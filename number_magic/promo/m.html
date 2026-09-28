@@ -45,6 +45,10 @@
 /* 한·영·중: 첫 그림 전에 언어를 정한다(?lang= → localStorage → navigator.language). 본문 사전은 문서 끝에. */
 (function(){var S=['ko','en','zh'],l=null;try{l=new URLSearchParams(location.search).get('lang')}catch(e){}if(S.indexOf(l)<0){l=null;try{l=localStorage.getItem('nmLang')}catch(e){}}if(S.indexOf(l)<0){var n=(navigator.language||'').toLowerCase();l=n.indexOf('zh')===0?'zh':n.indexOf('ko')===0?'ko':'en'}var h=document.documentElement;h.setAttribute('data-lang',l);h.setAttribute('lang',l==='zh'?'zh-Hans':l);if(l!=='ko')h.classList.add('i18n-wait');if(l==='zh'){var k=document.createElement('link');k.id='nmZhFont';k.rel='stylesheet';k.href='https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap';document.head.appendChild(k)}})();
 </script>
+<script>
+/* 허브(책 아래 네 장)는 릴을 보거나 "들어가기"를 누르면 열린다. 움직임 줄이기·같은 세션 재방문이면 처음부터 연다. */
+(function(){try{var rm=matchMedia('(prefers-reduced-motion: reduce)').matches,bk=sessionStorage.getItem('nmBookOpened')==='1';if(!rm&&!bk)document.documentElement.classList.add('hub-wait')}catch(e){}})();
+</script>
 <style>
 /* ────────────────────────────────────────────────────────────
    Numbers of Magic · 모바일 한 장 광고 (카카오톡·블로그 공유용)
@@ -643,6 +647,170 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
   clip-path:polygon(0 0,100% 0,100% 100%,50% 86%,0 100%);box-shadow:none}
 .bk-rib.c::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 30%)}
 
+
+/* ============================================================
+   입장 흐름 (2026-09-28) — 책을 누르면 15초 세로 릴 → 끝나면(또는 "들어가기") 책 아래 허브 4장.
+   세로 영상이라 두 쪽에 걸치지 않고 오른쪽 쪽에 세로 액자(9:16)로, 왼쪽 쪽에는 제목을 인쇄한다.
+   ============================================================ */
+.bk{--vw:252px;--vh:448px;--tx-o:0px}
+.bk.open .bk-scene{transform:translateY(var(--ty)) translateX(var(--tx-o)) scale3d(var(--s-o),var(--s-o),var(--s-o)) rotateX(var(--rx-o)) rotateZ(0deg)}
+.bk-plate{left:calc((var(--bw) - var(--vw)) / 2);top:calc(var(--ov) + (var(--bh) - var(--vh)) / 2 + 8px);width:var(--vw);height:var(--vh);aspect-ratio:auto;border-radius:3px;background:#1a1612;
+  box-shadow:0 0 0 5px var(--paper),0 0 0 6px rgba(176,140,60,.75),0 0 0 9px var(--paper),0 0 0 9.6px rgba(176,140,60,.45),0 18px 40px -8px rgba(60,40,15,.45),0 0 50px 8px rgba(255,232,170,.3)}
+.bk-plate::after{background:linear-gradient(180deg,rgba(255,248,230,.07),transparent 26%,transparent 82%,rgba(40,28,8,.14))}
+.bk-plate video{object-fit:cover}
+.bk-idle{background:#1a1612;color:#fffaf0;justify-content:flex-end;gap:12px;padding:0 14px 26px}
+.bk-idle .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bk-idle::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,14,8,0) 38%,rgba(20,14,8,.72));pointer-events:none}
+.bk-idle .pb,.bk-idle .t{z-index:1}
+.bk-idle .pb{width:74px;height:74px}
+.bk-idle .pb svg{width:26px;height:26px}
+.bk-idle .t{color:#fffaf0;font-size:17px;text-align:center;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.bk-idle .t small{color:#f0dca8}
+/* 왼쪽 쪽: 인쇄된 제목 */
+.bk-print .rh.l{left:34px}
+.bk-lp{position:absolute;left:46px;top:calc(var(--ov) + 64px);width:calc(var(--bw) - 96px);color:#3b3a44;text-align:left}
+.bk-lp .k{display:block;font:italic 400 13px/1 'Fraunces',Georgia,serif;letter-spacing:.04em;color:var(--paper-ink)}
+.bk-lp .t{display:block;margin-top:16px;font:600 30px/1.28 'Noto Serif KR','Hahmlet',serif;letter-spacing:-.02em;color:#2a2320}
+.bk-lp .s{display:block;margin-top:14px;font:400 14.5px/1.62 'Hahmlet','Noto Serif KR',serif;color:#4a4038}
+.bk-lp ol{list-style:none;margin:20px 0 0;padding:14px 0 0;border-top:1px solid rgba(176,140,60,.45);display:grid;gap:7px}
+.bk-lp li{display:flex;gap:10px;align-items:baseline;font:500 14px/1.3 'Hahmlet','Noto Serif KR',serif;color:#3b3a44}
+.bk-lp li i{font:italic 400 13px/1 'Fraunces',Georgia,serif;color:#9a7428;width:18px;flex:none}
+:root:lang(en) .bk-lp .t{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:31px;font-variation-settings:"opsz" 72,"SOFT" 30}
+:root:lang(en) .bk-lp .s,:root:lang(en) .bk-lp li{font-family:'Fraunces',Georgia,serif;font-variation-settings:"opsz" 18}
+:root:lang(zh) .bk-lp .t,:root:lang(zh) .bk-lp .s,:root:lang(zh) .bk-lp li{font-family:'Noto Serif SC','Noto Serif KR',serif}
+/* "들어가기" — 조작줄의 주 단추(표지와 같은 청록 + 금선) */
+.bk-btn.go{color:#fbf6ea;border-color:rgba(226,196,122,.7);padding:0 18px 0 16px;
+  background:linear-gradient(180deg,#2f6259 0%,#1d4a44 45%,#163b36 100%);
+  box-shadow:inset 0 0 0 3px rgba(22,59,54,1),inset 0 0 0 4px rgba(226,196,122,.5),0 8px 18px -10px rgba(20,48,42,.7)}
+.bk-btn.go svg{color:#e6cd8c}
+.bk-btn.go:hover{border-color:rgba(226,196,122,.95)}
+.bk.ended .bk-btn.go{animation:bk-go 1.8s ease-in-out 3}
+@keyframes bk-go{0%,100%{box-shadow:inset 0 0 0 3px #163b36,inset 0 0 0 4px rgba(226,196,122,.5),0 0 0 0 rgba(212,177,104,.55)}50%{box-shadow:inset 0 0 0 3px #163b36,inset 0 0 0 4px rgba(226,196,122,.5),0 0 0 8px rgba(212,177,104,0)}}
+@media (prefers-reduced-motion:reduce){.bk.ended .bk-btn.go{animation:none}}
+:root[data-theme="dark"] .bk-btn.go{background:linear-gradient(180deg,#2f6259 0%,#1d4a44 45%,#163b36 100%)}
+
+/* ============================================================
+   허브 — 책 아래 네 장(소개 영상 · 체험 학습지 · 온라인 학습 · 오픈톡 상담)
+   index·m 이 토큰 이름이 달라(--la-card/--card 등) 여기서 한 번 묶어 쓴다.
+   ============================================================ */
+.hub{--h-card:var(--la-card,var(--card));--h-line:var(--la-line,var(--hair));--h-soft:var(--la-line-soft,var(--hair-soft));
+  --h-shadow:var(--la-shadow,var(--shadow));--h-shadow-lg:var(--la-shadow-lg,var(--shadow-lg));--h-num:var(--display,var(--wm));
+  position:relative;padding:clamp(36px,6vw,80px) 0 clamp(20px,4vw,40px);scroll-margin-top:64px}
+.hub-wait .hub{display:none}
+.hub.hub-enter .hub-head,.hub.hub-enter .hub-card{opacity:0;transform:translateY(20px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.hub.hub-in .hub-head,.hub.hub-in .hub-card{opacity:1;transform:none}
+.hub.hub-in .hub-card:nth-child(2){transition-delay:.12s}.hub.hub-in .hub-card:nth-child(3){transition-delay:.24s}.hub.hub-in .hub-card:nth-child(4){transition-delay:.36s}
+.hub-head{text-align:center;max-width:44em;margin:0 auto clamp(22px,3.6vw,40px)}
+.hub-head .kicker{justify-content:center;margin:0}
+.hub-head .kicker::after{content:"";width:34px;height:1px;background:var(--la-gold)}
+.hub-head h2{font-size:clamp(26px,4vw,44px);margin-top:14px;line-height:1.28}
+.hub-head h2:focus{outline:none}
+.hub-head p{margin:14px auto 0;color:var(--la-ink-2);font-size:clamp(15px,1.3vw,17.5px);max-width:38em}
+.hub-map{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:18px}
+.hub-map a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--h-soft);text-decoration:none;font-size:13.5px;color:var(--la-ink-2);transition:border-color .2s,color .2s}
+.hub-map a i{font-family:var(--h-num);font-style:italic;color:var(--la-gold-ink)}
+.hub-map a:hover{border-color:var(--la-gold);color:var(--la-ink)}
+.hub-list{display:grid;gap:clamp(16px,2.4vw,28px)}
+.hub-card{position:relative;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(18px,3.4vw,48px);align-items:center;scroll-margin-top:72px;
+  padding:clamp(16px,3vw,36px);border-radius:22px;background:var(--la-pearl);border:1px solid var(--h-line);box-shadow:var(--h-shadow-lg);isolation:isolate}
+.hub-card::before{content:"";position:absolute;inset:8px;border:1px solid var(--h-soft);border-radius:15px;pointer-events:none;z-index:-1}
+.hub-card.flip{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+.hub-card.flip .hub-media{order:2}
+.hub-media{min-width:0}
+.hub-no{display:flex;align-items:center;gap:12px;color:var(--la-gold-ink);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin:0}
+.hub-no b{font-family:var(--h-num);font-weight:300;font-size:46px;letter-spacing:0;line-height:.8;color:var(--la-gold);font-variation-settings:"opsz" 144,"SOFT" 60}
+.hub-no::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--la-gold),transparent);opacity:.55}
+.hub-text h3{font-size:clamp(21px,2.5vw,29px);margin-top:14px;line-height:1.32}
+.hub-text > p{margin-top:12px;color:var(--la-ink-2);font-size:15.5px;line-height:1.72}
+.hub-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px}
+.hub-meta{margin-top:12px;font-size:13px;color:var(--la-ink-3);display:flex;align-items:center;gap:8px}
+.hub-meta svg{width:15px;height:15px;flex:none;color:var(--la-gold-ink)}
+/* 영상 액자 */
+.hub-frame{position:relative;border-radius:12px;overflow:hidden;background:#141210;aspect-ratio:16/9;container-type:inline-size;
+  box-shadow:0 0 0 5px var(--h-card),0 0 0 6px color-mix(in srgb,var(--la-gold) 70%,transparent),0 20px 44px -20px rgba(40,28,8,.55)}
+.hub-frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;max-width:none}
+.hub-capline{display:flex;gap:10px;align-items:baseline;margin-top:16px;font-family:var(--serif);font-size:15.5px;line-height:1.5;color:var(--la-ink);min-height:3em}
+.hub-capline b{flex:none;font:600 10.5px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--la-gold-ink);border:1px solid var(--h-line);border-radius:999px;padding:4px 8px;position:relative;top:-2px}
+.hub-seg{display:inline-flex;padding:3px;border-radius:999px;border:1px solid var(--h-line);background:var(--h-card)}
+.hub-seg button{min-height:44px;min-width:44px;padding:0 16px;border:0;border-radius:999px;background:transparent;font:600 14px/1 var(--sans);color:var(--la-ink-2);cursor:pointer;font-variant-numeric:tabular-nums}
+.hub-seg button[aria-pressed="true"]{background:var(--la-teal);color:var(--la-on-teal);box-shadow:inset 0 0 0 1px rgba(226,196,122,.5),0 1px 2px rgba(20,40,35,.3)}
+.hub-seg button:focus-visible{outline:2px solid var(--la-gold-ink);outline-offset:2px}
+.hub-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:13.5px;color:var(--la-ink-2);text-decoration:underline;text-decoration-color:var(--h-line);text-underline-offset:5px}
+.hub-link:hover{color:var(--la-ink);text-decoration-color:var(--la-gold)}
+/* 온라인 학습: 영상에 한국어 자막이 박혀 있어 영·중에서는 같은 자리에 번역 띠를 덮는다(1920×1080 기준 410,30 · 1100×76) */
+.ol-cap{position:absolute;left:21.354%;top:2.778%;width:57.292%;height:7.037%;z-index:2;box-sizing:border-box;border-radius:.73cqw;background:#1d4a44;color:#fbf6ea;
+  display:flex;align-items:center;justify-content:center;padding:0 1.2cqw;text-align:center;font:600 1.62cqw/1.1 var(--sans);letter-spacing:-.005em;pointer-events:none;
+  box-shadow:0 .5cqw 1.6cqw -.4cqw rgba(20,40,35,.55)}
+.ol-cap::before{content:"";position:absolute;inset:.26cqw;border-radius:.52cqw;border:1px solid rgba(226,196,122,.6)}
+.ol-cap b{color:#e6cd8c;margin-right:.5em;font-size:1.4cqw;font-weight:700}
+.ol-cap[hidden]{display:none}
+.hub-flow{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 4px;align-items:center}
+.hub-flow li{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--la-ink-2);padding:5px 11px;border-radius:999px;border:1px solid var(--h-soft);background:color-mix(in srgb,var(--h-card) 70%,transparent)}
+.hub-flow li + li::before{content:"→";color:var(--la-gold);margin:0 4px 0 -2px;font-size:12px}
+.hub-flow li + li{border:0;background:transparent;padding-left:2px}
+/* 체험 학습지 넘겨 보기 */
+.wsv{position:relative;border-radius:16px;padding:clamp(12px,2.4vw,24px);background:var(--la-bg-2);border:1px solid var(--h-soft)}
+.wsv-badge{position:absolute;top:clamp(18px,3vw,30px);right:clamp(18px,3vw,30px);z-index:2;font:600 11px/1 var(--sans);letter-spacing:.06em;padding:6px 10px;border-radius:999px;background:rgba(42,35,32,.78);color:#fbf6ea}
+.wsv-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;max-width:430px;margin:0 auto;border-radius:4px;background:#fff;overscroll-behavior-x:contain;
+  box-shadow:0 1px 2px rgba(58,40,20,.1),0 16px 34px -16px rgba(58,40,20,.5);outline-offset:4px}
+.wsv-track::-webkit-scrollbar{display:none}
+.wsv-page{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;margin:0;aspect-ratio:1064/1404;background:#fff}
+.wsv-page img{width:100%;height:100%;display:block;object-fit:contain}
+.wsv-bar{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center;max-width:430px;margin:12px auto 0}
+.wsv-arrow{width:44px;height:44px;border-radius:50%;border:1px solid var(--h-line);background:var(--h-card);color:var(--la-ink);cursor:pointer;display:grid;place-items:center;transition:border-color .2s}
+.wsv-arrow svg{width:18px;height:18px}
+.wsv-arrow:not(:disabled):hover{border-color:var(--la-gold)}
+.wsv-arrow:disabled{opacity:.35;cursor:default}
+.wsv-arrow:focus-visible{outline:2px solid var(--la-gold-ink);outline-offset:2px}
+.wsv-mid{display:flex;flex-direction:column;align-items:center;gap:0;min-width:0}
+.wsv-now{font-family:var(--serif);font-size:14.5px;color:var(--la-ink);text-align:center;line-height:1.3}
+.wsv-now i{font-family:var(--h-num);font-style:italic;color:var(--la-gold-ink);margin-right:6px}
+.wsv-dots{display:flex;justify-content:center}
+.wsv-dots button{width:44px;height:44px;border:0;padding:0;background:transparent;cursor:pointer;display:grid;place-items:center}
+.wsv-dots button::after{content:"";display:block;width:7px;height:7px;border-radius:50%;background:var(--la-ink-3);opacity:.45;transition:width .2s,background-color .2s}
+.wsv-dots button[aria-current="true"]::after{width:20px;border-radius:4px;background:var(--la-gold);opacity:1}
+.wsv-dots button:focus-visible{outline:2px solid var(--la-gold-ink);outline-offset:-6px;border-radius:8px}
+/* 오픈톡 상담: 표지 같은 청록 봉인 + 초대 글 */
+.hub-card.talk{grid-template-columns:auto minmax(0,1fr);align-items:center}
+.talk-seal{width:clamp(96px,12vw,140px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:radial-gradient(120% 85% at 30% 20%,rgba(255,255,255,.18),transparent 55%),linear-gradient(158deg,#2a7266,#1b534d 46%,#123c39);
+  box-shadow:inset 0 0 0 5px #163b36,inset 0 0 0 6px rgba(226,196,122,.65),inset 0 0 0 11px #163b36,inset 0 0 0 11.8px rgba(226,196,122,.35),0 14px 30px -14px rgba(20,48,42,.7)}
+.talk-seal svg{width:44%;height:44%;color:#e6cd8c}
+.talk-note{display:flex;gap:9px;align-items:flex-start;margin-top:16px;padding-top:14px;border-top:1px dashed var(--h-line);font-size:13.5px;color:var(--la-ink-2);line-height:1.6}
+.talk-note svg{width:17px;height:17px;flex:none;margin-top:2px;color:var(--la-gold-ink)}
+.hub-card.talk .btn{white-space:normal;text-align:center;line-height:1.25;padding-block:12px}
+@media (max-width:880px){
+  .hub-card,.hub-card.flip{grid-template-columns:1fr}
+  .hub-card.flip .hub-media{order:0}
+  .hub-card.talk{grid-template-columns:1fr;justify-items:start}
+}
+@media (max-width:520px){
+  .hub-card{border-radius:18px}
+  .hub-card::before{inset:6px;border-radius:13px}
+  .hub-no b{font-size:40px}
+  .hub-actions .btn{flex:1 1 100%}
+  .talk-seal{width:84px}
+}
+@media (prefers-reduced-motion:reduce){.hub.hub-enter .hub-head,.hub.hub-enter .hub-card{opacity:1;transform:none;transition:none}}
+:root:lang(zh) .ol-cap{font-family:'Noto Sans SC',var(--sans)}
+
+/* m.html: 폰 기둥(440px) — 카드 여백·제목을 줄인다 */
+.hub{padding:28px 0 8px}
+.hub-head{text-align:left;margin-bottom:18px}
+.hub-head .kicker{justify-content:flex-start}
+.hub-head .kicker::after{display:none}
+.hub-head h2{font-size:clamp(23px,6.2vw,27px);margin-top:4px}
+.hub-head p{font-size:15px;margin-top:10px}
+.hub-map{justify-content:flex-start;margin-top:12px}
+.hub-card,.hub-card.flip,.hub-card.talk{grid-template-columns:1fr;padding:14px;gap:16px;border-radius:18px}
+.hub-card.flip .hub-media{order:0}
+.hub-text h3{font-size:20px;margin-top:10px}
+.hub-text > p{font-size:15px}
+.hub-no b{font-size:36px}
+.talk-seal{width:76px}
+.hub-actions .btn{flex:1 1 100%}
+footer nav a{min-width:44px;justify-content:center}
+
 /* ---------- 한·영·중 ---------- */
 .i18n-wait body{visibility:hidden}
 :root:lang(zh){--serif:'Noto Serif SC','Noto Serif KR',Georgia,serif;--sans:'Noto Sans SC','Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
@@ -691,7 +859,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
     <p class="sub" data-i18n-html="hero.sub">답을 빨리 구하는 계산 학습이 아닙니다. 수를 가지고 놀고, 문장을 이해하고, 셈을 할 수 있도록 <b>언어·사고력·연산을 골고루</b>.</p>
 
 <!-- ▼▼ 마법서 히어로 (누르면 펼쳐지며 소개 영상 재생) ▼▼ -->
-<div class="bk" id="bk" data-src-full="../assets/promo/video/showreel-full.mp4" data-src-short="../assets/promo/video/showreel-60s.mp4" data-default="short" data-next="why">
+<div class="bk" id="bk" data-src-reel="../assets/promo/video/showreel-15s-vertical.mp4">
   <div class="bk-stage" id="bkStage">
     <div class="bk-scene">
       <div class="bk-table" aria-hidden="true"></div>
@@ -711,7 +879,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
         <!-- 아래 절반 책덩이(오른쪽에 남음) -->
         <div class="bk-3d bk-blockR">
           <div class="bk-f bk-paper gl">
-            <span class="bk-rh r ko" data-i18n="bk.rh">수의 마법 · 소개 영상</span>
+            <span class="bk-rh r ko" data-i18n="bk.rh">수의 마법 · 15초 미리보기</span>
             
           </div>
           <div class="bk-f bk-gilt-v bk-b-fore" style="backface-visibility:visible"></div>
@@ -826,38 +994,43 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
         <div class="bk-spill"></div>
         <!-- 펼친 면에 인쇄된 글 -->
         <div class="bk-print">
-                    <span class="lab" id="bkLab"><b>Chapter I</b>1분 요약본 · 1:00</span>
-          <span class="cap" id="bkCap" data-i18n="hero.kicker">숫자가 마법이 되는 곳</span>
+          <div class="bk-lp">
+            <span class="k">Chapter I · 0:15</span>
+            <span class="t" data-i18n-html="bk.lp.t">숫자가 마법이<br>되는 곳</span>
+            <span class="s" data-i18n="bk.lp.s">먼저 15초로 만나 보세요. 다 보시면 책 아래에 네 가지가 열립니다.</span>
+            <ol>
+              <li><i>01</i><span data-i18n="hub.a.no">소개 영상</span></li>
+              <li><i>02</i><span data-i18n="hub.b.no">체험 학습지</span></li>
+              <li><i>03</i><span data-i18n="hub.c.no">온라인 학습</span></li>
+              <li><i>04</i><span data-i18n="hub.d.no">오픈톡 상담</span></li>
+            </ol>
+          </div>
+          <span class="fo l">i</span><span class="fo r">ii</span>
         </div>
         </div><!-- /bk-deco -->
         <!-- 영상 판: 두 쪽에 걸쳐 인쇄된 듯 -->
         <div class="bk-plate" id="bkPlate">
-          <video id="bkVideo" playsinline preload="none" aria-label="Numbers of Magic 소개 영상 (1분)"></video>
+          <video id="bkVideo" playsinline preload="none" aria-label="Numbers of Magic 15초 미리보기 (세로 영상)" data-i18n-attr="aria-label:bk.vlabel"></video>
           <div class="bk-idle" aria-hidden="true">
-            <svg class="cons" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#c9a44c" stroke-width=".8">
-              <path d="M70 90L150 60L230 110L300 70" stroke-dasharray="2 5"/><path d="M430 280L510 240L580 290" stroke-dasharray="2 5"/><path d="M90 280L160 300" stroke-dasharray="2 5"/>
-              <g fill="#c9a44c" stroke="none"><circle cx="70" cy="90" r="2"/><circle cx="150" cy="60" r="1.5"/><circle cx="230" cy="110" r="2.2"/><circle cx="300" cy="70" r="1.4"/><circle cx="430" cy="280" r="1.8"/><circle cx="510" cy="240" r="2.2"/><circle cx="580" cy="290" r="1.5"/><circle cx="90" cy="280" r="1.6"/><circle cx="160" cy="300" r="2"/><circle cx="560" cy="70" r="1.4"/></g>
-            </svg>
+            <img class="poster" src="../assets/promo/video/poster-15s-vertical.jpg" alt="" loading="lazy" decoding="async" width="1080" height="1920">
             <span class="pb"><svg viewBox="0 0 24 24"><path d="M7 4.8v14.4L19 12z"/></svg></span>
-            <span class="t" id="bkIdleT"><span data-i18n="bk.idle">소개 영상 보기</span><small>Numbers of Magic</small></span>
+            <span class="t" id="bkIdleT"><span data-i18n="bk.idle">15초 미리보기</span><small>Numbers of Magic</small></span>
           </div>
-          <button class="bk-plate-btn" id="bkPlateBtn" type="button" aria-label="소개 영상 재생" data-i18n-attr="aria-label:bk.play"></button>
+          <button class="bk-plate-btn" id="bkPlateBtn" type="button" aria-label="15초 미리보기 재생" data-i18n-attr="aria-label:bk.play"></button>
         </div>
       </div>
     </div>
 
     <div class="bk-fx" aria-hidden="true"><div class="bk-bloom"></div><div class="bk-shaft"></div><div class="bk-motes"></div><div class="bk-dusts"></div></div>
-    <button class="bk-hit" id="bkHit" type="button" aria-label="마법서를 펼쳐 소개 영상 보기 (소리가 함께 나옵니다)" data-i18n-attr="aria-label:bk.hit"></button>
+    <button class="bk-hit" id="bkHit" type="button" aria-label="마법서를 펼쳐 15초 미리보기 보기 (소리가 함께 나옵니다)" data-i18n-attr="aria-label:bk.hit"></button>
     <div class="bk-dock">
       <p class="bk-hint" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="2.2"/></svg><span data-i18n="bk.hint">책을 눌러 펼쳐 보세요</span></p>
-      <div class="bk-ctl" role="group" aria-label="소개 영상 조작" data-i18n-attr="aria-label:bk.ctl">
+      <div class="bk-ctl" role="group" aria-label="미리보기 조작" data-i18n-attr="aria-label:bk.ctl">
         <button class="bk-btn ic" id="bkPlay" type="button" aria-label="일시정지" data-i18n-attr="aria-label:bk.pause"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg></button>
         <button class="bk-btn ic" id="bkMute" type="button" aria-label="소리 끄기" aria-pressed="false" data-i18n-attr="aria-label:bk.muteOff"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
-        <button class="bk-btn ic tx" id="bkRestart" type="button" aria-label="처음부터" data-i18n-attr="aria-label:bk.restart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg><span class="bk-lbl" aria-hidden="true" data-i18n="bk.restart">처음부터</span></button>
-        <div class="bk-seg" role="group" aria-label="영상 길이" data-i18n-attr="aria-label:bk.lenLabel">
-          <button type="button" data-v="full" aria-pressed="false" data-i18n="bk.full">전체 2:10</button><button type="button" data-v="short" aria-pressed="false" data-i18n="bk.short">1분</button>
-        </div>
-        <button class="bk-btn ic tx" id="bkClose" type="button" aria-label="책 덮기" data-i18n-attr="aria-label:bk.close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span class="bk-lbl" aria-hidden="true" data-i18n="bk.close">책 덮기</span></button>
+        <button class="bk-btn ic" id="bkRestart" type="button" aria-label="처음부터" data-i18n-attr="aria-label:bk.restart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg></button>
+        <button class="bk-btn go" id="bkEnter" type="button" aria-label="들어가기 — 소개 영상·체험 학습지·온라인 학습·상담 열기" data-i18n-attr="aria-label:bk.enterLabel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg><span aria-hidden="true" data-i18n="bk.enter">들어가기</span></button>
+        <button class="bk-btn ic" id="bkClose" type="button" aria-label="책 덮기" data-i18n-attr="aria-label:bk.close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg></button>
       </div>
     </div>
   </div>
@@ -865,7 +1038,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
 <!-- ▲▲ 마법서 히어로 ▲▲ -->
 
     <div class="hero-cta">
-      <a class="btn btn-pearl" href="#why" data-bk-more><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg><span data-i18n="cta.more">자세히 보기</span></a>
+      <a class="btn btn-pearl" href="#hub" data-bk-more><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg><span data-i18n="cta.more">자세히 보기</span></a>
       <a class="btn btn-glass" href="../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg><span data-i18n="cta.village">마법의 마을로</span></a>
     </div>
     <div class="under">
@@ -881,6 +1054,106 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
       <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h6M9 16h6"/></svg><span data-i18n="chip.paper">공부는 종이에</span></span>
     </div>
   </section>
+
+<!-- ============ 허브 · 책 아래 네 장 (2026-09-28) ============ -->
+<section class="hub" id="hub" aria-labelledby="hubh">
+  
+    <div class="hub-head">
+      <p class="kicker"><span data-i18n="hub.kicker">들어가기</span></p>
+      <h2 id="hubh" tabindex="-1" data-i18n="hub.h2">먼저, 네 가지를 보여 드립니다.</h2>
+      <p data-i18n="hub.lead">소개 영상으로 생각을, 체험 학습지로 종이 위의 공부를, 온라인 학습 영상으로 앱 속 수업을 보시고, 궁금한 점은 오픈톡으로 편하게 물어보세요.</p>
+      <nav class="hub-map" aria-label="네 가지 바로가기" data-i18n-attr="aria-label:hub.map">
+        <a href="#hubFilmCard"><i>01</i><span data-i18n="hub.a.no">소개 영상</span></a><a href="#hubSheetCard"><i>02</i><span data-i18n="hub.b.no">체험 학습지</span></a><a href="#hubOnlineCard"><i>03</i><span data-i18n="hub.c.no">온라인 학습</span></a><a href="#hubTalkCard"><i>04</i><span data-i18n="hub.d.no">오픈톡 상담</span></a>
+      </nav>
+    </div>
+
+    <div class="hub-list">
+      <!-- 01 소개 영상 -->
+      <article class="hub-card" id="hubFilmCard" aria-labelledby="hubAh">
+        <div class="hub-media">
+          <div class="hub-frame">
+            <video id="hubFilm" controls playsinline preload="none" poster="../assets/promo/video/poster-full.jpg" src="../assets/promo/video/showreel-full.mp4" aria-label="Numbers of Magic 소개 영상" data-i18n-attr="aria-label:hub.a.vlabel"></video>
+          </div>
+          <p class="hub-capline" aria-live="off"><b data-i18n="hub.cap">자막</b><span id="hubFilmCap">숫자가 마법이 되는 곳</span></p>
+        </div>
+        <div class="hub-text">
+          <p class="hub-no"><b>01</b><span data-i18n="hub.a.no">소개 영상</span></p>
+          <h3 id="hubAh" data-i18n="hub.a.h3">2분 10초로 보는 수의 마법</h3>
+          <p data-i18n="hub.a.p">왜 빠른 계산보다 수 감각인지, 진단부터 매주 종이 학습지까지 — 가족이 겪는 순서 그대로 담았습니다. 한국어 내레이션이고, 영상 아래에 자막이 흐릅니다.</p>
+          <div class="hub-actions">
+            <div class="hub-seg" role="group" aria-label="영상 길이" data-i18n-attr="aria-label:hub.a.len">
+              <button type="button" data-film="full" aria-pressed="true" data-i18n="hub.a.full">전체 2:10</button><button type="button" data-film="short" aria-pressed="false" data-i18n="hub.a.short">1분 요약</button>
+            </div>
+            <a class="hub-link" id="hubFilmFile" href="../assets/promo/video/showreel-full.mp4" data-i18n="hub.a.file">영상 파일로 받기</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 02 체험 학습지 -->
+      <article class="hub-card flip" id="hubSheetCard" aria-labelledby="hubBh">
+        <div class="hub-media">
+          <div class="wsv" role="region" aria-roledescription="carousel" aria-label="체험 학습지 넘겨 보기" data-i18n-attr="aria-label:hub.b.viewer">
+            <span class="wsv-badge" data-i18n="hub.b.badge">실제 학습지</span>
+            <div class="wsv-track" id="wsvTrack" tabindex="0">
+            <figure class="wsv-page" data-label="hub.b.p1"><img src="../assets/promo/sample/page-1.webp" width="1064" height="1404" alt="학습지 수학 이야기 쪽: 단위별 따로따로 빼기 — 빼기 기호 −가 라틴어 minus에서 −m을 거쳐 생겨난 이야기를 사진과 네 컷으로 싣다" data-i18n-attr="alt:hub.b.a1" loading="lazy" decoding="async"></figure>
+            <figure class="wsv-page" data-label="hub.b.p2"><img src="../assets/promo/sample/page-2.webp" width="1064" height="1404" alt="누미의 마법 노트: 80 − 47 = 80 − 40 − 7 처럼 십의 자리부터 따로 빼는 개념 정리" data-i18n-attr="alt:hub.b.a2" loading="lazy" decoding="async"></figure>
+            <figure class="wsv-page" data-label="hub.b.p3"><img src="../assets/promo/sample/page-3.webp" width="1064" height="1404" alt="창의 연산 Training Course: 76 − 31 을 76 − 30 과 − 1 로 나눠 빈칸을 채우는 문제" data-i18n-attr="alt:hub.b.a3" loading="lazy" decoding="async"></figure>
+            <figure class="wsv-page" data-label="hub.b.p4"><img src="../assets/promo/sample/page-4.webp" width="1064" height="1404" alt="교과 연산: 예시와 따라 풀기, 세로셈 뺄셈 문제" data-i18n-attr="alt:hub.b.a4" loading="lazy" decoding="async"></figure>
+            <figure class="wsv-page" data-label="hub.b.p5"><img src="../assets/promo/sample/page-5.webp" width="1064" height="1404" alt="문장제: 식과 답을 쓰는 뺄셈 이야기 문제" data-i18n-attr="alt:hub.b.a5" loading="lazy" decoding="async"></figure>
+            </div>
+            <div class="wsv-bar">
+              <button class="wsv-arrow" id="wsvPrev" type="button" aria-label="이전 쪽" data-i18n-attr="aria-label:hub.b.prev"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+              <div class="wsv-mid"><p class="wsv-now" id="wsvNow" aria-live="polite"></p><div class="wsv-dots" id="wsvDots"></div></div>
+              <button class="wsv-arrow" id="wsvNext" type="button" aria-label="다음 쪽" data-i18n-attr="aria-label:hub.b.next"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+            </div>
+            <span hidden data-i18n="hub.b.p1" data-pg="0">수학 이야기</span><span hidden data-i18n="hub.b.p2" data-pg="1">마법 노트</span><span hidden data-i18n="hub.b.p3" data-pg="2">창의 연산</span><span hidden data-i18n="hub.b.p4" data-pg="3">교과 연산</span><span hidden data-i18n="hub.b.p5" data-pg="4">문장제</span>
+          </div>
+        </div>
+        <div class="hub-text">
+          <p class="hub-no"><b>02</b><span data-i18n="hub.b.no">체험 학습지</span></p>
+          <h3 id="hubBh" data-i18n="hub.b.h3">이야기로 읽고, 노트로 이해하고, 손으로 풉니다</h3>
+          <p data-i18n="hub.b.p">실제 주간 학습지(과정 5 · 뺄셈 마법과 구구단 첫걸음)에서 다섯 쪽을 그대로 뽑았습니다. 빼기 기호 −의 역사를 담은 잡지형 수학 이야기, 누미의 마법 노트, 창의 연산, 교과 연산, 문장제 순서입니다. 정답지는 빼 두었습니다.</p>
+          <div class="hub-actions">
+            <a class="btn btn-pearl" href="../assets/promo/sample/sample.pdf" download="numbers-of-magic-sample.pdf" type="application/pdf"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span data-i18n="hub.b.pdf">PDF로 받기 · 5쪽</span></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- 03 온라인 학습 -->
+      <article class="hub-card" id="hubOnlineCard" aria-labelledby="hubCh">
+        <div class="hub-media">
+          <div class="hub-frame">
+            <video id="hubOnline" controls playsinline muted preload="none" poster="../assets/promo/video/poster-online-learning.jpg" src="../assets/promo/video/online-learning.mp4" aria-label="온라인 학습 화면 녹화 (소리 없음)" data-i18n-attr="aria-label:hub.c.vlabel"></video>
+            <p class="ol-cap" id="hubOnlineCap" hidden aria-hidden="true"></p>
+          </div>
+        </div>
+        <div class="hub-text">
+          <p class="hub-no"><b>03</b><span data-i18n="hub.c.no">온라인 학습</span></p>
+          <h3 id="hubCh" data-i18n="hub.c.h3">앱 속 수업은 이렇게 흘러갑니다</h3>
+          <p data-i18n="hub.c.p">마법 개념 유닛을 열면 짝을 찾는 매직 랩, 마법 노트, 3D 개념 장면을 지나 숫자 패드로 연습하고, 다 풀면 도장을 받습니다. 실제 앱 화면을 소리 없이 담았습니다.</p>
+          <ol class="hub-flow" aria-label="수업 순서" data-i18n-attr="aria-label:hub.c.flow">
+            <li><span data-i18n="hub.c.f1">매직 랩</span></li><li><span data-i18n="hub.c.f2">마법 노트</span></li><li><span data-i18n="hub.c.f3">3D 개념</span></li><li><span data-i18n="hub.c.f4">연습</span></li><li><span data-i18n="hub.c.f5">도장</span></li>
+          </ol>
+          <p class="hub-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg><span data-i18n="hub.c.meta">소리 없는 영상 · 약 41초</span></p>
+        </div>
+      </article>
+
+      <!-- 04 오픈톡 상담 -->
+      <article class="hub-card talk" id="hubTalkCard" aria-labelledby="hubDh">
+        <div class="talk-seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5c-4.7 0-8.5 2.9-8.5 6.5 0 2.3 1.6 4.4 4 5.5l-.8 3.3 3.6-2.4c.6.1 1.1.1 1.7.1 4.7 0 8.5-2.9 8.5-6.5S16.7 4.5 12 4.5z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01" stroke-width="2.2"/></svg></div>
+        <div class="hub-text">
+          <p class="hub-no"><b>04</b><span data-i18n="hub.d.no">오픈톡 상담</span></p>
+          <h3 id="hubDh" data-i18n="hub.d.h3">궁금한 건 오픈톡으로 편하게 물어보세요</h3>
+          <p data-i18n="hub.d.p">우리 아이는 어디서 시작하면 좋을지, 주 1회와 주 2회 중 어떤 속도가 맞을지, 학습지는 어떻게 받는지 — 무엇이든 카카오톡 오픈채팅에서 이야기 나눠요.</p>
+          <div class="hub-actions">
+            <a class="btn btn-pearl" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener" data-contact="kakao" aria-label="카카오톡 오픈채팅으로 상담하기 (새 탭에서 열림)" data-i18n-attr="aria-label:hub.d.aria"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span data-i18n="hub.d.btn">카카오톡 오픈채팅으로 상담하기</span></a>
+          </div>
+          <p class="talk-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 9.5-4-1.2-7-5-7-9.5V6z"/><path d="M9 12l2 2 4-4"/></svg><span data-i18n="hub.d.note">이 페이지는 아무것도 수집하지 않습니다 — 이름이나 연락처를 적는 칸이 없고, 대화는 카카오톡 안에서만 이어집니다.</span></p>
+        </div>
+      </article>
+    </div>
+  
+</section>
 
   <!-- ───── 1막 · 왜 ───── -->
   <section id="why" aria-labelledby="h-why">
@@ -1104,7 +1377,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
       <a href="../about.html" data-i18n="foot.phil">철학</a>
       <a href="../ws.html" data-i18n="foot.sheets">학습지</a>
     </nav>
-    <p style="margin-top:10px">GFIELD · Numbers of Magic — 수의 마법</p>
+    <p style="margin-top:10px">GFIELD · Numbers of Magic — <span lang="ko">수의 마법</span></p>
   </footer>
 
 </div>
@@ -1126,7 +1399,7 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
 window.__NM_KO = {
   'bk.lab.full':'소개 영상 · 2:10', 'bk.lab.short':'1분 요약본 · 1:00', 'bk.len.full':'2분 10초', 'bk.len.short':'1분',
   'bk.vlabel':'Numbers of Magic 소개 영상 ({len})', 'bk.capShort':'1분으로 보는 수의 마법', 'bk.again':'다시 보기',
-  'bk.play':'소개 영상 재생', 'bk.pauseFilm':'소개 영상 일시정지', 'bk.pause':'일시정지', 'bk.resume':'재생', 'bk.muteOff':'소리 끄기', 'bk.muteOn':'소리 켜기',
+  'bk.play':'15초 미리보기 재생', 'bk.pauseFilm':'미리보기 일시정지', 'bk.pause':'일시정지', 'bk.resume':'재생', 'bk.muteOff':'소리 끄기', 'bk.muteOn':'소리 켜기',
   'nav.dot':'{n}번째 카드', 'toast.phone':'전화 상담 번호는 곧 안내됩니다.', 'toast.kakao':'카카오 채널은 곧 열립니다.',
   'toast.copied':'링크를 복사했어요. 카카오톡에 붙여 넣어 주세요.', 'share.text':'답을 빨리 구하는 계산 학습이 아닙니다 — Numbers of Magic 60초',
   'caps':[[0,'숫자가 마법이 되는 곳'],[15.7,'답을 빨리 구하는 계산 학습이 아닙니다'],[29.6,'언어 · 사고력 · 연산을 골고루'],[39.1,'연산 단계 진단 · 지금 속도로 어디까지'],[61.8,'한 길로 이어진 로드맵 · 아이에게 맞는 속도'],[72.2,'마을을 걸으며 오늘의 마법을 찾아요'],[78.8,'유아부터 미적분까지, 한 권의 이야기'],[83.7,'창의 연산 — 수를 펼쳐 쉽게 만든다'],[95.1,'3D 개념 · 수학사 · 게임 — 왜 그런지까지'],[102.2,'공부는 종이에 — 매주 1~2회'],[115,'매주 학부모님 휴대폰으로'],[120.5,'함께 만드는 문화']],
@@ -1283,6 +1556,145 @@ window.__NM_ZH = {
   'caps60':[[0,'孩子以现在的节奏，能走多远？'],[3.3,'这不是追求快速求解的计算训练'],[17.1,'第一步，是诊断'],[27.2,'创意运算——把数拆开就变简单'],[38.5,'学习在纸上——每周1~2次'],[50.1,'一起营造的文化']]
 };
 
+/* 입장 흐름(2026-09-28) — 새 문구. 한국어 원문은 HTML 에 있고, 여기엔 JS 전용 값만 */
+Object.assign(window.__NM_KO, {
+  "ol.caps":null,
+  "hub.b.pg":"{n} / {total}",
+  "hub.b.dot":"{n}쪽 보기",
+  "hub.a.lab.full":"전체 2:10",
+  "hub.a.lab.short":"1분 요약"
+});
+Object.assign(window.__NM_EN, {
+  "nav.hub":"Start here",
+  "bk.rh":"Numbers of Magic · 15-second preview",
+  "bk.idle":"15-second preview",
+  "bk.again":"Watch again",
+  "bk.play":"Play the 15-second preview",
+  "bk.pauseFilm":"Pause the preview",
+  "bk.hit":"Open the spellbook to watch a 15-second preview (plays with sound, narrated in Korean)",
+  "bk.ctl":"Preview controls",
+  "bk.vlabel":"Numbers of Magic 15-second preview (vertical video, narrated in Korean)",
+  "bk.lp.t":"Where numbers<br>become magic",
+  "bk.lp.s":"Start with a 15-second look. When it ends, four doors open just below the book.",
+  "bk.enter":"Enter",
+  "bk.enterLabel":"Enter — open the film, the sample worksheet, online learning and the chat",
+  "hub.kicker":"Step inside",
+  "hub.h2":"Four things to see first.",
+  "hub.lead":"The film shows the thinking, the sample worksheet shows the work on paper, the online-learning clip shows a lesson in the app — and for anything else, just ask us on KakaoTalk.",
+  "hub.map":"Jump to",
+  "hub.cap":"Captions",
+  "hub.a.no":"Intro film",
+  "hub.a.h3":"The whole idea in just over two minutes",
+  "hub.a.p":"Why number sense matters more than speed, and the order a family actually goes through — from the first diagnostic to the weekly paper worksheets. Narrated in Korean; English captions run beneath the film.",
+  "hub.a.len":"Film length",
+  "hub.a.full":"Full 2:10",
+  "hub.a.short":"1-min cut",
+  "hub.a.file":"Download the video file",
+  "hub.a.vlabel":"Numbers of Magic intro film (narrated in Korean)",
+  "hub.b.no":"Sample worksheet",
+  "hub.b.h3":"Read the story, get the idea, then work it by hand",
+  "hub.b.p":"Five pages lifted straight from a real weekly set (Course 5 · subtraction tricks and a first look at times tables): a magazine-style story on where the minus sign came from, Numi's concept note, creative arithmetic, school-style written arithmetic, and word problems. The answer key is left out.",
+  "hub.b.badge":"Korean worksheet",
+  "hub.b.viewer":"Sample worksheet viewer (Korean worksheet)",
+  "hub.b.prev":"Previous page",
+  "hub.b.next":"Next page",
+  "hub.b.dot":"Show page {n}",
+  "hub.b.pg":"{n} / {total}",
+  "hub.b.pdf":"Download PDF · 5 pages",
+  "hub.b.p1":"Math story",
+  "hub.b.p2":"Concept note",
+  "hub.b.p3":"Creative arithmetic",
+  "hub.b.p4":"Written arithmetic",
+  "hub.b.p5":"Word problems",
+  "hub.b.a1":"Korean worksheet, math-story page: subtracting place by place, with a photo and a four-panel strip on how the minus sign grew out of the Latin word minus",
+  "hub.b.a2":"Korean worksheet, Numi's concept note: take away the tens first, then the ones (80 − 47 = 80 − 40 − 7)",
+  "hub.b.a3":"Korean worksheet, creative arithmetic: split 76 − 31 into 76 − 30 and then − 1, filling in the boxes",
+  "hub.b.a4":"Korean worksheet, written arithmetic: a worked example, guided practice and column subtraction",
+  "hub.b.a5":"Korean worksheet, word problems: write the number sentence and the answer",
+  "hub.c.no":"Online learning",
+  "hub.c.h3":"How a lesson flows in the app",
+  "hub.c.p":"Open a magic concept unit: find the pair in the Magic Lab, see it written out in the magic notebook, turn the idea around in 3D, practise on the number pad — and earn a stamp at the end. Recorded silently from the real app.",
+  "hub.c.flow":"Lesson order",
+  "hub.c.f1":"Magic Lab",
+  "hub.c.f2":"Magic notebook",
+  "hub.c.f3":"3D concept",
+  "hub.c.f4":"Practice",
+  "hub.c.f5":"Stamp",
+  "hub.c.meta":"Silent · about 41 s · English captions on screen",
+  "hub.c.vlabel":"Screen recording of an online lesson (silent, app shown in Korean)",
+  "hub.d.no":"Chat with us",
+  "hub.d.h3":"Questions? Ask us on KakaoTalk",
+  "hub.d.p":"Where your child might start, whether once or twice a week suits them, how the worksheets reach you — talk it over with us in a KakaoTalk open chat.",
+  "hub.d.btn":"Open the KakaoTalk chat",
+  "hub.d.aria":"Open the KakaoTalk chat (opens in a new tab)",
+  "hub.d.note":"This page collects nothing — there's no form to fill in, and the conversation happens only inside KakaoTalk."
+}, { "ol.caps":[[0,"Open the app and step into today's magic lesson"],[3.8,"Magic Lab — find the pair that makes 10"],[7.0,"Magic notebook — unfold the numbers to make it easy"],[15.8,"Turn the idea around in 3D until it makes sense"],[23.2,"Solve it step by step on the number pad"],[36.83,"All done — a stamp for today's magic"]] });
+Object.assign(window.__NM_ZH, {
+  "nav.hub":"先看看",
+  "bk.rh":"Numbers of Magic · 15秒预告",
+  "bk.idle":"15秒预告",
+  "bk.again":"再看一次",
+  "bk.play":"播放15秒预告",
+  "bk.pauseFilm":"暂停预告",
+  "bk.hit":"打开魔法书观看15秒预告（有声音，韩语旁白）",
+  "bk.ctl":"预告控制",
+  "bk.vlabel":"Numbers of Magic 15秒预告（竖版视频，韩语旁白）",
+  "bk.lp.t":"数字变成<br>魔法的地方",
+  "bk.lp.s":"先用15秒认识我们。看完后，书的下方会为您打开四扇门。",
+  "bk.enter":"进入",
+  "bk.enterLabel":"进入——打开介绍影片、体验学习单、线上学习和咨询",
+  "hub.kicker":"进入",
+  "hub.h2":"先带您看这四样。",
+  "hub.lead":"影片讲理念，体验学习单展示纸上的学习，线上学习短片展示应用里的一堂课——还有任何问题，欢迎在KakaoTalk上问我们。",
+  "hub.map":"快速跳转",
+  "hub.cap":"字幕",
+  "hub.a.no":"介绍影片",
+  "hub.a.h3":"两分多钟，看懂数的魔法",
+  "hub.a.p":"为什么数感比算得快更重要，以及一个家庭真实经历的顺序——从诊断到每周的纸质学习单。韩语旁白，影片下方有中文字幕。",
+  "hub.a.len":"影片长度",
+  "hub.a.full":"完整版 2:10",
+  "hub.a.short":"1分钟精简版",
+  "hub.a.file":"下载视频文件",
+  "hub.a.vlabel":"Numbers of Magic 介绍影片（韩语旁白）",
+  "hub.b.no":"体验学习单",
+  "hub.b.h3":"读故事、懂概念、再动手算",
+  "hub.b.p":"从真实的每周学习单（课程5 · 减法魔法与乘法口诀入门）中原样选出五页：讲述减号“−”由来的杂志式数学故事、努米的魔法笔记、创意运算、教材运算和应用题。答案页已略去。",
+  "hub.b.badge":"韩文学习单",
+  "hub.b.viewer":"体验学习单翻页浏览（韩文学习单）",
+  "hub.b.prev":"上一页",
+  "hub.b.next":"下一页",
+  "hub.b.dot":"查看第{n}页",
+  "hub.b.pg":"{n} / {total}",
+  "hub.b.pdf":"下载PDF · 5页",
+  "hub.b.p1":"数学故事",
+  "hub.b.p2":"魔法笔记",
+  "hub.b.p3":"创意运算",
+  "hub.b.p4":"教材运算",
+  "hub.b.p5":"应用题",
+  "hub.b.a1":"韩文学习单·数学故事页：按数位分别相减，配照片和四格漫画，讲述减号如何从拉丁文minus演变而来",
+  "hub.b.a2":"韩文学习单·努米的魔法笔记：先减十位再减个位（80 − 47 = 80 − 40 − 7）",
+  "hub.b.a3":"韩文学习单·创意运算：把76 − 31拆成76 − 30再减1，填写方框",
+  "hub.b.a4":"韩文学习单·教材运算：例题、跟着做和竖式减法",
+  "hub.b.a5":"韩文学习单·应用题：写出算式和答案",
+  "hub.c.no":"线上学习",
+  "hub.c.h3":"应用里的一堂课是这样进行的",
+  "hub.c.p":"打开一个魔法概念单元：在魔法实验里找数对，在魔法笔记里看清思路，在3D场景中转一转，再用数字键盘练习——做完就能盖章。以下为真实应用画面的无声录屏。",
+  "hub.c.flow":"上课顺序",
+  "hub.c.f1":"魔法实验",
+  "hub.c.f2":"魔法笔记",
+  "hub.c.f3":"3D概念",
+  "hub.c.f4":"练习",
+  "hub.c.f5":"盖章",
+  "hub.c.meta":"无声 · 约41秒 · 画面配中文字幕",
+  "hub.c.vlabel":"线上学习录屏（无声，应用界面为韩文）",
+  "hub.d.no":"开放聊天咨询",
+  "hub.d.h3":"有疑问？在KakaoTalk上随时问我们",
+  "hub.d.p":"孩子从哪里开始合适、每周一次还是两次更适合、学习单怎么收到——都可以在KakaoTalk开放聊天里和我们聊。",
+  "hub.d.btn":"打开KakaoTalk开放聊天",
+  "hub.d.aria":"打开KakaoTalk开放聊天（在新标签页打开）",
+  "hub.d.note":"本页面不收集任何信息——没有需要填写的表单，对话只在KakaoTalk内进行。"
+}, { "ol.caps":[[0,"打开应用，走进今天的魔法课"],[3.8,"魔法实验——找出乘积为10的一对数"],[7.0,"魔法笔记——把数拆开，算起来更轻松"],[15.8,"在3D中转一转，把概念看明白"],[23.2,"用数字键盘一步一步解题"],[36.83,"全部完成——盖上今天的魔法印章"]] });
+
 /* ---------- 한·영·중 (i18n) ----------
    순서: ?lang= → localStorage(nmLang) → navigator.language. 한국어 원문은 HTML 에 그대로 두고,
    첫 실행 때 data-i18n 요소에서 거둬 ko 사전으로 삼는다(중복 없음). en·zh 는 아래 사전. */
@@ -1388,7 +1800,93 @@ window.__NM_ZH = {
 })();
 </script>
 <script>
-/* ---------- 마법서 히어로 ---------- */
+/* ---------- 허브: 소개 영상 · 체험 학습지 · 온라인 학습 (2026-09-28) ---------- */
+(function(){
+  'use strict';
+  var hub = document.getElementById('hub'); if(!hub) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var tr = function(k){ return window.NM_I18N ? window.NM_I18N.t(k) : k; };
+  var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]; }); };
+
+  function reveal(scroll, focus){
+    var H = document.documentElement, was = H.classList.contains('hub-wait');
+    H.classList.remove('hub-wait');
+    if(was && !reduce){ hub.classList.add('hub-enter'); void hub.offsetWidth; requestAnimationFrame(function(){ hub.classList.add('hub-in'); }); }
+    if(scroll){
+      var bar = document.querySelector('.topbar'), off = bar ? bar.offsetHeight : 0;
+      window.scrollTo({ top: hub.getBoundingClientRect().top + window.pageYOffset - off + 8, behavior: reduce ? 'auto' : 'smooth' });
+    }
+    if(focus){ var h = document.getElementById('hubh'); if(h) h.focus({ preventScroll:true }); }
+  }
+  window.NM_HUB = { reveal:reveal };
+  /* 허브·그 안의 카드를 가리키는 링크는 먼저 허브를 연다 */
+  document.querySelectorAll('a[href="#hub"],a[href^="#hub"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href').slice(1), t = document.getElementById(id); if(!t) return;
+      e.preventDefault(); reveal(false);
+      var bar = document.querySelector('.topbar'), off = bar ? bar.offsetHeight : 0;
+      window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - off - 8, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  });
+
+  /* ── 01 소개 영상: 전체/1분 + 아래 자막 줄(책에서 쓰던 시간표 caps·caps60 그대로) ── */
+  var fv = document.getElementById('hubFilm'), fcap = document.getElementById('hubFilmCap'), ffile = document.getElementById('hubFilmFile');
+  var FSRC = { full:'../assets/promo/video/showreel-full.mp4', short:'../assets/promo/video/showreel-60s.mp4' };
+  var FPOS = { full:'../assets/promo/video/poster-full.jpg', short:'../assets/promo/video/poster-60s.jpg' };
+  var fwhich = 'full';
+  function fcaps(){ var c = tr(fwhich === 'short' ? 'caps60' : 'caps'); return (c && typeof c !== 'string') ? c : null; }
+  function fcapUpd(){
+    var C = fcaps(), s;
+    if(!C) s = tr('bk.capShort');                     /* 1분 컷 한국어: 자막이 영상에 박혀 있다 */
+    else { s = C[0][1]; for(var i = 0; i < C.length; i++){ if(fv.currentTime >= C[i][0]) s = C[i][1]; } }
+    if(fcap.textContent !== s) fcap.textContent = s;
+  }
+  function fset(w){
+    if(w === fwhich) return;
+    var playing = !fv.paused; fwhich = w;
+    hub.querySelectorAll('[data-film]').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-film') === w ? 'true' : 'false'); });
+    fv.setAttribute('poster', FPOS[w]); fv.setAttribute('src', FSRC[w]); ffile.setAttribute('href', FSRC[w]);
+    if(playing){ var p = fv.play(); if(p && p.catch) p.catch(function(){}); }
+    fcapUpd();
+  }
+  hub.querySelectorAll('[data-film]').forEach(function(b){ b.addEventListener('click', function(){ fset(b.getAttribute('data-film')); }); });
+  fv.addEventListener('timeupdate', fcapUpd); fv.addEventListener('seeked', fcapUpd);
+  fcapUpd();
+
+  /* ── 03 온라인 학습: 한국어 자막은 영상에, 영·중은 같은 자리에 번역 띠 ── */
+  var ov = document.getElementById('hubOnline'), ocap = document.getElementById('hubOnlineCap');
+  function ocapUpd(){
+    var C = tr('ol.caps'); if(!C || typeof C === 'string' || ov.ended || (ov.paused && ov.currentTime < .05)){ ocap.hidden = true; return; }
+    var s = '', n = 0; for(var i = 0; i < C.length; i++){ if(ov.currentTime >= C[i][0]){ s = C[i][1]; n = i + 1; } }
+    ocap.hidden = !s; var h = '<b>' + (n < 10 ? '0' : '') + n + '</b>' + esc(s); if(ocap.innerHTML !== h) ocap.innerHTML = h;
+  }
+  ['timeupdate', 'playing', 'seeked', 'ended', 'emptied'].forEach(function(ev){ ov.addEventListener(ev, ocapUpd); });
+
+  /* ── 02 체험 학습지 넘겨 보기 ── */
+  var track = document.getElementById('wsvTrack'), pages = [].slice.call(track.children), dots = document.getElementById('wsvDots');
+  var prev = document.getElementById('wsvPrev'), next = document.getElementById('wsvNext'), now = document.getElementById('wsvNow'), cur = 0;
+  pages.forEach(function(p, i){
+    var b = document.createElement('button'); b.type = 'button';
+    b.addEventListener('click', function(){ go(i); }); dots.appendChild(b);
+  });
+  function label(i){ var el = hub.querySelector('[data-pg="' + i + '"]'); return el ? el.textContent : ''; }
+  function go(i){ i = Math.max(0, Math.min(pages.length - 1, i)); track.scrollTo({ left: pages[i].offsetLeft - track.offsetLeft, behavior: reduce ? 'auto' : 'smooth' }); cur = i; paint(); }
+  function paint(){
+    [].forEach.call(dots.children, function(b, i){ b.setAttribute('aria-current', i === cur ? 'true' : 'false'); b.setAttribute('aria-label', tr('hub.b.dot').replace('{n}', i + 1)); });
+    prev.disabled = cur === 0; next.disabled = cur === pages.length - 1;
+    now.innerHTML = '<i>' + tr('hub.b.pg').replace('{n}', cur + 1).replace('{total}', pages.length) + '</i>' + esc(label(cur));
+  }
+  var raf = 0;
+  track.addEventListener('scroll', function(){ cancelAnimationFrame(raf); raf = requestAnimationFrame(function(){ var i = Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); if(i !== cur){ cur = i; paint(); } }); }, { passive:true });
+  prev.addEventListener('click', function(){ go(cur - 1); }); next.addEventListener('click', function(){ go(cur + 1); });
+  track.addEventListener('keydown', function(e){ if(e.key === 'ArrowRight'){ e.preventDefault(); go(cur + 1); } else if(e.key === 'ArrowLeft'){ e.preventDefault(); go(cur - 1); } });
+  paint();
+
+  document.addEventListener('nm:lang', function(){ fcapUpd(); ocapUpd(); paint(); });
+})();
+</script>
+<script>
+/* ---------- 마법서 히어로 (2026-09-28: 누르면 15초 세로 릴 → 끝나면 허브) ---------- */
 (function(){
   'use strict';
   var root = document.getElementById('bk');
@@ -1396,13 +1894,13 @@ window.__NM_ZH = {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var stage = document.getElementById('bkStage'), hit = document.getElementById('bkHit');
   var plate = document.getElementById('bkPlate'), v = document.getElementById('bkVideo'), plateBtn = document.getElementById('bkPlateBtn');
-  var bPlay = document.getElementById('bkPlay'), bMute = document.getElementById('bkMute'), bRestart = document.getElementById('bkRestart'), bClose = document.getElementById('bkClose');
-  var segs = root.querySelectorAll('.bk-seg button'), cap = document.getElementById('bkCap'), lab = document.getElementById('bkLab'), idleT = document.getElementById('bkIdleT');
+  var bPlay = document.getElementById('bkPlay'), bMute = document.getElementById('bkMute'), bRestart = document.getElementById('bkRestart'), bClose = document.getElementById('bkClose'), bEnter = document.getElementById('bkEnter');
+  var idleT = document.getElementById('bkIdleT');
   var fx = root.querySelector('.bk-fx'), motes = root.querySelector('.bk-motes'), dusts = root.querySelector('.bk-dusts');
-  var SRC = { full: root.getAttribute('data-src-full'), short: root.getAttribute('data-src-short') };
+  var SRC = root.getAttribute('data-src-reel');
   var tr = function(k){ return window.NM_I18N ? window.NM_I18N.t(k) : k; };   /* 사전 조회 — T 는 아래서 책 두께로 쓰므로 이름을 나눈다 */
-  var which = root.getAttribute('data-default') === 'short' ? 'short' : 'full';
-  var state = 'closed', timers = [], userPaused = false, autoPaused = false;
+  var hubReveal = function(scroll, focus){ if(window.NM_HUB) window.NM_HUB.reveal(scroll, focus); };
+  var state = 'closed', timers = [], userPaused = false, autoPaused = false, yAtOpen = 0;
   var KEY = 'nmBookOpened';
 
   /* 가죽·종이 결: 한 번만 그리는 인라인 canvas 노이즈(외부 그림 없음) */
@@ -1412,7 +1910,7 @@ window.__NM_ZH = {
       var g = c.getContext('2d'), img = g.createImageData(size, size), d = img.data;
       for(var i = 0; i < d.length; i += 4){ var n = 128 + (Math.random() - .5) * soft; d[i] = d[i+1] = d[i+2] = n; d[i+3] = 255; }
       g.putImageData(img, 0, 0);
-      for(var k = 0; k < dots; k++){                      /* 가죽의 오톨도톨한 알갱이 */
+      for(var k = 0; k < dots; k++){
         var x = Math.random() * size, y = Math.random() * size, r = .8 + Math.random() * 2.2, l = Math.random() < .5;
         g.fillStyle = l ? 'rgba(255,255,255,' + (.05 + Math.random() * .09) + ')' : 'rgba(0,0,0,' + (.06 + Math.random() * .12) + ')';
         g.beginPath(); g.ellipse(x, y, r, r * (.6 + Math.random() * .5), Math.random() * 3, 0, 6.3); g.fill();
@@ -1420,16 +1918,13 @@ window.__NM_ZH = {
       return 'url(' + c.toDataURL('image/png') + ')';
     }catch(e){ return ''; }
   }
-  var lg = grain(220, 2600, 70), pg = grain(180, 0, 26);
+  var lg = grain(220, 2600, 70);
   if(lg) root.style.setProperty('--grain', lg);
-  if(pg){
-    /* 종이는 곱하기(multiply)라서 평균이 흰색 쪽이어야 한다 */
-    try{
-      var c2 = document.createElement('canvas'); c2.width = c2.height = 180; var g2 = c2.getContext('2d'), im = g2.createImageData(180, 180), dd = im.data;
-      for(var j = 0; j < dd.length; j += 4){ var m = 244 + Math.random() * 11; dd[j] = m; dd[j+1] = m - 1; dd[j+2] = m - 4; dd[j+3] = 255; }
-      g2.putImageData(im, 0, 0); root.style.setProperty('--pgrain', 'url(' + c2.toDataURL('image/png') + ')');
-    }catch(e){}
-  }
+  try{
+    var c2 = document.createElement('canvas'); c2.width = c2.height = 180; var g2 = c2.getContext('2d'), im = g2.createImageData(180, 180), dd = im.data;
+    for(var j = 0; j < dd.length; j += 4){ var m = 244 + Math.random() * 11; dd[j] = m; dd[j+1] = m - 1; dd[j+2] = m - 4; dd[j+3] = 255; }
+    g2.putImageData(im, 0, 0); root.style.setProperty('--pgrain', 'url(' + c2.toDataURL('image/png') + ')');
+  }catch(e){}
 
   /* 늘 떠 있는 먼지(12개 이하) */
   if(!reduce){
@@ -1443,19 +1938,21 @@ window.__NM_ZH = {
     }
   }
 
-  /* 화면에 맞추기: 책은 고정 크기(400×540), 카메라 배율만 바꾼다 */
-  var PW = 400, PH = 540, T = 84, DOCK = 64;
+  /* 화면에 맞추기: 책은 고정 크기(400×540), 카메라 배율만 바꾼다.
+     폰에서는 펼친 뒤 카메라가 오른쪽 쪽(세로 액자)으로 옮겨 가 크게 보인다. */
+  var DOCK = 64;
   function fit(){
     var W = stage.clientWidth, H = stage.clientHeight, E = H - DOCK;
     var phone = W < 560;
     var sc = Math.min(W * (phone ? .8 : .7) / 500, E * .9 / 560);
-    var so = phone ? Math.min(W * .94 / 700, E * .95 / 560) : Math.min(W * .94 / 812, E * .92 / 560);  /* 폰: 영상 판이 폭의 94% — 책 가장자리는 화면 밖으로 */
-    if(!phone) sc = Math.min(sc, so * .9);                 /* 데스크톱: 펼치며 살짝 다가간다 */
+    var so = phone ? Math.min(W * .86 / 400, E * .95 / 540) : Math.min(W * .94 / 812, E * .94 / 560);
+    if(!phone) sc = Math.min(sc, so * .9);
     root.style.setProperty('--s-c', sc.toFixed(4));
     root.style.setProperty('--s-o', so.toFixed(4));
-    root.style.setProperty('--ty', (-DOCK / 2 + (phone ? -6 : 0)) + 'px');
+    root.style.setProperty('--ty', (-DOCK / 2 + (phone ? -4 : 0)) + 'px');
     root.style.setProperty('--persp', Math.round(1900 * so) + 'px');
-    root.style.setProperty('--rx-o', (phone ? 22 : 20) + 'deg');
+    root.style.setProperty('--rx-o', (phone ? 12 : 16) + 'deg');
+    root.style.setProperty('--tx-o', (phone ? -200 * so : 0).toFixed(1) + 'px');
   }
   fit();
   if('ResizeObserver' in window) new ResizeObserver(fit).observe(stage); else window.addEventListener('resize', fit);
@@ -1483,38 +1980,26 @@ window.__NM_ZH = {
         var g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .006); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
         o.connect(g); g.connect(dest || master); o.start(t); o.stop(t + dur + .05);
       }
-      /* 1) 가죽 삐걱: 끈적하게 미끄러지는 짧은 알갱이들 */
       var tc = t0, gap = .018;
-      for(var k = 0; k < 16; k++){
-        var a = Math.sin(Math.PI * k / 16);
-        noise(tc, .03, 'bandpass', 430 - k * 9, 9, .05 + .22 * a);
-        tc += gap; gap *= 1.06;
-      }
-      tone(t0 + .01, 150, .12, .12, 'triangle', 90);            /* 표지가 떨어지는 작은 톡 */
-      /* 2) 공기 — 큰 표지가 넘어가며 가르는 소리 */
+      for(var k = 0; k < 16; k++){ var a = Math.sin(Math.PI * k / 16); noise(tc, .03, 'bandpass', 430 - k * 9, 9, .05 + .22 * a); tc += gap; gap *= 1.06; }
+      tone(t0 + .01, 150, .12, .12, 'triangle', 90);
       noise(t0 + .3, .75, 'bandpass', 380, 1.4, .07, null, 1600);
-      /* 3) 종이 팔랑임: 낱장마다 한 번씩(좌우로 조금씩) */
       var leaves = [.62, .76, .9, 1.01, 1.11, 1.2];
       leaves.forEach(function(d, n){
         var dst = pan((n % 2 ? .25 : -.25) * Math.random());
         noise(t0 + d, .09 + Math.random() * .04, 'bandpass', 2400 + Math.random() * 1600, .9, .16 + Math.random() * .08, dst);
         noise(t0 + d + .02, .05, 'highpass', 5200, .7, .05, dst);
       });
-      /* 4) 표지가 탁자에 닿는 둔한 쿵 */
       tone(t0 + 1.36, 96, .42, .32, 'sine', 46);
       noise(t0 + 1.36, .16, 'lowpass', 420, .7, .2);
-      /* 5) 마법 차임: 사인 배음 + 종 같은 비정수 배음, 긴 감쇠 + 가벼운 메아리 */
       var dl = ac.createDelay(1); dl.delayTime.value = .23; var fb = ac.createGain(); fb.gain.value = .34; var lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3800;
       var wet = ac.createGain(); wet.gain.value = .42; var bus = ac.createGain(); bus.gain.value = 1;
       bus.connect(master); bus.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(master);
       [1567.98, 2093.0, 2637.02, 3135.96, 4186.01].forEach(function(f, n){
         var t = t0 + .92 + n * .075, g = .075 - n * .008;
-        tone(t, f, 2.4 - n * .2, g, 'sine', null, bus);
-        tone(t, f * 2.756, 1.1, g * .28, 'sine', null, bus);
-        tone(t, f * 5.404, .5, g * .09, 'sine', null, bus);
+        tone(t, f, 2.4 - n * .2, g, 'sine', null, bus); tone(t, f * 2.756, 1.1, g * .28, 'sine', null, bus); tone(t, f * 5.404, .5, g * .09, 'sine', null, bus);
       });
-      tone(t0 + .85, 523.25, 2.2, .035, 'sine', null, bus);      /* 아래에 깔리는 부드러운 울림 */
-      tone(t0 + .85, 783.99, 2.0, .025, 'sine', null, bus);
+      tone(t0 + .85, 523.25, 2.2, .035, 'sine', null, bus); tone(t0 + .85, 783.99, 2.0, .025, 'sine', null, bus);
     }catch(e){}
   }
 
@@ -1539,27 +2024,13 @@ window.__NM_ZH = {
     fx.classList.remove('burst'); void fx.offsetWidth; fx.classList.add('burst');
   }
 
-  /* ---------- 영상 ---------- */
-  /* 자막 줄: 전체 영상은 세 언어 모두 시간표(caps). 1분 컷은 한국어 자막이 영상에 박혀 있어 ko 는 고정 문구, en·zh 는 시간표(caps60) */
-  function capsFor(){ var c = tr(which === 'short' ? 'caps60' : 'caps'); return (c && typeof c !== 'string') ? c : null; }
+  /* ---------- 15초 릴 ---------- */
   var ICON = {
     pause:'<path d="M8 5v14M16 5v14"/>', play:'<path d="M7 4.8v14.4L19 12z"/>',
     on:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>',
     off:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M16 9l5 6M21 9l-5 6"/>'
   };
-  function setWhich(w){
-    which = w;
-    segs.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-v') === w ? 'true' : 'false'); });
-    lab.innerHTML = '<b>Chapter I</b>' + tr(w === 'full' ? 'bk.lab.full' : 'bk.lab.short');
-    var cs = capsFor();
-    cap.textContent = cs ? cs[0][1] : tr('bk.capShort');
-    v.setAttribute('aria-label', tr('bk.vlabel').replace('{len}', tr(w === 'full' ? 'bk.len.full' : 'bk.len.short')));
-  }
-  document.addEventListener('nm:lang', function(){ setWhich(which); syncUI(); });
-  function attach(){
-    var want = SRC[which];
-    if(v.getAttribute('src') !== want){ plate.classList.remove('vid-on'); v.setAttribute('src', want); }
-  }
+  function attach(){ if(v.getAttribute('src') !== SRC){ plate.classList.remove('vid-on'); v.setAttribute('src', SRC); } }
   function syncUI(){
     var p = v.paused;
     bPlay.setAttribute('aria-label', tr(p ? 'bk.resume' : 'bk.pause')); bPlay.querySelector('svg').innerHTML = p ? ICON.play : ICON.pause;
@@ -1567,8 +2038,9 @@ window.__NM_ZH = {
     bMute.querySelector('svg').innerHTML = v.muted ? ICON.off : ICON.on;
     plateBtn.setAttribute('aria-label', tr(p ? 'bk.play' : 'bk.pauseFilm'));
   }
+  document.addEventListener('nm:lang', syncUI);
   function play(withSound){
-    attach();
+    attach(); root.classList.remove('ended');
     if(withSound) v.muted = false;
     var pr = v.play();
     if(pr && pr.catch) pr.catch(function(err){
@@ -1578,30 +2050,25 @@ window.__NM_ZH = {
   }
   v.addEventListener('playing', function(){ plate.classList.add('vid-on'); syncUI(); });
   v.addEventListener('play', syncUI); v.addEventListener('pause', syncUI); v.addEventListener('volumechange', syncUI);
-  v.addEventListener('ended', function(){ v.currentTime = 0; plate.classList.remove('vid-on'); idleT.firstChild.setAttribute('data-i18n', 'bk.again'); idleT.firstChild.textContent = tr('bk.again'); syncUI(); });
-  v.addEventListener('timeupdate', function(){
-    var C = capsFor(); if(!C) return;
-    var t = v.currentTime, s = C[0][1];
-    for(var i = 0; i < C.length; i++){ if(t >= C[i][0]) s = C[i][1]; }
-    if(cap.textContent !== s) cap.textContent = s;
+  v.addEventListener('ended', function(){
+    try{ v.currentTime = 0; }catch(e){}
+    plate.classList.remove('vid-on'); root.classList.add('ended');
+    idleT.firstChild.setAttribute('data-i18n', 'bk.again'); idleT.firstChild.textContent = tr('bk.again'); syncUI();
+    /* 릴이 끝나면 허브를 연다. 보는 사이 스크롤을 옮기지 않았으면 허브까지 부드럽게 내려 준다 */
+    hubReveal(!root.classList.contains('offscreen') && Math.abs(window.pageYOffset - yAtOpen) < 400);
   });
-  plateBtn.addEventListener('click', function(){
-    if(v.paused){ play(true); } else { v.pause(); userPaused = true; }
-  });
+  plateBtn.addEventListener('click', function(){ if(v.paused){ play(true); } else { v.pause(); userPaused = true; } });
   bPlay.addEventListener('click', function(){ if(v.paused) play(false); else { v.pause(); userPaused = true; } });
   bMute.addEventListener('click', function(){ v.muted = !v.muted; if(!v.muted && v.paused) play(false); syncUI(); });
   bRestart.addEventListener('click', function(){ attach(); try{ v.currentTime = 0; }catch(e){} play(false); });
-  segs.forEach(function(b){ b.addEventListener('click', function(){
-    var w = b.getAttribute('data-v'); if(w === which) return;
-    setWhich(w); attach(); play(false);
-  }); });
+  bEnter.addEventListener('click', function(){ if(!v.paused){ v.pause(); userPaused = true; } hubReveal(true, true); });
 
   /* ---------- 펼치기 / 덮기 ---------- */
   function clearT(){ timers.forEach(clearTimeout); timers = []; }
   function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
   function openBook(userGesture){
     if(state === 'open' || state === 'opening') return;
-    clearT();
+    clearT(); yAtOpen = window.pageYOffset;
     try{ sessionStorage.setItem(KEY, '1'); }catch(e){}
     if(userGesture){
       sfx();
@@ -1626,7 +2093,7 @@ window.__NM_ZH = {
   function closeBook(){
     if(state === 'closed') return;
     clearT(); v.pause(); userPaused = false;
-    root.classList.remove('shown', 'opening');
+    root.classList.remove('shown', 'opening', 'ended');
     if(reduce){ root.classList.add('instant'); root.classList.remove('open'); state = 'closed'; requestAnimationFrame(function(){ requestAnimationFrame(function(){ root.classList.remove('instant'); }); }); hit.focus({ preventScroll:true }); return; }
     state = 'closing';
     later(function(){ root.classList.remove('open'); }, 250);
@@ -1646,20 +2113,15 @@ window.__NM_ZH = {
     }, { threshold:.3 }).observe(stage);
   }
 
-  /* 처음 상태: 움직임 줄이기·같은 세션에서 돌아온 경우엔 펼친 채(재생은 눌러야) */
-  setWhich(which); syncUI();
+  /* 처음 상태: 움직임 줄이기·같은 세션에서 돌아온 경우엔 펼친 채(릴 포스터, 재생은 눌러야) — 허브도 이미 열려 있다(머리 스크립트) */
+  syncUI();
   var back = false; try{ back = sessionStorage.getItem(KEY) === '1'; }catch(e){}
   if(reduce || back) openBook(false);
   requestAnimationFrame(function(){ root.classList.add('ready'); });
 
-  /* 자세히 보기 */
+  /* 자세히 보기 → 허브 */
   document.querySelectorAll('[data-bk-more]').forEach(function(a){
-    a.addEventListener('click', function(e){
-      var t = document.getElementById(root.getAttribute('data-next')); if(!t) return;
-      e.preventDefault();
-      var bar = document.querySelector('.topbar'), off = bar ? bar.offsetHeight : 0;   /* 고정 상단바에 가리지 않게 */
-      window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - off, behavior: reduce ? 'auto' : 'smooth' });
-    });
+    a.addEventListener('click', function(e){ e.preventDefault(); hubReveal(true); });
   });
 })();
 </script>
