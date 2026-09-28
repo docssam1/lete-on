@@ -62,7 +62,7 @@ window.NM_UNITS['M-34'] = {
     fills:[
       { tex:'x+2y+3=0, \\;\\; kx+4y+1=0 \\;\\Rightarrow\\; k = \\square', answer:2,
         hint:{ ko:'1:2=k:4', en:'1:2=k:4', zh:'1:2=k:4' } },
-      { tex:'2x+y+5=0, \\;\\; kx-4y+2=0 \\;\\Rightarrow\\; k = \\square', answer:2,
+      { tex:'(2x+y+5=0) \\perp (kx-4y+2=0) \\;\\Rightarrow\\; k = \\square', answer:2,
         hint:{ ko:'2k+1×(-4)=0', en:'2k+1×(-4)=0', zh:'2k+1×(-4)=0' } }
     ],
     open:{ ko:'3x-y+2=0과 kx+3y-1=0이 평행할 때 k를 구하는 과정을 설명해봅니다.',

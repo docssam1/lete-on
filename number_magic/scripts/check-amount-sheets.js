@@ -29,7 +29,7 @@ server.listen(0, async () => {
   const page = await browser.newPage();
   await page.goto(`http://localhost:${server.address().port}/ws.html?w=2026-W39&c=C1&n=check&k=1&auto=0`);
   await page.waitForFunction(() => window.__nmSheet && window.NM_COURSES, null, { timeout:20000 });
-  const courses = only.length ? only : Array.from({ length:48 }, (_, i) => 'C' + i);
+  const courses = only.length ? only : Array.from({ length:46 }, (_, i) => 'C' + i);
   const result = await page.evaluate(courses => {
     const out = { sheets:0, bad:[], grew:0 };
     for(const amt of [0.7, 0.85, 1, 1.25, 1.5]){

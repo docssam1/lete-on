@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,"><title>char3d lineup</title>
+<style>html,body{margin:0;height:100%;background:#eef1f4;overflow:hidden}canvas{display:block}
+#info{position:fixed;left:8px;bottom:6px;font:11px/1.4 system-ui;color:#556;white-space:pre}</style></head>
+<body><div id="info"></div>
+<script>window.__errs = []; addEventListener('error', e => { window.__errs.push(e.message); window.__ready = true; });</script>
+<script type="module">
+/* 3D 캐릭터 키트 시험대.
+   ?walk=1 제자리 걷기 · ?cam=close 얼굴 근접 · ?cam=small 마을 크기(작게) · ?wave=1 손 흔들기
+   ?only=boy,girl,b3 … 일부만 · ?hats=1 버디에 모자/망토 변형 */
+import * as THREE from '../../../world-explorer/vendor/three.module.js';
+import { makeCharacter } from '../../app/char3d/char3d.js';
+const Q = new URLSearchParams(location.search);
+try {
+const renderer = new THREE.WebGLRenderer({ antialias:true, preserveDrawingBuffer:true });
+renderer.setPixelRatio(Math.min(2, devicePixelRatio));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#e9eef3');
+scene.fog = new THREE.Fog('#e9eef3', 18, 40);
+scene.add(new THREE.HemisphereLight('#ffffff', '#b9c4b0', 1.5));
+const key = new THREE.DirectionalLight('#fff4e6', 2.2); key.position.set(4, 8, 6); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 4; key.shadow.bias = -0.0004;
+Object.assign(key.shadow.camera, { left:-10, right:10, top:6, bottom:-4, near:1, far:30 });
+scene.add(key);
+const rim = new THREE.DirectionalLight('#cfe2ff', 0.8); rim.position.set(-5, 4, -6); scene.add(rim);
+const ground = new THREE.Mesh(new THREE.CircleGeometry(30, 64).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color:'#dfe7d6', roughness:1 }));
+ground.receiveShadow = true; scene.add(ground);
+
+const hats = Q.get('hats') === '1';
+let list = [
+  { id:'boy', o:{ kind:'boy' } }, { id:'girl', o:{ kind:'girl' } }, { id:'elder', o:{ kind:'elder' } }, { id:'doc', o:{ kind:'doc' } },
+  { id:'b0', o:{ kind:'buddy', buddy:{ number:0 } } },
+  { id:'b3', o:{ kind:'buddy', buddy:{ number:3, color:'gold', hat:hats ? 'party' : 'none' } } },
+  { id:'b8', o:{ kind:'buddy', buddy:{ number:8, color:'pink', hat:hats ? 'ribbon' : 'none' } } },
+  { id:'b7', o:{ kind:'buddy', buddy:{ number:7, cape:hats ? 'blue' : 'none', hat:hats ? 'wizard' : 'none' } } },
+  { id:'b10', o:{ kind:'buddy', buddy:{ number:10, hat:hats ? 'crown' : 'none' } } },
+  { id:'plus', o:{ kind:'buddy', buddy:{ number:'plus', cape:hats ? 'red' : 'none' } } },
+];
+if(Q.get('set') === 'digits') list = [1,2,4,5,6,9].map(n => ({ id:'b' + n, o:{ kind:'buddy', buddy:{ number:n, hat:hats ? ['laurel','wizard','crown','party','ribbon','none'][n % 6] : 'none', cape:hats ? ['galaxy','rainbow','starcape','gold','none','purple'][n % 6] : 'none' } } }));
+if(Q.get('set') === 'syms') list = ['plus','minus','times','divide','equal','percent','pi','sigma','infinity','sqrt'].map(n => ({ id:n, o:{ kind:'buddy', buddy:{ number:n } } }));
+if(Q.get('only')) { const want = Q.get('only').split(','); list = list.filter(x => want.includes(x.id)); }
+const chars = [];
+const gapX = 1.25;
+list.forEach((d, i) => {
+  const c = makeCharacter(THREE, d.o);
+  c.object.position.x = (i - (list.length - 1) / 2) * gapX;
+  scene.add(c.object); chars.push({ id:d.id, c });
+  if(Q.get('walk') === '1') c.setWalking(true);
+});
+const camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.1, 100);
+const cm = Q.get('cam');
+const span = list.length * gapX;
+const ly = +(Q.get('ly') || (list.every(d => d.o.kind === 'buddy') ? 0.6 : 1.05));
+if(cm === 'close'){ camera.fov = 26; camera.position.set(0, ly + 0.45, 1.5 + span * 0.9); camera.lookAt(0, ly, 0); }
+else if(cm === 'small'){ camera.fov = 40; camera.position.set(0, 6.5, 8.8); camera.lookAt(0, 0.7, 0); }
+else if(cm === 'side'){ camera.position.set(span * 0.7 + 3, 2.2, 5); camera.lookAt(0, 0.9, 0); }
+else { camera.position.set(0, 2.3, 4 + span * 0.95); camera.lookAt(0, 0.85, 0); }
+camera.updateProjectionMatrix();
+if(Q.get('turn')) chars.forEach(({ c }, i) => c.faceNow(+Q.get('turn')));
+document.getElementById('info').textContent = chars.map(({ id, c }) => `${id}: ${c.triangles} tris / ${c.materials} mats`).join('  ·  ');
+window.__parts = (id) => { const c = chars.find(x => x.id === id); const agg = {}; for(const p of c.c.recipe.parts){ agg[p.line] = (agg[p.line] || 0) + p.tris; } return Object.entries(agg).sort((a, b) => b[1] - a[1]).slice(0, 25); };
+window.__stats = chars.map(({ id, c }) => ({ id, tris:c.triangles, mats:c.materials, meshes:c.meshes.length }));
+const clock = new THREE.Clock(); let t = 0, frames = 0;
+if(Q.get('wave') === '1') chars.forEach(({ c }) => c.wave());
+function loop(){
+  const dt = Math.min(0.05, clock.getDelta()); t += dt;
+  for(const { c } of chars) c.update(dt, t);
+  renderer.render(scene, camera);
+  if(++frames === 3) window.__ready = true;
+  requestAnimationFrame(loop);
+}
+loop();
+addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
+window.__step = (sec) => { for(const { c } of chars) for(let i = 0; i < sec * 30; i++) c.update(1 / 30, (t += 1 / 30)); renderer.render(scene, camera); };
+window.__wave = () => chars.forEach(({ c }) => c.wave());
+} catch(e){ window.__errs.push(String(e && e.stack || e)); window.__ready = true; }
+</script></body></html>

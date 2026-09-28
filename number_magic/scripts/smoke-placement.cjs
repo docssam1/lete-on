@@ -3,24 +3,30 @@
 /* 진단하기 v2(나이별 배치 진단 + 세부 스킬 체크) + 시작점 고르기 브라우저 스모크.
    사용법: node number_magic/scripts/smoke-placement.cjs [baseUrl]
    기본 http://127.0.0.1:8799/number_magic/index.html?enter=1
-   서버는 이 스크립트가 띄우지 않는다 — 먼저
-     cd /home/user/lete-on && nohup python3 -m http.server 8799 >/dev/null 2>&1 &
-   로 띄워 둘 것. */
+   baseUrl 을 주지 않았고 8799 에 아무것도 없으면 저장소 루트로 정적 서버를 직접 띄운다
+   (예전엔 미리 `python3 -m http.server 8799` 를 띄워 둬야 했다). */
 
 const path = require('path');
-function loadPlaywright(){
-  for (const c of ['playwright', '/opt/node22/lib/node_modules/playwright']) {
-    try { return require(c); } catch (e) {}
-  }
-  console.error('playwright를 찾지 못했습니다.');
-  process.exit(2);
-}
-const { chromium } = loadPlaywright();
+const http = require('http');
+const { spawn } = require('child_process');
+const { chromium } = require('./lib/playwright.js');
+const { onboard: onboardProfile, browserArgs } = require('./lib/nm-onboard.js');
 
-const BASE = process.argv[2] || process.env.BASE_URL ||
-  'http://127.0.0.1:8799/number_magic/index.html?enter=1';
+const GIVEN = process.argv[2] || process.env.BASE_URL || null;
+const BASE = GIVEN || 'http://127.0.0.1:8799/number_magic/index.html?enter=1';
 const OUT = process.env.SHOT_DIR || '/tmp/nm-shots';
-const CHROMIUM = process.env.PW_CHROMIUM || process.env.NM_CHROMIUM || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const CHROMIUM = process.env.PW_CHROMIUM || process.env.NM_CHROMIUM || undefined;
+function ping(url){ return new Promise(res => http.get(url, r => { r.resume(); res(r.statusCode < 400); }).on('error', () => res(false))); }
+async function ensureServer(){
+  if (GIVEN || await ping(BASE)) return null;
+  const py = spawn('python3', ['-m', 'http.server', '8799', '--bind', '127.0.0.1'],
+    { cwd: path.resolve(__dirname, '..', '..'), stdio: 'ignore' });
+  for (const t0 = Date.now(); Date.now() - t0 < 8000; ){
+    if (await ping(BASE)) return py;
+    await new Promise(r => setTimeout(r, 150));
+  }
+  py.kill(); throw new Error('정적 서버 기동 실패 (8799)');
+}
 const VIEWS = [
   { name: 'wide', viewport: { width: 1280, height: 900 } },
   { name: 'phone', viewport: { width: 430, height: 932 } }
@@ -31,16 +37,9 @@ function check(cond, msg){ if(!cond) fail.push(msg); console.log((cond?'  ok   '
 
 async function onboard(page){
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('.nm-av-card, #obName, #ttGame, #townCourseRoad, .nm-town', { timeout: 20000 });
-  if (await page.$('.nm-av-card')){
-    await page.click('.nm-av-card');
-    await page.click('#obAvNext');
-    await page.waitForSelector('#obName', { timeout: 10000 });
-  }
-  if (await page.$('#obName')){
-    await page.fill('#obName', '진단이');
-    await page.click('#obGo');
-  }
+  /* 온보딩은 이제 나 고르기 → 학년 → 이름 3단계(scripts/lib/nm-onboard.js). 예전 코드는
+     나 고르기 다음에 곧장 #obName 을 기다리다 학년 화면에서 시간 초과로 죽었다. */
+  await onboardProfile(page, { name: '진단이' });
   const tt = await page.waitForSelector('#ttGame, #townCourseRoad', { timeout: 30000 });
   if (await page.$('#ttGame')) await page.click('#ttGame');
   await page.waitForSelector('#townCourseRoad', { timeout: 30000 });
@@ -85,6 +84,18 @@ async function noOverflow(page, where){
    ❌ 칩이 충분히 나온다는 걸로 충분하다). */
 async function answerWrong(page){
   if (await page.$('#dgWidget')){
+    /* 10칸 틀(widget:'tenframe')은 "빈 칸을 눌러 10 만들기"라 틀리게 답할 길이 없고, 다 채워야
+       넘어간다. 아래의 "처음 눌리는 버튼"을 쓰면 빈 칸을 채웠다가(1회) 다음 회에 그 칸을 다시
+       눌러 비우기를 끝없이 되풀이해, 세부 진단이 25문항까지 "늘어난" 것처럼 보이고 결과에
+       못 닿았다(문항이 무작위라 4번에 1~2번꼴로 걸림). 빈 칸만 골라 끝까지 채운다. */
+    if (await page.$('#dgWidget .nm-w-tf-empty')){
+      for (let i = 0; i < 12; i++){
+        const slot = await page.$('#dgWidget .nm-w-tf-empty');
+        if (!slot) break;
+        await slot.dispatchEvent('pointerup');
+      }
+      return true;
+    }
     const btn = await page.$('#dgWidget .nm-tc-choice')
              || await page.$('#dgWidget .nm-nb-done')
              || await page.$('#dgWidget .nm-key.ok')
@@ -110,7 +121,7 @@ async function atResult(page){ return !!(await page.$('.nm-dg-course')); }
 
 async function run(view){
   console.log(`\n===== ${view.name} ${view.viewport.width}x${view.viewport.height} =====`);
-  const browser = await chromium.launch({ executablePath: CHROMIUM });
+  const browser = await chromium.launch({ executablePath: CHROMIUM, args: browserArgs() });
   const ctx = await browser.newContext({ viewport: view.viewport });
   const page = await ctx.newPage();
   const errors = [];
@@ -174,10 +185,19 @@ async function run(view){
       await page.screenshot({ path: path.join(OUT, `diag-fine-q-${view.name}.png`), fullPage: true });
       shotFine = true;
     }
+    const before = await page.evaluate(() => { const q = document.querySelector('.nm-dg-step'); return q ? q.textContent.trim() : ''; });
     const answered = await answerWrong(page);
     if (!answered) break;
     if (fine) fineQ++; else bracketQ++;
-    await page.waitForTimeout(950);
+    /* 다음 문제(또는 결과)가 뜰 때까지 기다린다. 예전엔 950ms 고정이었는데, 위젯은 답을 낸 뒤
+       한 번 더 쉬었다 넘어가므로(10칸 틀: 500ms 후 onAnswer) 부하가 걸린 PC 에서는 같은 문제를
+       한 번 더 "답해" 문항 수가 부풀었다(세부 진단 9문항 → 8문항 상한 FAIL). */
+    await page.waitForFunction(prev => {
+      if (document.querySelector('.nm-dg-course')) return true;
+      const q = document.querySelector('.nm-dg-step');
+      return !q || q.textContent.trim() !== prev;
+    }, before, { timeout: 15000 }).catch(() => {});
+    await page.waitForTimeout(300);
   }
   check(sawFineHeader, 'fine-stage header (세부 진단 / Skill check) appeared during the run');
   check(bracketQ <= 9, `bracketing stayed within its 9-question cap (${bracketQ} asked)`);
@@ -270,7 +290,9 @@ async function run(view){
 
 (async () => {
   require('fs').mkdirSync(OUT, { recursive: true });
-  for (const v of VIEWS) await run(v);
+  const server = await ensureServer();
+  try { for (const v of VIEWS) await run(v); }
+  finally { if (server) server.kill(); }
   console.log(fail.length ? `\nFAILED ${fail.length}:\n - ` + fail.join('\n - ') : '\n모두 통과.');
   process.exit(fail.length ? 1 : 0);
 })();

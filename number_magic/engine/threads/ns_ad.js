@@ -830,6 +830,9 @@ NM_TGEN['ad7_add4d'] = function(params, rng){
 /* ── AD8 여러 수 덧셈(짝 묶기) ── */
 NM_TGEN['ad8_multiAdd10'] = function(params, rng){
   params = params || {};
+  /* L4 새치기 · L5 100 짝 묶기(2026-09-26) — 생성기는 engine/threads/cre.js. 호출 때 찾으므로 로드 순서와 무관하다 */
+  if(params.mode === 'jump') return NM_TGEN['cre_ad8_jump'](params, rng);
+  if(params.mode === 'hundred') return NM_TGEN['cre_ad8_hundred'](params, rng);
   const termCount  = params.terms    || 4;
   const twoDigit   = params.twoDigit || false;
 

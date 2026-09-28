@@ -26,13 +26,8 @@ const PORT = process.env.NM_SMOKE_PORT || 8794;
 const outIdx = process.argv.indexOf('--out');
 const OUT = outIdx > 0 ? process.argv[outIdx + 1] : null;
 
-function loadPlaywright() {
-  for (const c of ['playwright', '/opt/node22/lib/node_modules/playwright']) {
-    try { return require(c); } catch (e) {}
-  }
-  console.error('playwright를 찾지 못했습니다.');
-  process.exit(2);
-}
+const { onboard, browserArgs } = require('./lib/nm-onboard.js');
+function loadPlaywright() { return require('./lib/playwright.js'); }
 
 function serve() {
   return new Promise((resolve, reject) => {
@@ -53,12 +48,11 @@ const TARGETS = [['WP1', 1], ['WP1', 2], ['WP1', 3], ['WP3', 1], ['WP3', 2], ['W
                  ['WP4', 1], ['WP4', 2], ['WP4', 3], ['WP5', 1], ['WP5', 2], ['WP5', 3]];
 const fails = [];
 
+let server = null;   // 도중에 죽어도 정적 서버를 남기지 않게
 (async () => {
   const { chromium } = loadPlaywright();
-  const server = await serve();
-  const browser = await chromium.launch({
-    executablePath: process.env.NM_CHROMIUM || '/opt/pw-browsers/chromium'
-  });
+  server = await serve();
+  const browser = await chromium.launch({ args: browserArgs() });
 
   for (const width of [1280, 430]) {
     const ctx = await browser.newContext({ viewport: { width, height: width === 430 ? 860 : 900 } });
@@ -69,13 +63,12 @@ const fails = [];
 
     /* 온보딩 — 새 프로필은 이름부터 받는다(index.html?enter=1로 인트로 영상을 건너뛴다) */
     await page.goto(`http://localhost:${PORT}/index.html?enter=1`, { waitUntil: 'networkidle' });
-    if (await page.$('#obName')) {
-      await page.fill('#obName', '문장제스모크');
-      await page.click('#obGo');
-      await page.waitForTimeout(600);
-    }
-    const onboarded = !(await page.$('#obName'));
-    if (!onboarded) fails.push(`W${width} 온보딩을 통과하지 못함`);
+    /* 온보딩은 이제 나 고르기 → 학년 → 이름 3단계다. 예전 코드는 첫 화면에 #obName 이 없으면
+       "이미 통과"로 보고 넘어가서, 실제로는 온보딩을 하나도 안 하고도 통과로 셌다. */
+    try {
+      const prof = await onboard(page, { name: '문장제스모크' });
+      if (!prof || prof.name !== '문장제스모크') fails.push(`W${width} 온보딩 후 프로필 이름이 저장되지 않음`);
+    } catch (e) { fails.push(`W${width} 온보딩을 통과하지 못함: ${e.message.split('\n')[0]}`); }
 
     /* 문제은행에서 실제로 풀기 */
     await page.goto(`http://localhost:${PORT}/drill.html`, { waitUntil: 'networkidle' });
@@ -186,4 +179,4 @@ const fails = [];
     process.exit(1);
   }
   console.log('\n통과 — WP 스레드가 화면·인쇄 양쪽에서 성립한다.');
-})().catch(e => { console.error(e); process.exit(2); });
+})().catch(e => { console.error(e); if (server) server.kill(); process.exit(2); });
