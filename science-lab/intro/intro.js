@@ -77,7 +77,7 @@ async function say(ids) {
       const fall = () => { if (fell) return; fell = true; if (my === sayToken && soundOn) speakDevice(line.text); };
       const src = (await cloneUrl(line.id, line.text)) || await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
       audio = new Audio(src); audio.preload = 'auto';
-      await tuneClone(audio, src); if (my !== sayToken) return;
+      await tuneClone(audio, src, { study: false }); if (my !== sayToken) return;   // 소개(광고)는 원래 빠르기
       audio.addEventListener('error', fall, { once: true });
       audio.addEventListener('playing', () => { voiceMode('독쌤 음성'); }, { once: true });
       audio.play().then(() => { setTimeout(() => { if (!audio || audio.paused) fall(); }, 400); }).catch(fall);

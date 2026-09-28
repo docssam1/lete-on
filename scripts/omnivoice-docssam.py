@@ -32,10 +32,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SL = os.path.join(ROOT, "science-lab")
 OUT = os.path.join(SL, "audio", "docssam")
 WORK = os.path.join(ROOT, ".docssam-work")
-VOICE = "docssam-clone-v1"          # 목소리를 다시 뽑으면 v2 로 올린다 → 파일 이름이 바뀌어 전부 새로 만든다
-# --speed 0.8 로 느리게 만들면 "docssam-clone-v2-slow" 로 바뀌어 전부 새로 만들고, manifest 의 rate 를 1 로 적는다
-# (사이트는 v1 을 0.8배로 틀고 있으므로 느리게 만든 음성은 원래 속도로 틀어야 한다 — v2/clone-voice.js).
-RATE = 0.8
+V1 = "docssam-clone-v1"             # 녹음 그대로의 말 빠르기(초당 약 6.5음절)
+SLOW = "docssam-clone-v2-slow"       # --speed 0.8 로 느리게 만든 것 — 공부 대사(data/voice)만
+VOICE = V1                           # 이번 실행에서 만드는 목소리(--speed 를 주면 SLOW)
+# 공부 대사: SLOW 파일이 있으면 그것(원래 속도로 틈), 없으면 V1 을 0.8배로 튼다.
+# 소개(광고) 대사(intro/narration.json): 언제나 V1, 원래 속도 — 광고는 살짝 빠른 게 자연스럽다(원장 결정 2026-09-28).
 SR = 24000
 CER_OK, CER_RETRY, TRIES = 0.35, 0.12, 3
 
@@ -76,6 +77,14 @@ def prep_ref(src, dst):
     return dst
 
 
+def study_lines():
+    out = []
+    for f in sorted(glob.glob(os.path.join(SL, "data", "voice", "*.voice.json"))):
+        for l in json.load(open(f, encoding="utf-8")).get("lines", []):
+            out.append((l["id"], l["text"]))
+    return out
+
+
 def lines():
     out = []
     for f in sorted(glob.glob(os.path.join(SL, "data", "voice", "*.voice.json"))):
@@ -92,8 +101,8 @@ def lines():
     return uniq
 
 
-def fname(lid, text):
-    return f"{lid}-{hashlib.sha1(f'{VOICE}|{text}'.encode('utf-8')).hexdigest()[:10]}.mp3"
+def fname(lid, text, voice=None):
+    return f"{lid}-{hashlib.sha1(f'{voice or VOICE}|{text}'.encode('utf-8')).hexdigest()[:10]}.mp3"
 
 
 # 읽기용 글 — 로마자·숫자를 한글 발음으로(앞의 것이 먼저 적용된다)
@@ -167,13 +176,20 @@ h1{{font-size:20px;margin:0 0 4px}}.lede{{color:#4a5468;font-size:13.5px}}.clip{
 
 
 def write_manifest(out):
-    # 지금 목소리·지금 글에 맞는 파일만 목록에 싣고, 옛 목소리(v1 등)나 고친 글의 옛 파일은 지운다
-    valid = {fname(i, t) for i, t in lines()}
-    for f in os.listdir(out):
+    # 지금 글에 맞는 파일만 목록에 싣는다: 모든 줄의 V1 + 공부 줄의 SLOW.
+    # 공부 줄은 SLOW 가 생기면 그 줄의 V1 은 지운다(실패한 줄은 V1 이 남아 0.8배로 나온다). 고친 글의 옛 파일도 지운다.
+    exist = set(os.listdir(out))
+    slow = {fname(i, t, SLOW) for i, t in study_lines()}
+    valid = {fname(i, t, V1) for i, t in lines()} | slow
+    for i, t in study_lines():
+        if fname(i, t, SLOW) in exist: valid.discard(fname(i, t, V1))
+    for f in exist:
         if f.endswith(".mp3") and f not in valid and out == OUT:
             os.remove(os.path.join(out, f))
     have = sorted(f for f in os.listdir(out) if f.endswith(".mp3") and f in valid)
-    json.dump({"voice": VOICE, "rate": RATE, "files": have}, open(os.path.join(out, "manifest.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    voices = ([SLOW] if any(f in slow for f in have) else []) + [V1]
+    # voices: 사이트가 이 순서로 찾는다. rates: 목소리마다 공부 화면 재생 속도(소개 페이지는 늘 1).
+    json.dump({"voices": voices, "rates": {SLOW: 1, V1: 0.8}, "files": have}, open(os.path.join(out, "manifest.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"manifest.json: {len(have)}개", flush=True)
     return have
 
@@ -192,9 +208,9 @@ def main():
     ap.add_argument("--speed", type=float, default=None, help="말 빠르기(1 보다 작으면 느리게). 예: 0.8 — 공부용 권장")
     ap.add_argument("--model", default="k2-fsa/OmniVoice")
     a = ap.parse_args()
-    global VOICE, RATE
+    global VOICE
     if a.speed:
-        VOICE, RATE = "docssam-clone-v2-slow", 1.0
+        VOICE = SLOW                 # 느린 목소리는 공부 대사에만 만든다
     os.makedirs(a.out, exist_ok=True); os.makedirs(WORK, exist_ok=True)   # WORK 는 .gitignore 대상
     if a.manifest_only:
         write_manifest(a.out); return
@@ -203,7 +219,7 @@ def main():
     ref_wav = a.ref if a.ref_ready else prep_ref(a.ref, os.path.join(WORK, "docssam-ref.wav"))
 
     only = set(x for x in a.only.split(",") if x)
-    todo = [(i, t) for i, t in lines() if (not only or i in only)
+    todo = [(i, t) for i, t in (study_lines() if a.speed else lines()) if (not only or i in only)
             and (a.force or not os.path.exists(os.path.join(OUT, fname(i, t))))]
     if a.shard:
         k, n = map(int, a.shard.split("/")); todo = todo[k::n]

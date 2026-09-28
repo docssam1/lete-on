@@ -1,6 +1,11 @@
 {
- "voice": "docssam-clone-v1",
- "rate": 0.8,
+ "voices": [
+  "docssam-clone-v1"
+ ],
+ "rates": {
+  "docssam-clone-v2-slow": 1,
+  "docssam-clone-v1": 0.8
+ },
  "files": [
   "ad1-59457a5009.mp3",
   "ad2-5134baa034.mp3",
