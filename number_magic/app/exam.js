@@ -470,16 +470,21 @@
     word-break:keep-all; }
   /* 매거진형 수학 이야기(2026-09-25) — 참고: 원장이 보낸 과학 이야기 지면. 색은 학습지 청록·금색만. */
   .nm-mzs-page { gap:0; }
-  .nm-mzs-band { flex:0 0 auto; display:flex; align-items:center; gap:3mm; background:#245b60; color:#fff; border-radius:3mm 3mm 0 0;
-    padding:2.5mm 4mm; font-size:12px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .nm-mzs-band b { font-size:13px; }
-  .nm-mzs-band span { margin-left:auto; font-size:9.5px; border:1px solid #ffffff99; border-radius:1.5mm; padding:.6mm 2.4mm; }
-  .nm-mzs-dash { flex:0 0 auto; height:1.6mm; background:repeating-linear-gradient(90deg,#C9A063 0 9mm,#fff 9mm 10mm);
-    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .nm-mzs-kick { flex:0 0 auto; align-self:flex-start; margin-top:5mm; background:#fbf3df; border-left:3px solid #C9A063; padding:1mm 3mm;
-    font-size:10.5px; font-weight:800; letter-spacing:.05em; color:#6b5122; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .nm-mzs-title { flex:0 0 auto; margin:2.5mm 0 1mm; font-size:27px; line-height:1.18; font-weight:900; color:#245b60; letter-spacing:-.02em; }
+  /* 머리띠 글자 다듬기(2026-09-28, 원장 "왜 자꾸 텍스트가 마음에 안들지 — 초록색 배너의").
+     전에는 띠에 적힌 제목을 아래 큰 제목이 한 번 더 말했고, 오른쪽 이름표는 버튼처럼 테를 둘렀고,
+     그 사이 "CONCEPT · 개념 노트" 꼭지가 영문 대문자와 한글을 섞어 세 번째 제목 노릇을 했다.
+     이제 띠 = 어느 지면인지(갈래 이름 + 과정 이름), 큰 제목 = 이 장의 내용, 한 번씩만 말한다. */
+  .nm-mzs-band { flex:0 0 auto; display:flex; align-items:center; gap:2.6mm; background:#245b60; color:#fff; border-radius:2.5mm 2.5mm 0 0;
+    padding:2.2mm 4.5mm; font-size:11px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mzs-band b { font-size:11.5px; font-weight:700; letter-spacing:.02em; }
+  .nm-mzs-band span { margin-left:auto; font-size:10px; font-weight:500; color:#d9e7e6; letter-spacing:.01em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60%; }
+  .nm-mzs-dash { flex:0 0 auto; height:.9mm; background:#C9A063; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mzs-title { flex:0 0 auto; margin:5.5mm 0 1.2mm; font-family:'Gowun Batang','Hahmlet','Noto Serif KR',serif; font-size:28px;
+    line-height:1.22; font-weight:700; color:#1d4a4e; letter-spacing:-.01em; word-break:keep-all; text-wrap:balance; }
   .nm-mzs-sub { flex:0 0 auto; margin:0 0 4mm; font-size:12.5px; line-height:1.6; color:#5c6b70; word-break:keep-all; }
+  .nm-mzs-sub::before { content:''; display:inline-block; width:5mm; height:.5mm; margin:0 2mm .9mm 0; vertical-align:middle;
+    background:#C9A063; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mzs-story { flex:0 0 auto; display:grid; grid-template-columns:84mm 1fr; gap:5mm; align-items:center; border:1.6px solid #8fb3b5;
     background:#f7faf9; border-radius:4mm; padding:3.5mm 5mm; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mzs-story-art { display:grid; grid-template-columns:1fr 1fr; gap:1.5mm; }
@@ -634,12 +639,12 @@
   /* 머리 제목 줄("4 마법 노트 · …")은 매거진 띠·제목과 겹친다 — 이름·날짜 줄만 남긴다. 회차 번호는 띠로 */
   .nm-w2-page-magic .nm-w2-head-row { display:none; }
   .nm-w2-page-magic .nm-w2-head { margin-bottom:3mm; }
-  .nm-mzs-no { display:inline-grid; place-items:center; width:6.5mm; height:6.5mm; border-radius:50%; background:#fff; color:#245b60;
-    font-style:normal; font-weight:900; font-size:11px; }
+  .nm-mzs-no { display:inline-grid; place-items:center; min-width:5.4mm; height:5.4mm; padding:0 1mm; border-radius:99px; background:#C9A063; color:#fff;
+    font-style:normal; font-weight:800; font-size:10px; font-variant-numeric:tabular-nums; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mzc-top { display:flex; align-items:flex-end; gap:4mm; }
   .nm-mzc-top > div { flex:1; min-width:0; display:flex; flex-direction:column; }
   .nm-mzc-mascot { flex:0 0 auto; width:22mm; height:auto; margin-bottom:3mm; }
-  .nm-w2-page-magic .nm-mzs-title { font-size:calc(25px * var(--ws-fs, 1)); }
+  .nm-w2-page-magic .nm-mzs-title { font-size:calc(26px * var(--ws-fs, 1)); margin-top:4mm; }
   .nm-w2-page-magic .nm-mzs-sub { margin-bottom:2mm; }
   .nm-w2-page-magic .nm-mn-stage { counter-increment:mzc; flex-direction:column; gap:1.5mm; border-top:1.3px solid #245b60; padding:3mm 0 2mm; }
   .nm-w2-page-magic .nm-mn-stages { counter-reset:mzc; }
@@ -2102,7 +2107,6 @@ function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
   /* 개념 노트의 "생각해 보기"와 겹치지 않게 — 여기서는 읽은 것을 제 말로 적게 한다 */
   const open = comic ? lk('이 이야기에서 새로 안 것 한 가지를 적어 보세요.', 'Write one thing you learned from this story.', '写下你从这个故事里新知道的一件事。') : '';
   const mzTitle = (u && pickL(u.title)) || topicName;
-  const kicker = esc(lk('MATH STORY · 수학 이야기', 'MATH STORY', 'MATH STORY · 数学故事'));
   /* 3D 대표 그림이 있는 유닛은 두 컷 대신 그 그림(data/hero3d.js, 2026-09-26 원장 "실사 느낌 … 3d로").
      네 컷 띠는 그대로라 만화는 아래에서 읽힌다. */
   const hero = comicUnit && (window.NM_HERO3D || {})[comicUnit];
@@ -2130,9 +2134,8 @@ function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
     <h3>${esc(open)}</h3><div class="nm-mzs-lines"><i></i><i></i><i></i></div>
   </div>` : '';
   return `<div class="nm-w2-page nm-hist-page nm-mzs-page">
-  <div class="nm-mzs-band"><b>${esc(topicName || mzTitle)}</b><span>Numbers of Magic</span></div>
+  <div class="nm-mzs-band"><b>${esc(lk('수학 이야기', 'Math Story', '数学故事'))}</b><span>${esc(topicName && topicName !== mzTitle ? topicName : 'Numbers of Magic')}</span></div>
   <div class="nm-mzs-dash"></div>
-  <div class="nm-mzs-kick">${kicker}</div>
   <h2 class="nm-mzs-title">${esc(mzTitle)}</h2>
   ${hook ? `<p class="nm-mzs-sub">${esc(hook)}</p>` : ''}
   ${storyCard}
@@ -4950,11 +4953,10 @@ function renderMagicNotePage(item, opts){
   const wm = `<div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>`;
   /* 매거진형 개념 노트(2026-09-25, 원장 "이렇게 디자인 둘 다") — 띠·금색 점선·키커·큰 제목, 단계는 번호 붙은 절. */
   const boardHtml = `<div class="nm-mzc-head">
-    <div class="nm-mzs-band">${opts.roundNo ? `<i class="nm-mzs-no">${esc(String(opts.roundNo))}</i>` : ''}<b>${esc(title)}</b><span>${esc(noteTitle)}</span></div>
+    <div class="nm-mzs-band">${opts.roundNo ? `<i class="nm-mzs-no">${esc(String(opts.roundNo))}</i>` : ''}<b>${esc(noteTitle)}</b><span>Numbers of Magic</span></div>
     <div class="nm-mzs-dash"></div>
     <div class="nm-mzc-top">
       <div>
-        <div class="nm-mzs-kick">${esc(lk('CONCEPT · 개념 노트','CONCEPT · Concept note','CONCEPT · 概念笔记'))}</div>
         <h2 class="nm-mzs-title">${esc(title)}</h2>
         ${sub ? `<p class="nm-mzs-sub">${esc(sub)}</p>` : ''}
       </div>

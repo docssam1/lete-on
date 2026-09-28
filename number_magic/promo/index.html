@@ -951,13 +951,15 @@ img.fb-pc{object-fit:fill;background:#fff}
 .fb-cv p{margin:0;position:relative}
 .fb-cv .k{font:600 .72em/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:#d4b168}
 .fb-cv .k i{font-family:var(--serif);font-style:italic;text-transform:none;letter-spacing:.05em}
-.fb-cv .t{margin-top:1.3em;font-family:var(--serif);font-weight:600;font-size:1.75em;line-height:1.2;color:#fbf6ea}
+.fb-cv .t{margin-top:1.1em;font-family:var(--serif);font-weight:500;font-size:1.02em;line-height:1.3;letter-spacing:.04em;color:#e7d9b6}
 .fb-cv .rule{width:2.6em;height:1px;background:#d4b168;margin:1.3em auto 1.1em}
-.fb-cv .c{font:600 .78em/1 var(--sans);letter-spacing:.32em;text-transform:uppercase;color:#d4b168}
+.fb-cv .c{font:600 .74em/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#d4b168}
 .fb-cv .n{font-family:var(--h-num);font-style:italic;font-weight:300;font-size:5.2em;line-height:1;color:#e2c47e;margin-top:.12em}
-.fb-cv .h{margin-top:.35em;font-family:var(--serif);font-size:1.3em;line-height:1.4;color:#fbf6ea;max-width:11em}
-.fb-cv .b{margin-top:auto;font-size:.86em;line-height:1.7;color:#e7d9b6}
-.fb-cv .go{margin-top:.9em;font-size:.76em;letter-spacing:.1em;color:#d4b168}
+.fb-cv .h{margin-top:.4em;font-family:var(--serif);font-weight:600;font-size:1.55em;line-height:1.34;color:#fbf6ea;max-width:8.6em;word-break:keep-all;text-wrap:balance}
+.fb-cv .h .nw{display:inline-block;white-space:nowrap}
+.fb-cv .b{margin-top:auto;padding-top:.9em;border-top:1px solid rgba(212,177,104,.35);font-size:.8em;line-height:1.75;color:#d9cba6}
+.fb-cv .b span:first-child{color:#e2c47e;font-weight:600}
+.fb-cv .go{margin-top:.8em;font-size:.74em;letter-spacing:.06em;color:#d4b168}
 /* 막대 */
 .fb-bar{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:8px;align-items:center;max-width:520px;margin:8px auto 0}
 .fb-arrow,.fb-tool{min-width:44px;min-height:44px;border-radius:999px;border:1px solid var(--h-line);background:var(--h-card);color:var(--la-ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:border-color .2s}
@@ -1354,7 +1356,7 @@ html.fb-lock,html.fb-lock body{overflow:hidden}
               <p class="rule"></p>
               <p class="c" data-i18n="hub.b.cv.c">과정</p>
               <p class="n">5</p>
-              <p class="h" data-i18n="hub.b.i.title">뺄셈 마법과 구구단 첫걸음</p>
+              <p class="h" data-i18n-html="hub.b.cv.h"><span class="nw">뺄셈 마법과</span> <span class="nw">구구단 첫걸음</span></p>
               <p class="b"><span data-i18n="hub.b.cv.b1">로드맵 2단계 · 계산의 새싹</span><br><span data-i18n="hub.b.cv.b2">6~7세 · 1회차 · 6쪽</span></p>
               <p class="go" data-i18n="hub.b.cv.go">넘겨 보세요 →</p>
             </div>
@@ -2165,6 +2167,7 @@ Object.assign(window.__NM_EN, {
   "hub.b.i.kick":"What this is",
   "hub.b.i.course":"Course 5",
   "hub.b.i.title":"Subtraction Magic & Times Tables Begin",
+  "hub.b.cv.h":"Subtraction Magic &amp; Times Tables Begin",
   "hub.b.i.road.k":"Roadmap",
   "hub.b.i.road":"Stage 2 of 7 · <b>Sprout</b> (Courses 1–10)",
   "hub.b.i.level.k":"Level",
@@ -2215,6 +2218,7 @@ Object.assign(window.__NM_ZH, {
   "hub.b.i.kick":"这份学习单",
   "hub.b.i.course":"课程5",
   "hub.b.i.title":"减法魔法与乘法口诀入门",
+  "hub.b.cv.h":"<span class=\"nw\">减法魔法与</span><span class=\"nw\">乘法口诀入门</span>",
   "hub.b.i.road.k":"路线图",
   "hub.b.i.road":"7个阶段中的第2阶段 · <b>计算的新芽</b>（课程1~10）",
   "hub.b.i.level.k":"水平",
