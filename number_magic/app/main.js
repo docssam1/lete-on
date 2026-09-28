@@ -4145,7 +4145,7 @@ const PLACEMENT_AGES=[
    실행할 때 데이터에서 직접 찾는다(tier 의 첫 과정 · 속도 비교 마일스톤).
      tier      : data/courses.js 에서 그 tier 의 **첫 과정**(번호가 가장 작은 것)
      milestone : app/pace-compare.js MILESTONES 의 course (출처: 기적의 계산법 권별 주제 —
-                 CURRICULUM-SOURCES.md §9, 상담 도구 roadmap/index.html)
+                 CURRICULUM-SOURCES.md §9)
      course    : 위 둘로 못 짚는 초5·초6 — CURRICULUM-SOURCES.md §9 권별 주제와
                  data/courses.js 과정 제목이 같은 자리(scripts/check-road-timing.js 가 제목을 대조)
    | 학년        | 근거                                                                 | 과정 |

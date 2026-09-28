@@ -31,8 +31,9 @@ function smOfKAge(age, month){ return (age-8)*12 + (month-3); }
 /* ── 1. 마일스톤 ↔ 우리 과정(주제로 맞춤) ──────────────────────
    course = "이 과정을 시작했다 = 그 앞 단계까지 끝냈다"는 과정 번호(C 뒤의 수).
    출처가 두 개다.
-   ① roadmap/index.html 의 연산 선택지 한 줄 설명(1165~1176행) — 상담 도구가 부모에게
-      보여 주는 그 설명.
+   ① 2026-09-26 에 옮겨 적은 유아 연산 교재 단계 설명(K·2권~6권 한 줄씩). 원래 상담용 진도 페이지에
+      있던 것이지만 **넘버스는 그 페이지를 읽지 않는다**(2026-09-28 원장: "로드맵을 넘버스가 왜 건드려") —
+      숫자와 설명은 여기 적힌 것이 정본이다.
    ② number_magic/CURRICULUM-SOURCES.md §9 — 기적의 계산법 권별 주제(초1~초3).
    우리 과정 제목은 data/courses.js. 애매하면 **더 많이 끝내야 도달로 치는 쪽(보수적)**. */
 const MILESTONES = [
@@ -65,7 +66,8 @@ const MILESTONES = [
 function milestone(id){ return MILESTONES.find(m=>m.id===id)||null; }
 
 /* ── 2. 기준표 ─────────────────────────────────────────────
-   (가) roadmap/index.html — const ROAD_L0.calc (471~477행)과 const LEVELS 의 shift(482~487행).
+   (가) 유아 연산 진도표 — 2026-09-26 에 옮겨 적은 값(원래 상담용 진도 페이지의 연산 블록과 레벨별 shift).
+        넘버스 밖의 파일과는 더 이어져 있지 않다. 값을 바꿀 일이 있으면 여기서 바꾸고 검사기의 고정값도 같이 바꾼다.
         L0 연산 블록(끝나는 달):  K 5세 9월 · 2권 5세 11월 · 3권 6세 1월 · 4권 6세 3월 ·
                                    5권 6세 5월 · 6권 6세 11월  (그 뒤 "복합연산·정확도 유지")
         각 레벨은 L0 을 shift 개월 뒤로 민 것: L0 0 · L1 3 · L2 7 · L3 10 · L4 12.
@@ -91,10 +93,10 @@ function roadmapAnchors(shift){
   });
 }
 const BENCH = [
-  { key:'a', rank:1, shift:12, src:'roadmap/index.html L4',
+  { key:'a', rank:1, shift:12, src:'유아 연산 진도표 L4 (2026-09-26 기록)',
     name:{ko:'이과 최상위권',en:'Top science track',zh:'理科顶尖'},   /* 원장 2026-09-26: 이름은 목적지로(L4 안정적 상위권 A반 선) */
     anchors: roadmapAnchors(12) },
-  { key:'p', rank:2, shift:3, src:'roadmap/index.html L1 (빠른 쪽 끝 = L0)',
+  { key:'p', rank:2, shift:3, src:'유아 연산 진도표 L1 (빠른 쪽 끝 = L0, 2026-09-26 기록)',
     name:{ko:'초6 수학올림피아드 수준',en:'AMC 10 level by grade 6',zh:'小六达到数学竞赛水平'},   /* L1 프리미어 표준 진도 선 */
     anchors: roadmapAnchors(3), fast: roadmapAnchors(0) },
   { key:'k', rank:3, src:'과정-로드맵.md §18 원장 실측',

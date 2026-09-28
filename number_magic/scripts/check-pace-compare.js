@@ -2,7 +2,7 @@
 /* ============================================================
    속도 비교 진단 검사 (app/pace-compare.js + 연산 로드맵 화면) — 2026-09-26
    ------------------------------------------------------------
-   1) 기준표가 원본(roadmap/index.html 의 ROAD_L0.calc · LEVELS.shift)과 같은가 — 원본을 직접 읽어 대조
+   1) 기준표가 기록된 고정값(2026-09-26)과 같은가 — 넘버스 밖 파일은 읽지 않는다
    2) KMO 세 점의 근거 문장이 과정-로드맵.md 에 그대로 있는가
    3) 마일스톤 ↔ 과정 대응이 courses.js 와 맞는가(중등 29=middle1 첫 과정, 고등 38=highmath1 첫 과정 …)
    4) 문구가 ko/en/zh 세 언어 모두 있고, 자리표시가 같고, 실제 학원 이름이 없는가
@@ -21,21 +21,12 @@ require(path.join(APP,'data/courses.js'));
 const C=global.window.NM_COURSES;
 const BANNED=/소마|황소|S학원|Academy S|S学院|프리미어|Premier|합격생|admits|录取生/i;
 
-check('기준표 = roadmap/index.html 원본', ()=>{
-  const src=fs.readFileSync(path.join(ROOT,'roadmap/index.html'),'utf8');
-  const calc=src.slice(src.indexOf('calc:['), src.indexOf(']', src.indexOf('calc:['))+1);
-  const blocks=[...calc.matchAll(/B\('([^']*)','calc',(\d+),(\d+),(\d+),(\d+)\)/g)].map(m=>({t:m[1],end:[+m[4],+m[5]]}));
-  assert(blocks.length>=6, 'ROAD_L0.calc 블록을 못 읽음');
-  const want={K:/K/, G2:/2권/, G3:/3권/, G4:/4권/, G5:/5권/, G6:/6권/};
-  Object.keys(want).forEach(id=>{
-    const b=blocks.find(x=>want[id].test(x.t)); assert(b, id+' 블록 없음');
-    assert.deepEqual(PC.ROADMAP_L0_CALC_END[id], b.end, id+' 끝나는 달이 원본과 다름');
-  });
-  const shift=id=>{ const m=src.match(new RegExp("\\{id:'"+id+"'[^}]*shift:(\\d+)")); assert(m,id+' shift 못 읽음'); return +m[1]; };
-  assert.equal(PC.bench('a').shift, shift('L4'), 'A반 = L4 shift');
-  assert.equal(PC.bench('p').shift, shift('L1'), '프리미어 = L1 shift');
-  assert.match(src, /id:'L4'[^}]*A반/, 'L4 가 A반 기준이어야 함');
-  assert.match(src, /id:'L1'[^}]*프리미어/, 'L1 이 프리미어 기준이어야 함');
+/* 기준표는 2026-09-26 에 옮겨 적은 값이 정본이다 — 넘버스 밖 파일(상담용 진도 페이지)은 읽지 않는다
+   (2026-09-28 원장: "로드맵을 넘버스가 왜 건드려"). 값이 바뀌면 여기 고정값도 함께 바꾼다. */
+check('기준표 = 기록된 고정값', ()=>{
+  assert.deepEqual(PC.ROADMAP_L0_CALC_END, { K:[5,9], G2:[5,11], G3:[6,1], G4:[6,3], G5:[6,5], G6:[6,11] }, '끝나는 달');
+  assert.equal(PC.bench('a').shift, 12, 'L4 shift');
+  assert.equal(PC.bench('p').shift, 3, 'L1 shift');
   // 5세 5월(격자 첫 칸) = 학령 -34, 7세 7월(마지막) = -8
   assert.equal(PC.smOfKAge(5,5), -34); assert.equal(PC.ROADMAP_GRID_END_SM, -8);
   // L0 6권은 6세 11월에 끝남 → 6세 12월(-15) 도달, L1 = -12, L4 = -3(격자 밖)
