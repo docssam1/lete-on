@@ -749,27 +749,147 @@ footer nav a{color:var(--la-ink-2);text-decoration:none;min-height:44px;padding:
 .hub-flow li + li::before{content:"→";color:var(--la-gold);margin:0 4px 0 -2px;font-size:12px}
 .hub-flow li + li{border:0;background:transparent;padding-left:2px}
 /* 체험 학습지 넘겨 보기 */
-.wsv{position:relative;border-radius:16px;padding:clamp(12px,2.4vw,24px);background:var(--la-bg-2);border:1px solid var(--h-soft)}
-.wsv-badge{position:absolute;top:clamp(18px,3vw,30px);right:clamp(18px,3vw,30px);z-index:2;font:600 11px/1 var(--sans);letter-spacing:.06em;padding:6px 10px;border-radius:999px;background:rgba(42,35,32,.78);color:#fbf6ea}
-.wsv-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;max-width:430px;margin:0 auto;border-radius:4px;background:#fff;overscroll-behavior-x:contain;
-  box-shadow:0 1px 2px rgba(58,40,20,.1),0 16px 34px -16px rgba(58,40,20,.5);outline-offset:4px}
-.wsv-track::-webkit-scrollbar{display:none}
-.wsv-page{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;margin:0;aspect-ratio:1064/1404;background:#fff}
-.wsv-page img{width:100%;height:100%;display:block;object-fit:contain}
-.wsv-bar{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center;max-width:430px;margin:12px auto 0}
-.wsv-arrow{width:44px;height:44px;border-radius:50%;border:1px solid var(--h-line);background:var(--h-card);color:var(--la-ink);cursor:pointer;display:grid;place-items:center;transition:border-color .2s}
-.wsv-arrow svg{width:18px;height:18px}
-.wsv-arrow:not(:disabled):hover{border-color:var(--la-gold)}
-.wsv-arrow:disabled{opacity:.35;cursor:default}
-.wsv-arrow:focus-visible{outline:2px solid var(--la-gold-ink);outline-offset:2px}
-.wsv-mid{display:flex;flex-direction:column;align-items:center;gap:0;min-width:0}
-.wsv-now{font-family:var(--serif);font-size:14.5px;color:var(--la-ink);text-align:center;line-height:1.3}
-.wsv-now i{font-family:var(--h-num);font-style:italic;color:var(--la-gold-ink);margin-right:6px}
-.wsv-dots{display:flex;justify-content:center}
-.wsv-dots button{width:44px;height:44px;border:0;padding:0;background:transparent;cursor:pointer;display:grid;place-items:center}
-.wsv-dots button::after{content:"";display:block;width:7px;height:7px;border-radius:50%;background:var(--la-ink-3);opacity:.45;transition:width .2s,background-color .2s}
-.wsv-dots button[aria-current="true"]::after{width:20px;border-radius:4px;background:var(--la-gold);opacity:1}
-.wsv-dots button:focus-visible{outline:2px solid var(--la-gold-ink);outline-offset:-6px;border-radius:8px}
+/* ── 02 체험 학습지: 정보 블록 + 책처럼 넘기는 뷰어 (2026-09-28) ──
+   넘김은 transform·opacity 만 움직인다. 크기는 JS 가 --pw(쪽 너비 px 숫자)로 준다. */
+.hub-card.sheet{grid-template-columns:1fr;gap:clamp(18px,2.6vw,30px);align-items:start}
+.sheet .hub-text{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(18px,3vw,40px);align-items:start}
+.sh-info{border:1px solid var(--h-line);border-radius:14px;background:var(--h-card);padding:18px 18px 16px;box-shadow:0 1px 2px rgba(58,40,20,.05)}
+.sh-kick{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--la-gold-ink)}
+.sh-info h4{margin:8px 0 0;font-family:var(--serif);font-weight:600;font-size:clamp(18px,1.9vw,21px);line-height:1.4;color:var(--la-ink)}
+.sh-course{display:inline-block;vertical-align:.12em;margin-right:4px;padding:4px 9px;border-radius:999px;background:var(--la-teal);color:var(--la-on-teal);font:600 12.5px/1 var(--sans);letter-spacing:.04em}
+.sh-rail{list-style:none;display:flex;gap:4px;margin:14px 0 4px;padding:0;align-items:center}
+.sh-rail li{flex:1;height:5px;border-radius:3px;background:var(--h-soft)}
+.sh-rail li:first-child{background:color-mix(in srgb,var(--la-gold) 45%,transparent)}
+.sh-rail li.on{height:20px;border-radius:10px;background:var(--la-teal);display:grid;place-items:center}
+.sh-rail li.on b{font:600 11px/1 var(--sans);color:var(--la-on-teal)}
+.sh-dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;margin:12px 0 0}
+.sh-dl div{display:contents}
+.sh-dl dt{font-size:12.5px;color:var(--la-ink-3);padding-top:2px;white-space:nowrap}
+.sh-dl dd{margin:0;font-size:14.5px;line-height:1.5;color:var(--la-ink)}
+.sh-dl dd b{font-weight:600;color:var(--la-teal)}
+:root[data-theme="dark"] .sh-dl dd b{color:var(--la-gold-ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sh-dl dd b{color:var(--la-gold-ink)}}
+.sh-note{margin:12px 0 0;padding:9px 12px;border-radius:10px;background:color-mix(in srgb,var(--la-gold) 12%,transparent);font-size:13.5px;line-height:1.55;color:var(--la-ink-2)}
+.sh-more{margin:10px 0 0;font-size:13.5px;line-height:1.6;color:var(--la-ink-2)}
+.sh-more a{display:inline-flex;align-items:center;min-height:44px;color:var(--la-teal);font-weight:600;text-underline-offset:3px}
+:root[data-theme="dark"] .sh-more a{color:var(--la-gold-ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sh-more a{color:var(--la-gold-ink)}}
+
+.fb{--pw:300;--ph:396;position:relative;border-radius:16px;padding:14px clamp(8px,2vw,24px) 12px;overflow:hidden;
+  background:radial-gradient(90% 70% at 50% 38%,rgba(184,145,63,.13),transparent 70%),var(--la-bg-2);border:1px solid var(--h-soft)}
+.fb-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 2px 10px}
+.fb-badge{font:600 11px/1 var(--sans);letter-spacing:.06em;padding:6px 10px;border-radius:999px;background:rgba(42,35,32,.78);color:#fbf6ea}
+.fb-hint{font-size:12.5px;color:var(--la-ink-3)}
+.fb-hint .m,.fb.single .fb-hint .d{display:none}
+.fb.single .fb-hint .m{display:inline}
+.fb-stage{position:relative;height:calc(var(--ph)*1px + 22px);touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;outline:none;cursor:pointer;border-radius:8px}
+.fb-stage:focus-visible{outline:2px solid var(--la-gold-ink);outline-offset:2px}
+.fb-book{position:absolute;top:11px;left:50%;width:calc(var(--pw)*2px);height:calc(var(--ph)*1px);margin-left:calc(var(--pw)*-1px);
+  perspective:calc(var(--pw)*7px);perspective-origin:50% 45%;will-change:transform}
+.fb.single .fb-book{width:calc(var(--pw)*1px);margin-left:calc(var(--pw)*-.5px)}
+/* 판지 표지 — 쪽 뒤로 위아래·바깥쪽이 몇 px 보인다 */
+.fb-board{position:absolute;top:-7px;bottom:-7px;width:calc(var(--pw)*1px + 11px);z-index:0;
+  background:linear-gradient(160deg,#2a6258,#1d4a44 50%,#163b36);box-shadow:0 22px 40px -22px rgba(40,24,8,.65),0 3px 8px -2px rgba(40,24,8,.3)}
+.fb-board::after{content:"";position:absolute;inset:3px;border:1px solid rgba(212,177,104,.42);border-radius:2px}
+.fb-board.l{left:-10px;border-radius:6px 2px 2px 6px;transform-origin:100% 50%}
+.fb-board.r{left:calc(var(--pw)*1px - 1px);border-radius:2px 6px 6px 2px}
+.fb-spine{position:absolute;top:-7px;bottom:-7px;left:calc(var(--pw)*1px - 6px);width:12px;z-index:1;
+  background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.1) 45%,rgba(0,0,0,.34));border-radius:2px}
+.fb.single .fb-board.l,.fb.single .fb-slot.l{display:none}
+.fb.single .fb-board.r{left:-3px}
+.fb.single .fb-spine{left:-6px}
+.fb-slot{position:absolute;top:0;width:calc(var(--pw)*1px);height:100%;z-index:2;background:#fffdf8}
+.fb-slot.l{left:0}
+.fb-slot.r{left:calc(var(--pw)*1px)}
+.fb.single .fb-slot.r{left:0}
+.fb-hold{position:absolute;inset:0;overflow:hidden}
+.fb-pc{position:absolute;top:0;left:0;width:calc(var(--pw)*1px);height:100%;max-width:none;display:block;-webkit-user-drag:none;pointer-events:none}
+img.fb-pc{object-fit:fill;background:#fff}
+/* 제본 쪽 그늘 — 정지 쪽 */
+.fb-slot::after{content:"";position:absolute;inset:0;pointer-events:none}
+.fb-slot.r::after{background:linear-gradient(90deg,rgba(58,38,18,.2),rgba(58,38,18,.07) 3.5%,rgba(58,38,18,0) 10%)}
+.fb-slot.l::after{background:linear-gradient(270deg,rgba(58,38,18,.2),rgba(58,38,18,.07) 3.5%,rgba(58,38,18,0) 10%)}
+.fb.single .fb-slot.r::after{opacity:.6}
+.fb-shade{position:absolute;inset:0;opacity:0;pointer-events:none;z-index:1}
+.fb-slot.r .fb-shade{background:linear-gradient(90deg,rgba(30,18,6,.5),rgba(30,18,6,.16) 35%,rgba(30,18,6,0) 75%)}
+.fb-slot.l .fb-shade{background:linear-gradient(270deg,rgba(30,18,6,.5),rgba(30,18,6,.16) 35%,rgba(30,18,6,0) 75%)}
+/* 넘어가는 잎 — 두 조각(a 안쪽, c 바깥쪽)으로 나눠 바깥이 먼저 들리며 휘어 보이게 */
+.fb-leaf{position:absolute;top:0;height:100%;width:calc(var(--pw)*1px);z-index:5;transform-style:preserve-3d;pointer-events:none;--sh:0}
+.fb-leaf[hidden]{display:none}
+.fb-leaf.fw{left:calc(var(--pw)*1px);transform-origin:0 50%}
+.fb.single .fb-leaf.fw{left:0}
+.fb-leaf.bw{left:0;transform-origin:100% 50%}
+.fb-seg{position:absolute;top:0;height:100%;transform-style:preserve-3d}
+.fb-leaf.fw .fb-seg.c{left:100%;transform-origin:0 50%}
+.fb-leaf.bw .fb-seg.c{right:100%;transform-origin:100% 50%}
+.fb-face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fffdf8}
+.fb-face.b{transform:rotateY(180deg)}
+.fb-face::before,.fb-face::after{content:"";position:absolute;inset:0;pointer-events:none}
+.fb-face::after{opacity:calc(var(--sh) * .95)}
+.fb-leaf.fw .fb-seg.a > .fb-face.f::before{background:linear-gradient(90deg,rgba(58,38,18,.2),rgba(58,38,18,0) 7%)}
+.fb-leaf.fw .fb-seg.a > .fb-face.b::before{background:linear-gradient(270deg,rgba(58,38,18,.2),rgba(58,38,18,0) 7%)}
+.fb-leaf.bw .fb-seg.a > .fb-face.f::before{background:linear-gradient(270deg,rgba(58,38,18,.2),rgba(58,38,18,0) 7%)}
+.fb-leaf.bw .fb-seg.a > .fb-face.b::before{background:linear-gradient(90deg,rgba(58,38,18,.2),rgba(58,38,18,0) 7%)}
+.fb-leaf.fw .fb-seg.a > .fb-face.f::after,.fb-leaf.bw .fb-seg.a > .fb-face.b::after{background:linear-gradient(90deg,rgba(40,25,10,0) 35%,rgba(40,25,10,.24))}
+.fb-leaf.fw .fb-seg.a > .fb-face.b::after,.fb-leaf.bw .fb-seg.a > .fb-face.f::after{background:linear-gradient(270deg,rgba(40,25,10,0) 35%,rgba(40,25,10,.24))}
+.fb-leaf.fw .fb-seg.c .fb-face.f::after,.fb-leaf.bw .fb-seg.c .fb-face.b::after{background:linear-gradient(90deg,rgba(40,25,10,.24),rgba(255,252,244,.4) 26%,rgba(40,25,10,.06) 64%,rgba(40,25,10,.2))}
+.fb-leaf.fw .fb-seg.c .fb-face.b::after,.fb-leaf.bw .fb-seg.c .fb-face.f::after{background:linear-gradient(270deg,rgba(40,25,10,.24),rgba(255,252,244,.4) 26%,rgba(40,25,10,.06) 64%,rgba(40,25,10,.2))}
+.fb-fade{position:absolute;inset:0;z-index:8;pointer-events:none;transition:opacity .28s ease}
+.fb-fade[hidden]{display:none}
+/* HTML 표지 */
+.fb-cv{position:absolute;top:0;left:0;width:calc(var(--pw)*1px);height:100%;box-sizing:border-box;padding:12% 10% 9%;display:flex;flex-direction:column;align-items:center;text-align:center;overflow:hidden;
+  font-size:calc(var(--pw)*1px/23);color:#f3e7c8;border-radius:0 3px 3px 0;
+  background:radial-gradient(110% 70% at 28% 12%,rgba(255,255,255,.1),transparent 58%),linear-gradient(158deg,#28605a,#1d4a44 48%,#143631)}
+.fb-cv[hidden]{display:none}
+.fb-cv::before{content:"";position:absolute;inset:4.5%;border:1px solid rgba(212,177,104,.6);border-radius:2px;box-shadow:inset 0 0 0 4px rgba(212,177,104,.1);pointer-events:none}
+.fb-cv::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.07) 3%,rgba(0,0,0,0) 7%);pointer-events:none}
+.fb-cv p{margin:0;position:relative}
+.fb-cv .k{font:600 .72em/1 var(--sans);letter-spacing:.3em;text-transform:uppercase;color:#d4b168}
+.fb-cv .k i{font-family:var(--serif);font-style:italic;text-transform:none;letter-spacing:.05em}
+.fb-cv .t{margin-top:1.3em;font-family:var(--serif);font-weight:600;font-size:1.75em;line-height:1.2;color:#fbf6ea}
+.fb-cv .rule{width:2.6em;height:1px;background:#d4b168;margin:1.3em auto 1.1em}
+.fb-cv .c{font:600 .78em/1 var(--sans);letter-spacing:.32em;text-transform:uppercase;color:#d4b168}
+.fb-cv .n{font-family:var(--h-num);font-style:italic;font-weight:300;font-size:5.2em;line-height:1;color:#e2c47e;margin-top:.12em}
+.fb-cv .h{margin-top:.35em;font-family:var(--serif);font-size:1.3em;line-height:1.4;color:#fbf6ea;max-width:11em}
+.fb-cv .b{margin-top:auto;font-size:.86em;line-height:1.7;color:#e7d9b6}
+.fb-cv .go{margin-top:.9em;font-size:.76em;letter-spacing:.1em;color:#d4b168}
+/* 막대 */
+.fb-bar{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:8px;align-items:center;max-width:520px;margin:8px auto 0}
+.fb-arrow,.fb-tool{min-width:44px;min-height:44px;border-radius:999px;border:1px solid var(--h-line);background:var(--h-card);color:var(--la-ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:border-color .2s}
+.fb-arrow{width:44px;height:44px;padding:0}
+.fb-arrow svg,.fb-tool svg{width:18px;height:18px;flex:none}
+.fb-arrow:not(:disabled):hover,.fb-tool:hover{border-color:var(--la-gold)}
+.fb-arrow:disabled{opacity:.35;cursor:default}
+.fb-arrow:focus-visible,.fb-tool:focus-visible{outline:2px solid var(--la-gold-ink);outline-offset:2px}
+.fb-now{margin:0;text-align:center;font-family:var(--serif);font-size:14.5px;line-height:1.35;color:var(--la-ink);min-width:0}
+.fb-now i{font-family:var(--h-num);font-style:italic;color:var(--la-gold-ink);margin-right:7px;white-space:nowrap}
+.fb-tools{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.fb-tool{padding:0 14px;font-size:13px;color:var(--la-ink-2)}
+.fb-tool .off,.fb-tool[aria-pressed="false"] .on{display:none}
+.fb-tool[aria-pressed="false"] .off{display:inline}
+/* 크게 보기 */
+.fb-lb{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;background:rgba(22,18,14,.94);color:#f3ecdf}
+.fb-lb[hidden]{display:none}
+.fb-lb-top{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 16px;padding-top:max(8px,env(safe-area-inset-top))}
+.fb-lb-top p{flex:1;min-width:0;margin:0;font-size:14px;line-height:1.35}
+.fb-lb-top p i{font-style:italic;color:#d4b168;margin-right:6px}
+.fb-lb-sc{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-x pan-y pinch-zoom}
+.fb-lb-sc img{display:block;width:min(100%,900px);max-width:none;height:auto;margin:0 auto;background:#fff}
+.fb-lb.z .fb-lb-sc img{width:max(200%,1064px)}
+.fb-lb.z .plus{display:none}
+.fb-lb-nav{display:flex;justify-content:center;gap:14px;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom))}
+.fb-ic{width:44px;height:44px;flex:none;border-radius:50%;border:1px solid rgba(243,236,223,.3);background:rgba(255,255,255,.06);color:#f3ecdf;display:grid;place-items:center;cursor:pointer;padding:0}
+.fb-ic svg{width:20px;height:20px}
+.fb-ic:disabled{opacity:.3;cursor:default}
+.fb-ic:focus-visible{outline:2px solid #d4b168;outline-offset:2px}
+html.fb-lock,html.fb-lock body{overflow:hidden}
+@media (max-width:899px){
+  .sheet .hub-text{grid-template-columns:1fr}
+  .fb{padding:12px 6px 10px}
+}
+
+/* m.html 폰 기둥 — 정보 블록은 늘 한 줄 */
+.sheet .hub-text{grid-template-columns:1fr}
 /* 오픈톡 상담: 표지 같은 청록 봉인 + 초대 글 */
 .hub-card.talk{grid-template-columns:auto minmax(0,1fr);align-items:center}
 .talk-seal{width:clamp(96px,12vw,140px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;position:relative;
@@ -1089,32 +1209,92 @@ footer nav a{min-width:44px;justify-content:center}
         </div>
       </article>
 
-      <!-- 02 체험 학습지 -->
-      <article class="hub-card flip" id="hubSheetCard" aria-labelledby="hubBh">
-        <div class="hub-media">
-          <div class="wsv" role="region" aria-roledescription="carousel" aria-label="체험 학습지 넘겨 보기" data-i18n-attr="aria-label:hub.b.viewer">
-            <span class="wsv-badge" data-i18n="hub.b.badge">실제 학습지</span>
-            <div class="wsv-track" id="wsvTrack" tabindex="0">
-            <figure class="wsv-page" data-label="hub.b.p1"><img src="../assets/promo/sample/page-1.webp" width="1064" height="1404" alt="학습지 수학 이야기 쪽: 단위별 따로따로 빼기 — 빼기 기호 −가 라틴어 minus에서 −m을 거쳐 생겨난 이야기를 사진과 네 컷으로 싣다" data-i18n-attr="alt:hub.b.a1" loading="lazy" decoding="async"></figure>
-            <figure class="wsv-page" data-label="hub.b.p2"><img src="../assets/promo/sample/page-2.webp" width="1064" height="1404" alt="누미의 마법 노트: 80 − 47 = 80 − 40 − 7 처럼 십의 자리부터 따로 빼는 개념 정리" data-i18n-attr="alt:hub.b.a2" loading="lazy" decoding="async"></figure>
-            <figure class="wsv-page" data-label="hub.b.p3"><img src="../assets/promo/sample/page-3.webp" width="1064" height="1404" alt="창의 연산 Training Course: 76 − 31 을 76 − 30 과 − 1 로 나눠 빈칸을 채우는 문제" data-i18n-attr="alt:hub.b.a3" loading="lazy" decoding="async"></figure>
-            <figure class="wsv-page" data-label="hub.b.p4"><img src="../assets/promo/sample/page-4.webp" width="1064" height="1404" alt="교과 연산: 예시와 따라 풀기, 세로셈 뺄셈 문제" data-i18n-attr="alt:hub.b.a4" loading="lazy" decoding="async"></figure>
-            <figure class="wsv-page" data-label="hub.b.p5"><img src="../assets/promo/sample/page-5.webp" width="1064" height="1404" alt="문장제: 식과 답을 쓰는 뺄셈 이야기 문제" data-i18n-attr="alt:hub.b.a5" loading="lazy" decoding="async"></figure>
-            </div>
-            <div class="wsv-bar">
-              <button class="wsv-arrow" id="wsvPrev" type="button" aria-label="이전 쪽" data-i18n-attr="aria-label:hub.b.prev"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-              <div class="wsv-mid"><p class="wsv-now" id="wsvNow" aria-live="polite"></p><div class="wsv-dots" id="wsvDots"></div></div>
-              <button class="wsv-arrow" id="wsvNext" type="button" aria-label="다음 쪽" data-i18n-attr="aria-label:hub.b.next"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-            </div>
-            <span hidden data-i18n="hub.b.p1" data-pg="0">수학 이야기</span><span hidden data-i18n="hub.b.p2" data-pg="1">마법 노트</span><span hidden data-i18n="hub.b.p3" data-pg="2">창의 연산</span><span hidden data-i18n="hub.b.p4" data-pg="3">교과 연산</span><span hidden data-i18n="hub.b.p5" data-pg="4">문장제</span>
-          </div>
-        </div>
+      <!-- 02 체험 학습지 — 책처럼 넘기는 샘플 (2026-09-28). 쪽 그림은 assets/promo/sample/page-N.webp, 표지는 HTML -->
+      <article class="hub-card sheet" id="hubSheetCard" aria-labelledby="hubBh">
         <div class="hub-text">
-          <p class="hub-no"><b>02</b><span data-i18n="hub.b.no">체험 학습지</span></p>
-          <h3 id="hubBh" data-i18n="hub.b.h3">이야기로 읽고, 노트로 이해하고, 손으로 풉니다</h3>
-          <p data-i18n="hub.b.p">실제 주간 학습지(과정 5 · 뺄셈 마법과 구구단 첫걸음)에서 다섯 쪽을 그대로 뽑았습니다. 빼기 기호 −의 역사를 담은 잡지형 수학 이야기, 누미의 마법 노트, 창의 연산, 교과 연산, 문장제 순서입니다. 정답지는 빼 두었습니다.</p>
-          <div class="hub-actions">
-            <a class="btn btn-pearl" href="../assets/promo/sample/sample.pdf" download="numbers-of-magic-sample.pdf" type="application/pdf"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span data-i18n="hub.b.pdf">PDF로 받기 · 5쪽</span></a>
+          <div class="sh-lead">
+            <p class="hub-no"><b>02</b><span data-i18n="hub.b.no">체험 학습지</span></p>
+            <h3 id="hubBh" data-i18n="hub.b.h3">이야기로 읽고, 노트로 이해하고, 손으로 풉니다</h3>
+            <p data-i18n="hub.b.p">실제 주간 학습지 한 회차에서 여섯 쪽을 그대로 뽑아 책처럼 엮었습니다. 빼기 기호 −의 역사를 담은 수학 이야기, 매거진 지면, 누미의 마법 노트, 창의 연산, 교과 연산, 문장제 순서입니다. 정답지는 빼 두었습니다.</p>
+            <div class="hub-actions">
+              <a class="btn btn-pearl" href="../assets/promo/sample/sample.pdf" download="numbers-of-magic-sample.pdf" type="application/pdf"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span data-i18n="hub.b.pdf">PDF로 받기 · 6쪽</span></a>
+            </div>
+          </div>
+          <!-- 값의 출처: data/courses.js id 5 · data/stages.js 'sprout'(7단계 중 2번째, 과정 1~10, band, aheadNote) -->
+          <aside class="sh-info" aria-labelledby="shInfoH">
+            <p class="sh-kick" data-i18n="hub.b.i.kick">이 학습지는</p>
+            <h4 id="shInfoH"><span class="sh-course" data-i18n="hub.b.i.course">과정 5</span> <span data-i18n="hub.b.i.title">뺄셈 마법과 구구단 첫걸음</span></h4>
+            <ol class="sh-rail" aria-hidden="true"><li></li><li class="on"><b>2</b></li><li></li><li></li><li></li><li></li><li></li></ol>
+            <dl class="sh-dl">
+              <div><dt data-i18n="hub.b.i.road.k">로드맵</dt><dd data-i18n-html="hub.b.i.road">7단계 중 <b>2단계 ‘계산의 새싹’</b> · 과정 1~10</dd></div>
+              <div><dt data-i18n="hub.b.i.level.k">수준</dt><dd data-i18n="hub.b.i.level">6~7세 · 초등 1학년 무렵 연산</dd></div>
+              <div><dt data-i18n="hub.b.i.sheet.k">이번 장</dt><dd data-i18n="hub.b.i.sheet">이 과정의 1회차 학습지 · 한 주 2회가 기본</dd></div>
+              <div><dt data-i18n="hub.b.i.in.k">담긴 것</dt><dd data-i18n="hub.b.i.in">수학 이야기 · 매거진 · 마법 노트 · 창의 연산 · 교과 연산 · 문장제</dd></div>
+            </dl>
+            <p class="sh-note" data-i18n="hub.b.i.ahead">학교 진도보다 앞선 편성이라 구구단까지 이 단계에 들어 있습니다.</p>
+            <p class="sh-more"><span data-i18n="hub.b.i.more">수준은 과정마다 달라집니다 — 과정 0부터 미적분까지 한 길로 이어집니다.</span> <a href="../index.html" data-i18n="hub.b.i.link">로드맵에서 우리 아이 자리 보기 →</a></p>
+          </aside>
+        </div>
+        <div class="hub-media">
+          <div class="fb" id="fb" role="region" aria-roledescription="book" aria-label="체험 학습지 책처럼 넘겨 보기" data-i18n-attr="aria-label:hub.b.viewer">
+            <div class="fb-top">
+              <span class="fb-badge" data-i18n="hub.b.badge">실제 학습지</span>
+              <span class="fb-hint"><span class="d" data-i18n="hub.b.hint.d">모서리를 누르거나 끌어서 넘기세요 · ← → 키도 됩니다</span><span class="m" data-i18n="hub.b.hint.m">옆으로 밀어 넘기고, 가운데를 누르면 크게 보여요</span></span>
+            </div>
+            <div class="fb-stage" id="fbStage" tabindex="0">
+              <div class="fb-book" id="fbBook">
+                <i class="fb-board l"></i><i class="fb-board r"></i><i class="fb-spine"></i>
+                <div class="fb-slot l" id="fbL"><div class="fb-hold"></div><i class="fb-shade"></i></div>
+                <div class="fb-slot r" id="fbR"><div class="fb-hold"></div><i class="fb-shade"></i></div>
+                <div class="fb-leaf" id="fbLeaf" aria-hidden="true" hidden>
+                  <div class="fb-seg a"><i class="fb-face f"></i><i class="fb-face b"></i>
+                    <div class="fb-seg c"><i class="fb-face f"></i><i class="fb-face b"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="fb-fade" id="fbFade" aria-hidden="true" hidden></div>
+            </div>
+            <div class="fb-bar">
+              <button class="fb-arrow" id="fbPrev" type="button" aria-label="이전 쪽" data-i18n-attr="aria-label:hub.b.prev"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+              <p class="fb-now" id="fbNow" aria-live="polite"></p>
+              <button class="fb-arrow" id="fbNext" type="button" aria-label="다음 쪽" data-i18n-attr="aria-label:hub.b.next"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+            </div>
+            <div class="fb-tools">
+              <button class="fb-tool" id="fbZoom" type="button"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8.5v5M8.5 11h5"/></svg><span data-i18n="hub.b.zoom">크게 보기</span></button>
+              <button class="fb-tool" id="fbSnd" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18 7.5a6.5 6.5 0 0 1 0 9"/><path class="off" d="M16 10l4 4M20 10l-4 4"/></svg><span data-i18n="hub.b.snd">넘김 소리</span></button>
+            </div>
+            <!-- 표지(HTML) — 넘기는 잎과 정지 쪽에 복제해 쓴다. 문구는 사전으로 번역된다 -->
+            <div class="fb-cv" id="fbCover" hidden>
+              <p class="k">Numbers <i>of</i> Magic</p>
+              <p class="t" data-i18n="hub.b.cv.t">체험 학습지</p>
+              <p class="rule"></p>
+              <p class="c" data-i18n="hub.b.cv.c">과정</p>
+              <p class="n">5</p>
+              <p class="h" data-i18n="hub.b.i.title">뺄셈 마법과 구구단 첫걸음</p>
+              <p class="b"><span data-i18n="hub.b.cv.b1">로드맵 2단계 · 계산의 새싹</span><br><span data-i18n="hub.b.cv.b2">6~7세 · 1회차 · 6쪽</span></p>
+              <p class="go" data-i18n="hub.b.cv.go">넘겨 보세요 →</p>
+            </div>
+            <ol class="fb-list" hidden>
+              <li data-src="../assets/promo/sample/page-1.webp"><span data-i18n="hub.b.p1">수학 이야기</span><span data-i18n="hub.b.a1">수학 이야기 쪽: 단위별 따로따로 빼기 — 빼기 기호 −가 라틴어 minus에서 생겨난 이야기를 사진과 네 컷으로 싣다</span></li>
+              <li data-src="../assets/promo/sample/page-2.webp"><span data-i18n="hub.b.p2">매거진</span><span data-i18n="hub.b.a2">매거진 지면: 깨진 기와에서 원을 되찾는 법 — 테두리에 점 세 개를 찍고, 두 현의 수직이등분선으로 중심을 찾아 원을 되살리는 세 단계</span></li>
+              <li data-src="../assets/promo/sample/page-3.webp"><span data-i18n="hub.b.p3">마법 노트</span><span data-i18n="hub.b.a3">누미의 마법 노트: 80 − 47 = 80 − 40 − 7 처럼 십의 자리부터 따로 빼는 개념 정리</span></li>
+              <li data-src="../assets/promo/sample/page-4.webp"><span data-i18n="hub.b.p4">창의 연산</span><span data-i18n="hub.b.a4">창의 연산 Training Course: 76 − 31 을 76 − 30 과 − 1 로 나눠 빈칸을 채우는 문제</span></li>
+              <li data-src="../assets/promo/sample/page-5.webp"><span data-i18n="hub.b.p5">교과 연산</span><span data-i18n="hub.b.a5">교과 연산: 더 빼고 돌려받기 — 예시와 따라 풀기, 세로셈 뺄셈 문제</span></li>
+              <li data-src="../assets/promo/sample/page-6.webp"><span data-i18n="hub.b.p6">문장제</span><span data-i18n="hub.b.a6">문장제: 식과 답을 쓰는 뺄셈 이야기 문제</span></li>
+            </ol>
+            <span hidden data-i18n="hub.b.p0">표지</span><span hidden data-i18n="hub.b.cvnow">표지 · 넘기면 6쪽</span>
+            <div class="fb-lb" id="fbLb" role="dialog" aria-modal="true" aria-label="학습지 크게 보기" data-i18n-attr="aria-label:hub.b.lb" hidden>
+              <div class="fb-lb-top">
+                <p id="fbLbT"></p>
+                <button class="fb-ic" id="fbLbZ" type="button" aria-pressed="false" aria-label="확대/축소" data-i18n-attr="aria-label:hub.b.zin"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M8.5 11h5"/><path class="plus" d="M11 8.5v5"/></svg></button>
+                <button class="fb-ic" id="fbLbX" type="button" aria-label="닫기" data-i18n-attr="aria-label:hub.b.close"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+              <div class="fb-lb-sc" id="fbLbSc"><img id="fbLbImg" alt="" width="1064" height="1404"></div>
+              <div class="fb-lb-nav">
+                <button class="fb-ic" id="fbLbP" type="button" aria-label="이전 쪽" data-i18n-attr="aria-label:hub.b.prev"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+                <button class="fb-ic" id="fbLbN" type="button" aria-label="다음 쪽" data-i18n-attr="aria-label:hub.b.next"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+              </div>
+            </div>
           </div>
         </div>
       </article>
@@ -1559,8 +1739,6 @@ window.__NM_ZH = {
 /* 입장 흐름(2026-09-28) — 새 문구. 한국어 원문은 HTML 에 있고, 여기엔 JS 전용 값만 */
 Object.assign(window.__NM_KO, {
   "ol.caps":null,
-  "hub.b.pg":"{n} / {total}",
-  "hub.b.dot":"{n}쪽 보기",
   "hub.a.lab.full":"전체 2:10",
   "hub.a.lab.short":"1분 요약"
 });
@@ -1591,26 +1769,6 @@ Object.assign(window.__NM_EN, {
   "hub.a.short":"1-min cut",
   "hub.a.file":"Download the video file",
   "hub.a.vlabel":"Numbers of Magic intro film (narrated in Korean)",
-  "hub.b.no":"Sample worksheet",
-  "hub.b.h3":"Read the story, get the idea, then work it by hand",
-  "hub.b.p":"Five pages lifted straight from a real weekly set (Course 5 · subtraction tricks and a first look at times tables): a magazine-style story on where the minus sign came from, Numi's concept note, creative arithmetic, school-style written arithmetic, and word problems. The answer key is left out.",
-  "hub.b.badge":"Korean worksheet",
-  "hub.b.viewer":"Sample worksheet viewer (Korean worksheet)",
-  "hub.b.prev":"Previous page",
-  "hub.b.next":"Next page",
-  "hub.b.dot":"Show page {n}",
-  "hub.b.pg":"{n} / {total}",
-  "hub.b.pdf":"Download PDF · 5 pages",
-  "hub.b.p1":"Math story",
-  "hub.b.p2":"Concept note",
-  "hub.b.p3":"Creative arithmetic",
-  "hub.b.p4":"Written arithmetic",
-  "hub.b.p5":"Word problems",
-  "hub.b.a1":"Korean worksheet, math-story page: subtracting place by place, with a photo and a four-panel strip on how the minus sign grew out of the Latin word minus",
-  "hub.b.a2":"Korean worksheet, Numi's concept note: take away the tens first, then the ones (80 − 47 = 80 − 40 − 7)",
-  "hub.b.a3":"Korean worksheet, creative arithmetic: split 76 − 31 into 76 − 30 and then − 1, filling in the boxes",
-  "hub.b.a4":"Korean worksheet, written arithmetic: a worked example, guided practice and column subtraction",
-  "hub.b.a5":"Korean worksheet, word problems: write the number sentence and the answer",
   "hub.c.no":"Online learning",
   "hub.c.h3":"How a lesson flows in the app",
   "hub.c.p":"One full lesson, 'Find the Ten', from start to finish: learn to pair numbers into tens in the magic notebook, pick the pairs yourself in the Magic Lab, check them in 3D, solve on the number pad and earn a stamp. It ends in the math lab, pairing 1 to 100 to reach 5050. Recorded silently from the real app.",
@@ -1656,26 +1814,6 @@ Object.assign(window.__NM_ZH, {
   "hub.a.short":"1分钟精简版",
   "hub.a.file":"下载视频文件",
   "hub.a.vlabel":"Numbers of Magic 介绍影片（韩语旁白）",
-  "hub.b.no":"体验学习单",
-  "hub.b.h3":"读故事、懂概念、再动手算",
-  "hub.b.p":"从真实的每周学习单（课程5 · 减法魔法与乘法口诀入门）中原样选出五页：讲述减号“−”由来的杂志式数学故事、努米的魔法笔记、创意运算、教材运算和应用题。答案页已略去。",
-  "hub.b.badge":"韩文学习单",
-  "hub.b.viewer":"体验学习单翻页浏览（韩文学习单）",
-  "hub.b.prev":"上一页",
-  "hub.b.next":"下一页",
-  "hub.b.dot":"查看第{n}页",
-  "hub.b.pg":"{n} / {total}",
-  "hub.b.pdf":"下载PDF · 5页",
-  "hub.b.p1":"数学故事",
-  "hub.b.p2":"魔法笔记",
-  "hub.b.p3":"创意运算",
-  "hub.b.p4":"教材运算",
-  "hub.b.p5":"应用题",
-  "hub.b.a1":"韩文学习单·数学故事页：按数位分别相减，配照片和四格漫画，讲述减号如何从拉丁文minus演变而来",
-  "hub.b.a2":"韩文学习单·努米的魔法笔记：先减十位再减个位（80 − 47 = 80 − 40 − 7）",
-  "hub.b.a3":"韩文学习单·创意运算：把76 − 31拆成76 − 30再减1，填写方框",
-  "hub.b.a4":"韩文学习单·教材运算：例题、跟着做和竖式减法",
-  "hub.b.a5":"韩文学习单·应用题：写出算式和答案",
   "hub.c.no":"线上学习",
   "hub.c.h3":"应用里的一堂课是这样进行的",
   "hub.c.p":"完整记录“找出凑十”这一课：在魔法笔记里学会把数凑成十，在魔法实验里亲手找数对，用3D确认，再用数字键盘作答并盖章。最后在数学实验室把1到100两两配对，得出5050。以下为真实应用画面的无声录屏。",
@@ -1698,6 +1836,107 @@ Object.assign(window.__NM_ZH, {
 /* ---------- 한·영·중 (i18n) ----------
    순서: ?lang= → localStorage(nmLang) → navigator.language. 한국어 원문은 HTML 에 그대로 두고,
    첫 실행 때 data-i18n 요소에서 거둬 ko 사전으로 삼는다(중복 없음). en·zh 는 아래 사전. */
+/* 02 체험 학습지 — 책 뷰어·정보 블록(2026-09-28). 한국어는 HTML 에서 거둬 온다. 값: data/courses.js id 5 · data/stages.js 'sprout' */
+Object.assign(window.__NM_EN, {
+  "hub.b.no":"Sample worksheet",
+  "hub.b.h3":"Read the story, get the idea, then work it by hand",
+  "hub.b.p":"Six pages lifted straight from one real weekly sheet and bound like a book: a math story on where the minus sign came from, a magazine page, Numi's magic note, creative arithmetic, school-style written arithmetic and word problems. The answer key is left out.",
+  "hub.b.pdf":"Download PDF · 6 pages",
+  "hub.b.i.kick":"What this is",
+  "hub.b.i.course":"Course 5",
+  "hub.b.i.title":"Subtraction Magic & Times Tables Begin",
+  "hub.b.i.road.k":"Roadmap",
+  "hub.b.i.road":"Stage 2 of 7 · <b>Sprout</b> (Courses 1–10)",
+  "hub.b.i.level.k":"Level",
+  "hub.b.i.level":"Ages 6–7 · arithmetic around Grade 1",
+  "hub.b.i.sheet.k":"This sheet",
+  "hub.b.i.sheet":"Sheet 1 of this course · two sheets a week is the standard",
+  "hub.b.i.in.k":"Inside",
+  "hub.b.i.in":"Math story · Magazine · Magic note · Creative arithmetic · Written arithmetic · Word problems",
+  "hub.b.i.ahead":"The plan runs ahead of school, so times tables already sit in this stage.",
+  "hub.b.i.more":"The level changes with each course — one road runs from Course 0 to calculus.",
+  "hub.b.i.link":"See where your child fits on the roadmap →",
+  "hub.b.viewer":"Sample worksheet as a book (Korean worksheet)",
+  "hub.b.badge":"Korean worksheet",
+  "hub.b.hint.d":"Click or drag a page corner to turn · ← → keys work too",
+  "hub.b.hint.m":"Swipe to turn · tap the middle to enlarge",
+  "hub.b.prev":"Previous page",
+  "hub.b.next":"Next page",
+  "hub.b.zoom":"Enlarge",
+  "hub.b.snd":"Page sound",
+  "hub.b.lb":"Worksheet, enlarged",
+  "hub.b.zin":"Zoom in or out",
+  "hub.b.close":"Close",
+  "hub.b.cv.t":"Sample worksheet",
+  "hub.b.cv.c":"Course",
+  "hub.b.cv.b1":"Roadmap stage 2 · Sprout",
+  "hub.b.cv.b2":"Ages 6–7 · Sheet 1 · 6 pages",
+  "hub.b.cv.go":"Turn the page →",
+  "hub.b.cvnow":"Cover · 6 pages inside",
+  "hub.b.p0":"Cover",
+  "hub.b.p1":"Math story",
+  "hub.b.p2":"Magazine",
+  "hub.b.p3":"Magic note",
+  "hub.b.p4":"Creative arithmetic",
+  "hub.b.p5":"Written arithmetic",
+  "hub.b.p6":"Word problems",
+  "hub.b.a1":"Korean worksheet, math-story page: subtracting place by place, with a photo and a four-panel strip on how the minus sign grew out of the Latin word minus",
+  "hub.b.a2":"Korean worksheet, magazine page: recovering a whole circle from a broken roof tile — mark three points on the rim, draw the perpendicular bisectors of two chords, and draw the circle from where they meet",
+  "hub.b.a3":"Korean worksheet, Numi's magic note: take away the tens first, then the ones (80 − 47 = 80 − 40 − 7)",
+  "hub.b.a4":"Korean worksheet, creative arithmetic: split 76 − 31 into 76 − 30 and then − 1, filling in the boxes",
+  "hub.b.a5":"Korean worksheet, written arithmetic: take away a little too much and give it back — a worked example, guided practice and column subtraction",
+  "hub.b.a6":"Korean worksheet, word problems: write the number sentence and the answer"
+});
+Object.assign(window.__NM_ZH, {
+  "hub.b.no":"体验学习单",
+  "hub.b.h3":"读故事、懂概念、再动手算",
+  "hub.b.p":"从真实的一次每周学习单中原样选出六页，像书一样装订：讲述减号“−”由来的数学故事、杂志页、努米的魔法笔记、创意运算、教材运算和应用题。答案页已略去。",
+  "hub.b.pdf":"下载PDF · 6页",
+  "hub.b.i.kick":"这份学习单",
+  "hub.b.i.course":"课程5",
+  "hub.b.i.title":"减法魔法与乘法口诀入门",
+  "hub.b.i.road.k":"路线图",
+  "hub.b.i.road":"7个阶段中的第2阶段 · <b>计算的新芽</b>（课程1~10）",
+  "hub.b.i.level.k":"水平",
+  "hub.b.i.level":"6~7岁 · 约小学一年级的运算",
+  "hub.b.i.sheet.k":"本次",
+  "hub.b.i.sheet":"该课程的第1次学习单 · 标准为每周2次",
+  "hub.b.i.in.k":"内容",
+  "hub.b.i.in":"数学故事 · 杂志 · 魔法笔记 · 创意运算 · 教材运算 · 应用题",
+  "hub.b.i.ahead":"编排比学校进度提前，所以乘法口诀已经在这一阶段。",
+  "hub.b.i.more":"水平随课程而变——从课程0到微积分是一条路。",
+  "hub.b.i.link":"在路线图上看看孩子的位置 →",
+  "hub.b.viewer":"体验学习单翻书浏览（韩文学习单）",
+  "hub.b.badge":"韩文学习单",
+  "hub.b.hint.d":"点击或拖动页角翻页 · 也可用 ← → 键",
+  "hub.b.hint.m":"左右滑动翻页 · 点中间放大",
+  "hub.b.prev":"上一页",
+  "hub.b.next":"下一页",
+  "hub.b.zoom":"放大查看",
+  "hub.b.snd":"翻页声",
+  "hub.b.lb":"学习单放大查看",
+  "hub.b.zin":"放大或缩小",
+  "hub.b.close":"关闭",
+  "hub.b.cv.t":"体验学习单",
+  "hub.b.cv.c":"课程",
+  "hub.b.cv.b1":"路线图第2阶段 · 计算的新芽",
+  "hub.b.cv.b2":"6~7岁 · 第1次 · 6页",
+  "hub.b.cv.go":"翻开看看 →",
+  "hub.b.cvnow":"封面 · 内有6页",
+  "hub.b.p0":"封面",
+  "hub.b.p1":"数学故事",
+  "hub.b.p2":"杂志",
+  "hub.b.p3":"魔法笔记",
+  "hub.b.p4":"创意运算",
+  "hub.b.p5":"教材运算",
+  "hub.b.p6":"应用题",
+  "hub.b.a1":"韩文学习单·数学故事页：按数位分别相减，配照片和四格漫画，讲述减号如何从拉丁文minus演变而来",
+  "hub.b.a2":"韩文学习单·杂志页：如何从破碎的瓦当复原整个圆——在边缘点三个点，作两条弦的垂直平分线，以交点为圆心画圆",
+  "hub.b.a3":"韩文学习单·努米的魔法笔记：先减十位再减个位（80 − 47 = 80 − 40 − 7）",
+  "hub.b.a4":"韩文学习单·创意运算：把76 − 31拆成76 − 30再减1，填写方框",
+  "hub.b.a5":"韩文学习单·教材运算：多减再补回——例题、跟着做和竖式减法",
+  "hub.b.a6":"韩文学习单·应用题：写出算式和答案"
+});
 (function(){
   'use strict';
   var SUP = ['ko', 'en', 'zh'], KEY = 'nmLang';
@@ -1862,27 +2101,402 @@ Object.assign(window.__NM_ZH, {
   }
   ['timeupdate', 'playing', 'seeked', 'ended', 'emptied'].forEach(function(ev){ ov.addEventListener(ev, ocapUpd); });
 
-  /* ── 02 체험 학습지 넘겨 보기 ── */
-  var track = document.getElementById('wsvTrack'), pages = [].slice.call(track.children), dots = document.getElementById('wsvDots');
-  var prev = document.getElementById('wsvPrev'), next = document.getElementById('wsvNext'), now = document.getElementById('wsvNow'), cur = 0;
-  pages.forEach(function(p, i){
-    var b = document.createElement('button'); b.type = 'button';
-    b.addEventListener('click', function(){ go(i); }); dots.appendChild(b);
-  });
-  function label(i){ var el = hub.querySelector('[data-pg="' + i + '"]'); return el ? el.textContent : ''; }
-  function go(i){ i = Math.max(0, Math.min(pages.length - 1, i)); track.scrollTo({ left: pages[i].offsetLeft - track.offsetLeft, behavior: reduce ? 'auto' : 'smooth' }); cur = i; paint(); }
-  function paint(){
-    [].forEach.call(dots.children, function(b, i){ b.setAttribute('aria-current', i === cur ? 'true' : 'false'); b.setAttribute('aria-label', tr('hub.b.dot').replace('{n}', i + 1)); });
-    prev.disabled = cur === 0; next.disabled = cur === pages.length - 1;
-    now.innerHTML = '<i>' + tr('hub.b.pg').replace('{n}', cur + 1).replace('{total}', pages.length) + '</i>' + esc(label(cur));
-  }
-  var raf = 0;
-  track.addEventListener('scroll', function(){ cancelAnimationFrame(raf); raf = requestAnimationFrame(function(){ var i = Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); if(i !== cur){ cur = i; paint(); } }); }, { passive:true });
-  prev.addEventListener('click', function(){ go(cur - 1); }); next.addEventListener('click', function(){ go(cur + 1); });
-  track.addEventListener('keydown', function(e){ if(e.key === 'ArrowRight'){ e.preventDefault(); go(cur + 1); } else if(e.key === 'ArrowLeft'){ e.preventDefault(); go(cur - 1); } });
-  paint();
+  document.addEventListener('nm:lang', function(){ fcapUpd(); ocapUpd(); });
+})();
+</script>
+<script>
+/* ---------- 02 체험 학습지 — 책처럼 넘기기 (2026-09-28) ----------
+   넓은 화면(≥900px)은 펼친 두 쪽, 좁은 화면은 한 쪽. 표지는 처음에 혼자 선다.
+   넘김: 잎(.fb-leaf)이 제본선을 축으로 rotateY — 안쪽/바깥쪽 두 조각으로 나눠 바깥이
+   조금 앞서 휘고, 그림자는 opacity 로만 움직인다(transform·opacity 외엔 애니메이션 없음).
+   진행도 q(0~1)는 JS 가 쥔다 — 끌기·되돌리기·시험용 정지(NM_FB.hold)가 같은 길을 쓴다.
+   쪽 그림은 이웃만 미리 받는다. 소리는 누른 뒤에야 만든다(Web Audio 잡음 한 줌). */
+(function(){
+  'use strict';
+  var fb = document.getElementById('fb'); if(!fb) return;
+  var tr = function(k){ return window.NM_I18N ? window.NM_I18N.t(k) : k; };
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var reduce = function(){ return !!(mq && mq.matches); };
+  var $ = function(id){ return document.getElementById(id); };
+  var stage = $('fbStage'), book = $('fbBook'), slotL = $('fbL'), slotR = $('fbR');
+  var holdL = slotL.querySelector('.fb-hold'), holdR = slotR.querySelector('.fb-hold');
+  var shadeL = slotL.querySelector('.fb-shade'), shadeR = slotR.querySelector('.fb-shade');
+  var boardL = book.querySelector('.fb-board.l');
+  var leaf = $('fbLeaf'), segA = leaf.querySelector('.fb-seg.a'), segC = leaf.querySelector('.fb-seg.c');
+  var fA = segA.children[0], bA = segA.children[1], fC = segC.children[0], bC = segC.children[1];
+  var fade = $('fbFade'), cover = $('fbCover'), now = $('fbNow');
+  var bPrev = $('fbPrev'), bNext = $('fbNext'), bZoom = $('fbZoom'), bSnd = $('fbSnd');
+  var items = [].slice.call(fb.querySelectorAll('.fb-list li'));
+  var N = items.length + 1, RATIO = 1404 / 1064;       /* 0 = 표지(HTML), 1.. = 학습지 쪽 */
+  var spread = true, k = 0, pw = 300, T = null, raf = 0, leafTok = 0, started = false;
 
-  document.addEventListener('nm:lang', function(){ fcapUpd(); ocapUpd(); paint(); });
+  function srcOf(i){ return items[i - 1].getAttribute('data-src'); }
+  function labelOf(i){ return i === 0 ? tr('hub.b.p0') : items[i - 1].children[0].textContent; }
+  function altOf(i){ return i === 0 ? '' : items[i - 1].children[1].textContent; }
+  function clamp(v, a, b){ return v < a ? a : v > b ? b : v; }
+
+  /* ── 그림 캐시: 이웃만 미리 ── */
+  var cache = {};
+  function load(i){
+    if(i < 1 || i >= N) return Promise.resolve();
+    if(cache[i]) return cache[i];
+    var im = new Image(); im.decoding = 'async';
+    cache[i] = new Promise(function(res){
+      im.onload = function(){ (im.decode ? im.decode() : Promise.resolve()).then(res, res); };
+      im.onerror = function(){ res(); };
+    });
+    im.src = srcOf(i);
+    return cache[i];
+  }
+  function near(a, b){ if(!started) return; for(var i = a - 2; i <= b + 2; i++) load(i); }
+
+  /* ── 쪽 하나를 요소로 (off = 왼쪽으로 밀 px, 조각 얼굴용) ── */
+  function make(i, off, live){
+    var el;
+    if(i === 0){ el = cover.cloneNode(true); el.removeAttribute('id'); el.hidden = false; if(!live) el.setAttribute('aria-hidden', 'true'); }
+    else { el = document.createElement('img'); el.alt = live ? altOf(i) : ''; el.draggable = false; el.decoding = 'async'; el.width = 1064; el.height = 1404; el.src = srcOf(i); }
+    el.classList.add('fb-pc');
+    if(off) el.style.transform = 'translateX(' + (-off) + 'px)';
+    return el;
+  }
+  function ready(el){ return (el.tagName === 'IMG' && el.decode) ? el.decode().catch(function(){}) : Promise.resolve(); }
+  /* 정지 쪽 채우기 — 새 그림이 풀린 뒤에 바꿔 끼워 깜빡임이 없다 */
+  function fill(h, i){
+    if(h._i === i && h.firstChild) return Promise.resolve();
+    h._i = i; var tok = h._tok = (h._tok || 0) + 1;
+    if(i == null){ h.textContent = ''; return Promise.resolve(); }
+    var el = make(i, 0, true);
+    return ready(el).then(function(){ if(h._tok !== tok) return; h.textContent = ''; h.appendChild(el); });
+  }
+  function face(f, i, off){
+    f.textContent = '';
+    if(i == null) return Promise.resolve();
+    var el = make(i, off, false); f.appendChild(el); return ready(el);
+  }
+
+  /* ── 펼침 계산 ── */
+  function lastK(){ return spread ? Math.ceil((N - 1) / 2) : N - 1; }
+  function LR(s){
+    if(!spread) return { l:null, r:s };
+    if(s === 0) return { l:null, r:0 };
+    var l = 2 * s - 1, r = 2 * s; return { l:l, r:r < N ? r : null };
+  }
+  function shiftOf(s){ if(!spread) return 0; var o = LR(s); return o.l == null ? -pw / 2 : o.r == null ? pw / 2 : 0; }
+  function stack(n, dir){
+    var a = [];
+    for(var i = 1; i <= n; i++) a.push((dir * i * 1.6).toFixed(1) + 'px ' + (i * .7).toFixed(1) + 'px 0 ' + (i % 2 ? '#e3d7bf' : '#fbf6ea'));
+    a.push('0 1px 2px rgba(40,24,8,.12)');
+    return a.join(',');
+  }
+  function paintStatic(){
+    var o = LR(k);
+    fill(holdL, o.l); fill(holdR, o.r);
+    slotL.style.opacity = o.l == null ? 0 : 1;
+    slotR.style.opacity = o.r == null ? 0 : 1;
+    boardL.style.opacity = (spread && o.l != null) ? 1 : 0; boardL.style.transform = '';
+    book.style.transform = 'translate3d(' + shiftOf(k) + 'px,0,0)';
+    var before = o.l == null ? 0 : o.l, after = N - 1 - (o.r == null ? o.l : o.r);
+    slotL.style.boxShadow = stack(Math.min(4, Math.ceil(before / 2)), -1);
+    slotR.style.boxShadow = stack(Math.min(4, Math.ceil(after / (spread ? 2 : 1))), 1);
+    shadeL.style.opacity = shadeR.style.opacity = 0;
+    paintNow();
+    near(o.l == null ? o.r : o.l, o.r == null ? o.l : o.r);
+  }
+  function paintNow(){
+    var o = LR(k), tot = N - 1, h;
+    if(k === 0) h = '<i>' + esc(labelOf(0)) + '</i>' + esc(tr('hub.b.cvnow').replace(/^[^·]*·\s*/, ''));
+    else if(spread && o.l != null && o.r != null) h = '<i>' + o.l + '–' + o.r + ' / ' + tot + '</i>' + esc(labelOf(o.l) + ' · ' + labelOf(o.r));
+    else { var p = o.r == null ? o.l : o.r; h = '<i>' + p + ' / ' + tot + '</i>' + esc(labelOf(p)); }
+    if(now.innerHTML !== h) now.innerHTML = h;
+    bPrev.disabled = k === 0; bNext.disabled = k === lastK();
+  }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]; }); }
+
+  /* ── 한 장 넘김 준비 ── */
+  function begin(dir){
+    var to = k + dir; if(to < 0 || to > lastK()) return null;
+    var a = LR(k), b = LR(to), fwd = dir > 0, rev = !spread && !fwd;
+    var t = { dir:dir, to:to, q:0, a:a, b:b, rev:rev, bw:spread && !fwd, target:1 };
+    var seg = Math.round(pw * .6), rest = pw - seg, front, back, ps = [];
+    if(spread){ front = fwd ? a.r : a.l; back = fwd ? b.l : b.r; }
+    else { front = fwd ? a.r : b.r; back = fwd ? b.r : a.r; }
+    leaf.className = 'fb-leaf ' + (t.bw ? 'bw' : 'fw');
+    ++leafTok; leaf.hidden = true; t.ok = false;
+    if(t.bw){
+      segA.style.left = rest + 'px'; segA.style.width = seg + 'px'; segC.style.width = rest + 'px';
+      ps.push(face(fA, front, rest), face(fC, front, 0), face(bA, back, 0), face(bC, back, seg));
+    } else {
+      segA.style.left = '0px'; segA.style.width = seg + 'px'; segC.style.width = rest + 'px';
+      ps.push(face(fA, front, 0), face(fC, front, seg), face(bA, back, rest), face(bC, back, 0));
+    }
+    /* 잎이 먼저 뜬 뒤에 그 아래 쪽을 바꾼다 — 앞으로 넘기면 오른쪽에 다음 쪽이, 뒤로면 왼쪽에 앞 쪽이 깔린다 */
+    t.readyP = Promise.race([Promise.all(ps), new Promise(function(r){ setTimeout(r, 450); })]).then(function(){
+      if(T !== t) return;
+      t.ok = true; leaf.hidden = false; render();
+      if(spread){
+        if(fwd){ fill(holdR, b.r); slotR.style.opacity = b.r == null ? 0 : 1; }
+        else { fill(holdL, b.l); slotL.style.opacity = b.l == null ? 0 : 1; }
+      } else if(fwd){ fill(holdR, b.r); }
+    });
+    T = t; render();
+    return t;
+  }
+  /* 진행도 q → 모양 */
+  function render(){
+    var t = T; if(!t) return;
+    var q = clamp(t.q, 0, 1), vq = t.rev ? 1 - q : q, ang = 180 * vq, s = Math.sin(Math.PI * vq);
+    var bend = 26 * s * (1 - vq * .35);
+    if(t.bw){ leaf.style.transform = 'translateZ(0) rotateY(' + ang.toFixed(2) + 'deg)'; segC.style.transform = 'rotateY(' + bend.toFixed(2) + 'deg)'; }
+    else { leaf.style.transform = 'translateZ(0) rotateY(' + (-ang).toFixed(2) + 'deg)'; segC.style.transform = 'rotateY(' + (-bend).toFixed(2) + 'deg)'; }
+    leaf.style.setProperty('--sh', s.toFixed(3));
+    leaf.style.opacity = (!spread && ang > 118) ? Math.max(0, 1 - (ang - 118) / 62).toFixed(3) : '1';
+    var under = s * (1 - vq) * 1.25, land = s * vq * 1.25;
+    if(spread){
+      if(t.bw){ shadeL.style.opacity = under.toFixed(3); shadeR.style.opacity = land.toFixed(3); }
+      else { shadeR.style.opacity = under.toFixed(3); shadeL.style.opacity = land.toFixed(3); }
+      var sh = shiftOf(k) + (shiftOf(t.to) - shiftOf(k)) * q;
+      book.style.transform = 'translate3d(' + sh.toFixed(1) + 'px,0,0)';
+      /* 왼쪽 판지는 표지 잎이 내려앉는 만큼만 펼쳐진다(잎의 투영 너비 = −cos) */
+      var la = LR(k).l != null ? 1 : 0, lb = LR(t.to).l != null ? 1 : 0, f = la;
+      if(la !== lb) f = Math.max(0, (lb ? -1 : 1) * Math.cos(Math.PI * vq));
+      boardL.style.opacity = f > 0 ? 1 : 0; boardL.style.transform = 'scaleX(' + f.toFixed(3) + ')';
+    } else {
+      shadeR.style.opacity = (s * .9).toFixed(3);
+    }
+  }
+  function ease(u){ return u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; }
+  function easeOut(u){ return 1 - Math.pow(1 - u, 3); }
+  function run(target, dur, done, fn){
+    cancelAnimationFrame(raf);
+    var t = T; if(!t) return; t.target = target; t.anim = true;
+    var q0 = t.q, t0 = 0; fn = fn || ease;
+    function step(ts){
+      if(T !== t) return;
+      if(!t0) t0 = ts;
+      var u = Math.min(1, (ts - t0) / Math.max(1, dur));
+      t.q = q0 + (target - q0) * fn(u); render();
+      if(u < 1) raf = requestAnimationFrame(step); else { t.anim = false; done(); }
+    }
+    raf = requestAnimationFrame(step);
+  }
+  /* 끝내기 — commit 이면 k 를 옮기고, 착지한 쪽이 풀린 뒤에 잎을 치운다 */
+  function finish(commit){
+    cancelAnimationFrame(raf);
+    var t = T; if(!t) return; T = null;
+    if(commit) k = t.to;
+    var tok = ++leafTok, o = LR(k);
+    var ps = [fill(holdL, o.l), fill(holdR, o.r)];
+    slotL.style.opacity = o.l == null ? 0 : 1; slotR.style.opacity = o.r == null ? 0 : 1;
+    Promise.all(ps).then(function(){ if(tok === leafTok){ leaf.hidden = true; fA.textContent = fC.textContent = bA.textContent = bC.textContent = ''; } });
+    paintStatic();
+  }
+  function dur(){ return spread ? 900 : 640; }
+
+  function go(dir){
+    if(reduce()) return crossfade(dir);
+    if(T){
+      if(T.peek === true && T.dir === dir){ T.peek = false; sound(); run(1, dur() * (1 - T.q), function(){ finish(true); }); return; }
+      finish(T.target === 1 && !T.peek);
+    }
+    var t = begin(dir); if(!t) return;
+    sound();
+    t.readyP.then(function(){ if(T === t) run(1, dur(), function(){ finish(true); }); });
+  }
+  function crossfade(dir){
+    var to = k + dir; if(to < 0 || to > lastK()) return;
+    if(T) finish(false);
+    var c = book.cloneNode(true); c.removeAttribute('id');
+    [].forEach.call(c.querySelectorAll('[id]'), function(e){ e.removeAttribute('id'); });
+    var lf = c.querySelector('.fb-leaf'); if(lf) lf.remove();
+    c.setAttribute('aria-hidden', 'true');
+    fade.textContent = ''; fade.appendChild(c);
+    fade.style.transition = 'none'; fade.style.opacity = '1'; fade.hidden = false;
+    k = to; paintStatic(); sound();
+    void fade.offsetWidth;
+    fade.style.transition = ''; fade.style.opacity = '0';
+    clearTimeout(crossfade.t); crossfade.t = setTimeout(function(){ fade.hidden = true; fade.textContent = ''; }, 340);
+  }
+
+  /* ── 크기·모드 ── */
+  function layout(){
+    var W = stage.clientWidth; if(!W) return;
+    var vw = window.innerWidth || W, vh = window.innerHeight || 800;
+    var want = vw >= 900 && W >= 600;
+    var npw = want ? Math.floor(Math.min((W - 30) / 2, 540, Math.max(300, (vh - 250) / RATIO)))
+                   : Math.floor(Math.min(W - 22, 520, Math.max(300, (vh * .92 - 150) / RATIO)));
+    if(want !== spread){
+      if(T){ cancelAnimationFrame(raf); T = null; leaf.hidden = true; }
+      var page = spread ? (k === 0 ? 0 : 2 * k - 1) : k;
+      spread = want; k = spread ? (page === 0 ? 0 : Math.floor((page + 1) / 2)) : page;
+      holdL._i = holdR._i = undefined;
+    }
+    if(npw !== pw || !fb.style.getPropertyValue('--pw')){
+      pw = npw;
+      fb.style.setProperty('--pw', pw); fb.style.setProperty('--ph', Math.round(pw * RATIO));
+    }
+    fb.classList.toggle('single', !spread);
+    if(!T) paintStatic();
+  }
+  if(window.ResizeObserver) new ResizeObserver(function(){ layout(); }).observe(stage);
+  window.addEventListener('resize', layout);
+
+  /* ── 누르기·끌기·모서리 들춤 ── */
+  var P = null;
+  function sideAt(e){
+    var r = book.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    return { side: spread ? (x < r.width / 2 ? 'l' : 'r') : 'r', rx: x / r.width, x:x, y:y, w:r.width, h:r.height };
+  }
+  function cornerDir(s){
+    if(!spread) return 0; var zone = Math.min(90, pw * .22);
+    var nearY = s.y < zone || s.y > s.h - zone;
+    if(s.x > s.w - zone && s.x <= s.w + 8 && nearY) return 1;
+    if(s.x < zone && s.x >= -8 && nearY) return -1;
+    return 0;
+  }
+  stage.addEventListener('pointerdown', function(e){
+    if(!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    var s = sideAt(e);
+    P = { id:e.pointerId, x0:e.clientX, y0:e.clientY, side:s.side, rx:s.rx, drag:false, vx:e.clientX, vt:e.timeStamp, type:e.pointerType };
+  });
+  stage.addEventListener('pointermove', function(e){
+    if(!P){
+      if(e.pointerType !== 'mouse' || reduce() || !spread) return;
+      var d = cornerDir(sideAt(e));
+      if(d && !T){ var t = begin(d); if(t){ t.peek = true; t.readyP.then(function(){ if(T === t && t.peek) run(.045, 260, function(){}, easeOut); }); } }
+      else if(!d && T && T.peek){ var tp = T; run(0, 200, function(){ if(T === tp) finish(false); }, easeOut); tp.peek = 'out'; }
+      return;
+    }
+    if(e.pointerId !== P.id) return;
+    var dx = e.clientX - P.x0, dy = e.clientY - P.y0;
+    if(!P.drag){
+      if(Math.abs(dx) < 8) return;
+      if(Math.abs(dy) > Math.abs(dx)){ P = null; return; }
+      var dir = spread ? (P.side === 'r' ? 1 : -1) : (dx < 0 ? 1 : -1);
+      if((dir > 0 && dx > 0) || (dir < 0 && dx < 0)){ P = null; return; }
+      P.dir = dir; P.drag = true;
+      try{ stage.setPointerCapture(e.pointerId); }catch(err){}
+      if(reduce()) return;
+      if(T && !(T.peek && T.dir === dir)) finish(T.target === 1 && !T.peek);
+      if(T){ cancelAnimationFrame(raf); T.anim = false; T.peek = false; }
+      else if(!begin(dir)){ P = null; return; }
+    }
+    if(e.cancelable) e.preventDefault();
+    if(T){
+      var span = spread ? pw * 1.7 : pw * .95;
+      T.q = clamp(Math.abs(dx) / span + (spread ? .02 : 0), 0, 1); render();
+    }
+    if(e.timeStamp - P.vt > 40){ P.pvx = P.vx; P.pvt = P.vt; P.vx = e.clientX; P.vt = e.timeStamp; }
+  });
+  function release(e, cancel){
+    if(!P || e.pointerId !== P.id) return;
+    var p = P; P = null;
+    if(p.drag){
+      if(reduce()){ if(!cancel && Math.abs(e.clientX - p.x0) > 40) go(p.dir); return; }
+      if(!T) return;
+      var vt = e.timeStamp - (p.pvt || p.vt), v = vt > 0 ? (e.clientX - (p.pvx != null ? p.pvx : p.vx)) / vt : 0;
+      var ok = !cancel && (T.q > .33 || (p.dir > 0 ? v < -.45 : v > .45));
+      if(ok) sound();
+      var q0 = T.q;
+      run(ok ? 1 : 0, Math.max(180, (spread ? 760 : 560) * (ok ? 1 - q0 : q0)), function(){ finish(ok); }, easeOut);
+      return;
+    }
+    if(cancel) return;
+    if(spread){ go(p.side === 'r' ? 1 : -1); return; }
+    if(p.rx > .78) go(1); else if(p.rx < .22) go(-1); else if(k === 0) go(1); else openLb(k);
+  }
+  stage.addEventListener('pointerup', function(e){ release(e, false); });
+  stage.addEventListener('pointercancel', function(e){ release(e, true); });
+  stage.addEventListener('pointerleave', function(e){
+    if(e.pointerType === 'mouse' && !P && T && T.peek === true){ var tp = T; tp.peek = 'out'; run(0, 200, function(){ if(T === tp) finish(false); }, easeOut); }
+  });
+  stage.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === 'PageDown'){ e.preventDefault(); go(1); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); go(-1); }
+    else if(e.key === 'Enter' && k > 0){ e.preventDefault(); openLb(spread ? (LR(k).l || LR(k).r) : k); }
+  });
+  bPrev.addEventListener('click', function(){ go(-1); });
+  bNext.addEventListener('click', function(){ go(1); });
+
+  /* ── 종이 넘기는 소리: 거른 잡음 0.26초. 첫 넘김(사용자 동작) 때 만든다 ── */
+  var ac = null, muted = false;
+  try{ muted = localStorage.getItem('nmFlipMute') === '1'; }catch(e){}
+  function sndUI(){ bSnd.setAttribute('aria-pressed', muted ? 'false' : 'true'); }
+  sndUI();
+  bSnd.addEventListener('click', function(){ muted = !muted; try{ localStorage.setItem('nmFlipMute', muted ? '1' : '0'); }catch(e){} sndUI(); });
+  function sound(){
+    if(muted) return;
+    try{
+      if(!ac){ var C = window.AudioContext || window.webkitAudioContext; if(!C) return; ac = new C(); }
+      if(ac.state === 'suspended') ac.resume();
+      var t0 = ac.currentTime + .01, d = .26, sr = ac.sampleRate, n = Math.floor(sr * d);
+      var buf = ac.createBuffer(1, n, sr), ch = buf.getChannelData(0), lp = 0;
+      for(var i = 0; i < n; i++){
+        var u = i / n, w = Math.random() * 2 - 1; lp = lp * .5 + w * .5;
+        var env = Math.pow(Math.sin(Math.PI * Math.min(1, u * 1.1)), 1.5) * (.75 + .25 * Math.sin(u * 55));
+        ch[i] = (lp + (Math.random() < .003 ? (Math.random() * 2 - 1) * .8 : 0)) * env;
+      }
+      var src = ac.createBufferSource(); src.buffer = buf;
+      var bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = .8;
+      bp.frequency.setValueAtTime(3400, t0); bp.frequency.exponentialRampToValueAtTime(1100, t0 + d);
+      var hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 420;
+      var g = ac.createGain(); g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(.18, t0 + .05); g.gain.exponentialRampToValueAtTime(.0001, t0 + d);
+      src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(ac.destination);
+      src.start(t0); src.stop(t0 + d + .02);
+    }catch(e){}
+  }
+
+  /* ── 크게 보기(라이트박스): 부모가 글자까지 읽도록 — 확대 토글 + 손가락 확대 ── */
+  var lb = $('fbLb'), lbImg = $('fbLbImg'), lbT = $('fbLbT'), lbSc = $('fbLbSc');
+  var lbZ = $('fbLbZ'), lbX = $('fbLbX'), lbP = $('fbLbP'), lbN = $('fbLbN'), lbI = 1, lbBack = null;
+  document.body.appendChild(lb);
+  function lbShow(i){
+    lbI = clamp(i, 1, N - 1);
+    lbImg.src = srcOf(lbI); lbImg.alt = altOf(lbI);
+    lbT.innerHTML = '<i>' + lbI + ' / ' + (N - 1) + '</i>' + esc(labelOf(lbI));
+    lbP.disabled = lbI <= 1; lbN.disabled = lbI >= N - 1;
+    load(lbI - 1); load(lbI + 1);
+  }
+  function zoom(on){ lb.classList.toggle('z', on); lbZ.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  function openLb(i){
+    lbBack = document.activeElement; zoom(false); lbShow(i || 1);
+    lb.hidden = false; document.documentElement.classList.add('fb-lock'); lbSc.scrollTop = 0; lbX.focus();
+  }
+  function closeLb(){ lb.hidden = true; document.documentElement.classList.remove('fb-lock'); if(lbBack && lbBack.focus) lbBack.focus(); }
+  bZoom.addEventListener('click', function(){ var o = LR(k); openLb(k === 0 ? 1 : (o.l != null ? o.l : o.r)); });
+  lbX.addEventListener('click', closeLb);
+  lbZ.addEventListener('click', function(){ zoom(!lb.classList.contains('z')); });
+  lbImg.addEventListener('dblclick', function(){ zoom(!lb.classList.contains('z')); });
+  lbP.addEventListener('click', function(){ lbShow(lbI - 1); lbSc.scrollTop = 0; });
+  lbN.addEventListener('click', function(){ lbShow(lbI + 1); lbSc.scrollTop = 0; });
+  lb.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ e.preventDefault(); closeLb(); }
+    else if(e.key === 'ArrowRight' && !lb.classList.contains('z')){ lbShow(lbI + 1); }
+    else if(e.key === 'ArrowLeft' && !lb.classList.contains('z')){ lbShow(lbI - 1); }
+    else if(e.key === 'Tab'){
+      var f = [lbZ, lbX, lbP, lbN].filter(function(b){ return !b.disabled; }), i = f.indexOf(document.activeElement);
+      e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+    }
+  });
+
+  /* ── 보일 즈음에만 그림을 받기 시작 ── */
+  function start(){ if(started) return; started = true; paintStatic(); }
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ start(); io.disconnect(); } }); }, { rootMargin:'600px 0px' });
+    io.observe(fb);
+  } else start();
+
+  document.addEventListener('nm:lang', function(){
+    holdL._i = holdR._i = undefined; if(!T) paintStatic(); else paintNow();
+    if(!lb.hidden) lbShow(lbI);
+  });
+  layout();
+
+  /* 시험용: 넘김을 q 에서 멈춰 둔다 (스크린숏 검증) */
+  window.NM_FB = {
+    hold: function(dir, q){ if(T) finish(false); var t = begin(dir); if(!t) return false; t.hold = true; t.q = q; return t.readyP.then(function(){ render(); return true; }); },
+    release: function(){ if(T) finish(false); },
+    go: go, state: function(){ return { k:k, spread:spread, pw:pw, turning:!!T }; }
+  };
 })();
 </script>
 <script>
