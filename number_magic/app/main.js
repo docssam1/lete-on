@@ -4226,17 +4226,46 @@ function startPlacement(){
             asked:0, correct:0, cur:null, qStart:null, log:[] };
   S.view='placement'; save(); render();
 }
+/* 진단 천장(2026-09-28, 원장 "말도 안되지, 연산 테스트가 5살한테 미적 줄꺼야?").
+   전에는 누구든 다 맞히면 사다리 끝(고등 미적분)까지 올라갔다. 이제 시작 과정이 속한 로드맵 단계의
+   **다음 단계 끝**까지만 올라간다(data/stages.js courses.from/to — 번호를 새로 정하지 않는다).
+     유아(과정 0) → 과정 10 · 초1~초3(과정 1~10) → 16 · 초4(13) → 25 · 초5·6(19·22) → 28 · 중등 → 45
+   천장까지 다 맞힌 아이는 결과 화면의 "한 단계 더 올라가 보기"로 천장을 다음 단계로 올려 이어서 푼다
+   — 빠른 아이를 막지 않되, 처음부터 어려운 문제를 보여 주지 않는다. */
+function placementCeilCourse(courseNum){
+  const st=(window.NM_STAGES||[]).filter(x=>x.courses);
+  const i=st.findIndex(x=>courseNum>=x.courses.from&&courseNum<=x.courses.to);
+  if(i<0) return null;
+  return st[Math.min(st.length-1,i+1)].courses.to;
+}
+/* 천장 과정 이하 칸의 개수 = 좁히기가 쓰는 사다리 길이 */
+function placementCapFor(ceilNum){
+  const ladder=placementLadder();
+  if(ceilNum==null) return ladder.length;
+  let n=0;
+  ladder.forEach((r,i)=>{ if(parseInt(String(r.course).replace(/^C/,''),10)<=ceilNum) n=i+1; });
+  return n||ladder.length;
+}
+function placementSetEntry(d, idx){
+  const ladder=placementLadder();
+  d.entry=idx;
+  const r=ladder[idx]||ladder[0];
+  d.ceil=r?placementCeilCourse(parseInt(String(r.course).replace(/^C/,''),10)):null;
+  d.cap=placementCapFor(d.ceil);
+  d.hi=Math.min(d.hi==null?d.cap:d.hi, d.cap);
+}
+function placementN(d){ return d.cap||placementLadder().length; }
 /* 다음에 물을 칸(bracketing). null이면 경계를 찾은 것 — placement-core.js로 위임. */
 function placementNext(d){
-  return window.NM_PLACEMENT_CORE.nextRung(d, placementLadder().length);
+  return window.NM_PLACEMENT_CORE.nextRung(d, placementN(d));
 }
 /* 한 문제의 채점 결과를 위아래 좁히기(lo/hi)에 반영 — placement-core.js로 위임. */
 function placementGrade(d, rungIndex, ok){
-  window.NM_PLACEMENT_CORE.grade(d, rungIndex, ok, placementLadder().length);
+  window.NM_PLACEMENT_CORE.grade(d, rungIndex, ok, placementN(d));
 }
 /* 아직 못 넘은 첫 칸 — placement-core.js로 위임. */
 function placementBoundary(d){
-  return window.NM_PLACEMENT_CORE.boundary(d, placementLadder().length);
+  return window.NM_PLACEMENT_CORE.boundary(d, placementN(d));
 }
 /* 물어본 스레드마다 결과를 남긴다(위아래 좁히기 문제든 세부 진단 문제든 공용).
    나중에(finishPlacement) 이 log에서 "구역 스레드 중 이미 물어본 것"을 찾아
@@ -4264,8 +4293,9 @@ function placementProblem(rung, i, run, extra){
 function placementAfterBracketing(d){
   const ladder=placementLadder();
   const CORE=window.NM_PLACEMENT_CORE;
-  const N=ladder.length;
+  const N=placementN(d);
   const b=CORE.boundary(d,N);
+  d.capped = N<ladder.length && b>=N;
   const K=CORE.courseAtIndex(ladder,b);
   d.boundaryIdx=b;
   d.K=K;
@@ -4306,7 +4336,8 @@ function placementFinish(d){
   const weak=profile.filter(p=>!p.ok).map(p=>p.t);
   const slow=profile.filter(p=>p.ok&&p.sec>25).map(p=>p.t);
   S.placement={ at:Date.now(), course:recommended, asked:d.asked||0, correct:d.correct||0,
-    age:d.age||null, grade:d.grade||null, cleared:d.boundaryIdx, profile, weak, slow, self:false };
+    age:d.age||null, grade:d.grade||null, cleared:d.boundaryIdx, profile, weak, slow, self:false,
+    ceil:d.ceil==null?null:d.ceil, capped:!!d.capped };
   d.stage='result';
   save();
 }
@@ -4409,11 +4440,11 @@ function screenPlacement(){
     </div>`;
     $('#dgBack').onclick=back;
     scr.querySelectorAll('.nm-dg-age').forEach(b=>{
-      b.onclick=()=>{ d.age=b.dataset.age; d.entry=+b.dataset.entry;
+      b.onclick=()=>{ d.age=b.dataset.age; placementSetEntry(d, +b.dataset.entry);
         d.stage='q'; save(); screenPlacement(); };
     });
     /* 건너뛰기 = 예전 그대로 맨 아래 칸부터 */
-    $('#dgSkip').onclick=()=>{ d.age='skip'; d.entry=0; d.stage='q'; save(); screenPlacement(); };
+    $('#dgSkip').onclick=()=>{ d.age='skip'; placementSetEntry(d, 0); d.stage='q'; save(); screenPlacement(); };
     $('#dgSelfPick').onclick=()=>{ S._diag=null; S.view='startpick'; save(); render(); };
     $('#dgGradeAsk').onclick=()=>{ d.stage='grade'; d.gradePick=null; save(); screenPlacement(); };
     return;
@@ -4479,7 +4510,7 @@ function screenPlacement(){
       $('#dgGradeCheck').onclick=()=>{
         const CORE=window.NM_PLACEMENT_CORE;
         const idx=CORE?CORE.rungIndexOfCourse(placementLadder(), key):-1;
-        d.grade=pick.key; d.age=null; d.entry=idx>=0?idx:0; d.stage='q'; save(); screenPlacement();
+        d.grade=pick.key; d.age=null; placementSetEntry(d, idx>=0?idx:0); d.stage='q'; save(); screenPlacement();
       };
     }
     return;
@@ -4489,7 +4520,7 @@ function screenPlacement(){
   if(d.stage==='q'){
     const ladder=placementLadder();
     const nextIdx=placementNext(d);
-    if(nextIdx===null || d.asked>=CORE.MAX_Q){
+    if(nextIdx===null || (d.asked-(d.askedBase||0))>=CORE.MAX_Q){
       placementAfterBracketing(d); save(); screenPlacement(); return;
     }
     renderPlacementQuestion(d, ladder[nextIdx], nextIdx, 'q');
@@ -4533,9 +4564,9 @@ function renderPlacementQuestion(d, rung, idx, stage){
   const useWidget = !cur.tex && cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
   const isMulti = Array.isArray(cur.answer);
 
-  const stepNum = isFine ? (d.fineAsked+1) : (d.asked+1);
+  const stepNum = isFine ? (d.fineAsked+1) : (d.asked-(d.askedBase||0)+1);
   const totalDots = isFine ? Math.min(CORE.FINE_MAX_Q, d.fineThreads.length) : CORE.MAX_Q;
-  const curDot = isFine ? d.fineAsked : d.asked;
+  const curDot = isFine ? d.fineAsked : (d.asked-(d.askedBase||0));
   const headerTitle = isFine ? lk('세부 진단','Skill check','细项测评') : lk('진단하기','Level Check','水平测评');
   const canStop = isFine && d.fineAsked>=3;
 
@@ -4640,6 +4671,10 @@ function renderPlacementResult(d){
       <div class="nm-score">${S.placement.correct||0} / ${S.placement.asked||0}</div>
       <p class="nm-wsh-sentence">${lk('맞힌 문제까지가 이미 익숙한 곳이에요. 여기서부터 새로 배우면 딱 맞아요.','Everything you answered is already comfortable — starting here fits just right.','答对的部分已经很熟练了，从这里开始正好。')}</p>
       ${placementSkillListHtml(S.placement.profile,lk)}
+      ${S.placement.capped&&d&&d.ceil!=null?`<div class="nm-dg-capped">
+        <p>${lk(`과정 ${d.ceil}까지 모두 맞혔어요! 더 어려운 문제도 풀어 볼래요?`,`You got everything up to Course ${d.ceil}! Want to try harder ones?`,`到课程${d.ceil}全部答对！想挑战更难的题吗？`)}</p>
+        <button class="nm-btn full" id="dgHigher">⛰️ ${lk('한 단계 더 올라가 보기','Go one stage higher','再往上一个阶段')}</button>
+      </div>`:''}
       <p class="nm-dg-free">${lk('이건 권유일 뿐이에요. 과정은 언제든 자유롭게 골라도 좋아요.','This is only a suggestion — you can pick any course you like, any time.','这只是建议，任何时候都可以自由选择课程。')}</p>
       <button class="nm-btn full" id="dgGoRoad">🛤️ ${lk('로드맵에서 이 과정 보기','See this course on the road','在路线图上看这个课程')}</button>
       <button class="nm-btn full ghost" id="dgPickInstead">🎯 ${lk('다른 곳에서 시작할래요 · 직접 고르기','Start somewhere else · pick myself','想从别处开始 · 自己选')}</button>
@@ -4650,6 +4685,14 @@ function renderPlacementResult(d){
   $('#dgGoRoad').onclick=()=>{ S._diag=null; S._roadFocus=key; S.view='courseroad'; save(); render(); };
   $('#dgPickInstead').onclick=()=>{ S._diag=null; S.view='startpick'; save(); render(); };
   $('#dgAgain').onclick=()=>startPlacement();
+  const hi=$('#dgHigher');
+  if(hi) hi.onclick=()=>{
+    const nc=placementCeilCourse(d.ceil);
+    if(nc==null||nc<=d.ceil) return;
+    d.ceil=nc; d.cap=placementCapFor(nc); d.hi=d.cap; d.capped=false;
+    d.askedBase=d.asked||0; d.ups=0; d.cur=null; d.qStart=null; d.zone=null; d.stage='q';
+    save(); screenPlacement();
+  };
 }
 /* 결과 화면에서 "몇 살이라고 했는지"를 한 줄로 되짚어 준다. 건너뛴/직접
    고른 경우엔 없음(둘 다 age가 없거나 'skip'). */
