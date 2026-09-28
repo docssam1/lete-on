@@ -162,7 +162,7 @@ window.NM_STAGES = [
     name:{ko:'고등 — 새 기호는 아는 마법의 새 이름표',en:'High School — a new symbol is a new label on a magic you know',zh:'高中——新符号只是熟悉魔法的新标签'},
     band:{ko:'공통수학1·2 · 대수 · 미적분Ⅰ',en:'Common Math 1·2 · Algebra · Calculus I',zh:'共同数学1·2 · 代数 · 微积分Ⅰ'},
     chapters:['W11-1','W11-2','W12-1','W12-2','W13-1','W13-2','W13-3','W13-4','W13-5','W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:38,to:45}, weeks:68,
+    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:38,to:47}, weeks:70,
     learn:{
       ko:'다항식과 나머지정리, 이차방정식, 점과 직선·원, 지수와 로그, 삼각함수, 수열과 Σ, 극한과 미분, 접선과 적분.',
       en:'Polynomials and the remainder theorem, quadratic equations, points, lines and circles, exponents and logarithms, trigonometric functions, sequences and Σ, limits and differentiation, tangents and integration.',
@@ -176,7 +176,7 @@ window.NM_STAGES = [
       {sym:'f(x)', tr:{ko:'x를 넣으면 결과가 나오는 기계',en:'a machine: put x in, a result comes out',zh:'放进x就出结果的机器'}},
       {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 38~45 · 주 2회 기준 37주(주 1회 68주) · 실험실 2',en:'Courses 38–45 · 37 weeks at two sheets a week (68 at one) · 2 labs',zh:'课程38~45 · 每周2次约37周(每周1次68周) · 2个实验室'}
+    meta:{ko:'과정 38~47 · 주 2회 기준 37주(주 1회 70주) · 실험실 2',en:'Courses 38–47 · 37 weeks at two sheets a week (70 at one) · 2 labs',zh:'课程38~47 · 每周2次约37周(每周1次70周) · 2个实验室'}
   }
 ];
 

@@ -348,30 +348,35 @@ const COURSE_SPEC = [
 
  /* 41~45 실배치(2026-08-25, 고등 W13·W14; 2026-09-21 재번호; 2026-09-28 재번호
     — 40 병합으로 42→41, 43→42). course41(대수 진입부)은 W12 마지막 재료 MD35를,
-    course44(미적분Ⅰ 진입부)는 W13 마지막 재료 MD42를 복습 풀에 얹는다(38·40과
+    course45(미적분Ⅰ 진입부)는 W13 마지막 재료 MD42를 복습 풀에 얹는다(38·40과
     같은 관례). 2022 개정 과목명 준수 — "고3" 표기 없음(전부 "대수"·"미적분Ⅰ"). */
- /* 대수 41~43 · 미적분Ⅰ 44~45 — 2022 개정 대수 세 단원(지수함수와 로그함수 / 삼각함수 / 수열) 순서로
-    다시 묶음(2026-09-28, 원장 "고등 과정 왜 이래, 대수는 한 개야? 그리고 지수방정식인데").
-    전에는 41 지수와 로그 · 42 삼각함수와 수열 · 43 미적분 · 44 지수·로그방정식과 삼각법 · 45 미적분 심화로
-    대수가 미적분을 사이에 두고 둘로 갈라져 있었고, 지수·로그방정식이 지수와 로그에서 세 과정 떨어져 있었다.
-    유형(스레드)·마법 단원은 하나도 빼거나 더하지 않았다 — 자리만 옮겼다.
+ /* 대수 41~44 · 미적분Ⅰ 45~47 — 2022 개정 과목 단원 순서(2026-09-28, 원장 "고등 과정 왜 이래, 대수는 한 개야?
+    그리고 지수방정식인데" → "41도 분리"). 전에는 대수가 미적분을 사이에 두고 둘로 갈라져 있었고(41·42 / 44),
+    지수·로그방정식이 지수와 로그에서 세 과정 떨어져 있었으며, 미적분Ⅰ은 극한~적분이 두 과정에 몰려 있었다.
+    유형(스레드)·마법 단원은 하나도 빼거나 더하지 않았다 — 묶음과 자리만 바꿨다.
     각 과정의 복습 풀에는 직전 과정의 마지막 재료를 얹는다(38·40과 같은 관례):
-    41 ← MD35(원의 방정식) · 42 ← MD54(지수·로그 부등식) · 43 ← MD56(코사인법칙) · 44 ← MD42(Σ). */
- {id:41, tier:'algebra', title:{ko:'지수와 로그, 지수·로그방정식',en:'Exponents, Logarithms & Their Equations',zh:'指数、对数及其方程'},
-   drills:['MD36','MD37','MD38','MD35','MD36@2','MD37@2','MD38@2','MD52','MD53','MD54','MD52@2','MD53@2','MD54@2','MD36@3','MD37@3','MD38@3','MD52@3','MD53@3','MD54@3'], minSessions:10,
-   magic:[['M-36'],['M-37'],['M-38'],['M-52'],['M-53'],['M-54']], creative:['MD38@3','MD54@3','MD53@3']},
- {id:42, tier:'algebra', title:{ko:'삼각함수와 사인·코사인법칙',en:'Trigonometric Functions & the Sine/Cosine Laws',zh:'三角函数与正弦·余弦定理'},
+    41 ← MD35 · 42 ← MD38 · 43 ← MD54 · 44 ← MD56 · 45 ← MD42 · 46 ← MD59 · 47 ← MD60. */
+ {id:41, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
+   drills:['MD36','MD37','MD38','MD35','MD36@2','MD37@2','MD38@2','MD36@3','MD37@3','MD38@3'], minSessions:5,
+   magic:[['M-36'],['M-37'],['M-38']], creative:['MD38@3','MD37@3','MD36@3']},
+ {id:42, tier:'algebra', title:{ko:'지수·로그방정식과 부등식',en:'Exponential & Log Equations and Inequalities',zh:'指数·对数方程与不等式'},
+   drills:['MD52','MD53','MD54','MD38','MD52@2','MD53@2','MD54@2','MD52@3','MD53@3','MD54@3'], minSessions:5,
+   magic:[['M-52'],['M-53'],['M-54']], creative:['MD54@3','MD53@3','MD52@3']},
+ {id:43, tier:'algebra', title:{ko:'삼각함수와 사인·코사인법칙',en:'Trigonometric Functions & the Sine/Cosine Laws',zh:'三角函数与正弦·余弦定理'},
    drills:['MD39','MD57','MD55','MD56','MD54','MD39@2','MD57@2','MD55@2','MD56@2','MD39@3','MD57@3','MD55@3','MD56@3'], minSessions:6,
    magic:[['M-39'],['M-57'],['M-55','M-56']], creative:['MD57@3','MD56@3','MD39@3']},
- {id:43, tier:'algebra', title:{ko:'수열과 Σ',en:'Sequences & Sigma',zh:'数列与Σ'},
+ {id:44, tier:'algebra', title:{ko:'수열과 Σ',en:'Sequences & Sigma',zh:'数列与Σ'},
    drills:['MD40','MD41','MD42','MD56','MD40@2','MD41@2','MD42@2','MD40@3','MD41@3','MD42@3'], minSessions:5,
    magic:[['M-40'],['M-41'],['M-42']], creative:['MD42@3','MD41@3','MD40@3']},
- /* 44 — 옛 44(극한과 미분)+45(접선과 적분) 병합(2026-09-28)을 대수 뒤로 옮긴 것. */
- {id:44, tier:'calculus1', title:{ko:'극한·미분과 적분',en:'Limits, Derivatives & Integration',zh:'极限·导数与积分'},
-   drills:['MD43','MD44','MD42','MD43@2','MD44','MD43','MD44@3','MD45','MD46','MD45@2','MD46','MD45','MD46@3'], minSessions:7, magic:[['M-43'],['M-44'],['M-45'],['M-46']], creative:['MD46@3','MD45@3','MD44@3']},
- {id:45, tier:'calculus1', title:{ko:'극한·미분·적분 심화',en:'Advanced Limits, Derivatives & Integrals',zh:'极限·导数·积分进阶'},
-   drills:['MD58','MD59','MD60','MD61','MD62','MD46','MD58@2','MD59@2','MD60@2','MD61@2','MD62@2','MD58@3','MD59@3','MD60@3','MD61@3','MD62@3'], minSessions:8,
-   magic:[['M-58'],['M-59'],['M-60'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD60@3']},
+ {id:45, tier:'calculus1', title:{ko:'함수의 극한과 연속',en:'Limits & Continuity',zh:'函数的极限与连续'},
+   drills:['MD43','MD58','MD59','MD42','MD43@2','MD58@2','MD59@2','MD43@3','MD58@3','MD59@3'], minSessions:5,
+   magic:[['M-43'],['M-58'],['M-59']], creative:['MD59@3','MD58@3','MD43@3']},
+ {id:46, tier:'calculus1', title:{ko:'미분 — 도함수·접선·극값',en:'Differentiation — Derivatives, Tangents & Extrema',zh:'微分——导数·切线·极值'},
+   drills:['MD44','MD45','MD60','MD59','MD44@2','MD45@2','MD60@2','MD44@3','MD45@3','MD60@3'], minSessions:5,
+   magic:[['M-44'],['M-45'],['M-60']], creative:['MD60@3','MD45@3','MD44@3']},
+ {id:47, tier:'calculus1', title:{ko:'적분 — 넓이와 속도',en:'Integration — Area & Motion',zh:'积分——面积与速度'},
+   drills:['MD46','MD61','MD62','MD60','MD46@2','MD61@2','MD62@2','MD46@3','MD61@3','MD62@3'], minSessions:5,
+   magic:[['M-46'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD46@3']},
 ];
 
 /* ── 회차의 세 층 — 교과 연산 → 창의 연산 → 연결 문장제·적용 (2026-09-25 정본) ──

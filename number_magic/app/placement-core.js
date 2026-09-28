@@ -8,7 +8,7 @@
    있으면 된다(app/main.js보다 먼저 로드).
 
    책임:
-   - buildLadder()      : NM_COURSE_SPEC(C1~C45) 순서로 사다리를 만든다.
+   - buildLadder()      : NM_COURSE_SPEC(C1~C47) 순서로 사다리를 만든다.
                            0~3번 칸은 예전 그대로 수의 나라(NL) 4칸(전부 과정 C1).
                            그 뒤로 courseBuilt인 과정마다 한 칸씩, 그 과정
                            자기 드릴 재료 중 "생성기 답이 숫자 하나"인 첫 스레드를
@@ -82,7 +82,7 @@ function isScalarDrill(threadId){
 }
 
 /* 사다리 — 0~3번은 수의 나라 4칸(고정, 전부 과정 C1). 그 뒤로 NM_COURSE_SPEC
-   순서(C1…C45)로 courseBuilt인 과정마다 한 칸. */
+   순서(C1…C47)로 courseBuilt인 과정마다 한 칸. */
 function buildLadder(){
   const spec = W.NM_COURSE_SPEC || [];
   const courses = W.NM_COURSES || {};

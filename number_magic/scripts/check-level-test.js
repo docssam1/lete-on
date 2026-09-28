@@ -35,7 +35,7 @@ forms.forEach((f, i) => {
     });
     a.courses.forEach(c => { const n = a.items.filter(x => x.course === c).length; ok(n >= 1 && n <= 2, `${tag} 과정 ${c}: ${n}문제`); });
     const all = LT.score(a, []);
-    ok(all.firstFail === null && all.rec === Math.min(f.to + 1, 45), `${tag}: 다 맞힘 → ${all.rec}`);
+    ok(all.firstFail === null && all.rec === Math.min(f.to + 1, window.NM_COURSE_SPEC.slice(-1)[0].id), `${tag}: 다 맞힘 → ${all.rec}`);
     const allWrong = LT.score(a, a.items.map(x => x.no));
     ok(allWrong.rec === f.from, `${tag}: 다 틀림 → 과정 ${allWrong.rec}(기대 ${f.from})`);
     if (a.courses.length >= 6) {

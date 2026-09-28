@@ -55,7 +55,7 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
       const keys=Object.keys(window.NM_COURSES).sort((a,b)=>+a.slice(1)-+b.slice(1));
       const out={cases:0, problems:[], mile:[]};
       const ages=[-30,-18,-6,0,8,20,40,80];
-      const curs=['C0','C1','C5','C13','C29','C38','C45'];
+      const curs=['C0','C1','C5','C13','C29','C38','C47'];
       for(const smNow of ages) for(const cad of ['w1','w2']) for(const pace of ['p0','p2','p4']) for(const speed of [0.7,1,1.5]) for(const curKey of curs) for(const curFrac of [0,0.5]){
         const o={smNow,cad,pace,speed,curKey,curFrac};
         const t=RT(o); out.cases++;
