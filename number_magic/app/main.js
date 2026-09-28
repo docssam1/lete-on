@@ -1296,7 +1296,7 @@ function screenTown(){
     gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">🪧 ${g.icon} <span>${esc(L(g.name))}</span></button>`;
   });
   scr.innerHTML=`
-    <div id="townVp">
+    <div id="townVp" class="is-3d-pending" aria-busy="true">
       <div id="townWorld">
         <div class="ncloud a"><span class="puff" style="width:64px;height:64px;left:0;top:-8px"></span><span class="puff" style="width:48px;height:48px;left:44px;top:0"></span><span class="puff" style="width:40px;height:40px;left:78px;top:6px"></span><span class="num">7</span></div>
         <div class="ncloud b"><span class="puff" style="width:70px;height:70px;left:0;top:-10px"></span><span class="puff" style="width:50px;height:50px;left:50px;top:2px"></span><span class="num">10</span></div>
@@ -4830,7 +4830,7 @@ function screenTitle(){
   const badge = mostRecentBadge();
 
   scr.innerHTML=`
-  <div class="nm-title">
+  <div class="nm-title is-3d-pending" aria-hidden="true">
     <div class="nm-title-card">
       <!-- 로고·캐릭터·인사·칩을 한 덩어리(.nm-title-hero)로 묶는다 — 가로 2단 배치에서 왼쪽 칸이
            오른쪽 메뉴 높이에 맞춰 행이 늘어나며 위아래로 벌어지던 것을 막는다(2026-09-16). -->
@@ -4904,16 +4904,24 @@ function screenTitle(){
   mountTitle3DInto(scr, summary, badge);
 }
 /* 3D 모드 선택 화면(2026-09-26, 원장 "학습지 모드, 게임모드 이런것들 고르는 화면서 3d로 제대로 구현") — app/title3d/title3d.js.
-   2D 타이틀을 먼저 그려 두고, 3D 가 서면 그 위를 덮는다. 고르면 2D 버튼을 그대로 누른다 —
-   이동 규칙(이어서 모험·진단·게임·학습지 …)이 한 곳(위 onclick)에만 있게. WebGL 이 없으면 2D 가 그대로 남는다. */
+   정상 로딩 중에는 옛 2D 타이틀을 숨기고 준비 화면만 보인다. 고르면 2D 버튼을 그대로 누른다 —
+   이동 규칙(이어서 모험·진단·게임·학습지 …)이 한 곳(위 onclick)에만 있게. WebGL 이 없을 때만 2D 를 드러낸다. */
 function mountTitle3DInto(scr, summary, badge){
   const card=scr.querySelector('.nm-title');
   if(!card)return;
   const BTN={continue:'ttContinue',diag:'ttDiag',game:'ttGame',sheet:'ttSheet',road:'ttRoad',story:'ttStory',dex:'ttDex',hist:'ttHist',magazine:'ttMz'};
   const box=document.createElement('div');
   box.className='nm-title3d';
-  box.style.visibility='hidden';
+  box.innerHTML=`<div class="nm-3d-loading title" role="status">
+    <span class="nm-3d-loading-mark" aria-hidden="true">✦</span>
+    <b>${S.lang==='ko'?'모험 책상을 여는 중…':S.lang==='en'?'Opening your adventure desk…':'正在打开冒险桌面…'}</b>
+  </div>`;
   scr.appendChild(box);
+  const revealFallback=()=>{
+    box.remove();
+    card.classList.remove('is-3d-pending');
+    card.removeAttribute('aria-hidden');
+  };
   const chips=[];   /* 동전은 모듈이 coins 로 따로 그린다 */
   if(S.attend&&S.attend.days)chips.push({icon:'📅',text:{ko:`${S.attend.days}일`,en:`Day ${S.attend.days}`,zh:`第${S.attend.days}天`}});
   if(badge)chips.push({icon:'🏅',text:badge.label,gold:true});
@@ -4926,13 +4934,16 @@ function mountTitle3DInto(scr, summary, badge){
       name:S.name||'', coins:S.coins, chips, extraHtml:lineageBadgeRowHtml()
     });
   }).then(ctl=>{
-    if(!ctl){box.remove();return;}
+    if(!ctl){revealFallback();return;}
     if(!box.isConnected){ctl.dispose();return;}
-    box.style.visibility='';
+    const loading=box.querySelector('.nm-3d-loading');
+    if(loading)loading.remove();
+    card.classList.remove('is-3d-pending');
     card.classList.add('is-3d-covered');
+    card.setAttribute('aria-hidden','true');
     const prev=townCleanup;
     townCleanup=()=>{ if(prev)prev(); ctl.dispose(); box.remove(); };
-  }).catch(()=>{box.remove();});
+  }).catch(revealFallback);
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
 function lineageBadgeRowHtml(){
@@ -5453,7 +5464,7 @@ function enterTier(id){S.view='tier';S.tierId=id;save();render();}
 function exitTier(){S.view='town';S.tierId=null;save();render();}
 
 /* 3D 마을(2026-09-26, 원장 "마을 지도야 … 3d로 제대로 구현") — app/town3d/town3d.js.
-   2D 지도를 먼저 그려 두고(곧바로 보이고, 3D 를 못 쓰면 그대로 남는다) 3D 가 준비되면 그 위를 덮는다.
+   정상 로딩 중에는 옛 2D 지도를 숨기고 준비 화면만 보이며, 3D 를 못 쓸 때만 2D 를 드러낸다.
    건물·관문을 누르면 2D 와 같은 안내(townSpotAction·showGateLinksModal). 잠금 규칙도 2D 와 같다. */
 function mountTown3DInto(scr){
   const vp=scr.querySelector('#townVp');
@@ -5494,10 +5505,19 @@ function mountTown3DInto(scr){
   ];
   const box=document.createElement('div');
   box.className='nm-town3d';
+  box.innerHTML=`<div class="nm-3d-loading town" role="status">
+    <span class="nm-3d-loading-mark" aria-hidden="true">✦</span>
+    <b>${S.lang==='ko'?'마법 마을을 여는 중…':S.lang==='en'?'Opening the magic village…':'正在打开魔法村…'}</b>
+  </div>`;
   /* 3D 층 안의 끌기·휠·탭이 아래 2D 지도의 처리기(지도 이동·탭 이동)로 새지 않게 */
   ['pointerdown','pointermove','pointerup','pointercancel','wheel'].forEach(ev=>box.addEventListener(ev,e=>e.stopPropagation()));
-  box.style.pointerEvents='none';   /* 준비되기 전엔 아래 2D 지도를 그대로 누를 수 있게 */
+  box.style.pointerEvents='none';   /* 준비 중에는 옛 지도도, 아직 덜 선 3D 도 누르지 못하게 */
   vp.appendChild(box);
+  const revealFallback=()=>{
+    box.remove();
+    vp.classList.remove('is-3d-pending');
+    vp.removeAttribute('aria-busy');
+  };
   const muted=()=>{const mb=scr.querySelector('#townMute');return !mb||mb.textContent.indexOf('🔇')>=0;};
   import('./town3d/town3d.js').then(m=>m.mountTown3D(box,{
     lang, spots, gates, characters,
@@ -5505,19 +5525,23 @@ function mountTown3DInto(scr){
     onGate:id=>{const g=TOWN_GATES.find(x=>x.id===id);if(g)showGateLinksModal(g);},
     onSay:text=>{if(!muted()&&S.lang==='ko')say(text);}
   })).then(ctl=>{
-    if(!ctl){box.remove();return;}
+    if(!ctl){revealFallback();return;}
     if(!box.isConnected){ctl.dispose();return;}
     /* 3D 가 섰다 — 2D 지도의 움직임(분수·반짝임·걷기)을 멈추고 숨긴다. 음소거·배경음은 2D 쪽 버튼 그대로 */
     const prev=townCleanup;
     if(prev)prev();
+    const loading=box.querySelector('.nm-3d-loading');
+    if(loading)loading.remove();
+    vp.classList.remove('is-3d-pending');
     vp.classList.add('is-3d');
+    vp.removeAttribute('aria-busy');
     box.style.pointerEvents='';
     const zi=scr.querySelector('#townZin'), zo=scr.querySelector('#townZout'), me=scr.querySelector('#townMe');
     if(zi)zi.onclick=()=>ctl.zoomIn();
     if(zo)zo.onclick=()=>ctl.zoomOut();
     if(me)me.onclick=()=>ctl.focusPlayer();
     townCleanup=()=>{ if(prev)prev(); ctl.dispose(); };
-  }).catch(()=>{box.remove();});
+  }).catch(revealFallback);
 }
 /* 마을 건물 탭 → 안내 모달(2D 지도·3D 마을 공통) */
 function townSpotAction(id){
