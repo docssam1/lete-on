@@ -281,7 +281,7 @@ export const SCENES_C42 = {
     const c4 = mcard(k, '32 ÷ 4 = 8,   5 − 2 = 3', X, 0.76, { w:2.9, d:0.56, glow:true, hmax:0.5, bg:GREEN, edge:GEDGE });
     /* 움직임: 주황 3 개가 파랑 2 개 위로 올라가 5 층(log₂32 = 5) → 덧셈 카드 → 다시 내려와 제자리(5 − 2 = 3) → 뺄셈 카드 */
     const B0 = B.position.clone(), BT = new THREE.Vector3(AX - BX + BX, 2 * S, 0);
-    BT.x = AX; 
+    BT.x = AX;
     k.onFrame(t => { const p = cyc(t, 10);
       const u = seg(p, 0.1, 0.28) * (1 - seg(p, 0.6, 0.78));
       B.position.lerpVectors(B0, BT, u); B.position.y += 0.55 * (hop(p, 0.1, 0.28) + hop(p, 0.6, 0.78));
