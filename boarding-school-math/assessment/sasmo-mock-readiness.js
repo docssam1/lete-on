@@ -40,11 +40,16 @@
   function round1(value) { return Math.round(value * 10) / 10; }
 
   function validateForm(form) {
-    onlyKeys(form, ["schemaVersion", "formId", "programId", "year", "levelId", "sourceState", "sections", "items"], "form");
+    onlyKeys(form, ["schemaVersion", "formId", "formVersion", "programId", "year", "levelId", "comparisonKey", "scoringFingerprintSha256", "sourceFingerprintSha256", "packFingerprintSha256", "sourceState", "sections", "items"], "form");
     if (form.schemaVersion !== SCHEMA_VERSION || form.programId !== "sasmo") fail("form is not a SASMO readiness form");
     text(form.formId, "form.formId", /^sasmo-[0-9]{4}-g(?:[2-9]|10)-[a-z0-9-]{3,64}$/);
+    text(form.formVersion, "form.formVersion", /^[a-z0-9-]{3,64}$/);
     if (!Number.isInteger(form.year) || form.year < 2000 || form.year > 2100) fail("form.year is invalid");
     text(form.levelId, "form.levelId", /^G(?:[2-9]|10)$/);
+    text(form.comparisonKey, "form.comparisonKey", /^sasmo:g(?:[2-9]|10):[a-z0-9:+_/-]{6,100}$/);
+    text(form.scoringFingerprintSha256, "form.scoringFingerprintSha256", /^[a-f0-9]{64}$/);
+    text(form.sourceFingerprintSha256, "form.sourceFingerprintSha256", /^[a-f0-9]{64}$/);
+    text(form.packFingerprintSha256, "form.packFingerprintSha256", /^[a-f0-9]{64}$/);
     if (!SOURCE_STATES.includes(form.sourceState)) fail("form.sourceState is invalid");
     const sections = dense(form.sections, "form.sections");
     if (sections.length !== 2) fail("form must contain exactly two sections");
@@ -54,7 +59,7 @@
     ];
     sections.forEach(function (section, index) {
       onlyKeys(section, ["id", "firstQuestionNumber", "itemCount", "correctPoints", "incorrectPoints", "blankPoints"], `form.sections[${index}]`);
-      if (JSON.stringify(section) !== JSON.stringify(expectedSections[index])) fail("form section scoring must preserve the 2019 SASMO G6 format");
+      if (JSON.stringify(section) !== JSON.stringify(expectedSections[index])) fail("form section scoring must preserve the verified SASMO G6 format");
     });
     const items = dense(form.items, "form.items");
     if (items.length !== 25) fail("form must contain exactly 25 items");
@@ -96,9 +101,17 @@
     });
   }
 
-  function axisReport(form, outcomes) {
+  function scoreOnlyNumbers(value) {
+    if (value == null) return Object.freeze([]);
+    const numbers = dense(value, "scoreOnlyQuestionNumbers");
+    if (numbers.some(function (number) { return !Number.isInteger(number) || number < 1 || number > 25; }) || new Set(numbers).size !== numbers.length) fail("scoreOnlyQuestionNumbers is invalid");
+    return Object.freeze(numbers.slice().sort(function (left, right) { return left - right; }));
+  }
+
+  function axisReport(form, outcomes, excluded) {
     const byAxis = new Map();
     form.items.forEach(function (item) {
+      if (excluded.has(item.questionNumber)) return;
       if (!byAxis.has(item.axisId)) byAxis.set(item.axisId, { axisId: item.axisId, itemCount: 0, correct: 0, incorrect: 0, blank: 0, questionNumbers: [] });
       const bucket = byAxis.get(item.axisId);
       const outcome = outcomes[item.questionNumber - 1].outcome;
@@ -134,7 +147,7 @@
 
   function readinessBand(percent, policy) {
     validateBandPolicy(policy);
-    return policy.bands.filter(function (band) { return percent >= band.minPercent; }).slice(-1)[0];
+    return policy.bands.filter(function (band) { return Math.max(0, percent) >= band.minPercent; }).slice(-1)[0];
   }
 
   function normalCdf(value) {
@@ -145,36 +158,57 @@
     return 0.5 * (1 + sign * erf);
   }
 
-  function buildTrendPrediction(rawScore, history, targetScore) {
-    if (history == null || history.length < 2 || targetScore == null) {
-      return Object.freeze({ state: "collect-another-real-paper", officialAwardPrediction: false });
-    }
-    dense(history, "history").forEach(function (entry, index) {
-      onlyKeys(entry, ["formId", "rawScore", "maxScore", "verifiedRealPaper"], `history[${index}]`);
+  function buildTrendPrediction(form, rawScore, history, targetScore) {
+    const entries = history == null ? [] : dense(history, "history");
+    if (targetScore != null && (!Number.isFinite(targetScore) || targetScore < -15 || targetScore > 70)) fail("target score is invalid");
+    entries.forEach(function (entry, index) {
+      onlyKeys(entry, ["formId", "formVersion", "levelId", "comparisonKey", "scoringFingerprintSha256", "sourceFingerprintSha256", "rawScore", "maxScore", "verifiedRealPaper"], `history[${index}]`);
       text(entry.formId, `history[${index}].formId`, /^sasmo-[0-9]{4}-g(?:[2-9]|10)-[a-z0-9-]{3,64}$/);
-      if (!Number.isFinite(entry.rawScore) || entry.maxScore !== 70 || entry.verifiedRealPaper !== true) fail("history must contain verified 70-point SASMO papers");
+      text(entry.formVersion, `history[${index}].formVersion`, /^[a-z0-9-]{3,64}$/);
+      text(entry.levelId, `history[${index}].levelId`, /^G(?:[2-9]|10)$/);
+      text(entry.comparisonKey, `history[${index}].comparisonKey`, /^sasmo:g(?:[2-9]|10):[a-z0-9:+_/-]{6,100}$/);
+      text(entry.scoringFingerprintSha256, `history[${index}].scoringFingerprintSha256`, /^[a-f0-9]{64}$/);
+      text(entry.sourceFingerprintSha256, `history[${index}].sourceFingerprintSha256`, /^[a-f0-9]{64}$/);
+      if (!Number.isFinite(entry.rawScore) || entry.rawScore < -15 || entry.rawScore > 70 || entry.maxScore !== 70 || entry.verifiedRealPaper !== true) fail("history must contain verified 70-point SASMO papers");
     });
-    if (!Number.isFinite(targetScore) || targetScore < -15 || targetScore > 70) fail("target score is invalid");
+    const evidenceCount = entries.length + 1;
+    if (evidenceCount < 3) {
+      return Object.freeze({ state: "collect-another-real-paper", officialAwardPrediction: false, evidenceCount, requiredEvidenceCount: 3 });
+    }
+    const formIds = entries.map(function (entry) { return entry.formId; }).concat([form.formId]);
+    const sourceFingerprints = entries.map(function (entry) { return entry.sourceFingerprintSha256; }).concat([form.sourceFingerprintSha256]);
+    const comparable = entries.every(function (entry) {
+      return entry.levelId === form.levelId && entry.comparisonKey === form.comparisonKey && entry.scoringFingerprintSha256 === form.scoringFingerprintSha256;
+    });
+    if (new Set(formIds).size !== formIds.length || new Set(sourceFingerprints).size !== sourceFingerprints.length || !comparable) {
+      return Object.freeze({ state: "incomparable-real-paper-history", officialAwardPrediction: false, evidenceCount, requiredEvidenceCount: 3 });
+    }
     const values = history.map(function (entry) { return entry.rawScore; }).concat([rawScore]);
     const mean = values.reduce(function (sum, value) { return sum + value; }, 0) / values.length;
     const spread = values.length > 1 ? Math.sqrt(values.reduce(function (sum, value) { return sum + (value - mean) ** 2; }, 0) / (values.length - 1)) : 0;
     const conservativeSpread = Math.max(8, spread);
-    const probability = round1(100 * (1 - normalCdf((targetScore - mean) / conservativeSpread)));
-    return Object.freeze({
+    const result = {
       state: "preliminary-real-paper-trend",
       officialAwardPrediction: false,
-      targetScore,
       expectedNextScoreRange: Object.freeze([Math.max(-15, Math.round(mean - conservativeSpread)), Math.min(70, Math.round(mean + conservativeSpread))]),
-      targetScoreProbabilityPercent: probability,
+      evidenceCount,
+      requiredEvidenceCount: 3,
       confidence: values.length >= 4 ? "medium" : "low",
       note: "This is a real-paper score trend, not an official SASMO award or cutoff prediction."
-    });
+    };
+    if (targetScore != null) {
+      result.targetScore = targetScore;
+      result.targetScoreProbabilityPercent = round1(100 * (1 - normalCdf((targetScore - mean) / conservativeSpread)));
+    }
+    return Object.freeze(result);
   }
 
   function analyzeAttempt(form, attempt, policy, options) {
     validateForm(form);
     validateAttempt(form, attempt);
     const settings = options || {};
+    const scoreOnlyQuestionNumbers = scoreOnlyNumbers(settings.scoreOnlyQuestionNumbers);
+    const scoreOnlySet = new Set(scoreOnlyQuestionNumbers);
     const sectionScores = form.sections.map(function (section) { return scoreSection(section, attempt.outcomes); });
     const rawScore = sectionScores.reduce(function (sum, section) { return sum + section.rawScore; }, 0);
     const maxScore = sectionScores.reduce(function (sum, section) { return sum + section.maxScore; }, 0);
@@ -182,21 +216,26 @@
     const incorrect = sectionScores.reduce(function (sum, section) { return sum + section.incorrect; }, 0);
     const blank = sectionScores.reduce(function (sum, section) { return sum + section.blank; }, 0);
     const percentOfMax = round1(100 * rawScore / maxScore);
-    const axes = axisReport(form, attempt.outcomes);
-    const sufficient = axes.filter(function (axis) { return axis.evidenceState === "sufficient"; });
-    const strengths = sufficient.filter(function (axis) { return axis.percentage > correct * 100 / 25; }).sort(function (a, b) { return b.percentage - a.percentage; }).slice(0, 2).map(function (axis) { return axis.axisId; });
-    const weaknesses = sufficient.filter(function (axis) { return axis.percentage < correct * 100 / 25 && axis.incorrect + axis.blank >= 2; }).sort(function (a, b) { return a.percentage - b.percentage; }).slice(0, 2).map(function (axis) { return axis.axisId; });
+    const axes = axisReport(form, attempt.outcomes, new Set());
+    const diagnosticAxes = axisReport(form, attempt.outcomes, scoreOnlySet);
+    const diagnosticItemCount = 25 - scoreOnlyQuestionNumbers.length;
+    const diagnosticCorrect = diagnosticAxes.reduce(function (sum, axis) { return sum + axis.correct; }, 0);
+    const diagnosticAverage = diagnosticItemCount ? diagnosticCorrect * 100 / diagnosticItemCount : null;
+    const sufficient = diagnosticAxes.filter(function (axis) { return axis.evidenceState === "sufficient"; });
+    const strengths = diagnosticAverage == null ? [] : sufficient.filter(function (axis) { return axis.percentage > diagnosticAverage; }).sort(function (a, b) { return b.percentage - a.percentage; }).slice(0, 2).map(function (axis) { return axis.axisId; });
+    const weaknesses = diagnosticAverage == null ? [] : sufficient.filter(function (axis) { return axis.percentage < diagnosticAverage && axis.incorrect + axis.blank >= 2; }).sort(function (a, b) { return a.percentage - b.percentage; }).slice(0, 2).map(function (axis) { return axis.axisId; });
     return Object.freeze({
       schemaVersion: SCHEMA_VERSION,
-      form: Object.freeze({ formId: form.formId, year: form.year, levelId: form.levelId, sourceState: form.sourceState }),
+      form: Object.freeze({ formId: form.formId, formVersion: form.formVersion, year: form.year, levelId: form.levelId, comparisonKey: form.comparisonKey, scoringFingerprintSha256: form.scoringFingerprintSha256, sourceFingerprintSha256: form.sourceFingerprintSha256, sourceState: form.sourceState }),
       score: Object.freeze({ rawScore, maxScore, percentOfMax, correct, incorrect, blank, sections: Object.freeze(sectionScores) }),
       readiness: Object.freeze({ band: Object.freeze(readinessBand(percentOfMax, policy)), notAnOfficialAward: true }),
       axes,
+      diagnostic: Object.freeze({ itemCount: diagnosticItemCount, scoreOnlyQuestionNumbers, axes: diagnosticAxes }),
       strengths: Object.freeze(strengths),
       weaknesses: Object.freeze(weaknesses),
-      prediction: buildTrendPrediction(rawScore, settings.history || null, settings.targetScore == null ? null : settings.targetScore)
+      prediction: buildTrendPrediction(form, rawScore, settings.history || null, settings.targetScore == null ? null : settings.targetScore)
     });
   }
 
-  return Object.freeze({ SCHEMA_VERSION, AXIS_IDS, validateForm, validateAttempt, validateBandPolicy, analyzeAttempt });
+  return Object.freeze({ SCHEMA_VERSION, AXIS_IDS, validateForm, validateAttempt, validateBandPolicy, buildTrendPrediction, analyzeAttempt });
 });

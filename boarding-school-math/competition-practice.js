@@ -2,7 +2,8 @@
   "use strict";
   const bank=window.GFIELDGrade6CompetitionTypeBank;
   const analysis=window.GFIELDCompetitionPracticeAnalysis;
-  if(!bank||!analysis)return;
+  const localRecord=window.GFIELDLocalLearningRecord;
+  if(!bank||!analysis||!localRecord)return;
   const params=new URLSearchParams(location.search);
   const aliases={sasmo:"sasmo-g6",kangaroo:"math-kangaroo-g5-6",amc8:"amc-8-bridge","amc-8":"amc-8-bridge"};
   const supportedLocales=["ko","en","en-SG","zh-Hans"];
@@ -92,11 +93,11 @@
   function typeCountLabel(count){if(state.locale.startsWith("en"))return count+" types";if(state.locale==="zh-Hans")return count+"种题型";return count+"개 유형";}
   function experienceCopy(){
     const rows={
-      ko:{studentDisclosure:"학생 연습 화면 · 공식 성적이나 학생 기록으로 저장하지 않습니다.",teacherDisclosure:"교사용 공개 미리보기 · 계정, 학생 기록, 실제 배정 기능은 없습니다.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"첫 유형부터 차례로 풀어 보세요.",studentStartCopy:"정답을 확인하면 다음에 풀 유형을 안내합니다.",teacherTitle:"정답·풀이·예상 오류를 함께 봅니다.",teacherCopy:"수업 설계 예시이며 인증된 교사 대시보드가 아닙니다.",first:"첫 유형으로 이동",next:"다음 유형으로 이동",teacherLink:"첫 풀이로 이동",complete:"이 대회의 10개 유형을 모두 확인했습니다.",completeCopy:"공식 점수나 수상 예측이 아닌 자체 연습 완료입니다.",review:"처음부터 다시 보기",nextPrefix:"다음 유형"},
-      en:{studentDisclosure:"Student practice preview · no official score or learner record is saved.",teacherDisclosure:"Public teacher preview · no account, learner record, or assignment tools.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"Start with the first problem type.",studentStartCopy:"After a correct response, the next type is shown here.",teacherTitle:"Review answers, solutions, and likely errors together.",teacherCopy:"This is a lesson-design preview, not an authenticated teacher dashboard.",first:"Go to the first type",next:"Go to the next type",teacherLink:"Go to the first solution",complete:"You reviewed all 10 problem types.",completeCopy:"This is GFIELD practice completion, not an official score or award prediction.",review:"Review from the first type",nextPrefix:"Next type"},
-      "zh-Hans":{studentDisclosure:"学生练习预览 · 不保存官方成绩或学生记录。",teacherDisclosure:"教师公开预览 · 不含账号、学生记录或实际布置功能。",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"从第一种题型开始练习。",studentStartCopy:"答对后，这里会提示下一种题型。",teacherTitle:"同时查看答案、解法和常见错误。",teacherCopy:"这是教学设计预览，并非已认证的教师后台。",first:"前往第一种题型",next:"前往下一种题型",teacherLink:"前往第一个解答",complete:"已完成本竞赛的10种题型。",completeCopy:"这是GFIELD练习完成状态，并非官方成绩或获奖预测。",review:"从第一种题型重新查看",nextPrefix:"下一种题型"}
+      ko:{studentDisclosure:"학생 연습 화면 · 첫 풀이 결과는 이 기기의 브라우저에만 저장됩니다. 공식 성적이나 공유 학생 기록이 아닙니다.",teacherDisclosure:"교사용 공개 미리보기 · 계정, 학생 기록, 실제 배정 기능은 없습니다.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"첫 유형부터 차례로 풀어 보세요.",studentStartCopy:"정답을 확인하면 다음에 풀 유형을 안내합니다.",teacherTitle:"정답·풀이·예상 오류를 함께 봅니다.",teacherCopy:"수업 설계 예시이며 인증된 교사 대시보드가 아닙니다.",first:"첫 유형으로 이동",next:"다음 유형으로 이동",teacherLink:"첫 풀이로 이동",complete:"이 대회의 10개 유형을 모두 확인했습니다.",completeCopy:"공식 점수나 수상 예측이 아닌 자체 연습 완료입니다.",review:"처음부터 다시 보기",nextPrefix:"다음 유형",plan:"나의 학습 계획에 반영",planNote:"이 유형 점검은 오늘의 보완 학습을 고르는 예비 근거입니다."},
+      en:{studentDisclosure:"Student practice preview · first-attempt results stay only in this browser. They are not an official score or shared learner record.",teacherDisclosure:"Public teacher preview · no account, learner record, or assignment tools.",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"Start with the first problem type.",studentStartCopy:"After a correct response, the next type is shown here.",teacherTitle:"Review answers, solutions, and likely errors together.",teacherCopy:"This is a lesson-design preview, not an authenticated teacher dashboard.",first:"Go to the first type",next:"Go to the next type",teacherLink:"Go to the first solution",complete:"You reviewed all 10 problem types.",completeCopy:"This is GFIELD practice completion, not an official score or award prediction.",review:"Review from the first type",nextPrefix:"Next type",plan:"Use this in my study plan",planNote:"This type check is preliminary evidence for choosing today’s review."},
+      "zh-Hans":{studentDisclosure:"学生练习预览 · 首次作答结果仅保存在本设备浏览器中，不是官方成绩或共享学生记录。",teacherDisclosure:"教师公开预览 · 不含账号、学生记录或实际布置功能。",studentKicker:"STUDENT PRACTICE",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"从第一种题型开始练习。",studentStartCopy:"答对后，这里会提示下一种题型。",teacherTitle:"同时查看答案、解法和常见错误。",teacherCopy:"这是教学设计预览，并非已认证的教师后台。",first:"前往第一种题型",next:"前往下一种题型",teacherLink:"前往第一个解答",complete:"已完成本竞赛的10种题型。",completeCopy:"这是GFIELD练习完成状态，并非官方成绩或获奖预测。",review:"从第一种题型重新查看",nextPrefix:"下一种题型",plan:"纳入我的学习计划",planNote:"这项题型检查只是选择今日补强学习的初步依据。"}
     };
-    if(state.locale==="en-SG")return Object.assign({},rows.en,{studentDisclosure:"Primary 6 practice preview · no official result or learner record is saved.",teacherDisclosure:"Public teacher preview · no account, learner record, or assignment tools.",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"Start with the first Primary 6 problem type.",teacherTitle:"Review answers, worked solutions, and likely errors together.",teacherCopy:"This is a lesson-planning preview, not an authenticated teacher dashboard."});
+    if(state.locale==="en-SG")return Object.assign({},rows.en,{studentDisclosure:"Primary 6 practice preview · first-attempt results stay only in this browser. They are not an official result or shared learner record.",teacherDisclosure:"Public teacher preview · no account, learner record, or assignment tools.",teacherKicker:"PUBLIC TEACHER PREVIEW",studentStart:"Start with the first Primary 6 problem type.",teacherTitle:"Review answers, worked solutions, and likely errors together.",teacherCopy:"This is a lesson-planning preview, not an authenticated teacher dashboard."});
     return localized(rows);
   }
   function diagnosticCopy(){
@@ -109,6 +110,18 @@
     return localized(rows);
   }
   function currentRows(){return bank.items.filter(function(row){return row.programId===state.programId;});}
+  function clearInMemoryAttempts(){state.attempts=new Map();state.correct=new Set();}
+  function restoreStudentAttempts(){
+    clearInMemoryAttempts();
+    if(state.audience!=="student")return;
+    const saved=localRecord.storage.loadPractice(state.programId);
+    state.attempts=new Map(Object.entries(saved.attempts));
+    state.correct=new Set(Array.from(state.attempts.entries()).filter(function(entry){return entry[1].solved;}).map(function(entry){return entry[0];}));
+  }
+  function persistStudentAttempts(){
+    if(state.audience!=="student")return;
+    localRecord.storage.savePractice(state.programId,state.attempts,analysis.summarize(currentRows(),state.attempts));
+  }
   function attemptRecord(itemId){
     if(!state.attempts.has(itemId))state.attempts.set(itemId,{responses:[],solved:false});
     return state.attempts.get(itemId);
@@ -175,9 +188,11 @@
     if(state.audience==="teacher"){
       teacherHtml='<section class="teacher-evidence"><h3>'+escapeHtml(c.teacherEvidence)+'</h3><div class="teacher-table-wrap"><table><thead><tr><th>'+escapeHtml(c.question)+'</th><th>'+escapeHtml(c.type)+'</th><th>'+escapeHtml(c.firstResult)+'</th><th>'+escapeHtml(c.attempts)+'</th><th>'+escapeHtml(c.error)+'</th></tr></thead><tbody>'+summary.itemEvidence.map(function(evidence){const item=byId.get(evidence.itemId);return '<tr><td>'+String(evidence.questionNumber).padStart(2,"0")+'</td><td><a href="#problem-'+escapeHtml(item.id)+'">'+escapeHtml(text(item.typeTitle))+'</a></td><td>'+escapeHtml(resultText(evidence,c))+'</td><td>'+evidence.attemptCount+escapeHtml(c.attemptUnit)+'</td><td>'+escapeHtml(evidence.misconception?misconceptionText(evidence.misconception):c.none)+'</td></tr>';}).join("")+'</tbody></table></div></section>';
     }
-    target.innerHTML='<div class="diagnostic-overview"><article><span>'+escapeHtml(c.firstAccuracy)+'</span><strong>'+escapeHtml(accuracy)+'</strong><small>'+summary.firstCorrect+' / '+summary.attempted+'</small></article><article><span>'+escapeHtml(c.eventual)+'</span><strong>'+summary.solved+' / '+summary.itemCount+'</strong><small>'+escapeHtml(sectionHtml?"":c.noSample)+'</small></article><article><span>'+escapeHtml(c.readiness)+'</span><strong>'+escapeHtml(readinessLabel(summary,c))+'</strong><small>'+escapeHtml(summary.complete?c.complete:c.collecting)+'</small></article><article><span>'+escapeHtml(c.strength)+'</span><strong>'+escapeHtml(strengthCopy)+'</strong></article><article><span>'+escapeHtml(c.priority)+'</span><strong>'+escapeHtml(priorityCopy)+'</strong></article></div><div class="diagnostic-section-scores">'+sectionHtml+'</div><div class="diagnostic-detail-grid"><section class="domain-analysis"><h3>'+escapeHtml(c.domains)+'</h3>'+domainHtml+'</section><aside class="diagnostic-prescription"><h3>'+escapeHtml(c.next)+'</h3><strong>'+escapeHtml(text(actionItem.typeTitle))+'</strong><p>'+escapeHtml(priorityItem?misconceptionText(priorityItem.misconception):c.coach)+'</p><p class="coach-direction">'+escapeHtml(c.coach)+'</p><a href="#problem-'+escapeHtml(actionItem.id)+'">'+escapeHtml(actionLabel)+' <span aria-hidden="true">↑</span></a>'+errorHtml+'<button type="button" id="diagnostic-reset">'+escapeHtml(c.reset)+'</button></aside></div>'+teacherHtml;
+    const planLink=state.audience==="student"&&summary.attempted?'<a class="diagnostic-plan-link" href="./learning-plan.html?goal=sasmo-primary6&fromPractice='+encodeURIComponent(state.programId)+'">'+escapeHtml(c.plan)+' <span aria-hidden="true">→</span></a><small class="diagnostic-plan-note">'+escapeHtml(c.planNote)+'</small>':'';
+    target.innerHTML='<div class="diagnostic-overview"><article><span>'+escapeHtml(c.firstAccuracy)+'</span><strong>'+escapeHtml(accuracy)+'</strong><small>'+summary.firstCorrect+' / '+summary.attempted+'</small></article><article><span>'+escapeHtml(c.eventual)+'</span><strong>'+summary.solved+' / '+summary.itemCount+'</strong><small>'+escapeHtml(sectionHtml?"":c.noSample)+'</small></article><article><span>'+escapeHtml(c.readiness)+'</span><strong>'+escapeHtml(readinessLabel(summary,c))+'</strong><small>'+escapeHtml(summary.complete?c.complete:c.collecting)+'</small></article><article><span>'+escapeHtml(c.strength)+'</span><strong>'+escapeHtml(strengthCopy)+'</strong></article><article><span>'+escapeHtml(c.priority)+'</span><strong>'+escapeHtml(priorityCopy)+'</strong></article></div><div class="diagnostic-section-scores">'+sectionHtml+'</div><div class="diagnostic-detail-grid"><section class="domain-analysis"><h3>'+escapeHtml(c.domains)+'</h3>'+domainHtml+'</section><aside class="diagnostic-prescription"><h3>'+escapeHtml(c.next)+'</h3><strong>'+escapeHtml(text(actionItem.typeTitle))+'</strong><p>'+escapeHtml(priorityItem?misconceptionText(priorityItem.misconception):c.coach)+'</p><p class="coach-direction">'+escapeHtml(c.coach)+'</p><a href="#problem-'+escapeHtml(actionItem.id)+'">'+escapeHtml(actionLabel)+' <span aria-hidden="true">↑</span></a>'+planLink+errorHtml+'<button type="button" id="diagnostic-reset">'+escapeHtml(c.reset)+'</button></aside></div>'+teacherHtml;
     document.getElementById("diagnostic-reset").addEventListener("click",function(){
       rows.forEach(function(item){state.attempts.delete(item.id);state.correct.delete(item.id);});
+      if(state.audience==="student")localRecord.storage.clearPractice(state.programId);
       render();
       document.getElementById("diagnostic-results").scrollIntoView({behavior:"smooth",block:"start"});
     });
@@ -185,6 +200,7 @@
   function selectProgram(programId){
     if(!bank.programs.some(function(row){return row.id===programId;}))return;
     state.programId=programId;
+    restoreStudentAttempts();
     render();
   }
   function renderPrograms(){
@@ -329,6 +345,7 @@
     const c=copy();
     document.getElementById("progress-label").textContent=count+" / "+rows.length;
     document.getElementById("progress-copy").textContent=c.solved;
+    persistStudentAttempts();
     renderGuidance();
     renderDiagnostic();
   }
@@ -394,13 +411,15 @@
     else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(current-1+buttons.length)%buttons.length;
     else next=(current+1)%buttons.length;
     state.audience=buttons[next].dataset.audience;
+    restoreStudentAttempts();
     render();
     document.querySelector('.role-tabs [data-audience="'+state.audience+'"]').focus();
   }
-  document.querySelectorAll(".role-tabs [data-audience]").forEach(function(button){button.addEventListener("click",function(){state.audience=button.dataset.audience;render();});});
+  document.querySelectorAll(".role-tabs [data-audience]").forEach(function(button){button.addEventListener("click",function(){state.audience=button.dataset.audience;restoreStudentAttempts();render();});});
   document.querySelector(".role-tabs").addEventListener("keydown",moveAudienceTab);
   document.getElementById("program-list").addEventListener("keydown",moveProgramTab);
   document.getElementById("locale-select").addEventListener("change",function(event){state.locale=event.target.value;render();});
   document.getElementById("print-button").addEventListener("click",function(){window.print();});
+  restoreStudentAttempts();
   render();
 })();

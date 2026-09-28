@@ -1,0 +1,245 @@
+{
+  "version": 1,
+  "task": {
+    "id": "sasmo-2019-g6-real-paper-local-diagnostic",
+    "title": "SASMO 2019 Grade 6 local real-paper diagnostic",
+    "domain": "math",
+    "objective": "Score a privately supplied verified 2019 SASMO Grade 6 paper locally and connect answer-safe evidence to a learning plan",
+    "learner_stage": "SASMO Primary 6 ages 11-12",
+    "release_authority": "user-curriculum-lead",
+    "updated": "2026-09-25",
+    "gate_set_version": "1",
+    "validator_version": "pipeline-gate-v2"
+  },
+  "items": [
+    {
+      "id": "sasmo-2019-g6-local-session",
+      "title": "Private real-paper PDF, local OMR, answer-safe diagnosis, and learning-plan bridge",
+      "work_key": "e913db2fce80cae57c2438f7c8f28b1271b8377cd85773e684cb4c247cf90fea",
+      "work_status": "in-progress",
+      "evidence_status": "draft",
+      "release_status": "locked",
+      "owner": "codex-lead",
+      "source_records": [],
+      "reason": "Local PDF matching, printed-key scoring, answer-safe storage, and desktop/mobile/A4 checks are supported. The Q19 score-only safeguard separates 25 scored outcomes from 24 provisional domain-observation outcomes in a versioned local record. Both legacy and v2 2019 records retain score history but cannot pass an unreviewed domain priority into the learning plan. Source and solution review yielded a proposed content/process remap for Q02, Q11, Q17, Q20, and Q25; it is not applied because the public catalog and private scoring pack must migrate together after independent curriculum review. The proposed diagnostic distribution is number 9, patterns 2, geometry 5, logic 6, data 2, process-as-primary 0, so this paper alone cannot establish all-domain proficiency. All 25 solution entries match corresponding problem topics despite a retained 2019-versus-2020 running-header discrepancy; the Q24 worked sum also has a transcription error, while an exhaustive distinct-digit check supports its printed final answer. Q19's intended calendar rule is supplied only by the printed solution. Keep release locked until taxonomy and source-prompt policy receive independent curriculum review.",
+      "claims": [
+        {
+          "id": "local-score-and-answer-safe-evidence",
+          "contract": "single-value",
+          "verifier": "printed-key matching, exact PDF and pack SHA-256 checks, actual private-pack validation, deterministic scoring and first-attempt tests, answer-safe storage audit, and prior rendered desktop/mobile/A4 review; domain semantics and Q19 diagnostic determinacy are separate pending gates",
+          "evidence": [
+            {
+              "role": "answer",
+              "locator": "test:sasmo-local-paper-session:actual-private-pack-70-of-70"
+            },
+            {
+              "role": "test",
+              "locator": "test:sasmo-real-paper-browser:local-score-storage-plan"
+            },
+            {
+              "role": "render",
+              "locator": "qa:sasmo-real-paper:desktop-390px-a4"
+            }
+          ]
+        }
+      ],
+      "gates": [
+        {
+          "id": "source-identity",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "source",
+              "locator": "private-record:sasmo-2019-g6-diagnostic-v2",
+              "note": "2019 Grade 6, 25 items, source fingerprint a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b; no private path or source text stored here."
+            }
+          ]
+        },
+        {
+          "id": "answer-contract",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "answer",
+              "locator": "test:validate-private-sasmo-diagnostic:25-published-solutions-plus-independent-solves"
+            },
+            {
+              "role": "test",
+              "locator": "test:sasmo-local-paper-session:rational-equivalence-and-negative-marking"
+            }
+          ]
+        },
+        {
+          "id": "form-taxonomy",
+          "required": true,
+          "status": "pending",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "test:sasmo-local-paper-session:form-taxonomy-mismatch-negative-control",
+              "note": "Proves pack/catalog axis and skill ID equality only; it does not prove semantic fit to the original question."
+            },
+            {
+              "role": "audit",
+              "locator": "boarding-school-math/docs/sasmo-2019-g6-domain-evidence-audit-20260925.md",
+              "note": "Public-safe 25-item source-action audit now proposes primary/secondary decisions for five contested items, based on the original prompts and worked solutions. The proposal is not applied to the private pack or public catalog; independent curriculum approval and versioned migration remain open."
+            }
+          ]
+        },
+        {
+          "id": "diagnostic-answer-determinacy",
+          "required": true,
+          "status": "blocked",
+          "evidence": [
+            {
+              "role": "source",
+              "locator": "restricted 2019 G6 problem PDF p11 Q19; solutions PDF p7 Q19",
+              "note": "The finite sequence omits its calendar rule; the solution supplies an intended interpretation, not uniqueness from the prompt alone. The implemented score-only safeguard does not resolve source-prompt ambiguity."
+            },
+            {
+              "role": "audit",
+              "locator": "boarding-school-math/docs/sasmo-2019-g6-domain-evidence-audit-20260925.md#q19-determinacy-boundary",
+              "note": "Distinguish key-matched score from skill-diagnostic evidence."
+            }
+          ]
+        },
+        {
+          "id": "score-diagnostic-separation",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "test:sasmo-local-paper-session:Q19-score-only-25-scored-24-domain"
+            },
+            {
+              "role": "test",
+              "locator": "test:gmap-local-learning-record:v2-score-domain-legacy-v1-priority-lock"
+            },
+            {
+              "role": "test",
+              "locator": "test:gmap-local-learning-record:2019-v2-taxonomy-pending-priority-lock",
+              "note": "Previously saved v2 weakness and priority fields are ignored while the original-to-domain mapping awaits curriculum approval."
+            },
+            {
+              "role": "audit",
+              "locator": "boarding-school-math/docs/sasmo-2019-g6-domain-evidence-audit-20260925.md#q19-determinacy-boundary"
+            }
+          ]
+        },
+        {
+          "id": "solution-item-correspondence",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "boarding-school-math/docs/sasmo-2019-g6-domain-evidence-audit-20260925.md#evidence-boundary",
+              "note": "All 25 numbered solution entries were compared with the corresponding problem topics. The running-header year discrepancy remains recorded and organizer-controlled source identity is not claimed. Q24's worked final sum has a transcription error; exhaustive digit assignment confirms the stated final answer, and the erroneous worked line must not be reused."
+            }
+          ]
+        },
+        {
+          "id": "scoring-format",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "test:sasmo-mock-readiness:15-10-negative-mark-70-point-contract"
+            }
+          ]
+        },
+        {
+          "id": "learner-fit",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "audit:sasmo-2019-primary6-local-session-v1",
+              "learner_stage": "SASMO Primary 6 ages 11-12",
+              "criteria": [
+                "language",
+                "representations",
+                "prerequisites",
+                "reasoning-load",
+                "response-mode"
+              ],
+              "note": "Original English paper and diagrams remain intact; the response surface preserves 15 multiple-choice and 10 exact-number items, the official time and scoring shape, and Grade 6 domain labels without simplifying the mathematical action."
+            }
+          ]
+        },
+        {
+          "id": "answer-visibility-and-privacy",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "test:gmap-local-learning-record:competition-answer-safe-storage"
+            },
+            {
+              "role": "test",
+              "locator": "test:sasmo-local-paper-session:no-answer-or-source-locator-export"
+            }
+          ]
+        },
+        {
+          "id": "rights-boundary",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "audit:private-reference-only-local-file-selection",
+              "note": "The public page ships no contest prompt, answer, PDF, private locator, or scoring pack. The teacher selects authorized files locally and PDF.js renders bytes without upload."
+            }
+          ]
+        },
+        {
+          "id": "render-surfaces",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "render",
+              "locator": "qa:sasmo-real-paper:1440-desktop-390-mobile-a4-one-page",
+              "note": "After the score-only and taxonomy-pending safeguards, PDF.js rendered the actual 16-page paper locally; 320px and 390px had no horizontal overflow; the answer-safe report printed to one A4 page with watermark. Desktop, mobile intro/result, and A4 results were visually inspected."
+            }
+          ]
+        },
+        {
+          "id": "negative-control",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "test:sasmo-local-paper-session:reject-unverified-proof-malformed-response-and-taxonomy-mismatch"
+            }
+          ]
+        },
+        {
+          "id": "regression",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "test:focused-sasmo-learning-plan-suite:32-of-32",
+              "note": "Includes 21 focused unit checks and 11 browser checks with the actual private PDF and scoring pack, Q19 score-only behavior, v1/v2 2019 taxonomy-pending prescription lock, first-attempt-only prediction boundary, cleared PDF state, 320px/390px rendering, and one-page A4 output. The previously observed broad repository suite had 10 unrelated failures and is not a release pass."
+            },
+            {
+              "role": "test",
+              "locator": "test:assessment-plan-competition-foundation-suite:23-of-23",
+              "note": "Covers school assessment input, learner plan, competition practice, curriculum navigation, concept lessons, and mobile boundaries."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

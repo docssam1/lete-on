@@ -228,6 +228,24 @@
   font-size: 12px;
   font-weight: 800;
 }
+.diagnostic-plan-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--blue);
+  border-radius: 4px;
+  color: #fff;
+  background: var(--blue);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 850;
+}
+.diagnostic-plan-note { display: block; margin-top: 7px; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .teacher-evidence {
   margin-top: 36px;
   padding-top: 28px;
@@ -297,6 +315,7 @@
 @media print {
   .results-jump,
   .diagnostic-prescription > a,
+  .diagnostic-plan-link,
   .diagnostic-prescription button { display: none !important; }
   .diagnostic-results {
     break-before: page;

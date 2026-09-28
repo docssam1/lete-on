@@ -56,18 +56,16 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator('[data-role-preview="teacher"]').count(), 1);
   assert.equal(await page.locator('[data-role-preview="parent"], [data-role="parent"]').count(), 0);
   assert.equal(await page.locator("#quick-start-grade").inputValue(), "6");
-  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=6#past-papers");
+  assert.equal(await page.locator("#quick-plan").getAttribute("href"), "./learning-plan.html?goal=school-g6");
+  assert.equal(await page.locator("#quick-assessment").getAttribute("href"), "./assessment-entry.html?grade=6");
+  assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./learning-plan.html?goal=sasmo-primary6");
   await page.locator("#quick-start-grade").selectOption("1");
   assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=1#past-papers");
-  assert.match(await page.locator("#quick-sasmo small").textContent(), /Grade 1 연도별/);
+  assert.match(await page.locator("#quick-sasmo small").textContent(), /Grade 1 준비 범위/);
   await page.locator("#quick-start-grade").selectOption("11");
   assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=11#past-papers");
   assert.match(await page.locator("#quick-sasmo strong").textContent(), /공식 자료 보기/);
-  assert.match(await page.locator("#quick-map").innerText(), /나의 과정 지도 보기[\s\S]*Algebra 2/);
-  await page.locator("#quick-map").click();
-  assert.equal(await page.locator('[data-map-view="course"]').getAttribute("aria-selected"), "true");
-  assert.equal(await page.locator("#course-map-panel h3").textContent(), "Algebra 2");
-  await page.locator('[data-map-view="grade"]').click();
+  assert.equal(await page.locator("#quick-plan").getAttribute("href"), "./catalog.html?role=student&grade=11");
   await page.locator("#quick-start-grade").selectOption("0");
   assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=K2#past-papers");
   await page.locator("#quick-start-grade").selectOption("6");
@@ -82,7 +80,8 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   await page.locator('[data-role-preview="teacher"]').click();
   assert.equal(await page.locator("#role-preview").getAttribute("aria-labelledby"), "role-tab-teacher");
   assert.match(await page.locator("#role-title").textContent(), /교사는[\s\S]*근거/);
-  await page.locator('.role-shortcut[data-role-target="student"]').click();
+  assert.equal(await page.locator('.role-shortcut').first().getAttribute("href"), "./learning-plan.html");
+  await page.locator('[data-role-preview="student"]').click();
   assert.equal(await page.locator('[data-role-preview="student"]').getAttribute("aria-selected"), "true");
   assert.equal((await page.locator("body").innerText()).includes("학부모"), false);
 
@@ -260,9 +259,10 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   }), true);
   assert.equal(await page.locator("#diagnostic-year").inputValue(), "2020");
   assert.equal(await page.locator("#diagnostic-workflow li").count(), 5);
-  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /2020[\s\S]*G6[\s\S]*준비 가능/);
-  assert.match(await page.locator("#diagnostic-readiness").innerText(), /문항별 페이지[\s\S]*답안 근거[\s\S]*영역 태그/);
+  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /2020[\s\S]*G6[\s\S]*문항 검수 중/);
+  assert.match(await page.locator("#diagnostic-readiness").innerText(), /원본·정답·영역·그림[\s\S]*채점과 예측에 사용하지 않/);
   await page.locator("#diagnostic-year").selectOption("2019");
+  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /2019[\s\S]*G6[\s\S]*로컬 검수 완료[\s\S]*공개 잠금/);
   assert.equal(await page.locator("#diagnostic-source-link").getAttribute("href"), "https://form.simcc.org/2019-sasmo-year-paper/");
   assert.equal(await page.locator("#diagnostic-source-link").getAttribute("target"), "_blank");
   assert.match(await page.locator("#diagnostic-source-link").getAttribute("rel"), /noopener/);

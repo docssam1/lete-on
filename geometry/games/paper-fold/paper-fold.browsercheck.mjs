@@ -83,8 +83,29 @@ async function sideAll(page, p) {
   assert.equal(await page.locator("[data-choice]").count(), 3, "final choice must not be skipped");
   if (p.resultChoices || p.interaction === "hole-result") assert.equal(await page.locator("[data-result-revealed]").count(), 0, "correct result leaked before answer");
 }
+async function assertConnectCardStacks(page, p) {
+  const folded = await page.locator(".folded-card .paper-diagram.view-folded").evaluateAll((svgs) => svgs.map((svg) => ({
+    depth: Number(svg.dataset.stackDepth),
+    layers: svg.querySelectorAll(".paper-stack-layer").length,
+    sides: svg.querySelectorAll(".paper-stack-side").length
+  })));
+  const opened = await page.locator(".result-card .paper-diagram.view-result").evaluateAll((svgs) => svgs.map((svg) => ({
+    depth: Number(svg.dataset.stackDepth),
+    layers: svg.querySelectorAll(".paper-stack-layer").length,
+    sides: svg.querySelectorAll(".paper-stack-side").length
+  })));
+  assert.equal(folded.length, p.pairs.length, "every folded specimen must be rendered in a folded card");
+  folded.forEach((stack) => {
+    assert.ok(stack.depth > 0, "folded specimen card must show paper thickness");
+    assert.equal(stack.layers, stack.depth);
+    assert.ok(stack.sides >= stack.depth);
+  });
+  assert.equal(opened.length, p.results.length, "every open specimen must be rendered in a result card");
+  opened.forEach((stack) => assert.deepEqual(stack, { depth: 0, layers: 0, sides: 0 }, "open result card must remain a single sheet"));
+}
 async function solve(page, p) {
   if (p.interaction === "connect-match") {
+    await assertConnectCardStacks(page, p);
     for (const pair of p.pairs) {
       await page.locator('[data-left="' + pair.key + '"]').click();
       await page.locator('[data-right="' + pair.key + '"]').click();

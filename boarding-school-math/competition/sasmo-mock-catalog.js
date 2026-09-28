@@ -22,9 +22,14 @@
   const g6Baseline2019 = Object.freeze({
     schemaVersion: FORM_SCHEMA_VERSION,
     formId: "sasmo-2019-g6-baseline-a",
+    formVersion: "2019-g6-r1",
     programId: "sasmo",
     year: 2019,
     levelId: "G6",
+    comparisonKey: "sasmo:g6:15x2-1_10x4:v1",
+    scoringFingerprintSha256: "189222535874465b8ac2323a9672d445d978822278db8ad75472e06453caac05",
+    sourceFingerprintSha256: "a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b",
+    packFingerprintSha256: "0eea425f4fe4cef9270b92fe92dc41a7be76995fc4f44d24cc377f7c7c1272a7",
     sourceState: "private-verified-reference",
     sections: Object.freeze([
       Object.freeze({ id: "A", firstQuestionNumber: 1, itemCount: 15, correctPoints: 2, incorrectPoints: -1, blankPoints: 0 }),
