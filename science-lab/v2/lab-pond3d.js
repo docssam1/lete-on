@@ -11,10 +11,10 @@ const PLANTS = {
 export const pondResult = (plant, zone) => { const P = PLANTS[plant], ok = P.ok.includes(zone); return { ok, text: ok ? P.how : P.no[zone] }; };
 
 export async function mountPond3D(el, opts = {}) {
-  let THREE, Stage, K, KIT;
+  let THREE, Stage, watchDetached, K, KIT;
   try {
-    [{ Stage }, THREE, K, KIT] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js'), import('../scenes/_pond.js'), import('../scenes/_kit.js')]);
-    const t = document.createElement('canvas'); if (!(t.getContext('webgl2') || t.getContext('webgl'))) throw new Error('no webgl');
+    [{ Stage, watchDetached }, THREE, K, KIT] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js'), import('../scenes/_pond.js'), import('../scenes/_kit.js')]);
+    if (!Stage.canWebGL()) throw new Error('no webgl');   // 확인용 문맥은 바로 돌려준다
   } catch (_) { el.innerHTML = '<p class="lab3d-tip">이 기기에서는 3D 실험실을 열 수 없어요. 3D 장면으로 관찰해 보세요.</p>'; return {}; }
   const rows = opts.rows || [], onRecord = opts.onRecord;
   let pick = '부레옥잠', last = null;
@@ -51,11 +51,11 @@ export async function mountPond3D(el, opts = {}) {
   const planted = {};           // 식물 이름 → { g, zone, ok, x, z, t0 }
   const make = { '부레옥잠': () => K.hyacinth(), '수련': () => K.waterLily(), '검정말': () => K.hydrilla(0.6), '부들': () => K.cattail(1.4) };
   function plant(name, x, z) {
-    if (planted[name]) stage.root.remove(planted[name].g);
+    if (planted[name]) { stage.root.remove(planted[name].g); stage._disposeObjects([planted[name].g]); }   // 다시 심으면 옛 식물의 GPU 자원도 내린다
     const zone = where(x), res = pondResult(name, zone), g = make[name]();
     g.traverse((o) => { if (o.material && !res.ok) { o.material = o.material.clone(); o.material.color.lerp(new THREE.Color(0x9a8a5a), 0.55); } });
     const floor = bottomAt(x);
-    const P = { g, zone, ok: res.ok, text: res.text, x, z, t0: performance.now() / 1000, floor };
+    const P = { g, zone, ok: res.ok, text: res.text, x, z, t0: t, floor };
     g.position.set(x, SURF + 1.0, z); stage.root.add(g); planted[name] = P; last = { name, ...P };
     ring.position.set(x, (x < BANK_X ? SURF + 0.17 : SURF + 0.01), z); ring.visible = true;
     tip(`<b>${name}</b>을 <b>${zone === '물' ? '깊은 물' : zone}</b>에 심었어요 → ${res.ok ? '' : '<b style="color:#c0392b">'}${res.text}${res.ok ? '' : '</b>'}`);
@@ -64,9 +64,10 @@ export async function mountPond3D(el, opts = {}) {
   // 떨어지는 동작과 사는 모습
   let push = 0, pushV = 0, pressing = false, bubT = -1, t = 0;
   stage.update = (dt) => {
+    if (opts.isActive && !opts.isActive()) return;
     t += dt; pondG.userData.ripple(t);
     for (const [name, P] of Object.entries(planted)) {
-      const g = P.g, age = performance.now() / 1000 - P.t0, drop = Math.min(1, age / 0.9), e = 1 - (1 - drop) ** 3;
+      const g = P.g, age = t - P.t0, drop = Math.min(1, age / 0.9), e = 1 - (1 - drop) ** 3;
       if (name === '부레옥잠') {
         const land = P.zone === '땅' ? SURF + 0.16 : SURF;
         let y = SURF + 1.0 + (land - SURF - 1.0) * e;
@@ -124,6 +125,6 @@ export async function mountPond3D(el, opts = {}) {
     renderRows(); onRecord?.(rows); tip('적었어요! 다른 식물이나 다른 곳에도 심어 봐요.');
   });
   renderRows();
-  const chk = () => setTimeout(() => { if (!el.isConnected) { stage.dispose(); removeEventListener('hashchange', chk); } }); addEventListener('hashchange', chk);
-  return { rows };
+  const dispose = watchDetached(el, () => stage.dispose());
+  return { rows, pause: stop, dispose };
 }

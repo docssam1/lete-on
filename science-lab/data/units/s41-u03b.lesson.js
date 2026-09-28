@@ -1,5 +1,6 @@
 // 4-1 Ⅲ 땅의 변화 — 두 번째 5단계 수업 「화산 실험실」(소단원 E3~E6). 문항은 s41-u03.js의 items를 같이 쓴다.
 // docssam 말풍선은 한 문장·25자 안팎·~해요체. mood: talk|surprised|thinking|praise|encourage
+import { reading } from '../reading/s41-u03b.reading.js';
 export const lesson = {
   unitId: 's41-u03b', grade: 4, title: '땅의 변화 · 화산', hero: '화산 실험실', parent: 's41-u03', elements: ['E3', 'E4', 'E5', 'E6'],
   engage: {
@@ -64,6 +65,7 @@ export const lesson = {
     say: [{ mood: 'thinking', text: '지진은 왜 어떤 곳만 피해가 클까요?' }],
     items: ['s41-u03-b16', 's41-u03-b15', 's41-u03-b09'],
     reading: {
+      magazine: reading,
       title: '백두산과 한라산도 화산이에요',
       text: '백두산 꼭대기에는 화산 분출로 생긴 커다란 분화구에 물이 고여 천지가 되었어요. 한라산 꼭대기의 백록담도 분화구예요. 제주도 곳곳의 검은 돌은 용암이 땅 위에서 빨리 식어 생긴 현무암이라 알갱이가 작고 구멍이 많아요. 화산이 있는 곳에는 온천이 많고, 땅속의 열로 전기를 만들기도 해요. 반대로 화산재가 하늘을 덮으면 비행기가 뜨지 못하고 농작물이 상하기도 해요.',
     },

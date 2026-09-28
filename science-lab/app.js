@@ -148,6 +148,7 @@ async function mount3D(u) {
   $dots.innerHTML = mod.beats.map(() => '<i></i>').join('');
   const sync = () => {
     const i = player.index, b = mod.beats[i];
+    if (!b) return; // 빠르게 유닛을 넘길 때 앞 유닛의 재생기가 부르는 경우
     $cap.innerHTML = `<span class="idx">장면 ${i + 1}/${mod.beats.length}</span>${esc(b.text)}`;
     $play.textContent = player.playing ? '❚❚ 멈춤' : (player.done ? '↺ 다시' : '▶ 재생');
     [...$dots.children].forEach((d, k) => { d.className = k < i ? 'done' : k === i ? 'cur' : ''; });

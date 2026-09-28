@@ -3036,13 +3036,19 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
   .nm-mzu-strip figure{flex:0 0 72%;scroll-snap-align:start}
   .nm-mzu-char{width:52px}
 }
-/* 3D 마을(app/town3d) — 2D 지도(#townWorld) 위를 덮는다. 준비되면 2D 는 숨긴다 */
-.nm-town3d{position:absolute;inset:0;z-index:5;cursor:default}
+/* 3D 마을(app/town3d) — 정상 로딩 중에는 옛 2D 지도를 노출하지 않고, 실패할 때만 되돌린다. */
+.nm-town3d{position:absolute;inset:0;z-index:5;cursor:default;background:linear-gradient(180deg,#bfe5f2 0 45%,#9fcf8a 45% 100%)}
+#townVp.is-3d-pending #townWorld{visibility:hidden}
 #townVp.is-3d #townWorld{display:none}
-#townVp.is-3d{background:#9fcf8a;cursor:default}
-/* 3D 모드 선택 화면(app/title3d) — 2D 타이틀 위를 화면 가득 덮는다. 2D 버튼은 남겨 두되(고르면 그 버튼을 누른다) 가려서 안 보이게 */
-.nm-title3d{position:fixed;inset:0;z-index:40}
-.nm-title.is-3d-covered{visibility:hidden}
+#townVp.is-3d,#townVp.is-3d-pending{background:#9fcf8a;cursor:default}
+/* 3D 모드 선택 화면(app/title3d) — 옛 2D 메뉴는 로딩 시작부터 숨기고, WebGL 실패 때만 드러낸다. */
+.nm-title3d{position:fixed;inset:0;z-index:40;background:linear-gradient(145deg,#f7f3ea 0%,#eef1f6 48%,#e8f6f2 100%)}
+.nm-title.is-3d-pending,.nm-title.is-3d-covered{visibility:hidden}
+.nm-3d-loading{position:absolute;inset:0;z-index:100;display:grid;place-content:center;justify-items:center;gap:12px;padding:24px;text-align:center;color:#26304a;background:inherit}
+.nm-3d-loading b{font-size:clamp(16px,2.4vw,22px);font-weight:850;letter-spacing:-.025em}
+.nm-3d-loading-mark{display:grid;place-items:center;width:48px;height:48px;border:1px solid rgba(201,164,76,.55);border-radius:50%;color:#9a7430;background:rgba(255,255,255,.72);box-shadow:0 10px 30px rgba(38,48,74,.12);font-size:22px;animation:nm3dLoadingPulse 1.2s ease-in-out infinite alternate}
+@keyframes nm3dLoadingPulse{to{transform:translateY(-3px) scale(1.04);box-shadow:0 15px 34px rgba(38,48,74,.16)}}
+@media (prefers-reduced-motion:reduce){.nm-3d-loading-mark{animation:none}}
 
 /* ============================================================
    연산 로드맵 — v2 "밝은 신비(Luminous Arcana)" (2026-09-26)

@@ -299,8 +299,13 @@
     const source = api.getYearSource(state.diagnosticYear);
     sourceLink.href = source.sourcePageUrl;
     if (readiness.available) {
-      title.textContent = `${state.diagnosticYear} · ${levelLabel(state.level)} 기출 진단 준비 가능`;
-      detail.textContent = "공식 원문·답·해설 접근 경로가 확인되었습니다. 교사용 검수에서 문항별 페이지·답안 근거·영역 태그를 기록한 뒤에만 실제 분석 결과를 생성합니다.";
+      if (state.diagnosticYear === 2019 && state.level === "G6") {
+        title.textContent = "2019 · G6 로컬 검수 완료 · 공개 잠금";
+        detail.textContent = "25문항 로컬 채점과 학습계획 연결을 검증했습니다. 교사가 원본 PDF와 검증팩을 제공하는 비공개 흐름이며, 공개 운영이나 공식 수상 등급 예측은 아직 아닙니다.";
+      } else {
+        title.textContent = `${state.diagnosticYear} · ${levelLabel(state.level)} 원문·해설 확보 · 문항 검수 중`;
+        detail.textContent = "공식 자료의 접근 경로만 확인했습니다. 25문항의 원본·정답·영역·그림을 독립 검수하고 실제 화면을 확인하기 전에는 채점과 예측에 사용하지 않습니다.";
+      }
     } else {
       title.textContent = `${state.diagnosticYear} · ${levelLabel(state.level)} 원문 기반 진단은 잠금`;
       detail.textContent = "이 연도·학년에는 공식 답·해설 접근 근거를 아직 선언하지 않았습니다. 다른 학년 기출로 대체하지 않으며, 필요 시 GFIELD 자체 제작 진단을 별도 구성합니다.";

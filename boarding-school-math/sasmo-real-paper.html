@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SASMO Grade 6 실제 기출을 이 기기 안에서 채점하고, 검수 중인 영역 관찰과 학습계획을 분리해 보여주는 GFIELD 로컬 진단실">
+  <title>SASMO 실제 기출 진단실 | GFIELD Math</title>
+  <link rel="stylesheet" href="./gfield-tokens.css?v=20260922-1">
+  <link rel="stylesheet" href="./sasmo-real-paper.css?v=20260925-1">
+</head>
+<body class="gfield-ui">
+  <a class="skip-link" href="#main">진단실로 바로 가기</a>
+  <header class="paper-header">
+    <a class="paper-brand" href="./sasmo.html"><span>G·MAP</span><strong>SASMO</strong></a>
+    <nav aria-label="SASMO 진단실 탐색">
+      <a href="./sasmo.html">프로그램 소개</a>
+      <a href="./competition-practice.html?program=sasmo-g6&amp;audience=student&amp;locale=ko">유형 워크북</a>
+      <a href="./learning-plan.html?goal=sasmo-primary6">학습계획</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="intro-shell" aria-labelledby="page-title">
+      <div>
+        <p class="section-label">REAL PAPER · LOCAL DIAGNOSTIC</p>
+        <h1 id="page-title">실제 기출을 풀고,<br>바로 다음 수업까지.</h1>
+        <p class="intro-copy">2019 SASMO Grade 6 원본 PDF를 선택해 파일 지문을 확인한 뒤 화면 또는 인쇄물로 풀고 답을 입력합니다. 채점 자료와 학생 답안은 서버로 전송하지 않습니다. 점수는 계산하되, 영역 분류는 검수 중이라 자동 약점 처방에 사용하지 않습니다.</p>
+      </div>
+      <dl class="format-facts" aria-label="진단 형식">
+        <div><dt>문항</dt><dd>25</dd></div>
+        <div><dt>만점</dt><dd>70</dd></div>
+        <div><dt>시간</dt><dd>90분</dd></div>
+        <div><dt>영역 분류</dt><dd>검수 중</dd></div>
+      </dl>
+    </section>
+
+    <section class="privacy-strip" aria-label="로컬 처리 안내">
+      <strong>이 기기에서만 처리</strong>
+      <span>PDF·검증팩·답안은 업로드되지 않습니다.</span>
+      <span>정답 원문은 결과나 학습기록에 저장하지 않습니다.</span>
+    </section>
+
+    <section class="diagnostic-layout" aria-label="SASMO 실제 기출 진단">
+      <aside class="setup-panel" aria-labelledby="setup-title">
+        <div class="panel-heading">
+          <span>01</span>
+          <div><p class="section-label">TEACHER SETUP</p><h2 id="setup-title">기출 자료 준비</h2></div>
+        </div>
+
+        <label class="file-control" for="paper-file">
+          <span>2019 원본 문제 PDF <small>필수</small></span>
+          <strong id="paper-file-name">2019 Grade 6 원본 PDF 선택</strong>
+          <input id="paper-file" type="file" accept="application/pdf,.pdf">
+        </label>
+        <label class="file-control" for="pack-file">
+          <span>검증된 채점팩 <small>필수</small></span>
+          <strong id="pack-file-name">2019 G6 검증팩 선택</strong>
+          <input id="pack-file" type="file" accept="application/json,.json">
+        </label>
+
+        <div class="source-state" id="source-state" data-state="waiting" role="status" aria-live="polite">
+          <b>채점 대기</b>
+          <p>원본 PDF와 검증팩을 선택하면 25문항 답안표가 활성화됩니다.</p>
+        </div>
+        <ul class="setup-rules">
+          <li>현재 검증 완료: 2019 · Grade 6</li>
+          <li>Section A: 정답 +2, 오답 −1</li>
+          <li>Section B: 정답 +4, 오답 감점 없음</li>
+        </ul>
+        <button class="secondary-action" id="clear-session" type="button">이 기기의 진단 내용 지우기</button>
+      </aside>
+
+      <div class="paper-panel" aria-labelledby="paper-title">
+        <div class="panel-heading compact">
+          <span>02</span>
+          <div><p class="section-label">QUESTION PAPER</p><h2 id="paper-title">문제지</h2></div>
+        </div>
+        <div class="paper-empty" id="paper-empty">
+          <strong>2019 Grade 6 원본 PDF를 선택하세요.</strong>
+          <p>파일 지문을 대조한 뒤 문제와 답안표가 열립니다. 화면 또는 인쇄물로 풀 수 있으며 파일은 이 기기를 벗어나지 않습니다.</p>
+        </div>
+        <div class="pdf-stage" id="pdf-stage" hidden>
+          <div class="pdf-toolbar" aria-label="문제지 페이지 이동">
+            <button id="previous-page" type="button" disabled>이전</button>
+            <strong id="page-indicator">1 / 1</strong>
+            <button id="next-page" type="button" disabled>다음</button>
+            <a id="open-paper" href="#" target="_blank" rel="noopener">원본 크게 열기</a>
+          </div>
+          <div class="pdf-canvas-wrap"><canvas id="paper-canvas" aria-label="선택한 SASMO 문제 PDF 페이지"></canvas></div>
+          <span class="viewer-watermark" aria-hidden="true">GFIELD LOCAL REVIEW</span>
+        </div>
+      </div>
+
+      <section class="answer-panel" aria-labelledby="answer-title">
+        <div class="panel-heading compact">
+          <span>03</span>
+          <div><p class="section-label">ANSWER SHEET</p><h2 id="answer-title">답안 입력</h2></div>
+        </div>
+        <div class="answer-progress"><strong id="answered-count">0 / 25 입력</strong><span>미입력 문항은 빈칸으로 채점합니다.</span></div>
+        <form id="answer-form" novalidate>
+          <div id="answer-sheet" class="answer-sheet" aria-describedby="answer-status"></div>
+          <p id="answer-status" class="answer-status" role="status" aria-live="polite">2019 원본 PDF와 채점팩을 모두 선택하세요.</p>
+          <button class="primary-action" id="score-button" type="submit" disabled>70점 기준으로 채점하기</button>
+        </form>
+      </section>
+    </section>
+
+    <section class="results" id="results" aria-labelledby="results-title" hidden>
+      <header class="results-heading">
+        <div><p class="section-label">04 · SCORE &amp; REVIEW</p><h2 id="results-title">기출 채점·영역 관찰</h2></div>
+        <span class="evidence-chip">검증 기출 1회</span>
+      </header>
+      <div class="score-overview">
+        <div class="score-main"><span>실제 취득점수</span><strong><b id="raw-score">—</b> / 70</strong><small id="readiness-label">채점 전</small></div>
+        <dl>
+          <div><dt>정답</dt><dd id="correct-count">—</dd></div>
+          <div><dt>오답</dt><dd id="incorrect-count">—</dd></div>
+          <div><dt>미응답</dt><dd id="blank-count">—</dd></div>
+        </dl>
+        <p class="prediction-boundary">한 회 결과는 공식 수상 등급이나 다음 점수 예측이 아닙니다. 서로 다른 검증 기출 기록이 더 쌓여야 예상 범위를 계산합니다.</p>
+      </div>
+
+      <div class="axis-heading"><h3>영역별 관찰 · 분류 검수 중</h3><p id="axis-boundary">25문항은 모두 점수에 포함합니다. 19번은 원문만으로 규칙을 하나로 정할 수 없어 영역 관찰에서 제외하고, 나머지 24문항으로 봅니다. 영역 분류 자체가 검수 중이므로 자동 약점 처방에는 사용하지 않습니다.</p></div>
+      <div class="axis-grid" id="axis-grid"></div>
+
+      <div class="next-route">
+        <div><p class="section-label">NEXT ASSIGNMENT</p><h3 id="priority-title">영역별 자동 처방은 검수 대기 중입니다.</h3><p id="priority-copy">기출 점수는 이력에 남기고, 교사 관찰이나 별도 점검 결과로 학습 영역을 선택합니다.</p></div>
+        <a class="primary-link" id="plan-link" href="./learning-plan.html?goal=sasmo-primary6">학습 기간·하루 분량 설계하기 <span aria-hidden="true">→</span></a>
+      </div>
+
+      <details class="teacher-evidence">
+        <summary>교사용 문항별 관찰표 열기</summary>
+        <p>19번은 인쇄 정답 기준으로 채점하지만 영역 관찰에는 사용하지 않습니다. 다른 영역 이름도 원본 대비 분류 검수 중입니다. 오답과 미응답은 풀이 흔적과 시간을 확인한 뒤에만 오류 원인을 기록하세요.</p>
+        <div class="question-evidence" id="question-evidence"></div>
+      </details>
+      <span class="print-watermark" aria-hidden="true">GFIELD MATH · SASMO LOCAL DIAGNOSTIC</span>
+    </section>
+  </main>
+
+  <footer><span>GFIELD BOARDING SCHOOL MATHEMATICS</span><a href="./sasmo.html">SASMO 프로그램으로 돌아가기</a></footer>
+
+  <script src="./competition/sasmo-mock-catalog.js?v=20260924-1"></script>
+  <script src="./assessment/sasmo-mock-readiness.js?v=20260925-1"></script>
+  <script src="./assessment/sasmo-local-paper-session.js?v=20260925-1"></script>
+  <script src="./shared/gmap-local-learning-record.js?v=20260925-1"></script>
+  <script src="../reading-world/vendor/pdfjs/pdf.min.js?v=20260922-1"></script>
+  <script src="./sasmo-real-paper.js?v=20260925-1"></script>
+</body>
+</html>

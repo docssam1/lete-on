@@ -11,6 +11,7 @@ a { color: inherit; }
 .page-home .site-header { min-height: 70px; padding: 10px max(24px, calc((100vw - 1180px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 22px; position: sticky; top: 0; z-index: 30; }
 .page-home .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; white-space: nowrap; }
 .page-home .desktop-nav { margin-left: auto; display: flex; align-items: center; }
+.page-home .role-shortcut { min-width: 44px; }
 .page-home .header-actions { display: flex; align-items: center; }
 .mobile-quick-nav { display: none; }
 

@@ -4,7 +4,7 @@
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const identity=()=>root.HFChallengeAccess?.watermarkIdentity?.();
  const same=(a,b)=>!!a&&!!b&&a.studentId===b.studentId&&a.name===b.name;
- function permitted(body){const access=root.HFChallengeAccess;if(body.action==='document')return access.allow(body.productKey);if(body.action==='bank')return access.allow('challenge-bank',body.typeId);const source=root.HFChallengePublicCatalog?.variants?.find(v=>v.round===body.round&&v.section===body.section&&v.number===body.number);return !!source&&(access.allow('challenge-mock-'+body.round)||access.allow('challenge-bank',source.typeId));}
+ function permitted(body){const access=root.HFChallengeAccess;if(body.action==='document')return access.allow(body.productKey);if(body.action==='bank'||body.action==='concept')return access.allow('challenge-bank',body.typeId);const source=root.HFChallengePublicCatalog?.variants?.find(v=>v.round===body.round&&v.section===body.section&&v.number===body.number);return !!source&&(access.allow('challenge-mock-'+body.round)||access.allow('challenge-bank',source.typeId));}
  function safeHtml(value){
   const doc=new DOMParser().parseFromString(String(value||''),'text/html');
   doc.querySelectorAll('script,iframe,object,embed,link,meta,base,form,input,button,textarea,select,style').forEach(el=>el.remove());

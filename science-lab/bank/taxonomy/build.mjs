@@ -13,6 +13,7 @@ const NOTE = '성취기준 문장은 교육부 고시 제2022-33호 [별책 9] �
   + '코드만 두고 text는 null·verified:false로 남긴다(추측 금지). 원문을 확인하면 text를 채우고 verified를 true로 바꾼다.';
 
 let diff = 0;
+const normalizedText = (text) => text.replace(/\r\n/g, '\n');
 for (const unit of UNITS) {
   const src = join(here, '..', '..', 'data', 'units', `${unit}.taxonomy.js`);
   const { taxonomy: t } = await import(pathToFileURL(src).href);
@@ -41,7 +42,7 @@ for (const unit of UNITS) {
   const dest = join(here, `${unit}.json`);
   if (process.argv.includes('--check')) {
     const cur = existsSync(dest) ? readFileSync(dest, 'utf8') : '';
-    if (cur !== json) { console.log(`  ✗ ${unit}.json이 ${unit}.taxonomy.js와 다름 — node bank/taxonomy/build.mjs 로 다시 만들 것`); diff++; }
+    if (normalizedText(cur) !== normalizedText(json)) { console.log(`  ✗ ${unit}.json이 ${unit}.taxonomy.js와 다름 — node bank/taxonomy/build.mjs 로 다시 만들 것`); diff++; }
     else console.log(`  ${unit}.json = ${unit}.taxonomy.js (유형 ${out.types.length} · 원문 ${out.sourceTotal})`);
   } else {
     writeFileSync(dest, json);

@@ -16,7 +16,10 @@ export function classify(it, misc, ok, detail = {}) {
   const T = misc?.typed?.[it.id];
   if (T && detail.typed) { let hit = false; for (const [re, m] of T.pats || []) if (re.test(detail.typed)) { ms.add(m); hit = true; } if (!hit && T.any) ms.add(T.any); }
   const C = misc?.cloze?.[it.id];
-  if (C && detail.wrongBlanks?.length) ms.add(C.wrong);
+  if (C && detail.wrongBlanks?.length) for (const k of detail.wrongBlanks) {
+    const m = Array.isArray(C.wrong) ? C.wrong[k] : C.wrong;
+    if (m) ms.add(m);
+  }
   const X = misc?.cells?.[it.id];
   if (X && detail.wrongCells) ms.add(X);
   if (detail.chip && misc?.bookChips?.[detail.chip]) ms.add(misc.bookChips[detail.chip][1]);
@@ -38,7 +41,7 @@ export function bearers(misc) {
   const add = (m, id) => { (B[m] = B[m] || new Set()).add(id); };
   for (const [id, D] of Object.entries(misc.distractors || {})) for (const m of Object.values(D)) add(m, id);
   for (const [id, T] of Object.entries(misc.typed || {})) { if (T.any) add(T.any, id); for (const [, m] of T.pats || []) add(m, id); }
-  for (const [id, C] of Object.entries(misc.cloze || {})) add(C.wrong, id);
+  for (const [id, C] of Object.entries(misc.cloze || {})) for (const m of [].concat(C.wrong || [])) if (m) add(m, id);
   for (const [id, m] of Object.entries(misc.cells || {})) add(m, id);
   return B;
 }

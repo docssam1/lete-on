@@ -12,6 +12,7 @@ test.after(async function(){await browser.close();await new Promise(function(res
 
 test("student solves actual SASMO, Math Kangaroo, and AMC bridge types without teacher answers",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});
+  await page.addInitScript(function(){localStorage.clear();});
   const errors=[];
   page.on("pageerror",function(error){errors.push(error.message);});
   await page.goto(`${url}?program=sasmo&audience=student&locale=ko`,{waitUntil:"networkidle"});
@@ -63,8 +64,9 @@ test("student solves actual SASMO, Math Kangaroo, and AMC bridge types without t
   await page.close();
 });
 
-test("first-attempt evidence produces a provisional diagnosis and teacher audit trail",async function(){
+test("first-attempt evidence produces a provisional diagnosis while public teacher preview stays record-separated",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});
+  await page.addInitScript(function(){localStorage.clear();});
   const external=[];
   page.on("request",function(request){const target=new URL(request.url());if(target.hostname!=="127.0.0.1")external.push(request.url());});
   await page.goto(`${url}?program=sasmo&audience=student&locale=en`,{waitUntil:"networkidle"});
@@ -80,7 +82,8 @@ test("first-attempt evidence produces a provisional diagnosis and teacher audit 
   assert.equal(await page.locator('[data-axis="data-probability"] .domain-value b').innerText(),"Not measured");
   assert.match(await page.locator(".diagnostic-prescription").innerText(),/halving the total/i);
   await page.locator('[data-audience="teacher"]').click();
-  assert.equal(await page.locator(".teacher-evidence tbody tr").count(),10);
+  assert.equal(await page.locator(".teacher-evidence").count(),0);
+  assert.equal(await page.locator(".diagnostic-empty").count(),1);
   assert.equal(await page.locator(".teacher-solution").count(),10);
   assert.equal(await page.locator(".gmap-ai-launch").count(),10);
   assert.deepEqual(external,[]);
@@ -89,6 +92,7 @@ test("first-attempt evidence produces a provisional diagnosis and teacher audit 
 
 test("teacher, localization, print, keyboard, and 390px boundaries remain distinct",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});
+  await page.addInitScript(function(){localStorage.clear();});
   await page.goto(`${url}?program=amc8&audience=teacher&locale=en`,{waitUntil:"networkidle"});
   assert.equal(await page.locator(".teacher-solution").count(),10);
   assert.equal(await page.locator(".choice:enabled").count(),0);
@@ -150,6 +154,7 @@ test("teacher, localization, print, keyboard, and 390px boundaries remain distin
 
 test("SASMO ten-type workbook stays answer-separated and within an A4 print page",async function(){
   const page=await browser.newPage({viewport:{width:794,height:1123}});
+  await page.addInitScript(function(){localStorage.clear();});
   await page.goto(`${url}?program=sasmo&audience=student&locale=ko`,{waitUntil:"networkidle"});
   await page.emulateMedia({media:"print"});
   assert.equal(await page.locator(".problem-page").count(),5);

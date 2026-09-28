@@ -6,6 +6,7 @@ import { wireLive } from '../v2/live.js';
 import { mount3D, mountLabOf } from '../v2/mounts.js';
 import { SEMS, READY } from '../v2/units-index.js';
 import { escapeInApp } from '../v2/inapp.js';
+import { cloneUrl, tuneClone } from '../v2/clone-voice.js';
 import * as misc from '../data/units/s41-u03.misc.js';
 import { record, analyze, remedyItems } from '../v2/progress.js';
 const LOGU = 's41-u03';   // 이 책의 확인 문제·개념 빈칸 기록이 쌓이는 단원 id(v2 화면과 같은 곳)
@@ -31,6 +32,10 @@ guide.insertAdjacentHTML('afterbegin', '<div class="it-char"><img class="b" src=
 guide.querySelector('.it-guide-img').remove();
 guide.querySelector('.it-guide-btns')?.insertAdjacentHTML('afterbegin', '<button type="button" class="it-demo" data-a="demo">바로 체험</button>');
 const $face = guide.querySelector('.it-char .f');
+document.addEventListener('science:media-focus', () => {
+  ++sayToken; audio?.pause(); try { window.speechSynthesis?.cancel(); } catch { /* no device voice */ }
+  $face.style.display = 'none'; guide.classList.remove('talk');
+});
 async function urlOf(line) {
   const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(`${NAR.voice}|${line.text}`));
   return `${SUPA}${line.id}-${[...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 10)}.mp3`;
@@ -42,9 +47,10 @@ function koVoices() {
   const ko = all.filter((v) => /^ko/i.test(v.lang));
   return ko.sort((a, b) => (/InJoon|Male|남/i.test(b.name) ? 1 : 0) - (/InJoon|Male|남/i.test(a.name) ? 1 : 0));
 }
-function speakDevice(text) {
+function speakDevice(text, token = sayToken) {
   if (!('speechSynthesis' in window)) return false;
   const run = () => {
+    if (token !== sayToken || !soundOn) return;
     try {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
@@ -59,17 +65,19 @@ function speakDevice(text) {
   return true;
 }
 async function say(ids) {
+  book?.querySelectorAll('video').forEach(video => video.pause());
   const my = ++sayToken; guide.classList.remove('min');
   for (const id of [].concat(ids)) {
     const line = NAR.lines.find((l) => l.id === id); if (!line) continue;
     if (my !== sayToken) return;
     try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ }
     if (soundOn) {
-      // 독쌤 음성 파일이 있으면 그것으로, 없으면 기기 음성으로 읽는다
+      // 독쌤 목소리 파일(audio/docssam) → 예전 음성 파일 → 기기 음성 순서로 읽는다
       let fell = false;
       const fall = () => { if (fell) return; fell = true; if (my === sayToken && soundOn) speakDevice(line.text); };
-      const src = await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
+      const src = (await cloneUrl(line.id, line.text)) || await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
       audio = new Audio(src); audio.preload = 'auto';
+      await tuneClone(audio, src, { study: false }); if (my !== sayToken) return;   // 소개(광고)는 원래 빠르기
       audio.addEventListener('error', fall, { once: true });
       audio.addEventListener('playing', () => { voiceMode('독쌤 음성'); }, { once: true });
       audio.play().then(() => { setTimeout(() => { if (!audio || audio.paused) fall(); }, 400); }).catch(fall);
@@ -79,9 +87,14 @@ async function say(ids) {
     // 문장은 처음부터 한 번에 놓는다. 글자마다 DOM 폭을 바꾸면 고정 안내창 뒤의 3D 책까지
     // 매번 다시 합성되어 모바일에서 책장이 깜빡였다.
     guide.classList.add('talk'); $p.textContent = line.text;
-    for (const ch of line.text) {
+    // 입은 글자 수만큼 움직이고, 음성이 아직 나오고 있으면(느리게 트는 복제 음성) 끝날 때까지 이어서 움직인다.
+    // 음성이 끝나기 전에 다음 줄로 넘어가 말이 잘리지 않게 한다(최대 30초).
+    const chars = [...line.text], t0 = Date.now();
+    for (let i = 0; ; i++) {
       if (my !== sayToken) return;
-      const m = REDUCED || NARROW.matches ? null : mouthFor(ch);
+      const speaking = audio && !audio.paused && !audio.ended;
+      if ((i >= chars.length && !speaking) || Date.now() - t0 > 30000) break;
+      const m = REDUCED || NARROW.matches ? null : mouthFor(chars[i % chars.length]);
       if (m) { $face.src = A + FACE[m]; $face.style.display = 'block'; } else $face.style.display = 'none';
       await new Promise((r) => setTimeout(r, m ? 70 : 110));
     }
@@ -300,8 +313,10 @@ const backPage = () => adPage('back', `<svg class="cv" viewBox="0 0 210 297" ari
 
 // ── 책 만들기 ──
 let state = { ch: 's41-u03b', teacher: false, pages: [], spread: 0, single: false, leaves: [], built: null };
+let releaseBook = () => {};
 const book = $('.it-book'), wrapEl = $('.it-book-wrap');
 async function build() {
+  releaseBook(); releaseBook = () => {};
   $('.it-loading').hidden = false;
   const [bm, lm] = await Promise.all([CH[state.ch].book(), CH[state.ch].lesson()]);
   const [simMod, itMod] = await Promise.all([import('../data/units/s41-u03.similar.js'), import('../data/units/s41-u03.js')]);
@@ -315,6 +330,7 @@ async function build() {
   await document.fonts?.ready; fitPages(bk);
   const wrapPage = (sec, from) => { const w = document.createElement('div'); w.className = from.className; w.setAttribute('style', from.getAttribute('style')); w.appendChild(sec); return w; };
   const adSecs = [...adHost.children], chSecs = [...bk.children];
+  state.readingPage = chSecs.findIndex((s) => s.classList.contains('bk-magazine')) + 1; // 실제 교재 쪽 번호, 없으면 0
   const endSec = (cls, inner) => { const d = document.createElement('section'); d.className = `bk-page end ${cls}`; d.innerHTML = inner; return d; };
   const repSec = endSec('rep-live', reportPageHtml(state.I)), rxSec = endSec('rx-live', samplePageHtml(pool));
   state.repSec = repSec;
@@ -324,9 +340,9 @@ async function build() {
   state.chCount = chSecs.length; host.remove();
   state.L = lm.lesson; state.rows = [];
   layout(true);
-  wireLive(book, {
+  releaseBook = wireLive(book, {
     scene: (el) => mount3D(el, state.L.engage.scene, { autoplay: true, preview: true }),
-    lab: (el) => mountLabOf(state.L.explore.lab.kind)(el, { ...state.L.explore.lab, rows: state.rows, onRecord: (rows) => { state.rows = rows; } }),
+    lab: (el, lifecycle) => mountLabOf(state.L.explore.lab.kind)(el, { ...state.L.explore.lab, ...lifecycle, rows: state.rows, onRecord: (rows) => { state.rows = rows; } }),
     misc,
     onAnswer: (kind, p) => {   // 이 책에서 고른 답도 기록 → 끝 쪽 진단 보고서에 바로 반영
       if (kind === 'item' && state.I[p.id]) record(LOGU, state.I[p.id], 'book', p.ok, { picked: p.picked }, misc);
@@ -361,6 +377,7 @@ function layout(rebuild = false) {
   }
 }
 function paint(anim = true, dir = 1) {
+  book.querySelectorAll('video').forEach(video => video.pause());
   const n = state.leaves.length, s = state.spread;
   state.leaves.forEach((leaf, i) => {
     const flipped = i < s;
@@ -403,13 +420,19 @@ function turnSound(heavy) {
 // 지금 보이는 쪽에 맞춰 docssam이 말한다(광고 쪽 순서 = ads() 순서, 표지 포함. 쪽을 더하면 여기에 한 칸)
 const AD_SAY = ['cover', 'ad1', 'ad2', 'ad3', 'ad3', 'home', 'diag', 'diag2', 'photo', 'remedy', 'free', 'faq', 'live'];
 function visiblePages() { const s = state.spread; return state.single ? [s] : [2 * s - 1, 2 * s].filter((i) => i >= 0); }
+function chapterVoiceKey(physicalPage, readingPage = 0) {
+  if (physicalPage === readingPage) return 'ad1'; // 읽고 보고 직접 해 보는 책: 기존 음성을 재사용한다.
+  const r = physicalPage - (readingPage > 0 && physicalPage > readingPage ? 1 : 0);
+  return r === 1 ? 'live' : r <= 4 ? 'steps' : r === 5 ? 'results' : r <= 7 ? 'concept' : r === 8 ? 'gifted' : r === 9 ? 'report' : r === 10 ? 'formative' : 'check';
+}
 function narrate() {
+  if (document.querySelector('.sl-lab-workspace:not([hidden])')) return;
   const vis = visiblePages(), c0 = AD_SAY.length, cn = state.chCount, rel = (i) => i - c0 + 1;   // 교재 쪽 번호(1~)
   const ids = [];
   for (const i of vis) {
     if (i < c0) { if (!ids.includes(AD_SAY[i])) ids.push(AD_SAY[i]); }
     else if (i === c0 + cn) ids.push('myreport'); else if (i === c0 + cn + 1) ids.push('sample');
-    else if (i >= c0 && i < c0 + cn) { const r = rel(i); const k = r === 1 ? 'live' : r <= 4 ? 'steps' : r === 5 ? 'results' : r <= 7 ? 'concept' : r === 8 ? 'gifted' : r === 9 ? 'report' : r === 10 ? 'formative' : 'check'; if (!ids.includes(k)) ids.push(k); }
+    else if (i >= c0 && i < c0 + cn) { const k = chapterVoiceKey(rel(i), state.readingPage); if (!ids.includes(k)) ids.push(k); }
     else ids.push('print', 'cta');
   }
   const key = ids.join(','); if (key === state.said) return; state.said = key; say(ids);
@@ -470,7 +493,7 @@ document.addEventListener('click', (e) => {
 });
 $('.it-arrow.next').addEventListener('click', () => go(1));
 $('.it-arrow.prev').addEventListener('click', () => go(-1));
-addEventListener('keydown', (e) => { if (document.querySelector('.bk-pop-wrap') || /INPUT|TEXTAREA/.test(e.target.tagName)) return; if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); });
+addEventListener('keydown', (e) => { if (document.querySelector('.bk-pop-wrap, .sl-lab-workspace:not([hidden])') || /INPUT|TEXTAREA/.test(e.target.tagName)) return; if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); });
 // 책장 모서리를 누르거나 밀어서 넘기기
 let sx = null;
 wrapEl.addEventListener('pointerdown', (e) => { if (e.target.closest('button,a,video,.bk-blank,.bk-choices li,img')) return; sx = e.clientX; });

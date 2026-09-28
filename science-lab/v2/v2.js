@@ -5,28 +5,30 @@ import { mount3D, LABS, mountLabOf } from './mounts.js';
 import { pageHome } from './home.js';
 import { escapeInApp } from './inapp.js';
 import { record, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
+import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js';
+import { readingHtml } from './reading.js';
+import { wireReading } from './reading-live.js';
 escapeInApp();
 
 const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
   ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')), misc: await import('../data/units/s41-u01.misc.js') }),
   's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
-  ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')) }),
+  ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')), misc: await import('../data/units/s41-u02.misc.js') }),
   's41-u03': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03.lesson.js')),
   ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's41-u03b': async () => ({ ...(await import('../data/units/s41-u03.js')), ...(await import('../data/units/s41-u03b.lesson.js')),
   ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), ...(await import('../data/media/s41-u03b.media.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's42-u01': async () => ({ ...(await import('../data/units/s42-u01.js')), ...(await import('../data/units/s42-u01.lesson.js')),
-  ...(await import('../data/units/s42-u01.similar.js')), ...(await import('../data/units/s42-u01.taxonomy.js')) }) };
+  ...(await import('../data/units/s42-u01.similar.js')), ...(await import('../data/units/s42-u01.taxonomy.js')), misc: await import('../data/units/s42-u01.misc.js') }) };
 const DATA_UNIT = { 's41-u03b': 's41-u03' }; const du = (u) => DATA_UNIT[u] || u; // 기록은 문항을 가진 단원 id로
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
   { key: 'elaborate', label: '④ 확장' }, { key: 'evaluate', label: '⑤ 점검' },
 ];
 const A = '../assets/';
-const BODY = { talk: 'docssam-A1-mouth-closed.webp', surprised: 'docssam-B1-surprised.webp', thinking: 'docssam-B2-thinking.webp', praise: 'docssam-B3-praise.webp', encourage: 'docssam-B4-encourage.webp' };
-const FACE = { half: 'face-A2-mouth-half.webp', open: 'face-A3-mouth-open.webp', o: 'face-A4-mouth-o.webp', blink: 'face-A5-eyes-closed.webp' };
-const REDUCED = matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 const $app = document.getElementById('app');
+let releasePage = () => {}, stopTeacher = () => {};
+document.addEventListener('science:media-focus', () => stopTeacher());
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const CIRC = ['①', '②', '③', '④', '⑤'];
 
@@ -38,39 +40,28 @@ const store = {
   set(u, patch) { try { const a = this.all(); a[u] = { ...(a[u] || {}), ...patch }; localStorage.setItem(KEY, JSON.stringify(a)); } catch { /* 저장 불가 기기 */ } },
 };
 
-// ── docssam: 말하기(모음에 따라 입 모양) · 깜빡임 · 표정 ──
-function mouthFor(ch) {
-  const c = ch.charCodeAt(0) - 0xac00; if (c < 0 || c > 11171) return null;
-  const j = Math.floor(c / 28) % 21;
-  if ([0, 2, 4, 6, 9, 14].includes(j)) return 'open';
-  if ([8, 12, 13, 17].includes(j)) return 'o';
-  return 'half';
-}
 let voiceOn = false;
+// 5단계 화면·지도: 독쌤은 화면 구석의 작은 말풍선(docssam.js). 이 대사에는 음성 파일이 없어 자막만 — 입은 움직이지 않는다.
+// (「소리」를 켜면 기기 음성으로 읽어 줄 뿐, 입 모양은 실제 음성 파일이 재생될 때만 움직인다.)
+let stepGuide = null;
+const MOOD = { talk: 'talk', surprised: 'surprise', thinking: 'think', praise: 'praise', encourage: 'encourage' };
 function teacher(el, lines, { big = false } = {}) {
-  el.innerHTML = `<div class="teacher ${big ? 'big' : ''}"><div class="bubble" aria-live="polite"></div>
-    <div class="char"><img class="body" alt="docssam 선생님"><img class="face" alt=""></div></div>`;
-  const $b = el.querySelector('.bubble'), $c = el.querySelector('.char'), $body = el.querySelector('.body'), $face = el.querySelector('.face');
-  let alive = true, talking = false;
-  const face = (k) => { if (!k) { $face.style.display = 'none'; return; } $face.src = A + FACE[k]; $face.style.display = 'block'; };
-  const blink = () => setTimeout(() => { if (!alive || !el.isConnected) return; if (!talking && $body.dataset.mood === 'talk') { face('blink'); setTimeout(() => !talking && face(null), 140); } blink(); }, 3000 + Math.random() * 2000);
-  async function say(line) {
-    const mood = line.mood || 'talk'; $body.src = A + BODY[mood] ; $body.dataset.mood = mood; face(null);
-    $b.classList.toggle('ask', mood === 'surprised' || mood === 'thinking');
-    if (voiceOn && 'speechSynthesis' in window) { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(line.text); u.lang = 'ko-KR'; speechSynthesis.speak(u); } catch { /* 음성 없음 */ } }
-    if (REDUCED) { $b.textContent = line.text; return; }
-    talking = true; $c.classList.add('talk'); $b.textContent = '';
-    for (const ch of line.text) {
-      if (!alive) return; $b.textContent += ch;
-      const m = mood === 'talk' ? mouthFor(ch) : null; face(m);
-      await new Promise((r) => setTimeout(r, m ? 90 : 150));
-      if (m) { face(null); await new Promise((r) => setTimeout(r, 20)); }
+  stopTeacher();
+  if (el) { el.innerHTML = ''; el.hidden = true; }
+  let alive = true;
+  (async () => {
+    const d = await import('./docssam.js'); if (!alive) return;
+    if (!stepGuide?.alive) stepGuide = d.mountGuide(null, { avoid: () => [...$app.querySelectorAll('main :is(h2, h3, p, .card, .choice, button, canvas, table, video, img)')].filter((x) => x.offsetParent).map((x) => x.getBoundingClientRect()) });
+    stepGuide.reset();
+    for (const l of lines) {
+      if (!alive) return;
+      if (voiceOn && 'speechSynthesis' in window) { try { speechSynthesis.cancel(); const t = new SpeechSynthesisUtterance(l.text); t.lang = 'ko-KR'; speechSynthesis.speak(t); } catch { /* 음성 없음 */ } }
+      await stepGuide.say({ text: l.text }, { mood: MOOD[l.mood] || 'talk' });
+      await new Promise((r) => setTimeout(r, 500));
     }
-    talking = false; $c.classList.remove('talk'); face(null);
-  }
-  (async () => { for (const l of lines) { await say(l); await new Promise((r) => setTimeout(r, 700)); } })();
-  blink();
-  return { say, stop() { alive = false; } };
+  })();
+  stopTeacher = () => { alive = false; stepGuide?.stop(); };
+  return { stop: () => stopTeacher() };
 }
 
 // ── 문항 렌더러 (화면·교재 공용) ──
@@ -82,6 +73,8 @@ function blanksHtml(text, blanks, { print, show }) {
     return `<button type="button" class="blank" data-k="${k}" aria-label="빈칸 ${k + 1}, 눌러서 열기">?</button>`;
   });
 }
+// 낱말 칩 순서는 그릴 때마다 섞는다(정답이 늘 같은 자리에 오지 않게)
+const shuffled = (a) => { const o = [...a]; for (let k = o.length - 1; k > 0; k--) { const r = Math.floor(Math.random() * (k + 1)); [o[k], o[r]] = [o[r], o[k]]; } return o; };
 function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const ac = it.answerContract, lv = `<span class="level">${esc(it.taxonomy.track)} · ${esc(it.taxonomy.level)}</span>`;
   const fig = it.visualModel?.kind === 'authored-svg' ? `<div class="fig">${FIG[it.visualModel.figure] || ''}</div>` : '';
@@ -91,7 +84,7 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   const head = `<p>${no ? `<span class="no">${no}.</span>` : ''}${ac.type === 'cloze' ? blanksHtml(it.prompt, ac.blanks, { print, show }) : esc(it.prompt)}</p>`;
   let body = '';
   const CZ = !print && ac.type === 'cloze' && MISC?.cloze?.[it.id];
-  if (CZ) body = `<div class="chips">${CZ.options.map((opts, k) => `<div class="chip-row" data-k="${k}"><span class="chip-no">${CIRC[k]}</span>${opts.map((o) => `<button type="button" class="chip" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>`).join('')}</div><p class="why" hidden></p>`;
+  if (CZ) body = `<div class="chips">${CZ.options.map((opts, k) => `<div class="chip-row" data-k="${k}"><span class="chip-no">${CIRC[k]}</span>${shuffled(opts).map((o) => `<button type="button" class="chip" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>`).join('')}</div><p class="why" hidden></p>`;
   if (ac.type === 'single-choice') {
     body = print ? `<div class="${it.choices.join('').length < 60 ? 'cols' : ''}">${it.choices.map((c, i) => `<div${show && i === ac.answer ? ' class="ans"' : ''}>${CIRC[i]} ${esc(c)}</div>`).join('')}</div>`
       : `<div class="choices">${it.choices.map((c, i) => `<button type="button" class="choice" data-i="${i}">${CIRC[i]} ${esc(c)}</button>`).join('')}</div><p class="why" hidden></p>`;
@@ -110,7 +103,7 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
   } else if (ac.type === 'written-explanation') {
     const rb = ac.rubric;
     body = print ? (show ? `<p class="ans">예시 답: ${esc(ac.sample)}</p><ul class="rubric">${rb.required.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>` : '<div class="ans-line"></div><div class="ans-line"></div><div class="ans-line"></div>')
-      : `<textarea aria-label="내 답 쓰기"></textarea><details><summary>채점 기준 보기</summary><ul class="rubric">${rb.required.map((r) => `<li><label><input type="checkbox"> ${esc(r)}</label></li>`).join('')}</ul><p class="rubric">통과: ${esc(rb.pass)}${rb.bonus ? ` · 더하기: ${esc(rb.bonus)}` : ''}</p><p class="why">예시 답: ${esc(ac.sample)}</p></details>`;
+      : writtenPracticeHtml();
     if (rb.preview) body += `<p class="preview"><b>미리보기</b> ${esc(rb.preview)}</p>`;
   }
   const expl = print && show ? `<p class="why">${esc(it.explanation)}</p>` : '';
@@ -123,13 +116,14 @@ function whyHtml(it, ok, detail) {
   const D = MISC?.distractors?.[it.id], T = MISC?.typed?.[it.id], ms = new Set();
   if (D && detail.picked != null) for (const i of [].concat(detail.picked)) if (D[i]) ms.add(D[i]);
   if (T && detail.typed) { let hit = false; for (const [re, m] of T.pats || []) if (re.test(detail.typed)) { ms.add(m); hit = true; } if (!hit && T.any) ms.add(T.any); }
-  if (detail.m) ms.add(detail.m);
+  for (const m of [].concat(detail.m || [])) if (m) ms.add(m);
   const fixes = [...ms].map((m) => MISC.misconceptions[m]).filter(Boolean);
   return fixes.length ? fixes.map((f) => `<span class="mis-tag">${esc(f.label)}</span><span class="fix">${f.fix}</span>`).join('') : `<b class="no">다시 생각해 봐요.</b> ${esc(it.explanation)}`;
 }
 // ctx = { u, stage } 가 있으면 결과를 기록한다. onDone(ok, detail)
 function wireItem(card, it, onDone, ctx) {
   const ac = it.answerContract;
+  if (ac.type === 'written-explanation') wireWrittenPractice(card, it);
   const done = (ok, detail = {}) => { if (ctx) record(du(ctx.u), it, ctx.stage, ok, detail, MISC); onDone?.(ok, detail); };
   const CZ = ac.type === 'cloze' && MISC?.cloze?.[it.id];
   if (CZ) {
@@ -140,7 +134,8 @@ function wireItem(card, it, onDone, ctx) {
       const b = card.querySelector(`.blank[data-k="${k}"]`); b.innerHTML = ok ? esc(v) : `<s>${esc(v)}</s> ${esc(ac.blanks[k].answer)}`; b.classList.add('open', ok ? 'right' : 'wrong');
       ch.classList.add(ok ? 'right' : 'wrong'); if (!ok) row.querySelector(`.chip[data-v="${CSS.escape(ac.blanks[k].answer)}"]`)?.classList.add('right');
       if (Object.keys(got).length === ac.blanks.length) { const wrong = Object.entries(got).filter(([, o]) => !o).map(([i]) => +i), all = !wrong.length;
-        $why.hidden = false; $why.innerHTML = whyHtml(it, all, { m: all ? null : CZ.wrong }); done(all, { wrongBlanks: wrong, picked: null }); }
+        const codes = wrong.map((k) => Array.isArray(CZ.wrong) ? CZ.wrong[k] : CZ.wrong).filter(Boolean);
+        $why.hidden = false; $why.innerHTML = whyHtml(it, all, { m: codes }); done(all, { wrongBlanks: wrong, picked: null }); }
     })));
   } else card.querySelectorAll('.blank').forEach((b) => b.addEventListener('click', () => { b.textContent = ac.blanks[+b.dataset.k].answer; b.classList.add('open'); if ([...card.querySelectorAll('.blank')].every((x) => x.classList.contains('open'))) done(true, { revealed: true }); }));
   if (ac.type === 'single-choice') {
@@ -266,14 +261,18 @@ function stepExplain(u, L, items) {
 }
 
 // ④ 확장
+const readingLab = (u, L) => (el, lifecycle) => mountLabOf(L.explore.lab.kind)(el, {
+  ...L.explore.lab, ...lifecycle, rows: store.get(u).labRows || [], onRecord: rows => store.set(u, { labRows: rows }),
+});
 function stepElaborate(u, L, items) {
   const x = L.elaborate, I = byId(items);
   frame(u, L, 3, `<p class="step-label">${STEPS[3].label}</p><div id="t"></div>
-    <div class="card reading"><h3>${esc(x.reading.title)}</h3>${L.media?.reading ? `<figure class="side"><img src="${L.media.reading.src}" alt="${esc(L.media.reading.cap)}" loading="lazy"><figcaption>${esc(L.media.reading.cap)}<small>${esc(L.media.reading.credit)}</small></figcaption></figure>` : ''}<p>${esc(x.reading.text)}</p></div>
+    ${x.reading.magazine ? `<a class="btn reading-open" href="#/${u}/reading">읽을거리 한 쪽 보기 · 인쇄</a>${readingHtml(x.reading.magazine)}` : `<div class="card reading"><h3>${esc(x.reading.title)}</h3>${L.media?.reading ? `<figure class="side"><img src="${L.media.reading.src}" alt="${esc(L.media.reading.cap)}" loading="lazy"><figcaption>${esc(L.media.reading.cap)}<small>${esc(L.media.reading.credit)}</small></figcaption></figure>` : ''}<p>${esc(x.reading.text)}</p></div>`}
     ${x.items.map((id) => itemHtml(I[id])).join('')}
     ${x.report ? `<div class="card"><h3>탐구보고서</h3><p class="lead">실험 기록이 보고서에 자동으로 들어가 있어요. 빈칸만 내 말로 채워요.</p><a class="btn" href="#/${u}/report" style="display:inline-flex;align-items:center;text-decoration:none">보고서 쓰기</a></div>` : ''}`,
   { next: `#/${u}/5`, nextLabel: '마지막 점검' });
   teacher(document.getElementById('t'), x.say);
+  if (x.reading.magazine) releasePage = wireReading($app.querySelector('main'), { mountLab: readingLab(u, L) });
   $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id], null, { u, stage: 'elaborate' }));
 }
 
@@ -432,52 +431,135 @@ function pageBook(u, L, items, mode) {
 }
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
-const BOOKS = { 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js') };
-function labBar(u, cur) {
-  const b = (href, t, k) => `<a class="btn${cur === k ? ' primary' : ''}" href="${href}">${t}</a>`;
-  return `<div class="bk-bar no-print">${b(`#/${u}/lab-book/student`, '교재 · 학생용', 'student')}${b(`#/${u}/lab-book/teacher`, '교재 · 강사용', 'teacher')}
-    <button class="btn" onclick="print()">A4 인쇄</button><span class="sep"></span>
-    ${b(`#/${u}/lab-class/self`, '스스로 공부하기', 'self')}${b(`#/${u}/lab-class/teach`, '가르치기 (수업 화면)', 'teach')}</div>`;
+const BOOKS = { 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
+// 교재·수업 화면 위쪽: 모드를 다시 고르는 메뉴는 두지 않는다(첫 화면에서 이미 골랐다). 처음으로 + 필요하면 인쇄만.
+function labBar(u, { print = false } = {}) {
+  return `<div class="bk-bar no-print"><a class="btn" href="#/${u}/start">‹ 처음으로</a>${print ? '<button class="btn primary" onclick="print()">A4 인쇄</button>' : ''}</div>`;
 }
-async function pageLabBook(u, mod, mode) {
-  if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, media }, { renderChapter, fitPages }, { wireLive }] = await Promise.all([BOOKS[u](), import('./book.js'), import('./live.js')]);
-  $app.innerHTML = `<header class="top no-print"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(chapter.book)} · ${esc(chapter.title)}</h1></div></header>
-    <main class="wrap">${labBar(u, mode)}</main>${renderChapter(chapter, art, mod.similar || [], { teacher: mode === 'teacher', live: true, media })}`;
+// 첫 화면: 무엇을 할지 처음에 바로 고른다 — 학생 교재 · 교사 교재 · 스스로 공부 · 가르치기
+async function pageStart(u) {
+  const bookMod = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null;
+  if (!bookMod) { location.replace(`#/${u}`); return; }
+  const ch = bookMod.chapter;
+  const card = (href, ico, t, d, primary) => `<a class="start-card${primary ? ' primary' : ''}" href="${href}"><span class="sc-ico" aria-hidden="true">${ico}</span><b>${t}</b><span>${d}</span></a>`;
+  $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header>
+    <main class="wrap start"><p class="step-label">${esc(ch.link?.course || '')} ${esc(ch.link?.unit || '')}</p>
+      <h2><span class="start-no">${esc(ch.no)}</span>${esc(ch.title)}</h2><p class="lead">무엇을 할까요?</p>
+      <div class="start-grid">
+        ${card(`#/${u}/lab-class/self/1`, '🧪', '스스로 공부하기', '독쌤이 한 단계씩 안내해요. 하나를 마치면 다음으로 자동으로 넘어가요.', true)}
+        ${card(`#/${u}/lab-class/teach/1`, '🖥️', '가르치기', '전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요.')}
+        ${card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
+        ${card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
+      </div>
+      <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a></p></main>`;
   scrollTo(0, 0);
-  const bk = $app.querySelector('.bk'), fit = () => bk.isConnected && fitPages(bk), L = mod.lesson;
-  fit(); document.fonts?.ready.then(fit);
+}
+async function pageReading(u, L, mode) {
+  const article = L.elaborate?.reading?.magazine;
+  if (!article) { location.replace(`#/${u}/4`); return; }
+  const teacher = mode === 'teacher';
+  $app.innerHTML = `<main class="reading-page"><nav class="reading-tools no-print" aria-label="읽을거리 도구">
+    <a class="btn" href="#/${u}/4">‹ 수업으로</a><a class="btn" href="#/${u}/lab-book/${teacher ? 'teacher' : 'student'}">교재 전체</a>
+    <a class="btn" href="#/${u}/reading/${teacher ? 'student' : 'teacher'}">${teacher ? '학생용 보기' : '교사용 보기'}</a>
+    <button type="button" class="btn primary" data-reading-print>A4 인쇄</button><p>${teacher ? '교사용 · 지도 팁 포함' : '학생용 읽을거리'}</p>
+    </nav>${readingHtml(article, { teacher })}</main>`;
+  $app.querySelector('[data-reading-print]').addEventListener('click', () => window.print());
+  const rel = wireReading($app.querySelector('.reading-page'), { mountLab: readingLab(u, L), autoplay: true });
+  let guide = null;
+  releasePage = () => { rel(); guide?.destroy(); };
+  scrollTo(0, 0);
+  if (teacher) return;   // 교사용 읽을거리에는 독쌤이 없다
+  const d = await import('./docssam.js'), V = await d.loadVoice(u);
+  if (!$app.querySelector('.reading-page') || !location.hash.includes(`/${u}/reading`)) return;
+  guide = d.mountGuide(V, { avoid: () => [...$app.querySelectorAll('.sl-reading :is(h2, h3, p, img, video, .sl-reading-player, a, figure, aside)')].filter((el) => el.offsetParent).map((el) => el.getBoundingClientRect()) });
+  guide.say({ text: BOOK_SAY.reading[1] });
+  // 읽는 동안 생각하는 얼굴, 영상을 보는 동안 조용히 듣는 얼굴
+  const art = $app.querySelector('.sl-reading'); let tRead = 0;
+  addEventListener('scroll', function onScroll() { if (!art.isConnected) { removeEventListener('scroll', onScroll); return; } clearTimeout(tRead); guide.mood('think'); tRead = setTimeout(() => guide.mood('listen'), 1400); }, { passive: true });
+}
+// 교재 쪽마다 독쌤이 한 가지만 말한다 — 단원 대사(음성 있음)가 있으면 그것, 없으면 자막만 나오는 짧은 안내.
+const BOOK_SAY = {
+  cover: [['cover'], '사진과 영상을 보며, 오늘 무엇을 알아볼지 생각해 봐.'],
+  design: [['design', 'hypo'], '바꿀 조건, 같게 할 조건, 잴 것을 칸마다 생각해 봐.'],
+  step: [['step1'], '그림을 보며 실험 순서를 차례로 읽어 봐.'],
+  lab: [['lab'], '조건을 골라 직접 해 보고, 표에 적기를 눌러 봐.'],
+  result: [['res1'], '실험에서 본 것을 떠올리며 결과와 결론을 적어 봐.'],
+  concept: [['note'], '빈칸을 눌러 알맞은 낱말을 골라 봐.'],
+  reading: [[], '먼저 영상을 보고, 관찰해 봐요 질문의 답을 찾으며 읽어 봐.'],
+  creative: [['creative'], '정답이 하나가 아니야. 떠오르는 생각을 자유롭게 적어 봐.'],
+  gifted: [['gifted'], '장소마다 해야 할 일을 되도록 많이 생각해 봐.'],
+  report: [[], '실험 기록을 떠올리며 탐구보고서 칸을 하나씩 채워 봐.'],
+  formative: [[], '보기를 잘 읽고 하나를 골라 봐. 틀리면 까닭을 알려 줄게.'],
+  check: [[], '보기를 잘 읽고 하나를 골라 봐. 틀리면 까닭을 알려 줄게.'],
+};
+function bookLine(V, key, { split, live } = {}) {
+  // 실험실이 쪽 옆에 살아 있으면 순서 쪽에서 바로 해 보자고 한다
+  if (split && key === 'step' && live?.some((x) => x.k === 'lab')) { const id = V.slides.lab; return id && V.lines.has(id) ? id : { text: '오른쪽 실험실에서 그림 순서대로 직접 해 봐.' }; }
+  const [slides, text] = BOOK_SAY[key] || [[], ''];
+  for (const s of slides) { const id = V.slides[s]; if (id && V.lines.has(id) && !/^dk-(write|choose)/.test(id)) return id; }
+  if (key === 'formative' || key === 'check') return V.lines.has('dk-choose') ? 'dk-choose' : { text };
+  return text ? { text } : null;
+}
+let bookToken = 0;
+async function pageLabBook(u, mod, mode, pageNo = 1) {
+  const my = ++bookToken, stale = () => my !== bookToken || !location.hash.includes(`/${u}/lab-book/${mode}`);
+  if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
+  const bookMod = await BOOKS[u]().catch(() => null);
+  if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
+  const teacherEd = mode === 'teacher';
+  const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js'), import('./book-view.js')]);
+  if (stale()) return;
+  const L = mod.lesson;
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((i) => [i.id, i]));
   const onAnswer = (kind, p) => {
     if (kind === 'item' && I[p.id]) record(du(u), I[p.id], 'book', p.ok, { picked: p.picked }, MISC);
     if (kind === 'blank' && MISC) { const pseudo = { id: `book:${p.chip}`, taxonomy: { element: MISC.misconceptions[MISC.bookChips?.[p.chip]?.[1]]?.element } };
       record(du(u), pseudo, 'book-concept', p.ok, { chip: p.ok ? null : p.chip, revealed: p.revealed }, MISC); }
   };
-  if (L) wireLive(bk, { scene: (el) => mount3D(el, L.engage.scene, { autoplay: true }),
-    lab: (el) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }),
-    misc: MISC, onAnswer });
+  // 학생용 교재에만 독쌤(교사용·가르치기에는 없음)
+  let guide = null, sayFor = null;
+  if (!teacherEd) {
+    const d = await import('./docssam.js'); const V = await d.loadVoice(u);
+    if (stale()) return;
+    guide = d.mountGuide(V, { label: '독쌤' }); sayFor = (key, o) => bookLine(V, key, o);
+  }
+  releasePage = mountBookView($app, { u, bookHtml: renderChapter(chapter, art, mod.similar || [], { teacher: teacherEd, live: true, media }),
+    title: `${chapter.book} · ${chapter.title}`, teacher: teacherEd, page: pageNo, backHref: `#/${u}/start`,
+    scene: L ? (el) => mount3D(el, L.engage.scene, { autoplay: true }) : null, lab: L ? readingLab(u, L) : null,
+    misc: MISC, onAnswer, guide, sayFor });
 }
 async function pageLabClass(u, mod, L, mode, idx) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([BOOKS[u](), import('./deck.js')]);
-  renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx,
-    mount3D: (el) => mount3D(el, L.engage.scene, { autoplay: false }),
-    mountLab: (el) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab, rows: store.get(u).labRows || [], onRecord: (rows) => store.set(u, { labRows: rows }) }) });
+  const bookMod = await BOOKS[u]().catch(() => null);
+  if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
+  const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([bookMod, import('./deck.js')]);
+  const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((x) => [x.id, x]));
+  renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx, misc: MISC,
+    mount3D: (el, o = {}) => mount3D(el, L.engage.scene, { autoplay: !!o.autoplay, onDone: o.onDone }),
+    // personal:false(가르치기) → 학생 기록을 읽지도 쓰지도 않는다. 두 팀 배틀은 각자 빈 표로.
+    mountLab: (el, o = {}) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab,
+      rows: o.personal === false ? (o.rows || []) : store.get(u).labRows || [],
+      onRecord: (rows) => { if (o.personal !== false) store.set(u, { labRows: rows }); o.onRecord?.(rows); } }),
+    // 스스로 공부하기의 확인 문제: 첫 시도만 진단 기록에 남긴다
+    onAnswer: (id, ok, picked) => { if (I[id]) record(du(u), I[id], 'deck', ok, { picked }, MISC); } });
 }
 
 // ── 라우터 ──
 async function route() {
+  releasePage(); releasePage = () => {}; stopTeacher(); stepGuide?.destroy(); stepGuide = null;
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (!u) return pageHome($app, store, teacher);
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
   const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, items }; MISC = mod.misc || null;
   if (a === 'sub') return pageSub(u, L, b);
-  if (!mod.lesson && !['print', 'lab-book', 'lab-class'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
+  if (!mod.lesson && !['print', 'lab-book', 'lab-class', 'start'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
+  if (a === 'start') return pageStart(u);
   if (a === 'kit') return pageKit(u, L);
   if (a === 'diagnose') return MISC ? pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student') : location.replace(`#/${u}`);
   if (a === 'report') return pageReport(u, L);
+  if (a === 'reading') return pageReading(u, L, b);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
-  if (a === 'lab-book') return pageLabBook(u, mod, b || 'student');
+  if (a === 'lab-book') return pageLabBook(u, mod, b || 'student', +location.hash.split('/')[4] || 1);
   if (a === 'lab-class') return pageLabClass(u, mod, L, b || 'teach', +location.hash.split('/')[4] || 1);
   const step = Math.min(5, Math.max(1, +a || (store.get(u).step ?? 0) + 1));
   if (!a) { location.replace(`#/${u}/${step}`); return; }

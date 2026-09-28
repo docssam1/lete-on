@@ -1,0 +1,114 @@
+/* 과학 잡지: 큰 사진과 편집형 본문. 수업/교재/인쇄 모두 같은 글을 쓴다. */
+.sl-reading { --read-accent: #1e3a78; --read-ink: #243041; --read-muted: #596575; --read-rule: #d5dce5; box-sizing: border-box; padding: 24px; margin: 16px 0; background: #fff; color: var(--read-ink); border: 1px solid var(--read-rule); border-top: 4px solid var(--read-accent); font: 16px/1.75 var(--body, sans-serif); word-break: keep-all; overflow-wrap: anywhere; }
+.sl-reading *, .sl-reading *::before, .sl-reading *::after { box-sizing: border-box; }
+.sl-reading a { color: var(--read-accent); text-underline-offset: 3px; }
+.sl-reading a:focus-visible { outline: 3px solid var(--read-accent); outline-offset: 3px; }
+.sl-reading-head { margin-bottom: 18px; }
+.sl-reading-kicker { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 9px; border-bottom: 1px solid var(--read-rule); font-size: 12px; font-weight: 700; letter-spacing: .06em; }
+.sl-reading-kicker span:last-child { color: var(--read-muted); font-size: 10px; }
+.sl-reading-topic { color: var(--read-accent); font-size: 12px; font-weight: 700; margin: 16px 0 6px; }
+.sl-reading h2 { font: 800 clamp(26px, 3.2vw, 36px)/1.3 var(--body, sans-serif); letter-spacing: -.045em; color: var(--read-accent); margin: 0 0 10px; max-width: 18em; }
+.sl-reading-lead { color: var(--read-muted); margin: 0; font-size: 15px; }
+.sl-reading-hero { margin: 0; }
+.sl-reading-hero > img { display: block; width: 100%; height: auto; aspect-ratio: 2.4; object-fit: cover; object-position: center 58%; background: #edf0f2; }
+.sl-reading-hero figcaption { display: grid; gap: 4px; font-size: 11px; line-height: 1.5; color: var(--read-muted); margin-top: 7px; }
+.sl-reading-hero figcaption a { font-size: 10px; color: inherit; }
+.sl-reading-player, .sl-reading-hero .sl-reading-video-caption { display: none; }
+.sl-reading.is-live .sl-reading-hero > img, .sl-reading.is-live .sl-reading-photo-caption { display: none; }
+.sl-reading.is-live .sl-reading-player { display: block; position: relative; width: 100%; aspect-ratio: 2.4; background: #141a22; }
+.sl-reading.is-live .sl-reading-video-caption { display: grid; }
+.sl-reading-player video { display: block; width: 100%; height: 100%; position: absolute; inset: 0; object-fit: contain; }
+.sl-reading-player [data-reading-play] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); min-height: 48px; padding: 10px 20px; border: 1px solid #fff; border-radius: 6px; background: #1e3a78; color: #fff; font: 700 15px var(--body, sans-serif); cursor: pointer; white-space: nowrap; }
+.sl-reading-player [data-reading-play][hidden], .sl-reading-player [data-video-status][hidden] { display: none; }
+.sl-reading-player [data-video-status] { position: absolute; bottom: 0; left: 0; right: 0; margin: 0; padding: 8px 12px; background: #fff; color: #243041; font-size: 12px; line-height: 1.4; }
+.sl-reading-player button:focus-visible { outline: 3px solid #f7c453; outline-offset: 3px; }
+.sl-reading-look { margin: 12px 0 20px; padding-left: 12px; border-left: 3px solid var(--read-accent); font-size: 13px; }
+.sl-reading-look b { color: var(--read-accent); margin-right: 6px; }
+.sl-reading-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 26px; }
+.sl-reading-columns > div + div { border-left: 1px solid var(--read-rule); padding-left: 26px; }
+.sl-reading-section { break-inside: avoid; margin: 0 0 18px; }
+.sl-reading-section h3 { display: flex; align-items: baseline; gap: 7px; font: 750 16px/1.5 var(--body, sans-serif); color: var(--read-accent); margin: 0 0 7px; }
+.sl-reading-section h3 span { flex-shrink: 0; font: 700 11px var(--body, sans-serif); color: var(--read-muted); }
+.sl-reading-section p { margin: 0; text-align: left; }
+.sl-reading-section strong { color: var(--read-accent); font-weight: 750; }
+.sl-reading-think { padding: 14px 0; border-top: 2px solid var(--read-accent); border-bottom: 1px solid var(--read-rule); margin: 2px 0 14px; }
+.sl-reading-think h3 { font: 700 20px/1.4 var(--disp, sans-serif); color: var(--read-accent); margin: 0 0 5px; }
+.sl-reading-think p { margin: 0; font-size: 14px; }
+.sl-reading-think .sl-reading-teacher { margin-top: 8px; color: #922f27; font-size: 12px; }
+.sl-reading-connect { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.sl-reading-connect > div > b { font-size: 13px; }
+.sl-reading-actions { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.sl-reading-actions a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 700; }
+.sl-reading-actions .sl-reading-printlink { display: none; }
+.sl-reading-qr { flex-shrink: 0; display: grid; justify-items: center; text-decoration: none; }
+.sl-reading-qr img { width: 80px; height: 80px; padding: 4px; background: #fff; }
+.sl-reading-qr span { font-size: 9px; }
+.sl-reading-sources { border-top: 1px solid var(--read-rule); margin-top: 14px; padding-top: 8px; color: var(--read-muted); font-size: 10px; line-height: 1.6; }
+.sl-reading-sources > span { font-weight: 700; margin-right: 6px; }
+.sl-reading-sources a { color: inherit; }
+.reading-page { max-width: 860px; margin: auto; padding: 0 16px 24px; }
+.reading-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 16px 0; }
+.reading-tools a { display: inline-flex; align-items: center; text-decoration: none; }
+.reading-tools p { margin: 0; color: var(--sub); font-size: 13px; }
+.reading-open { display: inline-flex; align-items: center; text-decoration: none; }
+
+/* 실제 교재의 독립된 한 쪽. 다른 쪽의 그림 크기나 글자는 바꾸지 않는다. */
+.bk .bk-magazine .bk-grid, .bk .bk-magazine.even .bk-grid { display: block; padding: 7mm 14mm 0; }
+.bk-magazine .bk-main { height: 100%; }
+.bk-magazine .sl-reading { border: 0; margin: 0; padding: 0; --read-accent: var(--bk-theme); font-size: 10.5pt; line-height: 1.65; }
+.bk-magazine .sl-reading h2 { font-size: 24pt; }
+.bk-magazine .sl-reading-head { margin-bottom: 4mm; }
+.bk-magazine .sl-reading-topic { margin: 3mm 0 1mm; }
+.bk-magazine .sl-reading-lead { font-size: 10.5pt; }
+.bk-magazine .sl-reading-hero > img { height: 48mm; aspect-ratio: auto; }
+.bk-magazine .sl-reading.is-live .sl-reading-player { height: 48mm; aspect-ratio: auto; }
+.bk-magazine .sl-reading-columns { gap: 7mm; }
+.bk-magazine .sl-reading-columns > div + div { padding-left: 7mm; }
+.bk-magazine .sl-reading-section { margin-bottom: 3.5mm; }
+.bk-magazine .sl-reading-section h3 { font-size: 11pt; }
+.bk-magazine .sl-reading-look { margin: 2.5mm 0 4mm; font-size: 9pt; }
+.bk-magazine .sl-reading-think { padding: 3mm 0; margin-bottom: 3mm; }
+.bk-magazine .sl-reading-think p { font-size: 9.5pt; }
+.bk-magazine .sl-reading-qr img { width: 22mm; height: 22mm; padding: 1mm; }
+.bk-magazine .sl-reading-sources { margin-top: 2mm; padding-top: 2mm; }
+
+@media screen and (max-width: 700px) {
+  .sl-reading { padding: 18px; }
+  .sl-reading-columns, .bk:not(.a4) .bk-magazine .sl-reading-columns { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .sl-reading-columns > div + div, .bk:not(.a4) .bk-magazine .sl-reading-columns > div + div { padding-left: 0; border-left: 0; }
+  .sl-reading-hero > img { aspect-ratio: 1.6; }
+  .sl-reading-section { margin-bottom: 22px; }
+  .sl-reading-section h3 { font-size: 17px; }
+  .sl-reading-kicker { flex-wrap: wrap; gap: 2px 8px; }
+  .sl-reading-connect { align-items: flex-start; gap: 8px; }
+  .sl-reading-actions { display: grid; gap: 0; }
+  .bk:not(.a4) .bk-magazine .bk-grid, .bk:not(.a4) .bk-magazine.even .bk-grid { padding: 16px 16px 0; }
+  .bk:not(.a4) .bk-magazine .sl-reading { font-size: 16px; }
+  .bk:not(.a4) .bk-magazine .sl-reading h2 { font-size: 28px; }
+  .bk:not(.a4) .bk-magazine .sl-reading-hero > img { height: auto; aspect-ratio: 1.6; }
+  .sl-reading.is-live .sl-reading-player, .bk:not(.a4) .bk-magazine .sl-reading.is-live .sl-reading-player { height: auto; aspect-ratio: 1.6; }
+  .bk:not(.a4) .bk-magazine .sl-reading-lead, .bk:not(.a4) .bk-magazine .sl-reading-think p { font-size: 14px; }
+  .bk.a4 .sl-reading-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 7mm; }
+  .bk.a4 .sl-reading-columns > div + div { border-left: 1px solid var(--read-rule); padding-left: 7mm; }
+  .bk.a4 .sl-reading-actions { display: flex; }
+}
+@media print {
+  .sl-reading.is-live .sl-reading-hero > img { display: block; }
+  .sl-reading.is-live .sl-reading-photo-caption { display: grid; }
+  .sl-reading.is-live .sl-reading-player, .sl-reading.is-live .sl-reading-video-caption { display: none !important; }
+  html:has(.reading-page), body:has(.reading-page) { background: #fff !important; }
+  .reading-page { width: 210mm; max-width: none; padding: 12mm 14mm; margin: 0; }
+  .reading-page .sl-reading { border: 0; margin: 0; padding: 0; font-size: 10.5pt; line-height: 1.65; }
+  .reading-page .sl-reading h2 { font-size: 24pt; }
+  .reading-page .sl-reading-head { margin-bottom: 4mm; }
+  .reading-page .sl-reading-hero > img { height: 48mm; aspect-ratio: auto; }
+  .reading-page .sl-reading-section { margin-bottom: 3.5mm; }
+  .reading-page .sl-reading-section h3 { font-size: 11pt; }
+  .reading-page .sl-reading-look { margin: 2.5mm 0 4mm; }
+  .reading-page .sl-reading-think { padding: 3mm 0; margin-bottom: 3mm; }
+  .reading-page .sl-reading-actions a, .bk-magazine .sl-reading-actions a { min-height: 6mm; font-size: 9pt; }
+  .sl-reading-actions .sl-reading-online { display: none; }
+  .sl-reading-actions .sl-reading-printlink { display: inline-flex; }
+  .sl-reading { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .sl-reading a { text-decoration: none; }
+}

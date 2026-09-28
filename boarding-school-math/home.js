@@ -749,23 +749,44 @@
   function updateQuickStart(grade) {
     const normalized = String(grade);
     const numericGrade = Number(normalized);
+    const assessment = document.getElementById("quick-assessment");
+    const plan = document.getElementById("quick-plan");
     const sasmo = document.getElementById("quick-sasmo");
     const concept = document.getElementById("quick-concept");
     const map = document.getElementById("quick-map");
+    const planTitle = plan && plan.querySelector("strong");
+    const planNote = plan && plan.querySelector("small");
     const sasmoTitle = sasmo && sasmo.querySelector("strong");
     const sasmoNote = sasmo && sasmo.querySelector("small");
     const conceptNote = concept && concept.querySelector("small");
     const mapTitle = map && map.querySelector("strong");
     const mapNote = map && map.querySelector("small");
-    if (numericGrade >= 1 && numericGrade <= 11) {
+    if (assessment) assessment.href = `./assessment-entry.html?grade=${numericGrade === 0 ? 3 : numericGrade}`;
+    if (numericGrade === 6) {
+      plan.href = "./learning-plan.html?goal=school-g6";
+      planTitle.textContent = "나의 학습 계획 만들기";
+      planNote.textContent = "진단 → 예상 성적 → 오늘의 학습";
+      sasmo.href = "./learning-plan.html?goal=sasmo-primary6";
+      sasmoTitle.textContent = "SASMO 학습 계획";
+      sasmoNote.textContent = "준비도 점검 → 유형·개념·모의";
+    } else if (numericGrade >= 1 && numericGrade <= 11) {
+      plan.href = `./catalog.html?role=student&grade=${numericGrade}`;
+      planTitle.textContent = `${gradeName(numericGrade)} 학습 범위 보기`;
+      planNote.textContent = "진단·개념·워크북 연결 범위를 준비 중입니다.";
       sasmo.href = `./sasmo.html?grade=${numericGrade}#past-papers`;
-      sasmoTitle.textContent = numericGrade === 11 ? "SASMO 공식 자료 보기" : "SASMO 기출 풀기";
-      sasmoNote.textContent = numericGrade === 11 ? "Grade 11 연도별 공식 LMS" : `Grade ${numericGrade} 연도별 문제·정답·해설`;
+      sasmoTitle.textContent = numericGrade === 11 ? "SASMO 공식 자료 보기" : "SASMO 준비 경로";
+      sasmoNote.textContent = numericGrade === 11 ? "Grade 11 연도별 공식 LMS" : `Grade ${numericGrade} 준비 범위와 자료`;
     } else if (numericGrade === 0) {
+      plan.href = "./catalog.html?role=student&grade=K";
+      planTitle.textContent = "Kindergarten 학습 범위 보기";
+      planNote.textContent = "진단·개념·워크북 연결 범위를 준비 중입니다.";
       sasmo.href = "./sasmo.html?grade=K2#past-papers";
       sasmoTitle.textContent = "SASMO K2 자료 보기";
       sasmoNote.textContent = "확인된 과거 원문과 공식 안내";
     } else {
+      plan.href = "#goals";
+      planTitle.textContent = "나의 과정 지도 보기";
+      planNote.textContent = "과정·선수개념·다음 단계를 먼저 확인합니다.";
       sasmo.href = `./sasmo.html?grade=${numericGrade}#past-papers`;
       sasmoTitle.textContent = "SASMO 준비 보기";
       sasmoNote.textContent = "확인된 과거 원문과 공식 안내";
@@ -780,14 +801,14 @@
       concept.href = "#goals";
       conceptNote.textContent = `${gradeName(normalized)} 과정 경로 보기`;
     }
-    if (numericGrade >= 9) {
+    if (map && numericGrade >= 9) {
       mapTitle.textContent = "나의 과정 지도 보기";
       mapNote.textContent = `${coursePathways.courses.find(function (course) { return course.id === courseIdForGrade(numericGrade); }).title} · 선수개념 · 다음 과정`;
-    } else {
+    } else if (map) {
       mapTitle.textContent = "학년·영역·과정 지도";
       mapNote.textContent = numericGrade >= 6 ? "영역 · Pre-Algebra 가교 · 다음 과정" : "학년 영역 · 기초 과정 · 다음 과정";
+      map.dataset.quickGrade = normalized;
     }
-    map.dataset.quickGrade = normalized;
   }
 
   const quickStartGrade = document.getElementById("quick-start-grade");

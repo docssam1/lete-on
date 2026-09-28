@@ -54,3 +54,6 @@ audition/
 audition-clone/
 clone/
 clone-ref/
+
+# 독쌤 목소리 복제 작업 폴더(원장님 녹음을 다듬은 참조 음성 — 공개 저장소에 올리지 않는다)
+.docssam-work/

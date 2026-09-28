@@ -140,7 +140,7 @@ const SCENES_C29_31 = {
       dot.visible = true; const a = seg(p, 0.08, 0.4), b = seg(p, 0.45, 0.72);
       const r0 = b * HOT[1]; dot.position.set(x0 + (hx - x0) * a, seatY(r0), seatZ(r0));
       const fade = 1 - seg(p, 0.82, 0.9); dot.material.opacity = fade; glow.intensity = 5 * fade;
-      spot.intensity = 90 + 70 * hop(p, 0.72, 0.88); }); 
+      spot.intensity = 90 + 70 * hop(p, 0.72, 0.88); });
   }},
 
   /* 수직선 위의 위치 — hook: 온도계를 눕히면 그대로 수직선(0 가운데, 오른쪽 양수, 왼쪽 음수) */
