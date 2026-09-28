@@ -43,7 +43,7 @@ console.log(`사다리 길이: ${ladder.length}칸 (수의 나라 4 + 과정 ${l
 const AGE_COURSES = [
   ['pre', null],
   ['g1', 'C1'], ['g2', 'C11'], ['g3', 'C17'], ['adv', 'C26'],
-  ['m1', 'C29'], ['m2', 'C32'], ['m3', 'C34'], ['hi', 'C36']
+  ['m1', 'C29'], ['m2', 'C32'], ['m3', 'C35'], ['hi', 'C38']
 ];
 const ENTRIES = AGE_COURSES.map(([age, key]) => {
   const idx = key === null ? 0 : CORE.rungIndexOfCourse(ladder, key);

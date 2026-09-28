@@ -29,7 +29,7 @@ window.NM_UNITS['M-81'] = {
         desc:{ ko:'꼭짓점이 (2, 3)이니 y=a(x−2)²+3까지는 바로 씁니다. 남은 a는 지나는 점 (4, 11)을 넣어 11=a×4+3, 4a=8, <b>a=2</b>로 구합니다.', en:'A vertex at (2, 3) gets you straight to y=a(x-2)2+3. For a, substitute the point (4, 11): 11 = 4a+3, so 4a = 8 and <b>a = 2</b>.', zh:'顶点是(2, 3)，所以直接写到y=a(x−2)²+3。剩下的a代入点(4, 11)：11=a×4+3，4a=8，<b>a=2</b>。' },
         mathSteps:['y = a(x-2)^2 + 3', '11 = a \\times 4 + 3', 'a = 2'],
         result:{ ko:'맞는 꼴로 시작하면 점 하나로 끝납니다!', en:'Start from the right form and one point finishes it!', zh:'从对的形式入手，一个点就够了！' },
-        book:{ ko:'점을 넣을 때 <b>x부터 넣어 괄호 안을 먼저 계산</b>하세요. (4−2)²=4를 먼저 구해 두면 남는 것은 간단한 일차방정식 하나뿐입니다.', en:'When substituting, <b>put x in and work out the bracket first</b>. Once (4-2)2 = 4 is done, all that remains is a simple linear equation.', zh:'代入时<b>先代x，先算括号</b>。先求出(4−2)²=4，剩下的就只是一个简单的一元一次方程。' } },
+        book:{ ko:'점을 넣을 때 <b>x부터 넣어 괄호 안을 먼저 계산</b>하세요. (4−2)²=4를 먼저 구해 두면 남는 것은 간단한 일차방정식 하나뿐입니다.', en:'When substituting, <b>put x in and work out the bracket first</b>. Once (4−2)² = 4 is done, all that remains is a simple linear equation.', zh:'代入时<b>先代x，先算括号</b>。先求出(4−2)²=4，剩下的就只是一个简单的一元一次方程。' } },
 
       { tag:{ ko:'② x축과의 두 교점을 알 때', en:'2) When you know both x-intercepts', zh:'② 已知与x轴的两个交点时' },
         head:{ ko:'\\text{x축과 } \\left(1,\\, 0\\right), \\left(3,\\, 0\\right) \\quad\\Rightarrow\\quad y = a(x-1)(x-3)', en:'\\text{x-axis at } \\left(1,\\, 0\\right), \\left(3,\\, 0\\right) \\quad\\Rightarrow\\quad y = a(x-1)(x-3)', zh:'\\text{与x轴交于} \\left(1,\\, 0\\right), \\left(3,\\, 0\\right) \\quad\\Rightarrow\\quad y = a(x-1)(x-3)' },

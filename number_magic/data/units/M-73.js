@@ -29,7 +29,7 @@ window.NM_UNITS['M-73'] = {
         desc:{ ko:'x 자리에 3을 그대로 넣습니다. 2×3+1=7이니 f(3)=7입니다. f(−2)처럼 음수를 넣을 때는 <b>괄호로 감싸</b> 2×(−2)+1=−3이라고 계산합니다.', en:'Put 3 straight into the x slot: 2x3+1 = 7, so f(3) = 7. For a negative like f(-2), <b>wrap it in brackets</b>: 2x(-2)+1 = -3.', zh:'把3直接代入x的位置：2×3+1=7，所以f(3)=7。代入f(−2)这样的负数时要<b>加括号</b>：2×(−2)+1=−3。' },
         mathSteps:['f(3) = 2 \\times 3 + 1', 'f(3) = 7'],
         result:{ ko:'f(3)은 곱셈이 아니라 "3을 넣은 결과"입니다!', en:'f(3) is not a product - it is the result for 3!', zh:'f(3)不是乘法，是"代入3的结果"！' },
-        book:{ ko:'하나의 x에 <b>하나의 y</b>만 대응해야 함수입니다. x 하나에 y가 둘이면(예: y²=x) 함수가 아닙니다 — 자판기가 같은 동전에 매번 다른 것을 내놓으면 고장인 것과 같습니다.', en:'A function must give <b>exactly one</b> y for each x. If one x could give two y values - as in y2 = x - it is not a function, just as a vending machine giving something different each time would be broken.', zh:'一个x只能对应<b>一个y</b>才叫函数。一个x对应两个y(如y²=x)就不是函数——就像自动售货机对同样的币每次给不同的东西，那是坏了。' } },
+        book:{ ko:'하나의 x에 <b>하나의 y</b>만 대응해야 함수입니다. x 하나에 y가 둘이면(예: y²=x) 함수가 아닙니다 — 자판기가 같은 동전에 매번 다른 것을 내놓으면 고장인 것과 같습니다.', en:'A function must give <b>exactly one</b> y for each x. If one x could give two y values - as in y² = x - it is not a function, just as a vending machine giving something different each time would be broken.', zh:'一个x只能对应<b>一个y</b>才叫函数。一个x对应两个y(如y²=x)就不是函数——就像自动售货机对同样的币每次给不同的东西，那是坏了。' } },
 
       { tag:{ ko:'② 거꾸로 — 나온 값에서 넣은 값 찾기', en:'2) Backwards - from the output to the input', zh:'② 反过来——由输出求输入' },
         head:{ ko:'f(x) = 2x + 1 = 11 \\quad\\Rightarrow\\quad x = 5', en:'f(x) = 2x + 1 = 11 \\quad\\Rightarrow\\quad x = 5', zh:'f(x) = 2x + 1 = 11 \\quad\\Rightarrow\\quad x = 5' },

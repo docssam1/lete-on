@@ -197,7 +197,7 @@ window.NM_AVATAR = {
             en:'Gathers scattered numbers and sums them at once — a steady senior who sees the whole at a glance.',
             zh:'把散落的数字聚起来一次整理，一眼看穿全局的稳重前辈。'},
       power:{ko:'여러 개를 모아 하나의 결과로 만들어요.',en:'Gathers many into a single result.',zh:'把许多聚成一个结果。'}},
-    {id:'infinity', glyph:'∞', course:42, price:190,
+    {id:'infinity', glyph:'∞', course:41, price:190,
       ko:'무한', en:'Infinity', zh:'无穷大',
       role:{ko:'무한의 문지기',en:'Keeper of the Endless',zh:'无限的守门人'},
       desc:{ko:'가장 오래된 존재로 끝없이 이어지는 가능성을 지켜요. 모든 마법의 근원이자 숫자 마을의 수호자예요.',

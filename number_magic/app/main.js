@@ -1316,7 +1316,7 @@ function screenTown(){
           <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker('elder',56):(window.renderHumanChar?window.renderHumanChar('elder',52):'')}</div>
           <div class="shadow"></div></div>
         <div class="nb nb-doc nb-walker" id="nbDoc"><div class="speech"></div>
-          <div class="nb-name">${S.lang==='ko'?'독쌤':S.lang==='en'?'Doc-ssaem':'独老师'}</div>
+          <div class="nb-name">${S.lang==='ko'?'독쌤':S.lang==='en'?'Doc-T':'独先生'}</div>
           <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker('doc',56):(window.renderHumanChar?window.renderHumanChar('doc',52):'')}</div>
           <div class="shadow"></div></div>
         <div class="nb" id="nbPoco"><div class="speech"></div>
@@ -1359,6 +1359,7 @@ function screenTown(){
       </div>
     </div>`;
   townCleanup=initTownWorld(scr);
+  mountTown3DInto(scr);
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
@@ -1467,15 +1468,22 @@ function screenRoadmap(){
   if(!window.NM_ROADMAP){scr.innerHTML='<div class="nm-card">roadmap.js 없음</div>';return;}
   const road=NM_ROADMAP;
   const nextId=findNextRoadUnit();
-  let html=`<div class="nm-road-wrap">
+  /* 3D 여행 그림책(app/story3d, 2026-09-26)과 그 2D 대체(단계 꼬리표 줄)가 같이 쓰는 단계 목록 —
+     아래 단계 머리와 같은 계산(도장 받은 유닛 비율). 잠그지 않는다. */
+  const storyStages=roadStoryStages(road);
+  const storyCur=roadStoryCurrentStage(road,nextId);
+  let html=`<div class="nm-road-wrap nm-storyroad">
     <div class="nm-road-header">
       <button class="nm-back" id="roadBack">${t('back')}</button>
-      <div class="nm-unit-title">🗺️ ${L(road.title)}</div>
+      <div class="nm-unit-title"><span class="nm-road-title-ic" aria-hidden="true">🗺️</span> ${L(road.title)}</div>
       <div class="nm-road-sub">${L(road.subtitle)}</div>
       <div class="nm-road-nav">
         <button class="nm-btn nm-btn-secondary" id="roadSuggested" ${nextId?'':'disabled'}>${S.lang==='ko'?'추천 위치':S.lang==='en'?'Suggested start':'推荐位置'}</button>
         <button class="nm-btn nm-btn-secondary" id="roadBrowseStart">${S.lang==='ko'?'처음부터 둘러보기':S.lang==='en'?'Browse from the beginning':'从头浏览'}</button>
       </div>
+    </div>
+    <div class="nm-story-hero" id="storyHero">
+      <nav class="nm-story-stages" aria-label="${esc(S.lang==='ko'?'학습 단계':S.lang==='en'?'Stages':'学习阶段')}">${storyStages.map(s=>`<button type="button" class="nm-story-chip${s.key===storyCur?' here':''}" data-stage="${esc(s.key)}" style="--st:${esc(s.accent)}"><span aria-hidden="true">${s.icon||''}</span><b>${esc(s.name)}</b><small>${s.pct}%</small></button>`).join('')}</nav>
     </div>
     <div class="nm-road-path">`;
 
@@ -1496,10 +1504,15 @@ function screenRoadmap(){
           (c2&&c2.units||[]).forEach(uid=>{ if(UNITS[uid]){tot++; if(stepDone(uid,'stamp'))don++;} });
         });
         const pct=tot?Math.round(don/tot*100):0;
+        /* 이야기 장 번호 + 한 줄 이야기(2026-09-26, 원장 "스토리가 있어야지") — 3D 그림책과 같은 글 */
+        const chN=storyStages.findIndex(x=>x.key===st.key)+1;
+        const beat=STORY_BEATS[st.key]?L(STORY_BEATS[st.key]):'';
         html+=`<div class="nm-road-stage" data-stage="${esc(st.key)}" style="--st:${esc(st.accent||'#0E2C57')}">
+          ${chN>0?`<div class="nm-road-stage-eb">${esc(S.lang==='ko'?`제${chN}장`:S.lang==='en'?`Chapter ${chN}`:`第${chN}章`)}</div>`:''}
           <div class="nm-road-stage-top"><span class="nm-road-stage-ic">${st.icon||''}</span>
             <b>${esc(L(st.name).split(' — ')[0])}</b>
             <span class="nm-road-stage-band">${esc(L(st.band))}</span></div>
+          ${beat?`<p class="nm-road-stage-beat">${esc(beat)}</p>`:''}
           <div class="nm-road-stage-bar"><i style="width:${pct}%"></i></div>
           <div class="nm-road-stage-meta">${esc(L(st.meta))} · ${pct}%</div>
         </div>`;
@@ -1571,11 +1584,21 @@ function screenRoadmap(){
 
   /* R0 배너의 "보러가기"가 세운 챕터 포커스 — courseroad의 scrollIntoView와 같은 패턴.
      한 번 쓰고 지운다(다음 재렌더 때 다시 스크롤 튀지 않게). */
+  /* 3D 그림책이 서면 첫 화면은 그림책(아이가 추천 단계 옆에 서 있다)이고, 목록으로 자동으로 내려가지 않는다.
+     3D 를 못 쓰면 예전처럼 추천 위치로 바로 내려간다. */
+  let autoSuggest=false;
   if(S._roadFocusChapter){
     const chEl=scr.querySelector(`.nm-road-chapter[data-chid="${S._roadFocusChapter}"]`);
     if(chEl)chEl.scrollIntoView({block:'start'});
     S._roadFocusChapter=null;
-  }else if(hasRoadCourseContext())goSuggested(false);
+  }else if(hasRoadCourseContext())autoSuggest=true;
+  const goStage=key=>roadScrollToStage(scr,key);
+  scr.querySelectorAll('.nm-story-chip[data-stage]').forEach(b=>{b.onclick=()=>goStage(b.dataset.stage);});
+  mountStory3DInto(scr,storyStages,storyCur,nextId,{
+    onStage:goStage,
+    onHere:()=>goSuggested(true),
+    onFail:()=>{ if(autoSuggest)goSuggested(false); }
+  });
 
   $('#roadBack').onclick=()=>{S.view='town';save();render();};
 
@@ -1609,6 +1632,92 @@ function screenRoadmap(){
       window.open(el.dataset.link,'_blank','noopener');
     };
   });
+}
+
+/* ── 스토리 모드의 장(章)마다 한 줄 이야기 (2026-09-26, 원장 "스토리가 있어야지") ──
+   마을 세계관(마을세계관-설계.md — 북쪽 경시의 탑, 동쪽 다리 건너 중등·고등)과 data/stages.js 의
+   단계 설명(□가 자라 x, 해발과 해저 …)에서만 가져온 분위기 글이다. 새 수학 내용을 지어내지 않는다. */
+const STORY_BEATS={
+  numberland:{ko:'여행은 병아리들이 사는 수의 나라에서 시작돼요. 톡톡 짚으며 하나, 둘, 셋 — 마지막 수가 전체 개수예요.',
+    en:'The journey begins in Number Land, where the chicks live. Tap and count one, two, three — the last number tells how many.',
+    zh:'旅程从小鸡们住的数字之国开始。点一点，数一、二、三——最后的数就是总数。'},
+  sprout:{ko:'마을 밭에 새싹이 돋았어요. 숫자 친구와 짝을 지어 10을 만들면 계산이 쑥쑥 자라요.',
+    en:'Sprouts are coming up in the village field. Pair up with your number friend to make 10, and your sums start to grow.',
+    zh:'村子的田里冒出了新芽。和数字朋友配对凑成10，计算就会一点点长大。'},
+  leap:{ko:'새싹이 로켓처럼 뛰어올라요. 큰 수도 조각조각 쪼개면 곱셈이 가벼워져요.',
+    en:'The sprout leaps up like a rocket. Split a big number into pieces and multiplication gets light.',
+    zh:'新芽像火箭一样跃起。把大数拆成小块，乘法就变轻了。'},
+  mastery:{ko:'수와 수 사이의 비밀 관계를 찾으면 왕관이 반짝여요. 계산을 줄이는 마법을 모아요.',
+    en:'Find the secret links between numbers and the crown begins to shine. Collect the magic that makes calculating shorter.',
+    zh:'找到数与数之间的秘密关系，王冠就会闪闪发光。收集让计算变短的魔法吧。'},
+  tower:{ko:'마을 북쪽, 어려운 문제를 좋아하는 아이들이 오르는 탑이에요. 건너뛰어도 괜찮아요 — 언제든 돌아올 수 있어요.',
+    en:'North of the village stands the tower for children who love hard puzzles. You may skip it and come back any time.',
+    zh:'村子北边，是喜欢难题的孩子们攀登的塔。跳过也没关系——随时都可以回来。'},
+  middle:{ko:'동쪽 다리를 건너면 기호가 바뀌는 땅이에요. 초등의 □가 자라 x가 되고, 해발과 해저가 음수가 돼요.',
+    en:'Cross the east bridge into the land where symbols change. The □ from Grade 1 grows into x, and altitude and depth become negative numbers.',
+    zh:'走过东边的桥，就是符号改变的土地。小学的□长成了x，海拔和海底变成了负数。'},
+  high:{ko:'구름 걸린 봉우리에서 새 기호들이 기다려요. 이미 아는 마법에 새 이름표를 붙이는 곳이에요.',
+    en:'On the cloud-wrapped peak, new symbols are waiting. Here you give new labels to magic you already know.',
+    zh:'云雾缭绕的山峰上，新的符号在等你。在这里，给熟悉的魔法贴上新标签。'}
+};
+/* ── 스토리 모드 3D 그림책(app/story3d) 도우미 (2026-09-26) ──
+   단계 목록: 지도 챕터에 처음 나오는 순서대로, 단계 머리와 같은 진도 계산(잠금 없음). */
+function roadStoryStages(road){
+  const stageOf=window.NM_STAGE_OF_CHAPTER; if(!stageOf||!road)return[];
+  const out=[],seen={};
+  road.chapters.forEach(ch=>{
+    const st=ch.id&&stageOf(ch.id); if(!st||seen[st.key])return; seen[st.key]=1;
+    let tot=0,don=0;
+    st.chapters.forEach(cid=>{const c2=road.chapters.find(x=>x.id===cid);(c2&&c2.units||[]).forEach(uid=>{if(UNITS[uid]){tot++;if(stepDone(uid,'stamp'))don++;}});});
+    out.push({key:st.key,icon:st.icon||'',accent:st.accent||'#0E2C57',name:L(st.name).split(' — ')[0],band:L(st.band),pct:tot?Math.round(don/tot*100):0,
+      beat:STORY_BEATS[st.key]?L(STORY_BEATS[st.key]):''});
+  });
+  return out;
+}
+/* 아이가 서 있는 단계 — "여기부터!" 유닛의 단계, 없으면 과정 시작 챕터의 단계 */
+function roadStoryCurrentStage(road,nextId){
+  const stageOf=window.NM_STAGE_OF_CHAPTER; if(!stageOf||!road)return null;
+  let ch=nextId?road.chapters.find(c=>(c.units||[]).indexOf(nextId)>=0):null;
+  if(!ch)ch=road.chapters[roadStartChapterIdx()]||road.chapters[0];
+  const st=ch&&ch.id&&stageOf(ch.id);
+  return st?st.key:null;
+}
+/* 단계 머리로 스크롤(끈적이는 머리 띠 밑에 오게) + 잠깐 금빛으로 알려 준다 */
+function roadScrollToStage(scr,key){
+  const wrap=scr.querySelector('.nm-road-wrap');
+  const el=scr.querySelector(`.nm-road-stage[data-stage="${key}"]`);
+  if(!wrap||!el)return;
+  const hd=scr.querySelector('.nm-road-header');
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const top=wrap.scrollTop+el.getBoundingClientRect().top-wrap.getBoundingClientRect().top-(hd?hd.offsetHeight:0)-10;
+  /* 멀리 뛰면(화면 세 장 넘게) 부드럽게 굴리지 않고 바로 간다 — 긴 목록을 몇 초씩 굴러가지 않게 */
+  const far=Math.abs(top-wrap.scrollTop)>wrap.clientHeight*3;
+  if(wrap.scrollTo)wrap.scrollTo({top:Math.max(0,top),behavior:reduce||far?'auto':'smooth'});else wrap.scrollTop=Math.max(0,top);
+  el.classList.remove('is-flash');void el.offsetWidth;el.classList.add('is-flash');
+  if(!el.hasAttribute('tabindex'))el.tabIndex=-1;
+  el.focus({preventScroll:true});
+}
+/* 스토리 모드 머리에 3D 여행 그림책을 세운다 — 못 세우면 2D 단계 꼬리표 줄이 그대로 남는다.
+   정리는 mountTitle3DInto·road3d 와 같이 townCleanup 사슬에 건다(render()가 화면을 떠날 때 부른다). */
+function mountStory3DInto(scr,stages,current,nextId,o){
+  const hero=scr.querySelector('#storyHero');
+  if(!hero||!stages.length){ if(o.onFail)o.onFail(); return; }
+  const box=document.createElement('div');
+  box.className='nm-story3d';
+  hero.appendChild(box);
+  hero.classList.add('is-3d');   /* 자리를 먼저 잡는다(3D 가 서는 동안 목록이 튀지 않게). 실패하면 되돌린다 */
+  const u=nextId&&UNITS[nextId];
+  const here=u?{label:S.lang==='ko'?'여기부터!':S.lang==='en'?'Start here!':'从这里！',sub:L(u.title)}:null;
+  const fail=()=>{ box.remove(); hero.classList.remove('is-3d'); if(hero.isConnected&&o.onFail)o.onFail(); };
+  import('./story3d/story3d.js').then(m=>m.mountStory3D(box,{
+    lang:S.lang, stages, current, here, avatar:{kind:avatarKind()},
+    onStage:o.onStage, onHere:o.onHere
+  })).then(ctl=>{
+    if(!ctl){ fail(); return; }
+    if(!box.isConnected){ ctl.dispose(); return; }
+    const prev=townCleanup;
+    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); };
+  }).catch(e=>{ console.warn('[story3d]',e); fail(); });
 }
 
 /* 학생의 현재 과정이 앱 지도의 어느 챕터에서 시작하는가 (2026-09-23)
@@ -1767,7 +1876,7 @@ function docStripHtml(size,lineHtml){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   return `<div class="nm-host doc">
     ${window.renderHumanChar?window.renderHumanChar('doc',size||44):''}
-    <div class="nm-host-bubble"><b>${lk('독쌤','Doc-ssaem','独老师')}</b><span>${lineHtml}</span></div>
+    <div class="nm-host-bubble"><b>${lk('독쌤','Doc-T','独先生')}</b><span>${lineHtml}</span></div>
   </div>`;
 }
 /* 유닛 화면 상단의 독쌤 학습 안내 — 유닛의 "첫 스텝"에서만 뜬다(연습/도장 등은 X). */
@@ -2499,12 +2608,14 @@ function middlePacingHtml(tier){
     return `${th?L(th.name):b.t} · ${lv?L(lv.label):'L'+b.lv} ${b.n}문항`;
   };
   return `<details class="nm-middle-pacing" id="middlePacing${grade}">
-    <summary>${esc(plan.title)}<span>주 2회 · ${plan.weeks}주 · ${plan.sessions.length}회 펼치기</span></summary>
-    <p class="nm-mp-intro">${esc(plan.scope)}.<br>
-      <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
-      위 정규 과정과 <strong>같은 회차</strong>를 학년별로 모아 보인 표입니다. 한 회는 하루 약 ${plan.grade===1?30:40}분 —
-      <strong>교과 연산 → 창의 연산 → 적용</strong> 순서이고, 쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.
-      시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 주차에 맞추려고 이해를 건너뛰지 마세요.</p>
+    <summary><span class="nm-mp-sumt"><small>정규 과정 회차표</small>${esc(plan.title)}</span><span class="nm-mp-summeta">주 2회 · <span class="nm-cr-tnum">${plan.weeks}</span>주 · 수업 <span class="nm-cr-tnum">${plan.sessions.length}</span>회 · 펼쳐 보기</span></summary>
+    <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
+    <p class="nm-mp-intro"><b>${esc(plan.scope)}.</b> 위 정규 과정과 <strong>같은 회차</strong>를 학년별로 모아 보인 표입니다.</p>
+    <ul class="nm-mp-facts">
+      <li>한 회는 하루 약 ${plan.grade===1?30:40}분 — <strong>교과 연산 → 창의 연산 → 적용</strong> 순서입니다.</li>
+      <li>쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.</li>
+      <li>시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 주차에 맞추려고 이해를 건너뛰지 마세요.</li>
+    </ul>
     <ol class="nm-mp-sessions">${plan.sessions.map(s=>{
       const count=s.blocks.reduce((n,b)=>n+b.n,0);
       const draw=s.blocks.filter(b=>b.kind==='drawing').reduce((n,b)=>n+b.n,0);
@@ -3112,6 +3223,326 @@ function openStudentSwitch(){
   document.getElementById('whoAge').onclick=()=>{ close(); openAgeSheet(()=>render()); };
 }
 
+/* 연산 로드맵의 선 아이콘(2026-09-26 v2 "밝은 신비") — 제목 앞 이모지 대신 1.6px 선 그림.
+   색은 currentColor(잉크 남색 또는 가는 금선) — 글자와 같은 무게로 읽힌다. */
+function crIc(name){
+  const P={
+    flag:'<path d="M6 21V4"/><path d="M6 4.5h11l-2.6 3.8L17 12H6"/>',
+    pin:'<path d="M12 21s-6.5-6.9-6.5-11.5a6.5 6.5 0 0 1 13 0C18.5 14.1 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.2"/>',
+    target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".9" fill="currentColor"/>',
+    compass:'<circle cx="12" cy="12" r="8.5"/><path d="M15.2 8.8l-1.9 4.5-4.5 1.9 1.9-4.5z"/>',
+    check:'<circle cx="12" cy="12" r="8.5"/><path d="M8.2 12.3l2.6 2.5 5-5.4"/>',
+    clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+    info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.2"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/>',
+    crown:'<path d="M4.5 17.5h15l1-9-5 3.5L12 6l-3.5 6-5-3.5z"/>',
+    tower:'<path d="M8 21V9h8v12"/><path d="M7 9l5-5 5 5"/><path d="M11 21v-4h2v4"/>',
+    flask:'<path d="M9.5 3.5h5"/><path d="M10.5 3.5v5.2L5.6 17.6A2 2 0 0 0 7.4 20.5h9.2a2 2 0 0 0 1.8-2.9l-4.9-8.9V3.5"/><path d="M7.8 15h8.4"/>',
+    steps:'<path d="M4 19.5h4.5v-4.5H13v-4.5h4.5V6H21"/>',
+    star:'<path d="M12 3.8l1.9 5.3 5.3 1.9-5.3 1.9L12 18.2l-1.9-5.3L4.8 11l5.3-1.9z"/>',
+    arrow:'<path d="M5 12h13"/><path d="M13 7l5 5-5 5"/>',
+    pack:'<path d="M4.5 8.5L12 4.5l7.5 4v8L12 20.5l-7.5-4z"/><path d="M4.5 8.5L12 12.5l7.5-4"/><path d="M12 12.5v8"/>'
+  };
+  return `<svg class="nm-cr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[name]||''}</svg>`;
+}
+/* ============================================================
+   속도 비교 진단 (2026-09-26, 원장 "지금 속도면 S학원 A반 / S학원 프리미어 / KMO 속도를
+   알 수 있고, 상위 레벨이 되려면 어떻게 해야 하고 기간을 줄여야 하는지").
+   기준표·마일스톤 대응·판정은 app/pace-compare.js(출처 주석 포함). 여기서는 주차 계산을
+   새로 하지 않고 이 화면이 이미 쓰는 roadTotals()/coursePaceWeeks()/roadPaceMult() 를 넘긴다.
+   아무것도 잠그지 않는다 — 안내뿐이다.
+   ============================================================ */
+/* 설정 하나(cad·pace·speed)에서 "지금 자리 → 과정 N 시작"까지 주. 지금 과정에서 끝낸 몫은 뺀다. */
+function paceWeeksToFn(curNum, curFrac, cad, pace, speed){
+  const mult=roadPaceMult(pace)/(speed||1);
+  const cur=roadCourseList().find(x=>x.num===curNum);
+  const curW=cur?coursePaceWeeks((cur.c.sessions||[]).length,cad,mult):0;
+  return target=>{
+    if(target<=curNum) return 0;
+    return Math.max(0, roadTotals(curNum,target-1,cad,mult).weeks - curFrac*curW);
+  };
+}
+/* 판정 한 벌 — 화면과 검사기(window.NM_PACE_DIAG)가 같은 것을 쓴다.
+   o 로 설정·과정·나이를 바꿔 볼 수 있다(검사기용). 나이를 모르면 null. */
+function paceCompareResult(o){
+  const PC=window.NM_PACE_COMPARE;
+  if(!PC) return null;
+  o=o||{};
+  const smNow=o.smNow!=null?o.smNow:schoolMonths();
+  if(smNow==null) return null;
+  const curKey=o.curKey||currentCourseKey();
+  const c=(window.NM_COURSES||{})[curKey];
+  const curNum=parseInt(String(curKey).replace(/^C/,''),10);
+  let curFrac=o.curFrac;
+  if(curFrac==null){ const p=c?courseProgress(c):{done:0,total:0}; curFrac=p.total?p.done/p.total:0; }
+  const cur={cad:o.cad||S.roadCadence, pace:o.pace||roadPaceDef(S.roadPace).key, speed:o.speed||S.roadSpeed||1};
+  const ctx={curNum, curFrac, smNow, weeksTo:paceWeeksToFn(curNum,curFrac,cur.cad,cur.pace,cur.speed)};
+  const ev=PC.evaluate(ctx);
+  let sugg=[];
+  if(ev.target){
+    const settings=[];
+    ['w1','w2'].forEach(cad=>ROAD_PACES.forEach(p=>ROAD_MULTS_LIST.forEach(speed=>{
+      settings.push({cad, pace:p.key, speed, weeksTo:paceWeeksToFn(curNum,curFrac,cad,p.key,speed)});
+    })));
+    sugg=PC.suggest(ctx, ev.target.key, cur, settings, ROAD_PACES.map(p=>p.key));
+  }
+  return {ctx, cur, curKey, ev, sugg};
+}
+window.NM_PACE_DIAG=paceCompareResult;
+/* ── 로드맵 시기(2026-09-28, 원장 "각 과정이 언제 시작하고 언제 끝나는지") ──
+   과정마다 시작·끝 학령개월. 계산은 **속도 비교 카드와 똑같은 것**을 쓴다 —
+   paceWeeksToFn(지금 자리 → 과정 N 시작까지 주) + NM_PACE_COMPARE.childSmAt.
+   과정 N 의 끝 = 과정 N+1 의 시작이라 과정 사이에 빈틈이 없다(check-road-timing.js).
+   지금 과정은 시작이 "지금"이고, 앞의 과정은 지났다. 나이를 모르면 sm 값은 null(주차만). */
+function roadTiming(o){
+  o=o||{};
+  const PC=window.NM_PACE_COMPARE;
+  const smNow=o.smNow!==undefined?o.smNow:schoolMonths();
+  const curKey=o.curKey||currentCourseKey();
+  const c=(window.NM_COURSES||{})[curKey];
+  const curNum=parseInt(String(curKey).replace(/^C/,''),10);
+  let curFrac=o.curFrac;
+  if(curFrac==null){ const p=c?courseProgress(c):{done:0,total:0}; curFrac=p.total?p.done/p.total:0; }
+  const cad=o.cad||S.roadCadence, pace=o.pace||roadPaceDef(S.roadPace).key, speed=o.speed||S.roadSpeed||1;
+  const weeksTo=paceWeeksToFn(curNum,curFrac,cad,pace,speed);
+  const ctx={curNum, curFrac, smNow, weeksTo};
+  const WPM=PC?PC.WEEKS_PER_MONTH:52/12;
+  const at=n=>smNow==null?null:(PC?PC.childSmAt(ctx,n):(n<=curNum?null:smNow+weeksTo(n)/WPM));
+  const rows={};
+  roadCourseList().forEach(x=>{
+    const past=x.num<curNum, cur=x.num===curNum;
+    rows[x.key]={ num:x.num, past, cur,
+      startWeeks: past?null:weeksTo(x.num), endWeeks: past?null:weeksTo(x.num+1),
+      startSm: past||cur?null:at(x.num), endSm: past?null:at(x.num+1) };
+  });
+  return {smNow, curNum, curFrac, cad, pace, speed, rows};
+}
+window.NM_ROAD_TIMING=roadTiming;
+/* 3D 지도 이름표용 — 과정 키 → 시작 시기 한 마디("초1 5월" · "지금" · 지난 과정은 빈 문자열). 나이를 모르면 전부 빈 문자열 */
+function roadStartLabels(){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const tm=roadTiming(), out={};
+  Object.keys(tm.rows).forEach(k=>{
+    const r=tm.rows[k];
+    out[k]=tm.smNow==null||r.past?'':r.cur?(ko?'지금':en?'Now':'现在'):pcAgeLabel(r.startSm);
+  });
+  return out;
+}
+/* 길 위의 이정표 — 중등·중2·고등·미적분이 시작되는 과정. 번호는 데이터에서 찾는다
+   (중등·고등 = 속도 비교 마일스톤, 중2·미적분 = 그 tier 의 첫 과정). */
+function roadMilestones(){
+  const PC=window.NM_PACE_COMPARE;
+  const firstOf=tier=>{ const x=roadCourseList().find(x=>x.c.tier===tier); return x?x.num:null; };
+  const ms=m=>m?m.course:null;
+  return [
+    {id:'MID',  course:PC?ms(PC.milestone('MID')):firstOf('middle1'),   name:PC&&PC.milestone('MID')?PC.milestone('MID').name:{ko:'중등 연산 시작',en:'Start of middle-school arithmetic',zh:'开始初中运算'}},
+    {id:'M2',   course:firstOf('middle2'),   name:{ko:'중2 연산 시작',en:'Start of Grade 8 arithmetic',zh:'开始初二运算'}},
+    {id:'HIGH', course:PC?ms(PC.milestone('HIGH')):firstOf('highmath1'), name:PC&&PC.milestone('HIGH')?PC.milestone('HIGH').name:{ko:'고등 연산 시작',en:'Start of high-school arithmetic',zh:'开始高中运算'}},
+    {id:'CAL',  course:firstOf('calculus1'), name:{ko:'미적분 시작',en:'Start of calculus',zh:'开始微积分'}}
+  ].filter(m=>m.course!=null);
+}
+/* 한 과정의 시기 문구 — "초1 5월 시작 → 초1 8월 끝" / 지금 / 지났어요 / (나이 모름) null */
+function roadWhenHtml(r){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  if(!r) return '';
+  if(r.past) return `<span class="nm-cr-when past">${lk('지났어요','Already past','已经过了')}</span>`;
+  if(r.endSm==null) return '';
+  const e=esc(pcAgeLabel(r.endSm));
+  if(r.cur) return `<span class="nm-cr-when cur"><span class="t">${lk('지금','Now','现在')}</span> → <span class="t nm-cr-tnum">${e}</span> ${lk('끝','end','结束')}</span>`;
+  const s=esc(pcAgeLabel(r.startSm));
+  if(s===e) return `<span class="nm-cr-when"><span class="t nm-cr-tnum">${s}</span> · ${lk('한 달 안에 끝나요','done within the month','一个月内完成')}</span>`;
+  return `<span class="nm-cr-when"><span class="t nm-cr-tnum">${s}</span> ${lk('시작','start','开始')} → <span class="t nm-cr-tnum">${e}</span> ${lk('끝','end','结束')}</span>`;
+}
+/* 과정 설명(한 번 눌러 펼침) — 전부 데이터에서 만든다(courses.js 회차 · threads.js 이름 · 유닛 제목 · hero3d).
+   무엇을 배우나(교과 연산 스레드) · 창의 연산 · 문장제·적용 · 마법 개념(3D 그림 표시) · 마치면 할 수 있는 것. */
+function courseExplainHtml(c){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const lk=(k,e,z)=>ko?k:en?e:z;
+  const TH=window.NM_THREADS||{}, H3=window.NM_HERO3D||{};
+  const uniq=a=>a.filter((v,i)=>a.indexOf(v)===i);
+  const school=[], top={}, creative=[], apply=[];
+  (c.sessions||[]).forEach(s=>{
+    if(s.test) return;
+    (s.school||s.drills||[]).forEach(d=>{ if(d.review) return; school.push(d.t); top[d.t]=Math.max(top[d.t]||0,d.lv||1); });
+    ((s.strategy&&s.strategy.practice)||[]).forEach(d=>creative.push(d.t));
+    (s.application||[]).forEach(d=>{ if(d.review) return; apply.push(d.kind==='drawing'&&d.title?L(d.title):(TH[d.t]?L(TH[d.t].name):d.t)); });
+  });
+  const nm=t=>TH[t]?L(TH[t].name):t;
+  const schoolIds=uniq(school), creIds=uniq(creative).filter(t=>schoolIds.indexOf(t)<0);
+  const units=courseUnitIds(c);
+  const li=(h,body)=>body?`<div class="nm-cr-ex-row"><b>${h}</b><span>${body}</span></div>`:'';
+  const join=a=>a.map(esc).join(' · ');
+  const unitHtml=units.map(u=>`<span class="nm-cr-ex-unit">${esc(L(UNITS[u].title))}${H3[u]?`<i class="nm-cr-ex-3d" title="${lk('3D 그림이 있어요','Has a 3D picture','有3D图')}">3D</i>`:''}</span>`).join('');
+  /* 마치면 — 그 과정에서 닿는 가장 높은 레벨의 이름표(threads.js levels.label) */
+  const after=schoolIds.map(t=>{
+    const th=TH[t]; const lv=th&&(th.levels||[]).find(l=>l.id===top[t]);
+    return esc(nm(t))+(lv&&lv.label?` <small>(${esc(L(lv.label))})</small>`:'');
+  }).join(' · ');
+  const body=li(lk('교과 연산','School arithmetic','教材运算'),join(schoolIds.map(nm)))
+    +li(lk('창의 연산','Creative arithmetic','创意运算'),join(creIds.map(nm)))
+    +li(lk('문장제 · 적용','Word problems · applying','应用题 · 应用'),join(uniq(apply)))
+    +(units.length?`<div class="nm-cr-ex-row"><b>${lk('마법 개념','Magic concepts','魔法概念')}</b><span class="nm-cr-ex-units">${unitHtml}</span></div>`:'')
+    +(after?`<p class="nm-cr-ex-after">${lk('마치면 스스로 풀 수 있어요','Afterwards you can solve on your own','学完后能独立完成')} — ${after}</p>`:'');
+  return body||`<p class="nm-cr-ex-after">${lk('이 과정의 편성은 아직 준비 중이에요.','This course is still being put together.','这个课程还在编排中。')}</p>`;
+}
+/* 학령개월 → 사람 말. 미취학은 한국 나이 "6세 9월", 취학 뒤는 "초1 11월"(schoolMonthsLabel). */
+function pcAgeLabel(sm){
+  sm=Math.round(sm);
+  const ko=S.lang==='ko', en=S.lang==='en';
+  const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if(sm<0){
+    const t=sm+98, a=Math.floor(t/12), m=t%12+1;
+    return ko?`${a}세 ${m}월`:en?`Age ${a} · ${MON[m-1]}`:`${a}岁${m}月`;
+  }
+  if(en){ const g=Math.floor(sm/12)+1, m=((sm%12)+2)%12+1; return `G${g} · ${MON[m-1]}`; }
+  return schoolMonthsLabel(sm);
+}
+function pcTickLabel(sm){
+  const ko=S.lang==='ko', en=S.lang==='en';
+  if(sm<0){ const a=8+Math.round(sm/12); return ko?`${a}세`:en?`Age ${a}`:`${a}岁`; }
+  const g=Math.round(sm/12)+1;
+  return g<=6?(ko?'초'+g:en?'G'+g:'小'+g):g<=9?(ko?'중'+(g-6):en?'G'+g:'初'+(g-6)):(ko?'고'+(g-9):en?'G'+g:'高'+(g-9));
+}
+function paceCompareHtml(){
+  const PC=window.NM_PACE_COMPARE;
+  if(!PC) return '';
+  const T=k=>L(PC.STR[k]);
+  const F=(k,v)=>PC.fmt(L(PC.STR[k]),v);
+  const ko=S.lang==='ko';
+  const head=`<span class="nm-cr-eyebrow">${T('eyebrow')}</span>
+    <div class="nm-cr-cad-h big">${T('title')}</div>
+    <p class="nm-cr-cadlead">${T('lead')}</p>`;
+  const R=paceCompareResult();
+  if(!R){
+    return `<div class="nm-cr-pc" id="crPaceCmp">${head}
+      <div class="nm-pc-needage">${crIc('info')}<span>${T('needAge')}</span>
+        <button class="nm-pc-agebtn" id="pcAge">${T('needAgeBtn')}</button></div></div>`;
+  }
+  const {ctx, ev, sugg, cur}=R;
+  const rowOf=k=>ev.rows.find(r=>r.key===k);
+  const bName=k=>esc(L(PC.bench(k).name));
+  const mo=v=>Math.max(1,Math.round(Math.abs(v)));
+  const deltaTxt=r=>{
+    if(r.status==='out') return T('outShort');
+    if(Math.abs(r.delta)<0.5) return T('even');
+    return r.delta<0?F('ahead',{n:mo(r.delta)}):F('behind',{n:mo(r.delta)});
+  };
+  /* 나이 줄 */
+  const ageRow=`<div class="nm-pc-age"><span>${T('ageNow')}</span><b class="nm-cr-tnum">${esc(pcAgeLabel(ctx.smNow))}</b>
+    <em>${T('today')}</em><button class="nm-pc-agebtn sm" id="pcAge">${T('change')}</button></div>`;
+
+  /* 판정 + 세 단 사다리 게이지 */
+  const vKey=ev.verdict?ev.verdict.key:null;
+  const vRank=vKey?PC.bench(vKey).rank:0;
+  let verdictHtml;
+  if(ev.out){
+    verdictHtml=`<div class="nm-pc-verdict out"><b class="nm-pc-vt">${T('outTitle')}</b><p>${T('outBody')}</p></div>`;
+  } else {
+    const fast=vKey==='p'&&ev.verdict.fastDelta!=null&&ev.verdict.fastDelta<=PC.TOL;
+    verdictHtml=`<div class="nm-pc-verdict${vKey?'':' none'}">
+      <span class="nm-pc-vpre">${T('verdictPre')}</span>
+      ${vKey?`<b class="nm-pc-vt">${ko?`${bName(vKey)} ${T('verdictPost')}`:S.lang==='en'?`${bName(vKey)} ${T('verdictPost')}`:`${bName(vKey)}${T('verdictPost')}`}</b>`
+        :`<b class="nm-pc-vt">${T('verdictNone')}</b>`}
+      ${fast?`<p class="nm-pc-vsub">${T('verdictFast')}</p>`:''}
+      ${vKey==='k'?`<p class="nm-pc-vsub">${T('verdictTop')}</p>`:''}
+    </div>`;
+  }
+  /* 비교 범위 밖(초3 6월 이후)이면 사다리를 그리지 않는다 — "늦어요"를 빨갛게 보여 줄 근거가 없다 */
+  const ladder=ev.out?'':`<ol class="nm-pc-ladder" aria-label="${T('eyebrow')}">${['a','p','k'].map(k=>{
+    const r=rowOf(k), rank=PC.bench(k).rank;
+    const cls=r.status==='out'?'out':rank<=vRank?'on':'off';
+    return `<li class="nm-pc-rung ${cls}${k===vKey?' cur':''}" data-bench="${k}">
+      <span class="nm-pc-dot" aria-hidden="true">${cls==='on'?crIc('check'):''}</span>
+      <b>${bName(k)}</b><small class="nm-cr-tnum">${esc(deltaTxt(r))}</small></li>`;
+  }).join('')}</ol>`;
+
+  /* 마일스톤별 타임라인 — x = 나이(학령개월), 네 줄 공통 눈금 */
+  const rowsDef=['G6','MID','HIGH'].map(id=>{
+    const m=PC.milestone(id);
+    const a=PC.bench('a').anchors.find(x=>x.id===id);
+    const p=PC.bench('p').anchors.find(x=>x.id===id);
+    const pf=(PC.bench('p').fast||[]).find(x=>x.id===id);
+    const k=PC.bench('k').anchors.find(x=>x.id===id);
+    const passed=ctx.curNum>=m.course;
+    const you=passed?null:PC.childSmAt(ctx,m.course);
+    return {m,a,p,pf,k,passed,you};
+  });
+  const vals=[ctx.smNow];
+  rowsDef.forEach(r=>{ [r.a,r.p,r.pf,r.k].forEach(x=>{ if(x) vals.push(x.sm); }); if(r.you!=null) vals.push(r.you); });
+  const x0=Math.floor((Math.min.apply(null,vals)-2)/12)*12;
+  const x1=Math.ceil((Math.max.apply(null,vals)+2)/12)*12;
+  const X=v=>((v-x0)/(x1-x0)*100).toFixed(2)+'%';
+  const ticks=[]; for(let v=x0; v<=x1; v+=12) ticks.push(v);
+  const tickEvery=ticks.length>9?2:1;
+  const axis=`<div class="nm-pc-axis" aria-hidden="true">${ticks.map((v,i)=>
+    `<span style="left:${X(v)}"${i%tickEvery?' class="minor"':''}>${i%tickEvery?'':esc(pcTickLabel(v))}</span>`).join('')}</div>`;
+  const mk=(cls,sm,label)=>`<span class="nm-pc-mk ${cls}" style="left:${X(sm)}" title="${esc(label)} · ${esc(pcAgeLabel(sm))}"></span>`;
+  const rowsHtml=rowsDef.map(r=>{
+    const facts=[];
+    facts.push(r.passed?`<span class="you">${T('you')} <b>${T('passedTxt')}</b></span>`
+      :`<span class="you">${T('you')} <b class="nm-cr-tnum">${esc(pcAgeLabel(r.you))}</b></span>`);
+    if(r.a) facts.push(`<span class="a">${bName('a')} <b class="nm-cr-tnum">${esc(pcAgeLabel(r.a.sm))}</b>${r.a.beyondGrid?'<sup>†</sup>':''}</span>`);
+    if(r.p) facts.push(`<span class="p">${bName('p')} <b class="nm-cr-tnum">${esc(pcAgeLabel(r.p.sm))}</b>${r.pf?` <i class="nm-cr-tnum">(~${esc(pcAgeLabel(r.pf.sm))})</i>`:''}</span>`);
+    if(r.k) facts.push(`<span class="k">${bName('k')} <b class="nm-cr-tnum">${esc(pcAgeLabel(r.k.sm))}</b></span>`);
+    const band=(r.p&&r.pf)?`<span class="nm-pc-band" style="left:${X(r.pf.sm)};width:calc(${X(r.p.sm)} - ${X(r.pf.sm)})" title="${esc(T('legendBand'))}"></span>`:'';
+    return `<li class="nm-pc-row${r.passed?' passed':''}" data-ms="${r.m.id}">
+      <div class="nm-pc-rowh"><b>${esc(L(r.m.name))}</b><small>${T('course')} ${r.m.course}</small></div>
+      <div class="nm-pc-track">
+        <span class="nm-pc-now" style="left:${X(ctx.smNow)}"></span>
+        ${band}
+        ${r.a?mk('a',r.a.sm,L(PC.bench('a').name)):''}
+        ${r.p?mk('p',r.p.sm,L(PC.bench('p').name)):''}
+        ${r.k?mk('k',r.k.sm,L(PC.bench('k').name)):''}
+        ${r.you!=null?mk('you',r.you,T('you')):''}
+      </div>
+      <div class="nm-pc-facts">${facts.join('')}</div>
+    </li>`;
+  }).join('');
+  const legend=`<div class="nm-pc-legend">
+    <span class="you"><i></i>${T('you')}</span><span class="a"><i></i>${bName('a')}</span>
+    <span class="p"><i></i>${bName('p')}</span><span class="k"><i></i>${bName('k')}</span></div>`;
+  const timeline=`<div class="nm-pc-tl">
+    <div class="nm-cr-cad-h sub">${T('rowsHead')}</div>${legend}
+    <ul class="nm-pc-rows">${rowsHtml}</ul>${axis}</div>`;
+
+  /* 상위 레벨이 되려면 */
+  let upHtml='';
+  if(!ev.out && ev.target){
+    const t=ev.target;
+    const pName=k=>{ const p=ROAD_PACES.find(x=>x.key===k); return p?L(p.name):k; };
+    const optTxt=s=>{
+      const parts=[];
+      if(s.cad!==cur.cad) parts.push(s.cad==='w2'?T('optCad'):T('optCadBack'));
+      if(s.pace!==cur.pace) parts.push(F('optPace',{v:esc(pName(s.pace))}));
+      if(s.speed!==cur.speed) parts.push(F('optSpeed',{v:s.speed}));
+      return parts.join(' + ');
+    };
+    upHtml=`<div class="nm-pc-up">
+      <div class="nm-cr-cad-h sub">${crIc('steps')}${T('upHead')}</div>
+      <p class="nm-pc-need">${F('upNeed',{name:bName(t.key), milestone:esc(L(PC.milestone(t.horizon.id)?PC.milestone(t.horizon.id).name:{ko:'',en:'',zh:''})), n:`<b class="nm-cr-tnum">${mo(t.delta)}</b>`})}</p>
+      ${sugg.length?`<ul class="nm-pc-opts">${sugg.map((s,i)=>`<li class="nm-pc-opt">
+          <span class="nm-pc-opttxt"><b>${optTxt(s)}</b>${s.saved!=null?`<small class="nm-cr-tnum">${F('saved',{n:mo(s.saved)})}</small>`:''}</span>
+          <button class="nm-pc-apply" data-pc-apply="${i}" data-cad="${s.cad}" data-pace="${s.pace}" data-speed="${s.speed}">${T('apply')}</button>
+        </li>`).join('')}</ul>
+        <p class="nm-pc-fine">${T('amountNote')}</p>`
+      :`<p class="nm-pc-fine">${T('upNone')}</p>`}
+    </div>`;
+  }
+
+  /* 기준표·대응 (접힘) — 숫자가 어디서 왔는지 부모가 직접 볼 수 있게 */
+  const srcRows=PC.MILESTONES.map(m=>{
+    const cell=k=>{ const a=PC.bench(k).anchors.find(x=>x.id===m.id); return a?esc(pcAgeLabel(a.sm))+(a.beyondGrid?'†':''):'—'; };
+    return `<tr><th scope="row">${esc(L(m.name))}</th><td class="nm-cr-tnum">${m.course}</td><td>${cell('a')}</td><td>${cell('p')}</td><td>${cell('k')}</td></tr>`;
+  }).join('');
+  const srcHtml=`<details class="nm-cr-more nm-pc-src"><summary>${T('srcHead')}</summary>
+    <div class="nm-pc-tablewrap"><table class="nm-pc-table"><thead><tr><th>${T('srcMilestone')}</th><th>${T('srcOurs')}</th><th>${bName('a')}</th><th>${bName('p')}</th><th>${bName('k')}</th></tr></thead>
+    <tbody>${srcRows}</tbody></table></div>
+    <p class="nm-pc-fine">† ${T('beyondGrid')} · ${bName('k')} ${T('course')} 2 = ${esc(pcAgeLabel(PC.bench('k').anchors[0].sm))} (${T('derived')})</p></details>`;
+
+  return `<div class="nm-cr-pc" id="crPaceCmp">${head}${ageRow}${verdictHtml}${ladder}${timeline}${upHtml}
+    <ul class="nm-pc-scope"><li>${T('scope1')}</li><li>${T('scope2')}</li><li>${T('scope3')}</li></ul>${srcHtml}</div>`;
+}
+
 function screenCourseRoad(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
@@ -3131,14 +3562,22 @@ function screenCourseRoad(){
   const list=roadCourseList();
   const lastNum=list.length?list[list.length-1].num:0;
 
-  scr.innerHTML=`<div class="nm-cr-wrap">
+  /* 2026-09-26 원장 "로드맵도 이제 이런 느낌으로" — 머리에 3D 길 지도(app/road3d)를 얹고, 아래 목록은
+     모드 선택 3D 책상과 같은 재질(나무 책상 · 종이 카드 · 가죽+금박 · 놋쇠 꼬리표)로 입힌다.
+     헤더는 한 줄(뒤로 · 제목 · 진단하기 · 🎯)만 고정하고, 학생 칩·안내·철학은 스크롤 안으로 옮겼다
+     — 폰에서 고정 머리가 화면의 3분의 1을 먹던 것을 풀어 3D 지도와 목록이 자리를 얻게. */
+  scr.innerHTML=`<div class="nm-cr-wrap nm-cr-desk">
     <div class="nm-cr-header">
-      <button class="nm-back" id="crBack">${t('back')}</button>
       <div class="nm-cr-titlerow">
-        <div class="nm-cr-title">🛤️ ${lk('연산 로드맵','Course Road','运算路线图')}</div>
-        <button class="nm-cr-diagbtn" id="crDiag">🧭 ${lk('진단하기','Level Check','水平测评')}</button>
-        <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}">🎯</button>
+        <button class="nm-back" id="crBack">${t('back')}</button>
+        <div class="nm-cr-title"><span class="nm-cr-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 20.5c0-4.6 9.5-3.2 9.5-7.6 0-3.6-6.2-3.2-6.2-6.6" stroke-dasharray="2.4 2.2"/><circle cx="5.5" cy="20" r="1.4" fill="currentColor" stroke="none"/><path d="M15.6 3.2v8M15.6 3.6h4.6l-1.5 2 1.5 2h-4.6"/></svg></span><span class="nm-cr-title-t">${lk('연산 로드맵','Course Road','运算路线图')}</span></div>
+        <button class="nm-cr-diagbtn" id="crDiag">${crIc('compass')}<span>${lk('진단하기','Level Check','水平测评')}</span></button>
+        <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}" aria-label="${lk('시작점 고르기','Pick your start','选择起点')}">${crIc('target')}</button>
       </div>
+    </div>
+    <div class="nm-cr-body" id="crBody">
+      <div class="nm-cr-hero" id="crHero"></div>
+      <div class="nm-cr-intro">
       <!-- 누구의 로드맵인지 (2026-09-16 원장 "선택한 학생의 연산 로드맵이 나와야지").
            한 기기를 형제가 같이 쓰므로 슬롯 3개가 이미 있는데, 로드맵에는 누구 것인지
            표시가 없어 남의 진도를 자기 것으로 읽을 수 있었다. 칩을 누르면 바로 바꾼다. -->
@@ -3147,18 +3586,20 @@ function screenCourseRoad(){
         <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}${schoolNowLabel()?` <em class="nm-cr-who-gr">${esc(schoolNowLabel())}</em>`:''}</b></span>
         <span class="nm-cr-who-sw">${lk('바꾸기','Switch','切换')}</span>
       </button>
-      <div class="nm-cr-sub">${lk('지금 어디까지 왔고 앞으로 어디로 가는지, 한 길로 보여요.','See the whole path — where you are now and where it leads.','用一条路看清现在走到哪里、接下来去哪里。')}</div>
+      <div class="nm-cr-sub"><span class="nm-cr-eyebrow">${lk('나의 연산 길','My arithmetic path','我的运算之路')}</span>
+        <span class="nm-cr-lead">${lk('어디까지 왔고 어디로 가는지, 한 길 위에서 봐요.','Where you are and where it leads — all on one road.','走到了哪里、要去哪里，都在一条路上。')}</span></div>
       <!-- 정복의 뜻은 about.html의 철학과 같은 것이어야 한다("수를 정복하기 위한
            DOCSSAM의 철학" · "어려운 수를 내가 다루기 쉬운 수로 펼쳐서"). 로드맵이
            따로 노는 은유를 만들지 않도록 그 문장을 여기서 다시 말하고 원문으로 잇는다. -->
       <div class="nm-cr-philo">
-        ${lk('수를 정복한다는 건 빨리 푸는 게 아니라, 어려운 수를 <b>내가 다루기 쉽게 펼칠</b> 수 있게 되는 거예요.',
+        <span>${lk('수를 정복한다는 건 빨리 푸는 게 아니라, 어려운 수를 <b>내가 다루기 쉽게 펼칠</b> 수 있게 되는 거예요.',
              'Conquering numbers isn\'t about speed — it\'s being able to <b>unfold</b> a hard number into ones you handle easily.',
-             '征服数字不是算得快，而是能把难的数<b>展开</b>成自己好处理的数。')}
-        <a class="nm-philobtn nm-cr-philolink" href="about.html">✦ ${lk('철학','Philosophy','理念')}</a>
+             '征服数字不是算得快，而是能把难的数<b>展开</b>成自己好处理的数。')}</span>
+        <a class="nm-philobtn nm-cr-philolink" href="about.html">${lk('철학 읽기','Our philosophy','阅读理念')}${crIc('arrow')}</a>
       </div>
+      </div>
+      <div id="crList"></div>
     </div>
-    <div class="nm-cr-body" id="crBody"></div>
   </div>`;
   $('#crBack').onclick=()=>{S._roadFocus=null;S.view='town';save();render();};
   $('#crDiag').onclick=()=>startPlacement();
@@ -3166,6 +3607,14 @@ function screenCourseRoad(){
   $('#crWho').onclick=()=>openStudentSwitch();
 
   const body=$('#crBody');
+  const listEl=$('#crList');
+  const heroEl=$('#crHero');
+  /* 3D 지도가 처음 비출 과정 — draw(false)가 S._roadFocus 를 지우기 전에 잡아 둔다 */
+  const heroFocus=S._roadFocus||null;
+  const hero3dLikely=!!heroEl && road3dLikely();
+  const openEx={};          /* 펼친 과정 설명(다시 그려도 유지) */
+  let road3dCtl=null;       /* 3D 지도 — 설정이 바뀌면 시작 달 이름표를 다시 쓴다 */
+  function syncRoad3dTimes(){ if(road3dCtl&&road3dCtl.setTimes) road3dCtl.setTimes(roadStartLabels()); }
 
   function draw(keepScroll){
     const cad=S.roadCadence;
@@ -3190,83 +3639,100 @@ function screenCourseRoad(){
 
     let html=`<div class="nm-cr-conq">
       <div class="nm-cr-conq-top">
-        <span class="nm-cr-conq-lbl">${lk('정복한 과정','Courses conquered','已征服课程')}</span>
+        <span class="nm-cr-conq-hd"><span class="nm-cr-eyebrow">${lk('정복 현황','Progress','征服进度')}</span>
+          <span class="nm-cr-conq-lbl">${lk('정복한 과정','Courses conquered','已征服课程')}</span></span>
         <span class="nm-cr-conq-num"><b>${conq.done}</b><i>/ ${conq.total}</i></span>
       </div>
       <div class="nm-cr-bar"><span style="width:${conq.pct}%"></span></div>
       <div class="nm-cr-conq-sub">${lk('계산의 새싹부터 경시의 탑까지','From the first sprouts to the Tower of Challenge','从计算的新芽到竞赛之塔')} · ${lk('과정','Course','课程')} 1~${conqLast}</div>
       ${fresh
-        ? `<div class="nm-cr-conq-line start">🚩 ${lk('과정 1에서 출발해요.','Starting at course 1.','从课程1出发。')}</div>`
-        : `<div class="nm-cr-conq-line now">📍 ${lk('지금 여기','You are here','当前位置')} — ${curC?courseLine(curKey,curC):''}</div>
-           ${goalC?`<div class="nm-cr-conq-line goal">🎯 ${lk('다음 목표','Next goal','下一个目标')} — ${courseLine(goalKey,goalC)}</div>`:''}`}
-      <div class="nm-cr-conq-all">${lk('전체 길','Whole path','整条路')} ${conqAll.done} / ${conqAll.total}</div>
+        ? `<div class="nm-cr-conq-line start">${crIc('flag')}<span>${lk('과정 1에서 출발해요.','Starting at course 1.','从课程1出发。')}</span></div>`
+        : `<div class="nm-cr-conq-line now">${crIc('pin')}<span><em>${lk('지금 여기','You are here','当前位置')}</em>${curC?courseLine(curKey,curC):''}</span></div>
+           ${goalC?`<div class="nm-cr-conq-line goal">${crIc('flag')}<span><em>${lk('다음 목표','Next goal','下一个目标')}</em>${courseLine(goalKey,goalC)}</span></div>`:''}`}
+      <div class="nm-cr-conq-all"><span>${lk('전체 길','Whole path','整条路')}</span><b>${conqAll.done} / ${conqAll.total}</b></div>
     </div>`;
 
     /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
+    const segBtn=(attr,v,on,label)=>`<button class="${on?'on':''}" data-${attr}="${v}" aria-pressed="${on?'true':'false'}">${label}</button>`;
+    const multLbl=v=>v===1?lk('기본','1×','默认'):v+lk('배','×','倍');
     html+=`<div class="nm-cr-cad" id="crPace">
-      <div class="nm-cr-cad-h big">⏱ ${lk('학습 속도 정하기','Set the pace','设定学习速度')}</div>
-      <p class="nm-cr-cadlead">${lk('수업 횟수와 목표 속도를 고르면 아래 주차·개월이 그대로 바뀌어요. 배우는 순서와 내용은 그대로예요.',
-           'Pick how often you meet and how fast you aim to go — the weeks and months below follow. The order and content of the path stay the same.',
-           '选择上课次数和目标速度，下面的周数和月数会跟着变。学习顺序和内容保持不变。')}</p>
-      <p class="nm-cr-caveat">${lk('여기 주차는 연산 트랙만 센 거예요. 사고력·교과를 함께하면 그만큼 더 걸려요.',
-           'These weeks count the arithmetic track only. Doing thinking-math and school-math alongside takes longer.',
-           '这里的周数只算运算课程。同时上思维和教材课程会更久。')}</p>
-      <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
-        <button class="${cad==='w1'?'on':''}" data-cad="w1"${cad==='w1'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 1회반','Once a week','每周1次')}</button>
-        <button class="${cad==='w2'?'on':''}" data-cad="w2"${cad==='w2'?' aria-pressed="true"':' aria-pressed="false"'}>${lk('주 2회반','Twice a week','每周2次')}</button>
+      <div class="nm-cr-sec">
+        <span class="nm-cr-eyebrow">${lk('학습 속도','Pace','学习速度')}</span>
+        <div class="nm-cr-cad-h big">${lk('어느 빠르기로 걸어갈까요?','How fast shall we walk?','要以什么速度走？')}</div>
+        <p class="nm-cr-cadlead">${lk('수업 횟수와 목표를 고르면 아래 주차·개월이 바로 바뀌어요. 배우는 순서와 내용은 그대로예요.',
+             'Pick how often you meet and your target — the weeks and months below follow. The order and content stay the same.',
+             '选择上课次数和目标，下面的周数和月数随之改变。学习顺序和内容不变。')}</p>
+        <p class="nm-cr-caveat">${crIc('info')}<span>${lk('연산 트랙만 센 주차예요. 사고력·교과를 함께하면 그만큼 더 걸려요.',
+             'Weeks count the arithmetic track only — thinking-math and school-math alongside take longer.',
+             '周数只算运算课程，同时上思维和教材课程会更久。')}</span></p>
       </div>
-      <p class="nm-cr-cadnote">${cad==='w2'
-        ? lk('한 주에 두 회차씩 나아가요. 한 과정에 걸리는 주차가 절반이 돼요. 더 다지고 싶으면 아래 속도를 낮추면 돼요.',
-             'Two sessions a week — a course takes half the weeks. To consolidate more, lower the speed below.',
-             '每周前进两节课，一个课程所需周数减半。想多巩固，可在下面调低速度。')
-        : lk('한 주에 한 세션씩 나아가요. 과정마다 마지막은 확인 세션이에요.',
-             'One session per week. Each course ends with a check session.',
-             '每周前进一节课。每个课程最后是一次检查课。')}</p>
-      <div class="nm-cr-pace">
-        <div class="nm-cr-cad-h">${lk('목표 기준','Target pace','目标标准')}</div>
-        <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 기준','Target pace','目标标准')}">
+      <div class="nm-cr-step">
+        <div class="nm-cr-cad-h"><i>1</i>${lk('수업 횟수','Classes per week','上课次数')}</div>
+        <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
+          ${segBtn('cad','w1',cad==='w1',lk('주 1회반','Once a week','每周1次'))}
+          ${segBtn('cad','w2',cad==='w2',lk('주 2회반','Twice a week','每周2次'))}
+        </div>
+        <p class="nm-cr-cadnote">${cad==='w2'
+          ? lk('한 주에 수업 2회 — 한 과정에 드는 주가 절반이 돼요. 더 다지고 싶으면 아래에서 속도를 낮춰요.',
+               'Two classes a week — a course takes half the weeks. To consolidate more, lower the speed below.',
+               '每周上课2次，一个课程所需周数减半。想多巩固，可在下面调低速度。')
+          : lk('한 주에 수업 1회 — 과정마다 마지막 회는 확인 수업이에요.',
+               'One class a week — each course ends with a check class.',
+               '每周上课1次，每个课程最后一次是检查课。')}</p>
+      </div>
+      <div class="nm-cr-step nm-cr-pace">
+        <div class="nm-cr-cad-h"><i>2</i>${lk('목표 빠르기','Target pace','目标速度')}</div>
+        <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 빠르기','Target pace','目标速度')}">
           ${ROAD_PACES.map(p=>{
             const mo=roadTotals(0,ROAD_OP_LAST,cad,roadPaceMult(p.key)/speed).months;
             return `<button class="nm-cr-pacebtn${p.key===pace?' on':''}" data-pace="${p.key}" aria-pressed="${p.key===pace?'true':'false'}">
-              <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} ${mo}${lk('개월','mo','个月')}</small></button>`;
+              <b>${esc(L(p.name))}</b><small>${lk('약','about','约')} <span class="nm-cr-tnum">${mo}</span>${lk('개월','mo','个月')}</small></button>`;
           }).join('')}
         </div>
-        <p class="nm-cr-pacenote">${lk('같은 길을 어느 속도로 걷느냐만 달라요. 배우는 순서와 내용은 그대로예요. 언제든 바꿔 볼 수 있어요.',
-             'Only the walking speed changes — the order and the content of the path stay the same. Switch any time.',
-             '只是走这条路的速度不同，学习顺序和内容都一样。随时可以切换。')}</p>
+        <p class="nm-cr-pacenote">${lk('길은 같고 걷는 빠르기만 달라요. 언제든 바꿀 수 있어요.',
+             'Same road, only the walking speed changes. Switch any time.',
+             '路是同一条，只是走的速度不同。随时可以切换。')}</p>
       </div>
-      <div class="nm-cr-pace nm-cr-mult">
-        <div class="nm-cr-cad-h">${lk('속도 · 양 조절','Speed · amount','速度 · 分量')}</div>
+      <div class="nm-cr-step nm-cr-pace nm-cr-mult">
+        <div class="nm-cr-cad-h"><i>3</i>${lk('속도 · 양 조절','Speed · amount','速度 · 分量')}<small>${lk('선택','optional','可选')}</small></div>
         <div class="nm-cr-multrow"><span>${lk('속도','Speed','速度')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${ROAD_MULTS_LIST.map(v=>
-            `<button class="${speed===v?'on':''}" data-speed="${v}" aria-pressed="${speed===v?'true':'false'}">${v===1?lk('기본','1×','默认'):v+lk('배','×','倍')}</button>`).join('')}</div></div>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${ROAD_MULTS_LIST.map(v=>segBtn('speed',v,speed===v,multLbl(v))).join('')}</div></div>
         <div class="nm-cr-multrow"><span>${lk('양','Amount','分量')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>
-            `<button class="${S.roadAmount===v?'on':''}" data-amount="${v}" aria-pressed="${S.roadAmount===v?'true':'false'}">${v===1?lk('기본','1×','默认'):v+lk('배','×','倍')}</button>`).join('')}</div></div>
-        <p class="nm-cr-pacenote">${lk('기본은 정해 둔 편성 그대로예요(한 회 30분, 중2·중3 40분). 0.7배까지 줄이고 1.5배까지 늘릴 수 있어요. 속도를 올리면 같은 기간에 회차를 더 나가 주차·개월이 줄고, 내리면 늘어요. 양은 그 주 배우는 계산 문항 수예요(복습·창의·적용은 그대로, 같은 문제는 되풀이하지 않아요).',
-             'Default is the set plan (30 min a session; 40 for middle grades 2–3). Go down to 0.7× or up to 1.5×. Faster speed covers more sessions in the same time, so weeks and months shrink; slower stretches them. Amount is how many problems of that week\'s calculation (review, creative and applying stay the same; problems never repeat).',
-             '默认即既定安排（每次30分钟，初二·初三40分钟）。可减到0.7倍、加到1.5倍。提高速度会在同样时间里上更多课次，周数和月数减少；放慢则增加。分量是本周所学运算的题数（复习·创意·应用不变，题目不重复）。')}</p>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>segBtn('amount',v,S.roadAmount===v,multLbl(v))).join('')}</div></div>
+        <details class="nm-cr-more">
+          <summary>${lk('속도와 양이 뭔가요?','What do speed and amount do?','速度和分量是什么？')}</summary>
+          <ul>
+            <li>${lk('기본은 정해 둔 편성 그대로예요 — 한 회 30분, 중2·중3은 40분.','Default is the set plan — 30 minutes a class, 40 for middle grades 2–3.','默认即既定安排：每次30分钟，初二·初三40分钟。')}</li>
+            <li>${lk('0.7배까지 줄이고 1.5배까지 늘릴 수 있어요.','Go down to 0.7× or up to 1.5×.','可减到0.7倍、加到1.5倍。')}</li>
+            <li>${lk('속도를 올리면 같은 기간에 회차를 더 나가 주차·개월이 줄고, 내리면 늘어요.','Faster speed covers more classes in the same time, so weeks and months shrink; slower stretches them.','提高速度会在同样时间里上更多课次，周数和月数减少；放慢则增加。')}</li>
+            <li>${lk('양은 그 주에 배우는 계산의 문항 수예요. 복습·창의·적용은 그대로이고, 같은 문제는 되풀이하지 않아요.','Amount is how many problems of that week\'s calculation. Review, creative and applying stay the same; problems never repeat.','分量是本周所学运算的题数。复习·创意·应用不变，题目不重复。')}</li>
+          </ul>
+        </details>
       </div>
-      <div class="nm-cr-cad-h sub">${lk('이 속도로 걸리는 시간','How long that takes','按这个速度需要多久')}</div>
-      <div class="nm-cr-totals">
-        <div class="nm-cr-total">
-          <b>${lk('연산 구간','Arithmetic stretch','运算区间')} <small>${lk('과정','Course','课程')} 1~${ROAD_OP_LAST}</small></b>
-          <span>${opTotals.weeks}${lk('주','wk','周')} · ${lk('약','about','约')} ${opTotals.months}${lk('개월','mo','个月')}</span>
+      <div class="nm-cr-step nm-cr-est">
+        <div class="nm-cr-cad-h sub">${lk('이 빠르기로 걸리는 시간','How long that takes','按这个速度需要多久')}</div>
+        <div class="nm-cr-totals">
+          <div class="nm-cr-total">
+            <b>${lk('연산 구간','Arithmetic stretch','运算区间')} <small>${lk('과정','Course','课程')} 1~${ROAD_OP_LAST}</small></b>
+            <span><em class="nm-cr-tnum">${opTotals.weeks}</em>${lk('주','wk','周')} <i>·</i> ${lk('약','about','约')} <em class="nm-cr-tnum">${opTotals.months}</em>${lk('개월','mo','个月')}</span>
+          </div>
+          <div class="nm-cr-total">
+            <b>${lk('전체 길','Whole path','整条路')} <small>${lk('과정','Course','课程')} 1~${lastNum}</small></b>
+            <span><em class="nm-cr-tnum">${allTotals.weeks}</em>${lk('주','wk','周')} <i>·</i> ${lk('약','about','约')} <em class="nm-cr-tnum">${allTotals.months}</em>${lk('개월','mo','个月')}</span>
+          </div>
         </div>
-        <div class="nm-cr-total">
-          <b>${lk('전체 길','Whole path','整条路')} <small>${lk('과정','Course','课程')} 1~${lastNum}</small></b>
-          <span>${allTotals.weeks}${lk('주','wk','周')} · ${lk('약','about','约')} ${allTotals.months}${lk('개월','mo','个月')}</span>
-        </div>
+        <div class="nm-cr-built">${builtCount===list.length
+          ? `${crIc('check')}<span>${lk(`과정 ${list.length}개 모두 배울 내용이 준비돼 있어요.`,`All ${list.length} courses have their content ready.`,`全部${list.length}个课程的内容都已备妥。`)}</span>`
+          : `${crIc('pack')}<span>${lk(`과정 ${list.length}개 중 ${builtCount}개가 준비됐어요.`,`${builtCount} of ${list.length} courses are ready.`,`${list.length}个课程中已备妥${builtCount}个。`)}</span>`}</div>
+        <p class="nm-cr-cadfoot">${lk('4주를 한 달로 셌어요.','Counted as 4 weeks per month.','按4周为一个月计算。')}
+          ${lk('권장 학습 시간은 한 회 40~50분','Recommended study time: 40–50 minutes a class','建议学习时间：每次40~50分钟')}
+          — ${cad==='w2'
+            ? lk('주 2회면 한 주에 80~100분이에요.','about 80–100 minutes a week.','每周约80~100分钟。')
+            : lk('주 1회면 한 주에 40~50분이에요.','about 40–50 minutes a week.','每周约40~50分钟。')}</p>
       </div>
-      <div class="nm-cr-built">${builtCount===list.length
-        ? `✅ ${lk(`과정 ${list.length}개 모두 배울 내용이 준비돼 있어요.`,`All ${list.length} courses have their content ready.`,`全部${list.length}个课程的内容都已备妥。`)}`
-        : `📦 ${lk(`과정 ${list.length}개 중 ${builtCount}개가 준비됐어요.`,`${builtCount} of ${list.length} courses are ready.`,`${list.length}个课程中已备妥${builtCount}个。`)}`}</div>
-      <p class="nm-cr-cadfoot">${lk('4주를 한 달로 셌어요.','Counted as 4 weeks per month.','按4周为一个月计算。')}
-        ${lk('권장 학습 시간은 한 세션 40~50분','Recommended study time: 40–50 minutes per session','建议学习时间：每节课40~50分钟')}
-        — ${cad==='w2'
-          ? lk('주 2회면 한 주에 80~100분(권장)','about 80–100 minutes a week (recommended)','每周约80~100分钟（建议）')
-          : lk('주 1회면 한 주에 40~50분(권장)','about 40–50 minutes a week (recommended)','每周约40~50分钟（建议）')}.</p>
     </div>`;
+    /* 속도 비교 진단 — 위에서 고른 빠르기 그대로 세 기준과 견준다(2026-09-26) */
+    html+=paceCompareHtml();
 
     if(S.placement&&S.placement.course){
       const pc=(window.NM_COURSES||{})[S.placement.course];
@@ -3274,8 +3740,8 @@ function screenCourseRoad(){
       if(pc){
         const weak=S.placement.weak||[];
         const label=S.placement.self
-          ? `🎯 ${lk('내가 고른 시작점','My chosen start','我选的起点')}`
-          : `🧭 ${lk('진단 추천','Check-up suggests','测评建议')}`;
+          ? `${crIc('target')}<b>${lk('내가 고른 시작점','My chosen start','我选的起点')}</b>`
+          : `${crIc('compass')}<b>${lk('진단 추천','Check-up suggests','测评建议')}</b>`;
         let suffix='';
         if(!S.placement.self && weak.length){
           const names=weak.slice(0,3).map(tid=>{
@@ -3284,8 +3750,33 @@ function screenCourseRoad(){
           });
           suffix=` · ${lk('연습 필요','needs practice','需要练习')} ${weak.length}: ${names.join(', ')}`;
         }
-        html+=`<div class="nm-cr-diagchip">${label} — ${lk('과정','Course','课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</div>`;
+        html+=`<div class="nm-cr-diagchip">${label}<span>${lk('과정','Course','课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</span></div>`;
       }
+    }
+
+    /* ── 진단하기 입구(2026-09-28) — 아직 시작점을 안 정했으면 길 바로 위에 크게 ── */
+    if(!(S.placement&&S.placement.course)){
+      html+=`<button class="nm-cr-diagcta" id="crDiagCta">
+        <span class="nm-cr-diagcta-ic">${crIc('compass')}</span>
+        <span class="nm-cr-diagcta-txt"><b>${lk('진단하기','Level Check','水平测评')}</b>
+          <small>${lk('지금 몇 학년 연산인지 알려 주거나, 몇 문제로 나에게 맞는 시작점을 찾아요.',
+            'Tell us which grade’s arithmetic you are on, or find your start with a few questions.',
+            '告诉我们现在做几年级的运算，或做几道题找到适合的起点。')}</small></span>
+        ${crIc('arrow')}
+      </button>`;
+    }
+    /* ── 시기 — 과정마다 언제 시작하고 끝나는지(속도 비교 카드와 같은 계산) ── */
+    const tm=roadTiming();
+    const ageKnown=tm.smNow!=null;
+    const MS=roadMilestones();
+    if(!ageKnown){
+      html+=`<button class="nm-cr-agecue" id="crAgeCue">${crIc('clock')}<span>${lk('나이를 알려 주면 과정마다 언제 시작하고 끝나는지 나와요.',
+        'Tell us the age and each course shows when it starts and ends.',
+        '告诉我们年龄，就能看到每个课程何时开始、何时结束。')}</span><b>${lk('나이 알려주기','Set age','填写年龄')}</b></button>`;
+    } else {
+      html+=`<p class="nm-cr-whenlead">${crIc('clock')}<span>${lk('과정마다 적힌 시기는 위에서 고른 빠르기로 지금부터 쉬지 않고 갔을 때예요.',
+        'The dates on each course assume the pace chosen above, starting now, with no breaks.',
+        '每个课程标注的时间，是按上面选的速度从现在开始不间断地学习时的估算。')}</span></p>`;
     }
 
     /* ── 길 ── */
@@ -3314,7 +3805,7 @@ function screenCourseRoad(){
         const embHtml=embs.length?`<span class="nm-cr-stemb">${embs.map(e=>
           `<span class="nm-cr-emb${e.earned?' on':''}" title="${esc(L(e.name))}">${e.emblem}</span>`).join('')}</span>`:'';
         const segLabel=segAll===0?''
-          :segState==='won'?`<span class="nm-cr-stwin">🏳️ ${lk('정복함','Conquered','已征服')}</span>`
+          :segState==='won'?`<span class="nm-cr-stwin">${crIc('flag')}${lk('정복함','Conquered','已征服')}</span>`
           :segState==='climbing'?`<span class="nm-cr-stclimb">${segDone}/${segAll}</span>`:'';
         html+=`<div class="nm-cr-station ${segState}" style="--acc:${tierDef.accent}">
           <span class="nm-cr-strow">
@@ -3322,10 +3813,18 @@ function screenCourseRoad(){
             ${segLabel}
           </span>
           ${again?'':`<span class="nm-cr-stband">${esc(L(tierDef.band))}</span>`}
-          <span class="nm-cr-strange">${lk('과정','Course','课程')} ${rangeTxt}${embHtml}</span>
+          <span class="nm-cr-strange">${lk('과정','Course','课程')} <span class="nm-cr-tnum">${rangeTxt}</span>${embHtml}</span>
+          ${(()=>{ /* 이 구간의 시작 → 끝(2026-09-28) */
+            if(!ageKnown) return '';
+            const a=tm.rows[runItems[0].key], b=tm.rows[runItems[runItems.length-1].key];
+            if(!a||!b) return '';
+            if(b.past) return `<span class="nm-cr-stwhen past">${lk('지났어요','Already past','已经过了')}</span>`;
+            const e=esc(pcAgeLabel(b.endSm));
+            const s=a.past||a.cur?lk('지금','Now','现在'):esc(pcAgeLabel(a.startSm));
+            return `<span class="nm-cr-stwhen">${crIc('clock')}<b class="nm-cr-tnum">${s}</b> → <b class="nm-cr-tnum">${e}</b></span>`; })()}
           ${(()=>{ const r=tierReadiness(c.tier); if(!r||r.ready) return '';
             /* 한국어는 "초1 8월부터"처럼 붙여 써야 한다 — 조사 앞에 빈칸을 두면 어색하다 */
-            return `<span class="nm-cr-stready">${r.unknown?'🎒':'⏳'} ${ko?`보통 ${schoolMonthsLabel(r.need)}부터 권해요`
+            return `<span class="nm-cr-stready">${crIc(r.unknown?'info':'clock')}${ko?`보통 ${schoolMonthsLabel(r.need)}부터 권해요`
               :en?`Usually from ${schoolMonthsLabel(r.need)}`:`通常从${schoolMonthsLabel(r.need)}起`}</span>`; })()}
         </div>`;
         if(!again) html+=middlePacingHtml(c.tier);
@@ -3349,23 +3848,39 @@ function screenCourseRoad(){
         /* 상태 말은 셋뿐이다 — 정복함 / 지금 여기 / 다음 목표.
            나머지는 옅게 두고 굳이 "예정" 같은 시스템 말을 붙이지 않는다.
            과정 25는 정복 판정 근거가 없으므로 마무리 관문으로만 표시한다. */
-        const stateLabel=isDone?`🏳️ ${lk('정복함','Conquered','已征服')}`
-          :isNow?`📍 ${lk('지금 여기','You are here','当前位置')}`
-          :isGoal?`🎯 ${lk('다음 목표','Next goal','下一个目标')}`
+        const stateLabel=isDone?`${crIc('flag')}${lk('정복함','Conquered','已征服')}`
+          :isNow?`${crIc('pin')}${lk('지금 여기','You are here','当前位置')}`
+          :isGoal?`${crIc('flag')}${lk('다음 목표','Next goal','下一个目标')}`
           :c.boss?lk('마무리 관문','Final gate','最后关卡')
           :isDoing?`${prog.done}/${prog.total}`
           :'';
-        html+=`<div class="nm-cr-row ${ci%2?'right':'left'}">
+        /* 이정표(중등·중2·고등·미적분 시작) — 그 과정 바로 앞에 깃발 한 줄 */
+        const ms=MS.find(m=>m.course===x.num);
+        if(ms){
+          const r=tm.rows[x.key];
+          const when=!ageKnown||!r?'':r.past?lk('지났어요','Already past','已经过了')
+            :r.cur?lk('지금','Now','现在'):esc(pcAgeLabel(r.startSm));
+          html+=`<div class="nm-cr-msrow" data-ms="${ms.id}"><span class="nm-cr-ms">${crIc('flag')}<b>${esc(L(ms.name))}</b>${when?`<em class="nm-cr-tnum">${when}</em>`:''}</span></div>`;
+        }
+        const isPlaced=!!(S.placement&&S.placement.course===x.key);
+        const placedChip=isPlaced?`<span class="nm-cr-placed">${S.placement.self?lk('내가 고른 시작점','My chosen start','我选的起点'):lk('진단 추천','Check-up pick','测评推荐')}</span>`:'';
+        html+=`<div class="nm-cr-row ${ci%2?'right':'left'}${isPlaced?' placed':''}">
           ${isNow?`<div class="nm-cr-here">${window.renderHumanChar?window.renderHumanChar(avatarKind(),44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
           <button class="nm-cr-node ${st}${locked?' trial-locked':''}" data-c="${x.key}" style="--acc:${tierDef.accent}"${isNow?' id="crNow"':''}>
-            <span class="nm-cr-num">${x.num}${isDone?'<i class="nm-cr-flag">🏳️</i>':''}</span>
+            <span class="nm-cr-num">${x.num}${isDone?`<i class="nm-cr-flag">${crIc('check')}</i>`:''}</span>
             <span class="nm-cr-nbody">
-              <b>${esc(L(c.title))}${c.boss?' 👑':isTower?' 🗼':''}</b>
-              <span class="nm-cr-meta">${lk('세션','Sessions','课节')} ${n} · ${wk}${lk('주','wk','周')}</span>
+              <b>${esc(L(c.title))}${c.boss?`<span class="nm-cr-tt" title="${lk('마무리 관문','Final gate','最后关卡')}">${crIc('crown')}</span>`:isTower?`<span class="nm-cr-tt">${crIc('tower')}</span>`:''}</b>
+              <span class="nm-cr-meta">${ko?`수업 ${n}회 · ${wk}주`:en?`${n} lessons · ${wk} wk`:`${n}次课 · ${wk}周`}</span>
+              ${ageKnown?roadWhenHtml(tm.rows[x.key]):''}
+              ${placedChip}
               ${!built?`<span class="nm-cr-soon">${lk('준비 중','Coming soon','准备中')}</span>`:''}
             </span>
-            <span class="nm-cr-state">${locked?'🔒':stateLabel}</span>
+            <span class="nm-cr-state">${locked?`<span aria-label="${lk('잠김','Locked','已锁定')}">🔒</span>`:stateLabel}</span>
           </button>
+          <details class="nm-cr-explain" style="--acc:${tierDef.accent}" data-c="${x.key}">
+            <summary>${lk('무엇을 배우나요','What you learn','学什么')}</summary>
+            <div class="nm-cr-ex-body"></div>
+          </details>
         </div>`;
         ci++;
         /* ── 세 과정마다 연산 점검 정거장(2026-09-16) ──
@@ -3379,13 +3894,13 @@ function screenCourseRoad(){
           const nums=checkupCourseNums(x.num);
           const qN=buildCheckupItems(x.num).length;
           const scoreTxt=going
-            ? `▶ ${lk('이어서 하기','Continue','继续')} · ${going.i}/${going.items.length}`
+            ? `${lk('이어서 하기','Continue','继续')} · ${going.i}/${going.items.length}`
             : rec
-            ? `🔢 ${rec.calcOk}/${rec.calcTotal} · 📖 ${rec.wpOk}/${rec.wpTotal}`
+            ? `${lk('계산','Calc','计算')} ${rec.calcOk}/${rec.calcTotal} · ${lk('문장제','Word problems','应用题')} ${rec.wpOk}/${rec.wpTotal}`
             : `${due?lk('지금 할 차례','Your turn now','轮到你了'):lk('과정 3개마다','every 3 courses','每3个课程')} · ${qN}${lk('문제','questions','题')}`;
           html+=`<div class="nm-cr-checkrow">
             <button class="nm-cr-check ${cls}" data-chk="${x.num}">
-              <span class="nm-cr-check-ic">🩺</span>
+              <span class="nm-cr-check-ic">${crIc(cls==='done'?'check':'steps')}</span>
               <span class="nm-cr-check-body">
                 <b>${lk('연산 점검','Check-up','运算检查')} · ${lk('과정','Course','课程')} ${nums[0]}~${nums[nums.length-1]}</b>
                 <span class="nm-cr-check-meta">${scoreTxt}</span>
@@ -3399,8 +3914,9 @@ function screenCourseRoad(){
 
     /* ── 수학 실험실 ── */
     html+=`<div class="nm-cr-labs">
-      <div class="nm-cr-labs-h">🔬 ${lk('수학 실험실','Math Lab','数学实验室')}</div>
-      <p class="nm-cr-labs-sub">${lk('과정과 상관없이 언제든 열어 볼 수 있어요. 새 창에서 열려요.','Open any of these any time, whatever course you are on. They open in a new tab.','不论在哪个课程，随时都能打开。会在新窗口打开。')}</p>
+      <span class="nm-cr-eyebrow">${lk('언제든 열어 보기','Open any time','随时打开')}</span>
+      <div class="nm-cr-labs-h">${crIc('flask')}${lk('수학 실험실','Math Lab','数学实验室')}</div>
+      <p class="nm-cr-labs-sub">${lk('과정과 상관없이 열 수 있어요. 새 창에서 열려요.','Whatever course you are on. They open in a new tab.','不论在哪个课程都能打开，会在新窗口打开。')}</p>
       <div class="nm-cr-lab-grid">${ROAD_LABS.map(lab=>`
         <button class="nm-cr-lab" data-lab="${esc(lab.file)}">
           <span class="nm-cr-lab-ic">${lab.icon}</span>
@@ -3409,7 +3925,7 @@ function screenCourseRoad(){
     </div>`;
 
     const keep=keepScroll?body.scrollTop:0;
-    body.innerHTML=html;
+    listEl.innerHTML=html;
     body.querySelectorAll('.nm-cr-seg button[data-cad]').forEach(el=>{
       el.onclick=()=>{ S.roadCadence=el.dataset.cad; save(); draw(true); };
     });
@@ -3424,6 +3940,27 @@ function screenCourseRoad(){
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
+    });
+    /* 과정 설명 — 펼칠 때 채운다. 설정을 바꿔 다시 그려도 펼친 것은 펼친 채로 */
+    body.querySelectorAll('.nm-cr-explain[data-c]').forEach(el=>{
+      const fill=()=>{ const b=el.querySelector('.nm-cr-ex-body'); if(b&&!b.childElementCount){ const c=(window.NM_COURSES||{})[el.dataset.c]; if(c) b.innerHTML=courseExplainHtml(c); } };
+      if(openEx[el.dataset.c]){ el.open=true; fill(); }
+      el.addEventListener('toggle',()=>{ openEx[el.dataset.c]=el.open; if(el.open) fill(); });
+    });
+    const ageCue=body.querySelector('#crAgeCue');
+    if(ageCue) ageCue.onclick=()=>openAgeSheet(()=>{ draw(true); syncRoad3dTimes(); });
+    const diagCta=body.querySelector('#crDiagCta');
+    if(diagCta) diagCta.onclick=()=>startPlacement();
+    syncRoad3dTimes();
+    const pcAge=body.querySelector('#pcAge');
+    if(pcAge) pcAge.onclick=()=>openAgeSheet(()=>draw(true));
+    body.querySelectorAll('[data-pc-apply]').forEach(el=>{
+      el.onclick=()=>{
+        S.roadCadence=el.dataset.cad; S.roadPace=el.dataset.pace; S.roadSpeed=+el.dataset.speed;
+        save(); draw(true);
+        const PC=window.NM_PACE_COMPARE;
+        if(PC) toast(L(PC.STR.applied));
+      };
     });
     body.querySelectorAll('[data-middle-session]').forEach(el=>{
       el.onclick=()=>{
@@ -3453,14 +3990,92 @@ function screenCourseRoad(){
 
     if(keepScroll){ body.scrollTop=keep; }
     else {
-      /* 처음 열 때만 현재 위치(또는 진단이 추천한 과정)로 스크롤 */
-      const focusKey=S._roadFocus||curKey;
-      const target=body.querySelector(`.nm-cr-node[data-c="${focusKey}"]`)||body.querySelector('#crNow');
-      if(target) target.scrollIntoView({block:'center'});
+      /* 처음 열 때만 현재 위치(또는 진단이 추천한 과정)로 스크롤.
+         3D 지도가 뜰 수 있으면 맨 위(지도)를 보여 주고, 지도가 그 과정을 비춘다.
+         단, 다른 화면이 "이 과정을 보여 줘"(S._roadFocus)라고 보냈으면 목록의 그 과정으로 간다. */
+      if(S._roadFocus||!hero3dLikely){
+        const focusKey=S._roadFocus||curKey;
+        const target=listEl.querySelector(`.nm-cr-node[data-c="${focusKey}"]`)||listEl.querySelector('#crNow');
+        /* 진단·시작점 고르기에서 왔으면 그 과정을 잠깐 빛나게(2026-09-28) */
+        if(target&&S._roadFocus) roadFlashRow(target,body);
+        else if(target) target.scrollIntoView({block:'center'});
+      } else body.scrollTop=0;
       S._roadFocus=null;
     }
   }
   draw(false);
+  if(heroEl){
+    if(hero3dLikely) mountRoad3DInto(heroEl,{curKey,focus:heroFocus,listEl,body,onCtl:ctl=>{ road3dCtl=ctl; }});
+    else heroEl.remove();
+  }
+}
+/* WebGL 을 쓸 수 있을 것 같은가(없으면 3D 지도 자리를 만들지 않고 옛 동작 그대로) */
+function road3dLikely(){
+  try{ const c=document.createElement('canvas'); return !!(c.getContext('webgl2')||c.getContext('webgl')); }catch(e){ return false; }
+}
+/* CSS 변수(var(--blue) 등)로 적힌 등급 색을 3D 가 쓸 #hex 로 */
+function roadAccentHex(v){
+  const m=/^var\((--[\w-]+)\)$/.exec(String(v||'').trim());
+  if(!m) return v||'#8a6a40';
+  const got=getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+  return got||'#8a6a40';
+}
+/* 목록에서 한 줄을 찾아 가운데로 보이고 잠깐 빛나게(3D 지도에서 누른 과정·점검) */
+function roadFlashRow(el,body){
+  if(!el) return;
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* 멀면 바로 옮기고(긴 부드러운 스크롤은 느린 기기에서 한참 걸린다) 가까우면 부드럽게 */
+  const far=body?Math.abs(el.getBoundingClientRect().top-body.getBoundingClientRect().top-body.clientHeight/2)>body.clientHeight*1.5:true;
+  el.scrollIntoView({block:'center',behavior:reduce||far?'auto':'smooth'});
+  el.classList.remove('nm-cr-flash'); void el.offsetWidth; el.classList.add('nm-cr-flash');
+  clearTimeout(el._flashT); el._flashT=setTimeout(()=>el.classList.remove('nm-cr-flash'),2600);
+  try{ el.focus({preventScroll:true}); }catch(e){}
+}
+/* 3D 연산 로드맵 지도(2026-09-26) — app/road3d/road3d.js. 목록(2D)이 먼저 서 있고, 3D 는 그 위 머리 자리에 선다.
+   이정표를 누르면 목록의 그 과정으로 스크롤해 빛나게 한다(과정 시트는 목록의 버튼을 눌러 연다 — 여는 길은 한 곳).
+   WebGL 이 없거나 실패하면 머리 자리를 치우고 옛 화면 그대로(현재 과정으로 스크롤). */
+function mountRoad3DInto(heroEl, o){
+  const list=roadCourseList();
+  const curKey=o.curKey, goalKey=nextGoalKey(curKey);
+  const whenMap=roadStartLabels();
+  const courses=list.map(x=>{
+    const c=x.c, isDone=courseConquered(c), isNow=x.key===curKey;
+    const isGoal=!isDone&&!isNow&&x.key===goalKey;
+    const prog=courseProgress(c);
+    return { id:x.key, num:x.num, title:L(c.title), band:c.tier, sessions:(c.sessions||[]).length,
+      state:isNow?'now':isDone?'done':isGoal?'goal':(prog.done>0?'doing':'ahead'),
+      boss:!!c.boss, tower:c.tier==='challenge', when:whenMap[x.key]||'' };
+  });
+  const bands={};
+  list.forEach(x=>{ if(bands[x.c.tier]) return; const d=roadTierInfo(x.c.tier); bands[x.c.tier]={name:L(d.name), sub:L(d.band), color:roadAccentHex(d.accent)}; });
+  const checkups=[];
+  list.forEach(x=>{
+    if(!isCheckupPoint(x.num)) return;
+    const nums=checkupCourseNums(x.num);
+    const going=checkupInProgress(x.num), rec=checkupRecord(x.num), due=checkupDue(x.num);
+    checkups.push({num:x.num, from:nums[0], to:nums[nums.length-1], state:going||due?'due':rec?'done':'ahead'});
+  });
+  const failBack=()=>{
+    heroEl.remove();
+    /* 지도가 안 섰다 — 아무도 스크롤하지 않았으면 옛 화면처럼 지금 과정으로 */
+    if(o.body&&o.body.isConnected&&o.body.scrollTop===0){
+      const t=o.listEl.querySelector(`.nm-cr-node[data-c="${o.focus||curKey}"]`)||o.listEl.querySelector('#crNow');
+      if(t) t.scrollIntoView({block:'center'});
+    }
+  };
+  import('./road3d/road3d.js').then(m=>m.mountRoad3D(heroEl,{
+    lang:S.lang, courses, bands, checkups, current:curKey, goal:goalKey, focus:o.focus,
+    avatar:{kind:avatarKind()},
+    onCourse:id=>roadFlashRow(o.listEl.querySelector(`.nm-cr-node[data-c="${id}"]`),o.body),
+    onCheckup:num=>roadFlashRow(o.listEl.querySelector(`.nm-cr-check[data-chk="${num}"]`),o.body)
+  })).then(ctl=>{
+    if(!ctl){ if(heroEl.isConnected) failBack(); return; }
+    if(!heroEl.isConnected){ ctl.dispose(); return; }
+    heroEl.classList.add('is-3d');
+    if(o.onCtl) o.onCtl(ctl);
+    const prev=townCleanup;
+    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); };
+  }).catch(e=>{ console.warn('[road3d]',e); if(heroEl.isConnected) failBack(); });
 }
 
 /* ============================================================
@@ -3521,9 +4136,61 @@ const PLACEMENT_AGES=[
   {key:'adv', emoji:'🗼', tier:'challenge', course:'C26'},
   {key:'m1',  emoji:'📘', tier:'middle1',   course:'C29'},
   {key:'m2',  emoji:'📗', tier:'middle2',   course:'C32'},
-  {key:'m3',  emoji:'📙', tier:'middle3',   course:'C34'},
-  {key:'hi',  emoji:'🎓', tier:'highmath1', course:'C36'}
+  {key:'m3',  emoji:'📙', tier:'middle3',   course:'C35'},
+  {key:'hi',  emoji:'🎓', tier:'highmath1', course:'C38'}
 ];
+/* ── "지금 몇 학년 연산을 하고 있어요?" — 학교 학년 → 시작 과정 (2026-09-28) ──
+   원장 "진단하기는 지금 몇 학년 연산을 하는지 말하거나 그냥 진행할 수 있게".
+   과정 번호를 새로 정하지 않는다. 행마다 근거가 되는 데이터를 적어 두고, 가능한 곳은
+   실행할 때 데이터에서 직접 찾는다(tier 의 첫 과정 · 속도 비교 마일스톤).
+     tier      : data/courses.js 에서 그 tier 의 **첫 과정**(번호가 가장 작은 것)
+     milestone : app/pace-compare.js MILESTONES 의 course (출처: 기적의 계산법 권별 주제 —
+                 CURRICULUM-SOURCES.md §9, 상담 도구 roadmap/index.html)
+     course    : 위 둘로 못 짚는 초5·초6 — CURRICULUM-SOURCES.md §9 권별 주제와
+                 data/courses.js 과정 제목이 같은 자리(scripts/check-road-timing.js 가 제목을 대조)
+   | 학년        | 근거                                                                 | 과정 |
+   | 유아(5~6세) | tier level0 (stages.js 수의 나라 "유아 5~7세")                         | 0   |
+   | 초1         | milestone K = 수 감각 끝 → 과정 1 (§9 1·2권 초1 자연수 덧뺄)            | 1   |
+   | 초2         | milestone G2 = 한 자리 덧뺄 끝 → 과정 3 (§9 3·4권 초2 덧뺄 고급·구구단)   | 3   |
+   | 초3         | milestone G4 = 구구단 끝 → 과정 8 (§9 5·6권 초3 곱셈·나눗셈)             | 8   |
+   | 초4         | milestone G6 = "초3 연산 끝" → 과정 13 (§9 7·8권 초4 곱나눗 고급·분수)   | 13  |
+   | 초5         | §9 9권 "약수배수·약분통분·이분모 분수(초5)" = 과정 19 「약수와 배수…」    | 19  |
+   | 초6         | §9 11권 "분수·소수 나눗셈(초6)" = 과정 22 「분수 나눗셈」                 | 22  |
+   | 중1·중2·중3 | tier middle1·middle2·middle3 첫 과정                                 | 29·32·35 |
+   | 고등        | tier highmath1 첫 과정(공통수학1 — 공통수학2 는 그 뒤 40)               | 38  |
+   | 대수·미적분Ⅰ | tier algebra·calculus1 첫 과정                                       | 41·43 |
+   학기(1·2학기) 구분은 넣지 않았다 — 학기마다 과정을 가를 근거가 데이터에 없다. */
+const PLACEMENT_GRADES=[
+  {key:'pre', tier:'level0',     label:{ko:'유아 (5~6세)',en:'Preschool (ages 5–6)',zh:'幼儿（5~6岁）'}},
+  {key:'e1',  milestone:'K',     label:{ko:'초1',en:'Grade 1',zh:'小1'}},
+  {key:'e2',  milestone:'G2',    label:{ko:'초2',en:'Grade 2',zh:'小2'}},
+  {key:'e3',  milestone:'G4',    label:{ko:'초3',en:'Grade 3',zh:'小3'}},
+  {key:'e4',  milestone:'G6',    label:{ko:'초4',en:'Grade 4',zh:'小4'}},
+  {key:'e5',  course:19,         label:{ko:'초5',en:'Grade 5',zh:'小5'}},
+  {key:'e6',  course:22,         label:{ko:'초6',en:'Grade 6',zh:'小6'}},
+  {key:'m1',  tier:'middle1',    label:{ko:'중1',en:'Grade 7',zh:'初1'}},
+  {key:'m2',  tier:'middle2',    label:{ko:'중2',en:'Grade 8',zh:'初2'}},
+  {key:'m3',  tier:'middle3',    label:{ko:'중3',en:'Grade 9',zh:'初3'}},
+  {key:'hi',  tier:'highmath1',  label:{ko:'고등 (공통수학1·2)',en:'High school (Common Math 1·2)',zh:'高中（共同数学1·2）'}},
+  {key:'alg', tier:'algebra',    label:{ko:'대수',en:'Algebra',zh:'代数'}},
+  {key:'cal', tier:'calculus1',  label:{ko:'미적분Ⅰ',en:'Calculus I',zh:'微积分Ⅰ'}}
+];
+/* 학년 행 → 과정 번호(데이터에서 찾는다). 못 찾으면 null */
+function placementGradeCourseNum(g){
+  if(g.course!=null) return g.course;
+  if(g.milestone){ const PC=window.NM_PACE_COMPARE, m=PC&&PC.milestone(g.milestone); return m?m.course:null; }
+  if(g.tier){ const x=roadCourseList().find(x=>x.c.tier===g.tier); return x?x.num:null; }
+  return null;
+}
+function placementGradeCourseKey(g){ const n=placementGradeCourseNum(g); return n==null?null:'C'+n; }
+/* 과정 → "학교로 치면 몇 학년 연산" — 표의 행 가운데 시작 과정이 그 과정 이하인 마지막 행 */
+function gradeBandOfCourse(key){
+  const num=parseInt(String(key).replace(/^C/,''),10);
+  let hit=null;
+  PLACEMENT_GRADES.forEach(g=>{ const n=placementGradeCourseNum(g); if(n!=null&&n<=num) hit=g; });
+  return hit;
+}
+window.NM_PLACEMENT_GRADES=()=>PLACEMENT_GRADES.map(g=>({key:g.key, label:g.label, course:placementGradeCourseNum(g)}));
 /* 수의 나라 구간의 이름·나이 — curriculum.js에서 읽고, 없으면 같은 문구로 적는다. */
 function placementPreLabel(){
   const tiers=(window.NM_CURRICULUM&&window.NM_CURRICULUM.tiers)||[];
@@ -3559,17 +4226,46 @@ function startPlacement(){
             asked:0, correct:0, cur:null, qStart:null, log:[] };
   S.view='placement'; save(); render();
 }
+/* 진단 천장(2026-09-28, 원장 "말도 안되지, 연산 테스트가 5살한테 미적 줄꺼야?").
+   전에는 누구든 다 맞히면 사다리 끝(고등 미적분)까지 올라갔다. 이제 시작 과정이 속한 로드맵 단계의
+   **다음 단계 끝**까지만 올라간다(data/stages.js courses.from/to — 번호를 새로 정하지 않는다).
+     유아(과정 0) → 과정 10 · 초1~초3(과정 1~10) → 16 · 초4(13) → 25 · 초5·6(19·22) → 28 · 중등 → 45
+   천장까지 다 맞힌 아이는 결과 화면의 "한 단계 더 올라가 보기"로 천장을 다음 단계로 올려 이어서 푼다
+   — 빠른 아이를 막지 않되, 처음부터 어려운 문제를 보여 주지 않는다. */
+function placementCeilCourse(courseNum){
+  const st=(window.NM_STAGES||[]).filter(x=>x.courses);
+  const i=st.findIndex(x=>courseNum>=x.courses.from&&courseNum<=x.courses.to);
+  if(i<0) return null;
+  return st[Math.min(st.length-1,i+1)].courses.to;
+}
+/* 천장 과정 이하 칸의 개수 = 좁히기가 쓰는 사다리 길이 */
+function placementCapFor(ceilNum){
+  const ladder=placementLadder();
+  if(ceilNum==null) return ladder.length;
+  let n=0;
+  ladder.forEach((r,i)=>{ if(parseInt(String(r.course).replace(/^C/,''),10)<=ceilNum) n=i+1; });
+  return n||ladder.length;
+}
+function placementSetEntry(d, idx){
+  const ladder=placementLadder();
+  d.entry=idx;
+  const r=ladder[idx]||ladder[0];
+  d.ceil=r?placementCeilCourse(parseInt(String(r.course).replace(/^C/,''),10)):null;
+  d.cap=placementCapFor(d.ceil);
+  d.hi=Math.min(d.hi==null?d.cap:d.hi, d.cap);
+}
+function placementN(d){ return d.cap||placementLadder().length; }
 /* 다음에 물을 칸(bracketing). null이면 경계를 찾은 것 — placement-core.js로 위임. */
 function placementNext(d){
-  return window.NM_PLACEMENT_CORE.nextRung(d, placementLadder().length);
+  return window.NM_PLACEMENT_CORE.nextRung(d, placementN(d));
 }
 /* 한 문제의 채점 결과를 위아래 좁히기(lo/hi)에 반영 — placement-core.js로 위임. */
 function placementGrade(d, rungIndex, ok){
-  window.NM_PLACEMENT_CORE.grade(d, rungIndex, ok, placementLadder().length);
+  window.NM_PLACEMENT_CORE.grade(d, rungIndex, ok, placementN(d));
 }
 /* 아직 못 넘은 첫 칸 — placement-core.js로 위임. */
 function placementBoundary(d){
-  return window.NM_PLACEMENT_CORE.boundary(d, placementLadder().length);
+  return window.NM_PLACEMENT_CORE.boundary(d, placementN(d));
 }
 /* 물어본 스레드마다 결과를 남긴다(위아래 좁히기 문제든 세부 진단 문제든 공용).
    나중에(finishPlacement) 이 log에서 "구역 스레드 중 이미 물어본 것"을 찾아
@@ -3597,8 +4293,9 @@ function placementProblem(rung, i, run, extra){
 function placementAfterBracketing(d){
   const ladder=placementLadder();
   const CORE=window.NM_PLACEMENT_CORE;
-  const N=ladder.length;
+  const N=placementN(d);
   const b=CORE.boundary(d,N);
+  d.capped = N<ladder.length && b>=N;
   const K=CORE.courseAtIndex(ladder,b);
   d.boundaryIdx=b;
   d.K=K;
@@ -3639,7 +4336,8 @@ function placementFinish(d){
   const weak=profile.filter(p=>!p.ok).map(p=>p.t);
   const slow=profile.filter(p=>p.ok&&p.sec>25).map(p=>p.t);
   S.placement={ at:Date.now(), course:recommended, asked:d.asked||0, correct:d.correct||0,
-    age:d.age||null, cleared:d.boundaryIdx, profile, weak, slow, self:false };
+    age:d.age||null, grade:d.grade||null, cleared:d.boundaryIdx, profile, weak, slow, self:false,
+    ceil:d.ceil==null?null:d.ceil, capped:!!d.capped };
   d.stage='result';
   save();
 }
@@ -3729,19 +4427,93 @@ function screenPlacement(){
         <p class="nm-dg-ask">${lk('나이에 맞는 문제부터 물어볼게요. 몇 문제만 풀면 끝나요.',
           'We will start with questions that fit your age. Just a few questions.',
           '我们从适合你年龄的题目开始，只要几道题就好。')}</p>
+        <button class="nm-dg-gradeask" id="dgGradeAsk">
+          <span class="nm-dg-gradeask-ic" aria-hidden="true">📚</span>
+          <span class="nm-dg-gradeask-txt"><b>${lk('지금 몇 학년 연산을 하고 있어요?','What grade’s arithmetic are you on now?','现在在做几年级的运算？')}</b>
+            <small>${lk('학년을 고르면 그 자리에서 시작하거나, 짧게 확인하고 시작해요.','Pick the grade — start right there, or take a short check first.','选好年级，可以直接从那里开始，也可以先简单确认再开始。')}</small></span>
+        </button>
+        <div class="nm-dg-or">${lk('또는 나이로 고르기','Or choose by age','或按年龄选择')}</div>
         <div class="nm-dg-ages">${opts}</div>
+        <a class="nm-dg-selfpick nm-dg-paper" href="level-test.html?lang=${S.lang}" target="_blank" rel="noopener">📝 ${lk('종이로 보는 표준 진단지 (인쇄)','Standard paper test (print)','纸质标准测评卷（打印）')}</a>
         <button class="nm-dg-selfpick" id="dgSelfPick">🎯 ${lk('진단 없이 직접 고를래요','Skip the check — pick myself','不测评，自己选')}</button>
         <button class="nm-dg-again" id="dgSkip">${lk('잘 모르겠어요 · 건너뛰기','Not sure · Skip','不太清楚 · 跳过')}</button>
       </div>
     </div>`;
     $('#dgBack').onclick=back;
     scr.querySelectorAll('.nm-dg-age').forEach(b=>{
-      b.onclick=()=>{ d.age=b.dataset.age; d.entry=+b.dataset.entry;
+      b.onclick=()=>{ d.age=b.dataset.age; placementSetEntry(d, +b.dataset.entry);
         d.stage='q'; save(); screenPlacement(); };
     });
     /* 건너뛰기 = 예전 그대로 맨 아래 칸부터 */
-    $('#dgSkip').onclick=()=>{ d.age='skip'; d.entry=0; d.stage='q'; save(); screenPlacement(); };
+    $('#dgSkip').onclick=()=>{ d.age='skip'; placementSetEntry(d, 0); d.stage='q'; save(); screenPlacement(); };
     $('#dgSelfPick').onclick=()=>{ S._diag=null; S.view='startpick'; save(); render(); };
+    $('#dgGradeAsk').onclick=()=>{ d.stage='grade'; d.gradePick=null; save(); screenPlacement(); };
+    return;
+  }
+
+  /* ── 지금 하는 학교 학년 연산 고르기(2026-09-28) — 고른 뒤 "이 과정부터" 또는 "짧게 확인하고" ── */
+  if(d.stage==='grade'){
+    const pick=PLACEMENT_GRADES.find(g=>g.key===d.gradePick)||null;
+    const chips=PLACEMENT_GRADES.map(g=>{
+      const n=placementGradeCourseNum(g);
+      if(n==null||!(window.NM_COURSES||{})['C'+n]) return '';
+      return `<button class="nm-dg-grade${pick&&pick.key===g.key?' on':''}" data-g="${g.key}" aria-pressed="${pick&&pick.key===g.key?'true':'false'}">${esc(L(g.label))}</button>`;
+    }).join('');
+    let preview='';
+    if(pick){
+      const key=placementGradeCourseKey(pick), c=(window.NM_COURSES||{})[key];
+      const tierDef=c?roadTierInfo(c.tier):null;
+      const num=String(key).replace(/^C/,'');
+      preview=`<div class="nm-dg-gradeprev" style="--acc:${tierDef?tierDef.accent:'var(--blue)'}">
+        <small>${lk(`${L(pick.label)} 연산이면 여기서 시작해요`,`For ${L(pick.label)} arithmetic, start here`,`${L(pick.label)}的运算，从这里开始`)}</small>
+        <b>${lk('과정','Course','课程')} ${num}${c?` · ${esc(L(c.title))}`:''}</b>
+        ${tierDef?`<span>${esc(L(tierDef.name))}</span>`:''}
+        <em>${lk('우리 과정은 학교 진도보다 앞서 있어서, 단계 이름에 적힌 나이·학년과 다를 수 있어요.',
+          'Our courses run ahead of school, so the age or grade in a stage name may differ.',
+          '我们的课程比学校进度靠前，阶段名里的年龄·年级可能不同。')}</em>
+      </div>
+      <button class="nm-btn full" id="dgGradeStart">🚩 ${lk('이 과정부터 시작','Start from this course','从这个课程开始')}</button>
+      <button class="nm-btn full ghost" id="dgGradeCheck">🧭 ${lk('짧게 확인하고 시작','Take a short check first','先简单确认再开始')}</button>
+      <p class="nm-dg-free">${lk('짧게 확인하면 이 과정 근처부터 몇 문제만 물어봐요. 어느 쪽이든 나중에 자유롭게 바꿀 수 있어요.',
+        'The short check asks just a few questions starting near this course. Either way, you can change it freely later.',
+        '简单确认只会从这个课程附近问几道题。不管选哪个，以后都可以自由更改。')}</p>`;
+    }
+    scr.innerHTML=`<div class="nm-unit-bar">
+      <button class="nm-back" id="dgBack">${t('back')}</button>
+      <div class="nm-unit-title">🧭 ${lk('진단하기','Level Check','水平测评')}</div>
+    </div>
+    <div class="nm-step-body nm-wsh-wrap nm-dg-wrap">
+      <div class="nm-card center">
+        <div class="nm-card-h">${lk('지금 몇 학년 연산을 하고 있어요?','What grade’s arithmetic are you on now?','现在在做几年级的运算？')}</div>
+        <p class="nm-dg-ask">${lk('학교 학년이 아니라, 지금 풀고 있는 연산이 몇 학년 것인지 골라요.',
+          'Not your school year — pick the grade of the arithmetic you are working on now.',
+          '不是学校的年级，而是现在正在做的运算属于几年级。')}</p>
+        <div class="nm-dg-grades" role="group" aria-label="${lk('학년','Grade','年级')}">${chips}</div>
+        ${preview}
+        <button class="nm-dg-again" id="dgGradeBack">${lk('나이로 고를래요','Choose by age instead','改为按年龄选')}</button>
+      </div>
+    </div>`;
+    $('#dgBack').onclick=back;
+    $('#dgGradeBack').onclick=()=>{ d.stage='age'; d.gradePick=null; save(); screenPlacement(); };
+    scr.querySelectorAll('.nm-dg-grade').forEach(b=>{
+      b.onclick=()=>{ d.gradePick=b.dataset.g; save(); screenPlacement();
+        const s=$('#dgGradeStart'); if(s) s.scrollIntoView({block:'nearest'}); };
+    });
+    if(pick){
+      const key=placementGradeCourseKey(pick);
+      /* 시작점 고르기(startpick)와 같은 모양으로 저장한다 — 로드맵이 "내가 고른 시작점"으로 표시 */
+      $('#dgGradeStart').onclick=()=>{
+        S.placement={ at:Date.now(), course:key, self:true, grade:pick.key,
+          asked:0, correct:0, profile:[], weak:[], slow:[] };
+        S._diag=null; S._roadFocus=key; S.view='courseroad'; save(); render();
+      };
+      /* 짧게 확인 = 기존 적응형 진단을 그 과정의 사다리 칸에서 시작(유아·못 찾으면 맨 아래 칸) */
+      $('#dgGradeCheck').onclick=()=>{
+        const CORE=window.NM_PLACEMENT_CORE;
+        const idx=CORE?CORE.rungIndexOfCourse(placementLadder(), key):-1;
+        d.grade=pick.key; d.age=null; placementSetEntry(d, idx>=0?idx:0); d.stage='q'; save(); screenPlacement();
+      };
+    }
     return;
   }
 
@@ -3749,7 +4521,7 @@ function screenPlacement(){
   if(d.stage==='q'){
     const ladder=placementLadder();
     const nextIdx=placementNext(d);
-    if(nextIdx===null || d.asked>=CORE.MAX_Q){
+    if(nextIdx===null || (d.asked-(d.askedBase||0))>=CORE.MAX_Q){
       placementAfterBracketing(d); save(); screenPlacement(); return;
     }
     renderPlacementQuestion(d, ladder[nextIdx], nextIdx, 'q');
@@ -3793,9 +4565,9 @@ function renderPlacementQuestion(d, rung, idx, stage){
   const useWidget = !cur.tex && cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
   const isMulti = Array.isArray(cur.answer);
 
-  const stepNum = isFine ? (d.fineAsked+1) : (d.asked+1);
+  const stepNum = isFine ? (d.fineAsked+1) : (d.asked-(d.askedBase||0)+1);
   const totalDots = isFine ? Math.min(CORE.FINE_MAX_Q, d.fineThreads.length) : CORE.MAX_Q;
-  const curDot = isFine ? d.fineAsked : d.asked;
+  const curDot = isFine ? d.fineAsked : (d.asked-(d.askedBase||0));
   const headerTitle = isFine ? lk('세부 진단','Skill check','细项测评') : lk('진단하기','Level Check','水平测评');
   const canStop = isFine && d.fineAsked>=3;
 
@@ -3891,10 +4663,19 @@ function renderPlacementResult(d){
         const f=window.NM_STAGE_OF_COURSE, st=f?f(num):null;
         return st?`<div class="nm-dg-stage">${st.icon||''} ${esc(L(st.name).split(' — ')[0])} · ${esc(L(st.band))}</div>`:'';
       })()}
+      ${(function(){ /* 이 과정이 학교로 치면 몇 학년 연산인지(2026-09-28) — PLACEMENT_GRADES 표에서 */
+        const g=gradeBandOfCourse(key); if(!g) return '';
+        const gl=esc(L(g.label));
+        return `<div class="nm-dg-gradeband">📚 ${lk(`학교 진도로 치면 <b>${gl}</b> 연산 무렵이에요`,`In school terms, about <b>${gl}</b> arithmetic`,`按学校进度，大约是<b>${gl}</b>的运算`)}</div>`;
+      })()}
       ${placementAgeNoteHtml(S.placement,lk)}
       <div class="nm-score">${S.placement.correct||0} / ${S.placement.asked||0}</div>
       <p class="nm-wsh-sentence">${lk('맞힌 문제까지가 이미 익숙한 곳이에요. 여기서부터 새로 배우면 딱 맞아요.','Everything you answered is already comfortable — starting here fits just right.','答对的部分已经很熟练了，从这里开始正好。')}</p>
       ${placementSkillListHtml(S.placement.profile,lk)}
+      ${S.placement.capped&&d&&d.ceil!=null?`<div class="nm-dg-capped">
+        <p>${lk(`과정 ${d.ceil}까지 모두 맞혔어요! 더 어려운 문제도 풀어 볼래요?`,`You got everything up to Course ${d.ceil}! Want to try harder ones?`,`到课程${d.ceil}全部答对！想挑战更难的题吗？`)}</p>
+        <button class="nm-btn full" id="dgHigher">⛰️ ${lk('한 단계 더 올라가 보기','Go one stage higher','再往上一个阶段')}</button>
+      </div>`:''}
       <p class="nm-dg-free">${lk('이건 권유일 뿐이에요. 과정은 언제든 자유롭게 골라도 좋아요.','This is only a suggestion — you can pick any course you like, any time.','这只是建议，任何时候都可以自由选择课程。')}</p>
       <button class="nm-btn full" id="dgGoRoad">🛤️ ${lk('로드맵에서 이 과정 보기','See this course on the road','在路线图上看这个课程')}</button>
       <button class="nm-btn full ghost" id="dgPickInstead">🎯 ${lk('다른 곳에서 시작할래요 · 직접 고르기','Start somewhere else · pick myself','想从别处开始 · 自己选')}</button>
@@ -3905,10 +4686,22 @@ function renderPlacementResult(d){
   $('#dgGoRoad').onclick=()=>{ S._diag=null; S._roadFocus=key; S.view='courseroad'; save(); render(); };
   $('#dgPickInstead').onclick=()=>{ S._diag=null; S.view='startpick'; save(); render(); };
   $('#dgAgain').onclick=()=>startPlacement();
+  const hi=$('#dgHigher');
+  if(hi) hi.onclick=()=>{
+    const nc=placementCeilCourse(d.ceil);
+    if(nc==null||nc<=d.ceil) return;
+    d.ceil=nc; d.cap=placementCapFor(nc); d.hi=d.cap; d.capped=false;
+    d.askedBase=d.asked||0; d.ups=0; d.cur=null; d.qStart=null; d.zone=null; d.stage='q';
+    save(); screenPlacement();
+  };
 }
 /* 결과 화면에서 "몇 살이라고 했는지"를 한 줄로 되짚어 준다. 건너뛴/직접
    고른 경우엔 없음(둘 다 age가 없거나 'skip'). */
 function placementAgeNoteHtml(d,lk){
+  if(d.grade){ /* "지금 몇 학년 연산" 으로 들어온 경우(2026-09-28) */
+    const g=PLACEMENT_GRADES.find(x=>x.key===d.grade);
+    return g?`<div class="nm-dg-agenote">📚 ${lk('고른 학년 연산','Grade picked','所选年级运算')} · ${esc(L(g.label))}</div>`:'';
+  }
   if(!d.age||d.age==='skip')return'';
   const opt=PLACEMENT_AGES.find(o=>o.key===d.age);
   if(!opt)return'';
@@ -4047,7 +4840,7 @@ function screenTitle(){
              만드는 데 쓴다(2026-09-16). 한 요소에 text-stroke와 background-clip:text를 같이 주면
              테두리가 그라데이션을 덮어 흰 글자로 보인다 — 인트로 영상 로고와 같은 결로 맞춘 것. -->
         <div class="nm-title-logo-kr" data-text="${lk('수의 마법','Numbers of Magic','数字魔法')}">${lk('수의 마법','Numbers of Magic','数字魔法')}</div>
-        <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','NUMBER VILLAGE · DOCSSAM','NUMBERS OF MAGIC')}</div>
+        <div class="nm-title-logo-sub">${lk('NUMBERS OF MAGIC','NUMBER VILLAGE · Doc-T','NUMBERS OF MAGIC')}</div>
       </div>
       <!-- 캐릭터 크기 88→136(2026-09-16, 원장 "캐릭터를 더 키워야지"). 원본 해상도로 크게 그려야
            흐려지지 않는다 — CSS 확대가 아니라 렌더 크기 자체를 키운다. -->
@@ -4108,6 +4901,38 @@ function screenTitle(){
   $('#ttDex').onclick=()=>{ S._dexFrom='title'; S.view='symboldex'; save(); render(); };
   $('#ttHist').onclick=()=>{ S.view='histquiz'; save(); render(); };
   $('#ttMz').onclick=()=>{ S._mzOpen=null; S.view='magazine'; save(); render(); };
+  mountTitle3DInto(scr, summary, badge);
+}
+/* 3D 모드 선택 화면(2026-09-26, 원장 "학습지 모드, 게임모드 이런것들 고르는 화면서 3d로 제대로 구현") — app/title3d/title3d.js.
+   2D 타이틀을 먼저 그려 두고, 3D 가 서면 그 위를 덮는다. 고르면 2D 버튼을 그대로 누른다 —
+   이동 규칙(이어서 모험·진단·게임·학습지 …)이 한 곳(위 onclick)에만 있게. WebGL 이 없으면 2D 가 그대로 남는다. */
+function mountTitle3DInto(scr, summary, badge){
+  const card=scr.querySelector('.nm-title');
+  if(!card)return;
+  const BTN={continue:'ttContinue',diag:'ttDiag',game:'ttGame',sheet:'ttSheet',road:'ttRoad',story:'ttStory',dex:'ttDex',hist:'ttHist',magazine:'ttMz'};
+  const box=document.createElement('div');
+  box.className='nm-title3d';
+  box.style.visibility='hidden';
+  scr.appendChild(box);
+  const chips=[];   /* 동전은 모듈이 coins 로 따로 그린다 */
+  if(S.attend&&S.attend.days)chips.push({icon:'📅',text:{ko:`${S.attend.days}일`,en:`Day ${S.attend.days}`,zh:`第${S.attend.days}天`}});
+  if(badge)chips.push({icon:'🏅',text:badge.label,gold:true});
+  import('./title3d/title3d.js').then(m=>{
+    const choices=m.DEFAULT_CHOICES.map(c=>c.id==='continue'&&summary?Object.assign({},c,{sub:summary}):c);
+    return m.mountTitle3D(box,{
+      lang:S.lang, choices,
+      onPick:id=>{const b=document.getElementById(BTN[id]);if(b)b.click();},
+      player:px=>window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,px):'',
+      name:S.name||'', coins:S.coins, chips, extraHtml:lineageBadgeRowHtml()
+    });
+  }).then(ctl=>{
+    if(!ctl){box.remove();return;}
+    if(!box.isConnected){ctl.dispose();return;}
+    box.style.visibility='';
+    card.classList.add('is-3d-covered');
+    const prev=townCleanup;
+    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); box.remove(); };
+  }).catch(()=>{box.remove();});
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
 function lineageBadgeRowHtml(){
@@ -4534,7 +5359,7 @@ function screenMailbox(){
   }
 
   const weeks = mailboxWeeks();
-  const fromDoc = `<span class="nm-mb-env-from">${lk('From. 독쌤','From. Doc-ssaem','来自 独老师')}</span>`;
+  const fromDoc = `<span class="nm-mb-env-from">${lk('From. 독쌤','From. Doc-T','来自 独先生')}</span>`;
   const rows = weeks.map(w=>`<button class="nm-mb-env-card${w.opened?' opened':''}" data-week="${w.weekKey}">
     <span class="nm-mb-env-icon">${w.opened?'📭':'📬'}</span>
     <span class="nm-mb-env-body">
@@ -4551,7 +5376,7 @@ function screenMailbox(){
   <div class="nm-step-body nm-wsh-wrap">
     <div class="nm-doc-strip">
       ${window.renderHumanChar?window.renderHumanChar('doc',64):''}
-      <div class="nm-doc-strip-bubble">${lk('독쌤이 이번 주 편지를 보냈어요. 봉투를 열어 볼까?',"Doc-ssaem sent this week's letter. Open the envelope?","独老师寄来了本周的信，打开看看？")}</div>
+      <div class="nm-doc-strip-bubble">${lk('독쌤이 이번 주 편지를 보냈어요. 봉투를 열어 볼까?',"Doc-T sent this week's letter. Open the envelope?","独先生寄来了本周的信，打开看看？")}</div>
     </div>
     <p class="nm-wsh-sentence" style="margin-bottom:12px">${lk('매주 월요일, 지금 배우는 곳에 맞춘 학습지 봉투가 도착해요.','Every Monday, a worksheet envelope arrives matched to what you’re learning.','每周一，会收到一份配合学习进度的学习单信封。')}</p>
     <div class="nm-mb-env-list">${rows || `<div class="nm-card">${lk('봉투가 없어요.','No envelopes yet.','暂无信封。')}</div>`}</div>
@@ -4627,6 +5452,93 @@ function showGateModal(){
 function enterTier(id){S.view='tier';S.tierId=id;save();render();}
 function exitTier(){S.view='town';S.tierId=null;save();render();}
 
+/* 3D 마을(2026-09-26, 원장 "마을 지도야 … 3d로 제대로 구현") — app/town3d/town3d.js.
+   2D 지도를 먼저 그려 두고(곧바로 보이고, 3D 를 못 쓰면 그대로 남는다) 3D 가 준비되면 그 위를 덮는다.
+   건물·관문을 누르면 2D 와 같은 안내(townSpotAction·showGateLinksModal). 잠금 규칙도 2D 와 같다. */
+function mountTown3DInto(scr){
+  const vp=scr.querySelector('#townVp');
+  if(!vp)return;
+  const lang=S.lang;
+  const spots=TOWN_SPOTS.map(sp=>{
+    const open=sp.tier==='_theater'?false:TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tierById(sp.tier));
+    return { id:sp.tier, open, label:sp.tag, sub:sp.sub, lockIcon:sp.lockIcon };
+  });
+  const gates=TOWN_GATES.map(g=>({ id:g.id, icon:g.icon, name:g.name }));
+  const walker=(k,n)=>window.renderWalker?window.renderWalker(k,n):'';
+  const numi=(c,n)=>window.renderNumiChar?window.renderNumiChar(c,n):'';
+  const myName=S.name?S.name:('#'+S.character.number);
+  /* 진짜 3D 캐릭터(app/char3d) 모델 — html 은 모델을 못 만들 때의 빌보드 대체용으로 그대로 둔다.
+     버디: 기호 캐릭터는 S.character.symbol(id), 숫자는 number. char3d 는 0~10 과 기호 10종만 빚으므로
+     그 밖의 숫자(11·20·42…)는 모델 없이 옛 그림으로 보여 준다(엉뚱한 숫자가 서 있지 않게). */
+  const C3_SYMS=['plus','minus','times','divide','equal','percent','pi','sigma','infinity','sqrt'];
+  const buddyModel=(()=>{
+    const c=S.character||{};
+    let id=c.symbol!=null?c.symbol:c.number;
+    if(typeof id==='string'&&/^\d+$/.test(id))id=+id;
+    const ok=(typeof id==='number'&&id>=0&&id<=10&&Math.floor(id)===id)||C3_SYMS.indexOf(id)>=0;
+    return ok?{kind:'buddy',buddy:{number:id,color:c.color,hat:c.hat||'none',cape:c.cape||'none'}}:null;
+  })();
+  const characters=[
+    { id:'player', role:'player', html:walker(avatarKind(),60), model:{kind:avatarKind()==='girl'?'girl':'boy'}, name:myName, at:'plaza',
+      lines:[{ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`},{ko:'길을 콕 찍으면 내가 걸어가!',en:'Tap a path and I will walk there!',zh:'点一下小路，我就走过去！'}] },
+    { id:'buddy', role:'buddy', html:numi(S.character,44), model:buddyModel||undefined,
+      lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'},{ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'}] },
+    { id:'elder', role:'npc', html:walker('elder',56), model:{kind:'elder'}, name:{ko:'할아버지',en:'Grandpa',zh:'爷爷'}, at:'gazebo', still:true,
+      lines:[{ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'},{ko:'정자에 앉아 숫자 이야기 들려줄까?',en:'Shall I tell you a number story at the gazebo?',zh:'在凉亭坐下，听我讲讲数字的故事？'},{ko:'천천히 해도 괜찮단다',en:'It is fine to take your time',zh:'慢慢来也没关系'},{ko:'항구에 가면 수학 이야기 퀴즈가 있단다',en:'There is a math-story quiz down at the harbor',zh:'去港口有数学故事问答哦'}] },
+    { id:'doc', role:'npc', html:walker('doc',56), model:{kind:'doc'}, name:{ko:'독쌤',en:'Doc-T',zh:'独先生'}, at:'academy', still:true,
+      lines:[{ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-T 📚',zh:'你好！我是独先生 📚'},{ko:'오늘 배울 마법은 도서관에 있어',en:"Today's magic is in the library",zh:'今天要学的魔法在图书馆里'},{ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'}] },
+    { id:'poco', role:'npc', html:numi({number:3,color:'gold',bg:'plain'},52), model:{kind:'buddy',buddy:{number:3,color:'gold'}}, at:'plaza', wander:true,
+      lines:[{ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'},{ko:'7이랑 만나면 10! 🔟',en:'With 7 we make 10! 🔟',zh:'和7在一起就是10！🔟'},{ko:'게임하러 가자!',en:"Let's go play!",zh:'去玩游戏吧！'}] },
+    { id:'momo', role:'npc', html:numi({number:8,color:'pink',bg:'plain'},52), model:{kind:'buddy',buddy:{number:8,color:'pink'}}, at:'numberland', wander:true,
+      lines:[{ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'},{ko:'2랑 만나면 10! 🔟',en:'With 2 we make 10! 🔟',zh:'和2在一起就是10！🔟'},{ko:'실수는 괜찮아!',en:'Mistakes are okay!',zh:'出错也没关系！'}] }
+  ];
+  const box=document.createElement('div');
+  box.className='nm-town3d';
+  /* 3D 층 안의 끌기·휠·탭이 아래 2D 지도의 처리기(지도 이동·탭 이동)로 새지 않게 */
+  ['pointerdown','pointermove','pointerup','pointercancel','wheel'].forEach(ev=>box.addEventListener(ev,e=>e.stopPropagation()));
+  box.style.pointerEvents='none';   /* 준비되기 전엔 아래 2D 지도를 그대로 누를 수 있게 */
+  vp.appendChild(box);
+  const muted=()=>{const mb=scr.querySelector('#townMute');return !mb||mb.textContent.indexOf('🔇')>=0;};
+  import('./town3d/town3d.js').then(m=>m.mountTown3D(box,{
+    lang, spots, gates, characters,
+    onSpot:id=>townSpotAction(id),
+    onGate:id=>{const g=TOWN_GATES.find(x=>x.id===id);if(g)showGateLinksModal(g);},
+    onSay:text=>{if(!muted()&&S.lang==='ko')say(text);}
+  })).then(ctl=>{
+    if(!ctl){box.remove();return;}
+    if(!box.isConnected){ctl.dispose();return;}
+    /* 3D 가 섰다 — 2D 지도의 움직임(분수·반짝임·걷기)을 멈추고 숨긴다. 음소거·배경음은 2D 쪽 버튼 그대로 */
+    const prev=townCleanup;
+    if(prev)prev();
+    vp.classList.add('is-3d');
+    box.style.pointerEvents='';
+    const zi=scr.querySelector('#townZin'), zo=scr.querySelector('#townZout'), me=scr.querySelector('#townMe');
+    if(zi)zi.onclick=()=>ctl.zoomIn();
+    if(zo)zo.onclick=()=>ctl.zoomOut();
+    if(me)me.onclick=()=>ctl.focusPlayer();
+    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); };
+  }).catch(()=>{box.remove();});
+}
+/* 마을 건물 탭 → 안내 모달(2D 지도·3D 마을 공통) */
+function townSpotAction(id){
+  if(id==='_theater'){
+    const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
+    const examDesc=S.lang==='ko'?'시드 학습지를 인쇄하거나 타이머 시험을 볼 수 있어요.':
+      S.lang==='en'?'Print a seeded worksheet or take a timed exam.':'打印带种子的学习单，或进行限时考试。';
+    showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();});
+    return;
+  }
+  if(id==='_closet'){
+    const cl=S.lang==='ko'?'🪄 마법사 옷장':S.lang==='en'?"🪄 Wizard's Closet":'🪄 魔法师衣橱';
+    const cd=S.lang==='ko'?'숫자·색·표정·모자·배경을 골라 내 캐릭터를 꾸며요!':
+      S.lang==='en'?'Customize your number character!':'选择数字、颜色、表情、帽子和背景，打造专属角色！';
+    showTownModal(cl, cd, ()=>{S.view='closet';save();render();});
+    return;
+  }
+  const tier=tierById(id);
+  if(tierOpen(tier)) showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc),()=>enterTier(id));
+  else showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc)+' — '+t('locked'),null);
+}
 /* 마을 상호작용(드래그/핀치줌/구름/분수/숫자친구/배경음) — 화면을 나갈 때 반드시 cleanup() 호출 */
 function initTownWorld(scr){
   const vp=scr.querySelector('#townVp'), world=scr.querySelector('#townWorld');
@@ -4721,24 +5633,7 @@ function initTownWorld(scr){
   scr.querySelectorAll('.nm-zone').forEach(z=>{
     z.addEventListener('pointerup',e=>{
       if(moved)return;e.stopPropagation();
-      const id=z.dataset.spot;
-      if(id==='_theater'){
-        const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
-        const examDesc=S.lang==='ko'?'시드 학습지를 인쇄하거나 타이머 시험을 볼 수 있어요.':
-          S.lang==='en'?'Print a seeded worksheet or take a timed exam.':'打印带种子的学习单，或进行限时考试。';
-        showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();});
-        return;
-      }
-      if(id==='_closet'){
-        const cl=S.lang==='ko'?'🪄 마법사 옷장':S.lang==='en'?"🪄 Wizard's Closet":'🪄 魔法师衣橱';
-        const cd=S.lang==='ko'?'숫자·색·표정·모자·배경을 골라 내 캐릭터를 꾸며요!':
-          S.lang==='en'?'Customize your number character!':'选择数字、颜色、表情、帽子和背景，打造专属角色！';
-        showTownModal(cl, cd, ()=>{S.view='closet';save();render();});
-        return;
-      }
-      const tier=tierById(id);
-      if(tierOpen(tier)) showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc),()=>enterTier(id));
-      else showTownModal(`${tier.grade} · ${L(tier.subtitle)}`,L(tier.desc)+' — '+t('locked'),null);
+      townSpotAction(z.dataset.spot);
     });
   });
   scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');
@@ -4785,7 +5680,7 @@ function initTownWorld(scr){
     {el:scr.querySelector('#nbElder'),x:31,y:52,tx:31,ty:52,spd:0,still:true,
       lines:[L({ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'}),L({ko:'정자에 앉아 숫자 이야기 들려줄까?',en:'Shall I tell you a number story at the gazebo?',zh:'在凉亭坐下，听我讲讲数字的故事？'}),L({ko:'천천히 해도 괜찮단다',en:'It is fine to take your time',zh:'慢慢来也没关系'}),L({ko:'항구에 가면 수학 이야기 퀴즈가 있단다',en:'There is a math-story quiz down at the harbor',zh:'去港口有数学故事问答哦'})]},
     {el:scr.querySelector('#nbDoc'),x:47,y:60,tx:47,ty:60,spd:0,still:true,
-      lines:[L({ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-ssaem 📚',zh:'你好！我是独老师 📚'}),L({ko:'오늘 배울 마법은 도서관에 있어',en:'Today\'s magic is in the library',zh:'今天要学的魔法在图书馆里'}),L({ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'})]},
+      lines:[L({ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-T 📚',zh:'你好！我是独先生 📚'}),L({ko:'오늘 배울 마법은 도서관에 있어',en:'Today\'s magic is in the library',zh:'今天要学的魔法在图书馆里'}),L({ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'})]},
     {el:scr.querySelector('#nbPoco'),x:45,y:60,tx:45,ty:60,spd:.14,lines:[L({ko:'안녕! 난 3이야 ✨',en:'Hi! I am 3 ✨',zh:'你好！我是3 ✨'}),L({ko:'7이랑 만나면 10! 🔟',en:'With 7 we make 10! 🔟',zh:'和7在一起就是10！🔟'}),L({ko:'게임하러 가자!',en:'Let\'s go play!',zh:'去玩游戏吧！'})]},
     {el:scr.querySelector('#nbMomo'),x:37,y:66,tx:37,ty:66,spd:.08,lines:[L({ko:'안녕! 난 8이야 💖',en:'Hi! I am 8 💖',zh:'你好！我是8 💖'}),L({ko:'2랑 만나면 10! 🔟',en:'With 2 we make 10! 🔟',zh:'和2在一起就是10！🔟'}),L({ko:'실수는 괜찮아!',en:'Mistakes are okay!',zh:'出错也没关系！'})]}
   ];
@@ -5268,13 +6163,18 @@ function stepDiscover(body,u){
   /* 매거진형(2026-09-25, 원장 "이런 식으로 매거진 형으로 … 풀고 싶게" · "이렇게 디자인 둘 다") — 인쇄의
      수학 이야기·개념 노트와 같은 짜임: 키커 · 큰 제목 · 여는 물음 · 이야기 카드(두 컷 + 역사 문단) · 네 컷 띠 ·
      개념 노트. 유아(kid-note)는 예전 그림책 모양 그대로. 내용은 전부 유닛·만화 데이터. */
+  /* 3D 대표 그림(data/hero3d.js · assets/hero3d, 2026-09-26 원장 "실사 느낌 … 막대도 실제 막대처럼 정 안되면 3d로") —
+     등록된 유닛만. 제목 바로 아래 가장 크게, alt 는 그림에 놓인 것(3개 언어). */
+  const hero=(window.NM_HERO3D||{})[u.id];
+  const heroHtml=hero?`<figure class="nm-mzu-hero"><img src="assets/hero3d/${esc(u.id)}.webp" alt="${esc(L(hero.alt))}" loading="lazy" width="1600" height="1000">
+    <figcaption class="nm-mzu-hero-hint">${S.lang==='ko'?'끌어서 돌려 보세요':S.lang==='en'?'Drag to turn':'拖动可以旋转'}</figcaption></figure>`:'';
   const mzKick=(ko,en,zh)=>`<div class="nm-mzu-kick">${S.lang==='ko'?ko:S.lang==='en'?en:zh}</div>`;
   const mzStory=(!kid&&st)?`<div class="nm-mzu">
       ${mzKick('MATH STORY · 수학 이야기','MATH STORY','MATH STORY · 数学故事')}
       <div class="nm-mzu-top"><div><h2 class="nm-mzu-title">${esc(L(u.title))}</h2>
         ${st.hook?`<p class="nm-mzu-sub">${L(st.hook)}</p>`:''}</div>
         <img class="nm-mzu-char" src="${isMidHigh?'assets/docssam.png':'assets/characters/numi-0-happy.png'}" alt=""></div>
-      ${artHtml}
+      ${heroHtml}${artHtml}
       ${comic?`<div class="nm-mzu-story"><div class="nm-mzu-story-art">${comic.panels.slice(0,2).map(p=>`<div>${p.art}</div>`).join('')}</div>
         <div class="nm-mzu-story-txt"><div class="nm-mzu-mini">${S.lang==='ko'?'그때 이야기':S.lang==='en'?'Back then':'那时的故事'}</div>
         ${st.history?`<p>${L(st.history)}</p>`:''}</div></div>
@@ -5288,6 +6188,10 @@ function stepDiscover(body,u){
     ${mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
     <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
+  /* 3D 대표 그림을 직접 띄워 움직인다(app/hero3d/live.js, 원장 "동작도 하는거야?" → "1"). 3D 라이브러리는 이 단계에서만
+     불러온다(약 2MB — 첫 화면에 싣지 않는다). 못 띄우면 정지 그림이 그대로 남는다. */
+  const heroFig=body.querySelector('.nm-mzu-hero');
+  if(heroFig) import('./hero3d/live.js').then(m=>m.mount(heroFig,u.id,S.lang)).catch(()=>{});
   body.querySelectorAll('.nm-lab-link[data-lab]').forEach(el=>{
     el.onclick=()=>{window.open(el.dataset.lab,'_blank','noopener');};
   });

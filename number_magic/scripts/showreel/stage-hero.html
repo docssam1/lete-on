@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<!-- 쇼릴용 무대: 앱과 같은 app/hero3d/live.js 로 수학 이야기 3D 장면(?u=M-14)을 띄운다. capture.js 가 가짜 시계로 찍는다. -->
+<title>showreel hero stage</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="../../app/styles.css">
+<link rel="stylesheet" href="../../vendor/katex/katex.min.css">
+<script src="../../vendor/katex/katex.min.js"></script>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden}
+  body{background:radial-gradient(ellipse 70% 60% at 50% 45%,#fbf8f1 0%,#f1ede4 55%,#e6e2da 100%)}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.55;
+    background-image:radial-gradient(circle,rgba(201,164,76,.55) 1px,transparent 1.6px),radial-gradient(circle,rgba(156,200,255,.5) 1px,transparent 1.6px);
+    background-size:140px 140px,190px 190px;background-position:20px 30px,90px 110px}
+  .wrap{position:fixed;left:50%;top:50%;width:960px;transform:translate(-50%,-50%)}
+  .nm-mzu-hero{max-width:none;width:960px;border-radius:18px;box-shadow:0 30px 70px rgba(40,24,8,.28),0 0 0 1px rgba(201,164,76,.35);transform-origin:50% 45%}
+  .nm-mzu-hero-hint{display:none!important}
+  .nm-mzu-hero-cap{font-size:17px;min-height:3.6em;padding:10px 20px}
+  .nm-mzu-hero-cap i{font-size:13px}
+</style></head><body>
+<div class="wrap"><figure class="nm-mzu-hero"><img alt="" width="1600" height="1000"><figcaption class="nm-mzu-hero-hint">drag</figcaption></figure></div>
+<script type="module">
+const q = new URLSearchParams(location.search), u = q.get('u'), lang = q.get('lang') || 'ko';
+const fig = document.querySelector('.nm-mzu-hero');
+document.querySelector('img').src = '../../assets/hero3d/' + u + '.webp';
+window.__zoom = t => { fig.style.transform = `scale(${1 + 0.035 * Math.min(1, t / 4.1)})`; };
+import('../../app/hero3d/live.js').then(m => m.mount(fig, u, lang).then(v => { window.__live = v; })).catch(e => { window.__liveErr = String(e && e.stack || e); });
+</script></body></html>

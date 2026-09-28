@@ -10,6 +10,8 @@ const { R, pick, shuffle } = NM_RNG;
 
 /* ── ML1 — 배와 반 (×2 · ÷2) ─────────────────────────────── */
 NM_TGEN['ml1_double'] = function(params, rng) {
+  /* L4 둘로 쪼개기(자리마다 반, 2026-09-26) — 생성기는 engine/threads/cre.js(호출 때 찾는다) */
+  if (params.mode === 'halvePlace') return NM_TGEN['cre_ml1_halvePlace'](params, rng);
   const op  = params.op  || 'x2';
   const max = params.max || 99;
 

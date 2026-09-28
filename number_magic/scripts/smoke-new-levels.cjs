@@ -5,16 +5,20 @@
 const { spawn } = require('child_process');
 const path = require('path');
 const http = require('http');
-const ROOT = path.resolve(__dirname, '..');
+/* 저장소 루트를 띄운다(운영 GitHub Pages 와 같은 배치). number_magic 만 띄우면 앱이 형제 폴더에서
+   가져오는 ../world-explorer/vendor/three.module.js · ../geometry/worksheet/render.js 가 404 가 된다. */
+const ROOT = path.resolve(__dirname, '..', '..');
+const APP = `/number_magic`;
 const PORT = 8799;
 const OUT = process.env.SHOT_DIR || '/tmp/nm-shots';
 require('fs').mkdirSync(OUT, { recursive: true });
 
-function loadPW(){ for(const c of ['playwright','/opt/node22/lib/node_modules/playwright']){ try{return require(c);}catch(e){} } throw new Error('no playwright'); }
+const { onboard, browserArgs } = require('./lib/nm-onboard.js');
+function loadPW(){ return require('./lib/playwright.js'); }
 function serve(){ return new Promise((res, rej) => {
   const py = spawn('python3', ['-m','http.server',String(PORT)], { cwd: ROOT, stdio:'ignore' });
   const t0 = Date.now();
-  (function ping(){ http.get(`http://localhost:${PORT}/drill.html`, r => { r.resume(); res(py); })
+  (function ping(){ http.get(`http://localhost:${PORT}${APP}/drill.html`, r => { r.resume(); res(py); })
     .on('error', () => Date.now()-t0>8000 ? rej(new Error('server')) : setTimeout(ping,150)); })();
 }); }
 
@@ -32,10 +36,12 @@ const NEW = [
   { sec:'magic',  label:'기준량 구하기' },
 ];
 
+/* 도중에 죽어도(시간 초과 등) 정적 서버를 남기지 않게 바깥에 둔다 — 남으면 다음 실행이 옛 서버를 쓴다 */
+let server = null;
 (async () => {
   const { chromium } = loadPW();
-  const server = await serve();
-  const browser = await chromium.launch({ executablePath: process.env.NM_CHROMIUM || '/opt/pw-browsers/chromium' });
+  server = await serve();
+  const browser = await chromium.launch({ args: browserArgs() });
   const problems = [];
   const netErrs = [];
   let solvedTotal = 0;
@@ -55,16 +61,17 @@ const NEW = [
     /* ── ① 앱 온보딩 ── */
     /* ?enter=1 = 인트로 영상 건너뛰기(index.html 21행). 안 붙이면 온보딩 카드가
        전체화면 영상 뒤에 가려 클릭이 안 된다. 프로필은 여전히 비어 있어 온보딩부터다. */
-    await page.goto(`http://localhost:${PORT}/index.html?enter=1`, { waitUntil:'networkidle' });
-    await page.waitForSelector('#obName', { timeout: 10000 });
-    await page.fill('#obName', '검사');
-    await page.click('#obGo');
-    await page.waitForTimeout(1200);
+    await page.goto(`http://localhost:${PORT}${APP}/index.html?enter=1`, { waitUntil:'networkidle' });
+    /* 온보딩은 이제 나 고르기 → 학년 → 이름 3단계다(scripts/lib/nm-onboard.js). */
+    try {
+      const prof = await onboard(page, { name: '검사' });
+      if (!prof || prof.name !== '검사') problems.push(`[${vp.tag}] 온보딩 후 프로필 이름이 저장되지 않음: ${JSON.stringify(prof)}`);
+    } catch (e) { problems.push(`[${vp.tag}] 온보딩을 통과하지 못함: ${e.message.split('\n')[0]}`); }
     await page.screenshot({ path: `${OUT}/app-${vp.tag}.png`, fullPage: false });
 
     /* ── ② drill.html에서 신규 레벨을 실제로 풀기 ── */
     for (const { sec, label } of NEW) {
-      await page.goto(`http://localhost:${PORT}/drill.html`, { waitUntil:'networkidle' });
+      await page.goto(`http://localhost:${PORT}${APP}/drill.html`, { waitUntil:'networkidle' });
       if (sec !== 'school') { await page.click(`.dr-tab[data-sec="${sec}"]`); await page.waitForTimeout(250); }
       /* 서랍장에서 라벨로 주제 선택 */
       const btn = page.locator('.drawer-item', { hasText: label }).first();
@@ -125,4 +132,4 @@ const NEW = [
   if (netErrs.length) { console.log(`\n[참고] 네트워크 리소스 실패(코드 무관) ${netErrs.length}건 — 서로 다른 주소:`); [...new Set(netErrs)].forEach(e => console.log('  ' + e)); }
   if (problems.length) { console.log(`\n[FAIL] ${problems.length}건`); [...new Set(problems)].forEach(p => console.log('  ' + p)); process.exit(1); }
   console.log('통과 — pageerror 0, 신규 레벨 전부 화면에서 풀림.');
-})().catch(e => { console.error(e); process.exit(2); });
+})().catch(e => { console.error(e); if (server) server.kill(); process.exit(2); });
