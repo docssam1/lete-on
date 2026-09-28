@@ -303,12 +303,16 @@ window.NM_CURRICULUM = {
         en:'log reads the exponent ladder backward, Σ dresses old magic in new clothes — meeting new symbols one by one',
         zh:'反着读指数梯子的log，给旧魔法换新衣的Σ——一个个认识新符号'},
       levels:[
-        { id:'40', available:true,
-          title:{ko:'40 지수와 로그',en:'40 · Exponents & Logarithms',zh:'40·指数与对数'},
-          units:['M-36','M-37','M-38'] },
+        /* 과정 41~43 과 같은 묶음(2026-09-28, 2022 개정 대수 세 단원 순서) */
         { id:'41', available:true,
-          title:{ko:'41 삼각함수와 수열',en:'41 · Trigonometry & Sequences',zh:'41·三角函数与数列'},
-          units:['M-39','M-40','M-41','M-42'] }
+          title:{ko:'41 지수와 로그, 지수·로그방정식',en:'41 · Exponents, Logarithms & Their Equations',zh:'41·指数、对数及其方程'},
+          units:['M-36','M-37','M-38','M-52','M-53','M-54'] },
+        { id:'42', available:true,
+          title:{ko:'42 삼각함수와 사인·코사인법칙',en:'42 · Trigonometric Functions & the Sine/Cosine Laws',zh:'42·三角函数与正弦·余弦定理'},
+          units:['M-39','M-57','M-55','M-56'] },
+        { id:'43', available:true,
+          title:{ko:'43 수열과 Σ',en:'43 · Sequences & Sigma',zh:'43·数列与Σ'},
+          units:['M-40','M-41','M-42'] }
       ]
     },
 
@@ -325,12 +329,13 @@ window.NM_CURRICULUM = {
         en:'From the value x approaches (lim) to the instantaneous slope (f′) and adding up infinitely thin pieces (∫) — the final peak of the roadmap',
         zh:'从x趋近的值(lim)到瞬时斜率(f′)，再到把细小碎片全部加起来(∫)——路线图的最后一座山峰'},
       levels:[
-        { id:'42', available:true,
-          title:{ko:'42 극한과 미분',en:'42 · Limits & Derivatives',zh:'42·极限与导数'},
-          units:['M-43','M-44'] },
-        { id:'43', available:true,
-          title:{ko:'43 접선과 적분',en:'43 · Tangent Lines & Integration',zh:'43·切线与积分'},
-          units:['M-45','M-46'] }
+        /* 과정 44~45 와 같은 묶음 */
+        { id:'44', available:true,
+          title:{ko:'44 극한·미분과 적분',en:'44 · Limits, Derivatives & Integration',zh:'44·极限·导数与积分'},
+          units:['M-43','M-44','M-45','M-46'] },
+        { id:'45', available:true,
+          title:{ko:'45 극한·미분·적분 심화',en:'45 · Advanced Limits, Derivatives & Integrals',zh:'45·极限·导数·积分进阶'},
+          units:['M-58','M-59','M-60','M-61','M-62'] }
       ]
     }
   ],

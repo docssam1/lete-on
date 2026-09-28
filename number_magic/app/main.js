@@ -4158,7 +4158,7 @@ const PLACEMENT_AGES=[
    | 초6         | §9 11권 "분수·소수 나눗셈(초6)" = 과정 22 「분수 나눗셈」                 | 22  |
    | 중1·중2·중3 | tier middle1·middle2·middle3 첫 과정                                 | 29·32·35 |
    | 고등        | tier highmath1 첫 과정(공통수학1 — 공통수학2 는 그 뒤 40)               | 38  |
-   | 대수·미적분Ⅰ | tier algebra·calculus1 첫 과정                                       | 41·43 |
+   | 대수·미적분Ⅰ | tier algebra·calculus1 첫 과정                                       | 41·44 |
    학기(1·2학기) 구분은 넣지 않았다 — 학기마다 과정을 가를 근거가 데이터에 없다. */
 const PLACEMENT_GRADES=[
   {key:'pre', tier:'level0',     label:{ko:'유아 (5~6세)',en:'Preschool (ages 5–6)',zh:'幼儿（5~6岁）'}},
