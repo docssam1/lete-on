@@ -3554,8 +3554,8 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-cr-row.left{align-items:flex-start}
 .nm-cr-row.right{align-items:flex-end}
 .nm-cr-when{display:block;margin-top:2px;font-size:12px;font-weight:500;color:var(--la-ink-2,#535c78);font-variant-numeric:tabular-nums;word-break:keep-all;line-height:1.4}
-.nm-cr-when b{font-weight:700;color:var(--la-ink,#26304a)}
-.nm-cr-when.cur b{color:#5b47c8}
+.nm-cr-when .t{font-weight:700;color:var(--la-ink,#26304a)}
+.nm-cr-when.cur .t{color:#5b47c8}
 .nm-cr-when.past{color:var(--la-ink-3,#6b7390)}
 .nm-cr-placed{display:inline-block;align-self:flex-start;margin-top:4px;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;color:#4a3aa8;background:rgba(185,167,255,.22)}
 .nm-cr-row.placed .nm-cr-node{box-shadow:inset 0 0 0 2px #8e7cf0,0 0 0 4px rgba(185,167,255,.22),0 6px 18px rgba(38,48,74,.1)}
@@ -3636,3 +3636,7 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
   .nm-dg-grades{grid-template-columns:repeat(4,1fr)}
   .nm-dg-grade[data-g="pre"],.nm-dg-grade[data-g="hi"]{grid-column:span 2}
 }
+.nm-dg-gradeask{margin:0 0 4px;border-width:2px;background:#f6f9ff;box-shadow:0 4px 14px rgba(22,65,124,.08)}
+.nm-dg-or{display:flex;align-items:center;gap:10px;margin:12px 0 8px;font-size:11.5px;font-weight:800;color:var(--sub)}
+.nm-dg-or::before,.nm-dg-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.nm-dg-gradeprev em{font-style:normal;font-size:11px;font-weight:600;color:var(--sub);line-height:1.45;word-break:keep-all;margin-top:2px}

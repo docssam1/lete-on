@@ -3348,10 +3348,10 @@ function roadWhenHtml(r){
   if(r.past) return `<span class="nm-cr-when past">${lk('지났어요','Already past','已经过了')}</span>`;
   if(r.endSm==null) return '';
   const e=esc(pcAgeLabel(r.endSm));
-  if(r.cur) return `<span class="nm-cr-when cur"><b>${lk('지금','Now','现在')}</b> → <b class="nm-cr-tnum">${e}</b> ${lk('끝','end','结束')}</span>`;
+  if(r.cur) return `<span class="nm-cr-when cur"><span class="t">${lk('지금','Now','现在')}</span> → <span class="t nm-cr-tnum">${e}</span> ${lk('끝','end','结束')}</span>`;
   const s=esc(pcAgeLabel(r.startSm));
-  if(s===e) return `<span class="nm-cr-when"><b class="nm-cr-tnum">${s}</b> · ${lk('한 달 안에 끝나요','done within the month','一个月内完成')}</span>`;
-  return `<span class="nm-cr-when"><b class="nm-cr-tnum">${s}</b> ${lk('시작','start','开始')} → <b class="nm-cr-tnum">${e}</b> ${lk('끝','end','结束')}</span>`;
+  if(s===e) return `<span class="nm-cr-when"><span class="t nm-cr-tnum">${s}</span> · ${lk('한 달 안에 끝나요','done within the month','一个月内完成')}</span>`;
+  return `<span class="nm-cr-when"><span class="t nm-cr-tnum">${s}</span> ${lk('시작','start','开始')} → <span class="t nm-cr-tnum">${e}</span> ${lk('끝','end','结束')}</span>`;
 }
 /* 과정 설명(한 번 눌러 펼침) — 전부 데이터에서 만든다(courses.js 회차 · threads.js 이름 · 유닛 제목 · hero3d).
    무엇을 배우나(교과 연산 스레드) · 창의 연산 · 문장제·적용 · 마법 개념(3D 그림 표시) · 마치면 할 수 있는 것. */
@@ -4136,8 +4136,8 @@ const PLACEMENT_AGES=[
   {key:'adv', emoji:'🗼', tier:'challenge', course:'C26'},
   {key:'m1',  emoji:'📘', tier:'middle1',   course:'C29'},
   {key:'m2',  emoji:'📗', tier:'middle2',   course:'C32'},
-  {key:'m3',  emoji:'📙', tier:'middle3',   course:'C34'},
-  {key:'hi',  emoji:'🎓', tier:'highmath1', course:'C36'}
+  {key:'m3',  emoji:'📙', tier:'middle3',   course:'C35'},
+  {key:'hi',  emoji:'🎓', tier:'highmath1', course:'C38'}
 ];
 /* ── "지금 몇 학년 연산을 하고 있어요?" — 학교 학년 → 시작 과정 (2026-09-28) ──
    원장 "진단하기는 지금 몇 학년 연산을 하는지 말하거나 그냥 진행할 수 있게".
@@ -4396,12 +4396,13 @@ function screenPlacement(){
         <p class="nm-dg-ask">${lk('나이에 맞는 문제부터 물어볼게요. 몇 문제만 풀면 끝나요.',
           'We will start with questions that fit your age. Just a few questions.',
           '我们从适合你年龄的题目开始，只要几道题就好。')}</p>
-        <div class="nm-dg-ages">${opts}</div>
         <button class="nm-dg-gradeask" id="dgGradeAsk">
           <span class="nm-dg-gradeask-ic" aria-hidden="true">📚</span>
           <span class="nm-dg-gradeask-txt"><b>${lk('지금 몇 학년 연산을 하고 있어요?','What grade’s arithmetic are you on now?','现在在做几年级的运算？')}</b>
             <small>${lk('학년을 고르면 그 자리에서 시작하거나, 짧게 확인하고 시작해요.','Pick the grade — start right there, or take a short check first.','选好年级，可以直接从那里开始，也可以先简单确认再开始。')}</small></span>
         </button>
+        <div class="nm-dg-or">${lk('또는 나이로 고르기','Or choose by age','或按年龄选择')}</div>
+        <div class="nm-dg-ages">${opts}</div>
         <button class="nm-dg-selfpick" id="dgSelfPick">🎯 ${lk('진단 없이 직접 고를래요','Skip the check — pick myself','不测评，自己选')}</button>
         <button class="nm-dg-again" id="dgSkip">${lk('잘 모르겠어요 · 건너뛰기','Not sure · Skip','不太清楚 · 跳过')}</button>
       </div>
@@ -4434,7 +4435,10 @@ function screenPlacement(){
       preview=`<div class="nm-dg-gradeprev" style="--acc:${tierDef?tierDef.accent:'var(--blue)'}">
         <small>${lk(`${L(pick.label)} 연산이면 여기서 시작해요`,`For ${L(pick.label)} arithmetic, start here`,`${L(pick.label)}的运算，从这里开始`)}</small>
         <b>${lk('과정','Course','课程')} ${num}${c?` · ${esc(L(c.title))}`:''}</b>
-        ${tierDef?`<span>${esc(L(tierDef.name))} · ${esc(L(tierDef.band))}</span>`:''}
+        ${tierDef?`<span>${esc(L(tierDef.name))}</span>`:''}
+        <em>${lk('우리 과정은 학교 진도보다 앞서 있어서, 단계 이름에 적힌 나이·학년과 다를 수 있어요.',
+          'Our courses run ahead of school, so the age or grade in a stage name may differ.',
+          '我们的课程比学校进度靠前，阶段名里的年龄·年级可能不同。')}</em>
       </div>
       <button class="nm-btn full" id="dgGradeStart">🚩 ${lk('이 과정부터 시작','Start from this course','从这个课程开始')}</button>
       <button class="nm-btn full ghost" id="dgGradeCheck">🧭 ${lk('짧게 확인하고 시작','Take a short check first','先简单确认再开始')}</button>
