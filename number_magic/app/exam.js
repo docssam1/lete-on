@@ -2017,24 +2017,27 @@ function w2MagazinePick(items, band, code){
   const use = pool.length ? pool : list;
   return use[mzHash(code) % use.length];
 }
+/* 매거진 글에는 강조용 <b> 가 들어 있다 — 그대로 esc 하면 태그가 글자로 찍혔다(2026-09-28).
+   이스케이프한 뒤 <b>·</b> 만 되살린다(다른 태그는 여전히 글자). */
+function escMz(t){ return esc(String(t == null ? '' : t)).replace(/&lt;(\/?)b&gt;/g, '<$1b>'); }
 function w2MagazinePageHtml(items, code, band){
   const art = w2MagazinePick(items, band, code);
   if(!art) return '';
   const secs = (art.body || []).map(b => `
     <div class="nm-mz-sec">
-      <div><h4>${esc(pickL(b.h) || '')}</h4><p>${esc(pickL(b.p) || '')}</p></div>
+      <div><h4>${escMz(pickL(b.h) || '')}</h4><p>${escMz(pickL(b.p) || '')}</p></div>
       <div class="nm-mz-fig">${b.art || ''}</div>
     </div>`).join('');
   return `<div class="nm-w2-page nm-mz-page">
   <div class="nm-hist-head">
-    <span class="nm-mz-kicker">${esc(pickL(art.kicker) || '')}</span>
-    <b>${esc(pickL(art.title) || '')}</b>
+    <span class="nm-mz-kicker">${escMz(pickL(art.kicker) || '')}</span>
+    <b>${escMz(pickL(art.title) || '')}</b>
   </div>
-  <p class="nm-mz-lede">${esc(pickL(art.lede) || '')}</p>
+  <p class="nm-mz-lede">${escMz(pickL(art.lede) || '')}</p>
   <div class="nm-mz-hero">${art.art || ''}</div>
   <div class="nm-mz-body">${secs}</div>
-  <div class="nm-mz-close">${esc(pickL(art.close) || '')}</div>
-  <p class="nm-mz-src">${esc(pickL(art.source) || '')}</p>
+  <div class="nm-mz-close">${escMz(pickL(art.close) || '')}</div>
+  <p class="nm-mz-src">${escMz(pickL(art.source) || '')}</p>
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code || '')}</span></div>
 </div>`;
 }
