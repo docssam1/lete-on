@@ -4434,6 +4434,7 @@ function screenPlacement(){
         </button>
         <div class="nm-dg-or">${lk('또는 나이로 고르기','Or choose by age','或按年龄选择')}</div>
         <div class="nm-dg-ages">${opts}</div>
+        <a class="nm-dg-selfpick nm-dg-paper" href="level-test.html?lang=${S.lang}" target="_blank" rel="noopener">📝 ${lk('종이로 보는 표준 진단지 (인쇄)','Standard paper test (print)','纸质标准测评卷（打印）')}</a>
         <button class="nm-dg-selfpick" id="dgSelfPick">🎯 ${lk('진단 없이 직접 고를래요','Skip the check — pick myself','不测评，自己选')}</button>
         <button class="nm-dg-again" id="dgSkip">${lk('잘 모르겠어요 · 건너뛰기','Not sure · Skip','不太清楚 · 跳过')}</button>
       </div>

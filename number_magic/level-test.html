@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>연산 진단 평가 · Numbers of Magic</title>
+<!-- 표준 연산 진단지(2026-09-28, 원장 "화면에서 할 수도 있지만 인쇄해서 할 수 있도록 표준 시험지").
+     문제는 app/level-test-core.js 가 고정 시드로 만든다 — 누가 언제 뽑아도 같은 형·판은 같은 문제.
+     검사: scripts/check-level-test.js -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<style>
+:root{
+  --teal:#245b60; --teal-d:#1d4a4e; --gold:#C9A063; --ink:#1f2a2e; --sub:#5c6b70; --line:#d9dfdf;
+  --paper:#fff; --desk:#eef1ef; --x:#b8402f; --o:#2f7d5b;
+  --sans:Pretendard,'Noto Sans KR','Malgun Gothic',sans-serif;
+  --serif:'Gowun Batang','Hahmlet','Noto Serif KR',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--desk);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ── 화면 도구(인쇄 안 됨) ── */
+.bar{max-width:210mm;margin:0 auto;padding:16px 16px 4px;display:flex;flex-direction:column;gap:12px}
+.bar-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bar-top a{color:var(--teal);font-weight:700;text-decoration:none;font-size:14px}
+.bar-top h1{margin:0 auto 0 0;font-family:var(--serif);font-size:22px;color:var(--teal-d)}
+.langs{display:flex;gap:2px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:2px}
+.langs button{border:0;background:none;padding:5px 11px;border-radius:99px;font-size:13px;color:var(--sub)}
+.langs button[aria-pressed="true"]{background:var(--teal);color:#fff}
+.lead{margin:0;font-size:14px;line-height:1.6;color:var(--sub);word-break:keep-all}
+.forms{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.form{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.form b{font-size:14px;color:var(--ink)}
+.form span{font-size:12px;color:var(--sub)}
+.form small{font-size:11.5px;color:var(--teal);font-weight:700;font-variant-numeric:tabular-nums}
+.form[aria-pressed="true"]{border-color:var(--teal);box-shadow:inset 0 0 0 1px var(--teal);background:#f3f8f7}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:10px;padding:2px}
+.seg button{border:0;background:none;padding:7px 12px;border-radius:8px;font-size:13.5px;color:var(--sub)}
+.seg button[aria-pressed="true"]{background:var(--teal);color:#fff}
+.btn{border:0;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:700;background:var(--teal);color:#fff}
+.btn.ghost{background:#fff;color:var(--teal);border:1px solid var(--teal)}
+.hint{margin:0;font-size:13px;color:var(--sub);word-break:keep-all}
+.result{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.result[hidden]{display:none}
+.result .k{font-size:12px;font-weight:800;color:var(--gold);letter-spacing:.04em}
+.result h2{margin:0;font-family:var(--serif);font-size:24px;color:var(--teal-d);text-wrap:balance}
+.result p{margin:0;font-size:14px;line-height:1.6;word-break:keep-all}
+.strip{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.strip i{font-style:normal;font-size:11px;font-variant-numeric:tabular-nums;padding:3px 6px;border-radius:6px;background:#eef3f2;color:var(--sub)}
+.strip i.ok{background:#e3f1ea;color:var(--o)}
+.strip i.no{background:#f7e4df;color:var(--x);font-weight:700}
+.strip i.rec{outline:2px solid var(--gold)}
+
+/* ── 종이 ── */
+.sheet{padding:12px 16px 40px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.page{width:100%;max-width:210mm;background:var(--paper);box-shadow:0 1px 2px rgba(0,0,0,.06),0 8px 24px rgba(20,40,40,.08);
+  padding:12mm 13mm 10mm;display:flex;flex-direction:column}
+.band{display:flex;align-items:center;gap:10px;background:var(--teal);color:#fff;border-radius:2.5mm 2.5mm 0 0;padding:2.2mm 4.5mm;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.band b{font-size:11.5px;font-weight:700;letter-spacing:.02em}
+.band span{margin-left:auto;font-size:10px;color:#d9e7e6}
+.goldline{height:.9mm;background:var(--gold);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.head{display:flex;align-items:flex-end;gap:6mm;margin:5mm 0 3mm}
+.head h2{margin:0;font-family:var(--serif);font-size:27px;line-height:1.2;color:var(--teal-d);font-weight:700}
+.head p{margin:1mm 0 0;font-size:12px;color:var(--sub);word-break:keep-all}
+.head .who{margin-left:auto;display:grid;grid-template-columns:auto 34mm;gap:2mm 2.5mm;font-size:11.5px;color:var(--sub);align-items:end}
+.head .who i{border-bottom:1px solid #9aa7a8;height:5mm}
+.head .who .score{grid-column:1/-1;display:flex;justify-content:flex-end;gap:2mm;align-items:baseline}
+.head .who .score i{width:12mm;display:inline-block}
+.how{margin:0 0 4mm;padding:2.5mm 4mm;border-left:2px solid var(--gold);background:#fbf6ea;font-size:11.5px;line-height:1.6;color:#5d4a26;
+  word-break:keep-all;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.grid{display:grid;grid-template-columns:1fr 1fr;column-gap:8mm;flex:1}
+.q{position:relative;display:grid;grid-template-columns:7mm 1fr;gap:2mm;align-items:start;padding:3.2mm 0 3.6mm;border-top:1px solid var(--line);min-height:21mm}
+.q > div{display:flex;flex-direction:column;min-height:100%;min-width:0}
+.q .no{font-size:12px;font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums;padding-top:1mm}
+.q .ex{font-size:15px;line-height:1.5;overflow-x:auto;overflow-y:hidden}
+.q .ex .katex{font-size:1.02em}
+.q .ans{display:flex;align-items:center;gap:2mm;margin-top:3mm;font-size:11px;color:var(--sub)}
+.q .ans .box{min-width:24mm;height:8mm;border:1.2px solid #9aa7a8;border-radius:1.5mm;display:flex;align-items:center;padding:0 2mm;font-size:14px;color:var(--ink)}
+.q .ans input{width:26mm;height:8mm;border:1.2px solid var(--teal);border-radius:1.5mm;padding:0 2mm;font:inherit;font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
+.q .mark{position:absolute;right:0;top:2.4mm;font-size:22px;font-weight:800;line-height:1}
+.q.is-x .mark::after{content:'✗';color:var(--x)}
+.q.is-o .mark::after{content:'○';color:var(--o)}
+.q .right{display:none;font-size:11.5px;color:var(--x);font-weight:700;margin-left:2mm}
+.q.is-x .right{display:inline}
+body.solving .keypage{display:none}
+body.grading .q{cursor:pointer}
+body.grading .q:hover{background:#faf7ef}
+.foot{display:flex;justify-content:space-between;margin-top:3mm;font-size:9.5px;color:#8a9496;font-family:monospace}
+
+/* 정답·채점 안내 */
+.key{display:grid;grid-template-columns:1fr 1fr;column-gap:8mm}
+.key table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.key th{font-size:10.5px;color:var(--sub);text-align:left;font-weight:700;padding:1.2mm 1.5mm;border-bottom:1.3px solid var(--teal)}
+.key td{padding:1.6mm 1.5mm;border-bottom:1px solid var(--line)}
+.key td.a{font-weight:800;color:var(--ink)}
+.key td.c{color:var(--sub)}
+.guide{margin-top:6mm;display:flex;flex-direction:column;gap:3mm;font-size:12px;line-height:1.65;word-break:keep-all}
+.guide h3{margin:0;font-family:var(--serif);font-size:16px;color:var(--teal-d)}
+.guide ol{margin:0;padding-left:5mm}
+.cmap{display:flex;flex-wrap:wrap;gap:1.6mm}
+.cmap span{border:1px solid var(--line);border-radius:1.5mm;padding:1mm 2mm;font-size:10.5px;font-variant-numeric:tabular-nums}
+.cmap span b{color:var(--teal)}
+
+@media (max-width:620px){
+  .page{padding:18px 14px}
+  .grid,.key{grid-template-columns:1fr}
+  .head{flex-direction:column;align-items:flex-start}
+  .head .who{margin-left:0}
+}
+@media print{
+  @page{size:A4;margin:0}
+  body{background:#fff}
+  .bar,.result{display:none!important}
+  .sheet{padding:0;gap:0}
+  .page{box-shadow:none;max-width:none;width:210mm;height:297mm;overflow:hidden;page-break-after:always;break-after:page}
+  .q .ans input{border-color:#9aa7a8}
+  .q .mark,.q .right{display:none!important}
+  .grid{grid-auto-rows:1fr}
+  .q .ans{margin-top:auto;justify-content:flex-end}
+  body.print-test .page.keypage{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+  <div class="bar-top">
+    <a href="index.html" data-t="back">← 넘버스 오브 매직</a>
+    <div class="langs" role="group" aria-label="Language">
+      <button data-lang="ko">한국어</button><button data-lang="en">English</button><button data-lang="zh">中文</button>
+    </div>
+  </div>
+  <div class="bar-top"><h1 data-t="title">연산 진단 평가</h1></div>
+  <p class="lead" data-t="lead"></p>
+  <div class="forms" id="forms" role="group"></div>
+  <div class="row">
+    <div class="seg" role="group" id="vers"><button data-v="1"></button><button data-v="2"></button></div>
+    <div class="seg" role="group" id="modes">
+      <button data-m="view" data-t="mView"></button><button data-m="solve" data-t="mSolve"></button><button data-m="grade" data-t="mGrade"></button>
+    </div>
+  </div>
+  <div class="row">
+    <button class="btn" id="printTest" data-t="printTest"></button>
+    <button class="btn ghost" id="printKey" data-t="printKey"></button>
+    <button class="btn" id="check" hidden data-t="check"></button>
+  </div>
+  <p class="hint" id="hint"></p>
+  <div class="result" id="result" hidden aria-live="polite"></div>
+</div>
+<div class="sheet" id="sheet"></div>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="engine/generators.js"></script>
+<script src="engine/rng.js"></script>
+<script src="engine/tex-tidy.js"></script>
+<script src="engine/scene-model.js"></script>
+<script src="engine/threads/ns_ad.js"></script>
+<script src="engine/threads/sb.js"></script>
+<script src="engine/threads/ml.js"></script>
+<script src="engine/threads/dv.js"></script>
+<script src="engine/threads/fr.js"></script>
+<script src="engine/threads/dc_mx.js"></script>
+<script src="engine/threads/el.js"></script>
+<script src="engine/threads/cre.js"></script>
+<script src="engine/threads/nl.js"></script>
+<script src="engine/threads/wp.js"></script>
+<script src="engine/threads/adv.js"></script>
+<script src="engine/threads/mid.js"></script>
+<script src="engine/threads/mid2.js"></script>
+<script src="engine/threads/mid3.js"></script>
+<script src="engine/threads/mid4.js"></script>
+<script src="engine/threads/mid5.js"></script>
+<script src="engine/threads/mid6.js"></script>
+<script src="engine/threads/mid7.js"></script>
+<script src="engine/threads/mid8.js"></script>
+<script src="engine/threads/mid9.js"></script>
+<script src="engine/threads/mid10.js"></script>
+<script src="engine/threads/mid11.js"></script>
+<script src="engine/threads/mid12.js"></script>
+<script src="engine/threads/mid13.js"></script>
+<script src="engine/threads/mid14.js"></script>
+<script src="engine/threads/mid15.js"></script>
+<script src="engine/threads/mid16.js"></script>
+<script src="data/threads.js"></script>
+<script src="data/courses.js"></script>
+<script src="data/stages.js"></script>
+<script src="app/level-test-core.js"></script>
+<script>
+(function(){
+'use strict';
+const LT = window.NM_LEVEL_TEST;
+const T = {
+  ko:{ back:'← 넘버스 오브 매직', title:'연산 진단 평가',
+    lead:'지금 하고 있는 연산에 맞는 형을 고르세요. 문제는 고정되어 있어 누가 언제 뽑아도 같습니다. 인쇄해서 종이로 풀거나, 화면에서 바로 풀 수 있습니다.',
+    v:n=>`${n}판`, mView:'시험지 보기', mSolve:'화면에서 풀기', mGrade:'종이 채점 입력',
+    printTest:'시험지 인쇄', printKey:'정답·채점 안내 인쇄', check:'채점하기',
+    hintView:'인쇄한 뒤 아이가 풀면, "종이 채점 입력"에서 틀린 문제만 눌러 추천 과정을 볼 수 있습니다.',
+    hintSolve:'□ 에 들어갈 수를 칸에 쓰고 "채점하기"를 누르세요.',
+    hintGrade:'틀린 문제를 눌러 ✗ 표시하세요. 누를 때마다 추천 과정이 바로 바뀝니다.',
+    form:n=>`${n}형`, range:(a,b)=>`과정 ${a}~${b}`, qn:n=>`${n}문제`,
+    band:'연산 진단 평가', name:'이름', date:'날짜', score:'맞은 개수',
+    how:'□ 에 들어갈 수를 오른쪽 칸에 쓰세요. 쉬운 문제부터 어려운 문제 순서입니다. 모르는 문제는 비워 두어도 괜찮아요.',
+    answer:'답', keyTitle:'정답 · 채점 안내', keySub:'선생님용 — 시험지와 함께 나누어 주지 마세요.',
+    thNo:'번호', thAns:'정답', thCourse:'과정',
+    gH:'추천 과정 찾기', g1:'과정마다 문제 번호를 아래에 적어 두었습니다. 쉬운 과정부터 차례로 봅니다.',
+    g2:'처음으로 틀린 과정을 찾습니다. 단, 그 뒤 두 과정을 모두 맞혔다면 한 번의 실수로 보고 넘어갑니다.',
+    g3:'추천 과정 = 그 앞에서 마지막으로 다 맞힌 과정의 다음 번호. (시험지에 없는 과정도 건너뛰지 않습니다.)',
+    g4:'끝까지 다 맞혔다면 다음 형으로 한 번 더 보세요.',
+    rK:'추천 과정', rCourse:(n,t)=>`과정 ${n} · ${t}`,
+    rWhy:(p,f)=>p==null?`첫 과정부터 틀린 문제가 이어졌어요. 이 형의 첫 과정부터 시작하면 좋아요.`:`과정 ${p}까지는 잘 풀었고, 과정 ${f}부터 틀린 문제가 이어졌어요.`,
+    rAll:(to,nx)=>nx?`과정 ${to}까지 모두 맞혔어요. ${nx}형으로 한 번 더 보면 더 정확해요.`:`과정 ${to}까지 모두 맞혔어요.`,
+    rSlip:'한 번 틀린 문제는 실수로 보고 넘어갔어요.', rScore:(a,b)=>`${a} / ${b} 맞음`,
+    rFree:'권유일 뿐이에요. 과정은 언제든 자유롭게 고를 수 있어요.', open:'앱에서 로드맵 열기' },
+  en:{ back:'← Numbers of Magic', title:'Arithmetic Level Test',
+    lead:'Pick the form that matches the arithmetic your child is doing now. Problems are fixed, so every printout of a form is the same. Print it for paper, or solve it right here on screen.',
+    v:n=>`Version ${n}`, mView:'View paper', mSolve:'Solve on screen', mGrade:'Mark a paper test',
+    printTest:'Print test', printKey:'Print answer key', check:'Check answers',
+    hintView:'After your child solves the printout, open "Mark a paper test" and tap only the wrong problems to see the recommended course.',
+    hintSolve:'Write the number that goes in □, then press "Check answers".',
+    hintGrade:'Tap each wrong problem to mark it ✗. The recommendation updates as you tap.',
+    form:n=>`Form ${n}`, range:(a,b)=>`Courses ${a}–${b}`, qn:n=>`${n} problems`,
+    band:'Arithmetic Level Test', name:'Name', date:'Date', score:'Correct',
+    how:'Write the number that goes in □ in the box. Problems go from easy to hard. It is fine to leave one blank.',
+    answer:'Answer', keyTitle:'Answer Key · Scoring', keySub:'For the teacher — do not hand out with the test.',
+    thNo:'No.', thAns:'Answer', thCourse:'Course',
+    gH:'Finding the course', g1:'Each course lists its problem numbers below. Go from the easiest course up.',
+    g2:'Find the first course with a wrong answer. If both of the next two courses are all correct, treat it as a slip and keep going.',
+    g3:'Recommended course = the one right after the last fully correct course before that. (Courses not on the test are not skipped.)',
+    g4:'If everything is correct, try the next form too.',
+    rK:'Recommended course', rCourse:(n,t)=>`Course ${n} · ${t}`,
+    rWhy:(p,f)=>p==null?`Mistakes started from the first course. Start at the beginning of this form.`:`Solid through Course ${p}; mistakes start at Course ${f}.`,
+    rAll:(to,nx)=>nx?`Everything correct through Course ${to}. Try Form ${nx} for a closer look.`:`Everything correct through Course ${to}.`,
+    rSlip:'A single wrong answer was treated as a slip.', rScore:(a,b)=>`${a} / ${b} correct`,
+    rFree:'Only a suggestion — any course can be chosen at any time.', open:'Open the roadmap in the app' },
+  zh:{ back:'← Numbers of Magic', title:'运算水平测评',
+    lead:'请选择与孩子现在所学运算相符的试卷。题目是固定的，同一套试卷无论何时打印都相同。可以打印在纸上做，也可以直接在屏幕上做。',
+    v:n=>`第${n}版`, mView:'查看试卷', mSolve:'在屏幕上做', mGrade:'录入纸质批改',
+    printTest:'打印试卷', printKey:'打印答案与批改说明', check:'批改',
+    hintView:'孩子做完打印的试卷后，在"录入纸质批改"中只点错题，就能看到推荐课程。',
+    hintSolve:'在格子里写出□中的数，然后点"批改"。',
+    hintGrade:'点错题标记✗，推荐课程会随之更新。',
+    form:n=>`第${n}套`, range:(a,b)=>`课程 ${a}~${b}`, qn:n=>`${n}题`,
+    band:'运算水平测评', name:'姓名', date:'日期', score:'答对',
+    how:'把□中的数写在右边的格子里。题目由易到难。不会的题可以空着。',
+    answer:'答', keyTitle:'答案 · 批改说明', keySub:'教师用——请勿与试卷一起发放。',
+    thNo:'题号', thAns:'答案', thCourse:'课程',
+    gH:'找推荐课程', g1:'下面列出了每个课程对应的题号。从最简单的课程往上看。',
+    g2:'找到第一个有错题的课程。若其后两个课程都全对，视为失误继续往下看。',
+    g3:'推荐课程 = 在那之前最后一个全对课程的下一个编号。（试卷上没有的课程也不跳过。）',
+    g4:'如果全部答对，请再做下一套。',
+    rK:'推荐课程', rCourse:(n,t)=>`课程 ${n} · ${t}`,
+    rWhy:(p,f)=>p==null?`从第一个课程起就连续出错，建议从本套的第一个课程开始。`:`课程 ${p} 之前都做得很好，从课程 ${f} 开始连续出错。`,
+    rAll:(to,nx)=>nx?`课程 ${to} 之前全部答对。再做第${nx}套会更准确。`:`课程 ${to} 之前全部答对。`,
+    rSlip:'只错一次的题视为失误。', rScore:(a,b)=>`答对 ${a} / ${b}`,
+    rFree:'这只是建议，课程随时可以自由选择。', open:'在应用中打开路线图' }
+};
+const qs = new URLSearchParams(location.search);
+const st = { lang: T[qs.get('lang')] ? qs.get('lang') : 'ko', form: +qs.get('f') || 2, v: qs.get('v') === '2' ? 2 : 1, mode: 'view', wrong: new Set(), answers: {} };
+const $ = s => document.querySelector(s);
+const L = o => o == null ? '' : typeof o === 'string' ? o : (o[st.lang] || o.ko || '');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const t = () => T[st.lang];
+const courseTitle = n => { const s = (window.NM_COURSE_SPEC || []).find(x => x.id === n); return s ? L(s.title) : ''; };
+let test = null;
+
+function tex(el, s){
+  try{ katex.render(s, el, { throwOnError:false, strict:false, trust:true }); }catch(e){ el.textContent = s; }
+}
+function renderBar(){
+  document.documentElement.lang = st.lang === 'zh' ? 'zh-Hans' : st.lang;
+  document.title = t().title + ' · Numbers of Magic';
+  document.querySelectorAll('[data-t]').forEach(el => { const v = t()[el.dataset.t]; if(typeof v === 'string') el.textContent = v; });
+  document.querySelectorAll('.langs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === st.lang));
+  $('#forms').innerHTML = LT.forms().map(f => {
+    const n = LT.build(f.id, 1).items.length;
+    return `<button class="form" data-f="${f.id}" aria-pressed="${f.id === st.form}">
+      <b>${esc(t().form(f.id))} · ${esc(L(f.stage.name))}</b>
+      <span>${esc(L(f.stage.band))}</span>
+      <small>${esc(t().range(f.from, f.to))} · ${esc(t().qn(n))}</small></button>`;
+  }).join('');
+  document.querySelectorAll('#vers button').forEach(b => { b.textContent = t().v(+b.dataset.v); b.setAttribute('aria-pressed', +b.dataset.v === st.v); });
+  document.querySelectorAll('#modes button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === st.mode));
+  $('#check').hidden = st.mode !== 'solve';
+  $('#hint').textContent = st.mode === 'solve' ? t().hintSolve : st.mode === 'grade' ? t().hintGrade : t().hintView;
+  document.body.classList.toggle('grading', st.mode === 'grade');
+  document.body.classList.toggle('solving', st.mode === 'solve');
+}
+function testPages(){
+  const f = test.form, code = `LT-${f.id}-${test.v}`;
+  const per = 10, pages = [];   /* 한 장 10문제 — 풀이 칸(세로셈 등)이 들어갈 자리를 남긴다 */
+  for(let i = 0; i < test.items.length; i += per) pages.push(test.items.slice(i, i + per));
+  return pages.map((items, pi) => `<section class="page testpage">
+    <div class="band"><b>${esc(t().band)} · ${esc(t().form(f.id))} ${esc(t().v(test.v))}</b><span>Numbers of Magic</span></div>
+    <div class="goldline"></div>
+    <div class="head">
+      <div><h2>${esc(t().title)}</h2><p>${esc(L(f.stage.name))}${f.next ? ' → ' + esc(L(f.next.name)) : ''} · ${esc(t().range(f.from, f.to))}</p></div>
+      <div class="who"><span>${esc(t().name)}</span><i></i><span>${esc(t().date)}</span><i></i>
+        <div class="score"><span>${esc(t().score)}</span><i class="line" style="border-bottom:1px solid #9aa7a8;height:5mm"></i><span>/ ${test.items.length}</span></div></div>
+    </div>
+    ${pi === 0 ? `<p class="how">${esc(t().how)}</p>` : ''}
+    <div class="grid">${items.map(it => `<div class="q" data-no="${it.no}">
+      <span class="no">${it.no}</span>
+      <div><div class="ex" data-tex="${esc(it.tex)}"></div>
+        <div class="ans">${esc(t().answer)} ${st.mode === 'solve' ? `<input inputmode="numeric" autocomplete="off" aria-label="${it.no}" data-no="${it.no}" value="${esc(st.answers[it.no] || '')}">` : `<span class="box"></span>`}<span class="right">${it.answer}</span></div></div>
+      <span class="mark" aria-hidden="true"></span></div>`).join('')}</div>
+    <div class="foot"><span>${code}</span><span>${pi + 1} / ${pages.length}</span></div>
+  </section>`).join('');
+}
+function keyPage(){
+  const f = test.form, half = Math.ceil(test.items.length / 2);
+  const tbl = rows => `<table><thead><tr><th>${esc(t().thNo)}</th><th>${esc(t().thAns)}</th><th>${esc(t().thCourse)}</th></tr></thead><tbody>${
+    rows.map(it => `<tr><td>${it.no}</td><td class="a">${it.answer}</td><td class="c">${it.course}</td></tr>`).join('')}</tbody></table>`;
+  const cmap = test.courses.map(c => `<span><b>${c}</b> · ${test.items.filter(i => i.course === c).map(i => i.no).join(', ')}</span>`).join('');
+  return `<section class="page keypage">
+    <div class="band"><b>${esc(t().keyTitle)} · ${esc(t().form(f.id))} ${esc(t().v(test.v))}</b><span>Numbers of Magic</span></div>
+    <div class="goldline"></div>
+    <div class="head"><div><h2>${esc(t().keyTitle)}</h2><p>${esc(t().keySub)}</p></div></div>
+    <div class="key">${tbl(test.items.slice(0, half))}${tbl(test.items.slice(half))}</div>
+    <div class="guide"><h3>${esc(t().gH)}</h3>
+      <ol><li>${esc(t().g1)}</li><li>${esc(t().g2)}</li><li>${esc(t().g3)}</li><li>${esc(t().g4)}</li></ol>
+      <div class="cmap">${cmap}</div></div>
+    <div class="foot"><span>LT-${f.id}-${test.v} · KEY</span><span></span></div>
+  </section>`;
+}
+function renderSheet(){
+  test = LT.build(st.form, st.v);
+  $('#sheet').innerHTML = testPages() + keyPage();
+  document.querySelectorAll('.ex').forEach(el => tex(el, el.dataset.tex));
+  paintMarks();
+}
+function paintMarks(){
+  document.querySelectorAll('.testpage .q').forEach(q => {
+    const no = +q.dataset.no, show = st.mode !== 'view' && st.checked;
+    q.classList.toggle('is-x', show && st.wrong.has(no));
+    q.classList.toggle('is-o', show && st.mode === 'solve' && !st.wrong.has(no));
+  });
+}
+function showResult(){
+  const r = LT.score(test, st.wrong), f = test.form, box = $('#result');
+  if(!st.checked){ box.hidden = true; return; }
+  const nx = LT.forms().find(x => x.id === f.id + 1);
+  const slip = r.perCourse.some(p => p.miss && (r.firstFail == null || p.c < r.firstFail));
+  const why = r.firstFail == null ? t().rAll(f.to, nx && nx.id) : t().rWhy(r.passedTo, r.firstFail);
+  box.innerHTML = `<div class="k">${esc(t().rK)} · ${esc(t().rScore(test.items.length - st.wrong.size, test.items.length))}</div>
+    <h2>${esc(t().rCourse(r.rec, courseTitle(r.rec)))}</h2>
+    <p>${esc(why)}${slip ? ' ' + esc(t().rSlip) : ''}</p>
+    <div class="strip">${r.perCourse.map(p => `<i class="${p.miss ? 'no' : 'ok'}${p.c === r.rec ? ' rec' : ''}">${p.c}${p.miss ? ' ✗' : ''}</i>`).join('')}</div>
+    <p class="hint">${esc(t().rFree)} · <a href="index.html">${esc(t().open)}</a></p>`;
+  box.hidden = false;
+}
+function all(){ renderBar(); renderSheet(); showResult(); }
+function reset(){ st.wrong = new Set(); st.answers = {}; st.checked = st.mode === 'grade'; }
+
+document.querySelector('.langs').onclick = e => { const b = e.target.closest('button'); if(!b) return; st.lang = b.dataset.lang; all(); };
+$('#forms').onclick = e => { const b = e.target.closest('.form'); if(!b) return; st.form = +b.dataset.f; reset(); all(); };
+$('#vers').onclick = e => { const b = e.target.closest('button'); if(!b) return; st.v = +b.dataset.v; reset(); all(); };
+$('#modes').onclick = e => { const b = e.target.closest('button'); if(!b) return; st.mode = b.dataset.m; reset(); all(); };
+$('#sheet').addEventListener('click', e => {
+  if(st.mode !== 'grade') return;
+  const q = e.target.closest('.testpage .q'); if(!q) return;
+  const no = +q.dataset.no; st.wrong.has(no) ? st.wrong.delete(no) : st.wrong.add(no);
+  paintMarks(); showResult();
+});
+$('#sheet').addEventListener('input', e => { if(e.target.matches('input[data-no]')) st.answers[e.target.dataset.no] = e.target.value; });
+$('#check').onclick = () => {
+  st.wrong = new Set(test.items.filter(it => String(st.answers[it.no] || '').replace(/[\s,]/g, '').replace('−', '-') !== String(it.answer)).map(it => it.no));
+  st.checked = true; paintMarks(); showResult();
+  $('#result').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+};
+function printWith(cls){ document.body.classList.add(cls); window.print(); setTimeout(() => document.body.classList.remove(cls), 500); }
+$('#printTest').onclick = () => printWith('print-test');
+$('#printKey').onclick = () => {
+  document.body.classList.add('print-key');
+  document.querySelectorAll('.testpage').forEach(p => p.style.display = 'none');
+  window.print();
+  setTimeout(() => { document.body.classList.remove('print-key'); document.querySelectorAll('.testpage').forEach(p => p.style.display = ''); }, 500);
+};
+reset(); all();
+})();
+</script>
+</body>
+</html>

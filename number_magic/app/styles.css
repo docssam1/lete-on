@@ -3642,3 +3642,4 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-dg-or{display:flex;align-items:center;gap:10px;margin:12px 0 8px;font-size:11.5px;font-weight:800;color:var(--sub)}
 .nm-dg-or::before,.nm-dg-or::after{content:"";flex:1;height:1px;background:var(--line)}
 .nm-dg-gradeprev em{font-style:normal;font-size:11px;font-weight:600;color:var(--sub);line-height:1.45;word-break:keep-all;margin-top:2px}
+.nm-dg-paper{text-decoration:none;text-align:center;box-sizing:border-box}
