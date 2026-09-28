@@ -1,5 +1,6 @@
 import { createPolygonMark, createPunchMark, unfoldMarkStages } from "./mark-geometry.js";
 import { buildPatternChoices, patternKey } from "./pattern-choices.js";
+import { REVERSE_SHAPE_ORDER, REVERSE_VARIANTS, buildFoldLineProblem, buildFoldResultProblem } from "./reverse-fold.js";
 
 const translations = (ko, zh, ja, en) => ({ ko, zh, ja, en });
 
@@ -30,6 +31,20 @@ export const levelMeta = [
       "把折叠一次或两次的纸逆向展开，判断孔的位置和数量。",
       "一回または二回折った紙を逆順に開き、穴の位置と数を考えます。",
       "Unfold paper folded once or twice in reverse to locate and count holes."
+    )
+  },
+  {
+    id: 3,
+    stage: "접는 방법 거꾸로 찾기",
+    difficulty: "심화",
+    color: "grape",
+    strand: "reverse-fold",
+    title: translations("접는 방법 거꾸로 찾기", "逆向找折法", "折り方を逆にたどる", "Find the Fold Backwards"),
+    description: translations(
+      "접은 결과를 보고 접는 선을 찾고, 한 번 접어 만들 수 있는 모양을 모두 골라요.",
+      "看折好的结果找出折线，并选出折一次能做出的所有图形。",
+      "折った結果から折り線を見つけ、一回折ってできる形をすべて選びます。",
+      "Find the crease from a folded result, then choose every shape one fold can make."
     )
   }
 ];
@@ -476,9 +491,36 @@ function levelTwoProblem(index) {
   };
 }
 
+/* 레벨 3 · 접는 방법 거꾸로 찾기.
+   원본 33장의 도형·보기와는 대조하지 않았으므로 어떤 문항도 full로 두지 않는다.
+   (A) 접는 선 찾기는 PF-C06, (B) 만들 수 있는 결과 모두 찾기는 평행사변형·직사각형이
+   PF-C07, 오각형·L자가 PF-C08의 학습 행동에 해당한다. */
+const resultAuditRef = (shapeId) => (["parallelogram", "rectangle"].includes(shapeId) ? "PF-C07" : "PF-C08");
+
+function reverseFoldProblems() {
+  const problems = [];
+  REVERSE_SHAPE_ORDER.forEach((shapeId) => {
+    for (let variant = 0; variant < REVERSE_VARIANTS; variant += 1) {
+      problems.push({
+        id: `paper-fold-line-${shapeId}-${variant + 1}`, level: 3,
+        ...buildFoldLineProblem(shapeId, variant),
+        sourceRef: "user-reference.paper-fold.reverse-fold-crease-line",
+        sourceAuditRefs: ["PF-C06"], sourceCoverage: "partial"
+      });
+      problems.push({
+        id: `paper-fold-possible-${shapeId}-${variant + 1}`, level: 3,
+        ...buildFoldResultProblem(shapeId, variant),
+        sourceRef: "user-reference.paper-fold.reverse-fold-possible-results",
+        sourceAuditRefs: [resultAuditRef(shapeId)], sourceCoverage: "partial"
+      });
+    }
+  });
+  return problems;
+}
+
 export const levels = levelMeta.map((meta) => ({
   ...meta,
-  problems: [
+  problems: meta.id === 3 ? reverseFoldProblems() : [
     ...(meta.id === 1 ? SINGLE_FOLDS.flatMap((foldSpec, index) => [0, 1].map((variant) => ({
       id: `paper-one-fold-pattern-${index + 1}-${variant + 1}`, level: 1, interaction: "region-unfold",
       ...regionCutSpec([foldSpec], index + variant * 5),
@@ -491,11 +533,14 @@ export const levels = levelMeta.map((meta) => ({
 
 const pointsInPaper = (points) => points.every(({ x, y }) => x >= 0 && x <= 1 && y >= 0 && y <= 1);
 
+const REVERSE_PROBLEM_COUNT = REVERSE_SHAPE_ORDER.length * REVERSE_VARIANTS * 2;
+const expectedProblemCount = { 1: 52, 2: 36, 3: REVERSE_PROBLEM_COUNT };
+
 export function validateLevels() {
-  if (levels.length !== 2) throw new Error("Paper fold must have exactly two content types.");
+  if (levels.length !== 3) throw new Error("Paper fold must have exactly three content types.");
   const ids = new Set();
   levels.forEach((level) => {
-    if (level.problems.length !== (level.id === 1 ? 52 : 36)) throw new Error(`Unexpected problem count for ${level.id}`);
+    if (level.problems.length !== expectedProblemCount[level.id]) throw new Error(`Unexpected problem count for ${level.id}`);
     level.problems.forEach((problem) => {
       if (ids.has(problem.id)) throw new Error(`Duplicate paper-fold id: ${problem.id}`);
       ids.add(problem.id);
@@ -512,6 +557,17 @@ export function validateLevels() {
         if (problem.folds.length !== 1 || problem.unfoldSteps.length !== 1 || problem.pointStages.length !== 2 || !pointsInPaper(problem.unfoldedPoints)) throw new Error(`Invalid one-fold hole problem: ${problem.id}`);
       } else if (problem.interaction === "hole-result") {
         if (problem.folds.length !== 2 || problem.unfoldSteps.length !== 2 || problem.pointStages.length !== 3 || problem.unfoldedPoints.length !== 4) throw new Error(`Invalid two-fold hole problem: ${problem.id}`);
+      } else if (problem.interaction === "fold-line-pick") {
+        const correct = problem.lineChoices.filter((choice) => choice.correct);
+        if (problem.lineChoices.length < 3 || correct.length !== 1 || correct[0].key !== problem.answerKey) throw new Error(`Invalid fold-line problem: ${problem.id}`);
+        if (problem.answerContract !== "single" || problem.resultPieces.length !== 2) throw new Error(`Invalid fold-line contract: ${problem.id}`);
+        if (!pointsInPaper([...problem.paper, ...problem.resultPieces.flat(), ...problem.lineChoices.flatMap((choice) => choice.band)])) throw new Error(`Fold-line figure leaves the picture: ${problem.id}`);
+      } else if (problem.interaction === "fold-result-multi") {
+        const correct = problem.resultOptions.filter((choice) => choice.correct);
+        if (problem.resultOptions.length !== 4 || correct.length !== 2) throw new Error(`Invalid fold-result problem: ${problem.id}`);
+        if (problem.answerContract !== "multiple" || problem.answerKeys.join(",") !== correct.map((choice) => choice.key).join(",")) throw new Error(`Invalid fold-result contract: ${problem.id}`);
+        if (new Set(problem.resultOptions.map((choice) => choice.signature)).size !== 4) throw new Error(`Duplicate fold-result choices: ${problem.id}`);
+        if (!pointsInPaper([...problem.paper, ...problem.resultOptions.flatMap((choice) => choice.pieces.flat())])) throw new Error(`Fold-result figure leaves the picture: ${problem.id}`);
       } else if (problem.interaction === "connect-match") {
         if (problem.pairs.length !== 3 || problem.results.length !== 3 || Object.keys(problem.answer).length !== 3) throw new Error(`Invalid matching problem: ${problem.id}`);
         if (level.strand === "fold-and-cut" && problem.pairs.some((item) => item.kind !== "pieces")) throw new Error(`Cut matching contains a non-cut item: ${problem.id}`);
