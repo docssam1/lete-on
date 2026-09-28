@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-독쌤 목소리를 원장님 실제 녹음으로 — 사이언스 랩의 독쌤 대사 전부를 그 목소리로 만든다.
+독쌤 목소리 만들기 — 사이언스 랩의 독쌤 대사 전부를 독쌤 목소리로 만든다.
 
-원장(2026-09-26): "목소리 이걸로 바꾸자, 독쌤 목소리야" → "네가 해".
-Drive 「녹음 2026-09-24 045754.mp4」(15.9초, 쉼 없이 이어 말함, 녹음 레벨이 아주 작다).
+참조 = 독쌤 목소리 녹음(Drive, 15.9초, 쉼 없이 이어 말함, 녹음 레벨이 아주 작다).
 
 하는 일
   1) 녹음을 참조 음성으로 다듬는다: 24kHz 모노 · 소리 크기 맞추기 · 8.5~11초 사이 **가장 조용한 틈에서** 자른다
@@ -19,11 +18,10 @@ Drive 「녹음 2026-09-24 045754.mp4」(15.9초, 쉼 없이 이어 말함, 녹�
 읽기용 글: "3D"·"O/X"·"N과 S" 같은 로마자·숫자는 복제 모델이 헷갈리므로 한글 발음으로 바꿔 **읽기만** 한다
 (파일 이름 해시는 원문 그대로 — 사이트가 원문으로 찾는다).
 
-⚠ 원본 녹음은 저장소에 넣지 않는다(공개 저장소 — 누구나 목소리를 복제할 수 있게 된다).
-   원장 PC 는 녹음 파일을 직접 읽고, GitHub 러너는 Supabase 비공개 표(voice_refs, RLS·anon 권한 없음)에서 받는다.
+⚠ 참조 녹음은 저장소에 넣지 않는다(공개 저장소 — 누구나 목소리를 복제할 수 있게 된다). GPU PC 에서만 읽는다.
 
 쓰는 법
-  원장 PC : scripts\\local\\omnivoice-docssam.cmd (녹음 파일을 그 위에 끌어다 놓기)
+  GPU PC  : scripts\\local\\omnivoice-docssam.cmd (녹음 파일을 그 위에 끌어다 놓기)
   러너    : .github/workflows/omnivoice-docssam.yml (20조각 병렬)
   python scripts/omnivoice-docssam.py --ref <녹음> [--ref-ready] [--shard 3/20] [--out DIR] [--only id,id] [--force]
   python scripts/omnivoice-docssam.py --manifest-only
@@ -154,7 +152,7 @@ def write_wav(path, y):
 
 def listen_page(ref_wav, made, path):
     b64 = lambda f: base64.b64encode(open(f, "rb").read()).decode("ascii")
-    ref = f'<div class="clip orig"><b>원장님 녹음(참조로 다듬은 것)</b><audio controls src="data:audio/wav;base64,{b64(ref_wav)}"></audio></div>'
+    ref = f'<div class="clip orig"><b>독쌤 목소리 녹음(참조로 다듬은 것)</b><audio controls src="data:audio/wav;base64,{b64(ref_wav)}"></audio></div>'
     items = "".join(f'<div class="clip"><b>{lid}</b><audio controls preload="none" src="data:audio/mpeg;base64,{b64(f)}"></audio><p>{t}</p></div>'
                     for lid, t, f in made)
     html = f"""<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -162,7 +160,7 @@ def listen_page(ref_wav, made, path):
 <style>body{{font:15px/1.7 system-ui,"Malgun Gothic",sans-serif;background:#f6f8fb;color:#1a2233;margin:0 auto;padding:20px 16px;max-width:820px;word-break:keep-all}}
 h1{{font-size:20px;margin:0 0 4px}}.lede{{color:#4a5468;font-size:13.5px}}.clip{{background:#fff;border:1px solid #dfe6f0;border-radius:12px;padding:10px 12px;margin:10px 0}}
 .clip.orig{{background:#fff8e6;border-color:#ecd9a8}}.clip b{{font-size:12.5px;color:#23498a}}audio{{width:100%}}.clip p{{margin:6px 0 0;font-size:13px;color:#4a5468}}</style>
-<h1>독쌤 목소리 — 들어 보기</h1><p class="lede">맨 위가 원장님 녹음, 아래가 그 목소리로 만든 독쌤 대사입니다.</p>
+<h1>독쌤 목소리 — 들어 보기</h1><p class="lede">맨 위가 독쌤 목소리 녹음(참조), 아래가 그 목소리로 만든 독쌤 대사입니다.</p>
 {ref}{items}</html>"""
     open(path, "w", encoding="utf-8").write(html)
     return path
@@ -182,7 +180,7 @@ def write_manifest(out):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ref", help="원장님 녹음(mp4/m4a/mp3/wav)")
+    ap.add_argument("--ref", help="독쌤 목소리 녹음(mp4/m4a/mp3/wav)")
     ap.add_argument("--ref-ready", action="store_true", help="--ref 가 이미 다듬은 참조 음성이다")
     ap.add_argument("--only", default="", help="이 id 들만(쉼표)")
     ap.add_argument("--shard", default="", help="k/n — n 조각 중 k 번째(0부터)만")
@@ -223,7 +221,7 @@ def main():
         model.load_asr_model()
         ko = lambda audio: model._asr_pipe(audio, generate_kwargs={"language": "korean"})["text"].strip()
         # 참조 전사는 한국어로 못 박는다 — 자동 언어 감지가 틀리면 문장 끝에 참조의 남은 말이 붙는다
-        # (수의 마법 쇼릴, 2026-09-26 원장: "문장 끝나고 '하넸다' 이런 것처럼 말을 반복해")
+        # (수의 마법 쇼릴에서 문장 끝에 참조의 남은 말이 반복되던 문제)
         ref_text = ko({"raw": read_wav(ref_wav), "sampling_rate": SR})
         print(f"참조 전사(Whisper, 한국어): {ref_text}", flush=True)
         json.dump({"ref_text": ref_text}, open(os.path.join(WORK, "ref.json"), "w", encoding="utf-8"), ensure_ascii=False)

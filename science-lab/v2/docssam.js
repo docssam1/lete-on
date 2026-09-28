@@ -1,5 +1,5 @@
 // docssam 안내 — 화면 구석의 **작은 말풍선**(스스로 공부하기·학생용 교재·읽을거리). 가르치기·교사용에는 쓰지 않는다.
-//  · 목소리: 원장님 녹음 복제 음성(audio/docssam/, clone-voice.js)이 있으면 그것, 없는 줄은 광고와 같은 docssam 음성 MP3
+//  · 목소리: 독쌤 목소리 음성 파일(audio/docssam/, clone-voice.js)이 있으면 그것, 없는 줄은 광고와 같은 docssam 음성 MP3
 //    (data/voice/*.voice.json → scripts/generate-audio.js → Supabase).
 //    파일이 없거나 재생이 막히면 **자막만** 보여 준다(기기 음성으로 바꿔 읽지 않고, 음성이 있다고 표시하지도 않는다).
 //  · 표정: 승인된 전신 그림 5장(A1 기본·B1 놀람·B2 생각·B3 칭찬·B4 격려)을 겹쳐 두고 **한 장만** 보인다(통째로 바꿔 끼우기).

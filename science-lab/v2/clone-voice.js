@@ -1,4 +1,4 @@
-// 독쌤 목소리 = 원장님 녹음을 복제한 음성(scripts/omnivoice-docssam.py, 원장 PC GPU에서 생성).
+// 독쌤 목소리 음성 파일(scripts/omnivoice-docssam.py 로 GPU PC에서 생성).
 // science-lab/audio/docssam/manifest.json 에 **있는 파일만** 쓴다 — 없는 줄은 null 을 돌려주고,
 // 부르는 쪽이 예전 목소리(Supabase)로 넘어간다. 파일 이름 = <id>-<sha1("<voice>|<text>") 앞 10자>.mp3
 // (글이 바뀌면 이름이 바뀌어 옛 음성을 틀지 않는다).

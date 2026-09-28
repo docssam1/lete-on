@@ -72,7 +72,7 @@ async function say(ids) {
     if (my !== sayToken) return;
     try { audio?.pause(); speechSynthesis?.cancel(); } catch { /* */ }
     if (soundOn) {
-      // 원장님 목소리(복제) → 독쌤 음성 파일 → 기기 음성 순서로 읽는다
+      // 독쌤 목소리 파일(audio/docssam) → 예전 음성 파일 → 기기 음성 순서로 읽는다
       let fell = false;
       const fall = () => { if (fell) return; fell = true; if (my === sayToken && soundOn) speakDevice(line.text); };
       const src = (await cloneUrl(line.id, line.text)) || await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
