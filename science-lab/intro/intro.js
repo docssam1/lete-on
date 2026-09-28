@@ -6,7 +6,7 @@ import { wireLive } from '../v2/live.js';
 import { mount3D, mountLabOf } from '../v2/mounts.js';
 import { SEMS, READY } from '../v2/units-index.js';
 import { escapeInApp } from '../v2/inapp.js';
-import { cloneUrl } from '../v2/clone-voice.js';
+import { cloneUrl, tuneClone } from '../v2/clone-voice.js';
 import * as misc from '../data/units/s41-u03.misc.js';
 import { record, analyze, remedyItems } from '../v2/progress.js';
 const LOGU = 's41-u03';   // 이 책의 확인 문제·개념 빈칸 기록이 쌓이는 단원 id(v2 화면과 같은 곳)
@@ -77,6 +77,7 @@ async function say(ids) {
       const fall = () => { if (fell) return; fell = true; if (my === sayToken && soundOn) speakDevice(line.text); };
       const src = (await cloneUrl(line.id, line.text)) || await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
       audio = new Audio(src); audio.preload = 'auto';
+      await tuneClone(audio, src); if (my !== sayToken) return;
       audio.addEventListener('error', fall, { once: true });
       audio.addEventListener('playing', () => { voiceMode('독쌤 음성'); }, { once: true });
       audio.play().then(() => { setTimeout(() => { if (!audio || audio.paused) fall(); }, 400); }).catch(fall);
@@ -86,9 +87,14 @@ async function say(ids) {
     // 문장은 처음부터 한 번에 놓는다. 글자마다 DOM 폭을 바꾸면 고정 안내창 뒤의 3D 책까지
     // 매번 다시 합성되어 모바일에서 책장이 깜빡였다.
     guide.classList.add('talk'); $p.textContent = line.text;
-    for (const ch of line.text) {
+    // 입은 글자 수만큼 움직이고, 음성이 아직 나오고 있으면(느리게 트는 복제 음성) 끝날 때까지 이어서 움직인다.
+    // 음성이 끝나기 전에 다음 줄로 넘어가 말이 잘리지 않게 한다(최대 30초).
+    const chars = [...line.text], t0 = Date.now();
+    for (let i = 0; ; i++) {
       if (my !== sayToken) return;
-      const m = REDUCED || NARROW.matches ? null : mouthFor(ch);
+      const speaking = audio && !audio.paused && !audio.ended;
+      if ((i >= chars.length && !speaking) || Date.now() - t0 > 30000) break;
+      const m = REDUCED || NARROW.matches ? null : mouthFor(chars[i % chars.length]);
       if (m) { $face.src = A + FACE[m]; $face.style.display = 'block'; } else $face.style.display = 'none';
       await new Promise((r) => setTimeout(r, m ? 70 : 110));
     }

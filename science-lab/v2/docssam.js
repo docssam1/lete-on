@@ -9,7 +9,7 @@
 //    prefers-reduced-motion이면 움직이지 않고 표정만 바뀐다.
 //  · 자리: 화면 아래 구석(왼쪽/오른쪽) 중 내용을 덜 가리는 쪽에 앉고, 어디든 가리면 스스로 접혀 얼굴만 남는다.
 //    휴대폰은 아래쪽 얇은 띠(작은 얼굴 + 1~2줄).
-import { cloneUrl } from './clone-voice.js';
+import { cloneUrl, tuneClone } from './clone-voice.js';
 const SUPA = 'https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio/science-lab/';
 const A = new URL('../assets/', import.meta.url).href;
 const BODY = { A1: 'docssam-A1-mouth-closed.webp', B1: 'docssam-B1-surprised.webp', B2: 'docssam-B2-thinking.webp', B3: 'docssam-B3-praise.webp', B4: 'docssam-B4-encourage.webp' };
@@ -169,6 +169,7 @@ export function mountGuide(V, { avoid = () => [], canPause = false, label = '독
         if (my !== token) return false;
         if (src) {
           const a = new Audio(src), v = { audio: a, text, flapping: false, mouth: null, off: [] };
+          await tuneClone(a, src); if (my !== token) return false;
           voice = v; setVoiceBtn();
           const on = (type, fn) => { a.addEventListener(type, fn); v.off.push(() => a.removeEventListener(type, fn)); };
           played = await new Promise((res) => {

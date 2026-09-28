@@ -25,7 +25,7 @@ if not exist "%REF%" (
 
 echo.
 echo  [실행] 독쌤 목소리로 대사를 만드는 중... 처음엔 모델을 받느라 오래 걸립니다.
-python scripts\omnivoice-docssam.py --ref "%REF%" --device auto %2 %3 %4
+python scripts\omnivoice-docssam.py --ref "%REF%" --device auto --speed 0.8 %2 %3 %4
 if errorlevel 1 ( echo. & echo  [!] 실패했습니다. 위 메시지를 그대로 복사해 Claude 에게 주세요. & pause & exit /b 1 )
 
 echo.

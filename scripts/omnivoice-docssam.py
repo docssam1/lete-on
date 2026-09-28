@@ -35,6 +35,9 @@ SL = os.path.join(ROOT, "science-lab")
 OUT = os.path.join(SL, "audio", "docssam")
 WORK = os.path.join(ROOT, ".docssam-work")
 VOICE = "docssam-clone-v1"          # 목소리를 다시 뽑으면 v2 로 올린다 → 파일 이름이 바뀌어 전부 새로 만든다
+# --speed 0.8 로 느리게 만들면 "docssam-clone-v2-slow" 로 바뀌어 전부 새로 만들고, manifest 의 rate 를 1 로 적는다
+# (사이트는 v1 을 0.8배로 틀고 있으므로 느리게 만든 음성은 원래 속도로 틀어야 한다 — v2/clone-voice.js).
+RATE = 0.8
 SR = 24000
 CER_OK, CER_RETRY, TRIES = 0.35, 0.12, 3
 
@@ -166,8 +169,13 @@ h1{{font-size:20px;margin:0 0 4px}}.lede{{color:#4a5468;font-size:13.5px}}.clip{
 
 
 def write_manifest(out):
-    have = sorted(f for f in os.listdir(out) if f.endswith(".mp3"))
-    json.dump({"voice": VOICE, "files": have}, open(os.path.join(out, "manifest.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    # 지금 목소리·지금 글에 맞는 파일만 목록에 싣고, 옛 목소리(v1 등)나 고친 글의 옛 파일은 지운다
+    valid = {fname(i, t) for i, t in lines()}
+    for f in os.listdir(out):
+        if f.endswith(".mp3") and f not in valid and out == OUT:
+            os.remove(os.path.join(out, f))
+    have = sorted(f for f in os.listdir(out) if f.endswith(".mp3") and f in valid)
+    json.dump({"voice": VOICE, "rate": RATE, "files": have}, open(os.path.join(out, "manifest.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"manifest.json: {len(have)}개", flush=True)
     return have
 
@@ -183,8 +191,12 @@ def main():
     ap.add_argument("--no-check", action="store_true", help="받아 적어 비교하는 검사를 끈다")
     ap.add_argument("--manifest-only", action="store_true")
     ap.add_argument("--device", default="auto")
+    ap.add_argument("--speed", type=float, default=None, help="말 빠르기(1 보다 작으면 느리게). 예: 0.8 — 공부용 권장")
     ap.add_argument("--model", default="k2-fsa/OmniVoice")
     a = ap.parse_args()
+    global VOICE, RATE
+    if a.speed:
+        VOICE, RATE = "docssam-clone-v2-slow", 1.0
     os.makedirs(a.out, exist_ok=True); os.makedirs(WORK, exist_ok=True)   # WORK 는 .gitignore 대상
     if a.manifest_only:
         write_manifest(a.out); return
@@ -219,10 +231,10 @@ def main():
         t0 = time.time(); audio_s = 0.0
         for n, (lid, text) in enumerate(todo, 1):
             t = time.time(); say = spoken(text); best = None
-            exp = expected(say); dur = None
+            exp = expected(say) / (a.speed or 1.0); dur = None
             for k in range(TRIES):
                 try:
-                    y = model.generate(text=say, language="ko", voice_clone_prompt=prompt, duration=dur)[0]
+                    y = model.generate(text=say, language="ko", voice_clone_prompt=prompt, duration=dur, speed=None if dur else a.speed)[0]
                 except Exception as e:
                     print(f"  ✗ {lid}: {e}", flush=True); break
                 y = y.reshape(-1)
