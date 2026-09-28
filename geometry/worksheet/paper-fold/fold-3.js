@@ -46,7 +46,7 @@ function drawHoles(ctx, holes, ox, oy, size, r){
   }
 }
 // 문항 번호. v4_2 시안이 교재 4번을 흉내 낸 '4'를 그대로 물려받아 유형과 무관하게
-// 늘 4번으로 찍히고 있었다. 랩에서는 "새 문제"를 누를 때마다 1부터 세어 올린다.
+// 늘 4번으로 찍힐고 있었다. 랩에서는 "새 문제"를 누를 때마다 1부터 세어 올린다.
 let questionNumber = 0;
 function header(ctx, lines){
   ctx.fillStyle='#16417C'; ctx.font='900 26px sans-serif';
@@ -196,7 +196,7 @@ const sharedAxisLabel={vertical:'세로',horizontal:'가로','diag-main':'왼쪽
 
 async function loadSharedGameLevels(){
   try{
-    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-13');
+    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-14');
     module.validateLevels();
     sharedGameLevels=module.levels;
   }catch(error){
@@ -294,7 +294,7 @@ function buildSharedProblem(mode){
   const text=source.interaction==='region-unfold'
     ? ['색종이를 접어 색칠한 부분을 잘랐습니다.','접은 순서의 반대로 펼친 뒤 잘린 부분을 그리세요.']
     : source.interaction==='mixed-hole-result'
-      ? ['색종이를 두 번 접어 서로 다른 모양의 구멍을 뚫었습니다.','거꾸로 펼쳤을 때 구멍 모양과 위치를 그리세요.']
+      ? ['색종이를 두 번 접어 서로 다른 모양의 구멍을 뚫었습니다.','거꾸로 펼쳐을 때 구멍 모양과 위치를 그리세요.']
       : prompts[levelNumber];
   return {kind:'game-level',gameLevel:levelNumber,source,answer,text,info:`${source.id} · ${foldNames}`,src:'게임과 동일한 확정 문항'};
 }
