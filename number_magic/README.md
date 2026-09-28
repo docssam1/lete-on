@@ -34,7 +34,7 @@
 | `data/middle-concepts.js` | 중등 MD 51유형·202레벨의 원리·절차·주의점 (한국어) |
 | `data/drill-topics.js` | 문제은행 탐색 분류, 등록 레벨 자동 연결 |
 | `data/units/*.js` | 유닛 카드 226개 |
-| `data/courses.js` | 48과정 편성 (학습지) |
+| `data/courses.js` | 46과정 편성 (학습지) |
 | `data/roadmap.js` | 71챕터 (앱 「마법 학습 여행」) |
 | `data/stages.js` | 7단계 (광고 로드맵) |
 | `scripts/check-*.js` | 동기화·수학·무중복·A4·모바일 검사기 |
