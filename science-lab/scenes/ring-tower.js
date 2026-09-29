@@ -202,6 +202,7 @@ export default {
       },
     };
   },
+  revealAt: 2,   // 이 단계부터 답(떠 있는 까닭(같은 극))이 나온다 — 가설 전 미리 보기는 그 앞까지(SEQUENCE-DESIGN.md)
   beats: [
     { text: '받침에 막대를 세우고 고리 자석 네 개를 준비해요.', show: ['base', 'rod', 'lbQ', 'r0', 'r1', 'r2', 'r3'], dur: 3,
       reset(o) { START.forEach((u, i) => { const r = o['r' + i]; setUp(r, u); r.position.set(PILE.x, (3 - i) * T, PILE.z); r.userData.top.visible = r.userData.bot.visible = false; }); } },

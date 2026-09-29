@@ -341,7 +341,7 @@ async function build() {
   state.L = lm.lesson; state.rows = [];
   layout(true);
   releaseBook = wireLive(book, {
-    scene: (el) => mount3D(el, state.L.engage.scene, { autoplay: true, preview: true }),
+    scene: (el) => mount3D(el, state.L.engage.scene, { autoplay: true, preview: 3 }),
     lab: (el, lifecycle) => mountLabOf(state.L.explore.lab.kind)(el, { ...state.L.explore.lab, ...lifecycle, rows: state.rows, onRecord: (rows) => { state.rows = rows; } }),
     misc,
     onAnswer: (kind, p) => {   // 이 책에서 고른 답도 기록 → 끝 쪽 진단 보고서에 바로 반영

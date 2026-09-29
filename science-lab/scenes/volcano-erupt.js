@@ -276,6 +276,7 @@ export default {
       halo.userData.set(0, 0, -0.35, 0, 2.4 * hg, 0.55 * hg); halo.userData.set(1, 0, 0.3, 0, 4.2 * hg, 0.2 * hg); halo.userData.set(2, 0, -0.5, 0, 1.1 * hg, 0.8 * hg); halo.userData.commit(e > 0.01 ? 3 : 0);
     } };
   },
+  revealAt: 1,   // 이 단계부터 답(분출해서 나오는 것)이 나온다 — 가설 전 미리 보기는 그 앞까지(SEQUENCE-DESIGN.md)
   beats: [
     { text: '산처럼 보이지만, 땅속을 비춰 보면 뜨거운 마그마가 모여 있는 방과 통로가 있어요.', show: ['terrain', 'under', 'lbM', 'lbQ'], dur: 5,
       reset(o) { Object.assign(ST, { xray: 1, erupt: 0, cool: 0 }); o.under.userData.gran.visible = false; o.under.userData.ch.visible = true; o.under.userData.pipe.visible = true; },

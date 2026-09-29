@@ -51,7 +51,9 @@ export function addLandscape(host, into) {
 const REDUCED = matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 // 3D (기존 engine.js 재사용)
-export async function mount3D(el, sceneName, { autoplay, preview = false, onDone } = {}) {
+// preview: true → 답이 나오기 전(장면의 revealAt)까지만, 숫자 → 그 단계 수만큼(광고 페이지). 끝나면 질문으로 멈춘다.
+// from: 'reveal' → 답이 나오는 단계부터(가설·실험 뒤 「3D로 확인하기」).
+export async function mount3D(el, sceneName, { autoplay, preview = false, from = null, onDone } = {}) {
   el.innerHTML = `<div class="stage3d"><div class="stage3d-view"><canvas aria-label="3D 실험 장면. 끌어서 돌려 볼 수 있어요."></canvas><span class="stage3d-hint">끌어서 회전 · 두 손가락으로 확대</span></div><p class="cap"><b class="stage3d-step">1/1</b><span>장면을 준비하고 있어요…</span></p>
     <div class="ctl"><button class="btn primary" data-a="play">재생</button><button class="btn" data-a="prev">이전</button><button class="btn" data-a="next">다음</button></div></div>`;
   try {
@@ -64,7 +66,13 @@ export async function mount3D(el, sceneName, { autoplay, preview = false, onDone
     player.onChange = () => { $cap.textContent = player.beats[player.index]?.text || ''; $step.textContent = `${player.index + 1}/${player.beats.length}`; $play.textContent = player.playing ? '멈춤' : '재생';
       if (player.done && !fired && onDone) { fired = true; onDone(); } };
     await player.load(mod.default);
-    if (preview) { player.beats = player.beats.slice(0, 3); player.speed = 1.15; }
+    const reveal = mod.default.revealAt ?? 3;
+    if (preview) { player.beats = player.beats.slice(0, typeof preview === 'number' ? preview : reveal); player.speed = 1.15; }
+    if (preview === true) {   // 미리 보기가 끝나면 답 대신 질문을 남긴다
+      const base = player.onChange;
+      player.onChange = () => { base(); if (player.done) $cap.textContent = '여기까지! 어떻게 될지는 먼저 예상하고, 실험한 뒤에 확인해요.'; };
+    }
+    if (from === 'reveal' && reveal < player.beats.length) player.goto(reveal, false);
     player.onChange();
     el.querySelector('[data-a=play]').onclick = () => player.toggle();
     el.querySelector('[data-a=prev]').onclick = () => player.prev();

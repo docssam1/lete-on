@@ -246,6 +246,7 @@ export default {
     const up = arrow([0.95, PAN_Y + H * FILL, 0.2], [0.95, PAN_Y + H * FILL * GROW + 0.3, 0.2], P.red, 0.035); world.add('up', up);
     return {};
   },
+  revealAt: 2,   // 이 단계부터 답(얼면 높이가 올라감)이 나온다 — 가설 전 미리 보기는 그 앞까지(SEQUENCE-DESIGN.md)
   beats: [
     { text: '물을 반쯤 담은 병을 저울에 올리고, 물 높이에 빨간 선을 그어요.', show: ['scale', 'bottle', 'water', 'mark', 'lbW', 'lbQ'], dur: 4,
       reset(o) { o.water.setFill(FILL); o.water.material.color.setHex(P.water); relabel(o.lbW, '무게 120 g', { size: 0.3 }); } },
