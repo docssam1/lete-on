@@ -340,7 +340,7 @@ const COURSE_SPEC = [
  /* 공통수학1 38~43 — 교과연산 고1(J) 챕터 순서(2026-09-29, 원장 "내가 준 연산학습지 개념을 다" · 설계 v2
     docs/high-concept-audit-2026-09-28.md). 옛 38 「다항식과 나머지정리」·39 「이차방정식과 행렬」 두 과정을
     교재 덩어리대로 여섯으로 나누고 새 유형 MD91~100 을 넣었다. 고차·연립·부등식·순열·조합(MD101~114)은
-    제작 중 — 들어오면 43 행렬 앞에 과정을 끼운다. 회차 수는 설계 v2 규칙(⌈소유형÷2⌉+확인 1).
+    43~47, 행렬은 48(2026-09-29 배치). 회차 수는 설계 v2 규칙(⌈소유형÷2⌉+확인 1).
     38 은 중3 마지막 재료 MD20 을 복습 풀에 얹는다(예전과 같은 관례). */
  {id:38, tier:'highmath1', title:{ko:'다항식의 연산과 곱셈공식의 변형',en:'Polynomial Operations & Rearranged Product Formulas',zh:'多项式运算与乘法公式的变形'},
    drills:['MD21','MD22','MD91','MD20','MD21@2','MD22@2','MD91@2','MD21@3','MD22@3','MD91@3'], minSessions:7,
@@ -357,12 +357,27 @@ const COURSE_SPEC = [
  {id:42, tier:'highmath1', title:{ko:'이차방정식과 이차함수',en:'Quadratic Equations & Quadratic Functions',zh:'二次方程与二次函数'},
    drills:['MD99','MD100','MD29','MD98','MD99@2','MD100@2','MD29@2','MD99@3','MD100@3','MD29@3'], minSessions:7,
    magic:[['M-99'],['M-100'],['M-29']], creative:['MD100@3','MD99@3','MD29@3']},
- {id:43, tier:'highmath1', title:{ko:'행렬',en:'Matrices',zh:'矩阵'},
-   drills:['MD30','MD29','MD30@2','MD30@3'], minSessions:3,
+ {id:43, tier:'highmath1', title:{ko:'고차방정식',en:'Higher-Degree Equations',zh:'高次方程'},
+   drills:['MD101','MD102','MD103','MD100','MD101@2','MD102@2','MD103@2','MD101@3','MD102@3','MD103@3'], minSessions:5,
+   magic:[['M-101'],['M-102'],['M-103']], creative:['MD101@3','MD103@3','MD102@3']},
+ {id:44, tier:'highmath1', title:{ko:'연립이차방정식과 부정방정식',en:'Simultaneous Quadratic & Indeterminate Equations',zh:'二次方程组与不定方程'},
+   drills:['MD104','MD105','MD106','MD103','MD104@2','MD105@2','MD106@2','MD104@3','MD105@3','MD106@3'], minSessions:5,
+   magic:[['M-104'],['M-105'],['M-106']], creative:['MD104@3','MD105@3','MD106@3']},
+ {id:45, tier:'highmath1', title:{ko:'여러 가지 부등식',en:'Various Inequalities',zh:'各种不等式'},
+   drills:['MD107','MD108','MD109','MD106','MD107@2','MD108@2','MD109@2','MD107@3','MD108@3','MD109@3'], minSessions:6,
+   magic:[['M-107'],['M-108'],['M-109']], creative:['MD109@3','MD108@3','MD107@3']},
+ {id:46, tier:'highmath1', title:{ko:'경우의 수와 순열',en:'Counting & Permutations',zh:'计数与排列'},
+   drills:['MD110','MD111','MD112','MD109','MD110@2','MD111@2','MD112@2','MD110@3','MD111@3','MD112@3'], minSessions:7,
+   magic:[['M-110'],['M-111'],['M-112']], creative:['MD111@3','MD112@3','MD110@3']},
+ {id:47, tier:'highmath1', title:{ko:'조합',en:'Combinations',zh:'组合'},
+   drills:['MD113','MD114','MD112','MD113@2','MD114@2','MD113@3','MD114@3'], minSessions:4,
+   magic:[['M-113'],['M-114']], creative:['MD113@3','MD114@3','MD113@2']},
+ {id:48, tier:'highmath1', title:{ko:'행렬',en:'Matrices',zh:'矩阵'},
+   drills:['MD30','MD113','MD30@2','MD30@3'], minSessions:3,
    magic:[['M-30']], creative:['MD30@3','MD30@2']},
  /* 40 — 옛 40(점과 직선)+41(직선의 관계와 원) 병합(2026-09-28). 5개 마법 단원이
     한 과정으로 이어진다(다른 5단원 과정과 같은 밀도 — course38·39 참조). */
- {id:44, tier:'highmath2', title:{ko:'직선과 원의 방정식',en:'Lines & Circles',zh:'直线与圆的方程'},
+ {id:49, tier:'highmath2', title:{ko:'직선과 원의 방정식',en:'Lines & Circles',zh:'直线与圆的方程'},
    drills:['MD31','MD32','MD33','MD30','MD31@2','MD32@2','MD33@2','MD31@3','MD32@3','MD33@3','MD34','MD35','MD34@2','MD35@2','MD34@3','MD35@3'], minSessions:8, magic:[['M-31'],['M-32'],['M-33'],['M-34'],['M-35']], creative:['MD35@3','MD34@3','MD33@3']},
 
  /* 41~45 실배치(2026-08-25, 고등 W13·W14; 2026-09-21 재번호; 2026-09-28 재번호
@@ -375,25 +390,25 @@ const COURSE_SPEC = [
     유형(스레드)·마법 단원은 하나도 빼거나 더하지 않았다 — 묶음과 자리만 바꿨다.
     각 과정의 복습 풀에는 직전 과정의 마지막 재료를 얹는다(38·40과 같은 관례):
     41 ← MD35 · 42 ← MD38 · 43 ← MD54 · 44 ← MD56 · 45 ← MD42 · 46 ← MD59 · 47 ← MD60. */
- {id:45, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
+ {id:50, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
    drills:['MD36','MD37','MD38','MD35','MD36@2','MD37@2','MD38@2','MD36@3','MD37@3','MD38@3'], minSessions:5,
    magic:[['M-36'],['M-37'],['M-38']], creative:['MD38@3','MD37@3','MD36@3']},
- {id:46, tier:'algebra', title:{ko:'지수·로그방정식과 부등식',en:'Exponential & Log Equations and Inequalities',zh:'指数·对数方程与不等式'},
+ {id:51, tier:'algebra', title:{ko:'지수·로그방정식과 부등식',en:'Exponential & Log Equations and Inequalities',zh:'指数·对数方程与不等式'},
    drills:['MD52','MD53','MD54','MD38','MD52@2','MD53@2','MD54@2','MD52@3','MD53@3','MD54@3'], minSessions:5,
    magic:[['M-52'],['M-53'],['M-54']], creative:['MD54@3','MD53@3','MD52@3']},
- {id:47, tier:'algebra', title:{ko:'삼각함수와 사인·코사인법칙',en:'Trigonometric Functions & the Sine/Cosine Laws',zh:'三角函数与正弦·余弦定理'},
+ {id:52, tier:'algebra', title:{ko:'삼각함수와 사인·코사인법칙',en:'Trigonometric Functions & the Sine/Cosine Laws',zh:'三角函数与正弦·余弦定理'},
    drills:['MD39','MD57','MD55','MD56','MD54','MD39@2','MD57@2','MD55@2','MD56@2','MD39@3','MD57@3','MD55@3','MD56@3'], minSessions:6,
    magic:[['M-39'],['M-57'],['M-55','M-56']], creative:['MD57@3','MD56@3','MD39@3']},
- {id:48, tier:'algebra', title:{ko:'수열과 Σ',en:'Sequences & Sigma',zh:'数列与Σ'},
+ {id:53, tier:'algebra', title:{ko:'수열과 Σ',en:'Sequences & Sigma',zh:'数列与Σ'},
    drills:['MD40','MD41','MD42','MD56','MD40@2','MD41@2','MD42@2','MD40@3','MD41@3','MD42@3'], minSessions:5,
    magic:[['M-40'],['M-41'],['M-42']], creative:['MD42@3','MD41@3','MD40@3']},
- {id:49, tier:'calculus1', title:{ko:'함수의 극한과 연속',en:'Limits & Continuity',zh:'函数的极限与连续'},
+ {id:54, tier:'calculus1', title:{ko:'함수의 극한과 연속',en:'Limits & Continuity',zh:'函数的极限与连续'},
    drills:['MD43','MD58','MD59','MD42','MD43@2','MD58@2','MD59@2','MD43@3','MD58@3','MD59@3'], minSessions:5,
    magic:[['M-43'],['M-58'],['M-59']], creative:['MD59@3','MD58@3','MD43@3']},
- {id:50, tier:'calculus1', title:{ko:'미분 — 도함수·접선·극값',en:'Differentiation — Derivatives, Tangents & Extrema',zh:'微分——导数·切线·极值'},
+ {id:55, tier:'calculus1', title:{ko:'미분 — 도함수·접선·극값',en:'Differentiation — Derivatives, Tangents & Extrema',zh:'微分——导数·切线·极值'},
    drills:['MD44','MD45','MD60','MD59','MD44@2','MD45@2','MD60@2','MD44@3','MD45@3','MD60@3'], minSessions:5,
    magic:[['M-44'],['M-45'],['M-60']], creative:['MD60@3','MD45@3','MD44@3']},
- {id:51, tier:'calculus1', title:{ko:'적분 — 넓이와 속도',en:'Integration — Area & Motion',zh:'积分——面积与速度'},
+ {id:56, tier:'calculus1', title:{ko:'적분 — 넓이와 속도',en:'Integration — Area & Motion',zh:'积分——面积与速度'},
    drills:['MD46','MD61','MD62','MD60','MD46@2','MD61@2','MD62@2','MD46@3','MD61@3','MD62@3'], minSessions:5,
    magic:[['M-46'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD46@3']},
 ];

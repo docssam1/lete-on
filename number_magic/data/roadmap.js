@@ -515,9 +515,9 @@ window.NM_ROADMAP = {
     },
     {
       id:'W11-2', icon:'🔭', grade:'공통수학1',
-      edu:{ko:'공통수학1 복소수·이차방정식과 행렬',en:'Common Math 1 Complex Numbers, Quadratics & Matrices',zh:'公共数学1复数·二次方程与矩阵'},
-      theme:{ko:'W11-2 · 복소수·이차방정식과 행렬 — 복소수·판별식·근과 계수·이차함수와 직선·부등식·행렬',en:'W11-2 · Quadratics & Matrices — Discriminant, Roots & Coefficients, Formula, Inequalities, Matrices',zh:'W11-2·二次方程与矩阵——判别式·根与系数·求根公式·不等式·矩阵'},
-      units:['M-95','M-96','M-97','M-28','M-26','M-27','M-98','M-99','M-100','M-29','M-30'],
+      edu:{ko:'공통수학1 복소수·방정식·부등식·경우의 수와 행렬',en:'Common Math 1 Complex Numbers, Equations, Inequalities, Counting & Matrices',zh:'公共数学1复数·方程·不等式·计数与矩阵'},
+      theme:{ko:'W11-2 · 복소수·방정식·부등식·경우의 수와 행렬 — 복소수·이차방정식·고차방정식·연립·부등식·순열·조합·행렬',en:'W11-2 · Quadratics & Matrices — Discriminant, Roots & Coefficients, Formula, Inequalities, Matrices',zh:'W11-2·二次方程与矩阵——判别式·根与系数·求根公式·不等式·矩阵'},
+      units:['M-95','M-96','M-97','M-28','M-26','M-27','M-98','M-99','M-100','M-29','M-101','M-102','M-103','M-104','M-105','M-106','M-107','M-108','M-109','M-110','M-111','M-112','M-113','M-114','M-30'],
       tip:{ko:'판별식은 근을 구하기 전에 몇 개인지 미리 아는 정찰병이에요!',en:'The discriminant scouts ahead and tells you the root count before you even solve!',zh:'判别式是求根之前先知道有几个根的侦察兵！'}
     },
 

@@ -212,7 +212,7 @@ NM_TGEN['md102_cubicVieta'] = function (params, rng) {
     return item(base, `${eq} \\;\\Rightarrow\\; \\dfrac{1}{\\alpha}+\\dfrac{1}{\\beta}+\\dfrac{1}{\\gamma}=\\square`, m, [
       { tex:`${Q}=${q},\\quad ${PR}=${p}` },
       { tex:`\\dfrac{1}{\\alpha}+\\dfrac{1}{\\beta}+\\dfrac{1}{\\gamma}=\\dfrac{${Q}}{${PR}}` },
-      { tex:`=\\dfrac{${q}}{${par(p)}}=\\square`, blank:m }]);
+      { tex:`=\\dfrac{${q}}{${p}}=\\square`, blank:m }]);
   }
   /* sum(기본) */
   return item(base, `${eq} \\;\\Rightarrow\\; ${S}=\\square`, s, [
@@ -238,7 +238,7 @@ NM_TGEN['md103_omega'] = function (params, rng) {
         withTip(L3('ωᵏ+1/ωᵏ 은 k 가 3의 배수이면 2, 아니면 ω+ω²=−1 입니다.', 'ωᵏ+1/ωᵏ is 2 when k is a multiple of 3, and ω+ω²=−1 otherwise.', 'k是3的倍数时ωᵏ+1/ωᵏ=2，否则等于ω+ω²=−1。')),
         `\\left(\\omega+\\dfrac{1}{\\omega}\\right)+\\left(\\omega^2+\\dfrac{1}{\\omega^2}\\right)+\\cdots+\\left(\\omega^{${n}}+\\dfrac{1}{\\omega^{${n}}}\\right)=\\square`, ans, [
           { tex:`\\omega^{3k}+\\dfrac{1}{\\omega^{3k}}=2,\\quad \\omega+\\dfrac{1}{\\omega}=\\omega+\\omega^2=-1` },
-          { tex:`=2\\times${f}+(-1)\\times${n - f}=\\square`, blank:ans }]);
+          { tex:`2\\times${f}+(-1)\\times${n - f}=\\square`, blank:ans }]);
     }
     const from1 = pick(rng, [0, 1]);
     /* 1+ω+…+ωⁿ (항 n+1 개) 또는 ω+…+ωⁿ (항 n 개): 남는 항이 정수가 되는 n 만 */
@@ -250,20 +250,21 @@ NM_TGEN['md103_omega'] = function (params, rng) {
       withTip(L3('연속한 세 항씩 묶으면 ωᵏ(1+ω+ω²)=0 이 되어 사라집니다. 남은 항만 계산합니다.', 'Every three consecutive terms form ωᵏ(1+ω+ω²)=0 and vanish; compute only what is left.', '每连续三项组成ωᵏ(1+ω+ω²)=0而消去，只算剩下的项。')),
       `${head}+\\omega^{${n}}=\\square`, ans, [
         { tex:`\\omega^{k}+\\omega^{k+1}+\\omega^{k+2}=\\omega^{k}(1+\\omega+\\omega^2)=0` },
-        { tex: from1
-            ? (ans === 1 ? `=\\omega^{${n}}=(\\omega^3)^{${n / 3}}=\\square` : `=0=\\square`)
-            : (ans === -1 ? `=\\omega^{${n - 1}}+\\omega^{${n}}=\\omega+\\omega^2=\\square` : `=0=\\square`), blank:ans }]);
+        { tex:`${head}+\\omega^{${n}}` + (from1
+            ? (ans === 1 ? `=\\omega^{${n}}=(\\omega^3)^{${n / 3}}=\\square` : `=\\square`)
+            : (ans === -1 ? `=\\omega^{${n - 1}}+\\omega^{${n}}=\\omega+\\omega^2=\\square` : `=\\square`)), blank:ans }]);
   }
 
   if (mode === 'expr') {
     if (pick(rng, [0, 1])) {
       const a = R(rng, 1, 9), b = R(rng, 1, 9);
       const ans = -a - b;
+      const lhs = `\\dfrac{${lead(a, '\\omega^2')}}{1+\\omega}+\\dfrac{${lead(b, '\\omega')}}{1+\\omega^2}`;
       return item(
         withTip(L3('1+ω=−ω², 1+ω²=−ω 로 바꾸면 분모가 약분됩니다.', 'Rewrite 1+ω=−ω² and 1+ω²=−ω; the denominators cancel.', '把1+ω换成−ω²，1+ω²换成−ω，分母就能约去。')),
-        `\\dfrac{${lead(a, '\\omega^2')}}{1+\\omega}+\\dfrac{${lead(b, '\\omega')}}{1+\\omega^2}=\\square`, ans, [
+        `${lhs}=\\square`, ans, [
           { tex:`1+\\omega=-\\omega^2,\\quad 1+\\omega^2=-\\omega` },
-          { tex:`=\\dfrac{${lead(a, '\\omega^2')}}{-\\omega^2}+\\dfrac{${lead(b, '\\omega')}}{-\\omega}` },
+          { tex:`${lhs}=\\dfrac{${lead(a, '\\omega^2')}}{-\\omega^2}+\\dfrac{${lead(b, '\\omega')}}{-\\omega}` },
           { tex:`=-${a}-${b}=\\square`, blank:ans }]);
     }
     const a = nzInt(rng, 1, 6), b = nzInt(rng, 1, 6);
@@ -286,11 +287,12 @@ NM_TGEN['md103_omega'] = function (params, rng) {
     const order = pick(rng, [0, 1]);
     const ex = order ? [e1, e2] : [e2, e1];
     const ans = k - c;
+    const lhs = `${lead(c, wpow(ex[0]))}${more(c, wpow(ex[1]))}${more(k, '')}`;
     return item(
       withTip(L3('지수를 3으로 나눈 나머지만 봅니다.', 'Only the remainder of each exponent divided by 3 matters.', '只看指数除以3的余数。')),
-      `${lead(c, wpow(ex[0]))}${more(c, wpow(ex[1]))}${more(k, '')}=\\square`, ans, [
+      `${lhs}=\\square`, ans, [
         { tex:`${wpow(e1)}=\\omega,\\quad ${wpow(e2)}=\\omega^2` },
-        { tex:`=${lead(c, '(\\omega+\\omega^2)')}${more(k, '')}` },
+        { tex:`${lhs}=${lead(c, '(\\omega+\\omega^2)')}${more(k, '')}` },
         { tex:`=${par(c)}\\times(-1)${more(k, '')}=\\square`, blank:ans }]);
   }
   const a = nzInt(rng, 1, 9);
@@ -588,7 +590,9 @@ NM_TGEN['md108_absIneq'] = function (params, rng) {
   if (mode === 'quad') {
     if (pick(rng, [0, 1])) {
       /* x²−p|x|−q (op) 0, |x|=t: (t−r)(t+s) (op) 0, t≥0 → t<r */
-      const r = R(rng, 1, 6), s = R(rng, 1, 6);
+      const r = R(rng, 1, 6);
+      let s = R(rng, 1, 6);
+      if (s === r) s = r === 6 ? 5 : r + 1;      /* r=s 이면 |x| 항이 사라져 절댓값 문제가 아니게 된다 */
       const strict = pick(rng, [0, 1]);
       const n = strict ? 2 * r - 1 : 2 * r + 1;
       const o = strict ? '<' : '\\le ';
@@ -721,10 +725,12 @@ NM_TGEN['md110_sumProduct'] = function (params, rng) {
       const ns = []; for (let i = 0; i < k; i++) ns.push(R(rng, 2, 5));
       const ex = ns.map((n, i) => `(${LETTERS[i].slice(0, n).join('+')})`).join('');
       const ans = ns.reduce((t, n) => t * n, 1);
-      return item(
-        L3('전개할 때 각 괄호에서 항을 하나씩 골라 곱하므로 곱의 법칙을 씁니다. 문자가 모두 달라 동류항이 생기지 않습니다. 항의 개수를 구합니다.',
-           'Expanding picks one term from each bracket and multiplies, so use the multiplication rule. All letters differ, so no like terms appear. Find the number of terms.',
-           '展开时从每个括号各取一项相乘，所以用乘法原理。字母都不同，不会出现同类项。求项数。'),
+      /* 같은 레벨의 다른 갈래가 문장제라 이것도 문장제로 낸다(인쇄 칸이 레벨 단위로 정해진다) */
+      return word(
+        L3(`다음 식을 전개합니다: ${ex}. 각 괄호에서 항을 하나씩 골라 곱하고, 문자가 모두 달라 동류항이 생기지 않습니다.`,
+           `Expand ${ex}. Each term picks one term from every bracket, and all letters differ, so no like terms appear.`,
+           `展开${ex}。每项从各括号中各取一项相乘，字母都不同，不会出现同类项。`),
+        L3('항은 모두 몇 개입니까?', 'How many terms are there?', '共有多少项？'),
         `${ex} \\;\\Rightarrow\\; \\square`, ans, [
           { tex:`${times(ns)}=\\square`, blank:ans }]);
     }
@@ -810,10 +816,11 @@ NM_TGEN['md110_sumProduct'] = function (params, rng) {
     const k = R(rng, 2, 3), n = R(rng, k + 3, 14);
     const cnt = []; for (let y = 1; n - k * y >= 1; y++) cnt.push(n - k * y);
     const ans = cnt.reduce((t, v) => t + v, 0);
-    return item(
-      L3('x, y 는 자연수입니다. y=1, 2, 3, … 일 때로 나누어 각각 가능한 x 의 개수를 세고 더합니다(합의 법칙). 순서쌍 (x, y) 의 개수를 구합니다.',
-         'x and y are natural numbers. Split into cases y=1, 2, 3, …, count the possible x in each, and add (addition rule). Find the number of ordered pairs (x, y).',
-         'x、y是自然数。按y=1、2、3、…分情况，数出每种情况下x的个数再相加(加法原理)。求有序数对(x, y)的个数。'),
+    return word(
+      L3(`자연수 x, y 가 다음 부등식을 만족합니다: x+${k}y≤${n}. y=1, 2, 3, … 일 때로 나누어 가능한 x 의 개수를 세고 더합니다(합의 법칙).`,
+         `Natural numbers x and y satisfy x+${k}y≤${n}. Split into cases y=1, 2, 3, …, count the possible x in each, and add (addition rule).`,
+         `自然数x、y满足x+${k}y≤${n}。按y=1、2、3、…分情况，数出x的个数再相加(加法原理)。`),
+      L3('순서쌍 (x, y) 는 모두 몇 개입니까?', 'How many ordered pairs (x, y) are there?', '有序数对(x, y)共有多少个？'),
       `x+${k}y\\le ${n} \\;\\Rightarrow\\; \\square`, ans, [
         { tex:`y=${cnt.length <= 4 ? cnt.map((_, i) => i + 1).join(',\\ ') : `1,\\ 2,\\ \\cdots,\\ ${cnt.length}`}` },
         { tex:`${cnt.join('+')}=\\square`, blank:ans }]);
@@ -834,13 +841,22 @@ NM_TGEN['md110_sumProduct'] = function (params, rng) {
 
 /* ── MD111 — 순열 ── */
 function nPr(n, r){ return `{}_{${n}}\\mathrm{P}_{${r}}`; }
+/* 한 줄로 놓는 장면 — 사람이 서거나 책을 꽂는다. k 는 이름 붙은 것의 개수(A, B, …) */
+function lineScene(rng, n, k){
+  const labs = ['A', 'B', 'C', 'D'].slice(0, k);
+  const ko = labs.join(', '), zh = labs.join('、');
+  const en = k === 1 ? 'A' : k === 2 ? 'A and B' : labs.slice(0, -1).join(', ') + ' and ' + labs[k - 1];
+  return pick(rng, [0, 1])
+    ? L3(`${ko} 를 포함한 ${n}명이 한 줄로 섭니다.`, `${n} people including ${en} stand in a line.`, `包括${zh}在内的${n}人站成一排。`)
+    : L3(`${ko} 를 포함한 서로 다른 책 ${n}권을 책꽂이에 한 줄로 꽂습니다.`, `${n} different books including ${en} are placed in a row on a shelf.`, `把包括${zh}在内的${n}本不同的书排成一排放在书架上。`);
+}
 NM_TGEN['md111_perm'] = function (params, rng) {
   const mode = params.mode || 'value';
 
   if (mode === 'adjacent') {
-    const kind = pick(rng, ['two', 'three', 'girls', 'blocks']);
+    const kind = pick(rng, ['two', 'three', 'pairs', 'girls', 'blocks']);
     if (kind === 'girls' || kind === 'blocks') {
-      const a = R(rng, 2, 4), b = R(rng, 2, 3);
+      const a = R(rng, 2, 5), b = R(rng, 2, 4);
       const story = L3(`남학생 ${a}명과 여학생 ${b}명이 한 줄로 섭니다.`, `${a} boys and ${b} girls stand in a line.`, `${a}名男生和${b}名女生站成一排。`);
       if (kind === 'blocks') {
         const ans = 2 * fact(a) * fact(b);
@@ -857,38 +873,63 @@ NM_TGEN['md111_perm'] = function (params, rng) {
           { tex:`${a + 1}!\\times${b}!` },
           { tex:`${fact(a + 1)}\\times${fact(b)}=\\square`, blank:ans }]);
     }
-    const k = kind === 'three' ? 3 : 2, n = R(rng, k + 2, 7);
+    if (kind === 'pairs') {
+      const n = R(rng, 5, 8), ans = fact(n - 2) * 2 * 2;
+      return word(lineScene(rng, n, 4),
+        L3('A 와 B 가 이웃하고, C 와 D 도 이웃하는 방법은 몇 가지입니까?', 'In how many arrangements are A and B next to each other and C and D also next to each other?', 'A和B相邻、C和D也相邻的排法有多少种？'),
+        `\\square`, ans, [
+          { tex:`${n - 2}!\\times2!\\times2!` },
+          { tex:`${fact(n - 2)}\\times2\\times2=\\square`, blank:ans }]);
+    }
+    const k = kind === 'three' ? 3 : 2, n = R(rng, k + 2, 8);
     const ans = fact(n - k + 1) * fact(k);
-    const who = k === 3 ? L3('A, B, C 세 사람이 모두', 'A, B and C all', 'A、B、C三人全部') : L3('A 와 B 가', 'A and B', 'A和B');
-    return word(
-      L3(`A${k === 3 ? ', B, C' : ', B'} 를 포함한 ${n}명이 한 줄로 섭니다.`, `${n} people including A${k === 3 ? ', B and C' : ' and B'} stand in a line.`, `包括A${k === 3 ? '、B、C' : '、B'}在内的${n}人站成一排。`),
-      L3(`${who.ko} 이웃하게 서는 방법은 몇 가지입니까?`, `In how many ways can ${who.en} stand next to each other?`, `${who.zh}相邻的排法有多少种？`),
+    const who = k === 3 ? L3('A, B, C 가 모두', 'A, B and C are all', 'A、B、C全部') : L3('A 와 B 가', 'A and B are', 'A和B');
+    return word(lineScene(rng, n, k),
+      L3(`${who.ko} 이웃하는 방법은 몇 가지입니까?`, `In how many arrangements ${who.en} next to each other?`, `${who.zh}相邻的排法有多少种？`),
       `\\square`, ans, [
         { tex:`${n - k + 1}!\\times${k}!` },
         { tex:`${fact(n - k + 1)}\\times${fact(k)}=\\square`, blank:ans }]);
   }
 
   if (mode === 'apart') {
-    const kind = pick(rng, ['twoApart', 'girlsApart', 'alternate', 'atLeast']);
+    const kind = pick(rng, ['twoApart', 'threeApart', 'notEnd', 'girlsApart', 'alternate', 'atLeast']);
+    if (kind === 'threeApart') {
+      /* 나머지 n−3 을 먼저 놓고, 그 사이사이·양 끝 n−2 자리에 A, B, C 를 하나씩 */
+      const n = R(rng, 5, 8), ans = fact(n - 3) * perm(n - 2, 3);
+      return word(lineScene(rng, n, 3),
+        L3('A, B, C 가운데 어느 둘도 이웃하지 않는 방법은 몇 가지입니까?', 'In how many arrangements are no two of A, B and C next to each other?', 'A、B、C中任意两个都不相邻的排法有多少种？'),
+        `\\square`, ans, [
+          { tex:`${n - 3}!\\times${nPr(n - 2, 3)}` },
+          { tex:`${fact(n - 3)}\\times${perm(n - 2, 3)}=\\square`, blank:ans }]);
+    }
+    if (kind === 'notEnd') {
+      /* '적어도'의 반대: 전체에서 A 가 양 끝에 오는 경우를 뺀다 */
+      const n = R(rng, 4, 8), ans = fact(n) - 2 * fact(n - 1);
+      return word(lineScene(rng, n, 1),
+        L3('A 가 양 끝이 아닌 자리에 놓이는 방법은 몇 가지입니까?', 'In how many arrangements is A at neither end?', 'A不在两端的排法有多少种？'),
+        `\\square`, ans, [
+          { tex:`${n}!-2\\times${n - 1}!` },
+          { tex:`${fact(n)}-${2 * fact(n - 1)}=\\square`, blank:ans }]);
+    }
     if (kind === 'twoApart') {
-      const n = R(rng, 4, 7), ans = fact(n) - 2 * fact(n - 1);
-      return word(
-        L3(`A, B 를 포함한 ${n}명이 한 줄로 섭니다.`, `${n} people including A and B stand in a line.`, `包括A、B在内的${n}人站成一排。`),
-        L3('A 와 B 가 이웃하지 않게 서는 방법은 몇 가지입니까?', 'In how many ways can they stand so that A and B are not next to each other?', 'A和B不相邻的排法有多少种？'),
+      const n = R(rng, 4, 8), ans = fact(n) - 2 * fact(n - 1);
+      return word(lineScene(rng, n, 2),
+        L3('A 와 B 가 이웃하지 않게 놓이는 방법은 몇 가지입니까?', 'In how many arrangements are A and B not next to each other?', 'A和B不相邻的排法有多少种？'),
         `\\square`, ans, [
           { tex:`${n}!-${n - 1}!\\times2!` },
           { tex:`${fact(n)}-${2 * fact(n - 1)}=\\square`, blank:ans }]);
     }
-    const a = R(rng, 2, 5); let b = R(rng, 2, 3);
+    const a = R(rng, 2, 5); let b = R(rng, 2, Math.min(4, 8 - a));   /* atLeast 용 */
     const story = () => L3(`남학생 ${a}명과 여학생 ${b}명이 한 줄로 섭니다.`, `${a} boys and ${b} girls stand in a line.`, `${a}名男生和${b}名女生站成一排。`);
     if (kind === 'alternate') {
-      b = pick(rng, [a, a - 1 >= 2 ? a - 1 : a]);
-      const ans = (a === b ? 2 : 1) * fact(a) * fact(b);
-      return word(story(),
+      /* 남학생이 여학생과 같거나 1 명 많다(그래야 번갈아 설 수 있다) */
+      const a3 = R(rng, 2, 5), b3 = pick(rng, [a3, a3 - 1 >= 2 ? a3 - 1 : a3]);
+      const ans = (a3 === b3 ? 2 : 1) * fact(a3) * fact(b3);
+      return word(L3(`남학생 ${a3}명과 여학생 ${b3}명이 한 줄로 섭니다.`, `${a3} boys and ${b3} girls stand in a line.`, `${a3}名男生和${b3}名女生站成一排。`),
         L3('남학생과 여학생이 번갈아 서는 방법은 몇 가지입니까?', 'In how many ways can boys and girls stand alternately?', '男生和女生交替站的排法有多少种？'),
         `\\square`, ans, [
-          { tex: a === b ? `2\\times${a}!\\times${b}!` : `${a}!\\times${b}!` },
-          { tex:`${a === b ? '2\\times' : ''}${fact(a)}\\times${fact(b)}=\\square`, blank:ans }]);
+          { tex: a3 === b3 ? `2\\times${a3}!\\times${b3}!` : `${a3}!\\times${b3}!` },
+          { tex:`${a3 === b3 ? '2\\times' : ''}${fact(a3)}\\times${fact(b3)}=\\square`, blank:ans }]);
     }
     if (kind === 'atLeast') {
       const n = a + b, ans = fact(n) - perm(a, 2) * fact(n - 2);
@@ -899,7 +940,8 @@ NM_TGEN['md111_perm'] = function (params, rng) {
           { tex:`${fact(n)}-${perm(a, 2)}\\times${fact(n - 2)}=\\square`, blank:ans }]);
     }
     /* girlsApart — 남학생을 먼저 세우고 사이사이·양 끝 (a+1) 자리에 여학생 */
-    const a2 = Math.max(a, 3);
+    const a2 = R(rng, 3, 6);
+    b = R(rng, 2, Math.min(4, 9 - a2));
     const ans = fact(a2) * perm(a2 + 1, b);
     return word(
       L3(`남학생 ${a2}명과 여학생 ${b}명이 한 줄로 섭니다.`, `${a2} boys and ${b} girls stand in a line.`, `${a2}名男生和${b}名女生站成一排。`),
@@ -928,7 +970,7 @@ NM_TGEN['md111_perm'] = function (params, rng) {
         { tex:`\\dfrac{${n}!}{${m}!}=${times(vs)}` },
         { tex:`${times(vs)}=\\square`, blank:ans }]);
   }
-  const n = R(rng, 4, 10), r = R(rng, 2, Math.min(4, n));
+  const n = R(rng, 4, 12), r = R(rng, 2, Math.min(5, n));
   const ans = perm(n, r);
   return item(
     L3('ₙPᵣ 는 서로 다른 n 개에서 r 개를 골라 한 줄로 늘어놓는 경우의 수입니다. n 부터 1 씩 줄여 가며 r 개를 곱합니다.',
@@ -1068,7 +1110,7 @@ NM_TGEN['md113_comb'] = function (params, rng) {
   const mode = params.mode || 'value';
 
   if (mode === 'include') {
-    const n = R(rng, 6, 10), kind = pick(rng, ['in', 'out', 'both', 'inOut']);
+    const n = R(rng, 6, 12), kind = pick(rng, ['in', 'out', 'both', 'inOut']);
     const r = kind === 'both' ? R(rng, 3, 5) : R(rng, 2, 5);
     let m, k, ask;
     if (kind === 'in') { m = n - 1; k = r - 1; ask = L3('A 가 반드시 뽑히는 방법은 몇 가지입니까?', 'In how many ways is A always chosen?', 'A一定被选中的方法有多少种？'); }
@@ -1149,7 +1191,7 @@ NM_TGEN['md114_selectArrange'] = function (params, rng) {
   if (mode === 'lines') {
     const kind = pick(rng, ['circle', 'collinear', 'diag']);
     if (kind === 'diag') {
-      const n = R(rng, 5, 15), ans = comb(n, 2) - n;
+      const n = R(rng, 5, 20), ans = comb(n, 2) - n;
       return word(
         L3(`볼록 ${n}각형이 있습니다.`, `There is a convex polygon with ${n} sides.`, `有一个凸${n}边形。`),
         L3('대각선은 모두 몇 개입니까? (두 꼭짓점을 이은 선분에서 변을 뺍니다)', 'How many diagonals does it have? (Segments joining two vertices, minus the sides.)', '它共有多少条对角线？(连接两顶点的线段减去边)'),
@@ -1168,7 +1210,7 @@ NM_TGEN['md114_selectArrange'] = function (params, rng) {
           { tex:`${nCr(n, 2)}-${nCr(k, 2)}+1` },
           { tex:`${comb(n, 2)}-${comb(k, 2)}+1=\\square`, blank:ans }]);
     }
-    const n = R(rng, 5, 12), ans = comb(n, 2);
+    const n = R(rng, 5, 15), ans = comb(n, 2);
     return word(
       L3(`원 위에 서로 다른 점 ${n}개가 있습니다.`, `There are ${n} different points on a circle.`, `圆上有${n}个不同的点。`),
       L3('두 점을 지나는 직선은 몇 개입니까?', 'How many lines pass through two of the points?', '过其中两点的直线有多少条？'),
@@ -1192,7 +1234,7 @@ NM_TGEN['md114_selectArrange'] = function (params, rng) {
           { tex:`${comb(a, 2)}\\times${b}+${a}\\times${comb(b, 2)}=\\square`, blank:ans }]);
     }
     if (kind === 'collinear') {
-      const n = R(rng, 6, 10), k = R(rng, 3, n - 2), ans = comb(n, 3) - comb(k, 3);
+      const n = R(rng, 6, 12), k = R(rng, 3, n - 2), ans = comb(n, 3) - comb(k, 3);
       return word(
         L3(`평면 위에 점 ${n}개가 있고, 그 가운데 ${k}개만 한 직선 위에 있습니다(그 밖의 어떤 세 점도 한 직선 위에 있지 않습니다).`,
            `There are ${n} points in a plane; exactly ${k} of them lie on one line (no other three are on a line).`,
@@ -1202,7 +1244,7 @@ NM_TGEN['md114_selectArrange'] = function (params, rng) {
           { tex:`${nCr(n, 3)}-${nCr(k, 3)}` },
           { tex:`${comb(n, 3)}-${comb(k, 3)}=\\square`, blank:ans }]);
     }
-    const n = R(rng, 5, 10), ans = comb(n, 3);
+    const n = R(rng, 5, 14), ans = comb(n, 3);
     return word(
       L3(`원 위에 서로 다른 점 ${n}개가 있습니다.`, `There are ${n} different points on a circle.`, `圆上有${n}个不同的点。`),
       L3('세 점을 꼭짓점으로 하는 삼각형은 몇 개입니까?', 'How many triangles have three of the points as vertices?', '以其中三点为顶点的三角形有多少个？'),
@@ -1223,7 +1265,7 @@ NM_TGEN['md114_selectArrange'] = function (params, rng) {
         { tex:`${nCr(a, i)}\\times${nCr(b, j)}\\times${i + j}!` },
         { tex:`${comb(a, i)}\\times${comb(b, j)}\\times${fact(i + j)}=\\square`, blank:ans }]);
   }
-  const n = R(rng, 5, 9);
+  const n = R(rng, 5, 10);
   const two = kind === 'withAB';
   const r = R(rng, 3, 4), m = two ? comb(n - 2, r - 2) : comb(n - 1, r - 1);
   const ans = m * fact(r);
