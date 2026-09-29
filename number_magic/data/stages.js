@@ -157,26 +157,87 @@ window.NM_STAGES = [
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
     meta:{ko:'과정 29~37 · 주 2회 기준 48주(주 1회 92주) · 실험실 2',en:'Courses 29–37 · 48 weeks at two sheets a week (92 at one) · 2 labs',zh:'课程29~37 · 每周2次约48周(每周1次92周) · 2个实验室'}
   },
+  /* 고등(2026-09-29) — 원장 "공통수학1, 공통수학2도 있어야지 / 대수 / 미적분1".
+     한 칸에 네 과목을 묶어 두었던 'high' 단계를 과목마다 한 단계로 나눈다(로드맵 10단계).
+     이름·설명은 data/curriculum.js 의 같은 tier 부제·desc 에서 가져왔다 — 새 구호를 짓지 않는다. */
   {
-    key:'high', icon:'∫', accent:'#0E2C57', status:'partial',
-    name:{ko:'고등 — 새 기호는 아는 마법의 새 이름표',en:'High School — a new symbol is a new label on a magic you know',zh:'高中——新符号只是熟悉魔法的新标签'},
-    band:{ko:'공통수학1·2 · 대수 · 미적분Ⅰ',en:'Common Math 1·2 · Algebra · Calculus I',zh:'共同数学1·2 · 代数 · 微积分Ⅰ'},
-    chapters:['W11-1','W11-2','W12-1','W12-2','W13-1','W13-2','W13-3','W13-4','W13-5','W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['highmath1','highmath2','algebra','calculus1'], courses:{from:38,to:47}, weeks:70,
+    key:'common1', icon:'🧱', accent:'#0f2e4f', status:'partial',
+    name:{ko:'공통수학1 — 다항식의 탑',en:'Common Math 1 — Tower of Polynomials',zh:'共同数学1——多项式之塔'},
+    band:{ko:'고등 · 공통수학1',en:'High school · Common Math 1',zh:'高中 · 共同数学1'},
+    chapters:['W11-1','W11-2'],
+    tiers:['highmath1'], courses:{from:38,to:39}, weeks:18,
     learn:{
-      ko:'다항식과 나머지정리, 이차방정식, 점과 직선·원, 지수와 로그, 삼각함수, 수열과 Σ, 극한과 미분, 접선과 적분.',
-      en:'Polynomials and the remainder theorem, quadratic equations, points, lines and circles, exponents and logarithms, trigonometric functions, sequences and Σ, limits and differentiation, tangents and integration.',
-      zh:'多项式与余数定理、二次方程、点与直线与圆、指数与对数、三角函数、数列与Σ、极限与微分、切线与积分。'},
+      ko:'다항식의 연산과 나머지정리, 곱셈공식의 확장과 항등식, 인수분해, 이차방정식의 판별식과 근과 계수의 관계, 이차부등식, 행렬.',
+      en:'Operations on polynomials and the remainder theorem, extended product formulas and identities, factorisation, the discriminant and the relation between roots and coefficients, quadratic inequalities, matrices.',
+      zh:'多项式运算与余数定理、乘法公式的扩展与恒等式、因式分解、二次方程的判别式与根与系数的关系、二次不等式、矩阵。'},
     how:{
-      ko:'새 기호는 이미 아는 마법에 붙는 새 이름표입니다. Σ는 초등에서 하던 짝지어 더하기가 기호 옷을 입은 것이고, log는 지수 사다리를 거꾸로 읽는 것입니다. 미적분은 기법보다 왜 태어났는지를 실험실에서 먼저 보고 들어갑니다.',
-      en:'A new symbol is a new label on a magic already known. Σ is the pairing-and-adding of elementary school in symbolic clothing; log reads the ladder of exponents backwards. Calculus begins in the lab with why it was born, before any technique.',
-      zh:'新符号只是熟悉魔法的新标签。Σ是小学的首尾配对相加穿上了符号的外衣；log是把指数的梯子倒过来读。微积分先在实验室看它为什么诞生，再谈技巧。'},
-    example:'1 + 2 + … + 100 = 5050 → Σk = n(n+1)/2 → ∫',
+      ko:'새 기호는 이미 아는 마법에 붙는 새 이름표입니다. 괄호 두 개를 곱하는 것부터 판별식·근의 공식·행렬까지, 다항식을 다루는 손이 한 단계 더 정교해집니다. 중학교에서 문자로 옮겨 온 쪼개기가 여기서 나머지정리가 됩니다.',
+      en:'A new symbol is a new label on a magic already known. From multiplying two brackets to the discriminant, the quadratic formula and matrices, handling polynomials gets a level more precise. The splitting carried into letters in middle school becomes the remainder theorem here.',
+      zh:'新符号只是熟悉魔法的新标签。从两括号相乘到判别式、求根公式、矩阵，处理多项式的手法更进一层。初中搬到字母上的拆分，在这里成为余数定理。'},
+    example:'f(x) = (x − 1)Q(x) + R → R = f(1)',
     symbols:[
-      {sym:'f(x)', tr:{ko:'x를 넣으면 결과가 나오는 기계',en:'a machine: put x in, a result comes out',zh:'放进x就出结果的机器'}},
-      {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}},
+      {sym:'f(x)', tr:{ko:'x를 넣으면 결과가 나오는 기계',en:'a machine: put x in, a result comes out',zh:'放进x就出结果的机器'}}],
+    meta:{ko:'과정 38~39 · 주 2회 기준 10주(주 1회 18주)',en:'Courses 38–39 · 10 weeks at two sheets a week (18 at one)',zh:'课程38~39 · 每周2次约10周(每周1次18周)'}
+  },
+  {
+    key:'common2', icon:'📍', accent:'#1b6e5b', status:'partial',
+    name:{ko:'공통수학2 — 도형의 방정식 나라',en:'Common Math 2 — Land of Coordinate Geometry',zh:'共同数学2——图形方程之国'},
+    band:{ko:'고등 · 공통수학2',en:'High school · Common Math 2',zh:'高中 · 共同数学2'},
+    chapters:['W12-1','W12-2'],
+    tiers:['highmath2'], courses:{from:40,to:40}, weeks:9,
+    learn:{
+      ko:'두 점 사이의 거리, 중점과 내분점, 직선의 방정식, 두 직선의 평행·수직 조건, 원의 방정식.',
+      en:'The distance between two points, midpoints and internal division, equations of lines, conditions for parallel and perpendicular lines, equations of circles.',
+      zh:'两点间的距离、中点与内分点、直线的方程、两直线平行·垂直的条件、圆的方程。'},
+    how:{
+      ko:'좌표평면 위의 도형을 식으로 붙잡습니다. 두 점 사이의 거리부터 직선·원의 방정식까지, 그림으로 보던 도형이 식이 되고 식이 다시 그림이 됩니다.',
+      en:'Shapes on the coordinate plane are pinned down with equations. From the distance between two points to lines and circles, a shape seen as a picture becomes an equation, and the equation becomes a picture again.',
+      zh:'用方程把坐标平面上的图形定住。从两点间的距离到直线、圆的方程，看作图的图形变成方程，方程又变回图。'},
+    example:'(0, 0) ↔ (3, 4) → √(3² + 4²) → 5',
+    symbols:[
+      {sym:'(x, y)', tr:{ko:'좌표평면 위의 한 점 — 가로 x, 세로 y',en:'one point on the coordinate plane — across x, up y',zh:'坐标平面上的一个点——横x，竖y'}}],
+    meta:{ko:'과정 40 · 주 2회 기준 5주(주 1회 9주)',en:'Course 40 · 5 weeks at two sheets a week (9 at one)',zh:'课程40 · 每周2次约5周(每周1次9周)'}
+  },
+  {
+    key:'algebra', icon:'Σ', accent:'#5b3a8f', status:'partial',
+    name:{ko:'대수 — 기호의 탑',en:'Algebra — Tower of Symbols',zh:'代数——符号之塔'},
+    band:{ko:'고등 · 대수',en:'High school · Algebra',zh:'高中 · 代数'},
+    chapters:['W13-1','W13-2','W13-3','W13-4','W13-5'],
+    tiers:['algebra'], courses:{from:41,to:44}, weeks:25,
+    learn:{
+      ko:'지수와 로그, 지수·로그방정식과 부등식, 삼각함수와 사인·코사인법칙, 등차수열·등비수열과 Σ.',
+      en:'Exponents and logarithms, exponential and log equations and inequalities, trigonometric functions and the sine and cosine laws, arithmetic and geometric sequences and Σ.',
+      zh:'指数与对数、指数·对数方程与不等式、三角函数与正弦·余弦定理、等差数列·等比数列与Σ。'},
+    how:{
+      ko:'새 기호를 하나씩 만납니다. Σ는 초등에서 하던 짝지어 더하기가 기호 옷을 입은 것이고, log는 지수 사다리를 거꾸로 읽는 것입니다.',
+      en:'New symbols are met one at a time. Σ is the pairing-and-adding of elementary school in symbolic clothing; log reads the ladder of exponents backwards.',
+      zh:'一个个认识新符号。Σ是小学的首尾配对相加穿上了符号的外衣；log是把指数的梯子倒过来读。'},
+    example:'1 + 2 + … + 100 = 5050 → Σk = n(n+1)/2',
+    symbols:[
+      {sym:'log', tr:{ko:'지수 사다리를 거꾸로 읽어라',en:'read the ladder of exponents backwards',zh:'把指数的梯子倒过来读'}},
+      {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}}],
+    meta:{ko:'과정 41~44 · 주 2회 기준 13주(주 1회 25주)',en:'Courses 41–44 · 13 weeks at two sheets a week (25 at one)',zh:'课程41~44 · 每周2次约13周(每周1次25周)'}
+  },
+  {
+    key:'calculus1', icon:'∫', accent:'#0d3b66', status:'partial',
+    name:{ko:'미적분Ⅰ — 변화의 정상',en:'Calculus I — Summit of Change',zh:'微积分Ⅰ——变化之巅'},
+    band:{ko:'고등 · 미적분Ⅰ',en:'High school · Calculus I',zh:'高中 · 微积分Ⅰ'},
+    chapters:['W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
+    tiers:['calculus1'], courses:{from:45,to:47}, weeks:18,
+    learn:{
+      ko:'함수의 극한과 연속, 미분계수와 도함수, 접선과 극값, 다항함수의 적분, 넓이와 속도·거리.',
+      en:'Limits and continuity, the derivative at a point and the derived function, tangents and extrema, integrating polynomials, area and speed and distance.',
+      zh:'函数的极限与连续、微分系数与导函数、切线与极值、多项式函数的积分、面积与速度·距离。'},
+    how:{
+      ko:'미적분은 기법보다 왜 태어났는지를 실험실에서 먼저 보고 들어갑니다. x가 다가가는 값에서 순간의 기울기, 잘게 쪼개 다 더하기까지 — 로드맵의 마지막 봉우리입니다.',
+      en:'Calculus begins in the lab with why it was born, before any technique. From the value x approaches to the instantaneous slope and adding up infinitely thin pieces — the final peak of the roadmap.',
+      zh:'微积分先在实验室看它为什么诞生，再谈技巧。从x趋近的值到瞬时斜率，再到把细小碎片全部加起来——路线图的最后一座山峰。'},
+    example:'f(x) = x² → f′(x) = 2x → ∫2x dx = x² + C',
+    symbols:[
+      {sym:'lim', tr:{ko:'x가 다가가는 값',en:'the value x approaches',zh:'x趋近的值'}},
+      {sym:'f′', tr:{ko:'순간의 기울기',en:'the instantaneous slope',zh:'瞬时斜率'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 38~47 · 주 2회 기준 37주(주 1회 70주) · 실험실 2',en:'Courses 38–47 · 37 weeks at two sheets a week (70 at one) · 2 labs',zh:'课程38~47 · 每周2次约37周(每周1次70周) · 2个实验室'}
+    meta:{ko:'과정 45~47 · 주 2회 기준 9주(주 1회 18주) · 실험실 2',en:'Courses 45–47 · 9 weeks at two sheets a week (18 at one) · 2 labs',zh:'课程45~47 · 每周2次约9周(每周1次18周) · 2个实验室'}
   }
 ];
 
@@ -187,7 +248,7 @@ window.NM_STAGE_OF_CHAPTER = function(id){
   }
   return null;
 };
-/* 과정 번호(1~45) 또는 'C20' 같은 키. */
+/* 과정 번호(0~47) 또는 'C20' 같은 키. */
 window.NM_STAGE_OF_COURSE = function(n){
   var num = (typeof n === 'string') ? parseInt(String(n).replace(/^C/i,''),10) : n;
   if(!(num >= 0)) return null;   // 과정 0(수의 나라)도 단계가 있다(2026-09-19)

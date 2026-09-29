@@ -80,6 +80,25 @@ const totalW2 = STAGES.reduce((a, s) => a + (s._w2 || 0), 0);
 const wants = [`${opW1}주`, `${totalW1}주`, `${opW2}주`, `${totalW2}주`];
 for (const w of wants) if (!html.includes(w)) fail.push(`landing.html 합계 줄에 ${w} 가 없다`);
 
+/* 광고·소개 페이지의 단계 카드 수 = 단계 수(2026-09-29 고등이 과목별 네 단계가 되며 7 → 10).
+   카드를 손으로 늘리고 줄이는 곳이라, 단계만 바꾸고 카드를 빠뜨리면 여기서 잡는다. */
+const rmCards = (html.match(/<li class="rm-stage"/g) || []).length;
+if (rmCards !== STAGES.length) fail.push(`landing.html 단계 카드 ${rmCards}장 ≠ 단계 ${STAGES.length}`);
+const about = fs.readFileSync(path.join(ROOT, 'about.html'), 'utf8');
+const rungs = (about.match(/<div class="rung reveal"/g) || []).length;
+if (rungs !== STAGES.length) fail.push(`about.html 사다리 칸 ${rungs} ≠ 단계 ${STAGES.length}`);
+
+/* 과정의 tier 는 정확히 한 단계에 속하고, 그 단계의 과정 범위 안에 있어야 한다
+   (고등 네 과목 — highmath1·highmath2·algebra·calculus1 — 이 한 단계에 뭉치지 않게). */
+for (const k of Object.keys(COURSES)) {
+  const c = COURSES[k], num = courseNum(c);
+  if (!c.tier) continue;
+  const owners = STAGES.filter(s => s.tiers.indexOf(c.tier) >= 0);
+  if (owners.length !== 1) { fail.push(`tier ${c.tier}: 단계 ${owners.length}개에 들어 있다`); continue; }
+  const r = owners[0].courses;
+  if (!r || num < r.from || num > r.to) fail.push(`과정 ${num}(${c.tier}) 이 단계 ${owners[0].key} 범위 밖`);
+}
+
 /* 조회 헬퍼가 실제로 도는가 */
 if (!global.window.NM_STAGE_OF_COURSE(1)) fail.push('NM_STAGE_OF_COURSE(1) 이 null');
 if (!global.window.NM_STAGE_OF_CHAPTER('R0')) fail.push("NM_STAGE_OF_CHAPTER('R0') 이 null");

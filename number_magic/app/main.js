@@ -1488,7 +1488,7 @@ function screenRoadmap(){
     <div class="nm-road-path">`;
 
   /* 단계 머리(2026-09-08) — 챕터 60개가 평평하게 늘어서 있어 "지금 어느 단계인지"가 안 보였다.
-     data/stages.js 의 일곱 단계로 묶어 준다. 광고·주간 학습지 표지와 같은 이름을 쓴다.
+     data/stages.js 의 단계(2026-09-29 고등을 과목별로 나눠 열 단계)로 묶어 준다. 광고·주간 학습지 표지와 같은 이름을 쓴다.
      stages.js 가 없으면(옛 캐시) 조용히 건너뛴다 — 화면이 죽지 않게. */
   let lastStageKey=null;
   const stageOf=window.NM_STAGE_OF_CHAPTER||null;
@@ -1656,9 +1656,19 @@ const STORY_BEATS={
   middle:{ko:'동쪽 다리를 건너면 기호가 바뀌는 땅이에요. 초등의 □가 자라 x가 되고, 해발과 해저가 음수가 돼요.',
     en:'Cross the east bridge into the land where symbols change. The □ from Grade 1 grows into x, and altitude and depth become negative numbers.',
     zh:'走过东边的桥，就是符号改变的土地。小学的□长成了x，海拔和海底变成了负数。'},
-  high:{ko:'구름 걸린 봉우리에서 새 기호들이 기다려요. 이미 아는 마법에 새 이름표를 붙이는 곳이에요.',
-    en:'On the cloud-wrapped peak, new symbols are waiting. Here you give new labels to magic you already know.',
-    zh:'云雾缭绕的山峰上，新的符号在等你。在这里，给熟悉的魔法贴上新标签。'}
+  /* 고등 네 과목(2026-09-29 — 'high' 한 장을 과목별 네 장으로). 글은 data/curriculum.js 의 같은 tier desc 에서 */
+  common1:{ko:'다항식의 탑에 올라요. 괄호 두 개를 곱하는 것부터 판별식·근의 공식·행렬까지 — 다항식을 다루는 손이 한 단계 더 정교해져요.',
+    en:'Climb the Tower of Polynomials. From multiplying two brackets to the discriminant, the quadratic formula and matrices — handling polynomials gets a level more precise.',
+    zh:'登上多项式之塔。从两括号相乘到判别式、求根公式、矩阵——处理多项式的手法更进一层。'},
+  common2:{ko:'도형의 방정식 나라예요. 두 점 사이의 거리부터 직선·원의 방정식까지 — 좌표평면 위의 도형을 식으로 붙잡아요.',
+    en:'This is the Land of Coordinate Geometry. From the distance between two points to lines and circles — pin down shapes on the plane with equations.',
+    zh:'这里是图形方程之国。从两点间的距离到直线、圆的方程——用方程把坐标平面上的图形定住。'},
+  algebra:{ko:'기호의 탑에서 새 기호들이 기다려요. 지수 사다리를 거꾸로 읽는 log, 이미 아는 마법에 새 옷을 입힌 Σ — 새 기호를 하나씩 만나요.',
+    en:'New symbols are waiting in the Tower of Symbols. log reads the exponent ladder backward, Σ dresses old magic in new clothes — meet the new symbols one by one.',
+    zh:'符号之塔里，新的符号在等你。反着读指数梯子的log，给旧魔法换新衣的Σ——一个个认识新符号。'},
+  calculus1:{ko:'구름 걸린 변화의 정상이에요. x가 다가가는 값부터 순간의 기울기, 잘게 쪼개 다 더하기까지 — 로드맵의 마지막 봉우리예요.',
+    en:'The cloud-wrapped Summit of Change. From the value x approaches to the instantaneous slope and adding up thin pieces — the final peak of the roadmap.',
+    zh:'云雾缭绕的变化之巅。从x趋近的值到瞬时斜率，再到把细小碎片全部加起来——路线图的最后一座山峰。'}
 };
 /* ── 스토리 모드 3D 그림책(app/story3d) 도우미 (2026-09-26) ──
    단계 목록: 지도 챕터에 처음 나오는 순서대로, 단계 머리와 같은 진도 계산(잠금 없음). */
@@ -4229,7 +4239,8 @@ function startPlacement(){
 /* 진단 천장(2026-09-28, 원장 "말도 안되지, 연산 테스트가 5살한테 미적 줄꺼야?").
    전에는 누구든 다 맞히면 사다리 끝(고등 미적분)까지 올라갔다. 이제 시작 과정이 속한 로드맵 단계의
    **다음 단계 끝**까지만 올라간다(data/stages.js courses.from/to — 번호를 새로 정하지 않는다).
-     유아(과정 0) → 과정 10 · 초1~초3(과정 1~10) → 16 · 초4(13) → 25 · 초5·6(19·22) → 28 · 중등 → 45
+     유아(과정 0) → 과정 10 · 초1~초3(과정 1~10) → 16 · 초4(13) → 25 · 초5·6(19·22) → 28 · 중등 → 39(공통수학1)
+     · 공통수학1 → 40 · 공통수학2 → 44 · 대수·미적분Ⅰ → 47 (2026-09-29 고등이 과목별 네 단계가 되며)
    천장까지 다 맞힌 아이는 결과 화면의 "한 단계 더 올라가 보기"로 천장을 다음 단계로 올려 이어서 푼다
    — 빠른 아이를 막지 않되, 처음부터 어려운 문제를 보여 주지 않는다. */
 function placementCeilCourse(courseNum){

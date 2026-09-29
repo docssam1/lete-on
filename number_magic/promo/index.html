@@ -273,8 +273,8 @@ p{margin:0}
 
 /* 로드맵 한 길 */
 .road-line{margin-top:34px;position:relative;padding:8px 0 0}
-.road-line ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,1fr);gap:6px;position:relative}
-.road-line ol::before{content:"";position:absolute;left:7%;right:7%;top:9px;height:1px;background:var(--la-gold);opacity:.7}
+.road-line ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(10,1fr);gap:6px;position:relative}
+.road-line ol::before{content:"";position:absolute;left:5%;right:5%;top:9px;height:1px;background:var(--la-gold);opacity:.7}
 .road-line li{text-align:center;position:relative;padding-top:24px;font-size:13px;color:var(--la-ink-2);line-height:1.4}
 .road-line li::before{content:"";position:absolute;left:50%;top:4px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:var(--la-pearl);border:1px solid var(--la-gold);box-shadow:0 0 0 4px var(--la-bg)}
 .road-line li b{display:block;font-family:var(--serif);font-weight:500;font-size:14.5px;color:var(--la-ink)}
@@ -1305,13 +1305,13 @@ html.fb-lock,html.fb-lock body{overflow:hidden}
               <a class="btn btn-pearl" href="../assets/promo/sample/sample.pdf" download="numbers-of-magic-sample.pdf" type="application/pdf"><svg viewBox="0 0 24 24" class="line-ic" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span data-i18n="hub.b.pdf">PDF로 받기 · 6쪽</span></a>
             </div>
           </div>
-          <!-- 값의 출처: data/courses.js id 5 · data/stages.js 'sprout'(7단계 중 2번째, 과정 1~10, band, aheadNote) -->
+          <!-- 값의 출처: data/courses.js id 5 · data/stages.js 'sprout'(10단계 중 2번째, 과정 1~10, band, aheadNote) -->
           <aside class="sh-info" aria-labelledby="shInfoH">
             <p class="sh-kick" data-i18n="hub.b.i.kick">이 학습지는</p>
             <h4 id="shInfoH"><span class="sh-course" data-i18n="hub.b.i.course">과정 5</span> <span data-i18n="hub.b.i.title">뺄셈 마법과 구구단 첫걸음</span></h4>
             <ol class="sh-rail" aria-hidden="true"><li></li><li class="on"><b>2</b></li><li></li><li></li><li></li><li></li><li></li></ol>
             <dl class="sh-dl">
-              <div><dt data-i18n="hub.b.i.road.k">로드맵</dt><dd data-i18n-html="hub.b.i.road">7단계 중 <b>2단계 ‘계산의 새싹’</b> · 과정 1~10</dd></div>
+              <div><dt data-i18n="hub.b.i.road.k">로드맵</dt><dd data-i18n-html="hub.b.i.road">10단계 중 <b>2단계 ‘계산의 새싹’</b> · 과정 1~10</dd></div>
               <div><dt data-i18n="hub.b.i.level.k">수준</dt><dd data-i18n="hub.b.i.level">6~7세 · 초등 1학년 무렵 연산</dd></div>
               <div><dt data-i18n="hub.b.i.sheet.k">이번 장</dt><dd data-i18n="hub.b.i.sheet">이 과정의 1회차 학습지 · 한 주 2회가 기본</dd></div>
               <div><dt data-i18n="hub.b.i.in.k">담긴 것</dt><dd data-i18n="hub.b.i.in">수학 이야기 · 매거진 · 마법 노트 · 창의 연산 · 교과 연산 · 문장제</dd></div>
@@ -1539,18 +1539,21 @@ html.fb-lock,html.fb-lock body{overflow:hidden}
       <div>
         <h3 id="s2h" class="rv" data-i18n="s2.h3">한 길로 이어진 로드맵, 아이에게 맞는 속도.</h3>
         <p class="say rv" data-d="1" data-i18n="s2.say">"주 1회, 주 2회, 속도와 양을 아이에게 맞게 정합니다."</p>
-        <p class="body rv" data-d="2" data-i18n="s2.body">일곱 장으로 이어진 하나의 길입니다. 어느 장에서 시작하든 다음 장이 이어지고, 레벨은 언제든 바꿀 수 있습니다. 학교 진도보다 앞선 편성이라 구구단이 이미 두 번째 장에 들어 있습니다.</p>
+        <p class="body rv" data-d="2" data-i18n="s2.body">열 장으로 이어진 하나의 길입니다. 어느 장에서 시작하든 다음 장이 이어지고, 레벨은 언제든 바꿀 수 있습니다. 학교 진도보다 앞선 편성이라 구구단이 이미 두 번째 장에 들어 있습니다.</p>
       </div>
     </div>
     <div class="road-line rv" data-d="2">
-      <ol aria-label="일곱 단계" data-i18n-attr="aria-label:road.label">
+      <ol aria-label="열 단계" data-i18n-attr="aria-label:road.label">
         <li><b data-i18n="st.1">수의 나라</b><span data-i18n="st.1b">유아 5~7세</span></li>
         <li><b data-i18n="st.2">계산의 새싹</b><span data-i18n="st.2b">6~7세 · 초1</span></li>
         <li><b data-i18n="st.3">계산의 도약</b><span data-i18n="st.3b">초1 말 ~ 초2</span></li>
         <li><b data-i18n="st.4">계산의 정복</b><span data-i18n="st.4b">초2 말 ~ 초3</span></li>
         <li><b data-i18n="st.5">경시의 탑</b><span data-i18n="st.5b">초등 심화</span></li>
         <li><b data-i18n="st.6">중학교</b><span data-i18n="st.6b">기호가 바뀌는 자리</span></li>
-        <li><b data-i18n="st.7">고등</b><span data-i18n="st.7b">공통수학 · 대수 · 미적분Ⅰ</span></li>
+        <li><b data-i18n="st.7">공통수학1</b><span data-i18n="st.7b">다항식의 탑</span></li>
+        <li><b data-i18n="st.8">공통수학2</b><span data-i18n="st.8b">도형의 방정식 나라</span></li>
+        <li><b data-i18n="st.9">대수</b><span data-i18n="st.9b">기호의 탑</span></li>
+        <li><b data-i18n="st.10">미적분Ⅰ</b><span data-i18n="st.10b">변화의 정상</span></li>
       </ol>
     </div>
     <div class="pace-pick">
@@ -1587,11 +1590,11 @@ html.fb-lock,html.fb-lock body{overflow:hidden}
       <div>
         <h3 id="s4h" class="rv" data-i18n="s4.h3">유아부터 미적분까지, 한 권의 이야기.</h3>
         <p class="say rv" data-d="1" data-i18n="s4.say">"그 길은 하나의 이야기로 이어집니다."</p>
-        <p class="body rv" data-d="2" data-i18n="s4.body">팝업 동화책을 펼치면 일곱 장이 한 지도 위에 서 있습니다. 병아리들이 사는 수의 나라에서 시작해, 동쪽 다리를 건너면 기호가 바뀌는 중학교 땅입니다. 초등의 □가 자라 x가 되고, 해발과 해저가 음수가 됩니다. 아이가 지금 어느 장에 있는지, 다음 장이 무엇인지 그림으로 압니다.</p>
+        <p class="body rv" data-d="2" data-i18n="s4.body">팝업 동화책을 펼치면 열 장이 한 지도 위에 서 있습니다. 병아리들이 사는 수의 나라에서 시작해, 동쪽 다리를 건너면 기호가 바뀌는 중학교 땅입니다. 초등의 □가 자라 x가 되고, 해발과 해저가 음수가 됩니다. 아이가 지금 어느 장에 있는지, 다음 장이 무엇인지 그림으로 압니다.</p>
       </div>
     </div>
     <div class="duo">
-      <figure class="wide rv" data-d="1"><img src="../assets/promo/shots/story.webp" alt="마법 학습 여행 화면: 펼쳐진 팝업 동화책 위에 제1장 수의 나라부터 제7장 고등까지 일곱 장이 지도로 서 있고, 아이 캐릭터가 제6장 중학교에 서 있다" data-i18n-attr="alt:story.alt" loading="lazy" style="object-position:58% 58%;transform:scale(1.22)"><figcaption data-i18n="story.cap">펼치면 일곱 장이 한 지도 위에</figcaption></figure>
+      <figure class="wide rv" data-d="1"><img src="../assets/promo/shots/story.webp" alt="마법 학습 여행 화면: 펼쳐진 팝업 동화책 위에 제1장 수의 나라부터 제7장 고등까지 일곱 장이 지도로 서 있고, 아이 캐릭터가 제6장 중학교에 서 있다" data-i18n-attr="alt:story.alt" loading="lazy" style="object-position:58% 58%;transform:scale(1.22)"><figcaption data-i18n="story.cap">펼치면 열 장이 한 지도 위에</figcaption></figure>
       <figure class="phone rv" data-d="2"><img src="../assets/promo/shots/story-phone.webp" alt="휴대폰에서 본 마법 학습 여행 화면" data-i18n-attr="alt:storyph.alt" loading="lazy"><figcaption data-i18n="storyph.cap">휴대폰에서도 같은 책</figcaption></figure>
     </div>
   </article></div>
@@ -1868,10 +1871,11 @@ window.__NM_EN = {
   'road.alt':"The app's arithmetic roadmap: course numbers run along one road, the child's character stands at 'you are here', course 29, and the next goal, course 30, is flagged",
   'road.b':'Once the plan is set, the road appears', 'road.s':"One arithmetic roadmap from preschool to high school. How far you've come and where you're headed — all on a single road.",
   's2.h3':"One continuous roadmap, at the child's own pace.", 's2.say':'"Once a week or twice a week — pace and volume set to fit the child."',
-  's2.body':'One road in seven chapters. Wherever you start, the next chapter follows, and the level can change at any time. The sequence runs ahead of school — the times tables already appear in chapter two.',
-  'road.label':'Seven stages',
+  's2.body':'One road in ten chapters. Wherever you start, the next chapter follows, and the level can change at any time. The sequence runs ahead of school — the times tables already appear in chapter two.',
+  'road.label':'Ten stages',
   'st.1':'Number Land', 'st.1b':'Ages 5–7', 'st.2':'Sprout', 'st.2b':'Ages 6–7 · Grade 1', 'st.3':'Leap', 'st.3b':'Late Grade 1 – Grade 2', 'st.4':'Mastery', 'st.4b':'Late Grade 2 – Grade 3',
-  'st.5':'The Tower', 'st.5b':'Elementary deep-dive', 'st.6':'Middle School', 'st.6b':'Where the symbols change', 'st.7':'High School', 'st.7b':'Common Math · Algebra · Calculus Ⅰ',
+  'st.5':'The Tower', 'st.5b':'Elementary deep-dive', 'st.6':'Middle School', 'st.6b':'Where the symbols change', 'st.7':'Common Math 1', 'st.7b':'Tower of Polynomials',
+  'st.8':'Common Math 2', 'st.8b':'Land of Coordinate Geometry', 'st.9':'Algebra', 'st.9b':'Tower of Symbols', 'st.10':'Calculus Ⅰ', 'st.10b':'Summit of Change',
   'pk.1':'Once a week', 'pk.1s':'One worksheet set a week — a pace that suits sitting down together at the weekend.',
   'pk.2':'Twice a week', 'pk.2s':'The same road at twice the speed. The whole course prints as a personal week-by-week plan.',
   'pk.3':'Pace and volume', 'pk.3s':'"Volume" is the number of problems per set, so it doesn\'t shorten the timeline. Pace is set by watching the child.',
@@ -1882,8 +1886,8 @@ window.__NM_EN = {
   'plaza.alt':"Close-up of the village plaza: the child's avatar and number friends around the fountain, Grandpa on the steps", 'plaza.cap':"The plaza — friends who point out today's magic",
   'chars.alt':'Four 3D characters: a boy in blue, a girl in purple with a star wand, white-bearded Grandpa with a staff, and Doc-T in green with glasses', 'chars.cap':'Child · Grandpa · Doc-T — the faces of the village',
   's4.h3':'From preschool to calculus, one story.', 's4.say':'"The road runs on as a single story."',
-  's4.body':"Open the pop-up storybook and seven chapters stand on one map. It begins in Number Land, where the chicks live; cross the eastern bridge and you're in middle-school country, where the symbols change. The □ of elementary school grows into x, and land above and below sea level become negative numbers. The child sees in pictures which chapter they're in and which comes next.",
-  'story.alt':"The magic learning-journey screen: on an open pop-up storybook, seven chapters from Chapter 1 Number Land to Chapter 7 High School stand as a map, with the child's character in Chapter 6, Middle School", 'story.cap':'Open it and seven chapters share one map',
+  's4.body':"Open the pop-up storybook and ten chapters stand on one map. It begins in Number Land, where the chicks live; cross the eastern bridge and you're in middle-school country, where the symbols change. The □ of elementary school grows into x, and land above and below sea level become negative numbers. The child sees in pictures which chapter they're in and which comes next.",
+  'story.alt':"The magic learning-journey screen: on an open pop-up storybook, seven chapters from Chapter 1 Number Land to Chapter 7 High School stand as a map, with the child's character in Chapter 6, Middle School", 'story.cap':'Open it and ten chapters share one map',
   'storyph.alt':'The learning-journey screen on a phone', 'storyph.cap':'The same book on a phone',
   's5.h3':"This is how today's magic is learned.", 's5.say':'"Pair the 2 and the 5 that make 10 first, and 4 × 7 × 5 falls into place."',
   's5.body':'Tap the board below. One creative-arithmetic problem, just as the child meets it on a worksheet, unfolds one step at a time. Written arithmetic is drilled accurately, in step with school; right beside it, the same problem is unfolded and rebuilt.',
@@ -1982,10 +1986,11 @@ window.__NM_ZH = {
   'road.alt':'应用中的运算路线图：一条路上课程编号依次排开，孩子的角色站在“现在在这里”第29课，下一个目标第30课插着旗子',
   'road.b':'设计完成，路就看得见了', 'road.s':'一条从幼儿到高中的运算路线图。走到了哪里、要去哪里，都在同一条路上看得清楚。',
   's2.h3':'一条连贯的路线图，按孩子的节奏走。', 's2.say':'“每周一次或两次，节奏和分量按孩子来定。”',
-  's2.body':'一条路，七个章节。无论从哪一章开始，下一章都会接上，而且随时可以换级别。编排比学校进度靠前——九九乘法表在第二章就已经出现。',
-  'road.label':'七个阶段',
+  's2.body':'一条路，十个章节。无论从哪一章开始，下一章都会接上，而且随时可以换级别。编排比学校进度靠前——九九乘法表在第二章就已经出现。',
+  'road.label':'十个阶段',
   'st.1':'数字之国', 'st.1b':'幼儿5~7岁', 'st.2':'计算的新芽', 'st.2b':'6~7岁 · 小一', 'st.3':'计算的跃进', 'st.3b':'小一下 ~ 小二', 'st.4':'计算的征服', 'st.4b':'小二下 ~ 小三',
-  'st.5':'竞赛之塔', 'st.5b':'小学进阶', 'st.6':'初中', 'st.6b':'符号改变的地方', 'st.7':'高中', 'st.7b':'共同数学 · 代数 · 微积分Ⅰ',
+  'st.5':'竞赛之塔', 'st.5b':'小学进阶', 'st.6':'初中', 'st.6b':'符号改变的地方', 'st.7':'共同数学1', 'st.7b':'多项式之塔',
+  'st.8':'共同数学2', 'st.8b':'图形方程之国', 'st.9':'代数', 'st.9b':'符号之塔', 'st.10':'微积分Ⅰ', 'st.10b':'变化之巅',
   'pk.1':'每周1次', 'pk.1s':'一周一套学习单，适合周末一起坐下来做。',
   'pk.2':'每周2次', 'pk.2s':'同一条路，速度加倍。整套课程按周拆分，打印成个人计划表。',
   'pk.3':'节奏与分量', 'pk.3s':'“分量”是每次的题量，不会缩短周期。节奏要看孩子来定。',
@@ -1996,8 +2001,8 @@ window.__NM_ZH = {
   'plaza.alt':'小镇广场近景：喷泉旁的孩子头像和数字朋友，台阶上的爷爷', 'plaza.cap':'广场——告诉你今天魔法的朋友们',
   'chars.alt':'四个3D角色：穿蓝衣的男孩、穿紫衣拿星星魔杖的女孩、拄拐杖的白胡子爷爷、戴眼镜穿绿衣的独先生', 'chars.cap':'孩子 · 爷爷 · 独先生——小镇的面孔',
   's4.h3':'从幼儿到微积分，一本故事书。', 's4.say':'“这条路，连成一个故事。”',
-  's4.body':'翻开立体故事书，七个章节立在同一张地图上。从小鸡们住的数字之国出发，过了东边的桥，就是符号改变的初中之地。小学的 □ 长成了 x，海拔和海底变成了负数。孩子现在在哪一章、下一章是什么，一看图就知道。',
-  'story.alt':'魔法学习之旅画面：翻开的立体故事书上，从第1章数字之国到第7章高中的七个章节立成一张地图，孩子的角色站在第6章初中', 'story.cap':'翻开来，七章在同一张地图上',
+  's4.body':'翻开立体故事书，十个章节立在同一张地图上。从小鸡们住的数字之国出发，过了东边的桥，就是符号改变的初中之地。小学的 □ 长成了 x，海拔和海底变成了负数。孩子现在在哪一章、下一章是什么，一看图就知道。',
+  'story.alt':'魔法学习之旅画面：翻开的立体故事书上，从第1章数字之国到第7章高中的七个章节立成一张地图，孩子的角色站在第6章初中', 'story.cap':'翻开来，十章在同一张地图上',
   'storyph.alt':'手机上看到的魔法学习之旅画面', 'storyph.cap':'手机上也是同一本书',
   's5.h3':'今天的魔法，这样学。', 's5.say':'“先把乘起来是10的2和5配成一对，4×7×5一下子就算出来了。”',
   's5.body':'点一下下面的板子。孩子在学习单上遇到的一道创意运算题，会一步一步展开。笔算跟着学校进度练得扎实，旁边再把同一道题拆开重组。',
@@ -2168,7 +2173,7 @@ Object.assign(window.__NM_EN, {
   "hub.b.i.title":"Subtraction Magic & Times Tables Begin",
   "hub.b.cv.h":"Subtraction Magic &amp; Times Tables Begin",
   "hub.b.i.road.k":"Roadmap",
-  "hub.b.i.road":"Stage 2 of 7 · <b>Sprout</b> (Courses 1–10)",
+  "hub.b.i.road":"Stage 2 of 10 · <b>Sprout</b> (Courses 1–10)",
   "hub.b.i.level.k":"Level",
   "hub.b.i.level":"Ages 6–7 · arithmetic around Grade 1",
   "hub.b.i.sheet.k":"This sheet",
@@ -2219,7 +2224,7 @@ Object.assign(window.__NM_ZH, {
   "hub.b.i.title":"减法魔法与乘法口诀入门",
   "hub.b.cv.h":"<span class=\"nw\">减法魔法与</span><span class=\"nw\">乘法口诀入门</span>",
   "hub.b.i.road.k":"路线图",
-  "hub.b.i.road":"7个阶段中的第2阶段 · <b>计算的新芽</b>（课程1~10）",
+  "hub.b.i.road":"10个阶段中的第2阶段 · <b>计算的新芽</b>（课程1~10）",
   "hub.b.i.level.k":"水平",
   "hub.b.i.level":"6~7岁 · 约小学一年级的运算",
   "hub.b.i.sheet.k":"本次",

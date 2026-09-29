@@ -7,7 +7,8 @@
    책을 여는 순간 종이 숲과 이정표가 차례로 일어서고(팝업), 아이(app/char3d)가 앞 장에서
    지금 장까지 길을 걸어온다. 장(章) = 단계(data/stages.js):
      수의 나라 = 숫자 나무 블록과 병아리 · 새싹 = 화분의 새싹 · 도약 = 로켓 · 정복 = 왕관 · 경시의 탑 = 탑 ·
-     중학교 = x 가 얹힌 책 더미(동쪽 다리 건너) · 고등 = 구름 걸린 봉우리 (모르는 key 는 빛나는 오벨리스크)
+     중학교 = x 가 얹힌 책 더미(동쪽 다리 건너) · 공통수학1 = x²·x·1 블록 탑 · 공통수학2 = 좌표판 위의 원 ·
+     대수 = Σ 블록 탑 · 미적분Ⅰ = 구름 걸린 봉우리 (모르는 key 는 빛나는 오벨리스크)
    이정표 받침 둘레의 금빛 호 = 그 단계의 진도. 지나온 길은 금빛 점, 남은 길은 옅은 먹 점선.
    왼쪽 위 이야기 쪽지(서리 유리 카드)가 지금 장의 이야기를 들려주고, 이정표에 올리면 그 장 이야기로 바뀐다.
    잠금은 없다(자유 선택 원칙) — 어느 이정표든 누르면 그 단계로 간다.
@@ -725,7 +726,33 @@ function buildWorld(k, stages, curIdx, kid, reduce){
       [[0, 0, 0.07], [0.07, 0.01, 0.055], [-0.07, 0, 0.05]].forEach(([x, y, rr]) => { const s = new THREE.Mesh(new THREE.SphereGeometry(rr, 14, 10), cm); s.position.set(x, y, 0); s.scale.y = 0.75; cl.add(s); });
       cl.position.set(-0.05, 0.3, 0.2); g.add(cl);
       return { g, h:0.66, flag, drift:cl }; },
+    /* 고등 네 과목(2026-09-29 — 'high' 한 장이 과목별 네 장이 됐다). 이름은 curriculum.js tier 부제에서:
+       공통수학1 = 다항식의 탑(x² · x · 1 블록 탑) · 공통수학2 = 도형의 방정식 나라(좌표판 위의 원과 한 점) ·
+       대수 = 기호의 탑(Σ 블록 위 지붕) · 미적분Ⅰ = 변화의 정상(옛 고등 봉우리) */
+    common1(){ const g = new THREE.Group();
+      const a = faceTile('x²', 0.17, '#f0d9b0'); a.rotation.y = 0.12;
+      const b = faceTile('x', 0.13, '#e6c898'); b.position.y = 0.17; b.rotation.y = -0.2;
+      const c = faceTile('1', 0.095, '#f3dfba'); c.position.y = 0.30; c.rotation.y = 0.25;
+      g.add(a, b, c); return { g, h:0.42 }; },
+    common2(){ const g = new THREE.Group();
+      const board = new THREE.Mesh(rbox(0.36, 0.022, 0.36, 0.01), std('#fbf6ea', 0.85)); g.add(board);
+      const ink = std('#26304a', 0.6);
+      const ax = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.006, 0.008), ink); ax.position.y = 0.025; g.add(ax);
+      const ay = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.006, 0.32), ink); ay.position.y = 0.025; g.add(ay);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.011, 8, 40), paint('#2f9e78')); ring.rotation.x = Math.PI / 2; ring.position.set(0.03, 0.03, -0.03); g.add(ring);
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.26, 6), brass); pole.position.set(0.13, 0.15, -0.03); g.add(pole);
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.018, 12, 8), paint('#ef7b6c')); dot.position.set(0.13, 0.035, -0.03); g.add(dot);
+      const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 0.06), std('#2f9e78', 0.6, { side:THREE.DoubleSide })); flag.position.set(0.18, 0.25, -0.03); g.add(flag);
+      return { g, h:0.3, flag }; },
+    algebra(){ const g = new THREE.Group();
+      const a = faceTile('Σ', 0.18, '#f0d9b0'); a.rotation.y = 0.1;
+      const b = faceTile('π', 0.13, '#e6c898'); b.position.y = 0.18; b.rotation.y = -0.18;
+      const roof = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.18, 20), paint('#9d8ae8')); roof.position.y = 0.4; g.add(roof);
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.1, 6), brass); pole.position.y = 0.53; g.add(pole);
+      const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.045), std('#c9a44c', 0.6, { side:THREE.DoubleSide })); flag.position.set(0.04, 0.56, 0); g.add(flag);
+      g.add(a, b); return { g, h:0.6, flag }; },
   };
+  props.calculus1 = props.high;
   const generic = () => { const g = new THREE.Group();
     const ob = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.09, 0.38, 4), std('#f4efff', 0.3, { emissive:new THREE.Color('#b9a7ff'), emissiveIntensity:0.25 })); ob.position.y = 0.19; ob.rotation.y = Math.PI / 4; g.add(ob);
     return { g, h:0.4 }; };
