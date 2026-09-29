@@ -27,6 +27,7 @@ const SPEC = global.window.NM_COURSE_SPEC;
 const bare = r => String(r).split('@')[0];
 const firstCourse = Object.create(null);   // 스레드 → 처음 나오는 과정 번호
 const pinBad = [];
+const offUses = [];
 
 for (const s of SPEC) {
   const ids = [];
@@ -44,6 +45,10 @@ for (const s of SPEC) {
       const n = (TH[t].levels || []).length;
       if (+pin > n) pinBad.push(`과정 ${s.id}: ${raw} — ${t} 레벨은 ${n}개뿐`);
     }
+    /* offLadder 레벨(2026-09-29, 학년별 □ 찾기 등)은 스레드 사다리의 한 칸이 아니라 따로 얹는 레벨이다 —
+       스레드의 첫 과정으로 세지 않고, 그 레벨의 선수(level.prereq, 없으면 스레드 선수)로 따로 검사한다. */
+    const lvObj = pin ? (TH[t].levels || []).find(l => l.id === +pin) : null;
+    if (lvObj && lvObj.offLadder) { offUses.push({ t, lv: +pin, c: s.id, prereq: lvObj.prereq || TH[t].prereq || [] }); continue; }
     if (firstCourse[t] === undefined) firstCourse[t] = s.id;
   }
 }
@@ -59,6 +64,14 @@ for (const t of all) {
     const pc = firstCourse[p];
     if (pc === undefined) order.push(`${t}(과정 ${fc}) — 선수 ${p} 가 어느 과정에도 없다`);
     else if (pc > fc)     order.push(`${t}(과정 ${fc}) — 선수 ${p} 가 더 뒤(과정 ${pc})`);
+  }
+}
+
+for (const u of offUses) {
+  for (const p of u.prereq) {
+    const pc = firstCourse[p];
+    if (pc === undefined) order.push(`${u.t}@${u.lv}(과정 ${u.c}) — 선수 ${p} 가 어느 과정에도 없다`);
+    else if (pc > u.c)    order.push(`${u.t}@${u.lv}(과정 ${u.c}) — 선수 ${p} 가 더 뒤(과정 ${pc})`);
   }
 }
 
