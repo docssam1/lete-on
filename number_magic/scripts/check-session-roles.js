@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /* ============================================================
-   회차 세 층 검사 (2026-09-25 강화) — 원장 "교과 연산과 창의 연산 문장제가 적절히 연결" ·
+   회차 세 층 검사 (2026-09-25 강화) — 원장 "교과 연산과 독셈 문장제가 적절히 연결" ·
    "문항수는 하루 30분 풀 분량, 난이도별로 연습도 되어야지"
    전에는 "과정 안에 그 역할이 하나라도 있으면 통과"였다(GPT 검수: 형식만 있고 편성이 아님).
    이제 **과정 0~37 의 모든 회차**를 한 회차씩 본다. 실패하면 exit 1.
 
      A. 교과(school)에 그 주 드릴이 있다 — 복습만 있는 회차는 실패
-     B. 창의 연산 드릴(strategy.practice)이 매 회차 있다
+     B. 독셈 드릴(strategy.practice)이 매 회차 있다
      C. 적용(application)이 매 회차 있다. 초등 문장제(kind 'word', from 'school')는 **그 회차 교과 드릴과
         같은 유형·레벨**이어야 한다 — 같은 계산을 문장으로 다시 푸는 것이 "연결"이다
      D. 복습은 같은 학교 구간(유아·초등·중등)에서 처음 배운 유형만 — 중등에 초등 복습 금지
@@ -46,7 +46,7 @@ for(let n = 0; n <= 37; n++){
     const own = s.school.filter(d => !d.review);
     const okA = own.length > 0, okB = !!(s.strategy && s.strategy.practice.length), okC = s.application.length > 0;
     if(!okA) fail.push(`A · ${at}: 교과 칸이 복습뿐이다`);
-    if(!okB) fail.push(`B · ${at}: 창의 연산 드릴이 없다`);
+    if(!okB) fail.push(`B · ${at}: 독셈 드릴이 없다`);
     if(!okC) fail.push(`C · ${at}: 적용 칸이 없다`);
     if(okA && okB && okC) s3++;
     s.application.forEach(a => {

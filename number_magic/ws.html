@@ -120,7 +120,7 @@
 <script src="app/word-frames-ratio.js"></script>
 <!-- 자릿값 색 힌트(2026-09-16) — 앱과 학습지가 같은 규칙을 쓰도록 공용. exam.js·main.js보다 먼저. -->
 <script src="app/place-color.js"></script>
-<!-- 창의 연산 과정 빈칸·색 힌트 표(2026-09-26) — exam.js applyProcessBlank 보다 먼저 -->
+<!-- 독셈 과정 빈칸·색 힌트 표(2026-09-26) — exam.js applyProcessBlank 보다 먼저 -->
 <script src="data/creative-process.js"></script>
 <script src="data/print-head.js"></script>
 <script src="app/exam.js"></script>
@@ -180,7 +180,7 @@
   Promise.all(loads).then(build);
   function build(){
   /* 봉투 구성은 exam.js weeklyEnvelope 하나(2026-09-08) — 앱 편지함 인쇄와 같은 학습지가 나온다.
-     세션 선택(주 2회 두 번째 회차)·필산 회차·창의 연산 회차·문장제(대안 포함)·표지·마법 유닛 전부 그쪽. */
+     세션 선택(주 2회 두 번째 회차)·필산 회차·독셈 회차·문장제(대안 포함)·표지·마법 유닛 전부 그쪽. */
   var wk = NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad });
   if(!wk) return fail('이 과정에는 아직 학습지가 없어요.');
   var items = wk.items, wsId = wk.wsId, cover = wk.cover, units = wk.units, title = wk.title;

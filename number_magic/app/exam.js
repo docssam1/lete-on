@@ -2200,7 +2200,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   <div class="nm-cvw-hero">
     <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
-    <p class="nm-cvw-tagline">${esc(lk('선행부터 창의연산, 문장제까지','From advanced work to creative arithmetic and word problems','从超前学习到创意运算与应用题'))}</p>
+    <p class="nm-cvw-tagline">${esc(lk('선행부터 독셈, 문장제까지','From advanced work to Doc-T Math and word problems','从超前学习到巧算与应用题'))}</p>
     <div class="nm-cv-rule"></div>
     <p class="nm-cvw-course">${cv.name ? `<b>${esc(cv.name)}</b> · ` : ''}${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
   </div>
@@ -3631,8 +3631,8 @@ function texDisplay(tex){
      문장제 3행 · 그림형 2행. 문항이 한 장에 다 안 들어가면 둘째 장은 perPage 그대로.
    pitch: 부분 페이지에서 행 하나의 높이(mm) — 전체 장과 같은 간격으로 위에서부터 채우고 남는
    아래는 별도의 메모 상자를 붙이지 않고 자연스러운 여백으로 둔다. */
-/* 네 번째 회차의 이름(2026-09-19) — 초등은 '창의 연산', 중·고는 '적용'이다.
-   중·고에 창의연산이라는 범주가 없어서다(암산법·풀풀·엑스맨은 초등 연산 교재의 갈래).
+/* 네 번째 회차의 이름(2026-09-19) — 초등은 '독셈', 중·고는 '적용'이다.
+   중·고에 독셈이라는 범주가 없어서다(암산법·풀풀·엑스맨은 초등 연산 교재의 갈래).
    그렇다고 그 자리를 비우면 학습지 모양이 중등부터 달라져 한 진도로 안 읽히므로,
    그 과정의 마무리 개념을 최고 레벨로 한 벌 더 싣고 이름만 바꾼다(courses.js 주석 참조). */
 const ELEM_TIERS = { level0:1, level1:1, level2:1, level3:1, challenge:1 };
@@ -3659,7 +3659,7 @@ function sessionRoleItems(course, session, seed){
   return {
     school: session.school.map(d => { const it = drillItem(d, d.review ? reviewTag : null);
       if(!d.review && it.count) it.count = scaleCount(d, it.count); return it; }),
-    strategy: ((session.strategy && session.strategy.practice) || []).map(d => Object.assign(creItem(d, lk('창의 연산 · ', 'Creative · ', '创意运算 · ')), { role:'strategy' })),
+    strategy: ((session.strategy && session.strategy.practice) || []).map(d => Object.assign(creItem(d, lk('독셈 · ', 'Doc-T Math · ', '巧算 · ')), { role:'strategy' })),
     application: (session.application || []).filter(a => a.from !== 'school').map((a, ai) => {
       if(a.kind === 'drawing') return { kind:'drawing', mode:a.mode, thread:a.t, level:a.lv, count:a.count || 6, n:a.count || 6,
         topicName:(a.title && (a.title.ko || a.title)) || thNm(a.t), seed:seed('dr', ai) };
@@ -3671,7 +3671,7 @@ function sessionRoleItems(course, session, seed){
 }
 function creTag(tier){
   return ELEM_TIERS[tier]
-    ? lk('창의 연산 · ', 'Creative · ', '创意运算 · ')
+    ? lk('독셈 · ', 'Doc-T Math · ', '巧算 · ')
     : lk('적용 · ', 'Applying · ', '应用 · ');
 }
 function classifyRoundLayout(problems, threadId, young, creative){
@@ -5051,8 +5051,8 @@ function applyPartialBlanks(problems, layoutType, item){
 }
 
 /* ============================================================
-   창의 연산 과정 빈칸 (2026-09-26) — 설계 docs/creative-stages-design-2026-09-26.md §3-3
-   원장 "창의 연산 때 한 문제는 빈칸 넣기도 있어야". applyPartialBlanks 의 짝이지만 빈칸을
+   독셈 과정 빈칸 (2026-09-26) — 설계 docs/creative-stages-design-2026-09-26.md §3-3
+   원장 "독셈 때 한 문제는 빈칸 넣기도 있어야". applyPartialBlanks 의 짝이지만 빈칸을
    답이 아니라 **풀이 과정 안에** 둔다: 식과 최종 답을 주고, 생성기가 낸 풀이 줄 가운데
    ★마법 자리 줄의 수 하나를 가린다(꼴 A). 보정·불변 기법(F2·F4)은 "바꾼 만큼 되돌린 수 /
    양쪽에 똑같이 바꾼 수"를 가린다(꼴 B 거꾸로). 표는 data/creative-process.js.
@@ -5428,7 +5428,7 @@ function renderRoundPagesBody(item, opts){
   }
   problems = sortRoundProblems(problems, layout.type);
   applyPartialBlanks(problems, layout.type, item);
-  /* 창의 연산(Training Course)만 — 과정 빈칸 한 문항 + 색 힌트(2026-09-26, data/creative-process.js) */
+  /* 독셈(Training Course)만 — 과정 빈칸 한 문항 + 색 힌트(2026-09-26, data/creative-process.js) */
   if(layout.type === 'train' && !getSolveMode()){
     applyProcessBlank(problems, item);
     applyTrainColor(problems, item);
@@ -5531,7 +5531,7 @@ function renderRoundPagesBody(item, opts){
   } else if(headBand && headBand[0] != null && firstRows > 0){
     let avail = headBand[0] - headBand[1] * (fsR - 1);
     if(problems.length <= firstRows * layout.cols && !item.pacing) avail -= (window.NM_PRINT_HEAD_QR || 0);
-    /* Training Course(창의 연산)는 잰 한 줄 높이가 드릴 칸 기준이라 맞지 않는다 — 제 줄 간격(pitch)으로 */
+    /* Training Course(독셈)는 잰 한 줄 높이가 드릴 칸 기준이라 맞지 않는다 — 제 줄 간격(pitch)으로 */
     const fitRows = Math.floor(avail / (layout.type === 'train' ? (layout.pitch || 78) : (rowNeed || layout.pitch || 20)));
     /* 한 줄만 들어가는 자리는 비워 둔다 — 머리 높이는 시드마다 달라(MD39 L1 은 69mm 차) 그 한 줄이 가장 잘 겹친다 */
     firstRows = Math.max(0, Math.min(firstRows, fitRows <= 1 && layout.rows > 2 ? 0 : fitRows));
@@ -5548,7 +5548,7 @@ function renderRoundPagesBody(item, opts){
   const guideWithPractice = midFirstSix && firstCap > 0 && guidePages.length === 1 && problems.length > firstCap
     /* 따라 풀기가 길면(MD83 L5 두 층 상자 — 214mm) 연습 6문항이 들어가지 않는다: 잰 높이로 판단 */
     && !(headBand && headBand[4] != null && rowNeed && headBand[4] < Math.ceil(6 / layout.cols) * rowNeed);
-  /* Training Course(창의 연산)는 칸 높이가 문항마다 다르다 — 풀이 줄 수로 거의 정확히 정해진다
+  /* Training Course(독셈)는 칸 높이가 문항마다 다르다 — 풀이 줄 수로 거의 정확히 정해진다
      (실측: 식 8mm + 줄마다 12.8mm + 점선 7mm, 2026-09-25). 한 장 3문항 고정이면 다섯 줄 문항 셋(248mm)이
      종이(약 235mm)를 넘었다(C37 CH9 L3). 첫 장은 잰 남은 높이, 다음 장은 가득 찬 장 높이까지 채운다. */
   if(layout.type === 'train' && problems.length && !getSolveMode()){
@@ -5564,10 +5564,10 @@ function renderRoundPagesBody(item, opts){
       const est = (14 + 12.8 * (nSteps + ansN) + 7 * (bare ? 3 : 1) + (p.__process ? 6 : 0)) * fsR * (young ? 1.28 : 1);
       return trainMax ? Math.max(est, trainMax) : est;
     };
-    /* 가득 찬 장 높이는 드릴 장에서 잰 값 — 창의 연산 장은 그 위에 "Training Course" 띠(15mm + 틈)가 더 붙는다
+    /* 가득 찬 장 높이는 드릴 장에서 잰 값 — 독셈 장은 그 위에 "Training Course" 띠(15mm + 틈)가 더 붙는다
        (C20 FR10 L1: 112mm 칸 둘이 띠 때문에 종이 아래로 40px 넘쳤다) */
     const gapMm = 7, fullH = ((headBand && headBand[3]) || 235) - 17 * fsR;
-    /* 잰 값이 있으면(scripts/build-print-head.js 가 창의 연산 모양으로 따로 잰 [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이) 그것을.
+    /* 잰 값이 있으면(scripts/build-print-head.js 가 독셈 모양으로 따로 잰 [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이) 그것을.
        없으면 추정: 첫 장에 "Training Course" 띠(약 24mm)가 붙고, 따라 풀기가 드릴보다 약 60mm 길다(C36 CH7 L1: 86mm). */
     const trainMax = headBand && headBand[5] ? headBand[5] * fsR : 0;
     const firstH = headBand && headBand[6] != null ? headBand[6] - (headBand[1] || 0) * (fsR - 1)
@@ -6194,7 +6194,7 @@ const NM_EXAM = {
      drill.html의 서랍장 미리보기가 재사용(2026-08-28, 리디자인). 생성 로직은 그대로. */
   buildProblems,
   problemKey,
-  /* 창의 연산 과정 빈칸(2026-09-26) — scripts/check-creative-process.js 가 같은 함수로 확인한다 */
+  /* 독셈 과정 빈칸(2026-09-26) — scripts/check-creative-process.js 가 같은 함수로 확인한다 */
   applyProcessBlank, processBlankIndexes, trainIsBare,
   /* Training Course 칸 짜임(풀이 줄 · "=" 로 이을지 · 답 줄) — scripts/check-train-steps.js */
   trainCellPlan,
@@ -6815,7 +6815,7 @@ ${printWatermarkHtml()}
           if(!session) return;
           /* 시험 회차는 풀 그대로. 나머지는 주간 봉투와 같은 세 층 순서(2026-09-25) —
              교과 → 창의 전략 → 적용 → 심화. 창의 칸은 주간 봉투(weeklyEnvelope)에는 있었는데
-             이 길에는 빠져 있던 것을 2026-09-16 에 넣었다(원장 "창의 연산은 같이 점검 안 해?"). */
+             이 길에는 빠져 있던 것을 2026-09-16 에 넣었다(원장 "독셈은 같이 점검 안 해?"). */
           let items;
           if(session.test){
             items = (session.pool||[]).map(d => ({ thread:d.t, level:d.lv, n:d.n, wordType:roadWordType, seed:NM_RNG.newCode() }));
@@ -7654,7 +7654,7 @@ ${answerSectionsHtml}`;
       guideSeed: it.guideSeed || null,
       exampleSkip:Number.isInteger(it.exampleSkip)?it.exampleSkip:null,
       guideSkips:Array.isArray(it.guideSkips)?it.guideSkips.slice():null,
-      /* 주간 봉투의 문장제(6)·창의 연산(4) 회차는 유형당 문항 수(10/20/40)를 따르지 않는다 —
+      /* 주간 봉투의 문장제(6)·독셈(4) 회차는 유형당 문항 수(10/20/40)를 따르지 않는다 —
          renderMixedSheet 와 같은 규칙(it.count 우선). optionalWord·wordAlts 도 그대로 넘겨
          편집기에서 인쇄해도 링크 학습지와 같은 결과가 나온다(2026-09-08 편지함 파리티). */
       count: it.count || null, optionalWord: !!it.optionalWord, wordAlts: it.wordAlts || null,
@@ -7686,7 +7686,7 @@ ${answerSectionsHtml}`;
       const c = (window.NM_COURSES||{})[courseKey]; if(!c) return [];
       const seen = {}, out = [];
       (c.sessions||[]).forEach(s => {
-        /* 창의 연산 회차(2026-09-08)도 그 과정의 재료다 — 유형 고르기 목록에 함께 싣는다. */
+        /* 독셈 회차(2026-09-08)도 그 과정의 재료다 — 유형 고르기 목록에 함께 싣는다. */
         (s.test ? (s.pool||[]) : (s.drills||[]).concat(s.creative||[])).forEach(d => {
           const key = d.t+'-L'+d.lv;
           if(seen[key]) return; seen[key] = true;

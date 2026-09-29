@@ -212,7 +212,7 @@ const SCENES = {
     await ctx.close();
   },
 
-  /* v3 창의 연산 — 유닛 C-02 '곱해서 10 만들기': 매직 랩(짝 찾기 타일)에서 곱해서 10 인 두 수를 고르고,
+  /* v3 독셈 — 유닛 C-02 '곱해서 10 만들기': 매직 랩(짝 찾기 타일)에서 곱해서 10 인 두 수를 고르고,
      마법 노트 계단식 수식으로 4×7×5 = (4×5)×7 = 20×7 = 140. 이 계단 한 줄만은 찍는 동안에 한해 첫 예(3×2×5)를
      4×7×5 로 바꿔 보여 준다(같은 유닛 ③ 에 있는 예 5×4×7→(4×5)×7=140 과 같은 계산, 앱 파일은 그대로). */
   async creative3(browser, base){
@@ -498,7 +498,7 @@ const SCENES = {
     const els = await page.$$('.nm-print-cover, .nm-w2-page, .nm-print-answer-key');
     const pick = { cover:0, concept:10, training:15, story:24, key:27 };
     for(const [k, i] of Object.entries(pick)) await els[i].screenshot({ path:path.join(src, k + '.png') });
-    /* Training Course(창의 연산) 쪽의 □ 칸 — 쪽 기준 비율 좌표 */
+    /* Training Course(독셈) 쪽의 □ 칸 — 쪽 기준 비율 좌표 */
     const boxes = await els[pick.training].evaluate(pg => { const P = pg.getBoundingClientRect();
       return [...pg.querySelectorAll('.fbox')].map(e => { const r = e.getBoundingClientRect(); return { x:(r.left - P.left) / P.width, y:(r.top - P.top) / P.height, w:r.width / P.width, h:r.height / P.height }; }); });
     fs.writeFileSync(path.join(src, 'training-boxes.json'), JSON.stringify(boxes));
@@ -507,7 +507,7 @@ const SCENES = {
   },
   /* 6. 학습지 — 책상 위에서 천천히 훑는다(stage-sheets.html) */
   async sheets(browser, base){ await stageScene(browser, base, 'sheets', 'stage-sheets.html?src=/__sheets/', 10.8); },
-  /* 창의 연산 — Training Course 칸을 손글씨로 한 칸씩 채운다(stage-creative.html) */
+  /* 독셈 — Training Course 칸을 손글씨로 한 칸씩 채운다(stage-creative.html) */
   async creative(browser, base){ await stageScene(browser, base, 'creative', 'stage-creative.html?src=/__sheets/', 12.6); },
   /* 7. 끝 카드 */
   async end(browser, base){ await stageScene(browser, base, 'end', 'endcard.html', 11, 'n12'); },
@@ -680,7 +680,7 @@ function PHILO_SETUP([D, part]){
     const u = b === a ? 0 : ease((t - a[0]) / (b[0] - a[0])); return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, Math.exp(Math.log(a[3]) + (Math.log(b[3]) - Math.log(a[3])) * u)]; };
   let K, HL, fades = [], glow = null;
   if(part === 1){
-    /* n02: 답을 빨리 구하는 계산 학습이 아닙니다(0–.2) · 연산만/창의 연산만 아닙니다(.2–.42, 비교 두 칸) · 수의 정복을 넘어 수학을(.42–.58) · 수를 가지고 놀고, 문장을 이해하고, 셈을(.58–1, 1275 = 999 + 276 예) */
+    /* n02: 답을 빨리 구하는 계산 학습이 아닙니다(0–.2) · 연산만/독셈만 아닙니다(.2–.42, 비교 두 칸) · 수의 정복을 넘어 수학을(.42–.58) · 수를 가지고 놀고, 문장을 이해하고, 셈을(.58–1, 1275 = 999 + 276 예) */
     K = [
       [0.0,     H.x + H.w * 0.52, H.y + H.h * 0.5, 1.75],
       [at(.18), H.x + H.w * 0.56, H.y + H.h * 0.5, 1.82],

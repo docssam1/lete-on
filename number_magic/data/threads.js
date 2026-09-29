@@ -262,7 +262,7 @@ AD10:{ name:{ko:'연이은 덧셈·뺄셈',en:'Add & subtract in a row',zh:'连�
           {id:2,label:{ko:'세 수(20까지)',en:'3 numbers (to 20)',zh:'三个数(到20)'},params:{terms:3,max:20,cross:true}},
           {id:3,label:{ko:'네 수(20까지)',en:'4 numbers (to 20)',zh:'四个数(到20)'},params:{terms:4,max:20,cross:true}}] },
 
-/* ── 창의 연산 초급 기법(2026-09-26) — 설계 docs/creative-stages-design-2026-09-26.md §2-2·§5 T2 ──
+/* ── 독셈 초급 기법(2026-09-26) — 설계 docs/creative-stages-design-2026-09-26.md §2-2·§5 T2 ──
    원장 "창의수연 재탕인 것들 조치해". 초급 38단원의 기법이 앱 전용 NM_GEN 에만 있어 과정 1~10 의
    창의 칸이 구구단·필산 드릴로 채워졌다. 같은 절차를 engine/threads/cre.js 로 옮겨 스레드로 등록한다.
    unit: 그 유닛(앱 마법 노트)이 **모든 레벨과 같은 절차**일 때만 스레드에 단다 — 학습지 개념 칸
@@ -472,7 +472,7 @@ SB7:{ name:{ko:'식의 변형',en:'Transform the Expression',zh:'变形算式'},
              en:'Bundle the pairs that make 10 first so you land on tens: 27+3+9+1 groups into (27+3) and (9+1), giving 30+10 = 40.',
              zh:'先把凑成10的一对捆起来就变成整十，计算更容易：27+3+9+1分成(27+3)与(9+1)，得30+10=40。'}}] },
 
-/* ── 창의 연산 초급 뺄셈 기법(2026-09-26, engine/threads/cre.js) — 위 AD11~AD16 머리말 참고 ── */
+/* ── 독셈 초급 뺄셈 기법(2026-09-26, engine/threads/cre.js) — 위 AD11~AD16 머리말 참고 ── */
 SB8:{ name:{ko:'자리별 빼기·쉬었다 빼기',en:'Place-by-Place & Rest-Stop Subtraction',zh:'按位减·歇一歇再减'}, gen:'cre_sb8_placeSub', prereq:['SB3'],
   concept:{ko:'빼는 수를 갈라서 두 번에 나눠 빼요. 57−23은 십을 먼저 빼서 57−20=37, 일을 나중에 빼서 37−3=34예요.',
     en:'Split the number you take away and subtract in two goes. 57−23: take the tens first, 57−20=37, then the ones, 37−3=34.',
@@ -1534,7 +1534,7 @@ EL5:{ name:{ko:'비례식',en:'Proportions',zh:'比例式'}, gen:'el_ratio', pre
              en:'Cut the total into as many parts as the ratio adds to, then give each its share: 117 split 6:7 has parts of 117÷13=9, giving 54 and 63.',
              zh:'把总数分成比之和那么多份，各取自己的份数：117按6:7分，每份是117÷13=9，所以是54和63。'}}] },
 
-/* ── 창의 연산 초급 기법(2026-09-26, engine/threads/cre.js) — AD11~AD16 머리말 참고 ──
+/* ── 독셈 초급 기법(2026-09-26, engine/threads/cre.js) — AD11~AD16 머리말 참고 ──
    MX7 덧셈끼리·뺄셈끼리 · MX8 수는 몇 개·짝지어 더하기 · EL6 합과 차 */
 MX7:{ name:{ko:'덧셈끼리·뺄셈끼리',en:'Gather the Pluses and Minuses',zh:'加的归加，减的归减'}, gen:'cre_mx7_sortAddSub', prereq:['AD5','SB4'],
   unit:'A-12',
@@ -3158,8 +3158,8 @@ WP5:{ name:{ko:'문장제 — 점검하기',en:'Word Problems — Check Your Wor
   levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
           {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
           {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
-/* ── 중등 교과 연산 3차(2026-09-20) ── 원장 지시: "교과연산과 창의연산이
-   같이 되어야 한다. 교과 연산 후 문장제·창의연산 혼합 컨셉이었는데."
+/* ── 중등 교과 연산 3차(2026-09-20) ── 원장 지시: "교과연산과 독셈이
+   같이 되어야 한다. 교과 연산 후 문장제·독셈 혼합 컨셉이었는데."
    점검 결과 중등 교과 연산의 기둥 다섯이 비어 있었다 — 연립방정식·
    일차부등식·일차함수(중2), 이차방정식 풀이·이차함수 꼭짓점(중3).
    중2 과정 33에 유형이 둘(MD13·MD14)밖에 없던 것이 그 증거다.

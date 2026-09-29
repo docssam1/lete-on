@@ -2623,7 +2623,7 @@ function middlePacingHtml(tier){
     <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
     <p class="nm-mp-intro"><b>${esc(plan.scope)}.</b> 위 정규 과정과 <strong>같은 회차</strong>를 학년별로 모아 보인 표입니다.</p>
     <ul class="nm-mp-facts">
-      <li>한 회는 하루 약 ${plan.grade===1?30:40}분 — <strong>교과 연산 → 창의 연산 → 적용</strong> 순서입니다.</li>
+      <li>한 회는 하루 약 ${plan.grade===1?30:40}분 — <strong>교과 연산 → 독셈 → 적용</strong> 순서입니다.</li>
       <li>쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.</li>
       <li>시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 주차에 맞추려고 이해를 건너뛰지 마세요.</li>
     </ul>
@@ -2774,14 +2774,14 @@ function checkupKeyFor(num){ return 'C'+num; }
 function isCheckupPoint(num){ return num>0 && num%CHECKUP_EVERY===0; }
 function checkupRecord(num){ return (S.checkups||{})[checkupKeyFor(num)]||null; }
 /* 점검이 볼 과정 세 개(과정 3이면 1·2·3) */
-/* 점검 화면의 셋째 칸 이름(2026-09-19) — 초등은 '창의 연산', 중·고는 '적용'이다.
-   중·고에 창의연산이라는 범주가 없어서다(courses.js 과정 29 위 주석 참조).
+/* 점검 화면의 셋째 칸 이름(2026-09-19) — 초등은 '독셈', 중·고는 '적용'이다.
+   중·고에 독셈이라는 범주가 없어서다(courses.js 과정 29 위 주석 참조).
    과정 번호로 가른다 — 중등이 과정 29부터다(stages.js). */
 const CHECKUP_CRE_FROM_MIDDLE = 29;
 function checkupCreLabel(num){
   return num >= CHECKUP_CRE_FROM_MIDDLE
     ? lk('적용','Applying','应用')
-    : lk('창의 연산','Creative moves','创意运算');
+    : lk('독셈','Doc-T Math','巧算');
 }
 function checkupCourseNums(num){
   const out=[];
@@ -2823,10 +2823,10 @@ function buildCheckupItems(num){
       picked.push(Object.assign({}, pool[Math.min(pool.length-1, Math.floor(i*pool.length/CHECKUP_PER_COURSE))]));
     }
   });
-  /* ── 창의 연산 (2026-09-16 원장 "그런데 창의 연산은 같이 점검 안 해?") ──
+  /* ── 독셈 (2026-09-16 원장 "그런데 독셈은 같이 점검 안 해?") ──
      그 세 과정의 창의 회차(courses.js의 session.creative)에서 뽑는다. 원장의 다음
      문장이 요지다 — "무조건 계산하는 것이 아니라 푸는 과정에 대한 연습도 되어야지.
-     창의 연산 때 한 문제는 빈칸 넣기도 있어야 하지 않겠어."
+     독셈 때 한 문제는 빈칸 넣기도 있어야 하지 않겠어."
      그래서 **과정을 채우는 문항(steps)을 맨 앞에 세운다.** 생성기가 steps를 내면
      widgets.js의 steps 위젯이 단계마다 빈칸을 받는다(답만 쓰는 게 아니라 푸는
      과정을 채운다). 어떤 스레드가 steps를 내는지는 미리 적어 두지 않고 한 번
@@ -2967,9 +2967,9 @@ function screenCheckup(){
       <p class="nm-cu-count">${lk(`모두 ${k.items.length}문제예요. 중간에 나가도 풀던 자리에서 이어서 할 수 있어요.`,
         `${k.items.length} questions in all. You can leave and pick up where you stopped.`,
         `一共${k.items.length}题。中途离开也能从停下的地方继续。`)}</p>
-      <p class="nm-cu-why">${lk('셋을 따로 세요. 빨리 계산하는 것, 푸는 길을 세우는 것, 문장을 읽어 내는 것은 서로 다른 힘이라, 합쳐 버리면 어느 쪽이 막혔는지 안 보여요. 창의 연산에는 답만 쓰는 게 아니라 <b>푸는 과정의 빈칸</b>을 채우는 문제가 들어 있어요.',
+      <p class="nm-cu-why">${lk('셋을 따로 세요. 빨리 계산하는 것, 푸는 길을 세우는 것, 문장을 읽어 내는 것은 서로 다른 힘이라, 합쳐 버리면 어느 쪽이 막혔는지 안 보여요. 독셈에는 답만 쓰는 게 아니라 <b>푸는 과정의 빈칸</b>을 채우는 문제가 들어 있어요.',
         'We score the three separately. Computing fast, building a route through a problem, and reading a problem are different abilities — one combined score hides which one is stuck. The creative part includes questions where you fill in <b>the steps</b>, not just the answer.',
-        '三项分开计分。算得快、想出解法路径、读懂题是不同的能力，合成一个分数就看不出卡在哪里。创意运算里有需要填<b>解题步骤空格</b>的题，不只是写答案。')}</p>
+        '三项分开计分。算得快、想出解法路径、读懂题是不同的能力，合成一个分数就看不出卡在哪里。巧算里有需要填<b>解题步骤空格</b>的题，不只是写答案。')}</p>
       <button class="nm-btn full" id="cuGo">${lk('시작하기','Start','开始')}</button>
     </div></div></div>`;
     $('#cuBack').onclick=back;
@@ -3009,9 +3009,9 @@ function screenCheckup(){
       ? lk('적용(배운 것을 문제에 쓰는 자리)이 따로 처져요. 계산은 되는데 적용에서 멈춘다면, 문제를 더 푸는 것보다 <b>이 문제가 어느 개념을 부르는지</b>를 먼저 말해 보는 연습이 필요해요.',
            'Applying what was learned lags on its own. If the computing works but applying stalls, practise naming <b>which idea the problem is calling for</b> before solving more of them.',
            '应用（把学过的用到题目上）单独落后。如果计算没问题却卡在应用，比起多做题，先练习说出<b>这道题在叫哪个概念</b>。')
-      : lk('창의 연산(푸는 길 세우기)이 따로 처져요. 답은 나오는데 과정의 빈칸에서 멈춘다면, 답을 맞히는 연습이 아니라 <b>왜 그 순서로 푸는지</b>를 소리 내어 말해 보는 연습이 필요해요.',
+      : lk('독셈(푸는 길 세우기)이 따로 처져요. 답은 나오는데 과정의 빈칸에서 멈춘다면, 답을 맞히는 연습이 아니라 <b>왜 그 순서로 푸는지</b>를 소리 내어 말해 보는 연습이 필요해요.',
            'The creative part — building a route — lags on its own. If the answer comes but the step blanks stall, practise saying <b>why</b> the steps go in that order, not more answer drills.',
-           '创意运算（想出解法路径）单独落后。如果答案能算出来却卡在步骤空格，需要练习说出<b>为什么按这个顺序解</b>，而不是多做计算。'))
+           '巧算（想出解法路径）单独落后。如果答案能算出来却卡在步骤空格，需要练习说出<b>为什么按这个顺序解</b>，而不是多做计算。'))
       : (k.creTotal && creGood && !calcGood)
       ? lk('푸는 길은 잘 세워요. 그 길 위에서 손이 느릴 뿐이에요.',
            'You build the route well — the hand on that route is just still slow.',
@@ -3029,7 +3029,7 @@ function screenCheckup(){
           <span class="nm-cu-num">${k.calcOk}<i>/${k.calcTotal}</i></span>
         </div>
         ${k.creTotal?`<div class="nm-cu-score cre${crePct>=60?' good':''}">
-          <b>✨ ${lk('창의 연산','Creative','创意运算')}</b>
+          <b>✨ ${lk('독셈','Doc-T Math','巧算')}</b>
           <span class="nm-cu-num">${k.creOk}<i>/${k.creTotal}</i></span>
         </div>`:''}
         <div class="nm-cu-score wp${wpGood?' good':''}">
@@ -3062,7 +3062,7 @@ function screenCheckup(){
   const cur=k.cur;
   const isMulti=Array.isArray(cur.answer);
   const hasTex=!!cur.tex;
-  /* 창의 연산만 steps 위젯으로 보낸다 — tex가 같이 있어도.
+  /* 독셈만 steps 위젯으로 보낸다 — tex가 같이 있어도.
      원장 지시의 "빈칸 넣기"가 바로 그 위젯이라, 창의 문항을 tex 한 줄로 떨어뜨리면
      푸는 과정이 사라지고 답만 묻는 문제가 된다.
      반대로 **계산 문항은 steps가 있어도 위젯으로 보내지 않는다.** 필산 스레드도
@@ -3097,7 +3097,7 @@ function screenCheckup(){
   </div>
   <div class="nm-step-body"><div class="nm-dialog">
     <div class="nm-dg-step">${item.kind==='wp'?`📖 ${lk('문장제 이해','Reading word problems','应用题理解')}`
-      :item.kind==='creative'?`✨ ${lk('창의 연산','Creative moves','创意运算')}`
+      :item.kind==='creative'?`✨ ${lk('독셈','Doc-T Math','巧算')}`
       :`🔢 ${lk('계산','Calculating','计算')}`}${th?` · ${esc(L(th.name))}`:''}</div>
     <div class="nm-prog">${dots(k.items.length,k.i)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
@@ -3365,7 +3365,7 @@ function roadWhenHtml(r){
   return `<span class="nm-cr-when"><span class="t nm-cr-tnum">${s}</span> ${lk('시작','start','开始')} → <span class="t nm-cr-tnum">${e}</span> ${lk('끝','end','结束')}</span>`;
 }
 /* 과정 설명(한 번 눌러 펼침) — 전부 데이터에서 만든다(courses.js 회차 · threads.js 이름 · 유닛 제목 · hero3d).
-   무엇을 배우나(교과 연산 스레드) · 창의 연산 · 문장제·적용 · 마법 개념(3D 그림 표시) · 마치면 할 수 있는 것. */
+   무엇을 배우나(교과 연산 스레드) · 독셈 · 문장제·적용 · 마법 개념(3D 그림 표시) · 마치면 할 수 있는 것. */
 function courseExplainHtml(c){
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
@@ -3390,7 +3390,7 @@ function courseExplainHtml(c){
     return esc(nm(t))+(lv&&lv.label?` <small>(${esc(L(lv.label))})</small>`:'');
   }).join(' · ');
   const body=li(lk('교과 연산','School arithmetic','教材运算'),join(schoolIds.map(nm)))
-    +li(lk('창의 연산','Creative arithmetic','创意运算'),join(creIds.map(nm)))
+    +li(lk('독셈','Doc-T Math','巧算'),join(creIds.map(nm)))
     +li(lk('문장제 · 적용','Word problems · applying','应用题 · 应用'),join(uniq(apply)))
     +(units.length?`<div class="nm-cr-ex-row"><b>${lk('마법 개념','Magic concepts','魔法概念')}</b><span class="nm-cr-ex-units">${unitHtml}</span></div>`:'')
     +(after?`<p class="nm-cr-ex-after">${lk('마치면 스스로 풀 수 있어요','Afterwards you can solve on your own','学完后能独立完成')} — ${after}</p>`:'');
@@ -3716,7 +3716,7 @@ function screenCourseRoad(){
             <li>${lk('기본은 정해 둔 편성 그대로예요 — 한 회 30분, 중2·중3은 40분.','Default is the set plan — 30 minutes a class, 40 for middle grades 2–3.','默认即既定安排：每次30分钟，初二·初三40分钟。')}</li>
             <li>${lk('0.7배까지 줄이고 1.5배까지 늘릴 수 있어요.','Go down to 0.7× or up to 1.5×.','可减到0.7倍、加到1.5倍。')}</li>
             <li>${lk('속도를 올리면 같은 기간에 회차를 더 나가 주차·개월이 줄고, 내리면 늘어요.','Faster speed covers more classes in the same time, so weeks and months shrink; slower stretches them.','提高速度会在同样时间里上更多课次，周数和月数减少；放慢则增加。')}</li>
-            <li>${lk('양은 그 주에 배우는 계산의 문항 수예요. 복습·창의·적용은 그대로이고, 같은 문제는 되풀이하지 않아요.','Amount is how many problems of that week\'s calculation. Review, creative and applying stay the same; problems never repeat.','分量是本周所学运算的题数。复习·创意·应用不变，题目不重复。')}</li>
+            <li>${lk('양은 그 주에 배우는 계산의 문항 수예요. 복습·독셈·적용은 그대로이고, 같은 문제는 되풀이하지 않아요.','Amount is how many problems of that week\'s calculation. Review, Doc-T Math and applying stay the same; problems never repeat.','分量是本周所学运算的题数。复习·巧算·应用不变，题目不重复。')}</li>
           </ul>
         </details>
       </div>
@@ -5366,7 +5366,7 @@ function screenMailbox(){
          buildMixedProblemSet 참조). */
       /* "발송 말고 고를 때는 제너레이터로"(2026-09-05) — 바로 인쇄하지 않고
          편집기를 먼저 연다(문항 스왑·유형 교체·인쇄는 편집기 안에서). */
-      /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 창의 연산 + 문장제, 표지·
+      /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 독셈 + 문장제, 표지·
          마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
       const wk = (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
         ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey() }) : null;

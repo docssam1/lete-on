@@ -106,7 +106,7 @@ server.listen(0, async () => {
           let need = 0; document.querySelectorAll('.nm-print-sheet .nm-w2-grid .nm-w2-item').forEach(e => { need = Math.max(need, e.getBoundingClientRect().height); });
           const gap = parseFloat(getComputedStyle(grid).rowGap) || 0;
           st.remove();
-          /* 창의 연산(Training Course) 모양 — 칸 높이가 풀이 줄 수로 달라 따로 잰다: [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이 */
+          /* 독셈(Training Course) 모양 — 칸 높이가 풀이 줄 수로 달라 따로 잰다: [5]=가장 큰 칸, [6]=첫 장 문항 칸 높이 */
           let trainMax = null, trainFirst = null;
           try {
             NM_EXAM.renderPrint({ thread:t, level:l.id, count:12, seed, grade, creative:true });
@@ -234,7 +234,7 @@ server.listen(0, async () => {
   const body = `/* 생성 파일 — 손으로 고치지 말 것. node scripts/build-print-head.js (2026-09-25 신설)
    학습지 첫 장에서 문항 칸이 쓸 수 있는 높이와 머리(개념·예시·따라 풀기) 높이, mm.
    레벨마다 [young, mid, senior] 밴드별 [첫 장 쓸 수 있는 높이, 머리 높이, 한 줄 필요 높이, 가득 찬 장 쓸 수 있는 높이, 따라 풀기+연습 장 높이,
-   창의 연산 가장 큰 칸, 창의 연산 첫 장 문항 칸 높이]
+   독셈 가장 큰 칸, 독셈 첫 장 문항 칸 높이]
    — ko·en·zh 중 가장 좁은 값. renderRoundPages 가 장마다 줄 수를 줄여 문항이 겹치지 않게 한다. ${n}개. */
 window.NM_PRINT_HEAD = ${JSON.stringify(table)};
 window.NM_PRINT_HEAD_QR = ${qr};
