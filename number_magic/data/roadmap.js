@@ -509,15 +509,15 @@ window.NM_ROADMAP = {
     {
       id:'W11-1', icon:'📦', grade:'공통수학1',
       edu:{ko:'공통수학1 다항식과 나머지정리',en:'Common Math 1 Polynomials & the Remainder Theorem',zh:'公共数学1多项式与余数定理'},
-      theme:{ko:'W11-1 · 다항식과 나머지정리 — 곱셈공식 확장·항등식·인수분해 심화',en:'W11-1 · Polynomials & the Remainder Theorem — Extended Formulas, Identities, Advanced Factoring',zh:'W11-1·多项式与余数定理——乘法公式扩展·恒等式·因式分解进阶'},
-      units:['M-21','M-22','M-23','M-24','M-25'],
+      theme:{ko:'W11-1 · 다항식과 나머지정리 — 곱셈공식 확장·변형·항등식·나머지정리·인수정리·인수분해',en:'W11-1 · Polynomials & the Remainder Theorem — Extended Formulas, Identities, Advanced Factoring',zh:'W11-1·多项式与余数定理——乘法公式扩展·恒等式·因式分解进阶'},
+      units:['M-21','M-22','M-91','M-23','M-24','M-92','M-93','M-25','M-94'],
       tip:{ko:'나눗셈을 다 하지 않아도 P(a)만 계산하면 나머지가 바로 나와요 — 대입 한 번의 지름길!',en:'You don\'t need long division — just compute P(a) and the remainder appears, a one-substitution shortcut!',zh:'不用做完整除法，算出P(a)余数就出来了——一次代入的捷径！'}
     },
     {
       id:'W11-2', icon:'🔭', grade:'공통수학1',
-      edu:{ko:'공통수학1 이차방정식과 행렬',en:'Common Math 1 Quadratics & Matrices',zh:'公共数学1二次方程与矩阵'},
-      theme:{ko:'W11-2 · 이차방정식과 행렬 — 판별식·근과 계수·근의 공식·부등식·행렬',en:'W11-2 · Quadratics & Matrices — Discriminant, Roots & Coefficients, Formula, Inequalities, Matrices',zh:'W11-2·二次方程与矩阵——判别式·根与系数·求根公式·不等式·矩阵'},
-      units:['M-26','M-27','M-28','M-29','M-30'],
+      edu:{ko:'공통수학1 복소수·이차방정식과 행렬',en:'Common Math 1 Complex Numbers, Quadratics & Matrices',zh:'公共数学1复数·二次方程与矩阵'},
+      theme:{ko:'W11-2 · 복소수·이차방정식과 행렬 — 복소수·판별식·근과 계수·이차함수와 직선·부등식·행렬',en:'W11-2 · Quadratics & Matrices — Discriminant, Roots & Coefficients, Formula, Inequalities, Matrices',zh:'W11-2·二次方程与矩阵——判别式·根与系数·求根公式·不等式·矩阵'},
+      units:['M-95','M-96','M-97','M-28','M-26','M-27','M-98','M-99','M-100','M-29','M-30'],
       tip:{ko:'판별식은 근을 구하기 전에 몇 개인지 미리 아는 정찰병이에요!',en:'The discriminant scouts ahead and tells you the root count before you even solve!',zh:'判别式是求根之前先知道有几个根的侦察兵！'}
     },
 
