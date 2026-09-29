@@ -34,6 +34,10 @@ try {
   /* HEAD 에 아직 없는 새 파일은 빈 파일로 본다 — 한 파일 때문에 비교 전체를 건너뛰지 않는다 */
   head = loadEngine(f => { try { return execSync(`git show HEAD:number_magic/${f}`, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore','pipe','ignore'] }); } catch(e){ return ''; } });
 } catch(e){ console.log('(HEAD 비교 생략: ' + e.message.split('\n')[0] + ')'); }
+if(head && (!head.NM_THREADS || !head.NM_TGEN || !head.NM_RNG)){
+  console.log('(HEAD 비교 생략: 과거 엔진 컨텍스트를 읽지 못함)');
+  head = null;
+}
 
 const T = cur.NM_THREADS, G = cur.NM_TGEN, R = cur.NM_RNG;
 /* 기본 대상은 MD·CH. `--all`이면 전 스레드(steps를 이미 주는 유형은 solution 대신
