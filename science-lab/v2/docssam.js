@@ -67,7 +67,7 @@ export function mountGuide(V, { avoid = () => [], canPause = false, label = '독
     <div class="dsg-bubble"><p class="dsg-say" role="status" aria-live="polite"></p><p class="dsg-status" hidden></p>
       <div class="dsg-ctl"><button type="button" data-g="voice" aria-pressed="${pref.sound}" title="독쌤 음성 켜기/끄기">${pref.sound ? '🔊 음성' : '🔇 음성 끔'}</button>
         <button type="button" data-g="again" title="다시 듣기" aria-label="다시 듣기">↺</button>
-        ${canPause ? `<button type="button" data-g="pause" aria-pressed="${pref.paused}" title="자동 넘김 멈춤">${pref.paused ? '▶ 이어서' : '⏸ 멈춤'}</button>` : ''}
+        ${canPause ? `<button type="button" data-g="pause" aria-pressed="${pref.paused}" title="다음 장으로 저절로 넘어가기 켜기/끄기">${pref.paused ? '▶ 자동 넘김' : '⏸ 넘김 멈춤'}</button>` : ''}
         <button type="button" data-g="fold" aria-label="말풍선 접기">접기</button></div></div>`;
   document.body.appendChild(dock);
   const fig = dock.querySelector('.dsg-fig'), $say = dock.querySelector('.dsg-say'), $status = dock.querySelector('.dsg-status'), bubble = dock.querySelector('.dsg-bubble');
@@ -143,7 +143,7 @@ export function mountGuide(V, { avoid = () => [], canPause = false, label = '독
     if (v) { stopFlap(v); v.off.forEach((f) => f()); try { v.audio.pause(); } catch { /* */ } }
     dock.classList.remove('talking'); delete fig.dataset.speaking; setVoiceBtn(); render();
   }
-  const setVoiceBtn = () => { const b = dock.querySelector('[data-g=voice]'); b.textContent = voice?.flapping ? '■ 멈춤' : pref.sound ? '🔊 음성' : '🔇 음성 끔'; b.setAttribute('aria-pressed', pref.sound); };
+  const setVoiceBtn = () => { const b = dock.querySelector('[data-g=voice]'); b.textContent = voice?.flapping ? '■ 소리 멈춤' : pref.sound ? '🔊 음성' : '🔇 음성 끔'; b.setAttribute('aria-pressed', pref.sound); };
 
   let token = 0, last = null, alive = true, onPause = () => {};
   const popText = () => { bubble.classList.remove('new'); void bubble.offsetWidth; bubble.classList.add('new'); };
@@ -264,7 +264,7 @@ export function mountGuide(V, { avoid = () => [], canPause = false, label = '독
   };
   dock.querySelector('[data-g=again]').onclick = () => { if (last) { pref.sound = true; api.say(...last); } };
   const $pause = dock.querySelector('[data-g=pause]');
-  if ($pause) $pause.onclick = () => { pref.paused = !pref.paused; $pause.textContent = pref.paused ? '▶ 이어서' : '⏸ 멈춤'; $pause.setAttribute('aria-pressed', pref.paused); onPause(pref.paused); };
+  if ($pause) $pause.onclick = () => { pref.paused = !pref.paused; $pause.textContent = pref.paused ? '▶ 자동 넘김' : '⏸ 넘김 멈춤'; $pause.setAttribute('aria-pressed', pref.paused); onPause(pref.paused); };
   render(); arrangeSoon();
   live = api;
   // 검증용(화면에는 영향 없음): 지금 표정·입·말하는 중인지

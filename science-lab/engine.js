@@ -41,6 +41,9 @@ export class Stage {
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
     this.root = new THREE.Group(); this.scene.add(this.root);
     this.orbit = { theta: 0.55, phi: 1.12, dist: 9, target: new THREE.Vector3(0, 0.8, 0), home: null };
+    // 자동 맞춤(원장 2026-09-29: "첫 화면이 가장 확실한 시점, 잘리지 않게"): 화면 비율이 무엇이든 실험 도구 전체가 여백을 두고 들어오게
+    // 카메라 거리·중심을 잰다. 각도(theta·phi)는 장면이 정한 가장 잘 보이는 각도 그대로. frameHidden: 숨은 것까지(3D 장면은 뒤에 나타나는 것도 포함).
+    this.autoFit = true; this.frameHidden = false; this.fitMargin = 0.88; this._needFit = true; this._fitAspect = 0; this._userZoom = false;
     this._perf = { n: 0, dts: [], drops: 0 };
     this._setupBackdrop(); this._setupEnv(); this._setupLights(); this._setupGround(); this._setupInput(); this._applyTier(this.tier);
     this.clock = new THREE.Timer(); this.update = null; this.running = true;   // Clock은 r184에서 폐지(콘솔 경고)
@@ -132,16 +135,47 @@ export class Stage {
   }
   _setupInput() {
     const c = this.canvas; let drag = null, pinch = null;
-    const down = (x, y) => { drag = { x, y, th: this.orbit.theta, ph: this.orbit.phi }; };
-    const move = (x, y) => { if (!drag) return; const dx = (x - drag.x) / c.clientWidth, dy = (y - drag.y) / c.clientHeight; this.orbit.theta = drag.th - dx * 3.2; this.orbit.phi = Math.max(0.35, Math.min(1.5, drag.ph - dy * 2.4)); };
+    const down = (x, y) => { drag = { x, y, th: this.orbit.theta, ph: this.orbit.phi }; this._goHome = false; };
+    const move = (x, y) => { if (!drag) return; const dx = (x - drag.x) / c.clientWidth, dy = (y - drag.y) / c.clientHeight; this.orbit.theta = drag.th - dx * 3.2; this.orbit.phi = Math.max(0.35, Math.min(1.5, drag.ph - dy * 2.4)); if (Math.abs(dx) + Math.abs(dy) > 0.03) this._moved(); };
     this._on(c, 'pointerdown', (e) => { if (e.isPrimary) { down(e.clientX, e.clientY); c.setPointerCapture(e.pointerId); } });
     this._on(c, 'pointermove', (e) => { if (e.isPrimary) move(e.clientX, e.clientY); });
     this._on(c, 'pointerup', () => { drag = null; }); this._on(c, 'pointercancel', () => { drag = null; });
     // 보통 휠은 팝업/페이지를 스크롤한다. 확대는 Ctrl+휠, 폰은 두 손가락만 사용한다.
-    this._on(c, 'wheel', (e) => { if (!e.ctrlKey) return; e.preventDefault(); this.orbit.dist = Math.max(3, Math.min(20, this.orbit.dist * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive: false });
+    this._on(c, 'wheel', (e) => { if (!e.ctrlKey) return; e.preventDefault(); this._userZoom = true; this._moved(); this.orbit.dist = this._zoomClamp(this.orbit.dist * (1 + Math.sign(e.deltaY) * 0.08)); }, { passive: false });
     this._on(c, 'touchstart', (e) => { if (e.touches.length === 2) pinch = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); }, { passive: true });
-    this._on(c, 'touchmove', (e) => { if (e.touches.length === 2 && pinch) { const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); this.orbit.dist = Math.max(3, Math.min(20, this.orbit.dist * pinch / d)); pinch = d; } }, { passive: true });
+    this._on(c, 'touchmove', (e) => { if (e.touches.length === 2 && pinch) { this._userZoom = true; this._moved(); const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); this.orbit.dist = this._zoomClamp(this.orbit.dist * pinch / d); pinch = d; } }, { passive: true });
     this._on(c, 'touchend', () => { pinch = null; });
+    this._on(c, 'dblclick', () => this.returnHome());
+    // 전체 화면을 켜고 끌 때는 새 화면 비율에 맞춰 다시 잡는다(확대해 둔 것도 풀고)
+    this._on(document, 'fullscreenchange', () => { this._userZoom = false; this._needFit = true; if (this._vbShown) this._placeViewBtn(); });
+  }
+  // 돌리거나 확대하면 「처음 시점」 단추가 캔버스 왼쪽 아래에 뜬다 — 누르면(또는 두 번 누르면) 부드럽게 돌아간다
+  // 확대 범위는 장면마다 맞춘 거리 기준 — 절대값(3~20)이면 멀리 잡힌 장면은 확대하자마자 튀었다
+  _zoomClamp(d) { const h = this.orbit.home?.dist || 8; return Math.max(Math.max(1.2, h * 0.35), Math.min(h * 1.8, d)); }
+  _moved() { if (!this._vbShown) { this._vbShown = true; this._placeViewBtn(); } }
+  _placeViewBtn() {
+    const c = this.canvas, p = c.parentElement; if (!p) return;
+    let b = this._vb;
+    if (!b) {
+      b = this._vb = document.createElement('button'); b.type = 'button'; b.className = 'stage-home'; b.textContent = '↺ 처음 시점';
+      b.setAttribute('aria-label', '처음 보던 시점으로 돌아가기');
+      Object.assign(b.style, { position: 'absolute', zIndex: '2', margin: '0', padding: '7px 12px', border: '0', borderRadius: '999px', background: 'rgba(255,255,255,.95)', color: '#1e3a78', font: '700 13px/1.2 inherit', boxShadow: '0 2px 10px rgba(20,40,80,.2)', cursor: 'pointer' });
+      b.addEventListener('click', (e) => { e.stopPropagation(); this.returnHome(); });
+      b.addEventListener('pointerdown', (e) => e.stopPropagation());
+      this._cleanups.push(() => b.remove());
+    }
+    if (b.parentElement !== p) p.appendChild(b);
+    if (getComputedStyle(p).position === 'static') p.style.position = 'relative';
+    b.style.display = this._vbShown ? '' : 'none';
+    b.style.left = (c.offsetLeft + 10) + 'px'; b.style.top = (c.offsetTop + c.offsetHeight - 10 - (b.offsetHeight || 32)) + 'px';
+  }
+  returnHome() { this._goHome = true; this._userZoom = false; this._needFit = true; this._vbShown = false; if (this._vb) this._vb.style.display = 'none'; }
+  _stepHome(raw) {
+    const o = this.orbit, h = o.home; if (!h) { this._goHome = false; return; }
+    const k = 1 - Math.exp(-raw * 7), TAU = Math.PI * 2;
+    let dth = (h.theta - o.theta) % TAU; if (dth > Math.PI) dth -= TAU; if (dth < -Math.PI) dth += TAU;
+    o.theta += dth * k; o.phi += (h.phi - o.phi) * k; o.dist += (h.dist - o.dist) * k; o.target.lerp(h.target, k);
+    if (Math.abs(dth) + Math.abs(h.phi - o.phi) < 0.002 && Math.abs(h.dist - o.dist) < 0.01 && o.target.distanceTo(h.target) < 0.01) { this.resetView(); this._goHome = false; }
   }
   _resize() {
     const w = this.canvas.clientWidth || 640, h = this.canvas.clientHeight || 400;
@@ -152,6 +186,53 @@ export class Stage {
     if (view.theta != null) o.theta = view.theta; if (view.phi != null) o.phi = view.phi; if (view.dist != null) o.dist = view.dist;
     if (view.target) o.target.set(...view.target);
     o.home = { theta: o.theta, phi: o.phi, dist: o.dist, target: o.target.clone() };
+    // frame: [[x0,y0,z0],[x1,y1,z1]] — 움직이는 물체가 있는 실험은 「다 놓였을 때」의 작업 공간을 직접 준다(떨어지는 도중의 포일에 맞추지 않게)
+    this._frameFixed = view.frame ? new THREE.Box3(new THREE.Vector3(...view.frame[0]), new THREE.Vector3(...view.frame[1])) : null;
+    this._goHome = false; this._vbShown = false; if (this._vb) this._vb.style.display = 'none';
+    this._needFit = true; this._userZoom = false;
+  }
+  // 틀에 넣을 점들: 보이는 물체(장면이 숨겨 둔 것도 frameHidden이면)마다 제 상자의 여덟 꼭짓점. 라벨은 가운데 한 점.
+  _framePoints() {
+    const F = this._frameFixed;
+    if (F) return Array.from({ length: 8 }, (_, i) => new THREE.Vector3(i & 1 ? F.max.x : F.min.x, i & 2 ? F.max.y : F.min.y, i & 4 ? F.max.z : F.min.z));
+    const pts = [], tmp = new THREE.Box3(), v = new THREE.Vector3(), all = this.frameHidden;
+    this.root.updateMatrixWorld(true);
+    const visit = (o, vis) => {
+      if ((!o.visible && !all) || o.userData?.noFrame || o.isPoints || o.isLine) return;
+      vis = vis && o.visible;
+      if (o.isSprite) { if (vis) pts.push(o.getWorldPosition(new THREE.Vector3())); }   // 나중에 뜰 라벨은 fitLabels가 화면 안으로 밀어 넣는다
+      else if (o.isMesh && o.geometry) {
+        if (o.isInstancedMesh) { o.computeBoundingBox(); tmp.copy(o.boundingBox); }
+        else { if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); tmp.copy(o.geometry.boundingBox); }
+        if (!tmp.isEmpty() && tmp.clone().applyMatrix4(o.matrixWorld).getSize(v).length() < 40)
+          for (let i = 0; i < 8; i++) pts.push(new THREE.Vector3(i & 1 ? tmp.max.x : tmp.min.x, i & 2 ? tmp.max.y : tmp.min.y, i & 4 ? tmp.max.z : tmp.min.z).applyMatrix4(o.matrixWorld));
+      }
+      o.children.forEach((c) => visit(c, vis));
+    };
+    this.root.children.forEach((c) => visit(c, true));
+    return pts;
+  }
+  // 장면이 정한 각도 그대로, 모든 점이 화면 안(여백 fitMargin)에 들어오는 가장 가까운 거리와 가운데 — 한쪽으로 쏠리지 않게 세 번 다시 잰다
+  _fit() {
+    const pts = this._framePoints(); if (!pts.length) return false;
+    const o = this.orbit, h = o.home || { theta: o.theta, phi: o.phi };
+    const d = new THREE.Vector3(Math.sin(h.phi) * Math.sin(h.theta), Math.cos(h.phi), Math.sin(h.phi) * Math.cos(h.theta));
+    const r = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), d).normalize(), u = new THREE.Vector3().crossVectors(d, r).normalize();
+    const tv = Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * this.fitMargin, th = tv * this.camera.aspect;
+    const c = new THREE.Box3().setFromPoints(pts).getCenter(new THREE.Vector3()), q = new THREE.Vector3();
+    const need = () => { let D = 0; for (const p of pts) { q.subVectors(p, c); const z = q.dot(d); D = Math.max(D, z + Math.abs(q.dot(r)) / th, z + Math.abs(q.dot(u)) / tv); } return D; };
+    let D = need();
+    for (let k = 0; k < 3; k++) {
+      let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+      for (const p of pts) { q.subVectors(p, c); const w = Math.max(0.01, D - q.dot(d)), sx = q.dot(r) / w, sy = q.dot(u) / w; x0 = Math.min(x0, sx); x1 = Math.max(x1, sx); y0 = Math.min(y0, sy); y1 = Math.max(y1, sy); }
+      c.addScaledVector(r, (x0 + x1) / 2 * D).addScaledVector(u, (y0 + y1) / 2 * D);
+      D = need();
+    }
+    D = Math.max(2, Math.min(40, D));
+    if (o.home) { o.home.dist = D; o.home.target.copy(c); }
+    if (!this._userZoom) { o.dist = D; o.target.copy(c); }
+    this._fitAspect = this.camera.aspect;
+    return true;
   }
   resetView() { const h = this.orbit.home; if (h) { this.orbit.theta = h.theta; this.orbit.phi = h.phi; this.orbit.dist = h.dist; this.orbit.target.copy(h.target); } }
   // 형상·재질·텍스처를 모두 GPU에서 내린다(라벨 텍스처는 여러 무대가 캐시로 같이 쓰지만, 내려도 다음에 쓸 때 다시 올라간다).
@@ -179,13 +260,16 @@ export class Stage {
     this.clock.update(); const raw = this.clock.getDelta(), dt = Math.min(0.25, raw), t = this.clock.getElapsed(); const o = this.orbit;
     if (this.lost) { this._requestFrame(); return; }
     this._measure(raw);
-    // fitWidth(선택): 옆으로 넓게 놓인 실험실이 세로로 긴 화면에서 잘리지 않게, 그 비율보다 좁아지면 그만큼만 뒤로 물러난다.
-    const fw = this.fitWidth && this.camera.aspect < this.fitWidth ? Math.min(1.8, this.fitWidth / this.camera.aspect) : 1, D = o.dist * fw;
+    const pr = this.renderer.getPixelRatio();   // 크기가 바뀌었으면(전체 화면 등) 맞추기 전에 먼저 — 그래야 같은 프레임에 새 비율로 잡힌다
+    if (this.canvas.width !== Math.floor(this.canvas.clientWidth * pr) || this.canvas.height !== Math.floor(this.canvas.clientHeight * pr)) this._resize();
+    if (this.autoFit && (this._needFit || Math.abs(this.camera.aspect - this._fitAspect) > 0.02)) { if (this._fit()) this._needFit = false; }
+    if (this._goHome) this._stepHome(raw);
+    if (this._vbShown && this._vb && (this._vbW !== this.canvas.clientWidth || this._vbH !== this.canvas.clientHeight)) { this._vbW = this.canvas.clientWidth; this._vbH = this.canvas.clientHeight; this._placeViewBtn(); }
+    // fitWidth(예전 방식): 자동 맞춤을 끈 무대에서만 — 세로로 긴 화면에서 그 비율보다 좁아지면 그만큼 뒤로 물러난다.
+    const fw = !this.autoFit && this.fitWidth && this.camera.aspect < this.fitWidth ? Math.min(1.8, this.fitWidth / this.camera.aspect) : 1, D = o.dist * fw;
     const x = o.target.x + D * Math.sin(o.phi) * Math.sin(o.theta), y = o.target.y + D * Math.cos(o.phi), z = o.target.z + D * Math.sin(o.phi) * Math.cos(o.theta);
     this.camera.position.set(x, y, z); this.camera.lookAt(o.target);
     if (this.update) this.update(dt, t, raw);
-    const pr = this.renderer.getPixelRatio();   // 가로 크게 보기로 높이만 바뀌어도 다시 맞춘다
-    if (this.canvas.width !== Math.floor(this.canvas.clientWidth * pr) || this.canvas.height !== Math.floor(this.canvas.clientHeight * pr)) this._resize();
     fitLabels(this.scene, this.camera, this.canvas.clientHeight, this.canvas.clientWidth < 500 ? 44 : 40, 72, this.canvas.clientWidth);   // 라벨 그림 전체 높이 px(카드는 약 71%, 글자는 약 45%)
     this.renderer.render(this.scene, this.camera);
     this._requestFrame();
@@ -228,7 +312,7 @@ export class Player {
     const world = { group: this.stage.root, add: (id, obj) => { obj.visible = false; obj.userData.id = id; this.objects.set(id, obj); this.stage.root.add(obj); return obj; }, get: (id) => this.objects.get(id) };
     const kit = await import('./scenes/_kit.js');
     const built = mod.build(kit, world) || {};
-    this.sceneUpdate = built.update || null; this.beats = mod.beats; this.stage.setView(mod.view);
+    this.sceneUpdate = built.update || null; this.beats = mod.beats; this.stage.frameHidden = mod.frameHidden !== false; this.stage.setView(mod.view);
     this.stage.update = (dt, t, raw) => this._tick(dt, t, raw);
     this.goto(0, false);
   }

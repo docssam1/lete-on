@@ -75,7 +75,7 @@ export async function mountVolcano3D(el, opts = {}) {
 
   // ── ① 화산 모형 ──
   const A = new THREE.Group(); A.position.y = TH; stage.root.add(A);
-  const table = makeTable(); A.add(table);
+  const table = makeTable(); table.userData.noFrame = true; A.add(table);   // 책상은 바닥 — 화면은 화산 모형에 맞춘다
   const ringY = 1.05;
   // 삼발이: 쇠고리 + 바깥으로 살짝 벌어진 다리 3개(고무 발)
   const ring = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.032, 12, 56), steel); ring.rotation.x = Math.PI / 2; ring.position.y = ringY; A.add(ring);
@@ -208,7 +208,7 @@ export async function mountVolcano3D(el, opts = {}) {
 
   // ── 상태·단계 ──
   const S = { temp: 20, melt: 0, set: 0, smoke: 0, lit: false, foilY: 4, temp2: 80, grow: 0, beakerY: 3 };
-  const viewA = { theta: 0.75, phi: 1.18, dist: 4.1, target: [0.15, 1.3 + TH, 0] }, viewB = { theta: 0.6, phi: 1.25, dist: 3.1, target: [0, 0.5 + TH, 0] };
+  const viewA = { theta: 0.75, phi: 1.18, dist: 4.1, target: [0.15, 1.3 + TH, 0], frame: [[-0.8, TH, -0.8], [0.8, TH + 1.9, 0.8]] }, viewB = { theta: 0.6, phi: 1.25, dist: 3.1, target: [0, 0.5 + TH, 0], frame: [[-0.8, TH, -0.8], [0.8, TH + 1.4, 0.8]] };   // frame: 삼발이·램프·포일(놓인 뒤) / 그릇·비커(놓인 뒤)
   const R = (k, v) => { const e = el.querySelector(`[data-r=${k}]`); if (e) e.textContent = v; };
   const $main = $('[data-act=main]');
   const MAIN = { '화산 모형': ['포일 화산 올리기', '불 붙이기', '가열하기 (누르고 있기)', '불 끄기', '표에 적기'], '식히기': ['백반 물 담기', '고르고 다음으로', '식히기 (누르고 있기)', '살펴보고 다음으로', '표에 적기'] };
@@ -239,7 +239,7 @@ export async function mountVolcano3D(el, opts = {}) {
   stage.update = (dt, t) => {
     if (opts.isActive && !opts.isActive()) return;
     if (A.visible) {
-      if (S.foilY > 0) { S.foilY = Math.max(0, S.foilY - dt * 4); }
+      if (S.foilY > 0 && S.foilY < 3.9) { S.foilY = Math.max(0, S.foilY - dt * 4); }   // 「포일 화산 올리기」를 누른 뒤에만(4 = 아직 안 올림)
       if (S.lit && holding) { S.temp = Math.min(260, S.temp + HEATS[heat] * dt); flame.scale.y = (heat === '강하게' ? 1.3 : 0.85) * (1 + Math.sin(t * 20) * 0.08); }
       else S.temp = Math.max(20, S.temp - (S.lit ? 6 : 32) * dt);
       const over = Math.max(0, S.temp - MELT) / 120;
@@ -256,7 +256,7 @@ export async function mountVolcano3D(el, opts = {}) {
       if (step === 2 && S.melt >= FULL && !holding) { goStep(3); tip('마시멜로가 다 흘러나왔어요. <b>불 끄기</b>를 눌러요.'); }
       if (step === 3 && !S.lit && S.set >= 1) { goStep(4); tip('굳었어요! 연기(화산 가스)·흘러나온 것(용암)·굳은 것(화산 암석)을 <b>표에 적어</b>요.'); }
     } else {
-      if (S.beakerY > 0) S.beakerY = Math.max(0, S.beakerY - dt * 3);
+      if (S.beakerY > 0 && S.beakerY < 2.9) S.beakerY = Math.max(0, S.beakerY - dt * 3);   // 「백반 물 담기」를 누른 뒤에만
       if (holding && S.temp2 > 20) S.temp2 = Math.max(20, S.temp2 - COOLS[cool] * dt);
       S.grow = Math.max(S.grow, Math.min(1, (60 - S.temp2) / 40)); setCrystals(S.grow, cool);
       let k = 0; if (S.temp2 > 45 && S.beakerY <= 0) { const hot = Math.min(1, (S.temp2 - 45) / 30); for (let i = 0; i < steam.userData.max; i++) { const life = ((t * 0.45 + hash(i)) % 1);

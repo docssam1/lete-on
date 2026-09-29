@@ -227,3 +227,60 @@
   .dk-stage.cover:not(:has(.dk-points)) .dk-art.cover figcaption { font-size: 10px; }
 }
 @media (max-width: 760px) { .dk-stage.cover:not(:has(.dk-points)) .dk-body { align-items: stretch; } }
+
+/* 여백이 많이 남는 장(생각 쓰기·확인 문제·목표): 내용을 세로 가운데로(넘치면 위부터), 쓰기 칸은 넉넉하게 — 아래 절반이 비어 보이던 문제 */
+@media (min-width: 761px) {
+  .dk-stage:not(.cover) .dk-body { display: flex; flex-direction: column; justify-content: flex-start; justify-content: safe center; }
+  .dk-stage:not(.cover) .dk-body > * { flex: none; }
+  .dk-in { min-height: 7.5cqw; }
+}
+
+/* 2차시 나누기(SEQUENCE-DESIGN.md): 1차시 끝·지난 시간 떠올리기·도전 하나 고르기·결과 표 직접 적기 */
+.dk-act a.dk-go { display: inline-flex; align-items: center; text-decoration: none; font-size: 1.7cqw; font-weight: 700; border-radius: 1cqw; padding: .8cqw 2.2cqw; min-height: 40px; }
+.dk-act .dk-go.ghost, .dk-pick .dk-go.ghost { background: #fff; color: var(--n); border: 1.5px solid #cfd8e6; }
+.dk-stage.cover .dk-act { display: flex; gap: 1cqw; flex-wrap: wrap; margin-top: 1.4cqw; }
+.dk-mine { display: grid; gap: 1cqw; margin: 1cqw 0; text-align: left; color: #222; }
+.dk-mine .dk-card h3 { margin: 0 0 .4cqw; } .dk-mine .dk-card p { margin: .2cqw 0; }
+.dk-pick { display: flex; gap: 1cqw; flex-wrap: wrap; margin: 1cqw 0; }
+.dk-pick .dk-go { min-width: 12cqw; font-size: 1.9cqw; padding: .8cqw 1.6cqw; border-radius: .9cqw; cursor: pointer; }
+.dk-mylab .dk-card { margin-bottom: 1cqw; }
+.dk-tbl td[contenteditable="true"] { background: #fbfdff; outline: 1.5px dashed #cfd8e6; outline-offset: -4px; min-width: 6cqw; cursor: text; }
+.dk-tbl td[contenteditable="true"]:empty::before { content: '적기'; color: #b5c0d0; }
+.dk-tbl td[contenteditable="true"]:focus { outline: 2px solid var(--t); background: #fff; }
+@media (max-width: 760px) { .dk-pick .dk-go { font-size: 15px; min-width: 90px; padding: 10px 14px; } .dk-stage.cover .dk-act { gap: 8px; margin-top: 14px; } }
+/* 실험 순서 맞추기 */
+.dk-ords { list-style: none; margin: 1cqw 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(15cqw, 1fr)); gap: 1cqw; }
+.dk-ord { all: unset; box-sizing: border-box; position: relative; display: flex; flex-direction: column; gap: .6cqw; width: 100%; height: 100%; padding: .9cqw; border: 1.5px solid #d6deea; border-radius: 1cqw; background: #fff; cursor: pointer; font-size: 1.35cqw; line-height: 1.45; }
+.dk-ord:hover { border-color: var(--t); } .dk-ord:focus-visible { outline: 3px solid var(--n); outline-offset: 2px; }
+.dk-ord .dk-art.mini { display: block; height: 9cqw; overflow: hidden; } .dk-ord .dk-art.mini svg { width: 100%; height: 100%; }
+.dk-ordn { position: absolute; top: -.9cqw; left: -.9cqw; width: 3cqw; height: 3cqw; border-radius: 50%; display: none; place-items: center; background: var(--n); color: #fff; font: 800 1.6cqw/1 var(--disp, sans-serif); font-style: normal; }
+.dk-ord.pick .dk-ordn, .dk-ord.ok .dk-ordn { display: grid; }
+.dk-ord.pick { border-color: var(--n); background: #eef2fb; }
+.dk-ord.no { border-color: var(--r); background: #fff0ee; }
+.dk-ord.ok { border-color: var(--t); background: #e7f5ec; } .dk-ord.ok .dk-ordn { background: var(--t); }
+@media (max-width: 760px) { .dk-ords { grid-template-columns: 1fr 1fr; gap: 10px; } .dk-ord { font-size: 14px; padding: 10px; gap: 6px; } .dk-ord .dk-art.mini { height: 80px; } .dk-ordn { width: 28px; height: 28px; top: -8px; left: -8px; font-size: 15px; } }
+/* 생각만 하기 — 예시 답 보기 */
+.dk-peekw { margin: .6cqw 0; }
+.dk-peek { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; gap: .6cqw; padding: .6cqw 1.6cqw; border-radius: .9cqw; border: 1.5px dashed #9fb4d8; color: var(--n); font-weight: 700; font-size: 1.6cqw; cursor: pointer; background: #f6f9ff; }
+.dk-peek::before { content: '👀'; }
+.dk-peek:hover { background: #eef3ff; } .dk-peek:focus-visible { outline: 3px solid var(--n); outline-offset: 2px; }
+.dk-tbl .dk-peek { font-size: 1.35cqw; padding: .35cqw 1cqw; }
+/* 3D 실험실 옆 실험 순서 — 고른 단계만 그림과 함께 크게 */
+.dk-labwrap { display: grid; grid-template-columns: 21cqw 1fr; gap: 1.6cqw; height: 100%; min-height: 0; }
+.dk-stepside { min-height: 0; overflow: auto; border-right: 1px solid #e3e9f2; padding-right: 1.2cqw; }
+.dk-stepside h3 { margin: 0 0 .6cqw; font-size: 1.5cqw; color: var(--n); }
+.dk-stepside ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .45cqw; }
+.dk-stepi { all: unset; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: 2.4cqw 1fr; gap: .2cqw .7cqw; align-items: start; padding: .5cqw .6cqw; border-radius: .8cqw; cursor: pointer; font-size: 1.2cqw; line-height: 1.4; color: #3a4459; }
+.dk-stepi b { grid-row: span 2; width: 2.2cqw; height: 2.2cqw; border-radius: 50%; display: grid; place-items: center; background: #e6ecf6; color: var(--n); font-size: 1.2cqw; }
+.dk-stepi .dk-art.mini { display: none; grid-column: 2; height: 8cqw; } .dk-stepi .dk-art.mini svg { width: 100%; height: 100%; }
+.dk-stepi .dk-stept { grid-column: 2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.dk-stepi.on { background: #eef7f1; color: #1d2b22; } .dk-stepi.on b { background: var(--t); color: #fff; }
+.dk-stepi.on .dk-art.mini { display: block; } .dk-stepi.on .dk-stept { -webkit-line-clamp: unset; display: block; }
+.dk-stepi:hover:not(.on) { background: #f5f8fc; } .dk-stepi:focus-visible { outline: 2px solid var(--n); }
+.dk-labwrap .dk-3d[data-mount=lab] { grid-template-columns: 1fr 24cqw; }
+@media (max-width: 760px) {
+  .dk-labwrap { grid-template-columns: 1fr; } .dk-stepside { border-right: 0; padding: 0; order: 2; max-height: none; }
+  .dk-stepi { font-size: 14px; grid-template-columns: 26px 1fr; gap: 4px 8px; padding: 8px; } .dk-stepi b { width: 24px; height: 24px; font-size: 13px; } .dk-stepi .dk-art.mini { height: 90px; }
+  .dk-stepside h3 { font-size: 15px; } .dk-peek { font-size: 15px; padding: 8px 14px; } .dk-tbl .dk-peek { font-size: 13px; }
+}
+.dk-peek[hidden] { display: none; }

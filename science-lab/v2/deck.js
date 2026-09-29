@@ -15,6 +15,8 @@ export function buildSlides(ch, art, plan, similar, mode) {
   // 답 자리: 가르치기는 클릭으로 열리는 답, 스스로는 쓰기 칸 + 예시 답 보기
   const ans = (a, id) => (teach ? `<div class="dk-ans rv">${esc(a)}</div>`
     : `<div class="dk-self" data-k="${id}"><div class="dk-inrow"><textarea class="dk-in" rows="2" placeholder="내 생각을 써 보세요"></textarea>${MIC ? '<button type="button" class="dk-mic" aria-pressed="false" title="말로 쓰기">🎤</button>' : ''}</div><div class="dk-ans" hidden><b>예시 답</b> ${esc(a)}</div></div>`);
+  // 생각만 하기(스스로 공부): 쓰지 않고 머릿속으로 답한 뒤 「예시 답 보기」로 확인 — 쓰기는 가설·결론·이런 경우는·도전만(원장 2026-09-29: "쓰는 활동이 너무 많다")
+  const peek = (a) => (teach ? `<div class="dk-ans rv">${esc(a)}</div>` : `<div class="dk-peekw"><button type="button" class="dk-peek">예시 답 보기</button><div class="dk-ans" hidden>${esc(a)}</div></div>`);
   const add = (id, phase, title, body, extra = {}) => S.push({ id, phase, title, body, ...extra });
   const ph = Object.fromEntries(plan.phases.map((p) => [p.id, p]));
 
@@ -23,27 +25,39 @@ export function buildSlides(ch, art, plan, similar, mode) {
   if (teach) add('plan', 'open', '수업 흐름 · 90분', `<ol class="dk-plan">${plan.phases.map((p) => `<li><b>${esc(p.name)}</b><span>${p.min}분</span><em>${esc(p.aim)}</em></li>`).join('')}</ol>
     <p class="dk-sub">탐구 요소 · ${ch.skills.map(esc).join(' · ')}</p>`);
   add('intro', 'open', '이런 모습 본 적 있나요?', `<div class="dk-two"><div class="dk-art">${art.opener}</div><div>${ch.intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div></div>`, { layout: 'intro', kind: 'read' });
-  ch.think.forEach((t, i) => add(`think${i + 1}`, 'open', `미리 생각하기 ${i + 1}`, `<p class="dk-q">${esc(t.q)}</p>${ans(t.a, `think${i}`)}`, { say: 'think', kind: 'write' }));
-  add('scene', 'open', '3D로 먼저 보기', `<div class="dk-3d" data-mount="scene"></div>`, { say: 'scene', mount: 'scene', layout: 'media', kind: 'scene' });
+  (teach ? ch.think : ch.think.slice(0, 1)).forEach((t, i) => add(`think${i + 1}`, 'open', `미리 생각하기 ${i + 1}`, `<p class="dk-q">${esc(t.q)}</p>${teach ? ans(t.a, `think${i}`) : `<p class="dk-sub">쓰지 않아도 돼요. 머릿속으로 떠올려 봐요.</p>${peek(t.a)}`}`, { say: 'think', kind: teach ? 'write' : 'think' }));
+  // 가설 전에는 답이 나오기 전까지만(장면의 revealAt) — 답은 실험·결과 뒤 「3D로 확인하기」에서(SEQUENCE-DESIGN.md)
+  add('scene', 'open', '3D로 먼저 보기', `<div class="dk-3d" data-mount="scene" data-preview="1"></div>`, { say: 'scene', mount: 'scene', layout: 'media', kind: 'scene' });
 
   add('goal', 'design', '탐구 목표', `<p class="dk-goal">${esc(ch.goal)}</p><div class="dk-two"><div class="dk-card"><h3>준비물</h3><p>${ch.materials.kit.map(esc).join(', ')}</p></div>
     <div class="dk-card"><h3>학생 준비물</h3><p>${ch.materials.student.map(esc).join(', ')}</p></div></div>`, { kind: 'read', layout: 'goal' });
   add('hypo', 'design', 'STEP 1 · 가설 세우기', `<p class="dk-q">${esc(ch.hypothesis.hint)}</p>${ans(ch.hypothesis.a, 'hypo')}`, { say: 'hypo', kind: 'write' });
   const d = ch.design;
-  add('design', 'design', 'STEP 2 · 실험 설계하기', `<table class="dk-tbl">${[d.change, d.same, d.measure].map((r, i) => `<tr><th>${esc(r.q)}</th><td>${ans(r.a, `design${i}`)}</td></tr>`).join('')}</table>
-    <p class="dk-sub">알맞은 실험은 바꿀 조건을 하나만 정하고, 나머지는 모두 같게 해요.</p>`, { say: 'design', kind: 'write' });
+  add('design', 'design', 'STEP 2 · 실험 설계하기', `<table class="dk-tbl">${[d.change, d.same, d.measure].map((r, i) => `<tr><th>${esc(r.q)}</th><td>${teach ? ans(r.a, `design${i}`) : peek(r.a)}</td></tr>`).join('')}</table>
+    <p class="dk-sub">알맞은 실험은 바꿀 조건을 하나만 정하고, 나머지는 모두 같게 해요.</p>
+    <div class="dk-caution"><h3>주의하세요!</h3><ul>${ch.caution.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>`, { say: 'design', kind: teach ? 'write' : 'think' });
 
-  ch.steps.forEach((s, i) => add(`step${i + 1}`, 'lab', `STEP 3 · 실험하기 ${i + 1}/${ch.steps.length}`,
+  if (false) ch.steps.forEach((s, i) => add(`step${i + 1}`, 'lab', `STEP 3 · 실험하기 ${i + 1}/${ch.steps.length}`,
     `<div class="dk-two wide-art"><div class="dk-art">${art[s.art]}</div><div><span class="dk-stepno" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><p class="dk-big">${esc(s.text)}</p><p class="dk-tip rv">도움말 · ${esc(s.tip)}</p></div></div>`, { say: `step${i + 1}`, kind: 'read', layout: 'step' }));
-  add('lab', 'lab', `3D 실험실 · ${esc(ch.labTitle || '조건을 바꿔 직접 해 보기')}`, `<div class="dk-3d" data-mount="lab"></div>`, { say: 'lab', mount: 'lab', layout: 'media', kind: 'lab' });
-  add('wonder', 'lab', 'Q. 이런 경우는?', `<p class="dk-q">${esc(ch.wonder.q)}</p>${ans(ch.wonder.a, 'wonder')}
-    <div class="dk-caution"><h3>주의하세요!</h3><ul>${ch.caution.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>`, { say: 'wonder', kind: 'write' });
+  if (!teach) {
+    // 실험 순서 맞추기(스스로 공부): 집에는 재료가 없으니 순서 읽기 5장 대신, 섞인 카드를 순서대로 누른다. 순서는 늘 정답과 다르게 섞는다.
+    const k = ch.steps.length, mix = ch.steps.map((_, j) => j).sort((a, b) => ((a * 7 + 3) % k) - ((b * 7 + 3) % k));
+    if (mix.every((x, j) => x === j)) mix.reverse();
+    add('order', 'lab', 'STEP 3 · 실험 순서 맞추기', `<p class="dk-q">실험을 어떤 순서로 할까요? 첫 번째부터 차례로 카드를 눌러요.</p>
+      <ol class="dk-ords">${mix.map((j) => `<li><button type="button" class="dk-ord" data-j="${j}"><i class="dk-ordn" aria-hidden="true"></i><span class="dk-art mini">${art[ch.steps[j].art] || ''}</span><span class="dk-ordt">${esc(ch.steps[j].text)}</span></button></li>`).join('')}</ol>
+      <div class="dk-act"><button type="button" class="dk-go" data-o="check" disabled>확인</button><button type="button" data-o="reset">처음부터</button></div>`, { say: 'order', kind: 'order' });
+  }
+  // 실험 순서를 3D 실험실 옆에(원장: "실험 순서와 3D 실험실이 옆에 나와야") — 누르면 그 단계가 크게, 가르치기는 순서를 짚으며 설명
+  const stepsAside = `<aside class="dk-stepside"><h3>실험 순서</h3><ol>${ch.steps.map((st, j) => `<li><button type="button" class="dk-stepi${j ? '' : ' on'}" data-st="${j}"><b>${j + 1}</b><span class="dk-art mini">${art[st.art] || ''}</span><span class="dk-stept">${esc(st.text)}</span></button></li>`).join('')}</ol></aside>`;
+  add('lab', 'lab', `3D 실험실 · ${esc(ch.labTitle || '조건을 바꿔 직접 해 보기')}`, `<div class="dk-labwrap">${stepsAside}<div class="dk-3d" data-mount="lab"></div></div>`, { say: 'lab', mount: 'lab', layout: 'media', kind: 'lab' });
+  add('wonder', teach ? 'lab' : 'extend', 'Q. 이런 경우는?', `<p class="dk-q">${esc(ch.wonder.q)}</p>${ans(ch.wonder.a, 'wonder')}`, { say: 'wonder', kind: 'write' });
 
-  ch.results.forEach((r, i) => add(`res${i + 1}`, 'result', `STEP 4 · 결과 ${i + 1}`, `<p class="dk-q">${esc(r.q)}</p>
+  ch.results.forEach((r, i) => add(`res${i + 1}`, 'result', `STEP 4 · 결과 ${i + 1}`, `${teach ? '' : '<div class="dk-mylab" hidden></div>'}<p class="dk-q">${esc(r.q)}</p>
     ${r.art ? `<div class="dk-art mid">${art[r.art]}</div>` : ''}
-    ${r.table ? `<table class="dk-tbl"><tr>${r.table.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>${r.rows.map((rw) => `<tr><th>${esc(rw)}</th>${r.table.slice(1).map(() => '<td></td>').join('')}</tr>`).join('')}</table>` : ''}
-    ${ans(r.a, `res${i}`)}`, { say: 'res', kind: 'write' }));
-  add('concl', 'result', 'STEP 5 · 결론 내리기', `<ol class="dk-list">${ch.conclusion.map((c, i) => `<li><p>${esc(c.q)}</p>${ans(c.a, `concl${i}`)}</li>`).join('')}</ol>`, { say: 'concl', kind: 'write' });
+    ${r.table ? `<table class="dk-tbl"><tr>${r.table.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>${r.rows.map((rw) => `<tr><th>${esc(rw)}</th>${r.table.slice(1).map((_, c) => (teach ? '<td></td>' : `<td contenteditable="true" data-cell="${i}-${rw}-${c}"></td>`)).join('')}</tr>`).join('')}</table>` : ''}
+    ${teach ? ans(r.a, `res${i}`) : peek(r.a)}`, { say: 'res', kind: teach ? 'write' : 'think' }));
+  add('reveal', 'result', '3D로 확인하기', `<p class="dk-sub">내 예상과 결과가 맞는지, 아까 멈췄던 곳부터 끝까지 봐요.</p><div class="dk-3d" data-mount="scene" data-from="reveal"></div>`, { say: 'reveal', mount: 'scene', layout: 'media', kind: 'scene' });
+  add('concl', 'result', 'STEP 5 · 결론 내리기', `<ol class="dk-list">${ch.conclusion.map((c, i) => `<li><p>${esc(c.q)}</p>${i === 0 || teach ? ans(c.a, `concl${i}`) : peek(c.a)}</li>`).join('')}</ol>`, { say: 'concl', kind: 'write' });
 
   const nt = ch.note;
   add('note', 'concept', `개념 노트 · ${nt.title}`, `<div class="dk-two"><div class="dk-art">${art[nt.art]}</div>
@@ -71,6 +85,23 @@ export function buildSlides(ch, art, plan, similar, mode) {
   });
   add('end', 'check', '', `<div class="dk-cover"><h1>오늘 배운 것</h1><ul class="dk-points big">${(ch.summary || (ch.note?.points || []).map(esc)).map((x) => `<li>${x}</li>`).join('')}</ul>
     <p class="dk-sub">과제 · 교재 ${ch.no}장 교과 확인 문제와 영재성 기르기를 마무리해 오세요.</p></div>`, { layout: 'cover', kind: 'end' });
+  if (!teach) {
+    // 스스로 공부 = 2차시(SEQUENCE-DESIGN.md 확정안). 1차시 「해 보기」: 예상 → 가설 → 설계 → 실험 → 결과, 「1차시 끝」.
+    // 2차시 「알아 가기」: 떠올리기 → 3D로 확인 → 결론 → 개념 → 바로 확인 2 → 개념 플러스 → 이런 경우는 → 도전 하나 → 확인 문제 → 오늘 배운 것.
+    add('break', 'result', '', `<div class="dk-cover"><p class="dk-kick">1차시 「해 보기」 끝</p><h1>오늘은 여기까지!</h1><div class="dk-mine"></div>
+      <p class="dk-sub">내 예상이 맞았을까? 다음 시간에 3D로 확인하고, 왜 그런지 알아봐요.</p>
+      <div class="dk-act"><a class="dk-go" href="#/${ch.unit}/start">오늘은 여기까지</a><button type="button" class="dk-go ghost" data-a2="cont">바로 2차시 이어서 ›</button></div></div>`, { layout: 'cover', kind: 'break' });
+    add('recall', 'result', '2차시 · 지난 시간 떠올리기', `<p class="dk-q">지난 시간에 내가 쓴 가설과 실험 결과예요. 천천히 다시 읽어 봐요.</p><div class="dk-mine"></div>`, { kind: 'recall' });
+    const ch3 = [['discuss', '토의', ch.discuss.q, ch.discuss.a], ['creative', '창의력', ch.creative.q, ch.creative.a]];
+    add('challenge', 'extend', '도전 하나 고르기', `<p class="dk-q">셋 중에 하고 싶은 도전 하나를 골라요.</p><div class="dk-pick">${[...ch3.map(([id, t]) => [id, t]), ['gifted', '영재성']].map(([id, t]) => `<button type="button" class="dk-go ghost" data-pick="${id}">${t}</button>`).join('')}</div>
+      ${ch3.map(([id, , q, a]) => `<div class="dk-pane" data-pane="${id}" hidden><p class="dk-q">${esc(q)}</p>${ans(a, id)}</div>`).join('')}
+      <div class="dk-pane" data-pane="gifted" hidden><p class="dk-q"><b>${esc(g.title)}</b><br>${esc(g.lead)}</p><table class="dk-tbl">${g.rows.map((r) => `<tr><th>${esc(r)}</th><td>${ans(g.a[r], `gifted-${r}`)}</td></tr>`).join('')}</table></div>`, { say: 'challenge', kind: 'challenge' });
+    const by = Object.fromEntries(S.map((x) => [x.id, x])), ids = S.map((x) => x.id), tests = ids.filter((x) => /^test\d/.test(x));
+    const order = ['cover', 'intro', 'think1', 'scene', 'goal', 'hypo', 'design', 'order', 'lab', ...ids.filter((x) => /^res\d/.test(x)), 'break',
+      'recall', 'reveal', 'concl', 'note', ...tests.slice(0, 2), 'plus', 'wonder', 'challenge', ...tests.slice(2), 'end'];
+    S.splice(0, S.length, ...order.filter((id) => by[id]).map((id) => by[id]));
+    let ses = 1; S.forEach((x) => { x.ses = ses; if (x.id === 'break') ses = 2; });
+  }
   S.forEach((s) => { s.n = ++n; s.phaseObj = ph[s.phase]; });
   return S;
 }
@@ -114,9 +145,9 @@ function watchLabTips(host, G) {
 let battle = false;   // 가르치기 · 실험 화면: 기본은 한 화면, 켜면 두 팀 배틀
 let recog = null;     // 말로 쓰기(학생이 🎤를 눌렀을 때만)
 
-export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, misc, onAnswer }) {
+export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, misc, onAnswer, myLab }) {
   const teach = mode === 'teach', S = buildSlides(ch, art, plan, similar, mode);
-  const i = Math.min(S.length - 1, Math.max(0, (idx || 1) - 1)), s = S[i], p = s.phaseObj;
+  const i = idx === 's2' ? Math.max(0, S.findIndex((x) => x.id === 'recall')) : Math.min(S.length - 1, Math.max(0, (idx || 1) - 1)), s = S[i], p = s.phaseObj;
   const go = (k) => { location.hash = `#/${u}/lab-class/${mode}/${k + 1}`; };
   const phases = plan.phases.map((x) => `<span class="${x.id === s.phase ? 'on' : ''}">${esc(x.name)}${teach ? ` ${x.min}′` : ''}</span>`).join('');
   const isLab = s.mount === 'lab';
@@ -134,6 +165,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     ${teach ? `<aside class="dk-notes no-print" ${notesOn ? '' : 'hidden'}><b>${esc(p?.name)} · ${p?.min}분</b> ${esc(p?.aim)}${s.say && plan.say[s.say] ? `<p>발문 · ${esc(plan.say[s.say])}</p>` : ''}<small>→ / 스페이스 / 화면 클릭: 답 열기·다음 · ← 이전 · N 노트 · F 전체 화면</small></aside>` : ''}
   </div>`;
   const stage = $app.querySelector('.dk-stage'), $next = $app.querySelector('[data-a=next]');
+  stage.querySelectorAll('.dk-stepi').forEach((b) => b.addEventListener('click', () => stage.querySelectorAll('.dk-stepi').forEach((x) => x.classList.toggle('on', x === b))));
   const alive = () => stage.isConnected;
   const hidden = () => [...stage.querySelectorAll('.rv:not(.on)')];
   const next = () => { const h = hidden(); if (teach && h.length) { h[0].classList.add('on'); return; } go(i === S.length - 1 ? 0 : i + 1); };
@@ -165,7 +197,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
       new MutationObserver(() => a.classList.contains('on') && ol.querySelectorAll('button').forEach((b) => b.classList.toggle('ok', key.includes(+b.dataset.j)))).observe(a, { attributes: true });
     });
     const m = stage.querySelector('[data-mount]');
-    if (m?.dataset.mount === 'scene') mount3D(m, { autoplay: false });
+    if (m?.dataset.mount === 'scene') mount3D(m, { autoplay: false, preview: !!m.dataset.preview, from: m.dataset.from || null });
     if (m?.dataset.mount === 'lab') {
       // 교사 화면에는 학생 개인 기록을 섞지 않는다 — 실험 표는 이 화면에서만 쓰고 버린다.
       if (!battle) mountLab(m, { rows: [], personal: false });
@@ -189,6 +221,10 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     clearTimeout(timer); timer = setTimeout(() => { if (alive() && !G?.paused) next(); }, ms);
   };
   addEventListener('hashchange', cancelAuto, { once: true });
+  // 장별 머문 시간(실측용, 이 기기에만): 몇 분짜리 수업인지 추정이 아니라 재어서 자르기 위해 — sciLab.dwell[u:장] = 최근 5번(초)
+  const t0 = performance.now();
+  addEventListener('hashchange', () => { try { const d = JSON.parse(localStorage.getItem('sciLab.dwell') || '{}'), k = `${u}:${s.id}`;
+    d[k] = [...(d[k] || []), Math.round((performance.now() - t0) / 1000)].slice(-5); localStorage.setItem('sciLab.dwell', JSON.stringify(d)); } catch { /* 저장 불가 */ } }, { once: true });
   let G = null;
   guideFor(u).then(({ V, guide }) => {
     if (!alive() || !guide.alive) return;
@@ -206,17 +242,75 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     if (k === 'read') { const t0 = performance.now(), c = cue(V, null); if (c) await G.say(c); if (!alive()) return;
       const read = Math.min(12000, Math.max(2200, textLen() * 55)) - (performance.now() - t0); auto(Math.max(1500, read)); return; }
     if (k === 'end') { G.say(cue(V, 'dk-end'), { mood: 'praise' }); return; }
-    if (k === 'scene') { G.say(cue(V, 'dk-scene')); const m = stage.querySelector('[data-mount]');
-      mount3D(m, { autoplay: true, onDone: async () => { if (!alive()) return; await G.say('dk-scene-done', { mood: 'praise' }); auto(900); } }); return; }
+    if (k === 'scene') { const m = stage.querySelector('[data-mount]'); G.say(cue(V, m.dataset.from ? 'dk-reveal' : 'dk-scene'));
+      mount3D(m, { autoplay: true, preview: !!m.dataset.preview, from: m.dataset.from || null, onDone: async () => { if (!alive()) return; await G.say('dk-scene-done', { mood: 'praise' }); auto(900); } }); return; }
     if (k === 'lab') { G.say(cue(V, 'dk-lab')); const m = stage.querySelector('[data-mount]'); let done = false;
       m.addEventListener('pointerdown', () => { if (timer) cancelAuto(); }, true);   // 실험을 더 하면 넘기지 않는다
-      mountLab(m, { personal: true, onRecord: async () => { if (done) return; done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } });
+      let recs = 0;   // 조건을 바꿔 두 번 이상 적어야 비교가 된다
+      mountLab(m, { personal: true, onRecord: async () => { if (done) return; recs += 1;
+        if (recs < 2) { G.say('dk-lab-more', { mood: 'encourage' }); return; }
+        done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } });
       watchLabTips(m, G); return; }
     if (k === 'test') return runTest(V);
+    if (k === 'order') return runOrder();
+    if (k === 'think') return runThink();
+    if (k === 'break') { fillMine(); G.say('dk-break', { mood: 'praise' });
+      stage.querySelector('[data-a2=cont]').onclick = () => next(); return; }                 // 1차시 끝: 저절로 넘기지 않는다
+    if (k === 'recall') { fillMine(); G.say('dk-recall'); auto(Math.min(15000, Math.max(5000, textLen() * 55))); return; }
+    if (k === 'challenge') { G.say('dk-challenge');
+      stage.querySelectorAll('[data-pick]').forEach((b) => { b.onclick = () => {
+        stage.querySelectorAll('[data-pane]').forEach((x) => { if (x.dataset.pane !== b.dataset.pick) x.remove(); else x.hidden = false; });
+        stage.querySelector('.dk-pick').remove(); stage.querySelector('.dk-body > .dk-q').remove(); runWrite(V); }; });
+      return; }
     return runWrite(V);
   }
+  // 생각만 하기: 머릿속으로 답하고 「예시 답 보기」 — 모두 열면 읽을 시간만큼 기다렸다가 다음으로
+  function wirePeek(onAll) {
+    const bs = [...stage.querySelectorAll('.dk-peek')];
+    bs.forEach((b) => { b.onclick = () => { b.hidden = true; b.nextElementSibling.hidden = false; if (onAll && bs.every((x) => x.hidden)) onAll(); }; });
+    return bs.length;
+  }
+  // 결과 장: 위에 내 3D 실험 기록, 표 칸은 직접 적기(저장)
+  function prepRes() {
+    const my = stage.querySelector('.dk-mylab'); if (my) { my.innerHTML = labTable(); my.hidden = !my.innerHTML; }
+    stage.querySelectorAll('td[data-cell]').forEach((td) => { const key = `${u}:cell:${td.dataset.cell}`; td.textContent = memo.get(key); td.addEventListener('input', () => memo.set(key, td.textContent)); });
+  }
+  function runThink() {
+    prepRes(); G.say('dk-think');
+    if (!wirePeek(() => auto(Math.min(9000, Math.max(3500, textLen() * 45))))) auto(4000);
+  }
+  // 실험 순서 맞추기: 누른 차례대로 번호가 붙는다(다시 누르면 빠짐). 첫 오답엔 정답을 알려 주지 않고, 두 번 틀리면 순서를 보여 준다.
+  function runOrder() {
+    const cards = [...stage.querySelectorAll('.dk-ord')], $chk = stage.querySelector('[data-o=check]'), seq = [];
+    let tries = 0, over = false;
+    G.say('dk-order');
+    const paint = () => { cards.forEach((c) => { const n = seq.indexOf(c); c.querySelector('.dk-ordn').textContent = n < 0 ? '' : n + 1; c.classList.toggle('pick', n >= 0); }); $chk.disabled = seq.length !== cards.length; };
+    cards.forEach((c) => { c.onclick = () => { if (over) return; const n = seq.indexOf(c); if (n >= 0) seq.splice(n, 1); else seq.push(c); c.classList.remove('no'); paint(); }; });
+    stage.querySelector('[data-o=reset]').onclick = () => { if (over) return; seq.length = 0; cards.forEach((c) => c.classList.remove('no')); paint(); };
+    $chk.onclick = async () => {
+      const ok = seq.every((c, j) => +c.dataset.j === j);
+      const sorted = () => [...cards].sort((a, b) => a.dataset.j - b.dataset.j).forEach((c) => c.parentElement.parentElement.appendChild(c.parentElement));
+      if (ok) { over = true; cards.forEach((c) => c.classList.add('ok')); sorted(); $chk.disabled = true; await G.say('dk-order-ok', { mood: 'praise' }); auto(3500); return; }
+      tries += 1;
+      if (tries < 2) { seq.forEach((c, j) => c.classList.toggle('no', +c.dataset.j !== j)); G.say('dk-order-retry', { mood: 'encourage' }); seq.length = 0; paint(); return; }
+      over = true; cards.forEach((c) => { c.classList.remove('no', 'pick'); c.classList.add('ok'); c.querySelector('.dk-ordn').textContent = +c.dataset.j + 1; });
+      sorted(); $chk.disabled = true; await G.say('dk-order-show'); auto(6000);
+    };
+  }
+  // 내가 쓴 것 모아 보기(1차시 끝·2차시 처음): 가설 + 3D 실험 기록 + 결과 답
+  function fillMine() {
+    const box = stage.querySelector('.dk-mine'); if (!box) return;
+    const hy = memo.get(`${u}:hypo`), res = S.filter((x) => /^res\d/.test(x.id)).map((x, j) => memo.get(`${u}:res${j}`)).filter(Boolean);
+    box.innerHTML = `<div class="dk-card"><h3>내 가설</h3><p>${esc(hy) || '<i>아직 쓰지 않았어요</i>'}</p></div>${labTable()}${res.length ? `<div class="dk-card"><h3>내가 적은 결과</h3>${res.map((t) => `<p>${esc(t)}</p>`).join('')}</div>` : ''}`;
+  }
   // 쓰기: 모든 칸을 채우면 '확인' → 예시 답과 비교해 스스로 O/X. O면 다음 장으로.
+  function labTable() {
+    const L = myLab?.(); if (!L?.rows?.length) return '';
+    return `<div class="dk-card"><h3>내 3D 실험 기록</h3><table class="dk-tbl"><tr>${L.cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr>${L.rows.map((r) => `<tr>${Object.values(r).slice(0, L.cols.length).map((v) => `<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+  }
   function runWrite(V) {
+    wirePeek();
+    prepRes();
     const boxes = [...stage.querySelectorAll('.dk-self')]; if (!boxes.length) { auto(3000); return; }
     const body = stage.querySelector('.dk-body');
     body.insertAdjacentHTML('beforeend', `<div class="dk-act"><button type="button" class="dk-go" data-w="check" disabled>확인</button>

@@ -169,20 +169,26 @@ let pw=null; try{ pw=require('./lib/playwright'); }catch(e){}
     // 화면: 로드맵에 카드가 그려지고, 실제 학원 이름이 안 나온다(세 언어)
     for(const lang of ['ko','en','zh']){
       await page.evaluate(l=>{ const s=JSON.parse(localStorage.getItem('nm_state_v1')); s.lang=l; s.schoolAge={entryYear:new Date().getFullYear()+((new Date().getMonth()+1)>=3?2:1)}; s.view='courseroad'; localStorage.setItem('nm_state_v1',JSON.stringify(s)); },lang);
-      await page.reload({waitUntil:'domcontentloaded'});
+      await page.reload({waitUntil:'domcontentloaded',timeout:60000});
       await page.waitForFunction(()=>typeof window.NM_PACE_DIAG==='function',null,{timeout:60000});
       /* 타이틀(모드 선택)이 뜨는 시점이 들쭉날쭉하다 — 카드가 보일 때까지 로드맵 버튼을 눌러 본다 */
-      let txt=null;
+      let txt=null,debug=null; const ready=lang==='ko'?/수학올림피아.*이과 최상위권|이과 최상위권.*수학올림피아/s:lang==='en'?/AMC.*Top science track|Top science track.*AMC/s:/数学竞赛.*理科顶尖|理科顶尖.*数学竞赛/s;
       for(let i=0;i<60&&!txt;i++){
-        await page.evaluate(()=>{ const vis=e=>e&&e.offsetParent!==null;
-          const t3=[...document.querySelectorAll('.nm-title3d button')].find(b=>/연산 로드맵|Course Road|运算路线图/.test(b.textContent));
-          const b=document.querySelector('#ttRoad'), t=document.querySelector('#townCourseRoad');
-          if(t3) t3.click(); else if(vis(b)) b.click(); else if(vis(t)) t.click(); });
+        await page.evaluate(()=>{
+          const b=document.querySelector('#ttRoad'),t=document.querySelector('#townCourseRoad');
+          const t3=[...document.querySelectorAll('.nm-title3d button')].find(x=>/연산 로드맵|Course Road|运算路线图/.test(x.textContent));
+          /* 3D 타이틀이 로딩 중이어도 숨겨진 2D 버튼의 공용 onclick은 준비된다.
+             화면 노출을 기다리지 말고 같은 이동 규칙을 직접 실행해 비결정성을 없애다. */
+          if(b)b.click();else if(t3)t3.click();else if(t)t.click(); });
         await page.waitForTimeout(500);
-        if(await page.locator('#crPaceCmp').count()) txt=await page.locator('#crPaceCmp').innerText();
+        if(await page.locator('#crPaceCmp').count()){
+          const candidate=await page.locator('#crPaceCmp').innerText();
+          if(ready.test(candidate))txt=candidate;
+        }
+        if(!txt)debug=await page.evaluate(()=>{let state=null;try{state=JSON.parse(localStorage.getItem('nm_state_v1'))}catch(e){}return{view:state&&state.view,ttRoad:!!document.querySelector('#ttRoad'),title3d:document.querySelectorAll('.nm-title3d button').length,townRoad:!!document.querySelector('#townCourseRoad'),pace:!!document.querySelector('#crPaceCmp'),text:(document.body.innerText||'').slice(0,180)}});
       }
       check(`화면(${lang}): 카드·판정·이름`, ()=>{
-        assert(txt, '#crPaceCmp 없음');
+        assert(txt, '#crPaceCmp 없음 '+JSON.stringify(debug));
         assert(!BANNED.test(txt), '실제 학원 이름이 보임');
         assert(/수학올림피아드|AMC|数学竞赛/.test(txt));
         assert(lang==='ko'?/이과 최상위권/.test(txt):lang==='en'?/Top science track/.test(txt):/理科顶尖/.test(txt));
