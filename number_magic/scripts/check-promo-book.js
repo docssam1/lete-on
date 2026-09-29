@@ -93,11 +93,14 @@ async function checkViewport(browser,port,width,height){
   if(OUT)await page.screenshot({path:path.join(OUT,screenName(width,'roadmap'))});
   await page.goBack();
   await page.waitForSelector('[data-panel="worksheet"].is-active');
+  await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
   const historyBeforeBack=await page.evaluate(()=>history.length);
   await page.keyboard.press('Escape');
   await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='video');
+  await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
   assert.equal(await page.evaluate(()=>history.length),historyBeforeBack,'이전 장은 브라우저 기록을 추가하지 않아야 한다');
   await page.keyboard.press('Escape');
+  await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='menu');
   await page.waitForSelector('[data-panel="menu"].is-active');
   assert.equal(await page.evaluate(()=>history.length),historyBeforeBack,'차례로 돌아가며 브라우저 기록을 추가하지 않아야 한다');
   assert.equal(await page.locator('#cinema').getAttribute('class'),'cinema journey-cinema is-journey');
