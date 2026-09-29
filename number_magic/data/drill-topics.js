@@ -709,7 +709,8 @@ var ADDITIONAL_THREADS = {
              'MD101','MD102','MD103','MD104','MD105','MD106','MD107','MD108','MD109','MD110',
              'MD111','MD112','MD113','MD114'],
   highmath2:['MD115','MD116','MD117','MD118','MD119','MD120','MD121','MD122','MD123','MD124',
-             'MD125','MD126','MD127','MD128','MD129','MD130','MD131','MD132','MD133']
+             'MD125','MD126','MD127','MD128','MD129','MD130','MD131','MD132','MD133'],
+  algebra:['MD134','MD135','MD136','MD137','MD138','MD139','MD140','MD141','MD142','MD143']
 };
 function buildTopics(threads){
   if(!threads) throw new Error('drill-topics: threads.js must load first');
