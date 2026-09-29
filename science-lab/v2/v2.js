@@ -446,7 +446,8 @@ async function pageStart(u) {
     <main class="wrap start"><p class="step-label">${esc(ch.link?.course || '')} ${esc(ch.link?.unit || '')}</p>
       <h2><span class="start-no">${esc(ch.no)}</span>${esc(ch.title)}</h2><p class="lead">무엇을 할까요?</p>
       <div class="start-grid">
-        ${card(`#/${u}/lab-class/self/1`, '🧪', '스스로 공부하기', '독쌤이 한 단계씩 안내해요. 하나를 마치면 다음으로 자동으로 넘어가요.', true)}
+        ${card(`#/${u}/lab-class/self/1`, '🧪', '스스로 공부하기 · 1차시', '「해 보기」 약 20분 — 예상하고, 가설 세우고, 3D 실험실에서 직접 해 봐요.', true)}
+        ${card(`#/${u}/lab-class/self/s2`, '🔎', '스스로 공부하기 · 2차시', '「알아 가기」 약 20분 — 3D로 확인하고, 결론과 개념을 정리해요.', true)}
         ${card(`#/${u}/lab-class/teach/1`, '🖥️', '가르치기', '전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요.')}
         ${card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
         ${card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
@@ -535,6 +536,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
   const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([bookMod, import('./deck.js')]);
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((x) => [x.id, x]));
   renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx, misc: MISC,
+    myLab: () => ({ cols: L.explore?.lab?.columns || [], rows: store.get(u).labRows || [] }),
     mount3D: (el, o = {}) => mount3D(el, L.engage.scene, { autoplay: !!o.autoplay, preview: o.preview || false, from: o.from || null, onDone: o.onDone }),
     // personal:false(가르치기) → 학생 기록을 읽지도 쓰지도 않는다. 두 팀 배틀은 각자 빈 표로.
     mountLab: (el, o = {}) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab,
@@ -560,7 +562,7 @@ async function route() {
   if (a === 'reading') return pageReading(u, L, b);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
   if (a === 'lab-book') return pageLabBook(u, mod, b || 'student', +location.hash.split('/')[4] || 1);
-  if (a === 'lab-class') return pageLabClass(u, mod, L, b || 'teach', +location.hash.split('/')[4] || 1);
+  if (a === 'lab-class') { const seg = location.hash.split('/')[4]; return pageLabClass(u, mod, L, b || 'teach', seg === 's2' ? 's2' : +seg || 1); }
   const step = Math.min(5, Math.max(1, +a || (store.get(u).step ?? 0) + 1));
   if (!a) { location.replace(`#/${u}/${step}`); return; }
   [stepEngage, (u2, L2) => stepExplore(u2, L2, b), stepExplain, stepElaborate, stepEvaluate][step - 1](u, L, items);

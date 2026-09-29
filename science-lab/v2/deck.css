@@ -234,3 +234,17 @@
   .dk-stage:not(.cover) .dk-body > * { flex: none; }
   .dk-in { min-height: 7.5cqw; }
 }
+
+/* 2차시 나누기(SEQUENCE-DESIGN.md): 1차시 끝·지난 시간 떠올리기·도전 하나 고르기·결과 표 직접 적기 */
+.dk-act a.dk-go { display: inline-flex; align-items: center; text-decoration: none; font-size: 1.7cqw; font-weight: 700; border-radius: 1cqw; padding: .8cqw 2.2cqw; min-height: 40px; }
+.dk-act .dk-go.ghost, .dk-pick .dk-go.ghost { background: #fff; color: var(--n); border: 1.5px solid #cfd8e6; }
+.dk-stage.cover .dk-act { display: flex; gap: 1cqw; flex-wrap: wrap; margin-top: 1.4cqw; }
+.dk-mine { display: grid; gap: 1cqw; margin: 1cqw 0; text-align: left; color: #222; }
+.dk-mine .dk-card h3 { margin: 0 0 .4cqw; } .dk-mine .dk-card p { margin: .2cqw 0; }
+.dk-pick { display: flex; gap: 1cqw; flex-wrap: wrap; margin: 1cqw 0; }
+.dk-pick .dk-go { min-width: 12cqw; font-size: 1.9cqw; padding: .8cqw 1.6cqw; border-radius: .9cqw; cursor: pointer; }
+.dk-mylab .dk-card { margin-bottom: 1cqw; }
+.dk-tbl td[contenteditable="true"] { background: #fbfdff; outline: 1.5px dashed #cfd8e6; outline-offset: -4px; min-width: 6cqw; cursor: text; }
+.dk-tbl td[contenteditable="true"]:empty::before { content: '적기'; color: #b5c0d0; }
+.dk-tbl td[contenteditable="true"]:focus { outline: 2px solid var(--t); background: #fff; }
+@media (max-width: 760px) { .dk-pick .dk-go { font-size: 15px; min-width: 90px; padding: 10px 14px; } .dk-stage.cover .dk-act { gap: 8px; margin-top: 14px; } }
