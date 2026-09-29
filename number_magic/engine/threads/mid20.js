@@ -308,7 +308,7 @@ NM_TGEN['md126_absIneq'] = function (params, rng) {
   if (kind === 'shift') {
     const s = R(rng, 1, 6), k = s * s, c = nz(rng, 1, 5), m = 2 * s + c;
     const d = xMinus(c);
-    return item(prompt, `x>${c}\\ \\Rightarrow\\ x+\\dfrac{${k}}{${d}}:\\ m=\\square`, m, [
+    return item(prompt, `x>${c}\\ \\Rightarrow\\ x+\\frac{${k}}{${d}}:\\ m=\\square`, m, [
       { tex:`x+\\dfrac{${k}}{${d}}=(${d})+\\dfrac{${k}}{${d}}${more(c, '')}` },
       { tex:`(${d})+\\dfrac{${k}}{${d}}${more(c, '')}\\ge 2\\sqrt{${k}}${more(c, '')}=${m}` },
       { tex:`m=\\square`, blank:m }]);
@@ -317,14 +317,15 @@ NM_TGEN['md126_absIneq'] = function (params, rng) {
     let p, q;
     do { const g = R(rng, 1, 3), a = R(rng, 1, 4), b = R(rng, 1, 4); p = g * a * a; q = g * b * b; } while (p === q && pick(rng, [0, 1, 1]));
     const m = p + q + 2 * Math.round(Math.sqrt(p * q));
-    return item(prompt, `x>0,\\ y>0\\ \\Rightarrow\\ (x+y)\\left(\\dfrac{${p}}{x}+\\dfrac{${q}}{y}\\right):\\ m=\\square`, m, [
+    /* 문제 줄은 \frac(글자 높이) — \dfrac 을 괄호로 감싸면 인쇄 칸(12문항)보다 6px 높았다(2026-09-29 check-print-overflow) */
+    return item(prompt, `x>0,\\ y>0\\ \\Rightarrow\\ (x+y)\\left(\\frac{${p}}{x}+\\frac{${q}}{y}\\right):\\ m=\\square`, m, [
       { tex:`(x+y)\\left(\\dfrac{${p}}{x}+\\dfrac{${q}}{y}\\right)=${p + q}+\\dfrac{${lead(p, 'y')}}{x}+\\dfrac{${lead(q, 'x')}}{y}` },
       { tex:`${p + q}+\\dfrac{${lead(p, 'y')}}{x}+\\dfrac{${lead(q, 'x')}}{y}\\ge ${p + q}+2\\sqrt{${p * q}}=${m}` },
       { tex:`m=\\square`, blank:m }]);
   }
   const t = R(rng, 2, 12), ds = divisors(t * t).filter(d => d <= 12 && t * t / d <= 150);
   const a = pick(rng, ds), b = t * t / a, m = 2 * t;
-  return item(prompt, `x>0\\ \\Rightarrow\\ ${lead(a, 'x')}+\\dfrac{${b}}{x}:\\ m=\\square`, m, [
+  return item(prompt, `x>0\\ \\Rightarrow\\ ${lead(a, 'x')}+\\frac{${b}}{x}:\\ m=\\square`, m, [
     { tex:`${lead(a, 'x')}+\\dfrac{${b}}{x}\\ge 2\\sqrt{${lead(a, 'x')}\\times\\dfrac{${b}}{x}}=2\\sqrt{${t * t}}` },
     { tex:`2\\times${t}=${m}` },
     { tex:`m=\\square`, blank:m }]);
