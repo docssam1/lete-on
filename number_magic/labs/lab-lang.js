@@ -20,6 +20,11 @@ try{
   var st=JSON.parse(localStorage.getItem('nm_state_v1')||'{}');
   if(st.lang==='en'||st.lang==='zh'||st.lang==='ko')LANG=st.lang;
 }catch(e){}
+/* 홍보 책(promo/)처럼 다른 언어 화면에서 링크로 열 때는 ?lang= 이 우선 — 앱 상태는 건드리지 않는다. */
+try{
+  var q=new URLSearchParams(location.search).get('lang');
+  if(q==='en'||q==='zh'||q==='ko')LANG=q;
+}catch(e){}
 document.documentElement.lang=(LANG==='zh')?'zh-CN':LANG;
 
 function T(o){
