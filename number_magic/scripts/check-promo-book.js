@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 /* 광고가 긴 스크롤 페이지로 돌아가지 않고 한 권의 책 안에서
-   표지 → 오른쪽 영상 → 실제 학습지 → 전체 로드맵으로 이어지는지 확인한다. */
+   표지 → 영상 → 이야기 → 실험실 → 학습지 → 전체 로드맵으로 이어지는지 확인한다. */
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert/strict');
 const {chromium}=require('./lib/playwright');
 const ROOT=path.resolve(__dirname,'..');
@@ -42,15 +42,16 @@ async function checkViewport(browser,port,width,height){
   await page.locator('#openBook').click();
   await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='menu');
   await page.waitForSelector('[data-panel="menu"].is-active');
-  assert.equal(await page.locator('.chapter-nav > *').count(),4);
-  assert.match(await visibleText(page,'.chapter-nav'),/04 오픈톡 상담/);
+  assert.equal(await page.locator('.chapter-nav > *').count(),6);
+  assert.match(await visibleText(page,'.chapter-nav'),/03 수학 실험실 체험/);
+  assert.match(await visibleText(page,'.chapter-nav'),/06 오픈톡 상담/);
   assert.equal(await page.locator('#cinema').getAttribute('class'),'cinema journey-cinema is-journey');
   assert.match(await page.locator('#introVideo').getAttribute('src'),/showreel-15s-vertical\.mp4$/);
   const journeyContract=await page.locator('#introVideo').evaluate(v=>({loop:v.loop,muted:v.muted,volume:v.volume,right:!!v.closest('.page-right')}));
   assert.deepEqual(journeyContract,{loop:true,muted:false,volume:.72,right:true});
   assert.match(await visibleText(page,'#journeyEnter'),/수의 마법으로 여행/);
   assert.equal(await page.locator('#cinemaPlay').isVisible(),true,'움직임 줄이기 설정에서는 미리보기를 직접 재생할 수 있어야 한다');
-  assert.equal(await page.locator('#bookNext').getAttribute('aria-label'),'다음 페이지: 실제 학습지');
+  assert.equal(await page.locator('#bookNext').getAttribute('aria-label'),'다음 페이지: 수의 마법 이야기 · 1');
   if(OUT)await page.screenshot({path:path.join(OUT,screenName(width,'menu'))});
 
   await page.locator('#journeyEnter .primary-button').click();
@@ -64,7 +65,8 @@ async function checkViewport(browser,port,width,height){
   assert.equal(await page.locator('#cinemaControls').isVisible(),true);
   assert.equal(await page.locator('#journeyEnter').isHidden(),true);
   assert.equal(await page.locator('[data-cut]').count(),2);
-  assert.match(await visibleText(page,'#video-title'),/2분 10초로 보는 수의 마법/);
+  assert.equal(await visibleText(page,'#video-title'),'소개 영상');
+  assert.doesNotMatch(await visibleText(page,'.invitation-page'),/2분 10초로 보는/);
   const videoContract=await page.locator('#introVideo').evaluate(v=>({native:v.hasAttribute('controls'),list:v.getAttribute('controlslist'),pip:v.hasAttribute('disablepictureinpicture')}));
   assert.deepEqual(videoContract,{native:false,list:'nodownload noremoteplayback',pip:true});
   await page.locator('#introVideo').evaluate(v=>v.dispatchEvent(new Event('play')));
@@ -74,6 +76,21 @@ async function checkViewport(browser,port,width,height){
   await page.waitForSelector('#videoFinish:not([hidden])');
   if(OUT)await page.screenshot({path:path.join(OUT,screenName(width,'video-ended'))});
 
+  await page.locator('#bookNext').click();
+  await page.waitForSelector('[data-panel="story1"].is-active');
+  assert.match(await visibleText(page,'[data-panel="story1"]'),/답을 빨리 구하는 계산 학습이 아닙니다/);
+  if(OUT)await page.screenshot({path:path.join(OUT,screenName(width,'story1'))});
+  await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
+  await page.locator('#bookNext').click();await page.waitForSelector('[data-panel="story2"].is-active');await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
+  assert.equal(await page.locator('.journey-steps li').count(),8);
+  await page.locator('#bookNext').click();await page.waitForSelector('[data-panel="story3"].is-active');await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
+  assert.match(await visibleText(page,'[data-panel="story3"]'),/수학 이야기 → 마법 노트 → 창의 연산 → 교과 연산 → 문장제·적용/);
+  await page.locator('#bookNext').click();await page.waitForSelector('[data-panel="labs"].is-active');await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
+  assert.equal(await page.locator('[data-lab]').count(),2);
+  assert.match(await page.locator('#labFrame').getAttribute('src'),/why-calculus\.html$/);
+  if(OUT)await page.screenshot({path:path.join(OUT,screenName(width,'labs'))});
+  await page.locator('[data-lab="secret1001"]').click();
+  assert.match(await page.locator('#labFrame').getAttribute('src'),/secret-1001\.html$/);
   await page.locator('#bookNext').click();
   await page.waitForSelector('[data-panel="worksheet"].is-active');
   assert.equal(await page.locator('#bookNext').getAttribute('aria-label'),'다음 페이지: 전체 로드맵');
@@ -87,31 +104,25 @@ async function checkViewport(browser,port,width,height){
   await page.locator('#bookNext').click();
   await page.waitForSelector('[data-panel="roadmap"].is-active');
   assert.equal(await page.locator('#bookNext').isHidden(),true);
-  assert.equal(await page.locator('#roadmapRows .roadmap-row').count(),7);
-  assert.equal(await page.locator('.track-key [data-track]').count(),3);
-  const tracks=await visibleText(page,'.track-key');
-  assert.match(tracks,/소마 A 트랙/);assert.match(tracks,/필즈 E1 트랙/);assert.match(tracks,/프리미어 트랙/);
+  assert.equal(await page.locator('#roadmapRows .roadmap-stage-card').count(),7);
+  assert.equal(await page.locator('#courseRows .course-row').count(),46);
+  assert.match(await visibleText(page,'#courseRows'),/00 수와 문장제와 친해지기/);
+  assert.match(await visibleText(page,'#courseRows'),/45 극한·미분·적분 심화/);
   if(OUT)await page.screenshot({path:path.join(OUT,screenName(width,'roadmap'))});
-  await page.locator('#bookBack').evaluate(button=>{button.click();button.click()});
+  await page.locator('#bookBack').click();
   await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='worksheet');
   await page.waitForSelector('[data-panel="worksheet"].is-active');
   await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
   const historyBeforeBack=await page.evaluate(()=>history.length);
   await page.keyboard.press('Escape');
-  await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='video');
+  await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='labs');
   await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
   assert.equal(await page.evaluate(()=>history.length),historyBeforeBack,'이전 장은 브라우저 기록을 추가하지 않아야 한다');
-  await page.keyboard.press('Escape');
-  await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='menu');
-  await page.waitForSelector('[data-panel="menu"].is-active');
-  assert.equal(await page.evaluate(()=>history.length),historyBeforeBack,'차례로 돌아가며 브라우저 기록을 추가하지 않아야 한다');
-  assert.equal(await page.locator('#cinema').getAttribute('class'),'cinema journey-cinema is-journey');
-  assert.equal(await page.locator('[data-panel="menu"]').getAttribute('aria-labelledby'),'menu-title');
   await page.locator('#bookHome').click();
   await page.waitForSelector('.scene-cover.is-active');
   assert.deepEqual(errors,[]);
   await context.close();
-  return {width,height,bodyOverflow:false,chapters:4,rightPageVideo:true,videoCuts:2,edgeNext:true,worksheet:true,roadmapStages:7,tracks:3};
+  return {width,height,bodyOverflow:false,chapters:6,rightPageVideo:true,videoCuts:2,pageLeaves:true,stories:3,labs:2,worksheet:true,roadmapStages:7,roadmapCourses:46};
 }
 async function checkMotionAndMedia(browser,port){
   const context=await browser.newContext({viewport:{width:1366,height:768},reducedMotion:'no-preference'});
@@ -135,8 +146,12 @@ async function checkMotionAndMedia(browser,port){
   assert.equal(await page.locator('.book-paper').evaluate(el=>el.classList.contains('is-turning')),false,'주 영상은 같은 오른쪽 장에서 바뀌어야 한다');
   assert.match(await page.locator('#introVideo').getAttribute('src'),/showreel-full\.mp4$/);
   await page.locator('#bookNext').click();
-  assert.equal(await page.locator('.book-paper').evaluate(el=>el.classList.contains('is-turning')),true,'옷 책장 넘김 버튼은 실제 페이지 애니메이션을 시작해야 한다');
-  await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='worksheet');
+  assert.equal(await page.locator('.book-paper').evaluate(el=>el.classList.contains('is-turning')),true,'책장 넘김 버튼은 실제 페이지 애니메이션을 시작해야 한다');
+  assert.equal(await page.locator('.turning-leaf .leaf-face').count(),2,'넘기는 종이는 앞면과 뒷면이 있어야 한다');
+  if(OUT){await page.waitForTimeout(330);await page.screenshot({path:path.join(OUT,'page-turn-1366.png')})}
+  await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='story1');
+  await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
+  assert.equal(await page.locator('[data-panel="story1"]').first().getAttribute('aria-hidden'),'false','넘김 뒤 새 장이 완전히 열려야 한다');
   assert.equal((await page.locator('#introVideo').evaluate(v=>v.paused)),true);
   assert.deepEqual(errors,[]);
   await context.close();
@@ -149,7 +164,8 @@ async function checkMotionAndMedia(browser,port){
   assert.equal(/<a\b[^>]+href=["'][^"']+\.mp4/i.test(html),false,'MP4 직접 다운로드 링크가 없어야 한다');
   assert.equal(/<a\b[^>]+href=["'][^"']+\.pdf/i.test(html),false,'PDF 다운로드 링크가 없어야 한다');
   assert.equal(/\sdownload(?:\s|=|>)/i.test(html),false,'download 속성이 없어야 한다');
-  for(const removed of ['왜 빠른 계산보다 수 감각인지','영상 파일로 받기','체험 학습지 PDF로 받기','과정 5 뺄셈 마법과 구구단 첫걸음'])assert.equal(html.includes(removed),false,`장황한 옛 문구가 남음: ${removed}`);
+  for(const required of ['답을 빨리 구하는','가족이 겪는 순서','그리고 공부는','미적분은 왜 태어났나','1001의 비밀'])assert.equal(html.includes(required),true,`책 안 설명 또는 체험이 빠짐: ${required}`);
+  for(const removed of ['영상 파일로 받기','체험 학습지 PDF로 받기','과정 5 뺄셈 마법과 구구단 첫걸음','2분 10초로 보는'])assert.equal(html.includes(removed),false,`불필요한 옛 문구가 남음: ${removed}`);
   if(OUT)fs.mkdirSync(OUT,{recursive:true});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));let browser;
   try{
