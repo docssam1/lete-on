@@ -53,7 +53,7 @@ export class Stage {
     this._on(canvas, 'webglcontextlost', (e) => { e.preventDefault(); this.lost = true; canvas.dataset.contextLost = 'true'; });
     this._on(canvas, 'webglcontextrestored', () => { this.lost = false; delete canvas.dataset.contextLost; });
     if ('IntersectionObserver' in window) {
-      this._observer = new IntersectionObserver(([entry]) => { this._inView = !!entry?.isIntersecting; this._updateActivity(); }, { threshold: 0.01 });
+      this._observer = new IntersectionObserver((entries) => { const entry = entries[entries.length - 1]; this._inView = !!entry?.isIntersecting; this._updateActivity(); }, { threshold: 0.01 });   // 캔버스를 옮기면(전체 화면) 한 번에 「안 보임→보임」 두 개가 온다 — 마지막 것이 지금 상태
       this._observer.observe(canvas);
     }
     this._loop = this._loop.bind(this); this._resize(); this._updateActivity();
@@ -135,7 +135,7 @@ export class Stage {
   }
   _setupInput() {
     const c = this.canvas; let drag = null, pinch = null;
-    const down = (x, y) => { drag = { x, y, th: this.orbit.theta, ph: this.orbit.phi }; this._goHome = false; };
+    const down = (x, y) => { drag = { x, y, th: this.orbit.theta, ph: this.orbit.phi }; this._goHome = false; this._glide = false; };
     const move = (x, y) => { if (!drag) return; const dx = (x - drag.x) / c.clientWidth, dy = (y - drag.y) / c.clientHeight; this.orbit.theta = drag.th - dx * 3.2; this.orbit.phi = Math.max(0.35, Math.min(1.5, drag.ph - dy * 2.4)); if (Math.abs(dx) + Math.abs(dy) > 0.03) this._moved(); };
     this._on(c, 'pointerdown', (e) => { if (e.isPrimary) { down(e.clientX, e.clientY); c.setPointerCapture(e.pointerId); } });
     this._on(c, 'pointermove', (e) => { if (e.isPrimary) move(e.clientX, e.clientY); });
@@ -146,12 +146,15 @@ export class Stage {
     this._on(c, 'touchmove', (e) => { if (e.touches.length === 2 && pinch) { this._userZoom = true; this._moved(); const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); this.orbit.dist = this._zoomClamp(this.orbit.dist * pinch / d); pinch = d; } }, { passive: true });
     this._on(c, 'touchend', () => { pinch = null; });
     this._on(c, 'dblclick', () => this.returnHome());
+    this._on(c, 'stage:moved', () => { this._userZoom = false; this._needFit = true; this._reobserve(); if (this._vbShown) this._placeViewBtn(); });
     // 전체 화면을 켜고 끌 때는 새 화면 비율에 맞춰 다시 잡는다(확대해 둔 것도 풀고)
-    this._on(document, 'fullscreenchange', () => { this._userZoom = false; this._needFit = true; if (this._vbShown) this._placeViewBtn(); });
+    this._on(document, 'fullscreenchange', () => { this._userZoom = false; this._needFit = true; this._reobserve(); if (this._vbShown) this._placeViewBtn(); });
   }
   // 돌리거나 확대하면 「처음 시점」 단추가 캔버스 왼쪽 아래에 뜬다 — 누르면(또는 두 번 누르면) 부드럽게 돌아간다
   // 확대 범위는 장면마다 맞춘 거리 기준 — 절대값(3~20)이면 멀리 잡힌 장면은 확대하자마자 튀었다
   _zoomClamp(d) { const h = this.orbit.home?.dist || 8; return Math.max(Math.max(1.2, h * 0.35), Math.min(h * 1.8, d)); }
+  // 캔버스가 DOM 안에서 옮겨졌을 때 보임 여부를 새로 받는다(전체 화면 켜고 끌 때)
+  _reobserve() { if (!this._observer) return; this._observer.unobserve(this.canvas); this._observer.observe(this.canvas); }
   _moved() { if (!this._vbShown) { this._vbShown = true; this._placeViewBtn(); } }
   _placeViewBtn() {
     const c = this.canvas, p = c.parentElement; if (!p) return;
@@ -188,7 +191,7 @@ export class Stage {
     o.home = { theta: o.theta, phi: o.phi, dist: o.dist, target: o.target.clone() };
     // frame: [[x0,y0,z0],[x1,y1,z1]] — 움직이는 물체가 있는 실험은 「다 놓였을 때」의 작업 공간을 직접 준다(떨어지는 도중의 포일에 맞추지 않게)
     this._frameFixed = view.frame ? new THREE.Box3(new THREE.Vector3(...view.frame[0]), new THREE.Vector3(...view.frame[1])) : null;
-    this._goHome = false; this._vbShown = false; if (this._vb) this._vb.style.display = 'none';
+    this._goHome = false; this._glide = false; this._vbShown = false; if (this._vb) this._vb.style.display = 'none';
     this._needFit = true; this._userZoom = false;
   }
   // 틀에 넣을 점들: 보이는 물체(장면이 숨겨 둔 것도 frameHidden이면)마다 제 상자의 여덟 꼭짓점. 라벨은 가운데 한 점.
@@ -213,8 +216,8 @@ export class Stage {
     return pts;
   }
   // 장면이 정한 각도 그대로, 모든 점이 화면 안(여백 fitMargin)에 들어오는 가장 가까운 거리와 가운데 — 한쪽으로 쏠리지 않게 세 번 다시 잰다
-  _fit() {
-    const pts = this._framePoints(); if (!pts.length) return false;
+  _solveFit() {
+    const pts = this._framePoints(); if (!pts.length) return null;
     const o = this.orbit, h = o.home || { theta: o.theta, phi: o.phi };
     const d = new THREE.Vector3(Math.sin(h.phi) * Math.sin(h.theta), Math.cos(h.phi), Math.sin(h.phi) * Math.cos(h.theta));
     const r = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), d).normalize(), u = new THREE.Vector3().crossVectors(d, r).normalize();
@@ -228,11 +231,32 @@ export class Stage {
       c.addScaledVector(r, (x0 + x1) / 2 * D).addScaledVector(u, (y0 + y1) / 2 * D);
       D = need();
     }
-    D = Math.max(2, Math.min(40, D));
-    if (o.home) { o.home.dist = D; o.home.target.copy(c); }
-    if (!this._userZoom) { o.dist = D; o.target.copy(c); }
-    this._fitAspect = this.camera.aspect;
+    return { D: Math.max(2, Math.min(40, D)), c };
+  }
+  _fit() {
+    const f = this._solveFit(); if (!f) return false; const o = this.orbit;
+    if (o.home) { o.home.dist = f.D; o.home.target.copy(f.c); }
+    if (!this._userZoom) { o.dist = f.D; o.target.copy(f.c); }
+    this._fitAspect = this.camera.aspect; this._fitSeen = f; this._fitWait = 0;
     return true;
+  }
+  // 실험 중 물체가 움직여(떨어지는 고리·놓이는 그릇) 처음 잡은 틀이 크게 어긋나면 다시 맞춘다 — 사용자가 돌리거나 확대하지 않았을 때만.
+  // 넓혀야 하면(잘릴 위험) 바로, 좁혀도 되면 1.2초 동안 그대로일 때만(카메라가 들썩이지 않게). 옮기는 건 부드럽게.
+  _watchFit(raw) {
+    this._fitClock = (this._fitClock || 0) + raw; if (this._fitClock < 0.6) return; this._fitClock = 0;
+    const o = this.orbit, h = o.home;
+    if (!h || this._userZoom || this._vbShown || this._goHome || this._frameFixed) return;
+    if (Math.abs(o.theta - h.theta) + Math.abs(o.phi - h.phi) > 1e-3) return;
+    const f = this._solveFit(); if (!f) return;
+    const dD = (f.D - h.dist) / h.dist, moved = f.c.distanceTo(h.target) / h.dist;
+    if (Math.abs(dD) < 0.1 && moved < 0.06) { this._fitWait = 0; return; }
+    if (dD < 0 && moved < 0.06 && ++this._fitWait < 2) return;
+    h.dist = f.D; h.target.copy(f.c); this._fitWait = 0; this._glide = true;
+  }
+  _stepGlide(raw) {
+    const o = this.orbit, h = o.home, k = 1 - Math.exp(-raw * 4);
+    o.dist += (h.dist - o.dist) * k; o.target.lerp(h.target, k);
+    if (Math.abs(h.dist - o.dist) < 0.005 && o.target.distanceTo(h.target) < 0.005) { o.dist = h.dist; o.target.copy(h.target); this._glide = false; }
   }
   resetView() { const h = this.orbit.home; if (h) { this.orbit.theta = h.theta; this.orbit.phi = h.phi; this.orbit.dist = h.dist; this.orbit.target.copy(h.target); } }
   // 형상·재질·텍스처를 모두 GPU에서 내린다(라벨 텍스처는 여러 무대가 캐시로 같이 쓰지만, 내려도 다음에 쓸 때 다시 올라간다).
@@ -264,6 +288,7 @@ export class Stage {
     if (this.canvas.width !== Math.floor(this.canvas.clientWidth * pr) || this.canvas.height !== Math.floor(this.canvas.clientHeight * pr)) this._resize();
     if (this.autoFit && (this._needFit || Math.abs(this.camera.aspect - this._fitAspect) > 0.02)) { if (this._fit()) this._needFit = false; }
     if (this._goHome) this._stepHome(raw);
+    else if (this.autoFit) { this._watchFit(raw); if (this._glide && !this._userZoom && !this._vbShown) this._stepGlide(raw); }
     if (this._vbShown && this._vb && (this._vbW !== this.canvas.clientWidth || this._vbH !== this.canvas.clientHeight)) { this._vbW = this.canvas.clientWidth; this._vbH = this.canvas.clientHeight; this._placeViewBtn(); }
     // fitWidth(예전 방식): 자동 맞춤을 끈 무대에서만 — 세로로 긴 화면에서 그 비율보다 좁아지면 그만큼 뒤로 물러난다.
     const fw = !this.autoFit && this.fitWidth && this.camera.aspect < this.fitWidth ? Math.min(1.8, this.fitWidth / this.camera.aspect) : 1, D = o.dist * fw;

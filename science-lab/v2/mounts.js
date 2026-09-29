@@ -28,7 +28,7 @@ export function addLandscape(host, into) {
   const exit = () => {
     if (!on) return; on = false;
     if (panel) { for (const n of [...panel.childNodes]) if (n !== fold) host.insertBefore(n, x); panel.remove(); panel = null; }
-    if (canvas && canvasMark?.parentNode) { canvasMark.parentNode.insertBefore(canvas, canvasMark); canvasMark.remove(); }
+    if (canvas && canvasMark?.parentNode) { canvasMark.parentNode.insertBefore(canvas, canvasMark); canvasMark.remove(); canvas.dispatchEvent(new Event('stage:moved')); }
     canvas = canvasMark = null;
     host.classList.remove('full-land'); document.documentElement.classList.remove('fl-lock');
     if (document.fullscreenElement === host) document.exitFullscreen?.().catch(() => {});
@@ -37,7 +37,7 @@ export function addLandscape(host, into) {
   const enter = async () => {
     if (on) return; on = true;
     canvas = host.querySelector('canvas');
-    if (canvas) { canvasMark = document.createComment('fl-canvas'); canvas.parentNode.insertBefore(canvasMark, canvas); host.prepend(canvas); }
+    if (canvas) { canvasMark = document.createComment('fl-canvas'); canvas.parentNode.insertBefore(canvasMark, canvas); host.prepend(canvas); canvas.dispatchEvent(new Event('stage:moved')); }   // 엔진이 보임 여부·화면 맞춤을 새로 잡게
     panel = document.createElement('div'); panel.className = 'fl-panel'; panel.append(fold);
     for (const n of [...host.childNodes]) if (n !== canvas && n !== x && n !== panel) panel.appendChild(n);
     host.append(panel); setFold(true);

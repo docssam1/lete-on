@@ -888,6 +888,7 @@ Drive 다운로드가 base64로 대화 문맥에 실려 오는 구조라 100MB�
 
 ### 과학 탐구 랩 v2 현재 상태 (2026-09-26, 브랜치 `claude/jolly-allen-w57yqh`, main 미병합)
 **다음 세션은 `science-lab/HANDOFF.md` 22~25차부터 읽을 것.** 요약:
+- **3D(실험실·장면)를 만들거나 고치면 `science-lab/3D-RULES.md`를 먼저 읽고 `node scripts/check-science-3d.mjs` 실패 0 확인 후 올릴 것.** 카메라 거리는 손으로 정하지 않는다(엔진 자동 맞춤).
 - 첫 화면 `#/<단원>/start`(스스로 공부·가르치기·학생/교사 교재). 스스로 공부 = `v2/deck.js` self + `v2/docssam.js`: 한 번에 한 행동, **끝나면 자동 다음**, 첫 오답 정답 비공개(오개념 label로 되묻기), 셀프 체크 O/X. 가르치기 = 독쌤·음성·필기 없음, 3D 실험실 **배틀**(두 팀).
 - 독쌤 음성 = 광고와 같은 **ko-KR-Chirp3-HD-Puck**, 대사 `science-lab/data/voice/*.voice.json` → `scripts/generate-audio.js`. main 병합 시 생성(브랜치에서 워크플로 돌리지 말 것 — reading-world 음성을 옛 글로 덮을 위험).
 - 글꼴 = 사이트 자체 탑재 Pretendard 하나(`science-lab/assets/fonts/`). 손글씨·80년대 광택은 사용자가 거절. 단추는 성향 검사 「AI 맞춤 상담」 카드 결(`--k-*` 토큰).
