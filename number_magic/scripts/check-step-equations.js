@@ -45,7 +45,7 @@ function toExpr(tex, blank){
   let s = String(tex);
   /* `0.\square`(소수 한 자리) · `\square0` 처럼 □ 가 **자릿수 하나**인 관례는 값이 아니다 —
      0.(8) 로 읽히므로 계산할 수 없다. 채우기 전의 tex 로 봐야 암묵 곱 `4(1)` 과 안 헷갈린다. */
-  if(/[0-9.]\s*\\square|\\square\s*[0-9]/.test(s)) return null;
+  if(/[0-9.]\s*\\square|\\square\s*[0-9.]/.test(s)) return null;   /* `\square.35` — □ 가 소수의 자연수 부분(EL1 L7) */
   /* `D = …`, `r=…` 처럼 앞에 이름표가 붙은 줄 — 이름표는 값을 알 수 없으니 떼고,
      남은 식끼리만 견준다(`r=\sqrt{…}=□` 는 근호 안과 □ 가 맞는지 볼 수 있다). */
   s = s.replace(/^\s*[A-Za-z](_\{?[0-9]+\}?)?\s*=(?!=)/, '');
@@ -62,6 +62,9 @@ function toExpr(tex, blank){
   s = s.replace(/\\left|\\right|\\!/g, '')
        .replace(/\\,|\\;|\\ /g, ' ')
        .replace(/\\times|\\cdot(?!s)/g, '*').replace(/\\div/g, '/');
+  /* 대분수 — `3\frac{6}{7}` 은 3 + 6/7 이다(암묵 곱이 아니다). 자연수 부분·분자·분모가 모두
+     수일 때만 대분수로 읽는다(□ 는 위에서 이미 `(n)` 으로 채워져 있다). 2026-09-29 — FR7 L5·EL1 L7·L8. */
+  s = s.replace(/(\d+|\(\d+\))\s*\\d?frac\{(\d+)\}\{(\d+)\}/g, '($1+($2)/($3))');
   /* \dfrac{a}{b} · \sqrt{a} — 중괄호가 중첩될 수 있어 안쪽부터 되풀이 */
   for(let i = 0; i < 6; i++){
     const before = s;

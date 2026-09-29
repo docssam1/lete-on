@@ -205,6 +205,38 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
     };
   }
 
+  /* numberLine — G05: 수직선을 이용한 정수의 덧셈·뺄셈 (2026-09-29 신규).
+     출발점 a 에서 화살표 위의 수만큼 움직인다. +k 와 −(−k) 는 오른쪽, −k 와 +(−k) 는 왼쪽 —
+     "음수를 빼는 것은 반대쪽(오른쪽)으로 가는 것"을 수직선 위의 방향으로 보게 하는 것이 핵심이다.
+     식에는 = 이 없어 인쇄물에 물음 줄(prompt)이 함께 실린다. 문제는 새로 지었다. */
+  if (mode === 'numberLine') {
+    const a = R(rng, -12, 12);
+    const k = R(rng, 1, 12);
+    const kind = pick(rng, ['plusPos', 'plusNeg', 'minusPos', 'minusNeg']);
+    const label = { plusPos: `+${k}`, plusNeg: `+(-${k})`, minusPos: `-(+${k})`, minusNeg: `-(-${k})` }[kind];
+    const right = kind === 'plusPos' || kind === 'minusNeg';
+    const move = right ? k : -k;
+    const answer = a + move;
+    const exprTex = { plusPos: `${a} + ${k}`, plusNeg: `${a} + (-${k})`, minusPos: `${a} - (+${k})`, minusNeg: `${a} - (-${k})` }[kind];
+    const tex = `${a} \\;\\xrightarrow{\\;${label}\\;}\\; \\square`;
+    const dirKo = right ? '오른쪽' : '왼쪽', dirEn = right ? 'right' : 'left', dirZh = right ? '右' : '左';
+    const steps = [
+      { tex: `${a} ${right ? '+' : '-'} ${k} = \\square`, blank: answer },
+      { tex, blank: answer }
+    ];
+    /* 괄호가 있는 꼴은 먼저 괄호를 풀어 방향(+ 오른쪽 / − 왼쪽)을 정한다 */
+    if (kind !== 'plusPos') steps.unshift({ tex: `${exprTex} = ${a} ${right ? '+' : '-'} \\square`, blank: k });
+    return {
+      prompt: {
+        ko: `수직선 위의 ${a}에서 ${label}만큼(${dirKo}으로 ${k}칸) 움직인 점이 나타내는 수를 구하시오.`,
+        en: `On the number line, start at ${a} and move by ${label} (${k} steps to the ${dirEn}). What number do you land on?`,
+        zh: `在数轴上从${a}出发，移动${label}（向${dirZh}${k}格），求到达的点表示的数。`
+      },
+      tex, answer, answerType: 'steps', widget: 'steps', negative: answer < 0,
+      steps, solution: steps
+    };
+  }
+
   /* chain3 — G12: 세 정수의 덧셈과 뺄셈 혼합, 앞에서부터 차례로 */
   const m1 = mag(), m2 = mag(), m3 = mag();
   const op1 = pick(rng, ['+', '-']);
@@ -402,6 +434,65 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
     };
   }
 
+  /* bracketChain — G18: 괄호가 겹친 정수의 곱셈·나눗셈 혼합 (2026-09-29 신규).
+     소괄호 → 중괄호 → 대괄호 순서로 안쪽부터 계산한다. 두 모양:
+       flat   A op1 [ B op2 C ]                 — 대괄호 안을 먼저
+       nested A op1 [ B op2 { C op3 D } ]       — 중괄호, 대괄호, 바깥 순서
+     나눗셈은 늘 나누어떨어지게 거꾸로 만든다. 문제는 새로 지었다. */
+  if (mode === 'bracketChain') {
+    const sm = hi => signOf(rng) * nzMag(rng, 2, hi);
+    const OPS = ['\\times', '\\div'];
+    /* x op y 를 정수로 떨어지게 — op 이 ÷ 이면 x 를 y 의 배수로 다시 만든다 */
+    const pair = (x, op, y) => op === '\\times' ? { x, y, v: x * y } : { x: x * y, y, v: x };
+    let tex, steps, answer, tries = 0;
+    for (;;) {
+      tries++;
+      const shape = pick(rng, ['flat', 'nested']);
+      const op1 = pick(rng, OPS), op2 = pick(rng, OPS), op3 = pick(rng, OPS);
+      if (shape === 'flat') {
+        const inner = pair(sm(9), op2, sm(6));
+        if (Math.abs(inner.v) < 2 && op1 === '\\div') continue;
+        const outer = op1 === '\\times' ? { A: sm(9), v: 0 } : { A: inner.v * sm(6), v: 0 };
+        answer = op1 === '\\times' ? outer.A * inner.v : outer.A / inner.v;
+        if (Math.abs(outer.A) > 200 || Math.abs(inner.x) > 60 || Math.abs(answer) > 400) continue;
+        const inTex = `${wrapSigned(inner.x)} ${op2} ${wrapSigned(inner.y)}`;
+        tex = `${outer.A} ${op1} [\\, ${inTex} \\,] = \\square`;
+        steps = [
+          { tex: `${inTex} = \\square \\;(\\text{대괄호 먼저})`, blank: inner.v },
+          { tex: `${outer.A} ${op1} ${wrapSigned(inner.v)} = \\square`, blank: answer },
+          { tex, blank: answer }
+        ];
+      } else {
+        const inn = pair(sm(9), op3, sm(5));
+        if (Math.abs(inn.v) < 2 && op2 === '\\div') continue;
+        const mid = op2 === '\\times' ? { B: sm(6), v: 0 } : { B: inn.v * sm(4), v: 0 };
+        mid.v = op2 === '\\times' ? mid.B * inn.v : mid.B / inn.v;
+        if (Math.abs(mid.v) < 2 && op1 === '\\div') continue;
+        const A = op1 === '\\times' ? sm(5) : mid.v * sm(4);
+        answer = op1 === '\\times' ? A * mid.v : A / mid.v;
+        if (Math.abs(A) > 300 || Math.abs(mid.B) > 120 || Math.abs(inn.x) > 60 || Math.abs(answer) > 400) continue;
+        const innTex = `${wrapSigned(inn.x)} ${op3} ${wrapSigned(inn.y)}`;
+        tex = `${A} ${op1} [\\, ${wrapSigned(mid.B)} ${op2} \\{ ${innTex} \\} \\,] = \\square`;
+        steps = [
+          { tex: `${innTex} = \\square \\;(\\text{중괄호 먼저})`, blank: inn.v },
+          { tex: `${wrapSigned(mid.B)} ${op2} ${wrapSigned(inn.v)} = \\square \\;(\\text{대괄호})`, blank: mid.v },
+          { tex: `${A} ${op1} ${wrapSigned(mid.v)} = \\square`, blank: answer },
+          { tex, blank: answer }
+        ];
+      }
+      if (Number.isInteger(answer) && answer !== 0 && /-/.test(tex)) break;   /* 음수가 하나는 있어야 부호 단원이다 */
+      if (tries > 400) break;
+    }
+    return {
+      prompt: {
+        ko: `괄호가 겹쳐 있으면 소괄호 → 중괄호 → 대괄호 순서로 안쪽부터 계산합니다`,
+        en: `With nested brackets, work from the inside out: ( ) first, then { }, then [ ]`,
+        zh: `括号套括号时从里往外算：先小括号，再中括号，最后大括号`
+      },
+      tex, answer, answerType: 'steps', widget: 'steps', steps, solution: steps
+    };
+  }
+
   /* mixedChain — G18: 곱셈과 나눗셈 혼합, 앞에서부터 차례로 */
   const shape = pick(rng, ['ab_div_c', 'a_div_b_c']);
   if (shape === 'a_div_b_c') {
@@ -457,8 +548,80 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
    (-a)^n(밑에 괄호) vs -a^n(지수가 밑보다 우선, -(a^n))의 차이를 정확히
    구분한다 — 짝수 지수에서만 값이 갈린다((-2)^4=16, -2^4=-16), 홀수
    지수는 둘 다 음수로 같다((-2)^3=-8=-2^3). mode: 'paren' · 'bare' · 'mixed'. */
+/* ratPower — G26: 유리수의 거듭제곱이 섞인 곱셈·나눗셈 (2026-09-29 신규). 답은 늘 정수.
+     mulK  (±p/q)ⁿ × K        K 가 qⁿ 의 배수   (−1/2)³ × 16 = −2
+     divK  K ÷ (±p/q)ⁿ        K 가 pⁿ 의 배수   8 ÷ (−2/3)³ = −27
+     twoPw (±p/q)ⁿ × (±q)ᵐ   m ≥ n              (−1/2)² × (−2)³ = −2
+   부호는 음수의 거듭제곱 규칙(지수가 짝수면 +, 홀수면 −)으로 마지막에 붙인다. 풀이 칸은 모두
+   정수(분모의 거듭제곱 → 약분 → 분자의 거듭제곱)라 □ 가 분수 안에 들어가지 않는다.
+   분수는 \bigl(\bigr) 로 묶는다(\left\right 는 인쇄 칸을 넘친 적이 있다). 문제는 새로 지었다. */
+function md5RatPower(rng){
+  const COPRIME = [[1,2],[1,3],[1,4],[1,5],[2,3],[3,2],[3,4],[4,3],[2,5],[5,2],[1,6],[3,5],[5,3]];
+  for (let tries = 0; tries < 500; tries++) {
+    const [p, q] = pick(rng, COPRIME);
+    const n = R(rng, 2, 3);
+    const s = signOf(rng);                      /* 밑의 부호 */
+    const kind = pick(rng, ['mulK', 'divK', 'twoPw']);
+    const lead = kind !== 'twoPw' && pick(rng, [0, 0, 1]) ? -1 : 1;   /* 맨 앞 −(…)ⁿ */
+    const baseTex = `\\bigl(${s < 0 ? '-' : ''}\\frac{${p}}{${q}}\\bigr)^{${n}}`;
+    const powSign = (s < 0 && n % 2) ? -1 : 1;
+    const pn = Math.pow(p, n), qn = Math.pow(q, n);
+    const leadTex = lead < 0 ? '-' : '';
+    if (kind === 'mulK') {
+      const m = R(rng, 1, 4), K = qn * m * signOf(rng);
+      const absAns = pn * m, answer = lead * powSign * Math.sign(K) * absAns;
+      if (qn > 64 || absAns > 200 || Math.abs(K) > 250) continue;
+      const tex = `${leadTex}${baseTex} \\times ${wrapSigned(K)} = \\square`;
+      const steps = [ { tex: `${q}^{${n}} = \\square`, blank: qn },
+                      { tex: `${Math.abs(K)} \\div ${qn} = \\square`, blank: m } ];
+      if (p > 1) steps.push({ tex: m === 1 ? `${p}^{${n}} = \\square` : `${p}^{${n}} \\times ${m} = \\square`, blank: absAns });
+      steps.push({ tex, blank: answer });
+      return { tex, answer, steps };
+    }
+    if (kind === 'divK') {
+      const m = R(rng, 1, 4), K = pn * m * signOf(rng);
+      const absAns = qn * m, answer = lead * powSign * Math.sign(K) * absAns;
+      if (p === 1 || absAns > 200 || Math.abs(K) > 250) continue;   /* p=1 이면 K÷(1/qⁿ) 로 너무 쉽다 */
+      const tex = `${K} \\div ${leadTex}${baseTex} = \\square`;
+      if (lead < 0) continue;                    /* `÷ −(…)ⁿ` 는 교과 표기가 아니다 */
+      const steps = [ { tex: `${p}^{${n}} = \\square`, blank: pn },
+                      { tex: `${Math.abs(K)} \\div ${pn} = \\square`, blank: m },
+                      { tex: m === 1 ? `${q}^{${n}} = \\square` : `${q}^{${n}} \\times ${m} = \\square`, blank: absAns },
+                      { tex, blank: answer } ];
+      return { tex, answer, steps };
+    }
+    /* twoPw */
+    const mExp = n + R(rng, 0, 1);
+    const t = signOf(rng);
+    const T = Math.pow(t * q, mExp);                          /* (±q)ᵐ, 부호 포함 */
+    const answer = powSign * pn * T / qn;
+    if (Math.abs(T) > 250 || Math.abs(answer) > 200) continue;
+    const qPow = t < 0 ? `(-${q})^{${mExp}}` : `${q}^{${mExp}}`;
+    const tex = `${baseTex} \\times ${qPow} = \\square`;
+    const steps = [ { tex: `${qPow} = \\square`, blank: T },
+                    { tex: `${wrapSigned(T)} \\div ${qn} = \\square`, blank: T / qn } ];
+    if (p > 1) steps.push({ tex: `${wrapSigned(T / qn)} \\times ${pn} = \\square`, blank: T / qn * pn });
+    steps.push({ tex, blank: answer });
+    return { tex, answer, steps };
+  }
+  const tex = `\\bigl(-\\frac{1}{2}\\bigr)^{3} \\times 16 = \\square`;
+  return { tex, answer: -2, steps: [ { tex: `2^{3} = \\square`, blank: 8 }, { tex: `16 \\div 8 = \\square`, blank: 2 }, { tex, blank: -2 } ] };
+}
+
 NM_TGEN['md5_signedPower'] = function (params, rng) {
   const mode = params.mode || 'mixed';
+  if (mode === 'ratPower') {
+    const r = md5RatPower(rng);
+    return {
+      prompt: {
+        ko: `유리수의 거듭제곱을 먼저 계산합니다 — 부호는 지수가 짝수면 +, 홀수면 −입니다`,
+        en: `Work out the power of the rational number first — an even exponent gives +, an odd one gives −`,
+        zh: `先算有理数的乘方——指数为偶数得正，为奇数得负`
+      },
+      tex: r.tex, answer: r.answer, answerType: 'steps', widget: 'steps',
+      steps: r.steps, solution: r.steps
+    };
+  }
   const form = mode === 'mixed' ? pick(rng, ['paren', 'bare']) : mode;
   const a = R(rng, 2, 30);
   const n = R(rng, 2, 4);
@@ -653,6 +816,61 @@ NM_TGEN['md7_ratMulDiv'] = function (params, rng) {
         { tex: `\\dfrac{${a1}}{${d1}} \\div \\dfrac{${a2}}{${d2}} = \\dfrac{${a1}}{${d1}} \\times \\dfrac{${d2}}{${a2}}` },
         { tex: `\\dfrac{${a1}}{${d1}} \\times \\dfrac{${d2}}{${a2}} = \\dfrac{\\square}{\\square}`, blank: [n, den] }
       ]
+    };
+  }
+
+  /* bracketChain — G24·G25: 대괄호가 있는 유리수의 곱셈·나눗셈 혼합 (2026-09-29 신규).
+     답은 늘 정수 하나. 모양 두 가지:
+       A op1 [ X op2 Y ]    ·    [ X op2 Y ] op1 A
+     정수 답을 먼저 정하고 대괄호 안의 값 v 에서 A 를 거꾸로 구해 만든다. 네 수 가운데 적어도
+     둘은 분모가 1 이 아닌 분수다. 분수는 \bigl(\bigr) 로 묶는다. 문제는 새로 지었다. */
+  if (mode === 'bracketChain') {
+    const F = (n, d) => { const [a, b] = normFrac(n, d); return { n: a, d: b }; };
+    const mul = (x, y) => F(x.n * y.n, x.d * y.d);
+    const div = (x, y) => F(x.n * y.d, x.d * y.n);
+    const raw = x => x.d === 1 ? String(x.n) : `${x.n < 0 ? '-' : ''}\\frac{${Math.abs(x.n)}}{${x.d}}`;
+    const wrapQ = x => x.n < 0 ? (x.d === 1 ? `(${x.n})` : `\\bigl(${raw(x)}\\bigr)`) : raw(x);
+    const rndQ = (maxN, maxD) => { const d = R(rng, 1, maxD); return F(signOf(rng) * R(rng, 1, maxN), d); };
+    let tex, answer, sol;
+    for (let tries = 0; tries < 2000; tries++) {
+      const X = rndQ(9, 9), Y = rndQ(9, 9);
+      const op2 = pick(rng, ['\\times', '\\div']), op1 = pick(rng, ['\\times', '\\div']);
+      const before = pick(rng, [true, false]);                 /* A 가 대괄호 앞인가 */
+      const v = op2 === '\\times' ? mul(X, Y) : div(X, Y);
+      const ans = signOf(rng) * R(rng, 1, 12);
+      const Ans = { n: ans, d: 1 };
+      /* A op1 v = ans  또는  v op1 A = ans 에서 A 를 푼다 */
+      let A;
+      if (before) A = op1 === '\\times' ? div(Ans, v) : mul(Ans, v);
+      else        A = op1 === '\\times' ? div(Ans, v) : div(v, Ans);
+      const terms = [X, Y, A];
+      if (terms.some(t => Math.abs(t.n) > 30 || t.d > 30)) continue;
+      if (terms.filter(t => t.d > 1).length < 2) continue;
+      if (terms.some(t => t.d === 1 && Math.abs(t.n) === 1)) continue;   /* ×1·÷1 은 빈 연산이다 */
+      if (v.d > 60 || Math.abs(v.n) > 60) continue;
+      const inTex = `${wrapQ(X)} ${op2} ${wrapQ(Y)}`;
+      tex = before ? `${raw(A)} ${op1} \\bigl[ ${inTex} \\bigr] = \\square`
+                   : `\\bigl[ ${raw(X)} ${op2} ${wrapQ(Y)} \\bigr] ${op1} ${wrapQ(A)} = \\square`;
+      answer = ans;
+      sol = [
+        { tex: `${before ? inTex : `${raw(X)} ${op2} ${wrapQ(Y)}`} = ${raw(v)} \\;(\\text{대괄호 먼저})` },
+        { tex: before ? `${raw(A)} ${op1} ${wrapQ(v)} = \\square` : `${raw(v)} ${op1} ${wrapQ(A)} = \\square`, blank: answer },
+        { tex, blank: answer }
+      ];
+      break;
+    }
+    if (!tex) {                                    /* 사실상 닿지 않는 안전판 */
+      tex = `-\\frac{15}{2} \\times \\bigl[ \\frac{7}{5} \\times \\bigl(-\\frac{2}{3}\\bigr) \\bigr] = \\square`; answer = 7;
+      sol = [ { tex: `\\frac{7}{5} \\times \\bigl(-\\frac{2}{3}\\bigr) = -\\frac{14}{15}` }, { tex, blank: 7 } ];
+    }
+    return {
+      prompt: {
+        ko: `대괄호 안을 먼저 계산합니다 — 음수의 개수로 부호를 정하고, 나눗셈은 역수의 곱셈으로 바꿉니다`,
+        en: `Work out the square brackets first — fix the sign from the number of negatives and turn ÷ into × by the reciprocal`,
+        zh: `先算大括号里的——用负数的个数定符号，除法改成乘倒数`
+      },
+      tex, answer, answerType: 'number', widget: 'numpad', negative: answer < 0,
+      solution: sol
     };
   }
 

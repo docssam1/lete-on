@@ -471,7 +471,99 @@ NM_TGEN['fr6_frMul'] = function(params, rng){
 /* ============================================================
    FR7 — 분수 나눗셈
    ============================================================ */
+/* FR7 레벨 2~5 (2026-09-29 신규) — 기적의 계산법 「분수의 나눗셈 ①~③」 자리.
+   문제는 새로 지었다. 답 관례는 레벨 1과 같다: **기약분수의 분자**가 답이고 분모는 식에
+   적어 준다(`= \frac{□}{d}`). 결과가 자연수로 떨어지면 `\frac{□}{1}` 대신 `= □` 로 묻는다.
+     natNat  (자연수)÷(자연수) = 분수     7 ÷ 3 = 7/3,  6 ÷ 8 = 3/4
+     fracNat (분수)÷(자연수)              4/5 ÷ 2 = 2/5
+     common  분모가 같은·다른 (분수)÷(분수), (자연수)÷(분수) — 통분해서 분자끼리 나누기
+     mixed   (대분수)÷(분수)              1 1/2 ÷ 3/4 = 2 */
+function fr7End(s){ return s.d === 1 ? '\\square' : '\\frac{\\square}{' + s.d + '}'; }
+function fr7Frac(n, d){ return '\\frac{' + n + '}{' + d + '}'; }
+function fr7Mode(mode, rng){
+  var tex, s, steps, ko, en, zh;
+  if(mode === 'natNat'){
+    var a, b;
+    do { a = R(rng, 1, 30); b = R(rng, 2, 12); } while(a % b === 0);
+    s = simplify(a, b);
+    tex = a + ' \\div ' + b + ' = ' + fr7End(s);
+    steps = [ { tex: a + ' \\div ' + b + ' = \\frac{\\square}{' + b + '} \\quad (\\text{나누는 수가 분모})', blank: a } ];
+    if(s.d !== b) steps.push({ tex: fr7Frac(a, b) + ' = ' + fr7End(s) + ' \\quad (\\text{약분})', blank: s.n });
+    ko = '(자연수)÷(자연수)의 몫을 분수로 나타내요 — 나누어지는 수가 분자, 나누는 수가 분모예요';
+    en = 'Write the quotient of two whole numbers as a fraction — the dividend is the numerator, the divisor the denominator';
+    zh = '把整数除以整数的商写成分数——被除数作分子，除数作分母';
+  } else if(mode === 'fracNat'){
+    var d, n, a2;
+    /* 절반 가까이는 분자가 나누는 수로 나누어떨어지게 — 교재의 두 방법(분자를 나누기 / 1/n 곱하기) */
+    var divisible = pick(rng, [0, 1]);
+    do {
+      d = R(rng, 2, 9); n = R(rng, 2, 9);
+      a2 = divisible ? n * R(rng, 1, 3) : R(rng, 1, 2 * d - 1);
+    } while(a2 % d === 0 || gcd(a2, d) !== 1);
+    s = simplify(a2, d * n);
+    tex = fr7Frac(a2, d) + ' \\div ' + n + ' = ' + fr7End(s);
+    steps = [ { tex: fr7Frac(a2, d) + ' \\times ' + fr7Frac(1, n) + ' = \\frac{\\square}{' + (d * n) + '}', blank: a2 } ];
+    steps.push({ tex: fr7Frac(a2, d * n) + ' = ' + fr7End(s) + ' \\quad (\\text{약분})', blank: s.n });
+    if(s.d === d * n) steps[1] = { tex: tex, blank: s.n };
+    ko = '(분수)÷(자연수)는 자연수를 1/(자연수)로 바꿔 곱해요';
+    en = 'Fraction ÷ whole number: multiply by 1 over the whole number';
+    zh = '分数÷整数：乘这个整数的倒数';
+  } else if(mode === 'common'){
+    var kind = pick(rng, ['same', 'diff', 'nat']);
+    if(kind === 'same'){
+      var dd = R(rng, 3, 12), p, q;
+      do { p = R(rng, 1, dd - 1); q = R(rng, 1, dd - 1); } while(p === q);
+      s = simplify(p, q);
+      tex = fr7Frac(p, dd) + ' \\div ' + fr7Frac(q, dd) + ' = ' + fr7End(s);
+      steps = [ { tex: fr7Frac(p, dd) + ' \\div ' + fr7Frac(q, dd) + ' = ' + p + ' \\div \\square \\quad (\\text{분자끼리})', blank: q },
+                { tex: p + ' \\div ' + q + ' = ' + fr7End(s), blank: s.n } ];
+    } else if(kind === 'diff'){
+      var b1, b2, a1, c1, L;
+      do {
+        b1 = R(rng, 2, 9); b2 = R(rng, 2, 9);
+        a1 = R(rng, 1, b1 - 1); c1 = R(rng, 1, b2 - 1);
+        L = lcm(b1, b2);
+      } while(b1 === b2 || gcd(a1, b1) !== 1 || gcd(c1, b2) !== 1 || L > 36);
+      var A1 = a1 * (L / b1), C1 = c1 * (L / b2);
+      s = simplify(A1, C1);
+      tex = fr7Frac(a1, b1) + ' \\div ' + fr7Frac(c1, b2) + ' = ' + fr7End(s);
+      steps = [ { tex: fr7Frac(a1, b1) + ' = \\frac{\\square}{' + L + '} \\quad (\\text{통분})', blank: A1 },
+                { tex: fr7Frac(c1, b2) + ' = \\frac{\\square}{' + L + '} \\quad (\\text{통분})', blank: C1 },
+                { tex: A1 + ' \\div ' + C1 + ' = ' + fr7End(s), blank: s.n } ];
+    } else {
+      var w = R(rng, 2, 12), c2, d2;
+      do { d2 = R(rng, 2, 9); c2 = R(rng, 1, d2 - 1); } while(gcd(c2, d2) !== 1);
+      s = simplify(w * d2, c2);
+      tex = w + ' \\div ' + fr7Frac(c2, d2) + ' = ' + fr7End(s);
+      steps = [ { tex: c2 === 1 ? w + ' \\times ' + d2 + ' = \\square \\quad (\\text{역수를 곱해요})'
+                                : w + ' \\times ' + fr7Frac(d2, c2) + ' = \\frac{\\square}{' + c2 + '} \\quad (\\text{역수를 곱해요})', blank: w * d2 },
+                { tex: s.d === c2 ? tex : fr7Frac(w * d2, c2) + ' = ' + fr7End(s) + ' \\quad (\\text{약분})', blank: s.n } ];
+    }
+    ko = '분모가 같으면 분자끼리 나누고, 다르면 통분한 뒤 분자끼리 나눠요';
+    en = 'Same denominators: divide the numerators. Different: find a common denominator first, then divide the numerators';
+    zh = '分母相同就用分子相除；分母不同先通分，再用分子相除';
+  } else {
+    var m = R(rng, 1, 4), bb, aa, cc, dv;
+    do {
+      bb = R(rng, 2, 9); aa = R(rng, 1, bb - 1);
+      dv = R(rng, 2, 9); cc = R(rng, 1, dv - 1);
+    } while(gcd(aa, bb) !== 1 || gcd(cc, dv) !== 1);
+    var N = m * bb + aa;
+    s = simplify(N * dv, bb * cc);
+    tex = m + fr7Frac(aa, bb) + ' \\div ' + fr7Frac(cc, dv) + ' = ' + fr7End(s);
+    steps = [ { tex: m + fr7Frac(aa, bb) + ' = \\frac{\\square}{' + bb + '} \\quad (\\text{가분수로})', blank: N },
+              { tex: fr7Frac(N, bb) + ' \\times ' + (cc === 1 ? String(dv) : fr7Frac(dv, cc)) + ' = \\frac{\\square}{' + (bb * cc) + '} \\quad (\\text{역수를 곱해요})', blank: N * dv },
+              { tex: fr7Frac(N * dv, bb * cc) + ' = ' + fr7End(s) + ' \\quad (\\text{약분})', blank: s.n } ];
+    if(s.d === bb * cc) steps[2] = { tex: tex, blank: s.n };
+    ko = '(대분수)÷(분수)는 대분수를 가분수로 바꾼 뒤 역수를 곱해요';
+    en = 'Mixed number ÷ fraction: turn the mixed number into an improper fraction, then multiply by the reciprocal';
+    zh = '带分数÷分数：先把带分数化成假分数，再乘除数的倒数';
+  }
+  return { prompt: { ko: ko, en: en, zh: zh }, tex: tex, answer: s.n, answerType: 'steps', widget: 'steps', steps: steps, solution: steps };
+}
+
 NM_TGEN['fr7_frDiv'] = function(params, rng){
+  if(params && params.mode) return fr7Mode(params.mode, rng);
   var a_n = R(rng, 1, 5);
   var a_d = R(rng, a_n+1, Math.max(a_n+2, 7));
   var b_n = R(rng, 1, 5);
