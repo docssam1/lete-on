@@ -318,7 +318,7 @@ NM_TGEN['md126_absIneq'] = function (params, rng) {
     do { const g = R(rng, 1, 3), a = R(rng, 1, 4), b = R(rng, 1, 4); p = g * a * a; q = g * b * b; } while (p === q && pick(rng, [0, 1, 1]));
     const m = p + q + 2 * Math.round(Math.sqrt(p * q));
     /* 문제 줄은 \frac(글자 높이) — \dfrac 을 괄호로 감싸면 인쇄 칸(12문항)보다 6px 높았다(2026-09-29 check-print-overflow) */
-    return item(prompt, `x>0,\\ y>0\\ \\Rightarrow\\ (x+y)\\left(\\frac{${p}}{x}+\\frac{${q}}{y}\\right):\\ m=\\square`, m, [
+    return item(prompt, `x>0,\\ y>0\\ \\Rightarrow\\ (x+y)\\bigl(\\frac{${p}}{x}+\\frac{${q}}{y}\\bigr):\\ m=\\square`, m, [
       { tex:`(x+y)\\left(\\dfrac{${p}}{x}+\\dfrac{${q}}{y}\\right)=${p + q}+\\dfrac{${lead(p, 'y')}}{x}+\\dfrac{${lead(q, 'x')}}{y}` },
       { tex:`${p + q}+\\dfrac{${lead(p, 'y')}}{x}+\\dfrac{${lead(q, 'x')}}{y}\\ge ${p + q}+2\\sqrt{${p * q}}=${m}` },
       { tex:`m=\\square`, blank:m }]);

@@ -291,12 +291,13 @@ NM_TGEN['md35_circleEquation'] = function (params, rng) {
       en: `Group the x-terms and y-terms into perfect squares to reveal the center and radius directly`,
       zh: `把x项、y项分别配成完全平方式，中心和半径就一目了然`
     },
-    tex: `x^2+y^2 ${wrapPlus(A)}x ${wrapPlus(B)}y ${wrapPlus(C)} = 0 \\;\\Rightarrow\\; (x-\\square)^2+(y-\\square)^2=\\square^2`,
+    /* 끝의 `=□²` 은 네모 위에 지수가 얹혀 줄이 87px(3줄 높이)이 된다 — 따라 풀기 3문항이 한 장을 57px 넘겼다(check-weekly-sheets C51). r 을 따로 묻는다 */
+    tex: `x^2+y^2 ${wrapPlus(A)}x ${wrapPlus(B)}y ${wrapPlus(C)} = 0 \\;\\Rightarrow\\; (\\square,\\ \\square),\\ r=\\square`,
     answer, answerType: 'number', widget: 'numpad', negative: hasNeg(answer),
     solution: [
-      { tex: `a=-\\dfrac{${A}}{2}=\\square,\\;\\;b=-\\dfrac{${B}}{2}=\\square`, blank: [a, b] },
+      { tex: `a=-\\frac{${A}}{2}=\\square,\\;\\;b=-\\frac{${B}}{2}=\\square`, blank: [a, b] },
       { tex: `r=\\sqrt{${par(a)}^2+${par(b)}^2-(${C})}=\\square`, blank: r },
-      { tex: `(x-\\square)^2+(y-\\square)^2=\\square^2`, blank: [a, b, r] }
+      { tex: `(a,\\ b)=(\\square,\\ \\square),\\ r=\\square`, blank: [a, b, r] }
     ]
   };
 };
