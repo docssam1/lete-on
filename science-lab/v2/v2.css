@@ -374,7 +374,7 @@ html.fl-lock, html.fl-lock body { overflow: hidden; }
   position: fixed !important; inset: 0; z-index: 60; margin: 0 !important; padding: 0 !important; max-width: none !important;
   border: 0 !important; border-radius: 0 !important; background: linear-gradient(180deg, #F6F2EA, #E9E2D6); overflow: hidden;   /* 3D 스튜디오 배경과 같은 결 */
 }
-.full-land > canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; z-index: 0; display: block; }
+.full-land > canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; z-index: 0; display: block; touch-action: none; }   /* 전체 화면에선 스크롤할 페이지가 없으니 위아래로도 돌린다 */
 .full-land .fl-close { display: inline-flex; align-items: center; position: absolute; z-index: 3; top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left));
   min-height: 44px; padding: 0 16px; font-size: 15px; font-weight: 700; background: rgba(255,255,255,.94); box-shadow: 0 6px 18px rgba(20,32,64,.18); }
 .full-land { --fl-pw: min(360px, 34vw); }

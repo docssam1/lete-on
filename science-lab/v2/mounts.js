@@ -49,12 +49,14 @@ export function addLandscape(host, into) {
   host.addEventListener('keydown', (e) => { if (e.key === 'Escape') exit(); });
 }
 const REDUCED = matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+// 조작 안내는 기기에 맞게: 마우스면 Ctrl+휠, 손가락이면 두 손가락
+const HINT3D = matchMedia?.('(pointer: fine)').matches ? '끌어서 돌리기 · Ctrl+휠 확대 · 두 번 클릭하면 처음 시점' : '옆으로 끌어 돌리기 · 두 손가락으로 확대';
 
 // 3D (기존 engine.js 재사용)
 // preview: true → 답이 나오기 전(장면의 revealAt)까지만, 숫자 → 그 단계 수만큼(광고 페이지). 끝나면 질문으로 멈춘다.
 // from: 'reveal' → 답이 나오는 단계부터(가설·실험 뒤 「3D로 확인하기」).
 export async function mount3D(el, sceneName, { autoplay, preview = false, from = null, onDone } = {}) {
-  el.innerHTML = `<div class="stage3d"><div class="stage3d-view"><canvas aria-label="3D 실험 장면. 끌어서 돌려 볼 수 있어요."></canvas><span class="stage3d-hint">끌어서 회전 · 두 손가락으로 확대</span></div><p class="cap"><b class="stage3d-step">1/1</b><span>장면을 준비하고 있어요…</span></p>
+  el.innerHTML = `<div class="stage3d"><div class="stage3d-view"><canvas aria-label="3D 실험 장면. 끌어서 돌려 볼 수 있어요."></canvas><span class="stage3d-hint">${HINT3D}</span></div><p class="cap"><b class="stage3d-step">1/1</b><span>장면을 준비하고 있어요…</span></p>
     <div class="ctl"><button class="btn primary" data-a="play">재생</button><button class="btn" data-a="prev">이전</button><button class="btn" data-a="next">다음</button></div></div>`;
   try {
     const [{ Stage, Player, watchDetached }, mod] = await Promise.all([import('../engine.js'), import(`../scenes/${sceneName}.js`)]);

@@ -181,7 +181,7 @@ const _lp = new THREE.Vector3(), _ps = new THREE.Vector3(), _pv = new THREE.Vect
 export function fitLabels(root, camera, viewH, minPx = 20, maxPx = 34, viewW = 0) {
   if (!viewH) return;
   const k = 2 * Math.tan((camera.fov * Math.PI) / 360) / viewH, M = 8;   // M: 화면 가장자리 여백(px)
-  camera.updateMatrixWorld();
+  camera.updateMatrixWorld(); const placed = [];
   root.traverseVisible((o) => {
     if (!o.isSprite || !o.userData.isLabel || !o.userData.base) return;
     const u = o.material.map?.userData; if (u?.w) o.userData.base.x = o.userData.base.y * u.w / u.h;   // 글꼴 도착 뒤 다시 그린 폭
@@ -200,7 +200,30 @@ export function fitLabels(root, camera, viewH, minPx = 20, maxPx = 34, viewW = 0
       else if (x - wPx / 2 < M) cx = (x - M) / wPx;
     }
     o.center.x = Math.max(0, Math.min(1, cx));
+    if (_lp.z < 1) {   // 겹침 검사용 화면 사각형(px)
+      const hPx = (o.userData.base.y * ps * f) / perPx, x = (_lp.x + 1) / 2 * viewW, y = (1 - _lp.y) / 2 * viewH;
+      if (o.userData.cy0 === undefined) o.userData.cy0 = o.center.y;
+      o.center.y = o.userData.cy0;
+      const x0 = x - o.center.x * wPx, y0 = y - (1 - o.center.y) * hPx;
+      placed.push({ o, x0, x1: x0 + wPx, y0, y1: y0 + hPx * 0.72, hPx });   // 카드는 그림 높이의 약 72%
+    }
   });
+  // 좁은 화면에서 라벨끼리 겹치면(연못의 「땅」·「물가」) 뒤의 것을 겹친 만큼 아래로 — 한 칸 넘게는 안 민다
+  placed.sort((a, b) => a.y0 - b.y0);
+  for (let i = 1; i < placed.length; i++) {
+    const a = placed[i];
+    for (let j = 0; j < i; j++) {
+      const b = placed[j];
+      if (a.x0 >= b.x1 || b.x0 >= a.x1 || a.y0 >= b.y1 || b.y0 >= a.y1) continue;
+      const dy = Math.min(b.y1 + 3 - a.y0, a.hPx);
+      a.y0 += dy; a.y1 += dy; a.o.center.y += dy / a.hPx;
+    }
+  }
+  // 위아래 가장자리도 — 높이 뜨는 라벨(화산재 등)이 화면 밖으로 나가지 않게
+  for (const a of placed) {
+    const dy = a.y0 < M ? M - a.y0 : a.y1 > viewH - M ? viewH - M - a.y1 : 0;
+    if (dy) a.o.center.y += dy / a.hPx;
+  }
 }
 
 // 화살표: from→to. 굵기는 월드 단위.
