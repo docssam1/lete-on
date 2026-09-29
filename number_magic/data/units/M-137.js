@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-137: 지수함수의 최대·최소 (고등 대수 · 과정 62 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-137: 지수함수의 최대·최소 (고등 대수 · 과정 60, 2026-09-29)
    근거: docs/high-build-spec.md MD137. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-137'] = {
-  id:'M-137', tier:'algebra', level:'62', order:137,
+  id:'M-137', tier:'algebra', level:'60', order:137,
   generator:'md137_expMaxMin',
   title:{ ko:'지수함수의 최대·최소', en:'Maxima & Minima of Exponential Functions', zh:'指数函数的最大值与最小值' },
   subtitle:{ ko:'양 끝을 보거나, t 로 바꾸어 보거나', en:'Look at the ends, or change to t', zh:'看两端，或换成t' },

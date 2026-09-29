@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-152: 점화식 (고등 대수 · 과정 71 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-152: 점화식 (고등 대수 · 과정 69, 2026-09-29)
    근거: docs/high-build-spec.md MD152. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-152'] = {
-  id:'M-152', tier:'algebra', level:'71', order:152,
+  id:'M-152', tier:'algebra', level:'69', order:152,
   generator:'md152_recurrence',
   title:{ ko:'점화식', en:'Recurrence Relations', zh:'递推公式' },
   subtitle:{ ko:'식을 모두 더하거나 모두 곱하기', en:'Add all the equations, or multiply them all', zh:'把各式全部相加或全部相乘' },

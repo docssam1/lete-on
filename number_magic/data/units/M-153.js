@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-153: 수학적 귀납법 (고등 대수 · 과정 71 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-153: 수학적 귀납법 (고등 대수 · 과정 69, 2026-09-29)
    근거: docs/high-build-spec.md MD153. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-153'] = {
-  id:'M-153', tier:'algebra', level:'71', order:153,
+  id:'M-153', tier:'algebra', level:'69', order:153,
   generator:'md153_induction',
   title:{ ko:'수학적 귀납법', en:'Mathematical Induction', zh:'数学归纳法' },
   subtitle:{ ko:'첫 도미노와 넘어가는 규칙', en:'The first domino and the rule that topples the next', zh:'第一块多米诺与推倒下一块的规则' },

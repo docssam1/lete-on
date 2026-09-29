@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-143: 삼각함수의 그래프와 각의 변환 (고등 대수 · 과정 64 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-143: 삼각함수의 그래프와 각의 변환 (고등 대수 · 과정 63, 2026-09-29)
    근거: docs/high-build-spec.md MD143. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-143'] = {
-  id:'M-143', tier:'algebra', level:'64', order:143,
+  id:'M-143', tier:'algebra', level:'63', order:143,
   generator:'md143_trigGraph',
   title:{ ko:'삼각함수의 그래프와 각의 변환', en:'Trig Graphs & Angle Transformations', zh:'三角函数的图像与角的变换' },
   subtitle:{ ko:'되풀이되는 물결을 읽는 법', en:'Reading a repeating wave', zh:'读懂反复的波浪' },

@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-146: 수열의 합과 일반항의 관계 (고등 대수 · 과정 68 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-146: 수열의 합과 일반항의 관계 (고등 대수 · 과정 66, 2026-09-29)
    근거: docs/high-build-spec.md MD146. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-146'] = {
-  id:'M-146', tier:'algebra', level:'68', order:146,
+  id:'M-146', tier:'algebra', level:'66', order:146,
   generator:'md146_snAn',
   title:{ ko:'수열의 합과 일반항의 관계', en:'Sₙ and aₙ', zh:'数列的和与通项的关系' },
   subtitle:{ ko:'합에서 한 칸 빼면 항이 나옵니다', en:'Take one step back from the sum to get the term', zh:'和减去前一个和就是项' },

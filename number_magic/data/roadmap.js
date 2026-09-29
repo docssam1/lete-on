@@ -543,44 +543,41 @@ window.NM_ROADMAP = {
        Σ(M-42)가 §13 기호 전환 교육 대상 — 두 유닛 모두 practice가
        "기호 해독"으로 시작한다(계산은 discover 이후). 2022 개정
        과목명 준수 — "고3" 표기 없음(전부 "대수"). */
+    /* 2026-09-29 — 대수 12과정(58~69) 순서대로 다시 묶었다. 새 유형 M-134~153 포함. 팁 문구는 옛 챕터에서 그대로 옮김. */
     {
       id:'W13-1', icon:'🪜', grade:'대수',
       edu:{ko:'대수 지수와 로그',en:'Algebra Exponents & Logarithms',zh:'代数指数与对数'},
-      theme:{ko:'W13-1 · 지수와 로그 — 유리수 지수·log의 정의와 성질',en:'W13-1 · Exponents & Logarithms — Rational Exponents, log Definition & Properties',zh:'W13-1·指数与对数——有理数指数·log的定义与性质'},
-      units:['M-36','M-37','M-38'],
+      theme:{ko:'W13-1 · 지수와 로그 — 거듭제곱근·유리수 지수·log의 성질·상용로그',en:'W13-1 · Exponents & Logarithms — Radicals, Rational Exponents, log Properties & Common Logs',zh:'W13-1·指数与对数——根式·有理数指数·log的性质·常用对数'},
+      units:['M-36','M-134','M-37','M-38','M-135'],
       tip:{ko:'log_a N = x는 "a를 몇 번 곱해야 N이 되는가" — 지수 사다리를 거꾸로 읽는 것뿐이에요!',en:'log_a N = x asks "how many times must a be multiplied to reach N" — just reading the exponent ladder backward!',zh:'log_a N = x问的是"a要乘几次才能得到N"——只是反过来读指数梯子而已！'}
     },
     {
-      id:'W13-2', icon:'📐', grade:'대수',
-      edu:{ko:'대수 삼각함수와 수열',en:'Algebra Trigonometry & Sequences',zh:'代数三角函数与数列'},
-      theme:{ko:'W13-2 · 삼각함수와 수열 — 특수각의 값·등차수열·등비수열',en:'W13-2 · Trigonometry & Sequences — Special-Angle Values, Arithmetic & Geometric Sequences',zh:'W13-2·三角函数与数列——特殊角的值·等差数列·等比数列'},
-      units:['M-39','M-40','M-41'],
-      tip:{ko:'30-60-90 삼각형의 변의 비는 1:√3:2 — 이 하나만 알면 특수각 값이 다 나와요!',en:'A 30-60-90 triangle has side ratio 1:√3:2 — know this one thing and every special-angle value follows!',zh:'30-60-90三角形的边比是1:√3:2——知道这一点，特殊角的值全都能推出来！'}
-    },
-    {
-      id:'W13-3', icon:'🌈', grade:'대수',
-      edu:{ko:'대수 Σ와 무지개 덧셈법',en:'Algebra Σ & the Rainbow-Sum Trick',zh:'代数Σ与彩虹加法法'},
-      theme:{ko:'W13-3 · Σ(시그마) — 이미 아는 마법이 새 기호 옷을 입어요',en:'W13-3 · Sigma (Σ) — Magic You Already Know, in New Symbolic Clothes',zh:'W13-3·Σ(西格玛)——早就会的魔法换上新符号的外衣'},
-      units:['M-42'],
-      tip:{ko:'Σk=n(n+1)÷2는 무지개 덧셈법 그 공식이고, Σk²=n(n+1)(2n+1)÷6은 제곱수의 합이에요 — 새로 외울 게 없어요!',en:'Σk=n(n+1)÷2 is exactly the rainbow-sum formula, and Σk²=n(n+1)(2n+1)÷6 is the sum of squares — nothing new to memorize!',zh:'Σk=n(n+1)÷2正是彩虹加法法的公式，Σk²=n(n+1)(2n+1)÷6就是平方数之和——完全不用背新东西！'}
-    },
-
-    /* ─────── W13-4·5 : 심화 유형 2차(2026-08-27) — 대수 심화 ───────
-       mid6.js(MD36~42)가 작업지시로 제외했던 지수·로그 방정식/부등식·
-       사인법칙·코사인법칙·삼각함수 최대최소주기(MD52~57). */
-    {
-      id:'W13-4', icon:'🧩', grade:'대수',
-      edu:{ko:'대수 지수·로그 방정식과 부등식',en:'Algebra Exponential & Log Equations/Inequalities',zh:'代数指数·对数方程与不等式'},
-      theme:{ko:'W13-4 · 지수·로그 방정식과 부등식 — 밑 통일부터 경계값까지',en:'W13-4 · Exponential & Log Equations/Inequalities — From Unifying the Base to Boundary Values',zh:'W13-4·指数·对数方程与不等式——从统一底数到边界值'},
-      units:['M-52','M-53','M-54'],
+      id:'W13-2', icon:'🧩', grade:'대수',
+      edu:{ko:'대수 지수함수와 로그함수',en:'Algebra Exponential & Log Functions',zh:'代数指数函数与对数函数'},
+      theme:{ko:'W13-2 · 지수함수와 로그함수 — 그래프·최대최소에서 방정식과 부등식까지',en:'W13-2 · Exponential & Log Functions — From Graphs and Max/Min to Equations & Inequalities',zh:'W13-2·指数函数与对数函数——从图像·最值到方程与不等式'},
+      units:['M-136','M-137','M-138','M-139','M-52','M-53','M-54'],
       tip:{ko:'밑이 같으면 지수함수는 일대일 대응 — 지수끼리 등식(또는 부등식)이 그대로 성립해요!',en:'With equal bases, the exponential function is one-to-one — the exponents themselves form the equation (or inequality)!',zh:'底数相同时，指数函数一一对应——指数本身就构成等式(或不等式)！'}
     },
     {
-      id:'W13-5', icon:'🔺', grade:'대수',
-      edu:{ko:'대수 삼각형의 법칙과 삼각함수',en:'Algebra Triangle Laws & Trig Functions',zh:'代数三角形定律与三角函数'},
-      theme:{ko:'W13-5 · 사인법칙·코사인법칙과 삼각함수 최대최소주기',en:'W13-5 · Law of Sines/Cosines & Trig Max/Min/Period',zh:'W13-5·正弦定理·余弦定理与三角函数最大最小值·周期'},
-      units:['M-55','M-56','M-57'],
+      id:'W13-3', icon:'📐', grade:'대수',
+      edu:{ko:'대수 삼각함수',en:'Algebra Trigonometric Functions',zh:'代数三角函数'},
+      theme:{ko:'W13-3 · 삼각함수 — 호도법·특수각·그래프·삼각방정식',en:'W13-3 · Trigonometric Functions — Radians, Special Angles, Graphs & Trig Equations',zh:'W13-3·三角函数——弧度制·特殊角·图像·三角方程'},
+      units:['M-140','M-141','M-39','M-142','M-57','M-143','M-144'],
+      tip:{ko:'30-60-90 삼각형의 변의 비는 1:√3:2 — 이 하나만 알면 특수각 값이 다 나와요!',en:'A 30-60-90 triangle has side ratio 1:√3:2 — know this one thing and every special-angle value follows!',zh:'30-60-90三角形的边比是1:√3:2——知道这一点，特殊角的值全都能推出来！'}
+    },
+    {
+      id:'W13-4', icon:'🔺', grade:'대수',
+      edu:{ko:'대수 삼각형의 법칙과 수열',en:'Algebra Triangle Laws & Sequences',zh:'代数三角形定律与数列'},
+      theme:{ko:'W13-4 · 사인·코사인법칙과 넓이, 등차수열·등비수열',en:'W13-4 · Sine/Cosine Laws & Area, Arithmetic & Geometric Sequences',zh:'W13-4·正弦·余弦定理与面积、等差数列·等比数列'},
+      units:['M-55','M-56','M-145','M-40','M-146','M-147','M-41','M-148'],
       tip:{ko:'사인법칙(a/sinA=2R)은 변과 외접원을, 코사인법칙(a²=b²+c²-2bc·cosA)은 두 변과 낀각을 이어줘요!',en:'The law of sines (a/sinA=2R) links a side to the circumscribed circle; the law of cosines (a²=b²+c²-2bc·cosA) links two sides and the included angle!',zh:'正弦定理(a/sinA=2R)连接边与外接圆；余弦定理(a²=b²+c²-2bc·cosA)连接两边与夹角！'}
+    },
+    {
+      id:'W13-5', icon:'🌈', grade:'대수',
+      edu:{ko:'대수 Σ와 수학적 귀납법',en:'Algebra Σ & Mathematical Induction',zh:'代数Σ与数学归纳法'},
+      theme:{ko:'W13-5 · Σ와 여러 가지 수열의 합 — 귀납적 정의와 수학적 귀납법까지',en:'W13-5 · Σ & Sums of Sequences — Through Recursive Definitions and Induction',zh:'W13-5·Σ与各种数列的和——直到递推定义与数学归纳法'},
+      units:['M-42','M-149','M-150','M-151','M-152','M-153'],
+      tip:{ko:'Σk=n(n+1)÷2는 무지개 덧셈법 그 공식이고, Σk²=n(n+1)(2n+1)÷6은 제곱수의 합이에요 — 새로 외울 게 없어요!',en:'Σk=n(n+1)÷2 is exactly the rainbow-sum formula, and Σk²=n(n+1)(2n+1)÷6 is the sum of squares — nothing new to memorize!',zh:'Σk=n(n+1)÷2正是彩虹加法法的公式，Σk²=n(n+1)(2n+1)÷6就是平方数之和——完全不用背新东西！'}
     },
 
     /* ─────── W14 : 변화의 정상 — 미적분Ⅰ (2026-08-25) ─────────

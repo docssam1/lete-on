@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-142: 삼각함수의 정의와 관계 (고등 대수 · 과정 63 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-142: 삼각함수의 정의와 관계 (고등 대수 · 과정 62, 2026-09-29)
    근거: docs/high-build-spec.md MD142. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-142'] = {
-  id:'M-142', tier:'algebra', level:'63', order:142,
+  id:'M-142', tier:'algebra', level:'62', order:142,
   generator:'md142_trigDef',
   title:{ ko:'삼각함수의 정의와 관계', en:'Definitions & Relations of Trig Functions', zh:'三角函数的定义与关系' },
   subtitle:{ ko:'원 위의 한 점이 알려 주는 세 값', en:'Three values told by one point on a circle', zh:'圆上一点告诉我们的三个值' },

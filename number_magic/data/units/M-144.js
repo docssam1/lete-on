@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-144: 삼각방정식과 삼각부등식 (고등 대수 · 과정 66 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-144: 삼각방정식과 삼각부등식 (고등 대수 · 과정 64, 2026-09-29)
    근거: docs/high-build-spec.md MD144. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-144'] = {
-  id:'M-144', tier:'algebra', level:'66', order:144,
+  id:'M-144', tier:'algebra', level:'64', order:144,
   generator:'md144_trigEq',
   title:{ ko:'삼각방정식과 삼각부등식', en:'Trig Equations & Inequalities', zh:'三角方程与三角不等式' },
   subtitle:{ ko:'단위원 위에서 같은 높이의 점을 모두 찾기', en:'Find every point at the same height on the unit circle', zh:'在单位圆上找出所有同样高度的点' },

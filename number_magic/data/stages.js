@@ -203,11 +203,11 @@ window.NM_STAGES = [
     name:{ko:'대수 — 기호의 탑',en:'Algebra — Tower of Symbols',zh:'代数——符号之塔'},
     band:{ko:'고등 · 대수',en:'High school · Algebra',zh:'高中 · 代数'},
     chapters:['W13-1','W13-2','W13-3','W13-4','W13-5'],
-    tiers:['algebra'], courses:{from:58,to:61}, weeks:25,
+    tiers:['algebra'], courses:{from:58,to:69}, weeks:92,
     learn:{
-      ko:'지수와 로그, 지수·로그방정식과 부등식, 삼각함수와 사인·코사인법칙, 등차수열·등비수열과 Σ.',
-      en:'Exponents and logarithms, exponential and log equations and inequalities, trigonometric functions and the sine and cosine laws, arithmetic and geometric sequences and Σ.',
-      zh:'指数与对数、指数·对数方程与不等式、三角函数与正弦·余弦定理、等差数列·等比数列与Σ。'},
+      ko:'지수와 로그·상용로그, 지수함수와 로그함수, 지수·로그 방정식과 부등식, 호도법과 삼각함수·그래프·삼각방정식, 사인·코사인법칙과 넓이, 등차·등비수열과 원리합계, Σ와 여러 가지 수열의 합, 귀납적 정의와 수학적 귀납법.',
+      en:'Exponents, logarithms and common logarithms, exponential and log functions, exponential and log equations and inequalities, radians, trigonometric functions, their graphs and equations, the sine and cosine laws and area, arithmetic and geometric sequences with compound savings, Σ and sums of various sequences, and recursive definitions with mathematical induction.',
+      zh:'指数与对数·常用对数、指数函数与对数函数、指数·对数方程与不等式、弧度制与三角函数·图像·三角方程、正弦·余弦定理与面积、等差·等比数列与本利和、Σ与各种数列的和、递推定义与数学归纳法。'},
     how:{
       ko:'새 기호를 하나씩 만납니다. Σ는 초등에서 하던 짝지어 더하기가 기호 옷을 입은 것이고, log는 지수 사다리를 거꾸로 읽는 것입니다.',
       en:'New symbols are met one at a time. Σ is the pairing-and-adding of elementary school in symbolic clothing; log reads the ladder of exponents backwards.',
@@ -216,14 +216,14 @@ window.NM_STAGES = [
     symbols:[
       {sym:'log', tr:{ko:'지수 사다리를 거꾸로 읽어라',en:'read the ladder of exponents backwards',zh:'把指数的梯子倒过来读'}},
       {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}}],
-    meta:{ko:'과정 58~61 · 주 2회 기준 13주(주 1회 25주)',en:'Courses 58–61 · 13 weeks at two sheets a week (25 at one)',zh:'课程58~61 · 每周2次约13周(每周1次25周)'}
+    meta:{ko:'과정 58~69 · 주 2회 기준 48주(주 1회 92주)',en:'Courses 58–69 · 48 weeks at two sheets a week (92 at one)',zh:'课程58~69 · 每周2次约48周(每周1次92周)'}
   },
   {
     key:'calculus1', icon:'∫', accent:'#0d3b66', status:'partial',
     name:{ko:'미적분Ⅰ — 변화의 정상',en:'Calculus I — Summit of Change',zh:'微积分Ⅰ——变化之巅'},
     band:{ko:'고등 · 미적분Ⅰ',en:'High school · Calculus I',zh:'高中 · 微积分Ⅰ'},
     chapters:['W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['calculus1'], courses:{from:62,to:64}, weeks:18,
+    tiers:['calculus1'], courses:{from:70,to:72}, weeks:18,
     learn:{
       ko:'함수의 극한과 연속, 미분계수와 도함수, 접선과 극값, 다항함수의 적분, 넓이와 속도·거리.',
       en:'Limits and continuity, the derivative at a point and the derived function, tangents and extrema, integrating polynomials, area and speed and distance.',
@@ -237,7 +237,7 @@ window.NM_STAGES = [
       {sym:'lim', tr:{ko:'x가 다가가는 값',en:'the value x approaches',zh:'x趋近的值'}},
       {sym:'f′', tr:{ko:'순간의 기울기',en:'the instantaneous slope',zh:'瞬时斜率'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 62~64 · 주 2회 기준 9주(주 1회 18주) · 실험실 2',en:'Courses 62–64 · 9 weeks at two sheets a week (18 at one) · 2 labs',zh:'课程62~64 · 每周2次约9周(每周1次18周) · 2个实验室'}
+    meta:{ko:'과정 70~72 · 주 2회 기준 9주(주 1회 18주) · 실험실 2',en:'Courses 70–72 · 9 weeks at two sheets a week (18 at one) · 2 labs',zh:'课程70~72 · 每周2次约9周(每周1次18周) · 2个实验室'}
   }
 ];
 

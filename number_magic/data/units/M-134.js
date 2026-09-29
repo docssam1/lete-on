@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-134: aˣ+a⁻ˣ 꼴 식의 값 (고등 대수 · 과정 60 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-134: aˣ+a⁻ˣ 꼴 식의 값 (고등 대수 · 과정 58, 2026-09-29)
    근거: docs/high-build-spec.md MD134. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-134'] = {
-  id:'M-134', tier:'algebra', level:'60', order:134,
+  id:'M-134', tier:'algebra', level:'58', order:134,
   generator:'md134_expSym',
   title:{ ko:'aˣ+a⁻ˣ 꼴 식의 값', en:'Values of aˣ+a⁻ˣ', zh:'aˣ+a⁻ˣ型式子的值' },
   subtitle:{ ko:'곱이 1 인 두 수의 짝', en:'Pairs of numbers whose product is 1', zh:'积为1的一对数' },

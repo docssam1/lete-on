@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-140: 일반각과 호도법 (고등 대수 · 과정 63 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-140: 일반각과 호도법 (고등 대수 · 과정 62, 2026-09-29)
    근거: docs/high-build-spec.md MD140. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-140'] = {
-  id:'M-140', tier:'algebra', level:'63', order:140,
+  id:'M-140', tier:'algebra', level:'62', order:140,
   generator:'md140_radian',
   title:{ ko:'일반각과 호도법', en:'General Angles & Radians', zh:'任意角与弧度制' },
   subtitle:{ ko:'한 바퀴를 넘어 도는 각, 반지름으로 재는 각', en:'Angles beyond one turn, measured by the radius', zh:'超过一圈的角，用半径度量的角' },

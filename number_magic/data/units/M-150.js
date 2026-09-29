@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-150: 군수열 (고등 대수 · 과정 70 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-150: 군수열 (고등 대수 · 과정 68, 2026-09-29)
    근거: docs/high-build-spec.md MD150. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-150'] = {
-  id:'M-150', tier:'algebra', level:'70', order:150,
+  id:'M-150', tier:'algebra', level:'68', order:150,
   generator:'md150_groupSeq',
   title:{ ko:'군수열', en:'Grouped Sequences', zh:'分群数列' },
   subtitle:{ ko:'괄호로 묶으면 규칙이 보입니다', en:'Brackets reveal the pattern', zh:'用括号分组，规律就出现了' },

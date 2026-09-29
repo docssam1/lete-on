@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-149: 여러 가지 수열의 합 (고등 대수 · 과정 70 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-149: 여러 가지 수열의 합 (고등 대수 · 과정 68, 2026-09-29)
    근거: docs/high-build-spec.md MD149. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-149'] = {
-  id:'M-149', tier:'algebra', level:'70', order:149,
+  id:'M-149', tier:'algebra', level:'68', order:149,
   generator:'md149_seriesSum',
   title:{ ko:'여러 가지 수열의 합', en:'Sums of Special Sequences', zh:'各种数列的求和' },
   subtitle:{ ko:'가운데가 지워지는 합', en:'Sums whose middles vanish', zh:'中间会消去的和' },

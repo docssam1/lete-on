@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-139: 로그함수의 최대·최소 (고등 대수 · 과정 62 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-139: 로그함수의 최대·최소 (고등 대수 · 과정 60, 2026-09-29)
    근거: docs/high-build-spec.md MD139. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-139'] = {
-  id:'M-139', tier:'algebra', level:'62', order:139,
+  id:'M-139', tier:'algebra', level:'60', order:139,
   generator:'md139_logMaxMin',
   title:{ ko:'로그함수의 최대·최소', en:'Maxima & Minima of Logarithmic Functions', zh:'对数函数的最大值与最小值' },
   subtitle:{ ko:'양 끝, 치환, 그리고 진수 묶기', en:'Ends, substitution, and combining arguments', zh:'两端、换元与合并真数' },

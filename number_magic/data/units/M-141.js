@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-141: 부채꼴의 호의 길이와 넓이 (고등 대수 · 과정 63 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-141: 부채꼴의 호의 길이와 넓이 (고등 대수 · 과정 62, 2026-09-29)
    근거: docs/high-build-spec.md MD141. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-141'] = {
-  id:'M-141', tier:'algebra', level:'63', order:141,
+  id:'M-141', tier:'algebra', level:'62', order:141,
   generator:'md141_sector',
   title:{ ko:'부채꼴의 호의 길이와 넓이', en:'Arc Length & Area of a Sector', zh:'扇形的弧长与面积' },
   subtitle:{ ko:'라디안이면 공식이 곱셈 하나', en:'With radians, the formula is a single product', zh:'用弧度，公式就是一次乘法' },

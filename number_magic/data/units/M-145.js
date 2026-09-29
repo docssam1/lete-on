@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-145: 삼각형과 사각형의 넓이 (고등 대수 · 과정 67 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-145: 삼각형과 사각형의 넓이 (고등 대수 · 과정 65, 2026-09-29)
    근거: docs/high-build-spec.md MD145. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-145'] = {
-  id:'M-145', tier:'algebra', level:'67', order:145,
+  id:'M-145', tier:'algebra', level:'65', order:145,
   generator:'md145_area',
   title:{ ko:'삼각형과 사각형의 넓이', en:'Areas of Triangles & Quadrilaterals', zh:'三角形与四边形的面积' },
   subtitle:{ ko:'높이를 몰라도 sin 이 높이를 대신합니다', en:'No height? The sine stands in for it', zh:'不知道高？sin来代替' },

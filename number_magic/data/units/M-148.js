@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-148: 원리합계 (고등 대수 · 과정 69 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-148: 원리합계 (고등 대수 · 과정 67, 2026-09-29)
    근거: docs/high-build-spec.md MD148. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-148'] = {
-  id:'M-148', tier:'algebra', level:'69', order:148,
+  id:'M-148', tier:'algebra', level:'67', order:148,
   generator:'md148_annuity',
   title:{ ko:'원리합계', en:'Compound Savings', zh:'本利和' },
   subtitle:{ ko:'매년 넣은 돈이 등비수열로 자랍니다', en:'Money saved each year grows as a geometric sequence', zh:'每年存的钱按等比数列增长' },

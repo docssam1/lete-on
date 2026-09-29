@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-136: 지수함수의 그래프 (고등 대수 · 과정 62 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-136: 지수함수의 그래프 (고등 대수 · 과정 60, 2026-09-29)
    근거: docs/high-build-spec.md MD136. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-136'] = {
-  id:'M-136', tier:'algebra', level:'62', order:136,
+  id:'M-136', tier:'algebra', level:'60', order:136,
   generator:'md136_expGraph',
   title:{ ko:'지수함수의 그래프', en:'Graphs of Exponential Functions', zh:'指数函数的图像' },
   subtitle:{ ko:'바닥에 닿을 듯 닿지 않는 곡선', en:'A curve that almost touches the floor', zh:'几乎贴地却永不相碰的曲线' },

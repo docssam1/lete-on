@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-138: 로그함수의 그래프 (고등 대수 · 과정 62 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-138: 로그함수의 그래프 (고등 대수 · 과정 60, 2026-09-29)
    근거: docs/high-build-spec.md MD138. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-138'] = {
-  id:'M-138', tier:'algebra', level:'62', order:138,
+  id:'M-138', tier:'algebra', level:'60', order:138,
   generator:'md138_logGraph',
   title:{ ko:'로그함수의 그래프', en:'Graphs of Logarithmic Functions', zh:'对数函数的图像' },
   subtitle:{ ko:'지수함수를 y=x 에 비춘 곡선', en:'The exponential curve reflected in y=x', zh:'指数曲线关于y=x的镜像' },

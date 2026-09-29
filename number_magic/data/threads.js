@@ -4401,7 +4401,7 @@ MD145:{ name:{ko:'삼각형과 사각형의 넓이',en:'Areas of Triangles & Qua
              en:'A diagonal splits a parallelogram into two congruent triangles, so S=ab sinθ. A quadrilateral with diagonals p and q meeting at angle θ has S=½pq sinθ.',
              zh:'平行四边形被对角线分成两个全等三角形，所以S=ab sinθ。对角线长为p、q且两对角线所成角为θ的四边形，S=½pq sinθ。'}}] },
 
-MD146:{ name:{ko:'수열의 합과 일반항의 관계',en:'Sₙ and aₙ',zh:'数列的和与通项的关系'}, gen:'md146_snAn', prereq:['MD40','MD42'],
+MD146:{ name:{ko:'수열의 합과 일반항의 관계',en:'Sₙ and aₙ',zh:'数列的和与通项的关系'}, gen:'md146_snAn', prereq:['MD40'],
   unit:'M-146',
   concept:{ko:'첫째항부터 제n항까지의 합을 Sₙ 이라 하면 a₁=S₁ 이고, n≥2 일 때 aₙ=Sₙ−Sₙ₋₁ 입니다. 여러 항의 합 aₘ+…+aₙ 은 Sₙ−Sₘ₋₁ 로 한 번에 구합니다.',
     en:'With Sₙ the sum from the first term to the nth, a₁=S₁ and, for n≥2, aₙ=Sₙ−Sₙ₋₁. A block of terms aₘ+…+aₙ is Sₙ−Sₘ₋₁ in one step.',

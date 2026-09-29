@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-135: 상용로그 (고등 대수 · 과정 61 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-135: 상용로그 (고등 대수 · 과정 59, 2026-09-29)
    근거: docs/high-build-spec.md MD135. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-135'] = {
-  id:'M-135', tier:'algebra', level:'61', order:135,
+  id:'M-135', tier:'algebra', level:'59', order:135,
   generator:'md135_commonLog',
   title:{ ko:'상용로그', en:'Common Logarithms', zh:'常用对数' },
   subtitle:{ ko:'엄청나게 큰 수의 자릿수를 세는 법', en:'Counting the digits of enormous numbers', zh:'数出巨大数字的位数' },

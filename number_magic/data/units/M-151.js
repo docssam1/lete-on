@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-151: 수열의 귀납적 정의 (고등 대수 · 과정 71 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-151: 수열의 귀납적 정의 (고등 대수 · 과정 69, 2026-09-29)
    근거: docs/high-build-spec.md MD151. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-151'] = {
-  id:'M-151', tier:'algebra', level:'71', order:151,
+  id:'M-151', tier:'algebra', level:'69', order:151,
   generator:'md151_recDef',
   title:{ ko:'수열의 귀납적 정의', en:'Recursive Definitions of Sequences', zh:'数列的递推定义' },
   subtitle:{ ko:'첫 계단과 오르는 규칙만 있으면 됩니다', en:'A first step and a rule for climbing are enough', zh:'有第一级台阶和上楼的规则就够了' },

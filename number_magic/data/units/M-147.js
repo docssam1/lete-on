@@ -1,11 +1,11 @@
-/* Numbers of Magic — 유닛 M-147: 등차수열의 합의 최대·최소 (고등 대수 · 과정 68 예정, 2026-09-29)
+/* Numbers of Magic — 유닛 M-147: 등차수열의 합의 최대·최소 (고등 대수 · 과정 66, 2026-09-29)
    근거: docs/high-build-spec.md MD147. 예시는 새로 만들었다. */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-147'] = {
-  id:'M-147', tier:'algebra', level:'68', order:147,
+  id:'M-147', tier:'algebra', level:'66', order:147,
   generator:'md147_apExtreme',
   title:{ ko:'등차수열의 합의 최대·최소', en:'Max & Min of Arithmetic Series', zh:'等差数列前n项和的最值' },
   subtitle:{ ko:'양수를 다 더한 곳이 꼭대기', en:'The peak is where the positive terms run out', zh:'正项加完的地方就是顶峰' },
