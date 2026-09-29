@@ -91,7 +91,8 @@ async function checkViewport(browser,port,width,height){
   const tracks=await visibleText(page,'.track-key');
   assert.match(tracks,/소마 A 트랙/);assert.match(tracks,/필즈 E1 트랙/);assert.match(tracks,/프리미어 트랙/);
   if(OUT)await page.screenshot({path:path.join(OUT,screenName(width,'roadmap'))});
-  await page.goBack();
+  await page.locator('#bookBack').evaluate(button=>{button.click();button.click()});
+  await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='worksheet');
   await page.waitForSelector('[data-panel="worksheet"].is-active');
   await page.waitForFunction(()=>!document.querySelector('.book-paper').classList.contains('is-turning'));
   const historyBeforeBack=await page.evaluate(()=>history.length);

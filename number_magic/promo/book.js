@@ -31,6 +31,7 @@
   var lastIntroView='menu';
   var opening=false;
   var turning=false;
+  var navigatingBack=false;
   var historyDepth=0;
   var views={
     cover:{title:'표지'},
@@ -141,8 +142,8 @@
   }
   function nextBookPage(){if(turning)return;if(currentView==='menu'||currentView==='video')setView('worksheet');else if(currentView==='worksheet')setView('roadmap')}
   function previousBookPage(){
-    if(turning)return;
-    if(historyDepth>0){if(currentView==='video')showJourney(true,false);history.back();return}
+    if(turning||navigatingBack)return;
+    if(historyDepth>0){navigatingBack=true;if(currentView==='video')showJourney(true,false);history.back();return}
     if(currentView==='menu'){setView('cover',{history:'replace'});return}
     if(currentView==='video'){showJourney(true,false);setView('menu',{turn:false,history:'replace'});return}
     if(currentView==='roadmap'){setView('worksheet',{history:'replace'});return}
@@ -169,7 +170,7 @@
   journeySound.addEventListener('click',function(){video.muted=!video.muted;syncMuteUI();if(video.paused)tryPlay()});
   document.getElementById('muteToggle').addEventListener('click',function(){video.muted=!video.muted;syncMuteUI()});
   sheetPrev.addEventListener('click',function(){turnSheets(-1)});sheetNext.addEventListener('click',function(){turnSheets(1)});if(mobileMedia.addEventListener)mobileMedia.addEventListener('change',renderSheets);
-  window.addEventListener('popstate',function(event){var view=viewFromHash();historyDepth=event.state&&event.state.nmBook?Number(event.state.depth)||0:0;if(view==='menu')showJourney(false,false);if(view==='video')loadCut(activeCut,false);setView(view,{history:false})});
+  window.addEventListener('popstate',function(event){var view=viewFromHash();navigatingBack=false;historyDepth=event.state&&event.state.nmBook?Number(event.state.depth)||0:0;if(view==='menu')showJourney(false,false);if(view==='video')loadCut(activeCut,false);setView(view,{history:false})});
   window.addEventListener('keydown',function(event){
     if(event.key==='Escape'&&currentView!=='cover'){event.preventDefault();previousBookPage();return}
     if(currentView==='worksheet'&&event.key==='ArrowRight'){turnSheets(1);return}
