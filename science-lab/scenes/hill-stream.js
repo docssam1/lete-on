@@ -262,6 +262,7 @@ export default {
     const down = arrow([0.35, BASE + 1.55, 0.55], [1.9, BASE + 0.45, 0.55], P.red, 0.035); world.add('down', down);
     return { update(dt) { if (wat.visible) wat.userData.tick(dt); } };
   },
+  revealAt: 2,   // 이 단계부터 답(흐르는 물이 깎아 냄)이 나온다 — 가설 전 미리 보기는 그 앞까지(SEQUENCE-DESIGN.md)
   beats: [
     { text: '쟁반에 흙 언덕을 만들고, 꼭대기에 색 모래를 뿌려요.', show: ['tray', 'hill', 'lbQ'], dur: 4,
       reset(o) { o.hill.userData.set(0, 0); Object.assign(o.water.userData, { carry: 0, front: 0 }); o.water.userData.refresh(); } },

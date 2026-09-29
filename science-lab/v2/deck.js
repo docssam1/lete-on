@@ -24,7 +24,8 @@ export function buildSlides(ch, art, plan, similar, mode) {
     <p class="dk-sub">탐구 요소 · ${ch.skills.map(esc).join(' · ')}</p>`);
   add('intro', 'open', '이런 모습 본 적 있나요?', `<div class="dk-two"><div class="dk-art">${art.opener}</div><div>${ch.intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div></div>`, { layout: 'intro', kind: 'read' });
   ch.think.forEach((t, i) => add(`think${i + 1}`, 'open', `미리 생각하기 ${i + 1}`, `<p class="dk-q">${esc(t.q)}</p>${ans(t.a, `think${i}`)}`, { say: 'think', kind: 'write' }));
-  add('scene', 'open', '3D로 먼저 보기', `<div class="dk-3d" data-mount="scene"></div>`, { say: 'scene', mount: 'scene', layout: 'media', kind: 'scene' });
+  // 가설 전에는 답이 나오기 전까지만(장면의 revealAt) — 답은 실험·결과 뒤 「3D로 확인하기」에서(SEQUENCE-DESIGN.md)
+  add('scene', 'open', '3D로 먼저 보기', `<div class="dk-3d" data-mount="scene" data-preview="1"></div>`, { say: 'scene', mount: 'scene', layout: 'media', kind: 'scene' });
 
   add('goal', 'design', '탐구 목표', `<p class="dk-goal">${esc(ch.goal)}</p><div class="dk-two"><div class="dk-card"><h3>준비물</h3><p>${ch.materials.kit.map(esc).join(', ')}</p></div>
     <div class="dk-card"><h3>학생 준비물</h3><p>${ch.materials.student.map(esc).join(', ')}</p></div></div>`, { kind: 'read', layout: 'goal' });
@@ -43,6 +44,7 @@ export function buildSlides(ch, art, plan, similar, mode) {
     ${r.art ? `<div class="dk-art mid">${art[r.art]}</div>` : ''}
     ${r.table ? `<table class="dk-tbl"><tr>${r.table.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>${r.rows.map((rw) => `<tr><th>${esc(rw)}</th>${r.table.slice(1).map(() => '<td></td>').join('')}</tr>`).join('')}</table>` : ''}
     ${ans(r.a, `res${i}`)}`, { say: 'res', kind: 'write' }));
+  add('reveal', 'result', '3D로 확인하기', `<p class="dk-sub">내 예상과 결과가 맞는지, 아까 멈췄던 곳부터 끝까지 봐요.</p><div class="dk-3d" data-mount="scene" data-from="reveal"></div>`, { say: 'reveal', mount: 'scene', layout: 'media', kind: 'scene' });
   add('concl', 'result', 'STEP 5 · 결론 내리기', `<ol class="dk-list">${ch.conclusion.map((c, i) => `<li><p>${esc(c.q)}</p>${ans(c.a, `concl${i}`)}</li>`).join('')}</ol>`, { say: 'concl', kind: 'write' });
 
   const nt = ch.note;
@@ -165,7 +167,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
       new MutationObserver(() => a.classList.contains('on') && ol.querySelectorAll('button').forEach((b) => b.classList.toggle('ok', key.includes(+b.dataset.j)))).observe(a, { attributes: true });
     });
     const m = stage.querySelector('[data-mount]');
-    if (m?.dataset.mount === 'scene') mount3D(m, { autoplay: false });
+    if (m?.dataset.mount === 'scene') mount3D(m, { autoplay: false, preview: !!m.dataset.preview, from: m.dataset.from || null });
     if (m?.dataset.mount === 'lab') {
       // 교사 화면에는 학생 개인 기록을 섞지 않는다 — 실험 표는 이 화면에서만 쓰고 버린다.
       if (!battle) mountLab(m, { rows: [], personal: false });
@@ -206,8 +208,8 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     if (k === 'read') { const t0 = performance.now(), c = cue(V, null); if (c) await G.say(c); if (!alive()) return;
       const read = Math.min(12000, Math.max(2200, textLen() * 55)) - (performance.now() - t0); auto(Math.max(1500, read)); return; }
     if (k === 'end') { G.say(cue(V, 'dk-end'), { mood: 'praise' }); return; }
-    if (k === 'scene') { G.say(cue(V, 'dk-scene')); const m = stage.querySelector('[data-mount]');
-      mount3D(m, { autoplay: true, onDone: async () => { if (!alive()) return; await G.say('dk-scene-done', { mood: 'praise' }); auto(900); } }); return; }
+    if (k === 'scene') { const m = stage.querySelector('[data-mount]'); G.say(cue(V, m.dataset.from ? 'dk-reveal' : 'dk-scene'));
+      mount3D(m, { autoplay: true, preview: !!m.dataset.preview, from: m.dataset.from || null, onDone: async () => { if (!alive()) return; await G.say('dk-scene-done', { mood: 'praise' }); auto(900); } }); return; }
     if (k === 'lab') { G.say(cue(V, 'dk-lab')); const m = stage.querySelector('[data-mount]'); let done = false;
       m.addEventListener('pointerdown', () => { if (timer) cancelAuto(); }, true);   // 실험을 더 하면 넘기지 않는다
       mountLab(m, { personal: true, onRecord: async () => { if (done) return; done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } });

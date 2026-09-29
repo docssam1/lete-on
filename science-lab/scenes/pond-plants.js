@@ -35,6 +35,7 @@ export default {
     let t = 0; const U = hy.userData; U.push = 0;
     return { update(dt) { t += dt; p.userData.ripple(t); gr.userData.sway(t); if (!U.push) { hy.position.y = SURF + Math.sin(t * 1.4) * 0.015; hy.rotation.y = Math.sin(t * 0.3) * 0.2; } } };
   },
+  revealAt: 3,   // 이 단계부터 답(잎자루 속 공기)이 나온다 — 가설 전 미리 보기는 그 앞까지(SEQUENCE-DESIGN.md)
   beats: [
     { text: '연못에 여러 식물이 살아요. 사는 곳이 저마다 달라요.', show: ['pond', 'hy', 'lily', 'grass', 'cat', 'lbQ'], dur: 4,
       reset(o) { o.hy.userData.push = 0; o.hy.position.y = SURF; o.bub.userData.play(0, 0); } },

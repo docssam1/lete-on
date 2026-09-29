@@ -535,7 +535,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
   const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([bookMod, import('./deck.js')]);
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((x) => [x.id, x]));
   renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx, misc: MISC,
-    mount3D: (el, o = {}) => mount3D(el, L.engage.scene, { autoplay: !!o.autoplay, onDone: o.onDone }),
+    mount3D: (el, o = {}) => mount3D(el, L.engage.scene, { autoplay: !!o.autoplay, preview: o.preview || false, from: o.from || null, onDone: o.onDone }),
     // personal:false(가르치기) → 학생 기록을 읽지도 쓰지도 않는다. 두 팀 배틀은 각자 빈 표로.
     mountLab: (el, o = {}) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab,
       rows: o.personal === false ? (o.rows || []) : store.get(u).labRows || [],
