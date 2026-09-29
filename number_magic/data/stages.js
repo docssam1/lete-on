@@ -52,7 +52,7 @@ window.NM_STAGES = [
     name:{ko:'계산의 새싹',en:'Sprout',zh:'计算的新芽'},
     band:{ko:'6~7세 · 초등 1학년',en:'Ages 6–7 · Grade 1',zh:'6~7岁 · 小学一年级'},
     chapters:['R0','R1','G0','G1','R2','R3','R4','T4','R5','R6','R7','R8'],
-    tiers:['level1'], courses:{from:1,to:10}, weeks:78,
+    tiers:['level1'], courses:{from:1,to:10}, weeks:80,
     learn:{
       ko:'자릿값과 모으기·가르기, 보수 5와 10, 받아올림·받아내림, 두 자리에서 네 자리 덧뺄셈, 구구단 2~9단, 나눗셈의 시작.',
       en:'Place value, gathering and splitting, complements of 5 and 10, carrying and borrowing, two- to four-digit addition and subtraction, times tables 2–9, the start of division.',
@@ -69,7 +69,7 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도보다 앞선 편성이라 구구단까지 이 단계에 들어 있습니다.',
       en:'The plan runs ahead of school, so times tables already sit in this stage.',
       zh:'编排比学校进度提前，所以乘法口诀已经在这一阶段。'},
-    meta:{ko:'과정 1~10 · 주 2회 기준 41주(주 1회 78주)',en:'Courses 1–10 · 41 weeks at two sheets a week (78 at one)',zh:'课程1~10 · 每周2次约41周(每周1次78周)'}
+    meta:{ko:'과정 1~10 · 주 2회 기준 42주(주 1회 80주)',en:'Courses 1–10 · 42 weeks at two sheets a week (80 at one)',zh:'课程1~10 · 每周2次约42周(每周1次80周)'}
   },
   {
     key:'leap', icon:'🚀', accent:'#16417C', status:'live',
@@ -96,7 +96,7 @@ window.NM_STAGES = [
     name:{ko:'계산의 정복',en:'Mastery',zh:'计算的征服'},
     band:{ko:'초등 2학년 말 ~ 3학년',en:'End of Grade 2 – Grade 3',zh:'小学二年级末~三年级'},
     chapters:['T14','R15','T15','R16','CR8','R17'],
-    tiers:['level3'], courses:{from:17,to:25}, weeks:52,
+    tiers:['level3'], courses:{from:17,to:25}, weeks:53,
     learn:{
       ko:'소수 덧뺄과 곱셈, 제곱수, 약수와 배수·소인수분해, 분모가 다른 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.',
       en:'Decimal addition, subtraction and multiplication, square numbers, factors and multiples, fractions with unlike denominators, multiplying and dividing fractions, sequences, percentages and ratios.',
@@ -113,7 +113,7 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도로는 초4~5에 나오는 내용을 여기서 만납니다.',
       en:'In school terms this covers Grade 4–5 material.',
       zh:'按学校进度，这里学的是小学四~五年级的内容。'},
-    meta:{ko:'과정 17~25 · 주 2회 기준 27주(주 1회 52주) · 학교로는 초4~5 내용',en:'Courses 17–25 · 27 weeks at two sheets a week (52 at one) · the end of the arithmetic track',zh:'课程17~25 · 每周2次约27周(每周1次52周) · 运算段的终点'}
+    meta:{ko:'과정 17~25 · 주 2회 기준 27주(주 1회 53주) · 학교로는 초4~5 내용',en:'Courses 17–25 · 27 weeks at two sheets a week (53 at one) · the end of the arithmetic track',zh:'课程17~25 · 每周2次约27周(每周1次53周) · 运算段的终点'}
   },
   {
     key:'tower', icon:'🗼', accent:'#C9A063', status:'live',

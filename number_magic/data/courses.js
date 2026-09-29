@@ -139,14 +139,16 @@ const COURSE_SPEC = [
  {id:2, tier:'level1', title:{ko:'받아올림과 두 배 수',en:'Carrying & Doubles',zh:'进位与翻倍数'},
    /* 창의 AD9(10 이용 덧셈)는 선수 AD3가 과정 3이라 한 과정 앞서 있었다 → 과정 3으로.
       대신 문장제 사슬(WP1→WP3→WP4→WP5)의 첫 칸을 여기서 연다 — 선수 AD1·SB1이 과정 1. */
-   drills:['AD2','NS5','NS4','AD2','NS5','NS4','NS4'], minSessions:4, magic:[['A-01'],['A-02']],
+   /* 2026-09-29 — 연이은 덧셈·뺄셈(AD10)을 교과 칸에(기적의 계산법 5·12단계, 만들어 놓고 안 실려 있었다). */
+   drills:['AD2','NS5','NS4','AD10','AD2','NS5','NS4','AD10@2','NS4'], minSessions:5, magic:[['A-01'],['A-02']],
    /* 창의(2026-09-26, 설계 §4-2) — 10 짝 묶기 · 수 이사. 옛 ML1@1(배와 반 드릴)은 뺐다.
       설계 표의 AD9@1(우선 10)은 선수 AD3(두 자리+한 자리)가 과정 3이라 위 주석대로 과정 3에 두고,
       그 자리는 같은 손동작(10 짝)의 AD8@2(5~6개 수)로 채웠다(check-ladder 선수 순서).
       뒤의 WP 는 창의 칸에 안 실린다(적용 칸은 교과 문장제). */
    creative:['AD8@1','AD11@1','AD8@2','AD8@1','WP1@1','WP1@2']},
  {id:3, tier:'level1', title:{ko:'두 자리 덧뺄셈 시작',en:'Two-digit ± Begins',zh:'两位数加减开始'},
-   drills:['AD3','SB2','SB3','AD3','SB2@2','SB3','AD3','SB3','AD3@4','SB3','AD3@5','AD3'], minSessions:7, magic:[['A-03'],['A-04']],
+   /* 2026-09-29 — (몇십)±(몇십)(AD4@1·2)과 네 수 연이은 덧뺄(AD10@3)을 교과 칸에(기적 6·8·12단계). */
+   drills:['AD3','SB2','SB3','AD4','AD3','SB2@2','SB3','AD4@2','AD3','SB3','AD3@4','AD10@3','SB3','AD3@5','AD3'], minSessions:8, magic:[['A-03'],['A-04']],
    /* 창의(2026-09-26, 설계 §4-2) — 우선 10 · 계단식 · 새치기 · 수 이사 두 자리. 뒤의 AD4(몇십 덧뺄)는 교과 드릴이라 창의 칸에 안 실린다(옛 명세 그대로 남김). */
    creative:['AD9@1','AD12@1','AD8@4','AD9@2','AD11@2','AD12@2','AD9@2','AD4@1','AD4@2','AD4@3','AD4@4','AD4@5']},
  {id:4, tier:'level1', title:{ko:'두 자리 올림 덧뺄셈',en:'Two-digit ± with Carrying',zh:'两位数进位加减'},
@@ -158,7 +160,7 @@ const COURSE_SPEC = [
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25·ML1·ML2(구구단 드릴)였다. 자리별·쉬었다 빼기 · 돌려받기 · 덧셈끼리·뺄셈끼리 */
    creative:['SB8@1','SB8@2','SB5@1','MX7@1','SB8@2','SB5@2','MX7@1','WP3@1']},
  {id:6, tier:'level1', title:{ko:'세 자리 뺄셈과 구구단 완성',en:'3-digit Subtraction & Full Times Tables',zh:'三位数减法与完整口诀'},
-   drills:['SB6','SB7','ML3','SB6','SB7@2','ML3','SB6','ML3','SB6','ML3','SB6','ML3','SB6','SB6'], minSessions:7, magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17'],['B-07','B-08','B-09'],['B-10','B-11','B-12']],
+   drills:['SB6','SB7','ML3','SB6','SB7@2','ML3','AD4@3','SB6','ML3','SB6','AD4@4','ML3','SB6','ML3','SB6','SB6'], minSessions:7, magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17'],['B-07','B-08','B-09'],['B-10','B-11','B-12']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25·ML3(구구단)이었다. 같은 수 ± · 백을 떼어 · 반대로 채우기(SB9 = 설계의 EL1 countUp).
       설계 표의 SB10@2·@3(자릿수 이동·풀어서 쓰기)은 원본 사진 확인 전이라(원장 결정 Q1) 아직 없다 —
       그 자리는 이미 있는 SB10@1·SB12@2 로 채웠다. AD10 은 옛 명세(창의 칸에 안 실림). */
@@ -234,7 +236,8 @@ const COURSE_SPEC = [
  {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
    drills:['MX2','FR8','DC3','MX2@2','DC3@2'], minSessions:7, magic:[['C-05'],['C-35'],['C-33']], creative:['MX6@1','DC5@1','WP4@3','MX6@2','DC5@2','MX6@3','MX6@4']},
  {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
-   drills:['MX3','DV8','EL4','MX3@2','DV8@2','EL4','MX3@3','DV8@3','EL4@3','MX3@4','MX3@5'], minSessions:6, magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1','EL5@1','CH12@2','EL5@2','EL5@3','AD16@2']},
+   /* 2026-09-29 — 비례식·비례배분(EL5)을 교과 칸에도(기적 115·116단계). 창의 칸의 EL5 는 그대로. */
+   drills:['MX3','DV8','EL4','MX3@2','DV8@2','EL4','EL5','MX3@3','DV8@3','EL4@3','EL5@2','MX3@4','EL5@3','MX3@5'], minSessions:7, magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1','EL5@1','CH12@2','EL5@2','EL5@3','AD16@2']},
  {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
    drills:['MX5'], magic:[], /* 레벨 보스는 세션이 3개로 고정이라 창의도 3종만 실린다(4개를 적으면 마지막이 안 나온다).
       레벨 3을 대표하는 셋 — 분수 · 소수 · 수열(가우스). */
