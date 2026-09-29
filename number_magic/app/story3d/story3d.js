@@ -297,14 +297,19 @@ export async function mountStory3D(container, opts){
       const [x, y] = tagPos(s, ax, ay, ts);
       rects.push({ i, x, y, w:ts[0], h:ts[1], cx:ax });
     });
-    for(let pass = 0; pass < 4; pass++){
+    /* 윗줄 꼬리표는 1·3·5·7·9 가 사슬처럼 이어져 있어, 한 쌍을 벌리면 옆 쌍이 다시 붙는다 —
+       4번으로는 모자라 PC 에서 제1장·제3장이 겹쳐 보였다(2026-09-29). 더 겹치는 게 없을 때까지(최대 40번) 민다. */
+    for(let pass = 0; pass < 40; pass++){
+      let moved = false;
       for(let a = 0; a < rects.length; a++) for(let b = a + 1; b < rects.length; b++){
         const A = rects[a], B = rects[b];
         if(A.x < B.x + B.w + 4 && B.x < A.x + A.w + 4 && A.y < B.y + B.h + 3 && B.y < A.y + A.h + 3){
-          const ov = Math.min(A.x + A.w + 4 - B.x, B.x + B.w + 4 - A.x) / 2;
+          const ov = Math.min(A.x + A.w + 4 - B.x, B.x + B.w + 4 - A.x) / 2 + 0.5;
           if(A.x <= B.x){ A.x -= ov; B.x += ov; } else { A.x += ov; B.x -= ov; }
+          moved = true;
         }
       }
+      if(!moved) break;
     }
     const gb = box(goBtn), sb = box(story), eg = narrow ? 54 : 4;   /* 좁으면 좌우 단추 안쪽으로 */
     rects.forEach(R => {
