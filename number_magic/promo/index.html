@@ -24,7 +24,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500;600;700&family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..700,0..100;1,9..144,400..700,0..100&display=swap">
-  <link rel="stylesheet" href="book.css?v=20260929-1">
+  <link rel="stylesheet" href="book.css?v=20260929-2">
 </head>
 <body>
   <a class="skip-link" href="#main">책 내용으로 건너뛰기</a>
@@ -90,40 +90,30 @@
             </article>
 
             <article class="paper-page page-right invitation-page">
-              <div class="invitation-art" aria-hidden="true">
-                <span class="constellation constellation-a">2</span>
-                <span class="constellation constellation-b">7</span>
-                <span class="constellation constellation-c">∞</span>
-                <span class="gold-ring ring-one"></span>
-                <span class="gold-ring ring-two"></span>
-              </div>
-              <div class="invitation-wordmark">
-                <span>Numbers <i>of</i> Magic</span>
-                <small>수의 마법</small>
-              </div>
-              <button class="primary-button" type="button" data-route="video">
-                <span>자세히 보기</span>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5"/></svg>
-              </button>
-            </article>
-          </section>
-
-          <section class="book-panel panel-video" data-panel="video" aria-labelledby="video-title" aria-hidden="true">
-            <div class="spread-page video-page">
-              <header class="video-heading">
-                <h2 id="video-title" tabindex="-1"><strong id="videoDurationTitle">2분 10초</strong>로 보는 <b>수의 마법</b></h2>
-                <div class="cut-switch" role="group" aria-label="소개 영상 버전 선택">
-                  <button class="is-selected" type="button" data-cut="full" aria-pressed="true">전체 2:10</button>
-                  <button type="button" data-cut="short" aria-pressed="false">1분 요약</button>
-                </div>
-              </header>
-              <div class="cinema" id="cinema">
-                <video id="introVideo" playsinline preload="metadata" poster="../assets/promo/video/poster-full.jpg" controlslist="nodownload noremoteplayback" disablepictureinpicture aria-label="수의 마법 소개 영상"></video>
+              <div class="cinema journey-cinema is-journey" id="cinema">
+                <video id="introVideo" playsinline preload="metadata" poster="../assets/promo/video/poster-15s-vertical.jpg" controlslist="nodownload noremoteplayback" disablepictureinpicture aria-label="수의 마법 15초 미리보기 영상"></video>
+                <header class="video-heading" id="videoHeading" hidden>
+                  <h2 id="video-title" tabindex="-1"><strong id="videoDurationTitle">2분 10초</strong>로 보는 <b>수의 마법</b></h2>
+                  <div class="cut-switch" role="group" aria-label="소개 영상 버전 선택">
+                    <button class="is-selected" type="button" data-cut="full" aria-pressed="true">전체 2:10</button>
+                    <button type="button" data-cut="short" aria-pressed="false">1분 요약</button>
+                  </div>
+                </header>
                 <button class="cinema-play" id="cinemaPlay" type="button" aria-label="영상 재생">
                   <svg class="play-shape" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z"/></svg>
                   <svg class="pause-shape" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
                 </button>
-                <div class="cinema-controls" aria-label="영상 재생 조절">
+                <button class="journey-sound" id="journeySound" type="button" aria-label="배경음 끄기">
+                  <svg class="sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12 0c1.2 1.5 1.2 4.5 0 6m2.5-8.5c3 3 3 8 0 11"/></svg>
+                  <svg class="sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 1.5 4 4m0-4-4 4"/></svg>
+                </button>
+                <div class="journey-enter" id="journeyEnter">
+                  <button class="primary-button light" type="button" data-route="video">
+                    <span>수의 마법으로 여행</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5"/></svg>
+                  </button>
+                </div>
+                <div class="cinema-controls" id="cinemaControls" aria-label="영상 재생 조절" hidden>
                   <button id="playToggle" type="button" aria-label="재생">
                     <svg class="play-shape" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z"/></svg>
                     <svg class="pause-shape" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
@@ -142,7 +132,7 @@
                   </button>
                 </div>
               </div>
-            </div>
+            </article>
           </section>
 
           <section class="book-panel panel-worksheet" data-panel="worksheet" aria-labelledby="worksheet-title" aria-hidden="true">
@@ -198,11 +188,14 @@
             </div>
           </section>
         </div>
+        <button class="edge-turn edge-turn-next" id="bookNext" type="button" aria-label="다음 페이지: 실제 학습지">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
       </div>
     </section>
   </main>
 
   <script src="../data/stages.js"></script>
-  <script src="book.js?v=20260929-1"></script>
+  <script src="book.js?v=20260929-2"></script>
 </body>
 </html>
