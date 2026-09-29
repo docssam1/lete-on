@@ -161,6 +161,12 @@ for (const [key, byLang] of Object.entries(GLOBAL_TASKS)) {
 
 const totalChars = tasks.reduce((s, t) => s + t.text.length, 0);
 console.log(`📋  ${tasks.length} tasks (~${totalChars.toLocaleString()} chars total)`);
+/* 2026-09-29 — OmniVoice 복제 음성(scripts/omnivoice-nm.py)이 같은 대사 목록을 쓰도록 목록만 내보낸다.
+   대사를 어디서 모으는지는 이 파일 한 곳에만 둔다(두 벌로 두면 한쪽만 고쳐져 어긋난다). */
+if (process.env.DUMP_TASKS) {
+  fs.writeFileSync(process.env.DUMP_TASKS, JSON.stringify(tasks.map(t => ({ unitId: t.unitId, key: t.key, lang: t.lang, text: t.text }))));
+  process.exit(0);
+}
 if (process.env.DRY_RUN) {   // 과금·업로드 없이 태스크 목록만 점검
   const byUnit = {};
   tasks.forEach(t => { byUnit[t.unitId] = (byUnit[t.unitId] || 0) + 1; });

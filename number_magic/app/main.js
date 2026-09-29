@@ -657,9 +657,10 @@ let _ttsCache={};
 function say(text){
   if(!text)return;
   const lang=S.lang||'ko';
-  const map=window.NM_TTS_MAP;
-  if(map&&map[lang]&&map[lang][text]){
-    const url=map[lang][text];
+  /* 2026-09-29 — OmniVoice 복제 음성(data/tts-map-omni.js)이 먼저, 없으면 구글(tts-map.js), 그다음 기기 음성 */
+  const omni=window.NM_TTS_OMNI,map=window.NM_TTS_MAP;
+  const url=(omni&&omni[lang]&&omni[lang][text])||(map&&map[lang]&&map[lang][text]);
+  if(url){
     try{
       speechSynthesis.cancel();
       let a=_ttsCache[url];

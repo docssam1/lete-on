@@ -1,0 +1,102 @@
+# 넘버스 오브 매직 앱 음성 — OmniVoice 복제 목소리 (2026-09-29, 원장: "복제음성으로 해. omni")
+#
+# 원장 PC(GPU)가 1순위다(scripts\local\omnivoice-nm.cmd). 이 워크플로는 PC 를 못 쓸 때의 대안 —
+# GPU 가 없어 CPU 로 돌므로 조각으로 나눠 병렬로 돈다. 구글 키는 쓰지 않는다
+# (참조 음성은 공개 URL, 모델은 Hugging Face 공개 가중치).
+# 결과: number_magic/audio/omni/*.mp3 + data/tts-map-omni.js 를 **실행한 브랜치에** 커밋한다.
+# 푸시 자동 실행은 두지 않는다 — 쇼릴 때 스크립트만 고쳐도 한 시간 넘게 돌았다(2026-09-27).
+name: OmniVoice — Numbers of Magic 앱 음성
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: '조각마다 앞에서 N줄만(시험용, 0 = 전부)'
+        default: '0'
+
+concurrency:
+  group: omnivoice-nm-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  refs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install librosa soundfile
+      - name: 참조 음성(지금 앱 목소리에서 언어마다 한 줄)
+        run: python scripts/omnivoice-nm.py --refs-only --ref-dir ref
+      - uses: actions/upload-artifact@v4
+        with: { name: nm-ref, path: ref/, retention-days: 3 }
+
+  gen:
+    needs: refs
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - uses: actions/download-artifact@v4
+        with: { name: nm-ref, path: ref }
+      - name: torch(CPU) · OmniVoice 설치
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install --upgrade pip
+          pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install omnivoice soundfile librosa
+      - name: 조각 ${{ matrix.shard }}/16
+        run: python scripts/omnivoice-nm.py --device cpu --ref-dir ref --out part --shard ${{ matrix.shard }}/16 --limit ${{ inputs.limit }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nm-part-${{ matrix.shard }}
+          path: part/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  merge:
+    needs: gen
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - uses: actions/download-artifact@v4
+        with: { pattern: nm-part-*, path: parts }
+      - name: 모아서 map 다시 쓰기
+        run: |
+          mkdir -p number_magic/audio/omni
+          find parts -name '*.mp3' -exec cp {} number_magic/audio/omni/ \;
+          cp "$(find parts -name refs.json | head -1)" number_magic/audio/omni/refs.json 2>/dev/null || true
+          python - <<'EOF'
+          import glob, json, os
+          out = "number_magic/audio/omni/report.json"
+          r = json.load(open(out, encoding="utf-8")) if os.path.exists(out) else {}
+          for f in glob.glob("parts/**/report*.json", recursive=True):
+              r.update(json.load(open(f, encoding="utf-8")))
+          json.dump(r, open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+          bad = [v for v in r.values() if not v["ok"]]
+          print(f"report: {len(r)}줄, 뺀 것 {len(bad)}줄")
+          for v in bad[:40]: print(f"  ✗ {v['lang']} CER {v['cer']}: {v['text']}  →  {v['asr']}")
+          EOF
+          python scripts/omnivoice-nm.py --manifest-only
+      - name: 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add number_magic/audio/omni number_magic/data/tts-map-omni.js
+          if git diff --cached --quiet; then echo "no change"; else
+            git commit -m "넘버스 오브 매직 앱 음성 — OmniVoice 복제 MP3 (자동 생성)"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

@@ -1,13 +1,10 @@
 name: Generate Numbers of Magic Audio
 
+# 2026-09-29 — 원장: "복제음성으로 해. omni". 앱 음성은 이제 OmniVoice 복제(omnivoice-nm.yml ·
+# scripts/local/omnivoice-nm.cmd)로 만든다. 푸시 때 구글로 자동 합성하던 것을 끄고 수동 실행만 남긴다
+# (구글 map 은 복제의 참조이자, 복제가 아직 없는 줄의 대체 음성으로 그대로 쓰인다).
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/generate-nm-audio.yml'
-      - 'number_magic/scripts/generate-nm-audio.js'
-      - 'number_magic/data/units/**'
 
 concurrency:
   group: numbers-of-magic-audio
