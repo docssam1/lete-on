@@ -757,7 +757,7 @@ NM_TGEN['md121_reflect'] = function (params, rng) {
       withNote(L3('점을 차례로 두 번 대칭이동합니다. 첫 번째로 옮긴 점을 다시 옮깁니다.',
         'Reflect the point twice, in order: reflect the first image again.',
         '把点依次对称变换两次：把第一次得到的点再变换。')),
-      `P${pt(x, y)}${arrow(k)}\\cdots${arrow(k2)}(\\square,\\ \\square)`, [x3, y3], [
+      `P${pt(x, y)}${arrow(k)}\\cdots${arrow(k2)}P'=(\\square,\\ \\square)`, [x3, y3], [
         { tex:`${pt(x, y)}\\ \\to\\ ${pt(x2, y2)}` },
         { tex:`${pt(x2, y2)}\\ \\to\\ (\\square,\\ \\square)`, blank:[x3, y3] }]);
   }
@@ -765,7 +765,7 @@ NM_TGEN['md121_reflect'] = function (params, rng) {
     withNote(L3('x축 대칭은 y 좌표의 부호를, y축 대칭은 x 좌표의 부호를, 원점 대칭은 둘 다 바꿉니다. 직선 y=x 대칭은 x, y 좌표를 서로 바꿉니다.',
       'Reflection in the x-axis flips the sign of y, in the y-axis the sign of x, and in the origin both; reflection in y=x swaps x and y.',
       '关于x轴对称改变y坐标的符号，关于y轴对称改变x坐标的符号，关于原点对称两个都改变；关于直线y=x对称则交换x、y坐标。')),
-    `P${pt(x, y)}${arrow(k)}(\\square,\\ \\square)`, [x2, y2], [
+    `P${pt(x, y)}${arrow(k)}P'=(\\square,\\ \\square)`, [x2, y2], [
       { tex:`(\\square,\\ \\square)`, blank:[x2, y2] }]);
 };
 
