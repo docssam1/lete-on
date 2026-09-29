@@ -31,7 +31,7 @@ server.listen(0, async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
   const rows = [];
-  for(let c = 0; c < 48; c++) for(const k of [1, 2]){
+  for(let c = 0, NC = (require('fs').readFileSync(require('path').join(__dirname,'../data/courses.js'),'utf8').match(/^\s*\{id:\d+,/gm)||[]).length; c < NC; c++) for(const k of [1, 2]){
     await page.goto(`http://localhost:${port}/ws.html?w=2026-W39&c=C${c}&n=check&k=${k}&cad=w2&auto=0`);
     let txt = '';
     for(let i = 0; i < 40; i++){ await page.waitForTimeout(250); txt = await page.evaluate(() => document.body.innerText); if(/문제가 생겼어요|정답지/.test(txt)) break; }

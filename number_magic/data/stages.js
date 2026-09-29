@@ -165,7 +165,7 @@ window.NM_STAGES = [
     name:{ko:'공통수학1 — 다항식의 탑',en:'Common Math 1 — Tower of Polynomials',zh:'共同数学1——多项式之塔'},
     band:{ko:'고등 · 공통수학1',en:'High school · Common Math 1',zh:'高中 · 共同数学1'},
     chapters:['W11-1','W11-2'],
-    tiers:['highmath1'], courses:{from:38,to:39}, weeks:18,
+    tiers:['highmath1'], courses:{from:38,to:43}, weeks:44,
     learn:{
       ko:'다항식의 연산과 나머지정리, 곱셈공식의 확장과 항등식, 인수분해, 이차방정식의 판별식과 근과 계수의 관계, 이차부등식, 행렬.',
       en:'Operations on polynomials and the remainder theorem, extended product formulas and identities, factorisation, the discriminant and the relation between roots and coefficients, quadratic inequalities, matrices.',
@@ -177,14 +177,14 @@ window.NM_STAGES = [
     example:'f(x) = (x − 1)Q(x) + R → R = f(1)',
     symbols:[
       {sym:'f(x)', tr:{ko:'x를 넣으면 결과가 나오는 기계',en:'a machine: put x in, a result comes out',zh:'放进x就出结果的机器'}}],
-    meta:{ko:'과정 38~39 · 주 2회 기준 10주(주 1회 18주)',en:'Courses 38–39 · 10 weeks at two sheets a week (18 at one)',zh:'课程38~39 · 每周2次约10周(每周1次18周)'}
+    meta:{ko:'과정 38~43 · 주 2회 기준 23주(주 1회 44주)',en:'Courses 38–43 · 23 weeks at two sheets a week (44 at one)',zh:'课程38~43 · 每周2次约23周(每周1次44周)'}
   },
   {
     key:'common2', icon:'📍', accent:'#1b6e5b', status:'partial',
     name:{ko:'공통수학2 — 도형의 방정식 나라',en:'Common Math 2 — Land of Coordinate Geometry',zh:'共同数学2——图形方程之国'},
     band:{ko:'고등 · 공통수학2',en:'High school · Common Math 2',zh:'高中 · 共同数学2'},
     chapters:['W12-1','W12-2'],
-    tiers:['highmath2'], courses:{from:40,to:40}, weeks:9,
+    tiers:['highmath2'], courses:{from:44,to:44}, weeks:9,
     learn:{
       ko:'두 점 사이의 거리, 중점과 내분점, 직선의 방정식, 두 직선의 평행·수직 조건, 원의 방정식.',
       en:'The distance between two points, midpoints and internal division, equations of lines, conditions for parallel and perpendicular lines, equations of circles.',
@@ -196,14 +196,14 @@ window.NM_STAGES = [
     example:'(0, 0) ↔ (3, 4) → √(3² + 4²) → 5',
     symbols:[
       {sym:'(x, y)', tr:{ko:'좌표평면 위의 한 점 — 가로 x, 세로 y',en:'one point on the coordinate plane — across x, up y',zh:'坐标平面上的一个点——横x，竖y'}}],
-    meta:{ko:'과정 40 · 주 2회 기준 5주(주 1회 9주)',en:'Course 40 · 5 weeks at two sheets a week (9 at one)',zh:'课程40 · 每周2次约5周(每周1次9周)'}
+    meta:{ko:'과정 44 · 주 2회 기준 5주(주 1회 9주)',en:'Course 44 · 5 weeks at two sheets a week (9 at one)',zh:'课程44 · 每周2次约5周(每周1次9周)'}
   },
   {
     key:'algebra', icon:'Σ', accent:'#5b3a8f', status:'partial',
     name:{ko:'대수 — 기호의 탑',en:'Algebra — Tower of Symbols',zh:'代数——符号之塔'},
     band:{ko:'고등 · 대수',en:'High school · Algebra',zh:'高中 · 代数'},
     chapters:['W13-1','W13-2','W13-3','W13-4','W13-5'],
-    tiers:['algebra'], courses:{from:41,to:44}, weeks:25,
+    tiers:['algebra'], courses:{from:45,to:48}, weeks:25,
     learn:{
       ko:'지수와 로그, 지수·로그방정식과 부등식, 삼각함수와 사인·코사인법칙, 등차수열·등비수열과 Σ.',
       en:'Exponents and logarithms, exponential and log equations and inequalities, trigonometric functions and the sine and cosine laws, arithmetic and geometric sequences and Σ.',
@@ -216,14 +216,14 @@ window.NM_STAGES = [
     symbols:[
       {sym:'log', tr:{ko:'지수 사다리를 거꾸로 읽어라',en:'read the ladder of exponents backwards',zh:'把指数的梯子倒过来读'}},
       {sym:'Σ', tr:{ko:'쭉 더해라',en:'add them all up',zh:'一路加下去'}}],
-    meta:{ko:'과정 41~44 · 주 2회 기준 13주(주 1회 25주)',en:'Courses 41–44 · 13 weeks at two sheets a week (25 at one)',zh:'课程41~44 · 每周2次约13周(每周1次25周)'}
+    meta:{ko:'과정 45~48 · 주 2회 기준 13주(주 1회 25주)',en:'Courses 45–48 · 13 weeks at two sheets a week (25 at one)',zh:'课程45~48 · 每周2次约13周(每周1次25周)'}
   },
   {
     key:'calculus1', icon:'∫', accent:'#0d3b66', status:'partial',
     name:{ko:'미적분Ⅰ — 변화의 정상',en:'Calculus I — Summit of Change',zh:'微积分Ⅰ——变化之巅'},
     band:{ko:'고등 · 미적분Ⅰ',en:'High school · Calculus I',zh:'高中 · 微积分Ⅰ'},
     chapters:['W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['calculus1'], courses:{from:45,to:47}, weeks:18,
+    tiers:['calculus1'], courses:{from:49,to:51}, weeks:18,
     learn:{
       ko:'함수의 극한과 연속, 미분계수와 도함수, 접선과 극값, 다항함수의 적분, 넓이와 속도·거리.',
       en:'Limits and continuity, the derivative at a point and the derived function, tangents and extrema, integrating polynomials, area and speed and distance.',
@@ -237,7 +237,7 @@ window.NM_STAGES = [
       {sym:'lim', tr:{ko:'x가 다가가는 값',en:'the value x approaches',zh:'x趋近的值'}},
       {sym:'f′', tr:{ko:'순간의 기울기',en:'the instantaneous slope',zh:'瞬时斜率'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 45~47 · 주 2회 기준 9주(주 1회 18주) · 실험실 2',en:'Courses 45–47 · 9 weeks at two sheets a week (18 at one) · 2 labs',zh:'课程45~47 · 每周2次约9周(每周1次18周) · 2个实验室'}
+    meta:{ko:'과정 49~51 · 주 2회 기준 9주(주 1회 18주) · 실험실 2',en:'Courses 49–51 · 9 weeks at two sheets a week (18 at one) · 2 labs',zh:'课程49~51 · 每周2次约9周(每周1次18周) · 2个实验室'}
   }
 ];
 

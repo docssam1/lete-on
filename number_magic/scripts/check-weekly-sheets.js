@@ -29,7 +29,7 @@ server.listen(0, async () => {
   const port = server.address().port;
   const browser = await chromium.launch();
   const page = await browser.newPage();
-  const courses = only.length ? only : Array.from({ length:48 }, (_, i) => 'C' + i);
+  const courses = only.length ? only : Array.from({ length:(require('fs').readFileSync(require('path').join(__dirname,'../data/courses.js'),'utf8').match(/^\s*\{id:\d+,/gm)||[]).length }, (_, i) => 'C' + i);
   const bad = []; let ok = 0;
   /* WS_DETAIL=1 이면 넘친 쪽의 종류(그리드 판정·쪽 클래스)를 함께 적는다 */
   await page.addInitScript(d => { window.__nmWsDetail = d; }, !!process.env.WS_DETAIL);
