@@ -723,17 +723,19 @@ NM_TGEN['md159_defInt'] = function (params, rng) {
     if (kind === 'split') {
       const F = F3(rng), f = dv(F), a = R(rng, -3, 2), c = a + R(rng, 1, 3), b = c + R(rng, 1, 3);
       if (b === 1 || c === 1) continue;
-      const body = `(${poly(f)})`;
+      /* 적분 둘에 같은 식을 두 번 쓰면 한 줄을 넘어 칸이 7px 모자랐다(2026-09-29, 인쇄 넘침 검사) —
+         식은 f(x) 로 한 번만 적는다. 풀이 줄은 그대로 식을 풀어 쓴다. */
+      const body = `(${poly(f)})`, fx = 'f(x)', given = `f(x)=${poly(f)}\\ \\Rightarrow\\ `;
       if (pick(rng, [0, 1])) {
         const ans = I(F, a, b);
         if (Math.abs(ans) > 300) continue;
-        return item(prompt, `${intT(a, c, body)}+${intT(c, b, body)}=\\square`, ans, [
+        return item(prompt, `${given}${intT(a, c, fx)}+${intT(c, b, fx)}=\\square`, ans, [
           { tex:`${intT(a, b, body)}=\\Bigl[${poly(F)}\\Bigr]_{${a}}^{${b}}` },
           { tex:'\\square', blank:ans }]);
       }
       const ans = I(F, a, c);
       if (Math.abs(ans) > 300) continue;
-      return item(prompt, `${intT(a, b, body)}-${intT(c, b, body)}=\\square`, ans, [
+      return item(prompt, `${given}${intT(a, b, fx)}-${intT(c, b, fx)}=\\square`, ans, [
         { tex:`${intT(a, c, body)}=\\Bigl[${poly(F)}\\Bigr]_{${a}}^{${c}}` },
         { tex:'\\square', blank:ans }]);
     }

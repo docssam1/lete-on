@@ -4787,7 +4787,8 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
   return {
     html: wrap(itemHtmls),
     // 모눈과 중간식을 축소하지 않는다. 그래프형 세 문제는 두 쪽에 나누어 쓴다.
-    pages: (problems.some(p=>p.graph) || (threadId==='MD66' && level===4)) ? [wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))] : [wrap(itemHtmls)],
+    /* MD30@3(행렬 곱셈) — 문제 행렬 + 성분 네 줄 + 답 행렬이라 세 문제가 한 쪽을 471px 넘쳤다(2026-09-29, C48 둘째 장). */
+    pages: (problems.some(p=>p.graph) || (threadId==='MD66' && level===4) || (threadId==='MD30' && level===3)) ? [wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))] : [wrap(itemHtmls)],
     problems,
     skips:problems.map(p=>p.__uniqueSkip||0)
   };
