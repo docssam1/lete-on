@@ -155,7 +155,7 @@ body, .fold-shell, .paper-panel, .paper-stage { background: #fff; }
 .fold-sequence-view figure { gap: 10px; align-content: center; }
 .fold-sequence-view figcaption { font-size: 13px; font-weight: 700; line-height: 1.45; text-align: center; color: #5b6b67; overflow-wrap: anywhere; }
 .fold-sequence-view .paper-action-step figcaption { color: #126c66; font-weight: 850; }
-.step-arrow { color: #acbdb8; font-size: 30px; text-align: center; }
+.step-arrow { color: #acbdb8; font-size: 30px; text-align: center; pointer-events: none; }
 .learning-step-label { color: var(--teal); font-size: 14px; font-weight: 800; line-height: 1.45; text-align: center; overflow-wrap: anywhere; }
 .result-question { border: 1.5px dashed #c1cfcc; border-radius: 6px; background: #fff; color: #9aafaa; font-family: var(--fold-title-font); font-size: 60px; font-weight: 500; }
 .pending-step figcaption { color: #788883; }
@@ -461,14 +461,14 @@ body.embedded .connect-card .paper-diagram {
 @media (orientation: portrait) and (max-width: 600px) {
   .fold-sequence-view.reverse-sequence { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 20px auto; }
   .fold-sequence-view.reverse-sequence .step-arrow { transform: rotate(90deg); }
-  .fold-sequence-view.reverse-sequence .reverse-diagram { max-height: 26vh; }
-  .fold-sequence-view.reverse-sequence.single .reverse-diagram { max-height: 38vh; }
+  .fold-sequence-view.reverse-sequence .reverse-diagram { max-height: 34vh; }
+  .fold-sequence-view.reverse-sequence.single .reverse-diagram { max-height: 44vh; }
   .reverse-choice { min-height: 84px; padding: 6px 2px; }
   .reverse-choice .reverse-diagram { width: min(100%, 70px); height: auto; }
 }
 
 @media (orientation: landscape) and (max-height: 560px) {
-  .fold-sequence-view.reverse-sequence .reverse-diagram { max-height: 30vh; }
+  .fold-sequence-view.reverse-sequence .reverse-diagram { max-height: 42vh; }
   .reverse-choice { min-height: 76px; }
   .reverse-choice .reverse-diagram { width: min(100%, 66px); height: auto; }
 }
