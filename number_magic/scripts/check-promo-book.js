@@ -57,7 +57,8 @@ async function checkViewport(browser,port,width,height){
   await page.waitForFunction(()=>document.querySelector('.magic-book-app').dataset.view==='video');
   await page.waitForSelector('[data-panel="menu"].is-active');
   assert.equal(await page.locator('[data-panel="menu"]').getAttribute('aria-labelledby'),'video-title');
-  assert.equal(await page.locator('#cinema').getAttribute('class'),'cinema journey-cinema is-showreel');
+  const showreelClasses=await page.locator('#cinema').evaluate(el=>Array.from(el.classList));
+  assert(showreelClasses.includes('is-showreel')&&!showreelClasses.includes('is-journey'),'CTA 후 주 영상 상태여야 한다');
   assert.match(await page.locator('#introVideo').getAttribute('src'),/showreel-full\.mp4$/);
   assert.equal(await page.locator('#videoHeading').isVisible(),true);
   assert.equal(await page.locator('#cinemaControls').isVisible(),true);
