@@ -37,6 +37,14 @@ export function buildSlides(ch, art, plan, similar, mode) {
 
   ch.steps.forEach((s, i) => add(`step${i + 1}`, 'lab', `STEP 3 · 실험하기 ${i + 1}/${ch.steps.length}`,
     `<div class="dk-two wide-art"><div class="dk-art">${art[s.art]}</div><div><span class="dk-stepno" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><p class="dk-big">${esc(s.text)}</p><p class="dk-tip rv">도움말 · ${esc(s.tip)}</p></div></div>`, { say: `step${i + 1}`, kind: 'read', layout: 'step' }));
+  if (!teach) {
+    // 실험 순서 맞추기(스스로 공부): 집에는 재료가 없으니 순서 읽기 5장 대신, 섞인 카드를 순서대로 누른다. 순서는 늘 정답과 다르게 섞는다.
+    const k = ch.steps.length, mix = ch.steps.map((_, j) => j).sort((a, b) => ((a * 7 + 3) % k) - ((b * 7 + 3) % k));
+    if (mix.every((x, j) => x === j)) mix.reverse();
+    add('order', 'lab', 'STEP 3 · 실험 순서 맞추기', `<p class="dk-q">실험을 어떤 순서로 할까요? 첫 번째부터 차례로 카드를 눌러요.</p>
+      <ol class="dk-ords">${mix.map((j) => `<li><button type="button" class="dk-ord" data-j="${j}"><i class="dk-ordn" aria-hidden="true"></i><span class="dk-art mini">${art[ch.steps[j].art] || ''}</span><span class="dk-ordt">${esc(ch.steps[j].text)}</span></button></li>`).join('')}</ol>
+      <div class="dk-act"><button type="button" class="dk-go" data-o="check" disabled>확인</button><button type="button" data-o="reset">처음부터</button></div>`, { say: 'order', kind: 'order' });
+  }
   add('lab', 'lab', `3D 실험실 · ${esc(ch.labTitle || '조건을 바꿔 직접 해 보기')}`, `<div class="dk-3d" data-mount="lab"></div>`, { say: 'lab', mount: 'lab', layout: 'media', kind: 'lab' });
   add('wonder', teach ? 'lab' : 'extend', 'Q. 이런 경우는?', `<p class="dk-q">${esc(ch.wonder.q)}</p>${ans(ch.wonder.a, 'wonder')}`, { say: 'wonder', kind: 'write' });
 
@@ -85,7 +93,7 @@ export function buildSlides(ch, art, plan, similar, mode) {
       ${ch3.map(([id, , q, a]) => `<div class="dk-pane" data-pane="${id}" hidden><p class="dk-q">${esc(q)}</p>${ans(a, id)}</div>`).join('')}
       <div class="dk-pane" data-pane="gifted" hidden><p class="dk-q"><b>${esc(g.title)}</b><br>${esc(g.lead)}</p><table class="dk-tbl">${g.rows.map((r) => `<tr><th>${esc(r)}</th><td>${ans(g.a[r], `gifted-${r}`)}</td></tr>`).join('')}</table></div>`, { say: 'challenge', kind: 'challenge' });
     const by = Object.fromEntries(S.map((x) => [x.id, x])), ids = S.map((x) => x.id), tests = ids.filter((x) => /^test\d/.test(x));
-    const order = ['cover', 'intro', 'think1', 'scene', 'goal', 'hypo', 'design', ...ids.filter((x) => /^step\d/.test(x)), 'lab', ...ids.filter((x) => /^res\d/.test(x)), 'break',
+    const order = ['cover', 'intro', 'think1', 'scene', 'goal', 'hypo', 'design', 'order', 'lab', ...ids.filter((x) => /^res\d/.test(x)), 'break',
       'recall', 'reveal', 'concl', 'note', ...tests.slice(0, 2), 'plus', 'wonder', 'challenge', ...tests.slice(2), 'end'];
     S.splice(0, S.length, ...order.filter((id) => by[id]).map((id) => by[id]));
     let ses = 1; S.forEach((x) => { x.ses = ses; if (x.id === 'break') ses = 2; });
@@ -239,6 +247,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
         done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } });
       watchLabTips(m, G); return; }
     if (k === 'test') return runTest(V);
+    if (k === 'order') return runOrder();
     if (k === 'break') { fillMine(); G.say('dk-break', { mood: 'praise' });
       stage.querySelector('[data-a2=cont]').onclick = () => next(); return; }                 // 1차시 끝: 저절로 넘기지 않는다
     if (k === 'recall') { fillMine(); G.say('dk-recall'); auto(Math.min(15000, Math.max(5000, textLen() * 55))); return; }
@@ -248,6 +257,24 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
         stage.querySelector('.dk-pick').remove(); stage.querySelector('.dk-body > .dk-q').remove(); runWrite(V); }; });
       return; }
     return runWrite(V);
+  }
+  // 실험 순서 맞추기: 누른 차례대로 번호가 붙는다(다시 누르면 빠짐). 첫 오답엔 정답을 알려 주지 않고, 두 번 틀리면 순서를 보여 준다.
+  function runOrder() {
+    const cards = [...stage.querySelectorAll('.dk-ord')], $chk = stage.querySelector('[data-o=check]'), seq = [];
+    let tries = 0, over = false;
+    G.say('dk-order');
+    const paint = () => { cards.forEach((c) => { const n = seq.indexOf(c); c.querySelector('.dk-ordn').textContent = n < 0 ? '' : n + 1; c.classList.toggle('pick', n >= 0); }); $chk.disabled = seq.length !== cards.length; };
+    cards.forEach((c) => { c.onclick = () => { if (over) return; const n = seq.indexOf(c); if (n >= 0) seq.splice(n, 1); else seq.push(c); c.classList.remove('no'); paint(); }; });
+    stage.querySelector('[data-o=reset]').onclick = () => { if (over) return; seq.length = 0; cards.forEach((c) => c.classList.remove('no')); paint(); };
+    $chk.onclick = async () => {
+      const ok = seq.every((c, j) => +c.dataset.j === j);
+      const sorted = () => [...cards].sort((a, b) => a.dataset.j - b.dataset.j).forEach((c) => c.parentElement.parentElement.appendChild(c.parentElement));
+      if (ok) { over = true; cards.forEach((c) => c.classList.add('ok')); sorted(); $chk.disabled = true; await G.say('dk-order-ok', { mood: 'praise' }); auto(3500); return; }
+      tries += 1;
+      if (tries < 2) { seq.forEach((c, j) => c.classList.toggle('no', +c.dataset.j !== j)); G.say('dk-order-retry', { mood: 'encourage' }); seq.length = 0; paint(); return; }
+      over = true; cards.forEach((c) => { c.classList.remove('no', 'pick'); c.classList.add('ok'); c.querySelector('.dk-ordn').textContent = +c.dataset.j + 1; });
+      sorted(); $chk.disabled = true; await G.say('dk-order-show'); auto(6000);
+    };
   }
   // 내가 쓴 것 모아 보기(1차시 끝·2차시 처음): 가설 + 3D 실험 기록 + 결과 답
   function fillMine() {
