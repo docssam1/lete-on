@@ -46,7 +46,7 @@ window.NM_UNITS['M-127'] = {
               en:'For X={1, 2} and Y={a, b, c}, a one-to-one function lets 1 choose among 3 and 2 among the remaining 2: <b>6</b> functions.',
               zh:'X={1, 2}、Y={a, b, c}时，单射中1有3种选法，2只能选剩下的2种，共<b>6</b>个。'},
         mathSteps:['{}_{3}\\mathrm{P}_{2}=6'],
-        result:{ko:'고른 것은 다시 못 골라요!',en:'No repeats allowed!',zh:'选过的不能再选！'},
+        result:{ko:'고른 것은 다시 고르지 않습니다!',en:'No repeats allowed!',zh:'选过的不能再选！'},
         book:{ko:'n(X)=n(Y)=n 인 일대일대응은 n! 개입니다. X={1, 2, 3}, Y={a, b, c} 이면 3!=6 개입니다.',
               en:'With n(X)=n(Y)=n there are n! one-to-one correspondences; for X={1, 2, 3}, Y={a, b, c}, 3!=6.',
               zh:'n(X)=n(Y)=n时一一对应有n!个；X={1, 2, 3}、Y={a, b, c}时有3!=6个。'} },

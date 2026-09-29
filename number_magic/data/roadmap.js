@@ -527,14 +527,14 @@ window.NM_ROADMAP = {
       id:'W12-1', icon:'📏', grade:'공통수학2',
       edu:{ko:'공통수학2 점과 직선',en:'Common Math 2 Points & Lines',zh:'公共数学2点与直线'},
       theme:{ko:'W12-1 · 점과 직선 — 두 점 사이의 거리·중점과 내분점·직선의 방정식',en:'W12-1 · Points & Lines — Distance, Midpoints & Division Points, Line Equations',zh:'W12-1·点与直线——两点间距离·中点与内分点·直线方程'},
-      units:['M-31','M-32','M-33'],
+      units:['M-31','M-32','M-115','M-33'],
       tip:{ko:'두 점 사이의 거리는 결국 피타고라스 정리 — 가로·세로 차를 제곱해 더하고 제곱근을 씌워요!',en:'Distance between two points is just the Pythagorean theorem — square the differences, add, take the root!',zh:'两点间距离其实就是勾股定理——差平方后相加，再开方！'}
     },
     {
       id:'W12-2', icon:'⭕', grade:'공통수학2',
-      edu:{ko:'공통수학2 직선의 관계와 원',en:'Common Math 2 Relations Between Lines & Circles',zh:'公共数学2直线的关系与圆'},
-      theme:{ko:'W12-2 · 직선의 관계와 원 — 평행·수직 조건·원의 방정식',en:'W12-2 · Relations Between Lines & Circles — Parallel/Perpendicular, Circle Equations',zh:'W12-2·直线的关系与圆——平行·垂直条件·圆的方程'},
-      units:['M-34','M-35'],
+      edu:{ko:'공통수학2 직선·원·도형의 이동·집합·명제·함수',en:'Common Math 2 Lines, Circles, Transformations, Sets, Propositions & Functions',zh:'公共数学2直线·圆·图形的移动·集合·命题·函数'},
+      theme:{ko:'W12-2 · 직선·원에서 함수까지 — 평행·수직·점과 직선 거리·원과 접선·도형의 이동·집합·명제·합성·역함수·유리·무리함수',en:'W12-2 · Relations Between Lines & Circles — Parallel/Perpendicular, Circle Equations',zh:'W12-2·直线的关系与圆——平行·垂直条件·圆的方程'},
+      units:['M-34','M-116','M-35','M-117','M-118','M-119','M-120','M-121','M-122','M-123','M-124','M-125','M-126','M-127','M-128','M-129','M-130','M-131','M-132','M-133'],
       tip:{ko:'x항·y항을 완전제곱으로 묶으면 원의 중심과 반지름이 한눈에 보여요!',en:'Complete the square on x and y, and a circle\'s center and radius appear at a glance!',zh:'把x、y项配成完全平方，圆的中心和半径一眼就看出来！'}
     },
 

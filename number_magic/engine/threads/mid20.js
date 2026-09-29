@@ -944,9 +944,9 @@ NM_TGEN['md132_radExpr'] = function (params, rng) {
   } else { ex = `${rootTxt(inA)} + ${rootTxt(inB)}`; cnt = b - a + 1; st1 = `${poly([k, -k * a])}\\ge 0,\\ ${terms([[b, ''], [-1, 'x']])}\\ge 0`; st2 = `${a}\\le x\\le ${b}`; }
   return word(
     L3(`식 ${ex} 가 있습니다.`, `Consider the expression ${ex}.`, `有式子${ex}。`),
-    L3('이 식의 값이 실수가 되도록 하는 정수 x 의 개수를 구합니다. (근호 안은 0 이상, 분모는 0 이 아니어야 합니다.)',
-       'How many integers x make its value a real number? (The radicand must be at least 0, and a denominator must not be 0.)',
-       '使该式的值为实数的整数x有多少个？(根号内不小于0，分母不为0。)'),
+    L3('값이 실수가 되는 정수 x 의 개수를 구합니다.',
+       'How many integers x make it a real number?',
+       '使其值为实数的整数x有多少个？'),
     cnt, [
       { tex:st1 },
       { tex:st2 },
