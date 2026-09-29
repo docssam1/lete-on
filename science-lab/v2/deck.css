@@ -243,11 +243,14 @@
 .dk-mine .dk-card h3 { margin: 0 0 .4cqw; } .dk-mine .dk-card p { margin: .2cqw 0; }
 .dk-pick { display: flex; gap: 1cqw; flex-wrap: wrap; margin: 1cqw 0; }
 .dk-pick .dk-go { min-width: 12cqw; font-size: 1.9cqw; padding: .8cqw 1.6cqw; border-radius: .9cqw; cursor: pointer; }
+.dk-gifted-clock { display: inline-flex; align-items: center; gap: .5em; margin: .5cqw 0 1cqw; padding: .5cqw 1.2cqw; border: 2px solid var(--n); border-radius: .8cqw; color: var(--n); background: #f6f9ff; font-weight: 700; font-variant-numeric: tabular-nums; }
+.dk-gifted-clock strong { font-size: 2.5cqw; line-height: 1; }
+.dk-gifted-clock.done { color: #a43428; border-color: #a43428; background: #fff2ef; }
 .dk-mylab .dk-card { margin-bottom: 1cqw; }
 .dk-tbl td[contenteditable="true"] { background: #fbfdff; outline: 1.5px dashed #cfd8e6; outline-offset: -4px; min-width: 6cqw; cursor: text; }
 .dk-tbl td[contenteditable="true"]:empty::before { content: '적기'; color: #b5c0d0; }
 .dk-tbl td[contenteditable="true"]:focus { outline: 2px solid var(--t); background: #fff; }
-@media (max-width: 760px) { .dk-pick .dk-go { font-size: 15px; min-width: 90px; padding: 10px 14px; } .dk-stage.cover .dk-act { gap: 8px; margin-top: 14px; } }
+@media (max-width: 760px) { .dk-pick .dk-go { font-size: 15px; min-width: 90px; padding: 10px 14px; } .dk-stage.cover .dk-act { gap: 8px; margin-top: 14px; } .dk-gifted-clock { padding: 7px 12px; border-radius: 8px; } .dk-gifted-clock strong { font-size: 24px; } }
 /* 실험 순서 맞추기 */
 .dk-ords { list-style: none; margin: 1cqw 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(15cqw, 1fr)); gap: 1cqw; }
 .dk-ord { all: unset; box-sizing: border-box; position: relative; display: flex; flex-direction: column; gap: .6cqw; width: 100%; height: 100%; padding: .9cqw; border: 1.5px solid #d6deea; border-radius: 1cqw; background: #fff; cursor: pointer; font-size: 1.35cqw; line-height: 1.45; }
