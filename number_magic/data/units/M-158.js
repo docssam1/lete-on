@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-158'] = {
-  id:'M-158', tier:'calculus1', level:'74', order:158,
+  id:'M-158', tier:'calculus1', level:'72', order:158,
   generator:'md158_rootsIneq',
   title:{ ko:'방정식과 부등식에의 활용', en:'Derivatives in Equations & Inequalities', zh:'导数在方程与不等式中的应用' },
   subtitle:{ ko:'근을 풀지 않고 그래프로 셉니다', en:'Count roots from the graph without solving', zh:'不解方程，用图像数根' },
@@ -46,7 +46,7 @@ window.NM_UNITS['M-158'] = {
       { tag:{ko:'③ 항상 성립하는 부등식',en:'3) Inequalities that always hold',zh:'③ 恒成立的不等式'},
         head:{ko:"x^4-4x^3+k\\ge0:\\ f'(x)=4x^2(x-3)",en:"x^4-4x^3+k\\ge0:\\ f'(x)=4x^2(x-3)",zh:"x^4-4x^3+k\\ge0:\\ f'(x)=4x^2(x-3)"},
         desc:{ko:'f(x)=x⁴−4x³ 의 최솟값은 f(3)=81−108=−27 입니다. 모든 x 에서 성립하려면 −27+k≥0, 곧 k 의 최솟값은 <b>27</b> 입니다.',en:'The least value of f(x)=x⁴−4x³ is f(3)=81−108=−27. For every x we need −27+k≥0, so the least k is <b>27</b>.',zh:'f(x)=x⁴−4x³的最小值为f(3)=81−108=−27。要对所有x成立需−27+k≥0，所以k的最小值为<b>27</b>。'},
-        mathSteps:["\\min f(x)=f(3)=-27","k\\ge27"],
+        mathSteps:["f(x)\\ge f(3)=-27","k\\ge27"],
         result:{ko:'가장 낮은 곳만 버티면 된다!',en:'If the lowest point holds, all do!',zh:'最低点成立就都成立！'},
         book:{ko:'x=0 에서도 f′(x)=0 이지만 부호가 바뀌지 않아 극값이 아닙니다. 최솟값 후보는 부호가 −에서 +로 바뀌는 x=3 입니다.',en:'f′(0)=0 too, but the sign does not change there, so it is not an extreme point. The candidate for the least value is x=3, where the sign changes from − to +.',zh:'x=0处也有f′(x)=0，但符号不变，不是极值点。最小值的候选是符号由−变+的x=3。'} }
     ],

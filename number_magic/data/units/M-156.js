@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-156'] = {
-  id:'M-156', tier:'calculus1', level:'74', order:156,
+  id:'M-156', tier:'calculus1', level:'72', order:156,
   generator:'md156_monotone',
   title:{ ko:'함수의 증가와 감소', en:'Increasing & Decreasing Functions', zh:'函数的增减' },
   subtitle:{ ko:'도함수의 부호가 오르막과 내리막을 알려 줍니다', en:'The sign of the derivative shows uphill and downhill', zh:'导函数的符号告诉我们上坡和下坡' },

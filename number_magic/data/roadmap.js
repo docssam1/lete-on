@@ -587,41 +587,34 @@ window.NM_ROADMAP = {
        fields-classic/calculus 이식, 새로 만들지 않음)을 외부 링크
        노드로 연결한다 — MASTER-ROADMAP.md §2 "개념 실험실 원칙"·
        작업지시 반영. */
+    /* 2026-09-29 — 미적분Ⅰ 4과정(70~73) 순서대로 다시 묶었다. 새 유형 M-154~159 포함. 팁은 옛 챕터에서 옮김. */
     {
       id:'W14-1', icon:'🧭', grade:'미적분Ⅰ',
-      edu:{ko:'미적분Ⅰ 극한과 미분',en:'Calculus Ⅰ Limits & Derivatives',zh:'微积分Ⅰ极限与导数'},
-      theme:{ko:'W14-1 · 극한과 미분 — 극한값 계산·미분계수와 도함수',en:'W14-1 · Limits & Derivatives — Evaluating Limits, Derivatives',zh:'W14-1·极限与导数——极限值计算·导数与导函数'},
-      units:['M-43','M-44'],
+      edu:{ko:'미적분Ⅰ 함수의 극한과 연속',en:'Calculus Ⅰ Limits & Continuity',zh:'微积分Ⅰ函数的极限与连续'},
+      theme:{ko:'W14-1 · 함수의 극한과 연속 — 0/0 꼴·유리화·연속 조건',en:'W14-1 · Limits & Continuity — 0/0 Forms, Rationalizing, Continuity Conditions',zh:'W14-1·函数的极限与连续——0/0型·有理化·连续条件'},
+      units:['M-43','M-58','M-59'],
       tip:{ko:'0/0 꼴이 나오면 당황하지 말고 분자를 인수분해해서 분모와 약분해요!',en:'Hit a 0/0 form? Don\'t panic — factor the numerator and cancel with the denominator!',zh:'遇到0/0型别慌——把分子因式分解后和分母约分！'}
     },
     {
       id:'W14-2', icon:'📏', grade:'미적분Ⅰ',
-      edu:{ko:'미적분Ⅰ 접선과 적분',en:'Calculus Ⅰ Tangent Lines & Integration',zh:'微积分Ⅰ切线与积分'},
-      theme:{ko:'W14-2 · 접선과 적분 — 접선의 방정식·다항함수의 적분',en:'W14-2 · Tangent Lines & Integration — Tangent Line Equations, Integrating Polynomials',zh:'W14-2·切线与积分——切线方程·多项式函数的积分'},
-      units:['M-45','M-46'],
-      tip:{ko:'∫는 미분의 반대 방향 — 계수를 (n+1)로 나누고 지수를 하나 늘리면 돼요!',en:'∫ reverses differentiation — divide the coefficient by (n+1) and raise the exponent by one!',zh:'∫是求导的反方向——系数除以(n+1)，指数加1就行！'}
-    },
-
-    /* ─────── W14-3·4 : 심화 유형 2차(2026-08-27) — 미적분Ⅰ 심화 ─────
-       mid7.js(MD43~46)가 작업지시로 제외했던 유리화형 극한·연속조건·
-       극값·넓이·속도(MD58~62). 🔬 실험실(LAB-CALC1)이 다루는 극값·
-       넓이 개념이 이제 실제 문항으로도 뒷받침되므로, 실험실 링크를
-       로드맵의 마지막(이 두 챕터 다음)으로 옮겨 "실험 → 문제로 마무리"
-       원칙(MASTER-ROADMAP.md §2)을 전체 W14의 진짜 마지막 매듭으로
-       삼는다. */
-    {
-      id:'W14-3', icon:'√', grade:'미적분Ⅰ',
-      edu:{ko:'미적분Ⅰ 극한 심화와 연속',en:'Calculus Ⅰ Advanced Limits & Continuity',zh:'微积分Ⅰ极限进阶与连续'},
-      theme:{ko:'W14-3 · 유리화형 극한과 연속조건 — 켤레를 곱해 근호를 없애요',en:'W14-3 · Limits via Rationalization & Continuity — Clear the root by multiplying the conjugate',zh:'W14-3·有理化型极限与连续条件——乘以共轭式去掉根号'},
-      units:['M-58','M-59'],
-      tip:{ko:'근호가 있는 0/0 꼴은 켤레(부호만 반대인 짝)를 곱해 근호를 없애면 (x-a)가 약분돼요!',en:'For a 0/0 form with a root, multiply by the conjugate (same expression, opposite sign) to clear the root — then (x-a) cancels!',zh:'带根号的0/0型，乘以共轭式(符号相反的搭档)去掉根号后，(x-a)就能约掉！'}
+      edu:{ko:'미적분Ⅰ 미분계수와 도함수',en:'Calculus Ⅰ Derivatives',zh:'微积分Ⅰ微分系数与导数'},
+      theme:{ko:'W14-2 · 미분계수와 도함수 — 정의에서 미분법 공식까지',en:'W14-2 · Derivatives — From the Definition to the Rules',zh:'W14-2·微分系数与导数——从定义到求导公式'},
+      units:['M-44','M-154'],
+      tip:{ko:"곱의 미분은 (fg)'=f'g+fg' — 한쪽씩 번갈아 미분해서 더하면 돼요!",en:"The product rule is (fg)'=f'g+fg' — differentiate one factor at a time and add!",zh:"积的求导是(fg)'=f'g+fg'——轮流对一个因子求导再相加！"}
     },
     {
-      id:'W14-4', icon:'⛰️', grade:'미적분Ⅰ',
-      edu:{ko:'미적분Ⅰ 극값·넓이·속도',en:'Calculus Ⅰ Extrema, Area & Velocity',zh:'微积分Ⅰ极值·面积·速度'},
-      theme:{ko:'W14-4 · 극값·곡선과 x축 사이 넓이·속도와 거리 활용',en:'W14-4 · Extrema, Area Between Curve & x-axis, Velocity & Distance',zh:'W14-4·极值·曲线与x轴间面积·速度与距离应用'},
-      units:['M-60','M-61','M-62'],
+      id:'W14-3', icon:'⛰️', grade:'미적분Ⅰ',
+      edu:{ko:'미적분Ⅰ 도함수의 활용',en:'Calculus Ⅰ Applications of Derivatives',zh:'微积分Ⅰ导数的应用'},
+      theme:{ko:'W14-3 · 도함수의 활용 — 접선·평균값 정리·증가감소·극값·최대최소·실근의 개수',en:'W14-3 · Applications of Derivatives — Tangents, Mean Value Theorem, Monotonicity, Extrema, Max/Min, Counting Roots',zh:'W14-3·导数的应用——切线·中值定理·增减·极值·最值·实根个数'},
+      units:['M-45','M-155','M-156','M-60','M-157','M-158'],
       tip:{ko:"f'(x)=0인 자리가 극값의 후보 — 그 x를 f(x)에 다시 대입하면 극댓값·극솟값이 나와요!",en:"Where f'(x)=0 are the candidates for extrema — substitute that x back into f(x) to get the local max/min!",zh:"f'(x)=0的位置是极值的候选——把那个x代回f(x)就能得到极大值·极小值！"}
+    },
+    {
+      id:'W14-4', icon:'∫', grade:'미적분Ⅰ',
+      edu:{ko:'미적분Ⅰ 적분',en:'Calculus Ⅰ Integration',zh:'微积分Ⅰ积分'},
+      theme:{ko:'W14-4 · 적분 — 부정적분·정적분의 성질·넓이·속도와 거리',en:'W14-4 · Integration — Antiderivatives, Properties of Definite Integrals, Area, Velocity & Distance',zh:'W14-4·积分——不定积分·定积分的性质·面积·速度与距离'},
+      units:['M-46','M-159','M-61','M-62'],
+      tip:{ko:'∫는 미분의 반대 방향 — 계수를 (n+1)로 나누고 지수를 하나 늘리면 돼요!',en:'∫ reverses differentiation — divide the coefficient by (n+1) and raise the exponent by one!',zh:'∫是求导的反方向——系数除以(n+1)，指数加1就行！'}
     },
     {
       /* 미적분을 "왜" 배우는지부터 여는 실험실 — 기법(LAB-CALC1)보다 앞에 둔다.

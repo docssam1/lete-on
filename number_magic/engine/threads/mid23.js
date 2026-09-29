@@ -559,7 +559,7 @@ NM_TGEN['md158_rootsIneq'] = function (params, rng) {
       else { tex = `${fT}${strict ? '<' : '\\le '}k`; sym = 'm'; ans = E.M + strict; step = `k${strict ? '>' : '\\ge'}${E.M}`; }
       return item(prompt, `${tex}${dom ? `\\ \\ (${dom})` : ''}\\ \\Rightarrow\\ ${sym}=\\square`, ans, [
         { tex:`f(x)=${fT},\\ f'(x)=${dT}` },
-        { tex:`${form === 'le' ? '\\max' : '\\min'} f(x)=${form === 'le' ? E.M : E.m},\\ ${step}` },
+        { tex:`${form === 'le' ? `f(x)\\le${E.M}` : `f(x)\\ge${E.m}`},\\ ${step}` },
         { tex:`${sym}=\\square`, blank:ans }]);
     }
   }

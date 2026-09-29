@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-159'] = {
-  id:'M-159', tier:'calculus1', level:'75', order:159,
+  id:'M-159', tier:'calculus1', level:'73', order:159,
   generator:'md159_defInt',
   title:{ ko:'정적분의 성질과 정적분으로 정의된 함수', en:'Properties of Definite Integrals', zh:'定积分的性质与由定积分定义的函数' },
   subtitle:{ ko:'구간을 자르고 잇고, 적분한 것을 다시 미분합니다', en:'Split and join intervals, and differentiate what you integrated', zh:'拆开、合并区间，再对积分求导' },

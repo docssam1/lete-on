@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-154'] = {
-  id:'M-154', tier:'calculus1', level:'73', order:154,
+  id:'M-154', tier:'calculus1', level:'71', order:154,
   generator:'md154_diffRules',
   title:{ ko:'미분법 공식', en:'Differentiation Rules', zh:'求导法则' },
   subtitle:{ ko:'항마다, 곱이면 번갈아, 괄호면 안까지', en:'Term by term, in turns for products, and inside for brackets', zh:'逐项求导，乘积轮流求导，括号还要乘内层' },

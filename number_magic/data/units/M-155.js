@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-155'] = {
-  id:'M-155', tier:'calculus1', level:'74', order:155,
+  id:'M-155', tier:'calculus1', level:'72', order:155,
   generator:'md155_mvt',
   title:{ ko:'평균값 정리와 롤의 정리', en:'Mean Value & Rolle’s Theorems', zh:'中值定理与罗尔定理' },
   subtitle:{ ko:'평균 속력과 같은 순간 속력은 반드시 있습니다', en:'Somewhere the instant speed equals the average speed', zh:'一定有某一瞬间的速度等于平均速度' },

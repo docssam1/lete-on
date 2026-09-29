@@ -450,17 +450,20 @@ const COURSE_SPEC = [
  {id:69, tier:'algebra', title:{ko:'귀납적 정의와 수학적 귀납법',en:'Recursive Definitions & Mathematical Induction',zh:'递推定义与数学归纳法'},
    drills:['MD151','MD152','MD153','MD150','MD151@2','MD152@2','MD153@2','MD151@3','MD152@3','MD153@3'], minSessions:4,
    magic:[['M-151'],['M-152'],['M-153']], creative:['MD153@3','MD152@3','MD151@3']},
- /* 미적분Ⅰ 70~72 — 새 유형(미분법 공식·평균값 정리·증가감소·최대최소·방정식 활용·정적분의 성질)을
-    만드는 중이라 옛 세 과정을 번호만 옮겨 두었다. 유형이 들어오면 설계 v2 대로 4과정으로 나눈다. */
+ /* 미적분Ⅰ 70~73 — 2022 개정 미적분Ⅰ 단원 순서(2026-09-29, 설계 v2). 새 유형 MD154~159(미분법 공식·평균값 정리·
+    증가감소·닫힌 구간 최대최소·방정식과 부등식에의 활용·정적분의 성질)를 넣어 옛 세 과정을 넷으로. */
  {id:70, tier:'calculus1', title:{ko:'함수의 극한과 연속',en:'Limits & Continuity',zh:'函数的极限与连续'},
-   drills:['MD43','MD58','MD59','MD153','MD43@2','MD58@2','MD59@2','MD43@3','MD58@3','MD59@3'], minSessions:5,
+   drills:['MD43','MD58','MD59','MD153','MD43@2','MD58@2','MD59@2','MD43@3','MD58@3','MD59@3'], minSessions:4,
    magic:[['M-43'],['M-58'],['M-59']], creative:['MD59@3','MD58@3','MD43@3']},
- {id:71, tier:'calculus1', title:{ko:'미분 — 도함수·접선·극값',en:'Differentiation — Derivatives, Tangents & Extrema',zh:'微分——导数·切线·极值'},
-   drills:['MD44','MD45','MD60','MD59','MD44@2','MD45@2','MD60@2','MD44@3','MD45@3','MD60@3'], minSessions:5,
-   magic:[['M-44'],['M-45'],['M-60']], creative:['MD60@3','MD45@3','MD44@3']},
- {id:72, tier:'calculus1', title:{ko:'적분 — 넓이와 속도',en:'Integration — Area & Motion',zh:'积分——面积与速度'},
-   drills:['MD46','MD61','MD62','MD60','MD46@2','MD61@2','MD62@2','MD46@3','MD61@3','MD62@3'], minSessions:5,
-   magic:[['M-46'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD46@3']},
+ {id:71, tier:'calculus1', title:{ko:'미분계수와 도함수',en:'Differential Coefficients & Derivatives',zh:'微分系数与导数'},
+   drills:['MD44','MD154','MD59','MD44@2','MD154@2','MD44@3','MD154@3'], minSessions:3,
+   magic:[['M-44'],['M-154']], creative:['MD154@3','MD44@3','MD154@2']},
+ {id:72, tier:'calculus1', title:{ko:'도함수의 활용',en:'Applications of Derivatives',zh:'导数的应用'},
+   drills:['MD45','MD155','MD156','MD60','MD157','MD158','MD154','MD45@2','MD155@2','MD156@2','MD60@2','MD157@2','MD158@2','MD45@3','MD155@3','MD156@3','MD60@3','MD157@3','MD158@3'], minSessions:5,
+   magic:[['M-45'],['M-155'],['M-156'],['M-60'],['M-157'],['M-158']], creative:['MD158@3','MD157@3','MD60@3']},
+ {id:73, tier:'calculus1', title:{ko:'적분',en:'Integration',zh:'积分'},
+   drills:['MD46','MD159','MD61','MD62','MD158','MD46@2','MD159@2','MD61@2','MD62@2','MD46@3','MD159@3','MD61@3','MD62@3'], minSessions:4,
+   magic:[['M-46'],['M-159'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD159@3']},
 ];
 
 /* ── 회차의 세 층 — 교과 연산 → 창의 연산 → 연결 문장제·적용 (2026-09-25 정본) ──

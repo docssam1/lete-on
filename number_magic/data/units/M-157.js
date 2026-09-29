@@ -5,7 +5,7 @@
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['M-157'] = {
-  id:'M-157', tier:'calculus1', level:'74', order:157,
+  id:'M-157', tier:'calculus1', level:'72', order:157,
   generator:'md157_closedMax',
   title:{ ko:'닫힌구간에서의 최대·최소', en:'Max & Min on a Closed Interval', zh:'闭区间上的最值' },
   subtitle:{ ko:'극값과 양 끝을 한 줄로 세워 비교합니다', en:'Line up the extreme values and both ends, then compare', zh:'把极值与两端排成一行比较' },
