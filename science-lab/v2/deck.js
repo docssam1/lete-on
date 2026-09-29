@@ -95,7 +95,7 @@ export function buildSlides(ch, art, plan, similar, mode) {
     const ch3 = [['discuss', '토의', ch.discuss.q, ch.discuss.a], ['creative', '창의력', ch.creative.q, ch.creative.a]];
     add('challenge', 'extend', '도전 하나 고르기', `<p class="dk-q">셋 중에 하고 싶은 도전 하나를 골라요.</p><div class="dk-pick">${[...ch3.map(([id, t]) => [id, t]), ['gifted', '영재성']].map(([id, t]) => `<button type="button" class="dk-go ghost" data-pick="${id}">${t}</button>`).join('')}</div>
       ${ch3.map(([id, , q, a]) => `<div class="dk-pane" data-pane="${id}" hidden><p class="dk-q">${esc(q)}</p>${ans(a, id)}</div>`).join('')}
-      <div class="dk-pane" data-pane="gifted" hidden><p class="dk-q"><b>${esc(g.title)}</b><br>${esc(g.lead)}</p><table class="dk-tbl">${g.rows.map((r) => `<tr><th>${esc(r)}</th><td>${ans(g.a[r], `gifted-${r}`)}</td></tr>`).join('')}</table></div>`, { say: 'challenge', kind: 'challenge' });
+      <div class="dk-pane" data-pane="gifted" hidden><p class="dk-q"><b>${esc(g.title)}</b><br>${esc(g.lead)}</p><p class="dk-gifted-clock" role="timer" aria-label="영재성 남은 시간"><span>남은 시간</span> <strong>3:00</strong></p><table class="dk-tbl">${g.rows.map((r) => `<tr><th>${esc(r)}</th><td>${ans(g.a[r], `gifted-${r}`)}</td></tr>`).join('')}</table></div>`, { say: 'challenge', kind: 'challenge' });
     const by = Object.fromEntries(S.map((x) => [x.id, x])), ids = S.map((x) => x.id), tests = ids.filter((x) => /^test\d/.test(x));
     const order = ['cover', 'intro', 'think1', 'scene', 'goal', 'hypo', 'design', 'order', 'lab', ...ids.filter((x) => /^res\d/.test(x)), 'break',
       'recall', 'reveal', 'concl', 'note', ...tests.slice(0, 2), 'plus', 'wonder', 'challenge', ...tests.slice(2), 'end'];
@@ -260,7 +260,21 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     if (k === 'challenge') { G.say('dk-challenge');
       stage.querySelectorAll('[data-pick]').forEach((b) => { b.onclick = () => {
         stage.querySelectorAll('[data-pane]').forEach((x) => { if (x.dataset.pane !== b.dataset.pick) x.remove(); else x.hidden = false; });
-        stage.querySelector('.dk-pick').remove(); stage.querySelector('.dk-body > .dk-q').remove(); runWrite(V); }; });
+        stage.querySelector('.dk-pick').remove(); stage.querySelector('.dk-body > .dk-q').remove();
+        if (b.dataset.pick === 'gifted') {
+          const clock = stage.querySelector('.dk-gifted-clock'), value = clock.querySelector('strong');
+          const deadline = Date.now() + 180000;
+          const tick = () => {
+            if (!alive()) { clearInterval(interval); return; }
+            const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+            value.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+            if (!left) { clearInterval(interval); clock.classList.add('done'); clock.setAttribute('aria-label', '영재성 도전 시간 종료'); clock.querySelector('span').textContent = '시간 종료'; }
+          };
+          const interval = setInterval(tick, 250);
+          addEventListener('hashchange', () => clearInterval(interval), { once: true });
+          tick();
+        }
+        runWrite(V); }; });
       return; }
     return runWrite(V);
   }
