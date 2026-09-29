@@ -53,15 +53,41 @@ const ENTRIES = AGE_COURSES.map(([age, key]) => {
 console.log('나이별 진입 칸:', ENTRIES.map(e => `${e.age}=${e.idx}(${ladder[e.idx] ? ladder[e.idx].course : '?'})`).join('  '));
 
 const N = ladder.length;
+/* 앱과 같은 천장(2026-09-28, main.js placementCeilCourse): 시작 과정이 속한 단계의 **다음 단계 끝**까지만
+   올라가고, 거기까지 다 맞히면 "한 단계 더 올라가 보기"로 천장을 다음 단계로 올려 이어서 푼다(문항 수 한도는
+   구간마다 새로). 천장 없이 한 번에 돌리면 사다리가 길어질수록(고등 재편 후 61칸) 유아가 고등 실력인 가짜
+   조합에서 9문항을 넘는다 — 앱은 그 경우를 천장으로 끊으므로 시뮬레이터도 같은 길로 돈다. */
+eval(fs.readFileSync(path.join(ROOT, 'data/stages.js'), 'utf8'));
+const courseNum = r => parseInt(String(r.course).replace(/^C/, ''), 10);
+function ceilCourse(num) {
+  const st = (window.NM_STAGES || []).filter(x => x.courses);
+  const i = st.findIndex(x => num >= x.courses.from && num <= x.courses.to);
+  return i < 0 ? null : st[Math.min(st.length - 1, i + 1)].courses.to;
+}
+function capFor(ceil) {
+  if (ceil == null) return N;
+  let n = 0; ladder.forEach((r, i) => { if (courseNum(r) <= ceil) n = i + 1; });
+  return n || N;
+}
 function run(entryIdx, ability) {
   const d = { lo: -1, hi: N, at: null, entry: entryIdx, asked: 0, correct: 0, ups: 0 };
+  let ceil = ceilCourse(courseNum(ladder[entryIdx] || ladder[0]));
+  let cap = capFor(ceil); d.hi = cap;
+  let maxSeg = 0, total = 0, seg = 0;
   while (true) {
-    const nxt = CORE.nextRung(d, N);
-    if (nxt === null || d.asked >= CORE.MAX_Q) break;
-    const ok = nxt <= ability;
-    CORE.grade(d, nxt, ok, N);
+    const nxt = CORE.nextRung(d, cap);
+    if (nxt === null || seg >= CORE.MAX_Q) {
+      /* 천장까지 다 맞힘 → 한 단계 더(앱의 dgHigher) */
+      if (cap < N && CORE.boundary(d, cap) >= cap) {
+        const nc = ceilCourse(ceil);
+        if (nc != null && nc > ceil) { ceil = nc; cap = capFor(nc); d.hi = cap; d.ups = 0; maxSeg = Math.max(maxSeg, seg); seg = 0; continue; }
+      }
+      break;
+    }
+    CORE.grade(d, nxt, nxt <= ability, cap); seg++; total++;
   }
-  return { asked: d.asked, b: CORE.boundary(d, N) };
+  maxSeg = Math.max(maxSeg, seg);
+  return { asked: maxSeg, total, b: CORE.boundary(d, cap) };
 }
 
 let maxQ = 0, sumQ = 0, cnt = 0, wrong = 0;
