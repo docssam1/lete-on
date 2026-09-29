@@ -24,7 +24,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500;600;700&family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..700,0..100;1,9..144,400..700,0..100&display=swap">
-  <link rel="stylesheet" href="book.css?v=20260929-2">
+  <link rel="stylesheet" href="book.css?v=20260929-3">
 </head>
 <body>
   <a class="skip-link" href="#main">책 내용으로 건너뛰기</a>
@@ -83,9 +83,11 @@
               <h2 id="menu-title" tabindex="-1">마법서의 차례</h2>
               <nav class="chapter-nav" aria-label="수의 마법 소개 차례">
                 <button type="button" data-route="video"><span>01</span><strong>소개 영상</strong><i aria-hidden="true">→</i></button>
-                <button type="button" data-route="worksheet"><span>02</span><strong>실제 학습지</strong><i aria-hidden="true">→</i></button>
-                <button type="button" data-route="roadmap"><span>03</span><strong>전체 로드맵</strong><i aria-hidden="true">→</i></button>
-                <a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener"><span>04</span><strong>오픈톡 상담</strong><i aria-hidden="true">↗</i></a>
+                <button type="button" data-route="story1"><span>02</span><strong>수의 마법 이야기</strong><i aria-hidden="true">→</i></button>
+                <button type="button" data-route="labs"><span>03</span><strong>수학 실험실 체험</strong><i aria-hidden="true">→</i></button>
+                <button type="button" data-route="worksheet"><span>04</span><strong>실제 학습지</strong><i aria-hidden="true">→</i></button>
+                <button type="button" data-route="roadmap"><span>05</span><strong>0~45 전체 로드맵</strong><i aria-hidden="true">→</i></button>
+                <a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener"><span>06</span><strong>오픈톡 상담</strong><i aria-hidden="true">↗</i></a>
               </nav>
             </article>
 
@@ -93,10 +95,10 @@
               <div class="cinema journey-cinema is-journey" id="cinema">
                 <video id="introVideo" playsinline preload="metadata" poster="../assets/promo/video/poster-15s-vertical.jpg" controlslist="nodownload noremoteplayback" disablepictureinpicture aria-label="수의 마법 15초 미리보기 영상"></video>
                 <header class="video-heading" id="videoHeading" hidden>
-                  <h2 id="video-title" tabindex="-1"><strong id="videoDurationTitle">2분 10초</strong>로 보는 <b>수의 마법</b></h2>
+                  <h2 id="video-title" class="visually-hidden" tabindex="-1">소개 영상</h2>
                   <div class="cut-switch" role="group" aria-label="소개 영상 버전 선택">
                     <button class="is-selected" type="button" data-cut="full" aria-pressed="true">전체 2:10</button>
-                    <button type="button" data-cut="short" aria-pressed="false">1분 요약</button>
+                    <button type="button" data-cut="short" aria-pressed="false">1분 영상</button>
                   </div>
                 </header>
                 <button class="cinema-play" id="cinemaPlay" type="button" aria-label="영상 재생">
@@ -126,11 +128,101 @@
                   </button>
                 </div>
                 <div class="video-finish" id="videoFinish" hidden>
-                  <button class="primary-button light" type="button" data-route="worksheet">
-                    <span>학습지 보기</span>
+                  <button class="primary-button light" type="button" data-route="story1">
+                    <span>이야기 계속 보기</span>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5"/></svg>
                   </button>
                 </div>
+              </div>
+            </article>
+          </section>
+
+          <section class="book-panel panel-story" data-panel="story1" aria-labelledby="story1-title" aria-hidden="true">
+            <article class="paper-page story-page story-philosophy">
+              <p class="page-folio">THE IDEA · 01</p>
+              <h2 id="story1-title" tabindex="-1">답을 빨리 구하는<br>계산 학습이 아닙니다.</h2>
+              <p class="story-lead">수는 언어입니다. 답만 외우지 않고 수를 쪼개고, 묶고, 관계를 말할 수 있어야 합니다.</p>
+              <div class="idea-pillars" aria-label="언어, 사고력, 연산의 세 기둥">
+                <div><b>언어</b><span>기호를 말로 읽기</span></div>
+                <div><b>사고력</b><span>관계를 그림으로 보기</span></div>
+                <div><b>연산</b><span>손으로 정확히 익히기</span></div>
+              </div>
+              <blockquote>언어와 사고력과 연산을 골고루 연습해야,<br><strong>수를 정복하고 수학을 정복합니다.</strong></blockquote>
+            </article>
+            <article class="paper-page story-page story-visual">
+              <figure class="story-shot"><img src="../assets/promo/shots/story.webp" alt="수의 마법 이야기 화면: 숫자 친구와 수식이 한 장면에 이어진 모습"></figure>
+              <div class="story-note">
+                <p class="page-folio">ONE LANGUAGE</p>
+                <h3>유아의 가르기가<br>미적분까지 이어집니다.</h3>
+                <p><b>5 = 2 + 3</b>에서 시작한 쪼개기는 분배법칙이 되고, 수열의 합과 함수, 미분과 적분의 언어로 자랍니다.</p>
+              </div>
+            </article>
+          </section>
+
+          <section class="book-panel panel-story" data-panel="story2" aria-labelledby="story2-title" aria-hidden="true">
+            <article class="paper-page story-page journey-page">
+              <p class="page-folio">THE JOURNEY · 02</p>
+              <h2 id="story2-title" tabindex="-1">가족이 겪는 순서<br>그대로 이어집니다.</h2>
+              <ol class="journey-steps">
+                <li><i>01</i><span><b>진단</b>지금 자리를 찾습니다.</span></li>
+                <li><i>02</i><span><b>로드맵·속도</b>주 1회·2회 길을 정합니다.</span></li>
+                <li><i>03</i><span><b>마을</b>오늘 배울 마법을 만납니다.</span></li>
+                <li><i>04</i><span><b>이야기</b>기호가 태어난 이유를 읽습니다.</span></li>
+                <li><i>05</i><span><b>창의 연산</b>수를 펼쳐 쉽게 만듭니다.</span></li>
+                <li><i>06</i><span><b>3D·실험실</b>어려운 개념을 움직여 봅니다.</span></li>
+                <li><i>07</i><span><b>종이 학습지</b>손으로 풀어 자기 것으로 만듭니다.</span></li>
+                <li><i>08</i><span><b>주간 안내</b>다음 한 걸음을 함께 봅니다.</span></li>
+              </ol>
+            </article>
+            <article class="paper-page story-page pace-page">
+              <figure class="pace-shot"><img src="../assets/promo/shots/pace-desk.webp" alt="현재 위치와 앞으로의 도착 시점을 보여 주는 속도 진단 화면"></figure>
+              <div class="story-note">
+                <p class="page-folio">DIAGNOSE, THEN PLAN</p>
+                <h3>첫걸음은 진단입니다.</h3>
+                <p>학년만으로 시작점을 정하지 않습니다. 지금 할 수 있는 계산과 멈추는 자리를 보고, 아이에게 맞는 양과 속도를 정합니다.</p>
+              </div>
+            </article>
+          </section>
+
+          <section class="book-panel panel-story" data-panel="story3" aria-labelledby="story3-title" aria-hidden="true">
+            <article class="paper-page story-page weekly-page">
+              <p class="page-folio">EVERY WEEK · 03</p>
+              <h2 id="story3-title" tabindex="-1">그리고 공부는<br>종이에 합니다.</h2>
+              <p class="story-lead">앱에서 왜 그런지 만나고, 매주 한두 번 종이 위에서 직접 풀어 완성합니다.</p>
+              <div class="weekly-flow" aria-label="한 회차 학습지 구성">
+                <span>수학 이야기</span><i>→</i><span>마법 노트</span><i>→</i><span>창의 연산</span><i>→</i><span>교과 연산</span><i>→</i><span>문장제·적용</span>
+              </div>
+              <p class="quiet-copy">그냥 던져 주는 학습지가 아닙니다. 진단으로 지금 자리를 찾고, 같은 개념을 이야기·그림·연산·문장제로 이어 한 회차 안에서 이해와 연습이 만나게 합니다.</p>
+            </article>
+            <article class="paper-page story-page together-page">
+              <figure class="story-shot"><img src="../assets/landing/m-mailbox.jpg" alt="이번 주 학습지와 진도 안내가 도착한 휴대폰 화면"></figure>
+              <div class="role-grid">
+                <div><b>아이</b><span>마을에서 발견하고 종이에서 풉니다.</span></div>
+                <div><b>부모님</b><span>매주 도착한 학습지 곁에 앉아 줍니다.</span></div>
+                <div><b>학원</b><span>진단하고 길과 속도를 설계합니다.</span></div>
+              </div>
+            </article>
+          </section>
+
+          <section class="book-panel panel-labs" data-panel="labs" aria-labelledby="labs-title" aria-hidden="true">
+            <article class="paper-page lab-index-page">
+              <p class="page-folio">MATH LAB</p>
+              <h2 id="labs-title" tabindex="-1">읽는 데서 멈추지 않고<br>직접 움직여 봅니다.</h2>
+              <p class="story-lead">책 속 실험실 두 곳을 골라 바로 체험해 보세요.</p>
+              <div class="lab-choices" role="tablist" aria-label="체험할 수학 실험실 선택">
+                <button class="lab-choice is-selected" type="button" role="tab" aria-selected="true" data-lab="calculus">
+                  <span class="lab-no">01 · 미적분Ⅰ</span><strong>미적분은 왜 태어났나</strong><small>접선의 기울기와 곡선 아래 넓이를 손잡이로 움직입니다.</small>
+                </button>
+                <button class="lab-choice" type="button" role="tab" aria-selected="false" data-lab="secret1001">
+                  <span class="lab-no">02 · 수의 비밀</span><strong>1001의 비밀</strong><small>세 자리 수를 두 번 쓰면 왜 7·11·13으로 나뉘는지 확인합니다.</small>
+                </button>
+              </div>
+              <p class="lab-hint">오른쪽 실험실 안의 단추와 손잡이를 직접 눌러 보세요.</p>
+            </article>
+            <article class="paper-page lab-stage-page">
+              <div class="lab-frame-shell">
+                <div class="lab-loading" id="labLoading">실험실을 여는 중…</div>
+                <iframe id="labFrame" title="미적분은 왜 태어났나 체험 실험실" src="../labs/why-calculus.html" loading="lazy"></iframe>
               </div>
             </article>
           </section>
@@ -163,26 +255,18 @@
           <section class="book-panel panel-roadmap" data-panel="roadmap" aria-labelledby="roadmap-title" aria-hidden="true">
             <div class="spread-page roadmap-page">
               <header class="roadmap-heading">
-                <div>
-                  <p class="page-folio">0 → 45</p>
-                  <h2 id="roadmap-title" tabindex="-1">수의 마법 전체 로드맵</h2>
-                </div>
-                <div class="track-key" aria-label="비교 기준선">
-                  <span data-track="soma-a">소마 A 트랙</span>
-                  <span data-track="fields-e1">필즈 E1 트랙</span>
-                  <span data-track="premier">프리미어 트랙</span>
-                </div>
+                <div><p class="page-folio">0 → 45 · SEVEN STAGES</p><h2 id="roadmap-title" tabindex="-1">유아 연산부터 미적분Ⅰ까지</h2></div>
+                <p>7단계 · 46과정 · 주 2회 기준</p>
               </header>
-              <div class="roadmap-scroll" tabindex="0" aria-label="7단계 전체 연산 로드맵 표">
-                <div class="roadmap-table" role="table" aria-label="수의 마법 7단계 전체 로드맵">
-                  <div class="roadmap-row roadmap-columns" role="row">
-                    <span role="columnheader">단계</span><span role="columnheader">연령·학년</span><span role="columnheader">과정</span><span role="columnheader">주 2회</span>
-                  </div>
-                  <div id="roadmapRows"></div>
-                </div>
+              <div class="roadmap-complete">
+                <section class="roadmap-stages" aria-label="7단계 로드맵 개요"><div id="roadmapRows"></div></section>
+                <section class="roadmap-courses" aria-label="과정 0부터 45까지 세부 로드맵">
+                  <header><b>과정별 길</b><span>0~45</span></header>
+                  <div class="course-scroll" id="courseRows" tabindex="0"></div>
+                </section>
               </div>
               <footer class="roadmap-footer">
-                <button class="text-button" type="button" data-route="worksheet">학습지로 돌아가기</button>
+                <span>학교 학년이 아니라 진단 결과에서 시작합니다.</span>
                 <a class="primary-button compact" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener">우리 아이 자리 상담 <span aria-hidden="true">↗</span></a>
               </footer>
             </div>
@@ -196,6 +280,7 @@
   </main>
 
   <script src="../data/stages.js"></script>
-  <script src="book.js?v=20260929-2"></script>
+  <script src="../data/courses.js"></script>
+  <script src="book.js?v=20260929-3"></script>
 </body>
 </html>
