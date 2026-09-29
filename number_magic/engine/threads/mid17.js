@@ -241,7 +241,7 @@ NM_TGEN['md93_factorTheorem'] = function (params, rng) {
       L3('상수항의 약수 ±1, ±2, … 를 차례로 넣어 P(a)=0 이 되는 정수 a 를 찾습니다.',
          'Try the divisors ±1, ±2, … of the constant term until P(a)=0 for an integer a.',
          '依次代入常数项的约数±1、±2、…，找出使P(a)=0的整数a。'),
-      `P(x)=${P},\\quad P(a)=0,\\ a\\in\\mathbb{Z} \\;\\Rightarrow\\; a=\\square`, r, [
+      `P(x)=${P},\\quad P(a)=0 \\;\\Rightarrow\\; a=\\square`, r, [
         { tex:`P(${r})=${par(r)}^3${more(p - r, '')}${p - r === 0 ? '' : '\\times' + par(r) + '^2'}${more(q - p * r, '')}${q - p * r === 0 ? '' : '\\times' + par(r)}${more(-r * q, '')}=0` },
         { tex:`a=\\square`, blank:r }]);
   }
@@ -290,8 +290,8 @@ NM_TGEN['md94_factorArith'] = function (params, rng) {
   if (mode === 'cube') {
     const kind = pick(rng, ['near', 'expand']);
     if (kind === 'expand') {
-      const S = pick(rng, [10, 20, 30]);
-      const b = R(rng, 1, S / 2 - 1), a = S - b;
+      const S = pick(rng, [10, 20, 30, 40, 50]);
+      const b = R(rng, 1, Math.min(S / 2 - 1, 7)), a = S - b;
       const ans = S * S * S;
       return item(
         L3('a³+3a²b+3ab²+b³=(a+b)³ 꼴로 묶어 계산합니다.', 'Group it as a³+3a²b+3ab²+b³=(a+b)³.', '把它合成a³+3a²b+3ab²+b³=(a+b)³来计算。'),
@@ -299,7 +299,7 @@ NM_TGEN['md94_factorArith'] = function (params, rng) {
           { tex:`=(${a}+${b})^3=${S}^3` },
           { tex:`=\\square`, blank:ans }]);
     }
-    const N = pick(rng, [10, 20, 100]);
+    const N = pick(rng, [10, 20, 30, 40, 50, 100]);
     const k = nzInt(rng, 1, 3), n = N + k;
     const ans = n * n * n;
     const op = k > 0 ? '+' : '-', ak = Math.abs(k);
@@ -527,15 +527,15 @@ NM_TGEN['md98_buildQuadratic'] = function (params, rng) {
   }
 
   if (mode === 'conjugate') {
-    const m = nzInt(rng, 1, 5);
+    const m = nzInt(rng, 1, 7);
     if (pick(rng, [0, 1])) {
       const n = pick(rng, [2, 3, 5, 6, 7, 10, 11]);
       const a = -2 * m, b = m * m - n;
       return item(
-        L3('계수가 유리수이면 m+√n 이 근일 때 m−√n 도 근입니다. 두 근의 합과 곱을 구합니다.',
-           'With rational coefficients, if m+√n is a root then so is m−√n. Find the sum and product of the two roots.',
-           '系数为有理数时，若m+√n是根，则m−√n也是根。求两根之和与积。'),
-        `${EQ}\\ (a,b\\in\\mathbb{Q}),\\quad \\alpha=${m}+\\sqrt{${n}} \\;\\Rightarrow\\; ${AB}`, [a, b], [
+        L3('a, b 는 유리수이고 α 는 방정식의 한 근입니다. 계수가 유리수이면 m+√n 이 근일 때 m−√n 도 근입니다. 두 근의 합과 곱을 구합니다.',
+           'a and b are rational and α is a root. With rational coefficients, if m+√n is a root then so is m−√n. Find the sum and product of the two roots.',
+           'a、b是有理数，α是方程的一个根。系数为有理数时，若m+√n是根，则m−√n也是根。求两根之和与积。'),
+        `${EQ},\\quad \\alpha=${m}+\\sqrt{${n}} \\;\\Rightarrow\\; ${AB}`, [a, b], [
           { tex:`\\beta=${m}-\\sqrt{${n}}` },
           { tex:`\\alpha+\\beta=${2 * m},\\quad \\alpha\\beta=${par(m)}^2-${n}=${b}` },
           { tex:`${AB}`, blank:[a, b] }]);
@@ -543,10 +543,10 @@ NM_TGEN['md98_buildQuadratic'] = function (params, rng) {
     const n = nzInt(rng, 1, 5);
     const a = -2 * m, b = m * m + n * n;
     return item(
-      L3('계수가 실수이면 허근 m+ni 의 켤레 m−ni 도 근입니다. 두 근의 합과 곱을 구합니다.',
-         'With real coefficients, the conjugate of a complex root m+ni is also a root. Find the sum and product of the two roots.',
-         '系数为实数时，虚根m+ni的共轭m−ni也是根。求两根之和与积。'),
-      `${EQ}\\ (a,b\\in\\mathbb{R}),\\quad \\alpha=${cx(m, n)} \\;\\Rightarrow\\; ${AB}`, [a, b], [
+      L3('a, b 는 실수이고 α 는 방정식의 한 근입니다. 계수가 실수이면 허근 m+ni 의 켤레 m−ni 도 근입니다. 두 근의 합과 곱을 구합니다.',
+         'a and b are real and α is a root. With real coefficients, the conjugate of a complex root m+ni is also a root. Find the sum and product of the two roots.',
+         'a、b是实数，α是方程的一个根。系数为实数时，虚根m+ni的共轭m−ni也是根。求两根之和与积。'),
+      `${EQ},\\quad \\alpha=${cx(m, n)} \\;\\Rightarrow\\; ${AB}`, [a, b], [
         { tex:`\\beta=${cx(m, -n)}` },
         { tex:`\\alpha+\\beta=${2 * m},\\quad \\alpha\\beta=${par(m)}^2+${par(n)}^2=${b}` },
         { tex:`${AB}`, blank:[a, b] }]);
@@ -573,7 +573,7 @@ NM_TGEN['md99_graphLine'] = function (params, rng) {
 
   if (mode === 'tangent') {
     /* x²+bx+c 와 mx+n 이 접함: (b−m)² = 4(c−n). b−m 을 짝수로 */
-    const h = nzInt(rng, 1, 5);             /* 차이식 = (x+h)² */
+    const h = nzInt(rng, 1, useLine ? 5 : 9);   /* 차이식 = (x+h)² */
     const b = m + 2 * h;
     const askLine = useLine && pick(rng, [0, 1]);
     if (askLine) {
@@ -598,7 +598,7 @@ NM_TGEN['md99_graphLine'] = function (params, rng) {
 
   if (mode === 'range') {
     /* 두 점에서 만나거나(k<경계) 만나지 않을(k>경계) 조건의 끝값 */
-    const h = nzInt(rng, 1, 5), b = m + 2 * h;
+    const h = nzInt(rng, 1, useLine ? 5 : 9), b = m + 2 * h;
     const bound = n + h * h;
     const meet = pick(rng, [0, 1]);
     const rel = meet ? '<' : '>';
@@ -664,23 +664,31 @@ NM_TGEN['md100_rangeExtrema'] = function (params, rng) {
     const M = askMax ? mx : mn;
     const k = c0;                          /* 원래 상수항이 답 */
     const shift = M - k;                   /* k 를 뺀 부분의 극값 */
+    const tag = askMax ? 'M' : 'm';        /* 교과서 표기: 최댓값 M, 최솟값 m (\max 기호는 쓰지 않는다) */
+    const def = askMax
+      ? L3('최댓값을 M 이라 합니다. ', 'Let M be the maximum value. ', '设最大值为M。')
+      : L3('최솟값을 m 이라 합니다. ', 'Let m be the minimum value. ', '设最小值为m。');
     return item(
-      L3('상수항 k 는 그래프를 위아래로만 옮깁니다. k 를 뺀 식의 최댓값·최솟값을 먼저 구하고 주어진 값과 비교합니다.',
-         'The constant k only shifts the graph up or down. Find the extreme value without k first, then compare with the given value.',
-         '常数k只使图象上下平移。先求不含k部分的最值，再与给定值比较。'),
-      `y=${poly([a, b, 0])}+k${range},\\ ${askMax ? '\\max' : '\\min'}=${M} \\;\\Rightarrow\\; k=\\square`, k, [
+      L3(def.ko + '상수항 k 는 그래프를 위아래로만 옮깁니다. k 를 뺀 식의 최댓값·최솟값을 먼저 구하고 주어진 값과 비교합니다.',
+         def.en + 'The constant k only shifts the graph up or down. Find the extreme value without k first, then compare with the given value.',
+         def.zh + '常数k只使图象上下平移。先求不含k部分的最值，再与给定值比较。'),
+      `y=${poly([a, b, 0])}+k${range},\\ ${tag}=${M} \\;\\Rightarrow\\; k=\\square`, k, [
         { tex:`y=${sq}${more(-a * p * p, '')}+k` },
-        { tex:`${askMax ? '\\max' : '\\min'}=k${more(shift, '')}=${M}` },
+        { tex:`${tag}=k${more(shift, '')}=${M}` },
         { tex:`k=\\square`, blank:k }]);
   }
 
   const askMax = pick(rng, [0, 1]);
   const ans = askMax ? mx : mn;
-  const tag = askMax ? '\\max' : '\\min';
+  const tag = askMax ? 'M' : 'm';
+  const def = askMax
+    ? L3('최댓값을 M 이라 합니다. ', 'Let M be the maximum value. ', '设最大值为M。')
+    : L3('최솟값을 m 이라 합니다. ', 'Let m be the minimum value. ', '设最小值为m。');
+  const how = inside
+    ? L3('꼭짓점이 범위 안에 있으면 꼭짓점과 양 끝점의 함숫값을 비교합니다.', 'If the vertex lies in the interval, compare the values at the vertex and both endpoints.', '顶点在范围内时，比较顶点与两端点的函数值。')
+    : L3('꼭짓점이 범위 밖에 있으면 양 끝점의 함숫값만 비교합니다.', 'If the vertex lies outside the interval, compare only the values at the two endpoints.', '顶点在范围外时，只比较两端点的函数值。');
   return item(
-    inside
-      ? L3('꼭짓점이 범위 안에 있으면 꼭짓점과 양 끝점의 함숫값을 비교합니다.', 'If the vertex lies in the interval, compare the values at the vertex and both endpoints.', '顶点在范围内时，比较顶点与两端点的函数值。')
-      : L3('꼭짓점이 범위 밖에 있으면 양 끝점의 함숫값만 비교합니다.', 'If the vertex lies outside the interval, compare only the values at the two endpoints.', '顶点在范围外时，只比较两端点的函数值。'),
+    L3(def.ko + how.ko, def.en + how.en, def.zh + how.zh),
     `y=${poly([a, b, c0])}${range} \\;\\Rightarrow\\; ${tag}=\\square`, ans, [
       { tex:vertexForm },
       { tex:`f(${lo})=${fl},\\quad f(${hi})=${fh}${inside ? `,\\quad f(${p})=${q}` : ''}` },
