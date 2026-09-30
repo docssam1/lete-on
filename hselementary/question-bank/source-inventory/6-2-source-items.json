@@ -1419,8 +1419,8 @@
       "answerContract": "union-overlap-triangle-height",
       "visualRisk": "두 큰 삼각형과 겹친 작은 삼각형, 밑변 ㅁㄷ의 범위, 교차점 ㅅ과 수선의 발 ㅇ, 직각 표시가 한눈에 구분되어야 함.",
       "sourceVerified": true,
-      "implementationStatus": "source-reviewed-release-locked",
-      "reviewReason": "원본 조건과 독립 계산은 확인했으나 심화 교재 공식 답, 문제와 답 그림 및 화면 검수가 남아 공개하지 않습니다."
+      "implementationStatus": "candidate-verified-release-locked",
+      "reviewReason": "원본 조건과 검수용 그림·계산은 확인했으나 심화 교재 공식 답과 실제 문제은행 출력 검수가 남아 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-5",
