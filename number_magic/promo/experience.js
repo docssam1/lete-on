@@ -12,7 +12,8 @@
   let threePromise;
   const modes = ['preschool', 'elementary', 'middle', 'high'];
   const aliases = { split: 'preschool', multiply: 'elementary', reciprocal: 'middle', calculus: 'high', kinder:'preschool', primary:'elementary', secondary:'middle' };
-    const titles = { preschool:'두 접시를 똑같이 만들기', elementary:'곱하여 10이 되는 수', middle:'두 수의 곱은 일정합니다', high:'조각을 모아 넓이 구하기' };
+  const tr=(ko,en,zh)=>window.NMPromoI18n?window.NMPromoI18n.text(ko,en,zh):ko;
+  const titles = { preschool:{ko:'두 접시를 똑같이 만들기',en:'Share equally between two plates',zh:'把两个盘子分得一样多'}, elementary:{ko:'곱하여 10이 되는 수',en:'Numbers that multiply to ten',zh:'乘积为10的数'}, middle:{ko:'두 수의 곱은 일정합니다',en:'The product stays constant',zh:'两个数的乘积保持不变'}, high:{ko:'조각을 모아 넓이 구하기',en:'Add pieces to estimate an area',zh:'拼合小块，估算面积'} };
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const normalizeMode = m => modes.includes(m) ? m : aliases[m] || 'preschool';
   const fmt = n => Number.isInteger(n) ? String(n) : String(Number(n.toFixed(2)));
@@ -33,38 +34,40 @@
     function updateUI() {
       root.dataset.mode=state.mode;
       root.classList.toggle('is-solved',state.mode==='preschool'&&state.left===5);
-      root.setAttribute('role','group'); root.setAttribute('aria-label', titles[state.mode]);
+      root.setAttribute('role','group'); root.setAttribute('aria-label',window.NMPromoI18n?window.NMPromoI18n.pick(titles[state.mode]):titles[state.mode].ko);
+      root.querySelector('.nm-experience__badge').textContent=tr('개념 미리보기 · 직접 해보기','Explore a concept · try it','概念预览 · 动手试试');
       if (state.mode==='preschool') {
-        equation.innerHTML=state.left===5?'<b>5개씩</b> 똑같아요!':'<b>'+state.left+'</b>개 <span class="nm-experience__operator">·</span> <b>'+(10-state.left)+'</b>개';
-        instruction.textContent='구슬을 옮겨 두 친구에게 똑같이 나누어 주세요.';
-        controls.innerHTML=button('← 한 알','split',1)+button('한 알 →','split',-1);
+        equation.innerHTML=state.left===5?tr('<b>5개씩</b> 똑같아요!','<b>5 each</b> — equal!','<b>各5颗</b>，一样多！'):'<b>'+state.left+'</b>'+tr('개','','颗')+' <span class="nm-experience__operator">·</span> <b>'+(10-state.left)+'</b>'+tr('개','','颗');
+        instruction.textContent=tr('구슬을 옮겨 두 친구에게 똑같이 나누어 주세요.','Move the beads to share equally between two friends.','移动珠子，平均分给两个朋友。');
+        controls.innerHTML=button(tr('← 한 알','← One bead','← 一颗'),'split',1)+button(tr('한 알 →','One bead →','一颗 →'),'split',-1);
         controls.children[0].disabled=state.left===10; controls.children[1].disabled=state.left===0;
-        feedback.textContent=state.left===5?'2개를 옮겨 5개씩! 모두 10개인 것은 같아요.':'어느 쪽에서 몇 개를 옮기면 같아질까요?';
+        feedback.textContent=state.left===5?tr('2개를 옮겨 5개씩! 모두 10개인 것은 같아요.','Move two: five each! The total is still ten.','移动两颗后各有五颗！总数仍然是十颗。'):tr('어느 쪽에서 몇 개를 옮기면 같아질까요?','Which way should you move them, and how many?','从哪边移几颗，才能一样多？');
         fallback.innerHTML='<div class="nm-experience__beads">'+[state.left,10-state.left].map(n=>'<div class="nm-experience__bead-group">'+Array.from({length:n},()=>'<i class="nm-experience__bead"></i>').join('')+'</div>').join('')+'</div>';
       } else if(state.mode==='elementary') {
         equation.innerHTML=state.a+' <span class="nm-experience__operator">×</span> <b>'+state.b+'</b> <span class="nm-experience__operator">=</span> '+state.a*state.b;
-        instruction.textContent=state.a+'와 곱하여 10이 되는 짝을 찾아보세요.';
-        controls.innerHTML=[1,2,5,10].map(n=>button(String(n),'factor',n)).join('')+button('다른 짝 ↗','challenge');
+        instruction.textContent=tr(state.a+'와 곱하여 10이 되는 짝을 찾아보세요.','What number times '+state.a+' makes ten?','哪个数乘'+state.a+'等于10？');
+        controls.innerHTML=[1,2,5,10].map(n=>button(String(n),'factor',n)).join('')+button(tr('다른 짝 ↗','Another pair ↗','换一组 ↗'),'challenge');
         controls.lastElementChild.classList.add('nm-experience__next');
         controls.querySelectorAll('[data-xp-action="factor"]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.xpValue)===state.b)));
-        feedback.textContent=state.a*state.b===10?'10 완성! '+state.a+'개씩 '+state.b+'묶음이에요.':state.a+'개씩 '+state.b+'묶음. 10이 되는 짝은 무엇일까요?';
-        fallback.textContent=state.a+'개씩 '+state.b+'묶음 = '+state.a*state.b+'개';
+        const groups=tr(state.a+'개씩 '+state.b+'묶음',state.b+' groups of '+state.a,state.b+'组，每组'+state.a+'个');
+        feedback.textContent=state.a*state.b===10?tr('10 완성! ','That makes ten! ','凑成10了！')+groups:groups+tr('. 10이 되는 짝은 무엇일까요?','. Which pair makes ten?','。哪一对能凑成10？');
+        fallback.textContent=groups+' = '+state.a*state.b;
       } else if(state.mode==='middle') {
         const x=[-6,-3,-2,-1,1,2,3,6][state.xIndex], y=state.k/x;
         equation.innerHTML=fmt(x)+' <span class="nm-experience__operator">×</span> <b>'+fmt(y)+'</b> <span class="nm-experience__operator">=</span> '+state.k;
-        instruction.textContent='점을 움직여도 두 수의 곱은 일정합니다.';
-        controls.innerHTML=button('비례상수 +6','sign',6)+button('비례상수 −6','sign',-6)+'<label class="nm-experience__slider">x 값<input type="range" min="0" max="7" step="1" value="'+state.xIndex+'" data-xp-range="x" aria-label="x 좌표 선택" aria-valuetext="'+x+'"></label>';
+        instruction.textContent=tr('점을 움직여도 두 수의 곱은 일정합니다.','Move the point. The product stays constant.','移动点，两个数的乘积仍然不变。');
+        controls.innerHTML=button(tr('비례상수 +6','Constant +6','比例常数 +6'),'sign',6)+button(tr('비례상수 −6','Constant −6','比例常数 −6'),'sign',-6)+'<label class="nm-experience__slider">'+tr('x 값','x value','x值')+'<input type="range" min="0" max="7" step="1" value="'+state.xIndex+'" data-xp-range="x" aria-label="'+tr('x 좌표 선택','Choose the x coordinate','选择x坐标')+'" aria-valuetext="'+x+'"></label>';
         controls.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.xpValue)===state.k)));
-        feedback.textContent=(state.k>0?'양수이면 제1·3사분면':'음수이면 제2·4사분면')+' · (x, y) = ('+fmt(x)+', '+fmt(y)+')';
-        fallback.textContent='y = '+state.k+' ÷ x · 점 ('+fmt(x)+', '+fmt(y)+')';
+        feedback.textContent=(state.k>0?tr('양수이면 제1·3사분면','Positive: quadrants I and III','正数：第一、三象限'):tr('음수이면 제2·4사분면','Negative: quadrants II and IV','负数：第二、四象限'))+' · (x, y) = ('+fmt(x)+', '+fmt(y)+')';
+        fallback.textContent='y = '+state.k+' ÷ x · '+tr('점','point','点')+' ('+fmt(x)+', '+fmt(y)+')';
       } else {
         const n=state.divisions, area=8/3-2/(3*n*n);
-        equation.innerHTML='넓이 <span class="nm-experience__operator">≈</span> <b>'+area.toFixed(3)+'</b>';
-        instruction.textContent='더 잘게 나누면, 곡선 아래가 채워집니다.';
-        controls.innerHTML=[4,8,16,32].map(n=>button(n+'조각','divisions',n)).join('');
+        equation.innerHTML=tr('넓이','Area','面积')+' <span class="nm-experience__operator">≈</span> <b>'+area.toFixed(3)+'</b>';
+        instruction.textContent=tr('더 잘게 나누면, 곡선 아래가 채워집니다.','Smaller pieces fill the area under the curve.','分得更细，就能填满曲线下方。');
+        controls.innerHTML=[4,8,16,32].map(n=>button(n+tr('조각',' pieces','块'),'divisions',n)).join('');
         controls.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.xpValue)===n)));
-        feedback.textContent='y = x² · 0부터 2까지 · 가운데 높이로 어림한 넓이';
-        fallback.textContent=n+'조각의 넓이 합 '+area.toFixed(3)+' · 실제 넓이 8/3';
+        feedback.textContent=tr('y = x² · 0부터 2까지 · 가운데 높이로 어림한 넓이','y = x² · from 0 to 2 · midpoint-height estimate','y = x² · 从0到2 · 用中点高度估算面积');
+        fallback.textContent=tr(n+'조각의 넓이 합 ',n+' pieces add up to ',n+'块面积之和 ')+area.toFixed(3)+tr(' · 실제 넓이 8/3',' · exact area 8/3',' · 实际面积8/3');
       }
       renderNeeded=true;
     }
@@ -175,7 +178,7 @@
     function pick(e){if(!T||!rayTargets.length||state.mode!=='preschool')return;const rect=canvas.getBoundingClientRect(),ndc=new T.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1),ray=new T.Raycaster();ray.setFromCamera(ndc,camera);const hit=ray.intersectObjects(rayTargets)[0];if(hit){const index=moving.findIndex(m=>m.mesh===hit.object),boundary=hit.object.userData.left?state.left-1:state.left;[moving[index],moving[boundary]]=[moving[boundary],moving[index]];state.left+=hit.object.userData.left?-1:1;updateUI();splitTargets();start();}}
     function visibility(){if(document.hidden){cancelAnimationFrame(raf);raf=0;}else{renderNeeded=true;start();}}
     function motion(){renderNeeded=true;start();}
-    controls.addEventListener('click',action);controls.addEventListener('input',range);canvas.addEventListener('click',pick);document.addEventListener('visibilitychange',visibility);reduced.addEventListener('change',motion);
+    controls.addEventListener('click',action);controls.addEventListener('input',range);canvas.addEventListener('click',pick);document.addEventListener('visibilitychange',visibility);reduced.addEventListener('change',motion);window.addEventListener('nm-promo-languagechange',updateUI);
     updateUI();
     (threePromise||(threePromise=import(threeURL))).then(module=>{
       if(destroyed)return;T=module;
@@ -193,8 +196,8 @@
     return {
       setMode,setActive,
       capture(){if(destroyed||!renderer||!scene||!camera)return null;try{renderer.render(scene,camera);return canvas.toDataURL('image/png');}catch(error){return null;}},
-      getState:()=>Object.assign({},state,{renderer:root.dataset.renderer||'loading'}),
-      destroy(){if(destroyed)return;destroyed=true;cancelAnimationFrame(raf);if(resizeObserver)resizeObserver.disconnect();controls.removeEventListener('click',action);controls.removeEventListener('input',range);canvas.removeEventListener('click',pick);document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',motion);disposeModel();if(scene)scene.traverse(o=>{if(o.shadow)o.shadow.dispose();});if(renderer)renderer.dispose();root.remove();}
+      getState:()=>Object.assign({},state,{active,renderer:root.dataset.renderer||'loading'}),
+      destroy(){if(destroyed)return;destroyed=true;cancelAnimationFrame(raf);if(resizeObserver)resizeObserver.disconnect();controls.removeEventListener('click',action);controls.removeEventListener('input',range);canvas.removeEventListener('click',pick);document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',motion);window.removeEventListener('nm-promo-languagechange',updateUI);disposeModel();if(scene)scene.traverse(o=>{if(o.shadow)o.shadow.dispose();});if(renderer)renderer.dispose();root.remove();}
     };
   }
   window.NMPromoExperience={create};

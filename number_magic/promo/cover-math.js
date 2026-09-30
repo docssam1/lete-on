@@ -1,41 +1,37 @@
-/* The actual about.html:initHeroShow, fitted to the book cover.
- * Preserve its equation, 7.4-second timing, two travelling stars and final burst.
- * Only lifecycle control and cached local coordinates are added for the book. */
+/* The about.html gold-star motif, with the requested visible regrouping:
+ * 8+7 -> 8+2+5 -> 10+5 -> 15. Digits split and move; whole formulas do not
+ * simply crossfade. Text/typography around this component belongs to the page. */
 (function(){
  'use strict';
  const host=document.querySelector('#coverMath');if(!host)return;
  const canvas=host.querySelector('canvas'),ctx=canvas&&canvas.getContext('2d');if(!ctx)return;
  const equation=host.querySelector('.cover-equation');if(!equation)return;
- // Old cached HTML must not leave the earlier 5+7 adaptation on this cover.
- if(!equation.querySelector('[data-equation="a"]'))equation.innerHTML='<span class="cover-eq-line" data-equation="a"><span data-token="eight">8</span><span class="cover-eq-op" data-token="plusA">+</span><span data-token="seven">7</span></span><span class="cover-eq-line" data-equation="b"><span data-token="ten">10</span><span class="cover-eq-op" data-token="plusB">+</span><span data-token="five">5</span></span><span class="cover-eq-line" data-equation="c"><span data-token="fifteen">15</span></span>';
- const eqA=equation.querySelector('[data-equation="a"]'),eqB=equation.querySelector('[data-equation="b"]'),eqC=equation.querySelector('[data-equation="c"]');
- const lines=[eqA,eqB,eqC],dig7=eqA.querySelector('[data-token="seven"]'),dig8=eqA.querySelector('[data-token="eight"]');
- const eqStatic=host.querySelector('.cover-math-static'),caption=host.querySelector('.cover-math-caption');
- const expressions=['8 + 7','10 + 5','15'];
- if(eqStatic)eqStatic.textContent=expressions.join(' = ');
- if(caption)caption.textContent='수는, 펼치면 쉬워진다';
+ const tokenSpec=[['eight','8'],['plusA','+'],['seven','7'],['two','2'],['plusB','+'],['five','5'],['ten','10'],['fifteen','15']];
+ // Tolerate an older cached document while keeping a single node per digit.
+ if(equation.dataset.animation!=='regrouping'||!equation.querySelector('[data-token="two"]')){
+  equation.dataset.animation='regrouping';
+  equation.innerHTML=tokenSpec.map(([id,text])=>'<span class="cover-number'+(text==='+'?' cover-eq-op':'')+(id==='two'?' is-transfer':'')+'" data-token="'+id+'">'+text+'</span>').join('');
+ }
+ const tokens=Object.fromEntries(tokenSpec.map(([id])=>[id,equation.querySelector('[data-token="'+id+'"]')]));
+ const eqStatic=host.querySelector('.cover-math-static'),expressions=['8 + 7','8 + 2 + 5','10 + 5','15'];
+ if(eqStatic)eqStatic.replaceChildren(...expressions.map((expression,index)=>{const line=document.createElement('span');line.textContent=(index?' = ':'')+expression;return line;}));
  const reduced=matchMedia('(prefers-reduced-motion:reduce)');
- const LOOP=7400,TRAVEL_START=2100,TRAVEL_END=2950,BURST_START=4700,BURST_END=6300;
+ const LOOP=9600,TRAVEL_START=4000,TRAVEL_END=5000,BURST_START=7500,BURST_END=8900;
  const stars=Array.from({length:140},()=>({x:Math.random(),y:Math.random()*.9,r:Math.random()*1.3+.4,sp:Math.random()*.8+.3,ph:Math.random()*Math.PI*2,baseA:Math.random()*.5+.35,gold:Math.random()<.6}));
  const burstParticles=Array.from({length:44},()=>({a:Math.random()*Math.PI*2,sp:36+Math.random()*88,r:Math.random()*2+1,drop:16+Math.random()*36}));
- let active=true,intersecting=true,raf=0,start=null,elapsed=0,W=1,H=1,anchors=null;
- function smooth01(t,a,b){if(t<=a)return 0;if(t>=b)return 1;const x=(t-a)/(b-a);return x*x*(3-2*x);}
- function fadeWin(t,inA,inB,outA,outB){return Math.min(smooth01(t,inA,inB),1-smooth01(t,outA,outB));}
+ let active=true,intersecting=true,raf=0,start=null,elapsed=0,W=1,H=1,EW=1,EH=1,EX=0,EY=0;
+ function smooth(t,a,b){if(t<=a)return 0;if(t>=b)return 1;const p=(t-a)/(b-a);return p*p*(3-2*p);}
+ function mix(a,b,p){return a+(b-a)*p;}
  function phase(time){return((time%LOOP)+LOOP)%LOOP;}
- // Offsets ignore the cover's own 3D transform. Read them only on resize/font
- // load, not during every animation frame (the original measured each frame).
- function localCenter(el){
-  let x=el.offsetWidth/2,y=el.offsetHeight/2,node=el;
-  while(node&&node!==host){x+=node.offsetLeft;y+=node.offsetTop;node=node.offsetParent;}
-  return{x,y};
+ function token(id,x,opacity,y=0,scale=1){
+  const el=tokens[id];el.style.opacity=Math.max(0,Math.min(1,opacity));
+  el.style.transform='translate3d('+(x*EW).toFixed(3)+'px,'+y.toFixed(3)+'px,0) translate(-50%,-50%) scale('+scale.toFixed(4)+')';
  }
- function scaledCenter(point,scale){return{x:anchors.a.x+(point.x-anchors.a.x)*scale,y:anchors.a.y+(point.y-anchors.a.y)*scale};}
  function drawStars(t,animate){
   ctx.clearRect(0,0,W,H);
   for(const s of stars){
    const tw=animate?.35+.65*(.5+.5*Math.sin(t*.0011*s.sp+s.ph)):.55+.45*s.baseA;
-   ctx.globalAlpha=tw*s.baseA;ctx.fillStyle=s.gold?'#F5D98B':'#EAF2FF';
-   ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);ctx.fill();
+   ctx.globalAlpha=tw*s.baseA;ctx.fillStyle=s.gold?'#F5D98B':'#EAF2FF';ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);ctx.fill();
   }
   ctx.globalAlpha=1;
  }
@@ -45,36 +41,54 @@
   ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*4.2,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='rgba(255,247,224,'+alpha+')';ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
  }
- function drawTravel(t,scale){
-  if(!anchors||t<TRAVEL_START||t>TRAVEL_END)return;
-  const p=(t-TRAVEL_START)/(TRAVEL_END-TRAVEL_START),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
-  const from=scaledCenter(anchors.seven,scale),to=scaledCenter(anchors.eight,scale),arc=-Math.sin(p*Math.PI)*44;
-  const edge=smooth01(p,0,.12)*(1-smooth01(p,.88,1));
-  [-7,7].forEach(off=>drawGlowDot(from.x+(to.x-from.x)*e+off*(1-Math.abs(p-.5)*.7),from.y+(to.y-from.y)*e+arc,2.1,.4+.6*edge+.4*(1-edge)));
+ function drawTravel(t,x,y){
+  if(t<TRAVEL_START||t>TRAVEL_END)return;
+  const p=(t-TRAVEL_START)/(TRAVEL_END-TRAVEL_START),fade=smooth(p,0,.12)*(1-smooth(p,.82,1));
+  [-7,7].forEach(off=>drawGlowDot(EX+x*EW+off,EY+EH/2+y-EH*.18,2.1,fade));
  }
  function drawBurst(t){
-  if(!anchors||t<BURST_START||t>BURST_END)return;
-  const p=(t-BURST_START)/(BURST_END-BURST_START),fade=Math.max(0,1-p),c=anchors.c;
-  for(const b of burstParticles){const dist=b.sp*p;ctx.globalAlpha=fade;ctx.fillStyle='#F5D98B';ctx.beginPath();ctx.arc(c.x+Math.cos(b.a)*dist,c.y+Math.sin(b.a)*dist+b.drop*p*p,b.r,0,Math.PI*2);ctx.fill();}
+  if(t<BURST_START||t>BURST_END)return;
+  const p=(t-BURST_START)/(BURST_END-BURST_START),fade=1-p;
+  for(const b of burstParticles){const dist=b.sp*p;ctx.globalAlpha=fade;ctx.fillStyle='#F5D98B';ctx.beginPath();ctx.arc(EX+EW*.5+Math.cos(b.a)*dist,EY+EH/2+Math.sin(b.a)*dist+b.drop*p*p,b.r,0,Math.PI*2);ctx.fill();}
   ctx.globalAlpha=1;
+ }
+ function initial(opacity){
+  token('eight',.27,opacity);token('plusA',.5,opacity);token('seven',.73,opacity);
+  token('two',.73,0);token('plusB',.69,0);token('five',.73,0);token('ten',.27,0);token('fifteen',.5,0);
  }
  function render(time){
   if(reduced.matches){
-   lines.forEach(el=>{el.style.display='none';});if(eqStatic)eqStatic.style.display='block';
+   equation.style.visibility='hidden';if(eqStatic)eqStatic.style.display='block';
    host.dataset.step='static';host.dataset.expression=expressions.join(' = ');drawStars(0,false);return;
   }
-  lines.forEach(el=>{el.style.display='';});if(eqStatic)eqStatic.style.display='none';
-  const t=phase(time),opacities=[fadeWin(t,0,600,2500,3000),fadeWin(t,2700,3200,4000,4400),fadeWin(t,4300,4700,6100,6400)];
-  const largest=Math.max(...opacities),step=largest>0?opacities.indexOf(largest):(t<2700?0:t<4300?1:2);
+  equation.style.visibility='';if(eqStatic)eqStatic.style.display='none';
+  const t=phase(time);drawStars(t,true);
+  // Each completed expression gets a readable hold, with a continuous reset.
+  if(t>=9200){initial(smooth(t,9200,9600));host.dataset.step='0';host.dataset.expression=expressions[0];return;}
+  const split=smooth(t,1600,2500),sevenOut=smooth(t,1600,1940),splitIn=smooth(t,1850,2280);
+  const gather=smooth(t,4000,5000),merge=smooth(t,4700,5100),removePlus=smooth(t,4000,4400);
+  const finish=smooth(t,6500,7250),finishOut=smooth(t,6900,7350),result=smooth(t,7050,7450),show=1-smooth(t,8900,9200);
+  const twoX=mix(mix(.73,.5,split),.27,gather),arc=-Math.sin(gather*Math.PI)*Math.min(32,EH*.28);
+  token('eight',mix(mix(.27,.12,split),.27,gather),(1-merge)*show);
+  token('plusA',mix(mix(.5,.31,split),.27,gather),(1-removePlus)*show);
+  token('seven',.73,(1-sevenOut)*show,0,1-.1*sevenOut);
+  token('two',twoX,splitIn*(1-merge)*show,arc,1+.06*Math.sin(gather*Math.PI));
+  token('plusB',mix(.69,.5,gather),splitIn*(1-smooth(t,6500,6850))*show);
+  token('five',mix(mix(mix(.73,.88,split),.73,gather),.5,finish),splitIn*(1-finishOut)*show);
+  token('ten',mix(.27,.5,finish),merge*(1-finishOut)*show);
+  token('fifteen',.5,result*show,0,.95+.05*result);
+  drawTravel(t,twoX,arc);drawBurst(t);
+  const step=t<2050?0:t<4900?1:t<7250?2:3;
   host.dataset.step=String(step);host.dataset.expression=expressions[step];
-  drawStars(t,true);drawTravel(t,.94+.06*opacities[0]);drawBurst(t);
-  lines.forEach((el,i)=>{el.style.opacity=opacities[i];el.style.transform='scale('+(.94+.06*opacities[i])+')';});
  }
  function resize(){
   const width=canvas.clientWidth,height=canvas.clientHeight;if(!width||!height)return;
   W=width;H=height;const dpr=Math.min(devicePixelRatio||1,2);
   canvas.width=Math.max(1,Math.round(W*dpr));canvas.height=Math.max(1,Math.round(H*dpr));ctx.setTransform(dpr,0,0,dpr,0,0);
-  anchors={a:localCenter(eqA),c:localCenter(eqC),seven:localCenter(dig7),eight:localCenter(dig8)};render(elapsed);
+  // Cache the untransformed equation box; the whole book can rotate independently.
+  EW=Math.max(1,equation.clientWidth);EH=Math.max(1,equation.clientHeight);EX=0;EY=0;
+  let node=equation;while(node&&node!==host){EX+=node.offsetLeft;EY+=node.offsetTop;node=node.offsetParent;}
+  render(elapsed);
  }
  function stop(){if(raf)cancelAnimationFrame(raf);raf=0;start=null;host.dataset.running='false';}
  function tick(ts){
@@ -82,13 +96,13 @@
   if(start===null)start=ts-elapsed;elapsed=phase(ts-start);render(elapsed);raf=requestAnimationFrame(tick);
  }
  function sync(){stop();render(elapsed);if(active&&intersecting&&!document.hidden&&!reduced.matches){host.dataset.running='true';raf=requestAnimationFrame(tick);}}
- const observer=new ResizeObserver(resize);observer.observe(host);
+ const observer=new ResizeObserver(resize);observer.observe(host);observer.observe(equation);
  const visibility=new IntersectionObserver(entries=>{intersecting=entries.some(entry=>entry.isIntersecting);sync();},{threshold:.05});visibility.observe(host);
  reduced.addEventListener('change',()=>{sync();resize();});document.addEventListener('visibilitychange',sync);
  if(document.fonts)document.fonts.ready.then(resize);
  window.NMCoverMath={
   setActive(value){active=Boolean(value);sync();},
-  getState(){return{active,running:Boolean(raf),elapsed,expression:host.dataset.expression,step:host.dataset.step,loop:LOOP,source:'about.html:initHeroShow'};},
+  getState(){return{active,running:Boolean(raf),elapsed,expression:host.dataset.expression,step:host.dataset.step,loop:LOOP,source:'about.html:initHeroShow',sequence:'visible-regrouping'};},
   seek(time){elapsed=phase(Number(time)||0);start=null;render(elapsed);}
  };
  resize();sync();

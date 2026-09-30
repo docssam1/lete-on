@@ -1,0 +1,8 @@
+.promo-language{font:500 11px var(--sans,sans-serif);color:inherit;background:#fff9e8;border:1px solid #78837280;border-radius:4px;min-height:36px;padding:4px 7px;max-width:105px}
+.scene-cover>.promo-language{position:absolute;right:18px;top:16px;z-index:4;background:#12382e;color:#f8e8bd;border-color:#cfba8060}
+.promo-language-note{font:500 10px/1.3 var(--sans,sans-serif);letter-spacing:0;display:block;margin-top:4px;color:#627363}
+.panel-video>.promo-language-note{position:absolute;bottom:8px;left:12px;padding:4px 7px;border-radius:3px;background:#09272bdd;color:#fff6df;pointer-events:none}
+html[data-promo-lang=en] .welcome-heading h1{font-size:clamp(24px,3.1vw,42px);letter-spacing:-.035em}
+html[data-promo-lang=en] .section-heading h2{letter-spacing:-.03em}
+html[data-promo-lang=zh] .roadmap-stop strong{min-width:0;word-break:normal;overflow-wrap:anywhere}
+@media(max-width:700px){.book-toolbar .promo-language{max-width:77px;min-height:32px;font-size:10px;padding:3px}.book-toolbar .book-brand{font-size:13px}.book-toolbar .consult-link{font-size:9px}.scene-cover>.promo-language{right:12px;top:10px}html[data-promo-lang=en] .welcome-heading h1{font-size:23px}.promo-language-note{font-size:9px}html[data-promo-lang=en] .nm-experience__instruction{font-size:11px}html[data-promo-lang=en] .nm-experience__feedback{font-size:10px}}
