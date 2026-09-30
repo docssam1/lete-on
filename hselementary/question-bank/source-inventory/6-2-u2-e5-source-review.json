@@ -26,7 +26,7 @@
       "independentCheck": "convert-length-to-millimeters-then-rate-to-total-minutes",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Example1",
-        "difficultyDesign": ["lengths-in-millimeters", "source-centimeters-to-millimeters", "extinguished-time-extra-step"],
+        "difficultyDesign": ["burned-length-given", "centimeter-lengths", "extinguished-time-extra-step"],
         "fixedPoolCount": 3,
         "publicReleaseStatus": "verified"
       }

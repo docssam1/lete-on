@@ -101,8 +101,13 @@ assert.equal(window.HSE_SOURCE_INVENTORY_GRADE6.items.find(item => item.sourceIt
   "6-2-u2-e5-example-1", "원문 공통 유형 연결이 공개 분류표에도 남아 있음");
 assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").commonPublicTypeId,
   "6-2-u2-e5-example-1", "원문 공통 유형 연결이 화면 유형에도 전달됨");
+assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").commonPublicVariant, 2);
+assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").commonPublicVariant, 2, "원문 Mission 5 구조 문항으로 미리보기");
 const candleExample = types.find(item => item.sourceItemId === "6-2-u2-e5-example-1");
 assert(!candleExample?.reviewLocked && candleExample.generatorKey === "sourceGrade6SecondDecimalDivisionE5Example1", "겹치는 양초 유형을 공통 출제");
+const mission5Common = window.HSE_GENERATORS.generate(candleExample, 0, 0, 1, 2);
+assert(mission5Common.prompt.includes("10분에 0.24cm씩") && mission5Common.prompt.includes("21.7cm") && mission5Common.prompt.includes("9.7cm"), "공통 유형에 원문 Mission 5 구조가 있음");
+assert.equal(mission5Common.answer, "8시간 20분");
 const burnedHundredthsCm = 2170n - 970n;
 assert.equal(burnedHundredthsCm % 24n, 0n, "Mission 5: 0.24cm씩 탄 횟수가 정수");
 const elapsedMinutes = burnedHundredthsCm / 24n * 10n;

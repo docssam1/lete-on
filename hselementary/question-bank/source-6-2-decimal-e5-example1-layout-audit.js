@@ -71,12 +71,13 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         assert(board.rows.every(row => row.scroll <= row.width + 1), `${width}px: 풀이 표 안의 글씨가 잘리지 않음`);
       }
       checked += 6;
-      if (outputDir && width === 390 && difficulty >= 0) await page.screenshot({ path: path.join(outputDir, `candle-${difficulty === 1 ? "hard" : "source"}-390.png`), fullPage: true });
-      if (outputDir && width === 1280 && difficulty >= 0) await page.pdf({ path: path.join(outputDir, `candle-${difficulty === 1 ? "hard" : "source"}-a4.pdf`), format: "A4", printBackground: true });
+      const label = ["easy", "source", "hard"][difficulty + 1];
+      if (outputDir && width === 390) await page.screenshot({ path: path.join(outputDir, `candle-${label}-390.png`), fullPage: true });
+      if (outputDir && width === 1280) await page.pdf({ path: path.join(outputDir, `candle-${label}-a4.pdf`), format: "A4", printBackground: true });
       await page.close();
     }
   } finally {
     await browser.close();
   }
-  console.log(`6-2 개념탐구 5 예제 5-1 잠금 후보: PC·390px·320px 문제·풀이 ${checked}개 배치 검사 통과`);
+  console.log(`6-2 개념탐구 5 공통 양초 유형: PC·390px·320px 문제·풀이 ${checked}개 배치 검사 통과`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

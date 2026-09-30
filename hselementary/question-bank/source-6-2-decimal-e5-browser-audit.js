@@ -49,6 +49,7 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
           if (id.endsWith("mission-3")) assert(previewText.includes("조건 보정 유사문항") && previewText.includes("물살 수치 보정"), `${width}px ${id}: 원문과 보정 문항 구분`);
         } else if (id.endsWith("mission-5")) {
           assert(previewText.includes("같은 탐구의 양초"), `${width}px ${id}: 공통 유형 안내`);
+          assert(previewText.includes("10분에 0.24cm씩") && previewText.includes("21.7cm") && previewText.includes("9.7cm"), `${width}px ${id}: 원문 Mission 5 구조 미리보기`);
         } else {
           assert(previewText.includes("공식 답"), `${width}px ${id}: 실제 잠금 사유 표시`);
         }
@@ -65,6 +66,7 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
       await commonRow.click();
       const commonPreview = page.locator("#typePreviewPopover:not([hidden])");
       assert((await commonPreview.innerText()).includes("공통 유형 예시"), `${width}px: 공통 양초 문제 미리보기`);
+      assert((await commonPreview.innerText()).includes("10분에 0.24cm씩"), `${width}px: Mission 5의 공통 문항을 미리보기`);
       if (outputDir && width !== 320) {
         await commonPreview.locator('[data-select-common-type="6-2-u2-e5-example-1"]').scrollIntoViewIfNeeded();
         await commonPreview.screenshot({ path: path.join(outputDir, `grade6-e5-common-preview-${width}.png`) });
@@ -75,6 +77,10 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
       await page.locator("#generateButton").click();
       await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
       assert.equal(await page.locator("#problemView .question-item").count(), 3, `${width}px: 중복 없는 검증 양초 문제 세 개 생성`);
+      assert((await page.locator("#problemView").innerText()).includes("10분에 0.24cm씩"), `${width}px: Mission 5 조건이 공통 시험지에 포함`);
+      await page.locator("#solutionTab").click();
+      assert((await page.locator("#solutionView").innerText()).includes("8시간 20분"), `${width}px: Mission 5 정답·풀이 연결`);
+      await page.locator("#problemTab").click();
       if (outputDir && width !== 320) {
         await page.screenshot({ path: path.join(outputDir, `grade6-e5-common-worksheet-${width}.png`) });
         await page.locator("#problemView .question-item").first().screenshot({ path: path.join(outputDir, `grade6-e5-common-question-${width}.png`) });

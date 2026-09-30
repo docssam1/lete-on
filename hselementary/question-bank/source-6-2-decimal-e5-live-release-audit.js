@@ -56,12 +56,14 @@ if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
       }));
       assert.equal(problem.count, 3, `${id} ${difficulty} ${width}px: 실제 문제 3개`);
       assert(!problem.overflow && !problem.answerLeak, `${id} ${difficulty} ${width}px: 문제 넘침·답 누출 없음`);
-      if (outputDir && difficulty === 0 && width !== 320) {
-        await page.screenshot({ path: path.join(outputDir, `${id}-${width}-problem.png`), fullPage: true });
+      const capture = difficulty === 0 || id === "6-2-u2-e5-example-1";
+      const suffix = difficulty === 0 ? "" : difficulty < 0 ? "-easy" : "-hard";
+      if (outputDir && capture && width !== 320) {
+        await page.screenshot({ path: path.join(outputDir, `${id}-${width}${suffix}-problem.png`), fullPage: true });
       }
-      if (outputDir && difficulty === 0 && width === 1280) {
+      if (outputDir && capture && width === 1280) {
         await page.emulateMedia({ media: "print" });
-        const file = path.join(outputDir, `${id}-problem-a4.pdf`);
+        const file = path.join(outputDir, `${id}${suffix}-problem-a4.pdf`);
         await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
         assertOneA4Page(file, `${id}: 문제`);
         await page.emulateMedia({ media: "screen" });
@@ -79,12 +81,12 @@ if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
       assert.equal(solution.boards, 3, `${id} ${difficulty} ${width}px: 문항·답 그림 1:1`);
       assert(!solution.overflow && !solution.rowOverflow, `${id} ${difficulty} ${width}px: 풀이 넘침 없음`);
       assert.deepEqual(errors, [], `${id} ${difficulty} ${width}px: 브라우저 오류`);
-      if (outputDir && difficulty === 0 && width !== 320) {
-        await page.screenshot({ path: path.join(outputDir, `${id}-${width}-solution.png`), fullPage: true });
+      if (outputDir && capture && width !== 320) {
+        await page.screenshot({ path: path.join(outputDir, `${id}-${width}${suffix}-solution.png`), fullPage: true });
       }
-      if (outputDir && difficulty === 0 && width === 1280) {
+      if (outputDir && capture && width === 1280) {
         await page.emulateMedia({ media: "print" });
-        const file = path.join(outputDir, `${id}-solution-a4.pdf`);
+        const file = path.join(outputDir, `${id}${suffix}-solution-a4.pdf`);
         await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
         assertOneA4Page(file, `${id}: 풀이`);
       }
