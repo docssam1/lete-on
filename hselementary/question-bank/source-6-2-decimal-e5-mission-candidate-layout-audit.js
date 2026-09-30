@@ -13,13 +13,16 @@ const missionNumber = Number(process.env.HSE_E5_MISSION_NUMBER || 1);
 assert([1, 2, 3, 4].includes(missionNumber), "배치 검사할 Mission 번호가 올바르지 않음");
 const sourceItemId = `6-2-u2-e5-mission-${missionNumber}`;
 const review = require("./source-inventory/6-2-u2-e5-missions-source-review.json").missions.find(item => item.sourceItemId === sourceItemId);
+const downstreamMode = missionNumber === 3 && process.env.HSE_E5_MISSION3_MODE === "downstream";
+const candidateReview = downstreamMode ? review.downstreamCandidateVerification : review.candidateVerification;
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
 assert.equal(type.reviewLocked, review.candidateVerification.publicReleaseStatus !== "verified", "검수 상태와 공개 상태 일치");
 assert.equal(type.generatorKey, type.reviewLocked ? "" : review.candidateVerification.generator);
-assert(review.candidateVerification, "검수할 후보 생성기가 기록되어 있음");
-const candidate = type.reviewLocked ? { ...type, reviewLocked: false, generatorKey: review.candidateVerification.generator } : type;
+assert(candidateReview, "검수할 후보 생성기가 기록되어 있음");
+if (downstreamMode) assert.equal(candidateReview.publicReleaseStatus, "locked", "하류 보정 후보는 공개 잠금");
+const candidate = type.reviewLocked ? { ...type, reviewLocked: false, generatorKey: candidateReview.generator } : type;
 const baseUrl = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
 if (outputDir) mkdirSync(outputDir, { recursive: true });
@@ -83,5 +86,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log(`6-2 개념탐구 5 Mission ${missionNumber} 잠금 후보: PC·390px·320px 문제·풀이 ${checked}개 배치 검사 통과`);
+  console.log(`6-2 개념탐구 5 Mission ${missionNumber}${downstreamMode ? " 하류 보정" : ""} 후보: PC·390px·320px 문제·풀이 ${checked}개 배치 검사 통과`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

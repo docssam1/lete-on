@@ -62,6 +62,10 @@ for (const [index, reviewed] of review.missions.entries()) {
 assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").implementationStatus, "ambiguity-locked");
 assert.equal(review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").candidateVerification.sourceRelationship,
   "condition-clarified-adaptation", "원문에 없는 물살 조건을 더한 후보임을 명시");
+const mission3Downstream = review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").downstreamCandidateVerification;
+assert.equal(mission3Downstream.sourceRelationship, "downstream-number-corrected-adaptation");
+assert.equal(mission3Downstream.publicReleaseStatus, "locked", "하류 보정 후보는 원문 유형으로 공개하지 않음");
+assert.equal(mission3Downstream.fixedPoolCount, 3);
 const referenceMinutes = 108n;
 const downstreamSpeedHundredths = 9360n * 60n / referenceMinutes;
 const currentSpeedHundredths = 4750n;
