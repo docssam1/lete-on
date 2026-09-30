@@ -24376,6 +24376,65 @@
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE1DivisorRatio({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-example-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { firstDividend: "207.84", firstQuotient: "3247.5", secondDividend: "20.784", secondQuotient: "32.475", firstDivisor: "0.064", secondDivisor: "0.64", answer: "0.1배" },
+        { firstDividend: "92.4", firstQuotient: "123.2", secondDividend: "92.4", secondQuotient: "1232", firstDivisor: "0.75", secondDivisor: "0.075", answer: "10배" },
+        { firstDividend: "12", firstQuotient: "12.5", secondDividend: "12", secondQuotient: "1250", firstDivisor: "0.96", secondDivisor: "0.0096", answer: "100배" }
+      ][poolIndex];
+      if (Math.abs(Number(data.firstDividend) / Number(data.firstQuotient) - Number(data.firstDivisor)) > 1e-10 || Math.abs(Number(data.secondDividend) / Number(data.secondQuotient) - Number(data.secondDivisor)) > 1e-10) throw new Error(`${sourceItemId}: 나누는 수 계산이 맞지 않습니다.`);
+      const ratio = data.answer.replace(/배$/, "");
+      const equations = `<div class="source62-decimal-equations" data-source62-equations="${sourceItemId}"><span>(가) ${data.firstDividend} ÷ ㉠ = ${data.firstQuotient}</span><span>(나) ${data.secondDividend} ÷ ㉡ = ${data.secondQuotient}</span></div>`;
+      const solution = level === 2
+        ? `㉠ ÷ ㉡ = (${data.firstDividend} × ${data.secondQuotient}) ÷ (${data.firstQuotient} × ${data.secondDividend}) = ${ratio}이므로 ㉠은 ㉡의 ${data.answer}입니다.`
+        : `㉠은 ${data.firstDividend} ÷ ${data.firstQuotient} = ${data.firstDivisor}, ㉡은 ${data.secondDividend} ÷ ${data.secondQuotient} = ${data.secondDivisor}입니다. 따라서 ㉠은 ㉡의 ${data.answer}입니다.`;
+      const instruction = level === 0 ? "㉠과 ㉡을 각각 구한 뒤 비교하세요." : level === 2 ? "㉠과 ㉡을 직접 구하지 않고 두 나눗셈을 비교해 보세요." : "";
+      return result(`다음 나눗셈을 만족하는 ㉠은 ㉡의 몇 배인가요?${instruction}${equations}`, data.answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${equations}${level === 2 ? `<p>㉠ ÷ ㉡ = (${data.firstDividend} × ${data.secondQuotient}) ÷ (${data.firstQuotient} × ${data.secondDividend}) = ${ratio}</p>` : `<p>㉠ = ${data.firstDivisor}, ㉡ = ${data.secondDivisor}</p><p>${data.firstDivisor} ÷ ${data.secondDivisor} = ${ratio}</p>`}<p>㉠은 ㉡의 ${data.answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1ThreeProducts({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-example-3";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [a, b, c] = [[16, 14, 18], [15, 12, 24], [25, 16, 14]][poolIndex];
+      const ab = a * b / 100;
+      const bc = b * c / 100;
+      const ac = a * c / 100;
+      const answer = b / 10;
+      const equations = `<div class="source62-decimal-equations is-three" data-source62-equations="${sourceItemId}"><span>가 × 나 = ${ab}</span><span>나 × 다 = ${bc}</span><span>가 × 다 = ${ac}</span></div>`;
+      const repeatedProduct = ab * bc / ac;
+      if (Math.abs(repeatedProduct - answer * answer) > 1e-10) throw new Error(`${sourceItemId}: 세 곱셈의 값이 맞지 않습니다.`);
+      const instruction = level === 0 ? "나×나의 값을 먼저 찾아보세요." : level === 2 ? "가와 다의 값을 각각 구하지 않고 풀어 보세요." : "";
+      return result(`가, 나, 다가 양의 소수일 때 나의 값을 구하세요.${instruction}${equations}`, answer, `첫째 식과 둘째 식을 곱한 뒤 셋째 식으로 나누면 나×나 = ${repeatedProduct}입니다. ${answer} × ${answer} = ${repeatedProduct}이므로 나는 ${answer}입니다.`, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${equations}<p>나 × 나 = ${ab} × ${bc} ÷ ${ac} = ${repeatedProduct}</p><p>${answer} × ${answer} = ${repeatedProduct}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1Parts({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-example-4";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const pool = level === 2 ? [[14, 80, 7, 10], [20, 80, 7, 10], [18, 80, 7, 10]] : [[15, 25, 9, 8], [18, 50, 7, 6], [12, 25, 11, 8]];
+      const [whole, partHundredths, wholeFactor, partFactor] = pool[poolIndex];
+      const total = wholeFactor * whole + partFactor * partHundredths / 100;
+      const candidates = Array.from({ length: Math.floor(total / wholeFactor) }, (_, index) => index + 1)
+        .map(value => ({ whole: value, remainder: total - wholeFactor * value }))
+        .filter(value => value.remainder >= 0 && value.remainder < partFactor && (level !== 2 || value.remainder * 2 > partFactor));
+      if (candidates.length !== 1 || candidates[0].whole !== whole || candidates[0].remainder * 100 !== partHundredths * partFactor) throw new Error(`${sourceItemId}: 답이 하나가 아닙니다.`);
+      const answer = whole * 100 / partHundredths;
+      const equation = `<div class="source62-decimal-equations" data-source62-equations="${sourceItemId}"><span>${wholeFactor} × ㉠ + ${partFactor} × ㉡ = ${total}</span></div>`;
+      const bound = level === 2 ? " 또한 ㉡은 0.5보다 큽니다." : level === 0 ? " 소수 부분은 0 이상 1 미만입니다." : "";
+      const solution = `㉡은 ${level === 2 ? "0.5보다 크고 1 미만" : "0 이상 1 미만"}이므로 자연수인 ㉠은 ${whole}뿐입니다. ㉡ = (${total} - ${wholeFactor} × ${whole}) ÷ ${partFactor} = ${partHundredths / 100}입니다. 따라서 ㉠ ÷ ㉡ = ${answer}입니다.`;
+      return result(`어떤 수의 자연수 부분을 ㉠, 소수 부분을 ㉡이라 할 때, 다음 식을 만족합니다.${bound} ㉠ ÷ ㉡의 몫을 구하세요.${equation}`, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${equation}<p>㉠ = ${whole}, ㉡ = ${partHundredths / 100}</p><p>${whole} ÷ ${partHundredths / 100} = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29220,6 +29279,9 @@
     [type => type.sourceItemId === "6-2-u2-e1-exploration-1", "sourceGrade6SecondDecimalDivisionE1Choice"],
     [type => type.sourceItemId === "6-2-u2-e1-exploration-2", "sourceGrade6SecondDecimalDivisionE1Calculate"],
     [type => type.sourceItemId === "6-2-u2-e1-example-1", "sourceGrade6SecondDecimalDivisionE1Range"],
+    [type => type.sourceItemId === "6-2-u2-e1-example-2", "sourceGrade6SecondDecimalDivisionE1DivisorRatio"],
+    [type => type.sourceItemId === "6-2-u2-e1-example-3", "sourceGrade6SecondDecimalDivisionE1ThreeProducts"],
+    [type => type.sourceItemId === "6-2-u2-e1-example-4", "sourceGrade6SecondDecimalDivisionE1Parts"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],

@@ -1144,12 +1144,13 @@
       "ordinal": 2,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "두 나눗셈에서 알려지지 않은 나누는 수를 각각 구해 몇 배인지 비교함.",
+      "publicSourceItemId": "6-2-u2-e1-example-2",
+      "answerContract": "single-ratio",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-example-3",
@@ -1159,12 +1160,13 @@
       "ordinal": 3,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "세 양의 소수의 두 수씩 곱한 값으로 가운데 수를 찾음.",
+      "publicSourceItemId": "6-2-u2-e1-example-3",
+      "answerContract": "single-value",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-example-4",
@@ -1174,12 +1176,13 @@
       "ordinal": 4,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "자연수 부분과 1 미만인 소수 부분의 식에서 두 부분을 찾고 몫을 구함.",
+      "publicSourceItemId": "6-2-u2-e1-example-4",
+      "answerContract": "single-value",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-1",
