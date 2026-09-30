@@ -102,10 +102,12 @@ function eqHtml(s, withResult){
 function circlesHtml(s, lang){
   const dots = n => `<span class="nm-lt-dots">${'○'.repeat(n)}</span>`;
   const label = (t) => `<small>${esc(t)}</small>`;
+  /* 원장(2026-09-30): "기본 바탕 그림은 그려 주라는 얘기야" — 아이가 그리는 게 아니라, 다 그려진 그림에 색칠·표시한다.
+     합병·첨가: 두 상자 다 ○로 채워 두고 둘째 상자를 색칠 · 구잔: ×로 지우기 · 구차: 짝짓기 · 배수: 묶음 전부 채워 두고 세기 */
   if(s.kind === '합병' || s.kind === '첨가'){
-    const l1 = s.kind === '합병' ? {ko:`${L(s.A,'ko')}의 ${s.o.ko.n}`, en:`${L(s.A,'en')}'s ${s.o.en.n}`, zh:`${L(s.A,'zh')}的${s.o.zh.n}`} : {ko:`처음 ${s.o.ko.n}`, en:`${s.o.en.n} at first`, zh:`一开始的${s.o.zh.n}`};
-    const l2 = s.kind === '합병' ? {ko:`${L(s.B,'ko')}의 ${s.o.ko.n} — △로 ${s.n2}개 그리세요`, en:`${L(s.B,'en')}'s ${s.o.en.n} — draw ${s.n2} triangles`, zh:`${L(s.B,'zh')}的${s.o.zh.n}——画${s.n2}个△`} : {ko:`더 받은 ${s.o.ko.n} — △로 ${s.n2}개 그리세요`, en:`${s.o.en.n} added — draw ${s.n2} triangles`, zh:`又得到的${s.o.zh.n}——画${s.n2}个△`};
-    return `<div class="nm-lt-two"><div>${dots(s.n1)}${label(L(l1, lang))}</div><div class="nm-lt-empty">${label(L(l2, lang))}</div></div>`;
+    const l1 = s.kind === '합병' ? {ko:`${L(s.A,'ko')}의 ${s.o.ko.n} ${s.n1}${s.o.ko.u}`, en:`${L(s.A,'en')}'s ${s.n1} ${s.o.en.n}`, zh:`${L(s.A,'zh')}的${s.n1}${s.o.zh.u}${s.o.zh.n}`} : {ko:`처음 ${s.o.ko.n} ${s.n1}${s.o.ko.u}`, en:`${s.n1} ${s.o.en.n} at first`, zh:`一开始的${s.n1}${s.o.zh.u}${s.o.zh.n}`};
+    const l2 = s.kind === '합병' ? {ko:`${L(s.B,'ko')}의 ${s.o.ko.n} — 색칠하세요`, en:`${L(s.B,'en')}'s ${s.o.en.n} — color them in`, zh:`${L(s.B,'zh')}的${s.o.zh.n}——涂上颜色`} : {ko:`더 받은 ${s.o.ko.n} — 색칠하세요`, en:`${s.o.en.n} added — color them in`, zh:`又得到的${s.o.zh.n}——涂上颜色`};
+    return `<div class="nm-lt-two"><div>${dots(s.n1)}${label(L(l1, lang))}</div><div>${dots(s.n2)}${label(L(l2, lang))}</div></div>`;
   }
   if(s.kind === '구잔'){
     return `<div class="nm-lt-one">${dots(s.n1)}${label(L({ko:`처음 ${s.o.ko.n} ${s.n1}${s.o.ko.u} — 없어진 만큼 ×로 지우세요`, en:`${s.n1} ${s.o.en.n} at first — cross out the ones taken away`, zh:`一开始${s.n1}${s.o.zh.u}${s.o.zh.n}——把减少的用×划掉`}, lang))}</div>`;
@@ -113,9 +115,9 @@ function circlesHtml(s, lang){
   if(s.kind === '구차'){
     return `<div class="nm-lt-rows"><div><small>${esc(nameOf(s,'A',lang))}</small>${dots(s.n1)}</div><div><small>${esc(nameOf(s,'B',lang))}</small>${dots(s.n2)}</div><small>${esc(L({ko:'위아래로 하나씩 짝을 지으세요. 짝이 없는 ○는 몇 개?', en:'Pair them up top to bottom. How many circles have no partner?', zh:'上下一一配对。没有配对的○有几个？'}, lang))}</small></div>`;
   }
-  /* 배수 — n2 묶음에 n1씩: 첫 묶음만 채워 두고 나머지는 그린다 */
-  const groups = []; for(let i = 0; i < s.n2; i++) groups.push(`<div class="nm-lt-group">${i === 0 ? dots(s.n1) : ''}</div>`);
-  return `<div class="nm-lt-groups">${groups.join('')}</div><small>${esc(L({ko:`한 묶음에 ${s.n1}개씩 — 나머지 묶음도 ○로 채우세요`, en:`${s.n1} in each group — fill the other groups with circles`, zh:`每组${s.n1}个——把其他组也画上○`}, lang))}</small>`;
+  /* 배수 — n2 묶음에 n1씩 전부 그려 둔다. 아이는 묶음마다 ○를 세고 묶음 수를 센다 */
+  const groups = []; for(let i = 0; i < s.n2; i++) groups.push(`<div class="nm-lt-group">${dots(s.n1)}</div>`);
+  return `<div class="nm-lt-groups">${groups.join('')}</div><small>${esc(L({ko:`한 묶음에 ${s.n1}개씩 ${s.n2}묶음 — 묶음마다 ○에 번호를 써 보세요`, en:`${s.n1} in each group, ${s.n2} groups — number the circles in each group`, zh:`每组${s.n1}个，共${s.n2}组——给每组的○编上号`}, lang))}</small>`;
 }
 /* 수직선 0~25 — 첫 화살표는 그려 두고 둘째는 아이가 */
 function numlineHtml(s, lang){
@@ -123,7 +125,7 @@ function numlineHtml(s, lang){
   let g = `<line x1="${x(0)}" y1="30" x2="${x(max)}" y2="30" stroke="#20343b" stroke-width="1.5"/>`;
   for(let n = 0; n <= max; n++) g += `<line x1="${x(n)}" y1="${n % 5 ? 27 : 24}" x2="${x(n)}" y2="${n % 5 ? 33 : 36}" stroke="#20343b" stroke-width="1"/>` + (n % 5 === 0 ? `<text x="${x(n)}" y="46" font-size="8" text-anchor="middle" fill="#20343b">${n}</text>` : '');
   const start = s.op === '−' ? s.n1 : 0, end = s.op === '−' ? s.n1 : s.n1;
-  g += `<path d="M ${x(start)} 22 Q ${x((start + end) / 2)} 4 ${x(end)} 22" fill="none" stroke="#D9534F" stroke-width="2"/>`;
+  if(start !== end) g += `<path d="M ${x(start)} 22 Q ${x((start + end) / 2)} 4 ${x(end)} 22" fill="none" stroke="#D9534F" stroke-width="2"/>`;   /* 빼기는 n1에 점만 — 시작=끝인 호는 가시처럼 찍혔다 */
   if(s.op !== '−') g += `<circle cx="${x(0)}" cy="30" r="2.5" fill="#D9534F"/>`;
   g += `<circle cx="${x(s.n1)}" cy="30" r="2.5" fill="#D9534F"/>`;
   const hint = s.op === '−'
@@ -162,12 +164,13 @@ function a2(rng, s, lang){
   const r = res(s);
   const t1 = s.kind === '구차' ? {ko:'문제를 읽고, ○를 위아래로 짝지어 보세요.', en:'Read the problem and pair the circles top to bottom.', zh:'读题，把○上下配对。'}
     : s.kind === '구잔' ? {ko:'문제를 읽고, 없어진 만큼 ○를 ×로 지우세요.', en:'Read the problem and cross out the circles taken away.', zh:'读题，把减少的○用×划掉。'}
-    : {ko:'문제를 읽고, ○로 그려 보세요.', en:'Read the problem and draw it with circles.', zh:'读题，用○画出来。'};
+    : s.op === '×' ? {ko:'문제를 읽고, 그림에서 묶음을 세어 보세요.', en:'Read the problem and count the groups in the picture.', zh:'读题，在图里数一数有几组。'}
+    : {ko:'문제를 읽고, 둘째 상자의 ○를 색칠하세요.', en:'Read the problem and color the circles in the second box.', zh:'读题，把第二个框里的○涂上颜色。'};
   const act1 = box(L(t1, lang), storyHtml(s, lang) + circlesHtml(s, lang));
   const act2 = s.op === '×'
     ? box(L({ko:'그림에서 세어 보고 답을 쓰세요.', en:'Count in your picture and write the answer.', zh:'在图里数一数，写出答案。'}, lang), ansBox(lang, unitTxt(s, lang)))
     : box(L({ko:'수직선에서 뛰어가 보고, 도착한 수를 쓰세요.', en:'Jump along the number line and write where you land.', zh:'在数轴上跳一跳，写出落到的数。'}, lang), numlineHtml(s, lang) + ansBox(lang, unitTxt(s, lang)));
-  return { acts:[act1, act2], answers:[L({ko:'그림 활동', en:'drawing', zh:'画图'}, lang), String(r)] };
+  return { acts:[act1, act2], answers:[L({ko:'색칠·표시 활동', en:'coloring / marking', zh:'涂色·做记号'}, lang), String(r)] };
 }
 function a3(rng, s, lang){
   const act1 = box(L({ko:'이 문제는 어떤 계산을 해야 할까요? ○ 안에 +, −, × 중 알맞은 기호를 크게 쓰세요.', en:'Which operation does this problem need? Write +, − or × in the circle.', zh:'这道题要用哪种运算？在○里写上 +、− 或 ×。'}, lang),
