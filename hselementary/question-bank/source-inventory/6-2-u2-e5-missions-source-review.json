@@ -70,7 +70,7 @@
         "difficultyDesign": ["downstream-speed-given", "downstream-distance-and-time", "derive-current-from-distance-and-time"],
         "fixedPoolCount": 3,
         "independentReviewer": "Claude Sonnet CLI",
-        "publicReleaseStatus": "locked"
+        "publicReleaseStatus": "verified-as-adaptation"
       }
     },
     {
@@ -107,7 +107,7 @@
   },
   "publicReleaseStatus": "partial",
   "pending": [
-    "mission 3 release choice between the still-water clarification and the downstream number-corrected adaptation; both remain locked",
+    "mission 3 printed wording remains ambiguous; only the explicitly downstream number-corrected adaptation is released, not an official source answer",
     "matching advanced-book official answer comparison if a valid key is found",
     "mission 6 remains outside this review"
   ]

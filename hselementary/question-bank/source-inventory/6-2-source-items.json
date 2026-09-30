@@ -1948,8 +1948,11 @@
       "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
       "visualRisk": "연어의 앞선 이동 방향이 원문에 명확하지 않음. 물이 흐르는 방향으로 읽으면 이후의 거슬러 가는 이동이 불가능함. 물살 없는 곳의 이동으로 읽으면 손글씨 답이 독립 계산과 충돌함.",
       "sourceVerified": true,
-      "implementationStatus": "ambiguity-locked",
-      "reviewReason": "앞선 이동을 물이 흐르는 방향으로 보면 연어가 강을 거슬러 올라갈 수 없습니다. 원문의 기준 빠르기 조건을 확인할 때까지 출제하지 않습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "originalPrintStatus": "ambiguity-locked",
+      "sourceRelationship": "downstream-number-corrected-adaptation",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e5-mission-3"
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-4",

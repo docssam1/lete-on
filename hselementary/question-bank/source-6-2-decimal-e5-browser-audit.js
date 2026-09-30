@@ -12,7 +12,7 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
 (async () => {
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   try {
-    const readyIds = new Set(["6-2-u2-e5-example-1", "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-4"]);
+    const readyIds = new Set(["6-2-u2-e5-example-1", "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-3", "6-2-u2-e5-mission-4"]);
     for (const width of [1280, 390, 320]) {
       const page = await browser.newPage({ viewport: { width, height: 844 }, deviceScaleFactor: 1 });
       const errors = [];
@@ -30,7 +30,7 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         ["6-2-u2-e5-example-4", "강물을 거슬러 가는 시간 구하기"],
         ["6-2-u2-e5-mission-1", "걷는 빠르기로 걸린 시간을 소수 첫째 자리까지 구하기"],
         ["6-2-u2-e5-mission-2", "두 자동차가 1L로 가는 거리 비교하기"],
-        ["6-2-u2-e5-mission-3", "연어가 강물을 거슬러 가는 시간 구하기"],
+        ["6-2-u2-e5-mission-3", "연어가 강물을 거슬러 가는 시간 구하기 (조건 보정)"],
         ["6-2-u2-e5-mission-4", "참기름을 덜어 낸 뒤 빈 통의 무게 구하기"],
         ["6-2-u2-e5-mission-5", "남은 양초의 길이로 지난 시간 구하기"],
         ["6-2-u2-e5-mission-6", "주어진 거리 관계로 갤런을 리터로 바꾸기"]
@@ -44,10 +44,14 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         const preview = page.locator("#typePreviewPopover");
         await preview.waitFor({ state: "visible" });
         const previewText = await preview.innerText();
-        if (readyIds.has(id)) assert(previewText.includes(label), `${width}px ${id}: 검증 문항 미리보기`);
-        else if (id.endsWith("mission-3")) assert(previewText.includes("기준 빠르기"), `${width}px ${id}: 모호한 조건 표시`);
-        else if (id.endsWith("mission-5")) assert(previewText.includes("같은 탐구의 양초"), `${width}px ${id}: 공통 유형 안내`);
-        else assert(previewText.includes("공식 답"), `${width}px ${id}: 실제 잠금 사유 표시`);
+        if (readyIds.has(id)) {
+          assert(previewText.includes(label), `${width}px ${id}: 검증 문항 미리보기`);
+          if (id.endsWith("mission-3")) assert(previewText.includes("조건 보정 유사문항") && previewText.includes("물살 수치 보정"), `${width}px ${id}: 원문과 보정 문항 구분`);
+        } else if (id.endsWith("mission-5")) {
+          assert(previewText.includes("같은 탐구의 양초"), `${width}px ${id}: 공통 유형 안내`);
+        } else {
+          assert(previewText.includes("공식 답"), `${width}px ${id}: 실제 잠금 사유 표시`);
+        }
         const box = await preview.evaluate(element => element.getBoundingClientRect().toJSON());
         assert(box.left >= -1 && box.right <= width + 1, `${width}px ${id}: 미리보기 가로 잘림 없음`);
         if (outputDir && ["example-3", "mission-3", "mission-4", "mission-5"].some(suffix => id.endsWith(suffix))) {
@@ -82,5 +86,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log("6-2 개념탐구 5 PC·390px·320px: 공개 4유형·Mission 5 공통 선택·나머지 잠금 미리보기 검사 통과");
+  console.log("6-2 개념탐구 5 PC·390px·320px: 공개 5유형·Mission 5 공통 선택·나머지 잠금 미리보기 검사 통과");
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

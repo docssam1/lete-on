@@ -14,10 +14,10 @@ const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6
   .find(item => item.sourceItemId === sourceItemId);
 const candidateRecord = review.downstreamCandidateVerification;
 assert.equal(candidateRecord.sourceRelationship, "downstream-number-corrected-adaptation");
-assert.equal(candidateRecord.publicReleaseStatus, "locked");
-assert(type.reviewLocked && type.generatorKey === "", "원문 조건 오류 문항은 공개 잠금");
-assert.equal(window.HSE_GENERATORS.generate(type, 0, 0, 1), null);
-const candidate = { ...type, reviewLocked: false, generatorKey: candidateRecord.generator };
+assert.equal(candidateRecord.publicReleaseStatus, "verified-as-adaptation");
+assert(!type.reviewLocked && type.generatorKey === candidateRecord.generator, "조건 보정 유사문항만 공개");
+assert.equal(type.sourceRelationship, candidateRecord.sourceRelationship);
+const candidate = type;
 
 const hundredths = text => {
   const [whole, fraction = ""] = text.split(".");
@@ -79,4 +79,4 @@ for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant 
 assert.equal(checked, 18);
 assert.deepEqual([0, 1, 2].map(variant => window.HSE_GENERATORS.generate(candidate, 0, 0, 1, variant).answer),
   ["2시간", "3시간", "4시간"]);
-console.log(`6-2 Mission 3 하류 조건 보정 잠금 후보: 3난이도 × 3문항 × 2시드 독립 계산 ${checked}회 통과`);
+console.log(`6-2 Mission 3 하류 조건 보정 공개 문항: 3난이도 × 3문항 × 2시드 독립 계산 ${checked}회 통과`);
