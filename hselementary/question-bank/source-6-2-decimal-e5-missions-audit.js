@@ -22,6 +22,8 @@ assert.equal(review.secondarySourceIdentity.handwrittenMarksPresent, false);
 assert.match(review.secondarySourceIdentity.sha256, /^[A-F0-9]{64}$/);
 assert.equal(review.officialAnswerEvidence, "not-available-for-these-items");
 assert.match(review.nonMatchingAnswerSource.sha256, /^[A-F0-9]{64}$/);
+assert.equal(review.nonMatchingAnswerSource.evidencePdfPage, 15);
+assert.equal(review.nonMatchingAnswerSource.printedFooter, "초 6-2 경시");
 assert.match(review.nonMatchingAnswerSource.reason, /not an answer key/);
 assert.equal(review.publicReleaseStatus, "partial");
 assert.equal(review.independentAnswerEvidence.officialAnswerClaimed, false);
