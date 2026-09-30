@@ -38,7 +38,13 @@
     {
       "sourceItemId": "6-2-u2-e5-example-4",
       "answerContract": "river-current-upstream-travel-time",
-      "independentCheck": "derive-current-speed-and-subtract-from-still-water-speed"
+      "independentCheck": "derive-current-speed-and-subtract-from-still-water-speed",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Example4",
+        "difficultyDesign": ["current-speed-given", "source-drift-distance", "downstream-observation"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      }
     }
   ],
   "officialAnswerEvidence": "not-available-for-these-items",
