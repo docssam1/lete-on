@@ -10105,8 +10105,8 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u2-e4-example-3",
       "sourceSection": "example",
       "sourceItemLabel": "예제 4-3",
-      "typeLabel": "나머지와 반올림 조건으로 수 구하기",
-      "commonTypeId": "나머지와 반올림 조건으로 수 구하기",
+      "typeLabel": "반올림 조건으로 수를 찾아 새 나머지 구하기",
+      "commonTypeId": "반올림 조건과 나머지로 수를 찾아 다시 나누기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -10131,8 +10131,8 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u2-e4-example-4",
       "sourceSection": "example",
       "sourceItemLabel": "예제 4-4",
-      "typeLabel": "나머지가 있는 나눗셈을 다시 계산하기",
-      "commonTypeId": "나머지가 있는 나눗셈을 다시 계산하기",
+      "typeLabel": "몫의 자리를 늘려 새 나머지 구하기",
+      "commonTypeId": "몫의 자리를 늘려 새 나머지 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -16838,7 +16838,8 @@ const safeLockedReasons = {
   "6-2-u2-e2-mission-6": "심화 교재의 공식 답 대조와 출제 화면 검수가 남아 있습니다.",
   "6-2-u2-e3-example-3": "원본에 공통 수의 양수 조건이 없어 답이 정해지지 않을 수 있습니다.",
   "6-2-u2-e3-mission-3": "원본 조건에 맞는 빈칸 조합이 여러 개입니다. 모두 찾는 방식으로 검수하기 전에는 출제할 수 없습니다.",
-  "6-2-u2-e3-mission-5": "원본의 손글씨 답과 전수 검산이 달라 공식 답을 확인할 때까지 출제하지 않습니다."
+  "6-2-u2-e3-mission-5": "원본의 손글씨 답과 전수 검산이 달라 공식 답을 확인할 때까지 출제하지 않습니다.",
+  "6-2-u2-e4-example-4": "새 나머지의 정답 근거가 서로 달라 공식 답을 확인할 때까지 출제하지 않습니다."
 };
 
 window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {

@@ -18,7 +18,16 @@
       "sourceItemId": "6-2-u2-e3-mission-2",
       "answerContract": "max-card-arrangement-rounded-quotient",
       "independentCheck": "all-card-permutations-enumerated",
-      "permutationsChecked": 720
+      "permutationsChecked": 720,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE3Mission2",
+        "fixedPoolCount": 3,
+        "difficultyDesign": ["fixed-leading-card", "source-structure", "excluded-smallest-divisor"],
+        "independentEnumerationChecks": 360,
+        "desktopMobileCardAndExpressionChecks": 54,
+        "a4CandidatePages": 2,
+        "scope": "Candidate only; the public type remains locked pending official-answer and worksheet review."
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-3",

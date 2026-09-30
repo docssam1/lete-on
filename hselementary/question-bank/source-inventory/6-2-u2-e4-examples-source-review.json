@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 22,
+    "printedPage": 24,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "examples": [
+    {
+      "sourceItemId": "6-2-u2-e4-example-1",
+      "answerContract": "three-whole-quotients-with-decimal-remainders",
+      "independentCheck": "each-dividend-divided-to-whole-quotient-and-remainder"
+    },
+    {
+      "sourceItemId": "6-2-u2-e4-example-2",
+      "answerContract": "minimum-addition-to-exact-tenth-quotient",
+      "independentCheck": "next-exact-tenth-quotient-multiple"
+    },
+    {
+      "sourceItemId": "6-2-u2-e4-example-3",
+      "answerContract": "minimum-dividend-from-rounded-quotient-then-new-remainder",
+      "independentCheck": "enumerate-hundredth-quotients-then-divide-again"
+    },
+    {
+      "sourceItemId": "6-2-u2-e4-example-4",
+      "answerContract": "continued-division-new-remainder",
+      "independentCheck": "recover-original-dividend-then-extend-quotient-by-one-place",
+      "risk": "Handwritten value repeats the previous remainder and disagrees with the independently calculated new remainder."
+    }
+  ],
+  "officialAnswerEvidence": "not-available-for-these-items",
+  "publicReleaseStatus": "locked",
+  "pending": [
+    "matching advanced-book official answer comparison",
+    "example 4 handwritten-answer conflict resolution",
+    "source-level variants and desktop/mobile/A4 worksheet validation"
+  ]
+}
