@@ -1400,11 +1400,12 @@
       "pdfPage": 19,
       "printedPage": 21,
       "sourceShape": "겹친 삼각형의 넓이 비와 한 삼각형의 넓이·높이로 표시된 선분의 길이를 구하는 문제",
-      "answerContract": "length",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-shared-height-triangle-base-difference",
+      "visualRisk": "두 삼각형의 높이가 같다는 점, 밑변 ㄴ-ㅁ-ㄷ의 순서, 세 직각 표시, 길이 3.9cm와 구할 선분 ㄴㅁ이 분명해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-mission-3"
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-4",
