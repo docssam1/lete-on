@@ -1,0 +1,83 @@
+/* Opening spread: readable Korean display type, restrained gilt book lettering. */
+@font-face{font-family:'NM Pretendard';font-style:normal;font-weight:100 900;font-display:swap;src:url('../assets/fonts/pretendard-var.woff2') format('woff2')}
+:root{--sans:'NM Pretendard','Noto Sans KR','Malgun Gothic',sans-serif}
+.book-cover-face{padding:9% 9% 7%;background:linear-gradient(100deg,#103d34 0,#326957 5%,#1c503f 9%,#174936 78%,#103b30)}
+.book-cover-face:before{inset:27px}.book-toolbar,.book-footer{background:var(--paper)}
+.cover-edition{font:500 clamp(10px,1vw,13px)/1.5 var(--sans);letter-spacing:.015em;color:#e2d1ab}
+.cover-title{display:grid;gap:.02em;font:500 clamp(38px,6.8dvh,68px)/.98 var(--display);letter-spacing:-.04em;margin-top:7%;text-shadow:0 1px 1px #09251c;color:#f4dba1}
+.cover-title>span{display:block;white-space:nowrap}.cover-title i{font-size:.64em;font-weight:500}
+.curl-staging{z-index:35;pointer-events:none!important}
+.cover-name-ko{font:600 clamp(16px,2.5dvh,24px)/1.4 var(--sans);letter-spacing:.16em;margin-top:5%;padding-left:.16em;color:#f3e2bc}
+.cover-art{display:block;flex:1;min-height:95px;width:100%;margin:7% 0 3%;position:relative;isolation:isolate}
+.cover-stars{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.8}
+.cover-equation{position:absolute;left:-2%;right:-2%;top:12%;bottom:24%;font:500 clamp(28px,5.7dvh,57px)/1 var(--display);font-variant-numeric:lining-nums tabular-nums;letter-spacing:-.02em;color:#f6dca0;filter:drop-shadow(0 2px 1px #082a24)}
+.math-token{position:absolute;left:0;top:50%;display:block;opacity:0;will-change:transform,opacity;white-space:nowrap;line-height:1}
+.math-token.math-plus{font-size:.62em;color:#d7bd7f}.math-token.math-total{font-size:1.23em;color:#fff0c4}
+.math-token[data-token=five]{left:26%;opacity:1;transform:translate(-50%,-50%)}.math-token[data-token=plusB]{left:50%;opacity:1;transform:translate(-50%,-50%)}.math-token[data-token=seven]{left:74%;opacity:1;transform:translate(-50%,-50%)}
+.cover-math-caption{position:absolute;bottom:4%;left:-5%;right:-5%;font:500 clamp(10px,1.6dvh,14px)/1.5 var(--sans);letter-spacing:0;color:#d8c79f;text-align:center;white-space:nowrap}
+.cover-math-static{display:none;position:absolute;inset:0;align-content:center;text-align:center;font:500 clamp(16px,3.5dvh,33px)/1.65 var(--display);color:#f5dda4;letter-spacing:-.02em}
+.cover-logo{width:82px;height:27px;margin-top:0;opacity:.92}.cover-kicker{font:550 13px/1.5 var(--sans);letter-spacing:.05em;color:#f4dfb8}.open-hint{font:500 13px/1.5 var(--sans);letter-spacing:0;color:#e9edde}
+.welcome-heading{max-width:100%}.welcome-heading p{font:500 12px/1.5 var(--sans);color:#697e70;letter-spacing:0;margin-bottom:14px}
+.welcome-heading h1{font:750 clamp(30px,3.8vw,51px)/1.2 var(--sans);letter-spacing:-.045em;color:#153f34;text-wrap:balance}
+.welcome-page{padding-top:clamp(23px,3.4vw,43px)}.hero-experience{margin-top:22px}.welcome-foot{font-size:11px}.welcome-foot .text-button{font-size:12px;letter-spacing:-.02em}
+.invitation-copy p{font:650 clamp(19px,2.1vw,29px)/1.5 var(--sans);letter-spacing:-.035em;max-width:18em;text-shadow:0 2px 12px #0a222960}.invitation-copy .primary-button{font-size:14px;letter-spacing:-.015em}
+@media(max-width:700px){.cover-title{font-size:clamp(35px,6.3dvh,62px)}.cover-name-ko{font-size:19px}.cover-art{margin-top:6%;min-height:90px}.cover-edition{font-size:10px}.cover-equation{font-size:clamp(29px,5.4dvh,48px)}.cover-math-caption{font-size:10px}.cover-logo{width:68px;height:23px}.welcome-page{padding:20px 20px 0}.welcome-heading{display:block}.welcome-heading p{font-size:10px;max-width:none;margin:0 0 7px}.welcome-heading h1{font-size:30px;line-height:1.16;letter-spacing:-.035em}.hero-experience{margin-top:12px}.welcome-foot{font-size:9px}.welcome-foot .text-button{font-size:10px}.invitation-copy p{font-size:12px;line-height:1.6;max-width:13em}.invitation-copy .primary-button{font-size:11px}}
+@media(max-width:360px){.welcome-page{padding:13px 16px 0}.welcome-heading h1{font-size:27px}.welcome-heading p{font-size:9px;margin-bottom:5px}.hero-experience{margin-top:8px}.cover-title{font-size:clamp(34px,6dvh,49px)}.cover-math-caption{font-size:9px}}
+@media(max-height:570px) and (min-width:701px){.book-cover-face{padding-top:7%}.cover-title{font-size:7.4dvh;margin-top:5%}.cover-name-ko{font-size:12px;margin-top:4%}.cover-edition{font-size:8px}.cover-art{min-height:50px;margin:4% 0 2%}.cover-equation{font-size:6.2dvh;top:3%;bottom:22%}.cover-math-caption{font-size:8px;bottom:0}.cover-logo{width:46px;height:16px}.cover-kicker,.open-hint{font-size:10px}.welcome-page{padding:12px 20px 2px}.welcome-heading{display:flex;align-items:center}.welcome-heading h1{font-size:23px;line-height:1.12;letter-spacing:-.035em}.welcome-heading p{font-size:10px;line-height:1.5;margin:0;max-width:9em}.hero-experience{margin-top:5px}.invitation-copy p{font-size:18px;margin-bottom:12px}.invitation-copy .primary-button{font-size:12px}}
+@media(max-width:700px){.book-cover-face:before{inset:19px}}
+@media(max-height:570px) and (min-width:701px){.book-cover-face:before{inset:12px}}
+@media(prefers-reduced-motion:reduce){.cover-equation,.cover-stars{display:none}.cover-math-static{display:block}}
+/* A single leather-bound volume, not two loose offset sheets. */
+.closed-book{filter:drop-shadow(9px 22px 24px #0008);transform:none;transition:filter .4s}
+.closed-book:hover{transform:none;filter:drop-shadow(9px 25px 30px #0009)}
+.book-pages{inset:5px -6px -6px 8px;transform:none;border:1px solid #c7aa6b;border-radius:4px 10px 9px 3px;background:repeating-linear-gradient(0deg,#b49b68 0 1px,#e5d3a6 1px 2px);box-shadow:2px 3px 0 #123728}
+.book-cover-face{padding:17% 12% 12% 18%;background:#092d20 url('../assets/promo/grimoire-emerald.webp') center/100% 100% no-repeat;border:1px solid #baa36b70;border-radius:5px 10px 9px 5px;box-shadow:inset 1px 1px 1px #f8e7b144,inset -2px -2px 3px #07191088;transform:none}
+.book-cover-face:before{display:none}
+.cover-title{margin-top:12%;font-weight:600;color:#f0d596;text-shadow:0 1px 0 #fff0c455,0 2px 2px #010d08,0 5px 15px #010d0866}
+.cover-edition{font-size:clamp(9px,1vw,12px);color:#f5dfb4}
+.cover-name-ko{margin-top:8%;font-family:var(--serif);font-weight:500;color:#e8d2a0}
+.cover-art{margin-top:9%;min-height:75px}.cover-equation{left:0;right:0;top:0;bottom:24%;filter:none;font-family:var(--serif);font-weight:700}
+.cover-eq-line{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:.22em;opacity:0;will-change:transform,opacity;white-space:nowrap;text-shadow:0 0 18px #f5d98b66,0 0 40px #c9a06333}
+.cover-eq-op{font-size:.7em;font-weight:400;color:#f5d98b99}.cover-eq-line[data-equation=a]{opacity:1}
+.cover-math-caption{font-family:var(--serif);color:#e3cc9d;font-weight:400}.cover-logo{margin-top:4%;width:70px;height:24px}
+.cover-math-static{font-size:clamp(13px,2.5dvh,24px);white-space:nowrap}
+.scene-cover.is-opening .book-cover-face,.scene-cover.is-opening .closed-book{animation:none}
+.magic-book-app.is-book-opening .scene{transition:none}.magic-book-app.is-book-opening .scene-reader{pointer-events:none}
+.cover-opening-stage{position:fixed;inset:0;z-index:70;pointer-events:none;perspective:6000px;perspective-origin:50% 50%;contain:layout style;isolation:isolate}
+.cover-opening-board{position:absolute;left:0;top:0;transform-origin:0 0;transform-style:preserve-3d;will-change:transform}
+.cover-opening-board .book-cover-face{inset:0;backface-visibility:hidden;transform:translateZ(2px);width:100%;height:100%;animation:none!important}
+.cover-opening-board .cover-opening-back{position:absolute;inset:0;border-radius:5px 10px 9px 5px;backface-visibility:hidden;transform:rotateY(180deg) translateZ(2px);background:linear-gradient(90deg,#e3d8bc,#f6edd7 10%,#f7edda 92%,#cdbb94);border:6px solid #183d2a;box-shadow:inset 0 0 0 1px #bb9b5e,inset -15px 0 24px #61482718}
+.cover-opening-back:after{content:'✦';position:absolute;inset:0;display:grid;place-items:center;color:#b49354;font:40px var(--serif);opacity:.4}
+.is-shared-turn .book-content{position:absolute;left:0;right:0;top:var(--turn-content-top);height:var(--turn-content-height)}
+.is-shared-turn .book-toolbar{position:absolute;top:0;left:0;right:0;height:var(--turn-header-height)}
+.is-shared-turn .book-footer{position:absolute;bottom:0;left:0;right:0;height:var(--turn-footer-height)}
+.is-shared-turn .book-paper>.cinema-controls{position:absolute;bottom:var(--turn-footer-height);left:0;right:0;visibility:hidden}
+@media(max-width:700px){.book-cover-face{padding:17% 12% 12% 18%}.cover-title{font-size:clamp(32px,6.1dvh,57px)}.cover-name-ko{font-size:17px}.cover-art{min-height:70px}.cover-equation{font-size:clamp(28px,5.2dvh,43px)}.cover-math-caption{font-size:10px}.cover-logo{width:62px;height:21px}}
+@media(max-height:570px) and (min-width:701px){.book-cover-face{padding:16% 12% 11% 18%}.cover-title{font-size:6.6dvh;margin-top:9%}.cover-edition{font-size:7px}.cover-name-ko{font-size:11px;margin-top:6%}.cover-art{min-height:35px;margin-top:6%}.cover-equation{font-size:5.5dvh}.cover-math-caption{font-size:7px}.cover-logo{width:40px;height:14px}}
+@media(max-width:700px){.cover-logo{height:26px;min-height:26px;object-fit:contain;padding-block:2px}}
+/* Handwritten invitation and visible make-ten regrouping. Local font subsets
+   contain the exact cover copy; copyright licenses accompany the font files. */
+@font-face{font-family:'NM Pen';font-style:normal;font-weight:400;font-display:swap;src:url('../assets/fonts/nanum-pen-cover.ttf') format('truetype')}
+@font-face{font-family:'NM Kalam';font-style:normal;font-weight:400;font-display:swap;src:url('../assets/fonts/kalam-cover.ttf') format('truetype')}
+@font-face{font-family:'NM Brush SC';font-style:normal;font-weight:400;font-display:swap;src:url('../assets/fonts/ma-shan-cover.ttf') format('truetype')}
+:root{--cover-script:'NM Pen',cursive}
+:root:lang(en){--cover-script:'NM Kalam',cursive}
+:root:lang(zh),:root:lang(zh-Hans){--cover-script:'NM Brush SC',cursive}
+.scene-cover{gap:12px}.book-cover-face{padding-top:16%;padding-bottom:11%}
+.cover-kicker,.open-hint{font:400 clamp(26px,3.7dvh,33px)/1.15 var(--cover-script);letter-spacing:0;text-align:center;color:#f1dfb1}
+.open-hint span{font:20px var(--sans);margin-left:10px}.cover-title{margin-top:8%}
+.cover-name-ko{font:400 clamp(36px,5.4dvh,46px)/1.12 var(--cover-script);letter-spacing:.01em;margin-top:4%;padding-left:0;color:#f6df9f;text-shadow:0 2px 3px #00180d}
+.cover-art{margin:6% 0 2%;min-height:105px}
+.cover-equation{font:400 clamp(49px,8.6dvh,70px)/1 'NM Kalam',cursive;letter-spacing:-.015em;top:0;bottom:32%;color:#ffe7a8}
+.cover-number{position:absolute;left:0;top:50%;display:block;line-height:1;white-space:nowrap;opacity:0;will-change:transform,opacity;text-shadow:0 0 18px #f5d98b55}
+.cover-eq-op{font-size:.65em;color:#f5d98bbb}.cover-number.is-transfer{color:#fff3c8;text-shadow:0 0 14px #ffdc8999}
+.cover-math-caption{font:400 clamp(22px,3.5dvh,28px)/1.1 var(--cover-script);letter-spacing:0;left:-5%;right:-5%;bottom:0;color:#f3dca9;white-space:normal;text-wrap:balance}
+.cover-math-static{font:400 clamp(18px,3.3dvh,28px)/1.5 'NM Kalam',cursive;white-space:normal;overflow-wrap:normal;padding:0 5%;text-wrap:balance;bottom:32%}
+.cover-logo{margin-top:3%}
+.cover-math-static>span{display:inline-block;white-space:nowrap}
+:root:lang(en) .cover-math-caption{font-size:clamp(17px,2.7dvh,22px);line-height:1.25}
+:root:lang(en) .cover-name-ko{font-size:clamp(24px,4.5dvh,36px)}
+@media(max-width:700px){.cover-kicker,.open-hint{font-size:28px}.cover-name-ko{font-size:38px}.cover-equation{font-size:56px}.cover-math-caption{font-size:25px}.cover-art{min-height:110px}.scene-cover{padding-block:38px 20px}}
+@media(max-width:360px){.cover-kicker,.open-hint{font-size:25px}.cover-name-ko{font-size:35px}.cover-equation{font-size:48px}.cover-math-caption{font-size:23px}.cover-art{min-height:92px}.cover-title{font-size:42px}.scene-cover{gap:10px}}
+@media(max-width:360px){:root:lang(en) .scene-cover{padding-top:60px}:root:lang(zh) .cover-math-caption{font-size:21px;left:0;right:0;bottom:5px}}
+@media(max-height:570px) and (min-width:701px){.scene-cover{gap:4px;padding:8px}.cover-kicker,.open-hint{font-size:22px}.book-cover-face{padding:13% 12% 9% 18%}.cover-title{font-size:6dvh;margin-top:5%}.cover-name-ko{font-size:25px;margin-top:3%}.cover-art{margin:3% 0 0;min-height:48px}.cover-equation{font-size:34px;bottom:32%}.cover-math-caption{font-size:16px}.cover-math-static{font-size:14px;line-height:1.3}.cover-logo{margin-top:2%}}

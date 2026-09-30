@@ -1,0 +1,42 @@
+/* One middle-school leaf, one high-school leaf. Preschool is on the earlier
+   discovery spread; it is not repeated in this laboratory chapter. */
+.panel-labs{padding:0!important;display:flex;flex-direction:column}
+.lab-page-switch{display:none}
+.lab-spread{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);flex:1;min-height:0}
+.lab-leaf{display:flex;flex-direction:column;min-height:0;min-width:0;padding:clamp(20px,2.5vw,34px);position:relative}
+.lab-leaf:first-child{border-right:1px solid #c7c1ae;box-shadow:inset -17px 0 25px -23px #31412b77}
+.lab-leaf:last-child{box-shadow:inset 17px 0 25px -23px #31412b77}
+.lab-leaf .section-heading{flex:none;min-height:94px;margin:0}
+.lab-leaf .section-heading h2{font:700 clamp(24px,2.5vw,34px)/1.24 var(--sans);letter-spacing:-.045em}
+.lab-leaf .lab-stage-label{font-size:12px;color:#987736;margin-bottom:9px}
+.lab-leaf .lab-experience{flex:1;min-height:0;margin-top:17px}
+.lab-leaf .nm-experience{display:flex!important;min-height:0;height:100%}
+.lab-leaf .nm-experience__stage{min-height:120px!important;border-radius:6px}
+.lab-leaf .nm-experience__equation{font-size:clamp(21px,2.4vw,31px)}
+.lab-leaf .nm-experience__controls{gap:5px;min-height:50px}
+.lab-leaf .nm-experience__controls button{font-size:12px;padding:9px 11px}
+.lab-leaf .nm-experience__instruction{font-size:12px;margin:10px 0 7px}
+.lab-leaf .nm-experience__feedback{font-size:11px;min-height:34px}
+.lab-leaf .lab-footer{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:4px;flex:none;min-height:62px;padding-top:8px}
+.lab-leaf .lab-footer>span{font-size:11px;line-height:1.5}.lab-leaf .lab-footer .text-button{font-size:12px;min-height:38px}
+@media(max-width:700px){
+ .lab-page-switch{display:flex;flex:none;justify-content:center;gap:5px;padding:10px 16px 2px}
+ .lab-page-switch button{min-height:44px;min-width:100px;font:600 13px var(--sans);border-bottom:2px solid transparent;color:#7d846e}
+ .lab-page-switch button[aria-pressed=true]{color:#194536;border-color:#c1984d}
+ .lab-spread{display:block;position:relative}
+ .lab-leaf{position:absolute;inset:0;padding:15px 20px 9px;border:0!important;box-shadow:none!important}
+ .lab-leaf[data-lab-page=high]{display:none}
+ .magic-book-app[data-lab-page=high] .lab-leaf[data-lab-page=middle]{display:none}
+ .magic-book-app[data-lab-page=high] .lab-leaf[data-lab-page=high]{display:flex}
+ .lab-leaf .section-heading{min-height:80px}.lab-leaf .section-heading h2{font-size:28px}
+ .lab-leaf .lab-experience{margin-top:10px}.lab-leaf .nm-experience__equation{font-size:26px}
+ .lab-leaf .lab-footer{min-height:60px;padding-top:4px}.lab-leaf .nm-experience__feedback{min-height:21px}
+}
+@media(max-width:360px){.lab-leaf{padding:10px 15px 5px}.lab-leaf .section-heading h2{font-size:24px}.lab-leaf .section-heading{min-height:71px}.lab-leaf .nm-experience__instruction{font-size:11px}.lab-leaf .nm-experience__controls button{font-size:11px;padding:8px}.lab-leaf .lab-footer>span{font-size:10px}}
+@media(max-height:570px) and (min-width:701px){
+ .lab-leaf{padding:10px 17px 3px}.lab-leaf .section-heading{min-height:45px}.lab-leaf .section-heading h2{font-size:20px;line-height:1.12}.lab-leaf .section-heading h2 br{display:none}.lab-leaf .section-heading p{display:none}
+ .lab-leaf .lab-experience{margin-top:4px}.lab-leaf .nm-experience__stage{min-height:72px!important}.lab-leaf .nm-experience__badge{top:5px;font-size:8px;padding:3px 7px}.lab-leaf .nm-experience__equation{font-size:21px;bottom:4px}
+ .lab-leaf .nm-experience__instruction{font-size:10px;line-height:1.3;margin:4px 0}.lab-leaf .nm-experience__controls{gap:3px;min-height:36px}.lab-leaf .nm-experience__controls button{font-size:10px;padding:4px 8px;min-height:36px}.lab-leaf .nm-experience__slider{font-size:10px;min-height:36px;width:125px}.lab-leaf .nm-experience__slider input{height:36px}
+ .lab-leaf .nm-experience__feedback{font-size:9px;min-height:17px;margin:3px 0 0}.lab-leaf .lab-footer{min-height:35px;padding:0}.lab-leaf .lab-footer>span{display:none}.lab-leaf .lab-footer .text-button{font-size:10px;min-height:34px}
+ .lab-leaf .lab-experience .nm-experience[data-mode=middle] .nm-experience__controls{min-height:36px}
+}

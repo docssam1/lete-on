@@ -10,27 +10,33 @@
 <meta property="og:description" content="책을 펼치고, 수를 움직여 보세요. 유아부터 고등까지 이어지는 수학의 발견.">
 <meta property="og:image" content="https://lete-on.gfieldacademy.net/number_magic/assets/promo/video/poster-full.jpg"><meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="../assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/nanum-pen-cover.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="../assets/fonts/kalam-cover.ttf" as="font" type="font/ttf" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="book.css?v=20260930-4"><link rel="stylesheet" href="experience.css?v=20260930-5">
+<link rel="stylesheet" href="book.css?v=20260930-7"><link rel="stylesheet" href="experience.css?v=20260930-5">
+<link rel="preload" href="../assets/promo/grimoire-emerald.webp" as="image">
+<link rel="stylesheet" href="front-page.css?v=20260930-10"><link rel="stylesheet" href="page-curl.css?v=20260930-9"><link rel="stylesheet" href="i18n.css?v=20260930-10"><link rel="stylesheet" href="lab-spread.css?v=20260930-10">
 </head>
 <body>
 <a class="skip-link" href="#bookContent">책 내용으로 건너뛰기</a>
 <main class="magic-book-app" data-view="cover">
 <section class="scene scene-cover is-active" data-scene="cover" aria-labelledby="coverTitle">
+<select class="promo-language cover-language" data-promo-language aria-label="언어 / Language / 语言"><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option></select>
 <p class="cover-kicker">숫자가 마법이 되는 곳</p>
 <button class="closed-book" id="openBook" type="button" aria-label="수의 마법 책 펼치기">
 <span class="book-pages" aria-hidden="true"></span>
 <span class="book-cover-face">
 <span class="cover-edition">계산하는 힘, 읽고 생각하는 힘</span>
-<span class="cover-title" id="coverTitle">Numbers<br><i>of</i> Magic</span><span class="cover-name-ko">수의 마법</span>
-<span class="cover-art" aria-hidden="true"><span class="orbit"></span><span class="orbit second"></span><b>5</b><span class="cover-parts"><i>2</i><em>+</em><i>3</i></span></span>
+<span class="cover-title" id="coverTitle"><span>Numbers</span><span><i>of</i> Magic</span></span><span class="cover-name-ko">수의 마법</span>
+<span class="cover-art" id="coverMath" aria-hidden="true" data-expression="8 + 7"><canvas class="cover-stars"></canvas><span class="cover-equation" data-animation="regrouping"><span class="cover-number" data-token="eight">8</span><span class="cover-number cover-eq-op" data-token="plusA">+</span><span class="cover-number" data-token="seven">7</span><span class="cover-number is-transfer" data-token="two">2</span><span class="cover-number cover-eq-op" data-token="plusB">+</span><span class="cover-number" data-token="five">5</span><span class="cover-number" data-token="ten">10</span><span class="cover-number" data-token="fifteen">15</span></span><span class="cover-math-caption">수는, 펼치면 쉬워진다</span><span class="cover-math-static">8 + 7 = 8 + 2 + 5 = 10 + 5 = 15</span></span>
 <img class="cover-logo" src="../assets/gfield-logo.svg" alt="GFIELD" width="90" height="30">
 </span></button>
 <p class="open-hint">책을 눌러 펼쳐 보세요 <span aria-hidden="true">↗</span></p>
 </section>
 <section class="scene scene-reader" data-scene="reader" aria-label="펼쳐진 수의 마법 책" aria-hidden="true" inert>
 <div class="open-book"><div class="book-underlay" aria-hidden="true"></div><div class="book-paper">
-<header class="book-toolbar"><button class="icon-button" id="bookHome" aria-label="책 표지로 돌아가기">⌂</button><span class="book-brand">Numbers <i>of</i> Magic</span><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener" class="consult-link">오픈톡 상담 ↗</a></header>
+<header class="book-toolbar"><button class="icon-button" id="bookHome" aria-label="책 표지로 돌아가기">⌂</button><span class="book-brand">Numbers <i>of</i> Magic</span><select class="promo-language reader-language" data-promo-language aria-label="언어 / Language / 语言"><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option></select><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener" class="consult-link">오픈톡 상담 ↗</a></header>
 <div class="book-content" id="bookContent" tabindex="-1">
 <section class="book-panel panel-menu" data-panel="menu" aria-labelledby="menuTitle">
 <article class="welcome-page"><header class="welcome-heading"><p>작은 발견이, 수학의 자신감으로.</p><h1 id="menuTitle" tabindex="-1">수를 움직이면<br>생각이 보입니다.</h1></header><div id="heroExperience" class="hero-experience"></div><div class="welcome-foot"><span>유아 · 똑같이 만들기</span><button class="text-button" data-route="labs">유·초·중·고 체험하기 ↗</button></div></article>
@@ -40,13 +46,15 @@
 <video id="introVideo" playsinline preload="none" poster="../assets/promo/video/poster-full.jpg" controlslist="nodownload noremoteplayback" disablepictureinpicture aria-label="수의 마법 소개 영상"></video>
 <div class="cut-switch" role="group" aria-label="소개 영상 선택"><button data-cut="full" aria-pressed="true">전체 영상</button><button data-cut="short" aria-pressed="false">짧은 영상</button></div>
 <button id="cinemaPlay" class="cinema-play" aria-label="소개 영상 재생">▶</button><div id="videoFinish" class="video-finish" hidden><button class="primary-button light" data-route="worksheet">실제 학습지 펼쳐 보기 →</button></div>
-<div class="cinema-controls"><button id="playToggle" aria-label="재생">▶</button><input id="videoProgress" type="range" min="0" max="1000" value="0" aria-label="영상 재생 위치"><span id="videoTime">0:00</span><button id="muteToggle" aria-label="음소거">♪</button></div>
 </section>
 <section class="book-panel panel-labs" data-panel="labs" aria-labelledby="labsTitle" hidden inert>
-<header class="section-heading"><div><p>눈으로 발견하고, 손으로 이해하는 수학</p><h2 id="labsTitle" tabindex="-1">두 친구에게 똑같이 나누어 주세요.</h2></div><div class="level-tabs" aria-label="체험 단계"><button data-level="preschool" aria-pressed="true">유아</button><button data-level="elementary" aria-pressed="false">초등</button><button data-level="middle" aria-pressed="false">중등</button><button data-level="high" aria-pressed="false">고등</button></div></header>
-<div id="labExperience" class="lab-experience"></div><footer class="lab-footer"><span id="labMeaning">옮기며 관계를 찾고, 조건에 맞게 해결해요.</span><button class="text-button" id="labToSheet">종이에서는 어떻게 배울까요? →</button></footer>
+<nav class="lab-page-switch" aria-label="체험 페이지"><button data-lab-select="middle" aria-pressed="true">중등</button><button data-lab-select="high" aria-pressed="false">고등</button></nav>
+<div class="lab-spread">
+<article class="lab-leaf" data-lab-page="middle"><header class="section-heading"><div><p class="lab-stage-label">중등 · 반비례</p><h2 id="labsTitle" tabindex="-1">한 수가 바뀌면,<br>다른 수는?</h2></div></header><div id="labExperience" class="lab-experience"></div><footer class="lab-footer"><span id="labMeaning">곱이 일정한 두 수의 관계를 발견합니다.</span><button class="text-button" id="labToSheet">중등 학습지 보기 →</button></footer></article>
+<article class="lab-leaf" data-lab-page="high"><header class="section-heading"><div><p class="lab-stage-label">고등 · 미적분</p><h2 id="labsHighTitle" tabindex="-1">잘게 나눌수록,<br>넓이가 보입니다.</h2></div></header><div id="highLabExperience" class="lab-experience"></div><footer class="lab-footer"><span id="highLabMeaning">눈으로 본 변화를 수와 식으로 다룹니다.</span><button class="text-button" id="highLabToSheet">고등 학습지 보기 →</button></footer></article>
+</div>
 </section>
-<section class="book-panel panel-village" data-panel="village" aria-label="마을 소개" hidden inert><iframe id="villageFrame" title="숫자 친구와 함께 둘러보는 실제 수의 마법 3D 마을" data-src="village.html?v=20260930-4"></iframe></section>
+<section class="book-panel panel-village" data-panel="village" aria-label="마을 소개" hidden inert><iframe id="villageFrame" title="숫자 친구와 함께 둘러보는 실제 수의 마법 3D 마을" data-src="village.html?v=20260930-10"></iframe></section>
 <section class="book-panel panel-worksheet" data-panel="worksheet" aria-labelledby="worksheetTitle" hidden inert>
 <header class="section-heading"><div><p>발견한 원리를, 내 것으로.</p><h2 id="worksheetTitle" tabindex="-1">읽고, 생각하고, 직접 풉니다.</h2></div><div class="level-tabs" aria-label="학습지 단계"><button data-sample="preschool" aria-pressed="true">유아</button><button data-sample="elementary" aria-pressed="false">초등</button><button data-sample="middle" aria-pressed="false">중등</button><button data-sample="high" aria-pressed="false">고등</button></div></header>
 <div class="sample-editorial" id="sampleEditorial"><article class="sample-story"><span class="sample-topic" id="sampleTopic">가르기와 모으기</span><h3 id="sampleHeadline">손으로 나눈 수를,<br>내 힘으로 풀어요.</h3><p id="sampleCopy">개념을 발견하고, 여러 문제에 써 보고, 짧은 이야기 속에서도 찾아봅니다.</p><div class="sample-sequence"><span>개념 이해</span><i>→</i><span>연산 연습</span><i>→</i><span>생각의 확장</span></div><button class="primary-button" id="openSamples">실제 학습지 펼치기 →</button><button class="text-button word-preview" id="wordPreview">문장제 연습 먼저 보기 ↗</button><small id="sampleSource">실제 과정에서 발췌한 학습지입니다.</small></article><button class="sample-preview" id="samplePreview" aria-label="실제 학습지 펼치기"><img id="sampleCover" src="../assets/promo/samples-v4/preschool/page-1.webp" alt="유아 가르기 실제 학습지" loading="lazy"><span>실제 학습지 발췌 <i>↗</i></span></button></div>
@@ -59,12 +67,13 @@
 <footer class="roadmap-footer"><a href="../index.html" class="primary-button">마법의 마을 들어가기 ↗</a><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener" class="text-button">우리 아이 시작점 상담 ↗</a></footer>
 </section>
 </div>
-<footer class="book-footer"><button class="edge-turn" id="bookBack" aria-label="이전 책장">‹</button><nav class="chapter-nav" aria-label="책의 차례"><button data-route="menu">첫 장</button><button data-route="video">영상</button><button data-route="labs">체험</button><button data-route="village">마을</button><button data-route="worksheet">학습지</button><button data-route="roadmap">로드맵</button></nav><button class="edge-turn" id="bookNext" aria-label="다음 책장">›</button></footer>
+<div class="cinema-controls" id="cinemaControls" role="group" aria-label="소개 영상 재생 조작" hidden><button id="playToggle" aria-label="재생">▶</button><input id="videoProgress" type="range" min="0" max="1000" value="0" aria-label="영상 재생 위치"><span id="videoTime">0:00</span><button id="muteToggle" aria-label="음소거">♪</button></div>
+<footer class="book-footer"><button class="edge-turn" id="bookBack" aria-label="이전 책장">‹</button><nav class="chapter-nav" aria-label="책의 차례"><button data-route="video">영상</button><button data-route="menu">발견</button><button data-route="labs">체험</button><button data-route="village">마을</button><button data-route="worksheet">학습지</button><button data-route="roadmap">로드맵</button></nav><button class="edge-turn" id="bookNext" aria-label="다음 책장">›</button></footer>
 </div></div>
 </section>
 </main>
 <dialog id="sheetZoom" aria-label="학습지 확대"><button id="zoomClose" aria-label="확대 닫기">닫기 ×</button><div class="zoom-scroll"><img id="zoomImage" alt="확대한 실제 학습지"></div></dialog>
 <noscript><p class="no-script">책을 펼치려면 JavaScript를 켜 주세요. <a href="../index.html">수의 마법으로 이동</a></p></noscript>
 <script src="../data/stages.js"></script><script src="../data/courses.js"></script>
-<script src="experience.js?v=20260930-4"></script><script src="book.js?v=20260930-4"></script>
+<script src="i18n.js?v=20260930-10"></script><script src="experience.js?v=20260930-10"></script><script src="cover-math.js?v=20260930-10"></script><script src="page-curl.js?v=20260930-9"></script><script src="book.js?v=20260930-10"></script>
 </body></html>
