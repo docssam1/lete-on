@@ -22,6 +22,9 @@
    자료 취급(문장제-설계.md §0 그대로): **방법·구조만 쓴다.** 교재의 지문·그림·문항은 옮기지 않는다 —
    상황은 매번 새로 만들어지고, 3개 언어는 번역이 아니라 언어마다 따로 쓴 문장이다.
 
+   앱(웹) 쪽 짝: 고르기·조작으로 같은 단계를 한다 — WP1(이해)·WP2(그림, wpScene 위젯)·WP3(연산)·WP4(식)·WP5(점검)·
+   WP6(문제 만들기, 이야기 고르기). engine/threads/wp.js.
+
    쓰는 곳: app/exam.js renderMixedSheet — 나이대(readingAgeBand)가 young 인 주간 학습지에서 수학 이야기
    자리에. 유아(과정 0)는 회차 10부터(그 전엔 읽을거리 없음)이고 더하기·빼기 상황만, 초1~2는 곱셈(배수)까지.
    ============================================================ */
@@ -204,13 +207,14 @@ function pickObjects(rng, s){
   if(!cands.length) cands = [WP().OBJECTS.filter(o => o.kinds.indexOf(s.kind) >= 0)];
   return shuffle(rng, pick(rng, cands)).slice(0, 3);
 }
+const eul = w => { const c = w.charCodeAt(w.length - 1); return (c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0) ? '을' : '를'; };
 function storyOptions(rng, s, lang, objs){
   const n1 = s.n1, n2 = s.n2, u = objs[0].ko.u, zu = objs[0].zh.u, A = L(s.A, lang), B = L(s.B, lang);
   const ob = `<i class="nm-lt-blank nm-lt-oblank"></i>`;
   const tmpl = {
     합병:{ko:`${A}은(는) ${ob}을(를) ${n1}${u}, ${B}은(는) ${n2}${u} 가지고 있어요. 모두 몇 ${u}일까요?`, en:`${A} has ${n1} ${ob} and ${B} has ${n2}. How many altogether?`, zh:`${A}有${n1}${zu}${ob}，${B}有${n2}${zu}。一共有几${zu}？`},
-    첨가:{ko:`${ob}이(가) ${n1}${u} 있었어요. ${n2}${u}를 더 받았어요. 모두 몇 ${u}일까요?`, en:`There were ${n1} ${ob}. Then ${n2} more came. How many now?`, zh:`有${n1}${zu}${ob}，又得到了${n2}${zu}。现在有几${zu}？`},
-    구잔:{ko:`${ob}이(가) ${n1}${u} 있었어요. ${n2}${u}를 주었어요. 남은 것은 몇 ${u}일까요?`, en:`There were ${n1} ${ob}. ${n2} were given away. How many are left?`, zh:`有${n1}${zu}${ob}，送掉了${n2}${zu}。还剩几${zu}？`},
+    첨가:{ko:`${ob}이(가) ${n1}${u} 있었어요. ${n2}${u}${eul(u)} 더 받았어요. 모두 몇 ${u}일까요?`, en:`There were ${n1} ${ob}. Then ${n2} more came. How many now?`, zh:`有${n1}${zu}${ob}，又得到了${n2}${zu}。现在有几${zu}？`},
+    구잔:{ko:`${ob}이(가) ${n1}${u} 있었어요. ${n2}${u}${eul(u)} 주었어요. 남은 것은 몇 ${u}일까요?`, en:`There were ${n1} ${ob}. ${n2} were given away. How many are left?`, zh:`有${n1}${zu}${ob}，送掉了${n2}${zu}。还剩几${zu}？`},
     구차:{ko:`${A}은(는) ${ob}을(를) ${n1}${u}, ${B}은(는) ${n2}${u} 가지고 있어요. 누가 몇 ${u} 더 많을까요?`, en:`${A} has ${n1} ${ob} and ${B} has ${n2}. Who has more, and how many more?`, zh:`${A}有${n1}${zu}${ob}，${B}有${n2}${zu}。谁多，多几${zu}？`},
     배수:{ko:`${ob}이(가) 한 상자에 ${n1}${u}씩 ${n2}상자 있어요. 모두 몇 ${u}일까요?`, en:`There are ${n1} ${ob} in each box, and ${n2} boxes. How many altogether?`, zh:`每盒有${n1}${zu}${ob}，有${n2}盒。一共有几${zu}？`}
   };

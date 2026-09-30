@@ -276,6 +276,7 @@ var CURATED_TOPICS = [
       {label:'문제 이해 (자연수 + − ×)', thread:'WP1', level:1, desc:'주어진 것과 구하는 것 가려내기'},
       {label:'문제 이해 (자연수 + − × ÷)', thread:'WP1', level:2, desc:'나눗셈 상황까지, 큰 수'},
       {label:'문제 이해 (분수·소수 + −)', thread:'WP1', level:3, desc:'길이·들이·무게를 재는 상황'},
+      {label:'그림으로 나타내기 (자연수 + − ×)', thread:'WP2', level:1, desc:'사물을 칠하고 지우며 그림에서 세기'},
       {label:'연산 찾기 (자연수 + − ×)', thread:'WP3', level:1, desc:'더할까 뺄까 곱할까'},
       {label:'연산 찾기 (자연수 + − × ÷)', thread:'WP3', level:2, desc:'나누기까지 넣어 고르기'},
       {label:'연산 찾기 (분수·소수 + −)', thread:'WP3', level:3, desc:'재는 상황에서 식 고르기'},
@@ -285,6 +286,8 @@ var CURATED_TOPICS = [
       {label:'점검하기 (자연수 + − ×)', thread:'WP5', level:1, desc:'바르게 풀었는지 다시 보기'},
       {label:'점검하기 (자연수 + − × ÷)', thread:'WP5', level:2, desc:'나눗셈까지, 어림해 보기'},
       {label:'점검하기 (분수·소수 + −)', thread:'WP5', level:3, desc:'답이 무엇을 나타내는지 말하기'},
+      {label:'문제 만들기 (자연수 + − ×)', thread:'WP6', level:1, desc:'식에 맞는 이야기 고르기'},
+      {label:'문제 만들기 (자연수 + − × ÷)', thread:'WP6', level:2, desc:'나눗셈 이야기까지 고르기'},
     ]
   },
   { id:'creative', label:'창의수연', en:'Strategy Math', zh:'思维数学', icon:'🧠', color:'#8b5cf6', section:'magic',

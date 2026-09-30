@@ -1179,6 +1179,135 @@
     return assemble(s, ask, choices, answer, { story, mode: 'spot', correctText: right });
   };
 
+  /* ============================================================
+     WP2 — 그림으로 나타내기 (이해편 Ⅱ "문제의 상황을 우뇌로 그려라")  2026-09-30
+     원장: "그림으로 표상하는 거니까 어차피 자동차나 물체들을 여러 개 놓고 선택하게 하면
+            되지. 그리고 색깔 바꾸기 해도 되고."
+     화면은 wpScene 위젯(app/widgets.js) — 사물을 판에 늘어놓고 아이가 **탭해서 색을 바꾸거나
+     지운다**. 답은 언제나 정수 하나(그림에서 센 결과)라 스레드 계약이 그대로다.
+       합병·첨가  처음 것(n1)은 파란색으로 이미 칠해져 있고, 더하는 만큼(n2) 회색 사물을 탭해
+                 빨간색으로 — 판에는 여분이 몇 개 더 있어 정확히 n2개를 골라야 한다. 답 = 전체.
+       구잔       n1개가 놓여 있고, 없어진 만큼 탭해 ×로 지운다. 답 = 남은 수.
+       구차       두 줄로 놓고(A는 n1, B는 n2), 짝이 없는 것을 탭해 표시한다. 답 = 차.
+       배수       상자 n2개, 첫 상자만 n1개가 들어 있다. 빈 상자를 탭해 채운다. 답 = 전체.
+     인쇄·문제은행(위젯 없음)에서는 같은 물음이 "○로 그려 보고 수를 쓰세요"로 읽혀 숫자로 답한다.
+     레벨은 A(자연수 + − ×) 하나 — 판에 놓을 수 있는 수만(배수는 5×5 이하로 다시 뽑는다).
+     ============================================================ */
+  const EMOJI = { apple:'🍎', tangerine:'🍊', cookie:'🍪', candy:'🍬', block:'🧱', paper:'📄', sticker:'⭐',
+    card:'🃏', jelly:'🍇', doll:'🧸', pencil:'✏️', note:'📓', storybook:'📚', rose:'🌹', chick:'🐤',
+    goldfish:'🐟', rabbit:'🐰' };
+  NM_TGEN['wp2_picture'] = function (params, rng) {
+    const range = 'A';
+    let s, guard = 0;
+    do {
+      const kind = pickKind(rng, range, weightsFor(range, params && params.kinds));
+      s = makeSituation(rng, { range, kind, numeric: 'decimal' });
+    } while (guard++ < 30 && ((s.kind === '배수' && (s.n1 > 5 || s.n2 > 5))
+                              || ((s.kind === '구잔' || s.kind === '구차') && s.n1 > 12)));   /* 판에 놓을 수 있는 수만 — 구차는 한 줄에 12개까지 */
+    const story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
+    const r = resultOf(s);
+    const A = s.A, B = s.B, o = s.o;
+    let ask, scene;
+    if (s.kind === '합병' || s.kind === '첨가') {
+      const extra = R(rng, 2, 4);
+      ask = s.kind === '합병'
+        ? { ko: `${NUI(A.ko)} ${EUN(o.ko.n)} 파란색으로 칠해져 있어요. ${NUI(B.ko)} ${EUL(o.ko.n)} 빨간색으로 칠하고, 모두 몇 ${o.ko.u}인지 쓰세요.`,
+            en: `${A.en}'s ${o.en.n} are already blue. Color ${B.en}'s ${o.en.n} red, then write how many there are altogether.`,
+            zh: `${A.zh}的${o.zh.n}已经涂成蓝色。把${B.zh}的${o.zh.n}涂成红色，再写出一共有几${o.zh.u}。` }
+        : { ko: `처음 ${EUN(o.ko.n)} 파란색으로 칠해져 있어요. 더 받은 만큼 빨간색으로 칠하고, 모두 몇 ${o.ko.u}인지 쓰세요.`,
+            en: `The ${o.en.n} from the start are already blue. Color the ones that were added red, then write how many there are altogether.`,
+            zh: `一开始的${o.zh.n}已经涂成蓝色。把又得到的涂成红色，再写出一共有几${o.zh.u}。` };
+      scene = { mode: 'color', fixed: s.n1, need: s.n2, total: s.n1 + s.n2 + extra,
+                labelA: { ko: A.ko, en: A.en, zh: A.zh }, labelB: { ko: B.ko, en: B.en, zh: B.zh } };
+    } else if (s.kind === '구잔') {
+      ask = { ko: `없어진 만큼 ${EUL(o.ko.n)} 탭해서 ×로 지우고, 남은 ${EUN(o.ko.n)} 몇 ${o.ko.u}인지 쓰세요.`,
+              en: `Tap the ${o.en.n} that are gone to cross them out, then write how many are left.`,
+              zh: `点一点减少的${o.zh.n}，用×划掉，再写出还剩几${o.zh.u}。` };
+      scene = { mode: 'cross', total: s.n1, need: s.n2 };
+    } else if (s.kind === '구차') {
+      ask = { ko: `${NUI(A.ko)} 것과 ${NUI(B.ko)} 것을 위아래로 짝지어요. 짝이 없는 ${EUL(o.ko.n)} 탭해서 표시하고, 몇 ${o.ko.u} 더 많은지 쓰세요.`,
+              en: `Pair ${A.en}'s and ${B.en}'s ${o.en.n} top to bottom. Tap the ones without a partner, then write how many more there are.`,
+              zh: `把${A.zh}和${B.zh}的${o.zh.n}上下配对。点一点没有配对的，再写出多几${o.zh.u}。` };
+      scene = { mode: 'pair', rowA: s.n1, rowB: s.n2, need: s.n1 - s.n2,
+                labelA: { ko: A.ko, en: A.en, zh: A.zh }, labelB: { ko: B.ko, en: B.en, zh: B.zh } };
+    } else {
+      const g = s.g;
+      ask = { ko: `첫 ${g.ko.n}만 채워져 있어요. 나머지 ${g.ko.n}도 똑같이 채우고, 모두 몇 ${o.ko.u}인지 쓰세요.`,
+              en: `Only the first ${g.en.one} is filled. Fill the other ${g.en.many} the same way, then write how many there are altogether.`,
+              zh: `只有第一个${g.zh.n}装好了。把其他${g.zh.n}也装成一样，再写出一共有几${o.zh.u}。` };
+      scene = { mode: 'groups', per: s.n1, groups: s.n2 };
+    }
+    const p = assemble(s, ask, null, r, { story, mode: 'picture', correctText: String(r) });
+    p.widget = 'wpScene';
+    p.emoji = EMOJI[o.id] || '🚗';
+    p.scene = scene;
+    return p;
+  };
+
+  /* ============================================================
+     WP6 — 문제 만들기 (이해편 Ⅵ "문제를 만들어라")  2026-09-30
+     원장: "문제 만들기는 영어처럼 고르기 하자. '무엇으로 만들래?' 이렇게."
+     식 하나(n1 op n2)와 사물 하나를 주고, 그 식에 맞는 이야기를 보기 셋에서 고른다.
+     오답 둘은 **계산 기호가 다른 유형**의 이야기다(구잔·구차는 둘 다 빼기라 서로 오답이 못 된다).
+     학습지(data/lang-think.js A-6)는 같은 틀에 "무엇으로 만들래?"(사물 고르기)를 한 단계 더 둔다.
+     레벨 A = + − × · 레벨 B = ÷(등분·포함)까지. C(분수·소수)는 두지 않는다 — 재는 상황의 이야기 틀이
+     따로 필요해 다음 차례.
+     ============================================================ */
+  function makeStory(kind, s, lang) {
+    const o = s.o, n1 = s.n1, n2 = s.n2, A = s.A[lang], B = s.B[lang];
+    const u = o.ko.u, zu = o.zh.u, on = o[lang].n;
+    const g = (s.g || GROUPS.box);
+    const T = {
+      합병: { ko: `${NEUN(A)} ${EUL(on)} ${n1}${u}, ${NEUN(B)} ${n2}${u} 가지고 있어요. 모두 몇 ${u}일까요?`,
+             en: `${A} has ${n1} ${on} and ${B} has ${n2}. How many altogether?`,
+             zh: `${A}有${n1}${zu}${on}，${B}有${n2}${zu}。一共有几${zu}？` },
+      첨가: { ko: `${IGA(on)} ${n1}${u} 있었어요. ${EUL(n2 + u)} 더 받았어요. 모두 몇 ${u}일까요?`,
+             en: `There were ${n1} ${on}. Then ${n2} more came. How many now?`,
+             zh: `有${n1}${zu}${on}，又得到了${n2}${zu}。现在有几${zu}？` },
+      구잔: { ko: `${IGA(on)} ${n1}${u} 있었어요. ${EUL(n2 + u)} 주었어요. 남은 것은 몇 ${u}일까요?`,
+             en: `There were ${n1} ${on}. ${n2} were given away. How many are left?`,
+             zh: `有${n1}${zu}${on}，送掉了${n2}${zu}。还剩几${zu}？` },
+      구차: { ko: `${NEUN(A)} ${EUL(on)} ${n1}${u}, ${NEUN(B)} ${n2}${u} 가지고 있어요. 누가 몇 ${u} 더 많을까요?`,
+             en: `${A} has ${n1} ${on} and ${B} has ${n2}. Who has more, and how many more?`,
+             zh: `${A}有${n1}${zu}${on}，${B}有${n2}${zu}。谁多，多几${zu}？` },
+      배수: { ko: `${IGA(on)} 한 ${g.ko.n}에 ${n1}${u}씩 ${n2}${g.ko.u} 있어요. 모두 몇 ${u}일까요?`,
+             en: `There are ${n1} ${on} in each ${g.en.one}, and ${n2} ${g.en.many}. How many altogether?`,
+             zh: `每${g.zh.u}有${n1}${zu}${on}，有${n2}${g.zh.u}。一共有几${zu}？` },
+      등분: { ko: `${EUL(on)} ${n1}${u} 가지고 있어요. ${n2}명이 똑같이 나누어 가지면 한 명이 몇 ${u}씩 가질까요?`,
+             en: `There are ${n1} ${on}. ${n2} children share them equally. How many does each child get?`,
+             zh: `有${n1}${zu}${on}，${n2}个小朋友平均分。每人分到几${zu}？` },
+      포함: { ko: `${EUL(on)} ${n1}${u} 가지고 있어요. 한 ${g.ko.n}에 ${n2}${u}씩 담으면 몇 ${g.ko.u}가 될까요?`,
+             en: `There are ${n1} ${on}. If ${n2} go in each ${g.en.one}, how many ${g.en.many} are there?`,
+             zh: `有${n1}${zu}${on}，每${g.zh.u}装${n2}${zu}。能装几${g.zh.u}？` }
+    };
+    return T[kind][lang];
+  }
+  NM_TGEN['wp6_make'] = function (params, rng) {
+    const range = (params && params.range) === 'B' ? 'B' : 'A';
+    const kind = pickKind(rng, range, weightsFor(range, params && params.kinds));
+    const s = makeSituation(rng, { range, kind, numeric: 'decimal' });
+    const eq = `${s.n1} ${s.op} ${s.n2}`;
+    const o = s.o;
+    /* 오답 둘 — 기호가 다른 유형에서. 등분·포함 이야기는 n1이 n2의 배수일 때만 자연스럽다(나눗셈 상황이 아니면 안 씀). */
+    const pool = Object.keys(OPS).filter(k => OPS[k] !== s.op && KIND_W[range][k] && o.kinds.indexOf(k) >= 0
+      && ((k !== '등분' && k !== '포함') || s.n1 % s.n2 === 0));
+    const wrongKinds = shuffle(rng, pool).slice(0, 2);
+    if (wrongKinds.length < 2) return NM_TGEN['wp6_make'](params, rng);
+    const kinds = [s.kind].concat(wrongKinds);
+    const { choices, answer } = buildChoices(rng, [kinds.map(k => makeStory(k, s, 'ko')), kinds.map(k => makeStory(k, s, 'en')), kinds.map(k => makeStory(k, s, 'zh'))], 0);
+    const story = { ko: `${EUL(o.ko.n)} 가지고 ${eq} 문제를 만들어요.`,
+                    en: `Make a problem for ${eq} with ${o.en.n}.`,
+                    zh: `用${o.zh.n}编一道 ${eq} 的题。` };
+    const ask = { ko: `어떤 이야기가 ${eq} 식에 맞을까요? 알맞은 번호를 쓰세요.`,
+                  en: `Which story fits ${eq}? Write the number.`,
+                  zh: `哪个故事和 ${eq} 相符？请写出序号。` };
+    const p = assemble(s, ask, choices, answer, { story, mode: 'make', correctText: makeStory(s.kind, s, 'ko') });
+    /* 검사기용 — 보기 순서대로의 의미 유형(정답 보기만 s.op 와 같은 기호여야 한다) */
+    const order = choices.ko.map(c => kinds[kinds.map(k => makeStory(k, s, 'ko')).indexOf(c)]);
+    p.wp.choiceKinds = order;
+    return p;
+  };
+
   /* ── 이해편 지면(data/lang-think.js, 2026-09-30)이 같은 상황 생성기를 쓴다 ──
      원장 "언어사고력 이해편 A-1~6" — 여섯 단계가 상황 하나에서 파생된다(문장제-설계.md §1).
      여기 내보내는 것은 읽기 전용 도우미뿐이고, 스레드 계약(NM_TGEN)은 그대로다. */

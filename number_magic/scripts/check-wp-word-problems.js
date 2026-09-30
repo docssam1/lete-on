@@ -422,6 +422,34 @@ function verifyAnswer(p, w, range) {
     if (/\d\/\d/.test(p.word)) return 'need: 본문에 분수가 있어 분모가 또 다른 답 후보가 됨';
     return null;
   }
+  /* WP2 picture — 답은 그림에서 센 수(= 상황의 계산 결과)이고, 위젯 장면(scene)이 상황과 맞아야 한다.
+     장면이 어긋나면 아이가 그림대로 해도 틀린 답이 나온다(2026-09-30). */
+  if (w.mode === 'picture') {
+    const r = w.op === '+' ? w.n1 + w.n2 : w.op === '−' ? w.n1 - w.n2 : w.op === '×' ? w.n1 * w.n2 : w.n1 / w.n2;
+    if (p.answer !== r) return `picture: 답 ${p.answer}이 ${w.n1} ${w.op} ${w.n2} = ${r}과 다름`;
+    if (p.widget !== 'wpScene' || !p.scene) return 'picture: wpScene 장면이 없음';
+    const sc = p.scene;
+    const ok = sc.mode === 'color' ? (sc.fixed === w.n1 && sc.need === w.n2 && sc.total >= w.n1 + w.n2 + 2 && sc.total <= 25)
+      : sc.mode === 'cross' ? (sc.total === w.n1 && sc.need === w.n2 && w.n1 <= 12)
+      : sc.mode === 'pair' ? (sc.rowA === w.n1 && sc.rowB === w.n2 && sc.need === w.n1 - w.n2 && w.n1 <= 12)
+      : sc.mode === 'groups' ? (sc.per === w.n1 && sc.groups === w.n2 && w.n1 <= 5 && w.n2 <= 5) : false;
+    if (!ok) return `picture: 장면 ${JSON.stringify(sc)}이 상황 ${w.kind} ${w.n1}·${w.n2}와 어긋남`;
+    const want = { 합병:'color', 첨가:'color', 구잔:'cross', 구차:'pair', 배수:'groups' }[w.kind];
+    if (sc.mode !== want) return `picture: ${w.kind}인데 장면이 ${sc.mode}`;
+    return null;
+  }
+  /* WP6 make — 보기 셋 가운데 식의 기호와 같은 유형은 정답 하나뿐이어야 한다(구잔·구차가 나란히 오면 복수정답). */
+  if (w.mode === 'make') {
+    const ks = w.choiceKinds;
+    if (!Array.isArray(ks) || ks.length !== 3 || p.choices.length !== 3) return 'make: 보기 유형이 3개가 아님';
+    const same = ks.map((k, i) => KIND_OP[k] === w.op ? i + 1 : 0).filter(Boolean);
+    if (same.length !== 1) return `make: 식의 기호와 같은 유형이 ${same.length}개 (${ks.join('/')})`;
+    if (same[0] !== p.answer || ks[p.answer - 1] !== w.kind) return `make: 정답 ${p.answer}이 상황 유형 ${w.kind}의 보기가 아님 (${ks.join('/')})`;
+    const eq = `${w.n1} ${w.op} ${w.n2}`;
+    if (p.word.indexOf(eq) < 0 || p.wordAsk.indexOf(eq) < 0) return `make: 식 ${eq}이 본문·물음에 없음`;
+    for (const c of p.choices) if (c.indexOf(String(w.n1)) < 0 || c.indexOf(String(w.n2)) < 0) return `make: 보기에 두 수가 다 안 나옴: ${c}`;
+    return null;
+  }
   return `모르는 모드: ${w.mode}`;
 }
 
@@ -505,6 +533,8 @@ console.log(`문장제(WP) 검산 — 레벨당 ${N}건\n`);
 [1, 2, 3].forEach(lv => sweep('WP3', lv));
 [1, 2, 3].forEach(lv => sweep('WP4', lv));
 [1, 2, 3].forEach(lv => sweep('WP5', lv));
+[1].forEach(lv => sweep('WP2', lv));
+[1, 2].forEach(lv => sweep('WP6', lv));
 
 console.log(`\n검산한 문항: ${checks}건 · 그릇 크기 검사 ${vesselChecks}건 × 3개 언어`);
 /* 검사가 한 번도 안 돌면 통과가 아니다 — 못 잡는 검사는 아무것도 증명하지 못한다 */

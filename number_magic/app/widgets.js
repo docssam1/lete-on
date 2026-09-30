@@ -213,6 +213,7 @@ function render(problem, container, onAnswer){
     case 'pyramid':      return renderPyramid(problem,container,onAnswer);
     case 'matchLine':    return renderMatchLine(problem,container,onAnswer);
     case 'gridPaint':    return renderGridPaint(problem,container,onAnswer);
+    case 'wpScene':      return renderWpScene(problem,container,onAnswer);
     case 'storyCard':    return renderStoryCard(problem,container,onAnswer);
     case 'balanceScale': return renderBalanceScale(problem,container,onAnswer);
     case 'numberMachine':return renderNumberMachine(problem,container,onAnswer);
@@ -1354,6 +1355,114 @@ function renderGridPaint(problem, container, onAnswer){
     lock=true;setTimeout(()=>{lock=false;},700);
     if(painted!==problem.target) shake(row);
     onAnswer(painted);
+  });
+}
+
+/* ─────────────────────────────────────────
+   WPSCENE  widget:'wpScene'  (문장제 WP2 · 그림으로 나타내기)  2026-09-30
+   원장: "그림으로 표상하는 거니까 물체들을 여러 개 놓고 선택하게 하면 되지. 색깔 바꾸기 해도 되고."
+   problem.emoji = 사물, problem.scene = {mode, ...} (engine/threads/wp.js wp2_picture).
+     color  — fixed개는 파란색으로 잠겨 있고, 회색을 탭하면 빨간색(다시 탭 = 회색). 답 = 칠한 전체.
+     cross  — total개. 탭 = ×로 지우기(다시 탭 = 되살리기). 답 = 남은 수.
+     pair   — 두 줄(rowA·rowB). 탭 = 표시. 답 = 표시한 수(짝이 없는 것).
+     groups — 상자 groups개, 첫 상자는 per개로 잠겨 있다. 빈 상자 탭 = 채우기, 채운 것 탭 = 지우기. 답 = 전체.
+   ✔ 로 제출: onAnswer(그림에서 센 수). 정답은 정수 하나라 스레드 계약이 그대로다.
+───────────────────────────────────────── */
+function renderWpScene(problem, container, onAnswer){
+  const em=problem.emoji||'🚗';
+  const sc=problem.scene||{mode:'cross',total:5,need:2};
+  const Lf=o=>(o&&window.NM_L)?window.NM_L(o):(o&&o.ko)||'';
+  const lang=(window.NM_L&&window.NM_L({ko:'ko',en:'en',zh:'zh'}))||'ko';
+  const tx=(ko,en,zh)=>lang==='en'?en:lang==='zh'?zh:ko;
+  let lock=false;
+
+  const root=document.createElement('div');
+  root.className='nm-ws-wrap';
+  container.appendChild(root);
+  const board=document.createElement('div');
+  board.className='nm-ws-board nm-ws-'+sc.mode;
+  const foot=document.createElement('div');
+  foot.className='nm-ws-counter';
+  foot.innerHTML=`<span class="nm-ws-cntlab"></span><span class="nm-ws-cnt">0</span>`;
+  const done=document.createElement('button');
+  done.className='nm-ws-done';done.textContent='✔';
+  const cnt=foot.querySelector('.nm-ws-cnt');
+  const cntlab=foot.querySelector('.nm-ws-cntlab');
+
+  const item=(cls)=>{ const b=document.createElement('button'); b.className='nm-ws-item'+(cls?' '+cls:''); b.innerHTML=`<span class="nm-ws-em">${art(em)}</span>`; return b; };
+  let value=0, valid=false;
+  const setCount=(v,ok)=>{ value=v; valid=ok; cnt.textContent=v; };
+
+  if(sc.mode==='color'){
+    const legend=document.createElement('div');
+    legend.className='nm-ws-legend';
+    legend.innerHTML=`<span class="nm-ws-key blue"></span>${esc(Lf(sc.labelA)||tx('처음','at first','一开始'))}<span class="nm-ws-key red"></span>${esc(Lf(sc.labelB)||tx('더 받은 것','added','又得到的'))}`;
+    root.appendChild(legend);
+    cntlab.textContent=tx('칠한 것','colored','涂了');
+    let red=0;
+    for(let i=0;i<sc.total;i++){
+      const b=item(i<sc.fixed?'blue lock':'');
+      if(i>=sc.fixed) b.addEventListener('pointerup',e=>{ e.stopPropagation();
+        if(b.classList.contains('red')){ b.classList.remove('red'); red--; } else { b.classList.add('red'); red++; }
+        setCount(sc.fixed+red, red===sc.need); });
+      board.appendChild(b);
+    }
+    setCount(sc.fixed,false);
+  }else if(sc.mode==='cross'){
+    cntlab.textContent=tx('남은 것','left','剩下');
+    let crossed=0;
+    for(let i=0;i<sc.total;i++){
+      const b=item('');
+      b.addEventListener('pointerup',e=>{ e.stopPropagation();
+        if(b.classList.contains('x')){ b.classList.remove('x'); crossed--; } else { b.classList.add('x'); crossed++; }
+        setCount(sc.total-crossed, crossed===sc.need); });
+      board.appendChild(b);
+    }
+    setCount(sc.total,false);
+  }else if(sc.mode==='pair'){
+    cntlab.textContent=tx('짝이 없는 것','no partner','没有配对');
+    let marked=0;
+    [['A',sc.rowA,sc.labelA],['B',sc.rowB,sc.labelB]].forEach(([k,n,lab])=>{
+      const row=document.createElement('div'); row.className='nm-ws-row';
+      row.style.gridTemplateColumns='44px repeat('+Math.max(sc.rowA,sc.rowB)+',1fr)';   /* 두 줄이 같은 칸 너비 — 위아래로 짝이 맞는다 */
+      const l=document.createElement('span'); l.className='nm-ws-rowlab'; l.textContent=Lf(lab)||k; row.appendChild(l);
+      for(let i=0;i<n;i++){
+        const b=item('');
+        b.addEventListener('pointerup',e=>{ e.stopPropagation();
+          if(b.classList.contains('mark')){ b.classList.remove('mark'); marked--; } else { b.classList.add('mark'); marked++; }
+          setCount(marked, marked===sc.need); });
+        row.appendChild(b);
+      }
+      board.appendChild(row);
+    });
+    setCount(0,false);
+  }else{ /* groups */
+    cntlab.textContent=tx('모두','total','一共');
+    const counts=[];
+    const total=()=>counts.reduce((a,b)=>a+b,0);
+    for(let g=0;g<sc.groups;g++){
+      const box=document.createElement('div'); box.className='nm-ws-group'+(g===0?' lock':'');
+      counts.push(g===0?sc.per:0);
+      for(let i=0;i<(g===0?sc.per:0);i++){ const s=document.createElement('span'); s.className='nm-ws-stamp'; s.innerHTML=art(em); box.appendChild(s); }
+      if(g>0) box.addEventListener('pointerup',e=>{ e.stopPropagation();
+        const hit=e.target.closest('.nm-ws-stamp');
+        if(hit&&box.contains(hit)){ hit.remove(); counts[g]--; }
+        else if(counts[g]<9){ const s=document.createElement('span'); s.className='nm-ws-stamp'; s.innerHTML=art(em); box.appendChild(s); counts[g]++; }
+        setCount(total(), counts.every(c=>c===sc.per)); });
+      board.appendChild(box);
+    }
+    setCount(total(),false);
+  }
+  root.appendChild(board);
+  root.appendChild(foot);
+  root.appendChild(done);
+
+  done.addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(value!==problem.answer||!valid) shake(board);
+    onAnswer(value);
   });
 }
 

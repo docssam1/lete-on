@@ -3131,6 +3131,13 @@ WP1:{ name:{ko:'문장제 — 문제 이해',en:'Word Problems — Understand',z
              zh:'先分清题目给了什么、问的是什么。题里出现的数并不都要用——像年龄、公交车号这种与所求无关的数不进算式。'}},
           {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
           {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
+WP2:{ name:{ko:'문장제 — 그림으로 나타내기',en:'Word Problems — Draw It',zh:'应用题 — 画图表示'},
+  gen:'wp2_picture', prereq:['WP1'],
+  concept:{ko:'글을 그림으로 바꾸면 계산이 보여요. 처음 것을 파란색, 더 받은 것을 빨간색으로 칠하고, 없어진 것은 ×로 지우고, 누가 더 많은지는 위아래로 짝을 지어 봐요. 그림에서 세면 답이 나와요.',
+    en:'Turn the words into a picture and the math shows. Color what you start with blue and what is added red, cross out what is gone, and pair things up top to bottom to see who has more. Count in the picture and you have the answer.',
+    zh:'把文字变成图，算式就看出来了。一开始的涂蓝色，又得到的涂红色，减少的用×划掉，比谁多就上下配对。在图里数一数，答案就出来了。'},
+  widgets:['wpScene','numpad'],
+  levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}}] },
 WP3:{ name:{ko:'문장제 — 연산 찾기',en:'Word Problems — Choose the Operation',zh:'应用题 — 选择运算'},
   gen:'wp3_operation', prereq:['WP1'],
   concept:{ko:'낱말만 보고 연산을 고르면 걸려요. "더 받았어요"는 더하기지만 "~보다 몇 개 더 많을까요?"는 둘 다 \'더\'가 들어가도 빼기예요. 상황이 늘어나는지, 줄어드는지, 몇 씩 몇 묶음인지를 보고 골라요.',
@@ -3158,6 +3165,14 @@ WP5:{ name:{ko:'문장제 — 점검하기',en:'Word Problems — Check Your Wor
   levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
           {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
           {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
+WP6:{ name:{ko:'문장제 — 문제 만들기',en:'Word Problems — Make a Problem',zh:'应用题 — 编题'},
+  gen:'wp6_make', prereq:['WP5'],
+  concept:{ko:'식을 보고 이야기를 만들 수 있으면 정말 아는 거예요. 12 + 9는 "12개가 있는데 9개를 더 받았어요"도 되고 "민수는 12개, 지우는 9개예요. 모두 몇 개?"도 돼요. 하지만 "9개를 주었어요"는 빼기 이야기라 안 돼요.',
+    en:'If you can make a story from a number sentence, you really understand it. 12 + 9 can be "there were 12 and 9 more came" or "Emma has 12 and Liam has 9, how many altogether?" But "9 were given away" is a subtraction story, so it does not fit.',
+    zh:'能看着算式编故事，才是真的懂了。12 + 9 可以是"有12个，又得到9个"，也可以是"小明有12个，小红有9个，一共几个？"。但"送掉了9个"是减法的故事，不合适。'},
+  widgets:['numpad'],
+  levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
+          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}}] },
 /* ── 중등 교과 연산 3차(2026-09-20) ── 원장 지시: "교과연산과 독셈이
    같이 되어야 한다. 교과 연산 후 문장제·독셈 혼합 컨셉이었는데."
    점검 결과 중등 교과 연산의 기둥 다섯이 비어 있었다 — 연립방정식·
