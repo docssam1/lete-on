@@ -1179,4 +1179,9 @@
     return assemble(s, ask, choices, answer, { story, mode: 'spot', correctText: right });
   };
 
+  /* ── 이해편 지면(data/lang-think.js, 2026-09-30)이 같은 상황 생성기를 쓴다 ──
+     원장 "언어사고력 이해편 A-1~6" — 여섯 단계가 상황 하나에서 파생된다(문장제-설계.md §1).
+     여기 내보내는 것은 읽기 전용 도우미뿐이고, 스레드 계약(NM_TGEN)은 그대로다. */
+  window.NM_WP = { makeSituation, storyText, resultOf, koQ, enQ, zhQ, OPS, NAMES, OBJECTS };
+
 })();

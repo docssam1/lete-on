@@ -581,6 +581,67 @@
   .nm-lt-answers { flex:0 0 auto; margin:auto 0 0; padding-top:3mm; font-size:9.5px; line-height:1.6; color:#7a8590; word-break:keep-all; }
   .nm-lt-answers b { color:#a3521c; margin-right:1.5mm; }
   .nm-lt-act.nm-lt-talk { flex:0 0 auto; background:#fff; }
+  /* 이해편 요소(2026-09-30) */
+  .nm-lt-story { display:grid; grid-template-columns:auto 1fr; gap:3mm; align-items:start; margin-bottom:3mm; padding:3mm 4mm; border:1.3px solid #cfdcdc; border-radius:3mm; background:#fff; }
+  .nm-lt-story b { font-size:11px; font-weight:800; color:#a3521c; letter-spacing:.06em; padding-top:1mm; }
+  .nm-lt-story p { margin:0; font-size:15px; line-height:1.75; color:#20343b; word-break:keep-all; }
+  .nm-lt-parts { margin:0; font-size:15px; line-height:1.9; color:#20343b; word-break:keep-all; }
+  .nm-lt-parts span { color:#D9534F; font-weight:900; margin:0 1mm; }
+  .nm-lt-given { display:grid; grid-template-columns:22mm 1fr; gap:3mm; align-items:start; margin-top:2mm; font-size:14px; color:#20343b; }
+  .nm-lt-given b { font-size:11.5px; font-weight:800; color:#245b60; padding-top:1.2mm; }
+  .nm-lt-blank { display:inline-block; height:6.5mm; border-bottom:1.4px solid #20343b; vertical-align:-1.5mm; margin:0 1mm; }
+  .nm-lt-choice { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:1.8mm; font-size:14px; color:#20343b; word-break:keep-all; }
+  .nm-lt-choice li { display:flex; gap:2.5mm; align-items:flex-start; line-height:1.55; }
+  .nm-lt-choice li i { font-style:normal; font-weight:800; color:#245b60; flex:0 0 auto; }
+  .nm-lt-choice.nm-lt-long { font-size:13px; }
+  .nm-lt-ops b { margin-left:1mm; color:#a3521c; }
+  .nm-lt-eq { display:flex; justify-content:center; align-items:center; gap:3mm; font-size:24px; font-weight:800; color:#20343b; }
+  .nm-lt-eq i { display:inline-block; font-style:normal; }
+  .nm-lt-eq .nm-lt-op { width:11mm; height:11mm; border:1.6px solid #245b60; border-radius:50%; line-height:11mm; text-align:center; font-size:18px; color:#b9c6c6; }
+  .nm-lt-eq .nm-lt-num { width:16mm; height:12mm; border:1.6px solid #245b60; border-radius:2.5mm; }
+  .nm-lt-eqbig { text-align:center; font-size:26px; font-weight:800; color:#245b60; margin-bottom:3mm; letter-spacing:.05em; }
+  .nm-lt-say { margin:0; padding-left:5mm; font-size:15px; line-height:2.1; color:#20343b; }
+  .nm-lt-dots { display:block; font-size:19px; letter-spacing:1.2mm; line-height:1.4; color:#20343b; word-break:break-all; }
+  .nm-lt-two { display:grid; grid-template-columns:1fr 1fr; gap:4mm; }
+  .nm-lt-two > div, .nm-lt-one, .nm-lt-empty { min-height:22mm; padding:2.5mm 3mm; border:1.3px solid #cfdcdc; border-radius:3mm; background:#fff; }
+  .nm-lt-two small, .nm-lt-one small, .nm-lt-rows small, .nm-lt-groups + small, .nm-lt-numline + small { display:block; margin-top:1.5mm; font-size:12px; color:#5c6b70; word-break:keep-all; }
+  .nm-lt-rows > div { display:grid; grid-template-columns:18mm 1fr; align-items:center; gap:2mm; }
+  .nm-lt-rows > div small { margin:0; font-weight:800; color:#245b60; }
+  .nm-lt-groups { display:flex; flex-wrap:wrap; gap:3mm; }
+  .nm-lt-group { min-width:26mm; min-height:16mm; padding:2mm; border:1.3px dashed #245b60; border-radius:3mm; background:#fff; }
+  .nm-lt-numline { display:block; width:100%; max-width:150mm; margin:0 auto; }
+  .nm-lt-ans { font-size:18px; font-weight:800; color:#20343b; text-align:center; }
+  .nm-lt-wordbank { display:flex; flex-wrap:wrap; gap:2.5mm; margin-bottom:3mm; }
+  .nm-lt-wordbank span { padding:1.2mm 3.5mm; border:1.4px solid #C9A063; border-radius:999px; background:#fdf6e3; font-size:13.5px; font-weight:700; color:#20343b; }
+  .nm-lt-fill { margin:0; font-size:14.5px; line-height:2.2; color:#20343b; word-break:keep-all; }
+  /* 쓰기 상자·유아 확대(2026-09-30, 원장 "학습지는 쓰기, 유아이니 크게, 나눠서 중요한 것만") */
+  .nm-lt-abox { display:inline-block; height:11mm; min-width:18mm; border:1.6px solid #245b60; border-radius:2.5mm; background:#fff; vertical-align:middle; }
+  .nm-lt-given { display:flex; flex-wrap:wrap; gap:4mm 10mm; margin-top:3mm; font-size:14.5px; color:#20343b; }
+  .nm-lt-given > div { display:flex; align-items:center; gap:2.5mm; }
+  .nm-lt-given b { font-weight:800; color:#245b60; }
+  .nm-lt-given em { font-style:normal; font-weight:700; }
+  .nm-lt-ans { display:flex; align-items:center; justify-content:center; gap:3mm; font-size:18px; font-weight:800; color:#20343b; }
+  .nm-lt-ans span { color:#245b60; }
+  .nm-lt-ans em { font-style:normal; }
+  .nm-lt-lines.nm-lt-big i { height:12mm; }
+  .nm-lt-opbig { display:flex; align-items:center; gap:6mm; justify-content:center; margin-top:1mm; }
+  .nm-lt-opbig i { width:18mm; height:18mm; border:2px solid #245b60; border-radius:50%; background:#fff; }
+  .nm-lt-opbig span { font-size:13px; color:#5c6b70; }
+  .nm-lt-check { display:flex; align-items:center; justify-content:center; gap:5mm; }
+  .nm-lt-wrong { padding:2.5mm 5mm; border:1.6px solid #D9534F; border-radius:3mm; color:#20343b; font-size:20px; font-weight:800; background:#fff; }
+  .nm-lt-check span { font-size:22px; color:#a3521c; font-weight:800; }
+  .nm-lt-check .nm-lt-abox { height:13mm; }
+  .nm-lt-infant .nm-lt-story p { font-size:18px; line-height:1.85; }
+  .nm-lt-infant .nm-lt-act h3 { font-size:17px; }
+  .nm-lt-infant .nm-lt-dots { font-size:24px; letter-spacing:1.8mm; }
+  .nm-lt-infant .nm-lt-abox { height:14mm; min-width:24mm; }
+  .nm-lt-infant .nm-lt-given, .nm-lt-infant .nm-lt-say, .nm-lt-infant .nm-lt-fill { font-size:16.5px; }
+  .nm-lt-infant .nm-lt-eq { font-size:30px; }
+  .nm-lt-infant .nm-lt-eq .nm-lt-num { width:20mm; height:15mm; }
+  .nm-lt-infant .nm-lt-eq .nm-lt-op { width:14mm; height:14mm; line-height:14mm; }
+  .nm-lt-infant .nm-lt-lines.nm-lt-big i { height:15mm; }
+  .nm-lt-infant .nm-lt-numline { max-width:170mm; }
+  .nm-lt-infant .nm-lt-note { font-size:12.5px; }
   .nm-lt-tag { display:inline-block; margin-right:2.5mm; padding:.5mm 2.5mm; border-radius:999px; background:#245b60; color:#fff; font-size:10.5px; font-weight:800; letter-spacing:.04em; vertical-align:2px;
     -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-lt-lines i { display:block; height:8mm; border-bottom:1px solid #b9c6c6; }
@@ -6015,7 +6076,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     const isInfant = +cv.courseNum === 0;
     const half = isInfant ? Math.ceil(((opts.courseSessions || 19) - 1) / 2) : 0;   // 19회차 → 9(열 번째 회차)부터
     const on = isInfant ? (sIdx != null && sIdx >= half) : true;
-    if(on) langHtml = NM_LANG_THINK.pageHtml(sIdx != null ? sIdx : mzHash(envelopeCode), envelopeCode, examLang(), cv.courseTitle, envelopeCode);
+    if(on) langHtml = NM_LANG_THINK.pageHtml(sIdx != null ? sIdx : mzHash(envelopeCode), envelopeCode, examLang(), cv.courseTitle, envelopeCode, isInfant);
   }
   const historyHtml = (opts.pacing || rBand === 'young') ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle, rBand);
   /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
