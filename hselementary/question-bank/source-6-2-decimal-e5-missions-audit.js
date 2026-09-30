@@ -21,6 +21,8 @@ assert.equal(review.secondarySourceIdentity.samePrintedWording, true);
 assert.equal(review.secondarySourceIdentity.handwrittenMarksPresent, false);
 assert.match(review.secondarySourceIdentity.sha256, /^[A-F0-9]{64}$/);
 assert.equal(review.officialAnswerEvidence, "not-available-for-these-items");
+assert.match(review.nonMatchingAnswerSource.sha256, /^[A-F0-9]{64}$/);
+assert.match(review.nonMatchingAnswerSource.reason, /not an answer key/);
 assert.equal(review.publicReleaseStatus, "partial");
 assert.equal(review.independentAnswerEvidence.officialAnswerClaimed, false);
 assert.deepEqual(review.missions.map(item => item.sourceItemId), Array.from({ length: 6 }, (_, i) => `6-2-u2-e5-mission-${i + 1}`));
@@ -60,6 +62,24 @@ for (const [index, reviewed] of review.missions.entries()) {
 assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").implementationStatus, "ambiguity-locked");
 assert.equal(review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").candidateVerification.sourceRelationship,
   "condition-clarified-adaptation", "원문에 없는 물살 조건을 더한 후보임을 명시");
+const referenceMinutes = 108n;
+const downstreamSpeedHundredths = 9360n * 60n / referenceMinutes;
+const currentSpeedHundredths = 4750n;
+assert.equal(downstreamSpeedHundredths, 5200n, "Mission 3: 93.6km를 1시간 48분에 간 빠르기");
+const stillWaterSpeedIfDownstream = downstreamSpeedHundredths - currentSpeedHundredths;
+assert.equal(stillWaterSpeedIfDownstream, 450n);
+assert(stillWaterSpeedIfDownstream - currentSpeedHundredths <= 0n,
+  "Mission 3: 앞선 이동이 하류라면 인쇄된 상류 이동은 불가능");
+const upstreamSpeedIfStillWater = downstreamSpeedHundredths - currentSpeedHundredths;
+assert.equal(1800n * 60n / upstreamSpeedIfStillWater, 240n,
+  "Mission 3: 앞선 빠르기가 물살 없는 곳의 빠르기라면 4시간이지만 원문 조건에는 없음");
+const mission3Interpretation = review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").interpretationAudit;
+assert.equal(mission3Interpretation.firstLegDirectionPrinted, false);
+assert.equal(mission3Interpretation.referenceSpeedKmh, Number(downstreamSpeedHundredths) / 100);
+assert.equal(mission3Interpretation.downstreamReadingUpstreamSpeedKmh,
+  Number(stillWaterSpeedIfDownstream - currentSpeedHundredths) / 100);
+assert.equal(mission3Interpretation.stillWaterReadingUpstreamSpeedKmh, Number(upstreamSpeedIfStillWater) / 100);
+assert.equal(mission3Interpretation.stillWaterReadingTimeHours, 4);
 assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").implementationStatus, "fixed-verified-pool");
 assert.match(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").visualRisk, /손글씨/);
 assert.equal(review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").overlapWith, "6-2-u2-e5-example-1");
@@ -75,4 +95,4 @@ assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").rev
 assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").reviewReason, "");
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").name, /참기름/);
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-6").name, /갤런/);
-console.log("6-2 개념탐구 5 Mission 6문항: 1·2·4 공개, 3 잠금, 5 공통 유형 연결, 6 잠금 검사 통과");
+console.log("6-2 개념탐구 5 Mission 6문항: 1·2·4 공개, 3 하류 해석 불가능·잠금, 5 공통 유형 연결, 6 잠금 검사 통과");
