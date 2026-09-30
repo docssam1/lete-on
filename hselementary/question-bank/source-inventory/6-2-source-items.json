@@ -1454,19 +1454,49 @@
       "reviewReason": "원문 그림과 독립 계산은 확인했으나 심화 교재 공식 답 대조와 실제 출제 화면 검수 전에는 공개하지 않습니다."
     },
     {
-      "sourceItemId": "6-2-u2-e3-exploration",
+      "sourceItemId": "6-2-u2-e3-exploration-1",
       "unitId": "6-2-u2",
       "exploration": 3,
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "나누는 수가 소수 첫째 자리인 나눗셈의 몫을 소수 둘째 자리까지 반올림하는 독립 소문항",
+      "answerContract": "rounded-quotient-hundredth",
+      "visualRisk": "몫의 셋째 자리에서 반올림한다는 조건과 소수 둘째 자리의 0을 혼동하지 않아야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산을 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-exploration-2",
+      "unitId": "6-2-u2",
+      "exploration": 3,
+      "section": "exploration",
+      "ordinal": 2,
+      "pdfPage": 20,
+      "printedPage": 22,
+      "sourceShape": "나누는 수가 소수 둘째 자리인 나눗셈의 몫을 소수 둘째 자리까지 반올림하는 독립 소문항",
+      "answerContract": "rounded-quotient-hundredth",
+      "visualRisk": "나누는 수와 몫의 소수점 자리를 바꾸어 읽지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "원문과 독립 계산을 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-exploration-3",
+      "unitId": "6-2-u2",
+      "exploration": 3,
+      "section": "exploration",
+      "ordinal": 3,
+      "pdfPage": 20,
+      "printedPage": 22,
+      "sourceShape": "몫이 1보다 작은 나눗셈의 몫을 소수 둘째 자리까지 반올림하는 독립 소문항",
+      "answerContract": "rounded-quotient-hundredth",
+      "visualRisk": "반올림한 몫이 0.90이 되며 마지막 0을 생략하지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "원문과 독립 계산을 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-example-1",
@@ -1476,12 +1506,12 @@
       "ordinal": 1,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "반올림한 소수 둘째 자리 몫의 모든 자리 수를 더하는 문제",
+      "answerContract": "rounded-quotient-digit-sum",
+      "visualRisk": "소수 둘째 자리와 몫의 자리 수 합을 서로 다른 계산 단계로 보여야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-example-2",
@@ -1491,12 +1521,12 @@
       "ordinal": 2,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "나누어지는 수의 한 자리 숫자 빈칸에 0부터 9까지 넣어 몫을 반올림했을 때 목표값이 되는 숫자 개수를 세는 문제",
+      "answerContract": "rounded-quotient-digit-count",
+      "visualRisk": "빈칸이 한 자리 숫자이고 반올림 자리가 소수 첫째 자리임을 분명히 해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 빈칸 전수 계산은 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-example-3",
@@ -1506,12 +1536,12 @@
       "ordinal": 3,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "같은 수를 서로 다른 세 소수로 나눈 몫 중 가장 큰 몫이 가장 작은 몫의 약 몇 배인지 비교하는 문제",
+      "answerContract": "largest-to-smallest-quotient-factor",
+      "visualRisk": "공통 수가 0일 경우 몫의 배수가 정의되지 않으므로 양수 조건이 필요함.",
+      "sourceVerified": true,
+      "implementationStatus": "source-condition-ambiguity-locked",
+      "reviewReason": "원본에 공통 수의 양수 조건이 없어 영인 경우 답이 정해지지 않습니다. 조건 보완 전에는 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-example-4",
@@ -1521,12 +1551,12 @@
       "ordinal": 4,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "한 봉지에 담을 수 있는 최대량으로 최소 봉지 수를 정한 뒤 전체를 같은 양으로 나누어 담는 문제",
+      "answerContract": "minimum-bag-count-equal-fill",
+      "visualRisk": "최소 봉지 수는 올림하고 실제 한 봉지의 양은 전체를 그 정수 봉지 수로 다시 나누어야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-1",

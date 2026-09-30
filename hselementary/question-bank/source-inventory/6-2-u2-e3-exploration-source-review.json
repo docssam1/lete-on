@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 20,
+    "printedPage": 22,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "sourceInstruction": "세 나눗셈의 몫을 각각 반올림하여 소수 둘째 자리까지 구함",
+  "sourceItems": [
+    { "sourceItemId": "6-2-u2-e3-exploration-1", "dividend": "21.8", "divisor": "3.2", "independentRounded": "6.81" },
+    { "sourceItemId": "6-2-u2-e3-exploration-2", "dividend": "20.5", "divisor": "3.21", "independentRounded": "6.39" },
+    { "sourceItemId": "6-2-u2-e3-exploration-3", "dividend": "27.72", "divisor": "30.7", "independentRounded": "0.90" }
+  ],
+  "commonType": "몫을 소수 둘째 자리까지 반올림하기",
+  "independentMath": {
+    "method": "Decimal operands converted to exact integer fractions; each rounded-hundredth interval exhaustively checked",
+    "candidateCountPerItem": 1,
+    "note": "셋째 식 주변의 손글씨는 인쇄된 답이 아니므로 답 근거에서 제외함"
+  },
+  "officialAnswerEvidence": "not-available-for-this-item",
+  "publicReleaseStatus": "locked",
+  "pending": ["심화 교재 공식 답 대조", "문항별 유사문항과 난이도 설계", "PC·모바일·A4 실제 출제 화면 검수"]
+}

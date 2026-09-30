@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 20,
+    "printedPage": 22,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "examples": [
+    {
+      "sourceItemId": "6-2-u2-e3-example-1",
+      "answerContract": "rounded-quotient-digit-sum",
+      "dividend": "4.7",
+      "divisor": "3.7",
+      "roundedQuotient": "1.27",
+      "independentAnswer": "10"
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-example-2",
+      "answerContract": "rounded-quotient-digit-count",
+      "dividendPattern": "1.□68",
+      "divisor": "2.34",
+      "targetRoundedTenth": "0.8",
+      "validDigits": [7, 8, 9],
+      "independentAnswer": "3",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE3Example2",
+        "fixedPoolCount": 3,
+        "independentEnumerationChecks": 360,
+        "desktopMobileFormulaAndGridChecks": 54,
+        "a4CandidatePages": 2,
+        "scope": "검수용 별도 화면이며 실제 문제은행 공개 화면 검수가 아님"
+      }
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-example-3",
+      "answerContract": "largest-to-smallest-quotient-factor",
+      "sameDividend": true,
+      "divisors": ["3.2", "5.6", "1.76"],
+      "roundedFactor": "3.18",
+      "sourceConditionRisk": "If the shared number is zero, every quotient is zero and the largest-to-smallest factor is undefined. A generated item must require a positive shared number.",
+      "publicReleaseStatus": "source-condition-ambiguity-locked"
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-example-4",
+      "answerContract": "minimum-bag-count-equal-fill",
+      "totalKg": "100.2",
+      "capacityKg": "4.22",
+      "minimumBags": 24,
+      "independentAnswerKg": "4.175"
+    }
+  ],
+  "officialAnswerEvidence": "not-available-for-these-items",
+  "publicReleaseStatus": "locked",
+  "pending": ["심화 교재 공식 답 대조", "예제별 난이도 설계와 나머지 유사문항", "예제 3의 양수 조건 명시", "PC·모바일·A4 실제 출제 화면 검수"]
+}
