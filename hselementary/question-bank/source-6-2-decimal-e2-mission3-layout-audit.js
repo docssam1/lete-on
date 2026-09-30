@@ -1,9 +1,20 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const { readFileSync } = require("node:fs");
+const path = require("node:path");
 const { chromium } = require("playwright");
-const url = process.env.HSE_URL || "http://127.0.0.1:8896/hselementary/question-bank/";
 const id = "6-2-u2-e2-mission-3";
+global.window = {};
+require("./source-inventory-grade6.js");
+require("./curriculum.js");
+require("./generators.js");
+const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
+  .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
+  .find(item => item.sourceItemId === id);
+assert(type?.reviewLocked, "공식 답 대조 전에는 공개 문항이 아님");
+const candidateType = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE2Mission3" };
+const style = readFileSync(path.join(__dirname, "source-6-2-overlap-triangles.css"), "utf8");
 
 async function inspect(page, view, width, difficulty) {
   const selector = `#${view} .source62-overlap-triangle-bases`;
@@ -51,16 +62,18 @@ async function inspect(page, view, width, difficulty) {
   try {
     for (const width of [1280, 390]) for (const difficulty of [-1, 0, 1]) {
       const page = await browser.newPage({ viewport: { width, height: 900 } });
-      await page.goto(`${url}?type=${id}&review=1&difficulty=${difficulty}`, { waitUntil: "domcontentloaded" });
-      await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible", timeout: 30000 });
+      const generated = [0, 1, 2].map(variant => window.HSE_GENERATORS.generate(candidateType, 0, difficulty, 1, variant));
+      const problemDiagrams = generated.map(item => item.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0]);
+      const solutionDiagrams = generated.map(item => item.answerVisual.match(/<svg[\s\S]*?<\/svg>/)?.[0]);
+      assert(problemDiagrams.every(Boolean) && solutionDiagrams.every(Boolean), "문제·정답 후보 그림 3개");
+      await page.setContent(`<!doctype html><html lang="ko"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}body{margin:0;padding:12px;font-family:"Malgun Gothic",sans-serif}#problemView,#solutionView{max-width:100%;padding:10px;border:1px solid #ddd}${style}</style><div id="problemView">${problemDiagrams.join("")}</div><div id="solutionView">${solutionDiagrams.join("")}</div></html>`);
       await page.evaluate(() => document.fonts.ready);
       count += await inspect(page, "problemView", width, difficulty);
-      await page.locator("#solutionTab").click();
       count += await inspect(page, "solutionView", width, difficulty);
       await page.close();
     }
   } finally {
     await browser.close();
   }
-  console.log(`6-2 겹친 삼각형 그림 검수 통과: PC·모바일 × 3난이도 × 문제·풀이 그림 ${count}개`);
+  console.log(`6-2 잠금 후보 그림 배치 검수 통과: PC·모바일 × 3난이도 × 문제·풀이 그림 ${count}개 (공개 화면 검수 아님)`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

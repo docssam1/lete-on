@@ -1403,8 +1403,8 @@
       "answerContract": "single-shared-height-triangle-base-difference",
       "visualRisk": "두 삼각형의 높이가 같다는 점, 밑변 ㄴ-ㅁ-ㄷ의 순서, 세 직각 표시, 길이 3.9cm와 구할 선분 ㄴㅁ이 분명해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "fixed-verified-pool",
-      "reviewReason": "",
+      "implementationStatus": "source-reviewed-release-locked",
+      "reviewReason": "심화 교재의 공식 답 자료가 없어 공개를 보류합니다. 독립 계산과 그림 검수는 완료했습니다.",
       "publicSourceItemId": "6-2-u2-e2-mission-3"
     },
     {
@@ -1415,12 +1415,12 @@
       "ordinal": 4,
       "pdfPage": 19,
       "printedPage": 21,
-      "sourceShape": "넓이가 다른 두 삼각형을 겹쳐 만든 전체 넓이와 주어진 짧은 선분으로 겹친 부분의 높이를 구하는 문제",
-      "answerContract": "length",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 삼각형 ㄱㄴㄷ과 ㄹㅁㅂ의 넓이, 겹친 전체 넓이와 밑변 ㅁㄷ을 이용하여 겹친 삼각형의 높이 ㅅㅇ을 구하는 문제",
+      "answerContract": "union-overlap-triangle-height",
+      "visualRisk": "두 큰 삼각형과 겹친 작은 삼각형, 밑변 ㅁㄷ의 범위, 교차점 ㅅ과 수선의 발 ㅇ, 직각 표시가 한눈에 구분되어야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "source-reviewed-release-locked",
+      "reviewReason": "원본 조건과 독립 계산은 확인했으나 심화 교재 공식 답, 문제와 답 그림 및 화면 검수가 남아 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-5",
