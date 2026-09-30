@@ -93,7 +93,7 @@
       "answerContract": "candle-remaining-length-to-hours-and-minutes",
       "independentCheck": "count-ten-minute-burn-intervals-then-convert-minutes",
       "overlapWith": "6-2-u2-e5-example-1",
-      "overlapDecision": "same burned-length-to-time method as example 5-1; retain this source item for provenance and use the verified common type rather than publishing a duplicate generator"
+      "overlapDecision": "same burned-length-to-time method as example 5-1; retain this source item for provenance and use verified common type pool 2 with the Mission 5 centimeter-only conditions rather than publishing a duplicate generator"
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-6",

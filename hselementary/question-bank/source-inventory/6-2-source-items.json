@@ -1984,7 +1984,8 @@
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "예제 5-1과 풀이 구조가 같아 별도 유형을 중복 출제하지 않습니다.",
-      "commonPublicTypeId": "6-2-u2-e5-example-1"
+      "commonPublicTypeId": "6-2-u2-e5-example-1",
+      "commonPublicVariant": 2
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-6",

@@ -270,7 +270,7 @@
     const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
     const commonType = type.commonPublicTypeId && typeById.get(type.commonPublicTypeId);
     if (commonType?.generator && !commonType.reviewLocked) {
-      const generated = generatorApi.generate(commonType, currentLevel().rank, state.difficulty, hash(`preview:${commonType.id}`), commonType.variant ?? 0);
+      const generated = generatorApi.generate(commonType, currentLevel().rank, state.difficulty, hash(`preview:${commonType.id}`), type.commonPublicVariant ?? commonType.variant ?? 0);
       if (!generated) return;
       const commonSourceLine = `<div class="type-preview-source"><b>공통 유형 예시</b><small>${source} · ${escapeHtml(commonType.sourceItemLabel || "공통 유형")}과 같은 풀이 방법</small></div>`;
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${commonSourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer class="type-preview-common-action"><span>같은 탐구의 양초 예제와 풀이가 같습니다.</span><button type="button" data-select-common-type="${escapeHtml(commonType.id)}">공통 유형 선택</button></footer>`;
