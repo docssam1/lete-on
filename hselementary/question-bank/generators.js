@@ -25212,6 +25212,111 @@
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE5Mission1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-1";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { sampleMinutes: 66, sampleDistanceHundredths: 418, targetHundredths: 4529, firstHundredths: 2347, secondHundredths: 2461 },
+        { sampleMinutes: 75, sampleDistanceHundredths: 525, targetHundredths: 4012, firstHundredths: 1936, secondHundredths: 2313 },
+        { sampleMinutes: 90, sampleDistanceHundredths: 540, targetHundredths: 3347, firstHundredths: 1904, secondHundredths: 1871 }
+      ][poolIndex];
+      const sampleHoursHundredths = data.sampleMinutes * 100 / 60;
+      const speedHundredths = data.sampleDistanceHundredths * 100 / sampleHoursHundredths;
+      const targetHundredths = level === 2 ? data.firstHundredths + data.secondHundredths : data.targetHundredths;
+      const roundedTenthsHours = Math.round(targetHundredths * 10 / speedHundredths);
+      if (![sampleHoursHundredths, speedHundredths, targetHundredths, roundedTenthsHours].every(Number.isInteger) || roundedTenthsHours <= 0) throw new Error(`${sourceItemId}: 거리·시간 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 2)}km`;
+      const hours = value => `${plainDecimal(value, 2)}시간`;
+      const answer = `${(roundedTenthsHours / 10).toFixed(1)}시간`;
+      const sample = level === 0
+        ? `미나는 걸어서 1시간에 ${km(speedHundredths)}를 갑니다.`
+        : `미나는 걸어서 ${Math.floor(data.sampleMinutes / 60)}시간 ${data.sampleMinutes % 60}분 동안 ${km(data.sampleDistanceHundredths)}를 갑니다.`;
+      const trip = level === 2
+        ? `같은 빠르기로 첫째 구간 ${km(data.firstHundredths)}와 둘째 구간 ${km(data.secondHundredths)}를 이어서 걸으면`
+        : `같은 빠르기로 ${km(targetHundredths)}를 걸으면`;
+      const prompt = `${sample} ${trip} 약 몇 시간이 걸릴까요? 시간을 소수 첫째 자리까지 반올림하여 나타내세요.`;
+      const difficultyDesign = ["hourly-distance-given", "source-time-distance", "two-leg-distance-before-rounding"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-walking-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>걷는 시간</strong>${row("1시간에 걷는 거리", km(speedHundredths))}${level === 2 ? row("전체 거리", km(targetHundredths)) : ""}${row("걸리는 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const speedStep = level === 0 ? "" : `1시간에 걷는 거리는 ${math(`${km(data.sampleDistanceHundredths)} ÷ ${hours(sampleHoursHundredths)} = ${km(speedHundredths)}`)}입니다. `;
+      const distanceStep = level === 2 ? `전체 거리는 ${math(`${km(data.firstHundredths)} + ${km(data.secondHundredths)} = ${km(targetHundredths)}`)}입니다. ` : "";
+      const solution = `${speedStep}${distanceStep}${math(`${km(targetHundredths)} ÷ (${km(speedHundredths)}/시간)`)}을 소수 첫째 자리까지 반올림하면 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Mission2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { aFuelMl: 2400, aDistanceHundredths: 3024, bFuelMl: 4600, bDistanceHundredths: 7245, hardFirstHundredths: 4232, hardSecondHundredths: 4462 },
+        { aFuelMl: 1500, aDistanceHundredths: 2160, bFuelMl: 2500, bDistanceHundredths: 5040, hardFirstHundredths: 2820, hardSecondHundredths: 2940 },
+        { aFuelMl: 1800, aDistanceHundredths: 2160, bFuelMl: 3200, bDistanceHundredths: 5760, hardFirstHundredths: 3360, hardSecondHundredths: 3552 }
+      ][poolIndex];
+      const bDistanceHundredths = level === 2 ? data.hardFirstHundredths + data.hardSecondHundredths : data.bDistanceHundredths;
+      const aPerLiterHundredths = data.aDistanceHundredths * 1000 / data.aFuelMl;
+      const bPerLiterHundredths = bDistanceHundredths * 1000 / data.bFuelMl;
+      const ratioHundredths = bPerLiterHundredths * 100 / aPerLiterHundredths;
+      if (![aPerLiterHundredths, bPerLiterHundredths, ratioHundredths].every(Number.isInteger) || ratioHundredths <= 100) throw new Error(`${sourceItemId}: 1L당 거리와 비교 순서가 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 2)}km`;
+      const liters = value => `${plainDecimal(value, 3)}L`;
+      const answer = `${plainDecimal(ratioHundredths, 2)}배`;
+      const sample = level === 0
+        ? `가 자동차는 휘발유 1L로 ${km(aPerLiterHundredths)}를, 나 자동차는 휘발유 1L로 ${km(bPerLiterHundredths)}를 갈 수 있습니다.`
+        : `가 자동차는 휘발유 ${liters(data.aFuelMl)}로 ${km(data.aDistanceHundredths)}를 갈 수 있습니다. 나 자동차는 휘발유 ${liters(data.bFuelMl)}로 ${level === 2 ? `첫째 구간 ${km(data.hardFirstHundredths)}와 둘째 구간 ${km(data.hardSecondHundredths)}를` : `${km(bDistanceHundredths)}를`} 갈 수 있습니다.`;
+      const prompt = `${sample} 휘발유 1L로 나 자동차가 갈 수 있는 거리는 가 자동차가 갈 수 있는 거리의 몇 배입니까?`;
+      const difficultyDesign = ["unit-distances-given", "source-fuel-distance-comparison", "second-car-two-leg-distance"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-car-ratio-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>휘발유 1L로 가는 거리</strong>${row("가 자동차", km(aPerLiterHundredths))}${row("나 자동차", km(bPerLiterHundredths))}${row("나 ÷ 가", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const distanceStep = level === 2 ? `나 자동차의 전체 거리는 ${math(`${km(data.hardFirstHundredths)} + ${km(data.hardSecondHundredths)} = ${km(bDistanceHundredths)}`)}입니다. ` : "";
+      const unitStep = level === 0 ? "" : `휘발유 1L로 가는 거리는 가 자동차가 ${math(`${km(data.aDistanceHundredths)} ÷ ${liters(data.aFuelMl)} = ${km(aPerLiterHundredths)}/L`)}, 나 자동차가 ${math(`${km(bDistanceHundredths)} ÷ ${liters(data.bFuelMl)} = ${km(bPerLiterHundredths)}/L`)}입니다. `;
+      const solution = `${distanceStep}${unitStep}나 자동차의 1L당 거리를 가 자동차의 1L당 거리로 나누면 ${math(`${km(bPerLiterHundredths)} ÷ ${km(aPerLiterHundredths)} = ${answer}`)}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Mission4({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-4";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { fullMl: 6000, fullMassG: 6110, usedMl: 1750, afterMassG: 4500, firstUsedMl: 1000, secondUsedMl: 750 },
+        { fullMl: 5000, fullMassG: 4920, usedMl: 1500, afterMassG: 3660, firstUsedMl: 600, secondUsedMl: 900 },
+        { fullMl: 7500, fullMassG: 7250, usedMl: 2250, afterMassG: 5270, firstUsedMl: 1000, secondUsedMl: 1250 }
+      ][poolIndex];
+      const densityGPerLiter = (data.fullMassG - data.afterMassG) * 1000 / data.usedMl;
+      const tareG = data.fullMassG - data.fullMl * densityGPerLiter / 1000;
+      const afterFirstMassG = data.fullMassG - data.firstUsedMl * densityGPerLiter / 1000;
+      const remainingMl = data.fullMl - data.usedMl;
+      if (![densityGPerLiter, tareG, afterFirstMassG, remainingMl].every(Number.isInteger)
+        || data.firstUsedMl + data.secondUsedMl !== data.usedMl || tareG <= 0
+        || tareG + remainingMl * densityGPerLiter / 1000 !== data.afterMassG) throw new Error(`${sourceItemId}: 무게와 참기름 양이 맞지 않습니다.`);
+      const liters = value => `${plainDecimal(value, 3)}L`;
+      const kg = value => `${plainDecimal(value, 3)}kg`;
+      const answer = kg(tareG);
+      const prompt = level === 0
+        ? `참기름 ${liters(data.fullMl)}가 들어 있는 통의 무게는 ${kg(data.fullMassG)}입니다. 참기름 1L의 무게는 ${kg(densityGPerLiter)}입니다. 빈 통의 무게는 몇 kg입니까?`
+        : level === 1
+          ? `참기름 ${liters(data.fullMl)}가 들어 있는 통의 무게는 ${kg(data.fullMassG)}입니다. 이 통에서 참기름 ${liters(data.usedMl)}를 사용한 뒤 무게는 ${kg(data.afterMassG)}이었습니다. 빈 통의 무게는 몇 kg입니까?`
+          : `처음 참기름 ${liters(data.fullMl)}가 들어 있었습니다. 참기름 ${liters(data.firstUsedMl)}를 사용한 뒤 통의 무게는 ${kg(afterFirstMassG)}, 참기름 ${liters(data.secondUsedMl)}를 더 사용한 뒤 통의 무게는 ${kg(data.afterMassG)}이었습니다. 빈 통의 무게는 몇 kg입니까?`;
+      const difficultyDesign = ["oil-unit-mass-given", "source-two-weighings", "two-stage-use-and-weighing"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-oil-container-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>빈 통의 무게</strong>${row("참기름 1L의 무게", kg(densityGPerLiter))}${row(level === 2 ? "남은 참기름" : "처음 참기름", liters(level === 2 ? remainingMl : data.fullMl))}${row("빈 통", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const densityStep = level === 0 ? "" : level === 1
+        ? `사용한 참기름 ${liters(data.usedMl)}의 무게는 ${math(`${kg(data.fullMassG)} − ${kg(data.afterMassG)} = ${kg(data.fullMassG - data.afterMassG)}`)}입니다. 참기름 1L의 무게는 ${math(`${kg(data.fullMassG - data.afterMassG)} ÷ ${liters(data.usedMl)} = ${kg(densityGPerLiter)}/L`)}입니다. `
+        : `두 번 잰 통의 무게 차이는 두 번째로 사용한 참기름의 무게이므로 ${math(`${kg(afterFirstMassG)} − ${kg(data.afterMassG)} = ${kg(afterFirstMassG - data.afterMassG)}`)}입니다. 참기름 1L의 무게는 ${math(`${kg(afterFirstMassG - data.afterMassG)} ÷ ${liters(data.secondUsedMl)} = ${kg(densityGPerLiter)}/L`)}입니다. `;
+      const tareStep = level === 2
+        ? `남은 참기름은 ${math(`${liters(data.fullMl)} − ${liters(data.firstUsedMl)} − ${liters(data.secondUsedMl)} = ${liters(remainingMl)}`)}입니다. 빈 통의 무게는 ${math(`${kg(data.afterMassG)} − ${liters(remainingMl)} × ${kg(densityGPerLiter)}/L = ${answer}`)}입니다.`
+        : `빈 통의 무게는 ${math(`${kg(data.fullMassG)} − ${liters(data.fullMl)} × ${kg(densityGPerLiter)}/L = ${answer}`)}입니다.`;
+      return result(prompt, answer, `${densityStep}${tareStep}`, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
