@@ -1,4 +1,4 @@
-/* A continuous cylindrical paper surface, approximated by adjacent DOM strips.
+/* One continuous paper surface, approximated by adjacent DOM strips.
  * No flat-leaf rotate animation: every strip has its own tangent and depth.
  * from/to are full-spread DOM snapshots (replace live canvases/videos first).
  * NMPageCurl.turn({container,from,to,direction:1|-1,narrow,onComplete,duration})
@@ -8,22 +8,30 @@
   'use strict';
   const activeTurns = new WeakMap();
   const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
-  const ease = t => t*t*(3-2*t);
+  // A soft start and landing without a fast central snap.
+  const ease = t => t-Math.sin(2*Math.PI*t)/(2*Math.PI)*.55;
   const round = x => Math.round(x*1000)/1000;
 
-  // Arc coordinate s remains continuous across every strip boundary.
-  // theta(s) = base + bend*(2s/width - 1).
-  // Integrating (cos(theta), sin(theta)) gives an inextensible cylinder arc.
+  // A rounded fold travels from the free edge to the binding. Material before
+  // it remains on the page; material after it settles onto the reverse side.
+  // Unlike rotating a whole arched leaf, this keeps the lift close to the book.
+  // Integrating unit-length tangents preserves one continuous physical sheet.
   function curve(width, progress, count) {
-    const q=clamp(progress,0,1),base=Math.PI*q;
-    const bend=Math.min(.96,base*.9,(Math.PI-base)*.9);
-    const theta0=base-bend,k=2*bend/width,points=[];
-    for(let i=0;i<=count;i++){
-      const s=width*i/count,theta=theta0+k*s;
-      const x=bend<.00001?s*Math.cos(base):(Math.sin(theta)-Math.sin(theta0))/k;
-      const z=bend<.00001?s*Math.sin(base):(Math.cos(theta0)-Math.cos(theta))/k;
-      points.push({s,x,z,theta});
+    const q=clamp(progress,0,1),base=Math.PI*q,band=width*.42;
+    const foldStart=width-(width+band)*q;
+    const angle=s=>{const u=clamp((s-foldStart)/band,0,1);return Math.PI*u*u*(3-2*u);};
+    const points=[{s:0,x:0,z:0,theta:angle(0)}];
+    let x=0,z=0;
+    const step=width/count,substep=step/8;
+    for(let i=1;i<=count;i++){
+      // Midpoint quadrature is stable and cheap: no DOM/layout reads in RAF.
+      for(let j=0;j<8;j++){
+        const theta=angle((i-1)*step+(j+.5)*substep);
+        x+=substep*Math.cos(theta);z+=substep*Math.sin(theta);
+      }
+      points.push({s:i*step,x,z,theta:angle(i*step)});
     }
+    const bend=(points[count].theta-points[0].theta)/2;
     return {progress:q,base,bend,points};
   }
 
@@ -77,17 +85,23 @@
     // A little material overlap seals subpixel seams under perspective. The
     // narrow-screen budget stays smaller while retaining a genuinely curved face.
     const count=narrow?32:42,arcWidth=width/count,overlap=1.25;
-    const duration=clamp(Number(opts.duration)||1100,700,1800);
+    const duration=clamp(Number(opts.duration)||1400,900,2000);
     const overlay=document.createElement('div');
     overlay.className='nm-curl-overlay';overlay.dataset.direction=backward?'backward':'forward';
     overlay.dataset.narrow=String(narrow);overlay.dataset.progress='0';
     overlay.setAttribute('aria-hidden','true');overlay.inert=true;
     overlay.style.setProperty('--curl-height',height+'px');
-    overlay.style.setProperty('--curl-perspective',Math.max(2400,width*5)+'px');
+    overlay.style.setProperty('--curl-perspective',Math.max(3600,width*8)+'px');
+
+    // Exactly one opaque substrate. The live incoming panel is hidden by CSS
+    // until completion, so live content cannot bleed through a second copy.
+    const underlay=document.createElement('div');underlay.className='nm-curl-underlay';
+    underlay.append(copy(narrow&&backward?from:to,fullWidth,height,narrow&&backward?displays.from:displays.to));
+    overlay.append(underlay);
 
     // The outgoing opposite page remains underneath the moving physical leaf.
     // On a single page, backward navigation reveals an incoming leaf over it.
-    if(!narrow||backward){
+    if(!narrow){
       const still=document.createElement('div');still.className='nm-curl-still';
       still.style.width=width+'px';still.style.height=height+'px';
       still.style.left=(!narrow&&backward?width:0)+'px';
@@ -109,14 +123,20 @@
       strip.dataset.strip=String(i);strip.style.width=faceWidth+'px';strip.style.height=height+'px';
       const front=document.createElement('div'),back=document.createElement('div');
       front.className='nm-curl-face is-front';back.className='nm-curl-face is-back';
-      const frontContent=frontMaster.cloneNode(true),backContent=backMaster.cloneNode(true);
+      const frontContent=frontMaster.cloneNode(true);
       frontContent.style.setProperty('left',-(narrow?s:width+s)+'px','important');
-      // On the back face local x runs in the opposite material direction.
-      // At progress=1 it lands at its original readable destination x.
-      backContent.style.setProperty('left',-(width-s-faceWidth)+'px','important');
+      // A desktop spread has a printed verso. A single-page mobile view uses
+      // unprinted paper behind the turning leaf: the next content is already
+      // present on the substrate, never duplicated on two visible surfaces.
+      if(!narrow){
+        const backContent=backMaster.cloneNode(true);
+        // Local x runs in the reverse material direction on the back face.
+        backContent.style.setProperty('left',-(width-s-faceWidth)+'px','important');
+        back.append(backContent);
+      }else back.classList.add('is-unprinted');
       const frontShade=document.createElement('span'),backShade=document.createElement('span');
       frontShade.className='nm-curl-shade';backShade.className='nm-curl-shade';
-      front.append(frontContent,frontShade);back.append(backContent,backShade);strip.append(front,back);
+      front.append(frontContent,frontShade);back.append(backShade);strip.append(front,back);
       if(i===count-1){const edge=document.createElement('span');edge.className='nm-curl-free-edge';strip.append(edge);}
       sheet.append(strip);strips.push({el:strip,frontShade,backShade});
     }
@@ -136,14 +156,14 @@
         entry.el.style.transform='translate3d('+round(spine+a.x)+'px,0,'+round(a.z+.45)+'px) rotateY('+round(angle)+'deg) scaleX('+round(chord/arcWidth)+')';
         entry.el.dataset.angle=String(round(angle));entry.el.dataset.depth=String(round(a.z));
         const grazing=1-Math.abs(Math.cos(theta));
-        entry.frontShade.style.opacity=String(round(pulse*(.04+grazing*.27)));
-        entry.backShade.style.opacity=String(round(pulse*(.025+grazing*.19)));
+        entry.frontShade.style.opacity=String(round(pulse*(.012+grazing*.17)));
+        entry.backShade.style.opacity=String(round(pulse*(.008+grazing*.12)));
         minAngle=Math.min(minAngle,angle);maxAngle=Math.max(maxAngle,angle);maxDepth=Math.max(maxDepth,a.z);
         minX=Math.min(minX,a.x,b.x);maxX=Math.max(maxX,a.x,b.x);
       }
       const shadowPad=width*.035*pulse,spread=Math.max(.045,(maxX-minX+shadowPad*2)/width);
       shadow.style.transform='translate3d('+round(spine+minX-shadowPad)+'px,0,0) scaleX('+round(spread)+')';
-      shadow.style.opacity=String(round(pulse*.35));
+      shadow.style.opacity=String(round(pulse*.22));
       overlay.dataset.progress=String(round(p));overlay.dataset.curveProgress=String(round(q));
       overlay.dataset.bend=String(round(shape.bend));
       latest={done:false,progress:p,curveProgress:q,bend:shape.bend,depth:maxDepth,angleSpread:maxAngle-minAngle,strips:count};

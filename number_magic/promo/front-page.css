@@ -27,3 +27,31 @@
 @media(max-width:700px){.book-cover-face:before{inset:19px}}
 @media(max-height:570px) and (min-width:701px){.book-cover-face:before{inset:12px}}
 @media(prefers-reduced-motion:reduce){.cover-equation,.cover-stars,.cover-math-caption{display:none}.cover-math-static{display:block}}
+/* A single leather-bound volume, not two loose offset sheets. */
+.closed-book{filter:drop-shadow(9px 22px 24px #0008);transform:none;transition:filter .4s}
+.closed-book:hover{transform:none;filter:drop-shadow(9px 25px 30px #0009)}
+.book-pages{inset:5px -6px -6px 8px;transform:none;border:1px solid #c7aa6b;border-radius:4px 10px 9px 3px;background:repeating-linear-gradient(0deg,#b49b68 0 1px,#e5d3a6 1px 2px);box-shadow:2px 3px 0 #123728}
+.book-cover-face{padding:17% 12% 12% 18%;background:#092d20 url('../assets/promo/grimoire-emerald.webp') center/100% 100% no-repeat;border:1px solid #baa36b70;border-radius:5px 10px 9px 5px;box-shadow:inset 1px 1px 1px #f8e7b144,inset -2px -2px 3px #07191088;transform:none}
+.book-cover-face:before{display:none}
+.cover-title{margin-top:12%;font-weight:600;color:#f0d596;text-shadow:0 1px 0 #fff0c455,0 2px 2px #010d08,0 5px 15px #010d0866}
+.cover-edition{font-size:clamp(9px,1vw,12px);color:#f5dfb4}
+.cover-name-ko{margin-top:8%;font-family:var(--serif);font-weight:500;color:#e8d2a0}
+.cover-art{margin-top:9%;min-height:75px}.cover-equation{left:0;right:0;top:0;bottom:24%;filter:none;font-family:var(--serif);font-weight:700}
+.cover-eq-line{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:.22em;opacity:0;will-change:transform,opacity;white-space:nowrap;text-shadow:0 0 18px #f5d98b66,0 0 40px #c9a06333}
+.cover-eq-op{font-size:.7em;font-weight:400;color:#f5d98b99}.cover-eq-line[data-equation=a]{opacity:1}
+.cover-math-caption{font-family:var(--serif);color:#e3cc9d;font-weight:400}.cover-logo{margin-top:4%;width:70px;height:24px}
+.cover-math-static{font-size:clamp(13px,2.5dvh,24px);white-space:nowrap}
+.scene-cover.is-opening .book-cover-face,.scene-cover.is-opening .closed-book{animation:none}
+.magic-book-app.is-book-opening .scene{transition:none}.magic-book-app.is-book-opening .scene-reader{pointer-events:none}
+.cover-opening-stage{position:fixed;inset:0;z-index:70;pointer-events:none;perspective:6000px;perspective-origin:50% 50%;contain:layout style;isolation:isolate}
+.cover-opening-board{position:absolute;left:0;top:0;transform-origin:0 0;transform-style:preserve-3d;will-change:transform}
+.cover-opening-board .book-cover-face{inset:0;backface-visibility:hidden;transform:translateZ(2px);width:100%;height:100%;animation:none!important}
+.cover-opening-board .cover-opening-back{position:absolute;inset:0;border-radius:5px 10px 9px 5px;backface-visibility:hidden;transform:rotateY(180deg) translateZ(2px);background:linear-gradient(90deg,#e3d8bc,#f6edd7 10%,#f7edda 92%,#cdbb94);border:6px solid #183d2a;box-shadow:inset 0 0 0 1px #bb9b5e,inset -15px 0 24px #61482718}
+.cover-opening-back:after{content:'✦';position:absolute;inset:0;display:grid;place-items:center;color:#b49354;font:40px var(--serif);opacity:.4}
+.is-shared-turn .book-content{position:absolute;left:0;right:0;top:var(--turn-content-top);height:var(--turn-content-height)}
+.is-shared-turn .book-toolbar{position:absolute;top:0;left:0;right:0;height:var(--turn-header-height)}
+.is-shared-turn .book-footer{position:absolute;bottom:0;left:0;right:0;height:var(--turn-footer-height)}
+.is-shared-turn .book-paper>.cinema-controls{position:absolute;bottom:var(--turn-footer-height);left:0;right:0;visibility:hidden}
+@media(max-width:700px){.book-cover-face{padding:17% 12% 12% 18%}.cover-title{font-size:clamp(32px,6.1dvh,57px)}.cover-name-ko{font-size:17px}.cover-art{min-height:70px}.cover-equation{font-size:clamp(28px,5.2dvh,43px)}.cover-math-caption{font-size:10px}.cover-logo{width:62px;height:21px}}
+@media(max-height:570px) and (min-width:701px){.book-cover-face{padding:16% 12% 11% 18%}.cover-title{font-size:6.6dvh;margin-top:9%}.cover-edition{font-size:7px}.cover-name-ko{font-size:11px;margin-top:6%}.cover-art{min-height:35px;margin-top:6%}.cover-equation{font-size:5.5dvh}.cover-math-caption{font-size:7px}.cover-logo{width:40px;height:14px}}
+@media(max-width:700px){.cover-logo{height:26px;min-height:26px;object-fit:contain;padding-block:2px}}

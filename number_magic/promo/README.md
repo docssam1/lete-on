@@ -18,8 +18,10 @@
 
 - `index.html`, `book.css`, `book.js`: 책, 양면 영상, 탐색, 학습지 확대, 실제 데이터 기반 로드맵.
 - `front-page.css`: 표지와 첫 장의 글꼴·위계. 첫 장 한글은 직접 제공하는 Pretendard 가변 글꼴을 쓴다(`assets/fonts/OFL-Pretendard.txt` 포함).
-- `cover-math.js`: `about.html:initHeroShow`의 DOM 수식·금빛 입자 연출을 사용자가 지정한 `5+7 → 2+3+7 → 2+10 → 12`로 조정했다. 원래 철학 페이지 예시는 `8+7 → 10+5 → 15`이며 원본은 변경하지 않았다. 책이 열리거나 탭이 숨으면 멈추고, 동작 줄이기에서는 전체 동치식이 보인다.
-- `page-curl.js/css`: 원통 곡면의 접선을 적분해 PC 42개·모바일 32개 종이 띠의 위치·깊이·각도를 정한다. 단일 평면 회전이 아니며 앞·뒷면에는 실제 지면의 정지 복제본을 붙인다. 완료·크기 변경·탭 숨김에는 복제본을 제거한다.
+- `cover-math.js`: 사용자 최종 지정은 `about.html`의 **수는, 펼치면 쉬워진다** 위 원본 연출이다. `8+7 → 10+5 → 15`, 7.4초 루프, 별 두 개의 7→8 이동과 15 완성 후 입자 퍼짐을 원본 그대로 사용한다. 이전 5+7 변형은 폐기했다. 책이 열리거나 탭이 숨으면 멈추고, 동작 줄이기에서는 전체 동치식이 보인다. `about.html` 원본은 변경하지 않는다.
+- `page-curl.js/css`: 국소 곡면의 접선을 적분해 PC 42개·모바일 32개 종이 띠의 위치·깊이·각도를 정한다. 1.4초 동안 하나의 불투명한 받침 위로 한 장만 넘어간다. PC 앞·뒷면에는 실제 지면, 모바일 단면 뒷면에는 무인쇄 종이를 사용해 다음 내용이 겹쳐 보이지 않게 한다. 완료·크기 변경·탭 숨김에는 복제본을 제거한다.
+- `book.js` 표지 열기는 하나의 앞·뒷표지가 책등을 축으로 1.4초에 걸쳐 열리며 영상 장으로 이어진다. 영상과 다른 장 사이에서는 넘김 중 책 크기를 고정하고, 종이가 내려앉은 뒤 0.62초에 걸쳐 목적 크기로 이동한다. 영상 복제본도 실제 재생 프레임과 원본 비율을 유지한다.
+- `../assets/promo/grimoire-emerald.webp`: built-in image generation으로 만든 비문자 표지 재질. 짙은 녹색 가죽과 금박 모서리만 이미지이며, 제목·원본 수식·로고는 실제 화면 요소다. 원본 PNG는 로컬 생성 폴더에 보존하고, 동일 이미지의 WebP(1080×1457)만 배포한다. 프롬프트: 아래 기록 참조.
 - `experience.js/css`: 광고용 개념 교구. 기존 앱의 교육과정이나 학습기록을 수정하지 않는다.
 - `village.html/js/css`: 실제 `app/town3d`와 캐릭터를 재사용하는 읽기 전용 마을. 메인 앱·구형 2D 메뉴는 불러오지 않는다.
 - `../assets/promo/samples-v4/manifest.json`: 실제 과정/회차/원래 쪽 번호/생성 코드 SHA와 발췌 근거.
@@ -45,3 +47,9 @@
 Playwright는 공용 `scripts/lib/playwright.js`를 사용한다. 필요하면 `NM_PLAYWRIGHT`, `NM_CHROMIUM` 환경변수로 실행 환경을 지정한다. `NM_PROMO_ARTIFACTS`를 지정하면 증거 캡처를 남긴다.
 
 검사 통과와 별개로 PC/390px/320px/휴대폰 가로 화면을 직접 본다. 책장 회전 중 3D 캡처, 각 조작 버튼, 문장제 실제 지면, 마을 왕복, 영상 재생을 확인한다. 실행하지 않은 검사는 통과로 보고하지 않는다.
+
+## 표지 재질 생성 기록
+
+2026-09-30, built-in image generation. 새 이미지 생성이며 기존 교재·영상·로고를 수정하지 않았다.
+
+> Create a single premium fantasy mathematics grimoire FRONT COVER MATERIAL texture for a real website book, portrait ratio approximately 0.74:1. Completely flat straight-on orthographic full-bleed texture, not a perspective mockup. Very dark emerald finely pebbled leather. Sophisticated finely tooled antique warm gold double border, delicate restrained Art Nouveau corner leaves, tiny star and mathematical compass motifs in corners only. Leftmost 6 percent darker polished leather hinge. Central 75 percent empty for HTML title and animated numbers. No text, letters, numbers, central illustration, book pages, multiple books, surrounding background or watermark. Soft neutral upper-left light; inviting high-end children's mathematics grimoire, not horror.
