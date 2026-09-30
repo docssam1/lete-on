@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 24,
+    "printedPage": 26,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "items": [
+    {
+      "sourceItemId": "6-2-u2-e5-exploration-1",
+      "answerContract": "fuel-distance-and-speed-to-travel-time",
+      "independentCheck": "fuel-to-distance-and-known-distance-to-speed-then-divide"
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-example-1",
+      "answerContract": "candle-burn-length-to-hours-and-minutes",
+      "independentCheck": "convert-length-to-millimeters-then-rate-to-total-minutes"
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-example-2",
+      "answerContract": "fuel-distance-ratio-to-total-cost",
+      "independentCheck": "distance-ratio-to-liters-then-multiply-price-per-liter"
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-example-3",
+      "answerContract": "combined-faucet-rates-to-minutes-and-seconds",
+      "independentCheck": "convert-both-durations-to-seconds-then-add-independent-flow-rates"
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-example-4",
+      "answerContract": "river-current-upstream-travel-time",
+      "independentCheck": "derive-current-speed-and-subtract-from-still-water-speed"
+    }
+  ],
+  "officialAnswerEvidence": "not-available-for-these-items",
+  "publicReleaseStatus": "locked",
+  "pending": [
+    "matching advanced-book official answer comparison",
+    "source-level variants and desktop/mobile/A4 worksheet validation"
+  ]
+}
