@@ -24435,6 +24435,138 @@
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE1Mission1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [dividend, divisor] = [[10.36, 1.4], [8.64, 1.2], [12.48, 1.6]][poolIndex];
+      const shifts = [[0.01, 1], [0.1, 0.01], [10, 1], [0.1, 1], [1, 0.1], [0.01, 0.01]];
+      const marks = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥"];
+      const decimal = value => String(Number(value.toFixed(4)));
+      const options = shifts.map(([numeratorScale, divisorScale], index) => ({
+        text: `${decimal(dividend * numeratorScale)} ÷ ${decimal(divisor * divisorScale)}`,
+        larger: numeratorScale > divisorScale,
+        mark: marks[index]
+      }));
+      const visible = level === 0 ? options.slice(0, 5) : options;
+      const answer = visible.filter(option => option.larger).map(option => option.mark).join(", ");
+      const choices = `<ol class="source62-decimal-choices" aria-label="나눗셈 보기">${visible.map(option => `<li><span>${option.mark}</span>${option.text}</li>`).join("")}</ol>`;
+      const target = decimal(dividend / divisor);
+      const instruction = level === 2 ? "몫이 같은 것은 제외하세요." : "";
+      return result(`${dividend} ÷ ${divisor}보다 몫이 큰 것을 모두 고르세요. ${instruction}${choices}`, answer,
+        `기준 몫은 ${target}입니다. 각 식의 몫을 비교하면 ${answer}의 몫만 ${target}보다 큽니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${choices}<p>${answer}</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        [[19.98, 2.22], [53.2, 3.5], [17.136, 1.36], [6.8, 0.4]],
+        [[14.3, 2.2], [43.4, 3.5], [13.8, 1.5], [30.4, 2]],
+        [[39.6, 2.2], [88.5, 3], [35.84, 1.6], [52.2, 2]]
+      ][poolIndex];
+      const [[a, b], [c, d], [e, f], [g, h]] = data;
+      const candidates = Array.from({ length: 100 }, (_, index) => index + 1).filter(value => a / b < value && value < c / d && e / f < value && value < g / h);
+      const answer = candidates.length;
+      const board = `<div class="source62-decimal-equations"><span>${a} ÷ ${b} &lt; □ &lt; ${c} ÷ ${d}</span><span>${e} ÷ ${f} &lt; □ &lt; ${g} ÷ ${h}</span></div>`;
+      const hint = level === 0 ? "두 범위에 모두 들어가는 자연수를 찾으세요." : level === 2 ? "두 부등식을 동시에 만족해야 합니다." : "";
+      return result(`□에 공통으로 들어갈 수 있는 자연수는 모두 몇 개인가요? ${hint}${board}`, answer,
+        `두 범위를 함께 만족하는 자연수는 ${candidates.join(", ")}이므로 ${answer}개입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${board}<p>${candidates.join(", ")} → ${answer}개</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-3";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [a, b, factor, c, d] = [[12.25, 2.8, 1.69, 18.56, 3.2], [12.6, 2.5, 2.4, 26.88, 4], [6.6, 2.4, 1.25, 13.2, 3.2]][poolIndex];
+      const candidates = Array.from({ length: 100 }, (_, index) => (index + 1) / 10).filter(value => a / b < value * factor && value * factor < c / d);
+      const answer = candidates.length;
+      const board = `<div class="source62-decimal-range">${a} ÷ ${b} &lt; ㉠ × ${factor} &lt; ${c} ÷ ${d}</div>`;
+      const hint = level === 0 ? "㉠은 소수 첫째 자리까지 나타낸 수입니다." : level === 2 ? "양쪽 몫을 구한 뒤 가능한 ㉠을 빠짐없이 세세요." : "";
+      return result(`㉠이 소수 첫째 자리까지 나타낸 양의 수일 때, 가능한 ㉠은 모두 몇 개인가요? ${hint}${board}`, answer,
+        `가능한 ㉠은 ${candidates.join(", ")}이므로 ${answer}개입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${board}<p>${candidates.join(", ")} → ${answer}개</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission4({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-4";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [head, middle, divisorTenths] = [[1, 6, 36], [2, 4, 24], [3, 5, 48]][poolIndex];
+      const pairs = [];
+      for (let a = 1; a <= 9; a += 1) for (let b = 1; b <= 9; b += 1) {
+        const digits = head * 1000 + a * 100 + middle * 10 + b;
+        if (digits % divisorTenths === 0 && digits / divisorTenths % 10 !== 0) pairs.push([a, b, digits / divisorTenths]);
+      }
+      if (!pairs.length) throw new Error(`${sourceItemId}: 가능한 자연수 쌍이 없습니다.`);
+      const answer = pairs.map(([a, b]) => `(${a}, ${b})`).join(", ");
+      const board = `<div class="source62-decimal-range">${head}.㉠${middle}㉡ ÷ ${divisorTenths / 10}</div>`;
+      const hint = level === 0 ? "㉠, ㉡은 각각 1부터 9까지의 자연수입니다." : level === 2 ? "두 자리 소수인 몫이 딱 나오도록 하세요." : "";
+      return result(`㉠, ㉡이 한 자리 자연수일 때 몫이 소수 둘째 자리에서 끝나도록 하는 순서쌍 (㉠, ㉡)을 모두 구하세요. ${hint}${board}`, answer,
+        `${head}.㉠${middle}㉡의 소수점을 없앤 네 자리 수는 ${divisorTenths}의 배수여야 합니다. 가능한 쌍은 ${answer}입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${board}<p>${pairs.map(([a, b, cents]) => `${head}.${a}${middle}${b} ÷ ${divisorTenths / 10} = ${(cents / 100).toFixed(2)}`).join("<br>")}</p><p>${answer}</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission5({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-5";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const cards = [[6, 7, 0, 1, 2, 5, 8], [0, 1, 3, 4, 5, 7, 9], [0, 3, 4, 5, 6, 8, 9]][poolIndex];
+      let best = null;
+      for (const a of cards) for (const b of cards) for (const c of cards) for (const d of cards) for (const e of cards) for (const f of cards) {
+        if (new Set([a, b, c, d, e, f]).size !== 6) continue;
+        const numerator = 100 * a + 10 * b + c;
+        const denominator = 100 * d + 10 * e + f;
+        if (!denominator) continue;
+        if (!best || numerator * best.denominator > best.numerator * denominator) best = { numerator, denominator, digits: [a, b, c, d, e, f] };
+      }
+      if (best.numerator % best.denominator !== 0) throw new Error(`${sourceItemId}: 몫이 자연수로 끝나지 않습니다.`);
+      const answer = best.numerator / best.denominator;
+      const divisors = [...new Set(cards.flatMap(a => cards.flatMap(b => cards.filter(c => new Set([a, b, c]).size === 3).map(c => 100 * a + 10 * b + c))))].filter(value => value > 0).sort((a, b) => a - b);
+      if (best.denominator !== divisors[0] || 1000 / divisors[1] >= answer) throw new Error(`${sourceItemId}: 가장 큰 몫의 증명이 성립하지 않습니다.`);
+      const cardRow = `<div class="source62-decimal-cards" aria-label="숫자 카드">${cards.map(digit => `<span>${digit}</span>`).join("")}</div>`;
+      const format = digits => `${digits[0]}.${digits[1]}${digits[2]}`;
+      const expression = `${format(best.digits.slice(0, 3))} ÷ ${format(best.digits.slice(3))}`;
+      const hint = level === 0 ? "0을 일의 자리에 놓아 0보다 큰 소수도 만들 수 있습니다." : level === 2 ? "한 장은 사용하지 않습니다." : "";
+      return result(`다음 숫자 카드 7장 중 6장을 한 번씩 써서 (소수 둘째 자리까지 나타낸 수) ÷ (소수 둘째 자리까지 나타낸 수)의 몫을 가장 크게 만드세요. 가장 큰 몫은 얼마인가요? ${hint}${cardRow}`, answer,
+        `나누는 수로 만들 수 있는 가장 작은 수는 ${divisors[0] / 100}, 다음으로 작은 수는 ${divisors[1] / 100}입니다. 다음으로 작은 수를 쓰면 몫은 10 ÷ ${divisors[1] / 100}보다 작습니다. 가장 작은 수를 나누는 수로 쓰고 남은 카드로 큰 수를 만들면 ${expression} = ${answer}입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${cardRow}<p>${expression} = ${answer}</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission6({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-6";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [cards, low, high, factor, divisor] = [
+        [[4, 2, 9, 8, 5], 7.6, 10.8, 3.2, 2.5],
+        [[3, 6, 8, 7, 4], 4.2, 5.2, 2.5, 3.2],
+        [[2, 5, 6, 9, 7], 9, 10, 3.6, 2.4]
+      ][poolIndex];
+      const candidates = [];
+      for (const a of cards) for (const b of cards) for (const c of cards) {
+        if (new Set([a, b, c]).size !== 3) continue;
+        const value = 100 * a + 10 * b + c;
+        if (value * Math.round(factor * 10) > Math.round(low * 10) * 10 * Math.round(divisor * 10) && value * Math.round(factor * 10) < Math.round(high * 10) * 10 * Math.round(divisor * 10)) candidates.push(`${a}.${b}${c}`);
+      }
+      candidates.sort((a, b) => Number(a) - Number(b));
+      const answer = candidates.length;
+      const cardRow = `<div class="source62-decimal-cards" aria-label="숫자 카드">${cards.map(digit => `<span>${digit}</span>`).join("")}</div>`;
+      const board = `<div class="source62-decimal-range">${low} &lt; ㉠ × ${factor} ÷ ${divisor} &lt; ${high}</div>`;
+      const hint = level === 0 ? "세 장은 각각 한 번만 씁니다." : level === 2 ? "경계값과 같은 수는 세지 않습니다." : "";
+      return result(`서로 다른 카드 3장을 사용해 소수 둘째 자리까지 나타낸 ㉠을 만듭니다. 다음 범위에 들어가는 ㉠은 모두 몇 개인가요? ${hint}${cardRow}${board}`, answer,
+        `조건을 만족하는 ㉠은 ${candidates.join(", ")}로 ${answer}개입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${cardRow}${board}<p>${candidates.join(", ")} → ${answer}개</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29282,6 +29414,12 @@
     [type => type.sourceItemId === "6-2-u2-e1-example-2", "sourceGrade6SecondDecimalDivisionE1DivisorRatio"],
     [type => type.sourceItemId === "6-2-u2-e1-example-3", "sourceGrade6SecondDecimalDivisionE1ThreeProducts"],
     [type => type.sourceItemId === "6-2-u2-e1-example-4", "sourceGrade6SecondDecimalDivisionE1Parts"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-1", "sourceGrade6SecondDecimalDivisionE1Mission1"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-2", "sourceGrade6SecondDecimalDivisionE1Mission2"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-3", "sourceGrade6SecondDecimalDivisionE1Mission3"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-4", "sourceGrade6SecondDecimalDivisionE1Mission4"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-5", "sourceGrade6SecondDecimalDivisionE1Mission5"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-6", "sourceGrade6SecondDecimalDivisionE1Mission6"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],

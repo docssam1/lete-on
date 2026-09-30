@@ -7,7 +7,7 @@ const { chromium } = require("playwright");
 
 const baseUrl = process.env.HSE_URL || "http://127.0.0.1:8896/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(os.tmpdir(), "hse-6-2-decimal-e1-browser-audit");
-const ids = ["6-2-u2-e1-exploration-1", "6-2-u2-e1-exploration-2", "6-2-u2-e1-example-1", "6-2-u2-e1-example-2", "6-2-u2-e1-example-3", "6-2-u2-e1-example-4"];
+const ids = process.env.HSE_AUDIT_IDS?.split(",") || ["6-2-u2-e1-exploration-1", "6-2-u2-e1-exploration-2", "6-2-u2-e1-example-1", "6-2-u2-e1-example-2", "6-2-u2-e1-example-3", "6-2-u2-e1-example-4", ...Array.from({ length: 6 }, (_, index) => `6-2-u2-e1-mission-${index + 1}`)];
 const failures = [];
 
 async function inspect(page, selector) {

@@ -1192,12 +1192,13 @@
       "ordinal": 1,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "여섯 소수 나눗셈의 몫을 기준 몫과 비교해 더 큰 식을 모두 고르는 문제",
+      "answerContract": "set-of-symbols",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-1"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-2",
@@ -1207,12 +1208,13 @@
       "ordinal": 2,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "두 개의 소수 나눗셈 부등식에 공통으로 들어가는 자연수의 개수를 구하는 문제",
+      "answerContract": "count",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-2"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-3",
@@ -1222,12 +1224,13 @@
       "ordinal": 3,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "소수 곱셈식이 두 나눗셈 몫 사이에 놓이도록 하는 한 자리 소수의 개수를 구하는 문제",
+      "answerContract": "count",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-3"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-4",
@@ -1237,12 +1240,13 @@
       "ordinal": 4,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "소수의 두 빈 자리에 한 자리 자연수를 넣어 몫이 소수 둘째 자리에서 끝나도록 하는 순서쌍 문제",
+      "answerContract": "ordered-pairs",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-4"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-5",
@@ -1252,12 +1256,13 @@
       "ordinal": 5,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "일곱 숫자 카드 중 여섯 장으로 두 자리 소수의 나눗셈을 만들어 몫을 최대로 하는 문제",
+      "answerContract": "maximum-quotient",
+      "visualRisk": "일곱 숫자 카드를 모두 보여주고 그중 여섯 장만 쓰도록 해야 함. 0.12처럼 일의 자리가 0인 소수를 허용하는지 문장과 풀이가 일치해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-5"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-6",
@@ -1267,12 +1272,13 @@
       "ordinal": 6,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "다섯 숫자 카드 중 세 장으로 두 자리 소수를 만들어 곱셈·나눗셈 범위를 만족하는 수의 개수를 구하는 문제",
+      "answerContract": "count",
+      "visualRisk": "다섯 숫자 카드와 열린 부등식의 두 경계를 선명하게 보여주고 답 후보를 수의 크기 순서로 적어야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-6"
     },
     {
       "sourceItemId": "6-2-u2-e2-exploration",
