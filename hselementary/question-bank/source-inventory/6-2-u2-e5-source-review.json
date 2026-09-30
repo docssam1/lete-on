@@ -28,7 +28,7 @@
         "generator": "sourceGrade6SecondDecimalDivisionE5Example1",
         "difficultyDesign": ["lengths-in-millimeters", "source-centimeters-to-millimeters", "extinguished-time-extra-step"],
         "fixedPoolCount": 3,
-        "publicReleaseStatus": "locked"
+        "publicReleaseStatus": "verified"
       }
     },
     {
@@ -66,9 +66,14 @@
     }
   ],
   "officialAnswerEvidence": "not-available-for-these-items",
-  "publicReleaseStatus": "locked",
+  "independentAnswerEvidence": {
+    "verifiedItemId": "6-2-u2-e5-example-1",
+    "method": "source unit conversion, independent integer arithmetic, Claude CLI comparison with Mission 5, real worksheet desktop/mobile/A4 inspection",
+    "officialAnswerClaimed": false
+  },
+  "publicReleaseStatus": "partial",
   "pending": [
-    "matching advanced-book official answer comparison",
-    "source-level variants and desktop/mobile/A4 worksheet validation"
+    "matching advanced-book official answer comparison if a valid key is found",
+    "other exploration and examples remain locked"
   ]
 }

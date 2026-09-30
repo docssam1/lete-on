@@ -25,7 +25,7 @@
         "generator": "sourceGrade6SecondDecimalDivisionE5Mission1",
         "difficultyDesign": ["hourly-distance-given", "source-time-distance", "two-leg-distance-before-rounding"],
         "fixedPoolCount": 3,
-        "publicReleaseStatus": "locked"
+        "publicReleaseStatus": "verified"
       }
     },
     {
@@ -36,14 +36,14 @@
         "generator": "sourceGrade6SecondDecimalDivisionE5Mission2",
         "difficultyDesign": ["unit-distances-given", "source-fuel-distance-comparison", "second-car-two-leg-distance"],
         "fixedPoolCount": 3,
-        "publicReleaseStatus": "locked"
+        "publicReleaseStatus": "verified"
       }
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-3",
       "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
       "independentCheck": "convert-reference-minutes-to-hours-and-subtract-current-speed",
-      "risk": "The reference salmon distance is not explicitly stated to be in still water. If it is downstream, the salmon cannot make the printed upstream trip at these speeds; if it is still-water distance, the handwritten time conflicts with independent calculation.",
+      "risk": "The initial 93.6 km direction is unstated. The user reads it as downstream: 52 km/h downstream minus 47.5 km/h current leaves 4.5 km/h still-water speed, so the printed 18 km upstream trip is impossible. If the initial speed instead means still water, the independently calculated four hours conflicts with the non-authoritative handwritten answer. Keep locked; do not silently rewrite either direction.",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Mission3",
         "sourceRelationship": "condition-clarified-adaptation",
@@ -56,12 +56,12 @@
       "sourceItemId": "6-2-u2-e5-mission-4",
       "answerContract": "container-tare-from-oil-mass-change",
       "independentCheck": "derive-oil-mass-per-liter-from-before-and-after-weights",
-      "risk": "Handwritten tare does not match either the direct empty-container calculation or the back-substitution into the second weighing.",
+      "risk": "A non-authoritative handwritten tare conflicts with both direct calculation and back-substitution; the clean scan has no handwriting.",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Mission4",
         "difficultyDesign": ["oil-unit-mass-given", "source-two-weighings", "two-stage-use-and-weighing"],
         "fixedPoolCount": 3,
-        "publicReleaseStatus": "locked"
+        "publicReleaseStatus": "verified"
       }
     },
     {
@@ -69,7 +69,7 @@
       "answerContract": "candle-remaining-length-to-hours-and-minutes",
       "independentCheck": "count-ten-minute-burn-intervals-then-convert-minutes",
       "overlapWith": "6-2-u2-e5-example-1",
-      "overlapDecision": "same burned-length-to-time method as example 5-1; retain this source item for provenance but do not publish a duplicate generator"
+      "overlapDecision": "same burned-length-to-time method as example 5-1; retain this source item for provenance and use the verified common type rather than publishing a duplicate generator"
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-6",
@@ -79,11 +79,15 @@
     }
   ],
   "officialAnswerEvidence": "not-available-for-these-items",
-  "publicReleaseStatus": "locked",
+  "independentAnswerEvidence": {
+    "status": "verified-for-missions-1-2-4-and-common-candle-type",
+    "method": "source wording in two scans, independent integer arithmetic and back-substitution, Claude CLI second calculation, real worksheet desktop/mobile/A4 inspection",
+    "officialAnswerClaimed": false
+  },
+  "publicReleaseStatus": "partial",
   "pending": [
-    "matching advanced-book official answer comparison",
     "mission 3 reference-speed condition resolution",
-    "mission 4 handwritten-answer conflict resolution",
-    "source-level variants and desktop/mobile/A4 worksheet validation"
+    "matching advanced-book official answer comparison if a valid key is found",
+    "mission 6 remains outside this review"
   ]
 }
