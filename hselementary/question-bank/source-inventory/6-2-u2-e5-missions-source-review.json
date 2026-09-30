@@ -12,12 +12,24 @@
     {
       "sourceItemId": "6-2-u2-e5-mission-1",
       "answerContract": "walking-speed-to-rounded-travel-hours",
-      "independentCheck": "convert-minutes-to-hours-then-round-final-time-only"
+      "independentCheck": "convert-minutes-to-hours-then-round-final-time-only",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission1",
+        "difficultyDesign": ["hourly-distance-given", "source-time-distance", "two-leg-distance-before-rounding"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-2",
       "answerContract": "compare-second-car-per-liter-distance-to-first",
-      "independentCheck": "compare-two-unit-distances-in-the-stated-direction"
+      "independentCheck": "compare-two-unit-distances-in-the-stated-direction",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission2",
+        "difficultyDesign": ["unit-distances-given", "source-fuel-distance-comparison", "second-car-two-leg-distance"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-3",
@@ -29,12 +41,20 @@
       "sourceItemId": "6-2-u2-e5-mission-4",
       "answerContract": "container-tare-from-oil-mass-change",
       "independentCheck": "derive-oil-mass-per-liter-from-before-and-after-weights",
-      "risk": "Handwritten tare does not match either the direct empty-container calculation or the back-substitution into the second weighing."
+      "risk": "Handwritten tare does not match either the direct empty-container calculation or the back-substitution into the second weighing.",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission4",
+        "difficultyDesign": ["oil-unit-mass-given", "source-two-weighings", "two-stage-use-and-weighing"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-5",
       "answerContract": "candle-remaining-length-to-hours-and-minutes",
-      "independentCheck": "count-ten-minute-burn-intervals-then-convert-minutes"
+      "independentCheck": "count-ten-minute-burn-intervals-then-convert-minutes",
+      "overlapWith": "6-2-u2-e5-example-1",
+      "overlapDecision": "same burned-length-to-time method; keep source item but avoid a second standalone type before deduplication review"
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-6",
