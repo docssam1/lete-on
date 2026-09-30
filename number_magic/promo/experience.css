@@ -14,6 +14,7 @@
 .nm-experience__controls button:hover:not(:disabled){background:#e8f3e8;border-color:#6e9b81;transform:translateY(-1px)}
 .nm-experience__controls button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #e0ded1}
 .nm-experience__controls button[aria-pressed=true]{background:#225e50;color:white;border-color:#225e50;box-shadow:0 3px 0 #174336}
+.nm-experience__controls button[aria-pressed=true]:hover:not(:disabled){background:#194c41;color:#fff;border-color:#194c41}
 .nm-experience__controls button:disabled{opacity:.38;cursor:default;box-shadow:none}
 .nm-experience__controls button:focus-visible,.nm-experience__controls input:focus-visible{outline:3px solid #ca9440;outline-offset:3px}
 .nm-experience__controls .nm-experience__next{background:transparent;border-color:transparent;box-shadow:none;font-size:12px;text-decoration:underline;text-underline-offset:4px}
