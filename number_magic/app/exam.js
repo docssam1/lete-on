@@ -511,6 +511,21 @@
   .nm-mzs-lines i { display:block; height:7.5mm; border-bottom:1px solid #d6dfe0; }
   /* 남는 높이는 덩어리 사이에 고르게 — 한곳에 몰린 빈칸이 없게 */
   .nm-mzs-page > .nm-mzs-story, .nm-mzs-page > .nm-mzs-sec, .nm-mzs-page > .nm-mzs-play, .nm-mzs-page > .nm-mzs-write { margin-top:auto; }
+  /* 나이대별 글씨(2026-09-30, 원장 "글자 수·크기·간격을 난이도·나이·과정에 따라") — 유아·초1~2는 문제 지면과
+     같은 비율로 키우고(문장제 1.15em 과 같은 감각), 이야기 카드를 그림 쪽으로 더 준다. 초5 이상·중·고는 조금 조인다.
+     기준은 시트의 .nm-print-age-*(문제의 수 크기로 정한다 — 초1 뺄셈에 173 이 나오면 mid)가 아니라 **과정의 나이대**
+     (readingAgeBand → 지면 클래스 .nm-mzs-age-*). */
+  .nm-mzs-age-young .nm-mzs-title { font-size:31px; }
+  .nm-mzs-age-young .nm-mzs-sub { font-size:13.5px; line-height:1.7; }
+  .nm-mzs-age-young .nm-mzs-story { grid-template-columns:80mm 1fr; padding:4mm 5mm; }
+  .nm-mzs-age-young .nm-mzs-story-txt h3 { font-size:16px; }
+  .nm-mzs-age-young .nm-mzs-story-txt p { font-size:14px; line-height:1.85; }
+  .nm-mzs-age-young .nm-mzs-strip figcaption { font-size:13.5px; line-height:1.7; }
+  .nm-mzs-age-young .nm-mzs-strip figcaption i { width:5.2mm; height:5.2mm; font-size:9.5px; }
+  .nm-mzs-age-young .nm-mzs-write h3 { font-size:15px; line-height:1.6; }
+  .nm-mzs-talk { padding-bottom:3mm; background:#f7faf9; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-mzs-age-senior .nm-mzs-story-txt p { font-size:11.5px; line-height:1.68; }
+  .nm-mzs-age-senior .nm-mzs-strip figcaption { font-size:11px; line-height:1.6; }
   .nm-mzs-strip { flex:0 0 auto; }
   .nm-hist-labs { flex:0 0 auto; margin-top:6mm; padding-top:5mm; border-top:1px solid #E4E2DC; }
   .nm-hist-labs-t { font-size:11px; font-weight:800; color:#0E2C57; margin-bottom:4mm; }
@@ -2011,6 +2026,20 @@ function mzHash(str){
   h ^= h >>> 13; h = Math.imul(h, 3266489909) >>> 0;
   return (h ^ (h >>> 16)) >>> 0;
 }
+/* 읽을거리의 나이대(2026-09-30) — 주간 학습지는 과정의 단계로 정한다: 유아·계산의 새싹(과정 0~10) young ·
+   초3~4(11~25) mid · 경시·중·고 senior. 시트의 printAgeBand 는 문제의 수 크기로 정해서 초1 뺄셈에 173 이 나오면
+   mid, 중1 정수 단원은 mid 로 잡혔다 — 문제 글씨엔 맞지만 읽을거리·매거진 고르기엔 맞지 않는다. 과정 번호가
+   없으면(편지함 단일 인쇄) 종전대로 printAgeBand. */
+function readingAgeBand(opts, items, problems){
+  const num = opts && opts.cover && opts.cover.courseNum;
+  const spec = (num != null) && (window.NM_COURSE_SPEC || []).find(c => c.id === +num);
+  if(spec){
+    if(/^level[01]$/.test(spec.tier)) return 'young';
+    if(/^level[23]$/.test(spec.tier)) return 'mid';
+    return 'senior';
+  }
+  return printAgeBand(items && items[0], problems);
+}
 function w2MagazinePick(items, band, code){
   const M = window.NM_MAGAZINE;
   const list = (M && M.articles) || [];
@@ -2027,10 +2056,13 @@ function w2MagazinePick(items, band, code){
     return (f.threads || []).some(t => threads[t]) || (f.units || []).some(u => units[u]);
   });
   if(hit.length) return hit[mzHash(code) % hit.length];
-  /* ② 나이대가 맞는 것 중에서 봉투 코드로 돌린다 */
+  /* ② 나이대가 맞는 것 중에서 봉투 코드로 돌린다. **맞는 글이 없으면 지면을 만들지 않는다** —
+     전에는 전체 목록으로 물러나서 초1 학습지에 삼각형의 외심(기와 복원) 기사가 실렸고 그 장이
+     광고 견본에까지 들어갔다(2026-09-30, 원장 "6살 학습지에 외심에 대한 수학사가 나와").
+     읽을거리는 있으면 싣는 것이지 반드시 있어야 하는 것이 아니다. */
   const pool = list.filter(a => (a.age || []).indexOf(band) >= 0);
-  const use = pool.length ? pool : list;
-  return use[mzHash(code) % use.length];
+  if(!pool.length) return null;
+  return pool[mzHash(code) % pool.length];
 }
 /* 매거진 글에는 강조용 <b> 가 들어 있다 — 그대로 esc 하면 태그가 글자로 찍혔다(2026-09-28).
    이스케이프한 뒤 <b>·</b> 만 되살린다(다른 태그는 여전히 글자). */
@@ -2057,7 +2089,10 @@ function w2MagazinePageHtml(items, code, band){
 </div>`;
 }
 
-function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
+/* band(2026-09-30): 나이대별 지면 — young(유아·초1~2)은 글 대신 말로 되짚는 "이야기해 보세요" 칸,
+   글씨는 CSS(.nm-mzs-age-young .nm-mzs-*)가 키운다. mid·senior 는 "읽고 적어요" 줄. */
+function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle, band){
+  const young = band === 'young';
   const comics = window.NM_COMICS || {};
   const labData = (window.NM_LABS && window.NM_LABS.byUnit) || {};
   const labList = (window.NM_LABS && window.NM_LABS.list) || [];
@@ -2139,11 +2174,16 @@ function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle){
     <div class="nm-mzs-mini">${esc(lk('PLAY · 손으로 움직여 보기', 'PLAY · Try it with your hands', 'PLAY · 动手试一试'))}</div>
     <div class="nm-hist-labs-body">${labs}</div>
   </div>` : '';
-  const writeHtml = open ? `<div class="nm-mzs-write">
+  const writeHtml = !comic ? '' : young ? `<div class="nm-mzs-write nm-mzs-talk">
+    <div class="nm-mzs-mini">${esc(lk('이야기해 보세요', 'Tell the story', '说一说'))}</div>
+    <h3>${esc(lk('그림을 보고 이야기를 다시 들려주세요. 가장 재미있던 장면은 어디예요?',
+      'Look at the pictures and tell the story again. Which part did you like best?',
+      '看着图把故事再讲一遍。你最喜欢哪一格？'))}</h3>
+  </div>` : `<div class="nm-mzs-write">
     <div class="nm-mzs-mini">${esc(lk('읽고 적어요', 'Read and write', '读一读，写一写'))}</div>
     <h3>${esc(open)}</h3><div class="nm-mzs-lines"><i></i><i></i><i></i></div>
-  </div>` : '';
-  return `<div class="nm-w2-page nm-hist-page nm-mzs-page">
+  </div>`;
+  return `<div class="nm-w2-page nm-hist-page nm-mzs-page nm-mzs-age-${esc(band || 'mid')}">
   <div class="nm-mzs-band"><b>${esc(lk('수학 이야기', 'Math Story', '数学故事'))}</b><span>${esc(topicName && topicName !== mzTitle ? topicName : 'Numbers of Magic')}</span></div>
   <div class="nm-mzs-dash"></div>
   <h2 class="nm-mzs-title">${esc(mzTitle)}</h2>
@@ -5905,14 +5945,14 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   /* 수학사 지면은 문제 뒤·정답지 앞. 해당하는 만화도 실험실도 없으면 빈 문자열이라 지면이 안 생긴다.
      표지보다 먼저 만든다 — 표지의 쪽 수·목차가 이 지면의 유무를 알아야 한다(2026-09-06).
      opts.units: 과정의 마법 유닛 목록(ws.html) — 스레드로 만화를 못 찾을 때의 대안. */
-  const historyHtml = opts.pacing ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle);
+  const historyHtml = opts.pacing ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle, readingAgeBand(opts, items, allProblems));
   /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
   const paperHtml = opts.pacing ? '' : w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
   /* 매거진 지면 — 만화 다음, 종이 교구 앞(2026-09-20). 회차 상황과 나이대로 고르고 봉투 코드로
      돌린다(과정 번호는 안 쓴다). 주간 학습지(표지가 있는 것)에만 싣는다 — 편지함 편집기가 한 회차만
      뽑을 때까지 읽을거리를 딸려 보내면 문제보다 읽을거리가 많아진다. */
   const magazineHtml = opts.cover && !opts.pacing
-    ? w2MagazinePageHtml(items, envelopeCode, printAgeBand(items[0], allProblems)) : '';
+    ? w2MagazinePageHtml(items, envelopeCode, readingAgeBand(opts, items, allProblems)) : '';
   const extraPages = (historyHtml ? 1 : 0) + (magazineHtml ? 1 : 0) + (paperHtml ? 1 : 0);
   const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true });
   const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!historyHtml, magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true })
