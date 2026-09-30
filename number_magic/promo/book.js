@@ -35,6 +35,7 @@ function setCut(key,autoplay){if(!cuts[key])return;activeCut=key;const c=cuts[ke
 function frameActive(active){if(frame.getAttribute('src'))frame.contentWindow.postMessage({type:'nm-promo-active',active},location.origin);}
 function prepare(next,autoplay){
  if(window.NMCoverMath)window.NMCoverMath.setActive(next==='cover');
+ $('#cinemaControls').hidden=next!=='video';
  teaser.pause();film.pause();
  stopTour();clearInterval(exampleTimer);
  if(hero)hero.setActive(false);if(lab)lab.setActive(false);frameActive(false);

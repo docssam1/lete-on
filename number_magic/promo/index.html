@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="../assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="book.css?v=20260930-4"><link rel="stylesheet" href="experience.css?v=20260930-5">
+<link rel="stylesheet" href="book.css?v=20260930-7"><link rel="stylesheet" href="experience.css?v=20260930-5">
 <link rel="stylesheet" href="front-page.css?v=20260930-6"><link rel="stylesheet" href="page-curl.css?v=20260930-6">
 </head>
 <body>
@@ -42,7 +42,6 @@
 <video id="introVideo" playsinline preload="none" poster="../assets/promo/video/poster-full.jpg" controlslist="nodownload noremoteplayback" disablepictureinpicture aria-label="수의 마법 소개 영상"></video>
 <div class="cut-switch" role="group" aria-label="소개 영상 선택"><button data-cut="full" aria-pressed="true">전체 영상</button><button data-cut="short" aria-pressed="false">짧은 영상</button></div>
 <button id="cinemaPlay" class="cinema-play" aria-label="소개 영상 재생">▶</button><div id="videoFinish" class="video-finish" hidden><button class="primary-button light" data-route="worksheet">실제 학습지 펼쳐 보기 →</button></div>
-<div class="cinema-controls"><button id="playToggle" aria-label="재생">▶</button><input id="videoProgress" type="range" min="0" max="1000" value="0" aria-label="영상 재생 위치"><span id="videoTime">0:00</span><button id="muteToggle" aria-label="음소거">♪</button></div>
 </section>
 <section class="book-panel panel-labs" data-panel="labs" aria-labelledby="labsTitle" hidden inert>
 <header class="section-heading"><div><p>눈으로 발견하고, 손으로 이해하는 수학</p><h2 id="labsTitle" tabindex="-1">두 친구에게 똑같이 나누어 주세요.</h2></div><div class="level-tabs" aria-label="체험 단계"><button data-level="preschool" aria-pressed="true">유아</button><button data-level="elementary" aria-pressed="false">초등</button><button data-level="middle" aria-pressed="false">중등</button><button data-level="high" aria-pressed="false">고등</button></div></header>
@@ -61,6 +60,7 @@
 <footer class="roadmap-footer"><a href="../index.html" class="primary-button">마법의 마을 들어가기 ↗</a><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener" class="text-button">우리 아이 시작점 상담 ↗</a></footer>
 </section>
 </div>
+<div class="cinema-controls" id="cinemaControls" role="group" aria-label="소개 영상 재생 조작" hidden><button id="playToggle" aria-label="재생">▶</button><input id="videoProgress" type="range" min="0" max="1000" value="0" aria-label="영상 재생 위치"><span id="videoTime">0:00</span><button id="muteToggle" aria-label="음소거">♪</button></div>
 <footer class="book-footer"><button class="edge-turn" id="bookBack" aria-label="이전 책장">‹</button><nav class="chapter-nav" aria-label="책의 차례"><button data-route="menu">첫 장</button><button data-route="video">영상</button><button data-route="labs">체험</button><button data-route="village">마을</button><button data-route="worksheet">학습지</button><button data-route="roadmap">로드맵</button></nav><button class="edge-turn" id="bookNext" aria-label="다음 책장">›</button></footer>
 </div></div>
 </section>
@@ -68,5 +68,5 @@
 <dialog id="sheetZoom" aria-label="학습지 확대"><button id="zoomClose" aria-label="확대 닫기">닫기 ×</button><div class="zoom-scroll"><img id="zoomImage" alt="확대한 실제 학습지"></div></dialog>
 <noscript><p class="no-script">책을 펼치려면 JavaScript를 켜 주세요. <a href="../index.html">수의 마법으로 이동</a></p></noscript>
 <script src="../data/stages.js"></script><script src="../data/courses.js"></script>
-<script src="experience.js?v=20260930-4"></script><script src="cover-math.js?v=20260930-6"></script><script src="page-curl.js?v=20260930-6"></script><script src="book.js?v=20260930-6"></script>
+<script src="experience.js?v=20260930-4"></script><script src="cover-math.js?v=20260930-6"></script><script src="page-curl.js?v=20260930-6"></script><script src="book.js?v=20260930-7"></script>
 </body></html>
