@@ -1,219 +1,175 @@
-(function(){
-  'use strict';
-  var app=document.querySelector('.magic-book-app');
-  var coverScene=document.querySelector('[data-scene="cover"]');
-  var readerScene=document.querySelector('[data-scene="reader"]');
-  var openBookButton=document.getElementById('openBook');
-  var bookNext=document.getElementById('bookNext');
-  var pageTurn=document.querySelector('.page-turn');
-  var locationTitle=document.getElementById('locationTitle');
-  var video=document.getElementById('introVideo');
-  var videoHeading=document.getElementById('videoHeading');
-  var cinemaControls=document.getElementById('cinemaControls');
-  var journeyEnter=document.getElementById('journeyEnter');
-  var journeySound=document.getElementById('journeySound');
-  var cinemaPlay=document.getElementById('cinemaPlay');
-  var bookPaper=document.querySelector('.book-paper');
-  var cinema=document.getElementById('cinema');
-  var videoFinish=document.getElementById('videoFinish');
-  var progress=document.getElementById('videoProgress');
-  var timeLabel=document.getElementById('videoTime');
-  var sheetA=document.getElementById('sheetA');
-  var sheetB=document.getElementById('sheetB');
-  var sheetSpread=document.getElementById('sheetSpread');
-  var sheetCounter=document.getElementById('sheetCounter');
-  var sheetPrev=document.getElementById('sheetPrev');
-  var sheetNext=document.getElementById('sheetNext');
-  var mobileMedia=window.matchMedia('(max-width:700px)');
-  var reduceMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
-  var sheetIndex=0;
-  var currentView='cover';
-  var filmMode='journey';
-  var lastIntroView='menu';
-  var opening=false;
-  var turning=false;
-  var historyDepth=0;
-  var views={
-    cover:{title:'표지'},
-    menu:{title:'차례',heading:'#menu-title',panel:'menu'},
-    video:{title:'소개 영상',heading:'#video-title',panel:'menu'},
-    story1:{title:'수의 마법 이야기 · 1',heading:'#story1-title'},
-    story2:{title:'수의 마법 이야기 · 2',heading:'#story2-title'},
-    story3:{title:'수의 마법 이야기 · 3',heading:'#story3-title'},
-    labs:{title:'수학 실험실',heading:'#labs-title'},
-    worksheet:{title:'실제 학습지',heading:'#worksheet-title'},
-    roadmap:{title:'전체 로드맵',heading:'#roadmap-title'}
-  };
-  var pageOrder=['menu','story1','story2','story3','labs','worksheet','roadmap'];
-  var journey={
-    src:'../assets/promo/video/showreel-15s-vertical.mp4',
-    poster:'../assets/promo/video/poster-15s-vertical.jpg'
-  };
-  var cuts={
-    full:{src:'../assets/promo/video/showreel-full.mp4',poster:'../assets/promo/video/poster-full.jpg',title:'2분 10초'},
-    short:{src:'../assets/promo/video/showreel-60s.mp4',poster:'../assets/promo/video/poster-60s.jpg',title:'1분'}
-  };
-  var activeCut='full';
-
-  function panelFor(view){return views[view]&&(views[view].panel||view)}
-  function sceneState(isCover){
-    coverScene.classList.toggle('is-active',isCover);
-    coverScene.setAttribute('aria-hidden',String(!isCover));
-    readerScene.classList.toggle('is-active',!isCover);
-    readerScene.setAttribute('aria-hidden',String(isCover));
-    if('inert' in coverScene)coverScene.inert=!isCover;
-    if('inert' in readerScene)readerScene.inert=isCover;
-  }
-  function updatePanels(view){
-    var activePanel=panelFor(view);
-    document.querySelectorAll('[data-panel]').forEach(function(panel){
-      var on=panel.getAttribute('data-panel')===activePanel;
-      panel.classList.toggle('is-active',on);
-      panel.setAttribute('aria-hidden',String(!on));
-      if(on&&activePanel==='menu')panel.setAttribute('aria-labelledby',view==='video'?'video-title':'menu-title');
-      if('inert' in panel)panel.inert=!on;
-    });
-  }
-  function routePage(view){return view==='video'?'menu':view}
-  function nextView(view){var index=pageOrder.indexOf(routePage(view));return index>=0&&index<pageOrder.length-1?pageOrder[index+1]:''}
-  function previousView(view){var index=pageOrder.indexOf(routePage(view));return index>0?pageOrder[index-1]:'cover'}
-  function updateEdgeNavigation(){
-    var next=nextView(currentView);
-    bookNext.hidden=!next;
-    bookNext.disabled=turning;
-    if(next)bookNext.setAttribute('aria-label','다음 페이지: '+views[next].title);
-  }
-  function cleanSnapshot(panel){
-    var clone=panel.cloneNode(true);clone.classList.add('is-active');clone.removeAttribute('aria-hidden');
-    clone.querySelectorAll('[id]').forEach(function(node){node.removeAttribute('id')});
-    clone.querySelectorAll('video').forEach(function(node){var img=document.createElement('img');img.src=node.getAttribute('poster')||journey.poster;img.alt='';img.style.cssText='width:100%;height:100%;object-fit:contain;background:#020507';node.replaceWith(img)});
-    clone.querySelectorAll('iframe').forEach(function(node){var box=document.createElement('div');box.className='lab-snapshot';box.textContent='수학 실험실';node.replaceWith(box)});
-    clone.querySelectorAll('button,a,input').forEach(function(node){node.setAttribute('tabindex','-1')});return clone;
-  }
-  function animatePageTurn(fromView,toView,onMiddle,onDone){
-    if(reduceMotion.matches){onMiddle();onDone();return}
-    var fromPanel=document.querySelector('[data-panel="'+panelFor(fromView)+'"]');
-    var toPanel=document.querySelector('[data-panel="'+panelFor(toView)+'"]');
-    if(!fromPanel||!toPanel||fromPanel===toPanel){onMiddle();onDone();return}
-    turning=true;bookPaper.classList.add('is-turning');updateEdgeNavigation();
-    pageTurn.innerHTML='<div class="turning-leaf is-forward"><div class="leaf-face leaf-face-front"><div class="leaf-snapshot"></div></div><div class="leaf-face leaf-face-back"><div class="leaf-snapshot"></div></div></div>';
-    pageTurn.querySelector('.leaf-face-front .leaf-snapshot').appendChild(cleanSnapshot(fromPanel));
-    pageTurn.querySelector('.leaf-face-back .leaf-snapshot').appendChild(cleanSnapshot(toPanel));
-    pageTurn.classList.add('is-ready');
-    window.setTimeout(onMiddle,430);
-    window.setTimeout(function(){pageTurn.classList.remove('is-ready');pageTurn.innerHTML='';bookPaper.classList.remove('is-turning');turning=false;updateEdgeNavigation();onDone()},940);
-  }
-  function viewFromHash(){var value=location.hash.replace(/^#/,'');return views[value]?value:'cover'}
-  function setView(view,opts){
-    opts=opts||{};if(!views[view])view='cover';var previous=currentView;var previousPanel=panelFor(previous);var nextPanel=panelFor(view);
-    var shouldTurn=previous!=='cover'&&view!=='cover'&&previous!==view&&previousPanel!==nextPanel&&opts.turn!==false;
-    currentView=view;app.setAttribute('data-view',view);sceneState(view==='cover');
-    if(view!=='cover')locationTitle.textContent=views[view].title;
-    if(view!=='menu'&&view!=='video')pauseVideo();
-    if(view==='worksheet')renderSheets();if(view==='roadmap')renderRoadmap();
-    var reveal=function(){if(view!=='cover')updatePanels(view)};
-    var focus=function(){if(opts.focus!==false){var target=view==='cover'?openBookButton:document.querySelector(views[view].heading||'');if(target)target.focus({preventScroll:true})}};
-    if(shouldTurn)animatePageTurn(previous,view,reveal,focus);else{reveal();focus()}
-    if(opts.history!==false){
-      var hash=view==='cover'?'#cover':'#'+view;
-      if(opts.history==='replace')history.replaceState({nmBook:true,view:view,depth:historyDepth},'',hash);
-      else if(location.hash!==hash){historyDepth+=1;history.pushState({nmBook:true,view:view,depth:historyDepth},'',hash)}
-    }
-    updateEdgeNavigation();
-  }
-  function formatTime(seconds){if(!isFinite(seconds))return'0:00';var m=Math.floor(seconds/60),s=Math.floor(seconds%60);return m+':'+String(s).padStart(2,'0')}
-  function syncMuteUI(){
-    cinema.classList.toggle('is-muted',video.muted);journeySound.classList.toggle('is-muted',video.muted);
-    journeySound.setAttribute('aria-label',video.muted?'배경음 켜기':'배경음 끄기');
-    document.getElementById('muteToggle').setAttribute('aria-label',video.muted?'소리 켜기':'음소거');
-  }
-  function setSource(src,poster){video.poster=poster;if(video.getAttribute('src')!==src){video.src=src;video.load()}}
-  function tryPlay(){var promise=video.play();if(promise&&promise.catch)promise.catch(function(){cinemaPlay.hidden=false})}
-  function showJourney(autoplay,restart){
-    filmMode='journey';lastIntroView='menu';cinema.classList.add('is-journey');cinema.classList.remove('is-showreel');
-    videoHeading.hidden=true;cinemaControls.hidden=true;journeyEnter.hidden=false;journeySound.hidden=false;videoFinish.hidden=true;cinemaPlay.hidden=false;
-    video.loop=true;video.volume=.72;video.setAttribute('aria-label','수의 마법 15초 미리보기 영상');setSource(journey.src,journey.poster);syncMuteUI();
-    if(restart){try{video.currentTime=0}catch(error){}}
-    if(autoplay&&!reduceMotion.matches)tryPlay();
-  }
-  function prepareShowreel(){
-    filmMode='showreel';lastIntroView='video';cinema.classList.remove('is-journey');cinema.classList.add('is-showreel');
-    videoHeading.hidden=false;cinemaControls.hidden=false;journeyEnter.hidden=true;journeySound.hidden=true;videoFinish.hidden=true;cinemaPlay.hidden=false;video.loop=false;video.volume=1;
-  }
-  function loadCut(key,autoplay){
-    if(!cuts[key])return;activeCut=key;var cut=cuts[key];prepareShowreel();
-    document.querySelectorAll('[data-cut]').forEach(function(button){var selected=button.getAttribute('data-cut')===key;button.classList.toggle('is-selected',selected);button.setAttribute('aria-pressed',String(selected))});
-    cinema.classList.remove('is-playing');progress.value=0;timeLabel.textContent='0:00';video.setAttribute('aria-label',cut.title+' 수의 마법 소개 영상');setSource(cut.src,cut.poster);syncMuteUI();
-    if(autoplay)tryPlay();
-  }
-  function enterShowreel(autoplay){loadCut(activeCut,autoplay);setView('video',{turn:false,focus:false});window.setTimeout(function(){document.getElementById('video-title').focus({preventScroll:true})},reduceMotion.matches?0:220)}
-  function playVideo(){videoFinish.hidden=true;tryPlay()}
-  function pauseVideo(){if(video&&!video.paused)video.pause()}
-  function toggleVideo(){if(video.paused)playVideo();else pauseVideo()}
-  function renderSheets(){
-    var step=mobileMedia.matches?1:2,maxIndex=6-step;sheetIndex=Math.max(0,Math.min(sheetIndex,maxIndex));
-    sheetA.src='../assets/promo/sample/page-'+(sheetIndex+1)+'.webp';sheetA.alt='수의 마법 실제 학습지 '+(sheetIndex+1)+'쪽';
-    var second=Math.min(sheetIndex+2,6);sheetB.src='../assets/promo/sample/page-'+second+'.webp';sheetB.alt='수의 마법 실제 학습지 '+second+'쪽';
-    sheetCounter.textContent=mobileMedia.matches?(sheetIndex+1)+' / 6':(sheetIndex+1)+'–'+second+' / 6';sheetPrev.disabled=sheetIndex===0;sheetNext.disabled=sheetIndex>=maxIndex;
-  }
-  function turnSheets(direction){var step=mobileMedia.matches?1:2,next=sheetIndex+(direction*step);if(next<0||next>6-step)return;sheetSpread.classList.add('is-turning');window.setTimeout(function(){sheetIndex=next;renderSheets();sheetSpread.classList.remove('is-turning')},180)}
-  function stageWeeks(stage){var meta=stage.meta&&stage.meta.ko||'',match=meta.match(/주 2회 기준\s*([0-9]+)주/);return match?match[1]+'주':'—'}
-  function shortLearn(stage){var text=stage.learn&&stage.learn.ko||'';return text.length>72?text.slice(0,72)+'…':text}
-  function renderRoadmap(){
-    var root=document.getElementById('roadmapRows');if(root.dataset.ready==='1')return;var stages=window.NM_STAGES||[],specs=window.NM_COURSE_SPEC||[];
-    root.innerHTML=stages.map(function(stage,index){var course=stage.courses.from===stage.courses.to?String(stage.courses.from):stage.courses.from+'–'+stage.courses.to;return '<article class="roadmap-stage-card" data-stage="'+stage.key+'"><i style="--stage-color:'+stage.accent+'">'+(index+1)+'</i><b>'+stage.name.ko+'</b><em>과정 '+course+' · '+stageWeeks(stage)+'</em><p>'+stage.band.ko+' · '+shortLearn(stage)+'</p></article>'}).join('');
-    var courseRoot=document.getElementById('courseRows'),lastStage='';
-    courseRoot.innerHTML=specs.map(function(spec){var stage=window.NM_STAGE_OF_COURSE?window.NM_STAGE_OF_COURSE(spec.id):null,group='';if(stage&&stage.key!==lastStage){lastStage=stage.key;group='<div class="course-group">'+stage.name.ko+' · '+stage.band.ko+'</div>'}var sessions=spec.minSessions?spec.minSessions+'회':'편성';return group+'<article class="course-row"><strong>'+String(spec.id).padStart(2,'0')+'</strong><b>'+spec.title.ko+'</b><span>'+sessions+'</span></article>'}).join('');
-    root.dataset.ready='1';
-  }
-  function openMagicBook(){
-    if(opening)return;opening=true;coverScene.classList.add('is-opening');openBookButton.classList.add('is-opening');showJourney(!reduceMotion.matches,true);
-    window.setTimeout(function(){setView('menu');coverScene.classList.remove('is-opening');openBookButton.classList.remove('is-opening');opening=false},reduceMotion.matches?0:540);
-  }
-  function nextBookPage(){if(turning)return;var next=nextView(currentView);if(next)setView(next)}
-  function previousBookPage(){
-    if(turning)return;
-    if(historyDepth>0){if(currentView==='video')showJourney(true,false);history.back();return}
-    if(currentView==='menu'){setView('cover',{history:'replace'});return}
-    if(currentView==='video'){showJourney(true,false);setView('menu',{turn:false,history:'replace'});return}
-    var previous=previousView(currentView);if(previous==='menu')showJourney(true,false);setView(previous,{history:'replace'});
-  }
-
-  openBookButton.addEventListener('click',openMagicBook);
-  document.getElementById('bookHome').addEventListener('click',function(){pauseVideo();setView('cover')});
-  document.getElementById('bookBack').addEventListener('click',previousBookPage);
-  bookNext.addEventListener('click',nextBookPage);
-  document.querySelectorAll('[data-route]').forEach(function(control){control.addEventListener('click',function(){var view=control.getAttribute('data-route');if(view==='video')enterShowreel(true);else setView(view)})});
-  document.querySelectorAll('[data-cut]').forEach(function(button){button.addEventListener('click',function(){loadCut(button.getAttribute('data-cut'),true)})});
-  document.querySelectorAll('[data-lab]').forEach(function(button){button.addEventListener('click',function(){
-    var key=button.getAttribute('data-lab'),frame=document.getElementById('labFrame'),sources={calculus:{src:'../labs/why-calculus.html',title:'미적분은 왜 태어났나 체험 실험실'},secret1001:{src:'../labs/secret-1001.html',title:'1001의 비밀 체험 실험실'}};
-    document.querySelectorAll('[data-lab]').forEach(function(choice){var selected=choice===button;choice.classList.toggle('is-selected',selected);choice.setAttribute('aria-selected',String(selected))});
-    frame.title=sources[key].title;if(frame.getAttribute('src')!==sources[key].src){document.getElementById('labLoading').hidden=false;frame.src=sources[key].src}
-  })});
-  document.getElementById('labFrame').addEventListener('load',function(){document.getElementById('labLoading').hidden=true});
-  cinemaPlay.addEventListener('click',toggleVideo);document.getElementById('playToggle').addEventListener('click',toggleVideo);video.addEventListener('click',toggleVideo);
-  video.addEventListener('play',function(){
-    cinema.classList.add('is-playing');cinemaPlay.setAttribute('aria-label','영상 일시정지');var toggle=document.getElementById('playToggle');toggle.setAttribute('aria-label','일시정지');
-    if(filmMode==='showreel'){cinemaPlay.hidden=true;if(document.activeElement===cinemaPlay)toggle.focus({preventScroll:true})}else cinemaPlay.hidden=false;
-  });
-  video.addEventListener('pause',function(){cinema.classList.remove('is-playing');if(!video.ended)cinemaPlay.hidden=false;cinemaPlay.setAttribute('aria-label','영상 재생');document.getElementById('playToggle').setAttribute('aria-label','재생')});
-  video.addEventListener('timeupdate',function(){var ratio=video.duration?video.currentTime/video.duration:0;progress.value=Math.round(ratio*1000);timeLabel.textContent=formatTime(video.currentTime)});
-  video.addEventListener('ended',function(){if(filmMode!=='showreel')return;cinema.classList.remove('is-playing');videoFinish.hidden=false;var next=videoFinish.querySelector('button');if(next)next.focus({preventScroll:true})});
-  video.addEventListener('contextmenu',function(event){event.preventDefault()});progress.addEventListener('input',function(){if(video.duration)video.currentTime=(Number(progress.value)/1000)*video.duration});
-  journeySound.addEventListener('click',function(){video.muted=!video.muted;syncMuteUI();if(video.paused)tryPlay()});
-  document.getElementById('muteToggle').addEventListener('click',function(){video.muted=!video.muted;syncMuteUI()});
-  sheetPrev.addEventListener('click',function(){turnSheets(-1)});sheetNext.addEventListener('click',function(){turnSheets(1)});if(mobileMedia.addEventListener)mobileMedia.addEventListener('change',renderSheets);
-  window.addEventListener('popstate',function(event){var view=viewFromHash();historyDepth=event.state&&event.state.nmBook?Number(event.state.depth)||0:0;if(view==='menu')showJourney(false,false);if(view==='video')loadCut(activeCut,false);setView(view,{history:false})});
-  window.addEventListener('keydown',function(event){
-    if(event.key==='Escape'&&currentView!=='cover'){event.preventDefault();previousBookPage();return}
-    if(currentView==='worksheet'&&event.key==='ArrowRight'){turnSheets(1);return}
-    if(currentView==='worksheet'&&event.key==='ArrowLeft'){turnSheets(-1);return}
-    if(event.key==='PageDown'&&document.activeElement.tagName!=='INPUT'){event.preventDefault();nextBookPage()}
-    if(event.key==='PageUp'&&document.activeElement.tagName!=='INPUT'){event.preventDefault();previousBookPage()}
-  });
-
-  var initialView=viewFromHash();
-  history.replaceState({nmBook:true,view:initialView,depth:0},'',initialView==='cover'?'#cover':'#'+initialView);
-  if(initialView==='video')loadCut('full',false);else showJourney(false,false);
-  renderRoadmap();setView(initialView,{history:false,focus:false});
+/* Promo presentation only. Course data and generators are read-only. */
+(function () {
+'use strict';
+const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+const app=$('.magic-book-app'), cover=$('[data-scene="cover"]'), reader=$('[data-scene="reader"]'), content=$('#bookContent');
+const panels=new Map($$('.book-content > [data-panel]').map(p=>[p.dataset.panel,p]));
+const order=['menu','video','labs','village','worksheet','roadmap'];
+const reduced=matchMedia('(prefers-reduced-motion:reduce)'), narrow=matchMedia('(max-width:700px)');
+let view='cover',turning=false,hero=null,lab=null,level='preschool',sample='preschool',sheetIndex=0,sampleOpen=false,activeCut='full',allCourses=false,stageIndex=0;
+let tourTimer=0,exampleTimer=0,tourStep=0;
+let pace=2;
+const teaser=$('#teaserVideo'),film=$('#introVideo'),frame=$('#villageFrame');
+const cuts={full:['showreel-full.mp4','poster-full.jpg'],short:['showreel-60s.mp4','poster-60s.jpg']};
+const modes={
+ preschool:{title:'두 친구에게 똑같이 나누어 주세요.',meaning:'옮기며 관계를 찾고, 조건에 맞게 해결해요.'},
+ elementary:{title:'곱해서 10이 되는 짝을 찾아요.',meaning:'같은 수를 묶어 보는 힘, 곱셈.'},
+ middle:{title:'한 수가 바뀌면, 다른 수는?',meaning:'곱이 일정한 두 수의 관계를 발견합니다.'},
+ high:{title:'잘게 나눌수록, 넓이가 보입니다.',meaning:'눈으로 본 변화를 수와 식으로 다룹니다.'}
+};
+const samples={
+ preschool:{pages:6,topic:'가르기와 모으기',headline:'손으로 나눈 수를,<br>내 힘으로 풀어요.',copy:'나누고 모으던 경험을 그림과 수로 옮깁니다. 짧은 이야기를 읽고 분류하는 문제까지 이어집니다.',source:'과정 0 · 6회차 발췌',word:4,caption:'가르기 · 연산 연습 · 분류하고 세기'},
+ elementary:{pages:8,topic:'곱하여 10 · 나눗셈 문장제',headline:'계산한 답을 넘어,<br>이야기 속 관계까지.',copy:'곱하여 10의 원리를 익히고, 같은 회차의 나눗셈에서는 읽고 식을 세우는 문장형 문제 24문항을 연습합니다.',source:'과정 8 · 1회차 발췌',word:3,caption:'1–3쪽 곱하여 10 · 4–8쪽 나눗셈 문장형 연습'},
+ middle:{pages:6,topic:'비례와 반비례',headline:'외운 공식이 아니라,<br>이해한 관계로.',copy:'두 수의 관계를 식과 그래프로 연결합니다. 개념을 확인한 뒤 직접 계산하고 그래프를 읽어 식으로 나타냅니다.',source:'과정 31 · 5회차 발췌',word:null,caption:'비례 개념 · 반비례 그래프 · 연산 연습'},
+ high:{pages:6,topic:'미분과 적분',headline:'눈으로 본 변화를,<br>수학의 언어로.',copy:'접선의 기울기와 곡선 아래 넓이. 움직이는 모형에서 발견한 개념을 식으로 다루며 연습합니다.',source:'과정 43 · 4회차 발췌',word:null,caption:'미분·접선 · 실전 연습 · 적분'}
+};
+function play(v){const p=v.play();if(p)p.catch(()=>syncMedia());}
+function mediaSource(v,name,poster){const src='../assets/promo/video/'+name;if(v.getAttribute('src')!==src){v.src=src;if(poster)v.poster='../assets/promo/video/'+poster;v.load();}}
+function syncMedia(){
+ $('#teaserPlay').textContent=teaser.paused?'▶':'Ⅱ';$('#teaserPlay').setAttribute('aria-label',teaser.paused?'미리보기 재생':'미리보기 일시정지');
+ $('#teaserSound').textContent=teaser.muted?'음소거':'♪';$('#teaserSound').setAttribute('aria-label',teaser.muted?'배경음 켜기':'배경음 끄기');
+ $('#cinemaPlay').hidden=!film.paused||film.ended;$('#playToggle').textContent=film.paused?'▶':'Ⅱ';$('#playToggle').setAttribute('aria-label',film.paused?'재생':'일시정지');
+ $('#muteToggle').textContent=film.muted?'×♪':'♪';$('#muteToggle').setAttribute('aria-label',film.muted?'소리 켜기':'음소거');
+}
+function setCut(key,autoplay){if(!cuts[key])return;activeCut=key;const c=cuts[key];mediaSource(film,c[0],c[1]);$$('[data-cut]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.cut===key)));$('#videoFinish').hidden=true;if(autoplay)play(film);}
+function frameActive(active){if(frame.getAttribute('src'))frame.contentWindow.postMessage({type:'nm-promo-active',active},location.origin);}
+function prepare(next,autoplay){
+ teaser.pause();film.pause();
+ stopTour();clearInterval(exampleTimer);
+ if(hero)hero.setActive(false);if(lab)lab.setActive(false);frameActive(false);
+ if(next==='menu'){
+   if(!hero)hero=window.NMPromoExperience.create($('#heroExperience'),{mode:'preschool',compact:true});
+   hero.setActive(!document.hidden);mediaSource(teaser,'showreel-15s-vertical.mp4');teaser.volume=.6;
+   if(autoplay&&!reduced.matches)play(teaser);
+ }
+ if(next==='video'){setCut(activeCut,autoplay);}
+ if(next==='labs'){if(!lab)lab=window.NMPromoExperience.create($('#labExperience'),{mode:level});lab.setMode(level);lab.setActive(!document.hidden);}
+ if(next==='village'){if(!frame.getAttribute('src'))frame.src=frame.dataset.src;else frameActive(true);}
+ if(next==='worksheet')renderSample();
+ if(next==='roadmap')renderRoadmap();
+ syncMedia();
+}
+function snapshot(panel){
+ const clone=panel.cloneNode(true);clone.removeAttribute('hidden');clone.removeAttribute('inert');clone.removeAttribute('data-panel');clone.removeAttribute('aria-labelledby');clone.classList.add('turn-snapshot');clone.setAttribute('aria-hidden','true');clone.inert=true;
+ [clone,...clone.querySelectorAll('[id]')].forEach(n=>n.removeAttribute('id'));
+ clone.querySelectorAll('button,a,input,iframe').forEach(n=>n.tabIndex=-1);
+ const originals=panel.querySelectorAll('canvas');
+ clone.querySelectorAll('canvas').forEach((n,i)=>{const im=document.createElement('img');try{const ctl=originals[i].closest('#heroExperience')?hero:lab;im.src=(ctl&&ctl.capture&&ctl.capture())||originals[i].toDataURL();}catch(e){}im.alt='';im.style.cssText=n.style.cssText;im.style.width='100%';im.style.height='100%';n.replaceWith(im);});
+ clone.querySelectorAll('video').forEach(n=>{const im=document.createElement('img');im.src=n.poster;im.alt='';im.style.cssText='width:100%;height:100%;object-fit:cover';n.replaceWith(im);});
+ clone.querySelectorAll('iframe').forEach(n=>{const im=document.createElement('img');im.src='../assets/promo/shots/village.webp';im.alt='';im.style.cssText='width:100%;height:100%;object-fit:cover';n.replaceWith(im);});
+ return clone;
+}
+function turn(from,to,direction,done){
+ if(reduced.matches){done();return;}
+ const layer=document.createElement('div');layer.className='turn-overlay'+(direction<0?' backward':'');layer.setAttribute('aria-hidden','true');layer.inert=true;
+ const still=document.createElement('div');still.className='turn-still';still.append(snapshot(from));layer.append(still);
+ const leaf=document.createElement('div');leaf.className='turn-leaf';
+ const front=document.createElement('div'),back=document.createElement('div');front.className='turn-face front';back.className='turn-face back';
+ // Forward: old right on front, new left on back. Backward reverses this.
+ front.append(snapshot(direction<0?to:from));back.append(snapshot(direction<0?from:to));leaf.append(front,back);layer.append(leaf);
+ content.append(layer);content.classList.add('is-turning');turning=true;updateNav();
+ setTimeout(()=>{still.style.visibility='hidden';},narrow.matches?280:420);
+ setTimeout(()=>{layer.remove();content.classList.remove('is-turning');turning=false;updateNav();done();},narrow.matches?680:870);
+}
+function updateNav(){
+ const i=order.indexOf(view);$('#bookBack').disabled=turning;$('#bookNext').disabled=turning||i===order.length-1;
+ $$('.chapter-nav [data-route]').forEach(b=>{if(b.dataset.route===view)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');b.disabled=turning;});
+}
+function go(next,{historyMode='push',animate=true,autoplay=false,focus=true}={}){
+ if(turning)return;if(!order.includes(next)&&next!=='cover')next='cover';if(view===next&&next!=='cover')return;
+ const from=view,fromPanel=panels.get(from),toPanel=panels.get(next);let fromSnapshot;
+ if(animate&&fromPanel&&toPanel&&!reduced.matches)fromSnapshot=snapshot(fromPanel);
+ view=next;app.dataset.view=next;const closed=next==='cover';
+ cover.classList.toggle('is-active',closed);cover.setAttribute('aria-hidden',String(!closed));cover.inert=!closed;
+ reader.classList.toggle('is-active',!closed);reader.setAttribute('aria-hidden',String(closed));reader.inert=closed;
+ panels.forEach((p,id)=>{const on=id===next;p.hidden=!on;p.inert=!on;p.setAttribute('aria-hidden',String(!on));});
+ prepare(next,autoplay);
+ if(historyMode==='push'&&location.hash!=='#'+next)history.pushState({nmBook:true,view:next},'','#'+next);
+ if(historyMode==='replace')history.replaceState({nmBook:true,view:next},'','#'+next);
+ const finish=()=>{if(focus){const t=closed?$('#openBook'):(toPanel.querySelector('h1,h2')||$('#bookContent'));t.focus({preventScroll:true});}};
+ if(fromSnapshot){turn(fromSnapshot,toPanel,order.indexOf(next)>=order.indexOf(from)?1:-1,finish);}else finish();
+ updateNav();
+}
+function previous(){const i=order.indexOf(view);go(i>0?order[i-1]:'cover',{autoplay:false});}
+function next(){const i=order.indexOf(view);if(i<order.length-1)go(order[i+1],{autoplay:i+1===1});}
+$('#openBook').addEventListener('click',()=>{
+ if(turning)return;turning=true;cover.classList.add('is-opening');mediaSource(teaser,'showreel-15s-vertical.mp4');teaser.volume=.6;if(!reduced.matches)play(teaser);
+ setTimeout(()=>{turning=false;cover.classList.remove('is-opening');go('menu',{animate:false,autoplay:true});},reduced.matches?0:650);
+});
+$('#bookHome').addEventListener('click',()=>go('cover'));$('#bookBack').addEventListener('click',previous);$('#bookNext').addEventListener('click',next);
+$$('[data-route]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.route,{autoplay:b.dataset.route==='video'})));
+$$('[data-cut]').forEach(b=>b.addEventListener('click',()=>setCut(b.dataset.cut,true)));
+$('#teaserPlay').addEventListener('click',()=>teaser.paused?play(teaser):teaser.pause());
+$('#teaserSound').addEventListener('click',()=>{teaser.muted=!teaser.muted;syncMedia();});
+[$('#cinemaPlay'),$('#playToggle'),film].forEach(b=>b.addEventListener('click',()=>{if(film.paused){$('#videoFinish').hidden=true;play(film);}else film.pause();}));
+$('#muteToggle').addEventListener('click',()=>{film.muted=!film.muted;syncMedia();});
+[film,teaser].forEach(v=>{v.addEventListener('play',syncMedia);v.addEventListener('pause',syncMedia);v.addEventListener('volumechange',syncMedia);v.addEventListener('contextmenu',e=>e.preventDefault());v.addEventListener('error',syncMedia);});
+film.addEventListener('timeupdate',()=>{$('#videoProgress').value=film.duration?Math.round(film.currentTime/film.duration*1000):0;const t=film.currentTime||0;$('#videoTime').textContent=Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');});
+$('#videoProgress').addEventListener('input',e=>{if(Number.isFinite(film.duration))film.currentTime=+e.target.value/1000*film.duration;});
+film.addEventListener('ended',()=>{$('#videoFinish').hidden=false;syncMedia();});
+function changeLevel(id){if(!modes[id])return;level=id;$('#labsTitle').textContent=modes[id].title;$('#labMeaning').textContent=modes[id].meaning;$$('[data-level]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===id)));if(lab)lab.setMode(id);}
+$$('[data-level]').forEach(b=>b.addEventListener('click',()=>changeLevel(b.dataset.level)));
+$('#labToSheet').addEventListener('click',()=>{sample=level;sheetIndex=0;sampleOpen=false;go('worksheet');});
+frame.addEventListener('load',()=>frameActive(view==='village'));
+window.addEventListener('message',e=>{
+ if(e.origin!==location.origin||e.source!==frame.contentWindow||!e.data)return;
+ if(e.data.type==='nm-promo-ready')frameActive(view==='village');
+ if(e.data.type==='nm-promo-route'&&['labs','worksheet','roadmap'].includes(e.data.view))go(e.data.view);
+});
+function samplePath(i){return '../assets/promo/samples-v4/'+sample+'/page-'+(i+1)+'.webp';}
+function renderSample(){
+ const s=samples[sample];$$('[data-sample]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.sample===sample)));
+ $('#sampleTopic').textContent=s.topic;$('#sampleHeadline').innerHTML=s.headline;$('#sampleCopy').textContent=s.copy;$('#sampleSource').textContent=s.source+' · 실제 학습지';
+ $('#sampleCover').src=samplePath(0);$('#sampleCover').alt=s.topic+' 실제 학습지';
+ $('#wordPreview').hidden=s.word===null;$('#sampleEditorial').hidden=sampleOpen;$('#sampleReader').hidden=!sampleOpen;$('#sampleCaption').textContent=s.caption;
+ renderSheets();
+}
+function renderSheets(){const total=samples[sample].pages,step=narrow.matches?1:2;sheetIndex=Math.max(0,Math.min(sheetIndex,total-step));$('#sheetA').src=samplePath(sheetIndex);$('#sheetA').alt=samples[sample].topic+' 발췌 '+(sheetIndex+1)+'쪽';$('#sheetB').src=samplePath(Math.min(sheetIndex+1,total-1));$('#sheetB').alt=samples[sample].topic+' 발췌 '+Math.min(sheetIndex+2,total)+'쪽';$('#sheetCounter').textContent=(sheetIndex+1)+(step===2?'–'+Math.min(total,sheetIndex+2):'')+' / '+total;$('#sheetPrev').disabled=sheetIndex===0;$('#sheetNext').disabled=sheetIndex>=total-step;}
+$$('[data-sample]').forEach(b=>b.addEventListener('click',()=>{sample=b.dataset.sample;sheetIndex=0;sampleOpen=false;renderSample();}));
+function openSample(index=0){sheetIndex=index;sampleOpen=true;renderSample();}
+$('#openSamples').addEventListener('click',()=>openSample());$('#samplePreview').addEventListener('click',()=>openSample());
+$('#wordPreview').addEventListener('click',()=>openSample(samples[sample].word||0));$('#closeSamples').addEventListener('click',()=>{sampleOpen=false;renderSample();});
+function turnSheet(d){const step=narrow.matches?1:2;sheetIndex+=d*step;renderSheets();const spread=$('.sheet-spread');spread.classList.remove('is-changing');requestAnimationFrame(()=>spread.classList.add('is-changing'));}
+$('#sheetPrev').addEventListener('click',()=>turnSheet(-1));$('#sheetNext').addEventListener('click',()=>turnSheet(1));
+function zoom(offset=0){$('#zoomImage').src=samplePath(Math.min(sheetIndex+offset,samples[sample].pages-1));$('#sheetZoom').showModal();}
+$$('[data-zoom]').forEach(b=>b.addEventListener('click',()=>zoom(+b.dataset.zoom)));$('#zoomSheet').addEventListener('click',()=>zoom());$('#zoomClose').addEventListener('click',()=>$('#sheetZoom').close());
+narrow.addEventListener('change',()=>{if(sampleOpen)renderSheets();});
+function escapeHTML(t){return String(t||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function renderRoadmap(){
+ const stages=window.NM_STAGES||[],specs=window.NM_COURSE_SPEC||[];
+ if(!$('#roadmapRows').children.length){stages.forEach((s,i)=>{const b=document.createElement('button');b.className='roadmap-stop';b.dataset.stage=s.key;b.innerHTML='<span class="station">'+(i+1)+'</span><strong>'+escapeHTML(s.name.ko.split(' — ')[0])+'</strong><small>과정 '+s.courses.from+(s.courses.to!==s.courses.from?'–'+s.courses.to:'')+'</small>';b.addEventListener('click',()=>{stopTour();stageIndex=i;allCourses=false;renderRoadmap();});$('#roadmapRows').append(b);});const traveller=document.createElement('span');traveller.className='roadmap-traveller';traveller.setAttribute('aria-hidden','true');traveller.textContent='✦';$('#roadmapRows').append(traveller);}
+ $$('.roadmap-stop').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===stageIndex&&!allCourses)));
+ const selected=stages[stageIndex];if(!selected)return;
+ $('#stageTitle').textContent=allCourses?'전체 '+specs.length+'과정':selected.name.ko;
+ $('#stageLearn').textContent=allCourses?'과정 번호순으로 전체 학습 내용을 확인하세요.':selected.learn.ko;
+ updatePace(selected);
+ const filtered=allCourses?specs:specs.filter(s=>s.id>=selected.courses.from&&s.id<=selected.courses.to);
+ $('#courseRows').innerHTML=filtered.map(s=>'<article class="course-row" data-course="'+s.id+'"><strong>'+String(s.id).padStart(2,'0')+'</strong><b>'+escapeHTML(s.title.ko)+'</b></article>').join('');
+ $('#courseRows').scrollTop=0;$('#allCourses').setAttribute('aria-pressed',String(allCourses));$('#allCourses').textContent=allCourses?'단계별로 보기 ↗':'전체 과정표 보기 ↗';
+ const pin=$('.roadmap-traveller');pin.hidden=allCourses;
+ requestAnimationFrame(()=>{const station=$$('.roadmap-stop .station')[stageIndex],r=station.getBoundingClientRect(),rail=$('#roadmapRows').getBoundingClientRect();pin.style.transform='translate('+(r.left-rail.left+r.width-5)+'px,'+(r.top-rail.top-6)+'px)';});
+ clearInterval(exampleTimer);$('#stageExample').hidden=allCourses;
+ const steps=selected.example.split('→').map(s=>s.trim());let exampleStep=0;
+ function example(){const el=$('#stageExpression');el.textContent=steps[exampleStep];el.classList.remove('is-revealing');requestAnimationFrame(()=>el.classList.add('is-revealing'));exampleStep=(exampleStep+1)%steps.length;}
+ example();$('#stageExample').classList.toggle('is-multi',steps.length>1&&!reduced.matches);
+ if(!allCourses&&!reduced.matches&&steps.length>1)exampleTimer=setInterval(example,2400);
+}
+function stopTour(){clearInterval(tourTimer);tourTimer=0;$('#roadmapPlay').setAttribute('aria-pressed','false');$('#roadmapPlay').textContent='여정 재생 ▶';}
+$('#roadmapPlay').addEventListener('click',()=>{if(tourTimer){stopTour();return;}allCourses=false;stageIndex=0;tourStep=0;renderRoadmap();$('#roadmapPlay').setAttribute('aria-pressed','true');$('#roadmapPlay').textContent='여정 멈춤 Ⅱ';tourTimer=setInterval(()=>{tourStep++;if(tourStep>=window.NM_STAGES.length){stopTour();return;}stageIndex=tourStep;renderRoadmap();},3000);});
+$('#allCourses').addEventListener('click',()=>{stopTour();allCourses=!allCourses;renderRoadmap();});
+function updatePace(stage){const match=(stage.meta&&stage.meta.ko||'').match(/주 2회 기준\s*(\d+)주/),weeks=pace===1?stage.weeks:(match?Number(match[1]):null);$('#paceEstimate').textContent=!allCourses&&weeks?'선택한 단계 · 약 '+weeks+'주':'';$$('[data-pace]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.pace===pace)));}
+$$('[data-pace]').forEach(b=>b.addEventListener('click',()=>{pace=+b.dataset.pace;updatePace(window.NM_STAGES[stageIndex]);}));
+window.addEventListener('resize',()=>{if(view==='roadmap')renderRoadmap();});
+function hashView(){const v=location.hash.slice(1);return order.includes(v)?v:({story1:'labs',story2:'village',story3:'worksheet'}[v]||'cover');}
+window.addEventListener('popstate',()=>{if(turning){setTimeout(()=>go(hashView(),{historyMode:'none',animate:false}),900);return;}go(hashView(),{historyMode:'none'});});
+window.addEventListener('hashchange',()=>{const v=hashView();if(v!==view&&!turning)go(v,{historyMode:'none'});});
+window.addEventListener('keydown',e=>{
+ if($('#sheetZoom').open||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.target.isContentEditable)return;
+ if(e.key==='Escape'&&view!=='cover'){e.preventDefault();previous();}
+ if(e.key==='PageDown'){e.preventDefault();next();}
+ if(e.key==='PageUp'){e.preventDefault();previous();}
+});
+document.addEventListener('visibilitychange',()=>{if(hero)hero.setActive(!document.hidden&&view==='menu');if(lab)lab.setActive(!document.hidden&&view==='labs');frameActive(!document.hidden&&view==='village');if(document.hidden){teaser.pause();film.pause();stopTour();clearInterval(exampleTimer);}else if(view==='roadmap')renderRoadmap();});
+const initial=hashView();go(initial,{historyMode:'replace',animate:false,focus:false});
+window.NMPromoBook={getState:()=>({view,level,sample,sheetIndex,sampleOpen,turning}),go,experience:()=>({hero,lab})};
 })();

@@ -1,0 +1,34 @@
+/* Advertisement-only manipulatives. No curriculum, generator or progress writes. */
+.nm-experience{--xp-ink:#193e39;--xp-accent:#157c6c;--xp-gold:#dfae54;position:relative;display:flex;flex-direction:column;min-width:0;width:100%;height:100%;min-height:300px;color:var(--xp-ink);isolation:isolate;font-family:inherit}
+.nm-experience *{box-sizing:border-box}
+.nm-experience__stage{position:relative;flex:1;min-height:170px;overflow:hidden;border-radius:24px;background:radial-gradient(ellipse at 50% 52%,#fffefa 4%,#f3eee2 67%,#e7e3d9 100%)}
+.nm-experience__stage:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 1px #87785312}
+.nm-experience canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:pan-y;cursor:pointer}
+.nm-experience__badge{position:absolute;left:15px;top:13px;z-index:1;padding:6px 9px;border:1px solid #ad9e7130;border-radius:99px;background:#fffdf6c9;color:#68786b;font-size:10px;font-weight:800;letter-spacing:.13em;pointer-events:none}
+.nm-experience__equation{position:absolute;left:12px;right:12px;bottom:13px;z-index:1;display:flex;justify-content:center;align-items:center;gap:.22em;color:var(--xp-ink);font-size:clamp(25px,3.1vw,43px);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.035em;text-align:center;text-shadow:0 2px 12px #fffefa}
+.nm-experience__equation b{font-weight:900;color:var(--xp-accent)}
+.nm-experience__equation .nm-experience__operator{color:#82928c;font-weight:500;padding:0 .08em}
+.nm-experience__instruction{margin:12px 0 8px;text-align:center;font-size:clamp(12px,1.1vw,15px);font-weight:700;line-height:1.5;word-break:keep-all}
+.nm-experience__controls{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px;padding:0 2px 3px;min-height:50px}
+.nm-experience__controls button{appearance:none;min-width:44px;min-height:44px;margin:0;padding:9px 15px;background:#fffdf8;color:var(--xp-ink);border:1px solid #aeb9ac;border-radius:12px;box-shadow:0 3px 0 #e0ded1;font-size:14px;font-weight:700;line-height:1.2;font-family:inherit;cursor:pointer;transition:background .18s,transform .18s,border-color .18s;touch-action:manipulation}
+.nm-experience__controls button:hover:not(:disabled){background:#e8f3e8;border-color:#6e9b81;transform:translateY(-1px)}
+.nm-experience__controls button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #e0ded1}
+.nm-experience__controls button[aria-pressed=true]{background:#225e50;color:white;border-color:#225e50;box-shadow:0 3px 0 #174336}
+.nm-experience__controls button:disabled{opacity:.38;cursor:default;box-shadow:none}
+.nm-experience__controls button:focus-visible,.nm-experience__controls input:focus-visible{outline:3px solid #ca9440;outline-offset:3px}
+.nm-experience__controls .nm-experience__next{background:transparent;border-color:transparent;box-shadow:none;font-size:12px;text-decoration:underline;text-underline-offset:4px}
+.nm-experience__slider{display:flex;align-items:center;gap:10px;min-height:44px;width:min(100%,250px);font-size:12px;font-weight:800;white-space:nowrap}
+.nm-experience__slider input{width:100%;height:44px;margin:0;accent-color:#207460;cursor:pointer}
+.nm-experience__feedback{margin:5px 4px 0;min-height:21px;text-align:center;color:#62736a;font-size:12px;font-weight:600;line-height:1.5;word-break:keep-all}
+.nm-experience__fallback{position:absolute;inset:45px 22px 61px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:#496858;text-align:center;font-size:17px;line-height:1.6}
+.nm-experience__fallback[hidden]{display:none}
+.nm-experience__beads{display:flex;justify-content:center;gap:18px;width:100%}
+.nm-experience__bead-group{display:flex;align-content:center;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;width:45%;min-height:83px;padding:12px;border:2px solid #e0d7c4;border-radius:28px;background:#fffdfa}
+.nm-experience__bead{width:22px;height:22px;border-radius:50%;background:#338c77;box-shadow:inset -3px -4px 0 #215e5033,0 3px 5px #27483b26}
+.nm-experience__bead-group:nth-child(2) .nm-experience__bead{background:#e7b14f}
+.nm-experience[data-mode=middle] .nm-experience__stage,.nm-experience[data-mode=high] .nm-experience__stage{min-height:200px}
+.nm-experience[data-mode=middle] .nm-experience__equation,.nm-experience[data-mode=high] .nm-experience__equation{font-size:clamp(21px,2.6vw,34px)}
+.nm-experience[data-mode=middle] .nm-experience__controls{gap:5px}
+.nm-experience.is-compact{min-height:260px}.nm-experience.is-compact .nm-experience__badge{display:none}.nm-experience.is-compact .nm-experience__instruction{font-size:12px;margin:8px 0 5px}.nm-experience.is-compact .nm-experience__feedback{font-size:11px;margin-top:3px}
+@media(max-width:420px){.nm-experience{min-height:275px}.nm-experience__stage{border-radius:16px}.nm-experience__instruction{margin:9px 0 5px}.nm-experience__controls{gap:6px}.nm-experience__controls button{padding:8px 12px}.nm-experience__feedback{font-size:11px}.nm-experience__badge{left:10px;top:10px;font-size:9px}.nm-experience__equation{bottom:10px}}
+@media(prefers-reduced-motion:reduce){.nm-experience__controls button{transition:none}}

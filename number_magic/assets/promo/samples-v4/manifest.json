@@ -1,0 +1,719 @@
+{
+  "generatedAt": "2026-09-30T02:11:15.682Z",
+  "generator": "number_magic/app/exam.js weeklyEnvelope + renderPrintMulti",
+  "sourceCode": "20adcf75b3661a7790ff201a99e5a68f683c50f9",
+  "method": "Unmodified real course session data, temporarily selected in browser memory; full-page raster captures; no curriculum or print changes.",
+  "samples": [
+    {
+      "id": "preschool",
+      "course": "C0",
+      "session": 6,
+      "title": "수와 문장제와 친해지기",
+      "focus": [
+        "NL2",
+        "NL3"
+      ],
+      "magic": [
+        "N-06"
+      ],
+      "school": [
+        {
+          "t": "NL2",
+          "lv": 1,
+          "n": 6,
+          "count": 18,
+          "difficulty": "easy"
+        },
+        {
+          "t": "NL3",
+          "lv": 1,
+          "n": 6,
+          "count": 12,
+          "difficulty": "easy"
+        }
+      ],
+      "strategy": {
+        "units": [
+          "N-06"
+        ],
+        "practice": [
+          {
+            "t": "NL12",
+            "lv": 1,
+            "n": 4,
+            "count": 6
+          }
+        ]
+      },
+      "creative": [
+        {
+          "t": "NL12",
+          "lv": 1,
+          "n": 4,
+          "count": 6
+        },
+        {
+          "t": "NL15",
+          "lv": 2,
+          "n": 4,
+          "kind": "word",
+          "from": "creative",
+          "count": 6
+        }
+      ],
+      "application": [
+        {
+          "t": "NL15",
+          "lv": 2,
+          "n": 4,
+          "kind": "word",
+          "from": "creative",
+          "count": 6
+        }
+      ],
+      "items": [
+        {
+          "thread": "NL2",
+          "level": 1,
+          "count": 18
+        },
+        {
+          "thread": "NL3",
+          "level": 1,
+          "count": 12
+        },
+        {
+          "thread": null,
+          "level": null,
+          "count": 0,
+          "topicName": "모으기와 가르기",
+          "magicUnit": "N-06"
+        },
+        {
+          "thread": "NL12",
+          "level": 1,
+          "count": 6,
+          "topicName": "창의 연산 · 길 잇기와 십자 퍼즐"
+        },
+        {
+          "thread": "NL15",
+          "level": 2,
+          "count": 6,
+          "topicName": "적용 · 분류하고 세기"
+        }
+      ],
+      "pages": [
+        {
+          "index": 6,
+          "classes": "nm-w2-page nm-w2-page-magic",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 푼 날짜: N-06 · 1/1 3 누미의 마법 노트 Numbers of Magic 모으기와 가르기 두 손에 나눠 쥐고, 다시 모으고! ① 가르기 나무 하나의 수가 두 갈래로! 5는 1과 4, 2와 3! 나눠도 합쳐도 5예요. 🍬🍬🍬🍬🍬 = 5 1과 4 · 2와 3 · 5와 0 모으면 다시 5! ✓ 갈라도 모아도 전체는 그대로! ! 마법의 규칙 가르고 모아도 전체 수는 변하지 않아요! 7 / 14 MAGI",
+          "words": 0,
+          "items": 0,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "preschool/page-1.webp"
+        },
+        {
+          "index": 1,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 푼 날짜: 점수: / 18 NL2-L1 · 1/3 1 모으기와 가르기 개념 · 모으기와 가르기 두 수를 모으면 하나의 큰 수가 되고, 큰 수는 다시 두 수로 가를 수 있어요. 4개와 2개를 모으면 6개, 6개는 4개와 2개로 갈라져요. 모으거나 갈라서 빈칸을 채우시오. (1) 나비 3개를 두 접시에 갈라요. 한 접시에 2개면 다른 접시엔 몇 개? 빈 원을 채워요! 3 2 (2) 물고기 5개를 두 접시에 갈라요. ",
+          "words": 0,
+          "items": 6,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "preschool/page-2.webp"
+        },
+        {
+          "index": 2,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 NL2-L1 · 2/3 1 모으기와 가르기 (7) 병아리 5개를 두 접시에 갈라요. 한 접시에 3개면 다른 접시엔 몇 개? 빈 원을 채워요! 5 3 (8) 쿠키 4개를 두 접시에 갈라요. 한 접시에 1개면 다른 접시엔 몇 개? 빈 원을 채워요! 4 1 (9) 사과 5개를 두 접시에 갈라요. 한 접시에 1개면 다른 접시엔 몇 개? 빈 원을 채워요! 5 1 (10) 나비 5개를 두 접시에 갈라요. 한 접시에 1개면 ",
+          "words": 0,
+          "items": 8,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "preschool/page-3.webp"
+        },
+        {
+          "index": 4,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 푼 날짜: 점수: / 12 NL3-L1 · 1/2 2 무당벌레 가르기 개념 · 무당벌레 가르기 전체 개수를 알면 한쪽을 보고 다른 쪽이 몇 개인지 구할 수 있어요. 점이 7개인데 왼쪽 날개에 3개면 오른쪽 날개는 4개예요. 무당벌레 점을 좌우로 갈라 쓰시오. (1) 무당벌레 등에 점이 4개예요! 왼쪽 날개에 점이 1개면, 오른쪽 날개는 몇 개? 빈 원을 채워요! 4 1 (2) 무당벌레 등에 점이 5개예요! 오른쪽",
+          "words": 0,
+          "items": 6,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "preschool/page-4.webp"
+        },
+        {
+          "index": 9,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 푼 날짜: 점수: / 6 NL15-L2 · 1/2 5 적용 · 분류하고 세기 개념 · 분류하고 세기 섞여 있는 것을 종류별로 나눠 담으면 각각 몇 개인지 세거나 어느 쪽이 더 많은지 비교할 수 있어요. 사과 5개와 바나나 3개로 나누면 사과 바구니가 더 많아요. 종류별로 나누어 세어 쓰시오. (1) 섞여 있는 걸 종류별로 나눠요! 축구공가 모두 몇 개인지 세어 봐요 🏀 ⚽ 🏀 🏀 ⚽ ⚽ ⚽ 🏀 ⚽ 🧺 ⚽",
+          "words": 0,
+          "items": 4,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "preschool/page-5.webp"
+        },
+        {
+          "index": 10,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 NL15-L2 · 2/2 5 적용 · 분류하고 세기 (5) 섞여 있는 걸 종류별로 나눠요! 거북이가 모두 몇 개인지 세어 봐요 🐢 🐢 🐢 🐰 🐰 🧺 🐰 🧺 🐢 개 (6) 섞여 있는 걸 종류별로 나눠요! 토끼가 모두 몇 개인지 세어 봐요 🐰 🐢 🐢 🐢 🐰 🧺 🐰 개 🧺 🐢 새 문제로 한 번 더 QR을 찍으면 같은 유형의 새 문제가 나와요. 화면에서 바로 풀 수 있어요. 11 / 14",
+          "words": 0,
+          "items": 2,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "preschool/page-6.webp"
+        }
+      ],
+      "sourceSessionIndex": 5,
+      "sourceWordPracticeCount": 6,
+      "capturedWordCardCount": 0,
+      "capturedExerciseCount": 26,
+      "notes": "The source application set contains 6 picture-based classification/counting activities. They are not rendered with the word-card CSS class; do not interpret zero word cards as no application activities."
+    },
+    {
+      "id": "elementary",
+      "course": "C8",
+      "session": 1,
+      "title": "몇십 곱과 나눗셈의 시작",
+      "focus": [
+        "ML12"
+      ],
+      "magic": [
+        "B-24"
+      ],
+      "school": [
+        {
+          "t": "DV12",
+          "lv": 1,
+          "n": 6,
+          "count": 18,
+          "difficulty": "easy"
+        },
+        {
+          "t": "DV13",
+          "lv": 1,
+          "n": 6,
+          "count": 18,
+          "difficulty": "easy"
+        },
+        {
+          "t": "ML1",
+          "lv": 3,
+          "n": 4,
+          "review": true,
+          "count": 6,
+          "difficulty": "review"
+        }
+      ],
+      "strategy": {
+        "units": [
+          "B-24"
+        ],
+        "practice": [
+          {
+            "t": "ML12",
+            "lv": 1,
+            "n": 4,
+            "count": 6
+          }
+        ]
+      },
+      "creative": [
+        {
+          "t": "ML12",
+          "lv": 1,
+          "n": 4,
+          "count": 6
+        }
+      ],
+      "application": [
+        {
+          "t": "DV12",
+          "lv": 1,
+          "n": 6,
+          "kind": "word",
+          "from": "school",
+          "count": 6
+        }
+      ],
+      "items": [
+        {
+          "thread": "DV12",
+          "level": 1,
+          "count": 18
+        },
+        {
+          "thread": "DV13",
+          "level": 1,
+          "count": 18
+        },
+        {
+          "thread": "ML1",
+          "level": 3,
+          "count": 6,
+          "topicName": "복습 · 배와 반(×2·÷2)"
+        },
+        {
+          "thread": null,
+          "level": null,
+          "count": 0,
+          "topicName": "나눗셈의 세 얼굴",
+          "magicUnit": "B-24"
+        },
+        {
+          "thread": "ML12",
+          "level": 1,
+          "count": 6,
+          "topicName": "창의 연산 · 곱해서 10·100·1000 만들기"
+        },
+        {
+          "thread": "DV12",
+          "level": 1,
+          "count": 6,
+          "wordType": "all",
+          "topicName": "문장제 · 똑같이 나누기"
+        }
+      ],
+      "pages": [
+        {
+          "index": 16,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 푼 날짜: 점수: / 6 ML12-L1 · 1/3 5 창의 연산 · 곱해서 10·100·1000 만들기 개념 · 곱해서 10·100·1000 만들기 2와 5는 친구예요. 둘이 한 번 만나면 10, 두 번 만나면 100, 세 번 만나면 1000이 돼요. ① 2와 5를 먼저! 10이 되면 계산이 쉬워요 — 2×5=10은 특별한 쌍이에요. 세 수를 곱할 때 2와 5를 찾으면, 이 둘을 먼저 곱해서 10을 만들어요. 예",
+          "words": 0,
+          "items": 0,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "elementary/page-1.webp"
+        },
+        {
+          "index": 17,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 ML12-L1 · 2/3 5 창의 연산 · 곱해서 10·100·1000 만들기 Training Course (1) 2 × 5 × 11 2×5×11 → 2 × 5 = 2×5= 00 ​ = 10 × 11 = 10×11= 00 ​ (2) 5 × 9 × 2 × 10 5×9×2×10 → 2 × 5 = 2×5= 00 ​ → 10 × 9 = 10×9= 00 ​ = 90 × 10 = 90×10= 00 ​ (3) 9 × 5 × ",
+          "words": 0,
+          "items": 3,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "elementary/page-2.webp"
+        },
+        {
+          "index": 18,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 ML12-L1 · 3/3 5 창의 연산 · 곱해서 10·100·1000 만들기 (4) 풀이 과정의 □에 알맞은 수를 써요. 10 × 2 × 5 = 100 10×2×5=100 → 2 × = 10 2× 00 ​ =10 = 10 × 10 = 100 10×10=100 (5) 2 × 11 × 5 2×11×5 → 2 × 5 = 2×5= 00 ​ = 10 × 11 = 10×11= 00 ​ (6) 2 × 5 × 3 2×5×3 ",
+          "words": 0,
+          "items": 3,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "elementary/page-3.webp"
+        },
+        {
+          "index": 3,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 DV12-L1 · 3/5 1 똑같이 나누기 다음 물음에 답하시오. (1) 쿠키 24개가 접시 4개에 똑같이 들어 있어요. 접시 한 개에는 몇 개씩 들어 있을까요? 식: 답: 개 (2) 구슬 16개가 주머니 2개에 똑같이 들어 있어요. 주머니 한 개에는 몇 개씩 들어 있을까요? 식: 답: 개 (3) 서연은 귤 16개를 4명이 똑같이 나누어 가지도록 나눠 줘요. 한 명이 몇 개씩 가질까요? 식: 답: 개 (4) 유나",
+          "words": 6,
+          "items": 6,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "elementary/page-4.webp"
+        },
+        {
+          "index": 4,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 DV12-L1 · 4/5 1 똑같이 나누기 (7) 지우는 구슬 27개를 3명이 똑같이 나누어 가지도록 나눠 줘요. 한 명이 몇 개씩 가질까요? 식: 답: 개 (8) 사탕 20개가 봉지 5개에 똑같이 들어 있어요. 봉지 한 개에는 몇 개씩 들어 있을까요? 식: 답: 개 (9) 서연은 딸기 27개를 3명이 똑같이 나누어 가지도록 나눠 줘요. 한 명이 몇 개씩 가질까요? 식: 답: 개 (10) 소율은 색종이 24장을 ",
+          "words": 6,
+          "items": 6,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "elementary/page-5.webp"
+        },
+        {
+          "index": 8,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 DV13-L1 · 3/5 2 묶어서 나누기 다음 물음에 답하시오. (1) 소율은 구슬 10개를 2개씩 한 묶음으로 묶어요. 몇 묶음이 될까요? 식: 답: 묶음 (2) 귤 32개를 상자 한 개에 4개씩 담으려고 해요. 상자는 몇 개 필요할까요? 식: 답: 개 (3) 서연은 쿠키 18개를 2개씩 한 묶음으로 묶어요. 몇 묶음이 될까요? 식: 답: 묶음 (4) 도윤은 귤 10개를 한 명에게 2개씩 나누어 주려고 해요.",
+          "words": 6,
+          "items": 6,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "elementary/page-6.webp"
+        },
+        {
+          "index": 19,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 푼 날짜: 점수: / 6 DV12-L1 · 1/2 6 문장제 · 똑같이 나누기 예시 도윤은 스티커 12장을 4명이 똑같이 나누어 가지도록 나눠 줘요. 한 명이 몇 장씩 가질까요? 1 2 3 4 4명 → 4줄 · 한 줄이 한 몫(3장) 12 ÷ 4 = 3 12÷4=3 4 , 8 , 12 ⇒ 3 4,8,12⇒3 → 4 × 3 = 12 4×3=12 → 12 ÷ 4 = 3 12÷4=3 답: 3장 다음 물음에 답하시오. ",
+          "words": 4,
+          "items": 4,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "elementary/page-7.webp"
+        },
+        {
+          "index": 20,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 초 이름: 체험 DV12-L1 · 2/2 6 문장제 · 똑같이 나누기 (5) 서연은 귤 9개를 3명이 똑같이 나누어 가지도록 나눠 줘요. 한 명이 몇 개씩 가질까요? 식: 답: 개 (6) 서연은 쿠키 35개를 5명이 똑같이 나누어 가지도록 나눠 줘요. 한 명이 몇 개씩 가질까요? 식: 답: 개 새 문제로 한 번 더 QR을 찍으면 같은 유형의 새 문제가 나와요. 화면에서 바로 풀 수 있어요. 21 / 24 #DV12-L1x6-20",
+          "words": 2,
+          "items": 2,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "elementary/page-8.webp"
+        }
+      ],
+      "sourceSessionIndex": 0,
+      "sourceWordPracticeCount": 6,
+      "capturedWordCardCount": 24,
+      "capturedExerciseCount": 30,
+      "notes": "Multiplication-to-10 is a creative strategy in this actual session. The connected word-problem pages practice equal sharing/division, not multiplication-to-10. Word-card count includes school arithmetic written as word problems."
+    },
+    {
+      "id": "middle",
+      "course": "C31",
+      "session": 5,
+      "title": "유리수·좌표와 대표값",
+      "focus": [
+        "MD51",
+        "MD69"
+      ],
+      "magic": [
+        "M-68"
+      ],
+      "school": [
+        {
+          "t": "MD51",
+          "lv": 2,
+          "n": 6,
+          "count": 12,
+          "difficulty": "core"
+        },
+        {
+          "t": "MD68",
+          "lv": 2,
+          "n": 6,
+          "count": 12,
+          "difficulty": "core"
+        },
+        {
+          "t": "MD69",
+          "lv": 2,
+          "n": 6,
+          "count": 12,
+          "difficulty": "core"
+        }
+      ],
+      "strategy": {
+        "units": [
+          "M-68"
+        ],
+        "practice": [
+          {
+            "t": "MX6",
+            "lv": 2,
+            "n": 4,
+            "count": 6
+          }
+        ]
+      },
+      "creative": [
+        {
+          "t": "MX6",
+          "lv": 2,
+          "n": 4,
+          "count": 6
+        },
+        {
+          "t": "MD84",
+          "lv": 6,
+          "n": 4,
+          "kind": "model",
+          "from": "creative",
+          "count": 6
+        }
+      ],
+      "application": [
+        {
+          "t": "MD84",
+          "lv": 6,
+          "n": 4,
+          "kind": "model",
+          "from": "creative",
+          "count": 6
+        }
+      ],
+      "items": [
+        {
+          "thread": "MD51",
+          "level": 2,
+          "count": 12
+        },
+        {
+          "thread": "MD68",
+          "level": 2,
+          "count": 12
+        },
+        {
+          "thread": "MD69",
+          "level": 2,
+          "count": 12
+        },
+        {
+          "thread": null,
+          "level": null,
+          "count": 0,
+          "topicName": "좌표와 사분면",
+          "magicUnit": "M-68"
+        },
+        {
+          "thread": "MX6",
+          "level": 2,
+          "count": 6,
+          "topicName": "창의 연산 · 곱을 이용한 가우스 덧셈"
+        },
+        {
+          "thread": "MD84",
+          "level": 6,
+          "count": 6,
+          "topicName": "적용 · 대표값: 평균·중앙값·최빈값"
+        }
+      ],
+      "pages": [
+        {
+          "index": 23,
+          "classes": "nm-w2-page nm-hist-page nm-mzs-page",
+          "text": "수학 이야기 정비례·반비례 값 정비례와 반비례 값 한 자루에 500원인 연필을 x자루 사면 값은 y=500x원입니다 — 자루 수가 2배면 값도 2배! 반대로, 일정한 거리를 갈 때 속력을 2배로 하면 걸리는 시간은 절반이 됩니다 — 이건 반비례입니다. 그때 이야기 비율이 일정한가, 곱이 일정한가 정비례·반비례는 고대 그리스의 \"비례론\"에서 나왔습니다. 유클리드의 『원론』 5권 전체가 비(比)와 비례를 다루는데, 이는 오늘날의 함수 개념의 뿌리가 됐습니다. 01—04 네 컷으로 읽",
+          "words": 0,
+          "items": 0,
+          "hero": true,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "middle/page-1.webp"
+        },
+        {
+          "index": 9,
+          "classes": "nm-w2-page nm-mid-six",
+          "text": "체험 · Numbers of Magic GFIELD 중 이름: 체험 푼 날짜: 점수: / 12 MD69-L2 · 1/5 3 정비례·반비례의 그래프 개념 이해 · 정비례·반비례의 그래프 왜 이렇게 할까요? 그래프는 식을 만족하는 (x,y)를 모두 모은 그림입니다. 정비례는 원점을 지나는 직선이고, 반비례는 축에 닿지 않는 두 갈래 곡선입니다. 𝑦 = 3 𝑥 : ( 0 , 0 ) , ( 1 , 3 ) , 𝑦 = 6 𝑥 : ( 2 , 3 ) , ( 3 , 2 ) y=3x: (0",
+          "words": 0,
+          "items": 0,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "middle/page-2.webp"
+        },
+        {
+          "index": 10,
+          "classes": "nm-w2-page nm-mid-six",
+          "text": "체험 · Numbers of Magic GFIELD 중 이름: 체험 MD69-L2 · 2/5 3 정비례·반비례의 그래프 따라 풀어 보세요. (가) 𝑦 = 𝑥 y= x 00 ​ ​ -6 -4 -2 2 4 6 -8 -6 -4 -2 2 4 6 8 x y O 지나는 점 ( 4 , 2 ) 지나는 점(4,2) → 4 × ( 2 ) = 4×(2)= 00 ​ → 𝑦 = 𝑥 y= x 00 ​ ​ (나) 𝑦 = 𝑥 y= x 00 ​ ​ -6 -4 -2 2 4 6 -8 -6 -4 -2 2",
+          "words": 0,
+          "items": 0,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "middle/page-3.webp"
+        },
+        {
+          "index": 12,
+          "classes": "nm-w2-page nm-mid-six",
+          "text": "체험 · Numbers of Magic GFIELD 중 이름: 체험 MD69-L2 · 4/5 3 정비례·반비례의 그래프 계산을 하시오. (1) -6 -4 -2 2 4 6 -8 -6 -4 -2 2 4 6 8 x y O 𝑦 = 𝑥 y= x 00 ​ ​ (2) -6 -4 -2 2 4 6 -8 -6 -4 -2 2 4 6 8 x y O 𝑦 = 𝑥 y= x 00 ​ ​ (3) -6 -4 -2 2 4 6 -8 -6 -4 -2 2 4 6 8 x y O 𝑦 = 𝑥 y= x 00 ​ ​",
+          "words": 0,
+          "items": 6,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "middle/page-4.webp"
+        },
+        {
+          "index": 13,
+          "classes": "nm-w2-page nm-mid-six",
+          "text": "체험 · Numbers of Magic GFIELD 중 이름: 체험 MD69-L2 · 5/5 3 정비례·반비례의 그래프 (7) -6 -4 -2 2 4 6 -8 -6 -4 -2 2 4 6 8 x y O 𝑦 = 𝑥 y= x 00 ​ ​ (8) -6 -4 -2 2 4 6 -8 -6 -4 -2 2 4 6 8 x y O 𝑦 = 𝑥 y= x 00 ​ ​ (9) -6 -4 -2 2 4 6 -8 -6 -4 -2 2 4 6 8 x y O 𝑦 = 𝑥 y= x 00 ​ ​ (10) -6 ",
+          "words": 0,
+          "items": 6,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "middle/page-5.webp"
+        },
+        {
+          "index": 3,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 중 이름: 체험 MD51-L2 · 3/4 1 정비례·반비례 값 계산을 하시오. (1) 𝑦 = 𝑎 𝑥 , ( 2 , 3 ) 를 지남 ⇒ 𝑥 = 3 일 때 𝑦 = y= x a ​ ,(2,3)를 지남⇒x=3일 때 y= 00 ​ (2) 𝑦 = 𝑎 𝑥 , ( 6 , − 6 ) 를 지남 ⇒ 𝑥 = 9 일 때 𝑦 = y= x a ​ ,(6,−6)를 지남⇒x=9일 때 y= 00 ​ (3) 𝑦 = 𝑎 𝑥 , ( 6 , −",
+          "words": 0,
+          "items": 6,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "middle/page-6.webp"
+        }
+      ],
+      "sourceSessionIndex": 4,
+      "sourceWordPracticeCount": 0,
+      "capturedWordCardCount": 0,
+      "capturedExerciseCount": 18,
+      "notes": "The application set in this session is statistics, not reciprocal-proportion word problems."
+    },
+    {
+      "id": "high",
+      "course": "C43",
+      "session": 4,
+      "title": "극한·미분과 적분",
+      "focus": [
+        "MD44",
+        "MD45"
+      ],
+      "magic": [
+        "M-46"
+      ],
+      "school": [
+        {
+          "t": "MD44",
+          "lv": 3,
+          "n": 6,
+          "count": 12,
+          "difficulty": "hard"
+        },
+        {
+          "t": "MD45",
+          "lv": 1,
+          "n": 6,
+          "count": 12,
+          "difficulty": "easy"
+        }
+      ],
+      "strategy": {
+        "units": [
+          "M-46"
+        ],
+        "practice": []
+      },
+      "creative": [],
+      "application": [],
+      "items": [
+        {
+          "thread": "MD44",
+          "level": 3,
+          "count": 12
+        },
+        {
+          "thread": "MD45",
+          "level": 1,
+          "count": 12
+        },
+        {
+          "thread": null,
+          "level": null,
+          "count": 0,
+          "topicName": "다항함수의 적분",
+          "magicUnit": "M-46"
+        }
+      ],
+      "pages": [
+        {
+          "index": 1,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 고 이름: 체험 푼 날짜: 점수: / 12 MD44-L3 · 1/4 1 미분계수와 도함수 개념 · 미분계수와 도함수 도함수를 먼저 구한 뒤 그 자리의 x값을 넣습니다 — f(x)=−6x²+5x의 도함수는 −12x+5이고, f′(2)=−24+5=−19입니다. ① 𝑓 ′ ( 𝑥 ) = 𝑑 𝑑 𝑥 𝑓 ( 𝑥 ) f ′ (x)= dx d ​ f(x) — 왼쪽 f'(x)(프라임)와 오른쪽 d/dx·f(x)(디엑스분의디)는 완",
+          "words": 0,
+          "items": 0,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "high/page-1.webp"
+        },
+        {
+          "index": 3,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 고 이름: 체험 MD44-L3 · 3/4 1 미분계수와 도함수 계산을 하시오. (1) 𝑓 ( 𝑥 ) = 𝑥 2 − 7 𝑥 ⇒ 𝑓 ′ ( − 5 ) = f(x)=x 2 −7x⇒f ′ (−5)= 00 ​ (2) 𝑓 ( 𝑥 ) = 𝑥 2 − 7 𝑥 ⇒ 𝑓 ′ ( − 6 ) = f(x)=x 2 −7x⇒f ′ (−6)= 00 ​ (3) 𝑓 ( 𝑥 ) = 8 𝑥 2 − 𝑥 ⇒ 𝑓 ′ ( − 3 ) = f(x)=8",
+          "words": 0,
+          "items": 8,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "high/page-2.webp"
+        },
+        {
+          "index": 5,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 고 이름: 체험 푼 날짜: 점수: / 12 MD45-L1 · 1/4 2 접선의 기울기와 방정식 개념 · 접선의 기울기와 방정식 접선의 기울기는 그 점에서의 미분계수 f'(x₀)입니다. 접선의 방정식 y=mx+n은 m=f'(x₀), n=f(x₀)-m·x₀로 구합니다. ① 𝑓 ( 𝑥 ) = 𝑥 2 ⇒ 𝑥 = 3 에서 접선의 기울기 = 6 f(x)=x 2 ⇒x=3에서 접선의 기울기=6 — 앞 유닛에서 배운 미분계수 f'(x₀)",
+          "words": 0,
+          "items": 0,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "high/page-3.webp"
+        },
+        {
+          "index": 7,
+          "classes": "nm-w2-page",
+          "text": "체험 · Numbers of Magic GFIELD 고 이름: 체험 MD45-L1 · 3/4 2 접선의 기울기와 방정식 계산을 하시오. (1) 𝑓 ( 𝑥 ) = − 𝑥 2 − 2 𝑥 + 6 ⇒ 𝑥 = − 4 에서 접선의 기울기 = f(x)=−x 2 −2x+6⇒x=−4에서 접선의 기울기= 00 ​ (2) 𝑓 ( 𝑥 ) = − 𝑥 2 + 5 𝑥 + 3 ⇒ 𝑥 = − 1 에서 접선의 기울기 = f(x)=−x 2 +5x+3⇒x=−1에서 접선의 기울기= 00 ​ (3) ",
+          "words": 0,
+          "items": 8,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "high/page-4.webp"
+        },
+        {
+          "index": 9,
+          "classes": "nm-w2-page nm-w2-page-magic",
+          "text": "체험 · Numbers of Magic GFIELD 고 이름: 체험 푼 날짜: M-46 · 1/2 3 누미의 마법 노트 Numbers of Magic 다항함수의 적분 미분을 거꾸로 되돌리는 새 기호, ∫ ① ∫는 미분을 거꾸로 — 부정적분 ∫ 6 𝑥 𝑑 𝑥 = 3 𝑥 2 + 𝐶 ∫6xdx=3x 2 +C 앞서 3x²을 미분하면 6x가 됐죠? ∫는 그 반대 방향입니다 — 6x를 적분하면 다시 3x²이 나옵니다. 그런데 3x²+1, 3x²+7도 미분하면 똑같이 6x가 되니, ",
+          "words": 0,
+          "items": 0,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "high/page-5.webp"
+        },
+        {
+          "index": 10,
+          "classes": "nm-w2-page nm-w2-page-magic",
+          "text": "체험 · Numbers of Magic GFIELD 고 이름: 체험 M-46 · 2/2 ② 정적분은 구간의 넓이 — F(끝)-F(처음) ∫ 1 3 6 𝑥 𝑑 𝑥 = 𝐹 ( 3 ) − 𝐹 ( 1 ) = 27 − 3 = 24 ∫ 1 3 ​ 6xdx=F(3)−F(1)=27−3=24 ∫ 아래 1, 위 3은 \"1부터 3까지의 구간\"을 뜻합니다. 원시함수 F(x)=3x²를 구한 뒤, F(3)-F(1)=27-3=24를 계산합니다. +C는 뺄셈에서 저절로 사라지니 정적분에는 붙이지 않",
+          "words": 0,
+          "items": 0,
+          "hero": false,
+          "height": 1047,
+          "width": 718,
+          "overflow": 0,
+          "file": "high/page-6.webp"
+        }
+      ],
+      "sourceSessionIndex": 3,
+      "sourceWordPracticeCount": 0,
+      "capturedWordCardCount": 0,
+      "capturedExerciseCount": 16,
+      "notes": "This actual calculus session has no separate word-problem/application set. Do not claim it does."
+    }
+  ]
+}
