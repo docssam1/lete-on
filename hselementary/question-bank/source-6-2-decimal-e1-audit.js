@@ -142,7 +142,7 @@ for (const sourceId of sourceIds) {
   }
   assert(prompts.size >= 3 && pools.size === 3, `${sourceId}: 3개 고정 묶음 누락`);
 }
-for (const type of types.filter(item => item.sourceItemId?.startsWith("6-2-u2-") && !sourceIds.includes(item.sourceItemId) && !/^6-2-u2-e1-mission-[1-6]$/.test(item.sourceItemId) && !["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-5"].includes(item.sourceItemId))) {
+for (const type of types.filter(item => item.sourceItemId?.startsWith("6-2-u2-") && !sourceIds.includes(item.sourceItemId) && !/^6-2-u2-e1-mission-[1-6]$/.test(item.sourceItemId) && !["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-2", "6-2-u2-e2-mission-5"].includes(item.sourceItemId))) {
   assert.equal(type.reviewLocked, true, `${type.sourceItemId}: 검수 전 유형 잠금 해제됨`);
 }
 console.log(`6-2 소수의 나눗셈 E1: ${sourceIds.length}유형, ${checked}건 독립 검산, 나머지 잠금 유지`);

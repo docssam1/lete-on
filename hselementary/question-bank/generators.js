@@ -193,6 +193,18 @@
     ...(Number.isInteger(options.verifiedVariantCount) ? { verifiedVariantCount: options.verifiedVariantCount } : {}),
     ...(options.sourceItemId ? { sourceItemId: options.sourceItemId } : {})
   });
+  const tapeOverlapGeometry = ({ length, overlap, overlapCycle, count }) => {
+    if (!(length > overlap && overlap > 0 && Number.isInteger(count) && count >= 2)) throw new Error("테이프의 길이·겹침·장수 조건이 잘못되었습니다.");
+    if (overlapCycle && (!overlapCycle.length || overlapCycle.some(value => value <= 0 || value >= length))) throw new Error("번갈아 겹친 길이의 조건이 잘못되었습니다.");
+    const overlapWidths = Array.from({ length: count - 1 }, (_, index) => overlapCycle?.[index % overlapCycle.length] ?? overlap);
+    const starts = [0];
+    for (const width of overlapWidths) starts.push(starts.at(-1) + length - width);
+    return { starts, overlapWidths, totalLength: starts.at(-1) + length };
+  };
+  const tapeOverlapSampleMarkup = ({ starts, sampleWidth, overlapWidth, overlapWidths, y, height, token, colors = ["#e3f1f8", "#fbf3dc"], outline = "#183d56", overlapOutline = "#a85f00", shade = `url(#${token}-hatch)` }) => ({
+    rects: starts.map((x, index) => `<rect x="${x.toFixed(2)}" y="${y}" width="${sampleWidth}" height="${height}" fill="${colors[index % colors.length]}" fill-opacity="0.82" stroke="${outline}" stroke-width="2"/>`).join(""),
+    overlaps: starts.slice(1).map((x, index) => `<rect x="${x.toFixed(2)}" y="${y}" width="${(overlapWidths?.[index] ?? overlapWidth).toFixed(2)}" height="${height}" fill="${shade}" stroke="${overlapOutline}" stroke-width="1.4"/>`).join("")
+  });
   const numberSequenceMarkup = values => `<div class="sequence number-sequence" role="list" aria-label="수 목록">${values.map(value => `<span role="listitem">${Number(value).toLocaleString()}</span>`).join("")}</div>`;
   const source41DigitWords = ["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
   const source41SmallUnits = ["", "십", "백", "천"];
@@ -13958,9 +13970,7 @@
     mixedCalculationE2({ rng, level, variant = 0 }) {
       const difficulty = level + 1;
       const tapeStripSvg = ({ length, width, overlap, count }) => {
-        const starts = Array.from({ length: count }, (_, index) => index * (length - overlap));
-        const segments = starts.map(start => ({ start, end: start + length }));
-        const totalLength = segments.at(-1).end;
+        const { totalLength } = tapeOverlapGeometry({ length, overlap, count });
         const token = `mixed-e2-${length}-${width}-${overlap}-${count}`;
         const overlapWidth = Math.max(14, Math.min(38, 150 * overlap / length));
         const pairFirstX = 280;
@@ -13968,10 +13978,8 @@
         const pairSecondX = pairFirstEnd - overlapWidth;
         const sampleWidth = 108;
         const sampleOverlap = Math.max(10, Math.min(30, sampleWidth * overlap / length));
-        const sampleStep = sampleWidth - sampleOverlap;
-        const sampleXs = [40, 40 + sampleStep, 40 + sampleStep * 2];
-        const sampleRects = sampleXs.map((x, index) => `<rect x="${x.toFixed(2)}" y="166" width="${sampleWidth}" height="34" fill="${index % 2 ? "#fbf3dc" : "#e3f1f8"}" fill-opacity="0.82" stroke="#183d56" stroke-width="2"/>`).join("");
-        const sampleOverlaps = sampleXs.slice(1).map(x => `<rect x="${x.toFixed(2)}" y="166" width="${sampleOverlap.toFixed(2)}" height="34" fill="url(#${token}-hatch)" stroke="#a85f00" stroke-width="1.4"/>`).join("");
+        const sampleXs = tapeOverlapGeometry({ length: sampleWidth, overlap: sampleOverlap, count: 3 }).starts.map(start => 40 + start);
+        const { rects: sampleRects, overlaps: sampleOverlaps } = tapeOverlapSampleMarkup({ starts: sampleXs, sampleWidth, overlapWidth: sampleOverlap, y: 166, height: 34, token });
         return `<svg class="geometry-diagram mixed-e2-tape-strip" viewBox="0 0 570 245" role="img" aria-label="길이 ${length}cm, 폭 ${width}cm인 같은 테이프 ${count}장을 ${overlap}cm씩 겹쳐 일직선으로 붙인 그림" data-tape-model="${length},${width},${overlap},${count},${count - 1},${totalLength}">
           <defs><marker id="${token}-arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#183d56"/></marker><pattern id="${token}-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#a85f00" stroke-width="1.4"/></pattern></defs>
           <text class="svg-measure-text" x="40" y="24" font-size="19" font-weight="700" fill="#183d56">한 장</text>
@@ -24761,6 +24769,51 @@
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE2Mission2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [lengthTenths, overlapTenths, secondOverlapTenths, count] = [[260, 25, 35, 19], [225, 15, 25, 17], [320, 32, 28, 15]][poolIndex];
+      const alternating = level === 2;
+      const stepTenths = lengthTenths - overlapTenths;
+      const totalTenths = tapeOverlapGeometry({ length: lengthTenths, overlap: overlapTenths, overlapCycle: alternating ? [overlapTenths, secondOverlapTenths] : undefined, count }).totalLength;
+      const compact = tenths => String(Number((tenths / 10).toFixed(1)));
+      const length = compact(lengthTenths);
+      const overlap = compact(overlapTenths);
+      const secondOverlap = compact(secondOverlapTenths);
+      const total = compact(totalTenths);
+      const step = compact(stepTenths);
+      const remaining = compact(totalTenths - lengthTenths);
+      const sampleWidth = 115;
+      const sampleOverlap = sampleWidth * overlapTenths / lengthTenths;
+      const sampleSecondOverlap = sampleWidth * (alternating ? secondOverlapTenths : overlapTenths) / lengthTenths;
+      const starts = tapeOverlapGeometry({ length: sampleWidth, overlap: sampleOverlap, overlapCycle: alternating ? [sampleOverlap, sampleSecondOverlap] : undefined, count: 3 }).starts.map(x => 28 + x);
+      const { rects, overlaps } = tapeOverlapSampleMarkup({ starts, sampleWidth, overlapWidth: sampleOverlap, overlapWidths: [sampleOverlap, sampleSecondOverlap], y: 49, height: 34, token: "source62-tape-count", colors: ["#f2f2f2", "#fff"], outline: "#222", overlapOutline: "#222", shade: "#c3c3c3" });
+      const firstEnd = starts[0] + sampleWidth;
+      const secondEnd = starts[1] + sampleWidth;
+      const diagram = `<svg class="geometry-diagram source62-tape-count" viewBox="0 0 420 124" role="img" aria-label="길이 ${length}cm인 색 테이프를 ${alternating ? `${overlap}cm와 ${secondOverlap}cm씩 번갈아` : `${overlap}cm씩`} 겹쳐 계속 이어 붙이는 그림" data-tape-model="${lengthTenths},${overlapTenths},${alternating ? secondOverlapTenths : overlapTenths},sample" data-sample-is-not-total="true">
+        <line x1="${starts[0].toFixed(2)}" y1="31" x2="${firstEnd.toFixed(2)}" y2="31" class="source62-tape-measure"/><line x1="${starts[1].toFixed(2)}" y1="35" x2="${secondEnd.toFixed(2)}" y2="35" class="source62-tape-measure"/>
+        <text x="${(starts[0] + sampleWidth / 2).toFixed(2)}" y="20" class="source62-tape-length">${length}cm</text><text x="${(starts[1] + sampleWidth / 2).toFixed(2)}" y="24" class="source62-tape-length">${length}cm</text>
+        ${rects}${overlaps}
+        <text x="${(starts[1] + sampleOverlap / 2).toFixed(2)}" y="109" class="source62-tape-overlap">${overlap}cm</text><text x="${(starts[2] + sampleSecondOverlap / 2).toFixed(2)}" y="109" class="source62-tape-overlap">${alternating ? secondOverlap : overlap}cm</text><text x="388" y="76" class="source62-tape-continue">…</text>
+      </svg>`;
+      const totalDisplay = alternating ? `${totalTenths}mm` : `${total}cm`;
+      const easyHint = level === 0 ? " 처음 한 장을 붙인 뒤에는 한 장을 더 붙일 때 늘어나는 길이를 생각해 보세요." : "";
+      const overlapCondition = alternating
+        ? `왼쪽부터 첫 이음새는 ${overlap}cm, 다음 이음새는 ${secondOverlap}cm씩 겹치게 하고, 이 두 길이를 번갈아 사용했습니다.`
+        : `이웃한 두 장이 ${overlap}cm씩 겹치게 했습니다.`;
+      const prompt = `그림과 같이 길이가 ${length}cm인 색 테이프 여러 장을 한 줄로 이어 붙였습니다. ${overlapCondition} 이어 붙인 전체 길이가 ${totalDisplay}입니다.${easyHint} 색 테이프는 모두 몇 장인가요?${diagram}`;
+      const answer = `${count}장`;
+      const pairGain = compact(2 * lengthTenths - overlapTenths - secondOverlapTenths);
+      const pairCount = (count - 1) / 2;
+      const solution = alternating
+        ? `${totalDisplay} = ${total}cm입니다. 첫 장 뒤에는 두 장을 더 붙일 때마다 (${length} - ${overlap}) + (${length} - ${secondOverlap}) = ${pairGain}cm 늘어납니다. 처음 한 장을 뺀 ${remaining}cm에는 두 장 묶음이 ${remaining} ÷ ${pairGain} = ${pairCount}번 들어가므로 전체는 1 + ${pairCount} × 2 = ${answer}입니다.`
+        : `첫 장 다음부터는 한 장을 붙일 때마다 ${length} - ${overlap} = ${step}cm 늘어납니다. 첫 장의 길이를 제외한 ${total} - ${length} = ${remaining}cm는 ${remaining} ÷ ${step} = ${count - 1}장을 더 붙인 길이이므로 모두 1 + ${count - 1} = ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-tape-answer" data-answer-source="${sourceItemId}" data-print-weight="compact">${diagram}</div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29619,6 +29672,7 @@
     [type => type.sourceItemId === "6-2-u2-e2-example-2", "sourceGrade6SecondDecimalDivisionE2Example2"],
     [type => type.sourceItemId === "6-2-u2-e2-example-3", "sourceGrade6SecondDecimalDivisionE2Example3"],
     [type => type.sourceItemId === "6-2-u2-e2-mission-1", "sourceGrade6SecondDecimalDivisionE2Mission1"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-2", "sourceGrade6SecondDecimalDivisionE2Mission2"],
     [type => type.sourceItemId === "6-2-u2-e2-mission-5", "sourceGrade6SecondDecimalDivisionE2Mission5"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
