@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "status": "private-review-metadata-no-source-image",
+  "semester": "6-2",
+  "unit": 2,
+  "exploration": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 16,
+    "printedPage": 18,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "officialAnswerEvidence": {
+    "status": "not-used",
+    "reason": "별도 답지 후보가 이 심화 원본과 같은 판본임을 확인하지 못해 인쇄 원문과 독립 계산만 근거로 사용함"
+  },
+  "rawSourceLinks": {
+    "6-2-u2-e1-exploration": ["6-2-u2-e1-exploration-1", "6-2-u2-e1-exploration-2"],
+    "6-2-u2-e1-example-1": ["6-2-u2-e1-example-1"]
+  },
+  "verification": {
+    "independentMathAudit": "source-6-2-decimal-e1-audit.js",
+    "browserAudit": "source-6-2-decimal-e1-browser-audit.js",
+    "randomizedChecks": 1080,
+    "desktopMobileScreenshots": 12,
+    "a4PdfFiles": 6
+  },
+  "items": [
+    {
+      "sourceItemId": "6-2-u2-e1-exploration-1",
+      "rawSourceItemId": "6-2-u2-e1-exploration",
+      "originalStructure": "두 소수의 나눗셈과 몫이 같은 식을 보기에서 하나 고름",
+      "visualRequirement": "보기의 소수점과 나눗셈 기호를 분명히 표시",
+      "answerContract": "single-choice",
+      "independentCalculation": "두 수를 같은 배수로 바꾼 나눗셈만 몫이 같음; 보기의 몫을 각각 유리수로 비교",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-exploration-2",
+      "rawSourceItemId": "6-2-u2-e1-exploration",
+      "originalStructure": "소수 나눗셈 한 식을 계산",
+      "visualRequirement": "원문에는 별도 그림이 없고 계산식만 있음",
+      "answerContract": "single-value",
+      "independentCalculation": "몫에 나누는 수를 곱해 원래 나누어지는 수와 같은지 확인",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-example-1",
+      "rawSourceItemId": "6-2-u2-e1-example-1",
+      "originalStructure": "두 나눗셈의 몫 사이에 있는 한 자리 소수를 모두 찾아 합함",
+      "visualRequirement": "열린 부등식과 빈칸을 한 줄에 표시",
+      "answerContract": "single-value",
+      "independentCalculation": "두 몫을 별도로 구하고 0.1 간격의 후보를 전수 열거해 합함",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    }
+  ]
+}

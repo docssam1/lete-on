@@ -24310,6 +24310,72 @@
       const answerVisual = mathBoard("나 혼자 일하는 달력", row("나의 하루 일한 양", fractionText(secondRate)) + row("필요한 날 수", `${aloneDays}일`) + row("기간", `${data.month}월 ${data.day}일 → ${answer}`));
       return fixedResult(`어떤 일을 가와 나가 함께 ${data.togetherDays}일 동안 하여 전체의 ${fractionMarkup(...data.together)}를 끝냈습니다. 나머지는 가가 혼자 ${data.firstAloneDays}일 동안 하여 끝냈습니다. 같은 일을 나가 ${data.month}월 ${data.day}일부터 쉬지 않고 혼자 한다면 끝나는 날은 몇 월 며칠인가요? (일한 첫날을 1일로 셉니다.)${promptVisual}${support("두 사람이 하루에 한 양에서 가가 하루에 한 양을 빼세요.")}${challenge}${evidence("work-rate-date", [data.togetherDays, ...data.together, data.firstAloneDays, data.month, data.day, secondRate.numerator, secondRate.denominator, aloneDays, endDay], "date")}`, answer, `두 사람이 하루에 한 양은 ${fractionText(togetherRate)}, 가가 하루에 한 양은 ${fractionText(firstRate)}입니다. 따라서 나는 하루에 ${fractionText(secondRate)}만큼 하므로 혼자 ${aloneDays}일 걸립니다. ${data.month}월 ${data.day}일을 첫날로 세면 ${answer}에 끝납니다.`, answerVisual);
     },
+    sourceGrade6SecondDecimalDivisionE1Choice({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-exploration-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [numerator, divisor] = [[672, 56], [864, 72], [936, 78]][poolIndex];
+      const target = numerator / (10 * divisor);
+      const options = [
+        { text: `${numerator} ÷ ${divisor / 100}`, value: target * 1000 },
+        { text: `${numerator} ÷ ${divisor / 10}`, value: target * 100 },
+        { text: `${numerator / 10} ÷ ${divisor / 10}`, value: target * 10 },
+        { text: `${numerator / 10} ÷ ${divisor}`, value: target },
+        { text: `${numerator / 100} ÷ ${divisor}`, value: target / 10 },
+        { text: `${numerator / 1000} ÷ ${divisor}`, value: target / 100 }
+      ];
+      const choices = level === 0 ? options.slice(1, 4) : level === 1 ? options.slice(1) : options;
+      const visible = [...choices.slice(poolIndex), ...choices.slice(0, poolIndex)];
+      const correct = visible.findIndex(option => option.value === target);
+      if (correct < 0 || visible.filter(option => option.value === target).length !== 1) throw new Error(`${sourceItemId}: 정답이 하나가 아닙니다.`);
+      const marks = ["①", "②", "③", "④", "⑤", "⑥"];
+      const list = `<ol class="source62-decimal-choices" aria-label="나눗셈 보기">${visible.map((option, index) => `<li><span>${marks[index]}</span>${option.text}</li>`).join("")}</ol>`;
+      const answer = marks[correct];
+      const solution = `나누어지는 수와 나누는 수에 각각 100을 곱하면 ${numerator / 10} ÷ ${divisor}입니다. 따라서 정답은 ${answer}입니다.`;
+      return result(`${numerator / 1000} ÷ ${divisor / 100}와 몫이 같은 것을 고르세요.${list}`, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${list}<p>${answer} ${numerator / 10} ÷ ${divisor} = ${target}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1Calculate({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-exploration-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [divisorHundredths, quotientTenths] = [[357, 239], [246, 187], [638, 125]][poolIndex];
+      const dividend = divisorHundredths * quotientTenths / 1000;
+      const divisor = divisorHundredths / 100;
+      const quotient = quotientTenths / 10;
+      const expression = `${dividend} ÷ ${divisor}`;
+      const prompt = level === 0 ? `${expression}을 계산하세요. 나누는 수를 자연수로 바꾸어 생각해 보세요.` : `${expression}을 계산하세요.`;
+      const solution = `나누어지는 수와 나누는 수에 각각 100을 곱하면 ${dividend * 100} ÷ ${divisorHundredths} = ${quotient}입니다.`;
+      return result(prompt, quotient, solution, {
+        answerVisual: `<p class="source62-decimal-calculation" data-answer-source="${sourceItemId}">${expression} = ${quotient}</p>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1Range({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-example-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { left: "14.28", leftDivisor: "6.8", right: "11.75", rightDivisor: "4.7", low: 210, high: 250 },
+        { left: "14.4", leftDivisor: "4.5", right: "10.36", rightDivisor: "2.8", low: 320, high: 370 },
+        { left: "13.94", leftDivisor: "6.8", right: "11.562", rightDivisor: "4.7", low: 205, high: 246 }
+      ][poolIndex];
+      const leftQuotient = Number(data.left) / Number(data.leftDivisor);
+      const rightQuotient = Number(data.right) / Number(data.rightDivisor);
+      if (Math.abs(leftQuotient * 100 - data.low) > 1e-8 || Math.abs(rightQuotient * 100 - data.high) > 1e-8) throw new Error(`${sourceItemId}: 범위 계산이 맞지 않습니다.`);
+      const candidates = Array.from({ length: 100 }, (_, index) => index).filter(tenth => tenth * 10 > data.low && tenth * 10 < data.high);
+      if (!candidates.length) throw new Error(`${sourceItemId}: 가능한 수가 없습니다.`);
+      const answer = candidates.reduce((sum, tenth) => sum + tenth, 0) / 10;
+      const expression = `${data.left} ÷ ${data.leftDivisor} < □ < ${data.right} ÷ ${data.rightDivisor}`;
+      const board = `<div class="source62-decimal-range" data-source62-decimal-range="${sourceItemId}">${expression}</div>`;
+      const solution = `양쪽 나눗셈의 몫은 각각 ${data.low / 100}, ${data.high / 100}입니다. 사이에 있는 한 자리 소수는 ${candidates.map(tenth => tenth / 10).join(", ")}이므로 합은 ${answer}입니다.`;
+      return result(`□는 소수 첫째 자리까지 나타낸 수입니다. □ 안에 들어갈 수 있는 모든 수의 합을 구하세요.${board}`, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${board}<p>${data.low / 100} < □ < ${data.high / 100}</p><p>${candidates.map(tenth => tenth / 10).join(" + ")} = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29126,6 +29192,9 @@
     [type => type.id === "5-1-u5-t2", "fifthFractionSubtractionAdvanced"],
     [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
     [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
+    [type => type.sourceItemId === "6-2-u2-e1-exploration-1", "sourceGrade6SecondDecimalDivisionE1Choice"],
+    [type => type.sourceItemId === "6-2-u2-e1-exploration-2", "sourceGrade6SecondDecimalDivisionE1Calculate"],
+    [type => type.sourceItemId === "6-2-u2-e1-example-1", "sourceGrade6SecondDecimalDivisionE1Range"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],
