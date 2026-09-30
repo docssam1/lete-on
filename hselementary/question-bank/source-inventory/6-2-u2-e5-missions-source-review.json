@@ -8,6 +8,14 @@
     "originalChecked": true,
     "handwrittenMarksExcluded": true
   },
+  "secondarySourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "DDF0DBBBF4957F70815BD633F5D78511040657DACFA0DDA9ED063FA142C27B1B",
+    "pdfPage": 31,
+    "printedPage": 27,
+    "samePrintedWording": true,
+    "handwrittenMarksPresent": false
+  },
   "missions": [
     {
       "sourceItemId": "6-2-u2-e5-mission-1",
