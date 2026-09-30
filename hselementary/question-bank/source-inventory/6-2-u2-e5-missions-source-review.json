@@ -35,7 +35,7 @@
       "sourceItemId": "6-2-u2-e5-mission-3",
       "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
       "independentCheck": "convert-reference-minutes-to-hours-and-subtract-current-speed",
-      "risk": "The reference salmon distance is not explicitly stated to be in still water; the handwritten answer conflicts with independent calculation under that interpretation.",
+      "risk": "The reference salmon distance is not explicitly stated to be in still water. If it is downstream, the salmon cannot make the printed upstream trip at these speeds; if it is still-water distance, the handwritten time conflicts with independent calculation.",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Mission3",
         "sourceRelationship": "condition-clarified-adaptation",
