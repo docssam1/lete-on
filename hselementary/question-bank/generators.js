@@ -24659,6 +24659,77 @@
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE2Example3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-example-3";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [stillTenths, currentTenths, minutes, startHour, startMinute] = [[427, 158, 252, 8, 18], [384, 146, 210, 9, 15], [472, 128, 285, 7, 50]][poolIndex];
+      const downstreamTenths = stillTenths + currentTenths;
+      if ((downstreamTenths * minutes) % 6 !== 0) throw new Error(`${sourceItemId}: 이동 거리가 소수 둘째 자리에서 끝나지 않습니다.`);
+      const distanceHundredths = downstreamTenths * minutes / 6;
+      const compact = value => String(Number(value.toFixed(2)));
+      const distance = compact(distanceHundredths / 100);
+      const still = compact(stillTenths / 10);
+      const downstream = compact(downstreamTenths / 10);
+      const hours = Math.floor(minutes / 60);
+      const remainderMinutes = minutes % 60;
+      const decimalHours = compact(minutes / 60);
+      const endMinutes = startHour * 60 + startMinute + minutes;
+      const endHour = Math.floor(endMinutes / 60);
+      if (endHour !== 12) throw new Error(`${sourceItemId}: 오전 출발·오후 도착 조건이 맞지 않습니다.`);
+      const tripSentence = level === 2
+        ? `이 배는 오전 ${startHour}시 ${startMinute}분에 출발해 강물을 따라 ${distance}km 떨어진 지점에 오후 ${endHour}시 ${endMinutes % 60}분에 도착했습니다.`
+        : `이 배가 강물을 따라 ${distance}km 떨어진 지점까지 내려가는 데 ${level === 0 ? `${decimalHours}시간` : `${hours}시간 ${remainderMinutes}분`}이 걸렸습니다.`;
+      const prompt = `흐르지 않는 물에서 한 시간에 ${still}km씩 가는 배가 있습니다. ${tripSentence} 강물과 배가 일정한 빠르기로 움직였다면 강물은 한 시간에 몇 km 흐르나요?`;
+      const timeStep = level === 0 ? `걸린 시간은 ${decimalHours}시간입니다.` : level === 2
+        ? `출발·도착 시각의 차는 ${hours}시간 ${remainderMinutes}분, 즉 ${decimalHours}시간입니다.`
+        : `${hours}시간 ${remainderMinutes}분은 ${decimalHours}시간입니다.`;
+      const answer = `${compact(currentTenths / 10)}km`;
+      const solution = `${timeStep} 강물을 따라간 배는 한 시간에 ${distance} ÷ ${decimalHours} = ${downstream}km 갑니다. 따라서 강물은 한 시간에 ${downstream} - ${still} = ${answer} 흐릅니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact"><p>걸린 시간: ${decimalHours}시간</p><p>내려간 빠르기: ${distance} ÷ ${decimalHours} = ${downstream}km/시</p><p>강물의 빠르기: ${downstream} - ${still} = ${answer}/시</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Mission5({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-5";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [firstTenths, secondTenths, startHour, startMinute, standardMinutes, hardMinutes] = [[27, 31, 9, 0, 330, 300], [36, 29, 8, 20, 330, 300], [28, 34, 9, 40, 270, 240]][poolIndex];
+      const delayed = level === 2;
+      const delayMinutes = delayed ? 30 : 0;
+      const meetingMinutes = delayed ? hardMinutes : standardMinutes;
+      const distanceSixthsOfHundredths = (firstTenths + secondTenths) * meetingMinutes - secondTenths * delayMinutes;
+      if (distanceSixthsOfHundredths % 6 !== 0) throw new Error(`${sourceItemId}: 두 사람의 이동 거리 합이 소수 둘째 자리에서 끝나지 않습니다.`);
+      const distanceHundredths = distanceSixthsOfHundredths / 6;
+      const firstAloneHundredths = firstTenths * delayMinutes / 6;
+      if (distanceHundredths <= firstAloneHundredths) throw new Error(`${sourceItemId}: 늦게 출발하기 전에 이미 만났습니다.`);
+      const compact = value => String(Number(value.toFixed(2)));
+      const distance = compact(distanceHundredths / 100);
+      const firstSpeed = compact(firstTenths / 10);
+      const secondSpeed = compact(secondTenths / 10);
+      const combined = compact((firstTenths + secondTenths) / 10);
+      const startTime = `오전 ${startHour}시 ${startMinute ? `${startMinute}분` : "정각"}`;
+      const meetingClockMinutes = startHour * 60 + startMinute + meetingMinutes;
+      const answerHour = Math.floor(meetingClockMinutes / 60) - 12;
+      const answerMinute = meetingClockMinutes % 60;
+      if (answerHour < 1 || answerHour > 11) throw new Error(`${sourceItemId}: 오후에 만나지 않습니다.`);
+      const answer = `오후 ${answerHour}시 ${answerMinute ? `${answerMinute}분` : "정각"}`;
+      const departure = delayed
+        ? `정은이는 ${startTime}에 출발했고 우석이는 30분 뒤 출발했습니다. 정은이는 그동안 쉬지 않고 걸었습니다.`
+        : `두 사람은 ${startTime}에 동시에 출발했습니다.`;
+      const easyHint = level === 0 ? " 두 사람이 한 시간에 얼마나 가까워지는지 생각해 보세요." : "";
+      const prompt = `정은이와 우석이는 ${distance}km 떨어진 곳에서 서로 마주 보고 있습니다. ${departure} 정은이는 한 시간에 ${firstSpeed}km, 우석이는 한 시간에 ${secondSpeed}km를 일정하게 걷습니다.${easyHint} 두 사람이 처음 만나는 시각은 오후 몇 시 몇 분인가요?`;
+      const remaining = compact((distanceHundredths - firstAloneHundredths) / 100);
+      const aloneStep = delayed ? `우석이가 출발하기 전 30분 동안 정은이는 ${firstSpeed} ÷ 2 = ${compact(firstAloneHundredths / 100)}km 걸었으므로 남은 거리는 ${distance} - ${compact(firstAloneHundredths / 100)} = ${remaining}km입니다. ` : "";
+      const togetherMinutes = meetingMinutes - delayMinutes;
+      const togetherHours = compact(togetherMinutes / 60);
+      const solution = `${aloneStep}두 사람은 한 시간에 ${firstSpeed} + ${secondSpeed} = ${combined}km씩 가까워집니다. 함께 걸은 시간은 ${remaining} ÷ ${combined} = ${togetherHours}시간이고, ${startTime}부터 ${compact(meetingMinutes / 60)}시간 후인 ${answer}에 만납니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact">${delayed ? `<p>먼저 간 거리: ${firstSpeed} ÷ 2 = ${compact(firstAloneHundredths / 100)}km, 남은 거리: ${distance} - ${compact(firstAloneHundredths / 100)} = ${remaining}km</p>` : ""}<p>한 시간에 가까워지는 거리: ${firstSpeed} + ${secondSpeed} = ${combined}km</p><p>함께 걸은 시간: ${remaining} ÷ ${combined} = ${togetherHours}시간, 만나는 시각: ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29490,6 +29561,8 @@
     [type => type.sourceItemId === "6-2-u2-e2-exploration", "sourceGrade6SecondDecimalDivisionE2Exploration"],
     [type => type.sourceItemId === "6-2-u2-e2-example-1", "sourceGrade6SecondDecimalDivisionE2Example1"],
     [type => type.sourceItemId === "6-2-u2-e2-example-2", "sourceGrade6SecondDecimalDivisionE2Example2"],
+    [type => type.sourceItemId === "6-2-u2-e2-example-3", "sourceGrade6SecondDecimalDivisionE2Example3"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-5", "sourceGrade6SecondDecimalDivisionE2Mission5"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],
