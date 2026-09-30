@@ -1510,6 +1510,178 @@
     return p;
   };
 
+  /* ============================================================
+     WP9 — 정보 판단  2026-09-30
+     문제를 풀기 전에 **필요한 정보가 다 있는가**를 본다. 지금까지 문장제는 늘 필요한 수가 다 주어졌다.
+       judge   이 문제는 풀 수 있을까요?  1 바로 풀 수 있다 / 2 정보가 모자라 못 푼다 / 3 필요 없는 수가 있지만 풀 수 있다
+       missing 풀려면 무엇을 더 알아야 할까요?  정답 = 모르는 수 하나, 오답 둘 = 문제와 상관없는 정보(나이·층·버스 번호·가게 이름)
+     보기는 언제나 3개. 본문의 수 개수로 세 경우를 가른다(judge: 완전 2개 · 모자람 1개 · 잡음 포함 3개).
+     ============================================================ */
+  function lackStory(kind, s, lang, V) {
+    const { n1, n2, o, A, B } = s, u = o.ko.u, on = o.ko.n, en = o.en.n, zn = o.zh.n, zu = o.zh.u;
+    if (kind === '합병') return {
+      story: { ko: `${NEUN(A.ko)} ${EUL(on)} ${n1}${u} 가지고 있고, ${B.ko}도 ${EUL(on)} 가지고 있어요.`,
+               en: `${A.en} has ${n1} ${en}, and ${B.en} has some too.`, zh: `${A.zh}有${n1}${zu}${zn}，${B.zh}也有一些。` }[lang],
+      q: { ko: `두 사람이 가진 ${EUN(on)} 모두 몇 ${u}일까요?`, en: `How many ${en} do they have altogether?`, zh: `两个人一共有几${zu}${zn}？` }[lang],
+      need: { ko: `${NUI(B.ko)} ${on} 수`, en: `how many ${en} ${B.en} has`, zh: `${B.zh}有几${zu}${zn}` }[lang] };
+    if (kind === '첨가') return {
+      story: { ko: `${NEUN(A.ko)} ${EUL(on)} 가지고 있었는데 ${EUL(n2 + u)} 더 받았어요.`,
+               en: `${A.en} had some ${en} and got ${n2} more.`, zh: `${A.zh}有一些${zn}，又得到了${n2}${zu}。` }[lang],
+      q: { ko: `모두 몇 ${u}일까요?`, en: `How many are there now?`, zh: `现在一共有几${zu}？` }[lang],
+      need: { ko: `처음에 가지고 있던 ${on}의 수`, en: `how many ${en} ${A.en} had at first`, zh: `原来有几${zu}${zn}` }[lang] };
+    if (kind === '구잔') return {
+      story: { ko: `${NEUN(A.ko)} ${EUL(on)} 가지고 있었는데 ${EUL(n2 + u)} ${V.ko}어요.`,
+               en: `${A.en} had some ${en} and ${V.en} ${n2}.`, zh: `${A.zh}有一些${zn}，${V.zh}了${n2}${zu}。` }[lang],
+      q: { ko: `남은 ${EUN(on)} 몇 ${u}일까요?`, en: `How many are left?`, zh: `还剩几${zu}？` }[lang],
+      need: { ko: `처음에 가지고 있던 ${on}의 수`, en: `how many ${en} ${A.en} had at first`, zh: `原来有几${zu}${zn}` }[lang] };
+    return {                                             /* 구차 */
+      story: { ko: `${NEUN(A.ko)} ${EUL(on)} ${n1}${u} 가지고 있고, ${B.ko}도 ${EUL(on)} 가지고 있어요.`,
+               en: `${A.en} has ${n1} ${en}, and ${B.en} has some too.`, zh: `${A.zh}有${n1}${zu}${zn}，${B.zh}也有一些。` }[lang],
+      q: { ko: `${NEUN(A.ko)} ${NBODA(B.ko)} ${EUL(on)} 몇 ${u} 더 많이 가지고 있을까요?`, en: `How many more ${en} does ${A.en} have than ${B.en}?`, zh: `${A.zh}比${B.zh}多几${zu}？` }[lang],
+      need: { ko: `${NUI(B.ko)} ${on} 수`, en: `how many ${en} ${B.en} has`, zh: `${B.zh}有几${zu}${zn}` }[lang] };
+  }
+  NM_TGEN['wp9_info'] = function (params, rng) {
+    const range = (params && params.range) === 'B' ? 'B' : 'A';
+    const mode = pick(rng, ['judge', 'missing']);
+    let kind = pick(rng, ['합병', '첨가', '구잔', '구차']);
+    const s = makeSituation(rng, { range, kind, numeric: 'decimal' });
+    const away = s.o.away || 'give';
+    const V = { eat: { ko: '먹었', en: 'ate', zh: '吃掉' }, use: { ko: '썼', en: 'used', zh: '用掉' }, give: { ko: '주었', en: 'gave away', zh: '送掉' } }[away];
+    const langs = ['ko', 'en', 'zh'];
+    const lack = {}; langs.forEach(l => { lack[l] = lackStory(kind, s, l, V); });
+    const DIST = [
+      { ko: a => `${NUI(a.ko)} 나이`, en: a => `how old ${a.en} is`, zh: a => `${a.zh}几岁` },
+      { ko: () => '교실이 있는 층', en: () => 'which floor the classroom is on', zh: () => '教室在几楼' },
+      { ko: () => '학교에 가는 버스 번호', en: () => 'the number of the school bus', zh: () => '上学坐几路车' },
+      { ko: () => '물건을 산 가게의 이름', en: () => 'the name of the shop', zh: () => '买东西的商店叫什么' }
+    ];
+    if (mode === 'missing') {
+      const wrong = shuffle(rng, DIST).slice(0, 2);
+      const opts = { ko: [lack.ko.need].concat(wrong.map(d => d.ko(s.A))), en: [lack.en.need].concat(wrong.map(d => d.en(s.A))), zh: [lack.zh.need].concat(wrong.map(d => d.zh(s.A))) };
+      const { choices, answer } = buildChoices(rng, [opts.ko, opts.en, opts.zh], 0);
+      const story = { ko: `${lack.ko.story} ${lack.ko.q}`, en: `${lack.en.story} ${lack.en.q}`, zh: `${lack.zh.story}${lack.zh.q}` };
+      const ask = { ko: '이 문제를 풀려면 무엇을 더 알아야 할까요? 알맞은 번호를 쓰세요.',
+                    en: 'What else do you need to know to solve this problem? Write the number.',
+                    zh: '要解这道题，还需要知道什么？请写出序号。' };
+      const p = assemble(s, ask, choices, answer, { story, mode: 'info-missing', correctText: lack.ko.need });
+      p.wp.needed = lack.ko.need;
+      return p;
+    }
+    /* judge — 세 경우를 한 문항이 골고루 낸다 */
+    const which = pick(rng, ['ok', 'lack', 'noise']);
+    let story;
+    if (which === 'lack') story = { ko: `${lack.ko.story} ${lack.ko.q}`, en: `${lack.en.story} ${lack.en.q}`, zh: `${lack.zh.story}${lack.zh.q}` };
+    else if (which === 'ok') story = { ko: storyText(s, 'ko'), en: storyText(s, 'en'), zh: storyText(s, 'zh') };
+    else {
+      const nz = pick(rng, NOISES); let v = nz.v(rng), guard = 0;
+      while (guard++ < 20 && (v === s.n1 || v === s.n2)) v = nz.v(rng);
+      if (v === s.n1 || v === s.n2) v = (s.n1 > 11 ? 5 : 13);
+      const noise = { pos: 1, text: { ko: nz.ko(s.A.ko, v), en: nz.en(s.A.en, v), zh: nz.zh(s.A.zh, v) } };
+      story = { ko: storyText(s, 'ko', noise), en: storyText(s, 'en', noise), zh: storyText(s, 'zh', noise) };
+    }
+    const texts = {
+      ko: ['바로 풀 수 있어요.', '정보가 모자라서 풀 수 없어요.', '필요 없는 수가 들어 있지만 풀 수 있어요.'],
+      en: ['I can solve it right away.', 'I cannot solve it because some information is missing.', 'It has a number I do not need, but I can solve it.'],
+      zh: ['可以直接解答。', '信息不够，解不出来。', '有用不到的数，但是可以解答。'] };
+    const idx = { ok: 0, lack: 1, noise: 2 }[which];
+    const { choices, answer } = buildChoices(rng, [texts.ko, texts.en, texts.zh], idx);
+    const ask = { ko: '이 문제를 풀 수 있을까요? 알맞은 번호를 쓰세요.', en: 'Can you solve this problem? Write the number.', zh: '这道题能解吗？请写出序号。' };
+    const p = assemble(s, ask, choices, answer, { story, mode: 'info-judge', correctText: texts.ko[idx] });
+    p.wp.judge = which;
+    return p;
+  };
+
+  /* ============================================================
+     WP10 — 생활 문제  2026-09-30
+     계산 하나로 끝나지 않고 **답을 해석**해야 하는 문제.
+       ceil   나머지가 있으면 하나 더 필요하다(올림): "한 보트에 4명씩, 10명이 타려면 보트가 몇 척?"  → 3, 나눗셈 몫이 아니라 몫 + 1
+       twoans 몫과 나머지 둘 다: "끈 47 cm를 6 cm씩 자르면 몇 도막, 몇 cm가 남나?" → [7, 5]
+       unit   단위를 맞춰 합한다: 2 m 35 cm = 235 cm · 1시간 20분 = 80분 · 1000원 2장과 100원 3개 = 2300원
+       table  글로 준 표에서 필요한 수만 골라 계산한다(요일별 판매 수: 두 날의 합 / 가장 많은 날과 가장 적은 날의 차)
+     ============================================================ */
+  const DAYS = { ko: ['월요일', '화요일', '수요일', '목요일', '금요일'], en: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], zh: ['星期一', '星期二', '星期三', '星期四', '星期五'] };
+  const VEHICLES = [
+    { ko: '보트', ku: '척', en: 'boat', ens: 'boats', zh: '小船', zu: '艘', kv: '탈 수 있어요', ev: 'can carry', zv: '可以坐' },
+    { ko: '승합차', ku: '대', en: 'van', ens: 'vans', zh: '面包车', zu: '辆', kv: '탈 수 있어요', ev: 'can carry', zv: '可以坐' }
+  ];
+  NM_TGEN['wp10_life'] = function (params, rng) {
+    const range = (params && params.range) === 'B' ? 'B' : 'A';
+    const big = range === 'B';
+    const modes = big ? ['ceil', 'twoans', 'unit', 'table'] : ['ceil', 'unit', 'table'];
+    const mode = pick(rng, modes);
+    const base = makeSituation(rng, { range: 'A', kind: '합병', numeric: 'decimal' });
+    const A = base.A;
+    let answer, story, ask, meta = { mode: 'life-' + mode }, vals;
+    const fakeO = (ko, en, zh, ku, zu) => ({ id: 'life', kinds: ALL, away: null, groups: [], ko: { n: ko, u: ku }, en: { n: en }, zh: { n: zh, u: zu } });
+    let o = fakeO('생활', 'life', '生活', '개', '个');
+    if (mode === 'ceil') {
+      const v = pick(rng, VEHICLES);
+      const per = big ? R(rng, 6, 12) : R(rng, 3, 6);
+      let total = big ? R(rng, 20, 90) : R(rng, 7, 22);
+      if (total % per === 0) total += 1;
+      vals = [per, total]; answer = Math.ceil(total / per);
+      story = { ko: `한 ${v.ko}에 ${per}명씩 ${v.kv}. ${total}명이 모두 타려면 ${v.ko}가 몇 ${v.ku} 필요할까요?`,
+                en: `Each ${v.en} ${v.ev} ${per} people. How many ${v.ens} are needed for ${total} people to ride?`,
+                zh: `每${v.zu}${v.zv}${per}个人。${total}个人都要坐，需要几${v.zu}${v.zh}？` };
+      ask = { ko: '남는 사람도 타야 해요. 필요한 수를 쓰세요.', en: 'The people left over must ride too. Write how many are needed.', zh: '剩下的人也要坐。请写出需要的数量。' };
+      o = fakeO(v.ko, v.en, v.zh, v.ku, v.zu);
+    } else if (mode === 'twoans') {
+      const per = R(rng, 4, 9);
+      let total = R(rng, 30, 95);
+      if (total % per === 0) total += 1;
+      vals = [per, total]; answer = [Math.floor(total / per), total % per];
+      story = { ko: `끈이 ${total} cm 있어요. ${per} cm씩 자르면 몇 도막이 되고, 몇 cm가 남을까요?`,
+                en: `A string is ${total} cm long. If you cut it into pieces of ${per} cm, how many pieces do you get and how many cm are left?`,
+                zh: `一根绳子长${total}厘米。每${per}厘米剪一段，能剪几段，还剩几厘米？` };
+      ask = { ko: '① 몇 도막, ② 남는 길이 cm를 차례대로 쓰세요.', en: 'Write ① the number of pieces and ② the length left over (cm), in order.', zh: '按顺序写出 ① 段数 和 ② 剩下的长度（厘米）。' };
+      meta.eqn = '① □   ② □';
+    } else if (mode === 'unit') {
+      const cat = pick(rng, ['length', 'time', 'money']);
+      if (cat === 'length') {
+        const a = R(rng, 1, big ? 9 : 4), b = R(rng, 1, big ? 19 : 9) * 5;
+        vals = [cat, a, b]; answer = a * 100 + b;
+        story = { ko: `${NEUN(A.ko)} 길이가 ${a} m ${b} cm인 끈을 가지고 있어요.`, en: `${A.en} has a string that is ${a} m ${b} cm long.`, zh: `${A.zh}有一根长${a}米${b}厘米的绳子。` };
+        ask = { ko: '이 끈의 길이는 모두 몇 cm일까요?', en: 'How many cm long is the string in all?', zh: '这根绳子一共长多少厘米？' };
+      } else if (cat === 'time') {
+        const a = R(rng, 1, big ? 5 : 3), b = R(rng, 1, 11) * 5;
+        vals = [cat, a, b]; answer = a * 60 + b;
+        story = { ko: `${NEUN(A.ko)} 책을 ${a}시간 ${b}분 동안 읽었어요.`, en: `${A.en} read a book for ${a} hour${a > 1 ? 's' : ''} and ${b} minutes.`, zh: `${A.zh}看了${a}小时${b}分钟的书。` };
+        ask = { ko: '책을 읽은 시간은 모두 몇 분일까요?', en: 'How many minutes did the reading take in all?', zh: '一共看了多少分钟？' };
+      } else {
+        const a = R(rng, 1, big ? 9 : 4), b = R(rng, 1, 9);
+        vals = [cat, a, b]; answer = a * 1000 + b * 100;
+        story = { ko: `${NEUN(A.ko)} 1000원짜리 지폐 ${a}장과 100원짜리 동전 ${b}개를 가지고 있어요.`, en: `${A.en} has ${a} bills of 1000 won and ${b} coins of 100 won.`, zh: `${A.zh}有${a}张1000元的纸币和${b}枚100元的硬币。` };
+        ask = { ko: '모두 얼마일까요? 원 단위로 쓰세요.', en: 'How much money is it in all? Write it in won.', zh: '一共多少钱？请用元来写。' };
+      }
+    } else {                                          /* table */
+      const n = 3;
+      const days = shuffle(rng, [0, 1, 2, 3, 4]).slice(0, n).sort((x, y) => x - y);
+      const cnt = []; while (cnt.length < n) { const c = R(rng, big ? 12 : 3, big ? 60 : 12); if (cnt.indexOf(c) < 0) cnt.push(c); }
+      const item = pick(rng, [{ ko: '빵', en: 'loaves of bread', zh: '面包', ku: '개', zu: '个' }, { ko: '사과', en: 'apples', zh: '苹果', ku: '개', zu: '个' }, { ko: '꽃', en: 'flowers', zh: '花', ku: '송이', zu: '朵' }]);
+      const listKo = days.map((d, i) => `${DAYS.ko[d]}에 ${cnt[i]}${item.ku}`).join(', ');
+      const listEn = days.map((d, i) => `${cnt[i]} on ${DAYS.en[d]}`).join(', ');
+      const listZh = days.map((d, i) => `${DAYS.zh[d]}${cnt[i]}${item.zu}`).join('，');
+      const variant = big ? pick(rng, ['sum2', 'range']) : 'sum2';
+      if (variant === 'sum2') {
+        const pair = shuffle(rng, [0, 1, 2]).slice(0, 2).sort();
+        vals = ['sum2', cnt.slice(), pair]; answer = cnt[pair[0]] + cnt[pair[1]];
+        story = { ko: `가게에서 ${EUL(item.ko)} ${listKo} 팔았어요.`, en: `A shop sold ${item.en}: ${listEn}.`, zh: `商店卖出${item.zh}：${listZh}。` };
+        ask = { ko: `${DAYS.ko[days[pair[0]]]}과 ${DAYS.ko[days[pair[1]]]}에 판 ${EUN(item.ko)} 모두 몇 ${item.ku}일까요?`,
+                en: `How many ${item.en} were sold on ${DAYS.en[days[pair[0]]]} and ${DAYS.en[days[pair[1]]]} altogether?`,
+                zh: `${DAYS.zh[days[pair[0]]]}和${DAYS.zh[days[pair[1]]]}一共卖出多少${item.zu}${item.zh}？` };
+      } else {
+        vals = ['range', cnt.slice()]; answer = Math.max(...cnt) - Math.min(...cnt);
+        story = { ko: `가게에서 ${EUL(item.ko)} ${listKo} 팔았어요.`, en: `A shop sold ${item.en}: ${listEn}.`, zh: `商店卖出${item.zh}：${listZh}。` };
+        ask = { ko: `가장 많이 판 날은 가장 적게 판 날보다 몇 ${item.ku} 더 많이 팔았을까요?`, en: 'On the best day the shop sold how many more than on the worst day?', zh: '卖得最多的一天比卖得最少的一天多卖了多少？' };
+      }
+      o = fakeO(item.ko, item.en, item.zh, item.ku, item.zu);
+    }
+    const s2 = Object.assign({}, base, { o, unitKo: o.ko.u, kind: '합병', op: '+', range, n1: 1, n2: 1 });
+    const p = assemble(s2, ask, null, answer, Object.assign(meta, { story, correctText: String(answer) }));
+    p.wp.vals = vals; p.wp.lifeMode = mode;
+    return p;
+  };
+
   /* ── 이해편 지면(data/lang-think.js, 2026-09-30)이 같은 상황 생성기를 쓴다 ──
      원장 "언어사고력 이해편 A-1~6" — 여섯 단계가 상황 하나에서 파생된다(문장제-설계.md §1).
      여기 내보내는 것은 읽기 전용 도우미뿐이고, 스레드 계약(NM_TGEN)은 그대로다. */

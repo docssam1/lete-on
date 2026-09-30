@@ -424,6 +424,37 @@ function verifyAnswer(p, w, range) {
     if (/\d\/\d/.test(p.word)) return 'need: 본문에 분수가 있어 분모가 또 다른 답 후보가 됨';
     return null;
   }
+  /* WP9 info — 세 경우를 본문의 수 개수로 가른다. judge: ok 2 · lack 1 · noise 3. missing: 본문 수 1개, 정답 보기만 모르는 수. */
+  if (w.mode === 'info-judge' || w.mode === 'info-missing') {
+    const nums = (p.word.match(/\d+/g) || []).length;
+    if (w.mode === 'info-judge') {
+      const want = { ok: 2, lack: 1, noise: 3 }[w.judge];
+      if (want == null) return `judge: 모르는 경우 ${w.judge}`;
+      if (nums !== want) return `judge(${w.judge}): 본문 수 ${nums}개(기대 ${want}) — ${p.word}`;
+      const chosen = p.choices[p.answer - 1];
+      const exp = { ok: '바로 풀 수 있어요.', lack: '정보가 모자라서 풀 수 없어요.', noise: '필요 없는 수가 들어 있지만 풀 수 있어요.' }[w.judge];
+      if (chosen !== exp) return `judge: 정답 보기 "${chosen}"이 경우 ${w.judge}와 다름`;
+      if (new Set(p.choices).size !== 3) return 'judge: 보기 중복';
+      return null;
+    }
+    if (nums !== 1) return `missing: 본문 수가 ${nums}개(기대 1) — ${p.word}`;
+    if (p.choices.length !== 3 || new Set(p.choices).size !== 3) return 'missing: 보기가 3개가 아니거나 중복';
+    if (p.choices[p.answer - 1] !== w.needed) return `missing: 정답 보기 "${p.choices[p.answer - 1]}"이 필요한 정보 "${w.needed}"와 다름`;
+    return null;
+  }
+  /* WP10 life — 답을 여기서 다시 계산한다. */
+  if (w.mode && w.mode.indexOf('life-') === 0) {
+    const v = w.vals;
+    let want;
+    if (w.lifeMode === 'ceil') { if (v[1] % v[0] === 0) return 'ceil: 나누어떨어짐 — 올림이 안 보임'; want = Math.ceil(v[1] / v[0]); }
+    else if (w.lifeMode === 'twoans') { if (v[1] % v[0] === 0) return 'twoans: 나머지 0'; want = [Math.floor(v[1] / v[0]), v[1] % v[0]]; }
+    else if (w.lifeMode === 'unit') want = v[0] === 'length' ? v[1] * 100 + v[2] : v[0] === 'time' ? v[1] * 60 + v[2] : v[1] * 1000 + v[2] * 100;
+    else want = v[0] === 'sum2' ? v[1][v[2][0]] + v[1][v[2][1]] : Math.max(...v[1]) - Math.min(...v[1]);
+    const same = Array.isArray(want) ? (Array.isArray(p.answer) && want.length === p.answer.length && want.every((x, i) => x === p.answer[i]) ) : p.answer === want;
+    if (!same) return `life/${w.lifeMode}: 답 ${JSON.stringify(p.answer)}이 ${JSON.stringify(want)}과 다름`;
+    if (w.lifeMode === 'table' && (new Set(v[1]).size !== v[1].length)) return 'table: 같은 수가 두 번 나와 최다·최소가 흐림';
+    return null;
+  }
   /* WP8 two — 답은 [중간값, 마지막 답]. 다섯 사슬을 여기서 따로 다시 계산해 맞춘다(생성기와 같은 함수를 부르지 않는다). */
   if (w.mode === 'two') {
     const [a, b, c] = w.vals || [];
@@ -521,7 +552,7 @@ function verifyLangs(p) {
   if (!ko || !en || !zh) return '3개 언어 중 빠진 것이 있음';
   if (ko === en || en === zh || ko === zh) return '두 언어의 문장이 똑같음';
   /* 언어 혼입. 한국어 문장의 m·L·kg는 단위 기호라 예외로 둔다(교과서 표기). */
-  const koLatin = ko.replace(/(?:^|\s)(?:mL|kg|m|L)(?![A-Za-z])/g, ' ');
+  const koLatin = ko.replace(/(?:^|\s)(?:mL|kg|cm|m|L)(?![A-Za-z])/g, ' ');
   if (/[A-Za-z]/.test(koLatin)) return `한국어 문장에 영문이 섞임: ${koLatin.match(/[A-Za-z]+/)[0]}`;
   if (/[가-힣]/.test(en)) return `영어 문장에 한글이 섞임: ${en.match(/[가-힣]+/)[0]}`;
   if (/[가-힣]/.test(zh)) return `중국어 문장에 한글이 섞임: ${zh.match(/[가-힣]+/)[0]}`;
@@ -556,7 +587,7 @@ function sweep(id, lv) {
   if (ratio > 0.45) fails.push(`${tag} — 정답 쏠림: ${(ratio * 100) | 0}%가 ${top} (안 읽고 찍어도 통과)`);
   /* 구차가 충분히 나오는가 — 이 스레드의 존재 이유가 구차다 */
   const gucha = (kinds.get('구차') || 0) / N;
-  if (gucha < 0.12) fails.push(`${tag} — 구차가 ${(gucha * 100).toFixed(1)}%뿐 (신호어 함정 훈련이 안 됨)`);
+  if (gucha < 0.12 && id !== 'WP10') fails.push(`${tag} — 구차가 ${(gucha * 100).toFixed(1)}%뿐 (신호어 함정 훈련이 안 됨)`);
   console.log(`  ${bad ? '✗' : '✓'} ${tag.padEnd(40)} ${N}건 · 답 ${seen.size}종 · 최빈 ${(ratio * 100).toFixed(1)}%` +
               ` · 구차 ${(gucha * 100).toFixed(1)}% · 모드 ${[...modes.keys()].sort().join('/')}`);
 }
@@ -570,6 +601,8 @@ console.log(`문장제(WP) 검산 — 레벨당 ${N}건\n`);
 [1, 2, 3].forEach(lv => sweep('WP6', lv));
 [1, 2].forEach(lv => sweep('WP7', lv));
 [1, 2].forEach(lv => sweep('WP8', lv));
+[1, 2].forEach(lv => sweep('WP9', lv));
+[1, 2].forEach(lv => sweep('WP10', lv));
 
 console.log(`\n검산한 문항: ${checks}건 · 그릇 크기 검사 ${vesselChecks}건 × 3개 언어`);
 /* 검사가 한 번도 안 돌면 통과가 아니다 — 못 잡는 검사는 아무것도 증명하지 못한다 */
