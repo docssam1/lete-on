@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "sourceItemId": "6-2-u2-e2-mission-6",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 19,
+    "printedPage": 21,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "sourceModel": {
+    "layout": "two rows and two columns with shared row heights and column widths",
+    "target": "top-left area",
+    "topRightCm2": 6,
+    "bottomLeftCm2": 9.25,
+    "bottomRightCm2": 5.55
+  },
+  "independentMath": {
+    "targetAreaCm2": 10,
+    "calculation": "6*9.25/5.55=10",
+    "candidateCount": 1
+  },
+  "officialAnswerEvidence": "not-available-for-this-item",
+  "publicReleaseStatus": "locked",
+  "candidateVerification": {
+    "generator": "sourceGrade6SecondDecimalDivisionE2Mission6",
+    "fixedPoolCount": 3,
+    "independentMathAndGeometryChecks": 360,
+    "desktopMobileDiagramChecks": 36,
+    "a4CandidatePages": 2,
+    "a4ProblemsAndSolutionsSeparated": true,
+    "a4ItemSplitObserved": false,
+    "scope": "검수용 별도 화면이며 실제 문제은행 공개 화면 검수가 아님"
+  },
+  "pending": ["심화 교재 공식 답과 문항 번호 대조", "난이도별 풀이 부담을 구분한 문항 설계", "실제 문제은행 PC·모바일·A4 출제 화면 검수"]
+}

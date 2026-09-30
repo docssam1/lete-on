@@ -1,0 +1,61 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+global.window = {};
+require("./source-inventory-grade6.js");
+require("./curriculum.js");
+require("./generators.js");
+
+const id = "6-2-u2-e2-mission-6";
+const raw = require("./source-inventory/6-2-source-items.json").items.find(item => item.sourceItemId === id);
+const review = require("./source-inventory/6-2-u2-e2-mission6-source-review.json");
+const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
+  .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
+  .find(item => item.sourceItemId === id);
+assert(raw && review && type);
+assert.equal(raw.pdfPage, 19);
+assert.equal(raw.printedPage, 21);
+assert.equal(raw.answerContract, "four-rectangle-missing-area");
+assert.equal(review.officialAnswerEvidence, "not-available-for-this-item");
+assert.equal(review.publicReleaseStatus, "locked");
+assert(type.reviewLocked && !type.generatorKey);
+assert.equal(window.HSE_GENERATORS.generate(type, 0, 0, 1, 0), null, "후보 문항은 공개 출제되지 않음");
+
+const candidateType = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE2Mission6" };
+const asHundredths = value => Math.round(Number(value) * 100);
+let checked = 0;
+for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 120; seed += 1) {
+  const generated = window.HSE_GENERATORS.generate(candidateType, 0, difficulty, seed, seed % 3);
+  assert(generated && generated.sourceItemId === id && generated.verifiedVariantCount === 3);
+  const svg = generated.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0];
+  assert(svg && svg.includes('data-geometry-kind="four-adjacent-rectangles"'));
+  const labels = [...svg.matchAll(/<text class="source62-four-rect-label(?: is-target)?" x="([\d.]+)" y="([\d.]+)" dominant-baseline="middle">([^<]+)<tspan/g)];
+  assert.equal(labels.length, 4, "네 영역이 모두 표시됨");
+  assert.equal(labels[0][3], "㉠", "문제 그림은 빈 넓이로 표시됨");
+  const [topRight100, bottomLeft100, bottomRight100] = labels.slice(1).map(match => asHundredths(match[3]));
+  const candidates = [];
+  for (let target100 = 1; target100 <= 10000; target100 += 1) {
+    if (target100 * bottomRight100 === topRight100 * bottomLeft100) candidates.push(target100);
+  }
+  assert.equal(candidates.length, 1, "그림에 표시된 넓이에서 답은 하나");
+  assert.equal(generated.answer, `${Number((candidates[0] / 100).toFixed(2))}cm²`, "별도 전수 계산과 정답 일치");
+  const split = svg.match(/data-split="([\d.]+),([\d.]+)"/);
+  const [splitX, splitY] = [Number(split?.[1]), Number(split?.[2])];
+  assert(splitX > 28 && splitX < 472 && splitY > 30 && splitY < 252, "그림의 네 영역이 유효함");
+  const geometryTopRatio = (splitY - 30) / (252 - splitY);
+  const geometryLeftRatio = (splitX - 28) / (472 - splitX);
+  assert(Math.abs(geometryTopRatio - topRight100 / bottomRight100) < 0.001, "그림의 높이 비율과 표시 넓이 일치");
+  assert(Math.abs(geometryLeftRatio - bottomLeft100 / bottomRight100) < 0.001, "그림의 너비 비율과 표시 넓이 일치");
+  assert(!generated.prompt.includes(generated.answer), "문제에 답이 드러나지 않음");
+  assert(generated.solution.includes(generated.answer), "풀이의 정답 일치");
+  const solvedSvg = generated.answerVisual.match(/<svg[\s\S]*?<\/svg>/)?.[0];
+  const solvedTarget = [...(solvedSvg || "").matchAll(/<text class="source62-four-rect-label is-target"[^>]*>([^<]+)<tspan/g)][0]?.[1];
+  assert.equal(asHundredths(solvedTarget), candidates[0], "정답 그림의 ㉠ 넓이 일치");
+  if (difficulty === 0 && generated.verifiedPoolIndex === 0) {
+    assert.deepEqual([topRight100, bottomLeft100, bottomRight100], [600, 925, 555], "원본 수치");
+    assert.equal(generated.answer, "10cm²", "원본 독립 계산");
+  }
+  checked += 1;
+}
+assert.equal(checked, 360);
+console.log(`6-2 Mission 6 잠금 후보 ${checked}회: 원본 구조·표시 넓이·답 유일성·그림 비율 통과`);
