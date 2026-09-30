@@ -526,6 +526,64 @@
   .nm-mzs-talk { padding-bottom:3mm; background:#f7faf9; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-mzs-age-senior .nm-mzs-story-txt p { font-size:11.5px; line-height:1.68; }
   .nm-mzs-age-senior .nm-mzs-strip figcaption { font-size:11px; line-height:1.6; }
+  /* 언어사고력 지면(data/lang-think.js, 2026-09-30) — 유아·초1~2 주간 학습지의 읽을거리 자리. 글씨는 young 기준. */
+  .nm-lt-page { gap:0; }
+  .nm-lt-head { flex:0 0 auto; display:flex; align-items:baseline; gap:3mm; margin:5mm 0 1mm; }
+  .nm-lt-no { font-size:11px; font-weight:900; letter-spacing:.08em; color:#a3521c; }
+  .nm-lt-head h2 { margin:0; font-family:'Gowun Batang','Hahmlet','Noto Serif KR',serif; font-size:30px; line-height:1.2; font-weight:700; color:#1d4a4e; }
+  .nm-lt-lede { flex:0 0 auto; margin:0 0 3mm; font-size:13.5px; line-height:1.6; color:#5c6b70; word-break:keep-all; }
+  .nm-lt-act { flex:1 1 0; min-height:0; display:flex; flex-direction:column; justify-content:center; margin-top:4mm; border:1.6px solid #8fb3b5; border-radius:4mm; padding:3.5mm 5mm 4mm; background:#fbfdfc;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-lt-act h3 { margin:0 0 3mm; font-size:15px; line-height:1.5; color:#20343b; word-break:keep-all; }
+  .nm-lt-cell { margin:0; display:flex; flex-direction:column; align-items:center; gap:1mm; }
+  .nm-lt-cell svg { width:20mm; height:20mm; display:block; }
+  .nm-lt-cell figcaption { font-size:12.5px; font-weight:700; color:#20343b; }
+  .nm-lt-grid8 { display:grid; grid-template-columns:repeat(4,1fr); gap:2mm; padding:2.5mm; border:1.2px solid #cfdcdc; border-radius:3mm; background:#fff; }
+  .nm-lt-grid8 .nm-lt-cell svg { width:17mm; height:17mm; }
+  .nm-lt-pair { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:3mm; }
+  .nm-lt-vs { color:#C9A063; font-size:16px; }
+  .nm-lt-side { display:grid; grid-template-columns:auto 1fr; gap:7mm; align-items:center; }
+  .nm-lt-side .nm-lt-cell svg { width:28mm; height:28mm; }
+  .nm-lt-ox { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:2mm; }
+  .nm-lt-ox li { display:grid; grid-template-columns:1fr auto; align-items:center; gap:3mm; max-width:90mm; font-size:14px; color:#20343b; }
+  .nm-lt-ox li i { flex:0 0 auto; width:9mm; height:9mm; border:1.4px solid #20343b; border-radius:2mm; }
+  .nm-lt-row3, .nm-lt-row2, .nm-lt-row6, .nm-lt-opts { display:flex; justify-content:center; gap:9mm; }
+  .nm-lt-row6 { gap:6mm; }
+  .nm-lt-row2 { gap:14mm; }
+  .nm-lt-mini { gap:6mm; margin-bottom:3mm; }
+  .nm-lt-mini .nm-lt-cell svg { width:13mm; height:13mm; }
+  .nm-lt-opts { margin-top:3mm; gap:11mm; }
+  .nm-lt-hint { display:grid; grid-template-columns:auto 1fr; gap:2mm 3mm; margin-top:3mm; align-items:end; font-size:12.5px; color:#4a5468; }
+  .nm-lt-hint i { display:block; height:7mm; border-bottom:1px solid #b9c6c6; }
+  .nm-lt-baskets { display:flex; justify-content:space-around; margin-top:4mm; }
+  .nm-lt-basket { min-width:34mm; padding:2.5mm 5mm; border:1.6px solid #245b60; border-radius:0 0 4mm 4mm; border-top-width:3px; text-align:center;
+    font-size:13.5px; font-weight:800; color:#245b60; background:#f7faf9; }
+  .nm-lt-seq { display:flex; align-items:center; justify-content:center; gap:3mm; }
+  .nm-lt-seq .nm-lt-cell svg { width:17mm; height:17mm; }
+  .nm-lt-arrow { color:#C9A063; font-size:18px; font-weight:800; }
+  .nm-lt-q { width:17mm; height:17mm; border:1.6px dashed #245b60; border-radius:3mm; display:flex; align-items:center; justify-content:center;
+    font-size:22px; font-weight:800; color:#245b60; }
+  .nm-lt-clues { margin:0 0 3mm; padding-left:6mm; font-size:14px; line-height:1.7; color:#20343b; }
+  .nm-lt-analogy { display:flex; justify-content:center; align-items:center; gap:3mm; font-size:18px; color:#20343b; }
+  .nm-lt-analogy b { padding:1.5mm 4mm; border:1.4px solid #245b60; border-radius:2.5mm; background:#fff; }
+  .nm-lt-analogy span { color:#a3521c; font-weight:800; }
+  .nm-lt-analogy i { font-style:normal; width:12mm; padding:1.5mm 0; border:1.6px dashed #245b60; border-radius:2.5mm; text-align:center; font-weight:800; color:#245b60; }
+  .nm-lt-words { display:flex; justify-content:center; gap:8mm; margin-top:3.5mm; font-size:15px; font-weight:700; color:#20343b; }
+  .nm-lt-words.nm-lt-big { flex-direction:column; gap:2.5mm; margin-top:0; font-size:17px; }
+  .nm-lt-train { display:flex; justify-content:center; align-items:center; gap:0; margin-top:1mm; }
+  .nm-lt-car { min-width:24mm; padding:3mm 4mm; border:1.6px solid #245b60; border-radius:3mm; background:#fff; text-align:center; font-size:16px; font-weight:800; color:#20343b; }
+  .nm-lt-car.nm-lt-q { width:auto; height:auto; min-width:24mm; font-size:20px; }
+  .nm-lt-link { width:6mm; height:2px; background:#245b60; }
+  .nm-lt-note { margin:3mm 0 0; font-size:11.5px; color:#5c6b70; word-break:keep-all; }
+  .nm-lt-cards { display:flex; justify-content:center; gap:6mm; }
+  .nm-lt-card { display:flex; align-items:center; gap:3mm; padding:2.5mm 4mm; border:1.6px solid #245b60; border-radius:3mm; background:#fff; font-size:16px; font-weight:800; color:#20343b; }
+  .nm-lt-card i { width:8mm; height:8mm; border:1.4px dashed #245b60; border-radius:50%; }
+  .nm-lt-answers { flex:0 0 auto; margin:auto 0 0; padding-top:3mm; font-size:9.5px; line-height:1.6; color:#7a8590; word-break:keep-all; }
+  .nm-lt-answers b { color:#a3521c; margin-right:1.5mm; }
+  .nm-lt-act.nm-lt-talk { flex:0 0 auto; background:#fff; }
+  .nm-lt-tag { display:inline-block; margin-right:2.5mm; padding:.5mm 2.5mm; border-radius:999px; background:#245b60; color:#fff; font-size:10.5px; font-weight:800; letter-spacing:.04em; vertical-align:2px;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-lt-lines i { display:block; height:8mm; border-bottom:1px solid #b9c6c6; }
   .nm-mzs-strip { flex:0 0 auto; }
   .nm-hist-labs { flex:0 0 auto; margin-top:6mm; padding-top:5mm; border-top:1px solid #E4E2DC; }
   .nm-hist-labs-t { font-size:11px; font-weight:800; color:#0E2C57; margin-bottom:4mm; }
@@ -2227,7 +2285,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   });
   /* 수학사·정답지는 번호·완료 칸 없이 — 푸는 지면이 아니라서 */
   if(extra.history){
-    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('수학사 이야기','Math history','数学史小故事'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(extra.historyLabel || lk('수학사 이야기','Math history','数学史小故事'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
   }
   if(extra.magazine){
@@ -5945,7 +6003,21 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   /* 수학사 지면은 문제 뒤·정답지 앞. 해당하는 만화도 실험실도 없으면 빈 문자열이라 지면이 안 생긴다.
      표지보다 먼저 만든다 — 표지의 쪽 수·목차가 이 지면의 유무를 알아야 한다(2026-09-06).
      opts.units: 과정의 마법 유닛 목록(ws.html) — 스레드로 만화를 못 찾을 때의 대안. */
-  const historyHtml = opts.pacing ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle, readingAgeBand(opts, items, allProblems));
+  /* 읽을거리 나이대 — 유아·초1~2(young)는 수학 이야기 대신 **언어사고력** 지면(data/lang-think.js, 2026-09-30,
+     원장 "수학 이야기 밀고 우리 언어사고력 넣자 A-1부터 6까지. 유아는 처음에는 없다가 유아 연산 중반 정도부터").
+     · 과정 0(유아): 회차 10부터(19회차의 중반) — 그 전엔 읽을거리 없음. 회차를 모르면(링크에 s 없음) 없음.
+     · 과정 1~10(초1~2): 늘. 주제는 회차 번호로 돌고(EA-1~6), 회차를 모르면 봉투 코드로 돈다. */
+  const rBand = readingAgeBand(opts, items, allProblems);
+  const cv = opts.cover || {};
+  const sIdx = (cv.sessionIdx != null && isFinite(+cv.sessionIdx)) ? +cv.sessionIdx : null;
+  let langHtml = '';
+  if(!opts.pacing && opts.cover && rBand === 'young' && window.NM_LANG_THINK){
+    const isInfant = +cv.courseNum === 0;
+    const half = isInfant ? Math.ceil(((opts.courseSessions || 19) - 1) / 2) : 0;   // 19회차 → 9(열 번째 회차)부터
+    const on = isInfant ? (sIdx != null && sIdx >= half) : true;
+    if(on) langHtml = NM_LANG_THINK.pageHtml(sIdx != null ? sIdx : mzHash(envelopeCode), envelopeCode, examLang(), cv.courseTitle, envelopeCode);
+  }
+  const historyHtml = (opts.pacing || rBand === 'young') ? '' : w2HistoryPageHtml(items, envelopeCode, opts.units, opts.cover && opts.cover.courseTitle, rBand);
   /* 종이 교구 지면 — 수학사 지면 다음, 정답지 앞(2026-09-08). */
   const paperHtml = opts.pacing ? '' : w2PaperToolPageHtml(opts.cover && opts.cover.courseNum, envelopeCode);
   /* 매거진 지면 — 만화 다음, 종이 교구 앞(2026-09-20). 회차 상황과 나이대로 고르고 봉투 코드로
@@ -5953,9 +6025,9 @@ function renderMixedSheetBody(items, envelopeCode, opts){
      뽑을 때까지 읽을거리를 딸려 보내면 문제보다 읽을거리가 많아진다. */
   const magazineHtml = opts.cover && !opts.pacing
     ? w2MagazinePageHtml(items, envelopeCode, readingAgeBand(opts, items, allProblems)) : '';
-  const extraPages = (historyHtml ? 1 : 0) + (magazineHtml ? 1 : 0) + (paperHtml ? 1 : 0);
+  const extraPages = (historyHtml ? 1 : 0) + (langHtml ? 1 : 0) + (magazineHtml ? 1 : 0) + (paperHtml ? 1 : 0);
   const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true });
-  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!historyHtml, magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true })
+  const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true })
     : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
   /* 통산 쪽 번호(2026-09-06) — 회차 발치 왼쪽에 "n / 총". 회차 안 "1/2"는 머리띠에 그대로(편지함 편집기가
      회차 단위로 쓰는 표시). 문자열 후처리라 renderRoundPages 는 모른다. */
@@ -5963,6 +6035,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   const stampPg = html => html.replace(/<div class="nm-w2-foot">/g, () => `<div class="nm-w2-foot"><span class="nm-w2-pg">${opts.pacing?'학습 '+pg+++'쪽':pg+++' / '+totalPages}</span>`);
   const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
   const historyStamped = historyHtml ? stampPg(historyHtml) : '';
+  const langStamped = langHtml ? stampPg(langHtml) : '';
   const magazineStamped = magazineHtml ? stampPg(magazineHtml) : '';
   const paperStamped = paperHtml ? stampPg(paperHtml) : '';
 
@@ -5977,6 +6050,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
 ${coverHtml}
 ${roundsHtml}
 ${historyStamped}
+${langStamped}
 ${magazineStamped}
 ${paperStamped}
 <div class="nm-print-answer-key">
@@ -7571,8 +7645,11 @@ ${round.html}
       return cad === 'w2' ? (mo + '월 ' + nth + '-' + k + '주차') : (mo + '월 ' + nth + '주차');
     })();
     const stage = (window.NM_STAGE_OF_COURSE && NM_STAGE_OF_COURSE(course.order)) || null;
+    /* sessionIdx(2026-09-30): 이 학생이 이 과정에서 몇 번째 회차인가(0부터). 링크 학습지는 주소의 s, 앱 편지함은
+       연 봉투 수로 넘긴다. 읽을거리(언어사고력) 주제 순환과 유아 "중반부터" 판정에만 쓴다 — 문항은 그대로 주차 시드. */
     const cover = { name, weekLabel, courseNum: course.order, courseTitle: title, k, cadence: cad, code: wsId,
-      stage: stage ? (stage.name.ko || '') : '' };
+      stage: stage ? (stage.name.ko || '') : '',
+      sessionIdx: (opts.sessionIdx != null && isFinite(+opts.sessionIdx)) ? Math.max(0, Math.floor(+opts.sessionIdx)) : null };
     const units = [].concat.apply([], (session.magic || []))
       .concat([].concat.apply([], course.sessions.filter(s => !s.test).map(s => [].concat.apply([], s.magic || []))))
       .filter((u, i, a) => u && a.indexOf(u) === i);
@@ -7582,7 +7659,7 @@ ${round.html}
     /* 학교 급(색)은 과정이 정한다 — 중등 과정의 복습 회차(초등 스레드)까지 같은 파란 띠(2026-09-18) */
     const schoolTier = SCHOOL_TIER_OF_COURSE[course.tier] || 'elem';
     items.forEach(it => { if(!it.schoolTier) it.schoolTier = schoolTier; });
-    return { wsId, session, items, cover, units, k, cad, title };
+    return { wsId, session, items, cover, units, k, cad, title, courseSessions: course.sessions.filter(x => !x.test).length };
   },
 
   /* 수학 팁 HTML — 학습지 QR 도우미 화면(main.js)이 같은 팁을 같은 모양으로 쓴다. */
