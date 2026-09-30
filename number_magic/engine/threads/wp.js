@@ -1439,6 +1439,77 @@
     return p;
   };
 
+  /* ============================================================
+     WP8 — 두 단계 문장제  2026-09-30
+     계산이 **둘** 이어진다: 중간값을 먼저 구해야 마지막 답이 나온다. 답은 정수 두 칸 [중간값, 마지막 답] —
+     "① □  ② □" 틀에 차례로 쓴다(WP4 fill 이 쓰는 배열 답과 같은 계약). 중간값 칸이 있어야 어디서 틀렸는지 보인다.
+       1 합병→구잔  아침·오후에 받은 것을 합하고 그중 일부를 씀     (x+y, −z)
+       2 배수→합병  묶음 수를 구하고 낱개를 더함                      (a×b, +c)
+       3 배수→구잔  묶음 수를 구하고 일부를 씀                        (a×b, −c)
+       4 첨가→구차  더 받은 뒤의 수를 구해 다른 사람과 견줌          (x+y, −z)
+       5 구잔→첨가  쓰고 남은 것에 다시 더 받음                       (x−y, +z)
+     레벨 1 = 작은 수(중간값 이름을 알려 줌) · 레벨 2 = 큰 수(중간값 이름 없이 "중간에 구한 수").
+     ============================================================ */
+  NM_TGEN['wp8_twostep'] = function (params, rng) {
+    const range = (params && params.range) === 'B' ? 'B' : 'A';
+    const hint = !params || params.hint !== false;
+    const big = range === 'B';
+    const chain = pick(rng, [1, 2, 3, 4, 5]);
+    const kindOf = { 1: '구잔', 2: '합병', 3: '구잔', 4: '구차', 5: '첨가' }[chain];
+    const base = makeSituation(rng, { range: 'A', kind: '합병', numeric: 'decimal' });
+    let o = base.o;
+    if ((chain === 2 || chain === 3) && !(o.groups && o.groups.length)) o = pick(rng, OBJECTS.filter(x => x.groups && x.groups.length));
+    const A = base.A, B = base.B, gid = o.groups && o.groups.length ? pick(rng, o.groups) : 'box', g = GROUPS[gid];
+    const away = o.away || 'give';
+    const V = { eat: { ko: '먹었', koN: '먹은', en: 'ate', zh: '吃掉' }, use: { ko: '썼', koN: '쓴', en: 'used', zh: '用掉' },
+                give: { ko: '주었', koN: '준', en: 'gave away', zh: '送掉' } }[away];
+    const u = o.ko.u, on = o.ko.n, en = o.en.n, zn = o.zh.n, zu = o.zh.u;
+    let vals, mid, fin;
+    if (chain === 1) { const x = big ? R(rng, 12, 40) : R(rng, 2, 9), y = big ? R(rng, 12, 40) : R(rng, 2, 9); mid = x + y; const z = R(rng, 1, big ? mid - 5 : mid - 1); vals = [x, y, z]; fin = mid - z; }
+    else if (chain === 2) { const a = big ? R(rng, 3, 9) : R(rng, 2, 5), b = big ? R(rng, 3, 9) : R(rng, 2, 4), c = big ? R(rng, 5, 30) : R(rng, 1, 9); vals = [a, b, c]; mid = a * b; fin = mid + c; }
+    else if (chain === 3) { const a = big ? R(rng, 3, 9) : R(rng, 2, 5), b = big ? R(rng, 3, 9) : R(rng, 2, 4); mid = a * b; const c = R(rng, 1, big ? mid - 5 : mid - 1); vals = [a, b, c]; fin = mid - c; }
+    else if (chain === 4) { const x = big ? R(rng, 12, 40) : R(rng, 3, 9), y = big ? R(rng, 10, 40) : R(rng, 2, 9); mid = x + y; const z = R(rng, 1, mid - 1); vals = [x, y, z]; fin = mid - z; }
+    else { const x = big ? R(rng, 30, 90) : R(rng, 4, 12), y = R(rng, 1, big ? x - 10 : x - 1); mid = x - y; const z = big ? R(rng, 5, 40) : R(rng, 1, 9); vals = [x, y, z]; fin = mid + z; }
+    const [v1, v2, v3] = vals;
+    const T = {
+      1: { ko: `${NEUN(A.ko)} ${EUL(on)} 아침에 ${v1}${u}, 오후에 ${v2}${u} 받았어요. 그중 ${EUL(v3 + u)} ${V.ko}어요. 남은 ${EUN(on)} 몇 ${u}일까요?`,
+           en: `${A.en} got ${v1} ${en} in the morning and ${v2} in the afternoon. ${A.en} ${V.en} ${v3} of them. How many are left?`,
+           zh: `${A.zh}上午得到${v1}${zu}${zn}，下午得到${v2}${zu}。其中${V.zh}了${v3}${zu}。还剩几${zu}？` },
+      2: { ko: `${NEUN(A.ko)} ${EUL(on)} 한 ${g.ko.n}에 ${v1}${u}씩 ${v2}${g.ko.u} 가지고 있어요. 따로 ${v3}${u}도 있어요. 모두 몇 ${u}일까요?`,
+           en: `${A.en} has ${v1} ${en} in each ${g.en.one}, and ${v2} ${g.en.many}. ${A.en} also has ${v3} more that are not in a ${g.en.one}. How many ${en} altogether?`,
+           zh: `${A.zh}有${v2}${g.zh.u}，每${g.zh.u}装${v1}${zu}${zn}。另外还有${v3}${zu}不在${g.zh.u}里。一共有几${zu}？` },
+      3: { ko: `${NEUN(A.ko)} ${EUL(on)} 한 ${g.ko.n}에 ${v1}${u}씩 ${v2}${g.ko.u} 가지고 있어요. 그중 ${EUL(v3 + u)} ${V.ko}어요. 남은 ${EUN(on)} 몇 ${u}일까요?`,
+           en: `${A.en} has ${v1} ${en} in each ${g.en.one}, and ${v2} ${g.en.many}. ${A.en} ${V.en} ${v3} of them. How many are left?`,
+           zh: `${A.zh}有${v2}${g.zh.u}，每${g.zh.u}装${v1}${zu}${zn}。其中${V.zh}了${v3}${zu}。还剩几${zu}？` },
+      4: { ko: `${NEUN(A.ko)} ${EUL(on)} ${v1}${u} 가지고 있었는데 ${EUL(v2 + u)} 더 받았어요. ${NEUN(B.ko)} ${EUL(on)} ${v3}${u} 가지고 있어요. ${NEUN(A.ko)} ${NBODA(B.ko)} ${EUL(on)} 몇 ${u} 더 많이 가지고 있을까요?`,
+           en: `${A.en} had ${v1} ${en} and got ${v2} more. ${B.en} has ${v3}. How many more ${en} does ${A.en} have than ${B.en} now?`,
+           zh: `${A.zh}有${v1}${zu}${zn}，又得到了${v2}${zu}。${B.zh}有${v3}${zu}。${A.zh}现在比${B.zh}多几${zu}？` },
+      5: { ko: `${NEUN(A.ko)} ${EUL(on)} ${v1}${u} 가지고 있었어요. ${EUL(v2 + u)} ${V.ko}어요. 그 뒤에 ${EUL(v3 + u)} 더 받았어요. 지금 가진 ${EUN(on)} 몇 ${u}일까요?`,
+           en: `${A.en} had ${v1} ${en}. ${A.en} ${V.en} ${v2} of them. Then ${A.en} got ${v3} more. How many does ${A.en} have now?`,
+           zh: `${A.zh}有${v1}${zu}${zn}，${V.zh}了${v2}${zu}，后来又得到了${v3}${zu}。现在有几${zu}？` }
+    }[chain];
+    const D = {
+      1: { ko: '모두 받은 수', en: 'the total received', zh: '一共得到的数量' },
+      2: { ko: `${g.ko.n}에 든 전체 수`, en: `the total in the ${g.en.many}`, zh: `${g.zh.n}里的总数` },
+      3: { ko: `${g.ko.n}에 든 전체 수`, en: `the total in the ${g.en.many}`, zh: `${g.zh.n}里的总数` },
+      4: { ko: '더 받은 뒤에 가진 수', en: 'the number after getting more', zh: '得到之后的数量' },
+      5: { ko: `${V.koN} 뒤에 남은 수`, en: 'the number left after that', zh: '之后剩下的数量' }
+    }[chain];
+    const ask = hint ? {
+      ko: `두 단계로 풀어요. ① ${D.ko}, ② 마지막 답을 차례대로 쓰세요.`,
+      en: `Solve it in two steps. Write ① ${D.en} and ② the final answer, in order.`,
+      zh: `分两步解答。按顺序写出 ① ${D.zh} 和 ② 最后的答案。`
+    } : {
+      ko: '두 단계로 풀어요. ①에는 중간에 구한 수, ②에는 마지막 답을 차례대로 쓰세요.',
+      en: 'Solve it in two steps. Write the number you find along the way as ①, then the final answer as ②, in order.',
+      zh: '分两步解答。按顺序写出 ① 中间求出的数 和 ② 最后的答案。'
+    };
+    const s2 = Object.assign({}, base, { o, unitKo: o.ko.u, kind: kindOf, op: OPS[kindOf], range, n1: mid, n2: chain === 1 || chain === 3 || chain === 4 ? vals[2] : (chain === 2 ? vals[2] : vals[2]), g });
+    const p = assemble(s2, ask, null, [mid, fin], { story: T, mode: 'two', eqn: '① □   ② □', correctText: `${mid}, ${fin}` });
+    p.wp.chain = chain; p.wp.vals = vals;
+    return p;
+  };
+
   /* ── 이해편 지면(data/lang-think.js, 2026-09-30)이 같은 상황 생성기를 쓴다 ──
      원장 "언어사고력 이해편 A-1~6" — 여섯 단계가 상황 하나에서 파생된다(문장제-설계.md §1).
      여기 내보내는 것은 읽기 전용 도우미뿐이고, 스레드 계약(NM_TGEN)은 그대로다. */

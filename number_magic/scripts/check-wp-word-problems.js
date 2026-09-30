@@ -424,6 +424,19 @@ function verifyAnswer(p, w, range) {
     if (/\d\/\d/.test(p.word)) return 'need: 본문에 분수가 있어 분모가 또 다른 답 후보가 됨';
     return null;
   }
+  /* WP8 two — 답은 [중간값, 마지막 답]. 다섯 사슬을 여기서 따로 다시 계산해 맞춘다(생성기와 같은 함수를 부르지 않는다). */
+  if (w.mode === 'two') {
+    const [a, b, c] = w.vals || [];
+    const mid = { 1: a + b, 2: a * b, 3: a * b, 4: a + b, 5: a - b }[w.chain];
+    const fin = { 1: mid - c, 2: mid + c, 3: mid - c, 4: mid - c, 5: mid + c }[w.chain];
+    if (mid == null || !Array.isArray(p.answer) || p.answer.length !== 2) return 'two: 답이 두 칸이 아님';
+    if (p.answer[0] !== mid || p.answer[1] !== fin) return `two: 답 [${p.answer}]이 사슬 ${w.chain} [${mid}, ${fin}]과 다름`;
+    if (fin <= 0 || mid <= 0) return `two: 중간값·마지막 답이 양수가 아님 [${mid}, ${fin}]`;
+    if (w.chain === 4 && !(mid > c)) return 'two: 사슬 4에서 A가 B보다 많지 않음';
+    for (const k of [a, b, c]) if (!new RegExp('(^|[^0-9])' + k + '([^0-9]|$)').test(p.word)) return `two: 아는 수 ${k}이 본문에 없음 — ${p.word}`;
+    if (!/[①]/.test(p.wordEqn)) return 'two: ①② 식 틀이 없음';
+    return null;
+  }
   /* WP7 unknown — 모르는 수의 자리가 옮겨 간다. 답은 (kind, pos)로 정해지고, 이야기에는 **아는 두 수**가 있어야 하며
      모르는 수(답)를 그대로 적어 두면 안 된다(2026-09-30). */
   if (w.mode === 'unknown') {
@@ -556,6 +569,7 @@ console.log(`문장제(WP) 검산 — 레벨당 ${N}건\n`);
 [1].forEach(lv => sweep('WP2', lv));
 [1, 2, 3].forEach(lv => sweep('WP6', lv));
 [1, 2].forEach(lv => sweep('WP7', lv));
+[1, 2].forEach(lv => sweep('WP8', lv));
 
 console.log(`\n검산한 문항: ${checks}건 · 그릇 크기 검사 ${vesselChecks}건 × 3개 언어`);
 /* 검사가 한 번도 안 돌면 통과가 아니다 — 못 잡는 검사는 아무것도 증명하지 못한다 */
