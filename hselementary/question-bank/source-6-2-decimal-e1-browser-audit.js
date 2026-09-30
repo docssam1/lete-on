@@ -67,7 +67,7 @@ async function check(browser, id, width, label, difficulty) {
   for (const id of ids) for (const difficulty of [-1, 0, 1]) for (const suffix of ["problem", "solution"]) {
     if (fs.statSync(path.join(outputDir, `${id}-${difficulty}-${suffix}.pdf`)).size < 5000) throw new Error(`${id}: A4 ${suffix} PDF가 비었습니다.`);
   }
-  console.log(`6-2 소수 나눗셈 E1 브라우저 감사 통과: ${ids.length}유형 × 3난이도 · PC/모바일 ${ids.length * 12}화면 · A4 ${ids.length * 6}파일 · ${outputDir}`);
+  console.log(`6-2 소수 나눗셈 브라우저 감사 통과: ${ids.length}유형 × 3난이도 · PC/모바일 ${ids.length * 12}화면 · A4 ${ids.length * 6}파일 · ${outputDir}`);
 })().catch(error => {
   console.error(error.stack || error);
   process.exit(1);

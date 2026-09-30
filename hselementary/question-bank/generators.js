@@ -24638,6 +24638,27 @@
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE2Example2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-example-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [hour, smallAngle, hardStartMinute] = [[8, 86, 8], [7, 78, 2], [8, 75, 6]][poolIndex];
+      const initialDirectedAngle = hour * 30;
+      const angleDifference = initialDirectedAngle - smallAngle;
+      if (angleDifference <= 0 || (angleDifference * 2) % 11 !== 0) throw new Error(`${sourceItemId}: 분 단위의 첫 시각을 만들 수 없습니다.`);
+      const minutes = angleDifference * 2 / 11;
+      if (minutes < 1 || minutes >= 60 || hardStartMinute >= minutes || smallAngle >= 360 - initialDirectedAngle || 2 * initialDirectedAngle - 11 * hardStartMinute <= 360) throw new Error(`${sourceItemId}: 처음 이루는 각의 조건이 성립하지 않습니다.`);
+      const startMinute = level === 2 ? hardStartMinute : 0;
+      const startingTime = startMinute ? `${hour}시 ${startMinute}분` : `${hour}시 정각`;
+      const hint = level === 0 ? ` 정각의 작은 각은 ${360 - initialDirectedAngle}°이고, 180°까지 커졌다가 다시 작아집니다.` : "";
+      const prompt = `시계가 ${startingTime}을 가리키고 있습니다.${hint} 앞으로 몇 분 후에 시침과 분침이 이루는 작은 각이 처음으로 ${smallAngle}°가 되나요?`;
+      const answer = `${minutes - startMinute}분 후`;
+      const solution = `${hour}시 정각에 작은 각은 ${360 - initialDirectedAngle}°이고 180°까지 커졌다가 작아집니다. 따라서 ${smallAngle}°는 작아지는 구간에서 처음 나옵니다. 계산하면 정각에서 ${minutes}분 후이며, ${startingTime}부터는 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact"><p>두 바늘의 1분당 차: 6° - 0.5° = 5.5°</p><p>정각부터: (${initialDirectedAngle} - ${smallAngle}) ÷ 5.5 = ${minutes}분</p>${startMinute ? `<p>${hour}시 ${startMinute}분부터: ${minutes} - ${startMinute} = ${answer}</p>` : `<p>처음 이루는 때: ${answer}</p>`}</div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29468,6 +29489,7 @@
     [type => type.sourceItemId === "6-2-u2-e1-mission-6", "sourceGrade6SecondDecimalDivisionE1Mission6"],
     [type => type.sourceItemId === "6-2-u2-e2-exploration", "sourceGrade6SecondDecimalDivisionE2Exploration"],
     [type => type.sourceItemId === "6-2-u2-e2-example-1", "sourceGrade6SecondDecimalDivisionE2Example1"],
+    [type => type.sourceItemId === "6-2-u2-e2-example-2", "sourceGrade6SecondDecimalDivisionE2Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],
