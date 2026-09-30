@@ -14,6 +14,8 @@ const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6
   .find(item => item.sourceItemId === sourceItemId);
 const candidateRecord = review.downstreamCandidateVerification;
 assert.equal(candidateRecord.sourceRelationship, "downstream-number-corrected-adaptation");
+assert.match(candidateRecord.userDecision, /Approved a number-adjusted downstream variant/);
+assert.match(candidateRecord.userDecision, /not an official answer/);
 assert.equal(candidateRecord.publicReleaseStatus, "verified-as-adaptation");
 assert(!type.reviewLocked && type.generatorKey === candidateRecord.generator, "조건 보정 유사문항만 공개");
 assert.equal(type.sourceRelationship, candidateRecord.sourceRelationship);

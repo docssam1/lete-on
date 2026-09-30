@@ -69,6 +69,7 @@
         "generator": "sourceGrade6SecondDecimalDivisionE5Mission3DownstreamCandidate",
         "sourceRelationship": "downstream-number-corrected-adaptation",
         "sourceNumberChange": "The source-like first variant changes the current from 47.5 to 21.5 km/h while keeping the 93.6 km, 1 hour 48 minutes, and 18 km values.",
+        "userDecision": "Approved a number-adjusted downstream variant on 2026-09-30; this is not an official answer to the printed question.",
         "difficultyDesign": ["downstream-speed-given", "downstream-distance-and-time", "derive-current-from-distance-and-time"],
         "fixedPoolCount": 3,
         "independentReviewer": "Claude Sonnet CLI",
