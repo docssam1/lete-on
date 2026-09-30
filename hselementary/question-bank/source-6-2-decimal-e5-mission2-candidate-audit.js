@@ -80,4 +80,4 @@ for (let variant = 0; variant < 3; variant += 1) {
 }
 assert.equal(new Set([0, 1, 2].map(variant => window.HSE_GENERATORS.generate(candidate, 0, 0, 1, variant).answer)).size, 3,
   "같은 난이도의 세 고정 묶음은 답도 다르게 만듦");
-console.log(`6-2 개념탐구 5 Mission 2 잠금 후보: 원문 1.25배와 3난이도 × 3고정 묶음 × 2시드 비교 순서 검산 ${checks}회 통과`);
+console.log(`6-2 개념탐구 5 Mission 2 공개 유형: 원문 1.25배와 3난이도 × 3고정 묶음 × 2시드 비교 순서 검산 ${checks}회 통과`);

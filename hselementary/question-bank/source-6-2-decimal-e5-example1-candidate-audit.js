@@ -67,4 +67,4 @@ for (const difficulty of [-1, 0, 1]) {
   const answers = [0, 1, 2].map(variant => window.HSE_GENERATORS.generate(candidate, 0, difficulty, 1, variant).answer);
   assert.equal(new Set(answers).size, 3, "같은 난이도의 세 묶음은 정답이 서로 다름");
 }
-console.log(`6-2 개념탐구 5 예제 5-1 잠금 후보: 원문 단위 환산과 3난이도 × 3고정 묶음 × 40회 독립 시간 검산 ${checks}회 통과`);
+console.log(`6-2 개념탐구 5 예제 5-1 공개 공통 유형: 원문 단위 환산과 3난이도 × 3고정 묶음 × 40회 독립 시간 검산 ${checks}회 통과`);

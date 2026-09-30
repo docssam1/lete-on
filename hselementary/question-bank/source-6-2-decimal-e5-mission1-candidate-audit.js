@@ -78,4 +78,4 @@ for (let variant = 0; variant < 3; variant += 1) {
   const hard = window.HSE_GENERATORS.generate(candidate, 0, 1, 1, variant);
   assert.notEqual(source.answer, hard.answer, "어려움은 다른 거리와 시간을 사용함");
 }
-console.log(`6-2 개념탐구 5 Mission 1 잠금 후보: 원문 11.9시간과 3난이도 × 3고정 묶음 × 2시드 반올림 검산 ${checks}회 통과`);
+console.log(`6-2 개념탐구 5 Mission 1 공개 유형: 원문 11.9시간과 3난이도 × 3고정 묶음 × 2시드 반올림 검산 ${checks}회 통과`);
