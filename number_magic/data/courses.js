@@ -186,7 +186,7 @@ const COURSE_SPEC = [
    drills:['ML6','ML22','DV18','DV19','DV3','ML6','ML22','DV18','DV19','ML6','DV18','DV19','ML6','DV18','DV19','ML6','DV18','DV19','ML6','ML6'], minSessions:10, magic:[['B-21','B-22','B-23'],['A-26'],['A-27'],['A-29'],['C-07','C-08']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML6·ML22·DV18·DV19(두 자리 곱·나눗셈 드릴)였다. ×9 · 999 마법 · 쪼개서 곱하기 ·
       수는 몇 개 · 10에서 부족한 수 */
-   creative:['ML13@1','SB14@1','ML22@1','SB14@2','MX8@1','ML13@2','SB14@4','ML22@2','MX8@2','SB14@3','WP4@1']},
+   creative:['ML13@1','SB14@1','ML22@1','SB14@2','MX8@1','ML13@2','SB14@4','ML22@2','MX8@2','SB14@3','WP4@1','WP7@1']},   /* WP7 모르는 수 찾기(2026-09-30) */
  {id:10, tier:'level1', title:{ko:'세 자리 곱셈과 검산',en:'3-digit Multiplication & Checking',zh:'三位数乘法与验算'},
    drills:['ML7','EL2','ML7','EL2@2','ML7','EL2@3','ML7','ML7','ML7@5','EL1@6'], minSessions:5, magic:[['A-28'],['A-35'],['C-06']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 3~5회차가 ML7@1(세 자리 곱셈 필산)이었다. 가우스 1 · 차근차근 곱하기 */
@@ -206,7 +206,7 @@ const COURSE_SPEC = [
    drills:['DV3','DV15','DV4','EL1','DV15@2','DV4','EL1@2','DV15@3','EL1@3'], minSessions:5, magic:[['C-18']],
    /* 창의(2026-09-26) — DV15(B 유닛 나눗셈 드릴)가 빠지자 DV9@1 하나만 5회차 내내 남았다. 분해 나눗셈 두 레벨 +
       반대로 채우기(역연산의 씨앗, 설계 §2-2 M7 '반대로 채우기 → EL1 역연산(C12·C16)') */
-   creative:['DV9@1','DV9@2','SB9@1','WP5@1','WP6@1']},   /* WP6 문제 만들기(2026-09-30, 이해편 Ⅵ) — 점검 뒤 */
+   creative:['DV9@1','DV9@2','SB9@1','WP5@1','WP6@1','WP7@2']},   /* WP6 문제 만들기(2026-09-30, 이해편 Ⅵ) — 점검 뒤 */
  {id:13, tier:'level2', title:{ko:'분수의 첫걸음',en:'Fractions Begin',zh:'分数入门'},
    drills:['FR1','FR2'], magic:[['C-21']], creative:['FR9@1','FR9@2','ML12@1']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
  {id:14, tier:'level2', title:{ko:'대분수와 세 자리×두 자리',en:'Mixed Numbers & 3d×2d',zh:'带分数与三位乘两位'},
@@ -483,7 +483,7 @@ const COURSE_SPEC = [
    같은 단원의 어려운 드릴이었다 — 그 드릴은 교과 드릴 계단에 이미 있으므로 따로 싣지 않는다. */
 /* 활용 스레드 — 드릴로 실려도 적용 칸으로 간다. 통계(MD84~88)는 **교과 계산**이라 여기 넣지 않는다
    (넣으면 통계 주간의 교과 칸이 복습 4문항만 남았다). 통계를 적용으로 쓰는 회차는 COURSE_APPLY 에 적는다. */
-const APPLY_THREADS = { WP1:1, WP2:1, WP3:1, WP4:1, WP5:1, WP6:1,
+const APPLY_THREADS = { WP1:1, WP2:1, WP3:1, WP4:1, WP5:1, WP6:1, WP7:1,
   MD70:1, MD71:1, MD72:1, MD76:1, MD77:1, MD89:1, MD90:1 };
 /* 스레드 전체가 아니라 그 레벨만 적용인 것 — params.mode 로 확인했다 */
 const APPLY_LEVELS = { 'MD19@4':1, 'MD19@5':1, 'MD11@5':1 };
@@ -541,8 +541,8 @@ const DRAWING = {
 const wordable = d => !!((window.NM_WORDABLE || {})[d.t + '@' + d.lv]);
 /* WP2(그림으로 나타내기)·WP6(문제 만들기)는 2026-09-30 이해편 Ⅱ·Ⅵ — 초1~2(level1)는 그림, 문제 만들기는
    점검(WP5) 뒤에. WP6 레벨 3(분수·소수)은 level3·challenge 에. */
-const WP_BY_TIER = { level1:['WP1@1','WP2@1','WP3@1','WP4@1','WP6@1'], level2:['WP1@2','WP3@2','WP4@2','WP5@1','WP6@1'],
-  level3:['WP1@3','WP3@3','WP4@3','WP5@2','WP6@3'], challenge:['WP4@3','WP5@3','WP6@3'] };
+const WP_BY_TIER = { level1:['WP1@1','WP2@1','WP3@1','WP4@1','WP6@1','WP7@1'], level2:['WP1@2','WP3@2','WP4@2','WP5@1','WP6@1','WP7@2'],
+  level3:['WP1@3','WP3@3','WP4@3','WP5@2','WP6@3','WP7@2'], challenge:['WP4@3','WP5@3','WP6@3','WP7@2'] };
 
 /* 창의 전략인가 — **명시 목록**(2026-09-26, 원장 "창의수연 재탕인 것들 조치해").
    전에는 `ML\d` 전부와 `unit:'B-…'` 를 전략으로 봐서, 구구단(ML1~ML4·ML25)·나눗셈 드릴(DV12~DV19, 구구 B 유닛)이

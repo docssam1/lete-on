@@ -283,6 +283,8 @@ var CURATED_TOPICS = [
       {label:'식으로 나타내기 (자연수 + − ×)', thread:'WP4', level:1, desc:'□ ○ □ = □ 채우기'},
       {label:'식으로 나타내기 (자연수 + − × ÷)', thread:'WP4', level:2, desc:'나눗셈까지, □가 있는 식'},
       {label:'식으로 나타내기 (분수·소수 + −)', thread:'WP4', level:3, desc:'재는 상황을 식으로 옮기기'},
+      {label:'모르는 수 찾기 (작은 수)', thread:'WP7', level:1, desc:'변화량·처음 수·비교 대상이 □'},
+      {label:'모르는 수 찾기 (큰 수)', thread:'WP7', level:2, desc:'받았는데 빼기, 주었는데 더하기'},
       {label:'점검하기 (자연수 + − ×)', thread:'WP5', level:1, desc:'바르게 풀었는지 다시 보기'},
       {label:'점검하기 (자연수 + − × ÷)', thread:'WP5', level:2, desc:'나눗셈까지, 어림해 보기'},
       {label:'점검하기 (분수·소수 + −)', thread:'WP5', level:3, desc:'답이 무엇을 나타내는지 말하기'},

@@ -1352,6 +1352,93 @@
     return p;
   };
 
+  /* ============================================================
+     WP7 — □ 옮기기 (모르는 수의 자리가 바뀐다)  2026-09-30
+     원장: "문장제는 너무 약하다 — 그냥 연산을 이야기로 넣은 것뿐이라."
+     지금까지는 늘 '결과'가 모르는 수였다 → 낱말("받았다=+")만 찍어도 맞는다. 여기서는 모르는 수가
+     변화량·처음 수·비교 대상으로 옮겨 가서, **이야기의 낱말과 식의 기호가 어긋난다**:
+       "몇 개를 더 받아 13개가 됐다" (받았다인데 13 − 8, 빼기) ·
+       "몇 개 있었는데 5개를 주고 3개 남았다" (주었다인데 3 + 5, 더하기) ·
+       "A는 B보다 3개 더 많다. B는 8개, A는?" (더 많다인데 8 + 3, 더하기)
+     답은 여전히 정수 하나(모르는 수). 레벨 1 = 자연수(작은 수) · 레벨 2 = 큰 수.
+     pos: part(합병 한 쪽) · change(변화량) · start(처음) · hi(큰 쪽이 알려짐→작은 쪽) · lo(작은 쪽이 알려짐→큰 쪽)
+     ============================================================ */
+  NM_TGEN['wp7_unknown'] = function (params, rng) {
+    const range = (params && params.range) === 'B' ? 'B' : 'A';
+    const kind = pick(rng, ['합병', '첨가', '첨가', '구잔', '구잔', '구차', '구차']);
+    const s = makeSituation(rng, { range, kind, numeric: 'decimal' });
+    const { n1, n2, o } = s, A = s.A, B = s.B, r = resultOf(s);
+    const away = o.away || 'give';
+    const V = { eat: { ko: '먹었', koN: '먹은', en: 'ate', zh: '吃掉' }, use: { ko: '썼', koN: '쓴', en: 'used', zh: '用掉' },
+                give: { ko: '주었', koN: '준', en: 'gave away', zh: '送掉' } }[away];
+    const u = o.ko.u, on = o.ko.n, en = o.en.n, zn = o.zh.n, zu = o.zh.u;
+    const num = (n, unit) => `${n}${unit}`;
+    let pos, answer, story, ask;
+    if (kind === '합병') {
+      pos = 'part'; answer = n2;
+      story = {
+        ko: `${NUI(A.ko)} 것과 ${NUI(B.ko)} 것을 합한 ${EUN(on)} 모두 ${r}${u}예요. ${NEUN(A.ko)} ${EUL(on)} ${n1}${u} 가지고 있어요.`,
+        en: `${A.en} and ${B.en} have ${r} ${en} altogether. ${A.en} has ${n1}.`,
+        zh: `${A.zh}和${B.zh}一共有${r}${zu}${zn}。${A.zh}有${n1}${zu}。` };
+      ask = { ko: `${NEUN(B.ko)} ${EUL(on)} 몇 ${u} 가지고 있을까요?`, en: `How many ${en} does ${B.en} have?`, zh: `${B.zh}有几${zu}${zn}？` };
+    } else if (kind === '첨가') {
+      pos = pick(rng, ['change', 'start']);
+      if (pos === 'change') {
+        answer = n2;
+        story = {
+          ko: `${NEUN(A.ko)} ${EUL(on)} ${n1}${u} 가지고 있었어요. 몇 ${EUL(u)} 더 받았더니 모두 ${r}${u}${hasBatchim(u) ? '이' : '가'} 되었어요.`,
+          en: `${A.en} had ${n1} ${en}. ${A.en} got some more and now has ${r}.`,
+          zh: `${A.zh}有${n1}${zu}${zn}，又得到了一些，现在一共有${r}${zu}。` };
+        ask = { ko: `더 받은 ${EUN(on)} 몇 ${u}일까요?`, en: `How many did ${A.en} get?`, zh: `又得到了几${zu}？` };
+      } else {
+        answer = n1;
+        story = {
+          ko: `${NEUN(A.ko)} ${EUL(on)} 몇 ${u} 가지고 있었어요. ${EUL(n2 + u)} 더 받았더니 모두 ${r}${u}${hasBatchim(u) ? '이' : '가'} 되었어요.`,
+          en: `${A.en} had some ${en}. ${A.en} got ${n2} more and now has ${r}.`,
+          zh: `${A.zh}有一些${zn}，又得到了${n2}${zu}，现在一共有${r}${zu}。` };
+        ask = { ko: `처음에 가지고 있던 ${EUN(on)} 몇 ${u}일까요?`, en: `How many did ${A.en} have at first?`, zh: `原来有几${zu}？` };
+      }
+    } else if (kind === '구잔') {
+      pos = pick(rng, ['change', 'start']);
+      if (pos === 'change') {
+        answer = n2;
+        story = {
+          ko: `${NEUN(A.ko)} ${EUL(on)} ${n1}${u} 가지고 있었어요. 몇 ${EUL(u)} ${V.ko}더니 ${r}${u}${hasBatchim(u) ? '이' : '가'} 남았어요.`,
+          en: `${A.en} had ${n1} ${en}. ${A.en} ${V.en} some and has ${r} left.`,
+          zh: `${A.zh}有${n1}${zu}${zn}，${V.zh}了一些，还剩${r}${zu}。` };
+        ask = { ko: `${V.koN} ${EUN(on)} 몇 ${u}일까요?`, en: `How many did ${A.en} ${away === 'give' ? 'give away' : V.en === 'ate' ? 'eat' : 'use'}?`, zh: `${V.zh}了几${zu}？` };
+      } else {
+        answer = n1;
+        story = {
+          ko: `${NEUN(A.ko)} ${EUL(on)} 몇 ${u} 가지고 있었어요. 그중 ${EUL(n2 + u)} ${V.ko}더니 ${r}${u}${hasBatchim(u) ? '이' : '가'} 남았어요.`,
+          en: `${A.en} had some ${en}. ${A.en} ${V.en} ${n2} of them and has ${r} left.`,
+          zh: `${A.zh}有一些${zn}，${V.zh}了${n2}${zu}，还剩${r}${zu}。` };
+        ask = { ko: `처음에 가지고 있던 ${EUN(on)} 몇 ${u}일까요?`, en: `How many did ${A.en} have at first?`, zh: `原来有几${zu}？` };
+      }
+    } else {                                            /* 구차 — 더 많다인데 더하기가 되는 자리 */
+      pos = pick(rng, ['hi', 'lo']);
+      if (pos === 'hi') {
+        answer = n2;
+        story = {
+          ko: `${NEUN(A.ko)} ${NBODA(B.ko)} ${EUL(on)} ${r}${u} 더 많이 가지고 있어요. ${NEUN(A.ko)} ${EUL(on)} ${n1}${u} 가지고 있어요.`,
+          en: `${A.en} has ${r} more ${en} than ${B.en}. ${A.en} has ${n1}.`,
+          zh: `${A.zh}比${B.zh}多${r}${zu}${zn}。${A.zh}有${n1}${zu}。` };
+        ask = { ko: `${NEUN(B.ko)} ${EUL(on)} 몇 ${u} 가지고 있을까요?`, en: `How many ${en} does ${B.en} have?`, zh: `${B.zh}有几${zu}${zn}？` };
+      } else {
+        answer = n1;
+        story = {
+          ko: `${NEUN(B.ko)} ${EUL(on)} ${n2}${u} 가지고 있어요. ${NEUN(A.ko)} ${NBODA(B.ko)} ${EUL(on)} ${r}${u} 더 많이 가지고 있어요.`,
+          en: `${B.en} has ${n2} ${en}. ${A.en} has ${r} more than ${B.en}.`,
+          zh: `${B.zh}有${n2}${zu}${zn}，${A.zh}比${B.zh}多${r}${zu}。` };
+        ask = { ko: `${NEUN(A.ko)} ${EUL(on)} 몇 ${u} 가지고 있을까요?`, en: `How many ${en} does ${A.en} have?`, zh: `${A.zh}有几${zu}${zn}？` };
+      }
+    }
+    const p = assemble(s, ask, null, answer, { story, mode: 'unknown', correctText: String(answer) });
+    p.wp.pos = pos;
+    p.wp.result = r;
+    return p;
+  };
+
   /* ── 이해편 지면(data/lang-think.js, 2026-09-30)이 같은 상황 생성기를 쓴다 ──
      원장 "언어사고력 이해편 A-1~6" — 여섯 단계가 상황 하나에서 파생된다(문장제-설계.md §1).
      여기 내보내는 것은 읽기 전용 도우미뿐이고, 스레드 계약(NM_TGEN)은 그대로다. */

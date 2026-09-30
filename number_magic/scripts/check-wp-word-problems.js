@@ -424,6 +424,23 @@ function verifyAnswer(p, w, range) {
     if (/\d\/\d/.test(p.word)) return 'need: 본문에 분수가 있어 분모가 또 다른 답 후보가 됨';
     return null;
   }
+  /* WP7 unknown — 모르는 수의 자리가 옮겨 간다. 답은 (kind, pos)로 정해지고, 이야기에는 **아는 두 수**가 있어야 하며
+     모르는 수(답)를 그대로 적어 두면 안 된다(2026-09-30). */
+  if (w.mode === 'unknown') {
+    const r = w.op === '+' ? w.n1 + w.n2 : w.op === '−' ? w.n1 - w.n2 : w.n1 * w.n2;
+    if (w.result !== r) return `unknown: 결과 ${w.result}이 ${w.n1} ${w.op} ${w.n2} = ${r}과 다름`;
+    const okPos = { 합병:['part'], 첨가:['change','start'], 구잔:['change','start'], 구차:['hi','lo'] }[w.kind];
+    if (!okPos || okPos.indexOf(w.pos) < 0) return `unknown: ${w.kind}에 맞지 않는 위치 ${w.pos}`;
+    const want = { part: w.n2, change: w.n2, start: w.n1, hi: w.n2, lo: w.n1 }[w.pos];
+    if (p.answer !== want) return `unknown: ${w.kind}/${w.pos} 답 ${p.answer}이 ${want}과 다름`;
+    /* 아는 수: part·hi·start 계열은 표에서 — 이야기 본문에 아는 두 수(결과와 나머지 하나)가 모두 있어야 한다 */
+    const known = { part: [r, w.n1], change: [w.n1, r], start: [w.n2, r], hi: [r, w.n1], lo: [w.n2, r] }[w.pos];
+    for (const k of known) if (!new RegExp('(^|[^0-9])' + k + '([^0-9]|$)').test(p.word)) return `unknown: 아는 수 ${k}이 본문에 없음 — ${p.word}`;
+    if (known.indexOf(p.answer) < 0 && new RegExp('(^|[^0-9])' + p.answer + '([^0-9]|$)').test(p.word))
+      return `unknown: 모르는 수 ${p.answer}이 본문에 적혀 있음 — ${p.word}`;
+    if (!/몇/.test(p.wordAsk) && !/몇/.test(p.word)) return 'unknown: 모르는 수를 묻는 "몇"이 없음';
+    return null;
+  }
   /* WP2 picture — 답은 그림에서 센 수(= 상황의 계산 결과)이고, 위젯 장면(scene)이 상황과 맞아야 한다.
      장면이 어긋나면 아이가 그림대로 해도 틀린 답이 나온다(2026-09-30). */
   if (w.mode === 'picture') {
@@ -538,6 +555,7 @@ console.log(`문장제(WP) 검산 — 레벨당 ${N}건\n`);
 [1, 2, 3].forEach(lv => sweep('WP5', lv));
 [1].forEach(lv => sweep('WP2', lv));
 [1, 2, 3].forEach(lv => sweep('WP6', lv));
+[1, 2].forEach(lv => sweep('WP7', lv));
 
 console.log(`\n검산한 문항: ${checks}건 · 그릇 크기 검사 ${vesselChecks}건 × 3개 언어`);
 /* 검사가 한 번도 안 돌면 통과가 아니다 — 못 잡는 검사는 아무것도 증명하지 못한다 */
