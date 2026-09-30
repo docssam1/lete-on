@@ -4,7 +4,7 @@
 const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
 const app=$('.magic-book-app'), cover=$('[data-scene="cover"]'), reader=$('[data-scene="reader"]'), content=$('#bookContent');
 const panels=new Map($$('.book-content > [data-panel]').map(p=>[p.dataset.panel,p]));
-const order=['menu','video','labs','village','worksheet','roadmap'];
+const order=['video','menu','labs','village','worksheet','roadmap'];
 const reduced=matchMedia('(prefers-reduced-motion:reduce)'), narrow=matchMedia('(max-width:700px)');
 let view='cover',turning=false,hero=null,lab=null,level='preschool',sample='preschool',sheetIndex=0,sampleOpen=false,activeCut='full',allCourses=false,stageIndex=0;
 let tourTimer=0,exampleTimer=0,tourStep=0;
@@ -94,11 +94,14 @@ function go(next,{historyMode='push',animate=true,autoplay=false,focus=true}={})
  updateNav();
 }
 function previous(){const i=order.indexOf(view);go(i>0?order[i-1]:'cover',{autoplay:false});}
-function next(){const i=order.indexOf(view);if(i<order.length-1)go(order[i+1],{autoplay:i+1===1});}
+function next(){const i=order.indexOf(view),target=order[i+1];if(target)go(target,{autoplay:target==='video'||target==='menu'});}
 $('#openBook').addEventListener('click',()=>{
- if(turning)return;turning=true;cover.classList.add('is-opening');mediaSource(teaser,'showreel-15s-vertical.mp4');teaser.volume=.6;if(!reduced.matches)play(teaser);
+ if(turning)return;turning=true;cover.classList.add('is-opening');
+ // The first spread is the full two-minute film, never the split teaser page.
+ // Start from the explicit click so mobile browsers allow its audio to play.
+ teaser.pause();setCut('full',false);film.currentTime=0;play(film);
  if(window.NMCoverMath)window.NMCoverMath.setActive(false);
- setTimeout(()=>{turning=false;cover.classList.remove('is-opening');go('menu',{animate:false,autoplay:true});},reduced.matches?0:650);
+ setTimeout(()=>{turning=false;cover.classList.remove('is-opening');go('video',{animate:false,autoplay:true});},reduced.matches?0:650);
 });
 $('#bookHome').addEventListener('click',()=>go('cover'));$('#bookBack').addEventListener('click',previous);$('#bookNext').addEventListener('click',next);
 $$('[data-route]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.route,{autoplay:b.dataset.route==='video'})));
