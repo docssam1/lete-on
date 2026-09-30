@@ -235,7 +235,7 @@ const COURSE_SPEC = [
  {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},
    drills:['FR6','FR6@2','FR6@3','EL1@8'], magic:[['C-31']], creative:['FR11@1','FR11@2','ML20@1','WP3@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
  {id:22, tier:'level3', title:{ko:'분수 나눗셈',en:'Fraction Division',zh:'分数除法'},
-   drills:['FR7','FR7@2','FR7@3','FR7@4','FR7@5','EL1@9'], magic:[['C-32']], creative:['FR12@1','FR12@2','FR11@2','WP5@3','WP6@2']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
+   drills:['FR7','FR7@2','FR7@3','FR7@4','FR7@5','EL1@9'], magic:[['C-32']], creative:['FR12@1','FR12@2','FR11@2','WP5@3','WP6@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
  {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
    drills:['MX2','FR8','DC3','MX2@2','DC3@2'], minSessions:7, magic:[['C-05'],['C-35'],['C-33']], creative:['MX6@1','DC5@1','WP4@3','MX6@2','DC5@2','MX6@3','MX6@4']},
  {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
@@ -540,9 +540,9 @@ const DRAWING = {
    문장제 스레드(WP)로 적용 칸을 채운다. */
 const wordable = d => !!((window.NM_WORDABLE || {})[d.t + '@' + d.lv]);
 /* WP2(그림으로 나타내기)·WP6(문제 만들기)는 2026-09-30 이해편 Ⅱ·Ⅵ — 초1~2(level1)는 그림, 문제 만들기는
-   점검(WP5) 뒤에. WP6 는 자연수 두 레벨뿐이라 level3·challenge 도 @2 를 쓴다. */
+   점검(WP5) 뒤에. WP6 레벨 3(분수·소수)은 level3·challenge 에. */
 const WP_BY_TIER = { level1:['WP1@1','WP2@1','WP3@1','WP4@1','WP6@1'], level2:['WP1@2','WP3@2','WP4@2','WP5@1','WP6@1'],
-  level3:['WP1@3','WP3@3','WP4@3','WP5@2','WP6@2'], challenge:['WP4@3','WP5@3','WP6@2'] };
+  level3:['WP1@3','WP3@3','WP4@3','WP5@2','WP6@3'], challenge:['WP4@3','WP5@3','WP6@3'] };
 
 /* 창의 전략인가 — **명시 목록**(2026-09-26, 원장 "창의수연 재탕인 것들 조치해").
    전에는 `ML\d` 전부와 `unit:'B-…'` 를 전략으로 봐서, 구구단(ML1~ML4·ML25)·나눗셈 드릴(DV12~DV19, 구구 B 유닛)이

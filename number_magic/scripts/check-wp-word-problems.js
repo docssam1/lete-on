@@ -182,16 +182,18 @@ function vesselNum(t) {
 }
 function verifyVessel(raw, range) {
   if (range !== 'C' || !raw.wp || raw.wp.kind !== '합병') return null;
-  if (/빨간|파란/.test(raw.word.ko)) return null;            /* 길이 — 색 이름표 */
+  /* WP6 make 는 본문이 식이고 그릇 이야기는 정답 보기에 있다(2026-09-30) */
+  const textOf = l => raw.wp.mode === 'make' ? raw.choices[l][raw.answer - 1] : raw.word[l];
+  if (/빨간|파란/.test(textOf('ko'))) return null;            /* 길이 — 색 이름표 */
   for (const l of ['ko', 'en', 'zh']) {
     const [reBig, reSmall] = VESSEL_RE[l];
-    const mb = reBig.exec(raw.word[l]), ms = reSmall.exec(raw.word[l]);
+    const mb = reBig.exec(textOf(l)), ms = reSmall.exec(textOf(l));
     /* 못 읽으면 통과가 아니라 실패다 — 이름표를 바꿨다면 이 검사도 같이 고쳐야 한다.
        조용히 건너뛰면 이 규칙은 영영 아무것도 못 잡는다. */
-    if (!mb || !ms) return `그릇: ${l} 본문에서 큰/작은 그릇의 양을 못 읽음 — ${raw.word[l]}`;
+    if (!mb || !ms) return `그릇: ${l} 본문에서 큰/작은 그릇의 양을 못 읽음 — ${textOf(l)}`;
     const big = vesselNum(mb[1]), small = vesselNum(ms[1]);
     if (!(big >= small))
-      return `그릇: ${l}에서 큰 그릇(${mb[1]})이 작은 그릇(${ms[1]})보다 적게 담김 — ${raw.word[l]}`;
+      return `그릇: ${l}에서 큰 그릇(${mb[1]})이 작은 그릇(${ms[1]})보다 적게 담김 — ${textOf(l)}`;
   }
   vesselChecks++;
   return null;
@@ -445,9 +447,10 @@ function verifyAnswer(p, w, range) {
     const same = ks.map((k, i) => KIND_OP[k] === w.op ? i + 1 : 0).filter(Boolean);
     if (same.length !== 1) return `make: 식의 기호와 같은 유형이 ${same.length}개 (${ks.join('/')})`;
     if (same[0] !== p.answer || ks[p.answer - 1] !== w.kind) return `make: 정답 ${p.answer}이 상황 유형 ${w.kind}의 보기가 아님 (${ks.join('/')})`;
-    const eq = `${w.n1} ${w.op} ${w.n2}`;
+    /* 레벨 C는 값(0.6)이 아니라 표기(3/5)로 찍혀야 한다 — t1·t2 로 본다(A·B는 t1 = n1) */
+    const eq = `${w.t1} ${w.op} ${w.t2}`;
     if (p.word.indexOf(eq) < 0 || p.wordAsk.indexOf(eq) < 0) return `make: 식 ${eq}이 본문·물음에 없음`;
-    for (const c of p.choices) if (c.indexOf(String(w.n1)) < 0 || c.indexOf(String(w.n2)) < 0) return `make: 보기에 두 수가 다 안 나옴: ${c}`;
+    for (const c of p.choices) if (c.indexOf(String(w.t1)) < 0 || c.indexOf(String(w.t2)) < 0) return `make: 보기에 두 수가 다 안 나옴: ${c}`;
     return null;
   }
   return `모르는 모드: ${w.mode}`;
@@ -534,7 +537,7 @@ console.log(`문장제(WP) 검산 — 레벨당 ${N}건\n`);
 [1, 2, 3].forEach(lv => sweep('WP4', lv));
 [1, 2, 3].forEach(lv => sweep('WP5', lv));
 [1].forEach(lv => sweep('WP2', lv));
-[1, 2].forEach(lv => sweep('WP6', lv));
+[1, 2, 3].forEach(lv => sweep('WP6', lv));
 
 console.log(`\n검산한 문항: ${checks}건 · 그릇 크기 검사 ${vesselChecks}건 × 3개 언어`);
 /* 검사가 한 번도 안 돌면 통과가 아니다 — 못 잡는 검사는 아무것도 증명하지 못한다 */

@@ -288,6 +288,7 @@ var CURATED_TOPICS = [
       {label:'점검하기 (분수·소수 + −)', thread:'WP5', level:3, desc:'답이 무엇을 나타내는지 말하기'},
       {label:'문제 만들기 (자연수 + − ×)', thread:'WP6', level:1, desc:'식에 맞는 이야기 고르기'},
       {label:'문제 만들기 (자연수 + − × ÷)', thread:'WP6', level:2, desc:'나눗셈 이야기까지 고르기'},
+      {label:'문제 만들기 (분수·소수 + −)', thread:'WP6', level:3, desc:'재는 상황의 이야기 고르기'},
     ]
   },
   { id:'creative', label:'창의수연', en:'Strategy Math', zh:'思维数学', icon:'🧠', color:'#8b5cf6', section:'magic',

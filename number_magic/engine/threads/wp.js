@@ -1283,29 +1283,69 @@
     };
     return T[kind][lang];
   }
+  /* 레벨 C(분수·소수) 이야기 — measureSituation 의 문장 규칙을 그대로 따라 **같은 재는 것·같은 두 값**으로
+     네 유형을 다시 쓴다(길이는 빨간·파란 두 개, 들이·무게는 큰 그릇·작은 그릇). 식에는 값(0.6)이 아니라 표기(3/5·0.6). */
+  function measureStory(kind, s, lang) {
+    const m = s.o, c = CAT[m.cat], isLen = m.cat === 'length', u = c.unit, n = m.ko.n, uE = c.unitEul, A = s.A, t1 = s.t1, t2 = s.t2;
+    const labA = isLen ? { ko:`빨간 ${n}`, en:`the red ${m.en.n}`, zh:`红色的${m.zh.n}` }
+                       : { ko:`큰 ${m.ko.v}에 든 ${n}`, en:`the ${m.en.n} in the big ${m.en.v}`, zh:`大${m.zh.v}里的${m.zh.n}` };
+    const labB = isLen ? { ko:`파란 ${n}`, en:`the blue ${m.en.n}`, zh:`蓝色的${m.zh.n}` }
+                       : { ko:`작은 ${m.ko.v}에 든 ${n}`, en:`the ${m.en.n} in the small ${m.en.v}`, zh:`小${m.zh.v}里的${m.zh.n}` };
+    const pair = {
+      ko: isLen ? `${NEUN(A.ko)} 빨간 ${n} ${t1} ${u.ko}와 파란 ${n} ${t2} ${u.ko}를 가지고 있어요.`
+                : `${NUI(A.ko)} 큰 ${m.ko.v}에는 ${IGA(n)} ${t1} ${u.ko}, 작은 ${m.ko.v}에는 ${t2} ${u.ko} 들어 있어요.`,
+      en: isLen ? `${A.en} has a red ${m.en.n} ${t1} ${u.en} long and a blue ${m.en.n} ${t2} ${u.en} long.`
+                : `${A.en}'s big ${m.en.v} holds ${t1} ${u.en} of ${m.en.n}, and the small ${m.en.v} holds ${t2} ${u.en}.`,
+      zh: isLen ? `${A.zh}有一${m.zh.mw}长${t1}${u.zh}的红色${m.zh.n}和一${m.zh.mw}长${t2}${u.zh}的蓝色${m.zh.n}。`
+                : `${A.zh}的大${m.zh.v}里有${t1}${u.zh}${m.zh.n}，小${m.zh.v}里有${t2}${u.zh}。`
+    };
+    const one = {
+      ko: isLen ? `${NEUN(A.ko)} 길이가 ${t1} ${u.ko}인 ${EUL(n)} 가지고 있었어요.` : `${NUI(A.ko)} ${m.ko.v}에 ${IGA(n)} ${t1} ${u.ko} 있었어요.`,
+      en: isLen ? `${A.en} had a ${m.en.n} ${t1} ${u.en} long.` : `${A.en}'s ${m.en.v} held ${t1} ${u.en} of ${m.en.n}.`,
+      zh: isLen ? `${A.zh}有一${m.zh.mw}长${t1}${u.zh}的${m.zh.n}。` : `${A.zh}的${m.zh.v}里有${t1}${u.zh}${m.zh.n}。`
+    };
+    const sep = lang === 'zh' ? '' : ' ';
+    const T = {
+      합병: { ko: [pair.ko, isLen ? `두 ${EUL(n)} 이으면 모두 몇 ${u.ko}일까요?` : `${EUN(n)} 모두 몇 ${u.ko}일까요?`],
+             en: [pair.en, isLen ? `How long are the two ${m.en.n}s together?` : `How much ${m.en.n} is there altogether?`],
+             zh: [pair.zh, isLen ? `两${m.zh.mw}${m.zh.n}接起来一共有多长？` : `${m.zh.n}一共有多少${u.zh}？`] },
+      구차: { ko: [pair.ko, `${EUN(labA.ko)} ${labB.ko}보다 몇 ${u.ko} ${c.moreQ.ko}?`],
+             en: [pair.en, `How much ${c.moreQ.en} is ${labA.en} than ${labB.en}?`],
+             zh: [pair.zh, `${labA.zh}比${labB.zh}${c.moreQ.zh}多少${u.zh}？`] },
+      첨가: { ko: [one.ko, `여기에 ${t2} ${u.ko}${uE} ${c.addV.ko}.`, isLen ? `${EUN(n)} 모두 몇 ${u.ko}가 되었을까요?` : `${m.ko.v}의 ${EUN(n)} 모두 몇 ${u.ko}일까요?`],
+             en: [one.en, `${t2} ${u.en} more was ${c.addV.en}.`, isLen ? `How long is the ${m.en.n} now?` : `How much ${m.en.n} is in the ${m.en.v} now?`],
+             zh: [one.zh, `${c.addV.zh}${t2}${u.zh}。`, isLen ? `现在${m.zh.n}一共有多长？` : `现在${m.zh.v}里一共有多少${u.zh}？`] },
+      구잔: { ko: [one.ko, `그중 ${t2} ${u.ko}${uE} ${c.cutV.ko}.`, `남은 ${EUN(n)} 몇 ${u.ko}일까요?`],
+             en: [one.en, `${t2} ${u.en} of it was ${c.cutV.en}.`, isLen ? `How long is the ${m.en.n} that is left?` : `How much ${m.en.n} is left?`],
+             zh: [one.zh, `${c.cutV.zh}${t2}${u.zh}。`, isLen ? `剩下的${m.zh.n}有多长？` : `还剩多少${u.zh}？`] }
+    };
+    return T[kind][lang].join(sep);
+  }
   NM_TGEN['wp6_make'] = function (params, rng) {
-    const range = (params && params.range) === 'B' ? 'B' : 'A';
+    const range = ['A', 'B', 'C'].indexOf((params && params.range) || 'A') >= 0 ? params.range || 'A' : 'A';
     const kind = pickKind(rng, range, weightsFor(range, params && params.kinds));
-    const s = makeSituation(rng, { range, kind, numeric: 'decimal' });
-    const eq = `${s.n1} ${s.op} ${s.n2}`;
+    const s = makeSituation(rng, { range, kind, numeric: range === 'C' ? ((params && params.numeric) || 'mix') : 'decimal' });
+    const t1 = s.t1 != null ? s.t1 : String(s.n1), t2 = s.t2 != null ? s.t2 : String(s.n2);
+    const eq = `${t1} ${s.op} ${t2}`;
     const o = s.o;
+    const storyOf = range === 'C' ? measureStory : makeStory;
     /* 오답 둘 — 기호가 다른 유형에서. 등분·포함 이야기는 n1이 n2의 배수일 때만 자연스럽다(나눗셈 상황이 아니면 안 씀). */
-    const pool = Object.keys(OPS).filter(k => OPS[k] !== s.op && KIND_W[range][k] && o.kinds.indexOf(k) >= 0
+    const pool = Object.keys(OPS).filter(k => OPS[k] !== s.op && KIND_W[range][k] && (range === 'C' || o.kinds.indexOf(k) >= 0)
       && ((k !== '등분' && k !== '포함') || s.n1 % s.n2 === 0));
     const wrongKinds = shuffle(rng, pool).slice(0, 2);
     if (wrongKinds.length < 2) return NM_TGEN['wp6_make'](params, rng);
     const kinds = [s.kind].concat(wrongKinds);
-    const { choices, answer } = buildChoices(rng, [kinds.map(k => makeStory(k, s, 'ko')), kinds.map(k => makeStory(k, s, 'en')), kinds.map(k => makeStory(k, s, 'zh'))], 0);
+    const { choices, answer } = buildChoices(rng, [kinds.map(k => storyOf(k, s, 'ko')), kinds.map(k => storyOf(k, s, 'en')), kinds.map(k => storyOf(k, s, 'zh'))], 0);
     const story = { ko: `${EUL(o.ko.n)} 가지고 ${eq} 문제를 만들어요.`,
                     en: `Make a problem for ${eq} with ${o.en.n}.`,
                     zh: `用${o.zh.n}编一道 ${eq} 的题。` };
     const ask = { ko: `어떤 이야기가 ${eq} 식에 맞을까요? 알맞은 번호를 쓰세요.`,
                   en: `Which story fits ${eq}? Write the number.`,
                   zh: `哪个故事和 ${eq} 相符？请写出序号。` };
-    const p = assemble(s, ask, choices, answer, { story, mode: 'make', correctText: makeStory(s.kind, s, 'ko') });
+    const p = assemble(s, ask, choices, answer, { story, mode: 'make', correctText: storyOf(s.kind, s, 'ko') });
     /* 검사기용 — 보기 순서대로의 의미 유형(정답 보기만 s.op 와 같은 기호여야 한다) */
-    const order = choices.ko.map(c => kinds[kinds.map(k => makeStory(k, s, 'ko')).indexOf(c)]);
-    p.wp.choiceKinds = order;
+    const koTexts = kinds.map(k => storyOf(k, s, 'ko'));
+    p.wp.choiceKinds = choices.ko.map(c => kinds[koTexts.indexOf(c)]);
     return p;
   };
 

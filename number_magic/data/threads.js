@@ -3172,7 +3172,8 @@ WP6:{ name:{ko:'문장제 — 문제 만들기',en:'Word Problems — Make a Pro
     zh:'能看着算式编故事，才是真的懂了。12 + 9 可以是"有12个，又得到9个"，也可以是"小明有12个，小红有9个，一共几个？"。但"送掉了9个"是减法的故事，不合适。'},
   widgets:['numpad'],
   levels:[{id:1,label:{ko:'자연수 + − ×',en:'Whole numbers + - x',zh:'自然数 + - ×'},params:{range:'A'}},
-          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}}] },
+          {id:2,label:{ko:'자연수 + − × ÷',en:'Whole numbers + - x /',zh:'自然数 + - × ÷'},params:{range:'B'}},
+          {id:3,label:{ko:'분수·소수 + −',en:'Fractions & decimals + -',zh:'分数·小数 + -'},params:{range:'C'}}] },
 /* ── 중등 교과 연산 3차(2026-09-20) ── 원장 지시: "교과연산과 독셈이
    같이 되어야 한다. 교과 연산 후 문장제·독셈 혼합 컨셉이었는데."
    점검 결과 중등 교과 연산의 기둥 다섯이 비어 있었다 — 연립방정식·
