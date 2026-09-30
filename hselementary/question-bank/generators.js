@@ -24958,6 +24958,35 @@
           generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
         });
     },
+    sourceGrade6SecondDecimalDivisionE3Example2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e3-example-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { whole: 1, suffix: "68", divisor100: 234, targetTenths: 8 },
+        { whole: 1, suffix: "42", divisor100: 208, targetTenths: 8 },
+        { whole: 3, suffix: "84", divisor100: 428, targetTenths: 9 }
+      ][poolIndex];
+      const divisor = (data.divisor100 / 100).toFixed(2).replace(/0$/, "");
+      const target = (data.targetTenths / 10).toFixed(1);
+      const lowerBound = ((data.targetTenths * 10 - 5) / 100).toFixed(2);
+      const upperBound = ((data.targetTenths * 10 + 5) / 100).toFixed(2);
+      const matchingDigits = [];
+      for (let digit = 0; digit <= 9; digit += 1) {
+        const dividend1000 = data.whole * 1000 + digit * 100 + Number(data.suffix);
+        const denominator = data.divisor100 * 10;
+        const roundedTenths = Math.floor((20 * dividend1000 + denominator) / (2 * denominator));
+        if (roundedTenths === data.targetTenths) matchingDigits.push(digit);
+      }
+      if (!matchingDigits.length || matchingDigits.length === 10) throw new Error(`${sourceItemId}: 빈칸 조건이 한 가지 경우로만 구분되지 않습니다.`);
+      const expression = `<span class="source62-e3-digit-expression" aria-label="${data.whole}점 빈칸 ${data.suffix} 나누기 ${divisor}">${data.whole}.<span class="source62-e3-digit-blank" aria-label="한 자리 숫자 빈칸">□</span>${data.suffix} ÷ ${divisor}</span>`;
+      const answer = String(matchingDigits.length);
+      const answerVisual = `<div class="source62-e3-digit-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><p>${expression} → ${target}</p><div class="source62-e3-digit-grid" aria-label="0부터 9까지의 숫자 검사">${Array.from({ length: 10 }, (_, digit) => `<span class="source62-e3-digit-cell${matchingDigits.includes(digit) ? " is-valid" : ""}" data-digit="${digit}" data-matches="${matchingDigits.includes(digit) ? "yes" : "no"}">${digit}</span>`).join("")}</div><p class="source62-e3-digit-count">가능한 숫자 ${matchingDigits.join(", ")} · 모두 ${answer}개</p></div>`;
+      return result(`${expression}의 몫을 반올림하여 소수 첫째 자리까지 나타내면 ${target}이 됩니다. □에 들어갈 수 있는 숫자는 모두 몇 개인가요?`, answer,
+        `몫이 ${target}로 반올림되는 범위는 ${lowerBound} 이상 ${upperBound} 미만입니다. 조건에 맞는 숫자는 ${matchingDigits.join(", ")}이므로 ${answer}개입니다.`, {
+          answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
