@@ -35,7 +35,14 @@
       "sourceItemId": "6-2-u2-e5-mission-3",
       "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
       "independentCheck": "convert-reference-minutes-to-hours-and-subtract-current-speed",
-      "risk": "The reference salmon distance is not explicitly stated to be in still water; the handwritten answer conflicts with independent calculation under that interpretation."
+      "risk": "The reference salmon distance is not explicitly stated to be in still water; the handwritten answer conflicts with independent calculation under that interpretation.",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission3",
+        "sourceRelationship": "condition-clarified-adaptation",
+        "difficultyDesign": ["still-water-speed-given", "still-water-distance-and-time", "derive-current-from-distance-and-time"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-4",
@@ -54,7 +61,7 @@
       "answerContract": "candle-remaining-length-to-hours-and-minutes",
       "independentCheck": "count-ten-minute-burn-intervals-then-convert-minutes",
       "overlapWith": "6-2-u2-e5-example-1",
-      "overlapDecision": "same burned-length-to-time method; keep source item but avoid a second standalone type before deduplication review"
+      "overlapDecision": "same burned-length-to-time method as example 5-1; retain this source item for provenance but do not publish a duplicate generator"
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-6",

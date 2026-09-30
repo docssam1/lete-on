@@ -50,6 +50,8 @@ for (const [index, reviewed] of review.missions.entries()) {
 }
 
 assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").implementationStatus, "ambiguity-locked");
+assert.equal(review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").candidateVerification.sourceRelationship,
+  "condition-clarified-adaptation", "원문에 없는 물살 조건을 더한 후보임을 명시");
 assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").implementationStatus, "conflict-locked");
 assert.equal(review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").overlapWith, "6-2-u2-e5-example-1");
 assert(!review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").candidateVerification, "중복 풀이 구조는 별도 후보 생성 전 검수");

@@ -10,7 +10,7 @@ require("./curriculum.js");
 require("./generators.js");
 
 const missionNumber = Number(process.env.HSE_E5_MISSION_NUMBER || 1);
-assert([1, 2, 4].includes(missionNumber), "배치 검사할 Mission 번호가 올바르지 않음");
+assert([1, 2, 3, 4].includes(missionNumber), "배치 검사할 Mission 번호가 올바르지 않음");
 const sourceItemId = `6-2-u2-e5-mission-${missionNumber}`;
 const review = require("./source-inventory/6-2-u2-e5-missions-source-review.json").missions.find(item => item.sourceItemId === sourceItemId);
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
