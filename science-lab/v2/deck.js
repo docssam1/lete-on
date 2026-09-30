@@ -315,12 +315,12 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   //  맞음 → 칭찬하고 다음 장 / 빠진 생각·오개념 → 답은 감추고 되묻기, 한 번 더 / 두 번째에도 아니면 예시 답을 보여 주고 다음으로
   //  규칙으로 가릴 수 없는 답(도전 과제·다른 말로 길게 쓴 답) → 틀렸다고 하지 않고 선생님 확인으로 모은다(필요할 때만 API)
   const J = judgeTable(u);
-  function judgeBox(k, text, tries, table) {
+  function judgeBox(k, text, tries, table, itemTable) {
     if (k === 'hypo' || k === 'wonder' || k === 'concl0') return judgeText(text, table?.[`deck:${k}`], { tries });
     if (/^test\d/.test(k) && s.item) {
       const it = similar.find((x) => x.id === s.item), ac = it?.answerContract;
       if (ac?.type === 'short-text') { const r = judgeShort(text, ac.accepted?.length ? ac.accepted : [ac.answer]); return { ...r, st: r.st === 'no' ? 'miss' : r.st, short: true, missing: [] }; }
-      if (ac?.type === 'written-explanation') return judgeText(text, table?.[s.item], { tries });
+      if (ac?.type === 'written-explanation') return judgeText(text, itemTable?.[s.item], { tries });   // 문항은 제 단원 판정표에서(화산 단원은 s41-u03 문항을 빌려 쓴다)
     }
     return judgeText(text, null, { tries });   // 도전 과제 등 — 선생님 확인
   }
@@ -345,31 +345,34 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     const ready = () => { $chk.disabled = !tas.every((t) => t.value.trim().length >= minLen); };
     boxes.forEach((b) => {
       const key = `${u}:${b.dataset.k}`, ta = b.querySelector('textarea');
-      ta.value = memo.get(key); ta.addEventListener('input', () => { memo.set(key, ta.value); ready(); b.querySelector('.dk-fb')?.remove(); b.classList.remove('j-ok', 'j-part', 'j-miss', 'j-wrong', 'j-review'); });
+      ta.value = memo.get(key); ta.addEventListener('input', () => { memo.set(key, ta.value); ready(); b.querySelector('.dk-fb:not(.dk-tnote)')?.remove(); b.classList.remove('j-ok', 'j-part', 'j-miss', 'j-wrong', 'j-review'); });
       b.querySelector('.dk-mic')?.addEventListener('click', (e) => listen(e.currentTarget, ta, () => { memo.set(key, ta.value); ready(); }));
     });
     ready();
+    // 선생님 확인(v2/check.js)에서 남긴 판정·한마디가 있으면 아이에게 보여 준다
+    boxes.forEach((b) => { const t = memo.get(`${u}:teacher:${s.id}:${b.dataset.k}`); if (!t?.v) return;
+      b.querySelector('.dk-inrow').insertAdjacentHTML('afterend', `<p class="dk-fb dk-tnote ${t.v}"><b>선생님</b> ${t.v === 'ok' ? '맞았어요!' : '한 번 더 고쳐 써 봐요.'}${t.note ? ` ${esc(t.note)}` : ''}</p>`); });
     G.say(cue(V, 'dk-write'));
     let tries = 0;
     const finish = async (line, mood) => { $chk.hidden = true; tas.forEach((t) => { t.readOnly = true; }); await G.say(line, mood ? { mood } : undefined); };
     $chk.onclick = async () => {
       tries++; $chk.disabled = true;
-      const table = await J;
-      const rs = boxes.map((b, j) => judgeBox(b.dataset.k, tas[j].value, tries, table));
+      const table = await J, itemTable = s.item ? await judgeTable(s.item.split('-').slice(0, 2).join('-')) : null;
+      const rs = boxes.map((b, j) => judgeBox(b.dataset.k, tas[j].value, tries, table, itemTable));
       boxes.forEach((b, j) => {
-        const r = rs[j], hy = b.dataset.k === 'hypo'; b.querySelector('.dk-fb')?.remove();
+        const r = rs[j], hy = b.dataset.k === 'hypo'; b.querySelector('.dk-fb:not(.dk-tnote)')?.remove();
         b.classList.remove('j-ok', 'j-part', 'j-miss', 'j-wrong', 'j-review'); b.classList.add(`j-${r.st}`);
         b.querySelector('.dk-inrow').insertAdjacentHTML('afterend', `<p class="dk-fb" role="status">${(FB[r.st] || FB.miss)(r, hy)}</p>`);
         if (r.st === 'ok' || r.st === 'review') b.querySelector('.dk-ans').hidden = false;   // 참고로 예시 답도 보여 준다 — 비교해서 고르라는 게 아니다
       });
       const sts = rs.map((r) => r.st), okAll = sts.every((x) => x === 'ok'), settled = sts.every((x) => x === 'ok' || x === 'review');
-      memo.set(`${u}:grade:${s.id}`, { at: Date.now(), tries, boxes: boxes.map((b, j) => ({ k: b.dataset.k, st: rs[j].st, m: rs[j].wrong?.m || null, text: tas[j].value })) });
+      memo.set(`${u}:grade:${s.id}`, { at: Date.now(), tries, item: s.item || null, boxes: boxes.map((b, j) => ({ k: b.dataset.k, st: rs[j].st, m: rs[j].wrong?.m || null, text: tas[j].value })) });
       if (s.item && tries === 1) onAnswer?.(s.item, okAll, []);
       if (okAll) { await finish('dk-judge-ok', 'praise'); auto(900); return; }
       if (settled) { await finish(rs.some((r) => r.why === 'unsure') ? 'dk-judge-show' : 'dk-judge-review'); auto(1500); return; }
       if (tries < 2) { $chk.disabled = false; cancelAuto(); G.say('dk-judge-retry', { mood: 'encourage' }); tas[sts.findIndex((x) => x !== 'ok' && x !== 'review')]?.focus(); return; }
       // 두 번째에도 아니면 예시 답을 보여 준다(더 붙잡지 않는다)
-      boxes.forEach((b, j) => { if (sts[j] !== 'ok') { b.querySelector('.dk-ans').hidden = false; b.querySelector('.dk-fb')?.insertAdjacentHTML('beforeend', ' <br>예시 답을 읽고 내 답에 빠진 생각을 확인해 봐요.'); } });
+      boxes.forEach((b, j) => { if (sts[j] !== 'ok') { b.querySelector('.dk-ans').hidden = false; b.querySelector('.dk-fb:not(.dk-tnote)')?.insertAdjacentHTML('beforeend', ' <br>예시 답을 읽고 내 답에 빠진 생각을 확인해 봐요.'); } });
       await finish('dk-judge-show');   // 예시 답을 읽을 시간 — 넘기기는 아래 「다음」으로
     };
   }
