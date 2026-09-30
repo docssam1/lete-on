@@ -57,6 +57,9 @@ function candidates(courseId){
     for(let i = 0; i < 6; i++){
       let p; try{ p = gen(lvl.params || {}, RNG.mulberry32(RNG.hashSeed('ltProbe' + t + i))); }catch(e){ return; }
       if(!p || !p.tex || typeof p.answer !== 'number' || !Number.isInteger(p.answer)) return;
+      /* 답이 계산값이 아니라 약속한 번호인 문항(①>②=③< 크기 비교, ①/② 부등호, 1=유한·0=순환)은 종이에서 뺀다 —
+         번호 약속을 잘못 읽으면 개념을 알아도 틀린다(2026-09-30 원장 "바꿔"). 앱·화면 진단에서는 그대로 쓴다. */
+      if(/[①②③]|\\text\{유한\}/.test(p.tex)) return;
     }
     out.push({ t, lv: lvl.id });
   });
