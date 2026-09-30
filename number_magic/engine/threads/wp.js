@@ -1210,24 +1210,25 @@
     let ask, scene;
     if (s.kind === '합병' || s.kind === '첨가') {
       const extra = R(rng, 2, 4);
+      /* 물음은 화면(탭해서 색이 바뀜)과 종이(연필로 칠함) 어디서나 같은 뜻이어야 한다 — "탭"·"파란색" 같은 화면 말은 위젯이 따로 보여 준다 */
       ask = s.kind === '합병'
-        ? { ko: `${NUI(A.ko)} ${EUN(o.ko.n)} 파란색으로 칠해져 있어요. ${NUI(B.ko)} ${EUL(o.ko.n)} 빨간색으로 칠하고, 모두 몇 ${o.ko.u}인지 쓰세요.`,
-            en: `${A.en}'s ${o.en.n} are already blue. Color ${B.en}'s ${o.en.n} red, then write how many there are altogether.`,
-            zh: `${A.zh}的${o.zh.n}已经涂成蓝色。把${B.zh}的${o.zh.n}涂成红色，再写出一共有几${o.zh.u}。` }
-        : { ko: `처음 ${EUN(o.ko.n)} 파란색으로 칠해져 있어요. 더 받은 만큼 빨간색으로 칠하고, 모두 몇 ${o.ko.u}인지 쓰세요.`,
-            en: `The ${o.en.n} from the start are already blue. Color the ones that were added red, then write how many there are altogether.`,
-            zh: `一开始的${o.zh.n}已经涂成蓝色。把又得到的涂成红色，再写出一共有几${o.zh.u}。` };
+        ? { ko: `${NUI(A.ko)} ${EUN(o.ko.n)} 이미 칠해져 있어요. ${NUI(B.ko)} ${o.ko.n}만큼 더 칠하고, 모두 몇 ${o.ko.u}인지 쓰세요.`,
+            en: `${A.en}'s ${o.en.n} are already colored. Color as many as ${B.en} has, then write how many there are altogether.`,
+            zh: `${A.zh}的${o.zh.n}已经涂好了。再涂上${B.zh}的那么多，然后写出一共有几${o.zh.u}。` }
+        : { ko: `처음 ${EUN(o.ko.n)} 이미 칠해져 있어요. 더 받은 만큼 더 칠하고, 모두 몇 ${o.ko.u}인지 쓰세요.`,
+            en: `The ${o.en.n} from the start are already colored. Color as many as were added, then write how many there are altogether.`,
+            zh: `一开始的${o.zh.n}已经涂好了。再涂上又得到的那么多，然后写出一共有几${o.zh.u}。` };
       scene = { mode: 'color', fixed: s.n1, need: s.n2, total: s.n1 + s.n2 + extra,
                 labelA: { ko: A.ko, en: A.en, zh: A.zh }, labelB: { ko: B.ko, en: B.en, zh: B.zh } };
     } else if (s.kind === '구잔') {
-      ask = { ko: `없어진 만큼 ${EUL(o.ko.n)} 탭해서 ×로 지우고, 남은 ${EUN(o.ko.n)} 몇 ${o.ko.u}인지 쓰세요.`,
-              en: `Tap the ${o.en.n} that are gone to cross them out, then write how many are left.`,
-              zh: `点一点减少的${o.zh.n}，用×划掉，再写出还剩几${o.zh.u}。` };
+      ask = { ko: `없어진 만큼 ${EUL(o.ko.n)} ×로 지우고, 남은 ${EUN(o.ko.n)} 몇 ${o.ko.u}인지 쓰세요.`,
+              en: `Cross out the ${o.en.n} that are gone, then write how many are left.`,
+              zh: `把减少的${o.zh.n}用×划掉，再写出还剩几${o.zh.u}。` };
       scene = { mode: 'cross', total: s.n1, need: s.n2 };
     } else if (s.kind === '구차') {
-      ask = { ko: `${NUI(A.ko)} 것과 ${NUI(B.ko)} 것을 위아래로 짝지어요. 짝이 없는 ${EUL(o.ko.n)} 탭해서 표시하고, 몇 ${o.ko.u} 더 많은지 쓰세요.`,
-              en: `Pair ${A.en}'s and ${B.en}'s ${o.en.n} top to bottom. Tap the ones without a partner, then write how many more there are.`,
-              zh: `把${A.zh}和${B.zh}的${o.zh.n}上下配对。点一点没有配对的，再写出多几${o.zh.u}。` };
+      ask = { ko: `${NUI(A.ko)} 것과 ${NUI(B.ko)} 것을 위아래로 짝지어요. 짝이 없는 ${EUL(o.ko.n)} 표시하고, 몇 ${o.ko.u} 더 많은지 쓰세요.`,
+              en: `Pair ${A.en}'s and ${B.en}'s ${o.en.n} top to bottom. Mark the ones without a partner, then write how many more there are.`,
+              zh: `把${A.zh}和${B.zh}的${o.zh.n}上下配对。把没有配对的做上记号，再写出多几${o.zh.u}。` };
       scene = { mode: 'pair', rowA: s.n1, rowB: s.n2, need: s.n1 - s.n2,
                 labelA: { ko: A.ko, en: A.en, zh: A.zh }, labelB: { ko: B.ko, en: B.en, zh: B.zh } };
     } else {

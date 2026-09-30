@@ -528,6 +528,7 @@
 }
 .nm-ws-group.lock{border-style:solid;cursor:default;background:#f4f7fc;}
 .nm-ws-stamp{font-size:22px;line-height:1;}
+.nm-ws-hint{font-size:13px;font-weight:700;color:var(--sub);text-align:center;}
 .nm-ws-counter{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--sub);}
 .nm-ws-cnt{display:inline-grid;place-items:center;min-width:34px;height:34px;border-radius:12px;background:#fff9e0;color:#7a5a12;font-size:20px;font-weight:900;padding:0 8px;}
 .nm-ws-done{

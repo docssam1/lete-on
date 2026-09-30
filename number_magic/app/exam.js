@@ -89,6 +89,14 @@
      자리라 본문보다 키우고 자간을 넓힌다. */
   .nm-print-word-eq { margin-top: 8px; font-size: 1.5em; font-weight: 700; letter-spacing: .22em;
     font-family: "SFMono-Regular", Consolas, monospace; }
+  /* WP2 장면(○●) — 연필로 칠하고 지우는 자리라 큼직하게 */
+  .nm-wp-scene { margin: 6px 0 2px; padding: 5px 7px; border: 1px solid #cfd6d6; border-radius: 3mm; background: #fff; }
+  .nm-wp-dots { font-size: 1.35em; letter-spacing: .18em; line-height: 1.5; word-break: break-all; }
+  .nm-wp-row { display: grid; grid-template-columns: 16mm 1fr; align-items: center; gap: 2mm; }
+  .nm-wp-row b { font-size: .85em; }
+  .nm-wp-boxes { display: flex; flex-wrap: wrap; gap: 2mm; }
+  .nm-wp-box { display: inline-block; min-width: 20mm; min-height: 12mm; padding: 1.5mm; border: 1px dashed #5b7b80; border-radius: 2.5mm; }
+  .nm-print-age-young .nm-wp-dots { font-size: 1.6em; }
   /* 문장제 칸은 장을 넘기지 않는다 — A4로 재 보니 24문항짜리에서 문제 칸이 종이 경계를
      걸치고 **이야기만 남고 물음·보기·답 줄이 다음 장으로 넘어가는** 것이 실제로 나왔다
      (1280·430 화면에서는 보이지 않는다. 종이에만 있는 결함이다). 이야기와 답할 자리가
@@ -1354,6 +1362,20 @@ function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;')
    프레임은 분수를 평문 `1/3`·`4 1/4`로 넘긴다(세 언어 공통). 여기서 그 토큰만 KaTeX
    span으로 바꿔 위아래로 선 분수로 찍는다 — 호출부의 KaTeX 패스(.nm-w2-tex / .nm-vp-tex)가
    그대로 렌더한다. 소수·정수는 손대지 않는다. cls 는 그 화면의 패스가 찾는 클래스. */
+/* WP2 그림으로 나타내기(2026-09-30) — 앱은 wpScene 위젯으로 탭해서 칠하지만, 인쇄·문제은행·온라인 학습지는
+   같은 장면을 ○●로 그려 연필로 하게 한다. 위젯과 같은 규칙: 색칠(●=처음, ○=칠할 것과 여분)·×지우기·짝짓기 두 줄·상자.
+   답은 어디서나 정수 하나(그림에서 센 수)라 문항이 그대로 성립한다. */
+function wpSceneHtml(p, cls){
+  const sc = p.scene; if(!sc) return '';
+  const dots = (n, ch) => `<span class="nm-wp-dots">${(ch || '○').repeat(n)}</span>`;
+  const lab = o => o ? esc(pickL(o)) : '';
+  let body;
+  if(sc.mode === 'color') body = `<div class="nm-wp-line">${dots(sc.fixed, '●')}${dots(sc.total - sc.fixed, '○')}</div>`;
+  else if(sc.mode === 'cross') body = `<div class="nm-wp-line">${dots(sc.total, '○')}</div>`;
+  else if(sc.mode === 'pair') body = `<div class="nm-wp-row"><b>${lab(sc.labelA)}</b>${dots(sc.rowA, '○')}</div><div class="nm-wp-row"><b>${lab(sc.labelB)}</b>${dots(sc.rowB, '○')}</div>`;
+  else { let g = ''; for(let i = 0; i < sc.groups; i++) g += `<span class="nm-wp-box">${i === 0 ? dots(sc.per, '●') : ''}</span>`; body = `<div class="nm-wp-boxes">${g}</div>`; }
+  return `<div class="nm-wp-scene nm-wp-${sc.mode}${cls ? ' ' + cls : ''}">${body}</div>`;
+}
 function wordHtml(text, cls){
   const t = esc(text);
   return t.replace(/(?<![\d.])(?:(\d+) )?(\d+)\/(\d+)(?![\d])/g, (m, w, n, d) =>
@@ -1460,6 +1482,7 @@ function gridCellHtml(p, i, mode, graded, userAnswers){
     inner = `<div class="nm-vp-wordwrap">
   <div class="nm-vp-word">${wordHtml(pickL(p.word), 'nm-vp-tex')}</div>
   ${wAsk ? `<div class="nm-vp-wordask">${esc(wAsk)}</div>` : ''}
+  ${wpSceneHtml(p)}
   ${p.wordEqn ? `<div class="nm-vp-word-eq">${esc(pickL(p.wordEqn))}</div>` : ''}
   ${wc ? `<ol class="nm-vp-choices">${wc.map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}
   <div class="nm-vp-word-ans">${ansRow}</div>
@@ -3357,6 +3380,7 @@ function fillPrintGrid(problems, problemGrid, answerGrid, opts){
         askEl.textContent = pickL(p.wordAsk);
         card.appendChild(askEl);
       }
+      if(p.scene){ const scn = document.createElement('div'); scn.innerHTML = wpSceneHtml(p); card.appendChild(scn.firstChild); }
       const ch = wordChoices(p);
       if(ch) card.appendChild(ch);
       /* 답이 '식'인 문장제(WP4)는 답 줄 대신 식 틀을 그린다 — 학생이 채우는 자리가
@@ -4262,6 +4286,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       + `</div>`;
     inner = `<div class="nm-print-word">${wordHtml(pickL(p.word), 'nm-w2-tex')}</div>`
       + (p.wordAsk ? `<div class="nm-print-wordask">${esc(pickL(p.wordAsk))}</div>` : '')
+      + wpSceneHtml(p)
       + (wc ? wc.outerHTML : '')
       + `<div class="nm-w2-story-work"><span>${esc(lk('풀이','Work','解答'))}</span><i></i><i></i></div>`
       + (p.wordEqn
@@ -4802,7 +4827,7 @@ function problemKey(p){
   for(const key of ['graph','solutionGraph','scatterPlot','cubes','pts','items','beads','numline','clock','fraction','word','wordAsk','choices','prompt',
     'dir','a','b','whole','seq','blank','rows','left','right','rightType','gridMode','total','emoji','layout','mark','chars',
     'interaction','mmode','examples','target','startCount','tallyGroups','input','rule','cells','askMode','askType','basketA','basketB',
-    'wordEqn','base10','array','meaning','picCap']){
+    'wordEqn','base10','array','meaning','picCap','scene']){
     if(p[key]!=null && (key!=='prompt'||!p.tex||(!p.word&&!p.graph&&/\\square|\\bigcirc/.test(p.tex)&&!/=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(p.tex)))) data[key]=p[key];
   }
   const steps=printSteps(p);if(steps) data.steps=steps.map(s=>s.tex);
@@ -4917,7 +4942,7 @@ function w2ExampleBodyHtml(p, threadId, young){
     if(digitSentence) bodyHtml += `<div class="nm-w2-ex-note">${esc(digitSentence)}</div>`;
   }
   const storyHtml = p.word
-    ? `<div class="nm-w2-ex-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>`
+    ? `<div class="nm-w2-ex-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>${wpSceneHtml(p)}`
     : '';
   return `<div class="nm-w2-example">
   <span class="nm-w2-ex-badge">${esc(lk('예시','Example','示例'))}</span>
@@ -4959,7 +4984,7 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
       : `<span class="nm-w2-guide-blank">= ____</span>`;
     /* 이야기가 있는 문항(DV12·13 등)은 식 앞에 이야기, 사슬 앞에 뜻 그림(2026-09-17) */
     const storyHtml = p.word
-      ? `<div class="nm-w2-guide-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>`
+      ? `<div class="nm-w2-guide-story">${esc(pickL(p.word))}${p.wordAsk ? ' <b>' + esc(pickL(p.wordAsk)) + '</b>' : ''}</div>${wpSceneHtml(p)}`
       : '';
     return `<div class="nm-w2-guide-item">
   <div class="nm-w2-guide-q"><span class="nm-w2-guide-label">(${esc(labs[i])})</span><span>${storyHtml}${qHtml}</span></div>
@@ -7458,6 +7483,7 @@ ${printWatermarkHtml()}
   <div class="nm-exam-question">
     ${p.word ? `<div class="nm-ex-word">${esc(pickL(p.word))}</div>
     ${pickL(p.wordAsk) ? `<div class="nm-ex-wordask">${esc(pickL(p.wordAsk))}</div>` : ''}
+    ${wpSceneHtml(p)}
     ${p.wordEqn ? `<div class="nm-ex-word-eq">${esc(pickL(p.wordEqn))}</div>` : ''}
     ${pickChoices(p)
       ? `<ol class="nm-ex-choices">${pickChoices(p).map(c => `<li>${esc(c)}</li>`).join('')}</ol>` : ''}`

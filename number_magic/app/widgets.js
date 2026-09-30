@@ -1454,6 +1454,13 @@ function renderWpScene(problem, container, onAnswer){
     setCount(total(),false);
   }
   root.appendChild(board);
+  /* 화면 전용 안내 — 물음(wordAsk)은 종이와 같이 쓰므로 "탭"이라는 말은 여기서만 */
+  const hint=document.createElement('div'); hint.className='nm-ws-hint';
+  hint.textContent=sc.mode==='color'?tx('회색을 톡 누르면 빨간색이 돼요','Tap a gray one to color it red','点一下灰色的就会变红')
+    :sc.mode==='cross'?tx('톡 누르면 ×로 지워져요','Tap to cross one out','点一下就用×划掉')
+    :sc.mode==='pair'?tx('짝이 없는 것을 톡 눌러요','Tap the ones without a partner','点一点没有配对的')
+    :tx('빈 상자를 톡 누르면 하나씩 들어가요','Tap an empty box to put one in','点一下空盒子就放进一个');
+  root.appendChild(hint);
   root.appendChild(foot);
   root.appendChild(done);
 
