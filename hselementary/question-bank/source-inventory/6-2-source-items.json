@@ -8,10 +8,10 @@
     "sourceReference": "생각하는 황소 초등 6-2 심화 원본",
     "sourceEvidenceState": "단원별 개념탐구, 예제, Mission의 개수와 쪽수 범위는 원본 렌더 확인 기록을 바탕으로 색인했습니다. 개별 문항은 sourceVerified가 true인 항목만 조건·정답·그림을 직접 대조했으며, 나머지는 검수 대기입니다.",
     "countingRule": {
-      "oneExplorationBodyIsOneSourceItem": true,
+      "oneNumberedExplorationSubquestionIsOneSourceItem": true,
       "oneNumberedExampleIsOneSourceItem": true,
       "oneNumberedMissionIsOneSourceItem": true,
-      "compositeExplorationSubquestionsRemainOneItem": true
+      "unverifiedExplorationGroupingIsProvisional": true
     },
     "itemDefaults": {
       "sourceVerified": false,
@@ -21,21 +21,21 @@
     "answerContractMeaning": "candidate는 정답 형식 후보일 뿐, 원문 정답이나 출제 가능 판정이 아닙니다."
   },
   "integrity": {
-    "expectedTotalItems": 352,
-    "actualTotalItems": 352,
+    "expectedTotalItems": 355,
+    "actualTotalItems": 355,
     "expectedBySection": {
-      "exploration": 32,
+      "exploration": 35,
       "example": 128,
       "mission": 192
     },
     "actualBySection": {
-      "exploration": 32,
+      "exploration": 35,
       "example": 128,
       "mission": 192
     },
     "expectedByUnit": {
       "6-2-u1": 66,
-      "6-2-u2": 66,
+      "6-2-u2": 69,
       "6-2-u3": 44,
       "6-2-u4": 66,
       "6-2-u5": 66,
@@ -43,7 +43,7 @@
     },
     "actualByUnit": {
       "6-2-u1": 66,
-      "6-2-u2": 66,
+      "6-2-u2": 69,
       "6-2-u3": 44,
       "6-2-u4": 66,
       "6-2-u5": 66,
@@ -1566,12 +1566,12 @@
       "ordinal": 1,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "같은 나눗셈의 몫을 소수 첫째 자리와 둘째 자리까지 각각 반올림한 뒤 두 값의 차를 구하는 문제",
+      "answerContract": "difference-between-rounded-quotients",
+      "visualRisk": "첫째 자리와 둘째 자리의 0을 생략하지 않고 서로 다른 반올림값을 구분해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-2",
@@ -1581,12 +1581,12 @@
       "ordinal": 2,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "여섯 숫자 카드를 한 번씩 써서 소수 두 자리 수끼리 나누는 식의 몫을 가장 크게 만든 뒤 반올림하는 문제",
+      "answerContract": "max-card-arrangement-rounded-quotient",
+      "visualRisk": "여섯 카드를 빠짐없이 한 번씩 쓰고 두 수가 모두 소수 두 자리 수인지 확인해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 카드 순서 전수 비교는 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-3",
@@ -1596,12 +1596,12 @@
       "ordinal": 3,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "나누어지는 수의 두 빈칸을 채워 몫을 소수 둘째 자리까지 반올림한 값과 맞추는 문제",
+      "answerContract": "all-valid-digit-pairs",
+      "visualRisk": "빈칸 두 개의 위치와 반올림 자리를 정확히 표시해야 하며, 가능한 숫자 조합을 하나의 답으로 오인하면 안 됨.",
+      "sourceVerified": true,
+      "implementationStatus": "answer-set-ambiguity-locked",
+      "reviewReason": "원본 조건에 맞는 빈칸 조합이 여러 개입니다. 가능한 조합을 모두 쓰는 문구와 정답 형식을 정하기 전에는 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-4",
@@ -1611,12 +1611,12 @@
       "ordinal": 4,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "다리의 무게 제한에서 트럭 무게를 빼고 상자 한 개의 무게로 나누어 실을 수 있는 최대 상자 수를 구하는 문제",
+      "answerContract": "bridge-capacity-max-whole-boxes",
+      "visualRisk": "다리의 제한 무게에 트럭 자체 무게도 포함하고 상자 수는 정수로 내려야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-5",
@@ -1626,12 +1626,12 @@
       "ordinal": 5,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "나눗셈의 몫을 소수 첫째 자리까지 반올림한 값에서 가능한 두 자리 소수 나누는 수를 모두 세는 문제",
+      "answerContract": "count-two-decimal-divisors-in-rounded-quotient-range",
+      "visualRisk": "반올림 범위의 양 끝 포함 여부와 두 자리 소수 간격을 확인해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "handwriting-conflict-locked",
+      "reviewReason": "원본의 손글씨 답과 가능한 수 전수 검산 결과가 달라 공식 답 대조 전에는 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-6",
@@ -1641,27 +1641,42 @@
       "ordinal": 6,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "직육면체 상자의 가로·세로·높이에 들어가는 같은 정육면체의 개수를 각각 구해 곱하는 문제",
+      "answerContract": "cube-packing-three-dimensions",
+      "visualRisk": "세 방향 모두 한 모서리 길이로 나눈 정수 개수만 세고 부피 나눗셈으로 대신하지 않아야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
     },
     {
-      "sourceItemId": "6-2-u2-e4-exploration",
+      "sourceItemId": "6-2-u2-e4-exploration-1",
       "unitId": "6-2-u2",
       "exploration": 4,
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "재료의 총무게와 한 개에 쓰는 무게로 만들 수 있는 최대 개수와 남는 무게를 함께 구하는 문제",
+      "answerContract": "maximum-whole-items-and-decimal-remainder",
+      "visualRisk": "만들 수 있는 개수는 자연수로 내리고 남는 무게는 원래 단위의 소수로 나타내야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
+    },
+    {
+      "sourceItemId": "6-2-u2-e4-exploration-2",
+      "unitId": "6-2-u2",
+      "exploration": 4,
+      "section": "exploration",
+      "ordinal": 2,
+      "pdfPage": 22,
+      "printedPage": 24,
+      "sourceShape": "같은 나눗셈에서 몫을 소수 둘째 자리와 첫째 자리에서 각각 멈출 때 가능한 나머지 중 가장 작은 값을 구하는 문제",
+      "answerContract": "minimum-remainder-at-shorter-quotient-precision",
+      "visualRisk": "원문은 반올림이 아니라 몫을 정해진 자리에서 멈추는 계산이며, 가능한 수의 범위를 확인해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "review-locked",
+      "reviewReason": "원문에서 몫을 멈추는 뜻과 공식 답 근거를 대조하고 유사문항 화면을 검수하기 전에는 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-example-1",
