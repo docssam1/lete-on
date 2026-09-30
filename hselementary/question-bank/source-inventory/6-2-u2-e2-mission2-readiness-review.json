@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "status": "private-review-metadata-no-source-image",
+  "sourceItemId": "6-2-u2-e2-mission-2",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 19,
+    "printedPage": 21,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "officialAnswerEvidence": {
+    "status": "not-available-for-this-item",
+    "reason": "별도 6-2답지는 경시 교재이므로 심화 Mission의 공식 답으로 취급하지 않음"
+  },
+  "originalStructure": "같은 길이 26cm인 테이프를 이웃한 두 장마다 2.5cm 겹쳐 한 줄로 붙임. 전체 길이 449cm에서 장수를 구함. 원본 그림에는 처음 두 이음새와 생략 표시가 있음",
+  "answerContract": {
+    "originalNumericAnswer": "19장",
+    "independentCalculation": "첫 장 26cm, 이후 한 장당 26-2.5=23.5cm 증가. (449-26)/23.5=18장이 더 필요하므로 총 19장",
+    "singleAnswer": true,
+    "difficultyDesign": "쉬움은 첫 장 이후 늘어나는 길이 단서, 기준은 원본과 같은 일정 겹침, 어려움은 두 겹침 길이를 번갈아 적용하여 두 장 묶음으로 계산하고 mm 단위를 cm로 바꿈",
+    "difficultyLimit": "어려움은 조건을 하나 늘렸으나 계산량 상승으로 체감될 수 있으므로 원본 Mission보다 확실히 더 어렵다고 단정하지 않음"
+  },
+  "verification": {
+    "independentMathAudit": "source-6-2-decimal-e2-mission2-audit.js",
+    "mathChecks": 360,
+    "fixedPoolCount": 3,
+    "difficultyOffsetsChecked": [-1, 0, 1],
+    "diagramGeometryAudit": "source-6-2-decimal-e2-mission2-layout-audit.js",
+    "diagramGeometryChecks": 18,
+    "browserAudit": "source-6-2-decimal-e1-browser-audit.js",
+    "desktopMobileScreenshots": 12,
+    "a4PdfFiles": 6,
+    "a4ProblemPageCount": 1,
+    "a4SolutionPageCount": 1,
+    "secondaryReviewer": {
+      "kind": "Claude CLI",
+      "scope": "전사된 조건과 고정 풀 네 문항의 장수·답 유일성을 별도 덧셈 및 두 장 묶음으로 계산",
+      "sourceImageDirectlyViewed": false,
+      "confirmedCounts": [19, 19, 17, 15],
+      "remainingCaution": "어려움 단계가 계산량 증가로만 느껴질 수 있고 그림만으로 교대 규칙을 알 수 없으므로 지문에 규칙을 명시함"
+    }
+  },
+  "verifiedVariantCount": 3,
+  "releaseStatus": "verified"
+}
