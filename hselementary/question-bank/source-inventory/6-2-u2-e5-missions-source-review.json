@@ -62,6 +62,15 @@
         "difficultyDesign": ["still-water-speed-given", "still-water-distance-and-time", "derive-current-from-distance-and-time"],
         "fixedPoolCount": 3,
         "publicReleaseStatus": "locked"
+      },
+      "downstreamCandidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission3DownstreamCandidate",
+        "sourceRelationship": "downstream-number-corrected-adaptation",
+        "sourceNumberChange": "The source-like first variant changes the current from 47.5 to 21.5 km/h while keeping the 93.6 km, 1 hour 48 minutes, and 18 km values.",
+        "difficultyDesign": ["downstream-speed-given", "downstream-distance-and-time", "derive-current-from-distance-and-time"],
+        "fixedPoolCount": 3,
+        "independentReviewer": "Claude Sonnet CLI",
+        "publicReleaseStatus": "locked"
       }
     },
     {
@@ -98,7 +107,7 @@
   },
   "publicReleaseStatus": "partial",
   "pending": [
-    "mission 3 reference-speed condition resolution",
+    "mission 3 release choice between the still-water clarification and the downstream number-corrected adaptation; both remain locked",
     "matching advanced-book official answer comparison if a valid key is found",
     "mission 6 remains outside this review"
   ]
