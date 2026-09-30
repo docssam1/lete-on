@@ -25279,6 +25279,45 @@
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE5Mission3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-3";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { sampleMinutes: 108, sampleDistanceHundredths: 9360, currentHundredths: 4750, targetHundredths: 1800 },
+        { sampleMinutes: 90, sampleDistanceHundredths: 810, currentHundredths: 240, targetHundredths: 900 },
+        { sampleMinutes: 75, sampleDistanceHundredths: 875, currentHundredths: 560, targetHundredths: 700 }
+      ][poolIndex];
+      const sampleHoursHundredths = data.sampleMinutes * 100 / 60;
+      const stillHundredths = data.sampleDistanceHundredths * 100 / sampleHoursHundredths;
+      const upstreamHundredths = stillHundredths - data.currentHundredths;
+      const currentSampleMinutes = 30;
+      const currentSampleDistanceHundredths = data.currentHundredths * currentSampleMinutes / 60;
+      if (![sampleHoursHundredths, stillHundredths, upstreamHundredths, currentSampleDistanceHundredths].every(Number.isInteger)
+        || upstreamHundredths <= 0 || data.targetHundredths % upstreamHundredths !== 0) throw new Error(`${sourceItemId}: 거슬러 가는 시간과 거리 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 2)}km`;
+      const speed = value => `${plainDecimal(value, 2)}km/시간`;
+      const hours = value => `${plainDecimal(value, 2)}시간`;
+      const measuredTime = `${Math.floor(data.sampleMinutes / 60)}시간 ${data.sampleMinutes % 60}분`;
+      const answer = `${data.targetHundredths / upstreamHundredths}시간`;
+      const salmonCondition = level === 0
+        ? `연어는 물이 흐르지 않는 곳에서 1시간에 ${km(stillHundredths)}를 갑니다.`
+        : `연어는 물이 흐르지 않는 곳에서 ${measuredTime} 동안 ${km(data.sampleDistanceHundredths)}를 갑니다.`;
+      const currentCondition = level === 2
+        ? `강물은 ${currentSampleMinutes}분 동안 ${km(currentSampleDistanceHundredths)} 흐릅니다.`
+        : `강물은 1시간에 ${km(data.currentHundredths)} 흐릅니다.`;
+      const prompt = `${currentCondition} ${salmonCondition} 이 연어가 강물이 흐르는 반대 방향으로 ${km(data.targetHundredths)}를 가는 데 걸리는 시간은 얼마입니까?`;
+      const difficultyDesign = ["still-water-speed-given", "still-water-distance-and-time", "derive-current-from-distance-and-time"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-upstream-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>강물을 거슬러 가는 시간</strong>${row("물살 없는 곳에서", speed(stillHundredths))}${row("강물의 빠르기", speed(data.currentHundredths))}${row("거슬러 가는 빠르기", speed(upstreamHundredths))}${row("걸린 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const stillStep = level === 0 ? "" : `물살 없는 곳에서의 빠르기는 ${math(`${km(data.sampleDistanceHundredths)} ÷ ${hours(sampleHoursHundredths)} = ${speed(stillHundredths)}`)}입니다. `;
+      const currentStep = level === 2 ? `강물의 빠르기는 ${math(`${km(currentSampleDistanceHundredths)} ÷ ${hours(currentSampleMinutes * 100 / 60)} = ${speed(data.currentHundredths)}`)}입니다. ` : "";
+      const solution = `${stillStep}${currentStep}거슬러 가는 빠르기는 ${math(`${speed(stillHundredths)} − ${speed(data.currentHundredths)} = ${speed(upstreamHundredths)}`)}입니다. 따라서 ${math(`${km(data.targetHundredths)} ÷ ${speed(upstreamHundredths)} = ${answer}`)}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondDecimalDivisionE5Mission4({ level, variant = 0 }) {
       const sourceItemId = "6-2-u2-e5-mission-4";
       if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
