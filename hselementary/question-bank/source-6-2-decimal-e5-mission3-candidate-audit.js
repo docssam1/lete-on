@@ -32,6 +32,10 @@ const originalUpstreamSpeed = originalStillSpeed - hundredths("47.5");
 assert.equal(originalStillSpeed, hundredths("52"));
 assert.equal(originalUpstreamSpeed, hundredths("4.5"));
 assert.equal(hundredths("18") / originalUpstreamSpeed, 4n);
+const downstreamReferenceStillSpeed = originalStillSpeed - hundredths("47.5");
+assert.equal(downstreamReferenceStillSpeed, hundredths("4.5"));
+assert(downstreamReferenceStillSpeed - hundredths("47.5") < 0n,
+  "93.6km가 물살 방향의 이동 거리였다면 인쇄된 반대 방향으로는 나아갈 수 없음");
 assert.notEqual(hundredths("18") * 60n / 20n, originalUpstreamSpeed, "손글씨 20분은 이 해석의 거슬러 가는 빠르기와 맞지 않음");
 const clarified = window.HSE_GENERATORS.generate(candidate, 0, 0, 1, 0);
 assert(clarified.prompt.includes("물이 흐르지 않는 곳에서 1시간 48분 동안 93.6km"));
