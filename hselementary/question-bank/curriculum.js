@@ -1515,6 +1515,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             reviewReason: item.reviewReason,
             commonTypeId: item.commonTypeId,
             commonPublicTypeId: item.commonPublicTypeId,
+            sourceRelationship: item.sourceRelationship,
             normalizedTypeId: item.normalizedTypeId,
             problemVisualRequired: item.problemVisualRequired,
             answerVisualRequired: item.answerVisualRequired,

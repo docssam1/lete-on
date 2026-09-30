@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const { execFileSync } = require("node:child_process");
 const { chromium } = require("playwright");
 
 global.window = {};
@@ -13,13 +14,19 @@ require("./generators.js");
 const review = require("./source-inventory/6-2-u2-e5-missions-source-review.json");
 const exampleReview = require("./source-inventory/6-2-u2-e5-source-review.json");
 const reviewedItems = [
-  ...review.missions.filter(item => [1, 2, 4].some(number => item.sourceItemId.endsWith(`mission-${number}`))),
+  ...review.missions.filter(item => [1, 2, 3, 4].some(number => item.sourceItemId.endsWith(`mission-${number}`))),
   ...exampleReview.items.filter(item => item.sourceItemId === "6-2-u2-e5-example-1")
 ];
-const candidateKeys = Object.fromEntries(reviewedItems.map(item => [item.sourceItemId, item.candidateVerification.generator]));
+const candidateKeys = Object.fromEntries(reviewedItems.map(item => [item.sourceItemId,
+  item.downstreamCandidateVerification?.publicReleaseStatus === "verified-as-adaptation"
+    ? item.downstreamCandidateVerification.generator : item.candidateVerification.generator]));
 const ids = process.env.HSE_AUDIT_IDS?.split(",").filter(Boolean) || Object.keys(candidateKeys);
 const baseUrl = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
+const assertOneA4Page = (file, label) => {
+  const pages = Number(execFileSync("pdfinfo", [file], { encoding: "utf8" }).match(/^Pages:\s+(\d+)/m)?.[1]);
+  assert.equal(pages, 1, `${label}: 실제 A4 PDF가 한 장이어야 함`);
+};
 
 for (const id of ids) {
   assert(candidateKeys[id], `${id}: 검수 후보 생성기 없음`);
@@ -54,7 +61,9 @@ if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
       }
       if (outputDir && difficulty === 0 && width === 1280) {
         await page.emulateMedia({ media: "print" });
-        await page.pdf({ path: path.join(outputDir, `${id}-problem-a4.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+        const file = path.join(outputDir, `${id}-problem-a4.pdf`);
+        await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
+        assertOneA4Page(file, `${id}: 문제`);
         await page.emulateMedia({ media: "screen" });
       }
       await page.locator("#solutionTab").click();
@@ -75,7 +84,9 @@ if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
       }
       if (outputDir && difficulty === 0 && width === 1280) {
         await page.emulateMedia({ media: "print" });
-        await page.pdf({ path: path.join(outputDir, `${id}-solution-a4.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+        const file = path.join(outputDir, `${id}-solution-a4.pdf`);
+        await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
+        assertOneA4Page(file, `${id}: 풀이`);
       }
       checked += 1;
       await page.close();

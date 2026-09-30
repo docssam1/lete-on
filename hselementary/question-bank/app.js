@@ -264,7 +264,9 @@
     const source = type.sourceItemLabel
       ? `원문 ${escapeHtml(type.sourceItemLabel)}${sourcePage}`
       : `${type.grade}학년 ${type.term}학기 분류`;
-    const sourceLine = `<div class="type-preview-source"><b>유형 예시</b><small>대표 문제 · ${source}</small></div>`;
+    const sourceLine = type.sourceRelationship === "downstream-number-corrected-adaptation"
+      ? `<div class="type-preview-source"><b>조건 보정 유사문항</b><small>원문 ${escapeHtml(type.sourceItemLabel)}의 풀이 구조 · 하류 방향 명시, 물살 수치 보정</small></div>`
+      : `<div class="type-preview-source"><b>유형 예시</b><small>대표 문제 · ${source}</small></div>`;
     const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
     const commonType = type.commonPublicTypeId && typeById.get(type.commonPublicTypeId);
     if (commonType?.generator && !commonType.reviewLocked) {

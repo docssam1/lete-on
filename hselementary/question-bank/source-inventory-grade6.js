@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 627,
     "answerVisualRequired": 633,
-    "unlocked": 310
+    "unlocked": 311
   },
   "items": [
     {
@@ -10495,21 +10495,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u2-e5-mission-3",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 3",
-      "typeLabel": "연어가 강물을 거슬러 가는 시간 구하기",
+      "typeLabel": "연어가 강물을 거슬러 가는 시간 구하기 (조건 보정)",
       "commonTypeId": "물살을 거슬러 가는 시간 구하기",
+      "sourceRelationship": "downstream-number-corrected-adaptation",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE5Mission3DownstreamCandidate",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "앞선 이동을 물이 흐르는 방향으로 보면 연어가 강을 거슬러 올라갈 수 없습니다. 원문의 기준 빠르기 조건을 확인할 때까지 출제하지 않습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3
     },
     {
       "semester": "6-2",
@@ -16845,7 +16846,6 @@ const safeLockedReasons = {
   "6-2-u2-e5-example-2": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
   "6-2-u2-e5-example-3": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
   "6-2-u2-e5-example-4": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
-  "6-2-u2-e5-mission-3": "앞선 이동을 물이 흐르는 방향으로 보면 연어가 강을 거슬러 올라갈 수 없습니다. 원문의 기준 빠르기 조건을 확인할 때까지 출제하지 않습니다.",
   "6-2-u2-e5-mission-5": "같은 탐구의 양초 예제와 풀이가 같아 별도 유형을 중복 출제하지 않습니다.",
   "6-2-u2-e5-mission-6": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
 };

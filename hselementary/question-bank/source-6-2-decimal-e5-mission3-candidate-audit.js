@@ -12,8 +12,9 @@ const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
 assert.equal(review.candidateVerification.sourceRelationship, "condition-clarified-adaptation");
-assert(type.reviewLocked && type.generatorKey === "", "원문 조건과 공식 답 확인 전 공개 잠금");
-assert.equal(window.HSE_GENERATORS.generate(type, 0, 0, 1), null);
+assert.equal(review.candidateVerification.publicReleaseStatus, "locked", "물살 없는 곳으로 읽은 후보는 잠금 유지");
+assert(!type.reviewLocked && type.generatorKey !== review.candidateVerification.generator,
+  "공개 생성기는 물살 없는 곳 해석 후보를 사용하지 않음");
 const candidate = { ...type, reviewLocked: false, generatorKey: review.candidateVerification.generator };
 
 const hundredths = text => {

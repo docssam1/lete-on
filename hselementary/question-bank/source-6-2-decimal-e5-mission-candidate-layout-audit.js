@@ -18,11 +18,14 @@ const candidateReview = downstreamMode ? review.downstreamCandidateVerification 
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
-assert.equal(type.reviewLocked, review.candidateVerification.publicReleaseStatus !== "verified", "검수 상태와 공개 상태 일치");
-assert.equal(type.generatorKey, type.reviewLocked ? "" : review.candidateVerification.generator);
+const publicCandidate = review.downstreamCandidateVerification?.publicReleaseStatus === "verified-as-adaptation"
+  ? review.downstreamCandidateVerification : review.candidateVerification;
+assert.equal(type.reviewLocked, !["verified", "verified-as-adaptation"].includes(publicCandidate.publicReleaseStatus), "검수 상태와 공개 상태 일치");
+assert.equal(type.generatorKey, type.reviewLocked ? "" : publicCandidate.generator);
 assert(candidateReview, "검수할 후보 생성기가 기록되어 있음");
-if (downstreamMode) assert.equal(candidateReview.publicReleaseStatus, "locked", "하류 보정 후보는 공개 잠금");
-const candidate = type.reviewLocked ? { ...type, reviewLocked: false, generatorKey: candidateReview.generator } : type;
+if (downstreamMode) assert.equal(candidateReview.publicReleaseStatus, "verified-as-adaptation", "하류 보정 후보는 공개 유사문항");
+const candidate = candidateReview === publicCandidate ? type
+  : { ...type, reviewLocked: false, generatorKey: candidateReview.generator };
 const baseUrl = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
 if (outputDir) mkdirSync(outputDir, { recursive: true });

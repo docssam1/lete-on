@@ -41,16 +41,20 @@ for (const [index, reviewed] of review.missions.entries()) {
   assert.equal(original.sourceVerified, true);
   assert.equal(inventoryType.problemVisualRequired, false, `${id}: 원문은 그림 없는 서술형`);
   assert.equal(inventoryType.answerVisualRequired, true);
-  const verified = reviewed.candidateVerification?.publicReleaseStatus === "verified";
+  const publicCandidate = reviewed.downstreamCandidateVerification?.publicReleaseStatus === "verified-as-adaptation"
+    ? reviewed.downstreamCandidateVerification
+    : reviewed.candidateVerification?.publicReleaseStatus === "verified" ? reviewed.candidateVerification : null;
+  const verified = Boolean(publicCandidate);
   assert.equal(publicType.reviewLocked, !verified, `${id}: 검수 상태와 공개 잠금 일치`);
-  assert.equal(publicType.generatorKey, verified ? reviewed.candidateVerification.generator : "");
+  assert.equal(publicType.generatorKey, verified ? publicCandidate.generator : "");
   assert.equal(original.implementationStatus, verified ? "fixed-verified-pool" : original.implementationStatus);
   if (!verified) assert.equal(window.HSE_GENERATORS.generate(publicType, 0, 0, 1), null, `${id}: 잠금 항목 출제 금지`);
   if (reviewed.candidateVerification) {
     assert(["locked", "verified"].includes(reviewed.candidateVerification.publicReleaseStatus));
     assert.equal(reviewed.candidateVerification.fixedPoolCount, 3);
     assert.equal(reviewed.candidateVerification.difficultyDesign.length, 3);
-    const candidate = verified ? publicType : { ...publicType, reviewLocked: false, generatorKey: reviewed.candidateVerification.generator };
+    const candidate = publicCandidate === reviewed.candidateVerification ? publicType
+      : { ...publicType, reviewLocked: false, generatorKey: reviewed.candidateVerification.generator };
     for (const difficulty of [-1, 0, 1]) {
       const generated = window.HSE_GENERATORS.generate(candidate, 0, difficulty, 1, 0);
       assert.equal(generated.sourceItemId, id, `${id}: 후보 문항이 원본 Mission을 가리킴`);
@@ -59,12 +63,14 @@ for (const [index, reviewed] of review.missions.entries()) {
   }
 }
 
-assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").implementationStatus, "ambiguity-locked");
+assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").implementationStatus, "fixed-verified-pool");
+assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").originalPrintStatus, "ambiguity-locked");
+assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").sourceRelationship, "downstream-number-corrected-adaptation");
 assert.equal(review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").candidateVerification.sourceRelationship,
   "condition-clarified-adaptation", "원문에 없는 물살 조건을 더한 후보임을 명시");
 const mission3Downstream = review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").downstreamCandidateVerification;
 assert.equal(mission3Downstream.sourceRelationship, "downstream-number-corrected-adaptation");
-assert.equal(mission3Downstream.publicReleaseStatus, "locked", "하류 보정 후보는 원문 유형으로 공개하지 않음");
+assert.equal(mission3Downstream.publicReleaseStatus, "verified-as-adaptation", "하류 보정 문제만 원문과 구분해 공개");
 assert.equal(mission3Downstream.fixedPoolCount, 3);
 const referenceMinutes = 108n;
 const downstreamSpeedHundredths = 9360n * 60n / referenceMinutes;
@@ -99,8 +105,8 @@ const burnedHundredthsCm = 2170n - 970n;
 assert.equal(burnedHundredthsCm % 24n, 0n, "Mission 5: 0.24cm씩 탄 횟수가 정수");
 const elapsedMinutes = burnedHundredthsCm / 24n * 10n;
 assert.equal(elapsedMinutes, 8n * 60n + 20n, "Mission 5: 독립 계산한 시간은 8시간 20분");
-assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").reviewReason, /기준 빠르기/);
+assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").reviewReason, "");
 assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").reviewReason, "");
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").name, /참기름/);
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-6").name, /갤런/);
-console.log("6-2 개념탐구 5 Mission 6문항: 1·2·4 공개, 3 하류 해석 불가능·잠금, 5 공통 유형 연결, 6 잠금 검사 통과");
+console.log("6-2 개념탐구 5 Mission 6문항: 1·2·4 공개, 3 원문 잠금·보정 유사문항 공개, 5 공통 유형 연결, 6 잠금 검사 통과");
