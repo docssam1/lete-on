@@ -25067,6 +25067,44 @@
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE5Example4({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-example-4";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { currentTenths: 134, stillTenths: 360, driftMinutes: 90, sourceMinutes: 150, hardMinutes: 210 },
+        { currentTenths: 96, stillTenths: 288, driftMinutes: 75, sourceMinutes: 135, hardMinutes: 165 },
+        { currentTenths: 120, stillTenths: 348, driftMinutes: 105, sourceMinutes: 165, hardMinutes: 195 }
+      ][poolIndex];
+      const downstreamTenths = data.stillTenths + data.currentTenths;
+      const upstreamTenths = data.stillTenths - data.currentTenths;
+      const targetMinutes = level === 2 ? data.hardMinutes : data.sourceMinutes;
+      const driftDistanceTenths = data.currentTenths * data.driftMinutes / 60;
+      const downstreamDistanceTenths = downstreamTenths * 120 / 60;
+      const targetDistanceTenths = upstreamTenths * targetMinutes / 60;
+      if (![driftDistanceTenths, downstreamDistanceTenths, targetDistanceTenths].every(Number.isInteger) || upstreamTenths <= 0) throw new Error(`${sourceItemId}: 거리 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 1)}km`;
+      const hours = minutes => `${Math.floor(minutes / 60)}시간${minutes % 60 ? ` ${minutes % 60}분` : ""}`;
+      const decimalHours = minutes => plainDecimal(minutes * 100 / 60, 2);
+      const drift = `${hours(data.driftMinutes)} 동안 ${km(driftDistanceTenths)}를 흐르는 강`;
+      const boat = level === 2
+        ? `이 강에서 배가 강물이 흐르는 방향으로 2시간 동안 ${km(downstreamDistanceTenths)}를 갔습니다.`
+        : `흐르지 않는 물에서 이 배는 1시간에 ${km(data.stillTenths)}를 갑니다.`;
+      const prompt = level === 0
+        ? `강물이 1시간에 ${km(data.currentTenths)}씩 흐릅니다. ${boat} 이 배가 강물이 흐르는 반대 방향으로 ${km(targetDistanceTenths)}를 가려면 몇 시간 몇 분이 걸릴까요?`
+        : `${drift}이 있습니다. ${boat} 이 배가 강물이 흐르는 반대 방향으로 ${km(targetDistanceTenths)}를 가려면 몇 시간 몇 분이 걸릴까요?`;
+      const answer = hours(targetMinutes);
+      const difficultyDesign = ["current-speed-given", "source-drift-distance", "downstream-observation"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-river-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>강물을 거슬러 가는 빠르기</strong>${row("강물이 흐르는 빠르기", `${km(data.currentTenths)}/시간`)}${level === 2 ? row("강물을 따라가는 빠르기", `${km(downstreamTenths)}/시간`) : ""}${row("흐르지 않는 물에서 배의 빠르기", `${km(data.stillTenths)}/시간`)}${row("강물을 거슬러 가는 빠르기", `${km(upstreamTenths)}/시간`)}${row("걸린 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const currentStep = level === 0 ? "" : `강물이 1시간에 흐르는 거리는 ${math(`${km(driftDistanceTenths)} ÷ ${decimalHours(data.driftMinutes)} = ${km(data.currentTenths)}`)}입니다. `;
+      const boatStep = level === 2 ? `강물을 따라가는 배는 1시간에 ${math(`${km(downstreamDistanceTenths)} ÷ 2 = ${km(downstreamTenths)}`)}를 가므로, 흐르지 않는 물에서 배의 빠르기는 ${math(`${km(downstreamTenths)} − ${km(data.currentTenths)} = ${km(data.stillTenths)}`)}입니다. ` : "";
+      const solution = `${currentStep}${boatStep}강물을 거슬러 가는 빠르기는 1시간에 ${math(`${km(data.stillTenths)} − ${km(data.currentTenths)} = ${km(upstreamTenths)}`)}입니다. ${math(`${km(targetDistanceTenths)} ÷ (${km(upstreamTenths)}/시간) = ${decimalHours(targetMinutes)}시간`)}이므로 답은 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
