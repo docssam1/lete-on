@@ -16,6 +16,10 @@
     "samePrintedWording": true,
     "handwrittenMarksPresent": false
   },
+  "nonMatchingAnswerSource": {
+    "sha256": "3B71EDCF9C234B180A08A73905B16F6065F833160E499223D413ED65792BACF0",
+    "reason": "The separately named answer PDF is already at chapter 3 on PDF page 25, whereas this advanced source is at chapter 2 on PDF page 25. It is not an answer key for these missions."
+  },
   "missions": [
     {
       "sourceItemId": "6-2-u2-e5-mission-1",
@@ -44,6 +48,14 @@
       "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
       "independentCheck": "convert-reference-minutes-to-hours-and-subtract-current-speed",
       "risk": "The initial 93.6 km direction is unstated. The user reads it as downstream: 52 km/h downstream minus 47.5 km/h current leaves 4.5 km/h still-water speed, so the printed 18 km upstream trip is impossible. If the initial speed instead means still water, the independently calculated four hours conflicts with the non-authoritative handwritten answer. Keep locked; do not silently rewrite either direction.",
+      "interpretationAudit": {
+        "referenceSpeedKmh": 52,
+        "downstreamReadingUpstreamSpeedKmh": -43,
+        "stillWaterReadingUpstreamSpeedKmh": 4.5,
+        "stillWaterReadingTimeHours": 4,
+        "firstLegDirectionPrinted": false,
+        "independentReviewer": "Claude Sonnet CLI"
+      },
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Mission3",
         "sourceRelationship": "condition-clarified-adaptation",
