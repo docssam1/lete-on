@@ -39,6 +39,13 @@ const pick = (rng, arr) => arr[Math.floor(rng() * arr.length)];
 function shuffle(rng, arr){ const a = arr.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 const box = (title, body, cls) => `<section class="nm-lt-act${cls ? ' ' + cls : ''}"><h3>${title}</h3>${body}</section>`;
 const blank = (w) => `<i class="nm-lt-blank" style="width:${w || 14}mm"></i>`;
+/* 한국어 조사(검수 2026-09-30) — "도윤은(는)"·"하준의"·"3을(를)"이 그대로 찍혔다. 이름은 받침이 있으면 '이'를 끼운다(하준이는·하준이의),
+   수는 마지막 숫자를 읽었을 때의 받침으로 정한다(영·일·삼·육·칠·팔 = 받침 있음, 이·사·오·구 = 없음). */
+const bat = w => { const c = String(w).charCodeAt(String(w).length - 1); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 > 0; };
+const neun = w => w + (bat(w) ? '이는' : '는');
+const nui = w => w + (bat(w) ? '이의' : '의');
+const numBat = n => '013678'.indexOf(String(n).slice(-1)) >= 0;
+const numJ = (n, a, b) => n + (numBat(n) ? a : b);
 
 const T = {
   band:   {ko:'언어사고력 · 이해편', en:'Language & Thinking · Understanding', zh:'语言思考力 · 理解篇'},
@@ -105,8 +112,8 @@ function circlesHtml(s, lang){
   /* 원장(2026-09-30): "기본 바탕 그림은 그려 주라는 얘기야" — 아이가 그리는 게 아니라, 다 그려진 그림에 색칠·표시한다.
      합병·첨가: 두 상자 다 ○로 채워 두고 둘째 상자를 색칠 · 구잔: ×로 지우기 · 구차: 짝짓기 · 배수: 묶음 전부 채워 두고 세기 */
   if(s.kind === '합병' || s.kind === '첨가'){
-    const l1 = s.kind === '합병' ? {ko:`${L(s.A,'ko')}의 ${s.o.ko.n} ${s.n1}${s.o.ko.u}`, en:`${L(s.A,'en')}'s ${s.n1} ${s.o.en.n}`, zh:`${L(s.A,'zh')}的${s.n1}${s.o.zh.u}${s.o.zh.n}`} : {ko:`처음 ${s.o.ko.n} ${s.n1}${s.o.ko.u}`, en:`${s.n1} ${s.o.en.n} at first`, zh:`一开始的${s.n1}${s.o.zh.u}${s.o.zh.n}`};
-    const l2 = s.kind === '합병' ? {ko:`${L(s.B,'ko')}의 ${s.o.ko.n} — 색칠하세요`, en:`${L(s.B,'en')}'s ${s.o.en.n} — color them in`, zh:`${L(s.B,'zh')}的${s.o.zh.n}——涂上颜色`} : {ko:`더 받은 ${s.o.ko.n} — 색칠하세요`, en:`${s.o.en.n} added — color them in`, zh:`又得到的${s.o.zh.n}——涂上颜色`};
+    const l1 = s.kind === '합병' ? {ko:`${nui(L(s.A,'ko'))} ${s.o.ko.n} ${s.n1}${s.o.ko.u}`, en:`${L(s.A,'en')}'s ${s.n1} ${s.o.en.n}`, zh:`${L(s.A,'zh')}的${s.n1}${s.o.zh.u}${s.o.zh.n}`} : {ko:`처음 ${s.o.ko.n} ${s.n1}${s.o.ko.u}`, en:`${s.n1} ${s.o.en.n} at first`, zh:`一开始的${s.n1}${s.o.zh.u}${s.o.zh.n}`};
+    const l2 = s.kind === '합병' ? {ko:`${nui(L(s.B,'ko'))} ${s.o.ko.n} ${s.n2}${s.o.ko.u} — 색칠하세요`, en:`${L(s.B,'en')}'s ${s.n2} ${s.o.en.n} — color them in`, zh:`${L(s.B,'zh')}的${s.n2}${s.o.zh.u}${s.o.zh.n}——涂上颜色`} : {ko:`더 받은 ${s.o.ko.n} ${s.n2}${s.o.ko.u} — 색칠하세요`, en:`${s.n2} ${s.o.en.n} added — color them in`, zh:`又得到的${s.n2}${s.o.zh.u}${s.o.zh.n}——涂上颜色`};
     return `<div class="nm-lt-two"><div>${dots(s.n1)}${label(L(l1, lang))}</div><div>${dots(s.n2)}${label(L(l2, lang))}</div></div>`;
   }
   if(s.kind === '구잔'){
@@ -117,7 +124,7 @@ function circlesHtml(s, lang){
   }
   /* 배수 — n2 묶음에 n1씩 전부 그려 둔다. 아이는 묶음마다 ○를 세고 묶음 수를 센다 */
   const groups = []; for(let i = 0; i < s.n2; i++) groups.push(`<div class="nm-lt-group">${dots(s.n1)}</div>`);
-  return `<div class="nm-lt-groups">${groups.join('')}</div><small>${esc(L({ko:`한 묶음에 ${s.n1}개씩 ${s.n2}묶음 — 묶음마다 ○에 번호를 써 보세요`, en:`${s.n1} in each group, ${s.n2} groups — number the circles in each group`, zh:`每组${s.n1}个，共${s.n2}组——给每组的○编上号`}, lang))}</small>`;
+  return `<div class="nm-lt-groups">${groups.join('')}</div><small>${esc(L({ko:`한 ${s.g ? s.g.ko.n : '묶음'}에 ${s.n1}${s.o.ko.u}씩 ${s.n2}${s.g ? s.g.ko.u : '묶음'} — ${s.g ? s.g.ko.n : '묶음'}마다 ○에 번호를 써 보세요`, en:`${s.n1} in each ${s.g ? s.g.en.one : 'group'}, ${s.n2} ${s.g ? s.g.en.many : 'groups'} — number the circles in each one`, zh:`每${s.g ? s.g.zh.u : '组'}${s.n1}${s.o.zh.u}，共${s.n2}${s.g ? s.g.zh.u : '组'}——给每${s.g ? s.g.zh.u : '组'}的○编上号`}, lang))}</small>`;
 }
 /* 수직선 0~25 — 첫 화살표는 그려 두고 둘째는 아이가 */
 function numlineHtml(s, lang){
@@ -137,7 +144,7 @@ function numlineHtml(s, lang){
 function eqWordsHtml(s, lang){
   const n1 = s.n1, n2 = s.n2, r = res(s);
   const rows = lang === 'ko'
-    ? [`${n1}에 ${n2}${s.op === '×' ? '을(를)' : '을(를)'} ${blank(16)} (${L(T.opVerb[s.op],'ko')})`, s.op === '×' ? `${n1}씩 ${blank(10)}묶음입니다.` : `${n1}보다 ${n2} ${blank(12)} (${s.op === '+' ? '큽니다' : '작습니다'})`, `${n1}과(와) ${n2}의 ${blank(10)}은(는) ${r}입니다.`]
+    ? [`${n1}에 ${numJ(n2,'을','를')} ${blank(16)} (${L(T.opVerb[s.op],'ko')})`, s.op === '×' ? `${n1}씩 ${blank(10)}묶음입니다.` : `${n1}보다 ${n2} ${blank(12)} (${s.op === '+' ? '큽니다' : '작습니다'})`, `${numJ(n1,'과','와')} ${n2}의 ${blank(10)}은(는) ${r}입니다.`]
     : lang === 'en'
     ? [`${blank(16)} ${n2} ${s.op === '+' ? 'to' : s.op === '−' ? 'from' : 'by'} ${n1}. (${L(T.opVerb[s.op],'en')})`, s.op === '×' ? `${n2} groups of ${blank(10)}.` : `${n2} ${s.op === '+' ? 'more' : 'less'} than ${n1} is ${blank(10)}.`, `The ${blank(16)} of ${n1} and ${n2} is ${r}. (${L(T.opNoun[s.op],'en')})`]
     : [`${n1}${blank(10)}${n2}（${L(T.opVerb[s.op],'zh')}）`, s.op === '×' ? `${n1}个一组，共${blank(10)}组` : `比${n1}${s.op === '+' ? '多' : '少'}${n2}的数是${blank(10)}`, `${n1}和${n2}的${blank(10)}是${r}（${L(T.opNoun[s.op],'zh')}）`];
@@ -150,9 +157,9 @@ function eqWordsHtml(s, lang){
 const ansBox = (lang, unit, w) => `<div class="nm-lt-ans"><span>${esc(L({ko:'답', en:'Answer', zh:'答'}, lang))}</span><i class="nm-lt-abox" style="width:${w || 26}mm"></i><em>${esc(unit || '')}</em></div>`;
 function a1(rng, s, lang){
   const givenRows = s.kind === '배수'
-    ? [ [{ko:'한 묶음에', en:'In each group', zh:'每组'}, unitTxt(s, lang)], [{ko:'묶음은', en:'Groups', zh:'组数'}, L({ko:'묶음', en:'', zh:'组'}, lang)] ]
+    ? [ [{ko:`한 ${s.g ? s.g.ko.n : '묶음'}에`, en:`In each ${s.g ? s.g.en.one : 'group'}`, zh:`每${s.g ? s.g.zh.u : '组'}`}, unitTxt(s, lang)], [{ko:s.g ? s.g.ko.n + (bat(s.g.ko.n) ? '은' : '는') : '묶음은', en:s.g ? s.g.en.many.replace(/^./, c => c.toUpperCase()) : 'Groups', zh:s.g ? s.g.zh.n + '数' : '组数'}, L({ko:s.g ? s.g.ko.u : '묶음', en:'', zh:s.g ? s.g.zh.u : '组'}, lang)] ]
     : (s.kind === '합병' || s.kind === '구차')
-    ? [ [{ko:`${L(s.A,'ko')}의 ${s.o.ko.n}`, en:`${L(s.A,'en')}'s ${s.o.en.n}`, zh:`${L(s.A,'zh')}的${s.o.zh.n}`}, unitTxt(s, lang)], [{ko:`${L(s.B,'ko')}의 ${s.o.ko.n}`, en:`${L(s.B,'en')}'s ${s.o.en.n}`, zh:`${L(s.B,'zh')}的${s.o.zh.n}`}, unitTxt(s, lang)] ]
+    ? [ [{ko:`${nui(L(s.A,'ko'))} ${s.o.ko.n}`, en:`${L(s.A,'en')}'s ${s.o.en.n}`, zh:`${L(s.A,'zh')}的${s.o.zh.n}`}, unitTxt(s, lang)], [{ko:`${nui(L(s.B,'ko'))} ${s.o.ko.n}`, en:`${L(s.B,'en')}'s ${s.o.en.n}`, zh:`${L(s.B,'zh')}的${s.o.zh.n}`}, unitTxt(s, lang)] ]
     : [ [{ko:`처음 ${s.o.ko.n}`, en:`${s.o.en.n} at first`, zh:`一开始的${s.o.zh.n}`}, unitTxt(s, lang)], [s.kind === '첨가' ? {ko:`더 받은 ${s.o.ko.n}`, en:`${s.o.en.n} added`, zh:`又得到的${s.o.zh.n}`} : {ko:`없어진 ${s.o.ko.n}`, en:`${s.o.en.n} taken away`, zh:`减少的${s.o.zh.n}`}, unitTxt(s, lang)] ];
   const act1 = box(L({ko:'문제를 소리 내어 읽고, 중요한 숫자에 ○ 하세요. 그 수를 아래에 쓰세요.', en:'Read the problem out loud and circle the important numbers. Write them below.', zh:'大声读题，圈出重要的数字，再写在下面。'}, lang),
     storyHtml(s, lang) + `<div class="nm-lt-given">${givenRows.map(([lab, u]) => `<div><b>${esc(L(lab, lang))}</b><i class="nm-lt-abox"></i><em>${esc(u)}</em></div>`).join('')}</div>`);
@@ -184,7 +191,7 @@ function a4(rng, s, lang){
   const r = res(s);
   const act1 = box(L({ko:'○에는 계산 기호를, □에는 수를 써서 식을 완성하세요.', en:'Write the sign in the circle and the numbers in the boxes to finish the number sentence.', zh:'在○里写运算符号，在□里写数，完成算式。'}, lang), storyHtml(s, lang) + eqHtml(s));
   const act2 = box(L({ko:'단위를 붙여 답을 쓰세요.', en:'Write the answer with its unit.', zh:'带上单位写出答案。'}, lang), ansBox(lang, unitTxt(s, lang) || (lang === 'en' ? s.o.en.n : '')));
-  return { acts:[act1, act2], answers:[`${s.n1} ${s.op} ${s.n2} = ${r}`, `${r}${unitTxt(s, lang)}`] };
+  return { acts:[act1, act2], answers:[`${s.n1} ${s.op} ${s.n2} = ${r}`, lang === 'en' ? `${r} ${s.o.en.n}` : `${r}${unitTxt(s, lang)}`] };
 }
 function a5(rng, s, lang){
   const r = res(s);
@@ -194,7 +201,7 @@ function a5(rng, s, lang){
   const wrong = useCalcErr ? `${s.n1} ${s.op} ${s.n2} = ${r + (rng() < 0.5 ? 1 : -1)}` : (s.op === '×' ? `${s.n1} + ${s.n2} = ${s.n1 + s.n2}` : `${s.n1} ${wrongOp} ${s.n2} = ${calc(s.n1, wrongOp, s.n2)}`);
   const act1 = box(L({ko:'친구가 이렇게 풀었어요. 틀린 곳을 찾아 바르게 고쳐 쓰세요.', en:'A friend solved it like this. Find the mistake and write it correctly.', zh:'一个朋友是这样做的。找出错误，改正后重新写。'}, lang),
     storyHtml(s, lang) + `<div class="nm-lt-check"><div class="nm-lt-wrong">${esc(wrong)}</div><span>→</span><i class="nm-lt-abox" style="width:56mm"></i></div>`);
-  const act2 = box(L({ko:`답 ${r}은(는) 무엇의 수인가요? 써 보세요.`, en:`What does the answer ${r} stand for? Write it.`, zh:`答案${r}表示的是什么？写一写。`}, lang), `<div class="nm-lt-lines nm-lt-big"><i></i></div>`);
+  const act2 = box(L({ko:`답 ${numJ(r,'은','는')} 무엇의 수인가요? 써 보세요.`, en:`What does the answer ${r} stand for? Write it.`, zh:`答案${r}表示的是什么？写一写。`}, lang), `<div class="nm-lt-lines nm-lt-big"><i></i></div>`);
   return { acts:[act1, act2], answers:[`${s.n1} ${s.op} ${s.n2} = ${r} (${useCalcErr ? L({ko:'계산이 틀림', en:'wrong arithmetic', zh:'计算错'}, lang) : L({ko:'기호가 틀림', en:'wrong sign', zh:'符号错'}, lang)})`, L(T.ask[s.kind], lang)] };
 }
 /* A-6 둘째 활동 — 원장(2026-09-30): "문제 만들기는 영어처럼 고르기 하자. '무엇으로 만들래?' 이렇게."
@@ -215,10 +222,10 @@ function storyOptions(rng, s, lang, objs){
   const n1 = s.n1, n2 = s.n2, u = objs[0].ko.u, zu = objs[0].zh.u, A = L(s.A, lang), B = L(s.B, lang);
   const ob = `<i class="nm-lt-blank nm-lt-oblank"></i>`;
   const tmpl = {
-    합병:{ko:`${A}은(는) ${ob}을(를) ${n1}${u}, ${B}은(는) ${n2}${u} 가지고 있어요. 모두 몇 ${u}일까요?`, en:`${A} has ${n1} ${ob} and ${B} has ${n2}. How many altogether?`, zh:`${A}有${n1}${zu}${ob}，${B}有${n2}${zu}。一共有几${zu}？`},
-    첨가:{ko:`${ob}이(가) ${n1}${u} 있었어요. ${n2}${u}${eul(u)} 더 받았어요. 모두 몇 ${u}일까요?`, en:`There were ${n1} ${ob}. Then ${n2} more came. How many now?`, zh:`有${n1}${zu}${ob}，又得到了${n2}${zu}。现在有几${zu}？`},
-    구잔:{ko:`${ob}이(가) ${n1}${u} 있었어요. ${n2}${u}${eul(u)} 주었어요. 남은 것은 몇 ${u}일까요?`, en:`There were ${n1} ${ob}. ${n2} were given away. How many are left?`, zh:`有${n1}${zu}${ob}，送掉了${n2}${zu}。还剩几${zu}？`},
-    구차:{ko:`${A}은(는) ${ob}을(를) ${n1}${u}, ${B}은(는) ${n2}${u} 가지고 있어요. 누가 몇 ${u} 더 많을까요?`, en:`${A} has ${n1} ${ob} and ${B} has ${n2}. Who has more, and how many more?`, zh:`${A}有${n1}${zu}${ob}，${B}有${n2}${zu}。谁多，多几${zu}？`},
+    합병:{ko:`${neun(A)} ${ob}을(를) ${n1}${u}, ${neun(B)} ${n2}${u} 가지고 있어요. 모두 몇 ${u}일까요?`, en:`${A} has ${n1} ${ob} and ${B} has ${n2}. How many altogether?`, zh:`${A}有${n1}${zu}${ob}，${B}有${n2}${zu}。一共有几${zu}？`},
+    첨가:{ko:`${neun(A)} ${ob}을(를) ${n1}${u} 가지고 있었어요. ${n2}${u}${eul(u)} 더 받았어요. 모두 몇 ${u}일까요?`, en:`${A} had ${n1} ${ob}. Then ${A} got ${n2} more. How many now?`, zh:`${A}有${n1}${zu}${ob}，又得到了${n2}${zu}。现在有几${zu}？`},
+    구잔:{ko:`${neun(A)} ${ob}을(를) ${n1}${u} 가지고 있었어요. 그중 ${n2}${u}${eul(u)} 주었어요. 남은 것은 몇 ${u}일까요?`, en:`${A} had ${n1} ${ob}. ${A} gave ${n2} away. How many are left?`, zh:`${A}有${n1}${zu}${ob}，送掉了${n2}${zu}。还剩几${zu}？`},
+    구차:{ko:`${neun(A)} ${ob}을(를) ${n1}${u}, ${neun(B)} ${n2}${u} 가지고 있어요. 누가 몇 ${u} 더 많을까요?`, en:`${A} has ${n1} ${ob} and ${B} has ${n2}. Who has more, and how many more?`, zh:`${A}有${n1}${zu}${ob}，${B}有${n2}${zu}。谁多，多几${zu}？`},
     배수:{ko:`${ob}이(가) 한 상자에 ${n1}${u}씩 ${n2}상자 있어요. 모두 몇 ${u}일까요?`, en:`There are ${n1} ${ob} in each box, and ${n2} boxes. How many altogether?`, zh:`每盒有${n1}${zu}${ob}，有${n2}盒。一共有几${zu}？`}
   };
   const opOf = { 합병:'+', 첨가:'+', 구잔:'−', 구차:'−', 배수:'×' };

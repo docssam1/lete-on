@@ -1218,8 +1218,10 @@
         : { ko: `처음 ${EUN(o.ko.n)} 이미 칠해져 있어요. 더 받은 만큼 더 칠하고, 모두 몇 ${o.ko.u}인지 쓰세요.`,
             en: `The ${o.en.n} from the start are already colored. Color as many as were added, then write how many there are altogether.`,
             zh: `一开始的${o.zh.n}已经涂好了。再涂上又得到的那么多，然后写出一共有几${o.zh.u}。` };
+      /* 범례 이름표는 합병(두 사람)에만 — 첨가는 '처음/더 받은 것'(위젯 기본값). B는 이야기에 없는 사람이라 이름을 주면 틀린 범례가 된다(검수 2026-09-30) */
       scene = { mode: 'color', fixed: s.n1, need: s.n2, total: s.n1 + s.n2 + extra,
-                labelA: { ko: A.ko, en: A.en, zh: A.zh }, labelB: { ko: B.ko, en: B.en, zh: B.zh } };
+                labelA: s.kind === '합병' ? { ko: A.ko, en: A.en, zh: A.zh } : null,
+                labelB: s.kind === '합병' ? { ko: B.ko, en: B.en, zh: B.zh } : null };
     } else if (s.kind === '구잔') {
       ask = { ko: `없어진 만큼 ${EUL(o.ko.n)} ×로 지우고, 남은 ${EUN(o.ko.n)} 몇 ${o.ko.u}인지 쓰세요.`,
               en: `Cross out the ${o.en.n} that are gone, then write how many are left.`,
@@ -1262,24 +1264,25 @@
       합병: { ko: `${NEUN(A)} ${EUL(on)} ${n1}${u}, ${NEUN(B)} ${n2}${u} 가지고 있어요. 모두 몇 ${u}일까요?`,
              en: `${A} has ${n1} ${on} and ${B} has ${n2}. How many altogether?`,
              zh: `${A}有${n1}${zu}${on}，${B}有${n2}${zu}。一共有几${zu}？` },
-      첨가: { ko: `${IGA(on)} ${n1}${u} 있었어요. ${EUL(n2 + u)} 더 받았어요. 모두 몇 ${u}일까요?`,
-             en: `There were ${n1} ${on}. Then ${n2} more came. How many now?`,
-             zh: `有${n1}${zu}${on}，又得到了${n2}${zu}。现在有几${zu}？` },
-      구잔: { ko: `${IGA(on)} ${n1}${u} 있었어요. ${EUL(n2 + u)} 주었어요. 남은 것은 몇 ${u}일까요?`,
-             en: `There were ${n1} ${on}. ${n2} were given away. How many are left?`,
-             zh: `有${n1}${zu}${on}，送掉了${n2}${zu}。还剩几${zu}？` },
+      /* 첨가·구잔도 사람을 세운다 — "3송이를 더 받았어요"만 있으면 누가 받았는지 없어 어색하다(검수 2026-09-30) */
+      첨가: { ko: `${NEUN(A)} ${EUL(on)} ${n1}${u} 가지고 있었어요. ${EUL(n2 + u)} 더 받았어요. 모두 몇 ${u}일까요?`,
+             en: `${A} had ${n1} ${on}. Then ${A} got ${n2} more. How many now?`,
+             zh: `${A}有${n1}${zu}${on}，又得到了${n2}${zu}。现在有几${zu}？` },
+      구잔: { ko: `${NEUN(A)} ${EUL(on)} ${n1}${u} 가지고 있었어요. 그중 ${EUL(n2 + u)} 주었어요. 남은 것은 몇 ${u}일까요?`,
+             en: `${A} had ${n1} ${on}. ${A} gave ${n2} away. How many are left?`,
+             zh: `${A}有${n1}${zu}${on}，送掉了${n2}${zu}。还剩几${zu}？` },
       구차: { ko: `${NEUN(A)} ${EUL(on)} ${n1}${u}, ${NEUN(B)} ${n2}${u} 가지고 있어요. 누가 몇 ${u} 더 많을까요?`,
              en: `${A} has ${n1} ${on} and ${B} has ${n2}. Who has more, and how many more?`,
              zh: `${A}有${n1}${zu}${on}，${B}有${n2}${zu}。谁多，多几${zu}？` },
       배수: { ko: `${IGA(on)} 한 ${g.ko.n}에 ${n1}${u}씩 ${n2}${g.ko.u} 있어요. 모두 몇 ${u}일까요?`,
              en: `There are ${n1} ${on} in each ${g.en.one}, and ${n2} ${g.en.many}. How many altogether?`,
              zh: `每${g.zh.u}有${n1}${zu}${on}，有${n2}${g.zh.u}。一共有几${zu}？` },
-      등분: { ko: `${EUL(on)} ${n1}${u} 가지고 있어요. ${n2}명이 똑같이 나누어 가지면 한 명이 몇 ${u}씩 가질까요?`,
-             en: `There are ${n1} ${on}. ${n2} children share them equally. How many does each child get?`,
-             zh: `有${n1}${zu}${on}，${n2}个小朋友平均分。每人分到几${zu}？` },
-      포함: { ko: `${EUL(on)} ${n1}${u} 가지고 있어요. 한 ${g.ko.n}에 ${n2}${u}씩 담으면 몇 ${g.ko.u}가 될까요?`,
-             en: `There are ${n1} ${on}. If ${n2} go in each ${g.en.one}, how many ${g.en.many} are there?`,
-             zh: `有${n1}${zu}${on}，每${g.zh.u}装${n2}${zu}。能装几${g.zh.u}？` }
+      등분: { ko: `${NEUN(A)} ${EUL(on)} ${n1}${u} 가지고 있어요. ${n2}명이 똑같이 나누어 가지면 한 명이 몇 ${u}씩 가질까요?`,
+             en: `${A} has ${n1} ${on}. ${n2} children share them equally. How many does each child get?`,
+             zh: `${A}有${n1}${zu}${on}，${n2}个小朋友平均分。每人分到几${zu}？` },
+      포함: { ko: `${NEUN(A)} ${EUL(on)} ${n1}${u} 가지고 있어요. 한 ${g.ko.n}에 ${n2}${u}씩 담으면 몇 ${g.ko.u}가 될까요?`,
+             en: `${A} has ${n1} ${on}. If ${n2} go in each ${g.en.one}, how many ${g.en.many} are there?`,
+             zh: `${A}有${n1}${zu}${on}，每${g.zh.u}装${n2}${zu}。能装几${g.zh.u}？` }
     };
     return T[kind][lang];
   }
