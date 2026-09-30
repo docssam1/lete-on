@@ -13,13 +13,16 @@ const TABLES = new Map();
 const judgeTable = (u) => { if (!TABLES.has(u)) TABLES.set(u, import(`../data/units/${u}.judge.js`).then((m) => m.judge).catch(() => null)); return TABLES.get(u); };
 const MIC = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
-export function buildSlides(ch, art, plan, similar, mode) {
+export function buildSlides(ch, art, plan, similar, mode, ix = null) {
   const teach = mode === 'teach', S = [];
   let n = 0;
   // 답 자리: 가르치기는 클릭으로 열리는 답, 스스로는 쓰기 칸 + 예시 답 보기
   const ans = (a, id) => (teach ? `<div class="dk-ans rv">${esc(a)}</div>`
     : `<div class="dk-self" data-k="${id}"><div class="dk-inrow"><textarea class="dk-in" rows="2" placeholder="내 생각을 써 보세요"></textarea>${MIC ? '<button type="button" class="dk-mic" aria-pressed="false" title="말로 쓰기">🎤</button>' : ''}</div><div class="dk-ans" hidden><b>예시 답</b> ${esc(a)}</div></div>`);
   // 생각만 하기(스스로 공부): 쓰지 않고 머릿속으로 답한 뒤 「예시 답 보기」로 확인 — 쓰기는 가설·결론·이런 경우는·도전만(원장 2026-09-29: "쓰는 활동이 너무 많다")
+  // 고르기(data/book/<u>.interact.js): 보기 단추. 가르치기의 예상 고르기는 손들기 집계(+/−)
+  const opts = (o, cls = '') => `<ol class="dk-choices dk-mc ${cls}">${o.map((t, j) => `<li><button type="button" data-j="${j}"><span>${NUM[j]}</span>${esc(t)}</button></li>`).join('')}</ol>`;
+  const tally = (o) => `<ol class="dk-tally">${o.map((t, j) => `<li data-j="${j}"><span class="dk-tn">${NUM[j]}</span><span class="dk-tt">${esc(t)}</span><button type="button" data-t="-" aria-label="${j + 1}번 한 명 빼기">−</button><b class="dk-tc">0</b><button type="button" data-t="+" aria-label="${j + 1}번 한 명 더하기">+</button></li>`).join('')}</ol>`;
   const peek = (a) => (teach ? `<div class="dk-ans rv">${esc(a)}</div>` : `<div class="dk-peekw"><button type="button" class="dk-peek">예시 답 보기</button><div class="dk-ans" hidden>${esc(a)}</div></div>`);
   const add = (id, phase, title, body, extra = {}) => S.push({ id, phase, title, body, ...extra });
   const ph = Object.fromEntries(plan.phases.map((p) => [p.id, p]));
@@ -32,12 +35,17 @@ export function buildSlides(ch, art, plan, similar, mode) {
   (teach ? ch.think : ch.think.slice(0, 1)).forEach((t, i) => add(`think${i + 1}`, 'open', `미리 생각하기 ${i + 1}`, `<p class="dk-q">${esc(t.q)}</p>${teach ? ans(t.a, `think${i}`) : `<p class="dk-sub">쓰지 않아도 돼요. 머릿속으로 떠올려 봐요.</p>${peek(t.a)}`}`, { say: 'think', kind: teach ? 'write' : 'think' }));
   // 가설 전에는 답이 나오기 전까지만(장면의 revealAt) — 답은 실험·결과 뒤 「3D로 확인하기」에서(SEQUENCE-DESIGN.md)
   add('scene', 'open', '3D로 먼저 보기', `<div class="dk-3d" data-mount="scene" data-preview="1"></div>`, { say: 'scene', mount: 'scene', layout: 'media', kind: 'scene' });
+  // 결과 예상 고르기: 3D 미리 보기(답 앞에서 멈춤) 바로 뒤. 답은 실험 뒤 「내 예상과 결과」에서
+  if (ix?.predict) add('predict', 'open', '결과 예상 고르기', `<p class="dk-q">${esc(ix.predict.q)}</p>${teach ? `${tally(ix.predict.options)}<p class="dk-sub">손을 들게 하고 보기마다 수를 세어 적어요. 답은 실험 뒤에 확인해요.</p>` : `${opts(ix.predict.options, 'predict')}<p class="dk-sub">맞고 틀린 것은 실험으로 확인해요. 내 생각에 가장 가까운 것을 골라요.</p>`}`, { say: 'predict', kind: 'predict' });
 
   add('goal', 'design', '탐구 목표', `<p class="dk-goal">${esc(ch.goal)}</p><div class="dk-two"><div class="dk-card"><h3>준비물</h3><p>${ch.materials.kit.map(esc).join(', ')}</p></div>
     <div class="dk-card"><h3>학생 준비물</h3><p>${ch.materials.student.map(esc).join(', ')}</p></div></div>`, { kind: 'read', layout: 'goal' });
   add('hypo', 'design', 'STEP 1 · 가설 세우기', `<p class="dk-q">${esc(ch.hypothesis.hint)}</p>${ans(ch.hypothesis.a, 'hypo')}`, { say: 'hypo', kind: 'write' });
   const d = ch.design;
-  add('design', 'design', 'STEP 2 · 실험 설계하기', `<table class="dk-tbl">${[d.change, d.same, d.measure].map((r, i) => `<tr><th>${esc(r.q)}</th><td>${teach ? ans(r.a, `design${i}`) : peek(r.a)}</td></tr>`).join('')}</table>
+  if (!teach && ix?.design) add('design', 'design', 'STEP 2 · 실험 설계하기', `<div class="dk-dpicks">${ix.design.map((x, i) => `<div class="dk-dpick" data-i="${i}"><p class="dk-dq"><b>${esc([d.change, d.same, d.measure][i]?.q || x.q)}</b> ${esc(x.q)}</p>${opts(x.options)}<p class="dk-hint" hidden></p></div>`).join('')}</div>
+    <p class="dk-sub">알맞은 실험은 바꿀 조건을 하나만 정하고, 나머지는 모두 같게 해요.</p>
+    <div class="dk-caution"><h3>주의하세요!</h3><ul>${ch.caution.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>`, { say: 'design', kind: 'dpick', layout: 'dense' });
+  else add('design', 'design', 'STEP 2 · 실험 설계하기', `<table class="dk-tbl">${[d.change, d.same, d.measure].map((r, i) => `<tr><th>${esc(r.q)}</th><td>${teach ? ans(r.a, `design${i}`) : peek(r.a)}</td></tr>`).join('')}</table>
     <p class="dk-sub">알맞은 실험은 바꿀 조건을 하나만 정하고, 나머지는 모두 같게 해요.</p>
     <div class="dk-caution"><h3>주의하세요!</h3><ul>${ch.caution.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>`, { say: 'design', kind: teach ? 'write' : 'think' });
 
@@ -60,6 +68,11 @@ export function buildSlides(ch, art, plan, similar, mode) {
     ${r.art ? `<div class="dk-art mid">${art[r.art]}</div>` : ''}
     ${r.table ? `<table class="dk-tbl"><tr>${r.table.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>${r.rows.map((rw) => `<tr><th>${esc(rw)}</th>${r.table.slice(1).map((_, c) => (teach ? '<td></td>' : `<td contenteditable="true" data-cell="${i}-${rw}-${c}"></td>`)).join('')}</tr>`).join('')}</table>` : ''}
     ${teach ? ans(r.a, `res${i}`) : peek(r.a)}`, { say: 'res', kind: teach ? 'write' : 'think' }));
+  // 내 예상과 결과: 실험실에서 본 것과 1차시 예상을 대조(까닭은 2차시). 가르치기는 손들기 집계와 대조
+  if (ix?.predict) add('vs', 'result', '내 예상과 결과', teach
+    ? `<p class="dk-q">${esc(ix.predict.q)}</p><ol class="dk-tally done" data-answer="${ix.predict.answer}">${ix.predict.options.map((t, j) => `<li data-j="${j}"><span class="dk-tn">${NUM[j]}</span><span class="dk-tt">${esc(t)}</span><b class="dk-tc">0</b></li>`).join('')}</ol><div class="dk-ans rv"><b>실험 결과</b> ${esc(ix.predict.result)}</div>`
+    : `<div class="dk-vs"><div class="dk-card"><h3>내 예상</h3><p class="dk-vmine"></p></div><div class="dk-card"><h3>실험 결과</h3><p>${esc(ix.predict.options[ix.predict.answer])}</p><p class="dk-sub">${esc(ix.predict.result)}</p></div></div><p class="dk-vsay dk-big"></p>`,
+    { say: 'vs', kind: 'vs' });
   add('reveal', 'result', '3D로 확인하기', `<p class="dk-sub">내 예상과 결과가 맞는지, 아까 멈췄던 곳부터 끝까지 봐요.</p><div class="dk-3d" data-mount="scene" data-from="reveal"></div>`, { say: 'reveal', mount: 'scene', layout: 'media', kind: 'scene' });
   add('concl', 'result', 'STEP 5 · 결론 내리기', `<ol class="dk-list">${ch.conclusion.map((c, i) => `<li><p>${esc(c.q)}</p>${i === 0 || teach ? ans(c.a, `concl${i}`) : peek(c.a)}</li>`).join('')}</ol>`, { say: 'concl', kind: 'write' });
 
@@ -95,14 +108,20 @@ export function buildSlides(ch, art, plan, similar, mode) {
     add('break', 'result', '', `<div class="dk-cover"><p class="dk-kick">1차시 「해 보기」 끝</p><h1>오늘은 여기까지!</h1><div class="dk-mine"></div>
       <p class="dk-sub">내 예상이 맞았을까? 다음 시간에 3D로 확인하고, 왜 그런지 알아봐요.</p>
       <div class="dk-act"><a class="dk-go" href="#/${ch.unit}/start">오늘은 여기까지</a><button type="button" class="dk-go ghost" data-a2="cont">바로 2차시 이어서 ›</button></div></div>`, { layout: 'cover', kind: 'break' });
-    add('recall', 'result', '2차시 · 지난 시간 떠올리기', `<p class="dk-q">지난 시간에 내가 쓴 가설과 실험 결과예요. 천천히 다시 읽어 봐요.</p><div class="dk-mine"></div>`, { kind: 'recall' });
+    if (ix?.recall) add('recallq', 'result', '2차시 · 지난 시간 떠올리기', `<p class="dk-q">${esc(ix.recall.q)}</p>${opts(ix.recall.options)}<p class="dk-hint" hidden></p><div class="dk-ans" hidden>${esc(ix.recall.why)}</div>`, { kind: 'recallq' });
+    if (ix?.learned) { const e = S.find((x) => x.id === 'end'); if (e) { const L = ix.learned;
+      e.body = `<div class="dk-cover"><h1>오늘 배운 것</h1><p class="dk-q">${esc(L.q)}</p><ol class="dk-choices dk-mc multi learned" data-key="${L.answers.join(',')}">${L.options.map((t, j) => `<li><button type="button" data-j="${j}"><span>${NUM[j]}</span>${esc(t)}</button></li>`).join('')}</ol>
+        <div class="dk-act"><button type="button" class="dk-go" data-l="check" disabled>확인</button></div><p class="dk-hint" hidden></p>
+        <div class="dk-lsum" hidden><ul class="dk-points big">${(ch.summary || (ch.note?.points || []).map(esc)).map((x) => `<li>${x}</li>`).join('')}</ul><p class="dk-sub">과제 · 교재 ${ch.no}장 교과 확인 문제와 영재성 기르기를 마무리해 오세요.</p></div></div>`;
+      e.kind = 'learned'; } }
+    add('recall', 'result', ix?.recall ? '내 가설과 실험 기록' : '2차시 · 지난 시간 떠올리기', `<p class="dk-q">지난 시간에 내가 쓴 가설과 실험 결과예요. 천천히 다시 읽어 봐요.</p><div class="dk-mine"></div>`, { kind: 'recall' });
     const ch3 = [['discuss', '토의', ch.discuss.q, ch.discuss.a], ['creative', '창의력', ch.creative.q, ch.creative.a]];
     add('challenge', 'extend', '도전 하나 고르기', `<p class="dk-q">셋 중에 하고 싶은 도전 하나를 골라요.</p><div class="dk-pick">${[...ch3.map(([id, t]) => [id, t]), ['gifted', '영재성']].map(([id, t]) => `<button type="button" class="dk-go ghost" data-pick="${id}">${t}</button>`).join('')}</div>
       ${ch3.map(([id, , q, a]) => `<div class="dk-pane" data-pane="${id}" hidden><p class="dk-q">${esc(q)}</p>${ans(a, id)}</div>`).join('')}
-      <div class="dk-pane" data-pane="gifted" hidden><p class="dk-q"><b>${esc(g.title)}</b><br>${esc(g.lead)}</p><table class="dk-tbl">${g.rows.map((r) => `<tr><th>${esc(r)}</th><td>${ans(g.a[r], `gifted-${r}`)}</td></tr>`).join('')}</table></div>`, { say: 'challenge', kind: 'challenge' });
+      <div class="dk-pane" data-pane="gifted" hidden><p class="dk-timer" role="timer" aria-live="off"><b>3:00</b> 3분 동안 되도록 많이, 서로 다른 쪽으로 써 봐요.</p><p class="dk-q"><b>${esc(g.title)}</b><br>${esc(g.lead)}</p><table class="dk-tbl">${g.rows.map((r) => `<tr><th>${esc(r)}</th><td>${ans(g.a[r], `gifted-${r}`)}</td></tr>`).join('')}</table></div>`, { say: 'challenge', kind: 'challenge' });
     const by = Object.fromEntries(S.map((x) => [x.id, x])), ids = S.map((x) => x.id), tests = ids.filter((x) => /^test\d/.test(x));
-    const order = ['cover', 'intro', 'think1', 'scene', 'goal', 'hypo', 'design', 'order', 'lab', ...ids.filter((x) => /^res\d/.test(x)), 'break',
-      'recall', 'reveal', 'concl', 'note', ...tests.slice(0, 2), 'plus', 'wonder', 'challenge', ...tests.slice(2), 'end'];
+    const order = ['cover', 'intro', 'think1', 'scene', 'predict', 'goal', 'hypo', 'design', 'order', 'lab', ...ids.filter((x) => /^res\d/.test(x)), 'vs', 'break',
+      'recallq', 'recall', 'reveal', 'concl', 'note', ...tests.slice(0, 2), 'plus', 'wonder', 'challenge', ...tests.slice(2), 'end'];
     S.splice(0, S.length, ...order.filter((id) => by[id]).map((id) => by[id]));
     let ses = 1; S.forEach((x) => { x.ses = ses; if (x.id === 'break') ses = 2; });
   }
@@ -149,8 +168,8 @@ function watchLabTips(host, G) {
 let battle = false;   // 가르치기 · 실험 화면: 기본은 한 화면, 켜면 두 팀 배틀
 let recog = null;     // 말로 쓰기(학생이 🎤를 눌렀을 때만)
 
-export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, misc, onAnswer, myLab }) {
-  const teach = mode === 'teach', S = buildSlides(ch, art, plan, similar, mode);
+export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, misc, onAnswer, myLab, ix = null }) {
+  const teach = mode === 'teach', S = buildSlides(ch, art, plan, similar, mode, ix);
   const i = idx === 's2' ? Math.max(0, S.findIndex((x) => x.id === 'recall')) : Math.min(S.length - 1, Math.max(0, (idx || 1) - 1)), s = S[i], p = s.phaseObj;
   const go = (k) => { location.hash = `#/${u}/lab-class/${mode}/${k + 1}`; };
   const phases = plan.phases.map((x) => `<span class="${x.id === s.phase ? 'on' : ''}">${esc(x.name)}${teach ? ` ${x.min}′` : ''}</span>`).join('');
@@ -195,6 +214,12 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
 
   if (teach) {
     import('./docssam.js').then((m) => m.dropGuide());   // 가르치기에는 독쌤이 없다
+    // 예상 손들기 집계(칠판): 보기마다 +/−, 「내 예상과 결과」 장에서 같은 수를 보여 주고 답을 열 때 정답 보기를 표시
+    const TK = `teach:${u}:tally`, T = (() => { const t = memo.get(TK); return Array.isArray(t) ? t : [0, 0, 0]; })();
+    stage.querySelectorAll('.dk-tally li').forEach((li) => { const j = +li.dataset.j, c = li.querySelector('.dk-tc'); c.textContent = T[j] || 0;
+      li.querySelectorAll('[data-t]').forEach((b) => b.addEventListener('click', () => { T[j] = Math.max(0, (T[j] || 0) + (b.dataset.t === '+' ? 1 : -1)); c.textContent = T[j]; memo.set(TK, T); })); });
+    const done = stage.querySelector('.dk-tally.done'), rv = stage.querySelector('.dk-ans.rv');
+    if (done && rv) new MutationObserver(() => done.querySelector(`[data-j="${done.dataset.answer}"]`)?.classList.toggle('ok', rv.classList.contains('on'))).observe(rv, { attributes: true });
     // 확인 문제: 정답 공개 때 표시
     stage.querySelectorAll('.dk-choices').forEach((ol) => {
       const key = ol.dataset.key.split(',').filter(Boolean).map(Number), a = stage.querySelector('.dk-ans.rv');
@@ -256,6 +281,11 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
         done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } });
       watchLabTips(m, G); return; }
     if (k === 'test') return runTest(V);
+    if (k === 'predict') return runPredict();
+    if (k === 'dpick') return runDesignPick();
+    if (k === 'vs') return runVs();
+    if (k === 'recallq') return runRecallQ();
+    if (k === 'learned') return runLearned();
     if (k === 'order') return runOrder();
     if (k === 'think') return runThink();
     if (k === 'break') { fillMine(); G.say('dk-break', { mood: 'praise' });
@@ -264,9 +294,75 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     if (k === 'challenge') { G.say('dk-challenge');
       stage.querySelectorAll('[data-pick]').forEach((b) => { b.onclick = () => {
         stage.querySelectorAll('[data-pane]').forEach((x) => { if (x.dataset.pane !== b.dataset.pick) x.remove(); else x.hidden = false; });
-        stage.querySelector('.dk-pick').remove(); stage.querySelector('.dk-body > .dk-q').remove(); runWrite(V); }; });
+        stage.querySelector('.dk-pick').remove(); stage.querySelector('.dk-body > .dk-q').remove(); if (b.dataset.pick === 'gifted') startTimer(180); runWrite(V); }; });
       return; }
     return runWrite(V);
+  }
+  // ── 고르기 활동(data/book/<u>.interact.js) ─────────────────────────────
+  // 한 문항 고르기: 맞으면 끝, 첫 오답엔 그 보기만 지우고 되묻기(답 감춤), 두 번째 오답엔 답을 보여 준다(확인 문제와 같은 규칙)
+  function mcWire(ol, answer, hintEl, hint, onDone) {
+    let tries = 0, over = false;
+    const lock = () => ol.querySelectorAll('button').forEach((x) => { x.disabled = true; });
+    ol.querySelectorAll('button').forEach((b) => { b.onclick = () => {
+      if (over) return; const j = +b.dataset.j; tries++;
+      if (j === answer) { over = true; b.classList.add('ok'); lock(); if (hintEl) hintEl.hidden = true; onDone(tries === 1); return; }
+      b.classList.add('no'); b.disabled = true;
+      if (tries < 2) { if (hintEl) { hintEl.hidden = false; hintEl.innerHTML = `<b>다시 골라 봐요</b>${esc(hint || '')}`; } G?.say('dk-pick-retry', { mood: 'encourage' }); return; }
+      over = true; ol.querySelector(`[data-j="${answer}"]`)?.classList.add('ok'); lock();
+      if (hintEl) { hintEl.hidden = false; hintEl.innerHTML = '<b>정답을 확인해요</b>초록색 보기가 알맞은 답이에요.'; }
+      onDone(false);
+    }; });
+  }
+  // 결과 예상 고르기: 맞고 틀림을 말하지 않는다 — 고른 것만 기억해 두었다가 실험 뒤에 대조
+  function runPredict() {
+    G.say('dk-predict');
+    const ol = stage.querySelector('.dk-mc.predict'), had = memo.get(`${u}:predict`);
+    const mark = (j) => ol.querySelectorAll('button').forEach((b) => b.classList.toggle('pick', +b.dataset.j === j));
+    if (had !== '') mark(+had);
+    ol.querySelectorAll('button').forEach((b) => { b.onclick = async () => { const j = +b.dataset.j; memo.set(`${u}:predict`, j); mark(j); cancelAuto(); await G.say('dk-predict-ok', { mood: 'praise' }); auto(1800); }; });
+  }
+  // 실험 설계 3칸 고르기
+  function runDesignPick() {
+    G.say('dk-design-pick');
+    const boxes = [...stage.querySelectorAll('.dk-dpick')]; let left = boxes.length;
+    boxes.forEach((bx) => { const x = ix.design[+bx.dataset.i];
+      mcWire(bx.querySelector('.dk-mc'), x.answer, bx.querySelector('.dk-hint'), x.hint, async () => { if (--left) return; await G.say('dk-design-ok', { mood: 'praise' }); auto(Math.min(12000, Math.max(3000, textLen() * 25))); }); });
+  }
+  // 내 예상과 결과
+  function runVs() {
+    const P = ix.predict, had = memo.get(`${u}:predict`), mine = had === '' ? null : +had, same = mine === P.answer;
+    stage.querySelector('.dk-vmine').textContent = mine == null ? '(예상을 고르지 않았어요)' : P.options[mine];
+    stage.querySelector('.dk-vsay').textContent = mine == null ? '실험 결과를 한 번 더 읽어 봐요.' : same ? '내 예상이 맞았어요! 왜 그런지는 다음 시간에 알아봐요.' : '예상과 달랐어요. 과학자도 자주 그래요. 왜 그런지는 다음 시간에 알아봐요.';
+    stage.querySelector('.dk-vs').classList.add(same ? 'same' : 'diff');
+    G.say(mine == null ? 'dk-vs-none' : same ? 'dk-vs-same' : 'dk-vs-diff', { mood: same ? 'praise' : 'encourage' }).then(() => alive() && auto(Math.min(12000, Math.max(3500, textLen() * 45))));
+  }
+  // 2차시 떠올리기: 내 기록을 보여 주기 전에 한 문제
+  function runRecallQ() {
+    G.say('dk-recallq');
+    const R = ix.recall;
+    mcWire(stage.querySelector('.dk-mc'), R.answer, stage.querySelector('.dk-hint'), '지난 시간 3D 실험실에서 조건을 바꿨을 때 무엇이 달라졌는지 떠올려 봐요.', async (first) => {
+      stage.querySelector('.dk-ans').hidden = false; await G.say(first ? 'dk-right' : 'dk-recallq-show', { mood: first ? 'praise' : 'encourage' }); auto(Math.min(10000, Math.max(3500, textLen() * 40))); });
+  }
+  // 오늘 배운 것: 맞는 말을 모두 고른 뒤 요약을 연다
+  function runLearned() {
+    G.say('dk-learned');
+    const ol = stage.querySelector('.dk-mc.learned'), key = ol.dataset.key.split(',').map(Number), $c = stage.querySelector('[data-l=check]'), $h = stage.querySelector('.dk-hint'), picked = new Set();
+    let tries = 0;
+    ol.querySelectorAll('button').forEach((b) => { b.onclick = () => { const j = +b.dataset.j; picked.has(j) ? picked.delete(j) : picked.add(j); b.classList.toggle('pick', picked.has(j)); $c.disabled = !picked.size; }; });
+    $c.onclick = async () => {
+      tries++; const ok = picked.size === key.length && key.every((j) => picked.has(j));
+      if (!ok && tries < 2) { $h.hidden = false; $h.innerHTML = `<b>조금만 더</b>맞는 말은 ${key.length}개예요. 하나씩 다시 읽어 봐요.`; G.say('dk-pick-retry', { mood: 'encourage' }); return; }
+      ol.querySelectorAll('button').forEach((b) => { const j = +b.dataset.j; b.disabled = true; b.classList.remove('pick'); b.classList.toggle('ok', key.includes(j)); b.classList.toggle('no', !key.includes(j) && picked.has(j)); });
+      $c.hidden = true; $h.hidden = !ok ? false : true; if (!ok) $h.innerHTML = '<b>정답을 확인해요</b>초록색이 맞는 말이에요.';
+      stage.querySelector('.dk-lsum').hidden = false; await G.say(ok ? 'dk-learned-ok' : 'dk-end', { mood: 'praise' });
+    };
+  }
+  // 영재성 도전: 3분 타이머 — 멈추게 하지는 않고 알려만 준다
+  function startTimer(sec) {
+    const el = stage.querySelector('.dk-timer b'); if (!el) return; let t = sec;
+    G.say('dk-timer');
+    const iv = setInterval(() => { if (!alive()) { clearInterval(iv); return; } t -= 1; el.textContent = t > 0 ? `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}` : '시간 끝!';
+      if (t <= 0) { clearInterval(iv); el.parentElement.classList.add('over'); } }, 1000);
   }
   // 생각만 하기: 머릿속으로 답하고 「예시 답 보기」 — 모두 열면 읽을 시간만큼 기다렸다가 다음으로
   function wirePeek(onAll) {
