@@ -1746,12 +1746,12 @@
       "ordinal": 1,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "네 나눗셈에서 몫을 소수 첫째 자리까지 구했을 때의 나머지를 비교하여 큰 순서로 기호를 쓰는 문제",
+      "answerContract": "rank-four-decimal-remainders-at-tenths",
+      "visualRisk": "네 나머지를 각각 원래 자리 단위로 구하고 크기 비교 전에 소수점 위치를 맞춰야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 네 나머지의 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-2",
@@ -1761,12 +1761,12 @@
       "ordinal": 2,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "나누어떨어지는 정확한 몫에서 원래 수를 구한 뒤 몫을 소수 첫째 자리에서 멈출 때 생기는 나머지를 구하는 문제",
+      "answerContract": "shortened-quotient-remainder-from-exact-division",
+      "visualRisk": "정확한 몫과 소수 첫째 자리에서 멈춘 몫을 구분해야 하며 반올림을 적용하면 안 됨.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-3",
@@ -1776,12 +1776,12 @@
       "ordinal": 3,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "첫 나눗셈의 자연수 몫과 나머지로 원래 수를 찾은 뒤 다른 수로 나누어 소수 첫째 자리의 새 나머지를 구하는 문제",
+      "answerContract": "recover-dividend-then-new-tenth-place-remainder",
+      "visualRisk": "첫 나눗셈의 나머지를 둘째 나눗셈의 새 나머지로 옮기지 않아야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-4",
@@ -1791,12 +1791,12 @@
       "ordinal": 4,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "나누어지는 수에 가장 적게 더해 몫이 소수 둘째 자리에서 나누어떨어지게 하는 문제",
+      "answerContract": "minimum-addition-for-exact-hundredth-quotient",
+      "visualRisk": "나눗셈 몫을 소수 둘째 자리까지 늘려 다음 정확한 배수와 원래 수의 차를 구해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-5",
@@ -1806,12 +1806,12 @@
       "ordinal": 5,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "첫 나눗셈의 소수 첫째 자리 몫과 나머지, 자연수까지 반올림한 몫으로 가능한 가장 큰 원래 수를 찾고 새 나눗셈의 나머지를 구하는 문제",
+      "answerContract": "largest-rounded-quotient-dividend-then-new-remainder",
+      "visualRisk": "첫 나눗셈의 반올림 조건으로 가능한 몫의 끝값을 정하고 둘째 나눗셈의 나머지를 따로 계산해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-6",
@@ -1821,12 +1821,12 @@
       "ordinal": 6,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "소수 둘째 자리 몫의 나머지와 셋째 자리 몫을 반올림한 결과로 원래 나누어지는 수를 되찾는 문제",
+      "answerContract": "recover-dividend-from-rounded-third-place-and-remainder",
+      "visualRisk": "셋째 자리까지 계산한 몫과 둘째 자리까지 반올림한 몫은 서로 다르며, 원래 수는 반올림 전 몫으로 복원해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e5-exploration",
