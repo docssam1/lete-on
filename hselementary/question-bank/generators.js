@@ -24730,6 +24730,37 @@
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE2Mission1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [lengthTenths, firstSpacingTenths, secondSpacingTenths] = [[1386, 126, 99], [1512, 108, 84], [1584, 88, 132]][poolIndex];
+      if (lengthTenths % firstSpacingTenths || lengthTenths % secondSpacingTenths) throw new Error(`${sourceItemId}: 처음과 끝에 모두 소화기를 놓을 수 없습니다.`);
+      const compact = tenths => String(Number((tenths / 10).toFixed(1)));
+      const length = compact(lengthTenths);
+      const firstSpacing = compact(firstSpacingTenths);
+      const secondSpacing = compact(secondSpacingTenths);
+      const firstEquivalentGaps = lengthTenths / firstSpacingTenths;
+      const secondGaps = lengthTenths / secondSpacingTenths;
+      const doubleGap = level === 2;
+      if (doubleGap && firstEquivalentGaps < 3) throw new Error(`${sourceItemId}: 두 배 간격을 넣을 공간이 없습니다.`);
+      const firstCount = firstEquivalentGaps + (doubleGap ? 0 : 1);
+      const secondCount = secondGaps + 1;
+      const answer = `${firstCount + secondCount}개`;
+      const extraCondition = doubleGap
+        ? ` 다만 ${firstSpacing}m 간격으로 놓은 쪽은 출입구 자리에 소화기 한 개를 놓지 않아, 그곳의 두 소화기 사이만 ${compact(firstSpacingTenths * 2)}m이고 나머지 구간은 ${firstSpacing}m입니다.`
+        : "";
+      const easyHint = level === 0 ? " 간격 수보다 소화기 수가 한 개 많다는 점을 생각해 보세요." : "";
+      const prompt = `길이가 ${length}m인 직선 승강장의 서로 마주 보는 양옆 가장자리에 소화기를 놓았습니다. 각 가장자리의 처음과 끝에도 놓았습니다. 한쪽은 ${firstSpacing}m 간격, 다른 쪽은 ${secondSpacing}m 간격으로 놓았습니다.${extraCondition} 소화기의 두께는 생각하지 않습니다.${easyHint} 양옆에 놓은 소화기는 모두 몇 개인가요?`;
+      const firstStep = doubleGap
+        ? `한쪽은 ${length} ÷ ${firstSpacing} = ${firstEquivalentGaps}칸이므로 보통 소화기 ${firstEquivalentGaps + 1}개를 놓습니다. 출입구 자리 한 개를 빼면 ${firstCount}개입니다.`
+        : `한쪽은 ${length} ÷ ${firstSpacing} = ${firstEquivalentGaps}칸이므로 소화기는 ${firstCount}개입니다.`;
+      const solution = `${firstStep} 다른 쪽은 ${length} ÷ ${secondSpacing} = ${secondGaps}칸이므로 소화기는 ${secondCount}개입니다. 모두 ${firstCount} + ${secondCount} = ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact"><p>한쪽: ${length} ÷ ${firstSpacing} = ${firstEquivalentGaps}칸 → ${firstEquivalentGaps + 1}개${doubleGap ? `, 출입구 자리 한 개를 빼면 ${firstCount}개` : ""}</p><p>다른 쪽: ${length} ÷ ${secondSpacing} = ${secondGaps}칸 → ${secondCount}개</p><p>전체: ${firstCount} + ${secondCount} = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29562,6 +29593,7 @@
     [type => type.sourceItemId === "6-2-u2-e2-example-1", "sourceGrade6SecondDecimalDivisionE2Example1"],
     [type => type.sourceItemId === "6-2-u2-e2-example-2", "sourceGrade6SecondDecimalDivisionE2Example2"],
     [type => type.sourceItemId === "6-2-u2-e2-example-3", "sourceGrade6SecondDecimalDivisionE2Example3"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-1", "sourceGrade6SecondDecimalDivisionE2Mission1"],
     [type => type.sourceItemId === "6-2-u2-e2-mission-5", "sourceGrade6SecondDecimalDivisionE2Mission5"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
