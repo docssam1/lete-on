@@ -541,15 +541,30 @@
   .nm-cvw .nm-cvw-toc td.nm-cvw-no { font-family:monospace; font-weight:700; color:var(--cv-accent); }
   .nm-cvw .nm-cvw-toc td.nm-cvw-name { font-weight:800; min-width:56mm; white-space:normal; }
   .nm-cvw .nm-cvw-toc td.nm-cvw-chk { font-size:16px; text-align:center; color:#0E2C57; }
-  .nm-cvw .nm-cv-meta { margin-top:8mm; }
+  /* 표지가 A4 한 장을 넘치지 않게(2026-09-30, 원장 "QR 칸이 넘친다") — 목차가 10줄이면 QR 칸이 28px,
+     발치가 73px 종이 밖으로 나갔고 8줄이어도 코드 줄이 잘렸다(overflow:hidden 이라 조용히).
+     ① 영웅부(제목) 여백을 줄이고 ② QR·발치·코드를 한 띠(.nm-cvw-foot)로 합쳐 25mm 를 벌고
+     ③ 목차가 9줄 이상이면 .nm-cvw-dense 로 줄 간격을 줄인다. */
+  .nm-cvw .nm-cv-kicker { margin-bottom:5mm; }
+  .nm-cvw .nm-cv-rule { margin:6mm auto; }
+  .nm-cvw .nm-cv-meta { margin-top:6mm; padding:5mm 4mm; }
+  .nm-cvw.nm-cvw-dense .nm-cvw-toc td { padding:2mm 4mm; font-size:11.5px; }
+  .nm-cvw.nm-cvw-dense .nm-cvw-toc td.nm-cvw-chk { font-size:14px; }
+  .nm-cvw .nm-cvw-foot { position:relative; display:flex; align-items:stretch; gap:6mm; margin:6mm 2mm 0; padding-top:5mm;
+    border-top:1px solid #c9c6be; }
+  .nm-cvw .nm-cvw-foot-r { flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; align-items:flex-end;
+    gap:1.6mm; padding-left:6mm; border-left:1px solid #dcd9d1; text-align:right; white-space:nowrap; }
+  .nm-cvw .nm-cvw-foot-r b { font-size:11px; font-weight:800; letter-spacing:1px; color:var(--cv-accent); }
+  .nm-cvw .nm-cvw-foot-r span { font-size:10px; font-weight:800; letter-spacing:1px; color:#0E2C57; }
+  .nm-cvw .nm-cvw-foot-r i { font-style:normal; font-family:monospace; font-size:9px; color:#555; }
   /* .nm-cvw-qr 도 <a>(홈페이지 링크 주석) — 컨테이너 자체가 앵커라 flex 배치는 그대로 */
-  .nm-cvw .nm-cvw-qr { position:relative; display:flex; align-items:center; gap:6mm; margin:7mm 6mm 0; padding:5mm 6mm;
-    border:1px solid #dcd9d1; border-radius:3mm; background:#fff; color:inherit; text-decoration:none; }
+  .nm-cvw .nm-cvw-qr { position:relative; flex:1 1 auto; min-width:0; display:flex; align-items:center; gap:5mm; margin:0; padding:0;
+    color:inherit; text-decoration:none; }
   .nm-cvw .nm-cvw-qr-img { flex:0 0 26mm; width:26mm; height:26mm; }
   .nm-cvw .nm-cvw-qr-img svg { width:26mm; height:26mm; display:block; }
   .nm-cvw .nm-cvw-qr-txt { display:flex; flex-direction:column; gap:1.5mm; min-width:0; }
-  .nm-cvw .nm-cvw-qr-txt b { font-size:13px; font-weight:800; color:#0E2C57; }
-  .nm-cvw .nm-cvw-qr-txt span { font-size:10.5px; line-height:1.55; color:#5c6a72; }
+  .nm-cvw .nm-cvw-qr-txt b { font-size:12px; font-weight:800; color:#0E2C57; word-break:keep-all; }
+  .nm-cvw .nm-cvw-qr-txt span { font-size:10.5px; line-height:1.55; color:#5c6a72; word-break:keep-all; }
   .nm-cvw .nm-cvw-qr-txt i { font-style:normal; font-family:monospace; font-size:11px; color:#0E2C57; }
 
   /* ── 학습지 v2 · 유형별 회차 (학습지-v2-설계.md §2, 2026-09-04) ───────
@@ -576,16 +591,11 @@
   .nm-w2-head { flex:0 0 auto; padding-bottom:6px; margin-bottom:8px; border-bottom:1.5px solid var(--w2-gold, #C9A063);
     position:relative; }
   .nm-w2-brand-mark { display:block; width:82px; height:28px; }
-  .nm-w2-brand-logo { display:block; width:82px; height:28px; object-fit:contain; }
-  .nm-w2-brand-logo-print { display:none; }
-  @media print {
-    /* Chromium PDF는 같은 raster-in-SVG 로고를 여러 쪽에 반복하면 일부 쪽을 누락한다.
-       화면/편집기는 원본을 유지하고, 인쇄는 glyph 기반 표기로 모든 쪽의 브랜드를 보장한다. */
-    .nm-w2-brand-logo { display:none !important; }
-    .nm-w2-brand-logo-print { display:flex; width:82px; height:28px; align-items:center;
-      color:#76279a; font:900 16px/1 Pretendard,'Noto Sans KR','Malgun Gothic',sans-serif;
-      letter-spacing:-.7px; white-space:nowrap; }
-  }
+  /* 로고는 PNG 한 장(assets/gfield-logo.png)을 화면·인쇄 공통으로. 전에는 SVG 가 웹P 를 감싼 파일이라
+     Chromium PDF 가 여러 쪽에 반복된 raster-in-SVG 를 일부 누락했고, 그래서 인쇄만 "GFIELD" 글자로
+     대신했다(원장: "인쇄하면 로고가 글자로 나온다"). 순수 래스터 <img> 는 누락되지 않는다 —
+     scripts/check-print-logo-multipage.js 가 PDF 를 쪽마다 그려 확인한다(2026-09-30). */
+  .nm-w2-brand-logo { display:block; width:82px; height:28px; object-fit:contain; object-position:left center; }
   .nm-w2-head-run { display:flex; align-items:center; gap:10px; font-size:10.5px; color:#555; margin-bottom:6px;
     padding-bottom:4px; border-bottom:.6px solid #d9d4c6; }
   /* 이름·날짜·점수 — 러닝헤드 가운데, 손으로 쓸 수 있는 크기(11px, 빈칸 6mm). */
@@ -1879,7 +1889,7 @@ function brandName(){
 function worksheetBrandHtml(){
   const name = brandName();
   return /^g[·\s-]?field$/i.test(name.trim())
-    ? '<span class="nm-w2-brand-mark" role="img" aria-label="GFIELD"><img class="nm-w2-brand-logo" src="assets/gfield-logo.svg" alt="" width="82" height="28"><span class="nm-w2-brand-logo-print" aria-hidden="true">GFIELD</span></span>'
+    ? '<span class="nm-w2-brand-mark" role="img" aria-label="GFIELD"><img class="nm-w2-brand-logo" src="assets/gfield-logo.png" alt="" width="82" height="28"></span>'
     : esc(name);
 }
 /* 표지 발치 왼쪽 — 학원명 + 제품명. 원장 확정(2026-09-07): "그냥 numbers of magic".
@@ -2195,7 +2205,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   const totalPages = page - 1;
   const kTxt = cv.cadence === 'w2' ? lk(` · ${cv.k||1}회차`, ` · session ${cv.k||1}`, ` · 第${cv.k||1}次`) : '';
   const studentTag = cv.name ? ` · ${esc(cv.name)}` : '';
-  return `<div class="nm-print-cover nm-cvw">
+  return `<div class="nm-print-cover nm-cvw${rows.length >= 9 ? ' nm-cvw-dense' : ''}">
   <div class="nm-cv-brand"><span>${worksheetBrandHtml()}</span><strong>NUMBERS <i>of</i> MAGIC${studentTag}</strong></div>
   <div class="nm-cvw-hero">
     <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}</p>
@@ -2213,18 +2223,23 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     <div class="nm-cv-meta-total"><span>${esc(lk('점수','Score','得分'))}</span><i></i><b>/ ${totalCount||''}</b></div>
     <div><span>${esc(lk('확인','Checked','确认'))}</span><i></i></div>
   </div>
-  <a class="nm-cvw-qr" href="${esc(APP_HOME_URL)}">
-    <div class="nm-cvw-qr-img">${qrSvg(APP_HOME_URL)}</div>
-    <div class="nm-cvw-qr-txt">
-      <b>${esc(lk('추가 학습을 원하면 언제든 홈페이지에 접속하세요','Want more practice? Visit the site any time','想加练？随时访问主页'))}</b>
-      <span>${esc(lk('QR을 찍으면 Numbers of Magic이 열려요 — 화면에서 풀고, 새 학습지를 뽑고, 진도를 볼 수 있어요.',
-        'Scan to open Numbers of Magic — solve on screen, print new worksheets, see progress.',
-        '扫码打开 Numbers of Magic——在线做题、打印新学习单、查看进度。'))}</span>
-      <i>${esc(APP_HOME_URL.replace(/^https?:\/\//,''))}</i>
+  <div class="nm-cvw-foot">
+    <a class="nm-cvw-qr" href="${esc(APP_HOME_URL)}">
+      <div class="nm-cvw-qr-img">${qrSvg(APP_HOME_URL)}</div>
+      <div class="nm-cvw-qr-txt">
+        <b>${esc(lk('추가 학습을 원하면 언제든 홈페이지에 접속하세요','Want more practice? Visit the site any time','想加练？随时访问主页'))}</b>
+        <span>${esc(lk('QR을 찍으면 Numbers of Magic이 열려요 — 화면에서 풀고, 새 학습지를 뽑고, 진도를 볼 수 있어요.',
+          'Scan to open Numbers of Magic — solve on screen, print new worksheets, see progress.',
+          '扫码打开 Numbers of Magic——在线做题、打印新学习单、查看进度。'))}</span>
+        <i>${esc(APP_HOME_URL.replace(/^https?:\/\//,''))}</i>
+      </div>
+    </a>
+    <div class="nm-cvw-foot-r">
+      <b>${esc(lk(`문제 ${totalCount||''}문항 · 총 ${totalPages}쪽`, `${totalCount||''} QUESTIONS · ${totalPages} PAGES`, `${totalCount||''}题 · 共${totalPages}页`))}</b>
+      <span>${coverFooterBrand()}</span>
+      <i>${esc(cv.code||'')}</i>
     </div>
-  </a>
-  <div class="nm-cv-footer"><span>${coverFooterBrand()}</span><b>${esc(lk(`문제 ${totalCount||''}문항 · 총 ${totalPages}쪽`, `${totalCount||''} QUESTIONS · ${totalPages} PAGES`, `${totalCount||''}题 · 共${totalPages}页`))}</b></div>
-  <div class="nm-cv-code">${esc(cv.code||'')}</div>
+  </div>
 </div>`;
 }
 
