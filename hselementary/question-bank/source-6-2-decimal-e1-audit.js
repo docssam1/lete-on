@@ -132,7 +132,10 @@ for (const sourceId of sourceIds) {
       assert.equal(generated.answer, expected(generated, sourceId), `${sourceId} 난이도 ${offset} 시드 ${seed}`);
       if (sourceId.endsWith("example-4")) assert.equal(generated.prompt.includes("0.5보다 큽니다"), offset === 1, "어려움의 추가 조건 누락");
       if (sourceId.endsWith("example-2")) assert.equal(generated.prompt.includes("직접 구하지 않고"), offset === 1, "어려움의 비교 방법 누락");
-      if (sourceId.endsWith("example-3")) assert.equal(generated.prompt.includes("값을 각각 구하지 않고"), offset === 1, "어려움의 풀이 조건 누락");
+      if (sourceId.endsWith("example-3")) {
+        assert.equal(generated.prompt.includes("값을 각각 구하지 않고"), offset === 1, "어려움의 풀이 조건 누락");
+        assert(!/\d+\.\d{8,}/.test(`${generated.prompt} ${generated.solution} ${generated.answerVisual}`), "풀이의 소수 표시 오류");
+      }
       assert(generated.solution && generated.answerVisual && generated.answerVisual.includes(generated.answer), "풀이 또는 답 그림 누락");
       assert(!/NaN|Infinity|undefined/.test(JSON.stringify(generated)), "표시값 오류");
       prompts.add(generated.prompt);
@@ -142,7 +145,7 @@ for (const sourceId of sourceIds) {
   }
   assert(prompts.size >= 3 && pools.size === 3, `${sourceId}: 3개 고정 묶음 누락`);
 }
-for (const type of types.filter(item => item.sourceItemId?.startsWith("6-2-u2-") && !sourceIds.includes(item.sourceItemId) && !/^6-2-u2-e1-mission-[1-6]$/.test(item.sourceItemId) && !["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-2", "6-2-u2-e2-mission-5"].includes(item.sourceItemId))) {
+for (const type of types.filter(item => item.sourceItemId?.startsWith("6-2-u2-") && !sourceIds.includes(item.sourceItemId) && !/^6-2-u2-e1-mission-[1-6]$/.test(item.sourceItemId) && !["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-2", "6-2-u2-e2-mission-3", "6-2-u2-e2-mission-5"].includes(item.sourceItemId))) {
   assert.equal(type.reviewLocked, true, `${type.sourceItemId}: 검수 전 유형 잠금 해제됨`);
 }
 console.log(`6-2 소수의 나눗셈 E1: ${sourceIds.length}유형, ${checked}건 독립 검산, 나머지 잠금 유지`);

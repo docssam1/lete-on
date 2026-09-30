@@ -24415,8 +24415,12 @@
       const ac = a * c / 100;
       const answer = b / 10;
       const equations = `<div class="source62-decimal-equations is-three" data-source62-equations="${sourceItemId}"><span>가 × 나 = ${ab}</span><span>나 × 다 = ${bc}</span><span>가 × 다 = ${ac}</span></div>`;
-      const repeatedProduct = ab * bc / ac;
-      if (Math.abs(repeatedProduct - answer * answer) > 1e-10) throw new Error(`${sourceItemId}: 세 곱셈의 값이 맞지 않습니다.`);
+      const numerator = (a * b) * (b * c);
+      const denominator = a * c;
+      if (numerator % denominator !== 0) throw new Error(`${sourceItemId}: 세 곱셈의 값이 맞지 않습니다.`);
+      const repeatedProductHundredths = numerator / denominator;
+      if (repeatedProductHundredths !== b * b) throw new Error(`${sourceItemId}: 세 곱셈의 값이 맞지 않습니다.`);
+      const repeatedProduct = repeatedProductHundredths / 100;
       const instruction = level === 0 ? "나×나의 값을 먼저 찾아보세요." : level === 2 ? "가와 다의 값을 각각 구하지 않고 풀어 보세요." : "";
       return result(`가, 나, 다가 양의 소수일 때 나의 값을 구하세요.${instruction}${equations}`, answer, `첫째 식과 둘째 식을 곱한 뒤 셋째 식으로 나누면 나×나 = ${repeatedProduct}입니다. ${answer} × ${answer} = ${repeatedProduct}이므로 나는 ${answer}입니다.`, {
         answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${equations}<p>나 × 나 = ${ab} × ${bc} ÷ ${ac} = ${repeatedProduct}</p><p>${answer} × ${answer} = ${repeatedProduct}</p></div>`,
@@ -24811,6 +24815,46 @@
         : `첫 장 다음부터는 한 장을 붙일 때마다 ${length} - ${overlap} = ${step}cm 늘어납니다. 첫 장의 길이를 제외한 ${total} - ${length} = ${remaining}cm는 ${remaining} ÷ ${step} = ${count - 1}장을 더 붙인 길이이므로 모두 1 + ${count - 1} = ${answer}입니다.`;
       return result(prompt, answer, solution, {
         answerVisual: `<div class="source62-tape-answer" data-answer-source="${sourceItemId}" data-print-weight="compact">${diagram}</div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Mission3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-3";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [height100, largeBase100, smallBase100] = [[390, 480, 384], [420, 600, 500], [480, 750, 600]][poolIndex];
+      const largeArea10000 = height100 * largeBase100 / 2;
+      const smallArea10000 = height100 * smallBase100 / 2;
+      const ratio = largeBase100 / smallBase100;
+      if (!Number.isInteger(largeArea10000) || !Number.isInteger(smallArea10000) || ratio <= 1 || Math.abs(ratio - Number(ratio.toFixed(2))) > 1e-10) throw new Error(`${sourceItemId}: 넓이 비가 소수 둘째 자리까지 정확히 표현되지 않습니다.`);
+      const cm = value => String(Number((value / 100).toFixed(2)));
+      const squareCm = value => String(Number((value / 10000).toFixed(4)));
+      const height = cm(height100);
+      const largeBase = cm(largeBase100);
+      const smallBase = cm(smallBase100);
+      const gap = cm(largeBase100 - smallBase100);
+      const ratioText = String(Number(ratio.toFixed(2)));
+      const largeArea = squareCm(largeArea10000);
+      const smallArea = squareCm(smallArea10000);
+      const combinedArea = squareCm(largeArea10000 + smallArea10000);
+      const points = { "ㄱ": { x: 100, y: 36 }, "ㄴ": { x: 100, y: 184 }, "ㄷ": { x: 380, y: 184 }, "ㄹ": { x: 380, y: 36 }, "ㅁ": { x: 100 + 280 * (largeBase100 - smallBase100) / largeBase100, y: 184 } };
+      const line = (from, to, role, extra = "") => `<line data-layout-role="${role}" data-from="${from}" data-to="${to}" x1="${points[from].x.toFixed(2)}" y1="${points[from].y}" x2="${points[to].x.toFixed(2)}" y2="${points[to].y}" ${extra}/>`;
+      const pointNames = Object.entries(points).map(([name, point]) => `<text data-label-for="${name}" x="${point.x.toFixed(2)}" y="${point.y === 36 ? 22 : 209}">${name}</text>`).join("");
+      const diagram = solved => `<svg class="geometry-diagram source62-overlap-triangle-bases" viewBox="0 0 460 254" role="img" aria-label="높이가 같은 삼각형 ㄱㄴㄷ과 ㄹㅁㄷ, 점 ㄴ·ㅁ·ㄷ이 차례로 놓인 겹친 삼각형" data-geometry-kind="same-height-overlap-triangles" data-source-item="${sourceItemId}" data-model="${height100},${largeBase100},${smallBase100}" data-target-segment="ㄴ-ㅁ">
+        ${line("ㄱ", "ㄹ", "equal-height-guide", 'stroke-dasharray="5 4"')}${line("ㄱ", "ㄴ", "large-height")}${line("ㄴ", "ㄷ", "shared-baseline")}${line("ㄱ", "ㄷ", "large-sloping-side")}${line("ㄹ", "ㄷ", "small-height")}${line("ㄹ", "ㅁ", "small-sloping-side")}
+        <path class="source62-triangle-right-angle" d="M100 173h11v11 M369 36v11h11 M369 184v-11h11"/>
+        <line class="source62-triangle-measure" x1="72" y1="36" x2="72" y2="184"/><line class="source62-triangle-measure-tick" x1="67" y1="36" x2="77" y2="36"/><line class="source62-triangle-measure-tick" x1="67" y1="184" x2="77" y2="184"/>
+        <text class="source62-triangle-height-label" x="38" y="115">${height}cm</text>${pointNames}
+        ${level === 0 ? `<text class="source62-triangle-base-label" x="240" y="229">ㄴㄷ = ${largeBase}cm</text>` : ""}
+        ${solved ? `<line class="source62-triangle-target" data-layout-role="target-segment" data-from="ㄴ" data-to="ㅁ" x1="100" y1="184" x2="${points["ㅁ"].x.toFixed(2)}" y2="184"/><text class="source62-triangle-answer-label" x="${((100 + points["ㅁ"].x) / 2).toFixed(2)}" y="243">${gap}cm</text>` : ""}
+      </svg>`;
+      const givens = level === 0 ? `선분 ㄴㄷ의 길이는 ${largeBase}cm입니다.` : level === 1 ? `삼각형 ㄱㄴㄷ의 넓이는 ${largeArea}cm²입니다.` : `두 삼각형의 넓이의 합은 ${combinedArea}cm²입니다.`;
+      const prompt = `그림에서 삼각형 ㄱㄴㄷ의 넓이는 삼각형 ㄹㅁㄷ의 넓이의 ${ratioText}배입니다. ${givens} 선분 ㄴㅁ의 길이는 몇 cm인가요?${diagram(false)}`;
+      const areaStep = level === 2 ? `작은 삼각형의 넓이를 한 묶음으로 보면 전체는 ${ratioText}+1=${String(Number((ratio + 1).toFixed(2)))}묶음입니다. 작은 삼각형의 넓이는 ${combinedArea}÷${String(Number((ratio + 1).toFixed(2)))}=${smallArea}cm²이고 큰 삼각형의 넓이는 ${smallArea}×${ratioText}=${largeArea}cm²입니다. ` : "";
+      const baseStep = level === 0 ? `두 삼각형의 높이가 같으므로 밑변의 비도 ${ratioText}:1입니다. ㅁㄷ은 ${largeBase}÷${ratioText}=${smallBase}cm입니다.` : `ㄴㄷ은 ${largeArea}×2÷${height}=${largeBase}cm입니다. 높이가 같으므로 ㅁㄷ은 ${largeBase}÷${ratioText}=${smallBase}cm입니다.`;
+      const answer = `${gap}cm`;
+      return result(prompt, answer, `${areaStep}${baseStep} 따라서 ㄴㅁ은 ${largeBase}-${smallBase}=${answer}입니다.`, {
+        answerVisual: `<div class="source62-triangle-answer" data-answer-source="${sourceItemId}" data-print-weight="compact">${diagram(true)}</div>`,
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
@@ -29648,6 +29692,7 @@
     [type => type.sourceItemId === "6-2-u2-e2-example-3", "sourceGrade6SecondDecimalDivisionE2Example3"],
     [type => type.sourceItemId === "6-2-u2-e2-mission-1", "sourceGrade6SecondDecimalDivisionE2Mission1"],
     [type => type.sourceItemId === "6-2-u2-e2-mission-2", "sourceGrade6SecondDecimalDivisionE2Mission2"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-3", "sourceGrade6SecondDecimalDivisionE2Mission3"],
     [type => type.sourceItemId === "6-2-u2-e2-mission-5", "sourceGrade6SecondDecimalDivisionE2Mission5"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
