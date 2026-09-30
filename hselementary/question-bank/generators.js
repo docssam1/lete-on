@@ -25073,6 +25073,37 @@
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE5Example1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-example-1";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { burnPerStepTenths: 8, stepMinutes: 5, initialMmTenths: 2350, remainingMmTenths: 1606, pauseMinutes: 40 },
+        { burnPerStepTenths: 9, stepMinutes: 3, initialMmTenths: 1840, remainingMmTenths: 1210, pauseMinutes: 25 },
+        { burnPerStepTenths: 12, stepMinutes: 4, initialMmTenths: 2680, remainingMmTenths: 1768, pauseMinutes: 35 }
+      ][poolIndex];
+      const burnedMmTenths = data.initialMmTenths - data.remainingMmTenths;
+      if (burnedMmTenths <= 0 || burnedMmTenths % data.burnPerStepTenths !== 0) throw new Error(`${sourceItemId}: 탄 길이와 시간 간격이 정확하지 않습니다.`);
+      const burningMinutes = burnedMmTenths / data.burnPerStepTenths * data.stepMinutes;
+      const elapsedMinutes = burningMinutes + (level === 2 ? data.pauseMinutes : 0);
+      const duration = minutes => `${Math.floor(minutes / 60)}시간${minutes % 60 ? ` ${minutes % 60}분` : ""}`;
+      const mm = value => `${plainDecimal(value, 1)}mm`;
+      const cm = value => `${plainDecimal(value, 2)}cm`;
+      const initialLength = level === 0 ? mm(data.initialMmTenths) : cm(data.initialMmTenths);
+      const remainingLength = level === 0 ? mm(data.remainingMmTenths) : cm(data.remainingMmTenths);
+      const timeCondition = level === 2 ? `중간에 불을 ${data.pauseMinutes}분 동안 꺼 두었고, 그 밖의 시간에는 일정하게 탔습니다. ` : "";
+      const prompt = `${data.stepMinutes}분에 ${mm(data.burnPerStepTenths)}씩 일정하게 타는 양초가 있습니다. 처음 길이는 ${initialLength}입니다. ${timeCondition}처음 불을 붙인 때부터 길이가 ${remainingLength}로 줄어들 때까지 몇 시간 몇 분이 걸렸습니까?`;
+      const answer = duration(elapsedMinutes);
+      const difficultyDesign = ["lengths-in-millimeters", "source-centimeters-to-millimeters", "extinguished-time-extra-step"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-candle-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>탄 길이와 지난 시간</strong>${row("탄 길이", mm(burnedMmTenths))}${row("실제로 탄 시간", duration(burningMinutes))}${level === 2 ? row("불을 꺼 둔 시간", `${data.pauseMinutes}분`) : ""}${row("처음 불을 붙인 때부터", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const conversion = level === 0 ? "" : `길이를 mm로 바꾸면 처음 ${mm(data.initialMmTenths)}, 나중 ${mm(data.remainingMmTenths)}입니다. `;
+      const solution = `${conversion}탄 길이는 ${math(`${mm(data.initialMmTenths)} − ${mm(data.remainingMmTenths)} = ${mm(burnedMmTenths)}`)}입니다. ${math(`${mm(burnedMmTenths)} ÷ ${mm(data.burnPerStepTenths)} × ${data.stepMinutes}분 = ${burningMinutes}분`)} 동안 실제로 탔습니다. ${level === 2 ? `불을 꺼 둔 ${data.pauseMinutes}분까지 더하면 ${math(`${burningMinutes}분 + ${data.pauseMinutes}분 = ${elapsedMinutes}분`)}입니다. ` : ""}답은 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondDecimalDivisionE5Example3({ level, variant = 0 }) {
       const sourceItemId = "6-2-u2-e5-example-3";
       if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
