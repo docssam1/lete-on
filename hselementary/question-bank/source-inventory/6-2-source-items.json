@@ -1337,11 +1337,12 @@
       "pdfPage": 18,
       "printedPage": 20,
       "sourceShape": "가만한 물에서 배의 속력과 하류 이동 거리·시간으로 강물의 속력을 구하는 문제",
-      "answerContract": "speed",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "single-current-speed",
+      "visualRisk": "배가 강을 따라 내려가는 방향과 시간·분 표기가 분명해야 하며, 거리와 속력의 단위를 섞지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-example-3"
     },
     {
       "sourceItemId": "6-2-u2-e2-example-4",
@@ -1426,12 +1427,13 @@
       "ordinal": 5,
       "pdfPage": 19,
       "printedPage": 21,
-      "sourceShape": "서로 마주 걷는 두 사람의 거리와 시간당 걸음 수로 만나는 시각을 구하는 문제",
-      "answerContract": "clock-time",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "서로 마주 걷는 두 사람의 거리와 각자 한 시간에 걷는 거리로 만나는 시각을 구하는 문제",
+      "answerContract": "single-meeting-clock-time",
+      "visualRisk": "오전 출발과 오후 만남 시각, 30분 늦은 출발 조건의 주체가 분명해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-mission-5"
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-6",
