@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "sourceItemId": "6-2-u2-e2-mission-4",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 19,
+    "printedPage": 21,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "sourceModel": {
+    "leftTriangle": "ㄱㄴㄷ",
+    "rightTriangle": "ㄹㅁㅂ",
+    "overlapTriangle": "ㅅㅁㄷ",
+    "sharedBase": "ㅁㄷ",
+    "targetHeight": "ㅅㅇ",
+    "givenAreasCm2": [46.8, 30.3],
+    "unionAreaCm2": 59.7,
+    "sharedBaseCm": 3.2
+  },
+  "independentMath": {
+    "overlapAreaCm2": 17.4,
+    "heightCm": 10.875,
+    "calculation": "46.8+30.3-59.7=17.4; 3.2*h/2=17.4; h=10.875",
+    "candidateCount": 1
+  },
+  "officialAnswerEvidence": "not-available-for-this-item",
+  "publicReleaseStatus": "locked",
+  "pending": ["심화 교재 공식 답과 문항 번호 대조", "원본 구조를 따르는 문제와 답 그림", "PC·모바일·A4 가시성 및 검산"]
+}

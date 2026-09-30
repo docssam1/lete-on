@@ -44,5 +44,6 @@
     }
   },
   "verifiedVariantCount": 3,
-  "releaseStatus": "verified"
+  "releaseStatus": "locked",
+  "releaseGate": "심화 교재의 공식 답과 독립 계산 결과를 문항 번호 기준으로 대조한 뒤 공개"
 }

@@ -12,7 +12,9 @@ const readiness = require("./source-inventory/6-2-u2-e2-mission3-readiness-revie
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === id);
-assert(raw && type && !type.reviewLocked && type.rawSourceItemId === id, "원본·출제 유형 연결");
+assert(raw && type && type.reviewLocked && type.rawSourceItemId === id, "원본·잠금 유형 연결");
+assert.equal(window.HSE_GENERATORS.generate(type, 0, 0, 1, 0), null, "공식 답 근거 전에는 출제되지 않음");
+const candidateType = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE2Mission3" };
 assert.equal(raw.answerContract, "single-shared-height-triangle-base-difference");
 assert.equal(raw.pdfPage, 19);
 assert.equal(raw.printedPage, 21);
@@ -21,7 +23,7 @@ assert.equal(readiness.sourceIdentity.pdfPage, raw.pdfPage);
 assert.equal(readiness.sourceIdentity.printedPage, raw.printedPage);
 assert.equal(readiness.officialAnswerEvidence.status, "not-available-for-this-item");
 assert.equal(readiness.verifiedVariantCount, 3);
-assert.equal(readiness.releaseStatus, "verified");
+assert.equal(readiness.releaseStatus, "locked");
 
 function independentAnswer(prompt) {
   const statement = prompt.split("<svg")[0];
@@ -45,7 +47,7 @@ function independentAnswer(prompt) {
 let checked = 0;
 const pools = new Set();
 for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 120; seed += 1) {
-  const generated = window.HSE_GENERATORS.generate(type, 0, difficulty, seed, seed % 3);
+  const generated = window.HSE_GENERATORS.generate(candidateType, 0, difficulty, seed, seed % 3);
   const independent = independentAnswer(generated.prompt);
   const svg = generated.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0];
   assert.equal(generated.sourceItemId, id);
