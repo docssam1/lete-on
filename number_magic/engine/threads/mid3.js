@@ -165,10 +165,8 @@ function buildComparisonPools(){
       add(mixed,seen.mixed,Object.assign({},q,{sign:-1}),Object.assign({},r,{sign:-1}));
       add(mixed,seen.mixed,Object.assign({},r,{sign:-1}),Object.assign({},q,{sign:-1}));
     }
-    /* 서로 다른 부호는 제곱 계산 전에 결정한다. */
-    const far=rootTerm(((i%29)+2),1,-1);
-    add(mixed,seen.mixed,q,far);
-    add(mixed,seen.mixed,far,q);
+    /* 2026-09-30 — 부호가 다른 쌍(양수 q 와 −√n)은 뺐다. 부호만 보면 끝나는 문제라 비교 연습이
+       안 되고, 발문이 "양수가 음수보다 큽니다"라고 답을 먼저 말해 버렸다(원장 "음수와 양수 비교 말도 안 돼"). */
   });
   return {comparePositive:positive,compareNegative:negative,compareMixed:mixed};
 }
