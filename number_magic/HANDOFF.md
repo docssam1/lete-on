@@ -2385,4 +2385,7 @@ GPT(Codex) 인수인계 ③ P0 · 원장 "문항수는 하루 30분 풀 분량 �
 - 배치: `courses.js` APPLY_THREADS·WP_BY_TIER 에 추가, 과정 2 creative 에 WP2@1, 과정 12 에 WP6@1, 과정 22 에 WP6@2
   (check-ladder 미배치 방지). drill-topics 문장제 묶음에 세 항목. about.html 유형 304·레벨 973.
 - 검사: `check-wp-word-problems.js` 에 picture(장면↔상황)·make(정답 유일) 모드, `smoke-wp.cjs` TARGETS 에 WP2@1·WP6@1·@2.
+- 인쇄: WP2 장면은 종이에서 ○●(`wpSceneHtml`, exam.js — 카드·예시·따라풀기·온라인 학습지·문제은행 다섯 자리). 새 유형은
+  `data/print-head.js` 에 첫 장 높이 값이 없어 따라풀기 장면이 첫 장을 넘쳤다 → 빌더에 `ONLY=WP2,WP6` 옵션을 넣어
+  그 유형만 다시 쟀다(전체는 한 시간 이상, 기존 값 변동 0). **새 스레드를 넣으면 `ONLY=…` 로 꼭 재고 커밋할 것.**
 

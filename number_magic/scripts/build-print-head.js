@@ -35,13 +35,18 @@ server.listen(0, async () => {
   let qr = 0;
   /* 부분만 다시 재기 — PARTS=magic,word 처럼(기본 head,magic,word 전부). 유형 표(head)는 한 시간 넘게 걸린다.
      재지 않는 부분은 지금 파일 값을 그대로 둔다. MAGIC_ONLY=1 은 PARTS=magic 과 같다. */
-  const PARTS = new Set((process.env.PARTS || (process.env.MAGIC_ONLY ? 'magic' : 'head,magic,word')).split(','));
+  /* ONLY=WP2,WP6 — 새 유형만 다시 잰다(2026-09-30). 유형 표 전체는 한 시간 넘게 걸리는데 스레드 몇 개를
+     더했을 때 그 값만 필요하다. 지금 파일을 그대로 두고 지정한 유형의 head·word 값만 지우고 새로 잰다(마법 노트는 안 잰다). */
+  const ONLY = process.env.ONLY ? process.env.ONLY.split(',').map(x => x.trim()).filter(Boolean) : null;
+  const PARTS = new Set(ONLY ? ['head', 'word'] : (process.env.PARTS || (process.env.MAGIC_ONLY ? 'magic' : 'head,magic,word')).split(','));
   const MAGIC_ONLY = !PARTS.has('head');
   let word = {}, keepMagic = null;
   { const w = {}; try { new Function('window', fs.readFileSync(path.join(ROOT, 'data', 'print-head.js'), 'utf8'))(w); } catch(e){}
-    if(!PARTS.has('head')){ table = w.NM_PRINT_HEAD || {}; qr = w.NM_PRINT_HEAD_QR || 0; }
-    if(!PARTS.has('word')) word = w.NM_PRINT_WORD || {};
-    if(!PARTS.has('magic')) keepMagic = w.NM_PRINT_MAGIC || {}; }
+    if(!PARTS.has('head') || ONLY){ table = w.NM_PRINT_HEAD || {}; qr = w.NM_PRINT_HEAD_QR || 0; }
+    if(!PARTS.has('word') || ONLY) word = w.NM_PRINT_WORD || {};
+    if(!PARTS.has('magic')) keepMagic = w.NM_PRINT_MAGIC || {};
+    if(ONLY) for(const k of Object.keys(table)) if(ONLY.includes(k.split('@')[0])){ delete table[k]; delete word[k]; } }
+  const ARG = { BANDS, ONLY };
   for(const lang of ['ko', 'en', 'zh']){
     const page = await browser.newPage({ viewport:{ width:1100, height:1100 } });
     await page.route('**/*', r => /jsdelivr|supabase|google/.test(r.request().url()) ? r.abort() : r.continue());
@@ -54,10 +59,10 @@ server.listen(0, async () => {
        주간 학습지 C31 첫 장 넘침). 유닛이 있는 쪽이 머리가 길다 — 드릴 인쇄에는 안전한 쪽. */
     for(const f of fs.readdirSync(path.join(ROOT, 'data', 'units')).filter(f => /^[A-Za-z0-9-]+\.js$/.test(f)))
       await page.addScriptTag({ url:'data/units/' + f });
-    const r = MAGIC_ONLY ? { out:{}, qr:0 } : await page.evaluate(async BANDS => {
+    const r = MAGIC_ONLY ? { out:{}, qr:0 } : await page.evaluate(async ({ BANDS, ONLY }) => {
       const mm = px => px / (96 / 25.4), out = {};
       let qr = 0;
-      for(const t of Object.keys(NM_THREADS)) for(const l of NM_THREADS[t].levels){
+      for(const t of Object.keys(NM_THREADS).filter(t => !ONLY || ONLY.includes(t))) for(const l of NM_THREADS[t].levels){
         const row = [];
         for(const [band, grade] of BANDS) for(const seed of ['head', 'head-b']){
           /* 40문항 — 첫 장이 마지막 장이 되지 않게(재도전 QR 없이 잰다; QR 은 따로 잰 높이를 뺀다).
@@ -138,17 +143,17 @@ server.listen(0, async () => {
         if(merged.some(Boolean)) out[t + '@' + l.id] = merged;
       }
       return { out, qr };
-    }, BANDS);
+    }, ARG);
     /* 마법 노트(매거진형 개념 노트) — 유닛마다 밴드별 [판, [단계…], 규칙·체크, 첫 장 쓸 높이, 다음 장 쓸 높이] mm.
        renderMagicNotePage 가 이 값으로 장을 채운다(저학년 큰 글씨에서 두 단계가 첫 장에 들지 않았다 — C20 C-22). */
     /* 문장제 회차(wordType 'all') — 같은 유형·레벨이라도 문장 카드는 식 한 줄보다 훨씬 높다(NS5 L1 young: 식 12.7mm,
        문장 카드 약 37mm). 유형 표의 한 줄 높이로 칸을 짜면 1.5배 학습량 C2 마지막 장이 넘쳤다. 밴드별 한 줄 필요 높이(mm). */
     if(PARTS.has('word')){
-      const wd = await page.evaluate(async BANDS => {
+      const wd = await page.evaluate(async ({ BANDS, ONLY }) => {
         const mm = px => px / (96 / 25.4), out = {};
         const st = document.createElement('style');
         st.textContent = '.nm-w2-grid{grid-template-rows:none!important;grid-auto-rows:max-content!important;flex:0 0 auto!important;height:auto!important}.nm-w2-item.nm-print-item{overflow:visible!important;min-height:0!important}';
-        for(const t of Object.keys(NM_THREADS)) for(const l of NM_THREADS[t].levels){
+        for(const t of Object.keys(NM_THREADS).filter(t => !ONLY || ONLY.includes(t))) for(const l of NM_THREADS[t].levels){
           const row = [];
           for(const [band, grade] of BANDS){
             let need = null;
@@ -171,7 +176,7 @@ server.listen(0, async () => {
           if(row.some(v => v != null)) out[t + '@' + l.id] = row;
         }
         return out;
-      }, BANDS);
+      }, ARG);
       for(const [k, row] of Object.entries(wd)){
         const cur = word[k] || (word[k] = [null, null, null]);
         row.forEach((v, i) => { if(v != null) cur[i] = cur[i] == null ? v : Math.max(cur[i], v); });
