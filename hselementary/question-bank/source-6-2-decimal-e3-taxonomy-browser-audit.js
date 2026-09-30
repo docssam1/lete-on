@@ -33,6 +33,36 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         assert((await row.innerText()).includes(label), `${width}px ${id}: 정확한 이름`);
         assert(await row.locator('input[type="checkbox"]').isDisabled(), `${width}px ${id}: 출제 잠금`);
       }
+      const missions = [
+        ["6-2-u2-e3-mission-1", "몫을 첫째·둘째 자리까지 반올림한 값의 차 구하기"],
+        ["6-2-u2-e3-mission-2", "수 카드로 몫이 가장 큰 나눗셈 만들기"],
+        ["6-2-u2-e3-mission-3", "반올림한 몫에 맞는 두 빈칸 숫자 모두 찾기"],
+        ["6-2-u2-e3-mission-4", "다리를 건널 수 있도록 실을 상자 수 구하기"],
+        ["6-2-u2-e3-mission-5", "반올림한 몫에 맞는 두 자리 소수의 개수 구하기"],
+        ["6-2-u2-e3-mission-6", "직육면체 상자에 들어가는 정육면체 개수 구하기"]
+      ];
+      for (const [id, label] of missions) {
+        await page.locator("#typeSearchInput").fill(label);
+        const row = page.locator(`[data-preview-type-id="${id}"]`);
+        assert.equal(await row.count(), 1, `${width}px ${id}: 원문 Mission 유형이 있음`);
+        assert((await row.innerText()).includes(label), `${width}px ${id}: 정확한 이름`);
+        assert(await row.locator('input[type="checkbox"]').isDisabled(), `${width}px ${id}: 출제 잠금`);
+      }
+      for (const [id, search, reason] of [
+        ["6-2-u2-e3-mission-3", "두 빈칸 숫자 모두", "여러 개"],
+        ["6-2-u2-e3-mission-5", "두 자리 소수의 개수", "공식 답"]
+      ]) {
+        await page.locator("#typeSearchInput").fill(search);
+        const row = page.locator(`[data-preview-type-id="${id}"]`);
+        await row.scrollIntoViewIfNeeded();
+        await row.click();
+        const preview = page.locator("#typePreviewPopover");
+        await preview.waitFor({ state: "visible" });
+        assert((await preview.innerText()).includes(reason), `${width}px ${id}: 잠금 이유 표시`);
+        const box = await preview.evaluate(element => element.getBoundingClientRect().toJSON());
+        assert(box.left >= -1 && box.right <= width + 1, `${width}px ${id}: 미리보기가 화면 밖으로 나가지 않음`);
+        if (outputDir) await page.screenshot({ path: path.join(outputDir, `grade6-e3-mission-${id.slice(-1)}-${width}.png`) });
+      }
       await page.locator("#typeSearchInput").fill("가장 큰 몫");
       const risk = page.locator('[data-preview-type-id="6-2-u2-e3-example-3"]');
       assert.equal(await risk.count(), 1, "양수 조건이 빠진 예제가 분류표에 있음");
@@ -56,5 +86,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log("6-2 개념탐구 3 공개 분류표 PC·390px: 세 원문 유형과 조건 누락 잠금 미리보기 통과");
+  console.log("6-2 개념탐구 3 공개 분류표 PC·390px: 세 탐구·여섯 Mission 원문 유형과 잠금 미리보기 통과");
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

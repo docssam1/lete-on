@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 21,
+    "printedPage": 23,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "missions": [
+    {
+      "sourceItemId": "6-2-u2-e3-mission-1",
+      "answerContract": "difference-between-rounded-quotients",
+      "independentCheck": "exact-division-and-two-rounding-places"
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-mission-2",
+      "answerContract": "max-card-arrangement-rounded-quotient",
+      "independentCheck": "all-card-permutations-enumerated",
+      "permutationsChecked": 720
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-mission-3",
+      "answerContract": "all-valid-digit-pairs",
+      "independentCheck": "all-two-digit-pairs-enumerated",
+      "candidatePairsChecked": 100,
+      "risk": "Original asks for digits in two blanks but admits more than one valid pair; do not use a single-pair answer contract."
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-mission-4",
+      "answerContract": "bridge-capacity-max-whole-boxes",
+      "independentCheck": "truck-subtracted-then-integer-capacity"
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-mission-5",
+      "answerContract": "count-two-decimal-divisors-in-rounded-quotient-range",
+      "independentCheck": "all-hundredth-divisors-enumerated",
+      "risk": "Handwritten answer disagrees with exhaustive calculation; official answer evidence is needed before release."
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-mission-6",
+      "answerContract": "cube-packing-three-dimensions",
+      "independentCheck": "integer-cube-count-per-dimension"
+    }
+  ],
+  "officialAnswerEvidence": "not-available-for-these-items",
+  "publicReleaseStatus": "locked",
+  "pending": [
+    "matching advanced-book official answer comparison",
+    "mission 3 all-valid-pairs wording and answer-format decision",
+    "mission 5 handwritten-answer conflict resolution",
+    "source-level variant creation, desktop/mobile/A4 worksheet validation"
+  ]
+}
