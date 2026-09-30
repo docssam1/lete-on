@@ -13,7 +13,7 @@
      A-3 상황에 적절한 연산을 찾아라 (더할까 뺄까·같은 상황 찾기·신호어)
      A-4 식으로 나타내어라 (식 완성·식을 말로·단위 붙여 답 쓰기)
      A-5 돌다리도 두들겨 보고 건너라 (바르게 푼 것·어림·답이 뜻하는 것)
-     A-6 문제를 만들어라 (식을 말로·같은 식의 새 문제·□가 있는 식)
+     A-6 문제를 만들어라 (식을 말로·같은 식의 새 문제 — 무엇으로? 어떤 이야기? 고르기)
 
    상황 하나 → 여섯 단계 전부 파생(문장제-설계.md §1). 상황은 engine/threads/wp.js 의
    makeSituation(window.NM_WP)이 만든다 — 문장제 회차(WP1·3·4·5)와 같은 원천이라 아이가 문제 회차에서
@@ -76,7 +76,9 @@ const T = {
 function situation(rng, infant){
   const kinds = infant ? ['합병','첨가','구잔','구차'] : ['합병','첨가','구잔','구차','배수'];
   const kind = pick(rng, kinds);
-  return window.NM_WP.makeSituation(rng, { range:'A', kind, numeric:'decimal' });
+  const s = window.NM_WP.makeSituation(rng, { range:'A', kind, numeric:'decimal' });
+  s.infant = !!infant;
+  return s;
 }
 const WP = () => window.NM_WP;
 function qty(s, n, lang){ return lang === 'ko' ? WP().koQ(s.o, n) : lang === 'zh' ? WP().zhQ(s.o, n) : WP().enQ(s.o, n); }
@@ -189,28 +191,48 @@ function a5(rng, s, lang){
   const act2 = box(L({ko:`답 ${r}은(는) 무엇의 수인가요? 써 보세요.`, en:`What does the answer ${r} stand for? Write it.`, zh:`答案${r}表示的是什么？写一写。`}, lang), `<div class="nm-lt-lines nm-lt-big"><i></i></div>`);
   return { acts:[act1, act2], answers:[`${s.n1} ${s.op} ${s.n2} = ${r} (${useCalcErr ? L({ko:'계산이 틀림', en:'wrong arithmetic', zh:'计算错'}, lang) : L({ko:'기호가 틀림', en:'wrong sign', zh:'符号错'}, lang)})`, L(T.ask[s.kind], lang)] };
 }
+/* A-6 둘째 활동 — 원장(2026-09-30): "문제 만들기는 영어처럼 고르기 하자. '무엇으로 만들래?' 이렇게."
+   쓰기(빈칸 채우기) 대신 두 번 고른다. ① 무엇으로 만들래? — 사물 셋 중 하나에 ○(아무거나 좋다)
+   ② 어떤 이야기가 이 식에 맞을까? — 이야기 셋 중 하나에 ○(하나만 맞다: 나머지 둘은 계산이 다른 유형).
+   사물 셋은 단위가 같은 것끼리 묶어 고른다(사과·귤·인형 = 개/个, 색종이·스티커·카드 = 장/张) — 그래야
+   이야기의 "3개" "4장"이 어느 사물을 골라도 맞는다. 원래 사물이 든 묶음은 피한다(새 문제여야 하니까). */
+function pickObjects(rng, s){
+  const groups = {};
+  WP().OBJECTS.forEach(o => { if(o.kinds.indexOf(s.kind) < 0) return; const k = o.ko.u + '/' + o.zh.u; (groups[k] = groups[k] || []).push(o); });
+  let cands = Object.values(groups).filter(g => g.length >= 3 && g.every(o => o.id !== s.o.id));
+  if(!cands.length) cands = Object.values(groups).filter(g => g.length >= 3);
+  if(!cands.length) cands = [WP().OBJECTS.filter(o => o.kinds.indexOf(s.kind) >= 0)];
+  return shuffle(rng, pick(rng, cands)).slice(0, 3);
+}
+function storyOptions(rng, s, lang, objs){
+  const n1 = s.n1, n2 = s.n2, u = objs[0].ko.u, zu = objs[0].zh.u, A = L(s.A, lang), B = L(s.B, lang);
+  const ob = `<i class="nm-lt-blank nm-lt-oblank"></i>`;
+  const tmpl = {
+    합병:{ko:`${A}은(는) ${ob}을(를) ${n1}${u}, ${B}은(는) ${n2}${u} 가지고 있어요. 모두 몇 ${u}일까요?`, en:`${A} has ${n1} ${ob} and ${B} has ${n2}. How many altogether?`, zh:`${A}有${n1}${zu}${ob}，${B}有${n2}${zu}。一共有几${zu}？`},
+    첨가:{ko:`${ob}이(가) ${n1}${u} 있었어요. ${n2}${u}를 더 받았어요. 모두 몇 ${u}일까요?`, en:`There were ${n1} ${ob}. Then ${n2} more came. How many now?`, zh:`有${n1}${zu}${ob}，又得到了${n2}${zu}。现在有几${zu}？`},
+    구잔:{ko:`${ob}이(가) ${n1}${u} 있었어요. ${n2}${u}를 주었어요. 남은 것은 몇 ${u}일까요?`, en:`There were ${n1} ${ob}. ${n2} were given away. How many are left?`, zh:`有${n1}${zu}${ob}，送掉了${n2}${zu}。还剩几${zu}？`},
+    구차:{ko:`${A}은(는) ${ob}을(를) ${n1}${u}, ${B}은(는) ${n2}${u} 가지고 있어요. 누가 몇 ${u} 더 많을까요?`, en:`${A} has ${n1} ${ob} and ${B} has ${n2}. Who has more, and how many more?`, zh:`${A}有${n1}${zu}${ob}，${B}有${n2}${zu}。谁多，多几${zu}？`},
+    배수:{ko:`${ob}이(가) 한 상자에 ${n1}${u}씩 ${n2}상자 있어요. 모두 몇 ${u}일까요?`, en:`There are ${n1} ${ob} in each box, and ${n2} boxes. How many altogether?`, zh:`每盒有${n1}${zu}${ob}，有${n2}盒。一共有几${zu}？`}
+  };
+  const opOf = { 합병:'+', 첨가:'+', 구잔:'−', 구차:'−', 배수:'×' };
+  /* 오답 둘은 계산 기호가 다른 유형에서 — 구잔·구차는 둘 다 빼기라 서로 오답이 될 수 없다 */
+  const others = Object.keys(tmpl).filter(k => opOf[k] !== s.op && (!s.infant || k !== '배수'));
+  const kinds = shuffle(rng, [s.kind].concat(shuffle(rng, others).slice(0, 2)));
+  return { items: kinds.map(k => L(tmpl[k], lang)), correct: kinds.indexOf(s.kind) };
+}
 function a6(rng, s, lang){
   const r = res(s);
   const act1 = box(L({ko:'식을 말로 나타내세요. 빈칸을 채워요.', en:'Say the number sentence in words. Fill in the blanks.', zh:'用话说出这个算式，填空。'}, lang), `<div class="nm-lt-eqbig">${s.n1} ${s.op} ${s.n2} = ${r}</div>` + eqWordsHtml(s, lang));
-  const other = pick(rng, WP().OBJECTS.filter(o => o.id !== s.o.id && o.kinds.indexOf(s.kind) >= 0));
-  const nm = shuffle(rng, WP().NAMES.filter(n => n !== s.A && n !== s.B)).slice(0, 2);
-  const tmpl = s.kind === '합병'
-    ? {ko:`${blank(14)}은(는) ${other.ko.n}을(를) ${blank(10)}${other.ko.u}, ${blank(14)}은(는) ${blank(10)}${other.ko.u} 가지고 있어요. 두 사람이 가진 ${other.ko.n}은(는) 모두 몇 ${other.ko.u}일까요?`, en:`${blank(14)} has ${blank(10)} ${other.en.n} and ${blank(14)} has ${blank(10)}. How many ${other.en.n} do they have altogether?`, zh:`${blank(14)}有${blank(10)}${other.zh.u}${other.zh.n}，${blank(14)}有${blank(10)}${other.zh.u}。两个人一共有几${other.zh.u}${other.zh.n}？`}
-    : s.kind === '첨가'
-    ? {ko:`${blank(14)}은(는) ${other.ko.n}을(를) ${blank(10)}${other.ko.u} 가지고 있었어요. ${blank(10)}${other.ko.u}를 더 받았어요. 모두 몇 ${other.ko.u}일까요?`, en:`${blank(14)} had ${blank(10)} ${other.en.n}. Then ${blank(14)} got ${blank(10)} more. How many now?`, zh:`${blank(14)}有${blank(10)}${other.zh.u}${other.zh.n}，又得到了${blank(10)}${other.zh.u}。现在一共有几${other.zh.u}？`}
-    : s.kind === '구잔'
-    ? {ko:`${other.ko.n}이(가) ${blank(10)}${other.ko.u} 있었어요. 그중 ${blank(10)}${other.ko.u}를 ${other.away === 'eat' ? '먹었어요' : other.away === 'use' ? '썼어요' : '주었어요'}. 남은 ${other.ko.n}은(는) 몇 ${other.ko.u}일까요?`, en:`There were ${blank(10)} ${other.en.n}. ${blank(14)} ${other.away === 'eat' ? 'ate' : other.away === 'use' ? 'used' : 'gave away'} ${blank(10)} of them. How many are left?`, zh:`有${blank(10)}${other.zh.u}${other.zh.n}，${other.away === 'eat' ? '吃掉了' : other.away === 'use' ? '用掉了' : '送掉了'}${blank(10)}${other.zh.u}。还剩几${other.zh.u}？`}
-    : s.kind === '구차'
-    ? {ko:`${blank(14)}은(는) ${other.ko.n}을(를) ${blank(10)}${other.ko.u}, ${blank(14)}은(는) ${blank(10)}${other.ko.u} 가지고 있어요. 누가 몇 ${other.ko.u} 더 많을까요?`, en:`${blank(14)} has ${blank(10)} ${other.en.n} and ${blank(14)} has ${blank(10)}. Who has more, and how many more?`, zh:`${blank(14)}有${blank(10)}${other.zh.u}${other.zh.n}，${blank(14)}有${blank(10)}${other.zh.u}。谁多，多几${other.zh.u}？`}
-    : {ko:`${other.ko.n}이(가) 한 상자에 ${blank(10)}${other.ko.u}씩 ${blank(10)}상자 있어요. 모두 몇 ${other.ko.u}일까요?`, en:`There are ${blank(10)} ${other.en.n} in each box and ${blank(10)} boxes. How many altogether?`, zh:`每盒有${blank(10)}${other.zh.u}${other.zh.n}，有${blank(10)}盒。一共有几${other.zh.u}？`};
-  /* 낱말 상자 — 틀에 이름 칸이 있는 유형(합병·첨가·구차)만 이름을 준다. 구잔·배수 틀엔 이름이 없다. */
-  const objWord = lang === 'en' ? other.en.n : L(other, lang).n;
-  const words = (s.kind === '구잔' || s.kind === '배수') ? [objWord, String(s.n1), String(s.n2)]
-    : s.kind === '첨가' ? [L(nm[0], lang), objWord, String(s.n1), String(s.n2)]
-    : [L(nm[0], lang), L(nm[1], lang), objWord, String(s.n1), String(s.n2)];
-  const act2 = box(L({ko:`${s.n1} ${s.op} ${s.n2} 에 맞는 새 문제를 만드세요. 아래 낱말과 수를 빈칸에 넣어요.`, en:`Make a new problem for ${s.n1} ${s.op} ${s.n2}. Use the words and numbers below to fill the blanks.`, zh:`为 ${s.n1} ${s.op} ${s.n2} 编一道新题，把下面的词和数填进空格。`}, lang),
-    `<div class="nm-lt-wordbank">${words.map(w => `<span>${esc(w)}</span>`).join('')}</div><p class="nm-lt-fill">${L(tmpl, lang)}</p>`);
-  return { acts:[act1, act2], answers:[L(T.opVerb[s.op], lang) + ' · ' + L(T.opNoun[s.op], lang), L({ko:'예: 낱말 상자의 이름·사물·수를 차례로', en:'e.g. the names, object and numbers from the word box', zh:'例如：依次填入词框里的名字、物品和数'}, lang)] };
+  const objs = pickObjects(rng, s);
+  const so = storyOptions(rng, s, lang, objs);
+  const objName = o => lang === 'en' ? o.en.n : L(o, lang).n;
+  const act2 = box(L({ko:`${s.n1} ${s.op} ${s.n2} 식으로 새 문제를 만들어요.`, en:`Make a new problem for ${s.n1} ${s.op} ${s.n2}.`, zh:`用 ${s.n1} ${s.op} ${s.n2} 编一道新题。`}, lang),
+    `<p class="nm-lt-q1">${esc(L({ko:'① 무엇으로 만들래? 하나 골라 ○ 하세요.', en:'① What will you make it with? Circle one.', zh:'① 用什么来编？选一个画○。'}, lang))}</p>
+    <div class="nm-lt-cards">${objs.map(o => `<div class="nm-lt-card"><i></i>${esc(objName(o))}</div>`).join('')}</div>
+    <p class="nm-lt-q1">${esc(L({ko:`② 어떤 이야기가 ${s.n1} ${s.op} ${s.n2} 에 맞을까요? 하나 골라 ○ 하세요.`, en:`② Which story fits ${s.n1} ${s.op} ${s.n2}? Circle one.`, zh:`② 哪个故事和 ${s.n1} ${s.op} ${s.n2} 相符？选一个画○。`}, lang))}</p>
+    <ul class="nm-lt-choice nm-lt-stories">${so.items.map((t, i) => `<li><i>${circled(i)}</i><span>${t}</span></li>`).join('')}</ul>
+    <p class="nm-lt-note">${esc(L({ko:'고른 것을 빈칸에 넣어 문제를 소리 내어 읽어 보세요.', en:'Put the thing you chose in the blank and read your problem out loud.', zh:'把选好的东西放进空格，大声读出你的题。'}, lang))}</p>`);
+  return { acts:[act1, act2], answers:[L(T.opVerb[s.op], lang) + ' · ' + L(T.opNoun[s.op], lang), L({ko:'①은 아무거나 좋아요, ②는 ', en:'① any is fine, ② is ', zh:'①选哪个都可以，②是'}, lang) + circled(so.correct)] };
 }
 const STAGES = [a1, a2, a3, a4, a5, a6];
 

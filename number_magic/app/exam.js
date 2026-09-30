@@ -614,6 +614,12 @@
   .nm-lt-wordbank { display:flex; flex-wrap:wrap; gap:2.5mm; margin-bottom:3mm; }
   .nm-lt-wordbank span { padding:1.2mm 3.5mm; border:1.4px solid #C9A063; border-radius:999px; background:#fdf6e3; font-size:13.5px; font-weight:700; color:#20343b; }
   .nm-lt-fill { margin:0; font-size:14.5px; line-height:2.2; color:#20343b; word-break:keep-all; }
+  .nm-lt-q1 { margin:0 0 2.5mm; font-size:14px; font-weight:800; color:#245b60; word-break:keep-all; }
+  .nm-lt-cards + .nm-lt-q1 { margin-top:4mm; }
+  .nm-lt-oblank { width:16mm; }
+  .nm-lt-stories { gap:2.5mm; font-size:14.5px; }
+  .nm-lt-stories li { line-height:1.7; }
+  .nm-lt-stories li span { word-break:keep-all; }
   /* 쓰기 상자·유아 확대(2026-09-30, 원장 "학습지는 쓰기, 유아이니 크게, 나눠서 중요한 것만") */
   .nm-lt-abox { display:inline-block; height:11mm; min-width:18mm; border:1.6px solid #245b60; border-radius:2.5mm; background:#fff; vertical-align:middle; }
   .nm-lt-given { display:flex; flex-wrap:wrap; gap:4mm 10mm; margin-top:3mm; font-size:14.5px; color:#20343b; }
@@ -636,6 +642,11 @@
   .nm-lt-infant .nm-lt-dots { font-size:24px; letter-spacing:1.8mm; }
   .nm-lt-infant .nm-lt-abox { height:14mm; min-width:24mm; }
   .nm-lt-infant .nm-lt-given, .nm-lt-infant .nm-lt-say, .nm-lt-infant .nm-lt-fill { font-size:16.5px; }
+  .nm-lt-infant .nm-lt-q1 { font-size:16px; }
+  .nm-lt-infant .nm-lt-card { font-size:19px; padding:3.5mm 6mm; }
+  .nm-lt-infant .nm-lt-card i { width:10mm; height:10mm; }
+  .nm-lt-infant .nm-lt-stories { font-size:16.5px; gap:3.5mm; }
+  .nm-lt-infant .nm-lt-oblank { width:20mm; }
   .nm-lt-infant .nm-lt-eq { font-size:30px; }
   .nm-lt-infant .nm-lt-eq .nm-lt-num { width:20mm; height:15mm; }
   .nm-lt-infant .nm-lt-eq .nm-lt-op { width:14mm; height:14mm; line-height:14mm; }
