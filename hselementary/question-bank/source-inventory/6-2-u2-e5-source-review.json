@@ -12,7 +12,13 @@
     {
       "sourceItemId": "6-2-u2-e5-exploration-1",
       "answerContract": "fuel-distance-and-speed-to-travel-time",
-      "independentCheck": "fuel-to-distance-and-known-distance-to-speed-then-divide"
+      "independentCheck": "fuel-to-distance-and-known-distance-to-speed-then-divide",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Exploration",
+        "difficultyDesign": ["speed-given", "source-distance-and-time", "remaining-fuel-extra-step"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-1",
