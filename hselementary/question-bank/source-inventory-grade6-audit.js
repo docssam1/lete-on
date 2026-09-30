@@ -295,7 +295,9 @@ const textOnlySourceItems = new Set([
   "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3",
   "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-5",
   "6-2-u2-e5-exploration-1", "6-2-u2-e5-example-1", "6-2-u2-e5-example-2",
-  "6-2-u2-e5-example-3", "6-2-u2-e5-example-4"
+  "6-2-u2-e5-example-3", "6-2-u2-e5-example-4",
+  "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-3",
+  "6-2-u2-e5-mission-4", "6-2-u2-e5-mission-5", "6-2-u2-e5-mission-6"
 ]);
 check(items.every(item => item.problemVisualRequired === !textOnlySourceItems.has(item.sourceItemId) && item.answerVisualRequired === true), "6학년 원문 유형의 문제·정답 화면 계약이 빠졌습니다.");
 check(items.every(item => {

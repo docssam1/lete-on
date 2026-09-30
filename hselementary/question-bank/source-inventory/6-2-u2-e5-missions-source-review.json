@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 25,
+    "printedPage": 27,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "missions": [
+    {
+      "sourceItemId": "6-2-u2-e5-mission-1",
+      "answerContract": "walking-speed-to-rounded-travel-hours",
+      "independentCheck": "convert-minutes-to-hours-then-round-final-time-only"
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-2",
+      "answerContract": "compare-second-car-per-liter-distance-to-first",
+      "independentCheck": "compare-two-unit-distances-in-the-stated-direction"
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-3",
+      "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
+      "independentCheck": "convert-reference-minutes-to-hours-and-subtract-current-speed",
+      "risk": "The reference salmon distance is not explicitly stated to be in still water; the handwritten answer conflicts with independent calculation under that interpretation."
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-4",
+      "answerContract": "container-tare-from-oil-mass-change",
+      "independentCheck": "derive-oil-mass-per-liter-from-before-and-after-weights",
+      "risk": "Handwritten tare does not match either the direct empty-container calculation or the back-substitution into the second weighing."
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-5",
+      "answerContract": "candle-remaining-length-to-hours-and-minutes",
+      "independentCheck": "count-ten-minute-burn-intervals-then-convert-minutes"
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-6",
+      "answerContract": "derive-gallon-to-liter-from-vehicle-distances",
+      "independentCheck": "convert-provided-miles-to-kilometers-before-comparing-fuel-units",
+      "risk": "The question defines a mathematical conversion through the vehicle data; an external gallon constant must not be substituted."
+    }
+  ],
+  "officialAnswerEvidence": "not-available-for-these-items",
+  "publicReleaseStatus": "locked",
+  "pending": [
+    "matching advanced-book official answer comparison",
+    "mission 3 reference-speed condition resolution",
+    "mission 4 handwritten-answer conflict resolution",
+    "source-level variants and desktop/mobile/A4 worksheet validation"
+  ]
+}
