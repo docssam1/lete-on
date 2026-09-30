@@ -1,12 +1,16 @@
 // GFIELD 실험 과학 영재 — 화면 수업 자료(교안). 교재와 같은 chapter 데이터를 16:9 슬라이드로 보여 준다.
 //  teach(가르치기·강사용): 클릭/→/스페이스로 빈칸 답이 차례로 열리고, N으로 강사 발문 노트, F로 전체 화면.
 //  self (스스로 공부하기·학생용): 내 생각을 쓰고 '예시 답 보기', 확인 문제는 눌러서 바로 채점.
+import { judgeText, judgeShort } from './judge.js';
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const NUM = ['①', '②', '③', '④', '⑤', '⑥'];
 const KEY = 'sciLab.deck';
 const memo = { all() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } },
   get(k) { return this.all()[k] ?? ''; }, set(k, v) { try { const a = this.all(); a[k] = v; localStorage.setItem(KEY, JSON.stringify(a)); } catch { /* 저장 불가 */ } } };
 let notesOn = true;
+// 단원 판정표 — 없으면 null(그 단원의 쓰기 답은 선생님 확인으로)
+const TABLES = new Map();
+const judgeTable = (u) => { if (!TABLES.has(u)) TABLES.set(u, import(`../data/units/${u}.judge.js`).then((m) => m.judge).catch(() => null)); return TABLES.get(u); };
 const MIC = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
 export function buildSlides(ch, art, plan, similar, mode) {
@@ -303,33 +307,71 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     const hy = memo.get(`${u}:hypo`), res = S.filter((x) => /^res\d/.test(x.id)).map((x, j) => memo.get(`${u}:res${j}`)).filter(Boolean);
     box.innerHTML = `<div class="dk-card"><h3>내 가설</h3><p>${esc(hy) || '<i>아직 쓰지 않았어요</i>'}</p></div>${labTable()}${res.length ? `<div class="dk-card"><h3>내가 적은 결과</h3>${res.map((t) => `<p>${esc(t)}</p>`).join('')}</div>` : ''}`;
   }
-  // 쓰기: 모든 칸을 채우면 '확인' → 예시 답과 비교해 스스로 O/X. O면 다음 장으로.
   function labTable() {
     const L = myLab?.(); if (!L?.rows?.length) return '';
     return `<div class="dk-card"><h3>내 3D 실험 기록</h3><table class="dk-tbl"><tr>${L.cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr>${L.rows.map((r) => `<tr>${Object.values(r).slice(0, L.cols.length).map((v) => `<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</table></div>`;
   }
+  // 쓰기: 모든 칸을 채우면 '확인' → 기기 안에서 판정(v2/judge.js + data/units/<u>.judge.js). 아이에게 "비슷한가요?"를 묻지 않는다(원장 2026-09-30).
+  //  맞음 → 칭찬하고 다음 장 / 빠진 생각·오개념 → 답은 감추고 되묻기, 한 번 더 / 두 번째에도 아니면 예시 답을 보여 주고 다음으로
+  //  규칙으로 가릴 수 없는 답(도전 과제·다른 말로 길게 쓴 답) → 틀렸다고 하지 않고 선생님 확인으로 모은다(필요할 때만 API)
+  const J = judgeTable(u);
+  function judgeBox(k, text, tries, table) {
+    if (k === 'hypo' || k === 'wonder' || k === 'concl0') return judgeText(text, table?.[`deck:${k}`], { tries });
+    if (/^test\d/.test(k) && s.item) {
+      const it = similar.find((x) => x.id === s.item), ac = it?.answerContract;
+      if (ac?.type === 'short-text') { const r = judgeShort(text, ac.accepted?.length ? ac.accepted : [ac.answer]); return { ...r, st: r.st === 'no' ? 'miss' : r.st, short: true, missing: [] }; }
+      if (ac?.type === 'written-explanation') return judgeText(text, table?.[s.item], { tries });
+    }
+    return judgeText(text, null, { tries });   // 도전 과제 등 — 선생님 확인
+  }
+  const FB = {
+    ok: (r, hy) => `<b>✓ ${hy ? '좋은 가설이에요! 조건과 결과를 이어 썼어요.' : '맞았어요!'}</b>`,
+    part: (r) => `<b>좋아요, 조금만 더!</b> ${esc(r.missing[0]?.ask || '빠진 생각이 있어요.')}`,
+    miss: (r) => r.short ? '<b>다시 생각해 봐요.</b> 문제를 다시 읽고 하나씩 살펴봐요.' : `<b>다시 써 볼까요?</b> ${esc(r.missing[0]?.ask || '핵심 낱말을 넣어 써 봐요.')}`,
+    wrong: (r) => `<b>혹시 이렇게 생각했나요?</b> ${esc(r.wrong?.say || '')}`,
+    review: (r) => (r.why === 'unsure' ? `<b>선생님이 한 번 더 볼게요.</b> ${esc(r.missing[0]?.ask ? '예시 답을 읽고 이 생각이 내 답에 있는지 확인해 봐요 — ' + r.missing[0].t : '예시 답도 읽어 봐요.')}` : '<b>잘 썼어요!</b> 이 답은 선생님이 확인할게요.'),
+    empty: () => '먼저 써 보세요.',
+  };
   function runWrite(V) {
     wirePeek();
     prepRes();
     const boxes = [...stage.querySelectorAll('.dk-self')]; if (!boxes.length) { auto(3000); return; }
     const body = stage.querySelector('.dk-body');
-    body.insertAdjacentHTML('beforeend', `<div class="dk-act"><button type="button" class="dk-go" data-w="check" disabled>확인</button>
-      <span class="dk-sc" hidden><button type="button" class="dk-o" data-w="o">O 비슷해요</button><button type="button" class="dk-x" data-w="x">X 고칠래요</button></span></div>`);
-    const $chk = body.querySelector('[data-w=check]'), $sc = body.querySelector('.dk-sc');
+    body.insertAdjacentHTML('beforeend', `<div class="dk-act"><button type="button" class="dk-go" data-w="check" disabled>확인</button></div>`);
+    const $chk = body.querySelector('[data-w=check]');
     const tas = boxes.map((b) => b.querySelector('textarea'));
     // 확인 문제의 쓰기(ㄴ·ㄷ 같은 한 글자 답)는 한 글자면 되고, 생각 쓰기는 두 글자 이상
     const minLen = s.id.startsWith('test') ? 1 : 2;
     const ready = () => { $chk.disabled = !tas.every((t) => t.value.trim().length >= minLen); };
     boxes.forEach((b) => {
       const key = `${u}:${b.dataset.k}`, ta = b.querySelector('textarea');
-      ta.value = memo.get(key); ta.addEventListener('input', () => { memo.set(key, ta.value); ready(); });
+      ta.value = memo.get(key); ta.addEventListener('input', () => { memo.set(key, ta.value); ready(); b.querySelector('.dk-fb')?.remove(); b.classList.remove('j-ok', 'j-part', 'j-miss', 'j-wrong', 'j-review'); });
       b.querySelector('.dk-mic')?.addEventListener('click', (e) => listen(e.currentTarget, ta, () => { memo.set(key, ta.value); ready(); }));
     });
     ready();
-    const say = cue(V, 'dk-write'); G.say(say);
-    $chk.onclick = () => { boxes.forEach((b) => { b.querySelector('.dk-ans').hidden = false; }); $chk.hidden = true; $sc.hidden = false; G.say('dk-compare'); };
-    body.querySelector('[data-w=o]').onclick = async () => { memo.set(`${u}:${s.id}:ok`, 1); $sc.querySelectorAll('button').forEach((x) => { x.disabled = true; }); await G.say('dk-self-ok', { mood: 'praise' }); auto(700); };
-    body.querySelector('[data-w=x]').onclick = () => { cancelAuto(); G.say('dk-self-x', { mood: 'encourage' }); tas[0].focus(); };
+    G.say(cue(V, 'dk-write'));
+    let tries = 0;
+    const finish = async (line, mood) => { $chk.hidden = true; tas.forEach((t) => { t.readOnly = true; }); await G.say(line, mood ? { mood } : undefined); };
+    $chk.onclick = async () => {
+      tries++; $chk.disabled = true;
+      const table = await J;
+      const rs = boxes.map((b, j) => judgeBox(b.dataset.k, tas[j].value, tries, table));
+      boxes.forEach((b, j) => {
+        const r = rs[j], hy = b.dataset.k === 'hypo'; b.querySelector('.dk-fb')?.remove();
+        b.classList.remove('j-ok', 'j-part', 'j-miss', 'j-wrong', 'j-review'); b.classList.add(`j-${r.st}`);
+        b.querySelector('.dk-inrow').insertAdjacentHTML('afterend', `<p class="dk-fb" role="status">${(FB[r.st] || FB.miss)(r, hy)}</p>`);
+        if (r.st === 'ok' || r.st === 'review') b.querySelector('.dk-ans').hidden = false;   // 참고로 예시 답도 보여 준다 — 비교해서 고르라는 게 아니다
+      });
+      const sts = rs.map((r) => r.st), okAll = sts.every((x) => x === 'ok'), settled = sts.every((x) => x === 'ok' || x === 'review');
+      memo.set(`${u}:grade:${s.id}`, { at: Date.now(), tries, boxes: boxes.map((b, j) => ({ k: b.dataset.k, st: rs[j].st, m: rs[j].wrong?.m || null, text: tas[j].value })) });
+      if (s.item && tries === 1) onAnswer?.(s.item, okAll, []);
+      if (okAll) { await finish('dk-judge-ok', 'praise'); auto(900); return; }
+      if (settled) { await finish(rs.some((r) => r.why === 'unsure') ? 'dk-judge-show' : 'dk-judge-review'); auto(1500); return; }
+      if (tries < 2) { $chk.disabled = false; cancelAuto(); G.say('dk-judge-retry', { mood: 'encourage' }); tas[sts.findIndex((x) => x !== 'ok' && x !== 'review')]?.focus(); return; }
+      // 두 번째에도 아니면 예시 답을 보여 준다(더 붙잡지 않는다)
+      boxes.forEach((b, j) => { if (sts[j] !== 'ok') { b.querySelector('.dk-ans').hidden = false; b.querySelector('.dk-fb')?.insertAdjacentHTML('beforeend', ' <br>예시 답을 읽고 내 답에 빠진 생각을 확인해 봐요.'); } });
+      await finish('dk-judge-show');   // 예시 답을 읽을 시간 — 넘기기는 아래 「다음」으로
+    };
   }
   // 확인 문제: 첫 오답에 정답을 알려 주지 않는다 — 그 보기에 이어진 오개념 힌트를 주고 다시 고르게. 풀이는 한 번 틀린 뒤 스스로 열 수 있다.
   function runTest(V) {

@@ -3,10 +3,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { writtenPracticeHtml, WRITING_GUIDES } from './written-practice.js';
 
+// 2026-09-30 원장: 아이에게 "예시 답과 비슷한가요?"를 맡기지 않는다 → 기기 안 판정(v2/judge.js). 저장·전송은 여전히 하지 않는다.
 test('writing practice starts without a sample, score or prechecked rubric', () => {
   const html = writtenPracticeHtml();
-  assert.match(html, /자동 채점 아님/);
+  assert.match(html, /서버로 보내지 않아요/);
   assert.match(html, /서버에 저장하거나 전송하지 않아요/);
+  assert.match(html, /data-writing-compare>확인하기</);
   assert.equal((html.match(/role="tab"/g) || []).length, 3);
   assert.equal((html.match(/role="tabpanel"/g) || []).length, 3);
   assert.equal((html.match(/data-writing-panel="(?:solution|criteria)" tabindex="0" hidden><\/div>/g) || []).length, 2);
@@ -43,9 +45,11 @@ test('all 39 existing written items retain source-authored samples and criteria'
   assert.equal(count, 39);
 });
 
-test('self-check has no grading, network or persistent student-data writer', async () => {
+test('local judging has no network or persistent student-data writer, and no child self-check boxes', async () => {
   const code = await readFile(new URL('./written-practice.js', import.meta.url), 'utf8');
   assert.doesNotMatch(code, /\b(?:fetch|record|onDone|XMLHttpRequest|WebSocket)\s*\(|\b(?:localStorage|sessionStorage|indexedDB)\b/);
+  assert.doesNotMatch(code, /data-writing-criterion/);
+  assert.match(code, /judgeText\(text, key/);
   const renderer = await readFile(new URL('./v2.js', import.meta.url), 'utf8');
   assert.match(renderer, /ac\.type === 'written-explanation'\) wireWrittenPractice\(card, it\)/);
   assert.match(renderer, /body = print \? \(show \?/);

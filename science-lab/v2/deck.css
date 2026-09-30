@@ -284,3 +284,11 @@
   .dk-stepside h3 { font-size: 15px; } .dk-peek { font-size: 15px; padding: 8px 14px; } .dk-tbl .dk-peek { font-size: 13px; }
 }
 .dk-peek[hidden] { display: none; }
+/* 쓰기 판정(v2/judge.js) — 칸마다 결과 한 줄. 색만으로 뜻을 전하지 않게 늘 글(✓·되묻기)이 함께 */
+.dk-fb { margin: .6cqw 0 0; padding: .7cqw 1.2cqw; border-radius: .6cqw; font-size: 1.7cqw; line-height: 1.5; background: #f4f6fb; color: #1B2340; }
+.dk-fb b { margin-right: .4em; }
+.dk-self.j-ok .dk-in { border-color: #2e9d5b; } .dk-self.j-ok .dk-fb { background: #eaf7ef; color: #1f6b40; }
+.dk-self.j-part .dk-fb, .dk-self.j-miss .dk-fb { background: #fff6e6; color: #7a4a00; }
+.dk-self.j-wrong .dk-fb { background: #fff0ee; color: #8a2b1d; }
+.dk-self.j-review .dk-fb { background: #eef5ff; color: #1B2340; }
+@media (max-width: 760px) { .dk-fb { font-size: 15px; padding: 8px 12px; } }

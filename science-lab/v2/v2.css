@@ -147,6 +147,12 @@ textarea { width: 100%; min-height: 96px; border: 1px solid var(--line); border-
 .writing-criteria { list-style: none; padding: 0; margin: 8px 0; }
 .writing-criteria li { border-bottom: 1px solid var(--line); }
 .writing-criteria label { display: flex; align-items: flex-start; gap: 8px; padding: 10px 0; min-height: 48px; cursor: pointer; }
+.writing-criteria li { padding: 8px 0; } .writing-criteria li.met span { color: #1f6b40; font-weight: 800; } .writing-criteria li em { color: var(--sub); font-style: normal; font-size: .9em; }
+/* 확인하기 결과(v2/judge.js) — 색만으로 뜻을 전하지 않게 늘 글이 함께 */
+.writing-judge { margin: 10px 0 0; padding: 10px 14px; border-radius: 10px; background: #f4f6fb; line-height: 1.55; }
+.writing-judge b { margin-right: .35em; }
+.writing-judge.ok { background: #eaf7ef; color: #1f6b40; } .writing-judge.part, .writing-judge.miss { background: #fff6e6; color: #7a4a00; }
+.writing-judge.wrong { background: #fff0ee; color: #8a2b1d; } .writing-judge.review { background: #eef5ff; color: #1B2340; }
 .writing-check-count, .writing-status { color: var(--sub); font-size: 14px; }
 .writing-status:empty { display: none; }
 .written-practice :is(button, textarea, input, summary, [role="tabpanel"]):focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
