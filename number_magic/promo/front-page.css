@@ -1,0 +1,29 @@
+/* Opening spread: readable Korean display type, restrained gilt book lettering. */
+@font-face{font-family:'NM Pretendard';font-style:normal;font-weight:100 900;font-display:swap;src:url('../assets/fonts/pretendard-var.woff2') format('woff2')}
+:root{--sans:'NM Pretendard','Noto Sans KR','Malgun Gothic',sans-serif}
+.book-cover-face{padding:9% 9% 7%;background:linear-gradient(100deg,#103d34 0,#326957 5%,#1c503f 9%,#174936 78%,#103b30)}
+.book-cover-face:before{inset:27px}.book-toolbar,.book-footer{background:var(--paper)}
+.cover-edition{font:500 clamp(10px,1vw,13px)/1.5 var(--sans);letter-spacing:.015em;color:#e2d1ab}
+.cover-title{display:grid;gap:.02em;font:500 clamp(38px,6.8dvh,68px)/.98 var(--display);letter-spacing:-.04em;margin-top:7%;text-shadow:0 1px 1px #09251c;color:#f4dba1}
+.cover-title>span{display:block;white-space:nowrap}.cover-title i{font-size:.64em;font-weight:500}
+.curl-staging{z-index:35;pointer-events:none!important}
+.cover-name-ko{font:600 clamp(16px,2.5dvh,24px)/1.4 var(--sans);letter-spacing:.16em;margin-top:5%;padding-left:.16em;color:#f3e2bc}
+.cover-art{display:block;flex:1;min-height:95px;width:100%;margin:7% 0 3%;position:relative;isolation:isolate}
+.cover-stars{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.8}
+.cover-equation{position:absolute;left:-2%;right:-2%;top:12%;bottom:24%;font:500 clamp(28px,5.7dvh,57px)/1 var(--display);font-variant-numeric:lining-nums tabular-nums;letter-spacing:-.02em;color:#f6dca0;filter:drop-shadow(0 2px 1px #082a24)}
+.math-token{position:absolute;left:0;top:50%;display:block;opacity:0;will-change:transform,opacity;white-space:nowrap;line-height:1}
+.math-token.math-plus{font-size:.62em;color:#d7bd7f}.math-token.math-total{font-size:1.23em;color:#fff0c4}
+.math-token[data-token=five]{left:26%;opacity:1;transform:translate(-50%,-50%)}.math-token[data-token=plusB]{left:50%;opacity:1;transform:translate(-50%,-50%)}.math-token[data-token=seven]{left:74%;opacity:1;transform:translate(-50%,-50%)}
+.cover-math-caption{position:absolute;bottom:4%;left:-5%;right:-5%;font:500 clamp(10px,1.6dvh,14px)/1.5 var(--sans);letter-spacing:0;color:#d8c79f;text-align:center;white-space:nowrap}
+.cover-math-static{display:none;position:absolute;inset:0;align-content:center;text-align:center;font:500 clamp(16px,3.5dvh,33px)/1.65 var(--display);color:#f5dda4;letter-spacing:-.02em}
+.cover-logo{width:82px;height:27px;margin-top:0;opacity:.92}.cover-kicker{font:550 13px/1.5 var(--sans);letter-spacing:.05em;color:#f4dfb8}.open-hint{font:500 13px/1.5 var(--sans);letter-spacing:0;color:#e9edde}
+.welcome-heading{max-width:100%}.welcome-heading p{font:500 12px/1.5 var(--sans);color:#697e70;letter-spacing:0;margin-bottom:14px}
+.welcome-heading h1{font:750 clamp(30px,3.8vw,51px)/1.2 var(--sans);letter-spacing:-.045em;color:#153f34;text-wrap:balance}
+.welcome-page{padding-top:clamp(23px,3.4vw,43px)}.hero-experience{margin-top:22px}.welcome-foot{font-size:11px}.welcome-foot .text-button{font-size:12px;letter-spacing:-.02em}
+.invitation-copy p{font:650 clamp(19px,2.1vw,29px)/1.5 var(--sans);letter-spacing:-.035em;max-width:18em;text-shadow:0 2px 12px #0a222960}.invitation-copy .primary-button{font-size:14px;letter-spacing:-.015em}
+@media(max-width:700px){.cover-title{font-size:clamp(35px,6.3dvh,62px)}.cover-name-ko{font-size:19px}.cover-art{margin-top:6%;min-height:90px}.cover-edition{font-size:10px}.cover-equation{font-size:clamp(29px,5.4dvh,48px)}.cover-math-caption{font-size:10px}.cover-logo{width:68px;height:23px}.welcome-page{padding:20px 20px 0}.welcome-heading{display:block}.welcome-heading p{font-size:10px;max-width:none;margin:0 0 7px}.welcome-heading h1{font-size:30px;line-height:1.16;letter-spacing:-.035em}.hero-experience{margin-top:12px}.welcome-foot{font-size:9px}.welcome-foot .text-button{font-size:10px}.invitation-copy p{font-size:12px;line-height:1.6;max-width:13em}.invitation-copy .primary-button{font-size:11px}}
+@media(max-width:360px){.welcome-page{padding:13px 16px 0}.welcome-heading h1{font-size:27px}.welcome-heading p{font-size:9px;margin-bottom:5px}.hero-experience{margin-top:8px}.cover-title{font-size:clamp(34px,6dvh,49px)}.cover-math-caption{font-size:9px}}
+@media(max-height:570px) and (min-width:701px){.book-cover-face{padding-top:7%}.cover-title{font-size:7.4dvh;margin-top:5%}.cover-name-ko{font-size:12px;margin-top:4%}.cover-edition{font-size:8px}.cover-art{min-height:50px;margin:4% 0 2%}.cover-equation{font-size:6.2dvh;top:3%;bottom:22%}.cover-math-caption{font-size:8px;bottom:0}.cover-logo{width:46px;height:16px}.cover-kicker,.open-hint{font-size:10px}.welcome-page{padding:12px 20px 2px}.welcome-heading{display:flex;align-items:center}.welcome-heading h1{font-size:23px;line-height:1.12;letter-spacing:-.035em}.welcome-heading p{font-size:10px;line-height:1.5;margin:0;max-width:9em}.hero-experience{margin-top:5px}.invitation-copy p{font-size:18px;margin-bottom:12px}.invitation-copy .primary-button{font-size:12px}}
+@media(max-width:700px){.book-cover-face:before{inset:19px}}
+@media(max-height:570px) and (min-width:701px){.book-cover-face:before{inset:12px}}
+@media(prefers-reduced-motion:reduce){.cover-equation,.cover-stars,.cover-math-caption{display:none}.cover-math-static{display:block}}

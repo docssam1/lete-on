@@ -15,6 +15,9 @@
 ## 파일과 연결
 
 - `index.html`, `book.css`, `book.js`: 책, 양면 영상, 탐색, 학습지 확대, 실제 데이터 기반 로드맵.
+- `front-page.css`: 표지와 첫 장의 글꼴·위계. 첫 장 한글은 직접 제공하는 Pretendard 가변 글꼴을 쓴다(`assets/fonts/OFL-Pretendard.txt` 포함).
+- `cover-math.js`: `about.html:initHeroShow`의 DOM 수식·금빛 입자 연출을 사용자가 지정한 `5+7 → 2+3+7 → 2+10 → 12`로 조정했다. 원래 철학 페이지 예시는 `8+7 → 10+5 → 15`이며 원본은 변경하지 않았다. 책이 열리거나 탭이 숨으면 멈추고, 동작 줄이기에서는 전체 동치식이 보인다.
+- `page-curl.js/css`: 원통 곡면의 접선을 적분해 PC 42개·모바일 32개 종이 띠의 위치·깊이·각도를 정한다. 단일 평면 회전이 아니며 앞·뒷면에는 실제 지면의 정지 복제본을 붙인다. 완료·크기 변경·탭 숨김에는 복제본을 제거한다.
 - `experience.js/css`: 광고용 개념 교구. 기존 앱의 교육과정이나 학습기록을 수정하지 않는다.
 - `village.html/js/css`: 실제 `app/town3d`와 캐릭터를 재사용하는 읽기 전용 마을. 메인 앱·구형 2D 메뉴는 불러오지 않는다.
 - `../assets/promo/samples-v4/manifest.json`: 실제 과정/회차/원래 쪽 번호/생성 코드 SHA와 발췌 근거.

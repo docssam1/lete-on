@@ -1,0 +1,17 @@
+/* Each strip has its own world transform and a readable front/back DOM crop.
+   Do not flatten .nm-curl-sheet or .nm-curl-strip with opacity/filter/overflow. */
+.nm-curl-overlay{position:absolute;inset:0;z-index:30;pointer-events:none;perspective:var(--curl-perspective,3200px);perspective-origin:50% 50%;contain:layout style;user-select:none;-webkit-user-select:none}
+.nm-curl-still{position:absolute;top:0;overflow:hidden;background:var(--paper,#fffcf5);z-index:0}
+.nm-curl-cast-shadow{position:absolute;left:0;top:0;transform-origin:0 50%;background:linear-gradient(90deg,#151c1533,#151c1580 35%,#151c1544 85%,transparent);filter:blur(12px);opacity:0;pointer-events:none;will-change:transform,opacity;z-index:1}
+.nm-curl-sheet{position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none;z-index:2}
+.nm-curl-strip{position:absolute;left:0;top:0;transform-style:preserve-3d;transform-origin:0 50%;will-change:transform;pointer-events:none}
+.nm-curl-face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--paper,#fffcf5);transform-style:flat;border-top:1px solid #f6efd5;border-bottom:1px solid #e3d8bb}
+.nm-curl-face.is-front{transform:translateZ(.18px)}
+.nm-curl-face.is-back{transform:rotateY(180deg) translateZ(.18px)}
+.nm-curl-content{position:absolute!important;max-width:none!important;max-height:none!important;visibility:visible!important;pointer-events:none!important;box-sizing:border-box!important;opacity:1!important;transform:none!important}
+.nm-curl-content,.nm-curl-content *,.nm-curl-content:before,.nm-curl-content:after,.nm-curl-content *:before,.nm-curl-content *:after{animation:none!important;transition:none!important;caret-color:transparent!important}
+.nm-curl-content img{user-select:none;-webkit-user-drag:none}
+.nm-curl-shade{position:absolute;inset:0;display:block;pointer-events:none;background:#263121;opacity:0;will-change:opacity;z-index:100}
+.nm-curl-free-edge{position:absolute;right:-.6px;top:0;bottom:0;width:1.2px;background:#f1e6c9;box-shadow:1px 0 1px #766a4b35;transform:translateZ(.24px);pointer-events:none}
+.book-content.has-page-curl>.book-panel{pointer-events:none}
+@media(prefers-reduced-motion:reduce){.nm-curl-overlay{display:none}}

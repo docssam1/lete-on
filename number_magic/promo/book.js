@@ -34,6 +34,7 @@ function syncMedia(){
 function setCut(key,autoplay){if(!cuts[key])return;activeCut=key;const c=cuts[key];mediaSource(film,c[0],c[1]);$$('[data-cut]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.cut===key)));$('#videoFinish').hidden=true;if(autoplay)play(film);}
 function frameActive(active){if(frame.getAttribute('src'))frame.contentWindow.postMessage({type:'nm-promo-active',active},location.origin);}
 function prepare(next,autoplay){
+ if(window.NMCoverMath)window.NMCoverMath.setActive(next==='cover');
  teaser.pause();film.pause();
  stopTour();clearInterval(exampleTimer);
  if(hero)hero.setActive(false);if(lab)lab.setActive(false);frameActive(false);
@@ -61,15 +62,16 @@ function snapshot(panel){
 }
 function turn(from,to,direction,done){
  if(reduced.matches){done();return;}
- const layer=document.createElement('div');layer.className='turn-overlay'+(direction<0?' backward':'');layer.setAttribute('aria-hidden','true');layer.inert=true;
- const still=document.createElement('div');still.className='turn-still';still.append(snapshot(from));layer.append(still);
- const leaf=document.createElement('div');leaf.className='turn-leaf';
- const front=document.createElement('div'),back=document.createElement('div');front.className='turn-face front';back.className='turn-face back';
- // Forward: old right on front, new left on back. Backward reverses this.
- front.append(snapshot(direction<0?to:from));back.append(snapshot(direction<0?from:to));leaf.append(front,back);layer.append(leaf);
- content.append(layer);content.classList.add('is-turning');turning=true;updateNav();
- setTimeout(()=>{still.style.visibility='hidden';},narrow.matches?280:420);
- setTimeout(()=>{layer.remove();content.classList.remove('is-turning');turning=false;updateNav();done();},narrow.matches?680:870);
+ turning=true;content.classList.add('is-turning');updateNav();
+ // Keep the outgoing spread visible while the incoming local WebGL scene renders.
+ const hold=snapshot(from);hold.classList.add('curl-staging');
+ hold.style.setProperty('display',from.classList.contains('panel-menu')?'grid':from.classList.contains('panel-video')||from.classList.contains('panel-village')?'block':'flex','important');
+ content.append(hold);
+ requestAnimationFrame(()=>{
+   const finish=()=>{hold.remove();content.classList.remove('is-turning');turning=false;updateNav();done();};
+   window.NMPageCurl.turn({container:content,from,to:snapshot(to),direction,narrow:narrow.matches,duration:1100,onComplete:finish});
+   hold.remove();
+ });
 }
 function updateNav(){
  const i=order.indexOf(view);$('#bookBack').disabled=turning;$('#bookNext').disabled=turning||i===order.length-1;
@@ -94,6 +96,7 @@ function previous(){const i=order.indexOf(view);go(i>0?order[i-1]:'cover',{autop
 function next(){const i=order.indexOf(view);if(i<order.length-1)go(order[i+1],{autoplay:i+1===1});}
 $('#openBook').addEventListener('click',()=>{
  if(turning)return;turning=true;cover.classList.add('is-opening');mediaSource(teaser,'showreel-15s-vertical.mp4');teaser.volume=.6;if(!reduced.matches)play(teaser);
+ if(window.NMCoverMath)window.NMCoverMath.setActive(false);
  setTimeout(()=>{turning=false;cover.classList.remove('is-opening');go('menu',{animate:false,autoplay:true});},reduced.matches?0:650);
 });
 $('#bookHome').addEventListener('click',()=>go('cover'));$('#bookBack').addEventListener('click',previous);$('#bookNext').addEventListener('click',next);
@@ -161,7 +164,7 @@ function updatePace(stage){const match=(stage.meta&&stage.meta.ko||'').match(/ì£
 $$('[data-pace]').forEach(b=>b.addEventListener('click',()=>{pace=+b.dataset.pace;updatePace(window.NM_STAGES[stageIndex]);}));
 window.addEventListener('resize',()=>{if(view==='roadmap')renderRoadmap();});
 function hashView(){const v=location.hash.slice(1);return order.includes(v)?v:({story1:'labs',story2:'village',story3:'worksheet'}[v]||'cover');}
-window.addEventListener('popstate',()=>{if(turning){setTimeout(()=>go(hashView(),{historyMode:'none',animate:false}),900);return;}go(hashView(),{historyMode:'none'});});
+window.addEventListener('popstate',()=>{if(turning){setTimeout(()=>go(hashView(),{historyMode:'none',animate:false}),1250);return;}go(hashView(),{historyMode:'none'});});
 window.addEventListener('hashchange',()=>{const v=hashView();if(v!==view&&!turning)go(v,{historyMode:'none'});});
 window.addEventListener('keydown',e=>{
  if($('#sheetZoom').open||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.target.isContentEditable)return;

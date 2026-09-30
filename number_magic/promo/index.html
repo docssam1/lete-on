@@ -10,8 +10,10 @@
 <meta property="og:description" content="책을 펼치고, 수를 움직여 보세요. 유아부터 고등까지 이어지는 수학의 발견.">
 <meta property="og:image" content="https://lete-on.gfieldacademy.net/number_magic/assets/promo/video/poster-full.jpg"><meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="../assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="book.css?v=20260930-4"><link rel="stylesheet" href="experience.css?v=20260930-5">
+<link rel="stylesheet" href="front-page.css?v=20260930-6"><link rel="stylesheet" href="page-curl.css?v=20260930-6">
 </head>
 <body>
 <a class="skip-link" href="#bookContent">책 내용으로 건너뛰기</a>
@@ -22,8 +24,8 @@
 <span class="book-pages" aria-hidden="true"></span>
 <span class="book-cover-face">
 <span class="cover-edition">계산하는 힘, 읽고 생각하는 힘</span>
-<span class="cover-title" id="coverTitle">Numbers<br><i>of</i> Magic</span><span class="cover-name-ko">수의 마법</span>
-<span class="cover-art" aria-hidden="true"><span class="orbit"></span><span class="orbit second"></span><b>5</b><span class="cover-parts"><i>2</i><em>+</em><i>3</i></span></span>
+<span class="cover-title" id="coverTitle"><span>Numbers</span><span><i>of</i> Magic</span></span><span class="cover-name-ko">수의 마법</span>
+<span class="cover-art" id="coverMath" aria-hidden="true" data-expression="5 + 7"><canvas class="cover-stars"></canvas><span class="cover-equation"><span class="math-token" data-token="five">5</span><span class="math-token" data-token="two">2</span><span class="math-token math-plus" data-token="plusA">+</span><span class="math-token" data-token="three">3</span><span class="math-token math-plus" data-token="plusB">+</span><span class="math-token" data-token="seven">7</span><span class="math-token" data-token="ten">10</span><span class="math-token math-total" data-token="twelve">12</span></span><span class="cover-math-caption">수를 나누면, 쉬운 길이 보여요.</span><span class="cover-math-static">5 + 7 = 2 + 3 + 7<br>= 2 + 10 = 12</span></span>
 <img class="cover-logo" src="../assets/gfield-logo.svg" alt="GFIELD" width="90" height="30">
 </span></button>
 <p class="open-hint">책을 눌러 펼쳐 보세요 <span aria-hidden="true">↗</span></p>
@@ -66,5 +68,5 @@
 <dialog id="sheetZoom" aria-label="학습지 확대"><button id="zoomClose" aria-label="확대 닫기">닫기 ×</button><div class="zoom-scroll"><img id="zoomImage" alt="확대한 실제 학습지"></div></dialog>
 <noscript><p class="no-script">책을 펼치려면 JavaScript를 켜 주세요. <a href="../index.html">수의 마법으로 이동</a></p></noscript>
 <script src="../data/stages.js"></script><script src="../data/courses.js"></script>
-<script src="experience.js?v=20260930-4"></script><script src="book.js?v=20260930-4"></script>
+<script src="experience.js?v=20260930-4"></script><script src="cover-math.js?v=20260930-6"></script><script src="page-curl.js?v=20260930-6"></script><script src="book.js?v=20260930-6"></script>
 </body></html>
