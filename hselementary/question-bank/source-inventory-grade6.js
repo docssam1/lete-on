@@ -10545,6 +10545,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "groupTitle": "개념탐구 5 원문 유형",
       "sourceItemId": "6-2-u2-e5-mission-5",
       "normalizedTypeId": "6-2-u2-e5-mission-5",
+      "commonPublicTypeId": "6-2-u2-e5-example-1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
       "typeLabel": "남은 양초의 길이로 지난 시간 구하기",

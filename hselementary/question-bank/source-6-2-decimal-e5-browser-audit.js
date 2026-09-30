@@ -50,9 +50,30 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         else assert(previewText.includes("공식 답"), `${width}px ${id}: 실제 잠금 사유 표시`);
         const box = await preview.evaluate(element => element.getBoundingClientRect().toJSON());
         assert(box.left >= -1 && box.right <= width + 1, `${width}px ${id}: 미리보기 가로 잘림 없음`);
-        if (outputDir && ["example-3", "mission-3", "mission-4"].some(suffix => id.endsWith(suffix))) {
+        if (outputDir && ["example-3", "mission-3", "mission-4", "mission-5"].some(suffix => id.endsWith(suffix))) {
           await page.screenshot({ path: path.join(outputDir, `grade6-e5-${id.slice(-9)}-${width}.png`) });
         }
+      }
+      await page.locator("#typeSearchInput").fill("남은 양초의 길이로 지난 시간 구하기");
+      const commonRow = page.locator('[data-preview-type-id="6-2-u2-e5-mission-5"]');
+      assert((await page.locator('[data-tree-unit="6-2-u2"]').innerText()).includes("1개 유형 생성 가능"), `${width}px: 공통 유형은 한 개로 집계`);
+      assert((await commonRow.innerText()).includes("공통 유형"), `${width}px: Mission 5는 중복 잠금이 아닌 공통 유형 안내`);
+      await commonRow.click();
+      const commonPreview = page.locator("#typePreviewPopover:not([hidden])");
+      assert((await commonPreview.innerText()).includes("공통 유형 예시"), `${width}px: 공통 양초 문제 미리보기`);
+      if (outputDir && width !== 320) {
+        await commonPreview.locator('[data-select-common-type="6-2-u2-e5-example-1"]').scrollIntoViewIfNeeded();
+        await commonPreview.screenshot({ path: path.join(outputDir, `grade6-e5-common-preview-${width}.png`) });
+      }
+      await commonPreview.locator('[data-select-common-type="6-2-u2-e5-example-1"]').click();
+      assert.equal(await page.locator("#selectedTypeCount").innerText(), "1", `${width}px: 공통 유형 하나만 선택`);
+      assert((await page.locator("#selectedTypeList").innerText()).includes("일정한 속도로 타는 양초 시간 구하기"), `${width}px: 검증된 양초 예제 유형 연결`);
+      await page.locator("#generateButton").click();
+      await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+      assert.equal(await page.locator("#problemView .question-item").count(), 3, `${width}px: 중복 없는 검증 양초 문제 세 개 생성`);
+      if (outputDir && width !== 320) {
+        await page.screenshot({ path: path.join(outputDir, `grade6-e5-common-worksheet-${width}.png`) });
+        await page.locator("#problemView .question-item").first().screenshot({ path: path.join(outputDir, `grade6-e5-common-question-${width}.png`) });
       }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${width}px: 가로 스크롤 없음`);
       assert.deepEqual(errors, [], `${width}px: 브라우저 오류 없음`);
@@ -61,5 +82,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log("6-2 개념탐구 5 PC·390px·320px: 공개 4유형·나머지 잠금 미리보기 검사 통과");
+  console.log("6-2 개념탐구 5 PC·390px·320px: 공개 4유형·Mission 5 공통 선택·나머지 잠금 미리보기 검사 통과");
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });
