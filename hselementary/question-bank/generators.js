@@ -24567,6 +24567,53 @@
           generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
         });
     },
+    sourceGrade6SecondDecimalDivisionE2Exploration({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-exploration";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [rightWidth, fullHeight, lowerHeight, ratio] = [[96, 72, 36, 12], [84, 64, 24, 12], [75, 80, 30, 12]][poolIndex];
+      const upperHeight = fullHeight - lowerHeight;
+      const numerator = 10 * rightWidth * fullHeight;
+      const denominator = ratio * upperHeight;
+      if (numerator % denominator !== 0) throw new Error(`${sourceItemId}: 빠진 길이가 한 자리 소수가 아닙니다.`);
+      const leftWidth = numerator / denominator - rightWidth;
+      if (leftWidth <= 0) throw new Error(`${sourceItemId}: 빠진 길이가 양수가 아닙니다.`);
+      const cm = tenths => String(Number((tenths / 10).toFixed(1)));
+      const answer = `${cm(leftWidth)}cm`;
+      const figure = solved => {
+        const scale = Math.min(235 / (leftWidth + rightWidth), 105 / fullHeight);
+        const points = {
+          ga: { x: 42, y: 58 },
+          ma: { x: 42 + leftWidth * scale, y: 58 },
+          ra: { x: 42 + (leftWidth + rightWidth) * scale, y: 58 },
+          na: { x: 42, y: 58 + upperHeight * scale },
+          center: { x: 42 + leftWidth * scale, y: 58 + upperHeight * scale },
+          da: { x: 42 + (leftWidth + rightWidth) * scale, y: 58 + upperHeight * scale },
+          ba: { x: 42 + leftWidth * scale, y: 58 + fullHeight * scale },
+          sa: { x: 42 + (leftWidth + rightWidth) * scale, y: 58 + fullHeight * scale }
+        };
+        const x = key => points[key].x.toFixed(1);
+        const y = key => points[key].y.toFixed(1);
+        const label = (key, text, dx, dy) => `<text data-label-for="${key}" x="${(points[key].x + dx).toFixed(1)}" y="${(points[key].y + dy).toFixed(1)}">${text}</text>`;
+        const measured = (name, x1, y1, x2, y2, tx, ty, text) => `<g data-owner-id="${name}" class="source62-e2-measure"><line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/><text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle">${text}</text></g>`;
+        const leftHeightLine = measured("lower-height", points.center.x - 10, points.center.y, points.ba.x - 10, points.ba.y, points.center.x - 34, (points.center.y + points.ba.y) / 2 + 4, `${cm(lowerHeight)}cm`);
+        const fullHeightLine = solved || level !== 2 ? measured("full-height", points.ra.x + 28, points.ra.y, points.sa.x + 28, points.sa.y, points.ra.x + 53, (points.ra.y + points.sa.y) / 2 + 4, `${cm(fullHeight)}cm`) : "";
+        const widthLine = measured("right-width", points.ba.x, points.ba.y + 28, points.sa.x, points.sa.y + 28, (points.ba.x + points.sa.x) / 2, points.sa.y + 46, `${cm(rightWidth)}cm`);
+        const answerLine = solved ? measured("target-left-width", points.ga.x, 25, points.ma.x, 25, (points.ga.x + points.ma.x) / 2, 13, answer) : "";
+        const outline = `M ${x("ga")} ${y("ga")} H ${x("ra")} V ${y("sa")} H ${x("ba")} V ${y("ma")} M ${x("ga")} ${y("ga")} V ${y("na")} H ${x("da")}`;
+        return `<svg class="geometry-diagram source62-e2-diagram" viewBox="0 0 360 240" role="img" aria-label="위쪽 직사각형과 오른쪽 직사각형의 겹친 그림" data-source62-e2-geometry="${sourceItemId}" data-right-width-tenths="${rightWidth}" data-full-height-tenths="${fullHeight}" data-lower-height-tenths="${lowerHeight}" data-area-ratio-tenths="${ratio}" data-target-segment="ga-ma"><rect data-region="upper-rectangle" x="${x("ga")}" y="${y("ga")}" width="${(points.ra.x - points.ga.x).toFixed(1)}" height="${(points.na.y - points.ga.y).toFixed(1)}"/><rect data-region="right-rectangle" x="${x("ma")}" y="${y("ma")}" width="${(points.ra.x - points.ma.x).toFixed(1)}" height="${(points.sa.y - points.ra.y).toFixed(1)}"/><path data-layout-role="outline" d="${outline}"/>${label("ga", "ㄱ", -17, -14)}${label("ma", "ㅁ", 0, -17)}${label("ra", "ㄹ", 14, -14)}${label("na", "ㄴ", -25, 13)}${label("center", "ㅇ", -17, -17)}${label("da", "ㄷ", 14, 13)}${label("ba", "ㅂ", -15, 14)}${label("sa", "ㅅ", 15, 14)}${leftHeightLine}${fullHeightLine}${widthLine}${answerLine}</svg>`;
+      };
+      const easier = level === 0 ? `위쪽 직사각형의 높이는 ${cm(upperHeight)}cm입니다. ` : "";
+      const perimeter = cm(2 * (rightWidth + fullHeight));
+      const harder = level === 2 ? `직사각형 ㅁㅂㅅㄹ의 둘레는 ${perimeter}cm입니다. ` : "";
+      const prompt = `그림에서 직사각형 ㅁㅂㅅㄹ의 넓이는 직사각형 ㄱㄴㄷㄹ의 넓이의 ${cm(ratio)}배입니다. ${easier}${harder}선분 ㄱㅁ의 길이는 몇 cm인가요?${figure(false)}`;
+      const heightStep = level === 2 ? `오른쪽 직사각형의 전체 높이는 ${perimeter} ÷ 2 - ${cm(rightWidth)} = ${cm(fullHeight)}cm입니다. ` : "";
+      const solution = `${heightStep}위쪽 직사각형의 높이는 ${cm(fullHeight)} - ${cm(lowerHeight)} = ${cm(upperHeight)}cm입니다. 오른쪽 직사각형의 넓이는 ${cm(rightWidth)} × ${cm(fullHeight)} = ${(rightWidth * fullHeight / 100).toFixed(2)}cm²입니다. 위쪽 직사각형의 넓이는 이를 ${cm(ratio)}으로 나눈 값이므로 가로 길이는 ${cm(leftWidth + rightWidth)}cm입니다. 따라서 ㄱㅁ = ${cm(leftWidth + rightWidth)} - ${cm(rightWidth)} = ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${figure(true)}</div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29395,6 +29442,7 @@
     [type => type.sourceItemId === "6-2-u2-e1-mission-4", "sourceGrade6SecondDecimalDivisionE1Mission4"],
     [type => type.sourceItemId === "6-2-u2-e1-mission-5", "sourceGrade6SecondDecimalDivisionE1Mission5"],
     [type => type.sourceItemId === "6-2-u2-e1-mission-6", "sourceGrade6SecondDecimalDivisionE1Mission6"],
+    [type => type.sourceItemId === "6-2-u2-e2-exploration", "sourceGrade6SecondDecimalDivisionE2Exploration"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],
