@@ -25104,6 +25104,44 @@
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE5Example2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-example-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { sampleFuelMl: 1200, sampleDistanceTenths: 174, priceWon: 1480, sourceRatio: 20, firstLegRatio: 15, secondLegRatio: 10 },
+        { sampleFuelMl: 900, sampleDistanceTenths: 135, priceWon: 1600, sourceRatio: 20, firstLegRatio: 15, secondLegRatio: 10 },
+        { sampleFuelMl: 1500, sampleDistanceTenths: 240, priceWon: 1700, sourceRatio: 15, firstLegRatio: 12, secondLegRatio: 8 }
+      ][poolIndex];
+      const perLiterDistanceTenths = data.sampleDistanceTenths * 1000 / data.sampleFuelMl;
+      const targetRatio = level === 2 ? data.firstLegRatio + data.secondLegRatio : data.sourceRatio;
+      const targetDistanceTenths = data.sampleDistanceTenths * targetRatio;
+      const neededFuelMl = data.sampleFuelMl * targetRatio;
+      const costWon = neededFuelMl * data.priceWon / 1000;
+      if (![perLiterDistanceTenths, targetDistanceTenths, neededFuelMl, costWon].every(Number.isInteger) || costWon <= 0) throw new Error(`${sourceItemId}: 거리·연료·금액 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 1)}km`;
+      const liters = value => `${plainDecimal(value, 3)}L`;
+      const answer = `${costWon}원`;
+      const sample = level === 0
+        ? `이 자동차는 휘발유 1L로 ${km(perLiterDistanceTenths)}를 갑니다.`
+        : `휘발유 ${liters(data.sampleFuelMl)}로 ${km(data.sampleDistanceTenths)}를 갈 수 있는 자동차가 있습니다.`;
+      const trip = level === 2
+        ? `이 자동차가 첫날 ${km(data.sampleDistanceTenths * data.firstLegRatio)}를, 다음 날 ${km(data.sampleDistanceTenths * data.secondLegRatio)}를 갔다면`
+        : `이 자동차가 ${km(targetDistanceTenths)}를 가는 데`;
+      const prompt = `${sample} 휘발유 1L의 가격이 ${data.priceWon}원일 때, ${trip} 필요한 휘발유값은 얼마입니까?`;
+      const difficultyDesign = ["distance-per-liter-given", "source-fuel-distance-ratio", "two-day-total-distance"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-fuel-cost-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>필요한 휘발유값</strong>${row("전체 이동 거리", km(targetDistanceTenths))}${row("필요한 휘발유", liters(neededFuelMl))}${row("휘발유 1L 가격", `${data.priceWon}원`)}${row("휘발유값", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const totalStep = level === 2 ? `전체 거리는 ${math(`${km(data.sampleDistanceTenths * data.firstLegRatio)} + ${km(data.sampleDistanceTenths * data.secondLegRatio)} = ${km(targetDistanceTenths)}`)}입니다. ` : "";
+      const fuelStep = level === 0
+        ? `필요한 휘발유는 ${math(`${km(targetDistanceTenths)} ÷ (${km(perLiterDistanceTenths)}/L) = ${liters(neededFuelMl)}`)}입니다. `
+        : `${math(`${km(targetDistanceTenths)} ÷ ${km(data.sampleDistanceTenths)} = ${targetRatio}`)}배이므로 휘발유는 ${math(`${liters(data.sampleFuelMl)} × ${targetRatio} = ${liters(neededFuelMl)}`)}가 필요합니다. `;
+      const solution = `${totalStep}${fuelStep}휘발유값은 ${math(`${liters(neededFuelMl)} × ${data.priceWon}원/L = ${answer}`)}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondDecimalDivisionE5Example3({ level, variant = 0 }) {
       const sourceItemId = "6-2-u2-e5-example-3";
       if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);

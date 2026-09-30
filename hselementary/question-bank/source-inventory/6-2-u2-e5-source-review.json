@@ -34,7 +34,13 @@
     {
       "sourceItemId": "6-2-u2-e5-example-2",
       "answerContract": "fuel-distance-ratio-to-total-cost",
-      "independentCheck": "distance-ratio-to-liters-then-multiply-price-per-liter"
+      "independentCheck": "distance-ratio-to-liters-then-multiply-price-per-liter",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Example2",
+        "difficultyDesign": ["distance-per-liter-given", "source-fuel-distance-ratio", "two-day-total-distance"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-3",
