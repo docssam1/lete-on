@@ -94,4 +94,4 @@ for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant 
   );
 }
 assert.equal(checks, 18);
-console.log(`6-2 개념탐구 5 Mission 4 잠금 후보: 원문 0.59kg 독립 계산·손풀이 충돌 확인과 3난이도 × 3고정 묶음 × 2시드 검산 ${checks}회 통과`);
+console.log(`6-2 개념탐구 5 Mission 4 공개 유형: 원문 0.59kg 독립 계산·손풀이 충돌 확인과 3난이도 × 3고정 묶음 × 2시드 검산 ${checks}회 통과`);
