@@ -1911,12 +1911,12 @@
       "ordinal": 1,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "걷는 거리와 시간에서 빠르기를 구하고 새 거리에 걸리는 시간을 소수 첫째 자리까지 반올림하는 문제",
+      "answerContract": "walking-speed-to-rounded-travel-hours",
+      "visualRisk": "1시간 6분을 소수 시간으로 바꾼 뒤 마지막 시간만 반올림해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-2",
@@ -1926,12 +1926,12 @@
       "ordinal": 2,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "두 자동차의 서로 다른 연료량과 이동 거리에서 1L당 거리를 구해 나 자동차가 가 자동차의 몇 배인지 비교하는 문제",
+      "answerContract": "compare-second-car-per-liter-distance-to-first",
+      "visualRisk": "가와 나의 순서를 뒤집으면 역수가 되므로 비교 방향을 고정해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-3",
@@ -1941,12 +1941,12 @@
       "ordinal": 3,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "강물의 빠르기와 연어의 이동 거리·시간으로 거슬러 가는 시간을 구하는 문제",
+      "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
+      "visualRisk": "연어의 앞선 이동 기록이 물살 없는 곳에서의 빠르기인지 원문에 명확하지 않음. 손글씨 답도 독립 계산과 충돌함.",
+      "sourceVerified": true,
+      "implementationStatus": "ambiguity-locked",
+      "reviewReason": "연어의 기준 빠르기 조건과 손글씨 답을 공식 풀이로 대조하기 전에는 출제하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-4",
@@ -1956,12 +1956,12 @@
       "ordinal": 4,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "참기름을 덜어 내기 전후의 통 무게와 덜어 낸 양으로 빈 통의 무게를 구하는 문제",
+      "answerContract": "container-tare-from-oil-mass-change",
+      "visualRisk": "전체 무게와 참기름 무게를 구분해야 함. 손글씨 답과 독립 계산이 다름.",
+      "sourceVerified": true,
+      "implementationStatus": "conflict-locked",
+      "reviewReason": "손글씨 답과 독립 계산이 달라 공식 답으로 확인할 때까지 출제하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-5",
@@ -1971,12 +1971,12 @@
       "ordinal": 5,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "양초의 처음 길이와 나중 길이, 10분마다 타는 길이로 지난 시간을 시간과 분으로 구하는 문제",
+      "answerContract": "candle-remaining-length-to-hours-and-minutes",
+      "visualRisk": "10분에 타는 양을 1분에 타는 양으로 바꾸거나 10분 묶음 수를 세어야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-6",
@@ -1986,12 +1986,12 @@
       "ordinal": 6,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "같은 자동차의 갤런당 마일과 리터당 킬로미터 이동 거리, 마일 환산을 연결해 100갤런의 리터 수를 구하는 문제",
+      "answerContract": "derive-gallon-to-liter-from-vehicle-distances",
+      "visualRisk": "실제 갤런 단위 환산값을 외워서 대입하지 않고 원문에 주어진 연료·거리 관계로 계산해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-exploration",
