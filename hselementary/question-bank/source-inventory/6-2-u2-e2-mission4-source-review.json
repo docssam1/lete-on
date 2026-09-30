@@ -27,5 +27,17 @@
   },
   "officialAnswerEvidence": "not-available-for-this-item",
   "publicReleaseStatus": "locked",
-  "pending": ["심화 교재 공식 답과 문항 번호 대조", "원본 구조를 따르는 문제와 답 그림", "PC·모바일·A4 가시성 및 검산"]
+  "candidateVerification": {
+    "generator": "sourceGrade6SecondDecimalDivisionE2Mission4",
+    "fixedPoolCount": 3,
+    "independentMathAndGeometryChecks": 360,
+    "desktopMobileDiagramChecks": 36,
+    "geometrySkillRenderedDiagrams": 12,
+    "geometrySkillCollisions": 0,
+    "a4CandidatePages": 4,
+    "a4ProblemsAndSolutionsSeparated": true,
+    "a4ItemSplitObserved": false,
+    "scope": "검수용 별도 화면이며 실제 문제은행 공개 화면 검수가 아님"
+  },
+  "pending": ["심화 교재 공식 답과 문항 번호 대조", "실제 문제은행 PC·모바일·A4 출제 화면 검수"]
 }

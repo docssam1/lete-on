@@ -24858,6 +24858,73 @@
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE2Mission4({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-4";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [leftArea100, rightArea100, unionArea100, overlapBase100] = [[4680, 3030, 5970, 320], [5640, 4260, 8040, 310], [6120, 3960, 7830, 360]][poolIndex];
+      const sumArea100 = leftArea100 + rightArea100;
+      const overlapArea100 = sumArea100 - unionArea100;
+      const outsideArea100 = sumArea100 - 2 * overlapArea100;
+      const height1000 = 2 * overlapArea100 * 1000 / overlapBase100;
+      if (!Number.isInteger(height1000) || outsideArea100 <= 0 || overlapArea100 <= 0) throw new Error(`${sourceItemId}: 겹친 부분의 넓이 또는 높이가 맞지 않습니다.`);
+      const areaText = value => String(Number((value / 100).toFixed(2)));
+      const lengthText = value => String(Number((value / 100).toFixed(2)));
+      const leftArea = areaText(leftArea100);
+      const rightArea = areaText(rightArea100);
+      const unionArea = areaText(unionArea100);
+      const sumArea = areaText(sumArea100);
+      const outsideArea = areaText(outsideArea100);
+      const overlapArea = areaText(overlapArea100);
+      const baseLength = lengthText(overlapBase100);
+      const answer = `${String(Number((height1000 / 1000).toFixed(3)))}cm`;
+      const realHeight = height1000 / 1000;
+      const fullHeight = realHeight * 1.4;
+      const leftBase = 2 * (leftArea100 / 100) / fullHeight;
+      const rightBase = 2 * (rightArea100 / 100) / fullHeight;
+      const overlapBase = overlapBase100 / 100;
+      if (leftBase <= overlapBase || rightBase <= overlapBase) throw new Error(`${sourceItemId}: 원본과 같은 두 삼각형의 겹침을 그릴 수 없습니다.`);
+      const leftOverlap = leftBase - overlapBase;
+      const totalBase = leftOverlap + rightBase;
+      const x = value => Number((48 + 424 * value / totalBase).toFixed(2));
+      const yBase = 204;
+      const yTop = 50;
+      const yCross = Number((yBase - (yBase - yTop) / 1.4).toFixed(2));
+      const model = {
+        "ㄱ": [x(leftOverlap + 0.3 * overlapBase), yTop],
+        "ㄴ": [x(0), yBase],
+        "ㄷ": [x(leftBase), yBase],
+        "ㄹ": [x(leftOverlap + 0.7 * overlapBase), yTop],
+        "ㅁ": [x(leftOverlap), yBase],
+        "ㅂ": [x(totalBase), yBase],
+        "ㅅ": [x(leftOverlap + 0.5 * overlapBase), yCross],
+        "ㅇ": [x(leftOverlap + 0.5 * overlapBase), yBase]
+      };
+      const point = name => model[name].join(",");
+      const line = (from, to, role, extra = "") => `<line data-layout-role="${role}" data-from="${from}" data-to="${to}" x1="${model[from][0]}" y1="${model[from][1]}" x2="${model[to][0]}" y2="${model[to][1]}" ${extra}/>`;
+      const labels = Object.entries(model).map(([name, [px, py]]) => {
+        const dx = name === "ㄴ" ? -8 : name === "ㅂ" ? 8 : name === "ㅅ" ? -42 : 0;
+        const dy = py === yTop ? -12 : name === "ㅅ" ? 12 : 31;
+        return `<text data-label-for="${name}" x="${px + dx}" y="${py + dy}">${name}</text>`;
+      }).join("");
+      const diagram = solved => `<svg class="geometry-diagram source62-overlap-height" viewBox="0 0 520 318" role="img" aria-label="삼각형 ㄱㄴㄷ과 ㄹㅁㅂ이 겹쳐 생긴 삼각형 ㅅㅁㄷ과 높이 ㅅㅇ" data-geometry-kind="two-overlapping-triangles-height" data-source-item="${sourceItemId}" data-model="${leftArea100},${rightArea100},${unionArea100},${overlapBase100}" data-target-segment="ㅅ-ㅇ">
+        <polygon class="source62-overlap-region" points="${point("ㅅ")} ${point("ㅁ")} ${point("ㄷ")}"/>
+        ${line("ㄱ", "ㄴ", "left-outer-side")}${line("ㄱ", "ㄷ", "left-crossing-side")}${line("ㄴ", "ㄷ", "left-base")}${line("ㄹ", "ㅁ", "right-crossing-side")}${line("ㄹ", "ㅂ", "right-outer-side")}${line("ㅁ", "ㅂ", "right-base")}
+        <circle class="source62-overlap-cross-point" cx="${model["ㅅ"][0]}" cy="${model["ㅅ"][1]}" r="3"/>
+        ${line("ㅅ", "ㅇ", "target-height", 'stroke-dasharray="5 4"')}
+        <path class="source62-overlap-right-angle" d="M${model["ㅇ"][0]},${yBase - 11}h11v11"/>
+        ${labels}
+        <path class="source62-overlap-bracket" d="M${model["ㅁ"][0]},254v8H${model["ㄷ"][0]}v-8"/>
+        <text class="source62-overlap-base-label" x="${model["ㅇ"][0]}" y="293">${baseLength}cm</text>
+        ${solved ? `<line class="source62-overlap-solved-height" x1="${model["ㅅ"][0]}" y1="${model["ㅅ"][1]}" x2="${model["ㅇ"][0]}" y2="${model["ㅇ"][1]}"/>` : ""}
+      </svg>`;
+      const givens = level === 0 ? `겹친 부분의 넓이는 ${overlapArea}cm²입니다.` : level === 1 ? `삼각형 ㄱㄴㄷ의 넓이는 ${leftArea}cm², 삼각형 ㄹㅁㅂ의 넓이는 ${rightArea}cm²이고 전체 넓이는 ${unionArea}cm²입니다.` : `두 삼각형의 넓이의 합은 ${sumArea}cm²이고 겹치지 않은 두 부분의 넓이의 합은 ${outsideArea}cm²입니다.`;
+      const areaStep = level === 0 ? `겹친 삼각형의 넓이는 ${overlapArea}cm²입니다.` : level === 1 ? `겹친 삼각형의 넓이는 ${leftArea}+${rightArea}-${unionArea}=${overlapArea}cm²입니다.` : `두 삼각형의 넓이 합에서 겹치지 않은 두 부분의 넓이 합을 빼면 겹친 부분 두 개의 넓이가 남습니다. 겹친 부분의 넓이는 (${sumArea}-${outsideArea})÷2=${overlapArea}cm²입니다.`;
+      return result(`그림과 같이 두 삼각형을 겹쳐 놓았습니다. ${givens} 선분 ㅅㅇ의 길이는 몇 cm인가요?${diagram(false)}`, answer, `${areaStep} 밑변 ㅁㄷ은 ${baseLength}cm이므로 높이 ㅅㅇ은 ${overlapArea}×2÷${baseLength}=${answer}입니다.`, {
+        answerVisual: `<div class="source62-overlap-height-answer" data-answer-source="${sourceItemId}">${diagram(true)}<p class="source62-overlap-result">ㅅㅇ = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29718,6 +29785,7 @@
     [type => type.sourceItemId === "6-2-u2-e2-mission-1", "sourceGrade6SecondDecimalDivisionE2Mission1"],
     [type => type.sourceItemId === "6-2-u2-e2-mission-2", "sourceGrade6SecondDecimalDivisionE2Mission2"],
     [type => type.sourceItemId === "6-2-u2-e2-mission-3", "sourceGrade6SecondDecimalDivisionE2Mission3"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-4", "sourceGrade6SecondDecimalDivisionE2Mission4"],
     [type => type.sourceItemId === "6-2-u2-e2-mission-5", "sourceGrade6SecondDecimalDivisionE2Mission5"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
