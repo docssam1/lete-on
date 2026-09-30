@@ -1686,12 +1686,12 @@
       "ordinal": 1,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "같은 나누는 수를 쓰는 세 나눗셈 각각에서 몫을 자연수 부분까지 구하고 나머지를 구하는 묶음 문제",
+      "answerContract": "three-whole-quotients-with-decimal-remainders",
+      "visualRisk": "세 나누어지는 수의 소수점 위치가 다르므로 각 나머지의 단위를 원래 자리에서 확인해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 세 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-example-2",
@@ -1701,12 +1701,12 @@
       "ordinal": 2,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "몫을 소수 첫째 자리에서 나누어떨어지게 하려면 나누어지는 수에 더해야 할 최소량을 구하는 문제",
+      "answerContract": "minimum-addition-to-exact-tenth-quotient",
+      "visualRisk": "몫의 다음 소수 첫째 자리 배수를 찾고 기존 수와의 차를 원래 자리 단위로 계산해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-example-3",
@@ -1716,12 +1716,12 @@
       "ordinal": 3,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "첫 나눗셈의 소수 둘째 자리 몫과 나머지, 반올림한 몫으로 가능한 최소 원래 수를 찾고 다른 수로 나눈 새 나머지를 구하는 문제",
+      "answerContract": "minimum-dividend-from-rounded-quotient-then-new-remainder",
+      "visualRisk": "반올림은 첫 몫의 조건에만 적용하고, 새 나눗셈에서는 몫을 소수 둘째 자리에서 멈춰 나머지를 계산해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-example-4",
@@ -1731,12 +1731,12 @@
       "ordinal": 4,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "소수 첫째 자리 몫과 나머지로 원래 수를 되찾은 뒤 같은 수로 계속 나누어 소수 둘째 자리의 새 나머지를 구하는 문제",
+      "answerContract": "continued-division-new-remainder",
+      "visualRisk": "첫째 자리의 기존 나머지를 둘째 자리의 새 나머지로 그대로 옮기면 틀림. 자리 늘림에 따른 소수점 위치를 다시 계산해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "handwriting-conflict-locked",
+      "reviewReason": "원본의 손글씨 답이 독립 계산과 달라 공식 답 대조 전에는 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-1",

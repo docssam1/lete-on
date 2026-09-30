@@ -22,7 +22,11 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
       await page.locator("#unitFilter").selectOption("6-2-u2");
       for (const [id, label] of [
         ["6-2-u2-e4-exploration-1", "만들 수 있는 반지 수와 남은 금의 무게 구하기"],
-        ["6-2-u2-e4-exploration-2", "몫을 구하는 자리가 달라질 때 가장 작은 나머지 구하기"]
+        ["6-2-u2-e4-exploration-2", "몫을 구하는 자리가 달라질 때 가장 작은 나머지 구하기"],
+        ["6-2-u2-e4-example-1", "세 나눗셈의 몫과 나머지 구하기"],
+        ["6-2-u2-e4-example-2", "몫이 소수 첫째 자리에서 끝나도록 더하기"],
+        ["6-2-u2-e4-example-3", "반올림 조건으로 수를 찾아 새 나머지 구하기"],
+        ["6-2-u2-e4-example-4", "몫의 자리를 늘려 새 나머지 구하기"]
       ]) {
         await page.locator("#typeSearchInput").fill(label);
         const row = page.locator(`[data-preview-type-id="${id}"]`);
@@ -34,7 +38,8 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         await preview.waitFor({ state: "visible" });
         const box = await preview.evaluate(element => element.getBoundingClientRect().toJSON());
         assert(box.left >= -1 && box.right <= width + 1, `${width}px ${id}: 미리보기 가로 잘림 없음`);
-        if (outputDir) await page.screenshot({ path: path.join(outputDir, `grade6-e4-exploration-${id.slice(-1)}-${width}.png`) });
+        if (id.endsWith("example-4")) assert((await preview.innerText()).includes("공식 답"), `${width}px: 필기와 계산이 다른 예제의 잠금 이유`);
+        if (outputDir) await page.screenshot({ path: path.join(outputDir, `grade6-e4-${id.includes("example") ? "example" : "exploration"}-${id.slice(-1)}-${width}.png`) });
       }
       assert(!(await page.locator("#catalogPanel").innerText()).includes("반올림한 몫과 나머지 관계 알아보기"), "원문에 없는 반올림 유형명 제거");
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${width}px: 가로 스크롤 없음`);
@@ -44,5 +49,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log("6-2 개념탐구 4 공개 분류표 PC·390px: 두 원문 물음 분리와 잠금 미리보기 통과");
+  console.log("6-2 개념탐구 4 공개 분류표 PC·390px: 두 탐구·네 예제 유형과 잠금 미리보기 통과");
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

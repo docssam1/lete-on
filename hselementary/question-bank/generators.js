@@ -24987,6 +24987,54 @@
           answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
         });
     },
+    sourceGrade6SecondDecimalDivisionE3Mission2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e3-mission-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const digits = [
+        [1, 2, 3, 4, 6, 8],
+        [1, 2, 4, 6, 7, 9],
+        [2, 3, 4, 5, 7, 8]
+      ][poolIndex];
+      const smallest = Math.min(...digits);
+      const largest = Math.max(...digits);
+      let best = null;
+      let bestCount = 0;
+      const compare = (numerator, denominator) => {
+        const order = numerator.concat(denominator);
+        if (level === 0 && order[0] !== largest) return;
+        if (level === 2 && order[3] === smallest) return;
+        const n = order[0] * 100 + order[1] * 10 + order[2];
+        const d = order[3] * 100 + order[4] * 10 + order[5];
+        if (!best || n * best.d > best.n * d) {
+          best = { n, d, order };
+          bestCount = 1;
+        } else if (n * best.d === best.n * d) bestCount += 1;
+      };
+      const arrange = (placed, remaining) => {
+        if (!remaining.length) {
+          compare(placed.slice(0, 3), placed.slice(3));
+          return;
+        }
+        remaining.forEach((digit, index) => arrange(placed.concat(digit), remaining.filter((_, other) => other !== index)));
+      };
+      arrange([], digits);
+      if (!best || bestCount !== 1) throw new Error(`${sourceItemId}: 가장 큰 몫의 배열이 하나가 아닙니다.`);
+      const shownNumber = value => `${Math.floor(value / 100)}.${String(value % 100).padStart(2, "0")}`;
+      const roundedCents = Math.floor((200 * best.n + best.d) / (2 * best.d));
+      const answer = (roundedCents / 100).toFixed(2);
+      const cards = `<div class="source62-card-max__cards" role="group" aria-label="수 카드 ${digits.join(", ")}">${digits.map(digit => `<span class="source62-card-max__card" data-card-digit="${digit}">${digit}</span>`).join("")}</div>`;
+      const extraCondition = level === 0 ? `나누어지는 수의 일의 자리에는 ${largest}를 놓습니다. ` : level === 2 ? `나누는 수의 일의 자리에는 가장 작은 카드 숫자를 놓을 수 없습니다. ` : "";
+      const expression = `${shownNumber(best.n)} ÷ ${shownNumber(best.d)}`;
+      const reasoning = level === 2
+        ? "나누는 수의 일의 자리에는 쓸 수 있는 카드 중 가장 작은 수를 놓습니다. 나누어지는 수에는 큰 카드를 앞자리부터 놓고 남은 자리의 배치를 비교합니다."
+        : "나누어지는 수의 일의 자리에는 큰 카드를, 나누는 수의 일의 자리에는 작은 카드를 놓습니다. 남은 자리의 카드 배치를 비교합니다.";
+      const answerVisual = `<div class="source62-card-max__answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${["fixed-leading-card", "source-structure", "excluded-smallest-divisor"][level]}"><div class="source62-card-max__expression">${expression}</div><div class="source62-card-max__result">몫을 소수 둘째 자리까지 반올림하면 <strong>${answer}</strong></div></div>`;
+      return result(`<span class="source62-card-max__text">다음 수 카드를 한 번씩 모두 사용하여 (소수 두 자리 수) ÷ (소수 두 자리 수)의 몫이 가장 큰 나눗셈식을 만드세요. ${extraCondition}그 몫을 반올림하여 소수 둘째 자리까지 나타내세요.</span>${cards}`, answer,
+        reasoning, {
+          answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");

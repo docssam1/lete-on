@@ -1,0 +1,47 @@
+.source62-card-max__cards,
+.source62-card-max__answer {
+  font-family: Pretendard, "Malgun Gothic", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.source62-card-max__text {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.source62-card-max__cards {
+  display: grid;
+  grid-template-columns: repeat(6, 38px);
+  gap: 7px;
+  width: max-content;
+  max-width: 100%;
+  margin: 13px 0;
+}
+
+.source62-card-max__card {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 42px;
+  border: 1px solid #383838;
+  color: #202020;
+  background: #fff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.source62-card-max__answer {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+  color: #202020;
+}
+
+.source62-card-max__expression {
+  font-size: 19px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.source62-card-max__result strong { font-weight: 800; }
