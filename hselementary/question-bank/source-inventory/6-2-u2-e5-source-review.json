@@ -23,7 +23,13 @@
     {
       "sourceItemId": "6-2-u2-e5-example-1",
       "answerContract": "candle-burn-length-to-hours-and-minutes",
-      "independentCheck": "convert-length-to-millimeters-then-rate-to-total-minutes"
+      "independentCheck": "convert-length-to-millimeters-then-rate-to-total-minutes",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Example1",
+        "difficultyDesign": ["lengths-in-millimeters", "source-centimeters-to-millimeters", "extinguished-time-extra-step"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-2",
