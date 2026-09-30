@@ -24614,6 +24614,30 @@
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE2Example1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-example-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [wheelTenths, turnsTenths, pedalCount] = [[632, 45, 75], [848, 35, 60], [2016, 24, 125]][poolIndex];
+      const distanceHundredthsCm = wheelTenths * turnsTenths * pedalCount;
+      if (distanceHundredthsCm % 100 !== 0) throw new Error(`${sourceItemId}: 전체 이동 거리가 cm로 정확히 나타나지 않습니다.`);
+      const distanceCm = distanceHundredthsCm / 100;
+      const compact = value => String(Number(value.toFixed(4)));
+      const wheelCm = compact(wheelTenths / 10);
+      const wheelTurns = compact(turnsTenths / 10);
+      const distance = level === 0 ? `${distanceCm}cm` : `${compact(distanceCm / 100)}m`;
+      const oneWay = `${compact(distanceCm / 200)}m`;
+      const perPedalCm = wheelTenths * turnsTenths / 100;
+      const answer = `${pedalCount}번`;
+      const route = level === 2 ? `출발점에서 ${oneWay} 떨어진 곳까지 갔다가 같은 길로 돌아오려면` : `이 자전거로 ${distance}를 가려면`;
+      const prompt = `어떤 자전거는 바퀴가 한 번 돌 때 ${wheelCm}cm씩 가고 페달을 한 번 돌릴 때마다 바퀴가 ${wheelTurns}바퀴씩 돕니다. ${route} 페달을 몇 번 돌려야 하나요?`;
+      const conversion = level === 0 ? "" : level === 2 ? `왕복 거리는 ${oneWay} × 2 = ${distance} = ${distanceCm}cm입니다. ` : `${distance} = ${distanceCm}cm입니다. `;
+      const solution = `페달을 한 번 돌릴 때 자전거가 가는 거리는 ${wheelCm} × ${wheelTurns} = ${compact(perPedalCm)}cm입니다. ${conversion}필요한 횟수는 ${distanceCm} ÷ ${compact(perPedalCm)} = ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact"><p>페달 한 번: ${wheelCm} × ${wheelTurns} = ${compact(perPedalCm)}cm</p>${level === 0 ? "" : `<p>${level === 2 ? `${oneWay} × 2 = ` : ""}${distance} = ${distanceCm}cm</p>`}<p>페달 횟수: ${distanceCm} ÷ ${compact(perPedalCm)} = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -29468,6 +29492,7 @@
     [type => type.sourceItemId === "6-2-u2-e1-mission-5", "sourceGrade6SecondDecimalDivisionE1Mission5"],
     [type => type.sourceItemId === "6-2-u2-e1-mission-6", "sourceGrade6SecondDecimalDivisionE1Mission6"],
     [type => type.sourceItemId === "6-2-u2-e2-exploration", "sourceGrade6SecondDecimalDivisionE2Exploration"],
+    [type => type.sourceItemId === "6-2-u2-e2-example-1", "sourceGrade6SecondDecimalDivisionE2Example1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],
