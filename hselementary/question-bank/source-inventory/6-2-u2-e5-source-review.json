@@ -27,7 +27,13 @@
     {
       "sourceItemId": "6-2-u2-e5-example-3",
       "answerContract": "combined-faucet-rates-to-minutes-and-seconds",
-      "independentCheck": "convert-both-durations-to-seconds-then-add-independent-flow-rates"
+      "independentCheck": "convert-both-durations-to-seconds-then-add-independent-flow-rates",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Example3",
+        "difficultyDesign": ["seconds-given", "source-mixed-times", "initial-water-extra-step"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-4",
