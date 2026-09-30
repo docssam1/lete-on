@@ -26,6 +26,22 @@ const seconds = text => {
 };
 const duration = value => `${value / 60n}분${value % 60n ? ` ${value % 60n}초` : ""}`;
 
+// 원본의 두 독립 계량값에서 1초당 유량과 답을 재계산한다.
+assert.equal(ml("54.6") / seconds("3분 15초"), 280n);
+assert.equal(ml("38.1") / seconds("2분 30초"), 254n);
+assert.equal(ml("280.35") % (280n + 254n), 0n);
+assert.equal(ml("280.35") / (280n + 254n), 525n);
+const originalShape = window.HSE_GENERATORS.generate(candidate, 0, 0, 1, 0);
+assert(originalShape.prompt.includes("㉮에서는 3분 15초 동안 54.6L"));
+assert(originalShape.prompt.includes("㉯에서는 2분 30초 동안 38.1L"));
+assert(originalShape.prompt.includes("함께 틀어 280.35L의 물"));
+assert.equal(originalShape.answer, "8분 45초");
+const hardShape = window.HSE_GENERATORS.generate(candidate, 0, 1, 1, 0);
+assert.equal(ml("347.1") - ml("13.35"), 534n * 625n);
+assert(hardShape.prompt.includes("처음에 13.35L의 물"));
+assert(hardShape.prompt.includes("수조에 든 물이 347.1L에 이를 때까지"));
+assert.equal(hardShape.answer, "10분 25초");
+
 let checks = 0;
 for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant += 1) {
   const level = difficulty + 1;
@@ -40,10 +56,11 @@ for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant 
     assert.equal(amountB % timeB, 0n, "㉯ 초당 물의 양이 정확히 정해짐");
     const totalRate = amountA / timeA + amountB / timeB;
     const initial = item.prompt.match(/처음에 ([\d.]+)L의 물이 들어 있는 수조/);
-    const final = item.prompt.match(/수조에 든 물이 ([\d.]+)L에 이를 때까지 지금부터/);
+    const final = item.prompt.match(/수조에 든 물이 ([\d.]+)L에 이를 때까지/);
     const emptyTarget = item.prompt.match(/함께 틀어 ([\d.]+)L의 물을 받으려면/);
     assert.equal(Boolean(initial), level === 2, "어려움에서만 처음 물 조건을 추가");
-    if (initial) assert(item.prompt.includes("지금부터 몇 분 몇 초가 더"), "처음 물이 있을 때 추가 시간을 물음");
+    assert.equal(Boolean(final), level === 2, "어려움에서 끝 물의 양을 명시");
+    if (initial) assert(item.prompt.includes("몇 분 몇 초가 걸릴까요"), "처음 물이 있을 때 걸린 시간을 물음");
     const required = initial ? ml(final[1]) - ml(initial[1]) : ml(emptyTarget[1]);
     assert(required > 0n && totalRate > 0n && required % totalRate === 0n, "시간 답은 정확히 하나");
     if (initial) {
@@ -72,4 +89,4 @@ for (let variant = 0; variant < 3; variant += 1) {
   const hardFinal = ml(hard.prompt.match(/수조에 든 물이 ([\d.]+)L에 이를 때까지/)[1]);
   assert.notEqual(sourceTarget, hardFinal - hardStart, "어려움이 기준 문제의 같은 나눗셈을 반복하지 않음");
 }
-console.log(`6-2 개념탐구 5 예제 5-3 잠금 후보: 3난이도 × 3고정 묶음 × 40회 독립 물량·시간 검산 ${checks}회 통과`);
+console.log(`6-2 개념탐구 5 예제 5-3 잠금 후보: 원문 8분 45초 독립 계산과 3난이도 × 3고정 묶음 × 40회 물량·시간 검산 ${checks}회 통과`);

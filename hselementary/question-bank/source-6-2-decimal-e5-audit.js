@@ -38,8 +38,18 @@ for (const reviewed of review.items) {
   assert.equal(publicType.reviewLocked, true);
   assert.equal(publicType.generatorKey, "");
   assert.equal(window.HSE_GENERATORS.generate(publicType, 0, 0, 1), null, `${id}: 공식 답 대조 전 출제 금지`);
+  assert(reviewed.candidateVerification, `${id}: 잠금 후보 생성기 기록 누락`);
+  assert.equal(reviewed.candidateVerification.fixedPoolCount, 3);
+  assert.equal(reviewed.candidateVerification.publicReleaseStatus, "locked");
+  assert.equal(reviewed.candidateVerification.difficultyDesign.length, 3);
+  const candidate = { ...publicType, reviewLocked: false, generatorKey: reviewed.candidateVerification.generator };
+  for (const difficulty of [-1, 0, 1]) {
+    const generated = window.HSE_GENERATORS.generate(candidate, 0, difficulty, 1, 0);
+    assert.equal(generated.sourceItemId, id, `${id}: 후보 문항이 원본 항목을 가리킴`);
+    assert(generated.prompt && generated.answer && generated.solution && generated.answerVisual, `${id}: 문제·정답·풀이·답 그림 존재`);
+  }
 }
 
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-example-2").name, /연료값/);
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-example-4").name, /거슬러/);
-console.log("6-2 개념탐구 5 본문·예제 5문항: 원문 구조·문장형 표시·공개 잠금 검사 통과");
+console.log("6-2 개념탐구 5 본문·예제 5문항: 원문 구조·3난이도 후보·공개 잠금 검사 통과");

@@ -25147,7 +25147,7 @@
       if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
       const poolIndex = variant % 3;
       const data = [
-        { rateA: 240, rateB: 180, timeA: 150, timeB: 225, targetTime: 485, hardTime: 635, startMl: 12600 },
+        { rateA: 280, rateB: 254, timeA: 195, timeB: 150, targetTime: 525, hardTime: 625, startMl: 13350 },
         { rateA: 275, rateB: 325, timeA: 160, timeB: 200, targetTime: 625, hardTime: 655, startMl: 18600 },
         { rateA: 245, rateB: 160, timeA: 140, timeB: 205, targetTime: 740, hardTime: 820, startMl: 16200 }
       ][poolIndex];
@@ -25162,7 +25162,7 @@
       const sampleTime = seconds => level === 0 ? `${seconds}초` : duration(seconds);
       const answer = duration(elapsedSeconds);
       const question = level === 2
-        ? `처음에 ${liters(startingMl)}L의 물이 들어 있는 수조에 두 수도꼭지를 함께 틀었습니다. 수조에 든 물이 ${liters(endingMl)}L에 이를 때까지 지금부터 몇 분 몇 초가 더 걸릴까요?`
+        ? `처음에 ${liters(startingMl)}L의 물이 들어 있는 수조에 두 수도꼭지를 함께 틀었습니다. 수조에 든 물이 ${liters(endingMl)}L에 이를 때까지 몇 분 몇 초가 걸릴까요?`
         : `두 수도꼭지를 함께 틀어 ${liters(neededMl)}L의 물을 받으려면 몇 분 몇 초가 걸릴까요?`;
       const difficultyDesign = ["seconds-given", "source-mixed-times", "initial-water-extra-step"][level];
       const prompt = `두 수도꼭지를 각각 따로 틀어 물의 양을 재었습니다. ㉮에서는 ${sampleTime(data.timeA)} 동안 ${liters(waterA)}L, ㉯에서는 ${sampleTime(data.timeB)} 동안 ${liters(waterB)}L의 물이 나왔습니다. 각 수도꼭지에서 1초 동안 나오는 물의 양이 일정할 때, ${question}`;
