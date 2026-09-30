@@ -1,0 +1,29 @@
+.geometry-diagram.source62-four-rect {
+  display: block;
+  width: min(500px, 100%);
+  height: auto;
+  margin: 8px auto;
+  overflow: visible;
+  font-family: Pretendard, "Malgun Gothic", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.source62-four-rect .source62-four-rect-outline,
+.source62-four-rect .source62-four-rect-divider {
+  fill: none;
+  stroke: #222;
+  stroke-width: 3;
+  stroke-linecap: square;
+}
+
+.source62-four-rect .source62-four-rect-label {
+  fill: #111;
+  text-anchor: middle;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.source62-four-rect .source62-four-rect-unit { font-size: 16px; }
+.source62-four-rect-answer { min-width: 0; max-width: 100%; }

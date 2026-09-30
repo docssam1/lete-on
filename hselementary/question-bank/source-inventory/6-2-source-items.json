@@ -1447,11 +1447,11 @@
       "pdfPage": 19,
       "printedPage": 21,
       "sourceShape": "네 직사각형을 2행 2열로 붙인 그림에서 세 부분의 넓이로 빈 한 부분의 넓이를 구하는 문제",
-      "answerContract": "area",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "answerContract": "four-rectangle-missing-area",
+      "visualRisk": "같은 행의 높이와 같은 열의 너비가 정확히 이어져야 하고, ㉠ 및 세 넓이 수치가 선과 겹치지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "candidate-verified-release-locked",
+      "reviewReason": "원문 그림과 독립 계산은 확인했으나 심화 교재 공식 답 대조와 실제 출제 화면 검수 전에는 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-exploration",

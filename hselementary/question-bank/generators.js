@@ -24925,6 +24925,39 @@
         generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE2Mission6({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-6";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [topRight100, bottomLeft100, bottomRight100] = [[600, 925, 555], [480, 720, 600], [735, 1260, 525]][poolIndex];
+      const numerator = topRight100 * bottomLeft100;
+      if (numerator % bottomRight100 !== 0) throw new Error(`${sourceItemId}: 빈칸의 넓이가 소수 둘째 자리로 정확히 정해지지 않습니다.`);
+      const target100 = numerator / bottomRight100;
+      const shown = value => String(Number((value / 100).toFixed(2)));
+      const x0 = 28;
+      const y0 = 30;
+      const x1 = 472;
+      const y1 = 252;
+      const splitX = Number((x0 + (x1 - x0) * bottomLeft100 / (bottomLeft100 + bottomRight100)).toFixed(2));
+      const splitY = Number((y0 + (y1 - y0) * topRight100 / (topRight100 + bottomRight100)).toFixed(2));
+      const mid = (a, b) => Number(((a + b) / 2).toFixed(2));
+      const label = (value, cx, cy, target = false) => `<text class="source62-four-rect-label${target ? " is-target" : ""}" x="${cx}" y="${cy}" dominant-baseline="middle">${value}<tspan class="source62-four-rect-unit" dx="3">cm²</tspan></text>`;
+      const diagram = solved => `<svg class="geometry-diagram source62-four-rect" viewBox="0 0 500 282" role="img" aria-label="같은 행과 열의 경계가 이어진 네 직사각형" data-source-item="${sourceItemId}" data-geometry-kind="four-adjacent-rectangles" data-model="${topRight100},${bottomLeft100},${bottomRight100}" data-split="${splitX},${splitY}">
+        <rect class="source62-four-rect-outline" x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}"/>
+        <line class="source62-four-rect-divider" x1="${splitX}" y1="${y0}" x2="${splitX}" y2="${y1}"/>
+        <line class="source62-four-rect-divider" x1="${x0}" y1="${splitY}" x2="${x1}" y2="${splitY}"/>
+        ${label(solved ? shown(target100) : "㉠", mid(x0, splitX), mid(y0, splitY), true)}
+        ${label(shown(topRight100), mid(splitX, x1), mid(y0, splitY))}
+        ${label(shown(bottomLeft100), mid(x0, splitX), mid(splitY, y1))}
+        ${label(shown(bottomRight100), mid(splitX, x1), mid(splitY, y1))}
+      </svg>`;
+      const answer = `${shown(target100)}cm²`;
+      return result(`그림과 같이 4개의 직사각형을 이어 붙였습니다. ㉠에 알맞은 넓이를 구하세요.${diagram(false)}`, answer,
+        `같은 줄의 두 직사각형은 높이가 같고, 같은 칸의 두 직사각형은 너비가 같습니다. 따라서 ㉠×${shown(bottomRight100)}=${shown(topRight100)}×${shown(bottomLeft100)}이고, ㉠=${shown(topRight100)}×${shown(bottomLeft100)}÷${shown(bottomRight100)}=${answer}입니다.`, {
+          answerVisual: `<div class="source62-four-rect-answer" data-answer-source="${sourceItemId}">${diagram(true)}</div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");

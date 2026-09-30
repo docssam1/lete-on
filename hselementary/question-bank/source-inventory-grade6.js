@@ -9645,7 +9645,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "difficultyBand": 1,
       "sourceTier": "advanced",
       "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewReason": "심화 교재의 공식 답안 대조와 실제 출제 화면 검수가 남아 있습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
       "answerVisualStatus": "not-implemented",
