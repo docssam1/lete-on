@@ -25035,6 +25035,38 @@
           answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
         });
     },
+    sourceGrade6SecondDecimalDivisionE5Example3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-example-3";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { rateA: 240, rateB: 180, timeA: 150, timeB: 225, targetTime: 485, hardTime: 635, startMl: 12600 },
+        { rateA: 275, rateB: 325, timeA: 160, timeB: 200, targetTime: 625, hardTime: 655, startMl: 18600 },
+        { rateA: 245, rateB: 160, timeA: 140, timeB: 205, targetTime: 740, hardTime: 820, startMl: 16200 }
+      ][poolIndex];
+      const waterA = data.rateA * data.timeA;
+      const waterB = data.rateB * data.timeB;
+      const elapsedSeconds = level === 2 ? data.hardTime : data.targetTime;
+      const neededMl = (data.rateA + data.rateB) * elapsedSeconds;
+      const startingMl = level === 2 ? data.startMl : 0;
+      const endingMl = startingMl + neededMl;
+      const liters = ml => plainDecimal(ml, 3);
+      const duration = seconds => `${Math.floor(seconds / 60)}분${seconds % 60 ? ` ${seconds % 60}초` : ""}`;
+      const sampleTime = seconds => level === 0 ? `${seconds}초` : duration(seconds);
+      const answer = duration(elapsedSeconds);
+      const question = level === 2
+        ? `처음에 ${liters(startingMl)}L의 물이 들어 있는 수조에 두 수도꼭지를 함께 틀었습니다. 수조에 든 물이 ${liters(endingMl)}L에 이를 때까지 지금부터 몇 분 몇 초가 더 걸릴까요?`
+        : `두 수도꼭지를 함께 틀어 ${liters(neededMl)}L의 물을 받으려면 몇 분 몇 초가 걸릴까요?`;
+      const difficultyDesign = ["seconds-given", "source-mixed-times", "initial-water-extra-step"][level];
+      const prompt = `두 수도꼭지를 각각 따로 틀어 물의 양을 재었습니다. ㉮에서는 ${sampleTime(data.timeA)} 동안 ${liters(waterA)}L, ㉯에서는 ${sampleTime(data.timeB)} 동안 ${liters(waterB)}L의 물이 나왔습니다. 각 수도꼭지에서 1초 동안 나오는 물의 양이 일정할 때, ${question}`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-two-taps-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>1초 동안 나오는 물</strong>${row("㉮", `${liters(data.rateA)}L`)}${row("㉯", `${liters(data.rateB)}L`)}${row("두 수도꼭지", `${liters(data.rateA + data.rateB)}L`)}${level === 2 ? row("새로 받을 물", `${liters(neededMl)}L`) : ""}${row("걸린 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const solution = `1초에 나오는 물은 ㉮가 ${math(`${liters(waterA)} ÷ ${data.timeA} = ${liters(data.rateA)} L`)}, ㉯가 ${math(`${liters(waterB)} ÷ ${data.timeB} = ${liters(data.rateB)} L`)}입니다. ${level === 2 ? `새로 받아야 할 물은 ${math(`${liters(endingMl)} − ${liters(startingMl)} = ${liters(neededMl)} L`)}입니다. ` : ""}함께 틀면 1초에 ${liters(data.rateA + data.rateB)}L이므로 ${math(`${liters(neededMl)} ÷ ${liters(data.rateA + data.rateB)} = ${elapsedSeconds}초`)}, 즉 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
