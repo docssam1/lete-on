@@ -85,6 +85,10 @@ assert.match(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").vi
 assert.equal(review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").overlapWith, "6-2-u2-e5-example-1");
 assert(!review.missions.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").candidateVerification, "중복 풀이 구조는 별도 후보 생성 전 검수");
 assert.equal(source.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").commonPublicTypeId, "6-2-u2-e5-example-1");
+assert.equal(window.HSE_SOURCE_INVENTORY_GRADE6.items.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").commonPublicTypeId,
+  "6-2-u2-e5-example-1", "원문 공통 유형 연결이 공개 분류표에도 남아 있음");
+assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-5").commonPublicTypeId,
+  "6-2-u2-e5-example-1", "원문 공통 유형 연결이 화면 유형에도 전달됨");
 const candleExample = types.find(item => item.sourceItemId === "6-2-u2-e5-example-1");
 assert(!candleExample?.reviewLocked && candleExample.generatorKey === "sourceGrade6SecondDecimalDivisionE5Example1", "겹치는 양초 유형을 공통 출제");
 const burnedHundredthsCm = 2170n - 970n;

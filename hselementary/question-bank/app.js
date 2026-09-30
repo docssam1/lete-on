@@ -163,15 +163,17 @@
 
   function typeTreeRow(type) {
     const ready = Boolean(type.generator) && !type.reviewLocked;
+    const commonType = type.commonPublicTypeId && typeById.get(type.commonPublicTypeId);
+    const linked = !ready && Boolean(commonType?.generator && !commonType.reviewLocked);
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     const sourceLabel = type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
-    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 유형 예시 미리보기" aria-controls="typePreviewPopover" aria-expanded="false">' +
+    return '<div class="tree-type ' + (selected ? "is-selected" : "") + (ready || linked ? "" : " is-pending") + '" data-preview-type-id="' + type.id + '" role="button" tabindex="0" aria-label="' + escapeHtml(typeDisplayName(type)) + ' 유형 예시 미리보기" aria-controls="typePreviewPopover" aria-expanded="false">' +
       '<input type="checkbox" data-type-id="' + type.id + '" ' + (selected ? "checked" : "") + (ready ? "" : " disabled") + '>' +
       '<span class="tree-type-number">' + number + '</span>' +
-      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i></small></span>' +
+      '<span class="tree-type-copy"><strong>' + escapeHtml(typeDisplayName(type)) + '</strong><small>' + sourceLabel + type.grade + '학년 ' + type.term + '학기 · <i class="difficulty-band difficulty-band-' + type.difficultyBand + '">' + difficultyBandLabel(type) + '</i>' + (linked ? ' · 공통 유형 연결' : '') + '</small></span>' +
       '<span class="tree-type-preview-action" aria-hidden="true">미리보기</span>' +
-      '<span class="tree-type-state ' + (ready ? "is-ready" : "") + '">' + (ready ? "생성 가능" : "검수 대기") + '</span>' +
+      '<span class="tree-type-state ' + (ready || linked ? "is-ready" : "") + '">' + (ready ? "생성 가능" : linked ? "공통 유형" : "검수 대기") + '</span>' +
     '</div>';
   }
 
@@ -183,7 +185,11 @@
       const unitTypes = visible.filter(type => type.unitId === unit.id);
       if (!unitTypes.length) return "";
       const isOpen = !state.collapsedUnits.has(unit.id);
-      const readyCount = unitTypes.filter(type => type.generator && !type.reviewLocked).length;
+      const readyCount = new Set(unitTypes.flatMap(type => {
+        if (type.generator && !type.reviewLocked) return [type.id];
+        const commonType = type.commonPublicTypeId && typeById.get(type.commonPublicTypeId);
+        return commonType?.generator && !commonType.reviewLocked ? [commonType.id] : [];
+      })).size;
       return '<section class="tree-unit ' + (isOpen ? "is-open" : "") + '">' +
         '<button class="tree-unit-toggle" type="button" data-tree-unit="' + unit.id + '" aria-expanded="' + isOpen + '">' +
           '<span class="tree-chevron" aria-hidden="true">›</span><span class="tree-unit-number">' + unit.number + '</span>' +
@@ -211,6 +217,15 @@
     previewPopover.setAttribute("aria-live", "polite");
     previewPopover.hidden = true;
     previewPopover.addEventListener("click", event => {
+      const commonButton = event.target.closest("button[data-select-common-type]");
+      if (commonButton) {
+        const commonType = typeById.get(commonButton.dataset.selectCommonType);
+        if (commonType?.generator && !commonType.reviewLocked) {
+          state.selected.add(commonType.id);
+          renderCatalog();
+        }
+        return;
+      }
       if (!event.target.closest("[data-close-type-preview]")) return;
       const anchor = previewAnchor;
       hideTypePreview(true);
@@ -251,7 +266,13 @@
       : `${type.grade}학년 ${type.term}학기 분류`;
     const sourceLine = `<div class="type-preview-source"><b>유형 예시</b><small>대표 문제 · ${source}</small></div>`;
     const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
-    if (!type.generator || type.reviewLocked) {
+    const commonType = type.commonPublicTypeId && typeById.get(type.commonPublicTypeId);
+    if (commonType?.generator && !commonType.reviewLocked) {
+      const generated = generatorApi.generate(commonType, currentLevel().rank, state.difficulty, hash(`preview:${commonType.id}`), commonType.variant ?? 0);
+      if (!generated) return;
+      const commonSourceLine = `<div class="type-preview-source"><b>공통 유형 예시</b><small>${source} · ${escapeHtml(commonType.sourceItemLabel || "공통 유형")}과 같은 풀이 방법</small></div>`;
+      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${commonSourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer class="type-preview-common-action"><span>같은 탐구의 양초 예제와 풀이가 같습니다.</span><button type="button" data-select-common-type="${escapeHtml(commonType.id)}">공통 유형 선택</button></footer>`;
+    } else if (!type.generator || type.reviewLocked) {
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
     } else {
