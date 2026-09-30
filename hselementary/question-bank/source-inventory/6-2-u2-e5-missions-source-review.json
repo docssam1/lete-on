@@ -18,7 +18,9 @@
   },
   "nonMatchingAnswerSource": {
     "sha256": "3B71EDCF9C234B180A08A73905B16F6065F833160E499223D413ED65792BACF0",
-    "reason": "The separately named answer PDF is already at chapter 3 on PDF page 25, whereas this advanced source is at chapter 2 on PDF page 25. It is not an answer key for these missions."
+    "evidencePdfPage": 15,
+    "printedFooter": "초 6-2 경시",
+    "reason": "The answer PDF identifies itself as the contest book in the printed footer on PDF page 15. It is not an answer key for these advanced-book missions."
   },
   "missions": [
     {
