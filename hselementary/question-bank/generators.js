@@ -25096,7 +25096,7 @@
       const answer = duration(elapsedMinutes);
       const difficultyDesign = ["lengths-in-millimeters", "source-centimeters-to-millimeters", "extinguished-time-extra-step"][level];
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
-      const answerVisual = `<div class="source61-math-board source62-e5-candle-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>탄 길이와 지난 시간</strong>${row("탄 길이", mm(burnedMmTenths))}${row("실제로 탄 시간", duration(burningMinutes))}${level === 2 ? row("불을 꺼 둔 시간", `${data.pauseMinutes}분`) : ""}${row("처음 불을 붙인 때부터", answer)}</div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-candle-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>탄 길이와 지난 시간</strong>${row("탄 길이", mm(burnedMmTenths))}${row("실제로 탄 시간", duration(burningMinutes))}${level === 2 ? row("불을 꺼 둔 시간", `${data.pauseMinutes}분`) : ""}${row("지난 시간", answer)}</div>`;
       const math = expression => `<span class="math-inline-expression">${expression}</span>`;
       const conversion = level === 0 ? "" : `길이를 mm로 바꾸면 처음 ${mm(data.initialMmTenths)}, 나중 ${mm(data.remainingMmTenths)}입니다. `;
       const solution = `${conversion}탄 길이는 ${math(`${mm(data.initialMmTenths)} − ${mm(data.remainingMmTenths)} = ${mm(burnedMmTenths)}`)}입니다. ${math(`${mm(burnedMmTenths)} ÷ ${mm(data.burnPerStepTenths)} × ${data.stepMinutes}분 = ${burningMinutes}분`)} 동안 실제로 탔습니다. ${level === 2 ? `불을 꺼 둔 ${data.pauseMinutes}분까지 더하면 ${math(`${burningMinutes}분 + ${data.pauseMinutes}분 = ${elapsedMinutes}분`)}입니다. ` : ""}답은 ${answer}입니다.`;
@@ -25238,7 +25238,7 @@
       const prompt = `${sample} ${trip} 약 몇 시간이 걸릴까요? 시간을 소수 첫째 자리까지 반올림하여 나타내세요.`;
       const difficultyDesign = ["hourly-distance-given", "source-time-distance", "two-leg-distance-before-rounding"][level];
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
-      const answerVisual = `<div class="source61-math-board source62-e5-walking-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>걷는 시간</strong>${row("1시간에 걷는 거리", km(speedHundredths))}${level === 2 ? row("전체 거리", km(targetHundredths)) : ""}${row("걸리는 시간", answer)}</div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-walking-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>걷는 시간</strong>${row("1시간에 걷는 거리", km(speedHundredths))}${level === 2 ? row("전체 거리", km(targetHundredths)) : ""}${row("걸리는 시간", answer)}</div>`;
       const math = expression => `<span class="math-inline-expression">${expression}</span>`;
       const speedStep = level === 0 ? "" : `1시간에 걷는 거리는 ${math(`${km(data.sampleDistanceHundredths)} ÷ ${hours(sampleHoursHundredths)} = ${km(speedHundredths)}`)}입니다. `;
       const distanceStep = level === 2 ? `전체 거리는 ${math(`${km(data.firstHundredths)} + ${km(data.secondHundredths)} = ${km(targetHundredths)}`)}입니다. ` : "";
@@ -25270,7 +25270,7 @@
       const prompt = `${sample} 휘발유 1L로 나 자동차가 갈 수 있는 거리는 가 자동차가 갈 수 있는 거리의 몇 배입니까?`;
       const difficultyDesign = ["unit-distances-given", "source-fuel-distance-comparison", "second-car-two-leg-distance"][level];
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
-      const answerVisual = `<div class="source61-math-board source62-e5-car-ratio-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>휘발유 1L로 가는 거리</strong>${row("가 자동차", km(aPerLiterHundredths))}${row("나 자동차", km(bPerLiterHundredths))}${row("나 ÷ 가", answer)}</div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-car-ratio-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>휘발유 1L로 가는 거리</strong>${row("가 자동차", km(aPerLiterHundredths))}${row("나 자동차", km(bPerLiterHundredths))}${row("나 ÷ 가", answer)}</div>`;
       const math = expression => `<span class="math-inline-expression">${expression}</span>`;
       const distanceStep = level === 2 ? `나 자동차의 전체 거리는 ${math(`${km(data.hardFirstHundredths)} + ${km(data.hardSecondHundredths)} = ${km(bDistanceHundredths)}`)}입니다. ` : "";
       const unitStep = level === 0 ? "" : `휘발유 1L로 가는 거리는 가 자동차가 ${math(`${km(data.aDistanceHundredths)} ÷ ${liters(data.aFuelMl)} = ${km(aPerLiterHundredths)}/L`)}, 나 자동차가 ${math(`${km(bDistanceHundredths)} ÷ ${liters(data.bFuelMl)} = ${km(bPerLiterHundredths)}/L`)}입니다. `;
@@ -25344,7 +25344,7 @@
           : `처음 참기름 ${liters(data.fullMl)}가 들어 있었습니다. 참기름 ${liters(data.firstUsedMl)}를 사용한 뒤 통의 무게는 ${kg(afterFirstMassG)}, 참기름 ${liters(data.secondUsedMl)}를 더 사용한 뒤 통의 무게는 ${kg(data.afterMassG)}이었습니다. 빈 통의 무게는 몇 kg입니까?`;
       const difficultyDesign = ["oil-unit-mass-given", "source-two-weighings", "two-stage-use-and-weighing"][level];
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
-      const answerVisual = `<div class="source61-math-board source62-e5-oil-container-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>빈 통의 무게</strong>${row("참기름 1L의 무게", kg(densityGPerLiter))}${row(level === 2 ? "남은 참기름" : "처음 참기름", liters(level === 2 ? remainingMl : data.fullMl))}${row("빈 통", answer)}</div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-oil-container-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>빈 통의 무게</strong>${row("참기름 1L의 무게", kg(densityGPerLiter))}${row(level === 2 ? "남은 참기름" : "처음 참기름", liters(level === 2 ? remainingMl : data.fullMl))}${row("빈 통", answer)}</div>`;
       const math = expression => `<span class="math-inline-expression">${expression}</span>`;
       const densityStep = level === 0 ? "" : level === 1
         ? `사용한 참기름 ${liters(data.usedMl)}의 무게는 ${math(`${kg(data.fullMassG)} − ${kg(data.afterMassG)} = ${kg(data.fullMassG - data.afterMassG)}`)}입니다. 참기름 1L의 무게는 ${math(`${kg(data.fullMassG - data.afterMassG)} ÷ ${liters(data.usedMl)} = ${kg(densityGPerLiter)}/L`)}입니다. `

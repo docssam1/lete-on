@@ -13,8 +13,8 @@ const sourceItemId = "6-2-u2-e5-example-1";
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
-assert(type.reviewLocked && type.generatorKey === "", "공개 유형은 잠금 유지");
-const candidate = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE5Example1" };
+assert(!type.reviewLocked && type.generatorKey === "sourceGrade6SecondDecimalDivisionE5Example1", "공통 양초 유형 공개 연결");
+const candidate = type;
 const baseUrl = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
 if (outputDir) mkdirSync(outputDir, { recursive: true });

@@ -1,0 +1,87 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const { chromium } = require("playwright");
+
+global.window = {};
+require("./source-inventory-grade6.js");
+require("./curriculum.js");
+require("./generators.js");
+
+const review = require("./source-inventory/6-2-u2-e5-missions-source-review.json");
+const exampleReview = require("./source-inventory/6-2-u2-e5-source-review.json");
+const reviewedItems = [
+  ...review.missions.filter(item => [1, 2, 4].some(number => item.sourceItemId.endsWith(`mission-${number}`))),
+  ...exampleReview.items.filter(item => item.sourceItemId === "6-2-u2-e5-example-1")
+];
+const candidateKeys = Object.fromEntries(reviewedItems.map(item => [item.sourceItemId, item.candidateVerification.generator]));
+const ids = process.env.HSE_AUDIT_IDS?.split(",").filter(Boolean) || Object.keys(candidateKeys);
+const baseUrl = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";
+const outputDir = process.env.HSE_SCREENSHOT_DIR;
+
+for (const id of ids) {
+  assert(candidateKeys[id], `${id}: 검수 후보 생성기 없음`);
+  const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
+    .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
+    .find(item => item.sourceItemId === id);
+  assert(!type?.reviewLocked, `${id}: 실제 공개 원장에 열려 있어야 함`);
+  assert.equal(type.generatorKey, candidateKeys[id], `${id}: 생성기 연결`);
+}
+if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
+
+(async () => {
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
+  let checked = 0;
+  try {
+    for (const id of ids) for (const difficulty of [-1, 0, 1]) for (const width of [1280, 390, 320]) {
+      const page = await browser.newPage({ viewport: { width, height: 900 }, deviceScaleFactor: 1 });
+      const errors = [];
+      page.on("pageerror", error => errors.push(error.message));
+      await page.goto(`${baseUrl}?type=${id}&review=1&difficulty=${difficulty}`, { waitUntil: "domcontentloaded" });
+      await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+      await page.evaluate(() => document.fonts.ready);
+      const problem = await page.evaluate(() => ({
+        count: document.querySelectorAll("#problemView .question-item").length,
+        overflow: document.documentElement.scrollWidth > innerWidth + 1,
+        answerLeak: !!document.querySelector("#problemView .source61-math-board")
+      }));
+      assert.equal(problem.count, 3, `${id} ${difficulty} ${width}px: 실제 문제 3개`);
+      assert(!problem.overflow && !problem.answerLeak, `${id} ${difficulty} ${width}px: 문제 넘침·답 누출 없음`);
+      if (outputDir && difficulty === 0 && width !== 320) {
+        await page.screenshot({ path: path.join(outputDir, `${id}-${width}-problem.png`), fullPage: true });
+      }
+      if (outputDir && difficulty === 0 && width === 1280) {
+        await page.emulateMedia({ media: "print" });
+        await page.pdf({ path: path.join(outputDir, `${id}-problem-a4.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+        await page.emulateMedia({ media: "screen" });
+      }
+      await page.locator("#solutionTab").click();
+      const solution = await page.evaluate(expectedId => ({
+        count: document.querySelectorAll("#solutionView .solution-item").length,
+        pages: document.querySelectorAll("#solutionView .print-page").length,
+        boards: document.querySelectorAll(`#solutionView [data-answer-source="${expectedId}"]`).length,
+        overflow: document.documentElement.scrollWidth > innerWidth + 1,
+        rowOverflow: [...document.querySelectorAll("#solutionView .source61-math-row")].some(row => row.scrollWidth > row.clientWidth + 1)
+      }), id);
+      assert.equal(solution.count, 3, `${id} ${difficulty} ${width}px: 실제 풀이 3개`);
+      assert.equal(solution.pages, 1, `${id} ${difficulty} ${width}px: 세 풀이를 한 쪽에 배치`);
+      assert.equal(solution.boards, 3, `${id} ${difficulty} ${width}px: 문항·답 그림 1:1`);
+      assert(!solution.overflow && !solution.rowOverflow, `${id} ${difficulty} ${width}px: 풀이 넘침 없음`);
+      assert.deepEqual(errors, [], `${id} ${difficulty} ${width}px: 브라우저 오류`);
+      if (outputDir && difficulty === 0 && width !== 320) {
+        await page.screenshot({ path: path.join(outputDir, `${id}-${width}-solution.png`), fullPage: true });
+      }
+      if (outputDir && difficulty === 0 && width === 1280) {
+        await page.emulateMedia({ media: "print" });
+        await page.pdf({ path: path.join(outputDir, `${id}-solution-a4.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
+      }
+      checked += 1;
+      await page.close();
+    }
+  } finally {
+    await browser.close();
+  }
+  console.log(`6-2 E5 공개 유형의 실제 문제은행 화면 ${checked}개: PC·390px·320px 문제·풀이 통과`);
+})().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

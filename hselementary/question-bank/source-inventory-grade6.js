@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 627,
     "answerVisualRequired": 633,
-    "unlocked": 306
+    "unlocked": 310
   },
   "items": [
     {
@@ -10343,17 +10343,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "일정한 속도로 타는 양초 시간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE5Example1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3
     },
     {
       "semester": "6-2",
@@ -10447,17 +10447,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "거리와 시간에서 빠르기와 새 시간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE5Mission1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3
     },
     {
       "semester": "6-2",
@@ -10473,17 +10473,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "연료 1L당 이동 거리의 배수 비교하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE5Mission2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3
     },
     {
       "semester": "6-2",
@@ -10503,7 +10503,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "difficultyBand": 1,
       "sourceTier": "advanced",
       "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewReason": "앞선 이동을 물이 흐르는 방향으로 보면 연어가 강을 거슬러 올라갈 수 없습니다. 원문의 기준 빠르기 조건을 확인할 때까지 출제하지 않습니다.",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
       "answerVisualStatus": "not-implemented",
@@ -10525,17 +10525,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "내용물을 덜어 낸 뒤 빈 통의 무게 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE5Mission4",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3
     },
     {
       "semester": "6-2",
@@ -16841,15 +16841,11 @@ const safeLockedReasons = {
   "6-2-u2-e3-mission-5": "원본의 손글씨 답과 전수 검산이 달라 공식 답을 확인할 때까지 출제하지 않습니다.",
   "6-2-u2-e4-example-4": "새 나머지의 정답 근거가 서로 달라 공식 답을 확인할 때까지 출제하지 않습니다.",
   "6-2-u2-e5-exploration-1": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
-  "6-2-u2-e5-example-1": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
   "6-2-u2-e5-example-2": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
   "6-2-u2-e5-example-3": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
   "6-2-u2-e5-example-4": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
-  "6-2-u2-e5-mission-1": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
-  "6-2-u2-e5-mission-2": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
-  "6-2-u2-e5-mission-3": "연어의 기준 빠르기 조건과 손글씨 답을 공식 풀이로 대조하기 전에는 출제하지 않습니다.",
-  "6-2-u2-e5-mission-4": "손글씨 답과 독립 계산이 달라 공식 답으로 확인할 때까지 출제하지 않습니다.",
-  "6-2-u2-e5-mission-5": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
+  "6-2-u2-e5-mission-3": "앞선 이동을 물이 흐르는 방향으로 보면 연어가 강을 거슬러 올라갈 수 없습니다. 원문의 기준 빠르기 조건을 확인할 때까지 출제하지 않습니다.",
+  "6-2-u2-e5-mission-5": "같은 탐구의 양초 예제와 풀이가 같아 별도 유형을 중복 출제하지 않습니다.",
   "6-2-u2-e5-mission-6": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
 };
 

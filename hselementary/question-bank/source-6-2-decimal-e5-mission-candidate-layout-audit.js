@@ -16,9 +16,10 @@ const review = require("./source-inventory/6-2-u2-e5-missions-source-review.json
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
-assert(type.reviewLocked && type.generatorKey === "", "공개 유형은 잠금 유지");
+assert.equal(type.reviewLocked, review.candidateVerification.publicReleaseStatus !== "verified", "검수 상태와 공개 상태 일치");
+assert.equal(type.generatorKey, type.reviewLocked ? "" : review.candidateVerification.generator);
 assert(review.candidateVerification, "검수할 후보 생성기가 기록되어 있음");
-const candidate = { ...type, reviewLocked: false, generatorKey: review.candidateVerification.generator };
+const candidate = type.reviewLocked ? { ...type, reviewLocked: false, generatorKey: review.candidateVerification.generator } : type;
 const baseUrl = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
 if (outputDir) mkdirSync(outputDir, { recursive: true });

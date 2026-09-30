@@ -1223,6 +1223,15 @@ button{
   }
 }
 
+@media print {
+  .answer-page:has(.source62-e5-candle-answer) .solution-list{gap:6px;margin-top:10px}
+  .answer-page:has(.source62-e5-candle-answer) .solution-answer-visual{padding:4px 8px}
+  .answer-page:has(.source62-e5-candle-answer) .source61-math-board{margin:3px auto 0}
+  .answer-page:has(.source62-e5-candle-answer) .source61-math-board>strong{padding:4px 8px}
+  .answer-page:has(.source62-e5-candle-answer) .source61-math-row{padding:4px 8px}
+  .answer-page:has(.source62-e5-candle-answer) .solution-item p{padding:7px 9px;font-size:12px;line-height:1.4}
+}
+
 @media screen {
   .sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
   .app-shell{width:min(1540px,calc(100% - 32px));padding:14px 0 30px}

@@ -12,6 +12,7 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
 (async () => {
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   try {
+    const readyIds = new Set(["6-2-u2-e5-example-1", "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-4"]);
     for (const width of [1280, 390, 320]) {
       const page = await browser.newPage({ viewport: { width, height: 844 }, deviceScaleFactor: 1 });
       const errors = [];
@@ -37,14 +38,15 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         await page.locator("#typeSearchInput").fill(label);
         const row = page.locator(`[data-preview-type-id="${id}"]`);
         assert.equal(await row.count(), 1, `${width}px ${id}: 원문 유형이 한 개만 표시`);
-        assert(await row.locator('input[type="checkbox"]').isDisabled(), `${width}px ${id}: 공식 답 대조 전 잠금`);
+        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), !readyIds.has(id), `${width}px ${id}: 검수 상태와 선택 상태 일치`);
         await row.scrollIntoViewIfNeeded();
         await row.click();
         const preview = page.locator("#typePreviewPopover");
         await preview.waitFor({ state: "visible" });
         const previewText = await preview.innerText();
-        if (id.endsWith("mission-3")) assert(previewText.includes("기준 빠르기"), `${width}px ${id}: 모호한 조건 표시`);
-        else if (id.endsWith("mission-4")) assert(previewText.includes("손글씨 답"), `${width}px ${id}: 계산 충돌 표시`);
+        if (readyIds.has(id)) assert(previewText.includes(label), `${width}px ${id}: 검증 문항 미리보기`);
+        else if (id.endsWith("mission-3")) assert(previewText.includes("기준 빠르기"), `${width}px ${id}: 모호한 조건 표시`);
+        else if (id.endsWith("mission-5")) assert(previewText.includes("같은 탐구의 양초"), `${width}px ${id}: 공통 유형 안내`);
         else assert(previewText.includes("공식 답"), `${width}px ${id}: 실제 잠금 사유 표시`);
         const box = await preview.evaluate(element => element.getBoundingClientRect().toJSON());
         assert(box.left >= -1 && box.right <= width + 1, `${width}px ${id}: 미리보기 가로 잘림 없음`);
@@ -59,5 +61,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log("6-2 개념탐구 5 PC·390px·320px: 본문·예제·Mission 11유형과 충돌 잠금 미리보기 검사 통과");
+  console.log("6-2 개념탐구 5 PC·390px·320px: 공개 4유형·나머지 잠금 미리보기 검사 통과");
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

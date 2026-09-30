@@ -11,9 +11,8 @@ const review = require("./source-inventory/6-2-u2-e5-missions-source-review.json
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
-assert(type.reviewLocked && type.generatorKey === "", "공식 답과 손풀이 충돌 해결 전 실제 유형은 잠금 유지");
-assert.equal(window.HSE_GENERATORS.generate(type, 0, 0, 1), null);
-const candidate = { ...type, reviewLocked: false, generatorKey: review.candidateVerification.generator };
+assert(!type.reviewLocked && type.generatorKey === review.candidateVerification.generator, "손글씨를 제외하고 독립 검산한 실제 유형 연결");
+const candidate = type;
 
 const thousandths = text => {
   const [whole, fraction = ""] = text.split(".");
