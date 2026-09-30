@@ -25035,6 +25035,44 @@
           answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
         });
     },
+    sourceGrade6SecondDecimalDivisionE5Exploration({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-exploration-1";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { speedTenths: 614, sampleMinutes: 270, fuelPerKmMl: 150, sourceMinutes: 180, hardMinutes: 240, initialFuelMl: 40000 },
+        { speedTenths: 576, sampleMinutes: 150, fuelPerKmMl: 125, sourceMinutes: 210, hardMinutes: 180, initialFuelMl: 35000 },
+        { speedTenths: 488, sampleMinutes: 225, fuelPerKmMl: 200, sourceMinutes: 150, hardMinutes: 210, initialFuelMl: 40000 }
+      ][poolIndex];
+      const sampleDistanceTenths = data.speedTenths * data.sampleMinutes / 60;
+      const targetMinutes = level === 2 ? data.hardMinutes : data.sourceMinutes;
+      const targetDistanceTenths = data.speedTenths * targetMinutes / 60;
+      const usedFuelMl = targetDistanceTenths * data.fuelPerKmMl / 10;
+      const remainingFuelMl = data.initialFuelMl - usedFuelMl;
+      if (![sampleDistanceTenths, targetDistanceTenths, usedFuelMl, remainingFuelMl].every(Number.isInteger) || remainingFuelMl <= 0) throw new Error(`${sourceItemId}: 거리와 휘발유 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 1)}km`;
+      const liters = value => `${plainDecimal(value, 3)}L`;
+      const hours = minutes => `${Math.floor(minutes / 60)}시간${minutes % 60 ? ` ${minutes % 60}분` : ""}`;
+      const decimalHours = minutes => plainDecimal(minutes * 100 / 60, 2);
+      const travel = level === 0
+        ? `어떤 자동차가 1시간에 ${km(data.speedTenths)}를 달립니다.`
+        : `어떤 자동차가 ${km(sampleDistanceTenths)}를 달리는 데 ${hours(data.sampleMinutes)}이 걸렸습니다.`;
+      const fuel = level === 2
+        ? `다른 날 운행을 시작할 때는 휘발유가 ${liters(data.initialFuelMl)} 있었고, 운행을 마친 뒤에는 ${liters(remainingFuelMl)} 남았습니다.`
+        : `다른 날 운행에서는 휘발유 ${liters(usedFuelMl)}를 사용했습니다.`;
+      const prompt = `${travel} 이 자동차는 1km를 달릴 때 휘발유 ${liters(data.fuelPerKmMl)}를 씁니다. ${fuel} 이 자동차는 얼마 동안 달린 셈입니까?`;
+      const answer = hours(targetMinutes);
+      const difficultyDesign = ["speed-given", "source-distance-and-time", "remaining-fuel-extra-step"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-fuel-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>연료와 이동 시간</strong>${row("1시간에 달린 거리", km(data.speedTenths))}${level === 2 ? row("사용한 휘발유", liters(usedFuelMl)) : ""}${row("달린 거리", km(targetDistanceTenths))}${row("달린 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const speedStep = level === 0 ? "" : `1시간에 달린 거리는 ${math(`${km(sampleDistanceTenths)} ÷ ${decimalHours(data.sampleMinutes)} = ${km(data.speedTenths)}`)}입니다. `;
+      const fuelStep = level === 2 ? `사용한 휘발유는 ${math(`${liters(data.initialFuelMl)} − ${liters(remainingFuelMl)} = ${liters(usedFuelMl)}`)}입니다. ` : "";
+      const solution = `${speedStep}${fuelStep}달린 거리는 ${math(`${liters(usedFuelMl)} ÷ (${liters(data.fuelPerKmMl)}/km) = ${km(targetDistanceTenths)}`)}입니다. 걸린 시간은 ${math(`${km(targetDistanceTenths)} ÷ (${km(data.speedTenths)}/시간) = ${decimalHours(targetMinutes)}시간`)}이므로 답은 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondDecimalDivisionE5Example3({ level, variant = 0 }) {
       const sourceItemId = "6-2-u2-e5-example-3";
       if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
