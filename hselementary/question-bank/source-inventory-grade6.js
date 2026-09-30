@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 627,
     "answerVisualRequired": 633,
-    "unlocked": 300
+    "unlocked": 301
   },
   "items": [
     {
@@ -9400,17 +9400,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "이동 거리로 페달을 돌린 횟수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE2Example1",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "rawSourceItemId": "6-2-u2-e2-example-1"
     },
     {
       "semester": "6-2",

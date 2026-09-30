@@ -1305,11 +1305,12 @@
       "pdfPage": 18,
       "printedPage": 20,
       "sourceShape": "바퀴 한 바퀴 거리와 페달 한 바퀴당 바퀴 회전 수로 전체 이동 거리에 필요한 페달 횟수를 구하는 문제",
-      "answerContract": "count",
+      "answerContract": "single-count",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-example-1"
     },
     {
       "sourceItemId": "6-2-u2-e2-example-2",
