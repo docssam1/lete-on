@@ -1112,12 +1112,13 @@
       "ordinal": 1,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
+      "sourceShape": "소수점을 함께 옮겨 몫이 같은 식을 고르는 문항과 소수 나눗셈을 계산하는 문항이 한 탐구에 묶여 있음. 공개 유형은 소문항별로 분리함.",
+      "publicSourceItemIds": ["6-2-u2-e1-exploration-1", "6-2-u2-e1-exploration-2"],
+      "answerContract": "single-value-per-subquestion",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 소문항별로 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-example-1",
@@ -1127,12 +1128,13 @@
       "ordinal": 1,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "두 소수 나눗셈의 몫 사이에 있는 한 자리 소수를 모두 찾아 합하는 구조.",
+      "publicSourceItemId": "6-2-u2-e1-example-1",
+      "answerContract": "single-value",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-example-2",

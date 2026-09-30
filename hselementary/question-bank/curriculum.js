@@ -1508,6 +1508,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             sourceVerified: item.sourceVerified,
             sourceEvidence: `황소 초등 심화 원문 직접 확인 · ${item.sourceItemId}`,
             sourceItemId: item.sourceItemId,
+            rawSourceItemId: item.rawSourceItemId,
             sourceItemLabel: item.sourceItemLabel,
             sourceSection: item.sourceSection,
             reviewLocked: item.reviewLocked,
