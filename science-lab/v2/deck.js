@@ -353,7 +353,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
       tries++; const ok = picked.size === key.length && key.every((j) => picked.has(j));
       if (!ok && tries < 2) { $h.hidden = false; $h.innerHTML = `<b>조금만 더</b>맞는 말은 ${key.length}개예요. 하나씩 다시 읽어 봐요.`; G.say('dk-pick-retry', { mood: 'encourage' }); return; }
       ol.querySelectorAll('button').forEach((b) => { const j = +b.dataset.j; b.disabled = true; b.classList.remove('pick'); b.classList.toggle('ok', key.includes(j)); b.classList.toggle('no', !key.includes(j) && picked.has(j)); });
-      $c.hidden = true; $h.hidden = !ok ? false : true; if (!ok) $h.innerHTML = '<b>정답을 확인해요</b>초록색이 맞는 말이에요.';
+      ol.classList.add('done'); $c.hidden = true; $h.hidden = !ok ? false : true;   // 확인 뒤엔 보기를 두 줄로 줄여 요약이 들어갈 자리를 만든다 if (!ok) $h.innerHTML = '<b>정답을 확인해요</b>초록색이 맞는 말이에요.';
       stage.querySelector('.dk-lsum').hidden = false; await G.say(ok ? 'dk-learned-ok' : 'dk-end', { mood: 'praise' });
     };
   }
