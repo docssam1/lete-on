@@ -83,10 +83,14 @@ const T = {
 };
 
 /* ── 상황 하나 ── 유아(infant)는 더하기·빼기만 */
-function situation(rng, infant){
+function situation(rng, infant, round){
   const kinds = infant ? ['합병','첨가','구잔','구차'] : ['합병','첨가','구잔','구차','배수'];
   const kind = pick(rng, kinds);
-  const s = window.NM_WP.makeSituation(rng, { range:'A', kind, numeric:'decimal' });
+  /* 진행(2026-10-01, 원장 "언어사고력 잘 구성됐어?" → 진행): 같은 여섯 단계가 도는 동안 숫자가 작은 채로 머물렀다.
+     여섯 회차(한 바퀴)마다 한 칸 — 첫 바퀴 작은 수, 둘째 바퀴부터 큰 수(레벨 B)로. 유아(과정 0)는 늘 작은 수. */
+  const range = (!infant && round >= 2) ? 'B' : 'A';
+  const s = window.NM_WP.makeSituation(rng, { range, kind, numeric:'decimal' });
+  s.range = range;
   s.infant = !!infant;
   return s;
 }
@@ -250,14 +254,53 @@ function a6(rng, s, lang){
 }
 const STAGES = [a1, a2, a3, a4, a5, a6];
 
+/* ── 문장제 2.0 연결(2026-10-01) ── 둘째 바퀴부터 A-3·A-5, 셋째 바퀴부터 A-4 가 앱의 WP7·WP9·WP8 생성기를 그대로 쓴다.
+   "결과가 모르는 수"인 문제만 있던 지면에 모르는 수의 자리가 옮겨 가고(WP7), 정보가 모자란 문제(WP9)와 두 단계(WP8)가 나온다.
+   생성기가 이미 3개 언어 문장·정답을 내므로 여기서는 지면 틀에 앉히기만 한다. */
+const G = (name, params, rng) => (window.NM_TGEN && window.NM_TGEN[name]) ? window.NM_TGEN[name](params, rng) : null;
+const pl = (o, lang) => (o && (o[lang] != null ? o[lang] : o.ko)) || '';
+/* 앱용 물음의 "알맞은 번호를 쓰세요" 는 종이에서는 ○ 이므로 뗀다 */
+const cleanAsk = t => String(t).replace(/\s*알맞은 번호를 쓰세요\.?/, '').replace(/\s*Write the number\.?/, '').replace(/\s*请写出序号。?/, '');
+const storyBox = (p, lang) => `<div class="nm-lt-story"><b>${esc(L(T.story, lang))}</b><p>${esc(pl(p.word, lang) + (lang === 'zh' ? '' : ' ') + cleanAsk(pl(p.wordAsk, lang)))}</p></div>`;
+function a3x(rng, s, lang){
+  const p = G('wp7_unknown', { range: s.range || 'A' }, rng); if(!p) return null;
+  const act1 = box(L({ko:'이야기를 읽고, 모르는 수가 무엇인지 찾아 답을 쓰세요.', en:'Read the story, find the unknown number, and write the answer.', zh:'读故事，找出未知数，写出答案。'}, lang), storyBox(p, lang) + ansBox(lang, ''));
+  const act2 = box(L({ko:'이야기에 "받았다"·"주었다"·"더 많다" 같은 말이 있어요. 그 말대로 계산하면 될까요, 아닐까요? 왜 그런지 써 보세요.', en:'The story has words like "got", "gave" or "more than". Is it right to calculate just as the word says? Write why.', zh:'故事里有"得到""送掉""多"这样的词。照着词的意思算就对吗？写一写为什么。'}, lang), `<div class="nm-lt-lines nm-lt-big"><i></i></div><p class="nm-lt-note">${esc(L({ko:'힌트: 처음·변한 것·나중 중에서 무엇을 모르는지 먼저 찾아요.', en:'Hint: first find which one is unknown: the start, the change, or the end.', zh:'提示：先找出不知道的是原来的、变的，还是后来的。'}, lang))}</p>`);
+  return { acts:[act1, act2], answers:[String(p.answer), L({ko:'낱말이 아니라 이야기의 모양을 봐요', en:'look at the shape of the story, not the word', zh:'看故事的样子，不看词'}, lang)] };
+}
+function a4x(rng, s, lang){
+  const p = G('wp8_twostep', { range: s.range || 'A', hint: true }, rng); if(!p) return null;
+  const hm = pl(p.wordAsk, lang).match(lang === 'ko' ? /①\s*([^,]+?),\s*②/ : lang === 'en' ? /①\s*(.+?)\s+and\s+②/ : /①\s*(.+?)\s*和\s*②/);
+  const hintTxt = hm ? hm[1] : '';
+  const act1 = box(L({ko:'두 단계로 풀어요. ①에는 먼저 구한 수, ②에는 마지막 답을 쓰세요.', en:'Solve it in two steps. Write the number you find first as ①, then the final answer as ②.', zh:'分两步解答。①写先求出的数，②写最后的答案。'}, lang),
+    `<div class="nm-lt-story"><b>${esc(L(T.story, lang))}</b><p>${esc(pl(p.word, lang))}</p></div>` +
+    (hintTxt ? `<p class="nm-lt-note">① ${esc(hintTxt)}</p>` : '') +
+    `<div class="nm-lt-given"><div><b>①</b><i class="nm-lt-abox"></i></div><div><b>②</b><i class="nm-lt-abox"></i></div></div>`);
+  const act2 = box(L({ko:'①을 먼저 구한 까닭을 한 문장으로 말하거나 써 보세요.', en:'Say or write in one sentence why you had to find ① first.', zh:'用一句话说一说或写一写，为什么要先求①。'}, lang), `<div class="nm-lt-lines nm-lt-big"><i></i></div>`);
+  return { acts:[act1, act2], answers:[`① ${p.answer[0]} · ② ${p.answer[1]}`, L({ko:'①이 있어야 ②를 구할 수 있어요', en:'② needs ①', zh:'有了①才能求②'}, lang)] };
+}
+function a5x(rng, s, lang){
+  const p = G('wp9_info', { range: s.range || 'A' }, rng); if(!p) return null;
+  const ch = (p.choices && (p.choices[lang] || p.choices.ko)) || [];
+  const act1 = box(L({ko:'이 문제를 풀기 전에 살펴봐요. 알맞은 것에 ○ 하세요.', en:'Look before you solve. Circle the right one.', zh:'解题之前先看一看。把合适的画上○。'}, lang),
+    storyBox(p, lang) + `<ul class="nm-lt-choice nm-lt-stories">${ch.map((c, i) => `<li><i>${circled(i)}</i><span>${esc(c)}</span></li>`).join('')}</ul>`);
+  const act2 = box(L({ko:'풀 수 있는 문제가 되려면 무엇이 있어야 할까요? 또는 필요 없는 수는 무엇일까요? 써 보세요.', en:'What must a solvable problem have? Or which number is not needed? Write it.', zh:'能解的题需要有什么？或者哪个数用不到？写一写。'}, lang), `<div class="nm-lt-lines nm-lt-big"><i></i></div>`);
+  return { acts:[act1, act2], answers:[circled(p.answer - 1), L({ko:'필요한 수가 다 있는지 먼저 봐요', en:'first check that every needed number is given', zh:'先看需要的数齐不齐'}, lang)] };
+}
+const XSTAGES = { 2: { from: 1, f: a3x }, 3: { from: 2, f: a4x }, 4: { from: 1, f: a5x } };
+
 /* ── 지면 하나 ── idx: 회차(0부터, 단계 = idx mod 6) · seed: 봉투 코드 · lang · courseTitle · code · infant: 과정 0 */
 function pageHtml(idx, seed, lang, courseTitle, code, infant){
   lang = (lang === 'en' || lang === 'zh') ? lang : 'ko';
   if(!window.NM_WP) return '';
   const si = ((idx % 6) + 6) % 6, stage = T.stages[si];
+  const round = Math.floor(Math.max(0, idx) / 6);
   const rng = rngOf(seed + ':' + si);
-  const s = situation(rng, !!infant);
-  const r = STAGES[si](rng, s, lang);
+  const s = situation(rng, !!infant, round);
+  const xs = XSTAGES[si];
+  let r = null;
+  if(!infant && xs && round >= xs.from) r = xs.f(rngOf(seed + ':x' + si), s, lang);
+  if(!r) r = STAGES[si](rng, s, lang);
   return `<div class="nm-w2-page nm-lt-page${infant ? ' nm-lt-infant' : ''}">
   <div class="nm-mzs-band"><b>${esc(L(T.band, lang))}</b><span>${esc(courseTitle || 'Numbers of Magic')}</span></div>
   <div class="nm-mzs-dash"></div>

@@ -1377,7 +1377,7 @@
     if (kind === '합병') {
       pos = 'part'; answer = n2;
       story = {
-        ko: `${NUI(A.ko)} 것과 ${NUI(B.ko)} 것을 합한 ${EUN(on)} 모두 ${r}${u}예요. ${NEUN(A.ko)} ${EUL(on)} ${n1}${u} 가지고 있어요.`,
+        ko: `${NUI(A.ko)} 것과 ${NUI(B.ko)} 것을 합한 ${EUN(on)} 모두 ${r}${u}${hasBatchim(u) ? '이에요' : '예요'}. ${NEUN(A.ko)} ${EUL(on)} ${n1}${u} 가지고 있어요.`,
         en: `${A.en} and ${B.en} have ${r} ${en} altogether. ${A.en} has ${n1}.`,
         zh: `${A.zh}和${B.zh}一共有${r}${zu}${zn}。${A.zh}有${n1}${zu}。` };
       ask = { ko: `${NEUN(B.ko)} ${EUL(on)} 몇 ${u} 가지고 있을까요?`, en: `How many ${en} does ${B.en} have?`, zh: `${B.zh}有几${zu}${zn}？` };
