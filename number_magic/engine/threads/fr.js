@@ -111,6 +111,51 @@ NM_TGEN['fr2_improperMixed'] = function(params, rng){
 NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
   var regroup = params && params.regroup;
 
+  /* ── 큰 자연수 + 올림·받아내림 (mode:'big', op '+'|'-') — 2026-10-01 신규 ──
+     레벨 1·2 는 자연수 부분이 5 이하이고, 덧셈에는 분수 부분의 올림(합 ≥ 1)이 아예 없었다.
+     여기서는 자연수 부분이 두 자리이고 분모도 5~12 로 넓혀, 분수 합이 1을 넘으면 자연수에 1을
+     더하고(덧셈), 분수가 모자라면 자연수에서 1을 빌린다(뺄셈). 분수 부분이 0이 되는 경우는 뺀다
+     (답이 대분수 한 칸으로 갈라지지 않게). 답은 대분수 통째로 [자연수, 분자, 분모]. */
+  if(params && params.mode === 'big'){
+    var bd = pick(rng, [5, 6, 8, 9, 10, 12]);
+    if(params.op === '+'){
+      var an = R(rng, Math.ceil(bd / 2), bd - 1), bn = R(rng, bd - an + 1, bd - 1);   /* an+bn > bd */
+      var aw = R(rng, 10, 79), bw = R(rng, 10, 79);
+      var rn = an + bn - bd, rw = aw + bw + 1;
+      return {
+        prompt: {
+          ko: '분수 부분의 합이 1이 넘으면 자연수에 1을 올려요!',
+          en: 'If the fractions add up to more than 1, carry 1 to the whole numbers!',
+          zh: '分数部分相加超过1时，向整数部分进1！'
+        },
+        tex: aw + '\\frac{' + an + '}{' + bd + '} + ' + bw + '\\frac{' + bn + '}{' + bd + '} = \\square\\frac{\\square}{' + bd + '}',
+        answer: [rw, rn, bd], answerShape: 'mixed', answerType: 'steps',
+        steps: [
+          { tex: '\\text{분수: } ' + an + ' + ' + bn + ' = \\square \\quad(' + bd + '\\text{이 넘으면 올림})', blank: an + bn },
+          { tex: '\\text{자연수: } ' + aw + ' + ' + bw + ' + 1 = \\square', blank: rw }
+        ],
+        widget: 'steps'
+      };
+    }
+    var cn = R(rng, 1, Math.min(bd - 2, 6)), dn = R(rng, cn + 1, bd - 1);              /* dn > cn → 받아내림 */
+    var cw = R(rng, 20, 99), dw = R(rng, 10, cw - 2);
+    var fp = bd + cn - dn, wp = cw - 1 - dw;
+    return {
+      prompt: {
+        ko: '분수 부분이 모자라면 자연수에서 1을 빌려요!',
+        en: 'When the fraction part is too small, borrow 1 from the whole number!',
+        zh: '分数部分不够减时，从整数借1！'
+      },
+      tex: cw + '\\frac{' + cn + '}{' + bd + '} - ' + dw + '\\frac{' + dn + '}{' + bd + '} = \\square\\frac{\\square}{' + bd + '}',
+      answer: [wp, fp, bd], answerShape: 'mixed', answerType: 'steps',
+      steps: [
+        { tex: '\\text{분수: } \\frac{' + (bd + cn) + '}{' + bd + '} - \\frac{' + dn + '}{' + bd + '} = \\frac{\\square}{' + bd + '} \\quad(1\\text{을 빌림})', blank: fp },
+        { tex: '\\text{자연수: } ' + (cw - 1) + ' - ' + dw + ' = \\square', blank: wp }
+      ],
+      widget: 'steps'
+    };
+  }
+
   if(!regroup){
     // 올림·내림 없는 덧셈
     var d      = pick(rng, [4,6,8]);
