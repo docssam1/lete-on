@@ -903,7 +903,9 @@ function buildCourses(NM_THREADS){
           const cand = recent[(globalSessionIdx + k) % recent.length];
           if(!drills.some(d => d.t === cand)){ pt = cand; break; }
         }
-        if(pt) drills.push({t:pt, lv:homeLevel[pt], n:4, review:true});
+        /* homeLevel 은 **자기 차례 드릴로 실린** 스레드에만 있다. 고정 레벨('EL1@5')로만 실린 스레드가 복습으로 뽑히면
+           lv 가 비어 'EL1@NaN' 이 되어 배포 검사(check-roadmap-sync)가 막혔다(2026-10-01). 그때는 레벨 1 로 복습한다. */
+        if(pt) drills.push({t:pt, lv:homeLevel[pt] != null ? homeLevel[pt] : 1, n:4, review:true});
       }
       globalSessionIdx++;
       /* 창의 회차는 세션마다 하나씩 순환 — 한 주 학습지에 필산 뒤 창의 한 벌.
