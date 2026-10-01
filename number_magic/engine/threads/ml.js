@@ -719,6 +719,32 @@ NM_TGEN['ml9_mul3d2d'] = function(params, rng) {
     };
   }
 
+  /* 심화(2026-10-01) — 세 자리 × 세 자리. 부분곱 셋(일·십·백의 자리)을 더한다. */
+  if (params.big3 === true) {
+    let a3, b3;
+    do { a3 = R(rng, 101, 999); b3 = R(rng, 101, 999); } while (b3 % 10 === 0 || Math.floor(b3 / 10) % 10 === 0);
+    const o = b3 % 10, t = (Math.floor(b3 / 10) % 10) * 10, h = Math.floor(b3 / 100) * 100;
+    const q1 = a3 * o, q2 = a3 * t, q3 = a3 * h, ans3 = a3 * b3;
+    return {
+      prompt: { ko: `${a3} × ${b3}을 계산해요`, en: `Calculate ${a3} × ${b3}`, zh: `计算 ${a3} × ${b3}` },
+      tex: `${a3} \\times ${b3} = \\square`,
+      answer: ans3, answerType: 'steps', widget: 'vertical',
+      steps: [
+        { tex: `${a3} \\times ${o} = \\square`, blank: q1 },
+        { tex: `${a3} \\times ${t} = \\square`, blank: q2 },
+        { tex: `${a3} \\times ${h} = \\square`, blank: q3 },
+        { tex: `${q1} + ${q2} + ${q3} = \\square`, blank: ans3 }
+      ],
+      solution: [
+        { tex: `${b3} = ${h} + ${t} + ${o}` },
+        { tex: `${a3} \\times ${o} = \\square`, blank: q1 },
+        { tex: `${a3} \\times ${t} = \\square`, blank: q2 },
+        { tex: `${a3} \\times ${h} = \\square`, blank: q3 },
+        { tex: `${q1} + ${q2} + ${q3} = \\square`, blank: ans3 }
+      ]
+    };
+  }
+
   let a, b, tries = 0;
   do {
     a = R(rng, 100, 999);

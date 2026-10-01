@@ -163,13 +163,13 @@ const COURSE_SPEC = [
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25·ML1·ML2(구구단 드릴)였다. 자리별·쉬었다 빼기 · 돌려받기 · 덧셈끼리·뺄셈끼리 */
    creative:['SB8@1','SB8@2','SB5@1','MX7@1','SB8@2','SB5@2','MX7@1','WP3@1']},
  {id:6, tier:'level1', title:{ko:'세 자리 뺄셈과 구구단 완성',en:'3-digit Subtraction & Full Times Tables',zh:'三位数减法与完整口诀'},
-   drills:['SB6','SB7','ML3','SB6','SB7@2','ML3','AD4@3','SB6','ML3','SB6','AD4@4','ML3','SB6','ML3','SB6','SB6'], minSessions:7, magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17'],['B-07','B-08','B-09'],['B-10','B-11','B-12']],
+   drills:['SB6','SB7','ML3','SB6','SB7@2','ML3','AD4@3','SB6','ML3','SB6','AD4@4','ML3','SB6','ML3','SB6','SB6','SB6@8'], minSessions:7, magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17'],['B-07','B-08','B-09'],['B-10','B-11','B-12']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25·ML3(구구단)이었다. 같은 수 ± · 백을 떼어 · 반대로 채우기(SB9 = 설계의 EL1 countUp).
       설계 표의 SB10@2·@3(자릿수 이동·풀어서 쓰기)은 원본 사진 확인 전이라(원장 결정 Q1) 아직 없다 —
       그 자리는 이미 있는 SB10@1·SB12@2 로 채웠다. AD10 은 옛 명세(창의 칸에 안 실림). */
    creative:['SB12@1','SB10@1','SB12@2','SB9@1','SB8@3','SB12@3','AD14@1','AD10'], maxSessions:6},
  {id:7, tier:'level1', title:{ko:'구구단 종합과 네 자리 연산',en:'Times Tables Mix & 4-digit ±',zh:'乘法口诀综合与四位数运算'},
-   drills:['ML4','AD7','ML4','AD7','AD7','EL1@5'], magic:[['B-13','B-14','B-15'],['A-18','A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25'],['C-01']],
+   drills:['ML4','AD7','ML4','AD7','AD7','EL1@5','AD7@4'], magic:[['B-13','B-14','B-15'],['A-18','A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25'],['C-01']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25@4·AD8@3·ML4(구구단)였다. 끊어서 · 앞부터 · 쪼개서 빼기 · 기준수 · 덧뺄 끼리끼리 2.
       뒤의 EL3 는 옛 명세(창의 칸에 안 실림). */
    creative:['AD14@2','AD15@1','SB13@1','AD16@1','MX7@2','AD15@2','EL3@1','EL3@2','EL3@3'], maxSessions:6},
@@ -210,9 +210,9 @@ const COURSE_SPEC = [
  {id:13, tier:'level2', title:{ko:'분수의 첫걸음',en:'Fractions Begin',zh:'分数入门'},
    drills:['FR1','FR2'], magic:[['C-21']], creative:['FR9@1','FR9@2','ML12@1']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
  {id:14, tier:'level2', title:{ko:'대분수와 세 자리×두 자리',en:'Mixed Numbers & 3d×2d',zh:'带分数与三位乘两位'},
-   drills:['FR3','ML9','FR3','ML9','ML9','ML9','ML9'], magic:[['C-14'],['C-30'],['C-16'],['C-17']], creative:['ML16@1','ML17@1','ML16@2','ML17@2']},
+   drills:['FR3','ML9','FR3','ML9','ML9','ML9','ML9','ML9@6'], magic:[['C-14'],['C-30'],['C-16'],['C-17']], creative:['ML16@1','ML17@1','ML16@2','ML17@2']},
  {id:15, tier:'level2', title:{ko:'두 자리로 나누기와 분수',en:'Dividing by 2 Digits & Fractions',zh:'除以两位数与分数'},
-   drills:['DV5','DV5','DV5','DV5','DV5@5','DV5@6'], magic:[['C-19'],['C-20'],['C-28'],['C-29']],
+   drills:['DV5','DV5','DV5','DV5','DV5@5','DV5@6','DV5@7'], magic:[['C-19'],['C-20'],['C-28'],['C-29']],
    /* 창의(2026-09-26) — 두 개가 번갈아 나왔다. 회차의 마법 순서(약분·부풀려·÷5·÷25) 그대로, 설계 §2-2 M7 */
    creative:['DV10@1','DV11@1','ML16@2','ML17@2','WP3@2','WP8@1','WP9@1']},
  {id:16, tier:'level2', title:{ko:'혼합계산과 역연산',en:'Mixed Operations & Inverse',zh:'混合运算与逆运算'},

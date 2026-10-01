@@ -315,8 +315,8 @@
     do {
       /* 나누는 수: 두 자리 전체. 몫 어림이 되도록 L1(두 자리÷두 자리)만 11~49로 둔다. */
       b = d === 2 ? R(rng, 11, 49) : R(rng, 11, 99);
-      const lo = d === 2 ? 10 : (d === 3 ? 100 : 1000);
-      const hi = d === 2 ? 99 : (d === 3 ? 999 : 9999);
+      const lo = Math.pow(10, d - 1);
+      const hi = Math.pow(10, d) - 1;      /* d = 2~5 (5 는 심화 레벨 7, 2026-10-01) */
       const qMin = Math.max(2, Math.ceil((lo + 1) / b));
       const qMax = Math.floor(hi / b);
       if (qMax < qMin) continue;
@@ -324,7 +324,7 @@
       const want = (rem === undefined) ? pick(rng, [true, false]) : rem;
       r = want ? R(rng, 1, b - 1) : 0;
       dv = b * q + r;
-    } while ((dv > (d === 2 ? 99 : d === 3 ? 999 : 9999) || dv < (d === 2 ? 10 : d === 3 ? 100 : 1000)) && tries++ < 200);
+    } while ((dv > Math.pow(10, d) - 1 || dv < Math.pow(10, d - 1)) && tries++ < 200);
     if (tries >= 200) { b = 21; q = 12; r = 5; dv = 257; }
 
     const hasR = r > 0;

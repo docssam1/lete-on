@@ -798,8 +798,10 @@ NM_TGEN['ad7_add4d'] = function(params, rng){
      자리마다 그냥 더하거나 빼면 끝나는 수만 뽑는다. */
   const noCarry  = params.carry === 'none';
   const wantCarry = params.carry === 'any';
+  /* 자릿수(기본 네 자리). 레벨 4(심화, 2026-10-01 원장 "조금 한 단계 높여도 돼, 심화로")는 다섯 자리 */
+  const nd = params.digits || 4, lo7 = Math.pow(10, nd - 1), hi7 = Math.pow(10, nd) - 1;
   function placeSafe(x, y, plus){
-    for(let i = 0; i < 4; i++){
+    for(let i = 0; i < nd; i++){
       const dx = Math.floor(x / Math.pow(10, i)) % 10;
       const dy = Math.floor(y / Math.pow(10, i)) % 10;
       if(plus ? (dx + dy > 9) : (dx < dy)) return false;
@@ -809,12 +811,12 @@ NM_TGEN['ad7_add4d'] = function(params, rng){
   let tries7 = 0;
   do {
     if(opChar === '+'){
-      a = R(rng, 1000, 8999);
-      b = R(rng, 1000, 9999 - a);
+      a = R(rng, lo7, 9 * lo7 - 1);
+      b = R(rng, lo7, hi7 - a);
       result = a + b;
     } else {
-      a = R(rng, 2000, 9999);
-      b = R(rng, 1000, a - 1);
+      a = R(rng, 2 * lo7, hi7);
+      b = R(rng, lo7, a - 1);
       result = a - b;
     }
   } while(tries7++ < 400 && (
@@ -831,7 +833,7 @@ NM_TGEN['ad7_add4d'] = function(params, rng){
     answer: result,
     answerType: 'number',
     widget: 'vertical',
-    solution: opChar === '+' ? _addPlaceLines(a, b, result, 4) : _subPlaceLines(a, b, result, 4)
+    solution: opChar === '+' ? _addPlaceLines(a, b, result, nd) : _subPlaceLines(a, b, result, nd)
   };
 };
 
