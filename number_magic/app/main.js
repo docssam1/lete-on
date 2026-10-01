@@ -6355,9 +6355,12 @@ function screenSymbolDex(){
   const ko=S.lang==='ko',en=S.lang==='en';
   const all=allUnitSymbols();
   const bySym={};all.forEach(sy=>{bySym[sy.sym]=sy;});
-  const canonCards=SYMBOL_DEX_CANON.map(sym=>symDexCardHtml(sym,bySym[sym])).join('');
-  const extra=all.filter(sy=>SYMBOL_DEX_CANON.indexOf(sy.sym)<0);
-  const extraCards=extra.map(sy=>symDexCardHtml(sy.sym,sy)).join('');
+  /* 도감 순서(2026-10-01) — 배우는 순서대로: 유아(N)→초등(A·B·C)→고급(H)→중등(M). 유닛에 연결된 기호만
+     센다(이전엔 틀 10칸 중 5칸이 어느 유닛에도 연결되지 않아 영원히 빈칸이었다). */
+  const rankOf=uid=>{const m=/^([A-Z])-(\d+)/.exec(uid)||[];return ({N:0,A:1,B:2,C:3,H:4,M:5}[m[1]]??9)*1000+(+m[2]||0);};
+  const ordered=all.slice().sort((a,b)=>rankOf(a.unitId)-rankOf(b.unitId));
+  const canonCards=ordered.map(sy=>symDexCardHtml(sy.sym,sy)).join('');
+  const extraCards='';
   const collectedCount=Object.keys(S.symbolDex||{}).length;
   scr.innerHTML=`<div class="nm-gc-wrap nm-dex-wrap">
     <div class="nm-gc-header">
@@ -6367,7 +6370,7 @@ function screenSymbolDex(){
     <div class="nm-gc-body">
       <p class="nm-dex-sub">${ko?'배운 기호를 모아보세요. 카드를 탭하면 뒤집혀요.':en?"Collect the symbols you've learned — tap a card to flip it.":'收集你学过的符号——点击卡片可以翻面。'}</p>
       <div class="nm-dex-grid">${canonCards}</div>
-      <p class="nm-dex-hint">${ko?'기호 친구는 과정이 올라가면 한 명씩 찾아와요':en?'Symbol friends arrive as you climb the course':'符号朋友会随课程提升一个个到来'}</p>
+      <p class="nm-dex-hint">${ko?`기호 친구는 단원을 마칠 때마다 한 명씩 찾아와요 · 전체 ${all.length}명`:en?'Symbol friends arrive as you climb the course':'符号朋友会随课程提升一个个到来'}</p>
       ${extraCards?`<div class="nm-dex-sec-h">${ko?'더 만난 기호':en?'More symbols met':'更多遇到的符号'}</div><div class="nm-dex-grid">${extraCards}</div>`:''}
     </div>
   </div>`;
