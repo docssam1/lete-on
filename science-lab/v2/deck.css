@@ -284,3 +284,34 @@
   .dk-stepside h3 { font-size: 15px; } .dk-peek { font-size: 15px; padding: 8px 14px; } .dk-tbl .dk-peek { font-size: 13px; }
 }
 .dk-peek[hidden] { display: none; }
+/* 쓰기 판정(v2/judge.js) — 칸마다 결과 한 줄. 색만으로 뜻을 전하지 않게 늘 글(✓·되묻기)이 함께 */
+.dk-fb { margin: .6cqw 0 0; padding: .7cqw 1.2cqw; border-radius: .6cqw; font-size: 1.7cqw; line-height: 1.5; background: #f4f6fb; color: #1B2340; }
+.dk-fb b { margin-right: .4em; }
+.dk-self.j-ok .dk-in { border-color: #2e9d5b; } .dk-self.j-ok .dk-fb { background: #eaf7ef; color: #1f6b40; }
+.dk-self.j-part .dk-fb, .dk-self.j-miss .dk-fb { background: #fff6e6; color: #7a4a00; }
+.dk-self.j-wrong .dk-fb { background: #fff0ee; color: #8a2b1d; }
+.dk-self.j-review .dk-fb { background: #eef5ff; color: #1B2340; }
+@media (max-width: 760px) { .dk-fb { font-size: 15px; padding: 8px 12px; } }
+.dk-fb.dk-tnote { background: #f3efff; color: #3b2a7a; } .dk-fb.dk-tnote.ok { background: #eaf7ef; color: #1f6b40; }
+/* 고르기 활동(data/book/<u>.interact.js) */
+.dk-dpicks { display: grid; gap: 1cqw; }
+.dk-dpick { border: 1.5px solid #e3e8f2; border-radius: 1cqw; padding: .8cqw 1.2cqw; }
+.dk-dq { margin: 0 0 .4cqw; font-size: 1.8cqw; } .dk-dq b { color: var(--n); margin-right: .5cqw; }
+.dk-dpick .dk-choices { grid-template-columns: repeat(3, 1fr); margin: .4cqw 0; } .dk-dpick .dk-choices button { font-size: 1.6cqw; }
+.dk-vs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4cqw; } .dk-vs .dk-card p { font-size: 2cqw; }
+.dk-vs.same .dk-card:first-child { border-color: var(--t); background: #eef9f2; } .dk-vs.diff .dk-card:first-child { border-color: var(--o); background: #fff8ec; }
+.dk-vsay { margin-top: 1.2cqw; font-weight: 700; }
+.dk-tally { list-style: none; padding: 0; margin: 1cqw 0; display: grid; gap: .7cqw; }
+.dk-tally li { display: grid; grid-template-columns: auto 1fr auto auto auto; align-items: center; gap: 1cqw; padding: .7cqw 1.2cqw; border: 1.5px solid #d6deea; border-radius: .8cqw; font-size: 2cqw; }
+.dk-tally.done li { grid-template-columns: auto 1fr auto; } .dk-tally li.ok { border-color: var(--t); background: #e7f5ec; font-weight: 700; }
+.dk-tally button { all: unset; cursor: pointer; width: 3.4cqw; height: 3.4cqw; border-radius: 50%; background: #eef2fb; text-align: center; line-height: 3.4cqw; font-weight: 800; }
+.dk-tc { min-width: 3cqw; text-align: center; font-size: 2.6cqw; }
+.dk-timer { display: inline-flex; gap: 1cqw; align-items: center; padding: .5cqw 1.2cqw; border-radius: 999px; background: #eef2fb; font-size: 1.6cqw; margin: 0 0 .6cqw; }
+.dk-timer b { font-variant-numeric: tabular-nums; font-size: 2cqw; } .dk-timer.over { background: #fff0ee; }
+@media (max-width: 760px) {
+  .dk-dq, .dk-dpick .dk-choices button, .dk-vs .dk-card p, .dk-tally li, .dk-timer { font-size: 15px; }
+  .dk-dpick .dk-choices, .dk-vs { grid-template-columns: 1fr; } .dk-tally button { width: 36px; height: 36px; line-height: 36px; } .dk-tc { font-size: 20px; }
+}
+.dk-stage.dense .dk-dpicks { gap: .6cqw; } .dk-stage.dense .dk-dpick { padding: .5cqw 1cqw; } .dk-stage.dense .dk-dq { font-size: 1.6cqw; }
+.dk-stage.dense .dk-caution { padding: .6cqw 1.2cqw; margin-top: .6cqw; } .dk-stage.dense .dk-caution h3 { font-size: 1.6cqw; margin: 0 0 .2cqw; } .dk-stage.dense .dk-caution li { font-size: 1.4cqw; }
+@media (max-width: 760px) { .dk-stage.dense .dk-dq { font-size: 15px; } .dk-stage.dense .dk-caution h3 { font-size: 15px; } .dk-stage.dense .dk-caution li { font-size: 14px; } }

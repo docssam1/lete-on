@@ -437,10 +437,16 @@ function labBar(u, { print = false } = {}) {
   return `<div class="bk-bar no-print"><a class="btn" href="#/${u}/start">‹ 처음으로</a>${print ? '<button class="btn primary" onclick="print()">A4 인쇄</button>' : ''}</div>`;
 }
 // 첫 화면: 무엇을 할지 처음에 바로 고른다 — 학생 교재 · 교사 교재 · 스스로 공부 · 가르치기
+// 선생님 확인: 이 기기의 스스로 공부 쓰기 답 중 규칙으로 가리지 못한 것 — 맞음/다시 쓰기·한마디
+async function pageCheck(only) {
+  const { renderCheck } = await import('./check.js');
+  await renderCheck($app, { units: Object.keys(BOOKS), only: BOOKS[only] ? only : null,
+    loadUnit: async (u) => { const [b, m] = await Promise.all([BOOKS[u](), UNITS[u]()]); return { ch: b.chapter, similar: m.similar || [] }; } });
+}
 async function pageStart(u) {
   const bookMod = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null;
   if (!bookMod) { location.replace(`#/${u}`); return; }
-  const ch = bookMod.chapter;
+  const ch = bookMod.chapter, need = (await import('./check.js')).countNeeds([u]);
   const card = (href, ico, t, d, primary) => `<a class="start-card${primary ? ' primary' : ''}" href="${href}"><span class="sc-ico" aria-hidden="true">${ico}</span><b>${t}</b><span>${d}</span></a>`;
   $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header>
     <main class="wrap start"><p class="step-label">${esc(ch.link?.course || '')} ${esc(ch.link?.unit || '')}</p>
@@ -452,7 +458,7 @@ async function pageStart(u) {
         ${card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
         ${card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
       </div>
-      <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a></p></main>`;
+      <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a> · <a href="#/${u}/check">선생님 확인${need ? ` <b class="start-badge">${need}</b>` : ''}</a></p></main>`;
   scrollTo(0, 0);
 }
 async function pageReading(u, L, mode) {
@@ -533,9 +539,9 @@ async function pageLabClass(u, mod, L, mode, idx) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
   const bookMod = await BOOKS[u]().catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, plan }, { renderDeck }] = await Promise.all([bookMod, import('./deck.js')]);
+  const [{ chapter, art, plan }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((x) => [x.id, x]));
-  renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx, misc: MISC,
+  renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx, misc: MISC, ix,
     myLab: () => ({ cols: L.explore?.lab?.columns || [], rows: store.get(u).labRows || [] }),
     mount3D: (el, o = {}) => mount3D(el, L.engage.scene, { autoplay: !!o.autoplay, preview: o.preview || false, from: o.from || null, onDone: o.onDone }),
     // personal:false(가르치기) → 학생 기록을 읽지도 쓰지도 않는다. 두 팀 배틀은 각자 빈 표로.
@@ -551,6 +557,7 @@ async function route() {
   releasePage(); releasePage = () => {}; stopTeacher(); stepGuide?.destroy(); stepGuide = null;
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (!u) return pageHome($app, store, teacher);
+  if (u === 'check' || a === 'check') return pageCheck(u === 'check' ? null : u);   // 선생님 확인(v2/check.js)
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
   const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, items }; MISC = mod.misc || null;
   if (a === 'sub') return pageSub(u, L, b);

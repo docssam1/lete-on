@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko" data-active="true" data-renderer="loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>수의 마법 · 마을 둘러보기</title>
+  <link rel="stylesheet" href="village.css?v=20260930-1">
+</head>
+<body>
+  <main class="village" aria-label="수의 마법 마을 소개">
+    <div id="townScene" aria-label="실제 수의 마법 3D 마을"></div>
+    <div id="villageLoading" class="loading" role="status"><span aria-hidden="true">✦</span>마을에 도착하는 중</div>
+    <div id="villageFallback" class="fallback" hidden>
+      <img src="../assets/promo/shots/village.webp" alt="실제 수의 마법 3D 마을의 도서관, 숫자 친구, 학습 공간" width="1280" height="800">
+      <p>이 기기에서는 마을 사진으로 둘러봅니다.</p>
+    </div>
+    <header class="heading"><span>NUMBERS OF MAGIC</span><h1>배움이 모이는 마을</h1></header>
+    <div class="view-controls" aria-label="마을 시점 조절">
+      <button type="button" id="viewLeft" aria-label="마을 왼쪽 보기">←</button>
+      <button type="button" id="viewReset" aria-label="마을 전체 보기">전체</button>
+      <button type="button" id="viewRight" aria-label="마을 오른쪽 보기">→</button>
+    </div>
+    <section class="tour" aria-label="마을에서 하는 일">
+      <div class="tour-tabs" aria-label="마을 소개 장면">
+        <button type="button" data-stop="friends" aria-pressed="true">숫자 친구</button>
+        <button type="button" data-stop="learning" aria-pressed="false">오늘의 배움</button>
+        <button type="button" data-stop="paper" aria-pressed="false">종이 학습지</button>
+      </div>
+      <div class="tour-detail" aria-live="polite" aria-atomic="true">
+        <div><h2 id="tourTitle">숫자 친구와 함께 걸어요.</h2><p id="tourCopy">길을 눌러 마을을 탐험해 보세요.</p></div>
+        <button type="button" id="tourAction" hidden>체험해 보기 <span aria-hidden="true">↗</span></button>
+      </div>
+    </section>
+  </main>
+  <script src="i18n.js?v=20260930-10"></script>
+  <script type="module" src="village.js?v=20260930-10"></script>
+</body>
+</html>

@@ -1,516 +1,79 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Numbers of Magic · 수의 마법</title>
-  <meta name="description" content="숫자가 마법이 되는 곳. 유아 연산부터 미적분Ⅰ까지 — 수의 마법 이야기·로드맵·실험실·실제 학습지를 한 권의 책으로 넘겨 보세요.">
-  <meta name="theme-color" content="#061a1c">
-  <link rel="icon" href="../assets/favicon.png">
-  <link rel="canonical" href="https://lete-on.gfieldacademy.net/number_magic/promo/">
-  <link rel="alternate" hreflang="ko" href="https://lete-on.gfieldacademy.net/number_magic/promo/?lang=ko">
-  <link rel="alternate" hreflang="en" href="https://lete-on.gfieldacademy.net/number_magic/promo/?lang=en">
-  <link rel="alternate" hreflang="zh-Hans" href="https://lete-on.gfieldacademy.net/number_magic/promo/?lang=zh">
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="ko_KR">
-  <meta property="og:site_name" content="Numbers of Magic · 수의 마법">
-  <meta property="og:title" content="Numbers of Magic · 수의 마법">
-  <meta property="og:description" content="숫자가 마법이 되는 곳. 책을 눌러 펼쳐 보세요.">
-  <meta property="og:url" content="https://lete-on.gfieldacademy.net/number_magic/promo/">
-  <meta property="og:image" content="https://lete-on.gfieldacademy.net/number_magic/assets/promo/video/poster-full.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Numbers of Magic · 수의 마법">
-  <meta name="twitter:description" content="숫자가 마법이 되는 곳. 책을 눌러 펼쳐 보세요.">
-  <meta name="twitter:image" content="https://lete-on.gfieldacademy.net/number_magic/assets/promo/video/poster-full.jpg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500..700;1,9..144,500..700&display=swap">
-  <link rel="stylesheet" href="book.css?v=20260929-v3">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Numbers of Magic · 수의 마법</title>
+<meta name="description" content="계산하는 힘, 읽고 생각하는 힘. 수 감각부터 문장제까지, 책 속에서 직접 만나는 수의 마법.">
+<meta name="theme-color" content="#102e34"><link rel="icon" href="../assets/favicon.png">
+<link rel="canonical" href="https://lete-on.gfieldacademy.net/number_magic/promo/">
+<meta property="og:title" content="계산하는 힘, 읽고 생각하는 힘 · 수의 마법">
+<meta property="og:description" content="책을 펼치고, 수를 움직여 보세요. 유아부터 고등까지 이어지는 수학의 발견.">
+<meta property="og:image" content="https://lete-on.gfieldacademy.net/number_magic/assets/promo/video/poster-full.jpg"><meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="../assets/fonts/pretendard-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/nanum-pen-cover.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="../assets/fonts/kalam-cover.ttf" as="font" type="font/ttf" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="book.css?v=20260930-7"><link rel="stylesheet" href="experience.css?v=20260930-5">
+<link rel="preload" href="../assets/promo/grimoire-emerald.webp" as="image">
+<link rel="stylesheet" href="front-page.css?v=20260930-10"><link rel="stylesheet" href="page-curl.css?v=20260930-9"><link rel="stylesheet" href="i18n.css?v=20260930-10"><link rel="stylesheet" href="lab-spread.css?v=20260930-10">
 </head>
 <body>
-<a class="skip-link" href="#book" data-t="ui.skip">책 내용으로 건너뛰기</a>
-
-<div class="desk" aria-hidden="true"><i class="desk-glow"></i><i class="desk-dust"></i></div>
-
-<header class="bar">
-  <button class="bar-btn bar-home" id="btnClose" type="button" hidden>
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM13 4h5.5c.8 0 1.5.7 1.5 1.5v13c0 .8-.7 1.5-1.5 1.5H13z"/></svg>
-    <span data-t="ui.close">책 덮기</span>
-  </button>
-  <p class="bar-where" id="where" aria-live="polite"></p>
-  <div class="bar-tools">
-    <div class="lang" role="group" aria-label="언어" data-ta="aria-label:ui.lang">
-      <button type="button" data-lang="ko" lang="ko">한</button><button type="button" data-lang="en" lang="en">EN</button><button type="button" data-lang="zh" lang="zh-Hans">中</button>
-    </div>
-    <button class="bar-btn bar-icon" id="btnSound" type="button" aria-pressed="true">
-      <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zm12 .5c1.1 1.5 1.1 3.5 0 5m2.4-8c2.6 3 2.6 8 0 11"/></svg>
-      <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zm12.5 1.5 4 4m0-4-4 4"/></svg>
-    </button>
-  </div>
-</header>
-
-<main class="stage" id="book" tabindex="-1">
-  <div class="book is-closed" id="bookEl" role="region" aria-roledescription="book" data-ta="aria-label:ui.book">
-    <div class="book-board" aria-hidden="true"></div>
-    <div class="edges edges-l" aria-hidden="true"></div>
-    <div class="edges edges-r" aria-hidden="true"></div>
-    <div class="slot slot-l"></div>
-    <div class="slot slot-r"></div>
-    <div class="gutter" aria-hidden="true"></div>
-    <div class="cast cast-l" aria-hidden="true"></div>
-    <div class="cast cast-r" aria-hidden="true"></div>
-    <button class="peel peel-next" id="peelNext" type="button" tabindex="-1" aria-hidden="true"></button>
-    <button class="peel peel-prev" id="peelPrev" type="button" tabindex="-1" aria-hidden="true"></button>
-    <div class="leaf-host" aria-hidden="true"></div>
-    <div class="cover" id="cover">
-      <div class="cover-front">
-        <button class="cover-hit" id="openBook" type="button" data-ta="aria-label:ui.openAria">
-          <span class="cover-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          <span class="cover-kicker" data-t="cover.kicker">숫자가 마법이 되는 곳</span>
-          <span class="cover-sigil" aria-hidden="true"><svg viewBox="0 0 200 200"><defs><linearGradient id="gold" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#f6e2a8"/><stop offset=".5" stop-color="#c99b4a"/><stop offset="1" stop-color="#f2d58e"/></linearGradient></defs><circle cx="100" cy="100" r="86" fill="none" stroke="url(#gold)" stroke-width="1.6"/><circle cx="100" cy="100" r="74" fill="none" stroke="url(#gold)" stroke-width=".8" stroke-dasharray="2 5"/><g class="sig-orbit"><path d="M100 14 L106 30 L100 26 L94 30Z" fill="url(#gold)"/><circle cx="186" cy="100" r="3" fill="url(#gold)"/><circle cx="14" cy="100" r="3" fill="url(#gold)"/></g><text x="100" y="92" text-anchor="middle" font-size="30" fill="url(#gold)" font-family="Fraunces,serif">π  Σ  √</text><text x="100" y="138" text-anchor="middle" font-size="46" fill="url(#gold)" font-family="Fraunces,serif" font-style="italic">∞</text></svg></span>
-          <span class="cover-title"><span>NUMBERS</span><i>of</i><span>MAGIC</span></span>
-          <span class="cover-local" data-t="cover.local">수의 마법</span>
-          <span class="cover-sub" data-t="cover.sub">유아 연산부터 미적분Ⅰ까지</span>
-          <img class="cover-logo" src="../assets/gfield-logo.svg" alt="GFIELD" width="84" height="29">
-        </button>
-      </div>
-      <div class="cover-edge" aria-hidden="true"></div>
-      <div class="cover-back" aria-hidden="true"></div>
-    </div>
-  </div>
-  <p class="open-hint" id="openHint"><span aria-hidden="true">✦</span> <span data-t="ui.open">책을 눌러 펼쳐 보세요</span></p>
-</main>
-
-<nav class="dock" id="dock" hidden>
-  <button class="dock-btn" id="btnPrev" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-  <div class="dock-mid">
-    <div class="dock-track" aria-hidden="true"><i id="dockFill"></i></div>
-    <span class="dock-count" id="dockCount"></span>
-    <span class="dock-hint" id="dockHint"></span>
-  </div>
-  <button class="dock-btn" id="btnNext" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-</nav>
-
-<div class="zoom" id="zoom" hidden>
-  <button class="zoom-close" id="zoomClose" type="button" data-t="ws.closeZoom">닫기</button>
-  <img id="zoomImg" alt="">
+<a class="skip-link" href="#bookContent">책 내용으로 건너뛰기</a>
+<main class="magic-book-app" data-view="cover">
+<section class="scene scene-cover is-active" data-scene="cover" aria-labelledby="coverTitle">
+<select class="promo-language cover-language" data-promo-language aria-label="언어 / Language / 语言"><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option></select>
+<p class="cover-kicker">숫자가 마법이 되는 곳</p>
+<button class="closed-book" id="openBook" type="button" aria-label="수의 마법 책 펼치기">
+<span class="book-pages" aria-hidden="true"></span>
+<span class="book-cover-face">
+<span class="cover-edition">계산하는 힘, 읽고 생각하는 힘</span>
+<span class="cover-title" id="coverTitle"><span>Numbers</span><span><i>of</i> Magic</span></span><span class="cover-name-ko">수의 마법</span>
+<span class="cover-art" id="coverMath" aria-hidden="true" data-expression="8 + 7"><canvas class="cover-stars"></canvas><span class="cover-equation" data-animation="regrouping"><span class="cover-number" data-token="eight">8</span><span class="cover-number cover-eq-op" data-token="plusA">+</span><span class="cover-number" data-token="seven">7</span><span class="cover-number is-transfer" data-token="two">2</span><span class="cover-number cover-eq-op" data-token="plusB">+</span><span class="cover-number" data-token="five">5</span><span class="cover-number" data-token="ten">10</span><span class="cover-number" data-token="fifteen">15</span></span><span class="cover-math-caption">수는, 펼치면 쉬워진다</span><span class="cover-math-static">8 + 7 = 8 + 2 + 5 = 10 + 5 = 15</span></span>
+<img class="cover-logo" src="../assets/gfield-logo.svg" alt="GFIELD" width="90" height="30">
+</span></button>
+<p class="open-hint">책을 눌러 펼쳐 보세요 <span aria-hidden="true">↗</span></p>
+</section>
+<section class="scene scene-reader" data-scene="reader" aria-label="펼쳐진 수의 마법 책" aria-hidden="true" inert>
+<div class="open-book"><div class="book-underlay" aria-hidden="true"></div><div class="book-paper">
+<header class="book-toolbar"><button class="icon-button" id="bookHome" aria-label="책 표지로 돌아가기">⌂</button><span class="book-brand">Numbers <i>of</i> Magic</span><select class="promo-language reader-language" data-promo-language aria-label="언어 / Language / 语言"><option value="ko">한국어</option><option value="en">English</option><option value="zh">中文</option></select><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener" class="consult-link">오픈톡 상담 ↗</a></header>
+<div class="book-content" id="bookContent" tabindex="-1">
+<section class="book-panel panel-menu" data-panel="menu" aria-labelledby="menuTitle">
+<article class="welcome-page"><header class="welcome-heading"><p>작은 발견이, 수학의 자신감으로.</p><h1 id="menuTitle" tabindex="-1">수를 움직이면<br>생각이 보입니다.</h1></header><div id="heroExperience" class="hero-experience"></div><div class="welcome-foot"><span>유아 · 똑같이 만들기</span><button class="text-button" data-route="labs">유·초·중·고 체험하기 ↗</button></div></article>
+<article class="invitation-page"><video id="teaserVideo" playsinline loop preload="none" poster="../assets/promo/video/poster-full.jpg" controlslist="nodownload noremoteplayback" disablepictureinpicture aria-label="수의 마법 미리보기"></video><div class="teaser-shade"></div><div class="teaser-tools"><button id="teaserPlay" class="round-button" aria-label="미리보기 재생">▶</button><button id="teaserSound" class="round-button" aria-label="배경음 끄기">♪</button></div><div class="invitation-copy"><p>교과와 사고력을 이어 주는<br>연산과 언어사고력.</p><button class="primary-button light" data-route="video">수의 마법으로 여행 <span>→</span></button></div></article>
+</section>
+<section class="book-panel panel-video" data-panel="video" aria-label="소개 영상" hidden inert>
+<video id="introVideo" playsinline preload="none" poster="../assets/promo/video/poster-full.jpg" controlslist="nodownload noremoteplayback" disablepictureinpicture aria-label="수의 마법 소개 영상"></video>
+<div class="cut-switch" role="group" aria-label="소개 영상 선택"><button data-cut="full" aria-pressed="true">전체 영상</button><button data-cut="short" aria-pressed="false">짧은 영상</button></div>
+<button id="cinemaPlay" class="cinema-play" aria-label="소개 영상 재생">▶</button><div id="videoFinish" class="video-finish" hidden><button class="primary-button light" data-route="worksheet">실제 학습지 펼쳐 보기 →</button></div>
+</section>
+<section class="book-panel panel-labs" data-panel="labs" aria-labelledby="labsTitle" hidden inert>
+<nav class="lab-page-switch" aria-label="체험 페이지"><button data-lab-select="middle" aria-pressed="true">중등</button><button data-lab-select="high" aria-pressed="false">고등</button></nav>
+<div class="lab-spread">
+<article class="lab-leaf" data-lab-page="middle"><header class="section-heading"><div><p class="lab-stage-label">중등 · 반비례</p><h2 id="labsTitle" tabindex="-1">한 수가 바뀌면,<br>다른 수는?</h2></div></header><div id="labExperience" class="lab-experience"></div><footer class="lab-footer"><span id="labMeaning">곱이 일정한 두 수의 관계를 발견합니다.</span><button class="text-button" id="labToSheet">중등 학습지 보기 →</button></footer></article>
+<article class="lab-leaf" data-lab-page="high"><header class="section-heading"><div><p class="lab-stage-label">고등 · 미적분</p><h2 id="labsHighTitle" tabindex="-1">잘게 나눌수록,<br>넓이가 보입니다.</h2></div></header><div id="highLabExperience" class="lab-experience"></div><footer class="lab-footer"><span id="highLabMeaning">눈으로 본 변화를 수와 식으로 다룹니다.</span><button class="text-button" id="highLabToSheet">고등 학습지 보기 →</button></footer></article>
 </div>
-
-<!-- ───────────── 책의 쪽들 — book.js 가 펼침(데스크톱 2쪽 / 휴대폰 1쪽)으로 배치한다 ───────────── -->
-<template id="pageTpl">
-
-<article class="pg pg-endpaper" data-page="endpaper" data-desk-only>
-  <div class="pg-in">
-    <div class="plate">
-      <p class="plate-k" data-t="ep.k"></p>
-      <img class="plate-numi" src="../assets/characters/numi-wizard.png" alt="" width="360" height="419">
-      <h2 class="plate-t" data-t="ep.t"></h2>
-      <p class="plate-p" data-t="ep.p"></p>
-      <p class="plate-sign" data-t="ep.sign"></p>
-    </div>
-  </div>
-</article>
-
-<article class="pg" data-page="contents" data-toc="0">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="toc.k"></p>
-    <h2 class="h2" data-t="toc.t"></h2>
-    <ol class="toc" id="tocList"></ol>
-    <p class="note" data-t="toc.note"></p>
-  </div>
-</article>
-
-<article class="pg" data-page="welcome" data-toc="1">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="wel.k"></p>
-    <h2 class="h2 h2-xl" data-h="wel.h"></h2>
-    <p class="lead" data-t="wel.p"></p>
-    <ul class="facts">
-      <li><b data-t="wel.f1b"></b><span data-t="wel.f1"></span></li>
-      <li><b data-t="wel.f2b" data-fill="stats"></b><span data-t="wel.f2"></span></li>
-      <li><b data-t="wel.f3b"></b><span data-t="wel.f3"></span></li>
-    </ul>
-    <p class="mini-h" data-t="wel.ppl"></p>
-    <ul class="people">
-      <li><img src="../assets/characters/kid-boy.png" alt="" width="512" height="512"><b data-t="p1b"></b><span data-t="p1"></span></li>
-      <li><img src="../assets/characters/kid-girl.png" alt="" width="512" height="512"><b data-t="p2b"></b><span data-t="p2"></span></li>
-      <li><img src="../assets/characters/numi-0.png" alt="" width="145" height="182"><b data-t="p3b"></b><span data-t="p3"></span></li>
-      <li><img src="../assets/characters/elder.png" alt="" width="512" height="512"><b data-t="p4b"></b><span data-t="p4"></span></li>
-      <li><img src="../assets/characters/docssam.png" alt="" width="512" height="512"><b data-t="p5b"></b><span data-t="p5"></span></li>
-    </ul>
-  </div>
-</article>
-
-<article class="pg pg-bleed" data-page="village">
-  <div class="pg-in">
-    <figure class="bleed">
-      <img data-limg="town-desktop.jpg" data-ta="alt:vil.alt" alt="" width="1600" height="950">
-    </figure>
-    <div class="bleed-card">
-      <p class="kicker" data-t="vil.k"></p>
-      <h2 class="h2" data-h="vil.h"></h2>
-      <p class="body" data-t="vil.p"></p>
-    </div>
-  </div>
-</article>
-
-<article class="pg" data-page="philosophy" data-toc="2">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="ph.k"></p>
-    <h2 class="h2" data-h="ph.h"></h2>
-    <p class="body" data-t="ph.p"></p>
-    <div class="vs">
-      <section class="vs-card vs-bad">
-        <p class="vs-tag" data-t="ph.badT"></p>
-        <p class="vs-q" data-t="ph.badQ"></p>
-        <p class="vs-p" data-t="ph.badP"></p>
-      </section>
-      <section class="vs-card vs-good">
-        <p class="vs-tag" data-t="ph.goodT"></p>
-        <p class="vs-q" data-t="ph.goodQ"></p>
-        <p class="vs-p" data-t="ph.goodP"></p>
-      </section>
-    </div>
-    <div class="unfold" id="unfold" data-no-turn>
-      <div class="unfold-eq" aria-live="polite"><span id="unfoldEq">8 + 7</span></div>
-      <p class="unfold-cap" id="unfoldCap"></p>
-      <button class="btn btn-gold" id="unfoldBtn" type="button"></button>
-    </div>
-    <p class="note" data-t="ph.note"></p>
-  </div>
-</article>
-
-<article class="pg" data-page="principles">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="pr.k"></p>
-    <h2 class="h2" data-h="pr.h"></h2>
-    <ol class="rules">
-      <li><i>01</i><div><b data-t="pr1b"></b><span data-t="pr1s"></span></div></li>
-      <li><i>02</i><div><b data-t="pr2b"></b><span data-t="pr2s"></span></div></li>
-      <li><i>03</i><div><b data-t="pr3b"></b><span data-t="pr3s"></span></div></li>
-      <li><i>04</i><div><b data-t="pr4b"></b><span data-t="pr4s"></span></div></li>
-      <li><i>05</i><div><b data-t="pr5b"></b><span data-t="pr5s"></span></div></li>
-      <li><i>06</i><div><b data-t="pr6b"></b><span data-t="pr6s"></span></div></li>
-    </ol>
-  </div>
-</article>
-
-<article class="pg" data-page="dna" data-toc="3">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="dna.k"></p>
-    <h2 class="h2" data-h="dna.h"></h2>
-    <p class="body" data-t="dna.p"></p>
-    <div class="dna">
-      <section class="dna-col">
-        <p class="dna-n"><i>1</i><span data-t="dna.1n"></span></p><b data-t="dna.1b"></b>
-        <pre class="dna-work col-work" aria-label="47 + 38 = 85">   4 7
- + 3 8
- ─────
-   8 5</pre>
-        <p data-t="dna.1p"></p>
-      </section>
-      <section class="dna-col">
-        <p class="dna-n"><i>2</i><span data-t="dna.2n"></span></p><b data-t="dna.2b"></b>
-        <p class="dna-work"><span>47 + 38</span><span>= 47 + 3 + 35</span><span>= 50 + 35</span><span>= <em>85</em></span></p>
-        <p data-t="dna.2p"></p>
-      </section>
-      <section class="dna-col">
-        <p class="dna-n"><i>3</i><span data-t="dna.3n"></span></p><b data-t="dna.3b"></b>
-        <p class="dna-work dna-story" data-t="dna.3ex"></p>
-        <p data-t="dna.3p"></p>
-      </section>
-    </div>
-  </div>
-</article>
-
-<article class="pg" data-page="symbols">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="sym.k"></p>
-    <h2 class="h2" data-h="sym.h"></h2>
-    <p class="body" data-t="sym.p"></p>
-    <p class="hint-line" data-t="sym.tap"></p>
-    <div class="symcards" id="symCards" data-no-turn></div>
-  </div>
-</article>
-
-<article class="pg" data-page="road" data-toc="4">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="rm.k"></p>
-    <h2 class="h2" data-h="rm.h"></h2>
-    <p class="body" data-t="rm.p"></p>
-    <ol class="phases"><li data-t="rm.s1"></li><li data-t="rm.s2"></li><li data-t="rm.s3"></li><li data-t="rm.s4"></li><li data-t="rm.s5"></li></ol>
-    <div class="road" id="road" data-no-turn></div>
-    <div class="road-pick">
-      <p class="road-now" id="roadNow"></p>
-      <button class="btn btn-ghost road-more" id="roadMore" type="button" data-t="rm.more"></button>
-    </div>
-  </div>
-</article>
-
-<article class="pg" data-page="stage">
-  <div class="pg-in pad">
-    <div class="stage-card" id="stageCard" aria-live="polite"></div>
-    <div class="stage-nav" data-no-turn>
-      <button class="btn btn-ghost" id="stPrev" type="button" data-t="st.prev"></button>
-      <span class="stage-dots" id="stageDots" aria-hidden="true"></span>
-      <button class="btn btn-ghost" id="stNext" type="button" data-t="st.next"></button>
-    </div>
-    <p class="note stage-total" id="stageTotal"></p>
-  </div>
-</article>
-
-<article class="pg" data-page="placement" data-toc="5">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="pl.k"></p>
-    <h2 class="h2" data-h="pl.h"></h2>
-    <p class="body" data-t="pl.p"></p>
-    <ol class="phones phones-3">
-      <li><figure class="phone"><img data-limg="m-diag.jpg" data-ta="alt:pl.a1" alt="" width="640" height="1385"></figure><p><i>1</i><b data-t="pl.1b"></b><span data-t="pl.1"></span></p></li>
-      <li><figure class="phone"><img data-limg="m-roadmap.jpg" data-ta="alt:pl.a2" alt="" width="640" height="1385"></figure><p><i>2</i><b data-t="pl.2b"></b><span data-t="pl.2"></span></p></li>
-      <li><figure class="phone"><img data-limg="m-road.jpg" data-ta="alt:pl.a3" alt="" width="640" height="1385"></figure><p><i>3</i><b data-t="pl.3b"></b><span data-t="pl.3"></span></p></li>
-    </ol>
-  </div>
-</article>
-
-<article class="pg" data-page="pace">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="pc.k"></p>
-    <h2 class="h2" data-h="pc.h"></h2>
-    <p class="body" data-t="pc.p"></p>
-    <ol class="bench">
-      <li class="b1"><i></i><div><b data-t="pc.a"></b><span data-t="pc.as"></span></div></li>
-      <li class="b2"><i></i><div><b data-t="pc.b"></b><span data-t="pc.bs"></span></div></li>
-      <li class="b3"><i></i><div><b data-t="pc.c"></b><span data-t="pc.cs"></span></div></li>
-    </ol>
-    <figure class="pacechart" aria-hidden="true">
-      <svg viewBox="0 0 320 150" preserveAspectRatio="none">
-        <g class="pc-grid"><path d="M28 10V128H314"/><path d="M28 88H314M28 48H314" stroke-dasharray="2 4"/></g>
-        <path class="pc-l pc-l1" d="M28 124 C 120 112 200 92 312 70"/>
-        <path class="pc-l pc-l2" d="M28 124 C 110 100 190 64 312 34"/>
-        <path class="pc-l pc-l3" d="M28 124 C 90 88 160 44 300 12"/>
-        <path class="pc-l pc-you" d="M28 124 C 100 104 170 76 250 54"/>
-        <circle class="pc-dot" cx="250" cy="54" r="5"/>
-      </svg>
-      <figcaption><span class="pc-x" data-t="pc.chartX"></span><span class="pc-y" data-t="pc.chartY"></span><span class="pc-youl" data-t="pc.you"></span></figcaption>
-    </figure>
-    <p class="disc" data-t="pc.disc"></p>
-    <p class="disc disc-eg" data-t="pc.eg"></p>
-  </div>
-</article>
-
-<article class="pg" data-page="calcA" data-toc="6">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="ca.k"></p>
-    <h2 class="h2" data-t="ca.h"></h2>
-    <p class="body" data-t="ca.p"></p>
-    <div class="lab" data-lab="tangent" data-no-turn>
-      <canvas class="lab-cv" id="cvTan" role="img" data-ta="aria-label:ca.canvas"></canvas>
-      <div class="lab-row">
-        <input class="lab-range" id="rgTan" type="range" min="0" max="100" step="1" value="10" data-ta="aria-label:ca.range">
-      </div>
-      <p class="lab-read" id="readTan" aria-live="polite"></p>
-    </div>
-    <p class="sym-line" data-h="ca.sym"></p>
-    <a class="lab-link" href="../labs/why-calculus.html" target="_blank" rel="noopener" data-lablink data-t="ui.openLab"></a>
-  </div>
-</article>
-
-<article class="pg" data-page="calcB">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="cb.k"></p>
-    <h2 class="h2" data-h="cb.h"></h2>
-    <p class="body" data-t="cb.p"></p>
-    <div class="lab" data-lab="area" data-no-turn>
-      <canvas class="lab-cv" id="cvArea" role="img" data-ta="aria-label:cb.canvas"></canvas>
-      <div class="lab-row">
-        <button class="btn btn-ghost btn-sq" id="areaLess" type="button" data-t="cb.less"></button>
-        <input class="lab-range" id="rgArea" type="range" min="1" max="80" step="1" value="4" data-ta="aria-label:cb.range">
-        <button class="btn btn-ghost btn-sq" id="areaMore" type="button" data-t="cb.more"></button>
-      </div>
-      <p class="lab-read" id="readArea" aria-live="polite"></p>
-      <div class="meter" aria-hidden="true"><i id="areaMeter"></i></div>
-    </div>
-    <p class="sym-line" data-h="cb.sym"></p>
-  </div>
-</article>
-
-<article class="pg" data-page="rainbow" data-toc="7">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="rb.k"></p>
-    <h2 class="h2" data-h="rb.h"></h2>
-    <p class="body" data-t="rb.p"></p>
-    <div class="lab rainbow" id="rainbow" data-no-turn>
-      <div class="rb-picks" role="group">
-        <button type="button" class="chip is-on" data-n="10">1 ~ 10</button>
-        <button type="button" class="chip" data-n="11">1 ~ 11</button>
-        <button type="button" class="chip" data-n="100">1 ~ 100</button>
-      </div>
-      <svg class="rb-arcs" id="rbArcs" viewBox="0 0 600 170" preserveAspectRatio="xMidYMax meet" aria-hidden="true"></svg>
-      <div class="rb-row" id="rbRow"></div>
-      <p class="lab-read" id="rbRead" aria-live="polite"></p>
-      <div class="rb-actions"><button class="btn btn-ghost" id="rbReset" type="button" data-t="rb.reset"></button></div>
-    </div>
-    <a class="lab-link" href="../labs/rainbow-sum.html" target="_blank" rel="noopener" data-lablink data-t="ui.openLab"></a>
-  </div>
-</article>
-
-<article class="pg" data-page="labs">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="lm.k"></p>
-    <h2 class="h2" data-h="lm.h"></h2>
-    <p class="body" data-t="lm.p"></p>
-    <ul class="lablist">
-      <li><a href="../labs/rainbow-sum.html" target="_blank" rel="noopener" data-lablink><i>🌈</i><b data-t="l1b"></b><span data-t="l1"></span></a></li>
-      <li><a href="../labs/square-friends.html" target="_blank" rel="noopener" data-lablink><i>🟦</i><b data-t="l2b"></b><span data-t="l2"></span></a></li>
-      <li><a href="../labs/secret-1001.html" target="_blank" rel="noopener" data-lablink><i>🔢</i><b data-t="l3b"></b><span data-t="l3"></span></a></li>
-      <li><a href="../labs/number-line-hole.html" target="_blank" rel="noopener" data-lablink><i>🕳️</i><b data-t="l4b"></b><span data-t="l4"></span></a></li>
-      <li><a href="../labs/root-hunter.html" target="_blank" rel="noopener" data-lablink><i>🌰</i><b data-t="l5b"></b><span data-t="l5"></span></a></li>
-      <li><a href="../labs/why-calculus.html" target="_blank" rel="noopener" data-lablink><i>🍎</i><b data-t="l6b"></b><span data-t="l6"></span></a></li>
-    </ul>
-    <p class="boxed comic-line" data-h="lm.comic"></p>
-  </div>
-</article>
-
-<article class="pg" data-page="app" data-toc="8">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="ap.k"></p>
-    <h2 class="h2" data-h="ap.h"></h2>
-    <p class="body" data-t="ap.p"></p>
-    <ul class="phones phones-4">
-      <li><figure class="phone"><img data-limg="m-town.jpg" alt="" width="640" height="1385"></figure><p><b data-t="ap.1b"></b><span data-t="ap.1"></span></p></li>
-      <li><figure class="phone"><img data-limg="m-unit.jpg" alt="" width="640" height="1385"></figure><p><b data-t="ap.2b"></b><span data-t="ap.2"></span></p></li>
-      <li><figure class="phone"><img data-limg="m-mailbox.jpg" alt="" width="640" height="1385"></figure><p><b data-t="ap.3b"></b><span data-t="ap.3"></span></p></li>
-      <li><figure class="phone"><img data-limg="m-title.jpg" alt="" width="640" height="1385"></figure><p><b data-t="ap.4b"></b><span data-t="ap.4"></span></p></li>
-    </ul>
-  </div>
-</article>
-
-<article class="pg" data-page="films">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="vd.k"></p>
-    <h2 class="h2" data-h="vd.h"></h2>
-    <p class="body" data-t="vd.p"></p>
-    <div class="film" data-no-turn>
-      <div class="film-screen">
-        <video id="film" playsinline preload="none" controls controlslist="nodownload noremoteplayback noplaybackrate" disablepictureinpicture poster="../assets/promo/video/poster-online-learning.jpg"></video>
-      </div>
-      <div class="film-picks" role="group">
-        <button type="button" class="chip is-on" data-film="lesson" aria-pressed="true" data-t="vd.c1"></button>
-        <button type="button" class="chip" data-film="full" aria-pressed="false" data-t="vd.c2"></button>
-        <button type="button" class="chip" data-film="short" aria-pressed="false" data-t="vd.c3"></button>
-      </div>
-      <p class="film-desc" id="filmDesc"></p>
-    </div>
-  </div>
-</article>
-
-<article class="pg" data-page="sheet" data-toc="9">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="ws.k"></p>
-    <h2 class="h2" data-h="ws.h"></h2>
-    <p class="body" data-t="ws.p"></p>
-    <div class="sheet" id="sheet" data-no-turn>
-      <button class="sheet-nav" id="sheetPrev" type="button" data-ta="aria-label:ws.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-      <button class="sheet-paper" id="sheetOpen" type="button">
-        <img id="sheetImg" src="../assets/promo/sample/page-1.webp" alt="" width="1064" height="1404">
-        <span class="sheet-zoom" data-t="ws.zoom"></span>
-      </button>
-      <button class="sheet-nav" id="sheetNext" type="button" data-ta="aria-label:ws.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
-    </div>
-    <ol class="sheet-tabs" id="sheetTabs" data-no-turn></ol>
-    <p class="note" data-t="ws.lang" data-hide-empty></p>
-  </div>
-</article>
-
-<article class="pg" data-page="weekly">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="wk.k"></p>
-    <h2 class="h2" data-h="wk.h"></h2>
-    <div class="cadence">
-      <section><b data-t="wk.c1h"></b><p class="weeks"><span data-t="wk1a"></span><span data-t="wk1b"></span><span data-t="wk1c"></span></p><p data-t="wk.c1p"></p></section>
-      <section><b data-t="wk.c2h"></b><p class="weeks"><span data-t="wk2a"></span><span data-t="wk2b"></span><span data-t="wk2c"></span></p><p data-t="wk.c2p"></p></section>
-    </div>
-    <p class="mini-h" data-t="wk.flowT"></p>
-    <ol class="flow"><li data-t="ws.p1"></li><li data-t="ws.p3"></li><li data-t="ws.p4"></li><li data-t="ws.p5"></li><li data-t="ws.p6"></li></ol>
-    <ul class="opts">
-      <li><b data-t="o1b"></b><span data-t="o1"></span></li>
-      <li><b data-t="o2b"></b><span data-t="o2"></span></li>
-      <li><b data-t="o3b"></b><span data-t="o3"></span></li>
-    </ul>
-    <p class="boxed tools-line" data-h="wk.tools"></p>
-    <section class="boxed stall-box">
-      <b data-t="pc.stallB"></b>
-      <p data-t="pc.stall"></p>
-    </section>
-  </div>
-</article>
-
-<article class="pg" data-page="start" data-toc="10">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="sg.k"></p>
-    <h2 class="h2" data-h="sg.h"></h2>
-    <ol class="steps">
-      <li><img src="../assets/characters/kid-girl.png" alt="" width="512" height="512"><div><b data-t="st1b"></b><span data-t="st1"></span></div></li>
-      <li><img src="../assets/characters/docssam.png" alt="" width="512" height="512"><div><b data-t="st2b"></b><span data-t="st2"></span></div></li>
-      <li><img src="../assets/characters/elder.png" alt="" width="512" height="512"><div><b data-t="st3b"></b><span data-t="st3"></span></div></li>
-    </ol>
-    <div class="price">
-      <p><span data-t="price.a"></span><b>₩10,000</b><small data-t="price.unit"></small></p>
-      <p><span data-t="price.b"></span><b>₩20,000</b><small data-t="price.unit"></small></p>
-    </div>
-    <p class="note" data-t="price.p"></p>
-  </div>
-</article>
-
-<article class="pg" data-page="faq">
-  <div class="pg-in pad">
-    <p class="kicker" data-t="fq.k"></p>
-    <h2 class="h2" data-t="fq.h"></h2>
-    <div class="faq" id="faq" data-no-turn></div>
-    <img class="faq-doc" src="../assets/characters/docssam.png" alt="" width="512" height="512">
-  </div>
-</article>
-
-<article class="pg" data-page="consult" data-toc="11">
-  <div class="pg-in pad pad-center">
-    <p class="ct-chars" aria-hidden="true"><img src="../assets/characters/kid-boy.png" alt="" width="512" height="512"><img src="../assets/characters/docssam.png" alt="" width="512" height="512"><img src="../assets/characters/kid-girl.png" alt="" width="512" height="512"></p>
-    <p class="kicker" data-t="ct.k"></p>
-    <h2 class="h2 h2-xl" data-h="ct.h"></h2>
-    <p class="lead" data-t="ct.p"></p>
-    <a class="btn btn-kakao" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener" data-contact="kakao">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4C7 4 3 7.1 3 11c0 2.5 1.7 4.7 4.3 6l-.9 3.3c-.1.3.3.5.5.3l3.9-2.6c.4 0 .8.1 1.2.1 5 0 9-3.1 9-7s-4-7.1-9-7.1z"/></svg>
-      <span data-t="ct.btn"></span>
-    </a>
-    <p class="note" data-t="ct.note"></p>
-    <p class="links">
-      <a href="../index.html?enter=1" data-t="ct.village"></a>
-      <a href="../index.html?enter=1&amp;trial=1" data-t="ct.trial"></a>
-      <a href="../landing.html" data-t="ct.home"></a>
-      <a href="../about.html" data-t="ct.phil"></a>
-    </p>
-  </div>
-</article>
-
-<article class="pg pg-endpaper pg-endpaper-back" data-page="colophon" data-desk-only>
-  <div class="pg-in">
-    <div class="plate">
-      <img class="plate-logo" src="../assets/gfield-logo.svg" alt="GFIELD" width="120" height="41">
-      <p class="plate-brand">NUMBERS <i>of</i> MAGIC</p>
-      <h2 class="plate-t plate-t-big" data-h="end.t"></h2>
-      <p class="plate-actions">
-        <button class="btn btn-gold" type="button" data-go="contents" data-t="end.again"></button>
-        <button class="btn btn-ghost-light" type="button" data-close data-t="end.close"></button>
-      </p>
-    </div>
-  </div>
-</article>
-
-</template>
-
-<noscript><p class="noscript">이 책은 자바스크립트가 켜져 있어야 넘길 수 있습니다. <a href="../landing.html">홈페이지에서 보기</a></p></noscript>
-
-<script src="../data/stages.js"></script>
-<script src="i18n.js?v=20260929-v3"></script>
-<script src="book.js?v=20260929-v3"></script>
-</body>
-</html>
+</section>
+<section class="book-panel panel-village" data-panel="village" aria-label="마을 소개" hidden inert><iframe id="villageFrame" title="숫자 친구와 함께 둘러보는 실제 수의 마법 3D 마을" data-src="village.html?v=20260930-10"></iframe></section>
+<section class="book-panel panel-worksheet" data-panel="worksheet" aria-labelledby="worksheetTitle" hidden inert>
+<header class="section-heading"><div><p>발견한 원리를, 내 것으로.</p><h2 id="worksheetTitle" tabindex="-1">읽고, 생각하고, 직접 풉니다.</h2></div><div class="level-tabs" aria-label="학습지 단계"><button data-sample="preschool" aria-pressed="true">유아</button><button data-sample="elementary" aria-pressed="false">초등</button><button data-sample="middle" aria-pressed="false">중등</button><button data-sample="high" aria-pressed="false">고등</button></div></header>
+<div class="sample-editorial" id="sampleEditorial"><article class="sample-story"><span class="sample-topic" id="sampleTopic">가르기와 모으기</span><h3 id="sampleHeadline">손으로 나눈 수를,<br>내 힘으로 풀어요.</h3><p id="sampleCopy">개념을 발견하고, 여러 문제에 써 보고, 짧은 이야기 속에서도 찾아봅니다.</p><div class="sample-sequence"><span>개념 이해</span><i>→</i><span>연산 연습</span><i>→</i><span>생각의 확장</span></div><button class="primary-button" id="openSamples">실제 학습지 펼치기 →</button><button class="text-button word-preview" id="wordPreview">문장제 연습 먼저 보기 ↗</button><small id="sampleSource">실제 과정에서 발췌한 학습지입니다.</small></article><button class="sample-preview" id="samplePreview" aria-label="실제 학습지 펼치기"><img id="sampleCover" src="../assets/promo/samples-v4/preschool/page-1.webp" alt="유아 가르기 실제 학습지" loading="lazy"><span>실제 학습지 발췌 <i>↗</i></span></button></div>
+<div class="sample-reader" id="sampleReader" hidden><div class="sheet-spread"><button class="sheet-leaf" data-zoom="0" aria-label="왼쪽 학습지 크게 보기"><img id="sheetA" alt="실제 학습지"></button><button class="sheet-leaf second" data-zoom="1" aria-label="오른쪽 학습지 크게 보기"><img id="sheetB" alt="실제 학습지"></button></div><div class="sheet-controls"><button id="closeSamples" class="text-button">← 소개</button><button id="sheetPrev" aria-label="이전 학습지 쪽">←</button><span id="sheetCounter"></span><button id="sheetNext" aria-label="다음 학습지 쪽">→</button><button id="zoomSheet" class="text-button">확대 ↗</button></div><p id="sampleCaption"></p></div>
+</section>
+<section class="book-panel panel-roadmap" data-panel="roadmap" aria-labelledby="roadmapTitle" hidden inert>
+<header class="section-heading"><div><p>목표를 향해, 한 걸음씩.</p><h2 id="roadmapTitle" tabindex="-1">수 감각에서 수학의 언어까지.</h2></div><button class="text-button" id="allCourses" aria-pressed="false">전체 과정표 보기 ↗</button></header>
+<div class="pace-control"><span>우리 아이 속도로.<small>진도·문항량 각각 0.7–1.5배 조절</small></span><div role="group" aria-label="주간 학습 횟수 예시"><button data-pace="1" aria-pressed="false">주 1회</button><button data-pace="2" aria-pressed="true">주 2회</button></div><output id="paceEstimate" aria-live="polite"></output></div>
+<div class="roadmap-layout"><div class="roadmap-journey"><div class="roadmap-rail" id="roadmapRows" aria-label="7단계 학습 여정"></div><div class="roadmap-note"><span>학년보다 지금의 이해에서 시작합니다.</span><button id="roadmapPlay" class="text-button" aria-pressed="false">여정 재생 ▶</button></div></div><section class="course-index" aria-labelledby="stageTitle"><header><h3 id="stageTitle"></h3><p id="stageLearn"></p></header><div id="courseRows" class="course-scroll" tabindex="0"></div><div class="stage-example" id="stageExample"><p>이렇게 생각이 이어집니다.</p><div id="stageExpression"></div><div class="example-progress" aria-hidden="true"></div></div></section></div>
+<footer class="roadmap-footer"><a href="../index.html" class="primary-button">마법의 마을 들어가기 ↗</a><a href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener" class="text-button">우리 아이 시작점 상담 ↗</a></footer>
+</section>
+</div>
+<div class="cinema-controls" id="cinemaControls" role="group" aria-label="소개 영상 재생 조작" hidden><button id="playToggle" aria-label="재생">▶</button><input id="videoProgress" type="range" min="0" max="1000" value="0" aria-label="영상 재생 위치"><span id="videoTime">0:00</span><button id="muteToggle" aria-label="음소거">♪</button></div>
+<footer class="book-footer"><button class="edge-turn" id="bookBack" aria-label="이전 책장">‹</button><nav class="chapter-nav" aria-label="책의 차례"><button data-route="video">영상</button><button data-route="menu">발견</button><button data-route="labs">체험</button><button data-route="village">마을</button><button data-route="worksheet">학습지</button><button data-route="roadmap">로드맵</button></nav><button class="edge-turn" id="bookNext" aria-label="다음 책장">›</button></footer>
+</div></div>
+</section>
+</main>
+<dialog id="sheetZoom" aria-label="학습지 확대"><button id="zoomClose" aria-label="확대 닫기">닫기 ×</button><div class="zoom-scroll"><img id="zoomImage" alt="확대한 실제 학습지"></div></dialog>
+<noscript><p class="no-script">책을 펼치려면 JavaScript를 켜 주세요. <a href="../index.html">수의 마법으로 이동</a></p></noscript>
+<script src="../data/stages.js"></script><script src="../data/courses.js"></script>
+<script src="i18n.js?v=20260930-10"></script><script src="experience.js?v=20260930-10"></script><script src="cover-math.js?v=20260930-10"></script><script src="page-curl.js?v=20260930-9"></script><script src="book.js?v=20260930-10"></script>
+</body></html>
