@@ -957,7 +957,7 @@ NM_TGEN['ml11_squares'] = function(params, rng) {
         steps: [{ tex: `${n}! = \\square`, blank: F(n) }, { tex: `${a} \\times ${F(n)} = \\square`, blank: ans }]
       };
     }
-    const n = R(rng, 3, 6);                /* 풀이 줄이 n−1 개라 6 이하 — 7·8 은 학습지 한 쪽에서 넘쳤다 */
+    const n = R(rng, 3, 5);                /* 풀이 줄이 n−1 개라 5 이하 — 6 이상은 학습지 한 쪽에서 넘쳤다 */
     const parts = [];
     let acc = 1;
     for (let i = 2; i <= n; i++) { acc *= i; parts.push(acc); }
