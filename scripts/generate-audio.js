@@ -105,7 +105,9 @@ const tasks = [];
 // 않으니, 문장을 바꿀 때는 이 파일도 함께 커밋해서 Generate Audio가 실행되게 한다. (나레이션 개정: 2026-09-21 16차, 20줄)
 const SCI_NARRATION = path.join(__dirname, '../science-lab/intro/narration.json');
 let SCI_VOICE = null, SCI_FALLBACK = null;
-if (fs.existsSync(SCI_NARRATION)) {
+// 사이언스 랩은 구글 음성을 만들지 않는다(원장 2026-10-01: 돈이 든다 → 독쌤 OmniVoice 복제 음성, 없으면 기기 음성). 되살리려면 true
+const SCI_GOOGLE = false;
+if (SCI_GOOGLE && fs.existsSync(SCI_NARRATION)) {
   const crypto = require('crypto');
   const nar = JSON.parse(fs.readFileSync(SCI_NARRATION, 'utf8'));
   SCI_VOICE = nar.voice; SCI_FALLBACK = nar.fallbackVoice || null;
@@ -117,7 +119,7 @@ if (fs.existsSync(SCI_NARRATION)) {
 // 스스로 공부하기(v2/deck.js self) docssam 안내 — science-lab/data/voice/*.voice.json. 광고와 같은 목소리·같은 해시 규칙이라
 // 화면(v2/docssam.js)이 같은 주소를 만든다. 줄 id는 파일끼리 겹치면 안 된다(dk-·v3b- 같은 접두어).
 const SCI_VOICE_DIR = path.join(__dirname, '../science-lab/data/voice');
-if (fs.existsSync(SCI_VOICE_DIR)) {
+if (SCI_GOOGLE && fs.existsSync(SCI_VOICE_DIR)) {
   const crypto = require('crypto'), seen = new Set(tasks.filter((t) => t.type === 'sci').map((t) => t.storagePath));
   for (const f of fs.readdirSync(SCI_VOICE_DIR).filter((x) => x.endsWith('.voice.json')).sort()) {
     const v = JSON.parse(fs.readFileSync(path.join(SCI_VOICE_DIR, f), 'utf8'));

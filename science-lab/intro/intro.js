@@ -75,12 +75,16 @@ async function say(ids) {
       // 독쌤 목소리 파일(audio/docssam) → 예전 음성 파일 → 기기 음성 순서로 읽는다
       let fell = false;
       const fall = () => { if (fell) return; fell = true; if (my === sayToken && soundOn) speakDevice(line.text); };
-      const src = (await cloneUrl(line.id, line.text)) || await urlOf(line); if (my !== sayToken) return;   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
+      // 독쌤 복제 음성이 없으면 기기 음성(돈 드는 구글 음성은 쓰지 않는다 — 원장 2026-10-01, 나중에 OmniVoice로 채운다)
+      const src = await cloneUrl(line.id, line.text); if (my !== sayToken) return;
+      if (!src) { fall(); voiceMode('기기 음성'); }   // 기다리는 사이 다른 말이 시작됐으면 글을 지우지 않는다(첫 글자가 사라지던 원인)
+      if (src) {
       audio = new Audio(src); audio.preload = 'auto';
       await tuneClone(audio, src, { study: false }); if (my !== sayToken) return;   // 소개(광고)는 원래 빠르기
       audio.addEventListener('error', fall, { once: true });
       audio.addEventListener('playing', () => { voiceMode('독쌤 음성'); }, { once: true });
       audio.play().then(() => { setTimeout(() => { if (!audio || audio.paused) fall(); }, 400); }).catch(fall);
+      }
       if (fell || !audio) voiceMode('기기 음성');
     }
     if (my !== sayToken) return;

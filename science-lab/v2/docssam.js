@@ -25,6 +25,21 @@ export function mouthFor(ch) {
   const j = Math.floor(c / 28) % 21;
   return [0, 2, 4, 6, 9, 14].includes(j) ? 'open' : [8, 12, 13, 17].includes(j) ? 'o' : 'half';
 }
+const USE_GOOGLE = false;
+// 기기 음성(Web Speech, ko-KR): 말을 마치면 true. 한국어 음성이 없거나 막히면 false(읽을 시간만큼 기다린다)
+function speakDevice(text, alive) {
+  if (typeof speechSynthesis === 'undefined') return Promise.resolve(false);
+  return new Promise((res) => {
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text), ko = (speechSynthesis.getVoices() || []).filter((v) => /^ko/i.test(v.lang));
+      u.lang = 'ko-KR'; u.rate = 0.95; if (ko[0]) u.voice = ko[0];
+      const t = setTimeout(() => res(false), 2500 + text.length * 160);
+      u.onend = () => { clearTimeout(t); res(alive()); }; u.onerror = () => { clearTimeout(t); res(false); };
+      speechSynthesis.speak(u);
+    } catch { res(false); }
+  });
+}
 async function urlOf(voice, id, text) {
   const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(`${voice}|${text}`));
   return `${SUPA}${id}-${[...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 10)}.mp3`;
@@ -139,6 +154,7 @@ export function mountGuide(V, { avoid = () => [], canPause = false, label = '독
     dock.classList.remove('talking'); delete fig.dataset.speaking; render();
   }
   function stopAudio() {
+    try { if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel(); } catch { /* 기기 음성 없음 */ }
     const v = voice; voice = null;
     if (v) { stopFlap(v); v.off.forEach((f) => f()); try { v.audio.pause(); } catch { /* */ } }
     dock.classList.remove('talking'); delete fig.dataset.speaking; setVoiceBtn(); render();
@@ -165,7 +181,8 @@ export function mountGuide(V, { avoid = () => [], canPause = false, label = '독
       arrangeSoon();
       let played = false;
       if (pref.sound && V?.voice && typeof id === 'string' && !loudVideo()) {
-        let src; try { src = (await cloneUrl(id, text)) || await urlOf(V.voice, id, text); } catch { src = null; }
+        // 독쌤 복제 음성(OmniVoice)만 쓴다. 없으면 아래에서 기기 음성 — 구글 음성은 돈이 들어 끈다(원장 2026-10-01). 되살리려면 USE_GOOGLE = true
+        let src; try { src = (await cloneUrl(id, text)) || (USE_GOOGLE ? await urlOf(V.voice, id, text) : null); } catch { src = null; }
         if (my !== token) return false;
         if (src) {
           const a = new Audio(src), v = { audio: a, text, flapping: false, mouth: null, off: [] };
@@ -183,6 +200,8 @@ export function mountGuide(V, { avoid = () => [], canPause = false, label = '독
           setVoiceBtn(); render();
         }
       }
+      if (my !== token) return false;
+      if (!played && pref.sound && typeof id === 'string' && !loudVideo()) played = await speakDevice(text, () => my === token);
       if (my !== token) return false;
       if (!played) await sleep(Math.min(6000, 700 + text.length * 85));   // 음성이 없으면 읽을 시간만큼 기다린다
       return my === token;

@@ -376,3 +376,9 @@ format, source:{set,no}}`, **원문 문장 없음**) + 분류 폴더 13개 + `RE
 - 고르기 데이터 내용 검토: 단원 요약·개념 노트와 어긋나는 문장 없음(물 단원의 증발·응결 문장도 그 단원 요약에 있다).
 - 자석 실험실에 `frame`(고리가 다 내려앉은 뒤의 작업 공간) — 처음 떨어지는 고리에 맞춰 멀리 잡혔다가 2초 뒤 다가오던 것. 3D 검사기는 화면 범위가 두 번 같을 때까지 기다리게(41건 실패 0).
 - 화산 사진(위키미디어)을 저장소로 옮기는 일은 이 컨테이너에서 위키미디어 접속이 막혀 못 함 — 지금은 원본 주소로 잘 보이므로 그대로 둔다.
+
+## 34차 (2026-10-01) — 독쌤 음성: 복제(OmniVoice) 아니면 기기 음성, 구글 음성 끔
+- 원장: "그냥 기기 음성으로 해 놔, 나중에 바꿀 수 있게. 돈 들어가."
+- `v2/docssam.js`·`intro/intro.js`: 복제 음성(`audio/docssam/`)이 있으면 그것, 없으면 **기기 음성(Web Speech ko-KR)**. 구글(Supabase) 주소는 `USE_GOOGLE = false`로 끔.
+- `scripts/generate-audio.js` `SCI_GOOGLE = false` — 사이언스 랩 대사를 구글 TTS로 만들지 않는다. `generate-audio.yml` 트리거에서 science-lab 경로 뺌.
+- 나중에 바꾸는 법: 원장 PC에서 OmniVoice로 빠진 줄만 생성(`python scripts/check-docssam-voice.py` → `scripts\local\omnivoice-docssam.cmd`). 코드 수정 없이 파일만 올리면 앱이 복제 음성으로 바뀐다.
