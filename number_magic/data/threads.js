@@ -763,9 +763,9 @@ ML11:{ name:{ko:'제곱수·거듭제곱',en:'Squares & powers',zh:'平方数与
              zh:'知道相邻的平方数时，加上两数之和就能算下一个：223²是222²加上222+223=445。'}},
           /* 2026-10-01 — 팩토리얼 입문(원장 "곱셈 단계에 간단히"): 1부터 n까지 차례로 곱하기. */
           {id:6,offLadder:true,label:{ko:'팩토리얼 (n!)',en:'factorials (n!)',zh:'阶乘(n!)'},params:{mode:'fact'},
-           concept:{ko:'1부터 n까지 차례로 곱한 수를 n 팩토리얼이라 하고 n!로 써요 — 4! = 1×2×3×4 = 24. 금방 아주 커져요: 7! = 5040.',
-             en:'Multiplying 1 up to n is called n factorial, written n! — 4! = 1×2×3×4 = 24. It grows very fast: 7! = 5040.',
-             zh:'从1乘到n叫n的阶乘，写作n!——4!=1×2×3×4=24。增长得很快：7!=5040。'}}] },
+           concept:{ko:'1부터 n까지 차례로 곱한 수를 n!(팩토리얼)이라 해요 — 4! = 1×2×3×4 = 24.',
+             en:'Multiplying 1 up to n is called n! (factorial) — 4! = 1×2×3×4 = 24.',
+             zh:'从1乘到n叫n!（阶乘）——4!=1×2×3×4=24。'}}] },
 
 /* ── DV 나눗셈 ───────────────────────────── */
 DV1:{ name:{ko:'반으로 나누기(÷2)',en:'Halving',zh:'除以2'}, gen:'dv1_half', prereq:['ML1'],
