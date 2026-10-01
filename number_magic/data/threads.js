@@ -760,7 +760,12 @@ ML11:{ name:{ko:'제곱수·거듭제곱',en:'Squares & powers',zh:'平方数与
           {id:5,label:{ko:'제곱수 점화식',en:'Square recurrence',zh:'平方数递推'},params:{mode:'adjacent'},
            concept:{ko:'이웃한 제곱수를 알면 다음 제곱수는 앞 제곱수에 두 수의 합을 더하면 나와요 — 223²은 222²에 222+223=445를 더한 값이에요.',
              en:'If you know the square next door, add the two numbers together to step up: 223² is 222² plus 222+223 = 445.',
-             zh:'知道相邻的平方数时，加上两数之和就能算下一个：223²是222²加上222+223=445。'}}] },
+             zh:'知道相邻的平方数时，加上两数之和就能算下一个：223²是222²加上222+223=445。'}},
+          /* 2026-10-01 — 팩토리얼 입문(원장 "곱셈 단계에 간단히"): 1부터 n까지 차례로 곱하기. */
+          {id:6,offLadder:true,label:{ko:'팩토리얼 (n!)',en:'factorials (n!)',zh:'阶乘(n!)'},params:{mode:'fact'},
+           concept:{ko:'1부터 n까지 차례로 곱한 수를 n!(팩토리얼)이라 해요 — 4! = 1×2×3×4 = 24.',
+             en:'Multiplying 1 up to n is called n! (factorial) — 4! = 1×2×3×4 = 24.',
+             zh:'从1乘到n叫n!（阶乘）——4!=1×2×3×4=24。'}}] },
 
 /* ── DV 나눗셈 ───────────────────────────── */
 DV1:{ name:{ko:'반으로 나누기(÷2)',en:'Halving',zh:'除以2'}, gen:'dv1_half', prereq:['ML1'],
@@ -4027,7 +4032,12 @@ MD111:{ name:{ko:'순열',en:'Permutations',zh:'排列'}, gen:'md111_perm', prer
           {id:3,label:{ko:'이웃하지 않는 경우와 "적어도"(실전)',en:'not adjacent and "at least" (main)',zh:'不相邻与"至少"(实战)'},params:{mode:'apart'},
            concept:{ko:'이웃하지 않게 하려면 나머지를 먼저 세우고 그 사이사이와 양 끝에 넣습니다. "적어도"는 전체에서 반대 경우를 빼면 쉽습니다.',
              en:'To keep items apart, first line up the others and place the items in the gaps and at the ends. For "at least", subtract the opposite case from the total.',
-             zh:'要使它们不相邻，先排好其余的，再插入空隙和两端。"至少"用全部减去相反情况更简单。'}}] },
+             zh:'要使它们不相邻，先排好其余的，再插入空隙和两端。"至少"用全部减去相反情况更简单。'}},
+          /* 2026-10-01 — 순열 심화(원장 "순열에 심화 넣고"): 팩토리얼의 구조 — 약분·끝자리 0·가운데 지우기. */
+          {id:4,offLadder:true,label:{ko:'팩토리얼 심화 (약분·끝자리 0·합)',en:'factorials deeper (cancel, trailing zeros, sums)',zh:'阶乘进阶(约分、末尾0、求和)'},params:{mode:'deep'},
+           concept:{ko:'(n+1)!=(n+1)·n·(n−1)! 처럼 팩토리얼은 한 칸씩 풀어 쓰면 약분돼요. n!의 끝자리 0은 5의 개수로 세고, k·k!=(k+1)!−k!로 바꾸면 합의 가운데가 지워져요.',
+             en:'Unfold a factorial one step — (n+1)! = (n+1)·n·(n−1)! — and it cancels. Trailing zeros of n! come from counting 5s, and k·k! = (k+1)! − k! makes sums telescope.',
+             zh:'阶乘展开一项就能约分——(n+1)!=(n+1)·n·(n−1)!。n!末尾的0看5的个数，k·k!=(k+1)!−k!能让求和中间抵消。'}}] },
 
 MD112:{ name:{ko:'사전식 배열과 자연수의 개수',en:'Dictionary Order & Counting Numbers',zh:'字典排列与自然数的个数'}, gen:'md112_lexOrder', prereq:['MD111'],
   unit:'M-112',

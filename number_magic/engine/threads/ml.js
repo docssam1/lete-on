@@ -925,6 +925,53 @@ NM_TGEN['ml11_squares'] = function(params, rng) {
      제너레이터 주의점(정독): 핵심체크가 세제곱·일반화까지 은근히
      요구하는 심화형이다 — 두 자리~여섯 자리 결과까지 자릿수를 늘려가며
      패턴이 유지됨을 보여야 원본 취지에 가깝다(11²~991²). */
+  /* ── 팩토리얼 입문 (mode:'fact') — 2026-10-01 신규 ──
+     원장 "곱셈 단계에 간단히 넣고". 1부터 n까지 차례로 곱하는 것을 n!(n 팩토리얼)이라 부른다.
+     n 은 3~7(7! = 5040)로 작게 둔다. 풀이는 앞에서부터 곱을 하나씩 쌓는다. */
+  if (params.mode === 'fact') {
+    const F = n => { let f = 1; for (let i = 2; i <= n; i++) f *= i; return f; };
+    const kind = pick(rng, ['plain', 'plain', 'ratio', 'ratio', 'minus', 'times']);
+    /* 서로 다른 문항이 충분해야 한다(주간 학습지가 같은 레벨에서 여러 장을 뽑는다) — 4가지 꼴로 40여 개 */
+    if (kind === 'ratio') {
+      const n = R(rng, 4, 8), m = R(rng, 2, n - 2), ans = F(n) / F(m);
+      const vs = []; for (let v = n; v > m; v--) vs.push(v);
+      return {
+        prompt: { ko: `${n}!÷${m}!은 ${m}!까지 겹치는 부분을 약분하면 쉬워요`, en: `${n}! ÷ ${m}! gets easy once the shared part up to ${m}! cancels`, zh: `${n}!÷${m}!把相同的部分约掉就简单了` },
+        tex: `${n}! \\div ${m}! = \\square`, answer: ans, answerType: 'steps', widget: 'steps',
+        steps: [{ tex: `${n}! \\div ${m}! = ${vs.join(' \\times ')}`, blank: null }, { tex: `${vs.join(' \\times ')} = \\square`, blank: ans }].filter(x => x.blank !== null)
+      };
+    }
+    if (kind === 'minus') {
+      const n = R(rng, 3, 7), ans = F(n) - F(n - 1);
+      return {
+        prompt: { ko: `${n}!과 ${n - 1}!을 각각 계산해서 빼요`, en: `Work out ${n}! and ${n - 1}!, then subtract`, zh: `分别算出${n}!和${n - 1}!再相减` },
+        tex: `${n}! - ${n - 1}! = \\square`, answer: ans, answerType: 'steps', widget: 'steps',
+        steps: [{ tex: `${n}! = \\square`, blank: F(n) }, { tex: `${n - 1}! = \\square`, blank: F(n - 1) }, { tex: `${F(n)} - ${F(n - 1)} = \\square`, blank: ans }]
+      };
+    }
+    if (kind === 'times') {
+      const a = R(rng, 2, 5), n = R(rng, 3, 6), ans = a * F(n);
+      return {
+        prompt: { ko: `${n}!을 먼저 계산한 뒤 ${a}배 해요`, en: `Work out ${n}! first, then multiply by ${a}`, zh: `先算${n}!，再乘${a}` },
+        tex: `${a} \\times ${n}! = \\square`, answer: ans, answerType: 'steps', widget: 'steps',
+        steps: [{ tex: `${n}! = \\square`, blank: F(n) }, { tex: `${a} \\times ${F(n)} = \\square`, blank: ans }]
+      };
+    }
+    const n = R(rng, 3, 5);                /* 풀이 줄이 n−1 개라 5 이하 — 6 이상은 학습지 한 쪽에서 넘쳤다 */
+    const parts = [];
+    let acc = 1;
+    for (let i = 2; i <= n; i++) { acc *= i; parts.push(acc); }
+    const steps = [];
+    for (let i = 0; i < parts.length; i++) {
+      const left = i === 0 ? '1 \\times 2' : `${parts[i - 1]} \\times ${i + 2}`;
+      steps.push({ tex: `${left} = \\square`, blank: parts[i] });
+    }
+    return {
+      prompt: { ko: `${n}!은 1부터 ${n}까지 차례로 곱한 수예요`, en: `${n}! means multiplying 1 up to ${n}`, zh: `${n}!表示从1乘到${n}` },
+      tex: `${n}! = \\square`, answer: acc, answerType: 'steps', widget: 'steps', steps
+    };
+  }
+
   if (params.mode === 'end1') {
     const k    = R(rng, 1, 99);       // n = 10k+1, n:11~991
     const n    = 10 * k + 1;
