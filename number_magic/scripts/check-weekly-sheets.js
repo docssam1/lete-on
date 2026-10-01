@@ -29,7 +29,7 @@ server.listen(0, async () => {
   const port = server.address().port;
   const browser = await chromium.launch();
   const page = await browser.newPage();
-  const courses = only.length ? only : Array.from({ length:46 }, (_, i) => 'C' + i);
+  const courses = only.length ? only : Array.from({ length:(require('fs').readFileSync(require('path').join(__dirname,'../data/courses.js'),'utf8').match(/^\s*\{id:\d+,/gm)||[]).length }, (_, i) => 'C' + i);
   const bad = []; let ok = 0;
   /* WS_DETAIL=1 이면 넘친 쪽의 종류(그리드 판정·쪽 클래스)를 함께 적는다 */
   await page.addInitScript(d => { window.__nmWsDetail = d; }, !!process.env.WS_DETAIL);
@@ -42,7 +42,7 @@ server.listen(0, async () => {
     else if(!/정답지/.test(txt)) bad.push(`${c} k${k}: 10초 안에 학습지가 완성되지 않음`);
     else {
       /* 지면 넘침(2026-09-25) — 인쇄 매체·A4 폭에서 칸이 내용보다 낮거나 장이 종이보다 길면 실패.
-         한 유형씩 보는 check-print-overflow 는 주간 봉투의 묶음(장 전체 글씨 밴드·창의 연산 띠·재도전 QR)을 못 본다. */
+         한 유형씩 보는 check-print-overflow 는 주간 봉투의 묶음(장 전체 글씨 밴드·독셈 띠·재도전 QR)을 못 본다. */
       await page.emulateMedia({ media:'print' });
       const tag = await page.addStyleTag({ content:'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}' });
       await page.waitForTimeout(150);

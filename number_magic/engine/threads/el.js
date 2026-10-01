@@ -13,11 +13,207 @@ const {R, pick, shuffle} = NM_RNG;
 /* 최대공약수 — EL5 비례배분이 "이미 간단한 비"를 뽑을 때 쓴다 */
 function gcdEl(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ const t = b; b = a % b; a = t; } return a || 1; }
 
+/* ── EL1 학년별 □ (mode 'g1'~'g6') — 2026-09-29 신규 ─────────────────
+   기적의 계산법은 권 끝마다 그 학년 연산으로 "방정식(□ 찾기)"을 다시 친다(10·20·…·110단계).
+   EL1 L1~L3 은 자연수 덧뺄·곱나눗만 있어 4~6학년의 분수·소수 □ 가 비어 있었다.
+   문제는 모두 새로 지었다(교재 문항을 옮기지 않음).
+
+   공통 계약 — 답은 늘 자연수 하나. 풀이는 [역연산 줄(들), 원래 식] 이고 마지막 칸 = 답.
+   인쇄 규칙: □ 는 분수(\frac) 안에 넣지 않는다. 분수 문항은 □ 를 **대분수의 자연수 부분**이나
+   곱해지는/나눠지는 자연수 자리에 둔다. 소수 문항도 □ 는 자연수 부분(`□.35`)이나 자연수 인수다. */
+function lcmEl(a, b){ return a / gcdEl(a, b) * b; }
+/* 정수 v 를 소수 p 자리 문자열로 — 끝자리 0 은 쓰지 않는다(호출부가 끝자리 0 을 피해 뽑는다) */
+function decStr(v, p){
+  if(p === 0) return String(v);
+  const s = Math.pow(10, p), w = Math.floor(v / s), f = String(v % s).padStart(p, '0').replace(/0+$/, '');
+  return f ? `${w}.${f}` : String(w);
+}
+function frTex(n, d){ return `\\frac{${n}}{${d}}`; }
+function mixTex(w, n, d){ return n ? `${w}\\frac{${n}}{${d}}` : String(w); }
+
+function elGradeProblem(mode, rng){
+  let tex, answer, steps, ko, en, zh;
+  const P_KO = '□에 알맞은 수를 역연산으로 구해요';
+  const P_EN = 'Find the missing number using the inverse operation';
+  const P_ZH = '用逆运算求□';
+  ko = P_KO; en = P_EN; zh = P_ZH;
+
+  /* 자연수 덧뺄 네 꼴 — lo~hi 범위의 수로 */
+  function addSub(lo, hi){
+    const form = pick(rng, ['xa', 'ax', 'amx', 'xma']);
+    if(form === 'xa' || form === 'ax'){
+      const x = R(rng, lo, hi - lo), a = R(rng, lo, hi - x), c = x + a;
+      tex = form === 'xa' ? `\\square + ${a} = ${c}` : `${a} + \\square = ${c}`;
+      answer = x; steps = [ { tex:`${c} - ${a} = \\square`, blank:x } ];
+    } else if(form === 'amx'){
+      const a = R(rng, 2 * lo, hi), x = R(rng, lo, a - lo), b = a - x;
+      tex = `${a} - \\square = ${b}`;
+      answer = x; steps = [ { tex:`${a} - ${b} = \\square`, blank:x } ];
+    } else {
+      const a = R(rng, lo, hi - lo), b = R(rng, lo, hi - a), x = a + b;
+      tex = `\\square - ${a} = ${b}`;
+      answer = x; steps = [ { tex:`${b} + ${a} = \\square`, blank:x } ];
+    }
+  }
+
+  if(mode === 'g1'){
+    addSub(1, 20);
+  } else if(mode === 'g2'){
+    if(pick(rng, [0, 0, 0, 1, 1])){
+      /* 구구단 □ — □×7=56, 4×□=36 */
+      const a = R(rng, 2, 9), x = R(rng, 2, 9), c = a * x;
+      tex = pick(rng, [0, 1]) ? `\\square \\times ${a} = ${c}` : `${a} \\times \\square = ${c}`;
+      answer = x; steps = [ { tex:`${c} \\div ${a} = \\square`, blank:x } ];
+    } else addSub(100, 999);
+  } else if(mode === 'g3'){
+    const kind = pick(rng, ['mulBig', 'mulOne', 'divQ', 'divD']);
+    if(kind === 'mulBig'){            /* □×6=138 — □ 가 두·세 자리 */
+      const a = R(rng, 2, 9), x = pick(rng, [0, 0, 1]) ? R(rng, 100, 999 / a | 0) : R(rng, 11, 99), c = a * x;
+      tex = pick(rng, [0, 1]) ? `\\square \\times ${a} = ${c}` : `${a} \\times \\square = ${c}`;
+      answer = x; steps = [ { tex:`${c} \\div ${a} = \\square`, blank:x } ];
+    } else if(kind === 'mulOne'){     /* 47×□=329 — □ 가 한 자리 */
+      const m = R(rng, 11, 199), x = R(rng, 2, 9), c = m * x;
+      tex = pick(rng, [0, 1]) ? `${m} \\times \\square = ${c}` : `\\square \\times ${m} = ${c}`;
+      answer = x; steps = [ { tex:`${c} \\div ${m} = \\square`, blank:x } ];
+    } else if(kind === 'divQ'){       /* □÷6=23 */
+      const a = R(rng, 2, 9), q = R(rng, 11, 99), x = a * q;
+      tex = `\\square \\div ${a} = ${q}`;
+      answer = x; steps = [ { tex:`${a} \\times ${q} = \\square`, blank:x } ];
+    } else {                          /* 138÷□=6 · 84÷□=12 */
+      const one = R(rng, 2, 9), big = R(rng, 11, 99), D = one * big;
+      const blankBig = pick(rng, [0, 1]);
+      const x = blankBig ? big : one, q = blankBig ? one : big;
+      tex = `${D} \\div \\square = ${q}`;
+      answer = x; steps = [ { tex:`${D} \\div ${q} = \\square`, blank:x } ];
+    }
+  } else if(mode === 'g4'){
+    const kind = pick(rng, ['wholeMinus', 'mixAdd', 'mixSub', 'decAdd', 'decSub']);
+    if(kind === 'wholeMinus'){        /* □ − 2/9 = 3 7/9 → 4 */
+      const d = R(rng, 3, 12), b = R(rng, 1, d - 1), c = R(rng, 1, 8), x = c + 1;
+      tex = `\\square - ${frTex(b, d)} = ${mixTex(c, d - b, d)}`;
+      answer = x; steps = [ { tex:`${mixTex(c, d - b, d)} + ${frTex(b, d)} = \\square`, blank:x } ];
+      ko = '□에 알맞은 자연수를 역연산으로 구해요'; en = 'Find the missing whole number using the inverse operation'; zh = '用逆运算求□里的整数';
+    } else if(kind === 'mixAdd' || kind === 'mixSub'){
+      /* □ 5/9 + 1 7/9 = 4 3/9 → 2   ·   4 3/9 − □ 5/9 = 1 7/9 → 2 (분모가 같은 대분수) */
+      let d, b, e, s;
+      do { d = R(rng, 3, 12); b = R(rng, 1, d - 1); e = R(rng, 1, d - 1); s = b + e; } while(s === d);
+      const w = R(rng, 1, 6), c = R(rng, 1, 5);
+      const f = w + c + (s > d ? 1 : 0), g = s > d ? s - d : s;
+      if(kind === 'mixAdd'){
+        tex = `\\square${frTex(b, d)} + ${mixTex(c, e, d)} = ${mixTex(f, g, d)}`;
+        steps = [ { tex:`${mixTex(f, g, d)} - ${mixTex(c, e, d)} = \\square${frTex(b, d)}`, blank:w } ];
+      } else {
+        tex = `${mixTex(f, g, d)} - \\square${frTex(b, d)} = ${mixTex(c, e, d)}`;
+        steps = [ { tex:`${mixTex(f, g, d)} - ${mixTex(c, e, d)} = \\square${frTex(b, d)}`, blank:w } ];
+      }
+      answer = w;
+      ko = '□에 알맞은 자연수를 역연산으로 구해요'; en = 'Find the missing whole number using the inverse operation'; zh = '用逆运算求□里的整数';
+    } else {
+      /* □.35 + 2.8 = … — □ 는 소수의 자연수 부분. 소수 한·두 자리, 끝자리는 0 이 아니게 */
+      const p = pick(rng, [1, 2]), sc = Math.pow(10, p);
+      let w1, f1, B, S;
+      do {
+        w1 = R(rng, 1, 9); f1 = R(rng, 1, sc - 1);
+        B = R(rng, sc + 1, 9 * sc + sc - 1);
+        S = w1 * sc + f1 + B;
+      } while(f1 % 10 === 0 || B % 10 === 0 || S % 10 === 0);
+      const fStr = String(f1).padStart(p, '0');
+      if(kind === 'decAdd'){
+        tex = `\\square.${fStr} + ${decStr(B, p)} = ${decStr(S, p)}`;
+        steps = [ { tex:`${decStr(S, p)} - ${decStr(B, p)} = \\square.${fStr}`, blank:w1 } ];
+      } else {
+        tex = `${decStr(S, p)} - \\square.${fStr} = ${decStr(B, p)}`;
+        steps = [ { tex:`${decStr(S, p)} - ${decStr(B, p)} = \\square.${fStr}`, blank:w1 } ];
+      }
+      answer = w1;
+      ko = '□에 알맞은 자연수를 역연산으로 구해요'; en = 'Find the missing whole number using the inverse operation'; zh = '用逆运算求□里的整数';
+    }
+  } else if(mode === 'g5'){
+    const kind = pick(rng, ['mixAdd', 'mixSub', 'frMul', 'decMul']);
+    if(kind === 'mixAdd' || kind === 'mixSub'){
+      /* 분모가 다른 대분수 — □ 2/3 + 1 1/2 = 5 1/6 → 3 */
+      let b, f, a, e, L, s;
+      do {
+        b = R(rng, 2, 9); f = R(rng, 2, 9);
+        a = R(rng, 1, b - 1); e = R(rng, 1, f - 1);
+        L = lcmEl(b, f); s = a * (L / b) + e * (L / f);
+      } while(b === f || gcdEl(a, b) !== 1 || gcdEl(e, f) !== 1 || L > 36 || s === L);
+      const w = R(rng, 1, 5), c = R(rng, 1, 4);
+      const G = w + c + (s > L ? 1 : 0), hRaw = s > L ? s - L : s, g = gcdEl(hRaw, L);
+      const h = hRaw / g, Lr = L / g;
+      if(kind === 'mixAdd'){
+        tex = `\\square${frTex(a, b)} + ${mixTex(c, e, f)} = ${mixTex(G, h, Lr)}`;
+      } else {
+        tex = `${mixTex(G, h, Lr)} - \\square${frTex(a, b)} = ${mixTex(c, e, f)}`;
+      }
+      steps = [ { tex:`${mixTex(G, h, Lr)} - ${mixTex(c, e, f)} = \\square${frTex(a, b)}`, blank:w } ];
+      answer = w;
+      ko = '□에 알맞은 자연수를 역연산으로 구해요 — 분모를 통분해서 되짚어요';
+      en = 'Find the missing whole number — use a common denominator and work backwards';
+      zh = '用逆运算求□里的整数——先通分再倒推';
+    } else if(kind === 'frMul'){
+      /* 3/4 × □ = 6 → 8 : 6÷3=2(1/4 만큼), 2×4=8 */
+      let p, q;
+      do { p = R(rng, 1, 9); q = R(rng, 2, 9); } while(p === q || gcdEl(p, q) !== 1);
+      const k = R(rng, 1, 6), x = q * k, N = p * k;
+      tex = pick(rng, [0, 1]) ? `${frTex(p, q)} \\times \\square = ${N}` : `\\square \\times ${frTex(p, q)} = ${N}`;
+      steps = [ { tex:`${N} \\div ${p} = \\square`, blank:k },
+                { tex:`${k} \\times ${q} = \\square`, blank:x } ];
+      answer = x;
+    } else {
+      /* 0.3 × □ = 2.1 → 7 : 양쪽을 10배 하면 21 ÷ 3 */
+      let t; do { t = R(rng, 2, 49); } while(t % 10 === 0);
+      const x = R(rng, 2, 12), P = t * x;
+      tex = pick(rng, [0, 1]) ? `${decStr(t, 1)} \\times \\square = ${decStr(P, 1)}` : `\\square \\times ${decStr(t, 1)} = ${decStr(P, 1)}`;
+      steps = [ { tex:`${P} \\div ${t} = \\square`, blank:x } ];
+      answer = x;
+      ko = '□에 알맞은 수를 역연산으로 구해요 — 소수를 10배 해서 자연수로 나눠요';
+      en = 'Find the missing number — scale the decimals by 10 and divide as whole numbers';
+      zh = '用逆运算求□——把小数扩大10倍再用整数除';
+    }
+  } else {
+    /* g6 — 분수·소수의 나눗셈 □ */
+    const kind = pick(rng, ['xDivFr', 'frDivX', 'xDivDec', 'decDivX']);
+    if(kind === 'xDivFr'){            /* □ ÷ 3/4 = 8 → 6 */
+      let p, q;
+      do { p = R(rng, 1, 9); q = R(rng, 2, 9); } while(p === q || gcdEl(p, q) !== 1);
+      const k = R(rng, 1, 6), x = p * k, N = q * k;
+      tex = `\\square \\div ${frTex(p, q)} = ${N}`;
+      steps = [ { tex:`${N} \\times ${frTex(p, q)} = \\square`, blank:x } ];
+      answer = x;
+    } else if(kind === 'frDivX'){     /* 2/3 ÷ □ = 1/6 → 4 */
+      let p, q;
+      do { p = R(rng, 1, 9); q = R(rng, 2, 9); } while(p === q || gcdEl(p, q) !== 1);
+      const k = R(rng, 2, 9), g = gcdEl(p, q * k), rn = p / g, rd = q * k / g;
+      tex = `${frTex(p, q)} \\div \\square = ${frTex(rn, rd)}`;
+      steps = [ { tex:`${frTex(p, q)} \\div ${frTex(rn, rd)} = \\square`, blank:k } ];
+      answer = k;
+    } else if(kind === 'xDivDec'){    /* □ ÷ 0.4 = 15 → 6 */
+      let t, x;
+      do { t = pick(rng, [2, 4, 5, 6, 8, 12, 15, 25]); x = R(rng, 1, 20); } while((10 * x) % t !== 0);
+      const N = 10 * x / t;
+      tex = `\\square \\div ${decStr(t, 1)} = ${N}`;
+      steps = [ { tex:`${N} \\times ${decStr(t, 1)} = \\square`, blank:x } ];
+      answer = x;
+    } else {                          /* 2.4 ÷ □ = 0.6 → 4 */
+      const t = R(rng, 2, 9), k = R(rng, 2, 12), D = t * k;
+      tex = `${decStr(D, 1)} \\div \\square = ${decStr(t, 1)}`;
+      steps = [ { tex:`${decStr(D, 1)} \\div ${decStr(t, 1)} = \\square`, blank:k } ];
+      answer = k;
+    }
+  }
+
+  steps.push({ tex, blank:answer });
+  return { prompt:{ ko, en, zh }, tex, answer, answerType:'steps', widget:'steps', steps };
+}
+
 /* ── EL1 — 역연산: □×7=91, □÷6=8, 52+□=131 ──────────────────
    params.mode: 'as'(덧뺄셈) | 'md'(곱나눗셈) | 'mix'(둘 다) — 기본 'mix'
+                'g1'~'g6'(학년별 □, 위 elGradeProblem)
    params.max : 수 범위 상한(연산별로 다르게 스케일) */
 NM_TGEN['el_inverse'] = function(params, rng){
   const mode = params.mode || 'mix';
+  if(/^g[1-6]$/.test(mode)) return elGradeProblem(mode, rng);
   const opKind = mode === 'mix' ? pick(rng, ['as','md']) : mode;
 
   let tex, answer, ko, en, zh, inv;   /* inv = 역연산 줄. 이게 없으면 "역연산으로 구해요"

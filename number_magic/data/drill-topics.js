@@ -33,6 +33,7 @@ var CURATED_TOPICS = [
       {label:'네 자리 덧셈 (올림 없음)', thread:'AD7', level:1, desc:'3241+2536'},
       {label:'네 자리 덧셈 (올림)', thread:'AD7', level:2, desc:'올림을 빠뜨리지 않기'},
       {label:'네 자리 덧셈·뺄셈', thread:'AD7', level:3, desc:'4d ± 4d, 자유 혼합'},
+      {label:'다섯 자리 덧셈·뺄셈 (심화)', thread:'AD7', level:4, desc:'5d ± 5d, 올림·내림 섞기'},
       {label:'몇십 더하기 · 빼기 (올림 없음)', thread:'AD4', level:1, desc:'40+30 — 0을 떼고'},
       {label:'몇십 더하기 (올림)', thread:'AD4', level:2, desc:'70+50 — 백의 자리가 생김'},
       {label:'몇백 더하기 · 빼기', thread:'AD4', level:3, desc:'100s ± 100s'},
@@ -62,6 +63,7 @@ var CURATED_TOPICS = [
       {label:'네 자리 뺄셈 (연속 내림)', thread:'SB6', level:5, desc:'4d − 4d'},
       {label:'세 자리 뺄셈 (세로셈)', thread:'SB6', level:6, desc:'자리 맞춰 세로로'},
       {label:'네 자리 뺄셈 (세로셈)', thread:'SB6', level:7, desc:'큰 수도 세로로'},
+      {label:'다섯 자리 뺄셈 (심화)', thread:'SB6', level:8, desc:'5d − 5d, 연속 내림'},
       {label:'식의 변형 (끼리끼리 묶기)', thread:'SB7', level:1, desc:'같은 수끼리 묶어 계산'},
       {label:'식의 변형 (10 만들기)', thread:'SB7', level:2, desc:'10의 배수로 바꿔 계산'},
     ]
@@ -108,6 +110,7 @@ var CURATED_TOPICS = [
       {label:'세 자리 × 두 자리 (올림 한두 번)', thread:'ML9', level:3, desc:'어느 줄인지 먼저'},
       {label:'세 자리 × 두 자리 (올림 서너 번)', thread:'ML9', level:4, desc:'164×55 — 두 줄 다'},
       {label:'세 자리 × 두 자리 (올림 다섯 번 이상)', thread:'ML9', level:5, desc:'432×56 — 백의 자리까지'},
+      {label:'세 자리 × 세 자리 (심화)', thread:'ML9', level:6, desc:'부분곱 셋을 더해요'},
       {label:'두 자리 × 한 자리 암산 (쉬움)', thread:'ML22', level:1, desc:'쉬운 수로 암산'},
       {label:'두 자리 × 한 자리 암산 (보통)', thread:'ML22', level:2, desc:'자유로운 두 자리 수'},
       {label:'배수 (×2 / ÷2)', thread:'ML1', level:1, desc:'두 배와 반으로'},
@@ -153,6 +156,7 @@ var CURATED_TOPICS = [
       {label:'세 자리 ÷ 두 자리 (나머지 없음)', thread:'DV5', level:2, desc:'441÷21 — 몫 자리 예상'},
       {label:'세 자리 ÷ 두 자리 (나머지 있음)', thread:'DV5', level:3, desc:'나머지 < 나누는 수'},
       {label:'네 자리 ÷ 두 자리', thread:'DV5', level:4, desc:'자리 내려오며 반복'},
+      {label:'다섯 자리 ÷ 두 자리 (심화)', thread:'DV5', level:7, desc:'몫이 네 자리인 나눗셈'},
       {label:'배수 판별법 (2 · 5 · 10)', thread:'DV6', level:1, desc:'끝자리로 판별'},
       {label:'배수 판별법 (3 · 6 · 9)', thread:'DV6', level:2, desc:'자릿수 합으로 판별'},
       {label:'배수 판별법 (7)', thread:'DV6', level:3, desc:'뒷자리를 떼고 그 2배를 빼기'},
@@ -276,18 +280,30 @@ var CURATED_TOPICS = [
       {label:'문제 이해 (자연수 + − ×)', thread:'WP1', level:1, desc:'주어진 것과 구하는 것 가려내기'},
       {label:'문제 이해 (자연수 + − × ÷)', thread:'WP1', level:2, desc:'나눗셈 상황까지, 큰 수'},
       {label:'문제 이해 (분수·소수 + −)', thread:'WP1', level:3, desc:'길이·들이·무게를 재는 상황'},
+      {label:'그림으로 나타내기 (자연수 + − ×)', thread:'WP2', level:1, desc:'사물을 칠하고 지우며 그림에서 세기'},
       {label:'연산 찾기 (자연수 + − ×)', thread:'WP3', level:1, desc:'더할까 뺄까 곱할까'},
       {label:'연산 찾기 (자연수 + − × ÷)', thread:'WP3', level:2, desc:'나누기까지 넣어 고르기'},
       {label:'연산 찾기 (분수·소수 + −)', thread:'WP3', level:3, desc:'재는 상황에서 식 고르기'},
       {label:'식으로 나타내기 (자연수 + − ×)', thread:'WP4', level:1, desc:'□ ○ □ = □ 채우기'},
       {label:'식으로 나타내기 (자연수 + − × ÷)', thread:'WP4', level:2, desc:'나눗셈까지, □가 있는 식'},
       {label:'식으로 나타내기 (분수·소수 + −)', thread:'WP4', level:3, desc:'재는 상황을 식으로 옮기기'},
+      {label:'정보 판단 (작은 수)', thread:'WP9', level:1, desc:'풀 수 있나? 무엇이 더 필요한가?'},
+      {label:'정보 판단 (큰 수)', thread:'WP9', level:2, desc:'필요 없는 수·모자란 수 가려내기'},
+      {label:'생활 문제 (올림·단위·표)', thread:'WP10', level:1, desc:'답의 뜻을 생각하며 풀기'},
+      {label:'생활 문제 (몫과 나머지)', thread:'WP10', level:2, desc:'몇 도막·몇 cm 남나'},
+      {label:'두 단계 풀기 (작은 수)', thread:'WP8', level:1, desc:'중간에 구한 수를 ①에, 답을 ②에'},
+      {label:'두 단계 풀기 (큰 수)', thread:'WP8', level:2, desc:'중간값 이름 없이 스스로'},
+      {label:'모르는 수 찾기 (작은 수)', thread:'WP7', level:1, desc:'변화량·처음 수·비교 대상이 □'},
+      {label:'모르는 수 찾기 (큰 수)', thread:'WP7', level:2, desc:'받았는데 빼기, 주었는데 더하기'},
       {label:'점검하기 (자연수 + − ×)', thread:'WP5', level:1, desc:'바르게 풀었는지 다시 보기'},
       {label:'점검하기 (자연수 + − × ÷)', thread:'WP5', level:2, desc:'나눗셈까지, 어림해 보기'},
       {label:'점검하기 (분수·소수 + −)', thread:'WP5', level:3, desc:'답이 무엇을 나타내는지 말하기'},
+      {label:'문제 만들기 (자연수 + − ×)', thread:'WP6', level:1, desc:'식에 맞는 이야기 고르기'},
+      {label:'문제 만들기 (자연수 + − × ÷)', thread:'WP6', level:2, desc:'나눗셈 이야기까지 고르기'},
+      {label:'문제 만들기 (분수·소수 + −)', thread:'WP6', level:3, desc:'재는 상황의 이야기 고르기'},
     ]
   },
-  { id:'creative', label:'창의수연', en:'Strategy Math', zh:'思维数学', icon:'🧠', color:'#8b5cf6', section:'magic',
+  { id:'creative', label:'독셈', en:'Doc-T Math', zh:'巧算', icon:'🧠', color:'#8b5cf6', section:'magic',
     subs:[
       {label:'보수 5 찾기', thread:'NS3', level:1, desc:'더해서 5 만들기'},
       {label:'보수 10 찾기', thread:'NS3', level:2, desc:'더해서 10 만들기'},
@@ -348,6 +364,8 @@ var CURATED_TOPICS = [
       {label:'자릿값 읽기', thread:'NS1', level:1, desc:'두·세 자리 자릿값'},
       {label:'자릿값 읽기 (네 자리)', thread:'NS1', level:2, desc:'천의 자리까지'},
       {label:'자릿값 읽기 (큰 수)', thread:'NS1', level:3, desc:'만의 자리까지'},
+      {label:'자릿값 읽기 (억 단위)', thread:'NS1', level:5, desc:'십만·백만·천만·억의 자리까지'},
+      {label:'자릿값 읽기 (조 단위)', thread:'NS1', level:6, desc:'십억·백억·천억·조의 자리까지'},
       {label:'자릿값 읽기 (십진블록)', thread:'NS1', level:4, desc:'십진블록으로 표현'},
       {label:'모으기 · 가르기 (5까지)', thread:'NS2', level:1, desc:'5까지 수 가르기'},
       {label:'모으기 · 가르기', thread:'NS2', level:2, desc:'9까지 수 가르기'},
@@ -466,7 +484,7 @@ var CURATED_TOPICS = [
       {label:'큰 수 정복', thread:'CH13', level:1, desc:'만·억·조'},
     ]
   },
-  { id:'middle1', label:'중등 · 정수와 유리수', en:'Middle 1 · Integers & Rationals', zh:'中学·整数与有理数', icon:'🌋', color:'#16417C', section:'magic',
+  { id:'middle1', label:'중등 · 정수와 유리수', en:'Middle 1 · Integers & Rationals', zh:'中学·整数与有理数', icon:'🌋', color:'#16417C', section:'school',
     subs:[
       {label:'절댓값·수직선 (연습)', thread:'MD1', level:1, desc:'절댓값 기초'},
       {label:'절댓값·수직선', thread:'MD1', level:2, desc:'절댓값(실전)'},
@@ -516,7 +534,7 @@ var CURATED_TOPICS = [
       {label:'정비례·반비례 혼합(실전)', thread:'MD51', level:3, desc:'혼합'},
     ]
   },
-  { id:'middle2', label:'중등 · 식의 계산', en:'Middle 2 · Expression Calculus', zh:'中学·式的运算', icon:'📐', color:'#5a4a8a', section:'magic',
+  { id:'middle2', label:'중등 · 식의 계산', en:'Middle 2 · Expression Calculus', zh:'中学·式的运算', icon:'📐', color:'#5a4a8a', section:'school',
     subs:[
       {label:'지수법칙 곱셈(aᵐ×aⁿ)', thread:'MD10', level:1, desc:'지수를 더하기'},
       {label:'거듭제곱의 거듭제곱', thread:'MD10', level:2, desc:'지수를 곱하기'},
@@ -541,7 +559,7 @@ var CURATED_TOPICS = [
       {label:'등식 변형→풀이 완주(실전)', thread:'MD14', level:3, desc:'이항+나눗셈'},
     ]
   },
-  { id:'middle3', label:'중등 · 제곱근과 공식', en:'Middle 3 · Roots & Formulas', zh:'中学·平方根与公式', icon:'🌈', color:'#16417C', section:'magic',
+  { id:'middle3', label:'중등 · 제곱근과 공식', en:'Middle 3 · Roots & Formulas', zh:'中学·平方根与公式', icon:'🌈', color:'#16417C', section:'school',
     subs:[
       {label:'완전제곱수의 제곱근', thread:'MD15', level:1, desc:'√N=k'},
       {label:'(√a)²=a', thread:'MD15', level:2, desc:'근호 제곱'},
@@ -569,7 +587,7 @@ var CURATED_TOPICS = [
       {label:'인수분해(십자곱셈, 실전)', thread:'MD20', level:6, desc:'x² 계수 ≠ 1'},
     ]
   },
-  { id:'highmath1', label:'고등 · 공통수학1', en:'High 1 · Common Math 1', zh:'高中·共同数学1', icon:'📦', color:'#0f2e4f', section:'magic',
+  { id:'highmath1', label:'고등 · 공통수학1', en:'High 1 · Common Math 1', zh:'高中·共同数学1', icon:'📦', color:'#0f2e4f', section:'school',
     subs:[
       {label:'다항식 곱셈(이항식×이항식)', thread:'MD21', level:1, desc:'전개 3다칸'},
       {label:'다항식 나눗셈(조립제법)', thread:'MD21', level:2, desc:'몫·나머지'},
@@ -603,7 +621,7 @@ var CURATED_TOPICS = [
       {label:'행렬곱(실전)', thread:'MD30', level:3, desc:'4다칸'},
     ]
   },
-  { id:'highmath2', label:'고등 · 공통수학2', en:'High 2 · Common Math 2', zh:'高中·共同数学2', icon:'📏', color:'#1b6e5b', section:'magic',
+  { id:'highmath2', label:'고등 · 공통수학2', en:'High 2 · Common Math 2', zh:'高中·共同数学2', icon:'📏', color:'#1b6e5b', section:'school',
     subs:[
       {label:'두 점 사이의 거리(연습)', thread:'MD31', level:1, desc:'[계수,근호안]'},
       {label:'두 점 사이의 거리(더 큰 좌표)', thread:'MD31', level:2, desc:'[계수,근호안]'},
@@ -622,7 +640,7 @@ var CURATED_TOPICS = [
       {label:'원의 방정식(공통계수, 실전)', thread:'MD35', level:3, desc:'[중심,반지름]'},
     ]
   },
-  { id:'algebra', label:'고등 · 대수', en:'High · Algebra', zh:'高中·代数', icon:'🪜', color:'#5b3a8f', section:'magic',
+  { id:'algebra', label:'고등 · 대수', en:'High · Algebra', zh:'高中·代数', icon:'🪜', color:'#5b3a8f', section:'school',
     subs:[
       {label:'유리수 지수(표기법 익히기)', thread:'MD36', level:1, desc:'[분자,분모]'},
       {label:'유리수 지수(약분 필요)', thread:'MD36', level:2, desc:'[분자,분모]'},
@@ -665,7 +683,7 @@ var CURATED_TOPICS = [
       {label:'삼각함수 혼합(주기+tan, 실전)', thread:'MD57', level:3, desc:'혼합'},
     ]
   },
-  { id:'calculus1', label:'고등 · 미적분Ⅰ', en:'High · Calculus Ⅰ', zh:'高中·微积分Ⅰ', icon:'🧭', color:'#0d3b66', section:'magic',
+  { id:'calculus1', label:'고등 · 미적분Ⅰ', en:'High · Calculus Ⅰ', zh:'高中·微积分Ⅰ', icon:'🧭', color:'#0d3b66', section:'school',
     subs:[
       {label:'극한(대입형)', thread:'MD43', level:1, desc:'다항식 대입'},
       {label:'극한(약분형, 0/0)', thread:'MD43', level:2, desc:'인수분해·약분'},
@@ -704,7 +722,15 @@ var ADDITIONAL_THREADS = {
   decimal:['DC6'],
   middle1:['MD68','MD69','MD70','MD73','MD82','MD84','MD89'],
   middle2:['MD63','MD64','MD65','MD71','MD72','MD74','MD75','MD76','MD88'],
-  middle3:['MD66','MD67','MD77','MD78','MD79','MD80','MD81','MD83','MD85','MD86','MD87','MD90']
+  middle3:['MD66','MD67','MD77','MD78','MD79','MD80','MD81','MD83','MD85','MD86','MD87','MD90'],
+  highmath1:['MD91','MD92','MD93','MD94','MD95','MD96','MD97','MD98','MD99','MD100',
+             'MD101','MD102','MD103','MD104','MD105','MD106','MD107','MD108','MD109','MD110',
+             'MD111','MD112','MD113','MD114'],
+  highmath2:['MD115','MD116','MD117','MD118','MD119','MD120','MD121','MD122','MD123','MD124',
+             'MD125','MD126','MD127','MD128','MD129','MD130','MD131','MD132','MD133'],
+  algebra:['MD134','MD135','MD136','MD137','MD138','MD139','MD140','MD141','MD142','MD143',
+           'MD144','MD145','MD146','MD147','MD148','MD149','MD150','MD151','MD152','MD153'],
+  calculus1:['MD154','MD155','MD156','MD157','MD158','MD159']
 };
 function buildTopics(threads){
   if(!threads) throw new Error('drill-topics: threads.js must load first');

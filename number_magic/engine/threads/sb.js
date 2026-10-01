@@ -329,6 +329,7 @@ NM_TGEN['sb6_subBig'] = function(params, rng) {
 
   do {
     if (d === 3) { a = R(rng, 201, 999); b = R(rng, 100, a - 1); }
+    else if (d === 5) { a = R(rng, 20001, 99999); b = R(rng, 10000, a - 1); }   /* 심화(2026-10-01) */
     else         { a = R(rng, 2001, 9999); b = R(rng, 1000, a - 1); }
     if (!mode) break;
     const st = _sbBorrowCount(a, b, d);

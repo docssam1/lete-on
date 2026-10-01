@@ -95,6 +95,81 @@ NM_TGEN['dc6_decBond'] = function(params, rng) {
 
 /* ── DC1 — 소수 덧·뺄 (1자리 · 2자리) ───────────────────────── */
 NM_TGEN['dc1_decAddSub'] = function(params, rng) {
+  /* ── 자릿수가 다른 소수의 덧셈·뺄셈 (mode:'mixedPlaces', op '+'|'-') — 2026-09-29 신규 ──
+     기적의 계산법 78·79단계 자리. 3.4 + 1.27, 4.56 − 2.3, 5 − 2.36 처럼 소수 자릿수가 다른
+     두 수. 핵심은 **빈 자리를 0 으로 채워 자릿수를 맞추는 것**(3.4 → 3.40)이라, 풀이 첫 줄에서
+     그 수를 100배 한 자연수로 바꿔 쓰게 한다. 답은 레벨 2와 같은 관례 — 결과를 100배 한
+     자연수(`\dfrac{□}{100}`). 한 수는 늘 소수 둘째 자리가 0 이 아니고 다른 수는 소수 한 자리
+     (또는 자연수)라 답의 끝자리도 0 이 되지 않는다. 문제는 새로 지었다. */
+  if (params.mode === 'mixedPlaces') {
+    const hund = () => { let v; do { v = R(rng, 101, 999); } while (v % 10 === 0); return v; };   /* 1.01~9.99 */
+    const tenth = () => { let v; do { v = R(rng, 11, 99); } while (v % 10 === 0); return v; };    /* 1.1~9.9 */
+    const s2 = v => `${Math.floor(v / 100)}.${String(v % 100).padStart(2, '0')}`;
+    const s1 = v => `${Math.floor(v / 10)}.${v % 10}`;
+    let aStr, bStr, A, B, res;
+    if (params.op === '-') {
+      const kind = pick(rng, ['oneMinusTwo', 'twoMinusOne', 'wholeMinusTwo']);
+      do {
+        if (kind === 'oneMinusTwo')      { const a = tenth(), b = hund(); aStr = s1(a); bStr = s2(b); A = a * 10; B = b; }
+        else if (kind === 'twoMinusOne') { const a = hund(), b = tenth(); aStr = s2(a); bStr = s1(b); A = a; B = b * 10; }
+        else                             { const a = R(rng, 2, 10), b = hund(); aStr = String(a); bStr = s2(b); A = a * 100; B = b; }
+      } while (A - B < 11);
+      res = A - B;
+    } else {
+      const a = tenth(), b = hund();
+      if (pick(rng, [0, 1])) { aStr = s1(a); bStr = s2(b); A = a * 10; B = b; }
+      else                   { aStr = s2(b); bStr = s1(a); A = b; B = a * 10; }
+      res = A + B;
+    }
+    const op = params.op === '-' ? '-' : '+';
+    const tex = `${aStr} ${op} ${bStr} = \\dfrac{\\square}{100}`;
+    /* 자릿수를 맞춰 100배 — 소수 한 자리 쪽(또는 자연수)이 0 을 채우는 자리다 */
+    const fillFirst = !/\.\d\d$/.test(aStr);
+    const steps = [
+      fillFirst ? { tex: `${aStr} \\times 100 = \\square \\;(\\text{빈 자리는 0})`, blank: A }
+                : { tex: `${bStr} \\times 100 = \\square \\;(\\text{빈 자리는 0})`, blank: B },
+      { tex: `${A} ${op} ${B} = \\square \\;(\\times 100\\text{ 계산})`, blank: res },
+      { tex, blank: res }
+    ];
+    return {
+      prompt: {
+        ko: op === '+' ? `자릿수가 다른 소수의 덧셈: 빈 자리를 0으로 채워 소수점을 맞춰요` : `자릿수가 다른 소수의 뺄셈: 빈 자리를 0으로 채워 소수점을 맞춰요`,
+        en: op === '+' ? `Add decimals with different numbers of places: fill the empty place with 0 and line up the points` : `Subtract decimals with different numbers of places: fill the empty place with 0 and line up the points`,
+        zh: op === '+' ? `位数不同的小数加法：空位补0，对齐小数点` : `位数不同的小数减法：空位补0，对齐小数点`
+      },
+      tex, answer: res, answerType: 'steps', widget: 'steps', steps
+    };
+  }
+
+  /* ── 정수 부분이 있는 큰 소수의 덧셈·뺄셈 (mode:'big', places 1|2) — 2026-10-01 신규 ──
+     레벨 1·2 는 0.a ± 0.b 처럼 정수 부분이 없어서 "소수점 위치 맞추기"가 크기로 이어지지 않았다.
+     여기서는 12.4 + 7.8, 135.62 − 48.9 처럼 십·백의 자리가 있는 소수로, 올림·받아내림이 소수점을
+     건너 정수 부분으로 이어진다. 답은 mixedPlaces 와 같은 관례 — 결과를 10^places 배 한 자연수. */
+  if (params.mode === 'big') {
+    const pl = params.places === 2 ? 2 : 1, M = pl === 2 ? 100 : 10;
+    const lo = pl === 2 ? 1001 : 101, hi = pl === 2 ? 29999 : 999;        /* 10.01~299.99 · 10.1~99.9 */
+    const num = v => { const w = Math.floor(v / M), f = String(v % M).padStart(pl, '0'); return `${w}.${f}`; };
+    const mk = () => { let v; do { v = R(rng, lo, hi); } while (v % 10 === 0); return v; };
+    let a = mk(), b = mk(), op = params.op === '-' ? '-' : '+';
+    if (op === '-') { if (a < b) { const t = a; a = b; b = t; } if (a - b < M) { a += M * 3; } }
+    const res = op === '+' ? a + b : a - b;
+    const tex = `${num(a)} ${op} ${num(b)} = \\dfrac{\\square}{${M}}`;
+    const steps = [
+      { tex: `${num(a)} \\times ${M} = \\square`, blank: a },
+      { tex: `${num(b)} \\times ${M} = \\square`, blank: b },
+      { tex: `${a} ${op} ${b} = \\square \\;(\\times ${M}\\text{ 계산})`, blank: res },
+      { tex, blank: res }
+    ];
+    return {
+      prompt: {
+        ko: `${pl === 2 ? '소수 두 자리' : '소수 한 자리'} 큰 소수의 ${op === '+' ? '덧셈' : '뺄셈'}: ${M}배 한 자연수로 바꿔 계산해요`,
+        en: `${op === '+' ? 'Add' : 'Subtract'} larger ${pl}-place decimals: turn them into whole numbers (×${M}) first`,
+        zh: `较大的${pl}位小数${op === '+' ? '加法' : '减法'}：先乘${M}变成整数再计算`
+      },
+      tex, answer: res, answerType: 'steps', widget: 'steps', steps
+    };
+  }
+
   const places = params.places || 1;
 
   if (places === 1) {

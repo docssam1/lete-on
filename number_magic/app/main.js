@@ -657,9 +657,10 @@ let _ttsCache={};
 function say(text){
   if(!text)return;
   const lang=S.lang||'ko';
-  const map=window.NM_TTS_MAP;
-  if(map&&map[lang]&&map[lang][text]){
-    const url=map[lang][text];
+  /* 2026-09-29 — OmniVoice 복제 음성(data/tts-map-omni.js)이 먼저, 없으면 구글(tts-map.js), 그다음 기기 음성 */
+  const omni=window.NM_TTS_OMNI,map=window.NM_TTS_MAP;
+  const url=(omni&&omni[lang]&&omni[lang][text])||(map&&map[lang]&&map[lang][text]);
+  if(url){
     try{
       speechSynthesis.cancel();
       let a=_ttsCache[url];
@@ -1488,7 +1489,7 @@ function screenRoadmap(){
     <div class="nm-road-path">`;
 
   /* 단계 머리(2026-09-08) — 챕터 60개가 평평하게 늘어서 있어 "지금 어느 단계인지"가 안 보였다.
-     data/stages.js 의 일곱 단계로 묶어 준다. 광고·주간 학습지 표지와 같은 이름을 쓴다.
+     data/stages.js 의 단계(2026-09-29 고등을 과목별로 나눠 열 단계)로 묶어 준다. 광고·주간 학습지 표지와 같은 이름을 쓴다.
      stages.js 가 없으면(옛 캐시) 조용히 건너뛴다 — 화면이 죽지 않게. */
   let lastStageKey=null;
   const stageOf=window.NM_STAGE_OF_CHAPTER||null;
@@ -1656,9 +1657,19 @@ const STORY_BEATS={
   middle:{ko:'동쪽 다리를 건너면 기호가 바뀌는 땅이에요. 초등의 □가 자라 x가 되고, 해발과 해저가 음수가 돼요.',
     en:'Cross the east bridge into the land where symbols change. The □ from Grade 1 grows into x, and altitude and depth become negative numbers.',
     zh:'走过东边的桥，就是符号改变的土地。小学的□长成了x，海拔和海底变成了负数。'},
-  high:{ko:'구름 걸린 봉우리에서 새 기호들이 기다려요. 이미 아는 마법에 새 이름표를 붙이는 곳이에요.',
-    en:'On the cloud-wrapped peak, new symbols are waiting. Here you give new labels to magic you already know.',
-    zh:'云雾缭绕的山峰上，新的符号在等你。在这里，给熟悉的魔法贴上新标签。'}
+  /* 고등 네 과목(2026-09-29 — 'high' 한 장을 과목별 네 장으로). 글은 data/curriculum.js 의 같은 tier desc 에서 */
+  common1:{ko:'다항식의 탑에 올라요. 괄호 두 개를 곱하는 것부터 판별식·근의 공식·행렬까지 — 다항식을 다루는 손이 한 단계 더 정교해져요.',
+    en:'Climb the Tower of Polynomials. From multiplying two brackets to the discriminant, the quadratic formula and matrices — handling polynomials gets a level more precise.',
+    zh:'登上多项式之塔。从两括号相乘到判别式、求根公式、矩阵——处理多项式的手法更进一层。'},
+  common2:{ko:'도형의 방정식 나라예요. 두 점 사이의 거리부터 직선·원의 방정식까지 — 좌표평면 위의 도형을 식으로 붙잡아요.',
+    en:'This is the Land of Coordinate Geometry. From the distance between two points to lines and circles — pin down shapes on the plane with equations.',
+    zh:'这里是图形方程之国。从两点间的距离到直线、圆的方程——用方程把坐标平面上的图形定住。'},
+  algebra:{ko:'기호의 탑에서 새 기호들이 기다려요. 지수 사다리를 거꾸로 읽는 log, 이미 아는 마법에 새 옷을 입힌 Σ — 새 기호를 하나씩 만나요.',
+    en:'New symbols are waiting in the Tower of Symbols. log reads the exponent ladder backward, Σ dresses old magic in new clothes — meet the new symbols one by one.',
+    zh:'符号之塔里，新的符号在等你。反着读指数梯子的log，给旧魔法换新衣的Σ——一个个认识新符号。'},
+  calculus1:{ko:'구름 걸린 변화의 정상이에요. x가 다가가는 값부터 순간의 기울기, 잘게 쪼개 다 더하기까지 — 로드맵의 마지막 봉우리예요.',
+    en:'The cloud-wrapped Summit of Change. From the value x approaches to the instantaneous slope and adding up thin pieces — the final peak of the roadmap.',
+    zh:'云雾缭绕的变化之巅。从x趋近的值到瞬时斜率，再到把细小碎片全部加起来——路线图的最后一座山峰。'}
 };
 /* ── 스토리 모드 3D 그림책(app/story3d) 도우미 (2026-09-26) ──
    단계 목록: 지도 챕터에 처음 나오는 순서대로, 단계 머리와 같은 진도 계산(잠금 없음). */
@@ -2090,7 +2101,7 @@ function screenGradeCourse(){
     {key:'초3',label:{ko:'초3',en:'Grade 3',zh:'三年级'}},
     {key:'초4',label:{ko:'초4',en:'Grade 4',zh:'四年级'}},
     {key:'초5',label:{ko:'초5',en:'Grade 5',zh:'五年级'}},
-    {key:'창의',label:{ko:'창의수연',en:'Creative',zh:'创意'}},
+    {key:'창의',label:{ko:'독셈',en:'Doc-T Math',zh:'巧算'}},
     {key:'중1',label:{ko:'중1',en:'Grade 7',zh:'初一'}},
     {key:'중2',label:{ko:'중2',en:'Grade 8',zh:'初二'}},
     {key:'중3',label:{ko:'중3',en:'Grade 9',zh:'初三'}},
@@ -2612,7 +2623,7 @@ function middlePacingHtml(tier){
     <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
     <p class="nm-mp-intro"><b>${esc(plan.scope)}.</b> 위 정규 과정과 <strong>같은 회차</strong>를 학년별로 모아 보인 표입니다.</p>
     <ul class="nm-mp-facts">
-      <li>한 회는 하루 약 ${plan.grade===1?30:40}분 — <strong>교과 연산 → 창의 연산 → 적용</strong> 순서입니다.</li>
+      <li>한 회는 하루 약 ${plan.grade===1?30:40}분 — <strong>교과 연산 → 독셈 → 적용</strong> 순서입니다.</li>
       <li>쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.</li>
       <li>시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 주차에 맞추려고 이해를 건너뛰지 마세요.</li>
     </ul>
@@ -2763,14 +2774,14 @@ function checkupKeyFor(num){ return 'C'+num; }
 function isCheckupPoint(num){ return num>0 && num%CHECKUP_EVERY===0; }
 function checkupRecord(num){ return (S.checkups||{})[checkupKeyFor(num)]||null; }
 /* 점검이 볼 과정 세 개(과정 3이면 1·2·3) */
-/* 점검 화면의 셋째 칸 이름(2026-09-19) — 초등은 '창의 연산', 중·고는 '적용'이다.
-   중·고에 창의연산이라는 범주가 없어서다(courses.js 과정 29 위 주석 참조).
+/* 점검 화면의 셋째 칸 이름(2026-09-19) — 초등은 '독셈', 중·고는 '적용'이다.
+   중·고에 독셈이라는 범주가 없어서다(courses.js 과정 29 위 주석 참조).
    과정 번호로 가른다 — 중등이 과정 29부터다(stages.js). */
 const CHECKUP_CRE_FROM_MIDDLE = 29;
 function checkupCreLabel(num){
   return num >= CHECKUP_CRE_FROM_MIDDLE
     ? lk('적용','Applying','应用')
-    : lk('창의 연산','Creative moves','创意运算');
+    : lk('독셈','Doc-T Math','巧算');
 }
 function checkupCourseNums(num){
   const out=[];
@@ -2812,10 +2823,10 @@ function buildCheckupItems(num){
       picked.push(Object.assign({}, pool[Math.min(pool.length-1, Math.floor(i*pool.length/CHECKUP_PER_COURSE))]));
     }
   });
-  /* ── 창의 연산 (2026-09-16 원장 "그런데 창의 연산은 같이 점검 안 해?") ──
+  /* ── 독셈 (2026-09-16 원장 "그런데 독셈은 같이 점검 안 해?") ──
      그 세 과정의 창의 회차(courses.js의 session.creative)에서 뽑는다. 원장의 다음
      문장이 요지다 — "무조건 계산하는 것이 아니라 푸는 과정에 대한 연습도 되어야지.
-     창의 연산 때 한 문제는 빈칸 넣기도 있어야 하지 않겠어."
+     독셈 때 한 문제는 빈칸 넣기도 있어야 하지 않겠어."
      그래서 **과정을 채우는 문항(steps)을 맨 앞에 세운다.** 생성기가 steps를 내면
      widgets.js의 steps 위젯이 단계마다 빈칸을 받는다(답만 쓰는 게 아니라 푸는
      과정을 채운다). 어떤 스레드가 steps를 내는지는 미리 적어 두지 않고 한 번
@@ -2956,9 +2967,9 @@ function screenCheckup(){
       <p class="nm-cu-count">${lk(`모두 ${k.items.length}문제예요. 중간에 나가도 풀던 자리에서 이어서 할 수 있어요.`,
         `${k.items.length} questions in all. You can leave and pick up where you stopped.`,
         `一共${k.items.length}题。中途离开也能从停下的地方继续。`)}</p>
-      <p class="nm-cu-why">${lk('셋을 따로 세요. 빨리 계산하는 것, 푸는 길을 세우는 것, 문장을 읽어 내는 것은 서로 다른 힘이라, 합쳐 버리면 어느 쪽이 막혔는지 안 보여요. 창의 연산에는 답만 쓰는 게 아니라 <b>푸는 과정의 빈칸</b>을 채우는 문제가 들어 있어요.',
+      <p class="nm-cu-why">${lk('셋을 따로 세요. 빨리 계산하는 것, 푸는 길을 세우는 것, 문장을 읽어 내는 것은 서로 다른 힘이라, 합쳐 버리면 어느 쪽이 막혔는지 안 보여요. 독셈에는 답만 쓰는 게 아니라 <b>푸는 과정의 빈칸</b>을 채우는 문제가 들어 있어요.',
         'We score the three separately. Computing fast, building a route through a problem, and reading a problem are different abilities — one combined score hides which one is stuck. The creative part includes questions where you fill in <b>the steps</b>, not just the answer.',
-        '三项分开计分。算得快、想出解法路径、读懂题是不同的能力，合成一个分数就看不出卡在哪里。创意运算里有需要填<b>解题步骤空格</b>的题，不只是写答案。')}</p>
+        '三项分开计分。算得快、想出解法路径、读懂题是不同的能力，合成一个分数就看不出卡在哪里。巧算里有需要填<b>解题步骤空格</b>的题，不只是写答案。')}</p>
       <button class="nm-btn full" id="cuGo">${lk('시작하기','Start','开始')}</button>
     </div></div></div>`;
     $('#cuBack').onclick=back;
@@ -2998,9 +3009,9 @@ function screenCheckup(){
       ? lk('적용(배운 것을 문제에 쓰는 자리)이 따로 처져요. 계산은 되는데 적용에서 멈춘다면, 문제를 더 푸는 것보다 <b>이 문제가 어느 개념을 부르는지</b>를 먼저 말해 보는 연습이 필요해요.',
            'Applying what was learned lags on its own. If the computing works but applying stalls, practise naming <b>which idea the problem is calling for</b> before solving more of them.',
            '应用（把学过的用到题目上）单独落后。如果计算没问题却卡在应用，比起多做题，先练习说出<b>这道题在叫哪个概念</b>。')
-      : lk('창의 연산(푸는 길 세우기)이 따로 처져요. 답은 나오는데 과정의 빈칸에서 멈춘다면, 답을 맞히는 연습이 아니라 <b>왜 그 순서로 푸는지</b>를 소리 내어 말해 보는 연습이 필요해요.',
+      : lk('독셈(푸는 길 세우기)이 따로 처져요. 답은 나오는데 과정의 빈칸에서 멈춘다면, 답을 맞히는 연습이 아니라 <b>왜 그 순서로 푸는지</b>를 소리 내어 말해 보는 연습이 필요해요.',
            'The creative part — building a route — lags on its own. If the answer comes but the step blanks stall, practise saying <b>why</b> the steps go in that order, not more answer drills.',
-           '创意运算（想出解法路径）单独落后。如果答案能算出来却卡在步骤空格，需要练习说出<b>为什么按这个顺序解</b>，而不是多做计算。'))
+           '巧算（想出解法路径）单独落后。如果答案能算出来却卡在步骤空格，需要练习说出<b>为什么按这个顺序解</b>，而不是多做计算。'))
       : (k.creTotal && creGood && !calcGood)
       ? lk('푸는 길은 잘 세워요. 그 길 위에서 손이 느릴 뿐이에요.',
            'You build the route well — the hand on that route is just still slow.',
@@ -3018,7 +3029,7 @@ function screenCheckup(){
           <span class="nm-cu-num">${k.calcOk}<i>/${k.calcTotal}</i></span>
         </div>
         ${k.creTotal?`<div class="nm-cu-score cre${crePct>=60?' good':''}">
-          <b>✨ ${lk('창의 연산','Creative','创意运算')}</b>
+          <b>✨ ${lk('독셈','Doc-T Math','巧算')}</b>
           <span class="nm-cu-num">${k.creOk}<i>/${k.creTotal}</i></span>
         </div>`:''}
         <div class="nm-cu-score wp${wpGood?' good':''}">
@@ -3051,7 +3062,7 @@ function screenCheckup(){
   const cur=k.cur;
   const isMulti=Array.isArray(cur.answer);
   const hasTex=!!cur.tex;
-  /* 창의 연산만 steps 위젯으로 보낸다 — tex가 같이 있어도.
+  /* 독셈만 steps 위젯으로 보낸다 — tex가 같이 있어도.
      원장 지시의 "빈칸 넣기"가 바로 그 위젯이라, 창의 문항을 tex 한 줄로 떨어뜨리면
      푸는 과정이 사라지고 답만 묻는 문제가 된다.
      반대로 **계산 문항은 steps가 있어도 위젯으로 보내지 않는다.** 필산 스레드도
@@ -3086,7 +3097,7 @@ function screenCheckup(){
   </div>
   <div class="nm-step-body"><div class="nm-dialog">
     <div class="nm-dg-step">${item.kind==='wp'?`📖 ${lk('문장제 이해','Reading word problems','应用题理解')}`
-      :item.kind==='creative'?`✨ ${lk('창의 연산','Creative moves','创意运算')}`
+      :item.kind==='creative'?`✨ ${lk('독셈','Doc-T Math','巧算')}`
       :`🔢 ${lk('계산','Calculating','计算')}`}${th?` · ${esc(L(th.name))}`:''}</div>
     <div class="nm-prog">${dots(k.items.length,k.i)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
@@ -3354,7 +3365,7 @@ function roadWhenHtml(r){
   return `<span class="nm-cr-when"><span class="t nm-cr-tnum">${s}</span> ${lk('시작','start','开始')} → <span class="t nm-cr-tnum">${e}</span> ${lk('끝','end','结束')}</span>`;
 }
 /* 과정 설명(한 번 눌러 펼침) — 전부 데이터에서 만든다(courses.js 회차 · threads.js 이름 · 유닛 제목 · hero3d).
-   무엇을 배우나(교과 연산 스레드) · 창의 연산 · 문장제·적용 · 마법 개념(3D 그림 표시) · 마치면 할 수 있는 것. */
+   무엇을 배우나(교과 연산 스레드) · 독셈 · 문장제·적용 · 마법 개념(3D 그림 표시) · 마치면 할 수 있는 것. */
 function courseExplainHtml(c){
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
@@ -3379,7 +3390,7 @@ function courseExplainHtml(c){
     return esc(nm(t))+(lv&&lv.label?` <small>(${esc(L(lv.label))})</small>`:'');
   }).join(' · ');
   const body=li(lk('교과 연산','School arithmetic','教材运算'),join(schoolIds.map(nm)))
-    +li(lk('창의 연산','Creative arithmetic','创意运算'),join(creIds.map(nm)))
+    +li(lk('독셈','Doc-T Math','巧算'),join(creIds.map(nm)))
     +li(lk('문장제 · 적용','Word problems · applying','应用题 · 应用'),join(uniq(apply)))
     +(units.length?`<div class="nm-cr-ex-row"><b>${lk('마법 개념','Magic concepts','魔法概念')}</b><span class="nm-cr-ex-units">${unitHtml}</span></div>`:'')
     +(after?`<p class="nm-cr-ex-after">${lk('마치면 스스로 풀 수 있어요','Afterwards you can solve on your own','学完后能独立完成')} — ${after}</p>`:'');
@@ -3705,7 +3716,7 @@ function screenCourseRoad(){
             <li>${lk('기본은 정해 둔 편성 그대로예요 — 한 회 30분, 중2·중3은 40분.','Default is the set plan — 30 minutes a class, 40 for middle grades 2–3.','默认即既定安排：每次30分钟，初二·初三40分钟。')}</li>
             <li>${lk('0.7배까지 줄이고 1.5배까지 늘릴 수 있어요.','Go down to 0.7× or up to 1.5×.','可减到0.7倍、加到1.5倍。')}</li>
             <li>${lk('속도를 올리면 같은 기간에 회차를 더 나가 주차·개월이 줄고, 내리면 늘어요.','Faster speed covers more classes in the same time, so weeks and months shrink; slower stretches them.','提高速度会在同样时间里上更多课次，周数和月数减少；放慢则增加。')}</li>
-            <li>${lk('양은 그 주에 배우는 계산의 문항 수예요. 복습·창의·적용은 그대로이고, 같은 문제는 되풀이하지 않아요.','Amount is how many problems of that week\'s calculation. Review, creative and applying stay the same; problems never repeat.','分量是本周所学运算的题数。复习·创意·应用不变，题目不重复。')}</li>
+            <li>${lk('양은 그 주에 배우는 계산의 문항 수예요. 복습·독셈·적용은 그대로이고, 같은 문제는 되풀이하지 않아요.','Amount is how many problems of that week\'s calculation. Review, Doc-T Math and applying stay the same; problems never repeat.','分量是本周所学运算的题数。复习·巧算·应用不变，题目不重复。')}</li>
           </ul>
         </details>
       </div>
@@ -4081,7 +4092,7 @@ function mountRoad3DInto(heroEl, o){
 /* ============================================================
    진단하기 v2 (S.view==='placement') — 세밀한 레벨 확인 + 세부 스킬 체크
    ------------------------------------------------------------
-   원장 지시 두 가지: ①"진단을 더 세밀하게" — 45개 과정(C1~C45) 전부를
+   원장 지시 두 가지: ①"진단을 더 세밀하게" — 47개 과정(C1~C47) 전부를
    사다리에 얹고, 경계를 찾은 뒤에는 그 근처 과정들의 스킬을 하나씩 더
    물어 "어느 스킬이 익숙하고, 어느 게 맞혔지만 느리고, 어느 게 연습이
    필요한지"까지 알려준다. ②"시작을 스스로 고를 수도 있게" — 진단 없이
@@ -4112,7 +4123,7 @@ function mountRoad3DInto(heroEl, o){
    시뮬레이터 scripts/sim-placement.js가 같이 쓴다 — main.js는 DOM이 있어야
    로드되므로 거기서는 못 부른다). 여기서는 한 번 만들어 캐시만 한다(과정
    데이터는 페이지 켜져 있는 동안 안 바뀐다).
-   45개 과정(C1~C45) 전부를 사다리에 한 칸씩 얹는다 — 예전엔 16칸짜리
+   47개 과정(C1~C47) 전부를 사다리에 한 칸씩 얹는다 — 예전엔 16칸짜리
    손으로 고른 표였지만, 이제 buildLadder()가 courseBuilt인 과정마다
    "그 과정 자기 드릴 재료 중 생성기 답이 숫자 하나인 첫 스레드"를 데이터에서
    직접 고른다(전부 배열 답이면 첫 재료로 대체). 수의 나라(유아) 4칸은
@@ -4145,7 +4156,7 @@ const PLACEMENT_AGES=[
    실행할 때 데이터에서 직접 찾는다(tier 의 첫 과정 · 속도 비교 마일스톤).
      tier      : data/courses.js 에서 그 tier 의 **첫 과정**(번호가 가장 작은 것)
      milestone : app/pace-compare.js MILESTONES 의 course (출처: 기적의 계산법 권별 주제 —
-                 CURRICULUM-SOURCES.md §9, 상담 도구 roadmap/index.html)
+                 CURRICULUM-SOURCES.md §9)
      course    : 위 둘로 못 짚는 초5·초6 — CURRICULUM-SOURCES.md §9 권별 주제와
                  data/courses.js 과정 제목이 같은 자리(scripts/check-road-timing.js 가 제목을 대조)
    | 학년        | 근거                                                                 | 과정 |
@@ -4158,7 +4169,7 @@ const PLACEMENT_AGES=[
    | 초6         | §9 11권 "분수·소수 나눗셈(초6)" = 과정 22 「분수 나눗셈」                 | 22  |
    | 중1·중2·중3 | tier middle1·middle2·middle3 첫 과정                                 | 29·32·35 |
    | 고등        | tier highmath1 첫 과정(공통수학1 — 공통수학2 는 그 뒤 40)               | 38  |
-   | 대수·미적분Ⅰ | tier algebra·calculus1 첫 과정                                       | 41·43 |
+   | 대수·미적분Ⅰ | tier algebra·calculus1 첫 과정                                       | 41·45 |
    학기(1·2학기) 구분은 넣지 않았다 — 학기마다 과정을 가를 근거가 데이터에 없다. */
 const PLACEMENT_GRADES=[
   {key:'pre', tier:'level0',     label:{ko:'유아 (5~6세)',en:'Preschool (ages 5–6)',zh:'幼儿（5~6岁）'}},
@@ -4229,7 +4240,8 @@ function startPlacement(){
 /* 진단 천장(2026-09-28, 원장 "말도 안되지, 연산 테스트가 5살한테 미적 줄꺼야?").
    전에는 누구든 다 맞히면 사다리 끝(고등 미적분)까지 올라갔다. 이제 시작 과정이 속한 로드맵 단계의
    **다음 단계 끝**까지만 올라간다(data/stages.js courses.from/to — 번호를 새로 정하지 않는다).
-     유아(과정 0) → 과정 10 · 초1~초3(과정 1~10) → 16 · 초4(13) → 25 · 초5·6(19·22) → 28 · 중등 → 45
+     유아(과정 0) → 과정 10 · 초1~초3(과정 1~10) → 16 · 초4(13) → 25 · 초5·6(19·22) → 28 · 중등 → 39(공통수학1)
+     · 공통수학1 → 40 · 공통수학2 → 44 · 대수·미적분Ⅰ → 47 (2026-09-29 고등이 과목별 네 단계가 되며)
    천장까지 다 맞힌 아이는 결과 화면의 "한 단계 더 올라가 보기"로 천장을 다음 단계로 올려 이어서 푼다
    — 빠른 아이를 막지 않되, 처음부터 어려운 문제를 보여 주지 않는다. */
 function placementCeilCourse(courseNum){
@@ -5354,13 +5366,15 @@ function screenMailbox(){
          buildMixedProblemSet 참조). */
       /* "발송 말고 고를 때는 제너레이터로"(2026-09-05) — 바로 인쇄하지 않고
          편집기를 먼저 연다(문항 스왑·유형 교체·인쇄는 편집기 안에서). */
-      /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 창의 연산 + 문장제, 표지·
+      /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 독셈 + 문장제, 표지·
          마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
       const wk = (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
-        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey() }) : null;
+        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey(),
+            /* 몇 번째 회차인가 = 이 주 전에 연 봉투 수(2026-09-30, 언어사고력 주제 순환·유아 중반 판정) */
+            sessionIdx: Object.keys((S.mailbox && S.mailbox.opened) || {}).filter(function(wk){ return wk < env.weekKey; }).length }) : null;
       const items = wk ? wk.items : env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
       if(window.NM_EXAM && NM_EXAM.openPrintEditor) NM_EXAM.openPrintEditor(items, env.wsId,
-        wk ? {mixed:20, cover:wk.cover, units:wk.units, courseKey:env.courseKey} : {mixed:20});
+        wk ? {mixed:20, cover:wk.cover, units:wk.units, courseKey:env.courseKey, courseSessions:wk.courseSessions} : {mixed:20});
     };
     if(!S.mailbox.opened) S.mailbox.opened={};
     if(!S.mailbox.opened[S._mbWeek]){ S.mailbox.opened[S._mbWeek]=Date.now(); save(); }
@@ -6341,9 +6355,12 @@ function screenSymbolDex(){
   const ko=S.lang==='ko',en=S.lang==='en';
   const all=allUnitSymbols();
   const bySym={};all.forEach(sy=>{bySym[sy.sym]=sy;});
-  const canonCards=SYMBOL_DEX_CANON.map(sym=>symDexCardHtml(sym,bySym[sym])).join('');
-  const extra=all.filter(sy=>SYMBOL_DEX_CANON.indexOf(sy.sym)<0);
-  const extraCards=extra.map(sy=>symDexCardHtml(sy.sym,sy)).join('');
+  /* 도감 순서(2026-10-01) — 배우는 순서대로: 유아(N)→초등(A·B·C)→고급(H)→중등(M). 유닛에 연결된 기호만
+     센다(이전엔 틀 10칸 중 5칸이 어느 유닛에도 연결되지 않아 영원히 빈칸이었다). */
+  const rankOf=uid=>{const m=/^([A-Z])-(\d+)/.exec(uid)||[];return ({N:0,A:1,B:2,C:3,H:4,M:5}[m[1]]??9)*1000+(+m[2]||0);};
+  const ordered=all.slice().sort((a,b)=>rankOf(a.unitId)-rankOf(b.unitId));
+  const canonCards=ordered.map(sy=>symDexCardHtml(sy.sym,sy)).join('');
+  const extraCards='';
   const collectedCount=Object.keys(S.symbolDex||{}).length;
   scr.innerHTML=`<div class="nm-gc-wrap nm-dex-wrap">
     <div class="nm-gc-header">
@@ -6353,7 +6370,7 @@ function screenSymbolDex(){
     <div class="nm-gc-body">
       <p class="nm-dex-sub">${ko?'배운 기호를 모아보세요. 카드를 탭하면 뒤집혀요.':en?"Collect the symbols you've learned — tap a card to flip it.":'收集你学过的符号——点击卡片可以翻面。'}</p>
       <div class="nm-dex-grid">${canonCards}</div>
-      <p class="nm-dex-hint">${ko?'기호 친구는 과정이 올라가면 한 명씩 찾아와요':en?'Symbol friends arrive as you climb the course':'符号朋友会随课程提升一个个到来'}</p>
+      <p class="nm-dex-hint">${ko?`기호 친구는 단원을 마칠 때마다 한 명씩 찾아와요 · 전체 ${all.length}명`:en?'Symbol friends arrive as you climb the course':'符号朋友会随课程提升一个个到来'}</p>
       ${extraCards?`<div class="nm-dex-sec-h">${ko?'더 만난 기호':en?'More symbols met':'更多遇到的符号'}</div><div class="nm-dex-grid">${extraCards}</div>`:''}
     </div>
   </div>`;

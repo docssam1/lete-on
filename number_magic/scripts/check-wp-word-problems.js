@@ -182,16 +182,18 @@ function vesselNum(t) {
 }
 function verifyVessel(raw, range) {
   if (range !== 'C' || !raw.wp || raw.wp.kind !== '합병') return null;
-  if (/빨간|파란/.test(raw.word.ko)) return null;            /* 길이 — 색 이름표 */
+  /* WP6 make 는 본문이 식이고 그릇 이야기는 정답 보기에 있다(2026-09-30) */
+  const textOf = l => raw.wp.mode === 'make' ? raw.choices[l][raw.answer - 1] : raw.word[l];
+  if (/빨간|파란/.test(textOf('ko'))) return null;            /* 길이 — 색 이름표 */
   for (const l of ['ko', 'en', 'zh']) {
     const [reBig, reSmall] = VESSEL_RE[l];
-    const mb = reBig.exec(raw.word[l]), ms = reSmall.exec(raw.word[l]);
+    const mb = reBig.exec(textOf(l)), ms = reSmall.exec(textOf(l));
     /* 못 읽으면 통과가 아니라 실패다 — 이름표를 바꿨다면 이 검사도 같이 고쳐야 한다.
        조용히 건너뛰면 이 규칙은 영영 아무것도 못 잡는다. */
-    if (!mb || !ms) return `그릇: ${l} 본문에서 큰/작은 그릇의 양을 못 읽음 — ${raw.word[l]}`;
+    if (!mb || !ms) return `그릇: ${l} 본문에서 큰/작은 그릇의 양을 못 읽음 — ${textOf(l)}`;
     const big = vesselNum(mb[1]), small = vesselNum(ms[1]);
     if (!(big >= small))
-      return `그릇: ${l}에서 큰 그릇(${mb[1]})이 작은 그릇(${ms[1]})보다 적게 담김 — ${raw.word[l]}`;
+      return `그릇: ${l}에서 큰 그릇(${mb[1]})이 작은 그릇(${ms[1]})보다 적게 담김 — ${textOf(l)}`;
   }
   vesselChecks++;
   return null;
@@ -422,6 +424,96 @@ function verifyAnswer(p, w, range) {
     if (/\d\/\d/.test(p.word)) return 'need: 본문에 분수가 있어 분모가 또 다른 답 후보가 됨';
     return null;
   }
+  /* WP9 info — 세 경우를 본문의 수 개수로 가른다. judge: ok 2 · lack 1 · noise 3. missing: 본문 수 1개, 정답 보기만 모르는 수. */
+  if (w.mode === 'info-judge' || w.mode === 'info-missing') {
+    const nums = (p.word.match(/\d+/g) || []).length;
+    if (w.mode === 'info-judge') {
+      const want = { ok: 2, lack: 1, noise: 3 }[w.judge];
+      if (want == null) return `judge: 모르는 경우 ${w.judge}`;
+      if (nums !== want) return `judge(${w.judge}): 본문 수 ${nums}개(기대 ${want}) — ${p.word}`;
+      const chosen = p.choices[p.answer - 1];
+      const exp = { ok: '바로 풀 수 있어요.', lack: '정보가 모자라서 풀 수 없어요.', noise: '필요 없는 수가 들어 있지만 풀 수 있어요.' }[w.judge];
+      if (chosen !== exp) return `judge: 정답 보기 "${chosen}"이 경우 ${w.judge}와 다름`;
+      if (new Set(p.choices).size !== 3) return 'judge: 보기 중복';
+      return null;
+    }
+    if (nums !== 1) return `missing: 본문 수가 ${nums}개(기대 1) — ${p.word}`;
+    if (p.choices.length !== 3 || new Set(p.choices).size !== 3) return 'missing: 보기가 3개가 아니거나 중복';
+    if (p.choices[p.answer - 1] !== w.needed) return `missing: 정답 보기 "${p.choices[p.answer - 1]}"이 필요한 정보 "${w.needed}"와 다름`;
+    return null;
+  }
+  /* WP10 life — 답을 여기서 다시 계산한다. */
+  if (w.mode && w.mode.indexOf('life-') === 0) {
+    const v = w.vals;
+    let want;
+    if (w.lifeMode === 'ceil') { if (v[1] % v[0] === 0) return 'ceil: 나누어떨어짐 — 올림이 안 보임'; want = Math.ceil(v[1] / v[0]); }
+    else if (w.lifeMode === 'twoans') { if (v[1] % v[0] === 0) return 'twoans: 나머지 0'; want = [Math.floor(v[1] / v[0]), v[1] % v[0]]; }
+    else if (w.lifeMode === 'unit') want = v[0] === 'length' ? v[1] * 100 + v[2] : v[0] === 'time' ? v[1] * 60 + v[2] : v[1] * 1000 + v[2] * 100;
+    else want = v[0] === 'sum2' ? v[1][v[2][0]] + v[1][v[2][1]] : Math.max(...v[1]) - Math.min(...v[1]);
+    const same = Array.isArray(want) ? (Array.isArray(p.answer) && want.length === p.answer.length && want.every((x, i) => x === p.answer[i]) ) : p.answer === want;
+    if (!same) return `life/${w.lifeMode}: 답 ${JSON.stringify(p.answer)}이 ${JSON.stringify(want)}과 다름`;
+    if (w.lifeMode === 'table' && (new Set(v[1]).size !== v[1].length)) return 'table: 같은 수가 두 번 나와 최다·최소가 흐림';
+    return null;
+  }
+  /* WP8 two — 답은 [중간값, 마지막 답]. 다섯 사슬을 여기서 따로 다시 계산해 맞춘다(생성기와 같은 함수를 부르지 않는다). */
+  if (w.mode === 'two') {
+    const [a, b, c] = w.vals || [];
+    const mid = { 1: a + b, 2: a * b, 3: a * b, 4: a + b, 5: a - b }[w.chain];
+    const fin = { 1: mid - c, 2: mid + c, 3: mid - c, 4: mid - c, 5: mid + c }[w.chain];
+    if (mid == null || !Array.isArray(p.answer) || p.answer.length !== 2) return 'two: 답이 두 칸이 아님';
+    if (p.answer[0] !== mid || p.answer[1] !== fin) return `two: 답 [${p.answer}]이 사슬 ${w.chain} [${mid}, ${fin}]과 다름`;
+    if (fin <= 0 || mid <= 0) return `two: 중간값·마지막 답이 양수가 아님 [${mid}, ${fin}]`;
+    if (w.chain === 4 && !(mid > c)) return 'two: 사슬 4에서 A가 B보다 많지 않음';
+    for (const k of [a, b, c]) if (!new RegExp('(^|[^0-9])' + k + '([^0-9]|$)').test(p.word)) return `two: 아는 수 ${k}이 본문에 없음 — ${p.word}`;
+    if (!/[①]/.test(p.wordEqn)) return 'two: ①② 식 틀이 없음';
+    return null;
+  }
+  /* WP7 unknown — 모르는 수의 자리가 옮겨 간다. 답은 (kind, pos)로 정해지고, 이야기에는 **아는 두 수**가 있어야 하며
+     모르는 수(답)를 그대로 적어 두면 안 된다(2026-09-30). */
+  if (w.mode === 'unknown') {
+    const r = w.op === '+' ? w.n1 + w.n2 : w.op === '−' ? w.n1 - w.n2 : w.n1 * w.n2;
+    if (w.result !== r) return `unknown: 결과 ${w.result}이 ${w.n1} ${w.op} ${w.n2} = ${r}과 다름`;
+    const okPos = { 합병:['part'], 첨가:['change','start'], 구잔:['change','start'], 구차:['hi','lo'] }[w.kind];
+    if (!okPos || okPos.indexOf(w.pos) < 0) return `unknown: ${w.kind}에 맞지 않는 위치 ${w.pos}`;
+    const want = { part: w.n2, change: w.n2, start: w.n1, hi: w.n2, lo: w.n1 }[w.pos];
+    if (p.answer !== want) return `unknown: ${w.kind}/${w.pos} 답 ${p.answer}이 ${want}과 다름`;
+    /* 아는 수: part·hi·start 계열은 표에서 — 이야기 본문에 아는 두 수(결과와 나머지 하나)가 모두 있어야 한다 */
+    const known = { part: [r, w.n1], change: [w.n1, r], start: [w.n2, r], hi: [r, w.n1], lo: [w.n2, r] }[w.pos];
+    for (const k of known) if (!new RegExp('(^|[^0-9])' + k + '([^0-9]|$)').test(p.word)) return `unknown: 아는 수 ${k}이 본문에 없음 — ${p.word}`;
+    if (known.indexOf(p.answer) < 0 && new RegExp('(^|[^0-9])' + p.answer + '([^0-9]|$)').test(p.word))
+      return `unknown: 모르는 수 ${p.answer}이 본문에 적혀 있음 — ${p.word}`;
+    if (!/몇/.test(p.wordAsk) && !/몇/.test(p.word)) return 'unknown: 모르는 수를 묻는 "몇"이 없음';
+    return null;
+  }
+  /* WP2 picture — 답은 그림에서 센 수(= 상황의 계산 결과)이고, 위젯 장면(scene)이 상황과 맞아야 한다.
+     장면이 어긋나면 아이가 그림대로 해도 틀린 답이 나온다(2026-09-30). */
+  if (w.mode === 'picture') {
+    const r = w.op === '+' ? w.n1 + w.n2 : w.op === '−' ? w.n1 - w.n2 : w.op === '×' ? w.n1 * w.n2 : w.n1 / w.n2;
+    if (p.answer !== r) return `picture: 답 ${p.answer}이 ${w.n1} ${w.op} ${w.n2} = ${r}과 다름`;
+    if (p.widget !== 'wpScene' || !p.scene) return 'picture: wpScene 장면이 없음';
+    const sc = p.scene;
+    const ok = sc.mode === 'color' ? (sc.fixed === w.n1 && sc.need === w.n2 && sc.total >= w.n1 + w.n2 + 2 && sc.total <= 25)
+      : sc.mode === 'cross' ? (sc.total === w.n1 && sc.need === w.n2 && w.n1 <= 12)
+      : sc.mode === 'pair' ? (sc.rowA === w.n1 && sc.rowB === w.n2 && sc.need === w.n1 - w.n2 && w.n1 <= 12)
+      : sc.mode === 'groups' ? (sc.per === w.n1 && sc.groups === w.n2 && w.n1 <= 5 && w.n2 <= 5) : false;
+    if (!ok) return `picture: 장면 ${JSON.stringify(sc)}이 상황 ${w.kind} ${w.n1}·${w.n2}와 어긋남`;
+    const want = { 합병:'color', 첨가:'color', 구잔:'cross', 구차:'pair', 배수:'groups' }[w.kind];
+    if (sc.mode !== want) return `picture: ${w.kind}인데 장면이 ${sc.mode}`;
+    return null;
+  }
+  /* WP6 make — 보기 셋 가운데 식의 기호와 같은 유형은 정답 하나뿐이어야 한다(구잔·구차가 나란히 오면 복수정답). */
+  if (w.mode === 'make') {
+    const ks = w.choiceKinds;
+    if (!Array.isArray(ks) || ks.length !== 3 || p.choices.length !== 3) return 'make: 보기 유형이 3개가 아님';
+    const same = ks.map((k, i) => KIND_OP[k] === w.op ? i + 1 : 0).filter(Boolean);
+    if (same.length !== 1) return `make: 식의 기호와 같은 유형이 ${same.length}개 (${ks.join('/')})`;
+    if (same[0] !== p.answer || ks[p.answer - 1] !== w.kind) return `make: 정답 ${p.answer}이 상황 유형 ${w.kind}의 보기가 아님 (${ks.join('/')})`;
+    /* 레벨 C는 값(0.6)이 아니라 표기(3/5)로 찍혀야 한다 — t1·t2 로 본다(A·B는 t1 = n1) */
+    const eq = `${w.t1} ${w.op} ${w.t2}`;
+    if (p.word.indexOf(eq) < 0 || p.wordAsk.indexOf(eq) < 0) return `make: 식 ${eq}이 본문·물음에 없음`;
+    for (const c of p.choices) if (c.indexOf(String(w.t1)) < 0 || c.indexOf(String(w.t2)) < 0) return `make: 보기에 두 수가 다 안 나옴: ${c}`;
+    return null;
+  }
   return `모르는 모드: ${w.mode}`;
 }
 
@@ -460,7 +552,7 @@ function verifyLangs(p) {
   if (!ko || !en || !zh) return '3개 언어 중 빠진 것이 있음';
   if (ko === en || en === zh || ko === zh) return '두 언어의 문장이 똑같음';
   /* 언어 혼입. 한국어 문장의 m·L·kg는 단위 기호라 예외로 둔다(교과서 표기). */
-  const koLatin = ko.replace(/(?:^|\s)(?:mL|kg|m|L)(?![A-Za-z])/g, ' ');
+  const koLatin = ko.replace(/(?:^|\s)(?:mL|kg|cm|m|L)(?![A-Za-z])/g, ' ');
   if (/[A-Za-z]/.test(koLatin)) return `한국어 문장에 영문이 섞임: ${koLatin.match(/[A-Za-z]+/)[0]}`;
   if (/[가-힣]/.test(en)) return `영어 문장에 한글이 섞임: ${en.match(/[가-힣]+/)[0]}`;
   if (/[가-힣]/.test(zh)) return `중국어 문장에 한글이 섞임: ${zh.match(/[가-힣]+/)[0]}`;
@@ -495,7 +587,7 @@ function sweep(id, lv) {
   if (ratio > 0.45) fails.push(`${tag} — 정답 쏠림: ${(ratio * 100) | 0}%가 ${top} (안 읽고 찍어도 통과)`);
   /* 구차가 충분히 나오는가 — 이 스레드의 존재 이유가 구차다 */
   const gucha = (kinds.get('구차') || 0) / N;
-  if (gucha < 0.12) fails.push(`${tag} — 구차가 ${(gucha * 100).toFixed(1)}%뿐 (신호어 함정 훈련이 안 됨)`);
+  if (gucha < 0.12 && id !== 'WP10') fails.push(`${tag} — 구차가 ${(gucha * 100).toFixed(1)}%뿐 (신호어 함정 훈련이 안 됨)`);
   console.log(`  ${bad ? '✗' : '✓'} ${tag.padEnd(40)} ${N}건 · 답 ${seen.size}종 · 최빈 ${(ratio * 100).toFixed(1)}%` +
               ` · 구차 ${(gucha * 100).toFixed(1)}% · 모드 ${[...modes.keys()].sort().join('/')}`);
 }
@@ -505,6 +597,12 @@ console.log(`문장제(WP) 검산 — 레벨당 ${N}건\n`);
 [1, 2, 3].forEach(lv => sweep('WP3', lv));
 [1, 2, 3].forEach(lv => sweep('WP4', lv));
 [1, 2, 3].forEach(lv => sweep('WP5', lv));
+[1].forEach(lv => sweep('WP2', lv));
+[1, 2, 3].forEach(lv => sweep('WP6', lv));
+[1, 2].forEach(lv => sweep('WP7', lv));
+[1, 2].forEach(lv => sweep('WP8', lv));
+[1, 2].forEach(lv => sweep('WP9', lv));
+[1, 2].forEach(lv => sweep('WP10', lv));
 
 console.log(`\n검산한 문항: ${checks}건 · 그릇 크기 검사 ${vesselChecks}건 × 3개 언어`);
 /* 검사가 한 번도 안 돌면 통과가 아니다 — 못 잡는 검사는 아무것도 증명하지 못한다 */

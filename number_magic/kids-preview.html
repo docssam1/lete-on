@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><title>언어사고력 유아 시안</title>
+<style>body{margin:0;background:#ddd}.pg{width:210mm;height:297mm;box-sizing:border-box;padding:12mm;background:#fff;margin:6mm auto;position:relative}
+.nm-w2-foot{position:absolute;bottom:6mm;right:12mm;font:9px monospace;color:#999}</style><style id="k"></style><div id="o"></div>
+<script src="engine/rng.js"></script><script src="data/lang-kids.js"></script>
+<script>document.getElementById('k').textContent=NM_LANG_KIDS.css;
+const q=new URLSearchParams(location.search);const lv=q.get('lv')||'K2';
+document.getElementById('o').innerHTML=[0,1,2,3].map(i=>'<div class="pg">'+NM_LANG_KIDS.pageHtml(lv,i,'seed7','독셈','KIDS-'+lv+'-'+i)+'</div>').join('');window.READY=1;</script>

@@ -111,6 +111,51 @@ NM_TGEN['fr2_improperMixed'] = function(params, rng){
 NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
   var regroup = params && params.regroup;
 
+  /* ── 큰 자연수 + 올림·받아내림 (mode:'big', op '+'|'-') — 2026-10-01 신규 ──
+     레벨 1·2 는 자연수 부분이 5 이하이고, 덧셈에는 분수 부분의 올림(합 ≥ 1)이 아예 없었다.
+     여기서는 자연수 부분이 두 자리이고 분모도 5~12 로 넓혀, 분수 합이 1을 넘으면 자연수에 1을
+     더하고(덧셈), 분수가 모자라면 자연수에서 1을 빌린다(뺄셈). 분수 부분이 0이 되는 경우는 뺀다
+     (답이 대분수 한 칸으로 갈라지지 않게). 답은 대분수 통째로 [자연수, 분자, 분모]. */
+  if(params && params.mode === 'big'){
+    var bd = pick(rng, [5, 6, 8, 9, 10, 12]);
+    if(params.op === '+'){
+      var an = R(rng, Math.ceil(bd / 2), bd - 1), bn = R(rng, bd - an + 1, bd - 1);   /* an+bn > bd */
+      var aw = R(rng, 10, 79), bw = R(rng, 10, 79);
+      var rn = an + bn - bd, rw = aw + bw + 1;
+      return {
+        prompt: {
+          ko: '분수 부분의 합이 1이 넘으면 자연수에 1을 올려요!',
+          en: 'If the fractions add up to more than 1, carry 1 to the whole numbers!',
+          zh: '分数部分相加超过1时，向整数部分进1！'
+        },
+        tex: aw + '\\frac{' + an + '}{' + bd + '} + ' + bw + '\\frac{' + bn + '}{' + bd + '} = \\square\\frac{\\square}{' + bd + '}',
+        answer: [rw, rn, bd], answerShape: 'mixed', answerType: 'steps',
+        steps: [
+          { tex: '\\text{분수: } ' + an + ' + ' + bn + ' = \\square \\quad(' + bd + '\\text{이 넘으면 올림})', blank: an + bn },
+          { tex: '\\text{자연수: } ' + aw + ' + ' + bw + ' + 1 = \\square', blank: rw }
+        ],
+        widget: 'steps'
+      };
+    }
+    var cn = R(rng, 1, Math.min(bd - 2, 6)), dn = R(rng, cn + 1, bd - 1);              /* dn > cn → 받아내림 */
+    var cw = R(rng, 20, 99), dw = R(rng, 10, cw - 2);
+    var fp = bd + cn - dn, wp = cw - 1 - dw;
+    return {
+      prompt: {
+        ko: '분수 부분이 모자라면 자연수에서 1을 빌려요!',
+        en: 'When the fraction part is too small, borrow 1 from the whole number!',
+        zh: '分数部分不够减时，从整数借1！'
+      },
+      tex: cw + '\\frac{' + cn + '}{' + bd + '} - ' + dw + '\\frac{' + dn + '}{' + bd + '} = \\square\\frac{\\square}{' + bd + '}',
+      answer: [wp, fp, bd], answerShape: 'mixed', answerType: 'steps',
+      steps: [
+        { tex: '\\text{분수: } \\frac{' + (bd + cn) + '}{' + bd + '} - \\frac{' + dn + '}{' + bd + '} = \\frac{\\square}{' + bd + '} \\quad(1\\text{을 빌림})', blank: fp },
+        { tex: '\\text{자연수: } ' + (cw - 1) + ' - ' + dw + ' = \\square', blank: wp }
+      ],
+      widget: 'steps'
+    };
+  }
+
   if(!regroup){
     // 올림·내림 없는 덧셈
     var d      = pick(rng, [4,6,8]);
@@ -185,6 +230,49 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
    ============================================================ */
 NM_TGEN['fr4_unlikeAddSub'] = function(params, rng){
   var mixed = params && params.mixed;
+
+  /* ── 부분분수 (mode:'split' | 'chain') — 2026-10-01 신규, 5학년 과정(C20) ──
+     원장 "5학년 과정에 부분분수도 넣어줘". 분모가 연달은 두 수의 곱인 분수는 두 분수의 차로 쪼개진다:
+       1/(a×(a+1)) = 1/a − 1/(a+1)       k/(a×(a+k)) = 1/a − 1/(a+k)     (통분의 거꾸로)
+     split : 쪼갠 뒤 빈 분모 하나를 찾는다.
+     chain : 1/(1×2)+1/(2×3)+… 의 합 — 쪼개면 가운데가 서로 지워져 처음과 끝만 남는다(망원 급수).
+     답은 정수 하나(빈칸의 분모). 분수 자체를 입력하게 하지 않는다. */
+  if(params && params.mode === 'split'){
+    var sk = pick(rng, [1, 1, 2, 3]), sa = R(rng, 2, 9), sb = sa + sk, sp = sa * sb;
+    return {
+      prompt: {
+        ko: '분모가 두 수의 곱이면 두 분수의 차로 쪼갤 수 있어요',
+        en: 'A fraction whose denominator is a product can be split into a difference of two fractions',
+        zh: '分母是两个数的积时，可以拆成两个分数的差'
+      },
+      tex: '\\frac{' + sk + '}{' + sa + '\\times ' + sb + '} = \\frac{1}{' + sa + '} - \\frac{1}{\\square}',
+      answer: sb, answerType: 'steps',
+      steps: [
+        { tex: sa + ' \\times ' + sb + ' = \\square', blank: sp },
+        { tex: '\\frac{' + sk + '}{' + sp + '} = \\frac{1}{' + sa + '} - \\frac{1}{\\square} \\quad(' + sb + ' - ' + sa + ' = ' + sk + ')', blank: sb }
+      ],
+      widget: 'steps'
+    };
+  }
+  if(params && params.mode === 'chain'){
+    var cs = R(rng, 1, 4), cn = R(rng, 4, 7), ce = cs + cn - 1;
+    var term = function(a){ return '\\frac{1}{' + a + '\\times ' + (a + 1) + '}'; };
+    return {
+      prompt: {
+        ko: '각 항을 쪼개면 가운데 분수들이 서로 지워져요',
+        en: 'Split every term and the middle fractions cancel out',
+        zh: '把每一项拆开，中间的分数会互相抵消'
+      },
+      tex: term(cs) + ' + ' + term(cs + 1) + ' + \\cdots + ' + term(ce) + ' = \\frac{1}{' + cs + '} - \\frac{1}{\\square}',
+      answer: ce + 1, answerType: 'steps',
+      steps: [
+        { tex: term(cs) + ' = \\frac{1}{' + cs + '} - \\frac{1}{\\square}', blank: cs + 1 },
+        { tex: '\\text{마지막 항 } ' + term(ce) + ' = \\frac{1}{' + ce + '} - \\frac{1}{\\square}', blank: ce + 1 },
+        { tex: '\\frac{1}{' + cs + '} - \\frac{1}{\\square} \\;(\\text{가운데는 모두 지워져요})', blank: ce + 1 }
+      ],
+      widget: 'steps'
+    };
+  }
   var op    = pick(rng, ['+', '-']);
 
   // 분모 두 개 선택 (서로 다르게)
@@ -471,7 +559,99 @@ NM_TGEN['fr6_frMul'] = function(params, rng){
 /* ============================================================
    FR7 — 분수 나눗셈
    ============================================================ */
+/* FR7 레벨 2~5 (2026-09-29 신규) — 기적의 계산법 「분수의 나눗셈 ①~③」 자리.
+   문제는 새로 지었다. 답 관례는 레벨 1과 같다: **기약분수의 분자**가 답이고 분모는 식에
+   적어 준다(`= \frac{□}{d}`). 결과가 자연수로 떨어지면 `\frac{□}{1}` 대신 `= □` 로 묻는다.
+     natNat  (자연수)÷(자연수) = 분수     7 ÷ 3 = 7/3,  6 ÷ 8 = 3/4
+     fracNat (분수)÷(자연수)              4/5 ÷ 2 = 2/5
+     common  분모가 같은·다른 (분수)÷(분수), (자연수)÷(분수) — 통분해서 분자끼리 나누기
+     mixed   (대분수)÷(분수)              1 1/2 ÷ 3/4 = 2 */
+function fr7End(s){ return s.d === 1 ? '\\square' : '\\frac{\\square}{' + s.d + '}'; }
+function fr7Frac(n, d){ return '\\frac{' + n + '}{' + d + '}'; }
+function fr7Mode(mode, rng){
+  var tex, s, steps, ko, en, zh;
+  if(mode === 'natNat'){
+    var a, b;
+    do { a = R(rng, 1, 30); b = R(rng, 2, 12); } while(a % b === 0);
+    s = simplify(a, b);
+    tex = a + ' \\div ' + b + ' = ' + fr7End(s);
+    steps = [ { tex: a + ' \\div ' + b + ' = \\frac{\\square}{' + b + '} \\quad (\\text{나누는 수가 분모})', blank: a } ];
+    if(s.d !== b) steps.push({ tex: fr7Frac(a, b) + ' = ' + fr7End(s) + ' \\quad (\\text{약분})', blank: s.n });
+    ko = '(자연수)÷(자연수)의 몫을 분수로 나타내요 — 나누어지는 수가 분자, 나누는 수가 분모예요';
+    en = 'Write the quotient of two whole numbers as a fraction — the dividend is the numerator, the divisor the denominator';
+    zh = '把整数除以整数的商写成分数——被除数作分子，除数作分母';
+  } else if(mode === 'fracNat'){
+    var d, n, a2;
+    /* 절반 가까이는 분자가 나누는 수로 나누어떨어지게 — 교재의 두 방법(분자를 나누기 / 1/n 곱하기) */
+    var divisible = pick(rng, [0, 1]);
+    do {
+      d = R(rng, 2, 9); n = R(rng, 2, 9);
+      a2 = divisible ? n * R(rng, 1, 3) : R(rng, 1, 2 * d - 1);
+    } while(a2 % d === 0 || gcd(a2, d) !== 1);
+    s = simplify(a2, d * n);
+    tex = fr7Frac(a2, d) + ' \\div ' + n + ' = ' + fr7End(s);
+    steps = [ { tex: fr7Frac(a2, d) + ' \\times ' + fr7Frac(1, n) + ' = \\frac{\\square}{' + (d * n) + '}', blank: a2 } ];
+    steps.push({ tex: fr7Frac(a2, d * n) + ' = ' + fr7End(s) + ' \\quad (\\text{약분})', blank: s.n });
+    if(s.d === d * n) steps[1] = { tex: tex, blank: s.n };
+    ko = '(분수)÷(자연수)는 자연수를 1/(자연수)로 바꿔 곱해요';
+    en = 'Fraction ÷ whole number: multiply by 1 over the whole number';
+    zh = '分数÷整数：乘这个整数的倒数';
+  } else if(mode === 'common'){
+    var kind = pick(rng, ['same', 'diff', 'nat']);
+    if(kind === 'same'){
+      var dd = R(rng, 3, 12), p, q;
+      do { p = R(rng, 1, dd - 1); q = R(rng, 1, dd - 1); } while(p === q);
+      s = simplify(p, q);
+      tex = fr7Frac(p, dd) + ' \\div ' + fr7Frac(q, dd) + ' = ' + fr7End(s);
+      steps = [ { tex: fr7Frac(p, dd) + ' \\div ' + fr7Frac(q, dd) + ' = ' + p + ' \\div \\square \\quad (\\text{분자끼리})', blank: q },
+                { tex: p + ' \\div ' + q + ' = ' + fr7End(s), blank: s.n } ];
+    } else if(kind === 'diff'){
+      var b1, b2, a1, c1, L;
+      do {
+        b1 = R(rng, 2, 9); b2 = R(rng, 2, 9);
+        a1 = R(rng, 1, b1 - 1); c1 = R(rng, 1, b2 - 1);
+        L = lcm(b1, b2);
+      } while(b1 === b2 || gcd(a1, b1) !== 1 || gcd(c1, b2) !== 1 || L > 36);
+      var A1 = a1 * (L / b1), C1 = c1 * (L / b2);
+      s = simplify(A1, C1);
+      tex = fr7Frac(a1, b1) + ' \\div ' + fr7Frac(c1, b2) + ' = ' + fr7End(s);
+      steps = [ { tex: fr7Frac(a1, b1) + ' = \\frac{\\square}{' + L + '} \\quad (\\text{통분})', blank: A1 },
+                { tex: fr7Frac(c1, b2) + ' = \\frac{\\square}{' + L + '} \\quad (\\text{통분})', blank: C1 },
+                { tex: A1 + ' \\div ' + C1 + ' = ' + fr7End(s), blank: s.n } ];
+    } else {
+      var w = R(rng, 2, 12), c2, d2;
+      do { d2 = R(rng, 2, 9); c2 = R(rng, 1, d2 - 1); } while(gcd(c2, d2) !== 1);
+      s = simplify(w * d2, c2);
+      tex = w + ' \\div ' + fr7Frac(c2, d2) + ' = ' + fr7End(s);
+      steps = [ { tex: c2 === 1 ? w + ' \\times ' + d2 + ' = \\square \\quad (\\text{역수를 곱해요})'
+                                : w + ' \\times ' + fr7Frac(d2, c2) + ' = \\frac{\\square}{' + c2 + '} \\quad (\\text{역수를 곱해요})', blank: w * d2 },
+                { tex: s.d === c2 ? tex : fr7Frac(w * d2, c2) + ' = ' + fr7End(s) + ' \\quad (\\text{약분})', blank: s.n } ];
+    }
+    ko = '분모가 같으면 분자끼리 나누고, 다르면 통분한 뒤 분자끼리 나눠요';
+    en = 'Same denominators: divide the numerators. Different: find a common denominator first, then divide the numerators';
+    zh = '分母相同就用分子相除；分母不同先通分，再用分子相除';
+  } else {
+    var m = R(rng, 1, 4), bb, aa, cc, dv;
+    do {
+      bb = R(rng, 2, 9); aa = R(rng, 1, bb - 1);
+      dv = R(rng, 2, 9); cc = R(rng, 1, dv - 1);
+    } while(gcd(aa, bb) !== 1 || gcd(cc, dv) !== 1);
+    var N = m * bb + aa;
+    s = simplify(N * dv, bb * cc);
+    tex = m + fr7Frac(aa, bb) + ' \\div ' + fr7Frac(cc, dv) + ' = ' + fr7End(s);
+    steps = [ { tex: m + fr7Frac(aa, bb) + ' = \\frac{\\square}{' + bb + '} \\quad (\\text{가분수로})', blank: N },
+              { tex: fr7Frac(N, bb) + ' \\times ' + (cc === 1 ? String(dv) : fr7Frac(dv, cc)) + ' = \\frac{\\square}{' + (bb * cc) + '} \\quad (\\text{역수를 곱해요})', blank: N * dv },
+              { tex: fr7Frac(N * dv, bb * cc) + ' = ' + fr7End(s) + ' \\quad (\\text{약분})', blank: s.n } ];
+    if(s.d === bb * cc) steps[2] = { tex: tex, blank: s.n };
+    ko = '(대분수)÷(분수)는 대분수를 가분수로 바꾼 뒤 역수를 곱해요';
+    en = 'Mixed number ÷ fraction: turn the mixed number into an improper fraction, then multiply by the reciprocal';
+    zh = '带分数÷分数：先把带分数化成假分数，再乘除数的倒数';
+  }
+  return { prompt: { ko: ko, en: en, zh: zh }, tex: tex, answer: s.n, answerType: 'steps', widget: 'steps', steps: steps, solution: steps };
+}
+
 NM_TGEN['fr7_frDiv'] = function(params, rng){
+  if(params && params.mode) return fr7Mode(params.mode, rng);
   var a_n = R(rng, 1, 5);
   var a_d = R(rng, a_n+1, Math.max(a_n+2, 7));
   var b_n = R(rng, 1, 5);

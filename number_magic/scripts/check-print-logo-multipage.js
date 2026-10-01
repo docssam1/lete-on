@@ -81,12 +81,14 @@ function logoPixels(file) {
       await image.decode();
       return {
         imageDisplay: getComputedStyle(image).display,
-        printDisplay: getComputedStyle(mark.querySelector('.nm-w2-brand-logo-print')).display,
+        src: (image.getAttribute('src') || '').split('/').pop(),
         complete: image.complete,
         naturalWidth: image.naturalWidth
       };
     });
-    assert.deepEqual(screen, { imageDisplay: 'block', printDisplay: 'none', complete: true, naturalWidth: 357 });
+    /* 2026-09-30 — 로고는 PNG 한 장을 화면·인쇄 공통으로 쓴다(전에는 인쇄만 "GFIELD" 글자로 대신했다).
+       여기서는 화면, 아래에서는 인쇄 매체와 실제 PDF 래스터로 모든 쪽에 그림 로고가 찍히는지 본다. */
+    assert.deepEqual(screen, { imageDisplay: 'block', src: 'gfield-logo.png', complete: true, naturalWidth: 357 });
     await page.emulateMedia({ media: 'print' });
     const dom = await page.evaluate(async () => {
       NM_EXAM.renderPrint({ thread: 'MD79', level: 4, count: 12, seed: 'logo-multipage-proof' });
@@ -98,30 +100,43 @@ function logoPixels(file) {
       return {
         studentPages: document.querySelectorAll('.nm-w2-page').length,
         marks: marks.length,
-        rows: marks.map(mark => ({
-          aria: mark.getAttribute('aria-label'),
-          imageDisplay: getComputedStyle(mark.querySelector('.nm-w2-brand-logo')).display,
-          printDisplay: getComputedStyle(mark.querySelector('.nm-w2-brand-logo-print')).display,
-          printText: mark.querySelector('.nm-w2-brand-logo-print').textContent.trim()
-        }))
+        rows: marks.map(mark => {
+          const image = mark.querySelector('.nm-w2-brand-logo');
+          return { aria: mark.getAttribute('aria-label'), imageDisplay: getComputedStyle(image).display,
+            complete: image.complete, naturalWidth: image.naturalWidth, textFallback: !!mark.querySelector('.nm-w2-brand-logo-print') };
+        })
       };
     });
     /* 쪽 수는 지면 배치(첫 장 연습 6문항 등)에 따라 바뀐다 — 여기서 보는 것은 "여러 쪽 모두에 로고".
        학생 쪽이 둘 이상이고, 로고 = 학생 쪽 + 정답지 한 장이어야 한다(2026-09-25, 12문항 4쪽 → 3쪽). */
     assert.ok(dom.studentPages >= 2, 'multipage sheet expected');
     assert.equal(dom.marks, dom.studentPages + 1);
-    assert.ok(dom.rows.every(row => row.aria === 'GFIELD' && row.imageDisplay === 'none' && row.printDisplay === 'flex' && row.printText === 'GFIELD'));
+    assert.ok(dom.rows.every(row => row.aria === 'GFIELD' && row.imageDisplay === 'block' && row.complete && row.naturalWidth === 357 && !row.textFallback), JSON.stringify(dom.rows));
 
     const pdf = path.join(temp, 'md79-logo-proof.pdf');
     await page.pdf({ path: pdf, format: 'A4', printBackground: true });
-    const info = childProcess.execFileSync('pdfinfo', [pdf], { encoding: 'utf8' });
-    const match = info.match(/^Pages:\s+(\d+)/m);
-    assert.ok(match, 'pdfinfo page count missing');
-    const pages = Number(match[1]);
-    assert.equal(pages, dom.marks);
-
+    /* PDF 를 쪽마다 그린다 — poppler(pdftoppm)가 있으면 그것으로, 없으면 PyMuPDF(python3 -m pip install pymupdf)로.
+       둘 다 없으면 래스터 확인은 못 한 것이므로 exit 2(미실행) — 통과로 치지 않는다(2026-09-30). */
     const prefix = path.join(temp, 'page');
-    childProcess.execFileSync('pdftoppm', ['-r', '96', pdf, prefix]);
+    const has = cmd => { try { childProcess.execFileSync(cmd[0], cmd.slice(1), { stdio: 'ignore' }); return true; } catch (e) { return false; } };
+    let pages;
+    if (has(['pdftoppm', '-v'])) {
+      const info = childProcess.execFileSync('pdfinfo', [pdf], { encoding: 'utf8' });
+      const match = info.match(/^Pages:\s+(\d+)/m);
+      assert.ok(match, 'pdfinfo page count missing');
+      pages = Number(match[1]);
+      childProcess.execFileSync('pdftoppm', ['-r', '96', pdf, prefix]);
+    } else if (has(['python3', '-c', 'import fitz'])) {
+      const out = childProcess.execFileSync('python3', ['-c', [
+        'import sys, fitz', 'd = fitz.open(sys.argv[1])',
+        'for i, p in enumerate(d): p.get_pixmap(dpi=96).save(sys.argv[2] + "-%d.ppm" % (i + 1))',
+        'print(len(d))'].join('\n'), pdf, prefix], { encoding: 'utf8' });
+      pages = Number(out.trim().split('\n').pop());
+    } else {
+      console.log('SKIP — pdftoppm 도 PyMuPDF 도 없어 PDF 래스터를 확인하지 못했다(미실행).');
+      process.exitCode = 2; return;
+    }
+    assert.equal(pages, dom.marks);
     const ppmFiles = fs.readdirSync(temp).filter(name => /^page-\d+\.ppm$/.test(name)).sort((a, b) => Number(a.match(/\d+/)[0]) - Number(b.match(/\d+/)[0]));
     assert.equal(ppmFiles.length, pages);
     const raster = ppmFiles.map(name => logoPixels(path.join(temp, name)));

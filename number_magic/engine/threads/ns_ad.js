@@ -26,9 +26,13 @@ function _bondForms(k, need, target) {
 }
 
 /* ── 자릿값 이름 헬퍼 ── */
-const PLACE_KO  = ['일','십','백','천','만'];
-const PLACE_EN  = ['ones','tens','hundreds','thousands','ten-thousands'];
-const PLACE_ZH  = ['个位','十位','百位','千位','万位'];
+/* 자리 이름 — 조(13자리)까지(2026-10-01, 원장 "자리값읽기에 큰수에 왜 다섯자리 밖에 없어?"). 한국 교과는 4자리씩 끊어 읽는다:
+   일십백천 · 만 십만 백만 천만 · 억 십억 백억 천억 · 조. */
+const PLACE_KO  = ['일','십','백','천','만','십만','백만','천만','억','십억','백억','천억','조'];
+const PLACE_EN  = ['ones','tens','hundreds','thousands','ten-thousands','hundred-thousands','millions','ten-millions','hundred-millions','billions','ten-billions','hundred-billions','trillions'];
+const PLACE_ZH  = ['个位','十位','百位','千位','万位','十万位','百万位','千万位','亿位','十亿位','百亿位','千亿位','万亿位'];
+/* 큰 수는 세 자리마다 쉼표를 찍어 읽기 쉽게 보여 준다(5자리 이하는 예전 그대로) */
+const withCommas = n => n >= 100000 ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : String(n);
 
 /* ── §red 예시 문항 solution 체인 헬퍼 (2026-09-05) ──
    두 수를 자리별로 더하거나 뺄 때 "일의 자리부터 자리 맞춰" 계산하는 과정을
@@ -109,12 +113,15 @@ NM_TGEN['ns1_placeValue'] = function(params, rng){
 
   const max = params.max || 999;
 
-  /* 자릿수 범위 결정 */
-  const digits = max >= 10000 ? 5 : max >= 1000 ? 4 : 3;
+  /* 자릿수 범위 결정 — max 의 자릿수 그대로(999→3 · 9999→4 · 99999→5 · 999999999→9 · 9999999999999→13) */
+  const digits = String(max).length;
 
   /* max 이하의 랜덤 수 — 최소 자릿수를 꽉 채운 수 보장 */
   const minVal = Math.pow(10, digits - 1);
-  const n = R(rng, minVal, max);
+  /* 9자리 이상은 R() 가 32비트 범위를 넘을 수 있어 자릿수마다 따로 뽑는다(앞자리는 0 이 아니다) */
+  let n = 0;
+  if(digits <= 9) n = R(rng, minVal, max);
+  else { n = R(rng, 1, 9); for(let i = 1; i < digits; i++) n = n * 10 + R(rng, 0, 9); }
 
   /* 물어볼 자리 선택 (0=일, 1=십, ...) */
   const placeIdx = R(rng, 0, digits - 1);
@@ -143,18 +150,19 @@ NM_TGEN['ns1_placeValue'] = function(params, rng){
 
   return {
     prompt: {
-      ko: `${n}에서 ${ko}의 자리 숫자는 얼마일까요?`,
-      en: `In ${n}, what digit is in the ${en} place?`,
-      zh: `${n}的${zh}是几？`
+      ko: `${withCommas(n)}에서 ${ko}의 자리 숫자는 얼마일까요?`,
+      en: `In ${withCommas(n)}, what digit is in the ${en} place?`,
+      zh: `${withCommas(n)}的${zh}是几？`
     },
     /* "자리 숫자"(2026-09-06) — "십의 자리 ="만 있으면 자릿값(50)인지 숫자(5)인지 모호한데 정답은 숫자다.
        prompt 는 원래 "자리 숫자"라고 묻고 있었다. 예시·따라풀기도 이 tex 에서 나온다. */
-    tex: `${n}에서 ${ko}의 자리 숫자 = \\square`,
+    tex: `${withCommas(n)}에서 ${ko}의 자리 숫자 = \\square`,
     answer: digitAt,
     answerType: 'number',
     widget: 'missing',
+    /* 일곱 자리 이상은 모든 자리를 풀어 쓰면 한 줄이 종이를 넘는다 — 물어본 자리의 자릿값만 보인다 */
     solution: [
-      { tex: `${n} = ${placeParts.join(' + ')}`, blank: digitAt }
+      { tex: digits > 6 ? `\\square \\times ${withCommas(placeValue)}` : `${withCommas(n)} = ${placeParts.join(' + ')}`, blank: digitAt }
     ]
   };
 };
@@ -790,8 +798,10 @@ NM_TGEN['ad7_add4d'] = function(params, rng){
      자리마다 그냥 더하거나 빼면 끝나는 수만 뽑는다. */
   const noCarry  = params.carry === 'none';
   const wantCarry = params.carry === 'any';
+  /* 자릿수(기본 네 자리). 레벨 4(심화, 2026-10-01 원장 "조금 한 단계 높여도 돼, 심화로")는 다섯 자리 */
+  const nd = params.digits || 4, lo7 = Math.pow(10, nd - 1), hi7 = Math.pow(10, nd) - 1;
   function placeSafe(x, y, plus){
-    for(let i = 0; i < 4; i++){
+    for(let i = 0; i < nd; i++){
       const dx = Math.floor(x / Math.pow(10, i)) % 10;
       const dy = Math.floor(y / Math.pow(10, i)) % 10;
       if(plus ? (dx + dy > 9) : (dx < dy)) return false;
@@ -801,12 +811,12 @@ NM_TGEN['ad7_add4d'] = function(params, rng){
   let tries7 = 0;
   do {
     if(opChar === '+'){
-      a = R(rng, 1000, 8999);
-      b = R(rng, 1000, 9999 - a);
+      a = R(rng, lo7, 9 * lo7 - 1);
+      b = R(rng, lo7, hi7 - a);
       result = a + b;
     } else {
-      a = R(rng, 2000, 9999);
-      b = R(rng, 1000, a - 1);
+      a = R(rng, 2 * lo7, hi7);
+      b = R(rng, lo7, a - 1);
       result = a - b;
     }
   } while(tries7++ < 400 && (
@@ -823,7 +833,7 @@ NM_TGEN['ad7_add4d'] = function(params, rng){
     answer: result,
     answerType: 'number',
     widget: 'vertical',
-    solution: opChar === '+' ? _addPlaceLines(a, b, result, 4) : _subPlaceLines(a, b, result, 4)
+    solution: opChar === '+' ? _addPlaceLines(a, b, result, nd) : _subPlaceLines(a, b, result, nd)
   };
 };
 

@@ -95,6 +95,50 @@
 
   /* ── DV2 — 두 자리÷한 자리(나머지×) ─────────────────────── */
   NM_TGEN['dv2_div2d1d'] = function (params, rng) {
+    /* ── (몇십)÷(몇) · (몇백몇십)÷(몇) (mode:'tens') — 2026-09-29 신규 ──
+       기적의 계산법 54단계 자리. 60÷3·480÷4 처럼 0 으로 끝나는 수를 한 자리 수로 나눈다.
+       0 을 떼고 구구단(또는 두 자리÷한 자리)으로 나눈 뒤 0 을 다시 붙이는 것이 핵심이고,
+       70÷5=14 처럼 0 을 떼면 안 나누어지는 몇십은 50+20 으로 갈라 나눈다. 늘 나누어떨어진다.
+       문제는 새로 지었다. */
+    if (params && params.mode === 'tens') {
+      let a, b, m;
+      if (pick(rng, [0, 1])) {
+        /* (몇십)÷(몇) — 몫이 2 이상 */
+        do { m = R(rng, 2, 9); b = R(rng, 2, 9); } while ((10 * m) % b !== 0 || 10 * m / b < 2);
+      } else {
+        /* (몇백몇십)÷(몇) — 백·십의 자리 모두 0 이 아니고 0 을 뗀 수가 나누어떨어진다 */
+        do { m = R(rng, 11, 99); b = R(rng, 2, 9); } while (m % 10 === 0 || m % b !== 0);
+      }
+      a = 10 * m;
+      const q = a / b;
+      let steps;
+      if (m % b === 0) {
+        steps = [ { tex: `${m} \\div ${b} = \\square`, blank: m / b },
+                  { tex: `${a} \\div ${b} = \\square`, blank: q } ];
+      } else if (q >= 10) {
+        const hi = b * 10 * Math.floor(q / 10), lo = a - hi;
+        steps = [ { tex: `${hi} \\div ${b} = \\square`, blank: hi / b },
+                  { tex: `${lo} \\div ${b} = \\square`, blank: lo / b },
+                  { tex: `${hi / b} + ${lo / b} = \\square`, blank: q } ];
+      } else {
+        steps = [ { tex: `${b} \\times \\square = ${a}`, blank: q },
+                  { tex: `${a} \\div ${b} = \\square`, blank: q } ];
+      }
+      const zeroTrick = m % b === 0;
+      return {
+        prompt: zeroTrick ? {
+          ko: `${a} ÷ ${b}를 계산해요 — 0을 떼고 나눈 뒤 0을 붙여 봐요`,
+          en: `Work out ${a} ÷ ${b} — drop the zero, divide, then put the zero back`,
+          zh: `计算${a}÷${b}——先去掉0再除，最后把0补回来`
+        } : {
+          ko: `${a} ÷ ${b}를 계산해요 — 나누기 쉬운 두 수로 갈라서 나눠 봐요`,
+          en: `Work out ${a} ÷ ${b} — split it into two easy parts and divide each`,
+          zh: `计算${a}÷${b}——拆成两个好除的数分别去除`
+        },
+        tex: `${a} \\div ${b} = \\square`,
+        answer: q, answerType: 'steps', widget: 'steps', steps, solution: steps
+      };
+    }
     const lv       = (params && params.level) || 'main';
     const b        = R(rng, 2, lv === 'practice' ? 5 : 9);
     const q        = R(rng, 2, lv === 'practice' ? 9 : 10);
@@ -219,14 +263,60 @@
           수가 십몇이면 어림할 것이 없다.
      자릿수만 늘어나는 D14·D15는 한 레벨로 합쳤다(C10 네 자리 곱셈을 뺀 것과 같은 기준). */
   NM_TGEN['dv5_div2d'] = function (params, rng) {
+    /* ── 몇십으로 나누기 (mode:'byTens' · 'byTens3') — 2026-09-29 신규 ──
+       기적의 계산법 64·65단계 자리. 나누는 수가 20·30·…·90 이다.
+         byTens  — 나누어지는 수도 0 으로 끝난다(240÷30, 250÷30). 0 을 하나씩 지우면 24÷3,
+                   25÷3 이 되어 몫은 같지만 **나머지는 지운 0 만큼 다시 10배**다(250÷30 = 8…10).
+         byTens3 — 나누어지는 수가 아무 세 자리 수(257÷30 = 8…17, 750÷30 = 25).
+       몫·나머지 관례는 레벨 2~4와 같다: 나누어떨어지면 `= □`, 아니면 `= □ ⋯ □`([몫, 나머지]).
+       문제는 새로 지었다. */
+    const pm = params && params.mode;
+    if (pm === 'byTens' || pm === 'byTens3') {
+      const t = R(rng, 2, 9), b = 10 * t;
+      let q, r, dv;
+      const wantRem = pick(rng, [true, false]);
+      if (pm === 'byTens') {
+        do {
+          q = R(rng, 2, 9);
+          r = wantRem ? 10 * R(rng, 1, t - 1) : 0;
+          dv = b * q + r;
+        } while (dv > 990);
+      } else {
+        do {
+          dv = R(rng, 100, 999);
+          q = Math.floor(dv / b); r = dv % b;
+        } while (q < 2 || (wantRem ? r === 0 : r !== 0));
+      }
+      const hasR = r > 0;
+      const final = hasR ? `${dv} \\div ${b} = \\square \\cdots \\square` : `${dv} \\div ${b} = \\square`;
+      const steps = [];
+      if (pm === 'byTens' && !hasR) steps.push({ tex: `${dv / 10} \\div ${t} = \\square`, blank: q });
+      else steps.push({ tex: `${b} \\times \\square = ${b * q}`, blank: q });
+      if (hasR) steps.push({ tex: `${dv} - ${b * q} = \\square`, blank: r });
+      steps.push({ tex: final, blank: hasR ? [q, r] : q });
+      return {
+        prompt: {
+          ko: hasR ? `${dv} ÷ ${b}의 몫과 나머지를 구해요` : `${dv} ÷ ${b}을 계산해요`,
+          en: hasR ? `Find the quotient and remainder: ${dv} ÷ ${b}` : `Work out ${dv} ÷ ${b}`,
+          zh: hasR ? `求${dv}÷${b}的商和余数` : `计算${dv}÷${b}`
+        },
+        tex: final,
+        answer: hasR ? [q, r] : q,
+        answerType: 'steps',
+        widget: 'steps',
+        divBox: { a: dv, b, q, r },
+        steps,
+        solution: steps
+      };
+    }
     const d    = (params && params.d) || 3;        /* 나누어지는 수의 자릿수 */
     const rem  = params && params.rem;             /* true=나머지 있음 · false=없음 · undefined=섞기 */
     let b, q, r, dv, tries = 0;
     do {
       /* 나누는 수: 두 자리 전체. 몫 어림이 되도록 L1(두 자리÷두 자리)만 11~49로 둔다. */
       b = d === 2 ? R(rng, 11, 49) : R(rng, 11, 99);
-      const lo = d === 2 ? 10 : (d === 3 ? 100 : 1000);
-      const hi = d === 2 ? 99 : (d === 3 ? 999 : 9999);
+      const lo = Math.pow(10, d - 1);
+      const hi = Math.pow(10, d) - 1;      /* d = 2~5 (5 는 심화 레벨 7, 2026-10-01) */
       const qMin = Math.max(2, Math.ceil((lo + 1) / b));
       const qMax = Math.floor(hi / b);
       if (qMax < qMin) continue;
@@ -234,7 +324,7 @@
       const want = (rem === undefined) ? pick(rng, [true, false]) : rem;
       r = want ? R(rng, 1, b - 1) : 0;
       dv = b * q + r;
-    } while ((dv > (d === 2 ? 99 : d === 3 ? 999 : 9999) || dv < (d === 2 ? 10 : d === 3 ? 100 : 1000)) && tries++ < 200);
+    } while ((dv > Math.pow(10, d) - 1 || dv < Math.pow(10, d - 1)) && tries++ < 200);
     if (tries >= 200) { b = 21; q = 12; r = 5; dv = 257; }
 
     const hasR = r > 0;

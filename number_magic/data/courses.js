@@ -32,14 +32,14 @@
      했다(새 id 없음 — 곱셈의 정점→ML19/20/23, 수의 비밀→DV7/8·MX2,
      제곱의 산→ML11/20·MX4).
 
-   ── 구구 B-01~B-23 (2026-09-03, 원장 "교과와 창의 연산이 자연스럽게 연결되도록") ──
+   ── 구구 B-01~B-23 (2026-09-03, 원장 "교과와 독셈이 자연스럽게 연결되도록") ──
    ADVANCE 건물의 구구 A~H 묶음을 그대로 연산 로드맵 과정 5~9에 얹었다. 같은 구구단
    드릴(ML1·ML2·ML3·ML4·ML5·ML6)이 있는 과정에 그 단의 마법 묶음을 세션 하나로 넣는다:
    과정5 배와반·2/5단 · 과정6 3/6단·4/8단 · 과정7 7/9단 · 과정8 총정리·몇십몇백 ·
    과정9 두자리×한자리. 세션 수가 5를 넘는 6·7은 maxSessions:6.
 
    ── 발달 단계 재편 (2026-09-08, 원장 "무조건 덧셈 뺄셈 곱셈 나눗셈 종합 관련으로만
-      묶여 있어 … 사이사이에 필산 후 창의 연산도 같이 … 배수판별법은 약수와 배수 다음에") ──
+      묶여 있어 … 사이사이에 필산 후 독셈도 같이 … 배수판별법은 약수와 배수 다음에") ──
    창의(창의수연) 유닛이 그 주 필산과 어긋난 자리가 여럿이었다 — 분수 첫걸음(13)에 ×5 전략,
    약수와 배수(19)에 곱셈 전략 셋, 소수 곱셈(18)은 정작 '소수를 곱하기'(C-25)가 여섯 과정
    뒤(24)에 있었다. 원본 권 순서(초급=덧뺄, 중급=곱나눗…)를 그대로 얹은 흔적이다.
@@ -53,7 +53,7 @@
    소수 나눗셈 필산 DC3은 어느 과정에도 없었다 — 과정 23(분수↔소수)에 편성했고,
    약분·통분 FR5도 마찬가지라 과정 20에 넣었다.
 
-   ── creative: 창의 연산 회차 (2026-09-08) ──
+   ── creative: 독셈 회차 (2026-09-08) ──
    그 과정의 마법(창의수연 전략)을 **손으로 푸는** 드릴 목록. 학습지에서 필산 회차 뒤,
    문장제 앞에 온다. 필산 레벨 사다리와 섞지 않는다(아래 규칙 5). 초급 A유닛(38개)은
    대응 스레드가 없어 가장 가까운 기존 스레드로 대신했다(AD9 10 보정·AD4 몇십 덧뺄·
@@ -139,18 +139,23 @@ const COURSE_SPEC = [
  {id:2, tier:'level1', title:{ko:'받아올림과 두 배 수',en:'Carrying & Doubles',zh:'进位与翻倍数'},
    /* 창의 AD9(10 이용 덧셈)는 선수 AD3가 과정 3이라 한 과정 앞서 있었다 → 과정 3으로.
       대신 문장제 사슬(WP1→WP3→WP4→WP5)의 첫 칸을 여기서 연다 — 선수 AD1·SB1이 과정 1. */
-   drills:['AD2','NS5','NS4','AD2','NS5','NS4','NS4'], minSessions:4, magic:[['A-01'],['A-02']],
+   /* 2026-09-29 — 연이은 덧셈·뺄셈(AD10)을 교과 칸에(기적의 계산법 5·12단계, 만들어 놓고 안 실려 있었다). */
+   drills:['AD2','NS5','NS4','AD10','AD2','NS5','NS4','AD10@2','NS4'], minSessions:5, magic:[['A-01'],['A-02']],
    /* 창의(2026-09-26, 설계 §4-2) — 10 짝 묶기 · 수 이사. 옛 ML1@1(배와 반 드릴)은 뺐다.
       설계 표의 AD9@1(우선 10)은 선수 AD3(두 자리+한 자리)가 과정 3이라 위 주석대로 과정 3에 두고,
       그 자리는 같은 손동작(10 짝)의 AD8@2(5~6개 수)로 채웠다(check-ladder 선수 순서).
       뒤의 WP 는 창의 칸에 안 실린다(적용 칸은 교과 문장제). */
-   creative:['AD8@1','AD11@1','AD8@2','AD8@1','WP1@1','WP1@2']},
+   creative:['AD8@1','AD11@1','AD8@2','AD8@1','WP1@1','WP1@2','WP2@1']},   /* WP2 그림으로 나타내기(2026-09-30, 이해편 Ⅱ) */
  {id:3, tier:'level1', title:{ko:'두 자리 덧뺄셈 시작',en:'Two-digit ± Begins',zh:'两位数加减开始'},
-   drills:['AD3','SB2','SB3','AD3','SB2@2','SB3','AD3','SB3','AD3@4','SB3','AD3@5','AD3'], minSessions:7, magic:[['A-03'],['A-04']],
+   /* 2026-09-29 — (몇십)±(몇십)(AD4@1·2)과 네 수 연이은 덧뺄(AD10@3)을 교과 칸에(기적 6·8·12단계). */
+   drills:['AD3','SB2','SB3','AD4','AD3','SB2@2','SB3','AD4@2','AD3','SB3','AD3@4','AD10@3','SB3','AD3@5','AD3'], minSessions:8, magic:[['A-03'],['A-04']],
    /* 창의(2026-09-26, 설계 §4-2) — 우선 10 · 계단식 · 새치기 · 수 이사 두 자리. 뒤의 AD4(몇십 덧뺄)는 교과 드릴이라 창의 칸에 안 실린다(옛 명세 그대로 남김). */
    creative:['AD9@1','AD12@1','AD8@4','AD9@2','AD11@2','AD12@2','AD9@2','AD4@1','AD4@2','AD4@3','AD4@4','AD4@5']},
+ /* 2026-09-29 — 기적의 계산법 빈틈: 학년별 □ 찾기(EL1@4~9)·몇십÷몇(DV2@2)·몇십으로 나누기(DV5@5·6)·
+    자릿수 다른 소수(DC1@3·4)·분수 나눗셈 ①~③(FR7@2~5), G권 빈틈: 수직선 덧뺄(MD2@5)·대괄호(MD4@5·MD7@4)·
+    유리수 거듭제곱(MD5@4) — 각 학년 과정의 교과 칸 끝에 직접 레벨로 얹는다(offLadder 레벨이라 자동 오르기 대상 아님). */
  {id:4, tier:'level1', title:{ko:'두 자리 올림 덧뺄셈',en:'Two-digit ± with Carrying',zh:'两位数进位加减'},
-   drills:['AD5','SB4','AD6','AD5','SB4','AD6','AD5','SB4','AD6','AD5','SB4','AD6','AD5','AD6','AD5','AD6','AD5','AD6'], minSessions:9, magic:[['A-05'],['A-06'],['A-07'],['A-08'],['A-09']],
+   drills:['AD5','SB4','AD6','AD5','SB4','AD6','AD5','SB4','AD6','AD5','SB4','AD6','AD5','AD6','AD5','AD6','AD5','AD6','EL1@4'], minSessions:9, magic:[['A-05'],['A-06'],['A-07'],['A-08'],['A-09']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 AD8@1 이 9회차 내내 나왔다. 두 자리 짝 · 끼리끼리 · 수 이사 2 · 100 짝 묶기 */
    creative:['AD8@3','AD13@1','AD11@3','AD8@5','AD13@2','AD13@3','AD11@3','AD13@2','AD8@5']},
  {id:5, tier:'level1', title:{ko:'뺄셈 마법과 구구단 첫걸음',en:'Subtraction Magic & Times Tables Begin',zh:'减法魔法与乘法口诀入门'},
@@ -158,13 +163,13 @@ const COURSE_SPEC = [
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25·ML1·ML2(구구단 드릴)였다. 자리별·쉬었다 빼기 · 돌려받기 · 덧셈끼리·뺄셈끼리 */
    creative:['SB8@1','SB8@2','SB5@1','MX7@1','SB8@2','SB5@2','MX7@1','WP3@1']},
  {id:6, tier:'level1', title:{ko:'세 자리 뺄셈과 구구단 완성',en:'3-digit Subtraction & Full Times Tables',zh:'三位数减法与完整口诀'},
-   drills:['SB6','SB7','ML3','SB6','SB7@2','ML3','SB6','ML3','SB6','ML3','SB6','ML3','SB6','SB6'], minSessions:7, magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17'],['B-07','B-08','B-09'],['B-10','B-11','B-12']],
+   drills:['SB6','SB7','ML3','SB6','SB7@2','ML3','AD4@3','SB6','ML3','SB6','AD4@4','ML3','SB6','ML3','SB6','SB6','SB6@8'], minSessions:7, magic:[['A-13'],['A-14'],['A-15'],['A-16','A-17'],['B-07','B-08','B-09'],['B-10','B-11','B-12']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25·ML3(구구단)이었다. 같은 수 ± · 백을 떼어 · 반대로 채우기(SB9 = 설계의 EL1 countUp).
       설계 표의 SB10@2·@3(자릿수 이동·풀어서 쓰기)은 원본 사진 확인 전이라(원장 결정 Q1) 아직 없다 —
       그 자리는 이미 있는 SB10@1·SB12@2 로 채웠다. AD10 은 옛 명세(창의 칸에 안 실림). */
    creative:['SB12@1','SB10@1','SB12@2','SB9@1','SB8@3','SB12@3','AD14@1','AD10'], maxSessions:6},
  {id:7, tier:'level1', title:{ko:'구구단 종합과 네 자리 연산',en:'Times Tables Mix & 4-digit ±',zh:'乘法口诀综合与四位数运算'},
-   drills:['ML4','AD7','ML4','AD7','AD7'], magic:[['B-13','B-14','B-15'],['A-18','A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25'],['C-01']],
+   drills:['ML4','AD7','ML4','AD7','AD7','EL1@5','AD7@4'], magic:[['B-13','B-14','B-15'],['A-18','A-19'],['A-20','A-21'],['A-22','A-23'],['A-24','A-25'],['C-01']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML25@4·AD8@3·ML4(구구단)였다. 끊어서 · 앞부터 · 쪼개서 빼기 · 기준수 · 덧뺄 끼리끼리 2.
       뒤의 EL3 는 옛 명세(창의 칸에 안 실림). */
    creative:['AD14@2','AD15@1','SB13@1','AD16@1','MX7@2','AD15@2','EL3@1','EL3@2','EL3@3'], maxSessions:6},
@@ -172,7 +177,7 @@ const COURSE_SPEC = [
    /* 나눗셈의 뜻 셋(DV12 등분·DV13 포함·DV14 반복 뺄셈)을 ÷2·2d÷1d 앞에 둔다(2026-09-17,
       원장 "직접 나누기·같은 수 빼기·묶어서 나누기 … 좀 제대로 생각을 할 수 있도록").
       마법 B-24(나눗셈의 세 얼굴)가 첫 세션, 창의 회차에 반복 뺄셈(나머지) 한 벌. */
-   drills:['DV12','DV13','DV14','DV17','ML5','DV1','DV2','DV12','DV13','DV14','DV17@2','ML5@2','DV1','DV12','DV13','DV17@3'], minSessions:8,
+   drills:['DV12','DV13','DV14','DV17','ML5','DV1','DV2','DV12','DV13','DV14','DV17@2','ML5@2','DV1','DV12','DV13','DV17@3','DV2@2'], minSessions:8,
    magic:[['B-24'],['B-16','B-17'],['B-18','B-19','B-20'],['A-30','A-31','A-32'],['A-33','A-34'],['C-02']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 DV12·13·14·17·ML5(나눗셈·몇십 곱 드릴)였다. 곱해서 10 · 앞부터 빼기 ·
       둘로 쪼개기 · 합과 차 · 빼기 쉬운 수부터. 옛 DV14@2 는 교과 드릴(드릴 칸에 그대로 있다)이라 뺐다. */
@@ -181,9 +186,9 @@ const COURSE_SPEC = [
    drills:['ML6','ML22','DV18','DV19','DV3','ML6','ML22','DV18','DV19','ML6','DV18','DV19','ML6','DV18','DV19','ML6','DV18','DV19','ML6','ML6'], minSessions:10, magic:[['B-21','B-22','B-23'],['A-26'],['A-27'],['A-29'],['C-07','C-08']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML6·ML22·DV18·DV19(두 자리 곱·나눗셈 드릴)였다. ×9 · 999 마법 · 쪼개서 곱하기 ·
       수는 몇 개 · 10에서 부족한 수 */
-   creative:['ML13@1','SB14@1','ML22@1','SB14@2','MX8@1','ML13@2','SB14@4','ML22@2','MX8@2','SB14@3','WP4@1']},
+   creative:['ML13@1','SB14@1','ML22@1','SB14@2','MX8@1','ML13@2','SB14@4','ML22@2','MX8@2','SB14@3','WP4@1','WP7@1']},   /* WP7 모르는 수 찾기(2026-09-30) */
  {id:10, tier:'level1', title:{ko:'세 자리 곱셈과 검산',en:'3-digit Multiplication & Checking',zh:'三位数乘法与验算'},
-   drills:['ML7','EL2','ML7','EL2@2','ML7','EL2@3','ML7','ML7','ML7@5'], minSessions:5, magic:[['A-28'],['A-35'],['C-06']],
+   drills:['ML7','EL2','ML7','EL2@2','ML7','EL2@3','ML7','ML7','ML7@5','EL1@6'], minSessions:5, magic:[['A-28'],['A-35'],['C-06']],
    /* 창의(2026-09-26, 설계 §4-2) — 전엔 3~5회차가 ML7@1(세 자리 곱셈 필산)이었다. 가우스 1 · 차근차근 곱하기 */
    creative:['ML14@1','ML24@1','MX8@3','ML23@1','ML14@2','ML24@2']},
 
@@ -198,20 +203,20 @@ const COURSE_SPEC = [
    drills:['ML8','ML8','ML8','ML8','ML8','ML8','ML8'], magic:[['C-26'],['C-15'],['C-10'],['C-11'],['C-12'],['C-13'],['C-23']],
    creative:['ML21@1','ML23@1','ML15@1','ML10@1','ML10@2','ML10@3'], maxSessions:7},
  {id:12, tier:'level2', title:{ko:'나눗셈과 역연산',en:'Division & Inverse Operations',zh:'除法与逆运算'},
-   drills:['DV3','DV15','DV4','EL1','DV15@2','DV4','EL1@2','DV15@3','EL1@3'], minSessions:5, magic:[['C-18']],
+   drills:['DV3','DV15','DV4','EL1','DV15@2','DV4','EL1@2','DV15@3','EL1@3','NS1@5'], minSessions:5, magic:[['C-18']],
    /* 창의(2026-09-26) — DV15(B 유닛 나눗셈 드릴)가 빠지자 DV9@1 하나만 5회차 내내 남았다. 분해 나눗셈 두 레벨 +
       반대로 채우기(역연산의 씨앗, 설계 §2-2 M7 '반대로 채우기 → EL1 역연산(C12·C16)') */
-   creative:['DV9@1','DV9@2','SB9@1','WP5@1']},
+   creative:['DV9@1','DV9@2','SB9@1','WP5@1','WP6@1','WP7@2']},   /* WP6 문제 만들기(2026-09-30, 이해편 Ⅵ) — 점검 뒤 */
  {id:13, tier:'level2', title:{ko:'분수의 첫걸음',en:'Fractions Begin',zh:'分数入门'},
    drills:['FR1','FR2'], magic:[['C-21']], creative:['FR9@1','FR9@2','ML12@1']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
  {id:14, tier:'level2', title:{ko:'대분수와 세 자리×두 자리',en:'Mixed Numbers & 3d×2d',zh:'带分数与三位乘两位'},
-   drills:['FR3','ML9','FR3','ML9','ML9','ML9','ML9'], magic:[['C-14'],['C-30'],['C-16'],['C-17']], creative:['ML16@1','ML17@1','ML16@2','ML17@2']},
+   drills:['FR3','ML9','FR3','ML9','ML9','ML9','ML9','ML9@6'], magic:[['C-14'],['C-30'],['C-16'],['C-17']], creative:['ML16@1','ML17@1','ML16@2','ML17@2']},
  {id:15, tier:'level2', title:{ko:'두 자리로 나누기와 분수',en:'Dividing by 2 Digits & Fractions',zh:'除以两位数与分数'},
-   drills:['DV5','DV5','DV5','DV5'], magic:[['C-19'],['C-20'],['C-28'],['C-29']],
+   drills:['DV5','DV5','DV5','DV5','DV5@5','DV5@6','DV5@7'], magic:[['C-19'],['C-20'],['C-28'],['C-29']],
    /* 창의(2026-09-26) — 두 개가 번갈아 나왔다. 회차의 마법 순서(약분·부풀려·÷5·÷25) 그대로, 설계 §2-2 M7 */
-   creative:['DV10@1','DV11@1','ML16@2','ML17@2','WP3@2']},
+   creative:['DV10@1','DV11@1','ML16@2','ML17@2','WP3@2','WP8@1','WP9@1']},
  {id:16, tier:'level2', title:{ko:'혼합계산과 역연산',en:'Mixed Operations & Inverse',zh:'混合运算与逆运算'},
-   drills:['MX1','EL1','MX1','MX1'], magic:[['C-09']],
+   drills:['MX1','EL1','MX1','MX1','NS1@6'], magic:[['C-09']],
    /* 레벨 펼치기(2026-09-26, 설계 §4-2) — 설계 표의 EL1@3(혼합·큰 수)은 교과 역연산 레벨이라 창의 칸에 못 온다.
       같은 역연산 줄기의 창의 기법 SB9(반대로 채우기 — 설계의 EL1 countUp)를 쓴다. */
    creative:['ML21@1','ML21@2','SB9@1','WP4@2']},
@@ -219,22 +224,23 @@ const COURSE_SPEC = [
  {id:17, tier:'level3', title:{ko:'소수의 시작',en:'Decimals Begin',zh:'小数入门'},
    /* 창의 회차 — 이 과정의 마법(A-36~38)은 세로셈 절차라 필산 DC1과 같은 것이어서 짝이
       없었다. 보수를 소수로 이은 DC6(0.3의 1 짝꿍은 0.7)을 쓴다(2026-09-09). */
-   drills:['DC1','DC1'], minSessions:4, magic:[['A-36'],['A-37'],['A-38']], creative:['DC6@1','WP5@2','DC6@2','DC6@3','MX7@3']},   /* MX7@3 소수 끼리끼리 — A-38(설계 §2-2 M8) */
+   drills:['DC1','DC1','DC1@3','DC1@4','EL1@7'], minSessions:4, magic:[['A-36'],['A-37'],['A-38']], creative:['DC6@1','WP5@2','DC6@2','DC6@3','MX7@3']},   /* MX7@3 소수 끼리끼리 — A-38(설계 §2-2 M8) */
  {id:18, tier:'level3', title:{ko:'소수 곱셈과 제곱수',en:'Decimal Multiplication & Squares',zh:'小数乘法与平方数'},
    drills:['DC2','ML11','ML11','ML11','ML11@4','ML11@5'], minSessions:7, magic:[['C-25'],['C-24'],['C-27'],['ML10'],['H-11']],
    creative:['DC4@1','ML20@3','CH11@1','DC4@2','CH11@2','CH11@3','CH11@4']},
  {id:19, tier:'level3', title:{ko:'약수와 배수, 그리고 배수 판별법',en:'Factors, Multiples & Divisibility Rules',zh:'因数、倍数与整除判别'},
    drills:['DV20','DV7','DV6','DV20@2','DV7@2','DV6','DV20@3','DV7@3','DV6@3','DV20@4','DV6@4','DV20@5','DV20@6'], minSessions:7, magic:[['C-04'],['C-34'],['C-03']], creative:['ML12@2','ML12@3','ML12@1']},   /* 곱해서 10 을 셋째로(2026-09-26 — 두 개만 번갈았다) */
  {id:20, tier:'level3', title:{ko:'분모가 다른 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
-   drills:['FR4','FR5','MX4','FR4','FR5@2','MX4'], magic:[['C-22']], creative:['FR10@1','FR10@2','ML12@2','WP1@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
+   drills:['FR4','FR5','MX4','FR4','FR5@2','MX4','FR4@3','FR4@4'], magic:[['C-22']], creative:['FR10@1','FR10@2','ML12@2','WP1@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
  {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},
-   drills:['FR6','FR6@2','FR6@3'], magic:[['C-31']], creative:['FR11@1','FR11@2','ML20@1','WP3@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
+   drills:['FR6','FR6@2','FR6@3','EL1@8'], magic:[['C-31']], creative:['FR11@1','FR11@2','ML20@1','WP3@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
  {id:22, tier:'level3', title:{ko:'분수 나눗셈',en:'Fraction Division',zh:'分数除法'},
-   drills:['FR7'], magic:[['C-32']], creative:['FR12@1','FR12@2','FR11@2','WP5@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
+   drills:['FR7','FR7@2','FR7@3','FR7@4','FR7@5','EL1@9'], magic:[['C-32']], creative:['FR12@1','FR12@2','FR11@2','WP5@3','WP6@3','WP8@2','WP9@2','WP10@1']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
  {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
    drills:['MX2','FR8','DC3','MX2@2','DC3@2'], minSessions:7, magic:[['C-05'],['C-35'],['C-33']], creative:['MX6@1','DC5@1','WP4@3','MX6@2','DC5@2','MX6@3','MX6@4']},
  {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
-   drills:['MX3','DV8','EL4','MX3@2','DV8@2','EL4','MX3@3','DV8@3','EL4@3','MX3@4','MX3@5'], minSessions:6, magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1','EL5@1','CH12@2','EL5@2','EL5@3','AD16@2']},
+   /* 2026-09-29 — 비례식·비례배분(EL5)을 교과 칸에도(기적 115·116단계). 창의 칸의 EL5 는 그대로. */
+   drills:['MX3','DV8','EL4','MX3@2','DV8@2','EL4','EL5','MX3@3','DV8@3','EL4@3','EL5@2','MX3@4','EL5@3','MX3@5'], minSessions:7, magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1','EL5@1','CH12@2','EL5@2','EL5@3','AD16@2']},
  {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
    drills:['MX5'], magic:[], /* 레벨 보스는 세션이 3개로 고정이라 창의도 3종만 실린다(4개를 적으면 마지막이 안 나온다).
       레벨 3을 대표하는 셋 — 분수 · 소수 · 수열(가우스). */
@@ -265,31 +271,31 @@ const COURSE_SPEC = [
     않고 기존 세 과정에 나눠 얹는다. 세션 수는 클램프(3~5) 안에
     그대로 들어가(3+2=5, 3+2=5, 3+1=4) 자동 병합 없이 깔끔하게
     늘어난다. */
- /* 중·고의 네 번째 회차(2026-09-19) — 초등의 '창의 연산' 자리에 대응하지만 이름이 다르다.
-    중·고에는 창의연산이라는 범주가 없다(암산법·풀풀·엑스맨은 초등 연산 교재의 갈래다).
+ /* 중·고의 네 번째 회차(2026-09-19) — 초등의 '독셈' 자리에 대응하지만 이름이 다르다.
+    중·고에는 독셈이라는 범주가 없다(암산법·풀풀·엑스맨은 초등 연산 교재의 갈래다).
     그렇다고 그 자리를 비워 두면 학습지 모양이 중등부터 달라져 한 진도로 안 읽힌다 —
     원장 "중등·고등은 문장제보다는 적용이지"를 그대로 따라 **그 과정의 마무리 개념을
     최고 레벨로 한 벌 더**(적용 회차) 싣는다. 재료는 그 과정이 이미 쓰는 스레드뿐이고
     새 id 를 지어내지 않는다. 회차마다 돌도록 2~3개씩 적어 둔다(한 개면 매주 같은 것이
-    나온다). 라벨은 exam.js 가 단계에 따라 '창의 연산 ·' / '적용 ·' 으로 붙인다. */
+    나온다). 라벨은 exam.js 가 단계에 따라 '독셈 ·' / '적용 ·' 으로 붙인다. */
  /* 29 — 수직선 위의 위치(MD82)를 MD1 바로 뒤에 붙인다(2026-09-21, 원장 "정수 또는 유리수도
     위치 찾기 연습도 있어야 하고 절댓값도 위치 찾기가 되어야지"). MD1 은 절댓값을 계산만
     시켰고 수직선 위 어디인지를 묻는 자리가 없었다. */
  {id:29, tier:'middle1', title:{ko:'소인수분해와 정수의 세계',en:'Prime Factorisation & Integers',zh:'质因数分解与整数'},
    /* 2026-09-25 — 중1-1 첫 단원 소인수분해·최대공약수(DV8·DV7)를 옛 중등 권장 편성에서 옮겨 맨 앞에 싣는다. */
-   drills:['DV8@1','DV8@2','DV8@3','DV7@2','DV7@3','MD1','MD82','MD2','MD3','CH5','MD47','MD48','MD1@2','MD82@2','MD2@2','MD3@2','CH5@2','MD47@2','MD48@2','MD1@3','MD82@3','MD2@3','MD3@3','CH5','MD47@3','MD48@3','MD1@4','MD2@4','CH5@4'], minSessions:15, magic:[['M-01'],['M-82'],['M-02'],['M-03'],['M-47'],['M-48']],
+   drills:['DV8@1','DV8@2','DV8@3','DV7@2','DV7@3','MD1','MD82','MD2','MD3','CH5','MD47','MD48','MD1@2','MD82@2','MD2@2','MD3@2','CH5@2','MD47@2','MD48@2','MD1@3','MD82@3','MD2@3','MD3@3','CH5','MD47@3','MD48@3','MD1@4','MD2@4','CH5@4','MD2@5'], minSessions:15, magic:[['M-01'],['M-82'],['M-02'],['M-03'],['M-47'],['M-48']],
    /* MD89(정수의 활용 — 기온·해발과 해저·수위)는 이 과정의 적용 회차다(2026-09-25). */
    creative:['MD89@1','MD3@3','MD89@2','MD82@3','MD89@3','MD48@3']},
  /* 30 — 일차방정식은 **푸는 법 다음에 쓰는 법**이 와야 한다(2026-09-21, 원장 "일차방정식의
     활용도 거리·속력·시간, 원가·정가 등 놓치지 마"). MD70 을 MD50 바로 뒤에 붙인다. */
  {id:30, tier:'middle1', title:{ko:'부호의 규칙과 방정식',en:'Rules of Sign & Equations',zh:'符号的规则与方程'},
-   drills:['MD4','MD5','MD6','MD49','MD50','MD70','MD4@2','MD5@2','MD6@2','MD49@2','MD50@2','MD70@2','MD4@3','MD5@3','MD6@3','MD49@3','MD50@3','MD70@3','MD4@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50'],['M-70']], creative:['MD70@3','MD50@3','MD6@3']},
+   drills:['MD4','MD5','MD6','MD49','MD50','MD70','MD4@2','MD5@2','MD6@2','MD49@2','MD50@2','MD70@2','MD4@3','MD5@3','MD6@3','MD49@3','MD50@3','MD70@3','MD4@4','MD4@5','MD5@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50'],['M-70']], creative:['MD70@3','MD50@3','MD6@3']},
  /* 31 — 좌표평면(MD68)과 정비례·반비례 그래프(MD69)를 여기서 연다. 원장 "정비례 반비례는".
     MD51 은 값만 다뤘고 그래프가 없었다 — 이 둘이 뒤의 일차함수·이차함수 그래프의 바닥이다. */
   {id:31, tier:'middle1', title:{ko:'유리수·좌표와 대표값',en:'Rationals, Coordinates & Measures of Center',zh:'有理数·坐标与代表值'},
    /* MD9의 5단계와 중1-2 비기하 통계 MD84를 함께 실제 회차에 싣는다.
       MD84는 확인된 p.224~230의 대표값만 포함하며 도수표 이후는 넣지 않는다. */
-   drills:['MD7','MD8','MD9','MD51','MD68','MD69','MD84','MD7@2','MD8','MD9@2','MD51@2','MD68@2','MD69@2','MD84@2','MD7@3','MD9@3','MD51@3','MD68@3','MD69@3','MD9@4','MD9@5','MD84@3','MD84@4','MD84@5','MD84@6'], minSessions:13, magic:[['M-07'],['M-08'],['M-09'],['M-51'],['M-68'],['M-69'],['M-84']], creative:['MD84@6','MD84@4','MD69@3']},
+   drills:['MD7','MD8','MD9','MD51','MD68','MD69','MD84','MD7@2','MD8','MD9@2','MD51@2','MD68@2','MD69@2','MD84@2','MD7@3','MD9@3','MD51@3','MD68@3','MD69@3','MD9@4','MD9@5','MD84@3','MD84@4','MD84@5','MD84@6','MD7@4'], minSessions:13, magic:[['M-07'],['M-08'],['M-09'],['M-51'],['M-68'],['M-69'],['M-84']], creative:['MD84@6','MD84@4','MD69@3']},
 
  /* 32~37 중등 재편(2026-09-21) — 원장 "한 단원씩이 아니잖아". 한 과정에 한 단원씩 서도록
     7과정 → 9과정으로 늘렸다. 중2 일차함수(34)와 중3 이차함수(37)가 새로 선 과정이고,
@@ -337,61 +343,147 @@ const COURSE_SPEC = [
     얹는다(32~35와 같은 관례 — spec.drills에 얹으면 자기 재료로도 잡히고 이후
     과정의 priorPool 순환에도 자동으로 실린다). 2022 개정 과목명 준수 — "고1"
     표기 없음(전부 "공통수학1"·"공통수학2"). */
- {id:38, tier:'highmath1', title:{ko:'다항식과 나머지정리',en:'Polynomials & the Remainder Theorem',zh:'多项式与余数定理'},
-   drills:['MD21','MD22','MD23','MD24','MD25','MD20','MD21@2','MD22@2','MD23@2','MD24@2','MD25@2','MD21@3','MD22@3','MD23@3','MD24@3','MD25@3'], minSessions:8, magic:[['M-21'],['M-22'],['M-23'],['M-24'],['M-25']], creative:['MD25@3','MD24@3','MD23@3']},
- {id:39, tier:'highmath1', title:{ko:'이차방정식과 행렬',en:'Quadratics & Matrices',zh:'二次方程与矩阵'},
-   drills:['MD26','MD27','MD28','MD29','MD30','MD26@2','MD27@2','MD28@2','MD29@2','MD30@2','MD26@3','MD27@3','MD28@3','MD29@3','MD30@3'], minSessions:8, magic:[['M-26'],['M-27'],['M-28'],['M-29'],['M-30']], creative:['MD30@3','MD29@3','MD27@3']},
+ /* 공통수학1 38~43 — 교과연산 고1(J) 챕터 순서(2026-09-29, 원장 "내가 준 연산학습지 개념을 다" · 설계 v2
+    docs/high-concept-audit-2026-09-28.md). 옛 38 「다항식과 나머지정리」·39 「이차방정식과 행렬」 두 과정을
+    교재 덩어리대로 여섯으로 나누고 새 유형 MD91~100 을 넣었다. 고차·연립·부등식·순열·조합(MD101~114)은
+    43~47, 행렬은 48(2026-09-29 배치). 회차 수는 설계 v2 규칙(⌈소유형÷2⌉+확인 1).
+    38 은 중3 마지막 재료 MD20 을 복습 풀에 얹는다(예전과 같은 관례). */
+ {id:38, tier:'highmath1', title:{ko:'다항식의 연산과 곱셈공식의 변형',en:'Polynomial Operations & Rearranged Product Formulas',zh:'多项式运算与乘法公式的变形'},
+   drills:['MD21','MD22','MD91','MD20','MD21@2','MD22@2','MD91@2','MD21@3','MD22@3','MD91@3'], minSessions:7,
+   magic:[['M-21'],['M-22'],['M-91']], creative:['MD91@3','MD22@3','MD21@3']},
+ {id:39, tier:'highmath1', title:{ko:'나머지정리와 인수분해',en:'The Remainder Theorem & Factoring',zh:'余数定理与因式分解'},
+   drills:['MD23','MD24','MD92','MD93','MD25','MD94','MD91','MD23@2','MD24@2','MD92@2','MD93@2','MD25@2','MD94@2','MD23@3','MD24@3','MD92@3','MD93@3','MD25@3','MD94@3'], minSessions:8,
+   magic:[['M-23'],['M-24'],['M-92'],['M-93'],['M-25'],['M-94']], creative:['MD93@3','MD25@3','MD94@3']},
+ {id:40, tier:'highmath1', title:{ko:'복소수',en:'Complex Numbers',zh:'复数'},
+   drills:['MD95','MD96','MD97','MD94','MD95@2','MD96@2','MD97@2','MD95@3','MD96@3','MD97@3'], minSessions:6,
+   magic:[['M-95'],['M-96'],['M-97']], creative:['MD95@3','MD97@3','MD96@3']},
+ {id:41, tier:'highmath1', title:{ko:'이차방정식',en:'Quadratic Equations',zh:'一元二次方程'},
+   drills:['MD28','MD26','MD27','MD98','MD97','MD28@2','MD26@2','MD27@2','MD98@2','MD28@3','MD26@3','MD27@3','MD98@3'], minSessions:7,
+   magic:[['M-28'],['M-26'],['M-27'],['M-98']], creative:['MD27@3','MD98@3','MD26@3']},
+ {id:42, tier:'highmath1', title:{ko:'이차방정식과 이차함수',en:'Quadratic Equations & Quadratic Functions',zh:'二次方程与二次函数'},
+   drills:['MD99','MD100','MD29','MD98','MD99@2','MD100@2','MD29@2','MD99@3','MD100@3','MD29@3'], minSessions:7,
+   magic:[['M-99'],['M-100'],['M-29']], creative:['MD100@3','MD99@3','MD29@3']},
+ {id:43, tier:'highmath1', title:{ko:'고차방정식',en:'Higher-Degree Equations',zh:'高次方程'},
+   drills:['MD101','MD102','MD103','MD100','MD101@2','MD102@2','MD103@2','MD101@3','MD102@3','MD103@3'], minSessions:5,
+   magic:[['M-101'],['M-102'],['M-103']], creative:['MD101@3','MD103@3','MD102@3']},
+ {id:44, tier:'highmath1', title:{ko:'연립이차방정식과 부정방정식',en:'Simultaneous Quadratic & Indeterminate Equations',zh:'二次方程组与不定方程'},
+   drills:['MD104','MD105','MD106','MD103','MD104@2','MD105@2','MD106@2','MD104@3','MD105@3','MD106@3'], minSessions:5,
+   magic:[['M-104'],['M-105'],['M-106']], creative:['MD104@3','MD105@3','MD106@3']},
+ {id:45, tier:'highmath1', title:{ko:'여러 가지 부등식',en:'Various Inequalities',zh:'各种不等式'},
+   drills:['MD107','MD108','MD109','MD106','MD107@2','MD108@2','MD109@2','MD107@3','MD108@3','MD109@3'], minSessions:6,
+   magic:[['M-107'],['M-108'],['M-109']], creative:['MD109@3','MD108@3','MD107@3']},
+ {id:46, tier:'highmath1', title:{ko:'경우의 수와 순열',en:'Counting & Permutations',zh:'计数与排列'},
+   drills:['MD110','MD111','MD112','MD109','MD110@2','MD111@2','MD112@2','MD110@3','MD111@3','MD112@3'], minSessions:7,
+   magic:[['M-110'],['M-111'],['M-112']], creative:['MD111@3','MD112@3','MD110@3']},
+ {id:47, tier:'highmath1', title:{ko:'조합',en:'Combinations',zh:'组合'},
+   drills:['MD113','MD114','MD112','MD113@2','MD114@2','MD113@3','MD114@3'], minSessions:4,
+   magic:[['M-113'],['M-114']], creative:['MD113@3','MD114@3','MD113@2']},
+ {id:48, tier:'highmath1', title:{ko:'행렬',en:'Matrices',zh:'矩阵'},
+   drills:['MD30','MD113','MD30@2','MD30@3'], minSessions:3,
+   magic:[['M-30']], creative:['MD30@3','MD30@2']},
  /* 40 — 옛 40(점과 직선)+41(직선의 관계와 원) 병합(2026-09-28). 5개 마법 단원이
     한 과정으로 이어진다(다른 5단원 과정과 같은 밀도 — course38·39 참조). */
- {id:40, tier:'highmath2', title:{ko:'직선과 원의 방정식',en:'Lines & Circles',zh:'直线与圆的方程'},
-   drills:['MD31','MD32','MD33','MD30','MD31@2','MD32@2','MD33@2','MD31@3','MD32@3','MD33@3','MD34','MD35','MD34@2','MD35@2','MD34@3','MD35@3'], minSessions:8, magic:[['M-31'],['M-32'],['M-33'],['M-34'],['M-35']], creative:['MD35@3','MD34@3','MD33@3']},
+ /* 공통수학2 49~57 — 교과연산 고1(J39~J50)·고2(K01~K35) 순서(2026-09-29, 설계 v2). 옛 49 「직선과 원의
+    방정식」 한 과정을 교재 덩어리대로 나누고 새 유형 MD115~133 을 넣었다. 유형이 하나뿐인 덩어리
+    (집합과 부분집합·집합의 연산, 함수·합성·역함수)는 한 과정으로 묶었다. 49 는 공통수학1 마지막 재료 MD30 을 복습 풀에. */
+ {id:49, tier:'highmath2', title:{ko:'평면좌표',en:'Coordinates in the Plane',zh:'平面坐标'},
+   drills:['MD31','MD32','MD115','MD30','MD31@2','MD32@2','MD115@2','MD31@3','MD32@3','MD115@3'], minSessions:6,
+   magic:[['M-31'],['M-32'],['M-115']], creative:['MD115@3','MD32@3','MD31@3']},
+ {id:50, tier:'highmath2', title:{ko:'직선의 방정식',en:'Equations of Lines',zh:'直线的方程'},
+   drills:['MD33','MD34','MD116','MD115','MD33@2','MD34@2','MD116@2','MD33@3','MD34@3','MD116@3'], minSessions:6,
+   magic:[['M-33'],['M-34'],['M-116']], creative:['MD116@3','MD34@3','MD33@3']},
+ {id:51, tier:'highmath2', title:{ko:'원의 방정식',en:'Equations of Circles',zh:'圆的方程'},
+   drills:['MD35','MD117','MD118','MD119','MD116','MD35@2','MD117@2','MD118@2','MD119@2','MD35@3','MD117@3','MD118@3','MD119@3'], minSessions:7,
+   magic:[['M-35'],['M-117'],['M-118'],['M-119']], creative:['MD119@3','MD118@3','MD117@3']},
+ {id:52, tier:'highmath2', title:{ko:'도형의 이동',en:'Transformations of Figures',zh:'图形的移动'},
+   drills:['MD120','MD121','MD119','MD120@2','MD121@2','MD120@3','MD121@3'], minSessions:4,
+   magic:[['M-120'],['M-121']], creative:['MD121@3','MD120@3','MD121@2']},
+ {id:53, tier:'highmath2', title:{ko:'집합',en:'Sets',zh:'集合'},
+   drills:['MD122','MD123','MD124','MD88','MD122@2','MD123@2','MD124@2','MD122@3','MD123@3','MD124@3'], minSessions:7,
+   magic:[['M-122'],['M-123'],['M-124']], creative:['MD124@3','MD123@3','MD122@3']},
+ {id:54, tier:'highmath2', title:{ko:'명제와 절대부등식',en:'Propositions & Absolute Inequalities',zh:'命题与绝对不等式'},
+   drills:['MD125','MD126','MD124','MD125@2','MD126@2','MD125@3','MD126@3'], minSessions:6,
+   magic:[['M-125'],['M-126']], creative:['MD126@3','MD125@3','MD126@2']},
+ {id:55, tier:'highmath2', title:{ko:'함수와 합성함수·역함수',en:'Functions, Composition & Inverses',zh:'函数与复合函数·反函数'},
+   drills:['MD127','MD128','MD129','MD73','MD127@2','MD128@2','MD129@2','MD127@3','MD128@3','MD129@3'], minSessions:8,
+   magic:[['M-127'],['M-128'],['M-129']], creative:['MD129@3','MD128@3','MD127@3']},
+ {id:56, tier:'highmath2', title:{ko:'유리식과 유리함수',en:'Rational Expressions & Functions',zh:'有理式与有理函数'},
+   drills:['MD130','MD131','MD129','MD130@2','MD131@2','MD130@3','MD131@3'], minSessions:7,
+   magic:[['M-130'],['M-131']], creative:['MD131@3','MD130@3','MD131@2']},
+ {id:57, tier:'highmath2', title:{ko:'무리식과 무리함수',en:'Irrational Expressions & Functions',zh:'无理式与无理函数'},
+   drills:['MD132','MD133','MD131','MD132@2','MD133@2','MD132@3','MD133@3'], minSessions:7,
+   magic:[['M-132'],['M-133']], creative:['MD133@3','MD132@3','MD133@2']},
 
- /* 41~45 실배치(2026-08-25, 고등 W13·W14; 2026-09-21 재번호; 2026-09-28 재번호
-    — 40 병합으로 42→41, 43→42). course41(대수 진입부)은 W12 마지막 재료 MD35를,
-    course43(미적분Ⅰ 진입부)는 W13 마지막 재료 MD42를 복습 풀에 얹는다(38·40과
-    같은 관례). 2022 개정 과목명 준수 — "고3" 표기 없음(전부 "대수"·"미적분Ⅰ"). */
- {id:41, tier:'algebra', title:{ko:'지수와 로그',en:'Exponents & Logarithms',zh:'指数与对数'},
-   drills:['MD36','MD37','MD38','MD35','MD36@2','MD37@2','MD38@2','MD36@3','MD37@3','MD38@3'], minSessions:5, magic:[['M-36'],['M-37'],['M-38']], creative:['MD38@3','MD37@3','MD36@3']},
- {id:42, tier:'algebra', title:{ko:'삼각함수와 수열',en:'Trigonometry & Sequences',zh:'三角函数与数列'},
-   drills:['MD39','MD40','MD41','MD42','MD39@2','MD40@2','MD41@2','MD42@2','MD39@3','MD40@3','MD41@3','MD42@3'], minSessions:6, magic:[['M-39'],['M-40'],['M-41'],['M-42']], creative:['MD42@3','MD41@3','MD39@3']},
- /* 43 — 옛 44(극한과 미분)+45(접선과 적분) 병합(2026-09-28). 4개 마법 단원이
-    한 과정으로 이어진다. */
- {id:43, tier:'calculus1', title:{ko:'극한·미분과 적분',en:'Limits, Derivatives & Integration',zh:'极限·导数与积分'},
-   drills:['MD43','MD44','MD42','MD43@2','MD44','MD43','MD44@3','MD45','MD46','MD45@2','MD46','MD45','MD46@3'], minSessions:7, magic:[['M-43'],['M-44'],['M-45'],['M-46']], creative:['MD46@3','MD45@3','MD44@3']},
-
- /* 44~45 신설(2026-08-27, 심화 유형 2차 작업지시 "대수·미적분Ⅰ 심화는
-    과정 41~43 세션 추가 또는 신설 — 판단해서 보고"; 2026-09-28 재번호 — 40
-    병합으로 46→44, 47→45). 41~43은 이미 4~5개 마법 슬롯이 차 있어 5개씩(지수·
-    로그방정식/부등식 3종 + 사인·코사인법칙 2종 + 최대최소주기 1종 = 6종, 극한
-    심화 5종)을 더 얹으면 세션이 8~9개까지 불어나 자동 병합(§편성 규칙 2)이
-    여러 유닛을 한 세션에 뭉쳐버린다 — 새 과정을 만드는 쪽이 세션 수를 클램프
-    (3~5) 안에 깔끔히 유지한다(44는 6→5, 사인·코사인법칙만 한 세션에 의도적으로
-    묶음. 45는 5→5, 병합 없음). course44 drills에 직전 재료 MD42(Σ)를, course45엔
-    MD46(적분)을 복습 풀에 얹는다(40·41이 앞 과정 마지막 재료를 얹던 것과 같은
-    관례). */
- {id:44, tier:'algebra', title:{ko:'지수·로그방정식과 삼각법',en:'Exponential/Log Equations & Trigonometry',zh:'指数·对数方程与三角法'},
-   drills:['MD52','MD53','MD54','MD55','MD56','MD57','MD42','MD52@2','MD53@2','MD54@2','MD55@2','MD56@2','MD57@2','MD52@3','MD53@3','MD54@3','MD55@3','MD56@3','MD57@3'], minSessions:10,
-   magic:[['M-52'],['M-53'],['M-54'],['M-55','M-56'],['M-57']], creative:['MD57@3','MD54@3','MD56@3']},
- {id:45, tier:'calculus1', title:{ko:'극한·미분·적분 심화',en:'Advanced Limits, Derivatives & Integrals',zh:'极限·导数·积分进阶'},
-   drills:['MD58','MD59','MD60','MD61','MD62','MD46','MD58@2','MD59@2','MD60@2','MD61@2','MD62@2','MD58@3','MD59@3','MD60@3','MD61@3','MD62@3'], minSessions:8,
-   magic:[['M-58'],['M-59'],['M-60'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD60@3']},
+ /* 대수 58~69 — 교과연산 고2(L) 챕터 순서(2026-09-29, 설계 v2 docs/high-concept-audit-2026-09-28.md).
+    옛 4과정(지수와 로그·방정식·삼각·수열)을 교재 덩어리대로 12과정으로 나누고 새 유형 MD134~153 을 넣었다.
+    회차 수는 설계 v2 규칙(⌈소유형÷2⌉+확인 1). 각 과정의 복습 풀에는 직전 과정의 마지막 재료를 얹는다. */
+ {id:58, tier:'algebra', title:{ko:'지수',en:'Exponents',zh:'指数'},
+   drills:['MD36','MD134','MD133','MD36@2','MD134@2','MD36@3','MD134@3'], minSessions:7,
+   magic:[['M-36'],['M-134']], creative:['MD134@3','MD36@3','MD134@2']},
+ {id:59, tier:'algebra', title:{ko:'로그와 상용로그',en:'Logarithms & Common Logarithms',zh:'对数与常用对数'},
+   drills:['MD37','MD38','MD135','MD134','MD37@2','MD38@2','MD135@2','MD37@3','MD38@3','MD135@3'], minSessions:9,
+   magic:[['M-37'],['M-38'],['M-135']], creative:['MD135@3','MD38@3','MD37@3']},
+ {id:60, tier:'algebra', title:{ko:'지수함수와 로그함수',en:'Exponential & Logarithmic Functions',zh:'指数函数与对数函数'},
+   drills:['MD136','MD137','MD138','MD139','MD135','MD136@2','MD137@2','MD138@2','MD139@2','MD136@3','MD137@3','MD138@3','MD139@3'], minSessions:9,
+   magic:[['M-136'],['M-137'],['M-138'],['M-139']], creative:['MD139@3','MD138@3','MD137@3']},
+ {id:61, tier:'algebra', title:{ko:'지수·로그 방정식과 부등식',en:'Exponential & Log Equations and Inequalities',zh:'指数·对数方程与不等式'},
+   drills:['MD52','MD53','MD54','MD139','MD52@2','MD53@2','MD54@2','MD52@3','MD53@3','MD54@3'], minSessions:8,
+   magic:[['M-52'],['M-53'],['M-54']], creative:['MD54@3','MD53@3','MD52@3']},
+ {id:62, tier:'algebra', title:{ko:'호도법과 삼각함수',en:'Radians & Trigonometric Functions',zh:'弧度制与三角函数'},
+   drills:['MD140','MD141','MD39','MD142','MD54','MD140@2','MD141@2','MD39@2','MD142@2','MD140@3','MD141@3','MD39@3','MD142@3'], minSessions:7,
+   magic:[['M-140'],['M-141'],['M-39'],['M-142']], creative:['MD142@3','MD39@3','MD141@3']},
+ {id:63, tier:'algebra', title:{ko:'삼각함수의 그래프',en:'Graphs of Trigonometric Functions',zh:'三角函数的图像'},
+   drills:['MD57','MD143','MD142','MD57@2','MD143@2','MD57@3','MD143@3'], minSessions:7,
+   magic:[['M-57'],['M-143']], creative:['MD143@3','MD57@3','MD143@2']},
+ {id:64, tier:'algebra', title:{ko:'삼각방정식과 부등식',en:'Trigonometric Equations & Inequalities',zh:'三角方程与不等式'},
+   drills:['MD144','MD143','MD144@2','MD144@3'], minSessions:3,
+   magic:[['M-144']], creative:['MD144@3','MD144@2']},
+ {id:65, tier:'algebra', title:{ko:'사인·코사인법칙과 넓이',en:'The Sine & Cosine Laws and Area',zh:'正弦·余弦定理与面积'},
+   drills:['MD55','MD56','MD145','MD144','MD55@2','MD56@2','MD145@2','MD55@3','MD56@3','MD145@3'], minSessions:6,
+   magic:[['M-55'],['M-56'],['M-145']], creative:['MD145@3','MD56@3','MD55@3']},
+ {id:66, tier:'algebra', title:{ko:'등차수열',en:'Arithmetic Sequences',zh:'等差数列'},
+   drills:['MD40','MD146','MD147','MD145','MD40@2','MD146@2','MD147@2','MD40@3','MD146@3','MD147@3'], minSessions:7,
+   magic:[['M-40'],['M-146'],['M-147']], creative:['MD147@3','MD146@3','MD40@3']},
+ {id:67, tier:'algebra', title:{ko:'등비수열',en:'Geometric Sequences',zh:'等比数列'},
+   drills:['MD41','MD148','MD147','MD41@2','MD148@2','MD41@3','MD148@3'], minSessions:7,
+   magic:[['M-41'],['M-148']], creative:['MD148@3','MD41@3','MD148@2']},
+ {id:68, tier:'algebra', title:{ko:'Σ와 여러 가지 수열의 합',en:'Sigma & Sums of Various Sequences',zh:'Σ与各种数列的和'},
+   drills:['MD42','MD149','MD150','MD148','MD42@2','MD149@2','MD150@2','MD42@3','MD149@3','MD150@3'], minSessions:6,
+   magic:[['M-42'],['M-149'],['M-150']], creative:['MD150@3','MD149@3','MD42@3']},
+ {id:69, tier:'algebra', title:{ko:'귀납적 정의와 수학적 귀납법',en:'Recursive Definitions & Mathematical Induction',zh:'递推定义与数学归纳法'},
+   drills:['MD151','MD152','MD153','MD150','MD151@2','MD152@2','MD153@2','MD151@3','MD152@3','MD153@3'], minSessions:4,
+   magic:[['M-151'],['M-152'],['M-153']], creative:['MD153@3','MD152@3','MD151@3']},
+ /* 미적분Ⅰ 70~73 — 2022 개정 미적분Ⅰ 단원 순서(2026-09-29, 설계 v2). 새 유형 MD154~159(미분법 공식·평균값 정리·
+    증가감소·닫힌 구간 최대최소·방정식과 부등식에의 활용·정적분의 성질)를 넣어 옛 세 과정을 넷으로. */
+ {id:70, tier:'calculus1', title:{ko:'함수의 극한과 연속',en:'Limits & Continuity',zh:'函数的极限与连续'},
+   drills:['MD43','MD58','MD59','MD153','MD43@2','MD58@2','MD59@2','MD43@3','MD58@3','MD59@3'], minSessions:4,
+   magic:[['M-43'],['M-58'],['M-59']], creative:['MD59@3','MD58@3','MD43@3']},
+ {id:71, tier:'calculus1', title:{ko:'미분계수와 도함수',en:'Differential Coefficients & Derivatives',zh:'微分系数与导数'},
+   drills:['MD44','MD154','MD59','MD44@2','MD154@2','MD44@3','MD154@3'], minSessions:3,
+   magic:[['M-44'],['M-154']], creative:['MD154@3','MD44@3','MD154@2']},
+ {id:72, tier:'calculus1', title:{ko:'도함수의 활용',en:'Applications of Derivatives',zh:'导数的应用'},
+   drills:['MD45','MD155','MD156','MD60','MD157','MD158','MD154','MD45@2','MD155@2','MD156@2','MD60@2','MD157@2','MD158@2','MD45@3','MD155@3','MD156@3','MD60@3','MD157@3','MD158@3'], minSessions:5,
+   magic:[['M-45'],['M-155'],['M-156'],['M-60'],['M-157'],['M-158']], creative:['MD158@3','MD157@3','MD60@3']},
+ {id:73, tier:'calculus1', title:{ko:'적분',en:'Integration',zh:'积分'},
+   drills:['MD46','MD159','MD61','MD62','MD158','MD46@2','MD159@2','MD61@2','MD62@2','MD46@3','MD159@3','MD61@3','MD62@3'], minSessions:4,
+   magic:[['M-46'],['M-159'],['M-61'],['M-62']], creative:['MD62@3','MD61@3','MD159@3']},
 ];
 
-/* ── 회차의 세 층 — 교과 연산 → 창의 연산 → 연결 문장제·적용 (2026-09-25 정본) ──
-   원장 "학습지는 교과 연산과 창의 연산 문장제가 적절히 연결" · "문항수는 하루 30분 풀 분량,
+/* ── 회차의 세 층 — 교과 연산 → 독셈 → 연결 문장제·적용 (2026-09-25 정본) ──
+   원장 "학습지는 교과 연산과 독셈 문장제가 적절히 연결" · "문항수는 하루 30분 풀 분량,
    난이도별로 연습도 되어야지". 과정 0~37 의 **모든 회차**가 세 칸을 데이터로 갖는다.
      school       교과 연산(그 주 드릴 + 같은 학교 구간의 바로 앞 복습 1벌)
-     strategy     창의 연산 — 그 주 마법 유닛(units, 개념 노트) + 전략을 손으로 푸는 드릴(practice, 매 회차 1벌)
+     strategy     독셈 — 그 주 마법 유닛(units, 개념 노트) + 전략을 손으로 푸는 드릴(practice, 매 회차 1벌)
      application  연결 문장제·적용 — 초등: 그 주 첫 교과 드릴을 **같은 계산의 문장제**로(kind 'word'),
                   유아: 이야기 셈, 중등: 활용 스레드·자료·그래프 직접 그리기(kind 'model'|'drawing')
    `drills`·`creative` 는 옛 화면(진도·시험·복습 풀·인쇄 편집기)이 읽으므로 계속 채운다 —
    drills = 교과 + 드릴 출신 적용, creative = 창의 전략 드릴 + 창의 칸 출신 적용.
    각 칸에는 count(그 칸의 문항 수)가 붙는다 — planCounts 가 난이도와 30분 예산으로 정한다.
-   예전 `creative` 한 칸은 초등에선 "창의 연산", 중등에선 "적용"으로 찍혔지만 실제로는 대부분
+   예전 `creative` 한 칸은 초등에선 "독셈", 중등에선 "적용"으로 찍혔지만 실제로는 대부분
    같은 단원의 어려운 드릴이었다 — 그 드릴은 교과 드릴 계단에 이미 있으므로 따로 싣지 않는다. */
 /* 활용 스레드 — 드릴로 실려도 적용 칸으로 간다. 통계(MD84~88)는 **교과 계산**이라 여기 넣지 않는다
    (넣으면 통계 주간의 교과 칸이 복습 4문항만 남았다). 통계를 적용으로 쓰는 회차는 COURSE_APPLY 에 적는다. */
-const APPLY_THREADS = { WP1:1, WP3:1, WP4:1, WP5:1,
+const APPLY_THREADS = { WP1:1, WP2:1, WP3:1, WP4:1, WP5:1, WP6:1, WP7:1, WP8:1, WP9:1, WP10:1,
   MD70:1, MD71:1, MD72:1, MD76:1, MD77:1, MD89:1, MD90:1 };
 /* 스레드 전체가 아니라 그 레벨만 적용인 것 — params.mode 로 확인했다 */
 const APPLY_LEVELS = { 'MD19@4':1, 'MD19@5':1, 'MD11@5':1 };
@@ -403,7 +495,7 @@ const BAND_OF = { level0:'pre', level1:'elem', level2:'elem', level3:'elem', cha
   middle1:'middle', middle2:'middle', middle3:'middle',
   highmath1:'high', highmath2:'high', algebra:'high', calculus1:'high' };
 const RECENT_REVIEW = 8;       /* 복습은 같은 구간에서 가장 최근에 배운 8유형 안에서만 */
-/* 중등 창의 연산 — 창의수연 고급 전략 가운데 **그 단원 계산과 같은 구조**인 것만 붙인다.
+/* 중등 독셈 — 창의수연 고급 전략 가운데 **그 단원 계산과 같은 구조**인 것만 붙인다.
    (원본의 초급·중급·고급 배열이 아니라 넘버스 매직 과정 순서로 다시 놓는다.)
      29 정수·유리수      CH5 순환소수 나눗셈 — 유리수를 소수로, 되풀이 마디 찾기
      30 부호의 규칙·방정식 CH1 한쪽으로 모으기 — 같은 수를 묶어 분배법칙으로(일차식 정리와 같은 손)
@@ -447,12 +539,14 @@ const DRAWING = {
    직접 확인한 목록이다. 이름으로 짐작했더니 17개가 틀렸다. 이 표에 없는 드릴만 있는 회차는 그 구간의
    문장제 스레드(WP)로 적용 칸을 채운다. */
 const wordable = d => !!((window.NM_WORDABLE || {})[d.t + '@' + d.lv]);
-const WP_BY_TIER = { level1:['WP1@1','WP3@1','WP4@1'], level2:['WP1@2','WP3@2','WP4@2','WP5@1'],
-  level3:['WP1@3','WP3@3','WP4@3','WP5@2'], challenge:['WP4@3','WP5@3'] };
+/* WP2(그림으로 나타내기)·WP6(문제 만들기)는 2026-09-30 이해편 Ⅱ·Ⅵ — 초1~2(level1)는 그림, 문제 만들기는
+   점검(WP5) 뒤에. WP6 레벨 3(분수·소수)은 level3·challenge 에. */
+const WP_BY_TIER = { level1:['WP1@1','WP2@1','WP3@1','WP4@1','WP6@1','WP7@1'], level2:['WP1@2','WP3@2','WP4@2','WP5@1','WP6@1','WP7@2','WP8@1','WP9@1'],
+  level3:['WP1@3','WP3@3','WP4@3','WP5@2','WP6@3','WP7@2','WP8@2','WP9@2','WP10@1'], challenge:['WP4@3','WP5@3','WP6@3','WP7@2','WP8@2','WP9@2','WP10@2'] };
 
 /* 창의 전략인가 — **명시 목록**(2026-09-26, 원장 "창의수연 재탕인 것들 조치해").
    전에는 `ML\d` 전부와 `unit:'B-…'` 를 전략으로 봐서, 구구단(ML1~ML4·ML25)·나눗셈 드릴(DV12~DV19, 구구 B 유닛)이
-   창의 칸에 실렸다 — 과정 5~10 의 창의 연산이 그 주 필산의 재탕이었다(docs/creative-stages-design-2026-09-26.md §0-1 B).
+   창의 칸에 실렸다 — 과정 5~10 의 독셈이 그 주 필산의 재탕이었다(docs/creative-stages-design-2026-09-26.md §0-1 B).
    이제 전략은 ① STRATEGY_THREADS ② 경시의 탑 CH ③ 창의수연 유닛(A- 초급 · C- 중급 · H- 고급; B- 구구 다리는 제외)에
    걸린 스레드·레벨 ④ ML10~ML24(중급 곱셈 기법)뿐이다. 레벨에 unit 이 달려 있으면 그 레벨만 본다(ML1 L4 둘로 쪼개기처럼
    교과 스레드에 붙인 창의 레벨). */
@@ -593,7 +687,7 @@ function composeSession(ss, i, spec, lists, maxLevel){
   const rotate = (list, n) => { for(let k = 0; k < list.length; k++){ const c = list[(i + k) % list.length]; if(c.draw || !taken(c)) return c; } return null; };
   /* 그 주에 뽑힌 드릴이 전부 활용이면 교과 칸이 복습만 남는다 — 과정의 교과 드릴 하나를 싣는다 */
   if(!ss.school.some(d => !d.review)){ const c = rotate(lists.school); if(c) ss.school.unshift({ t:c.t, lv:c.lv, n:6 }); }
-  /* 창의 연산 — 매 회차 한 벌 */
+  /* 독셈 — 매 회차 한 벌 */
   const st = rotate(lists.strategy);
   if(st) ss.strategy.practice.push({ t:st.t, lv:st.lv, n:4 });
   /* 연결 문장제·적용 — 매 회차 한 벌 이상 */
@@ -634,7 +728,9 @@ function buildCourses(NM_THREADS){
      드릴로 나올 때 올리는 레벨(homeLevel)이 창의 레벨로 넘어간다. */
   const drillMax = t => {
     const th = NM_THREADS[t];
-    const L = ((th && th.levels) || []).filter(l => !l.unit || l.unit === th.unit);
+    /* offLadder(2026-09-29) — 기적의 계산법·G권 빈틈을 메우려고 뒤에 덧붙인 레벨(EL1 학년별 □ 등)은 앞 레벨의
+       다음 단계가 아니다. 과정 사이 레벨 오르기가 그리로 튀지 않게 뺀다 — 쓸 곳에서 'EL1@6' 처럼 직접 적는다. */
+    const L = ((th && th.levels) || []).filter(l => (!l.unit || l.unit === th.unit) && !l.offLadder);
     return L.length ? Math.max.apply(null, L.map(l => l.id)) : maxLevel(t);
   };
   /* 'DV6@3' = 그 과정에서 DV6을 레벨 3으로 쓴다(고정). 2026-09-08 신설.
@@ -694,7 +790,7 @@ function buildCourses(NM_THREADS){
     /* 고정 레벨을 homeLevel 에 반영하는 일은 **실제로 회차에 실린 뒤** 아래에서 한다
        (2026-09-20). 항목만 있고 회차에 안 뽑힌 레벨까지 올려 두면, 시험이 한 번도
        가르치지 않은 레벨을 냈다(C37 시험에 MD28L3 이 그렇게 들어갔다). */
-    /* 창의 연산 회차(2026-09-08, 원장 "사이사이에 필산 후 창의 연산도 같이").
+    /* 독셈 회차(2026-09-08, 원장 "사이사이에 필산 후 독셈도 같이").
        그 과정의 마법(창의수연 전략)을 손으로 푸는 드릴이다. 필산 레벨 사다리
        (homeLevel·priorPool)와 섞지 않는다 — 계열이 다르고, 섞으면 창의 회차가
        필산 레벨을 밀어 올려 버린다. */
@@ -807,11 +903,13 @@ function buildCourses(NM_THREADS){
           const cand = recent[(globalSessionIdx + k) % recent.length];
           if(!drills.some(d => d.t === cand)){ pt = cand; break; }
         }
-        if(pt) drills.push({t:pt, lv:homeLevel[pt], n:4, review:true});
+        /* homeLevel 은 **자기 차례 드릴로 실린** 스레드에만 있다. 고정 레벨('EL1@5')로만 실린 스레드가 복습으로 뽑히면
+           lv 가 비어 'EL1@NaN' 이 되어 배포 검사(check-roadmap-sync)가 막혔다(2026-10-01). 그때는 레벨 1 로 복습한다. */
+        if(pt) drills.push({t:pt, lv:homeLevel[pt] != null ? homeLevel[pt] : 1, n:4, review:true});
       }
       globalSessionIdx++;
       /* 창의 회차는 세션마다 하나씩 순환 — 한 주 학습지에 필산 뒤 창의 한 벌.
-         레벨은 드릴과 같은 규칙으로 회차마다 한 칸씩 오른다(2026-09-20, 원장 "창의연산도
+         레벨은 드릴과 같은 규칙으로 회차마다 한 칸씩 오른다(2026-09-20, 원장 "독셈도
          개념 명확해야돼"). 전에는 늘 레벨 1이라, 그 스레드가 가진 다른 레벨의 기술
          (ML20 차가 2·4·6…, CH3 진법 변환·이진 곱셈)은 학습지에 한 번도 안 나왔고
          개념 설명만 그 기술을 말하고 있었다 — 설명과 문항이 어긋났다.

@@ -21,6 +21,7 @@ require(path.join(APP,'data/courses.js'));
 const C=global.window.NM_COURSES;
 const BANNED=/소마|황소|S학원|Academy S|S学院|프리미어|Premier|합격생|admits|录取生/i;
 
+/* 넘버스 밖 파일(roadmap/)은 읽지 않는다 — 2026-09-28 원장 "로드맵을 넘버스가 왜 건드려". */
 check('넘버스 내부 기준표 계약', ()=>{
   assert.deepEqual(PC.ROADMAP_L0_CALC_END, {
     K:[5,9], G2:[5,11], G3:[6,1], G4:[6,3], G5:[6,5], G6:[6,11]

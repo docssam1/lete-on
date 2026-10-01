@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /* ============================================================
-   창의 연산 과정 빈칸 · 색 힌트 검사 (2026-09-26) — 브라우저
+   독셈 과정 빈칸 · 색 힌트 검사 (2026-09-26) — 브라우저
    설계 docs/creative-stages-design-2026-09-26.md §3-3 · §3-4, 표 data/creative-process.js.
-   원장 "창의 연산 때 한 문제는 빈칸 넣기도 있어야" · "학습지도 이런 스킬(자릿값 색)이 들어가야".
+   원장 "독셈 때 한 문제는 빈칸 넣기도 있어야" · "학습지도 이런 스킬(자릿값 색)이 들어가야".
 
    A. 문항 단위(drill.html) — 과정 0~47 의 **모든 회차**의 창의 칸(strategy.practice) 유형·레벨을
       시드 여러 개로 뽑아 NM_EXAM.applyProcessBlank 를 돌린다.
@@ -229,7 +229,7 @@ server.listen(0, async () => {
     const pg = await browser.newPage();
     pg.on('pageerror', e => errs.push(e.message));
     await pg.addInitScript(() => { window.NM_PV_HINT = true; });
-    for(let c = 0; c < 46; c++) for(const k of [1, 2]){
+    for(let c = 0, NC = (require('fs').readFileSync(require('path').join(__dirname,'../data/courses.js'),'utf8').match(/^\s*\{id:\d+,/gm)||[]).length; c < NC; c++) for(const k of [1, 2]){
       await pg.goto(`http://localhost:${port}/ws.html?w=2026-W39&c=C${c}&n=check&k=${k}&cad=w2&auto=0`);
       let ready = null;
       for(let i = 0; i < 60; i++){ await pg.waitForTimeout(200); ready = await pg.evaluate(() => window.NM_WS_READY); if(ready) break; }

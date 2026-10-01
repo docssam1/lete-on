@@ -21,6 +21,10 @@
    `fit.units`·`fit.threads` 에 닿으면 그 회차에 그 기사를 싣는다. 비어 있으면
    나이대(age)로만 고르고 봉투 코드로 돌린다 — **과정 번호(주차)로는 고르지 않는다.**
 
+   나이 표시(age) 기준 — 2026-09-30 원장 "과정과 난이도에 맞게":
+     young = 유아·초1~2 → 아직 맞는 기사가 없다(지면 없음). mid = 초3~4(축구공·삼각 탁자·뫼비우스·당구처럼
+     그림으로 이해되는 것). senior = 초5 이상·중·고(평균·외심·생일 문제·지어낸 숫자처럼 개념어가 필요한 것).
+
    그림 규칙: viewBox 는 표제 320×170 · 본문 320×130 고정, 색은 아래 C 만,
    그림 속 글자는 숫자·기호·단위만(3개 언어가 그림 한 벌을 공유한다).
    검사기: node scripts/check-magazine.js
@@ -234,7 +238,7 @@ window.NM_MAGAZINE = {
   source:{ ko:'강을 건너다 빠졌다는 장수 이야기는 옛날부터 전해 오는 이야기예요. 진짜 있었던 일인지는 알 수 없지만, 평균이 무엇을 숨기는지는 분명합니다.',
            en:'The tale of the general who marched his soldiers into the river has been passed down for a long time. Whether it truly happened we cannot say — but what an average hides is certain.',
            zh:'将军带兵蹚河的故事流传已久，是否真有其事无从确认，但平均数藏起了什么，却是确定的。' },
-  fit:{ units:[], threads:[] }, age:['mid','senior'] },
+  fit:{ units:[], threads:[] }, age:['senior'] },
 
 /* ── 2. 축구공 ─────────────────────────────────────────── */
 { id:'mz-soccer', no:2,
@@ -386,7 +390,7 @@ window.NM_MAGAZINE = {
   source:{ ko:'200번 가운데 6연속이 나올 확률 96%는 앞면·뒷면이 똑같이 나오는 공정한 동전으로 직접 계산한 값이에요.',
            en:'The 96% figure for a run of six in 200 tosses was computed directly, assuming a fair coin with equal chances of heads and tails.',
            zh:'200次中出现六连的96%，是按正反面机会均等的公平硬币直接算出来的。' },
-  fit:{ units:[], threads:[] }, age:['mid','senior'] }
+  fit:{ units:[], threads:[] }, age:['senior'] }
 ,
 /* ── 5. 생일 ───────────────────────────────────────────── */
 { id:'mz-birthday', no:5,
@@ -463,7 +467,7 @@ window.NM_MAGAZINE = {
   source:{ ko:'23명 50.7%, 25명 56.9%, 30명 70.6%는 1년을 365일로 보고 직접 계산한 값이에요.',
            en:'The figures 50.7%, 56.9% and 70.6% were computed directly, taking a year as 365 days.',
            zh:'50.7%、56.9%、70.6%都是按一年365天直接计算出来的。' },
-  fit:{ units:[], threads:[] }, age:['mid','senior'] },
+  fit:{ units:[], threads:[] }, age:['senior'] },
 
 /* ── 6. 뫼비우스의 띠 ──────────────────────────────────── */
 { id:'mz-mobius', no:6,
@@ -638,7 +642,7 @@ window.NM_MAGAZINE = {
   source:{ ko:'7세기경 신라 유물로 알려진 얼굴무늬수막새는 경주 영묘사 터에서 발굴됐어요. 삼각형의 외심은 실제로 유물을 복원할 때 쓰입니다.',
            en:'The face-patterned roof tile, known as a Silla relic from around the seventh century, was excavated at the Yeongmyosa temple site in Gyeongju. The circumcentre really is used to restore artefacts.',
            zh:'这件被认为是七世纪新罗遗物的人面纹瓦当，出土于庆州灵庙寺遗址。三角形的外心确实用于文物修复。' },
-  fit:{ units:[], threads:[] }, age:['mid','senior'] }
+  fit:{ units:[], threads:[] }, age:['senior'] }
 
 
 ]};

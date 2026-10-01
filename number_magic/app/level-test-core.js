@@ -57,6 +57,9 @@ function candidates(courseId){
     for(let i = 0; i < 6; i++){
       let p; try{ p = gen(lvl.params || {}, RNG.mulberry32(RNG.hashSeed('ltProbe' + t + i))); }catch(e){ return; }
       if(!p || !p.tex || typeof p.answer !== 'number' || !Number.isInteger(p.answer)) return;
+      /* 답이 계산값이 아니라 약속한 번호인 문항(①>②=③< 크기 비교, ①/② 부등호, 1=유한·0=순환)은 종이에서 뺀다 —
+         번호 약속을 잘못 읽으면 개념을 알아도 틀린다(2026-09-30 원장 "바꿔"). 앱·화면 진단에서는 그대로 쓴다. */
+      if(/[①②③]|\\text\{유한\}/.test(p.tex)) return;
     }
     out.push({ t, lv: lvl.id });
   });
@@ -71,6 +74,13 @@ function build(formId, v){
   const TH = W.NM_THREADS || {}, TG = W.NM_TGEN || {}, RNG = W.NM_RNG;
   const rows = [];
   for(let c = f.from; c <= f.to; c++){ const cs = candidates(c); if(cs.length) rows.push({ c, cs, n: 1 }); }
+  /* 과정이 한 장(20문제)보다 많으면(공통수학2+대수 = 21과정) 처음·끝을 남기고 고르게 솎는다 —
+     빠진 과정은 채점에서 앞뒤 과정으로 판단된다(시험지에 없는 과정 규칙과 같다). */
+  if(rows.length > TARGET){
+    const n = rows.length, keep = new Set();
+    for(let k = 0; k < TARGET; k++) keep.add(Math.round(k * (n - 1) / (TARGET - 1)));
+    for(let i = n - 1; i >= 0; i--) if(!keep.has(i)) rows.splice(i, 1);
+  }
   /* 남는 자리를 고르게 나눠 한 문제씩 더 — 앞(쉬운 쪽)과 뒤(어려운 쪽)가 한쪽으로 쏠리지 않게 */
   let spare = Math.min(TARGET, rows.length * PER_MAX) - rows.length;
   if(spare > 0){
