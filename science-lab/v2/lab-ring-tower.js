@@ -95,7 +95,7 @@ export async function mountRingTower(el, opts = {}) {
   line.rotation.z = Math.PI / 2; line.position.x = TW.TOWER.R_OUT + len / 2;
   const lineG = new THREE.Group(); lineG.add(line); lineG.rotation.y = Math.atan2(-gauge.position.z, gauge.position.x); root.add(lineG);   // +x 축이 눈금자를 향하게
   const hLabel = KIT.label('탑 높이 0칸', { size: 0.26 }); root.add(hLabel);
-  stage.setView({ theta: 0.5, phi: 1.28, dist: 6.6, target: [-0.3, 1.5, 0] });   // 옆에 가깝게 — 뜬 틈이 잘 보이게
+  stage.setView({ theta: 0.5, phi: 1.28, dist: 6.6, target: [-0.3, 1.5, 0], frame: [[-1.95, 0, -2], [3.05, 3.7, 1.5]] });   // 옆에 가깝게 — 뜬 틈이 잘 보이게. frame: 고리가 다 내려앉은 뒤의 작업 공간(받침·연필·자) — 처음 떨어지는 고리에 맞추면 멀리 잡혔다가 다가온다
   stage.fitWidth = 1.1;   // 세로로 긴 화면(가로로 크게·세로 들기)에서도 소품이 잘리지 않게
   stage.setContactShadow({ x: -0.3, z: 0.2, w: 4.6, d: 4.0 });
 

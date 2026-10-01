@@ -57,13 +57,14 @@ const probe = (page) => page.evaluate(async () => {
   });
 });
 
-async function waitFitted(page, ms = 20000) {
-  const t0 = Date.now(); let st = [];
-  // 맞춤이 끝나고, 움직이던 물체가 자리 잡아 다시 맞추는 것(최대 약 2초)까지 기다린 뒤 잰다
+async function waitFitted(page, ms = 25000) {
+  // 맞춤이 끝나고, 화면에 잡힌 범위가 1.2초 간격으로 두 번 같을 때까지(움직이던 물체가 자리 잡아 다시 맞추는 것까지) 기다린다
+  const t0 = Date.now(); let prev = null, st = [];
+  const sig = (a) => a.map((s) => [s.x0, s.x1, s.y0, s.y1].map((v) => v.toFixed(2)).join(',')).join('|');
   while (Date.now() - t0 < ms) {
     st = await probe(page);
-    if (st.length && st.every((s) => s.fitted)) { await page.waitForTimeout(2600); const again = await probe(page); if (again.every((s) => s.fitted)) return again; }
-    await page.waitForTimeout(400);
+    if (st.length && st.every((s) => s.fitted)) { if (prev !== null && sig(st) === prev) return st; prev = sig(st); } else prev = null;
+    await page.waitForTimeout(1200);
   }
   return st;
 }

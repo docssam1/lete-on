@@ -315,3 +315,6 @@
 .dk-stage.dense .dk-dpicks { gap: .6cqw; } .dk-stage.dense .dk-dpick { padding: .5cqw 1cqw; } .dk-stage.dense .dk-dq { font-size: 1.6cqw; }
 .dk-stage.dense .dk-caution { padding: .6cqw 1.2cqw; margin-top: .6cqw; } .dk-stage.dense .dk-caution h3 { font-size: 1.6cqw; margin: 0 0 .2cqw; } .dk-stage.dense .dk-caution li { font-size: 1.4cqw; }
 @media (max-width: 760px) { .dk-stage.dense .dk-dq { font-size: 15px; } .dk-stage.dense .dk-caution h3 { font-size: 15px; } .dk-stage.dense .dk-caution li { font-size: 14px; } }
+.dk-mc.learned.done { grid-template-columns: 1fr 1fr; gap: .4cqw; margin: .6cqw 0; } .dk-mc.learned.done button { font-size: 1.4cqw; padding: .4cqw .9cqw; }
+.dk-lsum .dk-points.big li { font-size: 1.9cqw; margin: .3cqw 0; } .dk-lsum .dk-sub { margin-top: .4cqw; }
+@media (max-width: 760px) { .dk-mc.learned.done { grid-template-columns: 1fr; } .dk-mc.learned.done button { font-size: 14px; } .dk-lsum .dk-points.big li { font-size: 16px; } }
