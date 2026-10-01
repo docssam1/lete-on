@@ -141,6 +141,35 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
     };
   }
 
+  /* ── 정수 부분이 있는 큰 소수의 덧셈·뺄셈 (mode:'big', places 1|2) — 2026-10-01 신규 ──
+     레벨 1·2 는 0.a ± 0.b 처럼 정수 부분이 없어서 "소수점 위치 맞추기"가 크기로 이어지지 않았다.
+     여기서는 12.4 + 7.8, 135.62 − 48.9 처럼 십·백의 자리가 있는 소수로, 올림·받아내림이 소수점을
+     건너 정수 부분으로 이어진다. 답은 mixedPlaces 와 같은 관례 — 결과를 10^places 배 한 자연수. */
+  if (params.mode === 'big') {
+    const pl = params.places === 2 ? 2 : 1, M = pl === 2 ? 100 : 10;
+    const lo = pl === 2 ? 1001 : 101, hi = pl === 2 ? 29999 : 999;        /* 10.01~299.99 · 10.1~99.9 */
+    const num = v => { const w = Math.floor(v / M), f = String(v % M).padStart(pl, '0'); return `${w}.${f}`; };
+    const mk = () => { let v; do { v = R(rng, lo, hi); } while (v % 10 === 0); return v; };
+    let a = mk(), b = mk(), op = params.op === '-' ? '-' : '+';
+    if (op === '-') { if (a < b) { const t = a; a = b; b = t; } if (a - b < M) { a += M * 3; } }
+    const res = op === '+' ? a + b : a - b;
+    const tex = `${num(a)} ${op} ${num(b)} = \\dfrac{\\square}{${M}}`;
+    const steps = [
+      { tex: `${num(a)} \\times ${M} = \\square`, blank: a },
+      { tex: `${num(b)} \\times ${M} = \\square`, blank: b },
+      { tex: `${a} ${op} ${b} = \\square \\;(\\times ${M}\\text{ 계산})`, blank: res },
+      { tex, blank: res }
+    ];
+    return {
+      prompt: {
+        ko: `${pl === 2 ? '소수 두 자리' : '소수 한 자리'} 큰 소수의 ${op === '+' ? '덧셈' : '뺄셈'}: ${M}배 한 자연수로 바꿔 계산해요`,
+        en: `${op === '+' ? 'Add' : 'Subtract'} larger ${pl}-place decimals: turn them into whole numbers (×${M}) first`,
+        zh: `较大的${pl}位小数${op === '+' ? '加法' : '减法'}：先乘${M}变成整数再计算`
+      },
+      tex, answer: res, answerType: 'steps', widget: 'steps', steps
+    };
+  }
+
   const places = params.places || 1;
 
   if (places === 1) {
