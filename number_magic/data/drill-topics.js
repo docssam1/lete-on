@@ -299,7 +299,7 @@ var CURATED_TOPICS = [
       {label:'문제 만들기 (분수·소수 + −)', thread:'WP6', level:3, desc:'재는 상황의 이야기 고르기'},
     ]
   },
-  { id:'creative', label:'창의수연', en:'Strategy Math', zh:'思维数学', icon:'🧠', color:'#8b5cf6', section:'magic',
+  { id:'creative', label:'독셈', en:'Doc-T Math', zh:'巧算', icon:'🧠', color:'#8b5cf6', section:'magic',
     subs:[
       {label:'보수 5 찾기', thread:'NS3', level:1, desc:'더해서 5 만들기'},
       {label:'보수 10 찾기', thread:'NS3', level:2, desc:'더해서 10 만들기'},
