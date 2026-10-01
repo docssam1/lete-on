@@ -230,6 +230,49 @@ NM_TGEN['fr3_mixedAddSub'] = function(params, rng){
    ============================================================ */
 NM_TGEN['fr4_unlikeAddSub'] = function(params, rng){
   var mixed = params && params.mixed;
+
+  /* ── 부분분수 (mode:'split' | 'chain') — 2026-10-01 신규, 5학년 과정(C20) ──
+     원장 "5학년 과정에 부분분수도 넣어줘". 분모가 연달은 두 수의 곱인 분수는 두 분수의 차로 쪼개진다:
+       1/(a×(a+1)) = 1/a − 1/(a+1)       k/(a×(a+k)) = 1/a − 1/(a+k)     (통분의 거꾸로)
+     split : 쪼갠 뒤 빈 분모 하나를 찾는다.
+     chain : 1/(1×2)+1/(2×3)+… 의 합 — 쪼개면 가운데가 서로 지워져 처음과 끝만 남는다(망원 급수).
+     답은 정수 하나(빈칸의 분모). 분수 자체를 입력하게 하지 않는다. */
+  if(params && params.mode === 'split'){
+    var sk = pick(rng, [1, 1, 2, 3]), sa = R(rng, 2, 9), sb = sa + sk, sp = sa * sb;
+    return {
+      prompt: {
+        ko: '분모가 두 수의 곱이면 두 분수의 차로 쪼갤 수 있어요',
+        en: 'A fraction whose denominator is a product can be split into a difference of two fractions',
+        zh: '分母是两个数的积时，可以拆成两个分数的差'
+      },
+      tex: '\\frac{' + sk + '}{' + sa + '\\times ' + sb + '} = \\frac{1}{' + sa + '} - \\frac{1}{\\square}',
+      answer: sb, answerType: 'steps',
+      steps: [
+        { tex: sa + ' \\times ' + sb + ' = \\square', blank: sp },
+        { tex: '\\frac{' + sk + '}{' + sp + '} = \\frac{1}{' + sa + '} - \\frac{1}{\\square} \\quad(' + sb + ' - ' + sa + ' = ' + sk + ')', blank: sb }
+      ],
+      widget: 'steps'
+    };
+  }
+  if(params && params.mode === 'chain'){
+    var cs = R(rng, 1, 4), cn = R(rng, 4, 7), ce = cs + cn - 1;
+    var term = function(a){ return '\\frac{1}{' + a + '\\times ' + (a + 1) + '}'; };
+    return {
+      prompt: {
+        ko: '각 항을 쪼개면 가운데 분수들이 서로 지워져요',
+        en: 'Split every term and the middle fractions cancel out',
+        zh: '把每一项拆开，中间的分数会互相抵消'
+      },
+      tex: term(cs) + ' + ' + term(cs + 1) + ' + \\cdots + ' + term(ce) + ' = \\frac{1}{' + cs + '} - \\frac{1}{\\square}',
+      answer: ce + 1, answerType: 'steps',
+      steps: [
+        { tex: term(cs) + ' = \\frac{1}{' + cs + '} - \\frac{1}{\\square}', blank: cs + 1 },
+        { tex: '\\text{마지막 항 } ' + term(ce) + ' = \\frac{1}{' + ce + '} - \\frac{1}{\\square}', blank: ce + 1 },
+        { tex: '\\frac{1}{' + cs + '} - \\frac{1}{\\square} \\;(\\text{가운데는 모두 지워져요})', blank: ce + 1 }
+      ],
+      widget: 'steps'
+    };
+  }
   var op    = pick(rng, ['+', '-']);
 
   // 분모 두 개 선택 (서로 다르게)

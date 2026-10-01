@@ -906,7 +906,16 @@ FR4:{ name:{ko:'분모가 다른 분수 덧·뺄',en:'Unlike denominators ±',zh
     zh:'分母不同要先通分，用两个分母的最小公倍数作公分母。1/2+1/3=3/6+2/6=5/6。'},
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'진분수',en:'proper',zh:'真分数'},params:{mixed:false}},
-          {id:2,label:{ko:'대분수',en:'mixed',zh:'带分数'},params:{mixed:true}}] },
+          {id:2,label:{ko:'대분수',en:'mixed',zh:'带分数'},params:{mixed:true}},
+          /* 2026-10-01 — 부분분수(원장 "5학년 과정에 부분분수도 넣어줘"). 통분의 거꾸로: 분모가 곱이면 차로 쪼갠다. */
+          {id:3,offLadder:true,label:{ko:'부분분수 쪼개기',en:'splitting a fraction',zh:'拆分分数'},params:{mode:'split'},
+           concept:{ko:'분모가 곱으로 된 분수는 두 분수의 차로 쪼갤 수 있어요 — 1/(2×3)=1/2−1/3, 2/(3×5)=1/3−1/5. 통분을 거꾸로 한 거예요.',
+             en:'A fraction with a product as denominator splits into a difference — 1/(2×3) = 1/2 − 1/3, and 2/(3×5) = 1/3 − 1/5. It is common denominators run backwards.',
+             zh:'分母是积的分数可以拆成两个分数的差——1/(2×3)=1/2−1/3，2/(3×5)=1/3−1/5。这就是通分倒过来。'}},
+          {id:4,offLadder:true,label:{ko:'부분분수로 합 구하기',en:'telescoping sums',zh:'用拆分求和'},params:{mode:'chain'},
+           concept:{ko:'1/(1×2)+1/(2×3)+1/(3×4)는 (1−1/2)+(1/2−1/3)+(1/3−1/4)로 쪼개져요. 가운데가 서로 지워져 1−1/4만 남아요.',
+             en:'1/(1×2)+1/(2×3)+1/(3×4) = (1−1/2)+(1/2−1/3)+(1/3−1/4). The middle terms cancel, leaving 1−1/4.',
+             zh:'1/(1×2)+1/(2×3)+1/(3×4)=(1−1/2)+(1/2−1/3)+(1/3−1/4)，中间互相抵消，只剩1−1/4。'}}] },
 /* 약분과 통분은 초5의 한 단원이고 방향만 반대인 같은 조작이라 한 스레드에 둔다.
    통분 레벨은 2026-08-29 신규 — FR4가 이분모 덧뺄을 하며 속으로 통분하고 있었을 뿐
    통분 자체를 묻는 유형이 없었다. prereq(DV7)가 최소공배수까지 이미 대 준다. */
