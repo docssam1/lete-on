@@ -951,6 +951,44 @@ NM_TGEN['md111_perm'] = function (params, rng) {
         { tex:`${fact(a2)}\\times${perm(a2 + 1, b)}=\\square`, blank:ans }]);
   }
 
+  /* deep(심화) — 2026-10-01 신규. 원장 "순열에 심화 넣고". 팩토리얼의 구조를 보는 네 가지:
+     ① (n+1)!/(n−1)! = n(n+1) 으로 n 찾기 ② ₙP₃ = N 에서 n ③ 끝자리 0 의 개수(5 의 배수 세기)
+     ④ 1·1!+2·2!+…+k·k! = (k+1)!−1 (곱을 차로 바꾸면 가운데가 지워진다). 답은 모두 정수 하나. */
+  if (mode === 'deep') {
+    const dk = pick(rng, ['shift', 'p3', 'zeros', 'sumfact']);
+    if (dk === 'shift') {
+      const n = R(rng, 3, 14), N = n * (n + 1);
+      return item(
+        L3('(n+1)!=(n+1)×n×(n−1)! 이므로 분모의 (n−1)! 과 약분하면 n(n+1) 만 남습니다.', '(n+1)! = (n+1)×n×(n−1)!, so dividing by (n−1)! leaves n(n+1).', '(n+1)!=(n+1)×n×(n−1)!，与分母的(n−1)!约分后只剩n(n+1)。'),
+        `\\dfrac{(n+1)!}{(n-1)!}=${N} \\;\\Rightarrow\\; n=\\square`, n, [
+          { tex:`n(n+1)=${N}=${n}\\times${n + 1}` },
+          { tex:`n=\\square`, blank:n }]);
+    }
+    if (dk === 'p3') {
+      const n = R(rng, 4, 11), N = n * (n - 1) * (n - 2);
+      return item(
+        L3('ₙP₃=n(n−1)(n−2) 입니다. 연속한 세 자연수의 곱으로 나타내어 n 을 구합니다.', 'ₙP₃ = n(n−1)(n−2). Write the number as a product of three consecutive naturals to find n.', 'ₙP₃=n(n−1)(n−2)。把数写成三个连续自然数的积，求n。'),
+        `${nPr('n', 3)}=${N} \\;\\Rightarrow\\; n=\\square`, n, [
+          { tex:`n(n-1)(n-2)=${N}=${n}\\times${n - 1}\\times${n - 2}` },
+          { tex:`n=\\square`, blank:n }]);
+    }
+    if (dk === 'zeros') {
+      const n = R(rng, 10, 60), z = Math.floor(n / 5) + Math.floor(n / 25);
+      return item(
+        L3(`${n}! 의 일의 자리에서부터 이어지는 0 의 개수를 구합니다. 0 은 2×5 마다 하나씩 생기고 2 는 충분히 많으므로 5 의 개수만 셉니다(5 의 배수 + 25 의 배수).`, `Count the zeros at the end of ${n}!. Each 2×5 makes one zero and 2s are plentiful, so count the 5s (multiples of 5, plus extra for multiples of 25).`, `求${n}!末尾连续0的个数。每个2×5产生一个0，2足够多，所以只数5的个数（5的倍数再加25的倍数）。`),
+        `${n}! \\;\\Rightarrow\\; \\square`, z, [
+          { tex:`\\lfloor ${n}\\div 5\\rfloor + \\lfloor ${n}\\div 25\\rfloor = ${Math.floor(n / 5)}+${Math.floor(n / 25)}` },
+          { tex:`${Math.floor(n / 5)}+${Math.floor(n / 25)}=\\square`, blank:z }]);
+    }
+    const k = R(rng, 3, 7), tot = fact(k + 1) - 1;
+    const sumTex = Array.from({ length: Math.min(k, 3) }, (_, i) => `${i + 1}\\times ${i + 1}!`).join('+') + (k > 3 ? `+\\cdots+${k}\\times ${k}!` : '');
+    return item(
+      L3('k×k! = (k+1)! − k! 이므로 각 항을 차로 바꾸면 가운데가 서로 지워져 (k+1)!−1 만 남습니다.', 'k×k! = (k+1)! − k!, so the middle terms cancel and only (k+1)! − 1 is left.', 'k×k!=(k+1)!−k!，每项拆成差后中间互相抵消，只剩(k+1)!−1。'),
+      `${sumTex} = \\square`, tot, [
+        { tex:`(k+1)!-1 = ${k + 1}!-1 = ${fact(k + 1)}-1` },
+        { tex:`${fact(k + 1)}-1=\\square`, blank:tot }]);
+  }
+
   /* value(기본) */
   const kind = pick(rng, ['nPr', 'nPr', 'solve', 'fact']);
   if (kind === 'solve') {

@@ -226,7 +226,7 @@ const COURSE_SPEC = [
       없었다. 보수를 소수로 이은 DC6(0.3의 1 짝꿍은 0.7)을 쓴다(2026-09-09). */
    drills:['DC1','DC1','DC1@3','DC1@4','EL1@7'], minSessions:4, magic:[['A-36'],['A-37'],['A-38']], creative:['DC6@1','WP5@2','DC6@2','DC6@3','MX7@3']},   /* MX7@3 소수 끼리끼리 — A-38(설계 §2-2 M8) */
  {id:18, tier:'level3', title:{ko:'소수 곱셈과 제곱수',en:'Decimal Multiplication & Squares',zh:'小数乘法与平方数'},
-   drills:['DC2','ML11','ML11','ML11','ML11@4','ML11@5'], minSessions:7, magic:[['C-25'],['C-24'],['C-27'],['ML10'],['H-11']],
+   drills:['DC2','ML11','ML11','ML11','ML11@4','ML11@5','ML11@6'], minSessions:7, magic:[['C-25'],['C-24'],['C-27'],['ML10'],['H-11']],
    creative:['DC4@1','ML20@3','CH11@1','DC4@2','CH11@2','CH11@3','CH11@4']},
  {id:19, tier:'level3', title:{ko:'약수와 배수, 그리고 배수 판별법',en:'Factors, Multiples & Divisibility Rules',zh:'因数、倍数与整除判别'},
    drills:['DV20','DV7','DV6','DV20@2','DV7@2','DV6','DV20@3','DV7@3','DV6@3','DV20@4','DV6@4','DV20@5','DV20@6'], minSessions:7, magic:[['C-04'],['C-34'],['C-03']], creative:['ML12@2','ML12@3','ML12@1']},   /* 곱해서 10 을 셋째로(2026-09-26 — 두 개만 번갈았다) */
@@ -373,7 +373,7 @@ const COURSE_SPEC = [
    drills:['MD107','MD108','MD109','MD106','MD107@2','MD108@2','MD109@2','MD107@3','MD108@3','MD109@3'], minSessions:6,
    magic:[['M-107'],['M-108'],['M-109']], creative:['MD109@3','MD108@3','MD107@3']},
  {id:46, tier:'highmath1', title:{ko:'경우의 수와 순열',en:'Counting & Permutations',zh:'计数与排列'},
-   drills:['MD110','MD111','MD112','MD109','MD110@2','MD111@2','MD112@2','MD110@3','MD111@3','MD112@3'], minSessions:7,
+   drills:['MD110','MD111','MD112','MD109','MD110@2','MD111@2','MD112@2','MD110@3','MD111@3','MD112@3','MD111@4'], minSessions:7,
    magic:[['M-110'],['M-111'],['M-112']], creative:['MD111@3','MD112@3','MD110@3']},
  {id:47, tier:'highmath1', title:{ko:'조합',en:'Combinations',zh:'组合'},
    drills:['MD113','MD114','MD112','MD113@2','MD114@2','MD113@3','MD114@3'], minSessions:4,

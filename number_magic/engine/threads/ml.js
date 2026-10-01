@@ -925,6 +925,30 @@ NM_TGEN['ml11_squares'] = function(params, rng) {
      제너레이터 주의점(정독): 핵심체크가 세제곱·일반화까지 은근히
      요구하는 심화형이다 — 두 자리~여섯 자리 결과까지 자릿수를 늘려가며
      패턴이 유지됨을 보여야 원본 취지에 가깝다(11²~991²). */
+  /* ── 팩토리얼 입문 (mode:'fact') — 2026-10-01 신규 ──
+     원장 "곱셈 단계에 간단히 넣고". 1부터 n까지 차례로 곱하는 것을 n!(n 팩토리얼)이라 부른다.
+     n 은 3~7(7! = 5040)로 작게 둔다. 풀이는 앞에서부터 곱을 하나씩 쌓는다. */
+  if (params.mode === 'fact') {
+    const n = R(rng, 3, 7);
+    const parts = [];
+    let acc = 1;
+    for (let i = 2; i <= n; i++) { acc *= i; parts.push(acc); }
+    const tex = `${n}! = \\square`;
+    const steps = [];
+    for (let i = 0; i < parts.length; i++) {
+      const left = i === 0 ? '1 \\times 2' : `${parts[i - 1]} \\times ${i + 2}`;
+      steps.push({ tex: `${left} = \\square`, blank: parts[i] });
+    }
+    return {
+      prompt: {
+        ko: `${n}!은 1부터 ${n}까지 차례로 곱한 수예요`,
+        en: `${n}! means multiplying 1 up to ${n}`,
+        zh: `${n}!表示从1乘到${n}`
+      },
+      tex, answer: acc, answerType: 'steps', widget: 'steps', steps
+    };
+  }
+
   if (params.mode === 'end1') {
     const k    = R(rng, 1, 99);       // n = 10k+1, n:11~991
     const n    = 10 * k + 1;
