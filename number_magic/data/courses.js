@@ -203,7 +203,7 @@ const COURSE_SPEC = [
    drills:['ML8','ML8','ML8','ML8','ML8','ML8','ML8'], magic:[['C-26'],['C-15'],['C-10'],['C-11'],['C-12'],['C-13'],['C-23']],
    creative:['ML21@1','ML23@1','ML15@1','ML10@1','ML10@2','ML10@3'], maxSessions:7},
  {id:12, tier:'level2', title:{ko:'나눗셈과 역연산',en:'Division & Inverse Operations',zh:'除法与逆运算'},
-   drills:['DV3','DV15','DV4','EL1','DV15@2','DV4','EL1@2','DV15@3','EL1@3'], minSessions:5, magic:[['C-18']],
+   drills:['DV3','DV15','DV4','EL1','DV15@2','DV4','EL1@2','DV15@3','EL1@3','NS1@5'], minSessions:5, magic:[['C-18']],
    /* 창의(2026-09-26) — DV15(B 유닛 나눗셈 드릴)가 빠지자 DV9@1 하나만 5회차 내내 남았다. 분해 나눗셈 두 레벨 +
       반대로 채우기(역연산의 씨앗, 설계 §2-2 M7 '반대로 채우기 → EL1 역연산(C12·C16)') */
    creative:['DV9@1','DV9@2','SB9@1','WP5@1','WP6@1','WP7@2']},   /* WP6 문제 만들기(2026-09-30, 이해편 Ⅵ) — 점검 뒤 */
@@ -216,7 +216,7 @@ const COURSE_SPEC = [
    /* 창의(2026-09-26) — 두 개가 번갈아 나왔다. 회차의 마법 순서(약분·부풀려·÷5·÷25) 그대로, 설계 §2-2 M7 */
    creative:['DV10@1','DV11@1','ML16@2','ML17@2','WP3@2','WP8@1','WP9@1']},
  {id:16, tier:'level2', title:{ko:'혼합계산과 역연산',en:'Mixed Operations & Inverse',zh:'混合运算与逆运算'},
-   drills:['MX1','EL1','MX1','MX1'], magic:[['C-09']],
+   drills:['MX1','EL1','MX1','MX1','NS1@6'], magic:[['C-09']],
    /* 레벨 펼치기(2026-09-26, 설계 §4-2) — 설계 표의 EL1@3(혼합·큰 수)은 교과 역연산 레벨이라 창의 칸에 못 온다.
       같은 역연산 줄기의 창의 기법 SB9(반대로 채우기 — 설계의 EL1 countUp)를 쓴다. */
    creative:['ML21@1','ML21@2','SB9@1','WP4@2']},

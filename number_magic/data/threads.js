@@ -32,6 +32,12 @@ NS1:{ name:{ko:'자릿값 읽기',en:'Place Value',zh:'位值'}, gen:'ns1_placeV
           {id:3,label:{ko:'큰 수',en:'Big numbers',zh:'大数'},params:{max:99999}},
           /* 과정-로드맵.md §4 다함식 위젯 — 십진블록(백판·십막대·낱개)으로 수 읽기.
              2026-08-27 Phase 3 신규. */
+          /* 2026-10-01 — 큰 수(만·억·조 단위). 원장 "자리값읽기에 큰수에 왜 다섯자리 밖에 없어?" 레벨 3 은 5자리(만)까지였다. */
+          {id:5,offLadder:true,label:{ko:'큰 수 (억 단위까지)',en:'Big numbers (to hundred-millions)',zh:'大数（到亿位）'},params:{max:999999999},
+           concept:{ko:'큰 수는 네 자리씩 끊어 읽어요: 일·십·백·천 / 만·십만·백만·천만 / 억·십억·백억·천억. 345,600,000은 3억 4560만이에요. 3은 억의 자리, 4는 천만의 자리 — 오른쪽부터 세어 몇째 자리인지 찾아요.',
+             en:'Big numbers are read in groups: ones to thousands, then ten-thousands to ten-millions, then hundred-millions. In 345,600,000 the 3 is in the hundred-millions place and the 4 in the ten-millions place. Count the places from the right.',
+             zh:'大数每四位一组来读：个十百千，万十万百万千万，亿十亿百亿千亿。345,600,000是3亿4560万：3在亿位，4在千万位。从右往左数，就能找到数字在哪一位。'}},
+          {id:6,offLadder:true,label:{ko:'큰 수 (조 단위까지)',en:'Big numbers (to trillions)',zh:'大数（到万亿位）'},params:{max:9999999999999}},
           {id:4,label:{ko:'십진블록 읽기',en:'Read base-10 blocks',zh:'读十进制方块'},params:{mode:'base10'},
            concept:{ko:'십진블록은 백 판·십 막대·낱개를 세어 자릿값을 더해요 — 200+50+4는 254예요.',
              en:'With base-ten blocks, count the hundred-flats, ten-rods and ones and add their place values: 200+50+4 is 254.',

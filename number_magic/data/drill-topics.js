@@ -360,6 +360,8 @@ var CURATED_TOPICS = [
       {label:'자릿값 읽기', thread:'NS1', level:1, desc:'두·세 자리 자릿값'},
       {label:'자릿값 읽기 (네 자리)', thread:'NS1', level:2, desc:'천의 자리까지'},
       {label:'자릿값 읽기 (큰 수)', thread:'NS1', level:3, desc:'만의 자리까지'},
+      {label:'자릿값 읽기 (억 단위)', thread:'NS1', level:5, desc:'십만·백만·천만·억의 자리까지'},
+      {label:'자릿값 읽기 (조 단위)', thread:'NS1', level:6, desc:'십억·백억·천억·조의 자리까지'},
       {label:'자릿값 읽기 (십진블록)', thread:'NS1', level:4, desc:'십진블록으로 표현'},
       {label:'모으기 · 가르기 (5까지)', thread:'NS2', level:1, desc:'5까지 수 가르기'},
       {label:'모으기 · 가르기', thread:'NS2', level:2, desc:'9까지 수 가르기'},
@@ -478,7 +480,7 @@ var CURATED_TOPICS = [
       {label:'큰 수 정복', thread:'CH13', level:1, desc:'만·억·조'},
     ]
   },
-  { id:'middle1', label:'중등 · 정수와 유리수', en:'Middle 1 · Integers & Rationals', zh:'中学·整数与有理数', icon:'🌋', color:'#16417C', section:'magic',
+  { id:'middle1', label:'중등 · 정수와 유리수', en:'Middle 1 · Integers & Rationals', zh:'中学·整数与有理数', icon:'🌋', color:'#16417C', section:'school',
     subs:[
       {label:'절댓값·수직선 (연습)', thread:'MD1', level:1, desc:'절댓값 기초'},
       {label:'절댓값·수직선', thread:'MD1', level:2, desc:'절댓값(실전)'},
@@ -528,7 +530,7 @@ var CURATED_TOPICS = [
       {label:'정비례·반비례 혼합(실전)', thread:'MD51', level:3, desc:'혼합'},
     ]
   },
-  { id:'middle2', label:'중등 · 식의 계산', en:'Middle 2 · Expression Calculus', zh:'中学·式的运算', icon:'📐', color:'#5a4a8a', section:'magic',
+  { id:'middle2', label:'중등 · 식의 계산', en:'Middle 2 · Expression Calculus', zh:'中学·式的运算', icon:'📐', color:'#5a4a8a', section:'school',
     subs:[
       {label:'지수법칙 곱셈(aᵐ×aⁿ)', thread:'MD10', level:1, desc:'지수를 더하기'},
       {label:'거듭제곱의 거듭제곱', thread:'MD10', level:2, desc:'지수를 곱하기'},
@@ -553,7 +555,7 @@ var CURATED_TOPICS = [
       {label:'등식 변형→풀이 완주(실전)', thread:'MD14', level:3, desc:'이항+나눗셈'},
     ]
   },
-  { id:'middle3', label:'중등 · 제곱근과 공식', en:'Middle 3 · Roots & Formulas', zh:'中学·平方根与公式', icon:'🌈', color:'#16417C', section:'magic',
+  { id:'middle3', label:'중등 · 제곱근과 공식', en:'Middle 3 · Roots & Formulas', zh:'中学·平方根与公式', icon:'🌈', color:'#16417C', section:'school',
     subs:[
       {label:'완전제곱수의 제곱근', thread:'MD15', level:1, desc:'√N=k'},
       {label:'(√a)²=a', thread:'MD15', level:2, desc:'근호 제곱'},
@@ -581,7 +583,7 @@ var CURATED_TOPICS = [
       {label:'인수분해(십자곱셈, 실전)', thread:'MD20', level:6, desc:'x² 계수 ≠ 1'},
     ]
   },
-  { id:'highmath1', label:'고등 · 공통수학1', en:'High 1 · Common Math 1', zh:'高中·共同数学1', icon:'📦', color:'#0f2e4f', section:'magic',
+  { id:'highmath1', label:'고등 · 공통수학1', en:'High 1 · Common Math 1', zh:'高中·共同数学1', icon:'📦', color:'#0f2e4f', section:'school',
     subs:[
       {label:'다항식 곱셈(이항식×이항식)', thread:'MD21', level:1, desc:'전개 3다칸'},
       {label:'다항식 나눗셈(조립제법)', thread:'MD21', level:2, desc:'몫·나머지'},
@@ -615,7 +617,7 @@ var CURATED_TOPICS = [
       {label:'행렬곱(실전)', thread:'MD30', level:3, desc:'4다칸'},
     ]
   },
-  { id:'highmath2', label:'고등 · 공통수학2', en:'High 2 · Common Math 2', zh:'高中·共同数学2', icon:'📏', color:'#1b6e5b', section:'magic',
+  { id:'highmath2', label:'고등 · 공통수학2', en:'High 2 · Common Math 2', zh:'高中·共同数学2', icon:'📏', color:'#1b6e5b', section:'school',
     subs:[
       {label:'두 점 사이의 거리(연습)', thread:'MD31', level:1, desc:'[계수,근호안]'},
       {label:'두 점 사이의 거리(더 큰 좌표)', thread:'MD31', level:2, desc:'[계수,근호안]'},
@@ -634,7 +636,7 @@ var CURATED_TOPICS = [
       {label:'원의 방정식(공통계수, 실전)', thread:'MD35', level:3, desc:'[중심,반지름]'},
     ]
   },
-  { id:'algebra', label:'고등 · 대수', en:'High · Algebra', zh:'高中·代数', icon:'🪜', color:'#5b3a8f', section:'magic',
+  { id:'algebra', label:'고등 · 대수', en:'High · Algebra', zh:'高中·代数', icon:'🪜', color:'#5b3a8f', section:'school',
     subs:[
       {label:'유리수 지수(표기법 익히기)', thread:'MD36', level:1, desc:'[분자,분모]'},
       {label:'유리수 지수(약분 필요)', thread:'MD36', level:2, desc:'[분자,분모]'},
@@ -677,7 +679,7 @@ var CURATED_TOPICS = [
       {label:'삼각함수 혼합(주기+tan, 실전)', thread:'MD57', level:3, desc:'혼합'},
     ]
   },
-  { id:'calculus1', label:'고등 · 미적분Ⅰ', en:'High · Calculus Ⅰ', zh:'高中·微积分Ⅰ', icon:'🧭', color:'#0d3b66', section:'magic',
+  { id:'calculus1', label:'고등 · 미적분Ⅰ', en:'High · Calculus Ⅰ', zh:'高中·微积分Ⅰ', icon:'🧭', color:'#0d3b66', section:'school',
     subs:[
       {label:'극한(대입형)', thread:'MD43', level:1, desc:'다항식 대입'},
       {label:'극한(약분형, 0/0)', thread:'MD43', level:2, desc:'인수분해·약분'},
