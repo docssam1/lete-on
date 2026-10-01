@@ -70,7 +70,7 @@ const ROWS = [
     T('18세기 오일러가 "imaginary(상상의)"의 첫 글자 i를 쓰기 시작했어요.','In the 1700s Euler began using i, the first letter of "imaginary".','18世纪欧拉开始用“imaginary（想象的）”的首字母i。')],
   ['M-108', '|x|', T('절댓값','Absolute value','绝对值'), T('0에서 x까지의 거리 — 부호를 떼요','Distance from 0 to x — drop the sign','从0到x的距离——去掉符号'),
     T('1841년 독일의 바이어슈트라스가 양옆에 세로 막대를 세워 쓰기 시작했어요.','Karl Weierstrass of Germany began putting vertical bars on both sides in 1841.','1841年德国的魏尔斯特拉斯开始在两边各画一条竖线。')],
-  ['M-110', '!', T('팩토리얼','Factorial','阶乘'), T('1부터 그 수까지 모두 곱한다는 표시','Multiply all numbers from 1 up to it','从1乘到这个数'),
+  ['M-111', '!', T('팩토리얼','Factorial','阶乘'), T('1부터 그 수까지 모두 곱한다는 표시','Multiply all numbers from 1 up to it','从1乘到这个数'),
     T('1808년 프랑스의 크람프가 만들었어요. 놀란 것처럼 느낌표를 달았어요.','Christian Kramp made it in 1808. An exclamation mark, as if surprised how fast it grows.','1808年克拉姆普创造。用感叹号，好像在惊叹增长之快。')],
   ['M-113', 'ₙCᵣ', T('조합','Combination','组合'), T('순서를 따지지 않고 r개를 뽑는 방법의 수','Ways to pick r without caring about order','不管顺序，选出r个的方法数'),
     T('조합을 뜻하는 영어 Combination의 C예요.','The C is for "Combination".','C是“Combination（组合）”的首字母。')],
