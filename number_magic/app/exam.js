@@ -655,6 +655,54 @@
   .nm-lt-infant .nm-lt-card i { width:10mm; height:10mm; }
   .nm-lt-infant .nm-lt-stories { font-size:16.5px; gap:3.5mm; }
   .nm-lt-infant .nm-lt-oblank { width:20mm; }
+  /* 이해편 v2 — 주제 한 쪽 = 이야기 + 물음 사다리 (2026-10-01) */
+  .nm-lt-head small { margin-left:auto; font-size:11.5px; color:#5c6b70; font-weight:700; }
+  .nm-lt-think { flex:0 0 auto; margin:0 0 3mm; padding:2.5mm 4mm; border:1.4px dashed #C9A063; border-radius:3mm; background:#fdf6e3; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .nm-lt-think b { font-size:12.5px; color:#a3521c; }
+  .nm-lt-think ul { margin:1mm 0 0; padding-left:5mm; font-size:13px; line-height:1.6; color:#20343b; word-break:keep-all; }
+  .nm-lt-ladder { flex:1 1 auto; margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4.6mm; min-height:0; justify-content:space-evenly; }
+  .nm-lt-ladder.nm-lt-few { justify-content:flex-start; gap:8mm; margin-top:3mm; }
+  .nm-lt-qi { display:grid; grid-template-columns:7mm 1fr; gap:2mm; align-items:start; break-inside:avoid; }
+  .nm-lt-qn { font-size:15px; font-weight:800; color:#245b60; line-height:1.5; }
+  .nm-lt-qt { margin:0 0 1.6mm; font-size:15px; line-height:1.55; color:#20343b; word-break:keep-all; }
+  .nm-lt-infant .nm-lt-qt { font-size:17px; }
+  .nm-lt-inl { display:inline-flex; align-items:center; gap:2mm; font-size:15px; color:#20343b; }
+  .nm-lt-inl em { font-style:normal; font-weight:700; }
+  .nm-lt-chs { font-weight:700; color:#245b60; }
+  .nm-lt-pic { display:flex; flex-wrap:wrap; gap:2mm 6mm; padding:2mm 3mm; border:1.2px solid #cfdcdc; border-radius:3mm; background:#fff; }
+  .nm-lt-pr { display:flex; align-items:center; gap:2.5mm; min-height:8mm; }
+  .nm-lt-pr small { font-size:11px; color:#5c6b70; }
+  .nm-lt-drawme { flex:1 1 40mm; border:1.2px dashed #245b60; border-radius:2mm; padding:0 2mm; }
+  .nm-lt-pick { display:flex; flex-wrap:wrap; gap:1.5mm 7mm; font-size:14.5px; color:#20343b; }
+  .nm-lt-pick span { display:inline-flex; align-items:center; gap:1.8mm; word-break:keep-all; }
+  .nm-lt-pick i { width:4.5mm; height:4.5mm; border:1.4px solid #245b60; border-radius:50%; flex:0 0 auto; }
+  .nm-lt-opl { display:flex; align-items:center; gap:3mm; font-size:19px; font-weight:800; color:#20343b; }
+  .nm-lt-opc { width:11mm; height:11mm; border:1.6px solid #245b60; border-radius:50%; background:#fff; }
+  .nm-lt-ord { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:2mm; font-size:14.5px; line-height:1.5; color:#20343b; word-break:keep-all; }
+  .nm-lt-ord li b { margin-right:1.5mm; color:#245b60; }
+  .nm-lt-par { margin-left:2mm; font-weight:700; color:#245b60; white-space:nowrap; }
+  .nm-lt-mini li { padding-bottom:1mm; }
+  .nm-lt-opline { margin-top:.5mm; font-size:12px; color:#5c6b70; }
+  .nm-lt-solve { display:flex; gap:6mm; margin-top:1mm; font-size:12px; color:#5c6b70; align-items:center; }
+  .nm-lt-eqw { display:flex; align-items:center; }
+  .nm-lt-pics3 { display:flex; flex-wrap:wrap; gap:2mm 6mm; }
+  .nm-lt-pics3 span { display:inline-flex; align-items:center; gap:2mm; padding:1.5mm 3mm; border:1.2px solid #cfdcdc; border-radius:2.5mm; background:#fff; }
+  .nm-lt-pics3 .nm-lt-dots { font-size:13px; letter-spacing:.6mm; display:inline; }
+  .nm-lt-pairbox { display:flex; flex-direction:column; gap:1.5mm; margin-bottom:1.5mm; font-size:14.5px; line-height:1.55; color:#20343b; word-break:keep-all; }
+  .nm-lt-pairbox p { margin:0; padding:1.5mm 3mm; border:1.2px solid #cfdcdc; border-radius:2.5mm; background:#fff; }
+  .nm-lt-fillul { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:2mm; font-size:14.5px; color:#20343b; word-break:keep-all; }
+  .nm-lt-match { display:flex; gap:20mm; font-size:13px; color:#20343b; }
+  .nm-lt-match > div { display:flex; flex-direction:column; gap:2mm; }
+  .nm-lt-match span { padding:1mm 3mm; border:1.2px solid #cfdcdc; border-radius:2mm; background:#fff; }
+  .nm-lt-sl span { display:inline; }
+  .nm-lt-slash { display:inline-block; width:3mm; height:4.5mm; margin:0 1mm; border-right:1.6px dashed #D9534F; transform:skewX(-18deg); vertical-align:-1mm; }
+  .nm-lt-circ { display:inline-block; width:10mm; height:10mm; border:1.6px solid #245b60; border-radius:50%; }
+  .nm-lt-drawbox { height:20mm; border:1.3px dashed #245b60; border-radius:3mm; background:#fff; }
+  .nm-lt-lines { display:flex; flex-direction:column; gap:1mm; }
+  .nm-lt-lines i { display:block; height:7mm; border-bottom:1px solid #b9c6c6; }
+  .nm-lt-ladder .nm-lt-abox { height:10mm; }
+  .nm-lt-infant .nm-lt-ladder .nm-lt-abox { height:12.5mm; }
+  .nm-lt-group { display:inline-block; min-width:14mm; min-height:8mm; margin-right:2mm; padding:1mm 2mm; border:1.2px dashed #245b60; border-radius:2.5mm; background:#fff; }
   .nm-lt-infant .nm-lt-eq { font-size:30px; }
   .nm-lt-infant .nm-lt-eq .nm-lt-num { width:20mm; height:15mm; }
   .nm-lt-infant .nm-lt-eq .nm-lt-op { width:14mm; height:14mm; line-height:14mm; }
