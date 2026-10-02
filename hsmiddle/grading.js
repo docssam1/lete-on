@@ -144,9 +144,12 @@
       return setEqualOrdered(tokens(rawValue), tokens(correct));
     }
 
-    /* 순서형 (20번) */
+    /* 원본 시험지에 ㄱ/ㄴ/ㄷ 표시가 누락되어 분수 순서 답도 인정 */
     if (qNum === 20) {
-      return normBase(rawValue).replace(/,/g, '') === normBase(correct).replace(/,/g, '');
+      var labelAnswer = normBase(rawValue).replace(/[ ,>＞]/g, '');
+      if (labelAnswer === 'ㄱㄷㄴ') return true;
+      var fractionOrder = String(rawValue).split(/[ ,>＞\s]+/).map(normBase).filter(Boolean);
+      return setEqualOrdered(fractionOrder, tokens(correct));
     }
 
     /* 분수형 (24, 38번): 기약분수 표기 그대로 요구, 수치 동치 불인정 */
