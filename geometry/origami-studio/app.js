@@ -1,4 +1,4 @@
-import { levels as foldLevels } from "../games/paper-fold/levels.js?v=paper-fold-13";
+import { levels as foldLevels } from "../games/paper-fold/levels.js?v=paper-fold-14";
 import { levels as turnLevels } from "../games/paper-turn/levels.js?v=paper-turn-1";
 import { readProfile } from "../shared/profile-storage.js";
 
@@ -19,6 +19,9 @@ Object.assign(text.ja,{subtitle:"折って開く、数えて計算する、重�
 Object.assign(text.en,{subtitle:"Learn fold-and-open, counting and calculation, overlap order, and direction tracking in sequence.",courseTwo:"COURSE 2 · Count and Calculate",applicationTitle:"Locate affected cells, then calculate",applicationDesc:"Practice cut and remaining sums and numbers after repeated folds.",courseThree:"COURSE 3 · Overlap Order",overlapTitle:"Use visible edges to find the stack order",overlapDesc:"Reason separately about the top, bottom, and full order.",courseFour:"COURSE 4 · Direction Tracking"});
 const t = (key) => text[lang]?.[key] || text.ko[key];
 const difficultyText = {
+  기초: { ko:"기초", zh:"基础", ja:"基礎", en:"Basic" },
+  응용: { ko:"응용", zh:"应用", ja:"応用", en:"Applied" },
+  심화: { ko:"심화", zh:"进阶", ja:"発展", en:"Advanced" },
   입문: { ko:"입문", zh:"入门", ja:"入門", en:"Intro" },
   초급: { ko:"초급", zh:"初级", ja:"初級", en:"Beginner" },
   중급: { ko:"중급", zh:"中级", ja:"中級", en:"Intermediate" }
@@ -42,7 +45,7 @@ function renderLevels(levels, selector, game, accents) {
   });
 }
 
-renderLevels(foldLevels, "#foldLevelGrid", "paper-fold", ["#eb7f6a", "#57a7d7"]);
+renderLevels(foldLevels, "#foldLevelGrid", "paper-fold", ["#eb7f6a", "#57a7d7", "#8d75c9"]);
 
 const foldWorksheetActivities = [
   {

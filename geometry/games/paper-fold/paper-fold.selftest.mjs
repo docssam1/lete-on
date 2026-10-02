@@ -7,13 +7,14 @@ import { seededRandom, sessionQueue, visualProblemKey } from "./session-order.js
 
 validateLevels();
 
-assert.equal(levels.length, 2);
-assert.deepEqual(levels.map((level) => level.title.ko), ["색종이 접어 자르기", "색종이 접어 구멍 뚫기"]);
-assert.deepEqual(levels.map((level) => level.problems.length), [52, 36]);
+assert.equal(levels.length, 3);
+assert.deepEqual(levels.map((level) => level.title.ko), ["색종이 접어 자르기", "색종이 접어 구멍 뚫기", "접는 방법 거꾸로 찾기"]);
+assert.deepEqual(levels.map((level) => level.problems.length), [52, 36, 24]);
 
 const expectedInteractions = [
   new Set(["piece-count", "region-unfold", "connect-match"]),
-  new Set(["hole-count", "hole-result", "mixed-hole-result", "connect-match"])
+  new Set(["hole-count", "hole-result", "mixed-hole-result", "connect-match"]),
+  new Set(["fold-line-pick", "fold-result-multi"])
 ];
 const ids = new Set();
 
@@ -54,6 +55,18 @@ levels.forEach((level, levelIndex) => {
       assert.equal(problem.pointStages.length, 2);
       assert.deepEqual(problem.pointStages.at(-1), problem.unfoldedPoints);
       assert.equal(problem.choices.find((choice) => choice.key === problem.answer).value, problem.unfoldedPoints.length);
+    } else if (problem.interaction === "fold-line-pick") {
+      assert.equal(problem.answerContract, "single");
+      assert.equal(problem.lineChoices.filter((choice) => choice.correct).length, 1);
+      assert.equal(problem.lineChoices.find((choice) => choice.correct).key, problem.answerKey);
+      assert.ok(problem.lineChoices.length >= 3);
+      assert.equal(problem.resultPieces.length, 2);
+    } else if (problem.interaction === "fold-result-multi") {
+      assert.equal(problem.answerContract, "multiple");
+      assert.equal(problem.resultOptions.length, 4);
+      assert.equal(problem.answerKeys.length, 2);
+      assert.equal(problem.resultOptions.filter((choice) => choice.correct).length, 2);
+      assert.deepEqual(problem.resultOptions.filter((choice) => choice.correct).map((choice) => choice.key), problem.answerKeys);
     } else if (problem.interaction === "hole-result") {
       assert.equal(problem.folds.length, 2);
       assert.equal(problem.unfoldSteps.length, 2);
@@ -73,6 +86,7 @@ levels.forEach((level, levelIndex) => {
       else assert.ok(problem.pairs.every((item) => item.kind.includes("holes")));
     }
 
+    if (levelIndex === 2) return;
     const specimen = problem.interaction === "connect-match" ? problem.pairs[0] : problem;
     for (const sample of problem.pairs || [problem]) {
       if (!sample.pointStages) continue;
@@ -105,7 +119,7 @@ levels.forEach((level, levelIndex) => {
   });
 });
 
-assert.equal(ids.size, 88);
+assert.equal(ids.size, 112);
 
 const reflectIndependent = ({ x, y }, axis) => ({
   vertical: { x: 1 - x, y }, horizontal: { x, y: 1 - y },
@@ -152,4 +166,4 @@ const expectedCoverageIds = [
 ];
 assert.deepEqual([...coverageIds].sort(), expectedCoverageIds.sort(), "the 33-source coverage matrix is incomplete");
 
-console.log("Paper Fold self-test passed: 33 source pages, 88 problems, independent reflections, unique choices and 2/3/4-player orders across 120 seeded sets.");
+console.log("Paper Fold self-test passed: 33 source pages, 112 problems, independent reflections, unique choices and 2/3/4-player orders across 120 seeded sets.");

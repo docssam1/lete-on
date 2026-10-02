@@ -155,7 +155,7 @@ body, .fold-shell, .paper-panel, .paper-stage { background: #fff; }
 .fold-sequence-view figure { gap: 10px; align-content: center; }
 .fold-sequence-view figcaption { font-size: 13px; font-weight: 700; line-height: 1.45; text-align: center; color: #5b6b67; overflow-wrap: anywhere; }
 .fold-sequence-view .paper-action-step figcaption { color: #126c66; font-weight: 850; }
-.step-arrow { color: #acbdb8; font-size: 30px; text-align: center; }
+.step-arrow { color: #acbdb8; font-size: 30px; text-align: center; pointer-events: none; }
 .learning-step-label { color: var(--teal); font-size: 14px; font-weight: 800; line-height: 1.45; text-align: center; overflow-wrap: anywhere; }
 .result-question { border: 1.5px dashed #c1cfcc; border-radius: 6px; background: #fff; color: #9aafaa; font-family: var(--fold-title-font); font-size: 60px; font-weight: 500; }
 .pending-step figcaption { color: #788883; }
@@ -440,4 +440,35 @@ body.embedded .connect-card .paper-diagram {
 
 @media (prefers-reduced-motion: reduce) {
   .fold-shell *, .fold-shell *::before, .fold-shell *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* 접는 방법 거꾸로 찾기: 결과 도형은 같은 색 조각을 겹쳐 그린 뒤 같은 조각으로
+   한 번 더 덮어 안쪽 선을 지운다. 남는 외곽선이 곧 두 조각의 합집합이다. */
+.reverse-outline { stroke-width: 2.8; }
+.reverse-cover { stroke: none; }
+.reverse-layer-edge { fill: none; stroke: var(--sheet-edge); stroke-width: 1.2; stroke-linejoin: round; opacity: .78; }
+.reverse-crease { stroke-dasharray: 7 5; opacity: .9; }
+.reverse-line-zone { stroke-dasharray: none; stroke-width: 1.1; opacity: .3; }
+.reverse-line-zone:hover, .reverse-line-zone:focus-visible { opacity: 1; }
+.fold-sequence-view.reverse-sequence { grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr); grid-template-rows: auto; }
+.fold-sequence-view.reverse-sequence.single { grid-template-columns: minmax(0, 1fr); }
+.fold-sequence-view.reverse-sequence .reverse-diagram { width: min(100%, 300px); max-height: 34vh; }
+.fold-sequence-view.reverse-sequence.single .reverse-diagram { width: min(100%, 360px); max-height: 46vh; }
+.answer-dock .result-choices.reverse-choices { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.reverse-choice .reverse-diagram { width: min(100%, 118px); height: auto; max-height: none; margin: auto; filter: none; }
+.reverse-choice[aria-pressed="true"] { border-color: #147d68; box-shadow: 0 0 0 2px #147d6830, 0 3px 0 #147d68; }
+
+@media (orientation: portrait) and (max-width: 600px) {
+  .fold-sequence-view.reverse-sequence { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 20px auto; }
+  .fold-sequence-view.reverse-sequence .step-arrow { transform: rotate(90deg); }
+  .fold-sequence-view.reverse-sequence .reverse-diagram { max-height: 34vh; }
+  .fold-sequence-view.reverse-sequence.single .reverse-diagram { max-height: 44vh; }
+  .reverse-choice { min-height: 84px; padding: 6px 2px; }
+  .reverse-choice .reverse-diagram { width: min(100%, 70px); height: auto; }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  .fold-sequence-view.reverse-sequence .reverse-diagram { max-height: 42vh; }
+  .reverse-choice { min-height: 76px; }
+  .reverse-choice .reverse-diagram { width: min(100%, 66px); height: auto; }
 }

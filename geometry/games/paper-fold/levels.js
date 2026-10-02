@@ -1,1 +1,1 @@
-export * from "./curriculum.js?v=paper-fold-4";
+export * from "./curriculum.js?v=paper-fold-5";

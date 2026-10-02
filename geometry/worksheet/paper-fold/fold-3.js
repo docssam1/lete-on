@@ -196,7 +196,7 @@ const sharedAxisLabel={vertical:'세로',horizontal:'가로','diag-main':'왼쪽
 
 async function loadSharedGameLevels(){
   try{
-    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-13');
+    const module=await import('../../games/paper-fold/levels.js?v=paper-fold-14');
     module.validateLevels();
     sharedGameLevels=module.levels;
   }catch(error){

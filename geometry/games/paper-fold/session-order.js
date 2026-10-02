@@ -19,7 +19,7 @@ export function shuffle(items, random = Math.random) {
 }
 
 export function visualProblemKey(item) {
-  const specimen = (p) => [p.folds, p.cutSegments, p.cutMarks, p.punches];
+  const specimen = (p) => [p.folds, p.cutSegments, p.cutMarks, p.punches, p.figureKey];
   return JSON.stringify([item.interaction, specimen(item), item.pairs?.map(specimen)]);
 }
 
