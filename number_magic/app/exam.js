@@ -4748,6 +4748,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
   if(!info) return '';
   const nm = pickL(info.thread.name) || threadId;
   const lvObj = (info.thread.levels || []).find(l => l.id === level);
+  const visual = window.NM_CONCEPT_VISUALS ? NM_CONCEPT_VISUALS.html(threadId, level, examLang()) : '';
   const middle = examLang() === 'ko' && (window.NM_MIDDLE_CONCEPTS || {})[threadId];
   if(middle){
     // 레벨의 목표를 공통 개념으로 덮어쓰지 않는다. 원본 재구성 설명은 한국어만 제공한다.
@@ -4760,6 +4761,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
       ${middle.tip ? `<p class="nm-mid-tip"><b>풀이 팁</b> ${escEmph(middle.tip)}</p>` : ''}
       <p class="nm-mid-caution"><b>헷갈리지 않기</b> ${esc(middle.caution)}</p>
       ${focus ? `<p class="nm-mid-focus"><b>이번 단계에서는</b> ${escEmph(focus)}</p>` : ''}
+      ${visual}
       ${extra.rampN ? `<p>마지막 ${extra.rampN}문항은 한 단계 높은 문제입니다. 배운 원리를 연결해 보세요.</p>` : ''}
     </section>`;
   }
@@ -4794,9 +4796,10 @@ function w2ConceptPanelHtml(threadId, level, extra){
     <div class="nm-w2-board-body">
       <div class="nm-mn-kicker">${esc(lk('개념','CONCEPT','概念'))} · ${esc(nm)}</div>
       ${sentence ? `<p class="nm-w2-concept-sentence">${escEmph(sentence)}</p>` : ''}
-      ${stageLines}
+      ${visual ? '' : stageLines}
     </div>
   </div>
+  ${visual}
   ${ruleLines.length ? `<div class="nm-w2-note"><i class="nm-w2-note-bang">!</i><div><b>${esc(lk('마법의 규칙','The Magic Rule','魔法规则'))}</b>${ruleLines.map(t => `<p class="nm-w2-concept-rule">${esc(t)}</p>`).join('')}</div></div>` : ''}
   ${tipHtml}
   ${extra.rampN ? `<p class="nm-w2-concept-ramp">${esc(lk(`뒤 ${extra.rampN}문항은 한 단계 어려운 문제예요 — 예시처럼 풀어 보세요.`,`The last ${extra.rampN} are one step harder — solve them like the example.`,`最后${extra.rampN}题难度高一级——照例题的方法做。`))}</p>` : ''}
@@ -5677,8 +5680,12 @@ function renderRoundPagesBody(item, opts){
   const wordNeed = wordRow ? (wordRow[{ young:0, mid:1, senior:2 }[band]] || (opts.mixed && !opts.band ? Math.max(...wordRow.filter(x => x != null)) : 0) || 0) : 0;
   const rowNeed = headBand && (headBand[2] || mixNeed || wordNeed) ? Math.max(headBand[2] || 0, mixNeed, wordNeed) * fsR + 3 : 0;
   const midPage = !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread] || !!item.pacing;
-  if(rowNeed && headBand[3] && layout.type !== 'train'){
-    const fit = Math.max(1, Math.floor(headBand[3] / rowNeed));
+  /* A new level can initially put every practice item on the first page, so the
+     measuring pass has no later full-page grid and [3] is null. Still cap rows
+     by the A4 body; do not skip the height limit in that bootstrap state. */
+  const fullPageAvail = headBand && headBand[3] != null ? headBand[3] : 235;
+  if(rowNeed && layout.type !== 'train'){
+    const fit = Math.max(1, Math.floor(fullPageAvail / rowNeed));
     /* 중등 연습 면은 한 쪽 6문항 이상(GPT 지면 규칙, 중등 검사기들이 본다) — 그 밑으로는 줄이지 않는다.
        초등 문장제 카드(WP)는 원래 한 쪽 4~6장으로 설계됐고, 6장을 억지로 넣으면 글이 잘린다 — 잰 높이를 따른다. */
     const minRows = midPage ? Math.ceil(Math.min(6, layout.perPage) / layout.cols) : 1;

@@ -6183,7 +6183,7 @@ function stepDiscover(body,u){
       </figure>`).join('')}</div>`
     :(st&&st.history?`<div class="nm-story-hist">🏛 ${L(st.history)}</div>`:'');
   const storyHtml=st?`${artHtml}<div class="nm-story${isMidHigh?' doc':''}">
-      ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<div class="nm-story-numi">🧙</div>`}
+      ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<img class="nm-story-numi" src="assets/images/characters/numi.png" alt="">`}
       <div class="nm-story-bubble">${L(st.hook)}</div>
     </div>${histHtml}`:'';
   /* 이 개념과 짝인 실험실이 있으면(UNIT_LABS) 노트 하단에서 바로 연다.

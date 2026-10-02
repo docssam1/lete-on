@@ -2,21 +2,20 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,wig}=H;
+  const rods=(n,dark)=> (dark?'<defs><filter id="nm-dark-counting-rod" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".05 .05 .05 0 0 .05 .05 .05 0 0 .05 .05 .05 0 0 0 0 0 1 0"/></filter></defs>':'')+
+    Array.from({length:n},(_,i)=>'<image href="assets/images/concepts/counting-rod.png" x="'+(32+i*20)+'" y="33" width="43" height="74"'+(dark?' filter="url(#nm-dark-counting-rod)"':'')+'/>').join('');
   return { panels:[
     { art: svg(
         '<rect x="30" y="30" width="140" height="80" rx="6" fill="#fdf6e3" stroke="#C9A063" stroke-width="2.5"/>'
-        +'<line x1="56" y1="46" x2="56" y2="94" stroke="#D9534F" stroke-width="5" stroke-linecap="round"/>'
-        +'<line x1="76" y1="46" x2="76" y2="94" stroke="#D9534F" stroke-width="5" stroke-linecap="round"/>'
-        +'<line x1="96" y1="46" x2="96" y2="94" stroke="#D9534F" stroke-width="5" stroke-linecap="round"/>'
-        +'<text x="138" y="80" text-anchor="middle" font-size="26" font-weight="800" fill="#D9534F">+</text>'),
+        +rods(3,false)
+        +'<text x="138" y="80" text-anchor="middle" font-size="26" font-weight="800" fill="#D9534F">+3</text>'),
       text: { ko:'2,000년 전 중국 『구장산술』은 산가지 막대로 계산했어요. 붉은 가지는 더하는 수(+)!',
               en:'Two thousand years ago, Chinese mathematicians computed with counting rods. Red rods meant positive numbers (+)!',
               zh:'两千年前，《九章算术》用算筹来计算。红色的筹表示正数(+)！' } },
     { art: svg(
         '<rect x="30" y="30" width="140" height="80" rx="6" fill="#fdf6e3" stroke="#C9A063" stroke-width="2.5"/>'
-        +'<line x1="56" y1="46" x2="56" y2="94" stroke="#1A2233" stroke-width="5" stroke-linecap="round"/>'
-        +'<line x1="76" y1="46" x2="76" y2="94" stroke="#1A2233" stroke-width="5" stroke-linecap="round"/>'
-        +'<text x="130" y="80" text-anchor="middle" font-size="26" font-weight="800" fill="#1A2233">−</text>'),
+        +rods(2,true)
+        +'<text x="138" y="80" text-anchor="middle" font-size="26" font-weight="800" fill="#1A2233">−2</text>'),
       text: { ko:'검은 가지는 빼는 수(−). 색만 봐도 부호가 한눈에 보였죠!',
               en:'Black rods meant negative numbers (−). One glance at the colour told you the sign!',
               zh:'黑色的筹表示负数(−)。一看颜色就知道正负！' } },
