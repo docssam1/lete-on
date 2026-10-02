@@ -1,4 +1,4 @@
-/* N-07 — 여덟, 아홉이라는 이름의 비밀 (수 이웃과 10 짝꿍) */
+/* N-07 — 빈 칸을 채워 찾는 10 짝꿍 (검증되지 않은 수 이름 어원은 싣지 않는다) */
 'use strict';
 module.exports=function(H){
   const {C,svg,arrow,txt,numi}=H;
@@ -11,26 +11,26 @@ module.exports=function(H){
     { art: svg(
         frame(28,34,8)
         +txt(174,45,20,C.ink,'8')+numi(172,103,0.9)),
-      text:{ ko:'우리말 "여덟"이라는 이름은 어디서 왔을까요? 열 칸 중 여덟 칸을 채워 보아요.',
-             en:'Where does the Korean word for eight come from? Fill eight of the ten boxes.',
-             zh:'韩语"八"这个名字是从哪儿来的呢？先填满十格中的八格。' } },
+      text:{ ko:'10칸 중 8칸을 채웠어요. 빈 칸은 몇 개일까요?',
+             en:'8 of the 10 spaces are filled. How many are empty?',
+             zh:'10格中填满了8格。还空着几格呢？' } },
     { art: svg(
         frame(28,34,8)
         +txt(100,110,20,C.ink,'8 + 2 = 10')),
-      text:{ ko:'여덟은 열에서 딱 둘이 모자란다는 뜻이래요. 빈 칸 두 개가 바로 그 모자란 수예요.',
-             en:'Eight is said to mean "two short of ten" — the two empty boxes are exactly that gap.',
-             zh:'据说"八"就是"离十差二"的意思。空着的两格正好就是那个差数。' } },
+      text:{ ko:'빈 칸 2개를 더 채우면 10이 돼요. 8의 10 짝꿍은 2예요!',
+             en:'Fill the 2 empty spaces to make 10. The partner of 8 is 2!',
+             zh:'再填满2个空格就是10。8的凑十朋友是2！' } },
     { art: svg(
         frame(28,34,9)
         +txt(100,110,20,C.ink,'9 + 1 = 10')),
-      text:{ ko:'아홉은 하나가 모자라고, 열은 손가락을 접었다 다시 다 폈다는 뜻이에요.',
-             en:'Nine is one short, and ten means every folded finger has opened again.',
-             zh:'"九"是差一，"十"是弯着的手指全都又张开了。' } },
+      text:{ ko:'9칸을 채우면 1칸이 비어요. 9와 1을 모으면 10이에요.',
+             en:'With 9 filled spaces, 1 is empty. 9 and 1 make 10.',
+             zh:'填满9格，就空着1格。9和1合起来是10。' } },
     { art: svg(
         frame(28,44,7)
         +txt(100,110,20,C.ink,'7 + 3 = 10')),
-      text:{ ko:'조상님도 늘 10을 기준으로 셌대요. 지금 우리가 10 짝꿍을 찾는 것과 똑같지요!',
-             en:'Our ancestors always measured by ten too — just like us finding partners of 10 today!',
-             zh:'祖先们数数也总以10为准——和我们现在找凑十朋友一模一样！' } },
+      text:{ ko:'7칸을 채우면 빈 칸은 3개예요. 채운 칸과 빈 칸을 모으면 언제나 10이에요.',
+             en:'With 7 filled spaces, 3 are empty. Filled and empty spaces always total 10.',
+             zh:'填满7格，就空着3格。已填的格子和空格合起来总是10格。' } },
   ]};
 };

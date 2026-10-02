@@ -33,10 +33,13 @@
        }],
        onSay?  : (text, charId) => void   말풍선이 뜰 때(앱이 음성을 켰으면 TTS 를 여기서)
        onReady?: () => void               첫 장면을 그린 뒤
+       snapshot?: object                 ctl.snapshot()의 방문 시점(진도와 별개)
        touchAction? : CSS touch-action (기본 'none' — 마을은 전체 화면이라 끌기=지도 이동)
      }
    돌려주는 ctl = {
        dispose()          — 모든 GPU 자원·이벤트·DOM 을 푼다(container 가 문서에서 빠져도 스스로 푼다)
+       ready              — 첫 프레임을 그린 뒤 true, 먼저 닫혔으면 false로 완료되는 Promise
+       snapshot()         — 마을로 돌아올 때 쓸 카메라·캐릭터 위치 사본
        setLang(l)         — 라벨·이름표 언어 바꾸기
        refresh(spots)     — 잠금 상태 갱신(opts.spots 와 같은 모양, 일부만 줘도 된다)
        zoomIn(), zoomOut(), focusPlayer()  — 앱의 ＋/－/📍 버튼용
@@ -685,6 +688,10 @@ export async function mountTown3D(container, opts){
     if(pointers.size === 0){ wrap.classList.remove('drag'); if(wasTap) tap(e.clientX, e.clientY); drag = null; }
     lastUser = performance.now(); wake();
   }
+  function onCancel(e){
+    pointers.delete(e.pointerId);pinch=null;drag=null;wrap.classList.remove('drag');
+    lastUser=performance.now();wake();
+  }
   function tap(cx, cy){
     const h = pick(cx, cy);
     if(!h) return;
@@ -710,7 +717,7 @@ export async function mountTown3D(container, opts){
   canvas.addEventListener('pointerdown', onDown);
   canvas.addEventListener('pointermove', onMove);
   canvas.addEventListener('pointerup', onUp);
-  canvas.addEventListener('pointercancel', onUp);
+  canvas.addEventListener('pointercancel', onCancel);
   canvas.addEventListener('wheel', onWheel, { passive:false });
   canvas.addEventListener('keydown', onKey);
 
@@ -825,6 +832,8 @@ export async function mountTown3D(container, opts){
     return moving;
   }
 
+  let resolveReady;
+  const ready = new Promise(resolve => { resolveReady = resolve; });
   let raf = 0, running = true, visible = true, dirty = true, last = performance.now(), t0 = last, disposed = false, readySent = false;
   function frame(now){
     raf = 0;
@@ -840,7 +849,7 @@ export async function mountTown3D(container, opts){
     if(!reduce) world.animate(t, dt);
     const animating = !reduce || moving || dirty || now - lastUser < 600;
     if(animating){ renderer.render(scene, camera); layoutLabels(); layoutChars(); dirty = false; }
-    if(!readySent){ readySent = true; opts.onReady && opts.onReady(); }
+    if(!readySent){ readySent = true; resolveReady(true); opts.onReady && opts.onReady(); }
     if(running && visible && (animating || !reduce)) raf = requestAnimationFrame(frame);
   }
   function wake(){ if(!raf && running && visible && !disposed){ last = performance.now(); raf = requestAnimationFrame(frame); } }
@@ -856,11 +865,12 @@ export async function mountTown3D(container, opts){
 
   function dispose(){
     if(disposed) return; disposed = true;
+    if(!readySent)resolveReady(false);
     if(raf) cancelAnimationFrame(raf); raf = 0; clearInterval(alive);
     if(io) io.disconnect(); if(ro) ro.disconnect(); else window.removeEventListener('resize', resize);
     document.removeEventListener('visibilitychange', onVis);
     canvas.removeEventListener('pointerdown', onDown); canvas.removeEventListener('pointermove', onMove);
-    canvas.removeEventListener('pointerup', onUp); canvas.removeEventListener('pointercancel', onUp);
+    canvas.removeEventListener('pointerup', onUp); canvas.removeEventListener('pointercancel', onCancel);
     canvas.removeEventListener('wheel', onWheel); canvas.removeEventListener('keydown', onKey);
     /* 3D 캐릭터는 키트가 지오메트리·재질을 캐릭터끼리 공유한다 — 장면 순회로 하나씩 버리지 말고 떼어 낸 뒤 캐시째 비운다 */
     for(const ch of chars) if(ch.model){ if(ch.hit) ch.obj.remove(ch.hit); ch.model.dispose(); }
@@ -886,12 +896,29 @@ export async function mountTown3D(container, opts){
   const narrow = W / H < 0.8;
   if(narrow && player){ cam.x = player.x - 1.5; cam.z = player.z - 6.5; cam.d = 44; }
   else { cam.x = 0; cam.z = -3; cam.d = W / H > 1.5 ? 58 : 64; }
+  /* 같은 방문 안에서만 복원한다. 진행·언어·캐릭터 장식은 최신 opts를 사용하고,
+     이전 장면의 메시·재질은 재사용하지 않아 나간 화면의 GPU 자원을 유지하지 않는다. */
+  const previous = opts.snapshot;
+  if(previous && previous.camera){
+    for(const k of ['x','z','d'])if(Number.isFinite(previous.camera[k]))cam[k]=previous.camera[k];
+    follow=previous.follow===true;
+    for(const ch of chars){
+      const p=(previous.characters||[]).find(c=>c.id===ch.def.id);
+      if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.z))continue;
+      ch.x=clamp(p.x,X0+1,X1-1);ch.z=clamp(p.z,Z0+1,Z1-1);
+      ch.dir=['n','s','e','w'].includes(p.dir)?p.dir:'s';
+      if(Number.isFinite(p.facing)&&ch.model)ch.model.faceNow(p.facing);
+    }
+  }
   placeCam();
   paintLabels(); applyLocks();
   wake();
 
   return {
-    dispose,
+    dispose, ready,
+    snapshot(){return {camera:{x:cam.x,z:cam.z,d:cam.d},follow,
+      characters:chars.map(ch=>({id:ch.def.id,x:ch.x,z:ch.z,dir:ch.dir,
+        facing:ch.obj?ch.obj.rotation.y:0}))};},
     setLang(l){ lang = l || 'ko'; canvas.setAttribute('aria-label', L({ ko:'마을 지도 3D', en:'Village map (3D)', zh:'村庄地图 3D' }, lang)); paintLabels(); dirty = true; wake(); },
     refresh(spots){ (spots || []).forEach(s => { spotState[s.id] = Object.assign(spotState[s.id] || {}, s); }); paintLabels(); applyLocks(); wake(); },
     zoomIn(){ cam.d /= 1.25; placeCam(); wake(); },

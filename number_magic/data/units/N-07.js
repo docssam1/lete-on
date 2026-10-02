@@ -20,12 +20,12 @@ window.NM_UNITS['N-07'] = {
 
   discover:{
     story:{
-      hook:{ ko:'여덟, 아홉이라는 우리말 이름은 어디서 왔을까요?',
-        en:'Where do the Korean number names for eight and nine come from?',
-        zh:'韩语里八和九的名字是从哪儿来的呢？' },
-      history:{ ko:'열에서 얼마나 모자라는지를 보고 붙인 이름이라고 해요. 여덟은 열에서 둘이 모자라고, 아홉은 하나가 모자라죠. 열은 굽혔던 손가락을 모두 열었다는 뜻이고요. 우리 조상들도 수를 셀 때 10을 기준으로 삼았다는 뜻이에요 — 지금 우리가 10 짝꿍을 찾는 것과 똑같이요.',
-        en:'They seem to be named by how far they fall short of ten: eight is two short, nine is one short, and ten means all the folded fingers have opened again. Our ancestors already measured numbers against 10 — exactly what we do when we hunt for partners that fill 10.',
-        zh:'据说是按照离十还差多少来取名的：八差二，九差一，而十的意思是弯着的手指全都张开了。我们的祖先数数时就已经以10为准——和我们现在找凑十朋友是一样的。' }
+      hook:{ ko:'구슬 8개가 있어요. 몇 개를 더 놓으면 10칸이 가득 찰까요?',
+        en:'There are 8 beads. How many more will fill all 10 spaces?',
+        zh:'已经有8颗珠子了。再放几颗，才能填满10个格子呢？' },
+      history:{ ko:'10칸 판에 구슬 8개를 놓으면 빈 칸은 2개예요. 빈 칸을 채우면 8과 2가 모여 10이 되지요. 구슬이 9개면 1개, 7개면 3개가 더 필요해요. 채운 칸과 빈 칸을 함께 보면 10 짝꿍을 찾을 수 있어요.',
+        en:'Place 8 beads in a ten-frame and 2 spaces stay empty. Fill them: 8 and 2 make 10. With 9 beads you need 1 more; with 7 you need 3 more. Look at the filled and empty spaces together to find partners of 10.',
+        zh:'在十格板上放8颗珠子，就会空出2格。填满它们，8和2合起来就是10。有9颗时还需要1颗，有7颗时还需要3颗。把已填的格子和空格一起看，就能找到凑十朋友。' }
     },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
