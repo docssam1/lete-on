@@ -20,16 +20,38 @@
     return Math.round(n * 100) / 100;
   }
 
+  // stroke-width 1.2 (was 1): a hairline at screen size but, once a printer's
+  // halftone rounds it, "1" often thins away to a broken or invisible edge —
+  // 1.2 is the smallest bump that still reads as a clean solid line on a
+  // laser printer while staying a hairline on screen. Every polygon in this
+  // file (cube faces, IH walls/floor, HL holes) shares this one width so a
+  // shape's outline is never thinner than its neighbour's for no reason.
   function polygon(pts, fill, stroke) {
     const d = pts.map((p) => fmt(p.px) + "," + fmt(p.py)).join(" ");
-    return '<polygon points="' + d + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="1" stroke-linejoin="round"/>';
+    return '<polygon points="' + d + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="1.2" stroke-linejoin="round"/>';
   }
 
   // Cube face palettes. "grey" is the default book-style cube; "white"/
   // "black" are used by the BW checkerboard problem.
+  //
+  // WHY these particular tones (revised from a tighter #ececec/#d4d4d4/#bcbcbc
+  // spread): three cube faces only read as "a cube, not a flat tile" when a
+  // child can tell top/left/right apart at a glance, and a flat grey print
+  // compresses light differences further than the screen shows. Top/left/
+  // right now sit at roughly 244/216/173 grey levels (was 236/212/188) — a
+  // wider, more even 28-ish-point stair between them survives B/W toner
+  // better than the old top-heavy spread. The edge stroke moves from a mid
+  // grey (#6d6d6d, ~109) to a near-charcoal (#3d3d3d, ~61): dark enough that
+  // every seam between two stacked or adjacent cubes stays a visible line
+  // instead of thinning into the fill color once a printer's halftone rounds
+  // it — which is exactly where a child loses track of where one column ends
+  // and the next (possibly taller, possibly hidden-behind) one begins. grey
+  // and white intentionally share one stroke tone (both are "light" cube
+  // colors); black cubes keep their own near-black stroke (already darker
+  // than any print artifact could wash out).
   const PALETTES = {
-    grey: { top: "#ececec", left: "#d4d4d4", right: "#bcbcbc", stroke: "#6d6d6d" },
-    white: { top: "#f8f8f4", left: "#e6e6e0", right: "#cfcfc9", stroke: "#6d6d6d" },
+    grey: { top: "#f4f4f4", left: "#d7d7d7", right: "#adadad", stroke: "#3d3d3d" },
+    white: { top: "#faf9f5", left: "#e8e4d9", right: "#c7c2b3", stroke: "#3d3d3d" },
     black: { top: "#565656", left: "#3f3f3f", right: "#2b2b2b", stroke: "#161616" }
   };
 
@@ -385,6 +407,66 @@
 
   // --- 2D view grids -----------------------------------------------------
 
+  // Cell-grid borders as a deduplicated line network instead of one stroked
+  // rect per cell. A rect per cell draws every internal border twice — once
+  // from each neighbouring cell — which is invisible for a plain solid line
+  // but breaks a dashed one: two independently-phased "3 2" dash cycles land
+  // on the exact same line and either fill in each other's gaps (a faint
+  // dashed hint reads as a solid line where it shouldn't) or stutter
+  // unevenly. This draws each border segment exactly once, run-length-merged
+  // along a row/column so the dash phase also stays continuous instead of
+  // restarting at every cell boundary — the same "점선 간격" fix either way.
+  //
+  // styleAt(r, c) returns "solid" | "dashed" | null for how strongly cell
+  // (r, c) wants a border; a cell outside the grid always reads as null.
+  // Where two neighbouring cells disagree, "solid" always wins — e.g. the
+  // real edge of a shape's silhouette must never soften into the faint
+  // dashed hint grid drawn around it.
+  function gridEdgeLines(rows, cols, cellPx, styleAt, STYLE) {
+    const RANK = { solid: 2, dashed: 1 };
+    const at = (r, c) => (r < 0 || r >= rows || c < 0 || c >= cols ? null : styleAt(r, c));
+    const resolve = (ra, ca, rb, cb) => {
+      const sa = at(ra, ca);
+      const sb = at(rb, cb);
+      return (RANK[sa] || 0) >= (RANK[sb] || 0) ? sa : sb;
+    };
+    const attrs = (style) => {
+      const st = STYLE[style];
+      return 'stroke="' + st.stroke + '" stroke-width="' + st.width + '"' + (st.dash ? ' stroke-dasharray="' + st.dash + '"' : "");
+    };
+    let s = "";
+    for (let c = 0; c <= cols; c += 1) {
+      let r = 0;
+      while (r < rows) {
+        const style = resolve(r, c - 1, r, c);
+        if (!style) { r += 1; continue; }
+        let r2 = r;
+        while (r2 < rows && resolve(r2, c - 1, r2, c) === style) r2 += 1;
+        s += '<line x1="' + fmt(c * cellPx) + '" y1="' + fmt(r * cellPx) + '" x2="' + fmt(c * cellPx) + '" y2="' + fmt(r2 * cellPx) + '" ' + attrs(style) + "/>";
+        r = r2;
+      }
+    }
+    for (let r = 0; r <= rows; r += 1) {
+      let c = 0;
+      while (c < cols) {
+        const style = resolve(r - 1, c, r, c);
+        if (!style) { c += 1; continue; }
+        let c2 = c;
+        while (c2 < cols && resolve(r - 1, c2, r, c2) === style) c2 += 1;
+        s += '<line x1="' + fmt(c * cellPx) + '" y1="' + fmt(r * cellPx) + '" x2="' + fmt(c2 * cellPx) + '" y2="' + fmt(r * cellPx) + '" ' + attrs(style) + "/>";
+        c = c2;
+      }
+    }
+    return s;
+  }
+
+  // Shared by renderNumberGrid's blank cells and renderEmptyDottedGrid: a
+  // solid #333 border for a "given" cell, a faint dashed #aaa hint otherwise.
+  const DOTTED_LINE_STYLE = {
+    solid: { stroke: "#333", width: 1 },
+    dashed: { stroke: "#aaa", width: 1, dash: "3 2" }
+  };
+
   // Book-style top-view grid: bold solid grid lines, height numbers centred.
   function renderNumberGrid(grid, width, depth, cellPx, options) {
     cellPx = cellPx || 34;
@@ -395,13 +477,13 @@
     for (let z = 0; z < depth; z += 1) {
       for (let x = 0; x < width; x += 1) {
         const v = grid[z][x];
-        const emptyDotted = options.dottedEmpty && !v;
-        s += '<rect x="' + x * cellPx + '" y="' + z * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="#fff" stroke="' + (emptyDotted ? '#aaa' : '#333') + '" stroke-width="1"' + (emptyDotted ? ' stroke-dasharray="3 2"' : '') + '/>';
+        s += '<rect x="' + x * cellPx + '" y="' + z * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="#fff" stroke="none"/>';
         if (v) {
           s += '<text x="' + (x * cellPx + cellPx / 2) + '" y="' + (z * cellPx + cellPx / 2 + 1) + '" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="' + cellPx * 0.42 + '">' + v + "</text>";
         }
       }
     }
+    s += gridEdgeLines(depth, width, cellPx, (r, c) => (options.dottedEmpty && !grid[r][c] ? "dashed" : "solid"), DOTTED_LINE_STYLE);
     if (!options.dottedEmpty) s += '<rect x="0.5" y="0.5" width="' + (w - 1) + '" height="' + (h - 1) + '" fill="none" stroke="#111" stroke-width="2.5"/>';
     s += "</svg>";
     return s;
@@ -430,11 +512,7 @@
     const w = cols * cellPx;
     const h = rows * cellPx;
     let s = '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" class="ws-grid ws-grid-empty" preserveAspectRatio="xMidYMid meet">';
-    for (let r = 0; r < rows; r += 1) {
-      for (let c = 0; c < cols; c += 1) {
-        s += '<rect x="' + c * cellPx + '" y="' + r * cellPx + '" width="' + cellPx + '" height="' + cellPx + '" fill="none" stroke="#aaa" stroke-width="1" stroke-dasharray="3 2"/>';
-      }
-    }
+    s += gridEdgeLines(rows, cols, cellPx, () => "dashed", DOTTED_LINE_STYLE);
     s += "</svg>";
     return s;
   }
@@ -456,6 +534,14 @@
     s += "</svg>";
     return s;
   }
+
+  // Solid #333 (thicker than the dotted-grid's 1, since this border also
+  // has to read clearly against the light-blue helper boxes beside it) for
+  // the real footprint edge; faint dashed #c9cfcb hint outside it.
+  const SOLVE_LINE_STYLE = {
+    solid: { stroke: "#333", width: 1.4 },
+    dashed: { stroke: "#c9cfcb", width: 1, dash: "3 2" }
+  };
 
   // VC/VM "풀이 방법" solve table: the 위에서 본 모양 footprint drawn as a
   // grid (solid border = inside the shape, faint dashed = outside, matching
@@ -483,16 +569,13 @@
         const inside = footprint[z][x] === 1;
         const cx = x * cell;
         const cy = z * cell;
-        if (inside) {
-          s += '<rect x="' + cx + '" y="' + cy + '" width="' + cell + '" height="' + cell + '" fill="#fff" stroke="#333" stroke-width="1.4"/>';
-        } else {
-          s += '<rect x="' + cx + '" y="' + cy + '" width="' + cell + '" height="' + cell + '" fill="none" stroke="#c9cfcb" stroke-width="1" stroke-dasharray="3 2"/>';
-        }
+        if (inside) s += '<rect x="' + cx + '" y="' + cy + '" width="' + cell + '" height="' + cell + '" fill="#fff" stroke="none"/>';
         if (inside && numbers && numbers[z] && numbers[z][x] !== undefined && numbers[z][x] !== null && numbers[z][x] !== 0) {
           s += '<text x="' + (cx + cell / 2) + '" y="' + (cy + cell / 2 + 1) + '" text-anchor="middle" dominant-baseline="central" font-weight="700" font-size="' + numFontSize + '">' + numbers[z][x] + "</text>";
         }
       }
     }
+    s += gridEdgeLines(depth, width, cell, (r, c) => (footprint[r][c] === 1 ? "solid" : "dashed"), SOLVE_LINE_STYLE);
     // Right helper column: one box per row z, max height read off 오른쪽
     // 옆에서 본 모양.
     const rightX = width * cell + gutter;
