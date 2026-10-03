@@ -320,6 +320,7 @@ export function watchDetached(host, cleanup) {
   const check = () => setTimeout(() => { if (!host.isConnected) finish(); });
   const observer = new MutationObserver(check); observer.observe(document.body, { childList: true, subtree: true });
   addEventListener('hashchange', check);
+  if (!host.isConnected) finish();
   return finish;
 }
 
