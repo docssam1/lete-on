@@ -51,7 +51,10 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
   assert.equal(await page.locator("h1").count(), 1);
-  assert.match(await page.locator("h1").innerText(), /수학 실력을 진단하고,\s*다음 학습을 처방합니다/);
+  assert.match(await page.locator("h1").innerText(), /진단 한 번으로,\s*오늘의 수업과 학습계획까지/);
+  assert.match(await page.locator(".directory-lede").innerText(), /학생용 개념·워크북[\s\S]*강사용 수업팩/);
+  assert.match(await page.locator(".outcome-preview").innerText(), /현재 과정[\s\S]*우선 약점[\s\S]*오늘 분량/);
+  assert.equal(await page.locator(".hero-actions .button-primary").getAttribute("href"), "#start");
   assert.equal(await page.locator('[data-role-preview="student"]').count(), 1);
   assert.equal(await page.locator('[data-role-preview="teacher"]').count(), 1);
   assert.equal(await page.locator('[data-role-preview="parent"], [data-role="parent"]').count(), 0);
@@ -70,6 +73,12 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator("#quick-sasmo").getAttribute("href"), "./sasmo.html?grade=K2#past-papers");
   await page.locator("#quick-start-grade").selectOption("6");
   assert.match(await page.locator("#amc-pathway").innerText(), /AMC 8\s*→\s*10\s*→\s*12/);
+  await page.locator('[data-role-target="teacher"]').click();
+  assert.match(await page.locator("#start-actions-label").innerText(), /강사 수업 설계/);
+  assert.equal(await page.locator("#quick-plan").getAttribute("href"), "./learning-plan.html?goal=school-g6&audience=teacher#teacher-pack");
+  assert.match(await page.locator("#quick-plan").innerText(), /학생 수업 계획 설계하기[\s\S]*교안 · 워크북 · 숙제/);
+  await page.locator('[data-role-target="student"]').click();
+  assert.equal(await page.locator("#quick-plan").getAttribute("href"), "./learning-plan.html?goal=school-g6");
   assert.equal(await page.locator("[data-goal]").count(), 5);
   assert.equal(await page.locator("#goal-title").textContent(), "Grade 6 학교 수학");
   assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./concept-learning.html");
@@ -592,14 +601,14 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
       return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth };
     });
     assert.equal(dimensions.scroll, dimensions.client, `home overflow at ${width}px`);
-    const firstScreenControls = await page.locator('#quick-start-grade, .simple-action-card').evaluateAll(function (controls) {
+    const firstScreenControls = await page.locator('#quick-start-grade, .hero-actions .button, .start-primary-action').evaluateAll(function (controls) {
       return controls.filter(function (control) {
         const rect = control.getBoundingClientRect();
         return rect.top >= 0 && rect.top < window.innerHeight;
       }).length;
     });
     assert.ok(firstScreenControls >= 1, `no real directory action, search, or role choice visible at ${width}px`);
-    const targetSizes = await page.locator(".goal-button, .grade-tabs button, .role-tabs button, .map-view-tabs button, .domain-grade-link, .role-shortcut, .mobile-quick-nav a, .brand, .text-link, .official-link, .site-footer a").evaluateAll(function (controls) {
+    const targetSizes = await page.locator(".goal-button, .grade-tabs button, .role-tabs button, .start-role-choice button, .start-primary-action, .start-secondary-action, .map-view-tabs button, .domain-grade-link, .role-shortcut, .mobile-quick-nav a, .brand, .text-link, .official-link, .site-footer a").evaluateAll(function (controls) {
       return controls.filter(function (control) {
         const rect = control.getBoundingClientRect();
         return !control.disabled && rect.width > 0 && rect.height > 0;

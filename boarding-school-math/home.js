@@ -561,6 +561,8 @@
     document.getElementById("mini-product").innerHTML = role.panel;
     renderGradeMap(state.mapGrade);
     updatePrimaryRoleRoute();
+    const quickGrade = document.getElementById("quick-start-grade");
+    updateQuickStart(quickGrade ? quickGrade.value : "6");
   }
 
   function updatePrimaryRoleRoute() {
@@ -761,32 +763,39 @@
     const conceptNote = concept && concept.querySelector("small");
     const mapTitle = map && map.querySelector("strong");
     const mapNote = map && map.querySelector("small");
+    const assessmentTitle = assessment && assessment.querySelector("strong");
+    const assessmentNote = assessment && assessment.querySelector("small");
+    const startLabel = document.getElementById("start-actions-label");
+    const teacherMode = state.roleId === "teacher";
+    if (startLabel) startLabel.textContent = teacherMode ? "강사 수업 설계 시작" : "학생 학습 시작";
+    if (assessmentTitle) assessmentTitle.textContent = teacherMode ? "학생 학교·입학시험 결과 입력" : "학교·입학시험 결과 입력";
+    if (assessmentNote) assessmentNote.textContent = teacherMode ? "학생 근거를 불러와 진도와 수업 자료 설계" : "Placement · MAP · CTP · SSAT · ISEE";
     if (assessment) assessment.href = `./assessment-entry.html?grade=${numericGrade === 0 ? 3 : numericGrade}`;
     if (numericGrade === 6) {
-      plan.href = "./learning-plan.html?goal=school-g6";
-      planTitle.textContent = "나의 학습 계획 만들기";
-      planNote.textContent = "진단 → 예상 성적 → 오늘의 학습";
+      plan.href = teacherMode ? "./learning-plan.html?goal=school-g6&audience=teacher#teacher-pack" : "./learning-plan.html?goal=school-g6";
+      planTitle.textContent = teacherMode ? "학생 수업 계획 설계하기" : "나의 학습 계획 만들기";
+      planNote.textContent = teacherMode ? "약점 · 수업시간 → 교안 · 워크북 · 숙제" : "진단 → 약점 → 오늘의 학습";
       sasmo.href = "./learning-plan.html?goal=sasmo-primary6";
       sasmoTitle.textContent = "SASMO 학습 계획";
       sasmoNote.textContent = "준비도 점검 → 유형·개념·모의";
     } else if (numericGrade >= 1 && numericGrade <= 11) {
-      plan.href = `./catalog.html?role=student&grade=${numericGrade}`;
-      planTitle.textContent = `${gradeName(numericGrade)} 학습 범위 보기`;
-      planNote.textContent = "진단·개념·워크북 연결 범위를 준비 중입니다.";
+      plan.href = `./catalog.html?role=${teacherMode ? "teacher" : "student"}&grade=${numericGrade}`;
+      planTitle.textContent = teacherMode ? `${gradeName(numericGrade)} 수업 범위 설계` : `${gradeName(numericGrade)} 학습 범위 보기`;
+      planNote.textContent = teacherMode ? "영역·자료 상태를 확인하고 수업 범위를 정합니다." : "진단·개념·워크북 연결 범위를 준비 중입니다.";
       sasmo.href = `./sasmo.html?grade=${numericGrade}#past-papers`;
       sasmoTitle.textContent = numericGrade === 11 ? "SASMO 공식 자료 보기" : "SASMO 준비 경로";
       sasmoNote.textContent = numericGrade === 11 ? "Grade 11 연도별 공식 LMS" : `Grade ${numericGrade} 준비 범위와 자료`;
     } else if (numericGrade === 0) {
-      plan.href = "./catalog.html?role=student&grade=K";
-      planTitle.textContent = "Kindergarten 학습 범위 보기";
-      planNote.textContent = "진단·개념·워크북 연결 범위를 준비 중입니다.";
+      plan.href = `./catalog.html?role=${teacherMode ? "teacher" : "student"}&grade=K`;
+      planTitle.textContent = teacherMode ? "Kindergarten 수업 범위 설계" : "Kindergarten 학습 범위 보기";
+      planNote.textContent = teacherMode ? "영역·자료 상태를 확인하고 수업 범위를 정합니다." : "진단·개념·워크북 연결 범위를 준비 중입니다.";
       sasmo.href = "./sasmo.html?grade=K2#past-papers";
       sasmoTitle.textContent = "SASMO K2 자료 보기";
       sasmoNote.textContent = "확인된 과거 원문과 공식 안내";
     } else {
       plan.href = "#goals";
-      planTitle.textContent = "나의 과정 지도 보기";
-      planNote.textContent = "과정·선수개념·다음 단계를 먼저 확인합니다.";
+      planTitle.textContent = teacherMode ? "학생 과정 지도 설계" : "나의 과정 지도 보기";
+      planNote.textContent = teacherMode ? "과정·선수개념·다음 수업 단계를 확인합니다." : "과정·선수개념·다음 단계를 먼저 확인합니다.";
       sasmo.href = `./sasmo.html?grade=${numericGrade}#past-papers`;
       sasmoTitle.textContent = "SASMO 준비 보기";
       sasmoNote.textContent = "확인된 과거 원문과 공식 안내";
