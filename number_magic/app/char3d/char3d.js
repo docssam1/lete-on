@@ -962,7 +962,7 @@ export function makeCharacter(THREE, opts = {}){
   if(opts.blob !== false){ blob = blobShadow(THREE, k); blob.scale.setScalar(R.blobR * 2 * scale); blob.position.y = 0.003; object.add(blob); }
 
   /* 상태 */
-  let walking = false, walkAmt = 0, walkRate = 1, phase = 0;
+  let walking = false, walkAmt = 0, walkRate = 1, walkDirection = 1, phase = 0;
   let yaw = 0, yawTarget = 0;
   let waveT = -1;
   let blinkT = 1 + Math.random() * 3, blinkPh = -1;
@@ -978,7 +978,7 @@ export function makeCharacter(THREE, opts = {}){
   function update(dt = 1 / 60, t = 0){
     dt = Math.min(dt, 0.1);
     walkAmt += ((walking ? 1 : 0) - walkAmt) * Math.min(1, dt * 8);
-    phase += dt * (R.human ? 6.4 : 8.5) * walkRate * (0.3 + 0.7 * walkAmt);
+    phase += dt * (R.human ? 6.4 : 8.5) * walkRate * walkDirection * (0.3 + 0.7 * walkAmt);
     const w = walkAmt, s = Math.sin(phase), c2 = Math.cos(phase * 2);
     const tt = t + seed;
     const breathe = Math.sin(tt * 2.1);
@@ -999,7 +999,7 @@ export function makeCharacter(THREE, opts = {}){
     if(R.human){
       const bob = Math.abs(Math.cos(phase)) * 0.035 * w;
       pose('hips', 0, s * 0.08 * w, 0, 0, bob - 0.012 * w + breathe * 0.002 * (1 - w), 0);
-      pose('torso', 0.04 * w + breathe * 0.012 * (1 - w), -s * 0.12 * w, 0);
+      pose('torso', 0.04 * w * walkDirection + breathe * 0.012 * (1 - w), -s * 0.12 * w, 0);
       pose('head', -0.03 * w + Math.sin(tt * 0.9) * 0.03 * (1 - w), Math.sin(tt * 0.6) * 0.08 * (1 - w) + s * 0.06 * w, Math.sin(tt * 0.7) * 0.03 * (1 - w));
       pose('legL', -s * 0.55 * w, 0, 0); pose('legR', s * 0.55 * w, 0, 0);
       const armIdle = Math.sin(tt * 2.1) * 0.03;
@@ -1035,7 +1035,7 @@ export function makeCharacter(THREE, opts = {}){
     object, meshes, bones, kind, recipe:R,
     triangles:R.tris, materials:new Set(R.bins.map(b => b.mat)).size,
     update,
-    setWalking(on, rate){ walking = !!on; if(rate) walkRate = rate; },
+    setWalking(on, rate, backward = false){ walking = !!on; if(rate) walkRate = rate; walkDirection = backward ? -1 : 1; },
     face(a){ yawTarget = a; },
     faceNow(a){ yawTarget = yaw = a; object.rotation.y = a; },
     wave(){ waveT = 0; },

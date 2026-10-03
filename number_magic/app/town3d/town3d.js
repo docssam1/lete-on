@@ -48,6 +48,8 @@
      }
    ============================================================ */
 import * as THREE from '../../../world-explorer/vendor/three.module.js';
+import {MOVEMENT,joystickVector,moveSafely} from './movement.js';
+const TOWN_SCALE=1.35, TOWN_VERSION='wide-integrated-20261003';
 
 /* ── 작은 도구 ─────────────────────────────────────────── */
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -406,6 +408,17 @@ const CSS = `
   font:700 13px/1.3 system-ui,sans-serif;box-shadow:0 3px 12px rgba(0,0,0,.2);pointer-events:none;opacity:0;transition:opacity .2s;white-space:normal;text-align:center}
 .t3d-bub.on{opacity:1}
 .t3d-bub::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:#fff}
+.t3d-lab{position:fixed!important;width:1px;height:1px;padding:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;transform:none!important}
+.t3d-lab:focus-visible{clip-path:none;position:absolute!important;left:20px;top:112px;width:auto;height:auto;min-height:48px;padding:12px;font-size:22px;z-index:20}
+.t3d-destination{position:absolute;top:106px;left:50%;transform:translateX(-50%);max-width:calc(100% - 40px);padding:10px 18px;min-height:48px;background:#fffdf5;color:#23394b;border:2px solid #56645b;border-radius:8px;font:700 22px/1.3 system-ui;cursor:pointer;z-index:5}
+.t3d-destination[hidden]{display:none}
+.t3d-guide{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;padding:8px 20px;background:rgba(255,253,245,.97);color:#293c32;border-radius:8px;pointer-events:none;font:700 24px/1.3 system-ui;max-width:calc(100% - 32px);box-sizing:border-box;white-space:nowrap}
+.t3d-guide img{height:64px;width:56px;object-fit:contain}.t3d-guide small{display:block;font-size:20px;color:#795b30}
+.t3d-joystick{position:absolute;left:max(20px,env(safe-area-inset-left));bottom:calc(24px + env(safe-area-inset-bottom));width:148px;height:148px;border:2px solid rgba(255,255,255,.95);box-shadow:0 0 0 1px #637262,inset 0 0 0 1px #748171;background:rgba(255,255,255,.18);border-radius:50%;touch-action:none;z-index:8;cursor:grab;outline-offset:4px;box-sizing:border-box}
+.t3d-stick{position:absolute;width:64px;height:64px;left:40px;top:40px;border-radius:50%;background:rgba(255,255,255,.72);border:2px solid #667569;box-shadow:0 0 0 1px rgba(255,255,255,.95);box-sizing:border-box;pointer-events:none}
+.t3d-joystick::after{content:'↕ ↔';position:absolute;bottom:8px;left:0;right:0;text-align:center;font:700 18px system-ui;color:#34473c}
+.t3d-joystick:focus-visible{outline:3px solid #173e72}
+@media(max-height:420px){.t3d-guide{left:auto;right:12px;transform:none;font-size:20px}.t3d-guide img{height:48px}.t3d-guide small{font-size:16px}.t3d-destination{top:80px}.t3d-joystick{bottom:24px}}
 @media (max-width:480px){.t3d-lab{font-size:12px;padding:4px 9px 5px}.t3d-lab small{font-size:10px}.t3d-lab.gate{font-size:11px}}
 `;
 function ensureCss(){
@@ -450,18 +463,54 @@ export async function mountTown3D(container, opts){
   let world;
   try { world = buildWorld(scene, renderer, rng, track); }
   catch(e){ console.error('[town3d] build failed', e); try { renderer.dispose(); renderer.forceContextLoss(); } catch(_){} wrap.remove(); return null; }
+  // Expand real terrain/path spacing while preserving each building's size.
+  const terrainRoot=new THREE.Group();terrainRoot.name=TOWN_VERSION;
+  for(const o of [...scene.children])if(!o.isLight)terrainRoot.add(o);
+  terrainRoot.scale.set(TOWN_SCALE,1,TOWN_SCALE);scene.add(terrainRoot);
+  for(const collection of [world.spots,world.gates])for(const s of Object.values(collection)){
+    s.group.scale.x/=TOWN_SCALE;s.group.scale.z/=TOWN_SCALE;
+    s.center.x*=TOWN_SCALE;s.center.z*=TOWN_SCALE;s.anchor.x*=TOWN_SCALE;s.anchor.z*=TOWN_SCALE;
+  }
+  for(const n of world.nav.nodes){n[0]*=TOWN_SCALE;n[1]*=TOWN_SCALE;}
+  for(const edges of world.nav.adj)for(const e of edges)e[1]*=TOWN_SCALE;
+  world.wanderSpots=world.wanderSpots.map(p=>p.map(n=>n*TOWN_SCALE));
+  const ping=world.ping;world.ping=(x,y,z)=>ping(x/TOWN_SCALE,y,z/TOWN_SCALE);
+  const townY=(x,z)=>standY(x/TOWN_SCALE,z/TOWN_SCALE);
+  const canMove=(x,z,fx=x,fz=z)=>{
+    if(x<BOUND.x0*TOWN_SCALE||x>BOUND.x1*TOWN_SCALE||z<BOUND.z0*TOWN_SCALE||z>BOUND.z1*TOWN_SCALE)return false;
+    const ox=x/TOWN_SCALE,oz=z/TOWN_SCALE,bridge=Math.abs(oz+3)<1.05&&ox>16.6&&ox<25;
+    const dock=Math.abs(oz-17.6)<.8&&ox>12.2&&ox<17.2;
+    if(waterDist(ox,oz)<.4&&!bridge&&!dock)return false;
+    for(const [sx,sz,r,building] of world.solids||[]){
+      if(Math.hypot(x-sx*TOWN_SCALE,z-sz*TOWN_SCALE)<r*(building?1:TOWN_SCALE)+.18)return false;
+    }
+    return Math.abs(townY(x,z)-townY(fx,fz))<.65;
+  };
+  world.blockedAt=(x,z)=>!canMove(x,z);
 
   const camera = new THREE.PerspectiveCamera(40, 1, 0.5, 400);
 
   /* ── 건물·관문 상태와 라벨 ───────────────────────── */
   const spotState = {};
+  let selectedPlace=opts.snapshot?.selectedPlace||null;
+  const placeTitle=(id,s)=>id==='numberland'?L({ko:'수의 나라',en:'Number Land',zh:'数字王国'},lang):id==='_closet'?L({ko:'마법사 옷장',en:"Wizard’s Closet",zh:'魔法师衣橱'},lang):L(s?.label,lang).replace(/^[^\p{L}\p{N}]+/u,'');
+  const destination=document.createElement('button');destination.className='t3d-destination';destination.hidden=true;ov.appendChild(destination);
+  const guide=document.createElement('div');guide.className='t3d-guide';guide.setAttribute('aria-label',L({ko:'안내 마법사',en:'Guide Wizard',zh:'向导魔法师'},lang));
+  guide.innerHTML=`<img src="assets/characters/elder.png" alt=""><span><small>${L({ko:'안내 마법사',en:'Guide Wizard',zh:'向导魔法师'},lang)}</small>${L({ko:'어디로 가 볼까?',en:'Where shall we go?',zh:'想去哪里？'},lang)}</span>`;ov.appendChild(guide);
+  function choosePlace(kind,id,open=false){
+    selectedPlace={kind,id};const s=kind==='gate'?gateDefs[id]:spotState[id];
+    destination.textContent=kind==='gate'?L(s?.name,lang):placeTitle(id,s);destination.hidden=!s;
+    destination.onclick=()=>{stopMovement();if(kind==='gate')opts.onGate?.(id);else opts.onSpot?.(id);};
+    if(open)destination.onclick();
+  }
   (opts.spots || []).forEach(s => { spotState[s.id] = Object.assign({}, s); });
   const labels = [];
   function mkLabel(kind, id, anchor){
     const b = document.createElement('button'); b.type = 'button';
     b.className = 't3d-lab' + (kind === 'gate' ? ' gate' : '');
     b.dataset[kind === 'gate' ? 'gate' : 'spot'] = id;
-    b.addEventListener('click', e => { e.preventDefault(); if(kind === 'gate') opts.onGate && opts.onGate(id); else opts.onSpot && opts.onSpot(id); });
+    b.addEventListener('focus',()=>choosePlace(kind,id));
+    b.addEventListener('click', e => { e.preventDefault(); choosePlace(kind,id,true); });
     ov.appendChild(b);
     const lab = { kind, id, el:b, anchor, w:0, h:0 };
     labels.push(lab); return lab;
@@ -483,6 +532,7 @@ export async function mountTown3D(container, opts){
       el.classList.toggle('locked', !s.open);
       const lockWord = L({ ko:'잠김', en:'locked', zh:'未解锁' }, lang);
       el.setAttribute('aria-label', `${L(s.label, lang)} ${L(s.sub, lang)}${s.open ? '' : ' — ' + lockWord}`.replace(/\s+/g, ' ').trim());
+      world.spots[id].setName?.(placeTitle(id,s));
     }
     for(const id in gateLab){
       const g = gateDefs[id], el = gateLab[id].el;
@@ -539,6 +589,7 @@ export async function mountTown3D(container, opts){
       let p = def.at;
       if(typeof p === 'string') p = PLACES[p];
       if(!Array.isArray(p)) p = def.role === 'player' ? PLACES.plaza : def.role === 'buddy' ? [PLACES.plaza[0] - 1.3, PLACES.plaza[1] + 0.6] : PLACES.plaza;
+      p=p.map(n=>n*TOWN_SCALE);
       c.faceNow(def.role === 'buddy' ? 0.35 : 0);
       const ch = { def, model:c, obj:c.object, hit, hgt, spr:null, sh:null, tex:null, walker:false, x:p[0], z:p[1], route:[], dir:'s', phase:0,
         speed:def.role === 'npc' ? 1.5 : 3.4, idle:rng() * 4, bub:null, bubT:0 };
@@ -564,6 +615,7 @@ export async function mountTown3D(container, opts){
     let p = def.at;
     if(typeof p === 'string') p = PLACES[p];
     if(!Array.isArray(p)) p = def.role === 'player' ? PLACES.plaza : def.role === 'buddy' ? [PLACES.plaza[0] - 1.3, PLACES.plaza[1] + 0.6] : PLACES.plaza;
+    p=p.map(n=>n*TOWN_SCALE);
     const ch = { def, spr, sh, tex, walker:bk.walker, x:p[0], z:p[1], route:[], dir:'s', phase:0, speed:def.role === 'npc' ? 1.5 : 3.4, idle:rng() * 4, bub:null, bubT:0 };
     if(def.name){
       const el = document.createElement('div'); el.className = 't3d-name'; ov.appendChild(el);
@@ -574,6 +626,21 @@ export async function mountTown3D(container, opts){
   });
   const player = chars.find(c => c.def.role === 'player');
   const buddy = chars.find(c => c.def.role === 'buddy');
+  const joystick=document.createElement('div');joystick.className='t3d-joystick';joystick.tabIndex=0;joystick.setAttribute('role','group');joystick.setAttribute('aria-label',L({ko:'이동 조이스틱. 방향키로도 이동할 수 있습니다.',en:'Movement joystick. Arrow keys also move.',zh:'移动摇杆，也可使用方向键。'},lang));
+  joystick.innerHTML='<span class="t3d-stick"></span>';wrap.appendChild(joystick);
+  const stick=joystick.firstElementChild,keys=new Set();let owner=null,vector={x:0,z:0};
+  function stopMovement(){const held=owner;owner=null;if(held!==null&&joystick.hasPointerCapture?.(held)){try{joystick.releasePointerCapture(held);}catch{}}vector={x:0,z:0};keys.clear();follow=false;stick.style.transform='';if(player)player.route=[];pointers.clear();drag=null;pinch=null;}
+  function joyMove(e){if(owner!==e.pointerId)return;e.preventDefault();const r=joystick.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,d=Math.hypot(dx,dy),f=Math.min(1,42/(d||1));stick.style.transform=`translate(${dx*f}px,${dy*f}px)`;vector=joystickVector(dx,dy);if(player)player.route=[];follow=true;wake();}
+  function joyDown(e){if(owner!==null)return;e.preventDefault();owner=e.pointerId;joystick.setPointerCapture?.(owner);joyMove(e);}
+  function joyEnd(e){if(owner===e.pointerId)stopMovement();}
+  joystick.addEventListener('pointerdown',joyDown);joystick.addEventListener('pointermove',joyMove);
+  for(const ev of ['pointerup','pointercancel','lostpointercapture'])joystick.addEventListener(ev,joyEnd);
+  const moveKeys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'];
+  function movementKey(e){if(!moveKeys.includes(e.key)||!['CANVAS','DIV'].includes(e.target.tagName))return;e.preventDefault();if(owner!==null)return;keys.add(e.key);follow=true;wake();}
+  function movementUp(e){keys.delete(e.key);if(!keys.size&&owner===null)stopMovement();}
+  wrap.addEventListener('keydown',movementKey);window.addEventListener('keyup',movementUp);window.addEventListener('blur',stopMovement);
+  wrap.addEventListener('focusout',e=>{if(keys.size&&e.relatedTarget!==canvas&&e.relatedTarget!==joystick)stopMovement();});
+  const modalObserver=new MutationObserver(()=>{if(document.querySelector('.nm-tmodal.on,.nm-gate-overlay,.nm-menu.on'))stopMovement();});modalObserver.observe(document.body,{subtree:true,attributes:true,childList:true,attributeFilter:['class']});
 
   /* ── 걷기 그래프(길 위로 걷는다) ─────────────────── */
   const nav = world.nav;
@@ -594,7 +661,7 @@ export async function mountTown3D(container, opts){
     else pts.push(nav.nodes[b]);                        /* 끊긴 길(없어야 한다) — 곧장 간다 */
     /* 곧바로 갈 수 있을 만큼 가까우면 길로 돌아가지 않는다 */
     const direct = Math.hypot(tx - fx, tz - fz);
-    if(direct < 3.2 && Math.abs(heightAt(tx, tz) - heightAt(fx, fz)) < 0.5) return [[tx, tz]];
+    if(direct < 3.2 && Math.abs(townY(tx, tz) - townY(fx, fz)) < 0.5) return [[tx, tz]];
     if(db < 4 && !world.blockedAt(tx, tz)) pts.push([tx, tz]);
     return pts;
   }
@@ -613,7 +680,7 @@ export async function mountTown3D(container, opts){
     dMax = aspect < 0.8 ? 74 : 66;
   }
   function placeCam(){
-    cam.x = clamp(cam.x, BOUND.x0, BOUND.x1); cam.z = clamp(cam.z, BOUND.z0, BOUND.z1); cam.d = clamp(cam.d, dMin, dMax);
+    cam.x = clamp(cam.x, BOUND.x0*TOWN_SCALE, BOUND.x1*TOWN_SCALE); cam.z = clamp(cam.z, BOUND.z0*TOWN_SCALE, BOUND.z1*TOWN_SCALE); cam.d = clamp(cam.d, dMin, dMax);
     const zt = (cam.d - dMin) / (dMax - dMin);
     const pitch = lerp(0.84, 0.5, Math.pow(zt, 0.75));                 // 가까이 가면 더 내려다보고, 멀리 가면 그림처럼 눕힌다
     const ty = 1.2 + zt * 2.5;
@@ -695,19 +762,20 @@ export async function mountTown3D(container, opts){
   function tap(cx, cy){
     const h = pick(cx, cy);
     if(!h) return;
-    if(h.spot){ opts.onSpot && opts.onSpot(h.spot); return; }
-    if(h.gate){ opts.onGate && opts.onGate(h.gate); return; }
+    if(h.spot){ choosePlace('spot',h.spot); return; }
+    if(h.gate){ choosePlace('gate',h.gate); return; }
     if(h.char){ speak(h.char); return; }
     if(h.ground && player){
       const p = h.ground;
       if(p.x < BOUND.x0 - 4 || p.x > BOUND.x1 + 4 || p.z < BOUND.z0 - 3 || p.z > BOUND.z1 + 4) return;
       walkTo(player, p.x, p.z); follow = true;
-      world.ping(p.x, standY(p.x, p.z), p.z);
+      world.ping(p.x, townY(p.x, p.z), p.z);
     }
   }
   function onWheel(e){ e.preventDefault(); cam.d *= e.deltaY < 0 ? 0.9 : 1.1; placeCam(); lastUser = performance.now(); wake(); }
   function onKey(e){
     const k = e.key, step = cam.d * 0.06;
+    if(moveKeys.includes(k))return;
     if(k === 'ArrowLeft') cam.x -= step; else if(k === 'ArrowRight') cam.x += step;
     else if(k === 'ArrowUp') cam.z -= step; else if(k === 'ArrowDown') cam.z += step;
     else if(k === '+' || k === '=') cam.d /= 1.2; else if(k === '-') cam.d *= 1.2; else return;
@@ -777,6 +845,12 @@ export async function mountTown3D(container, opts){
   function stepChars(dt, t){
     let moving = false;
     for(const ch of chars){
+      let controlled=false;
+      if(ch===player){
+        const vx=owner!==null?vector.x:(keys.has('ArrowRight')||keys.has('d')?1:0)-(keys.has('ArrowLeft')||keys.has('a')?1:0);
+        const vz=owner!==null?vector.z:(keys.has('ArrowDown')||keys.has('s')?1:0)-(keys.has('ArrowUp')||keys.has('w')?1:0);
+        if(vx||vz){const n=moveSafely(ch,{x:vx,z:vz},dt,canMove);controlled=Math.hypot(n.x-ch.x,n.z-ch.z)>.0001;ch.x=n.x;ch.z=n.z;ch.route=[];ch.speed=MOVEMENT.maxSpeed;if(controlled&&ch.model)ch.model.face(Math.atan2(vx,vz));}
+      }
       if(ch.def.role === 'buddy' && player){
         const bx = player.x - (ch.model ? 1.55 : 1.2), bz = player.z + (ch.model ? 0.35 : 0.7);   /* 3D 모델은 더 커서 조금 더 옆으로 */
         const d = Math.hypot(bx - ch.x, bz - ch.z);
@@ -790,17 +864,18 @@ export async function mountTown3D(container, opts){
           walkTo(ch, home[0] + (rng() - 0.5) * 2, home[1] + (rng() - 0.5) * 2);
         }
       }
-      let walking = false;
+      let walking = controlled;if(controlled)moving=true;
       if(ch.route.length){
         const [tx, tz] = ch.route[0];
         const dx = tx - ch.x, dz = tz - ch.z, d = Math.hypot(dx, dz);
         const stepLen = ch.speed * dt;
-        if(d <= stepLen){ ch.x = tx; ch.z = tz; ch.route.shift(); }
-        else { ch.x += dx / d * stepLen; ch.z += dz / d * stepLen; }
+        const amount=Math.min(d,stepLen),nx=ch.x+(d?dx/d*amount:0),nz=ch.z+(d?dz/d*amount:0);
+        if(ch===player&&!canMove(nx,nz,ch.x,ch.z)){ch.route=[];}
+        else {ch.x=nx;ch.z=nz;if(d<=stepLen)ch.route.shift();}
         if(d > 0.02){ ch.dir = Math.abs(dx) > Math.abs(dz) * 0.8 ? (dx < 0 ? 'w' : 'e') : (dz < 0 ? 'n' : 's'); }
         walking = true; moving = true;
       }
-      const y = standY(ch.x, ch.z);
+      const y = townY(ch.x, ch.z);
       if(ch.model){
         const m = ch.model;
         if(walking && ch.route.length){
@@ -829,6 +904,7 @@ export async function mountTown3D(container, opts){
       }
       if(ch.bubT > 0){ ch.bubT -= dt; if(ch.bubT <= 0) ch.bub.classList.remove('on'); moving = true; }
     }
+    if(player){const near=Object.entries(world.spots).filter(([id])=>spotState[id]).map(([id,s])=>({id,d:Math.hypot(player.x-s.center.x,player.z-s.center.z)})).sort((a,b)=>a.d-b.d)[0];if(near&&near.d<7&&selectedPlace?.id!==near.id)choosePlace('spot',near.id);}
     return moving;
   }
 
@@ -856,7 +932,7 @@ export async function mountTown3D(container, opts){
 
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => { visible = es.some(x => x.isIntersecting); if(visible) wake(); }) : null;
   if(io) io.observe(wrap);
-  const onVis = () => { running = !document.hidden; if(running) wake(); };
+  const onVis = () => { stopMovement();running = !document.hidden; if(running) wake(); };
   document.addEventListener('visibilitychange', onVis);
   /* 화면이 바뀌어 container 가 문서에서 빠지면(멈춰 있는 동안이라도) 스스로 푼다 */
   const alive = setInterval(() => { if(!wrap.isConnected) dispose(); }, 2000);
@@ -865,6 +941,7 @@ export async function mountTown3D(container, opts){
 
   function dispose(){
     if(disposed) return; disposed = true;
+    stopMovement();modalObserver.disconnect();window.removeEventListener('blur',stopMovement);window.removeEventListener('keyup',movementUp);wrap.removeEventListener('keydown',movementKey);
     if(!readySent)resolveReady(false);
     if(raf) cancelAnimationFrame(raf); raf = 0; clearInterval(alive);
     if(io) io.disconnect(); if(ro) ro.disconnect(); else window.removeEventListener('resize', resize);
@@ -899,24 +976,25 @@ export async function mountTown3D(container, opts){
   /* 같은 방문 안에서만 복원한다. 진행·언어·캐릭터 장식은 최신 opts를 사용하고,
      이전 장면의 메시·재질은 재사용하지 않아 나간 화면의 GPU 자원을 유지하지 않는다. */
   const previous = opts.snapshot;
-  if(previous && previous.camera){
+  if(previous && previous.camera&&previous.version===TOWN_VERSION){
     for(const k of ['x','z','d'])if(Number.isFinite(previous.camera[k]))cam[k]=previous.camera[k];
     follow=previous.follow===true;
     for(const ch of chars){
       const p=(previous.characters||[]).find(c=>c.id===ch.def.id);
       if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.z))continue;
-      ch.x=clamp(p.x,X0+1,X1-1);ch.z=clamp(p.z,Z0+1,Z1-1);
+      ch.x=clamp(p.x,X0*TOWN_SCALE+1,X1*TOWN_SCALE-1);ch.z=clamp(p.z,Z0*TOWN_SCALE+1,Z1*TOWN_SCALE-1);
       ch.dir=['n','s','e','w'].includes(p.dir)?p.dir:'s';
       if(Number.isFinite(p.facing)&&ch.model)ch.model.faceNow(p.facing);
     }
   }
   placeCam();
   paintLabels(); applyLocks();
+  if(selectedPlace){choosePlace(selectedPlace.kind,selectedPlace.id);const el=labels.find(l=>l.kind===selectedPlace.kind&&l.id===selectedPlace.id)?.el;requestAnimationFrame(()=>el?.focus({preventScroll:true}));}
   wake();
 
   return {
     dispose, ready,
-    snapshot(){return {camera:{x:cam.x,z:cam.z,d:cam.d},follow,
+    snapshot(){return {townId:'numbers-magic',version:TOWN_VERSION,selectedPlace,camera:{x:cam.x,z:cam.z,d:cam.d,position:camera.position.toArray(),rotation:camera.rotation.toArray()},follow,
       characters:chars.map(ch=>({id:ch.def.id,x:ch.x,z:ch.z,dir:ch.dir,
         facing:ch.obj?ch.obj.rotation.y:0}))};},
     setLang(l){ lang = l || 'ko'; canvas.setAttribute('aria-label', L({ ko:'마을 지도 3D', en:'Village map (3D)', zh:'村庄地图 3D' }, lang)); paintLabels(); dirty = true; wake(); },
@@ -925,7 +1003,8 @@ export async function mountTown3D(container, opts){
     zoomOut(){ cam.d *= 1.25; placeCam(); wake(); },
     focusPlayer(){ if(player){ follow = true; cam.d = Math.min(cam.d, 30); cam.x = player.x; cam.z = player.z + 1.5; placeCam(); wake(); } },
     walkTo(x, z){ if(player){ walkTo(player, x, z); follow = true; wake(); } },
-    debug:{ scene, camera, renderer, cam, chars, placeCam, nav,
+    stopMovement,
+    debug:{ scene, camera, renderer, cam, chars, placeCam, nav,canMove,movement:()=>({owner,vector:{...vector},keys:[...keys]}),scale:TOWN_SCALE,world,
       project(id){ const s = world.spots[id] || world.gates[id]; if(!s) return null; const c = s.center; return project(c.x, c.y, c.z); } }
   };
 }
@@ -1204,7 +1283,8 @@ function buildWorld(scene, renderer, rng, track){
   /* ── 막힘(건물·물) — 나무 심기와 도착점 판정 ───────── */
   const pathSamples = [];
   PATHS.forEach(p => resample(p.pts, 0.6).forEach(pt => pathSamples.push([pt[0], pt[1], p.w])));
-  const solids = [];   // [x, z, r]
+  const solids = [];   // [x, z, r, buildingId?]; shared by keyboard and joystick
+  out.solids=solids;
   const nearPath = (x, z, pad) => pathSamples.some(([px, pz, w]) => (px - x) ** 2 + (pz - z) ** 2 < (w / 2 + pad) ** 2);
   const inSolid = (x, z, pad) => solids.some(([sx, sz, r]) => (sx - x) ** 2 + (sz - z) ** 2 < (r + pad) ** 2);
   out.blockedAt = (x, z) => waterDist(x, z) < 0.2 || inSolid(x, z, -0.4);
@@ -1215,6 +1295,12 @@ function buildWorld(scene, renderer, rng, track){
     const P = SPOT_POS[id];
     const gy = heightAt(P.x, P.z);
     grp.position.set(P.x, gy, P.z);
+    const plaques={numberland:[-3,2,-.75,2.8,.7],beginner:[0,3.83,2.45,5.8,.35],intermediate:[0,3.28,1.79,4.45,.4],advanced:[0,1.68,1.52,2.25,.4],_theater:[0,3.35,2.17,4.9,.45],_closet:[0,1.5,1.94,2.8,.5]};
+    const [px,py,pz,pw,ph]=plaques[id];
+    const signTexture=track(canvasTex(1024,256,()=>{}));
+    const signMat=track(new THREE.MeshStandardMaterial({map:signTexture,roughness:.9}));
+    const sign=new THREE.Mesh(track(new THREE.BoxGeometry(pw,ph,.08)),signMat);sign.position.set(px,py,pz);sign.userData.noDim=true;grp.add(sign);
+    const setName=text=>{const g=signTexture.image.getContext('2d');g.fillStyle=id==='intermediate'?'#57402b':id==='_closet'?'#4e377f':'#f0e6d2';g.fillRect(0,0,1024,256);g.fillStyle=id==='intermediate'||id==='_closet'?'#ffe2a3':'#553b22';g.font='700 100px system-ui';g.textAlign='center';g.textBaseline='middle';if(id==='numberland'){g.font='700 78px system-ui';g.fillText(text,512,90,960);g.font='700 62px system-ui';g.fillText('BASIC',512,193);}else g.fillText(text,512,135,950);signTexture.needsUpdate=true;sign.userData.placeName=text;};
     grp.userData.spot = id;
     grp.traverse(o => { if(o.isMesh) o.userData.spot = id; });
     scene.add(grp); out.pickables.push(grp);
@@ -1237,6 +1323,7 @@ function buildWorld(scene, renderer, rng, track){
     const center = new THREE.Vector3(P.x, gy + (anchorY || P.label) * 0.5, P.z);
     out.spots[id] = {
       group:grp, center,
+      setName,
       anchor:new THREE.Vector3(P.x, gy + (anchorY || P.label), P.z),
       setLocked(locked, soft){
         /* soft(lockIcon 이 있는 곳, 예: 극장) — 라벨만 회색, 건물은 그대로 밝고 자물쇠도 없다 */
@@ -1245,7 +1332,7 @@ function buildWorld(scene, renderer, rng, track){
         lock.visible = hard; halo.visible = !locked;
       }
     };
-    solids.push([P.x, P.z, extra == null ? P.r * 0.72 : extra]);
+    solids.push([P.x, P.z, extra == null ? P.r * 0.72 : extra,id]);
     spotGroups[id] = grp;
   }
   function makeLock(){
@@ -1536,6 +1623,7 @@ function buildWorld(scene, renderer, rng, track){
       if(Math.hypot(x - FOUNTAIN[0], z - FOUNTAIN[1]) < 4.6) return false;
       for(const id in GATE_POS){ const P = GATE_POS[id]; if((P.x - x) ** 2 + (P.z - z) ** 2 < 4) return false; }
       (kind ? pine : round).push([x, heightAt(x, z), z, s, r2()]);
+      solids.push([x,z,(kind ? .16 : .22)*s]);
       return true;
     };
     /* 마을 안 — 드문드문 */
@@ -1592,6 +1680,7 @@ function buildWorld(scene, renderer, rng, track){
       let skip = false; for(const id in SPOT_POS){ const P = SPOT_POS[id]; if((P.x - x) ** 2 + (P.z - z) ** 2 < (P.r * 0.8) ** 2) skip = true; }
       if(skip) continue;
       const y = heightAt(x, z), s = 0.35 + r2() * 0.4;
+      solids.push([x,z,s*.8]);
       if(r2() < 0.25) b.add(new THREE.DodecahedronGeometry(s * 0.8, 0), 'rock', x, y + s * 0.3, z, r2(), r2(), r2(), 1, 0.7, 1);
       else b.add(new THREE.IcosahedronGeometry(s, 0), 'bush', x, y + s * 0.5, z, 0, r2() * 3, 0, 1.3, 0.8, 1.1);
     }

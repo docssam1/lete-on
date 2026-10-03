@@ -1,5 +1,41 @@
 /* Functional 3D learning stage. Screen only: the established A4 renderer is unchanged. */
 @media screen{
+.nm-unit-view:has(.nm-journey),.nm-journey{--lesson-body:24px;--lesson-target:56px;--lesson-leading:1.55;--lesson-title:28px}
+.nm-unit-view:has(.nm-journey) .nm-flow-step small{font-size:20px}.nm-unit-view:has(.nm-journey) .nm-unit-title small{font-size:20px}
+html .nm-unit-view[data-learning-band] .nm-journey button{min-height:56px;min-width:56px;font-size:22px}
+html .nm-unit-view[data-learning-band] .nm-journey .nm-live-question{font-size:24px}
+html .nm-unit-view[data-learning-band] .nm-journey .nm-live-feedback{font-size:24px;min-height:0}
+.nm-journey .nm-live-head h2{font-family:'NM Lesson Sans',Pretendard,system-ui,sans-serif;font-size:28px}
+.nm-journey .nm-live-round,.nm-journey-caption{font-size:20px;line-height:1.5}
+.nm-journey-caption{margin:8px 0;color:#647365}
+.nm-journey-roles{display:flex;flex-wrap:wrap;gap:8px 18px;list-style:none;margin:12px 0;padding:0;font-size:20px;line-height:1.5}
+.nm-journey-roles li{color:#657669}.nm-journey-roles li[aria-current]{color:#245e49;font-weight:800;text-decoration:underline;text-underline-offset:6px}
+.nm-journey .nm-live-question{font-size:26px;line-height:1.55;word-break:keep-all}
+.nm-journey .nm-live-stage{height:440px;background:#e8eadf}
+.nm-journey[data-kind="integer"] .nm-live-stage{height:300px}
+.nm-journey .nm-live-equation{font-family:'NM Lesson Sans',Pretendard,system-ui,sans-serif;font-size:40px;line-height:1.45;flex-wrap:wrap;text-align:center;overflow-wrap:anywhere;padding:12px 0;word-break:normal}
+.nm-journey-legend,.nm-journey-evidence{font-size:20px;line-height:1.6;margin:10px 0;word-break:keep-all}
+.nm-journey-evidence p{font-size:22px;line-height:1.6}
+.nm-journey-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}.nm-journey-controls>p{flex-basis:100%;font-size:24px;margin:8px 0;line-height:1.5}
+.nm-journey.nm-live-lesson button{min-width:56px;min-height:56px;font-size:22px;line-height:1.4;padding:10px 14px;border-radius:8px;white-space:normal;overflow-wrap:anywhere;font-family:inherit}
+.nm-journey.nm-live-lesson button[aria-pressed="true"]{background:#245e49;color:#fff;outline:2px solid #dcb766;outline-offset:2px}
+.nm-journey-piece-controls{display:flex;flex-wrap:wrap;gap:10px;width:100%}
+.nm-journey-answer{display:flex;gap:12px;align-items:end;flex-wrap:wrap;max-width:100%}.nm-journey-answer label{font-size:24px;display:grid;gap:8px}
+.nm-journey-answer input{box-sizing:border-box;width:160px;max-width:100%;min-height:56px;border:2px solid #829a89;border-radius:8px;background:#fffdf6;color:#21382f;font-family:inherit;font-size:32px;font-weight:700;line-height:1.3;padding:8px 14px}
+.nm-journey-evidence .nm-journey-formula{font-size:36px;font-weight:700;text-align:center}
+.nm-journey .nm-live-feedback{min-height:0;font-size:24px;line-height:1.6;word-break:keep-all}.nm-journey-save{font-size:20px;line-height:1.55;color:#647365;word-break:keep-all}
+.nm-journey .nm-live-actions{gap:10px}.nm-journey .nm-live-render-note{font-size:20px;line-height:1.5}
+.nm-journey-labels{position:absolute;inset:0;z-index:1;pointer-events:none}.nm-journey-labels span{position:absolute;transform:translate(-50%,-50%);font:700 22px/1.3 'NM Lesson Sans',system-ui,sans-serif;color:#28473b;background:#fffcf1e8;border-radius:5px;padding:3px 7px;white-space:nowrap}
+.nm-journey-labels span[data-object^="tick-"]{font-size:20px;background:none;padding:0}.nm-journey-labels span[data-object="path"]{font-size:20px}
+.nm-journey-fallback{display:none}.nm-live-stage[data-renderer="fallback"] .nm-journey-labels{display:none}.nm-live-stage[data-renderer="fallback"] .nm-journey-fallback{display:flex;flex-wrap:wrap;gap:12px;align-content:center;justify-content:center;padding:14px;height:100%;box-sizing:border-box}
+.nm-journey-card-group{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:8px;border:2px solid #a1b19f;border-radius:9px;align-content:start}.nm-journey-card-group span{display:grid;place-items:center;width:25px;height:29px;background:#248c90;color:white;border-radius:5px;font-size:20px}.nm-journey-card-group .stripe{background:#c67825}.nm-journey[data-kind="common"] .nm-journey-card-group{grid-template-columns:repeat(2,1fr)}
+.nm-journey[data-kind="common"] .nm-journey-card-group[data-group="array"]{grid-template-columns:repeat(8,1fr)}
+.nm-journey[data-kind="common"] .nm-live-stage[data-renderer="fallback"]{height:auto;min-height:440px}.nm-journey[data-kind="common"] .nm-journey-fallback{height:auto;min-height:440px;gap:8px}
+.nm-journey-numberline{display:flex;width:100%;justify-content:space-between;border-bottom:2px solid #245e49;align-items:end}.nm-journey-numberline span{font-size:14px;padding:2px}.nm-journey-numberline span.current{background:#245e49;color:white}.nm-journey-fallback p{font-size:24px}
+@media(max-width:480px){.nm-journey .nm-live-stage{height:440px}.nm-journey[data-kind="integer"] .nm-live-stage{height:280px}.nm-journey .nm-live-equation{font-size:36px}.nm-journey .nm-live-question{font-size:24px}.nm-journey-roles{gap:6px 12px}.nm-journey .nm-live-head{flex-wrap:wrap}.nm-journey-labels span[data-object^="track-"]{font-size:18px}.nm-journey .nm-live-actions button{flex:1 1 40%}.nm-journey-answer input{width:140px}}
+@media(prefers-reduced-motion:reduce){.nm-journey *{scroll-behavior:auto;animation:none;transition:none}}
+}
+@media screen{
 .nm-live-lesson{--live-ink:#21382f;--live-green:#245e49;position:relative;max-width:920px;margin:0 auto 26px;color:var(--live-ink);font-family:Pretendard,system-ui,sans-serif}
 .nm-live-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:4px 0 12px;border-bottom:1px solid #d0d9d1}
 .nm-live-head h2{font-size:clamp(23px,4.4vw,30px);line-height:1.3;margin:0;font-weight:800;word-break:keep-all;letter-spacing:-.03em}
@@ -41,4 +77,33 @@
 .nm-live-fallback span.red{background:#af362b;color:#fff}.nm-live-fallback span.black{background:#263038;color:#fff}
 .nm-live-render-note{font-size:14px;line-height:1.5;color:#536455;margin:8px 0}
 @media(max-width:480px){.nm-live-stage{height:290px}.nm-live-question{font-size:20px}.nm-live-actions .primary{flex-basis:100%}.nm-live-feedback{min-height:4.8em}.nm-live-lesson button{padding:10px 13px}.nm-live-legend{gap:12px;font-size:14px}}
+.nm-strategy-lesson,.nm-strategy-lesson button{font-family:'NM Lesson Sans',Pretendard,system-ui,sans-serif}
+.nm-strategy-steps{display:flex;list-style:none;margin:16px 0 12px;padding:0;border-bottom:1px solid #ced7cf}
+.nm-strategy-steps li{flex:1;display:flex;gap:7px;align-items:center;padding:0 4px 12px;font-size:14px;color:#738275;white-space:nowrap}
+.nm-strategy-steps li span{font-variant-numeric:tabular-nums;font-size:12px}
+.nm-strategy-steps li[aria-current]{color:#245e49;font-weight:800;border-bottom:3px solid #245e49;margin-bottom:-1px}
+.nm-strategy-lesson .nm-live-stage{height:clamp(320px,45vw,440px);background:#ebe9dd}.nm-strategy-lesson .nm-live-loading{background:#ebe9dd}
+.nm-strategy-lesson[data-kind="numberLine"] .nm-live-stage{height:clamp(260px,35vw,350px)}
+.nm-strategy-labels{position:absolute;inset:0;pointer-events:none;z-index:1}
+.nm-strategy-labels span{position:absolute;transform:translate(-50%,-50%);font:700 18px/1.3 'NM Lesson Sans',system-ui,sans-serif;color:#213e35;white-space:nowrap;background:#f8f5e5e8;padding:2px 5px;border-radius:4px}
+.nm-strategy-lesson[data-kind="numberLine"] .nm-strategy-labels span[data-object^="tick-"]{font-size:15px;background:none;padding:0}
+.nm-strategy-lesson .nm-live-equation{flex-wrap:wrap;text-align:center;font-size:clamp(23px,4.8vw,34px);line-height:1.6;overflow-wrap:anywhere;padding:5px 0}
+.nm-strategy-lesson .nm-live-question{font-size:clamp(19px,2.3vw,22px);line-height:1.6}
+.nm-strategy-lesson[data-kind="numberLine"] .nm-live-question,.nm-strategy-lesson[data-kind="numberLine"] .nm-live-feedback{font-size:18px}
+.nm-strategy-memory{margin-top:20px;border-left:4px solid #b18934;padding:12px 16px;background:#f5efd9;font-size:19px;line-height:1.6}
+.nm-strategy-memory p{font-size:16px;margin:8px 0 0;color:#536454}
+.nm-strategy-transfer{margin-top:24px;border-top:1px solid #d0d9d1;padding-top:18px}.nm-strategy-transfer h3{margin:0 0 9px;font-size:20px}
+.nm-transfer-question{font-size:18px;line-height:1.7;word-break:keep-all;margin:0 0 14px}
+.nm-transfer-choices{display:flex;gap:10px;flex-wrap:wrap}.nm-transfer-choices button{min-width:62px;font-size:22px}.nm-transfer-choices button.is-confirmed{background:#245e49;color:white}
+.nm-transfer-feedback{font-size:17px;line-height:1.65;min-height:1.65em}
+.nm-strategy-factors{display:grid;gap:6px;margin:12px auto;max-width:620px;font-size:18px;font-variant-numeric:tabular-nums}.nm-strategy-factors strong{display:inline-block;padding:1px 7px;background:#d8e5d8;border-bottom:2px solid #245e49}
+.nm-strategy-factors[hidden],.nm-strategy-memory[hidden],.nm-strategy-transfer[hidden]{display:none}.nm-strategy-fallback{display:none}
+.nm-live-stage[data-renderer="fallback"] .nm-strategy-labels{display:none}
+.nm-live-stage[data-renderer="fallback"] .nm-strategy-fallback{height:100%;display:flex;flex-direction:column;justify-content:center;gap:20px;padding:20px;box-sizing:border-box}
+.nm-strategy-fallback>div:not(.nm-fallback-line){display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:260px;margin:auto}
+.nm-strategy-fallback span{display:grid;place-items:center;min-width:25px;min-height:30px;border-radius:5px;font-size:21px}
+.nm-strategy-fallback .base{background:#1372a3;color:#fff}.nm-strategy-fallback .gold{background:#ecb544}.nm-strategy-fallback .empty{border:1px solid #708b7b}
+.nm-fallback-line{display:flex;justify-content:space-between;border-bottom:2px solid #245e49;padding-bottom:9px}.nm-fallback-line span{font-size:15px;min-width:0;padding:0 2px}.nm-fallback-line .current{background:#245e49;color:#fff}
+.nm-strategy-fallback p{font-size:17px;line-height:1.6;text-align:center}.nm-strategy-fallback>.nm-fallback-product{grid-template-columns:repeat(8,1fr)!important;gap:4px!important}.nm-fallback-product span{font-size:14px;min-width:21px;min-height:21px}
+@media(max-width:480px){.nm-strategy-steps li{font-size:12px;gap:4px;padding-inline:0}.nm-strategy-steps li span{font-size:10px}.nm-strategy-lesson .nm-live-stage{height:330px}.nm-strategy-lesson .nm-live-equation{font-size:23px}.nm-strategy-labels span{font-size:16px}.nm-strategy-lesson[data-kind="numberLine"] .nm-strategy-labels span[data-object^="tick-"]{font-size:14px}.nm-strategy-lesson .nm-live-feedback{min-height:0}.nm-strategy-lesson .nm-live-actions .next{margin-left:0}.nm-strategy-memory{font-size:18px}}
 }

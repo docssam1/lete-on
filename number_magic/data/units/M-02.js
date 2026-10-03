@@ -42,9 +42,9 @@ window.NM_UNITS['M-02'] = {
 
       { tag:{ko:'② 부호가 다르면 큰 쪽이 이깁니다',en:'2) Different sign — the bigger one wins',zh:'② 异号时绝对值大的胜出'},
         head:{ko:'(+8) + (−3) = +5',en:'(+8) + (−3) = +5',zh:'(+8) + (−3) = +5'},
-        desc:{ko:'3득점하고 8실점했다고 생각해봅니다 — 절댓값의 <b>차(8−3=5)</b>를 구하고, <b>절댓값이 더 큰 쪽의 부호(+)</b>를 따라갑니다. 뺄셈은 빼는 수의 부호를 바꿔서 덧셈으로: 5 − (−3) = 5 + (+3) = 8.',
-              en:'Think of scoring 3 and conceding 8 — find the <b>difference of absolute values (8−3=5)</b> and follow the <b>sign of the bigger one (+)</b>. Subtraction becomes addition by flipping the sign: 5 − (−3) = 5 + (+3) = 8.',
-              zh:'想象得3分又丢8分——求绝对值的<b>差(8−3=5)</b>，符号跟着<b>绝对值更大的那个(+)</b>。减法把减数变号后改成加法：5 − (−3) = 5 + (+3) = 8。'},
+        desc:{ko:'8득점하고 3실점했다고 생각해봅니다 — 절댓값의 <b>차(8−3=5)</b>를 구하고, <b>절댓값이 더 큰 쪽의 부호(+)</b>를 따라갑니다. 뺄셈은 빼는 수의 부호를 바꿔서 덧셈으로: 5 − (−3) = 5 + (+3) = 8.',
+              en:'Think of scoring 8 and conceding 3 — find the <b>difference of absolute values (8−3=5)</b> and follow the <b>sign of the bigger one (+)</b>. Subtraction becomes addition by flipping the sign: 5 − (−3) = 5 + (+3) = 8.',
+              zh:'想象得8分又丢3分——求绝对值的<b>差(8−3=5)</b>，符号跟着<b>绝对值更大的那个(+)</b>。减法把减数变号后改成加法：5 − (−3) = 5 + (+3) = 8。'},
         mathSteps:['(+8)+(-3)', '|8|-|-3| = 5', '+5'],
         result:{ko:'다른 부호는 빼서 차이를 찾고, 큰 쪽 부호를 따라갑니다!',en:'Different sign: subtract to find the gap, follow the bigger sign!',zh:'异号就相减找差距，跟着更大的符号走！'},
         book:{ko:'괄호가 있는 식은 괄호를 풀어서 덧셈으로 바꾸면 계산이 편해집니다 — 부호에 주의!',

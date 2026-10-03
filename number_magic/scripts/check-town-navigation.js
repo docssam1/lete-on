@@ -7,6 +7,7 @@ const fs=require('fs'),path=require('path'),http=require('http'),assert=require(
 const {chromium}=require('./lib/playwright');
 const ROOT=path.resolve(__dirname,'../..');
 const OUT=process.env.NM_NAV_ARTIFACTS&&path.resolve(process.env.NM_NAV_ARTIFACTS);
+if(OUT&&!/^[EG]:[\\/]/i.test(OUT))throw Error('Artifacts must be on E: or G:');
 const MIME={'.html':'text/html; charset=utf-8','.js':'application/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.woff2':'font/woff2'};
 const server=http.createServer((req,res)=>{
   const file=path.resolve(ROOT,'.'+decodeURIComponent(req.url.split('?')[0]));
@@ -19,7 +20,7 @@ const server=http.createServer((req,res)=>{
   fs.createReadStream(file).pipe(res);
 });
 async function checkViewport(browser,port,width){
-  const ctx=await browser.newContext({viewport:{width,height:844},deviceScaleFactor:1});
+  const ctx=await browser.newContext({viewport:{width,height:844},deviceScaleFactor:1,hasTouch:width===390});
   const page=await ctx.newPage(),errors=[];
   const result={width};
   const shot=async name=>{if(OUT)await page.screenshot({path:path.join(OUT,`${width}-${name}.png`)});};
@@ -37,6 +38,33 @@ async function checkViewport(browser,port,width){
     await page.goto(`http://127.0.0.1:${port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
     await page.locator('.nm-title3d [data-id="game"]').click({timeout:60000});
     await waitTown(1);
+    if(width===390){
+      result.reachability=await page.evaluate(()=>{
+        const d=window.__navTown.debug,p=d.chars.find(c=>c.def.role==='player'),step=.9,queue=[[0,0]],seen=new Set(['0,0']),parent=new Map(),found={};
+        const spots=Object.entries(d.world.spots);let head=0;
+        const validEdge=(x,z,nx,nz)=>{const n=Math.ceil(Math.hypot(nx-x,nz-z)/.12);for(let i=1;i<=n;i++)if(!d.canMove(x+(nx-x)*i/n,z+(nz-z)*i/n,x+(nx-x)*(i-1)/n,z+(nz-z)*(i-1)/n))return false;return true;};
+        while(head<queue.length&&Object.keys(found).length<spots.length){const [ix,iz]=queue[head++],x=p.x+ix*step,z=p.z+iz*step;
+          for(const [id,s]of spots)if(!found[id]&&Math.hypot(x-s.center.x,z-s.center.z)<5.9)found[id]={x,z,cell:[ix,iz]};
+          for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=ix+dx,nz=iz+dz,key=nx+','+nz,wx=p.x+nx*step,wz=p.z+nz*step;if(seen.has(key)||wx<-47||wx>47||wz<-64||wz>40)continue;seen.add(key);if(!validEdge(x,z,wx,wz))continue;parent.set(key,[ix,iz]);queue.push([nx,nz]);}
+        }
+        // Each discovered path has collision-free edges in both directions.
+        for(const item of Object.values(found)){let cell=item.cell,count=0;while(cell[0]||cell[1]){const prev=parent.get(cell.join(','));if(!prev)throw Error('Broken reachable path');if(!validEdge(p.x+cell[0]*step,p.z+cell[1]*step,p.x+prev[0]*step,p.z+prev[1]*step))throw Error('Return path blocked');cell=prev;count++;}item.pathEdges=count;}
+        return {terrainScale:d.scale,destinations:found,visitedCells:head};
+      });
+      assert.deepEqual(Object.keys(result.reachability.destinations).sort(),['numberland','beginner','intermediate','advanced','_theater','_closet'].sort(),'all six destinations have round-trip collision-free paths');
+      const cdp=await ctx.newCDPSession(page),joy=await page.locator('.t3d-joystick').boundingBox(),cx=joy.x+joy.width/2,cy=joy.y+joy.height/2;
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:cx+38,y:cy,id:1}]});
+      const owner=await page.evaluate(()=>window.__navTown.debug.movement().owner);assert.notEqual(owner,null);
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:cx+38,y:cy,id:1},{x:cx-38,y:cy,id:2}]});
+      assert.equal(await page.evaluate(()=>window.__navTown.debug.movement().owner),owner,'second finger cannot steal the joystick');
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:cx+180,y:cy,id:1},{x:cx-38,y:cy,id:2}]});
+      assert.ok(await page.evaluate(()=>window.__navTown.debug.movement().vector.x>.9),'captured pointer keeps controlling outside the disc');
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+      assert.deepEqual(await page.evaluate(()=>window.__navTown.debug.movement()),{owner:null,vector:{x:0,z:0},keys:[]});
+      await page.locator('.t3d-joystick').focus();await page.keyboard.down('ArrowRight');await page.evaluate(()=>window.dispatchEvent(new Event('blur')));await page.keyboard.up('ArrowRight');
+      assert.deepEqual(await page.evaluate(()=>window.__navTown.debug.movement()),{owner:null,vector:{x:0,z:0},keys:[]});
+      result.touch={secondPointerIgnored:true,outsideCapture:true,cancelStops:true,blurHandlerStops:true};
+    }
     await page.locator('#townZin').click();await page.locator('#townZin').click();
     await page.locator('.t3d-cv').focus();await page.keyboard.press('ArrowLeft');
     result.before=await snap();await shot('map-before');

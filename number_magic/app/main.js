@@ -877,7 +877,7 @@ function startAmbience(){
 let townCleanup=null;
 /* 지도에서 학습·도감을 다녀와도 같은 장소로 돌아온다. 학생 진도와는 별개인
    이번 방문의 시점만 기억하며, localStorage·클라우드 저장에는 넣지 않는다. */
-let townVisitSnapshot=null;
+let townVisitSnapshot=S.townVisitSnapshot||null;
 let roadVisitSnapshot=null;
 let restoreRoadVisit=false;
 let hqPuzzle=null; /* 수학사 퀴즈(§3 남쪽 항구) — 현재 화면의 퍼즐 상태. S.histQuiz(큐·done)와
@@ -1301,6 +1301,7 @@ function screenTown(){
   TOWN_GATES.forEach(g=>{
     gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">🪧 ${g.icon} <span>${esc(L(g.name))}</span></button>`;
   });
+  scr.classList.add('nm-town');
   scr.innerHTML=`
     <div id="townVp" class="is-3d-pending" aria-busy="true">
       <div id="townWorld">
@@ -1318,7 +1319,7 @@ function screenTown(){
           <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,44):''}</div>
           <div class="shadow"></div></div>
         <div class="nb nb-elder nb-walker" id="nbElder"><div class="speech"></div>
-          <div class="nb-name">${S.lang==='ko'?'할아버지':S.lang==='en'?'Grandpa':'爷爷'}</div>
+          <div class="nb-name">${S.lang==='ko'?'안내 마법사':S.lang==='en'?'Guide Wizard':'向导魔法师'}</div>
           <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker('elder',56):(window.renderHumanChar?window.renderHumanChar('elder',52):'')}</div>
           <div class="shadow"></div></div>
         <div class="nb nb-doc nb-walker" id="nbDoc"><div class="speech"></div>
@@ -5526,7 +5527,7 @@ function mountTown3DInto(scr){
       lines:[{ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`},{ko:'길을 콕 찍으면 내가 걸어가!',en:'Tap a path and I will walk there!',zh:'点一下小路，我就走过去！'}] },
     { id:'buddy', role:'buddy', html:numi(S.character,44), model:buddyModel||undefined,
       lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'},{ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'}] },
-    { id:'elder', role:'npc', html:walker('elder',56), model:{kind:'elder'}, name:{ko:'할아버지',en:'Grandpa',zh:'爷爷'}, at:'gazebo', still:true,
+    { id:'elder', role:'npc', html:walker('elder',56), model:{kind:'elder'}, name:{ko:'안내 마법사',en:'Guide Wizard',zh:'向导魔法师'}, at:'gazebo', still:true,
       lines:[{ko:'허허, 마을에 온 걸 환영하네',en:'Ho ho, welcome to the village',zh:'呵呵，欢迎来到村庄'},{ko:'정자에 앉아 숫자 이야기 들려줄까?',en:'Shall I tell you a number story at the gazebo?',zh:'在凉亭坐下，听我讲讲数字的故事？'},{ko:'천천히 해도 괜찮단다',en:'It is fine to take your time',zh:'慢慢来也没关系'},{ko:'항구에 가면 수학 이야기 퀴즈가 있단다',en:'There is a math-story quiz down at the harbor',zh:'去港口有数学故事问答哦'}] },
     { id:'doc', role:'npc', html:walker('doc',56), model:{kind:'doc'}, name:{ko:'독쌤',en:'Doc-T',zh:'独先生'}, at:'academy', still:true,
       lines:[{ko:'안녕! 나는 독쌤이야 📚',en:'Hi! I am Doc-T 📚',zh:'你好！我是独先生 📚'},{ko:'오늘 배울 마법은 도서관에 있어',en:"Today's magic is in the library",zh:'今天要学的魔法在图书馆里'},{ko:'모르면 언제든 물어봐!',en:'Ask me anything, any time!',zh:'不懂随时问我！'}] },
@@ -5580,10 +5581,11 @@ function mountTown3DInto(scr){
     if(zo)zo.onclick=()=>ctl.zoomOut();
     if(me)me.onclick=()=>ctl.focusPlayer();
     townCleanup=()=>{
-      if(ctl.snapshot)townVisitSnapshot=ctl.snapshot();
+      if(ctl.snapshot){townVisitSnapshot=ctl.snapshot();S.townVisitSnapshot=townVisitSnapshot;save();}
       if(prev)prev();
       ctl.dispose();
     };
+    scr.addEventListener('click',e=>{if(e.target.closest('button,a')&&!e.target.closest('.t3d-joystick'))ctl.stopMovement?.();},{capture:true});
   }).catch(revealFallback);
 }
 /* 마을 건물 탭 → 안내 모달(2D 지도·3D 마을 공통) */
@@ -6189,6 +6191,7 @@ function stepDiscover(body,u){
   const stages = u.ranges ? d.stages.filter(s=> two || s.kind==='one') : d.stages;
   const kid = u.tier==='basic';
   const living=window.NM_LIVING_LESSONS&&NM_LIVING_LESSONS.has(u.id);
+  const strategy=living&&['A-02','M-02','T-DV4'].includes(u.id);
   /* 개념 스토리 훅(§7·§13): 중등·고등은 docssam 선생님 캐릭터가, 그 외는 누미가 말풍선으로 연다 */
   const st=d.story||u.story;
   /* 중·고 판정 — tier가 "middle*"·"high*"로 시작하는 기존 규칙에 더해
@@ -6255,8 +6258,8 @@ function stepDiscover(body,u){
     </div>`:'';
   body.innerHTML=`<div class="nm-card${kid&&!living?' kid-note':''}${mzStory?' nm-mzu-card':''}${living?' nm-live-card':''}">
     ${kid&&!living?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
-    ${living?`<div id="livingLesson"></div>${st&&st.history?`<details class="nm-live-history"><summary>${S.lang==='ko'?(kid?'수 이야기 더 보기':'이 교구의 수학 이야기'):S.lang==='en'?'The story behind the pieces':'教具里的数学故事'}</summary><p>${L(st.history)}</p></details>`:''}`:mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
-    <div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>
+    ${living?`<div id="livingLesson"></div>${!strategy&&st&&st.history?`<details class="nm-live-history"><summary>${S.lang==='ko'?(kid?'수 이야기 더 보기':'이 교구의 수학 이야기'):S.lang==='en'?'The story behind the pieces':'教具里的数学故事'}</summary><p>${L(st.history)}</p></details>`:''}`:mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
+    ${!strategy?`<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>`:''}
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   /* 3D 대표 그림을 직접 띄워 움직인다(app/hero3d/live.js, 원장 "동작도 하는거야?" → "1"). 3D 라이브러리는 이 단계에서만
      불러온다(약 2MB — 첫 화면에 싣지 않는다). 못 띄우면 정지 그림이 그대로 남는다. */
@@ -6266,7 +6269,18 @@ function stepDiscover(body,u){
   if(livingHost){
     const lang=S.lang;
     livingHost.textContent=lang==='ko'?'교구를 준비하고 있어요':lang==='en'?'Preparing the pieces':'正在准备教具';
-    import('./living-lesson.js').then(m=>m.mount(livingHost,u.id,lang)).catch(()=>{
+    if(strategy)$('#toCheck').disabled=true;
+    const journeyOptions=strategy?{
+      saved:S.conceptJourneys?.[u.id],
+      save:state=>{
+        const old=S.conceptJourneys;S.conceptJourneys={...(old||{}),[u.id]:state};
+        try{localStorage.setItem(KEY,JSON.stringify(S));}catch(error){S.conceptJourneys=old;throw error;}
+        cloudPushSoon();
+      },
+      onStatus:status=>{const next=body.querySelector('#toCheck');if(next)next.disabled=!(status.complete&&status.saved);},
+      onTown:()=>{S.view='town';save();render();}
+    }:{};
+    import('./living-lesson.js').then(m=>m.mount(livingHost,u.id,lang,journeyOptions)).catch(()=>{
       if(livingHost.isConnected)livingHost.textContent=lang==='ko'?'교구를 불러오지 못했습니다. 아래 개념으로 계속 학습할 수 있습니다.':lang==='en'?'The pieces could not load. Continue with the concept below.':'教具加载失败。可以继续学习下方概念。';
     });
   }
@@ -6274,7 +6288,7 @@ function stepDiscover(body,u){
     el.onclick=()=>{window.open(el.dataset.lab,'_blank','noopener');};
   });
   const host=body.querySelector('#cstages');
-  stages.forEach(s=>{
+  (strategy?[]:stages).forEach(s=>{
     const wrap=document.createElement('div');wrap.className='nm-cstage';
     const headTxt=L(s.head);
     wrap.innerHTML=`<span class="nm-ctag ${s.kind||''}">${L(s.tag)}</span>
@@ -6287,7 +6301,7 @@ function stepDiscover(body,u){
     if(s.book){const bk=document.createElement('div');bk.className='nm-cbook';bk.innerHTML='📖 '+L(s.book);wrap.appendChild(bk);}
     mountConceptScene(wrap,u,d.stages.indexOf(s));
   });
-  $('#toCheck').onclick=()=>{markStepDone(S.unit,'discover');gotoStep(u.tier==='basic'?'lab':'check');};
+  $('#toCheck').onclick=()=>{if($('#toCheck').disabled)return;markStepDone(S.unit,'discover');gotoStep(u.tier==='basic'?'lab':'check');};
 }
 
 /* 개념 애니메이션 붙이기 (개념애니-설계.md 2단계) — mathSteps 아래에 "움직이는 예"를 얹는다.
