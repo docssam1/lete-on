@@ -92,6 +92,7 @@ try {
     await page.route("**/functions/v1/fields-auth", (route) => route.fulfill({ contentType: "application/json", body: "{}" }));
     await page.route("**/functions/v1/golden-bell-answers", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ answers: privateBank.books["book-01"] }) }));
     await page.addInitScript(() => { sessionStorage.setItem("gfield_fields_session", "isolated-hands-on-review"); window.print = () => {}; });
+    await page.addInitScript(() => window.addEventListener("DOMContentLoaded", () => { const qr = document.getElementById("printGameQR"); if (qr) qr.checked = false; }));
     await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=HANDS-QA&book=book-01`, { waitUntil: "networkidle" });
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
     const progressBefore = await page.evaluate(() => localStorage.getItem("fields-classic-golden-bell:HANDS-QA"));

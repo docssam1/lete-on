@@ -1,6 +1,6 @@
 import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261003b";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
-import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook } from "./golden-bell-protected.js?v=20260906c";
+import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260918c";
@@ -15,8 +15,9 @@ import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
-import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20260909b";
-import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261003c";
+import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261003e";
+import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261003e";
+import { preparePrintGameLinks, attachPrintGameLinks } from "./golden-bell-game-print.js?v=20261003e";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261003d";
 
 const $ = (id) => document.getElementById(id);
@@ -1414,6 +1415,7 @@ function renumberPrintPages(root) {
       number.className = "gold-print-page-number";
       footer.append(number);
     }
+    if (footer.querySelector(".gold-print-footer-meta")) footer.querySelector(".gold-print-footer-meta").append(number);
     number.textContent = ` ${index + 1} / ${pages.length}`;
   });
   return pages.length;
@@ -1467,6 +1469,7 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
   renderContent();
   const book = activeBook();
   const root = $("goldPrintRoot");
+  const includeGames = $("printGameQR").checked && (mode === "study" || mode === "both");
   root.replaceChildren();
   root.setAttribute("aria-hidden", "true");
   if (mode !== "study" && !protectedBooks.has(book.id)) {
@@ -1477,15 +1480,18 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
   printPreparing = true;
   $("courseSelect").disabled = true;
   $("coursePrintMode").disabled = true;
+  $("printGameQR").disabled = true;
   $("bookTabs").querySelectorAll("button").forEach((button) => { button.disabled = true; });
   buttons.forEach((button) => { button.disabled = true; });
   if ($("coverDialog").open) renderCoverPreview();
   $("printStatus").textContent = "인쇄 분량을 정리하고 있습니다.";
   try {
+    const gameLinks = includeGames ? await preparePrintGameLinks(book, lessons, () => ensureFieldsSession(student)) : new Map();
     const cover = includeCover && coverStyle !== "none" && (mode === "study" || mode === "both") ? printBookCover(book, lessons, { includeAnswers: mode === "both" }) : "";
     const study = mode === "study" || mode === "both" ? lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") : "";
     const answers = mode === "study" ? "" : lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: mode === "quick" })).join("");
     root.innerHTML = cover + study + answers;
+    attachPrintGameLinks(root, gameLinks);
     if (document.fonts?.ready) await document.fonts.ready;
     await Promise.all([...root.querySelectorAll("img")].map((image) => image.decode()));
     compactGoldenBellPrint(root);
@@ -1501,12 +1507,15 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
     console.error("Golden Bell print preparation failed", error);
     root.replaceChildren();
     root.setAttribute("aria-hidden", "true");
-    $("printStatus").textContent = "인쇄 자료를 준비하지 못했습니다. 다시 인쇄를 눌러 주세요.";
+    $("printStatus").textContent = error.message === "login_required" || /^session_/u.test(error.message)
+      ? "게임 QR은 승인 계정으로 로그인한 뒤 인쇄할 수 있습니다. QR을 제외하면 학습지만 인쇄합니다."
+      : "인쇄 자료를 준비하지 못했습니다. 다시 인쇄를 눌러 주세요.";
     return false;
   } finally {
     printPreparing = false;
     $("courseSelect").disabled = false;
     $("coursePrintMode").disabled = false;
+    $("printGameQR").disabled = false;
     $("bookTabs").querySelectorAll("button").forEach((button) => { button.disabled = false; });
     buttons.forEach((button) => { button.disabled = !activeBook().lessons.length; });
     updateCoverButton();

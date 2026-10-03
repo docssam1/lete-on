@@ -29,6 +29,7 @@ try {
     await page.route("**/functions/v1/fields-auth", (route) => route.fulfill({ contentType: "application/json", body: "{}" }));
     await page.route("**/functions/v1/golden-bell-answers", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ answers: bank.books["book-01"] }) }));
     await page.addInitScript(() => { sessionStorage.setItem("gfield_fields_session", "cover-test-fixture"); window.print = () => {}; });
+    await page.addInitScript(() => window.addEventListener("DOMContentLoaded", () => { const qr = document.getElementById("printGameQR"); if (qr) qr.checked = false; }));
     await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=COVER-QA&book=book-01`, { waitUntil: "networkidle" });
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
     const dialog = page.locator("#coverDialog");
@@ -134,6 +135,7 @@ try {
   const largest = GOLDEN_BELL_BOOKS.filter((book) => book.lessons.length).sort((a, b) => b.lessons.length - a.lessons.length)[0];
   const crowded = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   await crowded.addInitScript(() => { window.print = () => {}; });
+  await crowded.addInitScript(() => window.addEventListener("DOMContentLoaded", () => { const qr = document.getElementById("printGameQR"); if (qr) qr.checked = false; }));
   await crowded.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=COVER-QA&book=${largest.id}`, { waitUntil: "networkidle" });
   for (const style of ["concept", "simple"]) {
     await crowded.locator("#printCoverButton").click();
