@@ -45,7 +45,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
   const KICK = { design: 'DESIGN · 탐구 설계', lab: 'EXPLORE · 직접 실험', concept: 'CONCEPT · 개념', think: 'CREATIVE · 생각 넓히기', gift: 'GIFTED · 영재 도전', check: 'CHECK · 확인', report: 'REPORT · 탐구 기록' };
   const banner = (t, kind = '') => `<div class="bk-banner ${kind}">${KICK[kind] ? `<small class="bk-kick">${KICK[kind]}</small>` : ''}<span>${esc(t)}</span></div>`;
   const step = (n, t) => `<h3 class="bk-step"><span>STEP ${n}</span>${esc(t)}</h3>`;
-  const qr = (src, label, kind) => `<figure class="bk-qr">${kind ? pop(kind, label) : ''}<img src="${src}" alt="${esc(label)} QR"><figcaption>${esc(label)}</figcaption></figure>`;
+  const qr = (src, label, kind) => !src ? `<figure class="bk-qr">${pop(kind, label)}<figcaption>${esc(label)}<br><a href="https://lete-on.gfieldacademy.net/science-lab/v2/#/${esc(ch.unit)}/start">lete-on.gfieldacademy.net/science-lab/v2/</a></figcaption></figure>` : `<figure class="bk-qr">${kind ? pop(kind, label) : ''}<img src="${src}" alt="${esc(label)} QR"><figcaption>${esc(label)}</figcaption></figure>`;
   const out = [];
 
   // 1. 장 첫 쪽
@@ -140,7 +140,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
   const pick = ch.check.map((k) => similar.find((s) => `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k)).filter(Boolean);
   out.push(page(`${banner('교과 확인 문제', 'check')}<ol class="bk-items">${pick.map(itemHtml).join('')}</ol>`, { cls: 'check', say: 'check' }));
 
-  return `<div class="bk ${teacher ? 'bk-t' : ''} ${live ? 'live' : ''}" style="--bk-theme:${ch.theme || '#2F7D4F'};--bk-thumb-top:${60 + (ch.no - 1) * 22}mm">${out.join('')}</div>`;
+  return `<div data-unit="${esc(ch.unit)}" class="bk ${teacher ? 'bk-t' : ''} ${live ? 'live' : ''}" style="--bk-theme:${ch.theme || '#2F7D4F'};--bk-thumb-top:${60 + (ch.no - 1) * 22}mm">${out.join('')}</div>`;
 }
 
 // 쪽 맞춤: 쪽마다 본문이 A4 한 장에 알맞게 차도록 조정한다(휴대폰의 한 줄 읽기 화면은 건너뜀).

@@ -5,7 +5,13 @@ const hill = (title, targets) => ({ title, question: '어느 팀에서 흙이 �
 const volcano = (title, field, targets) => ({ title, question: field === 'crystal' ? '어느 팀의 백반 결정이 더 클까요?' : '어느 팀에서 연기가 더 많이 날까요?', choices: field === 'crystal' ? order() : ['1팀에서 더 많이 남', '연기의 양이 같음', '2팀에서 더 많이 남'], field, targets });
 const pond = (title, targets) => ({ title, question: '우리 팀의 식물을 이 장소에 심으면 살기에 알맞을까요?', choices: ['살기에 알맞음', '살기에 알맞지 않음'], field: 'habitat', targets });
 
+const humidifier = (title, targets) => ({title,question:'어느 팀의 판 아래에 물방울이 더 뚜렷할까요?',choices:['1팀이 더 뚜렷함','관찰 모습이 같음','2팀이 더 뚜렷함'],field:'stage',targets});
 export const LAB_BATTLE_ROUNDS = {
+  's42-u02': [
+    humidifier('판의 냉각만 바꾸기',[{water:'따뜻한 물',surface:'실온'},{water:'따뜻한 물',surface:'차갑게'}]),
+    humidifier('물의 온도만 바꾸기',[{water:'따뜻한 물',surface:'차갑게'},{water:'실온 물',surface:'차갑게'}]),
+    humidifier('같은 조건으로 재현하기',[{water:'실온 물',surface:'차갑게'},{water:'실온 물',surface:'차갑게'}]),
+  ],
   's41-u02': [
     freeze('물과 얼음, 무게 줄세우기', 'mass', [{ ml: 100, state: '물' }, { ml: 100, state: '얼음' }]),
     freeze('물의 양을 바꾸어 비교하기', 'mass', [{ ml: 60, state: '얼음' }, { ml: 140, state: '얼음' }]),
@@ -31,6 +37,7 @@ export const LAB_BATTLE_ROUNDS = {
 const finite = (value) => typeof value === 'number' && Number.isFinite(value) && value >= 0;
 export function validBattleRow(unit, row) {
   if (!row || typeof row !== 'object') return false;
+  if (unit === 's42-u02') return ['실온 물','따뜻한 물'].includes(row.water) && ['실온','차갑게'].includes(row.surface) && [0,1,2].includes(row.stage) && row.stage === (row.water === '따뜻한 물' ? 1 : 0) + (row.surface === '차갑게' ? 1 : 0) && row.result === ['눈에 띄는 물방울 없음','작은 물방울이 맺힘','물방울이 더 뚜렷하게 맺힘'][row.stage];
   if (unit === 's41-u02') return ['물', '얼음'].includes(row.state) && [60, 100, 140].includes(row.ml) && finite(row.height) && finite(row.mass);
   if (unit === 's41-u03') return ['완만', '가파름'].includes(row.slope) && ['적게', '많이'].includes(row.water) && finite(row.cut) && finite(row.pile);
   if (unit === 's41-u03b') return (row.exp === '식히기' && ['얼음물(빨리)', '상자(천천히)'].includes(row.cond) && /^(작은|큰) 결정 \d+개$/.test(row.result))
@@ -43,12 +50,14 @@ export function matchesBattleTarget(unit, row, target) {
   return validBattleRow(unit, row) && Object.entries(target).every(([key, value]) => row[key] === value);
 }
 export function battleTargetText(unit, target) {
+  if (unit === 's42-u02') return `${target.water} · 판 ${target.surface}`;
   if (unit === 's41-u02') return `${target.ml} mL · ${target.state}`;
   if (unit === 's41-u03') return `경사 ${target.slope} · 물 ${target.water}`;
   if (unit === 's41-u03b') return `${target.exp === '식히기' ? '백반 식히기' : '가상 화산'} · ${target.cond}`;
   return `${target.plant} · ${target.where}`;
 }
 export function battleRowText(unit, row) {
+  if (unit === 's42-u02') return `${row.water} · 판 ${row.surface} · ${row.result}`;
   if (unit === 's41-u02') return `${row.ml} mL ${row.state} · ${row.mass} g · 높이 ${row.height}칸`;
   if (unit === 's41-u03') return `${row.slope} · 물 ${row.water} · 깎임 ${row.cut}칸 · 쌓임 ${row.pile}칸`;
   if (unit === 's41-u03b') return `${row.cond} · ${row.result}`;

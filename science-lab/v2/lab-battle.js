@@ -4,7 +4,7 @@ const esc = value => String(value ?? '').replace(/[&<>\"]/g, c => ({ '&': '&amp;
 export function mountLabBattle(host, unit, mountLab) {
   const rounds = LAB_BATTLE_ROUNDS[unit];
   if (!rounds) return;
-  host.classList.add('gfield-ui');
+  host.classList.add('gfield-ui'); host.dataset.unit = unit;
   let round = 0, generation = 0, predictions, records, submitted, actual, revealed, handles = [];
   const $ = selector => host.querySelector(selector), $$ = selector => [...host.querySelectorAll(selector)];
   const current = () => rounds[round % rounds.length];
@@ -46,12 +46,12 @@ export function mountLabBattle(host, unit, mountLab) {
     });
   };
   const startRound = () => {
-    generation++; handles.forEach(handle => handle?.dispose?.()); handles = [];
+    host.classList.remove('lb-running'); generation++; handles.forEach(handle => handle?.dispose?.()); handles = [];
     predictions = [null, null]; records = [null, null]; submitted = [false, false]; actual = [null, null]; revealed = false;
     const config = current();
     host.innerHTML = `<div class="mb-head"><div><span class="mb-eyebrow">2팀 탐구 대결</span><h3>${esc(config.title)}</h3><p>① 두 팀 예상 확정 → ② 실험과 기록 → ③ 함께 정답 확인</p></div><strong>${round % rounds.length + 1} / ${rounds.length} 대결</strong></div>
       <p class="lb-question">${esc(config.question)}</p>
-      ${unit === 's41-u03' ? '<p class="lb-note">컵은 두 팀 모두 같은 기본 위치에 놓여요. 과제에서 정한 경사와 물의 양을 골라 주세요.</p>' : unit === 's41-u03b' ? '<p class="lb-note">백반은 암석이 아닌 모형 재료예요. 화면 속 가열은 가상 실험이며 실제 가열은 선생님만 해요.</p>' : ''}
+      ${unit === 's42-u02' ? '<p class="lb-note">같은 시간 동안 관찰하는 예시 모형이에요. 실제 물방울 수·습도 측정값과는 달라요.</p>' : unit === 's41-u03' ? '<p class="lb-note">컵은 두 팀 모두 같은 기본 위치에 놓여요. 과제에서 정한 경사와 물의 양을 골라 주세요.</p>' : unit === 's41-u03b' ? '<p class="lb-note">백반은 암석이 아닌 모형 재료예요. 화면 속 가열은 가상 실험이며 실제 가열은 선생님만 해요.</p>' : ''}
       <div class="mb-standings"><p class="mb-result" data-lb-result role="status"></p><button type="button" class="btn primary" data-lb-check hidden>정답 확인</button><button type="button" class="btn mb-next" data-lb-next hidden>새 대결</button></div>
       <div class="mb-teams">${[0, 1].map(i => `<section class="mb-team"><header><b>${i + 1}팀</b><span>과제: ${esc(battleTargetText(unit, config.targets[i]))}</span></header>
         <div class="lb-predict"><label>우리 팀 예상<select data-lb-predict="${i}" aria-label="${i + 1}팀 예상"><option value="">예상을 골라 주세요</option>${config.choices.map((text, j) => `<option value="${j}">${esc(text)}</option>`).join('')}</select></label><button type="button" class="btn primary" data-lb-lock="${i}" disabled>예상 확정</button></div>
@@ -63,7 +63,7 @@ export function mountLabBattle(host, unit, mountLab) {
       const i = Number(button.dataset.lbLock), select = $(`[data-lb-predict="${i}"]`);
       if (predictions[i] !== null || select.value === '') return;
       predictions[i] = Number(select.value); select.disabled = true; button.disabled = true; button.textContent = '예상 확정됨';
-      if (predictions.every(value => value !== null)) mount();
+      if (predictions.every(value => value !== null)) { host.classList.add('lb-running'); mount(); }
       update();
     }));
     $$('[data-lb-pick]').forEach(select => select.addEventListener('change', update));

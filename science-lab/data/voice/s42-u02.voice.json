@@ -1,0 +1,43 @@
+{
+  "voice": "docssam-omnivoice",
+  "note": "안내 문장만 준비. 새 음성은 모든 기능 완료 후 생성. 기존 공용 음성·전신 캐릭터 재사용. Google TTS 사용 안 함.",
+  "slides": {
+    "cover": "s42u02-cover",
+    "intro": "s42u02-intro",
+    "scene": "s42u02-scene",
+    "lab": "s42u02-lab",
+    "concl": "s42u02-concl",
+    "note": "s42u02-note",
+    "reading": "s42u02-reading"
+  },
+  "lines": [
+    {
+      "id": "s42u02-cover",
+      "text": "오늘은 미니 가습기에서 물의 여행을 따라가요."
+    },
+    {
+      "id": "s42u02-intro",
+      "text": "눈에 보이지 않는 물이 어디에 있을까요?"
+    },
+    {
+      "id": "s42u02-scene",
+      "text": "판 아래는 어떻게 될까요? 먼저 예상해 봐요."
+    },
+    {
+      "id": "s42u02-lab",
+      "text": "조건을 고르고 실험 시작을 눌러 보세요. 끝나면 표에 적어요."
+    },
+    {
+      "id": "s42u02-concl",
+      "text": "관찰한 사실을 수증기와 이어 써 봐요."
+    },
+    {
+      "id": "s42u02-note",
+      "text": "김은 작은 물방울이고 수증기는 보이지 않는 기체예요."
+    },
+    {
+      "id": "s42u02-reading",
+      "text": "공기 속에서 물이 어떻게 여행하는지 읽어 볼까요?"
+    }
+  ]
+}

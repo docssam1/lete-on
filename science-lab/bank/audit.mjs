@@ -70,7 +70,8 @@ for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.similar.js'))) 
     if (it.status !== 'authored') err(`${it.id} authored 아님`);
     if (!types.has(t.type) || !els.has(t.element)) err(`${it.id} 분류 없음 ${t.element}/${t.type}`);
     const key = `${it.sourceRef.of.set}-${it.sourceRef.of.no}`;
-    if (!tx.sources[key] || tx.sources[key][0] !== t.type) err(`${it.id} 원문 ${key}와 유형 불일치`);
+    if (it.sourceRef.type === 'authored-practice') { if (tx.authored[it.id] !== t.type) err(`${it.id} 창작 연습 유형 불일치`); }
+    else if (!tx.sources[key] || tx.sources[key][0] !== t.type) err(`${it.id} 원문 ${key}와 유형 불일치`);
     perType[t.type] = (perType[t.type] || 0) + 1;
     const body = JSON.stringify([it.prompt, it.givens, it.choices, it.explanation, it.answerContract]);
     for (const w of EARLY_TERMS[t.grade] ?? []) if (body.includes(w)) err(`${it.id} ${t.grade}학년에 이른 용어 "${w}"`);

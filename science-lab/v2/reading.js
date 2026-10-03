@@ -26,7 +26,7 @@ export function readingHtml(a, { teacher = false } = {}) {
     <aside class="sl-reading-think"><h3>독쌤과 생각 이어 가기</h3><p>${esc(a.question)}</p>${teacher ? `<p class="sl-reading-teacher"><b>교사용</b> ${esc(a.teacherTip)}</p>` : ''}</aside>
     <div class="sl-reading-connect">
       <div><b>읽은 것을 직접 살펴봐요</b><div class="sl-reading-actions">${a.video ? `<a data-reading-watch href="${link(a.video.page)}" target="_blank" rel="noopener">${esc(a.videoLabel || '실제 영상')} <span aria-hidden="true">▶</span></a>` : ''}<a class="sl-reading-online" href="${link(a.labHref)}">실험실로 이동 <span aria-hidden="true">→</span></a><a class="sl-reading-printlink" href="${link(a.publicLabHref)}">3D 실험실 <span aria-hidden="true">→</span></a></div></div>
-      <a class="sl-reading-qr" href="${link(a.publicLabHref)}" aria-label="${esc(a.labLabel || '3D 실험실')} 열기"><img src="${esc(a.qr)}" width="80" height="80" alt="${esc(a.labLabel || '3D 실험실')}로 연결되는 QR"><span>${esc(a.labLabel || '3D 실험실')}</span></a>
+      <a class="sl-reading-qr" href="${link(a.publicLabHref)}" aria-label="${esc(a.labLabel || '3D 실험실')} 열기">${a.qr ? `<img src="${esc(a.qr)}" width="80" height="80" alt="${esc(a.labLabel || '3D 실험실')}로 연결되는 QR">` : ''}<span>${esc(a.labLabel || '3D 실험실')}</span></a>
     </div>
     <footer class="sl-reading-sources"><span>읽을거리 근거</span> ${a.sources.map((s) => `<a href="${link(s.href)}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join(' · ')}</footer>
   </article>`;

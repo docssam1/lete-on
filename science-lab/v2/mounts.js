@@ -1,10 +1,11 @@
 // 3D 장면·체험 실험실을 어느 화면에서나(5단계 화면·수업 화면·교재·광고 페이지) 같은 방식으로 띄운다.
 import { mountRingTower } from './lab-ring-tower.js';
+import { mountHumidifier } from './lab-humidifier.js';
 import { mountFreeze } from './lab-freeze.js';
 import { mountHill3D } from './lab-hill3d.js';
 import { mountPond3D } from './lab-pond3d.js';
 import { mountVolcano3D } from './lab-volcano3d.js';
-export const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D, pond: mountPond3D, volcano: mountVolcano3D };
+export const LABS = { 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D, pond: mountPond3D, volcano: mountVolcano3D, humidifier: mountHumidifier };
 // 3D 실험실(캔버스가 있는 것)에는 「전체 화면」 단추를 붙인다. 실험실 파일은 건드리지 않고 마운트 뒤에 끼운다.
 export const mountLabOf = (kind) => {
   const f = LABS[kind] || mountRingTower;
@@ -85,4 +86,3 @@ export async function mount3D(el, sceneName, { autoplay, preview = false, from =
     el.querySelector('.cap').textContent = '이 기기에서는 3D를 보여 줄 수 없어요. 가상 실험실로 해 봐요.';
   }
 }
-
