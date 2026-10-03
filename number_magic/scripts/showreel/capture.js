@@ -496,12 +496,29 @@ const SCENES = {
     await page.goto(base + '/number_magic/ws.html?w=2026-W39&c=C21&n=%EB%AF%BC%EC%A4%80&k=1&cad=w2&auto=0', { waitUntil:'load' });
     await page.waitForTimeout(5000);
     const els = await page.$$('.nm-print-cover, .nm-w2-page, .nm-print-answer-key');
-    const pick = { cover:0, concept:10, training:15, story:24, key:27 };
+    /* Page numbers move when concept/guide pagination changes. Select by role,
+       never accidentally film the next practice page and write old answers on it. */
+    const pick = await page.evaluate(() => {
+      const es=[...document.querySelectorAll('.nm-print-cover, .nm-w2-page, .nm-print-answer-key')];
+      return {cover:es.findIndex(e=>e.matches('.nm-print-cover')),
+        concept:es.findIndex(e=>e.querySelector('.nm-w2-concept')),
+        training:es.findIndex(e=>e.querySelector('.nm-w2-train-banner')&&/FR11-L1/.test(e.innerText)),
+        story:es.findIndex(e=>e.matches('.nm-mzs-page')),
+        key:es.findIndex(e=>e.matches('.nm-print-answer-key'))};
+    });
+    for(const [k,i] of Object.entries(pick))if(i<0)throw new Error('쇼릴 원본 쪽 없음: '+k);
+    const trainingPage=page.locator('.nm-print-cover, .nm-w2-page, .nm-print-answer-key').nth(pick.training);
+    const trainingCount=await trainingPage.locator('.fbox').count();
+    if(![6,8].includes(trainingCount))throw new Error('쇼릴 풀이 칸 재검수 필요: '+trainingCount);
+    const equations=await trainingPage.locator('.nm-w2-item-train').evaluateAll(es=>es.map(e=>[...e.querySelectorAll('[data-tex]')].map(x=>x.dataset.tex).join(' ')));
+    if(equations.length!==2||!/1\}\{2/.test(equations[0])||!/2\}\{3/.test(equations[0])||!/1\}\{3/.test(equations[1])||!/1\}\{2/.test(equations[1]))
+      throw new Error('쇼릴 손글씨와 원본 두 문항 대조 필요: '+JSON.stringify(equations));
     for(const [k, i] of Object.entries(pick)) await els[i].screenshot({ path:path.join(src, k + '.png') });
     /* Training Course(독셈) 쪽의 □ 칸 — 쪽 기준 비율 좌표 */
     const boxes = await els[pick.training].evaluate(pg => { const P = pg.getBoundingClientRect();
       return [...pg.querySelectorAll('.fbox')].map(e => { const r = e.getBoundingClientRect(); return { x:(r.left - P.left) / P.width, y:(r.top - P.top) / P.height, w:r.width / P.width, h:r.height / P.height }; }); });
     fs.writeFileSync(path.join(src, 'training-boxes.json'), JSON.stringify(boxes));
+    fs.writeFileSync(path.join(src,'source-proof.json'),JSON.stringify({pick,trainingCount,equations,checkedAt:new Date().toISOString()},null,2));
     console.log(`✓ sheets-src (Training Course 칸 ${boxes.length}개)`);
     await ctx.close();
   },

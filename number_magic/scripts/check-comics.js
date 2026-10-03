@@ -16,6 +16,7 @@ const PALETTE=new Set(Object.values(H.C).map(c=>c.toLowerCase())
   .concat(['#fff','#ffffff','#eac996','#dfe7db','#e0d6bd','#8d97ad','#2b3a67','#5b8dd9','#e08a2e','#ffd9c4','#c2571f','#b8541f']));
 
 const HANGUL=/[가-힣]/;
+const LOCAL_ART=/^assets\/images\/(?:characters\/[a-z]+|concepts\/(?:counting-tile|counting-rod|hands-nine))\.png$/;
 
 function checkPart(file){
   const errs=[],warns=[];
@@ -52,16 +53,17 @@ function checkPart(file){
       /* 그림 */
       if(typeof p.art!=='string'){errs.push(n+'컷: art가 문자열이 아님');return;}
       if(!p.art.startsWith('<svg viewBox="0 0 200 140"')) errs.push(n+'컷: viewBox 0 0 200 140이 아님');
-      /* 외부 참조 금지 — 단, 캐릭터 PNG(assets/images/characters/<이름>.png)만 허용.
+      /* 외부 참조 금지 — 정식 캐릭터와 이름을 한정한 검수 개념 PNG만 허용.
          스크립트·javascript:·그 밖의 href는 여전히 금지한다. */
       if(/<script|javascript:/i.test(p.art)) errs.push(n+'컷: 스크립트 금지');
       for(const m of p.art.matchAll(/href\s*=\s*"([^"]*)"/gi)){
-        if(!/^assets\/images\/characters\/[a-z]+\.png$/.test(m[1]))
+        if(!LOCAL_ART.test(m[1])||!fs.existsSync(path.join(ROOT,m[1])))
           errs.push(n+'컷: 허용되지 않은 외부 참조 href="'+m[1].slice(0,40)+'"');
       }
       for(const m of p.art.matchAll(/<image\b([^>]*)>/gi)){
-        if(!/href\s*=\s*"assets\/images\/characters\//.test(m[1]))
-          errs.push(n+'컷: <image>는 캐릭터 PNG만 허용');
+        const href=(m[1].match(/href\s*=\s*"([^"]*)"/)||[])[1];
+        if(!href||!LOCAL_ART.test(href))
+          errs.push(n+'컷: <image>는 검수된 로컬 PNG만 허용');
       }
       /* 태그 균형 */
       const stack=[]; let bad=false;

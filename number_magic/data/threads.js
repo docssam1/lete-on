@@ -4035,7 +4035,7 @@ MD111:{ name:{ko:'순열',en:'Permutations',zh:'排列'}, gen:'md111_perm', prer
              zh:'要使它们不相邻，先排好其余的，再插入空隙和两端。"至少"用全部减去相反情况更简单。'}},
           /* 2026-10-01 — 순열 심화(원장 "순열에 심화 넣고"): 팩토리얼의 구조 — 약분·끝자리 0·가운데 지우기. */
           {id:4,offLadder:true,label:{ko:'팩토리얼 심화 (약분·끝자리 0·합)',en:'factorials deeper (cancel, trailing zeros, sums)',zh:'阶乘进阶(约分、末尾0、求和)'},params:{mode:'deep'},
-           concept:{ko:'(n+1)!=(n+1)·n·(n−1)! 처럼 팩토리얼은 한 칸씩 풀어 쓰면 약분돼요. n!의 끝자리 0은 5의 개수로 세고, k·k!=(k+1)!−k!로 바꾸면 합의 가운데가 지워져요.',
+           concept:{ko:'(n+1)!=(n+1)·n·(n−1)!처럼 팩토리얼은 한 칸씩 풀어 쓰면 약분됩니다. n!의 끝자리 0은 5의 개수로 세고, k·k!=(k+1)!−k!로 바꾸면 합의 가운데 항이 지워집니다.',
              en:'Unfold a factorial one step — (n+1)! = (n+1)·n·(n−1)! — and it cancels. Trailing zeros of n! come from counting 5s, and k·k! = (k+1)! − k! makes sums telescope.',
              zh:'阶乘展开一项就能约分——(n+1)!=(n+1)·n·(n−1)!。n!末尾的0看5的个数，k·k!=(k+1)!−k!能让求和中间抵消。'}}] },
 

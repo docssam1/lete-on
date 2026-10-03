@@ -1,0 +1,6 @@
+.nm-concept-visual{margin:10px 0;padding:10px 12px;border-top:1px solid #d4c5aa;border-bottom:1px solid #d4c5aa;background:#fffdf8;color:#1a2233;break-inside:avoid}
+.nm-concept-visual figcaption{font-size:15px;font-weight:800;margin:0 0 5px}
+.nm-concept-visual svg{display:block;width:100%;height:auto;max-height:170px}
+.nm-story-numi{width:70px;height:90px;object-fit:contain}
+@media(max-width:480px){.nm-concept-visual{padding:10px 2px}.nm-concept-visual figcaption{font-size:14px}.nm-concept-visual svg{min-height:100px}}
+@media print{.nm-concept-visual{padding:2mm 1mm;margin:2mm 0;background:white!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.nm-concept-visual figcaption{font-size:10pt}.nm-concept-visual svg{max-height:39mm}}
