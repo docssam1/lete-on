@@ -32,10 +32,12 @@ const unit1 = goldenBellPrintUnits(book1).find((u) => u.number === 1);
 assert.ok(unit1);
 const allGames = Object.keys(HANDS_ON_ACTIVITIES).sort();
 const firstGames = ["mirror-tiles", "turn-clock"];
-const report = { startedAt: new Date().toISOString(), base, cases: [], prints: [], previews: [], qrDecodes: [], failures: [], pageErrors: [] };
+const onlyCases = new Set((process.env.FIELDS_COVER_AUDIT_CASES || "").split(",").map((s) => s.trim()).filter(Boolean));
+const report = { startedAt: new Date().toISOString(), base, selectedCases: [...onlyCases], cases: [], prints: [], previews: [], qrDecodes: [], failures: [], pageErrors: [] };
 const browser = await chromium.launch({ headless: true });
 
 async function check(name, operation) {
+  if (onlyCases.size && !onlyCases.has(name)) return;
   try { await operation(); report.cases.push({ name, passed: true }); console.log(`PASS ${name}`); }
   catch (error) {
     report.cases.push({ name, passed: false });
@@ -311,7 +313,7 @@ try {
     try {
       state.requests.length = 0;
       await page.goto(`${base}/fields-classic/question-bank/game.html?activity=fold-once&book=book-10#${issued.get("turn-clock").token}`, { waitUntil: "networkidle" });
-      await page.locator("#gameContent").waitFor({ state: "visible" });
+      await page.locator('#gameContent[data-hand-activity="turn-clock"]').waitFor({ state: "visible" });
       assert.equal(await page.locator("#gameContent").getAttribute("data-hand-activity"), "turn-clock");
       assert.equal(await page.locator("#gameContent").isVisible(), true);
       assert.equal(await page.locator("a,button[data-hand-activity],[data-hand-action=questions]").count(), 0);
