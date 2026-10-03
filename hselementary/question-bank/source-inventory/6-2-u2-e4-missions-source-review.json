@@ -12,39 +12,74 @@
     {
       "sourceItemId": "6-2-u2-e4-mission-1",
       "answerContract": "rank-four-decimal-remainders-at-tenths",
-      "independentCheck": "four-exact-tenth-place-divisions-and-remainder-ranking"
+      "independentCheck": "four-exact-tenth-place-divisions-and-remainder-ranking",
+      "independentAnswer": "ㄷ, ㄹ, ㄱ, ㄴ",
+      "handwritingReading": "ㄷ, ㄹ, ㄱ, ㄴ",
+      "handwritingAgrees": true,
+      "releaseStatus": "verified-finite-pools"
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-2",
       "answerContract": "shortened-quotient-remainder-from-exact-division",
-      "independentCheck": "recover-dividend-from-exact-quotient-then-truncate-to-tenths"
+      "independentCheck": "recover-dividend-from-exact-quotient-then-truncate-to-tenths",
+      "independentAnswer": "0.822",
+      "handwritingReading": "0.822와 1.192가 함께 남음",
+      "handwritingAgrees": null,
+      "releaseStatus": "verified-finite-pools"
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-3",
       "answerContract": "recover-dividend-then-new-tenth-place-remainder",
-      "independentCheck": "recover-dividend-from-whole-quotient-then-divide-again"
+      "independentCheck": "recover-dividend-from-whole-quotient-then-divide-again",
+      "independentAnswer": "0.08",
+      "handwritingReading": "0.08",
+      "handwritingAgrees": true,
+      "releaseStatus": "verified-finite-pools"
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-4",
       "answerContract": "minimum-addition-for-exact-hundredth-quotient",
-      "independentCheck": "next-exact-hundredth-quotient-multiple"
+      "independentCheck": "next-exact-hundredth-quotient-multiple",
+      "independentAnswer": "0.005",
+      "handwritingReading": "0.005",
+      "handwritingAgrees": true,
+      "releaseStatus": "verified-finite-pools"
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-5",
       "answerContract": "largest-rounded-quotient-dividend-then-new-remainder",
-      "independentCheck": "largest-allowed-tenth-quotient-then-second-division"
+      "independentCheck": "largest-allowed-tenth-quotient-then-second-division",
+      "independentAnswer": "0.3",
+      "handwritingReading": "0.3",
+      "handwritingAgrees": true,
+      "releaseStatus": "verified-finite-pools"
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-6",
       "answerContract": "recover-dividend-from-rounded-third-place-and-remainder",
       "independentCheck": "enumerate-hundredth-quotients-and-third-place-rounding",
-      "possibleHundredthQuotientsChecked": 1000
+      "possibleHundredthQuotientsChecked": 1000,
+      "independentAnswer": "5.378",
+      "handwritingReading": "5.378 (이전 값 취소)",
+      "handwritingAgrees": true,
+      "releaseStatus": "verified-finite-pools"
     }
   ],
   "officialAnswerEvidence": "not-available-for-these-items",
-  "publicReleaseStatus": "locked",
+  "publicReleaseStatus": "verified-finite-pools",
   "pending": [
-    "matching advanced-book official answer comparison",
-    "source-level variants and desktop/mobile/A4 worksheet validation"
-  ]
+    "publisher answer-key comparison remains unverified"
+  ],
+  "verification": {
+    "printedConditionsChecked": true,
+    "publisherAnswerVerified": false,
+    "independentPromptAudit": "source-6-2-decimal-e4-release-audit.js",
+    "realBrowserAudit": "source-6-2-decimal-e4-live-audit.js",
+    "verifiedVariantCount": 3,
+    "difficultyChoices": [
+      -1,
+      0,
+      1
+    ]
+  }
 }

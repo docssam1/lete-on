@@ -5,13 +5,25 @@
 - Branch: `codex/elementary-audit-sync-20260926`
 - Local page: `http://127.0.0.1:8897/hselementary/question-bank/`
 - Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-03)
-- Runtime-available types: 1,136 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 869
+- Runtime-available types: 1,147 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 858
 - Source-linked runtime entries: 1,625 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `98/477` types are runtime-available. The remainder stay review-locked.
+- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `109/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-10-03 Decimal-Division Exploration 4
+
+- The twelve original items were reread directly. Eleven have their own finite three-pool implementation with three structural difficulty choices, totaling 99 distinct conditions. Example 4 stays locked: the reconstructed dividend is 11.001 and the new remainder is 0.0135, while the handwriting says 0.16. Do not replace the conflicting original handwriting.
+- Stopping division at a stated decimal place is truncation, not rounding. Exploration 2 allows a zero hundredth-place remainder and attains a minimum tenths remainder of 0.4991. Mission 6 truncates to the third decimal place before rounding to the second; its uniquely reconstructed original number is 5.378.
+- Example 2's handwriting is ambiguous; do not claim either a confirmed match or a conflict. Mission 2 has both 0.822 and an earlier 1.192 still visible. Independent printed-condition calculation yields 0.822; neither handwritten mark is promoted to a publisher key. Publisher-key verification remains false for this stage.
+- All twelve source items are text-only. The three calculation blanks in Example 1 and four labelled expressions in Mission 1 remain calculation layouts, not invented explanatory diagrams. Question-side answer tables and extra hints must remain absent at the source level.
+- Current catalog and generation regressions: 633 Grade 6 source types, 348 ready, 285 locked; 68,820 runtime generations, 172,050 notation generations with real DOM fraction checks, and 344,100 numeric-display and elementary-language generations each passed.
+- Independent prompt audit passed 99 distinct conditions, eleven ready original cases and the locked Example 4; it also checked 495 changed-answer/condition negatives, 132 invalid inputs, eleven forced locks and 9,000 Mission 6 candidates. Producer answers and pools are not used as the independent calculation method.
+- Final-code real-page checks passed 99 desktop/mobile states (1280, 390 and 320px at all three difficulties), 66 one-page A4 question/answer PDFs and six unchanged asset SHA-256 hashes during rendering, with no page errors. All eleven source-level desktop questions and mobile solutions were inspected directly; additional independent visual review covered five screen captures and three A4 samples. These are sampled eye checks, not a claim that every PDF was visually inspected.
+- Calculation tables use the common body font and size with normal-weight black text. Example 1 keeps the final command together instead of orphaning the last syllable. Final checks were rerun after both typography changes.
+- Next: reread the remaining decimal-division Exploration 2 geometry items before reconnecting any candidate generator. Preserve the three Exploration 3 locks and Exploration 4 Example 4. Keep changes on the review branch; no main merge, deployment, publisher-key approval or empirical difficulty calibration is claimed.
 
 ## 2026-10-03 Decimal-Division Exploration 3
 

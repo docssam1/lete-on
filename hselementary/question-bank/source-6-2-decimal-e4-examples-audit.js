@@ -5,6 +5,7 @@ global.window = {};
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-6-2-decimal-e4.js");
 
 const source = require("./source-inventory/6-2-source-items.json").items;
 const review = require("./source-inventory/6-2-u2-e4-examples-source-review.json");
@@ -13,7 +14,7 @@ const types = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "
 
 assert.equal(review.examples.length, 4);
 assert.equal(review.officialAnswerEvidence, "not-available-for-these-items");
-assert.equal(review.publicReleaseStatus, "locked");
+assert.equal(review.publicReleaseStatus, "partial");
 assert.equal(review.sourceIdentity.handwrittenMarksExcluded, true);
 
 for (const [index, reviewed] of review.examples.entries()) {
@@ -27,9 +28,12 @@ for (const [index, reviewed] of review.examples.entries()) {
   assert.equal(original.printedPage, 24);
   assert.equal(original.answerContract, reviewed.answerContract);
   assert.equal(original.sourceVerified, true);
-  assert.equal(publicType.reviewLocked, true);
-  assert.equal(publicType.generatorKey, "");
-  assert.equal(window.HSE_GENERATORS.generate(publicType, 0, 0, 1), null, `${id}: 공식 답 대조 전 출제 금지`);
+  const locked = index === 3;
+  assert.equal(publicType.reviewLocked, locked);
+  assert.equal(publicType.generatorKey, locked ? "" : `sourceGrade6DecimalE4Example${index + 1}`);
+  assert.equal(publicType.problemVisualRequired, false, "원문에 없는 그림은 생성하지 않음");
+  if (!locked) assert.equal(window.HSE_GENERATORS.generate(publicType, 0, 0, 1).answer, reviewed.independentAnswer);
+  assert.equal(window.HSE_GENERATORS.generate({ ...publicType, reviewLocked: true }, 0, 0, 1), null, `${id}: 잠금이 생성기보다 우선`);
 }
 
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e4-example-3").name, /새 나머지/);
