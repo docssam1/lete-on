@@ -23,7 +23,8 @@
     "6.EE.B": Object.freeze({ packId: "gfield-grade6-ee-b-unit-workbook-v1", labelKo: "방정식과 부등식 36문항 단원 워크북", delivery:"unit-workbook", itemCount:36, recheckCount:8 }),
     "6.EE.C": Object.freeze({ packId: "gfield-grade6-ee-c-unit-workbook-v1", labelKo: "변수 관계와 그래프 36문항 단원 워크북", delivery:"unit-workbook", itemCount:36, recheckCount:8 }),
     "6.G.A": Object.freeze({ packId: "gfield-grade6-g-a-unit-workbook-v1", labelKo: "기하 측정 36문항 단원 워크북", delivery:"unit-workbook", itemCount:36, recheckCount:8 }),
-    "6.SP.A": Object.freeze({ packId: "gfield-grade6-sp-a-unit-workbook-v1", labelKo: "자료를 모아 답하는 질문과 자료의 분포 단원 워크북", delivery: "unit-workbook", itemCount:36, recheckCount:8 })
+    "6.SP.A": Object.freeze({ packId: "gfield-grade6-sp-a-unit-workbook-v1", labelKo: "자료를 모아 답하는 질문과 자료의 분포 단원 워크북", delivery: "unit-workbook", itemCount:36, recheckCount:8 }),
+    "6.SP.B": Object.freeze({ packId: "gfield-grade6-sp-b-unit-workbook-v1", labelKo: "자료를 그래프로 나타내고 분포를 설명하는 단원 워크북", delivery: "unit-workbook", itemCount:36, recheckCount:8 })
   });
   const COMPLETION_PREFIX = "gfield-clinic-workbook:";
 
@@ -98,5 +99,5 @@
     return true;
   }
 
-  return Object.freeze({ schemaVersion: 13, animatedByCluster: ANIMATED_BY_CLUSTER, workbookByCluster: WORKBOOK_BY_CLUSTER, conceptUrl: conceptUrl, workbookUrl: workbookUrl, completionKey: completionKey, routeFor: routeFor, validateAnimatedMapping: validateAnimatedMapping });
+  return Object.freeze({ schemaVersion: 14, animatedByCluster: ANIMATED_BY_CLUSTER, workbookByCluster: WORKBOOK_BY_CLUSTER, conceptUrl: conceptUrl, workbookUrl: workbookUrl, completionKey: completionKey, routeFor: routeFor, validateAnimatedMapping: validateAnimatedMapping });
 });

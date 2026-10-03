@@ -12,6 +12,7 @@
     "6.EE.C": window.GFIELDGrade6EECUnitWorkbook,
     "6.G.A": window.GFIELDGrade6GAUnitWorkbook,
     "6.SP.A": window.GFIELDGrade6SPAUnitWorkbook,
+    "6.SP.B": window.GFIELDGrade6SPBUnitWorkbook,
     "7.RP.A": window.GFIELDGrade7RPAUnitWorkbook
   };
   const source = sources[requestedCluster];

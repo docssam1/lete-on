@@ -90,6 +90,19 @@ button, select { font:inherit; }
 .plot-axis line { stroke:#89958f; stroke-width:1; }
 .plot-dots circle { fill:var(--primary); stroke:#fff; stroke-width:1.2; }
 .plot-label text { fill:var(--ink); font:700 8px system-ui,sans-serif; text-anchor:middle; }
+.spb-visual { width:100%; display:grid; gap:1.2mm; align-items:center; }
+.spb-context { margin:0; color:var(--ink); font:700 7.7pt/1.35 var(--workbook-sans); text-align:center; }
+.spb-data-strip { min-height:8mm; padding:1.5mm 2mm; display:flex; align-items:center; justify-content:center; gap:2mm; border:1px solid var(--line); background:#fff; font:700 8pt/1.2 var(--workbook-math); }
+.spb-data-strip span { color:var(--muted); font:850 6.7pt/1 var(--workbook-sans); letter-spacing:.04em; text-transform:uppercase; }
+.spb-data-strip strong { word-spacing:.08em; }
+.spb-plot { width:100%; height:auto; overflow:visible; }
+.spb-axis line { stroke:#64758a; stroke-width:1.25; }
+.spb-axis text,.spb-bars text { fill:#3d5068; font:750 8px var(--workbook-sans); text-anchor:middle; }
+.spb-marks circle { fill:var(--primary); stroke:#fff; stroke-width:1.4; }
+.spb-bars rect { fill:#cddcff; stroke:var(--primary); stroke-width:1.1; }
+.spb-box line { stroke:#263b54; stroke-width:2; }
+.spb-box rect { fill:#dbe6ff; stroke:#263b54; stroke-width:2; }
+.spb-box .spb-median { stroke:var(--primary); stroke-width:3; }
 .choice-list { margin-top:auto; display:grid; gap:2mm; }
 .choice-button { width:100%; min-height:44px; padding:2.1mm 3mm; display:grid; grid-template-columns:7mm minmax(0,1fr); align-items:center; column-gap:3mm; border:1px solid #53657b; color:var(--ink); background:#fff; text-align:left; font:700 8.4pt/1.42 var(--workbook-sans); cursor:pointer; }
 .choice-button::before { content:attr(data-choice); display:grid; grid-column:1; width:7mm; height:7mm; place-items:center; border:1px solid var(--ink); border-radius:50%; font:800 7pt/1 var(--workbook-sans); }
@@ -299,6 +312,14 @@ button, select { font:inherit; }
   [data-item-id="g7rpa-w25"] .choice-button,[data-item-id="g7rpa-w26"] .choice-button,[data-item-id="g7rpa-w27"] .choice-button,[data-item-id="g7rpa-w28"] .choice-button { min-height:6.2mm; font-size:7pt; }
   [data-item-id^="g7rpa"] .choice-list { gap:1.1mm; }
   [data-item-id^="g7rpa"] .choice-button { min-height:7mm; padding:1.1mm 2mm; font-size:7.4pt; line-height:1.16; }
+  [data-item-id^="spb"] .problem-visual { min-height:29mm; margin:1.5mm 0 2mm; }
+  [data-item-id^="spb"] .spb-context { font-size:6.8pt; line-height:1.24; }
+  [data-item-id^="spb"] .spb-data-strip { min-height:6.5mm; padding:1mm 1.5mm; font-size:7.3pt; }
+  [data-item-id^="spb"] .spb-plot { max-height:25mm; }
+  [data-item-id^="spb"] .choice-list { gap:1mm; }
+  [data-item-id^="spb"] .choice-button { min-height:7mm; padding:1.1mm 2mm; font-size:7.2pt; line-height:1.2; }
+  [data-item-id^="spb-w3"] .problem-visual { min-height:21mm; }
+  [data-item-id="spb-w36"] .choice-button { font-size:6.55pt; line-height:1.13; }
   [data-audience="student"] .choice-feedback { display:none; }
   [data-audience="student"] .screen-answer { display:none; }
   [data-audience="student"] .print-answer-line { display:block; }

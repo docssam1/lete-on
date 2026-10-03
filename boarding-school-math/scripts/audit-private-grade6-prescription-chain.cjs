@@ -10,7 +10,6 @@ const planEngine = require("../learning/learner-plan-engine.js");
 const root = path.resolve(__dirname, "..");
 const privateDirectory = path.resolve(process.argv[2] || path.join(root, "private-authoring"));
 const outputPath = process.argv[3] ? path.resolve(process.argv[3]) : null;
-const EXPECTED_PENDING_WORKBOOKS = new Set(["6.SP.B"]);
 
 function fail(message) { throw new Error(message); }
 function sortedObject(source) {
@@ -45,8 +44,9 @@ items.forEach(function (item) {
   conceptRoutes += 1;
   const cluster = clusters[item.clusterId] || { itemCount: 0, conceptState: route.concept.state, workbookState: route.workbook.state, errorProfileChecks: 0 };
   cluster.itemCount += 1;
-  if (route.workbook.state === "available") workbookRoutes += 1;
-  else if (!EXPECTED_PENDING_WORKBOOKS.has(item.clusterId)) fail(`unexpected workbook gap for ${item.clusterId}`);
+  if (route.workbook.state !== "available") fail(`workbook route is incomplete for ${item.clusterId}`);
+  if (route.workbook.delivery !== "unit-workbook" || route.workbook.itemCount !== 36 || route.workbook.recheckCount !== 8) fail(`workbook contract is incomplete for ${item.clusterId}`);
+  workbookRoutes += 1;
 
   const types = errorTypesFor(item);
   if (!types.length) fail(`missing error profile for ${item.clusterId}`);
@@ -61,11 +61,10 @@ items.forEach(function (item) {
 });
 
 const pendingClusters = Object.keys(clusters).filter(function (clusterId) { return clusters[clusterId].workbookState !== "available"; });
-if (pendingClusters.some(function (clusterId) { return !EXPECTED_PENDING_WORKBOOKS.has(clusterId); })) fail("unapproved workbook gap found");
-if (Array.from(EXPECTED_PENDING_WORKBOOKS).some(function (clusterId) { return !pendingClusters.includes(clusterId); })) fail("expected workbook gap changed; review the audit contract");
+if (pendingClusters.length) fail("workbook gap found in the complete Grade 6 prescription chain");
 
 const report = {
-  schemaVersion: "gfield-grade6-prescription-chain-audit-v1",
+  schemaVersion: "gfield-grade6-prescription-chain-audit-v2",
   generatedAt: new Date().toISOString(),
   sourceState: "private-authoring-read-only",
   privacy: {

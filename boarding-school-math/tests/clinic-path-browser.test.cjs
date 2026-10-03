@@ -175,6 +175,23 @@ test("6.SP.A concept opens the full 36-item unit workbook rather than a 12-item 
   await page.close();
 });
 
+test("6.SP.B concept opens the dedicated plots and distribution workbook", async function () {
+  const page = await browser.newPage({ viewport: { width: 1080, height: 850 } });
+  const errors = errorsFor(page);
+  await page.goto(`${baseUrl}/concept-learning.html?cluster=6.SP.B&from=diagnostic`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator('[data-clinic-action="animated"]').count(), 0);
+  const workbook = page.locator('[data-clinic-action="workbook"]');
+  assert.equal(await workbook.getAttribute("href"), "./unit-workbook.html?cluster=6.SP.B&mode=workbook&audience=student&locale=ko");
+  assert.match(await workbook.innerText(), /자료를 그래프로 나타내고 분포를 설명하는 단원 워크북/);
+  await workbook.click(); await page.waitForLoadState("networkidle");
+  assert.equal(await page.locator(".book-problem").count(), 36);
+  assert.equal(await page.locator(".book-page").count(), 12);
+  assert.equal(await page.locator(".spb-dot-plot").count(), 8);
+  assert.equal(await page.locator(".spb-histogram").count(), 8);
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
 test("clinic path has no page-level overflow on 320 and 390 pixel screens", async function () {
   for (const width of [320, 390]) {
     const page = await browser.newPage({ viewport: { width, height: 844 }, isMobile: true });
