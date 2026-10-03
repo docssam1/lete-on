@@ -1113,7 +1113,10 @@
       "pdfPage": 16,
       "printedPage": 18,
       "sourceShape": "소수점을 함께 옮겨 몫이 같은 식을 고르는 문항과 소수 나눗셈을 계산하는 문항이 한 탐구에 묶여 있음. 공개 유형은 소문항별로 분리함.",
-      "publicSourceItemIds": ["6-2-u2-e1-exploration-1", "6-2-u2-e1-exploration-2"],
+      "publicSourceItemIds": [
+        "6-2-u2-e1-exploration-1",
+        "6-2-u2-e1-exploration-2"
+      ],
       "answerContract": "single-value-per-subquestion",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
       "sourceVerified": true,
@@ -2016,8 +2019,22 @@
       "answerEvidence": "independent-calculation-not-publisher-key",
       "visualRisk": "세 번째 튀는 지점과 152.96cm를 재는 바닥은 서로 다름. 계단 높이와 튀는 순서를 그림에서 정확히 보존해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 문제·정답 그림을 포함한 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6DecimalE6Stairs",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "180cm"
     },
     {
       "sourceItemId": "6-2-u2-e6-example-1",
@@ -2041,7 +2058,11 @@
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE6Example1",
         "fixedPoolCount": 3,
-        "difficultyDesign": ["filled-ratio-given", "source-nested-empty-fraction", "withdrawal-extra-step"],
+        "difficultyDesign": [
+          "filled-ratio-given",
+          "source-nested-empty-fraction",
+          "withdrawal-extra-step"
+        ],
         "independentCheck": "generated-prompt-exact-fractions-27-cases-and-135000-candidates",
         "layoutCheck": "actual-bank-1280-390-320-9-states-and-a4-2-single-pages",
         "independentReview": "separate-model-source-math-and-implementation-review-passed",
@@ -2070,7 +2091,11 @@
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE6Example2Candidate",
         "fixedPoolCount": 3,
-        "difficultyDesign": ["one-second-distance-given", "source-total-distance-and-time", "nonzero-baseline-temperature"],
+        "difficultyDesign": [
+          "one-second-distance-given",
+          "source-total-distance-and-time",
+          "nonzero-baseline-temperature"
+        ],
         "independentCheck": "generated-prompt-hundredths-and-reverse-distance-18-cases",
         "layoutCheck": "candidate-worksheet-1280-390-320-54-pairs-and-a4-2-pages",
         "publicReleaseStatus": "verified-with-annotated-answer-and-independent-calculation"
@@ -2094,8 +2119,22 @@
       "answerEvidence": "independent-calculation-not-publisher-key",
       "visualRisk": "45cm는 두 막대의 수면 위 길이 차이며 A 지점의 깊이는 막대 전체의 0.6임. 원본의 수면과 바닥 위치를 유지해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 문제·정답 그림을 포함한 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6DecimalE6Pond",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "180cm"
     },
     {
       "sourceItemId": "6-2-u2-e6-example-4",
@@ -2111,8 +2150,22 @@
       "answerEvidence": "independent-calculation-not-publisher-key",
       "visualRisk": "올해의 비율은 지난해 각 성별 인원을 기준으로 하며, 물음은 지난해가 아니라 올해 학생 수의 차임.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": false,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Example4Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswerReview": "판독 가능한 손글씨 답을 확인하지 못함. 인쇄 조건의 독립 계산은 4명."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-1",
@@ -2128,8 +2181,22 @@
       "answerEvidence": "independent-calculation-not-publisher-key",
       "visualRisk": "늘거나 줄어든 비율의 기준은 각각 지난해 남학생과 여학생 수임.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission1Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "남학생 165명, 여학생 156명"
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-2",
@@ -2145,8 +2212,22 @@
       "answerEvidence": "independent-calculation-not-publisher-key",
       "visualRisk": "0.8배의 기준은 테이프 전체가 아닌 첫 사람이 가진 길이임.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission2Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "13.5m"
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-3",
@@ -2156,14 +2237,28 @@
       "ordinal": 3,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "거북·개·원숭이의 두 마리씩 무게 합 51.4kg·43.7kg·38.5kg으로 개가 거북의 약 몇 배인지 소수 첫째 자리까지 구하는 문제",
+      "sourceShape": "거북·개·원숭이의 두 마리씩 무게 합 51.4kg·43.7kg·38.5kg으로 거북이 원숭이의 약 몇 배인지 소수 첫째 자리까지 구하는 문제",
       "answerContract": "derive-rounded-animal-weight-ratio-from-pair-sums",
-      "independentAnswer": "약 0.8배",
+      "independentAnswer": "약 1.8배",
       "answerEvidence": "independent-calculation-not-publisher-key",
       "visualRisk": "각 무게 합의 동물 쌍을 바꾸면 답이 달라지며, 정확한 비와 반올림한 약 몇 배를 구별해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 반올림 경계 검수를 포함한 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission3Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "약 1.8배"
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-4",
@@ -2179,8 +2274,22 @@
       "answerEvidence": "independent-calculation-not-publisher-key",
       "visualRisk": "1.65m는 첫 번째가 아닌 두 번째 튄 높이의 차이임.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission4Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "5m"
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-5",
@@ -2196,8 +2305,22 @@
       "answerEvidence": "independent-calculation-not-publisher-key",
       "visualRisk": "회전 수가 더 많은 것은 둘레가 짧은 뒷바퀴이며, 거리와 회전 수의 단위를 구별해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": false,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission5Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswerReview": "손글씨 숫자는 판독 미확정. 인쇄 조건의 독립 계산은 2948.4m."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-6",
@@ -2213,8 +2336,22 @@
       "answerEvidence": "independent-calculation-not-publisher-key",
       "visualRisk": "전체 평균은 남녀 평균의 단순 평균이 아니라 인원수를 반영한 평균임.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission6Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "18명"
     },
     {
       "sourceItemId": "6-2-u3-e1-exploration",
