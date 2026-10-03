@@ -5,6 +5,7 @@ global.window = {};
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-6-2-decimal-e3.js");
 
 const raw = require("./source-inventory/6-2-source-items.json").items;
 const review = require("./source-inventory/6-2-u2-e3-exploration-source-review.json");
@@ -49,12 +50,16 @@ for (const [index, item] of review.sourceItems.entries()) {
   assert.equal(original.sourceVerified, true);
   assert.equal(publicType.commonTypeId, commonType);
   assert(!/빈칸|비 구하기/.test(publicType.typeLabel), `${id}: 뒤의 예제와 혼동하지 않음`);
-  assert.equal(publicType.reviewLocked, true);
-  assert.equal(publicType.generatorKey, "");
-  assert.equal(window.HSE_GENERATORS.generate(publicType, 0, 0, 1), null, "원문 대조만으로 출제하지 않음");
+  const locked = index === 2;
+  assert.equal(publicType.reviewLocked, locked);
+  assert.equal(Boolean(publicType.generatorKey), !locked);
+  assert.equal(window.HSE_GENERATORS.generate({ ...publicType, reviewLocked: true }, 0, 0, 1), null, "잠금이 생성기보다 우선함");
+  if (!locked) assert.equal(window.HSE_GENERATORS.generate(publicType, 0, 0, 1).answer, item.independentRounded);
   assert.equal(roundedHundredth(item.dividend, item.divisor), item.independentRounded);
 }
 assert.equal(review.sourceItems[2].independentRounded, "0.90", "소수 둘째 자리 0을 보존");
 assert.equal(review.officialAnswerEvidence, "not-available-for-this-item");
-assert.equal(review.publicReleaseStatus, "locked");
-console.log("6-2 개념탐구 3: 원문 세 소문항·공통 유형·정확한 반올림·공개 잠금 검사 통과");
+assert.equal(review.publicReleaseStatus, "partial");
+assert.equal(review.sourceItems[2].handwritingAgrees, false);
+assert.equal(raw.find(item => item.sourceItemId === review.sourceItems[2].sourceItemId).implementationStatus, "handwriting-conflict-locked");
+console.log("6-2 탐구 3: 원문 세 소문항·정확한 반올림·두 유형 출제·필기 충돌 잠금 검사 통과");

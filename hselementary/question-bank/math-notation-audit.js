@@ -21,6 +21,7 @@ require("./source-grade6-decimal-e2-mission6.js");
 require("./source-grade6-decimal-e4-example1.js");
 require("./source-grade6-decimal-e4-mission4.js");
 require("./source-6-2-decimal-e6-text.js");
+require("./source-6-2-decimal-e3.js");
 require("./source-6-2-decimal-e6-geometry.js");
 require("./source-grade6-volume-e2.js");
 require("./source-grade6-volume-e3-mission3.js");
@@ -30,7 +31,7 @@ require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
 const notation = window.HSE_MATH_NOTATION;
-const EXPECTED_PUBLIC_TYPE_COUNT = 1126;
+const EXPECTED_PUBLIC_TYPE_COUNT = 1136;
 const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   ...type,
   semesterId: semester.id,

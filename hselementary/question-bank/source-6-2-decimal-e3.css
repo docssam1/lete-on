@@ -1,0 +1,18 @@
+.source62-e3-answer-table {
+  width: min(430px, 100%);
+  margin: 8px auto;
+  color: #111;
+  font-family: var(--bank-font);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.source62-e3-answer-table { border-collapse: collapse; }
+.source62-e3-answer-table :is(td, th) { border: 1px solid #aaa; padding: 5px 8px; text-align: left; font-weight: 400; overflow-wrap: break-word; }
+.source62-e3-answer-table :is(b, strong) { font-weight: 400; }
+.solution-item:has([data-answer-source^="6-2-u2-e3-"]) > p { color: #111; font-family: var(--bank-font); font-weight: 400; }
+@media print {
+  .source62-e3-answer-table { margin: 3px auto; }
+  .source62-e3-answer-table :is(td, th) { padding: 3px 6px; }
+  .solution-item:has([data-answer-source^="6-2-u2-e3-"]) .solution-answer-visual { padding: 4px 8px; }
+  .solution-item:has([data-answer-source^="6-2-u2-e3-"]) > p { padding: 6px 8px; font-size: 12px; line-height: 1.4; }
+}

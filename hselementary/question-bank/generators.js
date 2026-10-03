@@ -24979,12 +24979,20 @@
         if (roundedTenths === data.targetTenths) matchingDigits.push(digit);
       }
       if (!matchingDigits.length || matchingDigits.length === 10) throw new Error(`${sourceItemId}: 빈칸 조건이 한 가지 경우로만 구분되지 않습니다.`);
-      const expression = `<span class="source62-e3-digit-expression" aria-label="${data.whole}점 빈칸 ${data.suffix} 나누기 ${divisor}">${data.whole}.<span class="source62-e3-digit-blank" aria-label="한 자리 숫자 빈칸">□</span>${data.suffix} ÷ ${divisor}</span>`;
+      const minimumDigit = level === 0 ? Math.max(0, matchingDigits[0] - 1) : 0;
+      const maximumDigit = level === 0 ? Math.min(9, matchingDigits.at(-1) + 1) : 9;
+      const divisorText = level === 2 ? `(${((data.divisor100 + 50) / 100).toFixed(2)} − 0.5)` : divisor;
+      const expression = `<span class="source62-e3-digit-expression" aria-label="${data.whole}점 빈칸 ${data.suffix} 나누기 ${divisorText}">${data.whole}.<span class="source62-e3-digit-blank" aria-label="한 자리 숫자 빈칸">□</span>${data.suffix} ÷ ${divisorText}</span>`;
+      const candidateDigits = Array.from({ length: maximumDigit - minimumDigit + 1 }, (_, index) => minimumDigit + index);
+      const difficultyDesign = ["restricted-candidate-digits", "source-structure", "divisor-subtraction-extra-step"][level];
       const answer = String(matchingDigits.length);
-      const answerVisual = `<div class="source62-e3-digit-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}"><p>${expression} → ${target}</p><div class="source62-e3-digit-grid" aria-label="0부터 9까지의 숫자 검사">${Array.from({ length: 10 }, (_, digit) => `<span class="source62-e3-digit-cell${matchingDigits.includes(digit) ? " is-valid" : ""}" data-digit="${digit}" data-matches="${matchingDigits.includes(digit) ? "yes" : "no"}">${digit}</span>`).join("")}</div><p class="source62-e3-digit-count">가능한 숫자 ${matchingDigits.join(", ")} · 모두 ${answer}개</p></div>`;
-      return result(`${expression}의 몫을 반올림하여 소수 첫째 자리까지 나타내면 ${target}이 됩니다. □에 들어갈 수 있는 숫자는 모두 몇 개인가요?`, answer,
-        `몫이 ${target}로 반올림되는 범위는 ${lowerBound} 이상 ${upperBound} 미만입니다. 조건에 맞는 숫자는 ${matchingDigits.join(", ")}이므로 ${answer}개입니다.`, {
-          answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      const answerVisual = `<div class="source62-e3-digit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><p>${expression} → ${target}</p><div class="source62-e3-digit-grid" aria-label="${minimumDigit}부터 ${maximumDigit}까지의 숫자 검사">${candidateDigits.map(digit => `<span class="source62-e3-digit-cell${matchingDigits.includes(digit) ? " is-valid" : ""}" data-digit="${digit}" data-matches="${matchingDigits.includes(digit) ? "yes" : "no"}">${digit}</span>`).join("")}</div><p class="source62-e3-digit-count">가능한 숫자 ${matchingDigits.join(", ")} · 모두 ${answer}개</p></div>`;
+      const digitCondition = level === 0 ? `□에는 ${minimumDigit}부터 ${maximumDigit}까지의 숫자 중 하나가 들어갑니다. ` : "";
+      const divisorStep = level === 2 ? `나누는 수는 <span class="math-inline-expression">${divisorText.slice(1, -1)} = ${divisor}</span>입니다. ` : "";
+      return result(`${expression}의 몫을 반올림하여 소수 첫째 자리까지 나타내면 ${target}이 됩니다. ${digitCondition}□에 들어갈 수 있는 숫자는 모두 몇 개인가요?`, answer,
+        `${divisorStep}몫이 ${target}로 반올림되는 범위는 ${lowerBound} 이상 ${upperBound} 미만입니다. 조건에 맞는 숫자는 ${matchingDigits.join(", ")}이므로 ${answer}개입니다.`, {
+          answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId,
+          difficultyDesign, reasoningSteps: level === 2 ? 3 : 2
         });
     },
     sourceGrade6SecondDecimalDivisionE3Mission2({ level, variant = 0 }) {
@@ -24992,7 +25000,7 @@
       if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
       const poolIndex = variant % 3;
       const digits = [
-        [1, 2, 3, 4, 6, 8],
+        [2, 1, 5, 3, 7, 4],
         [1, 2, 4, 6, 7, 9],
         [2, 3, 4, 5, 7, 8]
       ][poolIndex];
@@ -25029,10 +25037,12 @@
       const reasoning = level === 2
         ? "나누는 수의 일의 자리에는 쓸 수 있는 카드 중 가장 작은 수를 놓습니다. 나누어지는 수에는 큰 카드를 앞자리부터 놓고 남은 자리의 배치를 비교합니다."
         : "나누어지는 수의 일의 자리에는 큰 카드를, 나누는 수의 일의 자리에는 작은 카드를 놓습니다. 남은 자리의 카드 배치를 비교합니다.";
-      const answerVisual = `<div class="source62-card-max__answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${["fixed-leading-card", "source-structure", "excluded-smallest-divisor"][level]}"><div class="source62-card-max__expression">${expression}</div><div class="source62-card-max__result">몫을 소수 둘째 자리까지 반올림하면 <strong>${answer}</strong></div></div>`;
+      const difficultyDesign = ["fixed-leading-card", "source-structure", "excluded-smallest-divisor"][level];
+      const answerVisual = `<div class="source62-card-max__answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><div class="source62-card-max__expression">${expression}</div><div class="source62-card-max__result">몫을 소수 둘째 자리까지 반올림하면 <strong>${answer}</strong></div></div>`;
       return result(`<span class="source62-card-max__text">다음 수 카드를 한 번씩 모두 사용하여 (소수 두 자리 수) ÷ (소수 두 자리 수)의 몫이 가장 큰 나눗셈식을 만드세요. ${extraCondition}그 몫을 반올림하여 소수 둘째 자리까지 나타내세요.</span>${cards}`, answer,
-        reasoning, {
-          answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        `${reasoning} 가장 큰 몫의 식은 <span class="math-inline-expression">${expression}</span>이고, 소수 둘째 자리까지 반올림하면 ${answer}입니다.`, {
+          answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId,
+          difficultyDesign, reasoningSteps: level === 0 ? 2 : level === 1 ? 3 : 4
         });
     },
     sourceGrade6SecondDecimalDivisionE5Exploration({ level, variant = 0 }) {

@@ -1,6 +1,6 @@
 .source62-e3-digit-expression,
 .source62-e3-digit-answer {
-  font-family: Pretendard, "Malgun Gothic", Arial, sans-serif;
+  font-family: var(--bank-font);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
 }
@@ -9,8 +9,9 @@
   display: inline-flex;
   align-items: baseline;
   white-space: nowrap;
-  font-size: 1.05em;
-  font-weight: 650;
+  font-size: 1em;
+  font-weight: 400;
+  color: #111;
 }
 
 .source62-e3-digit-blank {
@@ -22,7 +23,7 @@
 .source62-e3-digit-answer {
   display: block;
   width: min(470px, 100%);
-  margin: 14px auto 12px;
+  margin: 8px auto;
   color: #202020;
 }
 
@@ -40,14 +41,20 @@
   align-items: center;
   min-height: 35px;
   border: 1px solid #666;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .source62-e3-digit-cell.is-valid {
-  border-width: 2px;
+  border-width: 1px;
   border-color: #111;
   background: #e5e5e5;
-  font-weight: 800;
+  font-weight: 400;
 }
 
 .source62-e3-digit-answer .source62-e3-digit-count { margin: 10px 0 0; }
+@media print {
+  .source62-e3-digit-answer { margin: 3px auto; }
+  .source62-e3-digit-cell { min-height: 22px; }
+  .source62-e3-digit-answer p { margin-bottom: 4px; }
+  .source62-e3-digit-answer .source62-e3-digit-count { margin-top: 4px; }
+}

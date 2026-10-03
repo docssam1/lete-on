@@ -13,7 +13,7 @@ const id = "6-2-u2-e3-example-2";
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === id);
-assert(type.reviewLocked, "공개 잠금 유지");
+assert(!type.reviewLocked && type.generatorKey, "검수 완료한 실제 유형 연결");
 const candidateType = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE3Example2" };
 const css = readFileSync(path.join(__dirname, "source-6-2-e3-digit-count.css"), "utf8");
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
@@ -51,10 +51,10 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
       }
       assert.equal(state.grids.length, 3);
       for (const grid of state.grids) {
-        assert.equal(grid.cells.length, 10, "0부터 9까지 전수 표시");
+        assert(grid.cells.length >= 3 && grid.cells.length <= 10, "문제에 제시한 범위의 숫자를 표시");
         assert(grid.box.left >= 0 && grid.box.right <= width + 1, "숫자판 화면 잘림 없음");
         const rows = new Set(grid.cells.map(box => Math.round(box.top)));
-        assert.equal(rows.size, 2, "다섯 칸씩 두 줄");
+        assert.equal(rows.size, Math.ceil(grid.cells.length / 5), "다섯 칸씩 정렬");
         assert(grid.cells.every(box => box.width > 30 && box.height >= 30), "칸 크기 유지");
       }
       checked += state.expressionBoxes.length + state.grids.length;

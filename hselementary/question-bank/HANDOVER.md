@@ -5,13 +5,27 @@
 - Branch: `codex/elementary-audit-sync-20260926`
 - Local page: `http://127.0.0.1:8897/hselementary/question-bank/`
 - Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-03)
-- Runtime-available types: 1,126 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 879
+- Runtime-available types: 1,136 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 869
 - Source-linked runtime entries: 1,625 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `88/477` types are runtime-available. The remainder stay review-locked.
+- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `98/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-10-03 Decimal-Division Exploration 3
+
+- Ten of thirteen source items now have three fixed pools at three structural difficulty choices. Exploration 1/2, Examples 1/2/4 and Missions 1/2/3/4/6 are ready. This is a finite set of 90 distinct conditions, not unlimited generation.
+- Original rereading corrected Mission 3 from two blanks to one (`2.94□5 / 3.4`, unique digit 0); corrected Mission 5 from rounding to ceiling; restored the six original cards in order `2, 1, 5, 3, 7, 4`; confirmed Mission 6's middle dimension is 19.35cm and its answer is 756 cubes.
+- Example 1 retains the original 100th-decimal-place digit sum, independently 301. Short repeating-block calculations replace an unreadable 100-digit display. Source-level reasoning is not reduced to rounding at the second place.
+- Three original items stay locked: Exploration 3 independently rounds to 0.90 but handwriting reads 0.81; Example 3 lacks a positive common-number premise; Mission 5's ceiling range contains twelve hundredth-grid values but eleven if trailing-zero 7.60 is excluded. Do not call the last handwriting wrong before resolving this convention.
+- Publisher-key verification is false. Printed source, readable handwriting and independent computation are separate evidence. An old source-memory entry still describes all E3 items as locked; this section and the current source reviews supersede that release snapshot.
+- Independent audit: 99 distinct prompt conditions (90 public and 9 locked-candidate-only), 99 modulo comparisons, 11 maximum-safe-variant comparisons, 198 incorrect-answer rejections, 132 invalid-input rejections, 11 forced-lock checks, 180 digit trials and 6480 card arrangements. The nine candidate cases for Exploration 3 do not unlock it.
+- Scoped source modules never mutate the catalog or unlock types. Negative, unsafe, fractional and nonnumeric variants are rejected. Central E3 candidates now reject invalid difficulty inputs instead of silently clamping them.
+- Question drawings are absent where absent from the source; the original six cards are displayed only for the card problem. Answer tables and formulas use normal-weight black common-font text. PC 1280px, mobile 390/320px, all three difficulties and A4 question/answer rendering are checked by the actual-page live audit, not a standalone mock fixture.
+- Final-code visual proof: 90 desktop/mobile states, 60 one-page A4 PDFs, eight unchanged asset SHA-256 hashes during the run, real-tree readiness/lock previews and direct visual inspection. Source PDF fingerprint remained unchanged. Earlier pre-guard screenshots are not the final-code completion evidence.
+- Current regressions: 68160 runtime generations, 170400 notation generations with DOM fraction checks, and 340800 numeric-display generations. Grade 6 catalog: 633 total, 337 available, 296 locked. Source-backed readiness is not empirical score calibration.
+- Next: decimal-division Exploration 4, item by item against its original printed conditions and handwritten evidence. Preserve all three unresolved E3 locks. Review branch only; no main merge or deployment is claimed.
 
 ## 2026-10-03 Decimal-Division Exploration 5
 
@@ -22,7 +36,7 @@
 - Scoped solution tables inherit the common font and use normal-weight black text. Actual browser checks passed 36 desktop 1280px and mobile 390/320px states, 24 one-page A4 PDFs across three levels, and stable implementation SHA-256 during rendering. PC/mobile/rasterized A4 samples were visually inspected.
 - Regressions: 67560 runtime generations, 168900 math-notation generations plus actual DOM fraction centering, and 337800 numeric-display generations. Public lock reasons remain answer-free. Common candle/Mission 5 selection still passes without a duplicate public type.
 - Next: decimal-division Exploration 3 (rounding and applied integer counts), then Exploration 4 (remainders). Read each original before reconnecting candidates. Keep unresolved trapezoid and other source types locked. Whole-bank completion and empirical difficulty calibration remain pending. Review-branch update only; main and deployment are not claimed.
-- Exploration 3 Example 3-1 source reread caught a prior second-place/100th-place transcription error. The original asks the sum of all digits of 4.7/3.7 rounded to the 100th decimal place; the independently derived sum is 301, not 10. Raw structure and answer evidence are corrected, with a separate long-division rounding check. This item remains locked: no generator, layout, difficulty, or publisher-key approval is implied by the correction.
+- Exploration 3 Example 3-1 source reread caught a prior second-place/100th-place transcription error. The original asks the sum of all digits of 4.7/3.7 rounded to the 100th decimal place; the independently derived sum is 301, not 10. It was initially kept locked after the correction alone; the later full implementation and release gates are recorded in the Exploration 3 section above.
 
 ## 2026-10-03 Decimal-Division Exploration 6
 
