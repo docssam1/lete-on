@@ -13,6 +13,14 @@ export function applyBook01SourceFixes(books) {
       { id: "quarter-turn", action: "transform", quarterTurns: 1, result: 3, caption: "시계 방향으로 반의 반 바퀴 돌리면 3을 가리킵니다." },
       { id: "counter-quarter-turn", action: "transform", quarterTurns: -1, result: 9, caption: "시계 반대 방향으로 반의 반 바퀴 돌리면 9를 가리킵니다." }
     ];
+    clock.experience.openingPrompt = clock.original.prompt;
+    clock.experience.check = {
+      prompt: "12를 가리키는 바늘을 시계 방향으로 반 바퀴 돌리면 어디를 가리킬까요?",
+      options: ["3", "6", "9"],
+      answerRef: clock.original.items.find((item) => item.id === "half-clockwise").answerRef
+    };
+    clock.explanation.headline = "12에서 출발해 방향과 회전량에 따라 바늘을 돌려 봅니다.";
+    clock.explanation.steps = clock.experience.beats.slice(1).map((beat) => beat.caption);
     clock.experience.finalStill.visibleBeatIds = clock.experience.beats.map((beat) => beat.id);
   }
 

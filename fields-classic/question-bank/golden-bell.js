@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261003a";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261003b";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
@@ -240,7 +240,8 @@ function experienceClockMarkup(experience, sceneState = state.experience) {
 }
 
 function clockExperienceSummaryMarkup(experience) {
-  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> 2에서 시작해 한 바퀴는 2, 반 바퀴는 8, 반의 반 바퀴는 시계 방향 5·반대 방향 11을 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
+  const landing = (turns) => clockValueAfterQuarterTurns(experience.start, turns);
+  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> ${experience.start}에서 시작해 시계 방향으로 한 바퀴는 ${landing(4)}, 반 바퀴는 ${landing(2)}를 가리킵니다. 시계 반대 방향으로 반 바퀴 돌려도 ${landing(-2)}를 가리킵니다. 반의 반 바퀴는 시계 방향 ${landing(1)}·반대 방향 ${landing(-1)}를 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
 }
 
 function experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled }) {
@@ -1504,7 +1505,7 @@ function bindLessonActions() {
     } else {
       state.experience.feedback = {
         passed: state.experience.answer === experience.check.answer,
-        message: state.experience.answer === experience.check.answer ? "맞아요. 반 바퀴는 맞은편을 가리켜 8입니다." : "시계판의 맞은편을 다시 찾아보세요. 2의 맞은편은 8입니다."
+        message: state.experience.answer === experience.check.answer ? `맞아요. 반 바퀴는 맞은편을 가리켜 ${escapeAttribute(experience.check.answer)}입니다.` : "아니에요. 출발한 위치의 맞은편을 다시 찾아보세요."
       };
     }
     if (["guided-concept", "progressive-concept"].includes(experience.kind)) render();
