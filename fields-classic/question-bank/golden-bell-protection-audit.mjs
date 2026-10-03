@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js";
+import { GOLDEN_BELL_BOOKS as libraryBooks } from "./golden-bell-library.js";
 import { GOLDEN_BELL_RECOVERY } from "./golden-bell-recovery-data.js";
+
+const GOLDEN_BELL_BOOKS = libraryBooks.filter((book) => book.courseId === "course-01");
 
 let answerRefs = 0;
 function auditPublicValue(value, path = "books") {

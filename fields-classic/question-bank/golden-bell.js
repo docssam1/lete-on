@@ -1,5 +1,5 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20260913e";
-import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20260918a";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261003b";
+import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
@@ -240,7 +240,8 @@ function experienceClockMarkup(experience, sceneState = state.experience) {
 }
 
 function clockExperienceSummaryMarkup(experience) {
-  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> 2에서 시작해 한 바퀴는 2, 반 바퀴는 8, 반의 반 바퀴는 시계 방향 5·반대 방향 11을 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
+  const landing = (turns) => clockValueAfterQuarterTurns(experience.start, turns);
+  return `<div class="gold-print-experience"><p><strong>개념 순서</strong> ${experience.start}에서 시작해 시계 방향으로 한 바퀴는 ${landing(4)}, 반 바퀴는 ${landing(2)}를 가리킵니다. 시계 반대 방향으로 반 바퀴 돌려도 ${landing(-2)}를 가리킵니다. 반의 반 바퀴는 시계 방향 ${landing(1)}·반대 방향 ${landing(-1)}를 가리킵니다.</p>${experienceClockMarkup({ ...experience, beats: [experience.beats.at(-1)] }, { step: 0, previousStep: 0 })}</div>`;
 }
 
 function experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled }) {
@@ -1154,6 +1155,14 @@ function answerControl(groupId, item, scope) {
   return `<label class="answer-input-wrap"><span>${label}</span><input type="text" inputmode="${inputMode}" autocomplete="off" spellcheck="false" value="${escapeAttribute(state.selections[groupId])}" aria-label="${escapeAttribute(item.prompt)} 답" data-input-group="${groupId}" data-answer-scope="${scope}" /></label>`;
 }
 
+function arithmeticListRepeatedByParts(item, visual) {
+  return visual?.subtype === "arithmetic-list"
+    && visual.expressions?.length === item.parts?.length
+    && visual.expressions.every((expression, index) => typeof expression === "string"
+      && typeof item.parts[index].label === "string"
+      && expression.replace(/\s+/g, "") === item.parts[index].label.replace(/\s+/g, ""));
+}
+
 function renderOriginal(lesson) {
   const result = state.feedback?.kind === "original" ? state.feedback : null;
   if (lesson.original.mode === "paged") {
@@ -1172,11 +1181,13 @@ function renderOriginal(lesson) {
           : "";
     const dots = items.map((candidate, index) => `<span class="${index === state.originalIndex ? "active" : originalItemComplete(candidate) ? "complete" : ""}" role="img" title="${escapeAttribute(candidate.sourceNo || index + 1)}" aria-label="${index + 1}번째 문제 · 원문 번호 ${escapeAttribute(candidate.sourceNo || index + 1)}" ${index === state.originalIndex ? 'aria-current="step"' : ""}>${index + 1}</span>`).join("");
     const nextLabel = state.originalIndex === items.length - 1 ? "추가 학습으로" : "다음 문제";
+    const sourceVisual = item.visual || lesson.original.visual;
+    const visual = arithmeticListRepeatedByParts(item, sourceVisual) ? "" : `<div class="quiz-visual item-quiz-visual">${visualMarkup(sourceVisual)}</div>`;
     const sourceCount = lesson.original.sourceQuestionCount || items.length;
     const progressLabel = sourceCount === items.length
       ? `${sourceCount}문제 중 ${state.originalIndex + 1}번째`
       : `${sourceCount}문항 · ${items.length}개 풀이 중 ${state.originalIndex + 1}번째`;
-    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>교재 ${item.sourceNo || state.originalIndex + 1}번</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${item.sourceNo || state.originalIndex + 1}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${item.prompt}</p><div class="quiz-visual item-quiz-visual">${visualMarkup(item.visual || lesson.original.visual)}</div><section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "확인"}</button>`;
+    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>교재 ${item.sourceNo || state.originalIndex + 1}번</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${item.sourceNo || state.originalIndex + 1}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${item.prompt}</p>${visual}<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "확인"}</button>`;
   }
   const allComplete = lesson.original.items.every(originalItemComplete);
   const itemVisuals = lesson.original.items.some((item) => item.visual);
@@ -1250,6 +1261,7 @@ function printResponseMarkup(item) {
 
 function printSourceItemVisual(item, fallback) {
   const visual = item.visual || fallback;
+  if (arithmeticListRepeatedByParts(item, visual)) return "";
   const repeatedParts = visual?.subtype === "multipart-conditions" && visual.context
     && visual.rows?.length === item.parts?.length
     && visual.rows.every((row, index) => ["id", "label", "equation"].every((key) => row[key] === item.parts[index][key]));
@@ -1493,7 +1505,7 @@ function bindLessonActions() {
     } else {
       state.experience.feedback = {
         passed: state.experience.answer === experience.check.answer,
-        message: state.experience.answer === experience.check.answer ? "맞아요. 반 바퀴는 맞은편을 가리켜 8입니다." : "시계판의 맞은편을 다시 찾아보세요. 2의 맞은편은 8입니다."
+        message: state.experience.answer === experience.check.answer ? `맞아요. 반 바퀴는 맞은편을 가리켜 ${escapeAttribute(experience.check.answer)}입니다.` : "아니에요. 출발한 위치의 맞은편을 다시 찾아보세요."
       };
     }
     if (["guided-concept", "progressive-concept"].includes(experience.kind)) render();
