@@ -136,7 +136,9 @@ export function courseAnswerPrintPages(lesson, book, student, { quick = false } 
   };
   const protectedContent = (item) => {
     const answer = validAnswer(item?.answer) ? answerText(item.answer) : combineParts(item || {}, "answer");
-    const solution = hasText(item?.solution) ? item.solution.trim() : combineParts(item || {}, "solution");
+    const solution = hasText(item?.solution) ? item.solution.trim()
+      : hasText(item?.explanation) ? item.explanation.trim()
+        : combineParts(item || {}, "solution");
     if (!answer || !solution) throw new Error(`Protected worked answers are required for printing (${item?.id || "unknown item"})`);
     const verificationCandidates = [item.verification, item.check, item.explanation]
       .filter((value) => hasText(value) && value.trim() !== solution);
