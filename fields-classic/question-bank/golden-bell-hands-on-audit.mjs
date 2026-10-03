@@ -136,7 +136,8 @@ try {
           await act("turn", round.turns > 0 ? -1 : 1).click();
           assert.equal(await host.locator(".hand-guide").getAttribute("data-guide-phase"), "progress");
           await act("undo").click();
-          assert.match(await host.locator(".hand-measure").innerText(), /0 \/ 4/);
+          assert.match(await host.locator(".hand-measure").innerText(), /출발/u);
+          assert.doesNotMatch(await host.innerText(), /¼|\d\s*\/\s*4\s*바퀴/u);
           for (let i = 0; i < Math.abs(round.turns); i++) await act("turn", Math.sign(round.turns)).click();
         } else if (["mirror", "fold"].includes(activity.kind)) {
           if (activity.kind === "mirror") assert.equal(await host.locator(".hand-pair-guide").count(), 0);
