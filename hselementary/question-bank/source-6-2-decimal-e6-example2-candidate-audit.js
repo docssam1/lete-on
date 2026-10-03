@@ -1,12 +1,19 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 global.window = {};
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
 
 const sourceItemId = "6-2-u2-e6-example-2";
+const sourceItem = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory", "6-2-source-items.json"), "utf8"))
+  .items.find(item => item.sourceItemId === sourceItemId);
+assert.equal(sourceItem?.candidateVerification?.generator, "sourceGrade6SecondDecimalDivisionE6Example2Candidate");
+assert.equal(sourceItem?.candidateVerification?.publicReleaseStatus, "locked-pending-matching-publisher-key-and-live-worksheet-review");
+assert.equal(sourceItem?.nonMatchingAnswerSource?.sha256, "3B71EDCF9C234B180A08A73905B16F6065F833160E499223D413ED65792BACF0");
 const lockedType = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(type => type.sourceItemId === sourceItemId);
