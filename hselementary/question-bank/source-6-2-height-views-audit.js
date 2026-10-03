@@ -9,7 +9,7 @@ const readiness = JSON.parse(fs.readFileSync(path.join(__dirname, "source-invent
 const raw = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory/6-2-source-items.json"), "utf8"));
 assert.equal(readiness.items.length,11);
 assert.equal(new Set(readiness.items.map(i=>i.sourceItemId)).size,11);
-assert.equal(readiness.items.filter(i=>i.releaseStatus === "verified").length,2);
+assert.equal(readiness.items.filter(i=>i.releaseStatus === "verified").length,4);
 const originals = {
   "6-2-u3-e1-exploration": [[0,0,0,0,0,0],[0,0,1,0,0,0],[0,2,3,4,1,0],[1,1,2,2,0,0],[0,0,0,1,0,0],[0,0,0,0,0,0]],
   "6-2-u3-e1-example-3": [[1,3,3],[2,1,2]]
@@ -52,7 +52,7 @@ function readHeightFigure(prompt) {
   return h;
 }
 let conditions = 0, projectionChecks = 0, faceChecks = 0, negativeChecks = 0;
-for (const d of heightApi.definitions) {
+for (const d of heightApi.definitions.filter(d=>Object.hasOwn(originals,d.sourceItemId))) {
   const type = window.HSE_SOURCE_INVENTORY_GRADE6.items.find(t => t.sourceItemId === d.sourceItemId);
   const ledger = raw.items.find(t=>t.sourceItemId === d.sourceItemId);
   const review = readiness.items.find(t=>t.sourceItemId === d.sourceItemId);
@@ -116,8 +116,8 @@ const candidates = [];
 for (let a = 0; a <= 17; a++) for (let b = 0; b <= 17; b++) if (countFaces([[1,a,2],[b,2,2]],true) === 34) candidates.push({ a,b,sum:a+b });
 assert.deepEqual(candidates, [{ a:3,b:1,sum:4 }]);
 const mission4 = window.HSE_SOURCE_INVENTORY_GRADE6.items.find(t => t.sourceItemId === "6-2-u3-e1-mission-4");
-assert(mission4.reviewLocked);
-assert.equal(api.generatorKey(mission4), "");
+assert(!mission4.reviewLocked);
+assert.equal(api.generatorKey(mission4), "sourceGrade6SecondSpaceE1Mission4");
 assert.equal(readiness.items.find(i=>i.sourceItemId === mission4.sourceItemId).requestedOperation,"sum-not-product");
 // A hollow step must differ from the same outer silhouette.
 for (const h of [[[3,1,3],[3,3,3]], [[0,2],[1,0]], [[1,1],[1,1]]]) {
@@ -127,6 +127,6 @@ for (const h of [[[3,1,3],[3,3,3]], [[0,2],[1,0]], [[1,1],[1,1]]]) {
 }
 if (process.env.HSE_HEIGHT_AUDIT_OUTPUT) {
   assert(/^[EG]:[/\\]/i.test(process.env.HSE_HEIGHT_AUDIT_OUTPUT));
-  fs.writeFileSync(process.env.HSE_HEIGHT_AUDIT_OUTPUT, JSON.stringify({ conditions, projectionChecks, faceChecks, negativeChecks, mission4: { candidates, release: "locked-unimplemented" } }, null, 2));
+  fs.writeFileSync(process.env.HSE_HEIGHT_AUDIT_OUTPUT, JSON.stringify({ conditions, projectionChecks, faceChecks, negativeChecks, mission4: { candidates, release: "verified-see-space-missions-audit" } }, null, 2));
 }
-console.log(`Height views: ${conditions} fixed conditions; ${projectionChecks} voxel projections; ${faceChecks} independent surface checks; ${negativeChecks} negative inputs/geometry cases. Mission 4 asks for the sum: 3+1=4; stays locked until implementation/render verification.`);
+console.log(`Height views: ${conditions} fixed conditions; ${projectionChecks} voxel projections; ${faceChecks} independent surface checks; ${negativeChecks} negative inputs/geometry cases. Mission 4 sum 3+1=4; its variants are independently checked by the space missions audit.`);

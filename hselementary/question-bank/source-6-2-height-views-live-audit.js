@@ -8,7 +8,7 @@ const { chromium } = require("playwright");
 const output = process.env.HSE_SCREENSHOT_DIR;
 assert(output && /^[EG]:[/\\]/i.test(output), "Evidence must stay on E: or G:.");
 fs.mkdirSync(output, { recursive: true });
-const ids = ["6-2-u3-e1-exploration", "6-2-u3-e1-example-3"];
+const ids = ["6-2-u3-e1-exploration", "6-2-u3-e1-example-3", "6-2-u3-e1-mission-2", "6-2-u3-e1-mission-4"];
 const assets = ["index.html", "app.js", "source-inventory-grade6.js", "source-6-2-height-views.js", "source-6-2-height-views.css"];
 const hashes = () => Object.fromEntries(assets.map(n => [n, crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,n))).digest("hex")]));
 const initialHashes = hashes();
@@ -58,7 +58,8 @@ async function inspect(page,id,phase) {
   },{id,phase});
   assert.deepEqual(result.errors,[],`${id}/${phase}`);
   assert.equal(result.questions,3);
-  assert.equal(result.figures,phase === "problem" ? id.endsWith("exploration") ? 15 : 3 : id.endsWith("exploration") ? 12 : 15);
+  const perQuestion = phase === "problem" ? id.endsWith("exploration") ? 5 : id.endsWith("mission-2") ? 3 : 1 : id.endsWith("exploration") ? 4 : id.endsWith("example-3") ? 5 : 1;
+  assert.equal(result.figures,3*perQuestion);
   assert.equal(result.answerBlocks,phase === "problem" ? 0 : 3);
   assert(!result.leak && !result.overflow, JSON.stringify(result));
 }
@@ -90,13 +91,14 @@ async function inspect(page,id,phase) {
           await page.pdf({path:file,format:"A4",printBackground:true,preferCSSPageSize:true});
           const pages=+execFileSync(process.env.HSE_PDFINFO_EXECUTABLE,[file],{encoding:"utf8"}).match(/^Pages:\s+(\d+)/m)[1];
           assert(pages>=1 && pages<=3,`${id}/${phase} ${pages} PDF pages`);
+          if ((phase === "solution" && /mission-(2|4)$/.test(id)) || (id.endsWith("mission-2") && phase === "problem" && difficulty === 0)) assert.equal(pages,1,`${id}/${phase} three compact items must fit one A4`);
           pdfs.push({id,difficulty,phase,pages});
           await page.emulateMedia({media:"screen"});
         }
       }
       assert.deepEqual(errors,[]);
       await page.close(); checked++;
-      console.log(`Height views ${checked}/18: ${id}/${difficulty}/${width}`);
+      console.log(`Height views ${checked}/${ids.length*9}: ${id}/${difficulty}/${width}`);
     }
   } finally { await browser.close(); }
   assert.deepEqual(hashes(),initialHashes,"Files changed during render; repeat verification.");

@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 583,
     "answerVisualRequired": 633,
-    "unlocked": 352
+    "unlocked": 354
   },
   "items": [
     {
@@ -16887,11 +16887,9 @@ const safeLockedReasons = {
   "6-2-u3-e1-example-2": "기호가 붙은 쌓기나무의 위치와 제거 뒤 앞·옆 모양을 확인해야 합니다.",
   "6-2-u3-e1-example-4": "원문 모양은 계산했지만 정답 입체 그림과 고정 변형 문항 검수가 남아 있습니다.",
   "6-2-u3-e1-mission-1": "원본의 가려진 쌓기나무 위치와 앞·옆 모양을 확인해야 합니다.",
-  "6-2-u3-e1-mission-2": "원문 조건과 답 모양은 계산했지만 고정 변형 문항과 화면 검수가 남아 있습니다.",
   "6-2-u3-e1-mission-3": "원문 모양은 계산했지만 정답 입체 그림과 고정 변형 문항 검수가 남아 있습니다.",
   "6-2-u3-e1-mission-5": "기호가 가리키는 위치와 쌓기나무를 추가한 뒤의 모양을 확인해야 합니다.",
   "6-2-u3-e1-mission-6": "색칠된 쌓기나무의 위치와 제거 뒤 세 방향의 모양을 확인해야 합니다.",
-  "6-2-u3-e1-mission-4": "원문과 독립 계산은 확인했지만 고정 변형 문항과 문제·정답 그림의 화면 검수가 남아 있습니다.",
   "6-2-u2-e2-mission-3": "원본 손글씨 답 판독과 답 근거 확인이 더 필요합니다.",
   "6-2-u2-e2-mission-4": "심화 교재의 공식 답 대조와 출제 화면 검수가 남아 있습니다.",
   "6-2-u2-e2-mission-6": "심화 교재의 공식 답 대조와 출제 화면 검수가 남아 있습니다.",
@@ -16912,7 +16910,9 @@ window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
 
 const heightViewReleases = {
   "6-2-u3-e1-exploration": "sourceGrade6SecondSpaceE1HeightViews",
-  "6-2-u3-e1-example-3": "sourceGrade6SecondSpaceE1ExposedArea"
+  "6-2-u3-e1-example-3": "sourceGrade6SecondSpaceE1ExposedArea",
+  "6-2-u3-e1-mission-2": "sourceGrade6SecondSpaceE1Mission2",
+  "6-2-u3-e1-mission-4": "sourceGrade6SecondSpaceE1Mission4"
 };
 window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
   if (!heightViewReleases[item.sourceItemId]) return;

@@ -59,6 +59,13 @@
   .source62-height-panels > svg, .source62-face-account svg,
   .solution-answer-visual .source62-height-panels > svg, .solution-answer-visual .source62-face-account svg { max-height: 30mm; }
   .source62-height-panels, .source62-face-account { gap: 2mm; max-width: 110mm; }
+  .source62-height-panels:has(.height-footprint-cell) > svg,
+  .solution-answer-visual .source62-height-panels:has(.height-footprint-cell) > svg { max-height: 38mm; }
+  .question-item:has(.height-footprint-cell) > .question-prompt > .source62-height { max-height: 30mm; }
+  .solution-item:has([data-source-item="6-2-u3-e1-mission-2"]) .solution-answer-visual .source62-height { max-height: 30mm; }
+  .solution-item:has([data-source-item="6-2-u3-e1-mission-4"]) .solution-answer-visual .source62-height { max-height: 22mm; }
+  .solution-item:has([data-source-item="6-2-u3-e1-mission-4"]) .solution-answer-visual { padding-top: 3px; padding-bottom: 3px; }
+  .solution-item:has([data-source-item="6-2-u3-e1-mission-4"]) > p { line-height: 1.5; padding-top: 8px; padding-bottom: 8px; }
   .source62-face-account { grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: 100%; }
   .source62-face-account figure:first-child { grid-column: auto; }
   .source62-face-account figcaption { font-size: 11px; }
