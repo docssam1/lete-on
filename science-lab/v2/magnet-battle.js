@@ -38,9 +38,10 @@ export function mountMagnetBattle(host, mountLab) {
     } else { result.textContent = '두 팀의 기록을 기다리고 있어요.'; next.hidden = true; }
   };
   const mount = () => [0, 1].forEach(i => {
+    const mountedRound = round;
     const el = $(`[data-team="${i + 1}"]`), rows = [];
     mountLab(el, { rows, personal: false, lowPower: true, onRecord: list => {
-      if (submitted[i]) return;
+      if (round !== mountedRound || submitted[i] || !host.isConnected) return;
       const select = $(`[data-mb-pick="${i}"]`), previous = select.value;
       select.innerHTML = '<option value="">기록을 골라 주세요</option>' + list.map((r, j) => `<option value="${j}">${j + 1}번 · ${String(r.shape).replace(/[&<>\"]/g, '')} · ${Number(r.floating)}곳 · ${Number(r.height)}칸</option>`).join('');
       select.value = previous || String(list.length - 1);
@@ -61,7 +62,7 @@ export function mountMagnetBattle(host, mountLab) {
   }));
   $('[data-mb-next]').addEventListener('click', () => {
     round++; records = [null, null]; submitted = [false, false]; actual = [null, null];
-    [0, 1].forEach(i => { const pick = $(`[data-mb-pick="${i}"]`); pick.disabled = false; pick._rows = []; pick.innerHTML = '<option value="">먼저 표에 적어 주세요</option>'; $(`[data-team="${i + 1}"]`).replaceChildren(); });
+    [0, 1].forEach(i => { const pick = $(`[data-mb-pick="${i}"]`); pick.disabled = false; pick._rows = []; pick.innerHTML = '<option value="">먼저 표에 적어 주세요</option>'; const old = $(`[data-team="${i + 1}"]`); old.replaceWith(old.cloneNode(false)); });
     mount(); update(); host.scrollTop = 0;
   });
   mount(); update();

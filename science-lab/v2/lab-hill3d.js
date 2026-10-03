@@ -13,6 +13,7 @@ export async function mountHill3D(el, opts = {}) {
     if (!Stage.canWebGL()) throw new Error('no webgl');   // 확인용 문맥은 바로 돌려준다
   } catch (_) { return mountHill(el, opts); }
   const rows = opts.rows || [], onRecord = opts.onRecord;
+  const instruction = opts.fixedSource ? '이번 대결에서는 두 팀의 <b>컵 위치를 같게</b> 놓아요. 경사와 물의 양을 고르고 <b>물 붓기</b>를 누르고 있어요.' : TIP;
   let slope = '완만', water = '적게', pouring = false;
   const grp = (name, key, keys, cur) => `<div class="modes" role="group" aria-label="${name}"><span class="lab-lbl">${name}</span>${keys.map((k) => `<button type="button" data-${key}="${k}" aria-pressed="${k === cur}">${k}</button>`).join('')}</div>`;
   el.innerHTML = `
@@ -24,7 +25,7 @@ export async function mountHill3D(el, opts = {}) {
         <p class="lab-read"><span>깎인 흙</span><b data-r="cut">0</b><small>칸</small></p>
         <p class="lab-read"><span>쌓인 흙</span><b data-r="pile">0</b><small>칸</small></p>
       </div>
-      <p class="lab3d-tip" data-r="tip">${TIP}</p>
+      <p class="lab3d-tip" data-r="tip">${instruction}</p>
       <div class="lab3d-btns">
         <button class="btn primary pour" data-act="pour" type="button">물 붓기 (누르고 있기)</button>
         <button class="btn" data-act="reset" type="button">다시 쌓기</button>
@@ -96,12 +97,12 @@ export async function mountHill3D(el, opts = {}) {
   }
   function read() {
     const left = Math.max(0, 1 - sim.poured / full);
-    $('[data-r=cup]').textContent = Math.round(left * 100); cup.setFill(left);
+    $('[data-r=cup]').textContent = Math.ceil(left * 100); cup.setFill(left);
     $('[data-r=cut]').textContent = toCells(sim.eroded, sim.dx);
     $('[data-r=pile]').textContent = toCells(sim.deposited, sim.dx);
   }
   const tip = (html) => { $('[data-r=tip]').innerHTML = html; };
-  function reset() { setTilt(); sim = createSim(slope); full = WATERS[water]; pouring = false; drops.count = 0; fall.count = 0; paint(); placeCup(); read(); tip(TIP); }
+  function reset() { setTilt(); sim = createSim(slope); full = WATERS[water]; pouring = false; drops.count = 0; fall.count = 0; paint(); placeCup(); read(); tip(instruction); }
   reset();
 
   const M = new THREE.Matrix4(), LIP = new THREE.Vector3(), HIT = new THREE.Vector3();
@@ -137,6 +138,7 @@ export async function mountHill3D(el, opts = {}) {
   canvas.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
   canvas.addEventListener('pointerup', (e) => {
     if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 8 || performance.now() - down.t > 400) return;
+    if (opts.fixedSource) { tip(instruction); return; }
     const r = canvas.getBoundingClientRect(); ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, stage.camera); const hit = ray.intersectObject(soil)[0]; if (!hit) return;
     rig.worldToLocal(HIT.copy(hit.point));

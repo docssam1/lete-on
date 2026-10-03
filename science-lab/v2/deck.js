@@ -3,6 +3,7 @@
 //  self (스스로 공부하기·학생용): 내 생각을 쓰고 '예시 답 보기', 확인 문제는 눌러서 바로 채점.
 import { judgeText, judgeShort } from './judge.js';
 import { mountMagnetBattle } from './magnet-battle.js';
+import { mountLabBattle } from './lab-battle.js';
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const NUM = ['①', '②', '③', '④', '⑤', '⑥'];
 const KEY = 'sciLab.deck';
@@ -236,9 +237,9 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
         m.outerHTML = '<div class="dk-battle dk-magnet-battle"></div>';
         mountMagnetBattle(stage.querySelector('.dk-magnet-battle'), mountLab);
       } else {
-        m.outerHTML = `<div class="dk-battle"><p class="dk-bq"><b>공통 문제</b> ${esc(ch.battle || ch.labTitle || '조건을 바꿔 결과를 비교해요')} — 두 팀이 조건을 다르게 골라 결과를 겨뤄요.</p>
-          <div class="dk-bt"><section><h3>1팀</h3><div class="dk-3d" data-mount="lab" data-team="1"></div></section><section><h3>2팀</h3><div class="dk-3d" data-mount="lab" data-team="2"></div></section></div></div>`;
-        stage.querySelectorAll('[data-team]').forEach((el) => mountLab(el, { rows: [], personal: false, lowPower: true }));
+        m.parentElement.classList.add('is-battle');
+        m.outerHTML = '<div class="dk-battle dk-lab-battle"></div>';
+        mountLabBattle(stage.querySelector('.dk-lab-battle'), u, mountLab);
       }
     }
     return;

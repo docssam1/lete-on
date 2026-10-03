@@ -546,6 +546,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
     mount3D: (el, o = {}) => mount3D(el, L.engage.scene, { autoplay: !!o.autoplay, preview: o.preview || false, from: o.from || null, onDone: o.onDone }),
     // personal:false(가르치기) → 학생 기록을 읽지도 쓰지도 않는다. 두 팀 배틀은 각자 빈 표로.
     mountLab: (el, o = {}) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab,
+      lowPower: !!o.lowPower, fixedSource: !!o.fixedSource,
       rows: o.personal === false ? (o.rows || []) : store.get(u).labRows || [],
       onRecord: (rows) => { if (o.personal !== false) store.set(u, { labRows: rows }); o.onRecord?.(rows); } }),
     // 스스로 공부하기의 확인 문제: 첫 시도만 진단 기록에 남긴다

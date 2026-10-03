@@ -15,7 +15,8 @@ export async function mountPond3D(el, opts = {}) {
   try {
     [{ Stage, watchDetached }, THREE, K, KIT] = await Promise.all([import('../engine.js'), import('../../world-explorer/vendor/three.module.js'), import('../scenes/_pond.js'), import('../scenes/_kit.js')]);
     if (!Stage.canWebGL()) throw new Error('no webgl');   // 확인용 문맥은 바로 돌려준다
-  } catch (_) { el.innerHTML = '<p class="lab3d-tip">이 기기에서는 3D 실험실을 열 수 없어요. 3D 장면으로 관찰해 보세요.</p>'; return {}; }
+  } catch (_) { return mountPond2D(el, opts); }
+  if (!el.isConnected) return {};
   const rows = opts.rows || [], onRecord = opts.onRecord;
   let pick = '부레옥잠', last = null;
   el.innerHTML = `
@@ -31,7 +32,7 @@ export async function mountPond3D(el, opts = {}) {
     </div>
     <table class="lab-table"><thead><tr><th>식물</th><th>심은 곳</th><th>어떻게 되었나</th></tr></thead><tbody></tbody></table>`;
   const $ = (s) => el.querySelector(s), canvas = $('canvas'), tbody = $('tbody'), tip = (h) => { $('[data-r=tip]').innerHTML = h; };
-  let stage; try { stage = new Stage(canvas); } catch (_) { el.querySelector('.lab3d').innerHTML = '<p class="lab3d-tip">이 기기에서는 3D를 열 수 없어요.</p>'; return {}; }
+  let stage; try { stage = new Stage(canvas); } catch (_) { return mountPond2D(el, opts); }
   stage.setView({ theta: 0.12, phi: 1.12, dist: 6.9, target: [-0.35, 0.8, 0] });
   const { SURF, BANK_X, POND, bottomAt, where } = K;
   const pondG = K.pond(); stage.root.add(pondG);
@@ -127,4 +128,36 @@ export async function mountPond3D(el, opts = {}) {
   renderRows();
   const dispose = watchDetached(el, () => stage.dispose());
   return { rows, pause: stop, dispose };
+}
+
+// 같은 서식 모형을 쓰는 2D 대체 화면. 실제 생물 관찰이나 실사 영상으로 표시하지 않는다.
+export function mountPond2D(el, opts = {}) {
+  const rows = opts.rows || [], zones = { 땅: '땅', 물가: '물가', 물: '깊은 물' };
+  const escape = value => String(value ?? '').replace(/[&<>\"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let pick = '부레옥잠', zone = '물', last = null;
+  el.innerHTML = `<p class="lab3d-tip">이 기기에서는 <b>2D 가상 모형</b>으로 관찰해요. 식물과 장소를 고르고 심어 보세요.</p>
+    <div class="modes" role="group" aria-label="식물">${Object.keys(PLANTS).map(name => `<button type="button" data-p="${name}" aria-pressed="${name === pick}">${name}</button>`).join('')}</div>
+    <div class="modes" role="group" aria-label="심을 곳">${Object.entries(zones).map(([key, name]) => `<button type="button" data-zone="${key}" aria-pressed="${key === zone}">${name}</button>`).join('')}</div>
+    <div class="lab3d-btns"><button type="button" class="btn primary" data-act="plant">심어 보기</button><button type="button" class="btn" data-act="record" disabled>표에 적기</button></div>
+    <p class="lab3d-tip" data-r="tip" role="status">장소를 정하고 심어 보세요.</p>
+    <table class="lab-table"><thead><tr><th>식물</th><th>심은 곳</th><th>어떻게 되었나</th></tr></thead><tbody></tbody></table>`;
+  const $ = query => el.querySelector(query);
+  const renderRows = () => { $('tbody').innerHTML = rows.length ? rows.map(row => `<tr><td>${escape(row.plant)}</td><td>${escape(row.where)}</td><td>${escape(row.result)}</td></tr>`).join('') : '<tr><td colspan="3" class="empty">아직 기록이 없어요.</td></tr>'; };
+  const resetObservation = () => { last = null; $('[data-act=record]').disabled = true; $('[data-r=tip]').textContent = '조건이 바뀌었어요. 다시 심어 보세요.'; };
+  el.querySelectorAll('[data-p]').forEach(button => button.addEventListener('click', () => { pick = button.dataset.p; el.querySelectorAll('[data-p]').forEach(other => other.setAttribute('aria-pressed', String(other === button))); resetObservation(); }));
+  el.querySelectorAll('[data-zone]').forEach(button => button.addEventListener('click', () => { zone = button.dataset.zone; el.querySelectorAll('[data-zone]').forEach(other => other.setAttribute('aria-pressed', String(other === button))); resetObservation(); }));
+  $('[data-act=plant]').addEventListener('click', () => {
+    const result = pondResult(pick, zone);
+    last = { plant: pick, where: zones[zone], result: result.text, ok: result.ok };
+    $('[data-r=tip]').textContent = `${pick} · ${zones[zone]}: ${result.text}`;
+    $('[data-act=record]').disabled = false;
+  });
+  $('[data-act=record]').addEventListener('click', () => {
+    if (!last) return;
+    const index = rows.findIndex(row => row.plant === last.plant && row.where === last.where);
+    if (index < 0) rows.push({ ...last }); else rows[index] = { ...last };
+    renderRows(); opts.onRecord?.(rows);
+  });
+  renderRows();
+  return { rows };
 }
