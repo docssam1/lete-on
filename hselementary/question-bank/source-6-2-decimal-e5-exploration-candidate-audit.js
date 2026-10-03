@@ -11,8 +11,8 @@ const review = require("./source-inventory/6-2-u2-e5-source-review.json").items.
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
-assert(type.reviewLocked && type.generatorKey === "", "공식 답 대조 전 실제 유형은 잠금 유지");
-assert.equal(window.HSE_GENERATORS.generate(type, 0, 0, 1), null);
+assert(!type.reviewLocked && type.generatorKey === review.candidateVerification.generator, "독립 검산된 실제 유형 연결");
+assert.equal(window.HSE_GENERATORS.generate({ ...type, reviewLocked: true }, 0, 0, 1), null);
 const candidate = { ...type, reviewLocked: false, generatorKey: review.candidateVerification.generator };
 
 const decimal = (value, places) => {
@@ -42,8 +42,8 @@ for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant 
     const sample = item.prompt.match(/([\d.]+)km를 달리는 데 (\d+)시간(?: (\d+)분)?이 걸렸습니다/);
     const perKm = item.prompt.match(/1km를 달릴 때 휘발유 ([\d.]+)L를 씁니다/);
     const used = item.prompt.match(/휘발유 ([\d.]+)L를 사용했습니다/);
-    const remaining = item.prompt.match(/다른 날 운행을 시작할 때는 휘발유가 ([\d.]+)L 있었고, 운행을 마친 뒤에는 ([\d.]+)L 남았습니다/);
-    assert(item.prompt.includes("다른 날 운행"), "앞선 거리 관찰과 목표 운행을 구분");
+    const remaining = item.prompt.match(/다른 날 달리기 시작할 때는 휘발유가 ([\d.]+)L 있었고, 달리고 난 뒤에는 ([\d.]+)L 남았습니다/);
+    assert(item.prompt.includes("다른 날 달"), "앞선 거리 관찰과 목표 달리기를 구분");
     assert(perKm, "1km에 필요한 휘발유가 제시됨");
     assert.equal(Boolean(easySpeed), level === 0);
     assert.equal(Boolean(sample), level !== 0);
@@ -81,4 +81,4 @@ for (let variant = 0; variant < 3; variant += 1) {
   assert.notEqual(source.answer, hard.answer, "어려움은 기준 문제의 답만 반복하지 않음");
 }
 assert.equal(new Set([0, 1, 2].map(variant => window.HSE_GENERATORS.generate(candidate, 0, 1, 1, variant).answer)).size, 3, "어려움 세 묶음의 답은 서로 다름");
-console.log(`6-2 개념탐구 5 본문 잠금 후보: 원문 독립 계산과 3난이도 × 3고정 묶음 × 40회 검산 ${checks}회 통과`);
+console.log(`6-2 개념탐구 5 본문 원문 유형: 원문 독립 계산과 3난이도 × 3고정 묶음 × 40회 검산 ${checks}회 통과`);

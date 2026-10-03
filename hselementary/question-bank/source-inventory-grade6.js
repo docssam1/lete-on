@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 607,
     "answerVisualRequired": 633,
-    "unlocked": 323
+    "unlocked": 327
   },
   "items": [
     {
@@ -10317,17 +10317,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "거리와 연료의 단위량으로 시간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE5Exploration",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3
     },
     {
       "semester": "6-2",
@@ -10369,17 +10369,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "거리와 연료 사용량으로 비용 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE5Example2",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3
     },
     {
       "semester": "6-2",
@@ -10395,17 +10395,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "두 수도꼭지로 물 받는 시간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE5Example3",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3
     },
     {
       "semester": "6-2",
@@ -10421,17 +10421,17 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "물살을 거슬러 가는 시간 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE5Example4",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "원문과 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3
     },
     {
       "semester": "6-2",

@@ -11,8 +11,8 @@ const review = require("./source-inventory/6-2-u2-e5-source-review.json").items.
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
-assert(type.reviewLocked && type.generatorKey === "", "공식 답 대조 전 실제 유형은 잠금 유지");
-assert.equal(window.HSE_GENERATORS.generate(type, 0, 0, 1), null);
+assert(!type.reviewLocked && type.generatorKey === review.candidateVerification.generator, "독립 검산된 실제 유형 연결");
+assert.equal(window.HSE_GENERATORS.generate({ ...type, reviewLocked: true }, 0, 0, 1), null);
 const candidate = { ...type, reviewLocked: false, generatorKey: review.candidateVerification.generator };
 
 const tenths = value => {
@@ -75,4 +75,4 @@ for (let variant = 0; variant < 3; variant += 1) {
   const hard = window.HSE_GENERATORS.generate(candidate, 0, 1, 1, variant);
   assert.notEqual(source.answer, hard.answer, "어려움은 기준 문제의 답만 반복하지 않음");
 }
-console.log(`6-2 개념탐구 5 예제 5-4 잠금 후보: 원문 독립 계산과 3난이도 × 3고정 묶음 × 40회 검산 ${checks}회 통과`);
+console.log(`6-2 개념탐구 5 예제 5-4 원문 유형: 원문 독립 계산과 3난이도 × 3고정 묶음 × 40회 검산 ${checks}회 통과`);

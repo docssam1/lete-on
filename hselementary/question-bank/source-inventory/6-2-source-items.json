@@ -1843,8 +1843,15 @@
       "answerContract": "fuel-distance-and-speed-to-travel-time",
       "visualRisk": "거리당 연료량과 시간당 거리의 단위를 혼동하지 않고 마지막 답을 시간으로 나타내야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "3시간",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact prompt calculation and independent back-substitution; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-1",
@@ -1874,8 +1881,15 @@
       "answerContract": "fuel-distance-ratio-to-total-cost",
       "visualRisk": "거리 비율, 리터 수, 원 단위의 순서대로 계산해야 하며 가격에 소수점이 남지 않도록 검산해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "35520원",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact prompt calculation and independent back-substitution; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-3",
@@ -1889,8 +1903,15 @@
       "answerContract": "combined-faucet-rates-to-minutes-and-seconds",
       "visualRisk": "분과 초를 먼저 초로 바꾸고 두 수도꼭지의 초당 물의 양을 합한 뒤 답을 분과 초로 되돌려야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "8분 45초",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": false,
+        "method": "exact prompt calculation and independent back-substitution; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-4",
@@ -1904,8 +1925,15 @@
       "answerContract": "river-current-upstream-travel-time",
       "visualRisk": "물살과 배의 빠르기는 같은 시간 단위로 맞추고, 거슬러 갈 때는 물살의 빠르기를 빼야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "2시간 30분",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact prompt calculation and independent back-substitution; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-1",

@@ -12,7 +12,7 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
 (async () => {
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   try {
-    const readyIds = new Set(["6-2-u2-e5-example-1", "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-3", "6-2-u2-e5-mission-4", "6-2-u2-e5-mission-6"]);
+    const readyIds = new Set(["6-2-u2-e5-exploration-1", "6-2-u2-e5-example-2", "6-2-u2-e5-example-3", "6-2-u2-e5-example-4", "6-2-u2-e5-example-1", "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-3", "6-2-u2-e5-mission-4", "6-2-u2-e5-mission-6"]);
     for (const width of [1280, 390, 320]) {
       const page = await browser.newPage({ viewport: { width, height: 844 }, deviceScaleFactor: 1 });
       const errors = [];
@@ -92,5 +92,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log("6-2 개념탐구 5 PC·390px·320px: 공개 6유형·Mission 5 공통 선택·나머지 잠금 미리보기 검사 통과");
+  console.log("6-2 개념탐구 5 PC·390px·320px: 공개 10유형·Mission 5 공통 선택 미리보기 검사 통과");
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

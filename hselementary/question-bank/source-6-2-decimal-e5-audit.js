@@ -17,7 +17,7 @@ assert.equal(review.sourceIdentity.printedPage, 26);
 assert.equal(review.sourceIdentity.originalChecked, true);
 assert.equal(review.sourceIdentity.handwrittenMarksExcluded, true);
 assert.equal(review.officialAnswerEvidence, "not-available-for-these-items");
-assert.equal(review.publicReleaseStatus, "partial");
+assert.equal(review.publicReleaseStatus, "verified");
 assert.equal(review.independentAnswerEvidence.officialAnswerClaimed, false);
 assert.deepEqual(review.items.map(item => item.sourceItemId), expectedIds);
 assert.equal(new Set(review.items.map(item => item.answerContract)).size, expectedIds.length);
@@ -54,4 +54,4 @@ for (const reviewed of review.items) {
 
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-example-2").name, /연료값/);
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-example-4").name, /거슬러/);
-console.log("6-2 개념탐구 5 본문·예제 5문항: 양초 공통 유형 공개·나머지 잠금 검사 통과");
+console.log("6-2 개념탐구 5 본문·예제 5문항: 원문·독립 계산·고정 문항 연결 검사 통과 (출판사 답안 확인 미주장)");
