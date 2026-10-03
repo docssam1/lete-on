@@ -10,7 +10,7 @@ function baseInput() {
     startDate: "2026-09-21",
     targetDate: "2026-11-16",
     availability: { studyDaysPerWeek: 4, minutesPerDay: 45 },
-    priorities: [{ label: "기하·공간 추론", errorType: "reasoning-gap", difficulty: "advanced", clusterId: "6.G.A" }]
+    priorities: [{ label: "기하·공간 추론", errorType: "strategy-gap", difficulty: "advanced", clusterId: "6.G.A" }]
   };
 }
 
@@ -43,4 +43,19 @@ test("plan retains spaced rechecks and rejects invalid daily capacity", function
   const invalid = baseInput();
   invalid.availability.minutesPerDay = 10;
   assert.throws(function () { engine.buildPlan(invalid); }, /minutesPerDay/);
+});
+
+test("all seven diagnostic error types produce a complete daily learning budget", function () {
+  [20, 45, 180].forEach(function (minutesPerDay) {
+    ["prerequisite-gap", "concept-gap", "representation-error", "calculation-error", "condition-missed", "strategy-gap", "explanation-incomplete"].forEach(function (errorType) {
+      const input = baseInput();
+      input.availability.minutesPerDay = minutesPerDay;
+      input.priorities = [{ label: "진단 우선 약점", errorType, difficulty: "core", clusterId: "6.EE.B" }];
+      const plan = engine.buildPlan(input);
+      assert.equal(plan.today.blocks.reduce(function (total, block) { return total + block.minutes; }, 0), minutesPerDay);
+      assert.equal(plan.today.blocks.every(function (block) { return block.minutes >= 2; }), true);
+      assert.equal(plan.priorities[0].errorType, errorType);
+      assert.ok(plan.priorities[0].errorLabel.length > 0);
+    });
+  });
 });

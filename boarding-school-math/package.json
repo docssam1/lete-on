@@ -11,6 +11,7 @@
     "test:browser": "node --test tests/foundation-browser.test.cjs tests/home-accessibility.test.cjs tests/international-entry.test.cjs tests/animated-math-browser.test.cjs tests/competition-practice-browser.test.cjs tests/sasmo-real-paper-browser.test.cjs tests/private-grade6-diagnostic-browser.test.cjs tests/clinic-path-browser.test.cjs tests/clinic-practice-browser.test.cjs tests/unit-workbook-browser.test.cjs",
     "dev:grade6-diagnostic": "node scripts/serve-private-grade6-diagnostic.cjs",
     "audit:public": "node scripts/audit-public-exposure.cjs",
+    "audit:private-grade6-prescription": "node scripts/audit-private-grade6-prescription-chain.cjs private-authoring",
     "validate:private-grade6": "node scripts/validate-private-grade6-authoring.cjs private-authoring",
     "validate:private-sasmo": "node scripts/validate-private-sasmo-diagnostic.cjs",
     "validate:private-sasmo-lessons": "node scripts/validate-private-sasmo-english-lessons.cjs",

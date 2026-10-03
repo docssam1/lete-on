@@ -486,6 +486,96 @@
     return list;
   }
 
+  function routeErrorEntries(route) {
+    const value = route && (route.errorBreakdown || route.errorCounts);
+    const entries = Array.isArray(value)
+      ? value.map(function (row) { return [row.errorType, Number(row.count)]; })
+      : Object.entries(value || {}).map(function (row) { return [row[0], Number(row[1])]; });
+    return entries.filter(function (row) { return ERROR_LABELS[row[0]] && Number.isFinite(row[1]) && row[1] > 0; })
+      .sort(function (left, right) { return right[1] - left[1] || left[0].localeCompare(right[0]); });
+  }
+
+  function saveGrade6DiagnosticEvidence(report, roadmap) {
+    const storage = window.GFIELDLocalLearningRecord && window.GFIELDLocalLearningRecord.storage;
+    if (!storage || typeof storage.saveGrade6DiagnosticEvidence !== "function" || !roadmap || !Array.isArray(roadmap.routes)) return false;
+    const priorities = roadmap.routes.map(function (route) {
+      const errors = routeErrorEntries(route);
+      if (!errors.length) return null;
+      return {
+        clusterId: route.clusterId,
+        domainId: route.domainId,
+        label: `${DOMAIN_LABELS[route.domainId] || route.domainId} · ${route.clusterId}`,
+        errorType: errors[0][0],
+        mode: route.mode,
+        difficulty: route.mode === "repair" ? "foundation" : route.mode === "consolidate" ? "advanced" : "core",
+        percentage: scorePercent(route)
+      };
+    }).filter(Boolean).slice(0, 2);
+    return storage.saveGrade6DiagnosticEvidence({
+      schemaVersion: "gfield-grade6-diagnostic-evidence-v1",
+      grade: 6,
+      sourceState: "local-qa-finalized-teacher-reviewed",
+      score: {
+        earnedPoints: report.score.earnedPoints,
+        maxPoints: report.score.maxPoints,
+        percentage: scorePercent(report.score),
+        performanceBand: report.score.performanceBand
+      },
+      priorities: priorities,
+      recordedAt: new Date().toISOString()
+    });
+  }
+
+  function workbookCompleted(clusterId) {
+    if (!window.GFIELDClinicPaths) return false;
+    try { return window.localStorage.getItem(window.GFIELDClinicPaths.completionKey(clusterId)) === "complete-v1"; }
+    catch (_) { return false; }
+  }
+
+  function resourceLink(label, href, className) {
+    const link = element("a", className || "route-resource-link", label);
+    link.href = href;
+    return link;
+  }
+
+  function renderRouteActions(route, audience) {
+    const host = element("div", "route-learning-actions");
+    const paths = window.GFIELDClinicPaths;
+    if (!paths) {
+      host.append(resourceLink(audience === "teacher" ? "개념 레슨 미리보기" : "개념 학습 시작", `./concept-learning.html?cluster=${encodeURIComponent(route.clusterId)}&from=diagnostic`, "route-concept-link"));
+      return host;
+    }
+    const mapped = paths.routeFor(route.clusterId, { fromDiagnostic: true, workbookCompleted: workbookCompleted(route.clusterId) });
+    host.append(resourceLink(audience === "teacher" ? "개념 레슨 미리보기" : "개념 학습 시작", mapped.concept.url, "route-concept-link"));
+    if (mapped.animated.state === "available") host.append(resourceLink(audience === "teacher" ? "시각 강의 확인" : "시각 강의로 보기", mapped.animated.url));
+    if (mapped.workbook.state === "available") {
+      host.append(resourceLink(audience === "teacher" ? "교사용 워크북·해설" : "학생용 36문항 워크북", audience === "teacher" ? mapped.workbook.teacherUrl : mapped.workbook.url));
+      if (audience === "teacher") {
+        host.append(resourceLink("8문항 재확인 지도", paths.workbookUrl(route.clusterId, "recheck", "teacher", "ko")));
+      } else if (mapped.recheck.state === "available") {
+        host.append(resourceLink(mapped.recheck.labelKo, mapped.recheck.url));
+      } else {
+        host.append(element("span", "route-resource-locked", mapped.recheck.labelKo));
+      }
+    } else {
+      host.append(element("span", "route-resource-locked", mapped.workbook.labelKo));
+    }
+    return host;
+  }
+
+  function renderPlanBridge(report, roadmap, audience) {
+    const saved = saveGrade6DiagnosticEvidence(report, roadmap);
+    const bridge = element("div", "diagnostic-plan-bridge");
+    const copy = element("div");
+    copy.append(element("strong", "", audience === "teacher" ? "진단 근거를 수업 시간표로 연결" : "진단 결과를 오늘의 공부로 연결"));
+    copy.append(element("p", "", saved
+      ? "정답이나 학생 응답은 저장하지 않고, 점수 요약과 우선 약점 최대 2개만 이 브라우저의 학습계획으로 전달합니다."
+      : "학습계획에서 목표일·주당 학습일·하루 시간을 입력하면 개념, 수업 워크북, 혼자 풀기와 재확인 분량을 계산합니다."));
+    const link = resourceLink(audience === "teacher" ? "학생 수업 계획 만들기 →" : "내 학습 계획 만들기 →", `./learning-plan.html?goal=school-g6&audience=${audience}&fromDiagnostic=grade6${audience === "teacher" ? "#teacher-pack" : ""}`, "diagnostic-plan-link");
+    bridge.append(copy, link);
+    return bridge;
+  }
+
   function renderCadence(roadmap) {
     const cadence = roadmap && roadmap.defaultCadence;
     if (!cadence) return null;
@@ -547,6 +637,7 @@
     if (roadmap && Array.isArray(roadmap.routes)) {
       const routeSection = element("section", "report-section");
       routeSection.append(element("h4", "", "우선 학습 처방"));
+      routeSection.append(renderPlanBridge(report, roadmap, audience));
       const routes = element("ol", "prescription-list");
       roadmap.routes.slice(0, 10).forEach(function (route, index) {
         const entry = element("li", "prescription-entry");
@@ -558,11 +649,7 @@
         body.append(renderErrorBreakdown(route.errorBreakdown || route.errorCounts));
         const action = audience === "teacher" ? route.teacherAction : route.studentAction;
         if (action) body.append(element("p", "route-action", localized(action, "")));
-        const conceptLink = element("a", "route-concept-link", audience === "teacher" ? "연결 개념 레슨 미리보기 →" : "이 개념 학습 시작 →");
-        conceptLink.href = window.GFIELDClinicPaths
-          ? window.GFIELDClinicPaths.conceptUrl(route.clusterId, true)
-          : `./concept-learning.html?cluster=${encodeURIComponent(route.clusterId)}&from=diagnostic`;
-        body.append(conceptLink);
+        body.append(renderRouteActions(route, audience));
         body.append(renderResourceSummary(route.studentResources, "학생 계획 자료"));
         if (audience === "teacher") body.append(renderResourceSummary(route.teacherResources, "교사 계획 자료"));
         body.append(element("p", "assignment-lock", route.assignmentState === "locked-awaiting-reviewed-signed-content-and-teacher-confirmation"
