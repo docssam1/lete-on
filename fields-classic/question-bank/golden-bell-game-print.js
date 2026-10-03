@@ -7,6 +7,24 @@ export function printGameActivities(bookId, lessonId) {
   return unitForLesson(bookId, lessonId)?.activities || [];
 }
 
+export function printCoverGames(book, lessons, units) {
+  const seen = new Set();
+  return units.flatMap((unit) => {
+    const ids = unit.lessons.filter((lesson) => lessons.includes(lesson))
+      .flatMap((lesson) => printGameActivities(book.id, lesson.id));
+    return ids.filter((id) => {
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    }).map((id) => ({ id, title: HANDS_ON_ACTIVITIES[id].title, unit: unit.label }));
+  });
+}
+
+export function printCoverGamesMarkup(games) {
+  if (!games.length) return "";
+  return `<section class="gold-cover-games${games.length > 4 ? " is-many" : ""}"><h2>게임으로 개념 익히기</h2><ol>${games.map((game) => `<li data-cover-game="${esc(game.id)}"><div class="gold-cover-game-unit">${esc(game.unit)}</div><strong>${esc(game.title)}</strong><div class="gold-cover-game-code"><span class="gold-cover-qr-placeholder">QR</span></div></li>`).join("")}</ol></section>`;
+}
+
 export function printGameExpiry(second) {
   const parts = new Intl.DateTimeFormat("ko-KR", {
     timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
@@ -44,6 +62,29 @@ export function attachPrintGameLinks(root, links) {
     codes.set(id, code.createSvgTag({ cellSize: 2, margin: 8, scalable: true }));
   }
   for (const page of root.children) {
+    if (page.dataset.printPart === "cover") {
+      for (const item of page.querySelectorAll("[data-cover-game]")) {
+        const id = item.dataset.coverGame;
+        if (!links.has(id)) throw new Error("game_link_missing");
+        const link = document.createElement("a");
+        link.className = "gold-cover-game-code";
+        link.dataset.printGame = id;
+        link.href = links.get(id);
+        link.setAttribute("aria-label", HANDS_ON_ACTIVITIES[id].title);
+        link.innerHTML = `<span class="gold-print-qr-image">${codes.get(id)}</span>`;
+        item.querySelector(".gold-cover-game-code").replaceWith(link);
+      }
+      const section = page.querySelector(".gold-cover-games");
+      if (section) {
+        const ids = [...section.querySelectorAll("[data-cover-game]")].map((node) => node.dataset.coverGame);
+        const expiry = printGameExpiry(Math.min(...ids.map((id) => Number(new URL(links.get(id)).hash.slice(1).split(".")[2]))));
+        const note = document.createElement("p");
+        note.className = "gold-cover-game-expiry";
+        note.textContent = `${expiry.date} ${expiry.time}까지 (한국 시간)`;
+        section.append(note);
+      }
+      continue;
+    }
     if (!/^(original|story)(-|$)/u.test(page.dataset.printPart || "")) continue;
     // Put the QR after practice, not alongside a large concept/storyboard.
     if (page.dataset.printPart.startsWith("original") && [...root.children].some((other) =>
