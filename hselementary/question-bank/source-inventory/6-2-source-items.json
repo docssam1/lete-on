@@ -2051,7 +2051,19 @@
       "visualRisk": "초당 거리와 5초 전체 거리를 혼동하지 않아야 함.",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
+      "reviewReason": "원문·독립 계산·후보 3개 변형·시험용 화면은 확인했으나 일치하는 공식 답안이 없고 실제 문제은행 출제 화면 검수가 남아 있습니다.",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Example2Candidate",
+        "fixedPoolCount": 3,
+        "difficultyDesign": ["one-second-distance-given", "source-total-distance-and-time", "nonzero-baseline-temperature"],
+        "independentCheck": "generated-prompt-hundredths-and-reverse-distance-18-cases",
+        "layoutCheck": "candidate-worksheet-1280-390-320-54-pairs-and-a4-2-pages",
+        "publicReleaseStatus": "locked-pending-matching-publisher-key-and-live-worksheet-review"
+      },
+      "nonMatchingAnswerSource": {
+        "sha256": "3B71EDCF9C234B180A08A73905B16F6065F833160E499223D413ED65792BACF0",
+        "reason": "The checked page belongs to a different 6-2 competition book, not this advanced decimal-division example."
+      }
     },
     {
       "sourceItemId": "6-2-u2-e6-example-3",
