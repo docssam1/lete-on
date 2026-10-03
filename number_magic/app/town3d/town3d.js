@@ -493,12 +493,13 @@ export async function mountTown3D(container, opts){
   /* ── 건물·관문 상태와 라벨 ───────────────────────── */
   const spotState = {};
   let selectedPlace=opts.snapshot?.selectedPlace||null;
+  let selectedByUser=opts.snapshot?.selectedByUser===true;
   const placeTitle=(id,s)=>id==='numberland'?L({ko:'수의 나라',en:'Number Land',zh:'数字王国'},lang):id==='_closet'?L({ko:'마법사 옷장',en:"Wizard’s Closet",zh:'魔法师衣橱'},lang):L(s?.label,lang).replace(/^[^\p{L}\p{N}]+/u,'');
   const destination=document.createElement('button');destination.className='t3d-destination';destination.hidden=true;ov.appendChild(destination);
   const guide=document.createElement('div');guide.className='t3d-guide';guide.setAttribute('aria-label',L({ko:'안내 마법사',en:'Guide Wizard',zh:'向导魔法师'},lang));
   guide.innerHTML=`<img src="assets/characters/elder.png" alt=""><span><small>${L({ko:'안내 마법사',en:'Guide Wizard',zh:'向导魔法师'},lang)}</small>${L({ko:'어디로 가 볼까?',en:'Where shall we go?',zh:'想去哪里？'},lang)}</span>`;ov.appendChild(guide);
-  function choosePlace(kind,id,open=false){
-    selectedPlace={kind,id};const s=kind==='gate'?gateDefs[id]:spotState[id];
+  function choosePlace(kind,id,open=false,byUser=true){
+    selectedPlace={kind,id};selectedByUser=byUser;const s=kind==='gate'?gateDefs[id]:spotState[id];
     destination.textContent=kind==='gate'?L(s?.name,lang):placeTitle(id,s);destination.hidden=!s;
     destination.onclick=()=>{stopMovement();if(kind==='gate')opts.onGate?.(id);else opts.onSpot?.(id);};
     if(open)destination.onclick();
@@ -560,7 +561,7 @@ export async function mountTown3D(container, opts){
   const defs = opts.characters || [];
   let C3 = null;
   if(defs.some(d => d && d.model)){
-    try { C3 = await import('../char3d/char3d.js'); } catch(e){ console.warn('[town3d] char3d unavailable — billboard fallback', e); }
+    try { C3 = await import('../char3d/char3d.js?v=20261003-dot-journeys'); } catch(e){ console.warn('[town3d] char3d unavailable — billboard fallback', e); }
   }
   const models = defs.map(def => {
     if(!C3 || !def || !def.model) return null;
@@ -630,13 +631,13 @@ export async function mountTown3D(container, opts){
   joystick.innerHTML='<span class="t3d-stick"></span>';wrap.appendChild(joystick);
   const stick=joystick.firstElementChild,keys=new Set();let owner=null,vector={x:0,z:0};
   function stopMovement(){const held=owner;owner=null;if(held!==null&&joystick.hasPointerCapture?.(held)){try{joystick.releasePointerCapture(held);}catch{}}vector={x:0,z:0};keys.clear();follow=false;stick.style.transform='';if(player)player.route=[];pointers.clear();drag=null;pinch=null;}
-  function joyMove(e){if(owner!==e.pointerId)return;e.preventDefault();const r=joystick.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,d=Math.hypot(dx,dy),f=Math.min(1,42/(d||1));stick.style.transform=`translate(${dx*f}px,${dy*f}px)`;vector=joystickVector(dx,dy);if(player)player.route=[];follow=true;wake();}
+  function joyMove(e){if(owner!==e.pointerId)return;e.preventDefault();const r=joystick.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,d=Math.hypot(dx,dy),f=Math.min(1,42/(d||1));stick.style.transform=`translate(${dx*f}px,${dy*f}px)`;vector=joystickVector(dx,dy);if(vector.x||vector.z)selectedByUser=false;if(player)player.route=[];follow=true;wake();}
   function joyDown(e){if(owner!==null)return;e.preventDefault();owner=e.pointerId;joystick.setPointerCapture?.(owner);joyMove(e);}
   function joyEnd(e){if(owner===e.pointerId)stopMovement();}
   joystick.addEventListener('pointerdown',joyDown);joystick.addEventListener('pointermove',joyMove);
   for(const ev of ['pointerup','pointercancel','lostpointercapture'])joystick.addEventListener(ev,joyEnd);
   const moveKeys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'];
-  function movementKey(e){if(!moveKeys.includes(e.key)||!['CANVAS','DIV'].includes(e.target.tagName))return;e.preventDefault();if(owner!==null)return;keys.add(e.key);follow=true;wake();}
+  function movementKey(e){if(!moveKeys.includes(e.key)||!['CANVAS','DIV'].includes(e.target.tagName))return;e.preventDefault();if(owner!==null)return;keys.add(e.key);selectedByUser=false;follow=true;wake();}
   function movementUp(e){keys.delete(e.key);if(!keys.size&&owner===null)stopMovement();}
   wrap.addEventListener('keydown',movementKey);window.addEventListener('keyup',movementUp);window.addEventListener('blur',stopMovement);
   wrap.addEventListener('focusout',e=>{if(keys.size&&e.relatedTarget!==canvas&&e.relatedTarget!==joystick)stopMovement();});
@@ -767,8 +768,8 @@ export async function mountTown3D(container, opts){
     if(h.char){ speak(h.char); return; }
     if(h.ground && player){
       const p = h.ground;
-      if(p.x < BOUND.x0 - 4 || p.x > BOUND.x1 + 4 || p.z < BOUND.z0 - 3 || p.z > BOUND.z1 + 4) return;
-      walkTo(player, p.x, p.z); follow = true;
+      if(p.x < BOUND.x0*TOWN_SCALE - 4 || p.x > BOUND.x1*TOWN_SCALE + 4 || p.z < BOUND.z0*TOWN_SCALE - 3 || p.z > BOUND.z1*TOWN_SCALE + 4) return;
+      selectedByUser=false;walkTo(player, p.x, p.z); follow = true;
       world.ping(p.x, townY(p.x, p.z), p.z);
     }
   }
@@ -904,7 +905,7 @@ export async function mountTown3D(container, opts){
       }
       if(ch.bubT > 0){ ch.bubT -= dt; if(ch.bubT <= 0) ch.bub.classList.remove('on'); moving = true; }
     }
-    if(player){const near=Object.entries(world.spots).filter(([id])=>spotState[id]).map(([id,s])=>({id,d:Math.hypot(player.x-s.center.x,player.z-s.center.z)})).sort((a,b)=>a.d-b.d)[0];if(near&&near.d<7&&selectedPlace?.id!==near.id)choosePlace('spot',near.id);}
+    if(player&&!selectedByUser){const near=Object.entries(world.spots).filter(([id])=>spotState[id]).map(([id,s])=>({id,d:Math.hypot(player.x-s.center.x,player.z-s.center.z)})).sort((a,b)=>a.d-b.d)[0];if(near&&near.d<7&&selectedPlace?.id!==near.id)choosePlace('spot',near.id,false,false);}
     return moving;
   }
 
@@ -989,12 +990,12 @@ export async function mountTown3D(container, opts){
   }
   placeCam();
   paintLabels(); applyLocks();
-  if(selectedPlace){choosePlace(selectedPlace.kind,selectedPlace.id);const el=labels.find(l=>l.kind===selectedPlace.kind&&l.id===selectedPlace.id)?.el;requestAnimationFrame(()=>el?.focus({preventScroll:true}));}
+  if(selectedPlace){choosePlace(selectedPlace.kind,selectedPlace.id,false,selectedByUser);if(selectedByUser)requestAnimationFrame(()=>destination.focus({preventScroll:true}));}
   wake();
 
   return {
     dispose, ready,
-    snapshot(){return {townId:'numbers-magic',version:TOWN_VERSION,selectedPlace,camera:{x:cam.x,z:cam.z,d:cam.d,position:camera.position.toArray(),rotation:camera.rotation.toArray()},follow,
+    snapshot(){return {townId:'numbers-magic',version:TOWN_VERSION,selectedPlace,selectedByUser,camera:{x:cam.x,z:cam.z,d:cam.d,position:camera.position.toArray(),rotation:camera.rotation.toArray()},follow,
       characters:chars.map(ch=>({id:ch.def.id,x:ch.x,z:ch.z,dir:ch.dir,
         facing:ch.obj?ch.obj.rotation.y:0}))};},
     setLang(l){ lang = l || 'ko'; canvas.setAttribute('aria-label', L({ ko:'마을 지도 3D', en:'Village map (3D)', zh:'村庄地图 3D' }, lang)); paintLabels(); dirty = true; wake(); },
@@ -1002,7 +1003,7 @@ export async function mountTown3D(container, opts){
     zoomIn(){ cam.d /= 1.25; placeCam(); wake(); },
     zoomOut(){ cam.d *= 1.25; placeCam(); wake(); },
     focusPlayer(){ if(player){ follow = true; cam.d = Math.min(cam.d, 30); cam.x = player.x; cam.z = player.z + 1.5; placeCam(); wake(); } },
-    walkTo(x, z){ if(player){ walkTo(player, x, z); follow = true; wake(); } },
+    walkTo(x, z){ if(player){ selectedByUser=false;walkTo(player, x, z); follow = true; wake(); } },
     stopMovement,
     debug:{ scene, camera, renderer, cam, chars, placeCam, nav,canMove,movement:()=>({owner,vector:{...vector},keys:[...keys]}),scale:TOWN_SCALE,world,
       project(id){ const s = world.spots[id] || world.gates[id]; if(!s) return null; const c = s.center; return project(c.x, c.y, c.z); } }

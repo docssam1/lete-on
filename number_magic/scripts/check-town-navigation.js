@@ -38,6 +38,15 @@ async function checkViewport(browser,port,width){
     await page.goto(`http://127.0.0.1:${port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
     await page.locator('.nm-title3d [data-id="game"]').click({timeout:60000});
     await waitTown(1);
+    await page.locator('.t3d-lab[data-spot="numberland"]').focus();
+    await page.waitForTimeout(350);
+    assert.deepEqual((await snap()).selectedPlace,{kind:'spot',id:'numberland'},'explicit building selection is not overwritten by a nearby building');
+    assert.equal((await snap()).selectedByUser,true);
+    const gate=page.locator('.t3d-lab[data-gate]').first();
+    if(await gate.count()){const id=await gate.getAttribute('data-gate');await gate.focus();await page.waitForTimeout(350);assert.deepEqual((await snap()).selectedPlace,{kind:'gate',id},'explicit gate selection is not overwritten by a nearby building');}
+    await page.locator('.t3d-cv').focus();await page.keyboard.press('ArrowLeft');
+    assert.equal((await snap()).selectedByUser,false,'intentional movement restores proximity guidance');
+    result.explicitSelectionPreserved=true;
     if(width===390){
       result.reachability=await page.evaluate(()=>{
         const d=window.__navTown.debug,p=d.chars.find(c=>c.def.role==='player'),step=.9,queue=[[0,0]],seen=new Set(['0,0']),parent=new Map(),found={};

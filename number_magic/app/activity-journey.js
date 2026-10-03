@@ -163,7 +163,7 @@ export async function mount(host,uid,lang='ko',options={}){
  const controller={dispose,getState:()=>JSON.parse(JSON.stringify(state)),getView:()=>view(state),getManifest:()=>({version:1,unit:uid,graded:false,reward:0,roles:scenes(uid),invariants:['identity','quantity','operation-role','independent-transfer']}),getVisualState:()=>visual?.inspect(),dispatch};
  host.__livingLesson=controller;render(true);await persist();
  try{
-  const [T,chars,module]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js'),import('./journey-stage.js')]);
+  const [T,chars,module]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js?v=20261003-dot-journeys'),import('./journey-stage.js')]);
   if(disposed||!host.isConnected)return controller;
   visual=module.createStage(stage,T,chars,view(state),id=>dispatch('select',id),()=>{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;busy=false;render();}});
   stage.dataset.renderer='webgl';visual.sync(view(state),true);

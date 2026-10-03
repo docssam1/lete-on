@@ -34,7 +34,7 @@ const out=process.env.NM_LIVE_ARTIFACTS;if(out)fs.mkdirSync(out,{recursive:true}
    const context=await browser.newContext({viewport:{width,height:950},reducedMotion:reduced?'reduce':'no-preference'});
    await context.route(url=>!url.href.startsWith(base)&&!url.href.startsWith('data:')&&!url.href.startsWith('blob:'),r=>r.abort());
    // Test-only projection probe: the actions below still use real pointer events/raycasting.
-   await context.route('**/app/living-lesson.js',r=>{
+   await context.route(url=>url.pathname.endsWith('/app/living-lesson.js'),r=>{
     const source=fs.readFileSync(path.join(__dirname,'../app/living-lesson.js'),'utf8');
     const probe=`stage.__probe=()=>{scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);const rect=canvas.getBoundingClientRect();return (ten?spares:pieces).filter(o=>o.visible&&o.userData.active).map(o=>{const p=o.getWorldPosition(new T.Vector3()).project(camera);return {index:o.userData.index,sign:o.userData.sign,x:rect.left+(p.x+1)*rect.width/2,y:rect.top+(1-p.y)*rect.height/2};});};`;
     return r.fulfill({contentType:'application/javascript',body:source.replace(' resize();\n return {sync',probe+'\n resize();\n return {sync')});

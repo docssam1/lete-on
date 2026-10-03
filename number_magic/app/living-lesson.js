@@ -97,7 +97,7 @@ export async function mount(host,uid,lang,options={}){
  const observer=new MutationObserver(()=>{if(!host.isConnected)dispose();});observer.observe(document.body,{childList:true,subtree:true});
  const controller={dispose,getState:()=>api.snapshot(state)};host.__livingLesson=controller;
  try{
-  const [THREE,chars]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js')]);
+  const [THREE,chars]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js?v=20261003-dot-journeys')]);
   if(disposed||!host.isConnected)return controller;
   visual=createScene(stage,THREE,chars,ten,t,()=>api.snapshot(state),hit=>{
    if(ten){action('add',hit.index);return;}
