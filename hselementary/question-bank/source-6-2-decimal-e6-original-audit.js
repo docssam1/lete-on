@@ -81,9 +81,14 @@ for (const test of cases) {
   assert.equal(item.independentAnswer, test.answer, `${id}: independent answer`);
   assert.equal(item.answerEvidence, "independent-calculation-not-publisher-key");
   assert.equal(item.sourceVerified, true);
-  assert.equal(item.implementationStatus, "review-locked");
-  assert.equal(publicType.reviewLocked, true, `${id}: source-key and variant review still required`);
-  assert.equal(publicType.generatorKey, "");
+  const isReviewedSoundExample = test.id === "example-2";
+  assert.equal(item.implementationStatus, isReviewedSoundExample ? "fixed-verified-pool" : "review-locked");
+  assert.equal(publicType.reviewLocked, !isReviewedSoundExample, `${id}: release decision`);
+  assert.equal(publicType.generatorKey, isReviewedSoundExample ? "sourceGrade6SecondDecimalDivisionE6Example2Candidate" : "");
+  if (isReviewedSoundExample) {
+    assert.equal(item.handwrittenAnswer, item.independentAnswer);
+    assert.equal(item.publisherAnswerKeyVerified, false);
+  }
   assert.ok(Math.abs(test.solve() - test.value) < 1e-8, `${id}: independent calculation`);
   assert.ok(!shapes.has(item.sourceShape), `${id}: duplicate source shape`);
   assert.ok(!contracts.has(item.answerContract), `${id}: duplicate answer contract`);
@@ -91,4 +96,4 @@ for (const test of cases) {
   contracts.add(item.answerContract);
 }
 
-console.log(`6-2 소수의 나눗셈 개념탐구 6: 원본 11항목·독립 계산·잠금 유지 검증 통과`);
+console.log(`6-2 소수의 나눗셈 개념탐구 6: 원본 11항목·독립 계산, 소리 예제만 공개·나머지 잠금 검증 통과`);

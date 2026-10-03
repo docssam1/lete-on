@@ -13,8 +13,8 @@ const sourceItemId = "6-2-u2-e6-example-2";
 const lockedType = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(type => type.sourceItemId === sourceItemId);
-assert(lockedType?.reviewLocked);
-const candidate = { ...lockedType, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE6Example2Candidate" };
+assert(lockedType && !lockedType.reviewLocked);
+const candidate = lockedType;
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
 if (outputDir) mkdirSync(outputDir, { recursive: true });
 
