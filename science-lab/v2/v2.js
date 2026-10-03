@@ -2,7 +2,7 @@
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
-import { pageHome } from './home.js';
+import { pageHome } from './home.js?v=5';
 import { escapeInApp } from './inapp.js';
 import { record, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js';
