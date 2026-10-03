@@ -10,7 +10,7 @@ function printRules(rules) {
 
 function contentFits(page) {
   const footerTop = page.querySelector(":scope > .gold-print-footer").getBoundingClientRect().top;
-  return [...page.children].filter((node) => !node.matches(".gold-print-footer"))
+  return [...page.children].filter((node) => !node.matches(".gold-print-footer,.gold-cover-art"))
     .every((node) => node.getBoundingClientRect().bottom <= footerTop - 8);
 }
 
@@ -125,7 +125,7 @@ export function compactGoldenBellPrint(root) {
     }
     const packed = [...copy.children];
     packed.forEach((page, index) => {
-      if (page.querySelector(".has-game-qr") && !contentFits(page)) {
+      if ((page.querySelector(".has-game-qr") || page.classList.contains("has-cover-games")) && !contentFits(page)) {
         throw new Error(`A print game QR overlaps learning content: ${page.dataset.printLesson}`);
       }
       const number = document.createElement("span");

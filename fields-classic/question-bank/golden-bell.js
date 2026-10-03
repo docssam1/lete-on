@@ -15,9 +15,9 @@ import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
-import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261003e";
+import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261003f";
 import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261003e";
-import { preparePrintGameLinks, attachPrintGameLinks } from "./golden-bell-game-print.js?v=20261003e";
+import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261003f";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261003d";
 
 const $ = (id) => document.getElementById(id);
@@ -1306,19 +1306,20 @@ function printLessonPage(lesson, lessonNumber, book) {
   return vocabulary + printSourceStoryboards(lesson, lessonNumber, book) + printLessonExercises(lesson, lessonNumber, book);
 }
 
-function printBookCover(book, lessons, { includeAnswers = false, style = coverStyle } = {}) {
+function printBookCover(book, lessons, { includeAnswers = false, style = coverStyle, includeGames = $("printGameQR").checked } = {}) {
   const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
   const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "FC";
   const units = printUnits(book).filter((unit) => unit.lessons.some((lesson) => lessons.includes(lesson)));
   const range = units.map((unit) => unit.label).join(" / ");
+  const games = includeGames ? printCoverGames(book, lessons, units) : [];
   const conceptRows = lessons.map((lesson) => `<li data-cover-lesson="${escapeAttribute(lesson.id)}"><span>${String(book.lessons.indexOf(lesson) + 1).padStart(2, "0")}</span><div><small>${escapeAttribute(lesson.unit)}</small><strong>${escapeAttribute(lesson.title)}</strong><p>${escapeAttribute(lesson.representativeConcept)}</p></div></li>`).join("");
   const densityClass = lessons.length > 12 ? " is-dense is-crowded" : lessons.length > 6 ? " is-dense" : "";
-  return `<article class="gold-print-page gold-print-cover cover-${style}${densityClass}" data-cover-style="${style}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
+  return `<article class="gold-print-page gold-print-cover cover-${style}${densityClass}${games.length ? " has-cover-games" : ""}" data-cover-style="${style}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
     <img class="gold-cover-art" src="./assets/fc-cover-${style === "simple" ? "grid" : "shapes"}.svg" alt="" aria-hidden="true" />
     <header class="gold-print-cover-head"><span>FC</span><strong>${escapeAttribute(courseLabel)} · 골든벨</strong></header>
     <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)} · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}</small><h1>${escapeAttribute(book.title || "골든벨 개념 학습")}</h1><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${student === "DEMO" ? "" : escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
     <section class="gold-print-cover-range"><h2>학습 범위</h2><p>${escapeAttribute(range)}</p><span>${includeAnswers ? "답안과 풀이 포함" : "답안 제외"}</span></section>
-    <section class="gold-print-cover-concepts"><h2>유형과 핵심 개념</h2><ol>${conceptRows}</ol></section>
+    <section class="gold-print-cover-concepts"><h2>유형과 핵심 개념</h2><ol>${conceptRows}</ol>${printCoverGamesMarkup(games)}</section>
     <footer class="gold-print-footer">${escapeAttribute(courseLabel)} · ${escapeAttribute(book.label)} · 개념 학습 교재</footer>
   </article>`;
 }
@@ -1487,7 +1488,7 @@ async function printLessons(lessons, { includeCover = false, mode = $("coursePri
   $("printStatus").textContent = "인쇄 분량을 정리하고 있습니다.";
   try {
     const gameLinks = includeGames ? await preparePrintGameLinks(book, lessons, () => ensureFieldsSession(student)) : new Map();
-    const cover = includeCover && coverStyle !== "none" && (mode === "study" || mode === "both") ? printBookCover(book, lessons, { includeAnswers: mode === "both" }) : "";
+    const cover = includeCover && coverStyle !== "none" && (mode === "study" || mode === "both") ? printBookCover(book, lessons, { includeAnswers: mode === "both", includeGames }) : "";
     const study = mode === "study" || mode === "both" ? lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") : "";
     const answers = mode === "study" ? "" : lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: mode === "quick" })).join("");
     root.innerHTML = cover + study + answers;
@@ -1921,6 +1922,7 @@ $("backLink").href = `./?student=${encodeURIComponent(student)}&mode=curriculum`
 $("printLessonButton").addEventListener("click", () => printLessons([activeLesson()]));
 $("printBookButton").addEventListener("click", () => printLessons(activeBook().lessons, { includeCover: true }));
 $("coursePrintMode").addEventListener("change", updateCoverButton);
+$("printGameQR").addEventListener("change", () => { if ($("coverDialog").open) renderCoverPreview(); });
 $("printCoverButton").addEventListener("click", () => openPrintSettings(false));
 $("printSelectedButton").addEventListener("click", () => openPrintSettings(true));
 $("printUnitList").addEventListener("change", (event) => {

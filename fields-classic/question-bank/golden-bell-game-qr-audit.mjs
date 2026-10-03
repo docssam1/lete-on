@@ -144,7 +144,8 @@ try {
       const links = await page.locator("#goldPrintRoot [data-print-game]").evaluateAll((nodes) => nodes.map((n) => ({ id: n.dataset.printGame, href: n.href })));
       if (["study", "both"].includes(mode)) assert.deepEqual([...new Set(links.map((n) => n.id))].sort(), Object.keys(activities).sort());
       else assert.equal(links.length, 0);
-      assert.equal(await page.locator('.gold-print-cover [data-print-game],.gold-print-duplex-blank [data-print-game],[data-print-part^="answers-"] [data-print-game]').count(), 0);
+      assert.equal(await page.locator('.gold-print-duplex-blank [data-print-game],[data-print-part^="answers-"] [data-print-game]').count(), 0);
+      assert.equal(await page.locator('.gold-print-cover [data-print-game]').count(), ["study", "both"].includes(mode) ? Object.keys(activities).length : 0);
       if (mode === "both") assert.equal(pages.findIndex((n) => n.part.startsWith("answers-")) % 2, 0);
       await page.emulateMedia({ media: "print" });
       const overflow = await page.locator("#goldPrintRoot > article:has(.has-game-qr)").evaluateAll((nodes) => nodes.filter((n) => {
