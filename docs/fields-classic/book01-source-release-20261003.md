@@ -4,6 +4,9 @@
 
 - Match the clock concept animation to the original starting position and all
   five requested movements on teacher slide 2.
+- Keep the opening question, tutorial steps, concept check, grading feedback,
+  and printed summary consistent with that same starting position. Reuse the
+  existing original half-turn answer reference; do not change legacy answers.
 - Correct the first digital half-turn question on teacher slide 4 from the
   mistakenly transcribed digit to the source digit. Use a new protected answer
   reference so clients using the old question keep their original answer.
@@ -26,6 +29,11 @@ source item in every book has passed a fresh visual audit.
   incorrect input, accept the approved answers, and expose worked text only
   after grading or a deliberate reveal. Reapplying the source correction does
   not append duplicate variants.
+- Clock regression: each of the six scene states renders its expected landing
+  value; the source-based half-turn check rejects a wrong choice and accepts the
+  approved answer. All five original responses grade correctly and enable the
+  next stage. The two-page clock study PDF has no unexpected physical pages and
+  its first page was rasterized and reviewed for clipping and text consistency.
 - Current digital lesson: actual A4 PDFs in all four modes. Study 5 pages,
   answers 3 pages, quick answers 2 pages, combined 9 pages. Desktop and mobile
   produce the same physical page counts; combined answers start on a front side.

@@ -22,6 +22,10 @@ const digital = book.lessons.find((lesson) => lesson.id === "digital-turn-flip")
 assert.equal(book.lessons.reduce((count, lesson) => count + lesson.original.items.length, 0), 133);
 assert.equal(digital.original.items.length, 21);
 assert.equal(clock.experience.start, clock.original.visual.value);
+assert.equal(clock.experience.openingPrompt, clock.original.prompt);
+assert.equal(clock.experience.check.answerRef, clock.original.items[1].answerRef);
+assert.equal(Number(privateBank.books[book.id][clock.experience.check.answerRef].answer), 6);
+assert.deepEqual(clock.explanation.steps, clock.experience.beats.slice(1).map((beat) => beat.caption));
 for (const beat of clock.experience.beats) {
   assert.equal(beat.result, ((clock.experience.start - 1 + beat.quarterTurns * 3) % 12 + 12) % 12 + 1);
   assert.doesNotMatch(beat.caption, /\d\s*\/\s*\d/u);
@@ -50,11 +54,39 @@ try {
     await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=SOURCE-QA&book=book-01`, { waitUntil: "networkidle" });
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
     const scene = page.locator(".concept-experience").first();
+    assert.equal((await page.locator(".concept-opening-question strong").innerText()).trim(), clock.original.prompt);
+    assert.ok((await page.locator(".concept-tutorial").innerText()).includes(clock.explanation.headline));
     for (let index = 0; index < clock.experience.beats.length; index++) {
       assert.ok((await scene.innerText()).includes(clock.experience.beats[index].caption));
+      assert.equal(Number(await scene.locator(".experience-clock").getAttribute("data-current-value")), clock.experience.beats[index].result);
       if (index < clock.experience.beats.length - 1) await scene.locator('[data-experience-action="next"]').click();
     }
     await scene.screenshot({ path: path.join(output, `${width}-clock-source.png`) });
+    await scene.locator('[data-experience-choice="9"]').click();
+    assert.match(await scene.locator(".feedback").innerText(), /^아니에요/u);
+    assert.equal(await scene.locator(".feedback.success").count(), 0);
+    await scene.locator('[data-experience-choice="6"]').click();
+    assert.match(await scene.locator(".feedback.success").innerText(), /6입니다/u);
+    await page.selectOption("#coursePrintMode", "study");
+    await page.locator("#printLessonButton").click();
+    await page.waitForFunction(() => !document.querySelector("#printLessonButton").disabled);
+    const clockSummary = await page.locator("#goldPrintRoot .gold-print-experience").first().innerText();
+    assert.match(clockSummary, /12에서 시작해/u);
+    assert.doesNotMatch(clockSummary, /2에서 시작해 한 바퀴는 2/u);
+    await page.emulateMedia({ media: "print" });
+    const clockPdf = await page.pdf({ format: "A4", printBackground: true });
+    assert.equal((await PDFDocument.load(clockPdf)).getPageCount(), await page.locator(".gold-print-page").count());
+    if (width === 1440) await fs.writeFile(path.join(output, "clock-study.pdf"), clockPdf);
+    await page.emulateMedia({ media: "screen" });
+    await page.locator('[data-phase="original"]').click();
+    for (const [index, item] of clock.original.items.entries()) {
+      assert.equal(Number(privateBank.books[book.id][item.answerRef].answer), clock.experience.beats[index + 1].result);
+      const card = page.locator(`[data-original-item="${item.id}"]`);
+      await card.locator("input").fill(String(privateBank.books[book.id][item.answerRef].answer));
+      await card.locator(`[data-original-check="${item.id}"]`).click();
+      assert.equal(await card.getAttribute("class"), "quiz-item correct");
+    }
+    assert.equal(await page.locator("[data-complete-original]").isDisabled(), false);
     for (const lesson of book.lessons) {
       await page.locator(`[data-lesson="${lesson.id}"]`).click();
       await page.locator('[data-phase="original"]').click();
@@ -121,7 +153,7 @@ try {
       await page.emulateMedia({ media: "screen" });
     }
     assert.deepEqual(errors, []);
-    report.viewports.push({ width, lessons: book.lessons.length, sourceItems: digital.original.items.length });
+    report.viewports.push({ width, lessons: book.lessons.length, sourceItems: digital.original.items.length, clockResponses: clock.original.items.length, clockStudyPages: (await PDFDocument.load(clockPdf)).getPageCount() });
     await page.close();
   }
   await fs.writeFile(path.join(output, "source-audit-report.json"), JSON.stringify(report, null, 2));
