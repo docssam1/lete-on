@@ -53,6 +53,14 @@ test("reviewed clusters open workbooks with completion-gated rechecks", function
   assert.equal(statistics.recheck.url, "./unit-workbook.html?cluster=6.SP.A&mode=recheck&audience=student&locale=ko");
   assert.equal(statistics.recheck.labelKo, "8문항 재확인");
 
+  const distribution = paths.routeFor("6.SP.B", { workbookCompleted: true });
+  assert.equal(distribution.workbook.packId, "gfield-grade6-sp-b-unit-workbook-v1");
+  assert.equal(distribution.workbook.delivery, "unit-workbook");
+  assert.equal(distribution.workbook.url, "./unit-workbook.html?cluster=6.SP.B&mode=workbook&audience=student&locale=ko");
+  assert.equal(distribution.workbook.teacherUrl, "./unit-workbook.html?cluster=6.SP.B&mode=workbook&audience=teacher&locale=ko");
+  assert.equal(distribution.recheck.url, "./unit-workbook.html?cluster=6.SP.B&mode=recheck&audience=student&locale=ko");
+  assert.equal(paths.completionKey("6.SP.B"), "gfield-clinic-workbook:6.SP.B:v1");
+
   const ratioUnit = paths.routeFor("6.RP.A", { workbookCompleted: true });
   assert.equal(ratioUnit.workbook.packId, "gfield-grade6-rp-a-unit-workbook-v1");
   assert.equal(ratioUnit.workbook.delivery, "unit-workbook");
