@@ -262,8 +262,9 @@ function checkPromptConditions(){
         const place={일:1,십:10,백:100}[match[2]],n=Number(match[1].replace(/,/g,''));
         assert.strictEqual(q.answer,Math.floor(n/place)%10,where+': independent place digit');
       } else if(t==='DV7'){
-        same(q.prompt,p.prompt,where+': greatest-common-divisor task must remain explicit');
-        cues(q,[/최대공약수/,/GCD/,/最大公因数/],where);
+        same(q.prompt,{...p.prompt,en:p.prompt.en.replace(/\bGCD\b/g,'greatest common divisor')},where+': greatest-common-divisor task must remain explicit without acronyms');
+        cues(q,[/최대공약수/,/greatest common divisor/,/最大公因数/],where);
+        assert(!/\b(?:GCD|LCM)\b/.test(q.prompt.en),where+': test question must use full curriculum terms');
         const numbers=p.tex.match(/\d+/g).map(Number);
         assert.strictEqual(q.answer,gcd(numbers[0],numbers[1]),where+': independent GCD');
       } else if(t==='EL3'){
@@ -999,13 +1000,25 @@ function main(){
   same(node.api.summarize(tuplePlan, tupleResponses), browser.api.summarize(plain(tuplePlan), plain(tupleResponses)),
     'Node/browser negative-array grading mismatch');
   same(learningLevels(node.world), node.levelsBefore, 'diagnosis must not add or change source learning levels');
+  const termAudit=loadBrowserVM(undefined,true),termModes=new Set();let termFixtures=0;
+  for(const level of termAudit.world.NM_THREADS.DV7.levels)for(let i=0;i<20;i++){
+    const ref={t:'DV7',lv:level.id},original=termAudit.api._auditSource(ref,'curriculum-term-'+i),before=plain(original);
+    const q=termAudit.api._auditAdapt(ref,original,false);
+    assert(q,'curriculum terms: supported divisor/multiple question rejected');
+    assert(!/\b(?:GCD|LCM)\b/.test(q.prompt.en),'curriculum terms: acronym exposed in test question');
+    same(q.prompt,{...original.prompt,en:original.prompt.en.replace(/\bGCD\b/g,'greatest common divisor').replace(/\bLCM\b/g,'least common multiple')},'curriculum terms: preserve complete question semantics');
+    same(original,before,'curriculum terms: do not mutate learning generator');same(q.answer,original.answer,'curriculum terms: answer invariant');
+    if(/greatest common divisor/.test(q.prompt.en))termModes.add('divisor');
+    if(/least common multiple/.test(q.prompt.en))termModes.add('multiple');termFixtures++;
+  }
+  same([...termModes].sort(),['divisor','multiple'],'curriculum terms: both full terms require coverage');
   const curatedFixtures=checkCuratedPrompts();
   const branch=checkBranchConditions();
   const bijectionUniqueness=checkMD127Bijection();
   const conditionFixtures=checkPromptConditions()+curatedFixtures+branch.branches+branch.uniqueFactors+branch.normalization+bijectionUniqueness;
 
   console.log(`PLACEMENT_PLAN_OK mode=${QUICK ? 'quick' : 'full'} seeds=${SEEDS} foundation=${foundation.length} courses=${courses.length} plans=${plans} browserParity=${parity} conditionFixtures=${conditionFixtures} curatedFixtures=${curatedFixtures} branchFixtures=${branch.branches} integerUniqueness=${branch.uniqueFactors} leadingZeroInputs=${branch.normalization} bijectionUniqueness=${bijectionUniqueness}`);
-  console.log('Verified: 20 questions, 6/10/4, independent foundation math, unique source items, final blank templates, FR4 cues, first submissions, skips, target flags, negative tuples, ordered learner-stage recommendations, exact source practice sessions, C0 map session 1. Browser UI is a separate gate.');
+  console.log('Verified: 20 questions, 6/10/4, independent foundation math, unique source items, final blank templates, FR4 cues, first submissions, skips, target flags, negative tuples, ordered learner-stage recommendations, exact source practice sessions, C0 map session 1; curriculum term fixtures='+termFixtures+'. Browser UI is a separate gate.');
 }
 
 try { main(); }

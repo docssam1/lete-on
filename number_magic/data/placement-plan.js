@@ -358,7 +358,10 @@
     const arithmeticRule = ref.t === 'DV6' && ['rule7', 'rule11'].includes(params.mode);
     if (COMPLETE_ARITHMETIC.has(ref.t) || arithmeticRule)
       return clone(NEUTRAL_BLANK);
-    return clone(p.prompt || text('빈칸의 값을 쓰세요.', 'Enter the missing value.', '填写空格的值。'));
+    const prompt = clone(p.prompt || text('빈칸의 값을 쓰세요.', 'Enter the missing value.', '填写空格的值。'));
+    // Define acronyms in concept notes, not in learner-facing test questions.
+    if (prompt.en) prompt.en = prompt.en.replace(/\bGCD\b/g, 'greatest common divisor').replace(/\bLCM\b/g, 'least common multiple');
+    return prompt;
   }
   function numberQuestion(ref, p, transition) {
     if (!numberSafe(p)) return null;
