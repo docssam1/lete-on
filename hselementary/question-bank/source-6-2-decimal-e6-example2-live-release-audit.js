@@ -11,7 +11,8 @@ require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
 
-const id = "6-2-u2-e6-example-2";
+const id = process.env.HSE_SOURCE_ITEM_ID || "6-2-u2-e6-example-2";
+assert(["6-2-u2-e6-example-1", "6-2-u2-e6-example-2"].includes(id));
 const sourceItem = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory", "6-2-source-items.json"), "utf8"))
   .items.find(item => item.sourceItemId === id);
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
@@ -25,7 +26,7 @@ const outputDir = process.env.HSE_SCREENSHOT_DIR;
 if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
 
 const oneA4Page = (file, label) => {
-  const pages = Number(execFileSync("pdfinfo", [file], { encoding: "utf8" }).match(/^Pages:\s+(\d+)/m)?.[1]);
+  const pages = Number(execFileSync(process.env.HSE_PDFINFO_EXECUTABLE || "pdfinfo", [file], { encoding: "utf8" }).match(/^Pages:\s+(\d+)/m)?.[1]);
   assert.equal(pages, 1, `${label}: A4 한 장 배치`);
 };
 
@@ -40,6 +41,16 @@ const oneA4Page = (file, label) => {
       await page.goto(`${baseUrl}?type=${id}&review=1&difficulty=${difficulty}`, { waitUntil: "domcontentloaded" });
       await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
       await page.evaluate(() => document.fonts.ready);
+      const fractions = await page.locator("#problemView .math-fraction").evaluateAll(nodes => nodes.map(node => {
+        const [numerator, denominator] = [...node.children].map(child => child.getBoundingClientRect());
+        const box = node.getBoundingClientRect();
+        return { centered: Math.abs(numerator.left + numerator.width / 2 - denominator.left - denominator.width / 2) <= 1,
+          inBox: numerator.top >= box.top - 1 && denominator.bottom <= box.bottom + 1 };
+      }));
+      if (id.endsWith("example-1")) {
+        assert.equal(fractions.length, difficulty === -1 ? 0 : 3, `${width}px: 원문 분수 표시 수`);
+        assert(fractions.every(item => item.centered && item.inBox), `${width}px: 분자·분모 가운데 정렬과 범위`);
+      }
       const problem = await page.evaluate(() => ({
         count: document.querySelectorAll("#problemView .question-item").length,
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
@@ -83,5 +94,5 @@ const oneA4Page = (file, label) => {
   } finally {
     await browser.close();
   }
-  console.log(`6-2 개념탐구 6 예제 6-2 실제 문제은행: ${checked}개 PC·390px·320px 문제·풀이·A4 통과`);
+  console.log(`${id} 실제 문제은행: ${checked}개 PC·390px·320px 문제·풀이·수식·A4 통과`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

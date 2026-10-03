@@ -2,16 +2,26 @@
 
 ## Current State
 
-- Branch: `agent/hsmiddle-question-bank`
-- Local page: `http://127.0.0.1:8878/hselementary/question-bank/`
-- Total runtime types: 1,962 across 6 semesters, 36 major units, and 184 subunits
-- Runtime-available types: 1,069 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 893
-- Source-linked runtime entries: 1,558 currently carry a source item ID (4-1: 329, 4-2: 239, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `196/263`, 5-1 `277/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `48/477` types are runtime-available. The remainder stay review-locked.
+- Branch: `codex/elementary-audit-sync-20260926`
+- Local page: `http://127.0.0.1:8897/hselementary/question-bank/`
+- Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-03)
+- Runtime-available types: 1,113 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 892
+- Source-linked runtime entries: 1,625 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
+- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `75/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-10-03 Decimal-Division Exploration 6
+
+- Examples 6-1 (container capacity) and 6-2 (sound speed and temperature) are available as three fixed verified variants each. The other nine items in this exploration remain locked.
+- Example 6-1 keeps the initially empty portion as the fraction's base. The source level preserves the original reasoning sequence; the easier level supplies the intermediate filled ratio, and the harder level adds withdrawal. These are reviewed structural difficulty choices, not empirical score calibration.
+- The handwritten answer agrees with independent calculation and back-substitution. A separate publisher answer key has not been verified; do not describe the handwriting as a publisher key.
+- Example 6-1 has no original problem diagram. Keep the question text-only with inline fractions, and show the calculation table only in the solution.
+- Verification: 27 exact-fraction prompt calculations, 135,000 finite candidates, separate source/math/code review, desktop 1280px and mobile 390/320px across all three difficulties, plus one-page A4 question and answer sheets inspected visually.
+- Updated regressions: 66,780 runtime generations, 166,950 math-notation generations, and 333,900 numeric-display generations. Private source images and rendered evidence remain outside Git.
+- Continue the remaining Exploration 6 items one by one. Exploration and Example 6-3 need source-faithful problem and answer diagrams before release.
 
 ## 2026-09-13 Parallel-Angle Repair And Release Gates
 

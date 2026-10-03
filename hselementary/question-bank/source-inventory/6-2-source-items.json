@@ -2031,10 +2031,22 @@
       "answerContract": "derive-container-capacity-from-initial-filled-and-remaining-fraction",
       "independentAnswer": "16.8L",
       "answerEvidence": "independent-calculation-not-publisher-key",
+      "handwrittenAnswer": "16.8L",
+      "handwrittenAnswerAgreement": "matches-independent-calculation-and-back-substitution",
+      "publisherAnswerKeyVerified": false,
       "visualRisk": "5/8은 물통 전체가 아닌 처음에 비어 있던 부분의 비율임.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 손글씨 답과 독립 계산·역산이 일치합니다. 출판사 별도 답지는 확인되지 않았음을 구분해 기록합니다.",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Example1",
+        "fixedPoolCount": 3,
+        "difficultyDesign": ["filled-ratio-given", "source-nested-empty-fraction", "withdrawal-extra-step"],
+        "independentCheck": "generated-prompt-exact-fractions-27-cases-and-135000-candidates",
+        "layoutCheck": "actual-bank-1280-390-320-9-states-and-a4-2-single-pages",
+        "independentReview": "separate-model-source-math-and-implementation-review-passed",
+        "publicReleaseStatus": "verified-with-annotated-answer-and-independent-calculation"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e6-example-2",
