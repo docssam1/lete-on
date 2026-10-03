@@ -11,7 +11,7 @@
   3) 참조로 복제 프롬프트를 **한 번만** 만든다(참조 전사는 모델의 Whisper 가 한 번 — 지어내지 않는다).
   4) 한 줄씩 복제 음성을 만들고(기대 길이의 1.25배를 넘으면 꼬리 반복으로 보고 길이를 고정해 다시), 같은 Whisper 로 **다시 받아 적어** 원문과 비교한다(글자 오류율 CER).
      어긋나면 최대 3번까지 다시 만들고 가장 나은 것을 쓴다. 끝까지 CER > 0.35 이면 **올리지 않는다** —
-     그 줄은 사이트가 예전 목소리(Supabase)로 읽는다. 엉뚱하게 읽은 음성을 아이에게 들려주지 않기 위해서다.
+     그 줄은 사이트가 기기 음성으로 읽는다(Google TTS는 켜지 않는다).
   5) science-lab/audio/docssam/<id>-<sha1("docssam-clone-v1|"+text) 앞 10자>.mp3 로 저장(글이 같으면 건너뜀).
   6) manifest.json(있는 파일 목록) · report.json(줄마다 CER·받아 적은 글) · 듣기.html(원본 + 만든 음성).
 
@@ -141,8 +141,10 @@ def expected(text):
 
 
 def to_mp3(wav, mp3):
+    temporary = mp3 + ".tmp"
     run([ffmpeg_exe(), "-y", "-v", "error", "-i", wav, "-af", "loudnorm=I=-18:TP=-1.5:LRA=11", "-ac", "1", "-ar", "24000",
-         "-c:a", "libmp3lame", "-b:a", "64k", mp3])
+         "-c:a", "libmp3lame", "-b:a", "64k", "-f", "mp3", temporary])
+    os.replace(temporary, mp3)
 
 
 def read_wav(path):
@@ -177,24 +179,42 @@ h1{{font-size:20px;margin:0 0 4px}}.lede{{color:#4a5468;font-size:13.5px}}.clip{
 
 def write_manifest(out):
     # 지금 글에 맞는 파일만 목록에 싣는다: 모든 줄의 V1 + 공부 줄의 SLOW.
-    # 공부 줄은 SLOW 가 생기면 그 줄의 V1 은 지운다(실패한 줄은 V1 이 남아 0.8배로 나온다). 고친 글의 옛 파일도 지운다.
+    # 공부 줄은 SLOW 가 생기면 V1 을 목록에서만 뺀다. 기존 승인 파일은 삭제하지 않는다.
     exist = set(os.listdir(out))
     slow = {fname(i, t, SLOW) for i, t in study_lines()}
     valid = {fname(i, t, V1) for i, t in lines()} | slow
     for i, t in study_lines():
         if fname(i, t, SLOW) in exist: valid.discard(fname(i, t, V1))
-    for f in exist:
-        if f.endswith(".mp3") and f not in valid and out == OUT:
-            os.remove(os.path.join(out, f))
     have = sorted(f for f in os.listdir(out) if f.endswith(".mp3") and f in valid)
     voices = ([SLOW] if any(f in slow for f in have) else []) + [V1]
     # voices: 사이트가 이 순서로 찾는다. rates: 목소리마다 공부 화면 재생 속도(소개 페이지는 늘 1).
-    json.dump({"voices": voices, "rates": {SLOW: 1, V1: 0.8}, "files": have}, open(os.path.join(out, "manifest.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    with open(os.path.join(out, "manifest.json"), "w", encoding="utf-8") as handle:
+        json.dump({"voices": voices, "rates": {SLOW: 1, V1: 0.8}, "files": have}, handle, ensure_ascii=False, indent=1)
     print(f"manifest.json: {len(have)}개", flush=True)
     return have
 
 
+def pending_lines(candidates, out, only=None, force=False):
+    """공개 폴더와 별도 출력 폴더 양쪽을 확인해 완료된 음성을 다시 만들지 않는다."""
+    return [(i, t) for i, t in candidates if (not only or i in only)
+            and (force or not any(os.path.exists(os.path.join(d, fname(i, t)))
+                                 for d in (OUT, out)))]
+
+
+def save_report(path, report):
+    """한 줄씩 저장한다. 중단 후 재실행해도 검수 결과가 남는다."""
+    old = {}
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as handle:
+            old = json.load(handle)
+    old.update(report)
+    with open(path + ".tmp", "w", encoding="utf-8") as handle:
+        json.dump(old, handle, ensure_ascii=False, indent=1)
+    os.replace(path + ".tmp", path)
+
+
 def main():
+    global VOICE, WORK
     ap = argparse.ArgumentParser()
     ap.add_argument("--ref", help="독쌤 목소리 녹음(mp4/m4a/mp3/wav)")
     ap.add_argument("--ref-ready", action="store_true", help="--ref 가 이미 다듬은 참조 음성이다")
@@ -207,8 +227,12 @@ def main():
     ap.add_argument("--device", default="auto")
     ap.add_argument("--speed", type=float, default=None, help="말 빠르기(1 보다 작으면 느리게). 예: 0.8 — 공부용 권장")
     ap.add_argument("--model", default="k2-fsa/OmniVoice")
+    ap.add_argument("--work-dir", default=WORK, help="비공개 참조·중간 WAV 폴더(E: 권장, 업로드 금지)")
+    ap.add_argument("--asr-device", default="cpu", help="전사 검수 장치(기본 cpu: GPU 메모리를 음성 생성에 확보)")
+    ap.add_argument("--asr-model", help="전사 모델 이름 또는 기존 로컬 캐시 경로")
+    ap.add_argument("--ref-text-file", help="실제 참조 녹음의 확인된 전사 UTF-8 파일(비공개)")
     a = ap.parse_args()
-    global VOICE
+    WORK = a.work_dir
     if a.speed:
         VOICE = SLOW                 # 느린 목소리는 공부 대사에만 만든다
     os.makedirs(a.out, exist_ok=True); os.makedirs(WORK, exist_ok=True)   # WORK 는 .gitignore 대상
@@ -219,13 +243,13 @@ def main():
     ref_wav = a.ref if a.ref_ready else prep_ref(a.ref, os.path.join(WORK, "docssam-ref.wav"))
 
     only = set(x for x in a.only.split(",") if x)
-    todo = [(i, t) for i, t in (study_lines() if a.speed else lines()) if (not only or i in only)
-            and (a.force or not os.path.exists(os.path.join(OUT, fname(i, t))))]
+    todo = pending_lines(study_lines() if a.speed else lines(), a.out, only, a.force)
     if a.shard:
         k, n = map(int, a.shard.split("/")); todo = todo[k::n]
     print(f"독쌤 대사 {len(lines())}줄 중 이번에 만들 것 {len(todo)}줄", flush=True)
 
     made, report = [], {}
+    rp = os.path.join(a.out, f"report{'-' + a.shard.replace('/', 'of') if a.shard else ''}.json")
     if todo:
         import torch
         dev = a.device
@@ -234,12 +258,15 @@ def main():
         print(("🎮 GPU: " + torch.cuda.get_device_name(0)) if dev.startswith("cuda") else "🖥  GPU 없음 — CPU 라 느립니다", flush=True)
         from omnivoice import OmniVoice
         model = OmniVoice.from_pretrained(a.model, device_map=dev, dtype=torch.float16 if dev.startswith("cuda") else torch.float32)
-        model.load_asr_model()
+        model.load_asr_model(model_name=a.asr_model, device=a.asr_device)
         ko = lambda audio: model._asr_pipe(audio, generate_kwargs={"language": "korean"})["text"].strip()
         # 참조 전사는 한국어로 못 박는다 — 자동 언어 감지가 틀리면 문장 끝에 참조의 남은 말이 붙는다
         # (수의 마법 쇼릴에서 문장 끝에 참조의 남은 말이 반복되던 문제)
-        ref_text = ko({"raw": read_wav(ref_wav), "sampling_rate": SR})
-        print(f"참조 전사(Whisper, 한국어): {ref_text}", flush=True)
+        ref_text = (open(a.ref_text_file, encoding="utf-8-sig").read().strip() if a.ref_text_file
+                    else ko({"raw": read_wav(ref_wav), "sampling_rate": SR}))
+        if not ref_text:
+            sys.exit("참조 전사가 비어 있습니다.")
+        print(f"참조 전사: {ref_text}", flush=True)
         json.dump({"ref_text": ref_text}, open(os.path.join(WORK, "ref.json"), "w", encoding="utf-8"), ensure_ascii=False)
         prompt = model.create_voice_clone_prompt(ref_audio=ref_wav, ref_text=ref_text)
         t0 = time.time(); audio_s = 0.0
@@ -273,14 +300,13 @@ def main():
             report[fname(lid, text)] = {"id": lid, "text": text, "spoken": say, "asr": hyp, "cer": round(c, 3), "ok": ok, "sec": round(len(y) / SR, 2)}
             if ok:
                 mp3 = os.path.join(a.out, fname(lid, text)); to_mp3(wav, mp3); made.append((lid, text, mp3))
+            save_report(rp, report)
             print(f"  {'✓' if ok else '✗ 뺌'} [{n}/{len(todo)}] {lid}  {len(y) / SR:.1f}초 · CER {c:.2f} · {time.time() - t:.0f}초", flush=True)
         el = time.time() - t0
         print(f"만든 음성 {len(made)}개 / 뺀 것 {len(todo) - len(made)}개 · {el:.0f}초 · RTF {el / max(audio_s, 1e-6):.1f}", flush=True)
 
-    rp = os.path.join(a.out, f"report{'-' + a.shard.replace('/', 'of') if a.shard else ''}.json")
     if report:
-        old = json.load(open(rp, encoding="utf-8")) if os.path.exists(rp) else {}
-        old.update(report); json.dump(old, open(rp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        save_report(rp, report)
     if a.out == OUT:
         write_manifest(OUT)
         sample = made or [(i, t, os.path.join(OUT, fname(i, t))) for i, t in lines()[:12] if os.path.exists(os.path.join(OUT, fname(i, t)))]
@@ -288,4 +314,6 @@ def main():
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
     main()

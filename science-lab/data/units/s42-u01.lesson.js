@@ -1,5 +1,6 @@
 // 4-2 Ⅰ 식물의 생활 — 5E 화면·교재 구성(문항 id는 s42-u01.js의 items 참조)
 // docssam 말풍선은 한 문장·25자 안팎·~해요체. mood: talk|surprised|thinking|praise|encourage
+import { plantReading } from '../reading/other-units.reading.js';
 export const lesson = {
   unitId: 's42-u01', grade: 4, title: '식물의 생활', hero: '부레옥잠 연못',
   engage: {
@@ -63,6 +64,7 @@ export const lesson = {
     say: [{ mood: 'thinking', text: '식물에게서 배운 발명품이 있대요.' }],
     items: ['s42-u01-b07', 's42-u01-b08', 's42-u01-b09'],
     reading: {
+      magazine: plantReading,
       title: '도꼬마리가 준 선물, 찍찍이',
       text: '산책을 다녀온 한 사람이 강아지 털과 옷에 잔뜩 붙은 도꼬마리 열매를 들여다봤어요. 가시 끝이 작은 갈고리처럼 휘어 있었지요. 이 모양을 본떠 한쪽에는 갈고리, 다른 쪽에는 고리를 만든 것이 찍찍이 테이프예요. 식물의 생김새를 본떠 물건을 만드는 것을 생체 모방이라고 해요.',
     },

@@ -5,13 +5,18 @@ import { pauseLearningMedia } from './media-session.js';
 // autoplay: the video starts muted when it comes into view (not with reduced motion); sound stays the learner's choice.
 export function wireReading(root, { mountLab = null, openLab = null, autoplay = false } = {}) {
   const abort = new AbortController(), { signal } = abort;
-  const workspace = mountLab ? createLabWorkspace(root, { title: '화산 실험실', mount: mountLab }) : null;
+  const workspace = mountLab ? createLabWorkspace(root, { title: '3D 실험실', mount: mountLab }) : null;
   const articles = [...root.querySelectorAll('.sl-reading')];
   const videos = [];
   const offscreen = new IntersectionObserver(entries => {
     for (const entry of entries) if (!entry.isIntersecting) entry.target.pause();
   }, { threshold: 0.01 });
   for (const article of articles) {
+    article.querySelector('.sl-reading-online')?.addEventListener('click', event => {
+      if (!workspace && !openLab) return;
+      event.preventDefault(); event.stopPropagation();
+      (openLab || (from => workspace.open(from)))(event.currentTarget);
+    }, { signal });
     const box = article.querySelector('.sl-reading-player'), video = box?.querySelector('video');
     if (!video) continue;
     videos.push(video); article.classList.add('is-live'); offscreen.observe(video);
@@ -59,11 +64,6 @@ export function wireReading(root, { mountLab = null, openLab = null, autoplay = 
     video.addEventListener('playing', () => { play.hidden = true; status.hidden = true; }, { signal });
     // A failed <source> must not suppress the browser's next format fallback.
     video.addEventListener('error', fail, { signal });
-    article.querySelector('.sl-reading-online')?.addEventListener('click', event => {
-      if (!workspace && !openLab) return; // ordinary route remains a no-JS/unsupported fallback
-      event.preventDefault(); event.stopPropagation();
-      (openLab || (from => workspace.open(from)))(event.currentTarget);
-    }, { signal });
   }
   // Flipbook leaves remain connected: inert/aria-hidden, not removal, marks page exit.
   const checkPages = () => videos.forEach(video => {

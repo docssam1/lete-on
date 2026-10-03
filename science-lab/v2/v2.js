@@ -10,7 +10,8 @@ import { readingHtml } from './reading.js';
 import { wireReading } from './reading-live.js';
 escapeInApp();
 
-const UNITS = { 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
+const UNITS = {
+  's42-u02': async () => ({ ...(await import('../data/units/s42-u02.js')), ...(await import('../data/units/s42-u02.lesson.js')), ...(await import('../data/units/s42-u02.similar.js')), ...(await import('../data/units/s42-u02.taxonomy.js')), misc: await import('../data/units/s42-u02.misc.js') }), 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
   ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')), misc: await import('../data/units/s41-u01.misc.js') }),
   's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
   ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')), misc: await import('../data/units/s41-u02.misc.js') }),
@@ -236,7 +237,7 @@ function kitHtml(u, h) {
   const buy = h.materials.filter((m) => m.have === 'buy');
   const link = (m) => m.buy.coupangUrl || `https://www.coupang.com/np/search?q=${encodeURIComponent(m.buy.query)}`;
   return `<div class="card"><h3>${esc(h.title)} <span class="level">${h.minutes}분 · ${h.guardian ? '보호자와 함께' : '혼자 해도 돼요'}</span></h3>
-    <div class="kit-qr"><img src="${h.qr}" alt="준비물 페이지로 가는 QR"><p class="lead">부모님 휴대폰으로 QR을 찍으면 준비물을 바로 살 수 있어요. 결제는 부모님이 해요.</p></div></div>
+    ${h.qr ? `<div class="kit-qr"><img src="${h.qr}" alt="준비물 페이지로 가는 QR"><p class="lead">부모님 휴대폰으로 QR을 찍으면 준비물을 바로 살 수 있어요. 결제는 부모님이 해요.</p></div>` : '<p class="lead">집에 있는 준비물로 가열 없이 관찰해요.</p>'}</div>
     <div class="card"><h3>준비물</h3>${h.materials.map((m) => `<div class="mat"><span class="name">${esc(m.name)} <small class="lead">${esc(m.qty)}</small></span>${m.have === 'home' ? '<span class="tag">집에 있음</span>' : `<a class="buy" href="${esc(link(m))}" target="_blank" rel="noopener">쿠팡에서 찾기</a>`}</div>`).join('')}
     ${buy.length ? '<p class="lead" style="margin-top:8px">로켓배송 표시가 있는 상품을 고르면 배송비 부담이 적어요.</p>' : ''}</div>
     <div class="card"><h3>순서</h3><ol class="steps">${h.steps.map((s) => `<li>${esc(s)}</li>`).join('')}</ol></div>
@@ -267,7 +268,7 @@ const readingLab = (u, L) => (el, lifecycle) => mountLabOf(L.explore.lab.kind)(e
 function stepElaborate(u, L, items) {
   const x = L.elaborate, I = byId(items);
   frame(u, L, 3, `<p class="step-label">${STEPS[3].label}</p><div id="t"></div>
-    ${x.reading.magazine ? `<a class="btn reading-open" href="#/${u}/reading">읽을거리 한 쪽 보기 · 인쇄</a>${readingHtml(x.reading.magazine)}` : `<div class="card reading"><h3>${esc(x.reading.title)}</h3>${L.media?.reading ? `<figure class="side"><img src="${L.media.reading.src}" alt="${esc(L.media.reading.cap)}" loading="lazy"><figcaption>${esc(L.media.reading.cap)}<small>${esc(L.media.reading.credit)}</small></figcaption></figure>` : ''}<p>${esc(x.reading.text)}</p></div>`}
+    ${x.reading.magazine ? `<a class="btn reading-open" href="#/${u}/reading">읽을거리 한 쪽 보기 · 인쇄</a>${readingHtml(x.reading.magazine)}<div class="card reading original-reading"><h3>원래 읽을거리 · ${esc(x.reading.title)}</h3><p>${esc(x.reading.text)}</p></div>` : `<div class="card reading"><h3>${esc(x.reading.title)}</h3>${L.media?.reading ? `<figure class="side"><img src="${L.media.reading.src}" alt="${esc(L.media.reading.cap)}" loading="lazy"><figcaption>${esc(L.media.reading.cap)}<small>${esc(L.media.reading.credit)}</small></figcaption></figure>` : ''}<p>${esc(x.reading.text)}</p></div>`}
     ${x.items.map((id) => itemHtml(I[id])).join('')}
     ${x.report ? `<div class="card"><h3>탐구보고서</h3><p class="lead">실험 기록이 보고서에 자동으로 들어가 있어요. 빈칸만 내 말로 채워요.</p><a class="btn" href="#/${u}/report" style="display:inline-flex;align-items:center;text-decoration:none">보고서 쓰기</a></div>` : ''}`,
   { next: `#/${u}/5`, nextLabel: '마지막 점검' });
@@ -408,7 +409,7 @@ function pageBook(u, L, items, mode) {
     <section class="page page-break"><h2>실험 — ${esc(h.title)}</h2>
       <p><b>알아볼 것</b> ${esc(L.engage.question)}</p>
       <p><b>원리</b> ${esc(L.explain.principle || '같은 극끼리는 밀어 내고 다른 극끼리는 끌어당겨요(개념 정리 쪽).')}</p>
-      <div class="kit-qr"><img src="${h.qr}" alt="준비물 QR" style="width:30mm;height:30mm"><div><b>준비물</b><ul>${h.materials.map((m) => `<li>${esc(m.name)} ${esc(m.qty)}${m.have === 'buy' ? ' (QR로 구매)' : ''}</li>`).join('')}</ul></div></div>
+      <div class="kit-qr">${h.qr ? `<img src="${h.qr}" alt="준비물 QR" style="width:30mm;height:30mm">` : ''}<div><b>준비물</b><ul>${h.materials.map((m) => `<li>${esc(m.name)} ${esc(m.qty)}${m.have === 'buy' ? ' (QR로 구매)' : ''}</li>`).join('')}</ul></div></div>
       <h3>순서</h3><ol class="steps">${h.steps.map((s) => `<li>${esc(s)}</li>`).join('')}</ol>
       <h3>안전</h3><ul>${h.safety.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
       <h3>결과 기록</h3><table class="tbl"><thead><tr>${L.explore.lab.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${[1, 2, 3, 4].map(() => `<tr>${L.explore.lab.columns.map(() => '<td>&nbsp;</td>').join('')}</tr>`).join('')}</tbody></table></section>
@@ -431,7 +432,7 @@ function pageBook(u, L, items, mode) {
 }
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
-const BOOKS = { 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
+const BOOKS = { 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
 // 교재·수업 화면 위쪽: 모드를 다시 고르는 메뉴는 두지 않는다(첫 화면에서 이미 골랐다). 처음으로 + 필요하면 인쇄만.
 function labBar(u, { print = false } = {}) {
   return `<div class="bk-bar no-print"><a class="btn" href="#/${u}/start">‹ 처음으로</a>${print ? '<button class="btn primary" onclick="print()">A4 인쇄</button>' : ''}</div>`;
@@ -479,7 +480,7 @@ async function pageReading(u, L, mode) {
   const d = await import('./docssam.js'), V = await d.loadVoice(u);
   if (!$app.querySelector('.reading-page') || !location.hash.includes(`/${u}/reading`)) return;
   guide = d.mountGuide(V, { avoid: () => [...$app.querySelectorAll('.sl-reading :is(h2, h3, p, img, video, .sl-reading-player, a, figure, aside)')].filter((el) => el.offsetParent).map((el) => el.getBoundingClientRect()) });
-  guide.say({ text: BOOK_SAY.reading[1] });
+  guide.say({ text: article?.video ? BOOK_SAY.reading[1] : '먼저 그림을 보고, 관찰해 봐요 질문의 답을 찾으며 읽어 봐.' });
   // 읽는 동안 생각하는 얼굴, 영상을 보는 동안 조용히 듣는 얼굴
   const art = $app.querySelector('.sl-reading'); let tRead = 0;
   addEventListener('scroll', function onScroll() { if (!art.isConnected) { removeEventListener('scroll', onScroll); return; } clearTimeout(tRead); guide.mood('think'); tRead = setTimeout(() => guide.mood('listen'), 1400); }, { passive: true });
@@ -546,6 +547,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
     mount3D: (el, o = {}) => mount3D(el, L.engage.scene, { autoplay: !!o.autoplay, preview: o.preview || false, from: o.from || null, onDone: o.onDone }),
     // personal:false(가르치기) → 학생 기록을 읽지도 쓰지도 않는다. 두 팀 배틀은 각자 빈 표로.
     mountLab: (el, o = {}) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab,
+      lowPower: !!o.lowPower, fixedSource: !!o.fixedSource, isActive: o.isActive,
       rows: o.personal === false ? (o.rows || []) : store.get(u).labRows || [],
       onRecord: (rows) => { if (o.personal !== false) store.set(u, { labRows: rows }); o.onRecord?.(rows); } }),
     // 스스로 공부하기의 확인 문제: 첫 시도만 진단 기록에 남긴다

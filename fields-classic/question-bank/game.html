@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src https://fgahqumaldheqettmvqg.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>FC 게임으로 연습하기</title>
+  <link rel="stylesheet" href="./golden-bell-hands-on.css?v=20261003c">
+  <link rel="stylesheet" href="./game.css?v=20261003e">
+</head>
+<body>
+  <header class="game-header"><strong>FC</strong><span id="gameTitle">게임으로 연습하기</span></header>
+  <main class="gold-hands-on game-only">
+    <section id="gameStatus" class="game-status" role="status"><p id="gameMessage">게임을 불러오고 있습니다.</p><button id="gameRetry" type="button" hidden>다시 불러오기</button></section>
+    <div id="gameContent" class="hand-content" hidden></div>
+  </main>
+  <script type="module" src="./game.js?v=20261003e"></script>
+</body>
+</html>

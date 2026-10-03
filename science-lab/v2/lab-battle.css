@@ -1,0 +1,44 @@
+/* GFIELD opt-in tokens: gfield-design-system/assets/gfield-tokens.css */
+.dk-lab-battle.gfield-ui {
+  --gf-paper: #fff; --gf-canvas: #f5f6f8; --gf-ink: #182230; --gf-muted: #566274;
+  --gf-line: #d8dee8; --gf-action: #2456c4; --gf-control-border: #566274;
+  --gf-focus: #2456c4; --gf-selected: #eaf0ff; --gf-success: #16734b; --gf-error: #b42332;
+  --gf-control-radius: 6px; --gf-control-min-size: 44px; --gf-font-size-input: 16px;
+  --gf-font-body: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  display: block; overflow: auto; height: 100%; max-height: 100%; padding-right: 4px;
+  color: var(--gf-ink); font-family: var(--gf-font-body);
+}
+.dk-lab-battle .mb-eyebrow { color: var(--gf-action); font-size: 14px; }
+.dk-lab-battle .mb-head h3 { font-size: clamp(24px, 2cqw, 32px); }
+.dk-lab-battle .mb-head > strong { background: var(--gf-selected); font-size: 16px; }
+.dk-lab-battle .mb-head p, .dk-lab-battle .mb-status, .dk-lab-battle .mb-result, .dk-lab-battle .mb-actual { font-size: clamp(16px, 1.3cqw, 20px); }
+.dk-lab-battle .lb-question { margin: 12px 0; font-size: clamp(22px, 2cqw, 30px); font-weight: 800; }
+.dk-lab-battle .lb-note { margin: 8px 0 12px; font-size: 16px; color: var(--gf-muted); }
+.dk-lab-battle .mb-standings { gap: 12px; align-items: center; flex-wrap: wrap; }
+.dk-lab-battle .mb-result { margin: 0; min-width: min(100%, 280px); background: var(--gf-selected); }
+.dk-lab-battle .mb-teams { margin-top: 16px; gap: 16px; }
+.dk-lab-battle .mb-team { padding: 12px; }
+.dk-lab-battle .mb-team header { flex-wrap: wrap; justify-content: start; font-size: 18px; gap: 8px 16px; }
+.dk-lab-battle .mb-team header b { font-size: 24px; }
+.dk-lab-battle .lb-predict, .dk-lab-battle .mb-control { display: flex; gap: 8px; align-items: end; margin: 12px 0; flex-wrap: wrap; }
+.dk-lab-battle .lb-predict label, .dk-lab-battle .mb-control label { flex: 1 1 180px; min-width: 0; font-size: 16px; font-weight: 700; }
+.dk-lab-battle select { display: block; width: 100%; min-height: var(--gf-control-min-size); border: 1px solid var(--gf-control-border); border-radius: var(--gf-control-radius); background: var(--gf-paper); font: inherit; font-size: var(--gf-font-size-input); color: var(--gf-ink); }
+.dk-lab-battle button { min-height: var(--gf-control-min-size); font-size: 16px; white-space: normal; }
+.dk-lab-battle .btn.primary { background: var(--gf-action); border-color: var(--gf-action); color: #fff; }
+.dk-lab-battle :is(button, select):focus-visible { outline: 3px solid var(--gf-focus); outline-offset: 3px; }
+.dk-lab-battle :is(button, select):disabled { cursor: default; opacity: .65; }
+.dk-lab-battle .lb-lab { min-height: 240px; }
+.dk-lab-battle .lb-wait { margin: 0; padding: 48px 16px; font-size: 18px; color: var(--gf-muted); background: var(--gf-canvas); border-radius: 8px; }
+.dk-lab-battle .mb-team canvas { height: max(240px, 16cqw) !important; }
+.dk-lab-battle .mb-team .modes { flex-wrap: wrap; }
+.dk-lab-battle .mb-team .modes button, .dk-lab-battle .mb-team .lab-lbl, .dk-lab-battle .mb-team .lab3d-tip { font-size: 16px; }
+.dk-lab-battle .lab-table :is(th, td) { font-size: 16px; line-height: 1.5; }
+.dk-lab-battle .mb-actual button { min-width: var(--gf-control-min-size); }
+.dk-lab-battle .mb-actual button[aria-pressed=true] { background: var(--gf-action); }
+@media(max-width: 760px) {
+  .dk-lab-battle .mb-head { flex-wrap: wrap; }
+  .dk-lab-battle .mb-teams { grid-template-columns: 1fr; }
+  .dk-lab-battle .mb-standings { position: static; }
+  .dk-lab-battle .mb-team canvas { height: 260px !important; }
+}
+.dk-lab-battle .mb-team .full-land > canvas { height: 100% !important; }

@@ -1,5 +1,6 @@
 // 4-1 Ⅲ 땅의 변화 — 5E 화면·교재 구성(문항 id는 s41-u03.js의 items 참조)
 // docssam 말풍선은 한 문장·25자 안팎·~해요체. mood: talk|surprised|thinking|praise|encourage
+import { riverReading } from '../reading/other-units.reading.js';
 export const lesson = {
   unitId: 's41-u03', grade: 4, title: '땅의 변화', hero: '흙 언덕 물길',
   engage: {
@@ -63,6 +64,7 @@ export const lesson = {
     say: [{ mood: 'thinking', text: '굽은 강은 어느 쪽이 깎일까요?' }],
     items: ['s41-u03-b07', 's41-u03-b08', 's41-u03-b09'],
     reading: {
+      magazine: riverReading,
       title: '돌하르방은 왜 구멍투성이일까',
       text: '제주도의 돌하르방은 현무암으로 만들어요. 현무암은 용암이 땅 위에서 빨리 식어 생긴 암석이라 알갱이가 작고 어두워요. 용암 속 가스가 빠져나간 자리가 구멍으로 남아 표면이 숭숭 뚫려 있어요.',
     },

@@ -15,6 +15,7 @@ const expressionSource=require("../learning/grade6-ee-a-unit-workbook.js");
 const equationSource=require("../learning/grade6-ee-b-unit-workbook.js");
 const relationshipSource=require("../learning/grade6-ee-c-unit-workbook.js");
 const geometrySource=require("../learning/grade6-g-a-unit-workbook.js");
+const distributionSource=require("../learning/grade6-sp-b-unit-workbook.js");
 const grade7RatioSource=require("../learning/grade7-rp-a-unit-workbook.js");
 const root=path.resolve(__dirname,"..","..");
 let server,browser,baseUrl;
@@ -364,6 +365,33 @@ test("all 36 geometry responses unlock only the separate eight-structure recheck
 test("geometry Chinese teacher guide separates all answers and printable figures",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.G.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=Letter`,{waitUntil:"networkidle"});
   assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".answer-input,.print-answer-line,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.G.A 几何测量单元练习册");assert.equal(await page.locator(".clinic-geometry-svg").count(),36);assert.match(await page.locator(".teacher-observation").innerText(),/作图/);await page.emulateMedia({media:"print"});assert.equal(await page.locator(".book-page").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollHeight>node.clientHeight+1;}).length;}),0);assert.deepEqual(errors,[]);await page.close();
+});
+
+test("6.SP.B student workbook renders 36 source-calculated data tasks without teacher answers",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.SP.B&mode=workbook&audience=student&locale=ko&paper=A4`,{waitUntil:"networkidle"});await page.waitForFunction(function(){return document.getElementById("print-book").dataset.ready==="true";});
+  assert.equal(await page.locator(".book-page").count(),12);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".answer-input").count(),30);assert.equal(await page.locator(".choice-button").count(),20);assert.equal(await page.locator(".teacher-key,.teacher-move").count(),0);assert.equal(await page.locator("h1").innerText(),"6.SP.B 자료를 그래프로 나타내고 분포 설명하기");
+  assert.equal(await page.locator(".spb-dot-plot").count(),8);assert.equal(await page.locator(".spb-histogram").count(),8);assert.equal(await page.locator(".spb-box-plot").count(),4);assert.equal(await page.locator('[data-item-id="spb-w01"] circle').count(),0);assert.equal(await page.locator('[data-item-id="spb-w05"] circle').count(),8);
+  const mad=page.locator('[data-item-id="spb-w28"]');await mad.locator(".answer-input").fill("2.4");await mad.locator(".check-button").click();assert.equal(await mad.locator(".choice-feedback.correct").count(),1);
+  const measures=page.locator('[data-item-id="spb-w34"]');await measures.locator('[data-answer-id="MEAN_MAD"]').click();assert.equal(await measures.locator(".choice-feedback.wrong").count(),1);await measures.locator('[data-answer-id="MEDIAN_IQR"]').click();assert.equal(await measures.locator(".choice-feedback.correct").count(),1);
+  await page.emulateMedia({media:"print"});const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(entry){return entry.scrollHeight>entry.clientHeight+1;});});assert.deepEqual(overflow,[]);assert.deepEqual(errors,[]);await page.close();
+});
+
+test("6.SP.B completion unlocks only its separate eight-item recheck",async function(){
+  const context=await browser.newContext({viewport:{width:1180,height:900}});const page=await context.newPage();const errors=errorsFor(page);
+  await page.goto(`${baseUrl}?cluster=6.SP.B&mode=recheck&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});assert.equal(new URL(page.url()).searchParams.get("mode"),"workbook");assert.equal(await page.locator('[data-mode="recheck"]').isDisabled(),true);
+  for(const item of distributionSource.pack.workbookItems){const card=page.locator(`[data-item-id="${item.id}"]`);if(Array.isArray(item.choices))await card.locator(`[data-answer-id="${distributionSource.solveItem(item)}"]`).click();else{await card.locator(".answer-input").fill(distributionSource.formatResult(item));await card.locator(".check-button").click();}}
+  assert.equal(await page.locator("#progress-chip").innerText(),"36 / 36");assert.equal(await page.evaluate(function(){return localStorage.getItem("gfield-clinic-workbook:6.SP.B:v1");}),"complete-v1");assert.equal(await page.locator('[data-mode="recheck"]').isEnabled(),true);await page.locator('[data-mode="recheck"]').click();assert.equal(await page.locator(".book-problem").count(),8);assert.equal(await page.locator(".teacher-key,.teacher-move").count(),0);assert.deepEqual(await page.locator(".practice-heading h2").allInnerTexts(),["Recheck · New data","Recheck · New data"]);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("6.SP.B Chinese teacher guide keeps answers separate and A4 pages printable",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.SP.B&mode=workbook&audience=teacher&locale=zh-Hans&paper=A4`,{waitUntil:"networkidle"});
+  assert.equal(await page.locator(".book-page").count(),20);assert.equal(await page.locator(".book-problem").count(),36);assert.equal(await page.locator(".teacher-key").count(),36);assert.equal(await page.locator(".teacher-move").count(),36);assert.equal(await page.locator(".answer-input,.choice-button,.record-page").count(),0);assert.equal(await page.locator("h1").innerText(),"6.SP.B 用图表示并概括数据分布");assert.match(await page.locator(".teacher-observation").innerText(),/点图、.*直方图、.*箱线图/);
+  await page.emulateMedia({media:"print"});const overflow=await page.locator(".book-page").evaluateAll(function(nodes){return nodes.map(function(node,index){return{page:index+1,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight};}).filter(function(entry){return entry.scrollHeight>entry.clientHeight+1;});});assert.deepEqual(overflow,[]);assert.deepEqual(errors,[]);await page.close();
+});
+
+test("6.SP.B plots and controls remain visible at 320px and 390px",async function(){
+  for(const width of [320,390]){const page=await browser.newPage({viewport:{width:width,height:844},isMobile:true});const errors=errorsFor(page);await page.goto(`${baseUrl}?cluster=6.SP.B&mode=workbook&audience=student&locale=en&paper=A4`,{waitUntil:"networkidle"});assert.deepEqual(await page.evaluate(function(){return[document.documentElement.scrollWidth,document.documentElement.clientWidth];}),[width,width]);const visualOverflow=await page.locator(".problem-visual").evaluateAll(function(nodes){return nodes.filter(function(node){return node.scrollWidth>node.clientWidth+1;}).length;});assert.equal(visualOverflow,0);const targets=await page.locator("button,select,input,.brand").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).map(function(node){const box=node.getBoundingClientRect();return[box.width,box.height];});});targets.forEach(function(size){assert.ok(size[0]>=44);assert.ok(size[1]>=44);});assert.deepEqual(errors,[]);await page.close();}
 });
 
 test("Grade 7 proportionality student edition renders a 12-page 36-item answer-free workbook",async function(){

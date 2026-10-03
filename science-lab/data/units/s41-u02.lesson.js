@@ -1,5 +1,6 @@
 // 4-1 Ⅱ 물의 상태 변화 — 5E 화면·교재 구성(문항 id는 s41-u02.js의 items 참조)
 // docssam 말풍선은 한 문장·25자 안팎·~해요체. mood: talk|surprised|thinking|praise|encourage
+import { iceReading } from '../reading/other-units.reading.js';
 export const lesson = {
   unitId: 's41-u02', grade: 4, title: '물의 상태 변화', hero: '얼음 병 저울',
   engage: {
@@ -61,6 +62,7 @@ export const lesson = {
     say: [{ mood: 'thinking', text: '얼음은 왜 물에 뜰까요?' }],
     items: ['s41-u02-b07', 's41-u02-b08', 's41-u02-b09', 's41-u02-b14'],
     reading: {
+      magazine: iceReading,
       title: '공기에서 물을 모으는 탑',
       text: '비가 적은 곳에서는 대나무와 그물로 높은 탑을 세우기도 해요. 밤에 차가워진 그물에 공기 중의 수증기가 닿아 물방울로 맺히고, 물방울이 흘러내려 아래 통에 모여요. 응결을 이용해 마실 물을 얻는 거예요.',
     },

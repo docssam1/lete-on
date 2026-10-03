@@ -1,0 +1,33 @@
+.game-print-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; color: #566274; cursor: pointer; }
+.game-print-toggle input { width: 18px; height: 18px; accent-color: #2456c4; }
+.game-print-toggle input:focus-visible { outline: 3px solid #2456c4; outline-offset: 3px; }
+.gold-print-cover.has-cover-games { gap: 3mm; }
+.gold-print-cover.has-cover-games .gold-print-cover-concepts > ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 4mm; }
+.gold-print-cover.has-cover-games .gold-print-cover-concepts li { min-height: 0; padding: 1.5mm 0; grid-template-columns: 7mm minmax(0, 1fr); gap: 1.5mm; }
+.gold-print-cover.has-cover-games .gold-print-cover-concepts li > span { width: 6.5mm; height: 6.5mm; }
+.gold-cover-games { margin-top: 4mm; padding-top: 3mm; border-top: .3mm solid #d8dee8; background: #fff; }
+.gold-print-cover-concepts .gold-cover-games h2 { margin-bottom: 2mm; color: #2456c4; font-size: 11pt; }
+.gold-cover-games > ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3mm; list-style: none; margin: 0; padding: 0; }
+.gold-print-cover.has-cover-games .gold-cover-games li { display: flex; flex-direction: column; align-items: center; gap: 1mm; padding: 0; border: 0; text-align: center; min-width: 0; }
+.gold-cover-game-unit { color: #566274; font-size: 8pt; line-height: 1.3; overflow-wrap: anywhere; }
+.gold-print-cover.has-cover-games .gold-cover-games strong { font-size: 9pt; line-height: 1.35; margin: 0; overflow-wrap: anywhere; }
+.gold-cover-game-code { display: block; width: 27mm; height: 27mm; margin-top: auto; background: #fff; text-decoration: none; }
+.gold-cover-game-code .gold-print-qr-image { display: block; width: 100%; height: 100%; }
+.gold-cover-game-code svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; }
+.gold-cover-qr-placeholder { display: grid; place-items: center; height: 100%; border: .3mm dashed #566274; box-sizing: border-box; color: #566274; font-size: 10pt; }
+.gold-cover-games.is-many > ol { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2mm; }
+.gold-cover-games.is-many .gold-cover-game-code { width: 22mm; height: 22mm; }
+.gold-print-cover.has-cover-games .gold-cover-games.is-many strong { font-size: 8.5pt; }
+.gold-cover-game-expiry { margin: 2mm 0 0; color: #566274; font-size: 7.5pt; text-align: right; }
+@media print {
+  .game-print-toggle { display: none; }
+  .gold-print-footer.has-game-qr { left: 8mm; font-size: 8pt; color: #566274; }
+  .gold-print-games { display: flex; align-items: center; justify-content: space-between; gap: 4mm; padding: 2mm 0; border-top: .25mm solid #d8dee8; }
+  .gold-print-games > strong { color: #182230; font-size: 10pt; white-space: nowrap; }
+  .gold-print-games > strong > small { display: block; margin-top: 1mm; color: #566274; font-size: 7.5pt; font-weight: 400; }
+  .gold-print-game-links { display: flex; gap: 5mm; }
+  .gold-print-game-qr { display: grid; grid-template-columns: 27mm minmax(0, 1fr); align-items: center; gap: 2mm; max-width: 66mm; color: #182230; text-decoration: none; font-size: 8pt; font-weight: 700; line-height: 1.4; }
+  .gold-print-qr-image { display: block; width: 27mm; height: 27mm; background: #fff; }
+  .gold-print-qr-image svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; }
+  .gold-print-footer-meta { text-align: right; font-size: 7pt; }
+}

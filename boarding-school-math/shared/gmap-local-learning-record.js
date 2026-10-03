@@ -9,6 +9,7 @@
   const SETTINGS_KEY = `${VERSION}:plan-settings`;
   const PRACTICE_KEY = `${VERSION}:practice`;
   const ASSESSMENT_KEY = `${VERSION}:external-assessment`;
+  const GRADE6_DIAGNOSTIC_KEY = `${VERSION}:grade6-diagnostic-evidence`;
   const COMPETITION_KEY = `${VERSION}:competition-evidence`;
   const COMPETITION_SERIES_KEY = `${VERSION}:competition-first-attempts-v2`;
   const MAX_COMPETITION_FORMS = 8;
@@ -16,12 +17,17 @@
   const MAX_RESPONSES_PER_ITEM = 12;
   const AXIS_PRIORITIES = Object.freeze({
     "number-operations": Object.freeze({ label: "수와 연산", clusterId: "6.RP.A", errorType: "concept-gap", difficulty: "core" }),
-    "patterns-algebra": Object.freeze({ label: "규칙과 대수", clusterId: "6.EE.B", errorType: "procedure-gap", difficulty: "core" }),
-    "geometry-spatial": Object.freeze({ label: "기하·공간 추론", clusterId: "6.G.A", errorType: "reasoning-gap", difficulty: "advanced" }),
-    "combinatorics-logic": Object.freeze({ label: "조합과 논리", clusterId: "6.G.A", errorType: "reasoning-gap", difficulty: "advanced" }),
+    "patterns-algebra": Object.freeze({ label: "규칙과 대수", clusterId: "6.EE.B", errorType: "representation-error", difficulty: "core" }),
+    "geometry-spatial": Object.freeze({ label: "기하·공간 추론", clusterId: "6.G.A", errorType: "strategy-gap", difficulty: "advanced" }),
+    "combinatorics-logic": Object.freeze({ label: "조합과 논리", clusterId: "6.G.A", errorType: "strategy-gap", difficulty: "advanced" }),
     "data-probability": Object.freeze({ label: "자료와 가능성", clusterId: "6.SP.A", errorType: "concept-gap", difficulty: "core" }),
-    "problem-solving-strategies": Object.freeze({ label: "문제 해결 전략", clusterId: "6.G.A", errorType: "reasoning-gap", difficulty: "advanced" })
+    "problem-solving-strategies": Object.freeze({ label: "문제 해결 전략", clusterId: "6.G.A", errorType: "strategy-gap", difficulty: "advanced" })
   });
+  const DIAGNOSTIC_ERROR_TYPES = new Set([
+    "prerequisite-gap", "concept-gap", "representation-error", "calculation-error", "condition-missed", "strategy-gap", "explanation-incomplete"
+  ]);
+  const DIAGNOSTIC_MODES = new Set(["repair", "guided-practice", "consolidate"]);
+  const DIAGNOSTIC_DIFFICULTIES = new Set(["foundation", "core", "advanced"]);
 
   function object(value) { return Boolean(value) && typeof value === "object" && !Array.isArray(value); }
   function safeParse(value, fallback) {
@@ -98,6 +104,39 @@
       materialState: typeof value.materialState === "string" ? value.materialState : null,
       decisionNotice: typeof value.decisionNotice === "string" ? value.decisionNotice.slice(0, 240) : null,
       savedAt: typeof value.savedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.savedAt) ? value.savedAt : new Date().toISOString()
+    };
+  }
+  function sanitizedGrade6DiagnosticEvidence(value) {
+    if (!object(value) || value.schemaVersion !== "gfield-grade6-diagnostic-evidence-v1" || value.grade !== 6 || value.sourceState !== "local-qa-finalized-teacher-reviewed" || !object(value.score) || !Array.isArray(value.priorities)) return null;
+    if (!Number.isFinite(value.score.earnedPoints) || !Number.isFinite(value.score.maxPoints) || value.score.maxPoints <= 0 || value.score.earnedPoints < 0 || value.score.earnedPoints > value.score.maxPoints || !Number.isFinite(value.score.percentage) || value.score.percentage < 0 || value.score.percentage > 100 || !["developing", "approaching", "ready"].includes(value.score.performanceBand)) return null;
+    const priorities = value.priorities.slice(0, 2).map(function (priority) {
+      if (!object(priority) || typeof priority.clusterId !== "string" || !/^6\.(?:RP|NS|EE|G|SP)\.[A-C]$/.test(priority.clusterId) || typeof priority.domainId !== "string" || !/^G6-(?:RP|NS|EE|G|SP)$/.test(priority.domainId) || typeof priority.label !== "string" || !priority.label.trim() || priority.label.length > 100 || !DIAGNOSTIC_ERROR_TYPES.has(priority.errorType) || !DIAGNOSTIC_MODES.has(priority.mode) || !DIAGNOSTIC_DIFFICULTIES.has(priority.difficulty) || !Number.isFinite(priority.percentage) || priority.percentage < 0 || priority.percentage > 100) return null;
+      return {
+        clusterId: priority.clusterId,
+        domainId: priority.domainId,
+        label: priority.label.trim(),
+        errorType: priority.errorType,
+        mode: priority.mode,
+        difficulty: priority.difficulty,
+        percentage: priority.percentage
+      };
+    }).filter(Boolean);
+    if (value.priorities.length > 0 && priorities.length !== Math.min(value.priorities.length, 2)) return null;
+    return {
+      schemaVersion: "gfield-grade6-diagnostic-evidence-v1",
+      grade: 6,
+      sourceState: "local-qa-finalized-teacher-reviewed",
+      sourceLabel: "Grade 6 42문항 진단",
+      officialPlacement: false,
+      assignmentAuthorized: false,
+      score: {
+        earnedPoints: value.score.earnedPoints,
+        maxPoints: value.score.maxPoints,
+        percentage: value.score.percentage,
+        performanceBand: value.score.performanceBand
+      },
+      priorities: priorities,
+      recordedAt: typeof value.recordedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.recordedAt) ? value.recordedAt : new Date().toISOString()
     };
   }
   function sanitizedCompetitionEvidence(value) {
@@ -233,6 +272,14 @@
       return true;
     }
     function clearAssessmentEvidence() { if (!store) return false; store.removeItem(ASSESSMENT_KEY); return true; }
+    function loadGrade6DiagnosticEvidence() { return sanitizedGrade6DiagnosticEvidence(read(GRADE6_DIAGNOSTIC_KEY)); }
+    function saveGrade6DiagnosticEvidence(evidence) {
+      const sanitized = sanitizedGrade6DiagnosticEvidence(evidence);
+      if (!sanitized) return false;
+      write(GRADE6_DIAGNOSTIC_KEY, sanitized);
+      return true;
+    }
+    function clearGrade6DiagnosticEvidence() { if (!store) return false; store.removeItem(GRADE6_DIAGNOSTIC_KEY); return true; }
     function loadCompetitionEvidence() { return sanitizedCompetitionEvidence(read(COMPETITION_KEY)); }
     function saveCompetitionEvidence(evidence) {
       const sanitized = sanitizedCompetitionEvidence(evidence);
@@ -280,7 +327,7 @@
       store.removeItem(COMPETITION_SERIES_KEY);
       return true;
     }
-    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
+    return Object.freeze({ loadPractice: loadPractice, savePractice: savePractice, clearPractice: clearPractice, loadPlanSettings: loadPlanSettings, savePlanSettings: savePlanSettings, loadAssessmentEvidence: loadAssessmentEvidence, saveAssessmentEvidence: saveAssessmentEvidence, clearAssessmentEvidence: clearAssessmentEvidence, loadGrade6DiagnosticEvidence: loadGrade6DiagnosticEvidence, saveGrade6DiagnosticEvidence: saveGrade6DiagnosticEvidence, clearGrade6DiagnosticEvidence: clearGrade6DiagnosticEvidence, loadCompetitionEvidence: loadCompetitionEvidence, saveCompetitionEvidence: saveCompetitionEvidence, loadCompetitionEvidenceSeries: loadCompetitionEvidenceSeries, saveCompetitionFirstAttempt: saveCompetitionFirstAttempt, getComparableCompetitionSeries: getComparableCompetitionSeries, clearCompetitionEvidence: clearCompetitionEvidence });
   }
   function priorityForAxis(axis) { return AXIS_PRIORITIES[axis] || null; }
   return Object.freeze({ VERSION: VERSION, AXIS_PRIORITIES: AXIS_PRIORITIES, priorityForAxis: priorityForAxis, create: create, storage: create() });
