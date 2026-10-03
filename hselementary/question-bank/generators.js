@@ -193,6 +193,18 @@
     ...(Number.isInteger(options.verifiedVariantCount) ? { verifiedVariantCount: options.verifiedVariantCount } : {}),
     ...(options.sourceItemId ? { sourceItemId: options.sourceItemId } : {})
   });
+  const tapeOverlapGeometry = ({ length, overlap, overlapCycle, count }) => {
+    if (!(length > overlap && overlap > 0 && Number.isInteger(count) && count >= 2)) throw new Error("테이프의 길이·겹침·장수 조건이 잘못되었습니다.");
+    if (overlapCycle && (!overlapCycle.length || overlapCycle.some(value => value <= 0 || value >= length))) throw new Error("번갈아 겹친 길이의 조건이 잘못되었습니다.");
+    const overlapWidths = Array.from({ length: count - 1 }, (_, index) => overlapCycle?.[index % overlapCycle.length] ?? overlap);
+    const starts = [0];
+    for (const width of overlapWidths) starts.push(starts.at(-1) + length - width);
+    return { starts, overlapWidths, totalLength: starts.at(-1) + length };
+  };
+  const tapeOverlapSampleMarkup = ({ starts, sampleWidth, overlapWidth, overlapWidths, y, height, token, colors = ["#e3f1f8", "#fbf3dc"], outline = "#183d56", overlapOutline = "#a85f00", shade = `url(#${token}-hatch)` }) => ({
+    rects: starts.map((x, index) => `<rect x="${x.toFixed(2)}" y="${y}" width="${sampleWidth}" height="${height}" fill="${colors[index % colors.length]}" fill-opacity="0.82" stroke="${outline}" stroke-width="2"/>`).join(""),
+    overlaps: starts.slice(1).map((x, index) => `<rect x="${x.toFixed(2)}" y="${y}" width="${(overlapWidths?.[index] ?? overlapWidth).toFixed(2)}" height="${height}" fill="${shade}" stroke="${overlapOutline}" stroke-width="1.4"/>`).join("")
+  });
   const numberSequenceMarkup = values => `<div class="sequence number-sequence" role="list" aria-label="수 목록">${values.map(value => `<span role="listitem">${Number(value).toLocaleString()}</span>`).join("")}</div>`;
   const source41DigitWords = ["영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
   const source41SmallUnits = ["", "십", "백", "천"];
@@ -13958,9 +13970,7 @@
     mixedCalculationE2({ rng, level, variant = 0 }) {
       const difficulty = level + 1;
       const tapeStripSvg = ({ length, width, overlap, count }) => {
-        const starts = Array.from({ length: count }, (_, index) => index * (length - overlap));
-        const segments = starts.map(start => ({ start, end: start + length }));
-        const totalLength = segments.at(-1).end;
+        const { totalLength } = tapeOverlapGeometry({ length, overlap, count });
         const token = `mixed-e2-${length}-${width}-${overlap}-${count}`;
         const overlapWidth = Math.max(14, Math.min(38, 150 * overlap / length));
         const pairFirstX = 280;
@@ -13968,10 +13978,8 @@
         const pairSecondX = pairFirstEnd - overlapWidth;
         const sampleWidth = 108;
         const sampleOverlap = Math.max(10, Math.min(30, sampleWidth * overlap / length));
-        const sampleStep = sampleWidth - sampleOverlap;
-        const sampleXs = [40, 40 + sampleStep, 40 + sampleStep * 2];
-        const sampleRects = sampleXs.map((x, index) => `<rect x="${x.toFixed(2)}" y="166" width="${sampleWidth}" height="34" fill="${index % 2 ? "#fbf3dc" : "#e3f1f8"}" fill-opacity="0.82" stroke="#183d56" stroke-width="2"/>`).join("");
-        const sampleOverlaps = sampleXs.slice(1).map(x => `<rect x="${x.toFixed(2)}" y="166" width="${sampleOverlap.toFixed(2)}" height="34" fill="url(#${token}-hatch)" stroke="#a85f00" stroke-width="1.4"/>`).join("");
+        const sampleXs = tapeOverlapGeometry({ length: sampleWidth, overlap: sampleOverlap, count: 3 }).starts.map(start => 40 + start);
+        const { rects: sampleRects, overlaps: sampleOverlaps } = tapeOverlapSampleMarkup({ starts: sampleXs, sampleWidth, overlapWidth: sampleOverlap, y: 166, height: 34, token });
         return `<svg class="geometry-diagram mixed-e2-tape-strip" viewBox="0 0 570 245" role="img" aria-label="길이 ${length}cm, 폭 ${width}cm인 같은 테이프 ${count}장을 ${overlap}cm씩 겹쳐 일직선으로 붙인 그림" data-tape-model="${length},${width},${overlap},${count},${count - 1},${totalLength}">
           <defs><marker id="${token}-arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#183d56"/></marker><pattern id="${token}-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#a85f00" stroke-width="1.4"/></pattern></defs>
           <text class="svg-measure-text" x="40" y="24" font-size="19" font-weight="700" fill="#183d56">한 장</text>
@@ -24310,6 +24318,1217 @@
       const answerVisual = mathBoard("나 혼자 일하는 달력", row("나의 하루 일한 양", fractionText(secondRate)) + row("필요한 날 수", `${aloneDays}일`) + row("기간", `${data.month}월 ${data.day}일 → ${answer}`));
       return fixedResult(`어떤 일을 가와 나가 함께 ${data.togetherDays}일 동안 하여 전체의 ${fractionMarkup(...data.together)}를 끝냈습니다. 나머지는 가가 혼자 ${data.firstAloneDays}일 동안 하여 끝냈습니다. 같은 일을 나가 ${data.month}월 ${data.day}일부터 쉬지 않고 혼자 한다면 끝나는 날은 몇 월 며칠인가요? (일한 첫날을 1일로 셉니다.)${promptVisual}${support("두 사람이 하루에 한 양에서 가가 하루에 한 양을 빼세요.")}${challenge}${evidence("work-rate-date", [data.togetherDays, ...data.together, data.firstAloneDays, data.month, data.day, secondRate.numerator, secondRate.denominator, aloneDays, endDay], "date")}`, answer, `두 사람이 하루에 한 양은 ${fractionText(togetherRate)}, 가가 하루에 한 양은 ${fractionText(firstRate)}입니다. 따라서 나는 하루에 ${fractionText(secondRate)}만큼 하므로 혼자 ${aloneDays}일 걸립니다. ${data.month}월 ${data.day}일을 첫날로 세면 ${answer}에 끝납니다.`, answerVisual);
     },
+    sourceGrade6SecondDecimalDivisionE1Choice({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-exploration-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [numerator, divisor] = [[672, 56], [864, 72], [936, 78]][poolIndex];
+      const target = numerator / (10 * divisor);
+      const options = [
+        { text: `${numerator} ÷ ${divisor / 100}`, value: target * 1000 },
+        { text: `${numerator} ÷ ${divisor / 10}`, value: target * 100 },
+        { text: `${numerator / 10} ÷ ${divisor / 10}`, value: target * 10 },
+        { text: `${numerator / 10} ÷ ${divisor}`, value: target },
+        { text: `${numerator / 100} ÷ ${divisor}`, value: target / 10 },
+        { text: `${numerator / 1000} ÷ ${divisor}`, value: target / 100 }
+      ];
+      const choices = level === 0 ? options.slice(1, 4) : level === 1 ? options.slice(1) : options;
+      const visible = [...choices.slice(poolIndex), ...choices.slice(0, poolIndex)];
+      const correct = visible.findIndex(option => option.value === target);
+      if (correct < 0 || visible.filter(option => option.value === target).length !== 1) throw new Error(`${sourceItemId}: 정답이 하나가 아닙니다.`);
+      const marks = ["①", "②", "③", "④", "⑤", "⑥"];
+      const list = `<ol class="source62-decimal-choices" aria-label="나눗셈 보기">${visible.map((option, index) => `<li><span>${marks[index]}</span>${option.text}</li>`).join("")}</ol>`;
+      const answer = marks[correct];
+      const solution = `나누어지는 수와 나누는 수에 각각 100을 곱하면 ${numerator / 10} ÷ ${divisor}입니다. 따라서 정답은 ${answer}입니다.`;
+      return result(`${numerator / 1000} ÷ ${divisor / 100}와 몫이 같은 것을 고르세요.${list}`, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${list}<p>${answer} ${numerator / 10} ÷ ${divisor} = ${target}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1Calculate({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-exploration-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [divisorHundredths, quotientTenths] = [[357, 239], [246, 187], [638, 125]][poolIndex];
+      const dividend = divisorHundredths * quotientTenths / 1000;
+      const divisor = divisorHundredths / 100;
+      const quotient = quotientTenths / 10;
+      const expression = `${dividend} ÷ ${divisor}`;
+      const prompt = level === 0 ? `${expression}을 계산하세요. 나누는 수를 자연수로 바꾸어 생각해 보세요.` : `${expression}을 계산하세요.`;
+      const solution = `나누어지는 수와 나누는 수에 각각 100을 곱하면 ${dividend * 100} ÷ ${divisorHundredths} = ${quotient}입니다.`;
+      return result(prompt, quotient, solution, {
+        answerVisual: `<p class="source62-decimal-calculation" data-answer-source="${sourceItemId}">${expression} = ${quotient}</p>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1Range({ rng, level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-example-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { left: "14.28", leftDivisor: "6.8", right: "11.75", rightDivisor: "4.7", low: 210, high: 250 },
+        { left: "14.4", leftDivisor: "4.5", right: "10.36", rightDivisor: "2.8", low: 320, high: 370 },
+        { left: "13.94", leftDivisor: "6.8", right: "11.562", rightDivisor: "4.7", low: 205, high: 246 }
+      ][poolIndex];
+      const leftQuotient = Number(data.left) / Number(data.leftDivisor);
+      const rightQuotient = Number(data.right) / Number(data.rightDivisor);
+      if (Math.abs(leftQuotient * 100 - data.low) > 1e-8 || Math.abs(rightQuotient * 100 - data.high) > 1e-8) throw new Error(`${sourceItemId}: 범위 계산이 맞지 않습니다.`);
+      const candidates = Array.from({ length: 100 }, (_, index) => index).filter(tenth => tenth * 10 > data.low && tenth * 10 < data.high);
+      if (!candidates.length) throw new Error(`${sourceItemId}: 가능한 수가 없습니다.`);
+      const answer = candidates.reduce((sum, tenth) => sum + tenth, 0) / 10;
+      const expression = `${data.left} ÷ ${data.leftDivisor} < □ < ${data.right} ÷ ${data.rightDivisor}`;
+      const board = `<div class="source62-decimal-range" data-source62-decimal-range="${sourceItemId}">${expression}</div>`;
+      const solution = `양쪽 나눗셈의 몫은 각각 ${data.low / 100}, ${data.high / 100}입니다. 사이에 있는 한 자리 소수는 ${candidates.map(tenth => tenth / 10).join(", ")}이므로 합은 ${answer}입니다.`;
+      return result(`□는 소수 첫째 자리까지 나타낸 수입니다. □ 안에 들어갈 수 있는 모든 수의 합을 구하세요.${board}`, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${board}<p>${data.low / 100} < □ < ${data.high / 100}</p><p>${candidates.map(tenth => tenth / 10).join(" + ")} = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1DivisorRatio({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-example-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { firstDividend: "207.84", firstQuotient: "3247.5", secondDividend: "20.784", secondQuotient: "32.475", firstDivisor: "0.064", secondDivisor: "0.64", answer: "0.1배" },
+        { firstDividend: "92.4", firstQuotient: "123.2", secondDividend: "92.4", secondQuotient: "1232", firstDivisor: "0.75", secondDivisor: "0.075", answer: "10배" },
+        { firstDividend: "12", firstQuotient: "12.5", secondDividend: "12", secondQuotient: "1250", firstDivisor: "0.96", secondDivisor: "0.0096", answer: "100배" }
+      ][poolIndex];
+      if (Math.abs(Number(data.firstDividend) / Number(data.firstQuotient) - Number(data.firstDivisor)) > 1e-10 || Math.abs(Number(data.secondDividend) / Number(data.secondQuotient) - Number(data.secondDivisor)) > 1e-10) throw new Error(`${sourceItemId}: 나누는 수 계산이 맞지 않습니다.`);
+      const ratio = data.answer.replace(/배$/, "");
+      const equations = `<div class="source62-decimal-equations" data-source62-equations="${sourceItemId}"><span>(가) ${data.firstDividend} ÷ ㉠ = ${data.firstQuotient}</span><span>(나) ${data.secondDividend} ÷ ㉡ = ${data.secondQuotient}</span></div>`;
+      const solution = level === 2
+        ? `㉠ ÷ ㉡ = (${data.firstDividend} × ${data.secondQuotient}) ÷ (${data.firstQuotient} × ${data.secondDividend}) = ${ratio}이므로 ㉠은 ㉡의 ${data.answer}입니다.`
+        : `㉠은 ${data.firstDividend} ÷ ${data.firstQuotient} = ${data.firstDivisor}, ㉡은 ${data.secondDividend} ÷ ${data.secondQuotient} = ${data.secondDivisor}입니다. 따라서 ㉠은 ㉡의 ${data.answer}입니다.`;
+      const instruction = level === 0 ? "㉠과 ㉡을 각각 구한 뒤 비교하세요." : level === 2 ? "㉠과 ㉡을 직접 구하지 않고 두 나눗셈을 비교해 보세요." : "";
+      return result(`다음 나눗셈을 만족하는 ㉠은 ㉡의 몇 배인가요?${instruction}${equations}`, data.answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${equations}${level === 2 ? `<p>㉠ ÷ ㉡ = (${data.firstDividend} × ${data.secondQuotient}) ÷ (${data.firstQuotient} × ${data.secondDividend}) = ${ratio}</p>` : `<p>㉠ = ${data.firstDivisor}, ㉡ = ${data.secondDivisor}</p><p>${data.firstDivisor} ÷ ${data.secondDivisor} = ${ratio}</p>`}<p>㉠은 ㉡의 ${data.answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1ThreeProducts({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-example-3";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [a, b, c] = [[16, 14, 18], [15, 12, 24], [25, 16, 14]][poolIndex];
+      const ab = a * b / 100;
+      const bc = b * c / 100;
+      const ac = a * c / 100;
+      const answer = b / 10;
+      const equations = `<div class="source62-decimal-equations is-three" data-source62-equations="${sourceItemId}"><span>가 × 나 = ${ab}</span><span>나 × 다 = ${bc}</span><span>가 × 다 = ${ac}</span></div>`;
+      const numerator = (a * b) * (b * c);
+      const denominator = a * c;
+      if (numerator % denominator !== 0) throw new Error(`${sourceItemId}: 세 곱셈의 값이 맞지 않습니다.`);
+      const repeatedProductHundredths = numerator / denominator;
+      if (repeatedProductHundredths !== b * b) throw new Error(`${sourceItemId}: 세 곱셈의 값이 맞지 않습니다.`);
+      const repeatedProduct = repeatedProductHundredths / 100;
+      const instruction = level === 0 ? "나×나의 값을 먼저 찾아보세요." : level === 2 ? "가와 다의 값을 각각 구하지 않고 풀어 보세요." : "";
+      return result(`가, 나, 다가 양의 소수일 때 나의 값을 구하세요.${instruction}${equations}`, answer, `첫째 식과 둘째 식을 곱한 뒤 셋째 식으로 나누면 나×나 = ${repeatedProduct}입니다. ${answer} × ${answer} = ${repeatedProduct}이므로 나는 ${answer}입니다.`, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${equations}<p>나 × 나 = ${ab} × ${bc} ÷ ${ac} = ${repeatedProduct}</p><p>${answer} × ${answer} = ${repeatedProduct}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1Parts({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-example-4";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const pool = level === 2 ? [[14, 80, 7, 10], [20, 80, 7, 10], [18, 80, 7, 10]] : [[15, 25, 9, 8], [18, 50, 7, 6], [12, 25, 11, 8]];
+      const [whole, partHundredths, wholeFactor, partFactor] = pool[poolIndex];
+      const total = wholeFactor * whole + partFactor * partHundredths / 100;
+      const candidates = Array.from({ length: Math.floor(total / wholeFactor) }, (_, index) => index + 1)
+        .map(value => ({ whole: value, remainder: total - wholeFactor * value }))
+        .filter(value => value.remainder >= 0 && value.remainder < partFactor && (level !== 2 || value.remainder * 2 > partFactor));
+      if (candidates.length !== 1 || candidates[0].whole !== whole || candidates[0].remainder * 100 !== partHundredths * partFactor) throw new Error(`${sourceItemId}: 답이 하나가 아닙니다.`);
+      const answer = whole * 100 / partHundredths;
+      const equation = `<div class="source62-decimal-equations" data-source62-equations="${sourceItemId}"><span>${wholeFactor} × ㉠ + ${partFactor} × ㉡ = ${total}</span></div>`;
+      const bound = level === 2 ? " 또한 ㉡은 0.5보다 큽니다." : level === 0 ? " 소수 부분은 0 이상 1 미만입니다." : "";
+      const solution = `㉡은 ${level === 2 ? "0.5보다 크고 1 미만" : "0 이상 1 미만"}이므로 자연수인 ㉠은 ${whole}뿐입니다. ㉡ = (${total} - ${wholeFactor} × ${whole}) ÷ ${partFactor} = ${partHundredths / 100}입니다. 따라서 ㉠ ÷ ㉡ = ${answer}입니다.`;
+      return result(`어떤 수의 자연수 부분을 ㉠, 소수 부분을 ㉡이라 할 때, 다음 식을 만족합니다.${bound} ㉠ ÷ ㉡의 몫을 구하세요.${equation}`, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${equation}<p>㉠ = ${whole}, ㉡ = ${partHundredths / 100}</p><p>${whole} ÷ ${partHundredths / 100} = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [dividend, divisor] = [[10.36, 1.4], [8.64, 1.2], [12.48, 1.6]][poolIndex];
+      const shifts = [[0.01, 1], [0.1, 0.01], [10, 1], [0.1, 1], [1, 0.1], [0.01, 0.01]];
+      const marks = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥"];
+      const decimal = value => String(Number(value.toFixed(4)));
+      const options = shifts.map(([numeratorScale, divisorScale], index) => ({
+        text: `${decimal(dividend * numeratorScale)} ÷ ${decimal(divisor * divisorScale)}`,
+        larger: numeratorScale > divisorScale,
+        mark: marks[index]
+      }));
+      const visible = level === 0 ? options.slice(0, 5) : options;
+      const answer = visible.filter(option => option.larger).map(option => option.mark).join(", ");
+      const choices = `<ol class="source62-decimal-choices" aria-label="나눗셈 보기">${visible.map(option => `<li><span>${option.mark}</span>${option.text}</li>`).join("")}</ol>`;
+      const target = decimal(dividend / divisor);
+      const instruction = level === 2 ? "몫이 같은 것은 제외하세요." : "";
+      return result(`${dividend} ÷ ${divisor}보다 몫이 큰 것을 모두 고르세요. ${instruction}${choices}`, answer,
+        `기준 몫은 ${target}입니다. 각 식의 몫을 비교하면 ${answer}의 몫만 ${target}보다 큽니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${choices}<p>${answer}</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        [[19.98, 2.22], [53.2, 3.5], [17.136, 1.36], [6.8, 0.4]],
+        [[14.3, 2.2], [43.4, 3.5], [13.8, 1.5], [30.4, 2]],
+        [[39.6, 2.2], [88.5, 3], [35.84, 1.6], [52.2, 2]]
+      ][poolIndex];
+      const [[a, b], [c, d], [e, f], [g, h]] = data;
+      const candidates = Array.from({ length: 100 }, (_, index) => index + 1).filter(value => a / b < value && value < c / d && e / f < value && value < g / h);
+      const answer = candidates.length;
+      const board = `<div class="source62-decimal-equations"><span>${a} ÷ ${b} &lt; □ &lt; ${c} ÷ ${d}</span><span>${e} ÷ ${f} &lt; □ &lt; ${g} ÷ ${h}</span></div>`;
+      const hint = level === 0 ? "두 범위에 모두 들어가는 자연수를 찾으세요." : level === 2 ? "두 부등식을 동시에 만족해야 합니다." : "";
+      return result(`□에 공통으로 들어갈 수 있는 자연수는 모두 몇 개인가요? ${hint}${board}`, answer,
+        `두 범위를 함께 만족하는 자연수는 ${candidates.join(", ")}이므로 ${answer}개입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${board}<p>${candidates.join(", ")} → ${answer}개</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-3";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [a, b, factor, c, d] = [[12.25, 2.8, 1.69, 18.56, 3.2], [12.6, 2.5, 2.4, 26.88, 4], [6.6, 2.4, 1.25, 13.2, 3.2]][poolIndex];
+      const candidates = Array.from({ length: 100 }, (_, index) => (index + 1) / 10).filter(value => a / b < value * factor && value * factor < c / d);
+      const answer = candidates.length;
+      const board = `<div class="source62-decimal-range">${a} ÷ ${b} &lt; ㉠ × ${factor} &lt; ${c} ÷ ${d}</div>`;
+      const hint = level === 0 ? "㉠은 소수 첫째 자리까지 나타낸 수입니다." : level === 2 ? "양쪽 몫을 구한 뒤 가능한 ㉠을 빠짐없이 세세요." : "";
+      return result(`㉠이 소수 첫째 자리까지 나타낸 양의 수일 때, 가능한 ㉠은 모두 몇 개인가요? ${hint}${board}`, answer,
+        `가능한 ㉠은 ${candidates.join(", ")}이므로 ${answer}개입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${board}<p>${candidates.join(", ")} → ${answer}개</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission4({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-4";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [head, middle, divisorTenths] = [[1, 6, 36], [2, 4, 24], [3, 5, 48]][poolIndex];
+      const pairs = [];
+      for (let a = 1; a <= 9; a += 1) for (let b = 1; b <= 9; b += 1) {
+        const digits = head * 1000 + a * 100 + middle * 10 + b;
+        if (digits % divisorTenths === 0 && digits / divisorTenths % 10 !== 0) pairs.push([a, b, digits / divisorTenths]);
+      }
+      if (!pairs.length) throw new Error(`${sourceItemId}: 가능한 자연수 쌍이 없습니다.`);
+      const answer = pairs.map(([a, b]) => `(${a}, ${b})`).join(", ");
+      const board = `<div class="source62-decimal-range">${head}.㉠${middle}㉡ ÷ ${divisorTenths / 10}</div>`;
+      const hint = level === 0 ? "㉠, ㉡은 각각 1부터 9까지의 자연수입니다." : level === 2 ? "두 자리 소수인 몫이 딱 나오도록 하세요." : "";
+      return result(`㉠, ㉡이 한 자리 자연수일 때 몫이 소수 둘째 자리에서 끝나도록 하는 순서쌍 (㉠, ㉡)을 모두 구하세요. ${hint}${board}`, answer,
+        `${head}.㉠${middle}㉡의 소수점을 없앤 네 자리 수는 ${divisorTenths}의 배수여야 합니다. 가능한 쌍은 ${answer}입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${board}<p>${pairs.map(([a, b, cents]) => `${head}.${a}${middle}${b} ÷ ${divisorTenths / 10} = ${(cents / 100).toFixed(2)}`).join("<br>")}</p><p>${answer}</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission5({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-5";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const cards = [[6, 7, 0, 1, 2, 5, 8], [0, 1, 3, 4, 5, 7, 9], [0, 3, 4, 5, 6, 8, 9]][poolIndex];
+      let best = null;
+      for (const a of cards) for (const b of cards) for (const c of cards) for (const d of cards) for (const e of cards) for (const f of cards) {
+        if (new Set([a, b, c, d, e, f]).size !== 6) continue;
+        const numerator = 100 * a + 10 * b + c;
+        const denominator = 100 * d + 10 * e + f;
+        if (!denominator) continue;
+        if (!best || numerator * best.denominator > best.numerator * denominator) best = { numerator, denominator, digits: [a, b, c, d, e, f] };
+      }
+      if (best.numerator % best.denominator !== 0) throw new Error(`${sourceItemId}: 몫이 자연수로 끝나지 않습니다.`);
+      const answer = best.numerator / best.denominator;
+      const divisors = [...new Set(cards.flatMap(a => cards.flatMap(b => cards.filter(c => new Set([a, b, c]).size === 3).map(c => 100 * a + 10 * b + c))))].filter(value => value > 0).sort((a, b) => a - b);
+      if (best.denominator !== divisors[0] || 1000 / divisors[1] >= answer) throw new Error(`${sourceItemId}: 가장 큰 몫의 증명이 성립하지 않습니다.`);
+      const cardRow = `<div class="source62-decimal-cards" aria-label="숫자 카드">${cards.map(digit => `<span>${digit}</span>`).join("")}</div>`;
+      const format = digits => `${digits[0]}.${digits[1]}${digits[2]}`;
+      const expression = `${format(best.digits.slice(0, 3))} ÷ ${format(best.digits.slice(3))}`;
+      const hint = level === 0 ? "0을 일의 자리에 놓아 0보다 큰 소수도 만들 수 있습니다." : level === 2 ? "한 장은 사용하지 않습니다." : "";
+      return result(`다음 숫자 카드 7장 중 6장을 한 번씩 써서 (소수 둘째 자리까지 나타낸 수) ÷ (소수 둘째 자리까지 나타낸 수)의 몫을 가장 크게 만드세요. 가장 큰 몫은 얼마인가요? ${hint}${cardRow}`, answer,
+        `나누는 수로 만들 수 있는 가장 작은 수는 ${divisors[0] / 100}, 다음으로 작은 수는 ${divisors[1] / 100}입니다. 다음으로 작은 수를 쓰면 몫은 10 ÷ ${divisors[1] / 100}보다 작습니다. 가장 작은 수를 나누는 수로 쓰고 남은 카드로 큰 수를 만들면 ${expression} = ${answer}입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${cardRow}<p>${expression} = ${answer}</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE1Mission6({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e1-mission-6";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [cards, low, high, factor, divisor] = [
+        [[4, 2, 9, 8, 5], 7.6, 10.8, 3.2, 2.5],
+        [[3, 6, 8, 7, 4], 4.2, 5.2, 2.5, 3.2],
+        [[2, 5, 6, 9, 7], 9, 10, 3.6, 2.4]
+      ][poolIndex];
+      const candidates = [];
+      for (const a of cards) for (const b of cards) for (const c of cards) {
+        if (new Set([a, b, c]).size !== 3) continue;
+        const value = 100 * a + 10 * b + c;
+        if (value * Math.round(factor * 10) > Math.round(low * 10) * 10 * Math.round(divisor * 10) && value * Math.round(factor * 10) < Math.round(high * 10) * 10 * Math.round(divisor * 10)) candidates.push(`${a}.${b}${c}`);
+      }
+      candidates.sort((a, b) => Number(a) - Number(b));
+      const answer = candidates.length;
+      const cardRow = `<div class="source62-decimal-cards" aria-label="숫자 카드">${cards.map(digit => `<span>${digit}</span>`).join("")}</div>`;
+      const board = `<div class="source62-decimal-range">${low} &lt; ㉠ × ${factor} ÷ ${divisor} &lt; ${high}</div>`;
+      const hint = level === 0 ? "세 장은 각각 한 번만 씁니다." : level === 2 ? "경계값과 같은 수는 세지 않습니다." : "";
+      return result(`서로 다른 카드 3장을 사용해 소수 둘째 자리까지 나타낸 ㉠을 만듭니다. 다음 범위에 들어가는 ㉠은 모두 몇 개인가요? ${hint}${cardRow}${board}`, answer,
+        `조건을 만족하는 ㉠은 ${candidates.join(", ")}로 ${answer}개입니다.`, {
+          answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${cardRow}${board}<p>${candidates.join(", ")} → ${answer}개</p></div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE2Exploration({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-exploration";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [rightWidth, fullHeight, lowerHeight, ratio] = [[96, 72, 36, 12], [84, 64, 24, 12], [75, 80, 30, 12]][poolIndex];
+      const upperHeight = fullHeight - lowerHeight;
+      const numerator = 10 * rightWidth * fullHeight;
+      const denominator = ratio * upperHeight;
+      if (numerator % denominator !== 0) throw new Error(`${sourceItemId}: 빠진 길이가 한 자리 소수가 아닙니다.`);
+      const leftWidth = numerator / denominator - rightWidth;
+      if (leftWidth <= 0) throw new Error(`${sourceItemId}: 빠진 길이가 양수가 아닙니다.`);
+      const cm = tenths => String(Number((tenths / 10).toFixed(1)));
+      const answer = `${cm(leftWidth)}cm`;
+      const figure = solved => {
+        const scale = Math.min(235 / (leftWidth + rightWidth), 105 / fullHeight);
+        const points = {
+          ga: { x: 42, y: 58 },
+          ma: { x: 42 + leftWidth * scale, y: 58 },
+          ra: { x: 42 + (leftWidth + rightWidth) * scale, y: 58 },
+          na: { x: 42, y: 58 + upperHeight * scale },
+          center: { x: 42 + leftWidth * scale, y: 58 + upperHeight * scale },
+          da: { x: 42 + (leftWidth + rightWidth) * scale, y: 58 + upperHeight * scale },
+          ba: { x: 42 + leftWidth * scale, y: 58 + fullHeight * scale },
+          sa: { x: 42 + (leftWidth + rightWidth) * scale, y: 58 + fullHeight * scale }
+        };
+        const x = key => points[key].x.toFixed(1);
+        const y = key => points[key].y.toFixed(1);
+        const label = (key, text, dx, dy) => `<text data-label-for="${key}" x="${(points[key].x + dx).toFixed(1)}" y="${(points[key].y + dy).toFixed(1)}">${text}</text>`;
+        const measured = (name, x1, y1, x2, y2, tx, ty, text) => `<g data-owner-id="${name}" class="source62-e2-measure"><line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/><text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle">${text}</text></g>`;
+        const leftHeightLine = measured("lower-height", points.center.x - 10, points.center.y, points.ba.x - 10, points.ba.y, points.center.x - 34, (points.center.y + points.ba.y) / 2 + 4, `${cm(lowerHeight)}cm`);
+        const fullHeightLine = solved || level !== 2 ? measured("full-height", points.ra.x + 28, points.ra.y, points.sa.x + 28, points.sa.y, points.ra.x + 53, (points.ra.y + points.sa.y) / 2 + 4, `${cm(fullHeight)}cm`) : "";
+        const widthLine = measured("right-width", points.ba.x, points.ba.y + 28, points.sa.x, points.sa.y + 28, (points.ba.x + points.sa.x) / 2, points.sa.y + 46, `${cm(rightWidth)}cm`);
+        const answerLine = solved ? measured("target-left-width", points.ga.x, 25, points.ma.x, 25, (points.ga.x + points.ma.x) / 2, 13, answer) : "";
+        const outline = `M ${x("ga")} ${y("ga")} H ${x("ra")} V ${y("sa")} H ${x("ba")} V ${y("ma")} M ${x("ga")} ${y("ga")} V ${y("na")} H ${x("da")}`;
+        return `<svg class="geometry-diagram source62-e2-diagram" viewBox="0 0 360 240" role="img" aria-label="위쪽 직사각형과 오른쪽 직사각형의 겹친 그림" data-source62-e2-geometry="${sourceItemId}" data-right-width-tenths="${rightWidth}" data-full-height-tenths="${fullHeight}" data-lower-height-tenths="${lowerHeight}" data-area-ratio-tenths="${ratio}" data-target-segment="ga-ma"><rect data-region="upper-rectangle" x="${x("ga")}" y="${y("ga")}" width="${(points.ra.x - points.ga.x).toFixed(1)}" height="${(points.na.y - points.ga.y).toFixed(1)}"/><rect data-region="right-rectangle" x="${x("ma")}" y="${y("ma")}" width="${(points.ra.x - points.ma.x).toFixed(1)}" height="${(points.sa.y - points.ra.y).toFixed(1)}"/><path data-layout-role="outline" d="${outline}"/>${label("ga", "ㄱ", -17, -14)}${label("ma", "ㅁ", 0, -17)}${label("ra", "ㄹ", 14, -14)}${label("na", "ㄴ", -25, 13)}${label("center", "ㅇ", -17, -17)}${label("da", "ㄷ", 14, 13)}${label("ba", "ㅂ", -15, 14)}${label("sa", "ㅅ", 15, 14)}${leftHeightLine}${fullHeightLine}${widthLine}${answerLine}</svg>`;
+      };
+      const easier = level === 0 ? `위쪽 직사각형의 높이는 ${cm(upperHeight)}cm입니다. ` : "";
+      const perimeter = cm(2 * (rightWidth + fullHeight));
+      const harder = level === 2 ? `직사각형 ㅁㅂㅅㄹ의 둘레는 ${perimeter}cm입니다. ` : "";
+      const prompt = `그림에서 직사각형 ㅁㅂㅅㄹ의 넓이는 직사각형 ㄱㄴㄷㄹ의 넓이의 ${cm(ratio)}배입니다. ${easier}${harder}선분 ㄱㅁ의 길이는 몇 cm인가요?${figure(false)}`;
+      const heightStep = level === 2 ? `오른쪽 직사각형의 전체 높이는 ${perimeter} ÷ 2 - ${cm(rightWidth)} = ${cm(fullHeight)}cm입니다. ` : "";
+      const solution = `${heightStep}위쪽 직사각형의 높이는 ${cm(fullHeight)} - ${cm(lowerHeight)} = ${cm(upperHeight)}cm입니다. 오른쪽 직사각형의 넓이는 ${cm(rightWidth)} × ${cm(fullHeight)} = ${(rightWidth * fullHeight / 100).toFixed(2)}cm²입니다. 위쪽 직사각형의 넓이는 이를 ${cm(ratio)}으로 나눈 값이므로 가로 길이는 ${cm(leftWidth + rightWidth)}cm입니다. 따라서 ㄱㅁ = ${cm(leftWidth + rightWidth)} - ${cm(rightWidth)} = ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}">${figure(true)}</div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Example1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-example-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [wheelTenths, turnsTenths, pedalCount] = [[632, 45, 75], [848, 35, 60], [2016, 24, 125]][poolIndex];
+      const distanceHundredthsCm = wheelTenths * turnsTenths * pedalCount;
+      if (distanceHundredthsCm % 100 !== 0) throw new Error(`${sourceItemId}: 전체 이동 거리가 cm로 정확히 나타나지 않습니다.`);
+      const distanceCm = distanceHundredthsCm / 100;
+      const compact = value => String(Number(value.toFixed(4)));
+      const wheelCm = compact(wheelTenths / 10);
+      const wheelTurns = compact(turnsTenths / 10);
+      const distance = level === 0 ? `${distanceCm}cm` : `${compact(distanceCm / 100)}m`;
+      const oneWay = `${compact(distanceCm / 200)}m`;
+      const perPedalCm = wheelTenths * turnsTenths / 100;
+      const answer = `${pedalCount}번`;
+      const route = level === 2 ? `출발점에서 ${oneWay} 떨어진 곳까지 갔다가 같은 길로 돌아오려면` : `이 자전거로 ${distance}를 가려면`;
+      const prompt = `어떤 자전거는 바퀴가 한 번 돌 때 ${wheelCm}cm씩 가고 페달을 한 번 돌릴 때마다 바퀴가 ${wheelTurns}바퀴씩 돕니다. ${route} 페달을 몇 번 돌려야 하나요?`;
+      const conversion = level === 0 ? "" : level === 2 ? `왕복 거리는 ${oneWay} × 2 = ${distance} = ${distanceCm}cm입니다. ` : `${distance} = ${distanceCm}cm입니다. `;
+      const solution = `페달을 한 번 돌릴 때 자전거가 가는 거리는 ${wheelCm} × ${wheelTurns} = ${compact(perPedalCm)}cm입니다. ${conversion}필요한 횟수는 ${distanceCm} ÷ ${compact(perPedalCm)} = ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact"><p>페달 한 번: ${wheelCm} × ${wheelTurns} = ${compact(perPedalCm)}cm</p>${level === 0 ? "" : `<p>${level === 2 ? `${oneWay} × 2 = ` : ""}${distance} = ${distanceCm}cm</p>`}<p>페달 횟수: ${distanceCm} ÷ ${compact(perPedalCm)} = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Example2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-example-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [hour, smallAngle, hardStartMinute] = [[8, 86, 8], [7, 78, 2], [8, 75, 6]][poolIndex];
+      const initialDirectedAngle = hour * 30;
+      const angleDifference = initialDirectedAngle - smallAngle;
+      if (angleDifference <= 0 || (angleDifference * 2) % 11 !== 0) throw new Error(`${sourceItemId}: 분 단위의 첫 시각을 만들 수 없습니다.`);
+      const minutes = angleDifference * 2 / 11;
+      if (minutes < 1 || minutes >= 60 || hardStartMinute >= minutes || smallAngle >= 360 - initialDirectedAngle || 2 * initialDirectedAngle - 11 * hardStartMinute <= 360) throw new Error(`${sourceItemId}: 처음 이루는 각의 조건이 성립하지 않습니다.`);
+      const startMinute = level === 2 ? hardStartMinute : 0;
+      const startingTime = startMinute ? `${hour}시 ${startMinute}분` : `${hour}시 정각`;
+      const hint = level === 0 ? ` 정각의 작은 각은 ${360 - initialDirectedAngle}°이고, 180°까지 커졌다가 다시 작아집니다.` : "";
+      const prompt = `시계가 ${startingTime}을 가리키고 있습니다.${hint} 앞으로 몇 분 후에 시침과 분침이 이루는 작은 각이 처음으로 ${smallAngle}°가 되나요?`;
+      const answer = `${minutes - startMinute}분 후`;
+      const solution = `${hour}시 정각에 작은 각은 ${360 - initialDirectedAngle}°이고 180°까지 커졌다가 작아집니다. 따라서 ${smallAngle}°는 작아지는 구간에서 처음 나옵니다. 계산하면 정각에서 ${minutes}분 후이며, ${startingTime}부터는 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact"><p>두 바늘의 1분당 차: 6° - 0.5° = 5.5°</p><p>정각부터: (${initialDirectedAngle} - ${smallAngle}) ÷ 5.5 = ${minutes}분</p>${startMinute ? `<p>${hour}시 ${startMinute}분부터: ${minutes} - ${startMinute} = ${answer}</p>` : `<p>처음 이루는 때: ${answer}</p>`}</div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Example3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-example-3";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [stillTenths, currentTenths, minutes, startHour, startMinute] = [[427, 158, 252, 8, 18], [384, 146, 210, 9, 15], [472, 128, 285, 7, 50]][poolIndex];
+      const downstreamTenths = stillTenths + currentTenths;
+      if ((downstreamTenths * minutes) % 6 !== 0) throw new Error(`${sourceItemId}: 이동 거리가 소수 둘째 자리에서 끝나지 않습니다.`);
+      const distanceHundredths = downstreamTenths * minutes / 6;
+      const compact = value => String(Number(value.toFixed(2)));
+      const distance = compact(distanceHundredths / 100);
+      const still = compact(stillTenths / 10);
+      const downstream = compact(downstreamTenths / 10);
+      const hours = Math.floor(minutes / 60);
+      const remainderMinutes = minutes % 60;
+      const decimalHours = compact(minutes / 60);
+      const endMinutes = startHour * 60 + startMinute + minutes;
+      const endHour = Math.floor(endMinutes / 60);
+      if (endHour !== 12) throw new Error(`${sourceItemId}: 오전 출발·오후 도착 조건이 맞지 않습니다.`);
+      const tripSentence = level === 2
+        ? `이 배는 오전 ${startHour}시 ${startMinute}분에 출발해 강물을 따라 ${distance}km 떨어진 지점에 오후 ${endHour}시 ${endMinutes % 60}분에 도착했습니다.`
+        : `이 배가 강물을 따라 ${distance}km 떨어진 지점까지 내려가는 데 ${level === 0 ? `${decimalHours}시간` : `${hours}시간 ${remainderMinutes}분`}이 걸렸습니다.`;
+      const prompt = `흐르지 않는 물에서 한 시간에 ${still}km씩 가는 배가 있습니다. ${tripSentence} 강물과 배가 일정한 빠르기로 움직였다면 강물은 한 시간에 몇 km 흐르나요?`;
+      const timeStep = level === 0 ? `걸린 시간은 ${decimalHours}시간입니다.` : level === 2
+        ? `출발·도착 시각의 차는 ${hours}시간 ${remainderMinutes}분, 즉 ${decimalHours}시간입니다.`
+        : `${hours}시간 ${remainderMinutes}분은 ${decimalHours}시간입니다.`;
+      const answer = `${compact(currentTenths / 10)}km`;
+      const solution = `${timeStep} 강물을 따라간 배는 한 시간에 ${distance} ÷ ${decimalHours} = ${downstream}km 갑니다. 따라서 강물은 한 시간에 ${downstream} - ${still} = ${answer} 흐릅니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact"><p>걸린 시간: ${decimalHours}시간</p><p>내려간 빠르기: ${distance} ÷ ${decimalHours} = ${downstream}km/시</p><p>강물의 빠르기: ${downstream} - ${still} = ${answer}/시</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Mission5({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-5";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [firstTenths, secondTenths, startHour, startMinute, standardMinutes, hardMinutes] = [[27, 31, 9, 0, 330, 300], [36, 29, 8, 20, 330, 300], [28, 34, 9, 40, 270, 240]][poolIndex];
+      const delayed = level === 2;
+      const delayMinutes = delayed ? 30 : 0;
+      const meetingMinutes = delayed ? hardMinutes : standardMinutes;
+      const distanceSixthsOfHundredths = (firstTenths + secondTenths) * meetingMinutes - secondTenths * delayMinutes;
+      if (distanceSixthsOfHundredths % 6 !== 0) throw new Error(`${sourceItemId}: 두 사람의 이동 거리 합이 소수 둘째 자리에서 끝나지 않습니다.`);
+      const distanceHundredths = distanceSixthsOfHundredths / 6;
+      const firstAloneHundredths = firstTenths * delayMinutes / 6;
+      if (distanceHundredths <= firstAloneHundredths) throw new Error(`${sourceItemId}: 늦게 출발하기 전에 이미 만났습니다.`);
+      const compact = value => String(Number(value.toFixed(2)));
+      const distance = compact(distanceHundredths / 100);
+      const firstSpeed = compact(firstTenths / 10);
+      const secondSpeed = compact(secondTenths / 10);
+      const combined = compact((firstTenths + secondTenths) / 10);
+      const startTime = `오전 ${startHour}시 ${startMinute ? `${startMinute}분` : "정각"}`;
+      const meetingClockMinutes = startHour * 60 + startMinute + meetingMinutes;
+      const answerHour = Math.floor(meetingClockMinutes / 60) - 12;
+      const answerMinute = meetingClockMinutes % 60;
+      if (answerHour < 1 || answerHour > 11) throw new Error(`${sourceItemId}: 오후에 만나지 않습니다.`);
+      const answer = `오후 ${answerHour}시 ${answerMinute ? `${answerMinute}분` : "정각"}`;
+      const departure = delayed
+        ? `정은이는 ${startTime}에 출발했고 우석이는 30분 뒤 출발했습니다. 정은이는 그동안 쉬지 않고 걸었습니다.`
+        : `두 사람은 ${startTime}에 동시에 출발했습니다.`;
+      const easyHint = level === 0 ? " 두 사람이 한 시간에 얼마나 가까워지는지 생각해 보세요." : "";
+      const prompt = `정은이와 우석이는 ${distance}km 떨어진 곳에서 서로 마주 보고 있습니다. ${departure} 정은이는 한 시간에 ${firstSpeed}km, 우석이는 한 시간에 ${secondSpeed}km를 일정하게 걷습니다.${easyHint} 두 사람이 처음 만나는 시각은 오후 몇 시 몇 분인가요?`;
+      const remaining = compact((distanceHundredths - firstAloneHundredths) / 100);
+      const aloneStep = delayed ? `우석이가 출발하기 전 30분 동안 정은이는 ${firstSpeed} ÷ 2 = ${compact(firstAloneHundredths / 100)}km 걸었으므로 남은 거리는 ${distance} - ${compact(firstAloneHundredths / 100)} = ${remaining}km입니다. ` : "";
+      const togetherMinutes = meetingMinutes - delayMinutes;
+      const togetherHours = compact(togetherMinutes / 60);
+      const solution = `${aloneStep}두 사람은 한 시간에 ${firstSpeed} + ${secondSpeed} = ${combined}km씩 가까워집니다. 함께 걸은 시간은 ${remaining} ÷ ${combined} = ${togetherHours}시간이고, ${startTime}부터 ${compact(meetingMinutes / 60)}시간 후인 ${answer}에 만납니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact">${delayed ? `<p>먼저 간 거리: ${firstSpeed} ÷ 2 = ${compact(firstAloneHundredths / 100)}km, 남은 거리: ${distance} - ${compact(firstAloneHundredths / 100)} = ${remaining}km</p>` : ""}<p>한 시간에 가까워지는 거리: ${firstSpeed} + ${secondSpeed} = ${combined}km</p><p>함께 걸은 시간: ${remaining} ÷ ${combined} = ${togetherHours}시간, 만나는 시각: ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Mission1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-1";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [lengthTenths, firstSpacingTenths, secondSpacingTenths] = [[1386, 126, 99], [1512, 108, 84], [1584, 88, 132]][poolIndex];
+      if (lengthTenths % firstSpacingTenths || lengthTenths % secondSpacingTenths) throw new Error(`${sourceItemId}: 처음과 끝에 모두 소화기를 놓을 수 없습니다.`);
+      const compact = tenths => String(Number((tenths / 10).toFixed(1)));
+      const length = compact(lengthTenths);
+      const firstSpacing = compact(firstSpacingTenths);
+      const secondSpacing = compact(secondSpacingTenths);
+      const firstEquivalentGaps = lengthTenths / firstSpacingTenths;
+      const secondGaps = lengthTenths / secondSpacingTenths;
+      const doubleGap = level === 2;
+      if (doubleGap && firstEquivalentGaps < 3) throw new Error(`${sourceItemId}: 두 배 간격을 넣을 공간이 없습니다.`);
+      const firstCount = firstEquivalentGaps + (doubleGap ? 0 : 1);
+      const secondCount = secondGaps + 1;
+      const answer = `${firstCount + secondCount}개`;
+      const extraCondition = doubleGap
+        ? ` 다만 ${firstSpacing}m 간격으로 놓은 쪽은 출입구 자리에 소화기 한 개를 놓지 않아, 그곳의 두 소화기 사이만 ${compact(firstSpacingTenths * 2)}m이고 나머지 구간은 ${firstSpacing}m입니다.`
+        : "";
+      const easyHint = level === 0 ? " 간격 수보다 소화기 수가 한 개 많다는 점을 생각해 보세요." : "";
+      const prompt = `길이가 ${length}m인 직선 승강장의 서로 마주 보는 양옆 가장자리에 소화기를 놓았습니다. 각 가장자리의 처음과 끝에도 놓았습니다. 한쪽은 ${firstSpacing}m 간격, 다른 쪽은 ${secondSpacing}m 간격으로 놓았습니다.${extraCondition} 소화기의 두께는 생각하지 않습니다.${easyHint} 양옆에 놓은 소화기는 모두 몇 개인가요?`;
+      const firstStep = doubleGap
+        ? `한쪽은 ${length} ÷ ${firstSpacing} = ${firstEquivalentGaps}칸이므로 보통 소화기 ${firstEquivalentGaps + 1}개를 놓습니다. 출입구 자리 한 개를 빼면 ${firstCount}개입니다.`
+        : `한쪽은 ${length} ÷ ${firstSpacing} = ${firstEquivalentGaps}칸이므로 소화기는 ${firstCount}개입니다.`;
+      const solution = `${firstStep} 다른 쪽은 ${length} ÷ ${secondSpacing} = ${secondGaps}칸이므로 소화기는 ${secondCount}개입니다. 모두 ${firstCount} + ${secondCount} = ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-decimal-answer" data-answer-source="${sourceItemId}" data-print-weight="compact"><p>한쪽: ${length} ÷ ${firstSpacing} = ${firstEquivalentGaps}칸 → ${firstEquivalentGaps + 1}개${doubleGap ? `, 출입구 자리 한 개를 빼면 ${firstCount}개` : ""}</p><p>다른 쪽: ${length} ÷ ${secondSpacing} = ${secondGaps}칸 → ${secondCount}개</p><p>전체: ${firstCount} + ${secondCount} = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Mission2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-2";
+      if (!Number.isInteger(variant) || variant < 0) throw new Error(`${sourceItemId}: 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [lengthTenths, overlapTenths, secondOverlapTenths, count] = [[260, 25, 35, 19], [225, 15, 25, 17], [320, 32, 28, 15]][poolIndex];
+      const alternating = level === 2;
+      const stepTenths = lengthTenths - overlapTenths;
+      const totalTenths = tapeOverlapGeometry({ length: lengthTenths, overlap: overlapTenths, overlapCycle: alternating ? [overlapTenths, secondOverlapTenths] : undefined, count }).totalLength;
+      const compact = tenths => String(Number((tenths / 10).toFixed(1)));
+      const length = compact(lengthTenths);
+      const overlap = compact(overlapTenths);
+      const secondOverlap = compact(secondOverlapTenths);
+      const total = compact(totalTenths);
+      const step = compact(stepTenths);
+      const remaining = compact(totalTenths - lengthTenths);
+      const sampleWidth = 115;
+      const sampleOverlap = sampleWidth * overlapTenths / lengthTenths;
+      const sampleSecondOverlap = sampleWidth * (alternating ? secondOverlapTenths : overlapTenths) / lengthTenths;
+      const starts = tapeOverlapGeometry({ length: sampleWidth, overlap: sampleOverlap, overlapCycle: alternating ? [sampleOverlap, sampleSecondOverlap] : undefined, count: 3 }).starts.map(x => 28 + x);
+      const { rects, overlaps } = tapeOverlapSampleMarkup({ starts, sampleWidth, overlapWidth: sampleOverlap, overlapWidths: [sampleOverlap, sampleSecondOverlap], y: 49, height: 34, token: "source62-tape-count", colors: ["#f2f2f2", "#fff"], outline: "#222", overlapOutline: "#222", shade: "#c3c3c3" });
+      const firstEnd = starts[0] + sampleWidth;
+      const secondEnd = starts[1] + sampleWidth;
+      const diagram = `<svg class="geometry-diagram source62-tape-count" viewBox="0 0 420 124" role="img" aria-label="길이 ${length}cm인 색 테이프를 ${alternating ? `${overlap}cm와 ${secondOverlap}cm씩 번갈아` : `${overlap}cm씩`} 겹쳐 계속 이어 붙이는 그림" data-tape-model="${lengthTenths},${overlapTenths},${alternating ? secondOverlapTenths : overlapTenths},sample" data-sample-is-not-total="true">
+        <line x1="${starts[0].toFixed(2)}" y1="31" x2="${firstEnd.toFixed(2)}" y2="31" class="source62-tape-measure"/><line x1="${starts[1].toFixed(2)}" y1="35" x2="${secondEnd.toFixed(2)}" y2="35" class="source62-tape-measure"/>
+        <text x="${(starts[0] + sampleWidth / 2).toFixed(2)}" y="20" class="source62-tape-length">${length}cm</text><text x="${(starts[1] + sampleWidth / 2).toFixed(2)}" y="24" class="source62-tape-length">${length}cm</text>
+        ${rects}${overlaps}
+        <text x="${(starts[1] + sampleOverlap / 2).toFixed(2)}" y="109" class="source62-tape-overlap">${overlap}cm</text><text x="${(starts[2] + sampleSecondOverlap / 2).toFixed(2)}" y="109" class="source62-tape-overlap">${alternating ? secondOverlap : overlap}cm</text><text x="388" y="76" class="source62-tape-continue">…</text>
+      </svg>`;
+      const totalDisplay = alternating ? `${totalTenths}mm` : `${total}cm`;
+      const easyHint = level === 0 ? " 처음 한 장을 붙인 뒤에는 한 장을 더 붙일 때 늘어나는 길이를 생각해 보세요." : "";
+      const overlapCondition = alternating
+        ? `왼쪽부터 첫 이음새는 ${overlap}cm, 다음 이음새는 ${secondOverlap}cm씩 겹치게 하고, 이 두 길이를 번갈아 사용했습니다.`
+        : `이웃한 두 장이 ${overlap}cm씩 겹치게 했습니다.`;
+      const prompt = `그림과 같이 길이가 ${length}cm인 색 테이프 여러 장을 한 줄로 이어 붙였습니다. ${overlapCondition} 이어 붙인 전체 길이가 ${totalDisplay}입니다.${easyHint} 색 테이프는 모두 몇 장인가요?${diagram}`;
+      const answer = `${count}장`;
+      const pairGain = compact(2 * lengthTenths - overlapTenths - secondOverlapTenths);
+      const pairCount = (count - 1) / 2;
+      const solution = alternating
+        ? `${totalDisplay} = ${total}cm입니다. 첫 장 뒤에는 두 장을 더 붙일 때마다 (${length} - ${overlap}) + (${length} - ${secondOverlap}) = ${pairGain}cm 늘어납니다. 처음 한 장을 뺀 ${remaining}cm에는 두 장 묶음이 ${remaining} ÷ ${pairGain} = ${pairCount}번 들어가므로 전체는 1 + ${pairCount} × 2 = ${answer}입니다.`
+        : `첫 장 다음부터는 한 장을 붙일 때마다 ${length} - ${overlap} = ${step}cm 늘어납니다. 첫 장의 길이를 제외한 ${total} - ${length} = ${remaining}cm는 ${remaining} ÷ ${step} = ${count - 1}장을 더 붙인 길이이므로 모두 1 + ${count - 1} = ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual: `<div class="source62-tape-answer" data-answer-source="${sourceItemId}" data-print-weight="compact">${diagram}</div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Mission3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-3";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [height100, largeBase100, smallBase100] = [[390, 480, 384], [420, 600, 500], [480, 750, 600]][poolIndex];
+      const largeArea10000 = height100 * largeBase100 / 2;
+      const smallArea10000 = height100 * smallBase100 / 2;
+      const ratio = largeBase100 / smallBase100;
+      if (!Number.isInteger(largeArea10000) || !Number.isInteger(smallArea10000) || ratio <= 1 || Math.abs(ratio - Number(ratio.toFixed(2))) > 1e-10) throw new Error(`${sourceItemId}: 넓이 비가 소수 둘째 자리까지 정확히 표현되지 않습니다.`);
+      const cm = value => String(Number((value / 100).toFixed(2)));
+      const squareCm = value => String(Number((value / 10000).toFixed(4)));
+      const height = cm(height100);
+      const largeBase = cm(largeBase100);
+      const smallBase = cm(smallBase100);
+      const gap = cm(largeBase100 - smallBase100);
+      const ratioText = String(Number(ratio.toFixed(2)));
+      const largeArea = squareCm(largeArea10000);
+      const smallArea = squareCm(smallArea10000);
+      const combinedArea = squareCm(largeArea10000 + smallArea10000);
+      const points = { "ㄱ": { x: 100, y: 36 }, "ㄴ": { x: 100, y: 184 }, "ㄷ": { x: 380, y: 184 }, "ㄹ": { x: 380, y: 36 }, "ㅁ": { x: 100 + 280 * (largeBase100 - smallBase100) / largeBase100, y: 184 } };
+      const line = (from, to, role, extra = "") => `<line data-layout-role="${role}" data-from="${from}" data-to="${to}" x1="${points[from].x.toFixed(2)}" y1="${points[from].y}" x2="${points[to].x.toFixed(2)}" y2="${points[to].y}" ${extra}/>`;
+      const pointNames = Object.entries(points).map(([name, point]) => `<text data-label-for="${name}" x="${point.x.toFixed(2)}" y="${point.y === 36 ? 22 : 209}">${name}</text>`).join("");
+      const diagram = solved => `<svg class="geometry-diagram source62-overlap-triangle-bases" viewBox="0 0 460 254" role="img" aria-label="높이가 같은 삼각형 ㄱㄴㄷ과 ㄹㅁㄷ, 점 ㄴ·ㅁ·ㄷ이 차례로 놓인 겹친 삼각형" data-geometry-kind="same-height-overlap-triangles" data-source-item="${sourceItemId}" data-model="${height100},${largeBase100},${smallBase100}" data-target-segment="ㄴ-ㅁ">
+        ${line("ㄱ", "ㄹ", "equal-height-guide", 'stroke-dasharray="5 4"')}${line("ㄱ", "ㄴ", "large-height")}${line("ㄴ", "ㄷ", "shared-baseline")}${line("ㄱ", "ㄷ", "large-sloping-side")}${line("ㄹ", "ㄷ", "small-height")}${line("ㄹ", "ㅁ", "small-sloping-side")}
+        <path class="source62-triangle-right-angle" d="M100 173h11v11 M369 36v11h11 M369 184v-11h11"/>
+        <line class="source62-triangle-measure" x1="72" y1="36" x2="72" y2="184"/><line class="source62-triangle-measure-tick" x1="67" y1="36" x2="77" y2="36"/><line class="source62-triangle-measure-tick" x1="67" y1="184" x2="77" y2="184"/>
+        <text class="source62-triangle-height-label" x="38" y="115">${height}cm</text>${pointNames}
+        ${level === 0 ? `<text class="source62-triangle-base-label" x="240" y="229">ㄴㄷ = ${largeBase}cm</text>` : ""}
+        ${solved ? `<line class="source62-triangle-target" data-layout-role="target-segment" data-from="ㄴ" data-to="ㅁ" x1="100" y1="184" x2="${points["ㅁ"].x.toFixed(2)}" y2="184"/><text class="source62-triangle-answer-label" x="${((100 + points["ㅁ"].x) / 2).toFixed(2)}" y="243">${gap}cm</text>` : ""}
+      </svg>`;
+      const givens = level === 0 ? `선분 ㄴㄷ의 길이는 ${largeBase}cm입니다.` : level === 1 ? `삼각형 ㄱㄴㄷ의 넓이는 ${largeArea}cm²입니다.` : `두 삼각형의 넓이의 합은 ${combinedArea}cm²입니다.`;
+      const prompt = `그림에서 삼각형 ㄱㄴㄷ의 넓이는 삼각형 ㄹㅁㄷ의 넓이의 ${ratioText}배입니다. ${givens} 선분 ㄴㅁ의 길이는 몇 cm인가요?${diagram(false)}`;
+      const areaStep = level === 2 ? `작은 삼각형의 넓이를 한 묶음으로 보면 전체는 ${ratioText}+1=${String(Number((ratio + 1).toFixed(2)))}묶음입니다. 작은 삼각형의 넓이는 ${combinedArea}÷${String(Number((ratio + 1).toFixed(2)))}=${smallArea}cm²이고 큰 삼각형의 넓이는 ${smallArea}×${ratioText}=${largeArea}cm²입니다. ` : "";
+      const baseStep = level === 0 ? `두 삼각형의 높이가 같으므로 밑변의 비도 ${ratioText}:1입니다. ㅁㄷ은 ${largeBase}÷${ratioText}=${smallBase}cm입니다.` : `ㄴㄷ은 ${largeArea}×2÷${height}=${largeBase}cm입니다. 높이가 같으므로 ㅁㄷ은 ${largeBase}÷${ratioText}=${smallBase}cm입니다.`;
+      const answer = `${gap}cm`;
+      return result(prompt, answer, `${areaStep}${baseStep} 따라서 ㄴㅁ은 ${largeBase}-${smallBase}=${answer}입니다.`, {
+        answerVisual: `<div class="source62-triangle-answer" data-answer-source="${sourceItemId}" data-print-weight="compact">${diagram(true)}</div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Mission4({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-4";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [leftArea100, rightArea100, unionArea100, overlapBase100] = [[4680, 3030, 5970, 320], [5640, 4260, 8040, 310], [6120, 3960, 7830, 360]][poolIndex];
+      const sumArea100 = leftArea100 + rightArea100;
+      const overlapArea100 = sumArea100 - unionArea100;
+      const outsideArea100 = sumArea100 - 2 * overlapArea100;
+      const height1000 = 2 * overlapArea100 * 1000 / overlapBase100;
+      if (!Number.isInteger(height1000) || outsideArea100 <= 0 || overlapArea100 <= 0) throw new Error(`${sourceItemId}: 겹친 부분의 넓이 또는 높이가 맞지 않습니다.`);
+      const areaText = value => String(Number((value / 100).toFixed(2)));
+      const lengthText = value => String(Number((value / 100).toFixed(2)));
+      const leftArea = areaText(leftArea100);
+      const rightArea = areaText(rightArea100);
+      const unionArea = areaText(unionArea100);
+      const sumArea = areaText(sumArea100);
+      const outsideArea = areaText(outsideArea100);
+      const overlapArea = areaText(overlapArea100);
+      const baseLength = lengthText(overlapBase100);
+      const answer = `${String(Number((height1000 / 1000).toFixed(3)))}cm`;
+      const realHeight = height1000 / 1000;
+      const fullHeight = realHeight * 1.4;
+      const leftBase = 2 * (leftArea100 / 100) / fullHeight;
+      const rightBase = 2 * (rightArea100 / 100) / fullHeight;
+      const overlapBase = overlapBase100 / 100;
+      if (leftBase <= overlapBase || rightBase <= overlapBase) throw new Error(`${sourceItemId}: 원본과 같은 두 삼각형의 겹침을 그릴 수 없습니다.`);
+      const leftOverlap = leftBase - overlapBase;
+      const totalBase = leftOverlap + rightBase;
+      const x = value => Number((48 + 424 * value / totalBase).toFixed(2));
+      const yBase = 204;
+      const yTop = 50;
+      const yCross = Number((yBase - (yBase - yTop) / 1.4).toFixed(2));
+      const model = {
+        "ㄱ": [x(leftOverlap + 0.3 * overlapBase), yTop],
+        "ㄴ": [x(0), yBase],
+        "ㄷ": [x(leftBase), yBase],
+        "ㄹ": [x(leftOverlap + 0.7 * overlapBase), yTop],
+        "ㅁ": [x(leftOverlap), yBase],
+        "ㅂ": [x(totalBase), yBase],
+        "ㅅ": [x(leftOverlap + 0.5 * overlapBase), yCross],
+        "ㅇ": [x(leftOverlap + 0.5 * overlapBase), yBase]
+      };
+      const point = name => model[name].join(",");
+      const line = (from, to, role, extra = "") => `<line data-layout-role="${role}" data-from="${from}" data-to="${to}" x1="${model[from][0]}" y1="${model[from][1]}" x2="${model[to][0]}" y2="${model[to][1]}" ${extra}/>`;
+      const labels = Object.entries(model).map(([name, [px, py]]) => {
+        const dx = name === "ㄴ" ? -8 : name === "ㅂ" ? 8 : name === "ㅅ" ? -42 : 0;
+        const dy = py === yTop ? -12 : name === "ㅅ" ? 12 : 31;
+        return `<text data-label-for="${name}" x="${px + dx}" y="${py + dy}">${name}</text>`;
+      }).join("");
+      const diagram = solved => `<svg class="geometry-diagram source62-overlap-height" viewBox="0 0 520 318" role="img" aria-label="삼각형 ㄱㄴㄷ과 ㄹㅁㅂ이 겹쳐 생긴 삼각형 ㅅㅁㄷ과 높이 ㅅㅇ" data-geometry-kind="two-overlapping-triangles-height" data-source-item="${sourceItemId}" data-model="${leftArea100},${rightArea100},${unionArea100},${overlapBase100}" data-target-segment="ㅅ-ㅇ">
+        <polygon class="source62-overlap-region" points="${point("ㅅ")} ${point("ㅁ")} ${point("ㄷ")}"/>
+        ${line("ㄱ", "ㄴ", "left-outer-side")}${line("ㄱ", "ㄷ", "left-crossing-side")}${line("ㄴ", "ㄷ", "left-base")}${line("ㄹ", "ㅁ", "right-crossing-side")}${line("ㄹ", "ㅂ", "right-outer-side")}${line("ㅁ", "ㅂ", "right-base")}
+        <circle class="source62-overlap-cross-point" cx="${model["ㅅ"][0]}" cy="${model["ㅅ"][1]}" r="3"/>
+        ${line("ㅅ", "ㅇ", "target-height", 'stroke-dasharray="5 4"')}
+        <path class="source62-overlap-right-angle" d="M${model["ㅇ"][0]},${yBase - 11}h11v11"/>
+        ${labels}
+        <path class="source62-overlap-bracket" d="M${model["ㅁ"][0]},254v8H${model["ㄷ"][0]}v-8"/>
+        <text class="source62-overlap-base-label" x="${model["ㅇ"][0]}" y="293">${baseLength}cm</text>
+        ${solved ? `<line class="source62-overlap-solved-height" x1="${model["ㅅ"][0]}" y1="${model["ㅅ"][1]}" x2="${model["ㅇ"][0]}" y2="${model["ㅇ"][1]}"/>` : ""}
+      </svg>`;
+      const givens = level === 0 ? `겹친 부분의 넓이는 ${overlapArea}cm²입니다.` : level === 1 ? `삼각형 ㄱㄴㄷ의 넓이는 ${leftArea}cm², 삼각형 ㄹㅁㅂ의 넓이는 ${rightArea}cm²이고 전체 넓이는 ${unionArea}cm²입니다.` : `두 삼각형의 넓이의 합은 ${sumArea}cm²이고 겹치지 않은 두 부분의 넓이의 합은 ${outsideArea}cm²입니다.`;
+      const areaStep = level === 0 ? `겹친 삼각형의 넓이는 ${overlapArea}cm²입니다.` : level === 1 ? `겹친 삼각형의 넓이는 ${leftArea}+${rightArea}-${unionArea}=${overlapArea}cm²입니다.` : `두 삼각형의 넓이 합에서 겹치지 않은 두 부분의 넓이 합을 빼면 겹친 부분 두 개의 넓이가 남습니다. 겹친 부분의 넓이는 (${sumArea}-${outsideArea})÷2=${overlapArea}cm²입니다.`;
+      return result(`그림과 같이 두 삼각형을 겹쳐 놓았습니다. ${givens} 선분 ㅅㅇ의 길이는 몇 cm인가요?${diagram(false)}`, answer, `${areaStep} 밑변 ㅁㄷ은 ${baseLength}cm이므로 높이 ㅅㅇ은 ${overlapArea}×2÷${baseLength}=${answer}입니다.`, {
+        answerVisual: `<div class="source62-overlap-height-answer" data-answer-source="${sourceItemId}">${diagram(true)}<p class="source62-overlap-result">ㅅㅇ = ${answer}</p></div>`,
+        generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE2Mission6({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e2-mission-6";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const [topRight100, bottomLeft100, bottomRight100] = [[600, 925, 555], [480, 720, 600], [735, 1260, 525]][poolIndex];
+      const numerator = topRight100 * bottomLeft100;
+      if (numerator % bottomRight100 !== 0) throw new Error(`${sourceItemId}: 빈칸의 넓이가 소수 둘째 자리로 정확히 정해지지 않습니다.`);
+      const target100 = numerator / bottomRight100;
+      const shown = value => String(Number((value / 100).toFixed(2)));
+      const x0 = 28;
+      const y0 = 30;
+      const x1 = 472;
+      const y1 = 252;
+      const splitX = Number((x0 + (x1 - x0) * bottomLeft100 / (bottomLeft100 + bottomRight100)).toFixed(2));
+      const splitY = Number((y0 + (y1 - y0) * topRight100 / (topRight100 + bottomRight100)).toFixed(2));
+      const mid = (a, b) => Number(((a + b) / 2).toFixed(2));
+      const label = (value, cx, cy, target = false) => `<text class="source62-four-rect-label${target ? " is-target" : ""}" x="${cx}" y="${cy}" dominant-baseline="middle">${value}<tspan class="source62-four-rect-unit" dx="3">cm²</tspan></text>`;
+      const diagram = solved => `<svg class="geometry-diagram source62-four-rect" viewBox="0 0 500 282" role="img" aria-label="같은 행과 열의 경계가 이어진 네 직사각형" data-source-item="${sourceItemId}" data-geometry-kind="four-adjacent-rectangles" data-model="${topRight100},${bottomLeft100},${bottomRight100}" data-split="${splitX},${splitY}">
+        <rect class="source62-four-rect-outline" x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}"/>
+        <line class="source62-four-rect-divider" x1="${splitX}" y1="${y0}" x2="${splitX}" y2="${y1}"/>
+        <line class="source62-four-rect-divider" x1="${x0}" y1="${splitY}" x2="${x1}" y2="${splitY}"/>
+        ${label(solved ? shown(target100) : "㉠", mid(x0, splitX), mid(y0, splitY), true)}
+        ${label(shown(topRight100), mid(splitX, x1), mid(y0, splitY))}
+        ${label(shown(bottomLeft100), mid(x0, splitX), mid(splitY, y1))}
+        ${label(shown(bottomRight100), mid(splitX, x1), mid(splitY, y1))}
+      </svg>`;
+      const answer = `${shown(target100)}cm²`;
+      return result(`그림과 같이 4개의 직사각형을 이어 붙였습니다. ㉠에 알맞은 넓이를 구하세요.${diagram(false)}`, answer,
+        `같은 줄의 두 직사각형은 높이가 같고, 같은 칸의 두 직사각형은 너비가 같습니다. 따라서 ㉠×${shown(bottomRight100)}=${shown(topRight100)}×${shown(bottomLeft100)}이고, ㉠=${shown(topRight100)}×${shown(bottomLeft100)}÷${shown(bottomRight100)}=${answer}입니다.`, {
+          answerVisual: `<div class="source62-four-rect-answer" data-answer-source="${sourceItemId}">${diagram(true)}</div>`,
+          generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE3Example2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e3-example-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { whole: 1, suffix: "68", divisor100: 234, targetTenths: 8 },
+        { whole: 1, suffix: "42", divisor100: 208, targetTenths: 8 },
+        { whole: 3, suffix: "84", divisor100: 428, targetTenths: 9 }
+      ][poolIndex];
+      const divisor = (data.divisor100 / 100).toFixed(2).replace(/0$/, "");
+      const target = (data.targetTenths / 10).toFixed(1);
+      const lowerBound = ((data.targetTenths * 10 - 5) / 100).toFixed(2);
+      const upperBound = ((data.targetTenths * 10 + 5) / 100).toFixed(2);
+      const matchingDigits = [];
+      for (let digit = 0; digit <= 9; digit += 1) {
+        const dividend1000 = data.whole * 1000 + digit * 100 + Number(data.suffix);
+        const denominator = data.divisor100 * 10;
+        const roundedTenths = Math.floor((20 * dividend1000 + denominator) / (2 * denominator));
+        if (roundedTenths === data.targetTenths) matchingDigits.push(digit);
+      }
+      if (!matchingDigits.length || matchingDigits.length === 10) throw new Error(`${sourceItemId}: 빈칸 조건이 한 가지 경우로만 구분되지 않습니다.`);
+      const minimumDigit = level === 0 ? Math.max(0, matchingDigits[0] - 1) : 0;
+      const maximumDigit = level === 0 ? Math.min(9, matchingDigits.at(-1) + 1) : 9;
+      const divisorText = level === 2 ? `(${((data.divisor100 + 50) / 100).toFixed(2)} − 0.5)` : divisor;
+      const expression = `<span class="source62-e3-digit-expression" aria-label="${data.whole}점 빈칸 ${data.suffix} 나누기 ${divisorText}">${data.whole}.<span class="source62-e3-digit-blank" aria-label="한 자리 숫자 빈칸">□</span>${data.suffix} ÷ ${divisorText}</span>`;
+      const candidateDigits = Array.from({ length: maximumDigit - minimumDigit + 1 }, (_, index) => minimumDigit + index);
+      const difficultyDesign = ["restricted-candidate-digits", "source-structure", "divisor-subtraction-extra-step"][level];
+      const answer = String(matchingDigits.length);
+      const answerVisual = `<div class="source62-e3-digit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><p>${expression} → ${target}</p><div class="source62-e3-digit-grid" aria-label="${minimumDigit}부터 ${maximumDigit}까지의 숫자 검사">${candidateDigits.map(digit => `<span class="source62-e3-digit-cell${matchingDigits.includes(digit) ? " is-valid" : ""}" data-digit="${digit}" data-matches="${matchingDigits.includes(digit) ? "yes" : "no"}">${digit}</span>`).join("")}</div><p class="source62-e3-digit-count">가능한 숫자 ${matchingDigits.join(", ")} · 모두 ${answer}개</p></div>`;
+      const digitCondition = level === 0 ? `□에는 ${minimumDigit}부터 ${maximumDigit}까지의 숫자 중 하나가 들어갑니다. ` : "";
+      const divisorStep = level === 2 ? `나누는 수는 <span class="math-inline-expression">${divisorText.slice(1, -1)} = ${divisor}</span>입니다. ` : "";
+      return result(`${expression}의 몫을 반올림하여 소수 첫째 자리까지 나타내면 ${target}이 됩니다. ${digitCondition}□에 들어갈 수 있는 숫자는 모두 몇 개인가요?`, answer,
+        `${divisorStep}몫이 ${target}로 반올림되는 범위는 ${lowerBound} 이상 ${upperBound} 미만입니다. 조건에 맞는 숫자는 ${matchingDigits.join(", ")}이므로 ${answer}개입니다.`, {
+          answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId,
+          difficultyDesign, reasoningSteps: level === 2 ? 3 : 2
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE3Mission2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e3-mission-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const digits = [
+        [2, 1, 5, 3, 7, 4],
+        [1, 2, 4, 6, 7, 9],
+        [2, 3, 4, 5, 7, 8]
+      ][poolIndex];
+      const smallest = Math.min(...digits);
+      const largest = Math.max(...digits);
+      let best = null;
+      let bestCount = 0;
+      const compare = (numerator, denominator) => {
+        const order = numerator.concat(denominator);
+        if (level === 0 && order[0] !== largest) return;
+        if (level === 2 && order[3] === smallest) return;
+        const n = order[0] * 100 + order[1] * 10 + order[2];
+        const d = order[3] * 100 + order[4] * 10 + order[5];
+        if (!best || n * best.d > best.n * d) {
+          best = { n, d, order };
+          bestCount = 1;
+        } else if (n * best.d === best.n * d) bestCount += 1;
+      };
+      const arrange = (placed, remaining) => {
+        if (!remaining.length) {
+          compare(placed.slice(0, 3), placed.slice(3));
+          return;
+        }
+        remaining.forEach((digit, index) => arrange(placed.concat(digit), remaining.filter((_, other) => other !== index)));
+      };
+      arrange([], digits);
+      if (!best || bestCount !== 1) throw new Error(`${sourceItemId}: 가장 큰 몫의 배열이 하나가 아닙니다.`);
+      const shownNumber = value => `${Math.floor(value / 100)}.${String(value % 100).padStart(2, "0")}`;
+      const roundedCents = Math.floor((200 * best.n + best.d) / (2 * best.d));
+      const answer = (roundedCents / 100).toFixed(2);
+      const cards = `<div class="source62-card-max__cards" role="group" aria-label="수 카드 ${digits.join(", ")}">${digits.map(digit => `<span class="source62-card-max__card" data-card-digit="${digit}">${digit}</span>`).join("")}</div>`;
+      const extraCondition = level === 0 ? `나누어지는 수의 일의 자리에는 ${largest}를 놓습니다. ` : level === 2 ? `나누는 수의 일의 자리에는 가장 작은 카드 숫자를 놓을 수 없습니다. ` : "";
+      const expression = `${shownNumber(best.n)} ÷ ${shownNumber(best.d)}`;
+      const reasoning = level === 2
+        ? "나누는 수의 일의 자리에는 쓸 수 있는 카드 중 가장 작은 수를 놓습니다. 나누어지는 수에는 큰 카드를 앞자리부터 놓고 남은 자리의 배치를 비교합니다."
+        : "나누어지는 수의 일의 자리에는 큰 카드를, 나누는 수의 일의 자리에는 작은 카드를 놓습니다. 남은 자리의 카드 배치를 비교합니다.";
+      const difficultyDesign = ["fixed-leading-card", "source-structure", "excluded-smallest-divisor"][level];
+      const answerVisual = `<div class="source62-card-max__answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><div class="source62-card-max__expression">${expression}</div><div class="source62-card-max__result">몫을 소수 둘째 자리까지 반올림하면 <strong>${answer}</strong></div></div>`;
+      return result(`<span class="source62-card-max__text">다음 수 카드를 한 번씩 모두 사용하여 (소수 두 자리 수) ÷ (소수 두 자리 수)의 몫이 가장 큰 나눗셈식을 만드세요. ${extraCondition}그 몫을 반올림하여 소수 둘째 자리까지 나타내세요.</span>${cards}`, answer,
+        `${reasoning} 가장 큰 몫의 식은 <span class="math-inline-expression">${expression}</span>이고, 소수 둘째 자리까지 반올림하면 ${answer}입니다.`, {
+          answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId,
+          difficultyDesign, reasoningSteps: level === 0 ? 2 : level === 1 ? 3 : 4
+        });
+    },
+    sourceGrade6SecondDecimalDivisionE5Exploration({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-exploration-1";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { speedTenths: 614, sampleMinutes: 270, fuelPerKmMl: 150, sourceMinutes: 180, hardMinutes: 240, initialFuelMl: 40000 },
+        { speedTenths: 576, sampleMinutes: 150, fuelPerKmMl: 125, sourceMinutes: 210, hardMinutes: 180, initialFuelMl: 35000 },
+        { speedTenths: 488, sampleMinutes: 225, fuelPerKmMl: 200, sourceMinutes: 150, hardMinutes: 210, initialFuelMl: 40000 }
+      ][poolIndex];
+      const sampleDistanceTenths = data.speedTenths * data.sampleMinutes / 60;
+      const targetMinutes = level === 2 ? data.hardMinutes : data.sourceMinutes;
+      const targetDistanceTenths = data.speedTenths * targetMinutes / 60;
+      const usedFuelMl = targetDistanceTenths * data.fuelPerKmMl / 10;
+      const remainingFuelMl = data.initialFuelMl - usedFuelMl;
+      if (![sampleDistanceTenths, targetDistanceTenths, usedFuelMl, remainingFuelMl].every(Number.isInteger) || remainingFuelMl <= 0) throw new Error(`${sourceItemId}: 거리와 휘발유 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 1)}km`;
+      const liters = value => `${plainDecimal(value, 3)}L`;
+      const hours = minutes => `${Math.floor(minutes / 60)}시간${minutes % 60 ? ` ${minutes % 60}분` : ""}`;
+      const decimalHours = minutes => plainDecimal(minutes * 100 / 60, 2);
+      const travel = level === 0
+        ? `어떤 자동차가 1시간에 ${km(data.speedTenths)}를 달립니다.`
+        : `어떤 자동차가 ${km(sampleDistanceTenths)}를 달리는 데 ${hours(data.sampleMinutes)}이 걸렸습니다.`;
+      const fuel = level === 2
+        ? `다른 날 달리기 시작할 때는 휘발유가 ${liters(data.initialFuelMl)} 있었고, 달리고 난 뒤에는 ${liters(remainingFuelMl)} 남았습니다.`
+        : `다른 날 달릴 때는 휘발유 ${liters(usedFuelMl)}를 사용했습니다.`;
+      const prompt = `${travel} 이 자동차는 항상 같은 빠르기로 달리며, 1km를 달릴 때 휘발유 ${liters(data.fuelPerKmMl)}를 씁니다. ${fuel} 이 자동차는 얼마 동안 달린 셈입니까?`;
+      const answer = hours(targetMinutes);
+      const difficultyDesign = ["speed-given", "source-distance-and-time", "remaining-fuel-extra-step"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-fuel-answer source62-e5-unit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>연료와 이동 시간</strong>${row("1시간에 달린 거리", km(data.speedTenths))}${level === 2 ? row("사용한 휘발유", liters(usedFuelMl)) : ""}${row("달린 거리", km(targetDistanceTenths))}${row("달린 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const speedStep = level === 0 ? "" : `1시간에 달린 거리는 ${math(`${km(sampleDistanceTenths)} ÷ ${decimalHours(data.sampleMinutes)} = ${km(data.speedTenths)}`)}입니다. `;
+      const fuelStep = level === 2 ? `사용한 휘발유는 ${math(`${liters(data.initialFuelMl)} − ${liters(remainingFuelMl)} = ${liters(usedFuelMl)}`)}입니다. ` : "";
+      const solution = `${speedStep}${fuelStep}달린 거리는 ${math(`${liters(usedFuelMl)} ÷ (${liters(data.fuelPerKmMl)}/km) = ${km(targetDistanceTenths)}`)}입니다. 걸린 시간은 ${math(`${km(targetDistanceTenths)} ÷ (${km(data.speedTenths)}/시간) = ${decimalHours(targetMinutes)}시간`)}이므로 답은 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Example1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-example-1";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { burnPerStepTenths: 8, stepMinutes: 5, initialMmTenths: 2350, remainingMmTenths: 1606, pauseMinutes: 40 },
+        { burnPerStepTenths: 9, stepMinutes: 3, initialMmTenths: 1840, remainingMmTenths: 1210, pauseMinutes: 25 },
+        { burnPerStepTenths: 24, stepMinutes: 10, initialMmTenths: 2170, remainingMmTenths: 970, pauseMinutes: 30, sameUnitCentimeters: true }
+      ][poolIndex];
+      const burnedMmTenths = data.initialMmTenths - data.remainingMmTenths;
+      if (burnedMmTenths <= 0 || burnedMmTenths % data.burnPerStepTenths !== 0) throw new Error(`${sourceItemId}: 탄 길이와 시간 간격이 정확하지 않습니다.`);
+      const burningMinutes = burnedMmTenths / data.burnPerStepTenths * data.stepMinutes;
+      const elapsedMinutes = burningMinutes + (level === 2 ? data.pauseMinutes : 0);
+      const duration = minutes => `${Math.floor(minutes / 60)}시간${minutes % 60 ? ` ${minutes % 60}분` : ""}`;
+      const mm = value => `${plainDecimal(value, 1)}mm`;
+      const cm = value => `${plainDecimal(value, 2)}cm`;
+      const useCentimeters = data.sameUnitCentimeters && level !== 0;
+      const length = useCentimeters ? cm : mm;
+      const initialLength = level === 0 ? mm(data.initialMmTenths) : cm(data.initialMmTenths);
+      const remainingLength = level === 0 ? mm(data.remainingMmTenths) : cm(data.remainingMmTenths);
+      const timeCondition = level === 2 ? `중간에 불을 ${data.pauseMinutes}분 동안 꺼 두었고, 그 밖의 시간에는 일정하게 탔습니다. ` : "";
+      const prompt = level === 0
+        ? `${data.stepMinutes}분에 ${mm(data.burnPerStepTenths)}씩 일정하게 타는 양초가 있습니다. 처음 불을 붙인 뒤 양초가 ${mm(burnedMmTenths)} 탈 때까지 몇 시간 몇 분이 걸렸습니까?`
+        : `${data.stepMinutes}분에 ${length(data.burnPerStepTenths)}씩 일정하게 타는 양초가 있습니다. 처음 길이는 ${initialLength}입니다. ${timeCondition}처음 불을 붙인 때부터 길이가 ${remainingLength}로 줄어들 때까지 몇 시간 몇 분이 걸렸습니까?`;
+      const answer = duration(elapsedMinutes);
+      const difficultyDesign = ["burned-length-given", "centimeter-lengths", "extinguished-time-extra-step"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-candle-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>탄 길이와 지난 시간</strong>${row("탄 길이", length(burnedMmTenths))}${row("실제로 탄 시간", duration(burningMinutes))}${level === 2 ? row("불을 꺼 둔 시간", `${data.pauseMinutes}분`) : ""}${row("지난 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const conversion = level === 0 || useCentimeters ? "" : `길이를 mm로 바꾸면 처음 ${mm(data.initialMmTenths)}, 나중 ${mm(data.remainingMmTenths)}입니다. `;
+      const burnedStep = level === 0 ? `탄 길이는 ${mm(burnedMmTenths)}입니다. `
+        : `${conversion}탄 길이는 ${math(`${length(data.initialMmTenths)} − ${length(data.remainingMmTenths)} = ${length(burnedMmTenths)}`)}입니다. `;
+      const solution = `${burnedStep}${math(`${length(burnedMmTenths)} ÷ ${length(data.burnPerStepTenths)} × ${data.stepMinutes}분 = ${burningMinutes}분`)} 동안 실제로 탔습니다. ${level === 2 ? `불을 꺼 둔 ${data.pauseMinutes}분까지 더하면 ${math(`${burningMinutes}분 + ${data.pauseMinutes}분 = ${elapsedMinutes}분`)}입니다. ` : ""}답은 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Example2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-example-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { sampleFuelMl: 1200, sampleDistanceTenths: 174, priceWon: 1480, sourceRatio: 20, firstLegRatio: 15, secondLegRatio: 10 },
+        { sampleFuelMl: 900, sampleDistanceTenths: 135, priceWon: 1600, sourceRatio: 20, firstLegRatio: 15, secondLegRatio: 10 },
+        { sampleFuelMl: 1500, sampleDistanceTenths: 240, priceWon: 1700, sourceRatio: 15, firstLegRatio: 12, secondLegRatio: 8 }
+      ][poolIndex];
+      const perLiterDistanceTenths = data.sampleDistanceTenths * 1000 / data.sampleFuelMl;
+      const targetRatio = level === 2 ? data.firstLegRatio + data.secondLegRatio : data.sourceRatio;
+      const targetDistanceTenths = data.sampleDistanceTenths * targetRatio;
+      const neededFuelMl = data.sampleFuelMl * targetRatio;
+      const costWon = neededFuelMl * data.priceWon / 1000;
+      if (![perLiterDistanceTenths, targetDistanceTenths, neededFuelMl, costWon].every(Number.isInteger) || costWon <= 0) throw new Error(`${sourceItemId}: 거리·연료·금액 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 1)}km`;
+      const liters = value => `${plainDecimal(value, 3)}L`;
+      const answer = `${costWon}원`;
+      const sample = level === 0
+        ? `이 자동차는 휘발유 1L로 ${km(perLiterDistanceTenths)}를 갑니다.`
+        : `휘발유 ${liters(data.sampleFuelMl)}로 ${km(data.sampleDistanceTenths)}를 갈 수 있는 자동차가 있습니다.`;
+      const trip = level === 2
+        ? `이 자동차가 첫날 ${km(data.sampleDistanceTenths * data.firstLegRatio)}를, 다음 날 ${km(data.sampleDistanceTenths * data.secondLegRatio)}를 갔다면`
+        : `이 자동차가 ${km(targetDistanceTenths)}를 가는 데`;
+      const prompt = `${sample} 휘발유 1L의 가격이 ${data.priceWon}원일 때, ${trip} 필요한 휘발유값은 얼마입니까?`;
+      const difficultyDesign = ["distance-per-liter-given", "source-fuel-distance-ratio", "two-day-total-distance"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-fuel-cost-answer source62-e5-unit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>필요한 휘발유값</strong>${row("전체 이동 거리", km(targetDistanceTenths))}${row("필요한 휘발유", liters(neededFuelMl))}${row("휘발유 1L 가격", `${data.priceWon}원`)}${row("휘발유값", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const totalStep = level === 2 ? `전체 거리는 ${math(`${km(data.sampleDistanceTenths * data.firstLegRatio)} + ${km(data.sampleDistanceTenths * data.secondLegRatio)} = ${km(targetDistanceTenths)}`)}입니다. ` : "";
+      const fuelStep = level === 0
+        ? `필요한 휘발유는 ${math(`${km(targetDistanceTenths)} ÷ (${km(perLiterDistanceTenths)}/L) = ${liters(neededFuelMl)}`)}입니다. `
+        : `${math(`${km(targetDistanceTenths)} ÷ ${km(data.sampleDistanceTenths)} = ${targetRatio}`)}배이므로 휘발유는 ${math(`${liters(data.sampleFuelMl)} × ${targetRatio} = ${liters(neededFuelMl)}`)}가 필요합니다. `;
+      const solution = `${totalStep}${fuelStep}휘발유값은 ${math(`${liters(neededFuelMl)} × ${data.priceWon}원/L = ${answer}`)}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Example3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-example-3";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { rateA: 280, rateB: 254, timeA: 195, timeB: 150, targetTime: 525, hardTime: 625, startMl: 13350 },
+        { rateA: 275, rateB: 325, timeA: 160, timeB: 200, targetTime: 625, hardTime: 655, startMl: 18600 },
+        { rateA: 245, rateB: 160, timeA: 140, timeB: 205, targetTime: 740, hardTime: 820, startMl: 16200 }
+      ][poolIndex];
+      const waterA = data.rateA * data.timeA;
+      const waterB = data.rateB * data.timeB;
+      const elapsedSeconds = level === 2 ? data.hardTime : data.targetTime;
+      const neededMl = (data.rateA + data.rateB) * elapsedSeconds;
+      const startingMl = level === 2 ? data.startMl : 0;
+      const endingMl = startingMl + neededMl;
+      const liters = ml => plainDecimal(ml, 3);
+      const duration = seconds => `${Math.floor(seconds / 60)}분${seconds % 60 ? ` ${seconds % 60}초` : ""}`;
+      const sampleTime = seconds => level === 0 ? `${seconds}초` : duration(seconds);
+      const answer = duration(elapsedSeconds);
+      const question = level === 2
+        ? `처음에 ${liters(startingMl)}L의 물이 들어 있는 물통에 두 수도꼭지를 함께 틀었습니다. 물통에 든 물이 ${liters(endingMl)}L에 이를 때까지 몇 분 몇 초가 걸릴까요?`
+        : `두 수도꼭지를 함께 틀어 ${liters(neededMl)}L의 물을 받으려면 몇 분 몇 초가 걸릴까요?`;
+      const difficultyDesign = ["seconds-given", "source-mixed-times", "initial-water-extra-step"][level];
+      const prompt = `두 수도꼭지를 각각 따로 틀어 물의 양을 재었습니다. ㉮에서는 ${sampleTime(data.timeA)} 동안 ${liters(waterA)}L, ㉯에서는 ${sampleTime(data.timeB)} 동안 ${liters(waterB)}L의 물이 나왔습니다. 각 수도꼭지에서 1초 동안 나오는 물의 양이 일정할 때, ${question}`;
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-two-taps-answer source62-e5-unit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>1초 동안 나오는 물</strong>${row("㉮", `${liters(data.rateA)}L`)}${row("㉯", `${liters(data.rateB)}L`)}${row("두 수도꼭지", `${liters(data.rateA + data.rateB)}L`)}${level === 2 ? row("새로 받을 물", `${liters(neededMl)}L`) : ""}${row("걸린 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const timeStep = level === 0 ? "" : `㉮의 ${duration(data.timeA)}는 ${data.timeA}초, ㉯의 ${duration(data.timeB)}는 ${data.timeB}초입니다. `;
+      const solution = `${timeStep}1초에 나오는 물은 ㉮가 ${math(`${liters(waterA)} ÷ ${data.timeA} = ${liters(data.rateA)} L`)}, ㉯가 ${math(`${liters(waterB)} ÷ ${data.timeB} = ${liters(data.rateB)} L`)}입니다. ${level === 2 ? `새로 받아야 할 물은 ${math(`${liters(endingMl)} − ${liters(startingMl)} = ${liters(neededMl)} L`)}입니다. ` : ""}함께 틀면 1초에 ${liters(data.rateA + data.rateB)}L이므로 ${math(`${liters(neededMl)} ÷ ${liters(data.rateA + data.rateB)} = ${elapsedSeconds}초`)}, 즉 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Example4({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-example-4";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { currentTenths: 134, stillTenths: 360, driftMinutes: 90, sourceMinutes: 150, hardMinutes: 210 },
+        { currentTenths: 96, stillTenths: 288, driftMinutes: 75, sourceMinutes: 135, hardMinutes: 165 },
+        { currentTenths: 120, stillTenths: 348, driftMinutes: 105, sourceMinutes: 165, hardMinutes: 195 }
+      ][poolIndex];
+      const downstreamTenths = data.stillTenths + data.currentTenths;
+      const upstreamTenths = data.stillTenths - data.currentTenths;
+      const targetMinutes = level === 2 ? data.hardMinutes : data.sourceMinutes;
+      const driftDistanceTenths = data.currentTenths * data.driftMinutes / 60;
+      const downstreamDistanceTenths = downstreamTenths * 120 / 60;
+      const targetDistanceTenths = upstreamTenths * targetMinutes / 60;
+      if (![driftDistanceTenths, downstreamDistanceTenths, targetDistanceTenths].every(Number.isInteger) || upstreamTenths <= 0) throw new Error(`${sourceItemId}: 거리 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 1)}km`;
+      const hours = minutes => `${Math.floor(minutes / 60)}시간${minutes % 60 ? ` ${minutes % 60}분` : ""}`;
+      const decimalHours = minutes => plainDecimal(minutes * 100 / 60, 2);
+      const drift = `${hours(data.driftMinutes)} 동안 ${km(driftDistanceTenths)}를 흐르는 강`;
+      const boat = level === 2
+        ? `이 강에서 배가 강물이 흐르는 방향으로 2시간 동안 ${km(downstreamDistanceTenths)}를 갔습니다. 배가 흐르지 않는 물에서 내는 빠르기는 강물을 따라갈 때와 거슬러 갈 때 같습니다.`
+        : `흐르지 않는 물에서 이 배는 1시간에 ${km(data.stillTenths)}를 갑니다.`;
+      const prompt = level === 0
+        ? `강물이 1시간에 ${km(data.currentTenths)}씩 흐릅니다. ${boat} 이 배가 강물이 흐르는 반대 방향으로 ${km(targetDistanceTenths)}를 가려면 몇 시간 몇 분이 걸릴까요?`
+        : `${drift}이 있습니다. ${boat} 이 배가 강물이 흐르는 반대 방향으로 ${km(targetDistanceTenths)}를 가려면 몇 시간 몇 분이 걸릴까요?`;
+      const answer = hours(targetMinutes);
+      const difficultyDesign = ["current-speed-given", "source-drift-distance", "downstream-observation"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-river-answer source62-e5-unit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>강물을 거슬러 가는 빠르기</strong>${row("강물이 흐르는 빠르기", `${km(data.currentTenths)}/시간`)}${level === 2 ? row("강물을 따라가는 빠르기", `${km(downstreamTenths)}/시간`) : ""}${row("흐르지 않는 물에서 배의 빠르기", `${km(data.stillTenths)}/시간`)}${row("강물을 거슬러 가는 빠르기", `${km(upstreamTenths)}/시간`)}${row("걸린 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const currentStep = level === 0 ? "" : `강물이 1시간에 흐르는 거리는 ${math(`${km(driftDistanceTenths)} ÷ ${decimalHours(data.driftMinutes)} = ${km(data.currentTenths)}`)}입니다. `;
+      const boatStep = level === 2 ? `강물을 따라가는 배는 1시간에 ${math(`${km(downstreamDistanceTenths)} ÷ 2 = ${km(downstreamTenths)}`)}를 가므로, 흐르지 않는 물에서 배의 빠르기는 ${math(`${km(downstreamTenths)} − ${km(data.currentTenths)} = ${km(data.stillTenths)}`)}입니다. ` : "";
+      const solution = `${currentStep}${boatStep}강물을 거슬러 가는 빠르기는 1시간에 ${math(`${km(data.stillTenths)} − ${km(data.currentTenths)} = ${km(upstreamTenths)}`)}입니다. ${math(`${km(targetDistanceTenths)} ÷ (${km(upstreamTenths)}/시간) = ${decimalHours(targetMinutes)}시간`)}이므로 답은 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Mission1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-1";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { sampleMinutes: 66, sampleDistanceHundredths: 418, targetHundredths: 4529, firstHundredths: 2347, secondHundredths: 2461 },
+        { sampleMinutes: 75, sampleDistanceHundredths: 525, targetHundredths: 4012, firstHundredths: 1936, secondHundredths: 2313 },
+        { sampleMinutes: 90, sampleDistanceHundredths: 540, targetHundredths: 3347, firstHundredths: 1904, secondHundredths: 1871 }
+      ][poolIndex];
+      const sampleHoursHundredths = data.sampleMinutes * 100 / 60;
+      const speedHundredths = data.sampleDistanceHundredths * 100 / sampleHoursHundredths;
+      const targetHundredths = level === 2 ? data.firstHundredths + data.secondHundredths : data.targetHundredths;
+      const roundedTenthsHours = Math.round(targetHundredths * 10 / speedHundredths);
+      if (![sampleHoursHundredths, speedHundredths, targetHundredths, roundedTenthsHours].every(Number.isInteger) || roundedTenthsHours <= 0) throw new Error(`${sourceItemId}: 거리·시간 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 2)}km`;
+      const hours = value => `${plainDecimal(value, 2)}시간`;
+      const answer = `${(roundedTenthsHours / 10).toFixed(1)}시간`;
+      const sample = level === 0
+        ? `미나는 걸어서 1시간에 ${km(speedHundredths)}를 갑니다.`
+        : `미나는 걸어서 ${Math.floor(data.sampleMinutes / 60)}시간 ${data.sampleMinutes % 60}분 동안 ${km(data.sampleDistanceHundredths)}를 갑니다.`;
+      const trip = level === 2
+        ? `같은 빠르기로 첫째 구간 ${km(data.firstHundredths)}와 둘째 구간 ${km(data.secondHundredths)}를 이어서 걸으면`
+        : `같은 빠르기로 ${km(targetHundredths)}를 걸으면`;
+      const prompt = `${sample} ${trip} 약 몇 시간이 걸릴까요? 시간을 소수 첫째 자리까지 반올림하여 나타내세요.`;
+      const difficultyDesign = ["hourly-distance-given", "source-time-distance", "two-leg-distance-before-rounding"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-walking-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>걷는 시간</strong>${row("1시간에 걷는 거리", km(speedHundredths))}${level === 2 ? row("전체 거리", km(targetHundredths)) : ""}${row("걸리는 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const speedStep = level === 0 ? "" : `1시간에 걷는 거리는 ${math(`${km(data.sampleDistanceHundredths)} ÷ ${hours(sampleHoursHundredths)} = ${km(speedHundredths)}`)}입니다. `;
+      const distanceStep = level === 2 ? `전체 거리는 ${math(`${km(data.firstHundredths)} + ${km(data.secondHundredths)} = ${km(targetHundredths)}`)}입니다. ` : "";
+      const solution = `${speedStep}${distanceStep}${math(`${km(targetHundredths)} ÷ (${km(speedHundredths)}/시간)`)}을 소수 첫째 자리까지 반올림하면 ${answer}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Mission2({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { aFuelMl: 2400, aDistanceHundredths: 3024, bFuelMl: 4600, bDistanceHundredths: 7245, hardFirstHundredths: 4232, hardSecondHundredths: 4462 },
+        { aFuelMl: 1500, aDistanceHundredths: 2160, bFuelMl: 2500, bDistanceHundredths: 5040, hardFirstHundredths: 2820, hardSecondHundredths: 2940 },
+        { aFuelMl: 1800, aDistanceHundredths: 2160, bFuelMl: 3200, bDistanceHundredths: 5760, hardFirstHundredths: 3360, hardSecondHundredths: 3552 }
+      ][poolIndex];
+      const bDistanceHundredths = level === 2 ? data.hardFirstHundredths + data.hardSecondHundredths : data.bDistanceHundredths;
+      const aPerLiterHundredths = data.aDistanceHundredths * 1000 / data.aFuelMl;
+      const bPerLiterHundredths = bDistanceHundredths * 1000 / data.bFuelMl;
+      const ratioHundredths = bPerLiterHundredths * 100 / aPerLiterHundredths;
+      if (![aPerLiterHundredths, bPerLiterHundredths, ratioHundredths].every(Number.isInteger) || ratioHundredths <= 100) throw new Error(`${sourceItemId}: 1L당 거리와 비교 순서가 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 2)}km`;
+      const liters = value => `${plainDecimal(value, 3)}L`;
+      const answer = `${plainDecimal(ratioHundredths, 2)}배`;
+      const sample = level === 0
+        ? `가 자동차는 휘발유 1L로 ${km(aPerLiterHundredths)}를, 나 자동차는 휘발유 1L로 ${km(bPerLiterHundredths)}를 갈 수 있습니다.`
+        : `가 자동차는 휘발유 ${liters(data.aFuelMl)}로 ${km(data.aDistanceHundredths)}를 갈 수 있습니다. 나 자동차는 휘발유 ${liters(data.bFuelMl)}로 ${level === 2 ? `첫째 구간 ${km(data.hardFirstHundredths)}와 둘째 구간 ${km(data.hardSecondHundredths)}를` : `${km(bDistanceHundredths)}를`} 갈 수 있습니다.`;
+      const prompt = `${sample} 휘발유 1L로 나 자동차가 갈 수 있는 거리는 가 자동차가 갈 수 있는 거리의 몇 배입니까?`;
+      const difficultyDesign = ["unit-distances-given", "source-fuel-distance-comparison", "second-car-two-leg-distance"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-car-ratio-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>휘발유 1L로 가는 거리</strong>${row("가 자동차", km(aPerLiterHundredths))}${row("나 자동차", km(bPerLiterHundredths))}${row("나 ÷ 가", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const distanceStep = level === 2 ? `나 자동차의 전체 거리는 ${math(`${km(data.hardFirstHundredths)} + ${km(data.hardSecondHundredths)} = ${km(bDistanceHundredths)}`)}입니다. ` : "";
+      const unitStep = level === 0 ? "" : `휘발유 1L로 가는 거리는 가 자동차가 ${math(`${km(data.aDistanceHundredths)} ÷ ${liters(data.aFuelMl)} = ${km(aPerLiterHundredths)}/L`)}, 나 자동차가 ${math(`${km(bDistanceHundredths)} ÷ ${liters(data.bFuelMl)} = ${km(bPerLiterHundredths)}/L`)}입니다. `;
+      const solution = `${distanceStep}${unitStep}나 자동차의 1L당 거리를 가 자동차의 1L당 거리로 나누면 ${math(`${km(bPerLiterHundredths)} ÷ ${km(aPerLiterHundredths)} = ${answer}`)}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Mission3({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-3";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { sampleMinutes: 108, sampleDistanceHundredths: 9360, currentHundredths: 4750, targetHundredths: 1800 },
+        { sampleMinutes: 90, sampleDistanceHundredths: 810, currentHundredths: 240, targetHundredths: 900 },
+        { sampleMinutes: 75, sampleDistanceHundredths: 875, currentHundredths: 560, targetHundredths: 700 }
+      ][poolIndex];
+      const sampleHoursHundredths = data.sampleMinutes * 100 / 60;
+      const stillHundredths = data.sampleDistanceHundredths * 100 / sampleHoursHundredths;
+      const upstreamHundredths = stillHundredths - data.currentHundredths;
+      const currentSampleMinutes = 30;
+      const currentSampleDistanceHundredths = data.currentHundredths * currentSampleMinutes / 60;
+      if (![sampleHoursHundredths, stillHundredths, upstreamHundredths, currentSampleDistanceHundredths].every(Number.isInteger)
+        || upstreamHundredths <= 0 || data.targetHundredths % upstreamHundredths !== 0) throw new Error(`${sourceItemId}: 거슬러 가는 시간과 거리 조건이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 2)}km`;
+      const speed = value => `${plainDecimal(value, 2)}km/시간`;
+      const hours = value => `${plainDecimal(value, 2)}시간`;
+      const measuredTime = `${Math.floor(data.sampleMinutes / 60)}시간 ${data.sampleMinutes % 60}분`;
+      const answer = `${data.targetHundredths / upstreamHundredths}시간`;
+      const salmonCondition = level === 0
+        ? `연어는 물이 흐르지 않는 곳에서 1시간에 ${km(stillHundredths)}를 갑니다.`
+        : `연어는 물이 흐르지 않는 곳에서 ${measuredTime} 동안 ${km(data.sampleDistanceHundredths)}를 갑니다.`;
+      const currentCondition = level === 2
+        ? `강물은 ${currentSampleMinutes}분 동안 ${km(currentSampleDistanceHundredths)} 흐릅니다.`
+        : `강물은 1시간에 ${km(data.currentHundredths)} 흐릅니다.`;
+      const prompt = `${currentCondition} ${salmonCondition} 이 연어가 강물이 흐르는 반대 방향으로 ${km(data.targetHundredths)}를 가는 데 걸리는 시간은 얼마입니까?`;
+      const difficultyDesign = ["still-water-speed-given", "still-water-distance-and-time", "derive-current-from-distance-and-time"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-upstream-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>강물을 거슬러 가는 시간</strong>${row("물살 없는 곳에서", speed(stillHundredths))}${row("강물의 빠르기", speed(data.currentHundredths))}${row("거슬러 가는 빠르기", speed(upstreamHundredths))}${row("걸린 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const stillStep = level === 0 ? "" : `물살 없는 곳에서의 빠르기는 ${math(`${km(data.sampleDistanceHundredths)} ÷ ${hours(sampleHoursHundredths)} = ${speed(stillHundredths)}`)}입니다. `;
+      const currentStep = level === 2 ? `강물의 빠르기는 ${math(`${km(currentSampleDistanceHundredths)} ÷ ${hours(currentSampleMinutes * 100 / 60)} = ${speed(data.currentHundredths)}`)}입니다. ` : "";
+      const solution = `${stillStep}${currentStep}거슬러 가는 빠르기는 ${math(`${speed(stillHundredths)} − ${speed(data.currentHundredths)} = ${speed(upstreamHundredths)}`)}입니다. 따라서 ${math(`${km(data.targetHundredths)} ÷ ${speed(upstreamHundredths)} = ${answer}`)}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Mission3DownstreamCandidate({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-3";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { sampleMinutes: 108, sampleDistanceHundredths: 9360, currentHundredths: 2150, targetHundredths: 1800 },
+        { sampleMinutes: 90, sampleDistanceHundredths: 1200, currentHundredths: 150, targetHundredths: 1500 },
+        { sampleMinutes: 75, sampleDistanceHundredths: 1250, currentHundredths: 250, targetHundredths: 2000 }
+      ][poolIndex];
+      const sampleHoursHundredths = data.sampleMinutes * 100 / 60;
+      const downstreamHundredths = data.sampleDistanceHundredths * 100 / sampleHoursHundredths;
+      const stillHundredths = downstreamHundredths - data.currentHundredths;
+      const upstreamHundredths = stillHundredths - data.currentHundredths;
+      const currentSampleMinutes = 30;
+      const currentSampleDistanceHundredths = data.currentHundredths * currentSampleMinutes / 60;
+      if (![sampleHoursHundredths, downstreamHundredths, stillHundredths, upstreamHundredths, currentSampleDistanceHundredths].every(Number.isInteger)
+        || upstreamHundredths <= 0 || data.targetHundredths % upstreamHundredths !== 0) throw new Error(`${sourceItemId}: 하류·상류 빠르기와 시간이 맞지 않습니다.`);
+      const km = value => `${plainDecimal(value, 2)}km`;
+      const speed = value => `${plainDecimal(value, 2)}km/시간`;
+      const hours = value => `${plainDecimal(value, 2)}시간`;
+      const measuredTime = `${Math.floor(data.sampleMinutes / 60)}시간 ${data.sampleMinutes % 60}분`;
+      const answer = `${data.targetHundredths / upstreamHundredths}시간`;
+      const currentCondition = level === 2
+        ? `강물은 ${currentSampleMinutes}분 동안 ${km(currentSampleDistanceHundredths)} 흐릅니다.`
+        : `강물은 1시간에 ${km(data.currentHundredths)} 흐릅니다.`;
+      const downstreamCondition = level === 0
+        ? `연어는 물이 흐르는 방향으로 1시간에 ${km(downstreamHundredths)} 갑니다.`
+        : `연어는 물이 흐르는 방향으로 ${measuredTime} 동안 ${km(data.sampleDistanceHundredths)} 갔습니다.`;
+      const prompt = `${currentCondition} ${downstreamCondition} 연어가 헤엄치는 빠르기를 바꾸지 않고 같은 강에서 물이 흐르는 반대 방향으로 ${km(data.targetHundredths)}를 가는 데 걸리는 시간은 얼마입니까?`;
+      const difficultyDesign = ["downstream-speed-given", "downstream-distance-and-time", "derive-current-from-distance-and-time"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-downstream-answer" data-answer-source="${sourceItemId}" data-source-relationship="downstream-number-corrected-adaptation" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>거슬러 가는 시간</strong>${row("물이 흐르는 방향", speed(downstreamHundredths))}${row("물살 없는 곳에서", speed(stillHundredths))}${row("거슬러 가는 빠르기", speed(upstreamHundredths))}${row("걸린 시간", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const downstreamStep = level === 0 ? "" : `물이 흐르는 방향으로 가는 빠르기는 ${math(`${km(data.sampleDistanceHundredths)} ÷ ${hours(sampleHoursHundredths)} = ${speed(downstreamHundredths)}`)}입니다. `;
+      const currentStep = level === 2 ? `강물의 빠르기는 ${math(`${km(currentSampleDistanceHundredths)} ÷ ${hours(currentSampleMinutes * 100 / 60)} = ${speed(data.currentHundredths)}`)}입니다. ` : "";
+      const stillStep = `물살 없는 곳에서 헤엄치는 빠르기는 ${math(`${speed(downstreamHundredths)} − ${speed(data.currentHundredths)} = ${speed(stillHundredths)}`)}입니다. `;
+      const upstreamStep = `거슬러 가는 빠르기는 ${math(`${speed(stillHundredths)} − ${speed(data.currentHundredths)} = ${speed(upstreamHundredths)}`)}입니다. `;
+      const solution = `${downstreamStep}${currentStep}${stillStep}${upstreamStep}따라서 ${math(`${km(data.targetHundredths)} ÷ ${speed(upstreamHundredths)} = ${answer}`)}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Mission4({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-4";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { fullMl: 6000, fullMassG: 6110, usedMl: 1750, afterMassG: 4500, firstUsedMl: 1000, secondUsedMl: 750 },
+        { fullMl: 5000, fullMassG: 4920, usedMl: 1500, afterMassG: 3660, firstUsedMl: 600, secondUsedMl: 900 },
+        { fullMl: 7500, fullMassG: 7250, usedMl: 2250, afterMassG: 5270, firstUsedMl: 1000, secondUsedMl: 1250 }
+      ][poolIndex];
+      const densityGPerLiter = (data.fullMassG - data.afterMassG) * 1000 / data.usedMl;
+      const tareG = data.fullMassG - data.fullMl * densityGPerLiter / 1000;
+      const afterFirstMassG = data.fullMassG - data.firstUsedMl * densityGPerLiter / 1000;
+      const remainingMl = data.fullMl - data.usedMl;
+      if (![densityGPerLiter, tareG, afterFirstMassG, remainingMl].every(Number.isInteger)
+        || data.firstUsedMl + data.secondUsedMl !== data.usedMl || tareG <= 0
+        || tareG + remainingMl * densityGPerLiter / 1000 !== data.afterMassG) throw new Error(`${sourceItemId}: 무게와 참기름 양이 맞지 않습니다.`);
+      const liters = value => `${plainDecimal(value, 3)}L`;
+      const kg = value => `${plainDecimal(value, 3)}kg`;
+      const answer = kg(tareG);
+      const prompt = level === 0
+        ? `참기름 ${liters(data.fullMl)}가 들어 있는 통의 무게는 ${kg(data.fullMassG)}입니다. 참기름 1L의 무게는 ${kg(densityGPerLiter)}입니다. 빈 통의 무게는 몇 kg입니까?`
+        : level === 1
+          ? `참기름 ${liters(data.fullMl)}가 들어 있는 통의 무게는 ${kg(data.fullMassG)}입니다. 이 통에서 참기름 ${liters(data.usedMl)}를 사용한 뒤 무게는 ${kg(data.afterMassG)}이었습니다. 빈 통의 무게는 몇 kg입니까?`
+          : `처음 참기름 ${liters(data.fullMl)}가 들어 있었습니다. 참기름 ${liters(data.firstUsedMl)}를 사용한 뒤 통의 무게는 ${kg(afterFirstMassG)}, 참기름 ${liters(data.secondUsedMl)}를 더 사용한 뒤 통의 무게는 ${kg(data.afterMassG)}이었습니다. 빈 통의 무게는 몇 kg입니까?`;
+      const difficultyDesign = ["oil-unit-mass-given", "source-two-weighings", "two-stage-use-and-weighing"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-oil-container-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>빈 통의 무게</strong>${row("참기름 1L의 무게", kg(densityGPerLiter))}${row(level === 2 ? "남은 참기름" : "처음 참기름", liters(level === 2 ? remainingMl : data.fullMl))}${row("빈 통", answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const densityStep = level === 0 ? "" : level === 1
+        ? `사용한 참기름 ${liters(data.usedMl)}의 무게는 ${math(`${kg(data.fullMassG)} − ${kg(data.afterMassG)} = ${kg(data.fullMassG - data.afterMassG)}`)}입니다. 참기름 1L의 무게는 ${math(`${kg(data.fullMassG - data.afterMassG)} ÷ ${liters(data.usedMl)} = ${kg(densityGPerLiter)}/L`)}입니다. `
+        : `두 번 잰 통의 무게 차이는 두 번째로 사용한 참기름의 무게이므로 ${math(`${kg(afterFirstMassG)} − ${kg(data.afterMassG)} = ${kg(afterFirstMassG - data.afterMassG)}`)}입니다. 참기름 1L의 무게는 ${math(`${kg(afterFirstMassG - data.afterMassG)} ÷ ${liters(data.secondUsedMl)} = ${kg(densityGPerLiter)}/L`)}입니다. `;
+      const tareStep = level === 2
+        ? `남은 참기름은 ${math(`${liters(data.fullMl)} − ${liters(data.firstUsedMl)} − ${liters(data.secondUsedMl)} = ${liters(remainingMl)}`)}입니다. 빈 통의 무게는 ${math(`${kg(data.afterMassG)} − ${liters(remainingMl)} × ${kg(densityGPerLiter)}/L = ${answer}`)}입니다.`
+        : `빈 통의 무게는 ${math(`${kg(data.fullMassG)} − ${liters(data.fullMl)} × ${kg(densityGPerLiter)}/L = ${answer}`)}입니다.`;
+      return result(prompt, answer, `${densityStep}${tareStep}`, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE5Mission6({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-6";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { milesPerGallon: 30, kmPerMileTenths: 16, kmPerLiterTenths: 128, firstGallons: 40, secondGallons: 60 },
+        { milesPerGallon: 45, kmPerMileTenths: 16, kmPerLiterTenths: 192, firstGallons: 35, secondGallons: 45 },
+        { milesPerGallon: 38, kmPerMileTenths: 16, kmPerLiterTenths: 160, firstGallons: 40, secondGallons: 50 }
+      ][poolIndex];
+      const gallons = data.firstGallons + data.secondGallons;
+      const kmPerGallonTenths = data.milesPerGallon * data.kmPerMileTenths;
+      const litersPerGallonHundredths = kmPerGallonTenths * 100 / data.kmPerLiterTenths;
+      const answerHundredths = gallons * litersPerGallonHundredths;
+      if (!Number.isInteger(litersPerGallonHundredths) || !Number.isInteger(answerHundredths)
+        || litersPerGallonHundredths <= 0 || answerHundredths % 100 !== 0) throw new Error(`${sourceItemId}: 거리와 연료 환산이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 1)}km`;
+      const liters = value => `${plainDecimal(value, 2)}L`;
+      const answer = liters(answerHundredths);
+      const sourceConditions = `승용차는 휘발유 1갤런에 ${data.milesPerGallon}마일을 달리고, 휘발유 1L에 ${km(data.kmPerLiterTenths)}를 달립니다. 1마일은 ${km(data.kmPerMileTenths)}입니다.`;
+      const easyConditions = `승용차는 휘발유 1갤런으로 ${data.milesPerGallon}마일, 즉 ${km(kmPerGallonTenths)}를 달립니다. 휘발유 1L로는 ${km(data.kmPerLiterTenths)}를 달립니다.`;
+      const target = level === 2
+        ? `이 승용차가 휘발유 ${data.firstGallons}갤런과 ${data.secondGallons}갤런을 사용했다면, 사용한 휘발유는 모두 몇 L입니까?`
+        : `휘발유 ${gallons}갤런은 몇 L입니까?`;
+      const prompt = `${level === 0 ? easyConditions : sourceConditions} ${target}`;
+      const difficultyDesign = ["mile-distance-already-converted", "source-mile-and-fuel-relations", "two-fuel-amounts-then-convert"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-gallon-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>연료 환산</strong>${row("1갤런", liters(litersPerGallonHundredths))}${row(`${gallons}갤런`, answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const mileStep = level === 0 ? "" : `1갤런으로 가는 거리는 ${math(`${data.milesPerGallon} × ${plainDecimal(data.kmPerMileTenths, 1)} = ${plainDecimal(kmPerGallonTenths, 1)}(km)`)}입니다. `;
+      const gallonStep = `1갤런의 양은 ${math(`${plainDecimal(kmPerGallonTenths, 1)} ÷ ${plainDecimal(data.kmPerLiterTenths, 1)} = ${plainDecimal(litersPerGallonHundredths, 2)}(L)`)}입니다. `;
+      const totalStep = level === 2 ? `사용한 휘발유는 ${math(`${data.firstGallons} + ${data.secondGallons} = ${gallons}(갤런)`)}입니다. ` : "";
+      const solution = `${mileStep}${gallonStep}${totalStep}따라서 ${math(`${gallons} × ${plainDecimal(litersPerGallonHundredths, 2)} = ${plainDecimal(answerHundredths, 2)}(L)`)}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE6Example1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e6-example-1";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { initialPercent: 20, numerator: 5, denominator: 8, addedHundredths: 252, emptyPercent: 15, removedHundredths: 84, hardEmptyPercent: 20 },
+        { initialPercent: 25, numerator: 2, denominator: 5, addedHundredths: 360, emptyPercent: 25, removedHundredths: 180, hardEmptyPercent: 35 },
+        { initialPercent: 30, numerator: 3, denominator: 7, addedHundredths: 480, emptyPercent: 20, removedHundredths: 120, hardEmptyPercent: 25 }
+      ][poolIndex];
+      const filledPercent = data.initialPercent + (100 - data.initialPercent) * data.numerator / data.denominator;
+      const finalPercent = 100 - (level === 2 ? data.hardEmptyPercent : data.emptyPercent);
+      const changeHundredths = data.addedHundredths - (level === 2 ? data.removedHundredths : 0);
+      const differencePercent = finalPercent - filledPercent;
+      const capacityHundredths = changeHundredths * 100 / differencePercent;
+      if (![filledPercent, capacityHundredths].every(Number.isInteger) || differencePercent <= 0
+        || data.initialPercent <= 0 || data.numerator <= 0 || data.numerator >= data.denominator
+        || capacityHundredths * (100 - filledPercent) < data.addedHundredths * 100) {
+        throw new Error(`${sourceItemId}: 물의 양과 물통의 들이가 정확하지 않습니다.`);
+      }
+      const decimal = value => plainDecimal(value, 2);
+      const liters = value => `${decimal(value)}L`;
+      const answer = liters(capacityHundredths);
+      const firstStage = level === 0
+        ? `어느 물통에 물통 들이의 ${decimal(filledPercent)}만큼 물이 채워져 있습니다. `
+        : `어느 물통에 물통 들이의 ${decimal(data.initialPercent)}만큼 물이 채워져 있습니다. 처음에 물이 채워지지 않은 부분의 ${fractionMarkup(data.numerator, data.denominator)}만큼 물을 채웠습니다. `;
+      const lastStage = level === 0
+        ? `물 ${liters(data.addedHundredths)}를 더 넣었더니 물통 들이의 ${decimal(finalPercent)}만큼 물이 채워졌습니다. `
+        : `그 뒤 물 ${liters(data.addedHundredths)}를 더 넣었${level === 2 ? `다가 물 ${liters(data.removedHundredths)}를 덜어냈` : ""}더니 물이 채워지지 않은 부분이 전체 들이의 ${100 - finalPercent}%가 되었습니다. `;
+      const prompt = `${firstStage}${lastStage}이 물통의 들이는 몇 L입니까?`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const fillStep = level === 0 ? "" : `처음 빈 부분은 전체의 ${math(`1 − ${decimal(data.initialPercent)} = ${decimal(100 - data.initialPercent)}`)}입니다. 그 부분에 채운 물은 전체의 ${math(`${decimal(100 - data.initialPercent)} × ${fractionMarkup(data.numerator, data.denominator)} = ${decimal(filledPercent - data.initialPercent)}`)}이므로, 그때 채워진 물은 전체의 ${math(`${decimal(data.initialPercent)} + ${decimal(filledPercent - data.initialPercent)} = ${decimal(filledPercent)}`)}입니다. `;
+      const finalStep = level === 0 ? "" : `마지막에 채워진 물은 전체의 ${math(`1 − ${decimal(100 - finalPercent)} = ${decimal(finalPercent)}`)}입니다. `;
+      const changeStep = level === 2 ? `늘어난 물의 양은 ${math(`${decimal(data.addedHundredths)} − ${decimal(data.removedHundredths)} = ${decimal(changeHundredths)}(L)`)}입니다. ` : "";
+      const solution = `${fillStep}${finalStep}${changeStep}전체 들이의 ${math(`${decimal(finalPercent)} − ${decimal(filledPercent)} = ${decimal(differencePercent)}`)}이 ${liters(changeHundredths)}입니다. 따라서 물통의 들이는 ${math(`${decimal(changeHundredths)} ÷ ${decimal(differencePercent)} = ${decimal(capacityHundredths)}(L)`)}입니다.`;
+      const difficultyDesign = ["filled-ratio-given", "source-nested-empty-fraction", "withdrawal-extra-step"][level];
+      const answerVisual = `<div class="source61-math-board" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>물통의 들이</strong><div class="source61-math-row"><span>늘어난 비율</span><b>${decimal(differencePercent)}</b></div><div class="source61-math-row"><span>물통의 들이</span><b>${answer}</b></div></div>`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE6Example2Candidate({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e6-example-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { baseHundredths: 33150, gainHundredths: 61, temperature: 26, seconds: 5 },
+        { baseHundredths: 33240, gainHundredths: 54, temperature: 18, seconds: 4 },
+        { baseHundredths: 33080, gainHundredths: 75, temperature: 24, seconds: 6 }
+      ][poolIndex];
+      const knownTemperature = 5;
+      const knownSpeedHundredths = data.baseHundredths + knownTemperature * data.gainHundredths;
+      const targetSpeedHundredths = data.baseHundredths + data.temperature * data.gainHundredths;
+      const totalDistanceHundredths = targetSpeedHundredths * data.seconds;
+      if (data.temperature <= knownTemperature || data.gainHundredths <= 0
+        || ![knownSpeedHundredths, targetSpeedHundredths, totalDistanceHundredths].every(Number.isInteger)) {
+        throw new Error(`${sourceItemId}: 원본의 온도·거리 조건이 일치하지 않습니다.`);
+      }
+      const meters = value => `${plainDecimal(value, 2)}m`;
+      const celsius = value => `${value}℃`;
+      const answer = celsius(data.temperature);
+      const prompt = level === 0
+        ? `공기 중에서 기온이 0℃일 때 소리는 1초에 ${meters(data.baseHundredths)}를 이동합니다. 기온이 1℃씩 높아지면 1초에 이동하는 거리가 ${meters(data.gainHundredths)}씩 늘어납니다. 소리가 1초에 ${meters(targetSpeedHundredths)}를 이동할 때 기온은 몇 ℃입니까?`
+        : level === 1
+          ? `공기 중에서 기온이 0℃일 때 소리는 1초에 ${meters(data.baseHundredths)}를 이동하고, 기온이 1℃씩 높아지면 1초에 ${meters(data.gainHundredths)}씩 더 이동합니다. 소리가 ${data.seconds}초 동안 ${meters(totalDistanceHundredths)}를 이동했다면 기온은 몇 ℃입니까?`
+          : `공기 중에서 기온이 ${knownTemperature}℃일 때 소리는 1초에 ${meters(knownSpeedHundredths)}를 이동합니다. 기온이 1℃씩 높아지면 1초에 이동하는 거리가 ${meters(data.gainHundredths)}씩 늘어납니다. 소리가 ${data.seconds}초 동안 ${meters(totalDistanceHundredths)}를 이동했다면 기온은 몇 ℃입니까?`;
+      const baselineTemperature = level === 2 ? knownTemperature : 0;
+      const baselineSpeedHundredths = level === 2 ? knownSpeedHundredths : data.baseHundredths;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const speedStep = level === 0 ? "" : `1초에 이동한 거리는 ${math(`${meters(totalDistanceHundredths)} ÷ ${data.seconds} = ${meters(targetSpeedHundredths)}`)}입니다. `;
+      const temperatureIncrease = data.temperature - baselineTemperature;
+      const temperatureStep = `${baselineTemperature}℃일 때보다 1초에 이동한 거리가 ${math(`${plainDecimal(targetSpeedHundredths, 2)} − ${plainDecimal(baselineSpeedHundredths, 2)} = ${plainDecimal(temperatureIncrease * data.gainHundredths, 2)}(m)`)} 더 깁니다. 1℃마다 ${meters(data.gainHundredths)}씩 늘어나므로 기온은 ${math(`${plainDecimal(temperatureIncrease * data.gainHundredths, 2)} ÷ ${plainDecimal(data.gainHundredths, 2)} = ${temperatureIncrease}(℃)`)}만큼 높습니다. `;
+      const finalStep = level === 2 ? `따라서 ${math(`${knownTemperature} + ${temperatureIncrease} = ${data.temperature}(℃)`)}입니다.` : `따라서 기온은 ${answer}입니다.`;
+      const difficultyDesign = ["one-second-distance-given", "source-total-distance-and-time", "nonzero-baseline-temperature"][level];
+      const answerVisual = `<div class="source61-math-board source62-e6-sound-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>소리의 속력과 기온</strong><div class="source61-math-row"><span>1초에 이동한 거리</span><b>${meters(targetSpeedHundredths)}</b></div><div class="source61-math-row"><span>기온</span><b>${answer}</b></div></div>`;
+      return result(prompt, answer, `${speedStep}${temperatureStep}${finalStep}`, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");
@@ -27548,7 +28767,7 @@
         const [ex, ey] = polar(cx, cy, radius, start + angle);
         return `M ${cx} ${cy} L ${sx.toFixed(2)} ${sy.toFixed(2)} A ${radius} ${radius} 0 ${angle > 180 ? 1 : 0} 1 ${ex.toFixed(2)} ${ey.toFixed(2)} Z`;
       };
-      const chartMarkup = ({ chart, cx, cy, radius, solved, chartIndex, chartCount }) => {
+      const chartMarkup = ({ chart, cx, cy, radius, solved, chartIndex, chartCount, singleColumn = false }) => {
         const angleTotal = chart.segments.reduce((sum, segment) => sum + segment.angle, 0);
         if (Math.abs(angleTotal - 360) > 1e-8) throw new Error(`${sourceItemId}: 원그래프 중심각의 합이 ${angleTotal}도입니다.`);
         let start = chart.startAngle ?? -90;
@@ -27561,25 +28780,28 @@
           let degreeMarkup = "";
           if (degree !== undefined && degree !== null) {
             const [dx, dy] = polar(cx, cy, radius * .48, midpoint);
-            degreeMarkup = `<path class="source61-e3-angle-arc" data-angle-owner="${esc(segment.label)}" data-angle-value="${degree}" data-angle-start="${segmentStart}" data-angle-end="${segmentStart + segment.angle}" d="${arcPath(cx, cy, radius * .32, segmentStart + 5, Math.max(1, segment.angle - 10))}" fill="none" stroke="#a85f00" stroke-width="2"/><text class="source61-e3-angle-label" x="${dx.toFixed(2)}" y="${(dy + 4).toFixed(2)}" text-anchor="middle" fill="#7a4300" font-size="${chartCount === 3 ? 8.5 : 10}" font-weight="900">${esc(degree)}°</text>`;
+            const angleFontSize = singleColumn ? 14 : chartCount === 3 ? 8.5 : 10;
+            degreeMarkup = `<path class="source61-e3-angle-arc" data-angle-owner="${esc(segment.label)}" data-angle-value="${degree}" data-angle-start="${segmentStart}" data-angle-end="${segmentStart + segment.angle}" d="${arcPath(cx, cy, radius * .32, segmentStart + 5, Math.max(1, segment.angle - 10))}" fill="none" stroke="#a85f00" stroke-width="2"/><text class="source61-e3-angle-label" x="${dx.toFixed(2)}" y="${(dy + 4).toFixed(2)}" text-anchor="middle" fill="#7a4300" font-size="${angleFontSize}" font-weight="900" style="font-size:${angleFontSize}px">${esc(degree)}°</text>`;
           }
           return `<g class="source61-e3-sector${highlight ? " is-solved" : ""}" data-chart-index="${chartIndex}" data-segment-index="${segmentIndex}" data-segment-label="${esc(segment.label)}" data-segment-angle="${solved ? segment.angle : ""}" data-segment-start="${solved ? segmentStart : ""}" data-segment-end="${solved ? segmentStart + segment.angle : ""}"><path d="${sectorPath(cx, cy, radius, segmentStart, segment.angle)}" fill="${highlight ? "#ffd86b" : colors[segmentIndex % colors.length]}" stroke="#183b56" stroke-width="1.4"/>${degreeMarkup}</g>`;
         }).join("");
         const titleY = cy - radius - 18;
         const legendStartY = cy + radius + 22;
-        const legendColumns = chartCount === 1 ? 2 : 1;
+        const legendColumns = singleColumn ? 1 : chartCount === 1 && variant !== 7 ? 2 : 1;
+        const legendRowGap = variant === 7 ? 36 : singleColumn ? 30 : 18;
         const legendWidth = chartCount === 1 ? 210 : chartCount === 2 ? 205 : 126;
         const legend = chart.segments.filter(segment => segment.label).map((segment, index) => {
           const col = index % legendColumns;
           const row = Math.floor(index / legendColumns);
           const chartEdgeInset = chartCount === 3 ? 10 : 0;
           const x = cx - (legendColumns === 2 ? 190 : radius) + chartEdgeInset + col * legendWidth;
-          const y = legendStartY + row * 18;
+          const y = legendStartY + row * legendRowGap;
           const rawDisplay = solved ? (segment.answerText ?? segment.problemText ?? "") : (segment.problemText ?? "");
           const degree = solved ? (segment.answerDegree ?? segment.problemDegree) : segment.problemDegree;
           const display = degree === undefined || degree === null ? rawDisplay : rawDisplay.replace(new RegExp(`^${String(degree).replace(".", "\\.")}°(?:\\s*·\\s*)?`), "");
           const text = `${segment.label}${display ? ` · ${display}` : ""}`;
-          return `<rect x="${x}" y="${y - 9}" width="9" height="9" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width=".7"/><text x="${x + 13}" y="${y}" text-anchor="start" fill="#183b56" font-size="${chartCount === 3 ? 7.5 : 8.5}">${esc(text)}</text>`;
+          const fontSize = singleColumn || variant === 7 ? 16 : chartCount === 1 ? 12 : chartCount === 2 ? 10 : 11;
+          return `<rect x="${x}" y="${y - 9}" width="9" height="9" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width=".7"/><text class="source61-e3-legend-label" x="${x + 13}" y="${y}" text-anchor="start" fill="#183b56" font-size="${fontSize}" style="font-size:${fontSize}px;text-anchor:start">${esc(text)}</text>`;
         }).join("");
         return `<g class="source61-e3-chart" data-chart-title="${esc(chart.title)}" data-angle-signature="${solved ? chart.segments.map(segment => segment.angle).join(",") : ""}"><text x="${cx}" y="${titleY}" text-anchor="middle" fill="#183b56" font-size="11" font-weight="900">${esc(chart.title)}</text>${sectors}${legend}</g>`;
       };
@@ -27587,12 +28809,32 @@
         const count = charts.length;
         const positions = count === 1 ? [{ cx: 270, cy: 160, radius: 82 }] : count === 2 ? [{ cx: 145, cy: 150, radius: 70 }, { cx: 395, cy: 150, radius: 70 }] : [{ cx: 92, cy: 145, radius: 58 }, { cx: 270, cy: 145, radius: 58 }, { cx: 448, cy: 145, radius: 58 }];
         const maxSegments = Math.max(...charts.map(chart => chart.segments.length));
-        const legendRows = count === 1 ? Math.ceil(maxSegments / 2) : maxSegments;
-        const resultY = (count === 3 ? 233 : count === 2 ? 246 : 272) + legendRows * 18 + (extra ? 34 : 0);
-        const height = resultY + (solved && resultText ? 50 : 24);
-        const markup = charts.map((chart, index) => chartMarkup({ chart, ...positions[index], solved, chartIndex: index, chartCount: count })).join("");
-        const final = solved && resultText ? `<rect class="source61-e3-result-box" data-final-answer="${esc(resultText)}" x="92" y="${resultY}" width="356" height="30" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/><text x="270" y="${resultY + 20}" text-anchor="middle" fill="#183b56" font-size="10" font-weight="900">답: ${esc(resultText)}</text>` : "";
-        return `<svg class="geometry-diagram source61-graphs-e3-diagram" style="width:min(620px,100%);height:auto" viewBox="0 0 540 ${height}" role="img" aria-label="${esc(title)}" data-source61-graphs-e3-structure="${esc(title)}" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="${solved ? values.join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="520" height="${height - 18}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">${esc(title)}</text>${markup}${extra}${final}</svg>`;
+        const compactSingleChart = count === 1 && variant === 7;
+        const renderDesktop = () => {
+          const legendRows = count === 1 && variant !== 7 ? Math.ceil(maxSegments / 2) : maxSegments;
+          const legendRowGap = count === 1 && variant === 7 ? 36 : 18;
+          const resultY = (count === 3 ? 233 : count === 2 ? 246 : 272) + legendRows * legendRowGap + (extra ? 34 : 0);
+          const height = resultY + (solved && resultText ? 50 : 24);
+          const viewBox = compactSingleChart ? `0 0 440 ${height}` : `0 0 540 ${height}`;
+          const frameWidth = compactSingleChart ? 420 : 520;
+          const contentTransform = compactSingleChart ? ` transform="translate(-50 0)"` : "";
+          const markup = charts.map((chart, index) => chartMarkup({ chart, ...positions[index], solved, chartIndex: index, chartCount: count, singleColumn: compactSingleChart })).join("");
+          const final = solved && resultText ? `<rect class="source61-e3-result-box" data-final-answer="${esc(resultText)}" x="92" y="${resultY}" width="356" height="30" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/><text x="270" y="${resultY + 20}" text-anchor="middle" fill="#183b56" font-size="10" font-weight="900">답: ${esc(resultText)}</text>` : "";
+          const layoutClass = count > 1 ? "source61-e3-desktop-chart" : "";
+          return `<svg class="geometry-diagram source61-graphs-e3-diagram ${layoutClass}" style="width:min(620px,100%);height:auto" viewBox="${viewBox}" role="img" aria-label="${esc(title)}" data-source61-graphs-e3-structure="${esc(title)}" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="${solved ? values.join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="${frameWidth}" height="${height - 18}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><g${contentTransform}><text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">${esc(title)}</text>${markup}${extra}${final}</g></svg>`;
+        };
+        const renderMobileStacked = () => charts.map((chart, index) => {
+          const cx = 270;
+          const cy = 175;
+          const radius = 72;
+          const legendStartY = cy + radius + 22;
+          const mobileHeight = Math.max(370, legendStartY + Math.max(0, chart.segments.length - 1) * 24 + 42);
+          const markup = chartMarkup({ chart, cx, cy, radius, solved, chartIndex: index, chartCount: 1, singleColumn: true });
+          const heading = index === 0 ? `<text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">${esc(title)}</text>` : "";
+          return `<svg class="geometry-diagram source61-graphs-e3-diagram source61-e3-mobile-chart" style="width:min(620px,100%);height:auto" viewBox="0 0 440 ${mobileHeight}" role="img" aria-label="${esc(chart.title)}" data-source61-graphs-e3-structure="${esc(title)}" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="${solved ? values.join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="420" height="${mobileHeight - 18}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><g transform="translate(-50 0)">${heading}${markup}${index === 0 ? extra : ""}</g></svg>`;
+        }).join("");
+        if (count < 2) return renderDesktop();
+        return `<style>.source61-e3-mobile-chart{display:none!important}@media(max-width:520px){.source61-e3-desktop-chart{display:none!important}.source61-e3-mobile-chart{display:block!important}}</style>${renderDesktop()}${renderMobileStacked()}`;
       };
       const table = (headers, rows, solved = false) => `<table class="problem-table source61-e3-table" data-source61-e3-summary-table="student-and-percent" data-phase="${solved ? "answer" : "problem"}"><thead><tr>${headers.map(value => `<th>${esc(value)}</th>`).join("")}</tr></thead><tbody>${rows.map(row => `<tr>${row.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
       const blankCircle = () => {
@@ -27608,7 +28850,7 @@
         const guides = ticks.map((tick, index) => `<line data-empty-circle-tick="${index}" x1="${cx}" y1="${cy}" x2="${tick.x}" y2="${tick.y}" stroke="#8296a6" stroke-width="1" stroke-dasharray="3 3"/><text x="${tick.tx}" y="${tick.ty}" text-anchor="middle" fill="#526b7d" font-size="10" font-weight="800">${tick.label}</text>`).join("");
         return `<svg class="geometry-diagram source61-graphs-e3-diagram source61-e3-empty-chart" style="width:min(620px,100%);height:auto" viewBox="0 0 540 275" role="img" aria-label="0·25·50·75 눈금의 빈 원그래프" data-source61-graphs-e3-structure="empty-circle-grid" data-source61-graphs-e3-layout="${layoutKind}" data-source61-graphs-e3-values="" data-phase="problem"><rect x="10" y="10" width="520" height="247" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><text x="270" y="32" text-anchor="middle" fill="#183b56" font-size="13" font-weight="900">0·25·50·75 눈금의 빈 원그래프</text><g data-empty-circle="true"><circle class="source61-e3-empty-circle-outline" cx="${cx}" cy="${cy}" r="${radius}" fill="#fff" stroke="#183b56" stroke-width="2"/>${guides}<circle cx="${cx}" cy="${cy}" r="3" fill="#183b56"/></g></svg>`;
       };
-      const fixed = (prompt, answer, solution, promptVisual, answerVisual, values, resultContract = "single-value") => result(`${prompt}${promptVisual}${support("원그래프의 전체를 360° 또는 100%로 보고, 같은 항목끼리 연결하세요.")}${challenge}${evidence(values, "problem", resultContract)}`, answer, solution, { answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e3-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-source61-e3-visibility-contract="${esc(visibilityContracts[variant])}" data-source61-e3-answer-contract="${esc(answerContracts[variant])}" data-final-answer="${esc(answer)}">${evidence(values, "answer", resultContract)}${answerVisual}</div>`, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId, resultContract });
+      const fixed = (prompt, answer, solution, promptVisual, answerVisual, values, resultContract = "single-value") => result(`${prompt}${promptVisual}${support("원그래프의 전체를 360° 또는 100%로 보고, 같은 항목끼리 연결하세요.")}${challenge}${evidence(values, "problem", resultContract)}`, answer, solution, { answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e3-answer" style="width:100%;justify-items:center" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-source61-e3-visibility-contract="${esc(visibilityContracts[variant])}" data-source61-e3-answer-contract="${esc(answerContracts[variant])}" data-final-answer="${esc(answer)}">${evidence(values, "answer", resultContract)}${answerVisual}</div>`, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId, resultContract });
       const segment = (label, percent, problemText = "", answerText = problemText, options = {}) => ({ label, angle: percent * 3.6, problemText, answerText, ...options });
 
       if (variant === 0) {
@@ -27752,11 +28994,13 @@
         const rates = [100 - 7 - 2 - d.otherRate, 7, 2, d.otherRate];
         const labels = ["수분", "탄수화물", "단백질", "기타"];
         const perFruit = d.weight * d.otherRate * d.part / 10000;
-        const answerCount = Math.ceil(d.need / perFruit);
+        const answerCount = Math.floor((d.need + perFruit - 1) / perFruit);
+        const amountBeforeEnough = (answerCount - 1) * perFruit;
+        const shortfall = d.need - amountBeforeEnough;
         const segments = solved => labels.map((label, index) => segment(label, rates[index], `${rates[index]}%`, `${rates[index]}%${solved && index === 3 ? ` · 한 개에 칼륨 ${perFruit}g` : ""}`, { highlight: index === 3 }));
         const values = [d.weight, ...rates, d.part, d.need, perFruit, answerCount];
         const answer = `${answerCount}개`;
-        return fixed(`참외 1개의 무게는 ${d.weight}g이고, 원그래프의 기타 성분 가운데 ${d.part}%가 칼륨입니다. 칼륨의 하루 충분 섭취량 ${d.need}g을 참외만으로 채우려면 적어도 몇 개를 먹어야 하는지 구하세요.`, answer, `기타 성분은 ${d.weight}×${d.otherRate}%=${d.weight * d.otherRate / 100}g이고 그중 칼륨은 ${d.part}%인 ${perFruit}g입니다. ${d.need}÷${perFruit}=${d.need / perFruit}이므로 적어도 ${answerCount}개가 필요합니다.`, circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(false) }], values }), circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(true) }], values, solved: true, resultText: answer }), values);
+        return fixed(`참외 1개의 무게는 ${d.weight}g이고, 원그래프의 기타 성분 가운데 ${d.part}%가 칼륨입니다. 칼륨의 하루 충분 섭취량 ${d.need}g을 참외만으로 채우려면 적어도 몇 개를 먹어야 하는지 구하세요.`, answer, `기타 성분은 ${d.weight}×${d.otherRate}%=${d.weight * d.otherRate / 100}g이고 그중 칼륨은 ${d.part}%인 ${perFruit}g입니다. 참외 ${answerCount - 1}개로는 ${amountBeforeEnough}g이어서 ${shortfall}g 부족하므로 ${answerCount}개가 필요합니다.`, circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(false) }], values }), circleSet({ title: "참외의 영양소별 성분", charts: [{ title: `참외 1개 · ${d.weight}g`, segments: segments(true) }], values, solved: true, resultText: answer }), values);
       }
 
       if (variant === 8) {
@@ -28831,8 +30075,7 @@
       const colors = ["#dcecf5", "#ffe3a3", "#cce8dc", "#e5dcf5", "#f5d4dc", "#d8e0e7"];
       const evidence = values => `<span hidden data-source61-graphs-e4-kind="${layoutKind}" data-source-item="${sourceItemId}" data-values="${values.join(",")}" data-layout="${layoutKind}" data-phase="answer" data-difficulty-design="${difficultyDesign}"></span>`;
       const problemEvidence = `<span hidden data-source61-graphs-e4-kind="${layoutKind}" data-source-item="${sourceItemId}" data-values="" data-layout="${layoutKind}" data-phase="problem" data-difficulty-design="${difficultyDesign}"></span>`;
-      const support = message => level === 0 ? `<p class="question-step" data-step-evidence="guided">먼저 ${message}</p>` : "";
-      const challenge = level === 2 ? `<p class="question-step source61-challenge" data-step-evidence="independent-reasoning">두 그래프의 전체를 따로 보고, 어느 비율을 곱하거나 빼야 하는지 스스로 정리해 보세요.</p>` : "";
+      const hard = level === 2;
       const polar = (cx, cy, radius, degrees) => {
         const radians = degrees * Math.PI / 180;
         return [cx + radius * Math.cos(radians), cy + radius * Math.sin(radians)];
@@ -28853,13 +30096,13 @@
           const middle = start + segment.percent * 1.8;
           const [lx, ly] = polar(cx, cy, radius * .72, middle);
           start += segment.percent * 3.6;
-          const display = segment.display || formatPercent(segment.percent);
+          const display = hard && segment.masked && !solved ? "□" : segment.display || formatPercent(segment.percent);
           const inChart = segment.showInChart || segment.percent >= 20;
           return `<path class="source61-e4-sector${solved && segment.highlight ? " is-solved" : ""}" data-segment-label="${esc(segment.label)}" data-segment-percent="${segment.percent}" data-segment-angle="${segment.percent * 3.6}" d="${path}" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width="1.4"/>${inChart ? `<text class="source61-e4-readable-text source61-e4-important-value source61-e4-sector-value" x="${lx.toFixed(2)}" y="${(ly + 3).toFixed(2)}" text-anchor="middle" fill="#183b56" font-size="22" font-weight="900">${esc(display)}</text>` : ""}`;
         }).join("");
         const legend = segments.map((segment, index) => {
           const y = 67 + index * 30;
-          const display = segment.text || segment.display || formatPercent(segment.percent);
+          const display = hard && segment.masked && !solved ? "□" : segment.text || segment.display || formatPercent(segment.percent);
           return `<rect x="263" y="${y - 11}" width="16" height="16" rx="1" fill="${colors[index % colors.length]}" stroke="#183b56" stroke-width="1"/><text class="source61-e4-readable-text source61-e4-category-label" x="290" y="${y}" text-anchor="start" fill="#183b56" font-size="20" font-weight="800">${esc(segment.label)}</text><text class="source61-e4-readable-text source61-e4-important-value source61-e4-legend-value" x="598" y="${y}" text-anchor="end" fill="#183b56" font-size="22" font-weight="900">${esc(display)}</text>`;
         }).join("");
         const finalY = 76 + segments.length * 30;
@@ -28880,7 +30123,7 @@
           const sx = x + width * start / 100;
           const sw = width * segment.percent / 100;
           const center = sx + sw / 2;
-          return `<rect class="source61-e4-strip-segment${solved && segment.highlight ? " is-solved" : ""}" data-strip-label="${esc(segment.label)}" data-strip-percent="${segment.percent}" x="${sx.toFixed(2)}" y="${y}" width="${sw.toFixed(2)}" height="${height}" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width="2"/><text class="source61-e4-readable-text source61-e4-important-value source61-e4-strip-value" x="${center.toFixed(2)}" y="${y + 34}" text-anchor="middle" fill="#183b56" font-size="22" font-weight="900">${formatPercent(segment.percent)}</text>`;
+          return `<rect class="source61-e4-strip-segment${solved && segment.highlight ? " is-solved" : ""}" data-strip-label="${esc(segment.label)}" data-strip-percent="${segment.percent}" x="${sx.toFixed(2)}" y="${y}" width="${sw.toFixed(2)}" height="${height}" fill="${solved && segment.highlight ? "#ffd86b" : colors[index % colors.length]}" stroke="#183b56" stroke-width="2"/><text class="source61-e4-readable-text source61-e4-important-value source61-e4-strip-value" x="${center.toFixed(2)}" y="${y + 34}" text-anchor="middle" fill="#183b56" font-size="22" font-weight="900">${hard && segment.masked && !solved ? "□" : formatPercent(segment.percent)}</text>`;
         }).join("");
         const legendRows = Math.ceil(segments.length / 2);
         const legend = blank ? "" : segments.map((segment, index) => {
@@ -28902,7 +30145,11 @@
         return `<svg class="geometry-diagram source61-graphs-e4-diagram" style="width:min(680px,100%);height:auto" viewBox="0 0 680 ${svgHeight}" role="img" aria-label="${esc(title)}" data-source61-graphs-e4-structure="${esc(title)}" data-source61-graphs-e4-layout="${layoutKind}" data-source61-graphs-e4-values="${solved ? segments.map(segment => segment.percent).join(",") : ""}" data-phase="${solved ? "answer" : "problem"}"${solved ? ` data-result-highlight="verified" data-final-answer="${esc(resultText)}"` : ""}><rect x="10" y="10" width="660" height="${svgHeight - 20}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/><text class="source61-e4-readable-text source61-e4-chart-title" x="340" y="29" text-anchor="middle" fill="#183b56" font-size="24" font-weight="900">${esc(title)}</text>${blocks}${guide}${boundaries}${legend}${final}</svg>`;
       };
       const table = (headers, rows, solved = false) => `<table class="problem-table source61-e4-table" data-phase="${solved ? "answer" : "problem"}"><thead><tr>${headers.map(value => `<th>${esc(value)}</th>`).join("")}</tr></thead><tbody>${rows.map(row => `<tr>${row.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
-      const fixed = (prompt, answer, solution, problemVisual, answerVisual, values, contract) => result(`${prompt}${problemVisual}${support("각 그래프의 전체를 100%로 보고, 필요한 두 비율을 차례로 계산하세요.")}${challenge}${problemEvidence}`, answer, solution, { answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-source61-e4-answer-contract="${contract}" data-final-answer="${esc(answer)}">${evidence(values)}${answerVisual}</div>`, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId });
+      const fixed = (prompt, answer, solution, problemVisual, answerVisual, values, contract, bridge = "") => {
+        const sentenceBreak = prompt.lastIndexOf(". ");
+        const stem = level !== 0 || !bridge ? prompt : sentenceBreak < 0 ? `${bridge} ${prompt}` : `${prompt.slice(0, sentenceBreak + 2)}${bridge} ${prompt.slice(sentenceBreak + 2)}`;
+        return result(`${stem}${problemVisual}${problemEvidence}`, answer, solution, { answerVisual: `<div class="verified-answer-diagram source61-answer-diagram source61-graphs-e4-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-source61-e4-answer-contract="${contract}" data-final-answer="${esc(answer)}">${evidence(values)}${answerVisual}</div>`, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId });
+      };
       const consentPools = [
         { total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] },
         { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] },
@@ -28915,24 +30162,24 @@
         const agreeMax = Math.max(...d.agreeReasons), opposeMax = Math.max(...d.opposeReasons);
         const answer = `${d.total * d.agree / 100 * agreeMax / 100 - d.total * d.oppose / 100 * opposeMax / 100}명`;
         const main = pie({ title: "찬반 여부", segments: [{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }] });
-        const p1 = strip({ title: "찬성 이유", segments: agreeLabels.map((label, i) => ({ label, percent: d.agreeReasons[i] })) });
+        const p1 = strip({ title: "찬성 이유", segments: agreeLabels.map((label, i) => ({ label, percent: d.agreeReasons[i], masked: i === d.agreeReasons.indexOf(agreeMax) })) });
         const p2 = strip({ title: "반대 이유", segments: opposeLabels.map((label, i) => ({ label, percent: d.opposeReasons[i] })) });
         const a1 = pie({ title: "찬반 여부", solved: true, resultText: answer, segments: [{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }] });
         const a2 = strip({ title: "찬성 이유", solved: true, segments: agreeLabels.map((label, i) => ({ label, percent: d.agreeReasons[i], highlight: d.agreeReasons[i] === agreeMax })) });
         const a3 = strip({ title: "반대 이유", solved: true, segments: opposeLabels.map((label, i) => ({ label, percent: d.opposeReasons[i], highlight: d.opposeReasons[i] === opposeMax })) });
-        return fixed(`${num(d.total)}명에게 정책에 대한 찬반을 물었습니다. 찬성 중 가장 큰 이유와 반대 중 가장 큰 이유의 사람 수 차를 구하세요.`, answer, `찬성의 큰 이유는 ${num(d.total * d.agree / 100 * agreeMax / 100)}명, 반대의 큰 이유는 ${num(d.total * d.oppose / 100 * opposeMax / 100)}명입니다. 차는 ${answer}입니다.`, `${main}${p1}${p2}`, `${a1}${a2}${a3}`, [d.total, d.agree, d.oppose, ...d.agreeReasons, ...d.opposeReasons], "circle-strip-difference");
+        return fixed(`${num(d.total)}명에게 정책에 대한 찬반을 물었습니다. 찬성 중 가장 큰 이유와 반대 중 가장 큰 이유의 사람 수 차를 구하세요.`, answer, `찬성의 큰 이유는 ${num(d.total * d.agree / 100 * agreeMax / 100)}명, 반대의 큰 이유는 ${num(d.total * d.oppose / 100 * opposeMax / 100)}명입니다. 차는 ${answer}입니다.`, `${main}${p1}${p2}`, `${a1}${a2}${a3}`, [d.total, d.agree, d.oppose, ...d.agreeReasons, ...d.opposeReasons], "circle-strip-difference", `찬성 중 가장 큰 이유에 해당하는 사람은 ${num(d.total * d.agree * agreeMax / 10000)}명입니다.`);
       }
       if (variant === 1) {
         const d = [{ total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] }, { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] }, { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }][poolIndex];
         const trafficRate = d.opposeReasons[2];
         const moved = d.total * d.oppose * trafficRate / 10000, oldOther = d.total * d.agree * d.agreeReasons[3] / 10000;
         const newAgree = d.total * d.agree / 100 + moved, newOther = oldOther + moved, answer = `${(newOther * 100 / newAgree).toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}%`;
-        const beforeOppose = strip({ title: "이동 전 반대 이유", segments: opposeLabels.map((label, index) => ({ label, percent: d.opposeReasons[index] })) });
+        const beforeOppose = strip({ title: "이동 전 반대 이유", segments: opposeLabels.map((label, index) => ({ label, percent: d.opposeReasons[index], masked: index === 2 })) });
         const solvedOppose = strip({ title: "이동 전 반대 이유", solved: true, segments: opposeLabels.map((label, index) => ({ label, percent: d.opposeReasons[index], highlight: index === 2 })) });
         const solvedAfter = strip({ title: "바뀐 뒤 찬성 이유", solved: true, resultText: answer, segments: [{ label: "기타", percent: newOther * 100 / newAgree, highlight: true, text: answer }, { label: "기타 외", percent: 100 - newOther * 100 / newAgree }] });
         const beforeCircle = (segments, solved = false) => pie({ title: "이동 전 찬반 여부", solved, segments });
         const beforeAgree = (solved = false) => strip({ title: "이동 전 찬성 이유", solved, segments: agreeLabels.map((label, index) => ({ label, percent: d.agreeReasons[index], highlight: solved && index === 3 })) });
-        return fixed(`반대했던 사람 중 교통 체증을 이유로 든 사람은 반대 이유 중 ${trafficRate}%이고, 그 사람들은 모두 찬성 중 기타 이유로 돌아섰습니다. 처음 찬성 중 기타 이유는 ${d.agreeReasons[3]}%였습니다. 바뀐 뒤 찬성한 사람 중 기타 이유의 비율을 구하세요.`, answer, `${num(moved)}명이 이동하고, 기타는 ${num(oldOther)}명에서 ${num(newOther)}명이 됩니다. 새 찬성 인원은 ${num(newAgree)}명이므로 ${num(newOther)}÷${num(newAgree)}×100=${answer}입니다.`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }])}${beforeAgree()}${beforeOppose}`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }], true)}${beforeAgree(true)}${solvedOppose}${pie({ title: "바뀐 뒤 찬반 여부", solved: true, segments: [{ label: "찬성", percent: newAgree * 100 / d.total, highlight: true }, { label: "반대", percent: 100 - newAgree * 100 / d.total }] })}${solvedAfter}`, [d.total, d.agree, d.oppose, trafficRate, d.agreeReasons[3], ...d.agreeReasons, ...d.opposeReasons, moved, oldOther, newAgree, newOther], "before-after-percent");
+        return fixed(`반대했던 사람 중 교통 체증을 이유로 든 사람은 모두 찬성 중 기타 이유로 돌아섰습니다. 바뀐 뒤 찬성한 사람 중 기타 이유의 비율을 구하세요.`, answer, `${num(moved)}명이 이동하고, 기타는 ${num(oldOther)}명에서 ${num(newOther)}명이 됩니다. 새 찬성 인원은 ${num(newAgree)}명이므로 ${num(newOther)}÷${num(newAgree)}×100=${answer}입니다.`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }])}${beforeAgree()}${beforeOppose}`, `${beforeCircle([{ label: "찬성", percent: d.agree }, { label: "반대", percent: d.oppose }], true)}${beforeAgree(true)}${solvedOppose}${pie({ title: "바뀐 뒤 찬반 여부", solved: true, segments: [{ label: "찬성", percent: newAgree * 100 / d.total, highlight: true }, { label: "반대", percent: 100 - newAgree * 100 / d.total }] })}${solvedAfter}`, [d.total, d.agree, d.oppose, trafficRate, d.agreeReasons[3], ...d.agreeReasons, ...d.opposeReasons, moved, oldOther, newAgree, newOther], "before-after-percent", `교통 체증을 이유로 든 사람은 ${num(moved)}명입니다.`);
       }
       if (variant === 2) {
         const d = [{ totalMan: 5000, surname: [22, 15, 8, 55], branches: [42, 17, 9, 32] }, { totalMan: 4000, surname: [25, 10, 12, 53], branches: [40, 20, 15, 25] }, { totalMan: 5000, surname: [20, 15, 10, 55], branches: [45, 20, 12, 23] }][poolIndex];
@@ -28940,44 +30187,44 @@
         const answer = `${d.totalMan * kim / 100 * (d.branches[0] - d.branches[2]) / 100}만명`;
         const circle = (segments, solved = false) => pie({ title: "우리나라 성씨별 사람 수", solved, segments });
         const surnameLabels = ["김씨", "이씨", "박씨", "기타"];
-        const surnameSegments = surnameLabels.map((label, index) => ({ label, percent: d.surname[index] }));
+        const surnameSegments = surnameLabels.map((label, index) => ({ label, percent: d.surname[index], masked: index === 0 }));
         const stripGraph = solved => strip({ title: "김씨의 본관별 사람 수", solved, segments: [{ label: "김해 김씨", percent: d.branches[0], highlight: solved }, { label: "경주 김씨", percent: d.branches[1] }, { label: "광산 김씨", percent: d.branches[2], highlight: solved }, { label: "기타", percent: d.branches[3] }] });
-        return fixed(`우리나라 사람은 약 ${d.totalMan}만 명이고, 김씨는 ${kim}%입니다. 김씨 중 김해 김씨와 광산 김씨의 사람 수 차를 구하세요.`, answer, `김씨는 ${d.totalMan}만×${kim}%이고, 두 본관의 비율 차는 ${d.branches[0]}-${d.branches[2]}=${d.branches[0] - d.branches[2]}%입니다. 따라서 차는 ${answer}입니다.`, `${circle(surnameSegments)}${stripGraph(false)}`, `${circle(surnameSegments, true)}${stripGraph(true)}`, [d.totalMan, ...d.surname, ...d.branches], "population-difference");
+        return fixed(`우리나라 사람은 약 ${d.totalMan}만 명입니다. 김씨 중 김해 김씨와 광산 김씨의 사람 수 차를 구하세요.`, answer, `김씨는 ${d.totalMan}만×${kim}%이고, 두 본관의 비율 차는 ${d.branches[0]}-${d.branches[2]}=${d.branches[0] - d.branches[2]}%입니다. 따라서 차는 ${answer}입니다.`, `${circle(surnameSegments)}${stripGraph(false)}`, `${circle(surnameSegments, true)}${stripGraph(true)}`, [d.totalMan, ...d.surname, ...d.branches], "population-difference", `김씨는 약 ${num(d.totalMan * kim / 100)}만 명입니다.`);
       }
       if (variant === 3) {
         const d = [{ total: 600, male: 60, female: 40, maleRates: [25, 35, 40], femaleRates: [45, 25, 30] }, { total: 800, male: 55, female: 45, maleRates: [30, 30, 40], femaleRates: [40, 35, 25] }, { total: 500, male: 48, female: 52, maleRates: [20, 45, 35], femaleRates: [30, 30, 40] }][poolIndex];
         const names = ["피아노", "미술", "태권도"], counts = names.map((_, i) => d.total * (d.male * d.maleRates[i] + d.female * d.femaleRates[i]) / 10000), max = Math.max(...counts), maxName = names[counts.indexOf(max)];
         const answer = `${maxName}, ${num(max)}명`;
-        const student = pie({ title: "남녀 학생 수", segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female }] });
+        const student = pie({ title: "남녀 학생 수", segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female, masked: true }] });
         const bars = `${strip({ title: "다니는 학원별 남학생 수", segments: names.map((name, i) => ({ label: name, percent: d.maleRates[i] })) })}${strip({ title: "다니는 학원별 여학생 수", segments: names.map((name, i) => ({ label: name, percent: d.femaleRates[i] })) })}`;
         const solvedBars = `${strip({ title: "다니는 학원별 남학생 수", solved: true, segments: names.map((name, i) => ({ label: name, percent: d.maleRates[i], highlight: counts[i] === max })) })}${strip({ title: "다니는 학원별 여학생 수", solved: true, segments: names.map((name, i) => ({ label: name, percent: d.femaleRates[i], highlight: counts[i] === max })) })}`;
-        return fixed(`전체 학생 ${num(d.total)}명의 남녀 비율과 학원별 남녀 비율을 보고, 가장 많은 학원과 그 학생 수를 구하세요.`, answer, `남학생 ${num(d.total * d.male / 100)}명과 여학생 ${num(d.total * d.female / 100)}명으로 각 학원의 수를 계산합니다. 가장 많은 학원은 ${answer}입니다.`, `${student}${bars}`, `${pie({ title: "남녀 학생 수", solved: true, segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female }] })}${solvedBars}`, [d.total, d.male, d.female, ...d.maleRates, ...d.femaleRates, ...counts], "largest-category");
+        return fixed(`전체 학생 ${num(d.total)}명의 남녀 비율과 학원별 남녀 비율을 보고, 가장 많은 학원과 그 학생 수를 구하세요.`, answer, `남학생 ${num(d.total * d.male / 100)}명과 여학생 ${num(d.total * d.female / 100)}명으로 각 학원의 수를 계산합니다. 가장 많은 학원은 ${answer}입니다.`, `${student}${bars}`, `${pie({ title: "남녀 학생 수", solved: true, segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female }] })}${solvedBars}`, [d.total, d.male, d.female, ...d.maleRates, ...d.femaleRates, ...counts], "largest-category", `남학생은 ${num(d.total * d.male / 100)}명, 여학생은 ${num(d.total * d.female / 100)}명입니다.`);
       }
       if (variant === 4) {
         const d = [{ before: [30, 25, 20, 15, 10] }, { before: [40, 20, 15, 15, 10] }, { before: [20, 30, 25, 15, 10] }][poolIndex];
         const after = [d.before[0] / 2, d.before[1], d.before[2] + d.before[0] / 2, d.before[3], d.before[4]];
         const names = ["소설", "참고서", "위인전", "시집", "기타"];
         const answer = names.map((name, i) => `${name}${after[i]}%`).join(", ");
-        const original = pie({ title: "1학기 학급 문고의 종류별 권수", segments: names.map((label, i) => ({ label, percent: d.before[i] })) });
+        const original = pie({ title: "1학기 학급 문고의 종류별 권수", segments: names.map((label, i) => ({ label, percent: d.before[i], masked: i === 0 })) });
         const blank = strip({ title: "2학기 학급 문고의 종류별 권수", segments: [], blank: true });
         const completed = strip({ title: "2학기 학급 문고의 종류별 권수", solved: true, resultText: answer, segments: names.map((label, i) => ({ label, percent: after[i], highlight: i === 2 })) });
-        return fixed(`책의 비율이 소설 ${d.before[0]}%, 참고서 ${d.before[1]}%, 위인전 ${d.before[2]}%, 시집 ${d.before[3]}%, 기타 ${d.before[4]}%입니다. 소설의 절반을 위인전으로 바꾸었을 때 새 비율을 구하세요.`, answer, `소설은 ${d.before[0]}%의 절반인 ${after[0]}%가 되고, 그만큼 위인전에 더해집니다. 새 비율은 ${answer}입니다.`, `${original}${blank}`, `${pie({ title: "1학기 학급 문고의 종류별 권수", solved: true, segments: names.map((label, i) => ({ label, percent: d.before[i] })) })}${completed}`, [...d.before, ...after], "ordered-percent-list");
+        return fixed(`소설 책의 절반을 위인전으로 바꾸었습니다. 2학기 학급 문고의 종류별 비율을 구하세요.`, answer, `소설은 ${d.before[0]}%의 절반인 ${after[0]}%가 되고, 그만큼 위인전에 더해집니다. 새 비율은 ${answer}입니다.`, `${original}${blank}`, `${pie({ title: "1학기 학급 문고의 종류별 권수", solved: true, segments: names.map((label, i) => ({ label, percent: d.before[i] })) })}${completed}`, [...d.before, ...after], "ordered-percent-list", `소설 책에서 바꾼 비율은 전체의 ${after[0]}%입니다.`);
       }
       if (variant === 5) {
         const d = [{ group: [62, 38], femaleAcademy: [35, 30, 20, 15] }, { group: [55, 45], femaleAcademy: [30, 20, 35, 15] }, { group: [64, 36], femaleAcademy: [40, 25, 20, 15] }][poolIndex];
         const academyNames = ["미술 학원", "피아노 학원", "발레 학원", "기타"], target = d.femaleAcademy[1];
         const answer = `${d.group[1] * target / 100}%`;
         const circle = pie({ title: "남녀의 수", segments: [{ label: "남학생", percent: d.group[0] }, { label: "여학생", percent: d.group[1] }] });
-        const stripGraph = solved => strip({ title: "여학생이 다니고 싶은 학원별 학생 수", solved, resultText: solved ? answer : "", segments: academyNames.map((label, index) => ({ label, percent: d.femaleAcademy[index], highlight: index === 1 })) });
-        return fixed(`남학생과 여학생의 비율은 ${d.group[0]}%와 ${d.group[1]}%입니다. 여학생이 다니고 싶은 학원은 미술 학원 ${d.femaleAcademy[0]}%, 피아노 학원 ${d.femaleAcademy[1]}%, 발레 학원 ${d.femaleAcademy[2]}%, 기타 ${d.femaleAcademy[3]}%입니다. 전체 학생 중 피아노 학원을 다니고 싶은 학생의 비율을 구하세요.`, answer, `전체에서 여학생은 ${d.group[1]}%이고, 그중 피아노 학원은 ${target}%이므로 ${d.group[1]}×${target}÷100=${answer}입니다.`, `${circle}${stripGraph(false)}`, `${pie({ title: "남녀의 수", solved: true, segments: [{ label: "남학생", percent: d.group[0] }, { label: "여학생", percent: d.group[1], highlight: true }] })}${stripGraph(true)}`, [...d.group, ...d.femaleAcademy], "nested-percent");
+        const stripGraph = solved => strip({ title: "여학생이 다니고 싶은 학원별 학생 수", solved, resultText: solved ? answer : "", segments: academyNames.map((label, index) => ({ label, percent: d.femaleAcademy[index], masked: index === 1, highlight: index === 1 })) });
+        return fixed(`남녀의 수와 여학생이 다니고 싶은 학원별 비율을 보고, 전체 학생 중 피아노 학원을 다니고 싶은 학생의 비율을 구하세요.`, answer, `전체에서 여학생은 ${d.group[1]}%이고, 그중 피아노 학원은 ${target}%이므로 ${d.group[1]}×${target}÷100=${answer}입니다.`, `${circle}${stripGraph(false)}`, `${pie({ title: "남녀의 수", solved: true, segments: [{ label: "남학생", percent: d.group[0] }, { label: "여학생", percent: d.group[1], highlight: true }] })}${stripGraph(true)}`, [...d.group, ...d.femaleAcademy], "nested-percent", `전체 학생을 100명으로 보면 여학생은 ${d.group[1]}명입니다.`);
       }
       if (variant === 6) {
         const d = [{ gifts: [30, 25, 20, 25], toys: [45, 20, 10, 25], count: 24 }, { gifts: [25, 30, 20, 25], toys: [40, 25, 15, 20], count: 30 }, { gifts: [35, 20, 20, 25], toys: [50, 15, 10, 25], count: 18 }][poolIndex];
         const answer = `${d.count * 10000 / (d.gifts[2] * d.toys[1])}명`;
         const giftNames = ["휴대전화", "게임기", "장난감", "기타"], toyNames = ["로봇", "팽이", "큐브", "기타"];
-        const gifts = giftNames.map((label, index) => ({ label, percent: d.gifts[index], highlight: index === 2 }));
+        const gifts = giftNames.map((label, index) => ({ label, percent: d.gifts[index], masked: index === 2, highlight: index === 2 }));
         const toys = toyNames.map((label, index) => ({ label, percent: d.toys[index], highlight: index === 1 }));
-        return fixed(`받고 싶은 선물은 휴대전화 ${d.gifts[0]}%, 게임기 ${d.gifts[1]}%, 장난감 ${d.gifts[2]}%, 기타 ${d.gifts[3]}%입니다. 장난감을 받고 싶은 학생 중 로봇 ${d.toys[0]}%, 팽이 ${d.toys[1]}%, 큐브 ${d.toys[2]}%, 기타 ${d.toys[3]}%입니다. 팽이를 받고 싶은 학생이 ${d.count}명일 때 전체 학생 수를 구하세요.`, answer, `팽이는 전체의 ${d.gifts[2]}%×${d.toys[1]}%=${d.gifts[2] * d.toys[1] / 100}%입니다. 전체 학생 수는 ${d.count}÷${d.gifts[2] * d.toys[1] / 100}=${answer}입니다.`, `${strip({ title: "받고 싶은 선물별 학생 수", segments: gifts })}${pie({ title: "장난감 종류별 학생 수", segments: toys })}`, `${strip({ title: "받고 싶은 선물별 학생 수", solved: true, segments: gifts })}${pie({ title: "장난감 종류별 학생 수", solved: true, resultText: answer, segments: toys })}`, [...d.gifts, ...d.toys, d.count], "nested-percent-count");
+        return fixed(`팽이를 받고 싶은 학생이 ${d.count}명일 때 전체 학생 수를 구하세요.`, answer, `팽이는 전체의 ${d.gifts[2]}%×${d.toys[1]}%=${d.gifts[2] * d.toys[1] / 100}%입니다. 전체 학생 수는 ${d.count}÷${d.gifts[2] * d.toys[1] / 100}=${answer}입니다.`, `${strip({ title: "받고 싶은 선물별 학생 수", segments: gifts })}${pie({ title: "장난감 종류별 학생 수", segments: toys })}`, `${strip({ title: "받고 싶은 선물별 학생 수", solved: true, segments: gifts })}${pie({ title: "장난감 종류별 학생 수", solved: true, resultText: answer, segments: toys })}`, [...d.gifts, ...d.toys, d.count], "nested-percent-count", `팽이를 고른 학생은 전체의 ${d.gifts[2] * d.toys[1] / 100}%입니다.`);
       }
       if (variant === 7) {
         const pools = [
@@ -28991,18 +30238,18 @@
         if (new Set(scoreCounts.map(item => item.score)).size !== scoreCounts.length) throw new Error(`${sourceItemId}: 점수 행이 겹칩니다.`);
         const average = scoreCounts.reduce((sum, item) => sum + item.count * item.score, 0) / d.total;
         const answer = `${average}점`;
-        const segments = [{ label: "3문제 모두 틀린 학생", percent: d.angles[0] / 3.6, display: `${d.angles[0]}°`, highlight: true, showInChart: true }, { label: "1문제 맞힌 학생", percent: d.angles[1] / 3.6, display: `${d.angles[1]}°`, showInChart: true }, { label: "2문제 맞힌 학생", percent: d.angles[2] / 3.6, display: `${d.angles[2]}°`, showInChart: true }, { label: "3문제 맞힌 학생", percent: d.angles[3] / 3.6, display: `${d.angles[3]}°`, showInChart: true }];
+        const segments = [{ label: "3문제 모두 틀린 학생", percent: d.angles[0] / 3.6, display: `${d.angles[0]}°`, highlight: true, showInChart: true }, { label: "1문제 맞힌 학생", percent: d.angles[1] / 3.6, display: `${d.angles[1]}°`, showInChart: true }, { label: "2문제 맞힌 학생", percent: d.angles[2] / 3.6, display: `${d.angles[2]}°`, showInChart: true }, { label: "3문제 맞힌 학생", percent: d.angles[3] / 3.6, display: `${d.angles[3]}°`, masked: true, showInChart: true }];
         const rows = scoreCounts.map(item => [`${item.score}점`, item.count]);
         const knownScores = new Map([[scoreValues[0], counts[0]], [scoreValues[1], counts[1]], [scoreValues[3], counts[3]]]);
         const problemRows = scoreCounts.map(item => [`${item.score}점`, knownScores.has(item.score) ? knownScores.get(item.score) : "□"]);
         const visual = solved => `${pie({ title: "시험 결과", solved, resultText: solved ? answer : "", segments })}${table(["점수", "학생 수"], solved ? rows : problemRows, solved)}`;
-        return fixed(`세 문제의 점수는 각각 ${d.points[0]}점, ${d.points[1]}점, ${d.points[2]}점입니다. 원그래프와 표를 보고 전체 학생의 평균 점수를 구하세요.`, answer, `각 구간의 학생 수는 ${counts.join(", ")}명입니다. 점수와 곱해 더한 뒤 ${d.total}으로 나누면 평균은 ${average}점입니다.`, visual(false), visual(true), [d.total, ...d.angles, ...d.points, ...counts, average], "circle-weighted-average");
+        return fixed(`세 문제의 점수는 각각 ${d.points[0]}점, ${d.points[1]}점, ${d.points[2]}점입니다. 원그래프와 표를 보고 전체 학생의 평균 점수를 구하세요.`, answer, `각 구간의 학생 수는 ${counts.join(", ")}명입니다. 점수와 곱해 더한 뒤 ${d.total}으로 나누면 평균은 ${average}점입니다.`, visual(false), visual(true), [d.total, ...d.angles, ...d.points, ...counts, average], "circle-weighted-average", `전체 학생은 ${d.total}명입니다.`);
       }
       const d = [{ male: 52, female: 48, maleItem: 104, femaleItem: 72, femaleRate: 24 }, { male: 55, female: 45, maleItem: 99, femaleItem: 54, femaleRate: 20 }, { male: 48, female: 52, maleItem: 72, femaleItem: 65, femaleRate: 25 }][poolIndex];
       const femaleTotal = d.femaleItem * 100 / d.femaleRate, total = femaleTotal * 100 / d.female, maleTotal = total * d.male / 100, answer = `${(d.maleItem * 100 / maleTotal).toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}%`;
       const gender = solved => pie({ title: "남·여학생 수", solved, segments: [{ label: "남학생", percent: d.male }, { label: "여학생", percent: d.female, highlight: solved }] });
-      const products = solved => strip({ title: "여학생이 좋아하는 상표", solved, resultText: solved ? answer : "", segments: [{ label: "가 상표", percent: 34 }, { label: "나 상표", percent: d.femaleRate, highlight: true }, { label: "다 상표", percent: 20 }, { label: "라 상표", percent: 12 }, { label: "기타", percent: 100 - 34 - d.femaleRate - 20 - 12 }] });
-      return fixed(`남학생과 여학생의 비율은 ${d.male}%와 ${d.female}%입니다. 나 상품을 좋아하는 학생은 남학생 ${d.maleItem}명, 여학생 ${d.femaleItem}명이고 여학생 중 나 상품의 비율은 ${d.femaleRate}%입니다. 남학생 중 나 상품을 좋아하는 학생의 비율을 구하세요.`, answer, `여학생 전체는 ${d.femaleItem}÷${d.femaleRate}%=${num(femaleTotal)}명, 전체는 ${num(total)}명, 남학생은 ${num(maleTotal)}명입니다. 따라서 ${d.maleItem}÷${num(maleTotal)}×100=${answer}입니다.`, `${gender(false)}${products(false)}`, `${gender(true)}${products(true)}`, [d.male, d.female, d.maleItem, d.femaleItem, d.femaleRate, femaleTotal, total, maleTotal], "gender-nested-percent");
+      const products = solved => strip({ title: "여학생이 좋아하는 상표", solved, resultText: solved ? answer : "", segments: [{ label: "가 상표", percent: 34 }, { label: "나 상표", percent: d.femaleRate, masked: true, highlight: true }, { label: "다 상표", percent: 20 }, { label: "라 상표", percent: 12 }, { label: "기타", percent: 100 - 34 - d.femaleRate - 20 - 12 }] });
+      return fixed(`나 상표를 좋아하는 학생은 남학생 ${d.maleItem}명, 여학생 ${d.femaleItem}명입니다. 남학생 중 나 상표를 좋아하는 학생의 비율을 구하세요.`, answer, `여학생 전체는 ${d.femaleItem}÷${d.femaleRate}%=${num(femaleTotal)}명, 전체는 ${num(total)}명, 남학생은 ${num(maleTotal)}명입니다. 따라서 ${d.maleItem}÷${num(maleTotal)}×100=${answer}입니다.`, `${gender(false)}${products(false)}`, `${gender(true)}${products(true)}`, [d.male, d.female, d.maleItem, d.femaleItem, d.femaleRate, femaleTotal, total, maleTotal], "gender-nested-percent", `여학생은 ${num(femaleTotal)}명입니다.`);
     },
   };
 
@@ -29123,6 +30370,27 @@
     [type => type.id === "5-1-u5-t2", "fifthFractionSubtractionAdvanced"],
     [type => type.id === "5-1-u5-t3", "fifthFractionEquationAdvanced"],
     [type => type.id?.startsWith("5-1-u5-t4") && type.sourceItemId?.startsWith("5-1-u5-e4-"), "unitFractionE4"],
+    [type => type.sourceItemId === "6-2-u2-e1-exploration-1", "sourceGrade6SecondDecimalDivisionE1Choice"],
+    [type => type.sourceItemId === "6-2-u2-e1-exploration-2", "sourceGrade6SecondDecimalDivisionE1Calculate"],
+    [type => type.sourceItemId === "6-2-u2-e1-example-1", "sourceGrade6SecondDecimalDivisionE1Range"],
+    [type => type.sourceItemId === "6-2-u2-e1-example-2", "sourceGrade6SecondDecimalDivisionE1DivisorRatio"],
+    [type => type.sourceItemId === "6-2-u2-e1-example-3", "sourceGrade6SecondDecimalDivisionE1ThreeProducts"],
+    [type => type.sourceItemId === "6-2-u2-e1-example-4", "sourceGrade6SecondDecimalDivisionE1Parts"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-1", "sourceGrade6SecondDecimalDivisionE1Mission1"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-2", "sourceGrade6SecondDecimalDivisionE1Mission2"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-3", "sourceGrade6SecondDecimalDivisionE1Mission3"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-4", "sourceGrade6SecondDecimalDivisionE1Mission4"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-5", "sourceGrade6SecondDecimalDivisionE1Mission5"],
+    [type => type.sourceItemId === "6-2-u2-e1-mission-6", "sourceGrade6SecondDecimalDivisionE1Mission6"],
+    [type => type.sourceItemId === "6-2-u2-e2-exploration", "sourceGrade6SecondDecimalDivisionE2Exploration"],
+    [type => type.sourceItemId === "6-2-u2-e2-example-1", "sourceGrade6SecondDecimalDivisionE2Example1"],
+    [type => type.sourceItemId === "6-2-u2-e2-example-2", "sourceGrade6SecondDecimalDivisionE2Example2"],
+    [type => type.sourceItemId === "6-2-u2-e2-example-3", "sourceGrade6SecondDecimalDivisionE2Example3"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-1", "sourceGrade6SecondDecimalDivisionE2Mission1"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-2", "sourceGrade6SecondDecimalDivisionE2Mission2"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-3", "sourceGrade6SecondDecimalDivisionE2Mission3"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-4", "sourceGrade6SecondDecimalDivisionE2Mission4"],
+    [type => type.sourceItemId === "6-2-u2-e2-mission-5", "sourceGrade6SecondDecimalDivisionE2Mission5"],
     [type => type.sourceItemId === "6-2-u1-e1-example-1", "sourceGrade6SecondFractionDivisionE1"],
     [type => type.sourceItemId === "6-2-u1-e1-example-2", "sourceGrade6SecondFractionDivisionE1Example2"],
     [type => type.sourceItemId === "6-2-u1-e1-example-3", "sourceGrade6SecondFractionDivisionE1Example3"],

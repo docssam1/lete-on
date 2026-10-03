@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "status": "private-review-metadata-no-source-image",
+  "sourceItemId": "6-2-u2-e2-mission-5",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 19,
+    "printedPage": 21,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "officialAnswerEvidence": {
+    "status": "not-used",
+    "reason": "별도 6-2답지는 경시 교재이므로 심화 Mission의 공식 답으로 취급하지 않음"
+  },
+  "originalStructure": "31.9km 떨어진 곳에서 두 사람이 오전 9시 동시에 마주 보고 걸으며 각자 2.7km/시, 3.1km/시일 때 처음 만나는 오후 시각을 구함. 원문에 그림 없음",
+  "answerContract": {
+    "originalNumericAnswer": "오후 2시 30분",
+    "independentCalculation": "31.9km를 2.7+3.1=5.8km/시로 나누면 5시간 30분, 오전 9시에서 더해 오후 2시 30분",
+    "singleAnswer": true,
+    "difficultyDesign": "쉬움은 두 사람의 한 시간당 접근 거리를 묻는 단서, 기준은 원문 동시 출발, 어려움은 둘째 사람이 30분 늦게 출발하여 첫째 사람의 선행 거리와 남은 거리를 계산"
+  },
+  "verification": {
+    "independentMathAudit": "source-6-2-decimal-e2-rates-audit.js",
+    "mathChecksAcrossBothTypes": 720,
+    "difficultyOffsetsChecked": [-1, 0, 1],
+    "browserAudit": "source-6-2-decimal-e1-browser-audit.js",
+    "desktopMobileScreenshots": 12,
+    "a4PdfFiles": 6,
+    "a4ProblemPageCount": 1,
+    "a4SolutionPageCount": 1,
+    "secondaryReviewer": {
+      "kind": "Claude CLI",
+      "scope": "개발된 세 고정 풀의 동시 출발·30분 지연 출발 만남 시각과 답 유일성을 독립 계산",
+      "sourceImageDirectlyViewed": false,
+      "confirmedStandardTimes": ["14:30", "13:50", "14:10"],
+      "confirmedHardTimes": ["14:00", "13:20", "13:40"]
+    }
+  },
+  "verifiedVariantCount": 3,
+  "releaseStatus": "verified"
+}

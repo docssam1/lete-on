@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "status": "private-review-metadata-no-source-image",
+  "sourceItemId": "6-2-u2-e2-example-3",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 18,
+    "printedPage": 20,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "officialAnswerEvidence": {
+    "status": "not-used",
+    "reason": "별도 6-2답지는 경시 교재이므로 심화 예제의 공식 답으로 취급하지 않음"
+  },
+  "originalStructure": "흐르지 않는 물에서 배의 시간당 이동 거리, 강을 따라 내려간 거리와 시간으로 강물의 시간당 이동 거리를 구함. 원문에 그림 없음",
+  "answerContract": {
+    "originalNumericAnswer": "15.8km",
+    "independentCalculation": "245.7km를 4시간 12분으로 나눈 58.5km/시에서 42.7km/시를 뺌",
+    "singleAnswer": true,
+    "difficultyDesign": "쉬움은 소수 시간, 기준은 시간·분, 어려움은 오전 출발과 오후 도착 시각에서 이동 시간을 먼저 계산"
+  },
+  "verification": {
+    "independentMathAudit": "source-6-2-decimal-e2-rates-audit.js",
+    "mathChecksAcrossBothTypes": 720,
+    "difficultyOffsetsChecked": [-1, 0, 1],
+    "browserAudit": "source-6-2-decimal-e1-browser-audit.js",
+    "desktopMobileScreenshots": 12,
+    "a4PdfFiles": 6,
+    "a4ProblemPageCount": 1,
+    "a4SolutionPageCount": 1,
+    "secondaryReviewer": {
+      "kind": "Claude CLI",
+      "scope": "개발된 세 고정 풀의 거리·시간·정지 속력만 받아 하류 속력과 강물 속력을 독립 계산",
+      "sourceImageDirectlyViewed": false,
+      "confirmedCurrentSpeeds": ["15.8km/시", "14.6km/시", "12.8km/시"]
+    }
+  },
+  "verifiedVariantCount": 3,
+  "releaseStatus": "verified"
+}

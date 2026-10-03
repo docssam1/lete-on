@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 22,
+    "printedPage": 24,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "examples": [
+    {
+      "sourceItemId": "6-2-u2-e4-example-1",
+      "answerContract": "three-whole-quotients-with-decimal-remainders",
+      "independentCheck": "each-dividend-divided-to-whole-quotient-and-remainder",
+      "independentAnswer": "566, 6; 56, 4.5; 5, 4.35",
+      "handwritingReading": "첫 줄 흐림, 뒤 두 줄 일치",
+      "handwritingAgrees": null,
+      "releaseStatus": "verified-finite-pools"
+    },
+    {
+      "sourceItemId": "6-2-u2-e4-example-2",
+      "answerContract": "minimum-addition-to-exact-tenth-quotient",
+      "independentCheck": "next-exact-tenth-quotient-multiple",
+      "independentAnswer": "0.07",
+      "handwritingReading": "0.07 또는 0.007, 판독 미확정",
+      "handwritingAgrees": null,
+      "releaseStatus": "verified-finite-pools"
+    },
+    {
+      "sourceItemId": "6-2-u2-e4-example-3",
+      "answerContract": "minimum-dividend-from-rounded-quotient-then-new-remainder",
+      "independentCheck": "enumerate-hundredth-quotients-then-divide-again",
+      "independentAnswer": "0.002",
+      "handwritingReading": "0.002",
+      "handwritingAgrees": true,
+      "releaseStatus": "verified-finite-pools"
+    },
+    {
+      "sourceItemId": "6-2-u2-e4-example-4",
+      "answerContract": "continued-division-new-remainder",
+      "independentCheck": "recover-original-dividend-then-extend-quotient-by-one-place",
+      "risk": "Handwritten value repeats the previous remainder and disagrees with the independently calculated new remainder.",
+      "independentAnswer": "0.0135",
+      "handwritingReading": "0.16",
+      "handwritingAgrees": false,
+      "releaseStatus": "locked",
+      "independentDividend": "11.001",
+      "independentNewQuotient": "3.75"
+    }
+  ],
+  "officialAnswerEvidence": "not-available-for-these-items",
+  "publicReleaseStatus": "partial",
+  "pending": [
+    "publisher answer-key comparison remains unverified",
+    "example 4 handwritten-answer conflict unresolved"
+  ],
+  "verification": {
+    "printedConditionsChecked": true,
+    "publisherAnswerVerified": false,
+    "independentPromptAudit": "source-6-2-decimal-e4-release-audit.js",
+    "realBrowserAudit": "source-6-2-decimal-e4-live-audit.js",
+    "verifiedVariantCount": 3,
+    "difficultyChoices": [
+      -1,
+      0,
+      1
+    ]
+  }
+}

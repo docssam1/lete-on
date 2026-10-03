@@ -1,0 +1,93 @@
+[data-renderer="source62-e2-model"] {
+  color: #000;
+  font-family: var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+svg.geometry-diagram[data-renderer="source62-e2-model"] {
+  display: block;
+  width: min(460px, 100%);
+  max-width: 100%;
+  height: auto;
+  margin: 10px auto 4px;
+  overflow: visible;
+  font-variant-numeric: tabular-nums;
+}
+
+svg.geometry-diagram[data-renderer="source62-e2-model"] line,
+svg.geometry-diagram[data-renderer="source62-e2-model"] path,
+svg.geometry-diagram[data-renderer="source62-e2-model"] rect {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+svg.geometry-diagram[data-renderer="source62-e2-model"] .source62-triangle-target {
+  stroke-width: 1.4 !important;
+}
+
+svg.geometry-diagram[data-renderer="source62-e2-model"] .source62-overlap-region {
+  fill: #e8e8e8;
+  stroke: none;
+}
+
+svg.geometry-diagram[data-renderer="source62-e2-model"] .source62-e2-source-shade {
+  fill: #f3f3f3;
+  stroke: none;
+}
+
+.solution-item:has([data-renderer="source62-e2-model"]) > p,
+.solution-viewer-solution:has(> [data-renderer="source62-e2-model"]) {
+  color: #000;
+  font-family: var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+svg.geometry-diagram[data-renderer="source62-e2-model"] .source62-overlap-cross-point {
+  fill: #000;
+  stroke: none;
+}
+
+svg.geometry-diagram[data-renderer="source62-e2-model"] text,
+svg.geometry-diagram[data-renderer="source62-e2-model"] text tspan {
+  fill: #000;
+  stroke: none;
+  paint-order: normal;
+  font-family: var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif);
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-anchor: middle;
+}
+
+div[data-renderer="source62-e2-model"][data-answer-source] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@page source62E2GeometryAnswer {
+  size: A4;
+  margin: 6mm 0;
+}
+
+@media print {
+  .answer-page:has(svg[data-renderer="source62-e2-model"]) {
+    page: source62E2GeometryAnswer;
+  }
+
+  svg.geometry-diagram[data-renderer="source62-e2-model"] {
+    width: min(90mm, 100%);
+    margin: 3mm auto 1mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  [data-renderer="source62-e2-model"][data-print-weight="compact"] > svg.geometry-diagram[data-renderer="source62-e2-model"] {
+    width: min(84mm, 100%);
+    margin: 2mm auto;
+  }
+}

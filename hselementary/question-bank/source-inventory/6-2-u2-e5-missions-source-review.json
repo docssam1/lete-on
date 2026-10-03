@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 25,
+    "printedPage": 27,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "secondarySourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "DDF0DBBBF4957F70815BD633F5D78511040657DACFA0DDA9ED063FA142C27B1B",
+    "pdfPage": 31,
+    "printedPage": 27,
+    "samePrintedWording": true,
+    "handwrittenMarksPresent": false
+  },
+  "annotatedAnswerEvidence": {
+    "sourceSha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 25,
+    "printedPage": 27,
+    "kind": "handwritten-answers-on-problem-scan",
+    "userPresentedAsAnswerSource": true,
+    "publisherAnswerKeyVerified": false,
+    "items": [
+      { "mission": 1, "writtenAnswer": "11.9시간", "independentAnswer": "11.9시간", "status": "matches" },
+      { "mission": 2, "writtenAnswer": "5/4배", "independentAnswer": "5/4배", "status": "matches" },
+      { "mission": 3, "writtenAnswer": "20분", "independentAnswer": null, "status": "conflicts-with-printed-conditions" },
+      { "mission": 4, "writtenAnswer": "0.69kg", "independentAnswer": "0.59kg", "status": "conflicts-with-printed-conditions" },
+      { "mission": 5, "writtenAnswer": "8시간 20분", "independentAnswer": "8시간 20분", "status": "matches" },
+      { "mission": 6, "writtenAnswer": "375L", "independentAnswer": "375L", "status": "matches" }
+    ]
+  },
+  "nonMatchingAnswerSource": {
+    "sha256": "3B71EDCF9C234B180A08A73905B16F6065F833160E499223D413ED65792BACF0",
+    "evidencePdfPage": 15,
+    "printedFooter": "초 6-2 경시",
+    "reason": "The answer PDF identifies itself as the contest book in the printed footer on PDF page 15. It is not an answer key for these advanced-book missions."
+  },
+  "missions": [
+    {
+      "sourceItemId": "6-2-u2-e5-mission-1",
+      "answerContract": "walking-speed-to-rounded-travel-hours",
+      "independentCheck": "convert-minutes-to-hours-then-round-final-time-only",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission1",
+        "difficultyDesign": ["hourly-distance-given", "source-time-distance", "two-leg-distance-before-rounding"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "verified"
+      }
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-2",
+      "answerContract": "compare-second-car-per-liter-distance-to-first",
+      "independentCheck": "compare-two-unit-distances-in-the-stated-direction",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission2",
+        "difficultyDesign": ["unit-distances-given", "source-fuel-distance-comparison", "second-car-two-leg-distance"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "verified"
+      }
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-3",
+      "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
+      "independentCheck": "convert-reference-minutes-to-hours-and-subtract-current-speed",
+      "risk": "The initial 93.6 km direction is unstated. The user reads it as downstream: 52 km/h downstream minus 47.5 km/h current leaves 4.5 km/h still-water speed, so the printed 18 km upstream trip is impossible. If the initial speed instead means still water, the independently calculated four hours conflicts with the handwritten 20-minute answer in the user-supplied annotated scan. Keep locked; do not silently rewrite either direction.",
+      "interpretationAudit": {
+        "referenceSpeedKmh": 52,
+        "downstreamReadingUpstreamSpeedKmh": -43,
+        "stillWaterReadingUpstreamSpeedKmh": 4.5,
+        "stillWaterReadingTimeHours": 4,
+        "firstLegDirectionPrinted": false,
+        "independentReviewer": "Claude Sonnet CLI"
+      },
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission3",
+        "sourceRelationship": "condition-clarified-adaptation",
+        "difficultyDesign": ["still-water-speed-given", "still-water-distance-and-time", "derive-current-from-distance-and-time"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "locked"
+      },
+      "downstreamCandidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission3DownstreamCandidate",
+        "sourceRelationship": "downstream-number-corrected-adaptation",
+        "sourceNumberChange": "The source-like first variant changes the current from 47.5 to 21.5 km/h while keeping the 93.6 km, 1 hour 48 minutes, and 18 km values.",
+        "userDecision": "Approved a number-adjusted downstream variant on 2026-09-30; this is not an official answer to the printed question.",
+        "difficultyDesign": ["downstream-speed-given", "downstream-distance-and-time", "derive-current-from-distance-and-time"],
+        "fixedPoolCount": 3,
+        "independentReviewer": "Claude Sonnet CLI",
+        "publicReleaseStatus": "verified-as-adaptation"
+      }
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-4",
+      "answerContract": "container-tare-from-oil-mass-change",
+      "independentCheck": "derive-oil-mass-per-liter-from-before-and-after-weights",
+      "risk": "The handwritten 0.69 kg answer in the user-supplied annotated scan conflicts with direct calculation and back-substitution: the printed conditions give 0.59 kg. The clean scan has no handwriting; do not substitute the handwritten value for the verified generator answer.",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission4",
+        "difficultyDesign": ["oil-unit-mass-given", "source-two-weighings", "two-stage-use-and-weighing"],
+        "fixedPoolCount": 3,
+        "publicReleaseStatus": "verified"
+      }
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-5",
+      "answerContract": "candle-remaining-length-to-hours-and-minutes",
+      "independentCheck": "count-ten-minute-burn-intervals-then-convert-minutes",
+      "overlapWith": "6-2-u2-e5-example-1",
+      "overlapDecision": "same burned-length-to-time method as example 5-1; retain this source item for provenance and use verified common type pool 2 with the Mission 5 centimeter-only conditions rather than publishing a duplicate generator"
+    },
+    {
+      "sourceItemId": "6-2-u2-e5-mission-6",
+      "answerContract": "derive-gallon-to-liter-from-vehicle-distances",
+      "independentCheck": "convert-provided-miles-to-kilometers-before-comparing-fuel-units",
+      "risk": "The question defines a mathematical conversion through the vehicle data; an external gallon constant must not be substituted. The handwritten 375L agrees with independent arithmetic but is not a publisher key.",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission6",
+        "difficultyDesign": ["mile-distance-already-converted", "source-mile-and-fuel-relations", "two-fuel-amounts-then-convert"],
+        "fixedPoolCount": 3,
+        "independentCheck": "Parse each generated prompt, solve total distance divided by km per liter with integer tenths, then multiply the answer back to recover the distance; verify desktop, 390px, 320px, and A4 output",
+        "publicReleaseStatus": "verified"
+      }
+    }
+  ],
+  "officialAnswerEvidence": "not-available-for-these-items",
+  "independentAnswerEvidence": {
+    "status": "verified-for-missions-1-2-4-6-and-common-candle-type",
+    "method": "source wording in two scans, independent integer arithmetic and back-substitution, Claude CLI second calculation for earlier missions, Mission 6 prompt-parsing BigInt check and real worksheet desktop/mobile/A4 inspection",
+    "officialAnswerClaimed": false
+  },
+  "publicReleaseStatus": "partial",
+  "pending": [
+    "mission 3 printed wording remains ambiguous; only the explicitly downstream number-corrected adaptation is released, not an official source answer",
+    "matching advanced-book official answer comparison if a valid key is found",
+    "mission 6 has independent arithmetic and a matching handwritten annotation, not an official answer key"
+  ]
+}

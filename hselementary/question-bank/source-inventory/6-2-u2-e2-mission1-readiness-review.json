@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "status": "private-review-metadata-no-source-image",
+  "sourceItemId": "6-2-u2-e2-mission-1",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 19,
+    "printedPage": 21,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "officialAnswerEvidence": {
+    "status": "not-used",
+    "reason": "별도 6-2답지는 경시 교재이므로 심화 Mission의 공식 답으로 취급하지 않음"
+  },
+  "originalStructure": "138.6m 직선 승강장의 양옆에 처음부터 끝까지 소화기를 놓음. 한쪽 간격 12.6m, 다른 쪽 9.9m. 두께는 무시하고 양옆의 개수를 합함. 원문에 그림 없음",
+  "answerContract": {
+    "originalNumericAnswer": "27개",
+    "independentCalculation": "첫쪽 138.6÷12.6=11칸이므로 12개, 둘째쪽 138.6÷9.9=14칸이므로 15개, 합계 27개",
+    "singleAnswer": true,
+    "difficultyDesign": "쉬움은 간격과 소화기 개수의 차이를 묻는 단서, 기준은 원문 양끝 포함, 어려움은 첫쪽 출입구 자리에 소화기 한 개가 없어 한 구간만 두 배 간격"
+  },
+  "verification": {
+    "independentMathAudit": "source-6-2-decimal-e2-mission1-audit.js",
+    "mathChecks": 360,
+    "allPossibleDoubleGapLocationsEnumerated": true,
+    "difficultyOffsetsChecked": [-1, 0, 1],
+    "browserAudit": "source-6-2-decimal-e1-browser-audit.js",
+    "desktopMobileScreenshots": 12,
+    "a4PdfFiles": 6,
+    "a4ProblemPageCount": 1,
+    "a4SolutionPageCount": 1,
+    "secondaryReviewer": {
+      "kind": "Claude CLI",
+      "scope": "사람이 전사한 원문 조건과 세 고정 풀의 보통·출입구 제외 개수, 위치에 따른 답 유일성을 독립 계산",
+      "sourceImageDirectlyViewed": false,
+      "confirmedStandardCounts": [27, 34, 32],
+      "confirmedHardCounts": [26, 33, 31],
+      "wordingFindingRemediated": "양쪽을 서로 마주 보는 양옆 가장자리로, 비워 둔 구간을 출입구 자리 소화기 한 개 제외로 명시"
+    }
+  },
+  "verifiedVariantCount": 3,
+  "releaseStatus": "verified"
+}

@@ -105,6 +105,14 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       if (generated.verifiedPoolIndex === 0 && variant === 1 && !problem.includes('data-angle-owner="벚나무" data-angle-value="54"')) failures.push(`${sourceIds[variant]}: 54°가 벚나무 구간에 붙지 않음`);
       if (generated.verifiedPoolIndex === 0 && variant === 3 && (!problem.includes('data-angle-owner="좋아하는 학생" data-angle-value="270"') || !problem.includes('data-angle-owner="좋아하는 학생" data-angle-value="240"') || !problem.includes('data-angle-owner="둘 다 좋아하지 않는 쪽" data-angle-value="150"'))) failures.push(`${sourceIds[variant]}: 270°·240°·150°의 대상 구간 불일치`);
       if (generated.verifiedPoolIndex === 0 && variant === 7 && (!problem.includes("기타 성분 가운데 25%") || !/기타(?:\s*·)?\s*2%/.test(problem))) failures.push(`${sourceIds[variant]}: 기타 2%와 그 안의 25% 구분 누락`);
+      if (variant === 7) {
+        const [weight, , , , otherRate, part, need, perFruit, answerCount] = answerValues;
+        const remainingNeed = need - (answerCount - 1) * perFruit;
+        if (answerCount !== Math.floor((need + perFruit - 1) / perFruit)) failures.push(`${sourceIds[variant]}: 독립 필요 개수 계산이 맞지 않음`);
+        if (!generated.solution.includes(`${answerCount - 1}개로는 ${(answerCount - 1) * perFruit}g`) || !generated.solution.includes(`${remainingNeed}g 부족`)) failures.push(`${sourceIds[variant]}: 나머지를 이용한 풀이 근거가 맞지 않음`);
+        if (/\d+\.\d{10,}/.test(generated.solution + generated.answer)) failures.push(`${sourceIds[variant]}: 풀이에 계산기 소수 꼬리가 노출됨`);
+        if (weight * otherRate * part / 10000 !== perFruit) failures.push(`${sourceIds[variant]}: 참외 한 개의 칼륨 양 계산 불일치`);
+      }
       if (generated.verifiedPoolIndex === 0 && variant === 9 && !problem.includes('data-angle-owner="둘 다 좋아하는 학생" data-angle-value="160"')) failures.push(`${sourceIds[variant]}: 160°가 둘 다 좋아하는 학생 구간에 붙지 않음`);
       if (variant === 3 && /1550명/.test(problem + answer + generated.solution)) failures.push(`${sourceIds[variant]}: 잘못된 이전 답 1550명 노출`);
     } catch (error) {
