@@ -30,7 +30,7 @@ async function auditIntro(page, viewportName) {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${baseUrl}/fields-classic/question-bank/intro.html?student=DEMO`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("h1").innerText(), "필즈 더 클래식\n사고력 문제은행", `${viewportName}: hero title mismatch`);
+  assert.equal(await page.locator("h1").innerText(), "FC\n사고력 문제은행", `${viewportName}: hero title mismatch`);
   assert.equal(await page.locator(".cycle-list li").count(), 4, `${viewportName}: learning cycle mismatch`);
   assert.equal(await page.locator(".difference-grid article").count(), 3, `${viewportName}: proof section mismatch`);
   assert.equal(await page.locator('img').evaluateAll((images) => images.every((image) => image.complete && image.naturalWidth > 0)), true, `${viewportName}: product image missing`);

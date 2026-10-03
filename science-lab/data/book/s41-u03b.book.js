@@ -9,8 +9,7 @@ const S = (w, h, body) => `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org
 const photo = (m, h = 'auto') => `<figure class="bk-photo"><img src="${m.src}" alt="${m.cap}" style="${h === 'auto' ? '' : `height:${h};object-fit:cover`}"><figcaption>${m.cap} <small>${m.credit}</small></figcaption></figure>`;
 const G = media.gallery, by = (k) => G.find((m) => m.cap.includes(k));
 const FOIL = '<linearGradient id="fo" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#eef1f4"/><stop offset=".45" stop-color="#b9c0c7"/><stop offset=".6" stop-color="#f4f6f8"/><stop offset="1" stop-color="#aab2ba"/></linearGradient>';
-const TRIPOD = (x, y) => `<ellipse cx="${x}" cy="${y}" rx="60" ry="10" fill="none" stroke="#4a4f55" stroke-width="5"/><path d="M${x - 50} ${y + 4} L${x - 58} ${y + 90} M${x + 50} ${y + 4} L${x + 58} ${y + 90} M${x} ${y + 10} L${x} ${y + 92}" stroke="#4a4f55" stroke-width="5" stroke-linecap="round"/>`;
-const LAMP = (x, y, on) => `<path d="M${x - 22} ${y} h44 l6 30 h-56z" fill="#cfe6f2" stroke="#7fa6bd" stroke-width="2"/><rect x="${x - 7}" y="${y - 12}" width="14" height="12" fill="#8a8f95"/><rect x="${x - 2}" y="${y - 26}" width="4" height="14" fill="#eee" stroke="#999"/>${on ? `<path d="M${x} ${y - 62} C${x + 14} ${y - 44} ${x + 12} ${y - 30} ${x} ${y - 24} C${x - 12} ${y - 30} ${x - 14} ${y - 44} ${x} ${y - 62}Z" fill="#f9a825"/><path d="M${x} ${y - 46} C${x + 6} ${y - 38} ${x + 5} ${y - 30} ${x} ${y - 26} C${x - 5} ${y - 30} ${x - 6} ${y - 38} ${x} ${y - 46}Z" fill="#fff3c4"/>` : ''}`;
+const HEATER = (on) => `<rect x="94" y="82" width="112" height="49" rx="6" fill="#dce5ed" stroke="#657789" stroke-width="2"/><rect x="106" y="78" width="88" height="7" rx="3" fill="${on ? '#d45b42' : '#7f8d9b'}"/><circle cx="184" cy="110" r="9" fill="#fff" stroke="#657789" stroke-width="2"/><circle cx="184" cy="110" r="2" fill="${on ? '#d45b42' : '#657789'}"/>`;
 const CONE = (x, y, w, h) => `<path d="M${x} ${y} L${x - w / 2} ${y + h} L${x + w / 2} ${y + h}Z" fill="url(#fo)" stroke="#8b949c" stroke-width="2"/><path d="M${x - 8} ${y + 6} h16" stroke="#3b2a22" stroke-width="5" stroke-linecap="round"/>`;
 const SMOKE = (x, y) => [0, 1, 2].map((i) => `<circle cx="${x + (i - 1) * 10}" cy="${y - 18 - i * 22}" r="${9 + i * 4}" fill="#e6e6e6" opacity=".85"/>`).join('');
 
@@ -24,9 +23,9 @@ export const art = {
     <rect x="128" y="86" width="44" height="40" rx="8" fill="#fff1f3" stroke="#e5b8c1"/><circle cx="150" cy="92" r="5" fill="#E23B2E"/><circle cx="140" cy="100" r="3" fill="#E23B2E"/>
     <path d="M150 30 L95 130 L205 130Z" fill="none" stroke="#8b949c" stroke-width="2"/><path d="M143 34 h14" stroke="#3b2a22" stroke-width="5" stroke-linecap="round"/>
     <text x="150" y="158" text-anchor="middle" font-size="13" fill="#444">안에 마시멜로와 빨간 색소를 넣어요</text>`),
-  step3: S(300, 170, `<defs>${FOIL}</defs><rect width="300" height="170" fill="#f7f7f5"/>${TRIPOD(150, 78)}${CONE(150, 12, 100, 66)}${LAMP(150, 138, false)}
-    <text x="150" y="164" text-anchor="middle" font-size="13" fill="#444">삼발이 위에 올리고 아래에 알코올램프</text>`),
-  step4: S(300, 170, `<defs>${FOIL}</defs><rect width="300" height="170" fill="#f7f7f5"/>${TRIPOD(150, 78)}${CONE(150, 12, 100, 66)}${LAMP(150, 138, true)}${SMOKE(150, 12)}
+  step3: S(300, 170, `<defs>${FOIL}</defs><rect width="300" height="170" fill="#f7f7f5"/>${HEATER(false)}${CONE(150, 12, 100, 66)}
+    <text x="150" y="164" text-anchor="middle" font-size="13" fill="#444">교사가 전기 가열판 위에 모형을 놓아요</text>`),
+  step4: S(300, 170, `<defs>${FOIL}</defs><rect width="300" height="170" fill="#f7f7f5"/>${HEATER(true)}${CONE(150, 12, 100, 66)}${SMOKE(150, 12)}
     <path d="M154 18 C170 30 178 50 186 78" stroke="#f3b6c2" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="188" cy="82" r="8" fill="#f3b6c2"/>
     <text x="250" y="40" font-size="12" fill="#444">연기</text><text x="215" y="100" font-size="12" fill="#444">흘러나옴</text>
     <text x="150" y="164" text-anchor="middle" font-size="13" fill="#444">가열하며 나오는 것을 관찰해요</text>`),
@@ -36,9 +35,9 @@ export const art = {
     <text x="150" y="30" text-anchor="middle" font-size="13" fill="#444">뜨거운 백반 물을 두 가지 방법으로 식혀요</text>`),
   result: S(520, 200, `<rect width="520" height="200" fill="#f7f7f5"/>
     <rect x="40" y="40" width="180" height="110" rx="10" fill="#3a3a3a"/>${Array.from({ length: 60 }, (_, i) => `<circle cx="${52 + (i * 37) % 160}" cy="${50 + (i * 53) % 92}" r="2" fill="#5a5a5a"/>`).join('')}${[0, 1, 2, 3, 4].map((i) => `<circle cx="${70 + i * 32}" cy="${70 + (i % 2) * 40}" r="6" fill="#111"/>`).join('')}
-    <text x="130" y="175" text-anchor="middle" font-size="13" fill="#444">빨리 식음 → 작은 알갱이 (현무암)</text>
+    <text x="130" y="175" text-anchor="middle" font-size="13" fill="#444">빨리 식힌 백반 → 작은 결정</text>
     <rect x="300" y="40" width="180" height="110" rx="10" fill="#d9cfc2"/>${Array.from({ length: 22 }, (_, i) => `<ellipse cx="${318 + (i * 41) % 150}" cy="${55 + (i * 29) % 80}" rx="11" ry="8" fill="${['#f2e9dc', '#e5b5a0', '#2b2b2b', '#c9c1b5'][i % 4]}"/>`).join('')}
-    <text x="390" y="175" text-anchor="middle" font-size="13" fill="#444">천천히 식음 → 큰 알갱이 (화강암)</text>`),
+    <text x="390" y="175" text-anchor="middle" font-size="13" fill="#444">천천히 식힌 백반 → 큰 결정</text>`),
   opener: photo(G[0], '58mm'),
   section: S(640, 250, `<defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#ff3d00"/></linearGradient></defs>
     <rect width="640" height="250" fill="#e9f0f7"/><rect y="150" width="640" height="100" fill="#6b5442"/><rect y="150" width="640" height="14" fill="#7a9a5a"/>
@@ -70,7 +69,7 @@ export const chapter = {
   ],
   goal: '화산 모형을 분출시켜 화산 분출물을 알아보고, 마그마가 식는 빠르기에 따라 암석이 어떻게 달라지는지 알아보자.',
   materials: {
-    kit: ['알루미늄 포일', '마시멜로 3개', '빨간 식용 색소', '삼발이·석면 그물', '알코올램프', '백반', '비커 2개', '온도계'],
+    kit: ['알루미늄 포일', '마시멜로 3개', '빨간 식용 색소', '교사용 전기 가열판', '백반', '비커 2개', '온도계'],
     student: ['얼음물', '작은 스티로폼 상자', '점화기(보호자)', '면장갑'],
   },
   hypothesis: { hint: '가열하면 무엇이 나올지, 식히는 빠르기에 따라 알갱이 크기가 어떻게 될지 예상해 보세요.', a: '가열하면 연기가 나고 녹은 마시멜로가 흘러나올 것이다. 천천히 식힐수록 알갱이(결정)가 클 것이다.' },
@@ -82,12 +81,12 @@ export const chapter = {
   steps: [
     { art: 'step1', text: '알루미늄 포일을 산 모양으로 접고, 꼭대기에 작은 구멍(분화구)을 뚫어요.', tip: '포일을 두 겹으로 하면 잘 찢어지지 않아요.' },
     { art: 'step2', text: '포일 안에 마시멜로를 넣고 빨간 식용 색소를 두세 방울 떨어뜨려요.', tip: '색소는 용암을 눈에 잘 보이게 해 줘요.' },
-    { art: 'step3', text: '삼발이 위 석면 그물에 화산 모형을 올리고, 아래에 알코올램프를 놓아요.', tip: '모형이 그물 가운데에 오게 놓아요.' },
+    { art: 'step3', text: '선생님이 화산 모형을 전기 가열판 위에 올려놓아요.', tip: '가열판과 뜨거운 모형은 선생님만 다뤄요.' },
     { art: 'step4', text: '보호자와 함께 불을 붙여 가열하면서 연기, 흘러나오는 것, 굳는 것을 차례로 관찰해요.', tip: '불 세기를 바꿔 한 번 더 하고 비교해요.' },
     { art: 'step5', text: '뜨거운 물에 백반을 녹인 백반 물을 두 비커에 나눠 하나는 얼음물에, 하나는 상자에 넣어 식혀요. 다 식으면 결정의 크기와 개수를 비교해요.', tip: '천천히 식힌 비커는 30분쯤 걸려요. 기다리는 동안 개념 정리를 해요.' },
   ],
   wonder: { q: '포일의 구멍을 더 크게 뚫거나, 마시멜로를 더 많이 넣으면 분출 모습은 어떻게 달라질까요?', a: '구멍이 크면 연기와 녹은 것이 쉽게 나오고, 마시멜로가 많으면 흘러나오는 양이 많아 더 넓게 퍼진다.' },
-  caution: ['불과 뜨거운 포일은 반드시 보호자와 함께 다뤄요.', '실험한 마시멜로와 백반 물은 먹지 않아요.', '뜨거운 비커는 면장갑을 끼고 옮겨요.'],
+  caution: ['가열은 선생님만 해요. 학생은 뜨거운 가열판과 포일에 손대지 않아요.', '실험한 마시멜로와 백반 물은 먹지 않아요.', '뜨거운 비커는 선생님이 내열 장갑을 끼고 옮겨요.'],
   results: [
     { q: '화산 모형을 가열했을 때 나온 것을 실제 화산 분출물과 짝지어 쓰세요.', table: ['', '모형에서 나온 것', '실제 화산 분출물', '상태'], rows: ['연기', '흘러나온 것', '굳은 것'],
       a: '연기 — 화산 가스 — 기체 / 녹아 흘러나온 마시멜로 — 용암 — 액체 / 굳은 마시멜로 — 화산 암석(현무암 등) — 고체' },
@@ -134,10 +133,10 @@ export const chapter = {
   rail: {
     1: [{ h: '교과서 연결', t: '4학년 1학기 Ⅲ. 땅의 변화 · 화산과 지진' }, { g: ['마그마', '용암'] }],
     2: [{ h: '두 가지 실험', t: '①은 분출물을 보는 모형 실험, ②는 알갱이 크기를 보는 결정 실험이에요. 바꿀 조건은 실험마다 하나!' }, { g: ['분화구'] }],
-    3: [{ h: '안전 먼저', t: '알코올램프는 뚜껑으로 덮어 끄고, 절대 입으로 불지 않아요.' }],
+    3: [{ h: '안전 먼저', t: '실제 가열은 선생님만 전기 가열판으로 시범 보여요. 학생은 뜨거운 모형에 손대지 않아요.' }],
     4: [{ h: '백반이 없다면', t: '설탕물을 진하게 끓여 식혀도 결정을 볼 수 있어요.' }, { g: ['결정'] }],
     5: [{ g: ['화성암'] }],
-    6: [{ h: '실험과 잇기', t: '얼음물 비커 = 땅 위(현무암), 상자 비커 = 땅속(화강암)' }, { g: ['규모'] }],
+    6: [{ h: '실험과 잇기', t: '백반 결정의 식는 속도와 크기를 비교해 암석 알갱이의 차이를 생각해요. 백반은 암석이 아니에요.' }, { g: ['규모'] }],
     7: [{ h: '생각을 넓히는 법', t: '“피해는? 이로움은? 막으려면?” 세 갈래로 나눠 보세요.' }],
     8: [{ h: '확인 문제', t: '4학년 1학기 단원평가 유형과 같은 모양으로 새로 쓴 문제예요.' }],
   },
@@ -155,8 +154,8 @@ export const chapter = {
       { label: '① 탐구 문제', hint: '무엇을 알아보려고 했나요?', a: '화산이 분출할 때 무엇이 나오고, 식는 빠르기에 따라 암석의 알갱이는 어떻게 달라질까?', lines: 2 },
       { label: '② 가설', hint: '두 실험 모두 써요.', a: '가열하면 연기와 녹은 것이 흘러나올 것이다. 천천히 식힐수록 결정이 클 것이다.', lines: 2 },
       { label: '③ 바꿀 조건 / 같게 할 조건', a: '바꿀 조건: 불 세기 / 식히는 빠르기 · 같게 할 조건: 마시멜로 양, 가열 시간, 백반 물의 양과 처음 온도', lines: 1 },
-      { label: '④ 준비물', a: '알루미늄 포일, 마시멜로, 식용 색소, 삼발이, 알코올램프, 백반, 비커, 온도계, 얼음물, 상자', lines: 1 },
-      { label: '⑤ 실험 과정', hint: '순서대로 번호를 붙여 써요.', a: '① 포일 화산 만들기 ② 마시멜로·색소 넣기 ③ 삼발이에 올리기 ④ 가열하며 관찰 ⑤ 백반 물을 두 곳에서 식히기', lines: 2 },
+      { label: '④ 준비물', a: '알루미늄 포일, 마시멜로, 식용 색소, 교사용 전기 가열판, 백반, 비커, 온도계, 얼음물, 상자', lines: 1 },
+      { label: '⑤ 실험 과정', hint: '순서대로 번호를 붙여 써요.', a: '① 포일 화산 만들기 ② 마시멜로·색소 넣기 ③ 선생님이 가열판에 올리기 ④ 가열하며 관찰 ⑤ 백반 물을 두 곳에서 식히기', lines: 2 },
       { label: '⑥ 결과', hint: '모형에서 나온 것과 결정 크기를 표로.', a: '연기(화산 가스)·흘러나온 마시멜로(용암)·굳은 것(화산 암석). 얼음물은 작은 결정 많이, 상자는 큰 결정 조금.', lines: 3 },
       { label: '⑦ 결론', a: '화산 분출물은 기체·액체·고체 세 가지다. 빨리 식으면 알갱이가 작은 현무암, 천천히 식으면 알갱이가 큰 화강암이 된다.', lines: 2 },
       { label: '⑧ 우리 생활과 이어 보기', hint: '화산이 주는 피해와 이로움.', a: '피해: 용암·화산재 / 이로움: 온천, 지열 발전, 기름진 땅. 지진에는 대피 방법을 미리 익힌다.', lines: 1 },
@@ -189,7 +188,7 @@ export const plan = {
     hypo: '분출물 예상과 결정 크기 예상, 두 가지를 쓰게 하세요.',
     design: '실험이 둘이므로 바꿀 조건도 둘 — 각각 하나씩임을 짚어 주세요.',
     step1: '포일은 미리 접어 두어도 됩니다.',
-    step3: '알코올램프 안전 규칙을 먼저 시범 보이세요.',
+    step3: '실제 가열은 교사가 전기 가열판으로만 시범 보여 주세요. 학생은 가상 실험실에서 조작합니다.',
     step5: '백반 물은 수업 초반에 식히기를 시작해야 결과를 볼 수 있어요.',
     lab: '실제 실험의 기다리는 시간에 3D 실험실에서 얼음물/상자를 비교하게 하세요.',
     wonder: '구멍 크기를 바꾼 모형을 하나 더 준비하면 좋아요.',

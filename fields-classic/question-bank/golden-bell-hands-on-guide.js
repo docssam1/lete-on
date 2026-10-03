@@ -12,7 +12,7 @@ export function handsOnGuide(activity, round, state) {
     transfer: "두 사람의 수가 같아졌어. 전체 개수도 그대로야."
   })[activity.kind] };
   if (state.checked) return { phase: "retry", text: ({
-    clock: "끝 숫자만 보지 말고, 방향과 ¼바퀴 횟수도 확인해 봐.",
+    clock: "끝 숫자만 보지 말고, 방향과 반의 반 바퀴씩 돌린 횟수도 확인해 봐.",
     mirror: "거울선에서 몇 칸 떨어져 있는지 하나씩 짝지어 봐.",
     fold: "마지막에 접은 선부터 펼친다고 생각해 봐. 자국은 어디로 옮겨질까?",
     cross: "카드를 중복해 놓지 않았는지, 두 줄의 합이 같은지 확인해 봐.",
@@ -22,7 +22,7 @@ export function handsOnGuide(activity, round, state) {
 
   if (activity.kind === "clock") return state.moves
     ? { phase: "progress", text: `지금 바늘은 ${clockValueAfterQuarterTurns(round.start, state.turns)}을 가리켜. 필요한 만큼 더 돌리거나 되돌려 봐.` }
-    : { phase: "start", text: "¼바퀴를 돌리면 숫자 세 칸을 지나가. 출발점과 방향을 먼저 봐." };
+    : { phase: "start", text: "반의 반 바퀴씩 돌려 문제를 맞춰 보자. 출발점과 방향을 먼저 봐." };
   if (activity.kind === "mirror") return state.cells.length
     ? { phase: "progress", text: `지금 ${state.cells.length}칸을 골랐어. 주어진 칸과 거울선 사이의 거리를 비교해 봐.` }
     : { phase: "start", text: "거울선에서 같은 거리의 빈칸을 찾아 직접 눌러 봐." };

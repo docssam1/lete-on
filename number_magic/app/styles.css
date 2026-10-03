@@ -3048,6 +3048,11 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 #townVp.is-3d-pending #townWorld{visibility:hidden}
 #townVp.is-3d #townWorld{display:none}
 #townVp.is-3d,#townVp.is-3d-pending{background:#9fcf8a;cursor:default}
+/* Keep the guide and movement area clear. These overrides affect only a real 3D town. */
+.nm-town:has(#townVp.is-3d) .nm-town-hud.brand{display:none}
+.nm-town:has(#townVp.is-3d) .nm-town-hud.info{top:110px;right:12px;display:flex;flex-direction:column;gap:6px}
+.nm-town:has(#townVp.is-3d) .nm-road-banner{bottom:22px;left:auto;right:76px;transform:none}
+@media(max-width:480px){.nm-town:has(#townVp.is-3d) .nm-road-banner{bottom:186px;right:12px}.nm-town:has(#townVp.is-3d) .nm-road-banner-btn{max-width:170px;white-space:normal;font-size:16px;padding:8px 12px}.nm-town:has(#townVp.is-3d) .nm-road-next{display:none}}
 /* 3D 모드 선택 화면(app/title3d) — 옛 2D 메뉴는 로딩 시작부터 숨기고, WebGL 실패 때만 드러낸다. */
 .nm-title3d{position:fixed;inset:0;z-index:40;background:linear-gradient(145deg,#f7f3ea 0%,#eef1f6 48%,#e8f6f2 100%)}
 .nm-title.is-3d-pending,.nm-title.is-3d-covered{visibility:hidden}

@@ -18,7 +18,7 @@ function patternGrid(cells, size, label = "") {
 function shapeTransformMarkup(visual) {
   const operationLabels = {
     "mirror-left-right": "좌우 뒤집기", "mirror-top-bottom": "위아래 뒤집기",
-    "rotate-left": "왼쪽 1/4바퀴", "rotate-right": "오른쪽 1/4바퀴", "rotate-half": "반 바퀴"
+    "rotate-left": "시계 반대 방향으로 반의 반 바퀴", "rotate-right": "시계 방향으로 반의 반 바퀴", "rotate-half": "반 바퀴"
   };
   const options = visual.options.map((option) => patternGrid(option.cells, visual.size, `${option.option}번`)).join("");
   return `<div class="b1-transform"><div class="b1-transform-source">${patternGrid(visual.source, visual.size, "처음 모양")}<span>→</span><strong>${visual.operations.map((operation) => operationLabels[operation]).join(" → ")}</strong></div><div class="b1-option-row">${options}</div></div>`;

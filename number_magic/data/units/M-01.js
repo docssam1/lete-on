@@ -11,7 +11,7 @@ window.NM_UNITS['M-01'] = {
   icon:'🌋',
   symbols:[
     { sym:'−', read:'마이너스', translate:'0을 기준으로 반대 방향이라는 걸 알려주는 부호',
-      birth:'중국 『구장산술』(약 2,000년 전)은 붉은 산가지(+)와 검은 산가지(−)로 셈했어요. 유럽에서는 오랫동안 음수를 "거짓 수"라 부르며 의심했어요.' }
+      birth:'『구장산술』의 유휘 주석에는 붉은 산가지로 양수, 검은 산가지로 음수를 나타냈다는 설명이 있습니다. 오늘날 수 앞의 +와 −는 양수와 음수를 구별하는 부호입니다.' }
   ],
 
   practice:{
@@ -30,9 +30,9 @@ window.NM_UNITS['M-01'] = {
       hook:{ ko:'해발 500m인 산도 있고, 해저 500m인 바다도 있습니다. 둘 다 "500"인데 왜 반대일까요?',
         en:'There is a mountain 500m above sea level, and an ocean floor 500m below it. Both are "500" — so why are they opposites?',
         zh:'有座山海拔500米，也有片海底500米深。都是"500"，为什么方向相反？' },
-      history:{ ko:'2,000년 전 중국의 『구장산술』은 붉은 산가지(+)와 검은 산가지(−)로 이미 이런 계산을 했습니다. 유럽에서는 오랫동안 음수를 "거짓 수"라 부르며 의심했다고 합니다 — 지금 낯설게 느껴지는 게 당연합니다.',
-        en:'2,000 years ago, the Chinese text "The Nine Chapters" already computed with red rods (+) and black rods (−). Europe doubted negative numbers for centuries, calling them "false numbers" — so it is completely normal if they feel strange right now.',
-        zh:'2000年前，中国的《九章算术》就已经用红色算筹(+)和黑色算筹(−)来计算了。欧洲曾长期怀疑负数，称它们为"假数"——所以现在觉得陌生是很正常的。' }
+      history:{ ko:'『구장산술』의 유휘 주석에는 붉은 산가지로 양수, 검은 산가지로 음수를 나타냈다는 설명이 있습니다. 이 활동에서는 붉은 가지 하나를 +1, 검은 가지 하나를 −1로 놓습니다. 둘을 한 쌍으로 모으면 합이 0입니다. 수 앞의 부호와 두 수 사이의 계산 기호는 구별해야 합니다.',
+        en:'Liu Hui\'s commentary on The Nine Chapters describes red rods for positive numbers and black rods for negative numbers. In this activity, one red rod represents +1 and one black rod represents −1. Together they total 0. A sign before a number is not the same as an operation between two numbers.',
+        zh:'刘徽的《九章算术》注释介绍了用红色算筹表示正数、黑色算筹表示负数的方法。在这个活动中，一根红筹表示+1，一根黑筹表示−1。两根配成一对，和就是0。数前面的正负号与两个数之间的运算符号需要区分。' }
     },
     stages:[
       { tag:{ko:'① 0을 기준으로 반대 방향',en:'1) Opposite directions from 0',zh:'① 以0为基准的两个方向'},

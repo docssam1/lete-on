@@ -1,0 +1,396 @@
+{
+  "total": 49,
+  "existing": 10,
+  "briefs": [
+    {
+      "glyph": "Ⅹ",
+      "unit": "A-35",
+      "read": "로마 숫자 열",
+      "id": "roman-ten",
+      "file": "sym-roman-ten.png",
+      "status": "brief-only",
+      "constraint": "열을 나타내는 대칭 X 모양. 곱하기 ×와 구별되는 곧은 세리프 기호.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"Ⅹ\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 열을 나타내는 대칭 X 모양. 곱하기 ×와 구별되는 곧은 세리프 기호."
+    },
+    {
+      "glyph": ".",
+      "unit": "A-36",
+      "read": "소수점",
+      "id": "decimal-point",
+      "file": "sym-decimal-point.png",
+      "status": "brief-only",
+      "constraint": "작은 둥근 점, 숫자 사이의 자리 구분을 지킨다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \".\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 작은 둥근 점, 숫자 사이의 자리 구분을 지킨다."
+    },
+    {
+      "glyph": "□",
+      "unit": "B-17",
+      "read": "빈칸(네모)",
+      "id": "unknown-box",
+      "file": "sym-unknown-box.png",
+      "status": "brief-only",
+      "constraint": "가운데가 빈 정사각형, 눈이나 장식으로 빈칸을 막지 않는다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"□\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 가운데가 빈 정사각형, 눈이나 장식으로 빈칸을 막지 않는다."
+    },
+    {
+      "glyph": "²",
+      "unit": "C-01",
+      "read": "제곱",
+      "id": "squared",
+      "file": "sym-squared.png",
+      "status": "brief-only",
+      "constraint": "작은 2를 오른쪽 위에 둔다. 아래 큰 2와 혼동하지 않는다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"²\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 작은 2를 오른쪽 위에 둔다. 아래 큰 2와 혼동하지 않는다."
+    },
+    {
+      "glyph": "½",
+      "unit": "C-21",
+      "read": "이분의 일",
+      "id": "half",
+      "file": "sym-half.png",
+      "status": "brief-only",
+      "constraint": "가로 분수선 위 1, 아래 2의 위치와 크기를 유지한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"½\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 가로 분수선 위 1, 아래 2의 위치와 크기를 유지한다."
+    },
+    {
+      "glyph": "≈",
+      "unit": "H-12",
+      "read": "약(거의 같다)",
+      "id": "approximately",
+      "file": "sym-approximately.png",
+      "status": "brief-only",
+      "constraint": "같은 길이의 물결 두 줄, 등호와 혼동하지 않는다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"≈\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 같은 길이의 물결 두 줄, 등호와 혼동하지 않는다."
+    },
+    {
+      "glyph": "aⁿ",
+      "unit": "M-10",
+      "read": "a의 n제곱",
+      "id": "power",
+      "file": "sym-power.png",
+      "status": "brief-only",
+      "constraint": "a 오른쪽 위에 작은 n. 지수를 몸통 위로 띄운다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"aⁿ\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: a 오른쪽 위에 작은 n. 지수를 몸통 위로 띄운다."
+    },
+    {
+      "glyph": "|x|",
+      "unit": "M-108",
+      "read": "절댓값",
+      "id": "absolute-value",
+      "file": "sym-absolute-value.png",
+      "status": "brief-only",
+      "constraint": "x 양쪽 세로 막대는 같은 높이·같은 거리.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"|x|\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: x 양쪽 세로 막대는 같은 높이·같은 거리."
+    },
+    {
+      "glyph": "!",
+      "unit": "M-111",
+      "read": "팩토리얼",
+      "id": "factorial",
+      "file": "sym-factorial.png",
+      "status": "brief-only",
+      "constraint": "세로 막대와 아래 점을 분리한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"!\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 세로 막대와 아래 점을 분리한다."
+    },
+    {
+      "glyph": "ₙCᵣ",
+      "unit": "M-113",
+      "read": "조합",
+      "id": "combination",
+      "file": "sym-combination.png",
+      "status": "brief-only",
+      "constraint": "n은 C 왼쪽 아래, r은 오른쪽 아래.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"ₙCᵣ\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: n은 C 왼쪽 아래, r은 오른쪽 아래."
+    },
+    {
+      "glyph": "∈",
+      "unit": "M-122",
+      "read": "속한다",
+      "id": "member",
+      "file": "sym-member.png",
+      "status": "brief-only",
+      "constraint": "입 벌어진 방향을 오른쪽으로 유지한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"∈\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 입 벌어진 방향을 오른쪽으로 유지한다."
+    },
+    {
+      "glyph": "∪",
+      "unit": "M-123",
+      "read": "합집합",
+      "id": "union",
+      "file": "sym-union.png",
+      "status": "brief-only",
+      "constraint": "위가 열린 U, 교집합과 혼동하지 않는다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"∪\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 위가 열린 U, 교집합과 혼동하지 않는다."
+    },
+    {
+      "glyph": "∩",
+      "unit": "M-123",
+      "read": "교집합",
+      "id": "intersection",
+      "file": "sym-intersection.png",
+      "status": "brief-only",
+      "constraint": "아래가 열린 아치, 합집합과 혼동하지 않는다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"∩\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 아래가 열린 아치, 합집합과 혼동하지 않는다."
+    },
+    {
+      "glyph": "f⁻¹",
+      "unit": "M-129",
+      "read": "역함수",
+      "id": "inverse-function",
+      "file": "sym-inverse-function.png",
+      "status": "brief-only",
+      "constraint": "f 오른쪽 위의 −1을 지킨다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"f⁻¹\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: f 오른쪽 위의 −1을 지킨다."
+    },
+    {
+      "glyph": "e",
+      "unit": "M-136",
+      "read": "이(오일러 수)",
+      "id": "euler",
+      "file": "sym-euler.png",
+      "status": "brief-only",
+      "constraint": "둥근 소문자 e. 대문자 E·숫자 3과 구별한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"e\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 둥근 소문자 e. 대문자 E·숫자 3과 구별한다."
+    },
+    {
+      "glyph": "°",
+      "unit": "M-140",
+      "read": "도",
+      "id": "degree",
+      "file": "sym-degree.png",
+      "status": "brief-only",
+      "constraint": "작은 빈 동그라미, 소수점과 구별한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"°\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 작은 빈 동그라미, 소수점과 구별한다."
+    },
+    {
+      "glyph": "θ",
+      "unit": "M-140",
+      "read": "세타",
+      "id": "theta",
+      "file": "sym-theta.png",
+      "status": "brief-only",
+      "constraint": "타원 안 가로 줄을 지킨다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"θ\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 타원 안 가로 줄을 지킨다."
+    },
+    {
+      "glyph": "sin",
+      "unit": "M-142",
+      "read": "사인",
+      "id": "sine",
+      "file": "sym-sine.png",
+      "status": "brief-only",
+      "constraint": "s i n 세 글자를 정확히 유지한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"sin\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: s i n 세 글자를 정확히 유지한다."
+    },
+    {
+      "glyph": "D",
+      "unit": "M-26",
+      "read": "판별식",
+      "id": "discriminant",
+      "file": "sym-discriminant.png",
+      "status": "brief-only",
+      "constraint": "대문자 D의 직선·곡선 실루엣을 지킨다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"D\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 대문자 D의 직선·곡선 실루엣을 지킨다."
+    },
+    {
+      "glyph": "αβ",
+      "unit": "M-27",
+      "read": "알파 베타",
+      "id": "alpha-beta",
+      "file": "sym-alpha-beta.png",
+      "status": "brief-only",
+      "constraint": "알파와 베타는 따로 알아볼 수 있게 나란히 둔다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"αβ\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 알파와 베타는 따로 알아볼 수 있게 나란히 둔다."
+    },
+    {
+      "glyph": "⊥",
+      "unit": "M-34",
+      "read": "수직",
+      "id": "perpendicular",
+      "file": "sym-perpendicular.png",
+      "status": "brief-only",
+      "constraint": "밑줄과 세로줄이 직각으로 만난다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"⊥\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 밑줄과 세로줄이 직각으로 만난다."
+    },
+    {
+      "glyph": "∥",
+      "unit": "M-34",
+      "read": "평행",
+      "id": "parallel",
+      "file": "sym-parallel.png",
+      "status": "brief-only",
+      "constraint": "동일 길이 평행 세로 막대 둘.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"∥\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 동일 길이 평행 세로 막대 둘."
+    },
+    {
+      "glyph": "ⁿ√",
+      "unit": "M-36",
+      "read": "n제곱근",
+      "id": "nth-root",
+      "file": "sym-nth-root.png",
+      "status": "brief-only",
+      "constraint": "작은 n은 루트 왼쪽 위. 루트의 윗줄을 막지 않는다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"ⁿ√\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 작은 n은 루트 왼쪽 위. 루트의 윗줄을 막지 않는다."
+    },
+    {
+      "glyph": "log",
+      "unit": "M-37",
+      "read": "로그",
+      "id": "logarithm",
+      "file": "sym-logarithm.png",
+      "status": "brief-only",
+      "constraint": "l o g 세 글자를 정확히 유지한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"log\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: l o g 세 글자를 정확히 유지한다."
+    },
+    {
+      "glyph": "lim",
+      "unit": "M-43",
+      "read": "리미트",
+      "id": "limit",
+      "file": "sym-limit.png",
+      "status": "brief-only",
+      "constraint": "l i m 세 글자를 정확히 유지한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"lim\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: l i m 세 글자를 정확히 유지한다."
+    },
+    {
+      "glyph": "f'",
+      "unit": "M-44",
+      "read": "프라임",
+      "id": "derivative",
+      "file": "sym-derivative.png",
+      "status": "brief-only",
+      "constraint": "f 오른쪽 위에 프라임 하나. 쉼표와 구별한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"f'\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: f 오른쪽 위에 프라임 하나. 쉼표와 구별한다."
+    },
+    {
+      "glyph": "d/dx",
+      "unit": "M-44",
+      "read": "디엑스분의디",
+      "id": "differentiate",
+      "file": "sym-differentiate.png",
+      "status": "brief-only",
+      "constraint": "분수선 위 d, 아래 dx.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"d/dx\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 분수선 위 d, 아래 dx."
+    },
+    {
+      "glyph": "∫",
+      "unit": "M-46",
+      "read": "인테그랄",
+      "id": "integral",
+      "file": "sym-integral.png",
+      "status": "brief-only",
+      "constraint": "세로로 긴 부드러운 적분 기호. S와 구별한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"∫\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 세로로 긴 부드러운 적분 기호. S와 구별한다."
+    },
+    {
+      "glyph": "x",
+      "unit": "M-47",
+      "read": "엑스",
+      "id": "variable",
+      "file": "sym-variable.png",
+      "status": "brief-only",
+      "constraint": "소문자 x, 곱셈 기호 ×와 구별한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"x\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 소문자 x, 곱셈 기호 ×와 구별한다."
+    },
+    {
+      "glyph": "∴",
+      "unit": "M-50",
+      "read": "그러므로",
+      "id": "therefore",
+      "file": "sym-therefore.png",
+      "status": "brief-only",
+      "constraint": "삼각형으로 배치한 점 셋.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"∴\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 삼각형으로 배치한 점 셋."
+    },
+    {
+      "glyph": "≤",
+      "unit": "M-64",
+      "read": "작거나 같다",
+      "id": "less-or-equal",
+      "file": "sym-less-or-equal.png",
+      "status": "brief-only",
+      "constraint": "작다 기호 아래 가로 줄 하나.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"≤\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 작다 기호 아래 가로 줄 하나."
+    },
+    {
+      "glyph": "(x, y)",
+      "unit": "M-68",
+      "read": "좌표",
+      "id": "coordinates",
+      "file": "sym-coordinates.png",
+      "status": "brief-only",
+      "constraint": "괄호·쉼표·x y 순서를 정확히 지킨다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"(x, y)\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 괄호·쉼표·x y 순서를 정확히 지킨다."
+    },
+    {
+      "glyph": "f(x)",
+      "unit": "M-73",
+      "read": "에프 엑스",
+      "id": "function",
+      "file": "sym-function.png",
+      "status": "brief-only",
+      "constraint": "f와 괄호 안 x의 읽는 순서를 지킨다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"f(x)\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: f와 괄호 안 x의 읽는 순서를 지킨다."
+    },
+    {
+      "glyph": "x̄",
+      "unit": "M-84",
+      "read": "엑스 바",
+      "id": "mean",
+      "file": "sym-mean.png",
+      "status": "brief-only",
+      "constraint": "x 바로 위 가로 줄을 지킨다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"x̄\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: x 바로 위 가로 줄을 지킨다."
+    },
+    {
+      "glyph": "σ",
+      "unit": "M-85",
+      "read": "시그마(표준편차)",
+      "id": "standard-deviation",
+      "file": "sym-standard-deviation.png",
+      "status": "brief-only",
+      "constraint": "소문자 시그마, 대문자 Σ와 구별한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"σ\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 소문자 시그마, 대문자 Σ와 구별한다."
+    },
+    {
+      "glyph": "i",
+      "unit": "M-95",
+      "read": "허수 단위 아이",
+      "id": "imaginary-unit",
+      "file": "sym-imaginary-unit.png",
+      "status": "brief-only",
+      "constraint": "소문자 i의 위 점을 지킨다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"i\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 소문자 i의 위 점을 지킨다."
+    },
+    {
+      "glyph": "0",
+      "unit": "N-01",
+      "read": "영",
+      "id": "zero",
+      "file": "sym-zero.png",
+      "status": "reuse-existing",
+      "constraint": "신규 제작하지 않고 공식 누미 0 그림을 재사용한다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"0\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 신규 제작하지 않고 공식 누미 0 그림을 재사용한다."
+    },
+    {
+      "glyph": "<",
+      "unit": "N-03",
+      "read": "작다",
+      "id": "less-than",
+      "file": "sym-less-than.png",
+      "status": "brief-only",
+      "constraint": "왼쪽이 뾰족하다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \"<\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 왼쪽이 뾰족하다."
+    },
+    {
+      "glyph": ">",
+      "unit": "N-03",
+      "read": "크다",
+      "id": "greater-than",
+      "file": "sym-greater-than.png",
+      "status": "brief-only",
+      "constraint": "오른쪽이 뾰족하다.",
+      "prompt": "Create ONE transparent square 512px character body for the mathematics symbol \">\". Same warm orange/cream, navy and purple storybook 3D jelly material as Numi, Poco and Momo. Centered full body, 6 percent safe margin, clean silhouette at 40px. Keep the central symbol display area empty: the application will typeset the exact symbol from source data. No generated lettering or equations, no extra digits, no ground shadow, no watermark. Shape constraint: 오른쪽이 뾰족하다."
+    }
+  ]
+}

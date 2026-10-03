@@ -1,6 +1,7 @@
 // 홈 = 로드맵 입구(매거진형). 표지(한 줄 약속 + 이어서 하기) → 지금 열린 실험 수업(3D 실험실 사진 카드)
 // → 3~6학년 로드맵(학기마다 정거장 줄) → 한 교재 네 가지 수업. 정거장을 누르면 소단원 시트.
 import { SEMS, READY, BOOK_UNITS } from './units-index.js';
+import { countNeeds } from './check.js';
 
 const ROMAN = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ'];
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -83,6 +84,7 @@ function roadmap(store, nx) {
 
 export function pageHome($app, store, teacher) {
   const nx = nextLab(store), go = nx || LABS[0], gok = stateOf(store, go.id);
+  const need = countNeeds();
   const passedN = ALL.filter((u) => stateOf(store, u.id).kind === 'passed').length;
   const openN = ALL.filter((u) => READY[u.id]).length;
   const cta = !nx ? '다시 보기' : gok.kind === 'doing' ? '이어서 하기' : '첫 수업 시작하기';
@@ -123,6 +125,7 @@ export function pageHome($app, store, teacher) {
 
       <section class="h-sec alt" id="h-map"><div class="h-wrap">
         <header class="h-sec-head"><p class="h-num">02</p><div><h2>3학년부터 6학년까지, 한 길로</h2><p>정거장 하나가 교과서 단원 하나예요. 파란 정거장은 지금 열려 있고, 끝내면 깃발이 꽂혀요.</p></div></header>
+        <div class="h-check"><div><b>선생님 확인</b><p>이 기기에서 스스로 공부한 쓰기 답을 확인해요. 기록은 다른 기기로 전송되지 않아요.</p></div><a class="h-btn" href="#/check">확인할 답 보기${need ? ` <span class="h-check-count">${need}</span>` : ''}${ICO.arrow}</a></div>
         <div class="h-legend" aria-hidden="true"><span><i class="open"></i>열림</span><span><i class="passed"></i>끝냄</span><span><i class="locked"></i>준비 중</span></div>
         <div class="h-map">${roadmap(store, nx)}</div>
       </div></section>

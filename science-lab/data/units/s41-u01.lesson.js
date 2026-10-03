@@ -2,6 +2,7 @@
 
 // ── 5E 학습 흐름 (v2 화면·교재가 같은 데이터를 쓴다) ──
 // docssam 말풍선은 한 문장·25자 안팎·~해요체. mood: talk|surprised|thinking|praise|encourage
+import { magnetReading } from '../reading/other-units.reading.js';
 export const lesson = {
   unitId: 's41-u01', grade: 4, title: '자석의 이용', hero: '고리 자석 탑',
   engage: {
@@ -55,6 +56,7 @@ export const lesson = {
     say: [{ mood: 'thinking', text: '이 원리로 무엇을 만들 수 있을까요?' }],
     items: ['s41-u01-a22', 's41-u01-a21', 's41-u01-a23'],
     reading: {
+      magazine: magnetReading,
       title: '떠서 달리는 열차',
       text: '자기부상 열차는 레일과 열차 바닥의 자석이 서로 밀어 내는 힘으로 떠서 달려요. 바퀴가 레일에 닿지 않아서 소리가 작고 흔들림이 적어요.',
     },

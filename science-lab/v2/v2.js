@@ -2,7 +2,7 @@
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
-import { pageHome } from './home.js';
+import { pageHome } from './home.js?v=5';
 import { escapeInApp } from './inapp.js';
 import { record, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js';
@@ -267,7 +267,7 @@ const readingLab = (u, L) => (el, lifecycle) => mountLabOf(L.explore.lab.kind)(e
 function stepElaborate(u, L, items) {
   const x = L.elaborate, I = byId(items);
   frame(u, L, 3, `<p class="step-label">${STEPS[3].label}</p><div id="t"></div>
-    ${x.reading.magazine ? `<a class="btn reading-open" href="#/${u}/reading">읽을거리 한 쪽 보기 · 인쇄</a>${readingHtml(x.reading.magazine)}` : `<div class="card reading"><h3>${esc(x.reading.title)}</h3>${L.media?.reading ? `<figure class="side"><img src="${L.media.reading.src}" alt="${esc(L.media.reading.cap)}" loading="lazy"><figcaption>${esc(L.media.reading.cap)}<small>${esc(L.media.reading.credit)}</small></figcaption></figure>` : ''}<p>${esc(x.reading.text)}</p></div>`}
+    ${x.reading.magazine ? `<a class="btn reading-open" href="#/${u}/reading">읽을거리 한 쪽 보기 · 인쇄</a>${readingHtml(x.reading.magazine)}<div class="card reading original-reading"><h3>원래 읽을거리 · ${esc(x.reading.title)}</h3><p>${esc(x.reading.text)}</p></div>` : `<div class="card reading"><h3>${esc(x.reading.title)}</h3>${L.media?.reading ? `<figure class="side"><img src="${L.media.reading.src}" alt="${esc(L.media.reading.cap)}" loading="lazy"><figcaption>${esc(L.media.reading.cap)}<small>${esc(L.media.reading.credit)}</small></figcaption></figure>` : ''}<p>${esc(x.reading.text)}</p></div>`}
     ${x.items.map((id) => itemHtml(I[id])).join('')}
     ${x.report ? `<div class="card"><h3>탐구보고서</h3><p class="lead">실험 기록이 보고서에 자동으로 들어가 있어요. 빈칸만 내 말로 채워요.</p><a class="btn" href="#/${u}/report" style="display:inline-flex;align-items:center;text-decoration:none">보고서 쓰기</a></div>` : ''}`,
   { next: `#/${u}/5`, nextLabel: '마지막 점검' });
@@ -479,7 +479,7 @@ async function pageReading(u, L, mode) {
   const d = await import('./docssam.js'), V = await d.loadVoice(u);
   if (!$app.querySelector('.reading-page') || !location.hash.includes(`/${u}/reading`)) return;
   guide = d.mountGuide(V, { avoid: () => [...$app.querySelectorAll('.sl-reading :is(h2, h3, p, img, video, .sl-reading-player, a, figure, aside)')].filter((el) => el.offsetParent).map((el) => el.getBoundingClientRect()) });
-  guide.say({ text: BOOK_SAY.reading[1] });
+  guide.say({ text: article?.video ? BOOK_SAY.reading[1] : '먼저 그림을 보고, 관찰해 봐요 질문의 답을 찾으며 읽어 봐.' });
   // 읽는 동안 생각하는 얼굴, 영상을 보는 동안 조용히 듣는 얼굴
   const art = $app.querySelector('.sl-reading'); let tRead = 0;
   addEventListener('scroll', function onScroll() { if (!art.isConnected) { removeEventListener('scroll', onScroll); return; } clearTimeout(tRead); guide.mood('think'); tRead = setTimeout(() => guide.mood('listen'), 1400); }, { passive: true });
