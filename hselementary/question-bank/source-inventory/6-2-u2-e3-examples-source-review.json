@@ -14,8 +14,12 @@
       "answerContract": "rounded-quotient-digit-sum",
       "dividend": "4.7",
       "divisor": "3.7",
-      "roundedQuotient": "1.27",
-      "independentAnswer": "10"
+      "roundingPlaces": 100,
+      "unroundedRepeatingDigits": "270",
+      "roundedLastDecimalDigit": "3",
+      "independentAnswer": "301",
+      "handwrittenAnswerEvidence": "readable-301-agrees-with-independent-calculation",
+      "sourceCorrection": "printed question says 100th decimal place, not second; release remains locked"
     },
     {
       "sourceItemId": "6-2-u2-e3-example-2",
