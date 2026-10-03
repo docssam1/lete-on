@@ -168,6 +168,35 @@
     renderToday(plan);
     renderTeacherPack(plan);
   }
+  function applyAudienceMode() {
+    const query = new URLSearchParams(window.location.search);
+    const audience = query.get("audience") === "teacher" ? "teacher" : "student";
+    const studentLink = document.getElementById("student-workspace-link");
+    const teacherLink = document.getElementById("teacher-workspace-link");
+    const requestedGoal = query.get("goal");
+    const goalQuery = requestedGoal && engine.GOALS[requestedGoal] ? `&goal=${encodeURIComponent(requestedGoal)}` : "";
+    document.body.dataset.audience = audience;
+    studentLink.href = `./learning-plan.html?audience=student${goalQuery}`;
+    teacherLink.href = `./learning-plan.html?audience=teacher${goalQuery}#teacher-pack`;
+    if (audience === "teacher") {
+      studentLink.removeAttribute("aria-current");
+      teacherLink.setAttribute("aria-current", "page");
+    } else {
+      studentLink.setAttribute("aria-current", "page");
+      teacherLink.removeAttribute("aria-current");
+    }
+    if (audience === "teacher") {
+      text("plan-audience-eyebrow", "TEACHER · G·MAP LESSON PATH");
+      document.getElementById("plan-audience-title").innerHTML = "진단 근거가<br><span>오늘의 수업이 됩니다.</span>";
+      text("plan-audience-description", "학생의 현재 과정과 약점 유형을 확인하고 수업 시간에 맞춰 강사용 교안, 학생용 워크북, 숙제와 재확인을 한 수업 세트로 구성합니다.");
+      text("plan-setup-title", "학생의 수업 조건을 입력하세요.");
+      document.querySelector("#plan-form .primary-action").textContent = "학생 수업 계획 계산";
+      const teacherSection = document.getElementById("teacher-pack");
+      const todaySection = document.querySelector(".today-section");
+      todaySection.parentNode.insertBefore(teacherSection, todaySection);
+      teacherSection.classList.add("audience-primary");
+    }
+  }
   function setInitialGoalFromQuery() {
     const requested = new URLSearchParams(window.location.search).get("goal");
     if (requested && engine.GOALS[requested]) goalId.value = requested;
@@ -200,6 +229,7 @@
   });
   targetDate.min = isoDate(1);
   targetDate.value = isoDate(56);
+  applyAudienceMode();
   restoreSettings();
   setInitialGoalFromQuery();
   applyAssessmentSchedule();

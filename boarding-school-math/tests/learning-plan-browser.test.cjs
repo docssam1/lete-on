@@ -50,6 +50,8 @@ test("learning plan connects goal, time budget, student materials, and teacher m
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
   assert.match(await page.locator("h1").innerText(), /진단 결과가/);
+  assert.equal(await page.locator("body").getAttribute("data-audience"), "student");
+  assert.equal(await page.locator("#student-workspace-link").getAttribute("aria-current"), "page");
   assert.equal(await page.locator("#plan-state").innerText(), "진단 연결 전");
   assert.match(await page.locator("#prediction-title").innerText(), /진단 후/);
   assert.equal(await page.locator("#today-blocks li").count(), 5);
@@ -87,9 +89,16 @@ test("learning plan stays readable at 390px and supports print styling", async f
   await page.close();
 });
 
-test("teacher preview anchor keeps its heading below the sticky mobile header", async function () {
+test("teacher workspace changes the product focus and keeps its heading below the sticky mobile header", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
-  await page.goto(`${baseUrl}?goal=school-g6#teacher-pack`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}?goal=school-g6&audience=teacher#teacher-pack`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("body").getAttribute("data-audience"), "teacher");
+  assert.equal(await page.locator("#teacher-workspace-link").getAttribute("aria-current"), "page");
+  assert.match(await page.locator("#plan-audience-title").innerText(), /오늘의 수업/);
+  assert.match(await page.locator("#plan-setup-title").innerText(), /학생의 수업 조건/);
+  assert.equal(await page.locator("#teacher-pack").evaluate(function (node) {
+    return node.compareDocumentPosition(document.querySelector(".today-section")) & Node.DOCUMENT_POSITION_FOLLOWING;
+  }) > 0, true);
   const positions = await page.evaluate(function () {
     const header = document.querySelector(".plan-header").getBoundingClientRect();
     const section = document.querySelector("#teacher-pack").getBoundingClientRect();

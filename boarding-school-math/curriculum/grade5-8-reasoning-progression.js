@@ -43,7 +43,7 @@
     freeze({
       sourceProgram: "Number Magic",
       sourceRole: "learning-sequence-taxonomy",
-      auditedSurface: "11 tier groups and 170 unit references",
+      auditedSurface: "11 tier groups and 182 unit references",
       reusable: freeze(["practice-discover-check-lab-arena-recheck", "prerequisite-sequencing"]),
       prohibited: freeze(["copying-unit-dialogue", "lowering-later-grade-symbols"]),
       evidenceState: "verified-public-code"

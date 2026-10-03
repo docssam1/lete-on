@@ -55,7 +55,7 @@ test("cross-program audit snapshots match current public code and retain conflic
   if (previousWindow === undefined) delete global.window;
   else global.window = previousWindow;
   assert.equal(numberMagic.tiers.length, 11);
-  assert.equal(numberMagicUnitCount, 170);
+  assert.equal(numberMagicUnitCount, 182);
 
   const fieldsSource = fs.readFileSync(path.resolve(__dirname, "../../fields-classic/question-bank/concept-data.js"), "utf8");
   assert.equal((fieldsSource.match(/id: "concept:[^"]+"/g) || []).length, 65);
