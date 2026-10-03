@@ -5,13 +5,26 @@
 - Branch: `codex/elementary-audit-sync-20260926`
 - Local page: `http://127.0.0.1:8897/hselementary/question-bank/`
 - Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-03)
-- Runtime-available types: 1,149 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 856
+- Runtime-available types: 1,151 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 854
 - Source-linked runtime entries: 1,625 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `111/477` types are runtime-available. The remainder stay review-locked.
+- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `113/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-10-03 Space and Solids Exploration 1
+
+- All eleven source items were visually inspected. Two types are implemented: the exploration height chart to four direction drawings, and Example 3's exposed area excluding the bottom. Each has three finite pools and three structural difficulty choices (eighteen conditions, not unlimited variants). The original graphics are height charts, so these types must not be replaced by an invented 3D image.
+- Row indices increase from back to front. Front is the column maximum, back reverses that maximum, left is the row maximum, and right reverses it. Separate cube projections caught an early left/right reversal before release. Side-area accounting includes exposed height changes inside the footprint, not only the outer silhouette. The answer has actual drawings, not a slash-separated numeric string that the formula parser can turn into fractions.
+- Easier variants add a front-view scaffold or the known side area. Source level preserves the source task. Harder variants conceal one positive height and provide the total cube count, requiring reconstruction before the original task. No empirical learner-score difficulty calibration or publisher-key validation is claimed.
+- Example 3's independent source result agrees with its handwriting. Mission 4 was initially misread as asking for a product: an enlarged source reread confirms it asks for the SUM. The independent unique blank heights give a sum matching handwriting. Both reviewers withdrew the earlier conflict claim. Do not keep a false answer-conflict lock: Mission 4 is pending implementation, fixed variants and rendered verification.
+- The two ready types pass eighteen prompt-derived independent conditions, nine four-view voxel projections, nine voxel surface checks, explicit source fixtures, answer-drawing checks, modulo/max-safe and invalid-input tests. No producer answer/model metadata is used to reconstruct question heights. The secondary reviewer independently checked eighteen conditions and eighty-one answer figures from SVG inputs.
+- Nine source types remain locked. Examples 4 and Missions 2/3 have secondary source enumeration but no completed runtime/render gate. Examples 1/2 and Missions 1/5/6 still need exact cube/label/marked-block positions. The legacy generic isometric renderer has an occlusion issue and is not validated or used by the two ready types.
+- Current regression counts: 633 Grade 6 source types, 352 ready/281 locked; runtime 69,060 generations, notation 172,650 plus desktop/mobile DOM checks, numeric display and elementary language 345,300 each.
+- Final actual-page checks pass eighteen states at 1280/390/320px, both problem and solution at all three difficulties, and twelve A4 PDFs (eighteen physical pages). Print face panels share the same square scale; all three surface solutions fit one A4. Named answer-page margins protect continuation pages. Every PDF has substantive text bounds inside a twelve-point physical inset. Korean PDF text extraction is incomplete, so those bounds are not semantic content proof: browser DOM and raster eye checks provide that evidence.
+- Direct eye checks compare original charts and source crops with desktop/mobile and rasterized A4 samples. Independent reviewer eye checks are sampled, not all twelve PDFs. Runtime asset hashes remain unchanged during the final browser audit. The catalog cache URL was advanced for the next approved publication; no current publication is claimed.
+- Next: implement source E1 Missions 2 and 4 with 2D question/answer graphics and separate exact enumeration; then the source-driven 3D/occlusion renderer for Examples 1/4 and Missions 1/3, followed by labelled removal/addition. Keep source images, detailed source calculations and full reports on private storage. No main merge or deployment is authorized for this stage.
 
 ## 2026-10-03 Decimal-Division Exploration 2 Geometry
 

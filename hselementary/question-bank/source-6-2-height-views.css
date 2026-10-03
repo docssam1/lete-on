@@ -1,0 +1,65 @@
+.geometry-diagram.source62-height, .solution-answer-visual .geometry-diagram.source62-height {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 250px;
+  margin: 12px auto;
+  overflow: hidden;
+}
+.geometry-diagram.source62-height text {
+  font-family: var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  fill: #000;
+  stroke: none;
+  text-anchor: middle;
+}
+.source62-height .height-cell { fill: #eee; stroke: none; }
+.source62-height .height-answer-cell { fill: #ddd; stroke: none; }
+.source62-height .height-grid {
+  fill: none;
+  stroke: #000;
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+.source62-height-panels, .source62-face-account {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 8px;
+  max-width: 480px;
+  margin: 0 auto;
+  break-inside: avoid;
+}
+.source62-height-panels > svg, .solution-answer-visual .source62-height-panels > svg { max-height: 170px; }
+.source62-face-account svg, .solution-answer-visual .source62-face-account svg { max-height: 230px; }
+.source62-face-account figure { min-width: 0; margin: 0; text-align: center; }
+.source62-face-account figure:first-child { grid-column: 1 / -1; }
+.source62-face-account figcaption { font-size: 14px; font-weight: 400; color: #000; }
+.question-item:has(.source62-height), .solution-item:has(.source62-height) { color: #000; }
+.question-item:has(.source62-height) .question-prompt,
+.solution-item:has(.source62-height) p,
+.solution-item:has(.source62-height) header strong,
+.source62-face-account figcaption {
+  font-family: var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif);
+  font-weight: 400;
+  color: #000;
+}
+.solution-item:has(.source62-height) header strong .math-unit,
+.solution-item:has(.source62-height) header strong .math-unit sup { font-weight: 400; }
+@media screen and (max-width: 420px) {
+  .source62-height-panels, .source62-face-account { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  @page source62HeightAnswer { size: A4; margin: 6mm 0; }
+  .answer-page:has(.source62-height) { page: source62HeightAnswer; }
+  .geometry-diagram.source62-height, .solution-answer-visual .geometry-diagram.source62-height { max-height: 48mm; margin: 2mm auto; }
+  .source62-height-panels > svg, .source62-face-account svg,
+  .solution-answer-visual .source62-height-panels > svg, .solution-answer-visual .source62-face-account svg { max-height: 30mm; }
+  .source62-height-panels, .source62-face-account { gap: 2mm; max-width: 110mm; }
+  .source62-face-account { grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: 100%; }
+  .source62-face-account figure:first-child { grid-column: auto; }
+  .source62-face-account figcaption { font-size: 11px; }
+}

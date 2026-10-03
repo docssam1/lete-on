@@ -2590,12 +2590,12 @@
       "ordinal": 1,
       "pdfPage": 30,
       "printedPage": 32,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
+      "sourceShape": "바닥 칸별 높이표를 주고 앞·뒤·왼쪽·오른쪽의 네 모양을 각각 그리는 구조. 방향 표시와 빈 바닥 칸을 유지함.",
+      "answerContract": "four-direction-drawings-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-example-1",
@@ -2635,12 +2635,12 @@
       "ordinal": 3,
       "pdfPage": 30,
       "printedPage": 32,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "직사각형 바닥 칸별 높이표와 한 모서리 길이에서 밑면을 제외한 겉면의 넓이를 구하는 구조.",
+      "answerContract": "bottom-excluded-surface-area-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-example-4",
@@ -2710,12 +2710,12 @@
       "ordinal": 4,
       "pdfPage": 31,
       "printedPage": 33,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
+      "sourceShape": "두 빈칸이 있는 높이표와 밑면을 포함한 겉면 넓이에서 빈칸 두 수의 합을 구하는 구조.",
       "answerContract": "candidate",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했지만 고정 변형 문항과 문제·정답 그림의 화면 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-5",
