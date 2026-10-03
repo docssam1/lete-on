@@ -3781,6 +3781,17 @@ function screenCourseRoad(){
           suffix=` · ${lk('연습 필요','needs practice','需要练习')} ${weak.length}: ${names.join(', ')}`;
         }
         html+=`<div class="nm-cr-diagchip">${label}<span>${lk('과정','Course','课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</span></div>`;
+        const gp=S.placement.pathRecommendation;
+        if(gp&&gp.version==='goal-path-v1'){
+          const support=(gp.support||[]), wrong=support.filter(x=>x.kind==='practice').length, recheck=support.filter(x=>x.kind==='recheck').length;
+          html+=`<section class="pd-road-goal" aria-label="${lk('진단 목표와 학습 경로','Assessment goal and study path','测评目标与学习路径')}">
+            <h3>${esc(L(gp.goal.label))}</h3>${gp.target?`<p>${esc(L(gp.target.label))} · ${lk('목표 대응 확인 필요','Target mapping needs verification','目标对应需要确认')}</p>`:''}
+            <p>${lk('진단 때 선택한 본진도','Main study selected for this check','测评时选择的主要进度')}: ${esc(L(gp.main.label))}</p>
+            <p>${lk('보강 후보','Practice candidates','补充练习候选')} ${wrong} · ${lk('재확인 후보','Recheck candidates','再确认候选')} ${recheck}</p>
+            <p>${esc(L(gp.goal.focus))}</p><p class="pd-note">${lk('목표별 학습 방향 제안이며 기존 진도·학습지 편성을 자동 변경하지 않습니다.','Goal-specific guidance does not automatically change existing progress or worksheets.','按目标提出建议，不自动改变现有进度或练习纸编排。')}</p>
+            <div class="pd-road-actions"><button type="button" class="pd-support-link" data-placement-course="${esc(gp.main.course)}">${lk('본진도 위치','Main-study location','主要进度位置')}</button>${support.length?`<button type="button" class="pd-support-link" data-placement-course="${esc(support[0].course)}">${lk('첫 보강·재확인 위치','First practice/recheck location','首个补充练习或再确认位置')}</button>`:''}</div>
+          </section>`;
+        }
       }
     }
 
@@ -3970,6 +3981,14 @@ function screenCourseRoad(){
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
+    });
+    body.querySelectorAll('[data-placement-course]').forEach(el=>{
+      el.onclick=()=>{
+        const key=el.dataset.placementCourse;
+        if(!(window.NM_COURSES||{})[key])return;
+        const node=listEl.querySelector(`.nm-cr-node[data-c="${key}"]`);
+        if(node)roadFlashRow(node,body);
+      };
     });
     /* 과정 설명 — 펼칠 때 채운다. 설정을 바꿔 다시 그려도 펼친 것은 펼친 채로 */
     body.querySelectorAll('.nm-cr-explain[data-c]').forEach(el=>{
@@ -4247,13 +4266,16 @@ function placementAgeEntry(opt){
 }
 
 function startPlacement(){
-  /* lo = 풀 수 있다고 확인된 가장 높은 칸(없으면 -1)
-     hi = 아직 못 푼다고 확인된 가장 낮은 칸(없으면 사다리 길이)
-     log = 지금까지 물은 모든 문제의 {t,lv,ok,sec} — 세부 진단이 "이미 물은
-     스레드는 다시 안 묻는다"를 판단하는 근거이자 결과 화면 스킬 목록의 재료. */
-  S._diag={ run:Date.now(), stage:'age', age:null, entry:0,
-            lo:-1, hi:placementLadder().length, at:null, ups:0,
-            asked:0, correct:0, cur:null, qStart:null, log:[] };
+  const ui=window.NM_PLACEMENT_UI,paths=window.NM_PLACEMENT_PATHS;
+  if(!ui)S._diag=null;
+  else if(!S._diag||S._diag.version!==ui.version||S._diag.phase==='result'){
+    const previous=S._diag&&S._diag.version===ui.version?S._diag.selection:
+      S.placement&&S.placement.pathRecommendation&&S.placement.pathRecommendation.config;
+    S._diag=ui.initial();
+    if(paths)Object.assign(S._diag.selection,paths.normalize(previous));
+  }
+  // Re-entry resumes a compatible fixed plan/setup; it never regenerates
+  // answered questions or reinterprets a legacy adaptive run.
   S.view='placement'; save(); render();
 }
 /* 진단 천장(2026-09-28, 원장 "말도 안되지, 연산 테스트가 5살한테 미적 줄꺼야?").
@@ -4424,6 +4446,43 @@ function placementSkillListHtml(profile, lk){
 }
 
 function screenPlacement(){
+  if(townCleanup){townCleanup();townCleanup=null;}
+  clearInterval(mgTimer);mgTimer=null;
+  const scr=$('#screen'), ui=window.NM_PLACEMENT_UI;
+  const close=()=>{S._diag=null;S.view='town';save();render();};
+  if(!ui){
+    scr.innerHTML='<div class="nm-step-body"><p role="alert">'+esc(L({ko:'진단 자료를 불러오지 못했습니다. 새로고침 후 다시 시작해 주세요.',en:'Assessment data could not be loaded. Please reload.',zh:'未能加载测评资料，请刷新。'}))+'</p><button class="nm-btn" id="pdLoadBack">'+t('back')+'</button></div>';
+    $('#pdLoadBack').onclick=close;return;
+  }
+  // A saved adaptive run cannot be interpreted as a fixed 6/10/4 plan.
+  if(!S._diag||S._diag.version!==ui.version){S._diag=ui.initial();save();}
+  ui.render({root:scr,state:S._diag,lang:S.lang,save,renderMath,close,
+    pick:()=>{S._diag=null;S.view='startpick';save();render();},
+    seeCourse:key=>{S._diag=null;S._roadFocus=key;S.view='courseroad';save();render();},
+    onResult:(result,run)=>{
+      S.placement={at:Date.now(),version:ui.version,course:result.recommendation.course,
+        session:result.recommendation.session,asked:result.asked,correct:result.correct,
+        age:run.selection.age||null,grade:run.selection.grade||null,
+        baselineId:run.plan.baseline.id,selection:Object.assign({},run.selection),
+        bands:result.bands,domains:result.domains,profile:result.profile,
+        recommendation:JSON.parse(JSON.stringify(result.recommendation)),
+        weak:Array.from(new Set(result.profile.filter(p=>p.ok===false).map(p=>p.t))),slow:[],
+        self:false,capped:false};
+      if(result.pathRecommendation){
+        const path=result.pathRecommendation;
+        S.placement.pathRecommendation=JSON.parse(JSON.stringify(path));
+        S.placement.course=path.main.course;
+        S.placement.session=path.main.session;
+        S.placement.weak=Array.from(new Set(path.support.filter(x=>x.wrong>0).map(x=>x.t)));
+        // Explicitly chosen frequency is a planning preference, not acceleration.
+        S.roadCadence=path.config.cadence;
+      }
+    }
+  });
+}
+/* Retained legacy helpers are used by existing paper/simulation tooling only.
+ * No app entry routes to this adaptive screen; saved runs restart above. */
+function screenLegacyPlacement(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
   const scr=$('#screen');

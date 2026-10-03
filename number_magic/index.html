@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="app/styles.css?v=20261003-dot-journeys">
 <link rel="stylesheet" href="app/middle-pacing.css">
 <link rel="stylesheet" href="app/widgets.css">
+<link rel="stylesheet" href="app/placement-ui.css?v=20261003-goalpath1">
 <link rel="stylesheet" href="app/closet.css">
 <link rel="stylesheet" href="app/concept-anim.css">
 <script defer src="vendor/katex/katex.min.js"></script>
@@ -478,9 +479,14 @@ html.skip-intro #nm-intro{display:none}
 <script src="app/concept-anim.js"></script>
 <script src="app/walker.js"></script>
 <script src="app/placement-core.js"></script>
+<!-- Fixed 20-question diagnosis: references existing levels, without changing course progress. -->
+<script src="data/placement-plan.js?v=20261003-mixed20"></script>
+<script src="data/placement-books.js?v=20261003-mixed20"></script>
+<script src="data/placement-paths.js?v=20261003-goalpath1"></script>
+<script src="app/placement-ui.js?v=20261003-goalpath1"></script>
 <!-- 속도 비교 진단(2026-09-26) — 기준표·마일스톤 대응·판정 순수 로직. 주차 계산은 main.js 것을 콜백으로 받는다. -->
 <script src="app/pace-compare.js"></script>
-<script src="app/main.js?v=20261003-dot-journeys"></script>
+<script src="app/main.js?v=20261003-goalpath1"></script>
 
 <script>
 (function(){
