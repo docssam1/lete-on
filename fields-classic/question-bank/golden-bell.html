@@ -4,19 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f5f7f4" />
-  <title>필즈 골든벨 학습</title>
+  <title>FC 골든벨 학습</title>
   <link rel="stylesheet" href="./golden-bell.css?v=20260918b" />
   <link rel="stylesheet" href="./golden-bell-source-animations.css?v=20260906b" />
   <link rel="stylesheet" href="./golden-bell-book10-animation.css?v=20260918a" />
-  <link rel="stylesheet" href="./golden-bell-print-layout.css?v=20261003c" />
-  <link rel="stylesheet" href="./golden-bell-cover-picker.css?v=20261003c" />
+  <link rel="stylesheet" href="./golden-bell-print-layout.css?v=20261003d" />
+  <link rel="stylesheet" href="./golden-bell-cover-picker.css?v=20261003d" />
   <link rel="stylesheet" href="./golden-bell-course-concepts.css?v=20260918a" />
   <link rel="stylesheet" href="./golden-bell-hands-on.css?v=20261003c" />
 </head>
 <body>
   <header class="gold-header">
     <a id="backLink" class="back-link" href="./"><span aria-hidden="true">←</span> 문제은행</a>
-    <div class="brand"><span id="courseBrand">FIELDS CLASSIC · COURSE 01</span><strong>골든벨 학습</strong></div>
+    <div class="brand"><span id="courseBrand">FC · 1과정</span><strong>골든벨 학습</strong></div>
     <div class="student-name"><span>학습자</span><strong id="studentName">DEMO</strong></div>
   </header>
 
@@ -30,7 +30,7 @@
       <label class="course-picker"><span>과정</span><select id="courseSelect" aria-label="학습 과정"></select></label>
       <div class="book-index-label"><span>BOOK INDEX</span><strong>교재 선택</strong></div>
       <nav id="bookTabs" class="book-tabs" aria-label="골든벨 교재 권 선택"></nav>
-      <div class="print-actions"><label id="coursePrintModeWrap" class="course-print-mode" hidden><span>인쇄</span><select id="coursePrintMode" aria-label="인쇄 내용"><option value="study">학습지</option><option value="answers">답안과 풀이</option><option value="both">학습지와 풀이</option><option value="quick">빠른 정답</option></select></label><button id="printCoverButton" type="button">표지 · 개념형</button><button id="printLessonButton" type="button">현재 학습 인쇄</button><button id="printBookButton" type="button">이 권 전체 인쇄</button></div>
+      <div class="print-actions"><label id="coursePrintModeWrap" class="course-print-mode" hidden><span>인쇄</span><select id="coursePrintMode" aria-label="인쇄 내용"><option value="study">학습지</option><option value="answers">답안과 풀이</option><option value="both">학습지와 풀이</option><option value="quick">빠른 정답</option></select></label><button id="printCoverButton" type="button">표지 · 도형 배경</button><button id="printSelectedButton" type="button">선택 학습 인쇄</button><button id="printLessonButton" type="button">현재 학습 인쇄</button><button id="printBookButton" type="button">이 권 전체 인쇄</button></div>
       <p id="printStatus" class="gold-print-status" role="status"></p>
     </section>
 
@@ -51,21 +51,25 @@
   <div id="goldPrintRoot" class="gold-print-root" aria-hidden="true"></div>
 
   <dialog id="coverDialog" class="gold-cover-dialog" aria-labelledby="coverDialogTitle">
-    <header><h2 id="coverDialogTitle">교재 표지</h2><button id="coverDialogClose" type="button">닫기</button></header>
+    <header><h2 id="coverDialogTitle">FC 교재 인쇄</h2><button id="coverDialogClose" type="button">닫기</button></header>
     <div class="cover-picker-layout">
-      <fieldset><legend>표지 선택</legend><div class="cover-options">
-        <label><input type="radio" name="coverStyle" value="concept" checked /><span class="cover-swatch concept" aria-hidden="true"><i></i><i></i><i></i></span><strong>개념형</strong></label>
-        <label><input type="radio" name="coverStyle" value="simple" /><span class="cover-swatch simple" aria-hidden="true"><i></i><i></i><i></i></span><strong>간결형</strong></label>
+      <div class="print-settings">
+      <fieldset id="printUnitFieldset" hidden><legend>단원·유형 선택</legend><div class="print-unit-actions"><button id="printUnitsAll" type="button">전체 선택</button><button id="printUnitsNone" type="button">선택 해제</button></div><div id="printUnitList" class="print-unit-list"></div></fieldset>
+      <fieldset id="printAnswerFieldset" hidden><legend>답안</legend><label class="print-answer-toggle"><input id="printIncludeAnswers" type="checkbox" /><span>답안과 풀이 포함</span></label></fieldset>
+      <fieldset id="printCoverFieldset"><legend>표지 배경</legend><div class="cover-options">
+        <label><input type="radio" name="coverStyle" value="concept" checked /><span class="cover-swatch concept" aria-hidden="true"><i></i><i></i><i></i></span><strong>도형 배경</strong></label>
+        <label><input type="radio" name="coverStyle" value="simple" /><span class="cover-swatch simple" aria-hidden="true"><i></i><i></i><i></i></span><strong>모눈 배경</strong></label>
         <label><input type="radio" name="coverStyle" value="none" /><span class="cover-swatch none" aria-hidden="true"></span><strong>표지 없음</strong></label>
       </div></fieldset>
+      </div>
       <div id="coverPreview" class="gold-cover-preview" aria-label="선택한 교재 표지 미리보기"></div>
     </div>
-    <footer><button id="coverDialogApply" type="button">표지 적용</button></footer>
+    <footer><p id="printSelectionStatus" role="status"></p><button id="coverDialogApply" type="button">표지 적용</button><button id="printSelectionApply" type="button" hidden>선택 학습 인쇄</button></footer>
   </dialog>
 
   <script src="../../geometry/shared/question-bank.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/generators.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/render.js?v=20260904a"></script>
-  <script type="module" src="./golden-bell.js?v=20261003c"></script>
+  <script type="module" src="./golden-bell.js?v=20261003d"></script>
 </body>
 </html>

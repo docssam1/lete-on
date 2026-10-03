@@ -18,7 +18,7 @@ import { defineQuestionBankAdapter } from "./question-bank-adapter.js?v=20260918
 
 export const FIELDS_QUESTION_BANK_ADAPTER = defineQuestionBankAdapter({
   id: "fields-classic",
-  label: "필즈 더 클래식",
+  label: "FC",
   types: TYPES,
   sourceItems: SOURCE_QUESTION_INDEX,
   catalog: {
