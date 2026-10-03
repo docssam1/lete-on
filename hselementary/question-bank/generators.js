@@ -25404,6 +25404,80 @@
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE5Mission6({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e5-mission-6";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { milesPerGallon: 30, kmPerMileTenths: 16, kmPerLiterTenths: 128, firstGallons: 40, secondGallons: 60 },
+        { milesPerGallon: 45, kmPerMileTenths: 16, kmPerLiterTenths: 192, firstGallons: 35, secondGallons: 45 },
+        { milesPerGallon: 38, kmPerMileTenths: 16, kmPerLiterTenths: 160, firstGallons: 40, secondGallons: 50 }
+      ][poolIndex];
+      const gallons = data.firstGallons + data.secondGallons;
+      const kmPerGallonTenths = data.milesPerGallon * data.kmPerMileTenths;
+      const litersPerGallonHundredths = kmPerGallonTenths * 100 / data.kmPerLiterTenths;
+      const answerHundredths = gallons * litersPerGallonHundredths;
+      if (!Number.isInteger(litersPerGallonHundredths) || !Number.isInteger(answerHundredths)
+        || litersPerGallonHundredths <= 0 || answerHundredths % 100 !== 0) throw new Error(`${sourceItemId}: 거리와 연료 환산이 정확하지 않습니다.`);
+      const km = value => `${plainDecimal(value, 1)}km`;
+      const liters = value => `${plainDecimal(value, 2)}L`;
+      const answer = liters(answerHundredths);
+      const sourceConditions = `승용차는 휘발유 1갤런에 ${data.milesPerGallon}마일을 달리고, 휘발유 1L에 ${km(data.kmPerLiterTenths)}를 달립니다. 1마일은 ${km(data.kmPerMileTenths)}입니다.`;
+      const easyConditions = `승용차는 휘발유 1갤런으로 ${data.milesPerGallon}마일, 즉 ${km(kmPerGallonTenths)}를 달립니다. 휘발유 1L로는 ${km(data.kmPerLiterTenths)}를 달립니다.`;
+      const target = level === 2
+        ? `이 승용차가 휘발유 ${data.firstGallons}갤런과 ${data.secondGallons}갤런을 사용했다면, 사용한 휘발유는 모두 몇 L입니까?`
+        : `휘발유 ${gallons}갤런은 몇 L입니까?`;
+      const prompt = `${level === 0 ? easyConditions : sourceConditions} ${target}`;
+      const difficultyDesign = ["mile-distance-already-converted", "source-mile-and-fuel-relations", "two-fuel-amounts-then-convert"][level];
+      const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-gallon-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>연료 환산</strong>${row("1갤런", liters(litersPerGallonHundredths))}${row(`${gallons}갤런`, answer)}</div>`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const mileStep = level === 0 ? "" : `1갤런으로 가는 거리는 ${math(`${data.milesPerGallon} × ${plainDecimal(data.kmPerMileTenths, 1)} = ${plainDecimal(kmPerGallonTenths, 1)}(km)`)}입니다. `;
+      const gallonStep = `1갤런의 양은 ${math(`${plainDecimal(kmPerGallonTenths, 1)} ÷ ${plainDecimal(data.kmPerLiterTenths, 1)} = ${plainDecimal(litersPerGallonHundredths, 2)}(L)`)}입니다. `;
+      const totalStep = level === 2 ? `사용한 휘발유는 ${math(`${data.firstGallons} + ${data.secondGallons} = ${gallons}(갤런)`)}입니다. ` : "";
+      const solution = `${mileStep}${gallonStep}${totalStep}따라서 ${math(`${gallons} × ${plainDecimal(litersPerGallonHundredths, 2)} = ${plainDecimal(answerHundredths, 2)}(L)`)}입니다.`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
+    sourceGrade6SecondDecimalDivisionE6Example2Candidate({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e6-example-2";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { baseHundredths: 33150, gainHundredths: 61, temperature: 26, seconds: 5 },
+        { baseHundredths: 33240, gainHundredths: 54, temperature: 18, seconds: 4 },
+        { baseHundredths: 33080, gainHundredths: 75, temperature: 24, seconds: 6 }
+      ][poolIndex];
+      const knownTemperature = 5;
+      const knownSpeedHundredths = data.baseHundredths + knownTemperature * data.gainHundredths;
+      const targetSpeedHundredths = data.baseHundredths + data.temperature * data.gainHundredths;
+      const totalDistanceHundredths = targetSpeedHundredths * data.seconds;
+      if (data.temperature <= knownTemperature || data.gainHundredths <= 0
+        || ![knownSpeedHundredths, targetSpeedHundredths, totalDistanceHundredths].every(Number.isInteger)) {
+        throw new Error(`${sourceItemId}: 원본의 온도·거리 조건이 일치하지 않습니다.`);
+      }
+      const meters = value => `${plainDecimal(value, 2)}m`;
+      const celsius = value => `${value}℃`;
+      const answer = celsius(data.temperature);
+      const prompt = level === 0
+        ? `공기 중에서 기온이 0℃일 때 소리는 1초에 ${meters(data.baseHundredths)}를 이동합니다. 기온이 1℃씩 높아지면 1초에 이동하는 거리가 ${meters(data.gainHundredths)}씩 늘어납니다. 소리가 1초에 ${meters(targetSpeedHundredths)}를 이동할 때 기온은 몇 ℃입니까?`
+        : level === 1
+          ? `공기 중에서 기온이 0℃일 때 소리는 1초에 ${meters(data.baseHundredths)}를 이동하고, 기온이 1℃씩 높아지면 1초에 ${meters(data.gainHundredths)}씩 더 이동합니다. 소리가 ${data.seconds}초 동안 ${meters(totalDistanceHundredths)}를 이동했다면 기온은 몇 ℃입니까?`
+          : `공기 중에서 기온이 ${knownTemperature}℃일 때 소리는 1초에 ${meters(knownSpeedHundredths)}를 이동합니다. 기온이 1℃씩 높아지면 1초에 이동하는 거리가 ${meters(data.gainHundredths)}씩 늘어납니다. 소리가 ${data.seconds}초 동안 ${meters(totalDistanceHundredths)}를 이동했다면 기온은 몇 ℃입니까?`;
+      const baselineTemperature = level === 2 ? knownTemperature : 0;
+      const baselineSpeedHundredths = level === 2 ? knownSpeedHundredths : data.baseHundredths;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const speedStep = level === 0 ? "" : `1초에 이동한 거리는 ${math(`${meters(totalDistanceHundredths)} ÷ ${data.seconds} = ${meters(targetSpeedHundredths)}`)}입니다. `;
+      const temperatureIncrease = data.temperature - baselineTemperature;
+      const temperatureStep = `${baselineTemperature}℃일 때보다 1초에 이동한 거리가 ${math(`${plainDecimal(targetSpeedHundredths, 2)} − ${plainDecimal(baselineSpeedHundredths, 2)} = ${plainDecimal(temperatureIncrease * data.gainHundredths, 2)}(m)`)} 더 깁니다. 1℃마다 ${meters(data.gainHundredths)}씩 늘어나므로 기온은 ${math(`${plainDecimal(temperatureIncrease * data.gainHundredths, 2)} ÷ ${plainDecimal(data.gainHundredths, 2)} = ${temperatureIncrease}(℃)`)}만큼 높습니다. `;
+      const finalStep = level === 2 ? `따라서 ${math(`${knownTemperature} + ${temperatureIncrease} = ${data.temperature}(℃)`)}입니다.` : `따라서 기온은 ${answer}입니다.`;
+      const difficultyDesign = ["one-second-distance-given", "source-total-distance-and-time", "nonzero-baseline-temperature"][level];
+      const answerVisual = `<div class="source61-math-board source62-e6-sound-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>소리의 속력과 기온</strong><div class="source61-math-row"><span>1초에 이동한 거리</span><b>${meters(targetSpeedHundredths)}</b></div><div class="source61-math-row"><span>기온</span><b>${answer}</b></div></div>`;
+      return result(prompt, answer, `${speedStep}${temperatureStep}${finalStep}`, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondFractionDivisionE1({ rng, level, variant = 0 }) {
       const sourceItemId = "6-2-u1-e1-example-1";
       if (variant !== 0) throw new Error("6-2 분수의 나눗셈 예제 1-1 원문 분기는 0이어야 합니다.");

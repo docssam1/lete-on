@@ -14,7 +14,7 @@ require("./generators.js");
 const review = require("./source-inventory/6-2-u2-e5-missions-source-review.json");
 const exampleReview = require("./source-inventory/6-2-u2-e5-source-review.json");
 const reviewedItems = [
-  ...review.missions.filter(item => [1, 2, 3, 4].some(number => item.sourceItemId.endsWith(`mission-${number}`))),
+  ...review.missions.filter(item => [1, 2, 3, 4, 6].some(number => item.sourceItemId.endsWith(`mission-${number}`))),
   ...exampleReview.items.filter(item => item.sourceItemId === "6-2-u2-e5-example-1")
 ];
 const candidateKeys = Object.fromEntries(reviewedItems.map(item => [item.sourceItemId,

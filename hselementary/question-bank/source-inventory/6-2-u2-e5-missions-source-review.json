@@ -16,6 +16,22 @@
     "samePrintedWording": true,
     "handwrittenMarksPresent": false
   },
+  "annotatedAnswerEvidence": {
+    "sourceSha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 25,
+    "printedPage": 27,
+    "kind": "handwritten-answers-on-problem-scan",
+    "userPresentedAsAnswerSource": true,
+    "publisherAnswerKeyVerified": false,
+    "items": [
+      { "mission": 1, "writtenAnswer": "11.9시간", "independentAnswer": "11.9시간", "status": "matches" },
+      { "mission": 2, "writtenAnswer": "5/4배", "independentAnswer": "5/4배", "status": "matches" },
+      { "mission": 3, "writtenAnswer": "20분", "independentAnswer": null, "status": "conflicts-with-printed-conditions" },
+      { "mission": 4, "writtenAnswer": "0.69kg", "independentAnswer": "0.59kg", "status": "conflicts-with-printed-conditions" },
+      { "mission": 5, "writtenAnswer": "8시간 20분", "independentAnswer": "8시간 20분", "status": "matches" },
+      { "mission": 6, "writtenAnswer": "375L", "independentAnswer": "375L", "status": "matches" }
+    ]
+  },
   "nonMatchingAnswerSource": {
     "sha256": "3B71EDCF9C234B180A08A73905B16F6065F833160E499223D413ED65792BACF0",
     "evidencePdfPage": 15,
@@ -49,7 +65,7 @@
       "sourceItemId": "6-2-u2-e5-mission-3",
       "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
       "independentCheck": "convert-reference-minutes-to-hours-and-subtract-current-speed",
-      "risk": "The initial 93.6 km direction is unstated. The user reads it as downstream: 52 km/h downstream minus 47.5 km/h current leaves 4.5 km/h still-water speed, so the printed 18 km upstream trip is impossible. If the initial speed instead means still water, the independently calculated four hours conflicts with the non-authoritative handwritten answer. Keep locked; do not silently rewrite either direction.",
+      "risk": "The initial 93.6 km direction is unstated. The user reads it as downstream: 52 km/h downstream minus 47.5 km/h current leaves 4.5 km/h still-water speed, so the printed 18 km upstream trip is impossible. If the initial speed instead means still water, the independently calculated four hours conflicts with the handwritten 20-minute answer in the user-supplied annotated scan. Keep locked; do not silently rewrite either direction.",
       "interpretationAudit": {
         "referenceSpeedKmh": 52,
         "downstreamReadingUpstreamSpeedKmh": -43,
@@ -80,7 +96,7 @@
       "sourceItemId": "6-2-u2-e5-mission-4",
       "answerContract": "container-tare-from-oil-mass-change",
       "independentCheck": "derive-oil-mass-per-liter-from-before-and-after-weights",
-      "risk": "A non-authoritative handwritten tare conflicts with both direct calculation and back-substitution; the clean scan has no handwriting.",
+      "risk": "The handwritten 0.69 kg answer in the user-supplied annotated scan conflicts with direct calculation and back-substitution: the printed conditions give 0.59 kg. The clean scan has no handwriting; do not substitute the handwritten value for the verified generator answer.",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Mission4",
         "difficultyDesign": ["oil-unit-mass-given", "source-two-weighings", "two-stage-use-and-weighing"],
@@ -99,19 +115,26 @@
       "sourceItemId": "6-2-u2-e5-mission-6",
       "answerContract": "derive-gallon-to-liter-from-vehicle-distances",
       "independentCheck": "convert-provided-miles-to-kilometers-before-comparing-fuel-units",
-      "risk": "The question defines a mathematical conversion through the vehicle data; an external gallon constant must not be substituted."
+      "risk": "The question defines a mathematical conversion through the vehicle data; an external gallon constant must not be substituted. The handwritten 375L agrees with independent arithmetic but is not a publisher key.",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE5Mission6",
+        "difficultyDesign": ["mile-distance-already-converted", "source-mile-and-fuel-relations", "two-fuel-amounts-then-convert"],
+        "fixedPoolCount": 3,
+        "independentCheck": "Parse each generated prompt, solve total distance divided by km per liter with integer tenths, then multiply the answer back to recover the distance; verify desktop, 390px, 320px, and A4 output",
+        "publicReleaseStatus": "verified"
+      }
     }
   ],
   "officialAnswerEvidence": "not-available-for-these-items",
   "independentAnswerEvidence": {
-    "status": "verified-for-missions-1-2-4-and-common-candle-type",
-    "method": "source wording in two scans, independent integer arithmetic and back-substitution, Claude CLI second calculation, real worksheet desktop/mobile/A4 inspection",
+    "status": "verified-for-missions-1-2-4-6-and-common-candle-type",
+    "method": "source wording in two scans, independent integer arithmetic and back-substitution, Claude CLI second calculation for earlier missions, Mission 6 prompt-parsing BigInt check and real worksheet desktop/mobile/A4 inspection",
     "officialAnswerClaimed": false
   },
   "publicReleaseStatus": "partial",
   "pending": [
     "mission 3 printed wording remains ambiguous; only the explicitly downstream number-corrected adaptation is released, not an official source answer",
     "matching advanced-book official answer comparison if a valid key is found",
-    "mission 6 remains outside this review"
+    "mission 6 has independent arithmetic and a matching handwritten annotation, not an official answer key"
   ]
 }

@@ -20,6 +20,30 @@ assert.equal(review.secondarySourceIdentity.printedPage, 27);
 assert.equal(review.secondarySourceIdentity.samePrintedWording, true);
 assert.equal(review.secondarySourceIdentity.handwrittenMarksPresent, false);
 assert.match(review.secondarySourceIdentity.sha256, /^[A-F0-9]{64}$/);
+const annotated = review.annotatedAnswerEvidence;
+assert.equal(annotated.sourceSha256, review.sourceIdentity.sha256);
+assert.equal(annotated.pdfPage, review.sourceIdentity.pdfPage);
+assert.equal(annotated.kind, "handwritten-answers-on-problem-scan");
+assert.equal(annotated.userPresentedAsAnswerSource, true);
+assert.equal(annotated.publisherAnswerKeyVerified, false);
+assert.deepEqual(annotated.items.map(item => item.status), [
+  "matches", "matches", "conflicts-with-printed-conditions", "conflicts-with-printed-conditions", "matches", "matches"
+]);
+assert.equal(annotated.items[2].writtenAnswer, "20분");
+assert.equal(annotated.items[3].writtenAnswer, "0.69kg");
+assert.equal(annotated.items[3].independentAnswer, "0.59kg");
+const oilMassPerLiterHundredths = (611n - 450n) * 100n / 175n;
+const emptyContainerHundredths = 611n - 6n * oilMassPerLiterHundredths;
+assert.equal(oilMassPerLiterHundredths, 92n);
+assert.equal(emptyContainerHundredths, 59n);
+assert.equal(emptyContainerHundredths + 425n * oilMassPerLiterHundredths / 100n, 450n);
+assert.equal(annotated.items[5].writtenAnswer, "375L");
+assert.equal(annotated.items[5].independentAnswer, "375L");
+const kilometersPerGallonTenths = 30n * 16n;
+const litersPerGallonHundredths = kilometersPerGallonTenths * 100n / 128n;
+assert.equal(kilometersPerGallonTenths, 480n);
+assert.equal(litersPerGallonHundredths, 375n);
+assert.equal(100n * litersPerGallonHundredths / 100n, 375n);
 assert.equal(review.officialAnswerEvidence, "not-available-for-these-items");
 assert.match(review.nonMatchingAnswerSource.sha256, /^[A-F0-9]{64}$/);
 assert.equal(review.nonMatchingAnswerSource.evidencePdfPage, 15);
@@ -116,4 +140,6 @@ assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-3").rev
 assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").reviewReason, "");
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-4").name, /참기름/);
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-6").name, /갤런/);
-console.log("6-2 개념탐구 5 Mission 6문항: 1·2·4 공개, 3 원문 잠금·보정 유사문항 공개, 5 공통 유형 연결, 6 잠금 검사 통과");
+assert.equal(types.find(item => item.sourceItemId === "6-2-u2-e5-mission-6").generatorKey,
+  "sourceGrade6SecondDecimalDivisionE5Mission6");
+console.log("6-2 개념탐구 5 Mission 6문항: 1·2·4·6 공개, 3 원문 잠금·보정 유사문항 공개, 5 공통 유형 연결 검사 통과");

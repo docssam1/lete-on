@@ -1999,23 +1999,25 @@
       "answerContract": "derive-gallon-to-liter-from-vehicle-distances",
       "visualRisk": "실제 갤런 단위 환산값을 외워서 대입하지 않고 원문에 주어진 연료·거리 관계로 계산해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "공식 답안은 확보되지 않아 인쇄 원문과 독립 계산을 별도 근거로 기록합니다."
     },
     {
-      "sourceItemId": "6-2-u2-e6-exploration",
+      "sourceItemId": "6-2-u2-e6-exploration-1",
       "unitId": "6-2-u2",
       "exploration": 6,
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "높이가 다른 계단에서 세 번 튀는 공의 비율 0.8, 계단 높이 20cm·35cm·20cm와 마지막 높이 152.96cm로 처음 높이를 구하는 그림 문제",
+      "answerContract": "derive-first-drop-height-across-stairs",
+      "independentAnswer": "180cm",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "세 번째 튀는 지점과 152.96cm를 재는 바닥은 서로 다름. 계단 높이와 튀는 순서를 그림에서 정확히 보존해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 문제·정답 그림을 포함한 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-example-1",
@@ -2025,12 +2027,14 @@
       "ordinal": 1,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "처음 물통의 0.2만큼 물이 있고 남은 부분의 5/8만큼과 2.52L를 더 채운 뒤 빈 부분이 전체의 15%일 때 들이를 구하는 문제",
+      "answerContract": "derive-container-capacity-from-initial-filled-and-remaining-fraction",
+      "independentAnswer": "16.8L",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "5/8은 물통 전체가 아닌 처음에 비어 있던 부분의 비율임.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-example-2",
@@ -2040,12 +2044,14 @@
       "ordinal": 2,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "0℃에서 1초에 331.5m 가는 소리가 1℃마다 0.61m씩 더 갈 때 5초 동안 1736.8m 간 기온을 구하는 문제",
+      "answerContract": "derive-temperature-from-sound-distance-and-time",
+      "independentAnswer": "26℃",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "초당 거리와 5초 전체 거리를 혼동하지 않아야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-example-3",
@@ -2055,12 +2061,14 @@
       "ordinal": 3,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "길이가 같은 두 막대를 서로 다른 깊이의 연못에 꽂아 잠긴 비율이 0.6과 0.75이고 수면 위 길이 차가 45cm일 때 A 지점의 깊이를 구하는 그림 문제",
+      "answerContract": "derive-pond-depth-from-submerged-rod-fractions",
+      "independentAnswer": "180cm",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "45cm는 두 막대의 수면 위 길이 차이며 A 지점의 깊이는 막대 전체의 0.6임. 원본의 수면과 바닥 위치를 유지해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 문제·정답 그림을 포함한 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-example-4",
@@ -2070,12 +2078,14 @@
       "ordinal": 4,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "지난해 남녀 학생 합계 1500명, 올해 남학생 0.05만큼 감소·여학생 0.08만큼 증가한 합계 1516명으로 올해 두 학생 수의 차를 구하는 문제",
+      "answerContract": "derive-gender-count-difference-from-opposite-yearly-changes",
+      "independentAnswer": "4명",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "올해의 비율은 지난해 각 성별 인원을 기준으로 하며, 물음은 지난해가 아니라 올해 학생 수의 차임.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-1",
@@ -2085,12 +2095,14 @@
       "ordinal": 1,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "지난해 6학년 345명에서 여학생이 남학생의 1.3배이고 올해 남학생은 0.1배 증가·여학생은 0.2배 감소했을 때 올해 성별 학생 수를 각각 구하는 문제",
+      "answerContract": "derive-current-gender-counts-from-last-year-ratio",
+      "independentAnswer": "남학생 165명, 여학생 156명",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "늘거나 줄어든 비율의 기준은 각각 지난해 남학생과 여학생 수임.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-2",
@@ -2100,12 +2112,14 @@
       "ordinal": 2,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "색 테이프의 0.3을 첫 사람, 그 길이의 0.8배를 둘째 사람이 갖고 남은 6.21m를 셋째 사람이 가졌을 때 처음 길이를 구하는 문제",
+      "answerContract": "derive-tape-length-from-nested-shares-and-remainder",
+      "independentAnswer": "13.5m",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "0.8배의 기준은 테이프 전체가 아닌 첫 사람이 가진 길이임.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-3",
@@ -2115,12 +2129,14 @@
       "ordinal": 3,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "거북·개·원숭이의 두 마리씩 무게 합 51.4kg·43.7kg·38.5kg으로 개가 거북의 약 몇 배인지 소수 첫째 자리까지 구하는 문제",
+      "answerContract": "derive-rounded-animal-weight-ratio-from-pair-sums",
+      "independentAnswer": "약 0.8배",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "각 무게 합의 동물 쌍을 바꾸면 답이 달라지며, 정확한 비와 반올림한 약 몇 배를 구별해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 반올림 경계 검수를 포함한 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-4",
@@ -2130,12 +2146,14 @@
       "ordinal": 4,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "같은 높이에서 떨어진 두 공이 각각 0.7배와 0.4배씩 튀고 두 번째 튄 높이 차가 1.65m일 때 처음 높이를 구하는 문제",
+      "answerContract": "derive-first-height-from-second-bounce-difference",
+      "independentAnswer": "5m",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "1.65m는 첫 번째가 아닌 두 번째 튄 높이의 차이임.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-5",
@@ -2145,12 +2163,14 @@
       "ordinal": 5,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "둘레 1.8m인 앞바퀴와 1.4m인 뒷바퀴가 같은 거리를 갈 때 뒷바퀴가 468번 더 회전한 이동 거리를 구하는 문제",
+      "answerContract": "derive-distance-from-wheel-circumference-and-rotation-difference",
+      "independentAnswer": "2948.4m",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "회전 수가 더 많은 것은 둘레가 짧은 뒷바퀴이며, 거리와 회전 수의 단위를 구별해야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-6",
@@ -2160,12 +2180,14 @@
       "ordinal": 6,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "전체 평균 86.35점, 남학생 22명 평균 89.5점, 여학생 평균 82.5점으로 여학생 수를 구하는 문제",
+      "answerContract": "derive-girl-count-from-weighted-class-average",
+      "independentAnswer": "18명",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "전체 평균은 남녀 평균의 단순 평균이 아니라 인원수를 반영한 평균임.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "원문과 독립 계산은 확인했으나 공식 답 대조 및 3개 변형 검수가 남아 있습니다."
     },
     {
       "sourceItemId": "6-2-u3-e1-exploration",
