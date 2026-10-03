@@ -3,11 +3,13 @@ import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js";
+import { GOLDEN_BELL_BOOKS as libraryBooks } from "./golden-bell-library.js";
 import { hydrateProtectedAnswers } from "./golden-bell-protected.js";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js";
 import "../../geometry/worksheet/generators.js";
 import { sourceAnimationsForLesson } from "./golden-bell-source-animations.js";
+
+const GOLDEN_BELL_BOOKS = libraryBooks.filter((book) => book.courseId === "course-01");
 
 const runtimeModules = process.env.CODEX_NODE_MODULES
   || path.join(process.env.USERPROFILE, ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules");
@@ -35,19 +37,19 @@ const privateFixture = process.env.FIELDS_PRIVATE_ANSWER_BANK
     ? { books: Object.fromEntries(GOLDEN_BELL_BOOKS.map((book) => [book.id, syntheticRecords(book)])) }
     : null;
 if (!testCode && !privateFixture) throw new Error("FIELDS_TEST_ACCESS_CODE or a private FIELDS_PRIVATE_ANSWER_BANK fixture is required");
-if (privateFixture) {
-  assert.ok(["localhost", "127.0.0.1", "[::1]"].includes(new URL(baseUrl).hostname), "Private answer fixtures may only be used against a local test server");
-  for (const book of GOLDEN_BELL_BOOKS) {
-    hydrateProtectedAnswers(book, privateFixture.books[book.id]);
-    appendProtectedRecoveryItems(book, privateFixture.books[book.id]);
-  }
-}
 const captureDirectory = process.env.FIELDS_CAPTURE_DIR;
 if (captureDirectory) await mkdir(captureDirectory, { recursive: true });
 const bookIds = requestedBook === "all"
   ? Array.from({ length: 10 }, (_, index) => `book-${String(index + 1).padStart(2, "0")}`)
   : requestedBook.split(",");
 assert.ok(bookIds.every((id) => GOLDEN_BELL_BOOKS.some((book) => book.id === id)), "Unknown print audit book");
+if (privateFixture) {
+  assert.ok(["localhost", "127.0.0.1", "[::1]"].includes(new URL(baseUrl).hostname), "Private answer fixtures may only be used against a local test server");
+  for (const book of GOLDEN_BELL_BOOKS.filter((candidate) => bookIds.includes(candidate.id))) {
+    hydrateProtectedAnswers(book, privateFixture.books[book.id]);
+    appendProtectedRecoveryItems(book, privateFixture.books[book.id]);
+  }
+}
 const viewportWidth = Number(process.env.FIELDS_VIEWPORT_WIDTH || 1440);
 
 function sourceParts(lesson) {
