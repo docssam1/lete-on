@@ -5,23 +5,29 @@
 - Branch: `codex/elementary-audit-sync-20260926`
 - Local page: `http://127.0.0.1:8897/hselementary/question-bank/`
 - Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-03)
-- Runtime-available types: 1,113 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 892
+- Runtime-available types: 1,122 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 883
 - Source-linked runtime entries: 1,625 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `75/477` types are runtime-available. The remainder stay review-locked.
+- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `84/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
 
 ## 2026-10-03 Decimal-Division Exploration 6
 
-- Examples 6-1 (container capacity) and 6-2 (sound speed and temperature) are available as three fixed verified variants each. The other nine items in this exploration remain locked.
+- All eleven source items in this exploration now have three fixed variants and three structural difficulty choices. This is a finite pool, not unlimited generation.
+- The nine newly rebuilt items include the staircase rebound and equal-rod pond diagrams, plus seven text-only problems. Problem diagrams are used only where the original has them; source calculations and solution tables stay in answers.
+- Mission 3's old inventory had the wrong animal comparison and answer. The original asks turtle/monkey, whose rounded ratio is 1.8, not dog/turtle. The third pair sum is 38.5kg, not the neighboring problem's 86.35. Handwriting is not a publisher key.
+- Example 6-4's handwriting is not treated as verified. Mission 5's handwriting is ambiguous; its 2948.4m answer follows the printed circumferences and rotation-count difference and is independently recalculated.
+- The geometry module respects locks and never unlocks an inventory item merely by loading. Diagram heights are model-derived from the correct stair/water datum. The harder staircase target adds the height from the lowest floor; the harder pond target adds the average of both depths.
 - Example 6-1 keeps the initially empty portion as the fraction's base. The source level preserves the original reasoning sequence; the easier level supplies the intermediate filled ratio, and the harder level adds withdrawal. These are reviewed structural difficulty choices, not empirical score calibration.
 - The handwritten answer agrees with independent calculation and back-substitution. A separate publisher answer key has not been verified; do not describe the handwriting as a publisher key.
 - Example 6-1 has no original problem diagram. Keep the question text-only with inline fractions, and show the calculation table only in the solution.
 - Verification: 27 exact-fraction prompt calculations, 135,000 finite candidates, separate source/math/code review, desktop 1280px and mobile 390/320px across all three difficulties, plus one-page A4 question and answer sheets inspected visually.
 - Updated regressions: 66,780 runtime generations, 166,950 math-notation generations, and 333,900 numeric-display generations. Private source images and rendered evidence remain outside Git.
-- Continue the remaining Exploration 6 items one by one. Exploration and Example 6-3 need source-faithful problem and answer diagrams before release.
+- New focused checks: 189 exact text-statement calculations, 300,000 geometry candidates, model-derived curve peaks/rod depths, and independent source/code review. Browser checks include desktop 1280px and mobile 390/320px, all three difficulties, text/line clearance, problem-answer separation, and A4 pagination.
+- Current regressions: 67,320 runtime generations, 168,300 math-notation generations, and 336,600 numeric-display generations. Grade 6 source catalog: 323 available, 310 locked. The picture-needed count is recalculated from actual entries rather than an outdated summary total.
+- Next: four still-locked text items in decimal-division Exploration 5, then the remaining source groups. Keep duplicate Mission 5 in that group excluded. Whole-bank source/difficulty completion and empirical score calibration are still pending.
 
 ## 2026-09-13 Parallel-Angle Repair And Release Gates
 

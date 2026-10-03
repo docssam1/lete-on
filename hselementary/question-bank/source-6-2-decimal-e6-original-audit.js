@@ -48,11 +48,11 @@ const cases = [
     solve: () => 6.21 / (1 - 0.3 - 0.3 * 0.8),
   },
   {
-    id: "mission-3", page: 27, answer: "약 0.8배", value: 0.8,
+    id: "mission-3", page: 27, answer: "약 1.8배", value: 1.8,
     solve: () => {
       const turtle = (51.4 + 43.7 - 38.5) / 2;
-      const dog = 51.4 - turtle;
-      return Math.round((dog / turtle) * 10) / 10;
+      const monkey = 43.7 - turtle;
+      return Math.round((turtle / monkey) * 10) / 10;
     },
   },
   {
@@ -81,12 +81,13 @@ for (const test of cases) {
   assert.equal(item.independentAnswer, test.answer, `${id}: independent answer`);
   assert.equal(item.answerEvidence, "independent-calculation-not-publisher-key");
   assert.equal(item.sourceVerified, true);
-  const generator = ({ "example-1": "sourceGrade6SecondDecimalDivisionE6Example1", "example-2": "sourceGrade6SecondDecimalDivisionE6Example2Candidate" })[test.id] || "";
+  const generator = ({ "exploration-1": "sourceGrade6DecimalE6Stairs", "example-1": "sourceGrade6SecondDecimalDivisionE6Example1", "example-2": "sourceGrade6SecondDecimalDivisionE6Example2Candidate", "example-3": "sourceGrade6DecimalE6Pond", "example-4": "sourceGrade6SecondDecimalDivisionE6Example4Text" })[test.id] || `sourceGrade6SecondDecimalDivisionE6Mission${test.id.replace("mission-", "")}Text`;
   assert.equal(item.implementationStatus, generator ? "fixed-verified-pool" : "review-locked");
   assert.equal(publicType.reviewLocked, !generator, `${id}: release decision`);
   assert.equal(publicType.generatorKey, generator);
   if (generator) {
-    assert.equal(item.handwrittenAnswer, item.independentAnswer);
+    if (item.handwrittenAnswerVerified !== false) assert.equal(item.handwrittenAnswer, item.independentAnswer);
+    else assert.ok(item.handwrittenAnswerReview);
     assert.equal(item.publisherAnswerKeyVerified, false);
   }
   assert.ok(Math.abs(test.solve() - test.value) < 1e-8, `${id}: independent calculation`);
@@ -96,4 +97,4 @@ for (const test of cases) {
   contracts.add(item.answerContract);
 }
 
-console.log(`6-2 소수의 나눗셈 개념탐구 6: 원본 11항목·독립 계산, 물통·소리 예제 공개·나머지 9항목 잠금 검증 통과`);
+console.log(`6-2 소수의 나눗셈 개념탐구 6: 원본 11항목·독립 계산·손글씨 근거 분리 검증 통과`);

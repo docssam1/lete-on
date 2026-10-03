@@ -9,9 +9,9 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "exploration": 73,
     "example": 221,
     "mission": 339,
-    "problemVisualRequired": 625,
+    "problemVisualRequired": 607,
     "answerVisualRequired": 633,
-    "unlocked": 314
+    "unlocked": 323
   },
   "items": [
     {
@@ -10606,17 +10606,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "튀어 오르는 공의 처음 높이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6DecimalE6Stairs",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ]
     },
     {
       "semester": "6-2",
@@ -10684,17 +10689,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "막대의 길이와 물 깊이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6DecimalE6Pond",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ]
     },
     {
       "semester": "6-2",
@@ -10710,17 +10720,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "지난해와 올해 학생 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE6Example4Text",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
-      "problemVisualRequired": true,
+      "reviewLocked": false,
+      "reviewReason": "",
+      "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ]
     },
     {
       "semester": "6-2",
@@ -10736,17 +10751,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "지난해 학생 수와 늘고 준 비율로 올해 학생 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE6Mission1Text",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
-      "problemVisualRequired": true,
+      "reviewLocked": false,
+      "reviewReason": "",
+      "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ]
     },
     {
       "semester": "6-2",
@@ -10762,17 +10782,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "나누어 가진 색 테이프의 처음 길이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE6Mission2Text",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
-      "problemVisualRequired": true,
+      "reviewLocked": false,
+      "reviewReason": "",
+      "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ]
     },
     {
       "semester": "6-2",
@@ -10788,17 +10813,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "세 동물 무게로 몇 배인지 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE6Mission3Text",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
-      "problemVisualRequired": true,
+      "reviewLocked": false,
+      "reviewReason": "",
+      "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ]
     },
     {
       "semester": "6-2",
@@ -10814,17 +10844,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "튄 높이의 비로 처음 높이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE6Mission4Text",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
-      "problemVisualRequired": true,
+      "reviewLocked": false,
+      "reviewReason": "",
+      "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ]
     },
     {
       "semester": "6-2",
@@ -10840,17 +10875,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "바퀴 둘레와 회전 수로 거리 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE6Mission5Text",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
-      "problemVisualRequired": true,
+      "reviewLocked": false,
+      "reviewReason": "",
+      "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ]
     },
     {
       "semester": "6-2",
@@ -10866,17 +10906,22 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "평균 점수로 여학생 수 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE6Mission6Text",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
-      "problemVisualRequired": true,
+      "reviewLocked": false,
+      "reviewReason": "",
+      "problemVisualRequired": false,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "verifiedVariantProvenance": [
+        "source-values",
+        "source-structure-variant",
+        "source-structure-variant"
+      ]
     },
     {
       "semester": "6-2",

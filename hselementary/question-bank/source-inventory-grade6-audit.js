@@ -40,6 +40,8 @@ const readiness = JSON.parse(fs.readFileSync(readinessPath, "utf8"));
 const readinessU5 = JSON.parse(fs.readFileSync(readinessU5Path, "utf8"));
 const readinessU6 = JSON.parse(fs.readFileSync(readinessU6Path, "utf8"));
 const items = catalog?.items || [];
+check(catalog.totals.problemVisualRequired === items.filter(item => item.problemVisualRequired).length, "문제 그림 필요 유형 합계와 실제 항목 수가 다릅니다.");
+check(catalog.totals.unlocked === items.filter(item => !item.reviewLocked).length, "공개 유형 합계와 실제 항목 수가 다릅니다.");
 const readinessU1E1Items = readinessU1.items.filter(item => item.sourceItemId.startsWith("6-1-u1-e1-"));
 const readinessU1E1Counts = readinessU1E1Items.reduce((counts, item) => {
   counts[item.publicDecision || "undefined"] = (counts[item.publicDecision || "undefined"] || 0) + 1;
@@ -91,6 +93,9 @@ const readinessU6Counts = readinessU6.items.reduce((counts, item) => {
   return counts;
 }, { public: 0, locked: 0, releaseLocked: 0 });
 const readyGeneratorKeys = [
+  "sourceGrade6DecimalE6Stairs", "sourceGrade6DecimalE6Pond",
+  "sourceGrade6SecondDecimalDivisionE6Example4Text",
+  ...Array.from({ length: 6 }, (_, i) => `sourceGrade6SecondDecimalDivisionE6Mission${i + 1}Text`),
   "sourceGrade6SecondDecimalDivisionE6Example1",
   "sourceGrade6SecondDecimalDivisionE1Choice", "sourceGrade6SecondDecimalDivisionE1Calculate", "sourceGrade6SecondDecimalDivisionE1Range", "sourceGrade6SecondDecimalDivisionE1DivisorRatio", "sourceGrade6SecondDecimalDivisionE1ThreeProducts", "sourceGrade6SecondDecimalDivisionE1Parts",
   "sourceGrade6SecondDecimalDivisionE1Mission1", "sourceGrade6SecondDecimalDivisionE1Mission2", "sourceGrade6SecondDecimalDivisionE1Mission3", "sourceGrade6SecondDecimalDivisionE1Mission4", "sourceGrade6SecondDecimalDivisionE1Mission5", "sourceGrade6SecondDecimalDivisionE1Mission6",
@@ -161,8 +166,8 @@ for (const [generatorKey, expectedCount, label] of [
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 314 && lockedItems.length === 319, `6학년 원문 유형의 공개 314개·잠금 319개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && (Number.isInteger(item.variant) || item.sourceItemId.startsWith("6-2-u2-e1-") || ["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-2", "6-2-u2-e2-mission-5", "6-2-u2-e5-example-1", "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-3", "6-2-u2-e5-mission-4", "6-2-u2-e5-mission-6", "6-2-u2-e6-example-1", "6-2-u2-e6-example-2"].includes(item.sourceItemId)) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 314유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 323 && lockedItems.length === 310, `6학년 원문 유형의 공개 323개·잠금 310개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && ((Number.isInteger(item.variant) || item.sourceItemId.startsWith("6-2-u2-e6-")) || item.sourceItemId.startsWith("6-2-u2-e1-") || ["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-2", "6-2-u2-e2-mission-5", "6-2-u2-e5-example-1", "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-3", "6-2-u2-e5-mission-4", "6-2-u2-e5-mission-6", "6-2-u2-e6-example-1", "6-2-u2-e6-example-2"].includes(item.sourceItemId)) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 323유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU1E1Items.length === 12 && readinessU1E1Counts.confirmed === 10 && readinessU1E1Counts.locked === 2 && readinessU1E1Counts.candidate === 0 && readinessU1E1Counts.releaseLocked === 2, `6-1 1단원 개념탐구 1 readiness 확인 10개·열린 설명 잠금 2개 구성이 다릅니다: 전체 ${readinessU1E1Items.length}, 확인 ${readinessU1E1Counts.confirmed}, 잠금 ${readinessU1E1Counts.locked}/${readinessU1E1Counts.releaseLocked}`);
@@ -300,7 +305,8 @@ const textOnlySourceItems = new Set([
   "6-2-u2-e5-example-3", "6-2-u2-e5-example-4",
   "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-3",
   "6-2-u2-e5-mission-4", "6-2-u2-e5-mission-5", "6-2-u2-e5-mission-6",
-  "6-2-u2-e6-example-1", "6-2-u2-e6-example-2"
+  "6-2-u2-e6-example-1", "6-2-u2-e6-example-2", "6-2-u2-e6-example-4",
+  ...Array.from({ length: 6 }, (_, i) => `6-2-u2-e6-mission-${i + 1}`)
 ]);
 check(items.every(item => item.problemVisualRequired === !textOnlySourceItems.has(item.sourceItemId) && item.answerVisualRequired === true), "6학년 원문 유형의 문제·정답 화면 계약이 빠졌습니다.");
 check(items.every(item => {
