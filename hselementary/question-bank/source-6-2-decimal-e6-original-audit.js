@@ -81,11 +81,11 @@ for (const test of cases) {
   assert.equal(item.independentAnswer, test.answer, `${id}: independent answer`);
   assert.equal(item.answerEvidence, "independent-calculation-not-publisher-key");
   assert.equal(item.sourceVerified, true);
-  const isReviewedSoundExample = test.id === "example-2";
-  assert.equal(item.implementationStatus, isReviewedSoundExample ? "fixed-verified-pool" : "review-locked");
-  assert.equal(publicType.reviewLocked, !isReviewedSoundExample, `${id}: release decision`);
-  assert.equal(publicType.generatorKey, isReviewedSoundExample ? "sourceGrade6SecondDecimalDivisionE6Example2Candidate" : "");
-  if (isReviewedSoundExample) {
+  const generator = ({ "example-1": "sourceGrade6SecondDecimalDivisionE6Example1", "example-2": "sourceGrade6SecondDecimalDivisionE6Example2Candidate" })[test.id] || "";
+  assert.equal(item.implementationStatus, generator ? "fixed-verified-pool" : "review-locked");
+  assert.equal(publicType.reviewLocked, !generator, `${id}: release decision`);
+  assert.equal(publicType.generatorKey, generator);
+  if (generator) {
     assert.equal(item.handwrittenAnswer, item.independentAnswer);
     assert.equal(item.publisherAnswerKeyVerified, false);
   }
@@ -96,4 +96,4 @@ for (const test of cases) {
   contracts.add(item.answerContract);
 }
 
-console.log(`6-2 소수의 나눗셈 개념탐구 6: 원본 11항목·독립 계산, 소리 예제만 공개·나머지 잠금 검증 통과`);
+console.log(`6-2 소수의 나눗셈 개념탐구 6: 원본 11항목·독립 계산, 물통·소리 예제 공개·나머지 9항목 잠금 검증 통과`);

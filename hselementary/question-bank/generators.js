@@ -25440,6 +25440,46 @@
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
     },
+    sourceGrade6SecondDecimalDivisionE6Example1({ level, variant = 0 }) {
+      const sourceItemId = "6-2-u2-e6-example-1";
+      if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
+      const poolIndex = variant % 3;
+      const data = [
+        { initialPercent: 20, numerator: 5, denominator: 8, addedHundredths: 252, emptyPercent: 15, removedHundredths: 84, hardEmptyPercent: 20 },
+        { initialPercent: 25, numerator: 2, denominator: 5, addedHundredths: 360, emptyPercent: 25, removedHundredths: 180, hardEmptyPercent: 35 },
+        { initialPercent: 30, numerator: 3, denominator: 7, addedHundredths: 480, emptyPercent: 20, removedHundredths: 120, hardEmptyPercent: 25 }
+      ][poolIndex];
+      const filledPercent = data.initialPercent + (100 - data.initialPercent) * data.numerator / data.denominator;
+      const finalPercent = 100 - (level === 2 ? data.hardEmptyPercent : data.emptyPercent);
+      const changeHundredths = data.addedHundredths - (level === 2 ? data.removedHundredths : 0);
+      const differencePercent = finalPercent - filledPercent;
+      const capacityHundredths = changeHundredths * 100 / differencePercent;
+      if (![filledPercent, capacityHundredths].every(Number.isInteger) || differencePercent <= 0
+        || data.initialPercent <= 0 || data.numerator <= 0 || data.numerator >= data.denominator
+        || capacityHundredths * (100 - filledPercent) < data.addedHundredths * 100) {
+        throw new Error(`${sourceItemId}: 물의 양과 물통의 들이가 정확하지 않습니다.`);
+      }
+      const decimal = value => plainDecimal(value, 2);
+      const liters = value => `${decimal(value)}L`;
+      const answer = liters(capacityHundredths);
+      const firstStage = level === 0
+        ? `어느 물통에 물통 들이의 ${decimal(filledPercent)}만큼 물이 채워져 있습니다. `
+        : `어느 물통에 물통 들이의 ${decimal(data.initialPercent)}만큼 물이 채워져 있습니다. 처음에 물이 채워지지 않은 부분의 ${fractionMarkup(data.numerator, data.denominator)}만큼 물을 채웠습니다. `;
+      const lastStage = level === 0
+        ? `물 ${liters(data.addedHundredths)}를 더 넣었더니 물통 들이의 ${decimal(finalPercent)}만큼 물이 채워졌습니다. `
+        : `그 뒤 물 ${liters(data.addedHundredths)}를 더 넣었${level === 2 ? `다가 물 ${liters(data.removedHundredths)}를 덜어냈` : ""}더니 물이 채워지지 않은 부분이 전체 들이의 ${100 - finalPercent}%가 되었습니다. `;
+      const prompt = `${firstStage}${lastStage}이 물통의 들이는 몇 L입니까?`;
+      const math = expression => `<span class="math-inline-expression">${expression}</span>`;
+      const fillStep = level === 0 ? "" : `처음 빈 부분은 전체의 ${math(`1 − ${decimal(data.initialPercent)} = ${decimal(100 - data.initialPercent)}`)}입니다. 그 부분에 채운 물은 전체의 ${math(`${decimal(100 - data.initialPercent)} × ${fractionMarkup(data.numerator, data.denominator)} = ${decimal(filledPercent - data.initialPercent)}`)}이므로, 그때 채워진 물은 전체의 ${math(`${decimal(data.initialPercent)} + ${decimal(filledPercent - data.initialPercent)} = ${decimal(filledPercent)}`)}입니다. `;
+      const finalStep = level === 0 ? "" : `마지막에 채워진 물은 전체의 ${math(`1 − ${decimal(100 - finalPercent)} = ${decimal(finalPercent)}`)}입니다. `;
+      const changeStep = level === 2 ? `늘어난 물의 양은 ${math(`${decimal(data.addedHundredths)} − ${decimal(data.removedHundredths)} = ${decimal(changeHundredths)}(L)`)}입니다. ` : "";
+      const solution = `${fillStep}${finalStep}${changeStep}전체 들이의 ${math(`${decimal(finalPercent)} − ${decimal(filledPercent)} = ${decimal(differencePercent)}`)}이 ${liters(changeHundredths)}입니다. 따라서 물통의 들이는 ${math(`${decimal(changeHundredths)} ÷ ${decimal(differencePercent)} = ${decimal(capacityHundredths)}(L)`)}입니다.`;
+      const difficultyDesign = ["filled-ratio-given", "source-nested-empty-fraction", "withdrawal-extra-step"][level];
+      const answerVisual = `<div class="source61-math-board" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>물통의 들이</strong><div class="source61-math-row"><span>늘어난 비율</span><b>${decimal(differencePercent)}</b></div><div class="source61-math-row"><span>물통의 들이</span><b>${answer}</b></div></div>`;
+      return result(prompt, answer, solution, {
+        answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
+      });
+    },
     sourceGrade6SecondDecimalDivisionE6Example2Candidate({ level, variant = 0 }) {
       const sourceItemId = "6-2-u2-e6-example-2";
       if (!Number.isInteger(variant) || variant < 0 || ![0, 1, 2].includes(level)) throw new Error(`${sourceItemId}: 난이도 또는 문항 번호가 올바르지 않습니다.`);
