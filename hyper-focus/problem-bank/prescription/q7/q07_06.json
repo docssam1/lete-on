@@ -1,0 +1,24 @@
+{
+  "same_sh": "house",
+  "same_col": "#E91E63",
+  "diff_sh": "pentagon",
+  "opts": [
+    [
+      "pentagon",
+      "#E91E63"
+    ],
+    [
+      "house",
+      "#E91E63"
+    ],
+    [
+      "house",
+      "#E91E63"
+    ],
+    [
+      "house",
+      "#E91E63"
+    ]
+  ],
+  "diff_idx": 0
+}

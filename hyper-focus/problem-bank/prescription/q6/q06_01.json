@@ -1,0 +1,30 @@
+{
+  "target_sh": "diamond",
+  "target_col": "#3498DB",
+  "opts": [
+    [
+      "cross",
+      "#3498DB",
+      0.1,
+      0
+    ],
+    [
+      "diamond",
+      "#E91E63",
+      0.1,
+      0
+    ],
+    [
+      "diamond",
+      "#3498DB",
+      0.1,
+      0
+    ],
+    [
+      "square",
+      "#E91E63",
+      0.1,
+      0
+    ]
+  ]
+}
