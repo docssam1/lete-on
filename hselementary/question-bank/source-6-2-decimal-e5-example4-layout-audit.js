@@ -13,7 +13,7 @@ const sourceItemId = "6-2-u2-e5-example-4";
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
-assert(type.reviewLocked && type.generatorKey === "", "공개 유형은 잠금 유지");
+assert(!type.reviewLocked && type.generatorKey === "sourceGrade6SecondDecimalDivisionE5Example4", "검증된 실제 유형 연결");
 const candidate = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE5Example4" };
 const baseUrl = process.env.HSE_BASE_URL || "http://127.0.0.1:8897/hselementary/question-bank/";
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
@@ -78,5 +78,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log(`6-2 개념탐구 5 예제 5-4 잠금 후보: PC·390px·320px 문제·풀이 ${checked}개 배치 검사 통과`);
+  console.log(`6-2 개념탐구 5 예제 5-4 원문 유형: PC·390px·320px 문제·풀이 ${checked}개 배치 검사 통과`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

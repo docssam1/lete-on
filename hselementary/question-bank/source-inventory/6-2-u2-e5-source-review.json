@@ -15,10 +15,17 @@
       "independentCheck": "fuel-to-distance-and-known-distance-to-speed-then-divide",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Exploration",
-        "difficultyDesign": ["speed-given", "source-distance-and-time", "remaining-fuel-extra-step"],
+        "difficultyDesign": [
+          "speed-given",
+          "source-distance-and-time",
+          "remaining-fuel-extra-step"
+        ],
         "fixedPoolCount": 3,
-        "publicReleaseStatus": "locked"
-      }
+        "publicReleaseStatus": "verified"
+      },
+      "independentAnswer": "3시간",
+      "officialAnswerVerified": false,
+      "handwrittenAnswerEvidence": "readable-and-agrees-with-independent-answer"
     },
     {
       "sourceItemId": "6-2-u2-e5-example-1",
@@ -26,7 +33,11 @@
       "independentCheck": "convert-length-to-millimeters-then-rate-to-total-minutes",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Example1",
-        "difficultyDesign": ["burned-length-given", "centimeter-lengths", "extinguished-time-extra-step"],
+        "difficultyDesign": [
+          "burned-length-given",
+          "centimeter-lengths",
+          "extinguished-time-extra-step"
+        ],
         "fixedPoolCount": 3,
         "publicReleaseStatus": "verified"
       }
@@ -37,10 +48,17 @@
       "independentCheck": "distance-ratio-to-liters-then-multiply-price-per-liter",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Example2",
-        "difficultyDesign": ["distance-per-liter-given", "source-fuel-distance-ratio", "two-day-total-distance"],
+        "difficultyDesign": [
+          "distance-per-liter-given",
+          "source-fuel-distance-ratio",
+          "two-day-total-distance"
+        ],
         "fixedPoolCount": 3,
-        "publicReleaseStatus": "locked"
-      }
+        "publicReleaseStatus": "verified"
+      },
+      "independentAnswer": "35520원",
+      "officialAnswerVerified": false,
+      "handwrittenAnswerEvidence": "readable-and-agrees-with-independent-answer"
     },
     {
       "sourceItemId": "6-2-u2-e5-example-3",
@@ -48,10 +66,17 @@
       "independentCheck": "convert-both-durations-to-seconds-then-add-independent-flow-rates",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Example3",
-        "difficultyDesign": ["seconds-given", "source-mixed-times", "initial-water-extra-step"],
+        "difficultyDesign": [
+          "seconds-given",
+          "source-mixed-times",
+          "initial-water-extra-step"
+        ],
         "fixedPoolCount": 3,
-        "publicReleaseStatus": "locked"
-      }
+        "publicReleaseStatus": "verified"
+      },
+      "independentAnswer": "8분 45초",
+      "officialAnswerVerified": false,
+      "handwrittenAnswerEvidence": "final-answer-not-legible"
     },
     {
       "sourceItemId": "6-2-u2-e5-example-4",
@@ -59,21 +84,34 @@
       "independentCheck": "derive-current-speed-and-subtract-from-still-water-speed",
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE5Example4",
-        "difficultyDesign": ["current-speed-given", "source-drift-distance", "downstream-observation"],
+        "difficultyDesign": [
+          "current-speed-given",
+          "source-drift-distance",
+          "downstream-observation"
+        ],
         "fixedPoolCount": 3,
-        "publicReleaseStatus": "locked"
-      }
+        "publicReleaseStatus": "verified"
+      },
+      "independentAnswer": "2시간 30분",
+      "officialAnswerVerified": false,
+      "handwrittenAnswerEvidence": "readable-and-agrees-with-independent-answer"
     }
   ],
   "officialAnswerEvidence": "not-available-for-these-items",
   "independentAnswerEvidence": {
     "verifiedItemId": "6-2-u2-e5-example-1",
-    "method": "source unit conversion, independent integer arithmetic, Claude CLI comparison with Mission 5, real worksheet desktop/mobile/A4 inspection",
-    "officialAnswerClaimed": false
+    "method": "original page read visually; exact rational prompt calculation; alternate back-substitution and unique-candidate checks; actual desktop/mobile/A4 worksheet inspection",
+    "officialAnswerClaimed": false,
+    "verifiedItemIds": [
+      "6-2-u2-e5-exploration-1",
+      "6-2-u2-e5-example-1",
+      "6-2-u2-e5-example-2",
+      "6-2-u2-e5-example-3",
+      "6-2-u2-e5-example-4"
+    ]
   },
-  "publicReleaseStatus": "partial",
+  "publicReleaseStatus": "verified",
   "pending": [
-    "matching advanced-book official answer comparison if a valid key is found",
-    "other exploration and examples remain locked"
+    "matching advanced-book publisher answer comparison if a valid key is found"
   ]
 }

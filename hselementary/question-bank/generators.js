@@ -25058,13 +25058,13 @@
         ? `어떤 자동차가 1시간에 ${km(data.speedTenths)}를 달립니다.`
         : `어떤 자동차가 ${km(sampleDistanceTenths)}를 달리는 데 ${hours(data.sampleMinutes)}이 걸렸습니다.`;
       const fuel = level === 2
-        ? `다른 날 운행을 시작할 때는 휘발유가 ${liters(data.initialFuelMl)} 있었고, 운행을 마친 뒤에는 ${liters(remainingFuelMl)} 남았습니다.`
-        : `다른 날 운행에서는 휘발유 ${liters(usedFuelMl)}를 사용했습니다.`;
-      const prompt = `${travel} 이 자동차는 1km를 달릴 때 휘발유 ${liters(data.fuelPerKmMl)}를 씁니다. ${fuel} 이 자동차는 얼마 동안 달린 셈입니까?`;
+        ? `다른 날 달리기 시작할 때는 휘발유가 ${liters(data.initialFuelMl)} 있었고, 달리고 난 뒤에는 ${liters(remainingFuelMl)} 남았습니다.`
+        : `다른 날 달릴 때는 휘발유 ${liters(usedFuelMl)}를 사용했습니다.`;
+      const prompt = `${travel} 이 자동차는 항상 같은 빠르기로 달리며, 1km를 달릴 때 휘발유 ${liters(data.fuelPerKmMl)}를 씁니다. ${fuel} 이 자동차는 얼마 동안 달린 셈입니까?`;
       const answer = hours(targetMinutes);
       const difficultyDesign = ["speed-given", "source-distance-and-time", "remaining-fuel-extra-step"][level];
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
-      const answerVisual = `<div class="source61-math-board source62-e5-fuel-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>연료와 이동 시간</strong>${row("1시간에 달린 거리", km(data.speedTenths))}${level === 2 ? row("사용한 휘발유", liters(usedFuelMl)) : ""}${row("달린 거리", km(targetDistanceTenths))}${row("달린 시간", answer)}</div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-fuel-answer source62-e5-unit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>연료와 이동 시간</strong>${row("1시간에 달린 거리", km(data.speedTenths))}${level === 2 ? row("사용한 휘발유", liters(usedFuelMl)) : ""}${row("달린 거리", km(targetDistanceTenths))}${row("달린 시간", answer)}</div>`;
       const math = expression => `<span class="math-inline-expression">${expression}</span>`;
       const speedStep = level === 0 ? "" : `1시간에 달린 거리는 ${math(`${km(sampleDistanceTenths)} ÷ ${decimalHours(data.sampleMinutes)} = ${km(data.speedTenths)}`)}입니다. `;
       const fuelStep = level === 2 ? `사용한 휘발유는 ${math(`${liters(data.initialFuelMl)} − ${liters(remainingFuelMl)} = ${liters(usedFuelMl)}`)}입니다. ` : "";
@@ -25137,7 +25137,7 @@
       const prompt = `${sample} 휘발유 1L의 가격이 ${data.priceWon}원일 때, ${trip} 필요한 휘발유값은 얼마입니까?`;
       const difficultyDesign = ["distance-per-liter-given", "source-fuel-distance-ratio", "two-day-total-distance"][level];
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
-      const answerVisual = `<div class="source61-math-board source62-e5-fuel-cost-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>필요한 휘발유값</strong>${row("전체 이동 거리", km(targetDistanceTenths))}${row("필요한 휘발유", liters(neededFuelMl))}${row("휘발유 1L 가격", `${data.priceWon}원`)}${row("휘발유값", answer)}</div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-fuel-cost-answer source62-e5-unit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>필요한 휘발유값</strong>${row("전체 이동 거리", km(targetDistanceTenths))}${row("필요한 휘발유", liters(neededFuelMl))}${row("휘발유 1L 가격", `${data.priceWon}원`)}${row("휘발유값", answer)}</div>`;
       const math = expression => `<span class="math-inline-expression">${expression}</span>`;
       const totalStep = level === 2 ? `전체 거리는 ${math(`${km(data.sampleDistanceTenths * data.firstLegRatio)} + ${km(data.sampleDistanceTenths * data.secondLegRatio)} = ${km(targetDistanceTenths)}`)}입니다. ` : "";
       const fuelStep = level === 0
@@ -25168,14 +25168,15 @@
       const sampleTime = seconds => level === 0 ? `${seconds}초` : duration(seconds);
       const answer = duration(elapsedSeconds);
       const question = level === 2
-        ? `처음에 ${liters(startingMl)}L의 물이 들어 있는 수조에 두 수도꼭지를 함께 틀었습니다. 수조에 든 물이 ${liters(endingMl)}L에 이를 때까지 몇 분 몇 초가 걸릴까요?`
+        ? `처음에 ${liters(startingMl)}L의 물이 들어 있는 물통에 두 수도꼭지를 함께 틀었습니다. 물통에 든 물이 ${liters(endingMl)}L에 이를 때까지 몇 분 몇 초가 걸릴까요?`
         : `두 수도꼭지를 함께 틀어 ${liters(neededMl)}L의 물을 받으려면 몇 분 몇 초가 걸릴까요?`;
       const difficultyDesign = ["seconds-given", "source-mixed-times", "initial-water-extra-step"][level];
       const prompt = `두 수도꼭지를 각각 따로 틀어 물의 양을 재었습니다. ㉮에서는 ${sampleTime(data.timeA)} 동안 ${liters(waterA)}L, ㉯에서는 ${sampleTime(data.timeB)} 동안 ${liters(waterB)}L의 물이 나왔습니다. 각 수도꼭지에서 1초 동안 나오는 물의 양이 일정할 때, ${question}`;
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
-      const answerVisual = `<div class="source61-math-board source62-e5-two-taps-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>1초 동안 나오는 물</strong>${row("㉮", `${liters(data.rateA)}L`)}${row("㉯", `${liters(data.rateB)}L`)}${row("두 수도꼭지", `${liters(data.rateA + data.rateB)}L`)}${level === 2 ? row("새로 받을 물", `${liters(neededMl)}L`) : ""}${row("걸린 시간", answer)}</div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-two-taps-answer source62-e5-unit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>1초 동안 나오는 물</strong>${row("㉮", `${liters(data.rateA)}L`)}${row("㉯", `${liters(data.rateB)}L`)}${row("두 수도꼭지", `${liters(data.rateA + data.rateB)}L`)}${level === 2 ? row("새로 받을 물", `${liters(neededMl)}L`) : ""}${row("걸린 시간", answer)}</div>`;
       const math = expression => `<span class="math-inline-expression">${expression}</span>`;
-      const solution = `1초에 나오는 물은 ㉮가 ${math(`${liters(waterA)} ÷ ${data.timeA} = ${liters(data.rateA)} L`)}, ㉯가 ${math(`${liters(waterB)} ÷ ${data.timeB} = ${liters(data.rateB)} L`)}입니다. ${level === 2 ? `새로 받아야 할 물은 ${math(`${liters(endingMl)} − ${liters(startingMl)} = ${liters(neededMl)} L`)}입니다. ` : ""}함께 틀면 1초에 ${liters(data.rateA + data.rateB)}L이므로 ${math(`${liters(neededMl)} ÷ ${liters(data.rateA + data.rateB)} = ${elapsedSeconds}초`)}, 즉 ${answer}입니다.`;
+      const timeStep = level === 0 ? "" : `㉮의 ${duration(data.timeA)}는 ${data.timeA}초, ㉯의 ${duration(data.timeB)}는 ${data.timeB}초입니다. `;
+      const solution = `${timeStep}1초에 나오는 물은 ㉮가 ${math(`${liters(waterA)} ÷ ${data.timeA} = ${liters(data.rateA)} L`)}, ㉯가 ${math(`${liters(waterB)} ÷ ${data.timeB} = ${liters(data.rateB)} L`)}입니다. ${level === 2 ? `새로 받아야 할 물은 ${math(`${liters(endingMl)} − ${liters(startingMl)} = ${liters(neededMl)} L`)}입니다. ` : ""}함께 틀면 1초에 ${liters(data.rateA + data.rateB)}L이므로 ${math(`${liters(neededMl)} ÷ ${liters(data.rateA + data.rateB)} = ${elapsedSeconds}초`)}, 즉 ${answer}입니다.`;
       return result(prompt, answer, solution, {
         answerVisual, generationMode: "fixed-verified-pool", verifiedPoolIndex: poolIndex, verifiedVariantCount: 3, sourceItemId
       });
@@ -25201,7 +25202,7 @@
       const decimalHours = minutes => plainDecimal(minutes * 100 / 60, 2);
       const drift = `${hours(data.driftMinutes)} 동안 ${km(driftDistanceTenths)}를 흐르는 강`;
       const boat = level === 2
-        ? `이 강에서 배가 강물이 흐르는 방향으로 2시간 동안 ${km(downstreamDistanceTenths)}를 갔습니다.`
+        ? `이 강에서 배가 강물이 흐르는 방향으로 2시간 동안 ${km(downstreamDistanceTenths)}를 갔습니다. 배가 흐르지 않는 물에서 내는 빠르기는 강물을 따라갈 때와 거슬러 갈 때 같습니다.`
         : `흐르지 않는 물에서 이 배는 1시간에 ${km(data.stillTenths)}를 갑니다.`;
       const prompt = level === 0
         ? `강물이 1시간에 ${km(data.currentTenths)}씩 흐릅니다. ${boat} 이 배가 강물이 흐르는 반대 방향으로 ${km(targetDistanceTenths)}를 가려면 몇 시간 몇 분이 걸릴까요?`
@@ -25209,7 +25210,7 @@
       const answer = hours(targetMinutes);
       const difficultyDesign = ["current-speed-given", "source-drift-distance", "downstream-observation"][level];
       const row = (label, value) => `<div class="source61-math-row"><span>${label}</span><b>${value}</b></div>`;
-      const answerVisual = `<div class="source61-math-board source62-e5-river-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>강물을 거슬러 가는 빠르기</strong>${row("강물이 흐르는 빠르기", `${km(data.currentTenths)}/시간`)}${level === 2 ? row("강물을 따라가는 빠르기", `${km(downstreamTenths)}/시간`) : ""}${row("흐르지 않는 물에서 배의 빠르기", `${km(data.stillTenths)}/시간`)}${row("강물을 거슬러 가는 빠르기", `${km(upstreamTenths)}/시간`)}${row("걸린 시간", answer)}</div>`;
+      const answerVisual = `<div class="source61-math-board source62-e5-river-answer source62-e5-unit-answer" data-answer-source="${sourceItemId}" data-print-weight="compact" data-verified-pool-index="${poolIndex}" data-difficulty-design="${difficultyDesign}"><strong>강물을 거슬러 가는 빠르기</strong>${row("강물이 흐르는 빠르기", `${km(data.currentTenths)}/시간`)}${level === 2 ? row("강물을 따라가는 빠르기", `${km(downstreamTenths)}/시간`) : ""}${row("흐르지 않는 물에서 배의 빠르기", `${km(data.stillTenths)}/시간`)}${row("강물을 거슬러 가는 빠르기", `${km(upstreamTenths)}/시간`)}${row("걸린 시간", answer)}</div>`;
       const math = expression => `<span class="math-inline-expression">${expression}</span>`;
       const currentStep = level === 0 ? "" : `강물이 1시간에 흐르는 거리는 ${math(`${km(driftDistanceTenths)} ÷ ${decimalHours(data.driftMinutes)} = ${km(data.currentTenths)}`)}입니다. `;
       const boatStep = level === 2 ? `강물을 따라가는 배는 1시간에 ${math(`${km(downstreamDistanceTenths)} ÷ 2 = ${km(downstreamTenths)}`)}를 가므로, 흐르지 않는 물에서 배의 빠르기는 ${math(`${km(downstreamTenths)} − ${km(data.currentTenths)} = ${km(data.stillTenths)}`)}입니다. ` : "";

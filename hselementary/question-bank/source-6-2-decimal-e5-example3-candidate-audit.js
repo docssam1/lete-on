@@ -12,8 +12,8 @@ const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
 const candidate = { ...type, reviewLocked: false, generatorKey: review.candidateVerification.generator };
-assert(type.reviewLocked && type.generatorKey === "", "공식 답 대조 전 실제 유형은 잠금 유지");
-assert.equal(window.HSE_GENERATORS.generate(type, 0, 0, 1), null);
+assert(!type.reviewLocked && type.generatorKey === review.candidateVerification.generator, "독립 검산된 실제 유형 연결");
+assert.equal(window.HSE_GENERATORS.generate({ ...type, reviewLocked: true }, 0, 0, 1), null);
 
 const ml = text => {
   const [whole, fractional = ""] = text.split(".");
@@ -39,7 +39,7 @@ assert.equal(originalShape.answer, "8분 45초");
 const hardShape = window.HSE_GENERATORS.generate(candidate, 0, 1, 1, 0);
 assert.equal(ml("347.1") - ml("13.35"), 534n * 625n);
 assert(hardShape.prompt.includes("처음에 13.35L의 물"));
-assert(hardShape.prompt.includes("수조에 든 물이 347.1L에 이를 때까지"));
+assert(hardShape.prompt.includes("물통에 든 물이 347.1L에 이를 때까지"));
 assert.equal(hardShape.answer, "10분 25초");
 
 let checks = 0;
@@ -55,8 +55,8 @@ for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant 
     assert.equal(amountA % timeA, 0n, "㉮ 초당 물의 양이 정확히 정해짐");
     assert.equal(amountB % timeB, 0n, "㉯ 초당 물의 양이 정확히 정해짐");
     const totalRate = amountA / timeA + amountB / timeB;
-    const initial = item.prompt.match(/처음에 ([\d.]+)L의 물이 들어 있는 수조/);
-    const final = item.prompt.match(/수조에 든 물이 ([\d.]+)L에 이를 때까지/);
+    const initial = item.prompt.match(/처음에 ([\d.]+)L의 물이 들어 있는 물통/);
+    const final = item.prompt.match(/물통에 든 물이 ([\d.]+)L에 이를 때까지/);
     const emptyTarget = item.prompt.match(/함께 틀어 ([\d.]+)L의 물을 받으려면/);
     assert.equal(Boolean(initial), level === 2, "어려움에서만 처음 물 조건을 추가");
     assert.equal(Boolean(final), level === 2, "어려움에서 끝 물의 양을 명시");
@@ -86,7 +86,7 @@ for (let variant = 0; variant < 3; variant += 1) {
   assert.match(hard.prompt, /처음에 [\d.]+L의 물/, "어려움에만 처음 물 조건이 추가됨");
   const sourceTarget = ml(source.prompt.match(/함께 틀어 ([\d.]+)L의 물을 받으려면/)[1]);
   const hardStart = ml(hard.prompt.match(/처음에 ([\d.]+)L의 물/)[1]);
-  const hardFinal = ml(hard.prompt.match(/수조에 든 물이 ([\d.]+)L에 이를 때까지/)[1]);
+  const hardFinal = ml(hard.prompt.match(/물통에 든 물이 ([\d.]+)L에 이를 때까지/)[1]);
   assert.notEqual(sourceTarget, hardFinal - hardStart, "어려움이 기준 문제의 같은 나눗셈을 반복하지 않음");
 }
-console.log(`6-2 개념탐구 5 예제 5-3 잠금 후보: 원문 8분 45초 독립 계산과 3난이도 × 3고정 묶음 × 40회 물량·시간 검산 ${checks}회 통과`);
+console.log(`6-2 개념탐구 5 예제 5-3 원문 유형: 원문 8분 45초 독립 계산과 3난이도 × 3고정 묶음 × 40회 물량·시간 검산 ${checks}회 통과`);

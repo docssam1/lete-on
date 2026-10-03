@@ -5,13 +5,23 @@
 - Branch: `codex/elementary-audit-sync-20260926`
 - Local page: `http://127.0.0.1:8897/hselementary/question-bank/`
 - Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-03)
-- Runtime-available types: 1,122 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 883
+- Runtime-available types: 1,126 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 879
 - Source-linked runtime entries: 1,625 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `84/477` types are runtime-available. The remainder stay review-locked.
+- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `88/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-10-03 Decimal-Division Exploration 5
+
+- The remaining four text-only Exploration/Example types use their own source generators with three fixed variants at each of three reasoning levels. Do not add diagrams or question-side solution tables where the original has none.
+- Source targets: exploration 3 hours, fuel cost 35520 won, two taps 8 minutes 45 seconds, upstream boat 2 hours 30 minutes. Publisher-key verification remains false. Three readable handwritten answers agree; the two-tap final handwriting is not established.
+- Independent review caught missing same-speed premises for the car and harder boat, and an omitted minute/second conversion in the tap solution. All three were corrected before release.
+- Alternate audit: 36 distinct conditions, exact BigInt cross-products/back-substitution, 36 pool wraparound checks, 72 numeric rejection tests, and 12 missing-speed-premise rejection tests. Repeated seeds are not counted as distinct problems.
+- Scoped solution tables inherit the common font and use normal-weight black text. Actual browser checks passed 36 desktop 1280px and mobile 390/320px states, 24 one-page A4 PDFs across three levels, and stable implementation SHA-256 during rendering. PC/mobile/rasterized A4 samples were visually inspected.
+- Regressions: 67560 runtime generations, 168900 math-notation generations plus actual DOM fraction centering, and 337800 numeric-display generations. Public lock reasons remain answer-free. Common candle/Mission 5 selection still passes without a duplicate public type.
+- Next: decimal-division Exploration 3 (rounding and applied integer counts), then Exploration 4 (remainders). Read each original before reconnecting candidates. Keep unresolved trapezoid and other source types locked. Whole-bank completion and empirical difficulty calibration remain pending. Review-branch update only; main and deployment are not claimed.
 
 ## 2026-10-03 Decimal-Division Exploration 6
 
@@ -27,7 +37,7 @@
 - Updated regressions: 66,780 runtime generations, 166,950 math-notation generations, and 333,900 numeric-display generations. Private source images and rendered evidence remain outside Git.
 - New focused checks: 189 exact text-statement calculations, 300,000 geometry candidates, model-derived curve peaks/rod depths, and independent source/code review. Browser checks include desktop 1280px and mobile 390/320px, all three difficulties, text/line clearance, problem-answer separation, and A4 pagination.
 - Current regressions: 67,320 runtime generations, 168,300 math-notation generations, and 336,600 numeric-display generations. Grade 6 source catalog: 323 available, 310 locked. The picture-needed count is recalculated from actual entries rather than an outdated summary total.
-- Next: four still-locked text items in decimal-division Exploration 5, then the remaining source groups. Keep duplicate Mission 5 in that group excluded. Whole-bank source/difficulty completion and empirical score calibration are still pending.
+- Follow-up: Exploration 5's four remaining text items are completed above. Keep duplicate Mission 5 excluded. Whole-bank source/difficulty completion and empirical score calibration remain pending.
 
 ## 2026-09-13 Parallel-Angle Repair And Release Gates
 
