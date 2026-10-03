@@ -22,6 +22,7 @@
 - Scoped solution tables inherit the common font and use normal-weight black text. Actual browser checks passed 36 desktop 1280px and mobile 390/320px states, 24 one-page A4 PDFs across three levels, and stable implementation SHA-256 during rendering. PC/mobile/rasterized A4 samples were visually inspected.
 - Regressions: 67560 runtime generations, 168900 math-notation generations plus actual DOM fraction centering, and 337800 numeric-display generations. Public lock reasons remain answer-free. Common candle/Mission 5 selection still passes without a duplicate public type.
 - Next: decimal-division Exploration 3 (rounding and applied integer counts), then Exploration 4 (remainders). Read each original before reconnecting candidates. Keep unresolved trapezoid and other source types locked. Whole-bank completion and empirical difficulty calibration remain pending. Review-branch update only; main and deployment are not claimed.
+- Exploration 3 Example 3-1 source reread caught a prior second-place/100th-place transcription error. The original asks the sum of all digits of 4.7/3.7 rounded to the 100th decimal place; the independently derived sum is 301, not 10. Raw structure and answer evidence are corrected, with a separate long-division rounding check. This item remains locked: no generator, layout, difficulty, or publisher-key approval is implied by the correction.
 
 ## 2026-10-03 Decimal-Division Exploration 6
 

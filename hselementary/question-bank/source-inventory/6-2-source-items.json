@@ -1509,9 +1509,9 @@
       "ordinal": 1,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "반올림한 소수 둘째 자리 몫의 모든 자리 수를 더하는 문제",
+      "sourceShape": "몫을 반올림해 소수 100째 자리까지 구한 뒤 몫의 모든 자리 수를 더하는 문제",
       "answerContract": "rounded-quotient-digit-sum",
-      "visualRisk": "소수 둘째 자리와 몫의 자리 수 합을 서로 다른 계산 단계로 보여야 함.",
+      "visualRisk": "원본은 소수 100째 자리까지이며 둘째 자리 문제가 아님. 반복되는 숫자와 마지막 반올림을 모두 확인해야 함.",
       "sourceVerified": true,
       "implementationStatus": "review-locked",
       "reviewReason": "원문과 독립 계산은 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."

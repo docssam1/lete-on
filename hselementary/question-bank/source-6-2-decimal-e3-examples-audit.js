@@ -44,8 +44,27 @@ for (const [index, example] of review.examples.entries()) {
 }
 
 const [first, second, third, fourth] = review.examples;
-const roundedFirst = formatRounded(divide(decimal(first.dividend), decimal(first.divisor)), 2);
-assert.equal(roundedFirst, first.roundedQuotient);
+assert.equal(first.roundingPlaces, 100, "원문은 소수 100째 자리까지 반올림");
+const quotientFirst = divide(decimal(first.dividend), decimal(first.divisor));
+const roundedFirst = formatRounded(quotientFirst, first.roundingPlaces);
+assert.equal(roundedFirst.split(".")[1].length, 100);
+assert.equal(roundedFirst.split(".")[1].slice(-1), first.roundedLastDecimalDigit);
+assert.match(raw.find(item => item.sourceItemId === first.sourceItemId).sourceShape, /100째/);
+// Long division supplies a separate check for the repeating digits and the rounding carry.
+let remainder = quotientFirst.n % quotientFirst.d;
+const expansion = [];
+for (let place = 0; place <= first.roundingPlaces; place += 1) {
+  remainder *= 10n;
+  expansion.push(String(remainder / quotientFirst.d));
+  remainder %= quotientFirst.d;
+}
+assert.equal(expansion.slice(0, 3).join(""), first.unroundedRepeatingDigits);
+assert(expansion.every((digit, index) => digit === first.unroundedRepeatingDigits[index % 3]));
+const truncated = BigInt(String(quotientFirst.n / quotientFirst.d) + expansion.slice(0, 100).join(""));
+const separatelyRounded = truncated + (Number(expansion[100]) >= 5 ? 1n : 0n);
+assert.equal(separatelyRounded.toString(), roundedFirst.replace(".", ""));
+assert.equal(roundedFirst, `1.${"270".repeat(33)}3`);
+assert.equal(first.independentAnswer, "301");
 assert.equal([...roundedFirst.replace(".", "")].reduce((sum, digit) => sum + Number(digit), 0), Number(first.independentAnswer));
 
 const matchingDigits = [];
