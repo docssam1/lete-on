@@ -36,6 +36,7 @@
 .gold-hands-on button[aria-pressed="true"], .gold-hands-on .picked { outline: 3px solid #2456c4; outline-offset: -3px; background: #eaf0ff; color: #163b8e; }
 .gold-hands-on .hand-scene { padding: 16px 0; min-height: 310px; }
 .gold-hands-on .hand-controls { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.gold-hands-on .hand-clock .hand-controls button span { word-break: keep-all; }
 .gold-hands-on .hand-feedback { min-height: 58px; display: flex; gap: 8px; align-items: flex-start; margin: 12px 0; font-size: 16px; line-height: 1.6; word-break: keep-all; overflow-wrap: anywhere; }
 .gold-hands-on .hand-feedback[hidden] { display: none; }
 .gold-hands-on .hand-feedback .ui-icon { margin-top: 3px; }

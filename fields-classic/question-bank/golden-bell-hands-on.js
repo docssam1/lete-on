@@ -2,7 +2,7 @@ import { icon } from "../../geometry/games/shape-transform/ui-icons.js";
 import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts } from "./golden-bell-hands-on-folding.js?v=20260925a";
 import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clockValueAfterQuarterTurns, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20260925a";
-import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20260925a";
+import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261003c";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sessions = new Map();
@@ -25,7 +25,9 @@ function clockScene(round, state) {
     return `<text x="${130 + 95 * Math.sin(a)}" y="${130 - 95 * Math.cos(a)}">${i + 1}</text>`;
   }).join("");
   const marks = Array.from({ length: 12 }, (_, i) => `<path transform="rotate(${i * 30} 130 130)" d="M130 13V20"/>`).join("");
-  return `<div class="hand-clock"><svg viewBox="0 0 260 260" role="img" aria-label="${round.start}에서 출발한 바늘이 현재 ${clockValueAfterQuarterTurns(round.start, state.turns)}을 가리키는 시계"><circle cx="130" cy="130" r="122" class="clock-rim"/><g class="clock-ticks">${marks}</g>${labels}<path class="clock-start" transform="rotate(${round.start * 30} 130 130)" d="M130 130V66"/><g class="clock-hand" style="transform:rotate(${angle}deg)"><path d="M130 134V55M122 64L130 54L138 64"/></g><circle cx="130" cy="130" r="6" class="clock-pin"/></svg><p class="hand-measure">돌린 양 <strong>${Math.abs(state.turns)} / 4 바퀴</strong><span>${state.turns === 0 ? "출발" : state.turns < 0 ? "시계 반대 방향" : "시계 방향"}</span></p><div class="hand-controls">${button("turn", "시계 반대로 ¼바퀴", "retry", { value: -1, disabled: state.solved || state.turns <= -8 })}${button("turn", "시계 방향으로 ¼바퀴", "clockwise", { value: 1, disabled: state.solved || state.turns >= 8 })}</div></div>`;
+  const turns = Math.abs(state.turns);
+  const amount = ["출발", "반의 반 바퀴", "반 바퀴", "반 바퀴와 반의 반 바퀴", "한 바퀴", "한 바퀴와 반의 반 바퀴", "한 바퀴 반", "한 바퀴 반과 반의 반 바퀴", "두 바퀴"][turns];
+  return `<div class="hand-clock"><svg viewBox="0 0 260 260" role="img" aria-label="${round.start}에서 출발한 바늘이 현재 ${clockValueAfterQuarterTurns(round.start, state.turns)}을 가리키는 시계"><circle cx="130" cy="130" r="122" class="clock-rim"/><g class="clock-ticks">${marks}</g>${labels}<path class="clock-start" transform="rotate(${round.start * 30} 130 130)" d="M130 130V66"/><g class="clock-hand" style="transform:rotate(${angle}deg)"><path d="M130 134V55M122 64L130 54L138 64"/></g><circle cx="130" cy="130" r="6" class="clock-pin"/></svg><p class="hand-measure">돌린 양 <strong>${amount}</strong><span>${state.turns === 0 ? "" : state.turns < 0 ? "시계 반대 방향" : "시계 방향"}</span></p><div class="hand-controls">${button("turn", "시계 반대 방향으로 반의 반 바퀴", "retry", { value: -1, disabled: state.solved || state.turns <= -8 })}${button("turn", "시계 방향으로 반의 반 바퀴", "clockwise", { value: 1, disabled: state.solved || state.turns >= 8 })}</div></div>`;
 }
 
 function cellGrid(state, { given = [], axis, enabled = true, label, pair = null }) {

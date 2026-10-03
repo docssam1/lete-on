@@ -4,7 +4,7 @@ import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBoo
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20260918c";
-import { book01Markup } from "./book01-renderers.js?v=20260904c";
+import { book01Markup } from "./book01-renderers.js?v=20261003c";
 import { book02Markup } from "./book02-renderers.js?v=20260913a";
 import { book03Markup } from "./book03-renderers.js?v=20260905a";
 import { book04Markup } from "./book04-renderers.js?v=20260905d";
@@ -16,7 +16,7 @@ import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20260909b";
-import { mountHandsOn } from "./golden-bell-hands-on.js?v=20260925-release";
+import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261003c";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -25,6 +25,14 @@ const requestedRoute = goldenBellLocation(params);
 const storageKey = `fields-classic-golden-bell:${student}`;
 const protectedBooks = new Set();
 const protectedLoads = new Map();
+const coverStorageKey = "fields-classic-golden-bell-print-cover";
+const coverLabels = { concept: "개념형", simple: "간결형", none: "표지 없음" };
+let coverStyle = "concept";
+try {
+  const saved = localStorage.getItem(coverStorageKey);
+  if (Object.hasOwn(coverLabels, saved)) coverStyle = saved;
+} catch {}
+let draftCoverStyle = coverStyle;
 let protectedMessage = "정답과 풀이는 승인번호 확인 후 열립니다.";
 
 async function ensureProtectedBook(bookId) {
@@ -1290,18 +1298,43 @@ function printLessonPage(lesson, lessonNumber, book) {
   return vocabulary + printSourceStoryboards(lesson, lessonNumber, book) + printLessonExercises(lesson, lessonNumber, book);
 }
 
-function printBookCover(book, lessons, { includeAnswers = false } = {}) {
+function printBookCover(book, lessons, { includeAnswers = false, style = coverStyle } = {}) {
   const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
   const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "필즈 더 클래식";
   const conceptRows = lessons.map((lesson, index) => `<li><span>${String(index + 1).padStart(2, "0")}</span><div><small>${escapeAttribute(lesson.unit)}</small><strong>${escapeAttribute(lesson.title)}</strong><p>${escapeAttribute(lesson.representativeConcept)}</p></div></li>`).join("");
   const densityClass = lessons.length > 12 ? " is-dense is-crowded" : lessons.length > 6 ? " is-dense" : "";
-  return `<article class="gold-print-page gold-print-cover${densityClass}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
+  return `<article class="gold-print-page gold-print-cover cover-${style}${densityClass}" data-cover-style="${style}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
     <header class="gold-print-cover-head"><span>FIELDS CLASSIC · GOLDEN BELL</span><strong>${escapeAttribute(courseLabel)}</strong></header>
     <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)}</small><h1>${escapeAttribute(book.title || "골든벨 개념 학습")}</h1><p>개념을 그림으로 이해하고, 교재 문제와 유사문제로 확인합니다.</p><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
     <section class="gold-print-cover-path" aria-label="교재 학습 순서"><h2>학습 순서</h2><ol><li><b>1</b><span>개념 그림</span></li><li><b>2</b><span>골든벨</span></li><li><b>3</b><span>유사 연습</span></li><li><b>4</b><span>${includeAnswers ? "답안과 풀이" : "스스로 점검"}</span></li></ol></section>
     <section class="gold-print-cover-concepts"><h2>이 권의 핵심 개념</h2><ol>${conceptRows}</ol></section>
     <footer class="gold-print-footer">${escapeAttribute(courseLabel)} · ${escapeAttribute(book.label)} · 개념 학습 교재</footer>
   </article>`;
+}
+
+function updateCoverButton() {
+  const answerOnly = ["answers", "quick"].includes($("coursePrintMode").value);
+  $("printCoverButton").disabled = answerOnly || !activeBook().lessons.length || $("printBookButton").disabled;
+  $("printCoverButton").textContent = `표지 · ${answerOnly ? "없음" : coverLabels[coverStyle]}`;
+  $("printCoverButton").title = answerOnly ? "답안만 인쇄에는 표지가 포함되지 않습니다." : "이 권 전체 인쇄의 표지 선택";
+}
+
+function scaleCoverPreview() {
+  const host = $("coverPreview");
+  const page = host.querySelector(".gold-print-cover");
+  if (!page || !host.clientWidth) return;
+  const scale = Math.min(1, (host.clientWidth - 24) / page.offsetWidth);
+  host.style.setProperty("--cover-scale", String(scale));
+  host.style.height = `${page.offsetHeight * scale + 24}px`;
+}
+
+function renderCoverPreview() {
+  const host = $("coverPreview");
+  host.removeAttribute("style");
+  host.innerHTML = draftCoverStyle === "none"
+    ? '<p class="cover-empty">표지 없이 첫 학습 페이지부터 인쇄합니다.</p>'
+    : printBookCover(activeBook(), activeBook().lessons, { style: draftCoverStyle, includeAnswers: $("coursePrintMode").value === "both" });
+  requestAnimationFrame(scaleCoverPreview);
 }
 
 function addDuplexAnswerBlank(root, book, mode) {
@@ -1383,11 +1416,11 @@ async function printLessons(lessons, { includeCover = false } = {}) {
     $("printStatus").textContent = "답안과 풀이를 불러온 뒤 인쇄할 수 있습니다.";
     return;
   }
-  const buttons = [$("printLessonButton"), $("printBookButton")];
+  const buttons = [$("printLessonButton"), $("printBookButton"), $("printCoverButton")];
   buttons.forEach((button) => { button.disabled = true; });
   $("printStatus").textContent = "인쇄 분량을 정리하고 있습니다.";
   try {
-    const cover = includeCover && (mode === "study" || mode === "both") ? printBookCover(book, lessons, { includeAnswers: mode === "both" }) : "";
+    const cover = includeCover && coverStyle !== "none" && (mode === "study" || mode === "both") ? printBookCover(book, lessons, { includeAnswers: mode === "both" }) : "";
     const study = mode === "study" || mode === "both" ? lessons.map((lesson) => printLessonPage(lesson, book.lessons.indexOf(lesson) + 1, book)).join("") : "";
     const answers = mode === "study" ? "" : lessons.map((lesson) => courseAnswerPrintPages(lesson, book, student, { quick: mode === "quick" })).join("");
     root.innerHTML = cover + study + answers;
@@ -1408,6 +1441,7 @@ async function printLessons(lessons, { includeCover = false } = {}) {
     $("printStatus").textContent = "인쇄 자료를 준비하지 못했습니다. 다시 인쇄를 눌러 주세요.";
   } finally {
     buttons.forEach((button) => { button.disabled = !activeBook().lessons.length; });
+    updateCoverButton();
   }
 }
 
@@ -1763,6 +1797,7 @@ function renderSummary() {
   const book = activeBook();
   document.body.dataset.coursePilot = String(book.status === "pilot");
   $("coursePrintModeWrap").hidden = !book.lessons.length;
+  updateCoverButton();
   $("courseSelect").value = book.courseId || "";
   $("courseBrand").textContent = book.courseId ? `FIELDS CLASSIC · COURSE ${book.courseId.slice(-2)}` : "FIELDS CLASSIC";
   const completed = book.lessons.filter(isLessonComplete).length;
@@ -1804,6 +1839,27 @@ $("courseSelect").addEventListener("change", (event) => {
 $("backLink").href = `./?student=${encodeURIComponent(student)}&mode=curriculum`;
 $("printLessonButton").addEventListener("click", () => printLessons([activeLesson()]));
 $("printBookButton").addEventListener("click", () => printLessons(activeBook().lessons, { includeCover: true }));
+$("coursePrintMode").addEventListener("change", updateCoverButton);
+$("printCoverButton").addEventListener("click", () => {
+  draftCoverStyle = coverStyle;
+  $("coverDialogTitle").textContent = `${activeBook().label} 교재 표지`;
+  $("coverDialog").querySelector(`[value="${draftCoverStyle}"]`).checked = true;
+  renderCoverPreview();
+  $("coverDialog").showModal();
+  requestAnimationFrame(scaleCoverPreview);
+});
+$("coverDialog").querySelectorAll('[name="coverStyle"]').forEach((input) => input.addEventListener("change", () => {
+  draftCoverStyle = input.value;
+  renderCoverPreview();
+}));
+$("coverDialogClose").addEventListener("click", () => $("coverDialog").close());
+$("coverDialogApply").addEventListener("click", () => {
+  coverStyle = draftCoverStyle;
+  try { localStorage.setItem(coverStorageKey, coverStyle); } catch {}
+  updateCoverButton();
+  $("coverDialog").close();
+});
+new ResizeObserver(scaleCoverPreview).observe($("coverPreview"));
 window.addEventListener("keydown", (event) => {
   const lesson = activeLesson();
   if (state.phase !== "concept" || !lesson?.experience || !["clock-turning", "triangular-stair", "guided-concept", "course-concept"].includes(lesson.experience.kind)) return;

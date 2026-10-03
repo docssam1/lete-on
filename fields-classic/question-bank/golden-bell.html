@@ -8,9 +8,10 @@
   <link rel="stylesheet" href="./golden-bell.css?v=20260918b" />
   <link rel="stylesheet" href="./golden-bell-source-animations.css?v=20260906b" />
   <link rel="stylesheet" href="./golden-bell-book10-animation.css?v=20260918a" />
-  <link rel="stylesheet" href="./golden-bell-print-layout.css?v=20260918a" />
+  <link rel="stylesheet" href="./golden-bell-print-layout.css?v=20261003c" />
+  <link rel="stylesheet" href="./golden-bell-cover-picker.css?v=20261003c" />
   <link rel="stylesheet" href="./golden-bell-course-concepts.css?v=20260918a" />
-  <link rel="stylesheet" href="./golden-bell-hands-on.css?v=20260925-release" />
+  <link rel="stylesheet" href="./golden-bell-hands-on.css?v=20261003c" />
 </head>
 <body>
   <header class="gold-header">
@@ -29,7 +30,7 @@
       <label class="course-picker"><span>과정</span><select id="courseSelect" aria-label="학습 과정"></select></label>
       <div class="book-index-label"><span>BOOK INDEX</span><strong>교재 선택</strong></div>
       <nav id="bookTabs" class="book-tabs" aria-label="골든벨 교재 권 선택"></nav>
-      <div class="print-actions"><label id="coursePrintModeWrap" class="course-print-mode" hidden><span>인쇄</span><select id="coursePrintMode" aria-label="인쇄 내용"><option value="study">학습지</option><option value="answers">답안과 풀이</option><option value="both">학습지와 풀이</option><option value="quick">빠른 정답</option></select></label><button id="printLessonButton" type="button">현재 학습 인쇄</button><button id="printBookButton" type="button">이 권 전체 인쇄</button></div>
+      <div class="print-actions"><label id="coursePrintModeWrap" class="course-print-mode" hidden><span>인쇄</span><select id="coursePrintMode" aria-label="인쇄 내용"><option value="study">학습지</option><option value="answers">답안과 풀이</option><option value="both">학습지와 풀이</option><option value="quick">빠른 정답</option></select></label><button id="printCoverButton" type="button">표지 · 개념형</button><button id="printLessonButton" type="button">현재 학습 인쇄</button><button id="printBookButton" type="button">이 권 전체 인쇄</button></div>
       <p id="printStatus" class="gold-print-status" role="status"></p>
     </section>
 
@@ -49,9 +50,22 @@
 
   <div id="goldPrintRoot" class="gold-print-root" aria-hidden="true"></div>
 
+  <dialog id="coverDialog" class="gold-cover-dialog" aria-labelledby="coverDialogTitle">
+    <header><h2 id="coverDialogTitle">교재 표지</h2><button id="coverDialogClose" type="button">닫기</button></header>
+    <div class="cover-picker-layout">
+      <fieldset><legend>표지 선택</legend><div class="cover-options">
+        <label><input type="radio" name="coverStyle" value="concept" checked /><span class="cover-swatch concept" aria-hidden="true"><i></i><i></i><i></i></span><strong>개념형</strong></label>
+        <label><input type="radio" name="coverStyle" value="simple" /><span class="cover-swatch simple" aria-hidden="true"><i></i><i></i><i></i></span><strong>간결형</strong></label>
+        <label><input type="radio" name="coverStyle" value="none" /><span class="cover-swatch none" aria-hidden="true"></span><strong>표지 없음</strong></label>
+      </div></fieldset>
+      <div id="coverPreview" class="gold-cover-preview" aria-label="선택한 교재 표지 미리보기"></div>
+    </div>
+    <footer><button id="coverDialogApply" type="button">표지 적용</button></footer>
+  </dialog>
+
   <script src="../../geometry/shared/question-bank.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/generators.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/render.js?v=20260904a"></script>
-  <script type="module" src="./golden-bell.js?v=20261003b"></script>
+  <script type="module" src="./golden-bell.js?v=20261003c"></script>
 </body>
 </html>
