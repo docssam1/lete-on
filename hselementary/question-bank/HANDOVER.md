@@ -5,13 +5,26 @@
 - Branch: `codex/elementary-audit-sync-20260926`
 - Local page: `http://127.0.0.1:8897/hselementary/question-bank/`
 - Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-03)
-- Runtime-available types: 1,147 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 858
+- Runtime-available types: 1,149 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 856
 - Source-linked runtime entries: 1,625 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `109/477` types are runtime-available. The remainder stay review-locked.
+- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `111/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+
+## 2026-10-03 Decimal-Division Exploration 2 Geometry
+
+- Missions 4 and 6 are now connected to their own finite three-pool generators at three structural difficulty choices: eighteen distinct public conditions. Mission 3 has nine candidate-only conditions and stays locked because its final cancelled/overwritten handwritten fraction cannot be read reliably. Do not claim either a confirmed handwriting match or a conflict for Mission 3.
+- Printed originals were reread directly on printed page 21. Independent answers are Mission 3 `0.96cm`, Mission 4 `10.875cm`, and Mission 6 `10cm2`. Legible handwriting agrees for Missions 4 and 6; publisher-key verification remains false for all three.
+- Mission 4 restores the original unequal apex heights, actual intersection, common baseline order, overlap region and perpendicular foot. Mission 6 restores the shared row/column boundaries. Point and segment models drive the figures rather than guessed coordinates. M6 uses one metric scale for both axes; triangle sketches preserve incidences and area ratios through a common-axis affine projection and must not be described as equal-metric drawings.
+- Difficulty changes the conditions: M4 uses given overlap area, two areas plus union, or area sum plus nonoverlap sum. M6 uses explicit column widths, the original three areas, or a bottom-row total with one hidden area. Its harder answer drawing restores both missing areas. Empirical student-score calibration remains pending.
+- Independent final audit passed 27 exact prompt-derived calculations, SVG/solved-figure checks and metadata-independence checks, three source cases, three M6 metric checks, 27 modulo/max-safe comparisons each, 51 invalid inputs and 297 changed-answer/condition/geometry negatives. M3 was tested as a locked candidate clone only; catalog loading never unlocks it.
+- Geometry text uses the common normal-weight black font with thin black lines. Numeric model attributes are absent from learner SVGs. Numbers and squared-area units stay on the same line, including the third M6 pool; its free drawing height was adjusted consistently instead of splitting a number from its unit. Alternative-font glyph bounds are checked by the separate layout fixtures.
+- Final actual-page audit passed eighteen states at 1280/390/320px, with question and solution views at all three difficulties, twelve A4 PDFs (21 physical pages), six unchanged runtime asset hashes and no page errors. Named answer-page margins protect continuation pages. A separate extracted-text check confirms a 12-point physical inset for substantive text on all 21 pages; rotated decorative watermark fragments are excluded, not problem text.
+- Direct visual review compared the original crops, desktop/mobile captures and rasterized A4 samples. Independent visual review covered four specified captures, not every PDF. Twelve PDFs are available as final-code evidence; earlier screenshots and the initial navigation timeout are not completion evidence.
+- Regressions: 633 Grade 6 source types, 350 ready and 283 locked; 68,940 runtime generations, 172,350 notation generations plus actual DOM fraction checks, 344,700 numeric-display and elementary-language generations each. All three focused layout fixtures passed 36 diagram inspections each.
+- Next: continue the remaining source-backed geometry and spatial groups item by item. Preserve E2 Mission 3, the three E3 locks, E4 Example 4 and unresolved trapezoid conditions. Review branch only: no main merge, deployment, whole-bank completion or publisher-key approval is claimed.
 
 ## 2026-10-03 Decimal-Division Exploration 4
 

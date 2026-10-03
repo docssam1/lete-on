@@ -8,14 +8,15 @@ global.window = {};
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-6-2-e2-geometry.js");
 
 const id = "6-2-u2-e2-mission-6";
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === id);
-assert(type.reviewLocked, "공개 잠금 유지");
+assert(!type.reviewLocked, "원문 검수 문항 공개 연결");
 const candidateType = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE2Mission6" };
-const css = readFileSync(path.join(__dirname, "source-6-2-four-rect.css"), "utf8");
+const css = readFileSync(path.join(__dirname, "source-6-2-four-rect.css"), "utf8") + readFileSync(path.join(__dirname, "source-6-2-e2-geometry.css"), "utf8");
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
 if (outputDir) mkdirSync(outputDir, { recursive: true });
 
@@ -35,7 +36,8 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         const box = svg.getBoundingClientRect();
         const texts = [...svg.querySelectorAll("text")].map(node => ({ text: node.textContent, box: node.getBoundingClientRect().toJSON() }));
         const rect = svg.querySelector("rect").getBoundingClientRect();
-        const [splitX, splitY] = svg.dataset.split.split(",").map(Number);
+        const splitX = Number(svg.querySelector('[data-layout-role="column-divider"]').getAttribute("x1"));
+        const splitY = Number(svg.querySelector('[data-layout-role="row-divider"]').getAttribute("y1"));
         const svgPoint = svg.createSVGPoint();
         svgPoint.x = splitX;
         svgPoint.y = splitY;
@@ -72,5 +74,5 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
   } finally {
     await browser.close();
   }
-  console.log(`6-2 Mission 6 잠금 후보 PC·모바일 그림 ${inspected}개 배치 검수 통과 (공개 화면 아님)`);
+  console.log(`6-2 Mission 6 PC·모바일 그림 ${inspected}개 배치 검수 통과 (별도 조판 화면, 실제 페이지 검수는 live audit)`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

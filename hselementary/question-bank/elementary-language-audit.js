@@ -10,6 +10,7 @@ require("./source-6-2-decimal-e6-text.js");
 require("./source-6-2-decimal-e6-geometry.js");
 require("./source-6-2-decimal-e3.js");
 require("./source-6-2-decimal-e4.js");
+require("./source-6-2-e2-geometry.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");

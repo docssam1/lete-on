@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 583,
     "answerVisualRequired": 633,
-    "unlocked": 348
+    "unlocked": 350
   },
   "items": [
     {
@@ -9565,7 +9565,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "difficultyBand": 1,
       "sourceTier": "advanced",
       "reviewLocked": true,
-      "reviewReason": "심화 교재의 공식 답 근거를 확인하기 전까지 공개하지 않습니다.",
+      "reviewReason": "원본 손글씨 답 판독과 답 근거 확인이 더 필요합니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
       "answerVisualStatus": "not-implemented",
@@ -9588,17 +9588,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "두 삼각형이 겹친 부분의 높이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE2Mission4",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "공식 답 대조와 문제 및 정답 그림의 화면 검수가 남아 있습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "rawSourceItemId": "6-2-u2-e2-mission-4"
     },
     {
       "semester": "6-2",
@@ -9641,17 +9642,18 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "commonTypeId": "네 직사각형의 빈 넓이 구하기",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE2Mission6",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "심화 교재의 공식 답안 대조와 실제 출제 화면 검수가 남아 있습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "rawSourceItemId": "6-2-u2-e2-mission-6"
     },
     {
       "semester": "6-2",
@@ -16881,7 +16883,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
 };
 
 const safeLockedReasons = {
-  "6-2-u2-e2-mission-3": "심화 교재의 공식 답 대조와 출제 화면 검수가 남아 있습니다.",
+  "6-2-u2-e2-mission-3": "원본 손글씨 답 판독과 답 근거 확인이 더 필요합니다.",
   "6-2-u2-e2-mission-4": "심화 교재의 공식 답 대조와 출제 화면 검수가 남아 있습니다.",
   "6-2-u2-e2-mission-6": "심화 교재의 공식 답 대조와 출제 화면 검수가 남아 있습니다.",
   "6-2-u2-e3-example-3": "원본에 공통 수의 양수 조건이 없어 답이 정해지지 않을 수 있습니다.",

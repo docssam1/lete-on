@@ -4,6 +4,7 @@ global.window = {};
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-6-2-e2-geometry.js");
 
 const assert = require("node:assert/strict");
 const id = "6-2-u2-e2-mission-3";
@@ -55,13 +56,12 @@ for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 120; seed += 1) 
   assert.equal(generated.verifiedVariantCount, 3);
   assert.equal(generated.answer, independent.answer, "표시된 조건을 별도 계산한 답");
   assert.equal(independent.condition, ["base", "large-area", "sum-area"][difficulty + 1], "난이도별 추론 조건");
-  assert(generated.solution.includes(generated.answer) && generated.answerVisual.includes(generated.answer), "풀이·정답 그림의 답 일치");
+  assert(generated.solution.replace(/<[^>]*>/g, "").includes(generated.answer) && generated.answerVisual.includes(generated.answer), "풀이·정답 그림의 답 일치");
   assert(svg && svg.includes('data-geometry-kind="same-height-overlap-triangles"') && svg.includes('data-target-segment="ㄴ-ㅁ"'), "원본 도형의 같은 높이와 목표 선분");
   assert.equal((svg.match(/data-label-for="/g) || []).length, 5, "다섯 꼭짓점 이름");
   assert.deepEqual([...svg.matchAll(/data-label-for="([^"]+)"/g)].map(match => match[1]).sort(), ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ"].sort(), "원본 점 이름");
-  const model = svg.match(/data-model="([\d,]+)"/)?.[1].split(",").map(Number);
-  assert(model && Math.abs(model[0] / 100 - independent.height) < 1e-8 && Math.abs(model[1] / 100 - independent.largeBase) < 1e-8 && Math.abs(model[2] / 100 - independent.smallBase) < 1e-8, "그림 좌표 모델과 표시 조건 일치");
-  const targetPoint = Number(svg.match(/data-label-for="ㅁ" x="([\d.]+)"/)?.[1]);
+  assert(!/data-model="/.test(svg), "문제 그림에 숨은 길이 조건을 넣지 않음");
+  const targetPoint = Number(svg.match(/<line[^>]* data-from="ㄹ" data-to="ㅁ"[^>]* x2="([\d.]+)"/)?.[1]);
   assert(Math.abs(targetPoint - (100 + 280 * (independent.largeBase - independent.smallBase) / independent.largeBase)) < 0.01, "ㅁ의 위치는 밑변 비에서 계산됨");
   assert(!svg.includes(generated.answer), "문제 그림에 정답 누설 없음");
   assert(!/NaN|Infinity|undefined/.test(JSON.stringify(generated)), "표시값 오류 없음");

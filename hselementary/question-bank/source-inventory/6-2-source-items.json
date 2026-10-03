@@ -1406,8 +1406,8 @@
       "answerContract": "single-shared-height-triangle-base-difference",
       "visualRisk": "두 삼각형의 높이가 같다는 점, 밑변 ㄴ-ㅁ-ㄷ의 순서, 세 직각 표시, 길이 3.9cm와 구할 선분 ㄴㅁ이 분명해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "source-reviewed-release-locked",
-      "reviewReason": "심화 교재의 공식 답 자료가 없어 공개를 보류합니다. 독립 계산과 그림 검수는 완료했습니다.",
+      "implementationStatus": "source-rebuilt-answer-reading-locked",
+      "reviewReason": "원문 조건의 독립 답은 하나지만 손글씨 분수에 취소와 덧쓰기가 있어 최종 답을 확정하지 않습니다.",
       "publicSourceItemId": "6-2-u2-e2-mission-3"
     },
     {
@@ -1422,8 +1422,20 @@
       "answerContract": "union-overlap-triangle-height",
       "visualRisk": "두 큰 삼각형과 겹친 작은 삼각형, 밑변 ㅁㄷ의 범위, 교차점 ㅅ과 수선의 발 ㅇ, 직각 표시가 한눈에 구분되어야 함.",
       "sourceVerified": true,
-      "implementationStatus": "candidate-verified-release-locked",
-      "reviewReason": "원본 조건과 검수용 그림·계산은 확인했으나 심화 교재 공식 답과 실제 문제은행 출력 검수가 남아 공개하지 않습니다."
+      "implementationStatus": "verified-fixed-pool",
+      "reviewReason": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE2Mission4",
+      "verifiedVariantCount": 3,
+      "answerVisualStatus": "verified",
+      "answerEvidence": {
+        "sourceAnswer": "10.875cm",
+        "independentCalculationVerified": true,
+        "handwritingReading": "10.875",
+        "handwritingReadingConfirmed": true,
+        "handwritingAgreesWithCalculation": true,
+        "publisherAnswerVerified": false,
+        "answerOrigin": "printed-conditions-independent-calculation-with-handwriting-match"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-5",
@@ -1453,8 +1465,20 @@
       "answerContract": "four-rectangle-missing-area",
       "visualRisk": "같은 행의 높이와 같은 열의 너비가 정확히 이어져야 하고, ㉠ 및 세 넓이 수치가 선과 겹치지 않아야 함.",
       "sourceVerified": true,
-      "implementationStatus": "candidate-verified-release-locked",
-      "reviewReason": "원문 그림과 독립 계산은 확인했으나 심화 교재 공식 답 대조와 실제 출제 화면 검수 전에는 공개하지 않습니다."
+      "implementationStatus": "verified-fixed-pool",
+      "reviewReason": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE2Mission6",
+      "verifiedVariantCount": 3,
+      "answerVisualStatus": "verified",
+      "answerEvidence": {
+        "sourceAnswer": "10cm²",
+        "independentCalculationVerified": true,
+        "handwritingReading": "10",
+        "handwritingReadingConfirmed": true,
+        "handwritingAgreesWithCalculation": true,
+        "publisherAnswerVerified": false,
+        "answerOrigin": "printed-conditions-independent-calculation-with-handwriting-match"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-exploration-1",

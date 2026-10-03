@@ -22,6 +22,33 @@
     "difficultyDesign": "쉬움은 ㄴㄷ 밑변을 직접 제시하여 넓이에서 밑변으로 바꾸는 단계를 생략, 기준은 원본의 큰 넓이, 어려움은 두 넓이의 합을 제시하여 넓이 비에 따라 먼저 나눔"
   },
   "verification": {
+    "independentMathAudit": "source-6-2-e2-geometry-release-audit.js",
+    "candidateMathAudit": "source-6-2-decimal-e2-mission3-audit.js",
+    "candidateLayoutAudit": "source-6-2-decimal-e2-mission3-layout-audit.js",
+    "distinctCandidateConditions": 9,
+    "focusedMathChecks": 360,
+    "candidateDiagramChecks": 36,
+    "sourceDirectlyViewed": true,
+    "publisherAnswerVerified": false,
+    "geometryProjection": "common-axis-affine",
+    "learnerNumericModelAttributes": false,
+    "publicRelease": false,
+    "handwritingFinalAnswerReadingPending": true,
+    "empiricalDifficultyCalibrated": false
+  },
+  "verifiedVariantCount": 3,
+  "releaseStatus": "locked",
+  "releaseGate": "원본 손글씨의 최종 답 판독과 별도 답 근거가 확인될 때만 잠금을 다시 검토",
+  "answerEvidence": {
+    "publisherAnswerVerified": false,
+    "handwritingReadingConfirmed": false,
+    "handwritingReading": "fraction-overwritten-not-confirmed",
+    "handwritingAgreesWithCalculation": null,
+    "handwritingConflict": null,
+    "independentPrintedConditionsVerified": true,
+    "handwritingStatus": "ambiguous-cancelled-writing"
+  },
+  "legacyCandidateVerification": {
     "independentMathAudit": "source-6-2-decimal-e2-mission3-audit.js",
     "mathChecks": 360,
     "candidateEnumeration": "0.01cm 단위의 양의 ㄴㅁ 후보 전수 검사에서 문항마다 1개",
@@ -42,8 +69,5 @@
       "confirmedOriginalAnswer": "0.96cm",
       "finding": "세 조건 모두 답이 하나이고 쉬움<기준<어려움의 단계 차이가 단순 숫자 변경이 아님"
     }
-  },
-  "verifiedVariantCount": 3,
-  "releaseStatus": "locked",
-  "releaseGate": "심화 교재의 공식 답과 독립 계산 결과를 문항 번호 기준으로 대조한 뒤 공개"
+  }
 }
