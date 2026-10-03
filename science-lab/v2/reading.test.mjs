@@ -25,17 +25,15 @@ test('lesson, print chapter and standalone article share one reading object', ()
   assert.doesNotMatch(readingHtml(reading), /MSG|우루사/);
 });
 
-test('reading reuses the existing photo, video and existing local QR asset', async () => {
-  const original = media.gallery.find((image) => image.src === reading.hero.src);
-  assert.ok(original, 'hero must come from the existing gallery');
-  assert.equal(reading.hero.page, original.page);
+test('reading keeps a printable local image, the existing video and QR asset', async () => {
+  assert.match(reading.hero.src, /^\.\.\/assets\/thumbs\//);
+  await access(new URL(reading.hero.src, import.meta.url));
   assert.equal(reading.video, media.explore);
   assert.equal(reading.qr, chapter.qr.lab);
   await access(new URL(reading.qr, import.meta.url));
-  assert.match(reading.hero.credit, /USGS.*Public domain/);
+  assert.match(reading.hero.credit, /3D 가상 실험/);
   const html = readingHtml(reading);
-  assert.ok(html.includes(`src="${escape(original.src)}"`));
-  assert.ok(html.includes(`href="${escape(original.page)}"`));
+  assert.ok(html.includes(`src="${escape(reading.hero.src)}"`));
   assert.ok(html.includes(`href="${escape(media.explore.page)}"`));
   for (const source of reading.sources) {
     assert.equal(new URL(source.href).protocol, 'https:');
@@ -111,23 +109,22 @@ test('one magazine page is inserted as physical page 7 without shifting original
     }
     assert.deepEqual(current.map((page) => Number(page.match(/class="bk-pn">(\d+)/)?.[1])), Array.from({ length: 12 }, (_, i) => i + 1));
     assert.equal(current[6].includes('sl-reading-teacher'), teacher);
-    assert.doesNotMatch(current[7], /class="bk-read"/);
+    assert.match(current[7], /class="bk-read"/);
   }
 });
 
-test('chapters without magazine data preserve their original reading and question pages', () => {
-  assert.equal(hillChapter.reading, undefined);
-  const html = renderChapter(hillChapter, hillArt, similar);
-  assert.doesNotMatch(html, /bk-magazine|sl-reading/);
-  assert.match(html, /class="bk-read"/);
-  assert.ok(html.includes(escape(hillChapter.note.plus.title)));
-  assert.ok(html.includes(escape(hillChapter.note.plus.text)));
+test('new magazine pages preserve original question order', () => {
+  const hill = renderChapter(hillChapter, hillArt, similar);
+  assert.match(hill, /bk-magazine/);
+  assert.match(hill, /class="bk-read"/);
   const { reading: omitted, ...withoutReading } = chapter;
   const baseline = renderChapter(withoutReading, art, similar);
   const current = renderChapter(chapter, art, similar);
   const itemIds = (value) => [...value.matchAll(/class="bk-choices"[^>]*data-id="([^"]+)"/g)].map((m) => m[1]);
   assert.ok(itemIds(baseline).length > 0);
   assert.deepEqual(itemIds(current), itemIds(baseline));
+  const { reading: oldHillReading, ...oldHill } = hillChapter;
+  assert.deepEqual(itemIds(hill), itemIds(renderChapter(oldHill, hillArt, similar)));
 });
 
 test('web routing keeps the old reading fallback and loads the shared stylesheet in both entry points', async () => {
@@ -163,7 +160,7 @@ test('intro narration follows the inserted reading page without changing existin
   const variants = [
     { ch: chapter, artwork: art, expected: expectedReading, readingPage: 7 },
     { ch: withoutReading, artwork: art, expected: expectedOriginal, readingPage: 0 },
-    { ch: hillChapter, artwork: hillArt, expected: expectedOriginal, readingPage: 0 },
+    { ch: hillChapter, artwork: hillArt, expected: expectedReading, readingPage: 7 },
   ];
   for (const variant of variants) {
     const pageHtml = pages(renderChapter(variant.ch, variant.artwork, similar));

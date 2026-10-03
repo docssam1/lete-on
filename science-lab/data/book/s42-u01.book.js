@@ -171,7 +171,9 @@ export const art = {
     <path d="M118 80 L126 58" stroke="#E23B2E" stroke-width="1.5"/><text x="118" y="52" font-size="19" font-weight="700" fill="#E23B2E" text-anchor="middle">가시=잎</text>`),
 };
 
+import { plantReading } from '../reading/other-units.reading.js';
 export const chapter = {
+  reading: plantReading,
   unit: 's42-u01', book: 'GFIELD 실험 과학 영재', vol: '4-2', no: 1, title: '둥둥 부레옥잠의 비밀', theme: '#2B7A62',
   link: { course: '4학년 2학기', unit: 'Ⅰ. 식물의 생활', topics: ['강이나 연못에 사는 식물', '식물의 생김새와 사는 곳', '환경에 적응한 식물과 생체 모방'] },
   skills: ['가설 설정', '변인 통제', '관찰', '분류', '결론 도출'],

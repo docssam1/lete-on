@@ -7,9 +7,9 @@ export const reading = {
   title: '화산이 지나간 자리에는 무엇이 남을까?',
   lead: '뜨거운 용암이 식은 뒤에도, 화산의 이야기는 땅 위에 남아 있어요.',
   hero: {
-    ...media.gallery.find((m) => m.src.endsWith('/Pahoehoe_toe.jpg')),
-    cap: '용암의 겉은 먼저 식어 어둡게 굳고, 안쪽에는 뜨거운 용암이 남아 있어요. 하와이 킬라우에아, 2003.',
-    credit: 'Hawaii Volcano Observatory (DAS) / USGS · Public domain',
+    src: '../assets/thumbs/s41-u03b.webp',
+    cap: '땅속 마그마가 올라와 화산이 분출하는 3D 가상 실험 장면',
+    credit: '사이언스랩 3D 가상 실험 장면',
     look: '밝은 부분과 어두운 부분은 무엇이 다를까요?',
   },
   sections: [
@@ -26,6 +26,7 @@ export const reading = {
   pageHref: '../v2/#/s41-u03b/reading',
   qr: '../assets/qr-s41-u03b-lab.svg',
   sources: [
+    { label: 'Wikimedia Commons · USGS 용암 사진', href: 'https://commons.wikimedia.org/wiki/File:Pahoehoe_toe.jpg' },
     { label: 'Smithsonian · 백두산', href: 'https://volcano.si.edu/volcano.cfm?vn=305060' },
     { label: 'UNESCO · 제주', href: 'https://whc.unesco.org/en/list/1264' },
     { label: 'USGS · 암석과 기공', href: 'https://www.usgs.gov/educational-resources/find-feature-vesicles' },

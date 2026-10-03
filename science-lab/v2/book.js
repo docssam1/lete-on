@@ -96,7 +96,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
   if (ch.reading) out.push(page(readingHtml(ch.reading, { teacher }), { cls: 'bk-magazine', full: true, say: 'reading' }));
   const n = ch.note;
   out.push(page(`${banner('창의사고력 기르기', 'think')}
-    ${ch.reading ? '' : `<div class="bk-read"><div class="bk-two art-r"><div><h4>${esc(n.plus.title)}</h4><p>${esc(n.plus.text)}</p></div><div class="bk-art">${art[n.plus.art]}</div></div></div>`}
+    <div class="bk-read"><div class="bk-two art-r"><div><h4>${esc(n.plus.title)}</h4><p>${esc(n.plus.text)}</p></div><div class="bk-art">${art[n.plus.art]}</div></div></div>
     ${step(6, '창의력 키우기')}<p class="bk-p">${esc(ch.creative.q)}</p>${ans(ch.creative.a, 5)}
     ${step(7, '개념 넓혀 토의하기')}<p class="bk-p">${esc(ch.discuss.q)}</p>${ans(ch.discuss.a, 5)}`, { say: 'creative' }));
 

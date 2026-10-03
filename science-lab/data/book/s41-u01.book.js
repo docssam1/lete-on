@@ -138,7 +138,9 @@ export const art = {
     <text x="120" y="200" font-size="15" fill="${SUB}" text-anchor="middle">바늘이 자석 쪽으로 돌아가요</text>`),
 };
 
+import { magnetReading } from '../reading/other-units.reading.js';
 export const chapter = {
+  reading: magnetReading,
   unit: 's41-u01', book: 'GFIELD 실험 과학 영재', vol: '4-1', no: 1, title: '둥실 고리 자석 탑', theme: '#2F5DA8',
   link: { course: '4학년 1학기', unit: 'Ⅰ. 자석의 이용', topics: ['자석의 극과 극 사이의 힘', '자석에 붙는 물체', '자석이 가리키는 방향과 나침반', '생활 속 자석의 이용'] },
   skills: ['가설 설정', '변인 통제', '관찰', '측정', '결론 도출'],

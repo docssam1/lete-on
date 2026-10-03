@@ -127,7 +127,9 @@ export const art = {
     <text x="160" y="192" text-anchor="middle" font-size="21" font-weight="700" fill="${INK}">보온재로 감싸 막아요</text>`),
 };
 
+import { iceReading } from '../reading/other-units.reading.js';
 export const chapter = {
+  reading: iceReading,
   unit: 's41-u02', book: 'GFIELD 실험 과학 영재', vol: '4-1', no: 2, title: '얼었다 녹는 물기둥', theme: '#2A6FB0',
   link: { course: '4학년 1학기', unit: 'Ⅱ. 물의 상태 변화', topics: ['물이 얼 때와 얼음이 녹을 때의 변화', '증발과 끓음', '응결', '물의 이용과 물 부족'] },
   skills: ['가설 설정', '변인 통제', '측정', '자료 해석', '결론 도출'],
