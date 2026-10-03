@@ -58,11 +58,11 @@ try {
     await page.keyboard.press("Space");
     assert.equal(await dialog.locator('[value="simple"]').isChecked(), true);
     await page.keyboard.press("Escape");
-    assert.match(await page.locator("#printCoverButton").innerText(), /개념형/u, "Cancelling must not apply a draft selection");
+    assert.match(await page.locator("#printCoverButton").innerText(), /도형 배경/u, "Cancelling must not apply a draft selection");
     await pick("simple");
     await page.reload({ waitUntil: "networkidle" });
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
-    assert.match(await page.locator("#printCoverButton").innerText(), /간결형/u);
+    assert.match(await page.locator("#printCoverButton").innerText(), /모눈 배경/u);
     for (const style of ["concept", "simple", "none"]) {
       await pick(style);
       if (width !== 1440) continue;

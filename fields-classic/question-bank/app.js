@@ -1,4 +1,4 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20260918b";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261003d";
 import { GENERATORS } from "./generators.js?v=20260918b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261003c";
@@ -476,7 +476,7 @@ function renderExamList() {
   $("examStageMeta").textContent = hasQuery ? `${resultCount}개 문항 검색 결과` : `${exams.length}개 시험지 · 원본 문항 번호 기준`;
   updateSearchStatus(resultCount, "시험 문항");
   $("examNotice").textContent = state.stage === "diagnostic"
-    ? "필즈 대비 선발 진단 모의고사의 문항을 고릅니다. 문항 구조를 유지한 유사문제를 만들 수 있습니다."
+    ? "FC 대비 선발 진단 모의고사의 문항을 고릅니다. 문항 구조를 유지한 유사문제를 만들 수 있습니다."
     : mockStage
       ? `${mockStage.label}의 문항을 고릅니다. 실제 출제 구조를 기준으로 유사문제를 만듭니다.`
       : "원본 선발시험의 문항 번호를 고른 뒤 유사문제를 만듭니다. 원본 시험 진단은 정답 대조가 끝난 시험지부터 별도로 제공합니다.";
@@ -751,16 +751,20 @@ function academyStyleIdsFor(target) {
   return academyStyleIdsForType(target);
 }
 
+function academyStyleDisplayLabel(style) {
+  return style?.id === FIELDS_QUESTION_BANK_ADAPTER.id ? FIELDS_QUESTION_BANK_ADAPTER.label : style?.label;
+}
+
 function academyStyleLabels(target) {
   return academyStyleIdsFor(target)
-    .map((id) => ACADEMY_STYLES.find((style) => style.id === id)?.label)
+    .map((id) => academyStyleDisplayLabel(ACADEMY_STYLES.find((style) => style.id === id)))
     .filter(Boolean);
 }
 
 function renderAcademyStyleFilters() {
   $("academyStyleFilters").innerHTML = ACADEMY_STYLES.map((style) => {
     const count = TYPES.filter((item) => isSelectableType(item) && academyStyleIdsForType(item).includes(style.id)).length;
-    return `<label><input type="checkbox" data-academy-style="${style.id}" ${state.academyStyles.has(style.id) ? "checked" : ""}/><span>${style.label}</span><em>${count}</em></label>`;
+    return `<label><input type="checkbox" data-academy-style="${style.id}" ${state.academyStyles.has(style.id) ? "checked" : ""}/><span>${academyStyleDisplayLabel(style)}</span><em>${count}</em></label>`;
   }).join("");
   $("academyStyleFilters").querySelectorAll("input[data-academy-style]").forEach((input) => input.addEventListener("change", () => {
     if (input.checked) state.academyStyles.add(input.dataset.academyStyle);
@@ -3676,7 +3680,7 @@ function watermarkMarkup() {
 
 function renderWorksheet() {
   hideTypePreview();
-  const title = state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "필즈 더 클래식 단원 학습지" : "유형별 맞춤 학습지";
+  const title = state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "FC 단원 학습지" : "유형별 맞춤 학습지";
   $("worksheetTitle").textContent = title;
   const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
