@@ -39,7 +39,12 @@ function needsFullWidth(question) {
 function packExercisePages(pages) {
   const first = pages[0];
   const header = first.querySelector(":scope > .gold-print-head");
-  const footer = first.querySelector(":scope > .gold-print-footer");
+  const footer = pages.map((page) => page.querySelector(":scope > .gold-print-footer"))
+    .find((node) => node.classList.contains("has-game-qr")) || first.querySelector(":scope > .gold-print-footer");
+  const hasGameFooter = footer.classList.contains("has-game-qr");
+  const regularFooter = footer.cloneNode(true);
+  regularFooter.querySelector(".gold-print-games")?.remove();
+  regularFooter.classList.remove("has-game-qr");
   const extras = [...first.children].filter((node) => !node.matches(".gold-print-head,.gold-print-footer,.gold-print-block"));
   const questions = pages.flatMap((page) => exerciseNodes(page).map((question, index) => {
     question.dataset.printExerciseKey = `${page.dataset.printLesson}:${page.dataset.printPart}:${index}`;
@@ -49,29 +54,33 @@ function packExercisePages(pages) {
   let sheet;
   let grid;
   const packed = [];
-  function nextSheet() {
+  function nextSheet(showGames = false) {
     sheet = first.cloneNode(false);
     sheet.classList.add("compact-exercise-page", "two-column-exercises");
     grid = document.createElement("div");
     grid.className = "gold-print-exercise-grid";
-    sheet.append(header.cloneNode(true), ...(packed.length ? [] : extras), grid, footer.cloneNode(true));
+    sheet.append(header.cloneNode(true), ...(packed.length ? [] : extras), grid, (showGames ? footer : regularFooter).cloneNode(true));
     first.before(sheet);
     packed.push(sheet);
   }
   nextSheet();
   for (const question of questions) {
+    const isLast = hasGameFooter && question === questions.at(-1);
+    if (isLast) sheet.querySelector(":scope > .gold-print-footer").replaceWith(footer.cloneNode(true));
     grid.append(question);
     if (needsFullWidth(question)) question.classList.add("full-width-exercise");
     if (!contentFits(sheet) && grid.children.length > 1) {
       question.remove();
-      nextSheet();
+      if (isLast) sheet.querySelector(":scope > .gold-print-footer").replaceWith(regularFooter.cloneNode(true));
+      nextSheet(isLast);
       grid.append(question);
     }
     if (!contentFits(sheet)) {
       question.classList.add("full-width-exercise");
       if (!contentFits(sheet) && sheet.querySelector(".gold-print-concept,.gold-print-experience")) {
         question.remove();
-        nextSheet();
+        if (isLast) sheet.querySelector(":scope > .gold-print-footer").replaceWith(regularFooter.cloneNode(true));
+        nextSheet(isLast);
         grid.append(question);
       }
     }
@@ -116,10 +125,14 @@ export function compactGoldenBellPrint(root) {
     }
     const packed = [...copy.children];
     packed.forEach((page, index) => {
+      if (page.querySelector(".has-game-qr") && !contentFits(page)) {
+        throw new Error(`A print game QR overlaps learning content: ${page.dataset.printLesson}`);
+      }
       const number = document.createElement("span");
       number.className = "gold-print-page-number";
       number.textContent = ` ${index + 1} / ${packed.length}`;
-      page.querySelector(":scope > .gold-print-footer").append(number);
+      const footer = page.querySelector(":scope > .gold-print-footer");
+      (footer.querySelector(".gold-print-footer-meta") || footer).append(number);
     });
     root.replaceChildren(...packed);
     return packed.length;

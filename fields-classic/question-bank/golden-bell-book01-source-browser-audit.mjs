@@ -50,6 +50,7 @@ try {
     await page.addInitScript(() => {
       sessionStorage.setItem("gfield_fields_session", "source-audit-fixture");
       window.print = () => {};
+      window.addEventListener("DOMContentLoaded", () => { document.getElementById("printGameQR").checked = false; });
     });
     await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=SOURCE-QA&book=book-01`, { waitUntil: "networkidle" });
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));

@@ -39,6 +39,7 @@ try {
     await page.route("**/functions/v1/fields-auth", (route) => route.fulfill({ contentType: "application/json", body: "{}" }));
     await page.route("**/functions/v1/golden-bell-answers", (route) => route.fulfill({ contentType: "application/json", body: JSON.stringify({ answers: bank.books["book-01"] }) }));
     await page.addInitScript(() => { sessionStorage.setItem("gfield_fields_session", "fc-print-test-fixture"); window.print = () => { window.fcPrintCalls = (window.fcPrintCalls || 0) + 1; }; });
+    await page.addInitScript(() => window.addEventListener("DOMContentLoaded", () => { const qr = document.getElementById("printGameQR"); if (qr) qr.checked = false; }));
     await page.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=DEMO&book=book-01`, { waitUntil: "networkidle" });
     await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
     assert.equal(await page.title(), "FC 골든벨 학습");
@@ -149,6 +150,7 @@ try {
 
   const locked = await browser.newPage({ viewport: { width: 390, height: 1000 } });
   await locked.addInitScript(() => { window.print = () => { window.fcPrintCalls = (window.fcPrintCalls || 0) + 1; }; });
+  await locked.addInitScript(() => window.addEventListener("DOMContentLoaded", () => { const qr = document.getElementById("printGameQR"); if (qr) qr.checked = false; }));
   await locked.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=DEMO&book=book-01`, { waitUntil: "networkidle" });
   await locked.locator("#printSelectedButton").click();
   await locked.locator("#printIncludeAnswers").check();

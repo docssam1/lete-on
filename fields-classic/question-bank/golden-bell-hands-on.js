@@ -114,7 +114,7 @@ function renderActivity(container, unit, session, onQuestions) {
   const portrait = state.solved ? "docssam-praise.webp" : state.checked ? "docssam-thinking.webp" : "docssam-guide.webp";
   const scene = kind === "clock" ? clockScene(round, state) : kind === "mirror" ? mirrorScene(round, state) : kind === "fold" ? foldScene(round, state, previousActivity === session.active && state.foldStep > previousFoldStep && previousFoldStep >= 0) : ["cross", "order"].includes(kind) ? cardsAndSlots(activity, round, state) : transferScene(round, state);
   const atEnd = state.roundIndex === activity.rounds.length - 1;
-  container.innerHTML = `<div class="hand-toolbar"><nav class="hand-activity-tabs" aria-label="단원 체험">${unit.activities.map((id) => `<button type="button" data-hand-activity="${id}" aria-current="${id === session.active ? "true" : "false"}" class="${id === session.active ? "active" : ""}">${esc(HANDS_ON_ACTIVITIES[id].title)}</button>`).join("")}</nav><span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div><h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p><div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><strong>독쌤</strong><p>${esc(guide.text)}</p></div></div><div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}"` : ""}>${scene}</div><p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${esc(state.feedback)}</span></p><div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? "questions" : "next", atEnd ? "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : button("check", "결과 확인", "check", { cls: "hand-primary", disabled: kind === "fold" && !state.cut })}</div>${state.solved && atEnd ? '<p class="hand-finished">체험 도전 3개 완료</p>' : ""}`;
+  container.innerHTML = `<div class="hand-toolbar">${unit.single ? "" : `<nav class="hand-activity-tabs" aria-label="단원 체험">${unit.activities.map((id) => `<button type="button" data-hand-activity="${id}" aria-current="${id === session.active ? "true" : "false"}" class="${id === session.active ? "active" : ""}">${esc(HANDS_ON_ACTIVITIES[id].title)}</button>`).join("")}</nav>`}<span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div><h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p><div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><strong>독쌤</strong><p>${esc(guide.text)}</p></div></div><div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}"` : ""}>${scene}</div><p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${esc(state.feedback)}</span></p><div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? unit.single ? "again" : "questions" : "next", atEnd ? unit.single ? "처음부터 다시" : "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : button("check", "결과 확인", "check", { cls: "hand-primary", disabled: kind === "fold" && !state.cut })}</div>${state.solved && atEnd ? '<p class="hand-finished">체험 도전 3개 완료</p>' : ""}`;
   container.querySelectorAll("[data-hand-activity]").forEach((tab) => tab.addEventListener("click", () => {
     session.active = tab.dataset.handActivity;
     renderActivity(container, unit, session, onQuestions);
@@ -127,8 +127,9 @@ function renderActivity(container, unit, session, onQuestions) {
   container.querySelectorAll("[data-hand-action]").forEach((control) => control.addEventListener("click", () => {
     const action = control.dataset.handAction;
     const value = control.dataset.value === undefined ? undefined : kind === "order" && action === "choose" ? control.dataset.value : Number(control.dataset.value);
-    if (action === "questions") return onQuestions(activity.lesson);
-    if (action === "reset") session.states[session.active] = newActivityState(session.active, state.roundIndex);
+    if (action === "questions") { if (!unit.single) onQuestions(activity.lesson); return; }
+    if (action === "again" && unit.single && state.solved && atEnd) session.states[session.active] = newActivityState(session.active, 0);
+    else if (action === "reset") session.states[session.active] = newActivityState(session.active, state.roundIndex);
     else if (action === "next" && state.solved && !atEnd) session.states[session.active] = newActivityState(session.active, state.roundIndex + 1);
     else if (!applyActivityAction(state, action, value)) return;
     renderActivity(container, unit, session, onQuestions);
@@ -136,6 +137,12 @@ function renderActivity(container, unit, session, onQuestions) {
     const focusTarget = container.querySelector(`${selector}:not(:disabled)`) || container.querySelector('.hand-primary:not(:disabled)') || container.querySelector('[data-hand-activity]');
     focusTarget?.focus({ preventScroll: true });
   }));
+}
+
+export function mountSingleHandsOn(container, activityId) {
+  if (!Object.hasOwn(HANDS_ON_ACTIVITIES, activityId)) throw new Error("game_scope_invalid");
+  const session = { active: activityId, states: {} };
+  renderActivity(container, { activities: [activityId], single: true }, session, null);
 }
 
 export function mountHandsOn(container, { bookId, lessonId, onQuestions, onOpen }) {
