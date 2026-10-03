@@ -212,8 +212,16 @@ button { color:inherit; font:inherit; }
 .page-diagnostic .route-difficulty-list, .page-diagnostic .route-resource-list { display:flex; flex-wrap:wrap; gap:5px; padding:0; margin:8px 0; list-style:none; }
 .page-diagnostic .route-difficulty-list li, .page-diagnostic .route-resource-list li { padding:4px 6px; border:1px solid var(--line); background:#faf6ed; font-size:.68rem; }
 .page-diagnostic .route-difficulty-list li.no-evidence { color:var(--muted); background:#f1eee7; }
-.page-diagnostic .route-concept-link { display:inline-flex; margin:8px 0 2px; padding:8px 11px; color:#fff; background:var(--green); font-size:.75rem; font-weight:850; text-decoration:none; }
-.page-diagnostic .route-concept-link:hover { background:#1f5144; }
+.page-diagnostic .diagnostic-plan-bridge { display:flex; justify-content:space-between; gap:24px; align-items:center; margin:0 0 18px; padding:18px; color:#fff; background:var(--green); }
+.page-diagnostic .diagnostic-plan-bridge strong { font-family:Georgia, "Noto Serif KR", serif; font-size:1.05rem; }
+.page-diagnostic .diagnostic-plan-bridge p { max-width:700px; margin:5px 0 0; color:#eaf4ef; font-size:.74rem; }
+.page-diagnostic .diagnostic-plan-link { flex:0 0 auto; padding:10px 13px; color:var(--green); background:#fff; font-size:.76rem; font-weight:900; text-decoration:none; }
+.page-diagnostic .route-learning-actions { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px; }
+.page-diagnostic .route-learning-actions a, .page-diagnostic .route-resource-locked { display:inline-flex; align-items:center; min-height:40px; padding:8px 10px; border:1px solid #b8cabf; color:var(--green); background:#f5faf7; font-size:.72rem; font-weight:850; text-decoration:none; }
+.page-diagnostic .route-learning-actions a:hover { border-color:var(--green); background:#eaf4ef; }
+.page-diagnostic .route-concept-link { display:inline-flex; margin:0; padding:8px 11px; color:#fff!important; border-color:var(--green)!important; background:var(--green)!important; font-size:.75rem; font-weight:850; text-decoration:none; }
+.page-diagnostic .route-concept-link:hover { background:#1f5144!important; }
+.page-diagnostic .route-resource-locked { color:var(--muted); border-style:dashed; background:#f4f1ea; }
 .page-diagnostic .route-resources { margin-top:10px; }
 .page-diagnostic .route-resource-label { color:var(--green); font-size:.68rem; font-weight:900; letter-spacing:.04em; }
 .page-diagnostic .assignment-lock { padding:7px 9px; color:#70463f; border-left:2px solid var(--burgundy); background:#fff8f5; font-weight:800; }
@@ -246,6 +254,8 @@ button { color:inherit; font:inherit; }
   .page-diagnostic .teacher-review > header { grid-template-columns:1fr; gap:8px; }
   .page-diagnostic .domain-result-grid { grid-template-columns:repeat(2, 1fr); }
   .page-diagnostic .cadence-grid { grid-template-columns:repeat(2, 1fr); }
+  .page-diagnostic .diagnostic-plan-bridge { align-items:flex-start; flex-direction:column; gap:14px; }
+  .page-diagnostic .diagnostic-plan-link { width:100%; text-align:center; }
 }
 @media (max-width:520px) {
   .page-diagnostic .shell, .page-diagnostic .site-header { width:min(100% - 28px, 1120px); }
@@ -295,7 +305,9 @@ button { color:inherit; font:inherit; }
   body.page-diagnostic.printing-report .workspace-panel:has([data-print-target="true"]) { display:block!important; }
   body.page-diagnostic.printing-report .workspace-panel:has([data-print-target="true"]) > *:not([data-print-target="true"]) { display:none!important; }
   body.page-diagnostic.printing-report [data-print-target="true"] { display:block!important; padding:0; border:0; }
-  body.page-diagnostic.printing-report .report-print { display:none!important; }
+  body.page-diagnostic.printing-report .report-print,
+  body.page-diagnostic.printing-report .diagnostic-plan-bridge,
+  body.page-diagnostic.printing-report .route-learning-actions { display:none!important; }
   body.page-diagnostic.printing-report .domain-result, body.page-diagnostic.printing-report .prescription-entry, body.page-diagnostic.printing-report .item-feedback-list li { break-inside:avoid; }
 }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }

@@ -228,6 +228,9 @@ test("Grade 6 local diagnostic turns a reviewed prerequisite error into domain a
     assert.equal(await page.locator("#teacher-report .route-difficulty-list").count(), 10);
     assert.equal(await page.locator("#teacher-report .route-concept-link").count(), 10);
     assert.equal(await page.locator("#teacher-report .route-concept-link").first().getAttribute("href").then(function (href) { return href.startsWith("./concept-learning.html?cluster="); }), true);
+    assert.equal(await page.locator("#teacher-report .route-learning-actions").count(), 10);
+    assert.equal(await page.locator("#teacher-report .diagnostic-plan-link").count(), 1);
+    assert.ok(await page.locator('#teacher-report .route-learning-actions a[href*="audience=teacher"]').count() >= 9);
     assert.doesNotMatch(await page.locator("#teacher-report .prescription-list").innerText(), /null%/);
     assert.equal(await page.locator("#teacher-report .route-resources").count(), 20);
     assert.match(await page.locator("#teacher-report .cadence-section").innerText(), /3주[\s\S]*주 2회 × 75분[\s\S]*D\+7/);
@@ -245,8 +248,35 @@ test("Grade 6 local diagnostic turns a reviewed prerequisite error into domain a
     assert.match(await page.locator("#student-report .prescription-list").innerText(), /선수개념 보완/);
     assert.equal(await page.locator("#student-report .route-resources").count(), 10);
     assert.equal(await page.locator("#student-report .route-concept-link").count(), 10);
+    assert.equal(await page.locator("#student-report .route-learning-actions").count(), 10);
+    assert.equal(await page.locator("#student-report .diagnostic-plan-link").count(), 1);
+    assert.ok(await page.locator('#student-report .route-learning-actions a[href*="mode=workbook"]').count() >= 9);
+    assert.match(await page.locator("#student-report .route-resource-locked").first().innerText(), /워크북 완료 후|검수 대기/);
+
+    const savedSummary = await page.evaluate(function () {
+      return window.GFIELDLocalLearningRecord.storage.loadGrade6DiagnosticEvidence();
+    });
+    assert.equal(savedSummary.score.earnedPoints, 41);
+    assert.equal(savedSummary.priorities[0].errorType, "prerequisite-gap");
+    assert.deepEqual(forbiddenStudentPaths(savedSummary), []);
+    assert.doesNotMatch(JSON.stringify(savedSummary), /studentToken|attemptId|response|answer|solution/);
 
     for (const width of [1440, 390, 320]) await noHorizontalOverflow(page, width);
+    await page.evaluate(function () {
+      document.body.classList.add("printing-report");
+      document.getElementById("student-report").dataset.printTarget = "true";
+    });
+    await page.emulateMedia({ media: "print" });
+    assert.equal(await page.locator("#student-report .diagnostic-plan-bridge").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+    assert.equal(await page.locator("#student-report .route-learning-actions").first().evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+    await page.emulateMedia({ media: "screen" });
+    const planHref = await page.locator("#student-report .diagnostic-plan-link").getAttribute("href");
+    await page.goto(new URL(planHref, baseUrl).href, { waitUntil: "networkidle" });
+    assert.equal(await page.locator("#plan-state").innerText(), "42문항 진단 연결");
+    assert.match(await page.locator("#prediction-copy").innerText(), /41 \/ 42점[\s\S]*우선 보완/);
+    assert.match(await page.locator("#today-description").innerText(), /선수개념부터 다시 연결할 약점/);
+    assert.equal(await page.locator("#teacher-grid article").count(), 4);
+    await noHorizontalOverflow(page, 390);
     assert.deepEqual(teacherUiViolations, []);
     assert.deepEqual(errors, []);
   } finally {

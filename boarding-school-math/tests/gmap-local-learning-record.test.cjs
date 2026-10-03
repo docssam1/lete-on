@@ -29,12 +29,34 @@ test("practice records retain only sanitized local first-attempt evidence", func
 
 test("only mapped axes can change a learner-plan priority and records can be cleared", function () {
   const store = records.create(memoryStorage());
-  assert.deepEqual(records.priorityForAxis("geometry-spatial"), { label: "기하·공간 추론", clusterId: "6.G.A", errorType: "reasoning-gap", difficulty: "advanced" });
+  assert.deepEqual(records.priorityForAxis("geometry-spatial"), { label: "기하·공간 추론", clusterId: "6.G.A", errorType: "strategy-gap", difficulty: "advanced" });
   assert.equal(records.priorityForAxis("unknown-axis"), null);
   store.savePractice("sasmo-g6", { "sasmo-g6-model-01": { responses: [{ answerId: "B", correct: true }], solved: true } }, { attempted: 1, itemCount: 10, firstCorrect: 1, accuracy: 100, complete: false, readinessBand: "collecting", strengthAxis: "number-operations", priorityAxis: null });
   assert.equal(Object.keys(store.loadPractice("sasmo-g6").attempts).length, 1);
   assert.equal(store.clearPractice("sasmo-g6"), true);
   assert.deepEqual(store.loadPractice("sasmo-g6"), { attempts: {}, summary: null });
+});
+
+test("Grade 6 diagnostic evidence keeps only an answer-safe teacher-reviewed summary", function () {
+  const store = records.create(memoryStorage());
+  assert.equal(store.saveGrade6DiagnosticEvidence({
+    schemaVersion: "gfield-grade6-diagnostic-evidence-v1",
+    grade: 6,
+    sourceState: "local-qa-finalized-teacher-reviewed",
+    score: { earnedPoints: 31, maxPoints: 42, percentage: 73.8, performanceBand: "approaching" },
+    priorities: [{ clusterId: "6.NS.B", domainId: "G6-NS", label: "수 체계 · 6.NS.B", errorType: "prerequisite-gap", mode: "repair", difficulty: "foundation", percentage: 50 }],
+    answer: "must-not-persist",
+    studentResponse: "must-not-persist",
+    recordedAt: "2026-10-03T03:00:00.000Z"
+  }), true);
+  const evidence = store.loadGrade6DiagnosticEvidence();
+  assert.equal(evidence.score.earnedPoints, 31);
+  assert.equal(evidence.priorities[0].errorType, "prerequisite-gap");
+  assert.equal(evidence.officialPlacement, false);
+  assert.equal(evidence.assignmentAuthorized, false);
+  assert.doesNotMatch(JSON.stringify(evidence), /must-not-persist|studentResponse|answer/);
+  assert.equal(store.clearGrade6DiagnosticEvidence(), true);
+  assert.equal(store.loadGrade6DiagnosticEvidence(), null);
 });
 
 test("external assessment evidence is reduced to an answer-safe local planning summary", function () {

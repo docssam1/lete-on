@@ -40,10 +40,13 @@
     })
   });
   const ERROR_PROFILES = Object.freeze({
-    "concept-gap": Object.freeze({ label: "개념 연결이 필요한 약점", weights: Object.freeze({ review: 0.08, concept: 0.30, guided: 0.38, independent: 0.19, check: 0.05 }) }),
-    "procedure-gap": Object.freeze({ label: "풀이 절차가 필요한 약점", weights: Object.freeze({ review: 0.12, concept: 0.17, guided: 0.39, independent: 0.27, check: 0.05 }) }),
-    "calculation-error": Object.freeze({ label: "계산 정확도가 필요한 약점", weights: Object.freeze({ review: 0.20, concept: 0.08, guided: 0.26, independent: 0.41, check: 0.05 }) }),
-    "reasoning-gap": Object.freeze({ label: "추론 전략이 필요한 약점", weights: Object.freeze({ review: 0.12, concept: 0.20, guided: 0.42, independent: 0.21, check: 0.05 }) })
+    "prerequisite-gap": Object.freeze({ label: "선수개념부터 다시 연결할 약점", weights: Object.freeze({ review: 0.12, concept: 0.36, guided: 0.34, independent: 0.13, check: 0.05 }) }),
+    "concept-gap": Object.freeze({ label: "개념의 뜻과 조건을 다시 연결할 약점", weights: Object.freeze({ review: 0.08, concept: 0.30, guided: 0.38, independent: 0.19, check: 0.05 }) }),
+    "representation-error": Object.freeze({ label: "그림·표·식 사이의 표현을 바꿔 볼 약점", weights: Object.freeze({ review: 0.10, concept: 0.20, guided: 0.40, independent: 0.25, check: 0.05 }) }),
+    "calculation-error": Object.freeze({ label: "계산 과정과 역산 확인이 필요한 약점", weights: Object.freeze({ review: 0.20, concept: 0.08, guided: 0.26, independent: 0.41, check: 0.05 }) }),
+    "condition-missed": Object.freeze({ label: "문제의 조건을 빠짐없이 표시할 약점", weights: Object.freeze({ review: 0.15, concept: 0.12, guided: 0.35, independent: 0.33, check: 0.05 }) }),
+    "strategy-gap": Object.freeze({ label: "풀이 전략을 비교하고 첫 단계를 고를 약점", weights: Object.freeze({ review: 0.12, concept: 0.20, guided: 0.42, independent: 0.21, check: 0.05 }) }),
+    "explanation-incomplete": Object.freeze({ label: "답의 근거를 수학 문장으로 완성할 약점", weights: Object.freeze({ review: 0.10, concept: 0.15, guided: 0.36, independent: 0.29, check: 0.10 }) })
   });
   const DIFFICULTY_MINUTES = Object.freeze({ foundation: 2.5, core: 4, advanced: 6 });
 
@@ -59,7 +62,6 @@
     if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) fail(`${field} is invalid`);
     return date;
   }
-  function round(value) { return Math.round(value); }
   function href(clusterId, audience, mode) {
     return `./unit-workbook.html?cluster=${encodeURIComponent(clusterId)}&mode=${mode}&audience=${audience}&locale=ko&paper=A4`;
   }
@@ -87,13 +89,22 @@
   }
   function allocateMinutes(total, weights) {
     const keys = ["review", "concept", "guided", "independent", "check"];
+    const minimums = Object.freeze({ review: 2, concept: 3, guided: 3, independent: 3, check: 2 });
+    const minimumTotal = keys.reduce(function (sum, key) { return sum + minimums[key]; }, 0);
+    if (total < minimumTotal) fail("daily minutes cannot cover the five learning blocks");
+    const remaining = total - minimumTotal;
     const output = {};
-    let used = 0;
+    const fractions = [];
+    let used = minimumTotal;
     keys.forEach(function (key, index) {
-      output[key] = index === keys.length - 1 ? total - used : Math.max(key === "check" ? 2 : 3, round(total * weights[key]));
-      used += output[key];
+      const exact = remaining * weights[key];
+      const extra = Math.floor(exact);
+      output[key] = minimums[key] + extra;
+      used += extra;
+      fractions.push({ key: key, index: index, remainder: exact - extra });
     });
-    if (used !== total) output.check += total - used;
+    fractions.sort(function (left, right) { return right.remainder - left.remainder || left.index - right.index; });
+    for (let index = 0; used < total; index += 1, used += 1) output[fractions[index % fractions.length].key] += 1;
     return Object.freeze(output);
   }
   function estimateProblems(minutes, difficulty, floor, ceiling) {

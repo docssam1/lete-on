@@ -158,6 +158,7 @@ test("unsupported or injected cluster identifiers are rejected", function () {
 
 test("diagnostic runner preserves the reviewed-route marker", function () {
   const runner = fs.readFileSync(path.join(root, "diagnostic-runner.js"), "utf8");
-  assert.match(runner, /GFIELDClinicPaths\.conceptUrl\(route\.clusterId, true\)/);
+  assert.match(runner, /paths\.routeFor\(route\.clusterId, \{ fromDiagnostic: true/);
+  assert.match(runner, /mapped\.concept\.url/);
   assert.match(runner, /from=diagnostic/);
 });
