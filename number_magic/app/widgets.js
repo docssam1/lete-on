@@ -214,6 +214,8 @@ function render(problem, container, onAnswer){
     case 'selectPairs':  return renderSelectPairs(problem,container,onAnswer);
     case 'tapCount':     return renderTapCount(problem,container,onAnswer);
     case 'tapMake':      return renderTapMake(problem,container,onAnswer);
+    case 'frameRead':    return renderFrameRead(problem,container,onAnswer);
+    case 'framePaint':   return renderFramePaint(problem,container,onAnswer);
     case 'numberBond':   return renderNumberBond(problem,container,onAnswer);
     case 'seqFill':      return renderSeqFill(problem,container,onAnswer);
     case 'dotToDot':     return renderDotToDot(problem,container,onAnswer);
@@ -924,6 +926,72 @@ function renderTapMake(problem, container, onAnswer){
     lock=true;setTimeout(()=>{lock=false;},700);
     if(stamps!==target)shake(board);
     onAnswer(stamps);
+  });
+}
+
+
+/* ─────────────────────────────────────────
+   FRAMEREAD  widget:'frameRead'  (유아 · 수의 나라)
+   10칸 틀(2×5)에 물건 n개가 놓여 있다 → 몇 개인지 숫자 3개 중에서 고른다. 교재의 '점 그림 ↔ 숫자' 읽기.
+───────────────────────────────────────── */
+function frameCells(n,em,onTap){
+  let h='';
+  for(let i=0;i<10;i++){
+    h+='<button type="button" class="nm-fr-cell'+(i<n?' on':'')+(onTap?' tap':'')+'" data-i="'+i+'"'+(onTap?'':' tabindex="-1"')+'>'+(i<n?'<span class="nm-fr-chip">'+art(em)+'</span>':'')+'</button>';
+  }
+  return h;
+}
+function renderFrameRead(problem, container, onAnswer){
+  const n=problem.n, em=problem.emoji||'🍎', answer=problem.answer;
+  let lock=false;
+  const root=document.createElement('div');
+  root.className='nm-fr-wrap';
+  root.innerHTML='<div class="nm-fr-frame">'+frameCells(n,em,false)+'</div><div class="nm-tc-choices"></div>';
+  container.appendChild(root);
+  const cand=[answer-2,answer-1,answer+1,answer+2].filter(v=>v>=1&&v<=9&&v!==answer);
+  const picks=[answer];
+  while(picks.length<3&&cand.length)picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);
+  picks.sort(()=>Math.random()-.5);
+  const ch=root.querySelector('.nm-tc-choices');
+  picks.forEach(v=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=v;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;lock=true;setTimeout(()=>{lock=false;},700);
+      if(v!==answer)shake(b);
+      onAnswer(v);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
+   FRAMEPAINT  widget:'framePaint'  (유아 · 수의 나라)
+   빈 10칸 틀에서 target 칸을 눌러 물건을 올린다(다시 누르면 내림) → ✔ 로 제출. onAnswer(올린 개수).
+───────────────────────────────────────── */
+function renderFramePaint(problem, container, onAnswer){
+  const em=problem.emoji||'⭐', target=problem.target||5;
+  const on=new Set();let lock=false;
+  const root=document.createElement('div');
+  root.className='nm-fr-wrap';
+  root.innerHTML='<div class="nm-fr-frame">'+frameCells(0,em,true)+'</div><div class="nm-tm-counter"><span class="nm-tm-cnt">0</span></div><button class="nm-tm-done">✔</button>';
+  container.appendChild(root);
+  const frame=root.querySelector('.nm-fr-frame'), cnt=root.querySelector('.nm-tm-cnt');
+  frame.addEventListener('pointerup',e=>{
+    const c=e.target.closest('.nm-fr-cell');if(!c)return;
+    e.stopPropagation();
+    const i=+c.dataset.i;
+    if(on.has(i)){on.delete(i);c.classList.remove('on');c.innerHTML='';}
+    else{on.add(i);c.classList.add('on');c.innerHTML='<span class="nm-fr-chip">'+art(em)+'</span>';}
+    cnt.textContent=on.size;
+  });
+  root.querySelector('.nm-tm-done').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock||on.size===0)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(on.size!==target)shake(frame);
+    onAnswer(on.size);
   });
 }
 
@@ -2301,6 +2369,8 @@ window.NM_WIDGETS={
   renderSelectPairs,
   renderTapCount,
   renderTapMake,
+  renderFrameRead,
+  renderFramePaint,
   renderNumberBond,
   renderSeqFill,
   renderDotToDot,

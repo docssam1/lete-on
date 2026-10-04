@@ -853,3 +853,14 @@
 .dgf2 .nm-dg{font-family:'Trebuchet MS',system-ui,sans-serif;color:#1a2233;font-size:40px}
 .dgf3 .nm-dg{font-family:'Comic Sans MS','Segoe Print',cursive;color:#2e7d57}
 .dgf4 .nm-dg{font-family:Impact,'Arial Black',sans-serif;font-weight:400;color:#b5651d;font-size:38px}
+
+/* ── 유아 10칸 틀 (frameRead · framePaint) — 교재의 10칸 점 그림을 물건 칩으로 ──────── */
+.nm-fr-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:8px 4px}
+.nm-fr-frame{display:grid;grid-template-columns:repeat(5,56px);grid-auto-rows:56px;gap:0;
+  border:3px solid #c8b583;border-radius:16px;overflow:hidden;background:#fffaf0;
+  box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf}
+.nm-fr-cell{border:0;border-right:2px solid #e3d3ac;border-bottom:2px solid #e3d3ac;background:transparent;padding:0;display:grid;place-items:center;cursor:default;touch-action:manipulation}
+.nm-fr-cell:nth-child(5n){border-right:0}.nm-fr-cell:nth-child(n+6){border-bottom:0}
+.nm-fr-cell.on{background:rgba(255,226,140,.35)}
+.nm-fr-chip{font-size:36px;line-height:1;animation:tc-pop .25s ease-out}
+button.nm-fr-cell.tap{cursor:pointer}

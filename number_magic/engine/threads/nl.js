@@ -85,8 +85,40 @@
       };
     }
 
-    /* ---- digits: 글꼴이 제각각인 숫자들 사이에서 지정한 숫자만 세기(main 전용, 4번에 1번쯤) ---- */
-    if (mode === 'count' && lv === 'main' && R(rng, 1, 4) === 1) {
+    /* 장면 종류를 한 번 굴린다 — practice: 10칸 읽기 1/4 · main: 숫자 찾기 1/6, 10칸 읽기 1/6, 10칸 칠하기 1/6, 나머지는 물건 세기 */
+    const roll = mode === 'count' ? R(rng, 1, 12) : 99;
+    const NATIVE = ['', '하나', '둘', '셋', '넷', '다섯', '여섯', '일곱', '여덟', '아홉'];
+
+    /* ---- frame: 10칸 틀 그림을 보고 몇 개인지 읽기(교재의 '수의 여러 표현' — 점 그림 ↔ 숫자) ---- */
+    if ((lv === 'practice' && roll <= 3) || (lv === 'main' && roll >= 3 && roll <= 4)) {
+      const n = R(rng, 1, lv === 'practice' ? 5 : 9);
+      const [em, ko, en, zh] = pick(rng, THINGS);
+      return {
+        prompt: {
+          ko: `10칸 틀에 ${ko}이(가) 모두 몇 개 있을까요?`,
+          en: `How many ${en} are in the ten-frame?`,
+          zh: `十格框里一共有几个${zh}？`
+        },
+        answer: n, answerType: 'number', widget: 'frameRead', emoji: em, n
+      };
+    }
+    /* ---- paint: 수만큼 10칸 틀에 색칠하기(숫자 또는 우리말 수로 제시) ---- */
+    if (lv === 'main' && roll >= 5 && roll <= 6) {
+      const n = R(rng, 2, 9);
+      const [em, ko, en, zh] = pick(rng, THINGS);
+      const useWord = R(rng, 0, 1) === 1;
+      return {
+        prompt: {
+          ko: `10칸 틀에 ${useWord ? NATIVE[n] : n}만큼 ${ko}을(를) 올려요. 칸을 톡톡 눌러요`,
+          en: `Put ${n} ${en} in the ten-frame. Tap the boxes`,
+          zh: `在十格框里放${n}个${zh}，点一点格子`
+        },
+        answer: n, answerType: 'number', widget: 'framePaint', emoji: em, target: n
+      };
+    }
+
+    /* ---- digits: 글꼴이 제각각인 숫자들 사이에서 지정한 숫자만 세기(main 전용, 6번에 1번쯤) ---- */
+    if (mode === 'count' && lv === 'main' && roll <= 2) {
       const digs = shuffle(rng, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
       const d = digs[0], nT = R(rng, 2, 7), nO = R(rng, 5, 9);
       const items = [];
