@@ -47,6 +47,7 @@ function run(){
   mutant('unknown new thread requires category','data/threads.js',append("window.NM_THREADS.NEW=Object.assign({},window.NM_THREADS.AD1);"),'SCRIPT_EVAL');
   const w={};w.window=w;vm.createContext(w);
   vm.runInContext(read(path.join(ROOT,'data/threads.js')),w);
+  for(const g of ['1-3','4-6','7-9','10-12','13-15'])vm.runInContext(read(path.join(ROOT,'data/g1/'+g+'-threads.js')),w);
   vm.runInContext(read(path.join(ROOT,'data/drill-topics.js')),w);
   const before=JSON.stringify(w.NM_DRILL_TOPICS);
   const added={id:999,label:{ko:'새 레벨',en:'New level',zh:'新等级'},params:{}};
