@@ -1,1 +1,192 @@
-/* G1-1-3호 화면 위젯 CSS */
+/* G1-1~3호(N-01~N-03) 화면 위젯 CSS — 접두 nm-g13-. 질감은 widgets.css 의 .nm-fr-* / .nm-tc-scatter(종이 액자·둥근 칸·그림자)를 따른다. */
+.nm-g13{display:flex;flex-direction:column;align-items:center;gap:14px;padding:8px 4px;width:100%;box-sizing:border-box}
+.nm-g13 svg{max-width:100%}
+.nm-g13 .nm-tc-choice.ok{border-color:var(--ok);background:#eafaf1;color:var(--ok)}
+.nm-g13-choices{flex-wrap:wrap}
+.nm-g13-cc{width:auto;min-width:64px;padding:6px 10px;height:auto;min-height:64px;display:inline-grid;place-items:center}
+.nm-g13-cw .nm-g13-cc{min-width:72px}
+.nm-g13-cc svg{display:block;height:44px;width:auto}
+
+/* ── 세기(g13Count) ── */
+.nm-g13-line{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:12px;max-width:min(380px,94vw);border:3px solid #e3d3ac;border-radius:22px;background:linear-gradient(180deg,#fffaf0,#f7ecd2);box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf}
+.nm-g13-line .nm-tc-item.cell{width:54px;height:62px;grid-template-rows:1fr auto}
+.nm-g13-line .nm-tc-item.cell .nm-tc-emoji{font-size:40px}
+.nm-g13-lab{display:block;font-style:normal;font-size:14px;font-weight:900;color:var(--sub);line-height:1;margin-top:-2px}
+.nm-g13-ring{display:flex;gap:8px;padding:6px 8px;border:3px dashed #c9a063;border-radius:24px;background:rgba(255,226,140,.18)}
+.nm-tc-item.ringed{cursor:default}
+.nm-g13-table{display:grid;grid-template-columns:repeat(7,1fr);gap:0;width:min(380px,94vw);border:3px solid #c8b583;border-radius:16px;overflow:hidden;background:#fffaf0;box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf}
+.nm-g13-th{padding:6px 0;text-align:center;font-size:14px;font-weight:900;color:#7a5a12;background:#f6e7bd;border-bottom:2px solid #e3d3ac;border-right:2px solid #e3d3ac}
+.nm-g13-th:nth-child(7n){border-right:0}
+.nm-g13-table .nm-tc-item.cell{width:100%;height:50px;border-right:2px solid #e3d3ac;border-bottom:2px solid #e3d3ac}
+.nm-g13-table .nm-tc-item.cell:nth-child(7n+7){border-right:0}
+.nm-g13-table .nm-tc-item.cell .nm-tc-emoji{font-size:32px}
+.nm-g13-table .nm-tc-item.cell.on::before{inset:3px;border-radius:10px}
+
+/* ── 같은 수끼리 잇기(g13Rep) · 표 빈칸(g13RepFill) ── */
+.nm-g13-mc{width:78px;height:72px;padding:4px}
+.nm-g13-mc svg{display:block;max-width:64px;max-height:56px}
+.nm-g13-hand{width:34px;height:auto}
+.nm-g13-hands{display:inline-flex;gap:0;align-items:flex-end}.nm-g13-hands .nm-g13-hand{width:30px}
+.nm-g13-word{font-size:26px;font-weight:900;color:var(--blue-deep);letter-spacing:-.02em}
+.nm-g13-rfrow{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.nm-g13-rfcard{min-width:78px;height:72px;padding:4px 8px;display:grid;place-items:center;border-radius:18px;border:2.5px solid var(--line);background:#fff;box-shadow:0 4px 0 #e0dbd2;box-sizing:border-box}
+.nm-g13-rfcard.blank{border:3px dashed var(--gold-deep);background:#fffaf0;font-size:28px;font-weight:900;color:#b8860b}
+.nm-g13-rfcard.blank.found{border-style:solid;border-color:var(--ok);background:#eafaf1;animation:tc-pop .3s ease}
+.nm-g13-rfcard svg,.nm-g13-cc svg{max-width:70px}
+
+/* ── 격자(g13Grid) ── */
+.nm-g13-gframe{display:grid;grid-template-columns:repeat(var(--cols,5),var(--cell,46px));grid-auto-rows:var(--cell,46px);border:3px solid #c8b583;border-radius:14px;overflow:hidden;background:#fffaf0;box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf}
+.nm-g13-gcell{border:0;border-right:2px solid #e3d3ac;border-bottom:2px solid #e3d3ac;background:transparent;padding:0;display:grid;place-items:center;font-size:calc(var(--cell,46px)*.7);touch-action:manipulation;box-sizing:border-box}
+.nm-g13-gcell.tap{cursor:pointer}
+.nm-g13-gcell.on{background:linear-gradient(145deg,#ffe58f,#f6c94c)}
+.nm-g13-gframe .nm-fr-chip{font-size:calc(var(--cell,46px)*.7)}
+
+/* ── 동그라미 나누기(g13CircleCut) ── */
+.nm-g13-cutbox{width:min(300px,86vw);aspect-ratio:1;border:3px solid #e3d3ac;border-radius:22px;background:linear-gradient(180deg,#fffaf0,#f7ecd2);box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf;touch-action:manipulation}
+.nm-g13-cutsvg{width:100%;height:100%;display:block}
+.nm-g13-circ{fill:#fff;stroke:var(--blue-deep);stroke-width:.05}
+.nm-g13-chord{stroke:var(--ok);stroke-width:.05;stroke-linecap:round}
+.nm-g13-chit{stroke:transparent;stroke-width:.2;cursor:pointer}
+.nm-g13-ndot{fill:#fff;stroke:var(--blue-deep);stroke-width:.04}
+.nm-g13-nd{cursor:pointer}
+.nm-g13-nd.sel .nm-g13-ndot{fill:var(--gold-bright);stroke:var(--gold-deep);r:.1}
+.nm-g13-cutinfo{font-size:15px;font-weight:800;color:var(--sub)}.nm-g13-cutinfo b{color:var(--ok);font-size:20px}
+
+/* ── 쌓기나무(g13Blocks) · 비교 ── */
+.nm-g13-isobox{width:min(280px,82vw);padding:10px;border:3px solid #e3d3ac;border-radius:20px;background:linear-gradient(180deg,#fffaf0,#f7ecd2);box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf;box-sizing:border-box}
+.nm-g13-isobox svg{display:block;width:100%;height:auto;max-height:200px}
+.nm-g13-isobox.sm{width:min(150px,38vw);padding:6px}
+.nm-g13-cmprow{display:flex;align-items:center;justify-content:center;gap:8px}
+.nm-g13-cmprow.big{gap:18px}
+.nm-g13-sign.slot{width:52px;height:52px;display:grid;place-items:center;border-radius:50%;border:3px dashed var(--gold-deep);background:#fffaf0;font-size:28px;font-weight:900;color:#b8860b}
+.nm-g13-sign.found{border-style:solid;border-color:var(--ok);background:#eafaf1;color:var(--ok);animation:tc-pop .3s ease}
+.nm-g13-signbtns{display:flex;gap:18px}
+.nm-g13-signbtn{width:76px;height:64px;border-radius:20px;border:2.5px solid var(--line);background:#fff;font-size:34px;font-weight:900;color:var(--blue-deep);cursor:pointer;box-shadow:0 5px 0 #eceae4;touch-action:manipulation}
+.nm-g13-signbtn:active{transform:translateY(3px);box-shadow:0 2px 0 #eceae4}
+.nm-g13-bignum{font-size:64px;font-weight:900;color:var(--blue-deep);min-width:56px;text-align:center}
+.nm-g13-sent{font-size:20px;font-weight:800;color:var(--blue-deep);text-align:center}
+.nm-g13-wordbtn{min-width:96px;height:56px;padding:0 14px;border-radius:18px;border:2.5px solid var(--line);background:#fff;font-size:20px;font-weight:900;color:var(--blue-deep);cursor:pointer;box-shadow:0 5px 0 #eceae4}
+.nm-g13-cmptail{display:flex;flex-direction:column;align-items:center;gap:10px}
+
+/* ── 점판 길이(g13DotLength) ── */
+.nm-g13-dlbox{width:min(260px,80vw);padding:10px;border:3px solid #e3d3ac;border-radius:20px;background:linear-gradient(180deg,#fffaf0,#f7ecd2);box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf;box-sizing:border-box;touch-action:manipulation}
+.nm-g13-dlsvg{width:100%;height:auto;display:block}
+.nm-g13-dlline{stroke:var(--ok);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.nm-g13-dpc{fill:#fff;stroke:var(--blue-deep);stroke-width:2.4}
+.nm-g13-dp{cursor:pointer}
+.nm-g13-dp.end .nm-g13-dpc{fill:var(--gold-bright);stroke:var(--gold-deep)}
+
+/* ── 칸 수 다른 것(g13Odd) · 뒤집기(g13Turn) ── */
+.nm-g13-odd{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:12px}
+.nm-g13-oddcard{position:relative;width:min(140px,40vw);padding:10px 6px 8px;border-radius:18px;border:2.5px solid var(--line);background:#fff;cursor:pointer;box-shadow:0 5px 0 #eceae4;touch-action:manipulation}
+.nm-g13-oddcard i{display:block;margin-top:2px;font-style:normal;font-size:20px;font-weight:900;color:var(--sub)}
+.nm-g13-oddcard.ok{border-color:var(--ok);background:#eafaf1}
+.nm-g13-oddsvg{width:100%;height:auto;display:block}
+.nm-g13-oc{fill:#f6c94c;stroke:#a67c00;stroke-width:1.4}
+.nm-g13-turncard{width:120px;height:140px;display:grid;place-items:center;border-radius:20px;border:3px solid #c8b583;background:#fffaf0;box-shadow:0 5px 0 #efe6cf;font-size:96px;font-weight:900;color:var(--blue-deep);font-family:'Trebuchet MS',system-ui,sans-serif;transition:transform .7s ease}
+.nm-g13-turncard.flip{transform:rotate(180deg)}
+.nm-g13-turnbtn{height:48px;padding:0 20px;border-radius:16px;border:none;background:var(--gold-bright);color:#6b4a0f;font-size:18px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 var(--gold-deep)}
+
+/* ── 수열(g13Seq) ── */
+.nm-g13-seq{gap:18px}
+.nm-g13-seqrow{max-width:min(420px,96vw)}
+.nm-g13-seq .nm-sf-chip{max-width:44px;font-size:clamp(14px,4.2vw,22px)}
+
+/* ── 길 채우기(g13Path) ── */
+.nm-g13-legend{font-size:14px;font-weight:800;color:var(--sub);text-align:center;padding:6px 12px;border-radius:12px;background:#f3f7ff}
+.nm-g13-pathbox{width:min(360px,94vw);border:3px solid #e3d3ac;border-radius:20px;background:linear-gradient(180deg,#fffaf0,#f7ecd2);box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf;padding:6px;box-sizing:border-box;touch-action:manipulation}
+.nm-g13-path{width:100%;height:auto;display:block}
+.nm-g13-pn.blank{cursor:pointer}
+.nm-g13-pn.focus circle:not(.nm-g13-hit),.nm-g13-pn.focus rect{stroke:var(--gold-deep);stroke-width:2.4;fill:#fff3cf}
+.nm-g13-bank{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.nm-g13-tile{width:58px;height:58px;border-radius:18px;border:2.5px solid var(--line);background:#fff;font-size:28px;font-weight:900;color:var(--blue-deep);cursor:pointer;box-shadow:0 5px 0 #eceae4;touch-action:manipulation}
+.nm-g13-tile:active{transform:translateY(3px);box-shadow:0 2px 0 #eceae4}
+.nm-g13-tile.used{opacity:.28;pointer-events:none;box-shadow:none}
+.nm-g13-tile.sel{border-color:var(--gold-deep);background:linear-gradient(145deg,#fff6e6,#fbeccd);transform:translateY(-4px)}
+
+/* ── 수 표시(g13NumPick) ── */
+.nm-g13-expr{font-size:34px;font-weight:900;color:var(--blue-deep);letter-spacing:.04em;padding:4px 18px;border-radius:16px;background:#f3f7ff}
+.nm-g13-scene{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:340px;padding:8px;border:3px solid #e3d3ac;border-radius:18px;background:#fffaf0}
+.nm-g13-sitem{font-size:34px;line-height:1;width:1.15em}
+.nm-g13-tools{display:flex;gap:10px}
+.nm-g13-tool{width:54px;height:54px;border-radius:16px;border:2.5px solid var(--line);background:#fff;font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #eceae4;display:grid;place-items:center}
+.nm-g13-tool.sel{border-color:var(--gold-deep);background:linear-gradient(145deg,#fff6e6,#fbeccd);transform:translateY(-3px)}
+.nm-g13-tool .nm-g13-sym{width:30px;height:30px}
+.nm-g13-tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:min(400px,96vw)}
+.nm-g13-ptile{position:relative;width:48px;height:56px;border-radius:14px;border:2.5px solid var(--line);background:#fff;font-size:26px;font-weight:900;color:var(--blue-deep);cursor:pointer;box-shadow:0 4px 0 #eceae4;touch-action:manipulation;padding:0}
+.nm-g13-ptile.color{background:linear-gradient(145deg,#ffe58f,#f6c94c);border-color:#d9a82a}
+.nm-g13-ov{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.nm-g13-sym{display:block}
+.nm-g13-sym.o{width:40px;height:40px;border:3.5px solid #d6453d;border-radius:50%;box-sizing:border-box}
+.nm-g13-sym.t path{fill:none;stroke:#2563c9;stroke-width:3;stroke-linejoin:round}
+.nm-g13-sym.x path{fill:none;stroke:#7a3dbb;stroke-width:3.4;stroke-linecap:round}
+.nm-g13-sym.t,.nm-g13-sym.x{width:38px;height:38px}
+.nm-g13-picktail{display:flex;flex-direction:column;align-items:center;gap:10px}
+.nm-g13-howmany{font-size:16px;font-weight:800;color:var(--sub);text-align:center}
+
+/* ── 차례로 누르기(g13Order) ── */
+.nm-g13-slots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.nm-g13-slot{width:48px;height:56px;border-radius:14px;border:2.5px dashed var(--gold-deep);background:#fffaf0;display:grid;place-items:center;font-size:26px;font-weight:900;color:var(--ok)}
+.nm-g13-slot.found{border-style:solid;border-color:var(--ok);background:#eafaf1;animation:tc-pop .3s ease}
+.nm-g13-pool{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;max-width:380px}
+.nm-g13-card{width:60px;height:72px;border-radius:12px;border:2.5px solid #c8b583;background:#fffdf6;font-size:34px;font-weight:900;color:var(--blue-deep);cursor:pointer;box-shadow:0 5px 0 #efe6cf;touch-action:manipulation;transform:rotate(-2deg)}
+.nm-g13-card:nth-child(even){transform:rotate(2.5deg)}
+.nm-g13-card.used{opacity:.25;pointer-events:none;box-shadow:none}
+.nm-g13-nline{width:min(360px,96vw)}
+.nm-g13-nlsvg{width:100%;height:auto;display:block}
+.nm-g13-nlax{stroke:var(--blue-deep);stroke-width:1.6}
+.nm-g13-nlt{font-size:11px;font-weight:800;fill:var(--sub)}
+.nm-g13-nlbase{fill:#fff3cf;stroke:var(--gold-deep);stroke-width:2}
+.nm-g13-nlbt{font-size:14px;font-weight:900;fill:#7a5a12}
+.nm-g13-nlarc{fill:none;stroke:var(--ok);stroke-width:1.6;stroke-dasharray:3 3}
+.nm-g13-nldot{fill:var(--ok)}
+
+/* ── 핀볼(g13Pinball) ── */
+.nm-g13-pinboard{display:grid;grid-template-columns:repeat(var(--cols,4),52px);gap:5px;padding:10px;border:3px solid #c8b583;border-radius:18px;background:#fffaf0;box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf}
+.nm-g13-pcell{width:52px;height:52px;border-radius:12px;border:2.5px solid #e3d3ac;background:#fff;font-size:24px;font-weight:900;color:var(--sub);display:grid;place-items:center;padding:0;cursor:pointer;touch-action:manipulation}
+.nm-g13-pcell.giv{color:var(--blue-deep);border-color:#c8b583;background:#f6efd9}
+.nm-g13-pcell.put{background:#eafaf1;border-color:var(--ok);color:var(--ok);animation:tc-pop .25s ease}
+.nm-g13-pcell.last{box-shadow:0 0 0 3px rgba(46,158,107,.3)}
+.nm-g13-pcell.blk{background:#e6e1d5;border-color:#d4cbb4;cursor:default}
+.nm-g13-pdot{width:22px;height:22px;border-radius:50%;background:#3a3f4d;display:block}
+
+/* ── 개수·순서 칠하기(g13OrdPaint) / 양쪽 순서수(g13OrdRow) ── */
+.nm-g13-oprow{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.nm-g13-opcap{display:flex;gap:8px;align-items:baseline;font-size:20px;color:var(--blue-deep)}
+.nm-g13-opcap i{font-style:normal;font-size:12px;font-weight:800;color:var(--sub)}
+.nm-g13-opline{display:flex;gap:4px;padding:8px;border:3px solid #c8b583;border-radius:16px;background:#fffaf0;box-shadow:0 4px 0 #efe6cf}
+.nm-g13-opc{width:30px;height:30px;border-radius:50%;border:2.5px solid #c8b583;background:#fff;padding:0;display:grid;place-items:center;font-size:22px;cursor:pointer;touch-action:manipulation}
+.nm-g13-opc.on{background:#ffe9a8;border-color:#d9a82a}
+.nm-g13-orends{display:flex;justify-content:space-between;width:min(340px,92vw);font-size:13px;font-weight:800;color:var(--sub)}
+.nm-g13-orstrip{display:flex;gap:6px;padding:8px;border:3px solid #c8b583;border-radius:16px;background:#fffaf0;box-shadow:0 4px 0 #efe6cf;flex-wrap:nowrap;max-width:96vw}
+.nm-g13-orstrip.v{flex-direction:column}
+.nm-g13-orcell{width:34px;height:34px;border-radius:9px;border:2.5px solid #c8b583;background:#fff;display:grid;place-items:center;font-size:24px;flex:none}
+.nm-g13-orcell.on{background:#ffe9a8;border-color:#d9a82a}
+.nm-g13-orctl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.nm-g13-pm{width:48px;height:48px;border-radius:14px;border:2.5px solid var(--line);background:#fff;font-size:28px;font-weight:900;color:var(--blue-deep);cursor:pointer;box-shadow:0 4px 0 #eceae4}
+.nm-g13-orhint{font-size:14px;font-weight:800;color:var(--sub);max-width:230px;text-align:center}
+.nm-g13-orcards{display:flex;gap:6px;justify-content:center;flex-wrap:nowrap}
+.nm-g13-orcard{width:42px;height:54px;border-radius:10px;border:2.5px solid #c8b583;background:#fffdf6;display:grid;place-items:center;font-size:26px;font-weight:900;color:var(--blue-deep)}
+.nm-g13-orcard.ref{background:#ffe9a8;border-color:#d9a82a}
+.nm-g13-ordw{font-size:22px;font-weight:900;color:var(--blue-deep)}
+
+/* ── 삼각형 화살표(g13ArrowTri) ── */
+.nm-g13-tribox{width:min(300px,84vw);border:3px solid #e3d3ac;border-radius:20px;background:linear-gradient(180deg,#fffaf0,#f7ecd2);box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf;padding:8px;box-sizing:border-box;touch-action:manipulation}
+.nm-g13-trisvg{width:100%;height:auto;display:block}
+.nm-g13-trg{stroke:#c8b583;stroke-width:1.6;stroke-linecap:round}
+.nm-g13-tre{stroke:var(--ok);stroke-width:2.4;stroke-linecap:round}
+.nm-g13-trh{fill:var(--ok)}
+.nm-g13-trhit{stroke:transparent;stroke-width:14;cursor:pointer}
+.nm-g13-trv circle{fill:#fff;stroke:var(--blue-deep);stroke-width:1.8}
+.nm-g13-trv.blank circle{stroke:var(--gold-deep);stroke-dasharray:3 2;fill:#fffaf0}
+.nm-g13-trv text{font-size:13px;font-weight:900;fill:var(--blue-deep)}
+.nm-g13-trv{cursor:pointer}
+
+/* ── 하나 더(g13Make) ── */
+.nm-g13-makeboard{min-height:120px}
+.nm-tm-stamp.fixed{opacity:.92;cursor:default;filter:saturate(.7) drop-shadow(0 2px 2px rgba(0,0,0,.12))}
+
+@media (max-width:420px){
+  .nm-g13-mc{width:66px;height:64px}
+  .nm-g13-bignum{font-size:54px}
+}

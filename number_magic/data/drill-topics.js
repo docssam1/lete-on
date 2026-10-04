@@ -719,6 +719,7 @@ var CURATED_TOPICS = [
 /* 기존 문구/순서는 보존한다. 새 레벨은 threads.js에서 자동으로 가져오며,
    처음 등장한 스레드는 갈래를 명시해야 한다. */
 var ADDITIONAL_THREADS = {
+  preschool:['NL17','NL18','NL19','NL20','NL21','NL22'],   /* G1-1~3호(N-01~03) 새 스레드 — 한 줄 추가(다른 묶음과 병합 시 합칠 것) */
   decimal:['DC6'],
   middle1:['MD68','MD69','MD70','MD73','MD82','MD84','MD89'],
   middle2:['MD63','MD64','MD65','MD71','MD72','MD74','MD75','MD76','MD88'],
