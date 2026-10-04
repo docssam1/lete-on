@@ -237,7 +237,12 @@ function render(problem, container, onAnswer){
     case 'base10':       return renderBase10(problem,container,onAnswer);
     case 'compareSteps': return renderCompareSteps(problem,container,onAnswer);
     case 'graphPlane':   return renderGraphPlane(problem,container,onAnswer);
-    default:             return renderFallback(problem,container,onAnswer);
+    default:{
+      /* 확장 위젯(app/g1/*.widgets.js) — window.NM_WIDGET_EXT[이름] = function(problem, container, onAnswer, KIT) */
+      const ext=window.NM_WIDGET_EXT&&window.NM_WIDGET_EXT[w];
+      if(typeof ext==='function')return ext(problem,container,onAnswer,window.NM_WIDGET_KIT);
+      return renderFallback(problem,container,onAnswer);
+    }
   }
 }
 
@@ -2362,6 +2367,8 @@ function renderGraphPlane(problem, container, onAnswer){
 /* ─────────────────────────────────────────
    EXPORT
 ───────────────────────────────────────── */
+/* 확장 위젯이 쓰는 공용 도구 */
+window.NM_WIDGET_KIT={art,esc,shake,buildNumpad,renderKaTeX};
 window.NM_WIDGETS={
   render,
   renderCubes,
