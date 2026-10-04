@@ -79,7 +79,7 @@ export const COURSE02_A1_MULTI_PATTERN_LESSON = Object.freeze({
   title: "여러 반복마디를 한 카드로 합쳐요",
   unit: "마디수열과 규칙 찾기",
   status: "pilot",
-  learnerStage: "필즈 더 클래식 2과정 A1; 연령 미확정",
+  learnerStage: "FC 2과정 A1; 연령 미확정",
   representativeConcept: "색·개수·모양 또는 모양·색·크기의 서로 다른 반복마디를 각각 계산해 같은 번째 그림으로 합치기",
   story: { title: "세 줄 카드 공방", text: "한 그림을 이루는 세 가지 조건이 서로 다른 속도로 반복됩니다.", mission: "같은 번째에서 세 줄의 값을 모아 그림 하나를 완성하세요." },
   explanation: { headline: "세 반복마디를 따로 찾고 합치는 방법", steps: ["문제에 나온 색, 개수, 모양 또는 크기의 한 마디를 각각 찾습니다.", "목표 번째를 각 마디 길이로 나누어 남는 자리를 확인합니다.", "찾은 세 값을 한 그림에 합친 뒤 모든 조건을 다시 확인합니다."] },

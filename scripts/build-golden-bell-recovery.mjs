@@ -20,7 +20,7 @@ const bank = await loadJson(baseArg);
 assert.equal(bank.schemaVersion, 1);
 const baseline = structuredClone(bank.books);
 const version = "source-recovery-20260906";
-const learnerStage = "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정";
+const learnerStage = "7세 8월부터 초등 1학년 초반 · FC 1과정";
 const publicGroups = [];
 const protectedKeys = /^(?:answer|solution|privateAnswer|workedSteps|workedSolution|evidence|sourcePath|fingerprint)$/i;
 function assertPublic(value) {

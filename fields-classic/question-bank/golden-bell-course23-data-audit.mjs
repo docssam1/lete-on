@@ -88,7 +88,7 @@ for (const book of COURSE23_PILOT_BOOKS) {
       assert.equal(lesson.experience.openingPrompt, lesson.experience.tracks[0].openingPrompt);
       assert.equal(lesson.experience.hint, lesson.experience.tracks[0].hint);
     } else {
-      assert.equal(lesson.learnerStage, `필즈 더 클래식 ${book.courseId === "course-02" ? "2" : "3"}과정 ${book.label}; 연령 미확정`);
+      assert.equal(lesson.learnerStage, `FC ${book.courseId === "course-02" ? "2" : "3"}과정 ${book.label}; 연령 미확정`);
     }
     for (const item of [...lesson.original.items, lesson.extension, ...lesson.similarPractice]) {
       practiceCount++; assert(!ids.has(item.id)); ids.add(item.id); assert(!refs.has(item.answerRef)); refs.add(item.answerRef);

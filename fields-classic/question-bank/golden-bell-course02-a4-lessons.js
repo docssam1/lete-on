@@ -376,7 +376,7 @@ function makeLesson({ lessonId, title, unit, concept, tracks, visuals, sourceNot
     title,
     unit,
     status: "pilot",
-    learnerStage: "필즈 더 클래식 2과정 A4; 연령 미확정",
+    learnerStage: "FC 2과정 A4; 연령 미확정",
     representativeConcept: concept,
     story: {
       title: "조건을 눈에 보이게 정리해요",

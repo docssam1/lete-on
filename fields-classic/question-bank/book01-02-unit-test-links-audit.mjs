@@ -347,7 +347,7 @@ const auditBook02SourceStress = () => {
   }
 };
 
-assert(LEARNER_STAGE === "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정", "learner stage contract changed");
+assert(LEARNER_STAGE === "7세 8월부터 초등 1학년 초반 · FC 1과정", "learner stage contract changed");
 assert(BOOK01_02_UNIT_TEST_LINKS["book-01"] === BOOK01_UNIT_TEST_LINKS, "book-01 export alias mismatch");
 assert(BOOK01_02_UNIT_TEST_LINKS["book-02"] === BOOK02_UNIT_TEST_LINKS, "book-02 export alias mismatch");
 for (const [bookId, links] of Object.entries(BOOK01_02_UNIT_TEST_LINKS)) {

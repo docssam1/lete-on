@@ -84,7 +84,7 @@ const tracks = [
 
 export const COURSE02_A1_STONE_GROWTH_LESSON = Object.freeze({
   id: lessonId, courseId: "course-02", bookId: "course-02-a1", label: "A1", title: "도형에서 규칙 찾기", unit: "도형에서 규칙 찾기", status: "pilot",
-  learnerStage: "필즈 더 클래식 2과정 A1; 연령 미확정",
+  learnerStage: "FC 2과정 A1; 연령 미확정",
   representativeConcept: "성장하는 삼각형에서 두 색 바둑돌의 개수와 차를 비교하고 최초 역전 단계를 찾기",
   story: { title: "두 색 돌의 성장", text: "삼각형이 커질 때 바깥과 안쪽의 돌을 색별로 세어 봐요.", mission: "두 색의 개수와 차가 단계에 따라 어떻게 바뀌는지 확인하세요." },
   explanation: { headline: "바깥 돌과 안쪽 돌을 나누어 세기", steps: ["바깥 줄의 돌은 변과 꼭짓점을 겹치지 않게 셉니다.", "안쪽 돌은 줄별 누적으로 셉니다.", "두 색의 개수와 차를 비교하고 앞 단계와 대조해 최초 역전을 확인합니다."] },

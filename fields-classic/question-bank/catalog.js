@@ -8,7 +8,7 @@ export const NUMBER_RANGES = [
   { id: "100", label: "100까지", max: 100 }
 ];
 
-// 실제 필즈 시험에 연결하는 쌓기나무 유형만 노출합니다.
+// 실제 FC 시험에 연결하는 쌓기나무 유형만 노출합니다.
 export const GEOMETRY_CUBE_TYPES = [
   { id: "cube-count-solid", label: "입체를 이루는 쌓기나무 전체 개수", game: "count-heights", ready: true },
   { id: "cube-different-shape", label: "같은 개수로 만든 입체 중 다른 모양", game: "find-shape", ready: false },

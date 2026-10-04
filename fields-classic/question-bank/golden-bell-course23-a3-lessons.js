@@ -238,7 +238,7 @@ function makeLesson({ bookId, lessonId, title, unit, concept, tracks, visuals, s
   const items = makeItems(bookId, lessonId, visuals);
   return Object.freeze({
     id: lessonId, bookId, courseId: bookId.startsWith("course-02") ? "course-02" : "course-03", label: "A3",
-    title, unit, status: "pilot", learnerStage: `필즈 더 클래식 ${bookId.startsWith("course-02") ? "2과정" : "3과정"} A3; 연령 미확정`,
+    title, unit, status: "pilot", learnerStage: `FC ${bookId.startsWith("course-02") ? "2과정" : "3과정"} A3; 연령 미확정`,
     representativeConcept: concept,
     story: { title: "개념 실험실", text: "교재의 활동과 권별 테스트에서 확인한 사고 과정을 움직이는 그림으로 익힙니다.", mission: "조건을 식과 그림으로 정리하고 원래 조건으로 검산하세요." },
     explanation: { headline: title, steps: tracks.map((track) => track.title) },

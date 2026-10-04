@@ -105,7 +105,7 @@ export const COURSE03_A1_COMPLEX_FRACTION_LESSON = Object.freeze({
   representativeConcept: "큰 분수선을 나눗셈으로 바꾸고, 유클리드 나눗셈으로 연분수의 층을 만들기",
   story: { title: "분수 계단", text: "분수 안의 계산을 한 층씩 정리해 하나의 값으로 만들어요.", mission: "큰 분수선, 뒤집어 곱하기, 몫의 순서를 차례로 확인하세요." },
   explanation: { headline: "번분수 계산과 연분수 변환", steps: ["큰 분수선을 나눗셈으로 바꾸고 아래 분수를 뒤집어 곱합니다.", "분수를 연분수로 바꿀 때는 몫과 나머지를 반복해 찾습니다.", "완성한 식을 안쪽부터 계산해 원래 값과 같은지 확인합니다."] },
-  learnerStage: "필즈 더 클래식 3과정 A1; 연령 미확정", status: "pilot",
+  learnerStage: "FC 3과정 A1; 연령 미확정", status: "pilot",
   source: { origin: "textbook-derived", note: "번분수와 연분수의 계산 원리를 바탕으로 새 수와 문장으로 구성한 개념 학습입니다." },
   experience: { kind: "course-concept", tracks, openingPrompt: tracks[0].openingPrompt, hint: tracks[0].hint, beats: tracks[0].beats },
   dailyPractice: { problemCount: 10, original: 4, extension: 1, similar: 5, estimatedMinutes: null },

@@ -39,7 +39,7 @@ for (const [lessonIndex, lesson] of COURSE02_A4_LESSONS.entries()) {
   assert.equal(lesson.bookId, "course-02-a4", `${lesson.id} book id`);
   assert.equal(lesson.courseId, "course-02", `${lesson.id} course id`);
   assert.equal(lesson.label, "A4", `${lesson.id} label`);
-  assert.equal(lesson.learnerStage, "필즈 더 클래식 2과정 A4; 연령 미확정", `${lesson.id} learner stage`);
+  assert.equal(lesson.learnerStage, "FC 2과정 A4; 연령 미확정", `${lesson.id} learner stage`);
   assert.equal(lesson.status, "pilot", `${lesson.id} release state`);
   assert.ok(lesson.experience.tracks.length >= 2, `${lesson.id} concept track count`);
   assert.match(lesson.source.note, expectedPageEvidence[lessonIndex], `${lesson.id} exact student-book page range`);

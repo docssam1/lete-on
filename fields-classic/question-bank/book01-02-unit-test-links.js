@@ -155,7 +155,7 @@ const withContracts = (bookId, links) => links.map((entry) => Object.freeze({
   generationCaseMode: entry.sourceFidelity === "exact-generator" ? "source" : "variant-from-source"
 }));
 
-export const LEARNER_STAGE = "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정";
+export const LEARNER_STAGE = "7세 8월부터 초등 1학년 초반 · FC 1과정";
 
 export const BOOK01_UNIT_TEST_LINKS = Object.freeze(withContracts("book-01", [
   link({ number: 1, typeId: "symbol-balanced-congruent-partition", label: "1·2·3·4가 한 개씩 들어가게 네 조각으로 나누기", sourceLocator: "book01-unit-test:q01", sourceVisualSignature: "4x4-grid-four-symbols-congruent-four-way-partition", verified: false, reason: "원본은 두 문제를 모두 그리는 응답인데 현재 generator는 한 문제만 생성합니다." }),

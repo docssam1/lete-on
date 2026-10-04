@@ -39,7 +39,7 @@ const tracks = [
 
 export const COURSE02_A1_WINDMILL_PATTERN_LESSON = Object.freeze({
   id: lessonId, courseId: "course-02", bookId: "course-02-a1", label: "A1", title: "바람개비의 색칠 위치를 찾아요", unit: "마디수열과 규칙 찾기", status: "pilot",
-  learnerStage: "필즈 더 클래식 2과정 A1; 연령 미확정",
+  learnerStage: "FC 2과정 A1; 연령 미확정",
   representativeConcept: "갔다 돌아오는 색칠 위치 다섯 그림을 한 마디로 묶어 먼 번째 위치 찾기",
   story: { title: "바람개비 조명", text: "바람개비의 한 날개가 정해진 순서로 색칠됩니다.", mission: "서로 다른 위치의 수가 아니라 반복되는 그림의 수로 한 마디를 찾으세요." },
   explanation: { headline: "색칠 위치의 반복마디", steps: ["첫째부터 색칠된 날개의 위치를 차례로 읽습니다.", "다섯 그림을 한 마디로 묶고 두 마디가 같은지 확인합니다.", "목표 번째를 5로 나눈 나머지로 색칠할 위치를 찾습니다."] },

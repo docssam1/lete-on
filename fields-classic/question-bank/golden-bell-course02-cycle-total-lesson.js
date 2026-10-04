@@ -98,7 +98,7 @@ export const COURSE02_A1_CYCLE_TOTAL_LESSON = Object.freeze({
   title: "반복마디로 전체의 차와 합을 구해요",
   unit: "마디수열과 규칙 찾기",
   status: "pilot",
-  learnerStage: "필즈 더 클래식 2과정 A1; 연령 미확정",
+  learnerStage: "FC 2과정 A1; 연령 미확정",
   representativeConcept: "전체 항을 완전한 반복마디와 남은 항으로 나누어 두 색의 개수 차 또는 수열의 합 구하기",
   story: { title: "끝까지 이어진 반복 줄", text: "같은 마디가 길게 반복되어도 모든 항을 하나씩 세지 않고 전체를 구할 수 있습니다.", mission: "완전한 마디와 남은 항을 빠짐없이 합쳐 확인하세요." },
   explanation: { headline: "완전한 마디와 남은 항을 함께 계산하는 방법", steps: ["문제에서 반복되는 한 마디를 정확히 찾습니다.", "전체 항 수를 마디 길이로 나누어 완전한 마디 수와 남은 항 수를 구합니다.", "마디마다의 개수나 합을 계산한 뒤 남은 항을 더하고 전체 항 수로 검산합니다."] },

@@ -70,7 +70,7 @@ const tracks = [
 export const COURSE02_A1_POLYGON_LESSON = Object.freeze({
   id: lessonId, courseId: "course-02", bookId: "course-02-a1", label: "A1",
   title: "도형에서 규칙 찾기", unit: "도형에서 규칙 찾기", status: "pilot",
-  learnerStage: "필즈 더 클래식 2과정 A1; 연령 미확정",
+  learnerStage: "FC 2과정 A1; 연령 미확정",
   representativeConcept: "꼭짓점을 한 번만 세어 정다각형 둘레의 점 수를 구하고, 같은 수로 다른 정다각형 만들기",
   story: { title: "바둑돌 모양 바꾸기", text: "같은 바둑돌을 남기거나 보태지 않고 다른 정다각형의 둘레로 옮겨요.", mission: "꼭짓점의 겹침을 생각해 전체 수를 정확히 보존하세요." },
   explanation: { headline: "꼭짓점을 한 번만 세는 방법", steps: ["한 변에서 다음 변으로 넘어갈 때 꼭짓점을 다시 세지 않습니다.", "전체 수는 변의 수와 한 변의 점 수에서 1을 뺀 수의 곱입니다.", "도형을 바꿀 때도 전체 점 수가 같은지 다시 확인합니다."] },
