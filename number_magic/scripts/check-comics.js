@@ -16,7 +16,7 @@ const PALETTE=new Set(Object.values(H.C).map(c=>c.toLowerCase())
   .concat(['#fff','#ffffff','#eac996','#dfe7db','#e0d6bd','#8d97ad','#2b3a67','#5b8dd9','#e08a2e','#ffd9c4','#c2571f','#b8541f','#dfe9f7']));
 
 const HANGUL=/[가-힣]/;
-const LOCAL_ART=/^assets\/images\/(?:characters\/[a-z]+|concepts\/(?:counting-tile|counting-rod|hands-nine))\.png$/;
+const LOCAL_ART=/^assets\/images\/(?:characters\/[a-z0-9-]+|concepts\/(?:counting-tile|counting-rod|hands-nine))\.png$/;
 
 function checkPart(file){
   const errs=[],warns=[];

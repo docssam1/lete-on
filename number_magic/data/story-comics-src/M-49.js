@@ -2,6 +2,7 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,sheep,scholar,greek,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {euclid}=H;
   return { panels:[
     { art: svg(
         '<rect x="70" y="40" width="80" height="45" rx="6" fill="'+C.cream+'" stroke="'+C.ink+'" stroke-width="2.5"/>'
@@ -26,7 +27,7 @@ module.exports=function(H){
         paper(20,20,100,100)
         + '<rect x="35" y="45" width="70" height="45" fill="none" stroke="'+C.ink+'" stroke-width="2"/>'
         + '<line x1="70" y1="45" x2="70" y2="90" stroke="'+C.ink+'" stroke-width="2"/>'
-        + greek(160,90,0.85)),
+        + euclid(160,90,0.85)),
       text: { ko:'기원전 3세기, 유클리드가 『원론』에서 이 원리를 도형으로 처음 증명했어요.',
               en:'In the 3rd century BCE, Euclid was the first to prove this principle geometrically, in his "Elements".',
               zh:'公元前3世纪，欧几里得在《几何原本》中首次用图形证明了这个原理。' } },

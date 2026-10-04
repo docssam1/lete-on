@@ -2,11 +2,12 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,boy,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {gaussBoy}=H;
   return { panels:[
     { art: svg(
         paper(20,14,160,58)
         +txt(100,48,15,C.ink,'1+2+3+···+100=?','font-family="Georgia,serif"')
-        +boy(100,108,1)),
+        +gaussBoy(100,108,1)),
       text: { ko:'200년 전, 선생님이 일곱 살 아이에게 1부터 100까지 더하면 얼마인지 물었어요.',
               en:'Two hundred years ago, a teacher asked a seven-year-old to add up everything from 1 to 100.',
               zh:'两百年前，老师让一个七岁的孩子把1加到100，看看是多少。' } },

@@ -2,6 +2,7 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,sheep,scholar,wig,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {napier}=H;
   return { panels:[
     { art: svg(
         paper(20,15,160,55)
@@ -13,7 +14,7 @@ module.exports=function(H){
               en:'Long ago, multiplying and dividing large numbers took people a very long time.',
               zh:'很久以前，人们乘除大数字要花费很长时间。' } },
     { art: svg(
-        wig(70,85,1.3)
+        napier(70,85,1.3)
         +paper(105,25,75,75)
         +txt(142,55,14,C.ink,'1550–1617')
         +txt(142,92,26,C.gold,'log')),
