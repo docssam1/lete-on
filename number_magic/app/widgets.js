@@ -18,6 +18,11 @@ function art(e){
       if(svg) return '<span class="nm-art-animal">'+svg+'</span>';
     }
   }
+  /* 세는 물건(사과·별·풍선…)은 젤리 SVG(object-art.js)로 — 없으면 이모지 글자 그대로 */
+  if(window.NM_OBJECTS&&window.NM_OBJECTS.has(e)){
+    var o=window.NM_OBJECTS.svg(e);
+    if(o) return '<span class="nm-art-obj" aria-hidden="true">'+o+'</span>';
+  }
   return esc(e);
 }
 

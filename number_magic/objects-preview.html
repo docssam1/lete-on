@@ -1,0 +1,5 @@
+<!doctype html><meta charset="utf-8"><title>objects</title>
+<style>body{margin:12px;font:12px sans-serif;background:#fffdf7}.g{display:flex;flex-wrap:wrap;gap:12px}.c{width:110px;text-align:center}.c svg{width:96px;height:96px}.s svg{width:34px;height:34px}.row{display:flex;gap:4px;margin:8px 0}</style>
+<script src="app/object-art.js"></script><div class="g" id="g"></div><div class="row s" id="s"></div>
+<script>NM_OBJECTS.tokens().forEach(t=>{const d=document.createElement('div');d.className='c';d.innerHTML=NM_OBJECTS.svg(t)+'<br>'+t;g.appendChild(d)});
+NM_OBJECTS.tokens().forEach(t=>{s.innerHTML+=NM_OBJECTS.svg(t)+NM_OBJECTS.svg(t)});</script>
