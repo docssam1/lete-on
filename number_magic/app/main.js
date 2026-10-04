@@ -1103,7 +1103,7 @@ function screenWelcome(){
     scr.innerHTML=`
     <div class="nm-ob">
       <div class="nm-ob-card">
-        <div class="nm-ob-dupico">🧙</div>
+        <div class="nm-ob-dupico"><img src="${window.NM_CHAR_BASE||'assets/characters/'}numi-wizard.png" alt="" draggable="false" style="height:64px;width:auto;vertical-align:middle"></div>
         <h1 class="nm-ob-title">${S.lang==='ko'?`'${esc(name)}' 친구가 이미 있어요!`:S.lang==='en'?`'${esc(name)}' already exists!`:`已经有叫'${esc(name)}'的朋友了！`}</h1>
         <p class="nm-ob-sub">${S.lang==='ko'?'예전에 만든 내 캐릭터라면 이어서 할 수 있어요.':S.lang==='en'?'If that was you, you can continue your adventure.':'如果那是你，可以继续冒险。'}</p>
         <button class="nm-btn nm-ob-go" id="obResume">${S.lang==='ko'?'이건 나예요! 이어하기 ▶':S.lang==='en'?"That's me! Continue ▶":'是我！继续 ▶'}</button>
@@ -3237,7 +3237,7 @@ function openStudentSwitch(){
   document.body.insertAdjacentHTML('beforeend',`<div class="nm-gate-overlay nm-cs-overlay" id="nmWhoSheet">
     <div class="nm-gate-card nm-cs-card">
       <button class="nm-gate-x" id="whoX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
-      <h3 class="nm-cs-title">🧙 ${lk('누구의 로드맵을 볼까요?','Whose roadmap?','看谁的路线图？')}</h3>
+      <h3 class="nm-cs-title"><img src="${window.NM_CHAR_BASE||'assets/characters/'}numi-wizard.png" alt="" draggable="false" style="height:26px;width:auto;vertical-align:middle"> ${lk('누구의 로드맵을 볼까요?','Whose roadmap?','看谁的路线图？')}</h3>
       <div class="nm-slots-grid">${cards}</div>
       <button class="nm-btn full ghost" id="whoAge">🎒 ${schoolGradeLabel()
         ? lk(`학년 — ${schoolNowLabel()} · 고치기`,`Grade — ${schoolNowLabel()} · change`,`年级 — ${schoolNowLabel()} · 修改`)
@@ -7331,7 +7331,7 @@ function renderSlotCards(){
   const slot=$('#nm-slots-slot');
   if(!slot)return;
   const ko=S.lang==='ko', en=S.lang==='en';
-  const titleTxt=ko?'🧙 우리 집 마법사들':en?'🧙 Our Wizards':'🧙 我家的魔法师';
+  const titleTxt=(ko?'우리 집 마법사들':en?'Our Wizards':'我家的魔法师');
   const active=activeSlot();
   let cards='';
   for(let n=1;n<=SLOT_COUNT;n++){
@@ -7363,7 +7363,7 @@ function renderSlotCards(){
     }
   }
   slot.innerHTML=`<div class="nm-slots-wrap">
-    <div class="nm-slots-title">${titleTxt}</div>
+    <div class="nm-slots-title"><img src="${window.NM_CHAR_BASE||'assets/characters/'}numi-wizard.png" alt="" draggable="false" style="height:26px;width:auto;vertical-align:middle"> ${titleTxt}</div>
     <div class="nm-slots-grid">${cards}</div>
   </div>`;
   slot.querySelectorAll('.nm-slot-card[data-slot]').forEach(b=>{

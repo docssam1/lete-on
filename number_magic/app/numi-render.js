@@ -330,6 +330,10 @@ function symLimbs(fg, id){
 </g>`;
 }
 function symbolCharacterSVG(id, fg){
+  /* 젤리 캐릭터(app/jelly-char.js)가 있으면 졸라맨식 도형 대신 그것을 쓴다. */
+  const it = (window.NM_AVATAR && window.NM_AVATAR.symbols || []).find(s=>s.id===id);
+  const J = window.NM_JELLY;
+  if(J && it && J.has(it.glyph)) return `<g>${J.svg(it.glyph,{color:fg,inner:true})}</g>`;
   return `<g>${symLimbs(fg, id)}${symGlyphPath(id, fg)}${symFace(id)}</g>`;
 }
 /* PNG 우선(sym-<id>.png, 숫자 캐릭터와 같은 tintFilter 적용) · 없으면 <img onerror>로
