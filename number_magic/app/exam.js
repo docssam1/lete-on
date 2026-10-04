@@ -3001,7 +3001,7 @@ const ANIMAL_GLYPH = {
   'animal:turtle':'🐢', 'animal:squirrel':'🐿️', 'animal:rabbit':'🐰',
   'animal:bear':'🐻', 'animal:fox':'🦊', 'animal:deer':'🦌', 'animal:duck':'🦆'
 };
-function nlGlyph(tok){ return ANIMAL_GLYPH[tok] || tok || '●'; }
+function nlGlyph(tok){ if(typeof tok==='string' && tok.indexOf('num:')===0) return tok.slice(4); return ANIMAL_GLYPH[tok] || tok || '●'; }
 function nlChunk(arr, n){ const out = []; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i, i+n)); return out; }
 function nlStage(inner, extraCls){ return `<div class="nm-nl-stage${extraCls ? ' ' + extraCls : ''}">${inner}</div>`; }
 function nlCard(stage, ans){ return `<div class="nm-nl">${stage}${ans || ''}</div>`; }

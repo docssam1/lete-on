@@ -31,6 +31,35 @@
     ['🍪', '쿠키',   'cookies',     '饼干']
   ];
 
+  /* 흩어진 장면 좌표 — 교재의 '여기저기 널린 그림 세기' 판. 0~100 정사각 판 위에 서로 겹치지 않게
+     (최소 거리를 못 지키면 조금씩 줄여서라도 반드시 n개를 놓는다). rng 만 쓰므로 같은 씨앗이면 같은 판. */
+  function scatterPos(rng, sizes) {
+    /* 크기마다 차지하는 반지름(판 폭의 %)이 다르다 — 60px 물건 = 판 폭 340px 의 약 17.6% */
+    const rad = sizes.map(s => 8.8 * s);
+    const pts = [];
+    let k = 1.0;
+    while (pts.length < sizes.length) {
+      const i = pts.length;
+      let ok = false;
+      for (let tries = 0; tries < 70 && !ok; tries++) {
+        const m = Math.min(rad[i] * 1.12, 30);
+        const x = m + R(rng, 0, Math.round((100 - 2 * m) * 10)) / 10, y = m + R(rng, 0, Math.round((100 - 2 * m) * 10)) / 10;
+        if (pts.every((p, j) => Math.hypot(p.x - x, p.y - y) >= (rad[i] + rad[j]) * k)) { pts.push({ x, y }); ok = true; }
+      }
+      if (!ok) k -= 0.06;                /* 못 놓으면 간격 기준을 조금 낮춰서라도 반드시 놓는다 */
+    }
+    return pts;
+  }
+  /* 스캐터 항목에 좌표·크기·기울기를 입힌다 — 크기는 같은 종류끼리도 제각각(0.7~1.45배) */
+  function dress(rng, items) {
+    const sizes = items.map(() => R(rng, 70, 145) / 100);
+    const pos = scatterPos(rng, sizes);
+    return items.map((it, i) => Object.assign({}, it, {
+      x: Math.round(pos[i].x * 10) / 10, y: Math.round(pos[i].y * 10) / 10,
+      r: R(rng, -28, 28), s: sizes[i], f: R(rng, 0, 4)
+    }));
+  }
+
   /* ── NL1 — 수 세기와 개수 ─────────────────────────────────
      mode:'count'  섞인 그림에서 특정 대상만 세기 → tapCount 위젯
      mode:'make'   제시된 수만큼 만들기(탭 스탬프)   → tapMake 위젯 */
@@ -53,6 +82,27 @@
         widget:     'tapMake',
         emoji:      em,
         target:     n
+      };
+    }
+
+    /* ---- digits: 글꼴이 제각각인 숫자들 사이에서 지정한 숫자만 세기(main 전용, 4번에 1번쯤) ---- */
+    if (mode === 'count' && lv === 'main' && R(rng, 1, 4) === 1) {
+      const digs = shuffle(rng, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const d = digs[0], nT = R(rng, 2, 7), nO = R(rng, 5, 9);
+      const items = [];
+      for (let i = 0; i < nT; i++) items.push({ e: 'num:' + d, t: true });
+      for (let i = 0; i < nO; i++) items.push({ e: 'num:' + digs[1 + (i % 3)], t: false });
+      return {
+        prompt: {
+          ko: `숫자 ${d}은(는) 모두 몇 개일까요? ${d}만 톡톡 세어 보세요`,
+          en: `How many times does the digit ${d} appear? Tap and count only the ${d}s`,
+          zh: `数字${d}一共有几个？只点${d}数一数`
+        },
+        answer:     nT,
+        answerType: 'number',
+        widget:     'tapCount',
+        emoji:      'num:' + d,
+        items:      dress(rng, shuffle(rng, items))
       };
     }
 
@@ -79,7 +129,7 @@
       answerType: 'number',
       widget:     'tapCount',
       emoji:      em,
-      items:      shuffle(rng, items)
+      items:      dress(rng, shuffle(rng, items))
     };
   };
 

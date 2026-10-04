@@ -18,6 +18,8 @@ function art(e){
       if(svg) return '<span class="nm-art-animal">'+svg+'</span>';
     }
   }
+  /* 'num:7' — 글꼴·기울기가 제각각인 숫자(교재의 '숫자의 개수'). 모양은 .nm-dg-f0~4 */
+  if(typeof e==='string'&&e.indexOf('num:')===0) return '<span class="nm-dg">'+esc(e.slice(4))+'</span>';
   /* 세는 물건(사과·별·풍선…)은 젤리 SVG(object-art.js)로 — 없으면 이모지 글자 그대로 */
   if(window.NM_OBJECTS&&window.NM_OBJECTS.has(e)){
     var o=window.NM_OBJECTS.svg(e);
@@ -834,12 +836,19 @@ function renderTapCount(problem, container, onAnswer){
   const scene=root.querySelector('.nm-tc-scene');
   const cnt=root.querySelector('.nm-tc-cnt');
 
+  const scatter=items.length&&items[0].x!=null;
+  if(scatter)scene.classList.add('nm-tc-scatter');
   function paint(){
     scene.innerHTML='';
     items.forEach(it=>{
       const el=document.createElement('button');
       const ord=marked.indexOf(it.id);
-      el.className='nm-tc-item'+(ord>=0?' on':'');
+      el.className='nm-tc-item'+(ord>=0?' on':'')+(scatter?' sc':'');
+      if(scatter){
+        el.style.left=it.x+'%';el.style.top=it.y+'%';
+        el.style.setProperty('--r',it.r+'deg');el.style.setProperty('--s',it.s);
+        if(/^num:/.test(it.e))el.classList.add('dgf'+it.f);
+      }
       el.innerHTML=`<span class="nm-tc-emoji">${art(it.e)}</span>`+
         (ord>=0?`<span class="nm-tc-ord">${(ord+1)*step}</span>`:'');
       el.addEventListener('pointerup',e=>{
