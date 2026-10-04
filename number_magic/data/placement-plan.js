@@ -105,7 +105,7 @@
     let domain, responseMode, renderData, prompt = p.prompt, answer = p.answer;
     switch (stage.id) {
       case 'f-count5':
-        if (p.answer > (small ? 3 : 5)) return null;
+        if (!Array.isArray(p.items) || p.widget !== 'tapCount' || p.answer > (small ? 3 : 5)) return null;   // 숫자·틀 위젯 굴림은 진단의 '그림 눌러 세기'가 아니다
         domain = 'counting'; responseMode = 'count-tap';
         renderData = { items: p.items.map(x => ({ symbol: x.e, target: x.t === true })), targetSymbol: p.emoji };
         prompt = text('목표 그림과 같은 그림을 모두 눌러요.', 'Tap every object matching the target picture.', '点选所有与目标图形相同的物体。');

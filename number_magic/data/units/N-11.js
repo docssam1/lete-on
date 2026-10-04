@@ -1,60 +1,61 @@
-/* Numbers of Magic — 유닛 N-11: 수 배열·이어 세기 (수의 나라 · 유아 5~7세)
+/* Numbers of Magic — 유닛 N-11: 식과 숫자 카드 (수의 나라 · 유아 5~7세) — 교재 G1-11 대응(2026-10-04)
    tier:'basic' → 경량 플로우: practice → discover(1스테이지) → lab → stamp
-   콘텐츠는 전부 창작(이모지·점 배열) — 라이선스 교재 삽화/지문 미사용 */
+   유아 단계에 식(+ − = □) 표기를 처음 들여오는 유닛. 이어 세기·수-점 매칭은 스레드 NL7 에 그대로 남아 있다(코스 11·17주가 NL7@2·@3 을 부른다).
+   콘텐츠는 전부 창작(별·숫자 카드·식) — 라이선스 교재 삽화/지문 미사용 */
 (function(){
 'use strict';
 window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['N-11'] = {
   id:'N-11', tier:'basic', level:'N', order:11,
-  generator:'nl11_arrange', edu:'유아',
-  title:{ ko:'수 배열·이어 세기', en:'Number Arrays & Counting On', zh:'数字排列与接着数' },
-  subtitle:{ ko:'빈 칸을 채우고, 수와 점 그림을 이어요!', en:'Fill the blanks and match numbers to dot pictures!', zh:'填空格，连数字与点图！' },
+  generator:'nlg11_eqvert', edu:'유아',
+  title:{ ko:'식과 숫자 카드', en:'Equations & Number Cards', zh:'算式与数字卡片' },
+  subtitle:{ ko:'별을 보고 식의 빈칸을 채우고, 숫자 카드로 식을 만들어요!', en:'Look at the stars to fill the equation, then build equations with number cards!', zh:'看星星填算式的空格，再用数字卡片做算式！' },
   icon:'🔢',
 
-  practice:{ generator:'nl11_arrange', level:'practice', count:4, params:{ mode:'seq' },
-    intro:{ ko:'수가 1씩 커지며 순서대로 줄을 서요! 빈 칸에 올 수를 골라 보자',
-      en:'Numbers grow by 1, lining up in order! Pick the missing one',
-      zh:'数字一个一个变大，排排队！选出空格里的数' } },
+  practice:{ generator:'nlg11_eqvert', level:'practice', count:4, params:{ mode:'eq', lv:1 },
+    intro:{ ko:'별이 몇 개인지 보고, 식의 빈칸에 알맞은 수를 써요! 별은 전체의 수예요',
+      en:'Look at how many stars there are, then write the right number in the blank! The stars show the whole',
+      zh:'看看星星有几颗，把合适的数写进算式的空格！星星的数量就是总数' } },
 
   discover:{
     story:{
-      hook:{ ko:'친구 41명이 동그랗게 앉아 셋째마다 한 명씩 빠지는 놀이를 해요. 끝까지 남으려면 몇 번째 자리에 앉아야 할까요?',
-        en:'Forty-one friends sit in a circle and every third one drops out. Which seat survives to the end?',
-        zh:'41个小朋友围成圈，每数到第三个就出局。想留到最后该坐第几个位子？' },
-      history:{ ko:'31번째예요. 세는 규칙이 정해져 있으면 남는 자리도 이미 정해져 있어서, 미리 한 바퀴 세어 보면 알 수 있어요. 아주 오래전부터 전해진 이야기인데, 지금은 자리를 세어 답을 찾는 놀이로 즐긴답니다.',
-        en:'Seat 31. When the counting rule is fixed, the surviving seat is fixed too — walk the circle once on paper and it appears. The story is very old; today we play it as a puzzle about counting positions.',
-        zh:'第31个。数数的规则一旦定下，留到最后的位子也就定了——在纸上走一圈就能找出来。这个故事流传已久，今天我们把它当作数位置的游戏来玩。' }
+      hook:{ ko:'별 5개 중에서 몇 개를 가져갔더니 2개가 남았어요. 가져간 별은 몇 개일까요?',
+        en:'There were 5 stars. Some were taken away and 2 are left. How many were taken?',
+        zh:'有5颗星星，拿走了几颗，还剩2颗。拿走了几颗呢？' },
+      history:{ ko:'3개예요. 이런 문제를 식으로 쓰면 5 − □ = 2 가 돼요. 등호(＝)는 아주 오래전에 한 영국 수학자가 만들었는데, "길이가 같은 두 줄만큼 서로 똑같은 것은 없다"고 생각해서 나란한 두 줄로 나타냈다고 해요.',
+        en:'Three. Written as an equation it is 5 − □ = 2. The equals sign (=) was invented long ago by an English mathematician who thought nothing is more alike than two parallel lines of the same length — so he drew two of them.',
+        zh:'是3颗。写成算式就是 5 − □ = 2。等号(＝)是很久以前一位英国数学家发明的，他觉得没有什么比两条一样长的平行线更相像了，所以就画了两条。' }
     },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
-      { tag:{ko:'① 수와 점은 쌍둥이!',en:'1) Numbers and dots are twins!',zh:'① 数字和点点是双胞胎！'},
-        head:{ko:'같은 수를 다르게 보여주는 두 가지 방법',en:'Two ways to show the same amount',zh:'展示同样数量的两种方式'},
-        desc:{ko:'빈 칸은 앞 수에 1을 더하면 돼요!',
-          en:'For a blank, just add 1 to the number before!',
-          zh:'空格就是前面的数加1！'},
-        mathSteps:[{ko:'앞 수 + 1 = 빈 칸',en:'Previous number + 1 = the blank',zh:'前一个数 + 1 = 空格'},{ko:'점을 세어요',en:'Count the dots',zh:'数一数点点'},{ko:'같은 수끼리 이어요!',en:'Match the same numbers!',zh:'把相同的数连起来！'}],
-        result:{ko:'수 4와 점 4개는 쌍둥이!',en:'The number 4 and four dots are twins!',zh:'数字4和4个点是双胞胎！'} }
+      { tag:{ko:'① 식은 수의 이야기!',en:'1) An equation tells a story!',zh:'① 算式是数的故事！'},
+        head:{ko:'별의 수는 전체, 식은 부분을 맞춰 줘요',en:'The stars are the whole; the equation fits the parts together',zh:'星星的数量是总数，算式把各部分对起来'},
+        desc:{ko:'□가 어디에 있어도 전체와 부분의 관계로 찾을 수 있어요.',
+          en:'Wherever the □ is, you can find it from how the whole and parts connect.',
+          zh:'□不管在哪里，都能用总数和部分的关系找出来。'},
+        mathSteps:[{ko:'별의 수 = 전체',en:'Stars = the whole',zh:'星星的数量 = 总数'},{ko:'더하기: 부분 + 부분 = 전체',en:'Add: part + part = whole',zh:'加法：部分＋部分＝总数'},{ko:'빼기: 전체 − 한 부분 = 다른 부분',en:'Subtract: whole − one part = other part',zh:'减法：总数－一个部分＝另一个部分'}],
+        result:{ko:'전체와 부분으로 □를 찾아요!',en:'Find □ from the whole and the parts!',zh:'用总数和部分找出□！'} }
     ],
-    rule:{ ko:'앞 수 +1! 점은 세어서 같은 수와 이어요!',
-      en:'Prev +1! Count dots and match the same number!',
-      zh:'前一个加1！点数一数，连一样的数！' }
+    rule:{ ko:'더하면 전체! 빼면 나머지 부분! □는 전체와 부분으로 찾아요!',
+      en:'Add to get the whole! Subtract to get the other part! Find □ with the whole and parts!',
+      zh:'加起来是总数！减掉是另一部分！用总数和部分找□！' }
   },
 
-  lab:{ generator:'nl11_arrange', level:'main', count:4, params:{ mode:'match' },
-    intro:{ ko:'수와 점 그림을 이어요! 왼쪽 수 카드를 먼저 톡 — 오른쪽 점 그림을 골라 이어요!',
-      en:'Match numbers to dot pictures! Tap a number card first, then tap its dots!',
-      zh:'连连看！先点左边的数字卡，再点右边的点图！' } },
+  lab:{ generator:'nlg11_make', level:'main', count:4, params:{ mode:'cardeq', kind:'target', lv:1 },
+    intro:{ ko:'숫자 카드로 식을 만들어요! 카드를 눌러 칸에 넣고, 답이 목표 수가 되는 식을 만들어 봐요',
+      en:'Build equations with number cards! Tap cards into the boxes and make equations whose answer is the target',
+      zh:'用数字卡片做算式！点卡片放进格子里，做出得数是目标数的算式' } },
 
-  stamp:{ label:{ ko:'수 배열사', en:'Array Expert', zh:'数列专家' }, coins:20 },
+  stamp:{ label:{ ko:'식 박사', en:'Equation Expert', zh:'算式专家' }, coins:20 },
 
   voice:{
-    correct:[ {ko:'딩동! 딱 맞아요 ✨',en:'Ding! Perfect match!',zh:'叮！配对成功！'},
+    correct:[ {ko:'딩동! 식이 딱 맞아요 ✨',en:'Ding! The equation is exactly right!',zh:'叮！算式完全正确！'},
               {ko:'훌륭해요! 🌟',en:'Excellent!',zh:'太棒了！'},
-              {ko:'점을 잘 셌어요! 🎉',en:'Great dot counting!',zh:'点得真准！'} ],
-    wrong:[ {ko:'음~ 점을 다시 세어볼까요?',en:'Hmm, count the dots again?',zh:'嗯，再数数点点？'},
-            {ko:'앞 수에 1을 더해 봐요!',en:'Add 1 to the number before!',zh:'在前面的数上加1试试！'} ],
-    finish:{ ko:'완벽해요! 수 배열 전문가! 🔢✨', en:'Perfect! Number Array Expert!', zh:'太完美了！数列专家诞生！' }
+              {ko:'별을 잘 읽었어요! 🎉',en:'You read the stars well!',zh:'星星读得真准！'} ],
+    wrong:[ {ko:'음~ 별의 수를 다시 볼까요?',en:'Hmm, look at the stars again?',zh:'嗯，再看看星星的数量？'},
+            {ko:'전체와 부분을 맞춰 봐요!',en:'Fit the whole and the parts together!',zh:'把总数和部分对一对！'} ],
+    finish:{ ko:'완벽해요! 식 박사 탄생! 🔢✨', en:'Perfect! An Equation Expert is born!', zh:'太完美了！算式专家诞生！' }
   }
 };
 

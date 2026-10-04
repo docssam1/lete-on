@@ -4818,5 +4818,9 @@ MD159:{ name:{ko:'정적분의 성질과 정적분으로 정의된 함수',en:'P
              zh:'在∫ₐˣ f(t)dt=g(x)中代入x=a得g(a)=0，两边求导得f(x)=g′(x)。式中的∫ₐᵇ f(t)dt是常数，设为k解关于k的方程。'}}] },
 };
 
-if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;
+if(typeof module!=='undefined'&&module.exports){
+  /* 유아 교재 G1 묶음 스레드 — 브라우저는 index.html 이 이어서 싣고, node 검사기는 여기서 이어 붙인다. */
+  ['1-3','4-6','7-9','10-12','13-15'].forEach(function(g){ require('./g1/'+g+'-threads.js'); });
+  module.exports=window.NM_THREADS;
+}
 })();

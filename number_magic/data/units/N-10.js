@@ -1,4 +1,4 @@
-/* Numbers of Magic — 유닛 N-10: 자료 분류와 표 (수의 나라 · 유아 5~7세)
+/* Numbers of Magic — 유닛 N-10: 이야기와 자료 정리 (수의 나라 · 유아 5~7세) — 교재 G1-10 대응(2026-10-04)
    tier:'basic' → 경량 플로우: practice → discover(1스테이지) → lab → stamp
    콘텐츠는 전부 창작(분류 장면) — 라이선스 교재 삽화/지문 미사용 */
 (function(){
@@ -7,15 +7,15 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['N-10'] = {
   id:'N-10', tier:'basic', level:'N', order:10,
-  generator:'nl10_data', edu:'유아',
-  title:{ ko:'자료 분류와 표', en:'Sorting & Simple Data', zh:'分类与数据' },
-  subtitle:{ ko:'섞인 걸 나눠 담고, 어느 쪽이 더 많은지 비교해요!', en:'Sort the mix, then compare which has more!', zh:'分类装篮子，再比比谁更多！' },
+  generator:'nlg10_text', edu:'유아',
+  title:{ ko:'이야기와 자료 정리', en:'Stories & Sorting Data', zh:'故事与整理数据' },
+  subtitle:{ ko:'이야기 속 빈칸을 채우고, 그림을 종류별로 세어 표를 만들어요!', en:'Fill the story blanks, then count the pictures into a table!', zh:'填好故事里的空格，再把图画分类数一数做成表！' },
   icon:'🧺',
 
-  practice:{ generator:'nl10_data', level:'practice', count:4, params:{ mode:'sort' },
-    intro:{ ko:'섞여 있는 걸 종류별로 나눠요! 톡톡 눌러서 바구니에 담고 세어 봐요',
-      en:'Sort the mixed items by kind! Tap to put them in baskets and count',
-      zh:'把混在一起的东西分类！点一点放进篮子，数一数' } },
+  practice:{ generator:'nlg10_text', level:'practice', count:4, params:{ mode:'storyfill', lv:1 },
+    intro:{ ko:'짧은 이야기를 읽어요! 문장을 끝까지 듣고, 빈칸에 알맞은 수를 골라 넣어요',
+      en:'Read a short story! Listen to the whole sentence, then pick the right number for each blank',
+      zh:'读一个小故事！把句子听完，再选合适的数填进空格' } },
 
   discover:{
     story:{
@@ -41,16 +41,16 @@ window.NM_UNITS['N-10'] = {
       zh:'分一分、数一数、比一比！' }
   },
 
-  lab:{ generator:'nl10_data', level:'main', count:4, params:{ mode:'compare' },
-    intro:{ ko:'이번엔 비교하기! 톡톡 눌러 나눠 담고, 어느 바구니가 더 많은지 콕 짚어요',
-      en:'Now let\'s compare! Sort them, then tap the basket with more',
-      zh:'现在来比较！点一点分类，再点数量更多的篮子' } },
+  lab:{ generator:'nlg10_survey', level:'main', count:4, params:{ mode:'tally3', lv:1 },
+    intro:{ ko:'이번엔 조사하기! 그림을 하나씩 짚어 종류별로 세고, 표에 알맞은 수를 써요',
+      en:'Now a survey! Point at each picture, count every kind, and write the numbers in the table',
+      zh:'这次来调查！把图画一个一个指着按种类数，再把数写进表里' } },
 
   stamp:{ label:{ ko:'분류 박사', en:'Sorting Expert', zh:'分类博士' }, coins:20 },
 
   voice:{
-    correct:[ {ko:'딩동! 딱 맞아요 🧺',en:'Ding! Exactly right!',zh:'叮！完全正确！'}, {ko:'비교도 완벽해요! ⚖️',en:'Perfect comparing too!',zh:'比较也很完美！'}, {ko:'분류를 잘했어요! ✨',en:'Great sorting!',zh:'分类得真好！'} ],
-    wrong:[ {ko:'음~ 각 바구니를 다시 세어 볼까요?',en:'Hmm, count each basket again?',zh:'嗯，再数数每个篮子？'}, {ko:'하나씩 세어서 비교해봐요',en:'Count one by one and compare',zh:'一个一个数，再比比看'} ],
+    correct:[ {ko:'딩동! 딱 맞아요 🧺',en:'Ding! Exactly right!',zh:'叮！完全正确！'}, {ko:'표도 완벽해요! 📋',en:'The table is perfect too!',zh:'表格也很完美！'}, {ko:'분류를 잘했어요! ✨',en:'Great sorting!',zh:'分类得真好！'} ],
+    wrong:[ {ko:'음~ 이야기를 끝까지 다시 들어 볼까요?',en:'Hmm, listen to the whole story again?',zh:'嗯，再把故事听完整好吗？'}, {ko:'하나씩 짚어서 세어 봐요',en:'Point and count one by one',zh:'一个一个指着数'} ],
     finish:{ ko:'짝짝짝! 분류 박사 탄생! 🧺✨', en:'Clap clap! A Sorting Expert is born!', zh:'鼓掌！分类博士诞生了！' }
   }
 };
