@@ -1075,7 +1075,7 @@ function renderNumberBond(problem, container, onAnswer){
 ───────────────────────────────────────── */
 function renderSeqFill(problem, container, onAnswer){
   const seq=problem.seq||[];
-  const blank=problem.blank||1;
+  const blank=problem.blank!=null?problem.blank:1;
   const answer=problem.answer;
   let lock=false;
 

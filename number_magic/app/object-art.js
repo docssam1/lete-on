@@ -246,6 +246,10 @@
   }
 
   window.NM_OBJECTS = {
+    /* 확장 소품 등록 — 유아 교재 묶음 파일(app/g1/*.art.js)이 새 물건을 같은 결로 그려 넣는다.
+       draw(id) 는 viewBox 0 0 64 64 안에 그린 SVG 조각 문자열을 돌려준다(id 는 그라데이션 id 접두). */
+    register: function (token, draw) { if (typeof draw === 'function') ART[token] = draw; },
+    helpers: { P: P, defs: defs, fill: fill, hl: hl, eye: eye, extra: extra, sw: sw },
     svg: svg,
     real: function (t) { return !!realImg(t); },
     has: function (t) { return !!realImg(t) || (typeof t === 'string' && t.indexOf('num:') === 0 && !!DIGIT_D[t.slice(4)]) || Object.prototype.hasOwnProperty.call(ART, t); },
