@@ -53,7 +53,7 @@ function serve(){
         return { q: document.querySelectorAll('.pl-q').length, over,
           unsupported: !!document.querySelector('.pl-unsupported'), katexErr: document.querySelectorAll('.katex-error').length,
           untex: [...document.querySelectorAll('[data-tex]')].filter(e => !e.querySelector('.katex')).length,
-          garbage: /undefined|NaN|\[object/.test(text), keyLast: !!(last && last.classList.contains('pl-keypage')),
+          garbage: /NaN|\[object|(^|\n)\s*undefined\s*(\n|$)|null\s*null/.test(text)   /* 'undefined' 단어는 수학 설명문(예: 'undefined when m=n')에 정상으로 나온다 */, keyLast: !!(last && last.classList.contains('pl-keypage')),
           keyRows: last ? last.querySelectorAll('.pl-key tbody tr').length : 0 };
       });
       n++;
