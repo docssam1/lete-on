@@ -1,0 +1,6514 @@
+{
+  "design_date": "2026-10-03",
+  "implementation_state": "reviewable_design_not_runtime_implementation",
+  "scope": "Claude expanded sections 1–4; originals read-only; no deploy",
+  "sources": {
+    "U1": {
+      "file": "LATEST_USER_DECISIONS.md",
+      "locator": "직접 발언과 해석을 구분한 최신 결정 기록; 본 대화의 최종 G: 지시 우선",
+      "kind": "handoff_with_direct_quotes",
+      "year": "2026-10-03"
+    },
+    "U2": {
+      "file": "사용자_직접발언_현재대화에서확인된부분.md",
+      "locator": "전체 214행; 특히 199–207행 확장 설계 지시",
+      "kind": "direct_user_excerpt",
+      "year": "2026-10-03"
+    },
+    "U3": {
+      "file": "사용자_소마_필즈_제도변화_생각_원문.md",
+      "locator": "전체 17행; 제도 변화에 대한 사용자 견해",
+      "kind": "user_opinion",
+      "year": "2026"
+    },
+    "H1": {
+      "file": "PATCH_인수인계서_로드맵_섹션1-4_2026-10-02.md",
+      "locator": "결정 목록과 섹션별 변경; 원문 대조가 가능한 항목만 확정",
+      "kind": "ai_handoff",
+      "year": "2026-10-02"
+    },
+    "H2": {
+      "file": "Claude_대화_사용자붙여넣기.md",
+      "locator": "전체 165행; 사용자 요청/Claude 주장 분리",
+      "kind": "mixed_dialogue",
+      "year": "2026-10-02"
+    },
+    "C1": {
+      "file": "roadmap_build.zip!/roadmap/index.html",
+      "locator": "rampT, personalShift, currentPositions, highThinking; 1154–1208행 입력 해석",
+      "kind": "static_code",
+      "year": "인수 ZIP"
+    },
+    "C2": {
+      "file": "roadmap_build.zip!/src/build_s2.py",
+      "locator": "월축·과정·설명; AST 정적 읽기, 실행 없음",
+      "kind": "static_code_and_explanation",
+      "year": "인수 ZIP"
+    },
+    "C3": {
+      "file": "roadmap_build.zip!/src/section3_nodes.json",
+      "locator": "/nodes/N1..N6, /lanes, /cases",
+      "kind": "coded_explanatory_data",
+      "year": "노드별 상이"
+    },
+    "C4": {
+      "file": "roadmap_build.zip!/src/build_s4.py",
+      "locator": "D meta/nodes; N1..N4, AST 정적 읽기",
+      "kind": "coded_explanatory_data",
+      "year": "인수 ZIP"
+    },
+    "C5": {
+      "file": "roadmap_build.zip!/src/assemble.py",
+      "locator": "외부 /mnt 경로·삭제·출력 조립 로직; 실행 금지",
+      "kind": "static_code",
+      "year": "인수 ZIP"
+    },
+    "C6": {
+      "file": "roadmap_build.zip!/src/parked_hotinfo_news.json",
+      "locator": "H1..H15; SHOW_HOT=false",
+      "kind": "parked_explanation",
+      "year": "항목별 상이"
+    },
+    "E1": {
+      "file": "03_Drive_참고원자료/5세 표준 커리_2025 L2.xlsx",
+      "locator": "Sheet1 A1:Y20; J6, M6, A9:Y10; ZIP 내 동명판 별도 보존",
+      "kind": "original_workbook",
+      "year": "2025"
+    },
+    "E2": {
+      "file": "03_Drive_참고원자료/최상위권을 위한 5세 표준 커리_2023 12월.xlsx",
+      "locator": "Sheet1 N6, R8, H9, F10:X10; 빈 Sheet2/3",
+      "kind": "original_workbook",
+      "year": "2023-12"
+    },
+    "E3": {
+      "file": "03_Drive_참고원자료/프리미어_로드맵(초1_P1_NEW).xlsx",
+      "locator": "코호트별 행 구분; 다수 연도와 과정이 한 시트에 공존",
+      "kind": "original_workbook",
+      "year": "복수 코호트"
+    },
+    "E4": {
+      "file": "03_Drive_참고원자료/프리미어_로드맵(2025 챌린지).xlsx",
+      "locator": "Sheet1 3행/8행 월축 별도; 3행 월 표기 불연속",
+      "kind": "original_workbook",
+      "year": "2025"
+    },
+    "E5": {
+      "file": "03_Drive_참고원자료/초2 86월 3-1 시작.xlsx",
+      "locator": "Sheet1 C7, F9:AG9; 3-1 시작·연산·운동·독립 해결",
+      "kind": "original_workbook",
+      "year": "파일 내 코호트"
+    },
+    "E6": {
+      "file": "03_Drive_참고원자료/로드맵_한과연_초등저학년.xlsx",
+      "locator": "초2(상) T3:Z8 및 D18:Z18; 초2(중) K8:N9",
+      "kind": "original_workbook",
+      "year": "기준연도 미표시"
+    },
+    "E7": {
+      "file": "03_Drive_참고원자료/로드맵_한과연_예비초4.xlsx",
+      "locator": "실제 시트 예비초6(초6/중1/중2/중3수학); E3:E5, C11:N12, H26, D39:E40, C35:N41",
+      "kind": "original_workbook",
+      "year": "기준연도 미표시"
+    },
+    "E8": {
+      "file": "03_Drive_참고원자료/국가대표 2.xlsx",
+      "locator": "Sheet1 셀 및 별도 도형 존재; 초4 완료 시점은 셀만으로 확정 불가",
+      "kind": "original_workbook_partial_layout",
+      "year": "구 교과명"
+    },
+    "E9": {
+      "file": "03_Drive_참고원자료/미래탐구 KMO 로드맵.xlsx",
+      "locator": "Sheet1 단계·기간; 스타워즈개편案 D20,D22,D24,D26,D28,D30,D32",
+      "kind": "academy_workbook",
+      "year": "기준연도 미표시"
+    },
+    "E10": {
+      "file": "03_Drive_참고원자료/과학로드맵(영재,자사고).xls",
+      "locator": "MSG초등과학/초등과학; 2행 월축, I9, K39 및 단계별 행",
+      "kind": "academy_workbook",
+      "year": "기준연도 미표시"
+    },
+    "I1": {
+      "file": "03_Drive_참고원자료/2025 필즈 s 로드맵.jpg",
+      "locator": "2025 7세 S1 원문 및 연산·중등 병행 행",
+      "kind": "original_image",
+      "year": "2025"
+    },
+    "I2": {
+      "file": "03_Drive_참고원자료/프리미어2,3로드맵.jpg",
+      "locator": "2026.09 표기; 인쇄 내용과 손글씨 분리",
+      "kind": "original_image",
+      "year": "2026-09"
+    },
+    "I3": {
+      "file": "03_Drive_참고원자료/KakaoTalk_20260629_115000435.jpg",
+      "locator": "소마 A1, 실제 2026 초2 코호트",
+      "kind": "original_image",
+      "year": "2026"
+    },
+    "I4": {
+      "file": "03_Drive_참고원자료/KakaoTalk_20260807_140433261.jpg",
+      "locator": "2026.06 챌린지 코호트",
+      "kind": "original_image",
+      "year": "2026-06"
+    },
+    "I5": {
+      "file": "03_Drive_참고원자료/초3 국가대표 로드맵.png",
+      "locator": "초3 중등 → 초4 구 고등 과정의 시각적 대응",
+      "kind": "original_image",
+      "year": "구 교과명"
+    },
+    "I6": {
+      "file": "03_Drive_참고원자료/스크린샷 2026-10-01 200536.png",
+      "locator": "중등 18개월, 공통 전환 심화 60–70% 학원 예시",
+      "kind": "academy_image",
+      "year": "수집 2026-10-01; 안내 기준연도 미확인"
+    },
+    "I7": {
+      "file": "03_Drive_참고원자료/스크린샷 2026-10-01 194936.png",
+      "locator": "CMS 50개월 구성; 같은 자료 5개 트랙 이미지와 함께 참조",
+      "kind": "academy_image",
+      "year": "수집 2026-10-01; 안내 기준연도 미확인"
+    },
+    "I8": {
+      "file": "03_Drive_참고원자료/KakaoTalk_20260923_151005039.png 및 151235213.png / 151255120.png",
+      "locator": "과학 단계 및 0.1%/5% 목표 예시; 학생 성취 백분위 아님",
+      "kind": "academy_image",
+      "year": "수집 2026-09-23"
+    },
+    "T1": {
+      "file": "비식별 상담 사례 · 원문 비공개",
+      "locator": "개별 사례에서 확인한 선택 구조. 보편 진입 조건이 아님.",
+      "kind": "private_direct_chat",
+      "year": "해당 메시지 날짜"
+    },
+    "T2": {
+      "file": "비식별 상담 사례 · 원문 비공개",
+      "locator": "개별 사례에서 확인한 선택 구조. 보편 진입 조건이 아님.",
+      "kind": "private_direct_chat",
+      "year": "해당 메시지 날짜"
+    },
+    "T3": {
+      "file": "비식별 상담 사례 · 원문 비공개",
+      "locator": "개별 사례에서 확인한 선택 구조. 보편 진입 조건이 아님.",
+      "kind": "private_direct_chat",
+      "year": "해당 메시지 날짜"
+    },
+    "T4": {
+      "file": "비식별 상담 사례 · 원문 비공개",
+      "locator": "개별 사례에서 확인한 선택 구조. 보편 진입 조건이 아님.",
+      "kind": "private_direct_chat",
+      "year": "2026 개별 메시지"
+    },
+    "A1": {
+      "file": "NA_영재고가는 수학, 의대가는 수학 로드맵.md",
+      "locator": "추가 자료의 키워드 관련 문단만 읽음; 정리본, 원 녹취 미검증",
+      "kind": "organized_third_party_summary",
+      "year": "미확인"
+    },
+    "A2": {
+      "file": "NA_초등과학에서 통합과학까지-- 올바른 선행방법 알아보자.md",
+      "locator": "관련 문단만 읽음; 정리본, 원 녹취 미검증",
+      "kind": "organized_third_party_summary",
+      "year": "미확인"
+    },
+    "A3": {
+      "file": "NA_금요라이브~~ 영재고 입시에 도움되는 kmo 공부법-  질의응답.md",
+      "locator": "관련 문단만 읽음; 정리본, 원 녹취 미검증",
+      "kind": "organized_third_party_summary",
+      "year": "미확인"
+    },
+    "D1": {
+      "file": "06_기존배포_읽기전용확인.json",
+      "locator": "GH roadmap 목록/index 최신 커밋, public HTTP 결과",
+      "kind": "live_read_only_check",
+      "year": "2026-10-03 작업 확인"
+    },
+    "U4": {
+      "file": "60_최신사용자방향_개인기준로드맵_v3.md",
+      "locator": "현재 채팅 직접 발언: 5세 기준 확장, 7세까지/7세 이후/목적별, 초2·초3·미선택, 개인 기준 계획·진단·미래3D",
+      "kind": "current_user_direct_statement",
+      "year": "2026-10-03"
+    },
+    "P1": {
+      "file": "03_Drive_참고원자료/예비고1설명회(게시용).pdf",
+      "locator": "52쪽 추출본문 전체, root14쪽+추가검토38쪽=52쪽 시각 확인. 71_PDF_추가시각검토.md P-S01~08/P-C01~07. 현행공식 검증은 별도",
+      "kind": "historical_briefing_proposals_examples",
+      "year": "본문별2025·2027·2028; 통일 기준일 미확인"
+    },
+    "P2": {
+      "file": "03_Drive_참고원자료/2028_대입_상위권합격로드맵_1부2부완전정리.pptx",
+      "locator": "17슬라이드 추출본문 전체, 내장PNG12개 직접확인·슬라이드관계 대조. 전체슬라이드 렌더 아님. 71_PPT_내장이미지_검토.md P7-X01~03",
+      "kind": "third_party_interview_summary_not_official",
+      "year": "표지2026.09; 대상2028"
+    },
+    "UF01": {
+      "kind": "current_conversation_direct_user_statement",
+      "locator": "독샘 인사, 나이 드롭다운, 4·5·6세 생월, 유아 기준, 초1~3 세축·교재/학원, 현재 위치 요약, 소마·필즈·CMS·그 외, 기존 성향검사 내용 사용"
+    },
+    "UF02": {
+      "kind": "current_conversation_direct_user_statement",
+      "verbatim": "성격유형 검사는 선택인거야 하지만 이걸하면 더 디테일하게 로드맵을 설정할수 있도록 해줘.\n기본을 빼고 나중에 심화를 채우는 형태라던지"
+    },
+    "UF03": {
+      "kind": "current_conversation_direct_user_statement",
+      "verbatim": "내가 학원 목표 상관없이 나가는 로드맵을 보여줄까?\n그러다 머리가 크면 좀 힘좀 생기면 심화 하다가 응용과 같이 나가는 거지"
+    },
+    "UF04": {
+      "kind": "current_conversation_direct_user_statement",
+      "verbatim": "단 현재 교과 과정에 맞춰야돼"
+    },
+    "UF05": {
+      "id": "U20261003-H01",
+      "kind": "current_conversation_user_statement",
+      "title": "황소 선택 시점과 이유를 실제 상태와 분리",
+      "verbatim": "진도가 안되어 황소 초등을 늦게 볼수도 있고 진도가 되도 어리다.판단하여 심화로 배우려고 늦개 할수 있고 아니면 그냥 안 다니고 꼼꼼히.하려ㅜ할수 있고",
+      "principles": [
+        "진도 보완 때문에 늦게 검토할 수 있다",
+        "진도가 되어도 어리다고 판단하여 심화를 더 학습할 수 있다",
+        "황소 미선택으로 꼼꼼히 학습하는 경로를 인정한다",
+        "선택 시점과 이유를 실제 상태 또는 지원자격 판단과 합치지 않는다"
+      ],
+      "supplementaryFields": [
+        "goals.hwangso",
+        "goals.hwangsoReasons",
+        "goals.hwangsoTimingNote",
+        "goals.hwangsoReasonNote"
+      ],
+      "priorSourceCatalogModified": false,
+      "officialAdmissionRule": false,
+      "detailDocument": "USER_DECISION_황소선택이유_v5.md"
+    },
+    "F01": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\최상위권을 위한 5세 표준 커리_2023 12월.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "ab54f83925a0ff30ae7d225d3f452e7ad76e358183f3efc185b1e8fc004238c5",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F02": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\혜준 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "74cb435005ca3005ccb7e02fda1d76ff7689fa9a9b93e4d453e00d298ab90eee",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F03": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\국가대표 2.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "b55dbc3ae6c18c30ea4bf9b83e4a018845cdf464b22ea9b3cb6ba48957cec20c",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F04": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\국가대표 3.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "db3e24f1973e9d534cb8dcfae895d972476cc0c3eab8505654097279da14371a",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F05": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\백준흠 초3 6월 5-2 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "c64a1674c716c6f8f50fb0ce8787cb80195b0a21053568cb1c2abc6ca6443318",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F06": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\서휘 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "f03b77dc208f8e3cc13ae1351cb968cb06df0668b2bf079a21e8f2378cca2bd5",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F07": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\예비초1 3-1 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "28c8b4217ca3d310f87c4bf9e6a94d9e36a839dac75e79531aeeb1d27fbc341c",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F08": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\유준이 커리.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "6e0dd41be496c75868cdd8cce2af6c72c15379885032a626b511afd8162f31da",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F09": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\지민 반 커리.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "7f077e58f8f32a505dfaf02e86eb397a9fdf642175049085e6585b2496180e5d",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F10": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초1 10월 3-1.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "1a14d49f7a24266068e5ac50c84a39da5a6ba67e35e2cb5d1bf5a9536512390f",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F11": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초1 12월 3-1.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "bf6469c294e6dfbeccfcd02b00eae19d18c746e7228f95bcc189dc5889d4dace",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F12": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초1 A 5월 3-1 시작 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "8e394dd00e0f0b4e8c030a69d3b5cdf1163186457a3b622c2ace0e8fa5b9fe03",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F13": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초1 A 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "e3b9342408a15e730af7468e5470050568d83b98cab1856d71a57157b07a9e52",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F14": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 3월 3-1 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "d8299a2d26b80028607f15f503a8d783000833b63ca51145dea87e93e6b7b958",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F15": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 6월 3-2.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "e62633d7b083ca306666215ca2aa2a80d083b60b81e76c983227c3fb541593dd",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F16": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 7월 3-2.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "662eac08010f87c7db31d3df952eaa1f3f0ffee815bc050a22d6e2547115ecd9",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F17": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 7월 4-1.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "f7c70173238aa1c3feeec6b4db5036103027aa14114640b318a73b812f442898",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F18": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 8월 3-2 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "7872b8834acde2fec2d2551a1c8355a0550d18aa259032990aaaf07280ac3315",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F19": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 8월 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "b97734f624de08d79be001f5de8ba2d52e88e3945377d10f3166860779c3dd76",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F20": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 86월 3-1 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "ce925deab34285e3d2c64b5f04089eac071feb57bddb2155204a61fa4e9cb6fc",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F21": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 국가대표 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "e1f226953db653943cb3c892db1b845c6ec8b153517f5ac7c31eca055d2236de",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F22": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 1월 4-1.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "233e318fc67c23b35b6286ef3d473ed1888a9aee38a13200f8d7e41ca9f7146c",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F23": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 3월 중등시작 커리큘럼.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "a73ee4ff0accf7831b29d3ed7928e8b0b4cf06fed5d0a2cbabd3dfdb43f1fefe",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F24": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 6월 5-2 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "41970db0fa29786edfdaa43bb5bf3a19ce167bd0d0e6806469634ced498c3e67",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F25": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 11월 5-1 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "172fcbf320bf1efce428b6abee65b5ed72ff0e92a402ea99c0acd01de8b4e66e",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F26": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 11월 6-1 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "49b0d0362e31ededb958227acd975956eed2f518f71cbda7e77fec3ae517c754",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F27": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 국가대표 2 커리큘럼.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "43989c4634b96f6f596ab342a4c625d96a509d6a75409d0415e9f4f0bae62df5",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F28": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초4 국가대표 2 커리큘럼.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "604cfd77ec36b865cfa38bced0edfb685b6a594e1e49010b1c6532a96f54347b",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "PN01": {
+      "file": "E:\\Codex\\workspaces\\gfield-roadmap-v4-20261003\\artifacts\\personality-ui-reference\\index.html",
+      "url": "https://github.com/docssam1/lete-on/blob/main/personality/index.html",
+      "kind": "existing_personality_program_snapshot",
+      "locator": "1032~1069 문항30개; 670~760 유형·코칭; 1537 혼합형 규칙",
+      "snapshot_commit": "7d8a2773744fa0207564b51d6afec8b47c1b6a82",
+      "current_fetch_blob": "2e62b09eabb7c09d14db917b40a27babaf556331",
+      "sha256": "bc43afd20cb9ac1e4572a38ca511b8c780e5f52d0959276738ce57cf02cecc2a",
+      "year": "2026-10-03 확인. 현재 main 전체와 바이트 동일을 새 검증한 것은 아님"
+    },
+    "PN02": {
+      "file": "DOCSSAM_성향별_KB_v2.md",
+      "url": "https://drive.google.com/file/d/1Hggp0SsDwOZSp3BMRTb6-g3QCffYEuTW/view",
+      "kind": "existing_coaching_knowledge_base",
+      "year": "본문2026-07-02; 2026-10-03 연결Drive 본문 확인",
+      "locator": "네 유형 특성·도움 문구. 기존 숫자 조언은 교육과정 진입 컷으로 채택 안 함"
+    },
+    "CUR01": {
+      "url": "https://open.gwe.go.kr/main/content.do?key=m2307210660022",
+      "kind": "official_curriculum_application",
+      "year": "2026-10-03 확인",
+      "locator": "2022개정 적용 학년 및2026-1 일부개정 적용 시기"
+    },
+    "CUR02": {
+      "url": "https://www.goe.go.kr/resource/old/BBSMSTR_000000030136/BBS_202410310111492621.pdf",
+      "kind": "official_course_structure_guide",
+      "year": "파일명2024-10-31; 명시 발간일 미확인;2026-10-03 관련 본문 확인",
+      "locator": "PDF16번째면 Q12,35번째면 수학·과학 과목표. 전체 단원 신구 대조 완료 아님"
+    },
+    "UF06": {
+      "kind": "current_conversation_direct_user_statement",
+      "date": "2026-10-03",
+      "verbatim": "초등은 응용 교재는 디딤돌 기본+응용을 표준 교재로 선행이 늦은 경우나 지문이해가 필요한 경우 최상위 S 수학 빠른 선행을 하는 경우 최상위 수학 / 다지기가 필요한 경우는 쎈수학"
+    },
+    "CUR03": {
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+      "kind": "official_curriculum_application",
+      "checkedOn": "2026-10-03",
+      "locator": "2022-33 고시 부칙 학교급·학년별 2024~2027 적용; 수학 성취기준 전수 대응 완료가 아님"
+    },
+    "PUBD2402270": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2402270",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6321-4",
+      "locator": "디딤돌 초등수학 기본+응용 1-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "10378763a440a55c011f67e3bc9a6fa96c08310c709726a5102b9b12fed1879b",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2402550": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2402550",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6426-6",
+      "locator": "디딤돌 초등수학 기본+응용 1-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "8892b71728db70a2795d60db4edc7909b69824b985fea8c2ffd28de72c42e75d",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2402280": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2402280",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6322-1",
+      "locator": "디딤돌 초등수학 기본+응용 2-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "404c9057674262e890a2b4d8c624f637cf0c238abeabdd6dca9ca0b91be5312f",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2402560": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2402560",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6427-3",
+      "locator": "디딤돌 초등수학 기본+응용 2-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "09ce8313d04bcf6030607b891f0404cc459db35b77fb11996db55d024e34a286",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2502290": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2502290",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6515-7",
+      "locator": "디딤돌 초등수학 기본+응용 3-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "1da7cd9de19ef9603802cab3091c21bb3cf2284fcecae33a8a3a8a03b12b6625",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2502570": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2502570",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6592-8",
+      "locator": "디딤돌 초등수학 기본+응용 3-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "fbd35705e9ef6b9b148ed93a1456abcca8103e3dc2c303cb20dba7cf9b192f5c",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2502300": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2502300",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6516-4",
+      "locator": "디딤돌 초등수학 기본+응용 4-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "9d964ff28f3c586020abab6ef9b71f57ea1d47519b93f495dc8c3ed6d5136648",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2502580": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2502580",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6593-5",
+      "locator": "디딤돌 초등수학 기본+응용 4-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "33be06a8bae09922ab991705633e7b84dbc9de1f49a9c7f851cdf1ccc23c6051",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2602310": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2602310",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6685-7",
+      "locator": "디딤돌 초등수학 기본+응용 5-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "6cd72dd372e460b1b1efa83851d7fa0c7c1d470b35e6f4acc1ce072bc3ae6b45",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2602590": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2602590",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6747-2",
+      "locator": "디딤돌 초등수학 기본+응용 5-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "123d3d66daf1493598146ed747c6a645c215b1a0bf650103370291e33267a823",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2602320": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2602320",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6686-4",
+      "locator": "디딤돌 초등수학 기본+응용 6-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "6f43304e51a2f1ee75aabb95603246845e61c61802bbf374258d7d1adf6cad30",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2602600": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2602600",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6748-9",
+      "locator": "디딤돌 초등수학 기본+응용 6-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "83f5bb0a422ff716650941aeb638bbdcf2c553670f3c9b75f51b72e06f9084d0",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2461370": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461370",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6333-7",
+      "locator": "디딤돌 초등수학 최상위S 1-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "ffee76228fb99e5a328ce5b2385ba0ac921af1513dff9f7a7032276060af0a85",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2461390": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461390",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6438-9",
+      "locator": "디딤돌 초등수학 최상위S 1-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "363603f1b8bf7b018b14431016124330b499515b98a52d3c8f1e9312da56e797",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2461380": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461380",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6334-4",
+      "locator": "디딤돌 초등수학 최상위S 2-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "835c48b0e679dff02f5eea8a323ba38c628ad0955df45b2ebb8b516a1ef1e6dc",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2461400": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461400",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6439-6",
+      "locator": "디딤돌 초등수학 최상위S 2-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "adfe849ca7e4abe277f34458769abbac7763bd3539248b0c977de58c65783d36",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2561410": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561410",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6525-6",
+      "locator": "디딤돌 초등수학 최상위S 3-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "fe70fbdb944352929809ccf31dff02fb45108e79bdd4027af8c11eb01f7878ac",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2561450": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561450",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6602-4",
+      "locator": "디딤돌 초등수학 최상위S 3-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "04796254fccdf77fa3b1e05a88facf8b8977153d2eaa483e91d8dacc3e96ff1c",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2561420": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561420",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6526-3",
+      "locator": "디딤돌 초등수학 최상위S 4-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "1c5c9168fad2e6a010fa801565c935183cc9670028cf197784ee95ce2fa949ba",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2561460": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561460",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6603-1",
+      "locator": "디딤돌 초등수학 최상위S 4-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "420255116e96aa2f1634da564ab7f331b187bc79d70c0fecac63ebf14cbbdb5d",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2661430": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661430",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6693-2",
+      "locator": "디딤돌 초등수학 최상위S 5-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "82a2dfeca6b0e424decea99b47bfc57ed209858fb4d69f0cdc20c05c641d7630",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2661470": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661470",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6755-7",
+      "locator": "디딤돌 초등수학 최상위S 5-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "38a34fca23ae3a459f9aaa04abf3d25ec8d8225906b89159d6752639fe2643ef",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2661440": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661440",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6694-9",
+      "locator": "디딤돌 초등수학 최상위S 6-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "b6941382adbc803470ab7066ce46bea2c03de2e742138e0717c5981f919baf69",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2661480": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661480",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6756-4",
+      "locator": "디딤돌 초등수학 최상위S 6-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "cc28eab8d9eabf80c289bfa282003414b68046fe00cb13f7dd599894d2a82e88",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2461510": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461510",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6339-9",
+      "locator": "최상위 초등수학 1-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "12e4b1b652b6639503bdcece627a9f91a0590cbc5f5d53a76d2fdf06352ee50b",
+      "verification": "publisher_toc_issue",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2461710": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461710",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6440-2",
+      "locator": "최상위 초등수학 1-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "d0aafeeaa03239b7378a72f974f21be7e671979e1447adbfbf3a81b20215ba1b",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2461520": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461520",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6340-5",
+      "locator": "최상위 초등수학 2-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "fc5f4858352e68b1824ef8814555c3c149e56118e794bfe1059922195641826c",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2461720": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461720",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6441-9",
+      "locator": "최상위 초등수학 2-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "4133e0323e41c69c4a60b01ca3b832b1208f4f9631a6c3a30b49820ac4638b17",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2561530": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561530",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6527-0",
+      "locator": "최상위 초등수학 3-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "11b32e9c9857e182ac301f79ed28f51f9a36e87e613da4f1143cd38d15596643",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2561730": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561730",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6604-8",
+      "locator": "최상위 초등수학 3-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "115fc677d04aff696b445ce332c492dd11b46c43df3809953d2b157943c6114f",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2561540": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561540",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6528-7",
+      "locator": "최상위 초등수학 4-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "cc22d18092214305dbfc9c74472139632ff1f0a0469bfc6e5d7bb5b753c3722c",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2561740": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561740",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6605-5",
+      "locator": "최상위 초등수학 4-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "14ffe780ca46fe56a8f1f675ea8390f90cad654c4af28473713d69fda7d67366",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2661550": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661550",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6695-6",
+      "locator": "최상위 초등수학 5-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "523e871b783af2bc6de634f94e8bbcab87472fa3fb94fd6270ce1a6fb6d452f0",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2661750": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661750",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6757-1",
+      "locator": "최상위 초등수학 5-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "9293b0b782dd6116d4a0bdcb2788378a4bb9ad2a7a726a2f58f799e6c076e95d",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2661560": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661560",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6696-3",
+      "locator": "최상위 초등수학 6-1(2022개정 교육과정) · 원문 목차",
+      "sha256": "f171abd61265544bdc4210c8acd8edeeea3a31ac6bd7e74e5a70b3b61f5a213a",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "PUBD2661760": {
+      "url": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661760",
+      "kind": "official_publisher_table_of_contents",
+      "checkedOn": "2026-10-03",
+      "isbn": "978-89-261-6758-8",
+      "locator": "최상위 초등수학 6-2(2022개정 교육과정) · 원문 목차",
+      "sha256": "7f0c7532becb7e5e058c2cb8829a1fdb1bee395b42ac9919c50df9e68eeaa3a5",
+      "verification": "publisher_toc",
+      "actualMasteryEvidence": false
+    },
+    "RETAILYES123763215": {
+      "file": "https://www.yes24.com/product/goods/123763215",
+      "locator": "신사고 쎈 초등 수학 1-1 (2026년용) / ISBN 9788928348367 / heading, curriculum label and table of contents; snapshot SHA-256 3911467f089a1aa5fd3c05ba843d9d2cd15dc808d61e802fa91ae98cddc85300",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES147562645": {
+      "file": "https://www.yes24.com/product/goods/147562645",
+      "locator": "신사고 쎈 초등 수학 1-2 (2026년용) / ISBN 9788928351909 / heading, curriculum label and table of contents; snapshot SHA-256 bf98d454ea389aa3fe04408d6a6e943377f0478bb1501a991f6fcdcb0eca3067",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES123815184": {
+      "file": "https://www.yes24.com/product/goods/123815184",
+      "locator": "신사고 쎈 수학 초등 2-1 (2026년용) / ISBN 9788928348381 / heading, curriculum label and table of contents; snapshot SHA-256 a891d83898830c2107cc836dde5469be1e53424b850979dca1289b9cb9e1c520",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES153040465": {
+      "file": "https://www.yes24.com/product/goods/153040465",
+      "locator": "신사고 쎈 초등 수학 2-2 (2026년용) / ISBN 9788928351916 / heading, curriculum label and table of contents; snapshot SHA-256 1100b688d36b679cc70ff6ffd32cf15337ae36bbce8fe20b672908c854d08a06",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES136765931": {
+      "file": "https://www.yes24.com/product/goods/136765931",
+      "locator": "신사고 쎈 초등 수학 3-1 (2026년용) / ISBN 9788928348091 / heading, curriculum label and table of contents; snapshot SHA-256 12dc5b5989b626582f20d3d40c73e5eaf0ce8df9de1315b4826802090886e757",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES143047840": {
+      "file": "https://www.yes24.com/product/goods/143047840",
+      "locator": "신사고 쎈 초등 수학 3-2 (2026년용) / ISBN 9788928351923 / heading, curriculum label and table of contents; snapshot SHA-256 b49c62795a46b17d459e61e3f9a792d5e969f4f30a878f1409dc1936c6d10d92",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES136766306": {
+      "file": "https://www.yes24.com/product/goods/136766306",
+      "locator": "신사고 쎈 초등 수학 4-1 (2026년용) / ISBN 9788928348107 / heading, curriculum label and table of contents; snapshot SHA-256 230a70c156e799fd90c1b0db15b7357c462478f406a88ad9edffe0a4e0864770",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES181001271": {
+      "file": "https://www.yes24.com/product/goods/181001271",
+      "locator": "신사고 쎈 초등 수학 4-1 (2026년) / ISBN 9788928347001 / heading, curriculum label and table of contents; snapshot SHA-256 f17f4d4fc7c5e984a7a90e545a104f7f494bc6e84d2e0d245c0caf7f1c3ba2e3",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES142967275": {
+      "file": "https://www.yes24.com/product/goods/142967275",
+      "locator": "신사고 쎈 초등 수학 4-2 (2026년용) / ISBN 9788928351930 / heading, curriculum label and table of contents; snapshot SHA-256 915de1c8caa75bf5003410f612ba47542f506ab58650e7ffb3a9fc04637975dc",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES152441725": {
+      "file": "https://www.yes24.com/product/goods/152441725",
+      "locator": "신사고 쎈 초등 수학 5-1 (2026년) / ISBN 9788928348114 / heading, curriculum label and table of contents; snapshot SHA-256 62b8c93e29bd047417c69871abb0a97411449caf3eb2651185d3d8ec090194ab",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES180308415": {
+      "file": "https://www.yes24.com/product/goods/180308415",
+      "locator": "신사고 쎈 초등 수학 5-2 (2026년) / ISBN 9788928351947 / heading, curriculum label and table of contents; snapshot SHA-256 7ce1252993e50339ed41b1d00ea44fbd69920f0ae2d5151fda72004540fa9f0a",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES151885919": {
+      "file": "https://www.yes24.com/product/goods/151885919",
+      "locator": "신사고 쎈 초등 수학 6-1 (2026년) / ISBN 9788928348121 / heading, curriculum label and table of contents; snapshot SHA-256 0fde469ca91eb7d7e3e5d08e7d575816a88f038564dbf1d9d90bab650439d758",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    },
+    "RETAILYES179732547": {
+      "file": "https://www.yes24.com/product/goods/179732547",
+      "locator": "신사고 쎈 초등 수학 6-2 (2026년) / ISBN 9788928351954 / heading, curriculum label and table of contents; snapshot SHA-256 931b8fab24f2e711efe5e0c8a673c5fe8b4e8a23f94a7080e29fe8ed6641372f",
+      "kind": "retailer_metadata",
+      "year": "2026",
+      "checkedOn": "2026-10-03"
+    }
+  },
+  "questions": [
+    {
+      "id": "Q01",
+      "module": "기본",
+      "prompt": "우선 우리 아이는 몇 살인가요?",
+      "answer_options": [
+        "나이 드롭다운",
+        "4·5·6세일 때 생월 1~12월 추가",
+        "나이 확인 필요"
+      ],
+      "followup": "사용자가 고른 나이와 생월을 보존한다. 학교 학년은 별도 Q02, 정확한 개월수는 출생 연월/일이 충분할 때만. 생월에 능력 점수를 부여하지 않음.",
+      "source_ids": [
+        "UF01",
+        "U2"
+      ],
+      "status": "설계 제안",
+      "display_policy": "entry_age_single_card",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "Q02",
+      "module": "기본",
+      "prompt": "현재 실제 학년은 어떻게 되나요?",
+      "answer_options": [
+        "미취학",
+        "초1~6",
+        "중1~3",
+        "고1~3",
+        "그 외/확인 필요"
+      ],
+      "followup": "나이만으로 학년을 확정하지 않음. 학습 기준일은 저장 시점으로 명시하고 수정 가능; 예비 학년/학년도는 필요할 때 추가.",
+      "source_ids": [
+        "UF01",
+        "U2"
+      ],
+      "status": "설계 제안",
+      "display_policy": "grade_context_only_when_needed",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "Q03",
+      "module": "기본",
+      "prompt": "누가 답변하며 어떤 기록을 참고하나요?",
+      "answer_options": [
+        "학부모 기억",
+        "학부모 교재 확인",
+        "아이 설명",
+        "교사 관찰",
+        "교재·과제 기록",
+        "평가 기록",
+        "혼합",
+        "미확인"
+      ],
+      "followup": "항목별 출처와 날짜를 남긴다. 학부모 보고를 교사 확인으로 바꾸지 않는다.",
+      "source_ids": [
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q04",
+      "module": "목표",
+      "prompt": "학부모가 희망하는 방향을 모두 선택해 주세요.",
+      "answer_options": [
+        "학교 수학 안정",
+        "진도 확대",
+        "심화·사고력",
+        "프리미어/챌린지",
+        "필즈",
+        "황소",
+        "누테/중등·고등",
+        "영재원 경험",
+        "경시/KMO",
+        "영재고",
+        "과학고",
+        "자사고",
+        "외고/국제고",
+        "일반고",
+        "미정",
+        "기타"
+      ],
+      "followup": "복수 선택 가능. Q05,Q06 및 각 목표 모듈. 희망과 추천을 별도 저장한다.",
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q05",
+      "module": "목표",
+      "prompt": "아이가 원하는 방향과 경험은 무엇인가요?",
+      "answer_options": [
+        "위 목표와 같음",
+        "다름",
+        "아직 말하기 어려움",
+        "미정",
+        "자유 입력"
+      ],
+      "followup": "다르면 Q06; 표현하기 어렵다는 이유로 목표 부적합을 단정하지 않는다.",
+      "source_ids": [
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q06",
+      "module": "목표",
+      "prompt": "현재 목표의 우선순위와 지금 결정해야 하는 시점은?",
+      "answer_options": [
+        "우선 목표 입력",
+        "동등한 복수 목표",
+        "탐색 중",
+        "현재 회차 지원",
+        "장기 준비",
+        "변경 검토"
+      ],
+      "followup": "어느 목표에 시간이 쓰이는지 Q07,Q08과 연결한다. 결정을 강제하지 않는다.",
+      "source_ids": [
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q07",
+      "module": "시간",
+      "prompt": "실제 가능한 수업·가정 학습·이동 시간은 어떻게 되나요?",
+      "answer_options": [
+        "요일별 분 단위 입력",
+        "최근 기록 있음",
+        "대략적 기억",
+        "미확인"
+      ],
+      "followup": "수학 축·과학·국어·영어·휴식·이동을 중복 계산하지 않는다. 가능한 시간과 현재 사용하는 시간을 구분한다.",
+      "source_ids": [
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q08",
+      "module": "시간",
+      "prompt": "추가 과정·속도 증가·동시 재원에 대해 어떻게 생각하나요?",
+      "answer_options": [
+        "가능성 검토",
+        "현재 유지 우선",
+        "줄이고 싶음",
+        "특정 과정만 추가",
+        "미정"
+      ],
+      "followup": "희망 응답은 실행 가능 증거가 아니다. 실제 과제량·학원 시간 미확인이면 병행 가능성은 미확인.",
+      "source_ids": [
+        "U2",
+        "T1",
+        "T3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q09",
+      "module": "시간",
+      "prompt": "최근 일정이나 목표가 달라졌나요?",
+      "answer_options": [
+        "새 학기",
+        "새 과정",
+        "시험·입학 결과",
+        "시간 변화",
+        "학습 상태 변화",
+        "목표 변화",
+        "변화 없음"
+      ],
+      "followup": "영향받는 답만 재질문하고 이전 답을 이력으로 보존한다.",
+      "source_ids": [
+        "U2",
+        "C4"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q10",
+      "module": "진도 공통",
+      "prompt": "지금까지 어떤 수학 공부를 했나요?",
+      "answer_options": [
+        "사고력",
+        "교과 기본·응용",
+        "교과 심화",
+        "연산",
+        "아직 시작 전",
+        "모름/나중에 입력"
+      ],
+      "followup": "유아는 기존 원자료 기준의 관련 교재, 초1~3은 사고력·교과·연산을 한 축씩 확인. 높은 과정 직접 입력과 같은 축 복수 교재 허용. 과학·경시·영재원은 해당 관심·경험이 있을 때 후속 모듈.",
+      "source_ids": [
+        "UF01",
+        "U2"
+      ],
+      "status": "설계 제안",
+      "display_policy": "axis_card_repeat_not_all_module_form",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "Q11",
+      "module": "진도 공통",
+      "prompt": "어떤 교재로 공부했나요? 최근 교재만 또는 공부한 교재들을 선택해 주세요.",
+      "answer_options": [
+        "최근 교재 선택",
+        "여러 교재 선택",
+        "목록 외 입력",
+        "교재 없음",
+        "모름"
+      ],
+      "followup": "각 선택에 권·단원·진행/완료를 필요한 경우 추가. 판본은 선택으로 식별되면 재질문하지 않고 모호할 때 확인. 최근 교재로 앞선 모든 교재를 완료 처리하지 않음.",
+      "source_ids": [
+        "UF01",
+        "UF04",
+        "U2",
+        "UF06"
+      ],
+      "status": "설계 제안",
+      "display_policy": "only_selected_book_details",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "Q12",
+      "module": "진도 공통",
+      "prompt": "현재 단원과 실제 진행 범위는 어디인가요?",
+      "answer_options": [
+        "단원·쪽·문제 범위 입력",
+        "일부만 진행",
+        "전체 진행",
+        "모름"
+      ],
+      "followup": "실제 총량을 아는 경우만 비율 계산. 분모 모르면 임의 50% 적용 금지.",
+      "source_ids": [
+        "U2",
+        "T1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q13",
+      "module": "진도 공통",
+      "prompt": "이 권·단원의 진행 상태는 무엇인가요?",
+      "answer_options": [
+        "미시작",
+        "진행 중",
+        "전체 다룸",
+        "혼자 풀며 마무리",
+        "복습 중",
+        "중단",
+        "건너뜀",
+        "미확인"
+      ],
+      "followup": "다룸과 숙달을 분리. 건너뜀/중단은 Q14; 완료라도 Q15–Q19.. 했지만 미제출/미지참, 미채점, 아직 자료 미배부, 수업에서 할 예정, 안내 정정은 별도 상태로 기록한다",
+      "source_ids": [
+        "U2",
+        "T2"
+      ],
+      "status": "설계 제안",
+      "evidence_locator": "70_상담B_추가검토_2026-10-03.md CB03; C1459–1462/2479–2480/2511–2514"
+    },
+    {
+      "id": "Q14",
+      "module": "진도 공통",
+      "prompt": "빠뜨리거나 건너뛴 단원·문항과 그 이유는?",
+      "answer_options": [
+        "범위 입력+이미 선행",
+        "시간 부족",
+        "어려움 보고",
+        "교사 선택",
+        "중단 후 복귀",
+        "이유 모름"
+      ],
+      "followup": "빈 범위와 확인이 필요한 범위를 별도 저장한다. 약점이라는 진단 금지.",
+      "source_ids": [
+        "T1",
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q15",
+      "module": "진도 공통",
+      "prompt": "현재 어느 깊이까지 학습했나요?",
+      "answer_options": [
+        "개념·기본",
+        "응용",
+        "심화",
+        "서술·증명",
+        "경시 유형",
+        "섞여 있음",
+        "모름"
+      ],
+      "followup": "같은 교재 전체에 단일 깊이를 부여하지 않고 필요 시 단원별 반복한다.",
+      "source_ids": [
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q16",
+      "module": "진도 공통",
+      "prompt": "대표적인 최근 문제를 어느 정도 혼자 해결했나요?",
+      "answer_options": [
+        "읽기만 도움",
+        "힌트 도움",
+        "풀이 함께",
+        "해설 보고 재풀이",
+        "혼자 풀이",
+        "문제마다 다름",
+        "기록 없음"
+      ],
+      "followup": "문제·날짜·도움 형태를 기록. 단계 점수로 합산하지 않는다.",
+      "source_ids": [
+        "U2",
+        "T2",
+        "T3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q17",
+      "module": "진도 공통",
+      "prompt": "풀이를 말·글·그림으로 설명할 수 있나요?",
+      "answer_options": [
+        "관찰한 예 입력",
+        "설명 도움 필요",
+        "답만 확인",
+        "확인 안 함"
+      ],
+      "followup": "언어 표현과 수학 이해를 단정해서 동일시하지 않는다. 성별은 판단 조건에서 제외.",
+      "source_ids": [
+        "T3",
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q18",
+      "module": "진도 공통",
+      "prompt": "최근 어떤 수행 기록을 확인할 수 있나요?",
+      "answer_options": [
+        "과제 일부",
+        "교사 피드백",
+        "시험지",
+        "실제 풀이",
+        "없음",
+        "제공하지 않음"
+      ],
+      "followup": "시험명·날짜·범위·원점수는 선택 기록. 합격 점수·능력 점수로 자동 환산 금지.",
+      "source_ids": [
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q19",
+      "module": "진도 공통",
+      "prompt": "진도는 빠르지만 보완이 필요한 부분이 있다는 보고가 있나요?",
+      "answer_options": [
+        "구체 단원 있음",
+        "독립 해결·읽기·설명 보고",
+        "연산 확인 필요",
+        "속도만 걱정",
+        "없다고 보고",
+        "판단 안 됨"
+      ],
+      "followup": "보고된 내용과 확인된 풀이를 분리하여 보완 후 합류 경로를 열어 둔다.",
+      "source_ids": [
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q20",
+      "module": "진도 공통",
+      "prompt": "같은 축의 여러 과정을 어떻게 병행하나요?",
+      "answer_options": [
+        "서로 다른 범위",
+        "같은 범위의 기본/심화",
+        "학원+가정",
+        "복습+새 진도",
+        "선택 대기"
+      ],
+      "followup": "대표 표시 과정은 사용자가 고른다. 다른 기록을 최고 권수 하나로 삭제하지 않는다.",
+      "source_ids": [
+        "U2",
+        "C1",
+        "T1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q21",
+      "module": "교과",
+      "prompt": "교과의 학년·학기·단원별 기본/응용 진도는?",
+      "answer_options": [
+        "초등 학기별",
+        "중등 학기별",
+        "공통수학1/2",
+        "대수",
+        "미적분Ⅰ",
+        "목록 외",
+        "미확인"
+      ],
+      "followup": "낮은 실제 학년도 높은 진도 입력 가능. 구 명칭이면 Q24.",
+      "source_ids": [
+        "H1",
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q22",
+      "module": "교과",
+      "prompt": "심화 교재는 어느 범위를 공부했나요?",
+      "answer_options": [
+        "현재 진행",
+        "마무리한 범위",
+        "아직 시작 안 함",
+        "잠시 쉬는 중",
+        "모름/나중에 입력"
+      ],
+      "followup": "응용과 독립 범위 저장. 2-1 응용+1-1 심화 허용. 공란을 미시작으로 바꾸지 않고, 심화 참여 여부는 별도 명시 상태.",
+      "source_ids": [
+        "UF01",
+        "UF03",
+        "F01",
+        "F21",
+        "F25"
+      ],
+      "status": "설계 제안",
+      "display_policy": "optional_depth_position",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "Q23",
+      "module": "교과",
+      "prompt": "3-1을 언제 시작했고 현재 어디까지 진행했나요?",
+      "answer_options": [
+        "시작 연·월+범위 입력",
+        "아직 시작 전",
+        "기억 불확실"
+      ],
+      "followup": "황소 희망 시만 과거 사례 세 코호트와 비교. 이 날짜만으로 입학 가능성 판단 금지.",
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q24",
+      "module": "교과",
+      "prompt": "수학 상/하·수Ⅰ 등 구 교육과정 이름으로 기록되어 있나요?",
+      "answer_options": [
+        "현 교과명으로 확인 가능",
+        "구 명칭만 있음",
+        "판본/단원 확인 필요"
+      ],
+      "followup": "구 명칭 원문을 보존하고 현 과목과의 내용 대응을 미확인으로 남긴다.",
+      "source_ids": [
+        "H1",
+        "E8",
+        "I5"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q25",
+      "module": "사고력",
+      "prompt": "사고력의 실제 과정·권·완료 범위는?",
+      "answer_options": [
+        "킨더팩토",
+        "키즈팩토",
+        "초등팩토",
+        "PRE1031",
+        "1031 입문/초급/중급 등",
+        "필즈 베이직/초급 등",
+        "GM",
+        "프리미어/챌린지",
+        "필즈 정규반",
+        "기타",
+        "미확인"
+      ],
+      "followup": "Q11–Q20 반복; 교재와 학원 반을 구분. 새 과정명 만들지 않는다.",
+      "source_ids": [
+        "C1",
+        "E1",
+        "E2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q26",
+      "module": "사고력",
+      "prompt": "지문 읽기와 조건 이해는 어떤 도움을 받나요?",
+      "answer_options": [
+        "혼자 읽고 조건 설명",
+        "읽어 주면 해결",
+        "조건 정리 도움",
+        "풀이 도움",
+        "상황마다 다름",
+        "관찰 없음"
+      ],
+      "followup": "어린 나이가 아닌 실제 도움 형태에 따라 읽기 보완 선택지를 낸다.",
+      "source_ids": [
+        "E2",
+        "T2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q27",
+      "module": "사고력",
+      "prompt": "PRE1031·초등팩토·필즈 베이직 등을 병행하나요?",
+      "answer_options": [
+        "병행 중",
+        "하나만 진행",
+        "완료 후 다음 검토",
+        "일부 보완",
+        "모름"
+      ],
+      "followup": "서로 자동 등가·완료 처리하지 않는다. 병행 이유와 시간 Q20,Q07.",
+      "source_ids": [
+        "T1",
+        "C1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q28",
+      "module": "사고력",
+      "prompt": "1031 입문/초급 시작 전 필요한 연산을 실제로 확인했나요?",
+      "answer_options": [
+        "구구단·세 자리 받아내림 수행 기록 있음",
+        "학부모 보고만",
+        "일부 도움",
+        "확인하지 않음"
+      ],
+      "followup": "교재 시작 전 원자료 권고를 보여 주되 자동 불가 판정은 하지 않는다.",
+      "source_ids": [
+        "E1",
+        "E2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q29",
+      "module": "연산",
+      "prompt": "연산은 어떤 교재·권·단원을 따로 공부하나요?",
+      "answer_options": [
+        "소마셈",
+        "기적의 계산법",
+        "상위권 연산",
+        "더클셈",
+        "중등연산",
+        "기타",
+        "별도 학습 없음",
+        "미확인"
+      ],
+      "followup": "Q11–Q20 반복. 교과 학기와 기적 권 번호를 동일 숫자로 매핑하지 않는다.",
+      "source_ids": [
+        "C1",
+        "E1",
+        "I1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q30",
+      "module": "연산",
+      "prompt": "현재 필요한 계산 유형을 어느 정도 혼자 해결하나요?",
+      "answer_options": [
+        "유형·풀이 기록 입력",
+        "교사/학부모 보고",
+        "아직 확인 안 함"
+      ],
+      "followup": "구구단·받아내림 등 실제 관찰된 내용만. 정답률 컷 임의 생성 금지.",
+      "source_ids": [
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q31",
+      "module": "연산",
+      "prompt": "교과 진도와 연결한 연산 계획은 무엇인가요?",
+      "answer_options": [
+        "현재 교과 보완",
+        "다음 교과 준비",
+        "별도 과정 유지",
+        "미정"
+      ],
+      "followup": "사용자 한 학년 앞 연산 원칙은 확인된 대응표가 있는 범위만 적용; 판본별 대응 미확인 시 보류.",
+      "source_ids": [
+        "U2",
+        "E1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q32",
+      "module": "학습 상태",
+      "prompt": "과제를 끝내는 과정에서 실제로 어떤 일이 있나요?",
+      "answer_options": [
+        "혼자 이어감",
+        "시작 도움",
+        "완수 도움",
+        "과제량 부담",
+        "변동 큼",
+        "관찰 없음"
+      ],
+      "followup": "기간·과정·예를 적고 성격 진단이나 적성 점수로 만들지 않는다.",
+      "source_ids": [
+        "T1",
+        "T2",
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q33",
+      "module": "학습 상태",
+      "prompt": "수업 적응·실수·피로·운동·휴식에 관한 최근 보고는?",
+      "answer_options": [
+        "관찰 내용 입력",
+        "문제 없다고 보고",
+        "교사 확인 대기",
+        "미확인"
+      ],
+      "followup": "중단 권고를 자동 발행하지 않는다. 학습량 조정·상담·확인 선택지.",
+      "source_ids": [
+        "E5",
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q34",
+      "module": "학습 상태",
+      "prompt": "현재 진도와 독립 해결 범위가 다를 때 어떤 선택을 원하나요?",
+      "answer_options": [
+        "원 진도 유지+별도 보완",
+        "일부 보완 후 합류",
+        "한 축만 조정",
+        "교사와 확인",
+        "미정"
+      ],
+      "followup": "다른 두 축의 완료 상태와 시간은 그대로 보존한다.",
+      "source_ids": [
+        "U2",
+        "T1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q35",
+      "module": "속도",
+      "prompt": "현재 유지와 확정된 증속 모델을 비교할까요?",
+      "answer_options": [
+        "현재 속도만",
+        "현재/증속 비교",
+        "비교 보류"
+      ],
+      "followup": "속도 증가를 선택해도 실제 실행·합격 예측이 아니다. 첫 실제 2개월 10%, 이후 20%만 사용.",
+      "source_ids": [
+        "H1",
+        "C1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q36",
+      "module": "속도",
+      "prompt": "표의 현재 위치를 단원 진행량으로 계산할 수 있나요?",
+      "answer_options": [
+        "범위/총량 확인",
+        "완료 지점만 확인",
+        "교재 중간으로만 보고",
+        "모름"
+      ],
+      "followup": "총량 없으면 월 단위 정확 위치 미확인. 기존 임의 mid 표시를 새 확인 사실로 저장하지 않는다.",
+      "source_ids": [
+        "C1",
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q37",
+      "module": "속도",
+      "prompt": "교과·사고력·연산 중 무엇을 조정하고 싶나요?",
+      "answer_options": [
+        "교과",
+        "사고력",
+        "연산",
+        "복수 선택",
+        "전체 유지"
+      ],
+      "followup": "각 축 독립 계산. 일부 조정으로 다른 축 완료를 되돌리지 않는다.",
+      "source_ids": [
+        "C1",
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q38",
+      "module": "소마·필즈",
+      "prompt": "다녔거나 다니고 있는 사고력 학원이 있나요?",
+      "answer_options": [
+        "소마",
+        "필즈",
+        "CMS",
+        "그 외",
+        "다닌 적 없음",
+        "모름"
+      ],
+      "followup": "선택한 기관만 현재/과거 재원과 반·레벨 질문. 그 외는 이름 입력. 여러 이력 허용. 프리미어·챌린지 등 해당 반은 선택한 기관에서 펼침. 학원 레벨을 교과 숙달로 자동 환산하지 않음.",
+      "source_ids": [
+        "UF01",
+        "E3",
+        "E4",
+        "I1",
+        "I2",
+        "I3",
+        "I4"
+      ],
+      "status": "설계 제안",
+      "display_policy": "thinking_academy_or_book_entry",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "Q39",
+      "module": "소마·필즈",
+      "prompt": "현재 선택하려는 것은 무엇인가요?",
+      "answer_options": [
+        "현재 반 유지",
+        "프리미어/챌린지 지원",
+        "필즈 지원",
+        "승급",
+        "반 이동",
+        "두 과정 병행",
+        "한 과정 선택",
+        "미정"
+      ],
+      "followup": "유아 과거 입테 설명은 역사 자료. 최신 초1 3월 관찰 방향을 구분한다.",
+      "source_ids": [
+        "H1",
+        "T1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q40",
+      "module": "소마·필즈",
+      "prompt": "준비/승급/지원의 현재 연도와 회차·공식 또는 학원 안내가 있나요?",
+      "answer_options": [
+        "현재 안내 있음",
+        "구 안내만",
+        "없음",
+        "확인 대기"
+      ],
+      "followup": "응시 시점·범위·선발 방식 최신 확인; 옛 컷과 모의 점수는 진입 조건 아님.",
+      "source_ids": [
+        "H1",
+        "I2",
+        "T1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q41",
+      "module": "소마·필즈",
+      "prompt": "프리미어/챌린지와 필즈를 함께 한다면 실제로 무엇을 줄일 수 있나요?",
+      "answer_options": [
+        "실제 시간 계획 있음",
+        "외부 교과/연산 조정",
+        "영어 등 유지 필요",
+        "줄일 과정 없음",
+        "미정"
+      ],
+      "followup": "선택·조건부 병행·후일 이동 모두 제공; 상담의 기간 예시를 고정 처방으로 쓰지 않는다.",
+      "source_ids": [
+        "T1",
+        "T3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q42",
+      "module": "소마·필즈",
+      "prompt": "입학/승급/지원 결과와 이후 선택은?",
+      "answer_options": [
+        "합격·등록",
+        "합격·미등록",
+        "미응시",
+        "미선발",
+        "선택 대기",
+        "승급 보류"
+      ],
+      "followup": "모든 결과에서 현재 과정을 유지하며 재지원/다른 과정/보완 경로 선택 가능.",
+      "source_ids": [
+        "T1",
+        "H1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q43",
+      "module": "황소",
+      "prompt": "황소 초등을 어느 시점에 고려하고 있나요?",
+      "answer_options": [
+        "초2 고려",
+        "초3 고려",
+        "나중에 고려",
+        "선택하지 않음",
+        "아직 미정"
+      ],
+      "followup": "선택한 경우 시점과 실제 회차를 확인. 늦춤/미선택 이유는 진도보완·어리다고 판단해 심화·꼼꼼한 독립학습·시간·아이의사·기타/모름으로 별도 입력. 이유를 실력 판정으로 사용하지 않음.",
+      "source_ids": [
+        "UF05",
+        "UF03",
+        "C3"
+      ],
+      "status": "설계 제안",
+      "display_policy": "only_selection_interest_or_user_open",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "Q44",
+      "module": "황소",
+      "prompt": "현재 교과 기본·응용·심화, 연산, 읽기·혼자 해결 범위는?",
+      "answer_options": [
+        "각 기록 연결",
+        "추가 관찰 필요",
+        "학원 반 이름만 앎"
+      ],
+      "followup": "교재 진도만으로 약점/합격 가능성 계산 금지. 반 이름 대신 실제 범위.",
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q45",
+      "module": "황소",
+      "prompt": "대상 회차의 실제 시험 범위·지원 대상·수업·과제량을 확인했나요?",
+      "answer_options": [
+        "현재 학원 안내",
+        "과거 사례만",
+        "일부 확인",
+        "미확인"
+      ],
+      "followup": "초2 11월/초3 2월/초3 11월은 코호트 참고, 현재 모집 규칙 아님.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q46",
+      "module": "황소",
+      "prompt": "다른 과정과 학습 시간을 유지하며 적응할 수 있을지 확인했나요?",
+      "answer_options": [
+        "현재 시간·과제 실제 기록",
+        "적응 관찰 중",
+        "부담 보고",
+        "미확인"
+      ],
+      "followup": "숙제 주2회/3시간 문구 총량 불명확. 임의 주6시간 컷 금지.",
+      "source_ids": [
+        "C3",
+        "T1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q47",
+      "module": "황소",
+      "prompt": "결과와 지금 선택은?",
+      "answer_options": [
+        "등록 후 적응",
+        "합격 후 다른 길",
+        "다음 회차",
+        "미선발 후 재지원",
+        "편입 검토",
+        "황소 없이 현재 학습 이어가기",
+        "미정"
+      ],
+      "followup": "합격·배정·등록·수강을 따로 저장. 황소 미선택은 현재 초등 과정 유지부터 실제 범위별 다음 선택으로 연결.",
+      "source_ids": [
+        "C3",
+        "UF05",
+        "UF03"
+      ],
+      "status": "설계 제안",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "Q48",
+      "module": "황소",
+      "prompt": "보완/재지원 중 무엇을 이어 갈까요?",
+      "answer_options": [
+        "기본·응용 유지",
+        "심화 병행",
+        "읽기/연산 확인",
+        "과제 적응",
+        "중등 준비",
+        "결정 대기"
+      ],
+      "followup": "미선발 이유를 추정하지 않고 확인된 피드백만 보완 조건.",
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q49",
+      "module": "영재원",
+      "prompt": "어떤 기관·지역·분야·경험을 희망하나요?",
+      "answer_options": [
+        "학교 영재학급",
+        "교육청",
+        "대학부설",
+        "가천 브릿지",
+        "수학",
+        "과학",
+        "융합",
+        "SW/AI",
+        "기타",
+        "미정"
+      ],
+      "followup": "지역·기관·영역별 질문. 지역 경험을 전국 기준으로 일반화하지 않는다.",
+      "source_ids": [
+        "C3",
+        "T4"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q50",
+      "module": "영재원",
+      "prompt": "지원 학년도·기관 공고·현재 학년/거주 요건은 확인했나요?",
+      "answer_options": [
+        "당해 모집요강 확보",
+        "과거 모집요강만",
+        "확인 전"
+      ],
+      "followup": "모집 학년도와 접수 달력 연도 분리. 미확인은 확인 대기 경로.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q51",
+      "module": "영재원",
+      "prompt": "기존 영재교육·브릿지 이수/지원/합격/재학 상태는?",
+      "answer_options": [
+        "신규",
+        "이수 중",
+        "이수 완료",
+        "지원 중",
+        "합격",
+        "재학",
+        "종료",
+        "모름"
+      ],
+      "followup": "신규/계속교육/중복 제한을 해당 연도 공고로 확인. 이수=자동 선발 아님.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q52",
+      "module": "영재원",
+      "prompt": "관찰·추천·지원서·산출물 등 현재 공고의 요구 사항은?",
+      "answer_options": [
+        "요구 항목+준비 상태 입력",
+        "추천/산출물 일부",
+        "공고 미확인"
+      ],
+      "followup": "공고에 없는 자기소개서·추천 의무를 만들지 않는다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q53",
+      "module": "영재원",
+      "prompt": "주말 수업·탐구·과제와 다른 과정이 실제로 겹치나요?",
+      "answer_options": [
+        "시간 충돌",
+        "조정 가능",
+        "교차 일정",
+        "미확인"
+      ],
+      "followup": "공식 동시 재학 제한과 개인 시간 충돌을 분리한다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q54",
+      "module": "영재원",
+      "prompt": "영재원 경험 후 원하는 선택은?",
+      "answer_options": [
+        "계속 교육",
+        "다른 기관 지원",
+        "탐구 유지",
+        "학교/다른 과정 우선",
+        "고입 목표 재검토",
+        "미정"
+      ],
+      "followup": "영재원 경험이 영재고 지원 의무나 합격 보장이 아니다.",
+      "source_ids": [
+        "C3",
+        "C4"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q55",
+      "module": "중등·누테",
+      "prompt": "현재 중등 학기별 기본·응용·심화 범위는?",
+      "answer_options": [
+        "범위 기록 연결",
+        "중등 시작 전",
+        "진행 중",
+        "다뤘으나 심화 미확인",
+        "완료 기록"
+      ],
+      "followup": "실제 학년과 무관하게 질문.",
+      "source_ids": [
+        "C3",
+        "H1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q56",
+      "module": "중등·누테",
+      "prompt": "선택 학원의 과정·현재 회차·입학 범위는?",
+      "answer_options": [
+        "학원/과정/회차 입력",
+        "누테 독립 중등 계획",
+        "황소 중등",
+        "CMS",
+        "기타",
+        "미정"
+      ],
+      "followup": "학교 학년 숫자를 과정 번호로 해석하지 않는다.",
+      "source_ids": [
+        "C3",
+        "I6",
+        "I7"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q57",
+      "module": "중등·누테",
+      "prompt": "공통수학 전환에 필요한 심화를 실제로 확인했나요?",
+      "answer_options": [
+        "확인된 풀이 기록",
+        "학원 시험·안내",
+        "미완료 범위 있음",
+        "미확인"
+      ],
+      "followup": "60–70%는 특정 학원 예시. 공통 진입 보편 컷으로 사용 금지.",
+      "source_ids": [
+        "C3",
+        "I6"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q58",
+      "module": "중등·누테",
+      "prompt": "외부 심화와 학교 내신을 어떻게 병행할까요?",
+      "answer_options": [
+        "병행 시간 확인",
+        "시험 기간 조정",
+        "기본 보완 후 합류",
+        "다음 모집 회차",
+        "독립 진행"
+      ],
+      "followup": "중등 12/18개월과 특정 6.5개월 예시를 합쳐 새 표준 기간으로 만들지 않는다.",
+      "source_ids": [
+        "H1",
+        "C3",
+        "I6"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q59",
+      "module": "중등·누테",
+      "prompt": "고등 과정·공통수학1/2의 실제 완료/심화 범위는?",
+      "answer_options": [
+        "과목별 기록 연결",
+        "일부 단원",
+        "기본만",
+        "심화/증명",
+        "미확인"
+      ],
+      "followup": "목표별 비교 참고, 완료만으로 경시·영재고 적합 판정 금지.",
+      "source_ids": [
+        "C4",
+        "H1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q60",
+      "module": "과학",
+      "prompt": "과학은 어떤 목적·분야·실제 경험으로 추가하려 하나요?",
+      "answer_options": [
+        "학교 과학",
+        "실험·탐구",
+        "영재원",
+        "물리",
+        "화학",
+        "생명",
+        "지구",
+        "영재고/과학고",
+        "경시",
+        "미정"
+      ],
+      "followup": "과학 관심/목표일 때만 Q61–Q67; 불필요한 공통 필수 질문 아님.",
+      "source_ids": [
+        "C3",
+        "E6",
+        "E7",
+        "E10"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q61",
+      "module": "과학",
+      "prompt": "과학 분야별 교재·단원·완료·독립 설명·실험 경험은?",
+      "answer_options": [
+        "초등 네 분야",
+        "중등 분야별",
+        "고등 물리/화학 등",
+        "실험/보고서",
+        "부분 학습",
+        "미확인"
+      ],
+      "followup": "수학 진도로 과학 진도를 자동 채우지 않는다. Q11–Q19를 분야별 반복.",
+      "source_ids": [
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q62",
+      "module": "과학",
+      "prompt": "현재 수학 범위를 연결해 어떤 과학 계획과 비교할까요?",
+      "answer_options": [
+        "초6 수학",
+        "중1 수학",
+        "중2 수학",
+        "중3 수학",
+        "공통수학",
+        "기타",
+        "미확인"
+      ],
+      "followup": "예비초6 네 계획은 같은 실제 학년에서의 수학 차이 예시. 미취학/다른 학년을 잠그지 않는다.",
+      "source_ids": [
+        "E7",
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q63",
+      "module": "과학",
+      "prompt": "과학 용어·설명·수식·도형을 실제로 다루는 정도는?",
+      "answer_options": [
+        "관찰 기록 있음",
+        "말로 설명",
+        "수식 도움",
+        "읽기 도움",
+        "미확인"
+      ],
+      "followup": "어휘·수학·실험을 별도 보완. 수학 중3/공통수학2 기준 충돌이면 해당 기관 조건 확인 대기.",
+      "source_ids": [
+        "E7",
+        "A2",
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q64",
+      "module": "과학",
+      "prompt": "실험·보고서·장기 탐구는 어떤 경험과 시간이 있나요?",
+      "answer_options": [
+        "실제 산출물·시간 기록",
+        "짧은 실험 경험",
+        "앞으로 희망",
+        "미확인"
+      ],
+      "followup": "산출물의 질은 기록/검토로 확인; 참여 자체로 우수성 판정하지 않는다.. 현재 수업 개설, 교재·교구·앱 등 실제 이용 조건과 과거 안내/출시예정을 구분해 확인한다",
+      "source_ids": [
+        "E6",
+        "E10",
+        "T4"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q65",
+      "module": "과학",
+      "prompt": "한과연 표준/FAST/SLOW 중 어떤 원자료 계획을 참고하나요?",
+      "answer_options": [
+        "표준",
+        "FAST",
+        "SLOW",
+        "다른 학원",
+        "과학 미시작",
+        "미정"
+      ],
+      "followup": "학원의 세 계획이며 GFIELD 학생 수준 등급으로 바꾸지 않는다.",
+      "source_ids": [
+        "H1",
+        "C3",
+        "E6",
+        "E7"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q66",
+      "module": "과학",
+      "prompt": "고등 물리·화학 진입 전 해당 과정 요구 사항은 확인했나요?",
+      "answer_options": [
+        "현재 학원 조건+학습 기록",
+        "자료 내 조건 충돌",
+        "일부 확인",
+        "미확인"
+      ],
+      "followup": "중3 완료와 공통수학2 완료를 임의로 합친 새 필수 조건 금지.",
+      "source_ids": [
+        "E7",
+        "A2",
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q67",
+      "module": "과학",
+      "prompt": "과학 경시·심화·내신의 우선순위와 병행 시간은?",
+      "answer_options": [
+        "물리 경시",
+        "화학 경시",
+        "다른 분야",
+        "학교 내신",
+        "실험·탐구",
+        "복수 희망",
+        "미정"
+      ],
+      "followup": "경시 경험·수상·현재 활동을 별도 질문 Q68–Q74.",
+      "source_ids": [
+        "E10",
+        "C3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q68",
+      "module": "경시",
+      "prompt": "어떤 경시 분야·대회·학습 경험을 희망하나요?",
+      "answer_options": [
+        "KMO/수학",
+        "물리",
+        "화학",
+        "정보",
+        "기타",
+        "경험 희망",
+        "현재 참가",
+        "희망 없음",
+        "미정",
+        "경시 자료만 학습하고 대회 응시는 미정 또는 희망하지 않음"
+      ],
+      "followup": "예/아니오 하나에 참가·수상·목표를 합치지 않는다.. 대회 이름의 자료를 썼다는 사실만으로 응시 목표·지원·실제 참가를 만들지 않는다",
+      "source_ids": [
+        "C3",
+        "E9",
+        "E10",
+        "T2"
+      ],
+      "status": "설계 제안",
+      "evidence_locator": "70_상담B_추가검토_2026-10-03.md CB13"
+    },
+    {
+      "id": "Q69",
+      "module": "경시",
+      "prompt": "해당 대회의 응시 학년·공고·현재 회차는 확인했나요?",
+      "answer_options": [
+        "공식 현재 공고",
+        "과거 공고",
+        "미확인"
+      ],
+      "followup": "학원 반 입학 조건과 대회 응시 자격 분리.",
+      "source_ids": [
+        "C3",
+        "E9"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q70",
+      "module": "경시",
+      "prompt": "중등 심화·공통수학·증명/논증의 실제 수행은?",
+      "answer_options": [
+        "분야별 기록 연결",
+        "풀이 검토 필요",
+        "미확인"
+      ],
+      "followup": "공통수학 완료, 완료 후 2년 등의 서로 다른 참고를 단일 의무로 합치지 않는다.",
+      "source_ids": [
+        "C3",
+        "E9",
+        "A3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q71",
+      "module": "경시",
+      "prompt": "현재 학원 단계·시험·성적·수상은 어떤 범위의 기록인가요?",
+      "answer_options": [
+        "학원 단계 입력",
+        "학원 진입/승급 시험",
+        "대회 참가",
+        "수상 종류·연도",
+        "해당 없음"
+      ],
+      "followup": "미래탐구 내부 80%/상위20% 등은 내부 조건으로만 보존. 일반 컷에 적용 금지.",
+      "source_ids": [
+        "E9"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q72",
+      "module": "경시",
+      "prompt": "어떤 경시 경로를 선택하려 하나요?",
+      "answer_options": [
+        "경험 중심",
+        "특정 학원 단계",
+        "1차/2차 준비",
+        "심화 유지",
+        "과학 경시 병행",
+        "보류"
+      ],
+      "followup": "모든 고입 희망 학생에게 KMO를 필수로 배정하지 않는다.",
+      "source_ids": [
+        "C3",
+        "E9",
+        "H1"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q73",
+      "module": "경시",
+      "prompt": "경시 준비와 교과·심화·탐구의 실제 시간은?",
+      "answer_options": [
+        "시간 계획 확인",
+        "추가 여력 미확인",
+        "경시 우선 조정",
+        "학교 우선 조정"
+      ],
+      "followup": "가장 높은 교재나 수상 기록 하나로 다른 목표를 자동 탈락시키지 않는다.",
+      "source_ids": [
+        "C3",
+        "A3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q74",
+      "module": "경시",
+      "prompt": "현재 결과 후 다음 선택은?",
+      "answer_options": [
+        "다음 회차",
+        "같은 단계 보완",
+        "심화 유지",
+        "다른 분야",
+        "고입 목표 재검토",
+        "보류"
+      ],
+      "followup": "수상 실패를 적성 부족 판정으로 바꾸지 않는다.",
+      "source_ids": [
+        "E9",
+        "C4"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q75",
+      "module": "고입",
+      "prompt": "현재 희망 학교 유형·학교·지원 학년도는?",
+      "answer_options": [
+        "영재고",
+        "과학고",
+        "자사고",
+        "외고/국제고",
+        "일반고",
+        "복수 탐색",
+        "미정"
+      ],
+      "followup": "유형별 현재 공고를 따로 확인. 선발 방식·재지원·동시 지원 추정 금지.. 유형만 희망하는지 실제 후보학교가 있는지 구분하고 실제 과목 개설·신청 가능 여부·일과·이동을 확인한다",
+      "source_ids": [
+        "C3",
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "status": "설계 제안",
+      "evidence_locator": "PDF 보충 P-S01~07; PPT 시각검토. 현재 공식 조건이 아닌 질문·출처 구분의 근거"
+    },
+    {
+      "id": "Q76",
+      "module": "고입",
+      "prompt": "학교 내신·수행·학교 생활과 탐구 기록은?",
+      "answer_options": [
+        "현재 학교 기록",
+        "교사 피드백",
+        "일부 기록",
+        "미확인"
+      ],
+      "followup": "선행과 내신을 별도 기록. 학교·기관 공식 요구가 확인된 범위만 비교.. 과목명·교육과정/평가제도 판본, 실제 수행한 탐구·아이 기여와 학교 공식기록을 각각 보존한다",
+      "source_ids": [
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "status": "설계 제안",
+      "evidence_locator": "PDF 보충 P-S01~07; PPT 시각검토. 현재 공식 조건이 아닌 질문·출처 구분의 근거"
+    },
+    {
+      "id": "Q77",
+      "module": "고입",
+      "prompt": "지원 자격·일정·서류·전형별 요구를 공식 확인했나요?",
+      "answer_options": [
+        "현 학년도 공식 자료",
+        "일부 확인",
+        "과거 자료",
+        "확인 전"
+      ],
+      "followup": "과거 CMS/학원 일정표를 올해 공식 일정으로 출력 금지.. 전형명 하나로 다른 준비요소를 지우지 않는다. 과거통계·예측표와 현재 공식공고의 자료유형·학년도·정정이력 구분",
+      "source_ids": [
+        "C3",
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "status": "설계 제안",
+      "evidence_locator": "PDF 보충 P-S01~07; PPT 시각검토. 현재 공식 조건이 아닌 질문·출처 구분의 근거"
+    },
+    {
+      "id": "Q78",
+      "module": "고입",
+      "prompt": "중2 시점 목표를 유지하거나 바꾸고 싶나요?",
+      "answer_options": [
+        "유지",
+        "영재고/과학고로 변경 검토",
+        "학교 내신 중심",
+        "다른 유형 탐색",
+        "미정"
+      ],
+      "followup": "교과·사고력·연산·과학 기록은 보존하고 관련 질문만 재개.",
+      "source_ids": [
+        "C4",
+        "E7"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q79",
+      "module": "고입",
+      "prompt": "현재 확인된 학습·탐구와 지원 준비 사이 무엇을 확인해야 하나요?",
+      "answer_options": [
+        "구체 범위·서류 보완",
+        "교사 검토",
+        "자격 확인",
+        "시간 검토",
+        "미확인"
+      ],
+      "followup": "합격 확률·영재성 점수 생성 금지.. 관심분야·선택희망 과목·실제개설·이수·성취를 구분한다. 대학별 상세는 B80 후속범위로 인계한다",
+      "source_ids": [
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "status": "설계 제안",
+      "evidence_locator": "PDF 보충 P-S01~07; PPT 시각검토. 현재 공식 조건이 아닌 질문·출처 구분의 근거"
+    },
+    {
+      "id": "Q80",
+      "module": "고입",
+      "prompt": "최종 지원·선발·등록 결과와 다음 목표는?",
+      "answer_options": [
+        "지원 결정",
+        "결과 대기",
+        "합격·등록",
+        "합격·미등록",
+        "미선발",
+        "목표 변경",
+        "다른 학교 진학"
+      ],
+      "followup": "확인된 결과만 기록; 중3 말 이후 섹션5는 요구 인계만, 새 과정 임의 설계 금지.",
+      "source_ids": [
+        "C4"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q81",
+      "module": "시간",
+      "prompt": "가능한 요일·이동을 고려할 때 수업을 나누거나 한 번에 길게 하는 선택은?",
+      "answer_options": [
+        "분산 수업 검토",
+        "한 번의 긴 수업 검토",
+        "현재 시간 유지",
+        "단과/개별 확인",
+        "미확인"
+      ],
+      "followup": "실제 연속 학습·피로 관찰과 가능한 시간으로 비교. 자료의 주1/2회·시간 예시는 개인 사례, 모든 학생 컷 아님.",
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q82",
+      "module": "시간",
+      "prompt": "가정에서 읽기·영상·과제·채점·이동을 도울 수 있는 실제 여건은?",
+      "answer_options": [
+        "요일별 지원 입력",
+        "가족 일부 지원",
+        "독립 진행",
+        "학원 지원 필요",
+        "일부 미확인"
+      ],
+      "followup": "직업·소득·성별로 학습 경로를 제한하지 않는다. 필요한 도움과 실제 제공 가능한 도움만 기록.",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q83",
+      "module": "학습 형태",
+      "prompt": "개별·팀·가정 학습을 어떻게 조합하고 싶나요?",
+      "answer_options": [
+        "개별 유지",
+        "팀+개별 검토",
+        "가정+수업",
+        "다른 반 검토",
+        "미정"
+      ],
+      "followup": "팀 공동 진행과 개인 독립 수행 기록은 별도. 현재 개설·시간은 확인 필요.",
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q84",
+      "module": "진도 공통",
+      "prompt": "권이나 단원을 일반 순서와 다르게 배운 적이 있나요?",
+      "answer_options": [
+        "실제 이수 순서 입력",
+        "선택 단원만",
+        "복습/재진행",
+        "일반 순서",
+        "모름"
+      ],
+      "followup": "1031 B/C/A 진행 같은 실제 기록을 보존한다. 높은 권/단계로 이전 모든 권·단원 완료를 채우지 않는다.",
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q85",
+      "module": "평가 경험",
+      "prompt": "시간 제한 없이 풀 때와 실제 시험에서 어떤 차이가 관찰되나요?",
+      "answer_options": [
+        "실제 시도/미시도/검토 기록",
+        "천천히 풀면 달라짐",
+        "확인된 특정 범위",
+        "학부모/교사 보고 다름",
+        "관찰 없음"
+      ],
+      "followup": "점수로 시간 관리/개념/정서 원인 진단하지 않는다. 답을 알려주기 전 실제 독립 시도 기록을 구분.",
+      "source_ids": [
+        "T2",
+        "T3"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q86",
+      "module": "학습 형태",
+      "prompt": "책의 실제 내용을 먼저 공부하고 미션·영상·권별테스트를 어떤 순서로 쓰나요?",
+      "answer_options": [
+        "책+수업 후 미션",
+        "영상 도움+책",
+        "미션부터",
+        "책 일부 미학습",
+        "확인 안 됨"
+      ],
+      "followup": "기존 자료의 책 학습→미션 권고를 해당 프로그램만 표시. 영상 시청=내용 숙달 아님.",
+      "source_ids": [
+        "T2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q87",
+      "module": "학습 상태",
+      "prompt": "학부모와 교사의 관찰이 다르다면 각각의 문제·시점·도움 형태는?",
+      "answer_options": [
+        "각 기록 입력",
+        "시점 다름",
+        "관찰 범위 다름",
+        "아직 비교 못함"
+      ],
+      "followup": "서로 다른 보고를 평균내거나 하나로 합치지 않는다. 같은 범위에서의 확인이 필요.",
+      "source_ids": [
+        "T2",
+        "U2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q88",
+      "module": "평가 경험",
+      "prompt": "모의고사·추가 특강 후 실제로 복습할 시간이 있나요?",
+      "answer_options": [
+        "복습 시간/범위 있음",
+        "시험만 추가 희망",
+        "시간 부족 보고",
+        "기본 학습 우선",
+        "미확인"
+      ],
+      "followup": "모의 횟수·점수만 늘리는 처방 대신 복습/한 시험지/현재 기본/추가 경험 후보 비교. 자료의 마감 예측은 현재 기준 아님.",
+      "source_ids": [
+        "T2"
+      ],
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q89",
+      "module": "진단",
+      "prompt": "교재 학습과 진단을 각각 어디까지 진행했나요?",
+      "answer_options": [
+        "학습 중·진단 예정",
+        "학습 완료·진단 미실시",
+        "보완 후 진단",
+        "진단 일부 실시",
+        "진단 완료·해석 확인",
+        "아직 계획 없음",
+        "모름"
+      ],
+      "followup": "다음 권을 공부해도 이전 권 진단은 별도 보류 가능. 연기 범위·이유·다시 확인할 사건 기록",
+      "source_ids": [
+        "T1",
+        "T3",
+        "U4"
+      ],
+      "evidence_locator": "A307–309, C507–509; 2024-11-03",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q90",
+      "module": "진단",
+      "prompt": "이 평가의 첫 풀이와 재풀이·수정 점수를 구분할 수 있나요?",
+      "answer_options": [
+        "처음 보는 평가",
+        "같은 문항 재풀이",
+        "일부 문항 사전 노출",
+        "채점 수정",
+        "조건이 달랐음",
+        "모름",
+        "최초 풀이 기록 없음·소실",
+        "문항 자체 오류 의심",
+        "교사가 예상한 점수"
+      ],
+      "followup": "시도별 문항버전·범위·시간·도움·최초응답과 채점 개정 사유 저장. 다른 시험 점수를 단순 성장치로 연결하지 않음. 원풀이가 없으면 missing으로 남기며 재구성하지 않는다. 실제 점수·정정점수·교사의 가정 점수 분리. 문항 오류 의심은 해당 문항 판정을 보류하고 자료검토로 연결한다",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "evidence_locator": "A2245–2248; B1931–1938",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q91",
+      "module": "근거",
+      "prompt": "이 안내는 우리 아이의 실제 결과인가요, 참고로 받은 예시인가요?",
+      "answer_options": [
+        "개인 결과 통지",
+        "본인 학습 관찰",
+        "학원 전체 안내",
+        "예시·문자 템플릿",
+        "다른 학생 사례",
+        "구분 어려움"
+      ],
+      "followup": "작성/발송/실제 사건일·대상자를 구분. 템플릿이면 결과 자동 반영 없음",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "evidence_locator": "A4262–4335; B3891 및3887–3929",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q92",
+      "module": "기관",
+      "prompt": "선발·승급에 반영되는 평가와 재원 기간을 확인했나요?",
+      "answer_options": [
+        "현재 회차 안내 확인",
+        "일부 평가만 반영",
+        "재원 시작일에 따라 다름",
+        "아직 확인 안 함",
+        "해당 없음"
+      ],
+      "followup": "기관·반·입반일·반영 대상 평가·안내 기준일 확인",
+      "source_ids": [
+        "T1"
+      ],
+      "evidence_locator": "A895; 2025-03-13",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q93",
+      "module": "기관",
+      "prompt": "선발 결과 뒤 반 배정·시간표·등록은 어디까지 정해졌나요?",
+      "answer_options": [
+        "결과 대기",
+        "선발·반 배정 대기",
+        "반 배정·시간 신청",
+        "등록 완료·시작 전",
+        "실제 수강 중",
+        "대기 명단",
+        "미등록 선택",
+        "모름"
+      ],
+      "followup": "선발과 좌석/시간표/등록/출석 각각 기록; 맞지 않으면 현재학습 유지·다음기회 비교",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "evidence_locator": "A2454–2474; B2232–2242",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q94",
+      "module": "과제",
+      "prompt": "지금 과제 중 반드시 할 범위와 선택할 범위는 무엇인가요?",
+      "answer_options": [
+        "필수·선택을 나눠 안내받음",
+        "모두 같은 과제",
+        "부모가 우선순위 선택",
+        "구분 모름"
+      ],
+      "followup": "구체 범위·부여한 사람·기한·대체 활동 기록. 시간 부족이면 선택 과제 조정 후보. 미배부/수업 예정/실행/미제출/채점대기/안내정정과 다른 과제를 대체하는지 구분한다",
+      "source_ids": [
+        "T3",
+        "T2"
+      ],
+      "evidence_locator": "C453–459",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q95",
+      "module": "진도",
+      "prompt": "교재 전체를 공부했나요, 일부 문제나 출력물만 골라 했나요?",
+      "answer_options": [
+        "권 전체",
+        "특정 단원",
+        "일부 문제·발췌 출력물",
+        "여러 권에서 고른 자료",
+        "모름"
+      ],
+      "followup": "원래 교재/판본·선택 범위 저장. 발췌학습을 권 전체 완료로 바꾸지 않음",
+      "source_ids": [
+        "T1"
+      ],
+      "evidence_locator": "A2370–2377; 2025-12-06",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q96",
+      "module": "계획 상태",
+      "prompt": "현재 계획을 어떤 형태로 이어가고 싶나요?",
+      "answer_options": [
+        "그대로 진행",
+        "부담을 줄여 진행",
+        "잠시 쉬기",
+        "이 계획 종료",
+        "아직 결정하지 못함"
+      ],
+      "followup": "대상 트랙/전체·적용일·다음 확인 시점 선택. 사적인 이유는 필수 입력 아님",
+      "source_ids": [
+        "T2",
+        "T3"
+      ],
+      "evidence_locator": "B3881–3886; C말미",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q97",
+      "module": "재개",
+      "prompt": "다시 시작할 때의 시간과 현재 학습 상태를 확인할까요?",
+      "answer_options": [
+        "지금 확인하고 재개 비교",
+        "원하는 재개 시점만 기록",
+        "아직 미정",
+        "다른 목표로 새 계획"
+      ],
+      "followup": "휴식 전 기록 보존, 현재 정보 다시 수집. 지난 계획을 자동 압축하지 않음",
+      "source_ids": [
+        "T3",
+        "U4"
+      ],
+      "evidence_locator": "C말미 개별 속도 복귀 희망; U4",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q98",
+      "module": "기간별 계획",
+      "prompt": "선발 준비가 끝난 뒤 다시 이어갈 공부나 휴식이 있나요?",
+      "answer_options": [
+        "잠시 줄였던 교과",
+        "사고력·연산",
+        "영어·타 과목",
+        "과학·탐구",
+        "휴식·활동",
+        "미정"
+      ],
+      "followup": "중단 범위·재개 의향·원계획 버전·예정 사건 연결. 선발 결과만으로 자동 재개 안 함",
+      "source_ids": [
+        "T1",
+        "U4"
+      ],
+      "evidence_locator": "A2198–2199",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q99",
+      "module": "유지 확인",
+      "prompt": "이전에 완료한 내용 중 시간이 지난 뒤 다시 확인할 범위가 있나요?",
+      "answer_options": [
+        "특정 범위 지목",
+        "아이가 다시 보고 싶음",
+        "확인된 문제 없음",
+        "기록 부족"
+      ],
+      "followup": "현재 관찰과 옛 완료 사실 병기. 전체 미완료로 되돌리지 않음; 임의 재시험 주기 없음",
+      "source_ids": [
+        "T1"
+      ],
+      "evidence_locator": "A2634–2650; 2025-12-30",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q100",
+      "module": "타 과목",
+      "prompt": "수학 외에 함께 기록할 과목과 실제 공부 범위는 무엇인가요?",
+      "answer_options": [
+        "영어",
+        "국어·독서",
+        "과학",
+        "가족이 직접 입력",
+        "현재 추가하지 않음"
+      ],
+      "followup": "영어는 읽기/어휘/듣기/쓰기/말하기 중 실제 영역만 추가. 실제 과정명·범위 입력; 평가 미준비 허용",
+      "source_ids": [
+        "T3",
+        "U4"
+      ],
+      "evidence_locator": "C572–622; 2024-11-04",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q101",
+      "module": "시간",
+      "prompt": "아이 혼자 하는 시간과 보호자가 함께 도울 시간을 나눌 수 있나요?",
+      "answer_options": [
+        "아이 혼자",
+        "함께 진행",
+        "준비·채점만 도움",
+        "이동만 도움",
+        "혼합",
+        "모름"
+      ],
+      "followup": "활동ID별 아이/보호자 시간을 각각 기록. 같은 함께 공부 시간을 아이 총량에 두 번 더하지 않음",
+      "source_ids": [
+        "U4",
+        "T1",
+        "T2"
+      ],
+      "evidence_locator": "U4 초기 설문; A2059, B7·2654–2655",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q102",
+      "module": "기준 계획",
+      "prompt": "비교한 경로 중 우리 아이의 기준으로 삼을 계획은 무엇인가요?",
+      "answer_options": [
+        "이 조합을 기준 계획으로 저장",
+        "일부 조건 수정·다시 비교",
+        "후보만 보관·미정"
+      ],
+      "followup": "선택 경로·병행 범위·미확인·출처·버전·동의시점 저장. 후보 선택은 실제 등록 아님",
+      "source_ids": [
+        "U4"
+      ],
+      "evidence_locator": "현재 채팅",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q103",
+      "module": "갱신",
+      "prompt": "이번 기록은 실제로 공부한 내용인가요, 앞으로 바꾸고 싶은 계획인가요?",
+      "answer_options": [
+        "실제 공부 기록",
+        "진단·관찰 결과",
+        "목표·시간 변경 희망",
+        "잘못된 기록 수정",
+        "구분 어려움"
+      ],
+      "followup": "사건일·입력일 구분. 실제기록은 기준계획을 덮어쓰지 않음; 수정이력·대상ID 연결",
+      "source_ids": [
+        "U4",
+        "T2"
+      ],
+      "evidence_locator": "U4 지속 추적; B1931–1938",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q104",
+      "module": "계획 변경",
+      "prompt": "바뀐 조건을 반영한 새 계획으로 교체할까요?",
+      "answer_options": [
+        "변경안 비교",
+        "새 버전을 기준으로 선택",
+        "기존 계획 유지",
+        "판단 보류"
+      ],
+      "followup": "차이·영향범위·근거 확인 후 새버전 선택. 유지/보류하면 현재기준 불변",
+      "source_ids": [
+        "U4"
+      ],
+      "evidence_locator": "현재 채팅",
+      "status": "설계 제안"
+    },
+    {
+      "id": "Q105",
+      "module": "선택 성향검사",
+      "prompt": "우리 아이의 성향까지 반영해 볼까요?",
+      "answer_options": [
+        "성격검사 하기",
+        "건너뛰고 계속하기"
+      ],
+      "followup": "기존 지원연령군에서 실제 I-Dentify 문항을 연결. 건너뛰기·미완료는 유형 없음으로 보존하고 기본 로드맵 제공. 검사 후 기존 유형/혼합형을 짧게 안내하고 실제 학습 상태·부담·부모 선택을 함께 반영.",
+      "source_ids": [
+        "UF02",
+        "PN01",
+        "PN02"
+      ],
+      "status": "사용자 선택 원칙 확정; 코칭 연결은 설계 제안",
+      "display_policy": "after_learning_position_summary",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    }
+  ],
+  "branches": [
+    {
+      "id": "B01",
+      "title": "실제 나이·학년과 진도의 분리",
+      "question_ids": [
+        "Q01",
+        "Q02",
+        "Q10"
+      ],
+      "answer_followups": "미취학이라도 중등/고등 입력 시 Q21,Q55,Q59; 학교 학년 미확인 시 Q02만 보완",
+      "available_paths": "실제 학년별 기본 질문 / 실제 진도별 추가 모듈 / 기본 정보 확인 대기",
+      "entry_and_remediation": "학년은 진도 입력 허용 조건이 아니다. 만 나이 산출에 필요한 정보가 없으면 미확인",
+      "parallel_courses": "모든 축",
+      "next_branch_ids": [
+        "B02",
+        "B03"
+      ],
+      "explanation": "실제 학년은 {학년}, 현재 학습은 {과정}으로 따로 기록했습니다. 높은 진도에 필요한 질문을 이어갑니다.",
+      "source_ids": [
+        "U2",
+        "H1",
+        "C1",
+        "UF01"
+      ],
+      "status": "확정 원칙 + 제안 로직",
+      "origin": "신규 상세 분기",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "B02",
+      "title": "희망·아이 의견·확인 상태·추천의 분리",
+      "question_ids": [
+        "Q04",
+        "Q05",
+        "Q06"
+      ],
+      "answer_followups": "복수 희망→우선순위/시점, 아이 의견 다름→선택 이유, 미정→관심 탐색",
+      "available_paths": "목표 탐색 / 복수 목표 / 우선 목표 / 변경 검토",
+      "entry_and_remediation": "추천은 확인된 기록과 시간·기관 조건을 바탕으로 제안만 한다",
+      "parallel_courses": "선택 목표들의 준비 과정",
+      "next_branch_ids": [
+        "B07",
+        "B40",
+        "B57",
+        "B72"
+      ],
+      "explanation": "학부모 희망은 {희망}이고 아이 의견은 {의견}입니다. 현재 기록만으로 목표 적합성을 확정하지 않습니다.",
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B03",
+      "title": "축별 현재 기록·미확인·미시작 구별",
+      "question_ids": [
+        "Q03",
+        "Q10",
+        "Q11",
+        "Q13"
+      ],
+      "answer_followups": "각 축 기록 있음→Q12–Q20; 없음→미시작 확인; 모름→자료 확인 선택",
+      "available_paths": "기록 연결 / 명시적 미시작 / 미확인 대기 / 목록 외 직접 입력",
+      "entry_and_remediation": "모름을 가장 낮은 과정이나 진행 중간으로 대입하지 않는다. 미제출·미배부·수업예정·미채점을 미학습 또는 미완료 하나로 합치지 않는다",
+      "parallel_courses": "교과·사고력·연산 별도",
+      "next_branch_ids": [
+        "B04",
+        "B05",
+        "B09",
+        "B14",
+        "B19"
+      ],
+      "explanation": "{축}은 {기록상태}입니다. 미확인 축은 다른 축의 권수로 추정하지 않았습니다.",
+      "source_ids": [
+        "U2",
+        "C1",
+        "T2"
+      ],
+      "status": "확정 원칙 + 제안 로직",
+      "origin": "신규 상세 분기",
+      "evidence_locator": "70_상담B_추가검토_2026-10-03.md CB03; C1459–1462/2479–2480/2511–2514"
+    },
+    {
+      "id": "B04",
+      "title": "권·단원·진행량·완료의 상세 위치",
+      "question_ids": [
+        "Q11",
+        "Q12",
+        "Q13",
+        "Q36"
+      ],
+      "answer_followups": "진행 중→총량/범위, 완료→깊이/독립 수행, 총량 없음→정밀 위치 미확인",
+      "available_paths": "정밀 위치 / 완료 지점 / 보고된 위치 / 확인 대기",
+      "entry_and_remediation": "단원-기간 대응표가 없는 경우 임의 월수 환산 금지",
+      "parallel_courses": "기본/심화, 새 진도/복습",
+      "next_branch_ids": [
+        "B05",
+        "B08",
+        "B84"
+      ],
+      "explanation": "{권}의 {범위}를 {상태}로 보고했습니다. 표의 월 위치는 대응 근거가 확인된 범위만 표시합니다.",
+      "source_ids": [
+        "U2",
+        "C1"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B05",
+      "title": "완료·깊이·독립 해결의 차이",
+      "question_ids": [
+        "Q13",
+        "Q15",
+        "Q16",
+        "Q17",
+        "Q18"
+      ],
+      "answer_followups": "전체 다룸+도움 필요→구체 범위 확인; 심화 미확인→심화 질문; 풀이 기록 없음→확인 대기",
+      "available_paths": "현재 진행 / 깊이 보완 / 독립 해결 확인 / 범위별 병행",
+      "entry_and_remediation": "완료 기록을 숙달이나 상위 단계 입학 조건 충족으로 환산하지 않는다",
+      "parallel_courses": "기본 새 진도+해당 범위 심화 가능성 검토",
+      "next_branch_ids": [
+        "B06",
+        "B09",
+        "B14",
+        "B19",
+        "B85",
+        "B87",
+        "B89",
+        "B98"
+      ],
+      "explanation": "교재 진행 완료와 혼자 해결한 범위는 별도입니다. 현재 확인된 내용은 {내용}입니다.",
+      "source_ids": [
+        "U2",
+        "T1",
+        "T2",
+        "C3"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B06",
+      "title": "누락·건너뜀·보완 후 합류",
+      "question_ids": [
+        "Q14",
+        "Q19",
+        "Q34"
+      ],
+      "answer_followups": "이미 선행→증거 연결, 시간/어려움 보고→범위별 보완, 이유 모름→확인 대기",
+      "available_paths": "진도 유지+보완 / 일부 보완 후 합류 / 확인 후 재선택",
+      "entry_and_remediation": "완료 조건은 확인된 누락 범위를 다시 다루고 해당 수행을 확인하는 것; 임의 점수·개월 없음",
+      "parallel_courses": "다른 두 축 유지; 동일 축의 보완/새 진도 별도",
+      "next_branch_ids": [
+        "B05",
+        "B08",
+        "B38",
+        "B55"
+      ],
+      "explanation": "건너뛴 {범위}는 확인 필요로 남겼습니다. 다른 완료 기록을 되돌리지 않고 보완 경로를 선택할 수 있습니다.",
+      "source_ids": [
+        "T1",
+        "U2"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B07",
+      "title": "실제 시간·중복·병행 선택",
+      "question_ids": [
+        "Q07",
+        "Q08",
+        "Q20",
+        "Q32",
+        "Q33"
+      ],
+      "answer_followups": "복수 과정→수업/과제/이동 중복 확인; 시간 불명→계산 대기; 부담 보고→조정 후보",
+      "available_paths": "유지 / 조건부 병행 / 우선 과정 선택 / 일시 보완 / 추후 합류",
+      "entry_and_remediation": "실제 요구 시간이 없으면 부족/충분 단정 금지; 의향과 가능성 분리",
+      "parallel_courses": "교과·사고력·연산·과학·경시·영재원",
+      "next_branch_ids": [
+        "B26",
+        "B33",
+        "B46",
+        "B56",
+        "B69",
+        "B81",
+        "B82",
+        "B83",
+        "B94",
+        "B95",
+        "B99"
+      ],
+      "explanation": "희망 병행 과정은 {목록}입니다. 확인한 시간은 {시간}, 아직 확인할 과제량은 {미확인}입니다.",
+      "source_ids": [
+        "U2",
+        "T1",
+        "T3",
+        "C3"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B08",
+      "title": "개별 축 표시·증속·재계산",
+      "question_ids": [
+        "Q35",
+        "Q36",
+        "Q37"
+      ],
+      "answer_followups": "증속 희망→확정 함수 비교; 축 일부 선택→해당 축만; 위치 미확인→예측 보류",
+      "available_paths": "현재 속도 / 승인 모델 증속 비교 / 축별 보류",
+      "entry_and_remediation": "기존 월축·기간 유지; 실제 첫2개월10%, 이후20%; 2배·3배 금지",
+      "parallel_courses": "선택하지 않은 축은 별도 기존 기록",
+      "next_branch_ids": [
+        "B09",
+        "B14",
+        "B19",
+        "B79",
+        "B49"
+      ],
+      "explanation": "{축}의 현 위치 근거를 사용해 현재/확정 증속을 비교합니다. 이는 계획 비교이며 수행·선발 보장이 아닙니다.",
+      "source_ids": [
+        "H1",
+        "C1"
+      ],
+      "status": "확정 모델 + 제안 입력",
+      "origin": "섹션1 기존 계산 + 신규 정밀 입력"
+    },
+    {
+      "id": "B09",
+      "title": "교과 기본·응용과 심화 두 기록",
+      "question_ids": [
+        "Q21",
+        "Q22",
+        "Q15"
+      ],
+      "answer_followups": "심화 미시작→기본·응용 계속 또는 심화 시작 검토; 병행 중→두 범위/도움/부담 확인; 모름→현재 응용만 표시하고 심화 미확인 보존",
+      "available_paths": "기본·응용 이어가기 / 이전 범위 심화를 나중에 시작 / 서로 다른 범위 응용·심화 병행 / 같은 범위 시차 병행 / 심화 보완 후 다음 범위 / 판단 보류",
+      "entry_and_remediation": "현재 이해·혼자 시도·도움·부담·가정/학원 시간을 필요할 때 확인. 나이·선행 진도·성향만으로 심화 진입 결정하지 않으며 점수·대기개월 규칙 없음.",
+      "parallel_courses": "교과 응용과 이전/현재 범위 심화의 복수 기록; 사고력·연산 독립; 과학 등은 해당 상황에서 추가",
+      "next_branch_ids": [
+        "B05",
+        "B06",
+        "B07",
+        "B10",
+        "B11",
+        "B12",
+        "B13",
+        "B56",
+        "B79",
+        "B95",
+        "B100"
+      ],
+      "explanation": "응용은 {응용범위}, 심화는 {심화범위또는상태}로 따로 볼 수 있어요. 응용을 이어가다가 이미 배운 범위의 심화를 더하는 경로도 비교할 수 있어요.",
+      "source_ids": [
+        "UF01",
+        "UF03",
+        "F01",
+        "F14",
+        "F20",
+        "F21",
+        "F25",
+        "C3",
+        "UF06"
+      ],
+      "status": "사용자 원칙·원자료 사례 확인; 개인 추천 조건은 제안",
+      "origin": "신규 상세 분기",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "B10",
+      "title": "초등 교과와 읽기·조건 이해",
+      "question_ids": [
+        "Q21",
+        "Q26",
+        "Q16"
+      ],
+      "answer_followups": "읽어 주면 해결→읽기 도움 기록; 조건 이해 도움→구체 문항; 확인 없음→관찰 요청",
+      "available_paths": "교과 유지+읽기 보완 / 단계별 관찰 / 다른 범위 확인",
+      "entry_and_remediation": "낮은 학년만으로 높은 교과 제한 금지; 읽기 도움=수학 약점 판정 아님",
+      "parallel_courses": "사고력·현재 연산",
+      "next_branch_ids": [
+        "B14",
+        "B19",
+        "B28"
+      ],
+      "explanation": "읽기 도움은 {형태}로 보고되었습니다. 수학 이해와 분리해 필요한 지원을 확인합니다.",
+      "source_ids": [
+        "E1",
+        "E2",
+        "T2"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B11",
+      "title": "중등 실제 진도에 따른 모듈 개방",
+      "question_ids": [
+        "Q21",
+        "Q55"
+      ],
+      "answer_followups": "초등 학년+중등 진도→Q55–Q59; 학기 일부→범위; 심화 미완→보완",
+      "available_paths": "중등 기본 / 중등 심화 / 누테 검토 / 독립 학습",
+      "entry_and_remediation": "실제 학년은 학원 공식 지원 조건 확인에만 사용",
+      "parallel_courses": "황소 중등·학교·과학은 시간 조건 검토",
+      "next_branch_ids": [
+        "B51",
+        "B53",
+        "B57"
+      ],
+      "explanation": "실제 {학년}이지만 {중등 범위} 학습을 기록했으므로 중등 질문을 열었습니다.",
+      "source_ids": [
+        "U2",
+        "C3",
+        "H1"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B12",
+      "title": "공통수학·대수·미적분Ⅰ 진도 개방",
+      "question_ids": [
+        "Q21",
+        "Q59",
+        "Q24"
+      ],
+      "answer_followups": "고등 진도→과목/단원/깊이; 구 이름→판본/내용 확인; 고입 희망 별도",
+      "available_paths": "고등 과정 계속 / 심화 확인 / 경시 탐색 / 학교 목표 재검토",
+      "entry_and_remediation": "공통 완료가 KMO·영재고 자동 진입 조건 아님",
+      "parallel_courses": "중등 심화·학교 내신·과학",
+      "next_branch_ids": [
+        "B54",
+        "B65",
+        "B72"
+      ],
+      "explanation": "{고등 과목}을 공부한 기록과 {고입 희망}은 별개입니다. 수행과 목표를 함께 확인합니다.",
+      "source_ids": [
+        "H1",
+        "C4",
+        "E8"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B13",
+      "title": "구 교과명과 현재 교과의 내용 대응",
+      "question_ids": [
+        "Q24",
+        "Q11",
+        "Q12"
+      ],
+      "answer_followups": "현재 재학 학년도·교육과정, 실제 교재 판본, 선행 계획 대상 판본을 별도로 확인. 모호한 교재만 판본 추가 질문.",
+      "available_paths": "원문 유지 / 대응 확인 대기 / 승인된 대응표 사용",
+      "entry_and_remediation": "현행 과목명뿐 아니라 단원·성취기준 대응 확인. 구판→현판 자동 완료/자동 기간 환산 금지. 기본수학1·2 과목명과 학습 깊이 기본/응용을 구별.",
+      "parallel_courses": "다른 축 기록과 응용·심화의 독립 범위 보존",
+      "next_branch_ids": [
+        "B09",
+        "B12",
+        "B20",
+        "B54"
+      ],
+      "explanation": "이 자료는 {구 명칭}을 사용합니다. 현재 과목 대응은 {확인상태}입니다.",
+      "source_ids": [
+        "H1",
+        "E8",
+        "I5",
+        "UF04",
+        "CUR01",
+        "CUR02"
+      ],
+      "status": "현행 적용 원칙 확정; 교재별 단원 대응 미완료",
+      "origin": "신규 상세 분기",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "B14",
+      "title": "팩토·PRE1031·필즈 베이직 시작점",
+      "question_ids": [
+        "Q25",
+        "Q13",
+        "Q26",
+        "Q27"
+      ],
+      "answer_followups": "각 교재 완료/진행/병행→독립 기록; 지문 도움→B16; 시작 전→내용 확인",
+      "available_paths": "현재 교재 유지 / 다음 교재 검토 / 팩토 보완 / 병행",
+      "entry_and_remediation": "PRE1031과 초등팩토, 필즈 베이직은 자동 등가 아님",
+      "parallel_courses": "교과·연산 별도; 사고력 교재 복수 기록",
+      "next_branch_ids": [
+        "B15",
+        "B16",
+        "B17"
+      ],
+      "explanation": "{교재들}을 각각 기록합니다. 한 권 완료를 다른 교재의 완료로 바꾸지 않습니다.",
+      "source_ids": [
+        "C1",
+        "E1",
+        "E2",
+        "T1"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B15",
+      "title": "초등팩토 완료 후 병행·확장",
+      "question_ids": [
+        "Q25",
+        "Q27",
+        "Q16"
+      ],
+      "answer_followups": "완료+혼자 해결 관찰→다음 선택; 완료만 보고→확인; 시간 부족→한 과정 유지",
+      "available_paths": "필즈 베이직/PRE1031 병행 검토 / 하나씩 진행 / 일부 보완",
+      "entry_and_remediation": "상담의 병행 제안은 개별 사례; 모든 학생 필수 조건 아님",
+      "parallel_courses": "학교 교과·연산·미션은 각자 범위",
+      "next_branch_ids": [
+        "B16",
+        "B17",
+        "B23"
+      ],
+      "explanation": "초등팩토 완료 보고가 있어 다음 선택을 비교합니다. 병행은 실제 시간과 독립 풀이를 확인한 뒤 제안합니다.",
+      "source_ids": [
+        "T1",
+        "E1",
+        "E2"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B16",
+      "title": "지문 이해와 사고력 보완",
+      "question_ids": [
+        "Q26",
+        "Q16",
+        "Q17"
+      ],
+      "answer_followups": "지문 이해 부족 보고→팩토 보완 사례 설명; 읽기 도움만→기록; 혼자→현재 유지",
+      "available_paths": "현재 과정+읽기 지원 / 팩토2 보완 검토 / 관찰 후 합류",
+      "entry_and_remediation": "E2 N6의 조건은 원자료 권고; 전체 학생 하향 배정 기준 아님",
+      "parallel_courses": "현재 교과와 계산 유지",
+      "next_branch_ids": [
+        "B14",
+        "B17",
+        "B06"
+      ],
+      "explanation": "{관찰}에 대해 읽기·조건 설명 지원을 검토합니다. 원자료의 팩토2 보완은 선택 가능한 사례입니다.",
+      "source_ids": [
+        "E2",
+        "T2"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B17",
+      "title": "1031 시작 전 연산 확인",
+      "question_ids": [
+        "Q28",
+        "Q30",
+        "Q31"
+      ],
+      "answer_followups": "구구단/받아내림 확인→현재 사고력 선택; 미확인→확인; 도움 필요→연산 보완",
+      "available_paths": "입문/초급 검토 / 현재 사고력+연산 보완 / 확인 대기",
+      "entry_and_remediation": "E1 M6/E2 H9 권고를 보존; 실제 기록 없는 자동 진입 불가 금지",
+      "parallel_courses": "사고력 유지+연산 유형 보완",
+      "next_branch_ids": [
+        "B18",
+        "B19"
+      ],
+      "explanation": "원자료는 해당 시작 전 {연산 유형} 확인을 권고합니다. 현재는 {확인상태}입니다.",
+      "source_ids": [
+        "E1",
+        "E2"
+      ],
+      "status": "자료 내 권고 + 제안 로직",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B18",
+      "title": "1031·필즈·GM의 확장·병행",
+      "question_ids": [
+        "Q25",
+        "Q20",
+        "Q15"
+      ],
+      "answer_followups": "교재별 단계 다름→각 범위; 초급/GM 병행→목적/중복; 미정→대안 설명",
+      "available_paths": "한 교재 계속 / 서로 다른 범위 병행 / 심화 보완 / 이후 합류",
+      "entry_and_remediation": "GM·필즈·1031을 동일 수준 완료로 변환하지 않는다",
+      "parallel_courses": "교과 심화·기존 계산 별도",
+      "next_branch_ids": [
+        "B23",
+        "B28",
+        "B65"
+      ],
+      "explanation": "각 과정의 실제 범위를 비교하여 중복과 새로운 내용을 확인합니다. 교재 이름만으로 동일 수준을 확정하지 않습니다.",
+      "source_ids": [
+        "E1",
+        "E2",
+        "C2",
+        "T1"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B19",
+      "title": "연산 별도 권·단원·수행",
+      "question_ids": [
+        "Q29",
+        "Q30",
+        "Q12",
+        "Q13"
+      ],
+      "answer_followups": "소마셈/기적/더클셈/기타 각각 범위; 미확인→기본값 없음",
+      "available_paths": "현재 권 유지 / 실제 유형 보완 / 다음 권 검토 / 별도 기록 없음",
+      "entry_and_remediation": "교과 진도로 연산 완료를 대신 계산하지 않는다",
+      "parallel_courses": "교과·사고력 독립",
+      "next_branch_ids": [
+        "B20",
+        "B21",
+        "B22"
+      ],
+      "explanation": "연산은 {교재·범위}로 별도 기록했습니다. 교과 진행과 동일하다고 가정하지 않았습니다.",
+      "source_ids": [
+        "U2",
+        "C1",
+        "E1",
+        "I1"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B20",
+      "title": "교과보다 앞선 연산 계획의 대응 확인",
+      "question_ids": [
+        "Q21",
+        "Q29",
+        "Q31"
+      ],
+      "answer_followups": "한 학년 앞 희망→실제 유형/권 대응; 현 단원 보완→부분 경로; 대응 없음→확인",
+      "available_paths": "앞선 연산 계획 / 현재 연산 보완 / 현 권 유지 / 대응 검토",
+      "entry_and_remediation": "한 학년 앞 원칙 유지; 권번호=학년 아님; 임의 대응표 생성 금지",
+      "parallel_courses": "교과 다음 단원·사고력",
+      "next_branch_ids": [
+        "B17",
+        "B21",
+        "B08"
+      ],
+      "explanation": "교과 {범위}에 필요한 계산과 {연산권}의 내용 대응을 확인한 뒤 계획합니다.",
+      "source_ids": [
+        "U2",
+        "E1"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B21",
+      "title": "연산 진행과 독립 수행의 차이",
+      "question_ids": [
+        "Q13",
+        "Q30",
+        "Q16"
+      ],
+      "answer_followups": "완료했으나 도움→실제 유형 확인; 수행 좋음 보고→증거 수준; 기록 없음→대기",
+      "available_paths": "진도 유지 / 유형 보완 / 수행 확인 / 이후 합류",
+      "entry_and_remediation": "오답 원인을 부주의·개념·속도로 임의 진단 금지",
+      "parallel_courses": "원래 교과·사고력 기록 유지",
+      "next_branch_ids": [
+        "B06",
+        "B17",
+        "B19"
+      ],
+      "explanation": "{유형}에 대한 확인 기록은 {근거}입니다. 권 완료만으로 계산 숙달을 단정하지 않습니다.",
+      "source_ids": [
+        "U2",
+        "T2"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B22",
+      "title": "기존 선택 범위 밖 연산 입력",
+      "question_ids": [
+        "Q29",
+        "Q11",
+        "Q12"
+      ],
+      "answer_followups": "기적7권 이상/더클셈/중등연산/기타→목록 외 직접 입력·범위",
+      "available_paths": "직접 기록 / 대응표 검토 / 정밀 월 위치 보류",
+      "entry_and_remediation": "최신 S1의 2–6권 제한을 새 입력의 제한으로 승계하지 않는다",
+      "parallel_courses": "모든 실제 과정",
+      "next_branch_ids": [
+        "B11",
+        "B12",
+        "B08"
+      ],
+      "explanation": "현재 선택 목록을 넘는 {과정}도 기록합니다. 표 위치 대응은 확인 필요로 남깁니다.",
+      "source_ids": [
+        "C1",
+        "E1",
+        "I1"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B23",
+      "title": "소마·필즈·CMS·그 외의 이력·반·코호트 구분",
+      "question_ids": [
+        "Q38",
+        "Q40"
+      ],
+      "answer_followups": "동명 반 다른 연도→코호트; S1/S2 차이→원문 반명 유지; 내부 진도 미확인→추가 기록",
+      "available_paths": "현재 코호트 경로 / 다른 코호트 참고 / 확인 대기",
+      "entry_and_remediation": "2025 S1 이미지와 최신 S2 설명을 임의 통합하지 않는다",
+      "parallel_courses": "외부 교과·연산·사고력",
+      "next_branch_ids": [
+        "B24",
+        "B25",
+        "B26",
+        "B27"
+      ],
+      "explanation": "원자료의 {반명·연도}와 현재 반은 {비교상태}입니다. 동명이더라도 기간을 합치지 않습니다.",
+      "source_ids": [
+        "E3",
+        "E4",
+        "I1",
+        "I2",
+        "I3",
+        "I4",
+        "C2",
+        "UF01"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "B24",
+      "title": "7세까지 프리미어 고려 구간과 실제 선발 회차의 분리",
+      "question_ids": [
+        "Q01",
+        "Q39",
+        "Q40"
+      ],
+      "answer_followups": "관심/미정→현재학습·선발회차 질문; 기존 초1 3월 관찰 설명은 과거 인계 방향으로 보존; 실제 날짜·입학학년은 공고 확인",
+      "available_paths": "7세까지 과정 보기 / 현재 과정 유지 / 해당 회차 확인 / 향후 재검토",
+      "entry_and_remediation": "최신 사용자 구간을 우선한다. 나이나 예전 초1 3월 표현만으로 현재 응시 가능·불가를 판정하지 않는다. 원표 월축은 이동하지 않는다",
+      "parallel_courses": "현재 교재·학교·계산",
+      "next_branch_ids": [
+        "B25",
+        "B27",
+        "B91",
+        "B92"
+      ],
+      "explanation": "7세까지의 학습 구간에서 프리미어 선발을 함께 살펴봅니다. 실제 선발일과 입학 학년은 해당 회차 안내로 확인합니다.",
+      "source_ids": [
+        "U4",
+        "H1",
+        "U3",
+        "E1",
+        "T1"
+      ],
+      "status": "사용자 구간 확정; 공식 일정 미확인; 연결 로직 제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B25",
+      "title": "프리미어·챌린지·필즈 선발/승급 결과",
+      "question_ids": [
+        "Q39",
+        "Q40",
+        "Q42"
+      ],
+      "answer_followups": "합격 등록→적응; 합격 미등록→선택; 미선발/미응시→현재 유지+다음 선택",
+      "available_paths": "등록 / 현재 반 유지 / 다음 회차 / 다른 반 / 보완 후 재검토",
+      "entry_and_remediation": "옛 모의 점수와 기간으로 자동 합격/진입 컷 만들지 않는다. 축하 문구만으로 합격 기록을 만들지 않고 개인별 결과 통지와 템플릿을 구분한다",
+      "parallel_courses": "현재 외부 공부의 시간 확인",
+      "next_branch_ids": [
+        "B26",
+        "B27",
+        "B28",
+        "B91",
+        "B93"
+      ],
+      "explanation": "{결과} 이후에도 현재 학습을 이어 가며 다른 선택을 비교할 수 있습니다. 실패 이유는 확인된 피드백만 사용합니다.",
+      "source_ids": [
+        "H1",
+        "T1",
+        "T3",
+        "I2"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B26",
+      "title": "프리미어/챌린지와 필즈 동시·택일",
+      "question_ids": [
+        "Q41",
+        "Q07",
+        "Q08",
+        "Q32"
+      ],
+      "answer_followups": "둘 희망+시간계획→조건부 병행; 과제부담→하나 우선; 영어 등 유지→제약 기록",
+      "available_paths": "소마 우선 / 필즈 우선 / 조건부 병행 / 후일 E2·승급 재검토 / 미정",
+      "entry_and_remediation": "교사 템플릿의 특정 교재·4권/2개월 등은 설명 예시이며 공통 일정·입학 조건이 아니다. 본인 이수·선발 결과는 별도 확인",
+      "parallel_courses": "외부 교과·연산·사고력; 유지할 다른 수업",
+      "next_branch_ids": [
+        "B25",
+        "B27",
+        "B07"
+      ],
+      "explanation": "두 과정의 희망과 실제 과제 시간을 함께 봅니다. 현재는 {우선선택}을 선택하고 {재검토사건}에 다시 비교할 수 있습니다.",
+      "source_ids": [
+        "T1",
+        "T3"
+      ],
+      "status": "제안",
+      "origin": "교사가 작성한 경로 설명 템플릿 A4262–4335 참고; 해당 아동 실제 병행/합격 사례 아님"
+    },
+    {
+      "id": "B27",
+      "title": "학원 반과 외부 교과·심화의 조합",
+      "question_ids": [
+        "Q38",
+        "Q21",
+        "Q22",
+        "Q25",
+        "Q29"
+      ],
+      "answer_followups": "반 진도와 외부공부 다름→각기 기록; 외부관리 불가→학원 중심/한과정; 병행가능→범위 연결",
+      "available_paths": "학원 중심 / 외부 교과·심화 병행 / 사고력 보완 / 한 과정 선택",
+      "entry_and_remediation": "학원 등록이 외부 교과·연산 완료를 의미하지 않는다",
+      "parallel_courses": "4-1 선행+낮은 범위 심화 등 원자료 사례를 해당 코호트만 표시",
+      "next_branch_ids": [
+        "B09",
+        "B18",
+        "B19",
+        "B28"
+      ],
+      "explanation": "{학원 반}과 외부 {교과·심화·연산}은 별도입니다. 관리 가능한 범위를 선택합니다.",
+      "source_ids": [
+        "T1",
+        "E3",
+        "E4",
+        "I1"
+      ],
+      "status": "제안",
+      "origin": "교사 설명 템플릿 A4318–4332와 실제 코호트 표의 병행 구조 참고; 상담 아동 이수 사실 아님"
+    },
+    {
+      "id": "B28",
+      "title": "황소 선택·늦춤·미선택과 학원 목표 없는 기준 경로",
+      "question_ids": [
+        "Q43",
+        "Q04"
+      ],
+      "answer_followups": "초2/초3/나중 고려→실제 회차와 이유 확인; 미선택/미정→현재 학습에서 기본·응용 계속, 심화 추가·병행·보완, 실제 진도에 맞는 다음 과정 비교",
+      "available_paths": "초2 고려 / 초3 고려 / 나중에 고려 / 황소 미선택의 현재 학습 유지 / 학원 목표 없이 응용·심화 진행 / 실제 진도 이후 경로 / 미정",
+      "entry_and_remediation": "선발과 독립된 기준 로드맵 제공. 늦춤 이유·가족 선택과 실제 학습 상태는 별도. 황소 미선택으로 중등 자동 진입시키지 않음.",
+      "parallel_courses": "교과·심화·사고력·계산",
+      "next_branch_ids": [
+        "B29",
+        "B30",
+        "B31",
+        "B32",
+        "B51",
+        "B09",
+        "B14",
+        "B19",
+        "B99"
+      ],
+      "explanation": "학원 목표 없이도 지금의 공부를 이어갈 수 있어요. 황소를 고려하는 시점과 이유는 따로 살펴볼 수 있어요.",
+      "source_ids": [
+        "UF03",
+        "UF05",
+        "C3",
+        "F20"
+      ],
+      "status": "사용자 선택 원칙 확정; 개별 회차 조건은 공식 확인 필요",
+      "origin": "S3.N1 상세화",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    },
+    {
+      "id": "B29",
+      "title": "황소 초2 11월 코호트 비교",
+      "question_ids": [
+        "Q23",
+        "Q44",
+        "Q45"
+      ],
+      "answer_followups": "초1 3월3-1 시작 사례와 유사→실제범위 비교; 날짜다름→다른참고; 현재 안내없음→확인",
+      "available_paths": "해당 사례 참고 / 다른 회차 검토 / 현 교과 유지",
+      "entry_and_remediation": "2개월/학기·초2 7월6응용·9월모의는 그 코호트 계획만; 공통 합격 조건 아님",
+      "parallel_courses": "심화·연산 독립",
+      "next_branch_ids": [
+        "B32",
+        "B33",
+        "B34"
+      ],
+      "explanation": "이 코호트는 {원자료 일정}입니다. 현재 학생의 실제 범위와 모집 안내를 따로 확인합니다.",
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "status": "자료 사례 + 제안",
+      "origin": "S3.N1 초2 11월 사례"
+    },
+    {
+      "id": "B30",
+      "title": "황소 초3 2월 코호트 비교",
+      "question_ids": [
+        "Q23",
+        "Q44",
+        "Q45"
+      ],
+      "answer_followups": "7세12월3-1 시작 사례→실제범위; 그외→날짜/범위 비교",
+      "available_paths": "해당 사례 참고 / 다른 회차 / 보완 후 재검토",
+      "entry_and_remediation": "3개월/학기+최상위 병행은 사례이며 초2 11월 어렵다는 표현을 개인 결과로 적용 금지",
+      "parallel_courses": "교과+해당 범위 심화·연산",
+      "next_branch_ids": [
+        "B32",
+        "B33",
+        "B34"
+      ],
+      "explanation": "시작 시점이 다른 사례를 참고하되 현재 선발 가능성으로 바꾸지 않습니다.",
+      "source_ids": [
+        "C3",
+        "E2"
+      ],
+      "status": "자료 사례 + 제안",
+      "origin": "S3.N1 초3 2월 사례"
+    },
+    {
+      "id": "B31",
+      "title": "황소 초3 11월 늦은 시작 코호트",
+      "question_ids": [
+        "Q23",
+        "Q44",
+        "Q45"
+      ],
+      "answer_followups": "초2 6월3-1 시작 사례→연산/2-2독립/심화 확인; 부족보고→구체범위",
+      "available_paths": "해당 사례 / 현재 진도 유지+보완 / 다른 회차 검토",
+      "entry_and_remediation": "E5의 2개월/학기·운동·연산 권고를 개별 계획으로 유지; 의무 점수 없음",
+      "parallel_courses": "연산5/6 실제 범위 및 교과 심화 별도",
+      "next_branch_ids": [
+        "B32",
+        "B33",
+        "B34"
+      ],
+      "explanation": "늦은 시작 원자료를 참고하여 {연산·읽기·심화}를 확인합니다. 학년만으로 지원을 제한하지 않습니다.",
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "status": "자료 사례 + 제안",
+      "origin": "S3.N1 초3 11월 사례"
+    },
+    {
+      "id": "B32",
+      "title": "황소 실제 범위·깊이·읽기 확인",
+      "question_ids": [
+        "Q44",
+        "Q45",
+        "Q16",
+        "Q26"
+      ],
+      "answer_followups": "반 이름만→실제 단원; 높은 진도+낮은 깊이→수행 확인; 범위미달보고→보완",
+      "available_paths": "지원 준비 / 범위 보완 / 수행 확인 / 다음 회차 검토",
+      "entry_and_remediation": "시험범위는 현재 학원 안내; 진도만으로 실제 약점/합격률 계산 금지",
+      "parallel_courses": "학교·연산·기존 사고력",
+      "next_branch_ids": [
+        "B33",
+        "B34",
+        "B35"
+      ],
+      "explanation": "확인한 범위는 {범위}이고 추가로 확인할 것은 {항목}입니다.",
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B33",
+      "title": "황소 적응과 기존 학습 시간",
+      "question_ids": [
+        "Q46",
+        "Q07",
+        "Q32",
+        "Q33"
+      ],
+      "answer_followups": "실제 과제량 확인→병행 검토; 다른 공부 모두중단예정→우선순위재검토; 부담보고→조정",
+      "available_paths": "등록+적응 확인 / 기존학습 조정 / 유지 후 다음회차 / 다른길",
+      "entry_and_remediation": "주2회3시간 표현은 총량 미확정; 등록 즉시 다른 공부 중단을 자동 권고하지 않는다",
+      "parallel_courses": "원 교과·심화·계산; 사고력은 실제 부담 검토",
+      "next_branch_ids": [
+        "B34",
+        "B35",
+        "B07"
+      ],
+      "explanation": "등록 희망과 과제 적응은 별도입니다. {과제량}이 확인되면 원래 공부와의 병행을 다시 봅니다.",
+      "source_ids": [
+        "C3",
+        "T1"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B34",
+      "title": "황소 합격·미등록·미선발·편입",
+      "question_ids": [
+        "Q47",
+        "Q48"
+      ],
+      "answer_followups": "등록→적응/중등; 미선발→피드백/재지원; 편입→회차/범위; 다른길→독립중등",
+      "available_paths": "A등록 / B황소 없이 중등 / C유예·편입 / D재지원·보완",
+      "entry_and_remediation": "기존 N1의 A–D 모두 유지. 2월·9월·교과5학년 사례는 현재 공식 일정/최소 조건 아님",
+      "parallel_courses": "현재 교과·심화·사고력·연산",
+      "next_branch_ids": [
+        "B35",
+        "B51",
+        "B36",
+        "B91",
+        "B93"
+      ],
+      "explanation": "{결과} 이후의 선택은 {경로}입니다. 현재 완료 기록을 유지하며 다음 합류 조건을 확인합니다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "제안",
+      "origin": "S3.N1 A–D 분기 유지"
+    },
+    {
+      "id": "B35",
+      "title": "황소 보완 후 같은/다른 회차 합류",
+      "question_ids": [
+        "Q48",
+        "Q14",
+        "Q34"
+      ],
+      "answer_followups": "구체 피드백→범위보완; 피드백없음→원인미확인; 준비변화→회차재선택",
+      "available_paths": "현재 범위 유지 / 부분 보완 / 재지원 / 편입 / 독립중등",
+      "entry_and_remediation": "지난해 승급 사례를 개인 승급 보장으로 만들지 않는다; 실수/스트레스는 보고 수준",
+      "parallel_courses": "독립 중등 준비와 교과 심화 시간 확인",
+      "next_branch_ids": [
+        "B34",
+        "B51",
+        "B06"
+      ],
+      "explanation": "미선발 원인은 {확인상태}입니다. 확인된 보완만 기록하고 이후 선택을 열어 둡니다.",
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B36",
+      "title": "영재원 종류·지역·분야",
+      "question_ids": [
+        "Q49",
+        "Q50",
+        "Q51"
+      ],
+      "answer_followups": "초저/초고/중등 실제학년→기관별공고; 지역다름→지역모듈; 미정→기관분류",
+      "available_paths": "학교 / 교육청 / 대학부설 / 브릿지 / SW·AI / 확인 대기",
+      "entry_and_remediation": "전국 공통 학년별 자격을 만들지 않는다. 현재 모집요강 없으면 자격 미확인",
+      "parallel_courses": "현재 수학·과학·탐구",
+      "next_branch_ids": [
+        "B37",
+        "B38",
+        "B39",
+        "B40",
+        "B41",
+        "B42"
+      ],
+      "explanation": "희망 기관은 {기관·지역·분야}입니다. 자격은 해당 학년도 공고로 확인해야 합니다.",
+      "source_ids": [
+        "C3",
+        "T4"
+      ],
+      "status": "제안",
+      "origin": "S3.N2 상세화"
+    },
+    {
+      "id": "B37",
+      "title": "초2 등 브릿지 경험·이수·신규 지원",
+      "question_ids": [
+        "Q49",
+        "Q50",
+        "Q51"
+      ],
+      "answer_followups": "미경험/이수중/완료→현재기관요건; 과거졸업→당해제한 확인",
+      "available_paths": "브릿지 경험 / 이수 계속 / 다음 선발 / 다른 기관",
+      "entry_and_remediation": "과거2–6학년·6개월·캠프·2019/2022/2023 사례는 역사; 이수=선발 아님",
+      "parallel_courses": "학교·교과·과학·관찰 산출물",
+      "next_branch_ids": [
+        "B40",
+        "B41",
+        "B43"
+      ],
+      "explanation": "브릿지 상태는 {상태}입니다. 이수와 신규 선발 자격은 각각 확인합니다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "연도별 과거 기준 + 제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B38",
+      "title": "초3–5 교육청/대학부설 지원",
+      "question_ids": [
+        "Q01",
+        "Q49",
+        "Q50",
+        "Q52"
+      ],
+      "answer_followups": "기관선택→현재학년/다음재학학년/지역/영역; 과거만→확인대기",
+      "available_paths": "신규 지원 / 계속교육 / 경험 후 지원 / 다른기관",
+      "entry_and_remediation": "강남서초2022,서울과학전시관2023,가천2026 등 연도 분리; 초5가 마지막이라는 설명은 해당 기관만",
+      "parallel_courses": "탐구+수학/과학 실제 시간",
+      "next_branch_ids": [
+        "B40",
+        "B41",
+        "B42"
+      ],
+      "explanation": "{기준연도} 자료의 대상은 {과거범위}입니다. 당해 대상은 {확인상태}입니다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "연도별 과거 기준 + 제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B39",
+      "title": "초6·중등 신규/계속/기관 이동",
+      "question_ids": [
+        "Q01",
+        "Q49",
+        "Q50",
+        "Q51"
+      ],
+      "answer_followups": "초6→신규/계속교육분리; 중등→기관별학년/분야; 미확인→공고확인",
+      "available_paths": "계속교육 / 중등기관 지원 / 학교탐구 / 다른경험",
+      "entry_and_remediation": "초6 신규 불가를 모든 영재원에 적용 금지; 서울중등융합2025 등 출처연도 표시",
+      "parallel_courses": "중등 수학·학교·과학",
+      "next_branch_ids": [
+        "B40",
+        "B41",
+        "B43"
+      ],
+      "explanation": "현재 학년에서 신규와 계속교육의 조건이 다를 수 있어 따로 확인합니다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "연도별 과거 기준 + 제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B40",
+      "title": "영재원 현재 자격·달력 연도 확인",
+      "question_ids": [
+        "Q50",
+        "Q51",
+        "Q52"
+      ],
+      "answer_followups": "현재공식자료→조건대조; 학년도만→접수달력연도; 없음→확인대기",
+      "available_paths": "지원 후보 / 자격 확인 대기 / 다른 기관 / 다른 학년도",
+      "entry_and_remediation": "가천2026 모집의 9–11월은 달력연도 불명확; 2027 강남서초도 원 공고 재확인. 자동 마감 알림 금지",
+      "parallel_courses": "현재 학습 계속 가능",
+      "next_branch_ids": [
+        "B41",
+        "B42",
+        "B43"
+      ],
+      "explanation": "기관 기준 연도는 {학년도}, 접수 달력 연도는 {확인상태}입니다. 최신 자격 확인 전 지원 가능으로 확정하지 않습니다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "확정 연도표시 원칙 + 미확정 현재 정보",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B41",
+      "title": "기관 제한과 개인 시간 충돌",
+      "question_ids": [
+        "Q51",
+        "Q53",
+        "Q07"
+      ],
+      "answer_followups": "동시 지원/재학→현 공고 규칙; 시간 충돌→개인조정; 둘 미확인→대기",
+      "available_paths": "가능성 검토 / 기관 규정 확인 / 일정 조정 / 우선 기관 선택",
+      "entry_and_remediation": "서울 대학합격/교육청 제한 사례를 전국/매년 규칙으로 일반화 금지",
+      "parallel_courses": "허용 여부가 확인된 과정끼리만 병행 제안",
+      "next_branch_ids": [
+        "B42",
+        "B43",
+        "B07"
+      ],
+      "explanation": "기관의 동시 재학 제한과 개인 시간 충돌을 따로 기록했습니다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B42",
+      "title": "영재원 관찰·지원서·산출물 준비",
+      "question_ids": [
+        "Q52",
+        "Q64",
+        "Q18"
+      ],
+      "answer_followups": "당해요구항목있음→완료/작성중/미시작; 산출물기록없음→경험확인",
+      "available_paths": "요구 항목 준비 / 관찰 경험 / 탐구 유지 / 다음 기회",
+      "entry_and_remediation": "현 공고에 없는 필수 서류·평가 컷을 만들지 않는다",
+      "parallel_courses": "영재원 준비+현재 수학·과학 시간",
+      "next_branch_ids": [
+        "B43",
+        "B57",
+        "B75"
+      ],
+      "explanation": "당해 확인한 요구 항목은 {목록}이고 현재 준비 상태는 {상태}입니다.",
+      "source_ids": [
+        "C3",
+        "T4"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B43",
+      "title": "영재원 선택 결과와 목표 재검토",
+      "question_ids": [
+        "Q54",
+        "Q51",
+        "Q80"
+      ],
+      "answer_followups": "재학/미선발/종료/다른기관→각선택; 고입변경→재질문",
+      "available_paths": "계속교육 / 다른기관 / 탐구 유지 / 학교 우선 / 고입 탐색",
+      "entry_and_remediation": "영재원 이력만으로 영재고 적합성·합격 가능성 판단 금지",
+      "parallel_courses": "현재 교과·과학·경시",
+      "next_branch_ids": [
+        "B36",
+        "B57",
+        "B72",
+        "B78"
+      ],
+      "explanation": "영재원 경험 {상태}를 기록했습니다. 이후 방향은 따로 선택할 수 있습니다.",
+      "source_ids": [
+        "C3",
+        "C4"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B44",
+      "title": "누테 진입 희망·실제 회차",
+      "question_ids": [
+        "Q56",
+        "Q55",
+        "Q57"
+      ],
+      "answer_followups": "진입희망→학원/회차/범위; 독립→자율기록; 조건없음→대기",
+      "available_paths": "누테/학원 지원 / 독립 중등 / 황소 유지 / 다른 과정",
+      "entry_and_remediation": "1/4/7/10월과 중1완료→중2-1 사례는 특정 과정 참고; 전국 공통 조건 아님",
+      "parallel_courses": "현재 학원과 동시 재원 시간 검토",
+      "next_branch_ids": [
+        "B45",
+        "B46",
+        "B47",
+        "B51"
+      ],
+      "explanation": "대상 과정은 {과정}이며 현재 회차 범위는 {확인상태}입니다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "제안",
+      "origin": "S3.N3 상세화"
+    },
+    {
+      "id": "B45",
+      "title": "누테 진입 부족 범위·보완 후 합류",
+      "question_ids": [
+        "Q55",
+        "Q57",
+        "Q34"
+      ],
+      "answer_followups": "조건확인+부족범위→기본/심화보완; 조건미확인→공고; 준비됨보고→수행확인",
+      "available_paths": "기본 보완 / 심화 보완 / 현 교사 확인 / 다음 모집 / 독립 진행",
+      "entry_and_remediation": "실제 진입시험/학원조건 없이 새 점수·개월 기준 없음",
+      "parallel_courses": "원 사고력·계산·학교",
+      "next_branch_ids": [
+        "B44",
+        "B47",
+        "B06"
+      ],
+      "explanation": "확인된 진입 조건과 현재 수행의 차이는 {범위}입니다. 보완 후 같은 또는 다음 회차를 다시 볼 수 있습니다.",
+      "source_ids": [
+        "C3"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B46",
+      "title": "황소·누테·다른 학원 병행",
+      "question_ids": [
+        "Q56",
+        "Q58",
+        "Q07",
+        "Q46"
+      ],
+      "answer_followups": "동시희망→실제시간/과제; 수업중복→택일; 확인대기→조건부후보",
+      "available_paths": "조건부 병행 / 한 학원 우선 / 외부심화 / 이후 전환",
+      "entry_and_remediation": "자료의 병행가능/대체로어려움은 맥락 차이. 자동 가능/불가 통합 금지",
+      "parallel_courses": "학교 내신과 계산도 시간 합산",
+      "next_branch_ids": [
+        "B44",
+        "B47",
+        "B07"
+      ],
+      "explanation": "두 과정 병행에 대한 자료의 표현이 달라 실제 시간과 과제량을 확인합니다.",
+      "source_ids": [
+        "C3",
+        "T1"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B47",
+      "title": "중등 기본·심화와 공통수학 전환",
+      "question_ids": [
+        "Q55",
+        "Q57",
+        "Q59"
+      ],
+      "answer_followups": "기본완료+심화미확인→심화확인; 실제학원조건확인→비교; 높은진도만→수행확인",
+      "available_paths": "중등 심화 유지 / 공통수학 검토 / 부분 보완 / 독립 전환",
+      "entry_and_remediation": "60–70%는 특정 학원 설명. 공통 전환 보편 정답률 컷 아님",
+      "parallel_courses": "중등 심화+공통 새진도 시간검토",
+      "next_branch_ids": [
+        "B48",
+        "B53",
+        "B54"
+      ],
+      "explanation": "중등의 {심화 범위}와 {대상 과정}의 실제 조건을 비교합니다.",
+      "source_ids": [
+        "C3",
+        "I6"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B48",
+      "title": "기간이 다른 학원 모델의 비교",
+      "question_ids": [
+        "Q56",
+        "Q59",
+        "Q35"
+      ],
+      "answer_followups": "황소/CMS/미래탐구/특정누테 선택→해당원기간만; 선택미정→별도비교",
+      "available_paths": "황소 모델 / CMS 모델 / 미래탐구 모델 / 개별 실제 기록",
+      "entry_and_remediation": "12개월·18개월·9개월·6.5개월·50개월은 다른 구성. 평균/합산해 새 기간 금지",
+      "parallel_courses": "계산·학교·과학은 별도축",
+      "next_branch_ids": [
+        "B53",
+        "B54",
+        "B08"
+      ],
+      "explanation": "이 비교는 {학원·과정} 원자료 기간입니다. 다른 학원 예시와 섞지 않았습니다.",
+      "source_ids": [
+        "H1",
+        "C3",
+        "E9",
+        "I6",
+        "I7"
+      ],
+      "status": "확정 보존 원칙 + 자료 사례",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B49",
+      "title": "L0–L4 기준선과 희망 방향 분리",
+      "question_ids": [
+        "Q04",
+        "Q21",
+        "Q25",
+        "Q29"
+      ],
+      "answer_followups": "기준선 선택→참고만; 현재진도→개별축; 희망목표→별도",
+      "available_paths": "승인 기준선 비교 / 실제 축 기록 / 목표 탐색",
+      "entry_and_remediation": "L0..4 shift=0/3/7/10/12 기존 값 보존; 성취 점수·목표 적합 등급으로 사용 금지",
+      "parallel_courses": "모든 실제 축",
+      "next_branch_ids": [
+        "B08",
+        "B50",
+        "B72"
+      ],
+      "explanation": "기준선 {L}는 표 비교용입니다. 희망 목표와 현재 수행은 별도로 기록합니다.",
+      "source_ids": [
+        "H1",
+        "C1"
+      ],
+      "status": "확정 기존 기준선 + 제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B50",
+      "title": "L4·국가대표 코호트의 참고",
+      "question_ids": [
+        "Q23",
+        "Q59",
+        "Q24"
+      ],
+      "answer_followups": "현재코호트같음→범위대조; 다름→예시로만; 현과목대응없음→확인",
+      "available_paths": "해당 코호트 참고 / 다른 기준선 / 실제 진도 계속",
+      "entry_and_remediation": "소마A1 초3 11월중등,초4공통완료 방향은 사례/비교; 국가대표셀+도형 추가 확인 필요. 영재고 응시 자격 아님",
+      "parallel_courses": "과학·경시 희망은 별도",
+      "next_branch_ids": [
+        "B54",
+        "B65",
+        "B72"
+      ],
+      "explanation": "{코호트} 계획과 현재 {진도}를 비교합니다. 빠른 진도만으로 목표 학교 가능성을 판단하지 않습니다.",
+      "source_ids": [
+        "H1",
+        "E8",
+        "I3",
+        "I5"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B51",
+      "title": "중등 학습과 실제 학교 생활",
+      "question_ids": [
+        "Q55",
+        "Q58",
+        "Q76"
+      ],
+      "answer_followups": "초등재학중중등→학교일정별도; 중학생→내신별도; 시험기간→조정",
+      "available_paths": "외부중등+학교 / 학교우선 / 부분심화 / 시간재선택",
+      "entry_and_remediation": "학년이 낮아도 중등입력가능; 중등 선행으로 학교 성취 자동입력 금지",
+      "parallel_courses": "사고력·계산·과학·경시",
+      "next_branch_ids": [
+        "B52",
+        "B53",
+        "B72"
+      ],
+      "explanation": "외부 중등 진도와 학교 {학년}의 학습 기록을 함께 보존합니다.",
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B52",
+      "title": "중등 심화와 학교 내신의 독립",
+      "question_ids": [
+        "Q22",
+        "Q55",
+        "Q76",
+        "Q07"
+      ],
+      "answer_followups": "학교기록있음→내신관리; 없음→미확인; 외부심화부담→시간조정",
+      "available_paths": "내신 병행 / 학교 우선 / 심화 보완 / 일정 조정",
+      "entry_and_remediation": "교재 진도만으로 내신 안정 판정 금지",
+      "parallel_courses": "실제 관심 과학·경시",
+      "next_branch_ids": [
+        "B53",
+        "B73",
+        "B74"
+      ],
+      "explanation": "내신의 확인 기록은 {기록}, 외부 심화는 {범위}입니다.",
+      "source_ids": [
+        "C4",
+        "E7"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B53",
+      "title": "공통수학1·2 기본/심화/누락",
+      "question_ids": [
+        "Q59",
+        "Q15",
+        "Q14"
+      ],
+      "answer_followups": "두과목상태다름→각각기록; 완료보고→깊이확인; 누락→보완",
+      "available_paths": "과목별 계속 / 중등심화 병행 / 누락 보완 / 경시 탐색",
+      "entry_and_remediation": "황소고등6개월은 공통1·2의 해당 모델; 무관한 전체 고등 기간으로 확대 금지",
+      "parallel_courses": "학교·과학·경시 시간 조건",
+      "next_branch_ids": [
+        "B54",
+        "B65",
+        "B72"
+      ],
+      "explanation": "공통수학1은 {상태}, 공통수학2는 {상태}로 기록합니다.",
+      "source_ids": [
+        "H1",
+        "C4"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B54",
+      "title": "대수·미적분Ⅰ 비교와 고입 방향",
+      "question_ids": [
+        "Q59",
+        "Q04",
+        "Q75"
+      ],
+      "answer_followups": "고입희망있음→준비질문; 학교우선→내신; 목표미정→탐색",
+      "available_paths": "L3 참고 속도 / 영재고·과학고 검토 / 내신·일반고 / 목표 탐색",
+      "entry_and_remediation": "L3 중2여름미적분Ⅰ·대수는 비교방향; 최상위보장/합격필수 아님",
+      "parallel_courses": "학교·과학·경시·탐구 선택",
+      "next_branch_ids": [
+        "B65",
+        "B72",
+        "B73",
+        "B74"
+      ],
+      "explanation": "{진도}는 비교 정보입니다. 현재 수행과 희망 방향을 확인한 뒤 다음 선택을 제안합니다.",
+      "source_ids": [
+        "H1",
+        "C4"
+      ],
+      "status": "제안",
+      "origin": "S4.N1 상세화"
+    },
+    {
+      "id": "B55",
+      "title": "중등·고등 보완 후 합류",
+      "question_ids": [
+        "Q34",
+        "Q55",
+        "Q59",
+        "Q57"
+      ],
+      "answer_followups": "부분범위미확인→확인; 학원조건부족→보완; 수행확인→다음선택",
+      "available_paths": "보완+진도 유지 / 다음 회차 합류 / 다른 학원 / 독립 진행",
+      "entry_and_remediation": "근거 없는 보완 기간·점수 없음. 대상 조건 확인 전 합류 확정 금지",
+      "parallel_courses": "영재원·과학은 별도 조건",
+      "next_branch_ids": [
+        "B44",
+        "B47",
+        "B53",
+        "B06"
+      ],
+      "explanation": "보완 대상은 {확인범위}입니다. 해당 수행과 모집 조건을 다시 확인하면 다음 길을 선택할 수 있습니다.",
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B56",
+      "title": "시간 여건에 따른 축별 조정",
+      "question_ids": [
+        "Q07",
+        "Q08",
+        "Q37",
+        "Q58"
+      ],
+      "answer_followups": "일부만부담→해당축조정; 목표시점변화→우선순위; 요구시간없음→확인",
+      "available_paths": "축별 유지/조정 / 병행유보 / 우선목표 / 다음회차",
+      "entry_and_remediation": "전체 과정을 학년 하나의 코스로 단축시키지 않는다",
+      "parallel_courses": "조정하지 않은 축 기록 유지",
+      "next_branch_ids": [
+        "B07",
+        "B57",
+        "B65",
+        "B78"
+      ],
+      "explanation": "{축}만 조정하고 {다른 축}은 유지하는 선택을 할 수 있습니다.",
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B57",
+      "title": "과학 모듈 추가 여부·목적",
+      "question_ids": [
+        "Q60",
+        "Q04",
+        "Q61"
+      ],
+      "answer_followups": "과학관심/기관목표→분야별기록; 미희망→추가질문종료; 미정→경험설명",
+      "available_paths": "학교 과학 / 실험탐구 / 분야학습 / 영재원 / 경시 / 추가 안 함",
+      "entry_and_remediation": "과학을 모든 학생의 공통 필수 모듈로 만들지 않는다",
+      "parallel_courses": "수학은 실제 시간별도",
+      "next_branch_ids": [
+        "B58",
+        "B59",
+        "B60",
+        "B61",
+        "B62",
+        "B63",
+        "B64"
+      ],
+      "explanation": "과학 목적은 {목적}입니다. 선택한 분야에 필요한 질문만 이어갑니다.",
+      "source_ids": [
+        "C3",
+        "E6",
+        "E7",
+        "E10"
+      ],
+      "status": "제안",
+      "origin": "S3.N4 상세화"
+    },
+    {
+      "id": "B58",
+      "title": "한과연 표준·FAST·SLOW 비교",
+      "question_ids": [
+        "Q65",
+        "Q61",
+        "Q62"
+      ],
+      "answer_followups": "계획선택→해당원자료; 미정→세사례차이; 다른학원→자체조건",
+      "available_paths": "표준 / FAST / SLOW / 다른기관 / 실제경험중심",
+      "entry_and_remediation": "세 이름은 한과연 학원 계획; GFIELD 학생등급으로 전환 금지",
+      "parallel_courses": "분야별 수학·과학 기록",
+      "next_branch_ids": [
+        "B59",
+        "B60",
+        "B61",
+        "B62",
+        "B63"
+      ],
+      "explanation": "{계획명}은 원자료의 학원 계획입니다. 현재 아이의 등급을 뜻하지 않습니다.",
+      "source_ids": [
+        "H1",
+        "C3",
+        "E6",
+        "E7"
+      ],
+      "status": "확정 명칭 해석 + 자료 사례",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B59",
+      "title": "같은 예비초6·수학 초6인 과학안",
+      "question_ids": [
+        "Q62",
+        "Q61",
+        "Q63"
+      ],
+      "answer_followups": "초6수학+초등과학미완→영역확인; 이미중등과학→중복확인",
+      "available_paths": "초등4분야+중등생명/지구 참고 / 이미배운범위유지 / 다른안검토",
+      "entry_and_remediation": "예비초6 1안은 사례; 학년 자동선택 금지",
+      "parallel_courses": "현재수학·실험·어휘",
+      "next_branch_ids": [
+        "B63",
+        "B64",
+        "B67"
+      ],
+      "explanation": "같은 예비초6이라도 수학·과학 경험이 달라 이 안을 참고 후보로 보여 줍니다.",
+      "source_ids": [
+        "E7",
+        "C3"
+      ],
+      "status": "자료 사례 + 제안",
+      "origin": "S3.N4 예비초6 1안"
+    },
+    {
+      "id": "B60",
+      "title": "같은 예비초6·수학 중1인 과학안",
+      "question_ids": [
+        "Q62",
+        "Q61",
+        "Q63"
+      ],
+      "answer_followups": "중1수학→분야별기존과학; 일부학습→중복/보완",
+      "available_paths": "생명→지구→물리→화학 원안 참고 / 실제경험에따라선택",
+      "entry_and_remediation": "순서는 해당 예비초6 2안 사례이며 일반 필수 순서 아님",
+      "parallel_courses": "수학·학교·실험",
+      "next_branch_ids": [
+        "B63",
+        "B64",
+        "B67"
+      ],
+      "explanation": "이 안은 수학 중1인 예비초6 원자료의 순서를 참고합니다.",
+      "source_ids": [
+        "E7",
+        "C3"
+      ],
+      "status": "자료 사례 + 제안",
+      "origin": "S3.N4 예비초6 2안"
+    },
+    {
+      "id": "B61",
+      "title": "같은 예비초6·수학 중2인 과학안",
+      "question_ids": [
+        "Q62",
+        "Q61",
+        "Q63"
+      ],
+      "answer_followups": "중2수학→물리/화학경험+수식; 빠른진도이나수행미확인→관찰",
+      "available_paths": "물리→화학→생명→지구 원안 참고 / 해당범위보완",
+      "entry_and_remediation": "중2 3월 목표변경 표기는 해당시트; 다른시트2월과 합치지 않는다",
+      "parallel_courses": "수학·학교·실험",
+      "next_branch_ids": [
+        "B63",
+        "B64",
+        "B67",
+        "B78"
+      ],
+      "explanation": "원자료의 수학 중2 과학안을 참고하며 각 분야의 실제 경험을 먼저 확인합니다.",
+      "source_ids": [
+        "E7",
+        "C3"
+      ],
+      "status": "자료 사례 + 제안",
+      "origin": "S3.N4 예비초6 3안"
+    },
+    {
+      "id": "B62",
+      "title": "같은 예비초6·수학 중3인 과학안",
+      "question_ids": [
+        "Q62",
+        "Q61",
+        "Q66"
+      ],
+      "answer_followups": "중3수학→물화브릿지기록; 이미공통학습→현재기관조건; 충돌→대기",
+      "available_paths": "물리/화학→브릿지→고등 원안 참고 / 보완 / 조건확인",
+      "entry_and_remediation": "고등물리 진입은 중3완료/공통2완료 자료충돌. 모두합친 새 필수요건 금지",
+      "parallel_courses": "수학·학교·실험",
+      "next_branch_ids": [
+        "B63",
+        "B64",
+        "B67"
+      ],
+      "explanation": "원자료의 중3수학 안을 참고합니다. 고등 진입 조건은 선택 기관에서 별도로 확인합니다.",
+      "source_ids": [
+        "E7",
+        "C3",
+        "A2"
+      ],
+      "status": "자료 사례 + 조건 미확정",
+      "origin": "S3.N4 예비초6 4안"
+    },
+    {
+      "id": "B63",
+      "title": "과학 분야별 어휘·수식·설명 보완",
+      "question_ids": [
+        "Q61",
+        "Q63",
+        "Q16"
+      ],
+      "answer_followups": "수식도움→관련수학범위; 어휘도움→설명기록; 깊이불명→수행확인",
+      "available_paths": "현재분야계속 / 어휘보완 / 수학연계보완 / 보완후합류",
+      "entry_and_remediation": "수학빠름=과학숙달 아님. 어려움 보고를 능력진단으로 표현 금지",
+      "parallel_courses": "다른과학분야·실험·교과",
+      "next_branch_ids": [
+        "B64",
+        "B67",
+        "B06"
+      ],
+      "explanation": "과학에서 확인할 부분은 {어휘/수식/설명}입니다. 분야별로 보완 선택을 할 수 있습니다.",
+      "source_ids": [
+        "E6",
+        "E7",
+        "A2"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B64",
+      "title": "실험·보고서·장기 탐구의 별도 경로",
+      "question_ids": [
+        "Q64",
+        "Q61",
+        "Q07"
+      ],
+      "answer_followups": "희망만→경험계획; 산출물있음→실제기록; 시간충돌→조정; 실험수업 희망→현재 개설/교재/교구/앱 이용 가능 여부와 실제 경험 구분",
+      "available_paths": "짧은실험 / 보고서작성 / 장기탐구 / 기관경험 / 현재유지",
+      "entry_and_remediation": "연구 참여나 보고서만으로 우수성·합격 가능성 평가 금지",
+      "parallel_courses": "분야학습·영재원·학교",
+      "next_branch_ids": [
+        "B42",
+        "B67",
+        "B75"
+      ],
+      "explanation": "{실험·탐구 경험}을 별도 기록하고 다음 경험과 시간을 선택합니다.",
+      "source_ids": [
+        "E6",
+        "E10",
+        "T4"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B65",
+      "title": "KMO·수학 경시 선택 여부",
+      "question_ids": [
+        "Q68",
+        "Q69",
+        "Q70",
+        "Q72"
+      ],
+      "answer_followups": "KMO희망→단계/범위; 경험만→경험경로; 희망없음→교과심화유지; 경시 자료만 활용→학습범위 기록, 응시 희망은 별도 질문",
+      "available_paths": "경험 / 특정학원단계 / 1차·2차준비 / 심화유지 / 보류",
+      "entry_and_remediation": "KMO는 선택 과정. 영재고희망이라는 이유만으로 필수 배정 금지. 자료 이름은 실제 대회 응시·수상 이력의 근거가 아니다",
+      "parallel_courses": "교과·과학·탐구 시간조건",
+      "next_branch_ids": [
+        "B66",
+        "B68",
+        "B69",
+        "B70",
+        "B71",
+        "B72"
+      ],
+      "explanation": "KMO 희망은 {희망}이며 현재 경험은 {경험}입니다. 고입 목표와 별도로 선택합니다.",
+      "source_ids": [
+        "C3",
+        "E9",
+        "H1",
+        "A3",
+        "T2"
+      ],
+      "status": "제안",
+      "origin": "S3.N5 수학 상세화",
+      "evidence_locator": "70_상담B_추가검토_2026-10-03.md CB13"
+    },
+    {
+      "id": "B66",
+      "title": "KMO 진입 깊이·학원 기준·대회 자격 분리",
+      "question_ids": [
+        "Q69",
+        "Q70",
+        "Q71"
+      ],
+      "answer_followups": "공통완료보고→심화/증명확인; 특정학원지원→현재조건; 대회응시→공식규칙",
+      "available_paths": "학원조건확인 / 수행확인 / 기본·심화보완 / 응시경험",
+      "entry_and_remediation": "FIX공통완료/완료후2년 표현은 원자료 범위. 모든KMO의무아님",
+      "parallel_courses": "수학심화·학교·과학",
+      "next_branch_ids": [
+        "B68",
+        "B69",
+        "B55"
+      ],
+      "explanation": "대회 응시 자격과 학원 반의 조건, 실제 수학 깊이를 따로 확인합니다.",
+      "source_ids": [
+        "C3",
+        "E9",
+        "A3"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B67",
+      "title": "물리·화학·정보 등 분야별 경시",
+      "question_ids": [
+        "Q67",
+        "Q68",
+        "Q69",
+        "Q61"
+      ],
+      "answer_followups": "분야복수→각경험/수상/현재활동; 물리희망→수식/과학경험; 기관조건없음→대기",
+      "available_paths": "분야경험 / 특정대회 / 과학심화 / 학교우선 / 복수분야검토",
+      "entry_and_remediation": "XLS초6 9월과노드7월,중2 11월과노드9월 충돌 보존; 조기물리놀이 제한 금지",
+      "parallel_courses": "수학경시·과학·학교",
+      "next_branch_ids": [
+        "B69",
+        "B70",
+        "B71",
+        "B72"
+      ],
+      "explanation": "{분야} 경험과 수상을 구분했습니다. 준비 시점은 출처별로 달라 현재 과정 안내가 필요합니다.",
+      "source_ids": [
+        "E10",
+        "C3",
+        "I8"
+      ],
+      "status": "제안",
+      "origin": "S3.N5 과학/정보 상세화"
+    },
+    {
+      "id": "B68",
+      "title": "미래탐구 내부 단계·승급 조건",
+      "question_ids": [
+        "Q71",
+        "Q72",
+        "Q70"
+      ],
+      "answer_followups": "단계8후시험→9생략사례; 단계9성취→내부검증; 수상조건→연도/단계",
+      "available_paths": "현재단계 / 내부진입시험 / 승급 / 보완 / 다른학원",
+      "entry_and_remediation": "80%·상위20%·동/은상 등 D20:D32는 해당학원 내부 기준. 일반점수/합격컷으로 사용 금지",
+      "parallel_courses": "교과·학교·과학은 별도",
+      "next_branch_ids": [
+        "B66",
+        "B69",
+        "B70"
+      ],
+      "explanation": "이 단계의 조건은 {학원 내부 원문}입니다. 현재 적용 여부를 학원에서 확인해야 합니다.",
+      "source_ids": [
+        "E9"
+      ],
+      "status": "학원 자료 기준 + 현재 적용 미확정",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B69",
+      "title": "경시·교과·과학·탐구 병행",
+      "question_ids": [
+        "Q73",
+        "Q07",
+        "Q58",
+        "Q67"
+      ],
+      "answer_followups": "실제시간확인→조건부병행; 우선목표변화→범위조정; 미확인→대기",
+      "available_paths": "경시우선 / 학교우선 / 심화유지 / 조건부병행 / 보류",
+      "entry_and_remediation": "자료의 각 단계 개월을 임의 합산해 모든 학생 일정으로 쓰지 않는다",
+      "parallel_courses": "선택한 분야와 학교·탐구",
+      "next_branch_ids": [
+        "B07",
+        "B70",
+        "B72",
+        "B78"
+      ],
+      "explanation": "경시 준비에 쓰는 실제 시간과 {다른과정}의 시간을 확인하여 선택합니다.",
+      "source_ids": [
+        "C3",
+        "E9",
+        "E10",
+        "A3"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B70",
+      "title": "참가·수상·현재활동·결과의 분리",
+      "question_ids": [
+        "Q71",
+        "Q74",
+        "Q18"
+      ],
+      "answer_followups": "수상있음→대회/연도/범위; 참가만→참가기록; 미선발→피드백; 중단→이력",
+      "available_paths": "다음회차 / 현재단계보완 / 다른분야 / 심화유지 / 목표재검토",
+      "entry_and_remediation": "O/X 하나로 활동과 수상을 묶지 않는다; 수상없음=지원불가 아님",
+      "parallel_courses": "다른축 기록유지",
+      "next_branch_ids": [
+        "B65",
+        "B67",
+        "B71",
+        "B78"
+      ],
+      "explanation": "현재 기록은 {참가/수상/활동}입니다. 각각을 별도로 사용합니다.",
+      "source_ids": [
+        "C3",
+        "E9"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B71",
+      "title": "경시 후 고입 방향 재선택",
+      "question_ids": [
+        "Q74",
+        "Q75",
+        "Q78"
+      ],
+      "answer_followups": "경시계속희망→다음회차; 고입변경→유형별질문; 학교우선→내신",
+      "available_paths": "경시유지 / 탐구유지 / 다른학교유형 / 내신우선 / 미정",
+      "entry_and_remediation": "경시성적만으로 고입합격 가능성·추천학교 결정 금지",
+      "parallel_courses": "선택한교과·과학·학교",
+      "next_branch_ids": [
+        "B72",
+        "B73",
+        "B74",
+        "B78"
+      ],
+      "explanation": "경시 경험 이후에도 희망 방향을 다시 선택할 수 있습니다.",
+      "source_ids": [
+        "C3",
+        "C4"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B72",
+      "title": "공통수학 이후 희망 학교 유형",
+      "question_ids": [
+        "Q75",
+        "Q59",
+        "Q76"
+      ],
+      "answer_followups": "영재고/과학고→지원준비; L3비교→학습/학교; 내신/일반→학교경로; 미정→탐색; 실제 후보학교 개설과목·시간·아이 희망을 유형과 별도로 확인",
+      "available_paths": "영재고 / 과학고 / 자사고 / 외고·국제고 / 일반고 / 탐색",
+      "entry_and_remediation": "진도로 학교유형 자동배정 금지; 학교자격은 현재공식자료. 해당 자료의 과거 수치·예측은 현재 공식 자격/합격확률/개인 진입 컷의 근거로 사용하지 않는다",
+      "parallel_courses": "교과·과학·경시·탐구는 선택",
+      "next_branch_ids": [
+        "B73",
+        "B74",
+        "B75",
+        "B76"
+      ],
+      "explanation": "현재 학습은 {진도}이고 희망 학교는 {목표}입니다. 유형별 조건을 확인합니다.",
+      "source_ids": [
+        "C3",
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "status": "제안",
+      "origin": "S3.N6 + S4.N1"
+    },
+    {
+      "id": "B73",
+      "title": "학교 내신·수행과 외부 선행",
+      "question_ids": [
+        "Q76",
+        "Q07",
+        "Q58"
+      ],
+      "answer_followups": "시험기간→일정조정; 기록불명→학교확인; 외부진도높음→별도기록; 외부 선행·학교 과목 판본·실제 탐구·학교 기록 구분",
+      "available_paths": "학교우선 / 선행병행 / 시험기간조정 / 확인대기",
+      "entry_and_remediation": "빠른진도=내신최상위보장 금지. 해당 자료의 과거 수치·예측은 현재 공식 자격/합격확률/개인 진입 컷의 근거로 사용하지 않는다",
+      "parallel_courses": "과학·탐구·경시 실제시간",
+      "next_branch_ids": [
+        "B74",
+        "B75",
+        "B78"
+      ],
+      "explanation": "학교의 {기록}과 외부 {진도}를 구분하여 계획합니다.",
+      "source_ids": [
+        "C4",
+        "E7",
+        "P1",
+        "P2"
+      ],
+      "status": "제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B74",
+      "title": "중2 목표 유지·변경",
+      "question_ids": [
+        "Q78",
+        "Q75",
+        "Q76",
+        "Q09"
+      ],
+      "answer_followups": "변경→새유형공고/범위/시간; 유지→부족확인; 미정→탐색",
+      "available_paths": "유지 / 영재고·과학고재검토 / 내신중심 / 다른유형 / 미정",
+      "entry_and_remediation": "시트중2 2월/3월 충돌 별도표시; 전환을 고정 월로강제하지 않는다",
+      "parallel_courses": "완료한모든축 기록보존",
+      "next_branch_ids": [
+        "B72",
+        "B75",
+        "B76",
+        "B78"
+      ],
+      "explanation": "목표를 {변경상태}로 기록했습니다. 기존 학습 기록은 보존하고 관련 준비 질문만 다시 확인합니다.",
+      "source_ids": [
+        "C4",
+        "E7"
+      ],
+      "status": "제안",
+      "origin": "S4.N2 + 과학 시트 전환"
+    },
+    {
+      "id": "B75",
+      "title": "고입 깊이·탐구·지원 준비 확인",
+      "question_ids": [
+        "Q79",
+        "Q70",
+        "Q64",
+        "Q76"
+      ],
+      "answer_followups": "수행기록있음→항목별검토; 없다→확인; 목표와시간충돌→조정; 희망분야/선택과목/개설/이수/성취를 각각 확인",
+      "available_paths": "현재준비 / 범위보완 / 탐구기록확인 / 서류준비 / 다음목표",
+      "entry_and_remediation": "책완료만으로 영재성/합격확률 산출 금지; 주관적적성진단금지. 해당 자료의 과거 수치·예측은 현재 공식 자격/합격확률/개인 진입 컷의 근거로 사용하지 않는다",
+      "parallel_courses": "학교내신·과학·경시·탐구",
+      "next_branch_ids": [
+        "B76",
+        "B77",
+        "B78"
+      ],
+      "explanation": "확인된 준비는 {기록}이고 추가 확인할 항목은 {목록}입니다.",
+      "source_ids": [
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "status": "제안",
+      "origin": "S4.N3 상세화"
+    },
+    {
+      "id": "B76",
+      "title": "현재 공식 고입 자격·일정·지원 제한",
+      "question_ids": [
+        "Q77",
+        "Q75",
+        "Q02"
+      ],
+      "answer_followups": "당해공고확보→항목대조; 옛표만→역사표시; 동시지원희망→공식제한확인; 공식공고/과거통계/시뮬레이션/전망의 유형·학년도·모집단·정정이력을 구분",
+      "available_paths": "지원후보 / 공식확인대기 / 다른유형 / 다른시기",
+      "entry_and_remediation": "영재고/과학고 독립전형·재지원·중복 가능 여부 추정 금지; 학원달력≠공식공고. 해당 자료의 과거 수치·예측은 현재 공식 자격/합격확률/개인 진입 컷의 근거로 사용하지 않는다",
+      "parallel_courses": "공식허용과 개인시간 모두확인",
+      "next_branch_ids": [
+        "B77",
+        "B78"
+      ],
+      "explanation": "기준 학년도는 {학년도}입니다. 자격·일정·제한의 확인 상태는 {상태}입니다.",
+      "source_ids": [
+        "C3",
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "status": "확정 공식확인 원칙 + 현재 미확정",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B77",
+      "title": "지원·선발·등록 결과 이후 선택",
+      "question_ids": [
+        "Q80",
+        "Q75",
+        "Q09"
+      ],
+      "answer_followups": "결과대기→기존계획유지; 합격등록→다음목표; 미등록/미선발→다른유형",
+      "available_paths": "현재지원 / 결과대기 / 등록 / 다른학교 / 목표변경",
+      "entry_and_remediation": "지원결과와학습상태별도. 중3후 섹션5는 다음설계인계만",
+      "parallel_courses": "학교·현재과정은실제상태",
+      "next_branch_ids": [
+        "B78",
+        "B79",
+        "B80"
+      ],
+      "explanation": "확인된 결과는 {결과}입니다. 다음 방향은 {선택}으로 따로 기록합니다.",
+      "source_ids": [
+        "C4"
+      ],
+      "status": "제안",
+      "origin": "S4.N4 상세화"
+    },
+    {
+      "id": "B78",
+      "title": "목표 변경에 따른 경로 재선택",
+      "question_ids": [
+        "Q09",
+        "Q04",
+        "Q06",
+        "Q78"
+      ],
+      "answer_followups": "목표변화→관련모듈재개; 시간변화→B07; 결과변화→해당결과노드",
+      "available_paths": "목표유지 / 새목표 / 복수목표 / 탐색 / 일부과정중단",
+      "entry_and_remediation": "완료/원자료/옛답 삭제금지; 과거목표는비활성이력으로보존",
+      "parallel_courses": "영향없는축 유지",
+      "next_branch_ids": [
+        "B02",
+        "B07",
+        "B72",
+        "B79"
+      ],
+      "explanation": "목표가 {이전}에서 {현재}로 바뀌었습니다. 영향을 받는 질문만 다시 확인합니다.",
+      "source_ids": [
+        "U2",
+        "C4"
+      ],
+      "status": "확정 요구 + 제안 재선택 로직",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B79",
+      "title": "갱신·보완·합류 시점의 사건 처리",
+      "question_ids": [
+        "Q09",
+        "Q13",
+        "Q34"
+      ],
+      "answer_followups": "단원완료/새회차/공고갱신/시간변화→해당판단재개; 변화없음→현상태",
+      "available_paths": "현재기록유지 / 보완후합류 / 병행재검토 / 조건확인대기",
+      "entry_and_remediation": "재검토는 사건/사용자선택으로만. 임의3개월주기 등없음; 반복자동루프금지",
+      "parallel_courses": "선택모든축",
+      "next_branch_ids": [
+        "B03",
+        "B06",
+        "B07",
+        "B78",
+        "B80",
+        "B89",
+        "B90",
+        "B95",
+        "B96",
+        "B97",
+        "B98",
+        "B99",
+        "B100"
+      ],
+      "explanation": "{사건}으로 인해 {판단}을 다시 확인합니다. 이전 기록도 이력으로 남겼습니다.",
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "status": "설계 제안",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B80",
+      "title": "설계 밖 과정·섹션5·미확정 인계",
+      "question_ids": [
+        "Q10",
+        "Q11",
+        "Q80"
+      ],
+      "answer_followups": "목록외과정→원문입력; 고등이후→범위/목표인계; 기준없음→미확인; PDF/PPT의 고등·대입 상세 요구는 후속 범위로 보관. 유아·초등 기본설문에 대입 문항 일괄 추가 안 함",
+      "available_paths": "직접기록 / 다음설계인계 / 기준확인대기",
+      "entry_and_remediation": "새 교육과정·챕터명·기간·조건 생성금지. 섹션5 실제범위별도승인. 해당 자료의 과거 수치·예측은 현재 공식 자격/합격확률/개인 진입 컷의 근거로 사용하지 않는다",
+      "parallel_courses": "현재확인과정 보존",
+      "next_branch_ids": [
+        "B79"
+      ],
+      "explanation": "{과정·목표}는 현재 근거 범위 밖입니다. 입력은 보존하고 다음 설계에 인계합니다.",
+      "source_ids": [
+        "U2",
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "status": "확정 범위 제한 + 제안 인계",
+      "origin": "신규 상세 분기"
+    },
+    {
+      "id": "B81",
+      "title": "분산 수업·긴 수업·현재 유지",
+      "question_ids": [
+        "Q81",
+        "Q07",
+        "Q33"
+      ],
+      "answer_followups": "주2회불가→주1회/개별 시간 후보; 긴수업피로미확인→관찰; 제한있음→현시간유지",
+      "available_paths": "분산 / 한 번의 긴 수업 / 현시간 / 개별·단과 확인",
+      "entry_and_remediation": "상담의1/2회·2/2.5/3시간은 해당 학생·반 예시. 신규 시간 컷이나 증속 모델로 사용 금지",
+      "parallel_courses": "각 축 수업을 실제 제공 형태별 조합",
+      "next_branch_ids": [
+        "B07",
+        "B56",
+        "B82"
+      ],
+      "explanation": "수업 형태는 실제 가능한 {요일·시간}과 {관찰}을 기준으로 선택합니다.",
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "status": "제안",
+      "origin": "상담 보충: A672–674, B126/832–868, C1231–1239"
+    },
+    {
+      "id": "B82",
+      "title": "가정 지원·이동·학교 일정의 여건",
+      "question_ids": [
+        "Q82",
+        "Q07",
+        "Q16"
+      ],
+      "answer_followups": "도움필요+가정지원부족→현재학원지원/시간후보; 독립가능보고→실제관찰; 오전불가→기존일정",
+      "available_paths": "가정+수업 / 학원 지원 / 독립 학습 / 가능한 일정 확인",
+      "entry_and_remediation": "직업·성별·소득으로 적합성 판정 금지. 필요한 도움과 가능한 도움만 비교",
+      "parallel_courses": "교과·사고력·계산 각 지원 형태",
+      "next_branch_ids": [
+        "B07",
+        "B27",
+        "B83",
+        "B86"
+      ],
+      "explanation": "현재 필요한 지원은 {도움}, 제공 가능한 시간은 {시간}입니다. 가능한 조합을 비교합니다.",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "status": "제안",
+      "origin": "상담 보충: A2059, B7/2654–2655"
+    },
+    {
+      "id": "B83",
+      "title": "개별·팀·가정 학습 조합",
+      "question_ids": [
+        "Q83",
+        "Q20",
+        "Q16",
+        "Q07"
+      ],
+      "answer_followups": "팀희망→개설/시간/개인수행; 개별희망→현재범위; 가정희망→지원여건",
+      "available_paths": "개별 / 팀+개별 / 가정+수업 / 현 형태 유지",
+      "entry_and_remediation": "원문 팀 제안은 개별 사례. 팀의 진도를 개인 완료로 환산하지 않는다",
+      "parallel_courses": "다른 축과 개인 복습 기록",
+      "next_branch_ids": [
+        "B07",
+        "B82",
+        "B84"
+      ],
+      "explanation": "팀에서 진행한 범위와 혼자 해결한 범위를 별도로 기록합니다.",
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "status": "제안",
+      "origin": "상담 보충: A1210, B1149, C1555"
+    },
+    {
+      "id": "B84",
+      "title": "권·단원 순서가 다른 이수 기록",
+      "question_ids": [
+        "Q84",
+        "Q11",
+        "Q12",
+        "Q14"
+      ],
+      "answer_followups": "B/C후A등→실제이력; 일부권완료→범위; 복습권→신규진도와분리",
+      "available_paths": "실제순서 유지 / 범위별 보완 / 복습 / 현재 교사 계획 연결",
+      "entry_and_remediation": "상위권·뒤단원 입력을 앞선 모든 범위 완료로 처리 금지. 임의 순서 강제 안 함",
+      "parallel_courses": "각 권·미션·교과 별도",
+      "next_branch_ids": [
+        "B04",
+        "B05",
+        "B06",
+        "B86",
+        "B94"
+      ],
+      "explanation": "실제 배운 순서는 {이력}입니다. 아직 확인하지 못한 이전 범위는 완료로 채우지 않았습니다.",
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "status": "제안",
+      "origin": "상담 보충: B1477/1561/1882/2550"
+    },
+    {
+      "id": "B85",
+      "title": "시험 기록과 시간 제한 없는 수행 비교",
+      "question_ids": [
+        "Q85",
+        "Q18",
+        "Q16"
+      ],
+      "answer_followups": "시간제한차이있음→실제미시도/시도범위; 점수만→원인미확인; 교사기록다름→양쪽보존",
+      "available_paths": "수행 확인 / 실제 시험 경험 / 범위 보완 / 풀이·검토 연습 후보",
+      "entry_and_remediation": "점수만으로 시간관리·개념·정서·능력 원인 진단 금지; 교재진도와 별도",
+      "parallel_courses": "현재교과·사고력·연산",
+      "next_branch_ids": [
+        "B87",
+        "B88",
+        "B32",
+        "B90"
+      ],
+      "explanation": "시험에서는 {기록}, 시간 제한 없는 상황에서는 {기록}으로 보고되었습니다. 원인은 추가 확인이 필요합니다.",
+      "source_ids": [
+        "T2",
+        "T3"
+      ],
+      "status": "제안",
+      "origin": "상담 보충: B2229/2559/3525–3533, C2777–2779"
+    },
+    {
+      "id": "B86",
+      "title": "책·수업·영상·미션·테스트의 사용 순서",
+      "question_ids": [
+        "Q86",
+        "Q12",
+        "Q16",
+        "Q82"
+      ],
+      "answer_followups": "미션부터→해당책학습여부; 영상사용→실제독립시도; 책미학습→범위확인",
+      "available_paths": "책 내용 확인 / 수업·영상 도움 / 미션 / 권별테스트 / 누락 보완",
+      "entry_and_remediation": "자료의 키즈팩토 책→미션 권고는 그 프로그램 범위. 영상 시청만으로 완료 처리하지 않는다",
+      "parallel_courses": "실제교재 원리·탐구·미션을 별도",
+      "next_branch_ids": [
+        "B04",
+        "B06",
+        "B82",
+        "B84"
+      ],
+      "explanation": "{책 범위} 학습을 확인한 뒤 {미션·평가}의 사용을 선택합니다.",
+      "source_ids": [
+        "T2"
+      ],
+      "status": "제안",
+      "origin": "상담 보충: B7–10/42/79–81"
+    },
+    {
+      "id": "B87",
+      "title": "학부모·교사 관찰의 충돌",
+      "question_ids": [
+        "Q87",
+        "Q03",
+        "Q18",
+        "Q19"
+      ],
+      "answer_followups": "범위다름→각범위; 시점다름→각날짜; 동일범위다른관찰→확인대기",
+      "available_paths": "보고별 보존 / 같은 범위 확인 / 부분 보완 / 현학습 유지",
+      "entry_and_remediation": "교사의 말이나 부모걱정 하나를 전 영역 사실로 확대하지 않는다. 평균 점수화 금지",
+      "parallel_courses": "다른 축 확인 기록 유지",
+      "next_branch_ids": [
+        "B05",
+        "B06",
+        "B85",
+        "B91"
+      ],
+      "explanation": "학부모 보고는 {보고}, 교사 관찰은 {관찰}입니다. 서로 다른 범위·시점을 확인합니다.",
+      "source_ids": [
+        "T2",
+        "U2"
+      ],
+      "status": "제안",
+      "origin": "상담 보충: B470–471/675–679"
+    },
+    {
+      "id": "B88",
+      "title": "모의·특강 확대와 복습·기본 학습 선택",
+      "question_ids": [
+        "Q88",
+        "Q07",
+        "Q85",
+        "Q14"
+      ],
+      "answer_followups": "시험추가+복습없음→시간질문; 구체범위부족→기본/복습; 실제여력확인→추가경험",
+      "available_paths": "현재 기본 / 한 시험지 복습 / 모의 경험 / 추가 특강 / 현재 유지",
+      "entry_and_remediation": "모의 횟수/개별 옛 컷을 목표달성 요건으로 만들지 않는다. 추가수업=성취증가 자동처리 금지",
+      "parallel_courses": "현재세축·휴식·학교시간",
+      "next_branch_ids": [
+        "B07",
+        "B85",
+        "B25",
+        "B34"
+      ],
+      "explanation": "추가 평가 경험과 실제 복습 시간은 따로 봅니다. 현재 선택은 {선택}입니다.",
+      "source_ids": [
+        "T2"
+      ],
+      "status": "제안",
+      "origin": "상담 보충: B3146–3155/3199–3203"
+    },
+    {
+      "id": "B89",
+      "title": "학습 계속과 진단 연기의 독립",
+      "question_ids": [
+        "Q89",
+        "Q13",
+        "Q18"
+      ],
+      "answer_followups": "이전권 완료·진단 연기→보완/확인 사건; 다음권→새 기록",
+      "available_paths": "현재 학습+이전범위 보완 / 진단 예정 / 진단 미정",
+      "entry_and_remediation": "학습완료·진단완료·진입충족 각각 판정; 새 점수컷 없음",
+      "parallel_courses": "현재 다른 권·다른 축",
+      "next_branch_ids": [
+        "B05",
+        "B06",
+        "B90",
+        "B98",
+        "B100"
+      ],
+      "explanation": "학습은 {현재범위}, 진단은 {평가범위·상태}로 따로 기록했습니다.",
+      "source_ids": [
+        "T1",
+        "T3",
+        "U4"
+      ],
+      "evidence_locator": "A307–309; C507–509",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B90",
+      "title": "평가 시도·채점 정정과 비교 가능성",
+      "question_ids": [
+        "Q90",
+        "Q85",
+        "Q18",
+        "Q103"
+      ],
+      "answer_followups": "재풀이→노출 표시; 채점오류→새채점버전; 조건다름→별도; 원풀이소실→기록없음; 문항오류의심→그 문항 판정 유보; 교사 예상점수→실제점수와 분리",
+      "available_paths": "최초 풀이 보존 / 학습용 재풀이 / 채점 재검토 / 비교 보류",
+      "entry_and_remediation": "동일문항 재응시를 독립 검증으로 간주하지 않음; 원풀이·정정이력 보존. 문항 자체 검토가 필요한 경우 관련 진단 결론을 보류한다. 최초풀이가 없으면 새로 만들어 채우지 않는다",
+      "parallel_courses": "현재 학습·보완",
+      "next_branch_ids": [
+        "B85",
+        "B87",
+        "B89",
+        "B98",
+        "B100"
+      ],
+      "explanation": "점수는 {조건}에서 얻었습니다. 수정 전후와 재풀이를 구분하여 보여줍니다.",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "evidence_locator": "A2245–2248; B1931–1938",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B91",
+      "title": "직접 결과·전달 공지·문자 템플릿 분리",
+      "question_ids": [
+        "Q91",
+        "Q03",
+        "Q42",
+        "Q47"
+      ],
+      "answer_followups": "개인통지→대상/사건일; 템플릿→예시; 대상불명→미확인",
+      "available_paths": "본인 사실 기록 / 참고 정보 / 확인 대기",
+      "entry_and_remediation": "축하 표현만으로 합격확정 안 함; 역할/사건/자료연도 보존",
+      "parallel_courses": "기존 학습",
+      "next_branch_ids": [
+        "B25",
+        "B34",
+        "B93",
+        "B100"
+      ],
+      "explanation": "이 자료는 {자료역할}입니다. 개인의 실제 결과와 분리하여 보관합니다.",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "evidence_locator": "A4262–4335; B3891",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B92",
+      "title": "기관의 평가 반영 조건과 재원 이력",
+      "question_ids": [
+        "Q92",
+        "Q38",
+        "Q40"
+      ],
+      "answer_followups": "늦은입반/전원→반영평가 확인; 공지없음→미확인",
+      "available_paths": "현재회차 / 다음회차 / 기관 확인",
+      "entry_and_remediation": "현재 기관·반·회차에 한정; 사례A 규칙을 모든 학원에 확장 금지",
+      "parallel_courses": "학습·진단 별도",
+      "next_branch_ids": [
+        "B24",
+        "B25",
+        "B40",
+        "B93"
+      ],
+      "explanation": "학습 기록과 이번 선발에 반영되는 평가는 다를 수 있어 각각 확인합니다.",
+      "source_ids": [
+        "T1"
+      ],
+      "evidence_locator": "A895",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B93",
+      "title": "선발·반 배정·좌석·등록·실제 수강 분리",
+      "question_ids": [
+        "Q93",
+        "Q42",
+        "Q47",
+        "Q46"
+      ],
+      "answer_followups": "합격·시간미정→배정대기; 맞지않음→미등록/대안; 수강→적응",
+      "available_paths": "대기 / 등록 검토 / 미등록 / 현재유지 / 다른회차",
+      "entry_and_remediation": "선발결과는 등록/출석/진도완료와 별개",
+      "parallel_courses": "이전 학습 유지 선택",
+      "next_branch_ids": [
+        "B25",
+        "B33",
+        "B34",
+        "B35",
+        "B97",
+        "B100"
+      ],
+      "explanation": "현재는 {선발상태}, {배정상태}, {등록상태}입니다. 다음 선택은 {선택}입니다.",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "evidence_locator": "A2454–2474; B2232–2242",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B94",
+      "title": "필수·선택 과제와 발췌 범위",
+      "question_ids": [
+        "Q94",
+        "Q95",
+        "Q12",
+        "Q14",
+        "Q88"
+      ],
+      "answer_followups": "발췌→실제범위; 선택과제→시간조정; 필수미확인→출처; 미배부/수업예정/미지참→각 상태; 안내정정→원안과 정정안 연결; 대체과제→같은 시간 이중 합산 방지",
+      "available_paths": "필수 우선 / 선택 병행 / 과제 조정 / 누락 확인",
+      "entry_and_remediation": "기관의 요구와 가족 선택 구별; 발췌를 책 전체 완료로 확대 금지",
+      "parallel_courses": "새 진도+보완",
+      "next_branch_ids": [
+        "B04",
+        "B06",
+        "B07",
+        "B84",
+        "B95"
+      ],
+      "explanation": "공부한 것은 {실제범위}이며 남은 선택 과제는 {범위}입니다.",
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "evidence_locator": "A2370–2377; C453–459; 70 상담B CB03; C1459–1462/2479–2480/2511–2514, C1184 대체 과제",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B95",
+      "title": "부담 조정·휴식·계획 종료",
+      "question_ids": [
+        "Q96",
+        "Q33",
+        "Q07"
+      ],
+      "answer_followups": "줄임→유지/중단트랙; 쉼→재개미정허용; 종료→이력보존",
+      "available_paths": "활동 유지 / 축소 / 일시 중단 / 이 계획 종료 / 미정",
+      "entry_and_remediation": "휴식/종료를 실패·능력저하로 판정하지 않음; 민감한 이유 필수 아님",
+      "parallel_courses": "남긴 트랙",
+      "next_branch_ids": [
+        "B07",
+        "B56",
+        "B96",
+        "B97",
+        "B100"
+      ],
+      "explanation": "선택한 {범위}는 {계획상태}로 두고 이미 공부한 기록은 보존합니다.",
+      "source_ids": [
+        "T2",
+        "T3",
+        "U4"
+      ],
+      "evidence_locator": "B3881–3886; C말미",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B96",
+      "title": "휴식 뒤 현재 상태에서 재개",
+      "question_ids": [
+        "Q97",
+        "Q01",
+        "Q07",
+        "Q10",
+        "Q89"
+      ],
+      "answer_followups": "재개→현재진도/시간; 미정→보류; 목표변경→목표질문",
+      "available_paths": "새 기준안 / 일부 재개 / 보류 / 새 목표",
+      "entry_and_remediation": "과거 미실행 구간을 자동 밀린숙제로 전환하거나 속도압축 안 함",
+      "parallel_courses": "이미 진행 중인 타 과목",
+      "next_branch_ids": [
+        "B01",
+        "B07",
+        "B78",
+        "B89",
+        "B100"
+      ],
+      "explanation": "이전 기록은 남기고 현재 가능한 범위에서 재개 계획을 비교합니다.",
+      "source_ids": [
+        "T3",
+        "U4"
+      ],
+      "evidence_locator": "C말미; U4",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B97",
+      "title": "선발 준비 종료 후 다른 학습 복귀",
+      "question_ids": [
+        "Q98",
+        "Q09",
+        "Q07",
+        "Q100"
+      ],
+      "answer_followups": "목표사건종료→줄인학습 재개여부; 미정→보류",
+      "available_paths": "교과 복귀 / 사고력·연산 / 타 과목 / 휴식 / 새 목표",
+      "entry_and_remediation": "준비종료/결과발표/등록 별도; 새 총량은 실제 여건 확인",
+      "parallel_courses": "유지 과정·다른 과목",
+      "next_branch_ids": [
+        "B07",
+        "B78",
+        "B95",
+        "B99",
+        "B100"
+      ],
+      "explanation": "준비 기간에 줄인 {과정}을 다시 이어갈지 현재 시간과 함께 선택합니다.",
+      "source_ids": [
+        "T1",
+        "U4"
+      ],
+      "evidence_locator": "A2198–2199",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B98",
+      "title": "완료 범위의 이후 유지·전이 확인",
+      "question_ids": [
+        "Q99",
+        "Q18",
+        "Q16",
+        "Q90"
+      ],
+      "answer_followups": "특정범위→해당확인; 근거없음→미확인; 잘함→관찰기록",
+      "available_paths": "현재 학습 / 범위 재확인 / 일부 보완",
+      "entry_and_remediation": "과거 완료와 현재 수행 보존; 임의 주기·기준점 없음",
+      "parallel_courses": "새 권·다른 축",
+      "next_branch_ids": [
+        "B05",
+        "B06",
+        "B89",
+        "B100"
+      ],
+      "explanation": "과거 완료 기록과 최근 {관찰}을 함께 보며 필요한 범위만 다시 확인합니다.",
+      "source_ids": [
+        "T1",
+        "U4"
+      ],
+      "evidence_locator": "A2634–2650",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B99",
+      "title": "타 과목 영역별 실제 학습·계획",
+      "question_ids": [
+        "Q100",
+        "Q07",
+        "Q98",
+        "Q103"
+      ],
+      "answer_followups": "영어→실제영역; 기타→직접과정명; 자료없음→일정/보고",
+      "available_paths": "별도 기록 / 일정만 / 후일 추가 / 유지·조정",
+      "entry_and_remediation": "영어 개별 상담은 표준 경로·입학기준 아님; 진단미준비 허용",
+      "parallel_courses": "수학 세 축·과학·영재원",
+      "next_branch_ids": [
+        "B07",
+        "B57",
+        "B69",
+        "B95",
+        "B97",
+        "B100"
+      ],
+      "explanation": "{과목}은 실제 공부와 선택한 계획으로 기록합니다. 진단이 없는 부분은 미확인입니다.",
+      "source_ids": [
+        "T3",
+        "U4"
+      ],
+      "evidence_locator": "C572–622",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B100",
+      "title": "가족 선택 기준계획·실제기록·변경안",
+      "question_ids": [
+        "Q102",
+        "Q103",
+        "Q104",
+        "Q09"
+      ],
+      "answer_followups": "후보저장→미확정; 선택→새버전; 실제기록→비교; 변경→차이안",
+      "available_paths": "후보 비교 / 개인기준 선택 / 실제 추적 / 새버전 / 기존 유지",
+      "entry_and_remediation": "시간미확인 후보도 조건부로 선택하되 실행가능 확정과 구분; 원표 보존",
+      "parallel_courses": "모든 선택 축·트랙",
+      "next_branch_ids": [
+        "B07",
+        "B78",
+        "B79",
+        "B89",
+        "B95",
+        "B99"
+      ],
+      "explanation": "기준은 {계획버전}, 실제는 {기록일}의 {범위}입니다. 변경안은 선택 전까지 별도로 둡니다.",
+      "source_ids": [
+        "U4"
+      ],
+      "evidence_locator": "현재 사용자 직접 지시",
+      "status": "원문 관찰 기반 설계 제안",
+      "origin": "v4 추가 검토"
+    },
+    {
+      "id": "B101",
+      "title": "선택형 기존 성향검사와 진행 방식의 설명 보강",
+      "question_ids": [
+        "Q105",
+        "Q15",
+        "Q16",
+        "Q20",
+        "Q07"
+      ],
+      "answer_followups": "검사 선택+지원연령→해당 기존10문항; 건너뛰기/미완료/지원연령밖→성향 결과 없이 동일한 기본 로드맵; 완료→유형과 혼합형+짧은 지원 설명",
+      "available_paths": "검사 없이 기준 경로 / 기존 성향검사 후 상세 설명 / 기존 결과 참고 후 학습 방식 비교",
+      "entry_and_remediation": "성향 점수를 학업 능력·숙달·지원 자격·자동 증속 기준으로 사용하지 않음. 이미 확인된 학습 상태와 가족 선택을 우선. 기존 문항 밖 새 유아 문항 없음.",
+      "parallel_courses": "모든 학습 과정 유지. 검사가 과정 진입의 필수 조건이 아님.",
+      "next_branch_ids": [
+        "B09",
+        "B07",
+        "B56",
+        "B78",
+        "B100"
+      ],
+      "explanation": "이번 답변에서 {성향}이 보여요. {간단한지원방법}을 참고하며 응용과 심화를 이어가는 방법을 비교할 수 있어요.",
+      "source_ids": [
+        "UF02",
+        "PN01",
+        "PN02"
+      ],
+      "status": "선택 원칙 확정; 유형별 설명 연결은 제안",
+      "origin": "최신 사용자 직접 정정",
+      "revision": "2026-10-03_최신사용자흐름_통합설계"
+    }
+  ],
+  "section_node_coverage": {
+    "S3.N1": [
+      "B28",
+      "B29",
+      "B30",
+      "B31",
+      "B32",
+      "B33",
+      "B34",
+      "B35"
+    ],
+    "S3.N2": [
+      "B36",
+      "B37",
+      "B38",
+      "B39",
+      "B40",
+      "B41",
+      "B42",
+      "B43"
+    ],
+    "S3.N3": [
+      "B44",
+      "B45",
+      "B46",
+      "B47",
+      "B48"
+    ],
+    "S3.N4": [
+      "B57",
+      "B58",
+      "B59",
+      "B60",
+      "B61",
+      "B62",
+      "B63",
+      "B64"
+    ],
+    "S3.N5": [
+      "B65",
+      "B66",
+      "B67",
+      "B68",
+      "B69",
+      "B70",
+      "B71"
+    ],
+    "S3.N6": [
+      "B72"
+    ],
+    "S4.N1": [
+      "B53",
+      "B54",
+      "B72"
+    ],
+    "S4.N2": [
+      "B74",
+      "B78"
+    ],
+    "S4.N3": [
+      "B75",
+      "B76"
+    ],
+    "S4.N4": [
+      "B77",
+      "B80"
+    ]
+  },
+  "proposal_gate": "review entire design before implementation",
+  "numeric_cutoffs_created": false,
+  "version": "2026-10-03_최신사용자흐름_통합설계",
+  "supersedes": "v4 design wording; keeps original stable Q/B IDs and all source sections",
+  "source_review_scope": "71_추가원자료_확인과정정_v4.md",
+  "storage_policy": {
+    "final": "G",
+    "temporary": [
+      "E",
+      "G"
+    ],
+    "C_task_writes": false
+  },
+  "preserved_models": {
+    "section_month_columns": {
+      "S1": 27,
+      "S2": 34,
+      "S3": 48,
+      "S4": 36
+    },
+    "L0_to_L4_shifts": [
+      0,
+      3,
+      7,
+      10,
+      12
+    ],
+    "acceleration": {
+      "first_actual_months": 2,
+      "first_factor": 1.1,
+      "later_factor": 1.2
+    },
+    "institution_specific_periods_are_not_merged": true
+  },
+  "corrections": [
+    {
+      "id": "V4_X01",
+      "affects": [
+        "B24"
+      ],
+      "reason": "현재 사용자 구간과 v2 초1 3월 고정 설명 충돌",
+      "resolution": "구간 보기·실제 회차 구분; 원표 유지"
+    },
+    {
+      "id": "V4_X02",
+      "affects": [
+        "B25",
+        "B26",
+        "B27"
+      ],
+      "reason": "문자 SET를 개인 결과·실제 병행 사례로 오인할 위험",
+      "resolution": "전달된 예시 설명으로 분류; 결과 근거 분리"
+    },
+    {
+      "id": "V4_X03",
+      "affects": [
+        "B80",
+        "B99"
+      ],
+      "reason": "타 과목 원자료 부재처럼 읽히는 v3 표현",
+      "resolution": "영어 개별 상담 존재; 공통 표준/진단은 미확정"
+    },
+    {
+      "id": "V4_X04",
+      "affects": [
+        "B72",
+        "B76"
+      ],
+      "reason": "PPT7 비율과 모집인원 산술 불일치",
+      "resolution": "현재 입시 규칙/추천 계산에 사용 안 함; 원문 보존"
+    },
+    {
+      "id": "V4_X05",
+      "affects": [
+        "B72",
+        "B76",
+        "B80"
+      ],
+      "reason": "PPT7 논술 표96.0%와4233/(87+4233) 약98% 불일치",
+      "resolution": "출처내 충돌; 계산값도 현재공식비율로 사용 안 함"
+    },
+    {
+      "id": "V4_X06",
+      "affects": [
+        "B72",
+        "B76",
+        "B80"
+      ],
+      "reason": "PPT3과PPT7 모집인원 합계차이",
+      "resolution": "모집단·버전 미확인; 통합 금지"
+    },
+    {
+      "id": "V4_X07",
+      "affects": [
+        "B72",
+        "B73",
+        "B80"
+      ],
+      "reason": "PDF36 시뮬레이션1.43과설명범위1.46~1.80 불일치",
+      "resolution": "출처 예측표의 내부차이 기록; 개인 진단/합격컷 전용 금지"
+    }
+  ],
+  "edge_policy": "연결 목록은 가능한 선택이다. 모든 연결을 자동 실행하지 않고 답변/변경 사건에 따라 활성화한다. 반복 경로는 새 사건ID·계획 버전에서만 재평가한다.",
+  "source_use_policy": "질문 설계의 근거와 기관의 현재 진입 조건은 별도. 과거 상담·학원 홍보·교사 템플릿·AI 요약은 현재 공식 조건으로 사용하지 않는다.",
+  "latest_user_sources": {
+    "UF01": {
+      "kind": "current_conversation_direct_user_statement",
+      "locator": "독샘 인사, 나이 드롭다운, 4·5·6세 생월, 유아 기준, 초1~3 세축·교재/학원, 현재 위치 요약, 소마·필즈·CMS·그 외, 기존 성향검사 내용 사용"
+    },
+    "UF02": {
+      "kind": "current_conversation_direct_user_statement",
+      "verbatim": "성격유형 검사는 선택인거야 하지만 이걸하면 더 디테일하게 로드맵을 설정할수 있도록 해줘.\n기본을 빼고 나중에 심화를 채우는 형태라던지"
+    },
+    "UF03": {
+      "kind": "current_conversation_direct_user_statement",
+      "verbatim": "내가 학원 목표 상관없이 나가는 로드맵을 보여줄까?\n그러다 머리가 크면 좀 힘좀 생기면 심화 하다가 응용과 같이 나가는 거지"
+    },
+    "UF04": {
+      "kind": "current_conversation_direct_user_statement",
+      "verbatim": "단 현재 교과 과정에 맞춰야돼"
+    },
+    "UF05": {
+      "id": "U20261003-H01",
+      "kind": "current_conversation_user_statement",
+      "title": "황소 선택 시점과 이유를 실제 상태와 분리",
+      "verbatim": "진도가 안되어 황소 초등을 늦게 볼수도 있고 진도가 되도 어리다.판단하여 심화로 배우려고 늦개 할수 있고 아니면 그냥 안 다니고 꼼꼼히.하려ㅜ할수 있고",
+      "principles": [
+        "진도 보완 때문에 늦게 검토할 수 있다",
+        "진도가 되어도 어리다고 판단하여 심화를 더 학습할 수 있다",
+        "황소 미선택으로 꼼꼼히 학습하는 경로를 인정한다",
+        "선택 시점과 이유를 실제 상태 또는 지원자격 판단과 합치지 않는다"
+      ],
+      "supplementaryFields": [
+        "goals.hwangso",
+        "goals.hwangsoReasons",
+        "goals.hwangsoTimingNote",
+        "goals.hwangsoReasonNote"
+      ],
+      "priorSourceCatalogModified": false,
+      "officialAdmissionRule": false,
+      "detailDocument": "USER_DECISION_황소선택이유_v5.md"
+    }
+  },
+  "revision_log": [
+    {
+      "object": "Q01",
+      "previous": {
+        "id": "Q01",
+        "module": "기본",
+        "prompt": "아이의 출생 연·월과 현재 실제 학년은 무엇인가요?",
+        "answer_options": [
+          "출생 연·월 입력",
+          "미취학",
+          "초1–6",
+          "중1–3",
+          "그 이상/기타",
+          "확인 필요"
+        ],
+        "followup": "학년과 진도가 다르면 Q10–Q34로 각각 기록한다. 생일이 없으면 만 나이 미확인. 기존 한국나이는 별도 표시한다.",
+        "source_ids": [
+          "U2"
+        ],
+        "status": "설계 제안"
+      },
+      "changed_fields": [
+        "prompt",
+        "answer_options",
+        "followup",
+        "source_ids",
+        "display_policy"
+      ]
+    },
+    {
+      "object": "Q02",
+      "previous": {
+        "id": "Q02",
+        "module": "기본",
+        "prompt": "학습 상태를 기록하는 기준일과 학교 학년도는 언제인가요?",
+        "answer_options": [
+          "기준일 입력",
+          "해외·유급·입학 유예 등 별도 학년",
+          "확인 필요"
+        ],
+        "followup": "달력 연도와 학년도, 예비 학년을 분리한다.",
+        "source_ids": [
+          "U2"
+        ],
+        "status": "설계 제안"
+      },
+      "changed_fields": [
+        "prompt",
+        "answer_options",
+        "followup",
+        "display_policy",
+        "source_ids"
+      ]
+    },
+    {
+      "object": "Q10",
+      "previous": {
+        "id": "Q10",
+        "module": "진도 공통",
+        "prompt": "현재 진행·완료·보완 중인 과정을 축마다 모두 입력해 주세요.",
+        "answer_options": [
+          "교과",
+          "사고력",
+          "연산",
+          "과학",
+          "경시·KMO",
+          "영재원",
+          "기타",
+          "없음",
+          "모름"
+        ],
+        "followup": "교과·사고력·연산 Q11–Q24 반복. 같은 축 복수 과정도 각각 입력.",
+        "source_ids": [
+          "U2",
+          "C1"
+        ],
+        "status": "설계 제안"
+      },
+      "changed_fields": [
+        "prompt",
+        "answer_options",
+        "followup",
+        "display_policy",
+        "source_ids"
+      ]
+    },
+    {
+      "object": "Q11",
+      "previous": {
+        "id": "Q11",
+        "module": "진도 공통",
+        "prompt": "정확한 교재·과정명, 판본/연도와 권은 무엇인가요?",
+        "answer_options": [
+          "목록 선택+권 입력",
+          "목록 외 직접 입력",
+          "교재 없음",
+          "권 모름"
+        ],
+        "followup": "새 교육과정을 만들지 않는다. 원문 이름과 정규화 이름을 별도 저장한다.",
+        "source_ids": [
+          "U2"
+        ],
+        "status": "설계 제안"
+      },
+      "changed_fields": [
+        "prompt",
+        "answer_options",
+        "followup",
+        "source_ids",
+        "display_policy"
+      ]
+    },
+    {
+      "object": "Q22",
+      "previous": {
+        "id": "Q22",
+        "module": "교과",
+        "prompt": "같은 범위의 심화는 어디까지 했나요?",
+        "answer_options": [
+          "동일 범위",
+          "기본보다 뒤",
+          "일부 단원",
+          "심화 없음",
+          "미확인"
+        ],
+        "followup": "기본과 심화의 완료 범위를 따로 기록한다. 학원 반 이름으로 대신하지 않는다.",
+        "source_ids": [
+          "C3",
+          "E5",
+          "I6"
+        ],
+        "status": "설계 제안"
+      },
+      "changed_fields": [
+        "prompt",
+        "answer_options",
+        "followup",
+        "source_ids",
+        "display_policy"
+      ]
+    },
+    {
+      "object": "Q38",
+      "previous": {
+        "id": "Q38",
+        "module": "소마·필즈",
+        "prompt": "현재 소마·프리미어·챌린지·필즈의 정확한 반/코호트는?",
+        "answer_options": [
+          "소마 A1 등 입력",
+          "프리미어 P1/P2/P3",
+          "챌린지",
+          "필즈 S/E 등",
+          "입학 준비",
+          "둘 이상",
+          "모름"
+        ],
+        "followup": "등록일·실제 학년·반 이름·내부 진도를 별도 기록.",
+        "source_ids": [
+          "E3",
+          "E4",
+          "I1",
+          "I2",
+          "I3",
+          "I4"
+        ],
+        "status": "설계 제안"
+      },
+      "changed_fields": [
+        "prompt",
+        "answer_options",
+        "followup",
+        "source_ids",
+        "display_policy"
+      ]
+    },
+    {
+      "object": "Q43",
+      "previous": {
+        "id": "Q43",
+        "module": "황소",
+        "prompt": "황소 경험·현재 희망·대상 학원과 회차는?",
+        "answer_options": [
+          "재원",
+          "신규 지원",
+          "재지원",
+          "편입",
+          "경험만",
+          "희망 없음",
+          "미정"
+        ],
+        "followup": "지원 희망이면 Q23,Q44–Q48; 미희망은 중등 경로를 막지 않는다.",
+        "source_ids": [
+          "C3",
+          "E5"
+        ],
+        "status": "설계 제안"
+      },
+      "changed_fields": [
+        "prompt",
+        "answer_options",
+        "followup",
+        "source_ids",
+        "display_policy"
+      ]
+    },
+    {
+      "object": "Q47",
+      "previous": {
+        "id": "Q47",
+        "module": "황소",
+        "prompt": "결과와 지금 선택은?",
+        "answer_options": [
+          "등록 후 적응",
+          "합격 후 다른 길",
+          "다음 회차",
+          "미선발 후 재지원",
+          "편입 검토",
+          "황소 없이 중등",
+          "미정"
+        ],
+        "followup": "개별 원자료 2월·9월 등의 재지원 사례는 현재 일정과 분리.",
+        "source_ids": [
+          "C3"
+        ],
+        "status": "설계 제안"
+      },
+      "changed_fields": [
+        "answer_options",
+        "followup",
+        "source_ids"
+      ]
+    },
+    {
+      "object": "B01",
+      "previous": {
+        "id": "B01",
+        "title": "실제 나이·학년과 진도의 분리",
+        "question_ids": [
+          "Q01",
+          "Q02",
+          "Q10"
+        ],
+        "answer_followups": "미취학이라도 중등/고등 입력 시 Q21,Q55,Q59; 학교 학년 미확인 시 Q02만 보완",
+        "available_paths": "실제 학년별 기본 질문 / 실제 진도별 추가 모듈 / 기본 정보 확인 대기",
+        "entry_and_remediation": "학년은 진도 입력 허용 조건이 아니다. 만 나이 산출에 필요한 정보가 없으면 미확인",
+        "parallel_courses": "모든 축",
+        "next_branch_ids": [
+          "B02",
+          "B03"
+        ],
+        "explanation": "실제 학년은 {학년}, 현재 학습은 {과정}으로 따로 기록했습니다. 높은 진도에 필요한 질문을 이어갑니다.",
+        "source_ids": [
+          "U2",
+          "H1",
+          "C1"
+        ],
+        "status": "확정 원칙 + 제안 로직",
+        "origin": "신규 상세 분기"
+      },
+      "changed_fields": [
+        "question_ids",
+        "source_ids"
+      ]
+    },
+    {
+      "object": "B09",
+      "previous": {
+        "id": "B09",
+        "title": "교과 기본·응용과 심화 두 기록",
+        "question_ids": [
+          "Q21",
+          "Q22",
+          "Q15"
+        ],
+        "answer_followups": "높은 기본+낮은 심화→심화 범위 확인; 기본 미시작→실제 목표; 둘 다 진행→기간/시간",
+        "available_paths": "기본·응용 계속 / 낮은 범위 심화 병행 / 보완 / 현재 유지",
+        "entry_and_remediation": "진도만으로 약점 추정 금지; 특정 문제 수행 확인 시만 설명",
+        "parallel_courses": "사고력·연산 독립",
+        "next_branch_ids": [
+          "B10",
+          "B11",
+          "B12",
+          "B13"
+        ],
+        "explanation": "교과 기본은 {범위}, 심화는 {범위}입니다. 두 기록을 각각 사용합니다.",
+        "source_ids": [
+          "U2",
+          "C3",
+          "E5"
+        ],
+        "status": "제안",
+        "origin": "신규 상세 분기"
+      },
+      "changed_fields": [
+        "answer_followups",
+        "available_paths",
+        "entry_and_remediation",
+        "parallel_courses",
+        "next_branch_ids",
+        "explanation",
+        "source_ids",
+        "status"
+      ]
+    },
+    {
+      "object": "B13",
+      "previous": {
+        "id": "B13",
+        "title": "구 교과명과 현재 교과의 내용 대응",
+        "question_ids": [
+          "Q24",
+          "Q11",
+          "Q12"
+        ],
+        "answer_followups": "구 상/하·수Ⅰ→판본/단원; 자료만 있음→원문 보존; 현판 확인→대응 검토",
+        "available_paths": "원문 유지 / 대응 확인 대기 / 승인된 대응표 사용",
+        "entry_and_remediation": "단순 문자열 치환으로 공통수학·대수·미적분Ⅰ로 변경 금지",
+        "parallel_courses": "다른 축 기록 보존",
+        "next_branch_ids": [
+          "B12",
+          "B54"
+        ],
+        "explanation": "이 자료는 {구 명칭}을 사용합니다. 현재 과목 대응은 {확인상태}입니다.",
+        "source_ids": [
+          "H1",
+          "E8",
+          "I5"
+        ],
+        "status": "제안",
+        "origin": "신규 상세 분기"
+      },
+      "changed_fields": [
+        "answer_followups",
+        "entry_and_remediation",
+        "parallel_courses",
+        "next_branch_ids",
+        "source_ids",
+        "status"
+      ]
+    },
+    {
+      "object": "B23",
+      "previous": {
+        "id": "B23",
+        "title": "소마·프리미어·필즈 반과 코호트 구분",
+        "question_ids": [
+          "Q38",
+          "Q40"
+        ],
+        "answer_followups": "동명 반 다른 연도→코호트; S1/S2 차이→원문 반명 유지; 내부 진도 미확인→추가 기록",
+        "available_paths": "현재 코호트 경로 / 다른 코호트 참고 / 확인 대기",
+        "entry_and_remediation": "2025 S1 이미지와 최신 S2 설명을 임의 통합하지 않는다",
+        "parallel_courses": "외부 교과·연산·사고력",
+        "next_branch_ids": [
+          "B24",
+          "B25",
+          "B26",
+          "B27"
+        ],
+        "explanation": "원자료의 {반명·연도}와 현재 반은 {비교상태}입니다. 동명이더라도 기간을 합치지 않습니다.",
+        "source_ids": [
+          "E3",
+          "E4",
+          "I1",
+          "I2",
+          "I3",
+          "I4",
+          "C2"
+        ],
+        "status": "제안",
+        "origin": "신규 상세 분기"
+      },
+      "changed_fields": [
+        "title",
+        "source_ids"
+      ]
+    },
+    {
+      "object": "B28",
+      "previous": {
+        "id": "B28",
+        "title": "황소 지원 선택과 황소 없는 중등",
+        "question_ids": [
+          "Q43",
+          "Q04"
+        ],
+        "answer_followups": "초2/초3 고려→해당 시점·실제회차 확인; 미선택→현재 초등 교과·심화 유지 또는 실제 진도에 맞는 다음 과정·목적별 경로; 미정→현재 유지와 관심 후보 비교",
+        "available_paths": "초2 고려 / 초3 고려 / 황소 미선택의 현재 교과·심화 유지 / 실제 진도에 맞는 이후 경로 / 미정",
+        "entry_and_remediation": "황소를 모든 중등 진입의 필수 경유지로 지정하지 않는다. 황소 미선택은 중등 진입 조건이 아니며 현재 학습 범위를 먼저 확인한다",
+        "parallel_courses": "교과·심화·사고력·계산",
+        "next_branch_ids": [
+          "B29",
+          "B30",
+          "B31",
+          "B32",
+          "B51",
+          "B09",
+          "B14",
+          "B19",
+          "B99"
+        ],
+        "explanation": "황소 희망 여부와 중등 학습 경로는 별도로 선택할 수 있습니다.",
+        "source_ids": [
+          "C3",
+          "E5"
+        ],
+        "status": "제안",
+        "origin": "S3.N1 상세화"
+      },
+      "changed_fields": [
+        "title",
+        "answer_followups",
+        "available_paths",
+        "entry_and_remediation",
+        "explanation",
+        "source_ids",
+        "status"
+      ]
+    }
+  ],
+  "excel_branch_mapping": {
+    "A01": [
+      "B03",
+      "B04",
+      "B09"
+    ],
+    "A02": [
+      "B03",
+      "B05",
+      "B09"
+    ],
+    "A03": [
+      "B09",
+      "B28"
+    ],
+    "A04": [
+      "B05",
+      "B06",
+      "B07",
+      "B09"
+    ],
+    "A05": [
+      "B07",
+      "B09",
+      "B18",
+      "B20"
+    ],
+    "A06": [
+      "B56",
+      "B95",
+      "B96"
+    ],
+    "A07": [
+      "B11",
+      "B47",
+      "B55"
+    ],
+    "A08": [
+      "B02",
+      "B28"
+    ],
+    "A09": [
+      "B71",
+      "B74",
+      "B78",
+      "B79",
+      "B100"
+    ],
+    "A10": [
+      "B101"
+    ]
+  },
+  "primary_question_flow": [
+    {
+      "stage": "intro",
+      "label": "독샘 인사",
+      "questions": []
+    },
+    {
+      "stage": "age",
+      "label": "나이·4/5/6세 생월",
+      "questions": [
+        "Q01",
+        "Q02"
+      ]
+    },
+    {
+      "stage": "thinking",
+      "label": "사고력 교재 또는 학원 경험",
+      "questions": [
+        "Q10",
+        "Q11",
+        "Q12",
+        "Q13",
+        "Q25",
+        "Q38"
+      ]
+    },
+    {
+      "stage": "curriculum",
+      "label": "교과 기본·응용과 심화 위치",
+      "questions": [
+        "Q11",
+        "Q12",
+        "Q13",
+        "Q15",
+        "Q21",
+        "Q22"
+      ]
+    },
+    {
+      "stage": "arithmetic",
+      "label": "연산의 독립 위치",
+      "questions": [
+        "Q11",
+        "Q12",
+        "Q13",
+        "Q29",
+        "Q30"
+      ]
+    },
+    {
+      "stage": "position",
+      "label": "성향검사 전 현재 학습 위치",
+      "questions": []
+    },
+    {
+      "stage": "personality_optional",
+      "label": "기존 성향검사 선택",
+      "questions": [
+        "Q105"
+      ]
+    },
+    {
+      "stage": "route",
+      "label": "기준 로드맵·목표·시간의 필요한 확인",
+      "questions": [
+        "Q04",
+        "Q05",
+        "Q06",
+        "Q07",
+        "Q08",
+        "Q20",
+        "Q43",
+        "Q102"
+      ]
+    },
+    {
+      "stage": "track",
+      "label": "기준 선택·실제 기록·갱신",
+      "questions": [
+        "Q103",
+        "Q104",
+        "Q09"
+      ]
+    }
+  ],
+  "flow_status": "입력 순서는 최신 사용자 결정. 목표·시간의 후속 상세 배치는 제안으로 표시.",
+  "elementary_book_policy": {
+    "source_id": "UF06",
+    "default": "디딤돌 기본+응용",
+    "reported_needs": {
+      "progress_late": "최상위 S 수학",
+      "reading": "최상위 S 수학",
+      "fast": "최상위 수학",
+      "consolidation": "쎈수학"
+    },
+    "progress_alone_implies_need": false,
+    "book_name_implies_mastery": false,
+    "speed_factor_changes": false
+  }
+}
