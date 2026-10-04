@@ -15,6 +15,9 @@ const C = {
   goldbright:'#F5D98B', red:'#D9534F', ok:'#2E9E6B', purple:'#8B6BC7',
   paper:'#fdf6e3', mist:'#f1f0ec', brown:'#8a6d46', sub:'#4a5468',
   grey:'#b0b7c3', wool:'#f5f1e6', cream:'#fdfaf3', sky:'#7ea4d6',
+  /* 2026-10-04 셀셰이딩용 보조색 — 같은 색상의 밝기만 다른 한 단계 */
+  wool2:'#e3dccb', grass:'#9bcf84', grass2:'#6fa85b', soil:'#b88a55', soil2:'#8f6636',
+  stone:'#aab0ba', stone2:'#7d8493', sun:'#ffd45a', blush:'#f6a6a0',
 };
 
 /* 바깥 껍데기 — 모든 패널은 이걸로 감싼다 */
@@ -158,5 +161,134 @@ function ground(y){
   return '<line x1="0" y1="'+y+'" x2="200" y2="'+y+'" stroke="'+C.gold+'" stroke-width="3"/>';
 }
 
-module.exports = { C, svg, stick, sheep, numi, pouch, arrow, paper, bubble, txt, ground,
+
+/* ══════════════════════════════════════════════════════════
+   셀셰이딩 소품 (2026-10-04) — 단색 도형 위에 그림자 한 겹·하이라이트 한 겹.
+   defs/그라데이션을 쓰지 않는다: 한 화면에 컷이 여러 장 떠도 id 충돌이 없고,
+   숨은 컨테이너에서도 색이 사라지지 않는다. 색은 전부 C 팔레트.
+   ══════════════════════════════════════════════════════════ */
+const OL = C.ink;
+
+/* 구름 뭉치(양털·구름 공용) — circles=[[cx,cy,r],…]. 윤곽선 → 바탕 → 아래쪽 그림자 → 위쪽 하이라이트 */
+function puff(circles, base, shade, ow){
+  ow = ow || 2.2;
+  let s = '';
+  circles.forEach(c => { s += '<circle cx="'+c[0]+'" cy="'+c[1]+'" r="'+c[2]+'" fill="'+OL+'" stroke="'+OL+'" stroke-width="'+(ow*2)+'"/>'; });
+  circles.forEach(c => { s += '<circle cx="'+c[0]+'" cy="'+c[1]+'" r="'+c[2]+'" fill="'+base+'"/>'; });
+  circles.forEach(c => { s += '<circle cx="'+(c[0]+c[2]*0.12)+'" cy="'+(c[1]+c[2]*0.22)+'" r="'+(c[2]*0.72)+'" fill="'+shade+'"/>'; });
+  circles.forEach(c => { s += '<circle cx="'+(c[0]-c[2]*0.05)+'" cy="'+(c[1]-c[2]*0.12)+'" r="'+(c[2]*0.62)+'" fill="'+base+'"/>'; });
+  circles.forEach(c => { s += '<ellipse cx="'+(c[0]-c[2]*0.32)+'" cy="'+(c[1]-c[2]*0.4)+'" rx="'+(c[2]*0.22)+'" ry="'+(c[2]*0.13)+'" fill="#fff" opacity=".8" transform="rotate(-30 '+(c[0]-c[2]*0.32)+' '+(c[1]-c[2]*0.4)+')"/>'; });
+  return s;
+}
+
+/* 양 — 복슬복슬 양털(그림자·하이라이트) + 얼굴·귀·발굽. (x,y)=몸통 중심, s=배율, flip=왼쪽 보기 */
+function sheep2(x,y,s,flip){
+  const f = flip ? ' scale(-1,1)' : '';
+  const legs = [[-13,17],[-4,19],[8,19],[17,17]].map(l =>
+    '<rect x="'+(l[0]-2.6)+'" y="'+l[1]+'" width="5.2" height="13" rx="2.4" fill="'+C.ink+'"/>'
+    +'<rect x="'+(l[0]-2.6)+'" y="'+(l[1]+10)+'" width="5.2" height="3.4" rx="1.6" fill="'+C.bluedeep+'"/>').join('');
+  const wool = puff([[-14,2,12],[-1,-7,13.5],[14,-1,12.5],[3,8,13],[-10,10,11.5],[17,10,10]], C.wool, C.wool2, 2.1);
+  const head = '<ellipse cx="29" cy="-4" rx="10.5" ry="9" transform="rotate(-8 29 -4)" fill="'+C.ink+'"/>'
+    +'<ellipse cx="22" cy="-10" rx="5.2" ry="3" transform="rotate(-30 22 -10)" fill="'+C.ink+'"/>'
+    +'<ellipse cx="22.4" cy="-10" rx="3.2" ry="1.6" transform="rotate(-30 22.4 -10)" fill="'+C.blush+'"/>'
+    +'<circle cx="26" cy="-13" r="6.2" fill="'+C.wool+'" stroke="'+OL+'" stroke-width="2"/>'
+    +'<circle cx="24.2" cy="-14.8" r="2.2" fill="#fff" opacity=".85"/>'
+    +'<circle cx="31" cy="-6" r="3.4" fill="#fff"/><circle cx="31.9" cy="-5.6" r="1.8" fill="'+C.ink+'"/>'
+    +'<ellipse cx="37.5" cy="0" rx="4" ry="2.6" fill="'+C.bluedeep+'"/><ellipse cx="37" cy="-0.8" rx="1.6" ry="0.9" fill="'+C.blush+'"/>'
+    +'<ellipse cx="29" cy="2.6" rx="2.6" ry="1.5" fill="'+C.blush+'" opacity=".75"/>';
+  return '<g transform="translate('+x+','+y+') scale('+s+')'+f+'">'
+    +'<ellipse cx="2" cy="31" rx="26" ry="3.4" fill="'+C.ink+'" opacity=".13"/>'
+    +legs+wool+head+'</g>';
+}
+
+/* 조약돌 — (x,y) 중심, r 반지름. 그림자 한 겹 + 하이라이트 */
+function pebble(x,y,r,col){
+  col = col || C.stone;
+  const dk = (col === C.stone) ? C.stone2 : C.bluedeep;
+  return '<ellipse cx="'+(x+r*0.15)+'" cy="'+(y+r*0.9)+'" rx="'+(r*1.05)+'" ry="'+(r*0.3)+'" fill="'+OL+'" opacity=".16"/>'
+    +'<ellipse cx="'+x+'" cy="'+y+'" rx="'+r+'" ry="'+(r*0.82)+'" fill="'+col+'" stroke="'+OL+'" stroke-width="1.8"/>'
+    +'<path d="M '+(x-r*0.7)+' '+(y+r*0.3)+' Q '+x+' '+(y+r*1.05)+' '+(x+r*0.85)+' '+(y+r*0.15)+' Q '+(x+r*0.3)+' '+(y+r*0.75)+' '+(x-r*0.7)+' '+(y+r*0.3)+' Z" fill="'+dk+'" opacity=".55"/>'
+    +'<ellipse cx="'+(x-r*0.32)+'" cy="'+(y-r*0.3)+'" rx="'+(r*0.3)+'" ry="'+(r*0.18)+'" fill="#fff" opacity=".8" transform="rotate(-28 '+(x-r*0.32)+' '+(y-r*0.3)+')"/>';
+}
+
+/* 가죽 주머니 — 입구를 끈으로 묶었고 조약돌 n개가 보인다. (x,y)=바닥 중심 */
+function pouch2(x,y,n){
+  let stones = '';
+  [[-6,-31],[5,-32],[-0.5,-37],[-10,-35],[9,-36]].slice(0, Math.min(n,5)).forEach(q => { stones += pebble(x+q[0], y+q[1], 5.4); });
+  return stones
+    +'<path d="M '+(x-17)+' '+(y-26)+' Q '+(x-23)+' '+(y-4)+' '+(x-13)+' '+(y-1)+' Q '+x+' '+(y+4)+' '+(x+13)+' '+(y-1)+' Q '+(x+23)+' '+(y-4)+' '+(x+17)+' '+(y-26)+' Q '+x+' '+(y-31)+' '+(x-17)+' '+(y-26)+' Z" fill="'+C.soil+'" stroke="'+OL+'" stroke-width="2.2" stroke-linejoin="round"/>'
+    +'<path d="M '+(x+8)+' '+(y-27)+' Q '+(x+20)+' '+(y-8)+' '+(x+12)+' '+(y-1)+' Q '+(x+2)+' '+(y+2)+' '+(x-4)+' '+(y+1)+' Q '+(x+12)+' '+(y-8)+' '+(x+8)+' '+(y-27)+' Z" fill="'+C.soil2+'" opacity=".55"/>'
+    +'<path d="M '+(x-14)+' '+(y-25)+' Q '+x+' '+(y-21)+' '+(x+14)+' '+(y-25)+'" fill="none" stroke="'+C.gold+'" stroke-width="3.2" stroke-linecap="round"/>'
+    +'<path d="M '+(x+1)+' '+(y-23)+' L '+(x-3)+' '+(y-16)+' M '+(x+1)+' '+(y-23)+' L '+(x+6)+' '+(y-16)+'" fill="none" stroke="'+C.gold+'" stroke-width="2.4" stroke-linecap="round"/>'
+    +'<path d="M '+(x-10)+' '+(y-12)+' Q '+(x-12)+' '+(y-7)+' '+(x-8)+' '+(y-3)+'" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".5"/>'
+    +'<path d="M '+(x-9)+' '+(y-14)+' L '+(x-9)+' '+(y-5)+' M '+(x+9)+' '+(y-14)+' L '+(x+9)+' '+(y-5)+'" fill="none" stroke="'+C.soil2+'" stroke-width="1.3" stroke-dasharray="2 2.4" opacity=".7"/>';
+}
+
+/* 나무 울타리 — (x,y)=땅에 닿는 왼쪽 끝, w 너비, 기둥 n개 */
+function fence(x,y,w,n){
+  n = n || 3;
+  let s = '';
+  const gap = (w - 8) / (n - 1);
+  [y-30, y-16].forEach(ry => {
+    s += '<rect x="'+x+'" y="'+ry+'" width="'+w+'" height="7" rx="3" fill="'+C.soil+'" stroke="'+OL+'" stroke-width="2"/>'
+      +'<rect x="'+(x+3)+'" y="'+(ry+1.4)+'" width="'+(w-6)+'" height="2" rx="1" fill="#fff" opacity=".28"/>';
+  });
+  for(let i=0;i<n;i++){
+    const px = x + i*gap;
+    s += '<rect x="'+px+'" y="'+(y-40)+'" width="9" height="42" rx="4" fill="'+C.soil+'" stroke="'+OL+'" stroke-width="2"/>'
+      +'<rect x="'+(px+5.2)+'" y="'+(y-37)+'" width="2.6" height="36" rx="1.3" fill="'+C.soil2+'" opacity=".55"/>'
+      +'<rect x="'+(px+1.6)+'" y="'+(y-37)+'" width="1.8" height="14" rx=".9" fill="#fff" opacity=".4"/>';
+  }
+  return s;
+}
+
+/* 풀밭 — y 에서 아래로 연두 띠 + 풀잎 + 작은 꽃. 땅 위 물건은 이 선에 닿게 놓는다. */
+function meadow(y, tufts){
+  let s = '<path d="M 0 '+y+' Q 50 '+(y-5)+' 100 '+y+' T 200 '+y+' L 200 140 L 0 140 Z" fill="'+C.grass+'"/>'
+    +'<path d="M 0 '+(y+9)+' Q 60 '+(y+4)+' 120 '+(y+10)+' T 200 '+(y+7)+' L 200 140 L 0 140 Z" fill="'+C.grass2+'" opacity=".55"/>'
+    +'<path d="M 0 '+y+' Q 50 '+(y-5)+' 100 '+y+' T 200 '+y+'" fill="none" stroke="'+C.grass2+'" stroke-width="2.4" stroke-linecap="round"/>';
+  (tufts || [14, 70, 126, 186]).forEach((tx, i) => {
+    const ty = y + 10 + (i % 2) * 8;
+    s += '<path d="M '+tx+' '+ty+' l -3 -7 M '+tx+' '+ty+' l 0 -9 M '+tx+' '+ty+' l 3 -7" fill="none" stroke="'+C.grass2+'" stroke-width="2" stroke-linecap="round"/>';
+  });
+  return s;
+}
+function flower(x,y,col){
+  col = col || C.blush;
+  let s = '<path d="M '+x+' '+y+' l 0 8" stroke="'+C.grass2+'" stroke-width="1.8" stroke-linecap="round"/>';
+  for(let i=0;i<5;i++){ const a = i*72*Math.PI/180; s += '<circle cx="'+(x+Math.sin(a)*3.4).toFixed(1)+'" cy="'+(y-Math.cos(a)*3.4).toFixed(1)+'" r="2.4" fill="'+col+'" stroke="'+OL+'" stroke-width=".9"/>'; }
+  return s + '<circle cx="'+x+'" cy="'+y+'" r="1.8" fill="'+C.sun+'"/>';
+}
+function sunDisc(x,y,r){
+  let s = '';
+  for(let i=0;i<8;i++){ const a = i*45*Math.PI/180; s += '<line x1="'+(x+Math.cos(a)*(r+3)).toFixed(1)+'" y1="'+(y+Math.sin(a)*(r+3)).toFixed(1)+'" x2="'+(x+Math.cos(a)*(r+7)).toFixed(1)+'" y2="'+(y+Math.sin(a)*(r+7)).toFixed(1)+'" stroke="'+C.sun+'" stroke-width="2.6" stroke-linecap="round"/>'; }
+  return s + '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+C.sun+'" stroke="'+OL+'" stroke-width="2"/><ellipse cx="'+(x-r*0.3)+'" cy="'+(y-r*0.35)+'" rx="'+(r*0.3)+'" ry="'+(r*0.18)+'" fill="#fff" opacity=".7" transform="rotate(-35 '+(x-r*0.3)+' '+(y-r*0.35)+')"/>';
+}
+function moonDisc(x,y,r){
+  return '<path d="M '+x+' '+(y-r)+' A '+r+' '+r+' 0 1 0 '+(x+r*0.9)+' '+(y+r*0.5)+' A '+(r*0.8)+' '+(r*0.8)+' 0 1 1 '+x+' '+(y-r)+' Z" fill="'+C.goldbright+'" stroke="'+OL+'" stroke-width="2" stroke-linejoin="round"/>'
+    +'<circle cx="'+(x-r*0.35)+'" cy="'+(y+r*0.1)+'" r="'+(r*0.14)+'" fill="'+C.gold+'" opacity=".6"/>';
+}
+function cloud(x,y,s){
+  s = s || 1;
+  return '<g transform="translate('+x+','+y+') scale('+s+')">'+puff([[-9,2,7],[0,-3,9],[10,1,7.5]], '#fff', '#dfe9f7', 1.8)+'</g>';
+}
+function star4(x,y,r){
+  return '<path d="M '+x+' '+(y-r)+' Q '+x+' '+y+' '+(x+r)+' '+y+' Q '+x+' '+y+' '+x+' '+(y+r)+' Q '+x+' '+y+' '+(x-r)+' '+y+' Q '+x+' '+y+' '+x+' '+(y-r)+' Z" fill="'+C.goldbright+'" stroke="'+OL+'" stroke-width="1.2" stroke-linejoin="round"/>';
+}
+/* 느낌표 — 글자가 아니라 그린 도형 */
+function bang(x,y,s,col){
+  s = s || 1; col = col || C.red;
+  return '<g transform="translate('+x+','+y+') scale('+s+')"><rect x="-4.5" y="-24" width="9" height="26" rx="4.5" fill="'+col+'" stroke="'+OL+'" stroke-width="2"/><circle cx="0" cy="11" r="5" fill="'+col+'" stroke="'+OL+'" stroke-width="2"/><ellipse cx="-1.6" cy="-17" rx="1.4" ry="4" fill="#fff" opacity=".6"/></g>';
+}
+/* 가는 끈(점선 대신) — 두 점을 부드러운 곡선으로, 끝에 작은 고리 */
+function rope(x1,y1,x2,y2,col,bend){
+  col = col || C.gold; bend = bend == null ? 10 : bend;
+  const mx = (x1+x2)/2, my = (y1+y2)/2 - bend;
+  const ang = Math.atan2(y2-my, x2-mx), L = 7;
+  const hx1 = x2 - L*Math.cos(ang-0.5), hy1 = y2 - L*Math.sin(ang-0.5), hx2 = x2 - L*Math.cos(ang+0.5), hy2 = y2 - L*Math.sin(ang+0.5);
+  return '<path d="M '+x1+' '+y1+' Q '+mx+' '+my+' '+x2+' '+y2+'" fill="none" stroke="'+col+'" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="1 5.5"/>'
+    +'<path d="M '+hx1.toFixed(1)+' '+hy1.toFixed(1)+' L '+x2+' '+y2+' L '+hx2.toFixed(1)+' '+hy2.toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>';
+}
+
+module.exports = { C, svg, stick, sheep, sheep2, pebble, pouch2, fence, meadow, flower, sunDisc, moonDisc, cloud, star4, bang, rope, puff, numi, pouch, arrow, paper, bubble, txt, ground,
   king, sage, greek, scholar, wig, boy, girl, shepherd, scribe, merchant, astronomer };

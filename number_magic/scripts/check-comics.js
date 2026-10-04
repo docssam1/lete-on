@@ -13,7 +13,7 @@ const SRC=path.join(ROOT,'data/story-comics-src');
 
 /* 허용 팔레트: C 값 + 기존 손그림 6편이 쓰던 소수의 예외 */
 const PALETTE=new Set(Object.values(H.C).map(c=>c.toLowerCase())
-  .concat(['#fff','#ffffff','#eac996','#dfe7db','#e0d6bd','#8d97ad','#2b3a67','#5b8dd9','#e08a2e','#ffd9c4','#c2571f','#b8541f']));
+  .concat(['#fff','#ffffff','#eac996','#dfe7db','#e0d6bd','#8d97ad','#2b3a67','#5b8dd9','#e08a2e','#ffd9c4','#c2571f','#b8541f','#dfe9f7']));
 
 const HANGUL=/[가-힣]/;
 const LOCAL_ART=/^assets\/images\/(?:characters\/[a-z]+|concepts\/(?:counting-tile|counting-rod|hands-nine))\.png$/;
@@ -76,8 +76,10 @@ function checkPart(file){
       if(bad||stack.length) errs.push(n+'컷: SVG 태그 균형 깨짐'+(stack.length?' (미닫힘: '+stack.join(',')+')':''));
       /* 요소 밀도 */
       const elCnt=(p.art.match(/<(rect|circle|ellipse|line|path|polygon|polyline|text|g|image)\b/g)||[]).length;
-      if(elCnt>40) errs.push(n+'컷: 요소 '+elCnt+'개 — 너무 복잡함(최대 40)');
-      else if(elCnt>20) warns.push(n+'컷: 요소 '+elCnt+'개(권장 ≤15) — 뭉개지지 않는지 확인');
+      /* 2026-10-04: 셀셰이딩 소품(양털·주머니·울타리)은 작은 도형 수십 개로 한 물건을 이룬다 — 상한을 도형 수가 아니라
+         '정말 뭉개질 정도'(220)로 올렸다. 새 소품을 쓰는 컷은 눈으로 확인할 것(comics-view.html). */
+      if(elCnt>220) errs.push(n+'컷: 요소 '+elCnt+'개 — 너무 복잡함(최대 220)');
+      else if(elCnt>170) warns.push(n+'컷: 요소 '+elCnt+'개(권장 ≤170) — 뭉개지지 않는지 확인');
       /* 팔레트 */
       for(const c of new Set((p.art.match(/#[0-9a-fA-F]{3,6}\b/g)||[]).map(x=>x.toLowerCase()))){
         if(!PALETTE.has(c)) warns.push(n+'컷: 팔레트 밖 색 '+c+' — C 팔레트를 쓸 것');
