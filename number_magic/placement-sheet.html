@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Numbers of Magic — 학습 시작점 확인 시험지</title>
+<!-- 학습 시작점 확인 시험지 (2026-10-04) — 온라인 고정 20문항 진단(data/placement-plan.js)과 같은 문항을 종이용으로 그린다.
+     쿼리: ?b=<시작 범위 id>&l=ko|en|zh&seed=<문자열>&n=<이름>  · 유아/초등/중등은 글씨 크기·쪽당 문항 수가 다르다(주간 학습지와 같은 매거진형 틀).
+     화면 아래 채점 입력은 인쇄에 나오지 않는다. 문항·정답은 전부 생성기 산출물(라이선스 원문 없음). -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="app/styles.css">
+<style>
+  /* 글꼴: Pretendard(CDN) → Noto Sans KR/CJK(Actions 러너에 apt로 설치) → 시스템 한글 순. 표지 이름은 Gowun Batang. */
+  /* app/styles.css 는 앱 셸용이라 html,body{height:100%} + body{overflow:hidden} 을 건다.
+     그 시트를 여기서도 불러오기 때문에 학습지 페이지가 통째로 스크롤되지 않았다
+     (2026-09-07, 원장 "학습지 html까지는 나오는데 스크롤이 안 된다"). 여기서 되돌린다. */
+  html,body{height:auto;min-height:100%;overflow:visible}
+  body,.nm-print-sheet{margin:0;background:#f4efe6;font-family:Pretendard,'Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif}
+  .ws-bar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    padding:10px 14px;background:#fffaf0;border-bottom:1px solid #e6dcc8}
+  .ws-bar b{font-size:15px}
+  .ws-bar .ws-sub{color:#6b6257;font-size:13px}
+  .ws-bar button{margin-left:auto;padding:10px 16px;border:0;border-radius:10px;background:#2f6f4e;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+  .ws-err{margin:40px auto;max-width:520px;padding:20px;background:#fff;border-radius:12px;color:#7a2e2e;line-height:1.6}
+  .ws-bar .ws-ghost{margin-left:0;background:#fffaf0;color:#2f6f4e;border:1px solid #cfe0d5}
+  /* 화면에서도 학습지를 그대로 보여 준다(2026-09-07, 원장 "먼저 html이 나오고 저장 또는 인쇄가
+     되어야 하는데 인쇄 페이지가 먼저 뜨고 html은 스크롤이 안 돼"). 예전엔 인쇄 대화상자가 뜬 뒤
+     A4 폭(210mm=794px) 시트가 폰 화면(390px) 밖으로 넘쳐 내용을 확인할 수 없었다.
+     zoom 은 레이아웃에 반영되는 축소라 아래로 스크롤이 정상 동작한다(transform:scale 은 빈 공간이 남는다). */
+  body>.nm-print-sheet{display:block!important;margin:12px auto;width:210mm;max-width:210mm;background:#fff;
+    box-shadow:0 2px 12px rgba(0,0,0,.08);zoom:var(--ws-zoom,1)}
+  /* 쪽 경계 — 화면에서 몇 쪽짜리인지 보이게 */
+  body>.nm-print-sheet .nm-w2-page,
+  body>.nm-print-sheet .nm-print-cover,
+  body>.nm-print-sheet .nm-print-answer-key{border-bottom:1px dashed #d8cdb5}
+  @media print{ .ws-bar,.ws-err,#wsBody{display:none!important} body{background:#fff}
+    body>.nm-print-sheet{margin:0;box-shadow:none;max-width:none;width:auto;zoom:1}
+    body>.nm-print-sheet .nm-w2-page,body>.nm-print-sheet .nm-print-cover,
+    body>.nm-print-sheet .nm-print-answer-key{border-bottom:0} }
+</style>
+<script src="vendor/katex/katex.min.js"></script>
+<style id="plStyle">
+  /* 학습 시작점 확인 시험지 — 주간 학습지(매거진형)와 같은 띠·금 줄·명조 제목. 유아·초등·중등은 글씨 크기와 쪽당 문항 수가 다르다 */
+  .ws-bar .pl-tools{display:flex;gap:6px;flex-wrap:wrap}
+  .ws-bar .pl-tools select,.ws-bar .pl-tools input{padding:7px 8px;border:1px solid #cfe0d5;border-radius:8px;font:inherit;font-size:13px;background:#fff;max-width:230px}
+  #plScore{max-width:210mm;margin:12px auto 40px;padding:14px 16px;background:#fff;border:1px solid #e6dcc8;border-radius:10px}
+  #plScore h2{margin:0 0 8px;font-size:15px}
+  .pl-sc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 12px}
+  .pl-sc-item{display:flex;align-items:center;gap:6px;font-size:13px}.pl-sc-item b{min-width:20px}
+  .pl-sc-item label{cursor:pointer}.pl-sc-item input{margin-right:2px}
+  #plGo{margin-top:10px;padding:9px 16px;border:0;border-radius:10px;background:#245b60;color:#fff;font-weight:800;cursor:pointer}
+  #plOut{margin-top:10px;font-size:14px;line-height:1.6}.pl-reason{color:#5c6b70}
+  @media print{#plScore{display:none!important}}
+
+  .pl-page .nm-mzs-title{margin-top:5mm}
+  .pl-sub{margin:0 0 2.5mm;font-size:12px;line-height:1.65;color:#5c6b70;word-break:keep-all}
+  .pl-fields{display:flex;gap:6mm;margin:0 0 3mm;font-size:12.5px;color:#20343b}
+  .pl-fields u{display:inline-block;min-width:26mm;border-bottom:1.2px solid #20343b;text-decoration:none;height:1em;vertical-align:baseline}
+  .pl-list{margin:0;padding:0;list-style:none;flex:1 1 auto;display:grid;align-content:space-between;gap:2mm 8mm;min-height:0}
+  .pl-q{display:grid;grid-template-columns:8mm 1fr;gap:2.5mm;align-items:start;break-inside:avoid;padding-bottom:2mm;border-bottom:1px dotted #cfd9d9}
+  .pl-no{display:flex;align-items:center;justify-content:center;width:7.2mm;height:7.2mm;border-radius:50%;background:#245b60;color:#fff;font-weight:800;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pl-prompt{margin:0 0 1.6mm;font-size:13px;line-height:1.55;font-weight:700;color:#20343b;word-break:keep-all}
+  .pl-tex{font-size:1.15em}.pl-formula{font-size:17px;color:#20343b}.pl-steps{margin-top:1mm;font-size:14px;color:#20343b}
+  .pl-ansline{margin-top:1.5mm;font-size:13px;color:#20343b;display:flex;align-items:center;gap:2mm}
+  .pl-ansbox{display:inline-block;min-width:15mm;height:9mm;border:1.5px solid #245b60;border-radius:2mm;background:#fff;vertical-align:middle}
+  .pl-tokens{display:inline-flex;flex-wrap:wrap;gap:1.2mm;vertical-align:middle}
+  .pl-dot{display:inline-block;width:6mm;height:6mm;border-radius:50%;background:#245b60;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pl-obj{display:inline-flex;align-items:center;justify-content:center;min-width:7mm;font-size:22px;line-height:1}
+  .pl-art svg{width:9mm;height:9mm;display:block}.pl-target .pl-art svg{width:12mm;height:12mm}
+  .pl-row{display:flex;align-items:center;gap:6mm;flex-wrap:wrap}
+  .pl-board{display:inline-flex;flex-wrap:wrap;gap:3mm}.pl-tapme{padding:1mm}
+  .pl-target{display:inline-flex;padding:1.5mm 3mm;border:1.5px solid #C9A063;border-radius:3mm;font-size:24px;background:#fdf6e3;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pl-bignum{font-size:34px;font-weight:800;color:#245b60;min-width:12mm;text-align:center}
+  .pl-drawbox{flex:1 1 60mm;min-height:22mm;border:1.5px dashed #245b60;border-radius:3mm}
+  .pl-choices{display:inline-flex;gap:5mm;flex-wrap:wrap}
+  .pl-choice{display:inline-flex;flex-direction:column;gap:1.5mm;align-items:flex-start;padding:2mm 3mm;border:1.4px solid #b9c6c6;border-radius:3mm;background:#fff}
+  .pl-choice i{font-style:normal;font-weight:800;font-size:13px;color:#245b60}
+  .pl-compare{gap:10mm}
+  .pl-seq{display:flex;gap:3mm;align-items:center;font-size:22px}.pl-seq b{display:inline-flex;min-width:11mm;height:11mm;align-items:center;justify-content:center;border:1.4px solid #b9c6c6;border-radius:2mm}
+  .pl-bond{display:flex;flex-direction:column;align-items:flex-start;gap:2mm}
+  .pl-whole{display:flex;gap:3mm;align-items:center}.pl-whole b,.pl-parts b{font-size:22px;color:#245b60;min-width:8mm}
+  .pl-parts{display:flex;gap:10mm;align-items:center}.pl-parts>div{display:flex;gap:2mm;align-items:center}
+  .pl-join{display:flex;gap:4mm;align-items:center;flex-wrap:wrap}.pl-join em{font-style:normal;font-size:24px;font-weight:800;color:#245b60}
+  .pl-tenframe{display:grid;grid-template-columns:repeat(5,11mm);gap:1.2mm}.pl-cell{display:flex;align-items:center;justify-content:center;width:11mm;height:11mm;border:1.5px solid #245b60;border-radius:1.5mm;background:#fff}
+  .pl-cell i{display:block;width:7mm;height:7mm;border-radius:50%;background:#245b60;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pl-pg{margin-left:auto;font-size:10px;color:#7a8590}
+  /* 유아 기초 — 쪽당 5문항, 큰 그림·큰 글씨(한 열) */
+  .pl-found .pl-list{grid-template-columns:1fr}.pl-found .pl-prompt{font-size:17px}.pl-found .pl-no{width:10mm;height:10mm;font-size:17px}.pl-found .pl-q{grid-template-columns:12mm 1fr}
+  .pl-found .pl-ansbox{min-width:20mm;height:13mm}.pl-found .pl-dot{width:8mm;height:8mm}.pl-found .pl-art svg{width:12mm;height:12mm}.pl-found .pl-seq{font-size:30px}
+  .pl-found .pl-tenframe{grid-template-columns:repeat(5,12mm)}.pl-found .pl-cell{width:12mm;height:12mm}.pl-found .pl-cell i{width:8mm;height:8mm}.pl-found .pl-bignum{font-size:44px}
+  /* 저학년 — 한 열 7문항 */
+  .pl-young .pl-list{grid-template-columns:1fr}.pl-young .pl-prompt{font-size:14.5px}.pl-young .pl-formula{font-size:21px}.pl-young .pl-steps{font-size:17px}
+  .pl-young .pl-ansbox{min-width:20mm;height:11mm}.pl-young .pl-no{width:8.5mm;height:8.5mm;font-size:15px}.pl-young .pl-q{grid-template-columns:10mm 1fr}
+  /* 중학년 — 두 열 10문항 */
+  .pl-mid .pl-list{grid-template-columns:1fr 1fr}.pl-mid .pl-prompt{font-size:12.5px}.pl-mid .pl-formula{font-size:16px}
+  /* 중등 이상 — 두 열 10문항, 촘촘하게 */
+  .pl-senior .pl-list{grid-template-columns:1fr 1fr}.pl-senior .pl-prompt{font-size:11.5px;line-height:1.5}.pl-senior .pl-formula{font-size:15px}.pl-senior .pl-steps{font-size:12.5px}
+  .pl-senior .pl-q,.pl-mid .pl-q{grid-template-columns:7.5mm 1fr}
+  /* 보호자·교사용 쪽 */
+  .pl-key{width:100%;border-collapse:collapse;font-size:11.5px;color:#20343b;margin:1mm 0 3mm}
+  .pl-key th,.pl-key td{border:1px solid #cfd9d9;padding:1.2mm 2mm;text-align:left}.pl-key th{background:#f3f6f6;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pl-key .pl-ak{font-weight:800;color:#245b60}.pl-key .pl-mark{white-space:nowrap;color:#7a8590;font-size:10.5px}
+  .pl-b-previous td:nth-child(2){color:#5c6b70}.pl-b-next td:nth-child(2){color:#a3521c}
+  .pl-tally{display:flex;gap:8mm;font-size:13px;margin:0 0 2mm}.pl-tally u{display:inline-block;min-width:12mm;border-bottom:1.2px solid #20343b;text-decoration:none}
+  .pl-keypage .pl-sub{margin-top:1mm}
+</style>
+</head>
+<body>
+<div class="ws-bar" id="wsBar">
+  <b id="wsTitle">Numbers of Magic · 시작점 확인 시험지</b>
+  <span class="ws-sub" id="wsSub">불러오는 중…</span>
+  <button id="wsPrint" type="button">🖨 인쇄 · PDF로 저장</button>
+</div>
+<div id="wsBody"></div>
+
+<script src="engine/generators.js"></script>
+<script src="engine/rng.js"></script>
+<script src="engine/tex-tidy.js"></script>
+<script src="../geometry/worksheet/render.js"></script>
+<script>if(!window.GW_RENDER)document.write('<scr'+'ipt src="geometry/worksheet/render.js"></scr'+'ipt>');</script>
+<script src="engine/scene-model.js"></script>
+<script src="engine/threads/ns_ad.js"></script>
+<script src="engine/threads/sb.js"></script>
+<script src="engine/threads/ml.js"></script>
+<script src="engine/threads/dv.js"></script>
+<script src="engine/threads/fr.js"></script>
+<script src="engine/threads/dc_mx.js"></script>
+<script src="engine/threads/el.js"></script>
+<script src="engine/threads/cre.js"></script>
+<script src="engine/threads/nl.js"></script>
+<script src="engine/threads/wp.js"></script>
+<script src="engine/threads/adv.js"></script>
+<script src="engine/threads/mid.js"></script>
+<script src="engine/threads/mid2.js"></script>
+<script src="engine/threads/mid3.js"></script>
+<script src="engine/threads/mid4.js"></script>
+<script src="engine/threads/mid5.js"></script>
+<script src="engine/threads/mid6.js"></script>
+<script src="engine/threads/mid7.js"></script>
+<script src="engine/threads/mid8.js"></script>
+<script src="engine/threads/mid9.js"></script>
+<script src="engine/threads/mid10.js"></script>
+<script src="engine/threads/mid11.js"></script>
+<script src="engine/threads/mid12.js"></script>
+<script src="engine/threads/mid13.js"></script>
+<script src="engine/threads/mid14.js"></script>
+<script src="engine/threads/mid15.js"></script>
+<script src="engine/threads/mid16.js"></script>
+<script src="engine/threads/mid17.js"></script>
+<script src="engine/threads/mid18.js"></script>
+<script src="engine/threads/mid19.js"></script>
+<script src="engine/threads/mid20.js"></script>
+<script src="engine/threads/mid21.js"></script>
+<script src="engine/threads/mid22.js"></script>
+<script src="engine/threads/mid23.js"></script>
+<script src="data/threads.js"></script>
+<script src="data/middle-concepts.js"></script>
+<script src="data/concept-visuals.js"></script>
+<link rel="stylesheet" href="app/concept-visuals.css">
+<script src="data/middle-pacing.js"></script>
+<script src="data/graph-drawing.js"></script>
+<script src="data/math-tips.js"></script>
+<script src="data/wordable.js"></script>
+<script src="data/courses.js"></script>
+<script src="data/stages.js"></script>
+<script src="data/story-comics.js"></script>
+<script src="data/hero3d.js"></script>
+<script src="data/paper-tools.js"></script>
+<script src="data/magazine.js"></script>
+<script src="data/lang-think.js"></script>
+<script src="data/labs.js"></script>
+<script src="vendor/qrcode.js"></script>
+<!-- 분수·소수 문장제 프레임(2026-09-08) — exam.js 의 wordifyExtended 가 window.NM_WORD_FRAMES 를 본다. exam.js보다 먼저. -->
+<script src="app/word-frames-fraction.js"></script>
+<script src="app/word-frames-decimal.js"></script>
+<script src="app/word-frames-ratio.js"></script>
+<!-- 자릿값 색 힌트(2026-09-16) — 앱과 학습지가 같은 규칙을 쓰도록 공용. exam.js·main.js보다 먼저. -->
+<script src="app/place-color.js"></script>
+<!-- 독셈 과정 빈칸·색 힌트 표(2026-09-26) — exam.js applyProcessBlank 보다 먼저 -->
+<script src="data/creative-process.js"></script>
+<script src="data/print-head.js"></script>
+<script src="app/exam.js"></script>
+<script src="app/animal-art.js"></script>
+<script src="data/placement-plan.js"></script>
+<script>
+(function(){
+'use strict';
+var Q = new URLSearchParams(location.search);
+var LANG = ['ko','en','zh'].indexOf(Q.get('l')) >= 0 ? Q.get('l') : 'ko';
+document.documentElement.lang = LANG;
+var NAME = (Q.get('n') || '').trim();
+var SEED = (Q.get('seed') || 'sheet1').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 24) || 'sheet1';
+var PLAN = window.NM_PLACEMENT_PLAN, SPEC = window.NM_COURSE_SPEC || [];
+var T = function(ko, en, zh){ return LANG === 'en' ? en : LANG === 'zh' ? zh : ko; };
+var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+var L = function(o){ return o ? (o[LANG] || o.ko || '') : ''; };
+var CIRC = ['①','②','③','④','⑤','⑥'];
+
+function fail(msg){ document.getElementById('wsBody').innerHTML = '<div class="ws-err">' + esc(msg) + '</div>'; window.NM_WS_READY = 'error'; }
+if(!PLAN) return fail('진단 자료를 불러오지 못했어요.');
+var STAGES = PLAN.stages();
+var BASE = Q.get('b') || 'f-split9';
+if(!STAGES.some(function(s){ return s.id === BASE; })) BASE = STAGES[0].id;
+
+/* ── 급 — 학습지와 같은 세 갈래(유아·저학년 / 초등 중고학년 / 중등 이상). 시작 범위의 과정 tier 로 정한다 ── */
+function bandOf(stage){
+  if(stage.kind === 'foundation') return 'young';
+  var id = +String(stage.course).slice(1), spec = SPEC.find(function(c){ return c.id === id; });
+  var tier = spec && spec.tier || '';
+  if(/^level[01]$/.test(tier)) return 'young';
+  if(/^level[23]$/.test(tier)) return 'mid';
+  return 'senior';
+}
+/* 쪽 용량 — 유아 기초는 그림이 커서 5, 저학년 7, 그 위 10. 문항마다 무게가 달라(큰 그림 문항·식 문항) 쪽을 무게로 채운다 */
+function layoutOf(stage){
+  var b = bandOf(stage);
+  if(stage.kind === 'foundation') return { band:b, cap:5, cls:'pl-found' };
+  if(b === 'young') return { band:b, cap:7, cls:'pl-young' };
+  return { band:b, cap:10, cls:'pl-' + b };
+}
+function weight(it, layout){
+  var picture = it.responseMode !== 'number';
+  if(layout.cls === 'pl-found') return picture ? 1 : 1.35;      /* 식 문항은 식 + 풀이 줄이 더 큼 */
+  if(layout.cls === 'pl-young') return picture ? 1.45 : 1;      /* 이전 구간이 유아 기초 그림인 경우 */
+  return 1;
+}
+function paginate(items, layout){
+  var pages = [], cur = [], w = 0;
+  items.forEach(function(it){
+    var x = weight(it, layout);
+    if(cur.length && w + x > layout.cap + 0.001){ pages.push(cur); cur = []; w = 0; }
+    cur.push(it); w += x;
+  });
+  if(cur.length) pages.push(cur);
+  return pages;
+}
+
+/* ── 그림 조각 ── */
+function art(symbol){
+  if(typeof symbol === 'string' && symbol.indexOf('animal:') === 0 && window.NM_ANIMALS && NM_ANIMALS.kinds.indexOf(symbol.slice(7)) >= 0)
+    return '<span class="pl-art">' + NM_ANIMALS.svg(symbol.slice(7)) + '</span>';
+  return esc(symbol);
+}
+function tokens(n, symbol){
+  symbol = symbol || '●'; var h = '';
+  for(var i = 0; i < n; i++) h += symbol === '●' ? '<span class="pl-dot"></span>' : '<span class="pl-obj">' + art(symbol) + '</span>';
+  return '<span class="pl-tokens">' + h + '</span>';
+}
+function ansBoxes(n){ var h = ''; for(var i = 0; i < n; i++) h += '<span class="pl-ansbox"></span>'; return h; }
+function tex(t){ return '<span class="pl-tex" data-tex="' + esc(t) + '"></span>'; }
+
+/* ── 문항 하나 — 온라인 진단(app/placement-ui.js)과 같은 문항·같은 표상, 종이에 맞게 쓰기·○ 로 답한다 ── */
+function itemBody(it){
+  var d = it.renderData, m = it.responseMode, p = esc(L(it.prompt)), scene = '', ans = '';
+  if(m === 'count-tap'){
+    scene = '<div class="pl-row"><span class="pl-target">' + art(d.targetSymbol) + '</span><span class="pl-board">' + d.items.map(function(x){ return '<span class="pl-obj pl-tapme">' + art(x.symbol) + '</span>'; }).join('') + '</span></div>';
+    p = esc(T('목표 그림과 같은 그림을 모두 ○ 해요.', 'Circle every object that matches the target picture.', '把与目标图形相同的物体全部圈出来。'));
+    ans = '<div class="pl-ansline">' + esc(T('○ 한 개수', 'How many circled', '圈出的个数')) + ' ' + ansBoxes(1) + '</div>';
+  } else if(m === 'make'){
+    scene = '<div class="pl-row"><span class="pl-bignum">' + esc(d.target) + '</span><span class="pl-drawbox"></span></div>';
+    p = esc(T('말한 수만큼 그려요.', 'Draw the requested quantity.', '画出指定的数量。'));
+  } else if(m === 'match-number'){
+    scene = '<div class="pl-row"><span class="pl-bignum">' + esc(d.target) + '</span><span class="pl-choices">' + d.dots.map(function(n,i){ return '<span class="pl-choice"><i>' + CIRC[i] + '</i>' + tokens(n) + '</span>'; }).join('') + '</span></div>';
+    p = esc(T('숫자와 같은 개수의 점 그림 하나에 ○ 해요.', 'Circle the dot picture matching the numeral.', '圈出与数字数量相同的点图。'));
+  } else if(m === 'compare'){
+    scene = '<div class="pl-row pl-compare"><span class="pl-choice"><i>' + esc(T('왼쪽','Left','左')) + '</i>' + tokens(d.left, d.symbol) + '</span><span class="pl-choice"><i>' + esc(T('오른쪽','Right','右')) + '</i>' + tokens(d.right, d.symbol) + '</span></div>';
+    p = esc(d.ask === 'more' ? T('더 많은 쪽에 ○ 해요.', 'Circle the side with more.', '圈出数量更多的一边。') : T('더 적은 쪽에 ○ 해요.', 'Circle the side with fewer.', '圈出数量更少的一边。'));
+  } else if(m === 'sequence'){
+    scene = '<div class="pl-seq">' + d.seq.map(function(n,i){ return i === d.blank ? '<span class="pl-ansbox"></span>' : '<b>' + esc(n) + '</b>'; }).join('') + '</div>';
+  } else if(m === 'split'){
+    scene = '<div class="pl-bond"><div class="pl-whole"><b>' + esc(d.whole) + '</b>' + tokens(d.whole, d.symbol) + '</div><div class="pl-parts"><div><b>' + esc(d.known) + '</b>' + tokens(d.known, d.symbol) + '</div><div><span class="pl-ansbox"></span></div></div></div>';
+  } else if(m === 'join'){
+    scene = '<div class="pl-join">' + tokens(d.left, d.symbol) + '<em>+</em>' + tokens(d.right, d.symbol) + '<em>=</em><span class="pl-ansbox"></span></div>';
+  } else if(m === 'ten-bond'){
+    var f = ''; for(var i = 0; i < 10; i++) f += '<span class="pl-cell">' + (i < d.filled ? '<i></i>' : '') + '</span>';
+    scene = '<div class="pl-row"><div class="pl-tenframe">' + f + '</div><div class="pl-ansline">' + esc(T('빈 칸', 'Empty', '空格')) + ' ' + ansBoxes(1) + '</div></div>';
+  } else if(m === 'number'){
+    scene = '<div class="pl-formula">' + tex(d.tex) + '</div>' + (d.steps && d.steps.length ? '<div class="pl-steps">' + d.steps.map(function(x){ return '<div>' + tex(x.tex) + '</div>'; }).join('') + '</div>' : '');
+  } else {
+    scene = '<div class="pl-unsupported">?</div>';
+  }
+  return '<p class="pl-prompt">' + p + '</p>' + scene + ans;
+}
+function itemHtml(it, n){
+  return '<li class="pl-q"><span class="pl-no">' + n + '</span><div class="pl-qbody">' + itemBody(it) + '</div></li>';
+}
+
+/* ── 쪽 틀 — 학습지(주간 매거진형)와 같은 띠·금 줄·명조 제목·푸터 ── */
+var CODE = '';
+function page(inner, pageNo, pageTotal, stage, cls){
+  return '<div class="nm-w2-page pl-page ' + cls + '">' +
+    '<div class="nm-mzs-band"><b>' + esc(T('넘버스 오브 매직 · 학습 시작점 확인', 'Numbers of Magic · Starting-point check', '数之魔法 · 学习起点测评')) + '</b><span>' + esc(L(stage.label)) + '</span></div>' +
+    '<div class="nm-mzs-dash"></div>' + inner +
+    '<div class="nm-w2-foot"><span class="nm-w2-foot-code">' + esc(CODE) + '</span><span class="pl-pg">' + pageNo + ' / ' + pageTotal + '</span></div></div>';
+}
+function firstHeader(stage, layout){
+  var t1 = T('지금 어디서 시작하면 좋을까요?', 'Where should we start?', '从哪里开始最合适？');
+  var sub = T('20문항을 풀어 보면 이전에 배운 곳, 지금 배우는 곳, 다음에 배울 곳의 상태를 한 번에 볼 수 있어요. 모르는 문제는 건너뛰어도 좋아요.',
+              'These 20 questions show how steady the earlier, current and next steps are. Skipping what you do not know is fine.',
+              '做完这20道题，就能看到之前、现在和之后学习内容的掌握情况。不会的题可以先跳过。');
+  return '<h1 class="nm-mzs-title">' + esc(t1) + '</h1><p class="pl-sub">' + esc(sub) + '</p>' +
+    '<div class="pl-fields"><span>' + esc(T('이름','Name','姓名')) + ' <u>' + esc(NAME) + '</u></span><span>' + esc(T('날짜','Date','日期')) + ' <u></u></span><span>' + esc(T('맞힌 수','Score','得分')) + ' <u></u> / 20</span></div>';
+}
+
+/* ── 보호자·교사용 쪽 — 정답과 ○×, 영역별 칸 ── */
+function ansText(it){
+  var a = it.answer;
+  if(it.responseMode === 'match-number') return CIRC[a] || String(a + 1);
+  if(it.responseMode === 'compare') return a === 1 ? T('왼쪽','Left','左') : T('오른쪽','Right','右');
+  if(it.responseMode === 'count-tap') return a + T('개 (목표 그림만 ○)', ' (circle target only)', '个（只圈目标图形）');
+  if(Array.isArray(a)) return a.join(', ');
+  return String(a);
+}
+function keyPage(plan, stage){
+  var BL = { previous: T('이전','Earlier','之前'), current: T('현재','Current','现在'), next: T('다음','Next','之后') };
+  var rows = plan.items.map(function(it, i){
+    return '<tr class="pl-b-' + it.band + '"><td>' + (i + 1) + '</td><td>' + esc(BL[it.band]) + '</td><td>' + esc(L(it.label)) + '</td><td class="pl-ak">' + esc(ansText(it)) + '</td><td class="pl-mark">○ × ' + esc(T('모름','?','不会')) + '</td></tr>';
+  }).join('');
+  return '<h1 class="nm-mzs-title">' + esc(T('보호자·선생님용 정답과 채점', 'Answers and marking (adults)', '家长·教师用答案与评分')) + '</h1>' +
+    '<p class="pl-sub">' + esc(T('아이에게 먼저 보여 주지 마세요. 모르는 문제는 틀린 문제와 다르게 ‘모름’에 표시해요. 결과는 20문항에 근거한 연습 제안이며, 숙달이나 입학을 판정하지 않아요.',
+      'Do not show this to the child first. Mark “?” for skipped items — it is different from wrong. The result is a practice suggestion from 20 questions, not a mastery or admission judgement.',
+      '请先不要给孩子看。不会的题标“不会”，与做错不同。结果只是基于20题的练习建议，不代表掌握程度或入学判断。')) + '</p>' +
+    '<table class="pl-key"><thead><tr><th>#</th><th>' + esc(T('구간','Band','区间')) + '</th><th>' + esc(T('영역','Topic','内容')) + '</th><th>' + esc(T('정답','Answer','答案')) + '</th><th>' + esc(T('채점','Mark','评分')) + '</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    '<div class="pl-tally"><span>' + esc(T('이전','Earlier','之前')) + ' <u></u>/6</span><span>' + esc(T('현재','Current','现在')) + ' <u></u>/10</span><span>' + esc(T('다음','Next','之后')) + ' <u></u>/4</span><span>' + esc(T('모름','Skipped','跳过')) + ' <u></u></span></div>' +
+    '<p class="pl-sub">' + esc(T('다음 4문항은 아직 배우지 않았을 수 있는 범위예요. 다음 구간의 오답을 지금 약점으로 보지 않아요. 화면 맨 아래 ‘채점 입력’에 ○×를 넣으면 추천 시작 회차를 바로 볼 수 있어요(인쇄에는 나오지 않아요).',
+      'The last 4 questions may cover content not yet taught; do not treat misses there as current weaknesses. On screen, the “Enter marks” panel at the bottom shows the suggested starting session (it is not printed).',
+      '最后4题可能是尚未学到的内容，这里做错不算当前弱点。在屏幕最下方“输入评分”处填入○×即可看到建议的起始课次（不会打印）。')) + '</p>';
+}
+
+/* ── 조립 ── */
+var PLAN_NOW = null;
+function build(){
+  var stage = STAGES.find(function(s){ return s.id === BASE; });
+  var layout = layoutOf(stage);
+  CODE = 'PL-' + BASE + '-' + SEED + '-' + LANG;
+  PLAN_NOW = PLAN.build(BASE, SEED);
+  var old = document.querySelector('.nm-print-sheet'); if(old) old.remove();
+  var sheet = document.createElement('div');
+  sheet.className = 'nm-print-sheet nm-print-age-' + layout.band + ' ' + layout.cls;
+  sheet.setAttribute('lang', LANG);
+  var groups = paginate(PLAN_NOW.items, layout), total = groups.length + 1, at = 0, html = '';
+  groups.forEach(function(slice, pi){
+    var inner = (pi === 0 ? firstHeader(stage, layout) : '') +
+      '<ol class="pl-list pl-n' + slice.length + '">' + slice.map(function(it, i){ return itemHtml(it, at + i + 1); }).join('') + '</ol>';
+    at += slice.length; html += page(inner, pi + 1, total, stage, layout.cls);
+  });
+  html += page(keyPage(PLAN_NOW, stage), total, total, stage, layout.cls + ' pl-keypage');
+  sheet.innerHTML = html;
+  document.body.appendChild(sheet);
+  sheet.querySelectorAll('[data-tex]').forEach(function(el){
+    try{ window.katex.render(el.getAttribute('data-tex'), el, { throwOnError:false, displayMode:false }); }catch(e){ el.textContent = el.getAttribute('data-tex'); }
+  });
+  document.title = 'Numbers of Magic — ' + CODE;
+  document.getElementById('wsSub').textContent = L(stage.label) + ' · ' + SEED;
+  renderScorer(stage);
+}
+
+/* ── 화면 전용: ○×를 눌러 추천 보기(인쇄에는 안 나온다). 온라인 진단과 같은 summarize 를 쓴다 ── */
+function renderScorer(stage){
+  var box = document.getElementById('plScore'); if(!box){ box = document.createElement('div'); box.id = 'plScore'; document.body.appendChild(box); }
+  var items = PLAN_NOW.items, state = {};
+  box.innerHTML = '<h2>' + esc(T('채점 입력(화면 전용)', 'Enter marks (screen only)', '输入评分（仅屏幕）')) + '</h2><div class="pl-sc-grid">' + items.map(function(it, i){
+    return '<div class="pl-sc-item"><b>' + (i + 1) + '</b>' + ['o','x','s'].map(function(k){ return '<label><input type="radio" name="q' + i + '" value="' + k + '"><span>' + (k === 'o' ? '○' : k === 'x' ? '×' : esc(T('모름','?','不会'))) + '</span></label>'; }).join('') + '</div>';
+  }).join('') + '</div><button type="button" id="plGo">' + esc(T('추천 보기', 'Show suggestion', '查看建议')) + '</button><div id="plOut"></div>';
+  box.querySelector('#plGo').onclick = function(){
+    var responses = [];
+    items.forEach(function(it, i){
+      var el = box.querySelector('input[name="q' + i + '"]:checked'); if(!el) return;
+      if(el.value === 'o') responses.push({ id: it.id, value: it.answer, validationFlags: it.responseMode === 'count-tap' ? { validTargets:true } : undefined, skipped:false });
+      else if(el.value === 'x') responses.push({ id: it.id, value: -987654321, validationFlags: it.responseMode === 'count-tap' ? { validTargets:true } : undefined, skipped:false });
+      else responses.push({ id: it.id, value: null, skipped:true });
+    });
+    var out = box.querySelector('#plOut');
+    try{
+      var r = PLAN.summarize(PLAN_NOW, responses), rec = r.recommendation || {};
+      var b = r.bands;
+      out.innerHTML = '<p><b>' + esc(T('이전','Earlier','之前')) + '</b> ' + b.previous.correct + '/' + b.previous.asked + ' · <b>' + esc(T('현재','Current','现在')) + '</b> ' + b.current.correct + '/' + b.current.asked + ' · <b>' + esc(T('다음','Next','之后')) + '</b> ' + b.next.correct + '/' + b.next.asked + ' · ' + esc(T('모름','Skipped','跳过')) + ' ' + (b.previous.skipped + b.current.skipped + b.next.skipped) + '</p>' +
+        '<p><b>' + esc(T('추천 시작','Suggested start','建议起点')) + '</b> ' + esc((rec.course || '') + ' · ' + T('회차','session','课次') + ' ' + (rec.session || '')) + (rec.label ? ' · ' + esc(L(rec.label)) : '') + '</p><p class="pl-reason">' + esc(rec.reason || '') + '</p>';
+    }catch(e){ out.textContent = String(e && e.message || e); }
+  };
+}
+
+/* ── 상단 도구(화면 전용) ── */
+function toolbar(){
+  var bar = document.getElementById('wsBar');
+  var sel = '<select id="plStage" aria-label="start">' + STAGES.map(function(s){ return '<option value="' + s.id + '"' + (s.id === BASE ? ' selected' : '') + '>' + esc((s.kind === 'foundation' ? T('유아 · ','Early · ','幼儿 · ') : s.course + ' · ') + L(s.label)) + '</option>'; }).join('') + '</select>';
+  var lg = '<select id="plLang">' + [['ko','한국어'],['en','English'],['zh','中文']].map(function(x){ return '<option value="' + x[0] + '"' + (x[0] === LANG ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select>';
+  var seedIn = '<input id="plSeed" value="' + esc(SEED) + '" size="10" aria-label="seed">';
+  var tools = document.createElement('div'); tools.className = 'pl-tools'; tools.innerHTML = sel + lg + seedIn;
+  bar.insertBefore(tools, document.getElementById('wsPrint'));
+  var go = function(){ var u = new URL(location.href); u.searchParams.set('b', document.getElementById('plStage').value); u.searchParams.set('l', document.getElementById('plLang').value); u.searchParams.set('seed', document.getElementById('plSeed').value.trim() || 'sheet1'); location.href = u.toString(); };
+  ['plStage','plLang'].forEach(function(id){ document.getElementById(id).onchange = go; });
+  document.getElementById('plSeed').onchange = go;
+  document.getElementById('wsTitle').textContent = 'Numbers of Magic · ' + T('시작점 확인 시험지', 'Starting-point check sheet', '起点测评卷');
+}
+toolbar();
+try{ build(); }catch(e){ return fail('시험지를 만드는 중 문제가 생겼어요: ' + (e && e.message || e)); }
+document.getElementById('wsPrint').onclick = function(){ window.print(); };
+function fitWidth(){ var z = Math.min(1, (document.documentElement.clientWidth - 16) / 794); document.documentElement.style.setProperty('--ws-zoom', z > 0 ? z.toFixed(3) : 1); }
+fitWidth(); window.addEventListener('resize', fitWidth);
+var fr = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+Promise.race([fr, new Promise(function(r){ setTimeout(r, 8000); })]).then(function(){ setTimeout(function(){ window.NM_WS_READY = true; }, 300); });
+})();
+</script>
+</body>
+</html>
