@@ -1,15 +1,18 @@
 // 비공개 원본 4-B 실험 교사 PDF 17–24쪽의 탐구 흐름을 바탕으로 새로 작성.
 // 원본 24쪽의 기화·액화 표제 오기는 교정. 불꽃·칼·염화코발트 대신 안전한 응결 관찰.
 import { humidifierReading } from '../reading/s42-u02.reading.js';
-const S=(body)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" font-family="Pretendard, sans-serif">${body}</svg>`;
-const cup=(x,cold=false)=>`<g transform="translate(${x} 50)"><path d="M0 20V180Q80 210 160 180V20" fill="#daf2fa" fill-opacity=".6" stroke="#287b9a" stroke-width="4"/><ellipse cx="80" cy="20" rx="80" ry="18" fill="#effaff" stroke="#287b9a" stroke-width="3"/><path d="M4 100Q80 125 156 100V178Q80 205 4 178Z" fill="#73bcda"/>${cold?'<rect x="38" y="86" width="45" height="35" rx="8" fill="#f4fcff" stroke="#80cbe8" transform="rotate(-12 60 100)"/><path d="M162 110q-15 20 0 20q15 0 0-20 M-8 140q-15 20 0 20q15 0 0-20" fill="#369bc3"/>':''}</g>`;
-export const art={opener:S(`<rect width="640" height="300" rx="24" fill="#eaf7fb"/>${cup(80)}${cup(390,true)}<g fill="#23667e" font-size="24" font-weight="800"><text x="160" y="284" text-anchor="middle">실온의 컵</text><text x="470" y="284" text-anchor="middle">차가운 컵</text><text x="325" y="126" text-anchor="middle">?</text></g>`),
-step1:S(`${cup(240)}<text x="320" y="285" text-anchor="middle" font-size="24" fill="#23667e">같은 양·같은 온도의 물</text>`),
-step2:S(`<rect x="100" y="70" width="180" height="35" rx="15" fill="#b4c8d0"/><rect x="360" y="70" width="180" height="35" rx="15" fill="#82cce8"/><g font-size="24" text-anchor="middle" fill="#23667e"><text x="190" y="160">실온 판</text><text x="450" y="160">차가운 판</text><text x="320" y="245">판의 차가움만 바꿔요</text></g>`),
-step3:S(`${cup(240)}<rect x="230" y="25" width="180" height="22" rx="10" fill="#82cce8"/><path d="M280 50q-10 20 0 20q10 0 0-20 M330 50q-10 20 0 20q10 0 0-20 M380 50q-10 20 0 20q10 0 0-20" fill="#369bc3"/>`),
-step4:S(`<g font-size="24" fill="#23667e"><text x="70" y="65">조건</text><text x="330" y="65">관찰한 사실</text></g><path d="M50 90h540M50 165h540M50 240h540M280 45v210" stroke="#93c5d5" stroke-width="3"/><g font-size="22" fill="#23667e"><text x="70" y="140">실온 판</text><text x="70" y="215">차가운 판</text></g>`),
-step5:S(`${cup(80)}${cup(390,true)}<text x="320" y="285" text-anchor="middle" font-size="24" fill="#23667e">컵 밖을 닦고 같은 시간 기다려요</text>`),
-states:S(`<rect x="35" y="70" width="220" height="130" rx="28" fill="#daf2fa"/><rect x="385" y="70" width="220" height="130" rx="28" fill="#f1f7fa"/><g font-size="28" font-weight="800" fill="#23667e" text-anchor="middle"><text x="145" y="145">액체 물</text><text x="495" y="145">기체 수증기</text><text x="320" y="84" font-size="20">기화 →</text><text x="320" y="215" font-size="20">← 응결</text></g>`)};
+export { media } from '../media/s42-u02.media.js';
+const photo=(name,alt,cap)=>`<figure class="water-photo"><img src="../assets/photos/s42-u02-${name}.webp" alt="${alt}" width="1536" height="1024"><figcaption>${cap}<small>AI 실사형 설명 이미지</small></figcaption></figure>`;
+const S=body=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" font-family="Pretendard, sans-serif">${body}</svg>`;
+export const art={
+ opener:photo('cups','실온 물이 든 마른 컵과 얼음물이 든 차가운 컵의 표면 비교','실온의 컵 · 차가운 컵 — 바깥을 자세히 살펴봐요'),
+ step1:photo('apparatus','열린 비커 위에 물과 닿지 않게 놓은 냉각판','같은 양의 물 · 판과 비커 사이에는 틈이 있어요'),
+ step2:S(`<defs><linearGradient id="hu-steel" x2="1" y2="1"><stop stop-color="#eff3f5"/><stop offset=".4" stop-color="#9dabaf"/><stop offset=".7" stop-color="#edf3f6"/><stop offset="1" stop-color="#85949c"/></linearGradient></defs><rect width="640" height="300" rx="24" fill="#f4f8fa"/><g fill="url(#hu-steel)" stroke="#71838c" stroke-width="2"><ellipse cx="170" cy="105" rx="116" ry="43"/><ellipse cx="470" cy="105" rx="116" ry="43"/></g><g fill="#23667e" text-anchor="middle"><text x="170" y="192" font-size="28" font-weight="800">실온 판</text><text x="470" y="192" font-size="28" font-weight="800">차가운 판</text><text x="320" y="253" font-size="24">같은 재질 · 같은 크기</text></g><path d="M470 22v48m-24-24h48m-41-17 34 34m0-34-34 34" stroke="#478dad" stroke-width="5"/>`),
+ step3:photo('condensation','냉각판 아래에 맺힌 투명한 물방울을 확대한 설명 이미지','판의 아래쪽 — 무엇이 달라졌나요?'),
+ step4:S(`<g font-size="24" fill="#23667e"><text x="70" y="65">조건</text><text x="330" y="65">관찰한 사실</text></g><path d="M50 90h540M50 165h540M50 240h540M280 45v210" stroke="#93c5d5" stroke-width="3"/><g font-size="22" fill="#23667e"><text x="70" y="140">실온 판</text><text x="70" y="215">차가운 판</text></g>`),
+ step5:photo('cups','마른 실온 컵과 물방울이 맺힌 차가운 컵의 비교','컵 밖을 닦고 같은 시간 기다려요'),
+ states:S(`<rect x="35" y="70" width="220" height="130" rx="28" fill="#daf2fa"/><rect x="385" y="70" width="220" height="130" rx="28" fill="#f1f7fa"/><g font-size="28" font-weight="800" fill="#23667e" text-anchor="middle"><text x="145" y="145">액체 물</text><text x="495" y="145">기체 수증기</text><text x="320" y="84" font-size="20">기화 →</text><text x="320" y="215" font-size="20">← 응결</text></g>`)
+};
 
 export const chapter = {
   "unit": "s42-u02",

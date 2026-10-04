@@ -17,7 +17,7 @@ const safe = (s) => (/^https:\/\//.test(s || '') || /^\.\.?\//.test(s || '') ? s
 function liveOf(page) {
   const out = [], vids = [];
   const v0 = page.querySelector('.bk-video[data-src]');
-  if (v0) vids.push({ k: 'video', src: v0.dataset.src, mp4: v0.dataset.mp4, full: v0.dataset.full, page: v0.dataset.page, poster: v0.querySelector('img')?.getAttribute('src') || '', credit: v0.querySelector('small')?.textContent || '', title: '실제 영상' });
+  if (v0) vids.push({ k: 'video', src: v0.dataset.src, mp4: v0.dataset.mp4, full: v0.dataset.full, page: v0.dataset.page, poster: v0.querySelector('img')?.getAttribute('src') || '', credit: v0.querySelector('small')?.textContent || '', title: v0.dataset.tag || '실제 영상' });
   page.querySelectorAll('.bk-video-link[data-video]').forEach((b) => vids.push({ k: 'video', src: b.dataset.src, mp4: b.dataset.mp4, full: b.dataset.full, page: b.dataset.page, poster: '', credit: b.dataset.credit, title: '실제 영상', cap: b.dataset.title, prompt: b.dataset.prompt }));
   page.querySelectorAll('.sl-reading-player').forEach((p) => vids.push({ k: 'video', src: p.dataset.src, mp4: p.dataset.mp4, full: p.dataset.full, poster: p.querySelector('video')?.getAttribute('poster') || '', credit: page.querySelector('.sl-reading-video-caption span')?.textContent || '', title: '실제 영상', cap: p.querySelector('video')?.getAttribute('aria-label') || '', page: page.querySelector('[data-video-status] a')?.getAttribute('href') }));
   const lab = page.querySelector('[data-pop="lab"], .sl-reading-online'), scene = page.querySelector('[data-pop="scene"]');
@@ -159,7 +159,7 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
     const f = document.createElement('figure'); f.className = 'bv-video';
     const poster = safe(x.poster);
     f.innerHTML = `<div class="bv-vbox"><video playsinline muted loop preload="${reduced() ? 'none' : 'auto'}" ${poster ? `poster="${esc(poster)}"` : ''} aria-label="${esc(x.title)}">
-        ${safe(x.src) ? `<source src="${esc(x.src)}" type="video/webm">` : ''}${safe(x.mp4) ? `<source src="${esc(x.mp4)}" type="video/mp4">` : ''}${safe(x.full) ? `<source src="${esc(x.full)}" type="video/webm">` : ''}</video>
+        ${safe(x.src) ? `<source src="${esc(x.src)}" type="video/${/\.mp4$/.test(x.src) ? 'mp4' : 'webm'}">` : ''}${safe(x.mp4) ? `<source src="${esc(x.mp4)}" type="video/mp4">` : ''}${safe(x.full) ? `<source src="${esc(x.full)}" type="video/${/\.mp4$/.test(x.full) ? 'mp4' : 'webm'}">` : ''}</video>
         <button type="button" class="bv-vplay" hidden>▶ 영상 보기</button>
         <button type="button" class="bv-vsound">🔊 소리 켜고 처음부터</button>
         <p class="bv-vfail" hidden>이 브라우저에서는 영상이 열리지 않아요. ${safe(x.page) ? `<a href="${esc(x.page)}" target="_blank" rel="noopener">새 창에서 보기</a>` : ''}</p></div>

@@ -1,4 +1,6 @@
+import { condensationVideo } from '../media/s42-u02.media.js';
 export const humidifierReading = {
+  video: condensationVideo,
   "id": "s42-u02-reading-01",
   "unit": "s42-u02",
   "issue": "06",
@@ -7,10 +9,10 @@ export const humidifierReading = {
   "title": "차가운 컵은 어디서 물을 얻을까?",
   "lead": "컵에 구멍이 없어도, 바깥에 물방울이 맺혀요.",
   "hero": {
-    "src": "../assets/thumbs/s42-u02.webp",
-    "cap": "따뜻한 물과 냉각판을 비교하는 3D 가상 실험",
-    "credit": "사이언스랩 3D 가상 실험 장면",
-    "look": "물방울은 판의 어느 쪽에 맺히나요?"
+    "src": "../assets/photos/s42-u02-cups.webp",
+    "cap": "실온 컵과 얼음물이 든 컵의 바깥 표면을 비교해요",
+    "credit": "AI 실사형 설명 이미지",
+    "look": "물방울은 어느 컵의 바깥에 맺혀 있나요?"
   },
   "sections": [
     {
