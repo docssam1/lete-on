@@ -1,0 +1,2422 @@
+{
+  "version": 2,
+  "checkedOn": "2026-10-03",
+  "scope": "36 Didimdol publisher identities and 13 SSEN retailer identities covering elementary 1-1 through 6-2; contents only",
+  "books": [
+    {
+      "id": "PUBD2402270",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 1-1(2022개정 교육과정)",
+      "volume": "1-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6321-4",
+      "units": [
+        {
+          "order": 1,
+          "title": "9까지의 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "여러 가지 모양",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "덧셈과 뺄셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "비교하기",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "50까지의 수",
+          "sourceOrder": 5
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2402270",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2402270.html",
+      "sha256": "10378763a440a55c011f67e3bc9a6fa96c08310c709726a5102b9b12fed1879b",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2402550",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 1-2(2022개정 교육과정)",
+      "volume": "1-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6426-6",
+      "units": [
+        {
+          "order": 1,
+          "title": "100까지의 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "덧셈과 뺄셈(1)",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "모양과 시각",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "덧셈과 뺄셈(2)",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "규칙 찾기",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "덧셈과 뺄셈(3)",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2402550",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2402550.html",
+      "sha256": "8892b71728db70a2795d60db4edc7909b69824b985fea8c2ffd28de72c42e75d",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2402280",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 2-1(2022개정 교육과정)",
+      "volume": "2-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6322-1",
+      "units": [
+        {
+          "order": 1,
+          "title": "세 자리 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "여러 가지 도형",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "덧셈과 뺄셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "길이 재기",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "분류하기",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "곱셈",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2402280",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2402280.html",
+      "sha256": "404c9057674262e890a2b4d8c624f637cf0c238abeabdd6dca9ca0b91be5312f",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2402560",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 2-2(2022개정 교육과정)",
+      "volume": "2-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6427-3",
+      "units": [
+        {
+          "order": 1,
+          "title": "네 자리 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "곱셈구구",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "길이 재기",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "시각과 시간",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "표와 그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "규칙 찾기",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2402560",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2402560.html",
+      "sha256": "09ce8313d04bcf6030607b891f0404cc459db35b77fb11996db55d024e34a286",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2502290",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 3-1(2022개정 교육과정)",
+      "volume": "3-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6515-7",
+      "units": [
+        {
+          "order": 1,
+          "title": "덧셈과 뺄셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "평면도형",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "나눗셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "곱셈",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "길이와 시간",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "분수와 소수",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2502290",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2502290.html",
+      "sha256": "1da7cd9de19ef9603802cab3091c21bb3cf2284fcecae33a8a3a8a03b12b6625",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2502570",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 3-2(2022개정 교육과정)",
+      "volume": "3-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6592-8",
+      "units": [
+        {
+          "order": 1,
+          "title": "곱셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "나눗셈",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "원",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "분수",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "들이와 무게",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "그림그래프",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2502570",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2502570.html",
+      "sha256": "fbd35705e9ef6b9b148ed93a1456abcca8103e3dc2c303cb20dba7cf9b192f5c",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2502300",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 4-1(2022개정 교육과정)",
+      "volume": "4-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6516-4",
+      "units": [
+        {
+          "order": 1,
+          "title": "큰 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "각도",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "곱셈과 나눗셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "평면도형의 이동",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "막대그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "규칙 찾기",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2502300",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2502300.html",
+      "sha256": "9d964ff28f3c586020abab6ef9b71f57ea1d47519b93f495dc8c3ed6d5136648",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2502580",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 4-2(2022개정 교육과정)",
+      "volume": "4-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6593-5",
+      "units": [
+        {
+          "order": 1,
+          "title": "분수의 덧셈과 뺄셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "삼각형",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "소수의 덧셈과 뺄셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "사각형",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "꺾은선그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "다각형",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2502580",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2502580.html",
+      "sha256": "33be06a8bae09922ab991705633e7b84dbc9de1f49a9c7f851cdf1ccc23c6051",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2602310",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 5-1(2022개정 교육과정)",
+      "volume": "5-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6685-7",
+      "units": [
+        {
+          "order": 1,
+          "title": "자연수의 혼합 계산",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "약수와 배수",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "대응 관계",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "약분과 통분",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "분수의 덧셈과 뺄셈",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "다각형의 둘레와 넓이",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2602310",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2602310.html",
+      "sha256": "6cd72dd372e460b1b1efa83851d7fa0c7c1d470b35e6f4acc1ce072bc3ae6b45",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2602590",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 5-2(2022개정 교육과정)",
+      "volume": "5-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6747-2",
+      "units": [
+        {
+          "order": 1,
+          "title": "수의 범위와 어림하기",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "분수의 곱셈",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "합동과 대칭",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "소수의 곱셈",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "직육면체와 정육면체",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "평균과 가능성",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2602590",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2602590.html",
+      "sha256": "123d3d66daf1493598146ed747c6a645c215b1a0bf650103370291e33267a823",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2602320",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 6-1(2022개정 교육과정)",
+      "volume": "6-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6686-4",
+      "units": [
+        {
+          "order": 1,
+          "title": "분수의 나눗셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "각기둥과 각뿔",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "소수의 나눗셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "비와 비율",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "여러 가지 그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "직육면체의 겉넓이와 부피",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2602320",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2602320.html",
+      "sha256": "6f43304e51a2f1ee75aabb95603246845e61c61802bbf374258d7d1adf6cad30",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2602600",
+      "family": "didimdol_application",
+      "title": "디딤돌 초등수학 기본+응용 6-2(2022개정 교육과정)",
+      "volume": "6-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6748-9",
+      "units": [
+        {
+          "order": 1,
+          "title": "분수의 나눗셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "소수의 나눗셈",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "공간과 입체",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "비례식과 비례배분",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "원의 둘레와 넓이",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "원기둥, 원뿔, 구",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2602600",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2602600.html",
+      "sha256": "83f5bb0a422ff716650941aeb638bbdcf2c553670f3c9b75f51b72e06f9084d0",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2461370",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 1-1(2022개정 교육과정)",
+      "volume": "1-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6333-7",
+      "units": [
+        {
+          "order": 1,
+          "title": "9까지의 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "여러 가지 모양",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "덧셈과 뺄셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "비교하기",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "50까지의 수",
+          "sourceOrder": 5
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461370",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2461370.html",
+      "sha256": "ffee76228fb99e5a328ce5b2385ba0ac921af1513dff9f7a7032276060af0a85",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2461390",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 1-2(2022개정 교육과정)",
+      "volume": "1-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6438-9",
+      "units": [
+        {
+          "order": 1,
+          "title": "100까지의 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "덧셈과 뺄셈(1)",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "모양과 시각",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "덧셈과 뺄셈(2)",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "규칙 찾기",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "덧셈과 뺄셈(3)",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461390",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2461390.html",
+      "sha256": "363603f1b8bf7b018b14431016124330b499515b98a52d3c8f1e9312da56e797",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2461380",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 2-1(2022개정 교육과정)",
+      "volume": "2-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6334-4",
+      "units": [
+        {
+          "order": 1,
+          "title": "세 자리 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "여러 가지 도형",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "덧셈과 뺄셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "길이재기",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "분류하기",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "곱셈",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461380",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2461380.html",
+      "sha256": "835c48b0e679dff02f5eea8a323ba38c628ad0955df45b2ebb8b516a1ef1e6dc",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2461400",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 2-2(2022개정 교육과정)",
+      "volume": "2-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6439-6",
+      "units": [
+        {
+          "order": 1,
+          "title": "네 자리 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "곱셈구구",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "길이 재기",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "시각과 시간",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "표와 그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "규칙 찾기",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461400",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2461400.html",
+      "sha256": "adfe849ca7e4abe277f34458769abbac7763bd3539248b0c977de58c65783d36",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2561410",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 3-1(2022개정 교육과정)",
+      "volume": "3-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6525-6",
+      "units": [
+        {
+          "order": 1,
+          "title": "덧셈과 뺄셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "평면도형",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "나눗셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "곱셈",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "길이와 시간",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "분수와 소수",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561410",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2561410.html",
+      "sha256": "fe70fbdb944352929809ccf31dff02fb45108e79bdd4027af8c11eb01f7878ac",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2561450",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 3-2(2022개정 교육과정)",
+      "volume": "3-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6602-4",
+      "units": [
+        {
+          "order": 1,
+          "title": "곱셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "나눗셈",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "원",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "분수",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "들이와 무게",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "그림그래프",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561450",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2561450.html",
+      "sha256": "04796254fccdf77fa3b1e05a88facf8b8977153d2eaa483e91d8dacc3e96ff1c",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2561420",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 4-1(2022개정 교육과정)",
+      "volume": "4-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6526-3",
+      "units": [
+        {
+          "order": 1,
+          "title": "큰 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "각도",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "곱셈과 나눗셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "평면도형의 이동",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "막대그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "규칙 찾기",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561420",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2561420.html",
+      "sha256": "1c5c9168fad2e6a010fa801565c935183cc9670028cf197784ee95ce2fa949ba",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2561460",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 4-2(2022개정 교육과정)",
+      "volume": "4-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6603-1",
+      "units": [
+        {
+          "order": 1,
+          "title": "분수의 덧셈과 뺄셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "삼각형",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "소수의 덧셈과 뺄셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "사각형",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "꺾은선그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "다각형",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561460",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2561460.html",
+      "sha256": "420255116e96aa2f1634da564ab7f331b187bc79d70c0fecac63ebf14cbbdb5d",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2661430",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 5-1(2022개정 교육과정)",
+      "volume": "5-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6693-2",
+      "units": [
+        {
+          "order": 1,
+          "title": "자연수의 혼합 계산",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "약수와 배수",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "대응 관계",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "약분과 통분",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "분수의 덧셈과 뺄셈",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "다각형의 둘레와 넓이",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661430",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2661430.html",
+      "sha256": "82a2dfeca6b0e424decea99b47bfc57ed209858fb4d69f0cdc20c05c641d7630",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2661470",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 5-2(2022개정 교육과정)",
+      "volume": "5-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6755-7",
+      "units": [
+        {
+          "order": 1,
+          "title": "수의 범위와 어림하기",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "분수의 곱셈",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "합동과 대칭",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "소수의 곱셈",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "직육면체와 정육면체",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "평균과 가능성",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661470",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2661470.html",
+      "sha256": "38a34fca23ae3a459f9aaa04abf3d25ec8d8225906b89159d6752639fe2643ef",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2661440",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 6-1(2022개정 교육과정)",
+      "volume": "6-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6694-9",
+      "units": [
+        {
+          "order": 1,
+          "title": "분수의 나눗셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "각기둥과 각뿔",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "소수의 나눗셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "비와 비율",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "여러 가지 그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "직육면체의 겉넓이와 부피",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661440",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2661440.html",
+      "sha256": "b6941382adbc803470ab7066ce46bea2c03de2e742138e0717c5981f919baf69",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2661480",
+      "family": "didimdol_s",
+      "title": "디딤돌 초등수학 최상위S 6-2(2022개정 교육과정)",
+      "volume": "6-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6756-4",
+      "units": [
+        {
+          "order": 1,
+          "title": "분수의 나눗셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "소수의 나눗셈",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "공간과 입체",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "비례식과 비례배분",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "원의 둘레와 넓이",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "원기둥, 원뿔, 구",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661480",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2661480.html",
+      "sha256": "cc28eab8d9eabf80c289bfa282003414b68046fe00cb13f7dd599894d2a82e88",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2461510",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 1-1(2022개정 교육과정)",
+      "volume": "1-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6339-9",
+      "units": [
+        {
+          "order": 1,
+          "title": "9까지의 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "여러 가지 모양",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "덧셈과 뺄셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "비교하기",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "50까지의 수",
+          "sourceOrder": 4
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461510",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2461510.html",
+      "sha256": "12e4b1b652b6639503bdcece627a9f91a0590cbc5f5d53a76d2fdf06352ee50b",
+      "verification": "publisher_toc_issue",
+      "issues": [
+        "publisher_unit_numbering_conflict"
+      ],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2461710",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 1-2(2022개정 교육과정)",
+      "volume": "1-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6440-2",
+      "units": [
+        {
+          "order": 1,
+          "title": "100까지의 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "덧셈과 뺄셈(1)",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "모양과 시각",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "덧셈과 뺄셈(2)",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "규칙 찾기",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "덧셈과 뺄셈(3)",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461710",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2461710.html",
+      "sha256": "d0aafeeaa03239b7378a72f974f21be7e671979e1447adbfbf3a81b20215ba1b",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2461520",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 2-1(2022개정 교육과정)",
+      "volume": "2-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6340-5",
+      "units": [
+        {
+          "order": 1,
+          "title": "세 자리 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "여러 가지 도형",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "덧셈과 뺄셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "길이 재기",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "분류하기",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "곱셈",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461520",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2461520.html",
+      "sha256": "fc5f4858352e68b1824ef8814555c3c149e56118e794bfe1059922195641826c",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2461720",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 2-2(2022개정 교육과정)",
+      "volume": "2-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6441-9",
+      "units": [
+        {
+          "order": 1,
+          "title": "네 자리 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "곱셈구구",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "길이 재기",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "시각과 시간",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "표와 그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "규칙 찾기",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2461720",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2461720.html",
+      "sha256": "4133e0323e41c69c4a60b01ca3b832b1208f4f9631a6c3a30b49820ac4638b17",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2561530",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 3-1(2022개정 교육과정)",
+      "volume": "3-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6527-0",
+      "units": [
+        {
+          "order": 1,
+          "title": "덧셈과 뺄셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "평면도형",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "나눗셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "곱셈",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "길이와 시간",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "분수와 소수",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561530",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2561530.html",
+      "sha256": "11b32e9c9857e182ac301f79ed28f51f9a36e87e613da4f1143cd38d15596643",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2561730",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 3-2(2022개정 교육과정)",
+      "volume": "3-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6604-8",
+      "units": [
+        {
+          "order": 1,
+          "title": "곱셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "나눗셈",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "원",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "분수",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "들이와 무게",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "그림그래프",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561730",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2561730.html",
+      "sha256": "115fc677d04aff696b445ce332c492dd11b46c43df3809953d2b157943c6114f",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2561540",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 4-1(2022개정 교육과정)",
+      "volume": "4-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6528-7",
+      "units": [
+        {
+          "order": 1,
+          "title": "큰 수",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "각도",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "곱셈과 나눗셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "평면도형의 이동",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "막대그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "규칙 찾기",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561540",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2561540.html",
+      "sha256": "cc22d18092214305dbfc9c74472139632ff1f0a0469bfc6e5d7bb5b753c3722c",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2561740",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 4-2(2022개정 교육과정)",
+      "volume": "4-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6605-5",
+      "units": [
+        {
+          "order": 1,
+          "title": "분수의 덧셈과 뺄셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "삼각형",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "소수의 덧셈과 뺄셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "사각형",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "꺾은선그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "다각형",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2561740",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2561740.html",
+      "sha256": "14ffe780ca46fe56a8f1f675ea8390f90cad654c4af28473713d69fda7d67366",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2661550",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 5-1(2022개정 교육과정)",
+      "volume": "5-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6695-6",
+      "units": [
+        {
+          "order": 1,
+          "title": "자연수의 혼합 계산",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "약수와 배수",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "대응 관계",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "약분과 통분",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "분수의 덧셈과 뺄셈",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "다각형의 둘레와 넓이",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661550",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2661550.html",
+      "sha256": "523e871b783af2bc6de634f94e8bbcab87472fa3fb94fd6270ce1a6fb6d452f0",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2661750",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 5-2(2022개정 교육과정)",
+      "volume": "5-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6757-1",
+      "units": [
+        {
+          "order": 1,
+          "title": "수의 범위와 어림하기",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "분수의 곱셈",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "합동과 대칭",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "소수의 곱셈",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "직육면체와 정육면체",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "평균과 가능성",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661750",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2661750.html",
+      "sha256": "9293b0b782dd6116d4a0bdcb2788378a4bb9ad2a7a726a2f58f799e6c076e95d",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2661560",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 6-1(2022개정 교육과정)",
+      "volume": "6-1",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6696-3",
+      "units": [
+        {
+          "order": 1,
+          "title": "분수의 나눗셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "각기둥과 각뿔",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "소수의 나눗셈",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "비와 비율",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "여러 가지 그래프",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "직육면체의 겉넓이와 부피",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661560",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2661560.html",
+      "sha256": "f171abd61265544bdc4210c8acd8edeeea3a31ac6bd7e74e5a70b3b61f5a213a",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "PUBD2661760",
+      "family": "didimdol_top",
+      "title": "최상위 초등수학 6-2(2022개정 교육과정)",
+      "volume": "6-2",
+      "sourceCurriculum": "2022",
+      "isbn": "978-89-261-6758-8",
+      "units": [
+        {
+          "order": 1,
+          "title": "분수의 나눗셈",
+          "sourceOrder": 1
+        },
+        {
+          "order": 2,
+          "title": "소수의 나눗셈",
+          "sourceOrder": 2
+        },
+        {
+          "order": 3,
+          "title": "공간과 입체",
+          "sourceOrder": 3
+        },
+        {
+          "order": 4,
+          "title": "비례식과 비례배분",
+          "sourceOrder": 4
+        },
+        {
+          "order": 5,
+          "title": "원의 둘레와 넓이",
+          "sourceOrder": 5
+        },
+        {
+          "order": 6,
+          "title": "원기둥, 원뿔, 구",
+          "sourceOrder": 6
+        }
+      ],
+      "sourceUrl": "https://www.didimdol.co.kr/books/bookDetail.asp?BookCode=2661760",
+      "checkedOn": "2026-10-03",
+      "snapshot": "didimdol-2661760.html",
+      "sha256": "7f0c7532becb7e5e058c2cb8829a1fdb1bee395b42ac9919c50df9e68eeaa3a5",
+      "verification": "publisher_toc",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified"
+    },
+    {
+      "id": "RETAILYES123763215",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 1-1 (2026년용)",
+      "volume": "1-1",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928348367",
+      "publishedOnText": "2023년 11월 21일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "9까지의 수"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "여러 가지 모양"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "덧셈과 뺄셈"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "비교하기"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "50까지의 수"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/123763215",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-123763215.html",
+      "sha256": "3911467f089a1aa5fd3c05ba843d9d2cd15dc808d61e802fa91ae98cddc85300",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "retailer_discontinued"
+    },
+    {
+      "id": "RETAILYES147562645",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 1-2 (2026년용)",
+      "volume": "1-2",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928351909",
+      "publishedOnText": "2025년 06월 13일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "100까지의 수"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "덧셈과 뺄셈(1)"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "모양과 시각"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "덧셈과 뺄셈(2)"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "규칙 찾기"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "덧셈과 뺄셈(3)"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/147562645",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-147562645.html",
+      "sha256": "bf98d454ea389aa3fe04408d6a6e943377f0478bb1501a991f6fcdcb0eca3067",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES123815184",
+      "family": "ssen",
+      "title": "신사고 쎈 수학 초등 2-1 (2026년용)",
+      "volume": "2-1",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928348381",
+      "publishedOnText": "2023년 11월 24일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "세 자리 수"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "여러 가지 도형"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "덧셈과 뺄셈"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "길이 재기"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "분류하기"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "곱셈"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/123815184",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-123815184.html",
+      "sha256": "a891d83898830c2107cc836dde5469be1e53424b850979dca1289b9cb9e1c520",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES153040465",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 2-2 (2026년용)",
+      "volume": "2-2",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928351916",
+      "publishedOnText": "2025년 09월 03일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "네 자리 수"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "곱셈구구"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "길이 재기"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "시각과 시간"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "표와 그래프"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "규칙 찾기"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/153040465",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-153040465.html",
+      "sha256": "1100b688d36b679cc70ff6ffd32cf15337ae36bbce8fe20b672908c854d08a06",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES136765931",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 3-1 (2026년용)",
+      "volume": "3-1",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928348091",
+      "publishedOnText": "2024년 11월 04일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "덧셈과 뺄셈"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "평면도형"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "나눗셈"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "곱셈"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "길이와 시간"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "분수와 소수"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/136765931",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-136765931.html",
+      "sha256": "12dc5b5989b626582f20d3d40c73e5eaf0ce8df9de1315b4826802090886e757",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES143047840",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 3-2 (2026년용)",
+      "volume": "3-2",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928351923",
+      "publishedOnText": "2025년 02월 26일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "곱셈"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "나눗셈"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "원"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "분수"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "들이와 무게"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "그림그래프"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/143047840",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-143047840.html",
+      "sha256": "b49c62795a46b17d459e61e3f9a792d5e969f4f30a878f1409dc1936c6d10d92",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES136766306",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 4-1 (2026년용)",
+      "volume": "4-1",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928348107",
+      "publishedOnText": "2024년 11월 04일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "큰 수"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "각도"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "곱셈과 나눗셈"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "평면도형의 이동"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "막대그래프"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "규칙 찾기"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/136766306",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-136766306.html",
+      "sha256": "230a70c156e799fd90c1b0db15b7357c462478f406a88ad9edffe0a4e0864770",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES181001271",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 4-1 (2026년)",
+      "volume": "4-1",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928347001",
+      "publishedOnText": "2026년 03월 04일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "큰 수"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "각도"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "곱셈과 나눗셈"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "평면도형의 이동"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "막대그래프"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "규칙 찾기"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/181001271",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-181001271.html",
+      "sha256": "f17f4d4fc7c5e984a7a90e545a104f7f494bc6e84d2e0d245c0caf7f1c3ba2e3",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES142967275",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 4-2 (2026년용)",
+      "volume": "4-2",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928351930",
+      "publishedOnText": "2025년 02월 24일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "분수의 덧셈과 뺄셈"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "삼각형"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "소수의 덧셈과 뺄셈"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "사각형"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "꺾은선그래프"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "다각형"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/142967275",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-142967275.html",
+      "sha256": "915de1c8caa75bf5003410f612ba47542f506ab58650e7ffb3a9fc04637975dc",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES152441725",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 5-1 (2026년)",
+      "volume": "5-1",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928348114",
+      "publishedOnText": "2025년 08월 27일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "자연수의 혼합 계산"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "약수와 배수"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "대응 관계"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "약분과 통분"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "분수의 덧셈과 뺄셈"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "다각형의 둘레와 넓이"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/152441725",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-152441725.html",
+      "sha256": "62b8c93e29bd047417c69871abb0a97411449caf3eb2651185d3d8ec090194ab",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES180308415",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 5-2 (2026년)",
+      "volume": "5-2",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928351947",
+      "publishedOnText": "2026년 02월 25일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "수의 범위와 어림하기"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "분수의 곱셈"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "합동과 대칭"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "소수의 곱셈"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "직육면체"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "평균과 가능성"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/180308415",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-180308415.html",
+      "sha256": "7ce1252993e50339ed41b1d00ea44fbd69920f0ae2d5151fda72004540fa9f0a",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES151885919",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 6-1 (2026년)",
+      "volume": "6-1",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928348121",
+      "publishedOnText": "2025년 08월 21일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "분수의 나눗셈"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "각기둥과 각뿔"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "소수의 나눗셈"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "비와 비율"
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "여러 가지 그래프"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "직육면체의 겉넓이와 부피"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/151885919",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-151885919.html",
+      "sha256": "0fde469ca91eb7d7e3e5d08e7d575816a88f038564dbf1d9d90bab650439d758",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    },
+    {
+      "id": "RETAILYES179732547",
+      "family": "ssen",
+      "title": "신사고 쎈 초등 수학 6-2 (2026년)",
+      "volume": "6-2",
+      "sourceCurriculum": "2022",
+      "isbn": "9788928351954",
+      "publishedOnText": "2026년 02월 23일",
+      "marketingYear": "2026",
+      "units": [
+        {
+          "order": 1,
+          "sourceOrder": 1,
+          "title": "분수의 나눗셈"
+        },
+        {
+          "order": 2,
+          "sourceOrder": 2,
+          "title": "소수의 나눗셈"
+        },
+        {
+          "order": 3,
+          "sourceOrder": 3,
+          "title": "공간과 입체"
+        },
+        {
+          "order": 4,
+          "sourceOrder": 4,
+          "title": "비레식과 비례배분",
+          "issues": [
+            "source_title_spelling_unverified"
+          ]
+        },
+        {
+          "order": 5,
+          "sourceOrder": 5,
+          "title": "원의 둘레와 넓이"
+        },
+        {
+          "order": 6,
+          "sourceOrder": 6,
+          "title": "원기둥, 원뿔, 구"
+        }
+      ],
+      "sourceUrl": "https://www.yes24.com/product/goods/179732547",
+      "sourceRole": "retailer_metadata",
+      "checkedOn": "2026-10-03",
+      "snapshot": "yes24-179732547.html",
+      "sha256": "931b8fab24f2e711efe5e0c8a673c5fe8b4e8a23f94a7080e29fe8ed6641372f",
+      "verification": "retailer_toc",
+      "publisherVerification": "not_acquired",
+      "issues": [
+        "one_unit_spelling_pending"
+      ],
+      "masteryEvidence": false,
+      "nationalAchievementMapping": "not_verified",
+      "availability": "not_used_for_learning_routes"
+    }
+  ],
+  "pending": [
+    {
+      "family": "ssen",
+      "reason": "Retailer edition metadata and contents acquired; publisher pages timed out. Publisher verification and national achievement mapping remain pending."
+    }
+  ],
+  "applicationSource": {
+    "id": "CUR03",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "checkedOn": "2026-10-03"
+  }
+}
