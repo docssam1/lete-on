@@ -203,7 +203,7 @@
   .nm-gp-boxplot .nm-bp-work { fill:#fff; stroke:none; }
   .nm-gp-boxplot.nm-bp-blank .nm-bp-work { fill:#f8fbfa; stroke:#9badab; stroke-width:1; stroke-dasharray:4 3; }
   .nm-nl { width: 62mm; height: auto; margin: 6px auto 0; display: block; }
-  .nm-nl line, .nm-nl path { fill: none; stroke: #000; stroke-width: 1.4; }
+  .nm-nl svg:not(.nm-obj-svg) :is(line, path) { fill: none; stroke: #000; stroke-width: 1.4; }
   .nm-nl .nm-nl-hop { stroke-dasharray: 3 2; }
   .nm-nl .nm-nl-blank { fill: none; stroke: #000; stroke-width: 1.4; stroke-dasharray: 4 3; }
   .nm-nl text { font-family: sans-serif; font-size: 15px; font-weight: 700; fill: #000; }
@@ -219,13 +219,21 @@
 
   /* NL(수의 나라, 유아) 그림 — nlVisualHtml() 참조(2026-09-19 재작성). 무대(.nm-nl-stage) 안에
      30px 이모지, 답 칸(.nm-nl-ans)은 카드 안. 흑백 레이저에서도 선·칸이 남게 진한 선만 쓴다. */
-  .nm-nl { display:flex; flex-direction:column; align-items:center; gap:2.5mm; margin:1.5mm auto 0; width:100%; max-width:80mm; }
+  .nm-nl { display:flex; flex-direction:column; align-items:center; gap:1.8mm; margin:1.2mm auto 0; width:100%; max-width:80mm; }
   .nm-nl-stage { border:1.3px solid #1F2A3A; border-radius:3.5mm; padding:2.5mm 3.5mm; background:#fff; min-width:40mm; max-width:100%;
     display:flex; flex-direction:column; align-items:center; gap:1.5mm; box-sizing:border-box; }
   .nm-nl-stage-bond { border:0; padding:0; }
   .nm-nl-stage .nm-bond { width:38mm; }
   .nm-nl-row { display:flex; justify-content:center; align-items:center; gap:2mm; font-size:30px; line-height:1.15; }
   .nm-nl-g { display:inline-block; }
+  .nm-nl-g svg, .nm-nl-sc svg, .nm-nl-fchip svg { display:block; width:1em; height:1em; }
+  .nm-nl-g svg { vertical-align:-.15em; display:inline-block; }
+  .nm-nl-scatter { position:relative; width:60mm; height:34mm; border:1.3px solid #1F2A3A; border-radius:3.5mm; background:#fff; overflow:hidden; }
+  .nm-nl-sc { position:absolute; font-size:27px; line-height:1; }
+  .nm-nl-dg { display:inline-block; font-size:36px; line-height:1; font-weight:900; color:#1F2A3A; }
+  .dgp0 { font-family:Georgia,serif; } .dgp1 { font-family:'Courier New',monospace; } .dgp2 { font-family:Arial,sans-serif; }
+  .dgp3 { font-family:'Comic Sans MS',cursive; } .dgp4 { font-family:Impact,'Arial Black',sans-serif; font-weight:400; }
+  .nm-nl-fchip { display:block; font-size:7.6mm; line-height:1; }
   .nm-nl-cell { display:inline-flex; align-items:center; justify-content:center; width:9.5mm; height:9.5mm; box-sizing:border-box;
     border:1.3px solid #1F2A3A; border-radius:2mm; font-size:18px; font-weight:700; line-height:1; background:#fff; }
   .nm-nl-cell-round { border-radius:50%; }
@@ -3001,7 +3009,7 @@ const ANIMAL_GLYPH = {
   'animal:turtle':'🐢', 'animal:squirrel':'🐿️', 'animal:rabbit':'🐰',
   'animal:bear':'🐻', 'animal:fox':'🦊', 'animal:deer':'🦌', 'animal:duck':'🦆'
 };
-function nlGlyph(tok){ return ANIMAL_GLYPH[tok] || tok || '●'; }
+function nlGlyph(tok){ if(typeof tok==='string' && tok.indexOf('num:')===0) return tok.slice(4); return ANIMAL_GLYPH[tok] || tok || '●'; }
 function nlChunk(arr, n){ const out = []; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i, i+n)); return out; }
 function nlStage(inner, extraCls){ return `<div class="nm-nl-stage${extraCls ? ' ' + extraCls : ''}">${inner}</div>`; }
 function nlCard(stage, ans){ return `<div class="nm-nl">${stage}${ans || ''}</div>`; }
@@ -3011,10 +3019,21 @@ function nlAnsBox(unit){
   return `<div class="nm-nl-ans"><span class="nm-nl-anslab">${esc(lk('답','Answer','答'))}</span><span class="nm-nl-ansbox"></span>${u}</div>`;
 }
 /* 이모지 줄 — 한 줄 perRow(기본 5)개씩 끊어 두 줄이면 5+n 으로 읽히게(다섯 묶음 세기). */
+/* 한 칸에 그릴 물건 — 젤리 SVG(app/object-art.js)가 있으면 그것, 'num:7' 은 숫자, 없으면 글자 그대로. */
+function nlObjHtml(tok, f){
+  if(window.NM_OBJECTS && window.NM_OBJECTS.has(tok)) return window.NM_OBJECTS.svg(tok, {f});
+  if(typeof tok === 'string' && tok.indexOf('num:') === 0) return esc(tok.slice(4));
+  return esc(nlGlyph(tok));
+}
 function nlGlyphRows(glyphs, perRow, sizePx){
   const st = sizePx ? ` style="font-size:${sizePx}px"` : '';
   return nlChunk(glyphs, perRow || 5).map(r =>
-    `<div class="nm-nl-row"${st}>${r.map(g => `<span class="nm-nl-g">${esc(nlGlyph(g))}</span>`).join('')}</div>`).join('');
+    `<div class="nm-nl-row"${st}>${r.map(g => `<span class="nm-nl-g">${nlObjHtml(g)}</span>`).join('')}</div>`).join('');
+}
+/* 흩어진 장면(N-01 tapCount) — 화면과 같은 좌표·크기·기울기. 생성기가 좌표를 정하므로 인쇄도 같은 판. */
+function nlScatterHtml(items){
+  const cells = items.map(it => `<span class="nm-nl-sc" style="left:${it.x}%;top:${it.y}%;transform:translate(-50%,-50%) rotate(${it.r|0}deg) scale(${it.s})">${nlObjHtml(it.e, it.f)}</span>`).join('');
+  return `<div class="nm-nl-scatter">${cells}</div>`;
 }
 /* 빈 판 — 만들기(tapMake)·색칠(gridPaint count)·탤리 그리기: 아이가 직접 그려 넣는 칸. */
 function nlBoardHtml(n, perRow){
@@ -3036,6 +3055,7 @@ function bondSvgTop(a, b){
 /* 섞인 장면(세기·분류) — items는 {e,t} 또는 {e,type} 어느 쪽이든 .e만 읽는다. */
 function nlSceneHtml(items){
   if(!Array.isArray(items) || !items.length) return '';
+  if(items[0].x != null) return nlScatterHtml(items);
   return nlStage(nlGlyphRows(items.map(it => it.e)));
 }
 function nlSeqStripHtml(seq, blank){
@@ -3133,6 +3153,11 @@ function nlCrossHtml(cells){
   </div>`);
 }
 /* 텐프레임 — 5×2 칸에 n개가 차 있고 나머지는 비어 있다(10의 짝꿍). */
+/* 10칸 틀 + 물건(젤리 SVG) — frameRead 는 n개가 놓인 틀, framePaint 는 n=0 빈 틀 */
+function nlFrameObjHtml(n, tok){
+  const cells = []; for(let i=0;i<10;i++) cells.push(`<span class="nm-nl-tf">${i < n ? `<span class="nm-nl-fchip">${nlObjHtml(tok)}</span>` : ''}</span>`);
+  return nlStage(`<div class="nm-nl-tenframe">${cells.join('')}</div>`);
+}
 function nlTenframeHtml(n){
   const cells = []; for(let i=0;i<10;i++) cells.push(`<span class="nm-nl-tf${i < n ? ' nm-nl-tf-on' : ''}"></span>`);
   return nlStage(`<div class="nm-nl-tenframe">${cells.join('')}</div>`);
@@ -3190,6 +3215,8 @@ function nlVisualHtml(p){
   }
   if(w==='tapCount') return Array.isArray(p.items) ? nlCard(nlSceneHtml(p.items), nlAnsBox(p.step === 10 ? lk('원','','元') : EA)) : '';
   if(w==='tapMake') return nlCard(nlStage(nlBoardHtml(10)));
+  if(w==='frameRead') return typeof p.n==='number' ? nlCard(nlFrameObjHtml(p.n, p.emoji), nlAnsBox(EA)) : '';
+  if(w==='framePaint') return nlCard(nlFrameObjHtml(0, p.emoji));
   if(w==='seqFill') return Array.isArray(p.seq) ? nlCard(nlSeqStripHtml(p.seq, p.blank)) : '';
   if(w==='dotToDot') return Array.isArray(p.pts) ? nlCard(nlStage(nlDotsSvg(p.pts)), nlAnsBox(EA)) : '';
   if(w==='pyramid') return Array.isArray(p.rows) ? nlCard(nlPyramidHtml(p.rows)) : '';

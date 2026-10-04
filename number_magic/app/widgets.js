@@ -10,13 +10,24 @@ function esc(s){
    'animal:kind' 형태면 NM_ANIMALS(animal-art.js, widgets.js보다 먼저 로드)의
    SVG로, 그 외엔 기존처럼 이모지 문자 그대로. 비동물 이모지 경로는 절대 안 건드림.
    반환값은 innerHTML로 삽입 가능한 HTML 문자열(플레인 이모지도 안전하게 escape). */
-function art(e){
+function art(e,f){
+  if(window.NM_OBJECTS&&window.NM_OBJECTS.real&&window.NM_OBJECTS.real(e)) return '<span class="nm-art-obj" aria-hidden="true">'+window.NM_OBJECTS.svg(e,{f:f})+'</span>';
   if(typeof e==='string'&&e.indexOf('animal:')===0){
     var kind=e.slice(7);
     if(window.NM_ANIMALS&&typeof window.NM_ANIMALS.svg==='function'){
       var svg=window.NM_ANIMALS.svg(kind);
       if(svg) return '<span class="nm-art-animal">'+svg+'</span>';
     }
+  }
+  /* 'num:7' — 글꼴·기울기가 제각각인 숫자(교재의 '숫자의 개수'). 모양은 .nm-dg-f0~4 */
+  if(typeof e==='string'&&e.indexOf('num:')===0&&window.NM_OBJECTS){
+    var dg=window.NM_OBJECTS.svg(e,{f:f});
+    if(dg) return '<span class="nm-art-obj nm-art-dg" aria-hidden="true">'+dg+'</span>';
+  }
+  /* 세는 물건(사과·별·풍선…)은 젤리 SVG(object-art.js)로 — 없으면 이모지 글자 그대로 */
+  if(window.NM_OBJECTS&&window.NM_OBJECTS.has(e)){
+    var o=window.NM_OBJECTS.svg(e);
+    if(o) return '<span class="nm-art-obj" aria-hidden="true">'+o+'</span>';
   }
   return esc(e);
 }
@@ -207,6 +218,8 @@ function render(problem, container, onAnswer){
     case 'selectPairs':  return renderSelectPairs(problem,container,onAnswer);
     case 'tapCount':     return renderTapCount(problem,container,onAnswer);
     case 'tapMake':      return renderTapMake(problem,container,onAnswer);
+    case 'frameRead':    return renderFrameRead(problem,container,onAnswer);
+    case 'framePaint':   return renderFramePaint(problem,container,onAnswer);
     case 'numberBond':   return renderNumberBond(problem,container,onAnswer);
     case 'seqFill':      return renderSeqFill(problem,container,onAnswer);
     case 'dotToDot':     return renderDotToDot(problem,container,onAnswer);
@@ -829,13 +842,20 @@ function renderTapCount(problem, container, onAnswer){
   const scene=root.querySelector('.nm-tc-scene');
   const cnt=root.querySelector('.nm-tc-cnt');
 
+  const scatter=items.length&&items[0].x!=null;
+  if(scatter)scene.classList.add('nm-tc-scatter');
   function paint(){
     scene.innerHTML='';
     items.forEach(it=>{
       const el=document.createElement('button');
       const ord=marked.indexOf(it.id);
-      el.className='nm-tc-item'+(ord>=0?' on':'');
-      el.innerHTML=`<span class="nm-tc-emoji">${art(it.e)}</span>`+
+      el.className='nm-tc-item'+(ord>=0?' on':'')+(scatter?' sc':'');
+      if(scatter){
+        el.style.left=it.x+'%';el.style.top=it.y+'%';
+        el.style.setProperty('--r',it.r+'deg');el.style.setProperty('--s',it.s);
+        if(/^num:/.test(it.e))el.classList.add('dgf'+it.f);
+      }
+      el.innerHTML=`<span class="nm-tc-emoji">${art(it.e,it.f)}</span>`+
         (ord>=0?`<span class="nm-tc-ord">${(ord+1)*step}</span>`:'');
       el.addEventListener('pointerup',e=>{
         e.stopPropagation();
@@ -910,6 +930,72 @@ function renderTapMake(problem, container, onAnswer){
     lock=true;setTimeout(()=>{lock=false;},700);
     if(stamps!==target)shake(board);
     onAnswer(stamps);
+  });
+}
+
+
+/* ─────────────────────────────────────────
+   FRAMEREAD  widget:'frameRead'  (유아 · 수의 나라)
+   10칸 틀(2×5)에 물건 n개가 놓여 있다 → 몇 개인지 숫자 3개 중에서 고른다. 교재의 '점 그림 ↔ 숫자' 읽기.
+───────────────────────────────────────── */
+function frameCells(n,em,onTap){
+  let h='';
+  for(let i=0;i<10;i++){
+    h+='<button type="button" class="nm-fr-cell'+(i<n?' on':'')+(onTap?' tap':'')+'" data-i="'+i+'"'+(onTap?'':' tabindex="-1"')+'>'+(i<n?'<span class="nm-fr-chip">'+art(em)+'</span>':'')+'</button>';
+  }
+  return h;
+}
+function renderFrameRead(problem, container, onAnswer){
+  const n=problem.n, em=problem.emoji||'🍎', answer=problem.answer;
+  let lock=false;
+  const root=document.createElement('div');
+  root.className='nm-fr-wrap';
+  root.innerHTML='<div class="nm-fr-frame">'+frameCells(n,em,false)+'</div><div class="nm-tc-choices"></div>';
+  container.appendChild(root);
+  const cand=[answer-2,answer-1,answer+1,answer+2].filter(v=>v>=1&&v<=9&&v!==answer);
+  const picks=[answer];
+  while(picks.length<3&&cand.length)picks.push(cand.splice(Math.floor(Math.random()*cand.length),1)[0]);
+  picks.sort(()=>Math.random()-.5);
+  const ch=root.querySelector('.nm-tc-choices');
+  picks.forEach(v=>{
+    const b=document.createElement('button');
+    b.className='nm-tc-choice';b.textContent=v;
+    b.addEventListener('pointerup',e=>{
+      e.stopPropagation();
+      if(lock)return;lock=true;setTimeout(()=>{lock=false;},700);
+      if(v!==answer)shake(b);
+      onAnswer(v);
+    });
+    ch.appendChild(b);
+  });
+}
+
+/* ─────────────────────────────────────────
+   FRAMEPAINT  widget:'framePaint'  (유아 · 수의 나라)
+   빈 10칸 틀에서 target 칸을 눌러 물건을 올린다(다시 누르면 내림) → ✔ 로 제출. onAnswer(올린 개수).
+───────────────────────────────────────── */
+function renderFramePaint(problem, container, onAnswer){
+  const em=problem.emoji||'⭐', target=problem.target||5;
+  const on=new Set();let lock=false;
+  const root=document.createElement('div');
+  root.className='nm-fr-wrap';
+  root.innerHTML='<div class="nm-fr-frame">'+frameCells(0,em,true)+'</div><div class="nm-tm-counter"><span class="nm-tm-cnt">0</span></div><button class="nm-tm-done">✔</button>';
+  container.appendChild(root);
+  const frame=root.querySelector('.nm-fr-frame'), cnt=root.querySelector('.nm-tm-cnt');
+  frame.addEventListener('pointerup',e=>{
+    const c=e.target.closest('.nm-fr-cell');if(!c)return;
+    e.stopPropagation();
+    const i=+c.dataset.i;
+    if(on.has(i)){on.delete(i);c.classList.remove('on');c.innerHTML='';}
+    else{on.add(i);c.classList.add('on');c.innerHTML='<span class="nm-fr-chip">'+art(em)+'</span>';}
+    cnt.textContent=on.size;
+  });
+  root.querySelector('.nm-tm-done').addEventListener('pointerup',e=>{
+    e.stopPropagation();
+    if(lock||on.size===0)return;
+    lock=true;setTimeout(()=>{lock=false;},700);
+    if(on.size!==target)shake(frame);
+    onAnswer(on.size);
   });
 }
 
@@ -2287,6 +2373,8 @@ window.NM_WIDGETS={
   renderSelectPairs,
   renderTapCount,
   renderTapMake,
+  renderFrameRead,
+  renderFramePaint,
   renderNumberBond,
   renderSeqFill,
   renderDotToDot,
