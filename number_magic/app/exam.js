@@ -228,8 +228,8 @@
   .nm-nl-g { display:inline-block; }
   .nm-nl-g svg, .nm-nl-sc svg, .nm-nl-fchip svg { display:block; width:1em; height:1em; }
   .nm-nl-g svg { vertical-align:-.15em; display:inline-block; }
-  .nm-nl-scatter { position:relative; width:68mm; height:58mm; border:1.3px solid #1F2A3A; border-radius:3.5mm; background:#fff; overflow:hidden; }
-  .nm-nl-sc { position:absolute; font-size:36px; line-height:1; }
+  .nm-nl-scatter { position:relative; width:64mm; height:49mm; border:1.3px solid #1F2A3A; border-radius:3.5mm; background:#fff; overflow:hidden; }
+  .nm-nl-sc { position:absolute; font-size:31px; line-height:1; }
   .nm-nl-dg { display:inline-block; font-size:36px; line-height:1; font-weight:900; color:#1F2A3A; }
   .dgp0 { font-family:Georgia,serif; } .dgp1 { font-family:'Courier New',monospace; } .dgp2 { font-family:Arial,sans-serif; }
   .dgp3 { font-family:'Comic Sans MS',cursive; } .dgp4 { font-family:Impact,'Arial Black',sans-serif; font-weight:400; }
