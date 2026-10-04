@@ -16,7 +16,7 @@ import { book09Markup } from "./book09-renderers.js?v=20260829b";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261003f";
-import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261003e";
+import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261004a";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261003f";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261003d";
 

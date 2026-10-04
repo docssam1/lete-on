@@ -56,7 +56,6 @@ async function routeGames(page, { failIssue = false, failResolve = false } = {})
 const permutations = (items) => items.length ? items.flatMap((n, i) => permutations(items.filter((_, j) => j !== i)).map((p) => [n, ...p])) : [[]];
 async function solveRound(page, activity, round) {
   const click = (action, value) => page.locator(`[data-hand-action="${action}"]${value === undefined ? "" : `[data-value="${value}"]`}`).click();
-  if (activity.kind === "clock") for (let i = 0; i < Math.abs(round.turns); i++) await click("turn", Math.sign(round.turns));
   if (activity.kind === "fold") {
     for (const _ of round.model.folds) await click("fold");
     await click("cut");
@@ -89,17 +88,30 @@ try {
       assert.equal(await page.locator("#gameContent").getAttribute("data-hand-activity"), id, "Query overrides cannot change the signed game");
       assert.equal(await page.locator("a,button[data-hand-activity],[data-hand-action=questions]").count(), 0);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
-      for (const [i, round] of activity.rounds.entries()) {
-        await solveRound(page, activity, round);
-        if (i < activity.rounds.length - 1) await page.locator('[data-hand-action="next"]').click();
+      if (activity.kind === "clock") {
+        // 시계는 네 단계 게임(golden-bell-clock-game.js). 1단계가 원본 체험 3도전 그대로라 그것을 풀고
+        // 2단계로 넘어가는지 본다. 게임 전체는 golden-bell-clock-game-audit.mjs가 검사한다.
+        await page.locator("[data-clock-go]").click();
+        for (const round of activity.rounds) {
+          for (let i = 0; i < Math.abs(round.turns); i++) await page.locator(`[data-clock-turn="${Math.sign(round.turns)}"]:not([disabled])`).click();
+          await page.locator("[data-clock-check]:not([disabled])").click();
+          await page.locator("[data-clock-next]").click();
+        }
+        assert.equal(await page.locator(".cg").getAttribute("data-stage"), "predict");
+        assert.equal(await page.locator(".cg-coach img").evaluate((img) => img.complete && img.naturalWidth > 0), true);
+      } else {
+        for (const [i, round] of activity.rounds.entries()) {
+          await solveRound(page, activity, round);
+          if (i < activity.rounds.length - 1) await page.locator('[data-hand-action="next"]').click();
+        }
+        await page.locator('[data-hand-action="again"]').click();
+        assert.match(await page.locator(".hand-round").innerText(), /1 \/ 3/u);
+        assert.equal(await page.locator(".hand-guide img").evaluate((img) => img.complete && img.naturalWidth > 0), true);
       }
-      await page.locator('[data-hand-action="again"]').click();
-      assert.match(await page.locator(".hand-round").innerText(), /1 \/ 3/u);
       assert.equal(await page.locator("#gameContent").getAttribute("data-hand-activity"), id);
       assert.ok(!requests.some((url) => /golden-bell-library|source-data|golden-bell-protected|fields-auth|golden-bell-answers|worksheet\/generators/u.test(url)), "Game must not load question-bank modules or APIs");
       assert.equal(await page.evaluate(() => sessionStorage.getItem("gfield_fields_session")), "ordinary-session-must-not-be-used-or-changed");
       assert.equal(await page.evaluate(() => localStorage.getItem("qr-audit-sentinel")), "unchanged");
-      assert.equal(await page.locator(".hand-guide img").evaluate((img) => img.complete && img.naturalWidth > 0), true);
       await page.screenshot({ path: path.join(output, `game-${id}-${width}.png`), fullPage: true });
       report.games.push({ id, width, rounds: activity.rounds.length, isolated: true });
       await page.close();

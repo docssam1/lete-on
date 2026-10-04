@@ -111,21 +111,22 @@ try {
         await page.emulateMedia({ media: "screen" });
       }
     }
+    // 시계 체험은 네 단계 게임이다. 분수 표기 없이 말로 된 돌린 양만 보이는지, 최대 두 바퀴에서 멈추는지 본다.
     await page.locator('[data-hand-open="turn-clock"]').click();
     const hand = page.locator(".gold-hands-on dialog");
-    const clockwise = hand.locator('[data-hand-action="turn"][data-value="1"]');
+    await hand.locator("[data-clock-go]").click();
+    const clockwise = hand.locator('[data-clock-turn="1"]');
     assert.equal(await clockwise.getAttribute("aria-label"), "시계 방향으로 반의 반 바퀴");
-    assert.match(await hand.locator(".hand-guide-copy").innerText(), /반의 반 바퀴씩 돌려/u);
     assert.doesNotMatch(await hand.innerText(), /¼|\d\s*\/\s*4\s*바퀴/u);
     await clockwise.click();
-    assert.match(await hand.locator(".hand-measure").innerText(), /반의 반 바퀴/u);
+    assert.match(await hand.locator("[data-clock-readout]").innerText(), /반의 반 바퀴/u);
     await hand.screenshot({ path: path.join(output, `clock-words-${width}.png`) });
     for (let turns = 2; turns <= 8; turns++) {
       await clockwise.click();
       assert.doesNotMatch(await hand.innerText(), /¼|\d\s*\/\s*4\s*바퀴|undefined/u);
     }
     assert.equal(await clockwise.isDisabled(), true);
-    await hand.locator('[data-hand-action="undo"]').click();
+    await hand.locator("[data-clock-reset]").click();
     assert.equal(await clockwise.isDisabled(), false);
     report.clock.push({ width, fractionalLabels: false, rotations: 8 });
     assert.deepEqual(errors, []);
