@@ -11,6 +11,7 @@ function esc(s){
    SVG로, 그 외엔 기존처럼 이모지 문자 그대로. 비동물 이모지 경로는 절대 안 건드림.
    반환값은 innerHTML로 삽입 가능한 HTML 문자열(플레인 이모지도 안전하게 escape). */
 function art(e,f){
+  if(window.NM_OBJECTS&&window.NM_OBJECTS.real&&window.NM_OBJECTS.real(e)) return '<span class="nm-art-obj" aria-hidden="true">'+window.NM_OBJECTS.svg(e,{f:f})+'</span>';
   if(typeof e==='string'&&e.indexOf('animal:')===0){
     var kind=e.slice(7);
     if(window.NM_ANIMALS&&typeof window.NM_ANIMALS.svg==='function'){

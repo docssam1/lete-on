@@ -226,7 +226,15 @@
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-9 -8 58 70" class="nm-obj-svg nm-obj-dg" aria-hidden="true" focusable="false" style="overflow:visible">' + inner + '</svg>';
   }
 
+  /* 실사 PNG(assets/images/real/, data/real-art.js 표) 가 있으면 그것을, 없으면 아래 직접 그린 SVG 를. */
+  function realImg(token, opts) {
+    var m = window.NM_REAL_ART, f = m && m[token + (opts && opts.f != null && String(token).indexOf('num:') === 0 ? '#' + (opts.f | 0) : '')] || (m && m[token]);
+    if (!f) return '';
+    return '<img src="assets/images/real/' + f + '" alt="" draggable="false" class="nm-obj-img" style="width:100%;height:100%;object-fit:contain;display:block">';
+  }
   function svg(token, opts) {
+    var real = realImg(token, opts);
+    if (real) return real;
     if (typeof token === 'string' && token.indexOf('num:') === 0) return digitSvg(token.slice(4), opts && opts.f);
     var f = ART[token];
     if (!f) return '';
@@ -239,7 +247,8 @@
 
   window.NM_OBJECTS = {
     svg: svg,
-    has: function (t) { return (typeof t === 'string' && t.indexOf('num:') === 0 && !!DIGIT_D[t.slice(4)]) || Object.prototype.hasOwnProperty.call(ART, t); },
+    real: function (t) { return !!realImg(t); },
+    has: function (t) { return !!realImg(t) || (typeof t === 'string' && t.indexOf('num:') === 0 && !!DIGIT_D[t.slice(4)]) || Object.prototype.hasOwnProperty.call(ART, t); },
     tokens: function () { return Object.keys(ART); }
   };
 })();
