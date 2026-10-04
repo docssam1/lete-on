@@ -2,6 +2,7 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,scholar}=H;
+  const {alkhwarizmi}=H;
   return { panels:[
     { art: svg(
         '<line x1="100" y1="25" x2="100" y2="55" stroke="'+C.ink+'" stroke-width="3"/>'
@@ -23,7 +24,7 @@ module.exports=function(H){
               en:'The word "equation" comes from the Latin "aequare", meaning "to make equal".',
               zh:'"方程(equation)"一词，来自意为"使相等"的拉丁语"aequare"。' } },
     { art: svg(
-        scholar(50,90,0.9)
+        alkhwarizmi(50,90,0.9)
         + paper(90,35,90,75)
         + txt(135,80,20,C.ink,'al-jabr')),
       text: { ko:'9세기 페르시아 수학자 알콰리즈미는 『al-jabr(복원)』이라는 책을 썼어요.',

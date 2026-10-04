@@ -93,11 +93,11 @@ const CHAR_BOX = 46;      /* s=1일 때 PNG 정사각형 한 변 */
 const CHAR_TOP = -26.24;  /* s=1일 때 정사각형 윗변의 y (발밑이 y+17에 오도록) */
 /* 2026-10-04: 인물이 컷 높이의 29%뿐이라 장면 속 배우가 아니라 도장처럼 보였다.
    발밑(y+17)과 x는 그대로 두고 키만 키운다 — 좌표를 안 고쳐도 서 있는 자리는 같다. */
-const CHAR_BOOST = 1.3;
+const CHAR_BOOST = 1.65;
 
 function charImg(name,x,y,s){
   s = (s===undefined||s===null) ? 1 : s;
-  const S = CHAR_BOX*s*CHAR_BOOST;
+  const S = CHAR_BOX*s*(name==='numi' ? 1.3 : CHAR_BOOST);   /* 누미는 256px 옛 그림이라 예전 배율 유지 */
   const foot = y + 17*s;                 /* 발밑 y — 키울 때 고정점 */
   return '<image href="assets/images/characters/'+name+'.png"'
     +' x="'+(x-S/2).toFixed(2)+'" y="'+(foot-S*0.94).toFixed(2)+'"'
@@ -128,6 +128,31 @@ function merchant(x,y,s){ return charImg('merchant',x,y,s); }
 function astronomer(x,y,s){ return charImg('astronomer',x,y,s); }
 /* 앱 마스코트 누미 — 이름 없는 질문자·관찰자·안내자 전용 */
 function numi(x,y,s){ return charImg('numi',x,y,s); }
+
+
+/* 실존 위인 22명 — 원장 승인(2026-10-04). assets/images/characters/fig-<이름>.png, 512×512 투명, 위 12역과 같은 좌표 규약((x,y)=몸통 중심, s=배율). */
+function gaussBoy(x,y,s){ return charImg('fig-gauss-boy',x,y,s); }
+function gauss(x,y,s){ return charImg('fig-gauss',x,y,s); }
+function recorde(x,y,s){ return charImg('fig-recorde',x,y,s); }
+function goldbach(x,y,s){ return charImg('fig-goldbach',x,y,s); }
+function oughtred(x,y,s){ return charImg('fig-oughtred',x,y,s); }
+function euclid(x,y,s){ return charImg('fig-euclid',x,y,s); }
+function ptolemy1(x,y,s){ return charImg('fig-ptolemy1',x,y,s); }
+function alkhwarizmi(x,y,s){ return charImg('fig-alkhwarizmi',x,y,s); }
+function liuhui(x,y,s){ return charImg('fig-liuhui',x,y,s); }
+function wallis(x,y,s){ return charImg('fig-wallis',x,y,s); }
+function descartes(x,y,s){ return charImg('fig-descartes',x,y,s); }
+function pythagoras(x,y,s){ return charImg('fig-pythagoras',x,y,s); }
+function hippasus(x,y,s){ return charImg('fig-hippasus',x,y,s); }
+function napier(x,y,s){ return charImg('fig-napier',x,y,s); }
+function euler(x,y,s){ return charImg('fig-euler',x,y,s); }
+function leibniz(x,y,s){ return charImg('fig-leibniz',x,y,s); }
+function newton(x,y,s){ return charImg('fig-newton',x,y,s); }
+function fermat(x,y,s){ return charImg('fig-fermat',x,y,s); }
+function viete(x,y,s){ return charImg('fig-viete',x,y,s); }
+function alwafa(x,y,s){ return charImg('fig-alwafa',x,y,s); }
+function archimedes(x,y,s){ return charImg('fig-archimedes',x,y,s); }
+function brahmagupta(x,y,s){ return charImg('fig-brahmagupta',x,y,s); }
 
 /* 화살표 (x1,y1)→(x2,y2) */
 function arrow(x1,y1,x2,y2,col,w){
@@ -291,4 +316,5 @@ function rope(x1,y1,x2,y2,col,bend){
 }
 
 module.exports = { C, svg, stick, sheep, sheep2, pebble, pouch2, fence, meadow, flower, sunDisc, moonDisc, cloud, star4, bang, rope, puff, numi, pouch, arrow, paper, bubble, txt, ground,
-  king, sage, greek, scholar, wig, boy, girl, shepherd, scribe, merchant, astronomer };
+  king, sage, greek, scholar, wig, boy, girl, shepherd, scribe, merchant, astronomer,
+  gaussBoy, gauss, recorde, goldbach, oughtred, euclid, ptolemy1, alkhwarizmi, liuhui, wallis, descartes, pythagoras, hippasus, napier, euler, leibniz, newton, fermat, viete, alwafa, archimedes, brahmagupta };

@@ -2,6 +2,7 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,astronomer,wig,arrow,paper,bubble,txt,ground}=H;
+  const {napier}=H;
   return { panels:[
     { art: svg(
         '<circle cx="30" cy="22" r="2.5" fill="'+C.gold+'"/><circle cx="55" cy="15" r="2" fill="'+C.gold+'"/><circle cx="80" cy="25" r="2.5" fill="'+C.gold+'"/>'
@@ -23,7 +24,7 @@ module.exports=function(H){
              en:'Logarithms were a clever invention that turned that painful multiplication into much easier addition.',
              zh:'对数是个聪明的发明，把那令人头疼的乘法变成了更容易的加法。' } },
     { art: svg(
-        wig(55,85,1.2)
+        napier(55,85,1.2)
         +paper(95,35,80,65)
         +txt(135,58,13,C.sub,'logos')
         +txt(135,76,13,C.sub,'arithmos')
