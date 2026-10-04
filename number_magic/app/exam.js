@@ -219,7 +219,7 @@
 
   /* NL(수의 나라, 유아) 그림 — nlVisualHtml() 참조(2026-09-19 재작성). 무대(.nm-nl-stage) 안에
      30px 이모지, 답 칸(.nm-nl-ans)은 카드 안. 흑백 레이저에서도 선·칸이 남게 진한 선만 쓴다. */
-  .nm-nl { display:flex; flex-direction:column; align-items:center; gap:2.5mm; margin:1.5mm auto 0; width:100%; max-width:80mm; }
+  .nm-nl { display:flex; flex-direction:column; align-items:center; gap:1.8mm; margin:1.2mm auto 0; width:100%; max-width:80mm; }
   .nm-nl-stage { border:1.3px solid #1F2A3A; border-radius:3.5mm; padding:2.5mm 3.5mm; background:#fff; min-width:40mm; max-width:100%;
     display:flex; flex-direction:column; align-items:center; gap:1.5mm; box-sizing:border-box; }
   .nm-nl-stage-bond { border:0; padding:0; }
@@ -228,7 +228,7 @@
   .nm-nl-g { display:inline-block; }
   .nm-nl-g svg, .nm-nl-sc svg, .nm-nl-fchip svg { display:block; width:1em; height:1em; }
   .nm-nl-g svg { vertical-align:-.15em; display:inline-block; }
-  .nm-nl-scatter { position:relative; width:62mm; height:40mm; border:1.3px solid #1F2A3A; border-radius:3.5mm; background:#fff; overflow:hidden; }
+  .nm-nl-scatter { position:relative; width:60mm; height:37mm; border:1.3px solid #1F2A3A; border-radius:3.5mm; background:#fff; overflow:hidden; }
   .nm-nl-sc { position:absolute; font-size:27px; line-height:1; }
   .nm-nl-dg { display:inline-block; font-size:36px; line-height:1; font-weight:900; color:#1F2A3A; }
   .dgp0 { font-family:Georgia,serif; } .dgp1 { font-family:'Courier New',monospace; } .dgp2 { font-family:Arial,sans-serif; }
@@ -3021,8 +3021,8 @@ function nlAnsBox(unit){
 /* 이모지 줄 — 한 줄 perRow(기본 5)개씩 끊어 두 줄이면 5+n 으로 읽히게(다섯 묶음 세기). */
 /* 한 칸에 그릴 물건 — 젤리 SVG(app/object-art.js)가 있으면 그것, 'num:7' 은 숫자, 없으면 글자 그대로. */
 function nlObjHtml(tok, f){
-  if(typeof tok === 'string' && tok.indexOf('num:') === 0) return `<span class="nm-nl-dg dgp${f|0}">${esc(tok.slice(4))}</span>`;
-  if(window.NM_OBJECTS && window.NM_OBJECTS.has(tok)) return window.NM_OBJECTS.svg(tok);
+  if(window.NM_OBJECTS && window.NM_OBJECTS.has(tok)) return window.NM_OBJECTS.svg(tok, {f});
+  if(typeof tok === 'string' && tok.indexOf('num:') === 0) return esc(tok.slice(4));
   return esc(nlGlyph(tok));
 }
 function nlGlyphRows(glyphs, perRow, sizePx){

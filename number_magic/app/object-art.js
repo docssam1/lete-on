@@ -188,7 +188,46 @@
     }
   };
 
+
+  /* ── 숫자 0~9 — 글꼴이 아니라 직접 그은 획(둥근 끝)으로. 5가지 모양(f0~f4)은 색·굵기·장식이 다르다 ── */
+  var DIGIT_D = {
+    '0': 'M20 6 C6 6 6 50 20 50 C34 50 34 6 20 6 Z',
+    '1': 'M11 17 L22 6 L22 50',
+    '2': 'M8 17 C8 3 32 3 32 18 C32 31 8 38 8 50 L32 50',
+    '3': 'M9 8 L30 8 L19 23 C35 21 36 49 19 50 C12 50 8 47 7 42',
+    '4': 'M28 50 L28 6 L6 36 L36 36',
+    '5': 'M31 7 L11 7 L9 26 C27 18 38 33 30 44 C24 52 12 50 8 44',
+    '6': 'M30 9 C16 5 8 20 8 34 C8 54 34 54 32 36 C30 23 11 24 8 34',
+    '7': 'M7 8 L34 8 L16 50',
+    '8': 'M20 28 C8 26 8 6 20 6 C32 6 32 26 20 28 C6 30 6 50 20 50 C34 50 34 30 20 28 Z',
+    '9': 'M32 22 C32 4 8 4 8 18 C8 32 32 34 32 22 C32 40 26 50 12 50'
+  };
+  var DIGIT_STYLE = [
+    { c: '#3b8fe0', o: '#16417c', w: 11 },
+    { c: '#ec6aa8', o: '#8c2a5e', w: 9 },
+    { c: '#fb8c2e', o: '#9a4a00', w: 12 },
+    { c: '#43a047', o: '#1f5c25', w: 10 },
+    { c: '#8e6bd8', o: '#4a2f8a', w: 11 }
+  ];
+  function digitSvg(d, f) {
+    var path = DIGIT_D[d]; if (!path) return '';
+    var s = DIGIT_STYLE[(f | 0) % DIGIT_STYLE.length];
+    var inner;
+    if ((f | 0) % 5 === 1) {            /* 속이 빈 글자 — 어두운 윤곽 + 흰 속 */
+      inner = '<path d="' + path + '" fill="none" stroke="' + s.o + '" stroke-width="' + (s.w + 5) + '" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="' + path + '" fill="none" stroke="#fff" stroke-width="' + (s.w - 1) + '" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="' + path + '" fill="none" stroke="' + s.c + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 7" opacity=".9"/>';
+    } else {
+      inner = '<path d="' + path + '" fill="none" stroke="' + s.o + '" stroke-width="' + (s.w + 4.5) + '" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.6 2.2)" opacity=".35"/>' +
+        '<path d="' + path + '" fill="none" stroke="' + s.o + '" stroke-width="' + (s.w + 4) + '" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="' + path + '" fill="none" stroke="' + s.c + '" stroke-width="' + s.w + '" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="' + path + '" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity=".55" transform="translate(-2 -2)"/>';
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-9 -8 58 70" class="nm-obj-svg nm-obj-dg" aria-hidden="true" focusable="false" style="overflow:visible">' + inner + '</svg>';
+  }
+
   function svg(token, opts) {
+    if (typeof token === 'string' && token.indexOf('num:') === 0) return digitSvg(token.slice(4), opts && opts.f);
     var f = ART[token];
     if (!f) return '';
     UID += 1;
@@ -200,7 +239,7 @@
 
   window.NM_OBJECTS = {
     svg: svg,
-    has: function (t) { return Object.prototype.hasOwnProperty.call(ART, t); },
+    has: function (t) { return (typeof t === 'string' && t.indexOf('num:') === 0 && !!DIGIT_D[t.slice(4)]) || Object.prototype.hasOwnProperty.call(ART, t); },
     tokens: function () { return Object.keys(ART); }
   };
 })();

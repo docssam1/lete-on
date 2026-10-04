@@ -17,6 +17,7 @@
 /* 젤리 물건 SVG — 이모지 글자 자리에 같은 크기로 꽂힌다 */
 .nm-art-obj{display:inline-block;width:1.15em;height:1.15em;vertical-align:-0.2em;line-height:1;flex-shrink:0}
 .nm-art-obj svg{display:block;width:100%;height:100%}
+.nm-art-dg{width:1.05em;height:1.25em}
 
 /* ── shared cube base ── */
 .nm-w-cube{

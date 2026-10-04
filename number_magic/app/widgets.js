@@ -10,7 +10,7 @@ function esc(s){
    'animal:kind' 형태면 NM_ANIMALS(animal-art.js, widgets.js보다 먼저 로드)의
    SVG로, 그 외엔 기존처럼 이모지 문자 그대로. 비동물 이모지 경로는 절대 안 건드림.
    반환값은 innerHTML로 삽입 가능한 HTML 문자열(플레인 이모지도 안전하게 escape). */
-function art(e){
+function art(e,f){
   if(typeof e==='string'&&e.indexOf('animal:')===0){
     var kind=e.slice(7);
     if(window.NM_ANIMALS&&typeof window.NM_ANIMALS.svg==='function'){
@@ -19,7 +19,10 @@ function art(e){
     }
   }
   /* 'num:7' — 글꼴·기울기가 제각각인 숫자(교재의 '숫자의 개수'). 모양은 .nm-dg-f0~4 */
-  if(typeof e==='string'&&e.indexOf('num:')===0) return '<span class="nm-dg">'+esc(e.slice(4))+'</span>';
+  if(typeof e==='string'&&e.indexOf('num:')===0&&window.NM_OBJECTS){
+    var dg=window.NM_OBJECTS.svg(e,{f:f});
+    if(dg) return '<span class="nm-art-obj nm-art-dg" aria-hidden="true">'+dg+'</span>';
+  }
   /* 세는 물건(사과·별·풍선…)은 젤리 SVG(object-art.js)로 — 없으면 이모지 글자 그대로 */
   if(window.NM_OBJECTS&&window.NM_OBJECTS.has(e)){
     var o=window.NM_OBJECTS.svg(e);
@@ -851,7 +854,7 @@ function renderTapCount(problem, container, onAnswer){
         el.style.setProperty('--r',it.r+'deg');el.style.setProperty('--s',it.s);
         if(/^num:/.test(it.e))el.classList.add('dgf'+it.f);
       }
-      el.innerHTML=`<span class="nm-tc-emoji">${art(it.e)}</span>`+
+      el.innerHTML=`<span class="nm-tc-emoji">${art(it.e,it.f)}</span>`+
         (ord>=0?`<span class="nm-tc-ord">${(ord+1)*step}</span>`:'');
       el.addEventListener('pointerup',e=>{
         e.stopPropagation();
