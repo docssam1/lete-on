@@ -721,6 +721,7 @@ var CURATED_TOPICS = [
 var ADDITIONAL_THREADS = {
   preschool:['NL17','NL18','NL19','NL20','NL21','NL22'],   /* G1-1~3호(N-01~03) 새 스레드 — 한 줄 추가(다른 묶음과 병합 시 합칠 것) */
   decimal:['DC6'],
+  preschool:['NL27','NL28','NL29','NL30','NL31','NL32','NL33','NL34','NL35','NL36'],   /* G1-4·5·6호(2026-10-04) */
   middle1:['MD68','MD69','MD70','MD73','MD82','MD84','MD89'],
   middle2:['MD63','MD64','MD65','MD71','MD72','MD74','MD75','MD76','MD88'],
   middle3:['MD66','MD67','MD77','MD78','MD79','MD80','MD81','MD83','MD85','MD86','MD87','MD90'],

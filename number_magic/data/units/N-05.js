@@ -33,10 +33,8 @@ window.NM_UNITS['N-05'] = {
       zh:'排队按方向数，台阶从下往上数！' }
   },
 
-  lab:{ generator:'nl5_story', level:'main', count:4, params:{ mode:'stairs' },
-    intro:{ ko:'이번엔 계단이에요! 동물 친구가 아래에서 몇째 계단에 있는지 숫자로 답해요',
-      en:'Now it\'s stairs! Type which step the animal friend is on, counting from the bottom',
-      zh:'这次是台阶！数一数动物朋友在从下面数第几级台阶上，写出数字' } },
+  lab:{ generator:'g46_ordinal', level:'main', count:4, params:{ mode:'qtyOrd', kinds:['line'] },
+    intro:{ ko:'몇 명인 수와 몇째인 수는 달라요! 묻는 쪽의 수 카드를 콕!', en:'How many and which place are different numbers! Tap the card that answers the question.', zh:'“几个”和“第几”是不同的数！点出回答问题的数字卡。' } },
 
   stamp:{ label:{ ko:'생활 서수 박사', en:'Ordinal Life Expert', zh:'生活序数博士' }, coins:20 },
 
