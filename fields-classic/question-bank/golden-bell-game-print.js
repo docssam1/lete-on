@@ -1,10 +1,11 @@
-import { HANDS_ON_ACTIVITIES, unitForLesson } from "./golden-bell-hands-on-models.js?v=20260925a";
+import { HANDS_ON_ACTIVITIES, unitForLesson } from "./golden-bell-hands-on-models.js?v=20261004a";
 import { gameLinkURL, issueGameLinks } from "./golden-bell-game-link.js?v=20261003e";
 
 const esc = (value) => String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 export function printGameActivities(bookId, lessonId) {
-  return unitForLesson(bookId, lessonId)?.activities || [];
+  // qr: false 게임은 게임 QR 서버에 등록되기 전이라 학습지 QR에서 뺀다.
+  return (unitForLesson(bookId, lessonId)?.activities || []).filter((id) => HANDS_ON_ACTIVITIES[id].qr !== false);
 }
 
 export function printCoverGames(book, lessons, units) {

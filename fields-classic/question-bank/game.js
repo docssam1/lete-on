@@ -23,11 +23,11 @@ async function openGame() {
     const grant = await resolveGameLink(token);
     if (request !== generation) return;
     if (grant.activityId !== token.split(".")[1]) throw new Error("game_scope_invalid");
-    const { HANDS_ON_ACTIVITIES, unitForLesson } = await import("./golden-bell-hands-on-models.js?v=20260925a");
+    const { HANDS_ON_ACTIVITIES, unitForLesson } = await import("./golden-bell-hands-on-models.js?v=20261004a");
     if (request !== generation) return;
     const activity = Object.hasOwn(HANDS_ON_ACTIVITIES, grant.activityId) ? HANDS_ON_ACTIVITIES[grant.activityId] : null;
     if (!activity || activity.lesson !== grant.lessonId || !unitForLesson(grant.bookId, grant.lessonId)?.activities.includes(grant.activityId)) throw new Error("game_scope_invalid");
-    const { mountSingleHandsOn } = await import("./golden-bell-hands-on.js?v=20261004b");
+    const { mountSingleHandsOn } = await import("./golden-bell-hands-on.js?v=20261004c");
     if (request !== generation) return;
     mountSingleHandsOn(content, grant.activityId);
     document.getElementById("gameTitle").textContent = activity.title;

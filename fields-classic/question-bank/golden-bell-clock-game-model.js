@@ -1,4 +1,4 @@
-import { HANDS_ON_ACTIVITIES, clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js?v=20260925a";
+import { HANDS_ON_ACTIVITIES, clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js?v=20261004a";
 
 // 1권 「시계 바늘 돌리기」 게임의 규칙. 화면과 검사가 같은 함수를 쓴다.
 // 돌리는 양은 원본이 쓰는 세 가지(반의 반 바퀴·반 바퀴·한 바퀴)만 쓰고 분수 표기는 쓰지 않는다.

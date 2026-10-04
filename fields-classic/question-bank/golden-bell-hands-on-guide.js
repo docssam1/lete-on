@@ -1,4 +1,4 @@
-import { clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js?v=20260925a";
+import { clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js?v=20261004a";
 
 const directions = { right: "오른쪽", left: "왼쪽", up: "위쪽", down: "아래쪽" };
 

@@ -10,7 +10,10 @@ import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 const permutations = (values) => values.length ? values.flatMap((v, i) => permutations(values.filter((_, j) => i !== j)).map((rest) => [v, ...rest])) : [[]];
 const sourceOrder = [["D", "B", "A", "C"], ["C", "B", "D", "A"], ["B", "C", "D", "A"]];
 const solutions = new Map();
-assert.equal(HANDS_ON_UNITS.length, 4);
+// 1권 체험 단원 4개 + 2권 레벨 게임 단원 4개. 2권은 golden-bell-book02-games-audit.mjs가 검사한다.
+assert.equal(HANDS_ON_UNITS.filter((unit) => unit.bookId === "book-01").length, 4);
+assert.equal(HANDS_ON_UNITS.filter((unit) => unit.bookId === "book-02").length, 4);
+for (const lesson of GOLDEN_BELL_BOOKS[1].lessons) assert.ok(unitForLesson("book-02", lesson.id), `book-02 ${lesson.id}: 게임 단원 없음`);
 assert.ok(HANDS_ON_UNITS.every((unit) => unit.activities.length >= 1 && unit.activities.length <= 2));
 for (const lesson of GOLDEN_BELL_BOOKS[0].lessons) assert.ok(unitForLesson("book-01", lesson.id), lesson.id);
 assert.equal(unitForLesson("book-02", "clock-turning"), undefined);
@@ -106,6 +109,7 @@ try {
       return host;
     };
     for (const [id, activity] of Object.entries(activities)) {
+      if (activity.kind === "level-game") continue; // 2권 레벨 게임은 golden-bell-book02-games-audit.mjs
       const host = await open(id);
       const act = (action, value) => host.locator(`[data-hand-action="${action}"]${value === undefined ? "" : `[data-value="${value}"]`}`);
       if (id === "turn-clock") {

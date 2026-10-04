@@ -1,9 +1,11 @@
 import { icon } from "../../geometry/games/shape-transform/ui-icons.js";
 import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts } from "./golden-bell-hands-on-folding.js?v=20260925a";
-import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20260925a";
+import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20261004a";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261003c";
 import { mountClockGame } from "./golden-bell-clock-game.js?v=20261004b";
+import { mountLevelGame } from "./golden-bell-level-game.js?v=20261004a";
+import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261004a";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sessions = new Map();
@@ -108,12 +110,23 @@ function renderClockGame(container, unit, session, onQuestions) {
   session.clockGame = mountClockGame(container.querySelector(".hand-scene"), { single: Boolean(unit.single), saved: session.clockSaved, onQuestions: unit.single ? null : () => onQuestions(activity.lesson) });
 }
 
+// 레벨 게임(2권~): 공용 틀에 게임 정의를 넣는다. 진행은 세션에 게임별로 남는다.
+function renderLevelGame(container, unit, session, onQuestions) {
+  const activity = HANDS_ON_ACTIVITIES[session.active];
+  container.innerHTML = `${unit.single ? "" : `<div class="hand-toolbar">${activityTabs(unit, session)}</div>`}<div class="hand-scene" data-hand-kind="level-game"></div>`;
+  bindTabs(container, unit, session, onQuestions);
+  session.levelSaved ||= {};
+  session.levelSaved[session.active] ||= {};
+  session.clockGame = mountLevelGame(container.querySelector(".hand-scene"), BOOK02_LEVEL_GAMES[activity.game], { single: Boolean(unit.single), saved: session.levelSaved[session.active], onQuestions: unit.single ? null : () => onQuestions(activity.lesson) });
+}
+
 function renderActivity(container, unit, session, onQuestions) {
   session.clockGame?.dispose();
   session.clockGame = null;
-  if (HANDS_ON_ACTIVITIES[session.active].kind === "clock") {
+  const gameKind = HANDS_ON_ACTIVITIES[session.active].kind;
+  if (gameKind === "clock" || gameKind === "level-game") {
     container.dataset.handActivity = session.active;
-    renderClockGame(container, unit, session, onQuestions);
+    (gameKind === "clock" ? renderClockGame : renderLevelGame)(container, unit, session, onQuestions);
     return;
   }
   const previousActivity = container.dataset.handActivity;

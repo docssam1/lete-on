@@ -4,7 +4,9 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
-import { HANDS_ON_ACTIVITIES as activities, expectedCells, matchesClue } from "./golden-bell-hands-on-models.js";
+import { HANDS_ON_ACTIVITIES as ALL_ACTIVITIES, expectedCells, matchesClue } from "./golden-bell-hands-on-models.js";
+// 게임 QR 서버에 등록된 게임만(qr: false인 2권 레벨 게임은 아직 QR이 없다).
+const activities = Object.fromEntries(Object.entries(ALL_ACTIVITIES).filter(([, activity]) => activity.qr !== false));
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 import { printGameExpiry } from "./golden-bell-game-print.js";
 import { FIELDS_GAME_LESSONS, issueFieldsGameCapability, resolveFieldsGameCapability } from "../../supabase/functions/_shared/fields-game-capability.js";

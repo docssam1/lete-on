@@ -6,7 +6,12 @@ export const HANDS_ON_UNITS = [
   { bookId: "book-01", id: "movement", title: "도형 움직이기", lessons: ["clock-turning", "mirror-reflection", "digital-turn-flip"], activities: ["turn-clock", "mirror-tiles"] },
   { bookId: "book-01", id: "folding", title: "색종이 접기", lessons: ["fold-one-cut", "fold-two-cut"], activities: ["fold-once", "fold-twice"] },
   { bookId: "book-01", id: "equal-sums", title: "마방진과 가쿠로 퍼즐", lessons: ["equal-line-sums", "equal-line-placement", "gakuro-sum-grid"], activities: ["cross-sums"] },
-  { bookId: "book-01", id: "logic", title: "수 추리와 논리 추리", lessons: ["number-inference", "preference-logic", "relative-order-running", "book1-equalize-transfer"], activities: ["line-order", "share-equally"] }
+  { bookId: "book-01", id: "logic", title: "수 추리와 논리 추리", lessons: ["number-inference", "preference-logic", "relative-order-running", "book1-equalize-transfer"], activities: ["line-order", "share-equally"] },
+  // 2권: 레벨 게임(golden-bell-book02-games.js). 단원의 모든 레슨에서 열린다.
+  { bookId: "book-02", id: "matrix", title: "매트릭스와 주고받기", lessons: ["number-splitting", "addition-matrix", "give-take-sum-difference", "two-term-arithmetic"], activities: ["b2-matrix"] },
+  { bookId: "book-02", id: "balance", title: "양팔저울", lessons: ["balance-order", "shape-number-equations", "arithmetic-sequences"], activities: ["b2-balance", "b2-matrix"] },
+  { bookId: "book-02", id: "pattern", title: "규칙찾기와 수열", lessons: ["repeating-sequence", "sequence-rules", "dual-shape-color-pattern", "multiples-2", "growth-patterns"], activities: ["b2-pattern"] },
+  { bookId: "book-02", id: "sudoku", title: "약속과 스도쿠", lessons: ["multiples-3", "diamond-number-promise", "multiples-4", "sudoku", "fractions-and-folds", "multiples-5"], activities: ["b2-sudoku"] }
 ];
 
 const cut = (row, col) => [[[col / 4, row / 4], [(col + 1) / 4, row / 4], [(col + 1) / 4, (row + 1) / 4], [col / 4, (row + 1) / 4]]];
@@ -28,7 +33,12 @@ export const HANDS_ON_ACTIVITIES = {
     { clues: [{ kind: "last", a: "A" }, { kind: "adjacent", a: "D", b: "A" }, { kind: "before", a: "C", b: "B" }] },
     { clues: [{ kind: "first", a: "B" }, { kind: "adjacent", a: "C", b: "D" }, { kind: "last", a: "A" }] }
   ] },
-  "share-equally": { title: "같아지도록 옮기기", kind: "transfer", lesson: "book1-equalize-transfer", rounds: [{ left: 10, right: 4 }, { left: 12, right: 6 }, { left: 15, right: 5 }] }
+  "share-equally": { title: "같아지도록 옮기기", kind: "transfer", lesson: "book1-equalize-transfer", rounds: [{ left: 10, right: 4 }, { left: 12, right: 6 }, { left: 15, right: 5 }] },
+  // 2권 레벨 게임. qr: false = 게임 QR 서버에 아직 등록되지 않아 학습지 QR에서 뺀다.
+  "b2-matrix": { title: "도형 값 찾기", kind: "level-game", game: "b2-matrix", lesson: "addition-matrix", qr: false, rounds: [] },
+  "b2-balance": { title: "무게 줄 세우기", kind: "level-game", game: "b2-balance", lesson: "balance-order", qr: false, rounds: [] },
+  "b2-pattern": { title: "무늬 기차", kind: "level-game", game: "b2-pattern", lesson: "repeating-sequence", qr: false, rounds: [] },
+  "b2-sudoku": { title: "빈칸 채우기", kind: "level-game", game: "b2-sudoku", lesson: "sudoku", qr: false, rounds: [] }
 };
 
 export function unitForLesson(bookId, lessonId) {
