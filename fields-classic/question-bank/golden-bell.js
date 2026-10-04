@@ -1360,7 +1360,13 @@ function openPrintSettings(selectUnits) {
 
 function updateCoverButton() {
   const answerOnly = ["answers", "quick"].includes($("coursePrintMode").value);
-  $("printCoverButton").disabled = printPreparing || answerOnly || !activeBook().lessons.length || $("printBookButton").disabled;
+  // 책 전체 인쇄 버튼의 disabled를 DOM에서 읽지 않는다. renderSummary는 이 함수를 먼저 부르고
+  // 그 버튼을 열네 줄 뒤에 갱신하므로, 준비 중인 교재에서 내용 있는 교재로 넘어가면 아직 이전
+  // 교재의 꺼진 값이 읽혀 표지 버튼만 꺼진 채 남았다. 게다가 바로잡히는 시점이
+  // ensureProtectedBook의 응답에 달려 있어, 답안 서비스가 늦으면 하염없이 꺼져 있었다.
+  // 그 버튼도 결국 `printPreparing || !lessons.length`로 정해지므로 같은 조건을 직접 쓴다.
+  // 호출 순서와 무관해져 여섯 군데 호출부 전부가 함께 고쳐진다.
+  $("printCoverButton").disabled = printPreparing || answerOnly || !activeBook().lessons.length;
   $("printCoverButton").textContent = `표지 · ${answerOnly ? "없음" : coverLabels[coverStyle]}`;
   $("printCoverButton").title = answerOnly ? "답안만 인쇄에는 표지가 포함되지 않습니다." : "교재 표지 배경 선택";
 }
