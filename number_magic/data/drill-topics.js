@@ -734,6 +734,8 @@ var ADDITIONAL_THREADS = {
            'MD144','MD145','MD146','MD147','MD148','MD149','MD150','MD151','MD152','MD153'],
   calculus1:['MD154','MD155','MD156','MD157','MD158','MD159']
 };
+/* 유아 교재 G1-7~9호 스레드(NL37~NL43) — 이 줄만 추가한다(다른 묶음과 합칠 때 충돌을 줄이려고 따로 둠) */
+ADDITIONAL_THREADS.preschool=(ADDITIONAL_THREADS.preschool||[]).concat(['NL37','NL38','NL39','NL40','NL41','NL42','NL43'].filter(function(id){return root.NM_THREADS&&root.NM_THREADS[id];}));
 function buildTopics(threads){
   if(!threads) throw new Error('drill-topics: threads.js must load first');
   var topics=CURATED_TOPICS.map(function(cat){
