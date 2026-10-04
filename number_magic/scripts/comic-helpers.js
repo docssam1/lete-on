@@ -88,12 +88,16 @@ function numi(x,y,s){
    ══════════════════════════════════════════════════════════ */
 const CHAR_BOX = 46;      /* s=1일 때 PNG 정사각형 한 변 */
 const CHAR_TOP = -26.24;  /* s=1일 때 정사각형 윗변의 y (발밑이 y+17에 오도록) */
+/* 2026-10-04: 인물이 컷 높이의 29%뿐이라 장면 속 배우가 아니라 도장처럼 보였다.
+   발밑(y+17)과 x는 그대로 두고 키만 키운다 — 좌표를 안 고쳐도 서 있는 자리는 같다. */
+const CHAR_BOOST = 1.3;
 
 function charImg(name,x,y,s){
   s = (s===undefined||s===null) ? 1 : s;
-  const S = CHAR_BOX*s;
+  const S = CHAR_BOX*s*CHAR_BOOST;
+  const foot = y + 17*s;                 /* 발밑 y — 키울 때 고정점 */
   return '<image href="assets/images/characters/'+name+'.png"'
-    +' x="'+(x-S/2).toFixed(2)+'" y="'+(y+CHAR_TOP*s).toFixed(2)+'"'
+    +' x="'+(x-S/2).toFixed(2)+'" y="'+(foot-S*0.94).toFixed(2)+'"'
     +' width="'+S.toFixed(2)+'" height="'+S.toFixed(2)+'"/>';
 }
 

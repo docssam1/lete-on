@@ -8,7 +8,7 @@ module.exports=function(H){
         ground(120)+HILL
         + boy(55,95,0.9)
         + arrow(55,110,90,45,C.ok,3)
-        + txt(75,60,16,C.ok,'10')),
+        + txt(105,60,16,C.ok,'10')),
       text: { ko:'산 정상까지 시속 10km로 천천히 걸어 올라갔어요. 내려올 땐 얼마나 빠를까요?',
               en:'Climbing the hill at 10 km/h, slow and steady. How fast would the way down be?',
               zh:'以每小时10公里的速度慢慢爬上山顶。下山又会有多快呢？' } },
@@ -31,9 +31,9 @@ module.exports=function(H){
               zh:'平均速度是不是直接(10+30)÷2=20呢？等等，真的能这么简单算吗？' } },
     { art: svg(
         ground(110)
-        + boy(100,85,1)
-        + txt(100,45,30,C.ok,'15')
-        + txt(100,105,13,C.sub,'km/h')),
+        + boy(55,85,1)
+        + txt(140,70,34,C.ok,'15')
+        + txt(140,95,14,C.sub,'km/h')),
       text: { ko:'정답은 15km/h예요. 느린 쪽에 시간을 더 썼으니 그냥 더해 반으로 나눌 수 없죠 — 분수도 분모부터 맞추는 조심이 필요해요.',
               en:'The real answer is 15 km/h. More time was spent going slow, so you can\'t just add and halve — fractions need that same care, lining up denominators first.',
               zh:'真正的答案是15公里/小时。慢的那段花的时间更长，不能直接相加除以2——加分数前也需要同样的谨慎，先对齐分母。' } },

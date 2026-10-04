@@ -3669,3 +3669,21 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-dex-card.unknown .nm-dex-fig,.nm-dex-card.silhouette .nm-dex-fig{filter:grayscale(1) brightness(.55) contrast(.9);opacity:.22}
 .nm-dex-card .nm-dex-face{gap:2px;padding:8px 6px}
 .nm-dex-card:not(.big) .nm-dex-read{font-size:12px;line-height:1.2}
+
+/* 수학이야기 만화 그림 — 장면 배경 + 캐릭터 그림자(데이터는 그대로, 보이는 것만 입체감).
+   패널마다 은은한 색조를 돌려 같은 책 안에서도 장면이 구분되게 한다. */
+.nm-comic-art,.nm-mzu-strip-art,.nm-mzu-story-art>div{
+  --sc-a:#fff8e6;--sc-b:#f3e3bd;--sc-h:rgba(201,160,99,.28);
+  background:
+    radial-gradient(120% 55% at 50% 112%,var(--sc-h) 0 62%,transparent 63%),
+    radial-gradient(circle at 18% 22%,rgba(255,255,255,.75) 0 7%,transparent 8%),
+    radial-gradient(circle at 84% 16%,rgba(255,255,255,.6) 0 5%,transparent 6%),
+    linear-gradient(180deg,var(--sc-a),var(--sc-b));
+  border-radius:10px;overflow:hidden}
+:is(.nm-comic-panel,figure,.nm-mzu-story-art>div):nth-child(4n+2) :is(.nm-comic-art,.nm-mzu-strip-art),
+.nm-mzu-story-art>div:nth-child(2n){--sc-a:#eaf3ff;--sc-b:#cfe2f7;--sc-h:rgba(126,164,214,.30)}
+:is(.nm-comic-panel,figure):nth-child(4n+3) :is(.nm-comic-art,.nm-mzu-strip-art){--sc-a:#f1ecfb;--sc-b:#ddd2f2;--sc-h:rgba(139,107,199,.22)}
+:is(.nm-comic-panel,figure):nth-child(4n) :is(.nm-comic-art,.nm-mzu-strip-art){--sc-a:#eaf7ef;--sc-b:#cfe9d9;--sc-h:rgba(46,158,107,.22)}
+.nm-comic-art svg image,.nm-mzu-strip-art svg image,.nm-mzu-story-art svg image{
+  filter:drop-shadow(0 1.6px 1.2px rgba(26,34,51,.30)) drop-shadow(0 0 .8px #fff)}
+.nm-comic-art svg rect[fill="#fdf6e3"],.nm-mzu-strip-art svg rect[fill="#fdf6e3"]{filter:drop-shadow(0 1.5px 1.5px rgba(26,34,51,.18))}

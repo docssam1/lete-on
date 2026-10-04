@@ -1,0 +1,5 @@
+<!doctype html><meta charset="utf-8"><title>comics</title>
+<link rel="stylesheet" href="app/styles.css"><style>body{margin:8px;font:12px sans-serif;background:#fff}.r{display:flex;gap:6px;margin-bottom:4px;align-items:center}.r figure{width:170px}.r svg{width:100%;height:auto;display:block}</style>
+<script src="data/story-comics.js"></script><div id=o></div>
+<script>const ids=(new URLSearchParams(location.search).get('u')||'').split(',').filter(Boolean);const all=Object.keys(NM_COMICS);
+(ids.length?ids:all).forEach(id=>{const d=document.createElement('div');d.className='r';d.innerHTML='<b style="width:44px">'+id+'</b>'+NM_COMICS[id].panels.map(p=>'<figure style="margin:0"><div class="nm-mzu-strip-art">'+p.art+'</div></figure>').join('');o.appendChild(d)});</script>

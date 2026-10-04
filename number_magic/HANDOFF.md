@@ -2578,3 +2578,9 @@ GPT 토큰 소진으로 Claude가 이어받음(Drive `넘버스-공용메모리/
 - `data/placement-paths.js` `autoPlan(result, selection)` 순수 함수 + `app/main.js` `onResult`가 적용 + 로드맵 "자동 편성" 상자 + `S.roadManual`. 규칙·한계는 `docs/placement-goals.md` "자동 편성 → 수동 조절".
 - 검사: `scripts/check-placement-auto.js` 신규. 캐시 버전 `20261004-auto1`(index.html 3곳).
 - 앞서 `(16)`·`(17)`에 "목표별 학습지 자동 편성 없음/남음"으로 적은 항목은 **이 구현으로 속도·양까지 해소**. 남은 것: 목표 대응표(원자료 필요)·예상 기간 수치(검증 전 만들지 않음).
+
+## 수학이야기(네 컷 만화) 그림 품질 (2026-10-04)
+- 캐릭터 PNG 키를 1.3배(`scripts/comic-helpers.js` `CHAR_BOOST`, 발밑·x 고정) — 도장처럼 작던 인물이 장면 배우로 보인다. 1.4는 글자와 겹침이 많아 1.3으로 정함.
+- 장면 배경·캐릭터 그림자는 **CSS만**(`app/styles.css` 끝 `.nm-comic-art`…) — 데이터·검사기 무영향. 패널 순서별 색조 4종.
+- `node scripts/build-comics.js` 재빌드 필요(실행함, 101편). `comics-view.html?u=A-07,B-04` 로 미리보기.
+- M-03 4컷·1컷 배치 조정(큰 인물과 글자 겹침). 나머지 겹침 후보는 `getBBox` 휴리스틱으로 64→약 88건(배경 사각형 포함 노이즈 큼) — 눈으로 이상한 컷 발견 시 해당 소스에서 좌표만 조정.
