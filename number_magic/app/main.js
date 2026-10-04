@@ -6416,6 +6416,19 @@ function mountConceptScene(wrap,u,stageIndex){
    L()도 typeof string이면 그대로 문자열을 돌려주므로 symText가 둘 다 받는다).
    ============================================================ */
 function symText(v){return typeof v==='string'?v:L(v);}
+/* 도감 카드의 기호 친구 — 젤리 SVG 캐릭터(app/jelly-char.js). 기호 마법단 PNG(sym-*.png)가 있으면 그것을 위에 덮고,
+   없으면(대부분) SVG 가 그대로 보인다. 0 은 누미. 둘 다 없는 글자는 예전처럼 글자만. */
+const DEX_PNG={'+':'plus','=':'equal','−':'minus','×':'times','÷':'divide','√':'sqrt','%':'percent','π':'pi','Σ':'sigma','∞':'infinity'};
+const DEX_HUES=['#2f7fd8','#e8742a','#2fa36b','#8a5fd0','#d94f7a','#16a0b8'];
+function dexFigure(sym,px){
+  const base=window.NM_CHAR_BASE||'assets/characters/';
+  if(sym==='0')return`<span class="nm-dex-fig" style="height:${px}px"><img src="${base}numi-0.png" alt="0" draggable="false" class="solo"></span>`;
+  const J=window.NM_JELLY;
+  if(!J||!J.has(sym))return`<div class="nm-dex-sym">${esc(sym)}</div>`;
+  const hue=DEX_HUES[Math.abs([...String(sym)].reduce((a,c)=>a*31+c.charCodeAt(0),7))%DEX_HUES.length];
+  const png=DEX_PNG[sym];
+  return`<span class="nm-dex-fig" style="height:${px}px" role="img" aria-label="${esc(sym)}">${J.svg(sym,{color:hue,size:Math.round(px/1.25),label:sym})}${png?`<img src="${base}sym-${png}.png" alt="" draggable="false" onload="var f=this.parentNode&&this.parentNode.querySelector('svg');if(f)f.style.visibility='hidden'" onerror="this.style.display='none'">`:''}</span>`;
+}
 /* "새 기호 카드!" 모달 — 앞면(기호+읽는 법) 탭하면 뒤집혀 뒷면(번역+탄생 이야기).
    닫으면(=수집하기) S.symbolDex에 저장하고 목록의 다음 기호(있으면)를 이어서 띄운다. */
 function symbolCardModalHtml(sy){
@@ -6426,7 +6439,7 @@ function symbolCardModalHtml(sy){
       <div class="nm-dex-card big" id="nmSymFlip">
         <div class="nm-dex-flip">
           <div class="nm-dex-face front">
-            <div class="nm-dex-sym">${esc(sy.sym)}</div>
+            ${dexFigure(sy.sym,118)}
             <div class="nm-dex-read">${esc(symText(sy.read))}</div>
             <div class="nm-symmodal-tap">👆 ${ko?'탭해서 뒤집기':en?'Tap to flip':'点击翻面'}</div>
           </div>
@@ -6468,14 +6481,14 @@ function symDexCardHtml(sym,real){
   /* 빈 자리(§3): 물음표 대신 그 기호 자체를 20% 흐리게(실루엣)로 미리 보여준다 —
      실제 문구는 SYMBOL_DEX_CANON의 glyph(sym 인자) 그대로, 진짜 뜻은 만나야 열린다. */
   const notMet=`<div class="nm-dex-card unknown"><div class="nm-dex-flip"><div class="nm-dex-face front">
-    <div class="nm-dex-sym">${esc(sym)}</div><div class="nm-dex-read">${ko?'아직 만나지 못한 기호':en?'Not met yet':'尚未遇到的符号'}</div>
+    ${dexFigure(sym,70)}<div class="nm-dex-read">${ko?'아직 만나지 못한 기호':en?'Not met yet':'尚未遇到的符号'}</div>
   </div></div></div>`;
   if(!real)return notMet;
   const collected=!!S.symbolDex[real.sym];
   if(!collected)return notMet.replace('nm-dex-card unknown','nm-dex-card silhouette');
   return`<div class="nm-dex-card collected" data-sym="${esc(real.sym)}">
     <div class="nm-dex-flip">
-      <div class="nm-dex-face front"><div class="nm-dex-sym">${esc(real.sym)}</div><div class="nm-dex-read">${esc(symText(real.read))}</div></div>
+      <div class="nm-dex-face front">${dexFigure(real.sym,70)}<div class="nm-dex-read">${esc(symText(real.read))}</div></div>
       <div class="nm-dex-face back"><div class="nm-dex-translate">${esc(symText(real.translate))}</div><div class="nm-dex-birth">${esc(symText(real.birth))}</div></div>
     </div>
   </div>`;

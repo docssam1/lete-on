@@ -1837,9 +1837,9 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 .nm-dex-sec-h{font-size:12.5px;font-weight:800;color:var(--sub);margin:18px 0 8px}
 .nm-dex-hint{font-size:12px;color:var(--sub);text-align:center;margin:12px 0 0;line-height:1.5}
 
-.nm-dex-card{perspective:900px;height:118px;cursor:default}
+.nm-dex-card{perspective:900px;height:138px;cursor:default}
 .nm-dex-card.collected{cursor:pointer}
-.nm-dex-card.big{height:170px;max-width:260px;margin:14px auto}
+.nm-dex-card.big{height:230px;max-width:260px;margin:14px auto}
 .nm-dex-flip{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.3,.8,.4,1);
   transform-style:preserve-3d}
 .nm-dex-card.flipped .nm-dex-flip{transform:rotateY(180deg)}
@@ -3661,3 +3661,11 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-dg-or::before,.nm-dg-or::after{content:"";flex:1;height:1px;background:var(--line)}
 .nm-dg-gradeprev em{font-style:normal;font-size:11px;font-weight:600;color:var(--sub);line-height:1.45;word-break:keep-all;margin-top:2px}
 .nm-dg-paper{text-decoration:none;text-align:center;box-sizing:border-box}
+/* 도감 카드의 젤리 기호 친구(app/jelly-char.js) — 빈 카드는 흐린 실루엣, 수집하면 제 색 */
+.nm-dex-fig{position:relative;display:inline-flex;align-items:flex-end;justify-content:center;max-width:100%}
+.nm-dex-fig svg{height:100%;width:auto;display:block}
+.nm-dex-fig img{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:100%;width:auto;max-width:none;object-fit:contain}
+.nm-dex-fig img.solo{position:static;transform:none}
+.nm-dex-card.unknown .nm-dex-fig,.nm-dex-card.silhouette .nm-dex-fig{filter:grayscale(1) brightness(.55) contrast(.9);opacity:.22}
+.nm-dex-card .nm-dex-face{gap:2px;padding:8px 6px}
+.nm-dex-card:not(.big) .nm-dex-read{font-size:12px;line-height:1.2}

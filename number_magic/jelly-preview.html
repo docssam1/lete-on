@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><title>젤리 기호 캐릭터 시안</title>
+<style>body{margin:0;background:#fffaf0;font-family:system-ui,sans-serif}h1{font-size:16px;margin:10px 14px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;padding:10px}.c{background:#fff;border:1px solid #eadfc8;border-radius:12px;text-align:center;padding:6px 4px}.c b{display:block;font-size:12px;color:#665}</style>
+<h1>젤리 기호 캐릭터 — 전체</h1><div class="g" id="g"></div>
+<script src="app/jelly-char.js"></script><script>
+const cols=['#2f7fd8','#e8742a','#2fa36b','#8a5fd0','#d94f7a','#16a0b8'];
+const q=new URLSearchParams(location.search);const only=q.get('g');
+let list=NM_JELLY.glyphs();if(only)list=only.split(',');
+document.getElementById('g').innerHTML=list.map((g,i)=>'<div class="c">'+NM_JELLY.svg(g,{color:cols[i%cols.length],size:130})+'<b>'+g+'</b></div>').join('');window.READY=1;</script>
