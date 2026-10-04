@@ -243,6 +243,9 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      roadSpeed — 같은 기간에 회차를 더 많이 나감: 로드맵의 주차·개월을 1/배수로 줄인다(회차·내용은 그대로).
      roadAmount — 한 회차 교과 드릴 문항 수를 배수만큼(exam.js getAmount, 6의 배수·상한 지킴). */
   roadSpeed:1, roadAmount:1,
+  /* 자동 편성(2026-10-04, 원장 "자동 편성을 하고 그 이후 수동 조절 가능하도록") — 진단+목표로 속도·양을 먼저 맞춘다.
+     roadManual — 사용자가 로드맵에서 속도·양을 직접 고쳤으면 true: 이후 새 진단은 값을 덮어쓰지 않고 제안만 한다. */
+  roadManual:false,
   roadPrints:{}, /* 연산 로드맵 세션 인쇄 회수(2026-09-04) — {'C5-0':2, 'C7-3':1, ...}
     key=courseKey+'-'+sessionIdx. exam.js showRoadPick의 "인쇄 N장" 표시·재인쇄 버튼용,
     잠금과 무관한 순수 카운터라 지워져도 학습에 지장 없음. */
@@ -3788,7 +3791,12 @@ function screenCourseRoad(){
             <h3>${esc(L(gp.goal.label))}</h3>${gp.target?`<p>${esc(L(gp.target.label))} · ${lk('목표 대응 확인 필요','Target mapping needs verification','目标对应需要确认')}</p>`:''}
             <p>${lk('진단 때 선택한 본진도','Main study selected for this check','测评时选择的主要进度')}: ${esc(L(gp.main.label))}</p>
             <p>${lk('보강 후보','Practice candidates','补充练习候选')} ${wrong} · ${lk('재확인 후보','Recheck candidates','再确认候选')} ${recheck}</p>
-            <p>${esc(L(gp.goal.focus))}</p><p class="pd-note">${lk('목표별 학습 방향 제안이며 기존 진도·학습지 편성을 자동 변경하지 않습니다.','Goal-specific guidance does not automatically change existing progress or worksheets.','按目标提出建议，不自动改变现有进度或练习纸编排。')}</p>
+            <p>${esc(L(gp.goal.focus))}</p><p class="pd-note">${lk('진단과 목표에 맞춰 속도·양을 먼저 맞춰 두었어요. 아래 ‘속도 · 양 조절’에서 언제든 직접 바꿀 수 있고, 기존 진도 기록은 바뀌지 않아요.','Speed and amount are set from your check and goal first. Change them any time under “Speed · amount” below; your progress records are not changed.','已根据测评和目标先设好速度与分量。可随时在下方“速度 · 分量”中修改，已有进度记录不会改变。')}</p>${(()=>{const a=gp.autoPlan||S.placement.autoPlan;if(!a)return '';const same=(S.roadSpeed===a.speed&&S.roadAmount===a.amount);
+              return `<div class="pd-auto"><h4>${lk('자동 편성','Automatic plan','自动编排')}</h4>
+                <p><b>${lk('속도','Speed','速度')} ${a.speed}${lk('배','×','倍')} · ${lk('양','Amount','分量')} ${a.amount}${lk('배','×','倍')} · ${a.cadence==='w1'?lk('주 1회','once a week','每周1次'):lk('주 2회','twice a week','每周2次')}</b></p>
+                <ul>${(a.reasons||[]).map(r=>`<li>${esc(L(r))}</li>`).join('')}</ul>
+                <p class="pd-note">${esc(L(a.note))} ${S.roadManual&&!same?lk('지금은 직접 고른 값을 쓰고 있어요.','You are currently using values you set yourself.','当前使用的是你自己设置的值。'):''}</p>
+                ${same?'':`<button type="button" class="pd-support-link" data-auto-apply="1">${lk('이 추천으로 맞추기','Use this suggestion','采用此建议')}</button>`}</div>`;})()}
             <div class="pd-road-actions"><button type="button" class="pd-support-link" data-placement-course="${esc(gp.main.course)}">${lk('본진도 위치','Main-study location','主要进度位置')}</button>${support.length?`<button type="button" class="pd-support-link" data-placement-course="${esc(support[0].course)}">${lk('첫 보강·재확인 위치','First practice/recheck location','首个补充练习或再确认位置')}</button>`:''}</div>
           </section>`;
         }
@@ -3974,10 +3982,13 @@ function screenCourseRoad(){
       el.onclick=()=>{ S.roadPace=el.dataset.pace; save(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-seg button[data-speed]').forEach(el=>{
-      el.onclick=()=>{ S.roadSpeed=+el.dataset.speed; save(); draw(true); };
+      el.onclick=()=>{ S.roadSpeed=+el.dataset.speed; S.roadManual=true; save(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-seg button[data-amount]').forEach(el=>{
-      el.onclick=()=>{ S.roadAmount=+el.dataset.amount; save(); syncAmount(); draw(true); };
+      el.onclick=()=>{ S.roadAmount=+el.dataset.amount; S.roadManual=true; save(); syncAmount(); draw(true); };
+    });
+    body.querySelectorAll('[data-auto-apply]').forEach(el=>{
+      el.onclick=()=>{ const a=S.placement&&S.placement.autoPlan; if(!a)return; S.roadSpeed=a.speed; S.roadAmount=a.amount; S.roadManual=false; a.applied=true; save(); syncAmount(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
@@ -4476,6 +4487,17 @@ function screenPlacement(){
         S.placement.weak=Array.from(new Set(path.support.filter(x=>x.wrong>0).map(x=>x.t)));
         // Explicitly chosen frequency is a planning preference, not acceleration.
         S.roadCadence=path.config.cadence;
+        // 자동 편성: 목표+진단으로 속도·양 시작값을 맞춘다. 직접 고친 적이 있으면(roadManual) 제안만 저장한다.
+        try{
+          const paths=window.NM_PLACEMENT_PATHS;
+          if(paths&&paths.autoPlan){
+            const auto=paths.autoPlan(result,run.selection);
+            auto.at=Date.now();
+            auto.applied=!S.roadManual;
+            if(auto.applied){S.roadSpeed=auto.speed;S.roadAmount=auto.amount;syncAmount();}
+            S.placement.autoPlan=auto;
+          }
+        }catch(_){/* 자동 편성은 진단 결과 저장을 막지 않는다 */}
       }
     }
   });

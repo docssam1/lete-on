@@ -62,7 +62,37 @@
       schedule: { cadence: config.cadence, weeks: null, targetMapping: config.goal === 'curriculum' ? 'not-applicable' : 'pending',
         reason: text('실제 학습 속도와 보강량을 확인한 뒤 기간을 조정합니다.', 'Adjust the timeline after observing learning pace and practice needs.', '确认实际学习速度和补充练习量后，再调整周期。') } };
   }
-  const api = { goals: clone(goals), targets: clone(targets), normalize, recommend };
+  /* ── 자동 편성(2026-10-04, 원장 "자동 편성을 하고 그 이후 수동 조절 가능하도록") ──
+     진단 결과 + 고른 목표 → 로드맵의 '속도'·'양' 시작값. 이 값은 **처음 맞춰 두는 값**이고, 로드맵의 '속도 · 양 조절'에서
+     언제든 직접 바꾼다(바꾸면 그 뒤 새 진단이 덮어쓰지 않고 제안만 한다).
+     · 목표 기본값: 교과=속도 1·양 1 / 소마·필즈=양 1.25(수를 바꾸고 조건을 읽는 연습을 더) / 이과 최상위=속도 1.25(선수 연산을 먼저).
+     · 진단 보정(이전 6·현재 10 의 맞힌 수만 본다. 다음 4문항은 승급 근거로 쓰지 않는다):
+         안정(이전 ≥5 그리고 현재 ≥9) → 속도 한 칸 위로 / 흔들림(현재 ≤5 또는 이전 ≤3) → 속도 한 칸 아래로 + 양 한 칸 위로.
+       모름은 맞힌 것으로 세지 않는다. 한 문제 실수로 크게 움직이지 않게 한 칸씩만, 속도는 0.85~1.5 안에서만 움직인다.
+     · 숫자는 설계 시작값이며 실제 학습 기록으로 검증한 것이 아니다. 합격·숙달·도달 시점을 뜻하지 않는다. */
+  const MULTS = [0.7, 0.85, 1, 1.25, 1.5];
+  const step = (v, d, lo, hi) => MULTS[Math.max(MULTS.indexOf(lo), Math.min(MULTS.indexOf(hi), MULTS.indexOf(v) + d))];
+  function autoPlan(result, selection) {
+    if (!result || !result.bands) throw new Error('Diagnosis result is required');
+    const config = normalize(selection), b = result.bands;
+    const prev = (b.previous && b.previous.correct) || 0, cur = (b.current && b.current.correct) || 0;
+    let speed = 1, amount = 1;
+    const reasons = [];
+    if (config.goal === 'competition') { amount = 1.25; reasons.push(text('소마·필즈 목표: 수를 바꾸고 조건을 읽는 연습을 조금 더 하도록 양을 1.25배로 시작해요.', 'SOMA/Fields goal: start with 1.25× amount for more number-restructuring and condition-reading practice.', '目标为SOMA/Fields：分量从1.25倍开始，多练换数计算和读条件。')); }
+    else if (config.goal === 'science') { speed = 1.25; reasons.push(text('이과 최상위권 준비: 다음 교과에 필요한 선수 연산을 먼저 만나도록 속도를 1.25배로 시작해요.', 'Advanced science-math prep: start at 1.25× speed so prerequisite arithmetic arrives sooner.', '理科高阶准备：速度从1.25倍开始，先接触后续所需的先修运算。')); }
+    else reasons.push(text('탄탄한 교과 학습: 정해 둔 편성 그대로(속도 1배·양 1배)로 시작해요.', 'Strong school foundation: start with the set plan (1× speed, 1× amount).', '扎实的学校学习：按既定安排（速度1倍、分量1倍）开始。'));
+    let basis = 'goal';
+    if (prev >= 5 && cur >= 9) {
+      speed = step(speed, 1, 0.85, 1.5); basis = 'stable';
+      reasons.push(text('이전 ' + prev + '/6 · 현재 ' + cur + '/10으로 안정적이라 속도를 한 칸 올렸어요.', 'Earlier ' + prev + '/6 and current ' + cur + '/10 look steady, so speed moves up one step.', '之前' + prev + '/6、现在' + cur + '/10较稳定，速度上调一档。'));
+    } else if (cur <= 5 || prev <= 3) {
+      speed = step(speed, -1, 0.85, 1.5); amount = step(amount, 1, 1, 1.5); basis = 'shaky';
+      reasons.push(text('이전 ' + prev + '/6 · 현재 ' + cur + '/10이라 속도는 한 칸 낮추고 양은 한 칸 늘려 더 많이 연습하도록 했어요.', 'Earlier ' + prev + '/6 and current ' + cur + '/10: speed moves down one step and amount up one step for more practice.', '之前' + prev + '/6、现在' + cur + '/10：速度下调一档、分量上调一档，多做练习。'));
+    } else reasons.push(text('이전 ' + prev + '/6 · 현재 ' + cur + '/10이라 목표 기본값을 그대로 둬요.', 'Earlier ' + prev + '/6 and current ' + cur + '/10: keep the goal default.', '之前' + prev + '/6、现在' + cur + '/10：保持目标默认值。'));
+    return { version: 'auto-plan-v1', goal: config.goal, cadence: config.cadence, speed, amount, basis, evidence: { previous: prev, current: cur }, reasons,
+      note: text('처음 맞춰 둔 값이에요. ‘속도 · 양 조절’에서 언제든 바꿀 수 있고, 정답이나 합격을 뜻하지 않아요.', 'These are starting values. Change them any time under “Speed · amount”; they do not predict results or admission.', '这是起始值，可随时在“速度 · 分量”中修改；不代表结果或录取。') };
+  }
+  const api = { goals: clone(goals), targets: clone(targets), normalize, recommend, autoPlan };
   W.NM_PLACEMENT_PATHS = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })();
