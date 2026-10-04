@@ -27,7 +27,7 @@ async function openGame() {
     if (request !== generation) return;
     const activity = Object.hasOwn(HANDS_ON_ACTIVITIES, grant.activityId) ? HANDS_ON_ACTIVITIES[grant.activityId] : null;
     if (!activity || activity.lesson !== grant.lessonId || !unitForLesson(grant.bookId, grant.lessonId)?.activities.includes(grant.activityId)) throw new Error("game_scope_invalid");
-    const { mountSingleHandsOn } = await import("./golden-bell-hands-on.js?v=20261004a");
+    const { mountSingleHandsOn } = await import("./golden-bell-hands-on.js?v=20261004b");
     if (request !== generation) return;
     mountSingleHandsOn(content, grant.activityId);
     document.getElementById("gameTitle").textContent = activity.title;

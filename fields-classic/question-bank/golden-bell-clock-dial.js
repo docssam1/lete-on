@@ -169,6 +169,8 @@ export function createDial(host, { onTick, forceFlat = false } = {}) {
     // 단추 상태(표시·누를 수 있는지)는 바로 반영하고, 그림은 다음 프레임에 그린다.
     mark(value, kind) { if (kind) state.marks.set(value, kind); else state.marks.delete(value); renderer.rebuild(); placePicks(); queue(); },
     clearMarks() { state.marks.clear(); renderer.rebuild(); placePicks(); queue(); },
+    // 바늘 숨기기: 회색 출발 바늘과 숫자만 남긴다(바늘 없이 레벨).
+    setHidden(hidden) { state.hideHand = hidden; queue(); },
     setPickable(enabled, handler) { state.pickable = enabled; onPick = handler || null; placePicks(); queue(); },
     setDraggable(enabled, handler) { state.draggable = enabled; onDragTurns = handler || null; stage.classList.toggle("draggable", enabled); },
     pulse(kind) {

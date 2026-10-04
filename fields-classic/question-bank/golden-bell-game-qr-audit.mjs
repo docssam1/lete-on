@@ -89,15 +89,15 @@ try {
       assert.equal(await page.locator("a,button[data-hand-activity],[data-hand-action=questions]").count(), 0);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
       if (activity.kind === "clock") {
-        // 시계는 네 단계 게임(golden-bell-clock-game.js). 1단계가 원본 체험 3도전 그대로라 그것을 풀고
-        // 2단계로 넘어가는지 본다. 게임 전체는 golden-bell-clock-game-audit.mjs가 검사한다.
+        // 시계는 레벨 게임(golden-bell-clock-game.js). 레벨 1이 원본 체험 3도전으로 시작하므로 그것을 풀고
+        // 넷째 문제로 넘어가는지 본다. 게임 전체는 golden-bell-clock-game-audit.mjs가 검사한다.
         await page.locator("[data-clock-go]").click();
         for (const round of activity.rounds) {
           for (let i = 0; i < Math.abs(round.turns); i++) await page.locator(`[data-clock-turn="${Math.sign(round.turns)}"]:not([disabled])`).click();
           await page.locator("[data-clock-check]:not([disabled])").click();
           await page.locator("[data-clock-next]").click();
         }
-        assert.equal(await page.locator(".cg").getAttribute("data-stage"), "predict");
+        assert.equal(await page.locator(".cg").getAttribute("data-problem"), "3");
         assert.equal(await page.locator(".cg-coach img").evaluate((img) => img.complete && img.naturalWidth > 0), true);
       } else {
         for (const [i, round] of activity.rounds.entries()) {

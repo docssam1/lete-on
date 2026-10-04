@@ -3,7 +3,7 @@ import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts } from "./golden-bell-hands-on-folding.js?v=20260925a";
 import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20260925a";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261003c";
-import { mountClockGame } from "./golden-bell-clock-game.js?v=20261004a";
+import { mountClockGame } from "./golden-bell-clock-game.js?v=20261004b";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sessions = new Map();

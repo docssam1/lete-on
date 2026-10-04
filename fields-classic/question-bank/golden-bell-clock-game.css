@@ -10,13 +10,6 @@
 
 /* 위 막대: 단계 · 별 · 소리 */
 .gold-hands-on .cg-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.gold-hands-on .cg-stages { display: flex; gap: 6px; flex: 1 1 auto; margin: 0; padding: 0; list-style: none; min-width: 0; }
-.gold-hands-on .cg-stages li { display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 6px; border-radius: 999px; background: #eef2f6; color: var(--cg-muted); font-size: 14px; font-weight: 800; white-space: nowrap; }
-.gold-hands-on .cg-stage-no { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #fff; font-size: 13px; }
-.gold-hands-on .cg-stages li.now { background: var(--cg-ink); color: #fff; box-shadow: 0 6px 16px rgba(29, 52, 70, .25); }
-.gold-hands-on .cg-stages li.now .cg-stage-no { background: var(--cg-gold); color: var(--cg-ink); }
-.gold-hands-on .cg-stages li.done { background: #e3f5ea; color: var(--cg-good); }
-.gold-hands-on .cg-stage-stars { color: #b07b00; font-size: 13px; }
 .gold-hands-on .cg-score { display: flex; align-items: center; gap: 8px; }
 .gold-hands-on .cg-stars { display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border-radius: 999px; background: #fff6da; color: #8a5e00; font-size: 18px; font-weight: 900; box-shadow: inset 0 0 0 2px #f6d77f; }
 .gold-hands-on .cg-stars::before { content: "★"; color: var(--cg-gold); font-size: 20px; }
@@ -104,8 +97,8 @@
 .gold-hands-on .cg-card:hover:not(:disabled) { border-color: var(--cg-cw); transform: translateY(-2px); }
 .gold-hands-on .cg-card[data-state="bad"] { border-color: #f0b2ad; background: #fff5f4; opacity: .6; text-decoration: line-through; }
 
-/* 진행 점 */
-.gold-hands-on .cg-track { display: flex; justify-content: center; gap: 6px; margin: 0; padding: 0; list-style: none; }
+/* 진행 점 (위 막대 안) */
+.gold-hands-on .cg-track { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; flex: 1 1 160px; margin: 0; padding: 0; list-style: none; min-width: 0; }
 .gold-hands-on .cg-track li { width: 14px; height: 14px; border-radius: 50%; background: #dfe7ee; }
 .gold-hands-on .cg-track li.now { background: var(--cg-ink); transform: scale(1.2); }
 .gold-hands-on .cg-track li.s2 { background: var(--cg-gold); box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--cg-gold); }
@@ -138,9 +131,6 @@
   .gold-hands-on .cg-board { min-height: 0; padding: 12px 10px 10px; border-radius: 18px; }
   .gold-hands-on .cg-dial-host { min-height: 330px; }
   .gold-hands-on .cg-mission { padding: 10px 12px; font-size: 18px; }
-  .gold-hands-on .cg-stages li { padding: 4px 8px 4px 4px; font-size: 13px; }
-  .gold-hands-on .cg-stage-name { display: none; }
-  .gold-hands-on .cg-stages li.now .cg-stage-name { display: inline; }
   .gold-hands-on .cg-coach { grid-template-columns: 60px minmax(0, 1fr); }
   .gold-hands-on .cg-coach img { width: 60px; height: 66px; }
   .gold-hands-on .cg-coach p { font-size: 15px; min-height: 0; }
@@ -153,4 +143,29 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .gold-hands-on .cg-dial.pulse-good, .gold-hands-on .cg-dial.pulse-bad, .gold-hands-on .cg-score.bump .cg-stars, .gold-hands-on .cg-next, .gold-hands-on .cg-banner { animation: none; }
+}
+
+/* 레벨 */
+.gold-hands-on .cg-level { display: inline-flex; align-items: center; gap: 10px; padding: 5px 14px 5px 5px; border: 0; border-radius: 999px; background: var(--cg-ink); color: #fff; font-size: 15px; font-weight: 800; box-shadow: 0 6px 16px rgba(29, 52, 70, .25); cursor: pointer; }
+.gold-hands-on .cg-level-no { display: grid; place-items: center; min-width: 32px; height: 32px; padding: 0 6px; border-radius: 999px; background: var(--cg-gold); color: var(--cg-ink); font-size: 16px; font-weight: 900; }
+.gold-hands-on .cg-level-more { opacity: .7; font-size: 12px; }
+.gold-hands-on .cg-level:focus-visible, .gold-hands-on .cg-tile:focus-visible { outline: 3px solid var(--cg-cw); outline-offset: 3px; }
+.gold-hands-on .cg-starrow { color: var(--cg-gold); letter-spacing: 2px; white-space: nowrap; }
+.gold-hands-on .cg-starrow i { color: #d9e2e8; font-style: normal; }
+.gold-hands-on .cg-result-stars { font-size: 46px; line-height: 1; }
+.gold-hands-on .cg-result-stars .cg-starrow { display: inline-block; animation: cg-bump 600ms cubic-bezier(.2, 1.6, .4, 1); }
+.gold-hands-on .cg-banner-sub { margin: -8px 0 16px; font-size: 14px; }
+.gold-hands-on .cg-unlock { margin: -6px 0 16px; padding: 8px 12px; border-radius: 12px; background: #e3f5ea; color: var(--cg-good); font-weight: 800; }
+.gold-hands-on .cg-map { width: min(620px, 100%); max-height: 100%; overflow: auto; }
+.gold-hands-on .cg-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.gold-hands-on .cg-tile { display: grid; justify-items: center; gap: 4px; padding: 12px 6px; border: 2px solid var(--cg-line); border-radius: 16px; background: #fff; color: var(--cg-ink); font-size: 13px; font-weight: 800; box-shadow: 0 4px 0 #d7e1e8; cursor: pointer; }
+.gold-hands-on .cg-tile b { font-size: 24px; }
+.gold-hands-on .cg-tile span { word-break: keep-all; text-align: center; }
+.gold-hands-on .cg-tile.current { border-color: var(--cg-cw); box-shadow: 0 4px 0 #9cc0ef; }
+.gold-hands-on .cg-tile.endless { background: linear-gradient(160deg, #fff8e6, #ffe9b8); }
+.gold-hands-on .cg-tile:disabled { opacity: .5; cursor: default; box-shadow: none; }
+.gold-hands-on .cg-tile:hover:not(:disabled) { transform: translateY(-2px); }
+@media (max-width: 860px) {
+  .gold-hands-on .cg-level-name { max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .gold-hands-on .cg-track { order: 5; flex-basis: 100%; }
 }
