@@ -856,6 +856,14 @@
   .nm-dv-line { border-bottom:1.2px solid #8d93a1; width:3.6em; margin:2px 0 3px 0; }
   .nm-dv-rem { height:1.5em; }
   .nm-w2-item-vis .nm-divbox { margin:4px auto 0; }
+  .nm-divbox-dec .nm-dv-b { min-width:2.6em; box-sizing:border-box; }
+  .nm-divbox-dec .nm-dv-q { margin-left:calc(2.6em + 14px); }
+  .nm-divbox-dec .nm-dv-cell, .nm-divbox-dec .nm-dv-d { margin-right:0; box-sizing:border-box; width:1.15em; border:1px solid transparent; }
+  .nm-divbox-dec .nm-dv-cell { border:1px dashed #c3c9d6; }
+  .nm-divbox-dec .nm-dv-add { border-color:#9aa3b5; }
+  .nm-dv-gap { display:inline-flex; align-items:flex-end; justify-content:center; width:.5em; height:1.5em; font-weight:800; font-size:1.15em; line-height:1; }
+  .nm-dv-gap-q { color:#1f5fbf; }
+  .nm-dv-add { border-color:#9aa3b5; }
   /* 마법 노트 지면 */
   .nm-w2-page-magic { gap:0; }
   /* 매거진형 개념 노트(2026-09-25) */
@@ -2912,7 +2920,40 @@ function bondSvg(whole, known){
 /* ── 세로 나눗셈 상자(2026-09-19, 교과서 "(두 자리)÷(한 자리)" 지면) ──
    3)17 꼴로 나누는 수·나누어지는 수를 놓고, 위에 몫 쓸 자리를, 아래에 빼는 줄과 나머지 자리를 둔다.
    학생이 직접 쓰는 자리라 숫자는 넣지 않는다(정답지는 따로 낸다). */
+/* 소수 나눗셈 상자(2026-10-05, DC3 L4·L6·L8) — 나누어지는 수의 자리마다 칸 하나, 칸 사이마다 좁은 틈 하나.
+   틈은 두 줄(몫·나누어지는 수)에 똑같이 놓여 자리가 위아래로 맞는다. 나누어지는 수 줄의 틈에는 원래 소수점만
+   찍고(옮긴 자리는 아이가 화살표로 표시), 몫 줄의 틈에는 몫의 소수점을 찍는다 — 옮긴 소수점 바로 위.
+   자연수÷소수처럼 자리가 모자라면 0 을 쓸 빈 칸(점선)을 뒤에 붙인다. */
+function divBoxDecHtml(d){
+  const x = d.dec;
+  const aDigits = String(x.aStr).replace('.', '').split('');
+  const p0 = String(x.aStr).indexOf('.') < 0 ? aDigits.length : String(x.aStr).indexOf('.');
+  const cols = aDigits.length + (x.zeros || 0);
+  const p1 = p0 + x.k;                                   /* 옮긴 소수점 — 열 p1-1 뒤 */
+  const qInt = String(x.qInt), qFrac = String(x.qFrac || '');
+  const qStart = p1 - qInt.length, qEnd = p1 - 1 + qFrac.length;
+  const gap = (txt, cls) => `<span class="nm-dv-gap${cls ? ' ' + cls : ''}">${txt}</span>`;
+  let qRow = '', aRow = '';
+  for(let i = 0; i < cols; i++){
+    qRow += (i < qStart || i > qEnd) ? '<span class="nm-dv-cell" style="visibility:hidden"></span>' : '<span class="nm-dv-cell"></span>';
+    aRow += i < aDigits.length ? `<span class="nm-dv-d">${esc(aDigits[i])}</span>` : '<span class="nm-dv-cell nm-dv-add"></span>';
+    if(i < cols - 1){
+      qRow += gap(qFrac && i === p1 - 1 ? '.' : '', 'nm-dv-gap-q');
+      aRow += gap(String(x.aStr).indexOf('.') >= 0 && i === p0 - 1 ? '.' : '');
+    }
+  }
+  const steps = Math.min(4, Math.max(1, (qInt.replace(/^0+/, '') + qFrac).length));
+  let body = '';
+  for(let i = 0; i < steps; i++) body += '<div class="nm-dv-sub"></div><div class="nm-dv-line"></div>';
+  body += '<div class="nm-dv-rem"></div>';
+  return `<div class="nm-divbox nm-divbox-dec" role="img" aria-label="${esc(lk('세로 나눗셈','Long division','竖式除法'))} ${esc(String(x.aStr))} ÷ ${esc(String(x.bStr))}">
+  <div class="nm-dv-q">${qRow}</div>
+  <div class="nm-dv-row"><span class="nm-dv-b">${esc(String(x.bStr))}</span><span class="nm-dv-bracket">${aRow}</span></div>
+  <div class="nm-dv-work">${body}</div>
+</div>`;
+}
 function divBoxHtml(d){
+  if(d && d.dec) return divBoxDecHtml(d);
   if(!d || !(d.a > 0) || !(d.b > 0)) return '';
   /* 몫 칸은 "몫이 설 수 있는 자리"만 — 35÷3이면 두 칸, 17÷3이면 한 칸.
      나누어지는 수의 자리 수에서 첫 몫이 서기 전 건너뛰는 자리를 뺀다. */
@@ -5957,7 +5998,7 @@ function renderRoundPagesBody(item, opts){
   const instrText = item.instr ? pickL(item.instr)
     : layout.type === 'word'
     ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
-    : pickL(th.instr || W2_INSTR[item.thread]) || lk('계산을 하시오.','Solve each problem.','请计算下列各题。');
+    : pickL(((th.levels || []).find(l => l.id === item.level) || {}).instr || th.instr || W2_INSTR[item.thread]) || lk('계산을 하시오.','Solve each problem.','请计算下列各题。');
   const html = pages.map((pageItems, pi) => {
     const first = pi === 0;
     const cap = first ? firstCap : layout.perPage;
@@ -6737,6 +6778,10 @@ const NM_EXAM = {
           concept:'나누기는 역수의 곱셈! ÷를 ×로 바꾸고 뒤 분수를 뒤집어 곱해요.\n예) 1/2 ÷ 1/4 = 1/2 × 4/1 = 2'},
         {label:'소수의 나눗셈',thread:'DC3',level:1,desc:'나누어떨어짐',
           concept:'소수 나눗셈 총정리.\n예) 4.8 ÷ 6 = 0.8'},
+        {label:'(소수)÷(소수) 가로셈',thread:'DC3',level:5,desc:'소수점 똑같이 옮기기',
+          concept:'나누는 수가 자연수가 되도록 두 수의 소수점을 똑같이 옮겨요.\n예) 6.72 ÷ 0.4 = 67.2 ÷ 4 = 16.8'},
+        {label:'(소수)÷(소수) 세로셈',thread:'DC3',level:6,desc:'몫의 소수점 위치',
+          concept:'세로셈에서도 소수점을 옮기고, 몫의 소수점은 옮긴 소수점 바로 위에 찍어요.\n예) 0.4)6.72 → 4)67.2 → 16.8'},
         {label:'비와 비율 종합',thread:'MX3',level:2,desc:'할·푼·리',
           concept:'우리나라식 소수 비율 표현이에요.\n예) 0.354 → 3할 5푼 4리'},
         {label:'혼합계산 끝판왕',thread:'MX1',level:3,desc:'중괄호까지',magic:true,

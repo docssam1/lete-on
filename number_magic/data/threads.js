@@ -1024,6 +1024,8 @@ DC2:{ name:{ko:'소수 곱셈',en:'Decimal ×',zh:'小数乘法'}, gen:'dc2_decM
   widgets:['steps','decimal'],
   levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
 DC3:{ name:{ko:'소수 나눗셈',en:'Decimal ÷',zh:'小数除法'}, gen:'dc3_decDiv', prereq:['DV5','DC2'],
+  /* 세로셈은 레벨이 정한다(L4·L6·L8 — 소수점 있는 나눗셈 상자 divBox). 일반 세로셈 판정이 ÷ 를 덧셈처럼 쌓지 않게. */
+  noVertical:true,
   concept:{ko:'나누는 수가 정수가 되도록 두 수에 같은 수를 곱한 뒤 나눠요. 1.2÷0.4는 12÷4와 같아 3이에요. 자연수끼리도 나누어떨어지지 않으면 나머지로 끝내지 않고 몫을 소수로 이어 나눠요 — 3÷4는 0.75예요.',
     en:'Multiply both numbers by the same amount until the divisor is whole, then divide. So 1.2÷0.4 is the same as 12÷4, which is 3. When whole numbers do not divide evenly, carry on instead of stopping at a remainder — 3÷4 is 0.75.',
     zh:'两数同时乘同一个数，使除数变成整数再除。1.2÷0.4等于12÷4，得3。整数相除除不尽时，不要停在余数上，把商继续写成小数——3÷4=0.75。'},
@@ -1034,7 +1036,20 @@ DC3:{ name:{ko:'소수 나눗셈',en:'Decimal ÷',zh:'小数除法'}, gen:'dc3_d
           {id:2,label:{ko:'몫이 소수인 (자연수)÷(자연수)',en:'whole ÷ whole, decimal quotient',zh:'整数÷整数(商是小数)'},params:{mode:'natural'},
            concept:{ko:'자연수끼리도 나누어떨어지지 않으면 나머지로 끝내지 않고 0을 내려 몫을 소수로 이어 나눠요 — 58÷25는 2 남고 8, 80을 25로 나눠 3, 다시 50을 나눠 2라서 2.32예요.',
              en:'When whole numbers do not divide evenly, do not stop at a remainder — bring down a zero and carry the quotient into decimals: 58÷25 gives 2 remainder 8, then 80÷25=3 and 50÷25=2, so 2.32.',
-             zh:'整数相除除不尽时不要停在余数，补0继续除下去得到小数：58÷25商2余8，再80÷25=3、50÷25=2，所以是2.32。'}}] },
+             zh:'整数相除除不尽时不要停在余数，补0继续除下去得到小数：58÷25商2余8，再80÷25=3、50÷25=2，所以是2.32。'}},
+          /* 2026-10-05 — (소수)÷(소수)·(자연수)÷(소수), 가로셈·세로셈 짝(기적의 계산법 107~109). */
+          {id:3,offLadder:true,label:{ko:'(소수)÷(소수) 가로셈 — 자릿수가 같은',en:'decimal ÷ decimal, across — same places',zh:'小数÷小数 横式(位数相同)'},params:{mode:'decSame',orient:'h'}, instr:{ko:'두 수의 소수점을 똑같이 옮겨 가로셈으로 계산하시오.',en:'Move both decimal points the same way and work it out across.',zh:'把两个数的小数点同样移动，用横式计算。'},
+           concept:{ko:'나누는 수가 자연수가 되도록 두 수의 소수점을 똑같이 옮겨요. 1.35÷0.45는 둘 다 두 자리 옮겨 135÷45 — 몫은 3이에요.',en:'Move both decimal points the same number of places until the divisor is whole. 1.35 ÷ 0.45 becomes 135 ÷ 45, so the quotient is 3.',zh:'把两个数的小数点同样移动，使除数变成整数。1.35÷0.45都移两位变成135÷45，商是3。'}},
+          {id:4,offLadder:true,label:{ko:'(소수)÷(소수) 세로셈 — 자릿수가 같은',en:'decimal ÷ decimal, long division — same places',zh:'小数÷小数 竖式(位数相同)'},params:{mode:'decSame',orient:'v'}, instr:{ko:'세로셈으로 계산하시오. 소수점을 옮기고, 몫의 소수점은 옮긴 자리 위에 찍으시오.',en:'Use long division. Move the decimal points, then put the quotient\'s point right above the moved point.',zh:'用竖式计算。移动小数点，商的小数点和移动后的小数点对齐。'},
+           concept:{ko:'나누는 수가 자연수가 되도록 두 수의 소수점을 똑같이 옮겨요. 1.35÷0.45는 둘 다 두 자리 옮겨 135÷45 — 몫은 3이에요.',en:'Move both decimal points the same number of places until the divisor is whole. 1.35 ÷ 0.45 becomes 135 ÷ 45, so the quotient is 3.',zh:'把两个数的小数点同样移动，使除数变成整数。1.35÷0.45都移两位变成135÷45，商是3。'}},
+          {id:5,offLadder:true,label:{ko:'(소수)÷(소수) 가로셈 — 자릿수가 다른',en:'decimal ÷ decimal, across — different places',zh:'小数÷小数 横式(位数不同)'},params:{mode:'decDiff',orient:'h'}, instr:{ko:'두 수의 소수점을 똑같이 옮겨 가로셈으로 계산하시오.',en:'Move both decimal points the same way and work it out across.',zh:'把两个数的小数点同样移动，用横式计算。'},
+           concept:{ko:'나누는 수의 소수 자릿수만큼만 옮겨요. 6.72÷0.4는 한 자리씩 옮겨 67.2÷4 — 몫 16.8의 소수점은 옮긴 67.2의 소수점 위에 찍어요.',en:'Move the points only as many places as the divisor has decimals. 6.72 ÷ 0.4 becomes 67.2 ÷ 4, and the point in 16.8 sits right above the point in 67.2.',zh:'按除数的小数位数移动小数点。6.72÷0.4都移一位变成67.2÷4，商16.8的小数点和67.2的小数点对齐。'}},
+          {id:6,offLadder:true,label:{ko:'(소수)÷(소수) 세로셈 — 자릿수가 다른',en:'decimal ÷ decimal, long division — different places',zh:'小数÷小数 竖式(位数不同)'},params:{mode:'decDiff',orient:'v'}, instr:{ko:'세로셈으로 계산하시오. 소수점을 옮기고, 몫의 소수점은 옮긴 자리 위에 찍으시오.',en:'Use long division. Move the decimal points, then put the quotient\'s point right above the moved point.',zh:'用竖式计算。移动小数点，商的小数点和移动后的小数点对齐。'},
+           concept:{ko:'나누는 수의 소수 자릿수만큼만 옮겨요. 6.72÷0.4는 한 자리씩 옮겨 67.2÷4 — 몫 16.8의 소수점은 옮긴 67.2의 소수점 위에 찍어요.',en:'Move the points only as many places as the divisor has decimals. 6.72 ÷ 0.4 becomes 67.2 ÷ 4, and the point in 16.8 sits right above the point in 67.2.',zh:'按除数的小数位数移动小数点。6.72÷0.4都移一位变成67.2÷4，商16.8的小数点和67.2的小数点对齐。'}},
+          {id:7,offLadder:true,label:{ko:'(자연수)÷(소수) 가로셈',en:'whole ÷ decimal, across',zh:'整数÷小数 横式'},params:{mode:'natDec',orient:'h'}, instr:{ko:'두 수의 소수점을 똑같이 옮겨 가로셈으로 계산하시오.',en:'Move both decimal points the same way and work it out across.',zh:'把两个数的小数点同样移动，用横式计算。'},
+           concept:{ko:'자연수에는 소수점이 끝에 숨어 있어요. 9÷0.25는 두 자리 옮겨야 하는데 9에는 자리가 없으니 0을 두 개 붙여 900÷25 — 몫은 36이에요.',en:'A whole number has a hidden point at its end. 9 ÷ 0.25 needs two places, so add two zeros: 900 ÷ 25, which is 36.',zh:'整数的小数点藏在末尾。9÷0.25要移两位，9后面没有位，就补两个0：900÷25，商是36。'}},
+          {id:8,offLadder:true,label:{ko:'(자연수)÷(소수) 세로셈',en:'whole ÷ decimal, long division',zh:'整数÷小数 竖式'},params:{mode:'natDec',orient:'v'}, instr:{ko:'세로셈으로 계산하시오. 소수점을 옮기고, 몫의 소수점은 옮긴 자리 위에 찍으시오.',en:'Use long division. Move the decimal points, then put the quotient\'s point right above the moved point.',zh:'用竖式计算。移动小数点，商的小数点和移动后的小数点对齐。'},
+           concept:{ko:'자연수에는 소수점이 끝에 숨어 있어요. 9÷0.25는 두 자리 옮겨야 하는데 9에는 자리가 없으니 0을 두 개 붙여 900÷25 — 몫은 36이에요.',en:'A whole number has a hidden point at its end. 9 ÷ 0.25 needs two places, so add two zeros: 900 ÷ 25, which is 36.',zh:'整数的小数点藏在末尾。9÷0.25要移两位，9后面没有位，就补两个0：900÷25，商是36。'}}] },
 
 /* ── MX 혼합 ───────────────────────────── */
 MX1:{ name:{ko:'사칙 혼합계산',en:'Order of operations',zh:'四则混合'}, gen:'mx1_orderOps', prereq:['ML7','DV4'],

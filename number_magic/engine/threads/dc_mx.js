@@ -386,6 +386,108 @@ NM_TGEN['dc3_decDiv'] = function(params, rng) {
     };
   }
 
+  /* ── (소수)÷(소수)·(자연수)÷(소수) — 가로셈(orient 'h')·세로셈(orient 'v') (2026-10-05 신규) ──
+     원장 "소수 나누기 교과 넣어야지. 직접 계산법과 가로셈 둘 다". 기적의 계산법 107~109단계
+     (소수의 나눗셈 ①②③)가 교과 칸에 없었다(창의 칸 C-33·DC5 만 있었음).
+       decSame : 자릿수가 같은 (소수)÷(소수)   2.4÷0.6=4 · 1.35÷0.45=3   — 몫은 자연수
+       decDiff : 자릿수가 다른 (소수)÷(소수)   6.72÷0.4=16.8             — 몫은 소수 한 자리
+       natDec  : (자연수)÷(소수)               12÷0.4=30 · 9÷0.25=36     — 나누어지는 수 뒤에 0 을 붙인다
+     가로셈은 "두 수의 소수점을 똑같이 옮긴 식"을 먼저 쓰고 나눈다. 세로셈은 인쇄에서 소수점이 있는
+     나눗셈 상자(divBox.dec — exam.js divBoxHtml)를 그리고, 화면 단계는 옮긴 수의 자리별 몫이다.
+     빈칸은 늘 정수(생성기 계약) — 소수 몫은 `\square.\square` 두 칸(자연수 부분, 소수 첫째 자리). */
+  const dmode = params && params.mode;
+  if (dmode === 'decSame' || dmode === 'decDiff' || dmode === 'natDec') {
+    const vert = params.orient === 'v';
+    const fmt  = (n, k) => (n / Math.pow(10, k)).toFixed(k);       /* 정수 n, 소수 k 자리 → "6.72" */
+    let aStr, bStr, k, bi, N, Q, qInt, qFrac = '';
+    for (let t = 0; t < 400; t++) {
+      if (dmode === 'decSame') {
+        k  = rng() < 0.6 ? 1 : 2;
+        bi = k === 1 ? pick(rng, [2,3,4,5,6,7,8,9,12,13,14,15,16,18,21,24,25])
+                     : pick(rng, [2,3,4,5,6,7,8,9,12,14,15,16,18,24,25,35,45]);
+        Q  = R(rng, 2, k === 1 ? 19 : 12);
+        const ai = Q * bi;                                         /* 나누어지는 수 × 10^k */
+        if (ai % 10 === 0) continue;                               /* 끝자리 0 이면 자릿수가 줄어 "같은 자릿수"가 아니다 */
+        if (ai >= 100 * Math.pow(10, k)) continue;
+        aStr = fmt(ai, k); bStr = fmt(bi, k); N = ai; qInt = Q;
+      } else if (dmode === 'decDiff') {
+        k  = 1;
+        bi = pick(rng, [2,3,4,5,6,7,8,9,12,13,14,15,16,21,23,24,32]);
+        const qi = R(rng, 11, 199);                                /* 몫 × 10 */
+        if (qi % 10 === 0) continue;                               /* 몫은 소수 한 자리 */
+        const ai = qi * bi;                                        /* 나누어지는 수 × 100 */
+        if (ai % 10 === 0 || ai >= 10000) continue;               /* 소수 두 자리 그대로, 100 미만 */
+        aStr = fmt(ai, 2); bStr = fmt(bi, 1); N = ai;
+        qInt = Math.floor(qi / 10); qFrac = String(qi % 10); Q = qi / 10;
+      } else {                                                     /* natDec */
+        k  = rng() < 0.6 ? 1 : 2;
+        bi = k === 1 ? pick(rng, [2,3,4,5,6,8,12,15,16,25]) : pick(rng, [4,5,8,25,75,125]);
+        const a = R(rng, 2, 60), sc = a * Math.pow(10, k);
+        if (sc % bi) continue;
+        Q = sc / bi;
+        if (Q < 2 || Q > 400) continue;
+        if (bi % 10 === 0) continue;
+        aStr = String(a); bStr = fmt(bi, k); N = sc; qInt = Q;
+      }
+      break;
+    }
+    const aDec  = (aStr.split('.')[1] || '').length;
+    const zeros = Math.max(0, k - aDec);                           /* 자연수÷소수 — 뒤에 붙이는 0 */
+    /* 옮긴 나누어지는 수: 소수점을 k 자리 오른쪽으로 */
+    const movedStr = aDec > k ? fmt(Math.round(+aStr * Math.pow(10, aDec)), aDec - k)
+                              : String(Math.round(+aStr * Math.pow(10, k)));
+    const qTex  = qFrac ? `\\square.\\square` : `\\square`;
+    const ans   = qFrac ? [qInt, +qFrac] : qInt;
+    const head  = `${aStr} \\div ${bStr}`;
+    /* 첫 줄 — 소수점 옮기기. 옮긴 나누어지는 수가 자연수면 그것을, 소수면(6.72→67.2) 나누는 수를 빈칸으로. */
+    const moveStep = aDec > k
+      ? { tex: `${head} = ${movedStr} \\div \\square`, blank: bi }
+      : { tex: `${head} = \\square \\div ${bi}`,      blank: +movedStr };
+    const steps = [moveStep];
+    if (vert) {
+      /* 자리별 몫 — DV19 와 같은 규칙(몫이 서지 않는 앞자리는 건너뛰고, 나머지를 함께 적어 참인 식) */
+      const ns = String(N);
+      let cur = 0, started = false;
+      for (let i = 0; i < ns.length; i++) {
+        cur = cur * 10 + +ns[i];
+        if (cur < bi && !started) continue;
+        started = true;
+        const qi = Math.floor(cur / bi), ri = cur - qi * bi;
+        steps.push({ tex: ri ? `${cur} \\div ${bi} = \\square \\cdots ${ri}` : `${cur} \\div ${bi} = \\square`, blank: qi });
+        cur = ri;
+      }
+      steps.push({ tex: `${head} = ${qTex}`, blank: ans });
+    } else {
+      steps.push({ tex: `${movedStr} \\div ${bi} = ${qTex}`, blank: ans });
+    }
+    /* 가로셈 문항식은 옮긴 식까지 한 줄에 — 1.35 ÷ 0.45 = □ ÷ □ = □ (기적의 계산법 가로셈 꼴).
+       옮긴 나누어지는 수가 소수(14.07→140.7)면 그 수는 적어 주고 나누는 수만 빈칸(빈칸은 정수). */
+    const hTex = aDec > k ? `${head} = ${movedStr} \\div \\square = ${qTex}` : `${head} = \\square \\div \\square = ${qTex}`;
+    const hAns = (aDec > k ? [bi] : [+movedStr, bi]).concat(qFrac ? [qInt, +qFrac] : [qInt]);
+    if (!vert) steps[0] = aDec > k ? moveStep : { tex: `${head} = \\square \\div \\square`, blank: [+movedStr, bi] };
+    const qDigits = String(qInt) + qFrac;
+    return {
+      prompt: vert ? {
+        ko: `세로셈으로 계산해요: ${aStr} ÷ ${bStr}. 나누는 수가 자연수가 되도록 두 수의 소수점을 똑같이 옮겨요${zeros ? ' — 모자란 자리에는 0을 써요' : ''}. 몫의 소수점은 옮긴 소수점 위에 찍어요.`,
+        en: `Work out ${aStr} ÷ ${bStr} in the long-division box. Move both decimal points the same number of places so the divisor is whole${zeros ? ', writing 0 in any empty place' : ''}. The quotient's point goes right above the moved point.`,
+        zh: `用竖式计算${aStr}÷${bStr}。把两个数的小数点同样移动，使除数变成整数${zeros ? '，位数不够时补0' : ''}。商的小数点要和移动后的小数点对齐。`
+      } : {
+        ko: `가로셈으로 계산해요: ${aStr} ÷ ${bStr}. 두 수의 소수점을 똑같이 옮겨 나누는 수를 자연수로 만들어요${zeros ? ' — 모자란 자리에는 0을 붙여요' : ''}.`,
+        en: `Work out ${aStr} ÷ ${bStr} across. Move both decimal points the same number of places so the divisor is whole${zeros ? ' — add zeros where places run out' : ''}.`,
+        zh: `用横式计算${aStr}÷${bStr}。把两个数的小数点同样移动，使除数变成整数${zeros ? '，位数不够时补0' : ''}。`
+      },
+      tex: vert ? `${head} = ${qTex}` : hTex,
+      answer: vert ? ans : hAns,
+      answerType: 'steps',
+      widget: 'steps',
+      orient: vert ? 'v' : 'h',
+      steps,
+      solution: steps,
+      divBox: vert ? { a: aStr, b: bStr, q: qDigits,
+                       dec: { aStr, bStr, k, zeros, qInt: String(qInt), qFrac } } : undefined
+    };
+  }
+
   /* 전략: 소수 나눗셈 = 10배 → 정수 나눗셈 → ÷10
      quotient_t : 몫의 십분의 자리 값 (정수)  → 실제 몫 = quotient_t / 10
      divisor    : 제수 (정수)
