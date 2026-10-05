@@ -5863,7 +5863,9 @@ function renderRoundPagesBody(item, opts){
     // 소수의 짝꿍: 따라풀기의 세로 분수/쓰기 상자가 높다. 뒤 문항을 다음 장으로
     // 넘겨 손으로 쓰는 높이를 지킨다(10/20/30문항 모두 같은 분할 규칙).
     : item.thread === 'DC6' ? Math.min(baseFirst, 2)
-    : item.thread === 'MD83' ? Math.min(baseFirst, 4) : baseFirst;
+    : item.thread === 'MD83' ? Math.min(baseFirst, 4)
+    // 합성함수 L3: 따라풀기(주기 찾기 표)가 길어 첫 장 셋째 줄이 4px 모자랐다(C57 복습, 2026-10-05). 첫 장은 두 줄.
+    : (item.thread === 'MD128' && item.level === 3) ? Math.min(baseFirst, 2) : baseFirst;
   /* 첫 장 줄 수를 **잰 높이**로 한 번 더 줄인다(2026-09-25). 판정별 고정표는 머리(개념·기억 고리·예시·
      따라 풀기) 높이를 모른다 — 머리가 긴 레벨은 남은 높이를 1fr 로 나눠 받은 줄이 내용보다 낮아져
      문항이 겹쳐 찍혔다(main 20문항 기준 312개 레벨, C29 DV8 L1 A4 에서 눈으로 확인).
