@@ -974,6 +974,8 @@
      14px 이던 숫자를 22px 로, 올림/내림을 쓸 줄(.nm-print-vp-carry)을 위에, 답 줄을 1.6em 으로
      (2026-09-06, 1~2학년이 손으로 쓰는 칸). 나이 밴드(.nm-print-age-*)와 무관하게 이 레이아웃만. */
   .nm-w2-grid-vertical .nm-print-vp { font-size:21px; min-width:3.4em; margin:0 auto; }
+  /* 섞기(종합) 장 — 나눗셈 상자 옆의 곱셈 세로셈을 같은 크기로(2026-10-05) */
+  .nm-print-sheet .nm-w2-grid-visual .nm-print-vp { font-size:calc(21px * var(--ws-fs, 1)); min-width:3.4em; margin:6px auto 0; }
   /* 부분 장(첫 쪽)의 세로셈 칸은 내용이 행보다 8px 높아 문항 번호가 반쯤 잘렸다 —
      칸 안쪽 여백을 걷어 높이를 맞춘다(2026-09-19). */
   .nm-w2-grid-vertical .nm-w2-item.nm-print-item { padding-top:0; padding-bottom:0; }
@@ -4431,7 +4433,9 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
        parseVert를 다시 걸면 우연히 부호 없는 문항 하나만 다른 칸과 형식이
        갈린다(2026-09-04 버그, classifyRoundLayout 주석 참조). 그 외
        레이아웃에서는 tex를 있는 그대로 인라인으로 찍는다. */
-    const v = isVerticalRound ? parseVert(p.tex) : null;
+    /* 섞기(종합) 레벨의 곱셈 문항은 나눗셈 상자와 같은 장에 놓인다 — 가로식이면 계산할 자리가 없다. 세로셈 틀로(2026-10-05, DV5 L8) */
+    const mixVert = !isVerticalRound && p.mixedFrom && layoutType === 'visual' && (parseVert(p.tex) || {}).op === '×';
+    const v = (isVerticalRound || mixVert) ? parseVert(p.tex) : null;
     if(v){
       cls += ' nm-w2-item-vp';
       /* .nm-print-vp-carry — 올림/내림 숫자를 적는 빈 줄(w2 세로셈 전용, 2026-09-06). 편집기의
@@ -5743,9 +5747,6 @@ function renderRoundPagesBody(item, opts){
   if(item.thread==='MD58'&&item.level===3&&!['solve','train','word','visual'].includes(layout.type)){
     Object.assign(layout,{cols:2,rows:6,perPage:12,firstRows:3,pitch:42});
   }
-  /* MD133 L3(무리함수와 직선의 교점 범위)는 √ 아래 식이 두 층이라 잰 줄 높이(시드 둘)보다 1mm 높은 문항이 있다 —
-     주간 봉투 마지막 장의 고정 칸(26mm)에서 4px 넘쳤다(C59 복습, 2026-10-05). 칸을 28mm 로. */
-  if(item.thread==='MD133'&&item.level===3) layout.pitch = Math.max(layout.pitch || 0, 28);
   /* 장마다 줄 수를 **잰 높이**로 줄인다(2026-09-25, data/print-head.js — scripts/build-print-head.js).
      판정별 고정표의 줄 수가 그 레벨 문항의 실제 높이보다 많으면 1fr 로 나눈 줄이 내용보다 낮아져
      문항이 겹쳐 찍혔다(가득 찬 장: ML2·ML8·MD25 등). 한 줄 높이는 글자 크기만큼 커진다고 본다. */
@@ -5989,8 +5990,14 @@ function renderRoundPagesBody(item, opts){
     const fullH = headBand && headBand[3];
     const pitchMm = Math.max(layout.pitch || 20, Math.ceil(rowNeed));
     /* 마지막 장의 재도전 QR·첫 연습 장의 지시문 줄이 차지하는 높이(extraMm)를 뺀다(C4 AD5 L1 마지막 장 17mm 넘침) */
-    const pitchUse = fullH ? Math.min(pitchMm, Math.floor((fullH - (extraMm || 0)) / rowsCount - 2)) : pitchMm;
-    const rows = fixedPitch ? `repeat(${rowsCount},minmax(0,${pitchUse}mm))` : `repeat(${rowsCount},minmax(0,1fr))`;
+    const pitchCap = fullH ? Math.floor((fullH - (extraMm || 0)) / rowsCount - 2) : Infinity;
+    const pitchUse = Math.min(pitchMm, pitchCap);
+    /* 여유는 상한까지 남은 만큼만 — 줄이 상한에 닿은 장은 장 전체가 종이보다 길어졌다(C25 +7px · C68 +4px) */
+    const slack = Math.max(0, Math.min(1.5, pitchCap - 1 - pitchUse));
+    /* 부분 장 칸은 pitch + 1.5mm 가 **최소**이고 내용이 더 높으면 그만큼 늘어난다(2026-10-05). 칸 높이는 레벨마다 시드 둘로 잰
+       값이라 더 높은 문항(√·분수 두 층)의 글리프가 1mm쯤 칸 밖으로 나가는 일이 복습 장에서 되풀이됐다(C57 MD128 · C59 MD133 +4px).
+       글리프 넘침은 auto 가 못 잡아 여유(slack)를 준다 — 상한까지 남은 만큼만. */
+    const rows = fixedPitch ? `repeat(${rowsCount},minmax(${pitchUse + slack}mm,auto))` : `repeat(${rowsCount},minmax(0,1fr))`;
     const flowCol = layout.flow === 'col' ? 'grid-auto-flow:column;' : '';
     const grow = fixedPitch ? 'flex:0 0 auto;align-content:start;' : '';
     return `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:${rows};${flowCol}${grow}`;

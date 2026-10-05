@@ -44,6 +44,7 @@ var CURATED_TOPICS = [
   { id:'sub', label:'뺄셈', en:'Subtraction', zh:'减法', icon:'－', color:'#ef4444', section:'school',
     subs:[
       {label:'한 자리 뺄셈', thread:'SB1', level:1, desc:'9 이하'},
+      {label:'덧셈·뺄셈 섞기 (9까지)', thread:'SB1', level:2, desc:'기호를 보고 고르기'},
       {label:'몇십 − 한 자리', thread:'SB2', level:1, desc:'10s − 1d'},
       {label:'100 − 수', thread:'SB2', level:2, desc:'100 − 1d/2d'},
       {label:'두 자리 − 한 자리 (내림 없음)', thread:'SB3', level:1, desc:'받아내림 없음'},
@@ -157,6 +158,7 @@ var CURATED_TOPICS = [
       {label:'세 자리 ÷ 두 자리 (나머지 있음)', thread:'DV5', level:3, desc:'나머지 < 나누는 수'},
       {label:'네 자리 ÷ 두 자리', thread:'DV5', level:4, desc:'자리 내려오며 반복'},
       {label:'다섯 자리 ÷ 두 자리 (심화)', thread:'DV5', level:7, desc:'몫이 네 자리인 나눗셈'},
+      {label:'곱셈·나눗셈 섞기 (세 자리와 두 자리)', thread:'DV5', level:8, desc:'곱셈과 나눗셈 종합'},
       {label:'배수 판별법 (2 · 5 · 10)', thread:'DV6', level:1, desc:'끝자리로 판별'},
       {label:'배수 판별법 (3 · 6 · 9)', thread:'DV6', level:2, desc:'자릿수 합으로 판별'},
       {label:'배수 판별법 (7)', thread:'DV6', level:3, desc:'뒷자리를 떼고 그 2배를 빼기'},

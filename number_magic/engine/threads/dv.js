@@ -1316,3 +1316,21 @@
   };
 
 })();
+
+/* ── DV5 종합 레벨 — 곱셈·나눗셈 섞기(2026-10-05, 기적 69단계 "곱셈과 나눗셈 종합") ──
+   params.mixFrom = [['AD1',1],['SB1',1]] 처럼 적으면 문항마다 그중 하나의 생성기(그 레벨의 params)를 부른다.
+   새 계산을 만들지 않고 이미 검증된 생성기를 섞는다 — 기적의 계산법 "종합" 단계는 **연산을 보고 고르는** 연습이다. */
+(function(){
+  const base = window.NM_TGEN['dv5_div2d'];
+  window.NM_TGEN['dv5_div2d'] = function(params, rng){
+    const from = params && params.mixFrom;
+    if(!from || !from.length) return base(params, rng);
+    const [t, lv] = from[Math.floor(rng() * from.length)];
+    const th = (window.NM_THREADS || {})[t];
+    const L = th && (th.levels || []).find(l => l.id === lv);
+    if(!th || !L || !window.NM_TGEN[th.gen]) return base({}, rng);
+    const p = window.NM_TGEN[th.gen](L.params || {}, rng);
+    p.mixedFrom = t + '@' + lv;
+    return p;
+  };
+})();
