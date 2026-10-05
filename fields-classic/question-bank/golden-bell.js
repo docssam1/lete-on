@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261005d";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261005e";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
