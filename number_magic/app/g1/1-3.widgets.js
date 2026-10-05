@@ -89,10 +89,10 @@ EXT.g13Count = function(p, c, onAnswer, KIT){
 /* ═══════════ g13Rep — 같은 수끼리 잇기(숫자·점·10칸 틀·손가락·고유어·한자어) ═══════════ */
 function repCard(type, n){
   var g = G(), l = lang();
-  if(type === 'dice') return g.diceSvg(n, { dot: '#0e2c57' });
+  if(type === 'dice') return g.diceSvg(n);
   if(type === 'frame') return g.frameSvg(n, { w: 52, ink: '#0e2c57', dot: '#e5a82a' });
   if(type === 'fingers') return n <= 5 ? g.handSvg(n) : '<span class="nm-g13-hands">' + g.handSvg(5) + g.handSvg(n - 5) + '</span>';
-  if(type === 'native' || type === 'sino') return '<span class="nm-g13-word">' + esc(g.numWord(n, type, l)) + '</span>';
+  if(type === 'native' || type === 'sino') return '<span class="nm-g13-word ' + (type === 'sino' ? 'w-sino' : 'w-native') + '">' + esc(g.numWord(n, type, l)) + '</span>';
   return '<span class="nm-ml-num">' + n + '</span>';
 }
 EXT.g13Rep = function(p, c, onAnswer, KIT){

@@ -22,12 +22,14 @@ var P = window.NM_NL_PRINT;
   + '.nm-nl-g13-match{display:flex;align-items:stretch}'
   + '.nm-nl-g13-mcol{display:flex;flex-direction:column;gap:1.1mm}'
   + '.nm-nl-g13-mgap{width:16mm}'
-  + '.nm-nl-g13-mc{position:relative;display:flex;align-items:center;justify-content:center;min-width:15mm;height:8.6mm;padding:0 1.6mm;border:1.3px solid #000;border-radius:2mm;box-sizing:border-box;font-size:20px;font-weight:800}'
+  + '.nm-nl-g13-mc{position:relative;display:flex;align-items:center;justify-content:center;min-width:15mm;height:8.6mm;padding:0 1.6mm;border:1.3px solid #2f4a6e;border-radius:2mm;box-sizing:border-box;font-size:20px;font-weight:800;background:#fffaf0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
   + '.nm-nl-g13-mc svg{height:6.4mm;width:auto;display:block}'
   + '.nm-nl-g13-mc .tag{position:absolute;right:-5.5mm;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:#444}'
-  + '.nm-nl-g13-mc .hands{display:inline-flex;align-items:flex-end}.nm-nl-g13-mc .hands svg{height:6.2mm}'
+  + '.nm-nl-g13-mc .hands{display:inline-flex;align-items:flex-end}.nm-nl-g13-mc .hands svg{height:7.6mm}.nm-nl-g13-mc > svg.nm-g13-hand{height:8mm}'
   + '.nm-nl-g13-card{display:flex;align-items:center;justify-content:center;min-width:12mm;height:10mm;padding:0 1.5mm;border:1.3px solid #000;border-radius:2mm;box-sizing:border-box;font-size:20px;font-weight:800;background:#fff}'
   + '.nm-nl-g13-card svg{height:7.5mm;width:auto;display:block}'
+  + '.nm-nl-g13-mc .w-num,.nm-nl-g13-card .w-num{color:#1f5fbf}.nm-nl-g13-mc .w-native,.nm-nl-g13-card .w-native{color:#2f8a4c}.nm-nl-g13-mc .w-sino,.nm-nl-g13-card .w-sino{color:#c4581c}'
+  + '.nm-nl-g13-card{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
   + '.nm-nl-g13-card.blank{border-style:dashed;border-width:1.6px}'
   + '.nm-nl-g13-card.sq{width:9mm;min-width:9mm;height:9mm;border-radius:1mm}'
   + '.nm-nl-g13-grid{display:grid;border:1.4px solid #000}'
@@ -103,11 +105,13 @@ def('g13Count', {
 /* ── 같은 수끼리 잇기 ── */
 function cardHtml(type, n, K){
   var g = G(), l = lg(K);
-  if(type === 'dice') return g.diceSvg(n, { dot: '#000', ink: '#000' });
-  if(type === 'frame') return g.frameSvg(n, { w: 52, ink: '#000', dot: '#333' });
-  if(type === 'fingers') return n <= 5 ? g.handSvg(n, { skin: '#fff', line: '#000' }) : '<span class="hands">' + g.handSvg(5, { skin: '#fff', line: '#000' }) + g.handSvg(n - 5, { skin: '#fff', line: '#000' }) + '</span>';
-  if(type === 'native' || type === 'sino') return K.esc(g.numWord(n, type, l));
-  return K.esc(String(n));
+  /* 2026-10-05 원장 "너무 흑백이야" — 화면과 같은 색으로 인쇄한다(점은 빨강, 10칸 틀은 노랑, 손은 살색, 낱말은 색 글자). */
+  if(type === 'dice') return g.diceSvg(n);
+  if(type === 'frame') return g.frameSvg(n, { w: 52, ink: '#0e2c57', dot: '#e5a82a' });
+  if(type === 'fingers') return n <= 5 ? g.handSvg(n) : '<span class="hands">' + g.handSvg(5) + g.handSvg(n - 5) + '</span>';
+  if(type === 'native') return '<b class="w-native">' + K.esc(g.numWord(n, type, l)) + '</b>';
+  if(type === 'sino') return '<b class="w-sino">' + K.esc(g.numWord(n, type, l)) + '</b>';
+  return '<b class="w-num">' + K.esc(String(n)) + '</b>';
 }
 def('g13Rep', {
   visual: function(p, K){

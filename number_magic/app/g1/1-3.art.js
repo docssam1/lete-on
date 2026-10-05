@@ -24,27 +24,40 @@ function numWord(n, form, lang){
 }
 
 /* ── SVG 조각 ───────────────────────────────────────────────────────────── */
-/* 손가락 — k=0~5 한 손. 1~4 는 검지부터, 5 는 엄지까지(오른손 손바닥). */
+/* 손가락 — k=0~5 한 손. 1~4 는 검지부터, 5 는 엄지까지(오른손 손바닥).
+   2026-10-05 다시 그림(원장 "허접한 그림", "너무 흑백이야") — 살색 면·그늘·손톱·소매. 화면·인쇄 모두 같은 색.
+   인쇄 CSS 는 .nm-nl svg 의 path 를 선만 남기므로 path 를 쓰지 않고 rect·ellipse 로만 그리며, nm-obj-svg 로 예외를 받는다. */
 function handSvg(k, o){
   o = o || {};
-  var skin = o.skin || '#ffd9b0', ln = o.line || '#a8693a';
+  var skin = o.skin || '#f6c9a0', shade = o.shade || '#e7aa7c', ln = o.line || '#a0603a', nail = '#fde6d4', sleeve = o.sleeve || '#5b9be0';
   var ext = [k >= 5, k >= 1, k >= 2, k >= 3, k >= 4];      /* 엄지·검지·중지·약지·새끼 */
-  var xs = [8, 17, 26.5, 36, 45], hs = [18, 30, 34, 30, 24];
-  var s = '<svg class="nm-g13-hand" viewBox="0 0 60 66" aria-hidden="true">';
+  var xs = [0, 15.5, 25, 34.5, 44], hs = [0, 27, 31, 28, 22];
+  var s = '<svg class="nm-g13-hand nm-obj-svg" viewBox="-6 0 64 74" aria-hidden="true">';
   for(var i = 1; i < 5; i++){
-    var h = ext[i] ? hs[i] : 9, y = ext[i] ? 34 - hs[i] + 6 : 25;
-    s += '<rect x="' + xs[i] + '" y="' + y + '" width="8.4" height="' + (ext[i] ? hs[i] + 8 : 17) + '" rx="4.2" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.6"/>';
+    if(ext[i]){
+      var top = 33 - hs[i];
+      s += '<rect x="' + xs[i] + '" y="' + top + '" width="9" height="' + (hs[i] + 10) + '" rx="4.5" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.3"/>';
+      s += '<rect x="' + (xs[i] + 2) + '" y="' + (top + 1.6) + '" width="5" height="5.5" rx="2.4" fill="' + nail + '" stroke="' + shade + '" stroke-width=".6"/>';
+      s += '<rect x="' + (xs[i] + 1.5) + '" y="' + (top + hs[i] * 0.55) + '" width="6" height="1.1" rx=".5" fill="' + shade + '"/>';
+    } else {
+      s += '<rect x="' + xs[i] + '" y="26" width="9" height="13" rx="4.5" fill="' + shade + '" stroke="' + ln + '" stroke-width="1.3"/>';
+    }
   }
-  s += '<rect x="9" y="30" width="44" height="30" rx="12" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.8"/>';
-  if(ext[0]) s += '<rect x="-1" y="30" width="9" height="24" rx="4.5" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.6" transform="rotate(-32 4 54)"/>';
-  else s += '<path d="M14 46 C20 40 30 42 33 48" fill="none" stroke="' + ln + '" stroke-width="1.8" stroke-linecap="round"/>';
+  s += '<rect x="13" y="31" width="42" height="30" rx="13" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.5"/>';
+  s += '<ellipse cx="38" cy="50" rx="11" ry="6" fill="' + shade + '" opacity=".45"/>';
+  for(var j = 1; j < 5; j++) if(!ext[j]) s += '<rect x="' + (xs[j] + 1) + '" y="31" width="7" height="6" rx="3" fill="' + skin + '" stroke="' + ln + '" stroke-width=".9"/>';
+  if(ext[0]) s += '<rect x="9" y="28" width="10" height="26" rx="5" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.3" transform="rotate(-38 14 54)"/>'
+    + '<rect x="11.2" y="29.6" width="5.6" height="5" rx="2.4" fill="' + nail + '" stroke="' + shade + '" stroke-width=".6" transform="rotate(-38 14 54)"/>';
+  else s += '<ellipse cx="25" cy="45" rx="10" ry="4.6" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.2" transform="rotate(-18 25 45)"/>';
+  if(ext[0]) s += '<rect x="14" y="40" width="14" height="18" rx="7" fill="' + skin + '"/>';
+  s += '<rect x="16" y="59" width="36" height="13" rx="3" fill="' + sleeve + '" stroke="#2f5f9a" stroke-width="1.2"/>';
   return s + '</svg>';
 }
 /* 10칸 틀 그림(5×2) — n 칸에 점이 찍힌다. 화면·인쇄 겸용(자체 색 속성). */
 function frameSvg(n, o){
   o = o || {};
   var ink = o.ink || '#1F2A3A', dot = o.dot || '#e5a82a', w = o.w || 50;
-  var s = '<svg class="nm-g13-frame" viewBox="0 0 50 22" width="' + w + '" aria-hidden="true">'
+  var s = '<svg class="nm-g13-frame nm-obj-svg" viewBox="0 0 50 22" width="' + w + '" aria-hidden="true">'
     + '<rect x="1" y="1" width="48" height="20" rx="2" fill="#fff" stroke="' + ink + '" stroke-width="1.4"/>';
   for(var i = 1; i < 5; i++) s += '<line x1="' + (1 + i * 9.6) + '" y1="1" x2="' + (1 + i * 9.6) + '" y2="21" stroke="' + ink + '" stroke-width=".8"/>';
   s += '<line x1="1" y1="11" x2="49" y2="11" stroke="' + ink + '" stroke-width=".8"/>';
@@ -56,9 +69,9 @@ function frameSvg(n, o){
 }
 /* 점 카드 — 3열로 차례로 */
 function diceSvg(n, o){
-  o = o || {}; var ink = o.ink || '#1F2A3A', dot = o.dot || '#1F2A3A';
+  o = o || {}; var ink = o.ink || '#1F2A3A', dot = o.dot || '#e0483e';
   var rows = Math.ceil(n / 3) || 1, h = rows * 9 + 3;
-  var s = '<svg class="nm-g13-dice" viewBox="0 0 30 ' + h + '" aria-hidden="true">';
+  var s = '<svg class="nm-g13-dice nm-obj-svg" viewBox="0 0 30 ' + h + '" aria-hidden="true">';
   for(var k = 0; k < n; k++) s += '<circle cx="' + (6 + (k % 3) * 9) + '" cy="' + (6 + Math.floor(k / 3) * 9) + '" r="3.2" fill="' + dot + '"/>';
   return s + '</svg>';
 }
