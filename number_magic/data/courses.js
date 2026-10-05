@@ -196,8 +196,9 @@ const COURSE_SPEC = [
    creative:['ML19@1','ML19@2','DV10@1','DV10@2','DV11@1','WP3@2','WP8@1']},
  {id:13, tier:'level2', title:{ko:'큰 수와 나눗셈 심화',en:'Big Numbers & Advanced Division',zh:'大数与除法提高'},
    drills:['DV5@7','EL1@3', 'NS1@3','NS1@5', 'NS1@6','EL1@1'], minSessions:3,
-   magic:[[],['C-09'],[]],
-   creative:['DV11@2','ML12@3','ML10@3','WP9@1']},
+   magic:[[],['C-09'],['H-13']],
+   /* 3회차 = 억·조 단위(NS1@6) — 큰 수의 곱을 0의 개수로 세는 H-13·CH13 이 같은 범위(2026-10-05, 과정 24 에서 옮김). */
+   creative:['DV11@2','ML12@3','CH13@1','WP9@1']},
  {id:14, tier:'level2', title:{ko:'분모가 같은 분수',en:'Fractions with Like Denominators',zh:'同分母分数'},
    drills:['FR2@1','FR1@1', 'FR3@1','FR3@2', 'FR3@3','FR3@4'], minSessions:3,
    magic:[['C-21'],[],[]],
@@ -207,32 +208,57 @@ const COURSE_SPEC = [
    drills:['ML9@3','DV5@4', 'ML8@5','DV4@2', 'EL2@3','EL1@2'], minSessions:3,
    magic:[[],[],[]],
    creative:['ML18@1','DV11@1','ML15@2','WP3@2']},
- {id:16, tier:'level2', title:{ko:'혼합계산과 역연산',en:'Mixed Operations & Inverse',zh:'混合运算与逆运算'},
-   drills:['MX1','EL1','MX1','MX1','NS1@6'], magic:[['C-09']],
-   /* 레벨 펼치기(2026-09-26, 설계 §4-2) — 설계 표의 EL1@3(혼합·큰 수)은 교과 역연산 레벨이라 창의 칸에 못 온다.
-      같은 역연산 줄기의 창의 기법 SB9(반대로 채우기 — 설계의 EL1 countUp)를 쓴다. */
-   creative:['ML21@1','ML21@2','SB9@1','WP4@2']},
-
- {id:17, tier:'level3', title:{ko:'소수의 시작',en:'Decimals Begin',zh:'小数入门'},
-   /* 창의 회차 — 이 과정의 마법(A-36~38)은 세로셈 절차라 필산 DC1과 같은 것이어서 짝이
-      없었다. 보수를 소수로 이은 DC6(0.3의 1 짝꿍은 0.7)을 쓴다(2026-09-09). */
-   drills:['DC1','DC1','DC1@3','DC1@4','EL1@7'], minSessions:4, magic:[['A-36'],['A-37'],['A-38']], creative:['DC6@1','WP5@2','DC6@2','DC6@3','MX7@3']},   /* MX7@3 소수 끼리끼리 — A-38(설계 §2-2 M8) */
- {id:18, tier:'level3', title:{ko:'소수 곱셈과 제곱수',en:'Decimal Multiplication & Squares',zh:'小数乘法与平方数'},
-   drills:['DC2','ML11','ML11','ML11','ML11@4','ML11@5','ML11@6'], minSessions:7, magic:[['C-25','C-01'],['C-24'],['C-27'],['ML10'],['H-11']],
-   creative:['DC4@1','ML20@3','CH11@1','DC4@2','CH11@2','CH11@3','CH11@4']},
- {id:19, tier:'level3', title:{ko:'약수와 배수, 그리고 배수 판별법',en:'Factors, Multiples & Divisibility Rules',zh:'因数、倍数与整除判别'},
-   drills:['DV20','DV7','DV6','DV20@2','DV7@2','DV6','DV20@3','DV7@3','DV6@3','DV20@4','DV6@4','DV20@5','DV20@6'], minSessions:7, magic:[['C-04'],['C-34'],['C-03']], creative:['ML12@2','ML12@3','ML12@1']},   /* 곱해서 10 을 셋째로(2026-09-26 — 두 개만 번갈았다) */
- {id:20, tier:'level3', title:{ko:'분모가 다른 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
-   drills:['FR5','FR5@2','MX4','FR4','MX4','FR4','FR4@3','FR4@4'], magic:[['C-22']], creative:['FR10@1','FR10@2','ML12@2','WP1@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) · 2026-10-05 약분·통분(FR5)을 분모가 다른 덧뺄(FR4)보다 먼저 — 기적 84·85→86단계 순서 */
- {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},
-   drills:['FR6','FR6@2','FR6@3','EL1@8'], magic:[['C-31']], creative:['FR11@1','FR11@2','ML20@1','WP3@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
- {id:22, tier:'level3', title:{ko:'분수 나눗셈',en:'Fraction Division',zh:'分数除法'},
-   drills:['FR7','FR7@2','FR7@3','FR7@4','FR7@5','EL1@9'], magic:[['C-32']], creative:['FR12@1','FR12@2','FR11@2','WP5@3','WP6@3','WP8@2','WP9@2','WP10@1']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
- {id:23, tier:'level3', title:{ko:'수열과 분수·소수 변환',en:'Sequences & Fraction↔Decimal',zh:'数列与分数小数互换'},
-   drills:['MX2','FR8','DC3','MX2@2','DC3@2'], minSessions:7, magic:[['C-05'],['C-35'],['C-33']], creative:['MX6@1','DC5@1','WP4@3','MX6@2','DC5@2','MX6@3','MX6@4']},
- {id:24, tier:'level3', title:{ko:'백분율과 비와 비율',en:'Percent, Ratio & Proportion',zh:'百分率与比例'},
-   /* 2026-09-29 — 비례식·비례배분(EL5)을 교과 칸에도(기적 115·116단계). 창의 칸의 EL5 는 그대로. */
-   drills:['MX3','DV8','EL4','MX3@2','DV8@2','EL4','EL5','MX3@3','DV8@3','EL4@3','EL5@2','MX3@4','EL5@3','MX3@5'], minSessions:7, magic:[['H-12'],['H-13']], creative:['CH12@1','CH13@1','EL5@1','CH12@2','EL5@2','EL5@3','AD16@2']},
+ /* 과정 16~24 재편성(2026-10-05) — 과정 1~15 와 같은 원칙(docs/진도대응-기적의계산법-2026-10-05.md).
+    교과 = 기적의 계산법 8~12권 순서: 소수 덧뺄(77~80) → 약수·배수(81~83) → 약분·통분·분모가 다른 분수(84~90)
+    → 혼합 계산(91~94) → 분수·소수의 곱셈(95~100) → 분수의 나눗셈(101~104) → 소수의 나눗셈(105~110) → 비와 비율(111~116).
+    제곱수·거듭제곱(기적에 없음)은 곱셈을 마친 뒤 나눗셈 앞에 한 과정으로 — 수열의 합(홀수의 합 = 제곱수)도 여기로.
+    옛 편성은 소수 곱셈과 제곱수를 한 과정에, 소인수분해를 백분율 과정에 두어 창의 칸과 교과가 따로 놀았다.
+    드릴은 회차마다 짝(앞 항목 + 그 뒤 첫 다른 스레드)으로 실리므로 짝 순서대로 적는다. magic[i]·creative[i] 가 회차 i 의 짝. */
+ {id:16, tier:'level2', title:{ko:'소수의 덧셈과 뺄셈',en:'Adding & Subtracting Decimals',zh:'小数加减法'},
+   drills:['DC1@1','EL1@7', 'DC1@2','DC1@5', 'DC1@3','DC1@7', 'DC1@4','DC1@8'], minSessions:4,
+   magic:[['A-36'],['A-37'],['A-38'],[]],
+   creative:['DC6@1','DC6@2','MX7@3','DC6@3']},
+ {id:17, tier:'level3', title:{ko:'약수와 배수',en:'Factors & Multiples',zh:'因数与倍数'},
+   drills:['DV20@1','DV7@1', 'DV20@2','DV6@1', 'DV20@3','DV6@2', 'DV20@4','DV7@2', 'DV20@5','DV6@3', 'DV20@6','DV7@3', 'DV8@1','DV6@4', 'DV8@2','DV8@3'], minSessions:8,
+   magic:[[],[],[],['C-04'],[],['C-34'],[],['C-03']],
+   /* 약수 → 10 짝꿍 · 2·5·10 판별 → 나누어떨어지는 나눗셈 · 3·6·9 판별 → 9로 나누기 · 최대공약수 → 100 짝꿍
+      · 공배수 → 쪼개어 나누기(÷15·÷25) · 최소공배수 → 1000 짝꿍 · 11 판별 → ×11 · 소인수분해 → 25×4·37×3.
+      수 크기는 교과와 같은 두세 자리(×9 실전·÷25 실전처럼 네다섯 자리로 뛰는 것은 쓰지 않는다). */
+   creative:['ML12@1','DV9@1','DV10@1','ML12@2','DV11@1','ML12@3','ML15@2','ML10@3']},
+ {id:18, tier:'level3', title:{ko:'약분·통분과 분모가 다른 분수',en:'Simplifying, Common Denominators & Unlike Fractions',zh:'约分、通分与异分母分数'},
+   /* 약분엔 최대공약수, 통분엔 최소공배수 — 앞 과정의 그 둘을 짝으로 다시 쓴다(기적 84·85 → 86~89). */
+   drills:['FR5@1','DV7@2', 'FR5@2','DV7@3', 'FR4@1','FR4@2', 'FR4@3','FR4@4'], minSessions:4,
+   magic:[[],[],['C-22'],[]],
+   creative:['FR9@1','FR9@2','FR10@1','FR10@2']},
+ {id:19, tier:'level3', title:{ko:'혼합 계산',en:'Mixed Operations',zh:'混合运算'},
+   drills:['MX1@1','EL1@3', 'MX1@2','EL2@3', 'MX1@3','EL1@2'], minSessions:3,
+   magic:[],
+   creative:['MX7@1','MX7@2','EL6@2','WP4@2']},
+ {id:20, tier:'level3', title:{ko:'분수·소수의 곱셈',en:'Multiplying Fractions & Decimals',zh:'分数与小数乘法'},
+   /* (분수)×(자연수) → (분수)×(분수) → 세 분수 → 소수의 곱셈(기적 95~100). 약분하며 곱하기를 첫 회차 짝으로. */
+   drills:['FR6@2','FR5@1', 'FR6@1','EL1@8', 'FR6@3','DC2@1'], minSessions:3,
+   magic:[['C-31'],[],['C-25']],
+   creative:['FR11@1','FR11@1','DC4@1','WP3@3']},
+ {id:21, tier:'level3', title:{ko:'제곱수와 거듭제곱',en:'Squares & Powers',zh:'平方数与乘方'},
+   drills:['ML11@1','MX4@1', 'ML11@2','MX4@2', 'ML11@3','MX2@1', 'ML11@4','MX2@2', 'ML11@5','ML11@6'], minSessions:5,
+   magic:[['ML10'],['C-24'],['C-01','C-05'],['H-11'],['C-27']],
+   creative:['ML10@1','ML20@1','MX6@1','CH11@2','MX6@3']},
+ {id:22, tier:'level3', title:{ko:'분수의 나눗셈',en:'Dividing Fractions',zh:'分数除法'},
+   /* (자연수)÷(자연수)·(분수)÷(자연수) → 분수÷분수 → 대분수(기적 101~104). 한 스레드라 회차마다 두 계단씩. */
+   drills:['FR7@2','FR7@3', 'FR7@1','FR7@4', 'FR7@5'], minSessions:3,
+   magic:[['C-32'],[],[]],
+   creative:['FR12@1','FR11@2','FR11@2','WP5@3','WP10@1']},
+ {id:23, tier:'level3', title:{ko:'소수의 나눗셈과 분수↔소수',en:'Dividing Decimals & Fraction↔Decimal',zh:'小数除法与分数小数互化'},
+   /* (소수)÷(자연수) → 몫이 소수인 나눗셈 → 6학년 방정식(기적 105·106·110). (소수)÷(소수)(107~109)는 교과 레벨이
+      아직 없어 창의 칸(C-33·DC5 — 나누는 수를 자연수로)이 맡는다. */
+   drills:['DC3@1','FR8@1', 'DC3@2','EL2@3', 'MX5@1','EL1@9'], minSessions:3,
+   magic:[['C-35'],['C-33'],[]],
+   creative:['DC5@1','FR12@2','DC5@2']},
+ {id:24, tier:'level3', title:{ko:'비와 비율·평균',en:'Ratio, Rate & Average',zh:'比、比率与平均数'},
+   /* 비율·백분율 → 할푼리 → 비교하는 양 → 가장 간단한 비 → 비례식 → 기준량 → 비례배분(기적 111~116) + 평균. */
+   drills:['MX3@1','EL4@1', 'MX3@2','EL4@2', 'MX3@4','EL4@3', 'MX3@3','EL5@1', 'MX3@5','EL5@2', 'EL5@3'], minSessions:6,
+   magic:[[],[],['H-12'],[],[],[]],
+   creative:['AD16@2','AD16@3','CH12@1','DV11@2','DC5@2','EL6@3']},
  {id:25, tier:'level3', title:{ko:'레벨 3 총정리',en:'Level 3 Final Review',zh:'第三级总复习'},
    drills:['MX5'], magic:[], /* 레벨 보스는 세션이 3개로 고정이라 창의도 3종만 실린다(4개를 적으면 마지막이 안 나온다).
       레벨 3을 대표하는 셋 — 분수 · 소수 · 수열(가우스). */
