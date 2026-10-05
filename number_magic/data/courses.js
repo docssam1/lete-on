@@ -231,7 +231,7 @@ const COURSE_SPEC = [
  {id:19, tier:'level3', title:{ko:'약수와 배수, 그리고 배수 판별법',en:'Factors, Multiples & Divisibility Rules',zh:'因数、倍数与整除判别'},
    drills:['DV20','DV7','DV6','DV20@2','DV7@2','DV6','DV20@3','DV7@3','DV6@3','DV20@4','DV6@4','DV20@5','DV20@6'], minSessions:7, magic:[['C-04'],['C-34'],['C-03']], creative:['ML12@2','ML12@3','ML12@1']},   /* 곱해서 10 을 셋째로(2026-09-26 — 두 개만 번갈았다) */
  {id:20, tier:'level3', title:{ko:'분모가 다른 분수와 제곱근',en:'Unlike Denominators & Square Roots',zh:'异分母分数与平方根'},
-   drills:['FR4','FR5','MX4','FR4','FR5@2','MX4','FR4@3','FR4@4'], magic:[['C-22']], creative:['FR10@1','FR10@2','ML12@2','WP1@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
+   drills:['FR5','FR5@2','MX4','FR4','MX4','FR4','FR4@3','FR4@4'], magic:[['C-22']], creative:['FR10@1','FR10@2','ML12@2','WP1@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) · 2026-10-05 약분·통분(FR5)을 분모가 다른 덧뺄(FR4)보다 먼저 — 기적 84·85→86단계 순서 */
  {id:21, tier:'level3', title:{ko:'분수 곱셈과 거듭제곱',en:'Fraction Multiplication & Powers',zh:'分数乘法与乘方'},
    drills:['FR6','FR6@2','FR6@3','EL1@8'], magic:[['C-31']], creative:['FR11@1','FR11@2','ML20@1','WP3@3']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
  {id:22, tier:'level3', title:{ko:'분수 나눗셈',en:'Fraction Division',zh:'分数除法'},
