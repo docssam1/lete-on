@@ -7,8 +7,15 @@ const pond = (title, targets) => ({ title, question: '우리 팀의 식물을 �
 
 const humidifier = (title, targets) => ({title,question:'어느 팀의 판 아래에 물방울이 더 뚜렷할까요?',choices:['1팀이 더 뚜렷함','관찰 모습이 같음','2팀이 더 뚜렷함'],field:'stage',targets});
 import { shadowModel } from './lab-shadow.js';
+import { quakeModel } from '../scenes/quake-model.js';
+const quake = (title, question, choices, field, targets) => ({ title, question, choices, field, targets });
 const shadow = (title, targets) => ({ title, question: '어느 팀의 그림자가 더 클까요?', choices: ['1팀이 더 큼', '크기가 같음', '2팀이 더 큼'], field: 'size', targets });
 export const LAB_BATTLE_ROUNDS = {
+  's42-u04': [
+    quake('미는 힘만 바꾸기', '어느 팀의 지층이 더 크게 변할까요?', ['1팀이 더 크게 변함', '변한 정도가 같음', '2팀이 더 크게 변함'], 'change', [{ force: '약하게', house: '보통 집' }, { force: '세게', house: '보통 집' }]),
+    quake('끝까지 밀어 보기', '어느 팀의 지층이 더 크게 변할까요?', ['1팀이 더 크게 변함', '변한 정도가 같음', '2팀이 더 크게 변함'], 'change', [{ force: '아주 세게', house: '보통 집' }, { force: '세게', house: '보통 집' }]),
+    quake('내진 설계 비교하기', '지층이 끊어질 때 어느 팀의 집이 더 크게 피해를 입을까요?', ['1팀 집의 피해가 더 큼', '피해가 같음', '2팀 집의 피해가 더 큼'], 'damage', [{ force: '아주 세게', house: '내진 설계 집' }, { force: '아주 세게', house: '보통 집' }]),
+  ],
   's42-u03': [
     shadow('물체 위치만 바꾸기', [{ light: '손전등', object: '종이 인형', place: '스크린 가까이' }, { light: '손전등', object: '종이 인형', place: '빛 가까이' }]),
     shadow('빛만 바꾸기', [{ light: '손전등', object: '종이 인형', place: '빛 가까이' }, { light: '햇빛', object: '종이 인형', place: '빛 가까이' }]),
@@ -44,6 +51,7 @@ export const LAB_BATTLE_ROUNDS = {
 const finite = (value) => typeof value === 'number' && Number.isFinite(value) && value >= 0;
 export function validBattleRow(unit, row) {
   if (!row || typeof row !== 'object') return false;
+  if (unit === 's42-u04') { try { const m = quakeModel(row.force, row.house); return row.change === m.change && row.damage === m.damage && row.result === m.result; } catch { return false; } }
   if (unit === 's42-u03') { try { const m = shadowModel(row.light, row.object, row.place); return row.size === m.size && row.result === m.result; } catch { return false; } }
   if (unit === 's42-u02') return ['실온 물','따뜻한 물'].includes(row.water) && ['실온','차갑게'].includes(row.surface) && [0,1,2].includes(row.stage) && row.stage === (row.water === '따뜻한 물' ? 1 : 0) + (row.surface === '차갑게' ? 1 : 0) && row.result === ['눈에 띄는 물방울 없음','작은 물방울이 맺힘','물방울이 더 뚜렷하게 맺힘'][row.stage];
   if (unit === 's41-u02') return ['물', '얼음'].includes(row.state) && [60, 100, 140].includes(row.ml) && finite(row.height) && finite(row.mass);
@@ -58,6 +66,7 @@ export function matchesBattleTarget(unit, row, target) {
   return validBattleRow(unit, row) && Object.entries(target).every(([key, value]) => row[key] === value);
 }
 export function battleTargetText(unit, target) {
+  if (unit === 's42-u04') return `미는 힘 ${target.force} · ${target.house}`;
   if (unit === 's42-u03') return `${target.light} · ${target.object} · ${target.place}`;
   if (unit === 's42-u02') return `${target.water} · 판 ${target.surface}`;
   if (unit === 's41-u02') return `${target.ml} mL · ${target.state}`;
@@ -66,6 +75,7 @@ export function battleTargetText(unit, target) {
   return `${target.plant} · ${target.where}`;
 }
 export function battleRowText(unit, row) {
+  if (unit === 's42-u04') return `${row.force} · ${row.house} · ${row.result}`;
   if (unit === 's42-u03') return `${row.light} · ${row.place} · ${row.result}`;
   if (unit === 's42-u02') return `${row.water} · 판 ${row.surface} · ${row.result}`;
   if (unit === 's41-u02') return `${row.ml} mL ${row.state} · ${row.mass} g · 높이 ${row.height}칸`;

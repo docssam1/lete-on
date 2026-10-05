@@ -1,0 +1,43 @@
+{
+  "voice": "docssam-omnivoice",
+  "note": "안내 문장만 준비. 새 음성은 모든 기능 완료 후 생성. 기존 공용 음성·전신 캐릭터 재사용. Google TTS 사용 안 함.",
+  "slides": {
+    "cover": "s42u04-cover",
+    "intro": "s42u04-intro",
+    "scene": "s42u04-scene",
+    "lab": "s42u04-lab",
+    "concl": "s42u04-concl",
+    "note": "s42u04-note",
+    "reading": "s42u04-reading"
+  },
+  "lines": [
+    {
+      "id": "s42u04-cover",
+      "text": "오늘은 땅이 흔들리는 까닭, 지진을 탐구해요."
+    },
+    {
+      "id": "s42u04-intro",
+      "text": "단단한 땅이 왜 흔들릴까요? 땅속 지층에 비밀이 있어요."
+    },
+    {
+      "id": "s42u04-scene",
+      "text": "겹친 우드락을 양쪽에서 밀면 어떻게 될까요? 먼저 예상해 봐요."
+    },
+    {
+      "id": "s42u04-lab",
+      "text": "미는 힘과 집을 고르고 밀기를 눌러 보세요. 끝나면 표에 적어요."
+    },
+    {
+      "id": "s42u04-concl",
+      "text": "지층이 끊어질 때 무슨 일이 일어나는지 이어 써 봐요."
+    },
+    {
+      "id": "s42u04-note",
+      "text": "휘어진 지층은 습곡, 끊어진 지층은 단층이에요."
+    },
+    {
+      "id": "s42u04-reading",
+      "text": "지진이 났을 때 어떻게 몸을 지키는지 읽어 볼까요?"
+    }
+  ]
+}
