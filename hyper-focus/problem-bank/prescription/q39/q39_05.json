@@ -1,0 +1,16 @@
+{
+  "bars": [
+    {
+      "label": "가",
+      "length": 11
+    },
+    {
+      "label": "나",
+      "length": 7
+    },
+    {
+      "label": "다",
+      "length": 5
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "same_sh": "diamond",
+  "same_col": "#27AE60",
+  "diff_sh": "circle",
+  "opts": [
+    [
+      "diamond",
+      "#27AE60"
+    ],
+    [
+      "diamond",
+      "#27AE60"
+    ],
+    [
+      "diamond",
+      "#27AE60"
+    ],
+    [
+      "circle",
+      "#27AE60"
+    ]
+  ],
+  "diff_idx": 3
+}

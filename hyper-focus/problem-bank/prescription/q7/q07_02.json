@@ -1,0 +1,24 @@
+{
+  "same_sh": "triangle",
+  "same_col": "#E91E63",
+  "diff_sh": "star",
+  "opts": [
+    [
+      "triangle",
+      "#E91E63"
+    ],
+    [
+      "triangle",
+      "#E91E63"
+    ],
+    [
+      "star",
+      "#E91E63"
+    ],
+    [
+      "triangle",
+      "#E91E63"
+    ]
+  ],
+  "diff_idx": 2
+}
