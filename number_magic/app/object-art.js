@@ -230,7 +230,11 @@
   function realImg(token, opts) {
     var m = window.NM_REAL_ART, f = m && m[token + (opts && opts.f != null && String(token).indexOf('num:') === 0 ? '#' + (opts.f | 0) : '')] || (m && m[token]);
     if (!f) return '';
-    return '<img src="assets/images/real/' + f + '" alt="" draggable="false" class="nm-obj-img" style="width:100%;height:100%;object-fit:contain;display:block">';
+    /* SVG 로 감싼다(2026-10-05) — <img> 는 감싼 칸에 크기가 없으면 원본 512px 로 커져 인쇄 칸이 넘쳤다(C0 k2·NL47·NL53).
+       같은 viewBox 의 SVG 안에 넣으면 그리던 SVG 와 똑같이 크기·정렬이 잡힌다(화면·인쇄의 svg 규칙을 그대로 받음). */
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="nm-obj-svg nm-obj-real" aria-hidden="true" focusable="false"' +
+      (opts && opts.size ? ' width="' + opts.size + '" height="' + opts.size + '"' : '') +
+      '><image href="assets/images/real/' + f + '" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid meet"/></svg>';
   }
   function svg(token, opts) {
     var real = realImg(token, opts);

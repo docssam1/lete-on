@@ -228,8 +228,6 @@
   .nm-nl-g { display:inline-block; }
   .nm-nl-g svg, .nm-nl-sc svg, .nm-nl-fchip svg { display:block; width:1em; height:1em; }
   .nm-nl-g svg { vertical-align:-.15em; display:inline-block; }
-  /* 실사 PNG(NM_REAL_ART) — img 는 인라인 width:100% 라 감싼 칸에 크기가 없으면 원본 512px 로 커진다(2026-10-05 C0 k2 넘침). SVG 와 같은 1em. */
-  .nm-nl-g img.nm-obj-img, .nm-nl-sc img.nm-obj-img, .nm-nl-fchip img.nm-obj-img { width:1em !important; height:1em !important; display:inline-block !important; vertical-align:-.15em; }
   .nm-nl-scatter { position:relative; width:60mm; height:34mm; border:1.3px solid #1F2A3A; border-radius:3.5mm; background:#fff; overflow:hidden; }
   .nm-nl-sc { position:absolute; font-size:27px; line-height:1; }
   .nm-nl-dg { display:inline-block; font-size:36px; line-height:1; font-weight:900; color:#1F2A3A; }
