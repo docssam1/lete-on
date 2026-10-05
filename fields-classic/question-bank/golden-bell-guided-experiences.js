@@ -1,6 +1,6 @@
 // 분수는 빗금 대신 위아래로 쓴다.
 const fractionText = (text) => String(text ?? "").replace(/(^|[^\d/])(\d+)\/(\d+)(?![\d/])/g, (_, before, numerator, denominator) => `${before}<span class="math-frac" role="math" aria-label="${denominator}분의 ${numerator}"><i>${numerator}</i><i>${denominator}</i></span>`);
-import { book02Markup } from "./book02-renderers.js?v=20261005b";
+import { book02Markup } from "./book02-renderers.js?v=20261005c";
 import { book03Markup } from "./book03-renderers.js?v=20260905a";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";

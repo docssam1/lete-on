@@ -436,7 +436,8 @@ function foldFractionMarkup(visual) {
     () => paper('<path d="M3 47L43 7V47Z" class="paper back"/><path d="M5 46L45 6V46Z" class="paper"/>', 60)
   ];
   const steps = (style === "diagonal" ? diagonal : half).slice(0, folds + 1).map((draw, index) => draw(index));
-  return `<div class="b2-fold-fraction" role="img" aria-label="색종이를 ${folds}번 접는 그림">${steps.join(arrow)}</div>`;
+  // 원본 교재: 반 접기는 단계 사이에 직선 화살표, 대각선 접기는 화살표 없이 그림만 나란히.
+  return `<div class="b2-fold-fraction" role="img" aria-label="색종이를 ${folds}번 접는 그림">${steps.join(style === "diagonal" ? "" : arrow)}</div>`;
 }
 
 function multipleMarkup(visual) {
