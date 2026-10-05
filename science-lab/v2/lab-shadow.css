@@ -1,0 +1,8 @@
+/* 그림자 살펴보기 실험실 */
+.sd-model-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#f2f4fb;color:#33416b}
+.shadow-2d{position:relative;height:300px;background:#eef1f7;border-radius:14px;overflow:hidden}
+.shadow-2d .sd-light{position:absolute;left:6%;top:42%;font-size:40px}
+.shadow-2d .sd-obj{position:absolute;left:47%;top:44%;font-size:30px;transition:left .3s}
+.shadow-2d .sd-screen{position:absolute;right:8%;top:12%;bottom:12%;width:14px;background:#fff;border:3px solid #2a2d33;border-radius:3px;display:flex;align-items:center;justify-content:center}
+.shadow-2d .sd-shadow{display:block;width:8px;background:#1f2430;border-radius:3px;opacity:0;transition:height .3s,opacity .3s}
+.dk-lab-battle[data-unit="s42-u03"] .mb-team .sd-model-note{display:none}

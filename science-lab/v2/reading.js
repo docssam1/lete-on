@@ -1,7 +1,7 @@
 // 같은 읽을거리 데이터를 웹·살아 있는 교재·A4에서 사용한다. 원문 문제/정답은 건드리지 않는다.
 const esc = (s) => String(s ?? '').replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c]));
 const prose = (s) => esc(s).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-const link = (s) => /^\.\.\/assets\/photos\/s42-u02-(cups|condensation|apparatus)\.webp$/.test(s || '') || /^https:\/\//.test(s || '') || /^\.\.\/v2\/#\/s\d{2}-u\d{2}[a-z]?\//.test(s || '') || /^\.\.\/assets\/thumbs\/s\d{2}-u\d{2}[a-z]?\.webp$/.test(s || '') ? esc(s) : '#';
+const link = (s) => /^\.\.\/assets\/photos\/s4\d-u\d{2}[a-z]?-[a-z0-9-]+\.webp$/.test(s || '') || /^https:\/\//.test(s || '') || /^\.\.\/v2\/#\/s\d{2}-u\d{2}[a-z]?\//.test(s || '') || /^\.\.\/assets\/thumbs\/s\d{2}-u\d{2}[a-z]?\.webp$/.test(s || '') ? esc(s) : '#';
 
 export function readingHtml(a, { teacher = false } = {}) {
   const split = Math.ceil(a.sections.length / 2);
