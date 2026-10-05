@@ -91,8 +91,9 @@ function isoSvg(H, o){
   var cubes = isoCubes(H), R = H.length, C = 0; H.forEach(function(row){ C = Math.max(C, row.length); });
   var hmax = 0; H.forEach(function(row){ row.forEach(function(v){ hmax = Math.max(hmax, v); }); });
   var minX = -R * W - 2, maxX = C * W + 2, minY = -hmax * W - 2, maxY = (R + C) * W / 2 + 2;
-  var col = print ? { top: '#ffffff', left: '#d9d9d9', right: '#a9a9a9', ln: '#000' } : { top: '#f4d49a', left: '#d9a45c', right: '#b97a35', ln: '#6b4220' };
-  var s = '<svg class="' + (print ? 'nm-nl-g13-iso' : 'nm-g13-iso') + '" viewBox="' + minX + ' ' + minY + ' ' + (maxX - minX) + ' ' + (maxY - minY) + '" role="img" aria-label="blocks">';
+  /* 2026-10-05 원장 "너무 흑백이야" — 인쇄도 화면과 같은 나무색. 윗면·왼면·오른면 밝기가 달라 흑백 프린터에서도 세 면이 갈린다. */
+  var col = { top: '#f4d49a', left: '#d9a45c', right: '#b97a35', ln: '#6b4220' };
+  var s = '<svg class="' + (print ? 'nm-nl-g13-iso nm-obj-svg' : 'nm-g13-iso') + '" viewBox="' + minX + ' ' + minY + ' ' + (maxX - minX) + ' ' + (maxY - minY) + '" role="img" aria-label="blocks">';
   function poly(pts, fill){ return '<polygon points="' + pts.map(function(p){ return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '" fill="' + fill + '" stroke="' + col.ln + '" stroke-width="' + (print ? 1.1 : 1) + '" stroke-linejoin="round"/>'; }
   cubes.forEach(function(q){
     var A = isoProject(q.c, q.r, q.z + 1, W), B = isoProject(q.c + 1, q.r, q.z + 1, W), Cc = isoProject(q.c + 1, q.r + 1, q.z + 1, W), D = isoProject(q.c, q.r + 1, q.z + 1, W);
@@ -171,11 +172,11 @@ function registerAll(){
 
 /* ── 길 채우기(pathFill) 그림 — 화면·인쇄 겸용 ─────────────────────────────────
    p.nodes[{x,y,v,show,shape}] · p.edges[{a,b,style}] (화살표는 a→b, 끝이 더 큰 수) · p.vw/vh.
-   o.fills={노드번호:값} 채운 칸, o.focus=지금 고를 빈칸, o.print=흑백 인쇄용(굵은 선·빈칸은 점선). */
+   o.fills={노드번호:값} 채운 칸, o.focus=지금 고를 빈칸, o.print=인쇄용(화면과 같은 색, 빈칸은 점선). 인쇄 CSS(.nm-nl text 검정)를 이기도록 글자색은 style 로 준다. */
 function pathSvg(p, o){
   o = o || {}; var print = !!o.print, fills = o.fills || {}, focus = o.focus;
-  var ink = print ? '#000' : '#16417c', lw = print ? 1.5 : 1.7;
-  var s = '<svg class="' + (print ? 'nm-nl-g13-path' : 'nm-g13-path') + '" viewBox="0 0 ' + p.vw + ' ' + p.vh + '" role="img" aria-label="path">';
+  var ink = '#16417c', lw = print ? 1.5 : 1.7;
+  var s = '<svg class="' + (print ? 'nm-nl-g13-path nm-obj-svg' : 'nm-g13-path') + '" viewBox="0 0 ' + p.vw + ' ' + p.vh + '" role="img" aria-label="path">';
   function rad(n){ return n.shape === 'box' ? 11 : 6.2; }
   (p.edges || []).forEach(function(e){
     var a = p.nodes[e.a], b = p.nodes[e.b];
@@ -193,13 +194,13 @@ function pathSvg(p, o){
   p.nodes.forEach(function(n, i){
     var filled = fills[i] != null, blank = !n.show, txt = n.show ? n.v : (filled ? fills[i] : '');
     var cls = 'nm-g13-pn' + (blank ? ' blank' : '') + (filled ? ' found' : '') + (focus === i ? ' focus' : '');
-    var fillc = print ? '#fff' : (blank ? (filled ? '#eafaf1' : '#fffaf0') : '#fff');
-    var stroke = print ? '#000' : (blank ? (filled ? '#2e9e6b' : '#c9a063') : ink);
+    var fillc = blank ? (filled ? '#eafaf1' : '#fffaf0') : '#fff';
+    var stroke = blank ? (filled ? '#2e9e6b' : '#c9a063') : ink;
     var dashed = blank && !filled ? ' stroke-dasharray="2.4 1.8"' : '';
     s += '<g class="' + cls + '" data-i="' + i + '">';
     if(n.shape === 'box') s += '<rect x="' + (n.x - 11) + '" y="' + (n.y - 11) + '" width="22" height="22" rx="4" fill="' + fillc + '" stroke="' + stroke + '" stroke-width="' + lw + '"' + dashed + '/>';
     else s += '<circle cx="' + n.x.toFixed(1) + '" cy="' + n.y.toFixed(1) + '" r="6.2" fill="' + fillc + '" stroke="' + stroke + '" stroke-width="' + lw + '"' + dashed + '/>';
-    if(txt !== '') s += '<text x="' + n.x.toFixed(1) + '" y="' + (n.y + 3).toFixed(1) + '" text-anchor="middle" font-size="' + (n.shape === 'box' ? 11 : 9) + '" font-weight="800" fill="' + (print ? '#000' : (filled ? '#1f7a50' : ink)) + '">' + txt + '</text>';
+    if(txt !== '') s += '<text x="' + n.x.toFixed(1) + '" y="' + (n.y + 3).toFixed(1) + '" text-anchor="middle" font-size="' + (n.shape === 'box' ? 11 : 9) + '" font-weight="800" fill="' + (filled ? '#1f7a50' : ink) + '"' + (print ? ' style="fill:' + (filled ? '#1f7a50' : ink) + '"' : '') + '>' + txt + '</text>';
     s += '<circle class="nm-g13-hit" cx="' + n.x.toFixed(1) + '" cy="' + n.y.toFixed(1) + '" r="10" fill="transparent"/></g>';
   });
   return s + '</svg>';
