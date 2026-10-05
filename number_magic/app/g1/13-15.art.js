@@ -93,17 +93,22 @@
   var G = window.NM_G1315 = {};
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   G.esc = esc;
-  var INK = '#1F2A3A';
+  /* 인쇄(o.print)도 화면과 같은 색을 쓴다 — 선만 조금 가늘고, 깜박임·눌림 표시만 뺀다.
+     인쇄 svg 에는 nm-obj-svg 를 붙인다: exam.js 의 `.nm-nl svg:not(.nm-obj-svg) :is(line, path)` 가
+     선·화살촉을 검정으로 덮기 때문(그 규칙은 다른 묶음이 기대므로 건드리지 않는다). */
+  var BLUE = '#16417c', GOLD = '#c9a063', BLANKF = '#fffdf7';
+  function svgCls(pre, name, pr) { return pre + '-' + name + (pr ? ' nm-obj-svg' : ''); }
 
   /* ── 겹친 도형(overlapSum) ── p.geom/p.regions/p.vb. o.print · o.pre · o.fillAsk(값으로 채움) · o.hiSet(강조 도형 index) */
   G.overlapSvg = function (p, o) {
     o = o || {}; var pre = o.pre || 'nm-g1315', pr = !!o.print;
-    var W = p.vb[0], Hh = p.vb[1], s = '<svg class="' + pre + '-ov" viewBox="0 0 ' + W + ' ' + Hh + '" role="img" aria-label="' + esc(o.label || '') + '">';
+    var W = p.vb[0], Hh = p.vb[1], s = '<svg class="' + svgCls(pre, 'ov', pr) + '" viewBox="0 0 ' + W + ' ' + Hh + '" role="img" aria-label="' + esc(o.label || '') + '">';
     var fills = ['rgba(59,143,224,.20)', 'rgba(251,140,46,.22)', 'rgba(67,160,71,.20)'];
     var strokes = ['#3b8fe0', '#e07a1e', '#3c9a43'];
     p.geom.forEach(function (g, i) {
       var on = o.hiSet === i;
-      var attr = pr ? ' fill="none" stroke="' + INK + '" stroke-width="1.3"' + (i === 1 ? ' stroke-dasharray="3 2"' : '')
+      /* 인쇄: 화면 색 그대로 + 두 번째 도형은 점선(흑백에서도 두 도형이 갈리게) */
+      var attr = pr ? ' fill="' + fills[i] + '" stroke="' + strokes[i] + '" stroke-width="1.6"' + (i === 1 ? ' stroke-dasharray="3 2"' : '')
         : ' fill="' + fills[i] + '" stroke="' + strokes[i] + '" stroke-width="' + (on ? 2.6 : 1.4) + '"';
       s += g.k === 'rect'
         ? '<rect class="' + pre + '-ovs" x="' + g.x + '" y="' + g.y + '" width="' + g.w + '" height="' + g.h + '" rx="3"' + attr + '/>'
@@ -115,7 +120,7 @@
       if (shown != null) {
         s += '<text class="' + pre + '-ovn' + (r.v == null ? ' ' + pre + '-found' : '') + '" x="' + x + '" y="' + (y + 3.4) + '" text-anchor="middle">' + shown + '</text>';
       } else if (pr) {
-        s += '<rect x="' + (x - 6) + '" y="' + (y - 6) + '" width="12" height="12" rx="2" fill="#fff" stroke="' + INK + '" stroke-width="1.3" stroke-dasharray="2.4 1.6"/>';
+        s += '<rect x="' + (x - 6) + '" y="' + (y - 6) + '" width="12" height="12" rx="2" fill="' + BLANKF + '" stroke="' + GOLD + '" stroke-width="1.5" stroke-dasharray="2.4 1.6"/>';
       } else {
         s += '<rect class="' + pre + '-ovb" x="' + (x - 6.5) + '" y="' + (y - 6.5) + '" width="13" height="13" rx="3"/><text class="' + pre + '-ovq" x="' + x + '" y="' + (y + 3.4) + '" text-anchor="middle">?</text>';
       }
@@ -127,7 +132,7 @@
   /* ── 막대 기호(rodNumeral) — 1~5 = 막대 n개, 6~9 = 위 가로 막대(5) + 나머지 막대 ── */
   G.rodGlyph = function (n, o) {
     o = o || {};
-    var col = o.print ? INK : '#16417c';
+    var col = BLUE;
     var top = n >= 6, k = top ? n - 5 : n;
     var s = '<svg class="' + (o.pre || 'nm-g1315') + '-rod" viewBox="0 0 40 40" aria-hidden="true">';
     if (top) s += '<rect x="5" y="4" width="30" height="5" rx="2.5" fill="' + col + '"/>';
@@ -140,9 +145,8 @@
   var RINGS = [{ s: 1, r0: 0.62, r1: 1 }, { s: 2, r0: 0.3, r1: 0.62 }, { s: 3, r0: 0, r1: 0.3 }];
   G.dartSvg = function (p, o) {
     o = o || {}; var pre = o.pre || 'nm-g1315', pr = !!o.print, R0 = 46, cx = 56, cy = 54;
-    var s = '<svg class="' + pre + '-dart" viewBox="0 0 112 108" role="img" aria-label="' + esc(o.label || '') + '">';
-    var fl = pr ? ['#fff', '#fff', '#fff'] : ['#ffd9d4', '#fff', '#ff8a80'];
-    var st = pr ? INK : '#c0392b';
+    var s = '<svg class="' + svgCls(pre, 'dart', pr) + '" viewBox="0 0 112 108" role="img" aria-label="' + esc(o.label || '') + '">';
+    var fl = ['#ffd9d4', '#fff', '#ff8a80'], st = '#c0392b';
     [[R0, 1, fl[0]], [R0 * 0.62, 2, fl[1]], [R0 * 0.3, 3, fl[2]]].forEach(function (a) {
       s += '<circle class="' + pre + '-ring" data-s="' + a[1] + '" cx="' + cx + '" cy="' + cy + '" r="' + a[0] + '" fill="' + a[2] + '" stroke="' + st + '" stroke-width="' + (pr ? 1.3 : 1.8) + '"/>';
     });
@@ -152,7 +156,7 @@
     });
     (p.hits || []).forEach(function (h) {
       var a = h.ang * Math.PI / 180, x = cx + Math.cos(a) * h.r * R0, y = cy + Math.sin(a) * h.r * R0;
-      s += pr ? '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3" fill="' + INK + '"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5" fill="none" stroke="' + INK + '" stroke-width="1"/>'
+      s += pr ? '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3.4" fill="#1a2233"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="1.3" fill="#ffe27a"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5" fill="none" stroke="#1a2233" stroke-width="1"/>'
         : '<circle class="' + pre + '-pin" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3.6" fill="#1a2233"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="1.3" fill="#ffe27a"/>';
     });
     return s + '</svg>';
@@ -178,8 +182,8 @@
   G.chainSvg = function (p, o) {
     o = o || {}; var pre = o.pre || 'nm-g1315', pr = !!o.print;
     var L = G.chainLayout(p.layout, p.nodes.length), pts = L.pts, n = pts.length, R0 = 6.9;
-    var s = '<svg class="' + pre + '-chain" viewBox="0 0 ' + L.vb[0] + ' ' + L.vb[1] + '" role="img" aria-label="' + esc(o.label || '') + '">';
-    var sol = pr ? INK : '#16417c', dash = pr ? INK : '#c0392b';
+    var s = '<svg class="' + svgCls(pre, 'chain', pr) + '" viewBox="0 0 ' + L.vb[0] + ' ' + L.vb[1] + '" role="img" aria-label="' + esc(o.label || '') + '">';
+    var sol = BLUE, dash = '#c0392b';
     s += '<defs><marker id="' + pre + 'ah' + (o.uid || 0) + '" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 Z" fill="' + sol + '"/></marker>' +
       '<marker id="' + pre + 'ad' + (o.uid || 0) + '" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 Z" fill="' + dash + '"/></marker></defs>';
     p.arrows.forEach(function (a, i) {
@@ -200,7 +204,7 @@
     pts.forEach(function (pt, i) {
       var v = o.vals ? o.vals[i] : p.nodes[i];
       var blank = v == null, cur = o.cur === i;
-      if (pr) s += '<circle cx="' + pt[0].toFixed(1) + '" cy="' + pt[1].toFixed(1) + '" r="' + R0 + '" fill="#fff" stroke="' + INK + '" stroke-width="1.4"' + (blank ? ' stroke-dasharray="2.6 1.8"' : '') + '/>' +
+      if (pr) s += '<circle cx="' + pt[0].toFixed(1) + '" cy="' + pt[1].toFixed(1) + '" r="' + R0 + '" fill="' + (blank ? BLANKF : '#fff') + '" stroke="' + (blank ? GOLD : BLUE) + '" stroke-width="' + (blank ? 1.6 : 1.5) + '"' + (blank ? ' stroke-dasharray="2.6 1.8"' : '') + '/>' +
         (blank ? '' : '<text class="' + pre + '-an" x="' + pt[0].toFixed(1) + '" y="' + (pt[1] + 3.6).toFixed(1) + '" text-anchor="middle">' + v + '</text>');
       else s += '<circle class="' + pre + '-node' + (blank ? ' ' + pre + '-blank' : '') + (cur ? ' ' + pre + '-cur' : '') + (o.found && o.found.indexOf(i) >= 0 ? ' ' + pre + '-found' : '') + '" cx="' + pt[0].toFixed(1) + '" cy="' + pt[1].toFixed(1) + '" r="' + R0 + '"/>' +
         '<text class="' + pre + '-an" x="' + pt[0].toFixed(1) + '" y="' + (pt[1] + 3.8).toFixed(1) + '" text-anchor="middle">' + (blank ? '?' : v) + '</text>';
@@ -210,12 +214,12 @@
   /* 규칙 상자 — 실선=a 큰 수, 점선=b 작은 수(규칙 찾기에서는 숫자 칸을 비운다) */
   G.chainLegend = function (p, o) {
     o = o || {}; var pre = o.pre || 'nm-g1315', lg = p.legend; if (!lg) return '';
-    var col = o.print ? INK : '#16417c', dcol = o.print ? INK : '#c0392b', L = o.lk || function (a) { return a; };
+    var col = BLUE, dcol = '#c0392b', L = o.lk || function (a) { return a; }, sc = o.print ? ' class="nm-obj-svg"' : '';
     var box = function (v) { return v == null ? '<i class="' + pre + '-lgb"></i>' : '<b>' + v + '</b>'; };
     var a = p.askRule ? (o.ruleVals ? o.ruleVals[0] : null) : lg.a, b = p.askRule ? (o.ruleVals ? o.ruleVals[1] : null) : lg.b;
     return '<div class="' + pre + '-legend">' +
-      '<span class="' + pre + '-lgi"><svg viewBox="0 0 30 8"><line x1="1" y1="4" x2="24" y2="4" stroke="' + col + '" stroke-width="2"/><path d="M22 0.8 L29 4 L22 7.2 Z" fill="' + col + '"/></svg> ' + box(a) + ' ' + L('큰 수', 'more', '多') + '</span>' +
-      '<span class="' + pre + '-lgi"><svg viewBox="0 0 30 8"><line x1="1" y1="4" x2="24" y2="4" stroke="' + dcol + '" stroke-width="2" stroke-dasharray="3.2 2.4"/><path d="M22 0.8 L29 4 L22 7.2 Z" fill="' + dcol + '"/></svg> ' + box(b) + ' ' + L('작은 수', 'less', '少') + '</span></div>';
+      '<span class="' + pre + '-lgi"><svg' + sc + ' viewBox="0 0 30 8"><line x1="1" y1="4" x2="24" y2="4" stroke="' + col + '" stroke-width="2"/><path d="M22 0.8 L29 4 L22 7.2 Z" fill="' + col + '"/></svg> ' + box(a) + ' ' + L('큰 수', 'more', '多') + '</span>' +
+      '<span class="' + pre + '-lgi"><svg' + sc + ' viewBox="0 0 30 8"><line x1="1" y1="4" x2="24" y2="4" stroke="' + dcol + '" stroke-width="2" stroke-dasharray="3.2 2.4"/><path d="M22 0.8 L29 4 L22 7.2 Z" fill="' + dcol + '"/></svg> ' + box(b) + ' ' + L('작은 수', 'less', '少') + '</span></div>';
   };
 
   /* ── 숫자 기차(numberTrain) — 기관차 + 객차 4~5량, 칸 사이 위의 동그라미 ── */
@@ -268,18 +272,18 @@
   G.ringSvg = function (p, o) {
     o = o || {}; var pre = o.pre || 'nm-g1315', pr = !!o.print;
     var C = [[22, 12], [78, 12], [78, 56], [22, 56]];
-    var s = '<svg class="' + pre + '-ring" viewBox="0 0 100 68">';
-    s += '<polygon points="' + C.map(function (c) { return c.join(','); }).join(' ') + '" fill="none" stroke="' + (pr ? INK : '#c9a063') + '" stroke-width="' + (pr ? 1.4 : 2) + '"/>';
+    var s = '<svg class="' + svgCls(pre, 'ring', pr) + '" viewBox="0 0 100 68">';
+    s += '<polygon points="' + C.map(function (c) { return c.join(','); }).join(' ') + '" fill="none" stroke="' + GOLD + '" stroke-width="' + (pr ? 1.8 : 2) + '"/>';
     var mids = [[50, 12], [78, 34], [50, 56], [22, 34]], dx = [0, 9, 0, -9], dy = [-4.5, 1.6, 9, 1.6];
     p.sides.forEach(function (v, i) {
-      s += '<rect x="' + (mids[i][0] - 6) + '" y="' + (mids[i][1] - 5.5) + '" width="12" height="11" rx="2.4" fill="' + (pr ? '#fff' : '#eef3fb') + '" stroke="' + (pr ? INK : '#9bb3d6') + '" stroke-width="1"/>' +
+      s += '<rect x="' + (mids[i][0] - 6) + '" y="' + (mids[i][1] - 5.5) + '" width="12" height="11" rx="2.4" fill="#eef3fb" stroke="#9bb3d6" stroke-width="' + (pr ? 1.2 : 1) + '"/>' +
         '<text class="' + pre + '-rs" x="' + mids[i][0] + '" y="' + (mids[i][1] + 3.2) + '" text-anchor="middle">' + v + '</text>';
       void dx; void dy;
     });
     C.forEach(function (c, i) {
       var v = o.vals ? o.vals[i] : p.corners[i], blank = v == null;
       s += '<circle class="' + pre + '-rc' + (blank ? ' ' + pre + '-blank' : '') + (o.cur === i ? ' ' + pre + '-cur' : '') + '" data-i="' + i + '" cx="' + c[0] + '" cy="' + c[1] + '" r="8.2"' +
-        (pr ? ' fill="#fff" stroke="' + INK + '" stroke-width="1.4"' + (blank ? ' stroke-dasharray="2.6 1.8"' : '') : '') + '/>' +
+        (pr ? ' fill="' + (blank ? BLANKF : '#fff') + '" stroke="' + (blank ? GOLD : BLUE) + '" stroke-width="1.6"' + (blank ? ' stroke-dasharray="2.6 1.8"' : '') : '') + '/>' +
         (blank && pr ? '' : '<text class="' + pre + '-rv" x="' + c[0] + '" y="' + (c[1] + 3.8) + '" text-anchor="middle" pointer-events="none">' + (blank ? '?' : v) + '</text>');
     });
     return s + '</svg>';
