@@ -253,6 +253,8 @@
   .nm-nl-dots circle { fill:#e0483e; } .nm-nl-dots text { fill:#1F2A3A; }
   .nm-nl-pyramid { display:flex; flex-direction:column; align-items:center; gap:1.5mm; }
   .nm-nl-pyramid .nm-nl-row { gap:2.5mm; }
+  .nm-nl-pyramid .nm-nl-cell { background:#fde9b8; border-color:#c98a1a; }
+  .nm-nl-pyramid .nm-nl-cell-blank { background:#fffaf0; }
   .nm-nl-stairs { height:30mm; max-width:100%; display:block; }
   .nm-nl-stairs rect { fill:#fde9b8; stroke:#1F2A3A; stroke-width:1.4; }
   .nm-nl-stairs line { stroke:#1F2A3A; }
