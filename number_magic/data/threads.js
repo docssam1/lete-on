@@ -37,6 +37,9 @@ NS1:{ name:{ko:'자릿값 읽기',en:'Place Value',zh:'位值'}, gen:'ns1_placeV
            concept:{ko:'큰 수는 네 자리씩 끊어 읽어요: 일·십·백·천 / 만·십만·백만·천만 / 억·십억·백억·천억. 345,600,000은 3억 4560만이에요. 3은 억의 자리, 4는 천만의 자리 — 오른쪽부터 세어 몇째 자리인지 찾아요.',
              en:'Big numbers are read in groups: ones to thousands, then ten-thousands to ten-millions, then hundred-millions. In 345,600,000 the 3 is in the hundred-millions place and the 4 in the ten-millions place. Count the places from the right.',
              zh:'大数每四位一组来读：个十百千，万十万百万千万，亿十亿百亿千亿。345,600,000是3亿4560万：3在亿位，4在千万位。从右往左数，就能找到数字在哪一位。'}},
+          /* 2026-10-05 — 원장 "1학년 첫번째에 갑자기 네자리 수가 나와". C1(초1)의 자릿값은 100까지(두 자리)만.
+             세 자리(L1)는 C3, 네 자리(L2)는 C7, 다섯 자리(L3)는 C11, 십진블록(L4)은 C7 로 옮겼다. */
+          {id:7,offLadder:true,opens:true,label:{ko:'두 자리 (100까지)',en:'2 digits (to 100)',zh:'两位数（100以内）'},params:{max:99}},
           {id:6,offLadder:true,label:{ko:'큰 수 (조 단위까지)',en:'Big numbers (to trillions)',zh:'大数（到万亿位）'},params:{max:9999999999999}},
           {id:4,label:{ko:'십진블록 읽기',en:'Read base-10 blocks',zh:'读十进制方块'},params:{mode:'base10'},
            concept:{ko:'십진블록은 백 판·십 막대·낱개를 세어 자릿값을 더해요 — 200+50+4는 254예요.',

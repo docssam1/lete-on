@@ -363,11 +363,14 @@
     if (prompt.en) prompt.en = prompt.en.replace(/\bGCD\b/g, 'greatest common divisor').replace(/\bLCM\b/g, 'least common multiple');
     return prompt;
   }
+  /* 유아 → 과정 1 경계 문항: 과정 1 첫 회차의 10 이하 계산만(2026-10-05 과정 1 재편성 — 보수 10·세 수 연이은 덧뺄). */
+  const TRANSITION = { NS3: [1, 2], AD10: [1], NS2: [1], AD1: [1], SB1: [1] };
+  const TRANSITION_OK = (t, lv) => !!(TRANSITION[t] && TRANSITION[t].includes(lv));
   function numberQuestion(ref, p, transition) {
     if (!numberSafe(p)) return null;
     // The next sample after C0 is still a small-number arithmetic sample, not 3-digit place value.
     if (transition) {
-      if (!['NS2', 'NS3', 'AD1', 'SB1'].includes(ref.t) || ref.lv !== 1) return null;
+      if (!TRANSITION_OK(ref.t, ref.lv)) return null;
       const numbers = (p.tex.match(/\d+(?:\.\d+)?/g) || []).map(Number);
       if (numbers.some(x => x > 10) || (Array.isArray(p.answer) ? p.answer : [p.answer]).some(x => x < 0 || x > 10)) return null;
     }
@@ -432,7 +435,7 @@
     const bands = [ ['previous', at ? list[at - 1] : baseline], ['current', baseline], ['next', list[at + 1] || baseline] ];
     for (const [band, stage] of bands) {
       const transition = baseline.id === 'f-ten10' && band === 'next' && stage.kind === 'course';
-      const refs = transition ? stage.refs.filter(r => ['NS2', 'NS3', 'AD1', 'SB1'].includes(r.t) && r.lv === 1) : stage.refs;
+      const refs = transition ? stage.refs.filter(r => TRANSITION_OK(r.t, r.lv)) : stage.refs;
       if (!refs.length) fail('no supported source refs for ' + stage.id + ' / ' + band);
       let accepted = 0;
       for (let attempt = 0; attempt < 8192 && accepted < BAND_COUNTS[band]; attempt++) {

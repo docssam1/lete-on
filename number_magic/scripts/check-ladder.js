@@ -48,6 +48,8 @@ for (const s of SPEC) {
     /* offLadder 레벨(2026-09-29, 학년별 □ 찾기 등)은 스레드 사다리의 한 칸이 아니라 따로 얹는 레벨이다 —
        스레드의 첫 과정으로 세지 않고, 그 레벨의 선수(level.prereq, 없으면 스레드 선수)로 따로 검사한다. */
     const lvObj = pin ? (TH[t].levels || []).find(l => l.id === +pin) : null;
+    /* opens(2026-10-05) — offLadder 이지만 그 스레드를 처음 여는 레벨(NS1 L7 두 자리: 초1 은 100까지만)은 첫 과정으로 센다. */
+    if (lvObj && lvObj.offLadder && lvObj.opens && firstCourse[t] === undefined) firstCourse[t] = s.id;
     if (lvObj && lvObj.offLadder) { offUses.push({ t, lv: +pin, c: s.id, prereq: lvObj.prereq || TH[t].prereq || [] }); continue; }
     if (firstCourse[t] === undefined) firstCourse[t] = s.id;
   }
