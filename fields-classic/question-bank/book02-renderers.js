@@ -329,7 +329,12 @@ function promiseFigure(layout, positions) {
 
 function promiseMarkup(visual) {
   if (visual.layout === "row") {
-    return `<div class="b2-promise row">${(visual.rows || []).map((row) => `<span>${row.map((value) => value == null ? token(null) : `<b>${esc(value)}</b>`).join("<i></i>")}</span>`).join("")}</div>`;
+    let blank = 0;
+    const blankCell = () => {
+      const label = visual.blankLabels?.[blank++];
+      return label ? `<span class="b2-token blank" aria-label="빈칸 ${esc(label)}">${esc(label)}</span>` : token(null);
+    };
+    return `<div class="b2-promise row">${(visual.rows || []).map((row) => `<span>${row.map((value) => value == null ? blankCell() : `<b>${esc(value)}</b>`).join("<i></i>")}</span>`).join("")}</div>`;
   }
   const examples = (visual.examples || []).map((example) => promiseFigure(visual.layout, example)).join("");
   const problem = promiseFigure(visual.layout, visual.values || {});
