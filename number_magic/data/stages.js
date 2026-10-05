@@ -96,7 +96,7 @@ window.NM_STAGES = [
     name:{ko:'계산의 정복',en:'Mastery',zh:'计算的征服'},
     band:{ko:'초등 2학년 말 ~ 3학년',en:'End of Grade 2 – Grade 3',zh:'小学二年级末~三年级'},
     chapters:['T14','R15','T15','R16','CR8','R17'],
-    tiers:['level3'], courses:{from:17,to:25}, weeks:50,
+    tiers:['level3'], courses:{from:17,to:25}, weeks:53,
     learn:{
       ko:'소수 덧뺄과 곱셈, 제곱수, 약수와 배수·소인수분해, 분모가 다른 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.',
       en:'Decimal addition, subtraction and multiplication, square numbers, factors and multiples, fractions with unlike denominators, multiplying and dividing fractions, sequences, percentages and ratios.',
@@ -113,7 +113,7 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도로는 초4~5에 나오는 내용을 여기서 만납니다.',
       en:'In school terms this covers Grade 4–5 material.',
       zh:'按学校进度，这里学的是小学四~五年级的内容。'},
-    meta:{ko:'과정 17~25 · 주 2회 기준 27주(주 1회 50주) · 학교로는 초5~6 내용',en:'Courses 17–25 · 27 weeks at two sheets a week (50 at one) · the end of the arithmetic track',zh:'课程17~25 · 每周2次约27周(每周1次50周) · 运算段的终点'}
+    meta:{ko:'과정 17~25 · 주 2회 기준 29주(주 1회 53주) · 학교로는 초5~6 내용',en:'Courses 17–25 · 29 weeks at two sheets a week (53 at one) · the end of the arithmetic track',zh:'课程17~25 · 每周2次约29周(每周1次53周) · 运算段的终点'}
   },
   {
     key:'tower', icon:'🗼', accent:'#C9A063', status:'live',

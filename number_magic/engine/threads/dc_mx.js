@@ -291,6 +291,59 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
 
 /* ── DC2 — 소수 곱셈 ──────────────────────────────────────────── */
 NM_TGEN['dc2_decMul'] = function(params, rng) {
+  /* ── (소수)×(자연수)·(자연수)×(소수)·(소수)×(소수) — 가로셈 'h'·세로셈 'v' (2026-10-05 신규, 기적 98·99) ──
+     가로셈: 소수점을 떼고 자연수로 곱한 뒤 10·100 으로 나눈다 — 1.2 × 0.4 = □ ÷ □ = □.□ (48 ÷ 100 = 0.48).
+     세로셈: 일반 세로셈 상자(오른쪽 끝 맞춤)에 곱하고 소수점을 찍는다 — 답은 소수 그대로(numpad).
+     곱의 끝자리가 0 이면(2.5×4=10.0) 소수 자릿수가 줄어 "자릿수 합만큼 옮긴다"가 흐려지므로 뺀다.
+     소수 첫째 자리가 0 인 곱(0.2×0.3=0.06)은 가로셈 빈칸(정수)에 06 을 못 쓰므로 가로셈에서만 뺀다. */
+  const mmode = params && params.mode;
+  if (mmode === 'decNat' || mmode === 'natDec' || mmode === 'decDec') {
+    const vert = params.orient === 'v';
+    const fmt = (n, k) => k ? (n / Math.pow(10, k)).toFixed(k) : String(n);
+    let ai, ak, bi, bk;
+    for (let t = 0; t < 400; t++) {
+      if (mmode === 'decNat') {        /* 2.4 × 3 · 0.35 × 6 · 12.6 × 4 */
+        ak = rng() < 0.6 ? 1 : 2; ai = ak === 1 ? R(rng, 11, 199) : R(rng, 11, 299); bk = 0; bi = R(rng, 2, rng() < 0.75 ? 9 : 25);
+      } else if (mmode === 'natDec') { /* 6 × 0.4 · 15 × 0.35 · 8 × 2.7 */
+        ai = R(rng, 2, rng() < 0.7 ? 9 : 40); ak = 0; bk = rng() < 0.6 ? 1 : 2; bi = bk === 1 ? R(rng, 2, 59) : R(rng, 11, 99);
+      } else {                         /* 1.2 × 0.4 · 2.5 × 1.3 · 0.35 × 1.2 */
+        ak = 1; ai = R(rng, 2, 59); bk = rng() < 0.7 ? 1 : 2; bi = bk === 1 ? R(rng, 2, 39) : R(rng, 11, 99);
+        if (rng() < 0.5) { const ti = ai, tk = ak; ai = bi; ak = bk; bi = ti; bk = tk; }
+      }
+      if ((ak && ai % 10 === 0) || (bk && bi % 10 === 0)) continue;   /* 0.40 처럼 끝자리 0 인 소수는 쓰지 않는다 */
+      const prod = ai * bi, kk = ak + bk;
+      if (prod % 10 === 0) continue;
+      const pStr = fmt(prod, kk), frac = pStr.split('.')[1] || '';
+      if (!vert && frac[0] === '0') continue;
+      break;
+    }
+    const aStr = fmt(ai, ak), bStr = fmt(bi, bk), prod = ai * bi, kk = ak + bk, sc = Math.pow(10, kk);
+    const pStr = fmt(prod, kk), pInt = Math.floor(prod / sc), pFrac = pStr.split('.')[1];
+    const head = `${aStr} \\times ${bStr}`;
+    const steps = [
+      { tex: `${ai} \\times ${bi} = \\square`, blank: prod },
+      { tex: `\\square \\div ${sc} = \\square.\\square`, blank: [prod, pInt, +pFrac] }   /* 곱을 미리 보여 주지 않는다 */
+    ];
+    const P = vert ? {
+      ko: `세로셈으로 계산해요: ${aStr} × ${bStr}. 자연수처럼 곱한 뒤, 두 수의 소수 자릿수를 더한 만큼 곱의 소수점을 왼쪽으로 옮겨 찍어요.`,
+      en: `Work out ${aStr} × ${bStr} in columns. Multiply as whole numbers, then place the point so the product has as many decimal places as both numbers together.`,
+      zh: `用竖式计算${aStr}×${bStr}。先按整数相乘，再按两个因数小数位数之和点上积的小数点。`
+    } : {
+      ko: `가로셈으로 계산해요: ${aStr} × ${bStr}. 소수점을 떼고 자연수로 곱한 뒤, 소수 자릿수만큼 10·100으로 나눠요.`,
+      en: `Work out ${aStr} × ${bStr} across. Multiply without the points, then divide by 10 or 100 for the decimal places.`,
+      zh: `用横式计算${aStr}×${bStr}。去掉小数点按整数相乘，再按小数位数除以10或100。`
+    };
+    if (vert) return {
+      prompt: P, tex: `${head} = \\square`, answer: +pStr, answerType: 'number', widget: 'numpad',
+      orient: 'v', solution: steps
+    };
+    return {
+      prompt: P, tex: `${head} = \\square \\div \\square = \\square.\\square`,
+      answer: [prod, sc, pInt, +pFrac], answerType: 'steps', widget: 'steps', orient: 'h',
+      steps: [steps[0], { tex: `${head} = ${prod} \\div \\square = \\square.\\square`, blank: [sc, pInt, +pFrac] }],
+      solution: steps
+    };
+  }
   /* 두 가지 유형 중 랜덤 선택 */
   const variant = pick(rng, ['decDec', 'intDec']);
 

@@ -4080,7 +4080,7 @@ function classifyRoundLayout(problems, threadId, young, creative){
   const excludedPrefix = /^(MD|CH|EL|MX)/.test(threadId||'') || !!(thDef && thDef.noVertical);
   /* 곱하는 수가 두 자리인 세로셈은 부분곱이 두 줄이라 칸이 더 높다(2026-09-19, ML8·ML9).
      5행 52mm 에 그대로 두면 칸마다 10px 씩 넘쳤다 — 4행 64mm 로 낮춘다. */
-  const twoRowVert = p => { const v = parseVert(p.tex); return !!v && v.op === '×' && String(v.b).replace(/\D/g,'').length >= 2; };
+  const twoRowVert = p => { const v = parseVert(p.tex); return !!v && v.op === '×' && String(v.b).replace(/\D/g,'').replace(/^0+/,'').length >= 2; };
   const vertLayout = () => withTex.length && withTex.every(twoRowVert)
     ? {type:'vertical', cols:4, rows:4, perPage:16, flow:'row', firstRows:2, pitch:64}
     : {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:3, pitch:52};
@@ -4443,7 +4443,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       /* 곱하는 수가 두 자리면 부분곱이 두 줄이다 — 줄이 하나뿐이면 답만 겨우 쓰고
          부분곱은 여백에 흘려 쓰게 된다(ML8·ML9 학습지에서 실제로 그랬다, 2026-09-19).
          두 줄 + 합 줄을 그려 세로셈의 모양 그대로 쓰게 한다. */
-      const twoRow = v.op === '×' && String(v.b).replace(/\D/g,'').length >= 2;
+      const twoRow = v.op === '×' && String(v.b).replace(/\D/g,'').replace(/^0+/,'').length >= 2;   /* 0.4 는 한 줄 */
       const rows = twoRow
         ? `<div class="nm-print-vp-bot">&nbsp;</div>
   <div class="nm-print-vp-bot">&nbsp;</div>
