@@ -213,29 +213,32 @@
   .nm-print-item-bond { text-align: center; }
   .nm-print-item-bond .nm-q-num { display: block; }
   .nm-bond { width: 34mm; height: auto; margin: 4px auto 0; }
-  .nm-bond circle, .nm-bond line { fill: none; stroke: #000; stroke-width: 1.6; }
+  .nm-bond circle, .nm-bond line { fill: none; stroke: #2f4a6e; stroke-width: 1.6; }
+  .nm-bond circle { fill: #fffaf0; }
   .nm-bond .nm-bond-blank { stroke-dasharray: 4 3; }
-  .nm-bond text { font-family: sans-serif; font-weight: 700; font-size: 20px; fill: #000; }
+  .nm-bond text { font-family: sans-serif; font-weight: 700; font-size: 20px; fill: #1f5fbf; }
 
   /* NL(수의 나라, 유아) 그림 — nlVisualHtml() 참조(2026-09-19 재작성). 무대(.nm-nl-stage) 안에
      30px 이모지, 답 칸(.nm-nl-ans)은 카드 안. 흑백 레이저에서도 선·칸이 남게 진한 선만 쓴다. */
   .nm-nl { display:flex; flex-direction:column; align-items:center; gap:1.8mm; margin:1.2mm auto 0; width:100%; max-width:80mm; }
-  .nm-nl-stage { border:1.3px solid #1F2A3A; border-radius:3.5mm; padding:2.5mm 3.5mm; background:#fff; min-width:40mm; max-width:100%;
+  .nm-nl-stage { border:1.3px solid #2f4a6e; border-radius:3.5mm; padding:2.5mm 3.5mm; background:#fffaf0; min-width:40mm; max-width:100%;
     display:flex; flex-direction:column; align-items:center; gap:1.5mm; box-sizing:border-box; }
   .nm-nl-stage-bond { border:0; padding:0; }
+  /* 2026-10-05 원장 "너무 흑백이야" — 유아 그림은 화면과 같은 색으로 인쇄(흑백 프린터는 회색 농도로 구분). */
+  .nm-nl, .nm-nl *, .nm-bond, .nm-bond * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-nl-stage .nm-bond { width:38mm; }
   .nm-nl-row { display:flex; justify-content:center; align-items:center; gap:2mm; font-size:30px; line-height:1.15; }
   .nm-nl-g { display:inline-block; }
   .nm-nl-g svg, .nm-nl-sc svg, .nm-nl-fchip svg { display:block; width:1em; height:1em; }
   .nm-nl-g svg { vertical-align:-.15em; display:inline-block; }
-  .nm-nl-scatter { position:relative; width:60mm; height:34mm; border:1.3px solid #1F2A3A; border-radius:3.5mm; background:#fff; overflow:hidden; }
+  .nm-nl-scatter { position:relative; width:60mm; height:34mm; border:1.3px solid #2f4a6e; border-radius:3.5mm; background:#fffaf0; overflow:hidden; }
   .nm-nl-sc { position:absolute; font-size:27px; line-height:1; }
   .nm-nl-dg { display:inline-block; font-size:36px; line-height:1; font-weight:900; color:#1F2A3A; }
   .dgp0 { font-family:Georgia,serif; } .dgp1 { font-family:'Courier New',monospace; } .dgp2 { font-family:Arial,sans-serif; }
   .dgp3 { font-family:'Comic Sans MS',cursive; } .dgp4 { font-family:Impact,'Arial Black',sans-serif; font-weight:400; }
   .nm-nl-fchip { display:block; font-size:7.6mm; line-height:1; }
   .nm-nl-cell { display:inline-flex; align-items:center; justify-content:center; width:9.5mm; height:9.5mm; box-sizing:border-box;
-    border:1.3px solid #1F2A3A; border-radius:2mm; font-size:18px; font-weight:700; line-height:1; background:#fff; }
+    border:1.3px solid #2f4a6e; border-radius:2mm; font-size:18px; font-weight:700; line-height:1; background:#fff; color:#1f5fbf; }
   .nm-nl-cell-round { border-radius:50%; }
   .nm-nl-cell-blank { border-style:dashed; border-width:1.6px; }
   .nm-nl-cell-empty { border-style:dashed; border-color:#8A8F99; }
@@ -247,24 +250,24 @@
   .nm-nl-ansbox { display:inline-block; width:12mm; height:9.5mm; border:1.5px solid #1F2A3A; border-radius:2mm; background:#fff; box-sizing:border-box; }
   .nm-nl-unit { font-size:13px; font-weight:700; }
   .nm-nl-dots { width:28mm; height:28mm; display:block; }
-  .nm-nl-dots circle, .nm-nl-dots text { fill:#1F2A3A; }
+  .nm-nl-dots circle { fill:#e0483e; } .nm-nl-dots text { fill:#1F2A3A; }
   .nm-nl-pyramid { display:flex; flex-direction:column; align-items:center; gap:1.5mm; }
   .nm-nl-pyramid .nm-nl-row { gap:2.5mm; }
   .nm-nl-stairs { height:30mm; max-width:100%; display:block; }
-  .nm-nl-stairs rect { fill:#fff; stroke:#1F2A3A; stroke-width:1.4; }
+  .nm-nl-stairs rect { fill:#fde9b8; stroke:#1F2A3A; stroke-width:1.4; }
   .nm-nl-stairs line { stroke:#1F2A3A; }
   .nm-nl-scale { width:60mm; display:block; }
   .nm-nl-scale line, .nm-nl-scale path { stroke:#1F2A3A; stroke-width:1.4; fill:#fff; stroke-linecap:round; }
-  .nm-nl-scale circle { fill:#1F2A3A; }
+  .nm-nl-scale circle { fill:#e0483e; }
   .nm-nl-scale text { fill:#1F2A3A; }
   .nm-nl-mrow { font-size:18px; gap:1.5mm; }
   .nm-nl-mach { display:inline-flex; align-items:center; justify-content:center; min-width:13mm; height:9.5mm; padding:0 2mm;
-    border:1.6px solid #1F2A3A; border-radius:2mm; background:#EEF1F6; font-size:15px; font-weight:800; box-sizing:border-box; }
+    border:1.6px solid #1F2A3A; border-radius:2mm; background:#dbe9fb; font-size:15px; font-weight:800; box-sizing:border-box; }
   .nm-nl-cross { display:flex; flex-direction:column; align-items:center; gap:1.5mm; }
   .nm-nl-plus { font-size:14px; padding:0 1.5mm; color:#1F2A3A; }
   .nm-nl-tenframe { display:grid; grid-template-columns:repeat(5, 10mm); grid-auto-rows:10mm; border:1.6px solid #1F2A3A; }
   .nm-nl-tf { border:.8px solid #1F2A3A; display:flex; align-items:center; justify-content:center; box-sizing:border-box; }
-  .nm-nl-tf-on::after { content:''; width:6.5mm; height:6.5mm; border-radius:50%; background:#1F2A3A; }
+  .nm-nl-tf-on::after { content:''; width:6.5mm; height:6.5mm; border-radius:50%; background:#e5a82a; border:.8px solid #0e2c57; box-sizing:border-box; }
   .nm-nl-tally { height:9mm; width:auto; max-width:60mm; display:block; }
   .nm-nl-tally line { stroke:#1F2A3A; stroke-width:1.6; stroke-linecap:round; }
   .nm-nl-tallyboard { width:52mm; height:14mm; border:1.3px dashed #8A8F99; border-radius:2mm; display:grid; place-items:center; }
@@ -274,11 +277,11 @@
   .nm-nl-mcol { display:flex; flex-direction:column; gap:2mm; }
   .nm-nl-mgap { width:18mm; }
   .nm-nl-mcard { position:relative; display:flex; align-items:center; justify-content:center; min-width:16mm; height:11mm; padding:0 2mm;
-    border:1.3px solid #1F2A3A; border-radius:2mm; font-size:19px; font-weight:800; box-sizing:border-box; }
+    border:1.3px solid #2f4a6e; border-radius:2mm; font-size:19px; font-weight:800; box-sizing:border-box; background:#fffaf0; color:#1f5fbf; }
   .nm-nl-mcard .nm-nl-tally { height:7mm; }
   .nm-nl-tag { position:absolute; right:-6mm; top:50%; transform:translateY(-50%); font-size:12px; color:#555; }
   .nm-nl-dice { display:inline-flex; flex-wrap:wrap; gap:1.2mm; max-width:14mm; justify-content:center; }
-  .nm-nl-dice i { width:3mm; height:3mm; border-radius:50%; background:#1F2A3A; display:block; }
+  .nm-nl-dice i { width:3mm; height:3mm; border-radius:50%; background:#e0483e; display:block; }
   .nm-nl-baskets { display:flex; gap:8mm; justify-content:center; margin-top:1mm; }
   .nm-nl-basket { display:flex; align-items:center; gap:1.5mm; font-size:14px; font-weight:700; }
   .nm-nl-bk { font-size:26px; }
