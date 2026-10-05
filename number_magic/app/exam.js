@@ -5743,6 +5743,9 @@ function renderRoundPagesBody(item, opts){
   if(item.thread==='MD58'&&item.level===3&&!['solve','train','word','visual'].includes(layout.type)){
     Object.assign(layout,{cols:2,rows:6,perPage:12,firstRows:3,pitch:42});
   }
+  /* MD133 L3(무리함수와 직선의 교점 범위)는 √ 아래 식이 두 층이라 잰 줄 높이(시드 둘)보다 1mm 높은 문항이 있다 —
+     주간 봉투 마지막 장의 고정 칸(26mm)에서 4px 넘쳤다(C59 복습, 2026-10-05). 칸을 28mm 로. */
+  if(item.thread==='MD133'&&item.level===3) layout.pitch = Math.max(layout.pitch || 0, 28);
   /* 장마다 줄 수를 **잰 높이**로 줄인다(2026-09-25, data/print-head.js — scripts/build-print-head.js).
      판정별 고정표의 줄 수가 그 레벨 문항의 실제 높이보다 많으면 1fr 로 나눈 줄이 내용보다 낮아져
      문항이 겹쳐 찍혔다(가득 찬 장: ML2·ML8·MD25 등). 한 줄 높이는 글자 크기만큼 커진다고 본다. */
