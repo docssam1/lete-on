@@ -163,54 +163,50 @@ const COURSE_SPEC = [
    creative:['AD14@1','AD16@1','SB10@1','SB13@1','SB12@3','SB8@3','SB5@2']},
  {id:6, tier:'level1', title:{ko:'네 자리 수와 2학년 마무리',en:'Four-digit Numbers & Grade 2 Wrap-up',zh:'四位数与二年级总结'},
    drills:['AD4@4','SB7@1', 'SB7@2','EL1@5', 'NS1@2','AD7@1', 'AD7@2','SB6@5', 'AD7@3','SB6@7', 'AD4@5','EL3@1', 'AD7@4','SB6@8'], minSessions:7,
-   magic:[['A-25'],[],['A-17'],['A-18'],[],[],[]],
-   creative:['MX7@2','AD16@2','AD14@2','AD15@2','AD15@4','AD15@5','AD15@3']},
+   magic:[['A-25'],['A-33'],['A-17'],['A-18'],['A-30'],['A-31'],['A-32']],
+   creative:['MX7@2','EL6@1','AD14@2','AD15@2','AD15@4','AD15@5','AD15@3']},
  {id:7, tier:'level1', title:{ko:'2학년 종합 다지기',en:'Grade 2 Review',zh:'二年级综合巩固'},
    drills:['EL3@2','ML1@3', 'EL3@3','ML1@4', 'ML2@4','ML4@2'], minSessions:3,
-   magic:[[],[],['C-01']],
-   creative:['SB13@2','AD16@3','SB14@1']},
- {id:8, tier:'level1', title:{ko:'몇십 곱과 나눗셈의 시작',en:'Multiplying Tens & Division Begins',zh:'整十乘法与除法开始'},
-   /* 나눗셈의 뜻 셋(DV12 등분·DV13 포함·DV14 반복 뺄셈)을 ÷2·2d÷1d 앞에 둔다(2026-09-17,
-      원장 "직접 나누기·같은 수 빼기·묶어서 나누기 … 좀 제대로 생각을 할 수 있도록").
-      마법 B-24(나눗셈의 세 얼굴)가 첫 세션, 창의 회차에 반복 뺄셈(나머지) 한 벌. */
-   drills:['DV12','DV13','DV14','DV17','ML5','DV1','DV2','DV12','DV13','DV14','DV17@2','ML5@2','DV1','DV12','DV13','DV17@3','DV2@2'], minSessions:8,
-   magic:[['B-24'],['B-16','B-17'],['B-18','B-19','B-20'],['A-30','A-31','A-32'],['A-33','A-34'],['C-02']],
-   /* 창의(2026-09-26, 설계 §4-2) — 전엔 DV12·13·14·17·ML5(나눗셈·몇십 곱 드릴)였다. 곱해서 10 · 앞부터 빼기 ·
-      둘로 쪼개기 · 합과 차 · 빼기 쉬운 수부터. 옛 DV14@2 는 교과 드릴(드릴 칸에 그대로 있다)이라 뺐다. */
-   creative:['ML12@1','AD15@3','ML1@4','EL6@1','AD15@5','EL6@2','AD15@4','EL6@3'], maxSessions:6},
- {id:9, tier:'level1', title:{ko:'두 자리 곱셈 암산과 나머지',en:'2-digit Mental Multiplication & Remainders',zh:'两位数心算乘法与余数'},
-   drills:['ML6','ML22','DV18','DV19','DV3','ML6','ML22','DV18','DV19','ML6','DV18','DV19','ML6','DV18','DV19','ML6','DV18','DV19','ML6','ML6'], minSessions:10, magic:[['B-21','B-22','B-23'],['A-26'],['A-27'],['A-29'],['C-07','C-08']],
-   /* 창의(2026-09-26, 설계 §4-2) — 전엔 ML6·ML22·DV18·DV19(두 자리 곱·나눗셈 드릴)였다. ×9 · 999 마법 · 쪼개서 곱하기 ·
-      수는 몇 개 · 10에서 부족한 수 */
-   creative:['ML13@1','SB14@1','ML22@1','SB14@2','MX8@1','ML13@2','SB14@4','ML22@2','MX8@2','SB14@3','WP4@1','WP7@1']},   /* WP7 모르는 수 찾기(2026-09-30) */
- {id:10, tier:'level1', title:{ko:'세 자리 곱셈과 검산',en:'3-digit Multiplication & Checking',zh:'三位数乘法与验算'},
-   drills:['ML7','EL2','ML7','EL2@2','ML7','EL2@3','ML7','ML7','ML7@5','EL1@6'], minSessions:5, magic:[['A-28'],['A-35'],['C-06']],
-   /* 창의(2026-09-26, 설계 §4-2) — 전엔 3~5회차가 ML7@1(세 자리 곱셈 필산)이었다. 가우스 1 · 차근차근 곱하기 */
-   creative:['ML14@1','ML24@1','MX8@3','ML23@1','ML14@2','ML24@2']},
-
- /* 원본 중급 C-7 묶음(몇 자리 수·풀풀·폭포수·엑스맨 기초·×11·창살·격자)을 진도 자리에
-    붙인다(2026-09-19, 원장 "원본의 필요 내용을 우리 로드맵 과정에 붙여야지"). C-12 엑스맨은
-    중급 유닛(연습·랩·아레나가 전부 두 자리×두 자리)인데 과정 26(125주)에만 있어 짝인
-    풀풀(C-10)과 67주 떨어져 있었다 — 유닛 안의 "풀풀 4조각 → 엑스맨 3조각" 비교가 그만큼
-    늦게 나왔다. 원본 순서 풀풀 → 폭포수 → 엑스맨 → ×11 로 끼운다. ML21 몇 자리 수(어림)도
-    원본은 이 묶음 맨 앞이라 창의 회차에 넣는다. 창살(C-14)·격자(C-30)는 세 자리×두 자리
-    (과정 14)에 그대로 둔다 — 그쪽이 그 방법이 빛나는 자리다. 회차 +1(maxSessions 7). */
- {id:11, tier:'level2', title:{ko:'두 자리×두 자리 곱셈',en:'2-digit × 2-digit Multiplication',zh:'两位数乘两位数'},
-   drills:['NS1@3','ML8','ML8','ML8','ML8','ML8','ML8','ML8'], magic:[['C-26'],['C-15'],['C-10'],['C-11'],['C-12'],['C-13'],['C-23']],
-   creative:['ML21@1','ML23@1','ML15@1','ML10@1','ML10@2','ML10@3'], maxSessions:7},
- {id:12, tier:'level2', title:{ko:'나눗셈과 역연산',en:'Division & Inverse Operations',zh:'除法与逆运算'},
-   drills:['DV3','DV15','DV4','EL1','DV15@2','DV4','EL1@2','DV15@3','EL1@3','NS1@5'], minSessions:5, magic:[['C-18']],
-   /* 창의(2026-09-26) — DV15(B 유닛 나눗셈 드릴)가 빠지자 DV9@1 하나만 5회차 내내 남았다. 분해 나눗셈 두 레벨 +
-      반대로 채우기(역연산의 씨앗, 설계 §2-2 M7 '반대로 채우기 → EL1 역연산(C12·C16)') */
-   creative:['DV9@1','DV9@2','SB9@1','WP5@1','WP6@1','WP7@2']},   /* WP6 문제 만들기(2026-09-30, 이해편 Ⅵ) — 점검 뒤 */
- {id:13, tier:'level2', title:{ko:'분수의 첫걸음',en:'Fractions Begin',zh:'分数入门'},
-   drills:['FR1','FR2'], magic:[['C-21']], creative:['FR9@1','FR9@2','ML12@1']},   /* 레벨 펼치기(2026-09-26, 설계 §4-2) */
- {id:14, tier:'level2', title:{ko:'대분수와 세 자리×두 자리',en:'Mixed Numbers & 3d×2d',zh:'带分数与三位乘两位'},
-   drills:['FR3','ML9','FR3','ML9','ML9','ML9','ML9','ML9@6'], magic:[['C-14'],['C-30'],['C-16'],['C-17']], creative:['ML16@1','ML17@1','ML16@2','ML17@2']},
- {id:15, tier:'level2', title:{ko:'두 자리로 나누기와 분수',en:'Dividing by 2 Digits & Fractions',zh:'除以两位数与分数'},
-   drills:['DV5','DV5','DV5','DV5','DV5@5','DV5@6','DV5@7'], magic:[['C-19'],['C-20'],['C-28'],['C-29']],
-   /* 창의(2026-09-26) — 두 개가 번갈아 나왔다. 회차의 마법 순서(약분·부풀려·÷5·÷25) 그대로, 설계 §2-2 M7 */
-   creative:['DV10@1','DV11@1','ML16@2','ML17@2','WP3@2','WP8@1','WP9@1']},
+   magic:[['A-26','A-29'],['A-27','A-28'],['A-34','A-35']],
+   creative:['SB14@2','MX8@1','EL6@2']},
+ /* 과정 8~15 재편성(2026-10-05) — 과정 1~7 과 같은 원칙(docs/진도대응-기적의계산법-2026-10-05.md).
+    교과 = 기적의 계산법 5~8권 순서: 곱셈(41~46) → 나눗셈(47~50) → 두 자리 곱셈(51~53) → 나머지 있는 나눗셈(54~59)
+    → 세 자리×두 자리·두 자리로 나누기(61~68) → 큰 수·종합(69) → 분모가 같은 분수(71~76). 옛 편성은 나눗셈을 곱셈보다
+    먼저 두고, 덧뺄 전략 노트(A-26~35)를 곱나 주에 붙여 창의 칸이 교과와 따로 놀았다 — A-26~35 는 2학년(과정 6·7)으로.
+    창의 칸 = 그 회차 교과와 같은 연산의 전략(×5·×25·×9·×11·분해/약분/부풀려 나눗셈 …). magic[i]·creative[i] 가 짝. */
+ {id:8, tier:'level1', title:{ko:'두·세 자리 × 한 자리',en:'Multiplying by One Digit',zh:'乘一位数'},
+   drills:['ML5@1','ML6@1', 'ML6@2','ML6@7', 'ML6@3','ML6@4', 'ML6@5','ML6@6', 'ML7@1','ML7@2', 'ML7@3','ML7@4', 'ML7@5','EL2@1', 'EL2@2','ML1@3'], minSessions:8,
+   magic:[['B-18'],['B-19'],['B-21'],['B-22','B-23'],['C-07'],['C-06'],['C-08'],['C-02']],
+   creative:['ML22@1','ML13@1','ML22@2','ML12@1','ML13@2','ML14@1','ML14@2','ML24@1']},
+ {id:9, tier:'level1', title:{ko:'나눗셈의 시작과 두 자리 곱셈',en:'Division Begins & 2-digit ×',zh:'除法入门与两位数乘法'},
+   drills:['DV12@1','DV13@1', 'DV14@1','DV17@1', 'DV12@2','DV13@2', 'DV17@2','DV14@2', 'DV12@3','DV13@3', 'DV17@3','DV1@1', 'DV1@2','EL2@3', 'ML5@2','ML8@1', 'ML8@2','ML8@3', 'ML8@4','ML8@5'], minSessions:10,
+   magic:[['B-24'],[],['B-16'],['B-17'],['C-16'],['C-28'],[],['B-20'],['C-26'],['C-10','C-11']],
+   creative:['ML13@1','ML22@1','ML12@1','ML22@2','ML16@1','ML16@2','ML1@4','ML12@2','ML23@1','ML23@2','WP4@1','WP7@1']},
+ {id:10, tier:'level1', title:{ko:'두 자리 곱셈 마무리와 나머지 나눗셈',en:'2-digit × Wrap-up & Remainders',zh:'两位数乘法总结与有余数除法'},
+   drills:['DV2@1','DV2@2', 'DV19@1','DV3@1', 'DV18@1','DV19@2', 'DV18@2','DV19@3', 'DV18@3','EL1@6'], minSessions:5,
+   magic:[[],[],['C-13'],[],[]],
+   creative:['ML16@2','ML24@2','ML15@1','ML15@2','ML21@1','WP5@1']},
+ {id:11, tier:'level2', title:{ko:'세 자리 ÷ 한 자리와 세 자리 × 두 자리',en:'3-digit ÷ 1-digit & 3-digit × 2-digit',zh:'三位数除以一位数与三位数乘两位数'},
+   drills:['DV19@4','DV18@4', 'DV19@5','DV18@5', 'DV4@1','DV4@2', 'DV15@1','DV15@2', 'DV15@3','EL1@2', 'ML8@6','ML9@1', 'ML9@2','ML9@3'], minSessions:7,
+   magic:[['C-17'],[],['C-18'],[],['C-15'],['C-12','C-29'],['C-14']],
+   creative:['ML17@1','ML10@2','DV9@1','DV9@2','ML18@1','ML17@2','ML18@2','WP6@1','WP7@2']},
+ {id:12, tier:'level2', title:{ko:'큰 곱셈과 두 자리로 나누기',en:'Big Multiplication & Dividing by 2 Digits',zh:'大数乘法与除以两位数'},
+   drills:['ML9@4','ML9@5', 'ML8@7','ML9@6', 'DV5@5','DV5@6', 'DV5@1','DV5@2', 'DV5@3','DV5@4'], minSessions:5,
+   magic:[['C-30'],['C-23'],['C-19'],[],['C-20']],
+   creative:['ML19@1','ML19@2','DV10@1','DV10@2','DV11@1','WP3@2','WP8@1']},
+ {id:13, tier:'level2', title:{ko:'큰 수와 나눗셈 심화',en:'Big Numbers & Advanced Division',zh:'大数与除法提高'},
+   drills:['DV5@7','EL1@3', 'NS1@3','NS1@5', 'NS1@6','EL1@1'], minSessions:3,
+   magic:[[],['C-09'],[]],
+   creative:['DV11@2','ML12@3','ML10@3','WP9@1']},
+ {id:14, tier:'level2', title:{ko:'분모가 같은 분수',en:'Fractions with Like Denominators',zh:'同分母分数'},
+   drills:['FR2@1','FR1@1', 'FR3@1','FR3@2', 'FR3@3','FR3@4'], minSessions:3,
+   magic:[['C-21'],[],[]],
+   creative:['FR9@1','FR9@2','FR9@1']},
+ {id:15, tier:'level2', title:{ko:'곱셈·나눗셈 종합',en:'Multiplication & Division Review',zh:'乘除法综合'},
+   /* 기적 69단계(곱셈과 나눗셈 종합) — 앞 과정의 대표 레벨을 섞어 다진다. */
+   drills:['ML9@3','DV5@4', 'ML8@5','DV4@2', 'EL2@3','EL1@2'], minSessions:3,
+   magic:[[],[],[]],
+   creative:['ML18@1','DV11@1','ML15@2','WP3@2']},
  {id:16, tier:'level2', title:{ko:'혼합계산과 역연산',en:'Mixed Operations & Inverse',zh:'混合运算与逆运算'},
    drills:['MX1','EL1','MX1','MX1','NS1@6'], magic:[['C-09']],
    /* 레벨 펼치기(2026-09-26, 설계 §4-2) — 설계 표의 EL1@3(혼합·큰 수)은 교과 역연산 레벨이라 창의 칸에 못 온다.
@@ -222,7 +218,7 @@ const COURSE_SPEC = [
       없었다. 보수를 소수로 이은 DC6(0.3의 1 짝꿍은 0.7)을 쓴다(2026-09-09). */
    drills:['DC1','DC1','DC1@3','DC1@4','EL1@7'], minSessions:4, magic:[['A-36'],['A-37'],['A-38']], creative:['DC6@1','WP5@2','DC6@2','DC6@3','MX7@3']},   /* MX7@3 소수 끼리끼리 — A-38(설계 §2-2 M8) */
  {id:18, tier:'level3', title:{ko:'소수 곱셈과 제곱수',en:'Decimal Multiplication & Squares',zh:'小数乘法与平方数'},
-   drills:['DC2','ML11','ML11','ML11','ML11@4','ML11@5','ML11@6'], minSessions:7, magic:[['C-25'],['C-24'],['C-27'],['ML10'],['H-11']],
+   drills:['DC2','ML11','ML11','ML11','ML11@4','ML11@5','ML11@6'], minSessions:7, magic:[['C-25','C-01'],['C-24'],['C-27'],['ML10'],['H-11']],
    creative:['DC4@1','ML20@3','CH11@1','DC4@2','CH11@2','CH11@3','CH11@4']},
  {id:19, tier:'level3', title:{ko:'약수와 배수, 그리고 배수 판별법',en:'Factors, Multiples & Divisibility Rules',zh:'因数、倍数与整除判别'},
    drills:['DV20','DV7','DV6','DV20@2','DV7@2','DV6','DV20@3','DV7@3','DV6@3','DV20@4','DV6@4','DV20@5','DV20@6'], minSessions:7, magic:[['C-04'],['C-34'],['C-03']], creative:['ML12@2','ML12@3','ML12@1']},   /* 곱해서 10 을 셋째로(2026-09-26 — 두 개만 번갈았다) */
