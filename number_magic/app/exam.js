@@ -861,7 +861,7 @@
   .nm-divbox-dec .nm-dv-cell, .nm-divbox-dec .nm-dv-d { margin-right:0; box-sizing:border-box; width:1.15em; border:1px solid transparent; }
   .nm-divbox-dec .nm-dv-cell { border:1px dashed #c3c9d6; }
   .nm-divbox-dec .nm-dv-add { border-color:#9aa3b5; }
-  .nm-dv-gap { display:inline-flex; align-items:flex-end; justify-content:center; width:.5em; height:1.5em; font-weight:800; font-size:1.15em; line-height:1; }
+  .nm-dv-gap { display:inline-flex; align-items:flex-end; justify-content:center; width:.44em; height:1.3em; font-weight:800; font-size:1.15em; line-height:1; vertical-align:top; }
   .nm-dv-gap-q { color:#1f5fbf; }
   .nm-dv-add { border-color:#9aa3b5; }
   /* 마법 노트 지면 */

@@ -400,7 +400,31 @@ NM_TGEN['dc3_decDiv'] = function(params, rng) {
     const vert = params.orient === 'v';
     const fmt  = (n, k) => (n / Math.pow(10, k)).toFixed(k);       /* 정수 n, 소수 k 자리 → "6.72" */
     let aStr, bStr, k, bi, N, Q, qInt, qFrac = '';
+    /* 2026-10-05 원장 "제수가 배수가 되는 경우, 피제수가 배수가 되는 경우" — 지금까지는 늘 피제수가 제수의 배수
+       (4.8÷1.2=4, 몫 ≥ 1)였다. 제수가 피제수의 배수인 경우(1.2÷4.8=0.25 — 몫이 1보다 작아 0 을 붙여 가며 나눈다)를
+       자릿수가 같은·다른 레벨에 약 40% 섞는다. 배수 m 은 2·4·5·8 — 몫이 0.5·0.25·0.2·0.125 로 끝나고 소수 첫째 자리가 0 이 아니다. */
+    const recip = (dmode === 'decSame' || dmode === 'decDiff') && rng() < 0.4;
     for (let t = 0; t < 400; t++) {
+      if (recip) {
+        const m = pick(rng, [2, 4, 5, 8]);
+        const aD = dmode === 'decSame' ? (rng() < 0.6 ? 1 : 2) : 2;   /* 피제수 소수 자릿수 */
+        const ai = dmode === 'decSame' ? R(rng, 2, aD === 1 ? 19 : 45) : R(rng, 2, 45);
+        if (ai % 10 === 0) continue;
+        const bRaw = ai * m;                                       /* 제수 × 10^aD */
+        if (dmode === 'decSame') {
+          if (bRaw % 10 === 0 || bRaw >= 100 * Math.pow(10, aD)) continue;  /* 같은 자릿수 */
+          k = aD; bi = bRaw;
+        } else {
+          if (bRaw % 10 !== 0 || bRaw % 100 === 0) continue;       /* 제수는 소수 한 자리(자릿수가 다른) */
+          k = 1; bi = bRaw / 10;
+          if (bi >= 100) continue;
+        }
+        aStr = fmt(ai, aD); bStr = fmt(bi, k);
+        const q1000 = 1000 / m;                                    /* 몫 = 1/m */
+        qInt = 0; qFrac = String(q1000).replace(/0+$/, '');
+        Q = 1 / m; N = 0;
+        break;
+      }
       if (dmode === 'decSame') {
         k  = rng() < 0.6 ? 1 : 2;
         bi = k === 1 ? pick(rng, [2,3,4,5,6,7,8,9,12,13,14,15,16,18,21,24,25])
@@ -432,7 +456,11 @@ NM_TGEN['dc3_decDiv'] = function(params, rng) {
       break;
     }
     const aDec  = (aStr.split('.')[1] || '').length;
-    const zeros = Math.max(0, k - aDec);                           /* 자연수÷소수 — 뒤에 붙이는 0 */
+    /* 뒤에 붙이는 0 — 자연수÷소수(자리가 모자람) 또는 몫이 피제수의 자리보다 길 때(1.5÷6=0.25 → 1.50) */
+    const aDigitsN = aStr.replace('.', '').length, p0n = aStr.indexOf('.') < 0 ? aStr.length : aStr.indexOf('.');
+    const zeros = Math.max(0, k - aDec, p0n + k + qFrac.length - aDigitsN);
+    /* 자리별 몫은 몫이 자연수가 되도록 키운 피제수로 — A × 10^(k + 몫의 소수 자릿수) */
+    N = Math.round(+aStr * Math.pow(10, k + qFrac.length));
     /* 옮긴 나누어지는 수: 소수점을 k 자리 오른쪽으로 */
     const movedStr = aDec > k ? fmt(Math.round(+aStr * Math.pow(10, aDec)), aDec - k)
                               : String(Math.round(+aStr * Math.pow(10, k)));
