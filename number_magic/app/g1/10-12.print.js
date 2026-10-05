@@ -252,7 +252,7 @@
           return `<div class="${X}-bag"><div class="nk"></div><div class="bd">${it}</div></div>`;
         }).join('') + '</div>';
       } else inner = picHtml(K, null, p.rows, p.kind === 'take' ? 'aside' : 'gone');
-      return K.nlCard(K.nlStage(inner), K.nlAnsBox(K.EA));
+      return K.nlCard(K.nlStage(inner), K.nlAnsBox(p.unit ? K.pickL(p.unit) : K.EA));   /* 동물 이야기는 '마리'(2026-10-05) */
     },
     label() { return null; },
     ask(p, K) { return K.pickL(p.prompt); }
