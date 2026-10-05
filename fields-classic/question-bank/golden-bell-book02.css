@@ -152,3 +152,62 @@
   .b2-sequence.align-bottom section>div>span>b.blank{min-width:6mm;height:6mm}
 }
 @media screen and (max-width:700px){.b2-promise-board .examples{zoom:.62}.b2-promise-board .problem{zoom:.8}}
+
+/* ── 2026-10-05 색 정리: 글씨는 검은색, 그림은 도형마다 다른 색(하늘색 한 가지 금지) ── */
+.book02-visual,.guided-book2-source{color:#111}
+.quiz-item>strong,.lesson-lead{color:#111}
+.b2-token{border-color:#555;color:#111}
+.b2-expression-text{color:#111}
+.b2-number-cards i{border-color:#555;background:#fff;color:#111}
+.b2-number-cards>span,.b2-sequence section>strong{color:#333}
+.b2-sequence section>div>span>b{border-color:#555;color:#111}
+.b2-sequence section>div>span>i{color:#555}
+.b2-matrix{border-color:#444}.b2-matrix>span{border-color:#888}
+.b2-matrix.has-void>span:not(.void){border-color:#444}
+.b2-row-sums b,.b2-column-sums b{color:#111}
+.b2-split-tree .b2-token.known{background:#fff3c4}
+.b2-scale-svg .beam{stroke:#6d4c41}
+.b2-scale-svg .pivot{fill:#fff;stroke:#3e2723}
+.b2-scale-svg .stand{fill:#5d4037}
+.b2-scale-svg .pan{fill:#d7ccc8;stroke:#4e342e}
+.b2-scale-svg .post{stroke:#4e342e}
+.b2-sum-difference .labels span{color:#111}
+.b2-sum-difference .bars span{border-color:#555}
+.b2-sum-difference .bars span.diff{background:#fff3c4;color:#111}
+.b2-growth.drawn svg .dot{fill:#222;stroke:#111}
+.b2-growth.drawn svg .dot.white{fill:#fff}
+.b2-growth.drawn svg .paper{fill:#ffe9a8;stroke:#7a5c00}
+.b2-growth.drawn svg .paper.back{fill:#fff6d6}
+.b2-growth.drawn figcaption,.b2-growth.drawn .more{color:#333}
+.b2-promise .b2-token,.b2-promise.row>span>b,.b2-promise.row>span>.b2-token{border-color:#555;color:#111}
+.b2-promise.row>span>i{background:#555}
+.b2-promise.square:before{border-color:#777}
+.b2-promise>strong{color:#111}
+.b2-sudoku{border-color:#222}.b2-sudoku>span{color:#111}
+.b2-fraction-figure{display:flex;align-items:center;justify-content:center;gap:22px}
+.b2-fraction-figure .piece,.b2-fraction-figure .line{stroke:#333}
+.b2-fraction-figure .piece.shaded{fill:#ffa94d}
+.b2-fold-fraction .paper{fill:#ffe9a8;stroke:#7a5c00}
+.b2-fold-fraction .paper.back{fill:#fff6d6}
+.b2-fold-fraction .crease{stroke:#d84315}
+.b2-fold-fraction .arrow path{stroke:#444}
+.b2-multiple.expression-only>strong{border-left-color:#f9c74f;color:#111}
+
+/* 분수: 분자 위, 가로선, 분모 아래 */
+.math-frac{display:inline-flex;flex-direction:column;align-items:center;margin:0 .15em;vertical-align:middle;line-height:1.05;font-size:.92em}
+.math-frac>i{display:block;padding:0 .2em;font-style:normal}
+.math-frac>i:first-child{border-bottom:.09em solid currentColor}
+.b2-frac-blank{display:inline-grid;grid-template-rows:auto 3px auto;justify-items:center;gap:4px}
+.b2-frac-blank>i{display:block;width:40px;height:36px;border:2px dashed #888}
+.b2-frac-blank>b{display:block;width:52px;height:3px;background:#111}
+.fraction-answer{display:flex;align-items:center;gap:12px}
+.answer-input-wrap>span:first-child{color:#333;font-size:13px}
+.fraction-answer .frac-input{display:inline-flex;flex-direction:column;align-items:center;gap:4px}
+.fraction-answer .frac-input>input{width:70px;height:42px;padding:0;text-align:center;color:#111;font-size:20px}
+.fraction-answer .frac-input>b{display:block;width:84px;height:3px;background:#111}
+@media print{
+  .b2-frac-blank>i{width:7mm;height:6mm}.b2-frac-blank>b{width:9mm;height:.5mm}
+  .b2-scale-svg .pan,.b2-fraction-figure .piece.shaded,.b2-fold-fraction .paper,.b2-shape-icon{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+.b2-promise.square>strong,.b2-promise.triangle>strong,.b2-promise-set strong{color:#111}
+.answer-choices.glyph-choices button{color:#111}

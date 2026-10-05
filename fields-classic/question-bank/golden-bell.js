@@ -1,11 +1,11 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261005a";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261005b";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261005a";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261005b";
 import { book01Markup } from "./book01-renderers.js?v=20261003c";
-import { book02Markup } from "./book02-renderers.js?v=20261005a";
+import { book02Markup } from "./book02-renderers.js?v=20261005b";
 import { book03Markup } from "./book03-renderers.js?v=20260905a";
 import { book04Markup } from "./book04-renderers.js?v=20260905d";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
@@ -427,8 +427,8 @@ function renderGuidedConceptExperience(experience) {
   const checkStatus = state.experience.checks[checkKey];
   const complete = ["correct", "revealed"].includes(checkStatus);
   const progress = experience.beats.map((beat, index) => `<i class="${index < currentStep ? "done" : index === currentStep ? "current" : ""}">${index + 1}</i>`).join("");
-  const check = atLast ? `<section class="experience-check guided-check"><p>${experience.check.prompt}</p><div class="answer-choices">${experience.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${escapeAttribute(option)}" ${complete ? "disabled" : ""}>${escapeAttribute(guidedCheckOptionLabel(experience, option))}</button>`).join("")}</div><button type="button" class="secondary-action guided-answer" data-experience-answer ${complete ? "disabled" : ""}>답 보기</button>${state.experience.feedback ? `<p class="feedback ${state.experience.feedback.passed ? "success" : ""}">${state.experience.feedback.message}</p>` : ""}</section>` : '<p class="guided-check-wait">마지막 장면까지 살펴보면 확인 문제가 열립니다.</p>';
-  return `<section class="concept-experience guided-concept" data-guided-family="${experience.family}"><header><div><span>직접 해보기</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track">${progress}</div><div class="guided-concept-scene">${guidedConceptVisual(experience, currentStep)}<p class="experience-caption">${experience.beats[currentStep].caption}</p></div>${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${check}</section>`;
+  const check = atLast ? `<section class="experience-check guided-check"><p>${experience.check.prompt}</p><div class="answer-choices">${experience.check.options.map((option) => `<button type="button" class="${state.experience.answer === option ? "selected" : ""}" data-experience-choice="${escapeAttribute(option)}" ${complete ? "disabled" : ""}>${mathText(guidedCheckOptionLabel(experience, option), { bare: true })}</button>`).join("")}</div><button type="button" class="secondary-action guided-answer" data-experience-answer ${complete ? "disabled" : ""}>답 보기</button>${state.experience.feedback ? `<p class="feedback ${state.experience.feedback.passed ? "success" : ""}">${state.experience.feedback.message}</p>` : ""}</section>` : '<p class="guided-check-wait">마지막 장면까지 살펴보면 확인 문제가 열립니다.</p>';
+  return `<section class="concept-experience guided-concept" data-guided-family="${experience.family}"><header><div><span>직접 해보기</span><strong>${experience.title}</strong></div><span class="experience-progress">${currentStep + 1} / ${experience.beats.length}</span></header><div class="experience-step-track">${progress}</div><div class="guided-concept-scene">${guidedConceptVisual(experience, currentStep)}<p class="experience-caption">${mathText(experience.beats[currentStep].caption, { bare: true })}</p></div>${experienceControlsMarkup(experience, { atFirst, atLast, nextDisabled: false })}<details class="concept-hint"><summary>개념 힌트</summary><p>${experience.hint}</p></details>${check}</section>`;
 }
 
 function renderSourceExperience(lesson) {
@@ -1157,6 +1157,17 @@ function originalAnswerControl(item) {
   }).join("")}</div>`;
 }
 
+// 분수는 빗금(1/32) 대신 분자를 위, 분모를 아래에 쓴다. 문장 안에서는 {1/32}로 적는다.
+function fractionMarkup(numerator, denominator) {
+  return `<span class="math-frac" role="math" aria-label="${denominator}분의 ${numerator}"><i>${numerator}</i><i>${denominator}</i></span>`;
+}
+
+function mathText(value, options = {}) {
+  const text = escapeAttribute(value);
+  const braced = text.replace(/\{(\d+)\/(\d+)\}/g, (_, numerator, denominator) => fractionMarkup(numerator, denominator));
+  return options.bare ? braced.replace(/(^|[^\d/])(\d+)\/(\d+)(?![\d/])/g, (_, before, numerator, denominator) => `${before}${fractionMarkup(numerator, denominator)}`) : braced;
+}
+
 function escapeAttribute(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -1165,7 +1176,14 @@ function escapeAttribute(value) {
     .replaceAll(">", "&gt;");
 }
 
+function fractionAnswerControl(groupId, item, scope) {
+  const [numerator = "", denominator = ""] = String(state.selections[groupId] ?? "").split("/");
+  const box = (part, value, label) => `<input type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="${escapeAttribute(value)}" aria-label="${label}" data-fraction-group="${groupId}" data-fraction-part="${part}" />`;
+  return `<div class="answer-input-wrap fraction-answer"><span>분수로 쓰세요</span><span class="frac-input">${box("numerator", numerator, "분자")}<b></b>${box("denominator", denominator, "분모")}</span><input type="hidden" value="${escapeAttribute(state.selections[groupId])}" data-input-group="${groupId}" data-answer-scope="${scope}" /></div>`;
+}
+
 function answerControl(groupId, item, scope) {
+  if (item.answerMode === "input" && item.inputMode === "fraction") return fractionAnswerControl(groupId, item, scope);
   if (item.answerMode !== "input") return choiceButtons(groupId, item.options);
   const inputMode = item.inputMode === "numeric" ? "numeric" : "text";
   const label = inputMode === "numeric" ? "답을 숫자로 쓰세요" : "답을 쓰세요";
@@ -1190,21 +1208,21 @@ function renderOriginal(lesson) {
     const correct = Boolean(state.originalChecks[item.id]?.passed || result?.passed && result.itemId === item.id);
     const status = assist === "skipped" ? "skipped" : assist === "revealed" ? "assisted" : correct ? "correct" : result && result.itemId === item.id ? "incorrect" : "";
     const solution = assist === "revealed"
-      ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
+      ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${mathText(item.solution, { bare: true })}</p><strong>답 ${mathText(approvedOriginalAnswer(item), { bare: true })}</strong></section>`
       : assist === "skipped"
         ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 학습 기록에서 다시 확인할 수 있어요.</p>'
         : correct
-          ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
+          ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${mathText(item.solution, { bare: true })}</p><strong>답 ${mathText(approvedOriginalAnswer(item), { bare: true })}</strong></section>`
           : "";
     const dots = items.map((candidate, index) => `<span class="${index === state.originalIndex ? "active" : originalItemComplete(candidate) ? "complete" : ""}" role="img" title="${escapeAttribute(candidate.sourceNo || index + 1)}" aria-label="${index + 1}번째 문제 · 원문 번호 ${escapeAttribute(candidate.sourceNo || index + 1)}" ${index === state.originalIndex ? 'aria-current="step"' : ""}>${index + 1}</span>`).join("");
     const nextLabel = state.originalIndex === items.length - 1 ? "추가 학습으로" : "다음 문제";
     const sourceVisual = item.visual || lesson.original.visual;
-    const visual = arithmeticListRepeatedByParts(item, sourceVisual) ? "" : `<div class="quiz-visual item-quiz-visual">${visualMarkup(sourceVisual)}</div>`;
+    const visual = item.noVisual || arithmeticListRepeatedByParts(item, sourceVisual) ? "" : `<div class="quiz-visual item-quiz-visual">${visualMarkup(sourceVisual)}</div>`;
     const sourceCount = lesson.original.sourceQuestionCount || items.length;
     const progressLabel = sourceCount === items.length
       ? `${sourceCount}문제 중 ${state.originalIndex + 1}번째`
       : `${sourceCount}문항 · ${items.length}개 풀이 중 ${state.originalIndex + 1}번째`;
-    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>교재 ${item.sourceNo || state.originalIndex + 1}번</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${item.sourceNo || state.originalIndex + 1}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${item.prompt}</p>${visual}<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "확인"}</button>`;
+    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>교재 ${item.sourceNo || state.originalIndex + 1}번</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${item.sourceNo || state.originalIndex + 1}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${mathText(item.prompt)}</p>${visual}<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "확인"}</button>`;
   }
   const allComplete = lesson.original.items.every(originalItemComplete);
   const itemVisuals = lesson.original.items.some((item) => item.visual);
@@ -1215,16 +1233,16 @@ function renderOriginal(lesson) {
     const status = assist === "skipped" ? "skipped" : assist === "revealed" ? "assisted" : check?.passed ? "correct" : check ? "incorrect" : "";
     const conditions = item.conditions?.length ? `<ul class="original-conditions">${item.conditions.map((condition) => `<li>${condition}</li>`).join("")}</ul>` : "";
     const assistNote = assist === "revealed"
-      ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
+      ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이</span><p>${mathText(item.solution, { bare: true })}</p><strong>답 ${mathText(approvedOriginalAnswer(item), { bare: true })}</strong></section>`
       : assist === "skipped"
         ? '<p class="quiz-item-assist skipped">넘어간 문제입니다. 다음에 다시 풀어 보세요.</p>'
         : check?.passed
-          ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${escapeAttribute(item.solution)}</p><strong>답 ${escapeAttribute(approvedOriginalAnswer(item))}</strong></section>`
+          ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${mathText(item.solution, { bare: true })}</p><strong>답 ${mathText(approvedOriginalAnswer(item), { bare: true })}</strong></section>`
           : check
             ? `<p class="quiz-item-feedback" aria-live="polite">${escapeAttribute(check.message)}</p>`
             : "";
     const itemVisual = item.visual ? `<div class="quiz-visual item-quiz-visual">${visualMarkup(item.visual)}</div>` : "";
-    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${item.prompt}</strong>${conditions}${itemVisual}${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="primary-action item-check-action" data-original-check="${escapeAttribute(item.id)}" ${originalItemResolved(item) ? "" : "disabled"}>${originalItemComplete(item) ? "확인 완료" : "확인"}</button><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
+    return `<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}"><strong>${mathText(item.prompt)}</strong>${conditions}${itemVisual}${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="primary-action item-check-action" data-original-check="${escapeAttribute(item.id)}" ${originalItemResolved(item) ? "" : "disabled"}>${originalItemComplete(item) ? "확인 완료" : "확인"}</button><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${assistNote}</section>`;
   }).join("")}</div><button type="button" class="primary-action grouped-next-action" data-complete-original ${allComplete ? "" : "disabled"}>추가 학습으로</button>`;
 }
 
@@ -1277,6 +1295,7 @@ function printResponseMarkup(item) {
 }
 
 function printSourceItemVisual(item, fallback) {
+  if (item.noVisual) return "";
   const visual = item.visual || fallback;
   if (arithmeticListRepeatedByParts(item, visual)) return "";
   const repeatedParts = visual?.subtype === "multipart-conditions" && visual.context
@@ -1455,7 +1474,7 @@ function printLessonExercises(lesson, lessonNumber, book) {
     const sourcePages = [...groups.entries()].map(([group, items], pageIndex) => {
       const blocks = items.map((item) => {
         const visual = printSourceItemVisual(item, lesson.original.visual);
-        return `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo)}</span>${escapeAttribute(item.typeLabel)}</h2><p>${escapeAttribute(item.prompt)}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}${printResponseMarkup(item)}</section>`;
+        return `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo)}</span>${escapeAttribute(item.typeLabel)}</h2><p>${mathText(item.prompt)}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}${printResponseMarkup(item)}</section>`;
       }).join("");
       const printConcept = !separateConceptPrint && pageIndex === 0 ? concept + sourceExperience : "";
       return `<article class="gold-print-page source-practice-print" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original-${group}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(pageIndex + 1 + (separateConceptPrint ? 1 : 0)).padStart(2, "0"))}${printConcept}<section class="gold-print-block"><h2>교재 연습 ${pageIndex + 1} / ${groups.size}</h2>${blocks}</section>${footer}</article>`;
@@ -1465,7 +1484,7 @@ function printLessonExercises(lesson, lessonNumber, book) {
   const visualHasResponseBoxes = lesson.original.visual.kind === "book03-six-original";
   const hasItemVisuals = lesson.original.items.some((item) => item.visual);
   const sharedVisual = !hasItemVisuals || visualHasResponseBoxes ? `<div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>` : "";
-  const originalItems = visualHasResponseBoxes ? "" : lesson.original.items.map((item, index) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo || index + 1)}</span>${escapeAttribute(item.typeLabel || "문제")}</h2><p>${escapeAttribute(item.prompt)}${item.conditions?.length ? `<br>${item.conditions.map(escapeAttribute).join(" · ")}` : ""}</p>${item.visual ? `<div class="gold-print-visual">${visualMarkup(item.visual)}</div>` : ""}${printResponseMarkup(item)}</section>`).join("");
+  const originalItems = visualHasResponseBoxes ? "" : lesson.original.items.map((item, index) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo || index + 1)}</span>${escapeAttribute(item.typeLabel || "문제")}</h2><p>${mathText(item.prompt)}${item.conditions?.length ? `<br>${item.conditions.map(escapeAttribute).join(" · ")}` : ""}</p>${item.visual ? `<div class="gold-print-visual">${visualMarkup(item.visual)}</div>` : ""}${printResponseMarkup(item)}</section>`).join("");
   const sharedClass = !hasItemVisuals && !visualHasResponseBoxes ? " shared-source-visual" : "";
   const originalPage = `<article class="gold-print-page source-practice-print${sharedClass}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p>${sharedVisual}${originalItems ? `<div class="gold-print-source-items">${originalItems}</div>` : ""}</section>${footer}</article>`;
   return originalPage + storyPages;
@@ -1691,6 +1710,16 @@ function bindLessonActions() {
     recordOutcome("original", item.id, "skipped");
     state.feedback = null;
     renderContent();
+  }));
+  $("lessonContent").querySelectorAll("[data-fraction-group]").forEach((box) => box.addEventListener("input", () => {
+    const group = box.dataset.fractionGroup;
+    const value = (part) => $("lessonContent").querySelector(`[data-fraction-group="${group}"][data-fraction-part="${part}"]`)?.value.trim() || "";
+    const hidden = $("lessonContent").querySelector(`input[type="hidden"][data-input-group="${group}"]`);
+    if (!hidden) return;
+    const numerator = value("numerator");
+    const denominator = value("denominator");
+    hidden.value = numerator || denominator ? `${numerator}/${denominator}` : "";
+    hidden.dispatchEvent(new Event("input"));
   }));
   $("lessonContent").querySelectorAll("[data-input-group]").forEach((input) => input.addEventListener("input", () => {
     state.selections[input.dataset.inputGroup] = input.value;

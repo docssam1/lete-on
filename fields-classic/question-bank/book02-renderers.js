@@ -10,15 +10,18 @@ const SHAPES = Object.freeze({
   "filled-diamond": "◆", "filled-star": "★", "filled-heart": "♥"
 });
 
-const SHAPE_FILL = "#8cc3dc";
-const SHAPE_DARK = "#24485a";
+// 도형마다 다른 색(원본 교재의 한 가지 하늘색 대신). 검은 도형·흰 도형은 색 규칙 문제용.
+const SHAPE_COLORS = Object.freeze({ circle: "#f4877c", square: "#f9c74f", triangle: "#7cc57f", diamond: "#b39ddb", star: "#ffa94d", heart: "#f48fb1" });
+const SHAPE_FILL = "#cfd8dc";
+const SHAPE_DARK = "#222";
+const SHAPE_STROKE = "#333";
 
 // 원본 교재처럼 색칠한 도형을 SVG로 그린다. x, y는 중심, r은 반지름 크기.
 export function shapeSvg(kind, x, y, r, options = {}) {
   const filled = String(kind).startsWith("filled-");
   const base = filled ? String(kind).slice(7) : String(kind);
-  const fill = options.fill || (filled ? SHAPE_DARK : options.hollow ? "#fff" : SHAPE_FILL);
-  const stroke = options.stroke || (filled ? SHAPE_DARK : "#2f7f9b");
+  const fill = options.fill || (filled ? SHAPE_DARK : options.hollow ? "#fff" : SHAPE_COLORS[base] || SHAPE_FILL);
+  const stroke = options.stroke || SHAPE_STROKE;
   const attrs = `fill="${fill}" stroke="${stroke}" stroke-width="${options.strokeWidth || 1.6}" stroke-linejoin="round"`;
   const n = (value) => Number(value.toFixed(2));
   if (base === "circle") return `<circle cx="${n(x)}" cy="${n(y)}" r="${n(r * 0.9)}" ${attrs}/>`;
@@ -34,8 +37,8 @@ export function shapeSvg(kind, x, y, r, options = {}) {
     return `<path d="M${points.join("L")}Z" ${attrs}/>`;
   }
   if (base === "heart") return `<path d="M${n(x)} ${n(y + r * 0.9)}C${n(x - r * 1.3)} ${n(y)} ${n(x - r * 0.9)} ${n(y - r * 1.05)} ${n(x)} ${n(y - r * 0.35)}C${n(x + r * 0.9)} ${n(y - r * 1.05)} ${n(x + r * 1.3)} ${n(y)} ${n(x)} ${n(y + r * 0.9)}Z" ${attrs}/>`;
-  if (/^[A-Z]$/.test(base)) return `<circle cx="${n(x)}" cy="${n(y)}" r="${n(r * 0.92)}" fill="#c9cdd1" stroke="#2f7f9b" stroke-width="1.6"/><text x="${n(x)}" y="${n(y + r * 0.36)}" text-anchor="middle" font-size="${n(r * 1.05)}" font-weight="700" fill="#1f3340">${base}</text>`;
-  return `<text x="${n(x)}" y="${n(y + r * 0.4)}" text-anchor="middle" font-size="${n(r * 1.2)}" font-weight="800" fill="#234d5e">${esc(base)}</text>`;
+  if (/^[A-Z]$/.test(base)) return `<circle cx="${n(x)}" cy="${n(y)}" r="${n(r * 0.92)}" fill="#e0e0e0" stroke="#333" stroke-width="1.6"/><text x="${n(x)}" y="${n(y + r * 0.36)}" text-anchor="middle" font-size="${n(r * 1.05)}" font-weight="700" fill="#111">${base}</text>`;
+  return `<text x="${n(x)}" y="${n(y + r * 0.4)}" text-anchor="middle" font-size="${n(r * 1.2)}" font-weight="800" fill="#111">${esc(base)}</text>`;
 }
 
 const GLYPH_SHAPE = Object.freeze({ "○": "circle", "□": "square", "△": "triangle", "◇": "diamond", "☆": "star", "♡": "heart", "●": "filled-circle", "■": "filled-square", "▲": "filled-triangle", "◆": "filled-diamond", "★": "filled-star", "♥": "filled-heart" });
@@ -396,12 +399,17 @@ const FRACTION_FIGURES = Object.freeze({
 
 function fractionMarkup(visual) {
   const figure = FRACTION_FIGURES[visual.figure];
-  if (figure) return `<div class="b2-fraction-figure" role="img" aria-label="똑같이 나누지 않았을 수도 있는 도형의 색칠한 부분"><svg viewBox="0 0 200 180" aria-hidden="true">${figure()}</svg></div>`;
+  const blank = visual.blank ? '<span class="b2-frac-blank" aria-label="분수 빈칸"><i></i><b></b><i></i></span>' : "";
+  if (figure) return `<div class="b2-fraction-figure" role="img" aria-label="색칠한 부분을 분수로 나타내는 그림"><svg viewBox="0 0 200 180" aria-hidden="true">${figure()}</svg>${blank}</div>`;
   const total = Number(visual.total || 1);
   const shaded = Number(visual.shaded || 0);
   if (visual.shape === "circle") {
-    const angle = total ? shaded / total * 360 : 0;
-    return `<div class="b2-fraction circle" style="--angle:${angle}deg"><i></i></div>`;
+    const point = (index) => {
+      const angle = -Math.PI / 2 + index / total * Math.PI * 2;
+      return `${(100 + 78 * Math.cos(angle)).toFixed(1)} ${(90 + 78 * Math.sin(angle)).toFixed(1)}`;
+    };
+    const slices = Array.from({ length: total }, (_, index) => `<path d="M100 90L${point(index)}A78 78 0 0 1 ${point(index + 1)}Z" class="piece${index < shaded ? " shaded" : ""}"/>`).join("");
+    return `<div class="b2-fraction-figure" role="img" aria-label="원을 ${total}조각으로 똑같이 나눈 그림"><svg viewBox="0 0 200 180" aria-hidden="true">${total === 1 ? '<circle cx="100" cy="90" r="78" class="piece"/>' : slices}</svg></div>`;
   }
   const cells = Array.from({ length: total }, (_, index) => `<i class="${index < shaded ? "shaded" : ""}"></i>`).join("");
   return `<div class="b2-fraction ${esc(visual.shape || "rectangle")}" style="--fraction-total:${total}">${cells}</div>`;
@@ -412,21 +420,22 @@ function foldFractionMarkup(visual) {
   const folds = Number(visual.folds || 0);
   const arrow = '<svg class="arrow" viewBox="0 0 40 20" aria-hidden="true"><path d="M3 10H33M27 4L35 10L27 16"/></svg>';
   const paper = (inner, w = 90) => `<svg class="paper-step" viewBox="0 0 ${w} 90" aria-hidden="true">${inner}</svg>`;
+  // 점선(접는 선)은 그 다음에 접는 단계가 있을 때만 그린다(원본 교재와 같음).
+  const crease = (index, path) => index < folds ? `<path d="${path}" class="crease"/>` : "";
   const half = [
-    paper('<rect x="5" y="5" width="80" height="80" class="paper"/><path d="M45 5V85" class="crease"/>'),
-    paper('<rect x="8" y="3" width="40" height="80" class="paper back"/><rect x="5" y="6" width="40" height="80" class="paper"/><path d="M5 46H45" class="crease"/>', 60),
-    paper('<rect x="8" y="3" width="40" height="40" class="paper back"/><rect x="5" y="6" width="40" height="40" class="paper"/>', 60)
+    (i) => paper(`<rect x="5" y="5" width="80" height="80" class="paper"/>${crease(i, "M45 5V85")}`),
+    (i) => paper(`<rect x="8" y="2" width="40" height="80" class="paper back"/><rect x="5" y="6" width="40" height="80" class="paper"/>${crease(i, "M5 46H45")}`, 60),
+    (i) => paper(`<rect x="8" y="2" width="40" height="40" class="paper back"/><rect x="5" y="6" width="40" height="40" class="paper"/>${crease(i, "M25 6V46")}`, 60),
+    (i) => paper(`<rect x="8" y="2" width="20" height="40" class="paper back"/><rect x="5" y="6" width="20" height="40" class="paper"/>${crease(i, "M5 26H25")}`, 40),
+    () => paper('<rect x="8" y="2" width="20" height="20" class="paper back"/><rect x="5" y="6" width="20" height="20" class="paper"/>', 40)
   ];
   const diagonal = [
-    paper('<rect x="5" y="5" width="80" height="80" class="paper"/><path d="M5 5L85 85" class="crease"/>'),
-    paper('<path d="M8 3V83H88Z" class="paper back"/><path d="M5 6V86H85Z" class="paper"/><path d="M5 86L45 46" class="crease"/>'),
-    paper('<path d="M8 43L48 3L88 43Z" class="paper back"/><path d="M5 46L45 6L85 46Z" class="paper"/><path d="M45 6V46" class="crease"/>'),
-    paper('<path d="M8 43L48 3V43Z" class="paper back"/><path d="M5 46L45 6V46Z" class="paper"/>', 60)
+    (i) => paper(`<rect x="5" y="5" width="80" height="80" class="paper"/>${crease(i, "M5 5L85 85")}`),
+    (i) => paper(`<path d="M3 4V84H83Z" class="paper back"/><path d="M5 6V86H85Z" class="paper"/>${crease(i, "M5 86L45 46")}`),
+    (i) => paper(`<path d="M8 47L48 7L88 47Z" class="paper back"/><path d="M5 46L45 6L85 46Z" class="paper"/>${crease(i, "M45 6V46")}`),
+    () => paper('<path d="M3 47L43 7V47Z" class="paper back"/><path d="M5 46L45 6V46Z" class="paper"/>', 60)
   ];
-  if (visual.unknown) {
-    return `<div class="b2-fold-fraction" role="img" aria-label="색종이를 여러 번 접는 그림">${half[0]}${arrow}<b class="unknown">?번 접기</b>${arrow}${paper('<rect x="35" y="35" width="14" height="14" class="paper"/>', 60)}</div>`;
-  }
-  const steps = (style === "diagonal" ? diagonal : half).slice(0, folds + 1);
+  const steps = (style === "diagonal" ? diagonal : half).slice(0, folds + 1).map((draw, index) => draw(index));
   return `<div class="b2-fold-fraction" role="img" aria-label="색종이를 ${folds}번 접는 그림">${steps.join(arrow)}</div>`;
 }
 
