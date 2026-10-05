@@ -1,4 +1,4 @@
-/* Numbers of Magic — 유닛 N-09: 수 피라미드와 동전 세기 (수의 나라 · 유아 5~7세)
+/* Numbers of Magic — 유닛 N-09: 동전 던지기와 수나무 (수의 나라 · 유아 5~7세, 교재 G1-9; 2026-10 개편 — 피라미드·10원 세기는 NL5 드릴로 계속)
    tier:'basic' → 경량 플로우: practice → discover(1스테이지) → lab → stamp
    콘텐츠는 전부 창작(자체 설계 피라미드 퍼즐·이모지 동전) — 라이선스 교재 삽화/지문 미사용 */
 (function(){
@@ -7,51 +7,51 @@ window.NM_UNITS = window.NM_UNITS || {};
 
 window.NM_UNITS['N-09'] = {
   id:'N-09', tier:'basic', level:'N', order:9,
-  generator:'nl9_chain', edu:'유아',
-  title:{ ko:'수 피라미드와 동전 세기', en:'Number Pyramid & Coin Counting', zh:'数字金字塔与数硬币' },
-  subtitle:{ ko:'이웃 돌을 모아 쌓고, 10원씩 폴짝 세고!', en:'Stack neighbor stones and hop-count by tens!', zh:'把邻居石头叠上去，再10元10元地跳着数！' },
-  icon:'🗼',
+  generator:'nl38_scene', edu:'유아',
+  title:{ ko:'동전 던지기와 수나무', en:'Coin Toss & Number Trees', zh:'扔硬币与数树' },
+  subtitle:{ ko:'동전을 던져 식을 만들고, 가지를 더해 수나무를 채워요!', en:'Toss coins to make equations and add branches to fill the tree!', zh:'扔硬币列算式，把枝杈加起来填满数树！' },
+  icon:'🌳',
 
-  practice:{ generator:'nl9_chain', level:'practice', count:4, params:{ mode:'coins' },
-    intro:{ ko:'반짝반짝 10원 동전! 한 닢 누를 때마다 10, 20, 30… 뛰어세 보자!',
-      en:'Shiny ten coins! Each tap counts 10, 20, 30…',
-      zh:'亮晶晶的10元硬币！每点一枚就数10、20、30……' } },
+  practice:{ generator:'nl38_scene', level:'practice', count:4, params:{ mode:'coins', toss:true },
+    intro:{ ko:'동전을 던져 볼까? 별무늬와 달무늬가 몇 개 나오는지 보고 식을 채워요!',
+      en:'Toss the coins! See how many stars and moons show up, then fill the equation.',
+      zh:'来扔硬币！看看星星面和月亮面各有几个，再填算式。' } },
 
   discover:{
     story:{
-      hook:{ ko:'6을 나누어 떨어지게 하는 수를 모두 찾아 더해 볼까요? 1 + 2 + 3 = ?',
-        en:'Find every number that divides 6 evenly, then add them: 1 + 2 + 3 = ?',
-        zh:'找出所有能整除6的数，再加起来：1 + 2 + 3 = ?' },
-      history:{ ko:'자기 자신을 뺀 약수를 모두 더하면 다시 자기가 되는 수를 완전수라고 해요. 6과 28이 그런 수예요. 우리 조상들도 수에 뜻을 담아 홀수가 겹치는 날을 명절로 삼았어요 — 설(1월 1일), 삼짓날(3월 3일), 단오(5월 5일), 칠석(7월 7일), 중양절(9월 9일).',
-        en:'A number whose divisors (not counting itself) add back up to itself is called perfect: 6 and 28 are the first two. Korea gave numbers meaning too, marking holidays where an odd number doubles — Seollal (1/1), Samjinnal (3/3), Dano (5/5), Chilseok (7/7), Jungyangjeol (9/9).',
-        zh:'把一个数除本身以外的所有约数相加，又得回它自己，这样的数叫完全数：6和28就是最前面的两个。韩国也给数赋予含义，把奇数相重的日子定为节日——春节(1/1)、三巳节(3/3)、端午(5/5)、七夕(7/7)、重阳(9/9)。' }
+      hook:{ ko:'동전 6개를 던졌더니 별무늬 2개, 달무늬 4개! 식으로 쓰면 어떻게 될까요?',
+        en:'You toss 6 coins: 2 stars and 4 moons! How do you write that as an equation?',
+        zh:'扔了6枚硬币：2个星星面、4个月亮面！写成算式是什么？' },
+      history:{ ko:'동전을 던지면 별무늬와 달무늬가 나뉘어요. 6개를 던져 2개가 별이면 2+4=6, 6−2=4예요. 수나무는 이 가르기를 가지로 그린 거예요 — 위 원의 수는 아래 두 원을 더한 값이에요.',
+        en:'Tossed coins split into stars and moons: 6 coins with 2 stars give 2 + 4 = 6 and 6 − 2 = 4. A number tree draws that split as branches — a circle is the sum of the two circles under it.',
+        zh:'硬币扔出来分成星星面和月亮面：6枚里有2枚星星面，就是2＋4＝6、6－2＝4。数树把这种分解画成枝杈——每个圆等于它下面两个圆之和。' }
     },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
-      { tag:{ko:'① 모으기가 쌓이면 탑!',en:'1) Joins stack into a tower!',zh:'① 合起来叠成塔！'},
-        head:{ko:'이웃 두 돌을 모으면 위 돌이 돼요',en:'Two neighbor stones join into the stone above',zh:'相邻两块石头合起来就是上面那块'},
-        desc:{ko:'이웃 돌 둘을 모으면 위 돌! 동전은 10, 20, 30!',
-          en:'Two neighbor stones make the top one! Coins go 10, 20, 30!',
-          zh:'相邻两块合成上面那块！硬币10、20、30！'},
-        mathSteps:[{ko:'바닥: 1, 2, 1',en:'Bottom: 1, 2, 1',zh:'底层：1, 2, 1'},{ko:'가운데: 1+2=3, 2+1=3',en:'Middle: 1+2=3, 2+1=3',zh:'中层：1+2=3, 2+1=3'},{ko:'꼭대기: 3+3=6!',en:'Top: 3+3=6!',zh:'顶层：3+3=6！'}],
-        result:{ko:'층층이 쌓으면 꼭대기까지!',en:'Stack up to the top!',zh:'一层层叠到塔顶！'} }
+      { tag:{ko:'① 가르면 가지가 돼요',en:'1) A split becomes branches',zh:'① 分开就成了枝杈'},
+        head:{ko:'두 가지를 더하면 위 원이에요',en:'Two branches add up to the circle',zh:'两根枝杈相加就是上面的圆'},
+        desc:{ko:'2와 3을 더하면 5! 5와 1을 더하면 6!',
+          en:'2 and 3 make 5! 5 and 1 make 6!',
+          zh:'2和3是5！5和1是6！'},
+        mathSteps:['2 + 3 = 5','5 + 1 = 6'],
+        result:{ko:'가지를 더해 나무를 채워요!',en:'Add the branches to fill the tree!',zh:'把枝杈加起来填满数树！'} }
     ],
-    rule:{ ko:'이웃 두 돌을 모으면 위 돌이에요!',
-      en:'Join two neighbors to make the stone above!',
-      zh:'相邻两块合起来就是上面那块！' }
+    rule:{ ko:'가지 두 개를 더하면 원 하나예요!',
+      en:'Two branches add up to one circle!',
+      zh:'两根枝杈相加就是一个圆！' }
   },
 
-  lab:{ generator:'nl9_chain', level:'main', count:4, params:{ mode:'pyramid' },
-    intro:{ ko:'이제 피라미드 탑 쌓기! 빈 돌에 올 수를 골라 봐. 가운데가 비어 있을 수도 있어!',
-      en:'Now build the pyramid! Pick the number for the empty stone — it might be in the middle!',
-      zh:'现在来叠金字塔！选出空石头上的数——空的可能在中间哦！' } },
+  lab:{ generator:'nl40_diagram', level:'main', count:4, params:{ mode:'tree', shape:'sym4', flow:'merge', kMin:1, kMax:2 },
+    intro:{ ko:'이제 수나무! 위 두 원을 더한 값이 아래 원이에요. 빈 원을 채워 봐!',
+      en:'Now the number tree! The circle below is the sum of the two above. Fill the empty circle!',
+      zh:'现在是数树！下面的圆等于上面两个圆之和。把空圆圈填出来！' } },
 
-  stamp:{ label:{ ko:'피라미드 석공', en:'Pyramid Mason', zh:'金字塔小石匠' }, coins:20 },
+  stamp:{ label:{ ko:'수나무 정원사', en:'Number Tree Gardener', zh:'数树小园丁' }, coins:20 },
 
   voice:{
-    correct:[ {ko:'딩동댕! 🎉',en:'Ding-dong!',zh:'叮咚！'}, {ko:'돌이 딱 맞아! 🗼',en:'The stone fits!',zh:'石头正合适！'}, {ko:'폴짝폴짝 잘 셌어! 🪙',en:'Great hop-counting!',zh:'跳得真棒！'} ],
-    wrong:[ {ko:'음~ 이웃 두 돌을 모아 볼까?',en:'Hmm, join the two neighbors?',zh:'嗯，把相邻两块合起来看看？'}, {ko:'10, 20, 30… 다시 폴짝!',en:'10, 20, 30… hop again!',zh:'10、20、30……再跳一次！'} ],
-    finish:{ ko:'짝짝짝! 피라미드 석공 탄생! 🗼✨', en:'Clap clap! A Pyramid Mason is born!', zh:'鼓掌！金字塔小石匠诞生了！' }
+    correct:[ {ko:'딩동댕! 🎉',en:'Ding-dong!',zh:'叮咚！'}, {ko:'가지가 딱 맞아! 🌳',en:'The branches fit!',zh:'枝杈正合适！'}, {ko:'동전 박사! 🪙',en:'Coin expert!',zh:'硬币博士！'} ],
+    wrong:[ {ko:'음~ 두 가지를 더해 볼까?',en:'Hmm, add the two branches?',zh:'嗯，把两根枝杈加起来看看？'}, {ko:'별무늬와 달무늬를 다시 세어 볼까?',en:'Count the stars and moons again?',zh:'再数数星星面和月亮面？'} ],
+    finish:{ ko:'짝짝짝! 수나무 정원사 탄생! 🌳✨', en:'Clap clap! A Number Tree Gardener is born!', zh:'鼓掌！数树小园丁诞生了！' }
   }
 };
 

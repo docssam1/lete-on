@@ -32,11 +32,39 @@
 .fb button:hover{background:#dbe6f2}
 .result-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.result-actions .btn{height:34px}
 @media print{.fb{display:none}}
+
+/* 맞은 문제 체크 */
+.live-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:12px}
+.live{font-size:13px;font-weight:800;color:#294563}
+.live b{font-size:17px;color:#173a6b;font-variant-numeric:tabular-nums}
+.live small{color:#60758d;font-weight:700}
+.mark-tools{display:flex;gap:6px}
+.mini{height:28px;padding:0 10px;border:1px solid #b9c8d8;border-radius:6px;background:#f5f8fb;color:#294563;font:900 11px Pretendard,sans-serif;cursor:pointer}
+.mini:hover{background:#e8eef6}
+.answer-grid{grid-template-columns:repeat(5,1fr)}
+.ck{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:46px;padding:4px 0;border:1.5px solid #bdcddd;border-radius:8px;background:#fff;color:#294563;cursor:pointer;font-family:inherit;transition:background .12s,border-color .12s}
+.ck-n{font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}
+.ck-s{height:14px;font-size:13px;font-weight:950;line-height:14px}
+.ck:hover{border-color:#7da1c4}
+.ck[aria-pressed="true"]{background:#d9f3e7;border-color:#62b58e;color:#147a4d}
+.ck.is-wrong{background:#fde4e6;border-color:#d6858b;color:#bd3038}
+.ck:focus-visible,.ans-ck:focus-visible,.mini:focus-visible{outline:2px solid #173a6b;outline-offset:2px}
+.ans-row{display:flex;gap:8px;align-items:flex-start;justify-content:space-between;padding:7px 0;border-bottom:1px solid #e3eaf2}
+.ans-main{min-width:0;flex:1}
+.ans-ck{flex:none;height:30px;min-width:54px;padding:0 10px;border:1.5px solid #bdcddd;border-radius:6px;background:#fff;color:#294563;font:900 12px Pretendard,sans-serif;cursor:pointer}
+.ans-ck[aria-pressed="true"]{background:#d9f3e7;border-color:#62b58e;color:#147a4d}
+.wrong-list{margin-top:12px;border-top:1px solid #d5dfeb}
+.wrong-list .fb{margin:0;padding:8px 0;border-bottom:1px solid #e3eaf2;gap:7px}
+.wrong-list .fb .wn{min-width:34px;color:#bd3038;font-size:12px;font-weight:950}
+.wrong-list .fb .ans{font-size:12px}
+.wrong-list .fb button{height:26px;font-size:11px;padding:0 9px}
+@media(prefers-reduced-motion:reduce){.ck{transition:none}}
+@media print{.live-row,.ans-ck{display:none}}
 </style>
 </head>
 <body>
-<header class="top"><div><b id="title">중등 모의고사</b><span id="student"></span></div><div class="actions"><button class="btn dark" onclick="goToPanel()">답안 입력</button><button class="btn dark" onclick="location.href='./library.html'">목록</button><button class="btn dark" onclick="openReport()">분석지 보기</button><button class="btn dark" onclick="printPaper()">시험지 인쇄</button><button class="btn dark" onclick="printAnswers()">답안 인쇄</button></div></header>
-<main class="shell"><div class="layout"><section class="viewer" id="viewer"></section><aside class="panel"><h2>답안 입력</h2><p class="hint" id="notice">40문항을 입력하면 검수된 문항만 채점합니다.</p><div class="actions"><button class="btn" onclick="grade()">채점하기</button><button class="btn dark" onclick="showAnswers()">답안 보기</button><button class="btn dark" onclick="watch()">전체 수업 영상</button></div><div class="answer-grid" id="answers"></div><div class="result" id="result">아직 채점하지 않았습니다.</div><div id="video"></div></aside></div></main>
+<header class="top"><div><b id="title">중등 모의고사</b><span id="student"></span></div><div class="actions"><button class="btn dark" onclick="goToPanel()">맞은 문제 체크</button><button class="btn dark" onclick="location.href='./library.html'">목록</button><button class="btn dark" onclick="openReport()">분석지 보기</button><button class="btn dark" onclick="printPaper()">시험지 인쇄</button><button class="btn dark" onclick="printAnswers()">답안 인쇄</button></div></header>
+<main class="shell"><div class="layout"><section class="viewer" id="viewer"></section><aside class="panel"><h2>맞은 문제 체크</h2><p class="hint" id="notice">시험지를 푼 뒤 답안을 확인하고, 맞은 문제의 번호를 눌러 체크하세요. 체크하지 않은 문제는 틀린 것으로 채점됩니다.</p><div class="actions"><button class="btn" onclick="grade()">채점하기</button><button class="btn dark" onclick="showAnswers()">답안 보기</button><button class="btn dark" onclick="watch()">전체 수업 영상</button></div><div class="live-row"><div class="live" id="live" aria-live="polite"></div><div class="mark-tools"><button type="button" class="mini" onclick="markAll(true)">전체 체크</button><button type="button" class="mini" onclick="markAll(false)">전체 해제</button></div></div><div class="answer-grid" id="answers" role="group" aria-label="맞은 문제 체크"></div><div class="result" id="result">아직 채점하지 않았습니다.</div><div id="video"></div></aside></div></main>
 <script src="./data.js"></script><script src="./exam-data.js"></script><script src="./shared-auth.js"></script><script src="./hsm-cloud.js"></script>
 <script src="./exam-meta.js"></script>
 <script src="./hsm-player.js"></script>
@@ -66,6 +94,7 @@ function enterExam(session){
   panelChildren.forEach(node=>node.classList.remove('hidden'));
   viewer.classList.remove('hidden');
   gate.classList.add('hidden');
+  restoreMarks();
   return true;
 }
 async function signIn(){
@@ -84,47 +113,127 @@ async function autoSignIn(){
 function watermark(){const w=document.createElement('div');w.className='watermark';for(let i=0;i<3;i++){const s=document.createElement('span');s.textContent=`${student} · GFIELD`;w.append(s)}return w}
 for(let n=1;n<=exam.pages;n++){const sec=document.createElement('section');sec.className='page';const img=document.createElement('img');img.src=`./assets/print/${exam.folder}/page-${String(n).padStart(2,'0')}.png`;img.alt=`${exam.title} ${n}쪽`;sec.append(img,watermark());viewer.append(sec)}
 autoSignIn();
-function setOx(n,value){localStorage.setItem(`hs-${key}-${n}`,value);const box=document.getElementById(`ox-${n}`);if(!box)return;box.querySelectorAll('button').forEach(button=>button.className='');box.querySelector(`[data-value="${value}"]`).classList.add(value==='o'?'active-o':'active-x')}
-function inputKey(n,part){return `hs-${key}-${n}${part===undefined?'':`-${part}`}`}
-function answerInput(n,part){const input=document.createElement('input');input.id=part===undefined?`a-${n}`:`a-${n}-${part}`;input.autocomplete='off';input.value=localStorage.getItem(inputKey(n,part))||'';input.addEventListener('input',()=>saveInput(input,n,part));return input}
-for(let i=1;i<=exam.questions;i++){const label=document.createElement('label');label.textContent=i;const mark=document.createElement('b');mark.id=`m-${i}`;mark.className='grade-mark';if(exam.oxQuestions&&exam.oxQuestions.includes(i)){const box=document.createElement('div');box.id=`ox-${i}`;box.className='ox-control';for(const value of ['o','x']){const button=document.createElement('button');button.type='button';button.dataset.value=value;button.textContent=value.toUpperCase();button.onclick=()=>setOx(i,value);box.append(button)}const saved=localStorage.getItem(`hs-${key}-${i}`);if(saved)setOx(i,saved);const answerImage=exam.answerImages&&exam.answerImages[i];if(answerImage){label.classList.add('with-answer-image');const image=document.createElement('img');image.className='answer-key-image';image.src=answerImage;image.alt=`${i}번 답안 그림`;label.append(box,image,mark)}else label.append(box,mark)}else{const fields=exam.answerFields&&exam.answerFields[i];if(fields){const box=document.createElement('div');box.className='answer-parts';fields.forEach((field,index)=>{const part=document.createElement('span');part.textContent=field.label;part.append(answerInput(i,index));box.append(part)});label.append(box,mark)}else label.append(answerInput(i),mark)}answers.append(label)}
-if(exam.locked){document.getElementById('notice').textContent='답안 검수 전입니다. 문제지와 영상만 열람할 수 있습니다.';document.querySelector('.answer-grid').classList.add('hidden');document.querySelector('.result').innerHTML='<div class="locked">답안 검수가 끝나면 채점과 약점 분석을 활성화합니다.</div>'}
+/* ── 맞은 문제 체크 방식 ─────────────────────────────────────────
+   저장값 hs-{시험}-{번호} = 'o'(맞음) | 'x'(틀림, 채점 후) | 없음(아직 체크 안 함)
+   채점하기를 누르면 체크하지 않은 문제가 'x'로 확정된다. 분석지(report.html)도 같은 값을 읽는다. */
+const MARK_KEY=n=>`hs-${key}-${n}`,GRADED_KEY=`hs-${key}-graded`;
+let graded=localStorage.getItem(GRADED_KEY)==='1',resultView='idle';
+const live=document.getElementById('live'),resultBox=document.getElementById('result');
+function isManualAnswer(expected){return ['수동','복수·수동'].includes(String(expected||'').trim())}
+function getMark(n){const v=localStorage.getItem(MARK_KEY(n));return v==='o'||v==='x'?v:null}
+function putMark(n,value){if(value)localStorage.setItem(MARK_KEY(n),value);else localStorage.removeItem(MARK_KEY(n))}
+for(let i=1;i<=exam.questions;i++){
+  const cell=document.createElement('button');
+  cell.type='button';cell.className='ck';cell.id=`ck-${i}`;
+  cell.setAttribute('aria-pressed','false');cell.setAttribute('aria-label',`${i}번 문제, 맞았으면 체크`);
+  cell.innerHTML=`<span class="ck-n">${i}</span><span class="ck-s" aria-hidden="true"></span>`;
+  cell.addEventListener('click',()=>toggleMark(i));
+  answers.append(cell);
+}
+if(exam.locked){document.getElementById('notice').textContent='답안 검수 전입니다. 문제지와 영상만 열람할 수 있습니다.';document.querySelectorAll('.answer-grid,.live-row').forEach(el=>el.classList.add('hidden'));document.querySelector('.result').innerHTML='<div class="locked">답안 검수가 끝나면 채점과 약점 분석을 활성화합니다.</div>'}
 function norm(v){return String(v||'').replace(/\s/g,'').replaceAll('㎡','m²').replaceAll('제곱센티미터','cm²').toLowerCase()}
 function matches(given,expected){if(!expected||expected==='수동'||expected==='복수·수동')return null;const g=norm(given),e=norm(expected);if(g===e)return true;if(e.includes('또는'))return e.split('또는').map(norm).includes(g);return false}
-function formatAutoComma(value,expected){const parts=String(expected||'').split(',').map(part=>part.trim());if(parts.length<2||parts.some(part=>!/^\d+$/.test(part)))return value;const digits=String(value).replace(/\D/g,''),groups=[];let offset=0;for(const part of parts){const group=digits.slice(offset,offset+part.length);if(!group)break;groups.push(group);offset+=part.length}return groups.join(', ')}
-function saveInput(input,n,part){if(part===undefined&&exam.autoCommaQuestions&&exam.autoCommaQuestions.includes(n))input.value=formatAutoComma(input.value,exam.answers[n-1]);localStorage.setItem(inputKey(n,part),input.value)}
-function answerCheck(n,expected){const fields=exam.answerFields&&exam.answerFields[n];if(fields){const values=fields.map((_,index)=>document.getElementById(`a-${n}-${index}`).value.trim());if(values.some(value=>!value))return 'blank';return fields.every((field,index)=>matches(values[index],field.answer)===true)}const field=document.getElementById(`a-${n}`);if(!field||!field.value.trim())return 'blank';return matches(field.value,expected)}
-function showOne(n){if(!verifiedAccess)return;const a=exam.answers[n-1],img=exam.answerImages&&exam.answerImages[n],note=exam.answerNotes&&exam.answerNotes[n];document.getElementById('result').innerHTML=`<b>${n}번 풀이</b><br><div>${n}. ${a}${note?`<pre style="white-space:pre-wrap;margin:8px 0;padding:10px;background:#f4f7fb;border-radius:5px;font:700 12px/1.7 Pretendard">${note}</pre>`:''}${img?`<br><img src="${img}" alt="${n}번 답안 풀이 이미지" style="display:block;width:100%;max-width:720px;margin:8px 0;border:1px solid #d5dfeb">`:''}</div>`;document.querySelector('.result').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}
-function addFeedback(n,expected,isManual){const mark=document.getElementById(`m-${n}`);if(!mark)return;const fb=document.createElement('div');fb.id=`fb-${n}`;fb.className='fb';const ans=document.createElement('span');ans.className='ans';const selfMarked=exam.oxQuestions&&exam.oxQuestions.includes(n)&&!['o','x'].includes(norm(expected));ans.textContent=selfMarked?'자기 채점 X':isManual?'채점 필요':`정답 ${expected}`;fb.append(ans);const meta=window.HSMIDDLE_EXAM_META&&HSMIDDLE_EXAM_META[key]&&HSMIDDLE_EXAM_META[key][n];if(meta&&meta.t!=null&&window.HSMIDDLE_PLAYER){const videoUrl=(window.HSMIDDLE_DATA&&HSMIDDLE_DATA.videos&&HSMIDDLE_DATA.videos[key])||'';const vm=videoUrl.match(/[?&]v=([\w-]{6,})/)||videoUrl.match(/youtu\.be\/([\w-]{6,})/);if(vm){const videoId=vm[1],start=meta.t;const videoBtn=document.createElement('button');videoBtn.type='button';videoBtn.textContent='▶ 영상';videoBtn.onclick=()=>HSMIDDLE_PLAYER.open({videoId,start,title:`${n}번 풀이 영상`,subtitle:meta.unit||''});fb.append(videoBtn)}}if((exam.answerNotes&&exam.answerNotes[n])||(exam.answerImages&&exam.answerImages[n])){const noteBtn=document.createElement('button');noteBtn.type='button';noteBtn.textContent='풀이';noteBtn.onclick=()=>showOne(n);fb.append(noteBtn)}mark.insertAdjacentElement('afterend',fb)}
-function questionState(n,expected){
-  if(exam.oxQuestions&&exam.oxQuestions.includes(n)){
-    const value=localStorage.getItem(`hs-${key}-${n}`);
-    if(value!=='o'&&value!=='x')return 'blank';
-    const answer=norm(expected);
-    return answer==='o'||answer==='x'?value===answer:value==='o';
+/* 예전 방식(답을 직접 입력)으로 저장된 값은, 정답과 일치하는 문제만 '맞음'으로 옮겨 온다.
+   일치하지 않거나 수동 채점 문항은 체크하지 않은 상태로 두어, 채점하기를 눌러도 기존 기록이 뒤집히지 않게 한다. */
+function migrateLegacy(){
+  for(let n=1;n<=exam.questions;n++){
+    const raw=localStorage.getItem(MARK_KEY(n));
+    if(raw==='o'||raw==='x')continue;
+    const fields=exam.answerFields&&exam.answerFields[n];
+    let ok=false;
+    if(fields){
+      const parts=fields.map((_,i)=>localStorage.getItem(`${MARK_KEY(n)}-${i}`));
+      ok=parts.every(v=>v!=null&&String(v).trim()!=='')&&fields.every((f,i)=>matches(parts[i],f.answer)===true);
+    }else if(raw!=null&&String(raw).trim()!==''){
+      ok=matches(raw,exam.answers[n-1])===true;
+    }
+    if(ok)putMark(n,'o');
   }
-  return answerCheck(n,expected);
+}
+function showOne(n){if(!verifiedAccess)return;resultView='one';const a=exam.answers[n-1],img=exam.answerImages&&exam.answerImages[n],note=exam.answerNotes&&exam.answerNotes[n];document.getElementById('result').innerHTML=`<b>${n}번 풀이</b><br><div>${n}. ${a}${note?`<pre style="white-space:pre-wrap;margin:8px 0;padding:10px;background:#f4f7fb;border-radius:5px;font:700 12px/1.7 Pretendard">${note}</pre>`:''}${img?`<br><img src="${img}" alt="${n}번 답안 풀이 이미지" style="display:block;width:100%;max-width:720px;margin:8px 0;border:1px solid #d5dfeb">`:''}</div>`;document.querySelector('.result').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}
+function buildFeedback(n,expected){
+  const fb=document.createElement('div');fb.id=`fb-${n}`;fb.className='fb';
+  const num=document.createElement('b');num.className='wn';num.textContent=`${n}번`;
+  const ans=document.createElement('span');ans.className='ans';ans.textContent=isManualAnswer(expected)?'직접 채점 문항':`정답 ${expected}`;
+  fb.append(num,ans);
+  const meta=window.HSMIDDLE_EXAM_META&&HSMIDDLE_EXAM_META[key]&&HSMIDDLE_EXAM_META[key][n];
+  if(meta&&meta.t!=null&&window.HSMIDDLE_PLAYER){
+    const videoUrl=(window.HSMIDDLE_DATA&&HSMIDDLE_DATA.videos&&HSMIDDLE_DATA.videos[key])||'';
+    const vm=videoUrl.match(/[?&]v=([\w-]{6,})/)||videoUrl.match(/youtu\.be\/([\w-]{6,})/);
+    if(vm){
+      const videoId=vm[1],start=meta.t;
+      const videoBtn=document.createElement('button');videoBtn.type='button';videoBtn.textContent='▶ 영상';
+      videoBtn.onclick=()=>HSMIDDLE_PLAYER.open({videoId,start,title:`${n}번 풀이 영상`,subtitle:meta.unit||''});
+      fb.append(videoBtn);
+    }
+  }
+  if((exam.answerNotes&&exam.answerNotes[n])||(exam.answerImages&&exam.answerImages[n])){
+    const noteBtn=document.createElement('button');noteBtn.type='button';noteBtn.textContent='풀이';noteBtn.onclick=()=>showOne(n);fb.append(noteBtn);
+  }
+  return fb;
+}
+function scoreOf(right){return Number((right*2.5).toFixed(1))}
+function syncAnswerButtons(){resultBox.querySelectorAll('.ans-ck').forEach(button=>button.setAttribute('aria-pressed',getMark(+button.dataset.n)==='o'?'true':'false'))}
+function renderGrade(){
+  resultView='grade';
+  let right=0;const wrongNums=[];
+  exam.answers.forEach((expected,i)=>{const n=i+1;if(getMark(n)==='o')right++;else wrongNums.push(n)});
+  resultBox.innerHTML=`맞은 문제 <b>${right}</b>/${exam.questions}문항 · <b>${scoreOf(right)}</b>점`+
+    (wrongNums.length?`<br><span class="hint">틀린 ${wrongNums.length}문항의 정답과 풀이 영상은 아래에서 바로 볼 수 있습니다.</span>`:'<br><span class="hint">모두 맞혔습니다.</span>')+
+    '<div class="result-actions"><button class="btn dark" type="button" onclick="openReport()">분석지에서 확인·저장</button></div>';
+  if(wrongNums.length){
+    const list=document.createElement('div');list.className='wrong-list';
+    wrongNums.forEach(n=>list.append(buildFeedback(n,exam.answers[n-1])));
+    resultBox.append(list);
+  }
+}
+function refresh(){
+  let right=0;
+  for(let n=1;n<=exam.questions;n++){
+    const v=getMark(n),cell=document.getElementById(`ck-${n}`),wrong=graded&&v!=='o';
+    if(v==='o')right++;
+    cell.setAttribute('aria-pressed',v==='o'?'true':'false');
+    cell.classList.toggle('is-wrong',wrong);
+    cell.querySelector('.ck-s').textContent=v==='o'?'✓':wrong?'✗':'';
+  }
+  live.innerHTML=`맞은 문제 <b>${right}</b>개 · <b>${scoreOf(right)}</b>점 <small>/ 100점</small>`;
+  syncAnswerButtons();
+  if(graded&&resultView==='grade')renderGrade();
+}
+function restoreMarks(){migrateLegacy();refresh();if(graded)renderGrade()}
+function toggleMark(n){
+  if(!verifiedAccess||exam.locked)return;
+  putMark(n,getMark(n)==='o'?(graded?'x':null):'o');
+  refresh();
+}
+function markAll(correct){
+  if(!verifiedAccess||exam.locked)return;
+  for(let n=1;n<=exam.questions;n++)putMark(n,correct?'o':(graded?'x':null));
+  refresh();
 }
 function grade(){
   if(exam.locked||!verifiedAccess)return;
-  document.querySelectorAll('.fb').forEach(el=>el.remove());
-  let correct=0,checked=0,manual=0,hasWrong=false;
-  exam.answers.forEach((expected,i)=>{
-    const n=i+1,mark=document.getElementById(`m-${n}`),state=questionState(n,expected);
-    mark.textContent='';mark.className='grade-mark';
-    if(state==='blank')return;
-    checked++;
-    if(state===true){correct++;mark.textContent='O';mark.classList.add('good')}
-    else if(state===false){mark.textContent='X';mark.classList.add('bad');hasWrong=true;addFeedback(n,expected,false)}
-    else{manual++;mark.textContent='확인';mark.classList.add('manual');hasWrong=true;addFeedback(n,expected,true)}
-  });
-  const missing=exam.questions-checked;
-  document.getElementById('result').innerHTML=`입력 ${checked}/${exam.questions}문항 · 정답 ${correct}문항 · 수동 확인 ${manual}문항`+
-    (missing?`<br><span class="hint">아직 입력하지 않은 문항이 ${missing}개 있습니다.</span>`:'')+
-    (hasWrong?'<br><span class="hint">틀린 문항 아래에서 풀이를 확인할 수 있습니다.</span>':'')+
-    (checked?'<div class="result-actions"><button class="btn dark" type="button" onclick="openReport()">분석지에서 확인·저장</button></div>':'');
+  let right=0;
+  for(let n=1;n<=exam.questions;n++)if(getMark(n)==='o')right++;
+  if(!right&&!graded&&!confirm('맞은 문제가 하나도 체크되지 않았습니다. 모두 틀린 것으로 채점할까요?')){
+    resultView='idle';
+    resultBox.innerHTML='먼저 맞은 문제의 번호를 눌러 체크해 주세요.<br><span class="hint">체크하지 않은 문제는 틀린 것으로 채점됩니다.</span>';
+    return;
+  }
+  for(let n=1;n<=exam.questions;n++)if(getMark(n)!=='o')putMark(n,'x');
+  graded=true;localStorage.setItem(GRADED_KEY,'1');
+  refresh();renderGrade();
 }
-function showAnswers(){if(exam.locked||!verifiedAccess)return;document.getElementById('result').innerHTML='<b>검수 답안</b><br>'+exam.answers.map((a,i)=>{const n=i+1,img=exam.answerImages&&exam.answerImages[n],note=exam.answerNotes&&exam.answerNotes[n];return `<div>${n}. ${a}${note?`<pre style="white-space:pre-wrap;margin:8px 0;padding:10px;background:#f4f7fb;border-radius:5px;font:700 12px/1.7 Pretendard">${note}</pre>`:''}${img?`<br><img src="${img}" alt="${n}번 답안 풀이 이미지" style="display:block;width:100%;max-width:720px;margin:8px 0;border:1px solid #d5dfeb">`:''}</div>`}).join('')}
+function showAnswers(){
+  if(exam.locked||!verifiedAccess)return;
+  resultView='answers';
+  resultBox.innerHTML='<b>검수 답안</b><span class="hint"> · 맞았으면 오른쪽 버튼을 눌러 체크하세요.</span>'+exam.answers.map((a,i)=>{
+    const n=i+1,img=exam.answerImages&&exam.answerImages[n],note=exam.answerNotes&&exam.answerNotes[n];
+    return `<div class="ans-row"><div class="ans-main">${n}. ${a}${note?`<pre style="white-space:pre-wrap;margin:8px 0;padding:10px;background:#f4f7fb;border-radius:5px;font:700 12px/1.7 Pretendard">${note}</pre>`:''}${img?`<br><img src="${img}" alt="${n}번 답안 풀이 이미지" style="display:block;width:100%;max-width:720px;margin:8px 0;border:1px solid #d5dfeb">`:''}</div><button type="button" class="ans-ck" data-n="${n}" aria-pressed="false" aria-label="${n}번 맞음 체크">맞음</button></div>`;
+  }).join('');
+  syncAnswerButtons();
+}
+resultBox.addEventListener('click',event=>{const button=event.target.closest('.ans-ck');if(button)toggleMark(+button.dataset.n)});
 function printPaper(){if(!verifiedAccess)return;document.body.classList.remove('print-answers');print()}
 function printAnswers(){
   if(!verifiedAccess)return;
@@ -145,7 +254,7 @@ function printAnswers(){
 function goToPanel(){const behavior=window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';document.querySelector('.panel').scrollIntoView({behavior,block:'start'})}
 function watch(){if(!verifiedAccess)return;const url=HSMIDDLE_DATA.videos[key];if(url)window.open(url,'_blank','noopener')}
 function openReport(){if(verifiedAccess)window.open(`./report.html?exam=${key}`,'_blank','noopener')}
-Object.assign(window,{signIn,grade,showAnswers,printPaper,printAnswers,goToPanel,watch,openReport});
+Object.assign(window,{signIn,grade,markAll,showAnswers,printPaper,printAnswers,goToPanel,watch,openReport});
 })();
 </script>
 </body></html>

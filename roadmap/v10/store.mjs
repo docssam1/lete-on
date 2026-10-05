@@ -1,6 +1,6 @@
 import {validateReviewState} from './review-validation.mjs';
 // Storage adapter. Local review server (api/health answers) keeps the E: files as before;
-// anywhere else (GitHub Pages) records live in this browser's IndexedDB, keyed by the approval code.
+// anywhere else (GitHub Pages) records live in this browser's IndexedDB, keyed by the child's name tag (gate.mjs).
 const DB_NAME='gfield-roadmap-v10',KEEP=20;
 const CONFLICT='다른 창에서 저장된 기록이 있습니다. 새로고침해 최신 기록을 확인해 주세요.';
 let mode=null,userKey='local',persistent=true,dbPromise=null;

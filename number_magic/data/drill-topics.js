@@ -719,6 +719,7 @@ var CURATED_TOPICS = [
 /* 기존 문구/순서는 보존한다. 새 레벨은 threads.js에서 자동으로 가져오며,
    처음 등장한 스레드는 갈래를 명시해야 한다. */
 var ADDITIONAL_THREADS = {
+  preschool:['NL17','NL18','NL19','NL20','NL21','NL22','NL27','NL28','NL29','NL30','NL31','NL32','NL33','NL34','NL35','NL36','NL47','NL48','NL49','NL50','NL51','NL52','NL53','NL54','NL55','NL56','NL57','NL58','NL59','NL60','NL61','NL62','NL63','NL64','NL65','NL66'],   /* G1 유아 새 스레드 */
   decimal:['DC6'],
   middle1:['MD68','MD69','MD70','MD73','MD82','MD84','MD89'],
   middle2:['MD63','MD64','MD65','MD71','MD72','MD74','MD75','MD76','MD88'],
@@ -732,6 +733,8 @@ var ADDITIONAL_THREADS = {
            'MD144','MD145','MD146','MD147','MD148','MD149','MD150','MD151','MD152','MD153'],
   calculus1:['MD154','MD155','MD156','MD157','MD158','MD159']
 };
+/* 유아 교재 G1-7~9호 스레드(NL37~NL43) — 이 줄만 추가한다(다른 묶음과 합칠 때 충돌을 줄이려고 따로 둠) */
+ADDITIONAL_THREADS.preschool=(ADDITIONAL_THREADS.preschool||[]).concat(['NL37','NL38','NL39','NL40','NL41','NL42','NL43'].filter(function(id){return root.NM_THREADS&&root.NM_THREADS[id];}));
 function buildTopics(threads){
   if(!threads) throw new Error('drill-topics: threads.js must load first');
   var topics=CURATED_TOPICS.map(function(cat){

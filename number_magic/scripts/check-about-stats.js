@@ -10,6 +10,7 @@ for(const f of fs.readdirSync(path.join(ROOT,'data/units')).filter(f=>f.endsWith
   try{ new Function('window',fs.readFileSync(path.join(ROOT,'data/units',f),'utf8'))(window); }catch(e){}
 }
 new Function('window',fs.readFileSync(path.join(ROOT,'data/threads.js'),'utf8'))(window);
+for(const g of ['1-3','4-6','7-9','10-12','13-15']) new Function('window',fs.readFileSync(path.join(ROOT,'data/g1/'+g+'-threads.js'),'utf8'))(window);  /* 브라우저는 index.html 이 이어 싣는다 */
 const units=Object.keys(window.NM_UNITS||{}).length;
 const threads=Object.keys(window.NM_THREADS||{}).length;
 let levels=0; for(const t of Object.values(window.NM_THREADS||{})) levels+=(t.levels||[]).length;

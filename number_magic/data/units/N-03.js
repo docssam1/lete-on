@@ -12,7 +12,7 @@ window.NM_UNITS['N-03'] = {
   subtitle:{ ko:'왼쪽에서 몇째? 콕 짚고, 딱 그만큼만 칠해요!', en:'Which one from the left? Tap it, then paint just the right amount!', zh:'从左边数第几个？点一点，再正好涂对数量！' },
   icon:'🥇',
 
-  practice:{ generator:'nl3_ordinal', level:'practice', count:4, params:{ mode:'position' },
+  practice:{ generator:'g13_n3', level:'practice', count:4, params:{ modes:['position','ord','cmp'] },
     intro:{ ko:'줄을 선 칸들 중에서 왼쪽에서 몇째인지 콕 짚어 봐요!',
       en:'Tap the box that is a certain place from the left!',
       zh:'点一点从左边数是第几个的格子！' } },
@@ -26,14 +26,21 @@ window.NM_UNITS['N-03'] = {
           en:'Count from the left: one, two, three… find which one!',
           zh:'从左边数：一、二、三……找出第几个！'},
         mathSteps:[{ko:'몇 개? → 개수를 세요',en:'How many? → Count them',zh:'几个？→ 数一数'},{ko:'몇째? → 방향 정하고 순서로 세요',en:'Which place? → Pick a direction, count in order',zh:'第几个？→ 先定方向再按顺序数'}],
-        result:{ko:'몇 개는 "얼마나", 몇째는 "어디"!',en:'How many vs. which one!',zh:'几个是"多少"，第几个是"哪里"！'} }
+        result:{ko:'몇 개는 "얼마나", 몇째는 "어디"!',en:'How many vs. which one!',zh:'几个是"多少"，第几个是"哪里"！'} },
+      { tag:{ko:'② 큰 수와 작은 수',en:'2) Bigger and smaller',zh:'② 大数和小数'},
+        head:{ko:'> 와 < 는 큰 쪽으로 벌어져요',en:'> and < open toward the bigger number',zh:'> 和 < 的开口朝向大的数'},
+        desc:{ko:'두 수를 견주어 큰 쪽으로 입을 벌려요. 입이 벌어진 쪽이 더 큰 수예요!',
+          en:'Compare two numbers and open the mouth toward the bigger one.',
+          zh:'比较两个数，把开口朝向大的那一边。'},
+        mathSteps:[{ko:'8 > 3 → 8은 3보다 큽니다',en:'8 > 3 → 8 is bigger than 3',zh:'8 > 3 → 8大于3'},{ko:'2 < 6 → 2는 6보다 작습니다',en:'2 < 6 → 2 is smaller than 6',zh:'2 < 6 → 2小于6'}],
+        result:{ko:'큰 쪽으로 벌어지면 크다, 좁은 쪽이면 작다!',en:'Wide side = bigger, point side = smaller!',zh:'开口那边大，尖角那边小！'} }
     ],
     rule:{ ko:'방향을 정하고 순서대로 세어요!',
       en:'Pick a direction, then count in order!',
       zh:'先定方向，再按顺序数！' }
   },
 
-  lab:{ generator:'nl3_ordinal', level:'main', count:4, params:{ mode:'paint' },
+  lab:{ generator:'g13_n3', level:'main', count:4, params:{ modes:['paint','order','range','arrowTri'] },
     intro:{ ko:'이번엔 칸을 색칠해요! 정확히 그 개수만큼만 콕콕 칠해 보자',
       en:'Now paint the boxes! Tap exactly the right number of them',
       zh:'这次来涂格子！正好涂对数量哦' } },

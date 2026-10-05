@@ -41,7 +41,7 @@ window.NM_UNITS['N-08'] = {
       zh:'机器按规则变数字！' }
   },
 
-  lab:{ generator:'nl8_machine', level:'main', count:4, params:{ mode:'guess' },
+  lab:{ generator:'nl42_rules', level:'main', count:4, params:{ mode:'box', ask:'mix' },
     intro:{ ko:'이번엔 규칙이 숨었어요! 예시 두 개를 보고 비밀 규칙을 추리해서 답해요',
       en:'This time the rule is hidden! Look at two examples and guess the secret rule',
       zh:'这次规则藏起来了！看两个例子，猜出秘密规则' } },

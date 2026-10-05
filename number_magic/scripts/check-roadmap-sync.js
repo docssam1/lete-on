@@ -21,7 +21,7 @@ const STORY_ONLY={
   'T-DV4':'교과 드릴을 재사용하는 나눗셈 확장 카드',
   'T-DV5':'교과 드릴을 재사용하는 큰 몫 연결 카드'
 };
-const DATA_SCRIPT=/^(?:engine\/(?:rng|generators)\.js|engine\/threads\/[^/]+\.js|data\/units\/[^/]+\.js|data\/(?:threads|middle-concepts|courses|roadmap|stages|labs|drill-topics)\.js)$/;
+const DATA_SCRIPT=/^(?:engine\/(?:rng|generators)\.js|engine\/threads\/[^/]+\.js|data\/units\/[^/]+\.js|data\/g1\/[^/]+-threads\.js|data\/(?:threads|middle-concepts|courses|roadmap|stages|labs|drill-topics)\.js)$/;
 function scriptTags(html){
   const clean=html.replace(/<!--[\s\S]*?-->/g,'');
   return [...clean.matchAll(/<script\b([^>]*)>/gi)].flatMap(m=>{
@@ -39,7 +39,7 @@ function check(options={}){
   const run=(w,f)=>{try{vm.runInContext(read(path.join(root,f)),w,{filename:f,timeout:5000});}catch(e){fail('SCRIPT_EVAL',f+': '+e.message);}};
   const files=folder=>fs.readdirSync(path.join(root,folder)).filter(f=>f.endsWith('.js')).sort().map(f=>folder+'/'+f);
   const full=make();
-  ['engine/rng.js','engine/generators.js',...files('engine/threads'),'data/threads.js','data/middle-concepts.js',...files('data/units'),
+  ['engine/rng.js','engine/generators.js',...files('engine/threads'),'data/threads.js',...files('data/g1').filter(f=>/-threads\.js$/.test(f)),'data/middle-concepts.js',...files('data/units'),
     'data/courses.js','data/roadmap.js','data/stages.js','data/labs.js','data/drill-topics.js'].forEach(f=>run(full,f));
   const U=full.NM_UNITS||{},T=full.NM_THREADS||{},C=Object.values(full.NM_COURSES||{}),chapters=full.NM_ROADMAP?.chapters||[],stages=full.NM_STAGES||[];
   const pages={};

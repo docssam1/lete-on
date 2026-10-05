@@ -3238,11 +3238,22 @@ function nlVisualHtml(p){
   if(w==='tallyBuild') return p.interaction==='read' && typeof p.target==='number'
     ? nlCard(nlStage(Array.isArray(p.tallyGroups)?nlTallyGroupsHtml(p.tallyGroups):nlTallySvg(p.target)), nlAnsBox(EA))
     : nlCard(nlStage(`<div class="nm-nl-tallyboard">${p.startCount>0?nlTallySvg(p.startCount):''}</div>`));
+  /* 확장 위젯의 인쇄 — window.NM_NL_PRINT[이름] = { visual(p,K), label(p,K), ask(p,K) } (app/g1/*.print.js) */
+  const ext = window.NM_NL_PRINT && window.NM_NL_PRINT[w];
+  if(ext && typeof ext.visual === 'function') return ext.visual(p, nlPrintKit()) || '';
   return '';
+}
+/* 확장 인쇄 도구 — 확장 파일이 exam.js 내부 헬퍼를 직접 못 보므로 여기서 건네 준다 */
+function nlPrintKit(){
+  return { nlCard, nlStage, nlAnsBox, nlObjHtml, nlGlyphRows, nlTenframeHtml, nlFrameObjHtml, nlBoardHtml, nlChunk,
+    esc, lk, pickL, EA: nlUnitEa(), NL_CIRC: typeof NL_CIRC !== 'undefined' ? NL_CIRC : [] };
 }
 /* 정답지 표기 — 고르는 문항은 인덱스(0/1) 대신 말로. 없으면 null(숫자 그대로). */
 function nlAnswerLabel(p){
   const w = p.widget; if(!w) return null;
+  if(p.answerLabel) return String(pickL(p.answerLabel));
+  { const ext = window.NM_NL_PRINT && window.NM_NL_PRINT[w];
+    if(ext && typeof ext.label === 'function'){ const r = ext.label(p, nlPrintKit()); if(r != null) return r; } }
   /* 우리말 서수는 "2째"가 아니라 "둘째"다 — 문항 문장(nl.js ORDINAL)과 같은 말로 적는다. */
   const ORD_KO = ['', '첫째', '둘째', '셋째', '넷째', '다섯째', '여섯째', '일곱째', '여덟째', '아홉째'];
   const ord = i => lk(`왼쪽에서 ${ORD_KO[i] || i + '째'}`,
@@ -3292,6 +3303,8 @@ const NL_PRINT_WORDS = [
   ['点一点放进篮子，再', ''], ['跳着数，选出', '跳着数，写出'], ['选出', '写出'], ['点一点，', '']
 ];
 function nlPrintAsk(p){
+  { const ext = window.NM_NL_PRINT && p.widget && window.NM_NL_PRINT[p.widget];
+    if(ext && typeof ext.ask === 'function'){ const r = ext.ask(p, nlPrintKit()); if(r != null) return r; } }
   let s = String(pickL(p.prompt) || '');
   NL_PRINT_WORDS.forEach(([a, b]) => { if(a && s.indexOf(a) >= 0) s = s.split(a).join(b); });
   /* 점 잇기·길 잇기의 답은 "점이 모두 몇 개"다(생성기 계약) — 화면에선 다 이으면 끝이라 물음이
@@ -4905,7 +4918,8 @@ function problemKey(p){
   for(const key of ['graph','solutionGraph','scatterPlot','cubes','pts','items','beads','numline','clock','fraction','word','wordAsk','choices','prompt',
     'dir','a','b','whole','seq','blank','rows','left','right','rightType','gridMode','total','emoji','layout','mark','chars',
     'interaction','mmode','examples','target','startCount','tallyGroups','input','rule','cells','askMode','askType','basketA','basketB',
-    'wordEqn','base10','array','meaning','picCap','scene']){
+    'wordEqn','base10','array','meaning','picCap','scene']
+    .concat(Array.isArray(p.keyFields) ? p.keyFields : [])){   /* 확장 위젯 문항이 문제를 가르는 필드를 스스로 선언 */
     if(p[key]!=null && (key!=='prompt'||!p.tex||(!p.word&&!p.graph&&/\\square|\\bigcirc/.test(p.tex)&&!/=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(p.tex)))) data[key]=p[key];
   }
   const steps=printSteps(p);if(steps) data.steps=steps.map(s=>s.tex);
