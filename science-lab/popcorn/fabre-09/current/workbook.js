@@ -1,4 +1,6 @@
-import { renderStudentPages } from './workbook-pages.js?v=1';
+import { renderStudentPages } from './workbook-pages.js?v=2';
+
+import { experimentPhotos } from './workbook-photos.js?v=1';
 
 let activeCleanup = null;
 let activePrintCleanup = null;
@@ -39,9 +41,11 @@ function attachViewer(host, {
   const learner = teacher ? {} : snapshot(record);
   let mode = teacher ? 'teacher' : standalone ? 'blank' : 'record';
   let currentPage = String(teacher ? 'T1' : Math.max(1, Number(initialPage) || 1));
-  let markup = '', renderVersion = 0, disposed = false, restorePrint, scrollFrame;
+  let markup = '', renderVersion = 0, disposed = false, restorePrint, scrollFrame, closePhoto;
+  let bookView = 'page';
+  host.dataset.bookView = bookView;
   const furthest = Math.max(0, Math.min(19, Number(learner.furthest) || 0));
-  host.innerHTML = `<header class="wb-toolbar"><div class="wb-toolbar-title"><strong id="workbook-title">전류 탐험 교재</strong><small>읽고, 그리고, 내 말로 설명해요</small>${standalone ? '<a href="./index.html">실험 화면으로</a>' : '<button type="button" data-workbook-close autofocus>실험으로 돌아가기 ×</button>'}</div><div class="wb-toolbar-actions"><div class="wb-mode-controls" aria-label="교재 종류">${teacher ? '<button type="button" data-workbook-mode="blank">학생용 빈 교재</button><button type="button" data-workbook-mode="teacher">교사용 지도자료</button>' : `<button type="button" data-workbook-mode="blank">빈 교재</button>${standalone ? '' : '<button type="button" data-workbook-mode="record">내 기록</button>'}`}</div><button type="button" data-workbook-print>교재 인쇄</button><a href="docs/student-workbook.pdf" download>학생용 PDF</a>${teacher ? '<a href="docs/teacher-guide.pdf" download>교사용 PDF</a>' : ''}</div></header><div class="wb-subtoolbar"><nav class="wb-page-tabs" aria-label="교재 쪽 선택"></nav><span class="wb-view-note" aria-live="polite"></span><p class="wb-locked-note" hidden>아직 배우지 않은 화면은 순서대로 공부하면 열려요.</p></div><div class="workbook-scroll"><div class="workbook-view-pages"><p class="wb-loading" role="status">교재를 펼치는 중이에요.</p></div></div>`;
+  host.innerHTML = `<header class="wb-toolbar"><div class="wb-toolbar-title"><strong id="workbook-title">전류 탐험 교재</strong><small>사진을 보고, 만들고, 관찰해요</small>${standalone ? '<a href="./index.html">실험 화면으로</a>' : '<button type="button" data-workbook-close autofocus>실험으로 돌아가기 ×</button>'}</div><div class="wb-toolbar-actions"><div class="wb-mode-controls" aria-label="교재 종류">${teacher ? '<button type="button" data-workbook-mode="blank">학생용 빈 교재</button><button type="button" data-workbook-mode="teacher">교사용 지도자료</button>' : `<button type="button" data-workbook-mode="blank">빈 교재</button>${standalone ? '' : '<button type="button" data-workbook-mode="record">내 기록</button>'}`}</div><button type="button" data-workbook-print>교재 인쇄</button><a href="docs/student-workbook.pdf" download>학생용 PDF</a>${teacher ? '<a href="docs/teacher-guide.pdf" download>교사용 PDF</a>' : ''}</div></header><div class="wb-subtoolbar"><nav class="wb-page-tabs" aria-label="교재 쪽 선택"></nav><div class="wb-view-controls"><button type="button" data-workbook-prev aria-label="앞 쪽">← 앞 쪽</button><button type="button" data-workbook-next aria-label="다음 쪽">다음 쪽 →</button><button type="button" data-workbook-view aria-pressed="false">모아 보기</button></div><span class="wb-view-note" aria-live="polite"></span><p class="wb-locked-note" hidden>아직 배우지 않은 화면은 순서대로 공부하면 열려요.</p></div><div class="workbook-scroll"><div class="workbook-view-pages"><p class="wb-loading" role="status">교재를 펼치는 중이에요.</p></div></div>`;
   const pagesHost = host.querySelector('.workbook-view-pages');
   const scrollHost = host.querySelector('.workbook-scroll');
   const tabs = host.querySelector('.wb-page-tabs');
@@ -50,6 +54,11 @@ function attachViewer(host, {
 
   function setCurrent(id) {
     currentPage = String(id);
+    const allPages = [...pagesHost.querySelectorAll('.workbook-page')];
+    allPages.forEach(page => page.toggleAttribute('data-current', page.dataset.page === currentPage));
+    const index = allPages.findIndex(page => page.dataset.page === currentPage);
+    host.querySelector('[data-workbook-prev]').disabled = index <= 0;
+    host.querySelector('[data-workbook-next]').disabled = index < 0 || index >= allPages.length - 1;
     tabs.querySelectorAll('[data-workbook-page]').forEach(button => {
       if (button.dataset.workbookPage === currentPage) button.setAttribute('aria-current', 'page');
       else button.removeAttribute('aria-current');
@@ -72,7 +81,7 @@ function attachViewer(host, {
     host.querySelectorAll('[data-workbook-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.workbookMode === mode)));
     try {
       if (mode === 'teacher') {
-        teacherModule ||= import('./workbook-teacher.js?v=1');
+        teacherModule ||= import('./workbook-teacher.js?v=2');
         const module = await teacherModule;
         if (disposed || version !== renderVersion) return;
         markup = module.renderTeacherPages();
@@ -85,7 +94,14 @@ function attachViewer(host, {
         button.disabled = locked;
         if (locked) { button.title = standalone ? '실험 화면에서 이용해요.' : '순서대로 공부하면 열려요.'; hasLocked = !standalone; }
       });
-      if (standalone) pagesHost.querySelectorAll('[data-workbook-read]').forEach(button => { button.disabled = true; button.title = '실험 화면의 과학 읽을거리에서 읽어요.'; });
+      const reference = pagesHost.querySelector('[data-workbook-reference]');
+      if (reference && !teacher && !['one','series','parallel','series-remove','parallel-remove'].every(id => learner.observations?.includes(id))) {
+        const wrapper = document.createElement('div');
+        wrapper.setAttribute('data-reference-locked', '');
+        reference.replaceWith(wrapper);
+        wrapper.innerHTML = '<div class="wb-reference-lock"><strong>먼저 내 눈으로 관찰해요.</strong><p>다섯 비교 관찰을 마치면 원본 실사 사진을 펼칠 수 있어요. 종이 교재는 2–3쪽 관찰을 마친 뒤 7쪽을 살펴요.</p></div>';
+        wrapper.append(reference);
+      }
       host.querySelector('.wb-locked-note').hidden = !hasLocked;
       const pages = [...pagesHost.querySelectorAll('.workbook-page')];
       tabs.innerHTML = pages.map(page => { const id = page.dataset.page, title = Number(id) <= 8 ? pageNames[Number(id) - 1] : id.startsWith('T') ? '교사용 지도자료' : '내 기록 이어쓰기'; return `<button type="button" data-workbook-page="${escape(id)}" aria-label="${escape(id)}쪽 · ${escape(title)}">${escape(id)}</button>`; }).join('');
@@ -93,11 +109,14 @@ function attachViewer(host, {
       if (!pages.some(page => page.dataset.page === currentPage)) currentPage = pages[0]?.dataset.page || '1';
       goToPage(currentPage);
       requestAnimationFrame(() => { if (!disposed && version === renderVersion) goToPage(currentPage); });
+      await Promise.all([...pagesHost.querySelectorAll('img')].map(image => image.decode()));
+      await document.fonts.ready;
+      if (disposed || version !== renderVersion) return;
       printButton.disabled = false;
       host.dataset.workbookReady = 'true';
     } catch (error) {
       if (disposed || version !== renderVersion) return;
-      pagesHost.innerHTML = '<p class="wb-error" role="alert">교재를 불러오지 못했어요. 닫았다가 다시 열어 주세요.</p>';
+      pagesHost.innerHTML = '<p class="wb-error" role="alert">교재 또는 사진을 불러오지 못했어요. 다시 불러와 주세요.</p><button type="button" data-workbook-retry>다시 불러오기</button>';
       console.error('Workbook rendering failed', error);
     }
   }
@@ -116,6 +135,39 @@ function attachViewer(host, {
     const button = event.target.closest('button');
     if (!button || button.disabled || !host.contains(button)) return;
     if (button.hasAttribute('data-workbook-close')) { close(); return; }
+    if (button.hasAttribute('data-workbook-retry')) { await render(); return; }
+    if (button.hasAttribute('data-workbook-view')) {
+      bookView = bookView === 'page' ? 'all' : 'page';
+      host.dataset.bookView = bookView;
+      button.textContent = bookView === 'page' ? '모아 보기' : '한 쪽씩 보기';
+      button.setAttribute('aria-pressed', String(bookView === 'all'));
+      goToPage(currentPage);
+      return;
+    }
+    if (button.hasAttribute('data-workbook-prev') || button.hasAttribute('data-workbook-next')) {
+      const pages = [...pagesHost.querySelectorAll('.workbook-page')];
+      const index = pages.findIndex(page => page.dataset.page === currentPage);
+      const target = pages[index + (button.hasAttribute('data-workbook-next') ? 1 : -1)];
+      if (target) goToPage(target.dataset.page, true);
+      return;
+    }
+    if (button.dataset.workbookPhoto) {
+      closePhoto?.();
+      const item = experimentPhotos[button.dataset.workbookPhoto];
+      if (!item) return;
+      const zoom = document.createElement('dialog');
+      zoom.className = 'wb-photo-dialog';
+      zoom.setAttribute('aria-label', item.alt + ' 확대 사진');
+      zoom.innerHTML = `<header><span>${item.alt}</span><button type="button" autofocus>사진 닫기 ×</button></header><img src="${item.src}" alt="${item.alt}">`;
+      let closed = false;
+      closePhoto = () => { if (closed) return; closed = true; zoom.close(); zoom.remove(); if (button.isConnected) button.focus({preventScroll:true}); closePhoto = null; };
+      zoom.querySelector('button').addEventListener('click', () => closePhoto?.());
+      zoom.addEventListener('cancel', event => { event.preventDefault(); closePhoto?.(); });
+      zoom.addEventListener('keydown', event => { if (event.key === 'Tab') { event.preventDefault(); zoom.querySelector('button').focus(); } });
+      document.documentElement.append(zoom);
+      zoom.showModal();
+      return;
+    }
     if (button.dataset.workbookMode) {
       const requested = button.dataset.workbookMode;
       if (!['blank', teacher ? 'teacher' : 'record'].includes(requested)) return;
@@ -139,10 +191,13 @@ function attachViewer(host, {
       return;
     }
     const article = button.dataset.workbookRead;
-    if (!standalone && ['battery', 'city', 'palace'].includes(article)) { close(); onRead(article); }
+    if (['battery', 'city', 'palace'].includes(article)) {
+      if (standalone) { const { openMagazine } = await import('./magazine.js?v=3'); if (!disposed) openMagazine({teacher, articleId:article}); }
+      else { close(); onRead(article); }
+    }
   }
   function handleScroll() {
-    if (scrollFrame) return;
+    if (bookView === 'page' || scrollFrame) return;
     scrollFrame = requestAnimationFrame(() => {
       scrollFrame = null;
       const top = standalone ? 120 : scrollHost.getBoundingClientRect().top;
@@ -160,6 +215,7 @@ function attachViewer(host, {
   void render();
   return () => {
     disposed = true;
+    closePhoto?.();
     renderVersion++;
     cancelAnimationFrame(scrollFrame);
     afterPrint();

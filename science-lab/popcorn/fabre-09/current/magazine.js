@@ -4,36 +4,7 @@ let activeCleanup = null;
 const external = (url, label, className = '') =>
   `<a class="${className}" href="${url}" target="_blank" rel="noopener noreferrer">${label}<span class="magazine-new-tab">새 창</span></a>`;
 
-const batteryFigure = `
-  <div class="magazine-circuit-pair"><svg viewBox="0 0 330 250" role="img" aria-label="전지 두 개를 직렬로 연결한 회로: 전지의 서로 다른 극을 이어 전압이 더해져요">
-    <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
-      <path d="M38 83H88 M150 83H181 M243 83H287V189H186 M142 189H38V83"/>
-      <rect x="88" y="66" width="62" height="34" rx="5" fill="#f6dfab"/>
-      <rect x="181" y="66" width="62" height="34" rx="5" fill="#f6dfab"/>
-      <circle cx="164" cy="189" r="22" fill="#ffe6a7"/>
-      <path d="m149 174 30 30m0-30-30 30"/>
-    </g>
-    <g fill="currentColor" font-size="16" font-weight="700" text-anchor="middle">
-      <text x="164" y="28">전지의 직렬연결</text>
-      <text x="101" y="89">+</text><text x="138" y="89">−</text>
-      <text x="194" y="89">+</text><text x="231" y="89">−</text>
-      <text x="164" y="240">전압이 더해져요</text>
-    </g>
-  </svg><svg viewBox="350 0 330 250" role="img" aria-label="전지 두 개를 병렬로 연결한 회로: 같은 극끼리 이어 전압은 전지 한 개일 때와 비슷해요">
-    <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
-      <path d="M389 73H478 M540 73H642V189H540 M496 189H389V73 M389 128H478 M540 128H642"/>
-      <rect x="478" y="56" width="62" height="34" rx="5" fill="#f6dfab"/>
-      <rect x="478" y="111" width="62" height="34" rx="5" fill="#f6dfab"/>
-      <circle cx="518" cy="189" r="22" fill="#f4efd8"/>
-      <path d="m503 174 30 30m0-30-30 30"/>
-    </g>
-    <g fill="currentColor" font-size="16" font-weight="700" text-anchor="middle">
-      <text x="518" y="28">전지의 병렬연결</text>
-      <text x="491" y="79">+</text><text x="528" y="79">−</text>
-      <text x="491" y="134">+</text><text x="528" y="134">−</text>
-      <text x="518" y="240">전압은 한 개일 때와 비슷해요</text>
-    </g>
-  </svg></div>`;
+const batteryFigure = `<div class="magazine-circuit-pair"><div><img src="./assets/experiment-photos/series-cells.jpg" alt="실제 전지 두 개의 직렬 연결"><h4>전지의 직렬연결</h4><p>서로 다른 극을 이어요.</p></div><div><img src="./assets/experiment-photos/parallel-cells.jpg" alt="실제 전지 두 개의 병렬 연결"><h4>전지의 병렬연결</h4><p>같은 극끼리 이어요.</p></div></div>`;
 
 const cityFigure = `
   <svg viewBox="0 0 680 230" role="img" aria-label="전등 세 개가 각각 다른 갈래에 있는 전등의 병렬연결 개념도">
@@ -71,7 +42,7 @@ const articles = [
       '오늘의 2단 스탠드는 직렬로 이은 전지의 연결점을 이용해 전지 한 개를 쓰는 길과 두 개를 쓰는 길을 골라요. 전지끼우개가 나란히 놓여 있다고 병렬연결인 것은 아니에요. 제품마다 연결은 다르니 전지함의 극 표시와 연결선을 함께 살펴봐요.'
     ],
     figure: batteryFigure,
-    caption: '같은 종류와 상태의 전지, 같은 전구를 비교한 개념도예요.',
+    caption: '원본 교재 46쪽의 실제 연결 사진. 노란 빛은 원본 시각 효과이며 밝기 측정값이 아니에요.',
     question: '전지의 개수는 같은데 밝기가 달라진다면, 무엇을 먼저 살펴볼까요?',
     hint: '전지의 +극과 −극에서 출발해 전선을 따라가 보세요. 서로 어떤 극이 이어져 있나요?',
     teacher: '전지끼우개의 겉모양과 실제 연결을 구별하도록 선을 따라 짚게 합니다. 병렬에서는 밝기가 두 배가 된다고 일반화하지 않도록 비교 조건을 확인합니다.',
@@ -138,7 +109,7 @@ export function openMagazine({ teacher = false, articleId, onClose = () => {} } 
   dialog.setAttribute('aria-labelledby', 'magazine-title');
   dialog.innerHTML = `<header class="magazine-toolbar"><span>팝콘 실험실 <span class="magazine-toolbar-detail">전류 탐험 읽을거리</span></span><button type="button" class="magazine-close" data-magazine-close autofocus>실험으로 돌아가기 <span aria-hidden="true">×</span></button></header>
     <div class="magazine-scroll">
-      <header class="magazine-cover"><div><p class="magazine-category">파브르 9호 · 선택해서 읽어요</p><h2 id="magazine-title">작은 전구에서,<br>도시의 불빛까지.</h2><p class="magazine-intro">손으로 만든 회로를 생활과 역사 속에서 다시 만나 보세요.<br class="magazine-wide-break"> 궁금한 이야기부터 읽어도 좋아요.</p></div><div class="magazine-cover-mark" aria-hidden="true"><svg viewBox="0 0 170 220"><path d="M56 133c-21-15-33-29-33-55a62 62 0 0 1 124 0c0 26-12 40-33 55v31H56z" fill="#efd89e" stroke="currentColor" stroke-width="4"/><path d="M56 165h58m-53 13h48m-43 13h38m-32 13h26 M66 89l19 26 19-26m-19 26v49" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div></header>
+      <header class="magazine-cover"><div><p class="magazine-category">파브르 9호 · 선택해서 읽어요</p><h2 id="magazine-title">작은 전구에서,<br>도시의 불빛까지.</h2><p class="magazine-intro">손으로 만든 회로를 생활과 역사 속에서 다시 만나 보세요.<br class="magazine-wide-break"> 궁금한 이야기부터 읽어도 좋아요.</p></div><div class="magazine-cover-mark"><img src="./assets/experiment-photos/stand-off.jpg" alt="내 손으로 만드는 실제 2단 밝기 스탠드"></div></header>
       <div class="magazine-layout"><nav class="magazine-index" aria-label="읽을거리 목차"><p>이번 읽을거리</p>${articles.map(a => `<button type="button" data-magazine-go="${a.id}"><span>${a.category}</span><strong>${a.title}</strong></button>`).join('')}<button type="button" data-magazine-go="videos"><span>교재와 함께</span><strong>실험 영상 보기</strong></button><div class="magazine-index-note">읽고 나면 돌아가서<br>내 회로를 다시 살펴봐요.</div></nav>
       <main class="magazine-content">${articles.map(a => articleMarkup(a, teacher)).join('')}
         <section class="magazine-videos" id="magazine-videos" aria-labelledby="magazine-videos-title"><p class="magazine-category">교재와 함께</p><h3 id="magazine-videos-title" tabindex="-1">실험 영상 보기</h3><p class="magazine-video-intro">교재 QR에 연결된 영상을 새 창에서 열어요.</p><ul>${videos.map(([url, title, description]) => `<li>${external(url, `<span class="magazine-play" aria-hidden="true">▶</span><span><strong>${title}</strong><small>${description}</small></span>`, 'magazine-video-link')}</li>`).join('')}</ul>

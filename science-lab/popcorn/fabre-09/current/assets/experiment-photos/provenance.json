@@ -1,0 +1,71 @@
+{
+  "source": "사용자 제공: 팩토사이언스 플러스 뉴턴 9호 교사용 · Unit 3",
+  "method": "PDF에 포함된 개별 사진 그대로 추출. 전체 원본 페이지와 공식 답안은 포함하지 않음.",
+  "brightness": "전지 비교 사진의 노란 빛은 원본의 시각 효과이며 밝기 측정값이 아님.",
+  "photos": [
+    {
+      "id": "single-cell",
+      "file": "single-cell.jpg",
+      "printedPage": 46,
+      "description": "전지 한 개 연결",
+      "use": "reference",
+      "sha256": "3cdca71c08640b7902c20368678946a9a56089d6cfeac036734c2d5db654f30c"
+    },
+    {
+      "id": "series-cells",
+      "file": "series-cells.jpg",
+      "printedPage": 46,
+      "description": "전지 두 개 직렬 연결",
+      "use": "reference",
+      "sha256": "5f8dc4f3aee775c9bb1f16ead31c0470fa5b74f5680466e2ec3ca29c7404775c"
+    },
+    {
+      "id": "parallel-cells",
+      "file": "parallel-cells.jpg",
+      "printedPage": 46,
+      "description": "전지 두 개 병렬 연결",
+      "use": "reference",
+      "sha256": "23326987da3602cd91faee69b1fbb8245b7c15977cc255d2001eb17f8309e6c5"
+    },
+    {
+      "id": "empty-kit",
+      "file": "empty-kit.jpg",
+      "printedPage": 47,
+      "description": "전지를 뺀 스탠드 교구와 전선",
+      "use": "assembly",
+      "sha256": "c01649f0540359b0d4d5c8de88f87b853128bba84f360ccefce02847c202ab98"
+    },
+    {
+      "id": "stand-off",
+      "file": "stand-off.jpg",
+      "printedPage": 47,
+      "description": "완성한 2단 밝기 스탠드",
+      "use": "neutral",
+      "sha256": "244f9fe943e63b0ab8e8dfa4452f9adcb7f2101ed7ef96a3dcc2bbb4884314cb"
+    },
+    {
+      "id": "stand-open",
+      "file": "stand-open.jpg",
+      "printedPage": 47,
+      "description": "앞판을 열어 본 스탠드 내부",
+      "use": "test",
+      "sha256": "3b043291a068f425378d589c1768ed8af3cacf64a81c2cb7f742e4f528fbebdf"
+    },
+    {
+      "id": "door-lock",
+      "file": "door-lock.jpg",
+      "printedPage": 49,
+      "description": "도어록의 전지함",
+      "use": "life",
+      "sha256": "a627bf9009268a6a28bbea9d67092c566f4f2b7f18bbcf36f5dabb65c518a78c"
+    },
+    {
+      "id": "remote-control",
+      "file": "remote-control.jpg",
+      "printedPage": 49,
+      "description": "리모컨의 전지함",
+      "use": "life",
+      "sha256": "94bacad15debccb6422761328d443207c0617f45c7348b27ad2434cbd38312d4"
+    }
+  ]
+}

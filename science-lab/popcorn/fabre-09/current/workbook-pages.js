@@ -1,3 +1,4 @@
+import { photo } from './workbook-photos.js?v=1';
 // Student material is authored separately from teacher explanations.
 // Only explicitly supplied learner text is inserted into writing spaces.
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -16,6 +17,7 @@ export const workbookNoteFields = [
 export function workbookPageForStep(id) { return Object.hasOwn(stepPages, id) ? stepPages[id] : 1; }
 
 const external = (url, label) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}<span class="wb-link-mark"> 새 창</span></a>`;
+const video = (id, url, label) => `<aside class="wb-video-bridge"><a href="${url}" target="_blank" rel="noopener noreferrer"><img src="./assets/video-qr/${id}.png" alt="${label} 영상 QR"></a><div><strong>${label}</strong><p>영상으로 다시 살펴요.</p><a href="${url}" target="_blank" rel="noopener noreferrer">${url.replace('https://','')}</a></div></aside>`;
 const step = (index, label) => `<button type="button" data-workbook-step="${index}">${label}</button>`;
 const read = (id, label) => `<button type="button" data-workbook-read="${id}">${label}</button>`;
 const battery = (x, y, removed = false) => `<rect x="${x}" y="${y - 16}" width="48" height="32" rx="3" class="${removed ? 'wb-cell-removed' : 'wb-cell'}"/>${removed ? `<text x="${x + 24}" y="${y + 6}" text-anchor="middle" font-size="16">빈자리</text>` : `<text x="${x + 10}" y="${y + 7}" text-anchor="middle" font-size="21">+</text><text x="${x + 38}" y="${y + 7}" text-anchor="middle" font-size="21">−</text>`}`;
@@ -101,65 +103,66 @@ export function renderStudentPages(record = {}, { blank = false } = {}) {
     const missing = completed.has(id) && !text(entry.brightness) && !text(entry.reason);
     return `<div class="wb-result-space">${missing ? '<span class="wb-record-status">관찰함 · 내용 미기록</span>' : ''}${writing(value, { lines: 2, label: `${label}에서 본 밝기`, page, narrow: true })}</div>`;
   }
-  const page = (number, title, deck, body, extraClass = '') => `<section class="workbook-page ${extraClass}" data-page="${number}" aria-labelledby="wb-student-${number}-title"><header class="wb-page-head"><p class="wb-kicker">팝콘 실험실 · 파브르 9호 · 전류</p><h2 id="wb-student-${number}-title">${title}</h2><p class="wb-deck">${deck}</p></header><div class="wb-page-body">${body}</div><footer class="wb-page-foot"><span>${blank ? '학생용 빈 교재' : '학생용 · 내가 남긴 기록'}</span><span>${number}</span></footer></section>`;
+  const page = (number, title, deck, body, extraClass = '') => `<section class="workbook-page ${extraClass}" data-page="${number}" aria-labelledby="wb-student-${number}-title"><header class="wb-page-head"><p class="wb-kicker">GFIELD SCIENCE LAB · 전류 탐험</p><h2 id="wb-student-${number}-title">${title}</h2><p class="wb-deck">${deck}</p></header><div class="wb-page-body">${body}</div><footer class="wb-page-foot"><span>GFIELD SCIENCE LAB · ${blank ? '학생용' : '내 기록'}</span><span>${number}</span></footer></section>`;
   const checked = value => `<span class="wb-square" aria-hidden="true">${value ? '✓' : ''}</span>`;
   const practice = record.practice === 'real' ? 'real' : record.practice === 'screen' ? 'screen' : '';
   const checks = Array.isArray(practice === 'real' ? record.checks : record.screenChecks) ? (practice === 'real' ? record.checks : record.screenChecks) : [];
   const pages = [
-    page(1, '전지 두 개면<br>항상 더 밝을까?', '만들기 전에 예상하고, 직접 본 결과로 생각을 다듬어요.', `
-      <section class="wb-section wb-goals"><h3>오늘 알아낼 두 가지</h3><ol><li>전지의 직렬·병렬 연결은 어떻게 다른지 설명해요.</li><li>스탠드의 밝기를 바꾸는 방법을 설명해요.</li></ol></section>
+    page(1, '2단 밝기 스탠드', '내 손으로 만들고, 밝기가 달라지는 까닭을 찾아요.', `
+      <div class="wb-cover-scene">${photo('stand-off', '완성한 스탠드 · 전구의 창과 스위치를 찾아보세요.', 'wb-cover-photo')}<div class="wb-cover-mission"><span class="wb-unit-mark">UNIT 3</span><h3>오늘의 탐구</h3><p>전지의 직렬·병렬 연결을 구별해요.</p><p>스탠드의 밝기 조절을 설명해요.</p><div class="wb-mini-route">예상 → 만들기 → 관찰 → 설명</div></div></div>
       <div class="wb-method"><span>오늘의 활동</span><span>${checked(practice === 'screen')} 화면으로 연습</span><span>${checked(practice === 'real')} 실물 교구로 실험</span></div>
-      <section class="wb-section"><h3>${practice === 'real' ? '전지를 넣기 전, 보호자와 확인해요' : '실물로 만들 때 지킬 안전 약속'}</h3><ul class="wb-safety-list"><li>${checked(checks.includes(0))} 전선을 연결하는 동안 전지를 빼 두어요.</li><li>${checked(checks.includes(1))} 마른 손과 책상에서 알맞은 1.5V 건전지를 사용해요.</li><li>${checked(checks.includes(2))} 보호자와 연결 상태와 전구의 3V 사용 규격을 확인해요.</li></ul><p class="wb-note">전지나 전선이 뜨거우면 실험을 멈추고 뜨거운 부분을 만지지 않은 채 어른에게 알려요. 전지 분리·제거는 보호자가 확인해요.</p></section>
-      <section class="wb-section"><h3>나의 예상</h3><p>같은 전구와 같은 종류·상태의 전지로 비교해요.<br>두 개를 직렬로 이을 때와 병렬로 이을 때, 어느 쪽이 더 밝을까요?</p><div class="wb-choice-line"><span>□ 직렬</span><span>□ 병렬</span><span>□ 비슷함</span><span>□ 아직 모르겠어요</span></div>${writing(text(record.prediction), { lines: 1, label: '내가 고른 예상', page: 1 })}<h4>이렇게 예상한 까닭</h4>${writing(notes.predictionReason, { lines: 3, label: '나의 예상과 까닭', page: 1 })}</section>
-      <nav class="wb-page-links" aria-label="1쪽 실험 연결">${step(1, '화면에서 안전 확인')}${step(2, '내 예상 남기기')}</nav>
+      <section class="wb-section wb-predict"><h3>전지 두 개면 언제나 더 밝을까요?</h3><div class="wb-choice-line"><span>□ 직렬이 더 밝음</span><span>□ 병렬이 더 밝음</span><span>□ 비슷함</span><span>□ 모르겠음</span></div>${writing(text(record.prediction), { lines: 1, label: '내가 고른 예상', page: 1 })}<h4>이렇게 예상한 까닭</h4>${writing(notes.predictionReason, { lines: 2, label: '나의 예상과 까닭', page: 1 })}</section>
+      <section class="wb-section wb-safety"><h3>만들기 전, 안전 약속</h3><ul class="wb-safety-list"><li>${checked(checks.includes(0))} 연결·조립 중에는 전지를 빼 두어요.</li><li>${checked(checks.includes(1))} 마른 손과 책상에서 알맞은 1.5V 전지를 써요.</li><li>${checked(checks.includes(2))} 보호자와 연결 및 전구의 3V 규격을 확인해요.</li></ul><p class="wb-small">뜨거우면 멈추고 만지지 않은 채 어른에게 알려요. 전지 제거는 보호자가 확인해요.</p></section>
+      <nav class="wb-page-links" aria-label="1쪽 실험 연결">${step(1, '안전 확인하며 시작하기')}${step(2, '내 예상 남기기')}</nav>
     `, 'wb-opening-page'),
-    page(2, '연결을 바꾸면<br>무엇이 달라질까?', '한 번에 연결 방법 하나만 바꾸며 같은 전구를 관찰해요.', `
-      <p class="wb-condition">비교 조건: 같은 전구 · 같은 종류와 상태의 전지<br>아래 그림에는 밝기를 표시하지 않았어요. 직접 보고 기록해요.</p>
+    page(2, '연결을 바꾸어 비교해요', '같은 전구 · 같은 종류와 상태의 전지. 연결 방법만 바꾸어요.', `
+      <div class="wb-activity-band"><strong>실험 1</strong><span>한 개 → 두 개 직렬 → 두 개 병렬</span></div>
       <div class="wb-three-col wb-comparison-diagrams">${[['one', '전지 한 개'], ['series', '전지 두 개 직렬'], ['parallel', '전지 두 개 병렬']].map(([id, title]) => `<figure><figcaption>${title}</figcaption>${circuit(id)}</figure>`).join('')}</div>
-      <table class="wb-table wb-observation-table"><thead><tr><th scope="col">연결 방법</th><th scope="col">내 눈에 보인 밝기</th><th scope="col">살펴본 점 · 내 생각</th></tr></thead><tbody>${[['one', '전지 한 개'], ['series', '두 개 직렬'], ['parallel', '두 개 병렬']].map(([id, label]) => `<tr><th scope="row">${label}</th><td>${comparison(id, label, 2)}</td><td>${writing(object(comparisons[id]).reason, { lines: 2, label: `${label}에서 살펴본 점`, page: 2, narrow: true })}</td></tr>`).join('')}</tbody></table>
-      <section class="wb-section"><h3>같은 전지 두 개를 썼는데, 무엇이 달랐나요?</h3>${writing('', { lines: 3, label: '직렬과 병렬에서 달랐던 점', page: 2 })}</section>
-      <p class="wb-small">예상과 달라도 직접 본 그대로 적어요. 병렬 비교는 화면에서 해요.</p>
-      <nav class="wb-page-links" aria-label="2쪽 실험 연결">${step(3, '화면에서 연결 비교')}${external('https://m.site.naver.com/1e5DZ', '전지 연결 실험 영상')}</nav>
+      <p class="wb-small">밝기를 표시하지 않은 관찰용 그림이에요. 실사 비교 사진은 관찰 뒤 7쪽에서 살펴봐요.</p>
+      <table class="wb-table wb-observation-table"><thead><tr><th scope="col">연결 방법</th><th scope="col">직접 본 밝기</th><th scope="col">선택 메모</th></tr></thead><tbody>${[['one', '전지 한 개'], ['series', '두 개 직렬'], ['parallel', '두 개 병렬']].map(([id, label]) => `<tr><th scope="row">${label}</th><td>${comparison(id, label, 2)}</td><td>${writing(object(comparisons[id]).reason, { lines: 2, label: `${label}에서 살펴본 점`, page: 2, narrow: true })}</td></tr>`).join('')}</tbody></table>
+      <div class="wb-photo-side">${photo('empty-kit', '실제 전지끼우개 · 사진에서 스프링 접점을 찾아보세요.')}<section><h3>그림과 교구를 이어 보아요</h3><p>전지끼우개의 +·− 표시와 선을 찾아요. 전구를 지나 되돌아오는 길을 따라가요.</p><p class="wb-small">병렬 비교는 화면에서 해요. 예상과 달라도 본 그대로 기록해요.</p></section></div>
+      ${video('compare', 'https://m.site.naver.com/1e5DZ', '전지 연결 실험')}<nav class="wb-page-links" aria-label="2쪽 실험 연결">${step(3, '연결을 바꾸며 관찰하기')}${external('https://m.site.naver.com/1e5DZ', '실험 영상 보기')}</nav>
     `),
-    page(3, '전지 하나를 빼면<br>어느 길이 남을까?', '빈자리를 다른 선으로 잇지 않아요. 전구를 지나 돌아오는 길을 따라 그려요.', `
-      <div class="wb-two-col wb-removal-grid">${[['series', '직렬에서 하나 빼기'], ['parallel', '병렬에서 하나 빼기']].map(([mode, label]) => { const id = `${mode}-remove`; return `<section><h3>${label}</h3><figure class="wb-removal-figure">${circuit(mode, true)}<figcaption>남은 전류의 길을 색연필로 따라가 보세요.</figcaption></figure><h4>전구는 어떻게 보였나요?</h4>${comparison(id, label, 3)}<h4>그렇게 생각한 까닭</h4>${writing(object(comparisons[id]).reason, { lines: 2, label: `${label}의 까닭`, page: 3, narrow: true })}</section>`; }).join('')}</div>
-      <section class="wb-section"><h3>두 연결에서 전지 하나를 뺀 결과는 어떻게 달랐나요?</h3>${writing('', { lines: 3, label: '전지를 하나 뺀 두 회로의 차이', page: 3 })}</section>
-      <nav class="wb-page-links" aria-label="3쪽 실험 연결">${step(3, '화면에서 전지 하나 빼기')}${external('https://m.site.naver.com/1e5E2', '전지 연결 방법 영상')}</nav>
+    page(3, '전지 하나를 빼 보아요', '빈자리를 다른 선으로 잇지 않아요. 남은 길을 색연필로 따라가요.', `
+      <div class="wb-activity-band"><strong>실험 2</strong><span>꺼졌을까? 계속 켜져 있을까?</span></div>
+      <div class="wb-two-col wb-removal-grid">${[['series', '직렬에서 하나 빼기'], ['parallel', '병렬에서 하나 빼기']].map(([mode, label]) => { const id = `${mode}-remove`; return `<section><h3>${label}</h3><figure class="wb-removal-figure">${circuit(mode, true)}<figcaption>전구를 지나는 닫힌 길이 남았나요?</figcaption></figure><h4>직접 본 밝기</h4>${comparison(id, label, 3)}<h4>선택 메모 · 길을 따라 보며</h4>${writing(object(comparisons[id]).reason, { lines: 2, label: `${label}의 까닭`, page: 3, narrow: true })}</section>`; }).join('')}</div>
+      <section class="wb-section wb-think"><h3>두 연결에서 달랐던 것은?</h3>${writing('', { lines: 2, label: '전지를 하나 뺀 두 회로의 차이', page: 3 })}</section>
+      ${video('connection', 'https://m.site.naver.com/1e5E2', '전지 연결 방법')}<nav class="wb-page-links" aria-label="3쪽 실험 연결">${step(3, '전지 하나 빼 보고 비교하기')}${external('https://m.site.naver.com/1e5E2', '연결 방법 영상')}</nav>
     `),
-    page(4, '창과 홈을 살피며<br>스탠드의 몸을 만들어요', '조립하는 동안 전지를 빼 두고, 부품의 글자와 자리를 확인해요.', `
-      <figure class="wb-parts-figure">${partsFigure}<figcaption>부품의 역할을 구별한 그림이에요. 실제 홈과 단자는 교구에서 확인해요.</figcaption></figure>
-      <p class="wb-materials">함께 준비해요: 전구 · 소켓 · 스위치 · 전지끼우개 · 전선 · 기름종이</p>
-      <div class="wb-build-steps"><section><h3><span>1</span> 창 뒤에 종이 붙이기</h3><p>C·D·E·F 두 장의 창 뒤에 종이를 붙여요. 판을 끼울 홈과 스위치 구멍은 비워 두어요.</p></section><section><h3><span>2</span> B 전구판에 소켓 놓기</h3><p>소켓의 서로 다른 두 접점에 전선을 연결해요. 소켓을 판에 고정하고 전구를 끼워요.</p></section><section><h3><span>3</span> D 앞판에 스위치 놓기</h3><p>스위치를 구멍에 끼운 뒤 가운데 꺼짐 위치에 두어요. 공통 단자와 두 단계 단자를 찾아요.</p></section></div>
-      <p class="wb-choice-line"><span>□ 화면으로 연습했어요</span><span>□ 실물로 만들어 봤어요</span></p>
-      <section class="wb-section"><h3>찾기 어렵거나 다시 맞춰 본 곳</h3>${writing('', { lines: 3, label: '조립하면서 다시 살핀 곳', page: 4 })}</section>
-      <nav class="wb-page-links" aria-label="4쪽 실험 연결">${step(4, '화면에서 부품 찾기')}${external('https://m.site.naver.com/1e5E0', '스탠드 조립 영상')}</nav>
+    page(4, '사진을 보며 준비해요', '종이·소켓·스위치를 붙이고, 조립할 자리를 찾아요.', `
+      ${photo('empty-kit', '전지가 빠진 실제 교구 · 전구판 B, 앞판 D, 빈 전지끼우개를 찾아요.', 'wb-large-photo')}
+      <div class="wb-build-steps"><section><h3><span>1</span> □ 창 뒤에 종이 붙이기</h3><p>C·D·E·F 두 장의 창 뒤에 붙여요. 홈과 스위치 구멍은 비워요.</p></section><section><h3><span>2</span> □ B판에 소켓과 전구 놓기</h3><p>소켓의 서로 다른 두 접점에 전선을 잇고 고정해요.</p></section><section><h3><span>3</span> □ D판에 스위치 끼우기</h3><p>가운데 꺼짐 위치에 두고, 공통·1단·2단 단자를 찾아요.</p></section></div>
+      <figure class="wb-parts-figure wb-secondary-figure">${partsFigure}<figcaption>부품의 역할을 구별한 보조 그림 · 실제 홈은 교구에서 확인해요.</figcaption></figure>
+      ${video('build', 'https://m.site.naver.com/1e5E0', '스탠드 조립')}<nav class="wb-page-links" aria-label="4쪽 실험 연결">${step(4, '3D에서 부품 찾아보기')}${external('https://m.site.naver.com/1e5E0', '조립 영상 보기')}</nav>
     `),
-    page(5, '선의 시작과 끝을<br>하나씩 확인해요', '전지는 빼 둔 채, 다섯 연결을 확인하고 판을 조립해요.', `
-      <figure class="wb-wiring-figure">${wiringFigure}<figcaption>단자의 역할을 나타낸 개념도예요. 실제 단자 배열은 교구 표시를 확인해요.</figcaption></figure>
+    page(5, '다섯 선을 하나씩 이어요', '전지는 빼 둔 채 연결해요. 선의 시작과 끝을 짚어 확인해요.', `
+      <div class="wb-wiring-pair">${photo('empty-kit', '접점과 빨간·검은 선을 실제 교구에서 찾으세요.')}<figure class="wb-wiring-figure">${wiringFigure}<figcaption>연결 역할을 보여 주는 보조 그림 · 실제 단자 배열은 교구 표시를 확인해요.</figcaption></figure></div>
       <table class="wb-table wb-wire-table"><thead><tr><th scope="col">선</th><th scope="col">시작</th><th scope="col">끝</th><th scope="col">확인</th></tr></thead><tbody><tr><th scope="row">1</th><td>첫 전지끼우개 빨간 선</td><td>전구 접점 하나</td><td>□</td></tr><tr><th scope="row">2</th><td>전구의 다른 접점</td><td>스위치 공통 단자</td><td>□</td></tr><tr><th scope="row">3</th><td>첫 전지끼우개 검은 선</td><td>둘째 전지끼우개 빨간 선</td><td>□</td></tr><tr><th scope="row">4</th><td>두 전지끼우개 사이 연결점</td><td>스위치 1단 단자</td><td>□</td></tr><tr><th scope="row">5</th><td>둘째 전지끼우개 검은 선</td><td>스위치 2단 단자</td><td>□</td></tr></tbody></table>
-      <section class="wb-section"><h3>판을 끼운 뒤 마지막으로 살펴요</h3><p>□ 전선이 판 사이에 눌리지 않아요. &nbsp; □ 금속 부분끼리 닿지 않아요.<br>□ 전지를 넣기 전에 보호자와 연결을 확인해요.</p>${writing('', { lines: 2, label: '연결을 확인하며 남긴 메모', page: 5 })}</section>
-      <nav class="wb-page-links" aria-label="5쪽 실험 연결">${step(8, '화면에서 선 연결')}${step(13, '판 조립 살펴보기')}</nav>
+      <section class="wb-section wb-think"><h3>이제 판을 끼워요</h3><p>F 두 장 사이에 C는 위, B는 가운데, A는 아래에 끼워요.<br>D를 앞에, E를 뒤에 끼우고 전선은 A 가운데에 넣어요.</p><p class="wb-small">□ 전선이 눌리지 않아요. □ 금속끼리 닿지 않아요.<br>□ 전지를 넣기 전 보호자와 연결을 확인해요.</p></section>
+      <nav class="wb-page-links" aria-label="5쪽 실험 연결">${step(8, '3D에서 선 하나씩 연결하기')}${step(13, '판 조립 살펴보기')}</nav>
     `),
-    page(6, '세 위치를 눌러 보고<br>내 관찰을 남겨요', '보호자와 연결·규격을 확인한 뒤, 가운데·1단·2단을 차례로 살펴요.', `
+    page(6, '내 스탠드를 시험해요', '연결과 규격을 보호자와 확인한 뒤 전지를 넣고 시험해요.', `
+      <div class="wb-test-scene">${photo('stand-open', '시험 준비: 전지를 넣은 뒤의 내부 모습. 조립 중에는 빼 두어요.')}<div><h3>스위치 세 위치를 눌러요</h3><div class="wb-switch-positions"><span>Ⅰ<br>1단</span><span>○<br>가운데</span><span>Ⅱ<br>2단</span></div><p>같은 자리에서 전구의 밝기를 비교해요. 직접 본 결과를 아래에 남겨요.</p></div></div>
       <div class="wb-method"><span>이 기록은</span><span>${checked(!blank && Object.values(results).some(value => text(value)) && kind === 'screen')} 화면에서 본 결과</span><span>${checked(!blank && Object.values(results).some(value => text(value)) && kind === 'real')} 실물에서 본 결과</span></div>
       <table class="wb-table wb-switch-table"><thead><tr><th scope="col">스위치 위치</th><th scope="col">직접 본 밝기</th><th scope="col">전지 개수 · 연결된 길</th></tr></thead><tbody>${[['off', '가운데'], ['low', '1단'], ['high', '2단']].map(([id, label]) => `<tr><th scope="row">${label}</th><td>${writing(brightness(results[id]), { lines: 2, label: `${label}에서 직접 본 밝기`, page: 6, narrow: true })}</td><td>${writing('', { lines: 2, label: `${label}에서 연결된 전지와 길`, page: 6, narrow: true })}</td></tr>`).join('')}</tbody></table>
-      <section class="wb-section"><h3>잘 안된 점과 고쳐 본 방법</h3><p>문제 → 확인한 곳 → 다시 본 결과의 순서로 떠올려요.</p>${writing(notes.trouble, { lines: 4, label: '문제와 확인한 곳, 다시 본 결과', page: 6 })}<div class="wb-three-col wb-trouble-columns"><div><h4>어떤 문제였나요?</h4>${writing('', { lines: 2 })}</div><div><h4>어디를 확인했나요?</h4>${writing('', { lines: 2 })}</div><div><h4>다시 보니 어땠나요?</h4>${writing('', { lines: 2 })}</div></div></section>
-      <p class="wb-note">뜨거우면 실험을 멈추고 만지지 않은 채 어른에게 알려요. 전지 분리·제거는 보호자가 확인해요.</p>
-      <nav class="wb-page-links" aria-label="6쪽 실험 연결">${step(14, '화면에서 스위치 실험')}${step(15, '내 관찰 기록하기')}</nav>
+      <section class="wb-section"><h3>잘 안됐다면? 고쳐 본 방법을 남겨요.</h3><p class="wb-small">문제 → 확인한 곳 → 다시 본 결과</p>${writing(notes.trouble, { lines: 3, label: '문제와 확인한 곳, 다시 본 결과', page: 6 })}</section>
+      <p class="wb-note">뜨거우면 실험을 멈추고 만지지 않은 채 어른에게 알려요. 전지 제거는 보호자가 확인해요.</p>
+      <nav class="wb-page-links" aria-label="6쪽 실험 연결">${step(14, '스위치 눌러 관찰하기')}${step(15, '내 관찰 기록하기')}</nav>
     `),
-    page(7, '관찰한 것을 근거로<br>내 말로 설명해요', '처음 생각, 직접 본 결과, 지금의 설명을 구별하며 써 보세요.', `
-      <section class="wb-section wb-thinking-questions"><h3>세 가지 생각 확인</h3><div><p><strong>1.</strong> 직렬로 이은 전지 하나를 빼고 빈자리를 그대로 두었어요.<br>전구는 어떻게 될까요? 전류의 길과 연결해 설명해요.</p>${writing('', { lines: 1, label: '생각 확인 1', page: 7 })}</div><div><p><strong>2.</strong> 같은 새 전지 두 개를 병렬로 이었어요. 같은 전구의 밝기는 전지 한 개일 때와 어떻게 다를까요? 까닭도 생각해요.</p>${writing('', { lines: 1, label: '생각 확인 2', page: 7 })}</div><div><p><strong>3.</strong> 스위치를 가운데에 놓으면 왜 불이 꺼질까요?</p>${writing('', { lines: 1, label: '생각 확인 3', page: 7 })}</div></section>
-      <section class="wb-section"><h3>내 스탠드의 밝기는 이렇게 달라져요</h3><p class="wb-small">1단과 2단에서 연결된 전지의 개수, 연결 방법, 전류의 길을 설명해요. 6쪽에서 직접 본 결과를 근거로 써 보세요.</p>${writing(text(record.report), { lines: 6, label: '나의 스탠드 설명', page: 7 })}</section>
+    page(7, '사진과 내 관찰을 비교해요', '2–3쪽의 관찰을 마친 뒤, 원본 교재의 비교 사진을 살펴요.', `
+      <div class="wb-reference-photos" data-workbook-reference><div class="wb-three-col">${photo('single-cell', '전지 한 개')}${photo('series-cells', '전지 두 개 직렬')}${photo('parallel-cells', '전지 두 개 병렬')}</div><p class="wb-small">사진의 노란 빛은 원본의 시각 효과예요. 밝기 측정값이 아니며, 내가 본 결과를 대신하지 않아요.</p></div>
+      <section class="wb-section wb-thinking-questions"><h3>길을 따라, 말로 설명해 보세요</h3><div><p><strong>1.</strong> 직렬에서 전지 하나를 빼면 전구는 어떻게 될까요?</p>${writing('', { lines: 1, label: '생각 확인 1', page: 7 })}</div><div><p><strong>2.</strong> 같은 새 전지 두 개를 병렬로 이으면, 한 개일 때와 밝기가 어떻게 다를까요?</p>${writing('', { lines: 1, label: '생각 확인 2', page: 7 })}</div><div><p><strong>3.</strong> 스위치를 가운데에 놓으면 왜 불이 꺼질까요?</p>${writing('', { lines: 1, label: '생각 확인 3', page: 7 })}</div></section>
+      <section class="wb-section wb-think"><h3>1단과 2단의 밝기가 달라진 까닭</h3><p class="wb-small">6쪽의 내 관찰을 근거로, 전지 개수와 전류의 길을 설명해요.</p>${writing(text(record.report), { lines: 3, label: '나의 스탠드 설명', page: 7 })}</section>
       <nav class="wb-page-links" aria-label="7쪽 실험 연결">${step(16, '연결 원리 살펴보기')}${step(18, '내 설명 쓰기')}</nav>
     `),
-    page(8, '작은 회로에서 넓은 세상으로', '궁금한 이야기 하나를 골라 읽고, 새 질문을 남겨요.', `
-      <section class="wb-section wb-reading-item"><h3>전지의 연결과 생활</h3><p>같은 전지라도 연결 방법에 따라 쓰임이 달라져요. 직렬은 전압을 더하고, 같은 종류와 상태의 전지를 병렬로 이으면 전압은 한 개일 때와 비슷해요. 같은 밝기로 더 오래 쓸지, 더 높은 전압이 필요할지에 따라 연결을 생각해요. 전지함이 나란히 놓여 있다고 병렬인 것은 아니에요. 극과 연결선을 함께 살펴봐요.</p><div class="wb-inline-link">${read('battery', '연결과 생활 이야기 읽기')}</div></section>
-      <section class="wb-section wb-reading-item"><h3>에디슨과 테슬라, 도시의 불빛</h3><p>에디슨은 전등을 각각 켜고 끌 수 있는 병렬회로와 전력 공급을 연구했어요. 테슬라는 교류 전동기와 교류 전력 기술에 기여했지요. 여기서 병렬로 잇는 것은 전등이에요. 직렬·병렬은 연결 방법, 직류·교류는 전류 방향에 관한 말이에요.</p><div class="wb-inline-link">${read('city', '도시의 전기 이야기 읽기')}</div></section>
-      <section class="wb-section wb-reading-item"><h3>1887년, 건청궁에 켜진 전등</h3><p>경복궁 건청궁에는 에디슨전등회사의 설비를 들여와 전등을 밝혔어요. 전구뿐 아니라 발전기와 전선, 설비를 다룰 사람도 필요했지요. 전기를 만드는 장치는 달라도 전등이 켜지려면 전기가 흐를 길이 이어져야 해요. 우리 스탠드의 전지·전선·스위치·전구는 각각 어떤 일을 할까요?</p><div class="wb-inline-link">${read('palace', '궁궐의 전등 이야기 읽기')}</div></section>
-      <section class="wb-section"><h3>더 알아보고 싶은 질문</h3>${writing(notes.nextQuestion, { lines: 3, label: '더 알아보고 싶은 질문', page: 8 })}<h3>오늘 바뀐 생각</h3>${writing(notes.changedThought, { lines: 3, label: '오늘 바뀐 생각', page: 8 })}</section>
-      <p class="wb-small wb-reading-credit">읽기 근거: 럿거스대 에디슨 기록 · 미국 에너지부 · 국사편찬위원회 우리역사넷<br>더 긴 이야기와 출처는 화면의 ‘과학 읽을거리’에서 살펴봐요.</p>
-      <div class="wb-video-resources" aria-label="교재 영상 자료"><h4>종이 교재에서 영상으로</h4><div class="wb-video-index">${external('https://m.site.naver.com/1e5DZ', '전지 연결 실험 · m.site.naver.com/1e5DZ')}${external('https://m.site.naver.com/1e5E0', '2단 밝기 스탠드 · m.site.naver.com/1e5E0')}${external('https://m.site.naver.com/1e5E2', '전지 연결 방법 · m.site.naver.com/1e5E2')}${external('https://m.site.naver.com/1e5E3', '전지 연결 예 · m.site.naver.com/1e5E3')}</div></div>
-      <nav class="wb-page-links" aria-label="8쪽 실험 연결">${step(19, '오늘의 실험 돌아보기')}${external('https://m.site.naver.com/1e5E3', '전지 연결 예 영상')}</nav>
+    page(8, '생활 속 전지를 찾아요', '사진에서 +·− 극과 접점을 찾아보세요. 어떤 길로 이어질까요?', `
+      <div class="wb-two-col wb-life-photos">${photo('remote-control', '리모컨의 전지함')}${photo('door-lock', '도어록의 전지함')}</div>
+      <p class="wb-condition">전지가 나란히 있다고 병렬일까요? 겉모습만으로 판단하지 말고, 극 표시와 연결선을 함께 살펴요.</p>
+      <section class="wb-section"><h3>오늘 바뀐 생각</h3>${writing(notes.changedThought, { lines: 2, label: '오늘 바뀐 생각', page: 8 })}<h3>더 알아보고 싶은 질문</h3>${writing(notes.nextQuestion, { lines: 2, label: '더 알아보고 싶은 질문', page: 8 })}</section>
+      <section class="wb-reading-shelf"><h3>궁금하면 펼치는 과학 읽을거리</h3><div>${read('battery', '전지 두 개의 다른 쓰임')}${read('city', '에디슨과 테슬라 · 도시의 불빛')}${read('palace', '1887년 · 건청궁의 첫 전등')}</div><p class="wb-small">생활·역사 이야기는 선택해서 읽어요. 자세한 출처는 과학 읽을거리에 있어요.</p></section>
+      ${video('life', 'https://m.site.naver.com/1e5E3', '생활 속 전지 연결')}
+      <p class="wb-small wb-reading-credit">실험 사진: 사용자 제공 팩토사이언스 플러스 뉴턴 9호 · Unit 3.<br>원본 45–52쪽의 탐구 흐름을 바탕으로 재구성했어요.</p>
+      <nav class="wb-page-links" aria-label="8쪽 실험 연결">${step(19, '오늘의 실험 돌아보기')}</nav>
     `)
   ];
   extraPages.forEach((extra, index) => pages.push(page(index + 9, '내 기록 이어쓰기', `${extra.origin}쪽 · ${escape(extra.label)}${extra.part > 1 ? ` · 계속 ${extra.part}` : ''}`, `<p class="wb-continuation-text">${escape(extra.chunk)}</p>`, 'wb-continuation-page')));
