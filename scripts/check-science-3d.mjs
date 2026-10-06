@@ -152,15 +152,24 @@ for (const u of UNITS) {
     }
     await done(where, page, errs);
   }
-  // 전체 화면(PC·폰 가로): 조작판이 옆에 붙어 캔버스 비율이 크게 바뀐다
-  for (const [name, vp, touch] of [['전체 화면(PC)', { width: 1280, height: 760 }], ['전체 화면(폰 가로)', { width: 844, height: 390 }, true]]) {
+  // 전체 화면(PC·폰 가로·덱): 조작판이 옆에 붙어 캔버스 비율이 크게 바뀐다.
+  // 덱은 실험 칸 규칙(캔버스 높이 36cqw !important·격자)이 전체 화면에 남아 아래 절반이 비었던 적이 있다(2026-10-06) → 화면을 채우는지도 잰다
+  for (const [name, vp, touch, hash] of [['전체 화면(PC)', { width: 1280, height: 760 }], ['전체 화면(폰 가로)', { width: 844, height: 390 }, true], ['전체 화면(덱)', { width: 1440, height: 900 }, false, n ? `#/${u}/lab-class/teach/${n}` : null]]) {
     const where = `${u} ${name}`; console.log(`  · ${name}`);
-    const { page, errs } = await open(vp, `#/${u}/2/lab`, { touch });
+    if (name === '전체 화면(덱)' && !hash) continue;
+    const { page, errs } = await open(vp, hash || `#/${u}/2/lab`, { touch });
     await waitFitted(page);
     const btn = await page.$('.fl-open');
     if (!btn) { fail(where, '「전체 화면」 단추 없음'); await done(where, page, errs); continue; }
     await btn.click(); await page.waitForTimeout(500);
     judge(where, await waitFitted(page));
+    checks++;
+    const box = await page.evaluate(() => { const h = document.querySelector('.full-land'), c = h?.querySelector(':scope > canvas'), x = h?.querySelector('.fl-close'); if (!c || !x) return null; const r = c.getBoundingClientRect(); return { h: r.height, top: r.top, vh: innerHeight, closeX: x.getBoundingClientRect().left }; });
+    if (!box) fail(where, '전체 화면에서 캔버스나 「닫기」를 찾지 못함');
+    else {
+      if (box.top > 2 || box.h < box.vh * 0.97) fail(where, `전체 화면인데 3D가 화면 높이를 다 채우지 않음(${Math.round(box.h)}/${box.vh}px)`);
+      if (box.closeX > 40) fail(where, `「닫기」가 왼쪽 위가 아니라 x ${Math.round(box.closeX)}px에 있음(조작판을 가림)`);
+    }
     await shot(page, `${u}-${name}`);
     await done(where, page, errs);
   }

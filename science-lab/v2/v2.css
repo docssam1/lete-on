@@ -384,6 +384,12 @@ html.fl-lock, html.fl-lock body { overflow: hidden; }
 .full-land .fl-close { display: inline-flex; align-items: center; position: absolute; z-index: 3; top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left));
   min-height: 44px; padding: 0 16px; font-size: 15px; font-weight: 700; background: rgba(255,255,255,.94); box-shadow: 0 6px 18px rgba(20,32,64,.18); }
 .full-land { --fl-pw: min(360px, 34vw); }
+/* 수업 화면(덱)의 실험 칸은 캔버스 높이(36cqw !important)·격자·여백 0을 강제한다 — 전체 화면에서는 그 규칙이 남지 않게 한 단계 더 세게 되돌린다
+   (원장 2026-10-06: 실험 전체 화면에서 아래 절반이 비고 「닫기」가 조작판을 가렸다) */
+html .full-land.full-land { display: block !important; }
+html .full-land.full-land > canvas { grid-column: auto !important; grid-row: auto !important; height: 100% !important; max-height: none !important; border-radius: 0 !important; }
+html .full-land.full-land > .fl-close { grid-column: auto; margin: 0; padding: 0 16px; }
+html .full-land.full-land > .fl-panel { grid-column: auto; margin: 0; padding: 8px 14px 14px; }
 /* 가로 화면: 조작판을 펴 두면 3D는 조작판 왼쪽 공간을 꽉 채우고(가리지 않게), 접으면 화면 전체 */
 .full-land:has(.fl-panel:not(.min)) > canvas { width: calc(100% - var(--fl-pw) - 24px) !important; }
 .fl-panel { position: absolute; z-index: 2; right: max(12px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); max-height: calc(100% - 24px);
