@@ -1,4 +1,4 @@
-import { renderStudentPages } from './workbook-pages.js?v=3';
+import { renderStudentPages, pageNames } from './workbook-pages.js?v=4';
 
 import { experimentPhotos } from './workbook-photos.js?v=2';
 
@@ -6,7 +6,6 @@ let activeCleanup = null;
 let activePrintCleanup = null;
 let teacherModule;
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const pageNames = ['예상과 안전', '연결과 밝기', '전지 하나 빼기', '부품과 조립', '다섯 선 연결', '스위치 관찰', '나의 설명', '생활과 역사'];
 const snapshot = record => {
   if (!record || typeof record !== 'object' || Array.isArray(record)) return {};
   try { return structuredClone(record); } catch { return {}; }
@@ -43,9 +42,22 @@ function attachViewer(host, {
   let currentPage = String(teacher ? 'T1' : Math.max(1, Number(initialPage) || 1));
   let markup = '', renderVersion = 0, disposed = false, restorePrint, scrollFrame, closePhoto;
   let bookView = 'page';
+  let bookAudio, audioCoach, audioButton, audioFrame, mediaVersion = 0;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  function stopMedia() {
+    mediaVersion++;
+    bookAudio?.pause();
+    cancelAnimationFrame(audioFrame);
+    audioCoach?.classList.remove('wb-speaking');
+    audioCoach?.removeAttribute('data-audio-pose');
+    if (audioButton) audioButton.textContent = '실험 안내 듣기';
+    host.querySelectorAll('.wb-video-player iframe').forEach(frame => frame.remove());
+    host.querySelectorAll('[data-book-video]').forEach(button => { button.textContent = '책 안에서 영상 보기'; button.setAttribute('aria-expanded','false'); });
+  }
+  const pauseHidden = () => { if (document.hidden) stopMedia(); };
   host.dataset.bookView = bookView;
   const furthest = Math.max(0, Math.min(19, Number(learner.furthest) || 0));
-  host.innerHTML = `<header class="wb-toolbar"><div class="wb-toolbar-title"><strong id="workbook-title">전류 탐험 교재</strong><small>사진을 보고, 만들고, 관찰해요</small>${standalone ? '<a href="./index.html">실험 화면으로</a>' : '<button type="button" data-workbook-close autofocus>실험으로 돌아가기 ×</button>'}</div><div class="wb-toolbar-actions"><div class="wb-mode-controls" aria-label="교재 종류">${teacher ? '<button type="button" data-workbook-mode="blank">학생용 빈 교재</button><button type="button" data-workbook-mode="teacher">교사용 지도자료</button>' : `<button type="button" data-workbook-mode="blank">빈 교재</button>${standalone ? '' : '<button type="button" data-workbook-mode="record">내 기록</button>'}`}</div><button type="button" data-workbook-print>교재 인쇄</button><a href="docs/student-workbook.pdf" download>학생용 PDF</a>${teacher ? '<a href="docs/teacher-guide.pdf" download>교사용 PDF</a>' : ''}</div></header><div class="wb-subtoolbar"><nav class="wb-page-tabs" aria-label="교재 쪽 선택"></nav><div class="wb-view-controls"><button type="button" data-workbook-prev aria-label="앞 쪽">← 앞 쪽</button><button type="button" data-workbook-next aria-label="다음 쪽">다음 쪽 →</button><button type="button" data-workbook-view aria-pressed="false">모아 보기</button></div><span class="wb-view-note" aria-live="polite"></span><p class="wb-locked-note" hidden>아직 배우지 않은 화면은 순서대로 공부하면 열려요.</p></div><div class="workbook-scroll"><div class="workbook-view-pages"><p class="wb-loading" role="status">교재를 펼치는 중이에요.</p></div></div>`;
+  host.innerHTML = `<header class="wb-toolbar"><div class="wb-toolbar-title"><strong id="workbook-title">전류 탐험 교재</strong><small>생각하고, 만들고, 읽고, 설명해요</small>${standalone ? '<a href="./index.html">실험 화면으로</a>' : '<button type="button" data-workbook-close autofocus>실험으로 돌아가기 ×</button>'}</div><div class="wb-toolbar-actions"><div class="wb-mode-controls" aria-label="교재 종류">${teacher ? '<button type="button" data-workbook-mode="blank">학생용 빈 교재</button><button type="button" data-workbook-mode="teacher">교사용 지도자료</button>' : `<button type="button" data-workbook-mode="blank">빈 교재</button>${standalone ? '' : '<button type="button" data-workbook-mode="record">내 기록</button>'}`}</div><button type="button" data-workbook-print>교재 인쇄</button><a href="docs/student-workbook.pdf" download>학생용 PDF</a>${teacher ? '<a href="docs/teacher-guide.pdf" download>교사용 PDF</a>' : ''}</div></header><div class="wb-subtoolbar"><nav class="wb-page-tabs" aria-label="교재 쪽 선택"></nav><div class="wb-view-controls"><button type="button" data-workbook-prev aria-label="앞 쪽">← 앞 쪽</button><button type="button" data-workbook-next aria-label="다음 쪽">다음 쪽 →</button><button type="button" data-workbook-view aria-pressed="false">모아 보기</button></div><span class="wb-view-note" aria-live="polite"></span><p class="wb-locked-note" hidden>아직 배우지 않은 화면은 순서대로 공부하면 열려요.</p></div><div class="workbook-scroll"><div class="workbook-view-pages"><p class="wb-loading" role="status">교재를 펼치는 중이에요.</p></div></div>`;
   const pagesHost = host.querySelector('.workbook-view-pages');
   const scrollHost = host.querySelector('.workbook-scroll');
   const tabs = host.querySelector('.wb-page-tabs');
@@ -53,6 +65,7 @@ function attachViewer(host, {
   const printMedia = matchMedia('print');
 
   function setCurrent(id) {
+    if (String(id) !== currentPage) stopMedia();
     currentPage = String(id);
     const allPages = [...pagesHost.querySelectorAll('.workbook-page')];
     allPages.forEach(page => page.toggleAttribute('data-current', page.dataset.page === currentPage));
@@ -80,6 +93,7 @@ function attachViewer(host, {
     if (focus) { const heading = page.querySelector('h2'); heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
   }
   async function render() {
+    stopMedia();
     const version = ++renderVersion;
     printButton.disabled = true;
     host.dataset.workbookReady = 'false';
@@ -88,13 +102,22 @@ function attachViewer(host, {
     host.querySelectorAll('[data-workbook-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.workbookMode === mode)));
     try {
       if (mode === 'teacher') {
-        teacherModule ||= import('./workbook-teacher.js?v=3');
+        teacherModule ||= import('./workbook-teacher.js?v=4');
         const module = await teacherModule;
         if (disposed || version !== renderVersion) return;
         markup = module.renderTeacherPages();
       } else markup = renderStudentPages(teacher ? {} : learner, { blank: mode === 'blank' });
       if (disposed || version !== renderVersion) return;
       pagesHost.innerHTML = markup;
+      const voices = {1:'welcome',2:'predict',3:'compare',5:'paper',6:'wire1',7:'test',8:'concept',9:'quiz',12:'report',13:'finish'};
+      pagesHost.querySelectorAll('.wb-coach').forEach(coach => {
+        const voice = voices[coach.closest('[data-page]').dataset.page];
+        if (!voice) return;
+        const controls = document.createElement('div');
+        controls.className = 'wb-coach-audio';
+        controls.innerHTML = `<button type="button" data-book-voice="fabre09-${voice}">실험 안내 듣기</button><p class="wb-voice-caption" aria-live="polite"></p>`;
+        coach.querySelector('.wb-coach-bubble').append(controls);
+      });
       let hasLocked = false;
       pagesHost.querySelectorAll('[data-workbook-step]').forEach(button => {
         const locked = standalone || !teacher && Number(button.dataset.workbookStep) > furthest;
@@ -106,17 +129,18 @@ function attachViewer(host, {
         const wrapper = document.createElement('div');
         wrapper.setAttribute('data-reference-locked', '');
         reference.replaceWith(wrapper);
-        wrapper.innerHTML = '<div class="wb-reference-lock"><strong>먼저 내 눈으로 관찰해요.</strong><p>다섯 비교 관찰을 마치면 원본 실사 사진을 펼칠 수 있어요. 종이 교재는 2–3쪽 관찰을 마친 뒤 7쪽을 살펴요.</p></div>';
+        wrapper.innerHTML = '<div class="wb-reference-lock"><strong>먼저 내 눈으로 관찰해요.</strong><p>다섯 비교 관찰을 마치면 원본 실사 사진을 펼칠 수 있어요. 종이 교재는 3–4쪽 관찰을 마친 뒤 8쪽을 살펴요.</p></div>';
         wrapper.append(reference);
       }
       host.querySelector('.wb-locked-note').hidden = !hasLocked;
       const pages = [...pagesHost.querySelectorAll('.workbook-page')];
-      tabs.innerHTML = pages.map(page => { const id = page.dataset.page, title = Number(id) <= 8 ? pageNames[Number(id) - 1] : id.startsWith('T') ? '교사용 지도자료' : '내 기록 이어쓰기'; return `<button type="button" data-workbook-page="${escape(id)}" aria-label="${escape(id)}쪽 · ${escape(title)}">${escape(id)}</button>`; }).join('');
-      host.querySelector('.wb-view-note').textContent = mode === 'teacher' ? '교사용 별도 3쪽' : mode === 'blank' ? '학생용 빈 교재 8쪽' : `직접 남긴 기록 · ${pages.length}쪽`;
+      tabs.innerHTML = pages.map(page => { const id = page.dataset.page, title = Number(id) <= pageNames.length ? pageNames[Number(id) - 1] : id.startsWith('T') ? '교사용 지도자료' : '내 기록 이어쓰기'; return `<button type="button" data-workbook-page="${escape(id)}" aria-label="${escape(id)}쪽 · ${escape(title)}">${escape(id)}</button>`; }).join('');
+      host.querySelector('.wb-view-note').textContent = mode === 'teacher' ? `교사용 별도 ${pages.length}쪽` : mode === 'blank' ? `학생용 빈 교재 ${pages.length}쪽` : `직접 남긴 기록 · ${pages.length}쪽`;
       if (!pages.some(page => page.dataset.page === currentPage)) currentPage = pages[0]?.dataset.page || '1';
       goToPage(currentPage);
       requestAnimationFrame(() => { if (!disposed && version === renderVersion) goToPage(currentPage); });
       await Promise.all([...pagesHost.querySelectorAll('img')].map(image => image.decode()));
+      const sprite = new Image(); sprite.src = './assets/popcorn-poses.webp'; await sprite.decode();
       await document.fonts.ready;
       if (disposed || version !== renderVersion) return;
       printButton.disabled = false;
@@ -129,18 +153,86 @@ function attachViewer(host, {
   }
   function beforePrint() {
     if (disposed) return;
+    stopMedia();
     restorePrint?.();
     if (host.dataset.workbookReady !== 'true' || !markup) {
       restorePrint = preparePrint('<section class="workbook-page"><h2>교재가 준비된 뒤 인쇄해 주세요</h2><p>인쇄를 취소하고, 선택한 교재가 화면에 나타난 뒤 다시 눌러 주세요.</p></section>', 'loading');
       return;
     }
     restorePrint = preparePrint(markup, mode);
+    // Blank handouts stay blank; own-record printing may include only this reading's choices.
+    if (mode === 'record') {
+      const root = document.querySelector('.workbook-print-root');
+      pagesHost.querySelectorAll('[data-book-evaluation]').forEach(select => {
+        const target = root.querySelector(`[data-book-evaluation="${select.dataset.bookEvaluation}"]`);
+        if (target && select.value) target.replaceWith(Object.assign(document.createElement('span'), {textContent:select.options[select.selectedIndex].text}));
+      });
+      const checked = pagesHost.querySelector('input[name="wb-source-choice"]:checked');
+      if (checked) root.querySelector(`input[name="wb-source-choice"][value="${checked.value}"]`)?.setAttribute('checked','');
+    }
   }
   function afterPrint() { restorePrint?.(); restorePrint = null; }
   function onPrintMedia(event) { if (!event.matches) afterPrint(); }
   async function handleClick(event) {
     const button = event.target.closest('button');
     if (!button || button.disabled || !host.contains(button)) return;
+    if (button.dataset.bookCheck === 'source') {
+      const question = button.closest('.wb-source-question');
+      const choice = question.querySelector('input[name="wb-source-choice"]:checked');
+      const feedback = question.querySelector('[data-book-feedback]');
+      feedback.hidden = false;
+      if (!choice) { feedback.textContent = '먼저 내 생각으로 하나를 골라 보세요.'; return; }
+      button.disabled = true;
+      try { const {sourceFeedback} = await import('./workbook-feedback.js?v=1'); if (!disposed && question.isConnected) feedback.textContent = sourceFeedback(choice.value); }
+      catch { if (!disposed) feedback.textContent = '해설을 불러오지 못했어요. 다시 눌러 주세요.'; }
+      finally { if (button.isConnected) button.disabled = false; }
+      return;
+    }
+    if (button.dataset.bookVideo) {
+      const container = button.closest('.wb-inline-video');
+      const player = container.querySelector('.wb-video-player');
+      const wasOpen = !!player.querySelector('iframe');
+      stopMedia();
+      if (wasOpen || !['Js6CZPD5XfE','Kaije_6OdOA'].includes(button.dataset.bookVideo)) return;
+      const frame = document.createElement('iframe');
+      frame.src = `https://www.youtube-nocookie.com/embed/${button.dataset.bookVideo}?rel=0`;
+      frame.title = container.querySelector('h3,strong')?.textContent || '과학 읽기 영상';
+      frame.allow = 'encrypted-media; picture-in-picture; fullscreen';
+      frame.allowFullscreen = true;
+      frame.referrerPolicy = 'strict-origin-when-cross-origin';
+      player.append(frame);
+      button.textContent = '영상 닫기'; button.setAttribute('aria-expanded','true');
+      return;
+    }
+    if (button.dataset.bookVoice) {
+      const coach = button.closest('.wb-coach');
+      const caption = coach.querySelector('.wb-voice-caption');
+      const wasPlaying = audioButton === button && bookAudio && !bookAudio.paused;
+      stopMedia();
+      if (wasPlaying) return;
+      const version = mediaVersion;
+      try {
+        const response = await fetch('./assets/audio/voices.json');
+        if (!response.ok) throw Error('voice');
+        const manifest = await response.json(), line = manifest.lines[button.dataset.bookVoice];
+        if (disposed || version !== mediaVersion || !line) return;
+        caption.textContent = line.text;
+        const audio = new Audio(`./assets/audio/${line.file}`);
+        bookAudio = audio;
+        audioCoach = coach; audioButton = button;
+        const animate = () => {
+          if (disposed || version !== mediaVersion || audio.paused || audio.ended) return;
+          coach.dataset.audioPose = reducedMotion.matches || Math.floor(audio.currentTime * 8) % 4 ? 'talk' : 'idle';
+          audioFrame = requestAnimationFrame(animate);
+        };
+        audio.addEventListener('ended',() => { if (version === mediaVersion) stopMedia(); },{once:true});
+        audio.addEventListener('error',() => { if (version !== mediaVersion) return; stopMedia(); caption.textContent = '소리를 불러오지 못했어요. 글로 안내를 읽어 주세요.'; },{once:true});
+        await audio.play();
+        if (disposed || version !== mediaVersion) { audio.pause(); return; }
+        coach.classList.add('wb-speaking'); button.textContent = '듣기 멈추기'; animate();
+      } catch { if (!disposed && version === mediaVersion) caption.textContent = '소리를 재생하지 못했어요. 글로 안내를 읽어 주세요.'; }
+      return;
+    }
     if (button.hasAttribute('data-workbook-close')) { close(); return; }
     if (button.hasAttribute('data-workbook-retry')) { await render(); return; }
     if (button.hasAttribute('data-workbook-view')) {
@@ -187,7 +279,7 @@ function attachViewer(host, {
       await document.fonts.ready;
       if (disposed || !markup) return;
       beforePrint();
-      try { window.print(); } catch (error) { afterPrint(); throw error; }
+      try { window.print(); } finally { afterPrint(); }
       return;
     }
     if (button.hasAttribute('data-workbook-step')) {
@@ -214,6 +306,7 @@ function attachViewer(host, {
     });
   }
   host.addEventListener('click', handleClick);
+  document.addEventListener('visibilitychange', pauseHidden);
   scrollHost.addEventListener('scroll', handleScroll, { passive: true });
   if (standalone) window.addEventListener('scroll', handleScroll, { passive: true });
   window.addEventListener('beforeprint', beforePrint);
@@ -222,6 +315,8 @@ function attachViewer(host, {
   void render();
   return () => {
     disposed = true;
+    stopMedia();
+    document.removeEventListener('visibilitychange', pauseHidden);
     closePhoto?.();
     renderVersion++;
     cancelAnimationFrame(scrollFrame);
@@ -263,7 +358,7 @@ export function openWorkbook({ teacher = false, record = {}, initialPage = 1, on
   const keyboard = event => {
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); cleanup(); return; }
     if (event.key !== 'Tab') return;
-    const focusable = [...dialog.querySelectorAll('button:not(:disabled),a[href],select,[tabindex="0"]')].filter(element => element.getClientRects().length);
+    const focusable = [...dialog.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),select,summary,[tabindex="0"]')].filter(element => element.getClientRects().length);
     const first = focusable[0], last = focusable.at(-1);
     if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }

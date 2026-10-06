@@ -1,6 +1,8 @@
 // Workbook regression: one real Chromium instance, independent serial contexts.
 // Select cases with PILOT_CASES (comma-separated); evidence is retained on failure.
 import assert from 'node:assert/strict';
+import {STUDENT_PAGE_COUNT} from './workbook-pages.js';
+import {TEACHER_PAGE_COUNT} from './workbook-teacher.js';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -216,7 +218,7 @@ async function closeWorkbook(page) {
   await page.locator('dialog.science-workbook [data-workbook-close]').first().click();
   await page.locator('dialog.science-workbook').waitFor({ state: 'detached' });
 }
-async function assertStudentPages(page, test, expected = 8) {
+async function assertStudentPages(page, test, expected = STUDENT_PAGE_COUNT) {
   const dialog = page.locator('dialog.science-workbook');
   equal(test, await dialog.locator('.workbook-view-pages .workbook-page').count(), expected, `${expected} student pages are rendered`);
   equal(test, await dialog.locator('.workbook-teacher-page').count(), 0, 'student workbook DOM contains no teacher pages');
@@ -270,6 +272,8 @@ async function observePrint(page) {
 async function printWorkbook(page, test, label) {
   await observePrint(page);
   const count = await page.evaluate(() => window.__workbookPrintEvents.filter(event => event.type === 'beforeprint').length);
+  // Headless Chromium throttles repeated native jobs after cancelling its dialog.
+  await page.waitForTimeout(3000);
   // Invoke the real user button and native print function, never a print stub.
   await page.locator('dialog.science-workbook [data-workbook-print]').click();
   await page.waitForFunction(count => window.__workbookPrintEvents.filter(event => event.type === 'beforeprint').length > count, count);
@@ -303,7 +307,7 @@ async function workbookContract(page, test) {
   equal(test, await dialog.locator('.wb-record-status').count(), 5, 'completion-only observations are labelled as content not yet recorded');
   equal(test, await dialog.locator('.wb-writing.wb-filled').count(), 0, 'completion-only observations generate no model answers in writing spaces');
   equal(test, await dialog.locator('[data-workbook-mode="teacher"]').count(), 0, 'student mode exposes no teacher-material switch');
-  const locked = dialog.locator('[data-workbook-step="18"]');
+  const locked = dialog.locator('[data-workbook-step="18"]').first();
   check(test, await locked.isDisabled(), 'workbook cannot jump to an unreached lesson step');
   check(test, await dialog.locator('.wb-locked-note').count() > 0, 'locked experiment links have an explanation');
   await assertTabTrap(page, test, dialog);
@@ -315,7 +319,7 @@ async function workbookContract(page, test) {
   equal(test, await dialog.locator('.wb-record-status').count(), 0, 'blank workbook removes observation-completion labels');
   equal(test, await dialog.locator('.wb-writing.wb-filled').count(), 0, 'blank workbook has no learner-filled writing spaces');
   const blank = await printWorkbook(page, test, 'blank');
-  equal(test, blank.pages, ['1', '2', '3', '4', '5', '6', '7', '8'], 'blank print contains exactly eight student pages');
+  equal(test, blank.pages, Array.from({length:STUDENT_PAGE_COUNT}, (_,i)=>String(i+1)), 'blank print contains the complete student page set');
   equal(test, blank.teacherPages, 0, 'blank student print contains no teacher explanations');
   equal(test, blank.statuses, [], 'blank print does not imply observations have been made');
   await workbookMode(dialog, 'record');
@@ -349,18 +353,18 @@ async function teacherIsolation(page, test) {
   await page.locator('[data-observation="parallel-remove"]').click();
   const stage = await snapshot(page, true);
   const dialog = await openWorkbook(page);
-  equal(test, await dialog.locator('.workbook-view-pages .workbook-teacher-page').count(), 3, 'teacher workbook renders exactly three teacher pages');
-  equal(test, await dialog.locator('.workbook-view-pages .workbook-page').count(), 3, 'teacher mode selects teacher material as its own print set');
+  equal(test, await dialog.locator('.workbook-view-pages .workbook-teacher-page').count(), TEACHER_PAGE_COUNT, 'teacher workbook renders the complete teacher page set');
+  equal(test, await dialog.locator('.workbook-view-pages .workbook-page').count(), TEACHER_PAGE_COUNT, 'teacher mode selects teacher material as its own print set');
   equal(test, await dialog.locator('[data-workbook-mode="record"]').count(), 0, 'teacher workbook cannot select private student records');
   check(test, !(await dialog.textContent()).includes(marker), 'teacher workbook contains no saved private student text');
   const printedTeacher = await printWorkbook(page, test, 'teacher-guide');
-  equal(test, printedTeacher.pages, ['T1', 'T2', 'T3'], 'teacher print includes only its three selected pages');
+  equal(test, printedTeacher.pages, Array.from({length:TEACHER_PAGE_COUNT}, (_,i)=>`T${i+1}`), 'teacher print includes only its selected teacher pages');
   check(test, !printedTeacher.text.includes(marker), 'teacher print excludes saved private learner text');
   await workbookMode(dialog, 'blank');
   await assertStudentPages(page, test);
   equal(test, await dialog.locator('.wb-writing.wb-filled').count(), 0, 'teacher blank student handout contains no private records');
   const printedBlank = await printWorkbook(page, test, 'teacher-blank-handout');
-  equal(test, printedBlank.pages.length, 8, 'teacher can print an eight-page blank student handout');
+  equal(test, printedBlank.pages.length, STUDENT_PAGE_COUNT, 'teacher can print an complete blank student handout');
   equal(test, printedBlank.teacherPages, 0, 'blank student handout excludes teacher explanations');
   check(test, !printedBlank.text.includes(marker), 'blank student handout excludes private learner text');
   await closeWorkbook(page);
@@ -405,7 +409,7 @@ async function viewportLayout(page, test) {
   const before = await snapshot(page, true);
   const dialog = await openWorkbook(page);
   await assertStudentPages(page, test);
-  for (const number of [1, 2, 3, 5, 7, 8]) {
+  for (const number of Array.from({length:STUDENT_PAGE_COUNT},(_,i)=>i+1)) {
     await dialog.locator(`[data-workbook-page="${number}"]`).click();
     await assertNoHorizontalOverflow(page, test, `workbook page ${number}`);
   }
@@ -427,9 +431,9 @@ async function viewportLayout(page, test) {
   await dialog.locator('[data-workbook-prev]').click();
   equal(test, await dialog.locator('.workbook-page:visible').getAttribute('data-page'), '1', 'previous page returns within the book');
   await dialog.locator('[data-workbook-view]').click();
-  equal(test, await dialog.locator('.workbook-page:visible').count(), 8, 'collection view can show every student page');
+  equal(test, await dialog.locator('.workbook-page:visible').count(), STUDENT_PAGE_COUNT, 'collection view can show every student page');
   await dialog.locator('[data-workbook-view]').click();
-  await dialog.locator('[data-workbook-page="7"]').click();
+  await dialog.locator('[data-workbook-page="8"]').click();
   check(test, await dialog.locator('.wb-reference-lock').isVisible() && !await dialog.locator('.wb-reference-photos').isVisible(), 'original glow photographs stay hidden before the five observations');
   await dialog.locator('[data-workbook-page="8"]').click();
   const closeBounds = await dialog.locator('[data-workbook-close]').first().boundingBox();
@@ -438,7 +442,7 @@ async function viewportLayout(page, test) {
   await screenshot(page, test, 'workbook-responsive');
   const printed = await printWorkbook(page, test, `${test.viewport.name}-student-record`);
   equal(test, printed.teacherPages, 0, 'responsive student workbook print excludes teacher notes');
-  equal(test, printed.pages.length, 8, 'short student records still print as eight pages');
+  equal(test, printed.pages.length, STUDENT_PAGE_COUNT, 'short student records retain the base page count');
   await page.keyboard.press('Escape');
   await dialog.waitFor({ state: 'detached' });
   equal(test, await snapshot(page), before, 'responsive workbook and printing leave the live model and saved record unchanged');
@@ -462,16 +466,16 @@ async function longReport(page, test) {
   check(test, continuationCount > 0, 'long learner text produces continuation pages');
   const chunks = await dialog.locator('.wb-continuation-text').allTextContents();
   equal(test, chunks.join(''), text, 'continuation pages retain every character and line in order');
-  await dialog.locator('[data-workbook-page="9"]').click();
+  await dialog.locator(`[data-workbook-page="${STUDENT_PAGE_COUNT+1}"]`).click();
   await assertNoHorizontalOverflow(page, test, 'long-report continuation');
   await screenshot(page, test, 'continuation-page');
   const printed = await printWorkbook(page, test, 'long-report-record');
-  check(test, printed.pages.length > 8 && printed.continuations.length === continuationCount, 'print includes all continuation pages');
+  check(test, printed.pages.length > STUDENT_PAGE_COUNT && printed.continuations.length === continuationCount, 'print includes all continuation pages');
   equal(test, printed.continuations.join(''), text, 'print retains the complete long report, including its final line');
   equal(test, printed.teacherPages, 0, 'long-report printing includes no teacher explanations');
   (test.limitations ||= []).push('Text completeness and print DOM verified; root must inspect actual PDF page breaks and clipping.');
   await workbookMode(dialog, 'blank');
-  equal(test, await dialog.locator('.workbook-page').count(), 8, 'blank mode returns to exactly eight pages despite a long saved report');
+  equal(test, await dialog.locator('.workbook-page').count(), STUDENT_PAGE_COUNT, 'blank mode returns to the base page count despite a long saved report');
   equal(test, await dialog.locator('.wb-continuation-page').count(), 0, 'blank mode includes no private continuation pages');
   await closeWorkbook(page);
   equal(test, await snapshot(page), before, 'printing and changing workbook views preserve the full saved report');
