@@ -1,5 +1,5 @@
 import { steps, quiz, helpers } from './lesson.js';
-import { createRig, circuitState } from './model.js?v=2';
+import { createRig, circuitState } from './model.js?v=3';
 import { createGuide } from './guide.js';
 const app=document.querySelector('#app'), KEY='popcorn.fabre09.current.v1';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
