@@ -1,7 +1,7 @@
 /* B-01 — 체스판과 두 배의 마법(기존 손그림을 소스 파트로 이관) */
 'use strict';
 module.exports=function(H){
-  const {C,svg,king,sage,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
+  const {C,svg,king,sage,sheep,pouch,arrow,paper,bubble,txt,ground,hop,bang}=H;
   return { panels:[
     { art: svg(
         king(40,80,1.3)
@@ -23,7 +23,8 @@ module.exports=function(H){
         +'<text x="60" y="26" text-anchor="middle" font-size="15" font-weight="800" fill="#16417C">2</text>'
         +'<text x="100" y="26" text-anchor="middle" font-size="15" font-weight="800" fill="#16417C">4</text>'
         +'<text x="140" y="26" text-anchor="middle" font-size="15" font-weight="800" fill="#16417C">8</text></g>'
-        +'<text x="100" y="122" text-anchor="middle" font-size="14" font-weight="800" fill="#C9A063">×2 → ×2 → ×2</text>'),
+        /* 칸 사이마다 ×2 뜀(2026-10-06 — 한 줄 "×2 → ×2 → ×2" 글자 대신, 검사기 경고) */
+        +[40,80,120].map(x=>hop(x,x+40,48,16,C.gold)+txt(x+20,30,12,C.gold,'×2')).join('')),
       text: { ko:'왕은 웃으며 승낙했어요. 1, 2, 4, 8, 16… 칸마다 겨우 두 배인걸요?',
               en:'The king laughed and agreed. 1, 2, 4, 8, 16 … it is only doubling, after all?',
               zh:'国王笑着答应了。1、2、4、8、16……不过是翻倍而已嘛？' } },
@@ -37,7 +38,7 @@ module.exports=function(H){
               zh:'可是翻倍越来越吓人。到第64格，全国的米加起来都不够！' } },
     { art: svg(
         king(50,84,1.3)
-        +'<text x="44" y="34" text-anchor="middle" font-size="22" font-weight="800" fill="#D9534F">!</text>'
+        +bang(92,44,0.85)
         +'<polygon points="130,116 160,56 190,116" fill="#f5f1e6" stroke="#C9A063" stroke-width="2.5"/>'
         +'<polygon points="142,92 160,56 178,92" fill="#fdf6e3"/>'
         +'<text x="160" y="134" text-anchor="middle" font-size="12" font-weight="800" fill="#4a5468">2⁶³</text>'),
