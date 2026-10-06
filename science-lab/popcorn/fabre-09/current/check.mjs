@@ -44,6 +44,15 @@ try{
  await page.locator('[data-action=next]').click();await page.locator('#draft').fill('1단은 전지 한 개, 2단은 전지 두 개의 직렬 길이에요. 가운데에서는 길이 끊겨요.');
  await page.locator('[data-action=selfcheck]').click();ok((await page.locator('#report-feedback').textContent()).includes('자동 채점 결과가 아니에요'),'self check does not claim automatic grading');
  await page.locator('#reviewed').check();await page.locator('[data-action=next]').click();await snap('finish');
+ // Leaving the comparison through the step menu must restore cells just like Next.
+ const jump=async index=>{await page.locator('[data-action=steps]').click();await page.locator(`[data-step="${index}"]`).click();};
+ await jump(3);await page.locator('[data-compare=parallel]').click();await page.locator('[data-cell="1"]').uncheck();
+ await jump(13);
+ const cells=()=>page.evaluate(async()=>{const {Stage}=await import('../../../engine.js');const s=[...Stage.live].find(s=>s.canvas.id==='model'&&s.canvas.isConnected);const counts=[];s.root.traverse(o=>{if(o.userData.cellParts)counts.push(o.userData.cellParts.filter(c=>c.visible).length);});return counts;});
+ ok((await cells()).every(n=>n===0),'step menu keeps assembly holders empty after comparison');
+ await jump(14);ok((await cells()).every(n=>n===3),'step menu restores both cells for completed experiment');
+ await page.locator('[data-position=high]').click();ok((await page.locator('#reading').textContent()).includes('3 V'),'restored cells supply 2-stage voltage');
+ await jump(19);
  const before=await page.evaluate(()=>localStorage.getItem('popcorn.fabre09.current.v1'));
  await page.locator('[data-action=home]').click();await page.locator('[data-start=teacher]').click();
  ok(await page.locator('#guide').count()===0,'teacher has no automatic character voice');
@@ -60,7 +69,7 @@ try{
  await page.setViewportSize({width:390,height:844});await snap('mobile-home');ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile no horizontal overflow');
  await page.locator('[data-start=helper]').click();await snap('mobile-helper');ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile helper no horizontal overflow');
  await page.evaluate(async()=>{if(document.fullscreenElement)await document.exitFullscreen();});await page.waitForFunction(()=>!document.fullscreenElement);await page.setViewportSize({width:360,height:740});ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'small phone no horizontal overflow');await page.locator('[data-action=model-fullscreen]').click();await page.waitForFunction(()=>document.fullscreenElement?.classList.contains('viewport'));ok(await page.evaluate(()=>!!document.fullscreenElement),'3D fullscreen');ok(await page.locator('.viewport #guide').count()===1,'guide stays with enlarged experiment');await page.locator('[data-action=model-exit]').click();await page.waitForFunction(()=>!document.fullscreenElement);ok(await page.evaluate(()=>!document.fullscreenElement),'visible fullscreen exit');
- const reduced=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});await reduced.goto(base);ok(await reduced.locator('.sprite').evaluate(e=>getComputedStyle(e).animationName==='none'),'reduced motion suppresses body animation');await reduced.close();
+ const reduced=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});await reduced.addInitScript(()=>{globalThis.SL_QUALITY='low';});await reduced.goto(base);ok(await reduced.locator('.sprite').evaluate(e=>getComputedStyle(e).animationName==='none'),'reduced motion suppresses body animation');await reduced.close();
  ok(errors.length===0,'no browser errors or missing assets: '+errors.join('\n'));
  console.log(JSON.stringify({passed:count,failed:0,notes},null,2));if(out)await writeFile(out+'/qa.json',JSON.stringify({passed:count,failed:0,notes},null,2));
 }finally{await browser.close();}
