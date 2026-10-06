@@ -315,6 +315,88 @@ function rope(x1,y1,x2,y2,col,bend){
     +'<path d="M '+hx1.toFixed(1)+' '+hy1.toFixed(1)+' L '+x2+' '+y2+' L '+hx2.toFixed(1)+' '+hy2.toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>';
 }
 
-module.exports = { C, svg, stick, sheep, sheep2, pebble, pouch2, fence, meadow, flower, sunDisc, moonDisc, cloud, star4, bang, rope, puff, numi, pouch, arrow, paper, bubble, txt, ground,
+
+/* ══════════════════════════════════════════════════════════
+   유아(N) 만화 소품 (2026-10-05) — 실사 물건 PNG + 셀셰이딩 무대(물·징검돌·계단·가게·눈금 막대).
+   ══════════════════════════════════════════════════════════ */
+/* 실사 물건 — assets/images/real/<name>.png(512 투명). (x,y)=바닥 중심, h=높이(px, viewBox 기준). 바닥 그림자 한 겹. */
+function real(name,x,y,h,flip){
+  h = h || 28;
+  const img = '<image href="assets/images/real/'+name+'.png" x="'+(x-h/2).toFixed(1)+'" y="'+(y-h).toFixed(1)+'" width="'+h+'" height="'+h+'"/>';
+  return '<ellipse cx="'+x+'" cy="'+(y-1)+'" rx="'+(h*0.36).toFixed(1)+'" ry="'+(h*0.07).toFixed(1)+'" fill="'+OL+'" opacity=".14"/>'
+    + (flip ? '<g transform="translate('+(2*x)+',0) scale(-1,1)">'+img+'</g>' : img);   /* flip = 왼쪽 보기 */
+}
+/* 물(개울) — y 에서 아래로 */
+function water(y){
+  let s = '<path d="M 0 '+y+' Q 50 '+(y-4)+' 100 '+y+' T 200 '+y+' L 200 140 L 0 140 Z" fill="'+C.sky+'"/>';
+  [[30,y+14],[96,y+22],[156,y+12],[64,y+30],[176,y+28]].forEach(w => {
+    s += '<path d="M '+(w[0]-8)+' '+w[1]+' q 4 -3 8 0 t 8 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".75"/>';
+  });
+  return s;
+}
+/* 징검돌 — 납작한 돌 위에 숫자. hi=강조색(금) */
+function stepStone(x,y,label,hi){
+  const col = hi ? C.goldbright : C.stone;
+  return '<ellipse cx="'+x+'" cy="'+(y+4)+'" rx="14" ry="4.5" fill="'+OL+'" opacity=".18"/>'
+    +'<ellipse cx="'+x+'" cy="'+y+'" rx="13" ry="7" fill="'+col+'" stroke="'+OL+'" stroke-width="2"/>'
+    +'<ellipse cx="'+(x-5)+'" cy="'+(y-3)+'" rx="5" ry="1.6" fill="#fff" opacity=".6"/>'
+    +(label!=null&&label!=='' ? '<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="11" font-weight="800" fill="'+C.ink+'">'+label+'</text>' : '');
+}
+/* 폴짝 — 포물선 화살표 */
+function hop(x1,x2,y,h,col){
+  col = col || C.red; h = h || 18;
+  const mx = (x1+x2)/2, dir = x2 > x1 ? 1 : -1;
+  return '<path d="M '+x1+' '+y+' Q '+mx+' '+(y-h)+' '+x2+' '+y+'" fill="none" stroke="'+col+'" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="1 5"/>'
+    +'<path d="M '+(x2-dir*6)+' '+(y-6)+' L '+x2+' '+y+' L '+(x2-dir*7.5)+' '+(y+1)+'" fill="none" stroke="'+col+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>';
+}
+/* 계단 — 왼쪽 아래에서 오른쪽 위로 n칸. (x,y)=맨 아래 왼쪽, w·h=한 칸. labels=아래부터 숫자 표시 여부 */
+function stairs(x,y,n,w,h,labels,hiIdx){
+  let s = '';
+  for(let i=0;i<n;i++){
+    const sx = x + i*w, sy = y - (i+1)*h;
+    const col = (hiIdx===i) ? C.goldbright : C.cream;
+    s += '<rect x="'+sx+'" y="'+sy+'" width="'+(n-i)*w+'" height="'+h+'" fill="'+col+'" stroke="'+OL+'" stroke-width="1.8"/>'
+      +'<rect x="'+(sx+2)+'" y="'+(sy+2)+'" width="'+(w-4)+'" height="2" rx="1" fill="#fff" opacity=".7"/>';
+    if(labels) s += '<text x="'+(sx+w/2)+'" y="'+(sy+h-4)+'" text-anchor="middle" font-size="9" font-weight="800" fill="'+C.sub+'">'+(i+1)+'</text>';
+  }
+  return s;
+}
+/* 작은 가게(차양 줄무늬) — (x,y)=땅에 닿는 왼쪽, 폭 w */
+function stall(x,y,w){
+  w = w || 40;
+  let stripes = '';
+  for(let i=0;i<5;i++) stripes += '<rect x="'+(x+i*w/5)+'" y="'+(y-52)+'" width="'+(w/5)+'" height="12" fill="'+(i%2?'#fff':C.red)+'"/>';
+  return '<rect x="'+(x+3)+'" y="'+(y-40)+'" width="'+(w-6)+'" height="40" fill="'+C.cream+'" stroke="'+OL+'" stroke-width="2"/>'
+    +'<rect x="'+(x+3)+'" y="'+(y-22)+'" width="'+(w-6)+'" height="8" fill="'+C.soil+'" stroke="'+OL+'" stroke-width="1.6"/>'
+    +stripes+'<rect x="'+x+'" y="'+(y-52)+'" width="'+w+'" height="12" fill="none" stroke="'+OL+'" stroke-width="2"/>'
+    +'<path d="M '+x+' '+(y-40)+' q '+(w/10)+' 5 '+(w/5)+' 0 q '+(w/10)+' 5 '+(w/5)+' 0 q '+(w/10)+' 5 '+(w/5)+' 0 q '+(w/10)+' 5 '+(w/5)+' 0 q '+(w/10)+' 5 '+(w/5)+' 0" fill="'+C.red+'" stroke="'+OL+'" stroke-width="1.6"/>';
+}
+/* 눈금 막대(탤리 막대) — 세로 나무 막대에 가로 눈금 n개. (x,y)=바닥 중심, h 높이 */
+function tallyStick(x,y,h,n){
+  let s = '<rect x="'+(x-5)+'" y="'+(y-h)+'" width="10" height="'+h+'" rx="4" fill="'+C.soil+'" stroke="'+OL+'" stroke-width="2"/>'
+    +'<rect x="'+(x+1)+'" y="'+(y-h+3)+'" width="2.4" height="'+(h-6)+'" rx="1.2" fill="'+C.soil2+'" opacity=".6"/>';
+  for(let i=0;i<n;i++){ const ty = y - h + 10 + i*((h-18)/Math.max(1,n-1 || 1)); s += '<line x1="'+(x-7)+'" y1="'+ty.toFixed(1)+'" x2="'+(x+7)+'" y2="'+ty.toFixed(1)+'" stroke="'+OL+'" stroke-width="2.4" stroke-linecap="round"/>'; }
+  return s;
+}
+/* 탤리 표시 — n개(5마다 비스듬한 묶음). (x,y)=왼쪽 아래, h 높이 */
+function tallyMarks(x,y,n,h,col){
+  h = h || 26; col = col || C.ink;
+  let s = '', cx = x;
+  for(let i=0;i<n;i++){
+    const inGroup = i % 5;
+    if(inGroup === 4){
+      s += '<line x1="'+(cx-34)+'" y1="'+(y-4)+'" x2="'+(cx+2)+'" y2="'+(y-h+4)+'" stroke="'+C.red+'" stroke-width="3" stroke-linecap="round"/>';
+      cx += 14;
+    } else {
+      s += '<line x1="'+cx+'" y1="'+y+'" x2="'+cx+'" y2="'+(y-h)+'" stroke="'+col+'" stroke-width="3.2" stroke-linecap="round"/>';
+      cx += 9;
+    }
+  }
+  return s;
+}
+/* 강조 고리 */
+function ring(x,y,r,col){ return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="none" stroke="'+(col||C.gold)+'" stroke-width="3"/>'; }
+
+module.exports = { real, water, stepStone, hop, stairs, stall, tallyStick, tallyMarks, ring, C, svg, stick, sheep, sheep2, pebble, pouch2, fence, meadow, flower, sunDisc, moonDisc, cloud, star4, bang, rope, puff, numi, pouch, arrow, paper, bubble, txt, ground,
   king, sage, greek, scholar, wig, boy, girl, shepherd, scribe, merchant, astronomer,
   gaussBoy, gauss, recorde, goldbach, oughtred, euclid, ptolemy1, alkhwarizmi, liuhui, wallis, descartes, pythagoras, hippasus, napier, euler, leibniz, newton, fermat, viete, alwafa, archimedes, brahmagupta };
