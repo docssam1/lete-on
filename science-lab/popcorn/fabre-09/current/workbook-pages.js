@@ -1,4 +1,4 @@
-import { photo } from './workbook-photos.js?v=1';
+import { photo } from './workbook-photos.js?v=2';
 // Student material is authored separately from teacher explanations.
 // Only explicitly supplied learner text is inserted into writing spaces.
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -103,16 +103,17 @@ export function renderStudentPages(record = {}, { blank = false } = {}) {
     const missing = completed.has(id) && !text(entry.brightness) && !text(entry.reason);
     return `<div class="wb-result-space">${missing ? '<span class="wb-record-status">관찰함 · 내용 미기록</span>' : ''}${writing(value, { lines: 2, label: `${label}에서 본 밝기`, page, narrow: true })}</div>`;
   }
-  const page = (number, title, deck, body, extraClass = '') => `<section class="workbook-page ${extraClass}" data-page="${number}" aria-labelledby="wb-student-${number}-title"><header class="wb-page-head"><p class="wb-kicker">GFIELD SCIENCE LAB · 전류 탐험</p><h2 id="wb-student-${number}-title">${title}</h2><p class="wb-deck">${deck}</p></header><div class="wb-page-body">${body}</div><footer class="wb-page-foot"><span>GFIELD SCIENCE LAB · ${blank ? '학생용' : '내 기록'}</span><span>${number}</span></footer></section>`;
+  const page = (number, title, deck, body, extraClass = '') => `<section class="workbook-page ${extraClass}" data-page="${number}" aria-labelledby="wb-student-${number}-title">${number === 1 ? '<header class="wb-cover-masthead"><div class="wb-cover-brand">GFIELD <span>SCIENCE LAB</span></div><p>전류 탐험 <strong><span class="wb-unit-word">UNIT</span> 03</strong></p></header>' : `<header class="wb-page-head"><p class="wb-kicker">GFIELD SCIENCE LAB · 전류 탐험 <span class="wb-page-index" aria-hidden="true">${String(number).padStart(2, '0')}<small>쪽</small></span></p><h2 id="wb-student-${number}-title">${title}</h2><p class="wb-deck">${deck}</p></header>`}<div class="wb-page-body">${body}</div><footer class="wb-page-foot"><span>GFIELD SCIENCE LAB · ${blank ? '학생용' : '내 기록'}</span><span>${number}</span></footer></section>`;
   const checked = value => `<span class="wb-square" aria-hidden="true">${value ? '✓' : ''}</span>`;
   const practice = record.practice === 'real' ? 'real' : record.practice === 'screen' ? 'screen' : '';
   const checks = Array.isArray(practice === 'real' ? record.checks : record.screenChecks) ? (practice === 'real' ? record.checks : record.screenChecks) : [];
   const pages = [
     page(1, '2단 밝기 스탠드', '내 손으로 만들고, 밝기가 달라지는 까닭을 찾아요.', `
-      <div class="wb-cover-scene">${photo('stand-off', '완성한 스탠드 · 전구의 창과 스위치를 찾아보세요.', 'wb-cover-photo')}<div class="wb-cover-mission"><span class="wb-unit-mark">UNIT 3</span><h3>오늘의 탐구</h3><p>전지의 직렬·병렬 연결을 구별해요.</p><p>스탠드의 밝기 조절을 설명해요.</p><div class="wb-mini-route">예상 → 만들기 → 관찰 → 설명</div></div></div>
-      <div class="wb-method"><span>오늘의 활동</span><span>${checked(practice === 'screen')} 화면으로 연습</span><span>${checked(practice === 'real')} 실물 교구로 실험</span></div>
-      <section class="wb-section wb-predict"><h3>전지 두 개면 언제나 더 밝을까요?</h3><div class="wb-choice-line"><span>□ 직렬이 더 밝음</span><span>□ 병렬이 더 밝음</span><span>□ 비슷함</span><span>□ 모르겠음</span></div>${writing(text(record.prediction), { lines: 1, label: '내가 고른 예상', page: 1 })}<h4>이렇게 예상한 까닭</h4>${writing(notes.predictionReason, { lines: 2, label: '나의 예상과 까닭', page: 1 })}</section>
-      <section class="wb-section wb-safety"><h3>만들기 전, 안전 약속</h3><ul class="wb-safety-list"><li>${checked(checks.includes(0))} 연결·조립 중에는 전지를 빼 두어요.</li><li>${checked(checks.includes(1))} 마른 손과 책상에서 알맞은 1.5V 전지를 써요.</li><li>${checked(checks.includes(2))} 보호자와 연결 및 전구의 3V 규격을 확인해요.</li></ul><p class="wb-small">뜨거우면 멈추고 만지지 않은 채 어른에게 알려요. 전지 제거는 보호자가 확인해요.</p></section>
+      <div class="wb-cover-hero"><div class="wb-cover-copy"><p class="wb-cover-eyebrow">만들어 보는 과학</p><h2 class="wb-cover-title" id="wb-student-1-title"><span>2단 밝기</span> <span>스탠드</span></h2><p class="wb-cover-question">전지의 연결을 바꾸면,<br>빛은 어떻게 달라질까요?</p><p class="wb-cover-deck">내 손으로 만들고,<br>밝기가 달라지는 까닭을 찾아요.</p></div>${photo('stand-off', '별 모양 창 아래에서 스위치를 찾아요.', 'wb-cover-photo')}</div>
+      <div class="wb-cover-goals"><span>전지의 직렬·병렬 연결을 구별해요.</span><span>스탠드의 밝기 조절을 설명해요.</span></div>
+      <div class="wb-cover-start"><section class="wb-section wb-predict"><h3><span class="wb-activity-number">01</span> 먼저 예상해요</h3><p class="wb-start-question">전지 두 개면 언제나 더 밝을까요?</p><div class="wb-choice-line"><span>□ 직렬이 더 밝음</span><span>□ 병렬이 더 밝음</span><span>□ 비슷함</span><span>□ 모르겠음</span></div>${writing(text(record.prediction), { lines: 1, label: '내가 고른 예상', page: 1, narrow: true })}<h4>이렇게 예상한 까닭</h4>${writing(notes.predictionReason, { lines: 2, label: '나의 예상과 까닭', page: 1, narrow: true })}</section>
+      <section class="wb-section wb-safety"><h3><span class="wb-activity-number">02</span> 만들기 전, 안전 약속</h3><ul class="wb-safety-list"><li>${checked(checks.includes(0))} 연결·조립 중에는 전지를 빼 두어요.</li><li>${checked(checks.includes(1))} 마른 손과 책상에서 알맞은 1.5V 전지를 써요.</li><li>${checked(checks.includes(2))} 보호자와 연결 및 전구의 3V 규격을 확인해요.</li></ul><p class="wb-small">뜨거우면 멈추고 만지지 않은 채 어른에게 알려요. 전지 제거는 보호자가 확인해요.</p></section></div>
+      <div class="wb-method"><span>오늘의 활동</span><span>${checked(practice === 'screen')} 화면으로 연습</span><span>${checked(practice === 'real')} 실물 교구로 실험</span></div><p class="wb-cover-route">예상 → 연결 비교 → 만들기 → 관찰 → 설명</p>
       <nav class="wb-page-links" aria-label="1쪽 실험 연결">${step(1, '안전 확인하며 시작하기')}${step(2, '내 예상 남기기')}</nav>
     `, 'wb-opening-page'),
     page(2, '연결을 바꾸어 비교해요', '같은 전구 · 같은 종류와 상태의 전지. 연결 방법만 바꾸어요.', `

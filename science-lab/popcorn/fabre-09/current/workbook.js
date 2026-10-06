@@ -1,6 +1,6 @@
-import { renderStudentPages } from './workbook-pages.js?v=2';
+import { renderStudentPages } from './workbook-pages.js?v=3';
 
-import { experimentPhotos } from './workbook-photos.js?v=1';
+import { experimentPhotos } from './workbook-photos.js?v=2';
 
 let activeCleanup = null;
 let activePrintCleanup = null;
@@ -63,6 +63,13 @@ function attachViewer(host, {
       if (button.dataset.workbookPage === currentPage) button.setAttribute('aria-current', 'page');
       else button.removeAttribute('aria-current');
     });
+    const selected = tabs.querySelector('[aria-current="page"]');
+    if (selected) {
+      const rail = tabs.getBoundingClientRect();
+      const item = selected.getBoundingClientRect();
+      if (item.left < rail.left) tabs.scrollLeft -= rail.left - item.left;
+      else if (item.right > rail.right) tabs.scrollLeft += item.right - rail.right;
+    }
   }
   function goToPage(id, focus = false) {
     const pages = [...pagesHost.querySelectorAll('.workbook-page')];
@@ -81,7 +88,7 @@ function attachViewer(host, {
     host.querySelectorAll('[data-workbook-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.workbookMode === mode)));
     try {
       if (mode === 'teacher') {
-        teacherModule ||= import('./workbook-teacher.js?v=2');
+        teacherModule ||= import('./workbook-teacher.js?v=3');
         const module = await teacherModule;
         if (disposed || version !== renderVersion) return;
         markup = module.renderTeacherPages();

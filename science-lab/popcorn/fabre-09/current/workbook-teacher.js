@@ -1,4 +1,4 @@
-import { photo } from './workbook-photos.js?v=1';
+import { photo } from './workbook-photos.js?v=2';
 // Separate teacher material. This renderer never reads or receives learner records.
 const link = (url, label) =>
   `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
