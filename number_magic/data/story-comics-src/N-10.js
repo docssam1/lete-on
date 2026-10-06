@@ -1,43 +1,34 @@
-/* N-10 — 넘어진 곳 통계의 함정 (자료 분류와 표) */
+/* N-10 — 이야기와 자료 정리(2026-10-06 다시 그림): 섞인 과일 → 종류별로 나누기 → 세어 그림그래프 → 비교.
+   유닛 rule "나눠 담고, 세고, 비교해요"를 그대로 따른다. 과일은 실사 소품. 그림 속 글자는 숫자뿐. */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
-  const bar=(x,h,col)=>'<rect x="'+x+'" y="'+(112-h)+'" width="26" height="'+h+'" fill="'+col+'" stroke="'+C.ink+'" stroke-width="2"/>';
-  const clock=(x,y,r)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#fff" stroke="'+C.ink+'" stroke-width="2.4"/>'
-    +'<line x1="'+x+'" y1="'+y+'" x2="'+x+'" y2="'+(y-r*0.6)+'" stroke="'+C.ink+'" stroke-width="2"/>'
-    +'<line x1="'+x+'" y1="'+y+'" x2="'+(x+r*0.4)+'" y2="'+y+'" stroke="'+C.ink+'" stroke-width="2"/>';
+  const {C,svg,real,girl,txt,ring}=H;
+  const mat='<rect x="10" y="60" width="180" height="70" rx="10" fill="'+C.cream+'" stroke="'+C.gold+'" stroke-width="2.4"/>';
+  const KINDS=[['apple',5],['banana',3],['strawberry',4]];
+  const grid=(counts)=>{ let s='<line x1="16" y1="124" x2="190" y2="124" stroke="'+C.ink+'" stroke-width="2"/>';
+    KINDS.forEach(([k],ci)=>{ const x=44+ci*56;
+      for(let j=0;j<counts[ci];j++) s+=real(k,x,120-j*20,18);
+      if(counts.show) s+=txt(x+20,120-(counts[ci]-1)*20-4,12,C.red,String(counts[ci])); });
+    return s; };
   return { panels:[
-    { art: svg(
-        ground(112)
-        +bar(30,70,C.blue)+txt(43,36,14,C.ink,'7')
-        +bar(90,40,C.gold)+txt(103,66,14,C.ink,'4')
-        +bar(150,25,C.purple)+txt(163,81,14,C.ink,'2')),
-      text:{ ko:'우리 반에서 넘어진 곳을 세어 보니 교실이 제일 많았어요.',
-             en:'We counted where classmates tripped, and the classroom came out on top.',
-             zh:'统计了同学们摔倒的地点，教室最多。' } },
-    { art: svg(
-        ground(112)
-        +bar(30,70,C.red)
-        +'<polygon points="43,10 54,30 32,30" fill="'+C.red+'"/>'+txt(43,27,11,'#fff','!')
-        +bar(90,40,C.gold)+bar(150,25,C.purple)
-        +txt(43,58,16,C.ink,'?')),
-      text:{ ko:'그러면 교실이 제일 위험한 곳일까요?',
-             en:'Does that mean the classroom is the most dangerous place?',
-             zh:'那教室就是最危险的地方吗？' } },
-    { art: svg(
-        ground(112)
-        +bar(30,70,C.ok)
-        +clock(130,50,26)
-        +arrow(64,55,100,50,C.gold,3)),
-      text:{ ko:'아니에요, 교실에서 가장 오래 있었기 때문이에요. 얼마나 자주 있었는지도 함께 봐야 해요.',
-             en:'No — it\'s because we spend the most time there. You have to look at how often you were there too.',
-             zh:'不是，因为在教室待的时间最长。除了发生次数，还要看在那儿待了多久。' } },
-    { art: svg(
-        pouch(55,85,5)
-        +pouch(145,85,3)
-        +txt(100,88,24,C.gold,'>')),
-      text:{ ko:'어른들의 통계도 똑같은 함정에 빠져요. 나눠 담고 셀 땐, 시간도 함께 생각해야 해요!',
-             en:'Even grown-up statistics fall into the same trap. When you sort and count, think about time too!',
-             zh:'大人的统计也会掉进同样的陷阱。分类数数的时候，也要想想时间才行！' } },
+    { art: svg(mat+girl(178,48,0.55)
+        +[['apple',30,88],['banana',54,80],['strawberry',76,96],['apple',98,84],['strawberry',122,90],['apple',144,100],['banana',40,118],['apple',66,122],['strawberry',96,120],['banana',124,124],['apple',150,124],['strawberry',172,112]]
+          .map(([k,x,y])=>real(k,x,y,20)).join('')),
+      text:{ ko:'과일이 뒤섞여 있어요. 사과, 바나나, 딸기가 각각 몇 개인지 한눈에 알 수 있을까요?',
+             en:'The fruit is all mixed up. Can you tell at a glance how many apples, bananas and strawberries there are?',
+             zh:'水果混在一起。能一眼看出苹果、香蕉、草莓各有几个吗？' } },
+    { art: svg('<rect x="10" y="24" width="180" height="32" rx="8" fill="'+C.cream+'" stroke="'+C.gold+'" stroke-width="2"/><rect x="10" y="62" width="180" height="32" rx="8" fill="'+C.cream+'" stroke="'+C.gold+'" stroke-width="2"/><rect x="10" y="100" width="180" height="32" rx="8" fill="'+C.cream+'" stroke="'+C.gold+'" stroke-width="2"/>'
+        +[0,1,2,3,4].map(i=>real('apple',30+i*26,52,22)).join('')+[0,1,2].map(i=>real('banana',30+i*26,90,22)).join('')+[0,1,2,3].map(i=>real('strawberry',30+i*26,128,22)).join('')),
+      text:{ ko:'같은 것끼리 나눠 담아요. 사과는 사과끼리, 바나나는 바나나끼리, 딸기는 딸기끼리!',
+             en:'Sort them into groups: apples with apples, bananas with bananas, strawberries with strawberries!',
+             zh:'同类放在一起：苹果和苹果，香蕉和香蕉，草莓和草莓！' } },
+    { art: svg(grid(Object.assign([5,3,4],{show:true}))),
+      text:{ ko:'종류마다 위로 하나씩 쌓아 그림그래프를 만들어요. 사과 5, 바나나 3, 딸기 4.',
+             en:'Stack each kind upward, one by one, to make a picture graph: 5 apples, 3 bananas, 4 strawberries.',
+             zh:'每种水果往上一个一个摞，做成图画统计图：苹果5个，香蕉3个，草莓4个。' } },
+    { art: svg(grid([5,3,4])+'<rect x="28" y="18" width="32" height="108" rx="10" fill="none" stroke="'+C.gold+'" stroke-width="3"/>'+txt(74,30,14,C.gold,'5')),
+      text:{ ko:'가장 높이 쌓인 것은 사과예요. 나눠 담고, 세고, 비교하면 어느 것이 많은지 바로 보여요!',
+             en:'The tallest stack is the apples. Sort, count and compare, and you can see right away which there is most of!',
+             zh:'摞得最高的是苹果。分一分、数一数、比一比，就能马上看出哪种最多！' } },
   ]};
 };
