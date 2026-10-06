@@ -871,7 +871,7 @@ function fractionGridMarkup(visual) {
   const rows = visual.rows;
   const columns = visual.columns;
   const selected = new Set(visual.shadedIndices || Array.from({ length: visual.shaded || 0 }, (_, index) => index));
-  return `<div class="b3-fraction-grid" style="--rows:${rows};--columns:${columns}" role="img" aria-label="같은 크기 ${rows * columns}칸 중 ${selected.size}칸을 색칠한 그림">${Array.from({ length: rows * columns }, (_, index) => `<i class="${selected.has(index) ? "shade" : ""}"></i>`).join("")}</div>`;
+  return `<div class="b3-fraction-grid" style="--rows:${rows};--columns:${columns}${visual.square ? ";aspect-ratio:1" : ""}" role="img" aria-label="같은 크기 ${rows * columns}칸 중 ${selected.size}칸을 색칠한 그림">${Array.from({ length: rows * columns }, (_, index) => `<i class="${selected.has(index) ? "shade" : ""}"></i>`).join("")}</div>`;
 }
 
 function distanceChainSourceMarkup(visual) {
