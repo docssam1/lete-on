@@ -50,6 +50,8 @@ a{color:inherit}
 .viewport-label{position:absolute;top:17px;left:18px;z-index:1;background:#fffc;font-size:13px;font-weight:800;border-radius:7px;padding:5px 10px;pointer-events:none}
 .scene-tools{display:flex;gap:8px;padding-top:12px;flex-wrap:wrap}
 .scene-tools button{font-size:13px;padding:7px 11px;min-height:36px}
+.assembly-video{display:inline-flex;align-items:center;min-height:44px;padding:9px 13px;border:1px solid #b48125;border-radius:10px;background:#fff1d3;color:#634215;font-size:15px;font-weight:800;text-decoration:none}
+.assembly-video:hover{background:#ffe4ad}
 .text-panel{padding:0 2px 8px;min-width:0}
 .instruction{font-size:20px;line-height:1.75;margin:0 0 18px}
 .instruction strong{font-weight:850;color:#194c44}
