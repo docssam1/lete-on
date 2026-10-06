@@ -12,5 +12,5 @@ export const experimentPhotos = {
 export function photo(id, caption = '', className = '') {
   const item = experimentPhotos[id];
   if (!item) throw new Error('Unknown experiment photo');
-  return `<figure class="wb-photo ${className}"><button type="button" class="wb-photo-open" data-workbook-photo="${id}" aria-label="${item.alt} 사진 크게 보기"><img src="${item.src}" alt="${item.alt}" decoding="async"><span class="wb-photo-hint" aria-hidden="true">사진 크게 보기 ↗</span></button>${caption ? `<figcaption>${caption}</figcaption>` : ''}</figure>`;
+  return `<figure class="wb-photo ${className}"><button type="button" class="wb-photo-open" data-workbook-photo="${id}" aria-label="${item.alt} 사진 크게 보기"><img src="${item.src}" alt="${item.alt}" decoding="async"></button><figcaption>${caption}<span class="wb-photo-hint" aria-hidden="true">↗ 확대</span></figcaption></figure>`;
 }
