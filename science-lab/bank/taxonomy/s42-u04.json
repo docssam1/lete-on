@@ -1,0 +1,88 @@
+{
+ "unit": "s42-u04",
+ "curriculum": "2022 개정",
+ "grade": 4,
+ "semester": 2,
+ "title": "화산과 지진",
+ "area": "지구",
+ "standards": [],
+ "standardsNote": "성취기준 문장은 교육부 고시 제2022-33호 [별책 9] 과학과 원문과 아직 대조하지 못했다. 코드만 두고 text는 null·verified:false로 남긴다(추측 금지). 원문을 확인하면 text를 채우고 verified를 true로 바꾼다.",
+ "elements": [
+  {
+   "id": "E1",
+   "name": "화산 활동과 암석"
+  },
+  {
+   "id": "E2",
+   "name": "지층의 변화와 지진"
+  },
+  {
+   "id": "E3",
+   "name": "지진의 세기와 대처"
+  }
+ ],
+ "types": [
+  {
+   "id": "T01",
+   "element": "E1",
+   "name": "화산과 화산 분출물",
+   "desc": "화산과 화산 분출물을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 3,
+   "source": []
+  },
+  {
+   "id": "T02",
+   "element": "E1",
+   "name": "화강암과 현무암",
+   "desc": "화강암과 현무암을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 3,
+   "source": []
+  },
+  {
+   "id": "T03",
+   "element": "E2",
+   "name": "지층의 휘어짐과 끊어짐",
+   "desc": "지층의 휘어짐과 끊어짐을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 4,
+   "source": []
+  },
+  {
+   "id": "T04",
+   "element": "E2",
+   "name": "지진이 일어나는 까닭",
+   "desc": "지진이 일어나는 까닭을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 2,
+   "source": []
+  },
+  {
+   "id": "T05",
+   "element": "E3",
+   "name": "지진의 세기와 지진대",
+   "desc": "지진의 세기와 지진대을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 4,
+   "source": []
+  },
+  {
+   "id": "T06",
+   "element": "E3",
+   "name": "지진 피해 줄이기와 대처",
+   "desc": "지진 피해 줄이기와 대처을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 4,
+   "source": []
+  }
+ ],
+ "formats": [
+  "선택형",
+  "단답형",
+  "서술형"
+ ],
+ "formatCounts": {},
+ "sourceTotal": 0,
+ "note": "data/units/s42-u04.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. 이 단원은 새로 쓴 창작 연습이며 원문 단원평가 대응이나 DB 수록을 주장하지 않는다."
+}

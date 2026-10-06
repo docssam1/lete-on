@@ -2,6 +2,7 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,wig}=H;
+  const {liuhui}=H;
   const rods=(n,dark)=> (dark?'<defs><filter id="nm-dark-counting-rod" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".05 .05 .05 0 0 .05 .05 .05 0 0 .05 .05 .05 0 0 0 0 0 1 0"/></filter></defs>':'')+
     Array.from({length:n},(_,i)=>'<image href="assets/images/concepts/counting-rod.png" x="'+(32+i*20)+'" y="33" width="43" height="74"'+(dark?' filter="url(#nm-dark-counting-rod)"':'')+'/>').join('');
   return { panels:[
@@ -20,7 +21,7 @@ module.exports=function(H){
               en:'Black rods represent negative numbers. These two black rods represent −2. Both colour and sign distinguish positive from negative.',
               zh:'黑色算筹表示负数。这里两根黑筹表示−2。颜色和正负号都能帮助我们区分正数与负数。' } },
     { art: svg(
-        wig(52,78,1.3)
+        liuhui(52,78,1.3)
         +'<ellipse cx="134" cy="52" rx="44" ry="26" fill="#fff" stroke="#1A2233" stroke-width="2"/>'
         +'<path d="M 104 70 L 92 84 L 112 74 Z" fill="#fff" stroke="#1A2233" stroke-width="2"/>'
         +'<text x="126" y="60" text-anchor="middle" font-size="20" font-weight="800" fill="#D9534F">−5</text>'

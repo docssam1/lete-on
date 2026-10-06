@@ -12,7 +12,7 @@ window.NM_UNITS['N-01'] = {
   subtitle:{ ko:'톡톡 짚으며 하나, 둘, 셋!', en:'Tap and count — one, two, three!', zh:'点一点数一数——一、二、三！' },
   icon:'🐤',
 
-  practice:{ generator:'nl1_count', level:'practice', count:4, params:{ mode:'count' },
+  practice:{ generator:'g13_n1', level:'practice', count:4, params:{ modes:['count','family','rep','shapes'] },
     intro:{ ko:'누미랑 같이 세어 보자! 톡톡 누르면서 하나, 둘, 셋!',
       en:"Let's count with Numi! Tap along — one, two, three!",
       zh:'和努米一起数数吧！点一点——一、二、三！' } },
@@ -41,7 +41,7 @@ window.NM_UNITS['N-01'] = {
       zh:'一个一个点！最后的数就是总数！' }
   },
 
-  lab:{ generator:'nl1_count', level:'main', count:4, params:{ mode:'make' },
+  lab:{ generator:'g13_n1', level:'main', count:4, params:{ modes:['make','grid','rowpaint','repFill'] },
     intro:{ ko:'이번엔 반대로! 누미가 말한 수만큼 톡톡 만들어 봐.',
       en:'Now the other way — tap to make as many as Numi says!',
       zh:'现在反过来——按努米说的数点出来！' } },

@@ -50,7 +50,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
 
   // 1. 장 첫 쪽
   out.push(page(`
-    ${live && media?.engage ? `${web(`<div class="bk-video" data-src="${media.engage.src}" data-mp4="${media.engage.mp4 || ''}" data-full="${media.engage.full}" data-page="${media.engage.page}"><img src="${media.engage.poster || ''}" alt=""><button type="button" class="bk-play">▶ 실제 영상 보기</button><small>${esc(media.engage.credit)}</small></div>`)}<div class="bk-art wide bk-print">${art.opener}</div>` : `<div class="bk-art wide">${art.opener}</div>`}
+    ${live && media?.engage ? `${web(`<div class="bk-video"${media.engage.tag ? ` data-tag="${esc(media.engage.tag)}"` : ''} data-src="${media.engage.src}" data-mp4="${media.engage.mp4 || ''}" data-full="${media.engage.full}" data-page="${media.engage.page}"><img src="${media.engage.poster || ''}" alt=""><button type="button" class="bk-play">▶ ${esc(media.engage.label || '실제 영상 보기')}</button><small>${esc(media.engage.credit)}</small></div>`)}<div class="bk-art wide bk-print">${art.opener}</div>` : `<div class="bk-art wide">${art.opener}</div>`}
     ${ch.intro.map((p) => `<p class="bk-p">${esc(p)}</p>`).join('')}
     <div class="bk-box think"><h4>미리 생각하기</h4><ol>${ch.think.map((t) => `<li>${esc(t.q)}${ans(t.a, 2)}</li>`).join('')}</ol></div>
     <div class="bk-road"><div class="bk-road-steps">${['가설', '설계', '실험', '결과·결론', '개념 정리', '창의·토의', '영재성', '확인 문제'].map((t, i) => `<span><b>${i + 1}</b>${t}</span>`).join('')}</div>${qr(ch.qr.scene, '3D로 먼저 보기', 'scene')}</div>`, { cls: 'first', band: `
@@ -71,7 +71,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
   const stepCard = (s, i) => `<div class="bk-stepcard"><div class="bk-art">${art[s.art]}${pop('lab', '3D 실험실에서 해 보기')}</div><div><span class="bk-n">${i + 1}</span><p>${esc(s.text)}</p><p class="bk-tip">${esc(s.tip)}</p></div></div>`;
   out.push(page(`${banner('탐구력 기르기', 'lab')}${step(3, '실험하기')}${ch.steps.slice(0, 3).map(stepCard).join('')}`, { say: 'step' }));
   out.push(page(`${ch.steps.slice(3).map((s, i) => stepCard(s, i + 3)).join('')}
-    ${media?.explore ? web(`<div class="bk-video-compare"><b>실제 용암과 비교해요</b>${videoPop(media.explore, '용암이 흐르고 굳는 영상')}</div>`) : ''}
+    ${media?.explore ? web(`<div class="bk-video-compare"><b>${esc(media.compareTitle || '실제 용암과 비교해요')}</b>${videoPop(media.explore, media.compareLabel || '용암이 흐르고 굳는 영상')}</div>`) : ''}
     <div class="bk-box q"><h4>Q. 이런 경우는?</h4><p>${esc(ch.wonder.q)}</p>${ans(ch.wonder.a, 2)}</div>
     <div class="bk-box caution"><h4>주의하세요!</h4><ul>${ch.caution.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>
     <div class="bk-qrs">${qr(ch.qr.lab, '3D 실험실에서 해 보기', 'lab')}${qr(ch.qr.kit, '집에서 하는 준비물')}</div>`, { say: 'lab' }));

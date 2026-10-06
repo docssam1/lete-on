@@ -898,6 +898,12 @@ function examAnalyze(){
   let checked=0,correct=0,manual=0;
   const states={};
   for(let n=1;n<=exam.questions;n++){
+    const token=localStorage.getItem(`hs-${examKey}-${n}`);
+    if(token==='o'||token==='x'){
+      checked++;states[n]=token;
+      if(token==='o')correct++;
+      continue;
+    }
     const isOx=exam.oxQuestions&&exam.oxQuestions.includes(n);
     const fields=exam.answerFields&&exam.answerFields[n];
     if(isOx){
@@ -978,7 +984,7 @@ function examErrorTable(analysis){
   const rows=wrongNums.map(n=>{
     const fields=exam.answerFields&&exam.answerFields[n];
     const preview=activeReadOnlyPreview();
-    const mine=preview?(preview.states[n]==='o'?'O':'X'):fields?fields.map((f,i)=>localStorage.getItem(`hs-${examKey}-${n}-${i}`)||'').join(' / '):(localStorage.getItem(`hs-${examKey}-${n}`)||'');
+    const mine=preview?(preview.states[n]==='o'?'O':'X'):fields?fields.map((f,i)=>localStorage.getItem(`hs-${examKey}-${n}-${i}`)||'').join(' / '):({o:'맞음 체크',x:'체크 안 함'}[localStorage.getItem(`hs-${examKey}-${n}`)]||localStorage.getItem(`hs-${examKey}-${n}`)||'');
     const note=exam.answerNotes&&exam.answerNotes[n];
     const img=exam.answerImages&&exam.answerImages[n];
     const noteHtml=note?`<details><summary>풀이 보기</summary><pre style="white-space:pre-wrap;margin:6px 0 0;font:700 12px/1.6 Pretendard,sans-serif">${note}</pre></details>`:'';
@@ -999,7 +1005,7 @@ function saveHistoryExam(list){localStorage.setItem(historyKeyExam(),JSON.string
 async function recordSessionExam(){
   if(!student){alert('먼저 로그인해 주세요.');return}
   const analysis=examAnalyze();
-  if(analysis.checked<analysis.questions){alert(`40문항을 모두 입력한 뒤 저장해 주세요. 현재 ${analysis.checked}문항이 입력되었습니다.`);return}
+  if(analysis.checked<analysis.questions){alert(`40문항을 모두 채점한 뒤 저장해 주세요. 시험 화면에서 맞은 문제를 체크하고 [채점하기]를 눌러 주세요. (현재 ${analysis.checked}문항 채점됨)`);return}
   const states={};
   Object.keys(analysis.states).forEach(n=>{
     const s=analysis.states[n];
@@ -1069,7 +1075,7 @@ function renderExam(){
   const body=byId('reportBody');
   if(analysis.checked===0){
     body.innerHTML=`<section class="panel empty">
-      <p><b>아직 채점된 문항이 없습니다.</b><br>exam.html에서 답안을 입력한 뒤 다시 확인해 주세요.</p>
+      <p><b>아직 채점된 문항이 없습니다.</b><br>exam.html에서 맞은 문제를 체크하고 채점한 뒤 다시 확인해 주세요.</p>
       <p><a href="./exam.html?exam=${examKey}">→ exam.html에서 채점하러 가기</a></p>
     </section>${examHistoryPanel(analysis)}`;
     return;

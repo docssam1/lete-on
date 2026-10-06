@@ -2,6 +2,7 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,merchant,scholar}=H;
+  const {brahmagupta}=H;
   return { panels:[
     { art: svg(
         ground(115)
@@ -18,7 +19,7 @@ module.exports=function(H){
         + txt(100,50,22,C.ink,'628')
         + txt(70,95,26,C.ok,'+')
         + txt(130,95,26,C.red,'−')
-        + scholar(165,100,0.8)),
+        + brahmagupta(165,100,0.8)),
       text: { ko:'서기 628년 무렵 인도 수학자들도 재산은 +, 빚은 −로 적고 계산 규칙까지 정리했어요.',
               en:'Around 628 CE, Indian mathematicians wrote wealth as + and debt as −, and worked out the rules for combining them.',
               zh:'大约公元628年，印度数学家也把财产记作+、债务记作−，并整理出运算规则。' } },

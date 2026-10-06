@@ -1,0 +1,2015 @@
+{
+  "version": "2026-10-03_최신사용자흐름_통합설계",
+  "date": "2026-10-03",
+  "status": "reviewable_design_pending_user_implementation_approval",
+  "primary_intent": "5세 기준 로드맵의 확장과 가족이 선택한 개인 기준 계획의 지속 추적",
+  "decision_source": "60_최신사용자방향_개인기준로드맵_v3.md",
+  "detail_catalog": "74_전체갈림길_설계데이터_v4.json",
+  "storage_policy": {
+    "final": "G",
+    "temporary": [
+      "E",
+      "G"
+    ],
+    "C_task_writes": false
+  },
+  "views": [
+    {
+      "id": "V01",
+      "label": "5세 기준부터7세까지 — 프리미어 선발을 고려하는 과정",
+      "source_sections": [
+        "S1",
+        "S2"
+      ],
+      "branch_ids": [
+        "B01",
+        "B07",
+        "B08",
+        "B23",
+        "B24",
+        "B25",
+        "B26",
+        "B27",
+        "B49",
+        "B81",
+        "B82",
+        "B83",
+        "B84",
+        "B85",
+        "B86",
+        "B87",
+        "B88"
+      ]
+    },
+    {
+      "id": "V02",
+      "label": "7세 이후 — 황소 초등 선택을 포함하는 과정",
+      "source_sections": [
+        "S2",
+        "S3"
+      ],
+      "branch_ids": [
+        "B28",
+        "B29",
+        "B30",
+        "B31",
+        "B32",
+        "B33",
+        "B34",
+        "B35",
+        "B44",
+        "B45",
+        "B46",
+        "B47",
+        "B48",
+        "B51",
+        "B52",
+        "B53",
+        "B54",
+        "B55",
+        "B56"
+      ]
+    },
+    {
+      "id": "V03",
+      "label": "목적별 로드맵",
+      "source_sections": [
+        "S3",
+        "S4"
+      ],
+      "branch_ids": [
+        "B36",
+        "B37",
+        "B38",
+        "B39",
+        "B40",
+        "B41",
+        "B42",
+        "B43",
+        "B57",
+        "B58",
+        "B59",
+        "B60",
+        "B61",
+        "B62",
+        "B63",
+        "B64",
+        "B65",
+        "B66",
+        "B67",
+        "B68",
+        "B69",
+        "B70",
+        "B71",
+        "B72",
+        "B73",
+        "B74",
+        "B75",
+        "B76",
+        "B77",
+        "B78",
+        "B79",
+        "B80"
+      ]
+    }
+  ],
+  "view_policy": {
+    "source_section_count": 4,
+    "display_group_count": 3,
+    "age_does_not_lock_progress_input": true,
+    "later_entry_joins_at_actual_position": true,
+    "unrecorded_past_is_not_fabricated": true,
+    "science_gifted_other_subjects_can_overlap_all_views": true,
+    "hwangso_nonparticipation_reaches_V03": "목적별 비교도 허용; 미선택만으로 중등 또는 특정 목표로 자동 이동하지 않음",
+    "original_month_axis_is_not_changed_to_match_view_boundary": true
+  },
+  "entry_fields": [
+    {
+      "id": "F01",
+      "label": "실제 학년·미취학 및 학년도",
+      "question_ids": [
+        "Q01",
+        "Q02"
+      ],
+      "use": "표 맥락과 기관 자격; 진도 허용 제한에는 사용 안 함",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F02",
+      "label": "출생 연월·현재 개월수·기준일·계산 정확도",
+      "question_ids": [
+        "Q01",
+        "Q02"
+      ],
+      "use": "5·6세 관찰 맥락과 실제 연령 표시; 능력/진도 가중치 없음",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F03",
+      "label": "평일/주말 직접 관리 가능 시간과 도움 형태",
+      "question_ids": [
+        "Q07",
+        "Q16",
+        "Q82"
+      ],
+      "use": "가정과 수업의 지원 조합",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F04",
+      "label": "아이의 독립 학습 가능 범위와 실제 시간",
+      "question_ids": [
+        "Q07",
+        "Q16",
+        "Q32"
+      ],
+      "use": "부모 관리 시간과 구분",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F05",
+      "label": "현재 수학학원 주당 횟수·회당 시간",
+      "question_ids": [
+        "Q07",
+        "Q38",
+        "Q56"
+      ],
+      "use": "현재 실제 일정",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F06",
+      "label": "고려하는 수학학원 주당 횟수·회당 시간·가능 요일",
+      "question_ids": [
+        "Q07",
+        "Q08",
+        "Q81"
+      ],
+      "use": "선택 후보의 시간 제약; 현재 기록과 구별",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F07",
+      "label": "과제·복습·이동 시간과 미확인 항목",
+      "question_ids": [
+        "Q07",
+        "Q46",
+        "Q88"
+      ],
+      "use": "중복 없는 실제 병행 시간 확인",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F08",
+      "label": "교과·사고력·연산의 복수 과정과 상세 현재 위치",
+      "question_ids": [
+        "Q10",
+        "Q11",
+        "Q12",
+        "Q13",
+        "Q14",
+        "Q15",
+        "Q16",
+        "Q20",
+        "Q21",
+        "Q25",
+        "Q29",
+        "Q84"
+      ],
+      "use": "세 축 독립 현재 기록",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F09",
+      "label": "학부모 희망·아이 의견·가까운 목표·우선순위",
+      "question_ids": [
+        "Q04",
+        "Q05",
+        "Q06"
+      ],
+      "use": "직접 확인한 선호; 시간만으로 목표 추정 안 함",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F10",
+      "label": "프리미어/필즈 선발을 고려하는지",
+      "question_ids": [
+        "Q38",
+        "Q39",
+        "Q40",
+        "Q42"
+      ],
+      "use": "7세까지 구간의 목표 사건; 실제 회차 날짜 별도",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F11",
+      "label": "황소 초2/초3/나중 고려/미선택/미정",
+      "question_ids": [
+        "Q43",
+        "Q44",
+        "Q45",
+        "Q46",
+        "Q47",
+        "Q48"
+      ],
+      "use": "동등한 주된 선택 경로",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F12",
+      "label": "과학·영재원·타 과목의 현재 계획과 유지할 일정",
+      "question_ids": [
+        "Q07",
+        "Q49",
+        "Q53",
+        "Q60",
+        "Q61",
+        "Q64",
+        "Q67"
+      ],
+      "use": "병행 계획; 타 과목 과정·실제 기록은 신규 확장 필드 필요",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    },
+    {
+      "id": "F13",
+      "label": "부모 보고·교사 관찰·풀이·진단 근거",
+      "question_ids": [
+        "Q03",
+        "Q18",
+        "Q85",
+        "Q87"
+      ],
+      "use": "보고/확인/충돌의 구분",
+      "initially_required": false,
+      "display_policy": "해당 흐름에서 필요한 값만 확인; 이미 입력한 값은 재질문하지 않음"
+    }
+  ],
+  "hwangso_choices": [
+    {
+      "id": "H_G2",
+      "label": "초2에 고려",
+      "branch_ids": [
+        "B29",
+        "B32",
+        "B33",
+        "B34",
+        "B35"
+      ],
+      "alternatives": [
+        "H_G3",
+        "H_NONE",
+        "H_UNDECIDED",
+        "H_LATER"
+      ]
+    },
+    {
+      "id": "H_G3",
+      "label": "초3에 고려",
+      "branch_ids": [
+        "B30",
+        "B31",
+        "B32",
+        "B33",
+        "B34",
+        "B35"
+      ],
+      "alternatives": [
+        "H_G2",
+        "H_NONE",
+        "H_UNDECIDED",
+        "H_LATER"
+      ]
+    },
+    {
+      "id": "H_NONE",
+      "label": "황소를 선택하지 않음",
+      "branch_ids": [
+        "B28",
+        "B09",
+        "B14",
+        "B19",
+        "B51",
+        "B44",
+        "B57",
+        "B65",
+        "B72"
+      ],
+      "alternatives": [
+        "H_G2",
+        "H_G3",
+        "H_UNDECIDED",
+        "H_LATER"
+      ],
+      "not_failure": true,
+      "explanation": "현재 초등 교과·심화 유지부터 실제 진도에 맞는 이후 경로까지 열려 있음; 황소 미선택은 중등진입 조건 아님"
+    },
+    {
+      "id": "H_UNDECIDED",
+      "label": "아직 결정하지 않음",
+      "branch_ids": [
+        "B02",
+        "B07",
+        "B28",
+        "B32"
+      ],
+      "alternatives": [
+        "H_G2",
+        "H_G3",
+        "H_NONE",
+        "H_LATER"
+      ]
+    },
+    {
+      "id": "H_LATER",
+      "label": "나중에 고려",
+      "branch_ids": [
+        "B28",
+        "B09",
+        "B07",
+        "B79",
+        "B100"
+      ],
+      "alternatives": [
+        "H_G2",
+        "H_G3",
+        "H_NONE",
+        "H_UNDECIDED"
+      ],
+      "explanation": "시점 미확정과 늦춤 이유를 기록. 임의 응시 학년·대기기간을 부여하지 않고 현재 실제 학습을 이어감."
+    }
+  ],
+  "selection_event_fields": [
+    "event_type",
+    "institution",
+    "cohort",
+    "intended_selection_timing",
+    "application_academic_year",
+    "exam_calendar_date",
+    "actual_school_grade_at_exam",
+    "admission_school_grade",
+    "official_source",
+    "verification_state"
+  ],
+  "plan_objects": {
+    "referencePlan": [
+      "source_id",
+      "source_hash",
+      "cohort",
+      "original_month_axis",
+      "original_course_spans",
+      "approved_speed_model"
+    ],
+    "routeCandidate": [
+      "candidate_id",
+      "selected_or_recommended",
+      "family_goals",
+      "route_edges",
+      "source_references",
+      "time_assumptions",
+      "confirmed_constraints",
+      "unknown_constraints",
+      "explanation"
+    ],
+    "personalBaselinePlan": [
+      "plan_id",
+      "version",
+      "previous_version_id",
+      "accepted_at",
+      "accepted_by",
+      "reference_links",
+      "selected_candidate_ids",
+      "actual_start_position_by_axis",
+      "planned_course_ranges",
+      "parallel_tracks",
+      "goal_events",
+      "planned_times_or_unknown",
+      "remediation_ranges",
+      "review_events",
+      "change_reason"
+    ],
+    "actualLearningRecord": [
+      "record_id",
+      "recorded_at",
+      "occurred_at",
+      "subject_axis",
+      "course_record_id",
+      "book_unit_range",
+      "coverage",
+      "completion_state",
+      "depth",
+      "independent_work",
+      "support_used",
+      "evidence_source",
+      "reported_or_verified",
+      "coverage_intent",
+      "distribution_state",
+      "submission_state",
+      "review_state",
+      "expected_in_class",
+      "notice_version",
+      "source_audience",
+      "individual_participation",
+      "source_message_id",
+      "task_replaces_id"
+    ],
+    "planComparison": [
+      "plan_id",
+      "plan_version",
+      "as_of",
+      "actual_record_ids",
+      "coverage_comparison",
+      "performance_evidence",
+      "continuity_records",
+      "parallel_workload_report",
+      "unknowns",
+      "proposed_review"
+    ],
+    "otherSubjectTrack": [
+      "subject_name_from_family",
+      "family_goal",
+      "current_course_name",
+      "actual_progress",
+      "planned_time",
+      "actual_time",
+      "support_needed",
+      "source_reference_or_unknown",
+      "diagnostic_link_or_unavailable"
+    ]
+  },
+  "diagnostic_contract": {
+    "state": "future_attachment_design_only",
+    "attachment_fields": [
+      "diagnostic_id",
+      "course_record_id",
+      "edition",
+      "target_range",
+      "purpose",
+      "item_source_ids",
+      "review_state",
+      "administration_date",
+      "independence_conditions",
+      "help_and_time_conditions",
+      "responses",
+      "scoring_evidence",
+      "verified_scope",
+      "limitations",
+      "remediation_links",
+      "next_branch_ids",
+      "linked_plan_version"
+    ],
+    "possible_triggers": [
+      "initial_position_check",
+      "range_completion",
+      "after_remediation",
+      "before_next_course_or_selection"
+    ],
+    "availability_states": [
+      "not_prepared",
+      "not_taken",
+      "partial_evidence",
+      "evidence_available",
+      "review_needed"
+    ],
+    "fixed_test_frequency": null,
+    "new_score_cutoff": null,
+    "new_item_count": null,
+    "book_completion_is_not_diagnostic_completion": true,
+    "result_scope_is_limited_to_assessed_evidence": true,
+    "changes_create_proposal_before_new_accepted_plan": true,
+    "attempt_fields": [
+      "attempt_id",
+      "assessment_version",
+      "scope",
+      "first_or_repeat",
+      "prior_exposure",
+      "started_at",
+      "duration_or_unknown",
+      "help",
+      "first_responses",
+      "reviewed_responses",
+      "score_version",
+      "correction_reason",
+      "evidence_role",
+      "first_responses_state",
+      "response_completeness",
+      "attempted_ranges",
+      "expression_modes",
+      "item_validity_state",
+      "score_kind",
+      "comparability_state"
+    ],
+    "assessment_states": [
+      "not_prepared",
+      "planned",
+      "deferred_for_remediation",
+      "not_taken",
+      "partly_taken",
+      "taken_unreviewed",
+      "reviewed",
+      "correction_pending"
+    ],
+    "no_automatic_course_rollback": true,
+    "no_automatic_promotion_on_book_completion": true,
+    "first_responses_states": [
+      "available",
+      "not_recorded",
+      "missing"
+    ],
+    "score_kinds": [
+      "observed",
+      "corrected",
+      "teacher_hypothetical_estimate"
+    ],
+    "item_validity_states": [
+      "unreviewed",
+      "reviewed",
+      "error_suspected",
+      "correction_pending",
+      "invalid_for_scoring"
+    ],
+    "first_response_reconstruction": false,
+    "item_error_policy": "문항 오류/채점 오류를 구분, 해당 항목 판정 유보. 실제점수·정정점수·가정 점수 구분. 첫 응답 없음은 기록 소실로 남김."
+  },
+  "monitoring_dimensions": [
+    "planned_range_progress",
+    "verified_performance",
+    "documented_learning_continuity",
+    "parallel_schedule_and_burden"
+  ],
+  "monitoring_label_proposals": [
+    "기록상 계획을 이어가는 중",
+    "일부 범위 확인·보완 필요",
+    "시간·목표에 맞춰 계획 재검토",
+    "기록 부족"
+  ],
+  "monitoring_limits": {
+    "speed_is_not_total_quality": true,
+    "missing_record_is_not_failure": true,
+    "no_admission_probability": true,
+    "no_birth_month_ability_score": true,
+    "no_automatic_weakness_cause_diagnosis": true
+  },
+  "future_3d": {
+    "reference_intent": "넘버스 매직처럼 개인 경로를 입체적으로 보여주기",
+    "implementation_inspected": false,
+    "production_authorized_this_step": false,
+    "semantic_layers": [
+      "reference_path",
+      "candidate_paths",
+      "accepted_personal_path",
+      "today_time_marker",
+      "actual_position_by_axis",
+      "parallel_tracks",
+      "remediation_and_rejoin",
+      "next_choices",
+      "diagnostic_evidence_state",
+      "plan_version_comparison"
+    ],
+    "node_details": [
+      "existing_course_name",
+      "volume_unit",
+      "plan",
+      "actual_record",
+      "diagnostic",
+      "source",
+      "unknown_conditions"
+    ],
+    "equivalent_list_table_view": true,
+    "new_fictional_curriculum_names": false,
+    "render_coordinates_define_curriculum": false
+  },
+  "preserved_models": {
+    "section_month_columns": {
+      "S1": 27,
+      "S2": 34,
+      "S3": 48,
+      "S4": 36
+    },
+    "L0_to_L4_shifts": [
+      0,
+      3,
+      7,
+      10,
+      12
+    ],
+    "acceleration": {
+      "first_actual_months": 2,
+      "first_factor": 1.1,
+      "later_factor": 1.2
+    },
+    "institution_specific_periods_are_not_merged": true
+  },
+  "open_conflicts": [
+    {
+      "id": "V3_X01",
+      "topic": "7세까지 프리미어 선발 구간과 기존 초1 3월 관찰",
+      "handling": "최신 사용자 구간 구조 우선, 실제 날짜/입학학년 확인 전 원표 이동 안 함"
+    },
+    {
+      "id": "V3_X02",
+      "topic": "3개 큰 구간과 기존4섹션",
+      "handling": "보기 구조와 출처/계산 구조를 구별해 모두 유지"
+    },
+    {
+      "id": "V3_X03",
+      "topic": "생월 차이의 교육적 해석",
+      "handling": "연령 맥락으로 수집, 능력/속도 자동 상향 기준 미설정"
+    },
+    {
+      "id": "V4_X03",
+      "topic": "타 과목 근거",
+      "handling": "영어 개별 상담 있음; 보편 표준/진단 미확정"
+    },
+    {
+      "id": "V4_X04",
+      "topic": "PPT 내부 수치 충돌",
+      "handling": "현재 입시 계산·추천에 사용 안 함"
+    }
+  ],
+  "phase": "source_review_and_design_update_before_implementation_approval",
+  "implementation_state": "design_only",
+  "screens": [
+    {
+      "stage": "intro",
+      "label": "독샘 인사",
+      "questions": []
+    },
+    {
+      "stage": "age",
+      "label": "나이·4/5/6세 생월",
+      "questions": [
+        "Q01",
+        "Q02"
+      ]
+    },
+    {
+      "stage": "thinking",
+      "label": "사고력 교재 또는 학원 경험",
+      "questions": [
+        "Q10",
+        "Q11",
+        "Q12",
+        "Q13",
+        "Q25",
+        "Q38"
+      ]
+    },
+    {
+      "stage": "curriculum",
+      "label": "교과 기본·응용과 심화 위치",
+      "questions": [
+        "Q11",
+        "Q12",
+        "Q13",
+        "Q15",
+        "Q21",
+        "Q22"
+      ]
+    },
+    {
+      "stage": "arithmetic",
+      "label": "연산의 독립 위치",
+      "questions": [
+        "Q11",
+        "Q12",
+        "Q13",
+        "Q29",
+        "Q30"
+      ]
+    },
+    {
+      "stage": "position",
+      "label": "성향검사 전 현재 학습 위치",
+      "questions": []
+    },
+    {
+      "stage": "personality_optional",
+      "label": "기존 성향검사 선택",
+      "questions": [
+        "Q105"
+      ]
+    },
+    {
+      "stage": "route",
+      "label": "기준 로드맵·목표·시간의 필요한 확인",
+      "questions": [
+        "Q04",
+        "Q05",
+        "Q06",
+        "Q07",
+        "Q08",
+        "Q20",
+        "Q43",
+        "Q102"
+      ]
+    },
+    {
+      "stage": "track",
+      "label": "기준 선택·실제 기록·갱신",
+      "questions": [
+        "Q103",
+        "Q104",
+        "Q09"
+      ]
+    }
+  ],
+  "condition_states": {
+    "met": "현재의 적용 가능한 근거로 충족 확인",
+    "not_met": "현재의 적용 가능한 근거로 미충족 확인",
+    "unknown": "미응답·근거부족·현행미확인",
+    "conflicting": "같은 조건의 상충 기록"
+  },
+  "condition_evaluation": {
+    "order": [
+      "기관·연도·회차·범위 적용성",
+      "자료 역할·검토 상태",
+      "사실 충족 상태",
+      "희망 일치",
+      "시간·지원"
+    ],
+    "unknown_is_false": false,
+    "unknown_is_zero": false,
+    "confirmed_ineligible_hides_course_input": false,
+    "preference_is_eligibility": false,
+    "unverified_thresholds_used": false,
+    "total_score_ranking": false
+  },
+  "route_actions": [
+    "continue",
+    "parallel",
+    "remediate_and_rejoin",
+    "defer",
+    "skip_selection",
+    "reconsider_goal",
+    "reduce",
+    "pause",
+    "resume",
+    "end_plan",
+    "await_evidence"
+  ],
+  "plan_states": [
+    "draft",
+    "active",
+    "reduced",
+    "paused",
+    "ended"
+  ],
+  "plan_state_policy": "가족이 선택한 범위만 상태변경. 전체계획/트랙별 상태 구분. 휴식/종료 시 실제기록 보존. 재개는 현재정보 기반 새버전 제안.",
+  "evidence_roles": [
+    "parent_report",
+    "child_report",
+    "teacher_observation",
+    "reviewed_work",
+    "individual_result_notice",
+    "institution_notice",
+    "forwarded_template",
+    "third_party_case",
+    "ai_summary"
+  ],
+  "evidence_time_fields": [
+    "occurred_at",
+    "sent_at",
+    "recorded_at",
+    "source_academic_year",
+    "target_cohort",
+    "verified_at"
+  ],
+  "time_contract": {
+    "activity_id": "과목/트랙에 공유하여 중복 합산 방지",
+    "dimensions": [
+      "child_activity_minutes",
+      "adult_support_minutes"
+    ],
+    "aggregation": "시간대가 있으면 사람별 구간 합집합; 시간대 없는 총량은 추정; 충돌 별도 표시",
+    "joint_session": "아이 예산에1회·보호자 예산에1회, 둘을 합쳐 아이 수요로 계산 안 함",
+    "unknown_homework_is_zero": false,
+    "academy_hours_change_rampT": false
+  },
+  "age_contract": {
+    "birth_year_month": "지원; 일 선택",
+    "as_of_date": "명시",
+    "exact_completed_months": "출생일 등 충분한 정보 있을 때만",
+    "month_only": "가능한 완료개월수 범위·정확도 표시",
+    "school_grade": "별도 보고",
+    "birth_month_ability_weight": null,
+    "grade_gates_course_input": false
+  },
+  "evaluation_refresh": {
+    "inputs_revision": "필드별 버전/기록일",
+    "invalidate": [
+      "변경입력에 의존한 파생조건",
+      "영향받는 후보시간"
+    ],
+    "keep": [
+      "과거답변",
+      "출처버전",
+      "기존선택기준",
+      "실제기록·정정이력"
+    ],
+    "cycles": "새 사건ID/리비전에서만 재평가"
+  },
+  "selection_result_states": {
+    "interest": "별도 희망",
+    "application": [
+      "not_applied",
+      "considering",
+      "applied",
+      "withdrawn",
+      "unknown"
+    ],
+    "selection": [
+      "pending",
+      "selected",
+      "not_selected",
+      "unknown"
+    ],
+    "placement": [
+      "pending",
+      "assigned",
+      "waitlisted",
+      "unknown"
+    ],
+    "registration": [
+      "not_decided",
+      "registered",
+      "declined",
+      "unknown"
+    ],
+    "attendance": [
+      "not_started",
+      "attending",
+      "paused",
+      "ended",
+      "unknown"
+    ]
+  },
+  "common_branch_ids": [
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B09",
+    "B10",
+    "B100",
+    "B11",
+    "B12",
+    "B13",
+    "B14",
+    "B15",
+    "B16",
+    "B17",
+    "B18",
+    "B19",
+    "B20",
+    "B21",
+    "B22",
+    "B50",
+    "B89",
+    "B90",
+    "B91",
+    "B92",
+    "B93",
+    "B94",
+    "B95",
+    "B96",
+    "B97",
+    "B98",
+    "B99"
+  ],
+  "common_branch_policy": "공통 분기는 세 보기 모두에서 답변/실제진도에 따라 개방한다. 보기의 나이 경계는 학습 입력이나 분기 개방을 제한하지 않는다. 화면에서 연결한 branch_ids는 직접 또는 하위 모듈을 통해 표시할 수 있는 범위다.",
+  "task_states": {
+    "distribution": [
+      "not_distributed",
+      "distributed",
+      "unknown"
+    ],
+    "execution": [
+      "planned_in_class",
+      "not_started",
+      "in_progress",
+      "reported_done",
+      "reviewed_done",
+      "deferred",
+      "unknown"
+    ],
+    "submission": [
+      "not_required",
+      "not_submitted",
+      "submitted",
+      "unknown"
+    ],
+    "review": [
+      "not_reviewed",
+      "reviewed",
+      "correction_pending",
+      "unknown"
+    ],
+    "notice": "original_notice_id plus correction_notice_id; never silently mark changed instructions done"
+  },
+  "other_subject_policy": "영어 등의 하위활동은 복수 records로 유지; 과학과 중복 입력되면 같은 트랙/활동ID 참조",
+  "evidence_audience_policy": "individual/group/general을 구분하고 개인 참여는 confirmed/reported/unknown. 집단 공지는 개인 이수 자동 반영 안 함.",
+  "history_retention_policy": "버전보존은 무조건 영구보관 의미 아님. 제품 기록정정/종료/삭제정책은 미확정. 제공된 원자료에는 이번 설계로 삭제권한 발생 안 함.",
+  "rule_field_dictionary": {
+    "birth_precision": [
+      "day",
+      "month",
+      "unknown"
+    ],
+    "school_grade": "reported enum independent of course_level",
+    "course_level": [
+      "elementary",
+      "middle",
+      "high",
+      "other",
+      "unknown"
+    ],
+    "hwangso_choice": [
+      "grade2",
+      "grade3",
+      "later",
+      "none",
+      "undecided",
+      "unknown"
+    ],
+    "premier_interest": [
+      "consider",
+      "current",
+      "later",
+      "none",
+      "undecided",
+      "unknown"
+    ],
+    "scope_completion": [
+      "in_progress",
+      "reported_done",
+      "reviewed_done",
+      "not_started",
+      "unknown"
+    ],
+    "assessment_state": [
+      "not_prepared",
+      "planned",
+      "deferred_for_remediation",
+      "not_taken",
+      "partly_taken",
+      "taken_unreviewed",
+      "reviewed",
+      "correction_pending"
+    ],
+    "evidence_role": [
+      "parent_report",
+      "child_report",
+      "teacher_observation",
+      "reviewed_work",
+      "individual_result_notice",
+      "institution_notice",
+      "forwarded_template",
+      "third_party_case",
+      "ai_summary"
+    ],
+    "condition_state": [
+      "met",
+      "not_met",
+      "unknown",
+      "conflicting"
+    ],
+    "plan_intent": [
+      "continue",
+      "reduce",
+      "pause",
+      "resume",
+      "end",
+      "undecided"
+    ],
+    "selection_state": [
+      "pending",
+      "selected",
+      "not_selected",
+      "unknown"
+    ],
+    "registration_state": [
+      "not_decided",
+      "registered",
+      "declined",
+      "unknown"
+    ],
+    "has_time_overlap": [
+      "yes",
+      "no",
+      "unknown"
+    ],
+    "homework_duration_known": [
+      "yes",
+      "no"
+    ],
+    "item_error_suspected": [
+      "yes",
+      "no",
+      "unknown"
+    ],
+    "first_responses_state": [
+      "available",
+      "not_recorded",
+      "missing"
+    ],
+    "attempt_kind": [
+      "first",
+      "repeat",
+      "unknown"
+    ],
+    "record_kind": [
+      "actual",
+      "diagnostic",
+      "change_request",
+      "correction",
+      "unknown"
+    ],
+    "plan_acceptance": [
+      "accept",
+      "keep_candidate",
+      "revise",
+      "keep_current",
+      "undecided"
+    ],
+    "science_interest": [
+      "yes",
+      "no",
+      "undecided"
+    ],
+    "other_subject_interest": [
+      "yes",
+      "no",
+      "undecided"
+    ],
+    "source_audience": [
+      "individual",
+      "group",
+      "general",
+      "unknown"
+    ],
+    "individual_participation": [
+      "confirmed",
+      "reported",
+      "unknown"
+    ],
+    "material_use": [
+      "course_learning",
+      "selection_preparation",
+      "both",
+      "unknown"
+    ],
+    "competition_intent": [
+      "enter",
+      "do_not_enter",
+      "undecided",
+      "unknown"
+    ],
+    "source_applicable": [
+      "yes",
+      "no",
+      "unknown"
+    ],
+    "diagnostic_correction": [
+      "yes",
+      "no",
+      "unknown"
+    ]
+  },
+  "routing_rules": [
+    {
+      "id": "R01",
+      "label": "나이와 높은 진도 분리",
+      "when": {
+        "course_level": {
+          "in": [
+            "middle",
+            "high"
+          ]
+        }
+      },
+      "question_ids": [
+        "Q21",
+        "Q55",
+        "Q59"
+      ],
+      "branch_ids": [
+        "B01",
+        "B11",
+        "B12",
+        "B53"
+      ],
+      "actions": [
+        "await_evidence"
+      ],
+      "result": "학교학년과 무관하게 실제 범위/심화 질문 개방",
+      "source_ids": [
+        "U4",
+        "U2"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R02",
+      "label": "개월수 정확도",
+      "when": {
+        "birth_precision": {
+          "eq": "month"
+        }
+      },
+      "question_ids": [
+        "Q01",
+        "Q02"
+      ],
+      "branch_ids": [
+        "B01"
+      ],
+      "actions": [
+        "await_evidence"
+      ],
+      "result": "정확한 완료개월수 대신 가능한 범위; 능력 가중치 없음",
+      "source_ids": [
+        "U4"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R03",
+      "label": "황소 초2 고려",
+      "when": {
+        "hwangso_choice": {
+          "eq": "grade2"
+        }
+      },
+      "question_ids": [
+        "Q43",
+        "Q44",
+        "Q45",
+        "Q46"
+      ],
+      "branch_ids": [
+        "B28",
+        "B29",
+        "B32",
+        "B33"
+      ],
+      "actions": [
+        "await_evidence"
+      ],
+      "result": "초2 비교안과 현재 학습을 함께 보되 현재 회차 확인 전 응시확정 안 함",
+      "source_ids": [
+        "U4",
+        "C3"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R04",
+      "label": "황소 초3 고려",
+      "when": {
+        "hwangso_choice": {
+          "eq": "grade3"
+        }
+      },
+      "question_ids": [
+        "Q43",
+        "Q44",
+        "Q45",
+        "Q46"
+      ],
+      "branch_ids": [
+        "B28",
+        "B30",
+        "B31",
+        "B32"
+      ],
+      "actions": [
+        "continue",
+        "await_evidence"
+      ],
+      "result": "현재 실제범위 유지·향후회차 검토; 과거표 월을 모집일로 복제 안 함",
+      "source_ids": [
+        "U4",
+        "C3"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R05",
+      "label": "황소 미선택",
+      "when": {
+        "hwangso_choice": {
+          "eq": "none"
+        }
+      },
+      "question_ids": [
+        "Q10",
+        "Q21",
+        "Q22",
+        "Q60",
+        "Q68"
+      ],
+      "branch_ids": [
+        "B28",
+        "B09",
+        "B14",
+        "B19",
+        "B51",
+        "B57",
+        "B65"
+      ],
+      "actions": [
+        "skip_selection",
+        "continue"
+      ],
+      "result": "현재 초등 교과·심화 포함 실제진도에 맞는 후보; 중등 자동진입 없음",
+      "source_ids": [
+        "U4"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시.",
+      "conditional_question_ids": {
+        "Q60": "과학 관심 또는 실제 이력 있을 때",
+        "Q68": "경시 관심 또는 실제 자료 학습 있을 때"
+      }
+    },
+    {
+      "id": "R06",
+      "label": "황소 미정",
+      "when": {
+        "hwangso_choice": {
+          "in": [
+            "undecided",
+            "unknown"
+          ]
+        }
+      },
+      "question_ids": [
+        "Q04",
+        "Q06",
+        "Q10"
+      ],
+      "branch_ids": [
+        "B02",
+        "B28",
+        "B07"
+      ],
+      "actions": [
+        "continue",
+        "await_evidence"
+      ],
+      "result": "미정을 보존하고 현재유지/관심후보 비교; 초기선택 강제없음",
+      "source_ids": [
+        "U4"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R07",
+      "label": "학습과 진단 분리",
+      "when": {
+        "all": [
+          {
+            "scope_completion": {
+              "in": [
+                "reported_done",
+                "reviewed_done"
+              ]
+            }
+          },
+          {
+            "assessment_state": {
+              "in": [
+                "not_taken",
+                "deferred_for_remediation",
+                "planned"
+              ]
+            }
+          }
+        ]
+      },
+      "question_ids": [
+        "Q89",
+        "Q18",
+        "Q14"
+      ],
+      "branch_ids": [
+        "B89",
+        "B06"
+      ],
+      "actions": [
+        "parallel",
+        "await_evidence"
+      ],
+      "result": "현재 진행권과 이전권 진단/보완을 별도 기록; 상위과정 충족 추정 없음",
+      "source_ids": [
+        "T1",
+        "T3"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R08",
+      "label": "템플릿 결과 방지",
+      "when": {
+        "evidence_role": {
+          "in": [
+            "forwarded_template",
+            "third_party_case",
+            "ai_summary"
+          ]
+        }
+      },
+      "question_ids": [
+        "Q91",
+        "Q03"
+      ],
+      "branch_ids": [
+        "B91",
+        "B25",
+        "B34"
+      ],
+      "actions": [
+        "await_evidence"
+      ],
+      "result": "해당 내용을 개인 선발·이수 사실로 자동 반영하지 않음",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R09",
+      "label": "집단 공지와 개인 이수",
+      "when": {
+        "all": [
+          {
+            "source_audience": {
+              "in": [
+                "group",
+                "general"
+              ]
+            }
+          },
+          {
+            "individual_participation": {
+              "eq": "unknown"
+            }
+          }
+        ]
+      },
+      "question_ids": [
+        "Q03",
+        "Q13",
+        "Q18"
+      ],
+      "branch_ids": [
+        "B03",
+        "B91"
+      ],
+      "actions": [
+        "await_evidence"
+      ],
+      "result": "본인 수행/참여 확인 전 공통 수업정보로만 연결",
+      "source_ids": [
+        "T1",
+        "T3"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R10",
+      "label": "합격과 등록 분리",
+      "when": {
+        "all": [
+          {
+            "selection_state": {
+              "eq": "selected"
+            }
+          },
+          {
+            "registration_state": {
+              "in": [
+                "not_decided",
+                "declined",
+                "unknown"
+              ]
+            }
+          }
+        ]
+      },
+      "question_ids": [
+        "Q93",
+        "Q46"
+      ],
+      "branch_ids": [
+        "B93",
+        "B34"
+      ],
+      "actions": [
+        "continue",
+        "defer"
+      ],
+      "result": "반배정·시간표·등록 질문; 실제수강 시작 처리 안 함",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R11",
+      "label": "시간 미확인",
+      "when": {
+        "homework_duration_known": {
+          "eq": "no"
+        }
+      },
+      "question_ids": [
+        "Q07",
+        "Q88",
+        "Q101"
+      ],
+      "branch_ids": [
+        "B07",
+        "B88"
+      ],
+      "actions": [
+        "await_evidence"
+      ],
+      "result": "병행후보 시간은 미확인 포함; 0분·시간충족 판정 안 함",
+      "source_ids": [
+        "U4",
+        "T2"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R12",
+      "label": "일정 충돌",
+      "when": {
+        "has_time_overlap": {
+          "eq": "yes"
+        }
+      },
+      "question_ids": [
+        "Q07",
+        "Q81",
+        "Q96"
+      ],
+      "branch_ids": [
+        "B07",
+        "B56",
+        "B95"
+      ],
+      "actions": [
+        "reduce",
+        "defer",
+        "reconsider_goal"
+      ],
+      "result": "겹치는 활동 확인 후 줄임/후일/현재유지 후보; 능력진단 아님",
+      "source_ids": [
+        "U4",
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R13",
+      "label": "휴식·종료",
+      "when": {
+        "plan_intent": {
+          "in": [
+            "pause",
+            "end",
+            "reduce"
+          ]
+        }
+      },
+      "question_ids": [
+        "Q96",
+        "Q97"
+      ],
+      "branch_ids": [
+        "B95",
+        "B96"
+      ],
+      "actions": [
+        "pause",
+        "end_plan",
+        "reduce"
+      ],
+      "result": "가족이 선택한 범위·상태만 적용; 여러 actions 중 응답에 해당하는 하나를 선택",
+      "source_ids": [
+        "T2",
+        "T3",
+        "U4"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R14",
+      "label": "재개",
+      "when": {
+        "plan_intent": {
+          "eq": "resume"
+        }
+      },
+      "question_ids": [
+        "Q97",
+        "Q07",
+        "Q10",
+        "Q89"
+      ],
+      "branch_ids": [
+        "B96",
+        "B79",
+        "B100"
+      ],
+      "actions": [
+        "resume",
+        "reconsider_goal"
+      ],
+      "result": "현재정보 확인과 새 기준안; 지난 일정을 압축하지 않음",
+      "source_ids": [
+        "T3",
+        "U4"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R15",
+      "label": "평가 오류·원응답 없음",
+      "when": {
+        "any": [
+          {
+            "item_error_suspected": {
+              "eq": "yes"
+            }
+          },
+          {
+            "first_responses_state": {
+              "in": [
+                "missing",
+                "not_recorded"
+              ]
+            }
+          },
+          {
+            "diagnostic_correction": {
+              "eq": "yes"
+            }
+          }
+        ]
+      },
+      "question_ids": [
+        "Q90",
+        "Q18"
+      ],
+      "branch_ids": [
+        "B90",
+        "B87"
+      ],
+      "actions": [
+        "await_evidence"
+      ],
+      "result": "각 원인별 문항판정 유보/응답없음/채점버전 기록. 모든 평가를 동일 무효처리하지 않음",
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R16",
+      "label": "재풀이",
+      "when": {
+        "attempt_kind": {
+          "eq": "repeat"
+        }
+      },
+      "question_ids": [
+        "Q90",
+        "Q85"
+      ],
+      "branch_ids": [
+        "B90",
+        "B85"
+      ],
+      "actions": [
+        "await_evidence"
+      ],
+      "result": "학습 성과로 보존하되 신규 독립 수행으로 승격 안 함",
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R17",
+      "label": "경시 자료만 공부",
+      "when": {
+        "all": [
+          {
+            "material_use": {
+              "eq": "course_learning"
+            }
+          },
+          {
+            "competition_intent": {
+              "in": [
+                "do_not_enter",
+                "undecided",
+                "unknown"
+              ]
+            }
+          }
+        ]
+      },
+      "question_ids": [
+        "Q68",
+        "Q72"
+      ],
+      "branch_ids": [
+        "B65",
+        "B70"
+      ],
+      "actions": [
+        "continue"
+      ],
+      "result": "자료의 범위만 기록하고 실제 응시 목표·참가를 생성하지 않음",
+      "source_ids": [
+        "T2"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R18",
+      "label": "조건 판단의 적용성",
+      "when": {
+        "any": [
+          {
+            "source_applicable": {
+              "in": [
+                "no",
+                "unknown"
+              ]
+            }
+          },
+          {
+            "condition_state": {
+              "in": [
+                "unknown",
+                "conflicting"
+              ]
+            }
+          }
+        ]
+      },
+      "question_ids": [
+        "Q40",
+        "Q50",
+        "Q69",
+        "Q77"
+      ],
+      "branch_ids": [
+        "B40",
+        "B76",
+        "B91"
+      ],
+      "actions": [
+        "await_evidence"
+      ],
+      "result": "해당 조건의 판정 보류·근거표시. 다른 학습 후보는 계속 열어 둠",
+      "source_ids": [
+        "U2",
+        "U4"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R19",
+      "label": "타 과목 추가",
+      "when": {
+        "other_subject_interest": {
+          "eq": "yes"
+        }
+      },
+      "question_ids": [
+        "Q100",
+        "Q07",
+        "Q98"
+      ],
+      "branch_ids": [
+        "B99",
+        "B97"
+      ],
+      "actions": [
+        "parallel"
+      ],
+      "result": "영역별 복수 실제 기록과 시간 연결; 가상 표준 과정 없음",
+      "source_ids": [
+        "T3",
+        "U4"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R20",
+      "label": "실제기록과 기준선",
+      "when": {
+        "record_kind": {
+          "in": [
+            "actual",
+            "diagnostic",
+            "correction"
+          ]
+        }
+      },
+      "question_ids": [
+        "Q103",
+        "Q104"
+      ],
+      "branch_ids": [
+        "B79",
+        "B90",
+        "B100"
+      ],
+      "actions": [
+        "continue"
+      ],
+      "result": "실제/진단/정정 기록 추가 후 비교; 선택기준 자동변경 안 함",
+      "source_ids": [
+        "U4"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R21",
+      "label": "새 기준 선택",
+      "when": {
+        "plan_acceptance": {
+          "eq": "accept"
+        }
+      },
+      "question_ids": [
+        "Q102",
+        "Q104"
+      ],
+      "branch_ids": [
+        "B100"
+      ],
+      "actions": [
+        "continue"
+      ],
+      "result": "가족이 선택한 새버전 생성; 조건부/미확인 내역도 같이 남김",
+      "source_ids": [
+        "U4"
+      ],
+      "status": "design_proposal",
+      "unknown_policy": "조건 누락은 거짓/0으로 대체하지 않고 해당 조건 미확인으로 보존; 현재학습과 대안 탐색 허용",
+      "question_display_policy": "질문 목록은 후속 후보이며 전부 필수 아님. 실제 학습·관심·선택 범위에 해당할 때만 표시."
+    },
+    {
+      "id": "R22",
+      "label": "황소 나중 고려",
+      "when": {
+        "hwangso_choice": {
+          "eq": "later"
+        }
+      },
+      "question_ids": [
+        "Q43",
+        "Q07",
+        "Q10",
+        "Q22"
+      ],
+      "branch_ids": [
+        "B28",
+        "B09",
+        "B07",
+        "B79",
+        "B100"
+      ],
+      "actions": [
+        "continue",
+        "await_evidence"
+      ],
+      "result": "현재 학습을 이어가며 늦춤 이유·조건 변화에 따라 재검토. 진도 부족으로 단정하거나 다음 회차에 자동 등록하지 않음.",
+      "source_ids": [
+        "UF05",
+        "UF03"
+      ],
+      "status": "design_proposal",
+      "question_display_policy": "이미 확인한 값은 재질문하지 않고 필요한 이유·시간·범위만 추가"
+    }
+  ],
+  "rules_semantics": "각 규칙은 질문/선택지 개방을 위한 선언이다. actions 목록은 가능한 선택이며 일괄 실행이 아니다. 규칙 중첩은 모듈 합집합·질문 중복제거. 기관 자격·학습수행·가족희망·시간을 별도로 판정. 이 JSON은 실행 엔진이 아니다.",
+  "reference_evidence_kinds": [
+    "official_notice",
+    "original_curriculum_plan",
+    "observed_case",
+    "group_notice",
+    "template",
+    "historical_outcome",
+    "sample_statistics",
+    "simulation",
+    "forecast",
+    "third_party_summary",
+    "static_code"
+  ],
+  "reference_evidence_fields": [
+    "source_document_date",
+    "applicable_academic_year",
+    "institution",
+    "program",
+    "population_scope",
+    "metric_definition",
+    "official_verification_state",
+    "internal_conflict_note",
+    "superseding_notice_id"
+  ],
+  "higher_school_followup_scope": "학교 선택 관련 실제 개설·판본·희망/현재/공식조건 구분은 현설계에 보완. 대학별 전형·성적환산 상세는 B80 후속이며 초기 유아/초등 설문에 강제 표시 안 함.",
+  "personality_contract": {
+    "optional": true,
+    "base_roadmap_on_skip": true,
+    "supported_age_groups": {
+      "young": [
+        7,
+        9
+      ],
+      "middle": [
+        10,
+        12
+      ],
+      "high": [
+        13,
+        15
+      ]
+    },
+    "questions_per_group": 10,
+    "answers_per_question": 4,
+    "use_existing_question_text": true,
+    "extend_to_4_6": false,
+    "changes": "지원 방법과 경로의 설명/비교 보강",
+    "automatic_route_from_type": false,
+    "academic_cutoff_from_personality": false,
+    "incomplete_result_inferred": false,
+    "mixed_threshold": "existing program secondary >= primary*0.7; psychometric validity not established",
+    "unsupported_age_behavior": "해당 기존 검사 문항을 표시하지 않고 기본 로드맵 진행; 지원연령 밖 새 유형 추정 없음"
+  },
+  "depth_contract": {
+    "independent_application_and_depth": true,
+    "states": [
+      "not_started",
+      "in_progress",
+      "reported_completed",
+      "paused",
+      "unknown"
+    ],
+    "blank_means_unknown": true,
+    "delay_depth_allowed": true,
+    "earlier_scope_depth_allowed": true,
+    "fixed_wait_months": null,
+    "score_cutoff": null,
+    "source_ids": [
+      "F01",
+      "F14",
+      "F20",
+      "F21",
+      "F25",
+      "UF03"
+    ]
+  },
+  "curriculum_contract": {
+    "checked_at": "2026-10-03",
+    "school_and_book_and_target_separate": true,
+    "current_2026_2022_groups": [
+      "elementary1-6",
+      "middle1-2",
+      "high1-2"
+    ],
+    "current_2026_2015_groups": [
+      "middle3",
+      "high3"
+    ],
+    "all_grades_2022_from": 2027,
+    "book_to_current_scope_mapping": "not_completed",
+    "no_string_only_conversion": true,
+    "no_source_duration_change": true,
+    "source_ids": [
+      "UF04",
+      "CUR01",
+      "CUR02"
+    ]
+  },
+  "question_load_policy": {
+    "one_question_at_a_time": true,
+    "all_questions_required": false,
+    "axis_details_only_for_selected_items": true,
+    "known_answer_not_reasked": true,
+    "previous_edit_supported": true,
+    "skip_optional_supported": true,
+    "save_resume_supported_in_design": true,
+    "questionnaire_length_fixed": false,
+    "three_result_maximum_fixed": false,
+    "show_all_branches_in_first_flow": false
+  }
+}

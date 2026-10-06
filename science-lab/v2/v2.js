@@ -2,7 +2,7 @@
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
-import { pageHome } from './home.js?v=5';
+import { pageHome } from './home.js?v=6';
 import { escapeInApp } from './inapp.js';
 import { record, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js';
@@ -11,7 +11,10 @@ import { wireReading } from './reading-live.js';
 escapeInApp();
 
 const UNITS = {
-  's42-u02': async () => ({ ...(await import('../data/units/s42-u02.js')), ...(await import('../data/units/s42-u02.lesson.js')), ...(await import('../data/units/s42-u02.similar.js')), ...(await import('../data/units/s42-u02.taxonomy.js')), misc: await import('../data/units/s42-u02.misc.js') }), 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
+  's42-u04': async () => ({ ...(await import('../data/units/s42-u04.js')), ...(await import('../data/units/s42-u04.lesson.js')), ...(await import('../data/units/s42-u04.similar.js')), ...(await import('../data/units/s42-u04.taxonomy.js')), misc: await import('../data/units/s42-u04.misc.js') }),
+  's42-u05': async () => ({ ...(await import('../data/units/s42-u05.js')), ...(await import('../data/units/s42-u05.lesson.js')), ...(await import('../data/units/s42-u05.similar.js')), ...(await import('../data/units/s42-u05.taxonomy.js')), misc: await import('../data/units/s42-u05.misc.js') }),
+  's42-u03': async () => ({ ...(await import('../data/units/s42-u03.js')), ...(await import('../data/units/s42-u03.lesson.js')), ...(await import('../data/units/s42-u03.similar.js')), ...(await import('../data/units/s42-u03.taxonomy.js')), misc: await import('../data/units/s42-u03.misc.js') }),
+  's42-u02': async () => ({ ...(await import('../data/media/s42-u02.media.js')), ...(await import('../data/units/s42-u02.js')), ...(await import('../data/units/s42-u02.lesson.js')), ...(await import('../data/units/s42-u02.similar.js')), ...(await import('../data/units/s42-u02.taxonomy.js')), misc: await import('../data/units/s42-u02.misc.js') }), 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
   ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')), misc: await import('../data/units/s41-u01.misc.js') }),
   's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
   ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')), misc: await import('../data/units/s41-u02.misc.js') }),
@@ -197,8 +200,8 @@ function frame(u, lesson, stepIdx, inner, { next, nextLabel = '다음' } = {}) {
 const byId = (items) => Object.fromEntries(items.map((i) => [i.id, i]));
 // 실제 사진·영상(위키미디어 공용 등 자유 이용 자료). 출처는 항상 화면에 같이 보인다.
 const videoHtml = (v) => v ? `<figure class="card media video"><h3>${esc(v.title)}</h3>
-    <video controls playsinline preload="metadata" ${v.poster ? `poster="${v.poster}"` : ''}><source src="${v.src}" type="video/webm">${v.mp4 ? `<source src="${v.mp4}" type="video/mp4">` : ''}<source src="${v.full}" type="video/webm"></video>
-    <figcaption>실제 영상 · <a href="${v.page}" target="_blank" rel="noopener">${esc(v.credit)}</a> · 안 보이면 <a href="${v.page}" target="_blank" rel="noopener">여기서 보기</a></figcaption></figure>` : '';
+    <video controls playsinline preload="metadata" ${v.poster ? `poster="${v.poster}"` : ''}><source src="${v.src}" type="video/${/\.mp4$/.test(v.src) ? 'mp4' : 'webm'}">${v.mp4 ? `<source src="${v.mp4}" type="video/mp4">` : ''}<source src="${v.full}" type="video/${/\.mp4$/.test(v.full) ? 'mp4' : 'webm'}"></video>
+    <figcaption>${esc(v.tag || '실제 영상')} · <a href="${v.page}" target="_blank" rel="noopener">${esc(v.credit)}</a> · 안 보이면 <a href="${v.page}" target="_blank" rel="noopener">여기서 보기</a></figcaption></figure>` : '';
 const galleryHtml = (g, title = '실제로 보기') => g?.length ? `<section class="card media"><h3>${esc(title)}</h3><div class="gallery">${g.map((m) => `<figure class="${m.tall ? 'tall' : ''}"><img src="${m.src}" alt="${esc(m.cap)}" loading="lazy"><figcaption>${esc(m.cap)}<small><a href="${m.page}" target="_blank" rel="noopener">${esc(m.credit)}</a></small></figcaption></figure>`).join('')}</div></section>` : '';
 
 // ① 궁금
@@ -432,7 +435,7 @@ function pageBook(u, L, items, mode) {
 }
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
-const BOOKS = { 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
+const BOOKS = { 's42-u05': () => import('../data/book/s42-u05.book.js'), 's42-u04': () => import('../data/book/s42-u04.book.js'), 's42-u03': () => import('../data/book/s42-u03.book.js'), 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
 // 교재·수업 화면 위쪽: 모드를 다시 고르는 메뉴는 두지 않는다(첫 화면에서 이미 골랐다). 처음으로 + 필요하면 인쇄만.
 function labBar(u, { print = false } = {}) {
   return `<div class="bk-bar no-print"><a class="btn" href="#/${u}/start">‹ 처음으로</a>${print ? '<button class="btn primary" onclick="print()">A4 인쇄</button>' : ''}</div>`;
@@ -540,9 +543,9 @@ async function pageLabClass(u, mod, L, mode, idx) {
   if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
   const bookMod = await BOOKS[u]().catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 수업 자료는 준비 중이에요.</p></main>'; return; }
-  const [{ chapter, art, plan }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
+  const [{ chapter, art, plan, media }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((x) => [x.id, x]));
-  renderDeck($app, { u, ch: chapter, art, plan, similar: mod.similar || [], mode, idx, misc: MISC, ix,
+  renderDeck($app, { u, ch: chapter, art, plan, media, similar: mod.similar || [], mode, idx, misc: MISC, ix,
     myLab: () => ({ cols: L.explore?.lab?.columns || [], rows: store.get(u).labRows || [] }),
     mount3D: (el, o = {}) => mount3D(el, L.engage.scene, { autoplay: !!o.autoplay, preview: o.preview || false, from: o.from || null, onDone: o.onDone }),
     // personal:false(가르치기) → 학생 기록을 읽지도 쓰지도 않는다. 두 팀 배틀은 각자 빈 표로.

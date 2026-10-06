@@ -15,7 +15,7 @@ const TABLES = new Map();
 const judgeTable = (u) => { if (!TABLES.has(u)) TABLES.set(u, import(`../data/units/${u}.judge.js`).then((m) => m.judge).catch(() => null)); return TABLES.get(u); };
 const MIC = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
-export function buildSlides(ch, art, plan, similar, mode, ix = null) {
+export function buildSlides(ch, art, plan, similar, mode, ix = null, media = null) {
   const teach = mode === 'teach', S = [];
   let n = 0;
   // 답 자리: 가르치기는 클릭으로 열리는 답, 스스로는 쓰기 칸 + 예시 답 보기
@@ -76,6 +76,10 @@ export function buildSlides(ch, art, plan, similar, mode, ix = null) {
     : `<div class="dk-vs"><div class="dk-card"><h3>내 예상</h3><p class="dk-vmine"></p></div><div class="dk-card"><h3>실험 결과</h3><p>${esc(ix.predict.options[ix.predict.answer])}</p><p class="dk-sub">${esc(ix.predict.result)}</p></div></div><p class="dk-vsay dk-big"></p>`,
     { say: 'vs', kind: 'vs' });
   add('reveal', 'result', '3D로 확인하기', `<p class="dk-sub">내 예상과 결과가 맞는지, 아까 멈췄던 곳부터 끝까지 봐요.</p><div class="dk-3d" data-mount="scene" data-from="reveal"></div>`, { say: 'reveal', mount: 'scene', layout: 'media', kind: 'scene' });
+  if (media?.deck) {
+  const v=media.deck;
+  add('video','result',v.title,`<figure class="dk-film"><video controls playsinline preload="none" poster="${esc(v.poster || '')}" aria-label="${esc(v.title)}"><source src="${esc(v.src)}" type="video/webm"><source src="${esc(v.mp4)}" type="video/mp4"></video><p class="dk-film-prompt">${esc(v.prompt)}</p><figcaption><a href="${esc(v.page)}" target="_blank" rel="noopener">${esc(v.credit)}</a> · <a href="${esc(v.license || v.page)}" target="_blank" rel="noopener">이용 허락</a></figcaption><p class="dk-film-error" role="status" hidden>영상을 불러오지 못했어요. 재생을 다시 누르거나 <a href="${esc(v.page)}" target="_blank" rel="noopener">원본 영상</a>을 열어 보세요.</p></figure>`,{kind:'video',layout:'media'});
+  }
   add('concl', 'result', 'STEP 5 · 결론 내리기', `<ol class="dk-list">${ch.conclusion.map((c, i) => `<li><p>${esc(c.q)}</p>${i === 0 || teach ? ans(c.a, `concl${i}`) : peek(c.a)}</li>`).join('')}</ol>`, { say: 'concl', kind: 'write' });
 
   const nt = ch.note;
@@ -123,7 +127,7 @@ export function buildSlides(ch, art, plan, similar, mode, ix = null) {
       <div class="dk-pane" data-pane="gifted" hidden><p class="dk-timer" role="timer" aria-live="off"><b>3:00</b> 3분 동안 되도록 많이, 서로 다른 쪽으로 써 봐요.</p><p class="dk-q"><b>${esc(g.title)}</b><br>${esc(g.lead)}</p><table class="dk-tbl">${g.rows.map((r) => `<tr><th>${esc(r)}</th><td>${ans(g.a[r], `gifted-${r}`)}</td></tr>`).join('')}</table></div>`, { say: 'challenge', kind: 'challenge' });
     const by = Object.fromEntries(S.map((x) => [x.id, x])), ids = S.map((x) => x.id), tests = ids.filter((x) => /^test\d/.test(x));
     const order = ['cover', 'intro', 'think1', 'scene', 'predict', 'goal', 'hypo', 'design', 'order', 'lab', ...ids.filter((x) => /^res\d/.test(x)), 'vs', 'break',
-      'recallq', 'recall', 'reveal', 'concl', 'note', ...tests.slice(0, 2), 'plus', 'wonder', 'challenge', ...tests.slice(2), 'end'];
+      'recallq', 'recall', 'reveal', 'video', 'concl', 'note', ...tests.slice(0, 2), 'plus', 'wonder', 'challenge', ...tests.slice(2), 'end'];
     S.splice(0, S.length, ...order.filter((id) => by[id]).map((id) => by[id]));
     let ses = 1; S.forEach((x) => { x.ses = ses; if (x.id === 'break') ses = 2; });
   }
@@ -170,8 +174,8 @@ function watchLabTips(host, G) {
 let battle = false;   // 가르치기 · 실험 화면: 기본은 한 화면, 켜면 두 팀 배틀
 let recog = null;     // 말로 쓰기(학생이 🎤를 눌렀을 때만)
 
-export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, misc, onAnswer, myLab, ix = null }) {
-  const teach = mode === 'teach', S = buildSlides(ch, art, plan, similar, mode, ix);
+export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, misc, onAnswer, myLab, ix = null, media = null }) {
+  const teach = mode === 'teach', S = buildSlides(ch, art, plan, similar, mode, ix, media);
   const i = idx === 's2' ? Math.max(0, S.findIndex((x) => x.id === 'recall')) : Math.min(S.length - 1, Math.max(0, (idx || 1) - 1)), s = S[i], p = s.phaseObj;
   const go = (k) => { location.hash = `#/${u}/lab-class/${mode}/${k + 1}`; };
   const phases = plan.phases.map((x) => `<span class="${x.id === s.phase ? 'on' : ''}">${esc(x.name)}${teach ? ` ${x.min}′` : ''}</span>`).join('');
@@ -192,6 +196,16 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   const stage = $app.querySelector('.dk-stage'), $next = $app.querySelector('[data-a=next]');
   stage.querySelectorAll('.dk-stepi').forEach((b) => b.addEventListener('click', () => stage.querySelectorAll('.dk-stepi').forEach((x) => x.classList.toggle('on', x === b))));
   const alive = () => stage.isConnected;
+  const film=stage.querySelector('.dk-film video');
+  if(film){
+  const fail=()=>{stage.querySelector('.dk-film-error').hidden=false;};
+  const sources=[...film.querySelectorAll('source')],failed=new Set();
+  sources.forEach(source=>source.addEventListener('error',()=>{failed.add(source);if(failed.size===sources.length)fail();}));
+  film.addEventListener('error',fail);
+  film.addEventListener('playing',()=>{stage.querySelector('.dk-film-error').hidden=true;});
+  addEventListener('hashchange',()=>{film.pause();film.removeAttribute('src');film.replaceChildren();film.load();},{once:true});
+  }
+
   const hidden = () => [...stage.querySelectorAll('.rv:not(.on)')];
   const next = () => { const h = hidden(); if (teach && h.length) { h[0].classList.add('on'); return; } go(i === S.length - 1 ? 0 : i + 1); };
   const prev = () => { const on = [...stage.querySelectorAll('.rv.on')]; if (teach && on.length) { on.at(-1).classList.remove('on'); return; } if (i) go(i - 1); };
@@ -202,10 +216,10 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   const toggleNotes = () => { notesOn = !notesOn; if ($notes) $notes.hidden = !notesOn; $app.querySelector('[data-a=notes]')?.setAttribute('aria-pressed', notesOn); };
   $app.querySelector('[data-a=notes]')?.addEventListener('click', toggleNotes);
   $app.querySelector('[data-a=battle]')?.addEventListener('click', () => { battle = !battle; renderDeck($app, arguments[1]); });
-  if (teach) stage.addEventListener('click', (e) => { if (!e.target.closest('button,canvas,a,input,textarea,.dk-3d,.dk-battle')) next(); });
+  if (teach) stage.addEventListener('click', (e) => { if (!e.target.closest('button,canvas,video,a,input,textarea,.dk-3d,.dk-battle')) next(); });
   const onKey = (e) => {
     if (!alive()) { removeEventListener('keydown', onKey); return; }
-    if (e.target.closest?.('textarea,input,select,button,.dk-battle')) return;
+    if (e.target.closest?.('textarea,input,select,button,video,.dk-battle')) return;
     if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
     else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
     else if (e.key === 'f' || e.key === 'F') $app.querySelector('[data-a=full]').click();
@@ -274,6 +288,16 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   const textLen = () => stage.querySelector('.dk-body').innerText.replace(/\s+/g, '').length;
   async function run(V) {
     const k = s.kind || 'read';
+    if (k === 'video') {
+    // No timed page advance during watching. Browser autoplay is muted; sound is the learner's choice.
+    await G.say({text:'이번에는 실제 응결 연구 영상을 살펴봐요. 작은 물방울이 생기고 커지는 모습을 찾아보세요.'});
+    if(!alive())return;
+    film.addEventListener('play',cancelAuto);
+    film.addEventListener('ended',async()=>{if(!alive())return;await G.say({text:'잘 관찰했어요. 보이지 않는 수증기가 식어 액체 물방울이 되었어요. 이제 내 실험과 비교해 볼까요?'},{mood:'praise'});if(alive())auto(3500);});
+    film.muted=true;
+    try{await film.play();}catch{G.status('영상의 재생 버튼을 눌러 보세요.');}
+    return;
+    }
     if (k === 'read') { const t0 = performance.now(), c = cue(V, null); if (c) await G.say(c); if (!alive()) return;
       const read = Math.min(12000, Math.max(2200, textLen() * 55)) - (performance.now() - t0); auto(Math.max(1500, read)); return; }
     if (k === 'end') { G.say(cue(V, 'dk-end'), { mood: 'praise' }); return; }

@@ -1,5 +1,6 @@
-/* Numbers of Magic — 유닛 N-07: 10까지의 수 관계망 (수의 나라 · 유아 5~7세)
+/* Numbers of Magic — 유닛 N-07: 더하기와 빼기 ③ — 주사위와 수직선 (수의 나라 · 유아 5~7세, 교재 G1-7)
    tier:'basic' → 경량 플로우: practice → discover(1스테이지) → lab → stamp
+   (2026-10 개편: 예전 제목 "수 이웃과 10 짝꿍"은 G1-7 문항집과 주제가 어긋나 교체. 이웃 수·10 짝꿍은 NL6 드릴로 계속 연습한다.)
    콘텐츠는 전부 창작 — 라이선스 교재 삽화/지문 미사용 */
 (function(){
 'use strict';
@@ -8,51 +9,51 @@ window.NM_UNITS = window.NM_UNITS || {};
 window.NM_UNITS['N-07'] = {
   id:'N-07', tier:'basic', level:'N', order:7,
   lineage:['ten-friends'],
-  generator:'nl7_relation', edu:'유아',
-  title:{ ko:'수 이웃과 10 짝꿍', en:'Number Neighbors & Partners of 10', zh:'数的邻居与凑十朋友' },
-  subtitle:{ ko:'1 큰 수, 1 작은 수, 그리고 10을 채우는 짝!', en:'One more, one less, and partners that fill 10!', zh:'大1的数、小1的数，还有凑满10的好朋友！' },
-  icon:'🔟',
+  generator:'nl38_scene', edu:'유아',
+  title:{ ko:'주사위와 수직선 더하기·빼기', en:'Dice & Number-Line Add and Subtract', zh:'骰子与数轴上的加减' },
+  subtitle:{ ko:'주사위를 굴리고, 개구리를 폴짝 뛰게 해요!', en:'Roll the die and make the frog hop!', zh:'掷骰子，让青蛙跳一跳！' },
+  icon:'🎲',
 
-  practice:{ generator:'nl7_relation', level:'practice', count:4, params:{ mode:'tenpair' },
-    intro:{ ko:'10칸 판을 가득 채워 보자! 몇 칸을 더 채우면 10이 될까?',
-      en:"Let's fill the ten-frame! How many more squares make 10?",
-      zh:'把十格板填满吧！再填几格就是10？' } },
+  practice:{ generator:'nl38_scene', level:'practice', count:4, params:{ mode:'dice', op:'+', level:'practice' },
+    intro:{ ko:'주사위를 눌러 굴려 봐! 나온 눈과 더해서 답을 써요.',
+      en:'Tap the die to roll it! Add the number it shows.',
+      zh:'点一点骰子来掷！和点数相加，写出得数。' } },
 
   discover:{
     story:{
-      hook:{ ko:'구슬 8개가 있어요. 몇 개를 더 놓으면 10칸이 가득 찰까요?',
-        en:'There are 8 beads. How many more will fill all 10 spaces?',
-        zh:'已经有8颗珠子了。再放几颗，才能填满10个格子呢？' },
-      history:{ ko:'10칸 판에 구슬 8개를 놓으면 빈 칸은 2개예요. 빈 칸을 채우면 8과 2가 모여 10이 되지요. 구슬이 9개면 1개, 7개면 3개가 더 필요해요. 채운 칸과 빈 칸을 함께 보면 10 짝꿍을 찾을 수 있어요.',
-        en:'Place 8 beads in a ten-frame and 2 spaces stay empty. Fill them: 8 and 2 make 10. With 9 beads you need 1 more; with 7 you need 3 more. Look at the filled and empty spaces together to find partners of 10.',
-        zh:'在十格板上放8颗珠子，就会空出2格。填满它们，8和2合起来就是10。有9颗时还需要1颗，有7颗时还需要3颗。把已填的格子和空格一起看，就能找到凑十朋友。' }
+      hook:{ ko:'개구리가 0에서 4칸을 뛰고, 또 3칸을 뛰었어요. 지금은 몇 칸에 있을까요?',
+        en:'A frog hops 4 steps from 0, then 3 more. Where is it now?',
+        zh:'青蛙从0跳了4格，又跳了3格。现在在哪一格？' },
+      history:{ ko:'수직선 위에서 앞으로 뛰면 더하기, 되돌아오면 빼기예요. 0에서 4칸 뛰고 3칸 더 뛰면 4+3=7, 7에서 3칸 되돌아오면 7−3=4예요. 주사위의 눈이나 도미노 점도 이렇게 더하고 뺄 수 있어요.',
+        en:'Hopping forward on the number line is adding and hopping back is subtracting: 0 → 4 → 7 is 4 + 3 = 7, and 7 back 3 steps is 7 − 3 = 4. Dice dots and domino dots can be added and subtracted the same way.',
+        zh:'在数轴上往前跳是加法，往回跳是减法：0→4→7就是4＋3＝7，从7往回跳3格是7－3＝4。骰子和多米诺的点也可以这样加减。' }
     },
     title:{ ko:'누미의 마법 노트', en:"Numi's Magic Note", zh:'努米的魔法笔记' },
     stages:[
-      { tag:{ko:'① 수는 이웃이 있어요',en:'1) Numbers have neighbors',zh:'① 数有邻居'},
-        head:{ko:'1 큰 수, 1 작은 수 — 그리고 10 짝꿍!',en:'One more, one less — and partners of 10!',zh:'大1、小1——还有凑十朋友！'},
-        desc:{ko:'5의 1 큰 수는 6, 1 작은 수는 4예요!',
-          en:'One more than 5 is 6, one less is 4!',
-          zh:'比5大1是6，小1是4！'},
-        mathSteps:[{ko:'4 ← 5 → 6 (이웃)',en:'4 ← 5 → 6 (neighbors)',zh:'4 ← 5 → 6（邻居）'},'7 + □ = 10',{ko:'짝꿍: 1·9, 2·8, 3·7, 4·6, 5·5',en:'Partners: 1·9, 2·8, 3·7, 4·6, 5·5',zh:'好朋友：1·9, 2·8, 3·7, 4·6, 5·5'}],
-        result:{ko:'이웃 수와 10 짝꿍을 찾아봐요!',en:'Find neighbors and partners of 10!',zh:'找找邻居数和凑十朋友！'} }
+      { tag:{ko:'① 뛰면 더하기, 되돌아오면 빼기',en:'1) Hop on = add, hop back = subtract',zh:'① 往前跳是加，往回跳是减'},
+        head:{ko:'수직선에서 식이 보여요',en:'See the equation on the number line',zh:'在数轴上看见算式'},
+        desc:{ko:'4에서 3칸 앞으로 뛰면 7! 7에서 3칸 되돌아오면 4!',
+          en:'3 steps on from 4 is 7! 3 steps back from 7 is 4!',
+          zh:'从4往前跳3格是7！从7往回跳3格是4！'},
+        mathSteps:['4 + 3 = 7','7 ' + '−' + ' 3 = 4'],
+        result:{ko:'뛰는 길이 곧 식이에요!',en:'The hops are the equation!',zh:'跳的路线就是算式！'} }
     ],
-    rule:{ ko:'채운 칸 + 빈 칸 = 10이에요!',
-      en:'Filled + empty = 10!',
-      zh:'已填的加空的等于10！' }
+    rule:{ ko:'앞으로 뛰면 +, 되돌아오면 −예요!',
+      en:'Hop forward is +, hop back is −!',
+      zh:'往前跳是＋，往回跳是－！' }
   },
 
-  lab:{ generator:'nl7_relation', level:'main', count:4, params:{ mode:'oneStep' },
-    intro:{ ko:'이번엔 이웃 수 찾기! 먼저 톡톡 세어 보고, 1 큰 수나 1 작은 수를 골라 봐.',
-      en:'Now find the neighbors! Count first, then pick one more or one less.',
-      zh:'现在找邻居数！先点着数一数，再选大1或小1的数。' } },
+  lab:{ generator:'nl41_hop', level:'main', count:4, params:{ mode:'read', dir:'mix' },
+    intro:{ ko:'개구리가 뛴 모습이에요. 빈 칸에 알맞은 수를 써 봐!',
+      en:'Look at how the frog hopped. Fill the empty box!',
+      zh:'看青蛙跳的样子，把空格填出来！' } },
 
-  stamp:{ label:{ ko:'10 짝꿍 수호자', en:'Guardian of 10-Partners', zh:'凑十小卫士' }, coins:20 },
+  stamp:{ label:{ ko:'주사위 개구리 박사', en:'Dice & Frog Expert', zh:'骰子青蛙小博士' }, coins:20 },
 
   voice:{
-    correct:[ {ko:'딩동댕! 🎉',en:'Ding-dong!',zh:'叮咚！'}, {ko:'짝꿍 발견! 🔟',en:'Partner found!',zh:'找到朋友啦！'}, {ko:'이웃 수 박사! ⭐',en:'Neighbor expert!',zh:'邻居数博士！'} ],
-    wrong:[ {ko:'음~ 다시 세어 볼까?',en:'Hmm, count again?',zh:'嗯，再数数看？'}, {ko:'한 칸 앞? 한 칸 뒤?',en:'One step forward? One step back?',zh:'往前一格？往后一格？'} ],
-    finish:{ ko:'짝짝짝! 10 짝꿍 수호자 탄생! 🔟✨', en:'Clap clap! A Guardian of 10-Partners is born!', zh:'鼓掌！凑十小卫士诞生了！' }
+    correct:[ {ko:'딩동댕! 🎉',en:'Ding-dong!',zh:'叮咚！'}, {ko:'폴짝! 🐸',en:'Hop! 🐸',zh:'跳！🐸'}, {ko:'주사위 박사! 🎲',en:'Dice expert! 🎲',zh:'骰子博士！🎲'} ],
+    wrong:[ {ko:'음~ 앞으로 뛰었나, 되돌아왔나?',en:'Hmm, did it hop on or back?',zh:'嗯，是往前跳还是往回跳？'}, {ko:'눈금을 하나씩 세어 볼까?',en:'Count the steps one by one?',zh:'一格一格数一数？'} ],
+    finish:{ ko:'짝짝짝! 주사위 개구리 박사 탄생! 🎲🐸', en:'Clap clap! A Dice & Frog Expert is born!', zh:'鼓掌！骰子青蛙小博士诞生了！' }
   }
 };
 

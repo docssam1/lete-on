@@ -39,7 +39,7 @@ function run(){
   mutant('invalid drill level','data/courses.js',append("window.NM_COURSES.C1.sessions[0].drills=[{t:'AD1',lv:999,n:10}];"),'LEVEL_UNKNOWN');
   mutant('generator missing','data/threads.js',append("window.NM_THREADS.MD83.gen='missing-generator';"),'GENERATOR_NOT_LOADED');
   mutant('invalid SPEC pinned level before clamp','data/courses.js',s=>s.replace('ML7@5','ML7@999'),'LEVEL_UNKNOWN');
-  mutant('unknown SPEC creative before filtering','data/courses.js',s=>s.replace("creative:['ML14@1'","creative:['NO_SUCH_THREAD'"),'SPEC_REFERENCE');
+  mutant('unknown SPEC creative before filtering','data/courses.js',s=>s.replace("creative:['ML13@1'","creative:['NO_SUCH_THREAD'"),'SPEC_REFERENCE');
   mutant('unit generator missing','data/units/A-35.js',s=>s.replace(/generator:'romanNumerals'/g,"generator:'NO_SUCH_GEN'"),'UNIT_GENERATOR');
   mutant('menu item missing','data/drill-topics.js',append('window.NM_DRILL_TOPICS[0].subs.shift();'),'MENU_MISSING');
   mutant('menu duplicate','data/drill-topics.js',append('window.NM_DRILL_TOPICS[0].subs.push(window.NM_DRILL_TOPICS[0].subs[0]);'),'MENU_DUPLICATE');
@@ -47,6 +47,7 @@ function run(){
   mutant('unknown new thread requires category','data/threads.js',append("window.NM_THREADS.NEW=Object.assign({},window.NM_THREADS.AD1);"),'SCRIPT_EVAL');
   const w={};w.window=w;vm.createContext(w);
   vm.runInContext(read(path.join(ROOT,'data/threads.js')),w);
+  for(const g of ['1-3','4-6','7-9','10-12','13-15'])vm.runInContext(read(path.join(ROOT,'data/g1/'+g+'-threads.js')),w);
   vm.runInContext(read(path.join(ROOT,'data/drill-topics.js')),w);
   const before=JSON.stringify(w.NM_DRILL_TOPICS);
   const added={id:999,label:{ko:'새 레벨',en:'New level',zh:'新等级'},params:{}};

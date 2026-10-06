@@ -3687,3 +3687,12 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-comic-art svg image,.nm-mzu-strip-art svg image,.nm-mzu-story-art svg image{
   filter:drop-shadow(0 1.6px 1.2px rgba(26,34,51,.30)) drop-shadow(0 0 .8px #fff)}
 .nm-comic-art svg rect[fill="#fdf6e3"],.nm-mzu-strip-art svg rect[fill="#fdf6e3"]{filter:drop-shadow(0 1.5px 1.5px rgba(26,34,51,.18))}
+
+/* 단원 화면(learning-stage.css)이 만화 그림 배경을 단색으로 덮어쓰던 것을 다시 장면 배경으로 */
+.nm-unit-view .nm-comic .nm-comic-art{
+  background:
+    radial-gradient(120% 55% at 50% 112%,var(--sc-h,rgba(201,160,99,.28)) 0 62%,transparent 63%),
+    radial-gradient(circle at 18% 22%,rgba(255,255,255,.7) 0 4%,transparent 5%),
+    linear-gradient(180deg,var(--sc-a,#fff8e6),var(--sc-b,#f3e3bd))}
+.nm-kid-hero .nm-art-obj{width:1.1em;height:1.1em;vertical-align:middle}
+.nm-unit-ic .nm-art-obj{width:1.1em;height:1.1em;vertical-align:middle}

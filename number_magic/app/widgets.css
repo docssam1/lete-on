@@ -14,6 +14,10 @@
   vertical-align:-0.3em;line-height:1;flex-shrink:0;
 }
 .nm-art-animal svg{display:block;width:100%;height:100%;}
+/* 젤리 물건 SVG — 이모지 글자 자리에 같은 크기로 꽂힌다 */
+.nm-art-obj{display:inline-block;width:1.15em;height:1.15em;vertical-align:-0.2em;line-height:1;flex-shrink:0}
+.nm-art-obj svg{display:block;width:100%;height:100%}
+.nm-art-dg{width:1.05em;height:1.25em}
 
 /* ── shared cube base ── */
 .nm-w-cube{
@@ -826,3 +830,38 @@
 .nm-gp-svg .nm-gp-tick{font-size:9px;font-weight:700;fill:var(--ink);opacity:.62;}
 .nm-gp-svg .nm-gp-ax{font-size:11px;font-weight:800;fill:var(--ink);opacity:.72;}
 .nm-gp-svg .nm-gp-ptlabel{font-size:12px;font-weight:900;fill:var(--gold-deep);}
+
+/* ── 유아 tapCount · 흩어진 장면 판 (교재의 '여기저기 널린 그림 세기') ───────────
+   좌표는 생성기(nl.js dress)가 정한다. 판은 종이 질감의 둥근 액자, 물건은 제각각 기울고 크기가 다르다. */
+.nm-tc-scene.nm-tc-scatter{
+  position:relative;display:block;width:min(340px,92vw);aspect-ratio:1/.86;max-width:none;padding:0;
+  border:3px solid #e3d3ac;border-radius:22px;overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 16%,rgba(255,255,255,.7) 0 3.5%,transparent 4.5%),
+    radial-gradient(120% 40% at 50% 112%,rgba(139,185,111,.28) 0 60%,transparent 61%),
+    repeating-linear-gradient(135deg,rgba(201,160,99,.06) 0 6px,transparent 6px 12px),
+    linear-gradient(180deg,#fffaf0,#f7ecd2);
+  box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf}
+.nm-tc-item.sc{position:absolute;width:60px;height:60px;margin:-30px 0 0 -30px;
+  transform:rotate(var(--r,0deg)) scale(var(--s,1))}
+.nm-tc-item.sc.on{transform:rotate(var(--r,0deg)) scale(calc(var(--s,1)*1.14));z-index:2}
+.nm-tc-item.sc .nm-tc-emoji{font-size:46px}
+.nm-tc-item.sc .nm-tc-ord{transform:rotate(calc(var(--r,0deg)*-1))}
+/* 글꼴이 제각각인 숫자 */
+.nm-dg{display:inline-block;font-size:44px;line-height:1;font-weight:900;color:#1a2233;filter:drop-shadow(0 2px 1px rgba(0,0,0,.12))}
+.dgf0 .nm-dg{font-family:Georgia,'Times New Roman',serif;color:#16417c}
+.dgf1 .nm-dg{font-family:'Courier New',monospace;color:#8b3a62}
+.dgf2 .nm-dg{font-family:'Trebuchet MS',system-ui,sans-serif;color:#1a2233;font-size:40px}
+.dgf3 .nm-dg{font-family:'Comic Sans MS','Segoe Print',cursive;color:#2e7d57}
+.dgf4 .nm-dg{font-family:Impact,'Arial Black',sans-serif;font-weight:400;color:#b5651d;font-size:38px}
+
+/* ── 유아 10칸 틀 (frameRead · framePaint) — 교재의 10칸 점 그림을 물건 칩으로 ──────── */
+.nm-fr-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:8px 4px}
+.nm-fr-frame{display:grid;grid-template-columns:repeat(5,56px);grid-auto-rows:56px;gap:0;
+  border:3px solid #c8b583;border-radius:16px;overflow:hidden;background:#fffaf0;
+  box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf}
+.nm-fr-cell{border:0;border-right:2px solid #e3d3ac;border-bottom:2px solid #e3d3ac;background:transparent;padding:0;display:grid;place-items:center;cursor:default;touch-action:manipulation}
+.nm-fr-cell:nth-child(5n){border-right:0}.nm-fr-cell:nth-child(n+6){border-bottom:0}
+.nm-fr-cell.on{background:rgba(255,226,140,.35)}
+.nm-fr-chip{font-size:36px;line-height:1;animation:tc-pop .25s ease-out}
+button.nm-fr-cell.tap{cursor:pointer}

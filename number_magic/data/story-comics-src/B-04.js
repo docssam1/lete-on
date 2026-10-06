@@ -2,6 +2,7 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,wig,sheep,pouch,numi,arrow,paper,bubble,txt,ground}=H;
+  const {oughtred}=H;
   return { panels:[
     { art: svg(
         txt(100,66,50,C.blue,'×')
@@ -11,7 +12,7 @@ module.exports=function(H){
               en:'Who invented the multiplication sign ×?',
               zh:'乘号×是谁发明的？' } },
     { art: svg(
-        wig(48,80,1.1)
+        oughtred(48,80,1.1)
         +paper(80,30,110,66)
         +txt(135,66,30,C.ink,'×')
         +txt(135,90,13,C.sub,'1631')),

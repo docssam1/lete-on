@@ -41,10 +41,8 @@ window.NM_UNITS['N-04'] = {
       zh:'4笔直接画，第5笔捆一下！' }
   },
 
-  lab:{ generator:'nl_tallybuild', level:'main', count:4, params:{ mode:'match' },
-    intro:{ ko:'수와 탤리 그림을 이어요! 숫자를 먼저 톡 — 탤리 그림을 골라 이어요!',
-      en:'Match numbers to tally marks! Tap a number first, then tap its tally!',
-      zh:'连连看！先点数字，再点它的计数符号！' } },
+  lab:{ generator:'g46_ancient', level:'main', count:4, params:{ mode:'match' },
+    intro:{ ko:'옛날 사람들의 숫자예요! 숫자를 먼저 톡 — 같은 수의 기호를 골라 이어요!', en:'Numbers from long ago! Tap a number, then tap its old symbol!', zh:'古人的数字！先点数字，再点同样数的符号！' } },
 
   stamp:{ label:{ ko:'기수법 마법사', en:'Notation Wizard', zh:'记数法魔法师' }, coins:20 },
 

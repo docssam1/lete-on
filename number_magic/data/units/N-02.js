@@ -12,7 +12,7 @@ window.NM_UNITS['N-02'] = {
   subtitle:{ ko:'앞으로, 거꾸로, 폴짝폴짝 뛰어세기!', en:'Forward, backward, and skip-counting hops!', zh:'往前数、倒着数、跳着数！' },
   icon:'🪜',
 
-  practice:{ generator:'nl2_seq', level:'practice', count:4, params:{ mode:'gap' },
+  practice:{ generator:'g13_n2', level:'practice', count:4, params:{ modes:['gap','repeat','between','nearest'] },
     intro:{ ko:'수들이 사다리처럼 줄을 섰어! 빈 칸에 누가 올지 골라 볼까?',
       en:'The numbers lined up like a ladder! Who goes in the blank?',
       zh:'数字像梯子一样排好队啦！空格里该是谁呢？' } },
@@ -33,7 +33,7 @@ window.NM_UNITS['N-02'] = {
       zh:'往前每次大1，倒着每次小1！' }
   },
 
-  lab:{ generator:'nl2_seq', level:'main', count:3, params:{ mode:'dots' },
+  lab:{ generator:'g13_n2', level:'main', count:3, params:{ modes:['dots','pathRow','skipPaint'] },
     intro:{ ko:'점 잇기 시간! 1부터 차례대로 점을 톡톡 — 숨은 그림이 나타나!',
       en:'Dot-to-dot time! Tap the dots from 1 in order — a hidden picture appears!',
       zh:'连点时间！从1开始按顺序点——藏着的图案出现啦！' } },

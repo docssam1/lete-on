@@ -44,6 +44,7 @@ var CURATED_TOPICS = [
   { id:'sub', label:'뺄셈', en:'Subtraction', zh:'减法', icon:'－', color:'#ef4444', section:'school',
     subs:[
       {label:'한 자리 뺄셈', thread:'SB1', level:1, desc:'9 이하'},
+      {label:'덧셈·뺄셈 섞기 (9까지)', thread:'SB1', level:2, desc:'기호를 보고 고르기'},
       {label:'몇십 − 한 자리', thread:'SB2', level:1, desc:'10s − 1d'},
       {label:'100 − 수', thread:'SB2', level:2, desc:'100 − 1d/2d'},
       {label:'두 자리 − 한 자리 (내림 없음)', thread:'SB3', level:1, desc:'받아내림 없음'},
@@ -157,6 +158,7 @@ var CURATED_TOPICS = [
       {label:'세 자리 ÷ 두 자리 (나머지 있음)', thread:'DV5', level:3, desc:'나머지 < 나누는 수'},
       {label:'네 자리 ÷ 두 자리', thread:'DV5', level:4, desc:'자리 내려오며 반복'},
       {label:'다섯 자리 ÷ 두 자리 (심화)', thread:'DV5', level:7, desc:'몫이 네 자리인 나눗셈'},
+      {label:'곱셈·나눗셈 섞기 (세 자리와 두 자리)', thread:'DV5', level:8, desc:'곱셈과 나눗셈 종합'},
       {label:'배수 판별법 (2 · 5 · 10)', thread:'DV6', level:1, desc:'끝자리로 판별'},
       {label:'배수 판별법 (3 · 6 · 9)', thread:'DV6', level:2, desc:'자릿수 합으로 판별'},
       {label:'배수 판별법 (7)', thread:'DV6', level:3, desc:'뒷자리를 떼고 그 2배를 빼기'},
@@ -199,8 +201,20 @@ var CURATED_TOPICS = [
       {label:'소수 덧셈 · 뺄셈 (소수 한 자리)', thread:'DC1', level:1, desc:'0.1 단위'},
       {label:'소수 덧셈 · 뺄셈 (소수 두 자리)', thread:'DC1', level:2, desc:'0.01 단위'},
       {label:'소수 곱셈', thread:'DC2', level:1, desc:'소수점 위치 맞추기'},
+      {label:'(소수) × (자연수) 가로셈', thread:'DC2', level:2, desc:'2.4 × 3 = 72 ÷ 10'},
+      {label:'(소수) × (자연수) 세로셈', thread:'DC2', level:3, desc:'자연수처럼 곱하고 점 찍기'},
+      {label:'(자연수) × (소수) 가로셈', thread:'DC2', level:4, desc:'6 × 0.35 = 210 ÷ 100'},
+      {label:'(자연수) × (소수) 세로셈', thread:'DC2', level:5, desc:'곱이 처음 수보다 작아져요'},
+      {label:'(소수) × (소수) 가로셈', thread:'DC2', level:6, desc:'1.2 × 0.4 = 48 ÷ 100'},
+      {label:'(소수) × (소수) 세로셈', thread:'DC2', level:7, desc:'소수 자릿수를 더한 만큼'},
       {label:'소수 나눗셈', thread:'DC3', level:1, desc:'소수점 이동해서 나누기'},
       {label:'몫이 소수인 나눗셈 (자연수 ÷ 자연수)', thread:'DC3', level:2, desc:'3 ÷ 4 = 0.75'},
+      {label:'(소수) ÷ (소수) 가로셈 — 자릿수가 같은', thread:'DC3', level:3, desc:'1.35 ÷ 0.45 = 135 ÷ 45'},
+      {label:'(소수) ÷ (소수) 세로셈 — 자릿수가 같은', thread:'DC3', level:4, desc:'소수점을 옮겨 세로로'},
+      {label:'(소수) ÷ (소수) 가로셈 — 자릿수가 다른', thread:'DC3', level:5, desc:'6.72 ÷ 0.4 = 67.2 ÷ 4'},
+      {label:'(소수) ÷ (소수) 세로셈 — 자릿수가 다른', thread:'DC3', level:6, desc:'몫의 소수점은 옮긴 자리 위에'},
+      {label:'(자연수) ÷ (소수) 가로셈', thread:'DC3', level:7, desc:'9 ÷ 0.25 = 900 ÷ 25'},
+      {label:'(자연수) ÷ (소수) 세로셈', thread:'DC3', level:8, desc:'모자란 자리에 0 붙이기'},
       {label:'소수를 곱하기 (연습)', thread:'DC4', level:1, desc:'자연수처럼 곱하고 소수점 찍기'},
       {label:'소수를 곱하기 (실전)', thread:'DC4', level:2, desc:'더 큰 소수로 연습'},
       {label:'소수를 나누기 (연습)', thread:'DC5', level:1, desc:'소수점을 옮겨서 나누기'},
@@ -719,6 +733,7 @@ var CURATED_TOPICS = [
 /* 기존 문구/순서는 보존한다. 새 레벨은 threads.js에서 자동으로 가져오며,
    처음 등장한 스레드는 갈래를 명시해야 한다. */
 var ADDITIONAL_THREADS = {
+  preschool:['NL17','NL18','NL19','NL20','NL21','NL22','NL27','NL28','NL29','NL30','NL31','NL32','NL33','NL34','NL35','NL36','NL47','NL48','NL49','NL50','NL51','NL52','NL53','NL54','NL55','NL56','NL57','NL58','NL59','NL60','NL61','NL62','NL63','NL64','NL65','NL66'],   /* G1 유아 새 스레드 */
   decimal:['DC6'],
   middle1:['MD68','MD69','MD70','MD73','MD82','MD84','MD89'],
   middle2:['MD63','MD64','MD65','MD71','MD72','MD74','MD75','MD76','MD88'],
@@ -732,6 +747,8 @@ var ADDITIONAL_THREADS = {
            'MD144','MD145','MD146','MD147','MD148','MD149','MD150','MD151','MD152','MD153'],
   calculus1:['MD154','MD155','MD156','MD157','MD158','MD159']
 };
+/* 유아 교재 G1-7~9호 스레드(NL37~NL43) — 이 줄만 추가한다(다른 묶음과 합칠 때 충돌을 줄이려고 따로 둠) */
+ADDITIONAL_THREADS.preschool=(ADDITIONAL_THREADS.preschool||[]).concat(['NL37','NL38','NL39','NL40','NL41','NL42','NL43'].filter(function(id){return root.NM_THREADS&&root.NM_THREADS[id];}));
 function buildTopics(threads){
   if(!threads) throw new Error('drill-topics: threads.js must load first');
   var topics=CURATED_TOPICS.map(function(cat){

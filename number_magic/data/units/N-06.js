@@ -41,10 +41,8 @@ window.NM_UNITS['N-06'] = {
       zh:'分开合起来，总数都不变！' }
   },
 
-  lab:{ generator:'nl4_bond', level:'main', count:4, params:{ mode:'split' },
-    intro:{ ko:'이번엔 가르기! 위의 수를 보고 빈 원에 알맞게 톡톡 채워 봐. 0이 될 수도 있어!',
-      en:'Now splitting! Look at the top number and fill the empty circle. It might even be 0!',
-      zh:'现在来分！看上面的数，把空圆填对。有可能是0哦！' } },
+  lab:{ generator:'g46_split', level:'main', count:4, params:{ skin:'plate' },
+    intro:{ ko:'같은 수도 서로 다르게 가를 수 있어요! 접시를 눌러 올리고 ✔를 눌러요', en:'The same number can be split in different ways! Tap plates to add, then tap ✔.', zh:'同一个数可以有不同的分法！点盘子放上去，再点✔。' } },
 
   stamp:{ label:{ ko:'가르기 요정', en:'Split Fairy', zh:'分分小精灵' }, coins:20 },
 

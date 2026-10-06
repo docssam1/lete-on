@@ -14,7 +14,10 @@ const LABS = [
   { id: 's41-u03', lab: '기울기와 물의 양 바꿔 보기', skills: ['변인 통제', '관찰', '자료 해석'], sem: '4-1', unit: 'Ⅲ. 땅의 변화', title: '흙 언덕 물길', q: '흐르는 물은 흙을 어디로 옮길까?', theme: '#8A5A2B' },
   { id: 's41-u03b', lab: '불 세기와 식히는 빠르기 바꿔 보기', skills: ['모형 실험', '비교', '결론 도출'], sem: '4-1', unit: 'Ⅲ. 땅의 변화', title: '화산 실험실', q: '화산에서는 무엇이 나올까?', theme: '#B23A2E' },
   { id: 's42-u01', lab: '연못에 식물 심고 부레옥잠 눌러 보기', skills: ['관찰', '분류', '결론 도출'], sem: '4-2', unit: 'Ⅰ. 식물의 생활', title: '둥둥 부레옥잠의 비밀', q: '부레옥잠은 어떻게 물에 뜰까?', theme: '#2B7A62' },
-  { id: 's42-u02', lab: '물의 온도와 판의 냉각 바꾸어 비교하기', skills: ['변인 통제', '관찰', '자료 해석'], sem: '4-2', unit: 'Ⅱ. 물의 상태 변화', title: '보이지 않는 물의 여행 · 미니 가습기', q: '차가운 판의 물방울은 어디서 왔을까?', theme: '#287B9A' },
+  { id: 's42-u02', lab: '물의 온도와 판의 냉각 바꾸어 비교하기', skills: ['변인 통제', '관찰', '자료 해석'], sem: '4-2', unit: 'Ⅱ. 물의 상태 변화', title: '보이지 않는 물의 여행 · 미니 가습기', q: '차가운 판의 물방울은 어디서 왔을까?', theme: '#287B9A', image: 'photos/s42-u02-cups.webp', imageAlt: '실온 컵과 차가운 컵 비교 · AI 실사형 설명 이미지' },
+  { id: 's42-u03', lab: '빛·물체·위치를 바꾸어 그림자 비교하기', skills: ['가설 설정', '변인 통제', '자료 해석'], sem: '4-2', unit: 'Ⅲ. 그림자와 거울', title: '빛이 그리는 그림 · 그림자 놀이 상자', q: '그림자는 왜 커졌다 작아졌다 할까?', theme: '#3D4FA8', image: 'photos/s42-u03-shadow.webp', imageAlt: '손전등과 인형 사이 거리에 따른 그림자 크기 비교 · AI 실사형 설명 이미지' },
+  { id: 's42-u04', lab: '미는 힘을 바꾸어 지층의 변화 보기', skills: ['가설 설정', '모형 실험', '결론 도출'], sem: '4-2', unit: 'Ⅳ. 화산과 지진', title: '땅이 흔들리는 까닭 · 지층 모형 지진 실험실', q: '단단한 땅은 왜 흔들릴까?', theme: '#9A4B2E' },
+  { id: 's42-u05', lab: '햇빛과 찬 공기를 바꾸어 수조 속 비 관찰하기', skills: ['가설 설정', '모형 실험', '결론 도출'], sem: '4-2', unit: 'Ⅴ. 물의 여행', title: '물 한 방울의 여행 · 수조 속 작은 지구', q: '오늘 내리는 비는 어디에서 왔을까?', theme: '#2B6F9E' },
 ];
 
 function stateOf(store, id) {
@@ -46,7 +49,7 @@ function labCard(store, l, feature) {
   const badge = k.kind === 'passed' ? '<span class="h-badge done">끝냄</span>' : k.kind === 'doing' ? `<span class="h-badge doing">${p}% 진행</span>` : '<span class="h-badge">새 수업</span>';
   return `<article class="h-lab${feature ? ' feature' : ''}" style="--t:${l.theme}">
     <a class="h-lab-img" href="${startOf(l.id)}" aria-label="${esc(l.title)} 시작 화면">
-      <img src="${A}thumbs/${l.id}.webp" alt="${esc(l.title)} 3D 실험실 화면" loading="${feature ? 'eager' : 'lazy'}" width="1200" height="675">
+      <img src="${A}${l.image || `thumbs/${l.id}.webp`}" alt="${esc(l.imageAlt || `${l.title} 3D 실험실 화면`)}" loading="${feature ? 'eager' : 'lazy'}" width="1200" height="675">
       ${badge}
     </a>
     <div class="h-lab-body">
@@ -113,7 +116,7 @@ export function pageHome($app, store, teacher) {
       </div>
       <div class="h-hero-art" aria-hidden="true">
         <div class="h-orbit"></div>
-        <figure class="h-shot" style="--t:${feature.theme}"><img src="${A}thumbs/${feature.id}.webp" alt="" width="1200" height="675"><figcaption><small>다음 수업</small>${esc(feature.title)}</figcaption></figure>
+        <figure class="h-shot" style="--t:${feature.theme}"><img src="${A}${feature.image || `thumbs/${feature.id}.webp`}" alt="" width="1200" height="675"><figcaption><small>다음 수업</small>${esc(feature.title)}</figcaption></figure>
         <img class="h-doc" src="${A}docssam-B4-encourage.webp" alt="" width="360" height="540">
       </div>
     </div></section>

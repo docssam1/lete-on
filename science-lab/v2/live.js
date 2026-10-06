@@ -20,7 +20,7 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
   root.querySelectorAll('.bk-video').forEach((v) => v.querySelector('.bk-play')?.addEventListener('click', (e) => {
     e.stopPropagation();
     if (panel?.open('video', v, { src: v.dataset.src })) return;
-    v.innerHTML = `<video controls autoplay playsinline><source src="${v.dataset.src}" type="video/webm">${v.dataset.mp4 ? `<source src="${v.dataset.mp4}" type="video/mp4">` : ''}<source src="${v.dataset.full}" type="video/webm"></video>`;
+    v.innerHTML = `<video controls autoplay playsinline><source src="${v.dataset.src}" type="video/${/\.mp4$/.test(v.dataset.src) ? 'mp4' : 'webm'}">${v.dataset.mp4 ? `<source src="${v.dataset.mp4}" type="video/mp4">` : ''}<source src="${v.dataset.full}" type="video/${/\.mp4$/.test(v.dataset.full) ? 'mp4' : 'webm'}"></video>`;
     const vid = v.querySelector('video');
     vid.addEventListener('error', () => { v.innerHTML = `<div class="bk-video-fail"><p>이 브라우저에서는 영상이 열리지 않아요.</p><a href="${v.dataset.page}" target="_blank" rel="noopener">새 창에서 영상 보기</a></div>`; }, true);
     vid.play?.().catch(() => { /* 자동 재생이 막히면 재생 버튼으로 */ });
@@ -50,7 +50,7 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
   }));
   root.querySelectorAll('.bk-photo img, .bk-art img').forEach((img) => { img.style.cursor = 'zoom-in'; img.addEventListener('click', (e) => {
     e.stopPropagation(); const cap = img.closest('figure')?.querySelector('figcaption')?.innerHTML || '';
-    openPop(img, '실제 사진', (el) => { el.innerHTML = `<figure class="pop-photo"><img src="${img.src}" alt=""><figcaption>${cap}</figcaption></figure>`; });
+    openPop(img, img.closest('.water-photo') ? '자세히 보기 · 설명 이미지' : '실제 사진', (el) => { el.innerHTML = `<figure class="pop-photo"><img src="${img.src}" alt=""><figcaption>${cap}</figcaption></figure>`; });
   }); });
   root.querySelectorAll('.bk-blank[data-a] i').forEach((i) => { i.parentElement.dataset.m = i.textContent; });
   root.querySelectorAll('.bk-blank[data-a]').forEach((b) => b.addEventListener('click', (e) => {

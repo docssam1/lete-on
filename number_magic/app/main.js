@@ -5992,7 +5992,7 @@ function screenTier(){
         const u=UNITS[uid];const done=unitDone(uid);const locked=unitLocked(uid);
         const isNext=!locked&&!done&&uid===nextUid;
         html+=`<button class="nm-unit ${done?'done':''} ${locked?'trial-locked':''} ${isNext?'next':''}" data-unit="${uid}">
-          <span class="nm-unit-ic" style="background:${esc(accent)}1f">${u.icon||'✦'}</span>
+          <span class="nm-unit-ic" style="background:${esc(accent)}1f">${u.icon?iconArt(u.icon):'✦'}</span>
           <span class="nm-unit-name">${L(u.title)}${lineageBadgeSpan(uid)}</span>
           ${locked?'<span class="nm-unit-lock">🔒</span>':done?'<span class="nm-unit-check">✓</span>':isNext?`<span class="nm-unit-next-pill">${esc(lk('다음','Next','下一个'))}</span>`:''}
         </button>`;
@@ -6338,7 +6338,7 @@ function stepDiscover(body,u){
       ${mzKick('CONCEPT · '+L(d.title),'CONCEPT · '+L(d.title),'CONCEPT · '+L(d.title))}
     </div>`:'';
   body.innerHTML=`<div class="nm-card${kid&&!living?' kid-note':''}${mzStory?' nm-mzu-card':''}${living?' nm-live-card':''}">
-    ${kid&&!living?`<div class="nm-kid-hero">${u.icon||'📓'}</div>`:''}
+    ${kid&&!living?`<div class="nm-kid-hero">${u.icon?iconArt(u.icon):'📓'}</div>`:''}
     ${living?`<div id="livingLesson"></div>${!strategy&&st&&st.history?`<details class="nm-live-history"><summary>${S.lang==='ko'?(kid?'수 이야기 더 보기':'이 교구의 수학 이야기'):S.lang==='en'?'The story behind the pieces':'教具里的数学故事'}</summary><p>${L(st.history)}</p></details>`:''}`:mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
     ${!strategy?`<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>`:''}
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
@@ -6420,6 +6420,11 @@ function symText(v){return typeof v==='string'?v:L(v);}
    없으면(대부분) SVG 가 그대로 보인다. 0 은 누미. 둘 다 없는 글자는 예전처럼 글자만. */
 const DEX_PNG={'+':'plus','=':'equal','−':'minus','×':'times','÷':'divide','√':'sqrt','%':'percent','π':'pi','Σ':'sigma','∞':'infinity'};
 const DEX_HUES=['#2f7fd8','#e8742a','#2fa36b','#8a5fd0','#d94f7a','#16a0b8'];
+/* 이모지 아이콘 자리에 쓰는 그림 — 젤리 물건(object-art.js)이 있으면 SVG, 없으면 글자 그대로 */
+function iconArt(ic){
+  if(window.NM_OBJECTS&&ic&&window.NM_OBJECTS.has(ic)){const o=window.NM_OBJECTS.svg(ic);if(o)return`<span class="nm-art-obj" aria-hidden="true">${o}</span>`;}
+  return esc(ic||'');
+}
 function dexFigure(sym,px){
   const base=window.NM_CHAR_BASE||'assets/characters/';
   if(sym==='0')return`<span class="nm-dex-fig" style="height:${px}px"><img src="${base}numi-0.png" alt="0" draggable="false" class="solo"></span>`;

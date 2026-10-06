@@ -203,7 +203,7 @@
   .nm-gp-boxplot .nm-bp-work { fill:#fff; stroke:none; }
   .nm-gp-boxplot.nm-bp-blank .nm-bp-work { fill:#f8fbfa; stroke:#9badab; stroke-width:1; stroke-dasharray:4 3; }
   .nm-nl { width: 62mm; height: auto; margin: 6px auto 0; display: block; }
-  .nm-nl line, .nm-nl path { fill: none; stroke: #000; stroke-width: 1.4; }
+  .nm-nl svg:not(.nm-obj-svg) :is(line, path) { fill: none; stroke: #000; stroke-width: 1.4; }
   .nm-nl .nm-nl-hop { stroke-dasharray: 3 2; }
   .nm-nl .nm-nl-blank { fill: none; stroke: #000; stroke-width: 1.4; stroke-dasharray: 4 3; }
   .nm-nl text { font-family: sans-serif; font-size: 15px; font-weight: 700; fill: #000; }
@@ -213,21 +213,32 @@
   .nm-print-item-bond { text-align: center; }
   .nm-print-item-bond .nm-q-num { display: block; }
   .nm-bond { width: 34mm; height: auto; margin: 4px auto 0; }
-  .nm-bond circle, .nm-bond line { fill: none; stroke: #000; stroke-width: 1.6; }
+  .nm-bond circle, .nm-bond line { fill: none; stroke: #2f4a6e; stroke-width: 1.6; }
+  .nm-bond circle { fill: #fffaf0; }
   .nm-bond .nm-bond-blank { stroke-dasharray: 4 3; }
-  .nm-bond text { font-family: sans-serif; font-weight: 700; font-size: 20px; fill: #000; }
+  .nm-bond text { font-family: sans-serif; font-weight: 700; font-size: 20px; fill: #1f5fbf; }
 
   /* NL(수의 나라, 유아) 그림 — nlVisualHtml() 참조(2026-09-19 재작성). 무대(.nm-nl-stage) 안에
      30px 이모지, 답 칸(.nm-nl-ans)은 카드 안. 흑백 레이저에서도 선·칸이 남게 진한 선만 쓴다. */
-  .nm-nl { display:flex; flex-direction:column; align-items:center; gap:2.5mm; margin:1.5mm auto 0; width:100%; max-width:80mm; }
-  .nm-nl-stage { border:1.3px solid #1F2A3A; border-radius:3.5mm; padding:2.5mm 3.5mm; background:#fff; min-width:40mm; max-width:100%;
+  .nm-nl { display:flex; flex-direction:column; align-items:center; gap:1.8mm; margin:1.2mm auto 0; width:100%; max-width:80mm; }
+  .nm-nl-stage { border:1.3px solid #2f4a6e; border-radius:3.5mm; padding:2.5mm 3.5mm; background:#fffaf0; min-width:40mm; max-width:100%;
     display:flex; flex-direction:column; align-items:center; gap:1.5mm; box-sizing:border-box; }
   .nm-nl-stage-bond { border:0; padding:0; }
+  /* 2026-10-05 원장 "너무 흑백이야" — 유아 그림은 화면과 같은 색으로 인쇄(흑백 프린터는 회색 농도로 구분). */
+  .nm-nl, .nm-nl *, .nm-bond, .nm-bond * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   .nm-nl-stage .nm-bond { width:38mm; }
   .nm-nl-row { display:flex; justify-content:center; align-items:center; gap:2mm; font-size:30px; line-height:1.15; }
   .nm-nl-g { display:inline-block; }
+  .nm-nl-g svg, .nm-nl-sc svg, .nm-nl-fchip svg { display:block; width:1em; height:1em; }
+  .nm-nl-g svg { vertical-align:-.15em; display:inline-block; }
+  .nm-nl-scatter { position:relative; width:60mm; height:34mm; border:1.3px solid #2f4a6e; border-radius:3.5mm; background:#fffaf0; overflow:hidden; }
+  .nm-nl-sc { position:absolute; font-size:27px; line-height:1; }
+  .nm-nl-dg { display:inline-block; font-size:36px; line-height:1; font-weight:900; color:#1F2A3A; }
+  .dgp0 { font-family:Georgia,serif; } .dgp1 { font-family:'Courier New',monospace; } .dgp2 { font-family:Arial,sans-serif; }
+  .dgp3 { font-family:'Comic Sans MS',cursive; } .dgp4 { font-family:Impact,'Arial Black',sans-serif; font-weight:400; }
+  .nm-nl-fchip { display:block; font-size:7.6mm; line-height:1; }
   .nm-nl-cell { display:inline-flex; align-items:center; justify-content:center; width:9.5mm; height:9.5mm; box-sizing:border-box;
-    border:1.3px solid #1F2A3A; border-radius:2mm; font-size:18px; font-weight:700; line-height:1; background:#fff; }
+    border:1.3px solid #2f4a6e; border-radius:2mm; font-size:18px; font-weight:700; line-height:1; background:#fff; color:#1f5fbf; }
   .nm-nl-cell-round { border-radius:50%; }
   .nm-nl-cell-blank { border-style:dashed; border-width:1.6px; }
   .nm-nl-cell-empty { border-style:dashed; border-color:#8A8F99; }
@@ -239,24 +250,26 @@
   .nm-nl-ansbox { display:inline-block; width:12mm; height:9.5mm; border:1.5px solid #1F2A3A; border-radius:2mm; background:#fff; box-sizing:border-box; }
   .nm-nl-unit { font-size:13px; font-weight:700; }
   .nm-nl-dots { width:28mm; height:28mm; display:block; }
-  .nm-nl-dots circle, .nm-nl-dots text { fill:#1F2A3A; }
+  .nm-nl-dots circle { fill:#e0483e; } .nm-nl-dots text { fill:#1F2A3A; }
   .nm-nl-pyramid { display:flex; flex-direction:column; align-items:center; gap:1.5mm; }
   .nm-nl-pyramid .nm-nl-row { gap:2.5mm; }
+  .nm-nl-pyramid .nm-nl-cell { background:#fde9b8; border-color:#c98a1a; }
+  .nm-nl-pyramid .nm-nl-cell-blank { background:#fffaf0; }
   .nm-nl-stairs { height:30mm; max-width:100%; display:block; }
-  .nm-nl-stairs rect { fill:#fff; stroke:#1F2A3A; stroke-width:1.4; }
+  .nm-nl-stairs rect { fill:#fde9b8; stroke:#1F2A3A; stroke-width:1.4; }
   .nm-nl-stairs line { stroke:#1F2A3A; }
   .nm-nl-scale { width:60mm; display:block; }
   .nm-nl-scale line, .nm-nl-scale path { stroke:#1F2A3A; stroke-width:1.4; fill:#fff; stroke-linecap:round; }
-  .nm-nl-scale circle { fill:#1F2A3A; }
+  .nm-nl-scale circle { fill:#e0483e; }
   .nm-nl-scale text { fill:#1F2A3A; }
   .nm-nl-mrow { font-size:18px; gap:1.5mm; }
   .nm-nl-mach { display:inline-flex; align-items:center; justify-content:center; min-width:13mm; height:9.5mm; padding:0 2mm;
-    border:1.6px solid #1F2A3A; border-radius:2mm; background:#EEF1F6; font-size:15px; font-weight:800; box-sizing:border-box; }
+    border:1.6px solid #1F2A3A; border-radius:2mm; background:#dbe9fb; font-size:15px; font-weight:800; box-sizing:border-box; }
   .nm-nl-cross { display:flex; flex-direction:column; align-items:center; gap:1.5mm; }
   .nm-nl-plus { font-size:14px; padding:0 1.5mm; color:#1F2A3A; }
   .nm-nl-tenframe { display:grid; grid-template-columns:repeat(5, 10mm); grid-auto-rows:10mm; border:1.6px solid #1F2A3A; }
   .nm-nl-tf { border:.8px solid #1F2A3A; display:flex; align-items:center; justify-content:center; box-sizing:border-box; }
-  .nm-nl-tf-on::after { content:''; width:6.5mm; height:6.5mm; border-radius:50%; background:#1F2A3A; }
+  .nm-nl-tf-on::after { content:''; width:6.5mm; height:6.5mm; border-radius:50%; background:#e5a82a; border:.8px solid #0e2c57; box-sizing:border-box; }
   .nm-nl-tally { height:9mm; width:auto; max-width:60mm; display:block; }
   .nm-nl-tally line { stroke:#1F2A3A; stroke-width:1.6; stroke-linecap:round; }
   .nm-nl-tallyboard { width:52mm; height:14mm; border:1.3px dashed #8A8F99; border-radius:2mm; display:grid; place-items:center; }
@@ -266,11 +279,11 @@
   .nm-nl-mcol { display:flex; flex-direction:column; gap:2mm; }
   .nm-nl-mgap { width:18mm; }
   .nm-nl-mcard { position:relative; display:flex; align-items:center; justify-content:center; min-width:16mm; height:11mm; padding:0 2mm;
-    border:1.3px solid #1F2A3A; border-radius:2mm; font-size:19px; font-weight:800; box-sizing:border-box; }
+    border:1.3px solid #2f4a6e; border-radius:2mm; font-size:19px; font-weight:800; box-sizing:border-box; background:#fffaf0; color:#1f5fbf; }
   .nm-nl-mcard .nm-nl-tally { height:7mm; }
   .nm-nl-tag { position:absolute; right:-6mm; top:50%; transform:translateY(-50%); font-size:12px; color:#555; }
   .nm-nl-dice { display:inline-flex; flex-wrap:wrap; gap:1.2mm; max-width:14mm; justify-content:center; }
-  .nm-nl-dice i { width:3mm; height:3mm; border-radius:50%; background:#1F2A3A; display:block; }
+  .nm-nl-dice i { width:3mm; height:3mm; border-radius:50%; background:#e0483e; display:block; }
   .nm-nl-baskets { display:flex; gap:8mm; justify-content:center; margin-top:1mm; }
   .nm-nl-basket { display:flex; align-items:center; gap:1.5mm; font-size:14px; font-weight:700; }
   .nm-nl-bk { font-size:26px; }
@@ -843,6 +856,14 @@
   .nm-dv-line { border-bottom:1.2px solid #8d93a1; width:3.6em; margin:2px 0 3px 0; }
   .nm-dv-rem { height:1.5em; }
   .nm-w2-item-vis .nm-divbox { margin:4px auto 0; }
+  .nm-divbox-dec .nm-dv-b { min-width:2.6em; box-sizing:border-box; }
+  .nm-divbox-dec .nm-dv-q { margin-left:calc(2.6em + 14px); }
+  .nm-divbox-dec .nm-dv-cell, .nm-divbox-dec .nm-dv-d { margin-right:0; box-sizing:border-box; width:1.15em; border:1px solid transparent; }
+  .nm-divbox-dec .nm-dv-cell { border:1px dashed #c3c9d6; }
+  .nm-divbox-dec .nm-dv-add { border-color:#9aa3b5; }
+  .nm-dv-gap { display:inline-flex; align-items:flex-end; justify-content:center; width:.44em; height:1.3em; font-weight:800; font-size:1.15em; line-height:1; vertical-align:top; }
+  .nm-dv-gap-q { color:#1f5fbf; }
+  .nm-dv-add { border-color:#9aa3b5; }
   /* 마법 노트 지면 */
   .nm-w2-page-magic { gap:0; }
   /* 매거진형 개념 노트(2026-09-25) */
@@ -953,6 +974,8 @@
      14px 이던 숫자를 22px 로, 올림/내림을 쓸 줄(.nm-print-vp-carry)을 위에, 답 줄을 1.6em 으로
      (2026-09-06, 1~2학년이 손으로 쓰는 칸). 나이 밴드(.nm-print-age-*)와 무관하게 이 레이아웃만. */
   .nm-w2-grid-vertical .nm-print-vp { font-size:21px; min-width:3.4em; margin:0 auto; }
+  /* 섞기(종합) 장 — 나눗셈 상자 옆의 곱셈 세로셈을 같은 크기로(2026-10-05) */
+  .nm-print-sheet .nm-w2-grid-visual .nm-print-vp { font-size:calc(21px * var(--ws-fs, 1)); min-width:3.4em; margin:6px auto 0; }
   /* 부분 장(첫 쪽)의 세로셈 칸은 내용이 행보다 8px 높아 문항 번호가 반쯤 잘렸다 —
      칸 안쪽 여백을 걷어 높이를 맞춘다(2026-09-19). */
   .nm-w2-grid-vertical .nm-w2-item.nm-print-item { padding-top:0; padding-bottom:0; }
@@ -2899,7 +2922,40 @@ function bondSvg(whole, known){
 /* ── 세로 나눗셈 상자(2026-09-19, 교과서 "(두 자리)÷(한 자리)" 지면) ──
    3)17 꼴로 나누는 수·나누어지는 수를 놓고, 위에 몫 쓸 자리를, 아래에 빼는 줄과 나머지 자리를 둔다.
    학생이 직접 쓰는 자리라 숫자는 넣지 않는다(정답지는 따로 낸다). */
+/* 소수 나눗셈 상자(2026-10-05, DC3 L4·L6·L8) — 나누어지는 수의 자리마다 칸 하나, 칸 사이마다 좁은 틈 하나.
+   틈은 두 줄(몫·나누어지는 수)에 똑같이 놓여 자리가 위아래로 맞는다. 나누어지는 수 줄의 틈에는 원래 소수점만
+   찍고(옮긴 자리는 아이가 화살표로 표시), 몫 줄의 틈에는 몫의 소수점을 찍는다 — 옮긴 소수점 바로 위.
+   자연수÷소수처럼 자리가 모자라면 0 을 쓸 빈 칸(점선)을 뒤에 붙인다. */
+function divBoxDecHtml(d){
+  const x = d.dec;
+  const aDigits = String(x.aStr).replace('.', '').split('');
+  const p0 = String(x.aStr).indexOf('.') < 0 ? aDigits.length : String(x.aStr).indexOf('.');
+  const cols = aDigits.length + (x.zeros || 0);
+  const p1 = p0 + x.k;                                   /* 옮긴 소수점 — 열 p1-1 뒤 */
+  const qInt = String(x.qInt), qFrac = String(x.qFrac || '');
+  const qStart = p1 - qInt.length, qEnd = p1 - 1 + qFrac.length;
+  const gap = (txt, cls) => `<span class="nm-dv-gap${cls ? ' ' + cls : ''}">${txt}</span>`;
+  let qRow = '', aRow = '';
+  for(let i = 0; i < cols; i++){
+    qRow += (i < qStart || i > qEnd) ? '<span class="nm-dv-cell" style="visibility:hidden"></span>' : '<span class="nm-dv-cell"></span>';
+    aRow += i < aDigits.length ? `<span class="nm-dv-d">${esc(aDigits[i])}</span>` : '<span class="nm-dv-cell nm-dv-add"></span>';
+    if(i < cols - 1){
+      qRow += gap(qFrac && i === p1 - 1 ? '.' : '', 'nm-dv-gap-q');
+      aRow += gap(String(x.aStr).indexOf('.') >= 0 && i === p0 - 1 ? '.' : '');
+    }
+  }
+  const steps = Math.min(4, Math.max(1, (qInt.replace(/^0+/, '') + qFrac).length));
+  let body = '';
+  for(let i = 0; i < steps; i++) body += '<div class="nm-dv-sub"></div><div class="nm-dv-line"></div>';
+  body += '<div class="nm-dv-rem"></div>';
+  return `<div class="nm-divbox nm-divbox-dec" role="img" aria-label="${esc(lk('세로 나눗셈','Long division','竖式除法'))} ${esc(String(x.aStr))} ÷ ${esc(String(x.bStr))}">
+  <div class="nm-dv-q">${qRow}</div>
+  <div class="nm-dv-row"><span class="nm-dv-b">${esc(String(x.bStr))}</span><span class="nm-dv-bracket">${aRow}</span></div>
+  <div class="nm-dv-work">${body}</div>
+</div>`;
+}
 function divBoxHtml(d){
+  if(d && d.dec) return divBoxDecHtml(d);
   if(!d || !(d.a > 0) || !(d.b > 0)) return '';
   /* 몫 칸은 "몫이 설 수 있는 자리"만 — 35÷3이면 두 칸, 17÷3이면 한 칸.
      나누어지는 수의 자리 수에서 첫 몫이 서기 전 건너뛰는 자리를 뺀다. */
@@ -3001,7 +3057,7 @@ const ANIMAL_GLYPH = {
   'animal:turtle':'🐢', 'animal:squirrel':'🐿️', 'animal:rabbit':'🐰',
   'animal:bear':'🐻', 'animal:fox':'🦊', 'animal:deer':'🦌', 'animal:duck':'🦆'
 };
-function nlGlyph(tok){ return ANIMAL_GLYPH[tok] || tok || '●'; }
+function nlGlyph(tok){ if(typeof tok==='string' && tok.indexOf('num:')===0) return tok.slice(4); return ANIMAL_GLYPH[tok] || tok || '●'; }
 function nlChunk(arr, n){ const out = []; for(let i=0;i<arr.length;i+=n) out.push(arr.slice(i, i+n)); return out; }
 function nlStage(inner, extraCls){ return `<div class="nm-nl-stage${extraCls ? ' ' + extraCls : ''}">${inner}</div>`; }
 function nlCard(stage, ans){ return `<div class="nm-nl">${stage}${ans || ''}</div>`; }
@@ -3011,10 +3067,21 @@ function nlAnsBox(unit){
   return `<div class="nm-nl-ans"><span class="nm-nl-anslab">${esc(lk('답','Answer','答'))}</span><span class="nm-nl-ansbox"></span>${u}</div>`;
 }
 /* 이모지 줄 — 한 줄 perRow(기본 5)개씩 끊어 두 줄이면 5+n 으로 읽히게(다섯 묶음 세기). */
+/* 한 칸에 그릴 물건 — 젤리 SVG(app/object-art.js)가 있으면 그것, 'num:7' 은 숫자, 없으면 글자 그대로. */
+function nlObjHtml(tok, f){
+  if(window.NM_OBJECTS && window.NM_OBJECTS.has(tok)) return window.NM_OBJECTS.svg(tok, {f});
+  if(typeof tok === 'string' && tok.indexOf('num:') === 0) return esc(tok.slice(4));
+  return esc(nlGlyph(tok));
+}
 function nlGlyphRows(glyphs, perRow, sizePx){
   const st = sizePx ? ` style="font-size:${sizePx}px"` : '';
   return nlChunk(glyphs, perRow || 5).map(r =>
-    `<div class="nm-nl-row"${st}>${r.map(g => `<span class="nm-nl-g">${esc(nlGlyph(g))}</span>`).join('')}</div>`).join('');
+    `<div class="nm-nl-row"${st}>${r.map(g => `<span class="nm-nl-g">${nlObjHtml(g)}</span>`).join('')}</div>`).join('');
+}
+/* 흩어진 장면(N-01 tapCount) — 화면과 같은 좌표·크기·기울기. 생성기가 좌표를 정하므로 인쇄도 같은 판. */
+function nlScatterHtml(items){
+  const cells = items.map(it => `<span class="nm-nl-sc" style="left:${it.x}%;top:${it.y}%;transform:translate(-50%,-50%) rotate(${it.r|0}deg) scale(${it.s})">${nlObjHtml(it.e, it.f)}</span>`).join('');
+  return `<div class="nm-nl-scatter">${cells}</div>`;
 }
 /* 빈 판 — 만들기(tapMake)·색칠(gridPaint count)·탤리 그리기: 아이가 직접 그려 넣는 칸. */
 function nlBoardHtml(n, perRow){
@@ -3036,6 +3103,7 @@ function bondSvgTop(a, b){
 /* 섞인 장면(세기·분류) — items는 {e,t} 또는 {e,type} 어느 쪽이든 .e만 읽는다. */
 function nlSceneHtml(items){
   if(!Array.isArray(items) || !items.length) return '';
+  if(items[0].x != null) return nlScatterHtml(items);
   return nlStage(nlGlyphRows(items.map(it => it.e)));
 }
 function nlSeqStripHtml(seq, blank){
@@ -3133,6 +3201,11 @@ function nlCrossHtml(cells){
   </div>`);
 }
 /* 텐프레임 — 5×2 칸에 n개가 차 있고 나머지는 비어 있다(10의 짝꿍). */
+/* 10칸 틀 + 물건(젤리 SVG) — frameRead 는 n개가 놓인 틀, framePaint 는 n=0 빈 틀 */
+function nlFrameObjHtml(n, tok){
+  const cells = []; for(let i=0;i<10;i++) cells.push(`<span class="nm-nl-tf">${i < n ? `<span class="nm-nl-fchip">${nlObjHtml(tok)}</span>` : ''}</span>`);
+  return nlStage(`<div class="nm-nl-tenframe">${cells.join('')}</div>`);
+}
 function nlTenframeHtml(n){
   const cells = []; for(let i=0;i<10;i++) cells.push(`<span class="nm-nl-tf${i < n ? ' nm-nl-tf-on' : ''}"></span>`);
   return nlStage(`<div class="nm-nl-tenframe">${cells.join('')}</div>`);
@@ -3190,6 +3263,8 @@ function nlVisualHtml(p){
   }
   if(w==='tapCount') return Array.isArray(p.items) ? nlCard(nlSceneHtml(p.items), nlAnsBox(p.step === 10 ? lk('원','','元') : EA)) : '';
   if(w==='tapMake') return nlCard(nlStage(nlBoardHtml(10)));
+  if(w==='frameRead') return typeof p.n==='number' ? nlCard(nlFrameObjHtml(p.n, p.emoji), nlAnsBox(EA)) : '';
+  if(w==='framePaint') return nlCard(nlFrameObjHtml(0, p.emoji));
   if(w==='seqFill') return Array.isArray(p.seq) ? nlCard(nlSeqStripHtml(p.seq, p.blank)) : '';
   if(w==='dotToDot') return Array.isArray(p.pts) ? nlCard(nlStage(nlDotsSvg(p.pts)), nlAnsBox(EA)) : '';
   if(w==='pyramid') return Array.isArray(p.rows) ? nlCard(nlPyramidHtml(p.rows)) : '';
@@ -3211,11 +3286,22 @@ function nlVisualHtml(p){
   if(w==='tallyBuild') return p.interaction==='read' && typeof p.target==='number'
     ? nlCard(nlStage(Array.isArray(p.tallyGroups)?nlTallyGroupsHtml(p.tallyGroups):nlTallySvg(p.target)), nlAnsBox(EA))
     : nlCard(nlStage(`<div class="nm-nl-tallyboard">${p.startCount>0?nlTallySvg(p.startCount):''}</div>`));
+  /* 확장 위젯의 인쇄 — window.NM_NL_PRINT[이름] = { visual(p,K), label(p,K), ask(p,K) } (app/g1/*.print.js) */
+  const ext = window.NM_NL_PRINT && window.NM_NL_PRINT[w];
+  if(ext && typeof ext.visual === 'function') return ext.visual(p, nlPrintKit()) || '';
   return '';
+}
+/* 확장 인쇄 도구 — 확장 파일이 exam.js 내부 헬퍼를 직접 못 보므로 여기서 건네 준다 */
+function nlPrintKit(){
+  return { nlCard, nlStage, nlAnsBox, nlObjHtml, nlGlyphRows, nlTenframeHtml, nlFrameObjHtml, nlBoardHtml, nlChunk,
+    esc, lk, pickL, EA: nlUnitEa(), NL_CIRC: typeof NL_CIRC !== 'undefined' ? NL_CIRC : [] };
 }
 /* 정답지 표기 — 고르는 문항은 인덱스(0/1) 대신 말로. 없으면 null(숫자 그대로). */
 function nlAnswerLabel(p){
   const w = p.widget; if(!w) return null;
+  if(p.answerLabel) return String(pickL(p.answerLabel));
+  { const ext = window.NM_NL_PRINT && window.NM_NL_PRINT[w];
+    if(ext && typeof ext.label === 'function'){ const r = ext.label(p, nlPrintKit()); if(r != null) return r; } }
   /* 우리말 서수는 "2째"가 아니라 "둘째"다 — 문항 문장(nl.js ORDINAL)과 같은 말로 적는다. */
   const ORD_KO = ['', '첫째', '둘째', '셋째', '넷째', '다섯째', '여섯째', '일곱째', '여덟째', '아홉째'];
   const ord = i => lk(`왼쪽에서 ${ORD_KO[i] || i + '째'}`,
@@ -3265,6 +3351,8 @@ const NL_PRINT_WORDS = [
   ['点一点放进篮子，再', ''], ['跳着数，选出', '跳着数，写出'], ['选出', '写出'], ['点一点，', '']
 ];
 function nlPrintAsk(p){
+  { const ext = window.NM_NL_PRINT && p.widget && window.NM_NL_PRINT[p.widget];
+    if(ext && typeof ext.ask === 'function'){ const r = ext.ask(p, nlPrintKit()); if(r != null) return r; } }
   let s = String(pickL(p.prompt) || '');
   NL_PRINT_WORDS.forEach(([a, b]) => { if(a && s.indexOf(a) >= 0) s = s.split(a).join(b); });
   /* 점 잇기·길 잇기의 답은 "점이 모두 몇 개"다(생성기 계약) — 화면에선 다 이으면 끝이라 물음이
@@ -3994,7 +4082,7 @@ function classifyRoundLayout(problems, threadId, young, creative){
   const excludedPrefix = /^(MD|CH|EL|MX)/.test(threadId||'') || !!(thDef && thDef.noVertical);
   /* 곱하는 수가 두 자리인 세로셈은 부분곱이 두 줄이라 칸이 더 높다(2026-09-19, ML8·ML9).
      5행 52mm 에 그대로 두면 칸마다 10px 씩 넘쳤다 — 4행 64mm 로 낮춘다. */
-  const twoRowVert = p => { const v = parseVert(p.tex); return !!v && v.op === '×' && String(v.b).replace(/\D/g,'').length >= 2; };
+  const twoRowVert = p => { const v = parseVert(p.tex); return !!v && v.op === '×' && String(v.b).replace(/\D/g,'').replace(/^0+/,'').length >= 2; };
   const vertLayout = () => withTex.length && withTex.every(twoRowVert)
     ? {type:'vertical', cols:4, rows:4, perPage:16, flow:'row', firstRows:2, pitch:64}
     : {type:'vertical', cols:4, rows:5, perPage:20, flow:'row', firstRows:3, pitch:52};
@@ -4345,7 +4433,9 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
        parseVert를 다시 걸면 우연히 부호 없는 문항 하나만 다른 칸과 형식이
        갈린다(2026-09-04 버그, classifyRoundLayout 주석 참조). 그 외
        레이아웃에서는 tex를 있는 그대로 인라인으로 찍는다. */
-    const v = isVerticalRound ? parseVert(p.tex) : null;
+    /* 섞기(종합) 레벨의 곱셈 문항은 나눗셈 상자와 같은 장에 놓인다 — 가로식이면 계산할 자리가 없다. 세로셈 틀로(2026-10-05, DV5 L8) */
+    const mixVert = !isVerticalRound && p.mixedFrom && layoutType === 'visual' && (parseVert(p.tex) || {}).op === '×';
+    const v = (isVerticalRound || mixVert) ? parseVert(p.tex) : null;
     if(v){
       cls += ' nm-w2-item-vp';
       /* .nm-print-vp-carry — 올림/내림 숫자를 적는 빈 줄(w2 세로셈 전용, 2026-09-06). 편집기의
@@ -4357,7 +4447,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       /* 곱하는 수가 두 자리면 부분곱이 두 줄이다 — 줄이 하나뿐이면 답만 겨우 쓰고
          부분곱은 여백에 흘려 쓰게 된다(ML8·ML9 학습지에서 실제로 그랬다, 2026-09-19).
          두 줄 + 합 줄을 그려 세로셈의 모양 그대로 쓰게 한다. */
-      const twoRow = v.op === '×' && String(v.b).replace(/\D/g,'').length >= 2;
+      const twoRow = v.op === '×' && String(v.b).replace(/\D/g,'').replace(/^0+/,'').length >= 2;   /* 0.4 는 한 줄 */
       const rows = twoRow
         ? `<div class="nm-print-vp-bot">&nbsp;</div>
   <div class="nm-print-vp-bot">&nbsp;</div>
@@ -4878,7 +4968,8 @@ function problemKey(p){
   for(const key of ['graph','solutionGraph','scatterPlot','cubes','pts','items','beads','numline','clock','fraction','word','wordAsk','choices','prompt',
     'dir','a','b','whole','seq','blank','rows','left','right','rightType','gridMode','total','emoji','layout','mark','chars',
     'interaction','mmode','examples','target','startCount','tallyGroups','input','rule','cells','askMode','askType','basketA','basketB',
-    'wordEqn','base10','array','meaning','picCap','scene']){
+    'wordEqn','base10','array','meaning','picCap','scene']
+    .concat(Array.isArray(p.keyFields) ? p.keyFields : [])){   /* 확장 위젯 문항이 문제를 가르는 필드를 스스로 선언 */
     if(p[key]!=null && (key!=='prompt'||!p.tex||(!p.word&&!p.graph&&/\\square|\\bigcirc/.test(p.tex)&&!/=|\\equiv|\\Rightarrow|<|>|\\ge|\\le/.test(p.tex)))) data[key]=p[key];
   }
   const steps=printSteps(p);if(steps) data.steps=steps.map(s=>s.tex);
@@ -5049,7 +5140,9 @@ function w2GuidedHtml(threadId, level, code, guideSeedOverride, exclude, levels,
     html: wrap(itemHtmls),
     // 모눈과 중간식을 축소하지 않는다. 그래프형 세 문제는 두 쪽에 나누어 쓴다.
     /* MD30@3(행렬 곱셈) — 문제 행렬 + 성분 네 줄 + 답 행렬이라 세 문제가 한 쪽을 471px 넘쳤다(2026-09-29, C48 둘째 장). */
-    pages: (problems.some(p=>p.graph) || (threadId==='MD66' && level===4) || (threadId==='MD30' && level===3)) ? [wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))] : [wrap(itemHtmls)],
+    /* 2026-10-05 — 2+1 로 나눠도 첫 쪽(두 문제 987px)이 52px 넘쳤다(C49·C51 둘째 장 복습). 행렬 곱셈은 한 쪽에 하나. */
+    pages: (threadId==='MD30' && level===3) ? itemHtmls.map(h => wrap([h]))
+      : (problems.some(p=>p.graph) || (threadId==='MD66' && level===4)) ? [wrap(itemHtmls.slice(0,2)),wrap(itemHtmls.slice(2))] : [wrap(itemHtmls)],
     problems,
     skips:problems.map(p=>p.__uniqueSkip||0)
   };
@@ -5774,7 +5867,9 @@ function renderRoundPagesBody(item, opts){
     // 소수의 짝꿍: 따라풀기의 세로 분수/쓰기 상자가 높다. 뒤 문항을 다음 장으로
     // 넘겨 손으로 쓰는 높이를 지킨다(10/20/30문항 모두 같은 분할 규칙).
     : item.thread === 'DC6' ? Math.min(baseFirst, 2)
-    : item.thread === 'MD83' ? Math.min(baseFirst, 4) : baseFirst;
+    : item.thread === 'MD83' ? Math.min(baseFirst, 4)
+    // 합성함수 L3: 따라풀기(주기 찾기 표)가 길어 첫 장 셋째 줄이 4px 모자랐다(C57 복습, 2026-10-05). 첫 장은 두 줄.
+    : (item.thread === 'MD128' && item.level === 3) ? Math.min(baseFirst, 2) : baseFirst;
   /* 첫 장 줄 수를 **잰 높이**로 한 번 더 줄인다(2026-09-25). 판정별 고정표는 머리(개념·기억 고리·예시·
      따라 풀기) 높이를 모른다 — 머리가 긴 레벨은 남은 높이를 1fr 로 나눠 받은 줄이 내용보다 낮아져
      문항이 겹쳐 찍혔다(main 20문항 기준 312개 레벨, C29 DV8 L1 A4 에서 눈으로 확인).
@@ -5895,8 +5990,14 @@ function renderRoundPagesBody(item, opts){
     const fullH = headBand && headBand[3];
     const pitchMm = Math.max(layout.pitch || 20, Math.ceil(rowNeed));
     /* 마지막 장의 재도전 QR·첫 연습 장의 지시문 줄이 차지하는 높이(extraMm)를 뺀다(C4 AD5 L1 마지막 장 17mm 넘침) */
-    const pitchUse = fullH ? Math.min(pitchMm, Math.floor((fullH - (extraMm || 0)) / rowsCount - 2)) : pitchMm;
-    const rows = fixedPitch ? `repeat(${rowsCount},minmax(0,${pitchUse}mm))` : `repeat(${rowsCount},minmax(0,1fr))`;
+    const pitchCap = fullH ? Math.floor((fullH - (extraMm || 0)) / rowsCount - 2) : Infinity;
+    const pitchUse = Math.min(pitchMm, pitchCap);
+    /* 여유는 상한까지 남은 만큼만 — 줄이 상한에 닿은 장은 장 전체가 종이보다 길어졌다(C25 +7px · C68 +4px) */
+    const slack = Math.max(0, Math.min(1.5, pitchCap - 1 - pitchUse));
+    /* 부분 장 칸은 pitch + 1.5mm 가 **최소**이고 내용이 더 높으면 그만큼 늘어난다(2026-10-05). 칸 높이는 레벨마다 시드 둘로 잰
+       값이라 더 높은 문항(√·분수 두 층)의 글리프가 1mm쯤 칸 밖으로 나가는 일이 복습 장에서 되풀이됐다(C57 MD128 · C59 MD133 +4px).
+       글리프 넘침은 auto 가 못 잡아 여유(slack)를 준다 — 상한까지 남은 만큼만. */
+    const rows = fixedPitch ? `repeat(${rowsCount},minmax(${pitchUse + slack}mm,auto))` : `repeat(${rowsCount},minmax(0,1fr))`;
     const flowCol = layout.flow === 'col' ? 'grid-auto-flow:column;' : '';
     const grow = fixedPitch ? 'flex:0 0 auto;align-content:start;' : '';
     return `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:${rows};${flowCol}${grow}`;
@@ -5909,7 +6010,7 @@ function renderRoundPagesBody(item, opts){
   const instrText = item.instr ? pickL(item.instr)
     : layout.type === 'word'
     ? lk('다음 물음에 답하시오.','Answer each question.','请回答下列各题。')
-    : pickL(th.instr || W2_INSTR[item.thread]) || lk('계산을 하시오.','Solve each problem.','请计算下列各题。');
+    : pickL(((th.levels || []).find(l => l.id === item.level) || {}).instr || th.instr || W2_INSTR[item.thread]) || lk('계산을 하시오.','Solve each problem.','请计算下列各题。');
   const html = pages.map((pageItems, pi) => {
     const first = pi === 0;
     const cap = first ? firstCap : layout.perPage;
@@ -6689,6 +6790,10 @@ const NM_EXAM = {
           concept:'나누기는 역수의 곱셈! ÷를 ×로 바꾸고 뒤 분수를 뒤집어 곱해요.\n예) 1/2 ÷ 1/4 = 1/2 × 4/1 = 2'},
         {label:'소수의 나눗셈',thread:'DC3',level:1,desc:'나누어떨어짐',
           concept:'소수 나눗셈 총정리.\n예) 4.8 ÷ 6 = 0.8'},
+        {label:'(소수)÷(소수) 가로셈',thread:'DC3',level:5,desc:'소수점 똑같이 옮기기',
+          concept:'나누는 수가 자연수가 되도록 두 수의 소수점을 똑같이 옮겨요.\n예) 6.72 ÷ 0.4 = 67.2 ÷ 4 = 16.8'},
+        {label:'(소수)÷(소수) 세로셈',thread:'DC3',level:6,desc:'몫의 소수점 위치',
+          concept:'세로셈에서도 소수점을 옮기고, 몫의 소수점은 옮긴 소수점 바로 위에 찍어요.\n예) 0.4)6.72 → 4)67.2 → 16.8'},
         {label:'비와 비율 종합',thread:'MX3',level:2,desc:'할·푼·리',
           concept:'우리나라식 소수 비율 표현이에요.\n예) 0.354 → 3할 5푼 4리'},
         {label:'혼합계산 끝판왕',thread:'MX1',level:3,desc:'중괄호까지',magic:true,

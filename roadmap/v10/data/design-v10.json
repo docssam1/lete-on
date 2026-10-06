@@ -1,0 +1,3627 @@
+{
+  "version": "v10-design-only",
+  "created_at": "2026-10-03T09:43:09.047893+00:00",
+  "priority": "UF07 목차보다 질문·경로 설계 우선",
+  "scope": "새 설계 문서와 설계 연결 데이터; 런타임·빌더·운영 HTML·배포 변경 없음",
+  "fixed_models": {
+    "section_month_columns": {
+      "S1": 27,
+      "S2": 34,
+      "S3": 48,
+      "S4": 36
+    },
+    "L0_to_L4_shifts": [
+      0,
+      3,
+      7,
+      10,
+      12
+    ],
+    "acceleration": {
+      "first_actual_months": 2,
+      "first_factor": 1.1,
+      "later_factor": 1.2
+    },
+    "institution_specific_periods_are_not_merged": true
+  },
+  "sources": {
+    "U1": {
+      "file": "LATEST_USER_DECISIONS.md",
+      "locator": "직접 발언과 해석을 구분한 최신 결정 기록; 본 대화의 최종 G: 지시 우선",
+      "kind": "handoff_with_direct_quotes",
+      "year": "2026-10-03"
+    },
+    "U2": {
+      "file": "사용자_직접발언_현재대화에서확인된부분.md",
+      "locator": "전체 214행; 특히 199–207행 확장 설계 지시",
+      "kind": "direct_user_excerpt",
+      "year": "2026-10-03"
+    },
+    "U3": {
+      "file": "사용자_소마_필즈_제도변화_생각_원문.md",
+      "locator": "전체 17행; 제도 변화에 대한 사용자 견해",
+      "kind": "user_opinion",
+      "year": "2026"
+    },
+    "H1": {
+      "file": "PATCH_인수인계서_로드맵_섹션1-4_2026-10-02.md",
+      "locator": "결정 목록과 섹션별 변경; 원문 대조가 가능한 항목만 확정",
+      "kind": "ai_handoff",
+      "year": "2026-10-02"
+    },
+    "H2": {
+      "file": "Claude_대화_사용자붙여넣기.md",
+      "locator": "전체 165행; 사용자 요청/Claude 주장 분리",
+      "kind": "mixed_dialogue",
+      "year": "2026-10-02"
+    },
+    "C1": {
+      "file": "roadmap_build.zip!/roadmap/index.html",
+      "locator": "rampT, personalShift, currentPositions, highThinking; 1154–1208행 입력 해석",
+      "kind": "static_code",
+      "year": "인수 ZIP"
+    },
+    "C2": {
+      "file": "roadmap_build.zip!/src/build_s2.py",
+      "locator": "월축·과정·설명; AST 정적 읽기, 실행 없음",
+      "kind": "static_code_and_explanation",
+      "year": "인수 ZIP"
+    },
+    "C3": {
+      "file": "roadmap_build.zip!/src/section3_nodes.json",
+      "locator": "/nodes/N1..N6, /lanes, /cases",
+      "kind": "coded_explanatory_data",
+      "year": "노드별 상이"
+    },
+    "C4": {
+      "file": "roadmap_build.zip!/src/build_s4.py",
+      "locator": "D meta/nodes; N1..N4, AST 정적 읽기",
+      "kind": "coded_explanatory_data",
+      "year": "인수 ZIP"
+    },
+    "C5": {
+      "file": "roadmap_build.zip!/src/assemble.py",
+      "locator": "외부 /mnt 경로·삭제·출력 조립 로직; 실행 금지",
+      "kind": "static_code",
+      "year": "인수 ZIP"
+    },
+    "C6": {
+      "file": "roadmap_build.zip!/src/parked_hotinfo_news.json",
+      "locator": "H1..H15; SHOW_HOT=false",
+      "kind": "parked_explanation",
+      "year": "항목별 상이"
+    },
+    "E1": {
+      "file": "03_Drive_참고원자료/5세 표준 커리_2025 L2.xlsx",
+      "locator": "Sheet1 A1:Y20; J6, M6, A9:Y10; ZIP 내 동명판 별도 보존",
+      "kind": "original_workbook",
+      "year": "2025"
+    },
+    "E2": {
+      "file": "03_Drive_참고원자료/최상위권을 위한 5세 표준 커리_2023 12월.xlsx",
+      "locator": "Sheet1 N6, R8, H9, F10:X10; 빈 Sheet2/3",
+      "kind": "original_workbook",
+      "year": "2023-12"
+    },
+    "E3": {
+      "file": "03_Drive_참고원자료/프리미어_로드맵(초1_P1_NEW).xlsx",
+      "locator": "코호트별 행 구분; 다수 연도와 과정이 한 시트에 공존",
+      "kind": "original_workbook",
+      "year": "복수 코호트"
+    },
+    "E4": {
+      "file": "03_Drive_참고원자료/프리미어_로드맵(2025 챌린지).xlsx",
+      "locator": "Sheet1 3행/8행 월축 별도; 3행 월 표기 불연속",
+      "kind": "original_workbook",
+      "year": "2025"
+    },
+    "E5": {
+      "file": "03_Drive_참고원자료/초2 86월 3-1 시작.xlsx",
+      "locator": "Sheet1 C7, F9:AG9; 3-1 시작·연산·운동·독립 해결",
+      "kind": "original_workbook",
+      "year": "파일 내 코호트"
+    },
+    "E6": {
+      "file": "03_Drive_참고원자료/로드맵_한과연_초등저학년.xlsx",
+      "locator": "초2(상) T3:Z8 및 D18:Z18; 초2(중) K8:N9",
+      "kind": "original_workbook",
+      "year": "기준연도 미표시"
+    },
+    "E7": {
+      "file": "03_Drive_참고원자료/로드맵_한과연_예비초4.xlsx",
+      "locator": "실제 시트 예비초6(초6/중1/중2/중3수학); E3:E5, C11:N12, H26, D39:E40, C35:N41",
+      "kind": "original_workbook",
+      "year": "기준연도 미표시"
+    },
+    "E8": {
+      "file": "03_Drive_참고원자료/국가대표 2.xlsx",
+      "locator": "Sheet1 셀 및 별도 도형 존재; 초4 완료 시점은 셀만으로 확정 불가",
+      "kind": "original_workbook_partial_layout",
+      "year": "구 교과명"
+    },
+    "E9": {
+      "file": "03_Drive_참고원자료/미래탐구 KMO 로드맵.xlsx",
+      "locator": "Sheet1 단계·기간; 스타워즈개편案 D20,D22,D24,D26,D28,D30,D32",
+      "kind": "academy_workbook",
+      "year": "기준연도 미표시"
+    },
+    "E10": {
+      "file": "03_Drive_참고원자료/과학로드맵(영재,자사고).xls",
+      "locator": "MSG초등과학/초등과학; 2행 월축, I9, K39 및 단계별 행",
+      "kind": "academy_workbook",
+      "year": "기준연도 미표시"
+    },
+    "I1": {
+      "file": "03_Drive_참고원자료/2025 필즈 s 로드맵.jpg",
+      "locator": "2025 7세 S1 원문 및 연산·중등 병행 행",
+      "kind": "original_image",
+      "year": "2025"
+    },
+    "I2": {
+      "file": "03_Drive_참고원자료/프리미어2,3로드맵.jpg",
+      "locator": "2026.09 표기; 인쇄 내용과 손글씨 분리",
+      "kind": "original_image",
+      "year": "2026-09"
+    },
+    "I3": {
+      "file": "03_Drive_참고원자료/KakaoTalk_20260629_115000435.jpg",
+      "locator": "소마 A1, 실제 2026 초2 코호트",
+      "kind": "original_image",
+      "year": "2026"
+    },
+    "I4": {
+      "file": "03_Drive_참고원자료/KakaoTalk_20260807_140433261.jpg",
+      "locator": "2026.06 챌린지 코호트",
+      "kind": "original_image",
+      "year": "2026-06"
+    },
+    "I5": {
+      "file": "03_Drive_참고원자료/초3 국가대표 로드맵.png",
+      "locator": "초3 중등 → 초4 구 고등 과정의 시각적 대응",
+      "kind": "original_image",
+      "year": "구 교과명"
+    },
+    "I6": {
+      "file": "03_Drive_참고원자료/스크린샷 2026-10-01 200536.png",
+      "locator": "중등 18개월, 공통 전환 심화 60–70% 학원 예시",
+      "kind": "academy_image",
+      "year": "수집 2026-10-01; 안내 기준연도 미확인"
+    },
+    "I7": {
+      "file": "03_Drive_참고원자료/스크린샷 2026-10-01 194936.png",
+      "locator": "CMS 50개월 구성; 같은 자료 5개 트랙 이미지와 함께 참조",
+      "kind": "academy_image",
+      "year": "수집 2026-10-01; 안내 기준연도 미확인"
+    },
+    "I8": {
+      "file": "03_Drive_참고원자료/KakaoTalk_20260923_151005039.png 및 151235213.png / 151255120.png",
+      "locator": "과학 단계 및 0.1%/5% 목표 예시; 학생 성취 백분위 아님",
+      "kind": "academy_image",
+      "year": "수집 2026-09-23"
+    },
+    "T1": {
+      "file": "비식별 상담 사례 · 원문 비공개",
+      "locator": "개별 사례에서 확인한 선택 구조. 보편 진입 조건이 아님.",
+      "kind": "private_direct_chat",
+      "year": "해당 메시지 날짜"
+    },
+    "T2": {
+      "file": "비식별 상담 사례 · 원문 비공개",
+      "locator": "개별 사례에서 확인한 선택 구조. 보편 진입 조건이 아님.",
+      "kind": "private_direct_chat",
+      "year": "해당 메시지 날짜"
+    },
+    "T3": {
+      "file": "비식별 상담 사례 · 원문 비공개",
+      "locator": "개별 사례에서 확인한 선택 구조. 보편 진입 조건이 아님.",
+      "kind": "private_direct_chat",
+      "year": "해당 메시지 날짜"
+    },
+    "T4": {
+      "file": "비식별 상담 사례 · 원문 비공개",
+      "locator": "개별 사례에서 확인한 선택 구조. 보편 진입 조건이 아님.",
+      "kind": "private_direct_chat",
+      "year": "2026 개별 메시지"
+    },
+    "A1": {
+      "file": "NA_영재고가는 수학, 의대가는 수학 로드맵.md",
+      "locator": "추가 자료의 키워드 관련 문단만 읽음; 정리본, 원 녹취 미검증",
+      "kind": "organized_third_party_summary",
+      "year": "미확인"
+    },
+    "A2": {
+      "file": "NA_초등과학에서 통합과학까지-- 올바른 선행방법 알아보자.md",
+      "locator": "관련 문단만 읽음; 정리본, 원 녹취 미검증",
+      "kind": "organized_third_party_summary",
+      "year": "미확인"
+    },
+    "A3": {
+      "file": "NA_금요라이브~~ 영재고 입시에 도움되는 kmo 공부법-  질의응답.md",
+      "locator": "관련 문단만 읽음; 정리본, 원 녹취 미검증",
+      "kind": "organized_third_party_summary",
+      "year": "미확인"
+    },
+    "D1": {
+      "file": "06_기존배포_읽기전용확인.json",
+      "locator": "GH roadmap 목록/index 최신 커밋, public HTTP 결과",
+      "kind": "live_read_only_check",
+      "year": "2026-10-03 작업 확인"
+    },
+    "U4": {
+      "file": "60_최신사용자방향_개인기준로드맵_v3.md",
+      "locator": "현재 채팅 직접 발언: 5세 기준 확장, 7세까지/7세 이후/목적별, 초2·초3·미선택, 개인 기준 계획·진단·미래3D",
+      "kind": "current_user_direct_statement",
+      "year": "2026-10-03"
+    },
+    "P1": {
+      "file": "03_Drive_참고원자료/예비고1설명회(게시용).pdf",
+      "locator": "52쪽 추출본문 전체, root14쪽+추가검토38쪽=52쪽 시각 확인. 71_PDF_추가시각검토.md P-S01~08/P-C01~07. 현행공식 검증은 별도",
+      "kind": "historical_briefing_proposals_examples",
+      "year": "본문별2025·2027·2028; 통일 기준일 미확인"
+    },
+    "P2": {
+      "file": "03_Drive_참고원자료/2028_대입_상위권합격로드맵_1부2부완전정리.pptx",
+      "locator": "17슬라이드 추출본문 전체, 내장PNG12개 직접확인·슬라이드관계 대조. 전체슬라이드 렌더 아님. 71_PPT_내장이미지_검토.md P7-X01~03",
+      "kind": "third_party_interview_summary_not_official",
+      "year": "표지2026.09; 대상2028"
+    },
+    "UF01": {
+      "kind": "current_conversation_direct_user_statement",
+      "locator": "독샘 인사, 나이 드롭다운, 4·5·6세 생월, 유아 기준, 초1~3 세축·교재/학원, 현재 위치 요약, 소마·필즈·CMS·그 외, 기존 성향검사 내용 사용"
+    },
+    "UF02": {
+      "kind": "current_conversation_direct_user_statement",
+      "verbatim": "성격유형 검사는 선택인거야 하지만 이걸하면 더 디테일하게 로드맵을 설정할수 있도록 해줘.\n기본을 빼고 나중에 심화를 채우는 형태라던지"
+    },
+    "UF03": {
+      "kind": "current_conversation_direct_user_statement",
+      "verbatim": "내가 학원 목표 상관없이 나가는 로드맵을 보여줄까?\n그러다 머리가 크면 좀 힘좀 생기면 심화 하다가 응용과 같이 나가는 거지"
+    },
+    "UF04": {
+      "kind": "current_conversation_direct_user_statement",
+      "verbatim": "단 현재 교과 과정에 맞춰야돼"
+    },
+    "UF05": {
+      "id": "U20261003-H01",
+      "kind": "current_conversation_user_statement",
+      "title": "황소 선택 시점과 이유를 실제 상태와 분리",
+      "verbatim": "진도가 안되어 황소 초등을 늦게 볼수도 있고 진도가 되도 어리다.판단하여 심화로 배우려고 늦개 할수 있고 아니면 그냥 안 다니고 꼼꼼히.하려ㅜ할수 있고",
+      "principles": [
+        "진도 보완 때문에 늦게 검토할 수 있다",
+        "진도가 되어도 어리다고 판단하여 심화를 더 학습할 수 있다",
+        "황소 미선택으로 꼼꼼히 학습하는 경로를 인정한다",
+        "선택 시점과 이유를 실제 상태 또는 지원자격 판단과 합치지 않는다"
+      ],
+      "supplementaryFields": [
+        "goals.hwangso",
+        "goals.hwangsoReasons",
+        "goals.hwangsoTimingNote",
+        "goals.hwangsoReasonNote"
+      ],
+      "priorSourceCatalogModified": false,
+      "officialAdmissionRule": false,
+      "detailDocument": "USER_DECISION_황소선택이유_v5.md"
+    },
+    "F01": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\최상위권을 위한 5세 표준 커리_2023 12월.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "ab54f83925a0ff30ae7d225d3f452e7ad76e358183f3efc185b1e8fc004238c5",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F02": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\혜준 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "74cb435005ca3005ccb7e02fda1d76ff7689fa9a9b93e4d453e00d298ab90eee",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F03": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\국가대표 2.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "b55dbc3ae6c18c30ea4bf9b83e4a018845cdf464b22ea9b3cb6ba48957cec20c",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F04": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\국가대표 3.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "db3e24f1973e9d534cb8dcfae895d972476cc0c3eab8505654097279da14371a",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F05": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\백준흠 초3 6월 5-2 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "c64a1674c716c6f8f50fb0ce8787cb80195b0a21053568cb1c2abc6ca6443318",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F06": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\서휘 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "f03b77dc208f8e3cc13ae1351cb968cb06df0668b2bf079a21e8f2378cca2bd5",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F07": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\예비초1 3-1 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "28c8b4217ca3d310f87c4bf9e6a94d9e36a839dac75e79531aeeb1d27fbc341c",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F08": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\유준이 커리.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "6e0dd41be496c75868cdd8cce2af6c72c15379885032a626b511afd8162f31da",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F09": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\지민 반 커리.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "7f077e58f8f32a505dfaf02e86eb397a9fdf642175049085e6585b2496180e5d",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F10": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초1 10월 3-1.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "1a14d49f7a24266068e5ac50c84a39da5a6ba67e35e2cb5d1bf5a9536512390f",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F11": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초1 12월 3-1.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "bf6469c294e6dfbeccfcd02b00eae19d18c746e7228f95bcc189dc5889d4dace",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F12": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초1 A 5월 3-1 시작 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "8e394dd00e0f0b4e8c030a69d3b5cdf1163186457a3b622c2ace0e8fa5b9fe03",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F13": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초1 A 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "e3b9342408a15e730af7468e5470050568d83b98cab1856d71a57157b07a9e52",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F14": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 3월 3-1 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "d8299a2d26b80028607f15f503a8d783000833b63ca51145dea87e93e6b7b958",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F15": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 6월 3-2.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "e62633d7b083ca306666215ca2aa2a80d083b60b81e76c983227c3fb541593dd",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F16": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 7월 3-2.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "662eac08010f87c7db31d3df952eaa1f3f0ffee815bc050a22d6e2547115ecd9",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F17": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 7월 4-1.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "f7c70173238aa1c3feeec6b4db5036103027aa14114640b318a73b812f442898",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F18": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 8월 3-2 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "7872b8834acde2fec2d2551a1c8355a0550d18aa259032990aaaf07280ac3315",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F19": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 8월 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "b97734f624de08d79be001f5de8ba2d52e88e3945377d10f3166860779c3dd76",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F20": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 86월 3-1 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "ce925deab34285e3d2c64b5f04089eac071feb57bddb2155204a61fa4e9cb6fc",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F21": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초2 국가대표 로드맵.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "e1f226953db653943cb3c892db1b845c6ec8b153517f5ac7c31eca055d2236de",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F22": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 1월 4-1.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "233e318fc67c23b35b6286ef3d473ed1888a9aee38a13200f8d7e41ca9f7146c",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F23": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 3월 중등시작 커리큘럼.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "a73ee4ff0accf7831b29d3ed7928e8b0b4cf06fed5d0a2cbabd3dfdb43f1fefe",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F24": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 6월 5-2 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "41970db0fa29786edfdaa43bb5bf3a19ce167bd0d0e6806469634ced498c3e67",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F25": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 11월 5-1 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "172fcbf320bf1efce428b6abee65b5ed72ff0e92a402ea99c0acd01de8b4e66e",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F26": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 11월 6-1 시작.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "49b0d0362e31ededb958227acd975956eed2f518f71cbda7e77fec3ae517c754",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F27": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초3 국가대표 2 커리큘럼.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "43989c4634b96f6f596ab342a4c625d96a509d6a75409d0415e9f4f0bae62df5",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "F28": {
+      "file": "F:\\지필드 usb\\지필드 영재교육 업무\\로드맵\\초4 국가대표 2 커리큘럼.xlsx",
+      "kind": "read_only_original_xlsx",
+      "year": "원자료 코호트; 현행 교육과정 판본 미확정",
+      "sha256": "604cfd77ec36b865cfa38bced0edfb685b6a594e1e49010b1c6532a96f54347b",
+      "locator": "Sheet1 또는 프로그램 일정표의 실제 셀/병합범위; 전 시트/숨김 포함. 추가엑셀28 문서 참조"
+    },
+    "PN01": {
+      "file": "E:\\Codex\\workspaces\\gfield-roadmap-v4-20261003\\artifacts\\personality-ui-reference\\index.html",
+      "url": "https://github.com/docssam1/lete-on/blob/main/personality/index.html",
+      "kind": "existing_personality_program_snapshot",
+      "locator": "1032~1069 문항30개; 670~760 유형·코칭; 1537 혼합형 규칙",
+      "snapshot_commit": "7d8a2773744fa0207564b51d6afec8b47c1b6a82",
+      "current_fetch_blob": "2e62b09eabb7c09d14db917b40a27babaf556331",
+      "sha256": "bc43afd20cb9ac1e4572a38ca511b8c780e5f52d0959276738ce57cf02cecc2a",
+      "year": "2026-10-03 확인. 현재 main 전체와 바이트 동일을 새 검증한 것은 아님"
+    },
+    "PN02": {
+      "file": "DOCSSAM_성향별_KB_v2.md",
+      "url": "https://drive.google.com/file/d/1Hggp0SsDwOZSp3BMRTb6-g3QCffYEuTW/view",
+      "kind": "existing_coaching_knowledge_base",
+      "year": "본문2026-07-02; 2026-10-03 연결Drive 본문 확인",
+      "locator": "네 유형 특성·도움 문구. 기존 숫자 조언은 교육과정 진입 컷으로 채택 안 함"
+    },
+    "CUR01": {
+      "url": "https://open.gwe.go.kr/main/content.do?key=m2307210660022",
+      "kind": "official_curriculum_application",
+      "year": "2026-10-03 확인",
+      "locator": "2022개정 적용 학년 및2026-1 일부개정 적용 시기"
+    },
+    "CUR02": {
+      "url": "https://www.goe.go.kr/resource/old/BBSMSTR_000000030136/BBS_202410310111492621.pdf",
+      "kind": "official_course_structure_guide",
+      "year": "파일명2024-10-31; 명시 발간일 미확인;2026-10-03 관련 본문 확인",
+      "locator": "PDF16번째면 Q12,35번째면 수학·과학 과목표. 전체 단원 신구 대조 완료 아님"
+    },
+    "UF06": {
+      "kind": "current_user_direct_statement",
+      "verbatim": "초등은 응용 교재는 디딤돌 기본+응용을 표준 교재로 선행이 늦은 경우나 지문이해가 필요한 경우 최상위 S 수학 빠른 선행을 하는 경우 최상위 수학 / 다지기가 필요한 경우는 쎈수학",
+      "status": "사용자 교재 선택 기준; 학업 진입 컷 아님"
+    },
+    "UF07": {
+      "kind": "current_user_direct_statement",
+      "verbatim": "목차가 그리 중요하지는 않아 나중에 진단 볼때는 중요하겠다",
+      "file": "E:\\Codex\\visualizations\\2026\\10\\02\\01a0fdb3-4395-7b10-850e-de9089af5044\\roadmap-local-v9-20261003\\09_사용자정정_목차보다경로설계우선_20261003.md"
+    }
+  },
+  "screens": [
+    {
+      "id": "S00",
+      "title": "독샘 인사",
+      "prompt": "안녕하세요. DOCSSAM입니다. 이 가이드는 우리 아이들의 학습을 고민하는 학부모님들을 위해 제작되었습니다. 정확한 개인별 로드맵은 아니지만 많은 학생들이 진행한 표준 커리큘럼과 비교하여 우리 아이들의 목표를 설정할 수 있습니다.",
+      "show_when": "첫 시작",
+      "answers": [
+        "시작하기"
+      ],
+      "followups": {
+        "시작하기": [
+          "S01"
+        ]
+      },
+      "source_ids": [
+        "UF01"
+      ],
+      "status": "사용자 문안; 띄어쓰기 제안"
+    },
+    {
+      "id": "S01",
+      "title": "나이·생월",
+      "prompt": "우선 우리 아이의 나이가 몇 살일까요?",
+      "show_when": "모든 새 설문",
+      "answers": [
+        "나이 드롭다운",
+        "확인 필요"
+      ],
+      "inline_fields": [
+        "선택 나이 4·5·6세에만 생월 1~12월 또는 모름"
+      ],
+      "followups": {
+        "나이 드롭다운": [
+          "S02"
+        ],
+        "확인 필요": [
+          "S02"
+        ]
+      },
+      "source_ids": [
+        "UF01"
+      ],
+      "status": "확정 질문; 생월을 능력 차이로 계산하지 않음"
+    },
+    {
+      "id": "S02",
+      "title": "실제 학년",
+      "prompt": "현재 학교 학년은 어떻게 되나요?",
+      "show_when": "모든 새 설문; 나이로 학년을 자동 확정하지 않음",
+      "answers": [
+        "미취학",
+        "초1~초6",
+        "중1~중3",
+        "고1~고3",
+        "기타",
+        "확인 필요"
+      ],
+      "followups": {
+        "*": [
+          "S03"
+        ]
+      },
+      "source_ids": [
+        "U2",
+        "UF01"
+      ],
+      "status": "설계 제안; 어떤 학년에서도 높은 과정 입력 허용"
+    },
+    {
+      "id": "S03",
+      "title": "사고력 경험",
+      "prompt": "사고력은 교재로 공부했나요, 학원에서 배웠나요?",
+      "show_when": "사고력 이력 미입력",
+      "answers": [
+        "교재",
+        "학원",
+        "둘 다",
+        "아직 시작하지 않음",
+        "잘 모르겠음"
+      ],
+      "conditional_fields": [
+        "학원/둘 다: 소마·필즈·CMS·그 외, 기억나는 반·레벨, 현재/과거",
+        "교재/둘 다: 마지막 사고력 교재·권·진행 상태"
+      ],
+      "followups": {
+        "교재": [
+          "S04"
+        ],
+        "학원": [
+          "S04"
+        ],
+        "둘 다": [
+          "S04"
+        ],
+        "아직 시작하지 않음": [
+          "S04"
+        ],
+        "잘 모르겠음": [
+          "S04"
+        ]
+      },
+      "source_ids": [
+        "UF01"
+      ],
+      "status": "원칙 확정; 반 이름으로 교과·연산 환산하지 않음"
+    },
+    {
+      "id": "S04",
+      "title": "교과·심화·연산의 실제 기록",
+      "prompt": "진행한 마지막 교재를 알려 주세요. 여러 교재를 함께 했다면 더 추가할 수 있어요.",
+      "show_when": "각 축의 현재 기록 미입력; 기본·응용/심화/연산 카드를 차례로 표시",
+      "answers": [
+        "교재 입력",
+        "아직 시작하지 않음",
+        "진행했지만 지금은 쉬고 있음",
+        "잘 모르겠음"
+      ],
+      "main_fields": [
+        "교재명 또는 학원 과정",
+        "권·학년학기 또는 마지막 범위",
+        "진행 중/완료/기억나지 않음",
+        "다른 교재 추가(선택)"
+      ],
+      "optional_fields": [
+        "진행량 자유 입력",
+        "단원",
+        "최근 풀이 도움·설명 예·실제 깊이",
+        "판본·교육과정·ISBN·목차(상세 입력/이후 진단)"
+      ],
+      "followups": {
+        "*": [
+          "S05"
+        ]
+      },
+      "source_ids": [
+        "UF01",
+        "UF04",
+        "UF06",
+        "UF07"
+      ],
+      "status": "세 축 별도 기록 확정; 질문을 접는 방식은 제안"
+    },
+    {
+      "id": "S05",
+      "title": "현재 위치 요약",
+      "prompt": "지금 입력한 공부를 먼저 살펴볼게요.",
+      "show_when": "기본 기록 완료 또는 모름으로 명시",
+      "answers": [
+        "맞아요",
+        "기록 수정"
+      ],
+      "display": [
+        "사고력",
+        "교과 기본·응용",
+        "교과 심화",
+        "연산"
+      ],
+      "followups": {
+        "맞아요": [
+          "S06",
+          "S07"
+        ],
+        "기록 수정": [
+          "S03",
+          "S04"
+        ]
+      },
+      "source_ids": [
+        "UF01",
+        "UF07"
+      ],
+      "status": "독립 표시 확정; 이 화면은 학업 진단 결과가 아님"
+    },
+    {
+      "id": "S06",
+      "title": "기존 성향검사 선택",
+      "prompt": "아이의 학습 성향도 함께 참고할까요?",
+      "show_when": "기존 문항 지원 나이 7~15세이면 선택 안내; 검사 선택 후에만 10문항 표시. 나이 미확인·범위 밖에는 검사 제안 없이 S07로 이동",
+      "answers": [
+        "검사 없이 계속",
+        "기존 검사 해보기",
+        "기존 결과 참고"
+      ],
+      "conditional_fields": [
+        "7~9/10~12/13~15 중 실제 나이에 해당하는 기존 10문항; 미완료 결과 미확정",
+        "기존 결과는 검사 나이·날짜·유형·출처가 확인되는 경우만 참고"
+      ],
+      "followups": {
+        "*": [
+          "S07"
+        ]
+      },
+      "source_ids": [
+        "UF02",
+        "PN01",
+        "PN02"
+      ],
+      "status": "선택 확정; 문항/배점은 기존 자료 그대로; 경로 자동 배정 없음"
+    },
+    {
+      "id": "S07",
+      "title": "추가 목표",
+      "prompt": "학원 목표 없이 지금 공부를 이어갈 수도 있어요. 함께 볼 목표가 있나요?",
+      "show_when": "모든 경로; 미응답과 명시적 미선택 분리",
+      "answers": [
+        "지금 수학 흐름부터 보기",
+        "선발·학원 살펴보기",
+        "과학·영재원·경시 살펴보기",
+        "진학·타 과목 살펴보기"
+      ],
+      "conditional_fields": [
+        "선택 그룹 안에서 실제 관심 항목 복수 선택; 이전 선택은 항상 표시·수정 가능",
+        "선발·학원: 프리미어·필즈/황소/누테/그 외",
+        "과학·영재원·경시: 각각 독립 선택",
+        "진학·타 과목: 고교·진로/영어·국어 등 직접 입력"
+      ],
+      "followups": {
+        "*": [
+          "S08",
+          "S11"
+        ]
+      },
+      "source_ids": [
+        "UF03",
+        "UF05",
+        "U4"
+      ],
+      "status": "표시 그룹은 제안; 학습 과정을 네 코스로 축소하는 뜻이 아님"
+    },
+    {
+      "id": "S08",
+      "title": "시간 여건",
+      "prompt": "집에서 함께 관리할 시간과 수학 학원 계획은 어느 정도인가요?",
+      "show_when": "새 기준 계획 또는 여건 변경",
+      "main_fields": [
+        "평일·주말 부모 관리 가능 시간(분/일 또는 모름)",
+        "수학 학원 희망 주당 횟수·회당 시간 또는 미정"
+      ],
+      "conditional_fields": [
+        "병행·합류를 비교할 때 현재 수업/숙제/이동/아이의 학습 시간 추가",
+        "여러 과정 시간이 겹치면 중복 구간 확인; 실제 일정과 희망 일정 별도"
+      ],
+      "answers": [
+        "시간 입력",
+        "아직 정하지 않음"
+      ],
+      "followups": {
+        "*": [
+          "S09"
+        ]
+      },
+      "source_ids": [
+        "U2",
+        "U4"
+      ],
+      "status": "질문 원칙 확정; 시간만으로 성향·증속·수행 판정 없음"
+    },
+    {
+      "id": "S09",
+      "title": "진행 방식의 첫 선택",
+      "prompt": "지금 공부에서 어떤 흐름을 먼저 비교해 볼까요?",
+      "show_when": "현재 기록 요약 확인 후",
+      "answers": [
+        "지금 흐름 이어가기",
+        "심화도 더해 보기",
+        "심화를 중심으로 살펴보기",
+        "아직 모르겠어요"
+      ],
+      "conditional_fields": [
+        "이어가기: 기본·응용 유지, 심화 미시작/미확인 구별",
+        "심화 더하기: 지금 병행/이전 범위 나중 추가/같은 범위 뒤이어 하기",
+        "심화 중심: 어느 범위인지, 기본·응용 유지/조정/잠시 쉬기, 나중 병행 희망",
+        "부담·누락 보고가 있을 때만 해당 과정 보완/분량 조정/휴식 추가 제안"
+      ],
+      "followups": {
+        "*": [
+          "S10"
+        ]
+      },
+      "source_ids": [
+        "UF03",
+        "F01",
+        "F21",
+        "F25"
+      ],
+      "status": "제안 UI; 과정별 복수 선택으로 확장; 선택이 실제 이수를 만들지 않음"
+    },
+    {
+      "id": "S10",
+      "title": "필요한 조건만 추가 확인",
+      "prompt": "이 길을 비교하려면 이 부분만 더 알려 주세요.",
+      "show_when": "후보 경로에 필요한 상태·시간이 아직 미확인",
+      "answers": [
+        "최근 혼자 풀기/읽기 도움/힌트/함께 풀이/해설 후 재풀이/문제마다 다름/미확인",
+        "부담: 괜찮음/큼/범위마다 다름/미확인",
+        "계속/분량 조정/잠시 쉬기/나중 시작/비교 보류"
+      ],
+      "conditional_fields": [
+        "질문 대상 과정과 범위를 먼저 표시; 이미 답한 동일 범위 재질문 없음",
+        "합류: 무엇을 더하고, 어떤 과정과 병행하며, 언제 다시 확인할지",
+        "새 범위로 바뀌면 예전 관찰 보존 후 해당 범위만 다시 확인"
+      ],
+      "followups": {
+        "*": [
+          "S12"
+        ]
+      },
+      "source_ids": [
+        "U2",
+        "UF03",
+        "F21",
+        "F25"
+      ],
+      "status": "관찰은 보고값; 부족·합류 충족 판단은 미확인 또는 진단 근거 별도"
+    },
+    {
+      "id": "S11",
+      "title": "목적별 추가 질문",
+      "prompt": "선택한 목표의 현재 상황을 살펴볼게요.",
+      "show_when": "해당 목표·과목을 선택했거나 실제 해당 과정 기록이 있음",
+      "answers": [
+        "각 목표의 현재 의사·실제 활동·희망 시점·미정"
+      ],
+      "conditional_fields": [
+        "황소: 초2/초3/더 늦게/선택하지 않음/미정 + 선택 이유 복수",
+        "프리미어: 가족이 바라는 준비 시점/실제 선발 회차·결과 분리",
+        "영재원: 지역·기관·분야·지원학년도·기존 참여·공식 요강 확인상태",
+        "경시: 자료 학습과 응시 의사 별도",
+        "과학: 실제 분야·범위·탐구와 희망 별도",
+        "진학: 학교 유형·진로 희망/지원학년도/현재 학교 생활 별도"
+      ],
+      "followups": {
+        "*": [
+          "S10",
+          "S12"
+        ]
+      },
+      "source_ids": [
+        "UF05",
+        "C3",
+        "C4"
+      ],
+      "status": "개별 조건은 기존 101갈림길로 연결; 기관 자격은 공식 확인 전 미확정"
+    },
+    {
+      "id": "S12",
+      "title": "개인 기준 경로 비교·선택",
+      "prompt": "우리 가족의 기준으로 어느 길을 남길까요?",
+      "show_when": "후보가 만들어졌거나 일부 조건 미확인으로 비교 가능",
+      "answers": [
+        "이 경로를 기준으로 선택",
+        "후보로 보관",
+        "질문 수정",
+        "나중에 결정"
+      ],
+      "display": [
+        "현재 실제 기록",
+        "선택한 진행·목표",
+        "추천 이유·미확인 조건",
+        "유지/조정/나중 추가할 각 과정",
+        "다음 갈림길·확인할 범위"
+      ],
+      "followups": {
+        "*": [
+          "S13"
+        ]
+      },
+      "source_ids": [
+        "U4",
+        "UF03"
+      ],
+      "status": "선택해도 실행 가능·숙달·합격 확정 아님; 원표는 유지"
+    },
+    {
+      "id": "S13",
+      "title": "추적·목표 변경",
+      "prompt": "공부가 진행되거나 목표가 달라지면 기준을 다시 살펴볼 수 있어요.",
+      "show_when": "선택한 기준 계획의 이후 방문",
+      "answers": [
+        "새 진도·관찰 기록",
+        "목표 변경안 비교",
+        "잠시 쉬기/재개",
+        "진단은 나중에"
+      ],
+      "followups": {
+        "목표 변경안 비교": [
+          "S07",
+          "S09",
+          "S12"
+        ],
+        "새 진도·관찰 기록": [
+          "S04",
+          "S10",
+          "S12"
+        ],
+        "잠시 쉬기/재개": [
+          "S10",
+          "S12"
+        ],
+        "진단은 나중에": [
+          "S13"
+        ]
+      },
+      "source_ids": [
+        "U4",
+        "U2",
+        "UF03"
+      ],
+      "status": "계획 버전과 실제 기록 누적; 진단 미완료에도 학습 추적 가능"
+    }
+  ],
+  "gateway_rules": {
+    "기본 정보와 가족 여건": "공통; 코호트·기준선 비교는 사용자가 비교를 요청할 때만. 부모 시간과 아이 시간 분리.",
+    "실제 교재·진도·학습 깊이": "기록한 축·실제 범위로 개방. 미취학이라도 높은 과정 허용. 도움·부담은 해당 범위를 비교할 때 필요하면 질문.",
+    "병행·시간·축별 계산": "병행/새 과정 추가/일정 변경/증속 비교 선택 시. 희망 횟수만으로 확정 증속 모델 자동 적용하지 않음.",
+    "학원 경험·선발·등록": "실제 해당 학원 이력 또는 해당 목표 선택 시. 황소 B28의 학원 없이 학습 선택은 S09에서도 도달. 반별 진도·기관 회차는 자동 환산 없음.",
+    "영재원": "실제 참여 또는 영재원 관심 선택 시; 미취학·초1에도 미래 관심을 기록하고 해당 연도 자격 확인 전 진입 확정하지 않음.",
+    "중등·고등 실제 진도": "실제 중등/공통수학/대수/미적분Ⅰ 등의 기록 또는 다음 과정 비교 희망 시; 실제 학년 제한 없음.",
+    "과학": "과학 실제 기록 또는 과학/과학 영재원·과학 경시 선택 시; 수학 진도는 관련 후보의 참고이며 과학 이해도 대체 아님.",
+    "경시": "경시 자료 학습·응시 희망·실제 참여 중 하나가 있음; 자료만 공부하고 응시하지 않는 선택 유지.",
+    "진학·진로": "관심 학교/진로 선택 또는 현재 고입 준비 기록이 있음; 어린 아이 미래 희망은 미확정 장기 목표로 저장.",
+    "변경·휴식·기준 계획": "선택/비교/기록 갱신/휴식/목표 변경/관찰 충돌 사건에 해당할 때; 이전 기록 보존.",
+    "진단을 붙일 때": "사용자가 진단/모의/평가 기록을 선택할 때만; 초기 설문 완료의 필수 조건 아님.",
+    "타 과목": "실제 타 과목 기록 또는 관심 선택 시; 수학·과학과 서로 숙달 추정 없음.",
+    "선택 성향검사": "기존 검사 나이 범위이고 선택했을 때만. 미완료·거절에도 모든 기본 경로 접근 가능."
+  },
+  "branch_screen_mapping": [
+    {
+      "branch_id": "B01",
+      "title": "실제 나이·학년과 진도의 분리",
+      "display_group": "기본 정보와 가족 여건",
+      "screen_ids": [
+        "S01",
+        "S02",
+        "S08"
+      ],
+      "question_ids": [
+        "Q01",
+        "Q02",
+        "Q10"
+      ],
+      "source_ids": [
+        "U2",
+        "H1",
+        "C1",
+        "UF01"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 원칙 + 제안 로직",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B02",
+      "title": "희망·아이 의견·확인 상태·추천의 분리",
+      "display_group": "기본 정보와 가족 여건",
+      "screen_ids": [
+        "S01",
+        "S02",
+        "S08"
+      ],
+      "question_ids": [
+        "Q04",
+        "Q05",
+        "Q06"
+      ],
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B03",
+      "title": "축별 현재 기록·미확인·미시작 구별",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q03",
+        "Q10",
+        "Q11",
+        "Q13"
+      ],
+      "source_ids": [
+        "U2",
+        "C1",
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 원칙 + 제안 로직",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B04",
+      "title": "권·단원·진행량·완료의 상세 위치",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q11",
+        "Q12",
+        "Q13",
+        "Q36"
+      ],
+      "source_ids": [
+        "U2",
+        "C1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B05",
+      "title": "완료·깊이·독립 해결의 차이",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q13",
+        "Q15",
+        "Q16",
+        "Q17",
+        "Q18"
+      ],
+      "source_ids": [
+        "U2",
+        "T1",
+        "T2",
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B06",
+      "title": "누락·건너뜀·보완 후 합류",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q14",
+        "Q19",
+        "Q34"
+      ],
+      "source_ids": [
+        "T1",
+        "U2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B07",
+      "title": "실제 시간·중복·병행 선택",
+      "display_group": "병행·시간·축별 계산",
+      "screen_ids": [
+        "S08",
+        "S09",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q07",
+        "Q08",
+        "Q20",
+        "Q32",
+        "Q33"
+      ],
+      "source_ids": [
+        "U2",
+        "T1",
+        "T3",
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B08",
+      "title": "개별 축 표시·증속·재계산",
+      "display_group": "병행·시간·축별 계산",
+      "screen_ids": [
+        "S08",
+        "S09",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q35",
+        "Q36",
+        "Q37"
+      ],
+      "source_ids": [
+        "H1",
+        "C1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 모델 + 제안 입력",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B09",
+      "title": "교과 기본·응용과 심화 두 기록",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q21",
+        "Q22",
+        "Q15"
+      ],
+      "source_ids": [
+        "UF01",
+        "UF03",
+        "F01",
+        "F14",
+        "F20",
+        "F21",
+        "F25",
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "사용자 원칙·원자료 사례 확인; 개인 추천 조건은 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B10",
+      "title": "초등 교과와 읽기·조건 이해",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q21",
+        "Q26",
+        "Q16"
+      ],
+      "source_ids": [
+        "E1",
+        "E2",
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B11",
+      "title": "중등 실제 진도에 따른 모듈 개방",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q21",
+        "Q55"
+      ],
+      "source_ids": [
+        "U2",
+        "C3",
+        "H1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B12",
+      "title": "공통수학·대수·미적분Ⅰ 진도 개방",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q21",
+        "Q59",
+        "Q24"
+      ],
+      "source_ids": [
+        "H1",
+        "C4",
+        "E8"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B13",
+      "title": "구 교과명과 현재 교과의 내용 대응",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q24",
+        "Q11",
+        "Q12"
+      ],
+      "source_ids": [
+        "H1",
+        "E8",
+        "I5",
+        "UF04",
+        "CUR01",
+        "CUR02"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "현행 적용 원칙 확정; 교재별 단원 대응 미완료",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B14",
+      "title": "팩토·PRE1031·필즈 베이직 시작점",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q25",
+        "Q13",
+        "Q26",
+        "Q27"
+      ],
+      "source_ids": [
+        "C1",
+        "E1",
+        "E2",
+        "T1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B15",
+      "title": "초등팩토 완료 후 병행·확장",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q25",
+        "Q27",
+        "Q16"
+      ],
+      "source_ids": [
+        "T1",
+        "E1",
+        "E2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B16",
+      "title": "지문 이해와 사고력 보완",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q26",
+        "Q16",
+        "Q17"
+      ],
+      "source_ids": [
+        "E2",
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B17",
+      "title": "1031 시작 전 연산 확인",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q28",
+        "Q30",
+        "Q31"
+      ],
+      "source_ids": [
+        "E1",
+        "E2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "자료 내 권고 + 제안 로직",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B18",
+      "title": "1031·필즈·GM의 확장·병행",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q25",
+        "Q20",
+        "Q15"
+      ],
+      "source_ids": [
+        "E1",
+        "E2",
+        "C2",
+        "T1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B19",
+      "title": "연산 별도 권·단원·수행",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q29",
+        "Q30",
+        "Q12",
+        "Q13"
+      ],
+      "source_ids": [
+        "U2",
+        "C1",
+        "E1",
+        "I1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B20",
+      "title": "교과보다 앞선 연산 계획의 대응 확인",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q21",
+        "Q29",
+        "Q31"
+      ],
+      "source_ids": [
+        "U2",
+        "E1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B21",
+      "title": "연산 진행과 독립 수행의 차이",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q13",
+        "Q30",
+        "Q16"
+      ],
+      "source_ids": [
+        "U2",
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B22",
+      "title": "기존 선택 범위 밖 연산 입력",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q29",
+        "Q11",
+        "Q12"
+      ],
+      "source_ids": [
+        "C1",
+        "E1",
+        "I1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B23",
+      "title": "소마·필즈·CMS·그 외의 이력·반·코호트 구분",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q38",
+        "Q40"
+      ],
+      "source_ids": [
+        "E3",
+        "E4",
+        "I1",
+        "I2",
+        "I3",
+        "I4",
+        "C2",
+        "UF01"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B24",
+      "title": "7세까지 프리미어 고려 구간과 실제 선발 회차의 분리",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q01",
+        "Q39",
+        "Q40"
+      ],
+      "source_ids": [
+        "U4",
+        "H1",
+        "U3",
+        "E1",
+        "T1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "사용자 구간 확정; 공식 일정 미확인; 연결 로직 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B25",
+      "title": "프리미어·챌린지·필즈 선발/승급 결과",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q39",
+        "Q40",
+        "Q42"
+      ],
+      "source_ids": [
+        "H1",
+        "T1",
+        "T3",
+        "I2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B26",
+      "title": "프리미어/챌린지와 필즈 동시·택일",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q41",
+        "Q07",
+        "Q08",
+        "Q32"
+      ],
+      "source_ids": [
+        "T1",
+        "T3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B27",
+      "title": "학원 반과 외부 교과·심화의 조합",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q38",
+        "Q21",
+        "Q22",
+        "Q25",
+        "Q29"
+      ],
+      "source_ids": [
+        "T1",
+        "E3",
+        "E4",
+        "I1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B28",
+      "title": "황소 선택·늦춤·미선택과 학원 목표 없는 기준 경로",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q43",
+        "Q04"
+      ],
+      "source_ids": [
+        "UF03",
+        "UF05",
+        "C3",
+        "F20"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "사용자 선택 원칙 확정; 개별 회차 조건은 공식 확인 필요",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B29",
+      "title": "황소 초2 11월 코호트 비교",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q23",
+        "Q44",
+        "Q45"
+      ],
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "자료 사례 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B30",
+      "title": "황소 초3 2월 코호트 비교",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q23",
+        "Q44",
+        "Q45"
+      ],
+      "source_ids": [
+        "C3",
+        "E2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "자료 사례 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B31",
+      "title": "황소 초3 11월 늦은 시작 코호트",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q23",
+        "Q44",
+        "Q45"
+      ],
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "자료 사례 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B32",
+      "title": "황소 실제 범위·깊이·읽기 확인",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q44",
+        "Q45",
+        "Q16",
+        "Q26"
+      ],
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B33",
+      "title": "황소 적응과 기존 학습 시간",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q46",
+        "Q07",
+        "Q32",
+        "Q33"
+      ],
+      "source_ids": [
+        "C3",
+        "T1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B34",
+      "title": "황소 합격·미등록·미선발·편입",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q47",
+        "Q48"
+      ],
+      "source_ids": [
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B35",
+      "title": "황소 보완 후 같은/다른 회차 합류",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q48",
+        "Q14",
+        "Q34"
+      ],
+      "source_ids": [
+        "C3",
+        "E5"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B36",
+      "title": "영재원 종류·지역·분야",
+      "display_group": "영재원",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q49",
+        "Q50",
+        "Q51"
+      ],
+      "source_ids": [
+        "C3",
+        "T4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B37",
+      "title": "초2 등 브릿지 경험·이수·신규 지원",
+      "display_group": "영재원",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q49",
+        "Q50",
+        "Q51"
+      ],
+      "source_ids": [
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "연도별 과거 기준 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B38",
+      "title": "초3–5 교육청/대학부설 지원",
+      "display_group": "영재원",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q01",
+        "Q49",
+        "Q50",
+        "Q52"
+      ],
+      "source_ids": [
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "연도별 과거 기준 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B39",
+      "title": "초6·중등 신규/계속/기관 이동",
+      "display_group": "영재원",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q01",
+        "Q49",
+        "Q50",
+        "Q51"
+      ],
+      "source_ids": [
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "연도별 과거 기준 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B40",
+      "title": "영재원 현재 자격·달력 연도 확인",
+      "display_group": "영재원",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q50",
+        "Q51",
+        "Q52"
+      ],
+      "source_ids": [
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 연도표시 원칙 + 미확정 현재 정보",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B41",
+      "title": "기관 제한과 개인 시간 충돌",
+      "display_group": "영재원",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q51",
+        "Q53",
+        "Q07"
+      ],
+      "source_ids": [
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B42",
+      "title": "영재원 관찰·지원서·산출물 준비",
+      "display_group": "영재원",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q52",
+        "Q64",
+        "Q18"
+      ],
+      "source_ids": [
+        "C3",
+        "T4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B43",
+      "title": "영재원 선택 결과와 목표 재검토",
+      "display_group": "영재원",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q54",
+        "Q51",
+        "Q80"
+      ],
+      "source_ids": [
+        "C3",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B44",
+      "title": "누테 진입 희망·실제 회차",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q56",
+        "Q55",
+        "Q57"
+      ],
+      "source_ids": [
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B45",
+      "title": "누테 진입 부족 범위·보완 후 합류",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q55",
+        "Q57",
+        "Q34"
+      ],
+      "source_ids": [
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B46",
+      "title": "황소·누테·다른 학원 병행",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q56",
+        "Q58",
+        "Q07",
+        "Q46"
+      ],
+      "source_ids": [
+        "C3",
+        "T1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B47",
+      "title": "중등 기본·심화와 공통수학 전환",
+      "display_group": "중등·고등 실제 진도",
+      "screen_ids": [
+        "S04",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q55",
+        "Q57",
+        "Q59"
+      ],
+      "source_ids": [
+        "C3",
+        "I6"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B48",
+      "title": "기간이 다른 학원 모델의 비교",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q56",
+        "Q59",
+        "Q35"
+      ],
+      "source_ids": [
+        "H1",
+        "C3",
+        "E9",
+        "I6",
+        "I7"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 보존 원칙 + 자료 사례",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B49",
+      "title": "L0–L4 기준선과 희망 방향 분리",
+      "display_group": "기본 정보와 가족 여건",
+      "screen_ids": [
+        "S01",
+        "S02",
+        "S08"
+      ],
+      "question_ids": [
+        "Q04",
+        "Q21",
+        "Q25",
+        "Q29"
+      ],
+      "source_ids": [
+        "H1",
+        "C1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 기존 기준선 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B50",
+      "title": "L4·국가대표 코호트의 참고",
+      "display_group": "기본 정보와 가족 여건",
+      "screen_ids": [
+        "S01",
+        "S02",
+        "S08"
+      ],
+      "question_ids": [
+        "Q23",
+        "Q59",
+        "Q24"
+      ],
+      "source_ids": [
+        "H1",
+        "E8",
+        "I3",
+        "I5"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B51",
+      "title": "중등 학습과 실제 학교 생활",
+      "display_group": "중등·고등 실제 진도",
+      "screen_ids": [
+        "S04",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q55",
+        "Q58",
+        "Q76"
+      ],
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B52",
+      "title": "중등 심화와 학교 내신의 독립",
+      "display_group": "중등·고등 실제 진도",
+      "screen_ids": [
+        "S04",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q22",
+        "Q55",
+        "Q76",
+        "Q07"
+      ],
+      "source_ids": [
+        "C4",
+        "E7"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B53",
+      "title": "공통수학1·2 기본/심화/누락",
+      "display_group": "중등·고등 실제 진도",
+      "screen_ids": [
+        "S04",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q59",
+        "Q15",
+        "Q14"
+      ],
+      "source_ids": [
+        "H1",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B54",
+      "title": "대수·미적분Ⅰ 비교와 고입 방향",
+      "display_group": "중등·고등 실제 진도",
+      "screen_ids": [
+        "S04",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q59",
+        "Q04",
+        "Q75"
+      ],
+      "source_ids": [
+        "H1",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B55",
+      "title": "중등·고등 보완 후 합류",
+      "display_group": "중등·고등 실제 진도",
+      "screen_ids": [
+        "S04",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q34",
+        "Q55",
+        "Q59",
+        "Q57"
+      ],
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B56",
+      "title": "시간 여건에 따른 축별 조정",
+      "display_group": "병행·시간·축별 계산",
+      "screen_ids": [
+        "S08",
+        "S09",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q07",
+        "Q08",
+        "Q37",
+        "Q58"
+      ],
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B57",
+      "title": "과학 모듈 추가 여부·목적",
+      "display_group": "과학",
+      "screen_ids": [
+        "S11",
+        "S04",
+        "S10"
+      ],
+      "question_ids": [
+        "Q60",
+        "Q04",
+        "Q61"
+      ],
+      "source_ids": [
+        "C3",
+        "E6",
+        "E7",
+        "E10"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B58",
+      "title": "한과연 표준·FAST·SLOW 비교",
+      "display_group": "과학",
+      "screen_ids": [
+        "S11",
+        "S04",
+        "S10"
+      ],
+      "question_ids": [
+        "Q65",
+        "Q61",
+        "Q62"
+      ],
+      "source_ids": [
+        "H1",
+        "C3",
+        "E6",
+        "E7"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 명칭 해석 + 자료 사례",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B59",
+      "title": "같은 예비초6·수학 초6인 과학안",
+      "display_group": "과학",
+      "screen_ids": [
+        "S11",
+        "S04",
+        "S10"
+      ],
+      "question_ids": [
+        "Q62",
+        "Q61",
+        "Q63"
+      ],
+      "source_ids": [
+        "E7",
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "자료 사례 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B60",
+      "title": "같은 예비초6·수학 중1인 과학안",
+      "display_group": "과학",
+      "screen_ids": [
+        "S11",
+        "S04",
+        "S10"
+      ],
+      "question_ids": [
+        "Q62",
+        "Q61",
+        "Q63"
+      ],
+      "source_ids": [
+        "E7",
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "자료 사례 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B61",
+      "title": "같은 예비초6·수학 중2인 과학안",
+      "display_group": "과학",
+      "screen_ids": [
+        "S11",
+        "S04",
+        "S10"
+      ],
+      "question_ids": [
+        "Q62",
+        "Q61",
+        "Q63"
+      ],
+      "source_ids": [
+        "E7",
+        "C3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "자료 사례 + 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B62",
+      "title": "같은 예비초6·수학 중3인 과학안",
+      "display_group": "과학",
+      "screen_ids": [
+        "S11",
+        "S04",
+        "S10"
+      ],
+      "question_ids": [
+        "Q62",
+        "Q61",
+        "Q66"
+      ],
+      "source_ids": [
+        "E7",
+        "C3",
+        "A2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "자료 사례 + 조건 미확정",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B63",
+      "title": "과학 분야별 어휘·수식·설명 보완",
+      "display_group": "과학",
+      "screen_ids": [
+        "S11",
+        "S04",
+        "S10"
+      ],
+      "question_ids": [
+        "Q61",
+        "Q63",
+        "Q16"
+      ],
+      "source_ids": [
+        "E6",
+        "E7",
+        "A2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B64",
+      "title": "실험·보고서·장기 탐구의 별도 경로",
+      "display_group": "과학",
+      "screen_ids": [
+        "S11",
+        "S04",
+        "S10"
+      ],
+      "question_ids": [
+        "Q64",
+        "Q61",
+        "Q07"
+      ],
+      "source_ids": [
+        "E6",
+        "E10",
+        "T4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B65",
+      "title": "KMO·수학 경시 선택 여부",
+      "display_group": "경시",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q68",
+        "Q69",
+        "Q70",
+        "Q72"
+      ],
+      "source_ids": [
+        "C3",
+        "E9",
+        "H1",
+        "A3",
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B66",
+      "title": "KMO 진입 깊이·학원 기준·대회 자격 분리",
+      "display_group": "경시",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q69",
+        "Q70",
+        "Q71"
+      ],
+      "source_ids": [
+        "C3",
+        "E9",
+        "A3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B67",
+      "title": "물리·화학·정보 등 분야별 경시",
+      "display_group": "경시",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q67",
+        "Q68",
+        "Q69",
+        "Q61"
+      ],
+      "source_ids": [
+        "E10",
+        "C3",
+        "I8"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B68",
+      "title": "미래탐구 내부 단계·승급 조건",
+      "display_group": "경시",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q71",
+        "Q72",
+        "Q70"
+      ],
+      "source_ids": [
+        "E9"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "학원 자료 기준 + 현재 적용 미확정",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B69",
+      "title": "경시·교과·과학·탐구 병행",
+      "display_group": "경시",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q73",
+        "Q07",
+        "Q58",
+        "Q67"
+      ],
+      "source_ids": [
+        "C3",
+        "E9",
+        "E10",
+        "A3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B70",
+      "title": "참가·수상·현재활동·결과의 분리",
+      "display_group": "경시",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q71",
+        "Q74",
+        "Q18"
+      ],
+      "source_ids": [
+        "C3",
+        "E9"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B71",
+      "title": "경시 후 고입 방향 재선택",
+      "display_group": "경시",
+      "screen_ids": [
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q74",
+        "Q75",
+        "Q78"
+      ],
+      "source_ids": [
+        "C3",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B72",
+      "title": "공통수학 이후 희망 학교 유형",
+      "display_group": "진학·진로",
+      "screen_ids": [
+        "S11",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q75",
+        "Q59",
+        "Q76"
+      ],
+      "source_ids": [
+        "C3",
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B73",
+      "title": "학교 내신·수행과 외부 선행",
+      "display_group": "진학·진로",
+      "screen_ids": [
+        "S11",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q76",
+        "Q07",
+        "Q58"
+      ],
+      "source_ids": [
+        "C4",
+        "E7",
+        "P1",
+        "P2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B74",
+      "title": "중2 목표 유지·변경",
+      "display_group": "진학·진로",
+      "screen_ids": [
+        "S11",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q78",
+        "Q75",
+        "Q76",
+        "Q09"
+      ],
+      "source_ids": [
+        "C4",
+        "E7"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B75",
+      "title": "고입 깊이·탐구·지원 준비 확인",
+      "display_group": "진학·진로",
+      "screen_ids": [
+        "S11",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q79",
+        "Q70",
+        "Q64",
+        "Q76"
+      ],
+      "source_ids": [
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B76",
+      "title": "현재 공식 고입 자격·일정·지원 제한",
+      "display_group": "진학·진로",
+      "screen_ids": [
+        "S11",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q77",
+        "Q75",
+        "Q02"
+      ],
+      "source_ids": [
+        "C3",
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 공식확인 원칙 + 현재 미확정",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B77",
+      "title": "지원·선발·등록 결과 이후 선택",
+      "display_group": "진학·진로",
+      "screen_ids": [
+        "S11",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q80",
+        "Q75",
+        "Q09"
+      ],
+      "source_ids": [
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B78",
+      "title": "목표 변경에 따른 경로 재선택",
+      "display_group": "변경·휴식·기준 계획",
+      "screen_ids": [
+        "S12",
+        "S13",
+        "S10"
+      ],
+      "question_ids": [
+        "Q09",
+        "Q04",
+        "Q06",
+        "Q78"
+      ],
+      "source_ids": [
+        "U2",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 요구 + 제안 재선택 로직",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B79",
+      "title": "갱신·보완·합류 시점의 사건 처리",
+      "display_group": "변경·휴식·기준 계획",
+      "screen_ids": [
+        "S12",
+        "S13",
+        "S10"
+      ],
+      "question_ids": [
+        "Q09",
+        "Q13",
+        "Q34"
+      ],
+      "source_ids": [
+        "U2",
+        "C3",
+        "C4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B80",
+      "title": "설계 밖 과정·섹션5·미확정 인계",
+      "display_group": "진학·진로",
+      "screen_ids": [
+        "S11",
+        "S10",
+        "S12"
+      ],
+      "question_ids": [
+        "Q10",
+        "Q11",
+        "Q80"
+      ],
+      "source_ids": [
+        "U2",
+        "C4",
+        "P1",
+        "P2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "확정 범위 제한 + 제안 인계",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B81",
+      "title": "분산 수업·긴 수업·현재 유지",
+      "display_group": "기본 정보와 가족 여건",
+      "screen_ids": [
+        "S01",
+        "S02",
+        "S08"
+      ],
+      "question_ids": [
+        "Q81",
+        "Q07",
+        "Q33"
+      ],
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B82",
+      "title": "가정 지원·이동·학교 일정의 여건",
+      "display_group": "기본 정보와 가족 여건",
+      "screen_ids": [
+        "S01",
+        "S02",
+        "S08"
+      ],
+      "question_ids": [
+        "Q82",
+        "Q07",
+        "Q16"
+      ],
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B83",
+      "title": "개별·팀·가정 학습 조합",
+      "display_group": "기본 정보와 가족 여건",
+      "screen_ids": [
+        "S01",
+        "S02",
+        "S08"
+      ],
+      "question_ids": [
+        "Q83",
+        "Q20",
+        "Q16",
+        "Q07"
+      ],
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B84",
+      "title": "권·단원 순서가 다른 이수 기록",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q84",
+        "Q11",
+        "Q12",
+        "Q14"
+      ],
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B85",
+      "title": "시험 기록과 시간 제한 없는 수행 비교",
+      "display_group": "진단을 붙일 때",
+      "screen_ids": [
+        "S10",
+        "S13"
+      ],
+      "question_ids": [
+        "Q85",
+        "Q18",
+        "Q16"
+      ],
+      "source_ids": [
+        "T2",
+        "T3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B86",
+      "title": "책·수업·영상·미션·테스트의 사용 순서",
+      "display_group": "진단을 붙일 때",
+      "screen_ids": [
+        "S10",
+        "S13"
+      ],
+      "question_ids": [
+        "Q86",
+        "Q12",
+        "Q16",
+        "Q82"
+      ],
+      "source_ids": [
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B87",
+      "title": "학부모·교사 관찰의 충돌",
+      "display_group": "변경·휴식·기준 계획",
+      "screen_ids": [
+        "S12",
+        "S13",
+        "S10"
+      ],
+      "question_ids": [
+        "Q87",
+        "Q03",
+        "Q18",
+        "Q19"
+      ],
+      "source_ids": [
+        "T2",
+        "U2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B88",
+      "title": "모의·특강 확대와 복습·기본 학습 선택",
+      "display_group": "진단을 붙일 때",
+      "screen_ids": [
+        "S10",
+        "S13"
+      ],
+      "question_ids": [
+        "Q88",
+        "Q07",
+        "Q85",
+        "Q14"
+      ],
+      "source_ids": [
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B89",
+      "title": "학습 계속과 진단 연기의 독립",
+      "display_group": "진단을 붙일 때",
+      "screen_ids": [
+        "S10",
+        "S13"
+      ],
+      "question_ids": [
+        "Q89",
+        "Q13",
+        "Q18"
+      ],
+      "source_ids": [
+        "T1",
+        "T3",
+        "U4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B90",
+      "title": "평가 시도·채점 정정과 비교 가능성",
+      "display_group": "진단을 붙일 때",
+      "screen_ids": [
+        "S10",
+        "S13"
+      ],
+      "question_ids": [
+        "Q90",
+        "Q85",
+        "Q18",
+        "Q103"
+      ],
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B91",
+      "title": "직접 결과·전달 공지·문자 템플릿 분리",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q91",
+        "Q03",
+        "Q42",
+        "Q47"
+      ],
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B92",
+      "title": "기관의 평가 반영 조건과 재원 이력",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q92",
+        "Q38",
+        "Q40"
+      ],
+      "source_ids": [
+        "T1"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B93",
+      "title": "선발·반 배정·좌석·등록·실제 수강 분리",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q93",
+        "Q42",
+        "Q47",
+        "Q46"
+      ],
+      "source_ids": [
+        "T1",
+        "T2"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B94",
+      "title": "필수·선택 과제와 발췌 범위",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q94",
+        "Q95",
+        "Q12",
+        "Q14",
+        "Q88"
+      ],
+      "source_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B95",
+      "title": "부담 조정·휴식·계획 종료",
+      "display_group": "변경·휴식·기준 계획",
+      "screen_ids": [
+        "S12",
+        "S13",
+        "S10"
+      ],
+      "question_ids": [
+        "Q96",
+        "Q33",
+        "Q07"
+      ],
+      "source_ids": [
+        "T2",
+        "T3",
+        "U4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B96",
+      "title": "휴식 뒤 현재 상태에서 재개",
+      "display_group": "변경·휴식·기준 계획",
+      "screen_ids": [
+        "S12",
+        "S13",
+        "S10"
+      ],
+      "question_ids": [
+        "Q97",
+        "Q01",
+        "Q07",
+        "Q10",
+        "Q89"
+      ],
+      "source_ids": [
+        "T3",
+        "U4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B97",
+      "title": "선발 준비 종료 후 다른 학습 복귀",
+      "display_group": "학원 경험·선발·등록",
+      "screen_ids": [
+        "S03",
+        "S11",
+        "S10"
+      ],
+      "question_ids": [
+        "Q98",
+        "Q09",
+        "Q07",
+        "Q100"
+      ],
+      "source_ids": [
+        "T1",
+        "U4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B98",
+      "title": "완료 범위의 이후 유지·전이 확인",
+      "display_group": "실제 교재·진도·학습 깊이",
+      "screen_ids": [
+        "S03",
+        "S04",
+        "S05",
+        "S10"
+      ],
+      "question_ids": [
+        "Q99",
+        "Q18",
+        "Q16",
+        "Q90"
+      ],
+      "source_ids": [
+        "T1",
+        "U4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B99",
+      "title": "타 과목 영역별 실제 학습·계획",
+      "display_group": "타 과목",
+      "screen_ids": [
+        "S11",
+        "S04",
+        "S13"
+      ],
+      "question_ids": [
+        "Q100",
+        "Q07",
+        "Q98",
+        "Q103"
+      ],
+      "source_ids": [
+        "T3",
+        "U4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B100",
+      "title": "가족 선택 기준계획·실제기록·변경안",
+      "display_group": "변경·휴식·기준 계획",
+      "screen_ids": [
+        "S12",
+        "S13",
+        "S10"
+      ],
+      "question_ids": [
+        "Q102",
+        "Q103",
+        "Q104",
+        "Q09"
+      ],
+      "source_ids": [
+        "U4"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "원문 관찰 기반 설계 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    },
+    {
+      "branch_id": "B101",
+      "title": "선택형 기존 성향검사와 진행 방식의 설명 보강",
+      "display_group": "선택 성향검사",
+      "screen_ids": [
+        "S06",
+        "S09"
+      ],
+      "question_ids": [
+        "Q105",
+        "Q15",
+        "Q16",
+        "Q20",
+        "Q07"
+      ],
+      "source_ids": [
+        "UF02",
+        "PN01",
+        "PN02"
+      ],
+      "condition_contract": "아래 gateway_rules의 조건과 해당 원갈림길의 entry_and_remediation을 모두 확인; 조건 미확인은 숨김/불가 판정 대신 조건부 후보",
+      "origin_status": "선택 원칙 확정; 유형별 설명 연결은 제안",
+      "runtime_v9": "갈림길 목록/설명 연결이 있음; 해당 개별 조건의 실행 완료를 뜻하지 않음",
+      "v10_state": "설계 문서만; 런타임 미구현"
+    }
+  ],
+  "course_relations": [
+    {
+      "id": "R01",
+      "label": "기본·응용 이어가기",
+      "condition": "해당 과정 유지 희망; 학습 상태 미확인이면 조건부",
+      "actions": [
+        "application:continue",
+        "depth:existing_state_preserved"
+      ],
+      "parallel": "사고력·연산 및 실제 다른 과정 유지; 심화 미시작과 미확인 별도",
+      "next": "새 범위·부담·목표 변경 때 B05/B09/B56/B79",
+      "sources": [
+        "UF03",
+        "F01"
+      ]
+    },
+    {
+      "id": "R02",
+      "label": "응용을 이어가고 이전 범위 심화는 나중 추가",
+      "condition": "가족이 나중 추가 희망; 심화 대상 범위 선택/미정; 이해·도움·부담·시간 확인 대기 가능",
+      "actions": [
+        "application:continue",
+        "depth:start_later"
+      ],
+      "parallel": "현재 사고력·연산 유지; 심화는 계획으로만 저장",
+      "next": "대상 범위 확인과 가족 재검토 뒤 심화 시작/보류/변경 선택; 자동 합류 없음",
+      "sources": [
+        "UF03",
+        "F01"
+      ]
+    },
+    {
+      "id": "R03",
+      "label": "서로 다른 범위의 응용·심화 병행",
+      "condition": "각 범위와 실제/계획 구분; 과정별 도움·부담·시간 보고",
+      "actions": [
+        "application:continue",
+        "depth:parallel"
+      ],
+      "parallel": "예: 응용 2-1·심화 1-1; 어느 한쪽의 완료로 다른 과정 완료 처리 금지",
+      "next": "범위 변경 또는 부담 발생 때 해당 과정만 다시 비교",
+      "sources": [
+        "UF01",
+        "F21",
+        "F25"
+      ]
+    },
+    {
+      "id": "R04",
+      "label": "같은 범위를 응용 후 심화",
+      "condition": "실제 같은 범위 확인; 순서 희망. 교재명만으로 동일 내용 확정 금지",
+      "actions": [
+        "application:continue",
+        "depth:after_scope_review"
+      ],
+      "parallel": "사고력·연산 독립; 학습 시차는 기록 또는 근거 있는 원표만 사용",
+      "next": "응용 완료 보고 뒤 이해·도움·부담 재확인, 심화 시작 별도 선택",
+      "sources": [
+        "F25",
+        "UF03"
+      ]
+    },
+    {
+      "id": "R05",
+      "label": "심화를 중심으로 배우다가 응용과 병행",
+      "condition": "가족이 심화 우선 희망; 어느 실제/예정 범위인지 확인; 응용 유지/조정/휴식 직접 선택",
+      "actions": [
+        "depth:focus",
+        "application:continue_or_reduce_or_pause_selected_by_family"
+      ],
+      "parallel": "나중 응용 병행 후보; 사고력·연산은 각각 유지 여부 선택",
+      "next": "최근 혼자 시도·설명·부담·시간 확인 후 응용 재개/추가/보류 선택",
+      "sources": [
+        "UF03"
+      ]
+    },
+    {
+      "id": "R06",
+      "label": "필요 범위 보완 후 합류",
+      "condition": "보고된 우려/진단/학원 조건의 출처와 대상 범위가 있음; 약점 확정과 확인 필요 분리",
+      "actions": [
+        "selected_course:review_or_remediate",
+        "other_courses:independent_selection"
+      ],
+      "parallel": "다른 응용·심화·연산 등을 유지할 수 있음; 전체 학습 중단 자동화 없음",
+      "next": "보완 범위 관찰/진단과 대상 과정 공식·실제 진입 조건을 확인 후 다음 선택",
+      "sources": [
+        "U2",
+        "C3",
+        "C4"
+      ]
+    },
+    {
+      "id": "R07",
+      "label": "일부 과정의 분량 조정·휴식·재개",
+      "condition": "부담·시간 변화 또는 가족 선택; 부담 원인 미확인 보존",
+      "actions": [
+        "selected_course:reduce_or_pause",
+        "other_courses:continue_or_other_choice"
+      ],
+      "parallel": "응용 계속+심화 휴식, 심화 유지+응용 조정 등 모두 허용",
+      "next": "쉬던 과정 재개 시 현재 범위 관찰; 이전 계획 종료와 일시 휴식 구별",
+      "sources": [
+        "U2",
+        "UF03"
+      ]
+    },
+    {
+      "id": "R08",
+      "label": "아직 결정하지 않고 비교",
+      "condition": "기록·희망·시간 일부 미확인 또는 가족 보류",
+      "actions": [
+        "all_courses:preserve_actual",
+        "candidates:unaccepted"
+      ],
+      "parallel": "실제 학습 계속 가능; 미확인 조건 안내",
+      "next": "필요한 질문만 확인하거나 그대로 후보 보관",
+      "sources": [
+        "U4",
+        "UF03"
+      ]
+    }
+  ],
+  "facts_vs_wishes": {
+    "actual_course": "실제 교재·범위·상태",
+    "observation": "보고자·일자·범위가 붙은 관찰; 진단과 구별",
+    "family_goal": "가족이 바라는 방향·시점",
+    "proposal": "조건부 비교 후보",
+    "accepted_plan": "가족이 선택한 기준 버전; 실제 이수·합격과 구별"
+  },
+  "states": {
+    "field": [
+      "answered",
+      "not_started",
+      "unknown",
+      "not_asked",
+      "declined",
+      "not_applicable"
+    ],
+    "course_actual": [
+      "active",
+      "paused",
+      "completed",
+      "ended",
+      "unknown"
+    ],
+    "course_intent": [
+      "continue",
+      "reduce",
+      "pause",
+      "start_later",
+      "focus",
+      "parallel",
+      "review_or_remediate",
+      "undecided"
+    ]
+  },
+  "relation_schema": {
+    "id": "stable id",
+    "kind": "R01..R08",
+    "source_course_ids": "실제 기준 과정 IDs; 새 예정 과정은 여기에 넣지 않음",
+    "target_planned_course_ids": "심화 추가/보완/나중 응용 등 예정 과정 IDs",
+    "parallel_course_ids": "함께 유지할 실제 또는 예정 IDs",
+    "scope": "각 과정 범위; 모름 허용",
+    "condition_evidence_ids": "관찰/진단/공식 자격 각각 별도 references",
+    "review_trigger": "family_review | scope_change | reported_burden | observation_added | diagnosis_added | schedule_change | goal_change",
+    "unresolved": "부족한 근거 목록",
+    "status": "candidate | family_selected | reviewing | started_reported | deferred | cancelled",
+    "automatic_join": false
+  },
+  "hwangso_schema": {
+    "timing": [
+      "grade2",
+      "grade3",
+      "later",
+      "none",
+      "undecided",
+      "not_asked"
+    ],
+    "reasons": [
+      "progress_pending",
+      "young_depth",
+      "thorough_alternative",
+      "time_fit",
+      "child_preference",
+      "unknown"
+    ],
+    "reasons_multi": true,
+    "readiness": "unknown/parent_report/diagnosis evidence 별도",
+    "official_cycle": "기관·지원연도·요강·확인일 별도",
+    "learning_relation_required": false,
+    "changes_actual_level": false
+  },
+  "forbidden_inferences": [
+    "생월→능력 점수",
+    "나이→입력 진도 제한",
+    "반 이름→교과·연산 진도",
+    "교재 완료→숙달",
+    "응용 완료→심화 완료",
+    "황소 늦춤→진도 부족",
+    "황소 없음→중등 자동 진입",
+    "검사 미완료→경로 제한",
+    "성향 점수→증속·합격·숙달",
+    "희망 학원 횟수→확정 증속 자동 적용",
+    "시간 미입력→0",
+    "목표 변경→기존 계획 삭제",
+    "구 수학 상·하→공통수학1·2 전체 자동 동치"
+  ],
+  "numeric_cutoffs_created": false,
+  "automatic_acceptance": false,
+  "diagnosis_required_for_intake": false,
+  "table_of_contents_required_for_intake": false,
+  "all_branches_required_for_parent": false,
+  "runtime_v9_gaps": [
+    "전역 progression을 과정별 복수 관계로 분리",
+    "책 추가 뒤 필수 detail 화면을 기본 필드 인라인/상세 접기로 변경",
+    "ISBN/목차·교육과정 상세는 선택 또는 진단 단계",
+    "과정별 관찰 미입력만 조건부 질문",
+    "황소 이유를 시점과 독립하여 수정 가능",
+    "높은 학습 범위별 실제 질문 모듈; 목록만 표시하는 상태와 구분",
+    "범위/근거가 연결된 합류 관계와 재검토 이벤트",
+    "전체 설계 승인 후 런타임 구현"
+  ]
+}

@@ -321,6 +321,7 @@
   .bk:not(.a4) .first .bk-band { height: auto; }
   .bk:not(.a4) .bk-band { height: 44px; }
 }
+.bk-video[data-tag]::before { content: 'VIDEO · ' attr(data-tag); }
 @media print { .bk-video::before { display: none; } }
 /* 상자 머리 칩은 윗변에 걸친 탭 — 높이를 더하지 않는다 */
 .bk-box, .bk-more { margin-top: 5mm; }

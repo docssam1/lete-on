@@ -37,6 +37,9 @@ NS1:{ name:{ko:'자릿값 읽기',en:'Place Value',zh:'位值'}, gen:'ns1_placeV
            concept:{ko:'큰 수는 네 자리씩 끊어 읽어요: 일·십·백·천 / 만·십만·백만·천만 / 억·십억·백억·천억. 345,600,000은 3억 4560만이에요. 3은 억의 자리, 4는 천만의 자리 — 오른쪽부터 세어 몇째 자리인지 찾아요.',
              en:'Big numbers are read in groups: ones to thousands, then ten-thousands to ten-millions, then hundred-millions. In 345,600,000 the 3 is in the hundred-millions place and the 4 in the ten-millions place. Count the places from the right.',
              zh:'大数每四位一组来读：个十百千，万十万百万千万，亿十亿百亿千亿。345,600,000是3亿4560万：3在亿位，4在千万位。从右往左数，就能找到数字在哪一位。'}},
+          /* 2026-10-05 — 원장 "1학년 첫번째에 갑자기 네자리 수가 나와". C1(초1)의 자릿값은 100까지(두 자리)만.
+             세 자리(L1)는 C3, 네 자리(L2)는 C7, 다섯 자리(L3)는 C11, 십진블록(L4)은 C7 로 옮겼다. */
+          {id:7,offLadder:true,opens:true,label:{ko:'두 자리 (100까지)',en:'2 digits (to 100)',zh:'两位数（100以内）'},params:{max:99}},
           {id:6,offLadder:true,label:{ko:'큰 수 (조 단위까지)',en:'Big numbers (to trillions)',zh:'大数（到万亿位）'},params:{max:9999999999999}},
           {id:4,label:{ko:'십진블록 읽기',en:'Read base-10 blocks',zh:'读十进制方块'},params:{mode:'base10'},
            concept:{ko:'십진블록은 백 판·십 막대·낱개를 세어 자릿값을 더해요 — 200+50+4는 254예요.',
@@ -375,7 +378,13 @@ SB1:{ name:{ko:'한 자리 뺄셈',en:'1-digit −',zh:'一位减法'}, gen:'sb1
     en:'Subtraction takes away from the bigger number. Take 3 away from 7 and 4 is left.',
     zh:'减法就是从大数中拿走一些。从7里拿走3，还剩4。'},
   widgets:['cubes','numpad'],
-  levels:[{id:1,label:{ko:'9까지',en:'to 9',zh:'到9'},params:{max:9}}] },
+  levels:[{id:1,label:{ko:'9까지',en:'to 9',zh:'到9'},params:{max:9}},
+          /* 2026-10-05 — 기적 4단계 "합·차 9까지 종합": 덧셈과 뺄셈이 한 장에 섞여 기호를 보고 고른다 */
+          {id:2,offLadder:true,label:{ko:'덧셈·뺄셈 섞기 (9까지)',en:'mixed + and − (to 9)',zh:'加减混合(到9)'},params:{mixFrom:[['AD1',1],['SB1',1]]},
+           instr:{ko:'+ 인지 − 인지 기호를 잘 보고 계산하시오.',en:'Look at the sign — + or − — before you work it out.',zh:'先看清是＋还是－，再计算。'},
+           concept:{ko:'덧셈과 뺄셈이 섞여 있어요. 먼저 기호를 보고, 더하면 커지고 빼면 작아진다는 것을 떠올려요. 4+3=7, 7−3=4.',
+             en:'Addition and subtraction are mixed together. Check the sign first: adding makes it bigger, taking away makes it smaller. 4+3=7, 7−3=4.',
+             zh:'加法和减法混在一起。先看符号：加了变大，减了变小。4+3=7，7−3=4。'}}] },
 SB2:{ name:{ko:'몇십−한 자리·100−수',en:'Tens−1d, 100−n',zh:'几十减一位'}, gen:'sb2_subTens', prereq:['NS3','NS4'],
   concept:{ko:'몇십에서 뺄 땐 10을 하나 풀어 써요. 40-7은 30과 10으로 나눠 10-7=3을 구하고 30을 더해 33이에요.',
     en:'Subtracting from a ten, break one ten open. For 40-7, split into 30 and 10, do 10-7=3, then add 30 to get 33.',
@@ -831,7 +840,13 @@ DV5:{ name:{ko:'두 자리로 나누기',en:'÷2-digit',zh:'除以两位数'}, g
            concept:{ko:'(세 자리)÷(몇십)은 나누는 수의 배수 가운데 나누어지는 수를 넘지 않는 가장 큰 것을 찾아요 — 257÷30은 30×8=240이 가장 가까우니 몫 8, 나머지 17이에요.',
              en:'For a three-digit number ÷ tens, find the largest multiple of the divisor that does not pass the dividend: in 257÷30, 30×8 = 240 is closest, so the quotient is 8 remainder 17.',
              zh:'三位数÷几十，找出不超过被除数的除数的最大倍数：257÷30中30×8=240最接近，所以商8余17。'}},
-          {id:7,offLadder:true,label:{ko:'다섯 자리 ÷ 두 자리 (심화)',en:'5d ÷ 2d (challenge)',zh:'五位除两位（拓展）'},params:{d:5}}] },
+          {id:7,offLadder:true,label:{ko:'다섯 자리 ÷ 두 자리 (심화)',en:'5d ÷ 2d (challenge)',zh:'五位除两位（拓展）'},params:{d:5}},
+          /* 2026-10-05 — 기적 69단계 "곱셈과 나눗셈 종합": (세 자리)×(두 자리)와 (세 자리)÷(두 자리)를 한 장에 */
+          {id:8,offLadder:true,label:{ko:'곱셈·나눗셈 섞기 (세 자리와 두 자리)',en:'mixed × and ÷ (3-digit and 2-digit)',zh:'乘除混合(三位与两位)'},params:{mixFrom:[['ML9',3],['ML9',4],['DV5',2],['DV5',3]]},
+           instr:{ko:'× 인지 ÷ 인지 기호를 잘 보고 계산하시오. 나머지가 있으면 함께 쓰시오.',en:'Check whether it is × or ÷ first. Write the remainder too if there is one.',zh:'先看清是×还是÷再计算。有余数时也要写出余数。'},
+           concept:{ko:'곱셈과 나눗셈이 섞여 있어요. 기호를 먼저 보고, 나눗셈은 몫을 어림한 뒤 곱해서 빼요. 나눗셈의 답은 곱셈으로 검산할 수 있어요 — 몫 × 나누는 수 + 나머지 = 나누어지는 수.',
+             en:'Multiplication and division are mixed. Check the sign first; for division, estimate the quotient, multiply and subtract. Check a division with multiplication: quotient × divisor + remainder = dividend.',
+             zh:'乘法和除法混在一起。先看符号；除法先估商，再乘再减。除法可以用乘法验算：商×除数+余数=被除数。'}}] },
 DV6:{ name:{ko:'배수판별법',en:'Divisibility rules',zh:'整除判别'}, gen:'dv6_divisibility', prereq:['ML4'],
   concept:{ko:'나눠 보지 않아도 배수인지 알 수 있어요. 끝자리가 짝수면 2의 배수, 0이나 5면 5의 배수, 각 자리 숫자의 합이 3의 배수면 3의 배수예요. 7은 뒷자리를 떼고 그 2배를 남은 수에서 빼면 되고(203 → 20−6=14, 7의 배수!), 11은 홀수번째 자리의 합과 짝수번째 자리의 합의 차를 봐요(8195 → 17−6=11, 11의 배수!).',
     en:'You can spot multiples without dividing. Even last digit means a multiple of 2, ending in 0 or 5 means 5, and digits summing to a multiple of 3 means 3. For 7, drop the last digit and subtract twice it (203 → 20−6=14, a multiple of 7!). For 11, take the difference between the odd-place and even-place digit sums (8195 → 17−6=11, a multiple of 11!).',
@@ -1019,8 +1034,23 @@ DC2:{ name:{ko:'소수 곱셈',en:'Decimal ×',zh:'小数乘法'}, gen:'dc2_decM
     en:'Multiply as whole numbers, then move the decimal point left by the total number of decimal places. So 0.3×0.4 is 0.12.',
     zh:'先当整数相乘，再把小数点向左移动两个因数小数位数之和。0.3×0.4=0.12。'},
   widgets:['steps','decimal'],
-  levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}}] },
+  levels:[{id:1,label:{ko:'기본',en:'basic',zh:'基本'},params:{}},
+          /* 2026-10-05 — 기적 98·99: (소수)×(자연수)·(자연수)×(소수)·(소수)×(소수), 가로셈·세로셈 짝 */
+          {id:2,offLadder:true,label:{ko:'(소수)×(자연수) 가로셈',en:'decimal × whole, across',zh:'小数×整数 横式'},params:{mode:'decNat',orient:'h'}, instr:{ko:'소수점을 떼고 자연수로 곱한 뒤, 소수 자릿수만큼 나누어 가로셈으로 계산하시오.',en:'Multiply without the points, then divide for the decimal places — work it out across.',zh:'去掉小数点按整数相乘，再按小数位数相除，用横式计算。'},
+           concept:{ko:'2.4×3은 24×3=72를 10으로 나눠 7.2 — 소수 한 자리 수에 자연수를 곱하면 곱도 소수 한 자리예요.',en:'2.4 × 3: 24 × 3 = 72, divided by 10 is 7.2 — one decimal place in, one decimal place out.',zh:'2.4×3：24×3=72，再除以10得7.2——一位小数乘整数，积也是一位小数。'}},
+          {id:3,offLadder:true,label:{ko:'(소수)×(자연수) 세로셈',en:'decimal × whole, in columns',zh:'小数×整数 竖式'},params:{mode:'decNat',orient:'v'}, instr:{ko:'세로셈으로 계산하시오. 자연수처럼 곱하고, 두 수의 소수 자릿수를 더한 만큼 곱에 소수점을 찍으시오.',en:'Multiply in columns as whole numbers, then give the product as many decimal places as both numbers together.',zh:'用竖式计算。按整数相乘，再按两个因数小数位数之和点上小数点。'},
+           concept:{ko:'2.4×3은 24×3=72를 10으로 나눠 7.2 — 소수 한 자리 수에 자연수를 곱하면 곱도 소수 한 자리예요.',en:'2.4 × 3: 24 × 3 = 72, divided by 10 is 7.2 — one decimal place in, one decimal place out.',zh:'2.4×3：24×3=72，再除以10得7.2——一位小数乘整数，积也是一位小数。'}},
+          {id:4,offLadder:true,label:{ko:'(자연수)×(소수) 가로셈',en:'whole × decimal, across',zh:'整数×小数 横式'},params:{mode:'natDec',orient:'h'}, instr:{ko:'소수점을 떼고 자연수로 곱한 뒤, 소수 자릿수만큼 나누어 가로셈으로 계산하시오.',en:'Multiply without the points, then divide for the decimal places — work it out across.',zh:'去掉小数点按整数相乘，再按小数位数相除，用横式计算。'},
+           concept:{ko:'6×0.35는 6×35=210을 100으로 나눠 2.1 — 끝자리 0은 지워요. 1보다 작은 수를 곱하면 곱이 처음 수보다 작아져요.',en:'6 × 0.35: 6 × 35 = 210, divided by 100 is 2.1. Multiplying by a number below 1 makes the product smaller.',zh:'6×0.35：6×35=210，除以100得2.1。乘一个比1小的数，积比原数小。'}},
+          {id:5,offLadder:true,label:{ko:'(자연수)×(소수) 세로셈',en:'whole × decimal, in columns',zh:'整数×小数 竖式'},params:{mode:'natDec',orient:'v'}, instr:{ko:'세로셈으로 계산하시오. 자연수처럼 곱하고, 두 수의 소수 자릿수를 더한 만큼 곱에 소수점을 찍으시오.',en:'Multiply in columns as whole numbers, then give the product as many decimal places as both numbers together.',zh:'用竖式计算。按整数相乘，再按两个因数小数位数之和点上小数点。'},
+           concept:{ko:'6×0.35는 6×35=210을 100으로 나눠 2.1 — 끝자리 0은 지워요. 1보다 작은 수를 곱하면 곱이 처음 수보다 작아져요.',en:'6 × 0.35: 6 × 35 = 210, divided by 100 is 2.1. Multiplying by a number below 1 makes the product smaller.',zh:'6×0.35：6×35=210，除以100得2.1。乘一个比1小的数，积比原数小。'}},
+          {id:6,offLadder:true,label:{ko:'(소수)×(소수) 가로셈',en:'decimal × decimal, across',zh:'小数×小数 横式'},params:{mode:'decDec',orient:'h'}, instr:{ko:'소수점을 떼고 자연수로 곱한 뒤, 소수 자릿수만큼 나누어 가로셈으로 계산하시오.',en:'Multiply without the points, then divide for the decimal places — work it out across.',zh:'去掉小数点按整数相乘，再按小数位数相除，用横式计算。'},
+           concept:{ko:'1.2×0.4는 12×4=48, 소수 자릿수가 1+1=2라 0.48이에요. 곱의 소수 자릿수는 두 수의 소수 자릿수를 더한 것이에요.',en:'1.2 × 0.4: 12 × 4 = 48, and 1 + 1 = 2 decimal places, so 0.48. The product has as many decimal places as both numbers together.',zh:'1.2×0.4：12×4=48，小数位数1+1=2，所以是0.48。积的小数位数等于两个因数小数位数之和。'}},
+          {id:7,offLadder:true,label:{ko:'(소수)×(소수) 세로셈',en:'decimal × decimal, in columns',zh:'小数×小数 竖式'},params:{mode:'decDec',orient:'v'}, instr:{ko:'세로셈으로 계산하시오. 자연수처럼 곱하고, 두 수의 소수 자릿수를 더한 만큼 곱에 소수점을 찍으시오.',en:'Multiply in columns as whole numbers, then give the product as many decimal places as both numbers together.',zh:'用竖式计算。按整数相乘，再按两个因数小数位数之和点上小数点。'},
+           concept:{ko:'1.2×0.4는 12×4=48, 소수 자릿수가 1+1=2라 0.48이에요. 곱의 소수 자릿수는 두 수의 소수 자릿수를 더한 것이에요.',en:'1.2 × 0.4: 12 × 4 = 48, and 1 + 1 = 2 decimal places, so 0.48. The product has as many decimal places as both numbers together.',zh:'1.2×0.4：12×4=48，小数位数1+1=2，所以是0.48。积的小数位数等于两个因数小数位数之和。'}}] },
 DC3:{ name:{ko:'소수 나눗셈',en:'Decimal ÷',zh:'小数除法'}, gen:'dc3_decDiv', prereq:['DV5','DC2'],
+  /* 세로셈은 레벨이 정한다(L4·L6·L8 — 소수점 있는 나눗셈 상자 divBox). 일반 세로셈 판정이 ÷ 를 덧셈처럼 쌓지 않게. */
+  noVertical:true,
   concept:{ko:'나누는 수가 정수가 되도록 두 수에 같은 수를 곱한 뒤 나눠요. 1.2÷0.4는 12÷4와 같아 3이에요. 자연수끼리도 나누어떨어지지 않으면 나머지로 끝내지 않고 몫을 소수로 이어 나눠요 — 3÷4는 0.75예요.',
     en:'Multiply both numbers by the same amount until the divisor is whole, then divide. So 1.2÷0.4 is the same as 12÷4, which is 3. When whole numbers do not divide evenly, carry on instead of stopping at a remainder — 3÷4 is 0.75.',
     zh:'两数同时乘同一个数，使除数变成整数再除。1.2÷0.4等于12÷4，得3。整数相除除不尽时，不要停在余数上，把商继续写成小数——3÷4=0.75。'},
@@ -1031,7 +1061,20 @@ DC3:{ name:{ko:'소수 나눗셈',en:'Decimal ÷',zh:'小数除法'}, gen:'dc3_d
           {id:2,label:{ko:'몫이 소수인 (자연수)÷(자연수)',en:'whole ÷ whole, decimal quotient',zh:'整数÷整数(商是小数)'},params:{mode:'natural'},
            concept:{ko:'자연수끼리도 나누어떨어지지 않으면 나머지로 끝내지 않고 0을 내려 몫을 소수로 이어 나눠요 — 58÷25는 2 남고 8, 80을 25로 나눠 3, 다시 50을 나눠 2라서 2.32예요.',
              en:'When whole numbers do not divide evenly, do not stop at a remainder — bring down a zero and carry the quotient into decimals: 58÷25 gives 2 remainder 8, then 80÷25=3 and 50÷25=2, so 2.32.',
-             zh:'整数相除除不尽时不要停在余数，补0继续除下去得到小数：58÷25商2余8，再80÷25=3、50÷25=2，所以是2.32。'}}] },
+             zh:'整数相除除不尽时不要停在余数，补0继续除下去得到小数：58÷25商2余8，再80÷25=3、50÷25=2，所以是2.32。'}},
+          /* 2026-10-05 — (소수)÷(소수)·(자연수)÷(소수), 가로셈·세로셈 짝(기적의 계산법 107~109). */
+          {id:3,offLadder:true,label:{ko:'(소수)÷(소수) 가로셈 — 자릿수가 같은',en:'decimal ÷ decimal, across — same places',zh:'小数÷小数 横式(位数相同)'},params:{mode:'decSame',orient:'h'}, instr:{ko:'두 수의 소수점을 똑같이 옮겨 가로셈으로 계산하시오.',en:'Move both decimal points the same way and work it out across.',zh:'把两个数的小数点同样移动，用横式计算。'},
+           concept:{ko:'나누는 수가 자연수가 되도록 두 수의 소수점을 똑같이 옮겨요. 1.35÷0.45는 둘 다 두 자리 옮겨 135÷45 — 몫은 3이에요. 거꾸로 제수가 피제수의 배수면(1.2÷4.8) 몫이 1보다 작아요 — 12÷48은 0을 붙여 가며 나눠 0.25예요.',en:'Move both decimal points the same number of places until the divisor is whole. 1.35 ÷ 0.45 becomes 135 ÷ 45, so the quotient is 3. When the divisor is the multiple instead (1.2 ÷ 4.8), the quotient is less than 1: 12 ÷ 48 = 0.25, adding zeros as you divide.',zh:'把两个数的小数点同样移动，使除数变成整数。1.35÷0.45都移两位变成135÷45，商是3。反过来除数是被除数的倍数时(1.2÷4.8)，商小于1：12÷48补0继续除，得0.25。'}},
+          {id:4,offLadder:true,label:{ko:'(소수)÷(소수) 세로셈 — 자릿수가 같은',en:'decimal ÷ decimal, long division — same places',zh:'小数÷小数 竖式(位数相同)'},params:{mode:'decSame',orient:'v'}, instr:{ko:'세로셈으로 계산하시오. 소수점을 옮기고, 몫의 소수점은 옮긴 자리 위에 찍으시오.',en:'Use long division. Move the decimal points, then put the quotient\'s point right above the moved point.',zh:'用竖式计算。移动小数点，商的小数点和移动后的小数点对齐。'},
+           concept:{ko:'나누는 수가 자연수가 되도록 두 수의 소수점을 똑같이 옮겨요. 1.35÷0.45는 둘 다 두 자리 옮겨 135÷45 — 몫은 3이에요. 거꾸로 제수가 피제수의 배수면(1.2÷4.8) 몫이 1보다 작아요 — 12÷48은 0을 붙여 가며 나눠 0.25예요.',en:'Move both decimal points the same number of places until the divisor is whole. 1.35 ÷ 0.45 becomes 135 ÷ 45, so the quotient is 3. When the divisor is the multiple instead (1.2 ÷ 4.8), the quotient is less than 1: 12 ÷ 48 = 0.25, adding zeros as you divide.',zh:'把两个数的小数点同样移动，使除数变成整数。1.35÷0.45都移两位变成135÷45，商是3。反过来除数是被除数的倍数时(1.2÷4.8)，商小于1：12÷48补0继续除，得0.25。'}},
+          {id:5,offLadder:true,label:{ko:'(소수)÷(소수) 가로셈 — 자릿수가 다른',en:'decimal ÷ decimal, across — different places',zh:'小数÷小数 横式(位数不同)'},params:{mode:'decDiff',orient:'h'}, instr:{ko:'두 수의 소수점을 똑같이 옮겨 가로셈으로 계산하시오.',en:'Move both decimal points the same way and work it out across.',zh:'把两个数的小数点同样移动，用横式计算。'},
+           concept:{ko:'나누는 수의 소수 자릿수만큼만 옮겨요. 6.72÷0.4는 한 자리씩 옮겨 67.2÷4 — 몫 16.8의 소수점은 옮긴 67.2의 소수점 위에 찍어요.',en:'Move the points only as many places as the divisor has decimals. 6.72 ÷ 0.4 becomes 67.2 ÷ 4, and the point in 16.8 sits right above the point in 67.2.',zh:'按除数的小数位数移动小数点。6.72÷0.4都移一位变成67.2÷4，商16.8的小数点和67.2的小数点对齐。'}},
+          {id:6,offLadder:true,label:{ko:'(소수)÷(소수) 세로셈 — 자릿수가 다른',en:'decimal ÷ decimal, long division — different places',zh:'小数÷小数 竖式(位数不同)'},params:{mode:'decDiff',orient:'v'}, instr:{ko:'세로셈으로 계산하시오. 소수점을 옮기고, 몫의 소수점은 옮긴 자리 위에 찍으시오.',en:'Use long division. Move the decimal points, then put the quotient\'s point right above the moved point.',zh:'用竖式计算。移动小数点，商的小数点和移动后的小数点对齐。'},
+           concept:{ko:'나누는 수의 소수 자릿수만큼만 옮겨요. 6.72÷0.4는 한 자리씩 옮겨 67.2÷4 — 몫 16.8의 소수점은 옮긴 67.2의 소수점 위에 찍어요.',en:'Move the points only as many places as the divisor has decimals. 6.72 ÷ 0.4 becomes 67.2 ÷ 4, and the point in 16.8 sits right above the point in 67.2.',zh:'按除数的小数位数移动小数点。6.72÷0.4都移一位变成67.2÷4，商16.8的小数点和67.2的小数点对齐。'}},
+          {id:7,offLadder:true,label:{ko:'(자연수)÷(소수) 가로셈',en:'whole ÷ decimal, across',zh:'整数÷小数 横式'},params:{mode:'natDec',orient:'h'}, instr:{ko:'두 수의 소수점을 똑같이 옮겨 가로셈으로 계산하시오.',en:'Move both decimal points the same way and work it out across.',zh:'把两个数的小数点同样移动，用横式计算。'},
+           concept:{ko:'자연수에는 소수점이 끝에 숨어 있어요. 9÷0.25는 두 자리 옮겨야 하는데 9에는 자리가 없으니 0을 두 개 붙여 900÷25 — 몫은 36이에요.',en:'A whole number has a hidden point at its end. 9 ÷ 0.25 needs two places, so add two zeros: 900 ÷ 25, which is 36.',zh:'整数的小数点藏在末尾。9÷0.25要移两位，9后面没有位，就补两个0：900÷25，商是36。'}},
+          {id:8,offLadder:true,label:{ko:'(자연수)÷(소수) 세로셈',en:'whole ÷ decimal, long division',zh:'整数÷小数 竖式'},params:{mode:'natDec',orient:'v'}, instr:{ko:'세로셈으로 계산하시오. 소수점을 옮기고, 몫의 소수점은 옮긴 자리 위에 찍으시오.',en:'Use long division. Move the decimal points, then put the quotient\'s point right above the moved point.',zh:'用竖式计算。移动小数点，商的小数点和移动后的小数点对齐。'},
+           concept:{ko:'자연수에는 소수점이 끝에 숨어 있어요. 9÷0.25는 두 자리 옮겨야 하는데 9에는 자리가 없으니 0을 두 개 붙여 900÷25 — 몫은 36이에요.',en:'A whole number has a hidden point at its end. 9 ÷ 0.25 needs two places, so add two zeros: 900 ÷ 25, which is 36.',zh:'整数的小数点藏在末尾。9÷0.25要移两位，9后面没有位，就补两个0：900÷25，商是36。'}}] },
 
 /* ── MX 혼합 ───────────────────────────── */
 MX1:{ name:{ko:'사칙 혼합계산',en:'Order of operations',zh:'四则混合'}, gen:'mx1_orderOps', prereq:['ML7','DV4'],
@@ -4818,5 +4861,9 @@ MD159:{ name:{ko:'정적분의 성질과 정적분으로 정의된 함수',en:'P
              zh:'在∫ₐˣ f(t)dt=g(x)中代入x=a得g(a)=0，两边求导得f(x)=g′(x)。式中的∫ₐᵇ f(t)dt是常数，设为k解关于k的方程。'}}] },
 };
 
-if(typeof module!=='undefined'&&module.exports)module.exports=window.NM_THREADS;
+if(typeof module!=='undefined'&&module.exports){
+  /* 유아 교재 G1 묶음 스레드 — 브라우저는 index.html 이 이어서 싣고, node 검사기는 여기서 이어 붙인다. */
+  ['1-3','4-6','7-9','10-12','13-15'].forEach(function(g){ require('./g1/'+g+'-threads.js'); });
+  module.exports=window.NM_THREADS;
+}
 })();

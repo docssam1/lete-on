@@ -2,6 +2,7 @@
 'use strict';
 module.exports=function(H){
   const {C,svg,sheep,pouch,arrow,paper,bubble,txt,ground,wig}=H;
+  const {viete}=H;
   return { panels:[
     { art: svg(
         '<polygon points="30,110 150,110 30,30" fill="none" stroke="'+C.blue+'" stroke-width="2.5"/>'
@@ -30,7 +31,7 @@ module.exports=function(H){
     { art: svg(
         '<polygon points="40,105 160,105 90,30" fill="none" stroke="'+C.blue+'" stroke-width="2.5"/>'
         +txt(100,122,11,C.ink,'a')+txt(58,72,11,C.ink,'b')+txt(132,72,11,C.ink,'c')+txt(90,20,11,C.gold,'A')
-        +wig(175,100,0.8)
+        +viete(175,100,0.8)
         +txt(100,134,10,C.sub,'a²=b²+c²-2bc·cosA')),
       text: { ko:'16세기 프랑스의 비에트가 지금 쓰는 식 a²=b²+c²-2bc·cosA로 정리했어요.',
               en:"16th-century Frenchman François Viète organized it into today's formula.",
