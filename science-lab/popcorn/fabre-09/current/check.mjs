@@ -26,6 +26,8 @@ try{
  await page.locator('[data-action=observe]').click();await snap('parallel');
  await page.locator('[data-compare=series]').click();await page.locator('[data-cell="1"]').uncheck();
  ok((await page.locator('#reading').textContent()).includes('꺼짐'),'series cell removal opens circuit');
+ ok(await page.locator('[data-action=next]').isDisabled(),'both series and parallel removal observations are required');
+ await page.locator('[data-action=observe]').click();
  await page.locator('[data-action=next]').click();
  for(let index=4;index<=13;index++){
    if([4,8,12,13].includes(index))await snap('assembly-'+index);

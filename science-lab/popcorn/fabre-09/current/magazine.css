@@ -1,0 +1,133 @@
+.science-magazine {
+  --mag-paper: #fbfaf4;
+  --mag-ink: #193f37;
+  --mag-green: #436b52;
+  --mag-line: #cbd5c7;
+  --mag-amber: #ecd6a2;
+  box-sizing: border-box;
+  color: var(--mag-ink);
+  background: var(--mag-paper);
+  font: 17px/1.8 Lab, "Malgun Gothic", system-ui, sans-serif;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  width: min(1200px, calc(100vw - 48px));
+  height: min(920px, calc(100dvh - 48px));
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 1px solid #c7cdbb;
+  border-radius: 18px;
+  box-shadow: 0 28px 100px #0a271d4d;
+  overflow: hidden;
+}
+.science-magazine *, .science-magazine *::before, .science-magazine *::after { box-sizing: border-box; }
+.science-magazine[open] { display: flex; flex-direction: column; }
+.science-magazine::backdrop { background: #0c2724c9; }
+.science-magazine button, .science-magazine a { touch-action: manipulation; }
+.science-magazine button { font: inherit; cursor: pointer; color: inherit; }
+.science-magazine button:focus-visible, .science-magazine a:focus-visible, .science-magazine summary:focus-visible { outline: 3px solid #bb791d; outline-offset: 4px; }
+.science-magazine button:hover { background: #e8eee1; }
+.science-magazine a { color: inherit; }
+.magazine-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex: none; padding: 13px 28px; border-bottom: 1px solid var(--mag-line); background: var(--mag-paper); font-size: 14px; font-weight: 800; z-index: 2; }
+.magazine-toolbar-detail { margin-left: 14px; font-weight: 500; color: #5c7466; }
+.science-magazine .magazine-close { display: flex; align-items: center; gap: 18px; min-height: 44px; border: 1px solid #b7c8b7; border-radius: 7px; padding: 6px 13px; background: #eff2e8; font-size: 14px; font-weight: 750; flex: none; }
+.magazine-close > span { font-size: 23px; line-height: 1; font-weight: 400; }
+.magazine-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.magazine-cover { display: grid; grid-template-columns: minmax(0, 1fr) 170px; align-items: center; gap: 32px; padding: 50px 58px 43px; background: #f1f1e4; border-bottom: 1px solid var(--mag-line); }
+.science-magazine .magazine-category { margin: 0 0 13px; color: var(--mag-green); font-size: 13px; font-weight: 750; }
+.magazine-cover h2 { margin: 0; font-size: clamp(35px, 4.2vw, 53px); line-height: 1.23; letter-spacing: -.055em; font-weight: 850; }
+.magazine-intro { margin: 22px 0 0; color: #4b6554; font-size: 16px; line-height: 1.85; }
+.magazine-cover-mark { width: 145px; justify-self: center; transform: rotate(9deg); }
+.magazine-cover-mark svg { width: 100%; display: block; }
+.magazine-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); align-items: start; gap: 48px; padding: 44px 58px 0; }
+.magazine-index { position: sticky; top: 26px; padding-bottom: 24px; }
+.magazine-index > p { margin: 0 0 8px; padding-bottom: 13px; border-bottom: 2px solid var(--mag-ink); font-size: 14px; font-weight: 850; }
+.science-magazine .magazine-index button { display: block; width: 100%; min-height: 76px; padding: 15px 0; text-align: left; border: 0; border-bottom: 1px solid var(--mag-line); border-radius: 0; background: transparent; }
+.science-magazine .magazine-index button:hover { background: #eaf0e3; }
+.magazine-index button span { display: block; font-size: 12px; color: #637663; line-height: 1.5; }
+.magazine-index button strong { display: block; margin-top: 5px; font-size: 16px; line-height: 1.55; font-weight: 750; }
+.magazine-index-note { margin-top: 23px; color: #697b66; font-size: 13px; line-height: 1.8; }
+.magazine-content { min-width: 0; }
+.magazine-article { padding: 0 0 44px; margin: 0 0 44px; border-bottom: 1px solid #adbea9; scroll-margin-top: 30px; }
+.magazine-article-head h3, .magazine-videos h3 { font-size: clamp(25px, 2.5vw, 33px); line-height: 1.4; letter-spacing: -.045em; margin: 0; font-weight: 850; }
+.magazine-subtitle { margin: 8px 0 24px; font-size: 16px; color: #67785d; }
+.magazine-figure { margin: 25px 0 30px; padding: 24px 18px 17px; background: #eff2e5; border-radius: 9px; }
+.magazine-figure svg { width: 100%; height: auto; display: block; font-family: Lab, "Malgun Gothic", sans-serif; }
+.magazine-circuit-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.magazine-figure figcaption { margin-top: 13px; color: #5d705c; font-size: 12px; text-align: center; line-height: 1.7; }
+.magazine-prose { max-width: 43em; font-size: 18px; line-height: 1.95; letter-spacing: -.018em; }
+.magazine-prose p { margin: 0 0 19px; }
+.magazine-prose p:last-child { margin-bottom: 0; }
+.magazine-question { border-left: 3px solid #c69c4c; background: #f7f1df; margin-top: 28px; padding: 17px 20px; }
+.magazine-question > p { margin: 0; font-size: 17px; font-weight: 650; line-height: 1.8; }
+.magazine-question > p > span { display: block; margin-bottom: 7px; color: #806025; font-size: 12px; font-weight: 800; }
+.magazine-question details { margin-top: 10px; }
+.magazine-question summary { width: fit-content; min-height: 44px; padding: 9px 3px; color: #685423; cursor: pointer; font-size: 14px; font-weight: 700; }
+.magazine-question details p { margin: 5px 0 0; color: #655b3a; font-size: 15px; line-height: 1.85; }
+.magazine-teacher-note { margin-top: 17px; padding: 16px 19px; background: #eaf0e4; border-radius: 6px; font-size: 15px; line-height: 1.85; }
+.magazine-teacher-note > strong { font-size: 13px; }
+.magazine-teacher-note p { margin: 6px 0 0; }
+.magazine-sources { display: grid; grid-template-columns: 105px minmax(0, 1fr); gap: 10px; margin-top: 23px; color: #61705b; font-size: 12px; line-height: 1.9; }
+.magazine-sources > span { font-weight: 750; }
+.magazine-sources a { display: block; margin-bottom: 5px; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.magazine-new-tab { display: inline-block; margin-left: 7px; font-size: 11px; font-weight: 500; color: #65715d; white-space: nowrap; }
+.magazine-videos { scroll-margin-top: 30px; }
+.magazine-video-intro { margin: 12px 0 22px; color: #60715b; font-size: 15px; }
+.magazine-videos ul { padding: 0; margin: 0; list-style: none; border-top: 1px solid var(--mag-line); }
+.magazine-videos li { padding: 0; margin: 0; border-bottom: 1px solid var(--mag-line); }
+.magazine-video-link { display: flex; align-items: center; gap: 15px; padding: 20px 5px; text-decoration: none; }
+.magazine-video-link:hover { background: #edf2e6; }
+.magazine-play { display: grid; place-items: center; width: 40px; height: 40px; flex: none; border: 1px solid #b5c7ab; border-radius: 50%; font-size: 13px; color: #426844; padding-left: 2px; }
+.magazine-video-link strong { display: block; font-size: 17px; font-weight: 750; line-height: 1.6; }
+.magazine-video-link small { display: block; margin-top: 3px; color: #6d785f; font-size: 13px; line-height: 1.6; }
+.magazine-video-link .magazine-new-tab { margin-left: auto; }
+.magazine-history-video { margin-top: 28px; padding: 21px 24px; background: #edf1e5; border-radius: 7px; }
+.magazine-history-video h4 { margin: 0; font-size: 17px; }
+.magazine-history-video p { margin: 8px 0 17px; font-size: 14px; }
+.magazine-history-video > a { display: block; margin-top: 14px; font-size: 14px; text-underline-offset: 4px; }
+.magazine-history-video > small { display: block; margin-top: 5px; color: #65715d; font-size: 12px; line-height: 1.8; }
+.magazine-ending { padding: 40px 0 47px; margin-top: 22px; }
+.magazine-ending p { margin: 0 0 20px; font-size: 20px; line-height: 1.8; }
+.science-magazine .magazine-ending button { min-height: 46px; padding: 10px 20px; background: var(--mag-ink); border: 1px solid var(--mag-ink); border-radius: 7px; color: #fff; font-size: 15px; font-weight: 700; }
+.science-magazine .magazine-ending button:hover { background: #2f604a; }
+@media (max-width: 900px) {
+  .magazine-cover { padding: 36px 32px; }
+  .magazine-layout { padding: 32px 32px 0; grid-template-columns: 185px minmax(0, 1fr); gap: 28px; }
+  .magazine-prose { font-size: 17px; }
+  .magazine-sources { grid-template-columns: 1fr; gap: 4px; }
+}
+@media (max-width: 680px) {
+  .science-magazine { width: 100%; height: 100dvh; margin: 0; border: 0; border-radius: 0; }
+  .magazine-toolbar { padding: max(10px, env(safe-area-inset-top)) 16px 10px; gap: 8px; font-size: 12px; }
+  .magazine-toolbar-detail { display: none; }
+  .science-magazine .magazine-close { font-size: 12px; padding: 7px 10px; gap: 10px; }
+  .magazine-cover { grid-template-columns: minmax(0, 1fr) 62px; gap: 6px; padding: 29px 22px; }
+  .magazine-cover h2 { font-size: clamp(27px, 6.7vw, 39px); }
+  .magazine-cover .magazine-category { font-size: 11px; margin-bottom: 12px; }
+  .magazine-intro { margin-top: 17px; font-size: 14px; line-height: 1.8; }
+  .magazine-cover-mark { width: 67px; align-self: start; margin-top: 38px; }
+  .magazine-wide-break { display: none; }
+  .magazine-layout { display: block; padding: 26px 22px 0; }
+  .magazine-index { position: static; margin-bottom: 32px; padding-bottom: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; }
+  .magazine-index > p { grid-column: 1 / -1; margin-bottom: 0; }
+  .science-magazine .magazine-index button { min-height: 88px; padding: 12px 0; }
+  .magazine-index button strong { font-size: 14px; }
+  .magazine-index button span { font-size: 11px; }
+  .magazine-index-note { display: none; }
+  .magazine-article { margin-bottom: 34px; padding-bottom: 34px; scroll-margin-top: 22px; }
+  .magazine-article-head h3, .magazine-videos h3 { font-size: 26px; }
+  .magazine-subtitle { font-size: 15px; margin-top: 7px; }
+  .magazine-figure { padding: 17px 8px 13px; margin: 22px 0; }
+  .magazine-figure figcaption { font-size: 11px; }
+  .magazine-circuit-pair { grid-template-columns: 1fr; gap: 24px; max-width: 340px; margin: auto; }
+  .magazine-prose { font-size: 17px; line-height: 1.95; }
+  .magazine-question { padding: 15px 16px; }
+  .magazine-question > p { font-size: 16px; }
+  .magazine-video-link { gap: 10px; }
+  .magazine-video-link strong { font-size: 16px; }
+  .magazine-video-link small { font-size: 12px; }
+  .magazine-play { width: 33px; height: 33px; font-size: 11px; }
+  .magazine-ending { padding-bottom: max(34px, env(safe-area-inset-bottom)); }
+  .magazine-ending p { font-size: 18px; }
+}
+@media print { .science-magazine { display: none !important; } }
