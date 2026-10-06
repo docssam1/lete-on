@@ -128,7 +128,7 @@ function articleMarkup(article, teacher) {
 }
 
 /** Open optional reading without changing lesson state; returned cleanup is idempotent. */
-export function openMagazine({ teacher = false, onClose = () => {} } = {}) {
+export function openMagazine({ teacher = false, articleId, onClose = () => {} } = {}) {
   activeCleanup?.();
   const previousFocus = document.activeElement;
   const bodyOverflow = document.body.style.overflow;
@@ -201,6 +201,11 @@ export function openMagazine({ teacher = false, onClose = () => {} } = {}) {
   activeCleanup = cleanup;
   try {
     dialog.showModal();
+    if (articles.some(article => article.id === articleId)) {
+      const section = dialog.querySelector(`#magazine-${articleId}`);
+      section?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      section?.querySelector('h3')?.focus({ preventScroll: true });
+    }
   } catch (error) {
     cleanup();
     throw error;
