@@ -1,0 +1,217 @@
+@font-face{font-family:Lab;src:url('../../../assets/fonts/pretendard-var.woff2') format('woff2');font-weight:100 900;font-display:swap}
+*{box-sizing:border-box}
+body{margin:0;background:#f8f7f1;color:#163d3b;font:18px/1.65 Lab,system-ui,sans-serif;word-break:keep-all}
+button,input,select,textarea{font:inherit}
+button,a{touch-action:manipulation}
+button{cursor:pointer;border:1px solid #bfcfc9;background:white;border-radius:10px;padding:10px 17px;min-height:46px;color:inherit;font-weight:750}
+button:disabled{opacity:.4;cursor:default}
+button.primary{background:#134943;color:white;border-color:#134943}
+button:hover:enabled{background:#e5eee7}
+button.primary:hover:enabled{background:#21655a}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #e49c37;outline-offset:3px}
+a{color:inherit}
+.top{height:74px;padding:0 3vw;border-bottom:1px solid #d7ded5;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{font-size:22px;font-weight:900;letter-spacing:-.05em}
+.brand small{font-size:14px;font-weight:600;margin-left:12px}
+.top-actions{display:flex;gap:8px}
+.top button{font-size:14px;padding:5px 11px;min-height:36px}
+.home{max-width:1380px;margin:0 auto;padding:42px 4vw}
+.eyebrow{font-size:14px;font-weight:850;letter-spacing:.1em;color:#4b756a}
+.hero{display:grid;grid-template-columns:.88fr 1.12fr;gap:38px;align-items:center}
+.home h1{font-size:clamp(38px,4.2vw,66px);line-height:1.18;letter-spacing:-.065em;margin:14px 0 22px}
+.home .lead{max-width:470px;font-size:21px;line-height:1.7}
+.hero-view{height:510px;border:1px solid #d0ded3;border-radius:28px;position:relative;background:#eeeadd;overflow:hidden}
+.hero-view canvas,.viewport canvas{width:100%;height:100%;display:block;outline:none}
+.hero-view .view-label{position:absolute;top:20px;left:22px;z-index:1;font-weight:800;font-size:14px;background:#fff9;padding:5px 12px;border-radius:7px}
+.hero-view .model-disclaimer{position:absolute;bottom:14px;right:16px;font-size:12px;color:#56706b}
+.entry{margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid #194c44;border-bottom:1px solid #c5d3ca}
+.entry button{border:0;border-radius:0;text-align:left;background:none;padding:24px}
+.entry button+button{border-left:1px solid #c5d3ca}
+.entry b{display:block;font-size:23px}
+.entry span{display:block;font-size:15px;line-height:1.7;margin-top:5px;color:#577269}
+.brief{display:flex;gap:22px;margin-top:24px;font-size:15px;color:#597369}
+.lesson{display:grid;grid-template-columns:255px minmax(0,1fr);min-height:calc(100dvh - 74px)}
+.rail{border-right:1px solid #cfdad0;padding:22px 16px;background:#eef2e9}
+.rail-title{font-size:14px;font-weight:800;display:flex;justify-content:space-between;margin-bottom:14px}
+.rail ol{list-style:none;margin:0;padding:0}
+.rail li button{width:100%;border:0;border-radius:6px;text-align:left;background:none;font-size:13px;font-weight:600;min-height:34px;padding:6px 10px;line-height:1.4}
+.rail li button.on{background:#d3e2d6;color:#123f36;font-weight:850}
+.rail li button span{font-size:11px;margin-right:9px;opacity:.65}
+.rail .save-note{font-size:12px;color:#668071;margin-top:22px}
+.progress{height:4px;background:#dde4d8;margin-top:10px}
+.progress i{height:100%;display:block;background:#246853}
+.workspace{padding:24px 30px 22px;display:flex;flex-direction:column;min-width:0}
+.lesson-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.lesson-head h1{font-size:clamp(26px,2.7vw,42px);line-height:1.24;margin:7px 0 21px;letter-spacing:-.05em}
+.step-kicker{font-size:13px;font-weight:850;letter-spacing:.08em;color:#618270}
+.step-number{font-size:13px;white-space:nowrap;color:#779080}
+.learning-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(300px,.9fr);gap:24px;flex:1;align-items:start}
+.viewport{position:relative;height:clamp(390px,53vh,650px);background:#efe9dd;border-radius:22px;border:1px solid #d5ded1;overflow:hidden}
+.viewport-label{position:absolute;top:17px;left:18px;z-index:1;background:#fffc;font-size:13px;font-weight:800;border-radius:7px;padding:5px 10px;pointer-events:none}
+.scene-tools{display:flex;gap:8px;padding-top:12px;flex-wrap:wrap}
+.scene-tools button{font-size:13px;padding:7px 11px;min-height:36px}
+.text-panel{padding:0 2px 8px;min-width:0}
+.instruction{font-size:20px;line-height:1.75;margin:0 0 18px}
+.instruction strong{font-weight:850;color:#194c44}
+.tip{border-left:3px solid #d4ad57;padding:10px 14px;background:#f6f0dd;font-size:15px;line-height:1.75;margin:20px 0}
+.activity{padding:18px 0;border-top:1px solid #d0dccf}
+.activity h2{font-size:19px;line-height:1.5;margin:0 0 13px}
+.choices{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.choices button[aria-pressed=true],.position button[aria-pressed=true]{background:#235c4c;color:#fff;border-color:#235c4c}
+.position{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}
+.position button{flex:1;min-width:84px}
+.reading{margin:12px 0;padding:12px 15px;border:1px solid #b9cec0;border-radius:9px;background:#edf5ec;font-size:18px;font-weight:800}
+.reading small{font-size:12px;font-weight:500;display:block}
+.checks{display:grid;gap:10px;font-size:15px}
+.checks label{display:flex;gap:10px;align-items:start}
+input[type=checkbox]{width:20px;height:20px;flex:none;margin-top:4px;accent-color:#205648}
+.work-confirm{display:grid;gap:7px;margin-top:15px}
+.work-confirm button{font-size:15px}
+.success{font-size:15px;color:#286148;font-weight:750}
+.feedback{border-left:3px solid #347c67;background:#e9f2e8;padding:13px 15px;margin-top:12px;font-size:16px}
+.feedback.retry{border-color:#cb9333;background:#f8f1df}
+ .mentor{display:grid;grid-template-columns:145px 1fr;align-items:center;gap:10px;margin-top:18px;border-top:1px solid #d8e0d3;padding-top:14px;min-height:178px}
+.sprite-window{width:145px;height:158px;position:relative;overflow:hidden;flex:none}
+.sprite{position:absolute;inset:0;display:block;background:url('assets/popcorn-poses.webp') no-repeat;background-size:435px 158px;background-position:0 0;transform-origin:50% 91%;animation:guide-sway 5s ease-in-out infinite}
+.mentor[data-pose=talk] .sprite{background-position:-145px 0}
+.mentor[data-pose=praise] .sprite{background-position:-290px 0;animation:guide-hop .65s ease-in-out 2}
+.mentor[data-pose=listen] .sprite{animation:guide-listen 2.3s ease-in-out infinite}
+.speaking .sprite{animation:guide-talk .75s ease-in-out infinite}
+@keyframes guide-sway{50%{transform:rotate(.8deg) translateY(-1px)}
+}
+@keyframes guide-talk{50%{transform:translateY(-3px) rotate(-1.5deg)}
+}
+@keyframes guide-hop{50%{transform:translateY(-8px) rotate(2deg)}
+}
+@keyframes guide-listen{50%{transform:rotate(-2deg)}
+}
+.mentor p{font-size:15px;line-height:1.65;margin:0}
+.mentor button{padding:3px 8px;min-height:32px;font-size:12px;margin-top:7px}
+.voice-state{font-size:12px;color:#718573;margin-left:8px}
+.teacher .mentor{display:none}
+.navigation{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:22px;border-top:1px solid #ccd8cb;padding-top:18px}
+.navigation .controls{display:flex;gap:8px}
+.navigation .nav-state{font-size:13px;color:#617c6b}
+.help-link{background:#fff7e2;border-color:#d4b972;color:#805719}
+.popover-backdrop{position:fixed;inset:0;z-index:30;background:#102a2999;display:flex;justify-content:center;align-items:center;padding:20px}
+.dialog{background:#fafbf6;border-radius:22px;max-width:670px;max-height:90dvh;overflow:auto;width:100%;padding:27px;box-shadow:0 18px 100px #0b22164d}
+.dialog header{display:flex;justify-content:space-between;align-items:start;gap:14px}
+.dialog h2{font-size:29px;margin:0 0 16px}
+.dialog .help-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dialog .help-options button{text-align:left;padding:17px}
+.dialog .help-actions{display:flex;gap:9px;margin-top:20px}
+.dialog ul{padding-left:22px;font-size:18px;line-height:1.9}
+.dialog.hot{border:3px solid #c06245}
+.material-tags{display:flex;gap:6px;flex-wrap:wrap;font-size:14px}
+.material-tags b{border:1px solid #c2d1c4;padding:5px 9px;border-radius:6px}
+.quiz-block{margin-top:17px;padding-top:15px;border-top:1px solid #cfdbcd}
+.quiz-block h3{font-size:17px;margin:0 0 8px}
+.quiz-block label{font-size:15px;display:flex;gap:9px;padding:7px 0;cursor:pointer}
+.quiz-block input{accent-color:#205648}
+.quiz-why{font-size:14px;margin:8px 0;color:#306a53}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid #c7d5c7;padding:9px 6px;text-align:left}
+th{font-size:13px}
+select{width:100%;font-size:15px;padding:8px;border:1px solid #bfcebf;border-radius:6px;background:#fff;color:#264b3e}
+textarea{width:100%;min-height:130px;resize:vertical;border:1px solid #b8cdbb;border-radius:10px;padding:14px;background:#fff;color:#294c3f;line-height:1.75;font-size:17px}
+.report-actions{display:flex;gap:8px;flex-wrap:wrap;font-size:14px}
+.mode-label{font-size:13px;color:#5d7565}
+.fallback{height:100%;display:flex;align-items:center;justify-content:center;padding:40px;font-size:25px;text-align:center;line-height:1.8}
+.print-report{display:none}
+.teacher .learning-grid{grid-template-columns:1.35fr .85fr}
+.teacher .rail{display:none}
+.teacher .lesson{display:block}
+.teacher .workspace{max-width:1600px;margin:auto}
+.teacher .viewport{height:62vh}
+.teacher .instruction{font-size:23px}
+.teacher .navigation{margin-top:16px}
+.teacher .tip{font-size:17px}
+.teacher .nav-state{font-size:15px}
+
+@media(min-width:1600px){.workspace{padding:32px 46px}
+.learning-grid{gap:38px}
+}
+@media(max-width:1100px){.lesson{grid-template-columns:180px 1fr}
+.rail{padding:18px 8px}
+.learning-grid{grid-template-columns:minmax(0,1fr) minmax(280px,.85fr);gap:18px}
+.workspace{padding:22px 20px}
+.instruction{font-size:18px}
+.viewport{height:460px}
+.hero-view{height:430px}
+.hero{gap:24px}
+.home{padding:34px 3vw}
+.teacher .instruction{font-size:20px}
+}
+@media(max-width:800px){.lesson{display:block}
+.rail{display:none}
+.learning-grid,.teacher .learning-grid{display:flex;flex-direction:column;gap:20px}
+.viewport{height:43vh;min-height:300px;width:100%}
+.text-panel{width:100%}
+.workspace{padding:20px 18px}
+.top{height:62px;padding:0 16px}
+.brand{font-size:18px}
+.brand small{display:none}
+.top-actions{gap:5px}
+.top button{font-size:12px;padding:4px 8px}
+.top-actions [data-action=voice]{display:none}
+.hero{grid-template-columns:1fr}
+.home h1{font-size:43px}
+.home .lead{font-size:19px}
+.hero-view{height:390px}
+.entry{grid-template-columns:1fr}
+.entry button+button{border-left:0;border-top:1px solid #c5d3ca}
+.entry button{padding:20px 8px}
+.brief{flex-wrap:wrap;gap:8px 20px}
+.mentor{grid-template-columns:120px 1fr}
+.sprite-window{width:120px;height:131px}
+.sprite{background-size:360px 131px}
+.mentor[data-pose=talk] .sprite{background-position:-120px 0}
+.mentor[data-pose=praise] .sprite{background-position:-240px 0}
+.teacher .viewport{height:54vh}
+.lesson-head h1{font-size:30px}
+.navigation .nav-state{display:none}
+.navigation{position:sticky;bottom:0;z-index:4;background:#f8f7f1;padding:12px 0;margin-top:16px}
+.navigation button{padding:9px 12px;font-size:15px}
+.scene-tools{gap:6px}
+.dialog{padding:20px}
+.dialog h2{font-size:24px}
+.dialog .help-options{grid-template-columns:1fr}
+.instruction{font-size:20px}
+.activity h2{font-size:21px}
+.lesson-head{gap:6px}
+.step-number{font-size:11px}
+}
+
+@media(prefers-reduced-motion:reduce){.speaking .sprite{animation:none}
+}
+
+@media print{body{background:white;font-size:12pt;color:#111}
+.top,.home,.lesson,.popover-backdrop{display:none!important}
+.print-report{display:block;padding:12mm}
+.print-report h1{font-size:25pt;line-height:1.3}
+.print-report h2{font-size:16pt;margin-top:10mm}
+.print-report p{white-space:pre-wrap;line-height:1.8}
+.print-report table{font-size:12pt}
+.print-report footer{margin-top:15mm;color:#555;font-size:9pt}
+@page{size:A4;margin:12mm}
+}
+
+
+.viewport:fullscreen{width:100vw;height:100dvh;border-radius:0}
+.viewport:fullscreen canvas{height:100dvh}
+.ready-pulse{box-shadow:0 0 0 4px #e0c47b55}
+fieldset{min-width:0;border:0;padding:0}
+legend{font-weight:800;font-size:17px;line-height:1.7}
+.mentor button{margin-right:5px}
+.home .mentor{max-width:490px}
+.teacher .model-panel{min-width:0}
+@media(prefers-reduced-motion:reduce){.sprite,.mentor[data-pose=praise] .sprite,.mentor[data-pose=listen] .sprite,.speaking .sprite{animation:none}
+}
+
+
+.brand{text-decoration:none}
+@media(max-width:800px){.mentor button{min-height:44px;padding:5px 10px}.navigation .help-link{max-width:43%;font-size:13px}.navigation .controls{gap:5px}.navigation .controls button{padding:8px 9px}.home .mentor{gap:5px}}
+
+.fullscreen-close{display:none}.viewport:fullscreen .fullscreen-close{display:block;position:absolute;top:15px;right:15px;z-index:12}.viewport:fullscreen:has(.mentor) canvas{width:calc(100vw - 345px)}.viewport:fullscreen .mentor{position:absolute;right:12px;bottom:12px;width:320px;grid-template-columns:110px 1fr;min-height:160px;background:#fafbf6;padding:12px;border:1px solid #bdccbe;border-radius:18px;z-index:11}.viewport:fullscreen .mentor p{font-size:14px}.viewport:fullscreen .mentor button{min-height:42px}.viewport:fullscreen .sprite-window{width:110px;height:120px}.viewport:fullscreen .sprite{background-size:330px 120px}.viewport:fullscreen .mentor[data-pose=talk] .sprite{background-position:-110px 0}.viewport:fullscreen .mentor[data-pose=praise] .sprite{background-position:-220px 0}@media(max-width:600px){.viewport:fullscreen:has(.mentor) canvas{width:100vw;height:calc(100dvh - 185px)}.viewport:fullscreen .mentor{width:calc(100vw - 24px);min-height:155px;grid-template-columns:110px 1fr}}
+
+@font-face{font-family:KomiTitle;src:url('../../../assets/fonts/gaegu-700.woff2') format('woff2');font-weight:700;font-display:swap}.brand,.home h1,.lesson-head h1,.entry b,.dialog h2,.guide-name{font-family:KomiTitle,Lab,sans-serif;font-weight:700;letter-spacing:-.035em}.brand{font-size:31px}.brand small{font-family:Lab,sans-serif}.home h1{font-size:clamp(48px,5.5vw,78px);line-height:1.04}.lesson-head h1{font-size:clamp(34px,3.35vw,48px);line-height:1.17}.entry b{font-size:30px}.guide-name{display:block;font-size:27px;line-height:1.1;margin:0 0 6px;color:#246248}.dialog h2{font-size:35px}.home .lead{line-height:1.75}@media(max-width:800px){.brand{font-size:27px}.home h1{font-size:56px}.lesson-head h1{font-size:38px}.entry b{font-size:30px}.guide-name{font-size:25px}.dialog h2{font-size:30px}}@media print{.print-report h1{font-family:KomiTitle,Lab,sans-serif;font-weight:700}}
