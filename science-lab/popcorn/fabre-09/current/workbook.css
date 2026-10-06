@@ -1,0 +1,201 @@
+@font-face { font-family: WorkbookLab; src: url('../../../assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+.science-workbook, .workbook-standalone, .workbook-print-root {
+  --wb-paper: #fffefa; --wb-ink: #193f37; --wb-green: #466b50; --wb-line: #ccd5c6; --wb-amber: #bc8d37;
+  color: var(--wb-ink); font: 16px/1.75 WorkbookLab, Lab, 'Malgun Gothic', sans-serif;
+  word-break: keep-all; overflow-wrap: anywhere;
+}
+.science-workbook *, .workbook-standalone *, .workbook-print-root * { box-sizing: border-box; }
+.science-workbook { width: min(1200px, calc(100vw - 40px)); height: min(1000px, calc(100dvh - 40px)); max-width: none; max-height: none; padding: 0; border: 1px solid #c8d1bf; border-radius: 12px; background: #e8ece2; color: #193f37; overflow: hidden; box-shadow: 0 24px 90px #102b2252; }
+.science-workbook[open] { display: flex; flex-direction: column; }
+.science-workbook::backdrop { background: #0b2526bd; }
+.science-workbook button, .workbook-standalone button { min-height: 44px; padding: 8px 14px; border: 1px solid #b8c7b3; border-radius: 6px; background: #fffefa; color: inherit; cursor: pointer; font: 650 14px/1.5 WorkbookLab, sans-serif; }
+.science-workbook button:disabled, .workbook-standalone button:disabled { cursor: default; opacity: .55; }
+.science-workbook button:hover:enabled, .workbook-standalone button:hover:enabled { background: #edf2e6; }
+.science-workbook button:focus-visible, .science-workbook a:focus-visible, .science-workbook select:focus-visible, .workbook-standalone button:focus-visible, .workbook-standalone a:focus-visible, .workbook-standalone select:focus-visible { outline: 3px solid #ba7a1d; outline-offset: 3px; }
+.wb-toolbar { flex: none; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 18px; padding: 13px 22px; border-bottom: 1px solid var(--wb-line); background: var(--wb-paper); z-index: 2; }
+.wb-toolbar-title { display: flex; align-items: center; gap: 14px; font-size: 16px; }
+.wb-toolbar-title small { font-size: 12px; color: #61735c; }
+.wb-toolbar-actions, .wb-mode-controls, .wb-view-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+.science-workbook [data-workbook-mode][aria-pressed=true], .workbook-standalone [data-workbook-mode][aria-pressed=true] { background: #254f3e; color: #fff; border-color: #254f3e; }
+.science-workbook [data-workbook-print], .workbook-standalone [data-workbook-print] { border-color: #bd9248; background: #f5ecd7; }
+.wb-toolbar a { color: inherit; text-underline-offset: 4px; font-size: 12px; padding: 8px 3px; }
+.wb-subtoolbar { flex: none; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 9px 22px; border-bottom: 1px solid #cdd5c7; background: #f2f4ec; }
+.wb-page-tabs { display: flex; flex-wrap: nowrap; align-items: center; gap: 5px; max-width: 100%; overflow-x: auto; padding: 3px; }
+.science-workbook .wb-page-tabs button, .workbook-standalone .wb-page-tabs button { min-width: 37px; min-height: 38px; padding: 5px 9px; flex: none; font-size: 13px; }
+.science-workbook .wb-page-tabs [aria-current=page], .workbook-standalone .wb-page-tabs [aria-current=page] { background: #d9e5d2; border-color: #809d74; }
+.wb-view-controls label { font-size: 12px; font-weight: 750; }
+.wb-view-controls select { width: auto; max-width: 230px; min-height: 40px; padding: 7px 26px 7px 10px; background: #fffefa; border: 1px solid #b8c7b3; color: inherit; border-radius: 5px; font: inherit; font-size: 13px; }
+.wb-view-note { font-size: 12px; color: #5c7058; }
+.wb-locked-note { margin: 0; font-size: 12px; color: #5c7058; }
+.workbook-scroll { overflow-y: auto; min-height: 0; flex: 1; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.workbook-view-pages { max-width: 850px; margin: 0 auto; padding: 24px; }
+.workbook-page { display: flex; flex-direction: column; width: 100%; min-height: 1060px; margin: 0 0 26px; padding: 38px 42px 24px; background: var(--wb-paper); border: 1px solid #d0d8c9; border-radius: 2px; box-shadow: 0 5px 18px #203d2010; scroll-margin-top: 20px; }
+.workbook-page:last-child { margin-bottom: 0; }
+.wb-page-head { margin-bottom: 23px; padding-bottom: 17px; border-bottom: 2px solid #335741; }
+.wb-kicker { margin: 0 0 10px; color: #4d6c51; font-size: 12px; font-weight: 750; }
+.wb-page-head h2 { margin: 0; font-size: 33px; line-height: 1.32; font-weight: 850; letter-spacing: -.045em; }
+.wb-opening-page .wb-page-head h2 { font-size: 38px; }
+.wb-deck { margin: 12px 0 0; color: #587050; font-size: 15px; line-height: 1.7; }
+.wb-page-body { flex: 1; min-width: 0; }
+.wb-page-body h3 { margin: 0 0 10px; font-size: 18px; line-height: 1.55; font-weight: 800; letter-spacing: -.02em; }
+.wb-page-body h4 { margin: 12px 0 5px; font-size: 15px; font-weight: 750; }
+.wb-page-body p { margin: 0 0 11px; }
+.wb-page-body ol, .wb-page-body ul { margin: 0; padding-left: 24px; }
+.wb-page-body li + li { margin-top: 7px; }
+.wb-section { margin: 0 0 22px; }
+.wb-section:last-child { margin-bottom: 0; }
+.wb-two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.wb-three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.wb-page-body figure { margin: 0; }
+.wb-page-body svg { display: block; max-width: 100%; margin: 0 auto; width: 100%; font-family: WorkbookLab, sans-serif; color: #253e34; }
+.wb-page-body svg text { fill: currentColor; stroke: none; }
+.wb-cell, .wb-bulb { fill: #fff; }
+.wb-cell-removed { stroke-dasharray: 4 4; fill: #fff; }
+.wb-page-body figcaption { font-size: 12px; line-height: 1.7; color: #5d6d59; }
+.wb-condition { padding-left: 12px; border-left: 3px solid #b7c8ac; font-size: 14px; }
+.wb-comparison-diagrams { margin: 22px 0; gap: 12px; }
+.wb-comparison-diagrams figcaption { text-align: center; color: var(--wb-ink); font-size: 14px; font-weight: 750; }
+.wb-comparison-diagrams svg { height: 180px; }
+.wb-removal-grid { margin-bottom: 25px; }
+.wb-removal-grid > section + section { border-left: 1px solid var(--wb-line); padding-left: 22px; }
+.wb-removal-figure svg { min-height: 210px; height: 245px; }
+.wb-removal-figure figcaption { min-height: 42px; }
+.wb-parts-figure { padding: 4px 0 18px; }
+.wb-parts-figure svg { height: 175px; }
+.wb-materials { padding: 12px 0; border-top: 1px solid var(--wb-line); border-bottom: 1px solid var(--wb-line); font-size: 14px; }
+.wb-build-steps section { padding: 15px 0 9px; border-bottom: 1px solid var(--wb-line); }
+.wb-build-steps section:last-child { border: 0; }
+.wb-build-steps h3 span { display: inline-block; width: 24px; font-size: 17px; color: #6c7c5d; }
+.wb-build-steps p { padding-left: 24px; }
+.wb-wiring-figure svg { height: 275px; }
+.wb-wiring-figure figcaption { margin: 4px 0 14px; }
+.wb-table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.65; table-layout: fixed; margin: 16px 0 22px; }
+.wb-table th, .wb-table td { padding: 10px 10px; border-bottom: 1px solid #aebfa8; vertical-align: top; text-align: left; overflow-wrap: anywhere; }
+.wb-table thead th { background: #f0f3e9; border-top: 1px solid #8fa486; font-size: 13px; font-weight: 800; }
+.wb-table tbody th { font-size: 14px; font-weight: 750; }
+.wb-observation-table th:first-child, .wb-switch-table th:first-child { width: 22%; }
+.wb-observation-table td, .wb-switch-table td { height: 66px; }
+.wb-observation-table .wb-writing, .wb-switch-table .wb-writing { margin: 0; min-height: 50px; line-height: 25px; background-size: 100% 25px; }
+.wb-wire-table th:first-child { width: 8%; }.wb-wire-table th:last-child { width: 12%; }
+.wb-wire-table td, .wb-wire-table th { padding: 8px 7px; font-size: 14px; }
+.wb-teacher-table td, .wb-teacher-table th { padding: 8px 8px; font-size: 14px; }
+.wb-writing { --wb-lines: 3; display: block; min-height: calc(var(--wb-lines) * 31px); padding: 0 3px; margin: 6px 0 12px; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 30px, #c6cfbe 30px, #c6cfbe 31px); line-height: 31px; font-size: 16px; white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; }
+.wb-writing.wb-filled { color: #153f39; font-weight: 550; }
+.wb-writing { position: relative; --wb-rule-step: 31px; background-image: none !important; }
+.wb-table .wb-writing { --wb-rule-step: 25px; }
+.wb-rules { position: absolute; inset: 0; pointer-events: none; }
+.wb-rule { position: absolute; left: 0; right: 0; top: calc(var(--wb-row) * var(--wb-rule-step) - 1px); border-top: 1px solid #c6cfbe; }
+.wb-empty { display: block; height: 1px; }
+.wb-result-space { min-width: 0; }
+.wb-record-status { display: block; color: #667459; font-size: 11px; font-weight: 600; }
+.wb-continuation-note { font-size: 12px; color: #536e4e; }
+.wb-continuation-text { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; line-height: 31px; font-size: 17px; }
+.wb-method { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px 20px; padding: 12px 0; margin: 0 0 20px; border-top: 1px solid var(--wb-line); border-bottom: 1px solid var(--wb-line); font-size: 14px; }
+.wb-method > span:first-child { font-weight: 800; }
+.wb-square { display: inline-block; width: 16px; height: 16px; line-height: 14px; font-size: 14px; text-align: center; border: 1px solid #64775d; margin-right: 4px; vertical-align: -1px; }
+.wb-safety-list { list-style: none; padding-left: 0 !important; font-size: 15px; }
+.wb-safety-list li { padding-left: 24px; text-indent: -24px; }
+.wb-note { margin: 15px 0 !important; padding: 11px 14px; border-left: 3px solid #b8934e; background: #f8f1e0; font-size: 14px; line-height: 1.75; }
+.wb-choice-line { display: flex; flex-wrap: wrap; gap: 6px 17px; font-size: 14px; margin: 15px 0 7px; }
+.wb-small { font-size: 13px; line-height: 1.75; color: #5c6b55; }
+.wb-trouble-columns h4 { min-height: 25px; font-size: 13px; }
+.wb-thinking-questions > div { margin-bottom: 14px; }
+.wb-thinking-questions p { margin-bottom: 5px; }
+.wb-reading-item { margin-bottom: 19px; }
+.wb-reading-item h3 { font-size: 18px; }
+.wb-reading-item p { font-size: 15px; line-height: 1.8; }
+.wb-reading-credit { padding-top: 8px; border-top: 1px solid var(--wb-line); }
+.wb-video-resources { font-size: 12px; line-height: 1.8; margin-bottom: 14px; }
+.wb-video-resources a { color: inherit; text-underline-offset: 3px; }
+.wb-video-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 16px; }
+.wb-page-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; padding-top: 13px; border-top: 1px solid var(--wb-line); }
+.wb-page-links a, .wb-sources a { color: #335d42; text-underline-offset: 4px; }
+.wb-page-links a { font-size: 13px; padding: 8px 0; }
+.wb-link-mark { font-size: 11px; color: #63745a; }
+.wb-inline-link button { padding: 5px 0; min-height: 36px; border: 0; background: none; font-size: 13px; text-decoration: underline; text-underline-offset: 4px; }
+.wb-page-foot { display: flex; justify-content: space-between; gap: 18px; margin-top: auto; padding-top: 18px; border-top: 1px solid var(--wb-line); font-size: 11px; color: #67745c; }
+.workbook-print-root { display: none; }
+.workbook-standalone { margin: 0; background: #e8ece2; min-height: 100dvh; }
+.workbook-standalone .wb-toolbar, .workbook-standalone .wb-subtoolbar { position: sticky; top: 0; }
+.workbook-standalone .wb-subtoolbar { position: static; }
+.workbook-standalone .workbook-scroll { overflow: visible; }
+.wb-loading, .wb-error { padding: 32px; }
+.wb-error { color: #753f27; }
+@media (max-width: 680px) {
+  .science-workbook { width: 100%; height: 100dvh; margin: 0; border: 0; border-radius: 0; }
+  .wb-toolbar { padding: max(9px, env(safe-area-inset-top)) 14px 9px; gap: 8px; }
+  .wb-toolbar-title { width: 100%; justify-content: space-between; font-size: 15px; }.wb-toolbar-title small { display: none; }
+  .wb-toolbar-actions { width: 100%; justify-content: space-between; gap: 6px; }.wb-toolbar-actions a { font-size: 11px; }
+  .science-workbook button, .workbook-standalone button { padding: 8px 11px; font-size: 12px; }
+  .wb-subtoolbar { padding: 8px 14px; }.wb-view-note { display: none; }.wb-locked-note { font-size: 11px; }
+  .wb-view-controls select { max-width: 200px; font-size: 12px; }
+  .workbook-view-pages { padding: 12px 10px; }
+  .workbook-page { min-height: auto; margin-bottom: 16px; padding: 25px 20px 18px; }
+  .wb-page-head { margin-bottom: 19px; padding-bottom: 15px; }.wb-page-head h2 { font-size: 28px; }.wb-opening-page .wb-page-head h2 { font-size: 31px; }
+  .wb-deck { font-size: 14px; }.wb-page-body h3 { font-size: 17px; }.wb-kicker { font-size: 11px; }
+  .wb-two-col, .wb-three-col { grid-template-columns: 1fr; gap: 18px; }
+  .wb-video-index { grid-template-columns: 1fr; }
+  .wb-comparison-diagrams { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }.wb-comparison-diagrams svg { height: 130px; }.wb-comparison-diagrams figcaption { font-size: 12px; }
+  .wb-removal-grid > section + section { border-left: 0; border-top: 1px solid var(--wb-line); padding: 23px 0 0; }.wb-removal-figure svg { height: 250px; }.wb-removal-figure figcaption { min-height: 0; }
+  .wb-parts-figure svg { height: auto; }.wb-wiring-figure svg { height: 235px; }
+  .wb-table th, .wb-table td { padding: 8px 5px; font-size: 12px; }.wb-table thead th { font-size: 11px; }.wb-table tbody th { font-size: 12px; }
+  .wb-table .wb-writing { font-size: 13px; }.wb-table .wb-record-status { font-size: 10px; }
+  .wb-trouble-columns { gap: 0; }.wb-trouble-columns h4 { min-height: 0; }.wb-page-links { margin-bottom: 18px; }
+  .wb-page-foot { margin-top: 20px; font-size: 10px; }.wb-method { gap: 6px 13px; font-size: 13px; }
+}
+@media (max-height: 500px) and (min-width: 681px) {
+  .science-workbook { width: calc(100vw - 20px); height: calc(100dvh - 16px); }
+  .wb-toolbar { padding: 8px 16px; }.wb-toolbar-title small { display: none; }.wb-toolbar-title { font-size: 14px; }
+  .science-workbook button { min-height: 40px; padding: 7px 11px; font-size: 12px; }.wb-subtoolbar { padding: 5px 16px; }
+}
+@page { size: A4 portrait; margin: 14mm; }
+@media print {
+  html:has(body.workbook-printing), body.workbook-printing { height: auto !important; min-height: 0 !important; overflow: visible !important; background: #fff !important; }
+  body.workbook-printing { margin: 0 !important; padding: 0 !important; }
+  body.workbook-printing > * { display: none !important; }
+  body.workbook-printing > .workbook-print-root { display: block !important; }
+  html > dialog.science-workbook { display: none !important; }
+  .workbook-print-root { --wb-paper: #fff; --wb-ink: #172c22; color: #172c22; font-size: 12pt; line-height: 1.65; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .workbook-print-root .workbook-page { width: 100%; min-height: 268mm; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; break-after: page; page-break-after: always; }
+  .workbook-print-root .workbook-page:last-child { break-after: auto; page-break-after: auto; }
+  .workbook-print-root .wb-page-head { margin-bottom: 5mm; padding-bottom: 4mm; break-after: avoid; }
+  .workbook-print-root .wb-kicker { font-size: 9pt; margin-bottom: 2mm; }
+  .workbook-print-root .wb-page-head h2 { font-size: 25pt; line-height: 1.25; }.workbook-print-root .wb-opening-page .wb-page-head h2 { font-size: 29pt; }
+  .workbook-print-root .wb-deck { margin-top: 3mm; font-size: 11.5pt; line-height: 1.6; }
+  .workbook-print-root .wb-page-body { padding-bottom: 3mm; }
+  .workbook-print-root .wb-page-body h3 { margin-bottom: 2mm; font-size: 13pt; line-height: 1.55; }
+  .workbook-print-root .wb-page-body h4 { margin: 3mm 0 1mm; font-size: 11.5pt; }
+  .workbook-print-root .wb-page-body p { margin-bottom: 2.5mm; }
+  .workbook-print-root .wb-section { margin-bottom: 4mm; break-inside: avoid; }
+  .workbook-print-root .wb-page-body ol, .workbook-print-root .wb-page-body ul { padding-left: 5mm; }.workbook-print-root .wb-page-body li + li { margin-top: 1.5mm; }
+  .workbook-print-root .wb-two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6mm; }
+  .workbook-print-root .wb-three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4mm; }
+  .workbook-print-root .wb-comparison-diagrams { margin: 4mm 0; gap: 4mm; }.workbook-print-root .wb-comparison-diagrams svg { height: 48mm; }.workbook-print-root .wb-comparison-diagrams figcaption { font-size: 11.5pt; }
+  .workbook-print-root .wb-removal-grid > section + section { border: 0; border-left: 1px solid var(--wb-line); padding: 0 0 0 6mm; }
+  .workbook-print-root .wb-removal-figure svg { min-height: 55mm; height: 61mm; }.workbook-print-root .wb-removal-figure figcaption { min-height: 13mm; }
+  .workbook-print-root figcaption { font-size: 9pt; line-height: 1.55; }.workbook-print-root .wb-parts-figure { padding: 0 0 4mm; }.workbook-print-root .wb-parts-figure svg { height: 42mm; }
+  .workbook-print-root .wb-wiring-figure svg { height: 73mm; }.workbook-print-root .wb-wiring-figure figcaption { margin: 1mm 0 3mm; }
+  .workbook-print-root .wb-table { font-size: 11.5pt; margin: 3mm 0 5mm; line-height: 1.55; }.workbook-print-root .wb-table th, .workbook-print-root .wb-table td { padding: 2mm; font-size: 11.5pt; }
+  .workbook-print-root .wb-table thead th { font-size: 10pt; }.workbook-print-root .wb-table tr { break-inside: avoid; }
+  .workbook-print-root .wb-observation-table td { min-height: 15mm; height: 19mm; }.workbook-print-root .wb-switch-table td { min-height: 16mm; height: 20mm; }
+  .workbook-print-root .wb-wire-table th, .workbook-print-root .wb-wire-table td { padding: 1.7mm; font-size: 10.5pt; }
+  .workbook-print-root .wb-teacher-table th, .workbook-print-root .wb-teacher-table td { padding: 1.5mm 2mm; font-size: 11.5pt; }
+  .workbook-print-root .wb-writing { min-height: calc(var(--wb-lines) * 8mm); line-height: 8mm; margin: 1mm 0 3mm; font-size: 12pt; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(8mm - .2mm), #c2cbb8 calc(8mm - .2mm), #c2cbb8 8mm); }
+  .workbook-print-root .wb-writing { --wb-rule-step: 8mm; }
+  .workbook-print-root .wb-table .wb-writing { --wb-rule-step: 7mm; }
+  .workbook-print-root .wb-rule { border-top-width: .2mm; }
+  .workbook-print-root .wb-table .wb-writing { min-height: 14mm; line-height: 7mm; margin: 0; font-size: 11.5pt; background-size: 100% 7mm; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(7mm - .2mm), #c2cbb8 calc(7mm - .2mm), #c2cbb8 7mm); }
+  .workbook-print-root .wb-record-status { font-size: 9pt; }.workbook-print-root .wb-continuation-note { font-size: 10pt; }
+  .workbook-print-root .wb-continuation-text { font-size: 12pt; line-height: 8mm; white-space: pre-wrap; }
+  .workbook-print-root .wb-method { padding: 2.5mm 0; margin: 0 0 4mm; gap: 3mm 5mm; font-size: 11.5pt; }.workbook-print-root .wb-square { width: 3.8mm; height: 3.8mm; line-height: 3.5mm; font-size: 10pt; }
+  .workbook-print-root .wb-safety-list { font-size: 11.5pt; }.workbook-print-root .wb-note { margin: 3mm 0 !important; padding: 2.5mm 3mm; font-size: 11.5pt; line-height: 1.65; }
+  .workbook-print-root .wb-condition, .workbook-print-root .wb-small { font-size: 10pt; }.workbook-print-root .wb-choice-line { font-size: 11pt; gap: 2mm 4mm; }
+  .workbook-print-root .wb-build-steps section { padding: 3mm 0 2mm; }.workbook-print-root .wb-materials { padding: 3mm 0; font-size: 11.5pt; }
+  .workbook-print-root .wb-thinking-questions > div { margin-bottom: 3mm; }.workbook-print-root .wb-thinking-questions p { font-size: 11.5pt; }
+  .workbook-print-root .wb-reading-item { margin-bottom: 3.5mm; }.workbook-print-root .wb-reading-item p { font-size: 11.5pt; line-height: 1.7; }
+  .workbook-print-root .wb-video-resources { font-size: 9pt; line-height: 1.55; margin-bottom: 2mm; }.workbook-print-root .wb-video-resources h4 { font-size: 10pt; margin-top: 2mm; }
+  .workbook-print-root .wb-video-index { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1mm 4mm; }
+  .workbook-print-root .wb-page-foot { margin-top: auto; padding-top: 3mm; font-size: 9pt; break-inside: avoid; }
+  .workbook-print-root .wb-trouble-columns h4 { min-height: 0; font-size: 10pt; }
+  .wb-page-links, .wb-inline-link, .wb-link-mark, .wb-toolbar, .wb-subtoolbar { display: none !important; }
+}
