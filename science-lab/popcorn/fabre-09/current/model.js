@@ -62,12 +62,12 @@ export function createRig(canvas){
    stage.frameHidden=false;stage.setView({theta:.57,phi:1.08});
    if(demo&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
      if(wires[id]){const p=wires[id];p.geometry.setDrawRange(0,0);animation={type:'wire',p,total:p.geometry.index.count,t:0};}
-     else if(id==='assembly'&&!exploded){const offsets={A:[0,0,.65],B:[0,.55,.45],C:[0,.65,0],D:[0,0,.75],E:[0,0,-.65],F1:[-.65,0,0],F2:[.65,0,0]};const items=Object.entries(parts).map(([key,p])=>{const to=p.position.clone();p.position.add(new THREE.Vector3(...offsets[key]));return {p,to,from:p.position.clone()};});animation={type:'parts',items,t:0};stage.setView({theta:.57,phi:1.08,frame:[[-2.5,.03,-2.1],[2.5,4.4,2.25]]});}
+     else if(id==='assembly'&&!exploded){const offsets={A:[0,0,.65],B:[0,.55,.45],C:[0,.65,0],D:[0,0,.75],E:[0,0,-.65],F1:[-.65,0,0],F2:[.65,0,0]};const items=Object.entries(parts).map(([key,p])=>{const mounted=key==='B'?[socket]:key==='D'?[sw]:[];const group=[p,...mounted].map(p=>{const to=p.position.clone();p.position.add(new THREE.Vector3(...offsets[key]));return {p,to,from:p.position.clone()};});return {group};});animation={type:'parts',items,t:0};stage.setView({theta:.57,phi:1.08,frame:[[-2.5,.03,-2.1],[2.5,4.4,2.55]]});}
      else if(id==='socket'||id==='switch'){const p=id==='socket'?socket:sw,to=p.position.clone();p.position[id==='socket'?'y':'z']+=.7;animation={type:'parts',items:[{p,to,from:p.position.clone()}],t:0};stage.setView({theta:.57,phi:1.08,frame:[[-1.85,.03,-1.5],[1.85,3.75,2.45]]});}
      else if(id==='paper'){const items=Object.values(parts).filter(p=>p.userData.paper).map(p=>p.userData.paper);items.forEach(p=>p.material.opacity=.05);animation={type:'paper',items,t:0};}
    }
    return result;
  }
- stage.update=(dt,t,raw)=>{if(animation){animation.t=Math.min(1,animation.t+(raw??dt)*.5);const a=animation.t*animation.t*(3-2*animation.t);if(animation.type==='wire')animation.p.geometry.setDrawRange(0,Math.floor(animation.total*a/3)*3);else if(animation.type==='paper')animation.items.forEach(p=>p.material.opacity=.05+.5*a);else animation.items.forEach(({p,from,to},i)=>{const f=Math.min(1,Math.max(0,(animation.t-i*.06)/(1-i*.06)));p.position.lerpVectors(from,to,f*f*(3-2*f));});if(animation.t===1)animation=null;}};
+ stage.update=(dt,t,raw)=>{if(animation){animation.t=Math.min(1,animation.t+(raw??dt)*.5);const a=animation.t*animation.t*(3-2*animation.t);if(animation.type==='wire')animation.p.geometry.setDrawRange(0,Math.floor(animation.total*a/3)*3);else if(animation.type==='paper')animation.items.forEach(p=>p.material.opacity=.05+.5*a);else animation.items.forEach((item,i)=>{const f=Math.min(1,Math.max(0,(animation.t-i*.06)/(1-i*.06)));for(const {p,from,to} of item.group||[item])p.position.lerpVectors(from,to,f*f*(3-2*f));});if(animation.t===1)animation=null;}};
  return {stage,set,parts,wires,dispose:()=>stage.dispose()};
 }
