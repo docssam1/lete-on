@@ -199,7 +199,9 @@ textarea{width:100%;min-height:130px;resize:vertical;border:1px solid #b8cdbb;bo
 
 .viewport:fullscreen{width:100vw;height:100dvh;border-radius:0}
 .viewport:fullscreen canvas{height:100dvh}
-.ready-pulse{box-shadow:0 0 0 4px #e0c47b55}
+.ready-pulse{box-shadow:0 0 0 4px #e0c47b55;animation:ready-glow 1.1s ease-in-out 3}
+@keyframes ready-glow{50%{box-shadow:0 0 0 7px #e0c47b99}}
+@media(prefers-reduced-motion:reduce){.ready-pulse{animation:none}}
 fieldset{min-width:0;border:0;padding:0}
 legend{font-weight:800;font-size:17px;line-height:1.7}
 .mentor button{margin-right:5px}
@@ -210,8 +212,36 @@ legend{font-weight:800;font-size:17px;line-height:1.7}
 
 
 .brand{text-decoration:none}
+
+[hidden]{display:none!important}
+body.lesson-mode .lesson{display:block}
+body.lesson-mode .rail{position:fixed;left:0;top:74px;bottom:0;width:255px;z-index:24;overflow:auto;box-shadow:15px 0 45px #163d3b26}
+body.lesson-mode .rail:not([hidden]){display:block}
+.teacher-notes{position:fixed;right:20px;bottom:100px;z-index:20;width:min(500px,calc(100vw - 40px));max-height:60dvh;overflow:auto;padding:22px;background:#fff9df;border:1px solid #d4b972;border-radius:18px;box-shadow:0 14px 50px #123b3926;font-size:19px}
+.teacher-notes small{display:block;font-size:14px;line-height:1.7}
+.class-votes{display:grid;gap:12px;font-size:18px}
+.class-votes>div{display:flex;align-items:center;gap:12px}
+.class-votes b{flex:1}.class-votes output{min-width:30px;text-align:center;font-size:26px;font-weight:800}.class-votes button{font-size:23px;padding:2px 14px}
+.class-question{padding:16px 0;border-bottom:1px solid #cad8cb}.class-question li{padding:7px 10px}.class-question .correct{background:#dcecd9;color:#235c4c;font-weight:850;border-radius:8px}
+@media(min-width:900px) and (min-height:600px){
+ body.lesson-mode{overflow:hidden}
+ body.lesson-mode .workspace{height:calc(100dvh - 74px);max-width:1700px;margin:auto;padding:18px 28px 14px}
+ body.lesson-mode .learning-grid{min-height:0;flex:1;align-items:stretch;grid-template-columns:minmax(0,1.3fr) minmax(330px,.85fr);gap:24px}
+ body.lesson-mode .model-panel{min-height:0;display:flex;flex-direction:column}
+ body.lesson-mode .viewport{height:auto;min-height:0;flex:1}
+ body.lesson-mode .text-panel{min-height:0;display:flex;flex-direction:column;padding:0}
+ body.lesson-mode .lesson-reading{min-height:0;overflow:auto;flex:1;padding-right:10px;scrollbar-gutter:stable}
+ body.lesson-mode .mentor{flex:none;margin-top:10px;padding-top:10px;min-height:165px}
+ body.lesson-mode .navigation{flex:none;margin-top:14px;padding-top:12px;min-height:65px}
+ body.lesson-mode .lesson-head h1{margin:5px 0 16px;font-size:clamp(32px,3vw,46px)}
+ body.lesson-mode .instruction{font-size:20px;line-height:1.7}
+ body.teacher .instruction{font-size:24px}
+ body.lesson-mode .scene-tools{flex:none}
+}
+@media(max-width:899px){.top-actions{flex-wrap:wrap;justify-content:flex-end}.top-actions [data-action=home]{display:none}.top{min-height:74px;height:auto;padding:8px 14px}.top-actions{max-width:68%}.lesson-mode .rail{top:74px}.teacher-notes{bottom:90px}.lesson-reading{width:100%}}
 @media(max-width:800px){.mentor button{min-height:44px;padding:5px 10px}.navigation .help-link{max-width:43%;font-size:13px}.navigation .controls{gap:5px}.navigation .controls button{padding:8px 9px}.home .mentor{gap:5px}}
 
 .fullscreen-close{display:none}.viewport:fullscreen .fullscreen-close{display:block;position:absolute;top:15px;right:15px;z-index:12}.viewport:fullscreen:has(.mentor) canvas{width:calc(100vw - 345px)}.viewport:fullscreen .mentor{position:absolute;right:12px;bottom:12px;width:320px;grid-template-columns:110px 1fr;min-height:160px;background:#fafbf6;padding:12px;border:1px solid #bdccbe;border-radius:18px;z-index:11}.viewport:fullscreen .mentor p{font-size:14px}.viewport:fullscreen .mentor button{min-height:42px}.viewport:fullscreen .sprite-window{width:110px;height:120px}.viewport:fullscreen .sprite{background-size:330px 120px}.viewport:fullscreen .mentor[data-pose=talk] .sprite{background-position:-110px 0}.viewport:fullscreen .mentor[data-pose=praise] .sprite{background-position:-220px 0}@media(max-width:600px){.viewport:fullscreen:has(.mentor) canvas{width:100vw;height:calc(100dvh - 185px)}.viewport:fullscreen .mentor{width:calc(100vw - 24px);min-height:155px;grid-template-columns:110px 1fr}}
+body.lesson-mode .viewport:fullscreen{height:100dvh;min-height:100dvh;flex:none;border-radius:0}
 
 @font-face{font-family:KomiTitle;src:url('../../../assets/fonts/gaegu-700.woff2') format('woff2');font-weight:700;font-display:swap}.brand,.home h1,.lesson-head h1,.entry b,.dialog h2,.guide-name{font-family:KomiTitle,Lab,sans-serif;font-weight:700;letter-spacing:-.035em}.brand{font-size:31px}.brand small{font-family:Lab,sans-serif}.home h1{font-size:clamp(48px,5.5vw,78px);line-height:1.04}.lesson-head h1{font-size:clamp(34px,3.35vw,48px);line-height:1.17}.entry b{font-size:30px}.guide-name{display:block;font-size:27px;line-height:1.1;margin:0 0 6px;color:#246248}.dialog h2{font-size:35px}.home .lead{line-height:1.75}@media(max-width:800px){.brand{font-size:27px}.home h1{font-size:56px}.lesson-head h1{font-size:38px}.entry b{font-size:30px}.guide-name{font-size:25px}.dialog h2{font-size:30px}}@media print{.print-report h1{font-family:KomiTitle,Lab,sans-serif;font-weight:700}}

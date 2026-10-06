@@ -31,11 +31,11 @@ export function createRig(canvas){
  const batteries=[battery(-.77,.38),battery(.76,.38)];batteries.forEach(b=>root.add(b));
  const sw=new THREE.Group();sw.position.set(0,.65,1.46);sw.add(mesh(roundedBoxGeometry(.79,.51,.22,.06,4),mat(0x2d333c)));const rocker=mesh(roundedBoxGeometry(.58,.32,.16,.07,4),mat(0x596470),0,.04,.19);sw.add(rocker);const terminals={low:[-.28,.32,1.49],common:[0,.32,1.49],high:[.28,.32,1.49]};for(const x of [-.28,0,.28])sw.add(mesh(new THREE.CylinderGeometry(.045,.045,.18,12),mat(0xc8ae67,{metalness:.85}),x,-.29,0));root.add(sw);
  const wires={};const paths={wire1:[[-1.32,.5,.38],[-1.70,.9,.76],[-.42,1.89,.22]],wire2:[[.40,1.89,.22],[.80,1.12,1.06],terminals.common],junction:[[-.22,.50,.38],[.02,.32,.73],[.21,.50,.38]],wirelow:[[.02,.32,.73],[-.50,.27,1.17],terminals.low],wirehigh:[[1.31,.50,.38],[1.50,.28,1.10],terminals.high]};
- for(const [id,pts]of Object.entries(paths)){wires[id]=wire(pts,id==='wire1'?0xc44b3a:id==='junction'?0xb05d42:0x273d4a);root.add(wires[id]);}
+ for(const [id,pts]of Object.entries(paths)){wires[id]=wire(pts,id==='wire1'?0xc44b3a:id==='junction'?0xb05d42:0x273d4a);wires[id].name=id;root.add(wires[id]);}
  const title=label('',{size:.29});title.position.set(0,4.12,0);root.add(title);
  const focus=label('',{size:.26});focus.visible=false;root.add(focus);
  const original=new Map(Object.values(parts).map(p=>[p,p.position.clone()]));let animation=null;let snap={};
- function set({id='welcome',mode='stand',position='off',cell1=true,cell2=true,exploded=false,highlight=true}={}){
+ function set({id='welcome',mode='stand',position='off',cell1=true,cell2=true,exploded=false,highlight=true,demo=false}={}){
    snap={id,mode,position,cell1,cell2,exploded};animation=null;const order=['paper','socket','switch','wire1','wire2','junction','wirelow','wirehigh','assembly','test','record','concept','quiz','report','finish'];const ix=order.indexOf(id);const full=['welcome','safe','predict','compare','parts','test','record','concept','quiz','report','finish'].includes(id);const assembly=ix>=8||full;
    for(const [key,p]of Object.entries(parts)){p.visible=assembly||['parts','paper','assembly'].includes(id)||key==='B'&&ix>=1||key==='D'&&id==='switch';p.position.copy(original.get(p));p.traverse(o=>{if(o.material?.emissive)o.material.emissive.setHex(0);});if(p.userData.paper)p.userData.paper.visible=id!=='parts';}
    socket.visible=full||ix>=1;sw.visible=full||ix>=2;batteries.forEach((b,i)=>{b.visible=full||ix>=3;b.userData.cellParts.forEach(c=>c.visible=i===0?cell1:cell2);});
@@ -43,7 +43,7 @@ export function createRig(canvas){
    if(exploded||['parts','paper'].includes(id)){const offsets={A:[0,-.05,2.8],B:[0,.9,2.3],C:[0,1.8,-1.3],D:[0,.0,2.3],E:[0,0,-2.3],F1:[-2.4,0,0],F2:[2.4,0,0]};for(const [key,p]of Object.entries(parts))p.position.add(new THREE.Vector3(...offsets[key]));}
    if(['socket','switch'].includes(id)){const p=parts[id==='socket'?'B':'D'];p.visible=true;p.traverse(o=>{if(o.material?.emissive)o.material.emissive.setHex(highlight?0x254b3b:0);});}
    // Compare actual cell topologies; the stand selector wiring is a different circuit.
-   socket.position.set(0,id==='compare'?.55:1.76,id==='compare'?-1.25:0);
+   socket.position.set(0,id==='compare'?.55:1.76,id==='compare'?-1.25:0);sw.position.set(0,.65,1.46);Object.values(parts).forEach(p=>{if(p.userData.paper)p.userData.paper.material.opacity=.55;});
    let shownPaths=paths;
    if(id==='compare'){
      Object.values(parts).forEach(p=>p.visible=false);sw.visible=false;
@@ -60,9 +60,14 @@ export function createRig(canvas){
    const focused=id==='socket'?'B':id==='switch'?'D':null;if(focused){focus.material.map?.dispose();const next=label(focused==='B'?'B · 전구판':'D · 앞판',{size:.26});focus.material.dispose();focus.material=next.material;focus.position.copy(parts[focused].position).add(new THREE.Vector3(0,.4,.45));focus.visible=true;}
    const result=circuitState({mode,position,cell1,cell2});const powered=['test','compare','concept'].includes(id)?result:{...result,volts:0,lit:false};bulbmat.color.setHex(powered.lit?0xffd371:0xecf8ff);bulbmat.emissive.setHex(powered.lit?0xffaf34:0);bulbmat.emissiveIntensity=powered.volts===3?.68:.2;filamat.emissive.setHex(powered.lit?0xffb248:0);filamat.emissiveIntensity=powered.volts===3?2.2:1;light.intensity=powered.volts===3?14:powered.lit?3:0;Object.values(parts).forEach(p=>{if(p.userData.paper){p.userData.paper.material.color.setHex(powered.lit?0xffd683:0xf5efd6);p.userData.paper.material.emissive.setHex(powered.lit?0xffc348:0);p.userData.paper.material.emissiveIntensity=powered.volts===3?1.25:powered.lit?.25:0;}});rocker.rotation.z=position==='low'?.20:position==='high'?-.20:0;
    stage.frameHidden=false;stage.setView({theta:.57,phi:1.08});
-   if(id==='assembly'&&!exploded&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const p=parts.D,to=p.position.clone();p.position.z+=1.8;animation={p,to,from:p.position.clone(),t:0};stage.setView({theta:.57,phi:1.08,frame:[[-1.85,.03,-1.5],[1.85,4.35,3.3]]});}
+   if(demo&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+     if(wires[id]){const p=wires[id];p.geometry.setDrawRange(0,0);animation={type:'wire',p,total:p.geometry.index.count,t:0};}
+     else if(id==='assembly'&&!exploded){const offsets={A:[0,0,.65],B:[0,.55,.45],C:[0,.65,0],D:[0,0,.75],E:[0,0,-.65],F1:[-.65,0,0],F2:[.65,0,0]};const items=Object.entries(parts).map(([key,p])=>{const to=p.position.clone();p.position.add(new THREE.Vector3(...offsets[key]));return {p,to,from:p.position.clone()};});animation={type:'parts',items,t:0};stage.setView({theta:.57,phi:1.08,frame:[[-2.5,.03,-2.1],[2.5,4.4,2.25]]});}
+     else if(id==='socket'||id==='switch'){const p=id==='socket'?socket:sw,to=p.position.clone();p.position[id==='socket'?'y':'z']+=.7;animation={type:'parts',items:[{p,to,from:p.position.clone()}],t:0};stage.setView({theta:.57,phi:1.08,frame:[[-1.85,.03,-1.5],[1.85,3.75,2.45]]});}
+     else if(id==='paper'){const items=Object.values(parts).filter(p=>p.userData.paper).map(p=>p.userData.paper);items.forEach(p=>p.material.opacity=.05);animation={type:'paper',items,t:0};}
+   }
    return result;
  }
- stage.update=dt=>{if(animation){animation.t=Math.min(1,animation.t+dt*.8);const a=animation.t*animation.t*(3-2*animation.t);animation.p.position.lerpVectors(animation.from,animation.to,a);if(animation.t===1)animation=null;}};
+ stage.update=(dt,t,raw)=>{if(animation){animation.t=Math.min(1,animation.t+(raw??dt)*.5);const a=animation.t*animation.t*(3-2*animation.t);if(animation.type==='wire')animation.p.geometry.setDrawRange(0,Math.floor(animation.total*a/3)*3);else if(animation.type==='paper')animation.items.forEach(p=>p.material.opacity=.05+.5*a);else animation.items.forEach(({p,from,to},i)=>{const f=Math.min(1,Math.max(0,(animation.t-i*.06)/(1-i*.06)));p.position.lerpVectors(from,to,f*f*(3-2*f));});if(animation.t===1)animation=null;}};
  return {stage,set,parts,wires,dispose:()=>stage.dispose()};
 }

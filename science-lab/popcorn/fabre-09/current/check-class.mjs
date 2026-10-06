@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {mkdir,writeFile} from 'node:fs/promises';
+const {chromium}=await import(process.env.SCIENCE_PLAYWRIGHT||'playwright');
+const browser=await chromium.launch({args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const out=process.env.PILOT_SHOTS;if(out)await mkdir(out,{recursive:true});const notes=[];const ok=(v,n)=>{assert.ok(v,n);notes.push(n);console.log('PASS',n);};
+try{
+ const page=await browser.newPage({viewport:{width:1024,height:768}});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.addInitScript(()=>{window.SL_QUALITY='low';});
+ await page.goto(process.env.PILOT_URL||'http://127.0.0.1:39246/science-lab/popcorn/fabre-09/current/',{waitUntil:'networkidle'});
+ await page.locator('[data-start=self]').click();await page.waitForFunction(()=>document.fullscreenElement===document.documentElement);
+ ok(await page.evaluate(()=>{const n=document.querySelector('.navigation').getBoundingClientRect(),g=document.querySelector('#guide').getBoundingClientRect(),c=document.querySelector('#model').getBoundingClientRect();return n.bottom<=innerHeight+1&&g.bottom<=innerHeight+1&&c.height>innerHeight*.45;}),'student single viewport keeps Komi and navigation visible');
+ await page.locator('h1').focus();await page.keyboard.press('ArrowRight');ok((await page.locator('.step-number').textContent()).includes('1 /'),'keyboard respects learner gate');
+ if(out)await page.screenshot({path:out+'/class-self-tablet.png'});
+ await page.locator('[data-action=home]').click();await page.locator('[data-start=teacher]').click();
+ ok(await page.locator('#guide').count()===0,'teacher has no guide');
+ await page.locator('[data-action=notes]').click();ok(await page.locator('#teacher-notes').isVisible(),'teacher discussion notes');
+ await page.locator('h1').focus();await page.keyboard.press('n');ok(await page.locator('#teacher-notes').isHidden(),'N hides notes');
+ await page.keyboard.press('ArrowRight');ok((await page.locator('.step-number').textContent()).includes('2 /'),'teacher arrow advances');
+ const go=async n=>{await page.locator('[data-action=steps]').click();await page.locator(`[data-step="${n}"]`).click();};
+ await go(2);for(let i=0;i<2;i++)await page.locator('[data-vote="0"][data-delta="1"]').click();ok(await page.locator('#vote-0').textContent()==='2','teacher prediction votes');
+ for(let i=0;i<3;i++)await page.locator('[data-vote="0"][data-delta="-1"]').click();ok(await page.locator('#vote-0').textContent()==='0','vote count cannot be negative');
+ await go(17);ok(await page.locator('#class-answer-0').isHidden(),'teacher answers initially hidden');await page.locator('[data-reveal="0"]').click();ok(await page.locator('#class-answer-0').isVisible()&&await page.locator('[data-class-option="0-1"]').evaluate(e=>e.classList.contains('correct')),'teacher answer and explanation reveal');
+ if(out)await page.screenshot({path:out+'/class-teacher-answers.png'});
+ await go(18);await page.locator('#draft').focus();await page.keyboard.press('ArrowRight');ok((await page.locator('.step-number').textContent()).includes('19 /'),'typing does not advance teacher deck');
+ await go(8);const before=await page.evaluate(async()=>{const {Stage}=await import('../../../engine.js');document.querySelector('[data-action=demo]').click();const s=[...Stage.live][0],w=s.root.getObjectByName('wire1');window.demoWire=w;return {draw:w.geometry.drawRange.count,total:w.geometry.index.count};});await page.waitForFunction(()=>window.demoWire.geometry.drawRange.count===window.demoWire.geometry.index.count);ok(before.draw===0&&before.total>0,'wire assembly demonstrator grows from source to destination');
+ await go(13);await page.locator('[data-action=demo]').click();await page.waitForTimeout(200);ok(await page.evaluate(async()=>{const {Stage}=await import('../../../engine.js');return !![...Stage.live][0]._frameFixed;}),'moving panels use fixed assembly workspace');if(out)await page.screenshot({path:out+'/class-assembly-demo.png'});
+ await page.locator('[data-action=model-fullscreen]').click();await page.waitForFunction(()=>document.fullscreenElement?.classList.contains('viewport'));ok(await page.locator('.viewport').evaluate(e=>e.clientHeight>=innerHeight*.97),'enlarged 3D uses full viewport height');await page.locator('[data-action=model-exit]').click();await page.waitForFunction(()=>!document.fullscreenElement);
+ await page.setViewportSize({width:390,height:844});ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile teacher has no overflow');
+ await page.locator('.brand').click();await page.locator('[data-start=helper]').click();await page.locator('.brand').click();ok(await page.locator('[data-start]').count()===3,'brand returns home repeatedly');
+ ok(errors.length===0,'no browser errors');if(out)await writeFile(out+'/class-qa.json',JSON.stringify({passed:notes.length,failed:0,notes},null,2));
+ console.log(JSON.stringify({passed:notes.length,failed:0,notes},null,2));
+}finally{await browser.close();}
