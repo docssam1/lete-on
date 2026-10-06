@@ -199,3 +199,121 @@
   .workbook-print-root .wb-trouble-columns h4 { min-height: 0; font-size: 10pt; }
   .wb-page-links, .wb-inline-link, .wb-link-mark, .wb-toolbar, .wb-subtoolbar { display: none !important; }
 }
+/* Source-led experiment edition: white paper, cyan/mint activity colors, unfiltered photographs. */
+.science-workbook, .workbook-standalone, .workbook-print-root { --wb-paper:#fff; --wb-ink:#182230; --wb-green:#2456c4; --wb-line:#c7dbe6; color:var(--wb-ink); }
+.science-workbook, .workbook-standalone { background:#eff6fa; }
+.science-workbook button, .workbook-standalone button { background:#fff; border-color:#7b95ad; }
+.science-workbook button:hover:enabled, .workbook-standalone button:hover:enabled { background:#eaf4fb; }
+.science-workbook [data-workbook-mode][aria-pressed=true], .workbook-standalone [data-workbook-mode][aria-pressed=true], .science-workbook [data-workbook-print], .workbook-standalone [data-workbook-print] { background:#2456c4; border-color:#2456c4; color:#fff; }
+.science-workbook :is(button,a,summary):focus-visible, .workbook-standalone :is(button,a,summary):focus-visible { outline-color:#2456c4; }
+.wb-subtoolbar { background:#e7f5fa; border-color:#b7dce8; }
+.science-workbook .wb-page-tabs [aria-current=page], .workbook-standalone .wb-page-tabs [aria-current=page] { background:#c5edf7; border-color:#2789a7; }
+.workbook-page { --wb-accent:#61c8e6; --wb-tint:#e8f8fc; border-color:#d0e3ec; border-top:9px solid var(--wb-accent); }
+.workbook-page:is([data-page="2"],[data-page="3"],[data-page="4"],[data-page="5"]) { --wb-accent:#79d3c3; --wb-tint:#e7f7f2; }
+.workbook-page:is([data-page="7"],[data-page="8"]) { --wb-accent:#bedb88; --wb-tint:#f0f7e5; }
+.wb-page-head { border:0; background:var(--wb-tint); margin:-15px -20px 22px; padding:18px 20px; }
+.wb-page-head h2 { color:#173c63; font-size:31px; }
+.wb-opening-page .wb-page-head h2 { font-size:39px; }
+.wb-deck, .wb-kicker, .wb-page-body figcaption, .wb-small { color:#526777; }
+.wb-kicker { letter-spacing:.07em; color:#266f91; }
+.wb-table thead th { background:var(--wb-tint); border-color:var(--wb-accent); }
+.wb-table th, .wb-table td { border-color:#b6cdd5; }
+.wb-page-body svg { color:#294f67; }
+.wb-photo { min-width:0; }
+.science-workbook .wb-photo-open, .workbook-standalone .wb-photo-open, .workbook-print-root .wb-photo-open { display:block; position:relative; width:100%; padding:0; margin:0; border:0; border-radius:0; background:#fff; color:inherit; }
+.wb-photo img { display:block; width:100%; height:100%; object-fit:contain; background:#fff; }
+.wb-photo figcaption { padding:7px 0 0; }
+.wb-photo-hint { position:absolute; bottom:8px; right:8px; background:#fffffff0; color:#2456c4; padding:3px 8px; border:1px solid #abc9dd; border-radius:4px; font-size:11px; }
+.wb-cover-scene { display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:24px; margin-bottom:16px; }
+.wb-cover-photo img { height:270px; }
+.wb-cover-mission { padding:18px; background:#e3f5fb; border-left:5px solid #5fc6e8; }
+.wb-unit-mark { display:inline-block; color:#247b9d; font-size:13px; font-weight:850; letter-spacing:.1em; margin-bottom:14px; }
+.wb-mini-route { margin-top:20px; font-size:13px; font-weight:700; color:#23667d; }
+.wb-predict, .wb-think { padding:15px 17px; background:#f8eef3; border-left:4px solid #e6a7c4; }
+.wb-think { background:#f0f8e9; border-color:#b7d882; }
+.wb-safety { padding:12px 16px; background:#edf7fc; border-left:4px solid #68bfdc; }
+.wb-safety .wb-small { margin-top:7px; }
+.wb-activity-band { display:flex; flex-wrap:wrap; gap:12px; background:var(--wb-tint); padding:9px 14px; margin-bottom:15px; border-left:5px solid var(--wb-accent); }
+.wb-activity-band strong { color:#277363; }
+.wb-photo-side, .wb-test-scene { display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:22px; }
+.wb-photo-side img { height:230px; }.wb-test-scene img { height:245px; }
+.wb-large-photo img { height:340px; }
+.wb-secondary-figure { margin-top:10px !important; }.wb-secondary-figure svg { height:90px; }
+.wb-wiring-pair { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:center; }
+.wb-wiring-pair .wb-photo img { height:280px; }.wb-wiring-pair svg { height:280px; }
+.wb-switch-positions { display:flex; justify-content:space-between; gap:10px; margin:15px 0; text-align:center; }
+.wb-switch-positions span { flex:1; padding:10px 5px; background:#e7f5fa; color:#234767; font-weight:750; border-bottom:3px solid #5fc6e8; }
+.wb-reference-photos img { height:140px; }.wb-reference-photos figcaption { text-align:center; font-weight:750; }
+.wb-reference-photos { margin-bottom:18px; }
+.wb-reference-lock { padding:20px; border:1px dashed #6b93ab; background:#eef7fb; margin-bottom:20px; }
+.wb-reference-lock p { margin-bottom:0; }
+[data-reference-locked] .wb-reference-photos { display:none; }
+.wb-life-photos { margin-bottom:18px; }.wb-life-photos img { height:185px; }.wb-life-photos figcaption { text-align:center; font-weight:750; }
+.wb-reading-shelf { padding:13px 16px; background:#e8f7fc; margin-bottom:15px; }
+.wb-reading-shelf > div { display:grid; gap:5px; }
+.science-workbook .wb-reading-shelf button, .workbook-standalone .wb-reading-shelf button { text-align:left; background:#fff; color:#2456c4; }
+.wb-reading-shelf .wb-small { margin-top:8px; }
+.wb-page-foot { color:#526777; }.wb-page-links a { color:#2456c4; }
+.wb-note { background:#fff0f0; border-color:#e4a1a1; }.wb-condition { border-color:#5abbb0; }
+.wb-view-controls { margin-left:auto; }
+[data-book-view="page"] .workbook-view-pages > .workbook-page:not([data-current]) { display:none; }
+[data-book-view="page"] .workbook-view-pages > .workbook-page { margin-bottom:0; }
+.wb-photo-dialog { box-sizing:border-box; width:min(1050px,calc(100vw - 24px)); max-width:none; height:min(900px,calc(100dvh - 24px)); max-height:none; padding:16px; background:#fff; border:1px solid #9bb8ce; border-radius:8px; color:#182230; }
+.wb-photo-dialog[open] { display:flex; flex-direction:column; gap:12px; }.wb-photo-dialog::backdrop { background:#102b49d9; }
+.wb-photo-dialog header { display:flex; justify-content:space-between; align-items:center; gap:10px; font:650 16px/1.5 WorkbookLab,sans-serif; }
+.wb-photo-dialog button { padding:8px 14px; min-height:44px; background:#fff; border:1px solid #2456c4; color:#2456c4; border-radius:5px; cursor:pointer; font:650 14px/1.5 WorkbookLab,sans-serif; }
+.wb-photo-dialog button:focus-visible { outline:3px solid #2456c4; outline-offset:3px; }.wb-photo-dialog img { flex:1; min-height:0; object-fit:contain; width:100%; }
+@media(max-width:680px) {
+ .wb-cover-scene { grid-template-columns:1fr 1fr; gap:10px; }.wb-cover-photo img { height:210px; }.wb-cover-mission { padding:10px; font-size:13px; }.wb-cover-mission h3 { font-size:15px; }.wb-unit-mark { margin-bottom:6px; }.wb-mini-route { margin-top:9px; font-size:11px; }
+ .wb-page-head { margin:-8px -10px 18px; padding:14px 10px; }.wb-page-head h2 { font-size:27px; }.wb-opening-page .wb-page-head h2 { font-size:31px; }
+ .wb-photo-side,.wb-test-scene,.wb-wiring-pair { grid-template-columns:1fr; }.wb-photo-side img,.wb-test-scene img { height:240px; }
+ .wb-large-photo img { height:300px; }.wb-life-photos { grid-template-columns:1fr 1fr; gap:12px; }.wb-life-photos img { height:150px; }
+ .wb-reference-photos .wb-three-col { grid-template-columns:1fr; }.wb-reference-photos img { height:200px; }
+ .wb-view-controls { gap:4px; }.science-workbook .wb-view-controls button,.workbook-standalone .wb-view-controls button { min-height:36px; font-size:11px; }
+ .wb-predict,.wb-think { padding:12px; }
+}
+@media print {
+ .workbook-print-root .workbook-page { border:0; border-top:2mm solid var(--wb-accent); padding-top:3mm; }
+ .workbook-print-root .wb-page-head { margin:0 0 4mm; padding:3mm 4mm; background:var(--wb-tint); border:0; }
+ .workbook-print-root .wb-page-head h2 { font-size:24pt; }.workbook-print-root .wb-opening-page .wb-page-head h2 { font-size:28pt; }
+ .workbook-print-root .wb-cover-scene { grid-template-columns:1fr 1fr; gap:6mm; margin-bottom:3mm; }.workbook-print-root .wb-cover-photo img { height:65mm; }.workbook-print-root .wb-cover-mission { padding:4mm; }.workbook-print-root .wb-mini-route { margin-top:4mm; font-size:9pt; }.workbook-print-root .wb-unit-mark { margin-bottom:3mm; font-size:10pt; }
+ .workbook-print-root .wb-predict,.workbook-print-root .wb-think,.workbook-print-root .wb-safety { padding:3mm 4mm; }
+ .workbook-print-root .wb-activity-band { padding:2mm 3mm; margin-bottom:3mm; font-size:11pt; }
+ .workbook-print-root .wb-photo-side,.workbook-print-root .wb-test-scene,.workbook-print-root .wb-wiring-pair { grid-template-columns:1fr 1fr; gap:5mm; }
+ .workbook-print-root .wb-photo-side img { height:53mm; }.workbook-print-root .wb-test-scene img { height:56mm; }
+ .workbook-print-root .wb-large-photo img { height:85mm; }.workbook-print-root .wb-secondary-figure svg { height:23mm; }
+ .workbook-print-root .wb-wiring-pair img,.workbook-print-root .wb-wiring-pair svg { height:67mm; }
+ .workbook-print-root .wb-reference-photos .wb-three-col { grid-template-columns:repeat(3,minmax(0,1fr)); }.workbook-print-root .wb-reference-photos img { height:36mm; }.workbook-print-root .wb-reference-photos { margin-bottom:4mm; }
+ .workbook-print-root .wb-life-photos { grid-template-columns:1fr 1fr; gap:5mm; }.workbook-print-root .wb-life-photos img { height:47mm; }
+ .workbook-print-root .wb-switch-positions { margin:3mm 0; }.workbook-print-root .wb-switch-positions span { padding:2mm; font-size:11pt; }
+ .workbook-print-root .wb-reading-shelf { padding:3mm 4mm; margin-bottom:3mm; }.workbook-print-root .wb-reading-shelf button { display:block; border:0; padding:0; margin:0; background:none; font:11pt/1.7 WorkbookLab,sans-serif; text-align:left; color:#173c63; }
+ .workbook-print-root .wb-reading-shelf > div { gap:0; }.workbook-print-root .wb-reading-shelf .wb-small { margin-top:2mm; }
+ .workbook-print-root .wb-photo-hint,.wb-photo-dialog,.wb-reference-lock { display:none!important; }
+ .workbook-print-root .wb-photo-open { font:inherit; }
+ .workbook-print-root .wb-reading-credit { font-size:8.5pt; }.workbook-print-root .wb-page-foot { color:#526777; }
+}
+.wb-teacher-photo-strip { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }.wb-teacher-photo-strip img { height:150px; }.wb-teacher-reference img { height:100px; }
+@media print { .workbook-print-root .wb-teacher-photo-strip { margin-bottom:3mm; gap:4mm; }.workbook-print-root .wb-teacher-photo-strip img { height:31mm; }.workbook-print-root .wb-teacher-reference img { height:24mm; }.workbook-print-root .workbook-teacher-page .wb-section { margin-bottom:3mm; }.workbook-print-root .workbook-teacher-page .wb-page-body p { font-size:11pt; }.workbook-print-root .workbook-teacher-page .wb-teacher-table th,.workbook-print-root .workbook-teacher-page .wb-teacher-table td { font-size:10.5pt; padding:1.3mm 2mm; } }
+@media print {
+ .workbook-print-root .wb-reading-shelf button { min-height:0!important; line-height:1.55; }
+ .workbook-print-root .workbook-teacher-page { line-height:1.5; }
+ .workbook-print-root .workbook-teacher-page .wb-page-head { margin-bottom:3mm; padding:2mm 4mm; }
+ .workbook-print-root .workbook-teacher-page .wb-teacher-photo-strip img { height:22mm; }
+ .workbook-print-root .workbook-teacher-page .wb-teacher-reference img { height:20mm; }
+ .workbook-print-root .workbook-teacher-page .wb-table { margin:2mm 0 3mm; line-height:1.4; }
+ .workbook-print-root .workbook-teacher-page .wb-page-body li { font-size:10.5pt; line-height:1.55; }
+ .workbook-print-root .workbook-teacher-page .wb-page-body li + li { margin-top:1mm; }
+ .workbook-print-root .workbook-teacher-page .wb-note { padding:2mm 3mm; margin:2mm 0!important; }
+}
+.wb-video-bridge { display:flex; align-items:center; gap:14px; margin:12px 0; border-top:1px solid #c7dbe6; padding-top:10px; font-size:13px; color:#334f66; }.wb-video-bridge img { display:block; width:70px; height:70px; object-fit:contain; }.wb-video-bridge p { margin:2px 0!important; }.wb-video-bridge a { color:#2456c4; }
+@media print { .workbook-print-root .wb-video-bridge { margin:2mm 0; padding-top:2mm; gap:3mm; font-size:9pt; }.workbook-print-root .wb-video-bridge img { width:16mm; height:16mm; }.workbook-print-root .wb-video-bridge p { display:none; } }
+/* Original-style QR sits beside the activity title on paper, without taking a writing row. */
+@media print {
+ .workbook-print-root .workbook-page { position:relative; }
+ .workbook-print-root .workbook-page:has(.wb-video-bridge) .wb-page-head { padding-right:30mm; }
+ .workbook-print-root .wb-video-bridge { position:absolute; top:7mm; right:4mm; width:21mm; display:block; border:0; padding:0; margin:0; text-align:center; }
+ .workbook-print-root .wb-video-bridge img { width:16mm; height:16mm; margin:0 auto 1mm; }
+ .workbook-print-root .wb-video-bridge strong { font-size:7.5pt; line-height:1.3; display:block; }
+ .workbook-print-root .wb-video-bridge div > a { display:none; }
+ .workbook-print-root .wb-reference-photos img { height:44mm; }
+}

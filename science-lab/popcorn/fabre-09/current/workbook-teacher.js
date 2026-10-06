@@ -1,3 +1,4 @@
+import { photo } from './workbook-photos.js?v=1';
 // Separate teacher material. This renderer never reads or receives learner records.
 const link = (url, label) =>
   `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
@@ -10,13 +11,14 @@ const page = (number, title, deck, body) => `
       <p class="wb-deck">${deck}</p>
     </header>
     <div class="wb-page-body">${body}</div>
-    <footer class="wb-page-foot"><span>팝콘 실험실 · 전류</span><span>${number}</span></footer>
+    <footer class="wb-page-foot"><span>GFIELD SCIENCE LAB · 전류</span><span>${number}</span></footer>
   </section>`;
 
 /** Render the three teacher pages independently of the student workbook. */
 export function renderTeacherPages() {
   return [
     page('T1', '관찰을 설명으로 잇는 수업', '예상 → 연결과 관찰 → 기록 → 나의 설명', `
+      <div class="wb-teacher-photo-strip">${photo('stand-off', '완성품으로 질문을 열어요.')}${photo('empty-kit', '조립 중 전지를 빼 둡니다.')}</div>
       <section class="wb-section">
         <h3>이번 수업의 두 목표</h3>
         <ol class="wb-check-list">
@@ -43,8 +45,7 @@ export function renderTeacherPages() {
       <section class="wb-section">
         <h3>준비와 안전</h3>
         <p>같은 종류·상태의 전지와 같은 전구를 비교한다. 실물은 보호자가 전지·전구 규격과 연결을 확인한다. 조립 중에는 전지를 빼 둔다. 병렬 비교는 화면으로 진행한다.</p>
-        <p class="wb-note">실험을 멈추고 뜨거운 부분을 만지지 않은 채 어른에게 알려요. 전지 분리·제거는 보호자가 확인해요.</p>
-        <p class="wb-small">위 안내는 전지나 전선이 뜨거워질 때 적용한다. 전지의 두 극을 전구 없이 바로 잇지 않으며, 콘센트·충전용 배터리는 사용하지 않는다.</p>
+        <p class="wb-note">전지나 전선이 뜨거우면 멈추고 만지지 않은 채 어른에게 알린다. 전지 제거는 보호자가 확인한다.</p><p class="wb-small">전지의 두 극을 전구 없이 직접 잇지 않는다. 콘센트·충전용 배터리는 사용하지 않는다.</p>
       </section>
       <section class="wb-section">
         <h3>관찰을 여는 두 발문</h3>
@@ -57,6 +58,8 @@ export function renderTeacherPages() {
       </nav>
     `),
     page('T2', '기대 관찰과 설명의 예', '학생의 기록을 먼저 읽고, 실제로 본 결과와 그 이유를 함께 확인합니다.', `
+      <div class="wb-three-col wb-teacher-reference">${photo('single-cell', '한 개')}${photo('series-cells', '직렬')}${photo('parallel-cells', '병렬')}</div>
+      <p class="wb-small">원본 실사 사진 · 노란 빛은 촬영 자료의 시각 효과이며 측정값이 아닙니다. 학생에게는 비교 관찰을 마친 뒤 제시합니다.</p>
       <section class="wb-section">
         <h3>다섯 가지 전지 비교 · 학생 2–3쪽</h3>
         <p class="wb-small">같은 종류·상태의 전지, 같은 전구를 사용하고 전구의 사용 전압이 맞는 조건이다. 화면 밝기는 비교를 위한 모형이다.</p>

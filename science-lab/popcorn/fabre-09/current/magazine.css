@@ -131,3 +131,10 @@
   .magazine-ending p { font-size: 18px; }
 }
 @media print { .science-magazine { display: none !important; } }
+/* Real experiment photographs replace the opening circuit illustration. */
+.science-magazine { --mag-paper:#fff; --mag-ink:#182230; --mag-green:#2456c4; --mag-line:#c8dce5; color:var(--mag-ink); }
+.magazine-cover { background:#e7f7fd; }.magazine-cover-mark { width:170px; transform:none; }.magazine-cover-mark img { display:block; width:100%; height:220px; object-fit:contain; background:#fff; }
+.magazine-figure { background:#fff; border-top:5px solid #79d3c3; border-bottom:1px solid #c8dce5; border-radius:0; padding:18px 0; }
+.magazine-circuit-pair img { width:100%; height:200px; object-fit:contain; }.magazine-circuit-pair h4 { margin:10px 0 0; font-size:17px; color:#173c63; }.magazine-circuit-pair p { margin:4px 0; font-size:14px; }
+.magazine-question { background:#edf7fc; border-color:#5fbad6; }.magazine-teacher-note { background:#e8f7f2; }
+@media(max-width:680px) { .magazine-circuit-pair { grid-template-columns:1fr; gap:20px; }.magazine-circuit-pair img { height:210px; }.magazine-cover { grid-template-columns:minmax(0,1fr) 96px; gap:12px; }.magazine-cover-mark { width:100%; max-width:100%; margin-top:30px; }.magazine-cover-mark img { height:150px; } }

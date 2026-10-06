@@ -16,9 +16,12 @@ try{
     page.on('response',response=>{if(response.status()>=400)errors.push(`${response.status()} ${response.url()}`);});
     await page.goto(new URL('workbook.html'+query,base).href,{waitUntil:'networkidle'});
     await page.waitForFunction(expected=>document.querySelectorAll('.workbook-page').length===expected,count);
-    await page.evaluate(()=>document.fonts.ready);
+    await page.waitForFunction(()=>document.querySelector('[data-workbook-ready="true"]'));
+    await page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('img')].map(image=>image.decode()));});
     await page.emulateMedia({media:'print'});
-    const layout=await page.locator('.workbook-page').evaluateAll(pages=>pages.map(p=>({page:p.dataset.page,width:p.getBoundingClientRect().width,height:p.getBoundingClientRect().height,scrollHeight:p.scrollHeight,clientHeight:p.clientHeight,title:p.querySelector('h2')?.textContent})));
+    await page.evaluate(()=>dispatchEvent(new Event('beforeprint')));
+    await page.evaluate(()=>Promise.all([...document.querySelectorAll('.workbook-print-root img')].map(image=>image.decode())));
+    const layout=await page.locator('.workbook-print-root .workbook-page').evaluateAll(pages=>pages.map(p=>({page:p.dataset.page,width:p.getBoundingClientRect().width,height:p.getBoundingClientRect().height,scrollHeight:p.scrollHeight,clientHeight:p.clientHeight,title:p.querySelector('h2')?.textContent})));
     if(errors.length)throw new Error(errors.join('\n'));
     await page.pdf({path:join(out,name+'.pdf'),format:'A4',printBackground:true,preferCSSPageSize:true,tagged:true});
     report.push({name,expectedPages:count,layout,errors});
