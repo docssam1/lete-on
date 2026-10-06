@@ -184,7 +184,12 @@ async function readingCase(page, test) {
   }
 
   if (test.mode === 'self' && test.viewport.name === 'desktop') {
-    if (!(await page.locator('#guide').evaluate(guide => guide.classList.contains('speaking')))) await page.locator('#guide [data-guide=play]').click();
+    // Establish a known paused state before enabling real narration. During a
+    // network load, audio can be playing before the speaking class appears;
+    // clicking the play toggle in that interval would pause it accidentally.
+    const mute = page.locator('#guide [data-guide=mute]');
+    if (await mute.getAttribute('aria-pressed') === 'false') await mute.click();
+    await mute.click();
     await page.waitForFunction(() => document.querySelector('#guide')?.classList.contains('speaking'));
     check(test, true, 'real narration is speaking before the magazine opens');
   }
