@@ -24,27 +24,40 @@ function numWord(n, form, lang){
 }
 
 /* ── SVG 조각 ───────────────────────────────────────────────────────────── */
-/* 손가락 — k=0~5 한 손. 1~4 는 검지부터, 5 는 엄지까지(오른손 손바닥). */
+/* 손가락 — k=0~5 한 손. 1~4 는 검지부터, 5 는 엄지까지(오른손 손바닥).
+   2026-10-05 다시 그림(원장 "허접한 그림", "너무 흑백이야") — 살색 면·그늘·손톱·소매. 화면·인쇄 모두 같은 색.
+   인쇄 CSS 는 .nm-nl svg 의 path 를 선만 남기므로 path 를 쓰지 않고 rect·ellipse 로만 그리며, nm-obj-svg 로 예외를 받는다. */
 function handSvg(k, o){
   o = o || {};
-  var skin = o.skin || '#ffd9b0', ln = o.line || '#a8693a';
+  var skin = o.skin || '#f6c9a0', shade = o.shade || '#e7aa7c', ln = o.line || '#a0603a', nail = '#fde6d4', sleeve = o.sleeve || '#5b9be0';
   var ext = [k >= 5, k >= 1, k >= 2, k >= 3, k >= 4];      /* 엄지·검지·중지·약지·새끼 */
-  var xs = [8, 17, 26.5, 36, 45], hs = [18, 30, 34, 30, 24];
-  var s = '<svg class="nm-g13-hand" viewBox="0 0 60 66" aria-hidden="true">';
+  var xs = [0, 15.5, 25, 34.5, 44], hs = [0, 27, 31, 28, 22];
+  var s = '<svg class="nm-g13-hand nm-obj-svg" viewBox="-6 0 64 74" aria-hidden="true">';
   for(var i = 1; i < 5; i++){
-    var h = ext[i] ? hs[i] : 9, y = ext[i] ? 34 - hs[i] + 6 : 25;
-    s += '<rect x="' + xs[i] + '" y="' + y + '" width="8.4" height="' + (ext[i] ? hs[i] + 8 : 17) + '" rx="4.2" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.6"/>';
+    if(ext[i]){
+      var top = 33 - hs[i];
+      s += '<rect x="' + xs[i] + '" y="' + top + '" width="9" height="' + (hs[i] + 10) + '" rx="4.5" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.3"/>';
+      s += '<rect x="' + (xs[i] + 2) + '" y="' + (top + 1.6) + '" width="5" height="5.5" rx="2.4" fill="' + nail + '" stroke="' + shade + '" stroke-width=".6"/>';
+      s += '<rect x="' + (xs[i] + 1.5) + '" y="' + (top + hs[i] * 0.55) + '" width="6" height="1.1" rx=".5" fill="' + shade + '"/>';
+    } else {
+      s += '<rect x="' + xs[i] + '" y="26" width="9" height="13" rx="4.5" fill="' + shade + '" stroke="' + ln + '" stroke-width="1.3"/>';
+    }
   }
-  s += '<rect x="9" y="30" width="44" height="30" rx="12" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.8"/>';
-  if(ext[0]) s += '<rect x="-1" y="30" width="9" height="24" rx="4.5" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.6" transform="rotate(-32 4 54)"/>';
-  else s += '<path d="M14 46 C20 40 30 42 33 48" fill="none" stroke="' + ln + '" stroke-width="1.8" stroke-linecap="round"/>';
+  s += '<rect x="13" y="31" width="42" height="30" rx="13" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.5"/>';
+  s += '<ellipse cx="38" cy="50" rx="11" ry="6" fill="' + shade + '" opacity=".45"/>';
+  for(var j = 1; j < 5; j++) if(!ext[j]) s += '<rect x="' + (xs[j] + 1) + '" y="31" width="7" height="6" rx="3" fill="' + skin + '" stroke="' + ln + '" stroke-width=".9"/>';
+  if(ext[0]) s += '<rect x="9" y="28" width="10" height="26" rx="5" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.3" transform="rotate(-38 14 54)"/>'
+    + '<rect x="11.2" y="29.6" width="5.6" height="5" rx="2.4" fill="' + nail + '" stroke="' + shade + '" stroke-width=".6" transform="rotate(-38 14 54)"/>';
+  else s += '<ellipse cx="25" cy="45" rx="10" ry="4.6" fill="' + skin + '" stroke="' + ln + '" stroke-width="1.2" transform="rotate(-18 25 45)"/>';
+  if(ext[0]) s += '<rect x="14" y="40" width="14" height="18" rx="7" fill="' + skin + '"/>';
+  s += '<rect x="16" y="59" width="36" height="13" rx="3" fill="' + sleeve + '" stroke="#2f5f9a" stroke-width="1.2"/>';
   return s + '</svg>';
 }
 /* 10칸 틀 그림(5×2) — n 칸에 점이 찍힌다. 화면·인쇄 겸용(자체 색 속성). */
 function frameSvg(n, o){
   o = o || {};
   var ink = o.ink || '#1F2A3A', dot = o.dot || '#e5a82a', w = o.w || 50;
-  var s = '<svg class="nm-g13-frame" viewBox="0 0 50 22" width="' + w + '" aria-hidden="true">'
+  var s = '<svg class="nm-g13-frame nm-obj-svg" viewBox="0 0 50 22" width="' + w + '" aria-hidden="true">'
     + '<rect x="1" y="1" width="48" height="20" rx="2" fill="#fff" stroke="' + ink + '" stroke-width="1.4"/>';
   for(var i = 1; i < 5; i++) s += '<line x1="' + (1 + i * 9.6) + '" y1="1" x2="' + (1 + i * 9.6) + '" y2="21" stroke="' + ink + '" stroke-width=".8"/>';
   s += '<line x1="1" y1="11" x2="49" y2="11" stroke="' + ink + '" stroke-width=".8"/>';
@@ -56,9 +69,9 @@ function frameSvg(n, o){
 }
 /* 점 카드 — 3열로 차례로 */
 function diceSvg(n, o){
-  o = o || {}; var ink = o.ink || '#1F2A3A', dot = o.dot || '#1F2A3A';
+  o = o || {}; var ink = o.ink || '#1F2A3A', dot = o.dot || '#e0483e';
   var rows = Math.ceil(n / 3) || 1, h = rows * 9 + 3;
-  var s = '<svg class="nm-g13-dice" viewBox="0 0 30 ' + h + '" aria-hidden="true">';
+  var s = '<svg class="nm-g13-dice nm-obj-svg" viewBox="0 0 30 ' + h + '" aria-hidden="true">';
   for(var k = 0; k < n; k++) s += '<circle cx="' + (6 + (k % 3) * 9) + '" cy="' + (6 + Math.floor(k / 3) * 9) + '" r="3.2" fill="' + dot + '"/>';
   return s + '</svg>';
 }
@@ -78,8 +91,9 @@ function isoSvg(H, o){
   var cubes = isoCubes(H), R = H.length, C = 0; H.forEach(function(row){ C = Math.max(C, row.length); });
   var hmax = 0; H.forEach(function(row){ row.forEach(function(v){ hmax = Math.max(hmax, v); }); });
   var minX = -R * W - 2, maxX = C * W + 2, minY = -hmax * W - 2, maxY = (R + C) * W / 2 + 2;
-  var col = print ? { top: '#ffffff', left: '#d9d9d9', right: '#a9a9a9', ln: '#000' } : { top: '#f4d49a', left: '#d9a45c', right: '#b97a35', ln: '#6b4220' };
-  var s = '<svg class="' + (print ? 'nm-nl-g13-iso' : 'nm-g13-iso') + '" viewBox="' + minX + ' ' + minY + ' ' + (maxX - minX) + ' ' + (maxY - minY) + '" role="img" aria-label="blocks">';
+  /* 2026-10-05 원장 "너무 흑백이야" — 인쇄도 화면과 같은 나무색. 윗면·왼면·오른면 밝기가 달라 흑백 프린터에서도 세 면이 갈린다. */
+  var col = { top: '#f4d49a', left: '#d9a45c', right: '#b97a35', ln: '#6b4220' };
+  var s = '<svg class="' + (print ? 'nm-nl-g13-iso nm-obj-svg' : 'nm-g13-iso') + '" viewBox="' + minX + ' ' + minY + ' ' + (maxX - minX) + ' ' + (maxY - minY) + '" role="img" aria-label="blocks">';
   function poly(pts, fill){ return '<polygon points="' + pts.map(function(p){ return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '" fill="' + fill + '" stroke="' + col.ln + '" stroke-width="' + (print ? 1.1 : 1) + '" stroke-linejoin="round"/>'; }
   cubes.forEach(function(q){
     var A = isoProject(q.c, q.r, q.z + 1, W), B = isoProject(q.c + 1, q.r, q.z + 1, W), Cc = isoProject(q.c + 1, q.r + 1, q.z + 1, W), D = isoProject(q.c, q.r + 1, q.z + 1, W);
@@ -158,11 +172,11 @@ function registerAll(){
 
 /* ── 길 채우기(pathFill) 그림 — 화면·인쇄 겸용 ─────────────────────────────────
    p.nodes[{x,y,v,show,shape}] · p.edges[{a,b,style}] (화살표는 a→b, 끝이 더 큰 수) · p.vw/vh.
-   o.fills={노드번호:값} 채운 칸, o.focus=지금 고를 빈칸, o.print=흑백 인쇄용(굵은 선·빈칸은 점선). */
+   o.fills={노드번호:값} 채운 칸, o.focus=지금 고를 빈칸, o.print=인쇄용(화면과 같은 색, 빈칸은 점선). 인쇄 CSS(.nm-nl text 검정)를 이기도록 글자색은 style 로 준다. */
 function pathSvg(p, o){
   o = o || {}; var print = !!o.print, fills = o.fills || {}, focus = o.focus;
-  var ink = print ? '#000' : '#16417c', lw = print ? 1.5 : 1.7;
-  var s = '<svg class="' + (print ? 'nm-nl-g13-path' : 'nm-g13-path') + '" viewBox="0 0 ' + p.vw + ' ' + p.vh + '" role="img" aria-label="path">';
+  var ink = '#16417c', lw = print ? 1.5 : 1.7;
+  var s = '<svg class="' + (print ? 'nm-nl-g13-path nm-obj-svg' : 'nm-g13-path') + '" viewBox="0 0 ' + p.vw + ' ' + p.vh + '" role="img" aria-label="path">';
   function rad(n){ return n.shape === 'box' ? 11 : 6.2; }
   (p.edges || []).forEach(function(e){
     var a = p.nodes[e.a], b = p.nodes[e.b];
@@ -180,13 +194,13 @@ function pathSvg(p, o){
   p.nodes.forEach(function(n, i){
     var filled = fills[i] != null, blank = !n.show, txt = n.show ? n.v : (filled ? fills[i] : '');
     var cls = 'nm-g13-pn' + (blank ? ' blank' : '') + (filled ? ' found' : '') + (focus === i ? ' focus' : '');
-    var fillc = print ? '#fff' : (blank ? (filled ? '#eafaf1' : '#fffaf0') : '#fff');
-    var stroke = print ? '#000' : (blank ? (filled ? '#2e9e6b' : '#c9a063') : ink);
+    var fillc = blank ? (filled ? '#eafaf1' : '#fffaf0') : '#fff';
+    var stroke = blank ? (filled ? '#2e9e6b' : '#c9a063') : ink;
     var dashed = blank && !filled ? ' stroke-dasharray="2.4 1.8"' : '';
     s += '<g class="' + cls + '" data-i="' + i + '">';
     if(n.shape === 'box') s += '<rect x="' + (n.x - 11) + '" y="' + (n.y - 11) + '" width="22" height="22" rx="4" fill="' + fillc + '" stroke="' + stroke + '" stroke-width="' + lw + '"' + dashed + '/>';
     else s += '<circle cx="' + n.x.toFixed(1) + '" cy="' + n.y.toFixed(1) + '" r="6.2" fill="' + fillc + '" stroke="' + stroke + '" stroke-width="' + lw + '"' + dashed + '/>';
-    if(txt !== '') s += '<text x="' + n.x.toFixed(1) + '" y="' + (n.y + 3).toFixed(1) + '" text-anchor="middle" font-size="' + (n.shape === 'box' ? 11 : 9) + '" font-weight="800" fill="' + (print ? '#000' : (filled ? '#1f7a50' : ink)) + '">' + txt + '</text>';
+    if(txt !== '') s += '<text x="' + n.x.toFixed(1) + '" y="' + (n.y + 3).toFixed(1) + '" text-anchor="middle" font-size="' + (n.shape === 'box' ? 11 : 9) + '" font-weight="800" fill="' + (filled ? '#1f7a50' : ink) + '"' + (print ? ' style="fill:' + (filled ? '#1f7a50' : ink) + '"' : '') + '>' + txt + '</text>';
     s += '<circle class="nm-g13-hit" cx="' + n.x.toFixed(1) + '" cy="' + n.y.toFixed(1) + '" r="10" fill="transparent"/></g>';
   });
   return s + '</svg>';

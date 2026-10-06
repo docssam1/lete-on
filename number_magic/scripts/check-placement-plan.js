@@ -802,7 +802,7 @@ function checkPlan(plan, stage, seed, stages, world){
       else {
         assert(['C0', 'C1'].includes(item.course), at + ': next band jumps beyond safe C1');
         if(item.course === 'C1'){
-          assert(['NS2', 'NS3', 'AD1', 'SB1'].includes(item.thread) && item.level === 1,
+          assert(({ NS3: [1, 2], AD10: [1], NS2: [1], AD1: [1], SB1: [1] })[item.thread] && ({ NS3: [1, 2], AD10: [1], NS2: [1], AD1: [1], SB1: [1] })[item.thread].includes(item.level),
             at + ': first course transition must not use three-digit NS1 or later levels');
           const givenNumbers = (item.renderData.tex.match(/\d+(?:\.\d+)?/g) || []).map(Number);
           assert(givenNumbers.every(value => value <= 10), at + ': safe first-course givens exceed ten');

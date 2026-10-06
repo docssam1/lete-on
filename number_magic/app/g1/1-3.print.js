@@ -1,6 +1,9 @@
 /* G1-1~3호(N-01~N-03) 인쇄 — window.NM_NL_PRINT['위젯이름'] = { visual(p,K), label(p,K), ask(p,K) }.
    K = exam.js nlPrintKit(): nlCard·nlStage·nlAnsBox·nlObjHtml·nlGlyphRows·nlTenframeHtml·nlFrameObjHtml·nlBoardHtml·nlChunk·esc·lk·pickL·EA·NL_CIRC.
-   흑백 레이저에서도 선이 또렷하도록 검은 윤곽 + 흰 바탕만 쓴다. 새 클래스는 nm-nl-g13- 접두. 그림 도구는 app/g1/1-3.art.js(NM_G13). */
+   2026-10-05 원장 "너무 흑백이야" — 화면 위젯(1-3.widgets.js·1-3.css)과 같은 팔레트로 인쇄한다.
+   글자는 진한 남색(#0E2C57·#16417c), 칠한 칸은 화면의 노랑(#f6c94c), 바탕은 크림(#fffaf0), 칸 선은 g13Rep 과 같은 #2f4a6e.
+   흑백 프린터에서도 갈리도록 채움은 밝기 차가 나는 색만 쓴다. exam.js 의 `.nm-nl text{fill:#000}` 을 이기려고 SVG 글자색은 style 로,
+   `.nm-nl svg:not(.nm-obj-svg) :is(line,path)` 를 피하려고 자체 SVG 에는 nm-obj-svg 를 붙인다. 새 클래스는 nm-nl-g13- 접두. 그림 도구는 app/g1/1-3.art.js(NM_G13). */
 (function(){ 'use strict';
 window.NM_NL_PRINT = window.NM_NL_PRINT || {};
 var P = window.NM_NL_PRINT;
@@ -8,55 +11,64 @@ var P = window.NM_NL_PRINT;
 /* ── 스타일 ── */
 (function(){
   var css = ''
+  + '[class^="nm-nl-g13-"],[class*=" nm-nl-g13-"]{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
   + '.nm-nl-g13-row{display:flex;justify-content:center;align-items:flex-end;gap:1.6mm;flex-wrap:wrap}'
   + '.nm-nl-g13-it{display:flex;flex-direction:column;align-items:center;font-size:24px;line-height:1}'
   + '.nm-nl-g13-it svg{display:block;width:1em;height:1em}'
-  + '.nm-nl-g13-it i{font-style:normal;font-size:10px;font-weight:700;margin-top:.4mm}'
-  + '.nm-nl-g13-ring{display:flex;gap:1.4mm;padding:1mm 1.6mm;border:1.2px dashed #000;border-radius:3mm}'
-  + '.nm-nl-g13-tbl{display:grid;grid-template-columns:repeat(7,9mm);border:1.3px solid #000}'
-  + '.nm-nl-g13-tbl>div{display:flex;align-items:center;justify-content:center;height:8mm;border:.6px solid #000;box-sizing:border-box;font-size:20px;font-weight:700}'
+  + '.nm-nl-g13-it i{font-style:normal;font-size:10px;font-weight:700;margin-top:.4mm;color:#4a5468}'
+  + '.nm-nl-g13-ring{display:flex;gap:1.4mm;padding:1mm 1.6mm;border:1.4px dashed #C9A063;border-radius:3mm;background:rgba(255,226,140,.18)}'
+  + '.nm-nl-g13-tbl{display:grid;grid-template-columns:repeat(7,9mm);border:1.3px solid #2f4a6e;background:#fffaf0}'
+  + '.nm-nl-g13-tbl>div{display:flex;align-items:center;justify-content:center;height:8mm;border:.6px solid #2f4a6e;box-sizing:border-box;font-size:20px;font-weight:700}'
   + '.nm-nl-g13-tbl>div svg{width:1em;height:1em;display:block}'
-  + '.nm-nl-g13-tbl>.h{background:#e8e8e8;font-size:10px;height:5.5mm}'
-  + '.nm-nl-g13-opts{display:flex;gap:5mm;justify-content:center;font-size:15px;font-weight:800}'
+  + '.nm-nl-g13-tbl>.h{background:#f6e7bd;color:#7a5a12;font-size:10px;height:5.5mm}'
+  + '.nm-nl-g13-opts{display:flex;gap:5mm;justify-content:center;font-size:15px;font-weight:800;color:#0E2C57}'
   + '.nm-nl-g13-opt{display:inline-flex;align-items:center;gap:1mm}'
   + '.nm-nl-g13-match{display:flex;align-items:stretch}'
   + '.nm-nl-g13-mcol{display:flex;flex-direction:column;gap:1.1mm}'
   + '.nm-nl-g13-mgap{width:16mm}'
-  + '.nm-nl-g13-mc{position:relative;display:flex;align-items:center;justify-content:center;min-width:15mm;height:8.6mm;padding:0 1.6mm;border:1.3px solid #000;border-radius:2mm;box-sizing:border-box;font-size:20px;font-weight:800}'
+  + '.nm-nl-g13-mc{position:relative;display:flex;align-items:center;justify-content:center;min-width:15mm;height:8.6mm;padding:0 1.6mm;border:1.3px solid #2f4a6e;border-radius:2mm;box-sizing:border-box;font-size:20px;font-weight:800;background:#fffaf0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
   + '.nm-nl-g13-mc svg{height:6.4mm;width:auto;display:block}'
-  + '.nm-nl-g13-mc .tag{position:absolute;right:-5.5mm;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:#444}'
-  + '.nm-nl-g13-mc .hands{display:inline-flex;align-items:flex-end}.nm-nl-g13-mc .hands svg{height:6.2mm}'
-  + '.nm-nl-g13-card{display:flex;align-items:center;justify-content:center;min-width:12mm;height:10mm;padding:0 1.5mm;border:1.3px solid #000;border-radius:2mm;box-sizing:border-box;font-size:20px;font-weight:800;background:#fff}'
+  + '.nm-nl-g13-mc .tag{position:absolute;right:-5.5mm;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:#4a5468}'
+  + '.nm-nl-g13-mc .hands{display:inline-flex;align-items:flex-end}.nm-nl-g13-mc .hands svg{height:7.6mm}.nm-nl-g13-mc > svg.nm-g13-hand{height:8mm}'
+  + '.nm-nl-g13-card{display:flex;align-items:center;justify-content:center;min-width:12mm;height:10mm;padding:0 1.5mm;border:1.3px solid #2f4a6e;border-radius:2mm;box-sizing:border-box;font-size:20px;font-weight:800;background:#fffdf6;color:#0E2C57}'
   + '.nm-nl-g13-card svg{height:7.5mm;width:auto;display:block}'
-  + '.nm-nl-g13-card.blank{border-style:dashed;border-width:1.6px}'
+  + '.nm-nl-g13-mc .w-num,.nm-nl-g13-card .w-num{color:#1f5fbf}.nm-nl-g13-mc .w-native,.nm-nl-g13-card .w-native{color:#2f8a4c}.nm-nl-g13-mc .w-sino,.nm-nl-g13-card .w-sino{color:#c4581c}'
+  + '.nm-nl-g13-card{-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+  + '.nm-nl-g13-card.blank{border-style:dashed;border-width:1.6px;border-color:#C9A063;background:#fffaf0}'
+  + '.nm-nl-g13-card.hi{background:#f6c94c;border-color:#a67c00}'
   + '.nm-nl-g13-card.sq{width:9mm;min-width:9mm;height:9mm;border-radius:1mm}'
-  + '.nm-nl-g13-grid{display:grid;border:1.4px solid #000}'
-  + '.nm-nl-g13-grid>i{border:.6px solid #000;box-sizing:border-box;background:#fff}'
-  + '.nm-nl-g13-grid>i.on{background:#9a9a9a}'
+  + '.nm-nl-g13-grid{display:grid;border:1.4px solid #2f4a6e;background:#fffaf0}'
+  + '.nm-nl-g13-grid>i{border:.6px solid #2f4a6e;box-sizing:border-box;background:#fffaf0}'
+  + '.nm-nl-g13-grid>i.on{background:#f6c94c}'
   + '.nm-nl-g13-svg{display:block;height:28mm;width:auto;max-width:100%}'
   + '.nm-nl-g13-iso{display:block;height:30mm;width:auto;max-width:100%}'
   + '.nm-nl-g13-cmp .nm-nl-g13-iso{height:19mm}'
   + '.nm-nl-g13-path{display:block;width:62mm;height:auto;max-height:36mm}'
-  + '.nm-nl-g13-legend{font-size:10px;font-weight:700;text-align:center;color:#222}'
-  + '.nm-nl-g13-big{font-size:34px;font-weight:900;letter-spacing:.06em}'
-  + '.nm-nl-g13-bx{display:inline-block;width:11mm;height:9mm;border:1.4px solid #000;border-radius:1.5mm;vertical-align:middle;background:#fff}'
-  + '.nm-nl-g13-cap{font-size:12px;font-weight:800;text-align:left}'
+  + '.nm-nl-g13-legend{font-size:10px;font-weight:700;text-align:center;color:#4a5468}'
+  + '.nm-nl-g13-big{font-size:34px;font-weight:900;letter-spacing:.06em;color:#0E2C57}'
+  + '.nm-nl-g13-big.sign{color:#b8860b}'
+  + '.nm-nl-g13-bx{display:inline-block;width:11mm;height:9mm;border:1.4px dashed #C9A063;border-radius:1.5mm;vertical-align:middle;background:#fffaf0}'
+  + '.nm-nl-g13-cap{font-size:12px;font-weight:800;text-align:left;color:#0E2C57}'
+  + '.nm-nl-g13-cap span{color:#4a5468}'
   + '.nm-nl-g13-cells{display:flex;gap:.8mm}'
-  + '.nm-nl-g13-oc{width:5.2mm;height:5.2mm;border:1.2px solid #000;border-radius:50%;background:#fff;box-sizing:border-box}'
-  + '.nm-nl-g13-sq{width:6mm;height:6mm;border:1.2px solid #000;border-radius:1mm;background:#fff;box-sizing:border-box}'
-  + '.nm-nl-g13-sq.on{background:#9a9a9a}'
-  + '.nm-nl-g13-ends{display:flex;justify-content:space-between;width:100%;font-size:9.5px;font-weight:700;color:#444}'
+  + '.nm-nl-g13-oc{width:5.2mm;height:5.2mm;border:1.3px solid #C9A063;border-radius:50%;background:#fff;box-sizing:border-box}'
+  + '.nm-nl-g13-sq{width:6mm;height:6mm;border:1.3px solid #C9A063;border-radius:1mm;background:#fff;box-sizing:border-box}'
+  + '.nm-nl-g13-sq.on{background:#f6c94c;border-color:#a67c00}'
+  + '.nm-nl-g13-ends{display:flex;justify-content:space-between;width:100%;font-size:9.5px;font-weight:700;color:#4a5468}'
   + '.nm-nl-g13-slotrow{display:flex;gap:1.6mm}'
-  + '.nm-nl-g13-slot{width:8mm;height:8mm;border:1.4px dashed #000;border-radius:1.5mm;box-sizing:border-box}'
-  + '.nm-nl-g13-pin{display:grid;border:1.4px solid #000}'
-  + '.nm-nl-g13-pin>div{display:flex;align-items:center;justify-content:center;border:.8px solid #000;box-sizing:border-box;font-size:15px;font-weight:800}'
-  + '.nm-nl-g13-pin>div.blk{background:#222;color:#222}'
+  + '.nm-nl-g13-slot{width:8mm;height:8mm;border:1.4px dashed #C9A063;border-radius:1.5mm;box-sizing:border-box;background:#fffaf0}'
+  + '.nm-nl-g13-pin{display:grid;border:1.4px solid #2f4a6e;background:#fff}'
+  + '.nm-nl-g13-pin>div{display:flex;align-items:center;justify-content:center;border:.8px solid #2f4a6e;box-sizing:border-box;font-size:15px;font-weight:800;color:#0E2C57}'
+  + '.nm-nl-g13-pin>div.giv{background:#f6efd9}'
+  + '.nm-nl-g13-pin>div.blk{background:#e6e1d5}'
+  + '.nm-nl-g13-pin>div.blk::after{content:"";width:45%;height:45%;border-radius:50%;background:#3a3f4d}'
+  + '.nm-nl-g13-wbox{height:11mm;width:58mm;border:1.4px dashed #C9A063;border-radius:2mm;background:#fffaf0}'
   + '.nm-nl .nm-nl-g13-path text{font-size:9px;font-weight:800}'
   + '.nm-nl .nm-nl-g13-svg text{font-size:.13px}'
   + '.nm-nl .nm-nl-g13-tri text{font-size:13px}'
   + '.nm-nl .nm-nl-g13-nl text{font-size:5.6px}'
-  + '.nm-nl-g13-sent{font-size:13px;font-weight:700}'
-  + '.nm-nl-g13-bubble{display:inline-block;padding:1mm 3mm;border:1.2px solid #000;border-radius:3mm;font-size:12px;font-weight:700;background:#fff}';
+  + '.nm-nl-g13-sent{font-size:13px;font-weight:700;color:#0E2C57}'
+  + '.nm-nl-g13-bubble{display:inline-block;padding:1mm 3mm;border:1.3px solid #2f4a6e;border-radius:3mm;font-size:12px;font-weight:700;background:#fffaf0;color:#0E2C57}';
   var st = document.createElement('style'); st.setAttribute('data-g13-print', '1'); st.textContent = css; document.head.appendChild(st);
 })();
 
@@ -103,11 +115,13 @@ def('g13Count', {
 /* ── 같은 수끼리 잇기 ── */
 function cardHtml(type, n, K){
   var g = G(), l = lg(K);
-  if(type === 'dice') return g.diceSvg(n, { dot: '#000', ink: '#000' });
-  if(type === 'frame') return g.frameSvg(n, { w: 52, ink: '#000', dot: '#333' });
-  if(type === 'fingers') return n <= 5 ? g.handSvg(n, { skin: '#fff', line: '#000' }) : '<span class="hands">' + g.handSvg(5, { skin: '#fff', line: '#000' }) + g.handSvg(n - 5, { skin: '#fff', line: '#000' }) + '</span>';
-  if(type === 'native' || type === 'sino') return K.esc(g.numWord(n, type, l));
-  return K.esc(String(n));
+  /* 2026-10-05 원장 "너무 흑백이야" — 화면과 같은 색으로 인쇄한다(점은 빨강, 10칸 틀은 노랑, 손은 살색, 낱말은 색 글자). */
+  if(type === 'dice') return g.diceSvg(n);
+  if(type === 'frame') return g.frameSvg(n, { w: 52, ink: '#0e2c57', dot: '#e5a82a' });
+  if(type === 'fingers') return n <= 5 ? g.handSvg(n) : '<span class="hands">' + g.handSvg(5) + g.handSvg(n - 5) + '</span>';
+  if(type === 'native') return '<b class="w-native">' + K.esc(g.numWord(n, type, l)) + '</b>';
+  if(type === 'sino') return '<b class="w-sino">' + K.esc(g.numWord(n, type, l)) + '</b>';
+  return '<b class="w-num">' + K.esc(String(n)) + '</b>';
 }
 def('g13Rep', {
   visual: function(p, K){
@@ -151,9 +165,10 @@ def('g13Grid', {
 /* ── 동그라미 나누기 ── */
 function cutSvg(ch, K, dots){
   var N = []; for(var i = 0; i < 12; i++){ var t = (i * 30 - 90) * Math.PI / 180; N.push([Math.cos(t), Math.sin(t)]); }
-  var s = '<svg class="nm-nl-g13-svg" viewBox="-1.3 -1.3 2.6 2.6"><circle cx="0" cy="0" r="1" fill="#fff" stroke="#000" stroke-width=".05"/>';
-  (ch || []).forEach(function(c){ s += '<line x1="' + N[c[0]][0] + '" y1="' + N[c[0]][1] + '" x2="' + N[c[1]][0] + '" y2="' + N[c[1]][1] + '" stroke="#000" stroke-width=".05" stroke-linecap="round"/>'; });
-  if(dots) N.forEach(function(q, i){ s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r=".055" fill="#000"/><text x="' + (q[0] * 1.2) + '" y="' + (q[1] * 1.2 + .05) + '" text-anchor="middle" font-size=".13" font-weight="700" fill="#000" stroke="none">' + (i + 1) + '</text>'; });
+  /* 화면(.nm-g13-circ·.nm-g13-chord·.nm-g13-ndot)과 같은 색: 원 테두리 남색, 자른 선 초록, 점 남색 */
+  var s = '<svg class="nm-nl-g13-svg nm-obj-svg" viewBox="-1.3 -1.3 2.6 2.6"><circle cx="0" cy="0" r="1" fill="#fff" stroke="#0E2C57" stroke-width=".05"/>';
+  (ch || []).forEach(function(c){ s += '<line x1="' + N[c[0]][0] + '" y1="' + N[c[0]][1] + '" x2="' + N[c[1]][0] + '" y2="' + N[c[1]][1] + '" stroke="#2E9E6B" stroke-width=".05" stroke-linecap="round"/>'; });
+  if(dots) N.forEach(function(q, i){ s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r=".055" fill="#0E2C57"/><text x="' + (q[0] * 1.2) + '" y="' + (q[1] * 1.2 + .05) + '" text-anchor="middle" font-size=".13" font-weight="700" style="fill:#4a5468" stroke="none">' + (i + 1) + '</text>'; });
   return s + '</svg>';
 }
 def('g13CircleCut', {
@@ -172,7 +187,7 @@ def('g13Blocks', {
   visual: function(p, K){
     var g = G();
     if(p.bmode === 'cmp'){
-      var mid = '<span class="nm-nl-g13-bx"></span> <span class="nm-nl-g13-big" style="font-size:26px">○</span> <span class="nm-nl-g13-bx"></span>';
+      var mid = '<span class="nm-nl-g13-bx"></span> <span class="nm-nl-g13-big sign" style="font-size:26px">○</span> <span class="nm-nl-g13-bx"></span>';
       return K.nlCard(K.nlStage('<div class="nm-nl-g13-row nm-nl-g13-cmp" style="align-items:center;gap:3mm">' + g.isoSvg(p.heightsA, { w: 8, print: true }) + '<span>' + mid + '</span>' + g.isoSvg(p.heightsB, { w: 8, print: true }) + '</div>'));
     }
     return stage(K, g.isoSvg(p.heights, { w: 13, print: true }), K.nlAnsBox(K.EA));
@@ -183,9 +198,9 @@ def('g13Blocks', {
 /* ── 점판 길이 ── */
 function dotLenSvg(p){
   var S = 14, w = 8 + (p.cols - 1) * S, h = 8 + (p.rows - 1) * S, pt = function(q){ return [4 + q[0] * S, 4 + q[1] * S]; };
-  var s = '<svg class="nm-nl-g13-svg" style="height:26mm" viewBox="0 0 ' + w + ' ' + h + '">';
-  if(p.lmode === 'read') s += '<polyline fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" points="' + p.path.map(function(q){ return pt(q).join(','); }).join(' ') + '"/>';
-  for(var r = 0; r < p.rows; r++) for(var c = 0; c < p.cols; c++){ var q = pt([c, r]); s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="1.5" fill="#000"/>'; }
+  var s = '<svg class="nm-nl-g13-svg nm-obj-svg" style="height:26mm" viewBox="0 0 ' + w + ' ' + h + '">';
+  if(p.lmode === 'read') s += '<polyline fill="none" stroke="#2E9E6B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" points="' + p.path.map(function(q){ return pt(q).join(','); }).join(' ') + '"/>';
+  for(var r = 0; r < p.rows; r++) for(var c = 0; c < p.cols; c++){ var q = pt([c, r]); s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="1.5" fill="#0E2C57"/>'; }
   return s + '</svg>';
 }
 def('g13DotLength', {
@@ -200,7 +215,7 @@ def('g13DotLength', {
 def('g13Odd', {
   visual: function(p, K){
     var cards = p.shapes.map(function(cells, i){
-      var s = '<svg viewBox="0 0 54 54" style="width:15mm;height:15mm;display:block">' + cells.map(function(q){ return '<rect x="' + (3 + q[1] * 16) + '" y="' + (3 + q[0] * 16) + '" width="15" height="15" fill="#fff" stroke="#000" stroke-width="1.4"/>'; }).join('') + '</svg>';
+      var s = '<svg viewBox="0 0 54 54" style="width:15mm;height:15mm;display:block">' + cells.map(function(q){ return '<rect x="' + (3 + q[1] * 16) + '" y="' + (3 + q[0] * 16) + '" width="15" height="15" rx="2" fill="#f6c94c" stroke="#a67c00" stroke-width="1.4"/>'; }).join('') + '</svg>';
       return '<span class="nm-nl-g13-opt" style="flex-direction:column"><span>' + s + '</span><span>' + circ(i + 1) + '</span></span>';
     }).join('');
     return K.nlCard(K.nlStage('<div class="nm-nl-g13-opts" style="gap:4mm;align-items:flex-end">' + cards + '</div>'));
@@ -220,9 +235,10 @@ def('g13Turn', {
 def('g13Dots', {
   visual: function(p, K){
     var n = p.pts.length, seq = p.pts.map(function(_, i){ return i; });
-    var s = '<svg class="nm-nl-dots" viewBox="-6 -8 112 112" style="width:25mm;height:25mm;display:block">';
-    for(var k = 0; k < (p.pre || 0) && k < n - 1; k++) s += '<line x1="' + p.pts[seq[k]][0] + '" y1="' + p.pts[seq[k]][1] + '" x2="' + p.pts[seq[k + 1]][0] + '" y2="' + p.pts[seq[k + 1]][1] + '" stroke="#000" stroke-width="1.6"/>';
-    p.pts.forEach(function(q, i){ s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="2.4" fill="#1F2A3A"/><text x="' + q[0] + '" y="' + (q[1] - 4.5) + '" text-anchor="middle" font-size="7.5" font-weight="700" fill="#1F2A3A" stroke="none">' + p.labels[i] + '</text>'; });
+    /* 화면(.nm-dd-*)과 같은 색: 미리 그린 선 초록, 점·수 남색 — exam.js .nm-nl-dots 의 #1F2A3A 를 이기려고 style 로 준다 */
+    var s = '<svg class="nm-nl-dots nm-nl-g13-dots nm-obj-svg" viewBox="-6 -8 112 112" style="width:25mm;height:25mm;display:block">';
+    for(var k = 0; k < (p.pre || 0) && k < n - 1; k++) s += '<line x1="' + p.pts[seq[k]][0] + '" y1="' + p.pts[seq[k]][1] + '" x2="' + p.pts[seq[k + 1]][0] + '" y2="' + p.pts[seq[k + 1]][1] + '" stroke="#2E9E6B" stroke-width="1.8" stroke-linecap="round"/>';
+    p.pts.forEach(function(q, i){ s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="2.4" style="fill:#0E2C57"/><text x="' + q[0] + '" y="' + (q[1] - 4.5) + '" text-anchor="middle" font-size="7.5" font-weight="700" style="fill:#0E2C57" stroke="none">' + p.labels[i] + '</text>'; });
     return stage(K, s + '</svg>', K.nlAnsBox(K.EA));
   },
   label: function(){ return null; }
@@ -258,7 +274,7 @@ def('g13NumPick', {
     if(p.scene){ var o = ''; for(var k = 0; k < p.scene.n; k++) o += '<span class="nm-nl-g">' + K.nlObjHtml(p.scene.e) + '</span>'; head += '<div class="nm-nl-row" style="font-size:22px;gap:1mm">' + o + '</div>'; }
     var tiles = '<div class="nm-nl-g13-row" style="align-items:center">' + p.tiles.map(function(v, i){
       var pre = (p.pre || []).indexOf(i) >= 0;
-      return '<span class="nm-nl-g13-card sq" style="' + (pre ? 'background:#bbb' : '') + '">' + v + '</span>'; }).join('') + '</div>';
+      return '<span class="nm-nl-g13-card sq' + (pre ? ' hi' : '') + '">' + v + '</span>'; }).join('') + '</div>';
     var ans = p.ask === 'count' ? K.nlAnsBox(K.EA) : '';
     return K.nlCard(K.nlStage(head + tiles), ans);
   },
@@ -277,9 +293,9 @@ def('g13Order', {
     var slots = '<div class="nm-nl-g13-slotrow">' + p.tiles.map(function(){ return '<span class="nm-nl-g13-slot"></span>'; }).join('') + '</div>';
     var line = '';
     if(p.otype === 'near'){
-      var mn = p.line.min, mx = p.line.max, X = function(v){ return 6 + (v - mn) * 10; }, s = '<svg class="nm-nl-g13-nl" viewBox="0 0 ' + (12 + (mx - mn) * 10) + ' 24" style="width:50mm;height:auto;display:block"><line x1="2" y1="14" x2="' + (10 + (mx - mn) * 10) + '" y2="14" stroke="#000" stroke-width="1"/>';
-      for(var v = mn; v <= mx; v++) s += '<line x1="' + X(v) + '" y1="11" x2="' + X(v) + '" y2="17" stroke="#000" stroke-width="1"/><text x="' + X(v) + '" y="23" text-anchor="middle" font-size="5.5" font-weight="700" fill="#000" stroke="none">' + v + '</text>';
-      s += '<rect x="' + (X(p.base) - 4) + '" y="3" width="8" height="8" rx="1.5" fill="#fff" stroke="#000" stroke-width="1"/><text x="' + X(p.base) + '" y="9.2" text-anchor="middle" font-size="6.5" font-weight="800" fill="#000" stroke="none">' + p.base + '</text>';
+      var mn = p.line.min, mx = p.line.max, X = function(v){ return 6 + (v - mn) * 10; }, s = '<svg class="nm-nl-g13-nl nm-obj-svg" viewBox="0 0 ' + (12 + (mx - mn) * 10) + ' 24" style="width:50mm;height:auto;display:block"><line x1="2" y1="14" x2="' + (10 + (mx - mn) * 10) + '" y2="14" stroke="#0E2C57" stroke-width="1"/>';
+      for(var v = mn; v <= mx; v++) s += '<line x1="' + X(v) + '" y1="11" x2="' + X(v) + '" y2="17" stroke="#0E2C57" stroke-width="1"/><text x="' + X(v) + '" y="23" text-anchor="middle" font-size="5.5" font-weight="700" style="fill:#4a5468" stroke="none">' + v + '</text>';
+      s += '<rect x="' + (X(p.base) - 4) + '" y="3" width="8" height="8" rx="1.5" fill="#fff3cf" stroke="#C9A063" stroke-width="1"/><text x="' + X(p.base) + '" y="9.2" text-anchor="middle" font-size="6.5" font-weight="800" style="fill:#7a5a12" stroke="none">' + p.base + '</text>';
       line = s + '</svg>';
     }
     return K.nlCard(K.nlStage(line + cards + '<div class="nm-nl-g13-ends"><span>' + K.esc(K.lk('쓰는 순서', 'Write in order', '书写顺序')) + ' →</span></div>' + slots));
@@ -298,7 +314,7 @@ def('g13Pinball', {
   visual: function(p, K){
     var blk = {}; p.blocks.forEach(function(q){ blk[q.join()] = 1; });
     var size = p.rows >= 5 ? 6.6 : p.rows === 4 ? 8 : 9.6, cells = '';
-    for(var r = 0; r < p.rows; r++) for(var c = 0; c < p.cols; c++){ var k = r + ',' + c; cells += '<div' + (blk[k] ? ' class="blk"' : '') + '>' + (p.given[k] != null ? p.given[k] : '') + '</div>'; }
+    for(var r = 0; r < p.rows; r++) for(var c = 0; c < p.cols; c++){ var k = r + ',' + c; cells += '<div' + (blk[k] ? ' class="blk"' : (p.given[k] != null ? ' class="giv"' : '')) + '>' + (p.given[k] != null ? p.given[k] : '') + '</div>'; }
     return K.nlCard(K.nlStage('<div class="nm-nl-g13-pin" style="grid-template-columns:repeat(' + p.cols + ',' + size + 'mm);grid-auto-rows:' + size + 'mm">' + cells + '</div>'));
   },
   label: function(p){
@@ -315,7 +331,7 @@ def('g13OrdPaint', {
     var out = p.rows.map(function(r){
       var cells = ''; for(var i = 0; i < p.total; i++) cells += '<span class="nm-nl-g13-oc"></span>';
       var flag = r.from === 'right' ? '◀ ' + K.lk('오른쪽 시작', 'start right', '从右边开始') : K.lk('왼쪽 시작', 'start left', '从左边开始') + ' ▶';
-      return '<div style="display:flex;flex-direction:column;align-items:center;gap:.8mm"><div class="nm-nl-g13-cap">' + K.esc(K.pickL(r.cap)) + ' <span style="font-weight:600;color:#555;font-size:9.5px">' + K.esc(flag) + '</span></div><div class="nm-nl-g13-cells">' + cells + '</div></div>';
+      return '<div style="display:flex;flex-direction:column;align-items:center;gap:.8mm"><div class="nm-nl-g13-cap">' + K.esc(K.pickL(r.cap)) + ' <span style="font-weight:600;font-size:9.5px">' + K.esc(flag) + '</span></div><div class="nm-nl-g13-cells">' + cells + '</div></div>';
     }).join('');
     return K.nlCard(K.nlStage(out));
   },
@@ -339,11 +355,11 @@ def('g13OrdRow', {
       var sd = { row: [['왼쪽', 'left', '左边'], ['오른쪽', 'right', '右边']], col: [['위', 'top', '上面'], ['아래', 'bottom', '下面']], queue: [['앞', 'front', '前面'], ['뒤', 'back', '后面']] }[p.axis];
       var s0 = K.lk(sd[0][0], sd[0][1], sd[0][2]), s1 = K.lk(sd[1][0], sd[1][1], sd[1][2]);
       var b1 = K.lk(s0 + '에서 ' + p.a + '째', 'No. ' + p.a + ' from the ' + s0, '从' + s0 + '数第' + p.a + '个'), b2 = K.lk(s1 + '에서 ' + p.b + '째', 'No. ' + p.b + ' from the ' + s1, '从' + s1 + '数第' + p.b + '个');
-      return K.nlCard(K.nlStage('<div class="nm-nl-g13-row" style="gap:3mm"><span class="nm-nl-g13-bubble">' + K.esc(b1) + '</span><span class="nm-nl-g13-bubble">' + K.esc(b2) + '</span></div><div style="height:12mm;width:58mm;border:1.2px dashed #777;border-radius:2mm"></div>'), K.nlAnsBox(K.lk('칸', '', '格')));
+      return K.nlCard(K.nlStage('<div class="nm-nl-g13-row" style="gap:3mm"><span class="nm-nl-g13-bubble">' + K.esc(b1) + '</span><span class="nm-nl-g13-bubble">' + K.esc(b2) + '</span></div><div class="nm-nl-g13-wbox" style="height:12mm"></div>'), K.nlAnsBox(K.lk('칸', '', '格')));
     }
     if(m === 'flip') return K.nlCard(K.nlStage(ends + stripSq(p.total, function(i){ return i === p.a - 1; })), optsRow(K, p.choices));
     if(m === 'find'){
-      var cards = '<div class="nm-nl-g13-row" style="align-items:center;gap:1.4mm">' + p.cards.map(function(v){ return '<span class="nm-nl-g13-card sq" style="height:11mm;width:8mm;min-width:8mm;' + (v === p.ref.v ? 'background:#ccc' : '') + '">' + v + '</span>'; }).join('') + '</div>';
+      var cards = '<div class="nm-nl-g13-row" style="align-items:center;gap:1.4mm">' + p.cards.map(function(v){ return '<span class="nm-nl-g13-card sq' + (v === p.ref.v ? ' hi' : '') + '" style="height:11mm;width:8mm;min-width:8mm">' + v + '</span>'; }).join('') + '</div>';
       return K.nlCard(K.nlStage(ends + cards), K.nlAnsBox(K.lk('째', '', '')));
     }
     var strip = stripSq(p.total, function(i){ var pos = p.from === 'left' ? i + 1 : p.total - i; return p.kind === 'ordinal' ? pos === p.n : pos <= p.n; });
@@ -361,7 +377,7 @@ def('g13OrdRow', {
 /* ── 크기 비교 ── */
 def('g13Cmp', {
   visual: function(p, K){
-    var big = '<div class="nm-nl-g13-row" style="align-items:center;gap:5mm"><span class="nm-nl-g13-big">' + p.left + '</span><span class="nm-nl-g13-big" style="font-weight:600">○</span><span class="nm-nl-g13-big">' + p.right + '</span></div>';
+    var big = '<div class="nm-nl-g13-row" style="align-items:center;gap:5mm"><span class="nm-nl-g13-big">' + p.left + '</span><span class="nm-nl-g13-big sign" style="font-weight:600">○</span><span class="nm-nl-g13-big">' + p.right + '</span></div>';
     var sent = '';
     if(p.ask === 'word'){
       var l = lg(K), words = K.lk('(큽니다, 작습니다)', '(bigger, smaller)', '(大于, 小于)');
@@ -376,17 +392,18 @@ def('g13Cmp', {
 var TRI = [[50, 14], [14, 76], [86, 76]];
 def('g13ArrowTri', {
   visual: function(p, K){
-    var s = '<svg class="nm-nl-g13-tri" viewBox="0 0 100 92" style="width:32mm;height:auto;display:block">';
+    /* 화면(.nm-g13-tr*)과 같은 색: 화살표 초록, 꼭짓점 남색 테두리, 빈 꼭짓점 금색 점선, 그릴 자리 점선은 금색 */
+    var s = '<svg class="nm-nl-g13-tri nm-obj-svg" viewBox="0 0 100 92" style="width:32mm;height:auto;display:block">';
     function arrow(a, b){
       var A = TRI[a], B = TRI[b], dx = B[0] - A[0], dy = B[1] - A[1], d = Math.sqrt(dx * dx + dy * dy), ux = dx / d, uy = dy / d, r = 12.5;
       var x1 = A[0] + ux * r, y1 = A[1] + uy * r, x2 = B[0] - ux * r, y2 = B[1] - uy * r, hx = x2 - ux * 6.5, hy = y2 - uy * 6.5, nx = -uy * 3.8, ny = ux * 3.8;
-      return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + hx + '" y2="' + hy + '" stroke="#000" stroke-width="2.2"/><polygon points="' + x2 + ',' + y2 + ' ' + (hx + nx) + ',' + (hy + ny) + ' ' + (hx - nx) + ',' + (hy - ny) + '" fill="#000"/>';
+      return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + hx + '" y2="' + hy + '" stroke="#2E9E6B" stroke-width="2.2" stroke-linecap="round"/><polygon points="' + x2 + ',' + y2 + ' ' + (hx + nx) + ',' + (hy + ny) + ' ' + (hx - nx) + ',' + (hy - ny) + '" fill="#2E9E6B"/>';
     }
-    [[0, 1], [0, 2], [1, 2]].forEach(function(e){ if(p.amode === 'draw') s += '<line x1="' + TRI[e[0]][0] + '" y1="' + TRI[e[0]][1] + '" x2="' + TRI[e[1]][0] + '" y2="' + TRI[e[1]][1] + '" stroke="#000" stroke-width="1.2" stroke-dasharray="3 2.4"/>'; });
+    [[0, 1], [0, 2], [1, 2]].forEach(function(e){ if(p.amode === 'draw') s += '<line x1="' + TRI[e[0]][0] + '" y1="' + TRI[e[0]][1] + '" x2="' + TRI[e[1]][0] + '" y2="' + TRI[e[1]][1] + '" stroke="#C9A063" stroke-width="1.4" stroke-dasharray="3 2.4"/>'; });
     if(p.amode === 'fill') p.arrows.forEach(function(a){ s += arrow(a[0], a[1]); });
     TRI.forEach(function(q, i){
       var v = p.amode === 'draw' ? p.vals[i] : (p.pre && p.pre[i] != null ? p.pre[i] : null);
-      s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="11" fill="#fff" stroke="#000" stroke-width="1.8"' + (v == null ? ' stroke-dasharray="3 2"' : '') + '/>' + (v == null ? '' : '<text x="' + q[0] + '" y="' + (q[1] + 4.6) + '" text-anchor="middle" font-size="13" font-weight="800" fill="#000" stroke="none">' + v + '</text>');
+      s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="11" fill="' + (v == null ? '#fffaf0' : '#fff') + '" stroke="' + (v == null ? '#C9A063' : '#0E2C57') + '" stroke-width="1.8"' + (v == null ? ' stroke-dasharray="3 2"' : '') + '/>' + (v == null ? '' : '<text x="' + q[0] + '" y="' + (q[1] + 4.6) + '" text-anchor="middle" font-size="13" font-weight="800" style="fill:#0E2C57" stroke="none">' + v + '</text>');
     });
     s += '</svg>';
     var bank = '';
@@ -404,7 +421,7 @@ def('g13ArrowTri', {
 def('g13Make', {
   visual: function(p, K){
     var fixed = ''; for(var i = 0; i < p.fixed; i++) fixed += '<span class="nm-nl-g">' + K.nlObjHtml(p.emoji) + '</span>';
-    return K.nlCard(K.nlStage('<div class="nm-nl-row" style="font-size:24px;gap:1mm;flex-wrap:wrap">' + fixed + '</div><div style="height:11mm;width:58mm;border:1.2px dashed #777;border-radius:2mm"></div>'), K.nlAnsBox(K.EA));
+    return K.nlCard(K.nlStage('<div class="nm-nl-row" style="font-size:24px;gap:1mm;flex-wrap:wrap">' + fixed + '</div><div class="nm-nl-g13-wbox"></div>'), K.nlAnsBox(K.EA));
   },
   label: function(){ return null; }
 });

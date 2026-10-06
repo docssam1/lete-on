@@ -1,7 +1,7 @@
 /* G1-10-12호 인쇄 — window.NM_NL_PRINT['위젯이름']={visual(p,K), label(p,K), ask(p,K)} (K = exam.js nlPrintKit).
    visual = HTML 문자열(K.nlCard(K.nlStage(...), K.nlAnsBox(K.EA)) 패턴), label = 정답지 말(null 이면 숫자 그대로),
    ask = 물음 줄. 열린 활동은 label 에 "여러 정답 가능, 예: …" 한 줄. 필요한 CSS 는 이 파일이 직접 넣는다(클래스 nm-nl-g1012-…).
-   흑백 레이저에서도 선이 또렷하게(진한 선 · 1.3px 이상), 한 칸(95×55mm)을 넘치지 않는 크기로. drill.html·ws.html 은 widgets 를 안 싣는다 —
+   색은 화면 위젯(10-12.css)과 같은 팔레트로 칠하되(print-color-adjust:exact) 흑백 레이저에서도 선이 또렷하게(진한 선 · 1.3px 이상), 한 칸(95×55mm)을 넘치지 않는 크기로. drill.html·ws.html 은 widgets 를 안 싣는다 —
    이 파일은 widgets.js 에 기대지 않고 engine/threads/g1-10-12.js 의 window.NM_G1012 만 쓴다. */
 (function () {
   'use strict';
@@ -17,94 +17,114 @@
     if (document.getElementById('nm-g1012-print-css')) return;
     const st = document.createElement('style'); st.id = 'nm-g1012-print-css';
     st.textContent = `
-.${X}-txt{font-size:12.5px;font-weight:700;line-height:2.05;text-align:left;color:#1F2A3A;max-width:74mm;word-break:keep-all}
-.${X}-bx{display:inline-block;width:8mm;height:6.4mm;border:1.4px solid #1F2A3A;border-radius:1.5mm;vertical-align:middle;margin:0 .6mm;background:#fff;box-sizing:border-box}
+/* 색은 화면(10-12.css · styles.css 토큰)과 같은 팔레트: 글 #1A2233 · 수 #0E2C57 · 카드·칸 선 #16417C · 연산·점선 #C9A063 ·
+   종이 #fffaf0/#f7ecd2/#fffdf7 · 지움 ✕ #c0392b · 저울·주머니 #8a6d3b/#a08a56/#b89a5b · 가르기 틀은 화면의 skin 6색.
+   흑백 레이저: 칸·카드 선 #16417C 와 수 #0E2C57 은 검정에 가깝게 남고, 종이 바탕은 옅은 회색으로만 남는다. */
+.${X}-txt,.${X}-bx,.${X}-chipbox,.${X}-c,.${X}-pi,.${X}-fact,.${X}-ul,.${X}-card,.${X}-sg td,.${X}-tab td,.${X}-plate .dish,.${X}-bag .nk,.${X}-bag .bd,
+.${X}-star,.${X}-vert,.${X}-dice,.${X}-dice i,.${X}-prow,.${X}-pf,.${X}-pf-given,.${X}-gg td,.${X}-es{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.${X}-txt{font-size:12.5px;font-weight:700;line-height:2.05;text-align:left;color:#1A2233;max-width:74mm;word-break:keep-all;background:#f7ecd2;border-radius:2mm;padding:.4mm 2mm;box-sizing:border-box}
+.${X}-bx{display:inline-block;width:8mm;height:6.4mm;border:1.4px solid #16417C;border-radius:1.5mm;vertical-align:middle;margin:0 .6mm;background:#fffaf0;box-sizing:border-box}
 .${X}-bx.dash{border-style:dashed}
 .${X}-bx.sm{width:6.6mm;height:6mm}
 .${X}-bx.wd{width:11mm}
-.${X}-chips{display:flex;gap:1.8mm;justify-content:center;align-items:center;flex-wrap:wrap}
-.${X}-chipbox{border:1.3px dashed #1F2A3A;border-radius:2mm;padding:.8mm 2.2mm;display:flex;gap:1.8mm;align-items:center;font-size:12px;font-weight:800}
-.${X}-chipbox i{font-style:normal;font-size:9px;color:#555;font-weight:700;margin-right:.6mm}
-.${X}-c{display:inline-grid;place-items:center;min-width:6.2mm;height:6.2mm;border:1.3px solid #1F2A3A;border-radius:50%;font-size:13px;font-weight:800;box-sizing:border-box;padding:0 .4mm;line-height:1}
+.${X}-chips{display:flex;gap:1.8mm;justify-content:center;align-items:center;flex-wrap:wrap;color:#0E2C57}
+.${X}-chipbox{border:1.4px dashed #C9A063;border-radius:2mm;padding:.8mm 2.2mm;display:flex;gap:1.8mm;align-items:center;font-size:12px;font-weight:800;background:#fffaf0}
+.${X}-chipbox i{font-style:normal;font-size:9px;color:#4a5468;font-weight:700;margin-right:.6mm}
+.${X}-c{display:inline-grid;place-items:center;min-width:6.2mm;height:6.2mm;border:1.3px solid #16417C;border-radius:50%;font-size:13px;font-weight:800;box-sizing:border-box;padding:0 .4mm;line-height:1;background:#fff;color:#0E2C57}
 .${X}-c.sq{border-radius:1.3mm}
 .${X}-pic{display:flex;flex-direction:column;align-items:center;gap:.7mm}
 .${X}-pr{display:flex;align-items:center;justify-content:center;gap:.3mm;flex-wrap:wrap}
 .${X}-pi{position:relative;display:inline-block;font-size:19px;line-height:1;padding:.2mm}
 .${X}-pi svg{display:block;width:1em;height:1em}
 .${X}-pi.gone{opacity:.45}
-.${X}-pi.gone::after{content:'✕';position:absolute;inset:0;display:grid;place-items:center;font-size:.9em;font-weight:900;color:#000;opacity:1}
-.${X}-pi.aside{outline:1.3px dashed #000;outline-offset:.2mm;border-radius:1.5mm}
-.${X}-plus{font-size:15px;font-weight:900;margin:0 1mm;color:#000}
+.${X}-pi.gone::after{content:'✕';position:absolute;inset:0;display:grid;place-items:center;font-size:.9em;font-weight:900;color:#c0392b;opacity:1}
+.${X}-pi.aside{outline:1.4px dashed #C9A063;outline-offset:.2mm;border-radius:1.5mm;background:rgba(255,226,140,.3)}
+.${X}-plus{font-size:15px;font-weight:900;margin:0 1mm;color:#C9A063}
 .${X}-sm .${X}-pi{font-size:13px}
 .${X}-sm .${X}-plus{font-size:11px;margin:0 .6mm}
 .${X}-facts{display:grid;grid-template-columns:1fr 1fr;gap:1.6mm;width:70mm}
-.${X}-fact{display:flex;align-items:center;gap:1.4mm;border:1.3px solid #1F2A3A;border-radius:2mm;padding:1mm 1.6mm;font-size:10.5px;font-weight:700;line-height:1.25;text-align:left}
+.${X}-fact{display:flex;align-items:center;gap:1.4mm;border:1.3px solid #C9A063;border-radius:2mm;padding:1mm 1.6mm;font-size:10.5px;font-weight:700;line-height:1.25;text-align:left;background:#fffaf0;color:#1A2233}
 .${X}-fact .${X}-pi{font-size:20px;flex:none}
-.${X}-sent{font-size:12.5px;font-weight:700;line-height:2.3;text-align:center;max-width:72mm;word-break:keep-all}
-.${X}-ul{display:inline-block;position:relative;border-bottom:1.6px solid #000;padding:0 .8mm;margin:0 .3mm}
-.${X}-ul sup{position:absolute;left:-.5mm;top:-3.2mm;font-size:9px;font-weight:800}
+.${X}-sent{font-size:12.5px;font-weight:700;line-height:2.3;text-align:center;max-width:72mm;word-break:keep-all;color:#1A2233}
+.${X}-ul{display:inline-block;position:relative;border-bottom:1.8px solid #C9A063;background:rgba(255,226,140,.28);border-radius:1.4mm 1.4mm .3mm .3mm;padding:0 .8mm;margin:0 .3mm;color:#0E2C57}
+.${X}-ul sup{position:absolute;left:-.5mm;top:-3.2mm;font-size:9px;font-weight:900;color:#C9A063}
 .${X}-cards{display:flex;gap:1.6mm;justify-content:center;width:100%}
-.${X}-card{flex:1 1 0;max-width:23mm;min-width:0;border:1.3px solid #1F2A3A;border-radius:2mm;padding:1mm 1mm;display:flex;flex-direction:column;align-items:center;gap:.8mm;font-size:10px;font-weight:700;line-height:1.25;text-align:center;box-sizing:border-box}
-.${X}-card b{font-size:12px;font-weight:900}
-.${X}-card .${X}-no{font-size:11px;font-weight:800}
-.${X}-eq{font-size:16px;font-weight:900;letter-spacing:.3px;white-space:nowrap}
+.${X}-card{flex:1 1 0;max-width:23mm;min-width:0;border:1.3px solid #16417C;border-radius:2mm;padding:1mm 1mm;display:flex;flex-direction:column;align-items:center;gap:.8mm;font-size:10px;font-weight:700;line-height:1.25;text-align:center;box-sizing:border-box;background:#fff;color:#1A2233}
+.${X}-card b{font-size:12px;font-weight:900;color:#0E2C57}
+.${X}-card .no{font-size:11px;font-weight:800;color:#C9A063}
+.${X}-card .${X}-pic{background:#fffaf0;border-radius:1.4mm;padding:.3mm .6mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.${X}-eq{font-size:16px;font-weight:900;letter-spacing:.3px;white-space:nowrap;color:#0E2C57}
 .${X}-sg{border-collapse:collapse}
-.${X}-sg td{border:1.3px solid #1F2A3A;width:7mm;height:7mm;text-align:center;padding:0;line-height:1}
+.${X}-sg td{border:1.3px solid #C9A063;width:7mm;height:7mm;text-align:center;padding:0;line-height:1;background:#fffaf0}
 .${X}-sg td .${X}-pi{font-size:17px;padding:0}
 .${X}-tab{border-collapse:collapse;margin-top:.6mm}
-.${X}-tab td{border:1.3px solid #1F2A3A;min-width:9.5mm;height:7mm;text-align:center;font-size:13px;font-weight:800;padding:0 .5mm}
+.${X}-tab td{border:1.3px solid #16417C;min-width:9.5mm;height:7mm;text-align:center;font-size:13px;font-weight:800;padding:0 .5mm;color:#0E2C57;background:#eef3fb}
+.${X}-tab tr:first-child td{background:#fffaf0}
 .${X}-tab td .${X}-pi{font-size:17px}
 .${X}-tab td.em{height:7.4mm}
+.${X}-tab td.em:empty{background:#fff}
 .${X}-plates{display:flex;gap:6mm;justify-content:center}
 .${X}-plate{display:flex;flex-direction:column;align-items:center;gap:.4mm;width:27mm}
 .${X}-plate .items{display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-end;min-height:12mm}
-.${X}-plate .dish{width:100%;height:2.2mm;border:1.3px solid #1F2A3A;border-radius:50%;background:#eee;box-sizing:border-box}
+.${X}-plate .dish{width:100%;height:2.6mm;border:1.4px solid #8a6d3b;border-radius:50%;background:#d8cba6;box-sizing:border-box}
 .${X}-bags{display:flex;gap:3mm;justify-content:center}
 .${X}-bag{width:15mm;display:flex;flex-direction:column;align-items:center}
-.${X}-bag .nk{width:6mm;height:2mm;border:1.3px solid #000;border-bottom:none;border-radius:2mm 2mm 0 0}
-.${X}-bag .bd{width:100%;min-height:12mm;border:1.3px solid #000;border-radius:2mm 2mm 4mm 4mm;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;padding:.6mm;box-sizing:border-box}
+.${X}-bag .nk{width:6mm;height:2mm;border:1.4px solid #8a6d3b;border-bottom:none;border-radius:2mm 2mm 0 0;background:#e7d3a5}
+.${X}-bag .bd{width:100%;min-height:12mm;border:1.4px solid #8a6d3b;border-radius:2mm 2mm 4mm 4mm;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;padding:.6mm;box-sizing:border-box;background:#f8e9c4}
 .${X}-bag .bd .${X}-pi{font-size:14px}
 .${X}-star{position:relative;width:15mm;height:15mm;display:grid;place-items:center}
 .${X}-star svg{position:absolute;inset:0;width:100%;height:100%}
-.${X}-star svg polygon{fill:#fff;stroke:#000;stroke-width:1.6;stroke-linejoin:round}
-.${X}-star b{position:relative;font-size:15px;font-weight:900;padding-top:1mm}
-.${X}-vert{display:inline-grid;grid-template-columns:7mm 12mm;grid-template-rows:auto auto auto auto;gap:.4mm 1mm;align-items:center;font-size:20px;font-weight:900;font-variant-numeric:tabular-nums}
+.${X}-star svg polygon{fill:#ffd23f;stroke:#a67c00;stroke-width:1.8;stroke-linejoin:round}
+.${X}-star b{position:relative;font-size:15px;font-weight:900;padding-top:1mm;color:#6b4a00}
+.${X}-vert{display:inline-grid;grid-template-columns:7mm 12mm;grid-template-rows:auto auto auto auto;gap:.4mm 1mm;align-items:center;font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:#0E2C57}
 .${X}-vert .n{grid-column:2;text-align:right;min-height:7.4mm;display:flex;align-items:center;justify-content:flex-end}
-.${X}-vert .o{grid-column:1;grid-row:2;text-align:center}
-.${X}-vert .ln{grid-column:1 / 3;height:0;border-top:1.8px solid #000}
+.${X}-vert .o{grid-column:1;grid-row:2;text-align:center;color:#C9A063}
+.${X}-vert .ln{grid-column:1 / 3;height:0;border-top:1.8px solid #0E2C57}
 .${X}-vert .${X}-bx{width:10mm;height:7.4mm;margin:0}
 .${X}-lines{display:flex;flex-direction:column;gap:1.6mm;align-items:center}
-.${X}-line{display:flex;align-items:center;gap:1.4mm;font-size:15px;font-weight:900}
-.${X}-line .no{font-size:10px;color:#555;width:4mm;text-align:right}
-.${X}-dice{display:inline-flex;flex-wrap:wrap;gap:.9mm;max-width:11mm;padding:1mm;border:1.3px solid #000;border-radius:1.6mm;vertical-align:middle}
-.${X}-dice i{width:2.4mm;height:2.4mm;border-radius:50%;background:#000;display:block}
-.${X}-goal{display:flex;align-items:center;gap:2mm;font-size:16px;font-weight:900}
+.${X}-line{display:flex;align-items:center;gap:1.4mm;font-size:15px;font-weight:900;color:#0E2C57}
+.${X}-line .no{font-size:10px;color:#4a5468;width:4mm;text-align:right}
+.${X}-line > .${X}-c{border:1.8px dashed #C9A063;background:#fffaf0}
+.${X}-dice{display:inline-flex;flex-wrap:wrap;gap:.9mm;max-width:11mm;padding:1mm;border:1.4px solid #16417C;border-radius:1.6mm;vertical-align:middle;background:#fff}
+.${X}-dice i{width:2.4mm;height:2.4mm;border-radius:50%;background:#0E2C57;display:block}
+.${X}-goal{display:flex;align-items:center;gap:2mm;font-size:16px;font-weight:900;color:#0E2C57}
 .${X}-purse{display:flex;flex-direction:column;gap:1.4mm}
-.${X}-prow{display:flex;align-items:center;gap:1.6mm;border:1.3px solid #1F2A3A;border-radius:2mm;padding:.8mm 1.6mm}
+.${X}-prow{display:flex;align-items:center;gap:1.6mm;border:1.3px solid #C9A063;border-radius:2mm;padding:.8mm 1.6mm;background:#fffdf7}
 .${X}-prow .who{font-size:21px;line-height:1;flex:none}
 .${X}-prow .who svg{width:1em;height:1em}
 .${X}-prow .co{display:flex;flex-wrap:wrap;gap:.2mm;flex:1}
 .${X}-prow .${X}-pi{font-size:17px}
 .${X}-pf{position:relative;width:46mm;aspect-ratio:100/80;--pfw:46mm}
 .${X}-pf-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.${X}-pf-b{fill:#fff;stroke:#000;stroke-width:1.6;stroke-linejoin:round}
-.${X}-pf-h{fill:#fff;stroke:#000;stroke-width:1.6}
-.${X}-pf-l{fill:none;stroke:#000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.${X}-skin-0{--pf-a:#ff8a80;--pf-s:#8e1b1b}
+.${X}-skin-1{--pf-a:#ffc58a;--pf-s:#9a4a00}
+.${X}-skin-2{--pf-a:#a8d8ff;--pf-s:#16417c}
+.${X}-skin-3{--pf-a:#9be39b;--pf-s:#1f5c25}
+.${X}-skin-4{--pf-a:#d7c2ff;--pf-s:#4a2f8a}
+.${X}-skin-5{--pf-a:#ffc1de;--pf-s:#8c2a5e}
+.nm-nl .${X}-pf-svg .${X}-pf-b{fill:var(--pf-a,#ff8a80);stroke:var(--pf-s,#8e1b1b);stroke-width:1.8;stroke-linejoin:round}
+.nm-nl .${X}-pf-svg .${X}-pf-h{fill:#fffdf7;stroke:var(--pf-s,#8e1b1b);stroke-width:1.8}
+.nm-nl .${X}-pf-svg .${X}-pf-l{fill:none;stroke:var(--pf-s,#8e1b1b);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .${X}-pf-cell,.${X}-pf-whole{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center}
 .${X}-pf-cell .${X}-bx,.${X}-pf-given{width:7.6mm;height:6.4mm;margin:0;font-size:14px}
-.${X}-pf-given{display:grid;place-items:center;border:1.4px solid #000;border-radius:1.5mm;background:#fff;font-weight:900;box-sizing:border-box}
-.${X}-pf-whole b{font-size:16px;font-weight:900}
-.nm-nl .${X}-pf-svg ellipse.${X}-pf-b,.nm-nl .${X}-pf-svg circle.${X}-pf-h,.nm-nl .${X}-pf-svg rect.${X}-pf-b,.nm-nl .${X}-pf-svg polygon.${X}-pf-b{fill:#fff;stroke:#000}
-.nm-nl .${X}-pf-svg .${X}-pf-b{fill:#f1f1f1}
-.nm-nl .${X}-pf-svg circle.${X}-pf-h{fill:#fff}
+.${X}-pf-cell .${X}-bx{background:#fff}
+.${X}-pf-given{display:grid;place-items:center;border:1.4px solid #16417C;border-radius:1.5mm;background:#fff;font-weight:900;box-sizing:border-box;color:#0E2C57}
+.${X}-pf-whole b{font-size:16px;font-weight:900;color:#0E2C57}
 .${X}-ways{display:flex;flex-direction:column;gap:1.4mm;align-items:center}
-.${X}-way{display:flex;align-items:center;gap:1mm;font-size:14px;font-weight:900}
+.${X}-way{display:flex;align-items:center;gap:1mm;font-size:14px;font-weight:900;color:#0E2C57}
 .${X}-gg{border-collapse:collapse}
-.${X}-gg td{border:1.8px solid #000;width:8.4mm;height:8.4mm;text-align:center;font-size:15px;font-weight:900;padding:0}
+.${X}-gg td{border:1.6px solid #16417C;width:8.4mm;height:8.4mm;text-align:center;font-size:15px;font-weight:900;padding:0;color:#0E2C57;background:#fff}
+.${X}-target{font-size:11px;font-weight:800;color:#4a5468}
+.${X}-target b{font-size:15px;color:#0E2C57}
 .${X}-es{width:64mm;height:auto;display:block}
-.nm-nl svg.${X}-es line,.nm-nl svg.${X}-es path{stroke:#1F2A3A;stroke-width:1.5;fill:none;stroke-linecap:round}
-.nm-nl svg.${X}-es path.pan{fill:#fff}
-.nm-nl svg.${X}-es text{font-size:11.5px;font-weight:800;fill:#000;text-anchor:middle}
+.nm-nl svg.${X}-es .bm{stroke:#8a6d3b;stroke-width:2.6;fill:none;stroke-linecap:round}
+.nm-nl svg.${X}-es .po{stroke:#a08a56;stroke-width:2.6;fill:none;stroke-linecap:round}
+.nm-nl svg.${X}-es .st{stroke:#8a6d3b;stroke-width:1.2;fill:none}
+.nm-nl svg.${X}-es .pan{fill:#f1e1b3;stroke:#b89a5b;stroke-width:1.6;stroke-linejoin:round}
+.nm-nl svg.${X}-es .hub{fill:#6b4a1e}
+.nm-nl svg.${X}-es text{font-size:11.5px;font-weight:800;fill:#0E2C57;text-anchor:middle}
+.nm-nl svg.${X}-es text .op{fill:#C9A063;font-weight:900}
+.nm-nl svg.${X}-es text .blank{fill:#0E2C57;font-size:14px;font-weight:900}
 `;
     document.head.appendChild(st);
   })();
@@ -232,7 +252,7 @@
           return `<div class="${X}-bag"><div class="nk"></div><div class="bd">${it}</div></div>`;
         }).join('') + '</div>';
       } else inner = picHtml(K, null, p.rows, p.kind === 'take' ? 'aside' : 'gone');
-      return K.nlCard(K.nlStage(inner), K.nlAnsBox(K.EA));
+      return K.nlCard(K.nlStage(inner), K.nlAnsBox(p.unit ? K.pickL(p.unit) : K.EA));   /* 동물 이야기는 '마리'(2026-10-05) */
     },
     label() { return null; },
     ask(p, K) { return K.pickL(p.prompt); }
@@ -342,11 +362,13 @@
       if (p.distinct > 1) {
         const ways = Array.from({ length: p.distinct }, (_, i) => {
           const cells = Array.from({ length: p.parts }, () => bx('sm')).join('<span class="' + X + '-eq">+</span>');
-          return `<div class="${X}-way"><span class="no" style="font-size:10px;color:#555">${CIRC[i]}</span>${cells}<span class="${X}-eq">=</span><b>${p.whole}</b></div>`;
+          return `<div class="${X}-way"><span class="no" style="font-size:10px;color:#4a5468">${CIRC[i]}</span>${cells}<span class="${X}-eq">=</span><b>${p.whole}</b></div>`;
         }).join('');
         body = `<div class="${X}-ways">${ways}</div>`;
       } else {
-        body = g.partsFrame(X, p, i => (p.given && p.given[i] !== undefined ? `<b class="${X}-pf-given">${p.given[i]}</b>` : bx()), () => `<b>${p.whole}</b>`);
+        body = g.partsFrame(X, p, i => (p.given && p.given[i] !== undefined ? `<b class="${X}-pf-given">${p.given[i]}</b>` : bx()), () => `<b>${p.whole}</b>`)
+          /* 틀 svg 를 exam.js 의 "선은 검정" 규칙에서 빼서 화면과 같은 skin 색(몸 채움 · 윤곽선)으로 */
+          .replace(`class="${X}-pf-svg"`, `class="${X}-pf-svg nm-obj-svg"`);
       }
       return K.nlCard(K.nlStage(body));
     },
@@ -366,7 +388,7 @@
   P.g12_gridGroup = {
     visual(p, K) {
       const t = '<table class="' + X + '-gg">' + p.grid.map(r => '<tr>' + r.map(v => `<td>${v}</td>`).join('') + '</tr>').join('') + '</table>';
-      return K.nlCard(K.nlStage(`<div style="font-size:11px;font-weight:800">${K.esc(K.lk('목표', 'Target', '目标'))} <b style="font-size:15px">${p.target}</b></div>` + t));
+      return K.nlCard(K.nlStage(`<div class="${X}-target">${K.esc(K.lk('목표', 'Target', '目标'))} <b>${p.target}</b></div>` + t));
     },
     label(p, K) {
       const ex = (p.solutionGroups || []).map(g => g.map(c => `(${c[0]},${c[1]})`).join('')).join(' · ');
@@ -379,12 +401,13 @@
     visual(p, K) {
       const pan = (x, pn) => {
         const sym = pn.op ? (pn.op === '-' ? MINUS : '+') : '○';
-        return `<line x1="${x}" y1="22" x2="${x - 20}" y2="60"/><line x1="${x}" y1="22" x2="${x + 20}" y2="60"/>` +
+        return `<line class="st" x1="${x}" y1="22" x2="${x - 20}" y2="60"/><line class="st" x1="${x}" y1="22" x2="${x + 20}" y2="60"/>` +
           `<path class="pan" d="M${x - 24} 60 L${x + 24} 60 L${x + 17} 70 L${x - 17} 70 Z"/>` +
-          `<text x="${x}" y="84">${pn.a} ${sym} ${pn.b}</text>`;
+          `<text x="${x}" y="84">${pn.a} <tspan class="${pn.op ? 'op' : 'blank'}">${sym}</tspan> ${pn.b}</text>`;
       };
-      const svg = `<svg class="${X}-es" viewBox="0 0 180 92" role="img" aria-label="${K.esc(K.lk('양팔저울', 'Balance scale', '天平'))}">` +
-        `<line x1="22" y1="22" x2="158" y2="22" style="stroke-width:2.6"/><line x1="90" y1="22" x2="90" y2="78"/><line x1="72" y1="78" x2="108" y2="78" style="stroke-width:2.6"/>` +
+      /* nm-obj-svg — exam.js 의 ".nm-nl svg:not(.nm-obj-svg) line/path → 검정" 규칙에서 빠져 화면 저울 색(막대 #8a6d3b · 기둥 #a08a56 · 접시 #b89a5b)을 쓴다 */
+      const svg = `<svg class="${X}-es nm-obj-svg" viewBox="0 0 180 92" role="img" aria-label="${K.esc(K.lk('양팔저울', 'Balance scale', '天平'))}">` +
+        `<line class="po" x1="90" y1="22" x2="90" y2="78"/><line class="po" x1="72" y1="78" x2="108" y2="78"/><line class="bm" x1="22" y1="22" x2="158" y2="22"/><circle class="hub" cx="90" cy="22" r="3.2"/>` +
         pan(46, p.pans[0]) + pan(134, p.pans[1]) + '</svg>';
       return K.nlCard(K.nlStage(svg));
     },

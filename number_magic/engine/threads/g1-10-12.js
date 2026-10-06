@@ -467,7 +467,7 @@
             `There are ${N} ${A.en}. There are ${k} more ${B.en} than ${A.en}. How many animals are there in all?`,
             `有${N}${A.zc}${A.zh}。${B.zh}比${A.zh}多${k}${B.zc}。一共有几${B.zc}？`),
           answer: N + N + k, answerType: 'number', widget: 'g10_storyRows', layout: 'rows',
-          rows: [{ tok: a, n: N }], kind: 'more', keyFields: ['rows', 'kind', 'layout']
+          rows: [{ tok: a, n: N }], kind: 'more', unit: L3('마리', '', B.zc), keyFields: ['rows', 'kind', 'layout']
         };
       }
     }

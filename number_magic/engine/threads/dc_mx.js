@@ -291,6 +291,59 @@ NM_TGEN['dc1_decAddSub'] = function(params, rng) {
 
 /* ── DC2 — 소수 곱셈 ──────────────────────────────────────────── */
 NM_TGEN['dc2_decMul'] = function(params, rng) {
+  /* ── (소수)×(자연수)·(자연수)×(소수)·(소수)×(소수) — 가로셈 'h'·세로셈 'v' (2026-10-05 신규, 기적 98·99) ──
+     가로셈: 소수점을 떼고 자연수로 곱한 뒤 10·100 으로 나눈다 — 1.2 × 0.4 = □ ÷ □ = □.□ (48 ÷ 100 = 0.48).
+     세로셈: 일반 세로셈 상자(오른쪽 끝 맞춤)에 곱하고 소수점을 찍는다 — 답은 소수 그대로(numpad).
+     곱의 끝자리가 0 이면(2.5×4=10.0) 소수 자릿수가 줄어 "자릿수 합만큼 옮긴다"가 흐려지므로 뺀다.
+     소수 첫째 자리가 0 인 곱(0.2×0.3=0.06)은 가로셈 빈칸(정수)에 06 을 못 쓰므로 가로셈에서만 뺀다. */
+  const mmode = params && params.mode;
+  if (mmode === 'decNat' || mmode === 'natDec' || mmode === 'decDec') {
+    const vert = params.orient === 'v';
+    const fmt = (n, k) => k ? (n / Math.pow(10, k)).toFixed(k) : String(n);
+    let ai, ak, bi, bk;
+    for (let t = 0; t < 400; t++) {
+      if (mmode === 'decNat') {        /* 2.4 × 3 · 0.35 × 6 · 12.6 × 4 */
+        ak = rng() < 0.6 ? 1 : 2; ai = ak === 1 ? R(rng, 11, 199) : R(rng, 11, 299); bk = 0; bi = R(rng, 2, rng() < 0.75 ? 9 : 25);
+      } else if (mmode === 'natDec') { /* 6 × 0.4 · 15 × 0.35 · 8 × 2.7 */
+        ai = R(rng, 2, rng() < 0.7 ? 9 : 40); ak = 0; bk = rng() < 0.6 ? 1 : 2; bi = bk === 1 ? R(rng, 2, 59) : R(rng, 11, 99);
+      } else {                         /* 1.2 × 0.4 · 2.5 × 1.3 · 0.35 × 1.2 */
+        ak = 1; ai = R(rng, 2, 59); bk = rng() < 0.7 ? 1 : 2; bi = bk === 1 ? R(rng, 2, 39) : R(rng, 11, 99);
+        if (rng() < 0.5) { const ti = ai, tk = ak; ai = bi; ak = bk; bi = ti; bk = tk; }
+      }
+      if ((ak && ai % 10 === 0) || (bk && bi % 10 === 0)) continue;   /* 0.40 처럼 끝자리 0 인 소수는 쓰지 않는다 */
+      const prod = ai * bi, kk = ak + bk;
+      if (prod % 10 === 0) continue;
+      const pStr = fmt(prod, kk), frac = pStr.split('.')[1] || '';
+      if (!vert && frac[0] === '0') continue;
+      break;
+    }
+    const aStr = fmt(ai, ak), bStr = fmt(bi, bk), prod = ai * bi, kk = ak + bk, sc = Math.pow(10, kk);
+    const pStr = fmt(prod, kk), pInt = Math.floor(prod / sc), pFrac = pStr.split('.')[1];
+    const head = `${aStr} \\times ${bStr}`;
+    const steps = [
+      { tex: `${ai} \\times ${bi} = \\square`, blank: prod },
+      { tex: `\\square \\div ${sc} = \\square.\\square`, blank: [prod, pInt, +pFrac] }   /* 곱을 미리 보여 주지 않는다 */
+    ];
+    const P = vert ? {
+      ko: `세로셈으로 계산해요: ${aStr} × ${bStr}. 자연수처럼 곱한 뒤, 두 수의 소수 자릿수를 더한 만큼 곱의 소수점을 왼쪽으로 옮겨 찍어요.`,
+      en: `Work out ${aStr} × ${bStr} in columns. Multiply as whole numbers, then place the point so the product has as many decimal places as both numbers together.`,
+      zh: `用竖式计算${aStr}×${bStr}。先按整数相乘，再按两个因数小数位数之和点上积的小数点。`
+    } : {
+      ko: `가로셈으로 계산해요: ${aStr} × ${bStr}. 소수점을 떼고 자연수로 곱한 뒤, 소수 자릿수만큼 10·100으로 나눠요.`,
+      en: `Work out ${aStr} × ${bStr} across. Multiply without the points, then divide by 10 or 100 for the decimal places.`,
+      zh: `用横式计算${aStr}×${bStr}。去掉小数点按整数相乘，再按小数位数除以10或100。`
+    };
+    if (vert) return {
+      prompt: P, tex: `${head} = \\square`, answer: +pStr, answerType: 'number', widget: 'numpad',
+      orient: 'v', solution: steps
+    };
+    return {
+      prompt: P, tex: `${head} = \\square \\div \\square = \\square.\\square`,
+      answer: [prod, sc, pInt, +pFrac], answerType: 'steps', widget: 'steps', orient: 'h',
+      steps: [steps[0], { tex: `${head} = ${prod} \\div \\square = \\square.\\square`, blank: [sc, pInt, +pFrac] }],
+      solution: steps
+    };
+  }
   /* 두 가지 유형 중 랜덤 선택 */
   const variant = pick(rng, ['decDec', 'intDec']);
 
@@ -383,6 +436,136 @@ NM_TGEN['dc3_decDiv'] = function(params, rng) {
         { tex: `${n * scale} \\div ${d} = \\square`,                    blank: (n * scale) / d },
         { tex: `${(n * scale) / d} \\div ${scale} = ${w}.\\square`,     blank: digits }
       ]
+    };
+  }
+
+  /* ── (소수)÷(소수)·(자연수)÷(소수) — 가로셈(orient 'h')·세로셈(orient 'v') (2026-10-05 신규) ──
+     원장 "소수 나누기 교과 넣어야지. 직접 계산법과 가로셈 둘 다". 기적의 계산법 107~109단계
+     (소수의 나눗셈 ①②③)가 교과 칸에 없었다(창의 칸 C-33·DC5 만 있었음).
+       decSame : 자릿수가 같은 (소수)÷(소수)   2.4÷0.6=4 · 1.35÷0.45=3   — 몫은 자연수
+       decDiff : 자릿수가 다른 (소수)÷(소수)   6.72÷0.4=16.8             — 몫은 소수 한 자리
+       natDec  : (자연수)÷(소수)               12÷0.4=30 · 9÷0.25=36     — 나누어지는 수 뒤에 0 을 붙인다
+     가로셈은 "두 수의 소수점을 똑같이 옮긴 식"을 먼저 쓰고 나눈다. 세로셈은 인쇄에서 소수점이 있는
+     나눗셈 상자(divBox.dec — exam.js divBoxHtml)를 그리고, 화면 단계는 옮긴 수의 자리별 몫이다.
+     빈칸은 늘 정수(생성기 계약) — 소수 몫은 `\square.\square` 두 칸(자연수 부분, 소수 첫째 자리). */
+  const dmode = params && params.mode;
+  if (dmode === 'decSame' || dmode === 'decDiff' || dmode === 'natDec') {
+    const vert = params.orient === 'v';
+    const fmt  = (n, k) => (n / Math.pow(10, k)).toFixed(k);       /* 정수 n, 소수 k 자리 → "6.72" */
+    let aStr, bStr, k, bi, N, Q, qInt, qFrac = '';
+    /* 2026-10-05 원장 "제수가 배수가 되는 경우, 피제수가 배수가 되는 경우" — 지금까지는 늘 피제수가 제수의 배수
+       (4.8÷1.2=4, 몫 ≥ 1)였다. 제수가 피제수의 배수인 경우(1.2÷4.8=0.25 — 몫이 1보다 작아 0 을 붙여 가며 나눈다)를
+       자릿수가 같은·다른 레벨에 약 40% 섞는다. 배수 m 은 2·4·5·8 — 몫이 0.5·0.25·0.2·0.125 로 끝나고 소수 첫째 자리가 0 이 아니다. */
+    const recip = (dmode === 'decSame' || dmode === 'decDiff') && rng() < 0.4;
+    for (let t = 0; t < 400; t++) {
+      if (recip) {
+        const m = pick(rng, [2, 4, 5, 8]);
+        const aD = dmode === 'decSame' ? (rng() < 0.6 ? 1 : 2) : 2;   /* 피제수 소수 자릿수 */
+        const ai = dmode === 'decSame' ? R(rng, 2, aD === 1 ? 19 : 45) : R(rng, 2, 45);
+        if (ai % 10 === 0) continue;
+        const bRaw = ai * m;                                       /* 제수 × 10^aD */
+        if (dmode === 'decSame') {
+          if (bRaw % 10 === 0 || bRaw >= 100 * Math.pow(10, aD)) continue;  /* 같은 자릿수 */
+          k = aD; bi = bRaw;
+        } else {
+          if (bRaw % 10 !== 0 || bRaw % 100 === 0) continue;       /* 제수는 소수 한 자리(자릿수가 다른) */
+          k = 1; bi = bRaw / 10;
+          if (bi >= 100) continue;
+        }
+        aStr = fmt(ai, aD); bStr = fmt(bi, k);
+        const q1000 = 1000 / m;                                    /* 몫 = 1/m */
+        qInt = 0; qFrac = String(q1000).replace(/0+$/, '');
+        Q = 1 / m; N = 0;
+        break;
+      }
+      if (dmode === 'decSame') {
+        k  = rng() < 0.6 ? 1 : 2;
+        bi = k === 1 ? pick(rng, [2,3,4,5,6,7,8,9,12,13,14,15,16,18,21,24,25])
+                     : pick(rng, [2,3,4,5,6,7,8,9,12,14,15,16,18,24,25,35,45]);
+        Q  = R(rng, 2, k === 1 ? 19 : 12);
+        const ai = Q * bi;                                         /* 나누어지는 수 × 10^k */
+        if (ai % 10 === 0) continue;                               /* 끝자리 0 이면 자릿수가 줄어 "같은 자릿수"가 아니다 */
+        if (ai >= 100 * Math.pow(10, k)) continue;
+        aStr = fmt(ai, k); bStr = fmt(bi, k); N = ai; qInt = Q;
+      } else if (dmode === 'decDiff') {
+        k  = 1;
+        bi = pick(rng, [2,3,4,5,6,7,8,9,12,13,14,15,16,21,23,24,32]);
+        const qi = R(rng, 11, 199);                                /* 몫 × 10 */
+        if (qi % 10 === 0) continue;                               /* 몫은 소수 한 자리 */
+        const ai = qi * bi;                                        /* 나누어지는 수 × 100 */
+        if (ai % 10 === 0 || ai >= 10000) continue;               /* 소수 두 자리 그대로, 100 미만 */
+        aStr = fmt(ai, 2); bStr = fmt(bi, 1); N = ai;
+        qInt = Math.floor(qi / 10); qFrac = String(qi % 10); Q = qi / 10;
+      } else {                                                     /* natDec */
+        k  = rng() < 0.6 ? 1 : 2;
+        bi = k === 1 ? pick(rng, [2,3,4,5,6,8,12,15,16,25]) : pick(rng, [4,5,8,25,75,125]);
+        const a = R(rng, 2, 60), sc = a * Math.pow(10, k);
+        if (sc % bi) continue;
+        Q = sc / bi;
+        if (Q < 2 || Q > 400) continue;
+        if (bi % 10 === 0) continue;
+        aStr = String(a); bStr = fmt(bi, k); N = sc; qInt = Q;
+      }
+      break;
+    }
+    const aDec  = (aStr.split('.')[1] || '').length;
+    /* 뒤에 붙이는 0 — 자연수÷소수(자리가 모자람) 또는 몫이 피제수의 자리보다 길 때(1.5÷6=0.25 → 1.50) */
+    const aDigitsN = aStr.replace('.', '').length, p0n = aStr.indexOf('.') < 0 ? aStr.length : aStr.indexOf('.');
+    const zeros = Math.max(0, k - aDec, p0n + k + qFrac.length - aDigitsN);
+    /* 자리별 몫은 몫이 자연수가 되도록 키운 피제수로 — A × 10^(k + 몫의 소수 자릿수) */
+    N = Math.round(+aStr * Math.pow(10, k + qFrac.length));
+    /* 옮긴 나누어지는 수: 소수점을 k 자리 오른쪽으로 */
+    const movedStr = aDec > k ? fmt(Math.round(+aStr * Math.pow(10, aDec)), aDec - k)
+                              : String(Math.round(+aStr * Math.pow(10, k)));
+    const qTex  = qFrac ? `\\square.\\square` : `\\square`;
+    const ans   = qFrac ? [qInt, +qFrac] : qInt;
+    const head  = `${aStr} \\div ${bStr}`;
+    /* 첫 줄 — 소수점 옮기기. 옮긴 나누어지는 수가 자연수면 그것을, 소수면(6.72→67.2) 나누는 수를 빈칸으로. */
+    const moveStep = aDec > k
+      ? { tex: `${head} = ${movedStr} \\div \\square`, blank: bi }
+      : { tex: `${head} = \\square \\div ${bi}`,      blank: +movedStr };
+    const steps = [moveStep];
+    if (vert) {
+      /* 자리별 몫 — DV19 와 같은 규칙(몫이 서지 않는 앞자리는 건너뛰고, 나머지를 함께 적어 참인 식) */
+      const ns = String(N);
+      let cur = 0, started = false;
+      for (let i = 0; i < ns.length; i++) {
+        cur = cur * 10 + +ns[i];
+        if (cur < bi && !started) continue;
+        started = true;
+        const qi = Math.floor(cur / bi), ri = cur - qi * bi;
+        steps.push({ tex: ri ? `${cur} \\div ${bi} = \\square \\cdots ${ri}` : `${cur} \\div ${bi} = \\square`, blank: qi });
+        cur = ri;
+      }
+      steps.push({ tex: `${head} = ${qTex}`, blank: ans });
+    } else {
+      steps.push({ tex: `${movedStr} \\div ${bi} = ${qTex}`, blank: ans });
+    }
+    /* 가로셈 문항식은 옮긴 식까지 한 줄에 — 1.35 ÷ 0.45 = □ ÷ □ = □ (기적의 계산법 가로셈 꼴).
+       옮긴 나누어지는 수가 소수(14.07→140.7)면 그 수는 적어 주고 나누는 수만 빈칸(빈칸은 정수). */
+    const hTex = aDec > k ? `${head} = ${movedStr} \\div \\square = ${qTex}` : `${head} = \\square \\div \\square = ${qTex}`;
+    const hAns = (aDec > k ? [bi] : [+movedStr, bi]).concat(qFrac ? [qInt, +qFrac] : [qInt]);
+    if (!vert) steps[0] = aDec > k ? moveStep : { tex: `${head} = \\square \\div \\square`, blank: [+movedStr, bi] };
+    const qDigits = String(qInt) + qFrac;
+    return {
+      prompt: vert ? {
+        ko: `세로셈으로 계산해요: ${aStr} ÷ ${bStr}. 나누는 수가 자연수가 되도록 두 수의 소수점을 똑같이 옮겨요${zeros ? ' — 모자란 자리에는 0을 써요' : ''}. 몫의 소수점은 옮긴 소수점 위에 찍어요.`,
+        en: `Work out ${aStr} ÷ ${bStr} in the long-division box. Move both decimal points the same number of places so the divisor is whole${zeros ? ', writing 0 in any empty place' : ''}. The quotient's point goes right above the moved point.`,
+        zh: `用竖式计算${aStr}÷${bStr}。把两个数的小数点同样移动，使除数变成整数${zeros ? '，位数不够时补0' : ''}。商的小数点要和移动后的小数点对齐。`
+      } : {
+        ko: `가로셈으로 계산해요: ${aStr} ÷ ${bStr}. 두 수의 소수점을 똑같이 옮겨 나누는 수를 자연수로 만들어요${zeros ? ' — 모자란 자리에는 0을 붙여요' : ''}.`,
+        en: `Work out ${aStr} ÷ ${bStr} across. Move both decimal points the same number of places so the divisor is whole${zeros ? ' — add zeros where places run out' : ''}.`,
+        zh: `用横式计算${aStr}÷${bStr}。把两个数的小数点同样移动，使除数变成整数${zeros ? '，位数不够时补0' : ''}。`
+      },
+      tex: vert ? `${head} = ${qTex}` : hTex,
+      answer: vert ? ans : hAns,
+      answerType: 'steps',
+      widget: 'steps',
+      orient: vert ? 'v' : 'h',
+      steps,
+      solution: steps,
+      divBox: vert ? { a: aStr, b: bStr, q: qDigits,
+                       dec: { aStr, bStr, k, zeros, qInt: String(qInt), qFrac } } : undefined
     };
   }
 

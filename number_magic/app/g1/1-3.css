@@ -28,6 +28,8 @@
 .nm-g13-hand{width:34px;height:auto}
 .nm-g13-hands{display:inline-flex;gap:0;align-items:flex-end}.nm-g13-hands .nm-g13-hand{width:30px}
 .nm-g13-word{font-size:26px;font-weight:900;color:var(--blue-deep);letter-spacing:-.02em}
+.nm-g13-word.w-native{color:#2f8a4c}.nm-g13-word.w-sino{color:#c4581c}
+.nm-g13-hand{width:36px}
 .nm-g13-rfrow{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
 .nm-g13-rfcard{min-width:78px;height:72px;padding:4px 8px;display:grid;place-items:center;border-radius:18px;border:2.5px solid var(--line);background:#fff;box-shadow:0 4px 0 #e0dbd2;box-sizing:border-box}
 .nm-g13-rfcard.blank{border:3px dashed var(--gold-deep);background:#fffaf0;font-size:28px;font-weight:900;color:#b8860b}

@@ -43,7 +43,7 @@ window.__g1315 = async function (p, c, mode) {
   }
   switch (W) {
     case 'pyramid': { tap($$('.nm-py-choices button').find(b => b.textContent === String(p.answer))); return; }
-    case 'overlapSum': case 'balanceEq': case 'ruleTable': case 'numberTrain': case 'promiseBox': case 'rodNumeral':
+    case 'overlapSum': case 'balanceEq': case 'g15RuleTable': case 'numberTrain': case 'promiseBox': case 'rodNumeral':
       tap(choice(p.answer)); return;
     case 'weightPick': {
       const sol = p.solutions[0], used = {};
