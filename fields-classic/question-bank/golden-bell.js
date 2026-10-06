@@ -1,12 +1,12 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261006b";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261006c";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261006b";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261006c";
 import { book01Markup } from "./book01-renderers.js?v=20261003c";
 import { book02Markup } from "./book02-renderers.js?v=20261005d";
-import { book03Markup } from "./book03-renderers.js?v=20261006b";
+import { book03Markup } from "./book03-renderers.js?v=20261006c";
 import { book04Markup } from "./book04-renderers.js?v=20260905d";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
@@ -1153,7 +1153,7 @@ function originalAnswerControl(item) {
   return `<div class="answer-part-grid">${item.parts.map((part) => {
     const key = `${item.id}:${part.id}`;
     const inputMode = part.inputMode === "text" ? "text" : "numeric";
-    return `<label class="answer-part"><span>${escapeAttribute(part.label)}</span><span class="answer-part-field"><input type="text" inputmode="${inputMode}" autocomplete="off" spellcheck="false" value="${escapeAttribute(state.selections[key])}" aria-label="${escapeAttribute(part.label)} 답" data-input-group="${escapeAttribute(key)}" data-answer-scope="original" />${part.unit ? `<b>${escapeAttribute(part.unit)}</b>` : ""}</span></label>`;
+    return `<label class="answer-part"><span${/^[□△◇☆+]+$/.test(part.label) ? ' class="glyph-label"' : ""}>${escapeAttribute(part.label)}</span><span class="answer-part-field"><input type="text" inputmode="${inputMode}" autocomplete="off" spellcheck="false" value="${escapeAttribute(state.selections[key])}" aria-label="${escapeAttribute(part.label)} 답" data-input-group="${escapeAttribute(key)}" data-answer-scope="original" />${part.unit ? `<b>${escapeAttribute(part.unit)}</b>` : ""}</span></label>`;
   }).join("")}</div>`;
 }
 
@@ -1182,7 +1182,37 @@ function fractionAnswerControl(groupId, item, scope) {
   return `<div class="answer-input-wrap fraction-answer"><span>분수로 쓰세요</span><span class="frac-input">${box("numerator", numerator, "분자")}<b></b>${box("denominator", denominator, "분모")}</span><input type="hidden" value="${escapeAttribute(state.selections[groupId])}" data-input-group="${groupId}" data-answer-scope="${scope}" /></div>`;
 }
 
+// 칸·별 조각을 눌러 색칠하는 답. 색칠한 칸의 값(문항에만 있고 화면에는 숨김)으로 답을 만든다.
+function pickedValue(pick, picked) {
+  const weights = picked.map((index) => pick.weights[index]).sort((a, b) => b - a);
+  if (!weights.length) return "";
+  return pick.format === "terms" ? weights.join("+") : String(weights.reduce((sum, value) => sum + value, 0));
+}
+
+function pickShapeMarkup(pick, picked, groupId) {
+  const on = new Set(picked);
+  const cell = (index, extra = "") => `<button type="button" class="pick-cell${on.has(index) ? " on" : ""}" data-pick-group="${groupId}" data-pick-index="${index}" aria-pressed="${on.has(index)}" aria-label="${index + 1}번 칸"${extra}></button>`;
+  if (pick.kind === "star") {
+    const point = (radius, angle) => [110 + radius * Math.cos(angle), 100 + radius * Math.sin(angle)];
+    const outer = Array.from({ length: 5 }, (_, index) => point(76, -Math.PI / 2 + index * 2 * Math.PI / 5));
+    const inner = Array.from({ length: 5 }, (_, index) => point(31, -Math.PI / 2 + Math.PI / 5 + index * 2 * Math.PI / 5));
+    const f = (p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`;
+    const tips = outer.map((tip, index) => `<polygon class="pick-piece${on.has(index) ? " on" : ""}" data-pick-group="${groupId}" data-pick-index="${index}" points="${f(inner[(index + 4) % 5])} ${f(tip)} ${f(inner[index])}"/>`).join("");
+    const pentagon = `<polygon class="pick-core" points="${inner.map(f).join(" ")}"/>`;
+    return `<svg class="pick-star" viewBox="0 0 220 200" role="group" aria-label="별 조각을 눌러 색칠하세요">${pentagon}${tips}</svg>`;
+  }
+  const rows = pick.rows || 1;
+  const columns = pick.columns || pick.weights.length;
+  return `<span class="pick-grid" style="--rows:${rows};--columns:${columns}">${pick.weights.map((_, index) => cell(index)).join("")}</span>`;
+}
+
+function pickAnswerControl(groupId, item, scope) {
+  const picked = JSON.parse(state.selections[`${groupId}:picked`] || "[]");
+  return `<div class="answer-input-wrap pick-answer"><span>${escapeAttribute(item.pick.label || "눌러서 색칠하세요")}</span>${pickShapeMarkup(item.pick, picked, groupId)}<input type="hidden" value="${escapeAttribute(state.selections[groupId])}" data-input-group="${groupId}" data-answer-scope="${scope}" /></div>`;
+}
+
 function answerControl(groupId, item, scope) {
+  if (item.answerMode === "pick") return pickAnswerControl(groupId, item, scope);
   if (item.answerMode === "input" && item.inputMode === "fraction") return fractionAnswerControl(groupId, item, scope);
   if (item.answerMode !== "input") return choiceButtons(groupId, item.options);
   const inputMode = item.inputMode === "numeric" ? "numeric" : "text";
@@ -1290,6 +1320,8 @@ function printResponseMarkup(item) {
     const label = part.equation && !part.label.includes(part.equation) ? `${part.label} · ${part.equation}` : part.label;
     return `<span data-print-part-id="${escapeAttribute(part.id)}"><b>${escapeAttribute(label)}</b><i></i>${part.unit ? `<small>${escapeAttribute(part.unit)}</small>` : ""}</span>`;
   }).join("")}</span>`;
+  if (item.answerMode === "pick") return "";
+  if (item.answerMode === "input" && item.inputMode === "fraction") return `<span class="gold-print-answer fraction" aria-label="분수 답 쓰는 칸"><b>답</b><span class="frac-blank"><i></i><em></em><i></i></span></span>`;
   if (item.answerMode === "input") return `<span class="gold-print-answer${item.answerRef?.startsWith("/recovery/") ? " recovered-source-answer" : ""}" aria-label="답 쓰는 칸"><b>답</b><i></i></span>`;
   return `<span class="gold-print-options">${item.options.map((option, index) => `${index + 1}. ${option}`).join("　")}</span>`;
 }
@@ -1710,6 +1742,24 @@ function bindLessonActions() {
     recordOutcome("original", item.id, "skipped");
     state.feedback = null;
     renderContent();
+  }));
+  $("lessonContent").querySelectorAll("[data-pick-group]").forEach((piece) => piece.addEventListener("click", () => {
+    const group = piece.dataset.pickGroup;
+    const index = Number(piece.dataset.pickIndex);
+    const item = activeLesson().original.items.find((entry) => entry.id === group) || activeLesson().original.items[state.originalIndex];
+    const picked = new Set(JSON.parse(state.selections[`${group}:picked`] || "[]"));
+    if (picked.has(index)) picked.delete(index); else picked.add(index);
+    const list = [...picked].sort((a, b) => a - b);
+    state.selections[`${group}:picked`] = JSON.stringify(list);
+    $("lessonContent").querySelectorAll(`[data-pick-group="${group}"]`).forEach((node) => {
+      const isOn = picked.has(Number(node.dataset.pickIndex));
+      node.classList.toggle("on", isOn);
+      if (node.tagName === "BUTTON") node.setAttribute("aria-pressed", String(isOn));
+    });
+    const hidden = $("lessonContent").querySelector(`input[type="hidden"][data-input-group="${group}"]`);
+    if (!hidden || !item?.pick) return;
+    hidden.value = pickedValue(item.pick, list);
+    hidden.dispatchEvent(new Event("input"));
   }));
   $("lessonContent").querySelectorAll("[data-fraction-group]").forEach((box) => box.addEventListener("input", () => {
     const group = box.dataset.fractionGroup;

@@ -61,7 +61,7 @@ function auditMidpointMarker() {
       `middle target needs an even division count; got divisions=${visual?.divisions}`
     );
     expect(
-      markup.includes("㉠"),
+      markup.includes("㉠") || markup.includes(`class="blank"`),
       id,
       `L${difficulty} central marker render`,
       "rendered number line must show the unknown midpoint marker"
