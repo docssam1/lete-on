@@ -116,9 +116,9 @@
 .wb-page-foot { display: flex; justify-content: space-between; gap: 18px; margin-top: auto; padding-top: 18px; border-top: 1px solid var(--wb-line); font-size: 11px; color: #67745c; }
 .workbook-print-root { display: none; }
 .workbook-standalone { margin: 0; background: #e8ece2; min-height: 100dvh; }
-.workbook-standalone .wb-toolbar, .workbook-standalone .wb-subtoolbar { position: sticky; top: 0; }
-.workbook-standalone .wb-subtoolbar { position: static; }
-.workbook-standalone .workbook-scroll { overflow: visible; }
+.workbook-standalone #workbook-preview { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+.workbook-standalone .wb-toolbar, .workbook-standalone .wb-subtoolbar { position: static; }
+.workbook-standalone .workbook-scroll { overflow: auto; min-height: 0; }
 .wb-loading, .wb-error { padding: 32px; }
 .wb-error { color: #753f27; }
 @media (max-width: 680px) {
