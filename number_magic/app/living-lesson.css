@@ -107,3 +107,10 @@ html .nm-unit-view[data-learning-band] .nm-journey .nm-live-feedback{font-size:2
 .nm-strategy-fallback p{font-size:17px;line-height:1.6;text-align:center}.nm-strategy-fallback>.nm-fallback-product{grid-template-columns:repeat(8,1fr)!important;gap:4px!important}.nm-fallback-product span{font-size:14px;min-width:21px;min-height:21px}
 @media(max-width:480px){.nm-strategy-steps li{font-size:12px;gap:4px;padding-inline:0}.nm-strategy-steps li span{font-size:10px}.nm-strategy-lesson .nm-live-stage{height:330px}.nm-strategy-lesson .nm-live-equation{font-size:23px}.nm-strategy-labels span{font-size:16px}.nm-strategy-lesson[data-kind="numberLine"] .nm-strategy-labels span[data-object^="tick-"]{font-size:14px}.nm-strategy-lesson .nm-live-feedback{min-height:0}.nm-strategy-lesson .nm-live-actions .next{margin-left:0}.nm-strategy-memory{font-size:18px}}
 }
+/* 유아 수직선 뛰기(N-07, app/hop-lesson.js) — 화면 전용 */
+@media screen{
+.nm-hop-stage{background:#eef4e6;cursor:pointer;height:clamp(220px,42vw,340px)}
+.nm-hop-svg{width:100%;height:100%;display:block}
+.nm-hop-rabbit{transition:transform .35s ease}
+@media(prefers-reduced-motion:reduce){.nm-hop-rabbit{transition:none}}
+}
