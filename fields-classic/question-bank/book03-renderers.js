@@ -496,6 +496,24 @@ function triangleTwelveFractionExactMarkup() {
   return `<div class="b3-concentric-fraction"><svg class="b3-svg b3-source-partition b3-source-exact" viewBox="0 0 220 195" role="img" aria-label="원본과 같은 큰 정삼각형 12조각 분할, 넓이 다섯 조각만큼 색칠">${fills}<polygon class="partition-outline" points="${pointsText([top, left, right])}"/><g class="partition-lines">${lines}</g></svg><div class="b3-fraction-answer" aria-label="분수 답칸"><span></span><i></i><span></span></div></div>`;
 }
 
+function triangleCentroidTwelveMarkup(visual) {
+  // 원본 8쪽 (8): 큰 정삼각형을 작은 정삼각형 4개로, 각각을 무게중심에서 꼭짓점으로 이어 3조각씩 = 같은 크기 12조각.
+  const top = [110, 10]; const left = [10, 183]; const right = [210, 183];
+  const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const mL = mid(top, left); const mR = mid(top, right); const mB = mid(left, right);
+  const triangles = [[top, mL, mR], [mL, left, mB], [mR, mB, right], [mL, mR, mB]];
+  const center = (t) => [(t[0][0] + t[1][0] + t[2][0]) / 3, (t[0][1] + t[1][1] + t[2][1]) / 3];
+  const shaded = (visual.shaded || []).map(([t, edge]) => {
+    const tri = triangles[t];
+    return `<polygon class="partition-cell shade" points="${pointsText([tri[edge], tri[(edge + 1) % 3], center(tri)])}"/>`;
+  }).join("");
+  const lines = triangles.map((tri) => {
+    const c = center(tri);
+    return `<polygon class="partition-outline inner" points="${pointsText(tri)}"/>${tri.map((v) => `<line x1="${v[0]}" y1="${v[1]}" x2="${c[0].toFixed(2)}" y2="${c[1].toFixed(2)}"/>`).join("")}`;
+  }).join("");
+  return `<svg class="b3-svg b3-source-partition b3-source-exact" viewBox="0 0 220 195" role="img" aria-label="큰 정삼각형을 같은 크기 12조각으로 나눈 그림">${shaded}<g class="partition-lines">${lines}</g><polygon class="partition-outline" points="${pointsText([top, left, right])}"/></svg>`;
+}
+
 function concentricSquareSixteenMarkup(visual) {
   const outer = { left: 24, top: 14, right: 196, bottom: 186 };
   const inner = { left: 67, top: 57, right: 153, bottom: 143 };
@@ -1035,6 +1053,7 @@ export function book03Markup(visual) {
   if (visual.subtype === "paired-source-fractions") return pairedSourceFractionsMarkup(visual);
   if (visual.subtype === "paired-source-fractions-exact") return pairedSourceFractionsExactMarkup(visual);
   if (visual.subtype === "triangle-twelve-fraction-exact") return triangleTwelveFractionExactMarkup(visual);
+  if (visual.subtype === "triangle-centroid-twelve") return triangleCentroidTwelveMarkup(visual);
   if (visual.subtype === "concentric-square-sixteen-fraction") return concentricSquareSixteenMarkup(visual);
   if (visual.subtype === "oblique-square-area") return obliqueSquareMarkup(visual);
   if (visual.subtype === "grid-path") return gridPathMarkup(visual);
