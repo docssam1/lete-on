@@ -1,39 +1,33 @@
-/* N-11 — 동그랗게 앉아 세는 이야기 (수 배열·이어 세기) */
+/* N-11 — 식과 숫자 카드(2026-10-06 새로 그림 — 옛 컷 "동그랗게 앉아 세기"는 유닛과 어긋났다).
+   유닛 story 그대로: 별 5개 중 몇 개를 가져가 2개가 남음 → 5 − □ = 2 → 3. 등호는 한 영국 수학자가 "같은 길이의 두 줄"로.
+   그림 속 글자는 숫자 카드 한 장에 한 글자. 별은 실사 소품. */
 'use strict';
 module.exports=function(H){
-  const {C,svg,stick,numi,sheep,pouch,arrow,paper,bubble,txt,ground}=H;
-  const ring=(highlightIdx,xIdx)=>{ let s=''; const n=10,cx=100,cy=66,r=40;
-    for(let i=0;i<n;i++){ const a=-Math.PI/2+i*(2*Math.PI/n); const x=(cx+r*Math.cos(a)).toFixed(1), y=(cy+r*Math.sin(a)).toFixed(1);
-      if(i===highlightIdx) s+='<circle cx="'+x+'" cy="'+y+'" r="7" fill="'+C.goldbright+'" stroke="'+C.ink+'" stroke-width="2.4"/>';
-      else if(xIdx&&xIdx.indexOf(i)>=0) s+='<circle cx="'+x+'" cy="'+y+'" r="6" fill="#fff" stroke="'+C.red+'" stroke-width="2"/>';
-      else s+='<circle cx="'+x+'" cy="'+y+'" r="6" fill="'+C.sky+'" stroke="'+C.ink+'" stroke-width="2"/>';
-    } return s; };
-  const seqBox=(x,y,label,col)=>'<rect x="'+(x-14)+'" y="'+(y-14)+'" width="28" height="28" rx="6" fill="'+(col||C.paper)+'" stroke="'+C.blue+'" stroke-width="2.2"/>'+txt(x,y+5,15,C.ink,label);
+  const {C,svg,real,girl,numi,recorde,txt,arrow}=H;
+  const table='<rect x="0" y="110" width="200" height="30" fill="'+C.soil+'"/><rect x="0" y="110" width="200" height="5" fill="'+C.soil2+'" opacity=".6"/>';
+  const stars=(xs,y)=>xs.map(x=>real('star',x,y,22)).join('');
+  const card=(x,y,ch,col)=>'<rect x="'+(x-14)+'" y="'+(y-18)+'" width="28" height="36" rx="5" fill="#fff" stroke="'+C.gold+'" stroke-width="2.2"/>'
+    +'<text x="'+x+'" y="'+(y+8)+'" text-anchor="middle" font-size="20" font-weight="800" fill="'+(col||C.ink)+'">'+ch+'</text>';
   return { panels:[
-    { art: svg(
-        ring(null,null)
-        +txt(100,70,20,C.ink,'?')
-        +numi(32,120,0.55)),
-      text:{ ko:'친구 41명이 동그랗게 앉아 셋째마다 한 명씩 빠지는 놀이를 해요. 누가 끝까지 남을까요?',
-             en:'Forty-one friends sit in a circle, and every third one drops out. Who will survive to the end?',
-             zh:'41个小朋友围成圈，每数到第三个就出局。谁能留到最后呢？' } },
-    { art: svg(
-        ring(null,[2,5,8])),
-      text:{ ko:'1, 2, 3을 세다가 셋째 자리마다 한 명씩 빠져나가요.',
-             en:'Counting 1, 2, 3 — every third seat drops out of the circle.',
-             zh:'数着1、2、3，每到第三个位子就出局。' } },
-    { art: svg(
-        ring(0,null)
-        +txt(136,16,14,C.gold,'31')),
-      text:{ ko:'규칙대로 끝까지 세어 보면, 31번째 자리에 앉은 친구가 끝까지 남는대요!',
-             en:'Count it all the way through by the rule — the friend in seat 31 is the one who stays till the end!',
-             zh:'按规则一直数下去，坐在第31个位子的小朋友会留到最后！' } },
-    { art: svg(
-        seqBox(24,70,'3')+arrow(46,70,66,70,C.gold,3)
-        +seqBox(88,70,'4')+arrow(110,70,130,70,C.gold,3)
-        +seqBox(152,70,'?',C.goldbright)),
-      text:{ ko:'세는 규칙이 정해지면 답도 정해져요. 오늘 우리가 빈 칸을 채우는 것도 똑같은 규칙이에요!',
-             en:'When a counting rule is fixed, the answer is fixed too — filling today\'s blanks works the same way!',
-             zh:'数数的规则定了，答案也就定了！我们今天填空格用的也是同一个规律！' } },
+    { art: svg(table+girl(26,92,0.72)+stars([84,108,132,156,180],110)+txt(132,58,22,C.ink,'5')),
+      text:{ ko:'탁자 위에 별이 5개 있어요. 누미가 몇 개를 가져가기로 했어요.',
+             en:'There are 5 stars on the table. Numi is going to take some of them.',
+             zh:'桌上有5颗星星。努米要拿走几颗。' } },
+    { art: svg(table+stars([40,64],110)+numi(156,94,0.85)+stars([138,160,182],60)+arrow(84,92,124,70,C.gold,3)+txt(52,62,22,C.ink,'2')),
+      text:{ ko:'누미가 가져가고 나니 2개가 남았어요. 누미가 가져간 별은 몇 개일까요?',
+             en:'After Numi took some, 2 were left. How many stars did Numi take?',
+             zh:'努米拿走以后，还剩2颗。努米拿走了几颗星星？' } },
+    { art: svg('<rect x="0" y="0" width="200" height="140" fill="'+C.cream+'" opacity=".35"/>'
+        +card(36,70,'5')+card(68,70,'−')+card(100,70,'□',C.red)+card(132,70,'=')+card(164,70,'2')),
+      text:{ ko:'숫자 카드로 식을 만들면 5 − □ = 2예요. 5에서 3을 빼야 2가 남으니 □는 3이에요.',
+             en:'With number cards the problem reads 5 − □ = 2. Taking 3 from 5 leaves 2, so the box is 3.',
+             zh:'用数字卡片写成算式就是5 − □ = 2。5减去3才剩2，所以□是3。' } },
+    { art: svg('<path d="M 0 140 L 0 116 Q 100 110 200 116 L 200 140 Z" fill="'+C.grass+'" opacity=".55"/>'
+        +recorde(44,90,1)
+        +'<rect x="96" y="50" width="84" height="10" rx="5" fill="'+C.blue+'" stroke="'+C.ink+'" stroke-width="1.8"/>'
+        +'<rect x="96" y="74" width="84" height="10" rx="5" fill="'+C.blue+'" stroke="'+C.ink+'" stroke-width="1.8"/>'),
+      text:{ ko:'등호(=)는 오래전 영국의 한 수학자가 만들었어요. 길이가 같은 두 줄만큼 똑같은 것은 없다고 생각했대요.',
+             en:'The equals sign (=) was made long ago by an English mathematician. He thought nothing is more equal than two lines of the same length.',
+             zh:'等号（=）是很久以前一位英国数学家发明的。他认为没有什么比两条一样长的线更相等了。' } },
   ]};
 };

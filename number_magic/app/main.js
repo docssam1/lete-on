@@ -6291,7 +6291,8 @@ function stepDiscover(body,u){
      캡션이 이야기를 다 전하므로 산문 history는 그 유닛에선 그리지 않는다. */
   const comic=window.NM_COMICS&&NM_COMICS[u.id];
   const histHtml=comic
-    ?`<div class="nm-comic-h">🏛 ${S.lang==='ko'?'네 컷 수학사':S.lang==='en'?'Math History in 4 Panels':'四格数学史'}</div>
+    ?`<div class="nm-comic-h">${kid?'📖 '+(S.lang==='ko'?'네 컷 이야기':S.lang==='en'?'A Story in 4 Panels':'四格故事')
+        :'🏛 '+(S.lang==='ko'?'네 컷 수학사':S.lang==='en'?'Math History in 4 Panels':'四格数学史')}</div>
       <div class="nm-comic">${comic.panels.map((p,i)=>`<figure class="nm-comic-panel">
         <span class="nm-comic-no">${i+1}</span>
         <div class="nm-comic-art">${p.art}</div>
@@ -6301,7 +6302,7 @@ function stepDiscover(body,u){
   const storyHtml=st?`${artHtml}<div class="nm-story${isMidHigh?' doc':''}">
       ${isMidHigh?`<img class="nm-story-char" src="assets/docssam.png" alt="">`:`<img class="nm-story-numi" src="assets/images/characters/numi.png" alt="">`}
       <div class="nm-story-bubble">${L(st.hook)}</div>
-    </div>${histHtml}`:'';
+    </div>${histHtml}`:(comic?histHtml:'');   /* 이야기 훅이 없는 유닛(N-02·03·05 등)도 만화는 보인다(2026-10-05) */
   /* 이 개념과 짝인 실험실이 있으면(UNIT_LABS) 노트 하단에서 바로 연다.
      두 개 이상 걸린 유닛도 있어(M-15·C-05) 실험실마다 제 이름으로 버튼을 낸다. */
   const unitLabs=unitLabsFor(u.id);
