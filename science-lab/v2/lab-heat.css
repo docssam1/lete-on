@@ -1,0 +1,9 @@
+/* 온도와 열 실험실 */
+.ht-model-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#fdf1e7;color:#7a3d14}
+.heat-2d{position:relative;height:300px;background:#fbf6ef;border-radius:14px;overflow:hidden;display:flex;justify-content:center;align-items:flex-end}
+.heat-2d .ht-strip{position:relative;z-index:1;width:46px;margin-bottom:16px;display:flex;flex-direction:column-reverse;gap:6px;padding:6px;background:#c87a46;border-radius:4px}
+.heat-2d .ht-strip i{display:block;height:24px;background:#2f5fd0;border-radius:3px}
+.heat-2d .ht-strip i[data-c="1"]{background:#f28a2e}.heat-2d .ht-strip i[data-c="2"]{background:#f5c518}
+.heat-2d .ht-water{position:absolute;left:30%;right:30%;bottom:0;height:70px;background:#f6dcc2;opacity:.8}
+.heat-2d[data-hot="1"] .ht-water{background:#f3b98a}
+.dk-lab-battle[data-unit="s51-u02"] .mb-team .ht-model-note{display:none}

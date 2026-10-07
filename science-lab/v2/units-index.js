@@ -7,6 +7,7 @@ import { taxonomy as tx42u03 } from '../data/units/s42-u03.taxonomy.js';
 import { taxonomy as tx42u04 } from '../data/units/s42-u04.taxonomy.js';
 import { taxonomy as tx42u05 } from '../data/units/s42-u05.taxonomy.js';
 import { taxonomy as tx51u01 } from '../data/units/s51-u01.taxonomy.js';
+import { taxonomy as tx51u02 } from '../data/units/s51-u02.taxonomy.js';
 
 // 탐구 지도의 정거장 = Drive `과학 단원평가` 폴더의 단원(data/source-toc.md §1). 중간·기말평가는 제외.
 // ready: 5E 화면이 있는 단원. 새 단원을 만들면 v2.js UNITS와 여기 ready 둘 다 등록한다.
@@ -37,7 +38,8 @@ export const READY = {
     labs: [{ id: 's42-u04', hero: '지층 모형 지진 실험실', covers: ['E2', 'E3'] }, { id: 's41-u03b', hero: '화산 실험실', covers: ['E1'] }] },
   's42-u05': { hero: '수조 속 작은 지구', subs: subsOf(tx42u05) },
   's51-u01': { hero: '튀는 물방울 실험실', subs: subsOf(tx51u01) },
+  's51-u02': { hero: '시온 스티커 실험실', subs: subsOf(tx51u02) },
 };
 
 // 실험 교재(data/book/<id>.book.js)가 있는 수업 — 지도의 시트에서 첫 화면(#/<id>/start)으로 들어간다.
-export const BOOK_UNITS = new Set(['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01']);
+export const BOOK_UNITS = new Set(['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02']);
