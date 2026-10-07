@@ -1,4 +1,4 @@
-import { renderStudentPages, pageNames } from './workbook-pages.js?v=5';
+import { renderStudentPages, pageNames } from './workbook-pages.js?v=6';
 
 import { experimentPhotos } from './workbook-photos.js?v=2';
 
@@ -102,7 +102,7 @@ function attachViewer(host, {
     host.querySelectorAll('[data-workbook-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.workbookMode === mode)));
     try {
       if (mode === 'teacher') {
-        teacherModule ||= import('./workbook-teacher.js?v=5');
+        teacherModule ||= import('./workbook-teacher.js?v=6');
         const module = await teacherModule;
         if (disposed || version !== renderVersion) return;
         markup = module.renderTeacherPages();

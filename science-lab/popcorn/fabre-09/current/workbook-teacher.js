@@ -6,12 +6,12 @@ const link = (url, label) =>
 const page = (number, title, deck, body) => `
   <section class="workbook-page workbook-teacher-page" data-page="${number}" aria-labelledby="wb-${number}-title">
     <header class="wb-page-head">
-      <p class="wb-kicker">교사용 지도자료</p>
+      <p class="wb-kicker">팝콘 실험실 · 교사용 지도자료</p>
       <h2 id="wb-${number}-title">${title}</h2>
       <p class="wb-deck">${deck}</p>
     </header>
     <div class="wb-page-body">${body}</div>
-    <footer class="wb-page-foot"><span>GFIELD SCIENCE LAB · 전류</span><span>${number}</span></footer>
+    <footer class="wb-page-foot"><span>팝콘 실험실 · 전류</span><span>${number}</span></footer>
   </section>`;
 
 export const TEACHER_PAGE_COUNT = 4;
