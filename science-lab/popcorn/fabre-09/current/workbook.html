@@ -12,7 +12,7 @@
 <body class="workbook-standalone">
   <main id="workbook-preview"></main>
   <script type="module">
-    import { mountWorkbookPreview } from './workbook.js?v=5';
+    import { mountWorkbookPreview } from './workbook.js?v=6';
     const teacher = new URLSearchParams(location.search).get('teacher') === '1';
     document.title = teacher ? '전류 탐험 · 교사용 지도자료' : '전류 탐험 · 학생용 빈 교재';
     mountWorkbookPreview(document.querySelector('#workbook-preview'), { teacher });
