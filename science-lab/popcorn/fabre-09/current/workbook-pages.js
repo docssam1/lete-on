@@ -24,7 +24,7 @@ const step = (index, label) => `<button type="button" data-workbook-step="${inde
 const read = (id, label) => `<button type="button" data-workbook-read="${id}">${label}</button>`;
 const inlineVideo = (id, label, url, note = '') => `<section class="wb-inline-video"><h3>${label}</h3><button type="button" data-book-video="${id}">이 쪽에서 영상 보기</button><div class="wb-video-player" aria-label="${label} 영상 재생 영역"></div><p>${external(url, '새 창에서 영상 보기')}</p>${note ? `<p class="wb-small">${note}</p>` : ''}</section>`;
 const coachWords = [
-  '안녕, 나는 팝콘 코미야. 전지의 연결을 살피고 내 손으로 밝기가 달라지는 스탠드를 만들어 보자!',
+  '안녕, 나는 팝콘 랩코니야. 전지의 연결을 살피고 내 손으로 밝기가 달라지는 스탠드를 만들어 보자!',
   '아는 말부터 꺼내 보자. 예상은 나중에 바뀌어도 괜찮아. 전지를 넣기 전에는 안전 약속부터 확인해 줘.',
   '이번에는 전지 수만 세지 말고 어느 극끼리 이어졌는지 살펴봐. 같은 전구를 보며 직접 느낀 밝기를 적으면 돼.',
   '빈자리를 새 전선으로 메우지 말고 그대로 살펴보자. 남은 전지에서 전구를 지나 돌아오는 길을 손가락으로 따라가 봐.',
@@ -42,7 +42,7 @@ const coachWords = [
   '이번 이야기에서 병렬로 잇는 것은 전등이야. 전지의 연결 방법과 전류의 방향을 서로 다른 기준으로 정리해 보자.',
   '작은 전구에서 궁궐의 불빛까지 탐험했구나! 전지와 발전기는 다르지만 전등이 켜지려면 연결된 길이 필요하다는 것을 떠올려 봐.'
 ];
-const coach = number => number <= STUDENT_PAGE_COUNT ? `<aside class="wb-coach" data-pose="${number === 17 ? 'praise' : 'talk'}"><span class="wb-coach-portrait" role="img" aria-label="실험복을 입은 팝콘 코미"></span><div class="wb-coach-bubble"><strong>팝콘 코미</strong><p>${coachWords[number - 1]}</p></div></aside>` : '';
+const coach = number => number <= STUDENT_PAGE_COUNT ? `<aside class="wb-coach" data-pose="${number === 17 ? 'praise' : 'talk'}"><span class="wb-coach-portrait" role="img" aria-label="실험복을 입은 팝콘 랩코니"></span><div class="wb-coach-bubble"><strong>팝콘 랩코니</strong><p>${coachWords[number - 1]}</p></div></aside>` : '';
 function circuit(mode, removed = false) {
   const title = mode === 'one' ? '전지 한 개' : mode === 'parallel' ? '전지 두 개 병렬' : '전지 두 개 직렬';
   const name = removed ? `${mode}-cell-removed` : mode === 'one' ? 'one-cell-preparation' : `${mode}-cells-preparation`;

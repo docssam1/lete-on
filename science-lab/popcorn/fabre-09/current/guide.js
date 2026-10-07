@@ -2,7 +2,7 @@
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let soundOff = false;
 export function createGuide(host) {
-  host.innerHTML = `<div class="sprite-window" role="img" aria-label="흰 실험복을 입은 코미"><span class="sprite"></span></div><div><b class="guide-name">코미</b><p class="guide-caption"></p><button type="button" data-guide="play">설명 다시 듣기</button><button type="button" data-guide="mute" aria-pressed="false">소리 끄기</button><span class="voice-state" aria-live="polite"></span></div>`;
+  host.innerHTML = `<div class="sprite-window" role="img" aria-label="흰 실험복을 입은 랩코니"><span class="sprite"></span></div><div><b class="guide-name">랩코니</b><p class="guide-caption"></p><button type="button" data-guide="play">설명 다시 듣기</button><button type="button" data-guide="mute" aria-pressed="false">소리 끄기</button><span class="voice-state" aria-live="polite"></span></div>`;
   const audio = new Audio(); audio.preload = 'auto';
   const caption = host.querySelector('.guide-caption'), status = host.querySelector('.voice-state'), play = host.querySelector('[data-guide=play]'), mute = host.querySelector('[data-guide=mute]');
   let map = {}, line = '', text = '', muted = soundOff, timer, praiseTimer, disposed = false, version = 0, done, idlePose='idle';
