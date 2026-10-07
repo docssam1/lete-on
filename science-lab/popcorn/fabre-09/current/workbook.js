@@ -1,4 +1,4 @@
-import { renderStudentPages, pageNames } from './workbook-pages.js?v=4';
+import { renderStudentPages, pageNames } from './workbook-pages.js?v=5';
 
 import { experimentPhotos } from './workbook-photos.js?v=2';
 
@@ -102,7 +102,7 @@ function attachViewer(host, {
     host.querySelectorAll('[data-workbook-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.workbookMode === mode)));
     try {
       if (mode === 'teacher') {
-        teacherModule ||= import('./workbook-teacher.js?v=4');
+        teacherModule ||= import('./workbook-teacher.js?v=5');
         const module = await teacherModule;
         if (disposed || version !== renderVersion) return;
         markup = module.renderTeacherPages();
@@ -193,7 +193,7 @@ function attachViewer(host, {
       const player = container.querySelector('.wb-video-player');
       const wasOpen = !!player.querySelector('iframe');
       stopMedia();
-      if (wasOpen || !['Js6CZPD5XfE','Kaije_6OdOA'].includes(button.dataset.bookVideo)) return;
+      if (wasOpen || !['Js6CZPD5XfE','mmD34B3cr1I'].includes(button.dataset.bookVideo)) return;
       const frame = document.createElement('iframe');
       frame.src = `https://www.youtube-nocookie.com/embed/${button.dataset.bookVideo}?rel=0`;
       frame.title = container.querySelector('h3,strong')?.textContent || '과학 읽기 영상';
@@ -291,7 +291,7 @@ function attachViewer(host, {
     }
     const article = button.dataset.workbookRead;
     if (['battery', 'city', 'palace'].includes(article)) {
-      if (standalone) { const { openMagazine } = await import('./magazine.js?v=3'); if (!disposed) openMagazine({teacher, articleId:article}); }
+      if (standalone) { const { openMagazine } = await import('./magazine.js?v=4'); if (!disposed) openMagazine({teacher, articleId:article}); }
       else { close(); onRead(article); }
     }
   }

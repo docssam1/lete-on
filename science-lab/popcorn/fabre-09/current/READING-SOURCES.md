@@ -40,7 +40,7 @@
 
 ## 역사 참고 영상
 
-- [건청궁 전기](https://royal.khs.go.kr/ROYAL/contents/R303000000.do?schGroupCode=gbg&schM=view&id=20240108151343717711): 궁능유적본부 상세 페이지와 삽입 영상 ID `Kaije_6OdOA` 일치 확인. 게시자는 시립서대문농아인복지관이며 국가유산청 제작으로 표시하지 않는다. 수어 해설이며 한국어 음성·자막 제공 여부는 미확인이다.
+- [건청궁 점등 · YTN 한국어 보도](https://www.ytn.co.kr/_ln/0106_202205181130447897): 공식 페이지의 YouTube 삽입 ID `mmD34B3cr1I`와 oEmbed 게시자 YTN, 제목 일치를 확인. 2022-05-17 재현 점등 행사, 보도 2022-05-18. 1887년 당시 촬영 영상이 아니다. 한국어 일반 보도 영상으로 교재 링크·삽입 재생·QR를 함께 교체했다.
 - [Edison vs. Tesla](https://www.energy.gov/articles/video-who-was-better-inventor-tesla-or-edison): 미 에너지부 원문과 공식 채널의 영상 ID `Js6CZPD5XfE` 일치 확인. 영어 영상이며 한국어 자막은 미확인이다.
 
 두 자료는 교사용과 자습용 모두 열 수 있다. 자습에서는 한국어 기사 뒤 ‘어른과 함께 보는 역사 영상’으로 안내한다. 외부 영상의 기기별 전체 재생·계정·지역 제한은 보장하지 않는다.

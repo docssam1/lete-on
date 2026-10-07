@@ -19,7 +19,7 @@ export const workbookNoteFields = [
 export function workbookPageForStep(id) { return Object.hasOwn(stepPages, id) ? stepPages[id] : 1; }
 
 const external = (url, label) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}<span class="wb-link-mark"> 새 창</span></a>`;
-const video = (id, url, label) => `<aside class="wb-video-bridge"><a href="${url}" target="_blank" rel="noopener noreferrer"><img src="./assets/video-qr/${id}.png" alt="${label} 영상 QR"></a><div><strong>${label}</strong><p>영상으로 다시 살펴요.</p><a href="${url}" target="_blank" rel="noopener noreferrer">${url.replace('https://','')}</a></div></aside>`;
+const video = (id, url, label, note = '영상으로 다시 살펴요.') => `<aside class="wb-video-bridge"><a href="${url}" target="_blank" rel="noopener noreferrer"><img src="./assets/video-qr/${id}.png" alt="${label} 영상 QR"></a><div><strong>${label}</strong><p>${note}</p><a href="${url}" target="_blank" rel="noopener noreferrer">${url.replace('https://','')}</a></div></aside>`;
 const step = (index, label) => `<button type="button" data-workbook-step="${index}">${label}</button>`;
 const read = (id, label) => `<button type="button" data-workbook-read="${id}">${label}</button>`;
 const inlineVideo = (id, label, url, note = '') => `<section class="wb-inline-video"><h3>${label}</h3><button type="button" data-book-video="${id}">이 쪽에서 영상 보기</button><div class="wb-video-player" aria-label="${label} 영상 재생 영역"></div><p>${external(url, '새 창에서 영상 보기')}</p>${note ? `<p class="wb-small">${note}</p>` : ''}</section>`;
@@ -43,44 +43,13 @@ const coachWords = [
   '작은 전구에서 궁궐의 불빛까지 탐험했구나! 전지와 발전기는 다르지만 전등이 켜지려면 연결된 길이 필요하다는 것을 떠올려 봐.'
 ];
 const coach = number => number <= STUDENT_PAGE_COUNT ? `<aside class="wb-coach" data-pose="${number === 17 ? 'praise' : 'talk'}"><span class="wb-coach-portrait" role="img" aria-label="실험복을 입은 팝콘 코미"></span><div class="wb-coach-bubble"><strong>팝콘 코미</strong><p>${coachWords[number - 1]}</p></div></aside>` : '';
-const battery = (x, y, removed = false) => `<rect x="${x}" y="${y - 16}" width="48" height="32" rx="3" class="${removed ? 'wb-cell-removed' : 'wb-cell'}"/>${removed ? `<text x="${x + 24}" y="${y + 6}" text-anchor="middle" font-size="16">빈자리</text>` : `<text x="${x + 10}" y="${y + 7}" text-anchor="middle" font-size="21">+</text><text x="${x + 38}" y="${y + 7}" text-anchor="middle" font-size="21">−</text>`}`;
-const lamp = (x, y) => `<circle cx="${x}" cy="${y}" r="20" class="wb-bulb"/><path d="M${x - 14} ${y - 14}l28 28m0-28-28 28"/>`;
-
 function circuit(mode, removed = false) {
-  const parallel = mode === 'parallel';
-  const title = mode === 'one' ? '전지 한 개' : parallel ? '전지 두 개 병렬' : '전지 두 개 직렬';
-  const wires = mode === 'one'
-    ? '<path d="M24 50H96 M144 50H216V165H140 M100 165H24V50"/>'
-    : parallel
-      ? '<path d="M24 50H96 M144 50H216V165H140 M100 165H24V50 M24 104H96 M144 104H216"/>'
-      : '<path d="M24 50H51 M99 50H141 M189 50H216V165H140 M100 165H24V50"/>';
-  const cells = mode === 'one' ? battery(96, 50) : parallel ? battery(96, 50, removed) + battery(96, 104) : battery(51, 50, removed) + battery(141, 50);
-  return `<svg viewBox="0 0 240 212" class="wb-circuit-svg" role="img" aria-label="${title}${removed ? '에서 전지 하나를 뺀' : ''} 회로. 전구의 관찰 결과는 표시하지 않은 그림"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round">${wires}${cells}${lamp(120, 165)}</g></svg>`;
+  const title = mode === 'one' ? '전지 한 개' : mode === 'parallel' ? '전지 두 개 병렬' : '전지 두 개 직렬';
+  const name = removed ? `${mode}-cell-removed` : mode === 'one' ? 'one-cell-preparation' : `${mode}-cells-preparation`;
+  return `<img class="wb-circuit-photo" src="./assets/learning-visuals/${name}.png" alt="${title}${removed ? '에서 전지 하나를 뺀' : ''} 연결 준비 모습 · AI 실사형 설명 이미지, 관찰 밝기는 표시하지 않음">`;
 }
-
-const starWindow = (x, y) => Array.from({ length: 16 }, (_, index) => { const angle = index * Math.PI / 8 - Math.PI / 2, radius = index % 2 ? 10 : 20; return `${index ? 'L' : 'M'}${(x + Math.cos(angle) * radius).toFixed(2)} ${(y + Math.sin(angle) * radius).toFixed(2)}`; }).join(' ') + 'Z';
-const partsFigure = `<svg viewBox="0 0 660 186" role="img" aria-label="A 바닥판, B 전구판, C 윗판, D 앞판, E 뒷판, F 옆판 두 장의 역할을 구별한 부품 개념도. 창은 여덟 꼭짓점의 별 모양">
-  <g fill="#f7f8f1" stroke="currentColor" stroke-width="2">
-    <rect x="13" y="51" width="87" height="54"/><rect x="122" y="51" width="87" height="54"/><circle cx="165" cy="77" r="10"/>
-    <rect x="231" y="51" width="87" height="54"/><path d="${starWindow(274, 78)}"/>
-    <rect x="341" y="28" width="69" height="100"/><path d="${starWindow(375, 62)}"/><rect x="365" y="94" width="22" height="14"/>
-    <rect x="432" y="28" width="69" height="100"/><path d="${starWindow(466, 73)}"/>
-    <rect x="543" y="20" width="57" height="100"/><rect x="531" y="28" width="57" height="100"/><path d="${starWindow(559, 73)}"/>
-  </g><g fill="currentColor" font-size="18" font-weight="650" text-anchor="middle"><text x="57" y="159">A 바닥판</text><text x="166" y="159">B 전구판</text><text x="275" y="159">C 윗판</text><text x="375" y="159">D 앞판</text><text x="466" y="159">E 뒷판</text><text x="566" y="159">F 옆판 ×2</text></g>
-</svg>`;
-
-const wiringFigure = `<svg viewBox="0 0 520 314" role="img" aria-label="전지 두 개의 직렬 연결점과 스위치 공통·1단·2단 단자에 이어지는 다섯 연결. 스위치는 가운데 꺼짐 위치인 배선 개념도">
-  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
-    <path d="M80 56H35V155H88 M132 155H180V280H360V230 M170 56H260 M215 56V180H300 M350 56H480V180H420"/>
-    <rect x="80" y="37" width="90" height="38" rx="4" fill="#fff"/><rect x="260" y="37" width="90" height="38" rx="4" fill="#fff"/>
-    <circle cx="110" cy="155" r="22" fill="#fff"/><path d="M95 140l30 30m0-30-30 30"/>
-    <rect x="274" y="152" width="172" height="108" rx="6" stroke-dasharray="6 5" stroke-width="1.5"/>
-    <circle cx="300" cy="180" r="5" fill="#fff"/><circle cx="420" cy="180" r="5" fill="#fff"/><circle cx="360" cy="230" r="5" fill="#fff"/><path d="M360 225V193"/>
-    <circle cx="215" cy="56" r="4" fill="currentColor"/>
-  </g><g fill="currentColor" text-anchor="middle" font-size="18"><text x="125" y="16" font-size="16">전지끼우개 1</text><text x="305" y="16" font-size="16">전지끼우개 2</text><text x="125" y="31" font-size="13">(전지 없음)</text><text x="305" y="31" font-size="13">(전지 없음)</text><text x="97" y="63">+</text><text x="154" y="63">−</text><text x="278" y="63">+</text><text x="335" y="63">−</text><text x="109" y="201">전구</text><text x="300" y="207">1단</text><text x="420" y="207">2단</text><text x="397" y="240">공통</text><text x="361" y="306">스위치 · 가운데</text></g>
-  <g fill="#fff" stroke="currentColor" stroke-width="1.5"><circle cx="35" cy="107" r="13"/><circle cx="224" cy="280" r="13"/><circle cx="215" cy="33" r="13"/><circle cx="215" cy="127" r="13"/><circle cx="480" cy="119" r="13"/></g>
-  <g fill="currentColor" text-anchor="middle" font-size="17" font-weight="750"><text x="35" y="113">1</text><text x="224" y="286">2</text><text x="215" y="39">3</text><text x="215" y="133">4</text><text x="480" y="125">5</text></g>
-</svg>`;
+const partsFigure = `<img class="wb-parts-photo" src="./assets/learning-visuals/parts-flat-photo.png" alt="A 바닥판, B 전구판, C 윗판, D 앞판, E 뒷판, F 옆판 두 장의 역할을 구별한 AI 실사형 설명 이미지">`;
+const wiringFigure = `<a href="./assets/learning-visuals/wiring-five-photo.png" target="_blank" rel="noopener noreferrer" aria-label="다섯 선 배선 이미지 크게 보기"><img class="wb-wiring-photo" src="./assets/learning-visuals/wiring-five-photo.png" alt="전지가 없는 두 전지끼우개, 전구와 가운데 꺼짐 스위치의 다섯 선. 두 끼우개 사이 연결점에서 1단으로 갈라지고 전구의 다른 접점은 스위치 가운데 공통 단자로 이어짐"></a>`;
 
 function readingChunks(value, maxLines = 22) {
   const chunks = [];
@@ -150,7 +119,7 @@ export function renderStudentPages(record = {}, { blank = false } = {}) {
     page(3, '연결을 바꾸어 비교해요', '같은 전구 · 같은 종류와 상태의 전지. 연결 방법만 바꾸어요.', `
       <div class="wb-activity-band"><strong>실험 1</strong><span>한 개 → 두 개 직렬 → 두 개 병렬</span></div>
       <div class="wb-three-col wb-comparison-diagrams">${[['one', '전지 한 개'], ['series', '전지 두 개 직렬'], ['parallel', '전지 두 개 병렬']].map(([id, title]) => `<figure><figcaption>${title}</figcaption>${circuit(id)}</figure>`).join('')}</div>
-      <p class="wb-small">밝기를 표시하지 않은 관찰용 그림이에요. 실사 비교 사진은 관찰 뒤 8쪽에서 살펴봐요.</p>
+      <p class="wb-small">AI 실사형 준비 이미지예요. 밝기 결과는 나타내지 않았어요. 관찰 뒤 8쪽의 원본 사진과 비교해요.</p>
       <table class="wb-table wb-observation-table"><thead><tr><th scope="col">연결 방법</th><th scope="col">직접 본 밝기</th><th scope="col">선택 메모</th></tr></thead><tbody>${[['one', '전지 한 개'], ['series', '두 개 직렬'], ['parallel', '두 개 병렬']].map(([id, label]) => `<tr><th scope="row">${label}</th><td>${comparison(id, label, 3)}</td><td>${writing(object(comparisons[id]).reason, { lines: 2, label: `${label}에서 살펴본 점`, page: 3, narrow: true })}</td></tr>`).join('')}</tbody></table>
       <div class="wb-photo-side">${photo('empty-kit', '실제 전지끼우개 · 사진에서 스프링 접점을 찾아보세요.')}<section><h3>그림과 교구를 이어 보아요</h3><p>전지끼우개의 +·− 표시와 선을 찾아요. 전구를 지나 되돌아오는 길을 따라가요.</p><p class="wb-small">병렬 비교는 화면에서 해요. 예상과 달라도 본 그대로 기록해요.</p></section></div>
       ${video('compare', 'https://m.site.naver.com/1e5DZ', '전지 연결 실험')}<nav class="wb-page-links" aria-label="3쪽 실험 연결">${step(3, '연결을 바꾸며 관찰하기')}${external('https://m.site.naver.com/1e5DZ', '실험 영상 보기')}</nav>
@@ -164,11 +133,11 @@ export function renderStudentPages(record = {}, { blank = false } = {}) {
     page(5, '사진을 보며 준비해요', '종이·소켓·스위치를 붙이고, 조립할 자리를 찾아요.', `
       ${photo('empty-kit', '전지가 빠진 실제 교구 · 전구판 B, 앞판 D, 빈 전지끼우개를 찾아요.', 'wb-large-photo')}
       <div class="wb-build-steps"><section><h3><span>1</span> □ 창 뒤에 종이 붙이기</h3><p>C·D·E 각 한 장과 F 두 장의 창 뒤에 붙여요. 홈과 스위치 구멍은 비워요.</p></section><section><h3><span>2</span> □ B판에 소켓과 전구 놓기</h3><p>소켓의 서로 다른 두 접점에 전선을 잇고 고정해요.</p></section><section><h3><span>3</span> □ D판에 스위치 끼우기</h3><p>가운데 꺼짐 위치에 두고, 공통·1단·2단 단자를 찾아요.</p></section></div>
-      <figure class="wb-parts-figure wb-secondary-figure">${partsFigure}<figcaption>부품의 역할을 구별한 보조 그림 · 실제 홈은 교구에서 확인해요.</figcaption></figure>
+      <figure class="wb-parts-figure wb-secondary-figure">${partsFigure}<figcaption>AI 실사형 부품 설명 · 실제 홈은 교구에서 확인해요.</figcaption></figure>
       ${video('build', 'https://m.site.naver.com/1e5E0', '스탠드 조립')}<nav class="wb-page-links" aria-label="5쪽 실험 연결">${step(4, '3D에서 부품 찾아보기')}${external('https://m.site.naver.com/1e5E0', '조립 영상 보기')}</nav>
     `),
     page(6, '다섯 선을 하나씩 이어요', '전지는 빼 둔 채 연결해요. 선의 시작과 끝을 짚어 확인해요.', `
-      <div class="wb-wiring-pair">${photo('empty-kit', '접점과 빨간·검은 선을 실제 교구에서 찾으세요.')}<figure class="wb-wiring-figure">${wiringFigure}<figcaption>연결 역할을 보여 주는 보조 그림 · 실제 단자 배열은 교구 표시를 확인해요.</figcaption></figure></div>
+      <div class="wb-wiring-pair">${photo('empty-kit', '접점과 빨간·검은 선을 실제 교구에서 찾으세요.')}<figure class="wb-wiring-figure">${wiringFigure}<figcaption>AI 실사형 배선 설명 · 두 끼우개 사이가 ③ 연결점이에요. 실제 단자 표시는 교구에서 확인해요.</figcaption></figure></div>
       <table class="wb-table wb-wire-table"><thead><tr><th scope="col">선</th><th scope="col">시작</th><th scope="col">끝</th><th scope="col">확인</th></tr></thead><tbody><tr><th scope="row">1</th><td>첫 전지끼우개 빨간 선</td><td>전구 접점 하나</td><td>□</td></tr><tr><th scope="row">2</th><td>전구의 다른 접점</td><td>스위치 공통 단자</td><td>□</td></tr><tr><th scope="row">3</th><td>첫 전지끼우개 검은 선</td><td>둘째 전지끼우개 빨간 선</td><td>□</td></tr><tr><th scope="row">4</th><td>두 전지끼우개 사이 연결점</td><td>스위치 1단 단자</td><td>□</td></tr><tr><th scope="row">5</th><td>둘째 전지끼우개 검은 선</td><td>스위치 2단 단자</td><td>□</td></tr></tbody></table>
       <section class="wb-section wb-think"><h3>이제 판을 끼워요</h3><p>F 두 장 사이에 C는 위, B는 가운데, A는 아래에 끼워요.<br>D를 앞에, E를 뒤에 끼우고 전선은 A 가운데에 넣어요.</p><p class="wb-small">□ 전선이 눌리지 않아요. □ 금속끼리 닿지 않아요.<br>□ 전지를 넣기 전 보호자와 연결을 확인해요.</p></section>
       <nav class="wb-page-links" aria-label="6쪽 실험 연결">${step(8, '3D에서 선 하나씩 연결하기')}${step(13, '판 조립 살펴보기')}</nav>
@@ -255,21 +224,22 @@ export function renderStudentPages(record = {}, { blank = false } = {}) {
       <nav class="wb-page-links" aria-label="15쪽 읽을거리 연결">${read('battery', '읽을거리 창에서 보기')}</nav>
     `),
     page(16, '전구 하나에서 도시의 불빛으로', '과학 읽을거리 2 · 에디슨과 테슬라가 고민한 전기', `
+      <figure class="wb-parallel-photo"><a class="parallel-photo-link" href="./assets/learning-visuals/parallel-lamps-photo.png" target="_blank" rel="noopener noreferrer" aria-label="전등 병렬연결 이미지 크게 보기 · 새 창"><img class="parallel-lamps-photo" src="./assets/learning-visuals/parallel-lamps-photo.png" width="2172" height="724" alt="전지함에서 나온 빨간 선과 검은 선에 전구 세 개가 각각 연결되어 있어요. 전구마다 왼쪽 소켓 접점에는 빨간 선, 오른쪽 접점에는 검은 선이 이어져요."><span class="parallel-photo-zoom">접점과 전선 크게 보기 ↗</span></a><figcaption>전등의 병렬연결 · 전구마다 두 전선 사이에 각각의 갈래가 있어요.<br>저전압 교구를 나타낸 AI 제작 설명 이미지예요.</figcaption></figure>
       <div class="wb-article-prose"><p>방 하나의 불을 꺼도 옆방은 밝게 남아 있지요. 에디슨은 오래 쓸 수 있는 전구와 함께, 여러 전등을 각각 켜고 끌 수 있는 병렬회로를 연구했어요. 여기서 병렬로 잇는 것은 전등이에요. 앞에서 살펴본 전지의 병렬연결과 구별해요.</p><p>도시에는 전기를 만드는 곳과 멀리 보내는 방법도 필요했어요. 에디슨은 직류 전력 공급을 발전시켰고, 테슬라는 교류 전동기와 교류 전력 기술을 발전시키는 데 기여했어요. 직류는 한 방향으로, 교류는 방향이 주기적으로 바뀌며 흘러요.</p><p>직렬·병렬은 부품을 연결하는 방법, 직류·교류는 전류의 방향에 관한 말이에요. 서로 다른 두 가지 기준이지요.</p></div>
       <div class="wb-concept-columns"><section><h3>직렬 · 병렬</h3><p>부품을 어떻게 이어 놓았을까?</p></section><section><h3>직류 · 교류</h3><p>전류의 방향은 어떻게 달라질까?</p></section></div>
-      ${video('history-city', 'https://www.youtube.com/watch?v=Js6CZPD5XfE', '에디슨과 테슬라')}
+      ${video('history-city', 'https://www.youtube.com/watch?v=Js6CZPD5XfE', '에디슨과 테슬라', '영어 영상 · 한국어 자막 제공 여부는 확인되지 않았어요.')}
       ${inlineVideo('Js6CZPD5XfE', '영상 · 에디슨과 테슬라', 'https://www.youtube.com/watch?v=Js6CZPD5XfE', '미국 에너지부가 소개하는 영어 영상이에요. 한국어 자막 제공 여부는 확인되지 않았어요.')}
       <section class="wb-section wb-think"><h3>도시를 상상해 보아요</h3><p>도시의 모든 전등이 한 줄로 이어져 있다면 어떤 불편이 생길까요?</p>${writing('', { lines: 2, label: '도시의 전등 연결에 관한 생각', page: 16 })}</section>
-      <p class="wb-small wb-article-sources">이야기 확인 자료: ${external('https://edison.rutgers.edu/component/content/article/electric-lamp?Itemid=101&amp;catid=91', '럿거스대 에디슨 문서 · 전구')}, ${external('https://www.energy.gov/articles/war-currents-ac-vs-dc-power', '미국 에너지부 · 직류와 교류')}.<br>영상 소개: ${external('https://www.energy.gov/articles/video-who-was-better-inventor-tesla-or-edison', '미국 에너지부')}.</p>
+      <p class="wb-small wb-article-sources">이야기 확인 자료: ${external('https://edison.rutgers.edu/component/content/article/electric-lamp?Itemid=101&amp;catid=91', '럿거스대 에디슨 문서 · 전구')}, ${external('https://www.energy.gov/articles/war-currents-ac-vs-dc-power', '미국 에너지부 · 직류와 교류')}.<br>영상 소개: ${external('https://www.energy.gov/articles/video-who-was-better-inventor-tesla-or-edison', '미국 에너지부')} · 영어 영상, 한국어 자막 제공 여부는 확인되지 않았어요.</p>
       <nav class="wb-page-links" aria-label="16쪽 읽을거리 연결">${read('city', '읽을거리 창에서 보기')}</nav>
     `),
     page(17, '1887년, 궁궐에 켜진 전등', '과학 읽을거리 3 · 우리나라 최초의 전등이 켜지던 날', `
       <figure class="wb-history-photo"><img src="assets/history/geoncheonggung.jpg" alt="오늘의 경복궁 건청궁 곤녕합 전경"><figcaption>오늘의 건청궁 곤녕합 · 1887년 당시 사진은 아니에요.<br>사진: 국가유산청 궁능유적본부 · 공공누리 제1유형</figcaption></figure>
       <div class="wb-article-prose"><p>1887년, 경복궁 건청궁에 전등이 켜졌어요. 조선 정부가 에디슨전등회사의 설비를 들여와 밝힌 전깃불이었지요.</p><p>전등만 가져오면 되었을까요? 발전기와 전선, 설비를 다룰 사람도 필요했어요. 첫 전깃불에는 여러 기술과 사람의 일이 함께 이어져 있었지요.</p><p>우리 스탠드도 전지, 전선, 스위치, 전구가 함께 일해요. 전기를 공급하는 장치는 달라도 전기가 흐를 길을 완성해야 불이 켜져요.</p></div>
-      ${video('history-palace', 'https://www.youtube.com/watch?v=Kaije_6OdOA', '건청궁의 전기')}
-      ${inlineVideo('Kaije_6OdOA', '영상 · 건청궁의 전기', 'https://www.youtube.com/watch?v=Kaije_6OdOA', '궁능유적본부가 안내하는 수어 해설이에요. 소리·자막은 재생 화면에서 확인해요.')}
+      ${video('history-palace', 'https://www.youtube.com/watch?v=mmD34B3cr1I', '건청궁 점등 · YTN 한국어 보도', '한국어 보도 · 2022년 재현 점등 행사예요.')}
+      ${inlineVideo('mmD34B3cr1I', '영상 · 건청궁 점등 이야기', 'https://www.youtube.com/watch?v=mmD34B3cr1I', '한국어 보도 · 2022년 재현 점등 행사예요. 1887년 당시 영상은 아니에요.')}
       <section class="wb-section wb-think"><h3>첫 전깃불 아래에서</h3><p>전등이 처음 들어온 날, 사람들은 무엇을 가장 신기해했을까요?</p>${writing('', { lines: 2, label: '건청궁 첫 전등 이야기를 읽고 든 생각', page: 17 })}</section>
-      <p class="wb-small wb-article-sources">이야기 확인 자료: ${external('https://contents.history.go.kr/mobile/kc/view.do?code=kc_age_40&amp;levelId=kc_o403950', '국사편찬위원회 · 우리 역사넷')}.<br>영상 안내: ${external('https://royal.khs.go.kr/ROYAL/contents/R303000000.do?schGroupCode=gbg&amp;schM=view&amp;id=20240108151343717711', '국가유산청 궁능유적본부 · 건청궁 전기')}.</p>
+      <p class="wb-small wb-article-sources">이야기 확인 자료: ${external('https://contents.history.go.kr/mobile/kc/view.do?code=kc_age_40&amp;levelId=kc_o403950', '국사편찬위원회 · 우리 역사넷')}.<br>영상 안내: ${external('https://www.ytn.co.kr/_ln/0106_202205181130447897', 'YTN · 2022년 재현 점등 보도')}.</p>
       <nav class="wb-page-links" aria-label="17쪽 읽을거리 연결">${read('palace', '읽을거리 창에서 보기')}${step(19, '내 실험으로 돌아가기')}</nav>
     `)
   ];
