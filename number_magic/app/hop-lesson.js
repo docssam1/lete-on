@@ -1,27 +1,27 @@
 /* N-07 수직선 뛰기 체험(2026-10-06) — 교재 G1-7호 "주사위 던지기·개구리의 위치·도미노".
    수학 상태는 data/living-lessons.js(kind:'hop')가 정하고, 여기는 SVG 로 그리기만 한다(그림이 답을 정하지 않는다).
-   0에서 첫 주사위만큼 뛰고, 둘째 주사위만큼 + 면 앞으로·− 면 되돌아온다. 토끼는 실사 소품(assets/images/real/rabbit.png). */
+   0에서 첫 주사위만큼 뛰고, 둘째 주사위만큼 + 면 앞으로·− 면 되돌아온다. 개구리는 실사 소품(assets/images/real/frog.png — 2026-10-07 실사-2차, 그 전엔 토끼). */
 const copy={
- ko:{title:'토끼의 수직선 뛰기',ask:(a,op,c)=>`주사위 ${a}, 그리고 ${c}! 0에서 ${a}칸 뛴 다음 ${c}칸 ${op==='+'?'앞으로':'되돌아'} 와요. 토끼는 어디에 설까요?`,
-  guess:'먼저 토끼가 설 자리를 골라 보세요. 그다음 직접 뛰어 확인해요.',stage1:n=>`첫 주사위만큼! ${n}칸 더 뛰어요.`,stage2:(op,n)=>op==='+'?`이제 앞으로 ${n}칸 더!`:`이제 되돌아 ${n}칸 더!`,
+ ko:{title:'개구리의 수직선 뛰기',ask:(a,op,c)=>`주사위 ${a}, 그리고 ${c}! 0에서 ${a}칸 뛴 다음 ${c}칸 ${op==='+'?'앞으로':'되돌아'} 와요. 개구리는 어디에 설까요?`,
+  guess:'먼저 개구리가 설 자리를 골라 보세요. 그다음 직접 뛰어 확인해요.',stage1:n=>`첫 주사위만큼! ${n}칸 더 뛰어요.`,stage2:(op,n)=>op==='+'?`이제 앞으로 ${n}칸 더!`:`이제 되돌아 ${n}칸 더!`,
   right:(a,op,c,x)=>`맞았어요! ${a} ${op==='+'?'+':'−'} ${c} = ${x}. ${op==='+'?'앞으로 뛰면 더하기예요.':'되돌아오면 빼기예요.'}`,
-  wrong:(p,x,op)=>`${p}(으)로 생각했는데 토끼는 ${x}에 섰어요. ${op==='+'?'앞으로 뛰면 커져요.':'되돌아오면 작아져요.'}`,
-  done:(a,op,c,x)=>`토끼가 ${x}에 섰어요. ${a} ${op==='+'?'+':'−'} ${c} = ${x}.`,
-  hop:'한 칸 뛰기',undo:'되돌리기',reset:'처음부터',next:'다른 수로',prediction:'토끼가 설 자리',scene:'수직선과 토끼. 그림을 누르거나 한 칸 뛰기 버튼을 누르세요.',
+  wrong:(p,x,op)=>`${p}(으)로 생각했는데 개구리는 ${x}에 섰어요. ${op==='+'?'앞으로 뛰면 커져요.':'되돌아오면 작아져요.'}`,
+  done:(a,op,c,x)=>`개구리가 ${x}에 섰어요. ${a} ${op==='+'?'+':'−'} ${c} = ${x}.`,
+  hop:'한 칸 뛰기',undo:'되돌리기',reset:'처음부터',next:'다른 수로',prediction:'개구리가 설 자리',scene:'수직선과 개구리. 그림을 누르거나 한 칸 뛰기 버튼을 누르세요.',
   legend:['첫 주사위만큼','앞으로(+)','되돌아(−)']},
- en:{title:'Rabbit Hops on the Number Line',ask:(a,op,c)=>`Dice ${a} and ${c}! Hop ${a} from 0, then ${c} ${op==='+'?'forward':'back'}. Where will the rabbit land?`,
-  guess:'First pick where the rabbit will land, then hop to check.',stage1:n=>`The first die: ${n} more hop${n>1?'s':''}.`,stage2:(op,n)=>op==='+'?`Now ${n} more forward!`:`Now ${n} more back!`,
+ en:{title:'Frog Hops on the Number Line',ask:(a,op,c)=>`Dice ${a} and ${c}! Hop ${a} from 0, then ${c} ${op==='+'?'forward':'back'}. Where will the frog land?`,
+  guess:'First pick where the frog will land, then hop to check.',stage1:n=>`The first die: ${n} more hop${n>1?'s':''}.`,stage2:(op,n)=>op==='+'?`Now ${n} more forward!`:`Now ${n} more back!`,
   right:(a,op,c,x)=>`Right! ${a} ${op==='+'?'+':'−'} ${c} = ${x}. ${op==='+'?'Hopping forward is adding.':'Hopping back is subtracting.'}`,
-  wrong:(p,x,op)=>`You guessed ${p}, but the rabbit landed on ${x}. ${op==='+'?'Forward makes it bigger.':'Going back makes it smaller.'}`,
-  done:(a,op,c,x)=>`The rabbit landed on ${x}. ${a} ${op==='+'?'+':'−'} ${c} = ${x}.`,
-  hop:'Hop once',undo:'Undo',reset:'Reset',next:'Try other numbers',prediction:'Where it lands',scene:'Number line and rabbit. Tap the picture or the Hop button.',
+  wrong:(p,x,op)=>`You guessed ${p}, but the frog landed on ${x}. ${op==='+'?'Forward makes it bigger.':'Going back makes it smaller.'}`,
+  done:(a,op,c,x)=>`The frog landed on ${x}. ${a} ${op==='+'?'+':'−'} ${c} = ${x}.`,
+  hop:'Hop once',undo:'Undo',reset:'Reset',next:'Try other numbers',prediction:'Where it lands',scene:'Number line and frog. Tap the picture or the Hop button.',
   legend:['First die','Forward (+)','Back (−)']},
- zh:{title:'小兔在数轴上跳',ask:(a,op,c)=>`骰子${a}和${c}！从0跳${a}格，再${op==='+'?'往前':'往回'}跳${c}格。小兔会停在哪里？`,
-  guess:'先猜猜小兔停在哪里，再跳一跳验证。',stage1:n=>`按第一个骰子！还要跳${n}格。`,stage2:(op,n)=>op==='+'?`再往前跳${n}格！`:`再往回跳${n}格！`,
+ zh:{title:'青蛙在数轴上跳',ask:(a,op,c)=>`骰子${a}和${c}！从0跳${a}格，再${op==='+'?'往前':'往回'}跳${c}格。青蛙会停在哪里？`,
+  guess:'先猜猜青蛙停在哪里，再跳一跳验证。',stage1:n=>`按第一个骰子！还要跳${n}格。`,stage2:(op,n)=>op==='+'?`再往前跳${n}格！`:`再往回跳${n}格！`,
   right:(a,op,c,x)=>`对了！${a}${op==='+'?'+':'−'}${c}=${x}。${op==='+'?'往前跳就是加。':'往回跳就是减。'}`,
-  wrong:(p,x,op)=>`你猜的是${p}，小兔停在了${x}。${op==='+'?'往前跳会变大。':'往回跳会变小。'}`,
-  done:(a,op,c,x)=>`小兔停在了${x}。${a}${op==='+'?'+':'−'}${c}=${x}。`,
-  hop:'跳一格',undo:'撤回',reset:'重新开始',next:'换一组数',prediction:'小兔停的位置',scene:'数轴和小兔。点图或按“跳一格”。',
+  wrong:(p,x,op)=>`你猜的是${p}，青蛙停在了${x}。${op==='+'?'往前跳会变大。':'往回跳会变小。'}`,
+  done:(a,op,c,x)=>`青蛙停在了${x}。${a}${op==='+'?'+':'−'}${c}=${x}。`,
+  hop:'跳一格',undo:'撤回',reset:'重新开始',next:'换一组数',prediction:'青蛙停的位置',scene:'数轴和青蛙。点图或按“跳一格”。',
   legend:['第一个骰子','往前（+）','往回（−）']}
 };
 const X=n=>24+n*31.2, LINE_Y=136;
@@ -60,8 +60,8 @@ export function mount(host,uid,lang){
   for(let n=0;n<=10;n++)s+=`<line x1="${X(n)}" y1="${LINE_Y-7}" x2="${X(n)}" y2="${LINE_Y+7}" stroke="${COL.ink}" stroke-width="2.4"/><text x="${X(n)}" y="${LINE_Y+26}" text-anchor="middle" font-size="16" font-weight="800" fill="${n===v.pos?COL.plus:'#4a5468'}">${n}</text>`;
   v.hops.forEach((h,i)=>{s+=arc(h[0],h[1],i<v.a?COL.first:(v.op==='+'?COL.plus:COL.minus));});
   const rx=X(v.pos);
-  s+=`<g class="nm-hop-rabbit" style="transform:translate(${rx}px,0)"><ellipse cx="0" cy="${LINE_Y-4}" rx="14" ry="3" fill="${COL.ink}" opacity=".15"/>`+
-   `<image href="assets/images/real/rabbit.png" x="-23" y="${LINE_Y-50}" width="46" height="46" ${v.stage===2&&v.op==='-'?'transform="scale(-1,1)"':''}/></g>`;
+  s+=`<g class="nm-hop-frog" style="transform:translate(${rx}px,0)"><ellipse cx="0" cy="${LINE_Y-4}" rx="14" ry="3" fill="${COL.ink}" opacity=".15"/>`+
+   `<image href="assets/images/real/frog.png" x="-23" y="${LINE_Y-50}" width="46" height="46" ${v.stage===2&&v.op==='-'?'transform="scale(-1,1)"':''}/></g>`;
   return s+`</svg>`;
  }
  function feedback(v){
