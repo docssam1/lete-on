@@ -1,0 +1,43 @@
+{
+  "voice": "docssam-omnivoice",
+  "note": "안내 문장만 준비. 새 음성은 모든 기능 완료 후 생성. 기존 공용 음성·전신 캐릭터 재사용. Google TTS 사용 안 함.",
+  "slides": {
+    "cover": "s51u01-cover",
+    "intro": "s51u01-intro",
+    "scene": "s51u01-scene",
+    "lab": "s51u01-lab",
+    "concl": "s51u01-concl",
+    "note": "s51u01-note",
+    "reading": "s51u01-reading"
+  },
+  "lines": [
+    {
+      "id": "s51u01-cover",
+      "text": "오늘은 과학자처럼 탐구하는 방법을 배워요."
+    },
+    {
+      "id": "s51u01-intro",
+      "text": "물줄기가 접시에 떨어질 때 튀는 방울, 무엇이 그 양을 바꿀까요?"
+    },
+    {
+      "id": "s51u01-scene",
+      "text": "구멍을 가늘게 하면 튄 방울이 많아질까요, 적어질까요? 먼저 예상해 봐요."
+    },
+    {
+      "id": "s51u01-lab",
+      "text": "구멍과 높이를 고르고 세 번 떨어뜨려 보세요. 평균을 내어 표에 적어요."
+    },
+    {
+      "id": "s51u01-concl",
+      "text": "표의 평균값을 근거로 결론을 써 봐요."
+    },
+    {
+      "id": "s51u01-note",
+      "text": "다르게 할 조건은 하나, 나머지는 모두 같게 해요."
+    },
+    {
+      "id": "s51u01-reading",
+      "text": "과학자들은 발표한 뒤에 어떤 질문을 받을까요? 함께 읽어 봐요."
+    }
+  ]
+}

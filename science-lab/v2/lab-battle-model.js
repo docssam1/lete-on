@@ -9,10 +9,17 @@ const humidifier = (title, targets) => ({title,question:'어느 팀의 판 아�
 import { shadowModel } from './lab-shadow.js';
 import { quakeModel } from '../scenes/quake-model.js';
 import { cycleModel } from '../scenes/water-cycle-model.js';
+import { splashModel } from '../scenes/splash-model.js';
+const splash = (title, targets) => ({ title, question: '어느 팀의 평균 튄 방울 수가 더 많을까요?', choices: ['1팀이 더 많음', '평균이 같음', '2팀이 더 많음'], field: 'mean', targets });
 const cycle = (title, targets) => ({ title, question: '어느 팀의 수조에 비가 더 많이 내릴까요?', choices: ['1팀이 더 많이 내림', '비의 양이 같음', '2팀이 더 많이 내림'], field: 'stage', targets });
 const quake = (title, question, choices, field, targets) => ({ title, question, choices, field, targets });
 const shadow = (title, targets) => ({ title, question: '어느 팀의 그림자가 더 클까요?', choices: ['1팀이 더 큼', '크기가 같음', '2팀이 더 큼'], field: 'size', targets });
 export const LAB_BATTLE_ROUNDS = {
+  's51-u01': [
+    splash('구멍 지름만 바꾸기', [{ hole: 1, height: 15 }, { hole: 7, height: 15 }]),
+    splash('높이만 바꾸기', [{ hole: 3, height: 15 }, { hole: 3, height: 35 }]),
+    splash('같은 조건으로 재현하기', [{ hole: 5, height: 35 }, { hole: 5, height: 35 }]),
+  ],
   's42-u05': [
     cycle('전등 세기만 바꾸기', [{ sun: '약하게', lid: '얼음 있음' }, { sun: '세게', lid: '얼음 있음' }]),
     cycle('뚜껑 얼음만 바꾸기', [{ sun: '세게', lid: '얼음 있음' }, { sun: '세게', lid: '얼음 없음' }]),
@@ -58,6 +65,7 @@ export const LAB_BATTLE_ROUNDS = {
 const finite = (value) => typeof value === 'number' && Number.isFinite(value) && value >= 0;
 export function validBattleRow(unit, row) {
   if (!row || typeof row !== 'object') return false;
+  if (unit === 's51-u01') { try { const m = splashModel(row.hole, row.height); return row.mean === m.mean && row.result === m.result && Array.isArray(row.trials) && row.trials.join() === m.trials.join(); } catch { return false; } }
   if (unit === 's42-u05') { try { const m = cycleModel(row.sun, row.lid); return row.stage === m.stage && row.evap === m.evap && row.result === m.result; } catch { return false; } }
   if (unit === 's42-u04') { try { const m = quakeModel(row.force, row.house); return row.change === m.change && row.damage === m.damage && row.result === m.result; } catch { return false; } }
   if (unit === 's42-u03') { try { const m = shadowModel(row.light, row.object, row.place); return row.size === m.size && row.result === m.result; } catch { return false; } }
@@ -74,6 +82,7 @@ export function matchesBattleTarget(unit, row, target) {
   return validBattleRow(unit, row) && Object.entries(target).every(([key, value]) => row[key] === value);
 }
 export function battleTargetText(unit, target) {
+  if (unit === 's51-u01') return `구멍 ${target.hole} mm · 높이 ${target.height} cm`;
   if (unit === 's42-u05') return `전등 ${target.sun} · 뚜껑 위 ${target.lid}`;
   if (unit === 's42-u04') return `미는 힘 ${target.force} · ${target.house}`;
   if (unit === 's42-u03') return `${target.light} · ${target.object} · ${target.place}`;
@@ -84,6 +93,7 @@ export function battleTargetText(unit, target) {
   return `${target.plant} · ${target.where}`;
 }
 export function battleRowText(unit, row) {
+  if (unit === 's51-u01') return `${row.hole} mm · ${row.height} cm · ${row.result}`;
   if (unit === 's42-u05') return `전등 ${row.sun} · ${row.lid} · ${row.result}`;
   if (unit === 's42-u04') return `${row.force} · ${row.house} · ${row.result}`;
   if (unit === 's42-u03') return `${row.light} · ${row.place} · ${row.result}`;
