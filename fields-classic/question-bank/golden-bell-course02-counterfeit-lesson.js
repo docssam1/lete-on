@@ -59,7 +59,7 @@ const concept = { kind: "course-concept", tracks };
 
 export const COURSE02_A1_COUNTERFEIT_LESSON = Object.freeze({
   id: "course-02-a1-counterfeit-coins", courseId: "course-02", bookId: "course-02-a1", label: "A1", title: "가벼운 가짜 금화 찾기", unit: "양팔저울과 금화 찾기", status: "pilot",
-  learnerStage: "필즈 더 클래식 2과정 A1; 연령 미확정",
+  learnerStage: "FC 2과정 A1; 연령 미확정",
   representativeConcept: "같은 개수로 나누어 비교하고, 가벼운 가짜 금화가 있는 후보를 줄여 최소 횟수로 찾기",
   story: { title: "금화 저울", text: "같아 보이는 금화 중 하나만 가벼워요. 양팔 저울의 결과로 후보를 줄여 보세요.", mission: "후보를 세 묶음으로 나누고 두 번의 비교로 하나를 찾아 보세요." },
   explanation: { headline: "후보를 같은 크기로 나누기", steps: ["9개를 3개씩 세 묶음으로 나눕니다.", "첫 비교 결과로 가짜가 있는 3개를 고릅니다.", "후보 3개 중 2개를 비교해 마지막 금화를 확인합니다."] },

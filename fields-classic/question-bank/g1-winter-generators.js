@@ -1,4 +1,4 @@
-// 필즈 더 클래식 초1 4차 원본 구조 전용 문제 생성기.
+// FC 초1 4차 원본 구조 전용 문제 생성기.
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 

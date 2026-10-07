@@ -1,0 +1,213 @@
+/* 2권 골든벨 그림 — 원본 교사용 교재 모양에 맞춘 다시 그리기 (2026-10-05 눈검수 반영) */
+
+.b2-token.shape.drawn{min-width:40px;padding:0;border-color:transparent;background:transparent}
+.b2-shape-icon{display:block;overflow:visible}
+
+/* 표에서 원본에 없는 칸 */
+.b2-matrix>span.void{border-color:transparent;background:transparent}
+
+/* 수열: 칸마다 나누어 그린다 */
+.b2-sequence section{display:block}
+.b2-sequence section>strong{display:block;margin-bottom:6px;color:#566274;font-size:14px;text-align:center}
+.b2-sequence section>div{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:6px}
+.b2-sequence section>div>span{display:grid;grid-template-rows:auto 16px;justify-items:center;align-items:end;min-width:44px}
+.b2-sequence.no-ordinals section>div>span{grid-template-rows:auto}
+.b2-sequence section>div>span>b{display:grid;place-items:center;min-width:44px;height:44px;padding:0 6px;border:1.5px solid #5791a5;background:#fff;color:#234d5e;font-size:20px;font-weight:900}
+.b2-sequence section>div>span>b.shape{min-width:40px;width:40px;padding:0;border:0;background:transparent}
+.b2-sequence section>div>span>b.stack{display:flex;flex-direction:column-reverse;gap:2px;height:auto;min-width:34px;padding:0;border:0;background:transparent}
+.b2-sequence section>div>span>b.blank{border:2px dashed #d69b2b;background:#fff7d9;color:#8a5b0b}
+.b2-sequence section>div>span>b.grid{display:grid;grid-template-columns:repeat(var(--grid-columns),30px);height:auto;padding:0;border:2px solid #3f7890;background:#fff}
+.b2-sequence section>div>span>b.grid em{display:grid;place-items:center;height:30px;border:1px solid #9bb8c4;font-style:normal;font-size:16px}
+.b2-sequence section>div>span>i{color:#71868d;font-size:11px;font-style:normal;font-weight:800}
+.b2-sequence section>div>span.more b{border:0;background:transparent}
+.b2-sequence>strong{text-align:center;color:#8e6318;font-size:15px}
+
+/* 양팔저울 */
+.b2-balance-set{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px;width:min(100%,820px)}
+.b2-balance-set .b2-scale{display:block;width:250px;max-width:100%;min-height:0;margin:0;border:0;background:transparent}
+.b2-scale-svg{display:block;width:100%;height:auto;overflow:visible}
+.b2-scale-svg .beam{stroke:#3a86a6;stroke-width:9;stroke-linecap:round}
+.b2-scale-svg .pivot{fill:#d5e9f1;stroke:#2c6f89;stroke-width:2}
+.b2-scale-svg .stand{fill:#2f7f9b}
+.b2-scale-svg .pan{fill:#8cc3dc;stroke:#2c6f89;stroke-width:1.6}
+.b2-scale-svg .post{stroke:#2c6f89;stroke-width:3}
+
+/* 식과 쓸 수 */
+.b2-number-cards{align-items:center;justify-content:center}
+.b2-number-cards>span{margin-right:4px;color:#566274;font-size:14px;font-weight:900}
+
+/* 합과 차 막대 */
+.b2-sum-difference{display:grid;justify-items:center;gap:6px}
+.b2-sum-difference .labels,.b2-sum-difference .bars{display:grid;grid-template-columns:repeat(2,56px)}
+.b2-sum-difference .labels span{text-align:center;font-weight:900;color:#234d5e}
+.b2-sum-difference .bars span{height:52px;border:1.5px solid #6f9fb2;background:#fff}
+.b2-sum-difference .bars span.diff{display:grid;place-items:center;background:#e9f5f9;color:#1f6f8f;font-size:22px;font-weight:900}
+.b2-sum-difference .bars span.empty{border-color:transparent;background:transparent}
+.b2-sum-difference strong{color:#8e6318;font-size:15px}
+
+/* 단계별로 자라는 모양 */
+.b2-growth.drawn>div{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:16px;overflow:visible}
+.b2-growth.drawn figure{display:grid;justify-items:center;gap:6px;min-width:0;margin:0}
+.b2-growth.drawn svg{display:block;max-width:200px}
+.b2-growth.drawn.square-match svg,.b2-growth.drawn.triangle-match svg{height:44px;width:auto}
+.b2-growth.drawn.house-match svg{height:62px;width:auto}
+.b2-growth.drawn svg .stick{stroke:#f2c58f;stroke-width:4;stroke-linecap:round}
+.b2-growth.drawn svg .head{fill:#e25555}
+.b2-growth.drawn svg .dot{fill:#2b7d93;stroke:#1d5a6b;stroke-width:1}
+.b2-growth.drawn svg .dot.white{fill:#fff}
+.b2-growth.drawn svg .paper{fill:#8cc3dc;stroke:#2c6f89;stroke-width:1.5}
+.b2-growth.drawn svg .paper.back{fill:#cfe6ef}
+.b2-growth.drawn figcaption{color:#3f5868;font-size:14px;font-weight:800}
+.b2-growth.drawn .more{align-self:center;color:#3f5868;font-size:22px;font-weight:900}
+.b2-growth.drawn>strong{text-align:center;color:#8e6318;font-size:15px}
+
+/* 숫자 약속: 예시 + 문제 */
+.b2-promise-board{display:grid;gap:12px;justify-items:center;width:min(100%,760px)}
+.b2-promise-board .examples{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px}
+.b2-promise-board .problem{padding:6px 12px;border-top:2px dashed #c9d8de}
+.b2-promise .b2-token{min-width:42px;height:42px;border-radius:50%;border-color:#2f7f9b;background:#fff}
+.b2-promise.square{display:grid;grid-template-columns:48px 76px 48px;grid-template-rows:48px 50px 48px;align-items:center;justify-items:center;width:auto;height:auto}
+.b2-promise.square:before{content:"";grid-area:1/1/4/4;width:120px;height:120px;border:2px solid #6e98a9}
+.b2-promise.square>span,.b2-promise.square>strong{position:static;z-index:1}
+.b2-promise.square .tl{grid-area:1/1}.b2-promise.square .tr{grid-area:1/3}.b2-promise.square .bl{grid-area:3/1}.b2-promise.square .br{grid-area:3/3}
+.b2-promise.square>strong{grid-area:2/2;font-size:22px}
+.b2-promise.row{display:grid;gap:8px}
+.b2-promise.row>span{display:flex;align-items:center;gap:0}
+.b2-promise.row>span>b,.b2-promise.row>span>.b2-token{display:grid;place-items:center;width:42px;height:42px;border:1.5px solid #2f7f9b;border-radius:50%;background:#fff;font-size:17px;font-weight:900}
+.b2-promise.row>span>i{width:16px;height:2px;background:#2f7f9b}
+
+/* 분수 도형 */
+.b2-fraction-figure svg{display:block;width:220px;max-width:100%;height:auto}
+.b2-fraction-figure .piece{fill:#fff;stroke:#2c6f89;stroke-width:1.8;stroke-linejoin:round}
+.b2-fraction-figure .piece.shaded{fill:#8cc3dc}
+.b2-fraction-figure .line{fill:none;stroke:#2c6f89;stroke-width:1.8;stroke-linejoin:round}
+
+/* 색종이 접기 */
+.b2-fold-fraction{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px}
+.b2-fold-fraction .paper-step{width:96px;height:auto}
+.b2-fold-fraction .paper{fill:#cfe6ef;stroke:#2c6f89;stroke-width:1.5}
+.b2-fold-fraction .paper.back{fill:#e7f3f7}
+.b2-fold-fraction .crease{stroke:#2f6fd0;stroke-width:1.5;stroke-dasharray:4 3;fill:none}
+.b2-fold-fraction .arrow{width:38px;height:20px}
+.b2-fold-fraction .arrow path{fill:none;stroke:#2f7f9b;stroke-width:2.4}
+.b2-fold-fraction .unknown{color:#8e6318;font-size:18px}
+
+/* 배수: 식만 */
+.b2-multiple.expression-only>strong{font-size:24px}
+
+@media screen and (max-width:700px){
+  .b2-balance-set .b2-scale{width:200px}
+  .b2-sequence section>div>span{min-width:36px}
+  .b2-sequence section>div>span>b{min-width:36px;height:38px;font-size:17px}
+  .b2-fraction-figure svg{width:180px}
+}
+
+@media print{
+  .b2-balance-set .b2-scale{width:46mm}
+  .b2-sequence section>div{gap:1mm}
+  .b2-sequence section>div>span{min-width:7mm}
+  .b2-sequence section>div>span>b{min-width:7mm;height:7mm;font-size:10pt}
+  .b2-sequence section>div>span>b.shape{width:7mm;min-width:7mm}
+  .b2-shape-icon{width:6.5mm;height:6.5mm}
+  .b2-growth.drawn svg{max-width:32mm}
+  .b2-fraction-figure svg{width:36mm}
+  .b2-fold-fraction .paper-step{width:16mm}
+  .b2-promise-board{gap:2mm}
+  .b2-sequence section>div>span>b.blank,.b2-scale-svg .pan,.b2-fraction-figure .piece.shaded{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+
+/* 도형 하나로 답하는 고르기 단추 */
+.answer-choices.glyph-choices button{min-width:58px;min-height:52px;font-size:28px;line-height:1}
+.b2-growth.drawn.square-match svg,.b2-growth.drawn.triangle-match svg{height:58px}
+.b2-growth.drawn.house-match svg{height:84px}
+@media print{.b2-growth.drawn.square-match svg,.b2-growth.drawn.triangle-match svg{height:10mm}.b2-growth.drawn.house-match svg{height:14mm}}
+.b2-sequence section>div>span>b.grid em{width:30px}
+.b2-promise.square{border:0}
+.b2-promise.square>strong{position:static;left:auto;top:auto;width:auto;min-width:52px;height:42px;padding:0 6px;transform:none;border:0;background:transparent;color:#234e60}
+.b2-promise.square>strong>.b2-token.blank{border-radius:4px}
+.b2-matrix.has-void{border:0}
+.b2-matrix.has-void>span:not(.void){border:1.5px solid #468da5}
+
+@media print{
+  .b2-balance-set .b2-scale{flex:0 0 52mm;width:52mm;height:auto;transform:none}
+  .b2-sequence section>div>span>b.stack,.b2-sequence section>div>span>b.grid{height:auto}
+  .b2-sequence section>div>span>b.stack .b2-shape-icon{width:4.5mm;height:4.5mm}
+  .b2-sequence section>div>span>b.grid em{width:5mm;height:5mm;font-size:8pt}
+  .b2-promise-board{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:3mm;zoom:.62}
+  .b2-promise-board .b2-token{min-width:11mm;height:11mm;font-size:16px}
+  .b2-promise-board .b2-promise>strong{font-size:22px}
+  .b2-sequence.align-bottom section>div{gap:.6mm}
+  .b2-sequence.align-bottom section>div>span{min-width:0}
+  .b2-promise-board .examples{flex-wrap:nowrap}
+  .b2-promise-board .problem{padding:0 0 0 10px;border-top:0;border-left:2px dashed #c9d8de}
+  .b2-promise-board .b2-promise{transform:none}
+  .b2-promise.row{zoom:.62;transform:none}
+}
+
+@media print{
+  .gold-print-page[data-print-book="book-02"][data-print-part^="original-"] .b2-promise-board .b2-promise{transform:none}
+  .gold-print-page[data-print-book="book-02"][data-print-part^="original-"] .b2-promise.row{transform:none}
+  .b2-sequence.align-bottom section>div>span>b.stack{min-width:0}
+  .b2-sequence.align-bottom section>div>span>b.stack .b2-shape-icon{width:4mm;height:4mm}
+  .b2-sequence.align-bottom section>div>span>b.blank{min-width:6mm;height:6mm}
+}
+@media screen and (max-width:700px){.b2-promise-board .examples{zoom:.62}.b2-promise-board .problem{zoom:.8}}
+
+/* ── 2026-10-05 색 정리: 글씨는 검은색, 그림은 도형마다 다른 색(하늘색 한 가지 금지) ── */
+.book02-visual,.guided-book2-source{color:#111}
+.quiz-item>strong,.lesson-lead{color:#111}
+.b2-token{border-color:#555;color:#111}
+.b2-expression-text{color:#111}
+.b2-number-cards i{border-color:#555;background:#fff;color:#111}
+.b2-number-cards>span,.b2-sequence section>strong{color:#333}
+.b2-sequence section>div>span>b{border-color:#555;color:#111}
+.b2-sequence section>div>span>i{color:#555}
+.b2-matrix{border-color:#444}.b2-matrix>span{border-color:#888}
+.b2-matrix.has-void>span:not(.void){border-color:#444}
+.b2-row-sums b,.b2-column-sums b{color:#111}
+.b2-split-tree .b2-token.known{background:#fff3c4}
+.b2-scale-svg .beam{stroke:#6d4c41}
+.b2-scale-svg .pivot{fill:#fff;stroke:#3e2723}
+.b2-scale-svg .stand{fill:#5d4037}
+.b2-scale-svg .pan{fill:#d7ccc8;stroke:#4e342e}
+.b2-scale-svg .post{stroke:#4e342e}
+.b2-sum-difference .labels span{color:#111}
+.b2-sum-difference .bars span{border-color:#555}
+.b2-sum-difference .bars span.diff{background:#fff3c4;color:#111}
+.b2-growth.drawn svg .dot{fill:#222;stroke:#111}
+.b2-growth.drawn svg .dot.white{fill:#fff}
+.b2-growth.drawn svg .paper{fill:#ffe9a8;stroke:#7a5c00}
+.b2-growth.drawn svg .paper.back{fill:#fff6d6}
+.b2-growth.drawn figcaption,.b2-growth.drawn .more{color:#333}
+.b2-promise .b2-token,.b2-promise.row>span>b,.b2-promise.row>span>.b2-token{border-color:#555;color:#111}
+.b2-promise.row>span>i{background:#555}
+.b2-promise.square:before{border-color:#777}
+.b2-promise>strong{color:#111}
+.b2-sudoku{border-color:#222}.b2-sudoku>span{color:#111}
+.b2-fraction-figure{display:flex;align-items:center;justify-content:center;gap:22px}
+.b2-fraction-figure .piece,.b2-fraction-figure .line{stroke:#333}
+.b2-fraction-figure .piece.shaded{fill:#ffa94d}
+.b2-fold-fraction .paper{fill:#ffe9a8;stroke:#7a5c00}
+.b2-fold-fraction .paper.back{fill:#fff6d6}
+.b2-fold-fraction .crease{stroke:#d84315}
+.b2-fold-fraction .arrow path{stroke:#444}
+.b2-multiple.expression-only>strong{border-left-color:#f9c74f;color:#111}
+
+/* 분수: 분자 위, 가로선, 분모 아래 */
+.math-frac{display:inline-flex;flex-direction:column;align-items:center;margin:0 .15em;vertical-align:middle;line-height:1.05;font-size:.92em}
+.math-frac>i{display:block;padding:0 .2em;font-style:normal}
+.math-frac>i:first-child{border-bottom:.09em solid currentColor}
+.b2-frac-blank{display:inline-grid;grid-template-rows:auto 3px auto;justify-items:center;gap:4px}
+.b2-frac-blank>i{display:block;width:40px;height:36px;border:2px dashed #888}
+.b2-frac-blank>b{display:block;width:52px;height:3px;background:#111}
+.fraction-answer{display:flex;align-items:center;gap:12px}
+.answer-input-wrap>span:first-child{color:#333;font-size:13px}
+.fraction-answer .frac-input{display:inline-flex;flex-direction:column;align-items:center;gap:4px}
+.fraction-answer .frac-input>input{width:70px;height:42px;padding:0;text-align:center;color:#111;font-size:20px}
+.fraction-answer .frac-input>b{display:block;width:84px;height:3px;background:#111}
+@media print{
+  .b2-frac-blank>i{width:7mm;height:6mm}.b2-frac-blank>b{width:9mm;height:.5mm}
+  .b2-scale-svg .pan,.b2-fraction-figure .piece.shaded,.b2-fold-fraction .paper,.b2-shape-icon{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+.b2-promise.square>strong,.b2-promise.triangle>strong,.b2-promise-set strong{color:#111}
+.answer-choices.glyph-choices button{color:#111}

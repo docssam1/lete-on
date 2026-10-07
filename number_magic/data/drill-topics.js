@@ -194,6 +194,7 @@ var CURATED_TOPICS = [
       {label:'분수 나눗셈 (역수로 곱하기)', thread:'FR11', level:2, desc:'역수로 바꿔 곱하기'},
       {label:'분수 전환 나눗셈 (연습)', thread:'FR12', level:1, desc:'나누는 수를 2 · 4 · 5 · 8로'},
       {label:'분수 전환 나눗셈 (실전)', thread:'FR12', level:2, desc:'20 · 25까지 포함해 나누기'},
+      {label:'분수 전환 나눗셈 (두 자리)', thread:'FR12', level:3, desc:'두 자리 ÷ 2 · 4 · 5 · 8'},
     ]
   },
   { id:'decimal', label:'소수', en:'Decimals', zh:'小数', icon:'🔢', color:'#06b6d4', section:'school',
@@ -406,6 +407,7 @@ var CURATED_TOPICS = [
       {label:'11의 곱셈법 (실전)', thread:'ML15', level:2, desc:'더 큰 수 × 11'},
       {label:'5의 변신 곱셈 (×5)', thread:'ML16', level:1, desc:'10의 반으로 빠르게'},
       {label:'5의 변신 나눗셈 (÷5)', thread:'ML16', level:2, desc:'2배 하고 10으로 나누기'},
+      {label:'5의 변신 나눗셈 (÷5 · 두·세 자리)', thread:'ML16', level:3, desc:'작은 수로 2배 하고 10으로 나누기'},
       {label:'25의 변신 곱셈 (×25)', thread:'ML17', level:1, desc:'100의 4분의 1로 빠르게'},
       {label:'25의 변신 나눗셈 (÷25)', thread:'ML17', level:2, desc:'4배 하고 100으로 나누기'},
       {label:'자리 이동 곱셈 (연습)', thread:'ML18', level:1, desc:'0을 옮겨서 곱하기'},

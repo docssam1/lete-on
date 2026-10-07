@@ -1,0 +1,12 @@
+{
+  "mode": "built-in image_gen",
+  "date": "2026-10-07",
+  "asset": "assembly-package.png",
+  "use": "Photoreal explanatory pouch for bag-opening animation, not actual package photograph",
+  "prompt": "A photoreal educational kit package photographed straight-on on a clean warm white tabletop, tall portrait 4:5 composition. A sealed crinkled TRANSPARENT clear plastic bag with a distinct sealed narrow top strip occupying the upper 12 percent, rest of pouch filled with the REAL miniature low voltage science stand apparatus in the references. Black thick foamboard white-cut edges panels A B C D E and TWO F side panels, the star windows have EIGHT points (not five); some panels stacked naturally. Two small BLACK EMPTY single AA battery holders with exposed springs, brass miniature clear-glass light bulb and socket, small centre-off rocker switch, red and black insulated wires and small alligator clips, translucent tracing paper. No batteries anywhere. Transparent plastic realistic gloss, folds, rippled edges and visible parts, premium product photo with soft shadow. NO Lego blocks, NO cartoon icons, NO hands, NO logo, NO printed labels. Preserve authentic kit materials from references; image is for a preparation-stage bag-opening animation. Keep the top sealed strip fully visible with clear whitespace above it. Complete pouch visible uncropped.",
+  "references": [
+    "parts-flat-photo.png",
+    "experiment-photos/empty-kit.jpg"
+  ],
+  "review": "Two empty AA holders; no batteries; realistic pouch and kit parts. Original reference files unchanged."
+}

@@ -9,7 +9,7 @@ const allItems = [...lesson.original.items, lesson.extension, ...lesson.similarP
 assert.equal(lesson.experience.kind, "course-concept");
 assert.equal(lesson.experience.tracks.length, 2);
 assert.equal(lesson.experience.tracks.every((track) => track.beats.length === 4), true);
-assert.equal(lesson.learnerStage, "필즈 더 클래식 2과정 A1; 연령 미확정");
+assert.equal(lesson.learnerStage, "FC 2과정 A1; 연령 미확정");
 assert.equal(lesson.original.items.length, 4);
 assert.equal(lesson.similarPractice.length, 5);
 assert.equal(allItems.length, 10);

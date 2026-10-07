@@ -1,0 +1,154 @@
+/* 더클래식 3권: 원본 학생용 교재 그림에 맞춘 화면·인쇄 규칙. 글자는 검정, 그림은 한 가지 색으로 몰지 않는다. */
+.book03-visual svg text{fill:#222}
+
+/* 5쪽 정사각형·마름모 겹친 그림 */
+.book03-visual .b3-alternating-area.nested rect{fill:none;stroke:#222;stroke-width:1.6;vector-effect:non-scaling-stroke}
+.book03-visual .b3-alternating-area.nested rect:first-of-type{fill:#ffe08a}
+.book03-visual .b3-alternating-area.nested text{font-size:14px;font-weight:800}
+.book03-visual .b3-alternating-area.nested text:last-child{fill:#222;font-size:14px}
+
+/* 13쪽 접힌 색테이프: 앞면 진한 칸, 접혀 뒷면이 보이는 연한 띠 */
+.book03-visual .b3-folded-tape-source{width:min(100%,260px)}
+.book03-visual .b3-folded-tape-source .tape-grid line{stroke:#9bb8c4;stroke-width:1;stroke-dasharray:2 3;vector-effect:non-scaling-stroke}
+.book03-visual .b3-folded-tape-source .tape-frame{fill:none;stroke:#222;stroke-width:1.4;vector-effect:non-scaling-stroke}
+.book03-visual .b3-folded-tape-source .tape-cells rect.front{fill:#e07a5f;stroke:none}
+.book03-visual .b3-folded-tape-source .tape-cells polygon.back{fill:#fcd3c1;stroke:#a8452c;stroke-width:1.6;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.book03-visual .b3-folded-tape-source .unit-arc{fill:none;stroke:#555;stroke-width:1;stroke-dasharray:2 2;vector-effect:non-scaling-stroke}
+.book03-visual .b3-folded-tape-source .unit{font-size:11px;font-weight:700;text-anchor:middle}
+
+/* 13·17쪽 수직선 */
+.book03-visual .b3-number-line>line,.book03-visual .b3-number-line line{stroke:#222;stroke-width:1.6;vector-effect:non-scaling-stroke}
+.book03-visual .b3-number-line path.arc{fill:none;stroke:#5a9d5e;stroke-width:1.8;vector-effect:non-scaling-stroke}
+.book03-visual .b3-number-line path.mark{fill:none;stroke:#222;stroke-width:1.6;vector-effect:non-scaling-stroke}
+.book03-visual .b3-number-line rect.blank{fill:#fff;stroke:#222;stroke-width:1.4;vector-effect:non-scaling-stroke}
+.book03-visual .b3-number-line text{font-size:15px;font-weight:800}
+
+/* 14쪽 겹친 거리 */
+.book03-visual .b3-distance-source .base,.book03-visual .b3-distance-source line{stroke:#222}
+.book03-visual .b3-distance-source path{stroke:#e07a5f}
+.book03-visual .b3-distance-source text{font-size:14px;font-weight:800}
+.book03-visual .b3-segment-chain>line,.book03-visual .b3-segment-chain line{stroke:#222;stroke-width:1.6;vector-effect:non-scaling-stroke}
+.book03-visual .b3-segment-chain path{fill:none;stroke:#e07a5f;stroke-width:1.8;vector-effect:non-scaling-stroke}
+.book03-visual .b3-segment-chain text{font-size:14px;font-weight:800}
+
+/* 16쪽 몇 배 */
+.book03-visual .b3-multiple-source{width:min(100%,360px);height:auto}
+.book03-visual .b3-multiple-source path{fill:none;stroke:#222;stroke-width:2;vector-effect:non-scaling-stroke}
+.book03-visual .b3-multiple-source circle{fill:#fff3c4;stroke:#222;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.book03-visual .b3-multiple-source .loop{fill:none;stroke-width:1.4;vector-effect:non-scaling-stroke}
+.book03-visual .b3-multiple-source .loop.col{stroke:#7b5ea7;stroke-width:2}
+.book03-visual .b3-multiple-source .loop.row{stroke:#8a8a3a}
+.book03-visual .b3-multiple-source text{font-size:18px;font-weight:900}
+.book03-visual .b3-math-expression{border-color:#222;background:#fffaf0;color:#222}
+
+/* 18쪽 길이가 같은 두 줄 */
+.book03-visual .b3-ratio-bars.source{display:grid;gap:0;width:min(100%,420px);padding:0}
+.book03-visual .b3-ratio-bars.source>span{display:flex;width:100%}
+.book03-visual .b3-ratio-bars.source>span i{display:grid;flex:1;place-items:center;height:40px;margin:0;border:2px solid #222;max-width:none;background:#ffe08a;color:#222;font-size:18px;font-style:normal;font-weight:900}
+.book03-visual .b3-ratio-bars.source>span+span i{border-top:0;background:#c9e7c4}
+.book03-visual .b3-ratio-bars.source>span i+i{border-left:0}
+
+/* 20~23쪽 복면산 카드 */
+.book03-visual .b3-cryptarithm-board.card{padding:16px 22px;border-radius:14px;background:#e3f2fb;color:#222}
+.book03-visual .b3-cryptarithm-board.card>div{grid-template-columns:30px repeat(var(--columns),52px)}
+.book03-visual .b3-cryptarithm-board.card i{width:52px;height:52px;border:0}
+.book03-visual .b3-cryptarithm-board.card hr{border-top-color:#222}
+.book03-visual .b3-cryptarithm-board .digit{width:auto;height:auto;font-family:var(--display);font-size:30px;color:#222}
+.b3-crypt-shape{display:block}
+.b3-crypt-shape :is(rect,path){fill:#fff;stroke:#222;stroke-width:2.4;stroke-linejoin:round}
+.part-label .b3-crypt-shape,.answer-part-label .b3-crypt-shape{display:inline-block;vertical-align:middle}
+
+/* 25~26쪽 마법카드 띠 (옛 .b3-binary-strip span 규칙을 덮는다) */
+.book03-visual .b3-binary-strip.source{display:grid;gap:14px;justify-items:center}
+.book03-visual .b3-binary-strip.source>div{display:flex;max-width:100%}
+.book03-visual .b3-binary-strip.source .b3-magic-strip{display:grid;place-items:stretch;grid-template-columns:repeat(var(--count),38px);width:max-content;height:auto;padding:0;border:2px solid #222;background:#222;gap:2px;box-shadow:none}
+.book03-visual .b3-binary-strip.source .b3-magic-strip i{display:block;height:38px;background:#fff}
+.book03-visual .b3-binary-strip.source .b3-magic-strip i.colored{background:#f4877c}
+.book03-visual .b3-binary-strip.source .b3-magic-strip.small{grid-template-columns:repeat(var(--count),18px);gap:1px;border-width:1.5px}
+.book03-visual .b3-binary-strip.source .b3-magic-strip.small i{height:18px}
+.book03-visual .b3-binary-strip.source .b3-magic-examples{display:grid;grid-template-columns:repeat(2,max-content);gap:10px 28px;justify-content:center}
+.book03-visual .b3-binary-strip.source .b3-magic-examples>span{display:flex;align-items:center;gap:8px;width:auto;height:auto;border:0;background:none}
+.book03-visual .b3-binary-strip.source .b3-magic-examples b{min-width:22px;color:#222;font-size:17px;text-align:right}
+.book03-visual .b3-binary-strip.source .b3-magic-question{display:flex;align-items:center;gap:10px;color:#222;font-size:16px}
+.book03-visual .b3-binary-strip.source .b3-magic-question strong{font-size:20px}
+
+/* 27쪽 별 조각 */
+.book03-visual .b3-star-code.source{display:grid;gap:10px;justify-items:center;width:min(100%,560px)}
+.book03-visual .b3-star-examples{display:grid;grid-template-columns:repeat(4,minmax(0,110px));gap:6px}
+.book03-visual .b3-star-code .b3-star-piece{width:100%;height:auto}
+.book03-visual .b3-star-piece polygon{fill:#fff;stroke:#222;stroke-width:1.6;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.book03-visual .b3-star-piece polygon.colored{fill:#f4877c}
+.book03-visual .b3-star-piece polygon.core{fill:#fff8e1}
+.book03-visual .b3-star-piece text{fill:#222;font-size:34px;font-weight:900;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:5px}
+.book03-visual .b3-star-code.source>strong{color:#222;font-size:16px}
+
+/* 27쪽 칸 무늬 */
+.book03-visual .b3-cell-code-grid{background:#222}
+.book03-visual .b3-cell-code-grid i.colored{background:#f4877c}
+.book03-visual .b3-cell-code-examples b{color:#222;font-size:15px}
+.book03-visual .b3-cell-code-question>strong{color:#222;font-size:20px}
+
+/* 28~30쪽 마방진: 합이 같은 줄을 초록 고리로 */
+.book03-visual .b3-magic-grid{position:relative;background:#222}
+.book03-visual .b3-magic-grid span{color:#222;font-size:20px}
+.book03-visual .b3-magic-grid span.target{background:#fff;color:#222}
+.b3-magic-loops{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.b3-magic-loops ellipse{fill:none;stroke:#3aa655;stroke-width:2.2;vector-effect:non-scaling-stroke}
+
+/* 눌러서 색칠하는 답 칸 */
+.pick-answer{display:grid;gap:8px;justify-items:center}
+.pick-answer>span{color:#222;font-weight:800}
+.pick-grid{display:grid;grid-template-columns:repeat(var(--columns),48px);grid-template-rows:repeat(var(--rows),48px);gap:2px;padding:2px;background:#222}
+.pick-cell{border:0;border-radius:0;background:#fff;cursor:pointer}
+.pick-cell.on{background:#f4877c}
+.pick-cell:focus-visible{outline:3px solid #3aa655;outline-offset:-3px}
+.pick-star{width:200px;height:auto}
+.pick-star .pick-piece{fill:#fff;stroke:#222;stroke-width:1.6;stroke-linejoin:round;cursor:pointer}
+.pick-star .pick-piece.on{fill:#f4877c}
+.pick-star .pick-core{fill:#fff8e1;stroke:#222;stroke-width:1.6}
+
+@media screen and (max-width:700px){
+  .book03-visual .b3-star-examples{grid-template-columns:repeat(2,minmax(0,110px))}
+  .book03-visual .b3-cryptarithm-board.card>div{grid-template-columns:24px repeat(var(--columns),42px)}
+  .book03-visual .b3-cryptarithm-board.card i{width:42px;height:42px}
+  .book03-visual .b3-binary-strip.source .b3-magic-strip{grid-template-columns:repeat(var(--count),32px)}
+  .book03-visual .b3-binary-strip.source .b3-magic-strip i{height:32px}
+}
+
+@media print{
+  .gold-print-page[data-print-book="book-03"] .b3-ratio-bars.source{width:60mm}
+  .gold-print-page[data-print-book="book-03"] .b3-ratio-bars.source>span i{height:7mm;border-width:.4mm;font-size:10px}
+  .gold-print-page[data-print-book="book-03"] .b3-cryptarithm-board.card{padding:1.5mm 3mm;border-radius:2mm}
+  .gold-print-page[data-print-book="book-03"] .b3-cryptarithm-board.card>div{grid-template-columns:5mm repeat(var(--columns),9mm)}
+  .gold-print-page[data-print-book="book-03"] .b3-cryptarithm-board.card i{width:9mm;height:9mm}
+  .gold-print-page[data-print-book="book-03"] .b3-cryptarithm-board .digit{font-size:15px}
+  .gold-print-page[data-print-book="book-03"] .b3-crypt-shape{width:7mm;height:7mm}
+  .gold-print-page[data-print-book="book-03"] .b3-binary-strip.source .b3-magic-strip{grid-template-columns:repeat(var(--count),7mm)}
+  .gold-print-page[data-print-book="book-03"] .b3-binary-strip.source .b3-magic-strip i{height:7mm}
+  .gold-print-page[data-print-book="book-03"] .b3-binary-strip.source .b3-magic-strip.small{grid-template-columns:repeat(var(--count),3.5mm)}
+  .gold-print-page[data-print-book="book-03"] .b3-binary-strip.source .b3-magic-strip.small i{height:3.5mm}
+  .gold-print-page[data-print-book="book-03"] .b3-magic-examples{gap:1mm 4mm}
+  .gold-print-page[data-print-book="book-03"] .b3-magic-examples b,.gold-print-page[data-print-book="book-03"] .b3-magic-question{font-size:9px}
+  .gold-print-page[data-print-book="book-03"] .b3-star-examples{grid-template-columns:repeat(4,16mm)}
+  .gold-print-page[data-print-book="book-03"] .b3-star-code.source>strong{font-size:9px}
+  .gold-print-page[data-print-book="book-03"] .b3-multiple-source{max-height:30mm}
+  .gold-print-page[data-print-book="book-03"] .b3-magic-grid span{font-size:10px}
+  .b3-magic-strip i.colored,.b3-star-piece polygon.colored,.b3-cell-code-grid i.colored{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+
+/* 눌러 색칠하는 문항: 화면은 답 칸에서 누르고, 인쇄물에는 빈 그림을 남긴다. */
+.book03-visual .b3-print-blank,.book03-visual .b3-binary-strip.source>.b3-print-blank{display:none}
+@media print{.book03-visual .b3-print-blank,.book03-visual .b3-binary-strip.source>.b3-print-blank{display:block;margin-top:2mm}.gold-print-page[data-print-book="book-03"] .b3-print-blank .b3-star-piece{width:28mm;height:auto}}
+
+/* 모양 이름 대신 모양 기호로 단 답 칸 이름 */
+.answer-part>span.glyph-label{color:#222;font-size:24px;font-weight:900;line-height:1.1}
+.book03-visual .b3-cell-code-grid.compact{grid-template-columns:repeat(var(--columns),18px);grid-template-rows:repeat(var(--rows),18px)}
+@media print{
+  .gold-print-page[data-print-book="book-03"] .b3-cell-code-grid{gap:0;padding:0;background:#fff;border:.35mm solid #222}
+  .gold-print-page[data-print-book="book-03"] .b3-cell-code-grid i{box-shadow:inset 0 0 0 .15mm #222}
+  .gold-print-page[data-print-book="book-03"] .b3-print-blank .b3-star-piece{display:block;width:22mm;height:20mm;max-height:none;overflow:visible}
+  .gold-print-page[data-print-book="book-03"] .b3-star-code.source{max-height:none;gap:1mm}
+  .gold-print-page[data-print-book="book-03"] .b3-star-code.source .b3-print-blank{margin-top:0}
+  .gold-print-page[data-print-book="book-03"] .b3-star-examples{grid-template-columns:repeat(4,13mm)}
+  .gold-print-page[data-print-book="book-03"] .b3-star-examples .b3-star-piece text{font-size:46px}
+}

@@ -1,5 +1,5 @@
 import { repeatingPatternModel, equalQuotientRemainderModel } from "./course-learning-models.js";
-import { book02Markup } from "./book02-renderers.js?v=20260913a";
+import { book02Markup } from "./book02-renderers.js?v=20261005d";
 import { course02PolygonConceptMarkup } from "./golden-bell-course02-polygon-lesson.js";
 import { course02StoneGrowthConceptMarkup } from "./golden-bell-course02-stone-growth-lesson.js";
 import { counterfeitConceptMarkup } from "./golden-bell-course02-counterfeit-lesson.js";

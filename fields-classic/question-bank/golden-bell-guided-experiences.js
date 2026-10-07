@@ -1,8 +1,10 @@
-import { book02Markup } from "./book02-renderers.js?v=20260904b";
-import { book03Markup } from "./book03-renderers.js?v=20260905a";
+// 분수는 빗금 대신 위아래로 쓴다.
+const fractionText = (text) => String(text ?? "").replace(/(^|[^\d/])(\d+)\/(\d+)(?![\d/])/g, (_, before, numerator, denominator) => `${before}<span class="math-frac" role="math" aria-label="${denominator}분의 ${numerator}"><i>${numerator}</i><i>${denominator}</i></span>`);
+import { book02Markup } from "./book02-renderers.js?v=20261005d";
+import { book03Markup } from "./book03-renderers.js?v=20261007a";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
-import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20260905e";
+import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20261007a";
 import { renderBook04Guided } from "./golden-bell-book04-guided.js?v=20260918a";
 import { renderBook07Guided } from "./golden-bell-book07-guided.js?v=20260918a";
 import { renderBook08Guided } from "./golden-bell-book08-guided.js?v=20260918a";
@@ -532,5 +534,5 @@ export function guidedConceptPrintSummary(experience) {
     }).join("");
     return `<div class="gold-print-experience guided-print-summary is-sequenced" data-print-guided-family="${bookNineEscape(experience.family)}"><h2>개념을 ${total}단계로 확인해요</h2><div class="guided-print-step-grid">${frames}</div></div>`;
   }
-  return `<div class="gold-print-experience guided-print-summary"><p><strong>개념 순서</strong> ${experience.beats.map((beat) => beat.caption).join(" → ")}</p>${guidedConceptVisual(experience, experience.beats.length - 1)}</div>`;
+  return `<div class="gold-print-experience guided-print-summary"><p><strong>개념 순서</strong> ${fractionText(experience.beats.map((beat) => beat.caption).join(" → "))}</p>${guidedConceptVisual(experience, experience.beats.length - 1)}</div>`;
 }

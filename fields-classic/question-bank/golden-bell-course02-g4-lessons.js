@@ -1,5 +1,5 @@
 const KIND = "course02-g4";
-const LEARNER_STAGE = "필즈 더 클래식 2과정 G4; 연령 미확정";
+const LEARNER_STAGE = "FC 2과정 G4; 연령 미확정";
 const PHASES = ["problem", "organize", "calculate", "verify"];
 
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({

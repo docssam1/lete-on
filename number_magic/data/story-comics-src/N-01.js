@@ -18,8 +18,7 @@ module.exports=function(H){
               en:'Long ago, a shepherd knew no numbers. Each time a sheep went out, he dropped one pebble into his pouch.',
               zh:'很久以前，牧羊人不认识数字。每出去一只羊，他就往袋子里放一颗小石子。' } },
     { art: svg(
-        '<rect x="0" y="0" width="200" height="140" fill="#dfe7db" opacity=".0"/>'
-        +meadow(116,[12,64,120,178])
+        '<path d="M 0 116 Q 50 111 100 116 T 200 116 L 200 140 L 0 140 Z" fill="'+C.grass+'" stroke="'+C.grass2+'" stroke-width="2.4"/>'
         +sheep2(36,36,0.78,false)+sheep2(100,36,0.78,false)+sheep2(164,36,0.78,false)
         +rope(38,74,50,96,C.gold,4)+rope(100,74,100,96,C.gold,0)+rope(162,74,150,96,C.gold,4)
         +pebble(50,108,7.5)+pebble(100,108,7.5)+pebble(150,108,7.5)),

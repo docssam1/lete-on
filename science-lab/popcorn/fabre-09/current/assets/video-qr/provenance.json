@@ -1,0 +1,25 @@
+{
+  "source": "사용자 제공 원본 Unit 3의 영상 QR",
+  "destinations": [
+    {
+      "file": "compare.png",
+      "printedPage": 46,
+      "url": "https://m.site.naver.com/1e5DZ"
+    },
+    {
+      "file": "build.png",
+      "printedPage": 47,
+      "url": "https://m.site.naver.com/1e5E0"
+    },
+    {
+      "file": "connection.png",
+      "printedPage": 48,
+      "url": "https://m.site.naver.com/1e5E2"
+    },
+    {
+      "file": "life.png",
+      "printedPage": 49,
+      "url": "https://m.site.naver.com/1e5E3"
+    }
+  ]
+}

@@ -496,6 +496,24 @@ function triangleTwelveFractionExactMarkup() {
   return `<div class="b3-concentric-fraction"><svg class="b3-svg b3-source-partition b3-source-exact" viewBox="0 0 220 195" role="img" aria-label="원본과 같은 큰 정삼각형 12조각 분할, 넓이 다섯 조각만큼 색칠">${fills}<polygon class="partition-outline" points="${pointsText([top, left, right])}"/><g class="partition-lines">${lines}</g></svg><div class="b3-fraction-answer" aria-label="분수 답칸"><span></span><i></i><span></span></div></div>`;
 }
 
+function triangleCentroidTwelveMarkup(visual) {
+  // 원본 8쪽 (8): 큰 정삼각형을 작은 정삼각형 4개로, 각각을 무게중심에서 꼭짓점으로 이어 3조각씩 = 같은 크기 12조각.
+  const top = [110, 10]; const left = [10, 183]; const right = [210, 183];
+  const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const mL = mid(top, left); const mR = mid(top, right); const mB = mid(left, right);
+  const triangles = [[top, mL, mR], [mL, left, mB], [mR, mB, right], [mL, mR, mB]];
+  const center = (t) => [(t[0][0] + t[1][0] + t[2][0]) / 3, (t[0][1] + t[1][1] + t[2][1]) / 3];
+  const shaded = (visual.shaded || []).map(([t, edge]) => {
+    const tri = triangles[t];
+    return `<polygon class="partition-cell shade" points="${pointsText([tri[edge], tri[(edge + 1) % 3], center(tri)])}"/>`;
+  }).join("");
+  const lines = triangles.map((tri) => {
+    const c = center(tri);
+    return `<polygon class="partition-outline inner" points="${pointsText(tri)}"/>${tri.map((v) => `<line x1="${v[0]}" y1="${v[1]}" x2="${c[0].toFixed(2)}" y2="${c[1].toFixed(2)}"/>`).join("")}`;
+  }).join("");
+  return `<svg class="b3-svg b3-source-partition b3-source-exact" viewBox="0 0 220 195" role="img" aria-label="큰 정삼각형을 같은 크기 12조각으로 나눈 그림">${shaded}<g class="partition-lines">${lines}</g><polygon class="partition-outline" points="${pointsText([top, left, right])}"/></svg>`;
+}
+
 function concentricSquareSixteenMarkup(visual) {
   const outer = { left: 24, top: 14, right: 196, bottom: 186 };
   const inner = { left: 67, top: 57, right: 153, bottom: 143 };
@@ -559,20 +577,38 @@ function gridPathMarkup(visual) {
 }
 
 function numberLineMarkup(visual) {
-  const ticks = Array.from({ length: visual.divisions + 1 }, (_, index) => {
-    const x = 35 + index * 300 / visual.divisions;
-    const label = index === 0 ? visual.left : index === visual.divisions ? visual.right : visual.target === "middle" && index * 2 === visual.divisions ? "㉠" : "";
-    return `<line x1="${x}" y1="67" x2="${x}" y2="87"/><text x="${x}" y="112">${label}</text>`;
+  // 원본 13·17쪽: 같은 간격 호(‖ 표시)와 빈칸 상자.
+  const n = visual.divisions;
+  const x = (index) => 35 + index * 300 / n;
+  const ticks = Array.from({ length: n + 1 }, (_, index) => `<line x1="${x(index)}" y1="70" x2="${x(index)}" y2="84"/>`).join("");
+  const arcs = Array.from({ length: n }, (_, index) => {
+    const a = x(index); const b = x(index + 1); const m = (a + b) / 2;
+    const mark = visual.target === "middle" ? `<path class="mark" d="M${m - 3} 40V50M${m + 3} 40V50"/>` : "";
+    return `<path class="arc" d="M${a} 77Q${m} ${visual.target === "interval" && index > 0 ? 77 : 30} ${b} 77"/>${mark}`;
   }).join("");
-  return `<svg class="b3-svg b3-number-line" viewBox="0 0 370 130" role="img" aria-label="똑같은 간격으로 나눈 수직선"><line x1="35" y1="77" x2="335" y2="77"/>${ticks}<text x="185" y="28">${visual.target === "interval" ? "한 칸 = ?" : "중간수 = ?"}</text></svg>`;
+  const labels = `<text x="${x(0)}" y="108">${visual.left}</text><text x="${x(n)}" y="108">${visual.right}</text>`;
+  const box = visual.target === "middle"
+    ? `<rect class="blank" x="${x(n / 2) - 14}" y="92" width="28" height="22"/>`
+    : `<rect class="blank" x="${(x(0) + x(1)) / 2 - 14}" y="20" width="28" height="22"/>`;
+  return `<svg class="b3-svg b3-number-line" viewBox="0 0 370 125" role="img" aria-label="똑같은 간격으로 나눈 수직선"><line x1="35" y1="77" x2="335" y2="77"/>${visual.target === "interval" ? arcs.split("</path>")[0] + "</path>" : arcs}${ticks}${labels}${box}</svg>`;
 }
 
 function segmentChainMarkup(visual) {
+  // 원본 14쪽: 겹치는 호를 선 위·아래로 나눠 그린다.
   const xs = [45, 145, 245, 345];
-  const labels = visual.labels.map((label, index) => `<circle cx="${xs[index]}" cy="90" r="5"/><text x="${xs[index]}" y="119">${label}</text>`).join("");
-  const arc = (from, to, y, text) => text == null || text === "" || text === "?" ? "" : `<path d="M${xs[from]} 82Q${(xs[from] + xs[to]) / 2} ${y} ${xs[to]} 82"/><text x="${(xs[from] + xs[to]) / 2}" y="${y + 5}">${text}cm</text>`;
-  const givens = visual.givens || {};
-  return `<svg class="b3-svg b3-segment-chain" viewBox="0 0 390 150" role="img" aria-label="A B C D 사이의 겹친 거리"><line x1="45" y1="90" x2="345" y2="90"/>${labels}${arc(0,3,6,givens.AD)}${arc(0,2,27,givens.AC)}${arc(1,3,47,givens.BD)}${arc(1,2,67,givens.BC)}<text x="195" y="142">${visual.target} = ?</text></svg>`;
+  const base = 80;
+  const labels = visual.labels.map((label, index) => `<line x1="${xs[index]}" y1="${base - 7}" x2="${xs[index]}" y2="${base + 7}"/><text x="${xs[index]}" y="${base + 30}">${label}</text>`).join("");
+  const arc = (from, to, side, depth, text) => {
+    if (text == null || text === "" || text === "?") return "";
+    const m = (xs[from] + xs[to]) / 2;
+    const y = side === "up" ? base - depth : base + depth;
+    return `<path d="M${xs[from]} ${base}Q${m} ${y} ${xs[to]} ${base}"/><text x="${m}" y="${side === "up" ? base - depth / 2 - 6 : base + depth / 2 + 16}">${text}cm</text>`;
+  };
+  const g = visual.givens || {};
+  const arcs = g.AD != null
+    ? arc(0, 3, "up", 70, g.AD) + arc(0, 2, "down", 60, g.AC) + arc(1, 3, "down", 60, g.BD) + arc(1, 2, "down", 30, g.BC)
+    : arc(0, 2, "up", 60, g.AC) + arc(1, 3, "up", 60, g.BD) + arc(1, 2, "down", 30, g.BC);
+  return `<svg class="b3-svg b3-segment-chain" viewBox="0 0 390 175" role="img" aria-label="A B C D 사이의 겹친 거리"><line x1="45" y1="${base}" x2="345" y2="${base}"/>${arcs}${labels}<text x="195" y="170">${visual.target} = ?</text></svg>`;
 }
 
 function slideEightFractionMarkup(visual) {
@@ -693,14 +729,13 @@ function binaryWeightMarkup(visual) {
 }
 
 function cellCodeMarkup(visual) {
-  const grid = (colored, compact = false) => `<span class="b3-cell-code-grid${compact ? " compact" : ""}" style="--rows:${visual.rows};--columns:${visual.columns}">${visual.weights.map((weight, index) => `<i class="${colored.includes(index) ? "colored" : ""}">${visual.showWeights && !compact ? weight : ""}</i>`).join("")}</span>`;
+  // 원본 27쪽 활동 06: 예시 무늬로 칸 값을 찾아, 주어진 무늬가 나타내는 수를 구한다. 칸 값은 적지 않는다.
+  const grid = (colored, compact = false) => `<span class="b3-cell-code-grid${compact ? " compact" : ""}" style="--rows:${visual.rows};--columns:${visual.columns}">${visual.weights.map((_, index) => `<i class="${colored.includes(index) ? "colored" : ""}"></i>`).join("")}</span>`;
   const examples = visual.examples?.length
     ? `<div class="b3-cell-code-examples">${visual.examples.map((example) => `<span>${grid(example.colored, true)}<b>${example.value}</b></span>`).join("")}</div>`
     : "";
-  const question = visual.mode === "color"
-    ? `<div class="b3-cell-code-question"><strong>${visual.target}</strong><b>가 되게 색칠</b>${grid(visual.colored)}</div>`
-    : `<div class="b3-cell-code-question">${grid(visual.colored)}<strong>= ?</strong></div>`;
-  return `<div class="b3-cell-code source-code">${examples}${question}${visual.showWeights ? `<small>각 칸의 값: ${visual.columnWeights.join(", ")}${visual.rows === 2 ? " (위아래 같은 값)" : ""}</small>` : ""}</div>`;
+  const question = `<div class="b3-cell-code-question">${grid(visual.pattern || [])}<strong>= ?</strong></div>`;
+  return `<div class="b3-cell-code source-code">${examples}${question}</div>`;
 }
 
 function symbolCodeMarkup(visual) {
@@ -713,7 +748,19 @@ function symbolValueCodeMarkup(visual) {
 }
 
 function magicGridMarkup(visual) {
-  return `${cardStrip(visual.cards)}<div class="b3-magic-wrap"><div class="b3-magic-grid" style="--size:${visual.size}">${visual.shown.map((value) => `<span class="${value == null ? "blank" : typeof value === "string" ? "target" : ""}">${value == null ? "" : esc(value)}</span>`).join("")}</div>${visual.lineSum ? `<strong>한 줄의 합 ${visual.lineSum}</strong>` : ""}</div>`;
+  // 원본 29~30쪽: 합이 같아야 하는 줄을 초록 고리로 표시.
+  const size = visual.size;
+  const loops = (visual.lines || []).map((line) => {
+    const [a, b] = [line[0], line[line.length - 1]];
+    const p = (i) => [(i % size) + 0.5, Math.floor(i / size) + 0.5];
+    const [x1, y1] = p(a); const [x2, y2] = p(b);
+    const cx = (x1 + x2) / 2; const cy = (y1 + y2) / 2;
+    const len = Math.hypot(x2 - x1, y2 - y1) / 2 + 0.55;
+    const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+    return `<ellipse cx="${cx}" cy="${cy}" rx="${len.toFixed(3)}" ry="0.42" transform="rotate(${angle.toFixed(1)} ${cx} ${cy})"/>`;
+  }).join("");
+  const overlay = loops ? `<svg class="b3-magic-loops" viewBox="0 0 ${size} ${size}" preserveAspectRatio="none" aria-hidden="true">${loops}</svg>` : "";
+  return `${cardStrip(visual.cards)}<div class="b3-magic-wrap"><div class="b3-magic-grid" style="--size:${size}">${visual.shown.map((value) => `<span class="${value == null ? "blank" : typeof value === "string" ? "target" : ""}">${value == null ? "" : CRYPT_SHAPES[value] ? cryptShapeIcon(value, 30) : esc(value)}</span>`).join("")}${overlay}</div>${visual.lineSum ? `<strong>한 줄의 합 ${visual.lineSum}</strong>` : ""}</div>`;
 }
 
 function polygonRingMarkup(visual) {
@@ -821,21 +868,21 @@ function sourceFractionStageMarkup(visual) {
 }
 
 function foldedTapeSourceMarkup(visual) {
-  const points = visual.points || [];
-  const xs = points.map(([x]) => x);
-  const ys = points.map(([,y]) => y);
-  const maxX = Math.max(1,...xs);
-  const maxY = Math.max(1,...ys);
-  const cell = Math.min(45, 170 / maxX, 130 / maxY);
-  const offsetX = (220 - maxX * cell) / 2;
-  const offsetY = 28;
-  const mapped = points.map(([x,y]) => [offsetX + x * cell,offsetY + y * cell]);
+  // 원본 13쪽: 앞면은 진한 칸, 비스듬히 접혀 뒷면이 보이는 부분은 연한 띠.
+  const cols = visual.cols || 3;
+  const rows = visual.rows || 2;
+  const cell = Math.min(34, 180 / cols, 140 / rows);
+  const ox = (220 - cols * cell) / 2;
+  const oy = 28;
+  const p = ([x, y]) => [ox + x * cell, oy + y * cell];
   const grid = [
-    ...Array.from({ length:maxX + 1 },(_,index) => `<line x1="${offsetX + index * cell}" y1="${offsetY}" x2="${offsetX + index * cell}" y2="${offsetY + maxY * cell}"/>`),
-    ...Array.from({ length:maxY + 1 },(_,index) => `<line x1="${offsetX}" y1="${offsetY + index * cell}" x2="${offsetX + maxX * cell}" y2="${offsetY + index * cell}"/>`)
+    ...Array.from({ length: cols + 1 }, (_, i) => `<line x1="${p([i, 0])[0]}" y1="${oy}" x2="${p([i, 0])[0]}" y2="${oy + rows * cell}"/>`),
+    ...Array.from({ length: rows + 1 }, (_, i) => `<line x1="${ox}" y1="${p([0, i])[1]}" x2="${ox + cols * cell}" y2="${p([0, i])[1]}"/>`)
   ].join("");
-  const folds = mapped.slice(1,-1).map(([x,y]) => `<circle cx="${x}" cy="${y}" r="4"/>`).join("");
-  return `<svg class="b3-svg b3-folded-tape-source" viewBox="0 0 220 190" role="img" aria-label="1센티미터 모눈 위에 접혀 있는 색테이프"><g class="tape-grid">${grid}</g><polyline class="tape-path" points="${pointsText(mapped)}"/><g class="tape-folds">${folds}</g><text x="110" y="174">한 칸 ${esc(visual.unitLabel || "1cm")}</text></svg>`;
+  const dark = (visual.dark || []).map(([x, y]) => `<rect class="front" x="${p([x, y])[0].toFixed(1)}" y="${p([x, y])[1].toFixed(1)}" width="${cell.toFixed(1)}" height="${cell.toFixed(1)}"/>`).join("");
+  const light = (visual.light || []).map((poly) => `<polygon class="back" points="${pointsText(poly.map(p))}"/>`).join("");
+  const unit = `<path class="unit-arc" d="M${ox} ${oy - 2}Q${ox + cell / 2} ${oy - 16} ${ox + cell} ${oy - 2}"/><text x="${ox + cell / 2}" y="${oy - 16}" class="unit">${esc(visual.unitLabel || "1cm")}</text>`;
+  return `<svg class="b3-svg b3-folded-tape-source" viewBox="0 0 220 ${oy + rows * cell + 10}" role="img" aria-label="1센티미터 모눈 위에 접혀 있는 색테이프"><g class="tape-cells">${dark}${light}</g><g class="tape-grid">${grid}</g><rect class="tape-frame" x="${ox}" y="${oy}" width="${cols * cell}" height="${rows * cell}"/>${unit}</svg>`;
 }
 
 function areaGridCompositeMarkup(visual) {
@@ -856,22 +903,24 @@ function areaGridCompositeMarkup(visual) {
 }
 
 function alternatingAreaMarkup(visual) {
-  const shown = visual.stages || [1, 2, 4, 8, 16];
-  const figures = shown.map((area, index) => {
-    const side = Math.sqrt(area) * 17;
-    const x = 48 + index * 82;
-    const y = 68;
-    const rotation = index % 2 ? 45 : 0;
-    return `<g transform="translate(${x} ${y}) rotate(${rotation})"><rect x="${-side / 2}" y="${-side / 2}" width="${side}" height="${side}"/></g><text x="${x}" y="128">${index + 1}번째</text><text x="${x}" y="146">넓이 ${area}</text>`;
+  // 원본 5쪽: ①~④를 한 그림 안에 겹쳐 그린다(정사각형과 마름모가 번갈아 바깥을 감쌈). 넓이는 적지 않는다.
+  const u = 21;
+  const count = visual.show || 4;
+  const stage = (k, cx) => Array.from({ length: k }, (_, i) => {
+    const side = Math.sqrt(2 ** i) * u;
+    const rotation = i % 2 ? 45 : 0;
+    return `<rect x="${(-side / 2).toFixed(1)}" y="${(-side / 2).toFixed(1)}" width="${side.toFixed(1)}" height="${side.toFixed(1)}" transform="translate(${cx} 72) rotate(${rotation})"/>`;
   }).join("");
-  return `<svg class="b3-svg b3-alternating-area" viewBox="0 0 420 165" role="img" aria-label="정사각형과 마름모가 번갈아 커지는 넓이 규칙">${figures}<text x="210" y="158">${visual.target || 7}번째 넓이 = ?</text></svg>`;
+  const centers = [36, 100, 180, 296].slice(0, count);
+  const figures = centers.map((cx, index) => `${stage(index + 1, cx)}<text x="${cx}" y="142">${"①②③④"[index]}</text>`).join("");
+  return `<svg class="b3-svg b3-alternating-area nested" viewBox="0 0 400 168" role="img" aria-label="정사각형과 마름모가 번갈아 바깥을 감싸며 커지는 그림">${figures}<text x="362" y="76">…</text><text x="200" y="163">${visual.target || 7}번째 바깥 도형의 넓이 = ?</text></svg>`;
 }
 
 function fractionGridMarkup(visual) {
   const rows = visual.rows;
   const columns = visual.columns;
   const selected = new Set(visual.shadedIndices || Array.from({ length: visual.shaded || 0 }, (_, index) => index));
-  return `<div class="b3-fraction-grid" style="--rows:${rows};--columns:${columns}" role="img" aria-label="같은 크기 ${rows * columns}칸 중 ${selected.size}칸을 색칠한 그림">${Array.from({ length: rows * columns }, (_, index) => `<i class="${selected.has(index) ? "shade" : ""}"></i>`).join("")}</div>`;
+  return `<div class="b3-fraction-grid" style="--rows:${rows};--columns:${columns}${visual.square ? ";aspect-ratio:1" : ""}" role="img" aria-label="같은 크기 ${rows * columns}칸 중 ${selected.size}칸을 색칠한 그림">${Array.from({ length: rows * columns }, (_, index) => `<i class="${selected.has(index) ? "shade" : ""}"></i>`).join("")}</div>`;
 }
 
 function distanceChainSourceMarkup(visual) {
@@ -894,41 +943,84 @@ function distanceChainSourceMarkup(visual) {
 }
 
 function multipleModelMarkup(visual) {
+  // 원본 16쪽 그대로: 선분 A·B, 동그라미 A·B, 덧셈식, 동그라미 배열.
+  const v = visual.source;
+  if (v === "segments") {
+    const seg = (n, y) => `<path d="M60 ${y}H${60 + n * 50}"/>${Array.from({ length: n + 1 }, (_, i) => `<path d="M${60 + i * 50} ${y - 8}V${y + 8}"/>`).join("")}`;
+    return `<svg class="b3-svg b3-multiple-source" viewBox="0 0 300 100" role="img" aria-label="선분 A와 B"><text x="30" y="34">A</text>${seg(1, 30)}<text x="30" y="79">B</text>${seg(visual.compareUnits, 75)}</svg>`;
+  }
+  if (v === "circles") {
+    const row = (n, y) => Array.from({ length: n }, (_, i) => `<circle cx="${70 + i * 34}" cy="${y}" r="14"/>`).join("");
+    return `<svg class="b3-svg b3-multiple-source" viewBox="0 0 300 100" role="img" aria-label="동그라미 A와 B"><text x="30" y="35">A</text>${row(visual.aCount, 30)}<text x="30" y="80">B</text>${row(visual.bCount, 75)}</svg>`;
+  }
+  if (v === "equation") return `<div class="b3-math-expression" role="img" aria-label="${esc(visual.expression)}">${esc(visual.expression)}</div>`;
+  if (v === "array") {
+    const rows = visual.rows; const cols = visual.columns;
+    const dots = Array.from({ length: rows * cols }, (_, i) => `<circle cx="${30 + (i % cols) * 30}" cy="${24 + Math.floor(i / cols) * 30}" r="11"/>`).join("");
+    const w = 30 + cols * 30; const h = 18 + rows * 30;
+    const colLoops = Array.from({ length: cols }, (_, c) => `<ellipse class="loop col" cx="${30 + c * 30}" cy="${(24 + (rows - 1) * 15).toFixed(1)}" rx="14" ry="${(rows * 15 + 4).toFixed(1)}"/>`).join("");
+    const rowLoops = Array.from({ length: rows }, (_, r) => `<ellipse class="loop row" cx="${(30 + (cols - 1) * 15).toFixed(1)}" cy="${24 + r * 30}" rx="${(cols * 15 + 6).toFixed(1)}" ry="13"/>`).join("");
+    return `<svg class="b3-svg b3-multiple-source" viewBox="0 0 ${w} ${h}" role="img" aria-label="${rows}줄 ${cols}칸 동그라미 배열">${dots}${colLoops}${rowLoops}</svg>`;
+  }
   const cells = (count, className) => Array.from({ length: count }, () => `<i class="${className}"></i>`).join("");
-  return `<div class="b3-multiple-model" role="img" aria-label="기준량과 비교량의 배수 관계"><div><b>${esc(visual.baseLabel || "기준")}</b><span>${cells(visual.baseUnits || 1, "base")}</span></div><div><b>${esc(visual.compareLabel || "비교")}</b><span>${cells(visual.compareUnits, "compare")}</span></div>${visual.values ? `<strong>${esc(visual.values)}</strong>` : ""}</div>`;
+  return `<div class="b3-multiple-model" role="img" aria-label="기준량과 비교량의 배수 관계"><div><b>${esc(visual.baseLabel || "기준")}</b><span>${cells(visual.baseUnits || 1, "base")}</span></div><div><b>${esc(visual.compareLabel || "비교")}</b><span>${cells(visual.compareUnits, "compare")}</span></div></div>`;
 }
 
 function ratioBarsMarkup(visual) {
-  const bars = (count, className) => Array.from({ length: count }, () => `<i class="${className}"></i>`).join("");
-  return `<div class="b3-ratio-bars" role="img" aria-label="두 막대의 같은 길이 묶음 비교"><div><b>ㄱ</b><span>${bars(visual.topUnits, "top")}</span></div><div><b>ㄴ</b><span>${bars(visual.bottomUnits, "bottom")}</span></div>${visual.given ? `<strong>${esc(visual.given)}</strong>` : ""}</div>`;
+  // 원본 18쪽: 길이가 같은 두 줄 — 윗줄은 ㄱ 칸, 아랫줄은 ㄴ 칸.
+  const row = (count, label) => `<span style="--count:${count}">${Array.from({ length: count }, () => `<i>${label}</i>`).join("")}</span>`;
+  return `<div class="b3-ratio-bars source" role="img" aria-label="길이가 같은 두 줄 막대">${row(visual.topUnits, "ㄱ")}${row(visual.bottomUnits, "ㄴ")}${visual.given ? `<strong>${esc(visual.given)}</strong>` : ""}</div>`;
+}
+
+const CRYPT_SHAPES = Object.freeze({
+  "□": '<rect x="7" y="7" width="26" height="26"/>',
+  "△": '<path d="M20 5L35 34H5Z"/>',
+  "◇": '<path d="M20 4L36 20L20 36L4 20Z"/>',
+  "☆": '<path d="M20 4L24.5 15.5H36.5L27 23L30.5 35L20 28L9.5 35L13 23L3.5 15.5H15.5Z"/>'
+});
+
+export function cryptShapeIcon(symbol, size = 36) {
+  const body = CRYPT_SHAPES[symbol];
+  return body ? `<svg class="b3-crypt-shape" viewBox="0 0 40 40" width="${size}" height="${size}" aria-label="${esc(symbol)}">${body}</svg>` : esc(symbol);
 }
 
 function cryptarithmBoardMarkup(visual) {
+  // 원본 20~23쪽: 하늘색 카드 안의 큰 칸·도형 세로셈.
   const addends = visual.addends || [];
   const sum = visual.sum || [];
   const width = Math.max(1, sum.length, ...addends.map((row) => row.length));
-  const row = (cells, sign = "") => `<div style="--columns:${width}"><b>${sign}</b>${Array.from({ length: width - cells.length }, () => "<i></i>").join("")}${cells.map((cell) => `<i>${esc(cell)}</i>`).join("")}</div>`;
-  return `<div class="b3-cryptarithm-board" role="img" aria-label="자리 맞춘 세로 덧셈 복면산">${addends.map((cells, index) => row(cells, index === addends.length - 1 ? "+" : "")).join("")}<hr>${row(sum)}</div>`;
+  const cell = (value) => `<i>${CRYPT_SHAPES[value] ? cryptShapeIcon(value) : `<b class="digit">${esc(value)}</b>`}</i>`;
+  const row = (cells, sign = "") => `<div style="--columns:${width}"><b>${sign}</b>${Array.from({ length: width - cells.length }, () => "<i></i>").join("")}${cells.map(cell).join("")}</div>`;
+  return `<div class="b3-cryptarithm-board card" role="img" aria-label="자리 맞춘 세로 덧셈 복면산">${addends.map((cells, index) => row(cells, index === addends.length - 1 ? "+" : "")).join("")}<hr>${row(sum)}</div>`;
 }
 
 function binaryStripMarkup(visual) {
+  // 원본 25~26쪽. 칸 값은 학생이 찾아야 하므로 blank 모드에서는 적지 않는다.
+  const strip = (count, colored = [], cls = "") => `<span class="b3-magic-strip ${cls}" style="--count:${count}">${Array.from({ length: count }, (_, i) => `<i class="${colored.includes(i) ? "colored" : ""}"></i>`).join("")}</span>`;
+  if (visual.mode === "blank") return `<div class="b3-binary-strip source">${strip(visual.cells)}</div>`;
+  if (visual.mode === "examples") {
+    const examples = `<div class="b3-magic-examples">${visual.examples.map((e) => `<span><b>${e.value}</b>${strip(visual.cells, e.colored, "small")}</span>`).join("")}</div>`;
+    const question = visual.pattern ? `<div class="b3-magic-question">${strip(visual.cells, visual.pattern)}<strong>= ?</strong></div>` : `<div class="b3-magic-question"><strong>${esc(visual.target)}</strong>이 되도록 색칠하세요</div><div class="b3-print-blank">${strip(visual.cells)}</div>`;
+    return `<div class="b3-binary-strip source">${examples}${question}</div>`;
+  }
   const selected = new Set(visual.selected || []);
-  return `<div class="b3-binary-strip" role="img" aria-label="각 칸의 값을 더해 수를 나타내는 마법카드"><div>${visual.weights.map((weight, index) => `<span class="${selected.has(index) ? "selected" : ""}"><b>${weight ?? "?"}</b></span>`).join("")}</div>${visual.target != null ? `<strong>나타낼 수 ${visual.target}</strong>` : ""}</div>`;
+  return `<div class="b3-binary-strip" role="img" aria-label="각 칸의 값을 더해 수를 나타내는 마법카드"><div>${visual.weights.map((weight, index) => `<span class="${selected.has(index) ? "selected" : ""}"><b>${weight ?? "?"}</b></span>`).join("")}</div></div>`;
+}
+
+function starPieces(colored = [], number = "") {
+  const point = (radius, angle) => [110 + radius * Math.cos(angle), 100 + radius * Math.sin(angle)];
+  const outer = Array.from({ length: 5 }, (_, i) => point(76, -Math.PI / 2 + i * 2 * Math.PI / 5));
+  const inner = Array.from({ length: 5 }, (_, i) => point(31, -Math.PI / 2 + Math.PI / 5 + i * 2 * Math.PI / 5));
+  const f = (p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`;
+  const on = new Set(colored);
+  const tips = outer.map((tip, i) => `<polygon class="${on.has(i) ? "colored" : ""}" points="${f(inner[(i + 4) % 5])} ${f(tip)} ${f(inner[i])}"/>`).join("");
+  return `<svg class="b3-svg b3-star-piece" viewBox="0 0 220 200" aria-hidden="true"><polygon class="core" points="${inner.map(f).join(" ")}"/>${tips}${number !== "" ? `<text x="110" y="108">${esc(number)}</text>` : ""}</svg>`;
 }
 
 function starCodeMarkup(visual) {
-  const outer = regularPoints(5, 110, 100, 76);
-  const inner = regularPoints(5, 110, 100, 31, -Math.PI / 2 + Math.PI / 5);
-  const star = outer.flatMap((point, index) => [point, inner[index]]);
-  const center = [110, 100];
-  const selected = new Set(visual.selected || []);
-  const wedges = Array.from({ length: 5 }, (_, index) => {
-    const a = star[(index * 2 + 9) % 10];
-    const b = star[(index * 2) % 10];
-    const c = star[(index * 2 + 1) % 10];
-    return `<polygon class="${selected.has(index) ? "selected" : ""}" points="${pointsText([center, a, b, c])}"/>`;
-  }).join("");
-  return `<svg class="b3-svg b3-star-code" viewBox="0 0 220 205" role="img" aria-label="색칠한 별 조각의 값을 더하는 마법카드">${wedges}<polygon class="outline" points="${pointsText(star)}"/><text x="110" y="101">${visual.center ?? "?"}</text></svg>`;
+  // 원본 27쪽 활동 05: 예시 별(1·5·10·7)로 조각 값을 찾고, 목표 수를 색칠한다.
+  const examples = (visual.examples || []).map((e) => `<span>${starPieces(e.colored, e.value)}</span>`).join("");
+  return `<div class="b3-star-code source" role="img" aria-label="별 조각 마법카드 예시와 목표 수"><div class="b3-star-examples">${examples}</div><strong>${esc(visual.target)}이 되도록 별 조각을 색칠하세요</strong><div class="b3-print-blank">${starPieces([])}</div></div>`;
 }
 
 function mathExpressionMarkup(visual) {
@@ -961,6 +1053,7 @@ export function book03Markup(visual) {
   if (visual.subtype === "paired-source-fractions") return pairedSourceFractionsMarkup(visual);
   if (visual.subtype === "paired-source-fractions-exact") return pairedSourceFractionsExactMarkup(visual);
   if (visual.subtype === "triangle-twelve-fraction-exact") return triangleTwelveFractionExactMarkup(visual);
+  if (visual.subtype === "triangle-centroid-twelve") return triangleCentroidTwelveMarkup(visual);
   if (visual.subtype === "concentric-square-sixteen-fraction") return concentricSquareSixteenMarkup(visual);
   if (visual.subtype === "oblique-square-area") return obliqueSquareMarkup(visual);
   if (visual.subtype === "grid-path") return gridPathMarkup(visual);

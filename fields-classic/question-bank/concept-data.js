@@ -4,7 +4,7 @@
 const beat = (id, label, text) => Object.freeze({ id, label, text });
 
 const sourceEvidence = (bookId, bookNumber, unitLabel, group, numbers) => Object.freeze({
-  source: `Fields the Classic Course 1 Book ${bookNumber}`,
+  source: `FC Course 1 Book ${bookNumber}`,
   bookId,
   unitLabel,
   stage: "concept",

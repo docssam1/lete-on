@@ -1180,7 +1180,11 @@ ML16:{ name:{ko:'"5"의 변신 곱셈',en:'×5 transform',zh:'×5变身'}, gen:'
           {id:2,label:{ko:'÷5',en:'÷5',zh:'÷5'},params:{level:'main',mode:'div'},
            concept:{ko:'÷5는 ×2 한 다음 ÷10 하면 돼요 — 8860÷5는 17720÷10=1772예요.',
              en:'To divide by 5, double and then divide by 10: 8860÷5 is 17720÷10 = 1772.',
-             zh:'除以5就是先乘2再除以10：8860÷5是17720÷10=1772。'}}] },
+             zh:'除以5就是先乘2再除以10：8860÷5是17720÷10=1772。'}},
+          {id:3,offLadder:true,label:{ko:'÷5 (두·세 자리)',en:'÷5 (2–3 digits)',zh:'÷5（两三位数）'},params:{level:'practice',mode:'div'},
+           concept:{ko:'÷5는 ×2 한 다음 ÷10 하면 돼요 — 85÷5는 170÷10=17이에요.',
+             en:'To divide by 5, double and then divide by 10: 85÷5 is 170÷10 = 17.',
+             zh:'除以5就是先乘2再除以10：85÷5是170÷10=17。'}}] },
 ML17:{ name:{ko:'"25"의 변신 곱셈',en:'×25 transform',zh:'×25变身'}, gen:'ml_x25', prereq:['ML16'],
   /* 레벨1(×25)→C-17, 레벨2(÷25)→C-29 — main.js의 UNIT_OVERRIDE_BY_LEVEL 참조 */
   unit:'C-17',
@@ -1510,7 +1514,9 @@ FR12:{ name:{ko:'분수 전환 나눗셈',en:'Fraction-conversion division',zh:'
     zh:'把除法看成分数，就能先拆出除数的大倍数块来除，再把各部分加起来读成小数。'},
   widgets:['steps','numpad'],
   levels:[{id:1,label:{ko:'연습',en:'practice',zh:'练习'},params:{level:'practice'}},
-          {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}}] },
+          {id:2,label:{ko:'실전',en:'main',zh:'实战'},params:{level:'main'}},
+          /* 2026-10-07 — 과정 22·23 교과(18÷12 · 3.6÷4)와 같은 크기의 첫걸음 */
+          {id:3,offLadder:true,label:{ko:'두 자리 ÷ 한 자리',en:'2-digit ÷ 1-digit',zh:'两位数÷一位数'},params:{level:'intro'}}] },
 DC5:{ name:{ko:'소수를 나누기',en:'Decimal division',zh:'小数除法'}, gen:'ml_decimal_div', prereq:['DC4'],
   unit:'C-33',
   concept:{ko:'나누는 수를 자연수로 만들 만큼 두 수를 똑같이 배로 키운 다음, 자연수끼리 나누면 답이 나와요.',

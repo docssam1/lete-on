@@ -17,7 +17,7 @@ assert.ok(outsideRepo(normalizedPath), "The normalized recovery file must stay p
 assert.ok(outsideRepo(p3ImagePath) && outsideRepo(p4ImagePath), "Source renders must stay private");
 
 const normalized = JSON.parse((await readFile(normalizedPath, "utf8")).replace(/^\uFEFF/, ""));
-const learnerStage = "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정";
+const learnerStage = "7세 8월부터 초등 1학년 초반 · FC 1과정";
 const sourceFingerprint = "0CD7AB1817A4DFCCAF9A3F1756C484CDC9BA37A3B5173A2F033C7A783B1A692D";
 const expectedImageHashes = {
   [resolve(p3ImagePath)]: "E339B42118AF899E9C747B41C63187B27453C6E15F161579BB54855D3BCA8581",

@@ -115,7 +115,7 @@ const similar = [
 
 export const COURSE03_A1_LCM_REMAINDER_LESSON = Object.freeze({
   id: lessonId, bookId: "course-03-a1", courseId: "course-03", label: "A1", title: "최소공배수와 나머지가 같은 수",
-  unit: "나머지 정리", representativeConcept: "여러 나머지 조건의 공통해와 반복 주기", learnerStage: "필즈 더 클래식 3과정 A1; 연령 미확정",
+  unit: "나머지 정리", representativeConcept: "여러 나머지 조건의 공통해와 반복 주기", learnerStage: "FC 3과정 A1; 연령 미확정",
   status: "pilot",
   story: { title: "두 갈래 수열이 만나는 곳", text: "서로 다른 조건에서 출발한 수들이 같은 수에서 만나는 규칙을 찾아요.", mission: "첫 공통 수와 다시 만나는 간격을 모두 확인하세요." },
   explanation: { headline: "첫 공통 수와 반복 간격 찾기", steps: ["각 나머지 조건을 만족하는 수를 따로 늘어놓습니다.", "처음 함께 나타나는 수를 찾습니다.", "나누는 수들의 최소공배수만큼 더해 다시 만나는지 확인합니다."] },

@@ -1814,7 +1814,7 @@ function qrHeaderBlockHtml(code, hasConcept){
    여기서 오버라이드한다 — main.js의 학습지 도우미 화면(?ws=)도 이 함수를 그대로 쓴다. */
 const UNIT_LEVEL_OVERRIDE = {
   ML12:{1:'C-02',2:'C-04',3:'C-34'},
-  ML16:{1:'C-16',2:'C-28'},
+  ML16:{1:'C-16',2:'C-28',3:'C-28'},
   ML17:{1:'C-17',2:'C-29'},
 };
 function resolveConceptUnit(threadId, level){

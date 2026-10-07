@@ -1,8 +1,11 @@
 import { icon } from "../../geometry/games/shape-transform/ui-icons.js";
 import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts } from "./golden-bell-hands-on-folding.js?v=20260925a";
-import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clockValueAfterQuarterTurns, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20260925a";
+import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20261004a";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261003c";
+import { mountClockGame } from "./golden-bell-clock-game.js?v=20261004b";
+import { mountLevelGame } from "./golden-bell-level-game.js?v=20261004a";
+import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261004a";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sessions = new Map();
@@ -10,24 +13,11 @@ const direction = { right: "오른쪽", left: "왼쪽", up: "위쪽", down: "아
 const button = (action, label, symbol, { value, disabled = false, cls = "" } = {}) => `<button type="button" class="${cls}" data-hand-action="${action}"${value === undefined ? "" : ` data-value="${esc(value)}"`} ${disabled ? "disabled" : ""} title="${esc(label)}" aria-label="${esc(label)}">${symbol ? icon(symbol) : ""}${cls.includes("icon-only") ? "" : `<span>${esc(label)}</span>`}</button>`;
 
 function task(activity, round) {
-  if (activity.kind === "clock") return `${round.start}에서 ${round.turns < 0 ? "시계 반대" : "시계"} 방향으로 ${Math.abs(round.turns) === 4 ? "한 바퀴" : Math.abs(round.turns) === 2 ? "반 바퀴" : "반의 반 바퀴"} 돌리세요.`;
   if (activity.kind === "mirror") return `${round.axis.kind === "vertical" ? "오른쪽" : "아래쪽"} 거울에 비칠 모양을 완성하세요.`;
   if (activity.kind === "fold") return `색종이를 ${round.model.folds.map((d) => direction[d]).join(", 다시 ")}으로 접어 표시한 칸을 자릅니다. 펼치면 잘릴 칸을 모두 고르세요.`;
   if (activity.kind === "cross") return `1, 2, 3, 4, 5를 한 번씩 놓아 가로줄과 세로줄의 합을 같게 만드세요. 가운데 수는 ${round.center}입니다.`;
   if (activity.kind === "order") return "네 친구를 조건에 맞게 앞에서부터 놓으세요.";
   return `A는 ${round.left}개, B는 ${round.right}개를 가졌습니다. A가 B에게 주어 두 사람의 개수를 같게 만드세요.`;
-}
-
-function clockScene(round, state) {
-  const angle = (round.start % 12) * 30 + state.turns * 90;
-  const labels = Array.from({ length: 12 }, (_, i) => {
-    const a = (i + 1) * Math.PI / 6;
-    return `<text x="${130 + 95 * Math.sin(a)}" y="${130 - 95 * Math.cos(a)}">${i + 1}</text>`;
-  }).join("");
-  const marks = Array.from({ length: 12 }, (_, i) => `<path transform="rotate(${i * 30} 130 130)" d="M130 13V20"/>`).join("");
-  const turns = Math.abs(state.turns);
-  const amount = ["출발", "반의 반 바퀴", "반 바퀴", "반 바퀴와 반의 반 바퀴", "한 바퀴", "한 바퀴와 반의 반 바퀴", "한 바퀴 반", "한 바퀴 반과 반의 반 바퀴", "두 바퀴"][turns];
-  return `<div class="hand-clock"><svg viewBox="0 0 260 260" role="img" aria-label="${round.start}에서 출발한 바늘이 현재 ${clockValueAfterQuarterTurns(round.start, state.turns)}을 가리키는 시계"><circle cx="130" cy="130" r="122" class="clock-rim"/><g class="clock-ticks">${marks}</g>${labels}<path class="clock-start" transform="rotate(${round.start * 30} 130 130)" d="M130 130V66"/><g class="clock-hand" style="transform:rotate(${angle}deg)"><path d="M130 134V55M122 64L130 54L138 64"/></g><circle cx="130" cy="130" r="6" class="clock-pin"/></svg><p class="hand-measure">돌린 양 <strong>${amount}</strong><span>${state.turns === 0 ? "" : state.turns < 0 ? "시계 반대 방향" : "시계 방향"}</span></p><div class="hand-controls">${button("turn", "시계 반대 방향으로 반의 반 바퀴", "retry", { value: -1, disabled: state.solved || state.turns <= -8 })}${button("turn", "시계 방향으로 반의 반 바퀴", "clockwise", { value: 1, disabled: state.solved || state.turns >= 8 })}</div></div>`;
 }
 
 function cellGrid(state, { given = [], axis, enabled = true, label, pair = null }) {
@@ -101,8 +91,44 @@ function transferScene(round, state) {
   return `<div class="hand-piles">${pile("A", state.left, 1)}${pile("B", state.right, -1)}</div><div class="hand-sums"><span>옮긴 개수 <b>${state.moved}</b></span><span>두 사람의 차이 <b>${Math.abs(state.left - state.right)}</b></span></div>`;
 }
 
+const activityTabs = (unit, session) => unit.single ? "" : `<nav class="hand-activity-tabs" aria-label="단원 체험">${unit.activities.map((id) => `<button type="button" data-hand-activity="${id}" aria-current="${id === session.active ? "true" : "false"}" class="${id === session.active ? "active" : ""}">${esc(HANDS_ON_ACTIVITIES[id].title)}</button>`).join("")}</nav>`;
+
+function bindTabs(container, unit, session, onQuestions) {
+  container.querySelectorAll("[data-hand-activity]").forEach((tab) => tab.addEventListener("click", () => {
+    session.active = tab.dataset.handActivity;
+    renderActivity(container, unit, session, onQuestions);
+    container.querySelector(`[data-hand-activity="${session.active}"]`).focus({ preventScroll: true });
+  }));
+}
+
+// 시계는 단계·별·연속 정답이 있는 별도 게임이 화면 전체를 맡는다. 진행은 세션에 남아 탭을 오가도 이어진다.
+function renderClockGame(container, unit, session, onQuestions) {
+  const activity = HANDS_ON_ACTIVITIES[session.active];
+  container.innerHTML = `${unit.single ? "" : `<div class="hand-toolbar">${activityTabs(unit, session)}</div>`}<div class="hand-scene" data-hand-kind="clock"></div>`;
+  bindTabs(container, unit, session, onQuestions);
+  session.clockSaved ||= {};
+  session.clockGame = mountClockGame(container.querySelector(".hand-scene"), { single: Boolean(unit.single), saved: session.clockSaved, onQuestions: unit.single ? null : () => onQuestions(activity.lesson) });
+}
+
+// 레벨 게임(2권~): 공용 틀에 게임 정의를 넣는다. 진행은 세션에 게임별로 남는다.
+function renderLevelGame(container, unit, session, onQuestions) {
+  const activity = HANDS_ON_ACTIVITIES[session.active];
+  container.innerHTML = `${unit.single ? "" : `<div class="hand-toolbar">${activityTabs(unit, session)}</div>`}<div class="hand-scene" data-hand-kind="level-game"></div>`;
+  bindTabs(container, unit, session, onQuestions);
+  session.levelSaved ||= {};
+  session.levelSaved[session.active] ||= {};
+  session.clockGame = mountLevelGame(container.querySelector(".hand-scene"), BOOK02_LEVEL_GAMES[activity.game], { single: Boolean(unit.single), saved: session.levelSaved[session.active], onQuestions: unit.single ? null : () => onQuestions(activity.lesson) });
+}
+
 function renderActivity(container, unit, session, onQuestions) {
-  const previousTurn = container.querySelector(".clock-hand")?.style.transform;
+  session.clockGame?.dispose();
+  session.clockGame = null;
+  const gameKind = HANDS_ON_ACTIVITIES[session.active].kind;
+  if (gameKind === "clock" || gameKind === "level-game") {
+    container.dataset.handActivity = session.active;
+    (gameKind === "clock" ? renderClockGame : renderLevelGame)(container, unit, session, onQuestions);
+    return;
+  }
   const previousActivity = container.dataset.handActivity;
   const previousFoldStep = Number(container.querySelector(".hand-scene")?.dataset.handFoldStep ?? -1);
   container.dataset.handActivity = session.active;
@@ -112,18 +138,10 @@ function renderActivity(container, unit, session, onQuestions) {
   const kind = activity.kind;
   const guide = handsOnGuide(activity, round, state);
   const portrait = state.solved ? "docssam-praise.webp" : state.checked ? "docssam-thinking.webp" : "docssam-guide.webp";
-  const scene = kind === "clock" ? clockScene(round, state) : kind === "mirror" ? mirrorScene(round, state) : kind === "fold" ? foldScene(round, state, previousActivity === session.active && state.foldStep > previousFoldStep && previousFoldStep >= 0) : ["cross", "order"].includes(kind) ? cardsAndSlots(activity, round, state) : transferScene(round, state);
+  const scene = kind === "mirror" ? mirrorScene(round, state) : kind === "fold" ? foldScene(round, state, previousActivity === session.active && state.foldStep > previousFoldStep && previousFoldStep >= 0) : ["cross", "order"].includes(kind) ? cardsAndSlots(activity, round, state) : transferScene(round, state);
   const atEnd = state.roundIndex === activity.rounds.length - 1;
-  container.innerHTML = `<div class="hand-toolbar">${unit.single ? "" : `<nav class="hand-activity-tabs" aria-label="단원 체험">${unit.activities.map((id) => `<button type="button" data-hand-activity="${id}" aria-current="${id === session.active ? "true" : "false"}" class="${id === session.active ? "active" : ""}">${esc(HANDS_ON_ACTIVITIES[id].title)}</button>`).join("")}</nav>`}<span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div><h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p><div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><strong>독쌤</strong><p>${esc(guide.text)}</p></div></div><div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}"` : ""}>${scene}</div><p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${esc(state.feedback)}</span></p><div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? unit.single ? "again" : "questions" : "next", atEnd ? unit.single ? "처음부터 다시" : "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : button("check", "결과 확인", "check", { cls: "hand-primary", disabled: kind === "fold" && !state.cut })}</div>${state.solved && atEnd ? '<p class="hand-finished">체험 도전 3개 완료</p>' : ""}`;
-  container.querySelectorAll("[data-hand-activity]").forEach((tab) => tab.addEventListener("click", () => {
-    session.active = tab.dataset.handActivity;
-    renderActivity(container, unit, session, onQuestions);
-    container.querySelector(`[data-hand-activity="${session.active}"]`).focus({ preventScroll: true });
-  }));
-  const hand = container.querySelector(".clock-hand");
-  if (hand && previousTurn && previousActivity === session.active && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    hand.animate([{ transform: previousTurn }, { transform: hand.style.transform }], { duration: 220, easing: "ease-out" });
-  }
+  container.innerHTML = `<div class="hand-toolbar">${activityTabs(unit, session)}<span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div><h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p><div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><strong>독쌤</strong><p>${esc(guide.text)}</p></div></div><div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}"` : ""}>${scene}</div><p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${esc(state.feedback)}</span></p><div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? unit.single ? "again" : "questions" : "next", atEnd ? unit.single ? "처음부터 다시" : "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : button("check", "결과 확인", "check", { cls: "hand-primary", disabled: kind === "fold" && !state.cut })}</div>${state.solved && atEnd ? '<p class="hand-finished">체험 도전 3개 완료</p>' : ""}`;
+  bindTabs(container, unit, session, onQuestions);
   container.querySelectorAll("[data-hand-action]").forEach((control) => control.addEventListener("click", () => {
     const action = control.dataset.handAction;
     const value = control.dataset.value === undefined ? undefined : kind === "order" && action === "choose" ? control.dataset.value : Number(control.dataset.value);

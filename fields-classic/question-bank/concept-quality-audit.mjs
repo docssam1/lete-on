@@ -547,7 +547,7 @@ for (const [typeId, expected] of Object.entries(expectedPilot)) {
     const evidenceBook = CURRICULUM.find((book) => book.id === sourceEvidence.bookId);
     assert(evidenceBook, `${typeId}: ${sourceEvidence.bookId} evidence book is missing`);
     const evidenceBookNumber = Number(sourceEvidence.bookId.split("-")[1]);
-    assert(sourceEvidence.source === `Fields the Classic Course 1 Book ${evidenceBookNumber}`,
+    assert(sourceEvidence.source === `FC Course 1 Book ${evidenceBookNumber}`,
       `${typeId}: source label does not match ${sourceEvidence.bookId}`);
     assert(sourceEvidence.verificationState === "source-confirmed" && sourceEvidence.visibility === "public-safe",
       `${typeId}: unsafe evidence state`);

@@ -10,7 +10,7 @@ const normalized = JSON.parse((await readFile(normalizedPath, "utf8")).replace(/
 assert.equal(normalized.bookId, "book-07");
 assert.equal(normalized.updates?.length, 2, "book07 recovery must have two lesson updates");
 
-const learnerStage = "7세 8월부터 초등 1학년 초반 · 필즈 더 클래식 1과정";
+const learnerStage = "7세 8월부터 초등 1학년 초반 · FC 1과정";
 const expectedIds = new Set([
   "book07-recovery-s22-04-35",
   "book07-recovery-s22-04-77",

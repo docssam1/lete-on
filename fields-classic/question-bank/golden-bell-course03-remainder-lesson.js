@@ -108,7 +108,7 @@ export const COURSE03_A1_REMAINDER_LESSON = Object.freeze({
   representativeConcept: "같은 나머지를 가진 수열을 양의 식과 음의 식으로 나타내고 포함 범위의 항 수 세기",
   story: { title: "두 식으로 여는 수열 상자", text: "같은 수열을 서로 다른 두 식으로 읽고 범위 안의 수를 빠짐없이 찾아요.", mission: "항 번호의 시작과 범위의 양끝을 정확히 확인하세요." },
   explanation: { headline: "같은 수열의 두 표현", steps: ["첫 항에서 시작하면 이동 횟수는 항 번호보다 1 작습니다.", "바로 앞 묶음에서 시작하는 음의 식은 항 번호를 그대로 사용합니다.", "범위 문제는 첫 항과 마지막 항을 모두 포함해 셉니다."] },
-  learnerStage: "필즈 더 클래식 3과정 A1; 연령 미확정",
+  learnerStage: "FC 3과정 A1; 연령 미확정",
   status: "pilot",
   source: { origin: "textbook-derived", note: "교재 구조를 참고해 새 예시로 구성한 개념 학습입니다." },
   experience: makeExperience(),

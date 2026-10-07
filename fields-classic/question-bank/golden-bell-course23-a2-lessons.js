@@ -250,7 +250,7 @@ function makeLesson({ bookId, lessonId, title, unit, concept, tracks, visuals, s
   const items = makeItems(bookId, lessonId, visuals);
   return Object.freeze({
     id: lessonId, bookId, courseId: bookId.startsWith("course-02") ? "course-02" : "course-03", label: "A2",
-    title, unit, status: "pilot", learnerStage: `필즈 더 클래식 ${bookId.startsWith("course-02") ? "2과정" : "3과정"} A2; 연령 미확정`,
+    title, unit, status: "pilot", learnerStage: `FC ${bookId.startsWith("course-02") ? "2과정" : "3과정"} A2; 연령 미확정`,
     representativeConcept: concept,
     story: { title: "개념 실험실", text: "교재의 활동 구조를 움직이는 그림과 계산 단계로 다시 확인합니다.", mission: "조건을 정리하고 계산한 뒤 원래 조건으로 검산하세요." },
     explanation: { headline: title, steps: tracks.map((track) => track.title) },

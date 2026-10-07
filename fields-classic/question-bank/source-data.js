@@ -25,7 +25,7 @@ export const DOMAINS = [
 // 한 세부 유형은 여러 학원·교재 스타일에서 함께 나타날 수 있다. 유형을 복제하지 않고
 // academyStyleIds에 출처 스타일을 누적해 다대다로 연결한다.
 export const ACADEMY_STYLES = [
-  { id: "fields-classic", label: "필즈 더 클래식" }
+  { id: "fields-classic", label: "FC" }
 ];
 
 const type = (id, domain, middle, label, options = {}) => ({
@@ -39,12 +39,12 @@ const type = (id, domain, middle, label, options = {}) => ({
   academyStyleIds: [...new Set(options.academyStyleIds || ["fields-classic"])]
 });
 
-// Geometry World의 검산된 학습지 엔진을 그대로 쓰는 유형이다. 필즈 쪽에
+// Geometry World의 검산된 학습지 엔진을 그대로 쓰는 유형이다. FC 쪽에
 // 비슷한 생성기나 SVG를 다시 만들지 않고, worksheetCode 하나로 수학·그림·정답을
 // 함께 가져온다. worksheetLevel은 이 문제은행에서 "같게"를 만들 때의 기준 단계다.
 const geometryWorksheet = (worksheetCode, worksheetLevel, options = {}) => ({
   // Geometry World에서 수학·그림·정답을 독립 검산한 공용 문제은행 유형이다.
-  // 실제 필즈 시험지와 1:1 대조했다는 뜻의 sourceMatched와는 구분한다.
+  // 실제 FC 시험지와 1:1 대조했다는 뜻의 sourceMatched와는 구분한다.
   bankApproved: true,
   worksheetCode,
   worksheetLevel,
@@ -360,11 +360,11 @@ export const TYPES = [
   type("reverse-thinking", "logic", "과정 추론", "거꾸로 생각하기", { generator: "halfGiveReverse", sourceMatched: true }),
   type("argument-logic", "logic", "조건 추리", "조건을 따져 옳고 그름 판단하기", { status: "curriculum" }),
   // 진단 모의고사 원본의 구조를 그대로 유지하는 전용 유형이다.
-  type("diagnostic-part-whole-bar", "number", "수의 구성", "부분 막대의 길이로 전체와 남은 부분 구하기", { generator: "diagnosticPartWholeBar", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 1번" }),
-  type("diagnostic-dialogue-condition-number", "number", "조건에 맞는 수", "대화 속 여러 조건으로 수 구하기", { generator: "diagnosticDialogueConditionNumber", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 2번" }),
-  type("diagnostic-number-relation", "number", "수 사이의 약속", "여러 수의 관계로 빈칸 구하기", { generator: "diagnosticNumberRelation", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 9번" }),
-  type("diagnostic-two-digit-cryptarithm", "number", "복면산과 식", "두 자리 수 덧셈 복면산", { generator: "diagnosticTwoDigitCryptarithm", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 20번" }),
-  type("diagnostic-animal-balance-order", "logic", "양팔저울", "동물 양팔저울로 무게 순서 정하기", { generator: "diagnosticAnimalBalanceOrder", sourceMatched: true, textbookSource: "필즈 대비 선발 진단 모의고사 8번" }),
+  type("diagnostic-part-whole-bar", "number", "수의 구성", "부분 막대의 길이로 전체와 남은 부분 구하기", { generator: "diagnosticPartWholeBar", sourceMatched: true, textbookSource: "FC 대비 선발 진단 모의고사 1번" }),
+  type("diagnostic-dialogue-condition-number", "number", "조건에 맞는 수", "대화 속 여러 조건으로 수 구하기", { generator: "diagnosticDialogueConditionNumber", sourceMatched: true, textbookSource: "FC 대비 선발 진단 모의고사 2번" }),
+  type("diagnostic-number-relation", "number", "수 사이의 약속", "여러 수의 관계로 빈칸 구하기", { generator: "diagnosticNumberRelation", sourceMatched: true, textbookSource: "FC 대비 선발 진단 모의고사 9번" }),
+  type("diagnostic-two-digit-cryptarithm", "number", "복면산과 식", "두 자리 수 덧셈 복면산", { generator: "diagnosticTwoDigitCryptarithm", sourceMatched: true, textbookSource: "FC 대비 선발 진단 모의고사 20번" }),
+  type("diagnostic-animal-balance-order", "logic", "양팔저울", "동물 양팔저울로 무게 순서 정하기", { generator: "diagnosticAnimalBalanceOrder", sourceMatched: true, textbookSource: "FC 대비 선발 진단 모의고사 8번" }),
 
   // 더클래식 1과정 1권: 단원 안에서도 실제 문항의 풀이 구조가 바뀌는 곳마다
   // 별도 유형으로 나눈다. 페이지는 판본마다 달라질 수 있어 문제 번호만 런타임에 쓴다.
@@ -1241,8 +1241,8 @@ export const DIAGNOSTIC_EXAM_TYPES = [
   {
     id: "diagnostic-mock",
     stage: "diagnostic",
-    label: "필즈 대비 선발 진단 모의고사",
-    file: "필즈 대비 선발 진단 모의고사 · 25문항",
+    label: "FC 대비 선발 진단 모의고사",
+    file: "FC 대비 선발 진단 모의고사 · 25문항",
     sourceViewer: false,
     questions: [
       question(1, "diagnostic-part-whole-bar", "부분 막대의 길이로 전체와 남은 부분 구하기"),

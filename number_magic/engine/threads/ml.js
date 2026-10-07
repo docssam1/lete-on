@@ -2215,9 +2215,11 @@ NM_TGEN['ml_frac_muldiv'] = function(params, rng) {
    675÷4 = 600/4 + 40/4 + 35/4 = 150+10+8.75 = 168.75 */
 NM_TGEN['ml_frac_conv'] = function(params, rng) {
   const lv   = params.level || 'main';
-  const DENS = lv === 'practice' ? [2, 4, 5, 8] : [2, 4, 5, 8, 20, 25];
+  const DENS = (lv === 'practice' || lv === 'intro') ? [2, 4, 5, 8] : [2, 4, 5, 8, 20, 25];
   const d    = pick(rng, DENS);
-  const n    = lv === 'practice' ? R(rng, 100, 999) : R(rng, 1000, 9999);
+  /* intro(2026-10-07): 두 자리 ÷ 한 자리 — 과정 22·23 의 교과(18÷12 · 3.6÷4)와 같은 수 크기. 나누어떨어지면 소수가 안 나오니 다시 뽑는다. */
+  let n = lv === 'intro' ? R(rng, 10, 99) : lv === 'practice' ? R(rng, 100, 999) : R(rng, 1000, 9999);
+  if (lv === 'intro') { for (let t = 0; t < 50 && n % d === 0; t++) n = R(rng, 10, 99); if (n % d === 0) n += 1; }
   /* d가 2·4·5·8·20·25뿐이라 소수 셋째자리 이하에서 끊기므로 반올림해도 오차 없음 */
   const answer = Math.round(n / d * 1000) / 1000;
 

@@ -70,7 +70,7 @@ const commonSource = { origin: "textbook-derived", note: "본 교재의 첫 활�
 const buildBook = (bookId, courseId, title, lesson, practice, extension, similarPractice) => ({
   id: bookId, bookId, courseId, label: "A1", title, status: "pilot", source: commonSource,
   dailyPractice: { problemCount: 6, original: 4, extension: 6, estimatedMinutes: null }, lessons: [{ ...lesson,
-    learnerStage: `필즈 더 클래식 ${courseId === "course-02" ? "2과정" : "3과정"} A1; 연령 미확정`,
+    learnerStage: `FC ${courseId === "course-02" ? "2과정" : "3과정"} A1; 연령 미확정`,
     sourceTypeIds: [], original: { title: "연습", prompt: "개념을 활용해 새 문제를 풀어 보세요.", mode: "paged", separateConceptPrint: true, visual: practice[0].visual, items: practice },
     extension: { ...extension, id: `${lesson.id}:extension`, prompt: extension.prompt, story: "", answerRef: `/course23/${bookId}/${lesson.id}:extension` }, similarPractice
   }]

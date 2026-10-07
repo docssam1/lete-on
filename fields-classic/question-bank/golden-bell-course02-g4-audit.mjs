@@ -54,7 +54,7 @@ for (const [lessonIndex, lesson] of COURSE02_G4_LESSONS.entries()) {
   assert.equal(lesson.bookId, "course-02-g4");
   assert.equal(lesson.courseId, "course-02");
   assert.equal(lesson.label, "G4");
-  assert.equal(lesson.learnerStage, "필즈 더 클래식 2과정 G4; 연령 미확정");
+  assert.equal(lesson.learnerStage, "FC 2과정 G4; 연령 미확정");
   assert.equal(lesson.dailyPractice.problemCount, 10);
   assert.deepEqual(
     [lesson.dailyPractice.original, lesson.dailyPractice.extension, lesson.dailyPractice.similar],

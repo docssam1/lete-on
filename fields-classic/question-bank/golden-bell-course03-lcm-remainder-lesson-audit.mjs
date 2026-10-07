@@ -12,7 +12,7 @@ const brute = (conditions, lower, upper) => {
   return Array.from({ length: upper - lower + 1 }, (_, i) => lower + i).filter((n) => conditions.every(({ divisor, remainder }) => n % divisor === remainder));
 };
 
-assert.equal(lesson.learnerStage, "필즈 더 클래식 3과정 A1; 연령 미확정");
+assert.equal(lesson.learnerStage, "FC 3과정 A1; 연령 미확정");
 assert.equal(lesson.experience.kind, "course-concept");
 assert.equal(lesson.experience.tracks.length, 2);
 assert.ok(lesson.experience.tracks.every((track) => track.beats.length === 4));

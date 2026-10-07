@@ -10,7 +10,10 @@ import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 const permutations = (values) => values.length ? values.flatMap((v, i) => permutations(values.filter((_, j) => i !== j)).map((rest) => [v, ...rest])) : [[]];
 const sourceOrder = [["D", "B", "A", "C"], ["C", "B", "D", "A"], ["B", "C", "D", "A"]];
 const solutions = new Map();
-assert.equal(HANDS_ON_UNITS.length, 4);
+// 1권 체험 단원 4개 + 2권 레벨 게임 단원 4개. 2권은 golden-bell-book02-games-audit.mjs가 검사한다.
+assert.equal(HANDS_ON_UNITS.filter((unit) => unit.bookId === "book-01").length, 4);
+assert.equal(HANDS_ON_UNITS.filter((unit) => unit.bookId === "book-02").length, 4);
+for (const lesson of GOLDEN_BELL_BOOKS[1].lessons) assert.ok(unitForLesson("book-02", lesson.id), `book-02 ${lesson.id}: 게임 단원 없음`);
 assert.ok(HANDS_ON_UNITS.every((unit) => unit.activities.length >= 1 && unit.activities.length <= 2));
 for (const lesson of GOLDEN_BELL_BOOKS[0].lessons) assert.ok(unitForLesson("book-01", lesson.id), lesson.id);
 assert.equal(unitForLesson("book-02", "clock-turning"), undefined);
@@ -106,17 +109,20 @@ try {
       return host;
     };
     for (const [id, activity] of Object.entries(activities)) {
+      if (activity.kind === "level-game") continue; // 2권 레벨 게임은 golden-bell-book02-games-audit.mjs
       const host = await open(id);
       const act = (action, value) => host.locator(`[data-hand-action="${action}"]${value === undefined ? "" : `[data-value="${value}"]`}`);
       if (id === "turn-clock") {
+        // 시계는 네 단계 게임으로 바뀌었다(2026-10-04). 탭 전환만 여기서 보고, 게임 자체와 연결 문제
+        // 전환은 golden-bell-clock-game-audit.mjs가 검사한다.
         assert.equal(await host.locator("[data-hand-voice],audio").count(), 0);
-        assert.equal(await host.locator(".hand-guide").getAttribute("data-guide-phase"), "start");
-        assert.match(await host.locator(".hand-guide-copy").innerText(), /출발점과 방향/);
-        assert.equal(await host.locator(".hand-task").evaluate((node) => Boolean(node.compareDocumentPosition(document.querySelector(".hand-guide")) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
+        assert.equal(await host.locator(".cg").getAttribute("data-stage"), "turn");
         await host.locator('[data-hand-activity="mirror-tiles"]').click();
         assert.equal(await host.locator(".hand-scene").getAttribute("data-hand-kind"), "mirror");
         await host.locator('[data-hand-activity="turn-clock"]').click();
         assert.equal(await host.locator(".hand-scene").getAttribute("data-hand-kind"), "clock");
+        await page.keyboard.press("Escape");
+        continue;
       }
       for (const [index, round] of activity.rounds.entries()) {
         assert.equal(await host.locator(".hand-scene").getAttribute("data-hand-round"), String(index));
@@ -232,10 +238,11 @@ try {
   await guest.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=GUEST&book=book-01`, { waitUntil: "networkidle" });
   await guest.locator(".protected-answer-notice").waitFor();
   await guest.locator('.gold-hands-on [data-hand-open="turn-clock"]').click();
-  for (let i = 0; i < 2; i++) await guest.locator('[data-hand-action="turn"][data-value="1"]').click();
-  assert.match(await guest.locator(".clock-hand").getAttribute("style"), /270deg/);
-  await guest.locator('[data-hand-action="check"]').click();
-  assert.equal(await guest.locator(".hand-feedback.correct").count(), 1);
+  await guest.locator("[data-clock-go]").click();
+  for (let i = 0; i < 2; i++) await guest.locator('[data-clock-turn="1"]:not([disabled])').click();
+  assert.match(await guest.locator("[data-clock-readout] strong").innerText(), /시계 방향으로 반 바퀴/u);
+  await guest.locator("[data-clock-check]").click();
+  assert.equal(await guest.locator(".cg").getAttribute("data-phase"), "correct");
   await guest.locator("[data-hand-close]").click();
   await guest.locator('[data-next-phase="original"]').click();
   assert.equal(await guest.locator('.quiz-item-solution').count(), 0);
