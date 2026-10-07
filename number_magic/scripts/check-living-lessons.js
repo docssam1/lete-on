@@ -2,26 +2,41 @@
 const assert=require('assert/strict'),fs=require('fs'),path=require('path');
 const api=require('../data/living-lessons');
 // Independent conservation checks, including repeated clicks at boundaries.
-for(const uid of ['N-07','M-01']){
- const rounds=uid==='N-07'?4:3;
+for(const uid of ['__ten','M-01']){
+ const rounds=uid==='__ten'?4:3;
  for(let round=0;round<rounds;round++){
   let s=api.create(uid,round),v=api.snapshot(s),start=v.positive-v.negative;
-  const action=uid==='N-07'?'add':'pair';
+  const action=uid==='__ten'?'add':'pair';
   for(let i=0;i<20;i++){
    s=api.act(s,action);v=api.snapshot(s);
    assert(v.remaining>=0);assert(v.positiveLeft>=0&&v.negativeLeft>=0);
-   if(uid==='N-07'){assert.equal(v.total,v.base+v.added);assert(v.total<=10);}
+   if(uid==='__ten'){assert.equal(v.total,v.base+v.added);assert(v.total<=10);}
    else{assert.equal(v.total,start);assert.equal(v.positiveLeft+v.pairs,v.positive);assert.equal(v.negativeLeft+v.pairs,v.negative);}
   }
-  assert(v.complete);if(uid==='N-07')assert.equal(v.total,10);
+  assert(v.complete);if(uid==='__ten')assert.equal(v.total,10);
   for(let i=0;i<20;i++)s=api.act(s,'undo');
   assert.equal(api.snapshot(s).added,0);assert.equal(api.snapshot(s).pairs,0);
   assert.deepEqual(api.act(s,'reset'),api.create(uid,round));
   const predicted=api.act(s,'predict',999);assert.equal(api.snapshot(predicted).total,api.snapshot(s).total);
  }
 }
-console.log('PASS — 7 rounds: ten-frame bound, zero-pair conservation, undo/reset and predictions');
-let picked=api.act(api.create('N-07'),'add',4);assert.deepEqual(picked.moved,[4]);assert.equal(api.act(picked,'add',4).added,1);
+console.log('PASS — 7 rounds: ten-frame bound(보관 __ten), zero-pair conservation, undo/reset and predictions');
+/* N-07 수직선 뛰기(2026-10-06) — 회차마다: 끝까지 뛰면 a ± c 에 서고, 0~10 밖으로 못 나가고, 되돌리기·처음부터·예측이 위치를 속이지 않는다 */
+assert.equal(api.create('N-07').kind,'hop');
+for(let round=0;round<4;round++){
+ let s=api.create('N-07',round),v=api.snapshot(s);const [a,op,c]=v.input;
+ assert(a>=1&&a<=6&&c>=1&&c<=6,'주사위 눈은 1~6');
+ assert.equal(api.snapshot(api.act(s,'predict',999)).pos,0,'예측은 토끼를 움직이지 않는다');
+ for(let i=0;i<30;i++){s=api.act(s,'hop');v=api.snapshot(s);assert(v.pos>=0&&v.pos<=10);}
+ assert(v.complete);assert.equal(v.pos,op==='+'?a+c:a-c);assert.equal(v.hops.length,a+c);
+ assert(v.hops.slice(0,a).every(h=>h[1]===h[0]+1),'첫 주사위는 앞으로');
+ assert(v.hops.slice(a).every(h=>h[1]===h[0]+(op==='+'?1:-1)),'둘째 주사위는 기호 방향');
+ s=api.act(s,'undo');assert.equal(api.snapshot(s).complete,false);assert.equal(api.snapshot(s).pos,v.hops[a+c-1][0]);
+ for(let i=0;i<30;i++)s=api.act(s,'undo');assert.equal(api.snapshot(s).pos,0);
+ assert.deepEqual(api.act(s,'reset'),api.create('N-07',round));
+}
+console.log('PASS — N-07 hop: 4 rounds land on a ± c inside 0–10, dice 1–6, undo/reset/prediction');
+let picked=api.act(api.create('__ten'),'add',4);assert.deepEqual(picked.moved,[4]);assert.equal(api.act(picked,'add',4).added,1);
 picked=api.act(api.create('M-01'),'pair',{positive:2,negative:1});assert.deepEqual(picked.paired,[{positive:2,negative:1}]);assert.equal(api.act(picked,'pair',{positive:2,negative:0}).pairs,1);
 if(!process.argv.includes('--browser'))process.exit(0);
 const {chromium}=require('./lib/playwright'),{serve}=require('./showreel/lib');
@@ -30,7 +45,8 @@ const out=process.env.NM_LIVE_ARTIFACTS;if(out)fs.mkdirSync(out,{recursive:true}
  const {server,base}=await serve();let browser;const report=[];
  try{
   browser=await chromium.launch({args:['--enable-unsafe-swiftshader']});
-  for(const [uid,lang,width,reduced,fallback] of [['N-07','ko',390,false,false],['M-01','ko',390,false,false],['N-07','en',1100,true,false],['M-01','zh',768,true,false],['N-07','ko',390,true,true]]){
+  /* N-07 은 2026-10-06 부터 2D 수직선 뛰기(app/hop-lesson.js)라 이 3D 구성에서 뺐다 — 3D 체험은 M-01 로 계속 본다. */
+  for(const [uid,lang,width,reduced,fallback] of [['M-01','ko',390,false,false],['M-01','zh',768,true,false],['M-01','ko',390,true,true]]){
    const context=await browser.newContext({viewport:{width,height:950},reducedMotion:reduced?'reduce':'no-preference'});
    await context.route(url=>!url.href.startsWith(base)&&!url.href.startsWith('data:')&&!url.href.startsWith('blob:'),r=>r.abort());
    // Test-only projection probe: the actions below still use real pointer events/raycasting.
@@ -106,7 +122,7 @@ const out=process.env.NM_LIVE_ARTIFACTS;if(out)fs.mkdirSync(out,{recursive:true}
    assert.deepEqual(errors,[]);
    report.push({uid,lang,width,reduced,fallback,rounds,passed:true});await context.close();
   }
-  console.log('PASS — actual app, 5 configurations, 18 rounds, keyboard, responsive, reduced motion, WebGL fallback, dispose/remount');
+  console.log(`PASS — actual app, ${report.length} configurations, ${report.reduce((n,r)=>n+r.rounds,0)} rounds, keyboard, responsive, reduced motion, WebGL fallback, dispose/remount`);
   if(out)fs.writeFileSync(path.join(out,'results.json'),JSON.stringify(report,null,2));
  }finally{if(browser)await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#244e3e">
   <title>전류 탐험 교재 · 팝콘 실험실</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="workbook.css?v=4">
-  <link rel="stylesheet" href="magazine.css?v=2">
+  <link rel="stylesheet" href="workbook.css?v=6">
+  <link rel="stylesheet" href="magazine.css?v=3">
 </head>
 <body class="workbook-standalone">
   <main id="workbook-preview"></main>
   <script type="module">
-    import { mountWorkbookPreview } from './workbook.js?v=3';
+    import { mountWorkbookPreview } from './workbook.js?v=6';
     const teacher = new URLSearchParams(location.search).get('teacher') === '1';
     document.title = teacher ? '전류 탐험 · 교사용 지도자료' : '전류 탐험 · 학생용 빈 교재';
     mountWorkbookPreview(document.querySelector('#workbook-preview'), { teacher });

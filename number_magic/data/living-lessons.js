@@ -5,7 +5,11 @@
 })(typeof window!=='undefined'?window:globalThis,function(){
   'use strict';
   const lessons={
-    'N-07':{kind:'ten',rounds:[8,9,7,6]},
+    /* N-07(2026-10-06) — 교재 G1-7호 "주사위·개구리의 위치(수직선)·도미노"에 맞춰 수직선 뛰기로. 0에서 주사위 수 a 만큼 뛴 뒤
+       + 면 c칸 앞으로, − 면 c칸 되돌아온다. 모든 점은 0~10 안. */
+    'N-07':{kind:'hop',rounds:[[4,'+',3],[6,'-',2],[3,'+',5],[5,'-',3]]},   /* 주사위 두 개 — 모두 1~6 */
+    /* 보관 — 예전 N-07 의 10 짝꿍 3D 체험. 10 짝꿍을 가르치는 유닛이 생기면 그 id 로 옮긴다(검사기 check-living-lessons 가 계속 검산). */
+    '__ten':{kind:'ten',rounds:[8,9,7,6]},
     'M-01':{kind:'signed',rounds:[[3,2],[2,4],[2,2]]},
     'A-02':{kind:'makeTen',rounds:[[8,7],[9,6],[7,5],[6,8]]},
     'M-02':{kind:'numberLine',rounds:[[-2,'+',-3],[2,'-',-3],[3,'+',2],[-2,'-',3],[3,'+',-3]]},
@@ -15,12 +19,23 @@
     const def=lessons[uid];if(!def)throw Error('Unknown living lesson');
     const index=Math.max(0,Math.min(def.rounds.length-1,Math.trunc(round||0)));
     const input=def.rounds[index];
+    if(def.kind==='hop')return {uid,kind:'hop',round:index,input:[...input],pos:0,hops:[],prediction:null};
     if(!['ten','signed'].includes(def.kind))return {uid,kind:def.kind,round:index,input:[...input],phase:0,moved:[],prediction:null,transferGuess:null,transferChecked:false};
     return {uid,kind:def.kind,round:index,base:def.kind==='ten'?input:0,
       positive:def.kind==='signed'?input[0]:0,negative:def.kind==='signed'?input[1]:0,
       added:0,pairs:0,moved:[],paired:[],prediction:null};
   }
+  /* 수직선 뛰기: 1단계는 0 → a(주사위), 2단계는 a → a ± c. hops = 지금까지 뛴 [from,to] 들(한 칸씩). */
+  function hopView(s){
+    const [a,op,c]=s.input,answer=op==='+'?a+c:a-c,stage=s.hops.length<a?1:2;
+    const target=stage===1?a:answer,dir=stage===1?1:(op==='+'?1:-1);
+    const done=s.hops.length===a+c;
+    return {...s,a,op,c,answer,stage,target,dir,complete:done,total:s.pos,
+      remaining:done?0:(stage===1?a-s.hops.length:c-(s.hops.length-a)),
+      rounds:lessons[s.uid].rounds.length,last:s.round===lessons[s.uid].rounds.length-1};
+  }
   function snapshot(s){
+    if(s.kind==='hop')return hopView(s);
     if(!['ten','signed'].includes(s.kind)){
       const [a,b,c]=s.input,make=s.kind==='makeTen',line=s.kind==='numberLine';
       const factors=n=>Array.from({length:n},(_,i)=>i+1).filter(d=>n%d===0);
@@ -44,6 +59,15 @@
       last:s.round===lessons[s.uid].rounds.length-1,rounds:lessons[s.uid].rounds.length};
   }
   function act(s,action,value){
+    if(s.kind==='hop'){
+      let n={...s,input:[...s.input],hops:s.hops.map(h=>[...h])};const v=hopView(s);
+      if(action==='predict'&&Number.isInteger(value))n.prediction=value;
+      if(action==='hop'&&!v.complete){const to=s.pos+v.dir;if(to>=0&&to<=10){n.hops.push([s.pos,to]);n.pos=to;}}
+      if(action==='undo'&&s.hops.length){n.hops.pop();n.pos=n.hops.length?n.hops[n.hops.length-1][1]:0;}
+      if(action==='reset')n=create(s.uid,s.round);
+      if(action==='next')n=create(s.uid,(s.round+1)%lessons[s.uid].rounds.length);
+      return n;
+    }
     if(!['ten','signed'].includes(s.kind)){
       let n={...s,input:[...s.input],moved:[...s.moved]};const v=snapshot(s);
       if(action==='predict'&&Number.isInteger(value))n.prediction=value;

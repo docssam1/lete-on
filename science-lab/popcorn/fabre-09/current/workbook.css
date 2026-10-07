@@ -115,9 +115,9 @@
 .wb-photo-dialog button:focus-visible { outline: 3px solid #2456c4; outline-offset: 3px; }.wb-photo-dialog img { flex: 1; min-height: 0; object-fit: contain; width: 100%; }
 
 .wb-activity-band { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--wb-accent); font-size: 15px; }.wb-activity-band strong { color: #347a67; font-size: 19px; }
-.wb-comparison-diagrams { margin: 0 0 24px; gap: 16px; }.wb-comparison-diagrams svg { height: 190px; }.wb-comparison-diagrams figcaption { text-align: center; color: #173241; font-size: 15px; font-weight: 650; }
-.wb-removal-grid { margin-bottom: 26px; }.wb-removal-grid > section + section { border-left: 1px solid #cfdddd; padding-left: 22px; }.wb-removal-figure svg { height: 255px; }.wb-removal-figure figcaption { min-height: 40px; }
-.wb-parts-figure { padding: 12px 0 18px; }.wb-parts-figure svg { height: 170px; }.wb-secondary-figure svg { height: 130px; }.wb-materials { padding: 14px 0; border-block: 1px solid #d3dfe3; font-size: 15px; }
+.wb-comparison-diagrams { margin: 0 0 24px; gap: 16px; }.wb-comparison-diagrams .wb-circuit-photo { height: 190px; }.wb-comparison-diagrams figcaption { text-align: center; color: #173241; font-size: 15px; font-weight: 650; }
+.wb-removal-grid { margin-bottom: 26px; }.wb-removal-grid > section + section { border-left: 1px solid #cfdddd; padding-left: 22px; }.wb-removal-figure .wb-circuit-photo { height: 255px; }.wb-removal-figure figcaption { min-height: 40px; }
+.wb-parts-figure { padding: 12px 0 18px; }.wb-parts-figure .wb-parts-photo { height: 170px; }.wb-secondary-figure .wb-parts-photo { height: 130px; }.wb-materials { padding: 14px 0; border-block: 1px solid #d3dfe3; font-size: 15px; }
 .wb-build-steps section { padding: 16px 0 12px; border-bottom: 1px solid #d3dfe3; }.wb-build-steps section:last-child { border: 0; }.wb-build-steps h3 span { display: inline-block; width: 30px; color: #41957b; font-size: 24px; font-weight: 700; }.wb-build-steps p { padding-left: 30px; }
 .wb-wiring-figure figcaption { margin: 9px 0 0; }.wb-switch-positions { display: flex; justify-content: space-between; gap: 10px; margin: 18px 0; text-align: center; }.wb-switch-positions span { flex: 1; padding: 10px 5px; border-bottom: 3px solid #56bad4; background: #f2f9fb; font-weight: 650; }
 .wb-table { border-collapse: collapse; width: 100%; table-layout: fixed; margin: 18px 0 26px; font-size: 15px; line-height: 1.65; }
@@ -152,8 +152,8 @@
   .wb-two-col, .wb-three-col, .wb-photo-side, .wb-test-scene, .wb-wiring-pair { grid-template-columns: 1fr; gap: 24px; }
   .wb-photo-side img, .wb-test-scene img { height: 260px; }.wb-large-photo img { height: 325px; }.wb-reference-photos img { height: 230px; }.wb-life-photos img { height: 240px; }
   .wb-removal-grid > section + section { border-left: 0; border-top: 1px solid #cfdddd; padding: 22px 0 0; }.wb-removal-figure figcaption { min-height: 0; }
-  .wb-comparison-diagrams { gap: 24px; }.wb-comparison-diagrams svg { height: 225px; }.wb-comparison-diagrams figcaption { font-size: 16px; }
-  .wb-secondary-figure svg { height: 130px; }.wb-wiring-pair svg { height: 285px; }
+  .wb-comparison-diagrams { gap: 24px; }.wb-comparison-diagrams .wb-circuit-photo { height: 225px; }.wb-comparison-diagrams figcaption { font-size: 16px; }
+  .wb-secondary-figure .wb-parts-photo { height: 130px; }.wb-wiring-pair svg { height: 285px; }
   .wb-table th, .wb-table td { padding: 10px 6px; font-size: 14px; }.wb-table thead th { font-size: 13px; }.wb-table .wb-writing { font-size: 15px; }
   .wb-wire-table th, .wb-wire-table td { padding: 10px 4px; font-size: 13px; }.wb-teacher-table th, .wb-teacher-table td { font-size: 14px; }
   .wb-method { gap: 9px 14px; font-size: 14px; }.wb-page-foot { margin-top: 24px; }.wb-photo-hint { font-size: 11px; }
@@ -189,13 +189,13 @@
   .workbook-print-root .wb-cover-start .wb-safety { padding-left: 5mm; border-left: .2mm solid #d3dfe3; }.workbook-print-root .wb-cover-start .wb-safety-list { font-size: 10.5pt; line-height: 1.6; }.workbook-print-root .wb-cover-start .wb-small { margin-top: 3mm; font-size: 9pt; }
   .workbook-print-root .wb-start-question { font-size: 11pt; }.workbook-print-root .wb-cover-route { font-size: 10pt; margin: 2mm 0 3mm!important; }
   .workbook-print-root .wb-activity-band { margin-bottom: 4mm; padding-bottom: 2mm; font-size: 11pt; }.workbook-print-root .wb-activity-band strong { font-size: 13pt; }
-  .workbook-print-root .wb-comparison-diagrams svg { height: 44mm; }.workbook-print-root .wb-comparison-diagrams figcaption { font-size: 10.5pt; }
-  .workbook-print-root .wb-removal-figure svg { height: 58mm; }.workbook-print-root .wb-removal-figure figcaption { min-height: 11mm; }.workbook-print-root .wb-removal-grid > section + section { padding-left: 5mm; }
+  .workbook-print-root .wb-comparison-diagrams .wb-circuit-photo { height: 44mm; }.workbook-print-root .wb-comparison-diagrams figcaption { font-size: 10.5pt; }
+  .workbook-print-root .wb-removal-figure .wb-circuit-photo { height: 58mm; }.workbook-print-root .wb-removal-figure figcaption { min-height: 11mm; }.workbook-print-root .wb-removal-grid > section + section { padding-left: 5mm; }
   .workbook-print-root .wb-photo-side, .workbook-print-root .wb-test-scene, .workbook-print-root .wb-wiring-pair { grid-template-columns: 1fr 1fr; gap: 5mm; margin-bottom: 4mm; }
   .workbook-print-root .wb-photo-side img { height: 48mm; }.workbook-print-root .wb-test-scene img { height: 55mm; }.workbook-print-root .wb-large-photo img { height: 81mm; }.workbook-print-root .wb-wiring-pair img, .workbook-print-root .wb-wiring-pair svg { height: 64mm; }
   .workbook-print-root .wb-reference-photos { margin-bottom: 5mm; }.workbook-print-root .wb-reference-photos img { height: 40mm; }.workbook-print-root .wb-reference-photos .wb-three-col { grid-template-columns: repeat(3,minmax(0,1fr)); }.workbook-print-root .wb-reference-photos > .wb-small { margin-top: 3mm; }
   .workbook-print-root .wb-life-photos { margin-bottom: 4mm; }.workbook-print-root .wb-life-photos img { height: 45mm; }
-  .workbook-print-root .wb-parts-figure { padding: 2mm 0 3mm; }.workbook-print-root .wb-parts-figure svg { height: 35mm; }.workbook-print-root .wb-secondary-figure svg { height: 32mm; }
+  .workbook-print-root .wb-parts-figure { padding: 2mm 0 3mm; }.workbook-print-root .wb-parts-figure .wb-parts-photo { height: 35mm; }.workbook-print-root .wb-secondary-figure .wb-parts-photo { height: 32mm; }
   .workbook-print-root .wb-build-steps section { padding: 3mm 0 2mm; }.workbook-print-root .wb-build-steps h3 span { width: 7mm; font-size: 16pt; }.workbook-print-root .wb-build-steps p { padding-left: 7mm; }
   .workbook-print-root .wb-switch-positions { margin: 3mm 0; }.workbook-print-root .wb-switch-positions span { padding: 2mm; font-size: 11pt; }
   .workbook-print-root .wb-table { margin: 3mm 0 5mm; font-size: 11pt; line-height: 1.55; }.workbook-print-root .wb-table th, .workbook-print-root .wb-table td { padding: 2mm; font-size: 11pt; }.workbook-print-root .wb-table thead th { font-size: 10pt; }.workbook-print-root .wb-table tr { break-inside: avoid; }
@@ -217,3 +217,91 @@
   .workbook-print-root .workbook-teacher-page .wb-table { margin: 2mm 0 3mm; line-height: 1.45; }.workbook-print-root .wb-teacher-table td, .workbook-print-root .wb-teacher-table th { font-size: 10.5pt; padding: 1.5mm 2mm; }.workbook-print-root .workbook-teacher-page .wb-note { margin: 2mm 0!important; padding: 2mm 3mm; }
   .wb-page-links, .wb-inline-link, .wb-link-mark, .wb-toolbar, .wb-subtoolbar, .wb-photo-hint, .wb-reference-lock { display: none!important; }
 }
+
+/* Popcorn explains in the page; its three approved poses are not replacement artwork. */
+.wb-coach { display:grid; grid-template-columns:112px minmax(0,1fr); align-items:center; gap:18px; margin:24px 0; }
+.wb-coach-portrait { width:112px; height:122px; background:url('assets/popcorn-poses.webp') no-repeat; background-size:336px 122px; background-position:0 0; }
+.wb-coach[data-pose=talk] .wb-coach-portrait,.wb-coach[data-audio-pose=talk] .wb-coach-portrait { background-position:-112px 0; }
+.wb-coach[data-pose=praise] .wb-coach-portrait { background-position:-224px 0; }
+.wb-coach[data-audio-pose=idle] .wb-coach-portrait { background-position:0 0; }
+.wb-coach-bubble { position:relative; border-left:4px solid var(--wb-accent); padding:14px 18px; background:var(--wb-tint); }
+.wb-coach-bubble>strong { display:block; margin-bottom:6px; font-family:WorkbookDisplay,WorkbookLab,sans-serif; font-size:24px; color:#28566a; }
+.wb-coach-bubble>p { margin:0; font-size:16px; line-height:1.75; }
+.wb-coach-audio { margin-top:12px; }.wb-coach-audio button { font-size:13px; }
+.wb-coach-audio .wb-voice-caption { font-size:13px; margin:8px 0 0; color:#52636f; }
+.wb-prior-questions { margin-bottom:24px; }.wb-prior-questions>div { margin-bottom:15px; }
+.wb-concept-columns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; margin:18px 0; }
+.wb-concept-columns>section { border-top:3px solid var(--wb-accent); padding-top:12px; }
+.wb-concept-columns p { font-size:16px; line-height:1.8; }
+.wb-source-question { border-top:3px solid #d875a1; padding-top:18px; margin-top:22px; }
+.wb-source-question fieldset { border:0; margin:0; padding:0; min-width:0; }.wb-source-question legend { font-weight:700; margin-bottom:12px; }
+.wb-source-options { display:grid; gap:6px; }.wb-source-options label { display:flex; align-items:flex-start; gap:10px; padding:9px 6px; min-height:44px; cursor:pointer; line-height:1.6; }
+.wb-source-options input { width:18px; height:18px; flex:none; margin-top:5px; accent-color:#2456c4; }
+.wb-source-question [data-book-check] { margin:14px 0 0; }.wb-source-question [data-book-feedback] { padding:12px; margin-top:14px; border-left:3px solid #2456c4; background:#eef3ff; }
+.wb-life-entry-list { display:grid; gap:16px; margin:16px 0; }.wb-life-entry-list>section { padding:12px 0; border-top:1px solid #cbd6db; }
+.wb-report-methods li { font-size:15px; line-height:1.65; }.wb-report-fields { margin-top:20px; }.wb-report-fields>div { margin-bottom:18px; }
+.wb-inline-blank { display:inline-block; min-width:54px; border-bottom:1px solid #9aabb5; }
+.wb-evaluation-table { table-layout:fixed; }.wb-evaluation-table td:last-child { width:142px; }.wb-evaluation-table select { width:100%; min-height:44px; font:inherit; color:#173241; border:1px solid #9aabb5; background:#fff; padding:6px; }
+.wb-core-concepts { margin-top:22px; padding-top:18px; border-top:3px solid #93b850; }.wb-core-concepts p { line-height:2; }
+.wb-inquiry-card { border-top:3px solid #d875a1; padding-top:18px; margin-bottom:24px; }.wb-inquiry-card>h3 { color:#a34670; }
+.wb-article-prose p { font-size:18px; line-height:1.95; margin-bottom:20px; }.wb-article-sources { font-size:12px; color:#52636f; border-top:1px solid #cbd6db; padding-top:14px; margin-top:20px; }.wb-article-sources a { color:#28566a; text-underline-offset:3px; }
+.wb-inline-video { margin:22px 0; border-top:3px solid #36b4d7; padding-top:18px; }.wb-inline-video a { color:#2456c4; }.wb-video-player:has(iframe) { aspect-ratio:16/9; margin:16px 0; }.wb-video-player iframe { width:100%; height:100%; border:0; }.wb-inline-video button { margin:4px 0 12px; }
+.workbook-page:is([data-page='8'],[data-page='9'],[data-page='10'],[data-page='11'],[data-page='12'],[data-page='13']) { --wb-accent:#93b850; --wb-tint:#f3f8e9; }
+.workbook-page:is([data-page='14'],[data-page='15'],[data-page='16'],[data-page='17']) { --wb-accent:#d875a1; --wb-tint:#fcf1f6; }
+@media(max-width:680px){
+ .wb-coach { grid-template-columns:82px minmax(0,1fr);gap:12px;margin:22px 0; }.wb-coach-portrait{width:82px;height:89px;background-size:246px 89px}.wb-coach[data-pose=talk] .wb-coach-portrait,.wb-coach[data-audio-pose=talk] .wb-coach-portrait{background-position:-82px 0}.wb-coach[data-pose=praise] .wb-coach-portrait{background-position:-164px 0}.wb-coach[data-audio-pose=idle] .wb-coach-portrait{background-position:0 0}.wb-coach-bubble{padding:12px}.wb-coach-bubble>strong{font-size:22px}.wb-coach-bubble>p{font-size:16px}.wb-concept-columns{grid-template-columns:1fr}.wb-evaluation-table td:last-child{width:110px}.wb-evaluation-table th,.wb-evaluation-table td{font-size:13px;padding:8px 4px}.wb-article-prose p{font-size:17px}
+}
+@media print {
+ .workbook-print-root .wb-coach{grid-template-columns:25mm minmax(0,1fr);gap:4mm;margin:4mm 0}.workbook-print-root .wb-coach-portrait{width:25mm;height:27.2mm;background-size:75mm 27.2mm}.workbook-print-root .wb-coach[data-pose=talk] .wb-coach-portrait{background-position:-25mm 0}.workbook-print-root .wb-coach[data-pose=praise] .wb-coach-portrait{background-position:-50mm 0}.workbook-print-root .wb-coach-bubble{padding:3mm 4mm;border-left-width:1mm}.workbook-print-root .wb-coach-bubble>strong{font-size:15pt;margin-bottom:1mm}.workbook-print-root .wb-coach-bubble>p{font-size:10.5pt;line-height:1.6}
+ .workbook-print-root .wb-coach-audio,.workbook-print-root [data-book-check],.workbook-print-root [data-book-feedback],.workbook-print-root [data-book-video],.workbook-print-root .wb-video-player{display:none!important}
+ .workbook-print-root .wb-prior-questions{margin-bottom:4mm}.workbook-print-root .wb-prior-questions>div{margin-bottom:2mm}.workbook-print-root .wb-concept-columns{gap:4mm;margin:3mm 0}.workbook-print-root .wb-concept-columns>section{padding-top:2mm}.workbook-print-root .wb-concept-columns p{font-size:10.5pt;line-height:1.6;margin-bottom:2mm}.workbook-print-root .wb-source-question{margin-top:3mm;padding-top:3mm}.workbook-print-root .wb-source-options{gap:1mm}.workbook-print-root .wb-source-options label{min-height:0;padding:1mm 0;gap:2mm;font-size:10.5pt;line-height:1.55}.workbook-print-root .wb-source-options input{width:3.5mm;height:3.5mm;margin-top:1mm}
+ .workbook-print-root .wb-life-entry-list{gap:3mm;margin:3mm 0}.workbook-print-root .wb-life-entry-list>section{padding:2mm 0}.workbook-print-root .wb-report-methods li{font-size:10.5pt;line-height:1.55}.workbook-print-root .wb-report-fields{margin-top:3mm}.workbook-print-root .wb-report-fields>div{margin-bottom:3mm}
+ .workbook-print-root .wb-evaluation-table select{border:0;border-bottom:.2mm solid #aab9c2;appearance:none;min-height:6mm;padding:0;font-size:9pt}.workbook-print-root .wb-evaluation-table td:last-child{width:28mm}.workbook-print-root .wb-evaluation-table td,.workbook-print-root .wb-evaluation-table th{font-size:9.5pt;padding:1.5mm 2mm}.workbook-print-root .wb-core-concepts{margin-top:3mm;padding-top:3mm}.workbook-print-root .wb-core-concepts p{font-size:10.5pt;line-height:1.65}
+ .workbook-print-root .wb-inquiry-card{padding-top:3mm;margin-bottom:4mm}.workbook-print-root .wb-inquiry-card p{font-size:10.5pt;line-height:1.6}.workbook-print-root .wb-inquiry-card .wb-writing{--wb-rule-step:6mm;min-height:calc(var(--wb-lines)*6mm);line-height:6mm}
+ .workbook-print-root .wb-article-prose p{font-size:12pt;line-height:1.85;margin-bottom:4mm}.workbook-print-root .wb-article-sources{font-size:8.5pt;margin-top:3mm;padding-top:2mm}.workbook-print-root .wb-inline-video{padding-top:3mm;margin:4mm 0}.workbook-print-root .wb-inline-video p{font-size:10.5pt}.workbook-print-root .wb-inline-video a{font-size:9.5pt}
+}
+
+.wb-cover-space { min-height:80px; }
+.wb-article-figure img { height:240px; object-fit:contain; }
+@media print {
+ .workbook-print-root .wb-cover-space{min-height:24mm}
+ .workbook-print-root .wb-coach{grid-template-columns:23mm minmax(0,1fr);margin:3mm 0;gap:4mm;break-inside:avoid;flex:none}.workbook-print-root .wb-coach-portrait{width:23mm;height:25mm;background-size:69mm 25mm}.workbook-print-root .wb-coach[data-pose=talk] .wb-coach-portrait{background-position:-23mm 0}.workbook-print-root .wb-coach[data-pose=praise] .wb-coach-portrait{background-position:-46mm 0}
+ .workbook-print-root .wb-page-body{flex:1 0 auto}
+ .workbook-print-root .wb-page-foot{flex:none}
+ .workbook-print-root [data-page='2'] .wb-writing{--wb-rule-step:7mm;min-height:calc(var(--wb-lines)*7mm);line-height:7mm}.workbook-print-root [data-page='2'] .wb-section{margin-bottom:3mm}
+ .workbook-print-root .wb-comparison-diagrams .wb-circuit-photo{height:34mm}.workbook-print-root .wb-photo-side img{height:38mm}
+ .workbook-print-root .wb-large-photo img{height:66mm}.workbook-print-root .wb-secondary-figure .wb-parts-photo{height:24mm}
+ .workbook-print-root .wb-test-scene img{height:43mm}.workbook-print-root .wb-test-scene{margin-bottom:3mm}.workbook-print-root .wb-switch-table .wb-writing{--wb-rule-step:5.5mm;min-height:calc(var(--wb-lines)*5.5mm);line-height:5.5mm}
+ .workbook-print-root .wb-article-figure img{height:52mm}
+}
+
+@media print {
+ .workbook-print-root .wb-observation-table .wb-writing{--wb-rule-step:6mm;min-height:calc(var(--wb-lines)*6mm);line-height:6mm}
+ .workbook-print-root [data-page='4'] .wb-writing{--wb-rule-step:7mm;min-height:calc(var(--wb-lines)*7mm);line-height:7mm}
+ .workbook-print-root .wb-wire-table td,.workbook-print-root .wb-wire-table th{padding-top:1.5mm;padding-bottom:1.5mm}
+ .workbook-print-root [data-page='7'] .wb-section .wb-writing{--wb-rule-step:7mm;min-height:calc(var(--wb-lines)*7mm);line-height:7mm}.workbook-print-root [data-page='7'] .wb-note{padding-top:1.5mm;padding-bottom:1.5mm}
+ .workbook-print-root .wb-key-terms{margin-bottom:3mm}.workbook-print-root .wb-key-terms p{font-size:10.5pt;line-height:1.6}.workbook-print-root .wb-switch-principle{margin-bottom:2mm;font-size:10pt;line-height:1.5}
+}
+
+@media print {.workbook-print-root [data-page='7'] .wb-test-scene img{height:41mm}.workbook-print-root .wb-original-answers p{margin-bottom:2mm}}
+
+.wb-history-photo{margin:0 0 24px}.wb-history-photo img{display:block;width:100%;max-height:320px;object-fit:contain}.wb-history-photo figcaption{font-size:12px;line-height:1.6;color:#52636f;margin-top:8px}
+@media print{.workbook-print-root .wb-history-photo{margin-bottom:3mm}.workbook-print-root .wb-history-photo img{height:31mm}.workbook-print-root .wb-history-photo figcaption{font-size:8pt;margin-top:1mm}}
+
+.wb-parallel-photo{margin:0 0 24px}
+.wb-parallel-photo .parallel-photo-link{display:block;text-decoration:none}
+.wb-parallel-photo img{display:block;width:100%;height:auto;aspect-ratio:3/1;object-fit:contain}
+.wb-parallel-photo .parallel-photo-zoom{display:block;font-size:12px;text-align:right;color:#2456c4;margin-top:6px;text-decoration:underline;text-underline-offset:3px}
+.wb-parallel-photo figcaption{font-size:12px;line-height:1.6;color:#52636f;margin-top:8px}
+@media print{
+ /* Page 16 already states both concept distinctions in prose and prints the
+    video URL, QR and language note. Print these once beside the new image. */
+ .workbook-print-root [data-page='16'] .wb-concept-columns,
+ .workbook-print-root [data-page='16'] .wb-inline-video{display:none}
+ .workbook-print-root .wb-parallel-photo{margin:0 0 3mm}
+ .workbook-print-root .wb-parallel-photo img{height:45mm;width:100%;object-fit:contain}
+ .workbook-print-root .wb-parallel-photo .parallel-photo-zoom{display:none}
+ .workbook-print-root .wb-parallel-photo figcaption{font-size:8pt;line-height:1.5;margin-top:1mm}
+}
+
+.wb-circuit-photo,.wb-parts-photo,.wb-wiring-photo {display:block;width:100%;max-width:100%;object-fit:contain;background:#fff;}

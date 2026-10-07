@@ -6340,7 +6340,7 @@ function stepDiscover(body,u){
     </div>`:'';
   body.innerHTML=`<div class="nm-card${kid&&!living?' kid-note':''}${mzStory?' nm-mzu-card':''}${living?' nm-live-card':''}">
     ${kid&&!living?`<div class="nm-kid-hero">${u.icon?iconArt(u.icon):'📓'}</div>`:''}
-    ${living?`<div id="livingLesson"></div>${!strategy&&st&&st.history?`<details class="nm-live-history"><summary>${S.lang==='ko'?(kid?'수 이야기 더 보기':'이 교구의 수학 이야기'):S.lang==='en'?'The story behind the pieces':'教具里的数学故事'}</summary><p>${L(st.history)}</p></details>`:''}`:mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
+    ${living?`<div id="livingLesson"></div>${kid&&comic?histHtml:''}${!kid&&!strategy&&st&&st.history?`<details class="nm-live-history"><summary>${S.lang==='ko'?(kid?'수 이야기 더 보기':'이 교구의 수학 이야기'):S.lang==='en'?'The story behind the pieces':'教具里的数学故事'}</summary><p>${L(st.history)}</p></details>`:''}`:mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
     ${!strategy?`<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>`:''}
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   /* 3D 대표 그림을 직접 띄워 움직인다(app/hero3d/live.js, 원장 "동작도 하는거야?" → "1"). 3D 라이브러리는 이 단계에서만
@@ -6362,7 +6362,7 @@ function stepDiscover(body,u){
       onStatus:status=>{const next=body.querySelector('#toCheck');if(next)next.disabled=!(status.complete&&status.saved);},
       onTown:()=>{S.view='town';save();render();}
     }:{};
-    import('./living-lesson.js?v=20261003-dot-journeys').then(m=>m.mount(livingHost,u.id,lang,journeyOptions)).catch(()=>{
+    import('./living-lesson.js?v=20261007-frog').then(m=>m.mount(livingHost,u.id,lang,journeyOptions)).catch(()=>{
       if(livingHost.isConnected)livingHost.textContent=lang==='ko'?'교구를 불러오지 못했습니다. 아래 개념으로 계속 학습할 수 있습니다.':lang==='en'?'The pieces could not load. Continue with the concept below.':'教具加载失败。可以继续学习下方概念。';
     });
   }

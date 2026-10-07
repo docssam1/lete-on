@@ -1,11 +1,12 @@
 /* N-09 — 동전 던지기와 수나무(2026-10-06 새로 그림 — 옛 컷은 완전수 이야기라 유닛과 어긋났다).
    유닛 story.history 그대로: 6개를 던져 별 2·달 4 → 2+4=6, 수나무는 가르기를 가지로 그린 것(위 원 = 아래 두 원의 합).
-   동전은 실사 소품(coin) 위에 별·달 무늬를 얹는다(coin-star/moon 그림이 오면 바꿀 자리). 그림 속 글자는 숫자뿐. */
+   동전은 실사 소품(coin·coin-star·coin-moon). 그림 속 글자는 숫자뿐. */
 'use strict';
 module.exports=function(H){
   const {C,svg,real,boy,txt,star4,moonDisc,ring}=H;
   const table='<rect x="0" y="108" width="200" height="32" fill="'+C.soil+'"/><rect x="0" y="108" width="200" height="5" fill="'+C.soil2+'" opacity=".6"/>';
-  const coin=(x,y,face)=>real('coin',x,y+11,24)+(face==='star'?star4(x,y-1,6):face==='moon'?moonDisc(x+1,y-1,5):'');
+  /* 별·달 동전은 실사-2차(coin-star/coin-moon, 2026-10-07). 공중의 동전은 면이 안 보이므로 기본 동전. */
+  const coin=(x,y,face)=>real(face==='star'?'coin-star':face==='moon'?'coin-moon':'coin',x,y+11,24);
   const node=(x,y,n,hi)=>'<circle cx="'+x+'" cy="'+y+'" r="15" fill="'+(hi?C.goldbright:'#fff')+'" stroke="'+C.blue+'" stroke-width="2.6"/>'
     +'<text x="'+x+'" y="'+(y+6)+'" text-anchor="middle" font-size="16" font-weight="800" fill="'+C.ink+'">'+n+'</text>';
   const tree=(top,l,r)=>'<line x1="100" y1="38" x2="62" y2="92" stroke="'+C.soil2+'" stroke-width="5" stroke-linecap="round"/>'

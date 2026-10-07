@@ -138,3 +138,10 @@
 .magazine-circuit-pair img { width:100%; height:200px; object-fit:contain; }.magazine-circuit-pair h4 { margin:10px 0 0; font-size:17px; color:#173c63; }.magazine-circuit-pair p { margin:4px 0; font-size:14px; }
 .magazine-question { background:#edf7fc; border-color:#5fbad6; }.magazine-teacher-note { background:#e8f7f2; }
 @media(max-width:680px) { .magazine-circuit-pair { grid-template-columns:1fr; gap:20px; }.magazine-circuit-pair img { height:210px; }.magazine-cover { grid-template-columns:minmax(0,1fr) 96px; gap:12px; }.magazine-cover-mark { width:100%; max-width:100%; margin-top:30px; }.magazine-cover-mark img { height:150px; } }
+
+/* Photoreal teaching visual: retain the entire circuit at every viewport. */
+.parallel-photo-link{display:block;color:inherit;text-decoration:none}
+.parallel-lamps-photo{display:block;width:100%;height:auto;aspect-ratio:3/1;object-fit:contain;background:#fff}
+.parallel-photo-zoom{display:block;margin-top:8px;color:#2456c4;font-size:12px;text-align:right;text-decoration:underline;text-underline-offset:3px}
+
+.magazine-palace-photo {display:block;width:100%;max-height:360px;object-fit:contain;}
