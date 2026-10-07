@@ -128,8 +128,8 @@ export function renderTeacherPages() {
       <section class="wb-section wb-sources">
         <h3>영상 출처와 활용</h3><p>${link('https://m.site.naver.com/1e5DW', '먼저 생각하기 · 원본 45쪽')}</p>
         <p>${link('https://m.site.naver.com/1e5DZ', '전지 연결 실험')} · ${link('https://m.site.naver.com/1e5E2', '전지 연결 방법')}: 비교·극 확인<br>${link('https://m.site.naver.com/1e5E0', '2단 밝기 스탠드')} · ${link('https://m.site.naver.com/1e5E3', '전지 연결 예')}: 조립·생활 연결</p>
-        <p>${link('https://www.energy.gov/articles/video-who-was-better-inventor-tesla-or-edison', '에디슨과 테슬라 · 미국 에너지부')}: 영어 영상<br>${link('https://royal.khs.go.kr/ROYAL/contents/R303000000.do?schGroupCode=gbg&amp;schM=view&amp;id=20240108151343717711', '건청궁 전기 · 궁능유적본부 안내')}: 수어 해설</p>
-        <p class="wb-small">역사 영상의 한국어 자막, 수어 영상의 한국어 음성은 확인 필요. 수업 전 필요한 장면을 확인하고 선택해 활용한다. 원본 QR는 새 창에서 열린다. 역사 영상은 지면 안에서 선택해 재생하며, 제한되면 새 창 링크를 이용한다. 선택 확장은 기존 수업 완료 조건에 추가하지 않는다.</p>
+        <p>${link('https://www.energy.gov/articles/video-who-was-better-inventor-tesla-or-edison', '에디슨과 테슬라 · 미국 에너지부')}: 영어 영상<br>${link('https://www.youtube.com/watch?v=mmD34B3cr1I', '건청궁 점등 · YTN')}: 한국어 보도</p>
+        <p class="wb-small">에디슨 영상의 한국어 자막은 확인 필요. YTN 영상은 2022년 재현 점등 행사로, 1887년 당시 영상과 구별한다. 수업 전 필요한 장면을 확인하고 선택해 활용한다. 원본 QR는 새 창에서 열린다. 역사 영상은 지면 안에서 선택해 재생하며, 제한되면 새 창 링크를 이용한다. 선택 확장은 기존 수업 완료 조건에 추가하지 않는다.</p>
       </section>
       <p class="wb-small">사용자 제공 원본의 책 45–52쪽(PDF 21–28쪽)을 재구성했다. 원본 46쪽의 온도 변화 제목은 전지 실험에 맞게 바로잡았다. 원본 Unit 3에는 ‘영재성 검사’라는 제목의 코너가 없다. 팝콘 설명·사고 확장·역사 잡지는 추가 구성이다. 제품 이름이나 나란한 배치만으로 직렬·병렬을 판정하지 않는다.</p>
       <nav class="wb-page-links" aria-label="설명 화면 연결">

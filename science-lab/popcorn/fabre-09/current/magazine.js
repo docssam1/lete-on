@@ -6,31 +6,9 @@ const external = (url, label, className = '') =>
 
 const batteryFigure = `<div class="magazine-circuit-pair"><div><img src="./assets/experiment-photos/series-cells.jpg" alt="실제 전지 두 개의 직렬 연결"><h4>전지의 직렬연결</h4><p>서로 다른 극을 이어요.</p></div><div><img src="./assets/experiment-photos/parallel-cells.jpg" alt="실제 전지 두 개의 병렬 연결"><h4>전지의 병렬연결</h4><p>같은 극끼리 이어요.</p></div></div>`;
 
-const cityFigure = `
-  <svg viewBox="0 0 680 230" role="img" aria-label="전등 세 개가 각각 다른 갈래에 있는 전등의 병렬연결 개념도">
-    <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
-      <path d="M80 75V40H619 M80 150V190H619 M260 40V92 M260 138V190 M440 40V92 M440 138V190 M619 40V92 M619 138V190"/>
-      <rect x="38" y="75" width="84" height="75" rx="8" fill="#e2eddf"/>
-      <circle cx="260" cy="115" r="23" fill="#ffe6a7"/><circle cx="440" cy="115" r="23" fill="#ffe6a7"/><circle cx="619" cy="115" r="23" fill="#ffe6a7"/>
-      <path d="M244 99l32 32m0-32-32 32 M424 99l32 32m0-32-32 32 M603 99l32 32m0-32-32 32"/>
-    </g>
-    <g fill="currentColor" font-size="24" font-weight="700" text-anchor="middle">
-      <text x="80" y="118">전원</text><text x="260" y="222">전등 1</text><text x="440" y="222">전등 2</text><text x="619" y="222">전등 3</text>
-    </g>
-  </svg>`;
+const cityFigure = `<a class="parallel-photo-link" href="./assets/learning-visuals/parallel-lamps-photo.png" target="_blank" rel="noopener noreferrer" aria-label="전등 병렬연결 이미지 크게 보기 · 새 창"><img class="parallel-lamps-photo" src="./assets/learning-visuals/parallel-lamps-photo.png" width="2172" height="724" alt="전지함에서 나온 빨간 선과 검은 선에 전구 세 개가 각각 연결되어 있어요. 전구마다 왼쪽 소켓 접점에는 빨간 선, 오른쪽 접점에는 검은 선이 이어져요."><span class="parallel-photo-zoom">접점과 전선 크게 보기 ↗</span></a>`;
 
-const palaceFigure = `
-  <svg viewBox="0 0 680 175" role="img" aria-label="발전기에서 만들어진 전기가 전선을 거쳐 전등을 밝히는 흐름">
-    <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
-      <rect x="24" y="29" width="138" height="104" rx="10" fill="#e2eddf"/>
-      <circle cx="93" cy="81" r="29"/><circle cx="93" cy="81" r="7"/><path d="M93 52V74 M68 95l19-10 M118 95l-19-10 M163 81H504 M491 70l13 11-13 11"/>
-      <path d="M555 103c-10-8-20-18-20-33a38 38 0 0 1 76 0c0 15-10 25-20 33v16h-36z" fill="#ffe6a7"/>
-      <path d="M555 119h36m-32 10h28m-24 10h20 M561 77l12 16 12-16m-12 16v25"/>
-    </g>
-    <g fill="currentColor" font-size="24" font-weight="700" text-anchor="middle">
-      <text x="93" y="162">발전기</text><text x="332" y="64">전선</text><text x="573" y="162">전등</text>
-    </g>
-  </svg>`;
+const palaceFigure = `<img class="magazine-palace-photo" src="./assets/history/geoncheonggung.jpg" alt="오늘의 경복궁 건청궁 곤녕합 전경 · 국가유산청 궁능유적본부 사진">`;
 
 const articles = [
   {
@@ -57,7 +35,7 @@ const articles = [
       '직렬·병렬은 부품을 연결하는 방법, 직류·교류는 전류의 방향에 관한 말이에요. 서로 다른 두 가지 기준이지요.'
     ],
     figure: cityFigure,
-    caption: '전등의 병렬연결 · 각 전등에 전류가 흐르는 갈래가 있어요.',
+    caption: '전등의 병렬연결 · 전구마다 두 전선 사이에 각각의 갈래가 있어요. 저전압 교구를 나타낸 AI 제작 설명 이미지예요.',
     question: '도시의 모든 전등이 한 줄로 이어져 있다면 어떤 불편이 생길까요?',
     hint: '한 전등을 빼서 길이 끊겼을 때, 나머지 전등까지 이어지는 길이 남아 있는지 생각해 보세요.',
     teacher: '전지 병렬과 전등 병렬을 칠판에 따로 그려 비교합니다. 직렬=직류, 병렬=교류로 연결하지 않도록 각각 “연결 방법”과 “전류 방향”으로 정리합니다.',
@@ -72,7 +50,7 @@ const articles = [
       '우리가 만든 스탠드에서도 전지, 전선, 스위치, 전구가 제 역할을 해요. 전기를 공급하는 장치는 달라도, 전기가 흐를 길을 완성해야 불이 켜진다는 점을 떠올려 보세요.'
     ],
     figure: palaceFigure,
-    caption: '발전기부터 전등까지의 역할을 나타낸 개념도예요.',
+    caption: '오늘의 건청궁 곤녕합 · 1887년 당시 사진은 아니에요. 사진: 국가유산청 궁능유적본부 · 공공누리 제1유형',
     question: '전등이 처음 들어온 날, 사람들은 무엇을 가장 신기해했을까요?',
     hint: '전등이 생긴 뒤 저녁의 생활이 어떻게 달라졌을지 한 가지 장면을 상상해 보세요.',
     teacher: '1887년 건청궁 전등 도입과 이후 도시 전력 보급을 구별합니다. 발전기와 전지를 모두 전기 공급 장치로 비교하되, 같은 작동 원리라고 설명하지 않습니다.',
@@ -113,7 +91,7 @@ export function openMagazine({ teacher = false, articleId, onClose = () => {} } 
       <div class="magazine-layout"><nav class="magazine-index" aria-label="읽을거리 목차"><p>이번 읽을거리</p>${articles.map(a => `<button type="button" data-magazine-go="${a.id}"><span>${a.category}</span><strong>${a.title}</strong></button>`).join('')}<button type="button" data-magazine-go="videos"><span>교재와 함께</span><strong>실험 영상 보기</strong></button><div class="magazine-index-note">읽고 나면 돌아가서<br>내 회로를 다시 살펴봐요.</div></nav>
       <main class="magazine-content">${articles.map(a => articleMarkup(a, teacher)).join('')}
         <section class="magazine-videos" id="magazine-videos" aria-labelledby="magazine-videos-title"><p class="magazine-category">교재와 함께</p><h3 id="magazine-videos-title" tabindex="-1">실험 영상 보기</h3><p class="magazine-video-intro">교재 QR에 연결된 영상을 새 창에서 열어요.</p><ul>${videos.map(([url, title, description]) => `<li>${external(url, `<span class="magazine-play" aria-hidden="true">▶</span><span><strong>${title}</strong><small>${description}</small></span>`, 'magazine-video-link')}</li>`).join('')}</ul>
-        <aside class="magazine-history-video"><h4>${teacher?'교사용 역사 영상':'어른과 함께 보는 역사 영상'}</h4><p>${teacher?'수업 전 내용을 살펴보고 필요한 부분을 골라 주세요.':'위의 한국어 이야기를 읽고, 궁금한 장면을 어른과 함께 찾아봐요.'}</p>${external('https://www.energy.gov/articles/video-who-was-better-inventor-tesla-or-edison', '에디슨과 테슬라 · 미국 에너지부')}<small>영어 영상 · 한국어 자막 제공 여부는 확인되지 않았어요.</small>${external('https://royal.khs.go.kr/ROYAL/contents/R303000000.do?schGroupCode=gbg&amp;schM=view&amp;id=20240108151343717711', '건청궁 전기 · 수어 해설')}<small>국가유산청 궁능유적본부 안내 · 수어 해설 영상 · 한국어 음성·자막 제공 여부는 확인되지 않았어요.</small></aside>
+        <aside class="magazine-history-video"><h4>${teacher?'교사용 역사 영상':'어른과 함께 보는 역사 영상'}</h4><p>${teacher?'수업 전 내용을 살펴보고 필요한 부분을 골라 주세요.':'위의 한국어 이야기를 읽고, 궁금한 장면을 어른과 함께 찾아봐요.'}</p>${external('https://www.energy.gov/articles/video-who-was-better-inventor-tesla-or-edison', '에디슨과 테슬라 · 미국 에너지부')}<small>영어 영상 · 한국어 자막 제공 여부는 확인되지 않았어요.</small>${external('https://www.youtube.com/watch?v=mmD34B3cr1I', '건청궁 점등 · YTN 한국어 보도')}<small>한국어 보도 · 2022년 재현 점등 행사예요. 1887년 당시 영상은 아니에요.</small></aside>
         </section><footer class="magazine-ending"><p>이제 내 스탠드에서<br><strong>전기가 흐르는 길을 찾아볼까요?</strong></p><button type="button" data-magazine-close>실험으로 돌아가기</button></footer>
       </main></div>
     </div>`;

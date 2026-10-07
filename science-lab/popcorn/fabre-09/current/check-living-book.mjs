@@ -42,7 +42,7 @@ try{
   await page.emulateMedia({reducedMotion:'reduce'});await page.locator('[data-workbook-page="8"]').click();await page.locator('[data-page="8"] [data-book-voice]').click();
   await page.waitForFunction(()=>window.__audios.at(-1).currentTime>0&&!window.__audios.at(-1).paused);assert.equal(await page.locator('[data-page="8"] .wb-coach').getAttribute('data-audio-pose'),'talk');
   await page.locator('[data-book-voice="fabre09-concept"]').click();assert.equal(await page.evaluate(()=>window.__audios.every(a=>a.paused)),true);pass('reduced motion uses a static pose and voice can be stopped');
-  for(const [num,id] of [[16,'Js6CZPD5XfE'],[17,'Kaije_6OdOA']]){
+  for(const [num,id] of [[16,'Js6CZPD5XfE'],[17,'mmD34B3cr1I']]){
    await page.locator(`[data-workbook-page="${num}"]`).click();assert.equal(await page.locator('iframe').count(),0);await page.locator(`[data-book-video="${id}"]`).click();
    assert.match(await page.locator('.wb-video-player iframe').getAttribute('src'),new RegExp(id));assert.ok(await page.locator('.wb-video-player iframe').getAttribute('title'));
    assert.equal(await page.locator(`.wb-inline-video [href="https://www.youtube.com/watch?v=${id}"]`).getAttribute('target'),'_blank');
