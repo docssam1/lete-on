@@ -1,7 +1,7 @@
 // A separate build-only slideshow. No quiz, concept lesson, prediction or learner record.
 export const assemblySlides = [
  {id:'unpack',title:'봉지를 열고 준비물을 꺼내요',body:'봉지 윗부분을 천천히 열고, 부품을 책상 위에 꺼내 놓아요.',care:'작은 전구와 소켓이 떨어지지 않게 해요. 가위가 필요하면 보호자에게 부탁해요.',photo:'package',kind:'bag'},
- {id:'parts',title:'부품을 나란히 놓아요',body:'A 바닥판, B 전구판, C 윗판, D 앞판, E 뒷판, F 옆판 두 장을 찾아요. 종이·소켓·전구·스위치·전지끼우개 두 개와 전선도 놓아요.',care:'건전지는 따로 두어요. 조립과 배선이 끝날 때까지 끼우개에 넣지 않아요.',photo:'parts',model:'parts',voice:'parts'},
+ {id:'parts',title:'판에서 부품을 하나씩 떼어요',body:'판에 붙어 있는 부품은 홈을 따라 천천히 떼어요. 이미 분리된 부품은 책상에 나란히 놓아요. A 바닥판, B 전구판, C 윗판, D 앞판, E 뒷판, F 옆판 두 장을 찾아요. 종이·소켓·전구·스위치·전지끼우개 두 개와 전선도 놓아요.',care:'한 손으로 판을 받치고, 작은 연결 부분부터 천천히 떼어요. 뻑뻑하면 보호자에게 부탁해요. 건전지는 계속 따로 두어요.',photo:'parts',model:'parts',voice:'parts'},
  {id:'paper',title:'창 뒤에 종이를 붙여요',body:'C·D·E와 F 두 장의 창 뒤에 기름종이를 붙여요. 판의 안쪽에서 붙이고, 바깥으로 삐져나온 종이는 정리해요.',care:'판을 끼우는 홈과 D판의 스위치 구멍을 덮지 않아요. 가위질은 보호자와 해요.',photo:'parts',model:'paper',voice:'paper'},
  {id:'socket',title:'B판에 소켓과 전구를 고정해요',body:'소켓의 서로 다른 두 접점에 전선을 연결해요. B 전구판에 소켓을 고정하고 전구를 천천히 끼워요.',care:'전지는 빼 둔 상태예요. 유리 전구를 세게 누르거나 너무 꽉 조이지 않아요.',photo:'empty-kit',model:'socket',voice:'socket'},
  {id:'switch',title:'D판에 스위치를 끼워요',body:'D 앞판의 작은 구멍에 스위치를 끼워요. 스위치는 가운데 ○ 위치에 두고, 공통·1단·2단 단자를 교구 표시에서 찾아요.',care:'단자의 배열은 제품마다 달라요. 가운데 공통과 양쪽 단자는 보호자와 확인해요.',photo:'empty-kit',model:'switch',voice:'switch'},
