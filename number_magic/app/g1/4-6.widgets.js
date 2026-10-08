@@ -384,8 +384,12 @@
       let s = ''; for (let i = 0; i < sc.total; i++) s += `<span class="nm-g46-coin${i === sc.rank - 1 ? ' big' : ''}">${K.art('🪙')}</span>`;
       scene = `<div class="nm-g46-coinrow">${s}</div>`;
     } else {
-      const left = sc.rank === 1 ? 50 : sc.rank === 2 ? 17 : 83;
-      scene = `<div class="nm-g46-podium"><span class="nm-g46-pdart">${K.art('podium')}</span><span class="nm-g46-pdfriend" style="left:${left}%">${K.art('🧒')}</span></div>`
+      /* 실사 시상대(2026-10-08)는 숫자 없이 오므로 계단 앞면에 1·2·3 을 얹고, 친구를 그 계단 윗면에 세운다(측정값: 계단 가운데 19/51/83%, 윗면 0.44/0.34/0.49). */
+      const real = !!(window.NM_OBJECTS && NM_OBJECTS.real('podium'));
+      const left = real ? (sc.rank === 1 ? 51 : sc.rank === 2 ? 19 : 83) : (sc.rank === 1 ? 50 : sc.rank === 2 ? 17 : 83);
+      const ftop = real ? `top:${sc.rank === 1 ? 17 : sc.rank === 2 ? 32 : 39}px` : '';
+      const nums = real ? [[2, 19, 60], [1, 51, 54], [3, 83, 64]].map(([n, x, y]) => `<b class="nm-g46-pdnum" style="left:${x}%;top:${y}%">${n}</b>`).join('') : '';
+      scene = `<div class="nm-g46-podium${real ? ' real' : ''}"><span class="nm-g46-pdart">${K.art('podium')}</span>${nums}<span class="nm-g46-pdfriend" style="left:${left}%;${ftop}">${K.art('🧒')}</span></div>`
         + `<div class="nm-g46-tkrow">${tks(K, sc.e, sc.q)}</div>`;
     }
     root.appendChild(div('nm-g46-scene', scene));
