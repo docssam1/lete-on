@@ -76,7 +76,7 @@ if (shot === 'hero' || shot === 'sizes') {
   const lvl = (ml) => 0.1 + 0.045 * (20 + ml), oilY = (ml) => { const f = [0, 0.4, 0.5, 0.8, 1][[0, 10, 20, 30, 40].indexOf(ml)]; return 0.1 + 0.34 + f * (lvl(ml) - 0.1 - 0.68); };
   if (shot === 'sun-row') {
     // 결과 비교: 물 0 · 20 · 40 mL 세 병을 나란히(같은 높이에서 찍어 덩어리 높이를 바로 비교)
-    [0, 20, 40].forEach((ml, i) => { const x = (i - 1) * 3.0; make({ ml, from: ml, p: 1, oilIn: 1, dropper: false }, x);
+    [0, 20, 40].forEach((ml, i) => { const x = (i - 1) * 3.0, rig = make({ ml, from: ml, p: 1, oilIn: 1, dropper: false }, x); rig.userData.props.forEach((o) => { o.visible = false; });
       overlay.push([`물 ${ml} mL`, x, -0.55, { size: 46, color: '#1f2a44', bold: true }], [['바닥에 가라앉음', '가운데쯤 둥글게', '수면까지 떠오름'][i], x, -1.05, { size: 36, color: '#c2581c', bold: true }]); });
     camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100); camera.position.set(0, 2.6, 15.5); camera.lookAt(0, 1.25, 0);
   } else {
