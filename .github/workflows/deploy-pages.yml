@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'academy/**'
       - 'boarding-school-math/**'
       - 'fields-classic/**'
       - 'hselementary/**'
@@ -59,6 +60,9 @@ jobs:
           node number_magic/scripts/check-about-stats.js
       - name: Stage sites and landing menu
         run: |
+          mkdir -p _site/academy/assets
+          cp academy/index.html academy/home.css academy/home.js academy/trial.html academy/trial.js _site/academy/
+          cp academy/assets/*.png academy/assets/*.mp4 _site/academy/assets/
           mkdir -p _site/boarding-school-math
           mkdir -p _site/fields-classic
           mkdir -p _site/hselementary
