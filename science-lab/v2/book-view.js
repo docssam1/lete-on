@@ -258,7 +258,7 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
   const ro = new ResizeObserver(() => fit()); ro.observe(space);
   document.fonts?.ready.then(() => { if (alive && mode !== 'phone') { fitPages(bk); fit(); } });
   // 인쇄: 모든 쪽을 보이게(보기 틀은 CSS가 숨김)
-  const beforePrint = () => { pages.forEach((p) => { p.inert = false; p.removeAttribute('aria-hidden'); }); if (['s42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02'].includes(u)) fitPages(bk); };
+  const beforePrint = () => { pages.forEach((p) => { p.inert = false; p.removeAttribute('aria-hidden'); }); if (['s42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03'].includes(u)) fitPages(bk); };
   addEventListener('beforeprint', beforePrint);
 
   relayout(Math.max(0, Math.min(pages.length - 1, (page || 1) - 1)));
