@@ -154,11 +154,13 @@
 .nm-g46-pdart{display:block;font-size:150px;line-height:1}
 .nm-g46-pdart .nm-art-obj{width:100%;height:100%}
 .nm-g46-pdfriend{position:absolute;top:-14px;transform:translateX(-50%);font-size:34px}
+.nm-g46-pdnum{position:absolute;transform:translate(-50%,-50%);font-size:18px;font-weight:900;color:#7a5a00;line-height:1;pointer-events:none}
 
 /* ── seatGrid ── */
 .nm-g46-board{width:34%;font-size:60px;line-height:1}
 .nm-g46-board span{display:block;width:100%}
 .nm-g46-board .nm-art-obj{width:100%;height:auto;aspect-ratio:64/48}
+.nm-g46-board .nm-art-obj:has(> .nm-obj-real){aspect-ratio:1/1}
 .nm-g46-front small{font-size:13px;font-weight:900;color:var(--gold-deep)}
 .nm-g46-seatgrid{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:6px;width:100%;padding:8px;border:3px solid #c8b583;border-radius:18px;background:#fffaf0;box-shadow:inset 0 2px 8px rgba(120,90,40,.10),0 4px 0 #efe6cf}
 .nm-g46-seatcell{position:relative;aspect-ratio:1/1;border-radius:12px;border:2px solid transparent;background:transparent;padding:0;cursor:pointer}

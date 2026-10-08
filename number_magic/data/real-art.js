@@ -13,5 +13,11 @@ window.NM_REAL_ART = {
   'coin-star':'coin-star.png', 'coin-moon':'coin-moon.png', 'frog':'frog.png',
   'g:box':'box-closed.png', 'g:boxopen':'box-open.png', 'g:weight':'weight.png', 'g:traincar':'toy-traincar.png',
   'rugby-ball':'rugby-ball.png', 'baseball':'baseball.png', 'grapes':'grapes.png', 'watermelon':'watermelon.png',
-  'melon':'melon.png', 'pear':'pear.png', 'kite':'kite.png', 'rain':'rain.png', 'weather-rain':'rain.png'
+  'melon':'melon.png', 'pear':'pear.png', 'kite':'kite.png', 'rain':'rain.png', 'weather-rain':'rain.png',
+  /* 2026-10-08 — 실사-2차 3회분 19종(기관차·소품 12·손 6). 과녁(dart-target)은 진짜 다트판(20칸)이라 3겹 과녁과 달라 보류.
+     양팔저울·과녁 본체는 기울기·띠 반지름으로 채점하는 그림이라 SVG 그대로 — g:scale·g:target 은 머리 아이콘만 덮는다. */
+  'g:train':'toy-train.png', 'podium':'podium.png', 'ticket-booth':'ticket-booth.png', 'blackboard':'blackboard.png',
+  'ticket':'ticket.png', 'desk':'desk.png', 'plate':'plate.png', 'cake':'cake.png', 'candle':'candle.png',
+  'padlock':'padlock.png', 'gem':'gem.png', 'g:card':'number-card.png', 'g:scale':'balance-scale.png',
+  'hand-0':'hand-0.png', 'hand-1':'hand-1.png', 'hand-2':'hand-2.png', 'hand-3':'hand-3.png', 'hand-4':'hand-4.png', 'hand-5':'hand-5.png'
 };
