@@ -145,8 +145,8 @@ export function buildRisingSun() {
   const bw = new THREE.Mesh(new THREE.CylinderGeometry(0.37, 0.37, 0.55, 48), fresnel(new THREE.MeshPhysicalMaterial({ color: 0xbfe0f7, roughness: 0.02, transparent: true, opacity: 0.22, clearcoat: 1, depthWrite: false }), { edge: 0.5 })); bw.position.y = 0.31; bw.renderOrder = 3; beaker.add(bw);
   for (let k = 1; k <= 4; k++) { const tick = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.012, 0.01), new THREE.MeshBasicMaterial({ color: 0x5b6577 })); tick.position.set(0, 0.16 * k, 0.405); beaker.add(tick); }
   beaker.position.set(1.62, 0, -0.95); beaker.traverse((o) => { o.userData.noFrame = true; }); g.add(beaker);
-  const names = { jar: label('에탄올', { size: 0.26 }), oil: label('붉은 식용유', { size: 0.26 }), water: label('물(스포이트)', { size: 0.24 }), scale: label('눈금', { size: 0.22 }) };
-  names.water.position.set(0.95, JAR_H + 1.35, 0); names.scale.position.set(R + 0.6, 0.35, R * 0.6);
+  const names = { jar: label('에탄올', { size: 0.26 }), oil: label('붉은 식용유', { size: 0.26 }), water: label('물(스포이트)', { size: 0.24 }) };   // 눈금 띠는 숫자가 적혀 있어 따로 이름표를 달지 않는다
+  names.water.position.set(0.95, JAR_H + 1.35, 0);
   for (const n of Object.values(names)) g.add(n);
 
   const S = { ml: 0, p: 1, from: 0, t: 0, oilIn: 1, shake: 0, lid: false, dropper: true };
@@ -175,7 +175,7 @@ export function buildRisingSun() {
       d.position.set(Math.cos(a) * rr, oy + Math.sin(a * 2) * 0.04 * split, Math.sin(a) * rr); d.scale.setScalar(OIL_R * (0.32 + 0.1 * (i % 3)) * Math.max(0.2, split));
     });
     names.oil.position.set(-R - 0.5, (drop ? oyIn : oy) + lift + 0.1, 0.3);
-    names.jar.position.set(-R - 0.6, Y0 + lift + h * (f > 0.55 && !drop ? 0.22 : 0.8), 0);
+    names.jar.position.set(R + 0.7, Y0 + lift + h * 0.82, 0.2);   // 오른쪽: 왼쪽 뒤의 에탄올 시약병과 겹치지 않게
     // 떠 있는 동안 아주 느리게 출렁(기름 덩어리의 살아 있는 느낌)
     if (!drop && split === 0 && flat < 0.5) { const w = Math.sin(S.t * 2.1) * 0.025; oil.scale.x *= 1 + w; oil.scale.z *= 1 + w; oil.scale.y *= 1 - w; }
     // 물방울: 진행 앞부분 동안 스포이트에서 떨어져 수면 아래로 가라앉으며 사라짐
