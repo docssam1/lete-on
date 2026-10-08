@@ -88,15 +88,20 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
   const cp = ch.concept.map((c) => `<section class="bk-cs"><h3><span class="bk-letter">${c.tag}</span>${esc(c.title)}</h3>
     ${c.lines ? `<ol class="bk-cl">${c.lines.map(([k, v]) => `<li><b>${esc(k)}</b> : ${blank(v)}</li>`).join('')}</ol>` : ''}
     ${c.table ? `<div class="bk-two art-l"><div class="bk-art">${art[ch.note.art]}</div><table class="bk-tbl note"><thead><tr>${c.table.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${c.table.rows.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${blank(x)}</td>` : `<th>${esc(x)}</th>`)).join('')}</tr>`).join('')}</tbody></table></div>` : ''}</section>`).join('');
+  // 개념 그림판: 꼭지에 표가 없는 장(개념 줄만 있는 장)은 note의 그림·표·요점을 개념 쪽 아래에 한 판으로 둔다(빈자리 대신 한눈 정리)
+  const N0 = ch.note, panel = N0 && !ch.concept.some((c) => c.table) ? `<div class="bk-notepanel"><h4>${esc(N0.title)}</h4>
+    <div class="bk-np-grid">${N0.art && art[N0.art] ? `<div class="bk-art">${art[N0.art]}</div>` : ''}${(N0.points || []).length ? `<ul class="bk-np-pts">${N0.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
+    ${N0.table ? `<table class="bk-tbl note"><thead><tr>${N0.table.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${N0.table.rows.map((r) => `<tr>${r.map((x, i) => (i ? `<td>${esc(x)}</td>` : `<th>${esc(x)}</th>`)).join('')}</tr>`).join('')}</tbody></table>` : ''}</div>` : '';
   const flow = ch.flow ? `<div class="bk-flow">${ch.flow.map(([a, b, c]) => `<div><b>${esc(a)}</b><span>${esc(b)}</span><small>${esc(c)}</small></div>`).join('<i>➜</i>')}</div>` : '';
   out.push(page(`${banner('개념 정리', 'concept')}${cp.replace('</ol>', `</ol>${flow}`)}
-    <div class="bk-more"><h4>${esc(ch.more.title)}</h4><p>${esc(ch.more.text)}</p></div>`, { say: 'concept' }));
+    ${panel}<div class="bk-more"><h4>${esc(ch.more.title)}</h4><p>${esc(ch.more.text)}</p></div>`, { say: 'concept' }));
 
   // 7. 창의사고력 기르기: 휘어진 강 → 창의 문제 → 토의
   if (ch.reading) out.push(page(readingHtml(ch.reading, { teacher }), { cls: 'bk-magazine', full: true, say: 'reading' }));
   const n = ch.note;
   out.push(page(`${banner('창의사고력 기르기', 'think')}
-    <div class="bk-read"><div class="bk-two art-r"><div><h4>${esc(n.plus.title)}</h4><p>${esc(n.plus.text)}</p></div><div class="bk-art">${art[n.plus.art]}</div></div></div>
+    ${n.plus.wide ? `<div class="bk-read wide"><h4>${esc(n.plus.title)}</h4><div class="bk-two art-w"><p>${esc(n.plus.text)}</p><div class="bk-art">${art[n.plus.art]}</div></div></div>`
+      : `<div class="bk-read"><div class="bk-two art-r"><div><h4>${esc(n.plus.title)}</h4><p>${esc(n.plus.text)}</p></div><div class="bk-art">${art[n.plus.art]}</div></div></div>`}
     ${step(6, '창의력 키우기')}<p class="bk-p">${esc(ch.creative.q)}</p>${ans(ch.creative.a, 5)}
     ${step(7, '개념 넓혀 토의하기')}<p class="bk-p">${esc(ch.discuss.q)}</p>${ans(ch.discuss.a, 5)}`, { say: 'creative' }));
 

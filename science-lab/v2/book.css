@@ -337,3 +337,19 @@
 .bk-box.self.tight { margin-top: 3.4mm; padding-top: 2.4mm; padding-bottom: 1.6mm; }
 .bk-more { padding-top: 2.6mm; padding-bottom: 2.4mm; }
 .bk-cs { margin-bottom: 3.2mm; }
+/* 개념 그림판(표 없는 장의 개념 쪽): 그림 + 표 + 요점을 한 판에 */
+.bk-notepanel { margin: 4mm 0 0; padding: 3.2mm 4mm 3.6mm; border-radius: 3mm; background: #fff; border: .3mm solid var(--bk-hair, #dfe5ee); box-shadow: inset 0 1.2mm 0 var(--bk-theme); break-inside: avoid; }
+.bk-notepanel h4 { margin: .8mm 0 2.2mm; font: 900 11pt/1.25 var(--disp, sans-serif); letter-spacing: -.03em; color: var(--bk-ink, #172033); }
+.bk-np-grid { display: grid; grid-template-columns: 84mm 1fr; gap: 4.5mm; align-items: center; margin: 0 0 2.6mm; }
+.bk-np-grid > .bk-art { background: var(--bk-tint, #f6f8fb); border-radius: 2mm; padding: 1mm; }
+.bk-np-pts { margin: 0; padding-left: 4.4mm; font-size: 9.6pt; line-height: 1.6; }
+.bk-np-pts li { margin: 0 0 1mm; }
+.bk-notepanel .bk-tbl.note { font-size: 9pt; width: 100%; } .bk-notepanel .bk-tbl.note td, .bk-notepanel .bk-tbl.note th { padding: 1.1mm 2mm; line-height: 1.35; }
+@media (max-width: 700px) { .bk:not(.a4) .bk-np-grid { grid-template-columns: 1fr; } }
+/* 플러스 노트 넓은 그림(별자리 도판처럼 작게 줄이면 읽히지 않는 그림): 글 왼쪽 · 그림 오른쪽 넓게 */
+.bk-two.art-w { grid-template-columns: 1fr 92mm; gap: 4mm; align-items: center; }
+.bk-two.art-w .bk-art svg { border-radius: 2.5mm; }
+.bk-read.wide h4 { margin-bottom: 2mm; }
+.bk-render { margin: 0; } .bk-render img { width: 100%; height: auto; display: block; border-radius: 1.6mm; }
+.bk-art.wide .bk-render img { max-height: none; }
+@media (max-width: 700px) { .bk:not(.a4) .bk-two.art-w { grid-template-columns: 1fr; } }

@@ -1,0 +1,10 @@
+/* 태양계와 별 실험실(떠오르는 태양) */
+.sn-model-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#eef1fb;color:#26357a}
+.sun-2d{position:relative;height:300px;background:#f5f1e8;border-radius:14px;display:flex;justify-content:center;align-items:flex-end;overflow:hidden;--lv:.33;--f:0}
+.sun-2d .sn-jar{position:relative;width:130px;height:250px;margin-bottom:18px;border:3px solid #b9c3cc;border-top:0;border-radius:0 0 16px 16px;background:rgba(255,255,255,.5)}
+.sun-2d .sn-liq{position:absolute;left:0;right:0;bottom:0;height:calc(var(--lv) * 100%);background:linear-gradient(0deg,rgba(120,175,230,.45),rgba(246,243,226,.6));border-radius:0 0 13px 13px;transition:height .1s}
+.sun-2d .sn-oil{position:absolute;left:50%;width:46px;height:46px;margin-left:-23px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8a70,#d8341c 60%);bottom:calc(6px + var(--f) * (var(--lv) * 250px - 52px))}
+.sun-2d[data-flat="1"] .sn-oil{height:20px;width:66px;margin-left:-33px}
+.sun-2d[data-shake="1"] .sn-oil{animation:sn-wob .35s linear infinite}
+@keyframes sn-wob{0%{transform:translateX(-14px)}50%{transform:translateX(14px)}100%{transform:translateX(-14px)}}
+.dk-lab-battle[data-unit="s51-u03"] .mb-team .sn-model-note{display:none}

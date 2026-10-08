@@ -112,3 +112,5 @@
   .sl-reading { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .sl-reading a { text-decoration: none; }
 }
+/* 도표처럼 잘리면 안 되는 머리 그림(hero.fit: 'contain'): 화면 비율이 달라도 그림 전체를 보인다 */
+.sl-reading-hero.contain > img, .bk-magazine .sl-reading-hero.contain > img { object-fit: contain; background: transparent; }
