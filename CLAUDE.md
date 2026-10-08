@@ -23,6 +23,15 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
 - git에는 창작(extra learning) 지문만 허용
 - `.gitignore`에 원본 관련 파일 등록됨
 
+**FC 골든벨(`fields-classic/question-bank/`) 정답도 공개 저장소·공개 파일에 쓰면 안 됩니다.**
+
+- 정답·풀이 → **Supabase `golden_bell_answer_books`(비공개 답안 DB)에만**. 공개 `golden-bell-data.js`에는 `answerRef`만 둔다.
+- 공개 데이터의 메모 칸(`sourceLocator`·`sourceDiscrepancy`·`sourceHold.reason`·`note`)과 **커밋 메시지·PR 본문**에 정답 값을 적지 않는다.
+  금지 꼴: "교사용 답(□=N)", "공개 답은 N", "=N으로 검산", "(a/b)". 그냥 "교사용 답안과 대조해 바로잡음"처럼 숫자 없이 쓴다.
+- 원본 오류를 바로잡은 내역(교사용 답 오타 등)은 그 문항 답 기록의 `sourceNote`에 남긴다. 문항이 없는 보류 메모는 `/books/<id>/history/<경로>` 키에 둔다.
+- 데이터를 고친 뒤에는 반드시 `node fields-classic/question-bank/golden-bell-protection-audit.mjs`를 돌린다(메모 칸 정답 문구도 잡는다).
+- 참고: 2026-09-05 정답 보호 이전의 공개 git 이력에는 정답이 통째로 남아 있다. 이력은 다시 쓰지 않기로 했다(2026-10-08). 이력까지 숨기려면 저장소를 비공개로 바꾸는 방법뿐이다.
+
 ---
 
 ## 디렉토리 구조
