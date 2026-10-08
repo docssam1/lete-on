@@ -1,0 +1,88 @@
+{
+ "unit": "s51-u04",
+ "curriculum": "2022 개정",
+ "grade": 5,
+ "semester": 1,
+ "title": "용해와 용액",
+ "area": "화학",
+ "standards": [],
+ "standardsNote": "성취기준 문장은 교육부 고시 제2022-33호 [별책 9] 과학과 원문과 아직 대조하지 못했다. 코드만 두고 text는 null·verified:false로 남긴다(추측 금지). 원문을 확인하면 text를 채우고 verified를 true로 바꾼다.",
+ "elements": [
+  {
+   "id": "E1",
+   "name": "용해와 용액"
+  },
+  {
+   "id": "E2",
+   "name": "용질이 녹는 양"
+  },
+  {
+   "id": "E3",
+   "name": "용액의 진하기와 결정"
+  }
+ ],
+ "types": [
+  {
+   "id": "T01",
+   "element": "E1",
+   "name": "용해와 용액(용질·용매)",
+   "desc": "용해와 용액(용질·용매)을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 5,
+   "source": []
+  },
+  {
+   "id": "T02",
+   "element": "E1",
+   "name": "용해 전과 후의 무게",
+   "desc": "용해 전과 후의 무게을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 2,
+   "source": []
+  },
+  {
+   "id": "T03",
+   "element": "E2",
+   "name": "용질의 종류에 따라 녹는 양",
+   "desc": "용질의 종류에 따라 녹는 양을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 2,
+   "source": []
+  },
+  {
+   "id": "T04",
+   "element": "E2",
+   "name": "물의 온도에 따라 녹는 양",
+   "desc": "물의 온도에 따라 녹는 양을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 3,
+   "source": []
+  },
+  {
+   "id": "T05",
+   "element": "E3",
+   "name": "용액의 진하기 비교",
+   "desc": "용액의 진하기 비교을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 4,
+   "source": []
+  },
+  {
+   "id": "T06",
+   "element": "E3",
+   "name": "결정이 다시 생기는 현상(재결정)",
+   "desc": "결정이 다시 생기는 현상(재결정)을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 4,
+   "source": []
+  }
+ ],
+ "formats": [
+  "선택형",
+  "단답형",
+  "서술형"
+ ],
+ "formatCounts": {},
+ "sourceTotal": 0,
+ "note": "data/units/s51-u04.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. 이 단원은 새로 쓴 창작 연습이며 원문 단원평가 대응이나 DB 수록을 주장하지 않는다."
+}

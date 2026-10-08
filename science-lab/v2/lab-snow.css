@@ -1,0 +1,13 @@
+/* 용해와 용액 실험실(병 속에 내리는 눈) */
+.sw-model-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#eef1fb;color:#26357a}
+.snow-2d{position:relative;height:300px;background:#1d2a52;border-radius:14px;display:flex;justify-content:center;align-items:flex-end;overflow:hidden;--pile:0}
+.snow-2d .sw-jar{position:relative;z-index:1;width:130px;height:240px;margin-bottom:18px;border:3px solid #b9c3cc;border-radius:22px 22px 16px 16px;background:rgba(255,255,255,.08);overflow:hidden}
+.snow-2d .sw-liq{position:absolute;left:0;right:0;bottom:0;height:70%;background:rgba(230,240,250,.12)}
+.snow-2d .sw-pile{position:absolute;left:6px;right:6px;bottom:0;height:calc(var(--pile) * 40px);background:#f4f7fb;border-radius:60% 60% 6px 6px}
+.snow-2d .sw-flakes{position:absolute;inset:30% 0 0 0;background-image:radial-gradient(#fff 1.4px,transparent 1.6px);background-size:16px 18px;opacity:0;animation:sw-fall 2.4s linear infinite}
+.snow-2d[data-snow="1"] .sw-flakes{opacity:.9}
+@keyframes sw-fall{from{background-position:0 0}to{background-position:4px 36px}}
+.snow-2d .sw-bath{position:absolute;left:28%;right:28%;bottom:0;height:90px;border:3px solid #b9c3cc;border-top:0;border-radius:0 0 18px 18px;opacity:0}
+.snow-2d[data-bath="ice"] .sw-bath{opacity:1;background:rgba(190,224,247,.35)}
+.snow-2d[data-bath="hot"] .sw-bath{opacity:1;background:rgba(246,201,166,.4)}
+.dk-lab-battle[data-unit="s51-u04"] .mb-team .sw-model-note{display:none}
