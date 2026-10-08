@@ -5,6 +5,12 @@ import { GOLDEN_BELL_RECOVERY } from "./golden-bell-recovery-data.js";
 
 const GOLDEN_BELL_BOOKS = libraryBooks.filter((book) => book.courseId === "course-01");
 
+// 출처·교정 메모는 공개 데이터로 나가므로 정답을 글로 적으면 안 된다(원문은 비공개 답안 기록의 sourceNote).
+// "교사용 답(□=8)", "공개 답은 2350", "47×50=2350이므로", "(5/12)" 같은 꼴을 막는다. 출처 표기 "답안 슬라이드 2쪽"은 허용.
+const NOTE_KEYS = new Set(["sourceLocator", "sourceDiscrepancy", "reason", "note", "sourceNote"]);
+const SOURCE_CITATION = /답안\s*(?:PPTX\s*)?슬라이드\s*\d+쪽?/gu;
+const NOTE_ANSWER_PATTERNS = [/[□△◇☆]\s*=\s*\d/u, /답(?:은|는|이|을|\(|:)?\s*\d/u, /=\s*\d+\s*(?:이므로|으로|로|입니다)/u, /\d+\s*\/\s*\d+/u];
+
 let answerRefs = 0;
 function auditPublicValue(value, path = "books") {
   if (typeof value === "string") assert.doesNotMatch(value, /(?:[A-Za-z]:[\\/]|file:\/\/)/, `${path}: private local path`);
@@ -13,7 +19,13 @@ function auditPublicValue(value, path = "books") {
     assert.equal(Object.hasOwn(value, key), false, `${path}: public ${key} leak`);
   }
   if (Object.hasOwn(value, "answerRef")) answerRefs += 1;
-  for (const [key, child] of Object.entries(value)) auditPublicValue(child, `${path}.${key}`);
+  for (const [key, child] of Object.entries(value)) {
+    if (typeof child === "string" && NOTE_KEYS.has(key)) {
+      const text = child.replace(SOURCE_CITATION, "");
+      assert.equal(NOTE_ANSWER_PATTERNS.some((pattern) => pattern.test(text)), false, `${path}.${key}: answer written in public note`);
+    }
+    auditPublicValue(child, `${path}.${key}`);
+  }
 }
 
 auditPublicValue(GOLDEN_BELL_BOOKS);

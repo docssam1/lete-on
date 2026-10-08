@@ -29,6 +29,11 @@ function numWord(n, form, lang){
    인쇄 CSS 는 .nm-nl svg 의 path 를 선만 남기므로 path 를 쓰지 않고 rect·ellipse 로만 그리며, nm-obj-svg 로 예외를 받는다. */
 function handSvg(k, o){
   o = o || {};
+  /* 2026-10-08 실사 손(data/real-art.js 'hand-0'~'hand-5') — 여섯 장이 같은 손·각도라 공통 viewBox 로 잘라
+     좁은 손(1)도 넓은 손(5)과 같은 높이로 선다. 클래스 nm-g13-hand 를 지켜야 화면 폭·인쇄 8mm 규칙이 그대로 받는다. */
+  var rf = window.NM_REAL_ART && window.NM_REAL_ART['hand-' + k];
+  if(rf && !o.skin) return '<svg class="nm-g13-hand nm-obj-svg nm-obj-real" viewBox="5 1 54 63" aria-hidden="true">'
+    + '<image href="assets/images/real/' + rf + '" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid meet"/></svg>';
   var skin = o.skin || '#f6c9a0', shade = o.shade || '#e7aa7c', ln = o.line || '#a0603a', nail = '#fde6d4', sleeve = o.sleeve || '#5b9be0';
   var ext = [k >= 5, k >= 1, k >= 2, k >= 3, k >= 4];      /* 엄지·검지·중지·약지·새끼 */
   var xs = [0, 15.5, 25, 34.5, 44], hs = [0, 27, 31, 28, 22];
