@@ -10,6 +10,9 @@ export const unit = {
     ],
     "lab": [
       "6-B 실험 교사 PDF 17–24쪽 컵 속에 내리는 비 · 3-C 25–32쪽 우량계 만들기 (비공개 원본)"
+    ],
+    "bank": [
+      "data/units/s42-u05.source.js"
     ]
   }
 };
@@ -31,9 +34,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u05",
-      "element": "E1",
-      "type": "T01",
-      "concept": "물이 있는 곳과 물의 상태",
+      "element": "E2",
+      "type": "T03",
+      "concept": "순환 속 물의 상태 변화",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -92,7 +95,7 @@ export const items = [
       "unit": "u05",
       "element": "E2",
       "type": "T03",
-      "concept": "증발과 응결",
+      "concept": "순환 속 물의 상태 변화",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -201,8 +204,8 @@ export const items = [
       "semester": 2,
       "unit": "u05",
       "element": "E1",
-      "type": "T02",
-      "concept": "물의 순환 과정",
+      "type": "T01",
+      "concept": "물의 순환의 뜻과 특징",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -252,9 +255,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u05",
-      "element": "E2",
-      "type": "T04",
-      "concept": "물의 순환 모형과 실제",
+      "element": "E1",
+      "type": "T02",
+      "concept": "물의 순환 과정",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -329,7 +332,7 @@ export const items = [
       "unit": "u05",
       "element": "E2",
       "type": "T03",
-      "concept": "증발과 응결",
+      "concept": "순환 속 물의 상태 변화",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -381,9 +384,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u05",
-      "element": "E2",
-      "type": "T04",
-      "concept": "물의 순환 모형과 실제",
+      "element": "E1",
+      "type": "T02",
+      "concept": "물의 순환 과정",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -486,9 +489,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u05",
-      "element": "E3",
-      "type": "T06",
-      "concept": "물 부족과 해결 방법",
+      "element": "E4",
+      "type": "T09",
+      "concept": "물 부족 해결 실천",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -538,9 +541,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u05",
-      "element": "E1",
-      "type": "T01",
-      "concept": "물이 있는 곳과 물의 상태",
+      "element": "E4",
+      "type": "T07",
+      "concept": "지구의 물 분포",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -594,7 +597,7 @@ export const items = [
       "unit": "u05",
       "element": "E3",
       "type": "T05",
-      "concept": "물의 이용과 중요성",
+      "concept": "물 이용에 대한 바른 이해",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -646,9 +649,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u05",
-      "element": "E3",
-      "type": "T06",
-      "concept": "물 부족과 해결 방법",
+      "element": "E4",
+      "type": "T09",
+      "concept": "물 부족 해결 실천",
       "level": "기본",
       "track": "교과",
       "format": "선택형"

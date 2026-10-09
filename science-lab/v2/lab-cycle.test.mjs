@@ -30,7 +30,7 @@ test('대결 세 라운드(전등: 2팀 · 얼음: 1팀 · 재현: 같음)를 �
 });
 test('「물이 튀어서·얼음이 녹아서」는 결론으로 통과하지 않고, 증발·응결·비로 설명하면 통과한다', () => {
   assert.notEqual(judgeText('바닷물이 튀어서 뚜껑에 붙는다.', judge['deck:concl0']).st, 'ok');
-  assert.notEqual(judgeText('얼음이 녹아서 그 물이 떨어진다.', judge['s42-u05-v017']).st, 'ok');
+  assert.notEqual(judgeText('얼음이 녹아서 그 물이 떨어진다.', judge['deck:concl0']).st, 'ok');
   assert.equal(judgeText('물이 증발해서 수증기가 되고 차가운 뚜껑에서 응결해 물방울이 되어 비로 떨어진다.', judge['deck:concl0']).st, 'ok');
-  assert.notEqual(judgeText('물이 점점 줄어든다.', judge['s42-u05-v018']).st, 'ok');
+  assert.notEqual(judgeText('물이 점점 줄어든다.', judge['deck:concl0']).st, 'ok');
 });

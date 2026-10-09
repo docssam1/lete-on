@@ -9,6 +9,7 @@
 // 판정표 한 항목(판정표 파일 머리 주석에 전체 설명):
 //   { kind?: 'hypo', open?: true,
 //     need: [{ t: '핵심 생각', ask: '빠졌을 때 되묻는 말', any: ['정규식', …], all?: ['정규식', …], not?: ['정규식'], count?: 2 }],
+//     (ideas: [[정규식…], [정규식…], …] + count — 서로 다른 생각 묶음 중 count개가 들어 있으면 충족)
 //     wrong?: [{ any: ['정규식'], m?: 'M09', say: '되묻는 말' }],
 //     ex: { ok: ['통과해야 할 답'], part: ['부분'], no: ['통과하면 안 되는 답'] } }
 //   정규식은 공백·문장부호를 없앤 글(norm)에 건다. 부정("~지 않다", "안 ~")이 바로 붙은 곳은 맞은 것으로 치지 않는다.
@@ -19,6 +20,7 @@ export const norm = (s) => String(s ?? '').normalize('NFC').toLowerCase()
   .replace(/(\d)\.(\d)/g, '$1점$2')   // 54.0 g ≠ 540 g — 소수점은 지우지 않는다
   .replace(/</g, '작').replace(/>/g, '큼')   // (가) < (나) ≠ (가) > (나) — 부등호도 지우지 않는다
   .replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣').replace(/ㅁ/g, '㉤').replace(/ㅂ/g, '㉥').replace(/ㅅ/g, '㉦').replace(/ㅇ/g, '㉧')   // 낱자 ㄱ·ㄴ은 글자 속에 없으니 늘 기호(「ㄴ, 」「ㄴ이」도)
+  .replace(/[㈎-㈛]/g, (c) => '가나다라마바사아자차카타파하'[c.charCodeAt(0) - 0x320e])   // ㈎~㈛ = (가)~(하)
   .replace(/[◯⭕]/g, '○').replace(/[✕✖]/g, '×')   // 큰 동그라미·곱표 꼴도 같은 기호로
   .replace(/[^0-9a-z가-힣㉠-㉧○×]/g, '');
 
@@ -42,6 +44,7 @@ const has = (t, pats) => hits(t, pats).size > 0;
 function metNeed(t, n) {
   if (n.not && (n.not || []).some((p) => rx(p).test(t))) return false;
   if (n.all && !n.all.every((p) => has(t, [p]))) return false;
+  if (n.ideas) return n.ideas.filter((g) => has(t, g)).length >= (n.count || 1);   // 생각 여러 개 중 count개(「두 가지를 쓰세요」)
   if (!n.any) return true;
   return hits(t, n.any).size >= (n.count || 1);
 }
