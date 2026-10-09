@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "reviewDate": "2026-10-03",
+  "reviewDate": "2026-10-10",
   "status": "source-checked-partial-release",
   "sourceIdentity": {
     "kind": "private-pdf",
@@ -10,21 +10,37 @@
     "sourceImagesPublished": false,
     "publisherKeyAvailable": false
   },
-  "policy": "Source conditions, handwritten answers and independent calculations remain separate. No claim of full E1 completion or verified 3D rendering.",
+  "policy": "Source conditions, handwritten answers and independent calculations remain separate. Six E1 types are released; the other five remain locked. No claim of full E1 completion or validation of the legacy generic 3D renderer.",
   "items": [
     { "sourceItemId": "6-2-u3-e1-exploration", "originalChecked": true, "sourceVerified": true, "singleAnswer": true, "answerContract": "four-direction-drawings-fixed-pool", "implementationStatus": "fixed-verified-pool", "releaseStatus": "verified", "publicDecision": "confirmed", "verifiedVariantCount": 3, "problemAndAnswerVisuals": "height-chart-and-four-direction-grids", "generatorKey": "sourceGrade6SecondSpaceE1HeightViews" },
     { "sourceItemId": "6-2-u3-e1-example-1", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "Source cube positions and occlusion need verification; a tested 3D renderer is required." },
     { "sourceItemId": "6-2-u3-e1-example-2", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "Label-to-cube addresses need verification. Do not add a top-view preservation condition absent from the source." },
     { "sourceItemId": "6-2-u3-e1-example-3", "originalChecked": true, "sourceVerified": true, "singleAnswer": true, "answerContract": "bottom-excluded-surface-area-fixed-pool", "implementationStatus": "fixed-verified-pool", "releaseStatus": "verified", "publicDecision": "confirmed", "verifiedVariantCount": 3, "problemAndAnswerVisuals": "height-chart-and-directional-exposed-face-account", "generatorKey": "sourceGrade6SecondSpaceE1ExposedArea" },
-    { "sourceItemId": "6-2-u3-e1-example-4", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "candidate", "sourceMathCheckedBySecondaryReviewer": true, "blockCoordinatesVerified": true, "sourceModelContract": "source-6-2-stack-models.js", "fixedModelVariantsVerified": 3, "threeModelReviewVerified": true, "learnerBankRenderVerified": false, "reason": "Three fixed source-model stacks and the 3D model-review renderer are verified. Learner question generation, difficulty choices, dot-grid answers, printed fallback mapping and mixed worksheet gates are still pending." },
+    { "sourceItemId": "6-2-u3-e1-example-4", "originalChecked": true, "sourceVerified": true, "singleAnswer": true, "releaseStatus": "verified", "publicDecision": "confirmed", "sourceMathCheckedBySecondaryReviewer": true, "blockCoordinatesVerified": true, "sourceModelContract": "source-6-2-stack-models.js", "fixedModelVariantsVerified": 3, "threeModelReviewVerified": true, "learnerBankRenderVerified": true, "generatorKey": "sourceGrade6SecondSpaceE1StackExample4", "verifiedVariantCount": 3, "publisherAnswerVerified": false, "problemAndAnswerVisuals": "three-projections-blank-isometric-dot-grid-and-verified-3D-answer", "reason": "Original count is retained. Visible projections and count independently reconstruct the single stack and match the verified answer image contract." },
     { "sourceItemId": "6-2-u3-e1-mission-1", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "Hidden cube positions and front/side views need source confirmation." },
     { "sourceItemId": "6-2-u3-e1-mission-2", "originalChecked": true, "sourceVerified": true, "singleAnswer": true, "singleStack": true, "releaseStatus": "verified", "publicDecision": "confirmed", "implementationStatus": "fixed-verified-pool", "sourceMathCheckedBySecondaryReviewer": true, "generatorKey": "sourceGrade6SecondSpaceE1Mission2", "verifiedVariantCount": 3, "problemAndAnswerVisuals": "top-footprint-right-profile-and-front-answer-grid" },
-    { "sourceItemId": "6-2-u3-e1-mission-3", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "candidate", "sourceMathCheckedBySecondaryReviewer": true, "blockCoordinatesVerified": true, "sourceModelContract": "source-6-2-stack-models.js", "fixedModelVariantsVerified": 3, "threeModelReviewVerified": true, "learnerBankRenderVerified": false, "reason": "Three projection-only source-model stacks and the 3D model-review renderer are verified, without adding a total clue. Learner question generation, difficulty choices, dot-grid answers, printed fallback mapping and mixed worksheet gates are still pending." },
+    { "sourceItemId": "6-2-u3-e1-mission-3", "originalChecked": true, "sourceVerified": true, "singleAnswer": true, "releaseStatus": "verified", "publicDecision": "confirmed", "sourceMathCheckedBySecondaryReviewer": true, "blockCoordinatesVerified": true, "sourceModelContract": "source-6-2-stack-models.js", "fixedModelVariantsVerified": 3, "threeModelReviewVerified": true, "learnerBankRenderVerified": true, "generatorKey": "sourceGrade6SecondSpaceE1StackMission3", "verifiedVariantCount": 3, "publisherAnswerVerified": false, "problemAndAnswerVisuals": "three-projections-blank-isometric-dot-grid-and-verified-3D-answer", "reason": "Original projection-only conditions retain no total clue. Visible conditions independently reconstruct the single stack and match the verified answer image contract." },
     { "sourceItemId": "6-2-u3-e1-mission-4", "originalChecked": true, "sourceVerified": true, "singleAnswer": true, "singleStack": true, "releaseStatus": "verified", "publicDecision": "confirmed", "implementationStatus": "fixed-verified-pool", "generatorKey": "sourceGrade6SecondSpaceE1Mission4", "verifiedVariantCount": 3, "requestedOperation": "sum-not-product", "handwritingSupportsRequestedSum": true, "problemAndAnswerVisuals": "two-blank-height-chart-and-completed-answer-chart" },
     { "sourceItemId": "6-2-u3-e1-mission-5", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "Target labels and added cube positions need source confirmation." },
     { "sourceItemId": "6-2-u3-e1-mission-6", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "The three marked cube positions and post-removal projections need source confirmation." }
   ],
   "verification": {
+    "learnerStackBank": {
+      "liveAudit": "source-6-2-stack-questions-live-audit.js",
+      "pdfAudit": "source-6-2-stack-questions-pdf-audit.py",
+      "sourceTypes": 2, "fixedGeometryVariants": 6, "difficultyContracts": 18,
+      "browserStates": 18, "viewports": [1280, 390, 320], "singlePageA4Files": 18,
+      "negativeControls": 36, "answerPngContractAndPixelsVerified": true,
+      "printModes": ["problem", "solution", "answer-key"],
+      "mixedPaper": { "requested": 40, "finitePoolCap": 6, "uniqueAnswerImages": 6, "problemPages": 2, "solutionPages": 2 },
+      "printFailuresChecked": ["delayed-image-decode", "repeated-click", "missing-answer-image", "print-exception"],
+      "easy": "Give one occupied cell's height, reducing independent reconstruction search.",
+      "source": "Keep original three projections; Example 4 also keeps total, Mission 3 adds no total.",
+      "hard": "Example 4 first derives total from floor cells and added cubes. Mission 3 first derives a missing front height from the two-column sum.",
+      "difficultyLimit": "Structural source-level match, not empirical student calibration.",
+      "reviewLimit": "Prior independent model/renderer reviewer evidence is retained. Current learner-visible voxel enumeration is a separate calculation implementation, not a new secondary-agent review.",
+      "visualReview": "Primary direct eyes sampled original-level A4 problem/solution, hard Mission 3 A4 problem/answer key, easy 320px problem and original 320px solution. Automated bounds and exact answer pixels cover all eighteen PDFs."
+    },
     "mathAudit": "source-6-2-height-views-audit.js",
     "browserAudit": "source-6-2-height-views-live-audit.js",
     "pdfAudit": "source-6-2-height-views-pdf-audit.py",

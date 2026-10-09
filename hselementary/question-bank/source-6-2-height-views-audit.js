@@ -9,7 +9,8 @@ const readiness = JSON.parse(fs.readFileSync(path.join(__dirname, "source-invent
 const raw = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory/6-2-source-items.json"), "utf8"));
 assert.equal(readiness.items.length,11);
 assert.equal(new Set(readiness.items.map(i=>i.sourceItemId)).size,11);
-assert.equal(readiness.items.filter(i=>i.releaseStatus === "verified").length,4);
+assert.equal(readiness.items.filter(i=>i.releaseStatus === "verified").length,6);
+assert.equal(readiness.items.filter(i=>i.releaseStatus === "verified" && !i.generatorKey.includes("Stack")).length,4);
 const originals = {
   "6-2-u3-e1-exploration": [[0,0,0,0,0,0],[0,0,1,0,0,0],[0,2,3,4,1,0],[1,1,2,2,0,0],[0,0,0,1,0,0],[0,0,0,0,0,0]],
   "6-2-u3-e1-example-3": [[1,3,3],[2,1,2]]

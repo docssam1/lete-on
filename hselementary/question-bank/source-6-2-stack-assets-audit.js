@@ -67,7 +67,7 @@ function run() {
     bytes[bytes.length - 1] ^= 1;
     return bytes;
   }));
-  console.log(`Canonical stack assets: ${count} model-linked PNGs, runtime/model/PNG hashes, exact dimensions and 11 negative controls passed. Learner release remains locked.`);
+  console.log(`Canonical stack assets: ${count} model-linked PNGs, runtime/model/PNG hashes, exact dimensions and 11 negative controls passed. Learner release is controlled separately by inventory and actual-bank audits.`);
 }
 if (require.main === module) run();
 module.exports = {directory, runtimeFiles, sha, textSha, contractSha, pngSize, verify};

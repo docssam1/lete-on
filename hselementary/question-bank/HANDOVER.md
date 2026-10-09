@@ -4,16 +4,26 @@
 
 - Branch: `codex/elementary-audit-sync-20260926`
 - Local page: `http://127.0.0.1:8897/hselementary/question-bank/`
-- Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-03)
-- Runtime-available types: 1,153 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 852
+- Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-10)
+- Runtime-available types: 1,155 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked types: 850
 - Source-linked runtime entries: 1,625 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `115/477` types are runtime-available. The remainder stay review-locked.
+- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `117/477` types are runtime-available. The remainder stay review-locked.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
 - Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
 
-## 2026-10-10 Fixed Cube Answer Assets
+## 2026-10-10 Learner Cube Reconstruction Release
+
+- Example 4 and Mission 3 now use `source-6-2-stack-questions.js/css` in the actual question bank. The original-level problems preserve the source projections and requested isometric drawing. Example 4 keeps the required total; Mission 3 has no total clue. Problems contain only the given views and blank isometric dot grid. Answers and answer-only print use the six previously verified canonical 3D PNGs, never solved diagrams on the problem side.
+- Each type has three fixed geometry variants and three structural difficulty choices, eighteen condition contracts in total. Easy gives one cell height and reduces independent search. Hard Example 4 first derives total from floor and added cubes; hard Mission 3 first derives a missing front height from a two-column sum. Publisher-key and handwriting flags remain false. No empirical learner calibration is claimed.
+- `source-6-2-stack-questions-live-audit.js` reads actual learner SVG squares and printed conditions, independently enumerates positive-height voxels and requires exactly one full stack. It links the reconstructed geometry to the answer manifest contract and checks HTTP image hashes. Eighteen desktop/390px/320px states, thirty-six negative controls and eighteen single-page A4 problem/solution/answer-only PDFs pass. `source-6-2-stack-questions-pdf-audit.py` checks safe page bounds and exact embedded answer pixels.
+- Mixed selection requests forty questions from the two types but correctly caps at six unique finite-pool geometries. The six problems and six solutions each occupy two A4 sheets. Print waits for decoded images; missing images and print exceptions restore the view, and repeated clicks do not start overlapping prints. A discovered grid/circled-symbol collision, blank first A4 and small 320px answer direction labels were fixed before release.
+- Direct eye review sampled source-level A4 problem/solution, hard Mission 3 A4 problem/answer key, easy 320px problem and source-level 320px solution. Automated bounds/pixel checks cover all eighteen PDFs; this is not a claim that every PDF was independently eye-reviewed. Prior separate model/renderer review remains historical evidence, not a new agent review.
+- Current counts: 2005 total / 1155 available / 850 locked; Grade 6 633 / 356 / 277; 6-2 477 / 117 / 360; E1 six ready and five locked. Next source-check Examples 1/2 and Missions 1/5/6, including exact marked-cube coordinates and occluded faces; do not reuse the generic cube renderer without validation.
+- No main merge or deployment in this stage. Work and evidence stay on E:, private source/report references on G:. Preserve the active checkout after review-branch push.
+
+## 2026-10-10 Fixed Cube Answer Assets (Previous Foundation Stage)
 
 - The six canonical source-model answers are stored in `assets/source-6-2-stacks/` as 1280x1040 PNGs (331355 bytes total). `manifest.json` links each source item and variant to its model contract and PNG SHA-256; it also pins all four renderer/model/review runtime hashes with UTF-8/LF normalization so Git checkout line endings cannot invalidate unchanged code. PNG hashes remain exact bytes. These are computed answer diagrams, not scans or original textbook assets.
 - `source-6-2-stack-assets-export.js` requires the complete live and PDF proofs before exporting. It refuses to overwrite a different existing asset. `source-6-2-stack-assets-audit.js` verifies exact source/variant addresses, dimensions, model/runtime/image hashes and eleven negative controls. Seven invalid direction-font sizes and a forced clipping failure are rejected; the failure restores the live canvas size.

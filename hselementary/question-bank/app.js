@@ -437,6 +437,7 @@
   }
 
   function problemWeight(question) {
+    if (question.prompt.includes("source62-stack-dotgrid")) return 1.5;
     const graphCount = (question.prompt.match(/class="graph-figure"/g) || []).length;
     const hasSource61VolumeE4 = question.prompt.includes("source61-volume-e4-diagram");
     const hasSource61E2Example2 = question.prompt.includes("source61-e2ex2-diagram");
@@ -557,6 +558,7 @@
     $("answerKeyView").innerHTML = pages.map((page, pageIndex) => `<section class="answer-key-page">
       <div class="answer-key-title">정답표 ${pageIndex + 1}</div>
       <div class="answer-key-grid">${page.map(question => `<div><b>${question.number}</b><span>${renderMathNotation(escapeHtml(question.answer))}</span></div>`).join("")}</div>
+      ${page.some(question => question.answerKeyVisual && question.answerVisual) ? `<div class="answer-key-visuals">${page.filter(question => question.answerKeyVisual && question.answerVisual).map(question => `<figure><figcaption>${question.number}</figcaption>${renderMathNotation(question.answerVisual)}</figure>`).join("")}</div>` : ""}
       ${watermark()}
     </section>`).join("");
   }
@@ -615,15 +617,27 @@
     activePrintMode = null;
   }
 
-  function printWorksheet(mode) {
-    if (!state.questions.length) return;
+  async function printWorksheet(mode) {
     setPrintMenu(false);
+    if (!state.questions.length || activePrintMode) return;
     activePrintMode = mode;
     document.body.dataset.printMode = mode;
     $("problemView").hidden = mode === "answer-key" || mode === "solution";
     $("solutionView").hidden = mode === "problem" || mode === "answer-key";
     $("answerKeyView").hidden = mode !== "answer-key";
-    requestAnimationFrame(() => window.print());
+    const requestedQuestions = state.questions;
+    try {
+      const images = [$("problemView"), $("solutionView"), $("answerKeyView")].filter(view => !view.hidden).flatMap(view => [...view.querySelectorAll("img")]);
+      await Promise.all(images.map(image => image.decode()));
+      if (images.some(image => !image.complete || !image.naturalWidth)) throw new Error("Print image is missing");
+      requestAnimationFrame(() => {
+        if (state.questions !== requestedQuestions || $("worksheet").hidden) { restorePrintView(); return; }
+        try { window.print(); } catch (error) { restorePrintView(); alert("인쇄를 시작하지 못했습니다. 다시 시도해 주세요."); }
+      });
+    } catch (error) {
+      restorePrintView();
+      alert("그림을 불러오지 못해 인쇄를 중단했습니다. 다시 시도해 주세요.");
+    }
   }
 
   function renderWorksheet() {

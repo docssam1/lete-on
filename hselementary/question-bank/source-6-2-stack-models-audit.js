@@ -55,12 +55,13 @@ const ambiguous={top:fixtures[1].top,front:[2,3],right:[1,2,3]};
 assert.equal(enumerate(ambiguous).answers.length,2,"Reject tempting but non-unique Mission 3 variant");
 for(const invalid of [null,[],[[0,0]],[[1],[1,2]],[[1,-1]],[[1,1.5]],[[7]],[[NaN]],[[Infinity]],[[1,,1]],[[1],,]])assert.throws(()=>models.cubes(invalid));
 global.window={};
-for(const name of ['source-inventory-4-1.js','source-inventory-grade6.js','curriculum.js','generators.js','source-6-2-height-views.js'])require(`./${name}`);
+for(const name of ['source-inventory-4-1.js','source-inventory-grade6.js','curriculum.js','generators.js','source-6-2-height-views.js','source-6-2-stack-questions.js'])require(`./${name}`);
 for(const def of models.definitions){
   const type=window.HSE_SOURCE_INVENTORY_GRADE6.items.find(item=>item.sourceItemId===def.sourceItemId);
-  assert(type.reviewLocked);
-  assert.equal(window.HSE_GENERATORS.generatorKey(type),'');
-  assert.equal(window.HSE_GENERATORS.generate(type,0,0,1),null,'Renderer review must not accidentally release a source type');
+  assert.equal(type.reviewLocked,false);
+  assert.equal(window.HSE_GENERATORS.generate(type,0,0,1).verifiedVariantCount,3);
+  assert.equal(window.HSE_GENERATORS.generatorKey({...type,reviewLocked:true}),'');
+  assert.equal(window.HSE_GENERATORS.generate({...type,reviewLocked:true},0,0,1),null,'An explicit inventory lock must override a verified model');
 }
 if(process.env.HSE_STACK_AUDIT_OUTPUT){assert(/^[EG]:[/\\]/i.test(process.env.HSE_STACK_AUDIT_OUTPUT));fs.writeFileSync(process.env.HSE_STACK_AUDIT_OUTPUT,JSON.stringify({records,missingTotalModels:2,ambiguousVariantModels:2,releaseStatus:"locked"},null,2));}
-console.log(`Cube reconstruction: ${records.length} fixed conditions, ${records.reduce((s,r)=>s+r.visited,0)} independent arrangements; unique full stacks, missing-total and ambiguous-variant negatives passed. Both types remain locked.`);
+console.log(`Cube reconstruction: ${records.length} fixed conditions, ${records.reduce((s,r)=>s+r.visited,0)} independent arrangements; unique full stacks, missing-total and ambiguous-variant negatives passed. Inventory release and explicit lock override passed.`);

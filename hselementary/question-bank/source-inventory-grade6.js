@@ -11,7 +11,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "mission": 339,
     "problemVisualRequired": 583,
     "answerVisualRequired": 633,
-    "unlocked": 354
+    "unlocked": 356
   },
   "items": [
     {
@@ -16885,9 +16885,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
 const safeLockedReasons = {
   "6-2-u3-e1-example-1": "원본의 블록 위치와 가려진 면을 확인하고 입체 그림을 검수해야 합니다.",
   "6-2-u3-e1-example-2": "기호가 붙은 쌓기나무의 위치와 제거 뒤 앞·옆 모양을 확인해야 합니다.",
-  "6-2-u3-e1-example-4": "원본 배치와 입체 검수 그림은 확인했습니다. 문제 생성기·난이도·학생용 화면과 인쇄 연결 검수가 남아 있습니다.",
   "6-2-u3-e1-mission-1": "원본의 가려진 쌓기나무 위치와 앞·옆 모양을 확인해야 합니다.",
-  "6-2-u3-e1-mission-3": "원본 배치와 입체 검수 그림은 확인했습니다. 문제 생성기·난이도·학생용 화면과 인쇄 연결 검수가 남아 있습니다.",
   "6-2-u3-e1-mission-5": "기호가 가리키는 위치와 쌓기나무를 추가한 뒤의 모양을 확인해야 합니다.",
   "6-2-u3-e1-mission-6": "색칠된 쌓기나무의 위치와 제거 뒤 세 방향의 모양을 확인해야 합니다.",
   "6-2-u2-e2-mission-3": "원본 손글씨 답 판독과 답 근거 확인이 더 필요합니다.",
@@ -16912,7 +16910,9 @@ const heightViewReleases = {
   "6-2-u3-e1-exploration": "sourceGrade6SecondSpaceE1HeightViews",
   "6-2-u3-e1-example-3": "sourceGrade6SecondSpaceE1ExposedArea",
   "6-2-u3-e1-mission-2": "sourceGrade6SecondSpaceE1Mission2",
-  "6-2-u3-e1-mission-4": "sourceGrade6SecondSpaceE1Mission4"
+  "6-2-u3-e1-mission-4": "sourceGrade6SecondSpaceE1Mission4",
+  "6-2-u3-e1-example-4": "sourceGrade6SecondSpaceE1StackExample4",
+  "6-2-u3-e1-mission-3": "sourceGrade6SecondSpaceE1StackMission3"
 };
 window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
   if (!heightViewReleases[item.sourceItemId]) return;
@@ -16921,4 +16921,5 @@ window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
     sourceVerified: true, reviewLocked: false, reviewReason: "",
     answerVisualStatus: "verified", verifiedVariantCount: 3
   });
+  if (item.sourceItemId === "6-2-u3-e1-example-4") item.typeLabel = "세 방향의 모양과 전체 개수로 쌓기나무 모양 그리기";
 });

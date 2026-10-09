@@ -22,6 +22,7 @@ require("./source-6-2-decimal-e3.js");
 require("./source-6-2-decimal-e4.js");
 require("./source-6-2-e2-geometry.js");
 require("./source-6-2-height-views.js");
+require("./source-6-2-stack-questions.js");
 require("./source-6-2-decimal-e6-geometry.js");
 require("./source-grade6-volume-e2.js");
 require("./source-grade6-volume-e3-mission3.js");
@@ -35,7 +36,7 @@ const types = allTypes.filter(type => api.generatorKey(type) && !type.reviewLock
 const floatingTail = /\b\d+\.\d{10,}\b/;
 const failures = [];
 let count = 0;
-if (types.length !== 1153) failures.push(`공개 검수 대상은 1153개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 1155) failures.push(`공개 검수 대상은 1155개여야 하나 ${types.length}개입니다.`);
 
 for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 100; seed += 1) {
   try {

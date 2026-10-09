@@ -165,6 +165,6 @@ async function pixels(page,options={}) {
     await test.close();
     assert.deepEqual(hashes(),originalHashes,'Runtime changed during audit');
     fs.writeFileSync(path.join(out,'stack-browser-result.json'),JSON.stringify({states:rows.length,rows,regression,negativeControl:'Normal reference rejects one highest cube removed from the actual GPU scene; near-edge red pixel rejected without a broad face-edge exemption',assetHashes:originalHashes,scope:'Internal locked source-model review, not learner bank publication or difficulty approval'},null,2));
-    console.log(`3D stack review: ${rows.length} states and ${regression.length} adversarial stacks; source models, analytic ray/pixel occlusion, rejection control, actual rotation/reset, desktop/mobile, six one-page A4s and asset hashes passed. Types remain locked.`);
+    console.log(`3D stack review: ${rows.length} states and ${regression.length} adversarial stacks; source models, analytic ray/pixel occlusion, rejection control, actual rotation/reset, desktop/mobile, six one-page A4s and asset hashes passed. Learner release is controlled separately by inventory and actual-bank audits.`);
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

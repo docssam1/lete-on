@@ -2651,11 +2651,12 @@
       "pdfPage": 30,
       "printedPage": 32,
       "sourceShape": "위의 다섯 점유 칸, 앞·오른쪽 모양과 쌓기나무 8개 조건으로 입체를 복원해 점격자에 그리는 구조. 총개수를 빼면 두 배치가 가능하므로 8개 조건을 보존해야 함.",
-      "answerContract": "candidate",
+      "answerContract": "three-projections-and-total-unique-stack-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publisherAnswerVerified": false,
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-1",
@@ -2696,11 +2697,12 @@
       "pdfPage": 31,
       "printedPage": 33,
       "sourceShape": "위의 네 점유 칸, 앞·오른쪽 모양만으로 입체를 복원해 점격자에 그리는 구조. 총개수 조건은 없으며 세 모양을 만족하는 입체가 하나로 정해짐.",
-      "answerContract": "candidate",
+      "answerContract": "three-projections-only-unique-stack-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publisherAnswerVerified": false,
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-4",
