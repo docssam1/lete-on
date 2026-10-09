@@ -18,7 +18,7 @@ for (const u of U) {
     assert.ok(J, `${u}.judge.js 없음`);
     const book = (await load(`book/${u}.book.js`))?.chapter;
     const items = [];
-    for (const f of [`units/${u}.js`, `units/${u}.similar.js`]) { const m = await load(f); if (m) for (const v of Object.values(m)) if (Array.isArray(v)) items.push(...v.filter((x) => x?.answerContract)); }
+    for (const f of [`units/${u}.js`, `units/${u}.similar.js`, `units/${u}.source.js`]) { const m = await load(f); if (m) for (const v of Object.values(m)) if (Array.isArray(v)) items.push(...v.filter((x) => x?.answerContract)); }
 
     await t.test('① 빠진 판정표 없음', () => {
       const want = [...items.filter((x) => x.answerContract.type === 'written-explanation').map((x) => x.id), ...(book ? ['deck:hypo', 'deck:wonder', 'deck:concl0'] : [])];

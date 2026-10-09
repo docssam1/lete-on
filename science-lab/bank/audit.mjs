@@ -1,6 +1,6 @@
 // 과학 문제은행 감사: node science-lab/bank/audit.mjs
 // 검사: id 중복 · 필수 태그(grade·level·track) · 객관식 정답 위치 분포 · 정답이 유일한 최장 보기 · 학년에 이른 용어
-import { readdirSync } from 'node:fs';
+import { readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -86,6 +86,26 @@ for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.similar.js'))) 
   if (Math.max(...pos) - Math.min(...pos) > 2) err('유사문항 정답 위치 쏠림');
   console.log('  유형별', JSON.stringify(perType));
   for (const [id, ty] of Object.entries(tx.authored || {})) if (!types.has(ty)) err(`창작 ${id} 유형 ${ty} 없음`);
+}
+// 단원평가 원문: <단원>.source.js — taxonomy.sources와 1:1, 정답이 보기 범위 안, 그림 파일이 있는지
+for (const f of readdirSync(unitsDir).filter((x) => x.endsWith('.source.js'))) {
+  const u = f.replace('.source.js', '');
+  const { source } = await import(pathToFileURL(join(unitsDir, f)).href);
+  const { taxonomy: tx } = await import(pathToFileURL(join(unitsDir, `${u}.taxonomy.js`)).href);
+  console.log(`${u} 원문: ${source.length}개`);
+  const keys = new Set(), ids = new Set();
+  for (const it of source) {
+    const key = `${it.sourceRef.set}-${it.sourceRef.no}`, ac = it.answerContract;
+    if (ids.has(it.id)) err(`${it.id} id 중복`); ids.add(it.id); keys.add(key);
+    if (it.status !== 'verified') err(`${it.id} verified 아님`);
+    if (!tx.sources[key] || tx.sources[key][0] !== it.taxonomy.type) err(`${it.id} 원문 ${key} 유형 불일치`);
+    const idx = ac.type === 'single-choice' ? [ac.answer] : ac.type === 'multi-choice' ? ac.answers : [];
+    if (idx.some((i) => !(i >= 0 && i < (it.choices?.length || 0)))) err(`${it.id} 정답 번호가 보기 밖`);
+    if (ac.type === 'short-text' && !ac.accepted?.includes(ac.answer)) err(`${it.id} 단답 정답이 accepted에 없음`);
+    if (it.figure && !existsSync(join(here, '..', it.figure))) err(`${it.id} 그림 없음 ${it.figure}`);
+  }
+  const miss = Object.keys(tx.sources).filter((k) => !keys.has(k));
+  if (miss.length) err(`${u} 원문 파일에 없는 sources: ${miss.join(', ')}`);
 }
 // 공개 산출물(bank/taxonomy/*.json)이 앱이 쓰는 *.taxonomy.js와 어긋나지 않는지.
 // 어긋나면 교재 차례와 문항 태그가 조용히 갈라진다.

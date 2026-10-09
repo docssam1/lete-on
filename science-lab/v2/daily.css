@@ -165,3 +165,9 @@
 }
 @media (prefers-reduced-motion: reduce) { .dt-ring-fg, .dt-grade { transition: none; } }
 @media (max-width: 520px) { .dt-hero { flex-direction: column; align-items: flex-start; } .dt-self { margin-left: 0; } }
+/* 단원평가(원문) 세트 */
+.dt-fig { margin: 10px 0; text-align: center; }
+.dt-fig img { max-width: min(100%, 440px); height: auto; border-radius: 8px; background: #fff; }
+.dt-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.dt-tabs .btn { min-height: 36px; padding: 4px 12px; text-decoration: none; display: inline-flex; align-items: center; }
+.dt-twin .item { margin-top: 10px; }

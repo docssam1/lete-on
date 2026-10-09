@@ -36,7 +36,7 @@ for (const unit of UNITS) {
     formatCounts: fmtCount,
     sourceTotal: bySrc.length,
     note: 'data/units/' + unit + '.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. '
-      + (bySrc.length ? 'types[].source는 원문의 세트·번호만 담는다 — 원문 문장은 Supabase public.science_bank_source에만 있다.' : '이 단원은 새로 쓴 창작 연습이며 원문 단원평가 대응이나 DB 수록을 주장하지 않는다.'),
+      + (bySrc.length ? `types[].source는 원문의 세트·번호다 — 원문 문장은 ${existsSync(join(unitsDir, `${unit}.source.js`)) ? `data/units/${unit}.source.js` : 'Supabase public.science_bank_source(옮기기 전 단원)'}에 있다.` : '이 단원은 새로 쓴 창작 연습이며 원문 단원평가 대응이나 DB 수록을 주장하지 않는다.'),
   };
   const json = JSON.stringify(out, null, 1) + '\n';
   const dest = join(here, `${unit}.json`);

@@ -467,3 +467,7 @@ h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
 .ck-empty { padding: 28px; text-align: center; color: var(--sub); background: #fff; border: 1px dashed var(--line); border-radius: 14px; }
 .start-badge { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 999px; background: #d9432f; color: #fff; font-size: 12px; text-align: center; }
 @media print { .ck-card { border-color: #999; } .ck-ex { display: block; } .ck-ex > summary { display: none; } .ck-ex:not([open]) p { display: block; } }
+/* 단원평가 원문 그림(시험지에서 잘라 냄) · 유형별 화면의 원문/유사 구분 */
+.src-fig { margin: 10px 0; text-align: center; }
+.src-fig img { max-width: min(100%, 420px); height: auto; border-radius: 8px; background: #fff; }
+.sub-h { margin: 14px 0 4px; font-weight: 700; color: var(--muted, #667); font-size: 14px; }
