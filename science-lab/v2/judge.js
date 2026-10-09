@@ -16,6 +16,8 @@
 // 「기체: 화산 가스」의 쌍점은 「는」으로 바꿔 둔다 — 짝짓기 답(상태: 물질)을 「기체는 화산 가스」와 같게 읽으려고
 export const norm = (s) => String(s ?? '').normalize('NFC').toLowerCase()
   .replace(/\s*[:=]\s*/g, '는')
+  .replace(/(\d)\.(\d)/g, '$1점$2')   // 54.0 g ≠ 540 g — 소수점은 지우지 않는다
+  .replace(/</g, '작').replace(/>/g, '큼')   // (가) < (나) ≠ (가) > (나) — 부등호도 지우지 않는다
   .replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣')   // 낱자 ㄱ·ㄴ은 글자 속에 없으니 늘 기호(「ㄴ, 」「ㄴ이」도)
   .replace(/[^0-9a-z가-힣㉠-㉣○×]/g, '');
 
