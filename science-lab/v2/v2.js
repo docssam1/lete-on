@@ -4,7 +4,7 @@ import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
 import { pageHome } from './home.js?v=6';
 import { escapeInApp } from './inapp.js';
-import { record, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
+import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js';
 import { readingHtml } from './reading.js';
 import { wireReading } from './reading-live.js';
@@ -14,6 +14,7 @@ const UNITS = {
   's42-u04': async () => ({ ...(await import('../data/units/s42-u04.js')), ...(await import('../data/units/s42-u04.lesson.js')), ...(await import('../data/units/s42-u04.similar.js')), ...(await import('../data/units/s42-u04.taxonomy.js')), misc: await import('../data/units/s42-u04.misc.js') }),
   's42-u05': async () => ({ ...(await import('../data/units/s42-u05.js')), ...(await import('../data/units/s42-u05.lesson.js')), ...(await import('../data/units/s42-u05.similar.js')), ...(await import('../data/units/s42-u05.taxonomy.js')), misc: await import('../data/units/s42-u05.misc.js') }),
   's51-u01': async () => ({ ...(await import('../data/units/s51-u01.js')), ...(await import('../data/units/s51-u01.lesson.js')), ...(await import('../data/units/s51-u01.similar.js')), ...(await import('../data/units/s51-u01.taxonomy.js')), misc: await import('../data/units/s51-u01.misc.js') }),
+  's51-u04': async () => ({ ...(await import('../data/units/s51-u04.js')), ...(await import('../data/units/s51-u04.lesson.js')), ...(await import('../data/units/s51-u04.similar.js')), ...(await import('../data/units/s51-u04.taxonomy.js')), misc: await import('../data/units/s51-u04.misc.js') }),
   's51-u03': async () => ({ ...(await import('../data/units/s51-u03.js')), ...(await import('../data/units/s51-u03.lesson.js')), ...(await import('../data/units/s51-u03.similar.js')), ...(await import('../data/units/s51-u03.taxonomy.js')), misc: await import('../data/units/s51-u03.misc.js') }),
   's51-u02': async () => ({ ...(await import('../data/units/s51-u02.js')), ...(await import('../data/units/s51-u02.lesson.js')), ...(await import('../data/units/s51-u02.similar.js')), ...(await import('../data/units/s51-u02.taxonomy.js')), misc: await import('../data/units/s51-u02.misc.js') }),
   's42-u03': async () => ({ ...(await import('../data/units/s42-u03.js')), ...(await import('../data/units/s42-u03.lesson.js')), ...(await import('../data/units/s42-u03.similar.js')), ...(await import('../data/units/s42-u03.taxonomy.js')), misc: await import('../data/units/s42-u03.misc.js') }),
@@ -438,7 +439,7 @@ function pageBook(u, L, items, mode) {
 }
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
-const BOOKS = { 's51-u03': () => import('../data/book/s51-u03.book.js'), 's51-u02': () => import('../data/book/s51-u02.book.js'), 's51-u01': () => import('../data/book/s51-u01.book.js'), 's42-u05': () => import('../data/book/s42-u05.book.js'), 's42-u04': () => import('../data/book/s42-u04.book.js'), 's42-u03': () => import('../data/book/s42-u03.book.js'), 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
+const BOOKS = { 's51-u04': () => import('../data/book/s51-u04.book.js'), 's51-u03': () => import('../data/book/s51-u03.book.js'), 's51-u02': () => import('../data/book/s51-u02.book.js'), 's51-u01': () => import('../data/book/s51-u01.book.js'), 's42-u05': () => import('../data/book/s42-u05.book.js'), 's42-u04': () => import('../data/book/s42-u04.book.js'), 's42-u03': () => import('../data/book/s42-u03.book.js'), 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
 // 교재·수업 화면 위쪽: 모드를 다시 고르는 메뉴는 두지 않는다(첫 화면에서 이미 골랐다). 처음으로 + 필요하면 인쇄만.
 function labBar(u, { print = false } = {}) {
   return `<div class="bk-bar no-print"><a class="btn" href="#/${u}/start">‹ 처음으로</a>${print ? '<button class="btn primary" onclick="print()">A4 인쇄</button>' : ''}</div>`;
@@ -461,11 +462,12 @@ async function pageStart(u) {
       <div class="start-grid">
         ${card(`#/${u}/lab-class/self/1`, '🧪', '스스로 공부하기 · 1차시', '「해 보기」 약 20분 — 예상하고, 가설 세우고, 3D 실험실에서 직접 해 봐요.', true)}
         ${card(`#/${u}/lab-class/self/s2`, '🔎', '스스로 공부하기 · 2차시', '「알아 가기」 약 20분 — 3D로 확인하고, 결론과 개념을 정리해요.', true)}
+        ${card(`#/${u}/daily`, '📝', 'Daily Test · 채점과 첨삭', '확인 문제를 한 문항씩 풀고 한꺼번에 채점해요. 틀린 문제는 독쌤이 먼저 되물어요.', true)}
         ${card(`#/${u}/lab-class/teach/1`, '🖥️', '가르치기', '전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요.')}
         ${card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
         ${card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
       </div>
-      <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a> · <a href="#/${u}/check">선생님 확인${need ? ` <b class="start-badge">${need}</b>` : ''}</a></p></main>`;
+      <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a> · <a href="#/${u}/daily/teacher">Daily Test 정답표</a> · <a href="#/${u}/check">선생님 확인${need ? ` <b class="start-badge">${need}</b>` : ''}</a></p></main>`;
   scrollTo(0, 0);
 }
 async function pageReading(u, L, mode) {
@@ -560,6 +562,27 @@ async function pageLabClass(u, mod, L, mode, idx) {
     onAnswer: (id, ok, picked) => { if (I[id]) record(du(u), I[id], 'deck', ok, { picked }, MISC); } });
 }
 
+// Daily Test — 교재의 교과 확인 문제 + 형성평가를 한 번에 풀고 채점·첨삭(v2/daily.js). 아무것도 서버로 보내지 않는다.
+async function pageDaily(u, mod, L, mode) {
+  const bookMod = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null;
+  const similar = mod.similar || [], items = mod.items || [], I = byId([...similar, ...items]);
+  const ch = bookMod?.chapter || { no: '', title: L.title || u, book: L.title || u };
+  const bySrc = (k) => similar.find((s) => `${s.sourceRef?.of?.set}-${s.sourceRef?.of?.no}` === k);
+  let list = ch.check ? [...new Set([...(ch.check || []), ...(ch.formative?.items || [])])].map(bySrc).filter(Boolean) : [];
+  if (!list.length) list = [...(L.evaluate?.items || []), ...(L.explain?.miniTest || [])].map((id) => I[id]).filter(Boolean);
+  if (!list.length) { $app.innerHTML = '<main class="wrap"><p>이 단원의 Daily Test는 준비 중이에요.</p></main>'; return; }
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js');
+  if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC }); scrollTo(0, 0); return; }
+  const judge = await import(`../data/units/${du(u)}.judge.js`).then((m) => m.judge).catch(() => ({}));
+  const pool = [...similar, ...items];
+  releasePage = mountDaily({ $app, u, title: `${ch.book} · ${ch.title}`, ch, list, pool, misc: MISC, judge,
+    record: (it, stage, ok, detail) => record(du(u), it, stage, ok, detail, MISC),
+    classify: (it, d) => classify(it, MISC, false, d).m,
+    remedyItems: (m, n) => remedyItems(du(u), m, MISC, pool, n),
+    itemHtml, wireItem, say: (lines) => teacher(null, lines), back: `#/${u}/start` });
+  scrollTo(0, 0);
+}
+
 // ── 라우터 ──
 async function route() {
   releasePage(); releasePage = () => {}; stopTeacher(); stepGuide?.destroy(); stepGuide = null;
@@ -569,11 +592,12 @@ async function route() {
   const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
   const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, items }; MISC = mod.misc || null;
   if (a === 'sub') return pageSub(u, L, b);
-  if (!mod.lesson && !['print', 'lab-book', 'lab-class', 'start'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
+  if (!mod.lesson && !['print', 'lab-book', 'lab-class', 'start', 'daily'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
   if (a === 'start') return pageStart(u);
   if (a === 'kit') return pageKit(u, L);
   if (a === 'diagnose') return MISC ? pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student') : location.replace(`#/${u}`);
   if (a === 'report') return pageReport(u, L);
+  if (a === 'daily') return pageDaily(u, mod, L, b);
   if (a === 'reading') return pageReading(u, L, b);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
   if (a === 'lab-book') return pageLabBook(u, mod, b || 'student', +location.hash.split('/')[4] || 1);

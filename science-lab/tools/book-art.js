@@ -3,11 +3,14 @@
 import * as THREE from '../../world-explorer/vendor/three.module.js';
 import { PLANETS, planetMesh, sunGlow } from '../scenes/solar-kit.js';
 import { buildRisingSun } from '../scenes/rising-sun.js';
+import { buildSnowJar, COOLS } from '../scenes/snow-jar.js';
+import { labTable, labTray, beakerMesh, reagentBottle, lathe, round, fresnel, thickGlass } from '../scenes/glassware.js';
+import { puffCloud } from '../scenes/_kit.js';
 const OIL_R_ = () => 0.34;
 
 const q = new URLSearchParams(location.search), shot = q.get('shot') || 'hero';
-const SIZE = { hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720] };
-const [W, H] = SIZE[shot] || SIZE[shot.startsWith('sun') ? 'sun' : shot] || [1600, 900];
+const SIZE = { hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720] };
+const [W, H] = SIZE[shot] || SIZE[shot.split('-')[0]] || [1600, 900];
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
 document.body.appendChild(renderer.domElement);
@@ -66,6 +69,66 @@ if (shot === 'hero' || shot === 'sizes') {
   }
   overlay.push(shot === 'hero' ? ['태양', sunX + SUN_R - 0.95, -3.35, { size: 48, color: '#fff1d6', bold: true }] : ['태양 — 지구 반지름의 약 109배', -W / 200 + 0.22, -3.45, { size: 34, color: '#7a3410', bold: true, align: 'left' }]);
   if (shot === 'sizes') overlay.push(['지구의 반지름을 1로 볼 때 · 크기만 비율대로, 간격은 실제 거리와 달라요', 0.9, 3.25, { size: 32, color: '#5b6577' }]);
+} else if (shot === 'float-row' || shot === 'snow-cup') {
+  scene.background = new THREE.Color(0xf5f1e8); scene.environment = env; scene.environmentIntensity = 0.55;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe7dccb, 0.9)); const d = new THREE.DirectionalLight(0xffffff, 2.4); d.position.set(3, 6, 5); scene.add(d);
+  const table = labTable(); table.scale.set(5, 1, 4); scene.add(table);
+  if (shot === 'float-row') {
+    // 진하기가 다른 소금물 세 컵 + 같은 방울토마토(진할수록 높이 뜬다)
+    const tomato = () => { const t = new THREE.Group(); t.add(new THREE.Mesh(new THREE.SphereGeometry(0.2, 48, 32), new THREE.MeshPhysicalMaterial({ color: 0xd8261a, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.08 })));
+      for (let k = 0; k < 5; k++) { const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.16, 6), new THREE.MeshStandardMaterial({ color: 0x3f7d2a, roughness: 0.7 })); const a = k / 5 * Math.PI * 2; leaf.position.set(Math.cos(a) * 0.06, 0.2, Math.sin(a) * 0.06); leaf.rotation.set(Math.sin(a) * 1.3, 0, -Math.cos(a) * 1.3); t.add(leaf); }
+      return t; };
+    [['물', '가라앉아요', 0x0, 0.23], ['조금 진한 소금물', '가운데쯤 떠요', 0xdbe9f3, 0.62], ['아주 진한 소금물', '물 위로 떠올라요', 0xcfe0ee, 1.06]].forEach(([n, sub, tint, y], i) => {
+      const x = (i - 1) * 2.35, bk = beakerMesh({ r: 0.62, h: 1.4, water: 1.12, tint: tint || 0xbfe0f7 }); bk.position.x = x; scene.add(bk);
+      const tm = tomato(); tm.position.set(x, y, 0.05); tm.rotation.set(0.2, i, 0.15); scene.add(tm);
+      overlay.push([n, x, -0.42, { size: 40, color: '#1f2a44', bold: true }], [sub, x, -0.82, { size: 32, color: '#2b5fa8', bold: true }]); });
+    camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100); camera.position.set(0, 2.1, 10.4); camera.lookAt(0, 0.5, 0);
+  } else {
+    // 종이컵의 뜨거운 물에 염화암모늄을 녹이는 장면
+    const tray = labTray(); scene.add(tray);
+    const paper = new THREE.MeshStandardMaterial({ color: 0xfbfaf6, roughness: 0.85, side: THREE.DoubleSide });
+    const cup = new THREE.Mesh(lathe(round([[0, 0.02], [0.42, 0.02, 0.03], [0.58, 1.25], [0.6, 1.28]]), 64), paper); scene.add(cup);
+    const band = new THREE.Mesh(new THREE.CylinderGeometry(0.535, 0.49, 0.3, 64, 1, true), new THREE.MeshStandardMaterial({ color: 0x2b5fa8, roughness: 0.7, side: THREE.DoubleSide })); band.position.y = 0.72; scene.add(band);
+    const water = new THREE.Mesh(new THREE.CircleGeometry(0.455, 48), fresnel(new THREE.MeshPhysicalMaterial({ color: 0xf2efe6, roughness: 0.05, transparent: true, opacity: 0.85, clearcoat: 1 }), { edge: 0.9 })); water.rotation.x = -Math.PI / 2; water.position.y = 0.38; scene.add(water);
+    for (let k = 0; k < 40; k++) { const g2 = new THREE.Mesh(new THREE.SphereGeometry(0.018, 8, 6), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 })); const a = k * 2.4, r = Math.sqrt(k / 40) * 0.36; g2.position.set(Math.cos(a) * r, 0.39, Math.sin(a) * r); scene.add(g2); }
+    const wood = new THREE.MeshStandardMaterial({ color: 0xd9b98a, roughness: 0.75 });
+    for (const dx of [-0.03, 0.03]) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.9, 0.05), wood); st.position.set(0.15 + dx, 0.95, 0.05); st.rotation.z = -0.32; st.rotation.x = 0.08; scene.add(st); }
+    const steam = puffCloud(40, { color: 0xffffff, opacity: 1, soft: 0.85, renderOrder: 8 }); scene.add(steam); let n = 0;
+    for (let i = 0; i < 18; i++) { const life = i / 18, a = i * 2.3; steam.userData.set(n++, Math.cos(a) * 0.25, 1.35 + life * 1.1, Math.sin(a) * 0.25, 0.35 + life * 0.5, 0.2 * Math.sin(life * Math.PI)); } steam.userData.commit(n);
+    const powder = new THREE.Mesh(lathe(round([[0, 0.16], [0.18, 0.1, 0.06], [0.32, 0]])), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 })); powder.position.set(-1.05, 0.03, 0.35); scene.add(powder);
+    const sheet = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.006, 0.9), new THREE.MeshStandardMaterial({ color: 0xe9eef6, roughness: 0.6 })); sheet.position.set(-1.05, 0.028, 0.35); sheet.rotation.y = 0.5; scene.add(sheet);
+    const bottle = reagentBottle('염화암모늄', 'NH₄Cl · 흰 가루', 0xd9d4c4, 0x1d4f8f, '#3346a0'); bottle.position.set(-1.3, 0, -0.9); bottle.rotation.y = 0.5; scene.add(bottle);
+    camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100); camera.position.set(2.1, 2.7, 7.4); camera.lookAt(1.25, 0.8, 0);
+    callouts.push({ t: '뜨거운 물 약 10 mL', p: [0.3, 0.4, 0.3], at: [700, 210], sub: '종이컵 바닥에서 1 cm쯤' }, { t: '염화암모늄을 넣고 저어요', p: [-1.05, 0.15, 0.45], at: [700, 420], sub: '더 녹지 않을 때까지' });
+  }
+} else if (shot.startsWith('snow')) {
+  // 병 속에 내리는 눈: snow-hot(맑은 포화 용액) · snow-room(실온) · snow-ice(얼음물) · snow-reheat(다시 데우기) · snow-row(세 병 비교) · snow-hero(여는 그림)
+  const dark = shot === 'snow-hero';
+  scene.background = new THREE.Color(dark ? 0x1b2547 : 0xf5f1e8); scene.environment = env; scene.environmentIntensity = dark ? 0.35 : 0.55;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe7dccb, dark ? 0.5 : 0.9)); const d = new THREE.DirectionalLight(dark ? 0xdfe8ff : 0xffffff, dark ? 1.6 : 2.4); d.position.set(3, 6, 5); scene.add(d);
+  if (dark) { const warm = new THREE.PointLight(0xffc98a, 30, 0, 1.6); warm.position.set(-2.5, 2.5, 3); scene.add(warm); }
+  const make = (st, x = 0) => { const rig = buildSnowJar(); rig.position.x = x; scene.add(rig); rig.userData.set({ t: 5.5, ...st }); Object.values(rig.userData.names).forEach((n) => { n.visible = false; }); rig.children[0].scale.set(5, 1, 4); return rig; };
+  if (shot === 'snow-row') {
+    [0, 1, 2].forEach((c, i) => { const x = (i - 1) * 3.4, rig = make({ cool: c, p: 1 }, x); rig.userData.props.forEach((o) => { o.visible = false; });
+      overlay.push([['그대로 60 ℃', '실온 20 ℃', '얼음물 0 ℃'][i], x, -0.55, { size: 46, color: '#1f2a44', bold: true }], [['결정 0 g', '결정 약 1.8 g', '결정 약 2.5 g'][i], x, -1.05, { size: 36, color: '#3346a0', bold: true }]); });
+    camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100); camera.position.set(0, 2.6, 17.5); camera.lookAt(0, 1.2, 0);
+  } else {
+    const st = { 'snow-hot': { cool: 0, p: 0 }, 'snow-room': { cool: 1, p: 0.7 }, 'snow-ice': { cool: 2, p: 1 }, 'snow-reheat': { cool: 2, p: 1, reheat: 0.45 }, 'snow-hero': { cool: 2, p: 0.75 } }[shot];
+    const rig = make(st, 0);
+    camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100);
+    if (dark) { rig.userData.props.forEach((o) => { o.visible = false; }); rig.userData.board.visible = false; rig.userData.boardFoot.visible = false; camera.position.set(-1.6, 2.4, 11.8); camera.lookAt(-2.3, 1.55, 0); }
+    else { camera.position.set(3.3, 2.5, 11.2); camera.lookAt(2.05, 1.55, 0); }
+    const R = 0.95, C = (t, p, py, sub) => callouts.push({ t, p, at: [700, py], sub });
+    const L = {
+      'snow-hot': [['염화암모늄 포화 용액', [R * 0.8, 1.5, R * 0.5], 230, '뜨거운 물 10 mL에 가득 녹였어요'], ['네임펜 그림', [R * 0.2, 1.0, R + 0.05], 420, '병 바깥에 겨울 풍경을 그려요']],
+      'snow-room': [['흰 결정이 내려요', [0.3, 1.5, 0.5], 230, '실온(20 ℃)에서 식는 동안'], ['바닥에 쌓여요', [0.4, 0.2, 0.7], 420, '녹지 못한 염화암모늄']],
+      'snow-ice': [['얼음물에 식히면', [1.3, 0.85, 0.7], 210, '0 ℃까지 더 차갑게'], ['눈이 더 많이 쌓여요', [0.4, 0.3, 0.75], 420, '녹을 수 있는 양이 더 줄어서']],
+      'snow-reheat': [['뜨거운 물에 다시 넣으면', [1.3, 0.85, 0.7], 210, '결정이 녹아 사라져요'], ['다시 맑아져요', [0.3, 1.6, 0.5], 420, '식히면 또 눈이 내려요']],
+      'snow-hero': [],
+    }[shot];
+    for (const [t, p, py, sub] of L) C(t, p, py, sub);
+    if (dark) overlay.push(['병 속에 내리는 눈', -6.4, 2.3, { size: 66, color: '#ffffff', bold: true, align: 'left' }], ['가득 녹인 용액을 식히면 녹지 못한 만큼', -6.4, 1.75, { size: 32, color: '#c9d6ff', align: 'left' }], ['흰 결정이 되어 내려앉아요', -6.4, 1.38, { size: 32, color: '#c9d6ff', align: 'left' }]);
+  }
 } else {
   // 떠오르는 태양 병: sun-oil(바닥) · sun-drop(물 넣는 중) · sun-mid(가운데 태양) · sun-top(너무 많이) · sun-shake(흔들기)
   scene.background = new THREE.Color(0xf5f1e8); scene.environment = env; scene.environmentIntensity = 0.55;
@@ -76,7 +139,7 @@ if (shot === 'hero' || shot === 'sizes') {
   const lvl = (ml) => 0.1 + 0.045 * (20 + ml), oilY = (ml) => { const f = [0, 0.4, 0.5, 0.8, 1][[0, 10, 20, 30, 40].indexOf(ml)]; return 0.1 + 0.34 + f * (lvl(ml) - 0.1 - 0.68); };
   if (shot === 'sun-row') {
     // 결과 비교: 물 0 · 20 · 40 mL 세 병을 나란히(같은 높이에서 찍어 덩어리 높이를 바로 비교)
-    [0, 20, 40].forEach((ml, i) => { const x = (i - 1) * 3.0; make({ ml, from: ml, p: 1, oilIn: 1, dropper: false }, x);
+    [0, 20, 40].forEach((ml, i) => { const x = (i - 1) * 3.0, rig = make({ ml, from: ml, p: 1, oilIn: 1, dropper: false }, x); rig.userData.props.forEach((o) => { o.visible = false; });
       overlay.push([`물 ${ml} mL`, x, -0.55, { size: 46, color: '#1f2a44', bold: true }], [['바닥에 가라앉음', '가운데쯤 둥글게', '수면까지 떠오름'][i], x, -1.05, { size: 36, color: '#c2581c', bold: true }]); });
     camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100); camera.position.set(0, 2.6, 15.5); camera.lookAt(0, 1.25, 0);
   } else {

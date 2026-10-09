@@ -1,4 +1,4 @@
-// 태양계와 별 실험실 — 넣을 물의 양을 골라 「떨어뜨리기」 → 붉은 식용유 덩어리가 뜬 눈금을 표에 적는다. 「흔들기」로 성운설 모형도 본다.
+// 태양계와 별 실험실 — 넣을 물의 양을 골라 「물 넣기」 → 붉은 식용유 덩어리가 뜬 눈금을 표에 적는다. 「흔들기」로 성운설 모형도 본다.
 // 원본 5-D 「떠오르는 태양」. 눈금은 원본 결과의 순서(물이 많을수록 높이 뜸)를 따르는 모형 값이다.
 import { WATERS, sunModel } from '../scenes/rising-sun-model.js';
 export { WATERS, sunModel };
@@ -14,8 +14,8 @@ export async function mountSun(el, opts = {}) {
   el.innerHTML = `<div class="modes" role="group" aria-label="넣을 물"><span class="lab-lbl">넣을 물</span>${WATERS.map((v) => `<button type="button" data-ml="${v}">${v} mL</button>`).join('')}</div>
     <div class="lab3d">${rig ? '<canvas aria-label="떠오르는 태양 3D 실험. 에탄올 속 붉은 식용유에 물을 떨어뜨려 덩어리가 떠오르는 높이를 관찰해요."></canvas>'
       : '<div class="sun-2d" role="img" aria-label="떠오르는 태양 2D 관찰"><div class="sn-jar"><i class="sn-liq"></i><b class="sn-oil"></b><span class="sn-scale"></span></div></div>'}
-      <p class="lab3d-tip" data-tip aria-live="polite">넣을 물의 양을 고르고 「떨어뜨리기」를 눌러요.</p>
-      <div class="lab3d-btns"><button type="button" class="btn primary" data-run>떨어뜨리기</button><button type="button" class="btn" data-shake disabled>뚜껑 닫고 흔들기</button><button type="button" class="btn" data-record disabled>표에 적기</button></div></div>
+      <p class="lab3d-tip" data-tip aria-live="polite">넣을 물의 양을 고르고 「물 넣기」를 눌러요.</p>
+      <div class="lab3d-btns"><button type="button" class="btn primary" data-run>물 넣기</button><button type="button" class="btn" data-shake disabled title="뚜껑을 닫고 흔들어요">흔들기</button><button type="button" class="btn" data-record disabled>표에 적기</button></div></div>
     <p class="sn-model-note">에탄올 20 mL에 붉은 식용유를 넣고 시작해요. 눈금은 액체 바닥 0칸부터 수면 10칸까지예요. 칸 수는 원본 실험의 결과 순서를 따르는 모형 값이에요.</p>
     <table class="lab-table"><thead><tr><th>넣은 물</th><th>눈금</th><th>덩어리 모양</th></tr></thead><tbody></tbody></table>`;
   const $ = (q) => el.querySelector(q), tip = (s) => { $('[data-tip]').textContent = s; }, record = $('[data-record]'), run = $('[data-run]'), shakeBtn = $('[data-shake]');
@@ -34,7 +34,7 @@ export async function mountSun(el, opts = {}) {
     }
   };
   const press = () => el.querySelectorAll('[data-ml]').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.ml) === ml)));
-  function choose() { clearInterval(timer); t = 0; running = null; completed = false; record.disabled = true; shakeBtn.disabled = true; run.disabled = false; show(0); press(); tip(`물 ${ml} mL. 「떨어뜨리기」를 눌러 식용유 덩어리를 지켜봐요.`); }
+  function choose() { clearInterval(timer); t = 0; running = null; completed = false; record.disabled = true; shakeBtn.disabled = true; run.disabled = false; show(0); press(); tip(`물 ${ml} mL. 「물 넣기」를 눌러 식용유 덩어리를 지켜봐요.`); }
   function done() {
     running = null; completed = true; run.disabled = false; record.disabled = false; shakeBtn.disabled = false; show(1, t);
     const m = sunModel(ml);

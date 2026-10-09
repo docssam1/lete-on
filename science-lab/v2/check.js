@@ -36,6 +36,11 @@ function lookup(r, ch, similar) {
     const it = similar.find((x) => x.id === r.item) || similar.find((x) => `${x.sourceRef?.of?.set}-${x.sourceRef?.of?.no}` === ch.check[+r.k.slice(4)]);
     const ac = it?.answerContract; return { q: it?.prompt, a: ac ? (ac.type === 'short-text' ? ac.answer : ac.sample) : '', where: '교과 확인 문제' };
   }
+  if (r.k === 'daily') {   // Daily Test(v2/daily.js)에서 규칙으로 못 가린 답
+    const it = similar.find((x) => x.id === r.item), ac = it?.answerContract;
+    const a = !ac ? '' : ac.type === 'written-explanation' ? ac.sample : ac.type === 'cloze' ? ac.blanks.map((b) => b.answer).join(' · ') : ac.answer;
+    return { q: it?.prompt, a, where: 'Daily Test' };
+  }
   return { q: r.k, a: '', where: '' };
 }
 

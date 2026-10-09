@@ -23,6 +23,7 @@ export function classify(it, misc, ok, detail = {}) {
   const X = misc?.cells?.[it.id];
   if (X && detail.wrongCells) ms.add(X);
   if (detail.chip && misc?.bookChips?.[detail.chip]) ms.add(misc.bookChips[detail.chip][1]);
+  for (const m of [].concat(detail.m || [])) if (m && misc?.misconceptions?.[m]) ms.add(m);   // 서술 판정표가 잡은 오개념(Daily Test)
   return { ok: false, m: [...ms], kind: detail.revealed ? 'reveal' : ms.size ? 'mis' : 'slip' };
 }
 
