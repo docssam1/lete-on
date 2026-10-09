@@ -624,7 +624,8 @@ function pageBank() {
     ${SEMS.map((s) => `<section class="bank-sem"><h3>${s.sem.replace('-', '학년 ')}학기</h3><ol class="bank-units">${s.units.map((un) => { const b = BANK[un.id];
       return `<li class="${b ? 'open' : 'wait'}"><span class="bn">${R[un.no - 1]}</span><span class="bt">${esc(un.title)}</span>${b
         ? `<span class="bc">원문 ${b.n}</span><span class="bs">${b.sets.map((n) => `<a href="#/${un.id}/exam/${n}">세트${n}</a>`).join('')}<a href="#/${un.id}/sub/E1">소단원</a></span>`
-        : '<span class="bc">준비 중</span>'}</li>`; }).join('')}</ol></section>`).join('')}</main>`;
+        : '<span class="bc">준비 중</span>'}</li>`; }).join('')}${['mid', 'fin'].map((k) => { const id = `s${s.sem.replace('-', '')}-${k}`, b = BANK[id];
+        return b ? `<li class="open exam"><span class="bn">${k === 'mid' ? '중간' : '기말'}</span><span class="bt">${k === 'mid' ? '중간평가' : '기말평가'}</span><span class="bc">원문 ${b.n}</span><span class="bs">${b.sets.map((n) => `<a href="#/${id}/exam/${n}">세트${n}</a>`).join('')}<a href="#/${id}/sub/E1">단원별</a></span></li>` : ''; }).join('')}</ol></section>`).join('')}</main>`;
   scrollTo(0, 0);
 }
 

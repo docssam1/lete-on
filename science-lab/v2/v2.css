@@ -487,3 +487,4 @@ h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
 .sub-exam .btn { min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }
 .sheet-sets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
 .sheet-sets .btn { text-decoration: none; display: inline-flex; align-items: center; min-height: 40px; }
+.bank-units li.exam { background: var(--soft, #f3f6fb); } .bank-units li.exam .bn { font-size: 13px; }
