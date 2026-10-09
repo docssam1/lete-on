@@ -129,3 +129,53 @@ export async function importUnit(cfg) {
   }
   console.log(`${unit}: 원문 ${source.length} · 유사 ${similar.length} · 그림 ${new Set(Object.values(figmap)).size} · 유형 ${Object.keys(TYPE).length}`);
 }
+
+// 이미 유사문항·분류가 있는 단원(앞서 원문을 Supabase에만 두었던 4-1 Ⅰ~Ⅲ·4-2 Ⅰ): 원문(source.js)과 그림만 더한다.
+// 유형은 기존 taxonomy.sources, 오개념은 짝 유사문항의 것을 그대로 쓴다. 유사문항·분류·레슨은 건드리지 않는다.
+export async function importSourceOnly(cfg) {
+  const { unit, dir } = cfg, date = cfg.date;
+  const figmap = existsSync(join(dir, 'figmap.json')) ? JSON.parse(readFileSync(join(dir, 'figmap.json'), 'utf8')) : {};
+  const sets = [1, 2, 3, 4].filter((s) => existsSync(join(dir, `set${s}.json`)));
+  const orig = sets.flatMap((s) => JSON.parse(readFileSync(join(dir, `set${s}.json`), 'utf8')).map((x) => ({ ...x, set: s, key: `${s}-${x.no}` })));
+  const { taxonomy: tx } = await load(`${unit}.taxonomy.js`), { similar } = await load(`${unit}.similar.js`);
+  const EL = Object.fromEntries(tx.types.map((t) => [t.id, t.element]));
+  const keys = new Set(orig.map((o) => o.key));
+  for (const o of orig) if (!tx.sources[o.key]) throw new Error(`분류에 없는 원문 ${o.key}`);
+  for (const k of Object.keys(tx.sources)) if (!keys.has(k)) throw new Error(`전사에 없는 원문 ${k}`);
+  const figDir = join(ROOT, 'assets', 'bank', unit); mkdirSync(figDir, { recursive: true });
+  for (const name of new Set(Object.values(figmap))) copyFileSync(join(dir, 'figs', `${name}.webp`), join(figDir, `${name}.webp`));
+  // 손으로 쓴 오개념표(정규식·주석)는 다시 쓰지 않는다 — 끝에 원문용 블록만 덧붙인다(다시 돌리면 블록만 바뀜)
+  const miscPath = join(UNITS, `${unit}.misc.js`), MARK = '// ── 단원평가 원문(source.js) ──';
+  const miscText = readFileSync(miscPath, 'utf8').split(MARK)[0].trimEnd() + '\n';
+  const misc = await load(`${unit}.misc.js`), add = { distractors: {}, typed: {}, written: {} };
+  const twinM = (o) => { const s = similar.find((x) => x.sourceRef?.of?.set === o.set && x.sourceRef?.of?.no === o.no); if (!s) return null;
+    return Object.values(misc.distractors?.[s.id] || {})[0] || misc.typed?.[s.id]?.any || null; };
+  const source = orig.map((o) => {
+    const type = tx.sources[o.key][0], ac = contract(o, cfg, o.key), rub = (o.rubric || []).map((r) => (r.ratio ? `${r.criterion} (${r.ratio})` : r.criterion));
+    const it = {
+      id: `${unit}-o${o.set}-${String(o.no).padStart(2, '0')}`, status: 'verified',
+      sourceRef: { type: 'original', set: o.set, no: o.no, page: o.page, sourceId: `${cfg.sourceId}-set${o.set}`, edition: `${cfg.edition} 세트${o.set}`, course: cfg.course, unit: cfg.unitLabel },
+      taxonomy: { curriculum: '2022 개정', grade: tx.grade, semester: tx.semester, unit: cfg.uKey, area: tx.area, element: EL[type], type, format: o.format, level: '기본', track: '교과', topic: o.topic, concept: o.concept },
+      prompt: o.prompt, givens: o.givens ?? null, choices: o.choices ? o.choices.map((c) => c.replace(/^[①②③④⑤]\s*/, '')) : null,
+      figure: figmap[o.key] ? `assets/bank/${unit}/${figmap[o.key]}.webp` : null, figureNote: o.figure?.note ?? null,
+      visualModel: null, variantRules: null, responseContract: ac.type, answerContract: ac,
+      explanation: rub.length ? `${o.explanation}\n[채점 기준] ${rub.join(' / ')}` : o.explanation,
+      evidence: { checkedBy: 'Claude', date, gates: ['source', 'answer'], against: '정답 및 풀이', note: o.uncertain || undefined },
+    };
+    const m = cfg.mFix?.[o.key] || twinM(o);
+    if (ac.type === 'written-explanation') add.written[it.id] = { partial: [] };
+    else if (m && (ac.type === 'single-choice' || ac.type === 'multi-choice')) { const ok = new Set([].concat(ac.answer ?? ac.answers)); add.distractors[it.id] = Object.fromEntries(it.choices.map((_, i) => i).filter((i) => !ok.has(i)).map((i) => [i, m])); }
+    else if (m) add.typed[it.id] = { any: m };
+    return it;
+  });
+  writeFileSync(join(UNITS, `${unit}.source.js`), `// ${cfg.title} — 단원평가 원문 ${orig.length}문항(${cfg.edition} 세트${sets.join('·')}). 시험지를 그대로 옮기고 정답 및 풀이와 대조했다.\n// 원장 지시(2026-10-09): 원문을 그대로 문제은행에 쓴다(전에는 Supabase에만 있었음). 그림은 시험지에서 잘라 낸 것(assets/bank/${unit}/).\nexport const source = ${js(source)};\n`);
+  writeFileSync(miscPath, `${miscText}\n${MARK}\n// 짝 유사문항의 오개념을 그대로 쓴다. scripts/bank-science-lib.mjs importSourceOnly가 쓴 블록 — 손으로 고치지 말 것.\n`
+    + `Object.assign(distractors, ${js(add.distractors)});\nObject.assign(typed, ${js(add.typed)});\nObject.assign(written, ${js(add.written)});\n`);
+  // 판정표도 손으로 쓴 주석을 살리려고 끝에 블록만 덧붙인다
+  const jPath = join(UNITS, `${unit}.judge.js`), jText = readFileSync(jPath, 'utf8').split(MARK)[0].trimEnd() + '\n', jAdd = {};
+  for (const [k, v] of Object.entries(cfg.judge || {})) { const o = orig.find((x) => `src:${x.key}` === k); if (!o) throw new Error(`판정표 키 ${k}`); jAdd[source[orig.indexOf(o)].id] = v; }
+  writeFileSync(jPath, `${jText}\n${MARK}\n// scripts/bank-science-lib.mjs importSourceOnly가 쓴 블록 — 손으로 고치지 말 것.\nObject.assign(judge, ${js(jAdd)});\n`);
+  const U = await load(`${unit}.js`), head = readFileSync(join(UNITS, `${unit}.js`), 'utf8');
+  if (!/source\.js/.test(head)) console.log(`  (참고) ${unit}.js의 sources.bank는 손으로 data/units/${unit}.source.js로 고칠 것`);
+  console.log(`${unit}: 원문 ${source.length} · 그림 ${new Set(Object.values(figmap)).size} (유사·분류는 그대로)`);
+}
