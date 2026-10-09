@@ -4,12 +4,14 @@ import * as THREE from '../../world-explorer/vendor/three.module.js';
 import { PLANETS, planetMesh, sunGlow } from '../scenes/solar-kit.js';
 import { buildRisingSun } from '../scenes/rising-sun.js';
 import { buildSnowJar, COOLS } from '../scenes/snow-jar.js';
+import { WATERS, volAt } from '../scenes/bread-model.js';
+import { buildBreadRig, buildYeastView, flourBag, sugarBowl, yeastPack, kitchenTimer } from '../scenes/bread-dough.js';
 import { labTable, labTray, beakerMesh, reagentBottle, lathe, round, fresnel, thickGlass } from '../scenes/glassware.js';
-import { puffCloud } from '../scenes/_kit.js';
+import { puffCloud, roundedBoxGeometry } from '../scenes/_kit.js';
 const OIL_R_ = () => 0.34;
 
 const q = new URLSearchParams(location.search), shot = q.get('shot') || 'hero';
-const SIZE = { hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720] };
+const SIZE = { hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600] };
 const [W, H] = SIZE[shot] || SIZE[shot.split('-')[0]] || [1600, 900];
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -100,6 +102,76 @@ if (shot === 'hero' || shot === 'sizes') {
     const bottle = reagentBottle('염화암모늄', 'NH₄Cl · 흰 가루', 0xd9d4c4, 0x1d4f8f, '#3346a0'); bottle.position.set(-1.3, 0, -0.9); bottle.rotation.y = 0.5; scene.add(bottle);
     camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100); camera.position.set(2.1, 2.7, 7.4); camera.lookAt(1.25, 0.8, 0);
     callouts.push({ t: '뜨거운 물 약 10 mL', p: [0.3, 0.4, 0.3], at: [700, 210], sub: '종이컵 바닥에서 1 cm쯤' }, { t: '염화암모늄을 넣고 저어요', p: [-1.05, 0.15, 0.45], at: [700, 420], sub: '더 녹지 않을 때까지' });
+  }
+} else if (shot.startsWith('bread') || shot === 'mold-dish') {
+  // 부푸는 효모빵: bread-hero · bread-mix · bread-start · bread-cup · bread-yeast · bread-baked · bread-row · mold-dish(읽을거리)
+  scene.background = new THREE.Color(shot === 'bread-yeast' ? 0xeef1f6 : 0xf5f1e8); scene.environment = env; scene.environmentIntensity = 0.55;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe7dccb, 0.9)); const d = new THREE.DirectionalLight(0xffffff, 2.4); d.position.set(3, 6, 5); scene.add(d);
+  camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100);
+  const hideNames = (rig) => { Object.values(rig.userData.names || {}).forEach((n) => { n.visible = false; }); (rig.userData.tags || []).forEach((n) => { n.visible = false; }); };
+  const C = (t, p, py, sub) => callouts.push({ t, p, at: [700, py], sub });
+  const SH = ['찬물 10 ℃', '따뜻한 물 40 ℃', '뜨거운 물 70 ℃'];
+  if (shot === 'bread-row' || shot === 'bread-start') {
+    const done = shot === 'bread-row', rig = buildBreadRig({ cups: [0, 1, 2], props: false }); rig.userData.set({ min: done ? 40 : 0, t: 3 }); hideNames(rig); rig.userData.timer.visible = false; rig.children[0].scale.set(5, 1, 4); scene.add(rig);
+    rig.userData.cups.forEach((c, i) => { overlay.push([SH[i], c.position.x, -0.42, { size: 40, color: '#1f2a44', bold: true }], [done ? ['240 mL · 조금 부풂', '400 mL · 두 배', '200 mL · 그대로'][i] : '200 mL에서 시작', c.position.x, -0.78, { size: 32, color: '#2f7d4f', bold: true }]); });
+    camera.position.set(0, 2.1, 10.2); camera.lookAt(0, 0.95, 0);
+  } else if (shot === 'bread-hero' || shot === 'bread-cup') {
+    const hero = shot === 'bread-hero', rig = buildBreadRig({ cups: [1], props: hero }); rig.userData.set({ min: hero ? 40 : 24, t: 3 }); hideNames(rig); rig.children[0].scale.set(5, 1, 4); scene.add(rig);
+    if (hero) { rig.position.x = 1.7; rig.userData.props.forEach((o, k) => { o.visible = k === 1; }); camera.position.set(0.9, 1.9, 8.0); camera.lookAt(0.9, 1.05, 0);
+      overlay.push(['부푸는 효모빵 반죽', -2.45, 1.95, { size: 70, color: '#1f2a44', bold: true, align: 'left' }], ['반죽 속의 작은 생물, 효모가', -2.45, 1.5, { size: 36, color: '#2f7d4f', bold: true, align: 'left' }], ['따뜻할 때 기체를 만들어 부풀려요', -2.45, 1.22, { size: 36, color: '#2f7d4f', bold: true, align: 'left' }]); }
+    else { rig.userData.timer.visible = false; camera.position.set(3.3, 2.3, 10.4); camera.lookAt(2.0, 1.0, 0);
+      C('눈금을 읽어요', [0.2, 0.07 + volAt(WATERS[1], 24) * 0.0036, 0.56], 210, '10분마다 컵 벽에 닿은 높이'); C('기체가 만든 구멍', [0.18, 0.55, 0.57], 420, '컵 벽에 비쳐 보여요'); }
+  } else if (shot === 'bread-mix') {
+    { const tb = labTable(); tb.scale.set(5, 1, 4); scene.add(tb); }
+    const bowlMat = new THREE.MeshPhysicalMaterial({ color: 0xfbfaf6, roughness: 0.25, clearcoat: 0.8 });
+    [-2.3, 0, 2.3].forEach((x, i) => {
+      const b = new THREE.Group(); b.position.set(x, 0, 0.3);
+      b.add(new THREE.Mesh(lathe(round([[0, 0.02], [0.4, 0, 0.06], [0.82, 0.55, 0.1], [0.86, 0.58], [0.8, 0.56], [0.38, 0.06], [0, 0.06]]), 64), bowlMat));
+      b.add(new THREE.Mesh(lathe(round([[0, 0.44], [0.3, 0.38, 0.12], [0.62, 0.2]]), 64), new THREE.MeshStandardMaterial({ color: 0xf6f0e2, roughness: 0.95 })));
+      for (let k = 0; k < 26; k++) { const a = k * 2.4 + i, r = 0.05 + (k % 7) * 0.03; const gr = new THREE.Mesh(new THREE.SphereGeometry(0.014, 6, 4), new THREE.MeshStandardMaterial({ color: k % 3 ? 0x9a6a2e : 0xffffff })); gr.position.set(x + Math.cos(a) * r, 0.43 - r * 0.25, 0.3 + Math.sin(a) * r); scene.add(gr); }
+      scene.add(b); overlay.push([['찬물을 넣을 그릇', '따뜻한 물을 넣을 그릇', '뜨거운 물을 넣을 그릇'][i], x, -0.5, { size: 30, color: '#1f2a44', bold: true }]);
+    });
+    const fl = flourBag(); fl.position.set(-1.1, 0, -1.25); fl.rotation.y = 0.3; scene.add(fl);
+    const su = sugarBowl(); su.position.set(0.55, 0, -1.2); scene.add(su);
+    const ye = yeastPack(); ye.position.set(1.65, 0, -1.25); ye.rotation.y = -0.3; scene.add(ye);
+    overlay.push(['세 그릇에 밀가루 100 g · 설탕 1숟가락 · 효모 1작은술을 똑같이', 0, 1.75, { size: 36, color: '#2f7d4f', bold: true }]);
+    camera.position.set(0, 4.3, 10.0); camera.lookAt(0, 0.3, 0);
+  } else if (shot === 'bread-yeast') {
+    const v = buildYeastView(); v.userData.set({ t: 3.2, bud: 1 }); Object.values(v.userData.names).forEach((n) => { n.visible = false; }); scene.add(v);
+    camera.position.set(3.0, 1.6, 11.0); camera.lookAt(2.6, 1.55, 0);
+    C('효모', [0.15, 2.45, 0.25], 160, '지름 약 0.005 mm'); C('혹처럼 돋은 싹', [1.1, 1.22, 0.2], 330, '자라서 떨어지면 새 효모(출아법)'); C('이산화탄소 기체', [0.75, 0.45, 0.4], 500, '설탕을 먹고 내놓아요');
+  } else if (shot === 'bread-baked') {
+    const board = new THREE.Mesh(roundedBoxGeometry(6.2, 0.16, 2.8, 0.08), new THREE.MeshStandardMaterial({ color: 0xc89a62, roughness: 0.7 })); board.position.y = 0.08; scene.add(board);
+    { const tb = labTable(); tb.scale.set(5, 1, 4); scene.add(tb); }
+    const crumb = (n, seed) => { const c = document.createElement('canvas'); c.width = 1024; c.height = 512; const g = c.getContext('2d'); g.fillStyle = '#f3dcae'; g.fillRect(0, 0, 1024, 512); let s = seed; const r = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+      for (let i = 0; i < n; i++) { const x = r() * 1024, y = 512 - Math.pow(r(), 0.8) * 500, rx = 6 + r() * (n > 200 ? 22 : 9), ry = rx * (0.6 + r() * 0.4); const gr = g.createRadialGradient(x, y - ry * 0.3, 1, x, y, rx); gr.addColorStop(0, '#b98b4e'); gr.addColorStop(1, '#e9cc96'); g.fillStyle = gr; g.beginPath(); g.ellipse(x, y, rx, ry, r() * 3, 0, 7); g.fill(); }
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; };
+    const loaf = (x, sx, sy, n, seed) => {
+      const g2 = new THREE.Group(); g2.position.set(x, 0.16, 0);
+      const crust = new THREE.Mesh(new THREE.SphereGeometry(1, 72, 36, Math.PI, Math.PI, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0xb8722e, roughness: 0.55, side: THREE.DoubleSide })); crust.scale.set(sx, sy, 0.9); g2.add(crust);
+      const pts = []; for (let k = 0; k <= 64; k++) { const a = Math.PI * k / 64; pts.push(new THREE.Vector2(Math.cos(a), Math.sin(a))); }
+      const geo = new THREE.ShapeGeometry(new THREE.Shape(pts)), uv = geo.attributes.uv, pos = geo.attributes.position; for (let i = 0; i < uv.count; i++) uv.setXY(i, (pos.getX(i) + 1) / 2, pos.getY(i));
+      const face = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: crumb(n, seed), roughness: 0.9 })); face.scale.set(sx, sy, 1); face.position.z = 0.002; g2.add(face);
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(1, 0.028, 8, 64, Math.PI), new THREE.MeshStandardMaterial({ color: 0x9a5a22, roughness: 0.6 })); rim.scale.set(sx, sy, 1); g2.add(rim);
+      scene.add(g2); };
+    loaf(-1.55, 1.35, 1.15, 260, 3); loaf(1.6, 1.05, 0.62, 70, 9);
+    overlay.push(['따뜻한 물 빵', -1.55, -0.45, { size: 44, color: '#1f2a44', bold: true }], ['크고 구멍이 많아 폭신해요', -1.55, -0.9, { size: 32, color: '#2f7d4f', bold: true }], ['찬물 빵', 1.6, -0.45, { size: 44, color: '#1f2a44', bold: true }], ['작고 촘촘해요', 1.6, -0.9, { size: 32, color: '#2f7d4f', bold: true }]);
+    camera.position.set(0, 1.6, 11.5); camera.lookAt(0, 0.62, 0);
+  } else {
+    // 읽을거리: 세균을 기른 실험 접시에 핀 푸른곰팡이와 둘레의 맑은 고리
+    { const tb = labTable(); tb.scale.set(5, 1, 4); scene.add(tb); }
+    const D = new THREE.Group(); scene.add(D); const DR = 1.9;
+    D.add(new THREE.Mesh(lathe(round([[0, 0.0], [DR + 0.04, 0, 0.03], [DR + 0.04, 0.32], [DR + 0.07, 0.32], [DR + 0.07, -0.0], [0, -0.0]]), 96), thickGlass(0xeef6f8, 0.1)));
+    const agar = new THREE.Mesh(new THREE.CylinderGeometry(DR, DR, 0.14, 96), new THREE.MeshPhysicalMaterial({ color: 0xf1e4b4, roughness: 0.2, transmission: 0, transparent: true, opacity: 0.88, clearcoat: 1 })); agar.position.y = 0.09; D.add(agar);
+    const MX = -0.55, MZ = -0.2, HALO = 0.95;
+    const col = new THREE.MeshPhysicalMaterial({ color: 0xf6e9c2, roughness: 0.35, clearcoat: 0.8 });
+    for (let i = 0; i < 260; i++) { const a = i * 2.399963, r = Math.sqrt((i + 0.5) / 260) * (DR - 0.12), x = Math.cos(a) * r, z = Math.sin(a) * r; if (Math.hypot(x - MX, z - MZ) < HALO) continue; const s = 0.035 + ((i * 0.618) % 1) * 0.05;
+      const c = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), col); c.scale.set(s, s * 0.5, s); c.position.set(x, 0.16, z); D.add(c); }
+    const fuzz = (() => { const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'); const gr = g.createRadialGradient(256, 256, 20, 256, 256, 256); gr.addColorStop(0, '#2f6f62'); gr.addColorStop(0.55, '#4f9a83'); gr.addColorStop(0.8, '#cfe8dc'); gr.addColorStop(1, '#ffffff'); g.fillStyle = gr; g.fillRect(0, 0, 512, 512);
+      for (let i = 0; i < 4000; i++) { const a = Math.random() * 7, r = Math.random() * 250; g.fillStyle = `rgba(255,255,255,${0.05 + Math.random() * 0.12})`; g.fillRect(256 + Math.cos(a) * r, 256 + Math.sin(a) * r, 2, 2); } const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+    const mold = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 24, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ map: fuzz, roughness: 1 })); mold.scale.set(0.5, 0.12, 0.5); mold.position.set(MX, 0.16, MZ); D.add(mold);
+    camera.position.set(2.6, 4.6, 8.6); camera.lookAt(1.6, 0, 0);
+    C('푸른곰팡이', [MX, 0.24, MZ], 170, '균류 · 포자로 퍼져 자라요'); C('맑은 고리', [MX + 0.75, 0.17, MZ + 0.2], 360, '세균이 자라지 못했어요'); C('세균 무리', [0.95, 0.18, 0.95], 540, '점 하나가 수많은 세균');
   }
 } else if (shot.startsWith('snow')) {
   // 병 속에 내리는 눈: snow-hot(맑은 포화 용액) · snow-room(실온) · snow-ice(얼음물) · snow-reheat(다시 데우기) · snow-row(세 병 비교) · snow-hero(여는 그림)

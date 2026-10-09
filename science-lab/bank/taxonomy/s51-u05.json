@@ -1,0 +1,88 @@
+{
+ "unit": "s51-u05",
+ "curriculum": "2022 개정",
+ "grade": 5,
+ "semester": 1,
+ "title": "다양한 생물과 우리 생활",
+ "area": "생명",
+ "standards": [],
+ "standardsNote": "성취기준 문장은 교육부 고시 제2022-33호 [별책 9] 과학과 원문과 아직 대조하지 못했다. 코드만 두고 text는 null·verified:false로 남긴다(추측 금지). 원문을 확인하면 text를 채우고 verified를 true로 바꾼다.",
+ "elements": [
+  {
+   "id": "E1",
+   "name": "균류와 효모"
+  },
+  {
+   "id": "E2",
+   "name": "원생생물과 세균"
+  },
+  {
+   "id": "E3",
+   "name": "다양한 생물과 우리 생활"
+  }
+ ],
+ "types": [
+  {
+   "id": "T01",
+   "element": "E1",
+   "name": "균류(곰팡이·버섯)의 특징",
+   "desc": "균류(곰팡이·버섯)의 특징을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 5,
+   "source": []
+  },
+  {
+   "id": "T02",
+   "element": "E1",
+   "name": "효모와 발효(효모빵)",
+   "desc": "효모와 발효(효모빵)을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 5,
+   "source": []
+  },
+  {
+   "id": "T03",
+   "element": "E2",
+   "name": "원생생물(해캄·짚신벌레)",
+   "desc": "원생생물(해캄·짚신벌레)을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 3,
+   "source": []
+  },
+  {
+   "id": "T04",
+   "element": "E2",
+   "name": "세균의 생김새와 특징",
+   "desc": "세균의 생김새와 특징을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 3,
+   "source": []
+  },
+  {
+   "id": "T05",
+   "element": "E3",
+   "name": "생물이 우리 생활에 주는 영향",
+   "desc": "생물이 우리 생활에 주는 영향을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 2,
+   "source": []
+  },
+  {
+   "id": "T06",
+   "element": "E3",
+   "name": "첨단 생명 과학",
+   "desc": "첨단 생명 과학을(를) 실험과 생활의 예로 설명한다.",
+   "sourceCount": 0,
+   "similarCount": 2,
+   "source": []
+  }
+ ],
+ "formats": [
+  "선택형",
+  "단답형",
+  "서술형"
+ ],
+ "formatCounts": {},
+ "sourceTotal": 0,
+ "note": "data/units/s51-u05.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. 이 단원은 새로 쓴 창작 연습이며 원문 단원평가 대응이나 DB 수록을 주장하지 않는다."
+}
