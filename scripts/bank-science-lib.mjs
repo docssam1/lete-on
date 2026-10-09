@@ -128,7 +128,7 @@ export async function importUnit(cfg) {
       const one = (a) => `[${a.map((k) => `'${k}'`).join(', ')}]`;
       const t0 = t;
       t = t.replace(/(\n\s*check: )\[[^\]]*\]/, (_, p) => `${p}${one(cfg.book.check)}`).replace(/(\n\s*formative: \{\s*items: )\[[^\]]*\]/, (_, p) => `${p}${one(cfg.book.formative)}`);
-      if (t === t0) throw new Error(`교재 ${unit}: check·formative 자리를 못 찾음`);
+      if (t === t0 && !(t.includes(`check: ${one(cfg.book.check)}`) && t.includes(`items: ${one(cfg.book.formative)}`))) throw new Error(`교재 ${unit}: check·formative 자리를 못 찾음`);
     }
     for (const k of [...cfg.book.check, ...cfg.book.formative]) if (!sim[k]) throw new Error(`교재 키 ${k} 없음`);
     writeFileSync(bookF, t);
