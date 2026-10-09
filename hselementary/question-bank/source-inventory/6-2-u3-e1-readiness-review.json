@@ -16,10 +16,10 @@
     { "sourceItemId": "6-2-u3-e1-example-1", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "Source cube positions and occlusion need verification; a tested 3D renderer is required." },
     { "sourceItemId": "6-2-u3-e1-example-2", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "Label-to-cube addresses need verification. Do not add a top-view preservation condition absent from the source." },
     { "sourceItemId": "6-2-u3-e1-example-3", "originalChecked": true, "sourceVerified": true, "singleAnswer": true, "answerContract": "bottom-excluded-surface-area-fixed-pool", "implementationStatus": "fixed-verified-pool", "releaseStatus": "verified", "publicDecision": "confirmed", "verifiedVariantCount": 3, "problemAndAnswerVisuals": "height-chart-and-directional-exposed-face-account", "generatorKey": "sourceGrade6SecondSpaceE1ExposedArea" },
-    { "sourceItemId": "6-2-u3-e1-example-4", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "candidate", "sourceMathCheckedBySecondaryReviewer": true, "reason": "A source-derived unique stack was enumerated; answer 3D and variant/render gates are not implemented." },
+    { "sourceItemId": "6-2-u3-e1-example-4", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "candidate", "sourceMathCheckedBySecondaryReviewer": true, "blockCoordinatesVerified": true, "sourceModelContract": "source-6-2-stack-models.js", "fixedModelVariantsVerified": 3, "threeModelReviewVerified": true, "learnerBankRenderVerified": false, "reason": "Three fixed source-model stacks and the 3D model-review renderer are verified. Learner question generation, difficulty choices, dot-grid answers, printed fallback mapping and mixed worksheet gates are still pending." },
     { "sourceItemId": "6-2-u3-e1-mission-1", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "Hidden cube positions and front/side views need source confirmation." },
     { "sourceItemId": "6-2-u3-e1-mission-2", "originalChecked": true, "sourceVerified": true, "singleAnswer": true, "singleStack": true, "releaseStatus": "verified", "publicDecision": "confirmed", "implementationStatus": "fixed-verified-pool", "sourceMathCheckedBySecondaryReviewer": true, "generatorKey": "sourceGrade6SecondSpaceE1Mission2", "verifiedVariantCount": 3, "problemAndAnswerVisuals": "top-footprint-right-profile-and-front-answer-grid" },
-    { "sourceItemId": "6-2-u3-e1-mission-3", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "candidate", "sourceMathCheckedBySecondaryReviewer": true, "reason": "A source-derived unique stack was enumerated; answer 3D and variant/render gates are pending." },
+    { "sourceItemId": "6-2-u3-e1-mission-3", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "candidate", "sourceMathCheckedBySecondaryReviewer": true, "blockCoordinatesVerified": true, "sourceModelContract": "source-6-2-stack-models.js", "fixedModelVariantsVerified": 3, "threeModelReviewVerified": true, "learnerBankRenderVerified": false, "reason": "Three projection-only source-model stacks and the 3D model-review renderer are verified, without adding a total clue. Learner question generation, difficulty choices, dot-grid answers, printed fallback mapping and mixed worksheet gates are still pending." },
     { "sourceItemId": "6-2-u3-e1-mission-4", "originalChecked": true, "sourceVerified": true, "singleAnswer": true, "singleStack": true, "releaseStatus": "verified", "publicDecision": "confirmed", "implementationStatus": "fixed-verified-pool", "generatorKey": "sourceGrade6SecondSpaceE1Mission4", "verifiedVariantCount": 3, "requestedOperation": "sum-not-product", "handwritingSupportsRequestedSum": true, "problemAndAnswerVisuals": "two-blank-height-chart-and-completed-answer-chart" },
     { "sourceItemId": "6-2-u3-e1-mission-5", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "Target labels and added cube positions need source confirmation." },
     { "sourceItemId": "6-2-u3-e1-mission-6", "originalChecked": true, "releaseStatus": "locked", "publicDecision": "locked", "blockCoordinatesVerified": false, "reason": "The three marked cube positions and post-removal projections need source confirmation." }
@@ -41,6 +41,23 @@
     "difficultyOffsets": [-1, 0, 1],
     "difficultyLimit": "Source level preserves each task. Easier adds a useful scaffold. Harder reconstructs a height, derives total from floor and added cubes, or converts edge length to unit face area before the source task. No empirical student difficulty calibration claimed.",
     "secondaryMathReviewer": "Existing read-only agent; learner SVG inputs and independent voxel/camera calculations, not producer answers or model metadata.",
-    "scopeLimit": "No validation of the legacy isometric cube renderer. The four released types use source-derived 2D height charts and orthographic grids."
+    "scopeLimit": "No validation of the legacy isometric cube renderer. The four released types use source-derived 2D height charts and orthographic grids.",
+    "locked3DModelReview": {
+      "sourceItems": ["6-2-u3-e1-example-4", "6-2-u3-e1-mission-3"],
+      "modelAudit": "source-6-2-stack-models-audit.js",
+      "liveAudit": "source-6-2-stack-renderer-live-audit.js",
+      "pdfAudit": "source-6-2-stack-pdf-audit.py",
+      "fixedSourceAndVariantConditions": 6,
+      "independentCandidateArrangements": 118,
+      "browserStates": 18,
+      "viewports": [1440, 390, 320],
+      "adversarialOcclusionStacks": 7,
+      "a4PdfCount": 6,
+      "a4PageCount": 6,
+      "pixelNegativeControl": "Normal reference rejects a highest cube actually removed from the GPU scene; a wrong near-edge color is rejected without a broad face-edge exemption.",
+      "sourceTotalContract": "Example 4 retains eight cubes. Mission 3 has no total clue.",
+      "renderingContract": "Opaque unit cubes, orthographic camera, depth-tested black edges, source directions; same-font direction labels inside decoded canonical PNG.",
+      "scopeLimit": "Internal model-review page only. No learner bank generation, difficulty approval, printed fallback integration or release claimed."
+    }
   }
 }
