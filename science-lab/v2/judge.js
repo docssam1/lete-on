@@ -49,7 +49,8 @@ export function judgeShort(text, accepted) {
   const t = norm(text); if (!t) return { st: 'empty' };
   for (const a of accepted || []) {
     const k = norm(a); if (!k) continue;
-    if (t === k || (t.startsWith(k) && t.length - k.length <= 4 && !/^(이|가)?아니/.test(t.slice(k.length)))) return { st: 'ok' };
+    const rest = t.slice(k.length);   // 말끝(「예요」 등)만 허용 — 기호·숫자가 더 붙으면(「ㄱ, ㄷ」에 「ㄹ」) 다른 답이다
+    if (t === k || (t.startsWith(k) && rest.length <= 4 && !/^(이|가)?아니/.test(rest) && !/[㉠-㉣0-9○×]/.test(rest))) return { st: 'ok' };
   }
   return { st: 'no' };
 }
