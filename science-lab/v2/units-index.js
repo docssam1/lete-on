@@ -68,6 +68,7 @@ export const READY = {
 // 문제은행 = 단원평가 원문(<단원>.source.js) + 유사문항. sets = 세트 번호, n = 원문 수.
 // 5단계 수업이 없는 단원도 여기에 있으면 지도에서 열린다(READY에 bankOnly:true로 함께 등록).
 export const BANK = {
+  's41-mid': { sets: [1,  2], n: 50 },
   's32-fin': { sets: [1,  2], n: 40 },
   's32-mid': { sets: [1,  2], n: 40 },
   's32-u05': { sets: [1,  2,  3,  4], n: 70 },
