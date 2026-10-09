@@ -13,7 +13,7 @@ const load = async (f) => (existsSync(join(unitsDir, f)) ? import(pathToFileURL(
 let fail = 0, total = 0, withRules = 0, rules = 0;
 const err = (m) => { fail++; console.log('  ✗ ' + m); };
 
-for (const f of readdirSync(unitsDir).filter((x) => /^s\d+-u\d+\.js$/.test(x))) {
+for (const f of readdirSync(unitsDir).filter((x) => /^s\d+-(u\d+|mid|fin)\.js$/.test(x))) {
   const base = f.replace(/\.js$/, '');
   const main = await load(f), sim = await load(`${base}.similar.js`), misc = await load(`${base}.misc.js`), src = await load(`${base}.source.js`);
   const items = [...(main.items || []), ...(sim?.similar || []), ...(src?.source || [])];   // source = 단원평가 원문

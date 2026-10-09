@@ -20,7 +20,7 @@ let fail = 0;
 const err = (m) => { fail++; console.log('  ✗ ' + m); };
 // 기본 단원 모듈만 검사한다. lesson/similar/taxonomy/misc 같은 보조 모듈은
 // 각자 다른 계약을 가지므로 파일명이 늘어날 때마다 제외 목록을 추가하지 않는다.
-const unitFiles = readdirSync(unitsDir).filter((x) => /^s\d{2}-u\d{2}[a-z]?\.js$/.test(x));
+const unitFiles = readdirSync(unitsDir).filter((x) => /^s\d{2}-(u\d{2}[a-z]?|mid|fin)\.js$/.test(x));
 for (const f of unitFiles) {
   let mod;
   try { mod = await import(pathToFileURL(join(unitsDir, f)).href); }
