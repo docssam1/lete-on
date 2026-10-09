@@ -1,0 +1,8 @@
+/* 다양한 생물과 우리 생활 실험실(부푸는 효모빵 반죽) */
+.bd-model-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#eef6ef;color:#24553a}
+.bread-2d{position:relative;height:300px;background:#f5f1e8;border-radius:14px;display:flex;justify-content:center;align-items:flex-end;overflow:hidden;--ml:200}
+.bread-2d .bd-cup{position:relative;width:120px;height:250px;margin-bottom:16px;border:3px solid #b9c3cc;border-top:0;border-radius:0 0 16px 16px;background:rgba(255,255,255,.4)}
+.bread-2d .bd-dough{position:absolute;left:4px;right:4px;bottom:4px;height:calc(var(--ml) * 0.5px);background:radial-gradient(circle at 30% 40%,#e0bf86 3px,transparent 4px) 0 0/18px 20px,#f3dfb4;border-radius:40% 40% 10px 10px}
+.bread-2d .bd-mark{position:absolute;right:-40px;bottom:calc(var(--ml) * 0.5px);font:700 13px/1 var(--body);color:#2b3a67;border-top:2px solid #2b3a67;padding-top:2px;width:34px}
+.bread-2d .bd-clock{position:absolute;right:18px;top:16px;font:800 20px/1 var(--body);font-style:normal;color:#c2581c}
+.dk-lab-battle[data-unit="s51-u05"] .mb-team .bd-model-note{display:none}

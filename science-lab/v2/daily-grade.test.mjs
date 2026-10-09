@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js';
 
-const UNITS = ['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04'];
+const UNITS = ['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05'];
 const DATA = { 's41-u03b': 's41-u03' };
 async function load(u) {
   const d = DATA[u] || u;
