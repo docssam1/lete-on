@@ -123,7 +123,13 @@ export async function importUnit(cfg) {
   if (cfg.book && existsSync(bookF)) {
     let t = readFileSync(bookF, 'utf8');
     const arr = (a) => `[\n${a.map((k) => `    "${k}"`).join(',\n')}\n  ]`;
-    t = t.replace(/"check": \[[^\]]*\]/, `"check": ${arr(cfg.book.check)}`).replace(/("formative": \{\s*"items": )\[[^\]]*\]/, (_, p) => `${p}${arr(cfg.book.formative).replace(/\n  \]$/, '\n    ]').replace(/\n {4}"/g, '\n      "')}`);
+    if (/"check": \[/.test(t)) t = t.replace(/"check": \[[^\]]*\]/, `"check": ${arr(cfg.book.check)}`).replace(/("formative": \{\s*"items": )\[[^\]]*\]/, (_, p) => `${p}${arr(cfg.book.formative).replace(/\n  \]$/, '\n    ]').replace(/\n {4}"/g, '\n      "')}`);
+    else {   // 손으로 쓴 교재(check: ['1-1', …] 한 줄 꼴)
+      const one = (a) => `[${a.map((k) => `'${k}'`).join(', ')}]`;
+      const t0 = t;
+      t = t.replace(/(\n\s*check: )\[[^\]]*\]/, (_, p) => `${p}${one(cfg.book.check)}`).replace(/(\n\s*formative: \{\s*items: )\[[^\]]*\]/, (_, p) => `${p}${one(cfg.book.formative)}`);
+      if (t === t0) throw new Error(`교재 ${unit}: check·formative 자리를 못 찾음`);
+    }
     for (const k of [...cfg.book.check, ...cfg.book.formative]) if (!sim[k]) throw new Error(`교재 키 ${k} 없음`);
     writeFileSync(bookF, t);
   }
