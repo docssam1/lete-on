@@ -2,8 +2,9 @@
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
-import { pageHome } from './home.js?v=6';
+import { pageHome } from './home.js?v=7';
 import { escapeInApp } from './inapp.js';
+import { SEMS, BANK } from './units-index.js';
 import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js';
 import { readingHtml } from './reading.js';
@@ -30,6 +31,9 @@ const UNITS = {
   ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), ...(await import('../data/media/s41-u03b.media.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's42-u01': async () => ({ ...(await import('../data/units/s42-u01.js')), ...(await import('../data/units/s42-u01.lesson.js')),
   ...(await import('../data/units/s42-u01.similar.js')), ...(await import('../data/units/s42-u01.taxonomy.js')), misc: await import('../data/units/s42-u01.misc.js') }) };
+// 문제은행만 있는 단원(5단계 수업 없음): 단원 파일 + 원문 + 유사문항 + 분류 + 오개념표
+const bankLoader = (u) => async () => ({ ...(await import(`../data/units/${u}.js`)), ...(await import(`../data/units/${u}.similar.js`)), ...(await import(`../data/units/${u}.source.js`)),
+  ...(await import(`../data/units/${u}.taxonomy.js`)), misc: await import(`../data/units/${u}.misc.js`) });
 const DATA_UNIT = { 's41-u03b': 's41-u03' }; const du = (u) => DATA_UNIT[u] || u; // 기록은 문항을 가진 단원 id로
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
@@ -367,6 +371,7 @@ function pageSub(u, L, eid) {
   const types = tx.types.filter((t) => t.element === e.id);
   frame(u, L, null, `<p class="step-label">소단원 ${tx.elements.indexOf(e) + 1}</p><h2>${esc(e.name)}</h2>
     ${L.engage ? `<div class="print-bar"><a class="btn primary" href="#/${u}/1" style="display:inline-flex;align-items:center;text-decoration:none">5단계 탐구로 배우기</a></div>` : ''}
+    ${src.length ? `<div class="print-bar sub-exam"><span>단원평가</span>${[...new Set(src.map((x) => x.sourceRef.set))].map((n) => `<a class="btn" href="#/${u}/exam/${n}">세트${n}</a>`).join('')}</div>` : ''}
     <nav class="modes" aria-label="소단원">${tx.elements.map((x, i) => `<a href="#/${u}/sub/${x.id}" class="btn" style="display:inline-flex;align-items:center;text-decoration:none;min-height:44px;font-size:17px${x.id === e.id ? ';background:var(--navy);color:var(--on-navy)' : ''}">${i + 1}</a>`).join('')}</nav>
     ${types.map((t) => { const os = src.filter((s) => s.taxonomy.type === t.id), ss = sim.filter((s) => s.taxonomy.type === t.id);
       return `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${os.length ? `<p class="sub-h">단원평가 문제 ${os.length}</p>${os.map((s) => itemHtml(s)).join('')}<p class="sub-h">비슷한 문제 ${ss.length}</p>` : ''}${ss.map((s) => itemHtml(s)).join('')}`; }).join('')}`);
@@ -610,13 +615,27 @@ async function pageExam(u, mod, L, set, mode) {
   scrollTo(0, 0);
 }
 
+// 문제은행 전체 차례 — 학기·단원마다 원문 수와 세트, 소단원 바로 가기
+function pageBank() {
+  const R = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ'], total = Object.values(BANK).reduce((a, b) => a + b.n, 0);
+  $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>문제은행</h1></div></header>
+    <main class="wrap bank"><p class="step-label">초등 과학 3~6학년 · 단원평가 원문 + 유사문항</p><h2>단원별 문제은행</h2>
+    <p class="lead">단원평가 원문 ${total}문항이 들어 있어요. 원문 한 문항마다 비슷한 문제가 하나씩 짝지어 있어, 틀리면 바로 다시 풀 수 있어요.</p>
+    ${SEMS.map((s) => `<section class="bank-sem"><h3>${s.sem.replace('-', '학년 ')}학기</h3><ol class="bank-units">${s.units.map((un) => { const b = BANK[un.id];
+      return `<li class="${b ? 'open' : 'wait'}"><span class="bn">${R[un.no - 1]}</span><span class="bt">${esc(un.title)}</span>${b
+        ? `<span class="bc">원문 ${b.n}</span><span class="bs">${b.sets.map((n) => `<a href="#/${un.id}/exam/${n}">세트${n}</a>`).join('')}<a href="#/${un.id}/sub/E1">소단원</a></span>`
+        : '<span class="bc">준비 중</span>'}</li>`; }).join('')}</ol></section>`).join('')}</main>`;
+  scrollTo(0, 0);
+}
+
 // ── 라우터 ──
 async function route() {
   releasePage(); releasePage = () => {}; stopTeacher(); stepGuide?.destroy(); stepGuide = null;
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (!u) return pageHome($app, store, teacher);
   if (u === 'check' || a === 'check') return pageCheck(u === 'check' ? null : u);   // 선생님 확인(v2/check.js)
-  const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
+  if (u === 'bank') return pageBank();
+  const load = UNITS[u] || (BANK[u] ? bankLoader(u) : null); if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
   const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, source: mod.source || [], items }; MISC = mod.misc || null;
   if (a === 'sub') return pageSub(u, L, b);
   if (!mod.lesson && !['print', 'lab-book', 'lab-class', 'start', 'daily', 'exam'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원

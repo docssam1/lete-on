@@ -15,6 +15,8 @@ const CIRC = '①②③④⑤';
 const uniq = (a) => [...new Set(a.filter((x) => x != null && String(x).trim() !== ''))];
 const js = (o) => JSON.stringify(o, null, 2);
 const load = async (f) => import(pathToFileURL(join(UNITS, f)).href + `?t=${Date.now()}`);
+// 문제은행만 있는 새 단원(5단계 수업 없음)은 보조 파일이 아직 없다 — 빈 것에서 시작한다.
+const loadOr = async (f, empty) => (existsSync(join(UNITS, f)) ? load(f) : empty);
 
 function contract(x, cfg, key) {
   const circ = [...String(x.answer)].filter((c) => CIRC.includes(c)).map((c) => CIRC.indexOf(c));
@@ -22,7 +24,7 @@ function contract(x, cfg, key) {
   if (x.choices && circ.length > 1) return { type: 'multi-choice', answers: circ };
   if (x.format === '서술형') {
     const req = cfg.required[`src:${key}`]; if (!req) throw new Error(`서술형 ${key} 채점 요소(required) 없음`);
-    return { type: 'written-explanation', sample: x.answer, rubric: { required: req, pass: '채점 기준을 모두 담으면 정답', criteria: (x.rubric || []).map((r) => `${r.criterion} (${r.ratio})`) } };
+    return { type: 'written-explanation', sample: x.answer, rubric: { required: req, pass: '채점 기준을 모두 담으면 정답', criteria: (x.rubric || []).map((r) => (r.ratio ? `${r.criterion} (${r.ratio})` : r.criterion)) } };
   }
   return { type: 'short-text', answer: x.answer, accepted: uniq([x.answer, ...(x.accepted || []), ...(cfg.accept?.[key] || [])]) };
 }
@@ -44,7 +46,7 @@ export async function importUnit(cfg) {
 
   const tax = (type, format) => ({ curriculum: '2022 개정', grade: cfg.grade, semester: cfg.semester, unit: cfg.uKey, area: cfg.area, element: EL[type], type, format, level: '기본', track: '교과' });
   const source = orig.map((o) => {
-    const type = M.map[o.key], ac = contract(o, cfg, o.key), rub = (o.rubric || []).map((r) => `${r.criterion} (${r.ratio})`);
+    const type = M.map[o.key], ac = contract(o, cfg, o.key), rub = (o.rubric || []).map((r) => (r.ratio ? `${r.criterion} (${r.ratio})` : r.criterion));
     return {
       id: `${unit}-o${o.set}-${String(o.no).padStart(2, '0')}`, status: 'verified',
       sourceRef: { type: 'original', set: o.set, no: o.no, page: o.page, sourceId: `${cfg.sourceId}-set${o.set}`, edition: `${cfg.edition} 세트${o.set}`, course: cfg.course, unit: cfg.unitLabel },
@@ -72,8 +74,8 @@ export async function importUnit(cfg) {
   const idOf = Object.fromEntries(orig.flatMap((o, i) => [[`src:${o.key}`, source[i].id], [`sim:${o.key}`, similar[i].id]]));
 
   // 분류 체계
-  const { taxonomy: oldTx } = await load(`${unit}.taxonomy.js`);
-  const authored = Object.fromEntries(Object.entries(cfg.lessonTypes).map(([b, t]) => [`${unit}-${b}`, t]));
+  const { taxonomy: oldTx } = await loadOr(`${unit}.taxonomy.js`, { taxonomy: { title: cfg.unitTitle, standards: [] } });
+  const authored = Object.fromEntries(Object.entries(cfg.lessonTypes || {}).map(([b, t]) => [`${unit}-${b}`, t]));
   const taxonomy = { unit, curriculum: '2022 개정', grade: cfg.grade, semester: cfg.semester, title: oldTx.title, area: cfg.area, standards: oldTx.standards || [],
     elements: cfg.elements, types: Object.entries(TYPE).map(([id, t]) => ({ id, element: t.element, name: t.name, desc: t.desc })),
     formats: ['선택형', '단답형', '서술형'], sources: Object.fromEntries(orig.map((o) => [o.key, [M.map[o.key], o.format]])), authored };
@@ -82,17 +84,18 @@ export async function importUnit(cfg) {
   writeFileSync(join(UNITS, `${unit}.similar.js`), `// ${cfg.title} — 유사문항 ${similar.length} (창작). 원문 1문항당 1개, 같은 유형·난이도로 상황과 물체를 바꿨다. of = 짝이 되는 원문 (세트, 번호).\nexport const similar = ${js(similar)};\n`);
 
   // 레슨 문항 유형을 새 분류로
-  const U = await load(`${unit}.js`);
+  const fresh = !existsSync(join(UNITS, `${unit}.js`));
+  const U = fresh ? { unit: { id: unit, course: cfg.course.replace('초등 ', ''), no: cfg.no, title: cfg.unitTitle, domain: cfg.area, sources: {} }, items: [] } : await load(`${unit}.js`);
   for (const it of U.items) { const t = authored[it.id]; if (!t) throw new Error(`레슨 문항 유형 없음 ${it.id}`); it.taxonomy = { ...it.taxonomy, element: EL[t], type: t, concept: TYPE[t].name }; }
   U.unit.sources = { ...U.unit.sources, bank: [`data/units/${unit}.source.js`] };
-  const head = readFileSync(join(UNITS, `${unit}.js`), 'utf8').match(/^(\/\/.*\n)*/)[0];
+  const head = fresh ? `// ${cfg.title} — 문제은행 단원(5단계 수업은 아직 없음). 원문은 ${unit}.source.js, 유사문항은 ${unit}.similar.js.\n` : readFileSync(join(UNITS, `${unit}.js`), 'utf8').match(/^(\/\/.*\n)*/)[0];
   writeFileSync(join(UNITS, `${unit}.js`), `${head}export const unit = ${js(U.unit)};\nexport const items = ${js(U.items)};\n`);
 
   // 오개념표 — 원문과 짝 유사문항은 같은 오개념을 공유한다
-  const misc = { ...(await load(`${unit}.misc.js`)) };
+  const misc = { ...(await loadOr(`${unit}.misc.js`, { misconceptions: {}, distractors: {}, typed: {}, remedy: {}, written: {} })) };
   const keepB = (o) => Object.fromEntries(Object.entries(o || {}).filter(([k]) => /-b\d+$/.test(k)));
   misc.misconceptions = { ...misc.misconceptions };
-  for (const [m, el] of Object.entries(cfg.mElement)) misc.misconceptions[m] = { ...misc.misconceptions[m], element: el };
+  for (const [m, el] of Object.entries(cfg.mElement || {})) misc.misconceptions[m] = { ...misc.misconceptions[m], element: el };
   Object.assign(misc.misconceptions, cfg.newMis);
   misc.remedy = { ...misc.remedy, ...Object.fromEntries(Object.entries(cfg.newMis).map(([m, v]) => [m, { step: v.step || 3 }])) };
   for (const m of Object.values(misc.misconceptions)) delete m.step;
@@ -110,7 +113,7 @@ export async function importUnit(cfg) {
   writeFileSync(join(UNITS, `${unit}.misc.js`), keys.map((k) => `export const ${k} = ${js(misc[k])};`).join('\n') + '\n');
 
   // 쓰기 판정표 — 옛 유사문항 키를 지우고 새 원문·유사 서술형을 넣는다
-  const { judge: J0 } = await load(`${unit}.judge.js`);
+  const { judge: J0 } = await loadOr(`${unit}.judge.js`, { judge: {} });
   const judge = Object.fromEntries(Object.entries(J0).filter(([k]) => !/-v\d+$/.test(k)));
   for (const [k, v] of Object.entries(cfg.judge)) { if (!idOf[k]) throw new Error(`판정표 키 ${k}`); judge[idOf[k]] = v; }
   writeFileSync(join(UNITS, `${unit}.judge.js`), `export const judge = ${js(judge)};\n`);

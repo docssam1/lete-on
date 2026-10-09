@@ -1,6 +1,6 @@
 // 홈 = 로드맵 입구(매거진형). 표지(한 줄 약속 + 이어서 하기) → 지금 열린 실험 수업(3D 실험실 사진 카드)
 // → 3~6학년 로드맵(학기마다 정거장 줄) → 한 교재 네 가지 수업. 정거장을 누르면 소단원 시트.
-import { SEMS, READY, BOOK_UNITS } from './units-index.js';
+import { SEMS, READY, BOOK_UNITS, BANK } from './units-index.js';
 import { countNeeds } from './check.js';
 
 const ROMAN = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ'];
@@ -38,7 +38,7 @@ const ALL = SEMS.flatMap((s) => s.units);
 function nextLab(store) {
   return LABS.find((l) => stateOf(store, l.id).kind === 'doing') || LABS.find((l) => stateOf(store, l.id).kind === 'open') || null;
 }
-const startOf = (id) => (BOOK_UNITS.has(id) ? `#/${id}/start` : `#/${id}/1`);
+const startOf = (id) => (BOOK_UNITS.has(id) ? `#/${id}/start` : READY[id]?.bankOnly ? `#/${id}/sub/E1` : `#/${id}/1`);
 const pct = (store, id) => { const k = stateOf(store, id); return k.kind === 'passed' ? 100 : Math.round(((k.st?.done || []).length / 5) * 100); };
 
 const ICO = {
@@ -102,7 +102,7 @@ export function pageHome($app, store, teacher) {
   $app.innerHTML = `<div class="h">
     <header class="h-top"><div class="h-wrap">
       <a class="h-brand" href="#/"><img src="${A}docssam-A1-mouth-closed.webp" alt="" width="28" height="42"><span>docssam <b>과학 탐구 랩</b></span></a>
-      <nav class="h-nav" aria-label="바로 가기"><a href="#h-labs">실험 수업</a><a href="#h-map">로드맵</a><a href="#h-modes">수업 방식</a><a class="h-intro" href="../intro/">교재 소개</a></nav>
+      <nav class="h-nav" aria-label="바로 가기"><a href="#h-labs">실험 수업</a><a href="#h-map">로드맵</a><a href="#h-modes">수업 방식</a><a href="#/bank">문제은행</a><a class="h-intro" href="../intro/">교재 소개</a></nav>
     </div></header>
 
     <section class="h-hero"><div class="h-wrap h-hero-in">
@@ -173,9 +173,10 @@ export function pageHome($app, store, teacher) {
     const u = ALL.find((x) => x.id === a.dataset.unit), r = READY[u.id];
     if (!r?.subs) return; e.preventDefault();
     const [g, h] = u.id.slice(1, 3).split('');
-    const labs = r.labs || [{ id: u.id, hero: r.hero }];
+    const labs = r.bankOnly ? [] : r.labs || [{ id: u.id, hero: r.hero }], bk = BANK[u.id];
     $sheet.innerHTML = `<div class="grab" aria-hidden="true"></div><p class="step-label">${g}학년 ${h}학기 ${ROMAN[u.no - 1]}</p><h2 id="sheet-t">${esc(u.title)}</h2>
-      <div class="labs">${labs.map((l) => { const ks = stateOf(store, l.id).kind, meta = LABS.find((x) => x.id === l.id); return `<a class="btn primary" href="${startOf(l.id)}"><b>${esc(meta?.title || l.hero)}</b><small>${l.covers ? `소단원 ${l.covers.map((c) => r.subs.findIndex((x) => x.id === c) + 1).join('·')} · ` : ''}${ks === 'doing' ? '이어서 하기' : ks === 'passed' ? '다시 보기' : '실험 수업 시작'}</small></a>`; }).join('')}</div>
+      ${labs.length ? '' : '<p class="lead">이 단원은 아직 실험 수업이 없어요. 소단원 문제와 단원평가로 공부해요.</p>'}<div class="labs">${labs.map((l) => { const ks = stateOf(store, l.id).kind, meta = LABS.find((x) => x.id === l.id); return `<a class="btn primary" href="${startOf(l.id)}"><b>${esc(meta?.title || l.hero)}</b><small>${l.covers ? `소단원 ${l.covers.map((c) => r.subs.findIndex((x) => x.id === c) + 1).join('·')} · ` : ''}${ks === 'doing' ? '이어서 하기' : ks === 'passed' ? '다시 보기' : '실험 수업 시작'}</small></a>`; }).join('')}</div>
+      ${bk ? `<h3>단원평가 <small>원문 ${bk.n}문항</small></h3><div class="sheet-sets">${bk.sets.map((n) => `<a class="btn" href="#/${u.id}/exam/${n}">세트${n}</a>`).join('')}</div>` : ''}
       <h3>소단원</h3><ol class="subs">${r.subs.map((s, i) => `<li><a href="#/${u.id}/sub/${s.id}"><span class="sn">${i + 1}</span><span class="st">${esc(s.name)}</span><span class="sc">유형 ${s.types}</span></a></li>`).join('')}</ol>
       <button type="button" class="btn" data-close>닫기</button>`;
     $sheet.querySelector('[data-close]').addEventListener('click', close);

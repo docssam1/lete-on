@@ -49,5 +49,11 @@ export const READY = {
   's52-u01': { hero: '비눗방울 실험실', subs: subsOf(tx52u01) },
 };
 
+// 문제은행 = 단원평가 원문(<단원>.source.js) + 유사문항. sets = 세트 번호, n = 원문 수.
+// 5단계 수업이 없는 단원도 여기에 있으면 지도에서 열린다(READY에 bankOnly:true로 함께 등록).
+export const BANK = {
+  's42-u02': { sets: [1, 2, 3, 4], n: 70 },
+};
+
 // 실험 교재(data/book/<id>.book.js)가 있는 수업 — 지도의 시트에서 첫 화면(#/<id>/start)으로 들어간다.
 export const BOOK_UNITS = new Set(['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01']);
