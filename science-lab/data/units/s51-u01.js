@@ -10,6 +10,9 @@ export const unit = {
     ],
     "lab": [
       "같은 자료 1부 예시 탐구 「물줄기의 굵기와 높이에 따라 튀는 물」 측정값 (비공개 원본)"
+    ],
+    "bank": [
+      "data/units/s51-u01.source.js"
     ]
   }
 };
@@ -33,7 +36,7 @@ export const items = [
       "unit": "u01",
       "element": "E2",
       "type": "T03",
-      "concept": "다르게 할 조건과 같게 할 조건",
+      "concept": "다르게 할 조건·같게 할 조건·측정할 것 정하기",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -89,9 +92,9 @@ export const items = [
       "grade": 5,
       "semester": 1,
       "unit": "u01",
-      "element": "E2",
+      "element": "E3",
       "type": "T04",
-      "concept": "측정과 반복 실험(평균)",
+      "concept": "실험 결과 기록과 반복 측정",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -142,8 +145,8 @@ export const items = [
       "semester": 1,
       "unit": "u01",
       "element": "E1",
-      "type": "T02",
-      "concept": "가설 세우기",
+      "type": "T01",
+      "concept": "문제 인식과 탐구 문제·가설",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -193,8 +196,8 @@ export const items = [
       "grade": 5,
       "semester": 1,
       "unit": "u01",
-      "element": "E3",
-      "type": "T06",
+      "element": "E4",
+      "type": "T08",
       "concept": "결론 도출과 발표",
       "level": "기본",
       "track": "교과",
@@ -247,7 +250,7 @@ export const items = [
       "unit": "u01",
       "element": "E2",
       "type": "T03",
-      "concept": "다르게 할 조건과 같게 할 조건",
+      "concept": "다르게 할 조건·같게 할 조건·측정할 것 정하기",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -320,9 +323,9 @@ export const items = [
       "grade": 5,
       "semester": 1,
       "unit": "u01",
-      "element": "E2",
+      "element": "E3",
       "type": "T04",
-      "concept": "측정과 반복 실험(평균)",
+      "concept": "실험 결과 기록과 반복 측정",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -375,8 +378,8 @@ export const items = [
       "semester": 1,
       "unit": "u01",
       "element": "E1",
-      "type": "T02",
-      "concept": "가설 세우기",
+      "type": "T01",
+      "concept": "문제 인식과 탐구 문제·가설",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -426,9 +429,9 @@ export const items = [
       "grade": 5,
       "semester": 1,
       "unit": "u01",
-      "element": "E2",
+      "element": "E3",
       "type": "T04",
-      "concept": "측정과 반복 실험(평균)",
+      "concept": "실험 결과 기록과 반복 측정",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -478,8 +481,8 @@ export const items = [
       "grade": 5,
       "semester": 1,
       "unit": "u01",
-      "element": "E3",
-      "type": "T06",
+      "element": "E4",
+      "type": "T08",
       "concept": "결론 도출과 발표",
       "level": "기본",
       "track": "교과",
@@ -532,7 +535,7 @@ export const items = [
       "unit": "u01",
       "element": "E1",
       "type": "T01",
-      "concept": "탐구 문제 정하기",
+      "concept": "문제 인식과 탐구 문제·가설",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -586,7 +589,7 @@ export const items = [
       "unit": "u01",
       "element": "E3",
       "type": "T05",
-      "concept": "자료 변환과 해석(표·그래프)",
+      "concept": "자료 변환의 뜻과 그래프",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -638,8 +641,8 @@ export const items = [
       "grade": 5,
       "semester": 1,
       "unit": "u01",
-      "element": "E3",
-      "type": "T06",
+      "element": "E4",
+      "type": "T08",
       "concept": "결론 도출과 발표",
       "level": "기본",
       "track": "교과",
