@@ -1,13 +1,13 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261009b";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261009c";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261009b";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261009c";
 import { book01Markup } from "./book01-renderers.js?v=20261003c";
 import { book02Markup } from "./book02-renderers.js?v=20261005d";
-import { book03Markup } from "./book03-renderers.js?v=20261009b";
-import { book04Markup } from "./book04-renderers.js?v=20261009b";
+import { book03Markup } from "./book03-renderers.js?v=20261009c";
+import { book04Markup } from "./book04-renderers.js?v=20261009c";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book07Markup } from "./book07-renderers.js?v=20260906a";
@@ -834,24 +834,6 @@ function book04HiddenCubesMarkup(visual) {
   return `<div class="cube-scene-set ${scenes.length === 1 ? "single" : ""}">${markup}</div>`;
 }
 
-// 원본 18쪽: 「전체」와 「보이는 것」(벽 모서리에 붙여 놓은 모습) 두 그림. 층수·개수는 적지 않는다.
-function book04SourceHiddenCubeMarkup(visual) {
-  const renderer = globalThis.GW_RENDER;
-  if (!renderer?.renderIso || !renderer?.project) throw new Error("Geometry worksheet cube renderer is required for hidden-cube visuals.");
-  const map = normalizedHeightMap(visual.map);
-  const width = map[0].length;
-  const depth = map.length;
-  const tallest = Math.max(...map.flat());
-  const u = 24;
-  const plain = renderer.renderIso(map, width, depth, { u, topLabels: false });
-  const at = (x, y, z) => renderer.project(x, y, z, u);
-  const edge = (to) => { const o = at(0, 0, 0); const p = at(...to); return `<line class="wall-edge" x1="${o.px.toFixed(1)}" y1="${o.py.toFixed(1)}" x2="${p.px.toFixed(1)}" y2="${p.py.toFixed(1)}"/>`; };
-  const walls = edge([0, tallest + 0.55, 0]) + edge([width + 0.55, 0, 0]) + edge([0, 0, depth + 0.55]);
-  const walled = plain.replace(/^(<svg[^>]*>)/, `$1${walls}`);
-  const svg = (markup) => markup.replace('class="ws-iso"', 'class="ws-iso book04-source-cubes" role="img" aria-label="쌓기나무 그림"');
-  return `<div class="b4-src-hidden-pair"><figure>${svg(plain)}<figcaption>전체</figcaption></figure><figure>${svg(walled)}<figcaption>보이는 것</figcaption></figure></div>`;
-}
-
 function balanceTokensMarkup(symbol, count, className) {
   return `<span class="balance-tokens ${className}">${Array.from({ length: count }, () => `<i>${symbol}</i>`).join("")}</span>`;
 }
@@ -948,7 +930,6 @@ function visualMarkup(visual) {
   if (visual.kind === "book2") return `<div class="book02-visual">${book02Markup(visual)}</div>`;
   if (visual.kind === "book1") return `<div class="book01-visual">${book01Markup(visual)}</div>`;
   if (visual.kind === "book3") return `<div class="book03-visual">${book03Markup(visual)}</div>`;
-  if (visual.kind === "book4" && visual.subtype === "source-hidden-cube") return book04SourceHiddenCubeMarkup(visual);
   if (visual.kind === "book4" && visual.subtype === "source-balance-equations") return book04SourceBalanceMarkup(visual);
   if (visual.kind === "book4") return `<div class="book04-visual">${book04Markup(visual)}</div>`;
   if (visual.kind === "shape-sum-table") return generatedShapeSumMarkup(visual);
