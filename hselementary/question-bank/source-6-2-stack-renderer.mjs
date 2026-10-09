@@ -110,10 +110,13 @@ export function createStackRenderer(host, { heights, interactive = true, pixelRa
   return {
     reset,
     render: draw,
-    snapshot({width: exportWidth = 640, height: exportHeight = 520} = {}) {
+    snapshot({width: exportWidth = 640, height: exportHeight = 520, directionFontSize} = {}) {
       if (!Number.isInteger(exportWidth) || !Number.isInteger(exportHeight) || exportWidth < 200 || exportHeight < 200 || exportWidth > 1600 || exportHeight > 1600) throw new Error("Invalid export dimensions");
+      if (directionFontSize !== undefined && (!Number.isFinite(directionFontSize) || directionFontSize < 12 || directionFontSize > 32)) throw new Error("Invalid direction font size");
       reset(); width = exportWidth; height = exportHeight;
-      renderer.setSize(width,height,false); draw();
+      renderer.setSize(width,height,false);
+      try {
+      draw();
       const output = document.createElement("canvas");
       output.width = canvas.width; output.height = canvas.height;
       const ctx = output.getContext("2d"), ratio = output.width / width;
@@ -121,12 +124,13 @@ export function createStackRenderer(host, { heights, interactive = true, pixelRa
       ctx.fillStyle = "#000"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
       for (const {el} of labels) {
         const style = getComputedStyle(el);
-        ctx.font = `${style.fontWeight} ${parseFloat(style.fontSize)*ratio}px ${style.fontFamily}`;
-        ctx.fillText(el.textContent,parseFloat(el.style.left)*ratio,parseFloat(el.style.top)*ratio);
+        ctx.font = `${style.fontWeight} ${(directionFontSize ?? parseFloat(style.fontSize))*ratio}px ${style.fontFamily}`;
+        const x = parseFloat(el.style.left)*ratio, y = parseFloat(el.style.top)*ratio, metrics = ctx.measureText(el.textContent);
+        if (x-metrics.actualBoundingBoxLeft < 4 || x+metrics.actualBoundingBoxRight > output.width-4 || y-metrics.actualBoundingBoxAscent < 4 || y+metrics.actualBoundingBoxDescent > output.height-4) throw new Error("Direction label outside snapshot");
+        ctx.fillText(el.textContent,x,y);
       }
-      const result = output.toDataURL("image/png");
-      resize();
-      return result;
+      return output.toDataURL("image/png");
+      } finally { resize(); }
     },
     inspect() {
       draw();
