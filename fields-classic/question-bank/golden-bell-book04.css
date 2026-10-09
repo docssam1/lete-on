@@ -19,12 +19,27 @@
 .b4-src-mino rect{fill:#f9c74f;stroke:#222;stroke-width:1.4}
 .b4-src-mino-row i{display:block;width:40px;height:2px}
 
+/* 16~18쪽 쌓기나무(원본과 같은 빗각 그림) */
+.b4-src-cubes .cube-front{fill:#dcedf5;stroke:#2f7f96;stroke-width:1.2;stroke-linejoin:round}
+.b4-src-cubes .cube-top{fill:#eaf5fa;stroke:#2f7f96;stroke-width:1.2;stroke-linejoin:round}
+.b4-src-cubes .cube-side{fill:#acc0c8;stroke:#2f7f96;stroke-width:1.2;stroke-linejoin:round}
+.b4-src-cubes .wall-edge{stroke:#222;stroke-width:1.3}
+.b4-src-cubes .top-label{fill:#d9473f;font-size:13px;font-weight:800;text-anchor:middle}
+.book04-visual svg.b4-src-cubes{max-width:100%;height:auto}
+
 /* 18쪽 전체 / 보이는 것 */
-.b4-src-hidden-pair{display:flex;flex-wrap:wrap;justify-content:center;gap:28px}
-.b4-src-hidden-pair figure{display:grid;justify-items:center;gap:4px;margin:0}
-.b4-src-hidden-pair svg{width:auto;height:170px;max-width:240px}
+.b4-src-hidden-pair{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:36px}
+.b4-src-hidden-pair figure{display:grid;justify-items:center;gap:6px;margin:0}
 .b4-src-hidden-pair figcaption{color:#222;font-size:15px;font-weight:800}
-.b4-src-hidden-pair .wall-edge{stroke:#222;stroke-width:1.4}
+
+/* 16·17쪽 쌓기나무 → 위에서 본 모양 */
+.b4-src-topview-set{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:22px}
+.b4-src-topview-row{display:flex;align-items:center;gap:22px}
+.b4-src-arrow{color:#2f7f96;font-size:26px;line-height:1}
+.b4-src-topview rect{fill:#fff;stroke:#e03131;stroke-width:1.4}
+.b4-src-topview text{fill:#e03131;font-size:13px;font-weight:700;text-anchor:middle}
+.b4-src-cube-example{display:grid;justify-items:center;gap:4px;margin:0;padding:10px 14px;border:1.5px solid #9bb7c0;border-radius:12px;background:#fff}
+.b4-src-cube-example figcaption{color:#222;font-size:14px;font-weight:700}
 
 /* 19쪽 상자 속 쌓기나무 */
 .book04-visual .b4-src-cube-box{width:auto;height:180px;max-width:100%}
@@ -59,13 +74,17 @@
 @media screen and (max-width:700px){
   .b4-src-mino-row{grid-template-columns:1fr auto;font-size:13px}
   .b4-src-mino-row b{grid-column:1/-1;justify-self:start}
-  .b4-src-hidden-pair svg{height:120px}
+  .b4-src-topview-row{gap:12px}
 }
 
 @media print{
   .gold-print-page[data-print-book="book-04"] .b4-source-fold-holes{width:72mm}
   .gold-print-page[data-print-book="book-04"] .b4-src-hidden-pair{gap:5mm}
-  .gold-print-page[data-print-book="book-04"] .b4-src-hidden-pair svg{height:26mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-cubes{width:auto;max-height:30mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-topview{width:auto;max-height:22mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-cube-example{padding:1.5mm 2.5mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-cube-example svg{max-height:22mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-cube-example figcaption{font-size:9px}
   .gold-print-page[data-print-book="book-04"] .b4-src-hidden-pair figcaption{font-size:9px}
   .gold-print-page[data-print-book="book-04"] .b4-src-cube-box{height:32mm}
   .gold-print-page[data-print-book="book-04"] .b4-src-matrix{height:26mm}
@@ -74,5 +93,23 @@
   .gold-print-page[data-print-book="book-04"] .b4-src-cardinal,.gold-print-page[data-print-book="book-04"] .b4-src-round{height:32mm}
   .gold-print-page[data-print-book="book-04"] .b4-src-minos{gap:1.5mm}
   .gold-print-page[data-print-book="book-04"] .b4-src-mino-row{grid-template-columns:auto 12mm auto;font-size:9px;gap:2mm}
-  .b4-src-cube-box polygon,.b4-src-mino rect,.b4-src-round .table,.b4-source-fold-holes .paper{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .b4-src-cube-box polygon,.b4-src-cubes polygon,.b4-src-mino rect,.b4-src-round .table,.b4-source-fold-holes .paper{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+
+/* 36·37·40·41쪽 순서 정하기: 왼쪽·오른쪽 빈칸 줄 */
+.b4-src-slots{display:flex;align-items:center;gap:0;color:#222;font-size:15px;font-weight:700}
+.b4-src-slots span{padding:0 10px}
+.b4-src-slots i{display:block;width:46px;height:40px;border:1.5px solid #555;background:#fff}
+.b4-src-slots i+i{border-left:0}
+
+/* 36쪽 동서남북 익히기 */
+.book04-visual .b4-src-compass{width:auto;height:180px;max-width:100%}
+.b4-src-compass rect{fill:#fff;stroke:#555;stroke-width:1.5}
+.b4-src-compass text{font-size:15px;font-weight:800;text-anchor:middle}
+.b4-src-compass .axis{stroke:#5a9d5e;stroke-width:2.2}
+.b4-src-compass .axis-head{fill:#5a9d5e}
+@media print{
+  .gold-print-page[data-print-book="book-04"] .b4-src-compass{height:30mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-slots{font-size:9px}
+  .gold-print-page[data-print-book="book-04"] .b4-src-slots i{width:8mm;height:7mm}
 }

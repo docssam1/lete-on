@@ -320,8 +320,71 @@ function sourceCubeBox(visual) {
   return `<svg class="b4-src-cube-box" viewBox="0 0 ${w.toFixed(0)} ${h.toFixed(0)}" role="img" aria-label="정육면체 상자 속 쌓기나무">${cubes}<g class="box">${box}</g></svg>`;
 }
 
+// 원본 16~18쪽 쌓기나무: 앞면이 정사각형이고 깊이가 오른쪽 위로 s/3씩 물러나는 빗각 그림.
+// map[줄][칸], 0번 줄이 뒤(위에서 본 그림의 윗줄). walls는 18쪽 「보이는 것」의 벽 모서리 세 줄.
+function obliqueCubes(map, { s = 36, walls = false, labels = false, label = "쌓기나무 그림" } = {}) {
+  const D = map.length;
+  const W = Math.max(...map.map((row) => row.length));
+  const height = (x, z) => Number(map[D - 1 - z]?.[x] || 0);
+  const H = Math.max(1, ...map.flat().map(Number));
+  const k = s / 3;
+  const pt = (x, y, z) => [x * s + z * k, -y * s - z * k];
+  const f = (n) => n.toFixed(1);
+  const poly = (cls, ...p) => `<polygon class="${cls}" points="${p.map((q) => q.map(f).join(",")).join(" ")}"/>`;
+  const extent = [pt(0, 0, 0), pt(W, 0, 0), pt(0, H, D), pt(W, H, D), pt(W, 0, D)];
+  let back = "";
+  if (walls) {
+    const ends = [pt(0, H + 0.6, D), pt(W + 0.8, 0, D), pt(0, 0, -1.4)];
+    const o = pt(0, 0, D);
+    back = ends.map((e) => `<line class="wall-edge" x1="${f(o[0])}" y1="${f(o[1])}" x2="${f(e[0])}" y2="${f(e[1])}"/>`).join("");
+    extent.push(...ends);
+  }
+  let cubes = "";
+  let tops = "";
+  for (let z = D - 1; z >= 0; z -= 1) {
+    for (let x = 0; x < W; x += 1) {
+      const h = height(x, z);
+      for (let y = 0; y < h; y += 1) {
+        cubes += poly("cube-front", pt(x, y, z), pt(x + 1, y, z), pt(x + 1, y + 1, z), pt(x, y + 1, z));
+        if (y + 1 === h) cubes += poly("cube-top", pt(x, y + 1, z), pt(x + 1, y + 1, z), pt(x + 1, y + 1, z + 1), pt(x, y + 1, z + 1));
+        if (y >= height(x + 1, z)) cubes += poly("cube-side", pt(x + 1, y, z), pt(x + 1, y, z + 1), pt(x + 1, y + 1, z + 1), pt(x + 1, y + 1, z));
+      }
+      if (labels && h) {
+        const c = pt(x + 0.5, h, z + 0.5);
+        tops += `<text class="top-label" x="${f(c[0])}" y="${f(c[1] + 5)}">${h}</text>`;
+      }
+    }
+  }
+  const pad = 4;
+  const xs = extent.map((p) => p[0]);
+  const ys = extent.map((p) => p[1]);
+  const minX = Math.min(...xs) - pad;
+  const minY = Math.min(...ys) - pad - (labels ? 8 : 0);
+  const w = Math.max(...xs) + pad - minX;
+  const hgt = Math.max(...ys) + pad - minY;
+  return `<svg class="b4-src-cubes" viewBox="${f(minX)} ${f(minY)} ${f(w)} ${f(hgt)}" width="${f(w)}" height="${f(hgt)}" role="img" aria-label="${label}">${back}${cubes}${tops}</svg>`;
+}
+
 function sourceHiddenCube(visual) {
-  return `<div class="b4-clue-panel"><p><b>물음</b>보이지 않는 쌓기나무 수를 쓰세요.</p></div>`;
+  // 원본 18쪽: 위 세 문제는 「전체」「보이는 것」 두 그림, 아래 세 문제는 그림 하나. 층수·개수는 적지 않는다.
+  if (visual.single) return `<div class="b4-src-hidden-pair single"><figure>${obliqueCubes(visual.map, { s: 44 })}</figure></div>`;
+  return `<div class="b4-src-hidden-pair"><figure>${obliqueCubes(visual.map)}<figcaption>전체</figcaption></figure><figure>${obliqueCubes(visual.map, { walls: true })}<figcaption>보이는 것</figcaption></figure></div>`;
+}
+
+function topViewGrid(map) {
+  // 원본 16·17쪽: 위에서 본 모양(빨간 빈칸). 쌓기나무가 있는 자리만 칸을 그린다.
+  const s = 34;
+  const cells = map.flatMap((row, r) => row.map((h, c) => Number(h) ? `<rect x="${c * s + 1}" y="${r * s + 17}" width="${s}" height="${s}"/>` : "")).join("");
+  const W = Math.max(...map.map((row) => row.length));
+  return `<svg class="b4-src-topview" viewBox="0 0 ${W * s + 2} ${map.length * s + 18}" width="${W * s + 2}" height="${map.length * s + 18}" role="img" aria-label="위에서 본 모양"><text x="${(W * s) / 2 + 1}" y="12">위</text>${cells}</svg>`;
+}
+
+function sourceCubeTopView(visual) {
+  // 원본 16·17쪽: 쌓기나무 그림 → 위에서 본 모양. example이면 16쪽 오른쪽 예시 상자를 함께 싣는다.
+  const example = visual.example
+    ? `<figure class="b4-src-cube-example">${obliqueCubes([[3, 2, 1], [2, 1, 0], [1, 0, 0]], { labels: true, s: 28, label: "예시: 윗면에 그 줄의 개수를 쓴 쌓기나무" })}<figcaption>3+2+2+1+1+1=10개</figcaption></figure>`
+    : "";
+  return `<div class="b4-src-topview-set"><div class="b4-src-topview-row">${obliqueCubes(visual.map)}<span class="b4-src-arrow" aria-hidden="true">➡</span>${topViewGrid(visual.map)}</div>${example}</div>`;
 }
 
 function sourceMatrix(visual) {
@@ -363,15 +426,34 @@ function sourceTableLogic(visual) {
 }
 
 function sourceCircleLogic(visual) {
-  // 원본 43쪽: 가운데 둥근 식탁, 둘레에 자리 번호.
+  // 원본 37·43·44쪽: 가운데 둥근 식탁, 둘레에 자리(번호·이름 또는 빈 자리).
   const n = visual.seats.length;
+  const start = (visual.startAngle ?? -90) * Math.PI / 180;
   const seats = visual.seats.map((seat, index) => {
-    const angle = -Math.PI / 2 + index * Math.PI * 2 / n;
+    const angle = start + index * Math.PI * 2 / n;
     const x = 80 + Math.cos(angle) * 56;
     const y = 80 + Math.sin(angle) * 56;
     return `<g class="seat"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="16"/><text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}">${escapeHtml(seat.fixed || seat.label || "")}</text></g>`;
   }).join("");
   return `<div class="b4-src-logic">${bulletBox(visual.clues)}<svg class="b4-src-round" viewBox="0 0 160 160" role="img" aria-label="둥근 식탁 자리"><circle class="table" cx="80" cy="80" r="32"/>${seats}</svg></div>`;
+}
+
+function sourceOrderSlots(visual) {
+  // 원본 36·37·40·41쪽: 조건 상자, 한 줄 자리 문항은 왼쪽·오른쪽 빈칸 줄.
+  const slots = visual.slots
+    ? `<div class="b4-src-slots"><span>${escapeHtml(visual.slots.left || "왼쪽")}</span>${Array.from({ length: visual.slots.count }, () => "<i></i>").join("")}<span>${escapeHtml(visual.slots.right || "오른쪽")}</span></div>`
+    : "";
+  return `<div class="b4-src-logic">${bulletBox(visual.clues)}${slots}</div>`;
+}
+
+function sourceCompassGrid(visual) {
+  // 원본 36쪽: A~I 3×3 칸과 북·남·동·서 방위표.
+  const s = 40;
+  const cells = visual.labels.map((label, i) => `<g><rect x="${(i % 3) * s}" y="${Math.floor(i / 3) * s}" width="${s}" height="${s}"/><text x="${(i % 3) * s + s / 2}" y="${Math.floor(i / 3) * s + s / 2 + 5}">${escapeHtml(label)}</text></g>`).join("");
+  const cx = 3 * s + 84;
+  const cy = 1.5 * s;
+  const compass = `<path class="axis" d="M${cx} ${cy - 44}V${cy + 44}M${cx - 44} ${cy}H${cx + 44}"/><path class="axis-head" d="M${cx} ${cy - 48}l-4 7h8Z"/><text x="${cx}" y="${cy - 52}">북</text><text x="${cx}" y="${cy + 62}">남</text><text x="${cx - 56}" y="${cy + 5}">서</text><text x="${cx + 56}" y="${cy + 5}">동</text>`;
+  return `<svg class="b4-src-compass" viewBox="-4 -20 ${3 * s + 150} ${3 * s + 44}" role="img" aria-label="A부터 I까지 3×3 칸과 방위표">${cells}${compass}</svg>`;
 }
 
 function sourceRowLogic(visual) {
@@ -412,9 +494,12 @@ export function book04Markup(visual) {
     case "source-fold-holes": return sourceFoldHoles(visual);
     case "source-cube-box": return sourceCubeBox(visual);
     case "source-hidden-cube": return sourceHiddenCube(visual);
+    case "source-cube-topview": return sourceCubeTopView(visual);
     case "source-matrix": return sourceMatrix(visual);
     case "source-table-logic": return sourceTableLogic(visual);
     case "source-circle-logic": return sourceCircleLogic(visual);
+    case "source-order-slots": return sourceOrderSlots(visual);
+    case "source-compass-grid": return sourceCompassGrid(visual);
     case "source-row-logic": return sourceRowLogic(visual);
     case "source-balance-equations": return sourceBalanceEquations(visual);
     default: return "";
