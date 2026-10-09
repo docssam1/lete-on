@@ -27,7 +27,8 @@ const rx = (p) => { let r = RX.get(p); if (!r) { r = new RegExp(p, 'g'); RX.set(
 // 부정이 붙은 자리인가: 앞에 '안/못', 뒤에 '~지 않/못'
 function negated(t, i, end) {
   const before = t.slice(Math.max(0, i - 1), i), after = t.slice(end, end + 4);
-  return /[안못]/.test(before) || /^[가-힣]?지(않|못|말)/.test(after) || /^[가-힣]?(않|없)/.test(after);
+  const word = t.slice(Math.max(0, i - 2), i);   // 「오랫동안·편안·불안」의 안은 부정이 아니다
+  return (/[안못]/.test(before) && !/^(동|편|불|평)안$/.test(word)) || /^[가-힣]?지(않|못|말)/.test(after) || /^[가-힣]?(않|없)/.test(after);
 }
 // 부정 아닌 곳에서 맞은 서로 다른 글 조각들
 function hits(t, pats) {
