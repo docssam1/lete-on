@@ -19,6 +19,7 @@ export const norm = (s) => String(s ?? '').normalize('NFC').toLowerCase()
   .replace(/(\d)\.(\d)/g, '$1점$2')   // 54.0 g ≠ 540 g — 소수점은 지우지 않는다
   .replace(/</g, '작').replace(/>/g, '큼')   // (가) < (나) ≠ (가) > (나) — 부등호도 지우지 않는다
   .replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣').replace(/ㅁ/g, '㉤').replace(/ㅂ/g, '㉥').replace(/ㅅ/g, '㉦').replace(/ㅇ/g, '㉧')   // 낱자 ㄱ·ㄴ은 글자 속에 없으니 늘 기호(「ㄴ, 」「ㄴ이」도)
+  .replace(/[◯⭕]/g, '○').replace(/[✕✖]/g, '×')   // 큰 동그라미·곱표 꼴도 같은 기호로
   .replace(/[^0-9a-z가-힣㉠-㉧○×]/g, '');
 
 const RX = new Map();
