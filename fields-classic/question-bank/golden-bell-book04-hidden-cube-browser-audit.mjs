@@ -62,7 +62,8 @@ async function auditPerQuestionAnswersAndPrint() {
   await experience.locator('[data-experience-answer]').click();
   await page.locator('.stage-step[data-phase="original"]').click();
 
-  const expectedLabelCounts = [3, 4, 6];
+  // 원본 18쪽처럼 원래 문항 그림에는 층수 숫자를 적지 않는다(답 노출 방지, 2026-10-08).
+  const expectedLabelCounts = [0, 0, 0];
   for (let index = 0; index < expectedLabelCounts.length; index += 1) {
     const card = page.locator(".source-question-card");
     assert.equal(await card.locator("[data-original-item]").count(), 1, `source ${index + 1}: more than one answer card is shown`);

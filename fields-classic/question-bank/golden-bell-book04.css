@@ -1,0 +1,78 @@
+/* 더클래식 4권: 학생용 원본 그림을 따라 그린 문항 그림. 글자는 검정, 그림은 한 가지 색으로 몰지 않는다. */
+.book04-visual{color:#222}
+.book04-visual svg text{fill:#222}
+
+/* 15쪽 색종이 접어 구멍 내기 — 폭이 없어 0으로 그려지던 것 */
+.book04-visual .b4-source-fold-holes{display:block;width:520px;max-width:100%;height:auto}
+.b4-source-fold-holes .paper{fill:#fde9b8;stroke:#7a5a1e;stroke-width:1.4}
+.b4-source-fold-holes .fold-line{stroke:#7a5a1e;stroke-width:1.2;stroke-dasharray:4 3}
+.b4-source-fold-holes .fold-arrow{fill:none;stroke:#d9473f;stroke-width:2}
+.b4-source-fold-holes .fold-arrow-head{fill:#d9473f}
+.b4-source-fold-holes .hole{fill:#fff;stroke:#222;stroke-width:1}
+.b4-source-fold-holes .step-arrow{fill:none;stroke:#555;stroke-width:1.6}
+.b4-source-fold-holes text{font-weight:800}
+
+/* 3쪽 폴리오미노 예시 */
+.b4-src-minos{display:grid;gap:8px;min-width:min(100%,360px)}
+.b4-src-mino-row{display:grid;grid-template-columns:minmax(150px,auto) 56px auto;align-items:center;gap:10px;color:#222;font-size:15px;font-weight:700}
+.b4-src-mino-row b{padding:4px 10px;border:1.5px solid #555;border-radius:8px;background:#fff;font-weight:800}
+.b4-src-mino rect{fill:#f9c74f;stroke:#222;stroke-width:1.4}
+.b4-src-mino-row i{display:block;width:40px;height:2px}
+
+/* 18쪽 전체 / 보이는 것 */
+.b4-src-hidden-pair{display:flex;flex-wrap:wrap;justify-content:center;gap:28px}
+.b4-src-hidden-pair figure{display:grid;justify-items:center;gap:4px;margin:0}
+.b4-src-hidden-pair svg{width:auto;height:170px;max-width:240px}
+.b4-src-hidden-pair figcaption{color:#222;font-size:15px;font-weight:800}
+.b4-src-hidden-pair .wall-edge{stroke:#222;stroke-width:1.4}
+
+/* 19쪽 상자 속 쌓기나무 */
+.book04-visual .b4-src-cube-box{width:auto;height:180px;max-width:100%}
+.b4-src-cube-box .cube-front{fill:#fde9b8;stroke:#8a6d2b;stroke-width:1.2}
+.b4-src-cube-box .cube-top{fill:#fff5d6;stroke:#8a6d2b;stroke-width:1.2}
+.b4-src-cube-box .cube-side{fill:#e9c97a;stroke:#8a6d2b;stroke-width:1.2}
+.b4-src-cube-box .box line{stroke:#111;stroke-width:3;stroke-linecap:round}
+
+/* 20쪽 2×2 곱셈 매트릭스 */
+.book04-visual .b4-src-matrix{width:auto;height:150px}
+.b4-src-matrix rect{fill:#fff;stroke:#222;stroke-width:1.6}
+.b4-src-matrix text{font-size:18px;font-weight:800}
+
+/* 38·39·42·43쪽 조건 상자 + 표·지도·식탁 */
+.b4-src-logic{display:grid;justify-items:center;gap:12px;width:min(100%,560px)}
+.b4-src-clues{margin:0;padding:10px 16px 10px 30px;border:1.5px solid #777;border-radius:12px;background:#fff;color:#222;font-size:15px;line-height:1.7}
+.b4-src-table{border-collapse:collapse;background:#fff}
+.b4-src-table th,.b4-src-table td{min-width:52px;height:34px;border:1.5px solid #555;color:#222;font-size:15px;text-align:center}
+.b4-src-table tr:first-child th,.b4-src-table th:first-child{background:#fff3c4}
+.book04-visual .b4-src-cardinal{width:auto;height:220px}
+.b4-src-cardinal .cell{fill:#fff;stroke:#555;stroke-width:1.5}
+.b4-src-cardinal .icon{fill:none;stroke:#333;stroke-width:1.6;stroke-linejoin:round}
+.b4-src-cardinal .axis{stroke:#5a9d5e;stroke-width:2.2}
+.b4-src-cardinal .axis-head{fill:#5a9d5e}
+.b4-src-cardinal text{font-size:14px;font-weight:800;text-anchor:middle}
+.b4-src-cardinal .mark{font-size:14px}
+.book04-visual .b4-src-round{width:auto;height:190px}
+.b4-src-round .table{fill:#fde9b8;stroke:#7a5a1e;stroke-width:1.6}
+.b4-src-round .seat circle{fill:#fff;stroke:#555;stroke-width:1.5}
+.b4-src-round .seat text{font-size:14px;font-weight:800;text-anchor:middle}
+
+@media screen and (max-width:700px){
+  .b4-src-mino-row{grid-template-columns:1fr auto;font-size:13px}
+  .b4-src-mino-row b{grid-column:1/-1;justify-self:start}
+  .b4-src-hidden-pair svg{height:120px}
+}
+
+@media print{
+  .gold-print-page[data-print-book="book-04"] .b4-source-fold-holes{width:72mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-hidden-pair{gap:5mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-hidden-pair svg{height:26mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-hidden-pair figcaption{font-size:9px}
+  .gold-print-page[data-print-book="book-04"] .b4-src-cube-box{height:32mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-matrix{height:26mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-clues{padding:1.5mm 3mm 1.5mm 6mm;font-size:9px;line-height:1.5}
+  .gold-print-page[data-print-book="book-04"] .b4-src-table th,.gold-print-page[data-print-book="book-04"] .b4-src-table td{min-width:9mm;height:5.5mm;font-size:8px}
+  .gold-print-page[data-print-book="book-04"] .b4-src-cardinal,.gold-print-page[data-print-book="book-04"] .b4-src-round{height:32mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-minos{gap:1.5mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-mino-row{grid-template-columns:auto 12mm auto;font-size:9px;gap:2mm}
+  .b4-src-cube-box polygon,.b4-src-mino rect,.b4-src-round .table,.b4-source-fold-holes .paper{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}

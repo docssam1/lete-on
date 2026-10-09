@@ -241,10 +241,23 @@ function frontBackTwoOrders(visual) {
   return `<div class="b4-two-order-cases">${visual.clues.map((clue) => `<p>${escapeHtml(clue)} <b>전체 ?명</b></p>`).join("")}</div>`;
 }
 
-// Source-backed Book 4 additions deliberately use newly authored, calculable
-// diagrams instead of reproducing a protected classroom slide.
+// 원본(학생용 무답본) 그림을 따라 그린다. 답이 되는 수는 그림에 적지 않는다.
+const bulletBox = (clues) => clues?.length
+  ? `<ul class="b4-src-clues">${clues.map((clue) => `<li>${escapeHtml(clue)}</li>`).join("")}</ul>`
+  : "";
+
 function sourceNumberModel(visual) {
-  return `<div class="b4-clue-panel"><p><b>칸 수</b>같은 정사각형 조각 ${Number(visual.count)}개</p><p><b>규칙</b>돌리거나 뒤집어 같은 모양은 하나로 셉니다.</p></div>`;
+  // 원본 3쪽: 모노미노·도미노 예시(도형 종류 1개) 다음에 묻는 칸 수.
+  const name = { 1: "모노미노", 2: "도미노", 3: "트리미노", 4: "테트로미노" };
+  const shape = (cells) => {
+    const s = 18;
+    const w = Math.max(...cells.map(([, c]) => c)) + 1;
+    const h = Math.max(...cells.map(([r]) => r)) + 1;
+    return `<svg class="b4-src-mino" viewBox="0 0 ${w * s + 2} ${h * s + 2}" width="${w * s + 2}" height="${h * s + 2}" aria-hidden="true">${cells.map(([r, c]) => `<rect x="${1 + c * s}" y="${1 + r * s}" width="${s}" height="${s}"/>`).join("")}</svg>`;
+  };
+  const row = (count, cells, result) => `<div class="b4-src-mino-row"><span>정사각형 ${count}개 → ${name[count]}</span>${cells ? shape(cells) : "<i></i>"}<b>${result}</b></div>`;
+  const count = Number(visual.count);
+  return `<div class="b4-src-minos">${row(1, [[0, 0]], "도형 종류 1개")}${row(2, [[0, 0], [1, 0]], "도형 종류 1개")}${row(count, null, "도형 종류 ?개")}</div>`;
 }
 
 function sourceFoldHoles(visual) {
@@ -258,51 +271,111 @@ function sourceFoldHoles(visual) {
     const length = Math.hypot(fold.direction[0], fold.direction[1]) || 1;
     const dx = fold.direction[0] / length * 18;
     const dy = fold.direction[1] / length * 18;
-    return `<g><text x="${offsetX + size / 2}" y="10" text-anchor="middle" font-size="8">${label}</text><polygon points="${points(paper, offsetX)}" fill="#dff1f6" stroke="#4389a8" stroke-width="1.4"/><line class="fold-line" x1="${lineStart[0]}" y1="${lineStart[1]}" x2="${lineEnd[0]}" y2="${lineEnd[1]}" stroke="#4389a8" stroke-width="1.2" stroke-dasharray="4 3"/><path class="fold-arrow" d="M${midX - dx} ${midY - dy}L${midX + dx} ${midY + dy}" fill="none" stroke="#d15a4a" stroke-width="2"/><path class="fold-arrow-head" d="M${midX + dx} ${midY + dy}l${-6 - dy / 4} ${-dx / 4}l${dy / 2} ${dx / 2}Z" fill="#d15a4a"/></g>`;
+    return `<g><text x="${offsetX + size / 2}" y="10" text-anchor="middle" font-size="8">${label}</text><polygon class="paper" points="${points(paper, offsetX)}"/><line class="fold-line" x1="${lineStart[0]}" y1="${lineStart[1]}" x2="${lineEnd[0]}" y2="${lineEnd[1]}"/><path class="fold-arrow" d="M${midX - dx} ${midY - dy}L${midX + dx} ${midY + dy}"/><path class="fold-arrow-head" d="M${midX + dx} ${midY + dy}l${-6 - dy / 4} ${-dx / 4}l${dy / 2} ${dx / 2}Z"/></g>`;
   };
   const first = foldPanel(visual.paper.vertices, visual.folds[0], 8, "첫째 접기");
   const second = visual.folds[1]
     ? foldPanel(visual.folds[0].after, visual.folds[1], 126, "둘째 접기")
-    : `<g><text x="168" y="10" text-anchor="middle" font-size="8">접은 모양</text><polygon points="${points(visual.folds[0].after, 126)}" fill="#dff1f6" stroke="#4389a8" stroke-width="1.4"/></g>`;
+    : `<g><text x="168" y="10" text-anchor="middle" font-size="8">접은 모양</text><polygon class="paper" points="${points(visual.folds[0].after, 126)}"/></g>`;
   const finalOffset = 244;
   const clipId = `b4-${escapeHtml(visual.diagramId)}-paper`;
   const holes = visual.holes.map((currentHole) => {
     const [cx, cy] = point(currentHole.center, finalOffset);
     return `<circle class="hole ${escapeHtml(currentHole.boundary)}" cx="${cx}" cy="${cy}" r="${currentHole.radius * size}" clip-path="url(#${clipId})"/>`;
   }).join("");
-  const final = `<g><text x="${finalOffset + size / 2}" y="10" text-anchor="middle" font-size="8">구멍 낸 모양</text><defs><clipPath id="${clipId}"><polygon points="${points(visual.finalPaper, finalOffset)}"/></clipPath></defs><polygon points="${points(visual.finalPaper, finalOffset)}" fill="#dff1f6" stroke="#4389a8" stroke-width="1.4"/>${holes}</g>`;
-  return `<svg class="b4-source-fold-holes" viewBox="0 0 340 108" role="img" aria-label="접는 선과 방향, 구멍 위치가 표시된 색종이 접기">${first}<path class="step-arrow" d="M100 56H118m-7-6 7 6-7 6"/>${second}<path class="step-arrow" d="M218 56H236m-7-6 7 6-7 6"/>${final}</svg>`;
+  const final = `<g><text x="${finalOffset + size / 2}" y="10" text-anchor="middle" font-size="8">구멍 낸 모양</text><defs><clipPath id="${clipId}"><polygon points="${points(visual.finalPaper, finalOffset)}"/></clipPath></defs><polygon class="paper" points="${points(visual.finalPaper, finalOffset)}"/>${holes}</g>`;
+  return `<svg class="b4-source-fold-holes" viewBox="0 0 340 108" role="img" aria-label="색종이를 접고 구멍을 낸 그림">${first}<path class="step-arrow" d="M100 56H118m-7-6 7 6-7 6"/>${second}<path class="step-arrow" d="M218 56H236m-7-6 7 6-7 6"/>${final}</svg>`;
 }
 
 function sourceCubeBox(visual) {
-  const cells = Array.from({ length: visual.total }, (_, index) => `<span style="background:${index < visual.shown ? "#79b7cc" : "#eef4f6"}">${index < visual.shown ? "■" : ""}</span>`).join("");
-  return `<div class="b4-clue-panel"><p><b>상자</b>${visual.dimensions.join(" x ")}칸</p><div style="display:grid;grid-template-columns:repeat(${visual.columns},22px);gap:3px;justify-content:center">${cells}</div></div>`;
+  // 원본 19쪽: 정육면체 상자(굵은 선) 속 쌓기나무. 앞면이 정사각형인 빗각 그림.
+  const [W, H, D] = visual.dimensions.map(Number);
+  const map = visual.map || [];
+  const s = 34;
+  const k = s / 3;
+  const ox = 8;
+  const oy = 8 + D * k + H * s;
+  const pt = (x, y, z) => [ox + x * s + z * k, oy - y * s - z * k];
+  const poly = (cls, ...p) => `<polygon class="${cls}" points="${p.map((q) => q.map((n) => n.toFixed(1)).join(",")).join(" ")}"/>`;
+  const height = (x, z) => Number(map[z]?.[x] || 0);
+  let cubes = "";
+  for (let z = D - 1; z >= 0; z -= 1) {
+    for (let y = 0; y < H; y += 1) {
+      for (let x = 0; x < W; x += 1) {
+        if (y >= height(x, z)) continue;
+        cubes += poly("cube-front", pt(x, y, z), pt(x + 1, y, z), pt(x + 1, y + 1, z), pt(x, y + 1, z));
+        if (y + 1 >= height(x, z)) cubes += poly("cube-top", pt(x, y + 1, z), pt(x + 1, y + 1, z), pt(x + 1, y + 1, z + 1), pt(x, y + 1, z + 1));
+        if (x + 1 >= W || y >= height(x + 1, z)) cubes += poly("cube-side", pt(x + 1, y, z), pt(x + 1, y, z + 1), pt(x + 1, y + 1, z + 1), pt(x + 1, y + 1, z));
+      }
+    }
+  }
+  const line = (a, b) => `<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}"/>`;
+  const box = [
+    line(pt(0, 0, 0), pt(W, 0, 0)), line(pt(W, 0, 0), pt(W, H, 0)), line(pt(W, H, 0), pt(0, H, 0)), line(pt(0, H, 0), pt(0, 0, 0)),
+    line(pt(0, H, 0), pt(0, H, D)), line(pt(W, H, 0), pt(W, H, D)), line(pt(W, 0, 0), pt(W, 0, D)),
+    line(pt(0, H, D), pt(W, H, D)), line(pt(W, H, D), pt(W, 0, D))
+  ].join("");
+  const w = ox * 2 + W * s + D * k;
+  const h = oy + 8;
+  return `<svg class="b4-src-cube-box" viewBox="0 0 ${w.toFixed(0)} ${h.toFixed(0)}" role="img" aria-label="정육면체 상자 속 쌓기나무">${cubes}<g class="box">${box}</g></svg>`;
 }
 
 function sourceHiddenCube(visual) {
-  const rows = visual.map.map((row) => `<div style="display:flex;gap:3px">${row.map((height) => `<span style="display:grid;place-items:center;width:28px;height:28px;border:1px solid #7898a8;background:${height ? "#dff1f6" : "#fff"}">${height || ""}</span>`).join("")}</div>`).join("");
-  return `<div class="b4-clue-panel"><p><b>위에서 본 층수</b>각 칸의 수만큼 쌓기나무가 있습니다.</p><div style="display:grid;gap:3px;justify-content:center">${rows}</div><p><b>물음</b>보이지 않는 쌓기나무 수를 쓰세요.</p></div>`;
+  return `<div class="b4-clue-panel"><p><b>물음</b>보이지 않는 쌓기나무 수를 쓰세요.</p></div>`;
 }
 
 function sourceMatrix(visual) {
-  const values = visual.cells.map((value) => `<span>${value == null ? "?" : value}</span>`).join("");
-  return `<div class="b4-clue-panel"><div style="display:grid;grid-template-columns:repeat(2,42px);gap:3px;justify-content:center">${values}</div><p><b>가로 곱</b>${visual.rowProducts.join(", ")} / <b>세로 곱</b>${visual.columnProducts.join(", ")}</p></div>`;
+  // 원본 20쪽: 2×2 빈칸, 가로 곱은 오른쪽, 세로 곱은 아래.
+  const s = 48;
+  const cells = [0, 1].flatMap((r) => [0, 1].map((c) => `<rect x="${c * s}" y="${r * s}" width="${s}" height="${s}"/>`)).join("");
+  const rows = visual.rowProducts.map((value, r) => `<text x="${2 * s + 12}" y="${r * s + s / 2 + 6}" text-anchor="start">${escapeHtml(value)}</text>`).join("");
+  const cols = visual.columnProducts.map((value, c) => `<text x="${c * s + s / 2}" y="${2 * s + 24}" text-anchor="middle">${escapeHtml(value)}</text>`).join("");
+  return `<svg class="b4-src-matrix" viewBox="-2 -2 ${2 * s + 46} ${2 * s + 34}" role="img" aria-label="가로와 세로의 곱이 적힌 2×2 빈칸">${cells}${rows}${cols}</svg>`;
+}
+
+function cardinalMap(visual) {
+  // 원본 42쪽: 2×2 칸 지도, 칸 사이 통로의 십자 화살표, 북·남·서·동, ㉮ 표시.
+  const order = ["NW", "NE", "SW", "SE"];
+  const cellSize = 62;
+  const gap = 30;
+  const icon = visual.icon === "house"
+    ? '<path class="icon" d="M8 22 21 10l13 12v14H8Z M17 36v-8h8v8"/>'
+    : '<path class="icon" d="M8 36V16h11v20 M21 36V8h12v28 M11 20h5M11 25h5M11 30h5M24 12h6M24 17h6M24 22h6M24 27h6"/>';
+  const cell = (key, index) => {
+    const x = (index % 2) * (cellSize + gap);
+    const y = Math.floor(index / 2) * (cellSize + gap);
+    const mark = key === visual.targetPosition ? `<text class="mark" x="${x + cellSize - 12}" y="${y + cellSize - 6}">㉮</text>` : "";
+    return `<g><rect class="cell" x="${x}" y="${y}" width="${cellSize}" height="${cellSize}"/><g transform="translate(${x + 10} ${y + 6})">${icon}</g>${mark}</g>`;
+  };
+  const full = cellSize * 2 + gap;
+  const c = cellSize + gap / 2;
+  const arrows = `<path class="axis" d="M${c} 8V${full - 8}M8 ${c}H${full - 8}"/><path class="axis-head" d="M${c} 3l-4 7h8ZM${c} ${full - 3}l-4-7h8ZM3 ${c}l7-4v8ZM${full - 3} ${c}l-7-4v8Z"/>`;
+  const labels = `<text x="${c}" y="-6">북</text><text x="${c}" y="${full + 16}">남</text><text x="-12" y="${c + 5}">서</text><text x="${full + 12}" y="${c + 5}">동</text>`;
+  return `<svg class="b4-src-cardinal" viewBox="-24 -22 ${full + 48} ${full + 44}" role="img" aria-label="동서남북 2×2 칸 지도">${order.map(cell).join("")}${arrows}${labels}</svg>`;
 }
 
 function sourceTableLogic(visual) {
-  return `<div class="b4-clue-panel">${visual.clues.map((clue, index) => `<p><b>${index + 1}</b>${escapeHtml(clue)}</p>`).join("")}<p><b>대상</b>${escapeHtml(visual.target)} = ?</p></div>`;
+  if (visual.places) return `<div class="b4-src-logic">${bulletBox(visual.clues)}${cardinalMap(visual)}</div>`;
+  // 원본 38·39쪽: 조건 상자 + 빈 표(행 = 고를 것, 열 = 사람).
+  const head = `<tr><th></th>${visual.people.map((name) => `<th>${escapeHtml(name)}</th>`).join("")}</tr>`;
+  const body = visual.choices.map((choice) => `<tr><th>${escapeHtml(choice)}</th>${visual.people.map(() => "<td></td>").join("")}</tr>`).join("");
+  return `<div class="b4-src-logic">${bulletBox(visual.clues)}<table class="b4-src-table">${head}${body}</table></div>`;
 }
 
 function sourceCircleLogic(visual) {
-  const seats = visual.seats.map((seat, index) => `<span class="${seat.target ? "is-target" : ""}" style="position:absolute;left:${50 + Math.cos(-Math.PI / 2 + index * Math.PI * 2 / visual.seats.length) * 38}%;top:${50 + Math.sin(-Math.PI / 2 + index * Math.PI * 2 / visual.seats.length) * 38}%;transform:translate(-50%,-50%);border:1px solid #7898a8;border-radius:50%;padding:4px 7px;background:${seat.target ? "#fff3c4" : "#fff"}">${escapeHtml(seat.fixed || seat.label || "?")}</span>`).join("");
-  return `<div class="b4-clue-panel">${visual.clues.map((clue, index) => `<p><b>${index + 1}</b>${escapeHtml(clue)}</p>`).join("")}<div style="position:relative;width:170px;height:170px;margin:auto;border:2px solid #7898a8;border-radius:50%">${seats}<i style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)">원탁</i></div></div>`;
+  // 원본 43쪽: 가운데 둥근 식탁, 둘레에 자리 번호.
+  const n = visual.seats.length;
+  const seats = visual.seats.map((seat, index) => {
+    const angle = -Math.PI / 2 + index * Math.PI * 2 / n;
+    const x = 80 + Math.cos(angle) * 56;
+    const y = 80 + Math.sin(angle) * 56;
+    return `<g class="seat"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="16"/><text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}">${escapeHtml(seat.fixed || seat.label || "")}</text></g>`;
+  }).join("");
+  return `<div class="b4-src-logic">${bulletBox(visual.clues)}<svg class="b4-src-round" viewBox="0 0 160 160" role="img" aria-label="둥근 식탁 자리"><circle class="table" cx="80" cy="80" r="32"/>${seats}</svg></div>`;
 }
 
 function sourceRowLogic(visual) {
-  const peopleByPosition = new Map(visual.placements.map((placement) => [placement.from === "front" ? placement.position : visual.total - placement.position + 1, placement.person]));
-  const seats = Array.from({ length: visual.total }, (_, index) => `<span style="display:grid;place-items:center;min-height:34px;border:1px solid #7898a8;border-radius:50%;background:${peopleByPosition.has(index + 1) ? "#fff3c4" : "#fff"};font-size:9px">${escapeHtml(peopleByPosition.get(index + 1) || "")}</span>`).join("");
-  const facts = visual.placements.map((placement) => `${placement.person}: ${placement.from === "front" ? "앞" : "뒤"}에서 ${placement.position}번째`).join(" / ");
-  return `<div class="b4-clue-panel"><div style="display:grid;grid-template-columns:repeat(${visual.total},minmax(18px,1fr));gap:3px">${seats}</div><p><b>조건</b>${escapeHtml(facts)}</p></div>`;
+  return "";
 }
 
 function sourceBalanceEquations(visual) {
