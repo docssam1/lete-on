@@ -31,6 +31,7 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
 - 원본 오류를 바로잡은 내역(교사용 답 오타 등)은 그 문항 답 기록의 `sourceNote`에 남긴다. 문항이 없는 보류 메모는 `/books/<id>/history/<경로>` 키에 둔다.
 - 데이터를 고친 뒤에는 반드시 `node fields-classic/question-bank/golden-bell-protection-audit.mjs`를 돌린다(메모 칸 정답 문구도 잡는다).
 - 참고: 2026-09-05 정답 보호 이전의 공개 git 이력에는 정답이 통째로 남아 있다. 이력은 다시 쓰지 않기로 했다(2026-10-08). 이력까지 숨기려면 저장소를 비공개로 바꾸는 방법뿐이다.
+- **골든벨 원본 대조 작업(2~4권 완료분·4권 남은 묶음 3~6·5~10권)을 이어받을 때는 `fields-classic/question-bank/HANDOVER-GOLDEN-BELL-SOURCE-REVIEW.md`부터 읽는다.** 저장 위치·answerRef 번호·DB 절차·검사 명령·했던 실수가 다 거기 있다. 작업 도구는 `fields-classic/question-bank/tools/golden-bell-book04/`.
 
 ---
 
