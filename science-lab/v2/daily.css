@@ -1,0 +1,167 @@
+/* Daily Test · 채점과 첨삭 (v2/daily.js) — 왼쪽 풀기, 오른쪽 결과. 노란 채점 단추 하나만 강조색. */
+:root { --dt-ok: #1F7A4D; --dt-ok-bg: #E6F4EC; --dt-no: #C8372D; --dt-no-bg: #FCEBE9; --dt-rv: #8A5A00; --dt-rv-bg: #FFF3D6; --dt-yel: #FFD43B; --dt-yel-ink: #2B2200; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --dt-ok: #6FD1A0; --dt-ok-bg: #173628; --dt-no: #FF8A80; --dt-no-bg: #3A1D1B; --dt-rv: #F5C76A; --dt-rv-bg: #3A2E14; }
+}
+:root[data-theme="dark"] { --dt-ok: #6FD1A0; --dt-ok-bg: #173628; --dt-no: #FF8A80; --dt-no-bg: #3A1D1B; --dt-rv: #F5C76A; --dt-rv-bg: #3A2E14; }
+
+.dt-wrap { max-width: 1240px; margin: 0 auto; padding: 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+@media (min-width: 960px) { .dt-wrap { grid-template-columns: minmax(380px, 5fr) minmax(0, 6fr); align-items: start; } .dt-left { position: sticky; top: 68px; } }
+
+/* ── 왼쪽: 풀기 ── */
+.dt-left { --dt-zoom: 1; font-size: calc(1em * var(--dt-zoom)); background: var(--card); border: 1px solid var(--k-line); border-radius: 20px; box-shadow: var(--k-shadow); padding: 16px; display: grid; gap: 14px; }
+.dt-lhead { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.dt-lhead h2 { margin: 0; flex: 1 1 auto; font-family: var(--disp); font-size: 1.35em; letter-spacing: -.02em; }
+.dt-chip { font-size: .78em; font-weight: 700; color: #fff; background: var(--k-badge); border-radius: 999px; padding: 3px 10px; }
+.dt-zoom { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; }
+.dt-zoom button { min-height: 32px; padding: 0 10px; border: 1px solid var(--k-line); border-radius: 10px; background: var(--k-top); color: var(--k-ink); cursor: pointer; }
+.dt-zoom output { min-width: 3.2em; text-align: center; color: var(--sub); }
+.dt-src { flex-basis: 100%; font-size: .82em; color: var(--sub); }
+
+.dt-qcard { border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: var(--bg); }
+.dt-qcard > header { display: flex; gap: 10px; align-items: flex-start; }
+.dt-qcard > header p { margin: 0; font-weight: 600; line-height: 1.55; }
+.dt-num { flex: none; display: inline-grid; place-items: center; min-width: 2.1em; height: 2.1em; border-radius: 10px; background: var(--k-navy); color: var(--k-on); font-weight: 800; font-size: .9em; font-variant-numeric: tabular-nums; }
+.dt-given { margin: 10px 0 0; padding: 8px 10px; background: var(--card); border-radius: 10px; font-size: .92em; }
+.dt-hint { margin: 10px 0 0; font-size: .88em; color: var(--sub); }
+.dt-choices { display: grid; gap: 8px; margin-top: 12px; }
+.dt-choice { display: flex; gap: 8px; align-items: flex-start; text-align: left; min-height: 48px; padding: 10px 12px; border: 1.5px solid var(--k-line); border-radius: 12px; background: var(--card); color: var(--ink); cursor: pointer; line-height: 1.45; }
+.dt-choice i { font-style: normal; font-weight: 800; color: var(--k-navy2); }
+.dt-choice[aria-pressed="true"] { border-color: var(--k-navy); background: var(--soft); box-shadow: inset 0 0 0 1px var(--k-navy); }
+.dt-in { display: block; width: 100%; margin-top: 12px; padding: 10px 12px; border: 1.5px solid var(--k-line); border-radius: 12px; background: var(--card); line-height: 1.5; resize: vertical; }
+.dt-in:focus, .dt-blank:focus, .dt-draft:focus { outline: 2px solid var(--k-navy2); outline-offset: 1px; }
+.dt-blank { margin: 0 2px; padding: 2px 6px; min-height: 34px; border: 1.5px solid var(--k-navy2); border-radius: 8px; background: var(--card); font-weight: 700; max-width: 9em; }
+.dt-tbl { width: 100%; margin-top: 12px; border-collapse: collapse; font-size: .92em; }
+.dt-tbl th, .dt-tbl td { border: 1px solid var(--line); padding: 6px; text-align: center; }
+.dt-tbl thead th { background: var(--soft); }
+.dt-tbl select { width: 100%; min-height: 36px; border-radius: 8px; border: 1px solid var(--k-line); background: var(--card); }
+
+.dt-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+.dt-tool { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid var(--k-line); border-radius: 999px; background: var(--k-top); color: var(--k-ink); cursor: pointer; font-weight: 600; font-size: .9em; }
+.dt-tool[aria-expanded="true"] { background: var(--soft); border-color: var(--k-navy2); }
+.dt-tool svg, .dt-mic svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.dt-self { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-left: auto; font-size: .85em; }
+.dt-self > span { color: var(--sub); }
+.dt-self button { min-height: 36px; padding: 0 10px; border: 1px solid var(--k-line); border-radius: 999px; background: var(--card); color: var(--ink); cursor: pointer; }
+.dt-self button[aria-pressed="true"] { background: var(--k-navy); border-color: var(--k-navy); color: var(--k-on); }
+.dt-drawer { margin-top: 12px; padding: 12px; border: 1px dashed var(--k-navy2); border-radius: 12px; background: var(--card); display: grid; gap: 10px; }
+.dt-drawer label { display: grid; gap: 6px; font-size: .88em; color: var(--sub); }
+.dt-draft { padding: 8px 10px; border: 1px solid var(--k-line); border-radius: 10px; background: var(--bg); color: var(--ink); resize: vertical; }
+.dt-row-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dt-mic { display: inline-flex; align-items: center; gap: 6px; }
+.dt-msg { margin: 0; font-size: .85em; color: var(--sub); }
+
+.dt-grade { min-height: 56px; border: 0; border-radius: 16px; background: var(--dt-yel); color: var(--dt-yel-ink); font-weight: 800; font-size: 1.1em; letter-spacing: -.01em; cursor: pointer; box-shadow: 0 6px 0 #D9A900, 0 10px 20px rgba(217, 169, 0, .25); transition: transform .12s, box-shadow .12s; }
+.dt-grade:hover { transform: translateY(-1px); }
+.dt-grade:active { transform: translateY(4px); box-shadow: 0 2px 0 #D9A900; }
+.dt-photo { display: grid; gap: 8px; padding: 12px; border-radius: 14px; background: var(--bg); font-size: .9em; }
+.dt-photo p { margin: 0; }
+.dt-photo small { color: var(--sub); }
+.dt-photo-btn { justify-self: start; cursor: pointer; }
+.dt-photo-box figure { margin: 0; display: grid; gap: 6px; justify-items: start; }
+.dt-photo-box img { max-width: 100%; max-height: 260px; border-radius: 10px; border: 1px solid var(--line); }
+.dt-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.dt-nav .btn:disabled { opacity: .45; cursor: default; }
+.dt-pos { font-variant-numeric: tabular-nums; }
+.dt-dots { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.dt-dots button { min-width: 40px; min-height: 36px; border-radius: 10px; border: 1px solid var(--k-line); background: var(--card); color: var(--sub); font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; }
+.dt-dots button[data-st="done"] { background: var(--soft); color: var(--k-navy2); }
+.dt-dots button[data-st="correct"] { background: var(--dt-ok-bg); color: var(--dt-ok); border-color: var(--dt-ok); }
+.dt-dots button[data-st="wrong"] { background: var(--dt-no-bg); color: var(--dt-no); border-color: var(--dt-no); }
+.dt-dots button[data-st="review"] { background: var(--dt-rv-bg); color: var(--dt-rv); border-color: var(--dt-rv); }
+.dt-dots button[aria-current="true"] { outline: 2px solid var(--k-navy); outline-offset: 1px; }
+
+/* ── 오른쪽: 결과 ── */
+.dt-right { min-width: 0; scroll-margin-top: 64px; }
+.dt-report, .dt-rx, .dt-items { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.dt-kick { margin: 0; font-size: 12px; letter-spacing: .12em; font-weight: 700; color: var(--sub); }
+.dt-title { margin: -8px 0 0; font-family: var(--disp); font-size: 1.6em; letter-spacing: -.03em; }
+.dt-hero { display: flex; gap: 18px; align-items: center; padding: 18px; border-radius: 20px; background: linear-gradient(180deg, var(--k-top), var(--k-bot)); border: 1px solid var(--k-line); box-shadow: var(--k-shadow); }
+.dt-hero.slim { display: block; }
+.dt-score { position: relative; flex: none; width: 116px; height: 116px; }
+.dt-ring { width: 100%; height: 100%; }
+.dt-ring circle { fill: none; stroke-width: 10; }
+.dt-ring-bg { stroke: var(--line); }
+.dt-ring-fg { stroke: var(--dt-ok); stroke-linecap: round; transition: stroke-dasharray .6s ease; }
+.dt-score > div { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; line-height: 1; }
+.dt-score b { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.dt-score span { font-size: 14px; color: var(--sub); margin-top: 4px; }
+.dt-hero-copy { min-width: 0; display: grid; gap: 6px; }
+.dt-hero-copy h3, .dt-diag h4 { margin: 0; font-size: 1.15em; letter-spacing: -.02em; }
+.dt-hero-copy small { color: var(--sub); }
+.dt-eyebrow { font-size: 12px; font-weight: 700; color: var(--k-navy2); letter-spacing: .02em; }
+.dt-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.dt-pill { padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.dt-pill.ok { background: var(--dt-ok-bg); color: var(--dt-ok); }
+.dt-pill.no { background: var(--dt-no-bg); color: var(--dt-no); }
+.dt-pill.review { background: var(--dt-rv-bg); color: var(--dt-rv); }
+.dt-pill.blank { background: var(--soft); color: var(--sub); }
+.dt-howto { margin: 6px 0; padding-left: 1.3em; line-height: 1.7; }
+
+.dt-diag { display: grid; gap: 12px; padding: 16px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); }
+@media (min-width: 700px) { .dt-diag:has(.dt-recommend) { grid-template-columns: minmax(0, 1fr) 220px; } }
+.dx-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.dx-row { display: flex; gap: 8px; align-items: flex-start; }
+.dx-row div { display: grid; }
+.dx-row small { color: var(--sub); }
+.dx-chip { flex: none; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; }
+.dx-chip.confirmed { background: var(--dt-no); color: #fff; }
+.dx-chip.suspected { background: var(--dt-rv-bg); color: var(--dt-rv); border: 1px solid var(--dt-rv); }
+.dt-meta-note { margin: 8px 0 0; font-size: 13px; color: var(--sub); }
+.dt-recommend { display: grid; gap: 4px; align-content: start; padding: 12px; border-radius: 14px; background: var(--soft); }
+.dt-recommend.hot { background: var(--dt-no-bg); }
+.dt-recommend > span { font-size: 12px; font-weight: 700; color: var(--sub); }
+.dt-recommend small { color: var(--sub); }
+.dt-recommend .btn { margin-top: 6px; }
+.dt-rx .item { min-width: 0; overflow-x: auto; }
+.dt-rx-h { margin: 0; }
+
+
+.dt-card { position: relative; padding: 14px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--line); display: grid; gap: 8px; }
+.dt-card.correct { border-left-color: var(--dt-ok); }
+.dt-card.wrong { border-left-color: var(--dt-no); }
+.dt-card.review { border-left-color: var(--dt-rv); }
+.dt-card > header { display: flex; gap: 10px; align-items: flex-start; }
+.dt-card > header p { margin: 0; flex: 1; font-weight: 600; line-height: 1.5; }
+.dt-stamp { flex: none; font-size: 30px; line-height: 1; font-weight: 900; }
+.dt-stamp.ok { color: var(--dt-ok); }
+.dt-stamp.no { color: var(--dt-no); }
+.dt-badge { flex: none; padding: 3px 8px; border-radius: 8px; font-size: 12px; font-weight: 800; }
+.dt-badge.review { background: var(--dt-rv-bg); color: var(--dt-rv); }
+.dt-badge.blank { background: var(--soft); color: var(--sub); }
+.dt-self-tag { justify-self: start; font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px dashed var(--sub); color: var(--sub); }
+.dt-row { display: grid; grid-template-columns: 3.4em 1fr; gap: 8px; margin: 0; align-items: baseline; }
+.dt-row > span { font-size: 12px; font-weight: 700; color: var(--sub); }
+.dt-row.key b { color: var(--dt-ok); }
+.dt-why { margin: 0; font-size: .92em; color: var(--sub); line-height: 1.6; }
+.dt-coach { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border-radius: 14px; background: var(--soft); }
+.dt-face { flex: none; width: 52px; height: 52px; border-radius: 50%; background: var(--card) url(../assets/docssam-B2-thinking.webp) 50% 6% / 230% auto no-repeat; border: 1px solid var(--line); }
+.dt-coach span { font-size: 12px; font-weight: 700; color: var(--k-navy2); }
+.dt-coach p { margin: 2px 0 0; line-height: 1.55; }
+.dt-reveal { border-top: 1px dashed var(--line); padding-top: 8px; }
+.dt-reveal summary { cursor: pointer; font-weight: 700; color: var(--k-navy2); min-height: 32px; display: flex; align-items: center; }
+.dt-reveal[open] > :not(summary) { margin-top: 8px; }
+.dt-fix { margin: 8px 0 0; font-size: .92em; }
+.dt-fix span { display: inline-block; margin-right: 6px; padding: 1px 6px; border-radius: 6px; background: var(--dt-ok-bg); color: var(--dt-ok); font-size: 12px; font-weight: 800; }
+.dt-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.dt-link { font-size: 14px; font-weight: 700; background: none; border: 0; padding: 0; color: var(--k-navy2); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.dt-need { list-style: none; margin: 0; padding: 0; font-size: .9em; display: grid; gap: 2px; }
+.dt-need li.ok { color: var(--dt-ok); }
+.dt-note { margin: 0; font-size: .9em; color: var(--sub); }
+.dt-foot { display: grid; gap: 8px; justify-items: start; padding-top: 4px; font-size: 13px; color: var(--sub); }
+.dt-foot p { margin: 0; }
+
+/* 선생님 정답표(인쇄) */
+.dt-key { max-width: 860px; padding-top: 16px; padding-bottom: 40px; }
+.dt-key h2 { font-size: 1.3em; }
+.dt-key-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.dt-key-list li { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); break-inside: avoid; display: grid; gap: 6px; }
+.dt-key-list li > p:first-child { margin: 0; display: flex; gap: 8px; font-weight: 600; }
+.dt-mis { margin: 0; font-size: 13px; color: var(--dt-no); }
+@media print {
+  .dt-key { max-width: none; padding: 0; }
+  .dt-key-list li { border-color: #999; }
+  .dt-num { background: #000; color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+@media (prefers-reduced-motion: reduce) { .dt-ring-fg, .dt-grade { transition: none; } }
+@media (max-width: 520px) { .dt-hero { flex-direction: column; align-items: flex-start; } .dt-self { margin-left: 0; } }

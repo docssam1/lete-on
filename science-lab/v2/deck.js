@@ -120,6 +120,8 @@ export function buildSlides(ch, art, plan, similar, mode, ix = null, media = nul
         <div class="dk-act"><button type="button" class="dk-go" data-l="check" disabled>확인</button></div><p class="dk-hint" hidden></p>
         <div class="dk-lsum" hidden><ul class="dk-points big">${(ch.summary || (ch.note?.points || []).map(esc)).map((x) => `<li>${x}</li>`).join('')}</ul><p class="dk-sub">과제 · 교재 ${ch.no}장 교과 확인 문제와 영재성 기르기를 마무리해 오세요.</p></div></div>`;
       e.kind = 'learned'; } }
+    // 마지막 장면 다음: 교과 확인 문제를 Daily Test(v2/daily.js)로 풀고 채점·첨삭
+    { const e = S.find((x) => x.id === 'end'); if (e) e.body = e.body.replace(/<\/div>$/, `<div class="dk-act"><a class="dk-go" href="#/${ch.unit}/daily">📝 Daily Test 풀고 채점하기 ›</a></div></div>`); }
     add('recall', 'result', ix?.recall ? '내 가설과 실험 기록' : '2차시 · 지난 시간 떠올리기', `<p class="dk-q">지난 시간에 내가 쓴 가설과 실험 결과예요. 천천히 다시 읽어 봐요.</p><div class="dk-mine"></div>`, { kind: 'recall' });
     const ch3 = [['discuss', '토의', ch.discuss.q, ch.discuss.a], ['creative', '창의력', ch.creative.q, ch.creative.a]];
     add('challenge', 'extend', '도전 하나 고르기', `<p class="dk-q">셋 중에 하고 싶은 도전 하나를 골라요.</p><div class="dk-pick">${[...ch3.map(([id, t]) => [id, t]), ['gifted', '영재성']].map(([id, t]) => `<button type="button" class="dk-go ghost" data-pick="${id}">${t}</button>`).join('')}</div>
