@@ -1,0 +1,8 @@
+/* 재미있는 나의 탐구 실험실(비눗방울) */
+.bb-model-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#f3eefb;color:#4a2f7a}
+.bubble-2d{position:relative;height:300px;background:linear-gradient(#eef3fb,#f8f5ee);border-radius:14px;overflow:hidden}
+.bubble-2d .bb-ball{position:absolute;left:50%;bottom:40px;width:110px;height:110px;margin-left:-55px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9) 0 8%,transparent 9%),conic-gradient(from 30deg,rgba(255,120,200,.35),rgba(120,200,255,.35),rgba(140,255,170,.35),rgba(255,230,120,.35),rgba(255,120,200,.35));border:2px solid rgba(255,255,255,.8);opacity:0;transform:translateY(0);transition:opacity .3s}
+.bubble-2d[data-on="1"] .bb-ball{opacity:1;animation:bb-up 6s ease-out forwards}
+@keyframes bb-up{to{transform:translateY(-120px)}}
+.bubble-2d .bb-clock{position:absolute;right:18px;top:16px;font:800 22px/1 var(--body);font-style:normal;color:#4a2f7a}
+.dk-lab-battle[data-unit="s52-u01"] .mb-team .bb-model-note{display:none}

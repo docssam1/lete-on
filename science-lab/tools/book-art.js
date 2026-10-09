@@ -5,13 +5,14 @@ import { PLANETS, planetMesh, sunGlow } from '../scenes/solar-kit.js';
 import { buildRisingSun } from '../scenes/rising-sun.js';
 import { buildSnowJar, COOLS } from '../scenes/snow-jar.js';
 import { WATERS, volAt } from '../scenes/bread-model.js';
+import { buildBubbleRig, buildFilmView, bubbleMat } from '../scenes/bubble-wand.js';
 import { buildBreadRig, buildYeastView, flourBag, sugarBowl, yeastPack, kitchenTimer } from '../scenes/bread-dough.js';
 import { labTable, labTray, beakerMesh, reagentBottle, lathe, round, fresnel, thickGlass } from '../scenes/glassware.js';
 import { puffCloud, roundedBoxGeometry } from '../scenes/_kit.js';
 const OIL_R_ = () => 0.34;
 
 const q = new URLSearchParams(location.search), shot = q.get('shot') || 'hero';
-const SIZE = { hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600] };
+const SIZE = { hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
 const [W, H] = SIZE[shot] || SIZE[shot.split('-')[0]] || [1600, 900];
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -102,6 +103,38 @@ if (shot === 'hero' || shot === 'sizes') {
     const bottle = reagentBottle('염화암모늄', 'NH₄Cl · 흰 가루', 0xd9d4c4, 0x1d4f8f, '#3346a0'); bottle.position.set(-1.3, 0, -0.9); bottle.rotation.y = 0.5; scene.add(bottle);
     camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100); camera.position.set(2.1, 2.7, 7.4); camera.lookAt(1.25, 0.8, 0);
     callouts.push({ t: '뜨거운 물 약 10 mL', p: [0.3, 0.4, 0.3], at: [700, 210], sub: '종이컵 바닥에서 1 cm쯤' }, { t: '염화암모늄을 넣고 저어요', p: [-1.05, 0.15, 0.45], at: [700, 420], sub: '더 녹지 않을 때까지' });
+  }
+} else if (shot.startsWith('bubble')) {
+  // 비눗방울: bubble-hero · bubble-mix · bubble-blow · bubble-thin · bubble-film · bubble-row · bubble-cluster(읽을거리)
+  const dark = shot === 'bubble-hero' || shot === 'bubble-cluster';
+  scene.background = new THREE.Color(dark ? 0x1b2547 : shot === 'bubble-film' ? 0xeef1f6 : 0xf5f1e8); scene.environment = env; scene.environmentIntensity = dark ? 0.9 : 0.7;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe7dccb, dark ? 0.5 : 0.9)); const d = new THREE.DirectionalLight(0xffffff, dark ? 1.4 : 2.4); d.position.set(3, 6, 5); scene.add(d);
+  camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 100);
+  const hide = (rig) => { (rig.userData.tags || []).forEach((n) => { n.visible = false; }); if (rig.userData.clock) rig.userData.clock.visible = false; Object.values(rig.userData.names || {}).forEach((n) => { n.visible = false; }); };
+  const C = (t, p, py, sub) => callouts.push({ t, p, at: [700, py], sub });
+  const SH = ['그냥 비눗물', '설탕', '글리세린'];
+  const iri = (r, th) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 72, 48), bubbleMat()); m.material.uniforms.uAge.value = th[0] < 120 ? 0.6 : th[0] > 180 ? 0.0 : 0.3; m.material.uniforms.uTime.value = r * 7; return m; };
+  if (shot === 'bubble-cluster' || shot === 'bubble-hero') {
+    const B = [[0, 1.4, 0, 1.0, [150, 900]], [1.75, 2.0, -0.6, 0.62, [100, 650]], [-1.6, 0.9, -0.4, 0.55, [200, 1000]], [1.1, 0.4, 0.5, 0.36, [120, 500]], [-0.9, 2.35, 0.3, 0.32, [80, 420]], [2.5, 0.8, 0.2, 0.25, [250, 800]]];
+    const g = new THREE.Group(); B.forEach(([x, y, z, r, th]) => { const m = iri(r, th); m.position.set(x, y, z); g.add(m); }); scene.add(g);
+    if (shot === 'bubble-hero') { g.position.x = 1.9; g.scale.setScalar(0.85); camera.position.set(0, 1.4, 11.5); camera.lookAt(0, 1.3, 0);
+      overlay.push(['비눗방울 탐구', -4.6, 2.35, { size: 70, color: '#ffffff', bold: true, align: 'left' }], ['어떻게 하면 비눗방울을 오래 띄울까?', -4.6, 1.75, { size: 36, color: '#d9ccff', bold: true, align: 'left' }], ['궁금한 점을 나만의 탐구로', -4.6, 1.38, { size: 36, color: '#d9ccff', bold: true, align: 'left' }]); }
+    else { camera.position.set(0, 1.4, 10.5); camera.lookAt(0.3, 1.3, 0); }
+  } else if (shot === 'bubble-film') {
+    const v = buildFilmView(); v.userData.set({ t: 2.3 }); Object.values(v.userData.names).forEach((n) => { n.visible = false; }); v.children.filter((c) => c.userData?.isLabel).forEach((n) => { n.visible = false; }); scene.add(v);
+    camera.position.set(0, 1.55, 11.5); camera.lookAt(0, 1.45, 0);
+    overlay.push(['그냥 비눗물', -1.1, -0.05, { size: 34, color: '#1f2a44', bold: true }], ['글리세린 넣은 비눗물', 1.1, -0.05, { size: 34, color: '#1f2a44', bold: true }], ['물이 많이 증발해요', -1.1, 3.0, { size: 30, color: '#3346a0', bold: true }], ['덜 증발해요', 1.1, 3.0, { size: 30, color: '#2f7d4f', bold: true }], ['파란 머리·노란 꼬리 = 비누 분자 · 가운데 = 막 속의 물 · 초록 = 글리세린', 0, -0.45, { size: 26, color: '#5b6577', bold: true }]);
+  } else {
+    const row = shot === 'bubble-row' || shot === 'bubble-mix', rig = buildBubbleRig({ adds: row ? [0, 1, 2] : [shot === 'bubble-thin' ? 1 : 2], props: shot === 'bubble-mix' });
+    const st = { 'bubble-mix': { grow: 0, sim: 0 }, 'bubble-row': { grow: 1, sim: 20 }, 'bubble-blow': { grow: 1, sim: 2.5 }, 'bubble-thin': { grow: 1, sim: 23 } }[shot];
+    rig.userData.set({ t: 1.2, trial: -1, ...st }); hide(rig); rig.children[0].scale.set(5, 1, 4); scene.add(rig);
+    if (row) { rig.userData.stations.forEach((s, i) => { overlay.push([SH[i], s.position.x, -0.45, { size: 40, color: '#1f2a44', bold: true }]);
+        if (shot === 'bubble-row') overlay.push([['약 10초에 터짐', '평균 25초', '평균 59초'][i], s.position.x, -0.82, { size: 32, color: '#6b3fa0', bold: true }]); });
+      camera.position.set(0, 2.2, shot === 'bubble-mix' ? 12.5 : 11.2); camera.lookAt(0, 1.25, 0);
+      if (shot === 'bubble-row') overlay.push(['불고 나서 20초 뒤', 0, 3.15, { size: 36, color: '#1f2a44', bold: true }]); }
+    else { camera.position.set(3.3, 2.0, 10.4); camera.lookAt(1.95, 1.45, 0);
+      if (shot === 'bubble-blow') { C('터질 때까지 시간 재기', [0.35, 2.0, 0.2], 230, '다 불어진 순간부터 초시계'); C('같은 고리', [0.3, 1.15, 0.05], 430, '같은 세기로 같은 크기로 불어요'); }
+      else { C('색이 바뀌어요', [0.3, 2.45, 0.35], 230, '막이 얇아지고 있어요'); C('곧 터져요', [0.0, 2.2, 0.4], 430, '막 속의 물이 증발해서'); } }
   }
 } else if (shot.startsWith('bread') || shot === 'mold-dish') {
   // 부푸는 효모빵: bread-hero · bread-mix · bread-start · bread-cup · bread-yeast · bread-baked · bread-row · mold-dish(읽을거리)

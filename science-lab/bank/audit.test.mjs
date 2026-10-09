@@ -37,9 +37,11 @@ test('문제은행 감사가 보조 모듈과 충돌하지 않고 전체 단원�
   's51-u04 용해와 용액: 12문항',
   's51-u04 유사문항: 20개',
   's51-u05 다양한 생물과 우리 생활: 12문항',
-  's51-u05 유사문항: 20개'
+  's51-u05 유사문항: 20개',
+  's52-u01 재미있는 나의 탐구: 12문항',
+  's52-u01 유사문항: 20개'
  ]) assert(output.includes(expected),`감사 출력 누락: ${expected}`);
- assert.equal((output.match(/\.json = .*\.taxonomy\.js/g)||[]).length,13,'분류 체계 JSON 13개가 원본과 동기화되어야 한다');
+ assert.equal((output.match(/\.json = .*\.taxonomy\.js/g)||[]).length,14,'분류 체계 JSON 14개가 원본과 동기화되어야 한다');
  assert.match(output,/통과\s*$/);
  assert(!output.includes('TypeError'));
 });
