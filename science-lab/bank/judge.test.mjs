@@ -8,7 +8,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { judgeText, judgeShort, norm } from '../v2/judge.js';
 
-const U = ['s31-u01', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
+const U = ['s32-u01', 's31-u01', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
 const R = new URL('../data/', import.meta.url);
 const load = async (p) => { try { return await import(new URL(p, R)); } catch (e) { if (e.code === 'ERR_MODULE_NOT_FOUND') return null; throw e; } };
 
