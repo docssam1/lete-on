@@ -363,15 +363,34 @@ function sourceTableLogic(visual) {
 }
 
 function sourceCircleLogic(visual) {
-  // 원본 43쪽: 가운데 둥근 식탁, 둘레에 자리 번호.
+  // 원본 37·43·44쪽: 가운데 둥근 식탁, 둘레에 자리(번호·이름 또는 빈 자리).
   const n = visual.seats.length;
+  const start = (visual.startAngle ?? -90) * Math.PI / 180;
   const seats = visual.seats.map((seat, index) => {
-    const angle = -Math.PI / 2 + index * Math.PI * 2 / n;
+    const angle = start + index * Math.PI * 2 / n;
     const x = 80 + Math.cos(angle) * 56;
     const y = 80 + Math.sin(angle) * 56;
     return `<g class="seat"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="16"/><text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}">${escapeHtml(seat.fixed || seat.label || "")}</text></g>`;
   }).join("");
   return `<div class="b4-src-logic">${bulletBox(visual.clues)}<svg class="b4-src-round" viewBox="0 0 160 160" role="img" aria-label="둥근 식탁 자리"><circle class="table" cx="80" cy="80" r="32"/>${seats}</svg></div>`;
+}
+
+function sourceOrderSlots(visual) {
+  // 원본 36·37·40·41쪽: 조건 상자, 한 줄 자리 문항은 왼쪽·오른쪽 빈칸 줄.
+  const slots = visual.slots
+    ? `<div class="b4-src-slots"><span>${escapeHtml(visual.slots.left || "왼쪽")}</span>${Array.from({ length: visual.slots.count }, () => "<i></i>").join("")}<span>${escapeHtml(visual.slots.right || "오른쪽")}</span></div>`
+    : "";
+  return `<div class="b4-src-logic">${bulletBox(visual.clues)}${slots}</div>`;
+}
+
+function sourceCompassGrid(visual) {
+  // 원본 36쪽: A~I 3×3 칸과 북·남·동·서 방위표.
+  const s = 40;
+  const cells = visual.labels.map((label, i) => `<g><rect x="${(i % 3) * s}" y="${Math.floor(i / 3) * s}" width="${s}" height="${s}"/><text x="${(i % 3) * s + s / 2}" y="${Math.floor(i / 3) * s + s / 2 + 5}">${escapeHtml(label)}</text></g>`).join("");
+  const cx = 3 * s + 84;
+  const cy = 1.5 * s;
+  const compass = `<path class="axis" d="M${cx} ${cy - 44}V${cy + 44}M${cx - 44} ${cy}H${cx + 44}"/><path class="axis-head" d="M${cx} ${cy - 48}l-4 7h8Z"/><text x="${cx}" y="${cy - 52}">북</text><text x="${cx}" y="${cy + 62}">남</text><text x="${cx - 56}" y="${cy + 5}">서</text><text x="${cx + 56}" y="${cy + 5}">동</text>`;
+  return `<svg class="b4-src-compass" viewBox="-4 -20 ${3 * s + 150} ${3 * s + 44}" role="img" aria-label="A부터 I까지 3×3 칸과 방위표">${cells}${compass}</svg>`;
 }
 
 function sourceRowLogic(visual) {
@@ -415,6 +434,8 @@ export function book04Markup(visual) {
     case "source-matrix": return sourceMatrix(visual);
     case "source-table-logic": return sourceTableLogic(visual);
     case "source-circle-logic": return sourceCircleLogic(visual);
+    case "source-order-slots": return sourceOrderSlots(visual);
+    case "source-compass-grid": return sourceCompassGrid(visual);
     case "source-row-logic": return sourceRowLogic(visual);
     case "source-balance-equations": return sourceBalanceEquations(visual);
     default: return "";

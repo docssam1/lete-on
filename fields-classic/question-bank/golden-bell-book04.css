@@ -76,3 +76,21 @@
   .gold-print-page[data-print-book="book-04"] .b4-src-mino-row{grid-template-columns:auto 12mm auto;font-size:9px;gap:2mm}
   .b4-src-cube-box polygon,.b4-src-mino rect,.b4-src-round .table,.b4-source-fold-holes .paper{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
+
+/* 36·37·40·41쪽 순서 정하기: 왼쪽·오른쪽 빈칸 줄 */
+.b4-src-slots{display:flex;align-items:center;gap:0;color:#222;font-size:15px;font-weight:700}
+.b4-src-slots span{padding:0 10px}
+.b4-src-slots i{display:block;width:46px;height:40px;border:1.5px solid #555;background:#fff}
+.b4-src-slots i+i{border-left:0}
+
+/* 36쪽 동서남북 익히기 */
+.book04-visual .b4-src-compass{width:auto;height:180px;max-width:100%}
+.b4-src-compass rect{fill:#fff;stroke:#555;stroke-width:1.5}
+.b4-src-compass text{font-size:15px;font-weight:800;text-anchor:middle}
+.b4-src-compass .axis{stroke:#5a9d5e;stroke-width:2.2}
+.b4-src-compass .axis-head{fill:#5a9d5e}
+@media print{
+  .gold-print-page[data-print-book="book-04"] .b4-src-compass{height:30mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-slots{font-size:9px}
+  .gold-print-page[data-print-book="book-04"] .b4-src-slots i{width:8mm;height:7mm}
+}
