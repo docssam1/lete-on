@@ -18,8 +18,8 @@ export const norm = (s) => String(s ?? '').normalize('NFC').toLowerCase()
   .replace(/\s*[:=]\s*/g, '는')
   .replace(/(\d)\.(\d)/g, '$1점$2')   // 54.0 g ≠ 540 g — 소수점은 지우지 않는다
   .replace(/</g, '작').replace(/>/g, '큼')   // (가) < (나) ≠ (가) > (나) — 부등호도 지우지 않는다
-  .replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣')   // 낱자 ㄱ·ㄴ은 글자 속에 없으니 늘 기호(「ㄴ, 」「ㄴ이」도)
-  .replace(/[^0-9a-z가-힣㉠-㉣○×]/g, '');
+  .replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣').replace(/ㅁ/g, '㉤').replace(/ㅂ/g, '㉥').replace(/ㅅ/g, '㉦').replace(/ㅇ/g, '㉧')   // 낱자 ㄱ·ㄴ은 글자 속에 없으니 늘 기호(「ㄴ, 」「ㄴ이」도)
+  .replace(/[^0-9a-z가-힣㉠-㉧○×]/g, '');
 
 const RX = new Map();
 const rx = (p) => { let r = RX.get(p); if (!r) { r = new RegExp(p, 'g'); RX.set(p, r); } r.lastIndex = 0; return r; };
@@ -51,7 +51,7 @@ export function judgeShort(text, accepted) {
   for (const a of accepted || []) {
     const k = norm(a); if (!k) continue;
     const rest = t.slice(k.length);   // 말끝(「예요」 등)만 허용 — 기호·숫자가 더 붙으면(「ㄱ, ㄷ」에 「ㄹ」) 다른 답이다
-    if (t === k || (t.startsWith(k) && rest.length <= 4 && !/^(이|가)?아니/.test(rest) && !/[㉠-㉣0-9○×]/.test(rest))) return { st: 'ok' };
+    if (t === k || (t.startsWith(k) && rest.length <= 4 && !/^(이|가)?아니/.test(rest) && !/[㉠-㉧0-9○×]/.test(rest))) return { st: 'ok' };
   }
   return { st: 'no' };
 }
