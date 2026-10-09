@@ -19,6 +19,7 @@ import { taxonomy as tx31u02 } from '../data/units/s31-u02.taxonomy.js';
 import { taxonomy as tx32u02 } from '../data/units/s32-u02.taxonomy.js';
 import { taxonomy as tx32u03 } from '../data/units/s32-u03.taxonomy.js';
 import { taxonomy as tx32u04 } from '../data/units/s32-u04.taxonomy.js';
+import { taxonomy as tx32u05 } from '../data/units/s32-u05.taxonomy.js';
 
 // 탐구 지도의 정거장 = Drive `과학 단원평가` 폴더의 단원(data/source-toc.md §1). 중간·기말평가는 제외.
 // ready: 5E 화면이 있는 단원. 새 단원을 만들면 v2.js UNITS와 여기 ready 둘 다 등록한다.
@@ -37,6 +38,7 @@ export const SEMS = [
 const subsOf = (tx) => tx.elements.map((e) => ({ ...e, types: tx.types.filter((t) => t.element === e.id).length }));
 // lesson:false = 5단계 화면 준비 전(소단원 유형별 문제만 열림)
 export const READY = {
+  's32-u05': { subs: subsOf(tx32u05), bankOnly: true },
   's32-u04': { subs: subsOf(tx32u04), bankOnly: true },
   's32-u03': { subs: subsOf(tx32u03), bankOnly: true },
   's32-u02': { subs: subsOf(tx32u02), bankOnly: true },
@@ -66,6 +68,7 @@ export const READY = {
 // 문제은행 = 단원평가 원문(<단원>.source.js) + 유사문항. sets = 세트 번호, n = 원문 수.
 // 5단계 수업이 없는 단원도 여기에 있으면 지도에서 열린다(READY에 bankOnly:true로 함께 등록).
 export const BANK = {
+  's32-u05': { sets: [1,  2,  3,  4], n: 70 },
   's32-u04': { sets: [1,  2,  3,  4], n: 70 },
   's31-mid': { sets: [1,  2], n: 50 },
   's32-u03': { sets: [1,  2,  3,  4], n: 70 },
