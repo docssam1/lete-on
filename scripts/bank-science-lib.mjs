@@ -49,7 +49,7 @@ export async function importUnit(cfg) {
     const type = M.map[o.key], ac = contract(o, cfg, o.key), rub = (o.rubric || []).map((r) => (r.ratio ? `${r.criterion} (${r.ratio})` : r.criterion));
     return {
       id: `${unit}-o${o.set}-${String(o.no).padStart(2, '0')}`, status: 'verified',
-      sourceRef: { type: 'original', set: o.set, no: o.no, page: o.page, sourceId: `${cfg.sourceId}-set${o.set}`, edition: `${cfg.edition} 세트${o.set}`, course: cfg.course, unit: cfg.unitLabel },
+      sourceRef: { type: 'original', set: o.set, no: o.no, page: o.page, sourceId: `${cfg.sourceId}-set${o.set}`, edition: cfg.single ? cfg.edition : `${cfg.edition} 세트${o.set}`, course: cfg.course, unit: cfg.unitLabel },
       taxonomy: { ...tax(type, o.format), topic: o.topic, concept: o.concept },
       prompt: o.prompt, givens: o.givens ?? null, choices: o.choices ? o.choices.map((c) => c.replace(/^[①②③④⑤]\s*/, '')) : null,
       figure: figmap[o.key] ? `assets/bank/${unit}/${figmap[o.key]}.webp` : null, figureNote: o.figure?.note ?? null,
