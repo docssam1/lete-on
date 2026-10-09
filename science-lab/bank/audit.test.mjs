@@ -13,6 +13,9 @@ test('문제은행 감사가 보조 모듈과 충돌하지 않고 전체 단원�
   encoding:'utf8'
  });
  for(const expected of [
+  's32-fin 원문: 40개',
+  's32-fin 유사문항: 40개',
+  's32-fin 기말평가: 0문항',
   's32-mid 원문: 40개',
   's32-mid 유사문항: 40개',
   's32-mid 중간평가: 0문항',
