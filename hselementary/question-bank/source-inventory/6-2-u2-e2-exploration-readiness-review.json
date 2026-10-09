@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "status": "private-review-metadata-no-source-image",
+  "sourceItemId": "6-2-u2-e2-exploration",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 18,
+    "printedPage": 20,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "officialAnswerEvidence": {
+    "status": "not-used",
+    "reason": "별도 답지가 동일 판본인지 확인되지 않아 인쇄 원문과 독립 넓이 계산만 근거로 사용"
+  },
+  "originalStructure": "오른쪽 직사각형과 위쪽 직사각형의 넓이 비, 오른쪽 전체 높이, 아래쪽 높이, 오른쪽 가로로 위쪽 왼쪽 선분의 길이를 구함",
+  "geometryContract": {
+    "upperRectangle": ["ga", "na", "da", "ra"],
+    "rightRectangle": ["ma", "ba", "sa", "ra"],
+    "targetSegment": ["ga", "ma"],
+    "independentCalculation": "오른쪽 가로×전체 높이÷넓이 비÷위쪽 높이 - 오른쪽 가로",
+    "originalNumericAnswer": "6.4cm",
+    "singleAnswer": true
+  },
+  "verification": {
+    "independentMathAudit": "source-6-2-decimal-e2-exploration-audit.js",
+    "mathAndGeometryChecks": 360,
+    "layoutValidator": "gfield-geometry-layout-validator",
+    "layoutProfiles": ["desktop", "mobile-390"],
+    "renderedDiagrams": 12,
+    "layoutCollisions": 0,
+    "browserAudit": "source-6-2-decimal-e1-browser-audit.js",
+    "desktopMobileScreenshots": 12,
+    "a4PdfFiles": 6,
+    "a4ProblemPageCount": 1,
+    "difficultyOffsetsChecked": [-1, 0, 1],
+    "secondaryReviewer": {
+      "kind": "Claude CLI",
+      "scope": "원본에서 읽은 두 직사각형의 치수와 넓이 비를 텍스트로 전달해 두 계산법과 둘레 변형의 답 유일성을 독립 검토",
+      "sourceImageDirectlyViewed": false,
+      "confirmedOriginalNumericAnswer": "6.4cm"
+    }
+  },
+  "verifiedVariantCount": 3,
+  "releaseStatus": "verified"
+}

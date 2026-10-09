@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "status": "private-review-metadata-no-source-image",
+  "sourceItemId": "6-2-u2-e2-mission-3",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 19,
+    "printedPage": 21,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "officialAnswerEvidence": {
+    "status": "not-available-for-this-item",
+    "reason": "별도 6-2답지는 경시 교재이므로 심화 Mission의 공식 답으로 취급하지 않음"
+  },
+  "originalStructure": "삼각형 ㄱㄴㄷ의 넓이는 ㄹㅁㄷ의 1.25배. ㄱㄴ=3.9cm이고 ㄱ·ㄹ은 같은 높이, ㄴ·ㅁ·ㄷ은 한 밑변에 이 순서로 놓임. ㄱㄴㄷ의 넓이 9.36cm²에서 ㄴㅁ의 길이를 구함. 원본의 세 직각과 위쪽 점선 및 교차하는 두 빗변을 보존",
+  "answerContract": {
+    "originalNumericAnswer": "0.96cm",
+    "independentCalculation": "같은 높이이므로 ㄴㄷ:ㅁㄷ=1.25:1=5:4. ㄴㄷ=2×9.36÷3.9=4.8cm, ㅁㄷ=4.8÷1.25=3.84cm, ㄴㅁ=0.96cm",
+    "singleAnswer": true,
+    "difficultyDesign": "쉬움은 ㄴㄷ 밑변을 직접 제시하여 넓이에서 밑변으로 바꾸는 단계를 생략, 기준은 원본의 큰 넓이, 어려움은 두 넓이의 합을 제시하여 넓이 비에 따라 먼저 나눔"
+  },
+  "verification": {
+    "independentMathAudit": "source-6-2-e2-geometry-release-audit.js",
+    "candidateMathAudit": "source-6-2-decimal-e2-mission3-audit.js",
+    "candidateLayoutAudit": "source-6-2-decimal-e2-mission3-layout-audit.js",
+    "distinctCandidateConditions": 9,
+    "focusedMathChecks": 360,
+    "candidateDiagramChecks": 36,
+    "sourceDirectlyViewed": true,
+    "publisherAnswerVerified": false,
+    "geometryProjection": "common-axis-affine",
+    "learnerNumericModelAttributes": false,
+    "publicRelease": false,
+    "handwritingFinalAnswerReadingPending": true,
+    "empiricalDifficultyCalibrated": false
+  },
+  "verifiedVariantCount": 3,
+  "releaseStatus": "locked",
+  "releaseGate": "원본 손글씨의 최종 답 판독과 별도 답 근거가 확인될 때만 잠금을 다시 검토",
+  "answerEvidence": {
+    "publisherAnswerVerified": false,
+    "handwritingReadingConfirmed": false,
+    "handwritingReading": "fraction-overwritten-not-confirmed",
+    "handwritingAgreesWithCalculation": null,
+    "handwritingConflict": null,
+    "independentPrintedConditionsVerified": true,
+    "handwritingStatus": "ambiguous-cancelled-writing"
+  },
+  "legacyCandidateVerification": {
+    "independentMathAudit": "source-6-2-decimal-e2-mission3-audit.js",
+    "mathChecks": 360,
+    "candidateEnumeration": "0.01cm 단위의 양의 ㄴㅁ 후보 전수 검사에서 문항마다 1개",
+    "fixedPoolCount": 3,
+    "diagramLayoutAudit": "source-6-2-decimal-e2-mission3-layout-audit.js",
+    "diagramLayoutChecks": 36,
+    "geometrySkillAudit": "gfield-geometry-layout-validator/scripts/audit-svg-layout.js",
+    "geometrySkillProfiles": "쉬움·기준·어려움 각각 PC와 390px, 총 36개 렌더 충돌 0",
+    "browserAudit": "source-6-2-decimal-e1-browser-audit.js",
+    "desktopMobileScreenshots": 12,
+    "a4PdfFiles": 6,
+    "a4ProblemPageCount": 1,
+    "a4SolutionPageCount": 1,
+    "secondaryReviewer": {
+      "kind": "Claude CLI",
+      "scope": "사람이 전사한 원본 조건에서 밑변 비로 0.96cm를 독립 계산하고 세 난이도의 추론 단계 차이를 검토",
+      "sourceImageDirectlyViewed": false,
+      "confirmedOriginalAnswer": "0.96cm",
+      "finding": "세 조건 모두 답이 하나이고 쉬움<기준<어려움의 단계 차이가 단순 숫자 변경이 아님"
+    }
+  }
+}

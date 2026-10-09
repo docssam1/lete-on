@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "releaseStatus": "locked",
+  "usage": "answer-only-canonical-source-model",
+  "camera": [
+    "right",
+    "above",
+    "front"
+  ],
+  "runtimeHashEncoding": "utf8-lf",
+  "runtimeHashes": {
+    "source-6-2-stack-models.js": "1dc519dd11912c75a6be7482c04f8558895d76c8a2eb5fa631a8309bfcaa9ff0",
+    "source-6-2-stack-renderer.mjs": "03e7797cc183fd70265daa802c91921a4bbecb1a6294970dd2f9c76e640e17a0",
+    "source-6-2-stack-review.html": "9b5f36c6985657fda8cc0e916122003af365ba9fd3efef3b6e4f441e9acee793",
+    "source-6-2-stack-review.css": "1cc33aa2ad5fdfaa3d568ff2ea898e8f6d7045b29d0431bf01e8adb50834c1aa"
+  },
+  "exportSettings": {
+    "width": 640,
+    "height": 520,
+    "pixelRatio": 2,
+    "directionFontSize": 28
+  },
+  "assets": [
+    {
+      "file": "6-2-u3-e1-example-4-v0.png",
+      "sourceItemId": "6-2-u3-e1-example-4",
+      "variant": 0,
+      "contractSha256": "d5613f641b31ae76a0b66a5e26b9d52168540341f96c1a421346351d3cb5c3eb",
+      "sha256": "589872212963a7d9ec28353bb518fb242df57a8ad4b8f37d4502b2b6f50de5ff",
+      "byteLength": 54461,
+      "size": [
+        1280,
+        1040
+      ]
+    },
+    {
+      "file": "6-2-u3-e1-example-4-v1.png",
+      "sourceItemId": "6-2-u3-e1-example-4",
+      "variant": 1,
+      "contractSha256": "143c1285be497c20e6c18c709ff39bfbb61eb69dede7bc870b5f4f3a5eaacbc5",
+      "sha256": "b21cf18f7e3630c20e6e32b93fdc4d99a5dffc5c4d23590f0787b72a3e044e8d",
+      "byteLength": 54371,
+      "size": [
+        1280,
+        1040
+      ]
+    },
+    {
+      "file": "6-2-u3-e1-example-4-v2.png",
+      "sourceItemId": "6-2-u3-e1-example-4",
+      "variant": 2,
+      "contractSha256": "1091293b3cc4d2dd2869eda99a23ecf601f723bcbe3beabe5c2b954c4279a899",
+      "sha256": "3df35027ed14c9dfa49e7c72542f50ee5d98d9c3d62d69c1f010a47f34394b84",
+      "byteLength": 53916,
+      "size": [
+        1280,
+        1040
+      ]
+    },
+    {
+      "file": "6-2-u3-e1-mission-3-v0.png",
+      "sourceItemId": "6-2-u3-e1-mission-3",
+      "variant": 0,
+      "contractSha256": "b19cb541f257f1a19587f80e9e5289cda286fcead1169f7e000dc502e7d8c52a",
+      "sha256": "ed7b4a662c87737adc0803a58cef84668a8719e3a1c7d8def9295c9fe081ed50",
+      "byteLength": 55920,
+      "size": [
+        1280,
+        1040
+      ]
+    },
+    {
+      "file": "6-2-u3-e1-mission-3-v1.png",
+      "sourceItemId": "6-2-u3-e1-mission-3",
+      "variant": 1,
+      "contractSha256": "67db58a168dd47977335bd9a66b266c58af907c519518609699fc578a6d71316",
+      "sha256": "db7225a596ee1bfcb102c2ae564f653daa9588d9502442ed3d75c7321da3c64e",
+      "byteLength": 55226,
+      "size": [
+        1280,
+        1040
+      ]
+    },
+    {
+      "file": "6-2-u3-e1-mission-3-v2.png",
+      "sourceItemId": "6-2-u3-e1-mission-3",
+      "variant": 2,
+      "contractSha256": "533d54272624f1243ae403c7ddbf3b93e14744e2557cfd1d722cf804bf5e3a7a",
+      "sha256": "3e3d3f71c954f5f40a04acba7c554ab0413f3fc5d8ef64eb16e18e0adb8d9144",
+      "byteLength": 57461,
+      "size": [
+        1280,
+        1040
+      ]
+    }
+  ]
+}

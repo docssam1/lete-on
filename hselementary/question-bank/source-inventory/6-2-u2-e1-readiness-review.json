@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "status": "private-review-metadata-no-source-image",
+  "semester": "6-2",
+  "unit": 2,
+  "exploration": 1,
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 16,
+    "printedPage": 18,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "missionSourceIdentity": {
+    "kind": "same-private-pdf",
+    "pdfPage": 17,
+    "printedPage": 19,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "officialAnswerEvidence": {
+    "status": "not-used",
+    "reason": "별도 답지 후보가 이 심화 원본과 같은 판본임을 확인하지 못해 인쇄 원문과 독립 계산만 근거로 사용함"
+  },
+  "rawSourceLinks": {
+    "6-2-u2-e1-exploration": ["6-2-u2-e1-exploration-1", "6-2-u2-e1-exploration-2"],
+    "6-2-u2-e1-example-1": ["6-2-u2-e1-example-1"],
+    "6-2-u2-e1-example-2": ["6-2-u2-e1-example-2"],
+    "6-2-u2-e1-example-3": ["6-2-u2-e1-example-3"],
+    "6-2-u2-e1-example-4": ["6-2-u2-e1-example-4"],
+    "6-2-u2-e1-mission-1": ["6-2-u2-e1-mission-1"],
+    "6-2-u2-e1-mission-2": ["6-2-u2-e1-mission-2"],
+    "6-2-u2-e1-mission-3": ["6-2-u2-e1-mission-3"],
+    "6-2-u2-e1-mission-4": ["6-2-u2-e1-mission-4"],
+    "6-2-u2-e1-mission-5": ["6-2-u2-e1-mission-5"],
+    "6-2-u2-e1-mission-6": ["6-2-u2-e1-mission-6"]
+  },
+  "verification": {
+    "independentMathAudit": "source-6-2-decimal-e1-audit.js",
+    "browserAudit": "source-6-2-decimal-e1-browser-audit.js",
+    "missionIndependentMathAudit": "source-6-2-decimal-e1-missions-audit.js",
+    "randomizedChecks": 2700,
+    "desktopMobileScreenshots": 144,
+    "a4PdfFiles": 72,
+    "difficultyOffsetsChecked": [-1, 0, 1],
+    "secondaryReviewer": {
+      "kind": "Claude CLI",
+      "scope": "인쇄 원문에서 읽은 예제 1-2~1-4의 수치에 대한 독립 계산과 단일 답 검토",
+      "sourceImageDirectlyViewed": false,
+      "confirmedOriginalNumericAnswers": ["0.1", "1.4", "60"],
+      "missionMathScope": "Mission 4~6은 인쇄 원문 판독 결과를 텍스트로 전달하여 별도 수학 계산 검토; 원본 영상이나 공식 답지는 직접 확인하지 않음"
+    }
+  },
+  "items": [
+    {
+      "sourceItemId": "6-2-u2-e1-exploration-1",
+      "rawSourceItemId": "6-2-u2-e1-exploration",
+      "originalStructure": "두 소수의 나눗셈과 몫이 같은 식을 보기에서 하나 고름",
+      "visualRequirement": "보기의 소수점과 나눗셈 기호를 분명히 표시",
+      "answerContract": "single-choice",
+      "independentCalculation": "두 수를 같은 배수로 바꾼 나눗셈만 몫이 같음; 보기의 몫을 각각 유리수로 비교",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-exploration-2",
+      "rawSourceItemId": "6-2-u2-e1-exploration",
+      "originalStructure": "소수 나눗셈 한 식을 계산",
+      "visualRequirement": "원문에는 별도 그림이 없고 계산식만 있음",
+      "answerContract": "single-value",
+      "independentCalculation": "몫에 나누는 수를 곱해 원래 나누어지는 수와 같은지 확인",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-example-1",
+      "rawSourceItemId": "6-2-u2-e1-example-1",
+      "originalStructure": "두 나눗셈의 몫 사이에 있는 한 자리 소수를 모두 찾아 합함",
+      "visualRequirement": "열린 부등식과 빈칸을 한 줄에 표시",
+      "answerContract": "single-value",
+      "independentCalculation": "두 몫을 별도로 구하고 0.1 간격의 후보를 전수 열거해 합함",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-example-2",
+      "rawSourceItemId": "6-2-u2-e1-example-2",
+      "originalStructure": "두 나눗셈에서 나누는 수를 찾아 몇 배인지 비교",
+      "visualRequirement": "두 식과 서로 다른 소수점 자리를 줄 단위로 구분",
+      "answerContract": "single-ratio",
+      "independentCalculation": "각 나누는 수는 나누어지는 수를 몫으로 나눈 값; 두 나누는 수의 비를 재계산",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-example-3",
+      "rawSourceItemId": "6-2-u2-e1-example-3",
+      "originalStructure": "세 양의 소수의 두 수씩 곱한 값으로 가운데 수를 찾음",
+      "visualRequirement": "서로 다른 세 곱셈식을 분리해 표시",
+      "answerContract": "single-value",
+      "independentCalculation": "가능한 양의 한 자리 소수를 전수 열거해 세 곱셈식 모두에 맞는지 확인",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-example-4",
+      "rawSourceItemId": "6-2-u2-e1-example-4",
+      "originalStructure": "자연수 부분과 1 미만인 소수 부분을 식에서 찾고 몫을 계산",
+      "visualRequirement": "계수와 두 기호 및 소수점을 한 식으로 표시",
+      "answerContract": "single-value",
+      "independentCalculation": "가능한 자연수와 0 이상 1 미만 소수 부분을 전수 열거해 유일한 쌍을 확인",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-mission-1",
+      "rawSourceItemId": "6-2-u2-e1-mission-1",
+      "originalStructure": "여섯 나눗셈의 몫을 기준 몫과 비교해 큰 식을 모두 고름",
+      "visualRequirement": "보기 여섯 개의 소수점, 기호와 기준식을 분리해 표시",
+      "answerContract": "set-of-symbols",
+      "independentCalculation": "각 나눗셈의 몫을 정확한 유리수로 비교해 참인 기호 집합을 확인",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-mission-2",
+      "rawSourceItemId": "6-2-u2-e1-mission-2",
+      "originalStructure": "두 열린 범위에 공통으로 들어가는 자연수의 개수를 구함",
+      "visualRequirement": "두 부등식을 줄별로 분리하고 같은 빈칸 기호 사용",
+      "answerContract": "count",
+      "independentCalculation": "자연수 후보를 두 몫 범위에 모두 대입해 전수 열거",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-mission-3",
+      "rawSourceItemId": "6-2-u2-e1-mission-3",
+      "originalStructure": "두 몫 사이에 곱셈 결과가 놓이는 한 자리 소수의 개수를 구함",
+      "visualRequirement": "나눗셈과 곱셈이 포함된 한 줄 부등식 표시",
+      "answerContract": "count",
+      "independentCalculation": "0.1 간격의 후보를 정확한 유리수로 비교해 전수 열거",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-mission-4",
+      "rawSourceItemId": "6-2-u2-e1-mission-4",
+      "originalStructure": "두 숫자 자리에 자연수를 넣어 몫이 소수 둘째 자리에서 끝나는 순서쌍을 모두 찾음",
+      "visualRequirement": "두 빈자리와 소수점을 자리 순서대로 분명히 표시",
+      "answerContract": "ordered-pairs",
+      "independentCalculation": "1부터 9까지의 81개 순서쌍을 전수 검사해 정확히 두 자리 소수인 몫 확인",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-mission-5",
+      "rawSourceItemId": "6-2-u2-e1-mission-5",
+      "originalStructure": "일곱 카드 중 여섯 장으로 만든 두 수의 나눗셈에서 몫을 최대로 함",
+      "visualRequirement": "일곱 숫자 카드를 문제와 답 모두에서 시각적으로 표시",
+      "answerContract": "maximum-quotient",
+      "independentCalculation": "서로 다른 여섯 카드 배치 5040가지를 분수 비교로 전수 확인",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    },
+    {
+      "sourceItemId": "6-2-u2-e1-mission-6",
+      "rawSourceItemId": "6-2-u2-e1-mission-6",
+      "originalStructure": "다섯 카드 중 세 장으로 소수를 만들고 연산 결과가 두 경계 사이인지 셈",
+      "visualRequirement": "다섯 숫자 카드와 열린 범위를 분리해 표시",
+      "answerContract": "count",
+      "independentCalculation": "세 카드 배치 60가지를 정확한 유리수로 전수 검사",
+      "singleAnswer": true,
+      "verifiedVariantCount": 3,
+      "releaseStatus": "verified"
+    }
+  ]
+}

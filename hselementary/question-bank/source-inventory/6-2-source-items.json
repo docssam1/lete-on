@@ -8,10 +8,10 @@
     "sourceReference": "생각하는 황소 초등 6-2 심화 원본",
     "sourceEvidenceState": "단원별 개념탐구, 예제, Mission의 개수와 쪽수 범위는 원본 렌더 확인 기록을 바탕으로 색인했습니다. 개별 문항은 sourceVerified가 true인 항목만 조건·정답·그림을 직접 대조했으며, 나머지는 검수 대기입니다.",
     "countingRule": {
-      "oneExplorationBodyIsOneSourceItem": true,
+      "oneNumberedExplorationSubquestionIsOneSourceItem": true,
       "oneNumberedExampleIsOneSourceItem": true,
       "oneNumberedMissionIsOneSourceItem": true,
-      "compositeExplorationSubquestionsRemainOneItem": true
+      "unverifiedExplorationGroupingIsProvisional": true
     },
     "itemDefaults": {
       "sourceVerified": false,
@@ -21,21 +21,21 @@
     "answerContractMeaning": "candidate는 정답 형식 후보일 뿐, 원문 정답이나 출제 가능 판정이 아닙니다."
   },
   "integrity": {
-    "expectedTotalItems": 352,
-    "actualTotalItems": 352,
+    "expectedTotalItems": 355,
+    "actualTotalItems": 355,
     "expectedBySection": {
-      "exploration": 32,
+      "exploration": 35,
       "example": 128,
       "mission": 192
     },
     "actualBySection": {
-      "exploration": 32,
+      "exploration": 35,
       "example": 128,
       "mission": 192
     },
     "expectedByUnit": {
       "6-2-u1": 66,
-      "6-2-u2": 66,
+      "6-2-u2": 69,
       "6-2-u3": 44,
       "6-2-u4": 66,
       "6-2-u5": 66,
@@ -43,7 +43,7 @@
     },
     "actualByUnit": {
       "6-2-u1": 66,
-      "6-2-u2": 66,
+      "6-2-u2": 69,
       "6-2-u3": 44,
       "6-2-u4": 66,
       "6-2-u5": 66,
@@ -1112,12 +1112,16 @@
       "ordinal": 1,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
+      "sourceShape": "소수점을 함께 옮겨 몫이 같은 식을 고르는 문항과 소수 나눗셈을 계산하는 문항이 한 탐구에 묶여 있음. 공개 유형은 소문항별로 분리함.",
+      "publicSourceItemIds": [
+        "6-2-u2-e1-exploration-1",
+        "6-2-u2-e1-exploration-2"
+      ],
+      "answerContract": "single-value-per-subquestion",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 소문항별로 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-example-1",
@@ -1127,12 +1131,13 @@
       "ordinal": 1,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "두 소수 나눗셈의 몫 사이에 있는 한 자리 소수를 모두 찾아 합하는 구조.",
+      "publicSourceItemId": "6-2-u2-e1-example-1",
+      "answerContract": "single-value",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-example-2",
@@ -1142,12 +1147,13 @@
       "ordinal": 2,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "두 나눗셈에서 알려지지 않은 나누는 수를 각각 구해 몇 배인지 비교함.",
+      "publicSourceItemId": "6-2-u2-e1-example-2",
+      "answerContract": "single-ratio",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-example-3",
@@ -1157,12 +1163,13 @@
       "ordinal": 3,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "세 양의 소수의 두 수씩 곱한 값으로 가운데 수를 찾음.",
+      "publicSourceItemId": "6-2-u2-e1-example-3",
+      "answerContract": "single-value",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-example-4",
@@ -1172,12 +1179,13 @@
       "ordinal": 4,
       "pdfPage": 16,
       "printedPage": 18,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "자연수 부분과 1 미만인 소수 부분의 식에서 두 부분을 찾고 몫을 구함.",
+      "publicSourceItemId": "6-2-u2-e1-example-4",
+      "answerContract": "single-value",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "인쇄 원문과 독립 계산 및 화면 출력을 검수했습니다. 필기 답은 근거에서 제외했습니다."
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-1",
@@ -1187,12 +1195,13 @@
       "ordinal": 1,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "여섯 소수 나눗셈의 몫을 기준 몫과 비교해 더 큰 식을 모두 고르는 문제",
+      "answerContract": "set-of-symbols",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-1"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-2",
@@ -1202,12 +1211,13 @@
       "ordinal": 2,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "두 개의 소수 나눗셈 부등식에 공통으로 들어가는 자연수의 개수를 구하는 문제",
+      "answerContract": "count",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-2"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-3",
@@ -1217,12 +1227,13 @@
       "ordinal": 3,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "소수 곱셈식이 두 나눗셈 몫 사이에 놓이도록 하는 한 자리 소수의 개수를 구하는 문제",
+      "answerContract": "count",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-3"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-4",
@@ -1232,12 +1243,13 @@
       "ordinal": 4,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "소수의 두 빈 자리에 한 자리 자연수를 넣어 몫이 소수 둘째 자리에서 끝나도록 하는 순서쌍 문제",
+      "answerContract": "ordered-pairs",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-4"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-5",
@@ -1247,12 +1259,13 @@
       "ordinal": 5,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "일곱 숫자 카드 중 여섯 장으로 두 자리 소수의 나눗셈을 만들어 몫을 최대로 하는 문제",
+      "answerContract": "maximum-quotient",
+      "visualRisk": "일곱 숫자 카드를 모두 보여주고 그중 여섯 장만 쓰도록 해야 함. 0.12처럼 일의 자리가 0인 소수를 허용하는지 문장과 풀이가 일치해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-5"
     },
     {
       "sourceItemId": "6-2-u2-e1-mission-6",
@@ -1262,12 +1275,13 @@
       "ordinal": 6,
       "pdfPage": 17,
       "printedPage": 19,
-      "sourceShape": "소수 나눗셈에서 몫의 크기, 자리, 또는 빠진 수를 정하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "다섯 숫자 카드 중 세 장으로 두 자리 소수를 만들어 곱셈·나눗셈 범위를 만족하는 수의 개수를 구하는 문제",
+      "answerContract": "count",
+      "visualRisk": "다섯 숫자 카드와 열린 부등식의 두 경계를 선명하게 보여주고 답 후보를 수의 크기 순서로 적어야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e1-mission-6"
     },
     {
       "sourceItemId": "6-2-u2-e2-exploration",
@@ -1277,12 +1291,13 @@
       "ordinal": 1,
       "pdfPage": 18,
       "printedPage": 20,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "위쪽과 오른쪽 직사각형의 넓이 비, 오른쪽 가로·세로, 아래쪽 높이로 위쪽 왼쪽 선분의 길이를 구하는 문제",
+      "answerContract": "single-length",
+      "visualRisk": "겹친 직사각형의 점 이름, 공통 윗변, 높이와 가로의 소유 선분이 분명해야 하며 그림 비율이 길이 조건과 맞아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-exploration"
     },
     {
       "sourceItemId": "6-2-u2-e2-example-1",
@@ -1292,12 +1307,13 @@
       "ordinal": 1,
       "pdfPage": 18,
       "printedPage": 20,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "바퀴 한 바퀴 거리와 페달 한 바퀴당 바퀴 회전 수로 전체 이동 거리에 필요한 페달 횟수를 구하는 문제",
+      "answerContract": "single-count",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-example-1"
     },
     {
       "sourceItemId": "6-2-u2-e2-example-2",
@@ -1307,12 +1323,13 @@
       "ordinal": 2,
       "pdfPage": 18,
       "printedPage": 20,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "8시 정각부터 두 시곗바늘이 처음으로 정해진 각을 이루는 때까지 걸리는 분을 구하는 문제",
+      "answerContract": "single-minutes-after-hour",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-example-2"
     },
     {
       "sourceItemId": "6-2-u2-e2-example-3",
@@ -1322,12 +1339,13 @@
       "ordinal": 3,
       "pdfPage": 18,
       "printedPage": 20,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "가만한 물에서 배의 속력과 하류 이동 거리·시간으로 강물의 속력을 구하는 문제",
+      "answerContract": "single-current-speed",
+      "visualRisk": "배가 강을 따라 내려가는 방향과 시간·분 표기가 분명해야 하며, 거리와 속력의 단위를 섞지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-example-3"
     },
     {
       "sourceItemId": "6-2-u2-e2-example-4",
@@ -1337,8 +1355,8 @@
       "ordinal": 4,
       "pdfPage": 18,
       "printedPage": 20,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "윗변과 아랫변이 주어진 사다리꼴의 넓이와 안의 교점·같은 길이 조건으로 색칠한 부분의 넓이를 구하는 문제",
+      "answerContract": "area",
       "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
       "sourceVerified": false,
       "implementationStatus": "review-locked",
@@ -1352,12 +1370,13 @@
       "ordinal": 1,
       "pdfPage": 19,
       "printedPage": 21,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "승강장 양쪽에 다른 간격으로 놓인 소화기의 개수를 각각 세어 합하는 문제",
+      "answerContract": "single-count-both-sides-with-endpoints",
+      "visualRisk": "양쪽 끝의 소화기를 각각 세고, 어려움 단계의 두 배 간격 한 구간만 별도로 반영해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-mission-1"
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-2",
@@ -1367,12 +1386,13 @@
       "ordinal": 2,
       "pdfPage": 19,
       "printedPage": 21,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "일정 길이의 색 테이프를 일정 길이씩 겹쳐 붙인 전체 길이로 테이프 장수를 구하는 문제",
+      "answerContract": "single-overlapped-tape-count",
+      "visualRisk": "테이프 한 장 길이와 겹친 길이의 비율을 맞추고, 예시 띠의 개수를 정답처럼 보이게 하지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-mission-2"
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-3",
@@ -1382,12 +1402,13 @@
       "ordinal": 3,
       "pdfPage": 19,
       "printedPage": 21,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "겹친 삼각형의 넓이 비와 한 삼각형의 넓이·높이로 표시된 선분의 길이를 구하는 문제",
+      "answerContract": "single-shared-height-triangle-base-difference",
+      "visualRisk": "두 삼각형의 높이가 같다는 점, 밑변 ㄴ-ㅁ-ㄷ의 순서, 세 직각 표시, 길이 3.9cm와 구할 선분 ㄴㅁ이 분명해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "source-rebuilt-answer-reading-locked",
+      "reviewReason": "원문 조건의 독립 답은 하나지만 손글씨 분수에 취소와 덧쓰기가 있어 최종 답을 확정하지 않습니다.",
+      "publicSourceItemId": "6-2-u2-e2-mission-3"
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-4",
@@ -1397,12 +1418,24 @@
       "ordinal": 4,
       "pdfPage": 19,
       "printedPage": 21,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 삼각형 ㄱㄴㄷ과 ㄹㅁㅂ의 넓이, 겹친 전체 넓이와 밑변 ㅁㄷ을 이용하여 겹친 삼각형의 높이 ㅅㅇ을 구하는 문제",
+      "answerContract": "union-overlap-triangle-height",
+      "visualRisk": "두 큰 삼각형과 겹친 작은 삼각형, 밑변 ㅁㄷ의 범위, 교차점 ㅅ과 수선의 발 ㅇ, 직각 표시가 한눈에 구분되어야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "verified-fixed-pool",
+      "reviewReason": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE2Mission4",
+      "verifiedVariantCount": 3,
+      "answerVisualStatus": "verified",
+      "answerEvidence": {
+        "sourceAnswer": "10.875cm",
+        "independentCalculationVerified": true,
+        "handwritingReading": "10.875",
+        "handwritingReadingConfirmed": true,
+        "handwritingAgreesWithCalculation": true,
+        "publisherAnswerVerified": false,
+        "answerOrigin": "printed-conditions-independent-calculation-with-handwriting-match"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-5",
@@ -1412,12 +1445,13 @@
       "ordinal": 5,
       "pdfPage": 19,
       "printedPage": 21,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "서로 마주 걷는 두 사람의 거리와 각자 한 시간에 걷는 거리로 만나는 시각을 구하는 문제",
+      "answerContract": "single-meeting-clock-time",
+      "visualRisk": "오전 출발과 오후 만남 시각, 30분 늦은 출발 조건의 주체가 분명해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e2-mission-5"
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-6",
@@ -1427,27 +1461,92 @@
       "ordinal": 6,
       "pdfPage": 19,
       "printedPage": 21,
-      "sourceShape": "길이, 양, 속력 등의 상황을 소수 나눗셈으로 나타내어 값을 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "네 직사각형을 2행 2열로 붙인 그림에서 세 부분의 넓이로 빈 한 부분의 넓이를 구하는 문제",
+      "answerContract": "four-rectangle-missing-area",
+      "visualRisk": "같은 행의 높이와 같은 열의 너비가 정확히 이어져야 하고, ㉠ 및 세 넓이 수치가 선과 겹치지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "verified-fixed-pool",
+      "reviewReason": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE2Mission6",
+      "verifiedVariantCount": 3,
+      "answerVisualStatus": "verified",
+      "answerEvidence": {
+        "sourceAnswer": "10cm²",
+        "independentCalculationVerified": true,
+        "handwritingReading": "10",
+        "handwritingReadingConfirmed": true,
+        "handwritingAgreesWithCalculation": true,
+        "publisherAnswerVerified": false,
+        "answerOrigin": "printed-conditions-independent-calculation-with-handwriting-match"
+      }
     },
     {
-      "sourceItemId": "6-2-u2-e3-exploration",
+      "sourceItemId": "6-2-u2-e3-exploration-1",
       "unitId": "6-2-u2",
       "exploration": 3,
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "나누는 수가 소수 첫째 자리인 나눗셈의 몫을 소수 둘째 자리까지 반올림하는 독립 소문항",
+      "answerContract": "rounded-quotient-hundredth",
+      "visualRisk": "몫의 셋째 자리에서 반올림한다는 조건과 소수 둘째 자리의 0을 혼동하지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "6.81",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-exploration-2",
+      "unitId": "6-2-u2",
+      "exploration": 3,
+      "section": "exploration",
+      "ordinal": 2,
+      "pdfPage": 20,
+      "printedPage": 22,
+      "sourceShape": "나누는 수가 소수 둘째 자리인 나눗셈의 몫을 소수 둘째 자리까지 반올림하는 독립 소문항",
+      "answerContract": "rounded-quotient-hundredth",
+      "visualRisk": "나누는 수와 몫의 소수점 자리를 바꾸어 읽지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "6.39",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
+    },
+    {
+      "sourceItemId": "6-2-u2-e3-exploration-3",
+      "unitId": "6-2-u2",
+      "exploration": 3,
+      "section": "exploration",
+      "ordinal": 3,
+      "pdfPage": 20,
+      "printedPage": 22,
+      "sourceShape": "몫이 1보다 작은 나눗셈의 몫을 소수 둘째 자리까지 반올림하는 독립 소문항",
+      "answerContract": "rounded-quotient-hundredth",
+      "visualRisk": "반올림한 몫이 0.90이 되며 마지막 0을 생략하지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "handwriting-conflict-locked",
+      "reviewReason": "원문 27.72 ÷ 30.7의 소수 둘째 자리 반올림은 0.90이나 손글씨는 0.81로 읽힙니다. 답 근거를 더 확인해야 합니다.",
+      "independentAnswer": "0.90",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": false,
+        "handwritingReading": "0.81",
+        "method": "exact rational interval and independent long division",
+        "agreement": false
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-example-1",
@@ -1457,12 +1556,19 @@
       "ordinal": 1,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "몫을 반올림해 소수 100째 자리까지 구한 뒤 몫의 모든 자리 수를 더하는 문제",
+      "answerContract": "rounded-quotient-digit-sum",
+      "visualRisk": "원본은 소수 100째 자리까지이며 둘째 자리 문제가 아님. 반복되는 숫자와 마지막 반올림을 모두 확인해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "301",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-example-2",
@@ -1472,12 +1578,19 @@
       "ordinal": 2,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "나누어지는 수의 한 자리 숫자 빈칸에 0부터 9까지 넣어 몫을 반올림했을 때 목표값이 되는 숫자 개수를 세는 문제",
+      "answerContract": "rounded-quotient-digit-count",
+      "visualRisk": "빈칸이 한 자리 숫자이고 반올림 자리가 소수 첫째 자리임을 분명히 해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "3",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-example-3",
@@ -1487,12 +1600,12 @@
       "ordinal": 3,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "같은 수를 서로 다른 세 소수로 나눈 몫 중 가장 큰 몫이 가장 작은 몫의 약 몇 배인지 비교하는 문제",
+      "answerContract": "largest-to-smallest-quotient-factor",
+      "visualRisk": "공통 수가 0일 경우 몫의 배수가 정의되지 않으므로 양수 조건이 필요함.",
+      "sourceVerified": true,
+      "implementationStatus": "source-condition-ambiguity-locked",
+      "reviewReason": "원본에 공통 수의 양수 조건이 없어 영인 경우 답이 정해지지 않습니다. 조건 보완 전에는 공개하지 않습니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-example-4",
@@ -1502,12 +1615,19 @@
       "ordinal": 4,
       "pdfPage": 20,
       "printedPage": 22,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "한 봉지에 담을 수 있는 최대량으로 최소 봉지 수를 정한 뒤 전체를 같은 양으로 나누어 담는 문제",
+      "answerContract": "minimum-bag-count-equal-fill",
+      "visualRisk": "최소 봉지 수는 올림하고 실제 한 봉지의 양은 전체를 그 정수 봉지 수로 다시 나누어야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "4.175kg",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-1",
@@ -1517,12 +1637,19 @@
       "ordinal": 1,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "같은 나눗셈의 몫을 소수 첫째 자리와 둘째 자리까지 각각 반올림한 뒤 두 값의 차를 구하는 문제",
+      "answerContract": "difference-between-rounded-quotients",
+      "visualRisk": "첫째 자리와 둘째 자리의 0을 생략하지 않고 서로 다른 반올림값을 구분해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.03",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-2",
@@ -1532,12 +1659,19 @@
       "ordinal": 2,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "여섯 숫자 카드를 한 번씩 써서 소수 두 자리 수끼리 나누는 식의 몫을 가장 크게 만든 뒤 반올림하는 문제",
+      "answerContract": "max-card-arrangement-rounded-quotient",
+      "visualRisk": "여섯 카드를 빠짐없이 한 번씩 쓰고 두 수가 모두 소수 두 자리 수인지 확인해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "6.13",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-3",
@@ -1547,12 +1681,20 @@
       "ordinal": 3,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "나누어지는 수의 한 빈칸을 채워 몫을 소수 둘째 자리까지 반올림한 값과 맞추는 문제",
+      "answerContract": "single-valid-digit-from-rounded-hundredth",
+      "visualRisk": "빈칸은 소수 셋째 자리 하나이며, 마지막 숫자는 고정되어 있음.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      },
+      "sourceCorrection": "확대 원문은 2.94□5 ÷ 3.4이며 두 빈칸 기록은 오독입니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-4",
@@ -1562,12 +1704,19 @@
       "ordinal": 4,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "다리의 무게 제한에서 트럭 무게를 빼고 상자 한 개의 무게로 나누어 실을 수 있는 최대 상자 수를 구하는 문제",
+      "answerContract": "bridge-capacity-max-whole-boxes",
+      "visualRisk": "다리의 제한 무게에 트럭 자체 무게도 포함하고 상자 수는 정수로 내려야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "112개",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-5",
@@ -1577,12 +1726,13 @@
       "ordinal": 5,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "나눗셈의 몫을 소수 첫째 자리까지 올림한 값에서 가능한 소수 두 자리 나누는 수를 모두 세는 문제",
+      "answerContract": "count-two-decimal-divisors-in-ceiling-quotient-range",
+      "visualRisk": "올림 범위는 아래쪽이 미포함이고 위쪽이 포함됨. 끝자리가 영인 소수를 소수 두 자리 수에 포함하는지 확인해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "source-decimal-place-ambiguity-locked",
+      "reviewReason": "원문은 반올림이 아니라 올림입니다. 소수 두 자리 수의 끝자리 영 포함 여부가 달라 답 해석을 확인해야 합니다.",
+      "sourceCorrection": "올림 조건은 6.3 < 몫 <= 6.4입니다. 가능한 값은 7.54부터 7.65까지 12개이며, 7.60을 제외하면 손글씨 11개와 일치합니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-6",
@@ -1592,27 +1742,65 @@
       "ordinal": 6,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "여러 계산 결과와 조건을 비교하여 알맞은 수를 정하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "직육면체 상자의 가로·세로·높이에 들어가는 같은 정육면체의 개수를 각각 구해 곱하는 문제",
+      "answerContract": "cube-packing-three-dimensions",
+      "visualRisk": "세 방향 모두 한 모서리 길이로 나눈 정수 개수만 세고 부피 나눗셈으로 대신하지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "756개",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
-      "sourceItemId": "6-2-u2-e4-exploration",
+      "sourceItemId": "6-2-u2-e4-exploration-1",
       "unitId": "6-2-u2",
       "exploration": 4,
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "재료의 총무게와 한 개에 쓰는 무게로 만들 수 있는 최대 개수와 남는 무게를 함께 구하는 문제",
+      "answerContract": "maximum-whole-items-and-decimal-remainder",
+      "visualRisk": "만들 수 있는 개수는 자연수로 내리고 남는 무게는 원래 단위의 소수로 나타내야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "6개, 2.14g",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "6개, 2.14g",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
+    },
+    {
+      "sourceItemId": "6-2-u2-e4-exploration-2",
+      "unitId": "6-2-u2",
+      "exploration": 4,
+      "section": "exploration",
+      "ordinal": 2,
+      "pdfPage": 22,
+      "printedPage": 24,
+      "sourceShape": "같은 나눗셈에서 몫을 소수 둘째 자리와 첫째 자리에서 각각 멈출 때 가능한 나머지 중 가장 작은 값을 구하는 문제",
+      "answerContract": "minimum-remainder-at-shorter-quotient-precision",
+      "visualRisk": "원문은 반올림이 아니라 몫을 정해진 자리에서 멈추는 계산이며, 가능한 수의 범위를 확인해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.4991",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": null,
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-example-1",
@@ -1622,12 +1810,20 @@
       "ordinal": 1,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "같은 나누는 수를 쓰는 세 나눗셈 각각에서 몫을 자연수 부분까지 구하고 나머지를 구하는 묶음 문제",
+      "answerContract": "three-whole-quotients-with-decimal-remainders",
+      "visualRisk": "세 나누어지는 수의 소수점 위치가 다르므로 각 나머지의 단위를 원래 자리에서 확인해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "566, 6; 56, 4.5; 5, 4.35",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "첫 줄 흐림, 뒤 두 줄 일치",
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-example-2",
@@ -1637,12 +1833,20 @@
       "ordinal": 2,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "몫을 소수 첫째 자리에서 나누어떨어지게 하려면 나누어지는 수에 더해야 할 최소량을 구하는 문제",
+      "answerContract": "minimum-addition-to-exact-tenth-quotient",
+      "visualRisk": "몫의 다음 소수 첫째 자리 배수를 찾고 기존 수와의 차를 원래 자리 단위로 계산해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.07",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.07 또는 0.007, 판독 미확정",
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-example-3",
@@ -1652,12 +1856,20 @@
       "ordinal": 3,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "첫 나눗셈의 소수 둘째 자리 몫과 나머지, 반올림한 몫으로 가능한 최소 원래 수를 찾고 다른 수로 나눈 새 나머지를 구하는 문제",
+      "answerContract": "minimum-dividend-from-rounded-quotient-then-new-remainder",
+      "visualRisk": "반올림은 첫 몫의 조건에만 적용하고, 새 나눗셈에서는 몫을 소수 둘째 자리에서 멈춰 나머지를 계산해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.002",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.002",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-example-4",
@@ -1667,12 +1879,20 @@
       "ordinal": 4,
       "pdfPage": 22,
       "printedPage": 24,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "소수 첫째 자리 몫과 나머지로 원래 수를 되찾은 뒤 같은 수로 계속 나누어 소수 둘째 자리의 새 나머지를 구하는 문제",
+      "answerContract": "continued-division-new-remainder",
+      "visualRisk": "첫째 자리의 기존 나머지를 둘째 자리의 새 나머지로 그대로 옮기면 틀림. 자리 늘림에 따른 소수점 위치를 다시 계산해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "handwriting-conflict-locked",
+      "reviewReason": "원본의 손글씨 답이 독립 계산과 달라 공식 답 대조 전에는 공개하지 않습니다.",
+      "independentAnswer": "0.0135",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.16",
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-1",
@@ -1682,12 +1902,20 @@
       "ordinal": 1,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "네 나눗셈에서 몫을 소수 첫째 자리까지 구했을 때의 나머지를 비교하여 큰 순서로 기호를 쓰는 문제",
+      "answerContract": "rank-four-decimal-remainders-at-tenths",
+      "visualRisk": "네 나머지를 각각 원래 자리 단위로 구하고 크기 비교 전에 소수점 위치를 맞춰야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "ㄷ, ㄹ, ㄱ, ㄴ",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "ㄷ, ㄹ, ㄱ, ㄴ",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-2",
@@ -1697,12 +1925,20 @@
       "ordinal": 2,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "나누어떨어지는 정확한 몫에서 원래 수를 구한 뒤 몫을 소수 첫째 자리에서 멈출 때 생기는 나머지를 구하는 문제",
+      "answerContract": "shortened-quotient-remainder-from-exact-division",
+      "visualRisk": "정확한 몫과 소수 첫째 자리에서 멈춘 몫을 구분해야 하며 반올림을 적용하면 안 됨.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.822",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.822와 1.192가 함께 남음",
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-3",
@@ -1712,12 +1948,20 @@
       "ordinal": 3,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "첫 나눗셈의 자연수 몫과 나머지로 원래 수를 찾은 뒤 다른 수로 나누어 소수 첫째 자리의 새 나머지를 구하는 문제",
+      "answerContract": "recover-dividend-then-new-tenth-place-remainder",
+      "visualRisk": "첫 나눗셈의 나머지를 둘째 나눗셈의 새 나머지로 옮기지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.08",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.08",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-4",
@@ -1727,12 +1971,20 @@
       "ordinal": 4,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "나누어지는 수에 가장 적게 더해 몫이 소수 둘째 자리에서 나누어떨어지게 하는 문제",
+      "answerContract": "minimum-addition-for-exact-hundredth-quotient",
+      "visualRisk": "나눗셈 몫을 소수 둘째 자리까지 늘려 다음 정확한 배수와 원래 수의 차를 구해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.005",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.005",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-5",
@@ -1742,12 +1994,20 @@
       "ordinal": 5,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "첫 나눗셈의 소수 첫째 자리 몫과 나머지, 자연수까지 반올림한 몫으로 가능한 가장 큰 원래 수를 찾고 새 나눗셈의 나머지를 구하는 문제",
+      "answerContract": "largest-rounded-quotient-dividend-then-new-remainder",
+      "visualRisk": "첫 나눗셈의 반올림 조건으로 가능한 몫의 끝값을 정하고 둘째 나눗셈의 나머지를 따로 계산해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.3",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.3",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-6",
@@ -1757,27 +2017,42 @@
       "ordinal": 6,
       "pdfPage": 23,
       "printedPage": 25,
-      "sourceShape": "나머지가 있는 소수 나눗셈에서 몫과 나머지의 관계를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "소수 둘째 자리 몫의 나머지와 셋째 자리 몫을 반올림한 결과로 원래 나누어지는 수를 되찾는 문제",
+      "answerContract": "recover-dividend-from-rounded-third-place-and-remainder",
+      "visualRisk": "셋째 자리까지 계산한 몫과 둘째 자리까지 반올림한 몫은 서로 다르며, 원래 수는 반올림 전 몫으로 복원해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "5.378",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "5.378 (이전 값 취소)",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
-      "sourceItemId": "6-2-u2-e5-exploration",
+      "sourceItemId": "6-2-u2-e5-exploration-1",
       "unitId": "6-2-u2",
       "exploration": 5,
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 24,
       "printedPage": 26,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "달린 거리와 시간으로 빠르기를 구하고 연료 사용량으로 달릴 수 있는 거리를 구해 시간을 구하는 문제",
+      "answerContract": "fuel-distance-and-speed-to-travel-time",
+      "visualRisk": "거리당 연료량과 시간당 거리의 단위를 혼동하지 않고 마지막 답을 시간으로 나타내야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "3시간",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact prompt calculation and independent back-substitution; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-1",
@@ -1787,12 +2062,13 @@
       "ordinal": 1,
       "pdfPage": 24,
       "printedPage": 26,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "일정한 시간에 타는 양초의 길이와 처음·나중 길이로 지난 시간을 시간과 분으로 구하는 문제",
+      "answerContract": "candle-burn-length-to-hours-and-minutes",
+      "visualRisk": "cm와 mm를 먼저 맞춘 뒤 총 분을 시간과 분으로 바꿔야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e5-example-1"
     },
     {
       "sourceItemId": "6-2-u2-e5-example-2",
@@ -1802,12 +2078,19 @@
       "ordinal": 2,
       "pdfPage": 24,
       "printedPage": 26,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "일정한 연료로 가는 거리에서 새 거리의 연료량을 구한 뒤 한 리터의 가격을 곱하는 문제",
+      "answerContract": "fuel-distance-ratio-to-total-cost",
+      "visualRisk": "거리 비율, 리터 수, 원 단위의 순서대로 계산해야 하며 가격에 소수점이 남지 않도록 검산해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "35520원",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact prompt calculation and independent back-substitution; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-3",
@@ -1817,12 +2100,19 @@
       "ordinal": 3,
       "pdfPage": 24,
       "printedPage": 26,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 수도꼭지의 각각 다른 시간 동안 나온 물의 양에서 초당 물의 양을 구하고 합쳐서 목표량을 받는 시간을 구하는 문제",
+      "answerContract": "combined-faucet-rates-to-minutes-and-seconds",
+      "visualRisk": "분과 초를 먼저 초로 바꾸고 두 수도꼭지의 초당 물의 양을 합한 뒤 답을 분과 초로 되돌려야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "8분 45초",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": false,
+        "method": "exact prompt calculation and independent back-substitution; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-example-4",
@@ -1832,12 +2122,19 @@
       "ordinal": 4,
       "pdfPage": 24,
       "printedPage": 26,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "강물이 흐른 거리와 시간으로 물살의 빠르기를 구하고 배의 정지한 물에서의 빠르기에서 빼 거슬러 간 시간을 구하는 문제",
+      "answerContract": "river-current-upstream-travel-time",
+      "visualRisk": "물살과 배의 빠르기는 같은 시간 단위로 맞추고, 거슬러 갈 때는 물살의 빠르기를 빼야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "2시간 30분",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact prompt calculation and independent back-substitution; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-1",
@@ -1847,12 +2144,13 @@
       "ordinal": 1,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "걷는 거리와 시간에서 빠르기를 구하고 새 거리에 걸리는 시간을 소수 첫째 자리까지 반올림하는 문제",
+      "answerContract": "walking-speed-to-rounded-travel-hours",
+      "visualRisk": "1시간 6분을 소수 시간으로 바꾼 뒤 마지막 시간만 반올림해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e5-mission-1"
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-2",
@@ -1862,12 +2160,13 @@
       "ordinal": 2,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "두 자동차의 서로 다른 연료량과 이동 거리에서 1L당 거리를 구해 나 자동차가 가 자동차의 몇 배인지 비교하는 문제",
+      "answerContract": "compare-second-car-per-liter-distance-to-first",
+      "visualRisk": "가와 나의 순서를 뒤집으면 역수가 되므로 비교 방향을 고정해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e5-mission-2"
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-3",
@@ -1877,12 +2176,15 @@
       "ordinal": 3,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "강물의 빠르기와 연어의 이동 거리·시간으로 거슬러 가는 시간을 구하는 문제",
+      "answerContract": "salmon-upstream-time-after-interpreting-reference-speed",
+      "visualRisk": "연어의 앞선 이동 방향이 원문에 명확하지 않음. 물이 흐르는 방향으로 읽으면 이후의 거슬러 가는 이동이 불가능함. 물살 없는 곳의 이동으로 읽으면 손글씨 답이 독립 계산과 충돌함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "originalPrintStatus": "ambiguity-locked",
+      "sourceRelationship": "downstream-number-corrected-adaptation",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e5-mission-3"
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-4",
@@ -1892,12 +2194,13 @@
       "ordinal": 4,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "참기름을 덜어 내기 전후의 통 무게와 덜어 낸 양으로 빈 통의 무게를 구하는 문제",
+      "answerContract": "container-tare-from-oil-mass-change",
+      "visualRisk": "전체 무게와 참기름 무게를 구분해야 함. 손글씨 답과 독립 계산이 다름.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publicSourceItemId": "6-2-u2-e5-mission-4"
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-5",
@@ -1907,12 +2210,14 @@
       "ordinal": 5,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
+      "sourceShape": "양초의 처음 길이와 나중 길이, 10분마다 타는 길이로 지난 시간을 시간과 분으로 구하는 문제",
+      "answerContract": "candle-remaining-length-to-hours-and-minutes",
+      "visualRisk": "10분에 타는 양을 1분에 타는 양으로 바꾸거나 10분 묶음 수를 세어야 함.",
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "reviewReason": "예제 5-1과 풀이 구조가 같아 별도 유형을 중복 출제하지 않습니다.",
+      "commonPublicTypeId": "6-2-u2-e5-example-1",
+      "commonPublicVariant": 2
     },
     {
       "sourceItemId": "6-2-u2-e5-mission-6",
@@ -1922,27 +2227,43 @@
       "ordinal": 6,
       "pdfPage": 25,
       "printedPage": 27,
-      "sourceShape": "한 단위의 양을 먼저 구하여 전체 양이나 필요한 양을 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "같은 자동차의 갤런당 마일과 리터당 킬로미터 이동 거리, 마일 환산을 연결해 100갤런의 리터 수를 구하는 문제",
+      "answerContract": "derive-gallon-to-liter-from-vehicle-distances",
+      "visualRisk": "실제 갤런 단위 환산값을 외워서 대입하지 않고 원문에 주어진 연료·거리 관계로 계산해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "공식 답안은 확보되지 않아 인쇄 원문과 독립 계산을 별도 근거로 기록합니다."
     },
     {
-      "sourceItemId": "6-2-u2-e6-exploration",
+      "sourceItemId": "6-2-u2-e6-exploration-1",
       "unitId": "6-2-u2",
       "exploration": 6,
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "높이가 다른 계단에서 세 번 튀는 공의 비율 0.8, 계단 높이 20cm·35cm·20cm와 마지막 높이 152.96cm로 처음 높이를 구하는 그림 문제",
+      "answerContract": "derive-first-drop-height-across-stairs",
+      "independentAnswer": "180cm",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "세 번째 튀는 지점과 152.96cm를 재는 바닥은 서로 다름. 계단 높이와 튀는 순서를 그림에서 정확히 보존해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6DecimalE6Stairs",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "180cm"
     },
     {
       "sourceItemId": "6-2-u2-e6-example-1",
@@ -1952,12 +2273,30 @@
       "ordinal": 1,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 예제 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "처음 물통의 0.2만큼 물이 있고 남은 부분의 5/8만큼과 2.52L를 더 채운 뒤 빈 부분이 전체의 15%일 때 들이를 구하는 문제",
+      "answerContract": "derive-container-capacity-from-initial-filled-and-remaining-fraction",
+      "independentAnswer": "16.8L",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "handwrittenAnswer": "16.8L",
+      "handwrittenAnswerAgreement": "matches-independent-calculation-and-back-substitution",
+      "publisherAnswerKeyVerified": false,
+      "visualRisk": "5/8은 물통 전체가 아닌 처음에 비어 있던 부분의 비율임.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 손글씨 답과 독립 계산·역산이 일치합니다. 출판사 별도 답지는 확인되지 않았음을 구분해 기록합니다.",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Example1",
+        "fixedPoolCount": 3,
+        "difficultyDesign": [
+          "filled-ratio-given",
+          "source-nested-empty-fraction",
+          "withdrawal-extra-step"
+        ],
+        "independentCheck": "generated-prompt-exact-fractions-27-cases-and-135000-candidates",
+        "layoutCheck": "actual-bank-1280-390-320-9-states-and-a4-2-single-pages",
+        "independentReview": "separate-model-source-math-and-implementation-review-passed",
+        "publicReleaseStatus": "verified-with-annotated-answer-and-independent-calculation"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e6-example-2",
@@ -1967,12 +2306,33 @@
       "ordinal": 2,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 예제 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "0℃에서 1초에 331.5m 가는 소리가 1℃마다 0.61m씩 더 갈 때 5초 동안 1736.8m 간 기온을 구하는 문제",
+      "answerContract": "derive-temperature-from-sound-distance-and-time",
+      "independentAnswer": "26℃",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "handwrittenAnswer": "26℃",
+      "handwrittenAnswerAgreement": "matches-independent-calculation-and-back-substitution",
+      "publisherAnswerKeyVerified": false,
+      "visualRisk": "초당 거리와 5초 전체 거리를 혼동하지 않아야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "원본 손글씨 답과 독립 계산·역산이 일치합니다. 출판사 별도 답지는 확인되지 않았음을 구분해 기록합니다.",
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Example2Candidate",
+        "fixedPoolCount": 3,
+        "difficultyDesign": [
+          "one-second-distance-given",
+          "source-total-distance-and-time",
+          "nonzero-baseline-temperature"
+        ],
+        "independentCheck": "generated-prompt-hundredths-and-reverse-distance-18-cases",
+        "layoutCheck": "candidate-worksheet-1280-390-320-54-pairs-and-a4-2-pages",
+        "publicReleaseStatus": "verified-with-annotated-answer-and-independent-calculation"
+      },
+      "nonMatchingAnswerSource": {
+        "sha256": "3B71EDCF9C234B180A08A73905B16F6065F833160E499223D413ED65792BACF0",
+        "reason": "The checked page belongs to a different 6-2 competition book, not this advanced decimal-division example."
+      }
     },
     {
       "sourceItemId": "6-2-u2-e6-example-3",
@@ -1982,12 +2342,28 @@
       "ordinal": 3,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "길이가 같은 두 막대를 서로 다른 깊이의 연못에 꽂아 잠긴 비율이 0.6과 0.75이고 수면 위 길이 차가 45cm일 때 A 지점의 깊이를 구하는 그림 문제",
+      "answerContract": "derive-pond-depth-from-submerged-rod-fractions",
+      "independentAnswer": "180cm",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "45cm는 두 막대의 수면 위 길이 차이며 A 지점의 깊이는 막대 전체의 0.6임. 원본의 수면과 바닥 위치를 유지해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6DecimalE6Pond",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "180cm"
     },
     {
       "sourceItemId": "6-2-u2-e6-example-4",
@@ -1997,12 +2373,28 @@
       "ordinal": 4,
       "pdfPage": 26,
       "printedPage": 28,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "지난해 남녀 학생 합계 1500명, 올해 남학생 0.05만큼 감소·여학생 0.08만큼 증가한 합계 1516명으로 올해 두 학생 수의 차를 구하는 문제",
+      "answerContract": "derive-gender-count-difference-from-opposite-yearly-changes",
+      "independentAnswer": "4명",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "올해의 비율은 지난해 각 성별 인원을 기준으로 하며, 물음은 지난해가 아니라 올해 학생 수의 차임.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": false,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Example4Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswerReview": "판독 가능한 손글씨 답을 확인하지 못함. 인쇄 조건의 독립 계산은 4명."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-1",
@@ -2012,12 +2404,28 @@
       "ordinal": 1,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 1의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "지난해 6학년 345명에서 여학생이 남학생의 1.3배이고 올해 남학생은 0.1배 증가·여학생은 0.2배 감소했을 때 올해 성별 학생 수를 각각 구하는 문제",
+      "answerContract": "derive-current-gender-counts-from-last-year-ratio",
+      "independentAnswer": "남학생 165명, 여학생 156명",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "늘거나 줄어든 비율의 기준은 각각 지난해 남학생과 여학생 수임.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission1Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "남학생 165명, 여학생 156명"
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-2",
@@ -2027,12 +2435,28 @@
       "ordinal": 2,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "색 테이프의 0.3을 첫 사람, 그 길이의 0.8배를 둘째 사람이 갖고 남은 6.21m를 셋째 사람이 가졌을 때 처음 길이를 구하는 문제",
+      "answerContract": "derive-tape-length-from-nested-shares-and-remainder",
+      "independentAnswer": "13.5m",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "0.8배의 기준은 테이프 전체가 아닌 첫 사람이 가진 길이임.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission2Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "13.5m"
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-3",
@@ -2042,12 +2466,28 @@
       "ordinal": 3,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "거북·개·원숭이의 두 마리씩 무게 합 51.4kg·43.7kg·38.5kg으로 거북이 원숭이의 약 몇 배인지 소수 첫째 자리까지 구하는 문제",
+      "answerContract": "derive-rounded-animal-weight-ratio-from-pair-sums",
+      "independentAnswer": "약 1.8배",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "각 무게 합의 동물 쌍을 바꾸면 답이 달라지며, 정확한 비와 반올림한 약 몇 배를 구별해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission3Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "약 1.8배"
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-4",
@@ -2057,12 +2497,28 @@
       "ordinal": 4,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "같은 높이에서 떨어진 두 공이 각각 0.7배와 0.4배씩 튀고 두 번째 튄 높이 차가 1.65m일 때 처음 높이를 구하는 문제",
+      "answerContract": "derive-first-height-from-second-bounce-difference",
+      "independentAnswer": "5m",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "1.65m는 첫 번째가 아닌 두 번째 튄 높이의 차이임.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission4Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "5m"
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-5",
@@ -2072,12 +2528,28 @@
       "ordinal": 5,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 5의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "둘레 1.8m인 앞바퀴와 1.4m인 뒷바퀴가 같은 거리를 갈 때 뒷바퀴가 468번 더 회전한 이동 거리를 구하는 문제",
+      "answerContract": "derive-distance-from-wheel-circumference-and-rotation-difference",
+      "independentAnswer": "2948.4m",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "회전 수가 더 많은 것은 둘레가 짧은 뒷바퀴이며, 거리와 회전 수의 단위를 구별해야 함.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": false,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission5Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswerReview": "손글씨 숫자는 판독 미확정. 인쇄 조건의 독립 계산은 2948.4m."
     },
     {
       "sourceItemId": "6-2-u2-e6-mission-6",
@@ -2087,12 +2559,28 @@
       "ordinal": 6,
       "pdfPage": 27,
       "printedPage": 29,
-      "sourceShape": "소수 나눗셈 관계를 식으로 세워 모르는 수를 구하는 구조. Mission 6의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
-      "visualRisk": "소수점의 자리와 나눗셈 기호가 분명해야 하며, 어림값과 정확한 값이 섞일 때 계산 기준을 한 가지로 고정해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceShape": "전체 평균 86.35점, 남학생 22명 평균 89.5점, 여학생 평균 82.5점으로 여학생 수를 구하는 문제",
+      "answerContract": "derive-girl-count-from-weighted-class-average",
+      "independentAnswer": "18명",
+      "answerEvidence": "independent-calculation-not-publisher-key",
+      "visualRisk": "전체 평균은 남녀 평균의 단순 평균이 아니라 인원수를 반영한 평균임.",
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "publisherAnswerKeyVerified": false,
+      "independentlyVerified": true,
+      "handwrittenAnswerVerified": true,
+      "candidateVerification": {
+        "generator": "sourceGrade6SecondDecimalDivisionE6Mission6Text",
+        "verifiedVariantCount": 3,
+        "verification": "source-and-independent-calculation-desktop-mobile-a4",
+        "difficultyVariants": [
+          "easier",
+          "source",
+          "harder"
+        ]
+      },
+      "handwrittenAnswer": "18명"
     },
     {
       "sourceItemId": "6-2-u3-e1-exploration",
@@ -2102,12 +2590,12 @@
       "ordinal": 1,
       "pdfPage": 30,
       "printedPage": 32,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
+      "sourceShape": "바닥 칸별 높이표를 주고 앞·뒤·왼쪽·오른쪽의 네 모양을 각각 그리는 구조. 방향 표시와 빈 바닥 칸을 유지함.",
+      "answerContract": "four-direction-drawings-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-example-1",
@@ -2147,12 +2635,12 @@
       "ordinal": 3,
       "pdfPage": 30,
       "printedPage": 32,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "직사각형 바닥 칸별 높이표와 한 모서리 길이에서 밑면을 제외한 겉면의 넓이를 구하는 구조.",
+      "answerContract": "bottom-excluded-surface-area-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-example-4",
@@ -2162,12 +2650,13 @@
       "ordinal": 4,
       "pdfPage": 30,
       "printedPage": 32,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "위의 다섯 점유 칸, 앞·오른쪽 모양과 쌓기나무 8개 조건으로 입체를 복원해 점격자에 그리는 구조. 총개수를 빼면 두 배치가 가능하므로 8개 조건을 보존해야 함.",
+      "answerContract": "three-projections-and-total-unique-stack-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publisherAnswerVerified": false,
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-1",
@@ -2192,12 +2681,12 @@
       "ordinal": 2,
       "pdfPage": 31,
       "printedPage": 33,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "위에서 본 바닥 점유 모양·오른쪽 모양·총개수로 앞에서 본 모양을 그리는 구조. 총개수가 주어진 옆모양의 행별 최대 수와 같아 각 칸 높이가 정해짐.",
+      "answerContract": "front-from-top-right-total-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-3",
@@ -2207,12 +2696,13 @@
       "ordinal": 3,
       "pdfPage": 31,
       "printedPage": 33,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "위의 네 점유 칸, 앞·오른쪽 모양만으로 입체를 복원해 점격자에 그리는 구조. 총개수 조건은 없으며 세 모양을 만족하는 입체가 하나로 정해짐.",
+      "answerContract": "three-projections-only-unique-stack-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publisherAnswerVerified": false,
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-4",
@@ -2222,12 +2712,12 @@
       "ordinal": 4,
       "pdfPage": 31,
       "printedPage": 33,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "두 빈칸이 있는 높이표와 밑면을 포함한 겉면 넓이에서 빈칸 두 수의 합을 구하는 구조.",
+      "answerContract": "two-heights-from-surface-sum-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-5",

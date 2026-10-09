@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>공간과 입체 원본 검수</title>
+  <link rel="stylesheet" href="./source-6-2-stack-review.css">
+  <script type="importmap">{"imports":{"three":"../../geometry/vendor/three/three.module.js"}}</script>
+  <script src="./source-6-2-stack-models.js"></script>
+</head>
+<body>
+  <header><label>원본 <select id="source"><option value="0">예제 1-4</option><option value="1">Mission 3</option></select></label><label>문항 <select id="pool"><option value="0">원본</option><option value="1">변형 1</option><option value="2">변형 2</option></select></label><button type="button" id="reset">원래 방향</button><strong>출제 잠금</strong></header>
+  <main><div id="views" aria-label="원본 조건 그림"></div><div id="scene" aria-label="검수용 입체 그림"></div></main>
+  <script type="module">
+    import {createStackRenderer} from "./source-6-2-stack-renderer.mjs";
+    const models=window.HSE_SOURCE_GRADE6_STACK_MODELS;
+    let stack;
+    function grid(values,label,profile=false) {
+      const h=profile ? Array.from({length:Math.max(...values)},(_,y)=>values.map(v=>+(Math.max(...values)-y<=v))) : values;
+      const cols=h[0].length, rows=h.length, c=24;
+      return `<figure data-view="${label}"><figcaption>${label}</figcaption><svg viewBox="0 0 ${cols*c+2} ${rows*c+2}" role="img" aria-label="${label}">${h.map((row,y)=>row.map((v,x)=>`<rect x="${x*c+1}" y="${y*c+1}" width="${c}" height="${c}" fill="${v?'#ddd':'#fff'}"/>`).join('')).join('')}</svg>${profile?'':'<figcaption data-front-direction="down">앞쪽</figcaption>'}</figure>`;
+    }
+    function show() {
+      stack?.dispose();
+      document.querySelector('#scene').querySelector('.source62-stack-print')?.remove();
+      delete document.querySelector('#scene').dataset.printReady;
+      const def=models.definitions[+document.querySelector('#source').value], pool=def.pools[+document.querySelector('#pool').value];
+      document.querySelector('#views').innerHTML=grid(pool.top,'위')+grid(pool.front,'앞',true)+grid(pool.right,'오른쪽',true)+(def.countGiven?`<span>쌓기나무 ${pool.total}개</span>`:'');
+      stack=createStackRenderer(document.querySelector('#scene'),{heights:pool.heights});
+      window.stackReview={stack,definition:def,pool,ready:true,replaceHeights(heights){
+        models.validateHeights(heights);
+        stack.dispose();
+        stack=createStackRenderer(document.querySelector('#scene'),{heights});
+        window.stackReview.stack=stack;
+      }};
+      const current=stack;
+      document.fonts.ready.then(async()=>{
+        if(stack!==current)return;
+        const image=new Image(); image.className='source62-stack-print'; image.alt='앞쪽과 오른쪽에서 본 정답 입체';
+        image.src=current.snapshot();
+        await image.decode();
+        if(stack!==current)return;
+        document.querySelector('#scene').append(image);
+        document.querySelector('#scene').dataset.printReady='true';
+      });
+    }
+    document.querySelector('#source').addEventListener('change',show);
+    document.querySelector('#pool').addEventListener('change',show);
+    document.querySelector('#reset').addEventListener('click',()=>stack.reset());
+    show();
+    window.addEventListener('beforeprint',()=>{
+      if(document.querySelector('#scene').dataset.printReady!=='true')throw new Error('Canonical print image is not decoded yet');
+    });
+    window.addEventListener('pagehide',()=>stack.dispose());
+  </script>
+</body>
+</html>
