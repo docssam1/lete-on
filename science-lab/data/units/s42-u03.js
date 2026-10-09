@@ -8,6 +8,9 @@ export const unit = {
     "lab": [
       "3-F 실험 교사 PDF 17–24쪽 그림자 살펴보기 (비공개 원본)",
       "3-F 9–16쪽 바늘구멍 사진기 · 25–32쪽 해시계 만들기(개념 확장)"
+    ],
+    "bank": [
+      "data/units/s42-u03.source.js"
     ]
   }
 };
@@ -31,7 +34,7 @@ export const items = [
       "unit": "u03",
       "element": "E1",
       "type": "T01",
-      "concept": "빛의 직진과 그림자",
+      "concept": "그림자의 뜻과 생기는 조건",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -87,9 +90,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E1",
-      "type": "T02",
-      "concept": "투명·불투명 물체의 그림자",
+      "element": "E2",
+      "type": "T04",
+      "concept": "빛이 통과하는 정도와 그림자의 진하기",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -145,9 +148,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E2",
-      "type": "T03",
-      "concept": "거리에 따른 그림자 크기",
+      "element": "E4",
+      "type": "T08",
+      "concept": "손전등·물체 사이의 거리와 그림자 크기",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -200,9 +203,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E1",
-      "type": "T01",
-      "concept": "빛의 직진과 그림자",
+      "element": "E3",
+      "type": "T06",
+      "concept": "빛의 직진",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -254,9 +257,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E2",
-      "type": "T03",
-      "concept": "거리에 따른 그림자 크기",
+      "element": "E4",
+      "type": "T08",
+      "concept": "손전등·물체 사이의 거리와 그림자 크기",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -329,9 +332,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E1",
-      "type": "T02",
-      "concept": "투명·불투명 물체의 그림자",
+      "element": "E2",
+      "type": "T03",
+      "concept": "투명한 물체와 불투명한 물체 구별",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -385,7 +388,7 @@ export const items = [
       "unit": "u03",
       "element": "E1",
       "type": "T01",
-      "concept": "빛의 직진과 그림자",
+      "concept": "그림자의 뜻과 생기는 조건",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -435,9 +438,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E3",
-      "type": "T05",
-      "concept": "공정한 비교와 관찰",
+      "element": "E4",
+      "type": "T09",
+      "concept": "그림자 크기를 바꾸는 방법과 조건",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -487,9 +490,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E3",
-      "type": "T06",
-      "concept": "거울과 빛의 반사",
+      "element": "E5",
+      "type": "T10",
+      "concept": "거울에 비친 물체의 모습",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -539,9 +542,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E2",
-      "type": "T03",
-      "concept": "거리에 따른 그림자 크기",
+      "element": "E4",
+      "type": "T09",
+      "concept": "그림자 크기를 바꾸는 방법과 조건",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -593,9 +596,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E3",
-      "type": "T05",
-      "concept": "공정한 비교와 관찰",
+      "element": "E4",
+      "type": "T09",
+      "concept": "그림자 크기를 바꾸는 방법과 조건",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -647,9 +650,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u03",
-      "element": "E3",
-      "type": "T06",
-      "concept": "거울과 빛의 반사",
+      "element": "E6",
+      "type": "T12",
+      "concept": "빛의 반사",
       "level": "기본",
       "track": "교과",
       "format": "선택형"

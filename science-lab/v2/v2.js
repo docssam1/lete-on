@@ -2,8 +2,9 @@
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
-import { pageHome } from './home.js?v=6';
+import { pageHome } from './home.js?v=7';
 import { escapeInApp } from './inapp.js';
+import { SEMS, BANK } from './units-index.js';
 import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js';
 import { readingHtml } from './reading.js';
@@ -11,15 +12,16 @@ import { wireReading } from './reading-live.js';
 escapeInApp();
 
 const UNITS = {
-  's42-u04': async () => ({ ...(await import('../data/units/s42-u04.js')), ...(await import('../data/units/s42-u04.lesson.js')), ...(await import('../data/units/s42-u04.similar.js')), ...(await import('../data/units/s42-u04.taxonomy.js')), misc: await import('../data/units/s42-u04.misc.js') }),
-  's42-u05': async () => ({ ...(await import('../data/units/s42-u05.js')), ...(await import('../data/units/s42-u05.lesson.js')), ...(await import('../data/units/s42-u05.similar.js')), ...(await import('../data/units/s42-u05.taxonomy.js')), misc: await import('../data/units/s42-u05.misc.js') }),
-  's51-u01': async () => ({ ...(await import('../data/units/s51-u01.js')), ...(await import('../data/units/s51-u01.lesson.js')), ...(await import('../data/units/s51-u01.similar.js')), ...(await import('../data/units/s51-u01.taxonomy.js')), misc: await import('../data/units/s51-u01.misc.js') }),
+  's42-u04': async () => ({ ...(await import('../data/units/s42-u04.js')), ...(await import('../data/units/s42-u04.lesson.js')), ...(await import('../data/units/s42-u04.similar.js')), ...(await import('../data/units/s42-u04.source.js')), ...(await import('../data/units/s42-u04.taxonomy.js')), misc: await import('../data/units/s42-u04.misc.js') }),
+  's42-u05': async () => ({ ...(await import('../data/units/s42-u05.js')), ...(await import('../data/units/s42-u05.lesson.js')), ...(await import('../data/units/s42-u05.similar.js')), ...(await import('../data/units/s42-u05.source.js')), ...(await import('../data/units/s42-u05.taxonomy.js')), misc: await import('../data/units/s42-u05.misc.js') }),
+  's51-u01': async () => ({ ...(await import('../data/units/s51-u01.js')), ...(await import('../data/units/s51-u01.lesson.js')), ...(await import('../data/units/s51-u01.similar.js')), ...(await import('../data/units/s51-u01.source.js')), ...(await import('../data/units/s51-u01.taxonomy.js')), misc: await import('../data/units/s51-u01.misc.js') }),
+  's52-u01': async () => ({ ...(await import('../data/units/s52-u01.js')), ...(await import('../data/units/s52-u01.lesson.js')), ...(await import('../data/units/s52-u01.similar.js')), ...(await import('../data/units/s52-u01.taxonomy.js')), misc: await import('../data/units/s52-u01.misc.js') }),
   's51-u05': async () => ({ ...(await import('../data/units/s51-u05.js')), ...(await import('../data/units/s51-u05.lesson.js')), ...(await import('../data/units/s51-u05.similar.js')), ...(await import('../data/units/s51-u05.taxonomy.js')), misc: await import('../data/units/s51-u05.misc.js') }),
   's51-u04': async () => ({ ...(await import('../data/units/s51-u04.js')), ...(await import('../data/units/s51-u04.lesson.js')), ...(await import('../data/units/s51-u04.similar.js')), ...(await import('../data/units/s51-u04.taxonomy.js')), misc: await import('../data/units/s51-u04.misc.js') }),
   's51-u03': async () => ({ ...(await import('../data/units/s51-u03.js')), ...(await import('../data/units/s51-u03.lesson.js')), ...(await import('../data/units/s51-u03.similar.js')), ...(await import('../data/units/s51-u03.taxonomy.js')), misc: await import('../data/units/s51-u03.misc.js') }),
   's51-u02': async () => ({ ...(await import('../data/units/s51-u02.js')), ...(await import('../data/units/s51-u02.lesson.js')), ...(await import('../data/units/s51-u02.similar.js')), ...(await import('../data/units/s51-u02.taxonomy.js')), misc: await import('../data/units/s51-u02.misc.js') }),
-  's42-u03': async () => ({ ...(await import('../data/units/s42-u03.js')), ...(await import('../data/units/s42-u03.lesson.js')), ...(await import('../data/units/s42-u03.similar.js')), ...(await import('../data/units/s42-u03.taxonomy.js')), misc: await import('../data/units/s42-u03.misc.js') }),
-  's42-u02': async () => ({ ...(await import('../data/media/s42-u02.media.js')), ...(await import('../data/units/s42-u02.js')), ...(await import('../data/units/s42-u02.lesson.js')), ...(await import('../data/units/s42-u02.similar.js')), ...(await import('../data/units/s42-u02.taxonomy.js')), misc: await import('../data/units/s42-u02.misc.js') }), 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
+  's42-u03': async () => ({ ...(await import('../data/units/s42-u03.js')), ...(await import('../data/units/s42-u03.lesson.js')), ...(await import('../data/units/s42-u03.similar.js')), ...(await import('../data/units/s42-u03.source.js')), ...(await import('../data/units/s42-u03.taxonomy.js')), misc: await import('../data/units/s42-u03.misc.js') }),
+  's42-u02': async () => ({ ...(await import('../data/media/s42-u02.media.js')), ...(await import('../data/units/s42-u02.js')), ...(await import('../data/units/s42-u02.lesson.js')), ...(await import('../data/units/s42-u02.similar.js')), ...(await import('../data/units/s42-u02.source.js')), ...(await import('../data/units/s42-u02.taxonomy.js')), misc: await import('../data/units/s42-u02.misc.js') }), 's41-u01': async () => ({ ...(await import('../data/units/s41-u01.js')), ...(await import('../data/units/s41-u01.lesson.js')),
   ...(await import('../data/units/s41-u01.similar.js')), ...(await import('../data/units/s41-u01.taxonomy.js')), misc: await import('../data/units/s41-u01.misc.js') }),
   's41-u02': async () => ({ ...(await import('../data/units/s41-u02.js')), ...(await import('../data/units/s41-u02.lesson.js')),
   ...(await import('../data/units/s41-u02.similar.js')), ...(await import('../data/units/s41-u02.taxonomy.js')), misc: await import('../data/units/s41-u02.misc.js') }),
@@ -29,6 +31,9 @@ const UNITS = {
   ...(await import('../data/units/s41-u03.similar.js')), ...(await import('../data/units/s41-u03.taxonomy.js')), ...(await import('../data/media/s41-u03b.media.js')), misc: await import('../data/units/s41-u03.misc.js') }),
   's42-u01': async () => ({ ...(await import('../data/units/s42-u01.js')), ...(await import('../data/units/s42-u01.lesson.js')),
   ...(await import('../data/units/s42-u01.similar.js')), ...(await import('../data/units/s42-u01.taxonomy.js')), misc: await import('../data/units/s42-u01.misc.js') }) };
+// 문제은행만 있는 단원(5단계 수업 없음): 단원 파일 + 원문 + 유사문항 + 분류 + 오개념표
+const bankLoader = (u) => async () => ({ ...(await import(`../data/units/${u}.js`)), ...(await import(`../data/units/${u}.similar.js`)), ...(await import(`../data/units/${u}.source.js`)),
+  ...(await import(`../data/units/${u}.taxonomy.js`)), misc: await import(`../data/units/${u}.misc.js`) });
 const DATA_UNIT = { 's41-u03b': 's41-u03' }; const du = (u) => DATA_UNIT[u] || u; // 기록은 문항을 가진 단원 id로
 const STEPS = [
   { key: 'engage', label: '① 궁금' }, { key: 'explore', label: '② 실험' }, { key: 'explain', label: '③ 개념' },
@@ -85,8 +90,9 @@ function blanksHtml(text, blanks, { print, show }) {
 // 낱말 칩 순서는 그릴 때마다 섞는다(정답이 늘 같은 자리에 오지 않게)
 const shuffled = (a) => { const o = [...a]; for (let k = o.length - 1; k > 0; k--) { const r = Math.floor(Math.random() * (k + 1)); [o[k], o[r]] = [o[r], o[k]]; } return o; };
 function itemHtml(it, { print = false, show = false, no = '' } = {}) {
-  const ac = it.answerContract, lv = `<span class="level">${esc(it.taxonomy.track)} · ${esc(it.taxonomy.level)}</span>`;
+  const ac = it.answerContract, lv = `<span class="level">${it.sourceRef?.type === 'original' ? `단원평가 세트${it.sourceRef.set} · ${it.sourceRef.no}번` : `${esc(it.taxonomy.track)} · ${esc(it.taxonomy.level)}`}</span>`;
   const fig = it.visualModel?.kind === 'authored-svg' ? `<div class="fig">${FIG[it.visualModel.figure] || ''}</div>` : '';
+  const srcFig = it.figure ? `<figure class="src-fig"><img src="../${esc(it.figure)}" alt="${esc(it.figureNote || '문항 그림')}" loading="lazy"></figure>` : '';   // 원문 그림은 지문 뒤(시험지 순서)
   const giv = it.givens ? Object.entries(it.givens).map(([k, v]) => v && typeof v === 'object' && !Array.isArray(v)
     ? `<table class="tbl"><thead><tr>${Object.keys(v).map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody><tr>${Object.values(v).map((c) => `<td>${esc([].concat(c).join(', '))}</td>`).join('')}</tr></tbody></table>`
     : `<p class="lead">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b> ' : `<b>${esc(k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : v)}</p>`).join('') : '';
@@ -116,7 +122,7 @@ function itemHtml(it, { print = false, show = false, no = '' } = {}) {
     if (rb.preview) body += `<p class="preview"><b>미리보기</b> ${esc(rb.preview)}</p>`;
   }
   const expl = print && show ? `<p class="why">${esc(it.explanation)}</p>` : '';
-  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${head}${fig}${giv}${body}${expl}</div>`;
+  return `<div class="${print ? 'q' : 'card item'}" data-id="${it.id}">${print ? '' : lv}${head}${fig}${giv}${srcFig}${body}${expl}</div>`;
 }
 let FIG = {}, BOOKX = {}, MISC = null;
 // 오답 → 오개념 교정 문장. 연결된 오개념이 없으면 해설만.
@@ -316,7 +322,7 @@ function stepEvaluate(u, L, items, retry = false) {
 
 // 틀린 문항의 오개념마다 유사문항 한 판 더(같은 오개념이 오답 보기로 들어 있는 문항, 안 푼 것 먼저)
 function drillFor(u, wrongIds, el) {
-  const pool = [...(BOOKX.similar || []), ...(BOOKX.items || [])];
+  const pool = [...(BOOKX.similar || []), ...(BOOKX.source || []), ...(BOOKX.items || [])];
   const L = readLog(du(u)), ms = new Set();
   for (const id of wrongIds) { const e = [...L].reverse().find((x) => x.id === id); for (const m of e?.m || []) ms.add(m); }
   if (!ms.size) return;
@@ -328,9 +334,9 @@ function drillFor(u, wrongIds, el) {
 
 // 진단·분석·처방 — 학습 중 고른 오답을 오개념표로 읽어 정리한다(학생용/강사용, 인쇄)
 function pageDiagnose(u, L, items, mode = 'student') {
-  const A = analyze(du(u), MISC), tx = BOOKX.taxonomy, pool = [...(BOOKX.similar || []), ...items];
+  const A = analyze(du(u), MISC), tx = BOOKX.taxonomy, pool = [...(BOOKX.similar || []), ...(BOOKX.source || []), ...items];
   const I = Object.fromEntries(pool.map((i) => [i.id, i])), T = mode === 'teacher';
-  const STAGE = { concept: '개념', mini: '잠깐 확인', elaborate: '확장', evaluate: '점검', sub: '유형별', remedy: '한 판 더', book: '교재', 'book-concept': '교재 개념' };
+  const STAGE = { concept: '개념', mini: '잠깐 확인', elaborate: '확장', evaluate: '점검', sub: '유형별', remedy: '한 판 더', book: '교재', 'book-concept': '교재 개념', daily: 'Daily Test', exam: '단원평가' };
   const ST = { confirmed: ['확정', 'st-c'], suspected: ['의심', 'st-s'], resolved: ['해소', 'st-r'] };
   const pct = (o) => (o.tot ? Math.round((o.ok / o.tot) * 100) : null);
   const bar = (name, o) => { const p = pct(o); return `<div class="bar"><span>${esc(name)}</span><i><b style="width:${p ?? 0}%" class="${p == null ? '' : p < 60 ? 'weak' : p < 80 ? 'mid' : 'good'}"></b></i><em>${p == null ? '—' : `${p}%`}<small> ${o.ok}/${o.tot}</small></em></div>`; };
@@ -360,14 +366,16 @@ function pageDiagnose(u, L, items, mode = 'student') {
 
 // 소단원 = 교육과정 내용 요소. 유형별로 유사문항을 푼다.
 function pageSub(u, L, eid) {
-  const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], e = tx?.elements.find((x) => x.id === eid);
+  const tx = BOOKX.taxonomy, sim = BOOKX.similar || [], src = BOOKX.source || [], e = tx?.elements.find((x) => x.id === eid);
   if (!e) { location.replace('#/'); return; }
   const types = tx.types.filter((t) => t.element === e.id);
   frame(u, L, null, `<p class="step-label">소단원 ${tx.elements.indexOf(e) + 1}</p><h2>${esc(e.name)}</h2>
     ${L.engage ? `<div class="print-bar"><a class="btn primary" href="#/${u}/1" style="display:inline-flex;align-items:center;text-decoration:none">5단계 탐구로 배우기</a></div>` : ''}
+    ${src.length ? `<div class="print-bar sub-exam"><span>단원평가</span>${[...new Set(src.map((x) => x.sourceRef.set))].map((n) => `<a class="btn" href="#/${u}/exam/${n}">세트${n}</a>`).join('')}</div>` : ''}
     <nav class="modes" aria-label="소단원">${tx.elements.map((x, i) => `<a href="#/${u}/sub/${x.id}" class="btn" style="display:inline-flex;align-items:center;text-decoration:none;min-height:44px;font-size:17px${x.id === e.id ? ';background:var(--navy);color:var(--on-navy)' : ''}">${i + 1}</a>`).join('')}</nav>
-    ${types.map((t) => `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${sim.filter((s) => s.taxonomy.type === t.id).map((s) => itemHtml(s)).join('')}`).join('')}`);
-  const I = Object.fromEntries(sim.map((s) => [s.id, s]));
+    ${types.map((t) => { const os = src.filter((s) => s.taxonomy.type === t.id), ss = sim.filter((s) => s.taxonomy.type === t.id);
+      return `<h3>${esc(t.name)}</h3><p class="lead">${esc(t.desc)}</p>${os.length ? `<p class="sub-h">단원평가 문제 ${os.length}</p>${os.map((s) => itemHtml(s)).join('')}<p class="sub-h">비슷한 문제 ${ss.length}</p>` : ''}${ss.map((s) => itemHtml(s)).join('')}`; }).join('')}`);
+  const I = Object.fromEntries([...sim, ...src].map((s) => [s.id, s]));
   $app.querySelectorAll('.item').forEach((c) => wireItem(c, I[c.dataset.id], null, { u, stage: 'sub' }));
 }
 
@@ -440,7 +448,7 @@ function pageBook(u, L, items, mode) {
 }
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
-const BOOKS = { 's51-u05': () => import('../data/book/s51-u05.book.js'), 's51-u04': () => import('../data/book/s51-u04.book.js'), 's51-u03': () => import('../data/book/s51-u03.book.js'), 's51-u02': () => import('../data/book/s51-u02.book.js'), 's51-u01': () => import('../data/book/s51-u01.book.js'), 's42-u05': () => import('../data/book/s42-u05.book.js'), 's42-u04': () => import('../data/book/s42-u04.book.js'), 's42-u03': () => import('../data/book/s42-u03.book.js'), 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
+const BOOKS = { 's52-u01': () => import('../data/book/s52-u01.book.js'), 's51-u05': () => import('../data/book/s51-u05.book.js'), 's51-u04': () => import('../data/book/s51-u04.book.js'), 's51-u03': () => import('../data/book/s51-u03.book.js'), 's51-u02': () => import('../data/book/s51-u02.book.js'), 's51-u01': () => import('../data/book/s51-u01.book.js'), 's42-u05': () => import('../data/book/s42-u05.book.js'), 's42-u04': () => import('../data/book/s42-u04.book.js'), 's42-u03': () => import('../data/book/s42-u03.book.js'), 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.book.js'), 's41-u02': () => import('../data/book/s41-u02.book.js'), 's41-u03': () => import('../data/book/s41-u03.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
 // 교재·수업 화면 위쪽: 모드를 다시 고르는 메뉴는 두지 않는다(첫 화면에서 이미 골랐다). 처음으로 + 필요하면 인쇄만.
 function labBar(u, { print = false } = {}) {
   return `<div class="bk-bar no-print"><a class="btn" href="#/${u}/start">‹ 처음으로</a>${print ? '<button class="btn primary" onclick="print()">A4 인쇄</button>' : ''}</div>`;
@@ -453,7 +461,8 @@ async function pageCheck(only) {
     loadUnit: async (u) => { const [b, m] = await Promise.all([BOOKS[u](), UNITS[u]()]); return { ch: b.chapter, similar: m.similar || [] }; } });
 }
 async function pageStart(u) {
-  const bookMod = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null;
+  const bookMod = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null, src = BOOKX.source || [];
+  const sets = [...new Set(src.map((x) => x.sourceRef.set))];
   if (!bookMod) { location.replace(`#/${u}`); return; }
   const ch = bookMod.chapter, need = (await import('./check.js')).countNeeds([u]);
   const card = (href, ico, t, d, primary) => `<a class="start-card${primary ? ' primary' : ''}" href="${href}"><span class="sc-ico" aria-hidden="true">${ico}</span><b>${t}</b><span>${d}</span></a>`;
@@ -464,11 +473,12 @@ async function pageStart(u) {
         ${card(`#/${u}/lab-class/self/1`, '🧪', '스스로 공부하기 · 1차시', '「해 보기」 약 20분 — 예상하고, 가설 세우고, 3D 실험실에서 직접 해 봐요.', true)}
         ${card(`#/${u}/lab-class/self/s2`, '🔎', '스스로 공부하기 · 2차시', '「알아 가기」 약 20분 — 3D로 확인하고, 결론과 개념을 정리해요.', true)}
         ${card(`#/${u}/daily`, '📝', 'Daily Test · 채점과 첨삭', '확인 문제를 한 문항씩 풀고 한꺼번에 채점해요. 틀린 문제는 독쌤이 먼저 되물어요.', true)}
+        ${sets.length ? card(`#/${u}/exam/${sets[0]}`, '🗂️', `단원평가 · 세트${sets.join('·')}`, `시험지 원문 ${src.length}문항을 세트별로 풀고 채점해요. 틀리면 비슷한 문제로 다시 풀어요.`, true) : ''}
         ${card(`#/${u}/lab-class/teach/1`, '🖥️', '가르치기', '전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요.')}
         ${card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
         ${card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
       </div>
-      <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a> · <a href="#/${u}/daily/teacher">Daily Test 정답표</a> · <a href="#/${u}/check">선생님 확인${need ? ` <b class="start-badge">${need}</b>` : ''}</a></p></main>`;
+      <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a> · <a href="#/${u}/daily/teacher">Daily Test 정답표</a> ·${sets.length ? ` <a href="#/${u}/exam/${sets[0]}/teacher">단원평가 정답표</a> ·` : ''} <a href="#/${u}/check">선생님 확인${need ? ` <b class="start-badge">${need}</b>` : ''}</a></p></main>`;
   scrollTo(0, 0);
 }
 async function pageReading(u, L, mode) {
@@ -584,21 +594,58 @@ async function pageDaily(u, mod, L, mode) {
   scrollTo(0, 0);
 }
 
+// 단원평가 — 시험지 원문을 세트별로 Daily Test처럼 풀고 채점한다. 틀린 원문은 짝 유사문항으로 다시 풀게 한다.
+async function pageExam(u, mod, L, set, mode) {
+  const src = mod.source || [], similar = mod.similar || [], items = mod.items || [];
+  const sets = [...new Set(src.map((x) => x.sourceRef.set))], list = src.filter((x) => x.sourceRef.set === set);
+  if (!list.length) { $app.innerHTML = '<main class="wrap"><p>이 단원의 단원평가는 준비 중이에요.</p></main>'; return; }
+  const ch = { no: '', title: `${L.title || mod.taxonomy?.title || u} · 단원평가 세트${set}` };
+  const tabs = sets.map((s) => `<a class="btn${s === set ? ' primary' : ''}" href="#/${u}/exam/${s}${mode === 'teacher' ? '/teacher' : ''}">세트${s}</a>`).join('');
+  const { mountDaily, teacherKeyHtml } = await import('./daily.js');
+  if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC, heading: `단원평가 세트${set}`, back: `#/${u}/exam/${set}`, tabs }); scrollTo(0, 0); return; }
+  const judge = await import(`../data/units/${du(u)}.judge.js`).then((m) => m.judge).catch(() => ({}));
+  const pool = [...similar, ...src, ...items];
+  const twin = (it) => similar.find((s) => s.sourceRef?.of?.set === it.sourceRef.set && s.sourceRef?.of?.no === it.sourceRef.no);
+  releasePage = mountDaily({ $app, u, store: `${u}:exam${set}`, stage: 'exam', heading: `단원평가 세트${set}`, src: `${list[0].sourceRef.edition} · ${list.length}문항`, tabs,
+    title: `${L.title || u} · 단원평가`, ch, list, pool, misc: MISC, judge, twin,
+    record: (it, stage, ok, detail) => record(du(u), it, stage, ok, detail, MISC),
+    classify: (it, d) => classify(it, MISC, false, d).m,
+    remedyItems: (m, n) => remedyItems(du(u), m, MISC, pool, n),
+    itemHtml, wireItem, say: (lines) => teacher(null, lines), back: `#/${u}/start` });
+  scrollTo(0, 0);
+}
+
+// 문제은행 전체 차례 — 학기·단원마다 원문 수와 세트, 소단원 바로 가기
+function pageBank() {
+  const R = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ'], total = Object.values(BANK).reduce((a, b) => a + b.n, 0);
+  $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>문제은행</h1></div></header>
+    <main class="wrap bank"><p class="step-label">초등 과학 3~6학년 · 단원평가 원문 + 유사문항</p><h2>단원별 문제은행</h2>
+    <p class="lead">단원평가 원문 ${total}문항이 들어 있어요. 원문 한 문항마다 비슷한 문제가 하나씩 짝지어 있어, 틀리면 바로 다시 풀 수 있어요.</p>
+    ${SEMS.map((s) => `<section class="bank-sem"><h3>${s.sem.replace('-', '학년 ')}학기</h3><ol class="bank-units">${s.units.map((un) => { const b = BANK[un.id];
+      return `<li class="${b ? 'open' : 'wait'}"><span class="bn">${R[un.no - 1]}</span><span class="bt">${esc(un.title)}</span>${b
+        ? `<span class="bc">원문 ${b.n}</span><span class="bs">${b.sets.map((n) => `<a href="#/${un.id}/exam/${n}">세트${n}</a>`).join('')}<a href="#/${un.id}/sub/E1">소단원</a></span>`
+        : '<span class="bc">준비 중</span>'}</li>`; }).join('')}${['mid', 'fin'].map((k) => { const id = `s${s.sem.replace('-', '')}-${k}`, b = BANK[id];
+        return b ? `<li class="open exam"><span class="bn">${k === 'mid' ? '중간' : '기말'}</span><span class="bt">${k === 'mid' ? '중간평가' : '기말평가'}</span><span class="bc">원문 ${b.n}</span><span class="bs">${b.sets.map((n) => `<a href="#/${id}/exam/${n}">세트${n}</a>`).join('')}<a href="#/${id}/sub/E1">단원별</a></span></li>` : ''; }).join('')}</ol></section>`).join('')}</main>`;
+  scrollTo(0, 0);
+}
+
 // ── 라우터 ──
 async function route() {
   releasePage(); releasePage = () => {}; stopTeacher(); stepGuide?.destroy(); stepGuide = null;
   const [u, a, b] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   if (!u) return pageHome($app, store, teacher);
   if (u === 'check' || a === 'check') return pageCheck(u === 'check' ? null : u);   // 선생님 확인(v2/check.js)
-  const load = UNITS[u]; if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
-  const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, items }; MISC = mod.misc || null;
+  if (u === 'bank') return pageBank();
+  const load = UNITS[u] || (BANK[u] ? bankLoader(u) : null); if (!load) { $app.innerHTML = '<main class="wrap"><p>단원을 찾을 수 없어요.</p></main>'; return; }
+  const mod = await load(); const L = mod.lesson || { title: mod.taxonomy?.title || u }, items = mod.items || []; if (mod.media) L.media = mod.media; FIG = mod.figures || {}; BOOKX = { taxonomy: mod.taxonomy, similar: mod.similar, source: mod.source || [], items }; MISC = mod.misc || null;
   if (a === 'sub') return pageSub(u, L, b);
-  if (!mod.lesson && !['print', 'lab-book', 'lab-class', 'start', 'daily'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
+  if (!mod.lesson && !['print', 'lab-book', 'lab-class', 'start', 'daily', 'exam'].includes(a)) { location.replace(`#/${u}/sub/E1`); return; } // 5단계 화면이 아직 없는 단원
   if (a === 'start') return pageStart(u);
   if (a === 'kit') return pageKit(u, L);
   if (a === 'diagnose') return MISC ? pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student') : location.replace(`#/${u}`);
   if (a === 'report') return pageReport(u, L);
   if (a === 'daily') return pageDaily(u, mod, L, b);
+  if (a === 'exam') return pageExam(u, mod, L, +b || 1, location.hash.split('/')[4]);
   if (a === 'reading') return pageReading(u, L, b);
   if (a === 'print') return pageBook(u, L, items, b || 'student');
   if (a === 'lab-book') return pageLabBook(u, mod, b || 'student', +location.hash.split('/')[4] || 1);

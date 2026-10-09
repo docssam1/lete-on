@@ -8,7 +8,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { judgeText, judgeShort, norm } from '../v2/judge.js';
 
-const U = ['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05'];
+const U = ['s41-mid', 's32-fin', 's32-mid', 's32-u05', 's32-u04', 's31-mid', 's32-u03', 's32-u02', 's31-u02', 's31-u03', 's32-u01', 's31-u01', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
 const R = new URL('../data/', import.meta.url);
 const load = async (p) => { try { return await import(new URL(p, R)); } catch (e) { if (e.code === 'ERR_MODULE_NOT_FOUND') return null; throw e; } };
 
@@ -18,7 +18,7 @@ for (const u of U) {
     assert.ok(J, `${u}.judge.js 없음`);
     const book = (await load(`book/${u}.book.js`))?.chapter;
     const items = [];
-    for (const f of [`units/${u}.js`, `units/${u}.similar.js`]) { const m = await load(f); if (m) for (const v of Object.values(m)) if (Array.isArray(v)) items.push(...v.filter((x) => x?.answerContract)); }
+    for (const f of [`units/${u}.js`, `units/${u}.similar.js`, `units/${u}.source.js`]) { const m = await load(f); if (m) for (const v of Object.values(m)) if (Array.isArray(v)) items.push(...v.filter((x) => x?.answerContract)); }
 
     await t.test('① 빠진 판정표 없음', () => {
       const want = [...items.filter((x) => x.answerContract.type === 'written-explanation').map((x) => x.id), ...(book ? ['deck:hypo', 'deck:wonder', 'deck:concl0'] : [])];

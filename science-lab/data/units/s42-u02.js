@@ -7,6 +7,9 @@ export const unit = {
   "sources": {
     "lab": [
       "4-B 실험 교사 PDF 17–24쪽 (비공개 원본)"
+    ],
+    "bank": [
+      "data/units/s42-u02.source.js"
     ]
   }
 };
@@ -28,9 +31,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E1",
-      "type": "T01",
-      "concept": "기화와 물의 세 상태",
+      "element": "E3",
+      "type": "T06",
+      "concept": "증발",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -86,9 +89,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E1",
-      "type": "T02",
-      "concept": "증발과 끓음",
+      "element": "E3",
+      "type": "T08",
+      "concept": "끓음과 증발 비교",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -144,9 +147,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E2",
-      "type": "T03",
-      "concept": "수증기와 김 구별",
+      "element": "E1",
+      "type": "T01",
+      "concept": "얼음·물·수증기의 성질",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -202,9 +205,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E2",
-      "type": "T04",
-      "concept": "응결과 생활 속 예",
+      "element": "E4",
+      "type": "T09",
+      "concept": "응결",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -254,9 +257,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E2",
-      "type": "T04",
-      "concept": "응결과 생활 속 예",
+      "element": "E1",
+      "type": "T02",
+      "concept": "물의 상태 변화와 예",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -329,9 +332,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E2",
-      "type": "T03",
-      "concept": "수증기와 김 구별",
+      "element": "E1",
+      "type": "T01",
+      "concept": "얼음·물·수증기의 성질",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -383,9 +386,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E2",
-      "type": "T04",
-      "concept": "응결과 생활 속 예",
+      "element": "E4",
+      "type": "T09",
+      "concept": "응결",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -435,9 +438,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E3",
-      "type": "T05",
-      "concept": "공정한 비교와 관찰",
+      "element": "E5",
+      "type": "T12",
+      "concept": "공정한 비교",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -487,9 +490,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E3",
-      "type": "T06",
-      "concept": "가습기와 물의 순환",
+      "element": "E5",
+      "type": "T11",
+      "concept": "생활 속 상태 변화 이용",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -538,9 +541,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E1",
-      "type": "T02",
-      "concept": "증발과 끓음",
+      "element": "E3",
+      "type": "T07",
+      "concept": "증발의 예",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -592,9 +595,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E3",
-      "type": "T05",
-      "concept": "공정한 비교와 관찰",
+      "element": "E5",
+      "type": "T12",
+      "concept": "공정한 비교",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -646,9 +649,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u02",
-      "element": "E2",
-      "type": "T04",
-      "concept": "응결과 생활 속 예",
+      "element": "E4",
+      "type": "T09",
+      "concept": "응결",
       "level": "기본",
       "track": "교과",
       "format": "선택형"

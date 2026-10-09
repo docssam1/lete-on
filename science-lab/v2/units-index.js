@@ -11,6 +11,15 @@ import { taxonomy as tx51u02 } from '../data/units/s51-u02.taxonomy.js';
 import { taxonomy as tx51u03 } from '../data/units/s51-u03.taxonomy.js';
 import { taxonomy as tx51u04 } from '../data/units/s51-u04.taxonomy.js';
 import { taxonomy as tx51u05 } from '../data/units/s51-u05.taxonomy.js';
+import { taxonomy as tx52u01 } from '../data/units/s52-u01.taxonomy.js';
+import { taxonomy as tx31u01 } from '../data/units/s31-u01.taxonomy.js';
+import { taxonomy as tx32u01 } from '../data/units/s32-u01.taxonomy.js';
+import { taxonomy as tx31u03 } from '../data/units/s31-u03.taxonomy.js';
+import { taxonomy as tx31u02 } from '../data/units/s31-u02.taxonomy.js';
+import { taxonomy as tx32u02 } from '../data/units/s32-u02.taxonomy.js';
+import { taxonomy as tx32u03 } from '../data/units/s32-u03.taxonomy.js';
+import { taxonomy as tx32u04 } from '../data/units/s32-u04.taxonomy.js';
+import { taxonomy as tx32u05 } from '../data/units/s32-u05.taxonomy.js';
 
 // 탐구 지도의 정거장 = Drive `과학 단원평가` 폴더의 단원(data/source-toc.md §1). 중간·기말평가는 제외.
 // ready: 5E 화면이 있는 단원. 새 단원을 만들면 v2.js UNITS와 여기 ready 둘 다 등록한다.
@@ -29,6 +38,14 @@ export const SEMS = [
 const subsOf = (tx) => tx.elements.map((e) => ({ ...e, types: tx.types.filter((t) => t.element === e.id).length }));
 // lesson:false = 5단계 화면 준비 전(소단원 유형별 문제만 열림)
 export const READY = {
+  's32-u05': { subs: subsOf(tx32u05), bankOnly: true },
+  's32-u04': { subs: subsOf(tx32u04), bankOnly: true },
+  's32-u03': { subs: subsOf(tx32u03), bankOnly: true },
+  's32-u02': { subs: subsOf(tx32u02), bankOnly: true },
+  's31-u02': { subs: subsOf(tx31u02), bankOnly: true },
+  's31-u03': { subs: subsOf(tx31u03), bankOnly: true },
+  's32-u01': { subs: subsOf(tx32u01), bankOnly: true },
+  's31-u01': { subs: subsOf(tx31u01), bankOnly: true },
   's41-u01': { hero: '고리 자석 탑', subs: subsOf(tx41u01) },
   's41-u02': { hero: '얼음 병 저울', subs: subsOf(tx41u02) },
   's41-u03': { hero: '흙 언덕 물길', subs: subsOf(tx41u03),
@@ -45,7 +62,30 @@ export const READY = {
   's51-u03': { hero: '떠오르는 태양 실험실', subs: subsOf(tx51u03) },
   's51-u04': { hero: '병 속 눈 실험실', subs: subsOf(tx51u04) },
   's51-u05': { hero: '효모빵 반죽 실험실', subs: subsOf(tx51u05) },
+  's52-u01': { hero: '비눗방울 실험실', subs: subsOf(tx52u01) },
+};
+
+// 문제은행 = 단원평가 원문(<단원>.source.js) + 유사문항. sets = 세트 번호, n = 원문 수.
+// 5단계 수업이 없는 단원도 여기에 있으면 지도에서 열린다(READY에 bankOnly:true로 함께 등록).
+export const BANK = {
+  's51-u01': { sets: [1], n: 15 },
+  's42-u05': { sets: [1,  2,  3], n: 45 },
+  's42-u04': { sets: [1,  2,  3,  4], n: 70 },
+  's42-u03': { sets: [1,  2,  3,  4], n: 70 },
+  's41-mid': { sets: [1,  2], n: 50 },
+  's32-fin': { sets: [1,  2], n: 40 },
+  's32-mid': { sets: [1,  2], n: 40 },
+  's32-u05': { sets: [1,  2,  3,  4], n: 70 },
+  's32-u04': { sets: [1,  2,  3,  4], n: 70 },
+  's31-mid': { sets: [1,  2], n: 50 },
+  's32-u03': { sets: [1,  2,  3,  4], n: 70 },
+  's32-u02': { sets: [1,  2,  3,  4], n: 70 },
+  's31-u02': { sets: [1,  2,  3,  4], n: 80 },
+  's31-u03': { sets: [1,  2,  3,  4], n: 80 },
+  's32-u01': { sets: [1], n: 15 },
+  's31-u01': { sets: [1, 2, 3, 4], n: 80 },
+  's42-u02': { sets: [1, 2, 3, 4], n: 70 },
 };
 
 // 실험 교재(data/book/<id>.book.js)가 있는 수업 — 지도의 시트에서 첫 화면(#/<id>/start)으로 들어간다.
-export const BOOK_UNITS = new Set(['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05']);
+export const BOOK_UNITS = new Set(['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01']);

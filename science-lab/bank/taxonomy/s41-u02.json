@@ -242,5 +242,5 @@
   "서술형": 8
  },
  "sourceTotal": 80,
- "note": "data/units/s41-u02.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. types[].source는 원문의 세트·번호만 담는다 — 원문 문장은 Supabase public.science_bank_source에만 있다."
+ "note": "data/units/s41-u02.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. types[].source는 원문의 세트·번호다 — 원문 문장은 Supabase public.science_bank_source(옮기기 전 단원)에 있다."
 }

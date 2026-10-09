@@ -19,13 +19,13 @@ const load = (f) => (existsSync(join(dir, f)) ? import(pathToFileURL(join(dir, f
 const only = new Set(process.argv.slice(2));
 
 let fail = 0;
-for (const f of readdirSync(dir).filter((x) => /^s\d+-u\d+\.misc\.js$/.test(x))) {
+for (const f of readdirSync(dir).filter((x) => /^s\d+-(u\d+|mid|fin)\.misc\.js$/.test(x))) {
   const u = f.replace('.misc.js', '');
   if (only.size && !only.has(u)) continue;
   const errs = [];
   const err = (m) => errs.push(m);
-  const [misc, main, sim, tax] = await Promise.all([load(f), load(`${u}.js`), load(`${u}.similar.js`), load(`${u}.taxonomy.js`)]);
-  const items = [...(main?.items || []), ...(sim?.similar || [])];
+  const [misc, main, sim, tax, src] = await Promise.all([load(f), load(`${u}.js`), load(`${u}.similar.js`), load(`${u}.taxonomy.js`), load(`${u}.source.js`)]);
+  const items = [...(main?.items || []), ...(sim?.similar || []), ...(src?.source || [])];   // source = 단원평가 원문
   const byId = new Map(items.map((i) => [i.id, i]));
   const M = misc.misconceptions || {};
   const elements = new Set((tax?.taxonomy?.elements || []).map((e) => e.id));
@@ -78,7 +78,7 @@ for (const f of readdirSync(dir).filter((x) => /^s\d+-u\d+\.misc\.js$/.test(x)))
         if (new Set(row).size !== row.length) err(`${it.id} 빈칸 ${bi + 1} 칩 중복`);
         if (row.length < 2) err(`${it.id} 빈칸 ${bi + 1} 칩이 1개`);
       });
-      use(c.wrong, it.id);
+      for (const m of [].concat(c.wrong)) use(m, it.id);   // 빈칸마다 다른 오개념이면 배열(progress.js classify)
     } else if (t === 'table-fill') {
       nCells++;
       if (!CE[it.id]) err(`${it.id} 표 채우기인데 cells 없음`); else use(CE[it.id], it.id);

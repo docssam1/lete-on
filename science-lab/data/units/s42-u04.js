@@ -10,6 +10,9 @@ export const unit = {
     ],
     "lab": [
       "4-D 실험 교사 PDF 마그마의 분출 · 현무암 (비공개 원본)"
+    ],
+    "bank": [
+      "data/units/s42-u04.source.js"
     ]
   }
 };
@@ -32,8 +35,8 @@ export const items = [
       "semester": 2,
       "unit": "u04",
       "element": "E1",
-      "type": "T01",
-      "concept": "화산과 화산 분출물",
+      "type": "T03",
+      "concept": "화산 분출물과 그 상태",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -90,9 +93,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E1",
-      "type": "T02",
-      "concept": "화강암과 현무암",
+      "element": "E2",
+      "type": "T05",
+      "concept": "화성암이 만들어지는 곳과 알갱이 크기",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -148,9 +151,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E2",
-      "type": "T03",
-      "concept": "지층의 휘어짐과 끊어짐",
+      "element": "E4",
+      "type": "T07",
+      "concept": "지진 발생 모형실험",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -206,9 +209,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E2",
-      "type": "T04",
-      "concept": "지진이 일어나는 까닭",
+      "element": "E4",
+      "type": "T08",
+      "concept": "지진의 뜻과 일어나는 까닭",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -258,9 +261,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E2",
-      "type": "T03",
-      "concept": "지층의 휘어짐과 끊어짐",
+      "element": "E4",
+      "type": "T07",
+      "concept": "지진 발생 모형실험",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -333,9 +336,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E3",
-      "type": "T05",
-      "concept": "지진의 세기와 지진대",
+      "element": "E5",
+      "type": "T09",
+      "concept": "지진의 세기(규모)와 피해",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -387,9 +390,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E2",
-      "type": "T04",
-      "concept": "지진이 일어나는 까닭",
+      "element": "E4",
+      "type": "T07",
+      "concept": "지진 발생 모형실험",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -439,9 +442,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E2",
-      "type": "T03",
-      "concept": "지층의 휘어짐과 끊어짐",
+      "element": "E4",
+      "type": "T07",
+      "concept": "지진 발생 모형실험",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -491,9 +494,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E3",
-      "type": "T06",
-      "concept": "지진 피해 줄이기와 대처",
+      "element": "E6",
+      "type": "T11",
+      "concept": "지진이 났을 때와 난 뒤의 대처",
       "level": "기본",
       "track": "교과",
       "format": "서술형"
@@ -543,9 +546,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E1",
-      "type": "T02",
-      "concept": "화강암과 현무암",
+      "element": "E2",
+      "type": "T04",
+      "concept": "화강암과 현무암의 특징과 쓰임",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -597,9 +600,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E3",
-      "type": "T05",
-      "concept": "지진의 세기와 지진대",
+      "element": "E4",
+      "type": "T08",
+      "concept": "지진의 뜻과 일어나는 까닭",
       "level": "기본",
       "track": "교과",
       "format": "선택형"
@@ -651,9 +654,9 @@ export const items = [
       "grade": 4,
       "semester": 2,
       "unit": "u04",
-      "element": "E3",
-      "type": "T06",
-      "concept": "지진 피해 줄이기와 대처",
+      "element": "E6",
+      "type": "T10",
+      "concept": "지진에 미리 대비하기",
       "level": "기본",
       "track": "교과",
       "format": "선택형"

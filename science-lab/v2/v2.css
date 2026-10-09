@@ -467,3 +467,24 @@ h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
 .ck-empty { padding: 28px; text-align: center; color: var(--sub); background: #fff; border: 1px dashed var(--line); border-radius: 14px; }
 .start-badge { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 999px; background: #d9432f; color: #fff; font-size: 12px; text-align: center; }
 @media print { .ck-card { border-color: #999; } .ck-ex { display: block; } .ck-ex > summary { display: none; } .ck-ex:not([open]) p { display: block; } }
+/* 단원평가 원문 그림(시험지에서 잘라 냄) · 유형별 화면의 원문/유사 구분 */
+.src-fig { margin: 10px 0; text-align: center; }
+.src-fig img { max-width: min(100%, 420px); height: auto; border-radius: 8px; background: #fff; }
+.sub-h { margin: 14px 0 4px; font-weight: 700; color: var(--muted, #667); font-size: 14px; }
+/* 문제은행 차례(#/bank) · 지도 시트의 세트 단추 */
+.bank-sem { margin: 22px 0 6px; }
+.bank-sem h3 { margin: 0 0 8px; }
+.bank-units { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.bank-units li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 12px; border-radius: 12px; background: var(--card, #fff); border: 1px solid var(--line, #e3e7ef); }
+.bank-units li.wait { opacity: .55; }
+.bank-units .bn { font-weight: 800; min-width: 1.6em; }
+.bank-units .bt { font-weight: 700; flex: 1 1 10em; min-width: 0; }
+.bank-units .bc { font-size: 13px; color: var(--muted, #667); }
+.bank-units .bs { display: flex; flex-wrap: wrap; gap: 6px; flex-basis: 100%; }
+.bank-units .bs a { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line, #d7dce6); text-decoration: none; font-size: 14px; }
+.sub-exam { align-items: center; gap: 6px; flex-wrap: wrap; }
+.sub-exam span { font-weight: 700; margin-right: 4px; }
+.sub-exam .btn { min-height: 36px; text-decoration: none; display: inline-flex; align-items: center; }
+.sheet-sets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+.sheet-sets .btn { text-decoration: none; display: inline-flex; align-items: center; min-height: 40px; }
+.bank-units li.exam { background: var(--soft, #f3f6fb); } .bank-units li.exam .bn { font-size: 13px; }

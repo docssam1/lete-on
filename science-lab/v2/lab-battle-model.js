@@ -14,6 +14,8 @@ import { heatModel } from '../scenes/heat-model.js';
 import { sunModel } from '../scenes/rising-sun-model.js';
 import { snowModel } from '../scenes/snow-model.js';
 import { breadModel } from '../scenes/bread-model.js';
+import { bubbleModel } from '../scenes/bubble-model.js';
+const bubble = (title, targets) => ({ title, question: '어느 팀의 비눗방울이 평균적으로 더 오래 갈까요?', choices: ['1팀이 더 오래 감', '평균 시간이 같음', '2팀이 더 오래 감'], field: 'mean', targets });
 const bread = (title, targets) => ({ title, question: '어느 팀의 반죽이 40분 뒤 더 많이 부풀까요?', choices: ['1팀이 더 많이 부풂', '부피가 같음', '2팀이 더 많이 부풂'], field: 'vol', targets });
 const snow = (title, targets) => ({ title, question: '어느 팀의 병 속에 결정(눈)이 더 많이 생길까요?', choices: ['1팀이 더 많음', '결정의 양이 같음', '2팀이 더 많음'], field: 'snow', targets });
 const sun = (title, targets) => ({ title, question: '어느 팀의 식용유 「태양」이 더 높이 뜰까요?', choices: ['1팀이 더 높이 뜸', '높이가 같음', '2팀이 더 높이 뜸'], field: 'height', targets });
@@ -23,6 +25,11 @@ const cycle = (title, targets) => ({ title, question: '어느 팀의 수조에 �
 const quake = (title, question, choices, field, targets) => ({ title, question, choices, field, targets });
 const shadow = (title, targets) => ({ title, question: '어느 팀의 그림자가 더 클까요?', choices: ['1팀이 더 큼', '크기가 같음', '2팀이 더 큼'], field: 'size', targets });
 export const LAB_BATTLE_ROUNDS = {
+  's52-u01': [
+    bubble('넣는 것만 바꾸기', [{ add: '아무것도 넣지 않음' }, { add: '글리세린 1숟가락' }]),
+    bubble('설탕은 어떨까?', [{ add: '설탕 1숟가락' }, { add: '아무것도 넣지 않음' }]),
+    bubble('같은 조건으로 재현하기', [{ add: '설탕 1숟가락' }, { add: '설탕 1숟가락' }]),
+  ],
   's51-u05': [
     bread('물의 온도만 바꾸기', [{ water: '찬물(10 ℃)' }, { water: '따뜻한 물(40 ℃)' }]),
     bread('너무 뜨거운 물이면?', [{ water: '따뜻한 물(40 ℃)' }, { water: '뜨거운 물(70 ℃)' }]),
@@ -93,6 +100,7 @@ export const LAB_BATTLE_ROUNDS = {
 const finite = (value) => typeof value === 'number' && Number.isFinite(value) && value >= 0;
 export function validBattleRow(unit, row) {
   if (!row || typeof row !== 'object') return false;
+  if (unit === 's52-u01') { try { const m = bubbleModel(row.add); return row.mean === m.mean && row.result === m.result && Array.isArray(row.trials) && row.trials.join() === m.trials.join(); } catch { return false; } }
   if (unit === 's51-u05') { try { const m = breadModel(row.water); return row.vol === m.vol && row.temp === m.temp && row.result === m.result; } catch { return false; } }
   if (unit === 's51-u04') { try { const m = snowModel(row.cool); return row.snow === m.snow && row.temp === m.temp && row.result === m.result; } catch { return false; } }
   if (unit === 's51-u03') { try { const m = sunModel(row.ml); return row.height === m.height && row.shape === m.shape && row.result === m.result; } catch { return false; } }
@@ -114,6 +122,7 @@ export function matchesBattleTarget(unit, row, target) {
   return validBattleRow(unit, row) && Object.entries(target).every(([key, value]) => row[key] === value);
 }
 export function battleTargetText(unit, target) {
+  if (unit === 's52-u01') return target.add;
   if (unit === 's51-u05') return target.water;
   if (unit === 's51-u04') return target.cool;
   if (unit === 's51-u03') return `넣은 물 ${target.ml} mL`;
@@ -129,6 +138,7 @@ export function battleTargetText(unit, target) {
   return `${target.plant} · ${target.where}`;
 }
 export function battleRowText(unit, row) {
+  if (unit === 's52-u01') return `${row.add} · ${row.result}`;
   if (unit === 's51-u05') return `${row.water} · ${row.result}`;
   if (unit === 's51-u04') return `${row.cool} · ${row.result}`;
   if (unit === 's51-u03') return `물 ${row.ml} mL · ${row.result}`;
