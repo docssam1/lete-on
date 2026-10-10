@@ -1,0 +1,47 @@
+.geometry-diagram.source62-tape-count {
+  display: block;
+  width: min(420px, 100%);
+  height: auto;
+  margin: 12px auto 4px;
+  overflow: visible;
+  font-family: Pretendard, "Malgun Gothic", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.source62-tape-count .source62-tape-measure {
+  stroke: #333;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.source62-tape-count text {
+  fill: #111;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  text-anchor: middle;
+  font-family: Pretendard, "Malgun Gothic", Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.source62-tape-count .source62-tape-overlap { font-size: 16px; }
+.source62-tape-count .source62-tape-continue { font-size: 25px; }
+.source62-tape-answer { min-width: 0; max-width: 100%; }
+
+@media print {
+  .geometry-diagram.source62-tape-count {
+    width: min(360px, 100%);
+    margin: 4px auto;
+  }
+  .solution-answer-visual .geometry-diagram.source62-tape-count { width: min(320px, 100%); }
+  .solution-item:has(.source62-tape-count) .solution-answer-visual { padding: 4px 9px; }
+  .print-page:has(.source62-tape-count) .question-item,
+  .print-page:has(.source62-tape-count) .solution-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

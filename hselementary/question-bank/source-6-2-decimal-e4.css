@@ -1,0 +1,34 @@
+.source62-e4-answer-table,
+.source62-e4-problem-table {
+  width: min(430px, 100%);
+  margin: 8px auto;
+  border-collapse: collapse;
+  color: #111;
+  font-family: var(--bank-font);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.source62-e4-answer-table :is(td, th),
+.source62-e4-problem-table :is(td, th) {
+  padding: 5px 8px;
+  border: 1px solid #aaa;
+  background: #fff;
+  text-align: left;
+  font-weight: 400;
+  overflow-wrap: break-word;
+}
+.source62-e4-problem-table { width: max-content; max-width: 100%; font-size: inherit; line-height: 1.5; }
+.source62-e4-problem-table :is(td, th) { border: 0; }
+.source62-e4-command { white-space: nowrap; }
+.source62-e4-answer-table :is(b, strong) { font-weight: 400; }
+.solution-item:has([data-answer-source^="6-2-u2-e4-"]) > p {
+  color: #111;
+  font-family: var(--bank-font);
+  font-weight: 400;
+}
+@media print {
+  .source62-e4-answer-table, .source62-e4-problem-table { margin: 3px auto; }
+  .source62-e4-answer-table :is(td, th), .source62-e4-problem-table :is(td, th) { padding: 3px 6px; }
+  .solution-item:has([data-answer-source^="6-2-u2-e4-"]) .solution-answer-visual { padding: 4px 8px; }
+  .solution-item:has([data-answer-source^="6-2-u2-e4-"]) > p { padding: 6px 8px; font-size: 12px; line-height: 1.4; }
+}

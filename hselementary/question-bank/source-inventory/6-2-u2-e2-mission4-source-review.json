@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "sourceItemId": "6-2-u2-e2-mission-4",
+  "sourceIdentity": {
+    "kind": "private-pdf",
+    "sha256": "69035C63AD62DED1308E490D7073C7CE01F7D9887CFE338F3D88AAC10B9A6FAE",
+    "pdfPage": 19,
+    "printedPage": 21,
+    "originalChecked": true,
+    "handwrittenMarksExcluded": true
+  },
+  "sourceModel": {
+    "leftTriangle": "ㄱㄴㄷ",
+    "rightTriangle": "ㄹㅁㅂ",
+    "overlapTriangle": "ㅅㅁㄷ",
+    "sharedBase": "ㅁㄷ",
+    "targetHeight": "ㅅㅇ",
+    "givenAreasCm2": [
+      46.8,
+      30.3
+    ],
+    "unionAreaCm2": 59.7,
+    "sharedBaseCm": 3.2,
+    "leftApexHigherThanRight": true
+  },
+  "independentMath": {
+    "overlapAreaCm2": 17.4,
+    "heightCm": 10.875,
+    "calculation": "46.8+30.3-59.7=17.4; 3.2*h/2=17.4; h=10.875",
+    "candidateCount": 1
+  },
+  "officialAnswerEvidence": "not-available-for-this-item",
+  "publicReleaseStatus": "ready",
+  "pending": [],
+  "answerEvidence": {
+    "publisherAnswerVerified": false,
+    "handwritingReadingConfirmed": true,
+    "handwritingReading": "10.875",
+    "handwritingAgreesWithCalculation": true,
+    "handwritingConflict": false,
+    "independentPrintedConditionsVerified": true
+  },
+  "legacyCandidateVerification": {
+    "generator": "sourceGrade6SecondDecimalDivisionE2Mission4",
+    "fixedPoolCount": 3,
+    "independentMathAndGeometryChecks": 360,
+    "desktopMobileDiagramChecks": 36,
+    "geometrySkillRenderedDiagrams": 12,
+    "geometrySkillCollisions": 0,
+    "a4CandidatePages": 4,
+    "a4ProblemsAndSolutionsSeparated": true,
+    "a4ItemSplitObserved": false,
+    "scope": "검수용 별도 화면이며 실제 문제은행 공개 화면 검수가 아님"
+  },
+  "verification": {
+    "independentMathAudit": "source-6-2-e2-geometry-release-audit.js",
+    "actualPageAudit": "source-6-2-e2-geometry-live-audit.js",
+    "sourceDirectlyViewed": true,
+    "fixedPoolCount": 3,
+    "structuralDifficultyLevels": 3,
+    "publisherAnswerVerified": false,
+    "answerBasis": "printed-source-independent-calculation-and-legible-handwriting",
+    "independentDistinctConditions": 9,
+    "actualPageStates": 9,
+    "a4PdfFiles": 6,
+    "browserAssetHashGuard": true,
+    "normalBlackTextAndThinLines": true,
+    "learnerNumericModelAttributes": false,
+    "empiricalDifficultyCalibrated": false,
+    "geometryProjection": "common-axis-affine"
+  }
+}

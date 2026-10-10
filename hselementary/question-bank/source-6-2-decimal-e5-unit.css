@@ -1,0 +1,36 @@
+.source62-e5-unit-answer {
+  width: min(430px, 100%);
+  color: #111;
+  background: #fff;
+  border-color: #aaa;
+  font-family: var(--bank-font);
+  letter-spacing: 0;
+}
+.source62-e5-unit-answer > strong {
+  color: #111;
+  background: #f5f5f5;
+  font-weight: 500;
+}
+.source62-e5-unit-answer .source61-math-row {
+  grid-template-columns: minmax(0, 1fr) minmax(95px, .8fr);
+  gap: 8px;
+}
+.source62-e5-unit-answer .source61-math-row > :is(span, b) {
+  color: #111;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.solution-item:has(.source62-e5-unit-answer) > p {
+  color: #111;
+  font-family: var(--bank-font);
+  font-weight: 400;
+}
+@media print {
+  .answer-page:has(.source62-e5-unit-answer) .solution-list { gap: 6px; margin-top: 10px; }
+  .solution-item:has(.source62-e5-unit-answer) .solution-answer-visual { padding: 4px 8px; }
+  .source62-e5-unit-answer { margin: 3px auto 0; }
+  .source62-e5-unit-answer > strong,
+  .source62-e5-unit-answer .source61-math-row { padding: 4px 8px; }
+  .solution-item:has(.source62-e5-unit-answer) > p { padding: 7px 9px; font-size: 12px; line-height: 1.4; }
+}

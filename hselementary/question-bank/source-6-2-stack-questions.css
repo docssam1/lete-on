@@ -1,0 +1,40 @@
+.source62-stack-projections { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); align-items: start; gap: 8px; max-width: 400px; margin: 10px auto; break-inside: avoid; }
+.source62-stack-projections figure { min-width: 0; margin: 0; text-align: center; }
+.source62-stack-projections figcaption { font: 400 14px var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif); color: #000; }
+.source62-stack-view { display: block; max-width: 100%; height: auto; margin: 4px auto; }
+.source62-stack-view .stack-view-cell { fill: #d5d5d5; stroke: none; }
+.source62-stack-view line { stroke: #000; stroke-width: .8; vector-effect: non-scaling-stroke; }
+.source62-stack-view text { fill: #000; stroke: none; font: 400 14px var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif); text-anchor: middle; }
+.source62-stack-dotgrid { display: block; width: min(332px,100%); height: auto; margin: 10px auto; }
+.source62-stack-dotgrid rect { fill: #fff; stroke: #000; stroke-width: .8; vector-effect: non-scaling-stroke; }
+.source62-stack-dotgrid circle { fill: #000; stroke: none; }
+.source62-stack-answer img { display: block; width: min(400px,100%); height: auto; margin: 0 auto; }
+.question-item:has(.source62-stack-dotgrid), .solution-item:has(.source62-stack-answer) { color: #000; font-family: var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif); font-weight: 400; }
+.question-item:has(.source62-stack-dotgrid) .question-prompt, .solution-item:has(.source62-stack-answer) p, .solution-item:has(.source62-stack-answer) header strong { color: #000; font-weight: 400; }
+.solution-item:has(.source62-stack-answer) header span { color: #000; font-weight: 400; }
+.solution-viewer-content:has(.source62-stack-answer) :is(.solution-viewer-prompt,.solution-viewer-answer,.solution-viewer-solution) { font-family: var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif); color: #000; font-weight: 400; }
+.solution-viewer-content:has(.source62-stack-answer) .solution-viewer-answer-visual { padding: 4px; }
+.question-item:has(.source62-stack-dotgrid) > .answer-line { display: none; }
+.solution-item:has(.source62-stack-answer) .solution-answer-visual { padding: 4px; }
+.answer-key-visuals { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-top: 12px; }
+.answer-key-visuals figure { min-width: 0; margin: 0; break-inside: avoid; }
+.answer-key-visuals figcaption { font-size: 14px; font-weight: 400; color: #000; }
+@media screen and (max-width:420px) {
+  .source62-stack-projections { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .source62-stack-projections figure:last-child { grid-column: 1 / -1; justify-self: center; }
+  .answer-page:has(.source62-stack-answer) { padding-inline: 7px; }
+  .answer-key-page:has(.source62-stack-answer) { padding-inline: 7px; }
+  .answer-key-visuals { grid-template-columns: 1fr; }
+}
+@media print {
+  .source62-stack-projections { gap: 2mm; max-width: 94mm; margin: 2mm auto; }
+  .source62-stack-projections figcaption { font-size: 12px; }
+  .source62-stack-dotgrid { max-height: 35mm; width: auto; max-width: 100%; margin: 2mm auto; }
+  .source62-stack-answer img { width: auto; max-width: 100%; height: 60mm; object-fit: contain; }
+  .question-item:has(.source62-stack-dotgrid), .solution-item:has(.source62-stack-answer) { break-inside: avoid; }
+  .question-item:has(.source62-stack-dotgrid) { min-height: 0; padding: 10px 0; }
+  .question-item:has(.source62-stack-dotgrid) .question-prompt { font-size: 14px; line-height: 1.5; margin-top: 10px; }
+  .solution-item:has(.source62-stack-answer) header span, .solution-item:has(.source62-stack-answer) header strong { padding: 4px 10px; }
+  .solution-item:has(.source62-stack-answer) header { grid-template-columns: 30px minmax(0,1fr) auto; }
+  .solution-item:has(.source62-stack-answer) p { padding: 6px 10px; line-height: 1.4; }
+}

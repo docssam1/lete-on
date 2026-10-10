@@ -1,0 +1,62 @@
+.geometry-diagram.source62-overlap-triangle-bases {
+  display: block;
+  width: min(460px, 100%);
+  height: auto;
+  margin: 8px auto 2px;
+  overflow: visible;
+  font-family: Pretendard, "Malgun Gothic", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.source62-overlap-triangle-bases line[data-layout-role],
+.source62-overlap-triangle-bases .source62-triangle-right-angle,
+.source62-overlap-triangle-bases .source62-triangle-measure,
+.source62-overlap-triangle-bases .source62-triangle-measure-tick {
+  fill: none;
+  stroke: #222;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.source62-overlap-triangle-bases line[data-layout-role="equal-height-guide"] { stroke-width: 1.4; }
+.source62-overlap-triangle-bases .source62-triangle-right-angle { stroke-width: 1.4; }
+.source62-overlap-triangle-bases .source62-triangle-measure,
+.source62-overlap-triangle-bases .source62-triangle-measure-tick { stroke-width: 1; }
+.source62-overlap-triangle-bases .source62-triangle-target { stroke-width: 3.5 !important; }
+
+.source62-overlap-triangle-bases text {
+  fill: #111;
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  text-anchor: middle;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.source62-overlap-triangle-bases .source62-triangle-height-label { font-size: 15px; }
+.source62-overlap-triangle-bases .source62-triangle-base-label,
+.source62-overlap-triangle-bases .source62-triangle-answer-label { font-size: 14px; }
+.source62-triangle-answer { min-width: 0; max-width: 100%; }
+
+@media print {
+  .geometry-diagram.source62-overlap-triangle-bases { width: min(360px, 100%); margin: 4px auto; }
+  .solution-answer-visual .geometry-diagram.source62-overlap-triangle-bases { width: min(330px, 100%); }
+  .solution-item:has(.source62-overlap-triangle-bases) .solution-answer-visual { padding: 4px 9px; }
+  .answer-page:has(.source62-overlap-triangle-bases) .solution-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .answer-page:has(.source62-overlap-triangle-bases) .solution-item + .solution-item { margin-top: 0; }
+  .answer-page:has(.source62-overlap-triangle-bases) .solution-item:nth-child(3):last-child { grid-column: 1 / -1; }
+  .print-page:has(.source62-overlap-triangle-bases) .question-item,
+  .print-page:has(.source62-overlap-triangle-bases) .solution-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

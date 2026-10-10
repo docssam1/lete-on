@@ -215,6 +215,19 @@ function inspectCase(variant, data, generated, pool, difficulty) {
   const expected = expectedVisuals(variant, data);
   compareGraphs(extractGraphs(generated.prompt), expected.problem, "problem", label);
   compareGraphs(extractGraphs(generated.answerVisual || ""), expected.answer, "answer", label);
+  const graphBlanks = [...generated.prompt.matchAll(/<text\b[^>]*class="[^"]*source61-e4-(?:legend-value|strip-value)[^"]*"[^>]*>□<\/text>/g)].length;
+  const answerBlanks = [...(generated.answerVisual || "").matchAll(/<text\b[^>]*class="[^"]*source61-e4-(?:legend-value|strip-value)[^"]*"[^>]*>□<\/text>/g)].length;
+  check(graphBlanks === (difficulty === 1 ? 1 : 0), `${label}: 난이도별 그래프 빈칸 수 ${graphBlanks}`);
+  check(answerBlanks === 0, `${label}: 답안 그래프에 빈칸이 남았습니다.`);
+  const bridgeWords = ["찬성 중 가장 큰 이유에 해당하는 사람은", variant === 1 ? `교통 체증을 이유로 든 사람은 ${data.total * data.oppose * data.opposeReasons[2] / 10000}명입니다.` : "", "김씨는 약", "남학생은", "소설 책에서 바꾼 비율은", "전체 학생을 100명으로 보면", "팽이를 고른 학생은 전체의", "전체 학생은", "여학생은"];
+  const stem = generated.prompt.split("<svg")[0];
+  check(stem.includes(bridgeWords[variant]) === (difficulty === -1), `${label}: 쉬움 단계의 계산 조건이 중복되거나 빠졌습니다.`);
+  if (difficulty === 1) {
+    const maskedGraph = [1, 2, 0, 0, 0, 1, 0, 0, 1][variant];
+    const maskedSegment = variant === 0 ? data.agreeReasons.indexOf(Math.max(...data.agreeReasons)) : [0, 2, 0, 1, 0, 1, 2, 3, 1][variant];
+    const values = expected.problem[maskedGraph].values;
+    check(close(100 - values.filter((_, index) => index !== maskedSegment).reduce((total, value) => total + value, 0), values[maskedSegment]), `${label}: 숨긴 비율이 나머지 비율로 유일하게 결정되지 않습니다.`);
+  }
 
   const answerGraphs = extractGraphs(generated.answerVisual || "");
   check(answerGraphs.length > 0 && answerGraphs.every(graph => graph.phase === "answer"), `${label}: 답안 그래프 phase 오류`);
