@@ -11,8 +11,8 @@
         같은 유형·레벨**이어야 한다 — 같은 계산을 문장으로 다시 푸는 것이 "연결"이다
      D. 복습은 같은 학교 구간(유아·초등·중등)에서 처음 배운 유형만 — 중등에 초등 복습 금지
      E. 한 회차 안에서 같은 유형·레벨이 두 층에 실리지 않는다(C 의 문장제만 예외)
-     F. 모든 칸에 count 가 있고, 회차 예상 시간이 30분 안팎(유아 20분, 중2·중3 40분)이다 — 쉬운 유형 12 이상,
-        어려운 유형은 쉬운 유형보다 적지 않다
+     F. 모든 칸에 count 가 있고, 회차 예상 시간이 30분 안팎(유아 20분, 중2·중3 40분)이다 — 교과 12 이상,
+        유아의 쉬운·기본 활동만 6문항 묶음 허용(어려운 활동은 12 이상). 어려운 유형은 쉬운 유형보다 적지 않다
      G. 중등 진도 보기(NM_MIDDLE_PACING)가 정규 과정 C29~C37 과 **회차·블록이 똑같다**(두 번째 편성 금지),
         옛 번호 M1-S01~M3-S14 가 모두 정규 회차로 이어진다
    --browser: 초등 문장제 칸의 유형·레벨이 실제로 문장제로 바뀌는지 앱 함수로 확인한다(브라우저 필요).
@@ -24,7 +24,13 @@ const ROOT = path.resolve(__dirname, '..');
 const w = { document:{}, console:{log(){},warn(){},error(){}}, Math, JSON, Object, Array, String, Number, RegExp, Date, parseInt, parseFloat, isNaN, isFinite };
 w.window = w; w.global = w;
 const sb = vm.createContext(w);
-for(const f of ['data/middle-pacing.js','data/threads.js','data/wordable.js','data/courses.js']) vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), sb, { filename:f });
+/* 실제 앱의 태그 순서로 읽는다. threads.js만 VM에서 읽으면 Node용 require가 실행되지 않아
+   G1 확장 레벨이 빠지고, 존재하지 않는 레벨을 1로 낮춘 옛 편성을 검사하게 된다. */
+const appHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+const appScripts = [...appHtml.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/g)]
+  .map(m => m[1].split('?')[0])
+  .filter(f => /^data\/(?:threads|middle-pacing|wordable|courses)\.js$|^data\/g1\/[^/]+-threads\.js$/.test(f));
+for(const f of appScripts) vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), sb, { filename:f });
 const C = w.NM_COURSES, SPEC = w.NM_COURSE_SPEC, T = w.NM_THREADS;
 const BAND = { level0:'pre', level1:'elem', level2:'elem', level3:'elem', challenge:'elem', middle1:'middle', middle2:'middle', middle3:'middle' };
 const ELEM = { level1:1, level2:1, level3:1, challenge:1 };
@@ -32,6 +38,12 @@ const firstBand = {};
 SPEC.forEach(s => (s.drills || []).forEach(r => { const t = String(r).split('@')[0]; if(!(t in firstBand)) firstBand[t] = BAND[s.tier] || 'high'; }));
 const fail = [], rows = [];
 const key = d => d.t + '@' + d.lv;
+/* 고정 편성의 모든 레벨이 실제 로드되어야 한다. G1 태그 하나를 빼도 통과할 수 없게 한다. */
+SPEC.forEach(spec => (spec.perSessionDrills || []).forEach((refs, i) => refs.forEach(ref => {
+  const [t, lv = '1'] = String(ref).split('@');
+  if(!T[t] || !(T[t].levels || []).some(l => l.id === +lv))
+    fail.push(`로드 · C${spec.id} 회차 ${i + 1}: 고정 편성 ${ref}의 레벨이 앱에 없다`);
+})));
 let sessions = 0, full = 0, wordItems = new Map();
 for(let n = 0; n <= 37; n++){
   const c = C['C' + n];
@@ -66,7 +78,10 @@ for(let n = 0; n <= 37; n++){
     s.strategy.practice.forEach(d => mark(d, 'strategy'));
     s.application.filter(a => !(a.kind === 'word' && a.from === 'school') && a.kind !== 'drawing').forEach(d => mark(d, 'application'));
     [...s.school, ...s.strategy.practice, ...s.application].forEach(d => { if(!(d.count > 0)) fail.push(`F · ${at}: ${key(d)} 에 문항 수(count)가 없다`); });
-    own.forEach(d => { if(d.count < 12) fail.push(`F · ${at}: ${key(d)} ${d.count}문항 — 교과는 12문항 이상`); });
+    own.forEach(d => {
+      const min = c.tier === 'level0' && d.difficulty !== 'hard' ? 6 : 12;
+      if(d.count < min || d.count % 6) fail.push(`F · ${at}: ${key(d)} ${d.count}문항 — 최소 ${min}, 6문항 묶음`);
+    });
     const hard = own.filter(d => d.difficulty === 'hard'), easy = own.filter(d => d.difficulty === 'easy');
     if(hard.length && easy.length && Math.min(...hard.map(d => d.count)) < Math.max(...easy.map(d => d.count)))
       fail.push(`F · ${at}: 어려운 유형이 쉬운 유형보다 적게 배정됐다`);

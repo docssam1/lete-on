@@ -40,7 +40,8 @@ function arc(from,to,col){
 export function mount(host,uid,lang){
  const api=window.NM_LIVING_LESSONS;if(!host||!api||!api.has(uid))return null;
  if(host.__livingLesson)host.__livingLesson.dispose();
- const t=copy[lang]||copy.ko;let state=api.create(uid),disposed=false;
+ const t=copy[lang]||copy.ko;let state=api.create(uid),disposed=false,motion=null;
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
  host.classList.add('nm-live-lesson','nm-hop-lesson');host.dataset.lesson=uid;
  host.innerHTML=`<header class="nm-live-head"><h2>${t.title}</h2><span class="nm-live-round"></span></header>
   <p class="nm-live-question"></p>
@@ -57,11 +58,11 @@ export function mount(host,uid,lang){
   s+=`<path d="M 0 170 L 0 120 Q 180 112 360 120 L 360 170 Z" fill="#cfe5c2"/>`;
   s+=die(40,30,v.a,COL.first)+`<text x="80" y="42" text-anchor="middle" font-size="34" font-weight="800" fill="${v.op==='+'?COL.plus:COL.minus}">${v.op==='+'?'+':'−'}</text>`+die(118,30,v.c,v.op==='+'?COL.plus:COL.minus);
   s+=`<line x1="12" y1="${LINE_Y}" x2="348" y2="${LINE_Y}" stroke="${COL.ink}" stroke-width="3" stroke-linecap="round"/>`;
-  for(let n=0;n<=10;n++)s+=`<line x1="${X(n)}" y1="${LINE_Y-7}" x2="${X(n)}" y2="${LINE_Y+7}" stroke="${COL.ink}" stroke-width="2.4"/><text x="${X(n)}" y="${LINE_Y+26}" text-anchor="middle" font-size="16" font-weight="800" fill="${n===v.pos?COL.plus:'#4a5468'}">${n}</text>`;
-  v.hops.forEach((h,i)=>{s+=arc(h[0],h[1],i<v.a?COL.first:(v.op==='+'?COL.plus:COL.minus));});
+  for(let n=0;n<=10;n++)s+=`<line x1="${X(n)}" y1="${LINE_Y-7}" x2="${X(n)}" y2="${LINE_Y+7}" stroke="${COL.ink}" stroke-width="2.4"/><text data-tick="${n}" x="${X(n)}" y="${LINE_Y+26}" text-anchor="middle" font-size="16" font-weight="800" fill="${n===v.pos?COL.plus:'#4a5468'}">${n}</text>`;
+  s+='<g class="nm-hop-trails"></g>';
   const rx=X(v.pos);
-  s+=`<g class="nm-hop-frog" style="transform:translate(${rx}px,0)"><ellipse cx="0" cy="${LINE_Y-4}" rx="14" ry="3" fill="${COL.ink}" opacity=".15"/>`+
-   `<image href="assets/images/real/frog.png" x="-23" y="${LINE_Y-50}" width="46" height="46" ${v.stage===2&&v.op==='-'?'transform="scale(-1,1)"':''}/></g>`;
+  s+=`<g class="nm-hop-frog" style="transform:translate(${rx}px,0)"><ellipse class="nm-hop-shadow" cx="0" cy="${LINE_Y-4}" rx="14" ry="3" fill="${COL.ink}" opacity=".15"/>`+
+   `<g class="nm-hop-body"><image href="assets/images/real/frog.png" x="-23" y="${LINE_Y-50}" width="46" height="46"/></g></g>`;
   return s+`</svg>`;
  }
  function feedback(v){
@@ -74,7 +75,13 @@ export function mount(host,uid,lang){
   const v=api.snapshot(state);host.dataset.complete=String(v.complete);host.dataset.total=v.pos;host.dataset.round=v.round;
   $('.nm-live-round').textContent=`${v.round+1} / ${v.rounds}`;
   $('.nm-live-question').textContent=t.ask(v.a,v.op,v.c);
-  stage.innerHTML=draw(v);
+  /* 개구리 노드를 매 클릭마다 다시 만들면 transition은 출발점 없이 순간 이동한다.
+     회차를 바꿀 때만 무대를 만들고, 위치·자국·현재 눈금은 같은 노드에서 갱신한다. */
+  if(rebuild)stage.innerHTML=draw(v);
+  stage.querySelector('.nm-hop-frog').style.transform=`translate(${X(v.pos)}px,0)`;
+  stage.querySelector('.nm-hop-body image').setAttribute('transform',v.dir<0?'scale(-1,1)':'scale(1,1)');
+  stage.querySelector('.nm-hop-trails').innerHTML=v.hops.map((h,i)=>arc(h[0],h[1],i<v.a?COL.first:(v.op==='+'?COL.plus:COL.minus))).join('');
+  stage.querySelectorAll('[data-tick]').forEach(el=>el.setAttribute('fill',+el.dataset.tick===v.pos?COL.plus:'#4a5468'));
   $('.nm-live-equation').textContent=`${v.a} ${v.op==='+'?'+':'−'} ${v.c} = ${v.complete?v.answer:'□'}`;
   $('.nm-live-feedback').textContent=feedback(v);
   $('[data-act="hop"]').disabled=v.complete;$('[data-act="undo"]').disabled=!v.hops.length;
@@ -88,15 +95,53 @@ export function mount(host,uid,lang){
    b.classList.toggle('is-revised',v.complete&&+b.dataset.predict===v.prediction&&v.prediction!==v.answer);
    b.disabled=v.complete;
   });
+  host.querySelectorAll('[data-act="hop"],[data-act="undo"],[data-predict]').forEach(b=>b.setAttribute('aria-disabled',String(b.disabled)));
  }
- function action(name,value){if(disposed)return;state=api.act(state,name,value);update(name==='next'||name==='reset');}
+ function busy(value){
+  host.dataset.moving=String(value);stage.setAttribute('aria-busy',String(value));
+  const v=api.snapshot(state);
+  /* 이동 중 native disabled를 켜면 키보드 초점이 사라진다. 초점은 유지하고 action에서 재입력을 막는다. */
+  const hopButton=$('[data-act="hop"]'),undoButton=$('[data-act="undo"]');
+  hopButton.disabled=v.complete;undoButton.disabled=!v.hops.length;
+  [hopButton,undoButton,...host.querySelectorAll('[data-predict]')].forEach(b=>b.setAttribute('aria-disabled',String(value||b.disabled)));
+ }
+ function cancelMotion(commit){
+  if(!motion)return;
+  const active=motion;motion=null;
+  active.animations.forEach(a=>{a.onfinish=null;a.cancel();});
+  if(commit)state=active.next;
+  if(!disposed)busy(false);
+ }
+ function hop(next){
+  const before=api.snapshot(state),after=api.snapshot(next);
+  if(before.pos===after.pos)return;
+  const frog=stage.querySelector('.nm-hop-frog'),body=stage.querySelector('.nm-hop-body'),shadow=stage.querySelector('.nm-hop-shadow');
+  if(reduced.matches||typeof frog.animate!=='function'){state=next;update(false);return;}
+  body.querySelector('image').setAttribute('transform',after.pos<before.pos?'scale(-1,1)':'scale(1,1)');
+  const options={duration:360,easing:'linear'},height=after.pos<before.pos?26:18;
+  const position=frog.animate([{transform:`translate(${X(before.pos)}px,0)`},{transform:`translate(${X(after.pos)}px,0)`}],options);
+  const lift=body.animate(Array.from({length:9},(_,i)=>{const u=i/8;return {offset:u,transform:`translateY(${-4*height*u*(1-u)}px)`};}),options);
+  const shade=shadow.animate([{opacity:.15},{opacity:.06,offset:.5},{opacity:.15}],options);
+  motion={next,animations:[position,lift,shade]};busy(true);
+  /* 상태·정답·자국은 착지한 뒤 확정한다. 연속 클릭은 한 번의 뜀으로 세며 초기화/다음 회차는 즉시 취소한다. */
+  position.onfinish=()=>{if(disposed||!motion||motion.next!==next)return;cancelMotion(true);update(false);};
+ }
+ function action(name,value){
+  if(disposed)return;
+  if(motion){if(name!=='next'&&name!=='reset')return;cancelMotion(false);}
+  const next=api.act(state,name,value);
+  if(name==='hop'){hop(next);return;}
+  state=next;update(name==='next'||name==='reset');
+ }
  function onClick(e){
   const b=e.target.closest('button');
   if(b&&host.contains(b)&&!b.disabled){if(b.hasAttribute('data-predict'))action('predict',+b.dataset.predict);else if(b.dataset.act)action(b.dataset.act);return;}
   if(e.target.closest('.nm-hop-stage'))action('hop');
  }
- host.addEventListener('click',onClick);update(true);
- function dispose(){if(disposed)return;disposed=true;host.removeEventListener('click',onClick);observer.disconnect();delete host.__livingLesson;}
+ host.addEventListener('click',onClick);update(true);busy(false);
+ function onReduce(e){if(e.matches&&motion){cancelMotion(true);update(false);}}
+ reduced.addEventListener('change',onReduce);
+ function dispose(){if(disposed)return;disposed=true;cancelMotion(false);host.removeEventListener('click',onClick);reduced.removeEventListener('change',onReduce);observer.disconnect();delete host.__livingLesson;}
  const observer=new MutationObserver(()=>{if(!host.isConnected)dispose();});observer.observe(document.body,{childList:true,subtree:true});
  const controller={dispose,getState:()=>api.snapshot(state)};host.__livingLesson=controller;
  return controller;

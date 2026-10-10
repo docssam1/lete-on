@@ -111,6 +111,6 @@ html .nm-unit-view[data-learning-band] .nm-journey .nm-live-feedback{font-size:2
 @media screen{
 .nm-hop-stage{background:#eef4e6;cursor:pointer;height:clamp(220px,42vw,340px)}
 .nm-hop-svg{width:100%;height:100%;display:block}
-.nm-hop-frog{transition:transform .35s ease}
-@media(prefers-reduced-motion:reduce){.nm-hop-frog{transition:none}}
+.nm-hop-lesson[data-moving="true"] .nm-hop-stage{cursor:progress}
+.nm-hop-lesson button[aria-disabled="true"]{opacity:.5;cursor:default}
 }

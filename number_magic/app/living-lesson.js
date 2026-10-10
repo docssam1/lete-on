@@ -27,7 +27,7 @@ const signed=n=>n>0?'+'+n:n<0?'−'+Math.abs(n):'0';
 export async function mount(host,uid,lang,options={}){
  if(['A-02','M-02','T-DV4'].includes(uid))return (await import('./activity-journey.js')).mount(host,uid,lang,options);
  const api=window.NM_LIVING_LESSONS;if(!host||!host.isConnected||!api||!api.has(uid))return null;
- if(api.create(uid).kind==='hop')return (await import('./hop-lesson.js?v=20261007-frog')).mount(host,uid,lang);   /* 유아 수직선 뛰기(N-07) */
+ if(api.create(uid).kind==='hop')return (await import('./hop-lesson.js?v=20261010-hop-motion')).mount(host,uid,lang);   /* 유아 수직선 뛰기(N-07) */
  if(!['ten','signed'].includes(api.create(uid).kind))return (await import('./strategy-lesson.js')).mount(host,uid,lang);
  if(host.__livingLesson)host.__livingLesson.dispose();
  const t=copy[lang]||copy.ko,ten=api.create(uid).kind==='ten';let state=api.create(uid),selected=null,visual=null,disposed=false;

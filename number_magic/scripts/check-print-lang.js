@@ -30,12 +30,12 @@
    ============================================================ */
 'use strict';
 
-const { spawn } = require('child_process');
+const fs = require('fs');
 const path = require('path');
 const http = require('http');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = process.env.NM_CHECK_PORT || 8793;
+const PORT = process.env.NM_CHECK_PORT ? Number(process.env.NM_CHECK_PORT) : 0;
 const ONLY = process.argv.slice(2).map(s => s.toUpperCase());
 const LANGS = ['ko', 'en', 'zh'];
 
@@ -46,22 +46,30 @@ function loadPlaywright(){ return require('./lib/playwright'); }
 
 function serve(){
   return new Promise((resolve, reject) => {
-    const py = spawn(process.platform === 'win32' ? 'python' : 'python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
-    py.on('error', reject);
-    const t0 = Date.now();
-    (function ping(){
-      http.get(`http://localhost:${PORT}/drill.html`, res => { res.resume(); resolve(py); })
-        .on('error', () => {
-          if(Date.now() - t0 > 8000) return reject(new Error('정적 서버 기동 실패'));
-          setTimeout(ping, 150);
-        });
-    })();
+    if(!Number.isInteger(PORT) || PORT < 0 || PORT > 65535) return reject(new Error('NM_CHECK_PORT 범위 오류'));
+    const types = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.mjs':'text/javascript; charset=utf-8',
+      '.css':'text/css; charset=utf-8', '.json':'application/json', '.png':'image/png', '.jpg':'image/jpeg', '.webp':'image/webp',
+      '.svg':'image/svg+xml', '.woff2':'font/woff2', '.woff':'font/woff', '.ttf':'font/ttf' };
+    const server = http.createServer((req, res) => {
+      let file;
+      try { file = path.resolve(ROOT, '.' + decodeURIComponent(new URL(req.url, 'http://localhost').pathname)); }
+      catch(e){ res.writeHead(400); return res.end(); }
+      const relative = path.relative(ROOT, file);
+      if(relative.startsWith('..') || path.isAbsolute(relative)){ res.writeHead(403); return res.end(); }
+      if(!fs.existsSync(file) || !fs.statSync(file).isFile()){ res.writeHead(404); return res.end(); }
+      res.writeHead(200, { 'Content-Type':types[path.extname(file)] || 'application/octet-stream' });
+      if(req.method === 'HEAD') return res.end();
+      fs.createReadStream(file).on('error', () => res.destroy()).pipe(res);
+    });
+    /* 기본은 이 실행만의 빈 포트. 지정한 포트가 사용 중이면 실패하고 다른 서버를 검사하지 않는다. */
+    server.once('error', reject);
+    server.listen(PORT, '127.0.0.1', () => resolve({ server, base:`http://127.0.0.1:${server.address().port}` }));
   });
 }
 
 (async () => {
   const { chromium } = loadPlaywright();
-  const server = await serve();
+  const { server, base } = await serve();
   const browser = await chromium.launch();
 
   const fails = [], warns = [];
@@ -71,6 +79,9 @@ function serve(){
   for(const lang of LANGS){
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     page.on('pageerror', e => pageErrors.push(`[${lang}] ${e.message}`));
+    const isLocalScript = url => { const u = new URL(url); return u.origin === base && /\.(?:m?js|css)$/.test(u.pathname); };
+    page.on('requestfailed', req => { if(isLocalScript(req.url())) fails.push(`[${lang}] 자료 요청 실패: ${req.url()} (${req.failure()?.errorText})`); });
+    page.on('response', res => { if(res.status() >= 400 && isLocalScript(res.url())) fails.push(`[${lang}] 자료 응답 실패: ${res.status()} ${res.url()}`); });
     await page.addInitScript(l => {
       window.print = () => {};
       /* 표지·개념장까지 켜고 본다 — 그쪽에도 하드코딩 한국어가 있었다 */
@@ -80,7 +91,7 @@ function serve(){
         localStorage.setItem('nm_ws_cover', '1');
       }catch(e){}
     }, lang);
-    await page.goto(`http://localhost:${PORT}/drill.html`, { waitUntil: 'networkidle' });
+    await page.goto(`${base}/drill.html`, { waitUntil: 'networkidle' });
     /* 인쇄 CSS를 실제로 적용시킨다 — 이게 없으면 칸 너비가 0이라 넘침을 못 잰다 */
     await page.emulateMedia({ media: 'print' });
 
@@ -96,7 +107,7 @@ function serve(){
 
     if(!targets.length){
       console.error('검사 대상이 없습니다.' + (ONLY.length ? ` (${ONLY.join(', ')})` : ''));
-      await browser.close(); server.kill(); process.exit(2);
+      await browser.close(); server.close(); process.exit(2);
     }
 
     let done = 0, wpLevels = 0;
@@ -178,7 +189,7 @@ function serve(){
   }
 
   await browser.close();
-  server.kill();
+  server.close();
 
   console.log('\n언어별 검사한 유형·레벨: ' + LANGS.map(l => `${l} ${counts[l]||0}`).join(' · '));
   if(pageErrors.length){

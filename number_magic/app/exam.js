@@ -5951,8 +5951,10 @@ function renderRoundPagesBody(item, opts){
        남는 장이 생겨 "한 쪽 6문항" 규칙을 어겼다(C30-S06). 장 수는 그대로, 고르게: 18 → 6+6+6. */
     const rest = problems.length - from;
     const nEven = Math.ceil(rest / layout.perPage);
-    /* 고르게 나눠도 장마다 6문항 이상일 때만(10문항을 5+5 로 나누면 오히려 규칙을 어긴다 → 8+2, 짧은 장은 마지막) */
-    if(midPage && rest > layout.perPage && rest >= 6 * nEven){
+    /* 다른 연령도 꼬리 장의 1~3문항을 앞 장과 나눈다. 그림·긴 문장처럼 한 장 용량이 6보다 작은
+       유형은 그 용량의 절반을 기준으로 삼고, 중등은 기존 6문항 기준을 지킨다. 잰 용량은 늘리지 않는다. */
+    const minPractice = midPage ? 6 : Math.min(6, Math.ceil(layout.perPage / 2));
+    if(rest > layout.perPage && rest >= minPractice * nEven){
       const n = nEven;
       for(let j = 0, at = from; j < n; j++){ const size = Math.ceil((problems.length - at) / (n - j)); pages.push(problems.slice(at, at + size)); evenPages.push(pages.length - 1); at += size; }
     } else {
@@ -5961,16 +5963,19 @@ function renderRoundPagesBody(item, opts){
   } else {
     pages.push([]);
   }
-  // 중등 12문항을 10+2로 나누면 마지막 장이 낭비된다. 마지막 두 연습 장은
-  // 가능할 때 모두 6문항 이상으로 재배분한다(순서·답·총 문항 수는 그대로).
+  // 마지막 장이 작으면 직전 장(개념 아래의 첫 연습 포함)과 재배분한다.
+  // 각 장의 잰 용량·교수 순서·문항 순서·답·총 문항 수는 그대로다. 독셈은 문항별 높이 패커를 유지한다.
   const balancedPracticePages = new Set();
   if(guideWithPractice) balancedPracticePages.add(1);
   evenPages.forEach(i => balancedPracticePages.add(i));
-  if(((window.NM_MIDDLE_CONCEPTS || {})[item.thread] || item.pacing) && pages.length >= 2){
+  if(layout.type !== 'train' && pages.length >= 2){
     const tail = pages[pages.length-1], prev = pages[pages.length-2];
-    if(tail.length > 0 && tail.length < 6 && prev.length + tail.length >= 12){
-      const joined = prev.concat(tail), split = joined.length - 6;
-      pages.splice(pages.length-2, 2, joined.slice(0,split), joined.slice(split));
+    const prevCap = pages.length === 2 ? firstCap : guideWithPractice && pages.length === 3 ? 6 : layout.perPage;
+    const minPractice = midPage ? 6 : Math.min(6, Math.ceil(layout.perPage / 2));
+    const joined = prev.concat(tail), size = Math.ceil(joined.length / 2), lastSize = joined.length - size;
+    if(tail.length > 0 && tail.length < minPractice && prev.length > 0 && lastSize >= minPractice
+      && size <= prevCap && lastSize <= layout.perPage){
+      pages.splice(pages.length-2, 2, joined.slice(0,size), joined.slice(size));
       balancedPracticePages.add(pages.length-2); balancedPracticePages.add(pages.length-1);
     }
   }

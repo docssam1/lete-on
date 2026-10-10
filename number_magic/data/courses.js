@@ -610,6 +610,7 @@ const COUNT_CAP = {
   'DV14@1':24,   // 서로 다른 문항 32
   'DV17@1':24,   // 서로 다른 문항 32
   'DV17@2':24,   // 서로 다른 문항 32
+  'FR4@4':12,   // 시작 1~4 × 항수 4~7 = 정확히 16종. 예시·따라 풀기 4종을 남김(2026-10-10).
   'MD19@6':30,   // 서로 다른 문항 34
   'MD20@4':24,   // 서로 다른 문항 29
   'MD66@5':18,   // 서로 다른 문항 24
@@ -680,10 +681,15 @@ function planCounts(ss, tier, maxLevel){
   const total = () => [...ss.school, ...ss.strategy.practice].reduce((a, d) => a + d.count * sec * (ss.strategy.practice.indexOf(d) >= 0 ? 1.2 : 1), 0)
     + ss.application.reduce((a, d) => a + d.count * cost(d), 0);
   const own = ss.school.filter(d => !d.review);
-  /* 넘치면 쉬운 것부터 6씩 덜고(최소 12 — 어려운 유형은 뒤에 덜린다), 모자라면 어려운 것부터 6씩 더한다(최대 36) */
+  /* 유아 G1은 한 회차에 4~6종의 조작·읽기 활동이 있다. 모두 최소 12로 고정하면 26~30분이 된다.
+     유형·회차는 빼지 않고, 쉬운·기본 활동만 6문항 묶음까지 줄인다. 어려운 활동은 최소 12 유지.
+     초등 이후의 최소 12와 난이도별 추가 연습, 사용자의 학습량 조절은 그대로다. */
+  const minimum = d => tier === 'level0' && d.difficulty !== 'hard' ? 6 : 12;
+  const trimPriority = d => tier === 'level0' ? ({easy:0, core:1, hard:2})[d.difficulty] : +(d.difficulty === 'hard');
+  /* 넘치면 쉬운 것부터 6씩 덜고, 모자라면 어려운 것부터 6씩 더한다(최대 36) */
   for(let guard = 0; guard < 20 && total() > BUDGET * OVER; guard++){
-    const c = own.slice().sort((a, b) => (a.difficulty === 'hard') - (b.difficulty === 'hard') || b.count - a.count)
-      .find(d => d.count > 12);
+    const c = own.slice().sort((a, b) => trimPriority(a) - trimPriority(b) || b.count - a.count)
+      .find(d => d.count > minimum(d));
     if(!c) break; c.count -= 6;
   }
   /* 그래도 넘치면 복습 한 벌을 뺀다 — 그 주 교과·창의·적용이 먼저다 */

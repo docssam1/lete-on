@@ -6362,7 +6362,7 @@ function stepDiscover(body,u){
       onStatus:status=>{const next=body.querySelector('#toCheck');if(next)next.disabled=!(status.complete&&status.saved);},
       onTown:()=>{S.view='town';save();render();}
     }:{};
-    import('./living-lesson.js?v=20261007-frog').then(m=>m.mount(livingHost,u.id,lang,journeyOptions)).catch(()=>{
+    import('./living-lesson.js?v=20261010-hop-motion').then(m=>m.mount(livingHost,u.id,lang,journeyOptions)).catch(()=>{
       if(livingHost.isConnected)livingHost.textContent=lang==='ko'?'교구를 불러오지 못했습니다. 아래 개념으로 계속 학습할 수 있습니다.':lang==='en'?'The pieces could not load. Continue with the concept below.':'教具加载失败。可以继续学习下方概念。';
     });
   }

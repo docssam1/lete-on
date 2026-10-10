@@ -19,7 +19,7 @@ const { browserArgs } = require('./lib/nm-onboard.js');
 
 function serve(){
   return new Promise((resolve, reject) => {
-    const py = spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
+    const py = spawn(process.platform === 'win32' ? 'python' : 'python3', ['-m', 'http.server', String(PORT)], { cwd: ROOT, stdio: 'ignore' });
     py.on('error', reject);
     const t0 = Date.now();
     (function ping(){
