@@ -1,5 +1,8 @@
 "use strict";
 
+const fs = require("node:fs");
+const path = require("node:path");
+
 global.window = {};
 require("./source-inventory-4-1.js");
 require("./source-inventory-grade6.js");
@@ -44,6 +47,16 @@ const types = window.HSE_CURRICULUM.semesters.flatMap(semester =>
 const ready = types.filter(type => generatorApi.generatorKey(type) && !type.reviewLocked);
 const locked = types.filter(type => !generatorApi.generatorKey(type) || type.reviewLocked);
 const sourceGrade6 = types.filter(type => type.normalizedTypeId && /^6-[12]-/.test(type.sourceItemId));
+
+const readme = fs.readFileSync(path.join(__dirname, "README.md"), "utf8");
+for (const [label, pattern, expected] of [
+  ["전체", /런타임 ([\d,]+)개 세부 유형 항목/, types.length],
+  ["생성 가능", /현재 생성 가능:[^\n]*?([\d,]+)개 유형/, ready.length],
+  ["검수 대기", /검수 대기:[^\n]*?([\d,]+)개 유형/, locked.length]
+]) {
+  const match = readme.match(pattern);
+  if (!match || Number(match[1].replaceAll(",", "")) !== expected) failures.push(`README ${label} 수치가 실제 ${expected}개와 다릅니다.`);
+}
 
 if (types.length !== 2005) failures.push(`런타임 유형은 2005개여야 하나 ${types.length}개입니다.`);
 if (ready.length !== 1155) failures.push(`생성 가능 유형은 1155개여야 하나 ${ready.length}개입니다.`);
