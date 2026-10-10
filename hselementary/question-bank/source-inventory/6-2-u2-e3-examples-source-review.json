@@ -19,7 +19,8 @@
       "roundedLastDecimalDigit": "3",
       "independentAnswer": "301",
       "handwrittenAnswerEvidence": "readable-301-agrees-with-independent-calculation",
-      "sourceCorrection": "printed question says 100th decimal place, not second; release remains locked"
+      "sourceCorrection": "printed question says 100th decimal place, not second; three pools independently verified",
+      "publicReleaseStatus": "verified"
     },
     {
       "sourceItemId": "6-2-u2-e3-example-2",
@@ -32,10 +33,10 @@
       "candidateVerification": {
         "generator": "sourceGrade6SecondDecimalDivisionE3Example2",
         "fixedPoolCount": 3,
-        "independentEnumerationChecks": 360,
-        "desktopMobileFormulaAndGridChecks": 54,
-        "a4CandidatePages": 2,
-        "scope": "검수용 별도 화면이며 실제 문제은행 공개 화면 검수가 아님"
+        "independentEnumerationChecks": 9,
+        "browserAudit": "source-6-2-decimal-e3-live-audit.js",
+        "difficultyDesign": ["restricted-candidate-digits", "source-structure", "divisor-subtraction-extra-step"],
+        "scope": "원문과 독립 계산, 세 난이도 실제 출제 화면을 따로 검사함"
       }
     },
     {
@@ -53,10 +54,13 @@
       "totalKg": "100.2",
       "capacityKg": "4.22",
       "minimumBags": 24,
-      "independentAnswerKg": "4.175"
+      "independentAnswerKg": "4.175",
+      "publicReleaseStatus": "verified"
     }
   ],
   "officialAnswerEvidence": "not-available-for-these-items",
-  "publicReleaseStatus": "locked",
-  "pending": ["심화 교재 공식 답 대조", "예제별 난이도 설계와 나머지 유사문항", "예제 3의 양수 조건 명시", "PC·모바일·A4 실제 출제 화면 검수"]
+  "publicReleaseStatus": "partial",
+  "verificationAudit": "source-6-2-decimal-e3-release-audit.js",
+  "browserAudit": "source-6-2-decimal-e3-live-audit.js",
+  "pending": ["예제 3의 공통 수가 양수인지 원문 조건 확인"]
 }

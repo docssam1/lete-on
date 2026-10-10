@@ -15,9 +15,13 @@
     "overlapTriangle": "ㅅㅁㄷ",
     "sharedBase": "ㅁㄷ",
     "targetHeight": "ㅅㅇ",
-    "givenAreasCm2": [46.8, 30.3],
+    "givenAreasCm2": [
+      46.8,
+      30.3
+    ],
     "unionAreaCm2": 59.7,
-    "sharedBaseCm": 3.2
+    "sharedBaseCm": 3.2,
+    "leftApexHigherThanRight": true
   },
   "independentMath": {
     "overlapAreaCm2": 17.4,
@@ -26,8 +30,17 @@
     "candidateCount": 1
   },
   "officialAnswerEvidence": "not-available-for-this-item",
-  "publicReleaseStatus": "locked",
-  "candidateVerification": {
+  "publicReleaseStatus": "ready",
+  "pending": [],
+  "answerEvidence": {
+    "publisherAnswerVerified": false,
+    "handwritingReadingConfirmed": true,
+    "handwritingReading": "10.875",
+    "handwritingAgreesWithCalculation": true,
+    "handwritingConflict": false,
+    "independentPrintedConditionsVerified": true
+  },
+  "legacyCandidateVerification": {
     "generator": "sourceGrade6SecondDecimalDivisionE2Mission4",
     "fixedPoolCount": 3,
     "independentMathAndGeometryChecks": 360,
@@ -39,5 +52,21 @@
     "a4ItemSplitObserved": false,
     "scope": "검수용 별도 화면이며 실제 문제은행 공개 화면 검수가 아님"
   },
-  "pending": ["심화 교재 공식 답과 문항 번호 대조", "실제 문제은행 PC·모바일·A4 출제 화면 검수"]
+  "verification": {
+    "independentMathAudit": "source-6-2-e2-geometry-release-audit.js",
+    "actualPageAudit": "source-6-2-e2-geometry-live-audit.js",
+    "sourceDirectlyViewed": true,
+    "fixedPoolCount": 3,
+    "structuralDifficultyLevels": 3,
+    "publisherAnswerVerified": false,
+    "answerBasis": "printed-source-independent-calculation-and-legible-handwriting",
+    "independentDistinctConditions": 9,
+    "actualPageStates": 9,
+    "a4PdfFiles": 6,
+    "browserAssetHashGuard": true,
+    "normalBlackTextAndThinLines": true,
+    "learnerNumericModelAttributes": false,
+    "empiricalDifficultyCalibrated": false,
+    "geometryProjection": "common-axis-affine"
+  }
 }

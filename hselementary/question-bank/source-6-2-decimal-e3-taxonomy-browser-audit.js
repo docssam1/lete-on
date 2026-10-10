@@ -31,14 +31,14 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         const row = page.locator(`[data-preview-type-id="${id}"]`);
         assert.equal(await row.count(), 1, `${width}px ${id}: 원문 세부 유형이 있음`);
         assert((await row.innerText()).includes(label), `${width}px ${id}: 정확한 이름`);
-        assert(await row.locator('input[type="checkbox"]').isDisabled(), `${width}px ${id}: 출제 잠금`);
+        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), id.endsWith("exploration-3"), `${width}px ${id}: 필기 충돌만 잠금`);
       }
       const missions = [
         ["6-2-u2-e3-mission-1", "몫을 첫째·둘째 자리까지 반올림한 값의 차 구하기"],
         ["6-2-u2-e3-mission-2", "수 카드로 몫이 가장 큰 나눗셈 만들기"],
-        ["6-2-u2-e3-mission-3", "반올림한 몫에 맞는 두 빈칸 숫자 모두 찾기"],
+        ["6-2-u2-e3-mission-3", "반올림한 몫에 맞는 빈칸 숫자 찾기"],
         ["6-2-u2-e3-mission-4", "다리를 건널 수 있도록 실을 상자 수 구하기"],
-        ["6-2-u2-e3-mission-5", "반올림한 몫에 맞는 두 자리 소수의 개수 구하기"],
+        ["6-2-u2-e3-mission-5", "올림한 몫에 맞는 두 자리 소수의 개수 구하기"],
         ["6-2-u2-e3-mission-6", "직육면체 상자에 들어가는 정육면체 개수 구하기"]
       ];
       for (const [id, label] of missions) {
@@ -46,11 +46,11 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         const row = page.locator(`[data-preview-type-id="${id}"]`);
         assert.equal(await row.count(), 1, `${width}px ${id}: 원문 Mission 유형이 있음`);
         assert((await row.innerText()).includes(label), `${width}px ${id}: 정확한 이름`);
-        assert(await row.locator('input[type="checkbox"]').isDisabled(), `${width}px ${id}: 출제 잠금`);
+        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), id.endsWith("mission-5"), `${width}px ${id}: 자리 해석 미확인만 잠금`);
       }
       for (const [id, search, reason] of [
-        ["6-2-u2-e3-mission-3", "두 빈칸 숫자 모두", "여러 개"],
-        ["6-2-u2-e3-mission-5", "두 자리 소수의 개수", "공식 답"]
+        ["6-2-u2-e3-exploration-3", "1보다 작은 몫", "손글씨"],
+        ["6-2-u2-e3-mission-5", "올림한 몫에 맞는 두 자리 소수", "해석"]
       ]) {
         await page.locator("#typeSearchInput").fill(search);
         const row = page.locator(`[data-preview-type-id="${id}"]`);

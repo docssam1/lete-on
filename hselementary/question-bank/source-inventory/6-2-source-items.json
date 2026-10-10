@@ -1406,8 +1406,8 @@
       "answerContract": "single-shared-height-triangle-base-difference",
       "visualRisk": "두 삼각형의 높이가 같다는 점, 밑변 ㄴ-ㅁ-ㄷ의 순서, 세 직각 표시, 길이 3.9cm와 구할 선분 ㄴㅁ이 분명해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "source-reviewed-release-locked",
-      "reviewReason": "심화 교재의 공식 답 자료가 없어 공개를 보류합니다. 독립 계산과 그림 검수는 완료했습니다.",
+      "implementationStatus": "source-rebuilt-answer-reading-locked",
+      "reviewReason": "원문 조건의 독립 답은 하나지만 손글씨 분수에 취소와 덧쓰기가 있어 최종 답을 확정하지 않습니다.",
       "publicSourceItemId": "6-2-u2-e2-mission-3"
     },
     {
@@ -1422,8 +1422,20 @@
       "answerContract": "union-overlap-triangle-height",
       "visualRisk": "두 큰 삼각형과 겹친 작은 삼각형, 밑변 ㅁㄷ의 범위, 교차점 ㅅ과 수선의 발 ㅇ, 직각 표시가 한눈에 구분되어야 함.",
       "sourceVerified": true,
-      "implementationStatus": "candidate-verified-release-locked",
-      "reviewReason": "원본 조건과 검수용 그림·계산은 확인했으나 심화 교재 공식 답과 실제 문제은행 출력 검수가 남아 공개하지 않습니다."
+      "implementationStatus": "verified-fixed-pool",
+      "reviewReason": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE2Mission4",
+      "verifiedVariantCount": 3,
+      "answerVisualStatus": "verified",
+      "answerEvidence": {
+        "sourceAnswer": "10.875cm",
+        "independentCalculationVerified": true,
+        "handwritingReading": "10.875",
+        "handwritingReadingConfirmed": true,
+        "handwritingAgreesWithCalculation": true,
+        "publisherAnswerVerified": false,
+        "answerOrigin": "printed-conditions-independent-calculation-with-handwriting-match"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e2-mission-5",
@@ -1453,8 +1465,20 @@
       "answerContract": "four-rectangle-missing-area",
       "visualRisk": "같은 행의 높이와 같은 열의 너비가 정확히 이어져야 하고, ㉠ 및 세 넓이 수치가 선과 겹치지 않아야 함.",
       "sourceVerified": true,
-      "implementationStatus": "candidate-verified-release-locked",
-      "reviewReason": "원문 그림과 독립 계산은 확인했으나 심화 교재 공식 답 대조와 실제 출제 화면 검수 전에는 공개하지 않습니다."
+      "implementationStatus": "verified-fixed-pool",
+      "reviewReason": "",
+      "generatorKey": "sourceGrade6SecondDecimalDivisionE2Mission6",
+      "verifiedVariantCount": 3,
+      "answerVisualStatus": "verified",
+      "answerEvidence": {
+        "sourceAnswer": "10cm²",
+        "independentCalculationVerified": true,
+        "handwritingReading": "10",
+        "handwritingReadingConfirmed": true,
+        "handwritingAgreesWithCalculation": true,
+        "publisherAnswerVerified": false,
+        "answerOrigin": "printed-conditions-independent-calculation-with-handwriting-match"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-exploration-1",
@@ -1468,8 +1492,15 @@
       "answerContract": "rounded-quotient-hundredth",
       "visualRisk": "몫의 셋째 자리에서 반올림한다는 조건과 소수 둘째 자리의 0을 혼동하지 않아야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산을 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "6.81",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-exploration-2",
@@ -1483,8 +1514,15 @@
       "answerContract": "rounded-quotient-hundredth",
       "visualRisk": "나누는 수와 몫의 소수점 자리를 바꾸어 읽지 않아야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산을 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "6.39",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-exploration-3",
@@ -1498,8 +1536,17 @@
       "answerContract": "rounded-quotient-hundredth",
       "visualRisk": "반올림한 몫이 0.90이 되며 마지막 0을 생략하지 않아야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산을 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
+      "implementationStatus": "handwriting-conflict-locked",
+      "reviewReason": "원문 27.72 ÷ 30.7의 소수 둘째 자리 반올림은 0.90이나 손글씨는 0.81로 읽힙니다. 답 근거를 더 확인해야 합니다.",
+      "independentAnswer": "0.90",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": false,
+        "handwritingReading": "0.81",
+        "method": "exact rational interval and independent long division",
+        "agreement": false
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-example-1",
@@ -1513,8 +1560,15 @@
       "answerContract": "rounded-quotient-digit-sum",
       "visualRisk": "원본은 소수 100째 자리까지이며 둘째 자리 문제가 아님. 반복되는 숫자와 마지막 반올림을 모두 확인해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "301",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-example-2",
@@ -1528,8 +1582,15 @@
       "answerContract": "rounded-quotient-digit-count",
       "visualRisk": "빈칸이 한 자리 숫자이고 반올림 자리가 소수 첫째 자리임을 분명히 해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 빈칸 전수 계산은 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "3",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-example-3",
@@ -1558,8 +1619,15 @@
       "answerContract": "minimum-bag-count-equal-fill",
       "visualRisk": "최소 봉지 수는 올림하고 실제 한 봉지의 양은 전체를 그 정수 봉지 수로 다시 나누어야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 유사문항과 실제 출제 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "4.175kg",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-1",
@@ -1573,8 +1641,15 @@
       "answerContract": "difference-between-rounded-quotients",
       "visualRisk": "첫째 자리와 둘째 자리의 0을 생략하지 않고 서로 다른 반올림값을 구분해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.03",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-2",
@@ -1588,8 +1663,15 @@
       "answerContract": "max-card-arrangement-rounded-quotient",
       "visualRisk": "여섯 카드를 빠짐없이 한 번씩 쓰고 두 수가 모두 소수 두 자리 수인지 확인해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 카드 순서 전수 비교는 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "6.13",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-3",
@@ -1599,12 +1681,20 @@
       "ordinal": 3,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "나누어지는 수의 두 빈칸을 채워 몫을 소수 둘째 자리까지 반올림한 값과 맞추는 문제",
-      "answerContract": "all-valid-digit-pairs",
-      "visualRisk": "빈칸 두 개의 위치와 반올림 자리를 정확히 표시해야 하며, 가능한 숫자 조합을 하나의 답으로 오인하면 안 됨.",
+      "sourceShape": "나누어지는 수의 한 빈칸을 채워 몫을 소수 둘째 자리까지 반올림한 값과 맞추는 문제",
+      "answerContract": "single-valid-digit-from-rounded-hundredth",
+      "visualRisk": "빈칸은 소수 셋째 자리 하나이며, 마지막 숫자는 고정되어 있음.",
       "sourceVerified": true,
-      "implementationStatus": "answer-set-ambiguity-locked",
-      "reviewReason": "원본 조건에 맞는 빈칸 조합이 여러 개입니다. 가능한 조합을 모두 쓰는 문구와 정답 형식을 정하기 전에는 공개하지 않습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      },
+      "sourceCorrection": "확대 원문은 2.94□5 ÷ 3.4이며 두 빈칸 기록은 오독입니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-4",
@@ -1618,8 +1708,15 @@
       "answerContract": "bridge-capacity-max-whole-boxes",
       "visualRisk": "다리의 제한 무게에 트럭 자체 무게도 포함하고 상자 수는 정수로 내려야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "112개",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-5",
@@ -1629,12 +1726,13 @@
       "ordinal": 5,
       "pdfPage": 21,
       "printedPage": 23,
-      "sourceShape": "나눗셈의 몫을 소수 첫째 자리까지 반올림한 값에서 가능한 두 자리 소수 나누는 수를 모두 세는 문제",
-      "answerContract": "count-two-decimal-divisors-in-rounded-quotient-range",
-      "visualRisk": "반올림 범위의 양 끝 포함 여부와 두 자리 소수 간격을 확인해야 함.",
+      "sourceShape": "나눗셈의 몫을 소수 첫째 자리까지 올림한 값에서 가능한 소수 두 자리 나누는 수를 모두 세는 문제",
+      "answerContract": "count-two-decimal-divisors-in-ceiling-quotient-range",
+      "visualRisk": "올림 범위는 아래쪽이 미포함이고 위쪽이 포함됨. 끝자리가 영인 소수를 소수 두 자리 수에 포함하는지 확인해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "handwriting-conflict-locked",
-      "reviewReason": "원본의 손글씨 답과 가능한 수 전수 검산 결과가 달라 공식 답 대조 전에는 공개하지 않습니다."
+      "implementationStatus": "source-decimal-place-ambiguity-locked",
+      "reviewReason": "원문은 반올림이 아니라 올림입니다. 소수 두 자리 수의 끝자리 영 포함 여부가 달라 답 해석을 확인해야 합니다.",
+      "sourceCorrection": "올림 조건은 6.3 < 몫 <= 6.4입니다. 가능한 값은 7.54부터 7.65까지 12개이며, 7.60을 제외하면 손글씨 11개와 일치합니다."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-6",
@@ -1648,8 +1746,15 @@
       "answerContract": "cube-packing-three-dimensions",
       "visualRisk": "세 방향 모두 한 모서리 길이로 나눈 정수 개수만 세고 부피 나눗셈으로 대신하지 않아야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "756개",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwrittenAnswerVerified": true,
+        "method": "exact source and independent calculation; three fixed pools at three reasoning levels"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-exploration-1",
@@ -1663,8 +1768,16 @@
       "answerContract": "maximum-whole-items-and-decimal-remainder",
       "visualRisk": "만들 수 있는 개수는 자연수로 내리고 남는 무게는 원래 단위의 소수로 나타내야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "6개, 2.14g",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "6개, 2.14g",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-exploration-2",
@@ -1678,8 +1791,16 @@
       "answerContract": "minimum-remainder-at-shorter-quotient-precision",
       "visualRisk": "원문은 반올림이 아니라 몫을 정해진 자리에서 멈추는 계산이며, 가능한 수의 범위를 확인해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문에서 몫을 멈추는 뜻과 공식 답 근거를 대조하고 유사문항 화면을 검수하기 전에는 공개하지 않습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.4991",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": null,
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-example-1",
@@ -1693,8 +1814,16 @@
       "answerContract": "three-whole-quotients-with-decimal-remainders",
       "visualRisk": "세 나누어지는 수의 소수점 위치가 다르므로 각 나머지의 단위를 원래 자리에서 확인해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 세 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "566, 6; 56, 4.5; 5, 4.35",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "첫 줄 흐림, 뒤 두 줄 일치",
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-example-2",
@@ -1708,8 +1837,16 @@
       "answerContract": "minimum-addition-to-exact-tenth-quotient",
       "visualRisk": "몫의 다음 소수 첫째 자리 배수를 찾고 기존 수와의 차를 원래 자리 단위로 계산해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.07",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.07 또는 0.007, 판독 미확정",
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-example-3",
@@ -1723,8 +1860,16 @@
       "answerContract": "minimum-dividend-from-rounded-quotient-then-new-remainder",
       "visualRisk": "반올림은 첫 몫의 조건에만 적용하고, 새 나눗셈에서는 몫을 소수 둘째 자리에서 멈춰 나머지를 계산해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 화면 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.002",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.002",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-example-4",
@@ -1739,7 +1884,15 @@
       "visualRisk": "첫째 자리의 기존 나머지를 둘째 자리의 새 나머지로 그대로 옮기면 틀림. 자리 늘림에 따른 소수점 위치를 다시 계산해야 함.",
       "sourceVerified": true,
       "implementationStatus": "handwriting-conflict-locked",
-      "reviewReason": "원본의 손글씨 답이 독립 계산과 달라 공식 답 대조 전에는 공개하지 않습니다."
+      "reviewReason": "원본의 손글씨 답이 독립 계산과 달라 공식 답 대조 전에는 공개하지 않습니다.",
+      "independentAnswer": "0.0135",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.16",
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-1",
@@ -1753,8 +1906,16 @@
       "answerContract": "rank-four-decimal-remainders-at-tenths",
       "visualRisk": "네 나머지를 각각 원래 자리 단위로 구하고 크기 비교 전에 소수점 위치를 맞춰야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 네 나머지의 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "ㄷ, ㄹ, ㄱ, ㄴ",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "ㄷ, ㄹ, ㄱ, ㄴ",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-2",
@@ -1768,8 +1929,16 @@
       "answerContract": "shortened-quotient-remainder-from-exact-division",
       "visualRisk": "정확한 몫과 소수 첫째 자리에서 멈춘 몫을 구분해야 하며 반올림을 적용하면 안 됨.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.822",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.822와 1.192가 함께 남음",
+        "handwrittenAnswerVerified": false,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-3",
@@ -1783,8 +1952,16 @@
       "answerContract": "recover-dividend-then-new-tenth-place-remainder",
       "visualRisk": "첫 나눗셈의 나머지를 둘째 나눗셈의 새 나머지로 옮기지 않아야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.08",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.08",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-4",
@@ -1798,8 +1975,16 @@
       "answerContract": "minimum-addition-for-exact-hundredth-quotient",
       "visualRisk": "나눗셈 몫을 소수 둘째 자리까지 늘려 다음 정확한 배수와 원래 수의 차를 구해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.005",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.005",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-5",
@@ -1813,8 +1998,16 @@
       "answerContract": "largest-rounded-quotient-dividend-then-new-remainder",
       "visualRisk": "첫 나눗셈의 반올림 조건으로 가능한 몫의 끝값을 정하고 둘째 나눗셈의 나머지를 따로 계산해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "0.3",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "0.3",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e4-mission-6",
@@ -1828,8 +2021,16 @@
       "answerContract": "recover-dividend-from-rounded-third-place-and-remainder",
       "visualRisk": "셋째 자리까지 계산한 몫과 둘째 자리까지 반올림한 몫은 서로 다르며, 원래 수는 반올림 전 몫으로 복원해야 함.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문과 독립 계산은 확인했지만 공식 답 대조와 유사문항 검수가 남아 있습니다."
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": "",
+      "independentAnswer": "5.378",
+      "answerEvidence": {
+        "sourcePageChecked": true,
+        "officialAnswerVerified": false,
+        "handwritingReading": "5.378 (이전 값 취소)",
+        "handwrittenAnswerVerified": true,
+        "method": "independent exact decimal calculation and finite-pool prompt review"
+      }
     },
     {
       "sourceItemId": "6-2-u2-e5-exploration-1",
@@ -2389,12 +2590,12 @@
       "ordinal": 1,
       "pdfPage": 30,
       "printedPage": 32,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. 개념탐구 본문의 복합 소문항은 나누지 않고 한 source item으로 유지함.",
-      "answerContract": "candidate",
+      "sourceShape": "바닥 칸별 높이표를 주고 앞·뒤·왼쪽·오른쪽의 네 모양을 각각 그리는 구조. 방향 표시와 빈 바닥 칸을 유지함.",
+      "answerContract": "four-direction-drawings-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-example-1",
@@ -2434,12 +2635,12 @@
       "ordinal": 3,
       "pdfPage": 30,
       "printedPage": 32,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. 예제 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "직사각형 바닥 칸별 높이표와 한 모서리 길이에서 밑면을 제외한 겉면의 넓이를 구하는 구조.",
+      "answerContract": "bottom-excluded-surface-area-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-example-4",
@@ -2449,12 +2650,13 @@
       "ordinal": 4,
       "pdfPage": 30,
       "printedPage": 32,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. 예제 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "위의 다섯 점유 칸, 앞·오른쪽 모양과 쌓기나무 8개 조건으로 입체를 복원해 점격자에 그리는 구조. 총개수를 빼면 두 배치가 가능하므로 8개 조건을 보존해야 함.",
+      "answerContract": "three-projections-and-total-unique-stack-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publisherAnswerVerified": false,
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-1",
@@ -2479,12 +2681,12 @@
       "ordinal": 2,
       "pdfPage": 31,
       "printedPage": 33,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. Mission 2의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "위에서 본 바닥 점유 모양·오른쪽 모양·총개수로 앞에서 본 모양을 그리는 구조. 총개수가 주어진 옆모양의 행별 최대 수와 같아 각 칸 높이가 정해짐.",
+      "answerContract": "front-from-top-right-total-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-3",
@@ -2494,12 +2696,13 @@
       "ordinal": 3,
       "pdfPage": 31,
       "printedPage": 33,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. Mission 3의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "위의 네 점유 칸, 앞·오른쪽 모양만으로 입체를 복원해 점격자에 그리는 구조. 총개수 조건은 없으며 세 모양을 만족하는 입체가 하나로 정해짐.",
+      "answerContract": "three-projections-only-unique-stack-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "publisherAnswerVerified": false,
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-4",
@@ -2509,12 +2712,12 @@
       "ordinal": 4,
       "pdfPage": 31,
       "printedPage": 33,
-      "sourceShape": "위, 앞, 옆에서 본 그림과 높이 조건을 연결하여 쌓기나무의 모양 또는 개수를 구하는 구조. Mission 4의 조건과 물음을 한 source item으로 기록함.",
-      "answerContract": "candidate",
+      "sourceShape": "두 빈칸이 있는 높이표와 밑면을 포함한 겉면 넓이에서 빈칸 두 수의 합을 구하는 구조.",
+      "answerContract": "two-heights-from-surface-sum-fixed-pool",
       "visualRisk": "위·앞·옆·바닥의 시선, 보이지 않는 쌓기나무, 색칠 면을 구분해야 함. 가능한 쌓는 방법을 전수 확인해 답이 하나일 때만 공개해야 함.",
-      "sourceVerified": false,
-      "implementationStatus": "review-locked",
-      "reviewReason": "원문 페이지의 정확한 조건, 그림·표시, 공식 답 근거, 단일 정답 여부를 항목별로 직접 대조하기 전에는 공개하지 않습니다."
+      "sourceVerified": true,
+      "implementationStatus": "fixed-verified-pool",
+      "reviewReason": ""
     },
     {
       "sourceItemId": "6-2-u3-e1-mission-5",

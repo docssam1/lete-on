@@ -93,6 +93,19 @@ const readinessU6Counts = readinessU6.items.reduce((counts, item) => {
   return counts;
 }, { public: 0, locked: 0, releaseLocked: 0 });
 const readyGeneratorKeys = [
+  "sourceGrade6DecimalE4Exploration1", "sourceGrade6DecimalE4Exploration2",
+  "sourceGrade6DecimalE4Example1", "sourceGrade6DecimalE4Example2", "sourceGrade6DecimalE4Example3",
+  ...Array.from({ length: 6 }, (_, i) => `sourceGrade6DecimalE4Mission${i + 1}`),
+  "sourceGrade6DecimalE3Exploration1",
+  "sourceGrade6DecimalE3Exploration2",
+  "sourceGrade6DecimalE3Example1",
+  "sourceGrade6SecondDecimalDivisionE3Example2",
+  "sourceGrade6DecimalE3Example4",
+  "sourceGrade6DecimalE3Mission1",
+  "sourceGrade6SecondDecimalDivisionE3Mission2",
+  "sourceGrade6DecimalE3Mission3",
+  "sourceGrade6DecimalE3Mission4",
+  "sourceGrade6DecimalE3Mission6",
   "sourceGrade6DecimalE6Stairs", "sourceGrade6DecimalE6Pond",
   "sourceGrade6SecondDecimalDivisionE6Example4Text",
   ...Array.from({ length: 6 }, (_, i) => `sourceGrade6SecondDecimalDivisionE6Mission${i + 1}Text`),
@@ -102,19 +115,22 @@ const readyGeneratorKeys = [
   "sourceGrade6SecondDecimalDivisionE2Exploration",
   "sourceGrade6SecondDecimalDivisionE2Example1",
   "sourceGrade6SecondDecimalDivisionE2Example2",
-  "sourceGrade6SecondDecimalDivisionE2Example3", "sourceGrade6SecondDecimalDivisionE2Mission1", "sourceGrade6SecondDecimalDivisionE2Mission2", "sourceGrade6SecondDecimalDivisionE2Mission3", "sourceGrade6SecondDecimalDivisionE2Mission5",
+  "sourceGrade6SecondDecimalDivisionE2Example3", "sourceGrade6SecondDecimalDivisionE2Mission1", "sourceGrade6SecondDecimalDivisionE2Mission2", "sourceGrade6SecondDecimalDivisionE2Mission3", "sourceGrade6SecondDecimalDivisionE2Mission4", "sourceGrade6SecondDecimalDivisionE2Mission5", "sourceGrade6SecondDecimalDivisionE2Mission6",
   "sourceGrade6SecondDecimalDivisionE5Exploration", "sourceGrade6SecondDecimalDivisionE5Example2", "sourceGrade6SecondDecimalDivisionE5Example3", "sourceGrade6SecondDecimalDivisionE5Example4",
   "sourceGrade6SecondDecimalDivisionE5Example1", "sourceGrade6SecondDecimalDivisionE5Mission1", "sourceGrade6SecondDecimalDivisionE5Mission2", "sourceGrade6SecondDecimalDivisionE5Mission3DownstreamCandidate", "sourceGrade6SecondDecimalDivisionE5Mission4", "sourceGrade6SecondDecimalDivisionE5Mission6", "sourceGrade6SecondDecimalDivisionE6Example2Candidate",
   "sourceGrade6FractionDivisionE1", "sourceGrade6FractionDivisionE2", "sourceGrade6SecondFractionDivisionE1", "sourceGrade6SecondFractionDivisionE1Example2", "sourceGrade6SecondFractionDivisionE1Example3", "sourceGrade6SecondFractionDivisionE1Example4", "sourceGrade6SecondFractionDivisionE1Mission1", "sourceGrade6SecondFractionDivisionE1Mission2", "sourceGrade6SecondFractionDivisionE1Mission3", "sourceGrade6SecondFractionDivisionE1Mission4", "sourceGrade6SecondFractionDivisionE1Mission5", "sourceGrade6SecondFractionDivisionE1Mission6", "sourceGrade6SecondFractionDivisionE2Exploration", "sourceGrade6SecondFractionDivisionE2Example1", "sourceGrade6SecondFractionDivisionE2Example2", "sourceGrade6SecondFractionDivisionE2Example3", "sourceGrade6SecondFractionDivisionE2Example4", "sourceGrade6SecondFractionDivisionE2Mission1", "sourceGrade6SecondFractionDivisionE2Mission2", "sourceGrade6SecondFractionDivisionE2Mission3", "sourceGrade6SecondFractionDivisionE2Mission4", "sourceGrade6SecondFractionDivisionE2Mission5", "sourceGrade6SecondFractionDivisionE2Mission6", "sourceGrade6SecondFractionDivisionE3Example1", "sourceGrade6SecondFractionDivisionE3Example2", "sourceGrade6SecondFractionDivisionE3Example3", "sourceGrade6SecondFractionDivisionE3Example4", "sourceGrade6SecondFractionDivisionE3Mission1", "sourceGrade6SecondFractionDivisionE3Mission2", "sourceGrade6SecondFractionDivisionE3Mission3", "sourceGrade6SecondFractionDivisionE3Mission4", "sourceGrade6SecondFractionDivisionE3Mission5", "sourceGrade6SecondFractionDivisionE3Mission6", "sourceGrade6SecondFractionDivisionE4Exploration", "sourceGrade6SecondFractionDivisionE4Example1", "sourceGrade6SecondFractionDivisionE4Example2", "sourceGrade6SecondFractionDivisionE4Example3", "sourceGrade6SecondFractionDivisionE4Example4", "sourceGrade6SecondFractionDivisionE4Mission1", "sourceGrade6SecondFractionDivisionE4Mission2", "sourceGrade6SecondFractionDivisionE4Mission3", "sourceGrade6SecondFractionDivisionE4Mission4", "sourceGrade6SecondFractionDivisionE4Mission5", "sourceGrade6SecondFractionDivisionE4Mission6", "sourceGrade6SecondFractionDivisionE5Exploration", "sourceGrade6SecondFractionDivisionE5Example1", "sourceGrade6SecondFractionDivisionE5Example2", "sourceGrade6SecondFractionDivisionE5Example3", "sourceGrade6SecondFractionDivisionE5Example4", "sourceGrade6SecondFractionDivisionE5Mission1",
   "sourceGrade6PrismsPyramidsE1", "sourceGrade6PrismsPyramidsE2", "sourceGrade6PrismsPyramidsE3", "sourceGrade6PrismsPyramidsE4",
   "sourceGrade6DecimalDivisionE1", "sourceGrade6DecimalDivisionE1Mission3", "sourceGrade6DecimalDivisionE1Mission4", "sourceGrade6DecimalDivisionE2", "sourceGrade6DecimalDivisionE2Example2", "sourceGrade6DecimalDivisionE2Example4", "sourceGrade6DecimalDivisionE2Mission6", "sourceGrade6DecimalDivisionE3", "sourceGrade6DecimalDivisionE4", "sourceGrade6DecimalDivisionE4Example1", "sourceGrade6DecimalDivisionE4Mission4",
-  "sourceGrade6RatioE1", "sourceGrade6RatioE2", "sourceGrade6RatioE3", "sourceGrade6RatioE4", "sourceGrade6RatioE5", "sourceGrade6RatioE6"
+  "sourceGrade6RatioE1", "sourceGrade6RatioE2", "sourceGrade6RatioE3", "sourceGrade6RatioE4", "sourceGrade6RatioE5", "sourceGrade6RatioE6",
+  "sourceGrade6SecondSpaceE1HeightViews", "sourceGrade6SecondSpaceE1ExposedArea", "sourceGrade6SecondSpaceE1Mission2", "sourceGrade6SecondSpaceE1Mission4"
   , "sourceGrade6GraphsE1", "sourceGrade6GraphsE2", "sourceGrade6GraphsE3", "sourceGrade6GraphsE4"
   , "sourceGrade6VolumeSurfaceE3"
   , "sourceGrade6VolumeE4"
   , "sourceGrade6SurfaceE1"
   , "sourceGrade6VolumeE2"
   , "sourceGrade6VolumeE3Mission3"
+  , "sourceGrade6SecondSpaceE1StackExample4"
+  , "sourceGrade6SecondSpaceE1StackMission3"
 ];
 check(rawInventory.items.length === 264, `6-1 원자료 장부는 번호가 붙은 개념탐구 소문항을 나눈 264개여야 하나 ${rawInventory.items.length}개입니다.`);
 check(new Set(rawInventory.items.map(item => item.sourceItemId)).size === rawInventory.items.length, "6-1 원자료 장부의 항목 ID가 중복되었습니다.");
@@ -167,8 +183,8 @@ for (const [generatorKey, expectedCount, label] of [
   });
 }
 check(catalog.totals?.unlocked === readyItems.length, `6학년 공개 분류표 요약의 생성 가능 수가 실제 항목과 다릅니다: ${catalog.totals?.unlocked}/${readyItems.length}`);
-check(readyItems.length === 327 && lockedItems.length === 306, `6학년 원문 유형의 공개 327개·잠금 306개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
-check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && ((Number.isInteger(item.variant) || item.sourceItemId.startsWith("6-2-u2-e6-")) || item.sourceItemId.startsWith("6-2-u2-e1-") || ["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-2", "6-2-u2-e2-mission-5", "6-2-u2-e5-exploration-1", "6-2-u2-e5-example-2", "6-2-u2-e5-example-3", "6-2-u2-e5-example-4", "6-2-u2-e5-example-1", "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-3", "6-2-u2-e5-mission-4", "6-2-u2-e5-mission-6", "6-2-u2-e6-example-1", "6-2-u2-e6-example-2"].includes(item.sourceItemId)) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 327유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
+check(readyItems.length === 356 && lockedItems.length === 277, `6학년 원문 유형의 공개 356개·잠금 277개 구성이 다릅니다: ${readyItems.length}/${lockedItems.length}`);
+check(readyItems.every(item => readyGeneratorKeys.includes(item.generatorKey) && ((Number.isInteger(item.variant) || item.sourceItemId.startsWith("6-2-u2-e6-") || item.sourceItemId.startsWith("6-2-u2-e3-") || item.sourceItemId.startsWith("6-2-u2-e4-")) || item.sourceItemId.startsWith("6-2-u2-e1-") || ["6-2-u2-e2-exploration", "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3", "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-2", "6-2-u2-e2-mission-4", "6-2-u2-e2-mission-5", "6-2-u2-e2-mission-6", "6-2-u2-e5-exploration-1", "6-2-u2-e5-example-2", "6-2-u2-e5-example-3", "6-2-u2-e5-example-4", "6-2-u2-e5-example-1", "6-2-u2-e5-mission-1", "6-2-u2-e5-mission-2", "6-2-u2-e5-mission-3", "6-2-u2-e5-mission-4", "6-2-u2-e5-mission-6", "6-2-u2-e6-example-1", "6-2-u2-e6-example-2"].includes(item.sourceItemId)) && item.answerVisualStatus === "verified" && item.verifiedVariantCount === (item.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3)), "검증 완료한 6학년 원문 356유형의 생성기·답 그림·고정 문항 연결이 다릅니다.");
 check(lockedItems.every(item => item.generatorKey === "" && item.answerVisualStatus === "not-implemented" && item.verifiedVariantCount === 0), "검수 대기인 6학년 원문 유형이 생성 가능 상태입니다.");
 check(items.filter(item => item.reviewLocked).every(item => !/\d/.test(item.reviewReason || "")), "공개 분류표의 잠금 사유에 숫자가 노출되었습니다.");
 check(readinessU1E1Items.length === 12 && readinessU1E1Counts.confirmed === 10 && readinessU1E1Counts.locked === 2 && readinessU1E1Counts.candidate === 0 && readinessU1E1Counts.releaseLocked === 2, `6-1 1단원 개념탐구 1 readiness 확인 10개·열린 설명 잠금 2개 구성이 다릅니다: 전체 ${readinessU1E1Items.length}, 확인 ${readinessU1E1Counts.confirmed}, 잠금 ${readinessU1E1Counts.locked}/${readinessU1E1Counts.releaseLocked}`);
@@ -299,6 +315,8 @@ readinessU6.items.forEach(readinessItem => {
   }
 });
 const textOnlySourceItems = new Set([
+  ...["exploration-1", "exploration-2", "example-1", "example-2", "example-3", "example-4", "mission-1", "mission-2", "mission-3", "mission-4", "mission-5", "mission-6"].map(suffix => `6-2-u2-e4-${suffix}`),
+  ...["exploration-1", "exploration-2", "exploration-3", "example-1", "example-2", "example-3", "example-4", "mission-1", "mission-3", "mission-4", "mission-5", "mission-6"].map(suffix => `6-2-u2-e3-${suffix}`),
   "6-2-u2-e1-exploration-2",
   "6-2-u2-e2-example-1", "6-2-u2-e2-example-2", "6-2-u2-e2-example-3",
   "6-2-u2-e2-mission-1", "6-2-u2-e2-mission-5",

@@ -8,14 +8,15 @@ global.window = {};
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-6-2-e2-geometry.js");
 
 const id = "6-2-u2-e2-mission-4";
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === id);
-assert(type?.reviewLocked, "공개 잠금 유지");
+assert(type && !type.reviewLocked, "원문 검수 문항 공개 연결");
 const candidateType = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE2Mission4" };
-const css = readFileSync(path.join(__dirname, "source-6-2-overlap-height.css"), "utf8");
+const css = readFileSync(path.join(__dirname, "source-6-2-overlap-height.css"), "utf8") + readFileSync(path.join(__dirname, "source-6-2-e2-geometry.css"), "utf8");
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
 if (outputDir) mkdirSync(outputDir, { recursive: true });
 
@@ -32,7 +33,7 @@ async function inspect(page, width, difficulty, view) {
     assert.equal(diagram.labels.filter(label => ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ"].includes(label.text)).length, 8, "여덟 점 이름");
     for (let i = 0; i < diagram.labels.length; i += 1) {
       const a = diagram.labels[i];
-      assert(a.box.left >= diagram.box.left - 1 && a.box.right <= diagram.box.right + 1 && a.box.top >= diagram.box.top - 1 && a.box.bottom <= diagram.box.bottom + 1 && a.box.height >= 10, `그림 글자 ${a.text} 잘림 없음`);
+      assert(a.box.left >= diagram.box.left - 1 && a.box.right <= diagram.box.right + 1 && a.box.top >= diagram.box.top - 1 && a.box.bottom <= diagram.box.bottom + 1 && a.box.height >= 10, `그림 글자 ${a.text} 잘림 없음: ${JSON.stringify({ label: a.box, frame: diagram.box, width, difficulty, view })}`);
       for (let j = i + 1; j < diagram.labels.length; j += 1) {
         const b = diagram.labels[j];
         const overlap = a.box.left < b.box.right + 1 && a.box.right + 1 > b.box.left && a.box.top < b.box.bottom + 1 && a.box.bottom + 1 > b.box.top;
@@ -67,5 +68,5 @@ async function inspect(page, width, difficulty, view) {
   } finally {
     await browser.close();
   }
-  console.log(`6-2 Mission 4 잠금 후보 PC·모바일 그림 ${checked}개 배치 검수 통과 (공개 화면 아님)`);
+  console.log(`6-2 Mission 4 PC·모바일 그림 ${checked}개 배치 검수 통과 (별도 조판 화면, 실제 페이지 검수는 live audit)`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

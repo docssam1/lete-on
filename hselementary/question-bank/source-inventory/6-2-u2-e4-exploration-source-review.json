@@ -12,18 +12,42 @@
     {
       "sourceItemId": "6-2-u2-e4-exploration-1",
       "answerContract": "maximum-whole-items-and-decimal-remainder",
-      "risk": "Keep the count as a whole number and the remainder in the original weight unit."
+      "risk": "Keep the count as a whole number and the remainder in the original weight unit.",
+      "independentAnswer": "6개, 2.14g",
+      "handwritingReading": "6개, 2.14g",
+      "handwritingAgrees": true,
+      "releaseStatus": "verified-finite-pools"
     },
     {
       "sourceItemId": "6-2-u2-e4-exploration-2",
       "answerContract": "minimum-remainder-at-shorter-quotient-precision",
-      "risk": "Quotient calculated to a place is not rounded; source meaning and official answer need independent comparison."
+      "risk": "Quotient calculated to a place is not rounded; source meaning and official answer need independent comparison.",
+      "independentAnswer": "0.4991",
+      "handwritingReading": null,
+      "handwritingAgrees": null,
+      "releaseStatus": "verified-finite-pools",
+      "minimumDivisorRemainder": "0",
+      "possibleTenthsRemainderRange": {
+        "minimum": "0.4991",
+        "upperExclusive": "0.5704"
+      }
     }
   ],
   "officialAnswerEvidence": "not-available-for-these-items",
-  "publicReleaseStatus": "locked",
+  "publicReleaseStatus": "verified-finite-pools",
   "pending": [
-    "exploration 2 division-remainder convention and official answer comparison",
-    "source-level variant creation, desktop/mobile/A4 worksheet validation"
-  ]
+    "publisher answer-key comparison remains unverified"
+  ],
+  "verification": {
+    "printedConditionsChecked": true,
+    "publisherAnswerVerified": false,
+    "independentPromptAudit": "source-6-2-decimal-e4-release-audit.js",
+    "realBrowserAudit": "source-6-2-decimal-e4-live-audit.js",
+    "verifiedVariantCount": 3,
+    "difficultyChoices": [
+      -1,
+      0,
+      1
+    ]
+  }
 }

@@ -23,18 +23,24 @@
         "generator": "sourceGrade6SecondDecimalDivisionE3Mission2",
         "fixedPoolCount": 3,
         "difficultyDesign": ["fixed-leading-card", "source-structure", "excluded-smallest-divisor"],
-        "independentEnumerationChecks": 360,
-        "desktopMobileCardAndExpressionChecks": 54,
-        "a4CandidatePages": 2,
-        "scope": "Candidate only; the public type remains locked pending official-answer and worksheet review."
+        "independentEnumerationChecks": 9,
+        "permutationsPerCondition": 720,
+        "browserAudit": "source-6-2-decimal-e3-live-audit.js",
+        "scope": "Ten E3 types released after original, independent calculation and actual worksheet gates. Publisher answer verification is not claimed."
       }
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-3",
-      "answerContract": "all-valid-digit-pairs",
-      "independentCheck": "all-two-digit-pairs-enumerated",
-      "candidatePairsChecked": 100,
-      "risk": "Original asks for digits in two blanks but admits more than one valid pair; do not use a single-pair answer contract."
+      "answerContract": "single-valid-digit-from-rounded-hundredth",
+      "independentCheck": "all-ten-single-digits-enumerated",
+      "candidateDigitsChecked": 10,
+      "dividendPattern": "2.94□5",
+      "divisor": "3.4",
+      "targetRoundedHundredth": "0.86",
+      "validDigits": [0],
+      "independentAnswer": "0",
+      "handwritingReading": "0",
+      "sourceCorrection": "Expanded source has one blank, not two; the old ambiguity lock was a transcription error."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-4",
@@ -43,22 +49,29 @@
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-5",
-      "answerContract": "count-two-decimal-divisors-in-rounded-quotient-range",
+      "answerContract": "count-two-decimal-divisors-in-ceiling-quotient-range",
       "independentCheck": "all-hundredth-divisors-enumerated",
-      "risk": "Handwritten answer disagrees with exhaustive calculation; official answer evidence is needed before release."
+      "dividend": "48.21",
+      "targetCeilingTenth": "6.4",
+      "candidateDivisors": ["7.54", "7.55", "7.56", "7.57", "7.58", "7.59", "7.60", "7.61", "7.62", "7.63", "7.64", "7.65"],
+      "handwritingReading": "11개",
+      "risk": "Source says ceiling, not rounding. Twelve values at hundredth intervals or eleven if trailing-zero 7.60 is excluded by the decimal-place convention; keep locked pending clarification."
     },
     {
       "sourceItemId": "6-2-u2-e3-mission-6",
       "answerContract": "cube-packing-three-dimensions",
-      "independentCheck": "integer-cube-count-per-dimension"
+      "independentCheck": "integer-cube-count-per-dimension",
+      "dimensionsCm": ["15.05", "19.35", "25.8"],
+      "cubeEdgeCm": "2.15",
+      "independentAnswer": "756개",
+      "handwritingReading": "756개 (earlier answer crossed out)"
     }
   ],
   "officialAnswerEvidence": "not-available-for-these-items",
-  "publicReleaseStatus": "locked",
+  "publicReleaseStatus": "partial",
+  "verificationAudit": "source-6-2-decimal-e3-release-audit.js",
+  "browserAudit": "source-6-2-decimal-e3-live-audit.js",
   "pending": [
-    "matching advanced-book official answer comparison",
-    "mission 3 all-valid-pairs wording and answer-format decision",
-    "mission 5 handwritten-answer conflict resolution",
-    "source-level variant creation, desktop/mobile/A4 worksheet validation"
+    "mission 5 trailing-zero decimal-place convention and answer evidence"
   ]
 }

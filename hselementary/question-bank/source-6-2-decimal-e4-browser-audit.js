@@ -38,7 +38,7 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         await page.locator("#typeSearchInput").fill(label);
         const row = page.locator(`[data-preview-type-id="${id}"]`);
         assert.equal(await row.count(), 1, `${width}px ${id}: 원문 물음과 같은 이름으로 한 개만 표시`);
-        assert(await row.locator('input[type="checkbox"]').isDisabled(), `${width}px ${id}: 공식 답 대조 전 잠금`);
+        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), id.endsWith("example-4"), `${width}px ${id}: 검증 완료 문항만 선택 가능`);
         await row.scrollIntoViewIfNeeded();
         await row.click();
         const preview = page.locator("#typePreviewPopover");

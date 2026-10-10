@@ -1,0 +1,18 @@
+:root { font-family: var(--bank-font, Pretendard, "Malgun Gothic", Arial, sans-serif); color: #000; background: #fff; }
+* { box-sizing: border-box; letter-spacing: 0; }
+body { margin: 0; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid #ccc; font-size: 14px; }
+header label { display: flex; align-items: center; gap: 6px; }
+select,button { font: inherit; padding: 6px; background: #fff; color: #000; border: 1px solid #999; border-radius: 2px; }
+header strong { font-weight: 400; margin-left: auto; }
+#views { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 26px; padding: 16px 12px 0; min-height: 160px; }
+#views figure { margin: 0; text-align: center; }
+#views svg { display: block; width: auto; height: 105px; max-width: 100%; }
+#views rect { stroke: #000; stroke-width: .8; vector-effect: non-scaling-stroke; }
+#views figcaption { font-size: 14px; margin-top: 4px; }
+#scene { position: relative; width: 100%; height: max(360px,65vh); background: #fff; }
+.source62-stack-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.source62-stack-direction { position: absolute; transform: translate(-50%,-50%); font-weight: 400; font-size: 15px; color: #000; pointer-events: none; background: #fff; padding: 2px; }
+.source62-stack-print { display: none; }
+@media (max-width: 420px) { #views { gap: 18px; } #views svg { height: 82px; } #scene { height: 400px; } }
+@media print { @page { size: A4; margin: 12mm; } header { display: none; } #scene { height: 170mm; } .source62-stack-canvas,.source62-stack-direction { display: none; } .source62-stack-print { display: block; width: 100%; height: 100%; object-fit: contain; } #views { min-height: 45mm; } }

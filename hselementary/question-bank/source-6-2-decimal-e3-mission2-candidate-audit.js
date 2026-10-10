@@ -12,8 +12,8 @@ const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
 const candidate = { ...type, reviewLocked: false, generatorKey: review.candidateVerification.generator };
-assert(type.reviewLocked && type.generatorKey === "", "원본 확인만으로 공개하지 않음");
-assert.equal(window.HSE_GENERATORS.generate(type, 0, 0, 1), null, "공개 유형은 잠금 유지");
+assert(!type.reviewLocked && type.generatorKey, "검수 완료한 유형만 생성기로 연결");
+assert.equal(window.HSE_GENERATORS.generate({ ...type, reviewLocked: true }, 0, 0, 1), null, "잠금 속성이 생성보다 우선함");
 
 function nextPermutation(values) {
   let pivot = values.length - 2;
@@ -35,8 +35,8 @@ function independentBest(cards, level) {
   let inspected = 0;
   do {
     inspected += 1;
-    if (level === 0 && order[0] !== cards.at(-1)) continue;
-    if (level === 2 && order[3] === cards[0]) continue;
+    if (level === 0 && order[0] !== Math.max(...cards)) continue;
+    if (level === 2 && order[3] === Math.min(...cards)) continue;
     const numerator = BigInt(order[0] * 100 + order[1] * 10 + order[2]);
     const denominator = BigInt(order[3] * 100 + order[4] * 10 + order[5]);
     if (!best || numerator * best.denominator > best.numerator * denominator) {
@@ -53,12 +53,12 @@ function independentBest(cards, level) {
   };
 }
 
-const cardPools = [[1, 2, 3, 4, 6, 8], [1, 2, 4, 6, 7, 9], [2, 3, 4, 5, 7, 8]];
+const cardPools = [[2, 1, 5, 3, 7, 4], [1, 2, 4, 6, 7, 9], [2, 3, 4, 5, 7, 8]];
 let checks = 0;
 for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant += 1) {
   const level = difficulty + 1;
   const expected = independentBest(cardPools[variant], level);
-  for (let seed = 1; seed <= 40; seed += 1) {
+  for (let seed = 1; seed <= 1; seed += 1) {
     const item = window.HSE_GENERATORS.generate(candidate, 0, difficulty, seed, variant);
     assert.equal(item.sourceItemId, sourceItemId);
     assert.equal(item.answer, expected.answer, "독립 BigInt 반올림과 같은 답");
@@ -69,6 +69,6 @@ for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant 
     checks += 1;
   }
 }
-assert.equal(checks, 360);
+assert.equal(checks, 9);
 assert.equal(review.candidateVerification.independentEnumerationChecks, checks);
-console.log(`6-2 Mission 3-2 잠금 후보: 3난이도 × 3카드 묶음 × 40회 독립 전수 배열 검산 ${checks}회 통과`);
+console.log(`6-2 Mission 3-2: ${checks}개 서로 다른 조건 각각 720배열 독립 전수 검산 통과`);

@@ -5,6 +5,7 @@ global.window = {};
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-6-2-decimal-e3.js");
 
 const raw = require("./source-inventory/6-2-source-items.json").items;
 const review = require("./source-inventory/6-2-u2-e3-examples-source-review.json");
@@ -40,7 +41,9 @@ for (const [index, example] of review.examples.entries()) {
   assert.equal(source.printedPage, 22);
   assert.equal(source.answerContract, example.answerContract);
   assert.equal(source.sourceVerified, true);
-  assert(type.reviewLocked && !type.generatorKey && window.HSE_GENERATORS.generate(type, 0, 0, 1) === null, `${id}: 출제 잠금 유지`);
+  assert.equal(type.reviewLocked, index === 2, `${id}: 조건 누락 예제만 잠금`);
+  assert.equal(Boolean(type.generatorKey), index !== 2);
+  assert.equal(window.HSE_GENERATORS.generate({ ...type, reviewLocked: true }, 0, 0, 1), null, `${id}: 잠금 상태는 생성 불가`);
 }
 
 const [first, second, third, fourth] = review.examples;
@@ -98,5 +101,5 @@ assert.equal(formatRounded(perBag, 3), fourth.independentAnswerKg);
 assert(perBag.n * capacity.d <= capacity.n * perBag.d, "실제 봉지당 쌀은 용량 이하");
 
 assert.equal(review.officialAnswerEvidence, "not-available-for-these-items");
-assert.equal(review.publicReleaseStatus, "locked");
-console.log("6-2 개념탐구 3 예제 4문항: 원본별 계약·정확한 계산·빈칸 전수 열거·양수 조건·출제 잠금 검사 통과");
+assert.equal(review.publicReleaseStatus, "partial");
+console.log("6-2 탐구 3 예제 4문항: 원본별 계약·100째 자리·빈칸 전수 열거·양수 조건 잠금 검사 통과");

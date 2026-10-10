@@ -5,6 +5,7 @@ global.window = {};
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-6-2-decimal-e4.js");
 
 const rawInventory = require("./source-inventory/6-2-source-items.json");
 const source = rawInventory.items;
@@ -21,7 +22,7 @@ for (const [unitId, expectedCount] of Object.entries(rawInventory.integrity.expe
 }
 assert.equal(review.sourceItems.length, 2);
 assert.equal(review.officialAnswerEvidence, "not-available-for-these-items");
-assert.equal(review.publicReleaseStatus, "locked");
+assert.equal(review.publicReleaseStatus, "verified-finite-pools");
 assert(!source.some(item => item.sourceItemId === "6-2-u2-e4-exploration"), "서로 다른 두 물음을 한 문항으로 합치지 않음");
 
 for (const [index, reviewed] of review.sourceItems.entries()) {
@@ -35,9 +36,11 @@ for (const [index, reviewed] of review.sourceItems.entries()) {
   assert.equal(original.printedPage, 24);
   assert.equal(original.answerContract, reviewed.answerContract);
   assert.equal(original.sourceVerified, true);
-  assert.equal(publicType.reviewLocked, true);
-  assert.equal(publicType.generatorKey, "");
-  assert.equal(window.HSE_GENERATORS.generate(publicType, 0, 0, 1), null, `${id}: 공식 답·화면 검수 전 출제 금지`);
+  assert.equal(publicType.reviewLocked, false);
+  assert.equal(publicType.generatorKey, `sourceGrade6DecimalE4Exploration${index + 1}`);
+  assert.equal(publicType.problemVisualRequired, false, "원문에 없는 그림은 생성하지 않음");
+  assert.equal(window.HSE_GENERATORS.generate(publicType, 0, 0, 1).answer, reviewed.independentAnswer);
+  assert.equal(window.HSE_GENERATORS.generate({ ...publicType, reviewLocked: true }, 0, 0, 1), null, `${id}: 잠금이 생성기보다 우선`);
 }
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e4-exploration-1").name, /반지 수.*남은 금/);
 assert.match(types.find(item => item.sourceItemId === "6-2-u2-e4-exploration-2").name, /가장 작은 나머지/);

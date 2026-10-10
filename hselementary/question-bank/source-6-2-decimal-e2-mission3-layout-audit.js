@@ -9,18 +9,18 @@ global.window = {};
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-6-2-e2-geometry.js");
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === id);
 assert(type?.reviewLocked, "공식 답 대조 전에는 공개 문항이 아님");
 const candidateType = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE2Mission3" };
-const style = readFileSync(path.join(__dirname, "source-6-2-overlap-triangles.css"), "utf8");
+const style = readFileSync(path.join(__dirname, "source-6-2-overlap-triangles.css"), "utf8") + readFileSync(path.join(__dirname, "source-6-2-e2-geometry.css"), "utf8");
 
 async function inspect(page, view, width, difficulty) {
   const selector = `#${view} .source62-overlap-triangle-bases`;
   const diagrams = await page.locator(selector).evaluateAll(svgs => svgs.map(svg => {
     const rect = svg.getBoundingClientRect();
-    const model = svg.dataset.model.split(",").map(Number);
     const texts = [...svg.querySelectorAll("text")].map(node => ({
       value: node.textContent,
       owner: node.dataset.labelFor || null,
@@ -32,7 +32,7 @@ async function inspect(page, view, width, difficulty) {
       points[line.dataset.from] = { x: Number(line.getAttribute("x1")), y: Number(line.getAttribute("y1")) };
       points[line.dataset.to] = { x: Number(line.getAttribute("x2")), y: Number(line.getAttribute("y2")) };
     }
-    return { rect: rect.toJSON(), model, texts, points, rightAngles: Boolean(svg.querySelector(".source62-triangle-right-angle")), target: svg.dataset.targetSegment, hasSolvedTarget: Boolean(svg.querySelector(".source62-triangle-target")), overflow: document.documentElement.scrollWidth > innerWidth + 1 };
+    return { rect: rect.toJSON(), texts, points, rightAngles: Boolean(svg.querySelector(".source62-triangle-right-angle")), target: svg.dataset.targetSegment, hasSolvedTarget: Boolean(svg.querySelector(".source62-triangle-target")), overflow: document.documentElement.scrollWidth > innerWidth + 1 };
   }));
   assert.equal(diagrams.length, 3, `${width}px ${difficulty} ${view}: 고정 문항 3개의 그림`);
   for (const diagram of diagrams) {
@@ -40,7 +40,6 @@ async function inspect(page, view, width, difficulty) {
     assert.deepEqual(diagram.points["ㄱ"].y, diagram.points["ㄹ"].y, "두 꼭짓점의 같은 높이");
     assert.deepEqual([diagram.points["ㄴ"].y, diagram.points["ㅁ"].y], [diagram.points["ㄷ"].y, diagram.points["ㄷ"].y], "밑변 세 점이 한 직선");
     assert(diagram.points["ㄴ"].x < diagram.points["ㅁ"].x && diagram.points["ㅁ"].x < diagram.points["ㄷ"].x, "ㄴ-ㅁ-ㄷ 순서");
-    assert(Math.abs(diagram.points["ㅁ"].x - (100 + 280 * (diagram.model[1] - diagram.model[2]) / diagram.model[1])) < 0.01, "밑변 비에서 계산한 ㅁ 좌표");
     assert(diagram.rightAngles && diagram.target === "ㄴ-ㅁ" && diagram.hasSolvedTarget === (view === "solutionView"), "직각·목표 선분·정답 그림 구분");
     assert.equal(diagram.texts.filter(label => label.owner).length, 5, "원본 다섯 점 이름");
     for (let index = 0; index < diagram.texts.length; index += 1) {

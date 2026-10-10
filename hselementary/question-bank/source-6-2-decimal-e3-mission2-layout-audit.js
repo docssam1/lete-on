@@ -13,7 +13,7 @@ const sourceItemId = "6-2-u2-e3-mission-2";
 const type = window.HSE_CURRICULUM.semesters.find(semester => semester.id === "6-2")
   .units.find(unit => unit.id === "6-2-u2").subunits.flatMap(subunit => subunit.types)
   .find(item => item.sourceItemId === sourceItemId);
-assert(type.reviewLocked && type.generatorKey === "", "공개 잠금 유지");
+assert(!type.reviewLocked && type.generatorKey, "검수 완료한 실제 유형 연결");
 const candidate = { ...type, reviewLocked: false, generatorKey: "sourceGrade6SecondDecimalDivisionE3Mission2" };
 const css = readFileSync(path.join(__dirname, "source-6-2-e3-card-maximum.css"), "utf8");
 const outputDir = process.env.HSE_SCREENSHOT_DIR;
