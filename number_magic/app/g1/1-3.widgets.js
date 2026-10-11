@@ -146,6 +146,7 @@ EXT.g13RepFill = function(p, c, onAnswer, KIT){
 EXT.g13Grid = function(p, c, onAnswer, KIT){
   var art = KIT.art, root = div('nm-g13 nm-fr-wrap nm-g13-grid'); c.appendChild(root);
   var rows = p.rows, cols = p.cols, em = p.emoji;
+  c.style.setProperty('--rows', rows); c.style.setProperty('--cols', cols);
   var fr = div('nm-g13-gframe'); fr.style.setProperty('--cols', cols); fr.style.setProperty('--cell', (cols >= 10 ? 32 : cols >= 5 ? 46 : 54) + 'px');
   root.appendChild(fr);
   if(p.gmode === 'read'){
@@ -155,19 +156,28 @@ EXT.g13Grid = function(p, c, onAnswer, KIT){
     return;
   }
   var on = {}, size = 0, lock = false, cells = [];
+  function keyboardTap(b){
+    b.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); b.dispatchEvent(new Event('pointerup', { bubbles: true })); }
+    });
+  }
   for(var k = 0; k < rows * cols; k++) (function(k){
     var b = btn('nm-g13-gcell tap', '', function(){
       if(on[k]){ delete on[k]; size--; b.classList.remove('on'); b.innerHTML = ''; }
       else { on[k] = 1; size++; b.classList.add('on'); b.innerHTML = em ? '<span class="nm-fr-chip">' + art(em) + '</span>' : ''; }
-      cnt.textContent = size;
+      b.setAttribute('aria-pressed', !!on[k]); cnt.textContent = size;
     });
+    b.setAttribute('aria-label', W('칸 ' + (k + 1), 'Box ' + (k + 1), '第' + (k + 1) + '格'));
+    b.setAttribute('aria-pressed', 'false'); keyboardTap(b);
     cells.push(b); fr.appendChild(b);
   })(k);
   var cnt = counterEl(root, 0);
-  submitBtn(root, function(){
+  cnt.setAttribute('aria-live', 'polite');
+  var submit = submitBtn(root, function(){
     if(lock || size === 0) return; lock = true; setTimeout(function(){ lock = false; }, 700);
     if(size !== p.target){ KIT.shake(fr); onAnswer(-1); } else onAnswer(p.answer);
   });
+  submit.setAttribute('aria-label', W('답 확인', 'Check answer', '确认答案')); keyboardTap(submit);
 };
 
 /* ═══════════ g13CircleCut — 동그라미 나누기(읽기/그리기) ═══════════ */

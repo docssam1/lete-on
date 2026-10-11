@@ -37,6 +37,10 @@ async function run(){
     if(!await close.count()||!await close.isVisible())break;await close.click();
    }
    await page.waitForFunction(()=>!document.querySelector('.nm-confetti'),null,{timeout:6000});
+   // Dynamic lesson imports can finish after font readiness. Compare loaded
+   // lesson text, not a transient empty host against a fully mounted host.
+   if(await page.locator('#livingLesson').count())
+    await page.waitForFunction(()=>document.querySelector('#livingLesson')?.textContent.trim());
    await page.evaluate(()=>document.fonts.ready);
    const key=unit+'-'+lang+'-'+width;
    const result=await page.evaluate(()=>{

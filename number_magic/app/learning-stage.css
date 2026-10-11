@@ -8,6 +8,86 @@
   font-weight: 100 900;
   font-display: swap;
 }
+
+/* One interactive question, not a scaled-up scrolling worksheet. Group the
+   guide and the work explicitly: legacy dense-grid auto-placement put the
+   guide beneath a zoomed board. Stories and printable pages keep their scroll. */
+@media screen {
+  .nm-unit-view .nm-dialog.nm-widget-dialog {
+    display: flex; flex-direction: column; align-items: stretch;
+    justify-content: flex-start; gap: 10px;
+  }
+  .nm-widget-guide {
+    display: grid; grid-template-columns: 56px minmax(0, 1fr);
+    align-items: center; gap: 12px;
+  }
+  .nm-widget-guide .nm-numi { width: 56px; margin: 0; }
+  .nm-widget-guide .nm-bubble {
+    max-width: none; width: 100%; min-height: 0;
+    margin: 0; padding: 10px 14px; text-align: left;
+    display: block;
+  }
+  .nm-widget-guide .nm-bubble::before,
+  .nm-widget-guide .nm-bubble::after { display: none; }
+  .nm-widget-work { min-width: 0; display: flex; flex-direction: column; }
+  .nm-unit-view .nm-widget-dialog .nm-lab-widget {
+    zoom: 1; margin: 0; width: 100%;
+  }
+  .nm-widget-dialog .nm-memo-wrap { margin: 0 auto; }
+  @media (orientation: landscape) and (min-width: 700px) {
+    .nm-unit-view .nm-dialog.nm-widget-dialog {
+      display: grid; grid-template-columns: minmax(220px, 30%) minmax(0, 1fr);
+      grid-template-rows: auto auto auto;
+      grid-template-areas: 'progress progress' 'guide work' '. memo';
+      gap: 12px 24px; align-items: start;
+    }
+    .nm-unit-view .nm-widget-dialog > .nm-prog { grid-area: progress; margin: 0; }
+    /* Override the legacy :not(...) column selector (six class specificity). */
+    .nm-unit-view .nm-widget-dialog > .nm-widget-guide { grid-area: guide !important; }
+    .nm-unit-view .nm-widget-dialog > .nm-widget-work { grid-area: work !important; }
+    .nm-unit-view .nm-widget-dialog > .nm-memo-wrap { grid-area: memo !important; }
+    .nm-widget-guide { grid-template-columns: 1fr; justify-items: center; }
+    .nm-widget-guide .nm-numi { width: 80px; }
+    .nm-widget-guide .nm-bubble { text-align: center; padding: 16px; }
+  }
+  /* Bounded 3–5 column grids use the actual available stage height. A short
+     landscape phone/zoomed window keeps a readable scroll fallback instead of
+     hiding content or reducing a child’s target/text below its minimum. */
+  @media (min-height: 600px) {
+    .nm-unit-view:has(.nm-grid-dialog) { flex: 1 1 0; }
+    .nm-unit-view:has(.nm-grid-dialog) .nm-unit-inner { flex: 1 1 0; }
+    .nm-unit-view:has(.nm-grid-dialog) .nm-flow { padding: 4px 0 8px; }
+    .nm-unit-view:has(.nm-grid-dialog) .nm-step-body { overflow: visible; }
+    .nm-unit-view .nm-dialog.nm-grid-dialog {
+      flex: 1; min-height: 0;
+    }
+    .nm-grid-dialog .nm-widget-work { flex: 1; min-height: 0; }
+    .nm-grid-dialog .nm-lab-widget {
+      container-type: size; min-height: calc(var(--rows) * 44px + 100px); flex: 1;
+      padding: 12px !important;
+    }
+    .nm-grid-dialog .nm-g13-grid {
+      height: 100%; padding: 0; display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: minmax(0, 1fr) 56px;
+      gap: 12px 16px; align-items: center;
+    }
+    .nm-grid-dialog .nm-g13-gframe {
+      --cell: clamp(44px, min(84px, calc((100cqh - 80px) / var(--rows)), calc((100cqw - 8px) / var(--cols))), 84px) !important;
+      grid-column: 1 / -1; justify-self: center;
+    }
+    .nm-grid-dialog .nm-tm-counter { justify-self: end; }
+    .nm-grid-dialog .nm-tm-done { justify-self: start; }
+    .nm-grid-dialog .nm-g13-choices { grid-column: 1 / -1; justify-self: center; }
+    @media (orientation: landscape) and (min-width: 700px) {
+      .nm-unit-view .nm-dialog.nm-grid-dialog {
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        align-items: stretch;
+      }
+      .nm-grid-dialog .nm-widget-guide { align-self: center; }
+    }
+  }
+}
 @font-face {
   font-family: 'NM Lesson Hand';
   src: url('../assets/fonts/nm-lesson-hand.woff2') format('woff2');
@@ -310,5 +390,25 @@
     border-left: 2px solid #d0d9d1;
     padding-left: 12px;
     margin-top: 10px;
+  }
+}
+
+/* Numi's short spoken dialogue, distinct from a worksheet question/formula.
+   Unsupported Chinese, secondary courses and long dialogue stay in sans. */
+@media screen {
+  html .nm-unit-view[data-learning-band][lang]:is([data-learning-band="preschool"], [data-learning-band="elementary"]):is(:lang(ko), :lang(en)) .nm-numi-dialogue {
+    font-family: 'NM Lesson Hand', var(--lesson-font);
+    font-size: 28px;
+    font-weight: 400;
+    font-synthesis: none;
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+  html .nm-unit-view[data-learning-band][lang]:is([data-learning-band="preschool"], [data-learning-band="elementary"]):is(:lang(ko), :lang(en)) .nm-numi-dialogue .nm-dialog-figure {
+    font-family: var(--lesson-font);
+    font-size: 22px;
+    font-weight: 650;
+    font-synthesis: weight;
+    font-variant-numeric: tabular-nums;
   }
 }

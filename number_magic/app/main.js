@@ -6128,7 +6128,7 @@ function runPractice(body,u){
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
+    <div class="nm-bubble" id="bub">${first?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt)):numiDialogueHtml(L(cur.prompt))}</div>
     <div class="nm-board">
       ${pracTex}
       <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
@@ -6145,11 +6145,15 @@ function runPractice(body,u){
 }
 function runPracticeWidget(body,u,cur,first,need){
   const cfg=u.practice;
-  body.innerHTML=`<div class="nm-dialog">
+  const gridFit=cur.widget==='g13Grid'&&cur.cols<=5;
+  body.innerHTML=`<div class="nm-dialog${gridFit?' nm-widget-dialog nm-grid-dialog':''}">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
+    ${gridFit?'<div class="nm-widget-guide">':''}
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    <div class="nm-bubble" id="bub">${first?esc(L(cfg.intro))+'<br><br>'+esc(L(cur.prompt)):esc(L(cur.prompt))}</div>
+    <div class="nm-bubble" id="bub">${first&&!gridFit?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt)):numiDialogueHtml(L(cur.prompt))}</div>
+    ${gridFit?'</div><div class="nm-widget-work">':''}
     <div id="pracWidget" class="nm-lab-widget nm-board"></div>
+    ${gridFit?'</div>':''}
   </div>`;
   S.sub.started=true;
   say(first?L(cfg.intro):L(cur.prompt));
@@ -6948,12 +6952,17 @@ function stepLabWidget(body,u){
   const origLbl=S.lang==='zh'?'怎么算？':S.lang==='en'?'How do we solve?':'어떻게 구할까?';
   const origTexHtml=cur.tex?labExprHtml(cur.tex):'';
   /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
-  body.innerHTML=`<div class="nm-dialog${cur.widget==='steps'?' steps-mode':''}">
+  const gridFit=cur.widget==='g13Grid'&&cur.cols<=5;
+  body.innerHTML=`<div class="nm-dialog${gridFit?' nm-widget-dialog nm-grid-dialog':''}${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
+    ${gridFit?'<div class="nm-widget-guide">':''}
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    ${origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
-    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
+    ${!gridFit&&origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
+    <div class="nm-bubble">${numiDialogueHtml(first&&!gridFit?L(cfg.intro):L(cur.prompt))}</div>
+    ${gridFit?'</div><div class="nm-widget-work">':''}
+    ${gridFit&&origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
     <div id="labWidget" class="nm-lab-widget nm-board"></div>
+    ${gridFit?'</div>':''}
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
   </div>`;
   S.sub.labStarted=true;
@@ -6979,7 +6988,7 @@ function stepLabPairs(body,u){
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
+    <div class="nm-bubble">${numiDialogueHtml(first?L(cfg.intro):L(cur.prompt))}</div>
     <div class="nm-expr nm-board" id="expr"></div>
     <button class="nm-btn full" id="pick" disabled>${t('picked')}</button>
     <div class="nm-hint">${t('pairHint')}</div>
@@ -7009,6 +7018,14 @@ function labExprHtml(tex){
   if(parts.length<2)return `<span data-tex="${esc(d)}"></span>`;
   return parts.map((pt,i)=>`<span class="nm-expr-line" data-tex="${esc((i?'\\Rightarrow\\; ':'')+pt.trim())}"></span>`).join('');
 }
+/* Short spoken lines have character; long explanations and formula source
+   remain ordinary reading text. Escape each original token, never rewrite it. */
+function numiDialogueHtml(text){
+  text=String(text||'');
+  if([...text].length>90||/[\\\n]/.test(text))return esc(text);
+  const parts=text.split(/([0-9]+(?:[.,][0-9]+)?|[+\-−×÷=<>≤≥□√π^%])/);
+  return '<span class="nm-numi-dialogue">'+parts.map((s,i)=>i%2?`<span class="nm-dialog-figure">${esc(s)}</span>`:esc(s)).join('')+'</span>';
+}
 function stepLabNumpad(body,u){
   const cfg=u.lab;const need=cfg.count||4;
   S.sub.li=S.sub.li||0;
@@ -7019,7 +7036,7 @@ function stepLabNumpad(body,u){
   body.innerHTML=`<div class="nm-dialog">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    <div class="nm-bubble">${first?esc(L(cfg.intro)):esc(L(cur.prompt))}</div>
+    <div class="nm-bubble">${numiDialogueHtml(first?L(cfg.intro):L(cur.prompt))}</div>
     <div class="nm-board">
       <div class="nm-lab-expr">${labExprHtml(cur.tex)}</div>
       <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
