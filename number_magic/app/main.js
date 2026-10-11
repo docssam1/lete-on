@@ -6060,7 +6060,7 @@ function screenUnit(){
      unitFlowOf(u)[0].key는 항상 'practice'(§curriculum.js unitFlow). */
   const isFirstUnitStep = S.step==='range' || S.step==='intro' || S.step===unitFlowOf(u)[0].key;
   const learningBand=u.tier==='basic'?'preschool':(/^(middle|high)/.test(u.tier||'')||['algebra','calculus1'].includes(u.tier))?'secondary':'elementary';
-  scr.innerHTML=`<div class="nm-unit-view" data-learning-band="${learningBand}" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
+  scr.innerHTML=`<div class="nm-unit-view" lang="${esc(S.lang)}" data-learning-band="${learningBand}" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backMap" aria-label="${t('back')}">←</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>

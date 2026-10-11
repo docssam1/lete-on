@@ -8,6 +8,13 @@
   font-weight: 100 900;
   font-display: swap;
 }
+@font-face {
+  font-family: 'NM Lesson Hand';
+  src: url('../assets/fonts/nm-lesson-hand.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 @media screen {
   .nm-unit-view {
     --lesson-font: 'NM Lesson Sans', 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
@@ -248,5 +255,60 @@
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+/* Authored lesson lettering: screen titles, not the maths or navigation.
+   The unit's own lang is authoritative; unsupported Chinese stays readable.
+   Preschool/elementary pen letters are larger to retain their open strokes. */
+@media screen {
+  .nm-unit-view[data-learning-band] :is(.nm-card-h, .nm-mzu-title, .nm-live-head h2) {
+    position: relative;
+    padding-bottom: 12px;
+    letter-spacing: -.015em;
+  }
+  .nm-unit-view[data-learning-band] :is(.nm-card-h, .nm-mzu-title, .nm-live-head h2)::after {
+    content: '';
+    display: block;
+    width: 56px;
+    height: 3px;
+    margin-top: 10px;
+    background: #376b64;
+    border-radius: 3px;
+  }
+  .nm-unit-view[data-learning-band="secondary"] :is(.nm-card-h, .nm-mzu-title, .nm-live-head h2) {
+    font-family: var(--lesson-font);
+    font-weight: 750;
+  }
+  .nm-unit-view:is([data-learning-band="preschool"], [data-learning-band="elementary"]):is(:lang(ko), :lang(en))
+      :is(.nm-unit-bar .nm-unit-title, .nm-card-h, .nm-mzu-title, .nm-live-head h2) {
+    font-family: 'NM Lesson Hand', var(--lesson-font);
+    font-weight: 400;
+    font-synthesis: none;
+    font-size: clamp(34px, 6vw, 42px);
+    line-height: 1.2;
+    letter-spacing: 0;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  .nm-unit-view .nm-unit-bar .nm-unit-title small {
+    font-family: var(--lesson-font);
+    font-synthesis: weight;
+  }
+  html .nm-unit-view[data-learning-band][lang]:is([data-learning-band="preschool"], [data-learning-band="elementary"]):is(:lang(ko), :lang(en)) .nm-story-bubble {
+    font-family: 'NM Lesson Hand', var(--lesson-font);
+    font-size: 30px;
+    font-weight: 400;
+    font-synthesis: none;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+  .nm-unit-view:is([data-learning-band="preschool"], [data-learning-band="elementary"]) .nm-live-head {
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+  .nm-unit-view .nm-comic-cap {
+    border-left: 2px solid #d0d9d1;
+    padding-left: 12px;
+    margin-top: 10px;
   }
 }
