@@ -113,3 +113,30 @@
   .gold-print-page[data-print-book="book-04"] .b4-src-slots{font-size:9px}
   .gold-print-page[data-print-book="book-04"] .b4-src-slots i{width:8mm;height:7mm}
 }
+
+/* 22~27쪽 비교하기 */
+.b4-src-relations{display:grid;gap:10px;justify-items:start;padding:14px 22px;border:1.5px solid #2f7f96;border-radius:16px;background:#fff;color:#222;font-size:20px;font-weight:600}
+.b4-src-relations.tint{border-color:transparent;background:#dcedf5}
+.b4-src-rel-row{display:flex;align-items:center;gap:10px}
+.b4-src-shape{width:28px;height:28px;flex:none}
+.b4-src-shape circle,.b4-src-shape polygon,.b4-src-shape rect{fill:#fff;stroke:#2f7f96;stroke-width:1.6;stroke-linejoin:round}
+.b4-src-number-cards{display:grid;justify-items:center;gap:16px}
+.b4-src-cards{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.b4-src-cards span{position:relative;display:grid;place-items:center;width:30px;height:32px;border:1.5px solid #2f7f96;background:#dcedf5;color:#222;font-size:16px;font-weight:600;overflow:hidden}
+.b4-src-cards span.used{border-color:#e8742c;background:#fde3d0}
+.b4-src-cards span.used::after{content:"";position:absolute;left:-4px;right:-4px;top:50%;height:1.6px;background:#d9473f;transform:rotate(-48deg)}
+.b4-src-sums{display:grid;gap:10px;padding:16px 26px;border-radius:16px;background:#dcedf5}
+.b4-src-sum-row{display:flex;align-items:center;gap:8px;color:#222;font-size:18px;font-weight:600}
+.b4-src-sum-row i{display:block;width:30px;height:30px;border:1.5px solid #2f7f96;background:#fff}
+.b4-src-sum-row span{display:grid;place-items:center;width:30px;height:30px;border:1.5px solid #e8742c;background:#fde3d0}
+@media print{
+  .gold-print-page[data-print-book="book-04"] .b4-src-relations{gap:1.5mm;padding:2mm 4mm;font-size:11px}
+  .gold-print-page[data-print-book="book-04"] .b4-src-shape{width:5mm;height:5mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-cards span{width:6mm;height:6.5mm;font-size:10px}
+  .gold-print-page[data-print-book="book-04"] .b4-src-sums{gap:1.5mm;padding:2mm 4mm}
+  .gold-print-page[data-print-book="book-04"] .b4-src-sum-row{font-size:11px}
+  .gold-print-page[data-print-book="book-04"] .b4-src-sum-row i,.gold-print-page[data-print-book="book-04"] .b4-src-sum-row span{width:6mm;height:6mm}
+  .b4-src-relations.tint,.b4-src-sums,.b4-src-cards span{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
+/* 23쪽 도형 크기 순서 보기: 글자 크기로는 도형이 너무 작다 */
+.answer-choices.shape-order-choices button{min-height:52px;padding:6px 16px;color:#111;font-size:24px;line-height:1.1;letter-spacing:1px}

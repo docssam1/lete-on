@@ -5,6 +5,8 @@ import { renderBook04Guided } from "./golden-bell-book04-guided.js";
 
 const FAMILIES = [
   "book4-circle-logic-source",
+  "book4-compare-difference",
+  "book4-compare-order",
   "book4-cube-box-fill",
   "book4-fold-hole-count",
   "book4-multiplication-matrix",
@@ -131,7 +133,34 @@ function rowAnswer(visual) {
   return String(total);
 }
 
+// 대입 없이 관계식만으로 계산한다: 한 값을 0으로 두고 상대 값을 퍼뜨린다(렌더러는 기준값을 대입).
+function relativeValues(visual) {
+  const values = new Map([[visual.relations[0].right, 0]]);
+  for (let round = 0; round < visual.relations.length; round += 1) {
+    for (const { left, right, op, n } of visual.relations) {
+      const delta = op === "-" ? -Number(n) : Number(n);
+      if (values.has(right) && !values.has(left)) values.set(left, values.get(right) + delta);
+      if (values.has(left) && !values.has(right)) values.set(right, values.get(left) - delta);
+    }
+  }
+  for (const { left, right, op, n } of visual.relations) assert.equal(values.get(left), values.get(right) + (op === "-" ? -Number(n) : Number(n)), "comparison relation is inconsistent");
+  return values;
+}
+const COMPARE_GLYPH = { circle: "○", triangle: "△", square: "□", diamond: "◇" };
+function compareOrderAnswer(visual) {
+  const values = relativeValues(visual);
+  assert.equal(new Set(values.values()).size, values.size, "comparison order needs distinct values");
+  return [...values.entries()].sort((a, b) => a[1] - b[1]).map(([name]) => COMPARE_GLYPH[name] || name).join(",");
+}
+function compareDifferenceAnswer(visual) {
+  const values = relativeValues(visual);
+  const [a, b] = visual.target;
+  return String(Math.abs(values.get(a) - values.get(b)));
+}
+
 const EXPECTED_ANSWER = {
+  "book4-compare-order": compareOrderAnswer,
+  "book4-compare-difference": compareDifferenceAnswer,
   "book4-fold-hole-count": foldAnswer,
   "book4-cube-box-fill": cubeAnswer,
   "book4-multiplication-matrix": matrixAnswer,

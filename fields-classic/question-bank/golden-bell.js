@@ -1,13 +1,13 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261009c";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261011a";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261009c";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261011a";
 import { book01Markup } from "./book01-renderers.js?v=20261003c";
 import { book02Markup } from "./book02-renderers.js?v=20261005d";
-import { book03Markup } from "./book03-renderers.js?v=20261009c";
-import { book04Markup } from "./book04-renderers.js?v=20261009c";
+import { book03Markup } from "./book03-renderers.js?v=20261011a";
+import { book04Markup } from "./book04-renderers.js?v=20261011a";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book07Markup } from "./book07-renderers.js?v=20260906a";
@@ -1082,7 +1082,8 @@ function renderConcept(lesson) {
 
 function choiceButtons(groupId, options) {
   const glyphs = options.every((option) => [...String(option)].length === 1);
-  return `<div class="answer-choices${glyphs ? " glyph-choices" : ""}">${options.map((option) => `<button type="button" class="${state.selections[groupId] === option ? "selected" : ""}" data-choice-group="${groupId}" data-choice="${option}">${option}</button>`).join("")}</div>`;
+  const shapeOrder = !glyphs && options.every((option) => /^[○△□◇<\s]+$/u.test(String(option)));
+  return `<div class="answer-choices${glyphs ? " glyph-choices" : ""}${shapeOrder ? " shape-order-choices" : ""}">${options.map((option) => `<button type="button" class="${state.selections[groupId] === option ? "selected" : ""}" data-choice-group="${groupId}" data-choice="${option}">${option}</button>`).join("")}</div>`;
 }
 
 function normalizeAnswer(value) {
@@ -1320,7 +1321,8 @@ function printResponseMarkup(item) {
   if (item.answerMode === "pick") return "";
   if (item.answerMode === "input" && item.inputMode === "fraction") return `<span class="gold-print-answer fraction" aria-label="분수 답 쓰는 칸"><b>답</b><span class="frac-blank"><i></i><em></em><i></i></span></span>`;
   if (item.answerMode === "input") return `<span class="gold-print-answer${item.answerRef?.startsWith("/recovery/") ? " recovered-source-answer" : ""}" aria-label="답 쓰는 칸"><b>답</b><i></i></span>`;
-  return `<span class="gold-print-options">${item.options.map((option, index) => `${index + 1}. ${option}`).join("　")}</span>`;
+  // 짧은 보기(「△ < ○ < □」 등)는 한 보기가 두 줄로 갈라지지 않게 묶는다.
+  return `<span class="gold-print-options">${item.options.map((option, index) => String(option).length <= 20 ? `<span style="white-space:nowrap">${index + 1}. ${option}</span>` : `${index + 1}. ${option}`).join("　")}</span>`;
 }
 
 function printSourceItemVisual(item, fallback) {

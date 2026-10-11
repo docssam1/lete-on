@@ -39,7 +39,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261009c`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261009c/20261009d/g' …`) |
+| **캐시 꼬리표** | 현재 `?v=20261011a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261011a/20261011b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -48,7 +48,7 @@
 - 꼴: `/books/book-04/lessons/<번호>/original/items/<번호>` (칸이 있으면 `…/parts/<번호>`),
   `/books/book-04/lessons/<번호>/experience/check`, `/books/book-04/lessons/<번호>/extension`.
 - **문자열로만 연결된다.** 단원 순서를 바꿔도 번호는 그대로 둔다. 새 단원은 **아직 안 쓴 번호**를 쓴다.
-- 4권에서 지금 쓰는 단원 번호: 0~11. **다음 새 단원은 12부터.**
+- 4권에서 지금 쓰는 단원 번호: 0~13. **다음 새 단원은 14부터.**
 - 공개 데이터의 `answerRef` 하나하나에 DB 기록이 있어야 한다. 하나라도 빠지면 그 권 답 불러오기가 깨진다.
 
 ### 4권 단원 ↔ answerRef 번호 (화면 순서)
@@ -60,16 +60,18 @@
 | 4 | fold-hole-count | 접은 종이의 구멍 수를 세어요 | 2 | 15 |
 | 5 | cube-box-fill | 상자의 빈칸을 채워요 | 3 | 19 |
 | 6 | multiplication-matrix | 가로와 세로의 곱을 맞춰요 | 4 | 20 |
-| 7 | balance-substitution | 도형을 바꾸어 넣어요 | 5 | 31 |
-| 8 | order-logic-source | 조건으로 순서를 정해요 | **10** | 36·37·40·41 |
-| 9 | table-logic-source | 가능한 선택을 표로 지워요 | 6 | 38·39 |
-| 10 | cardinal-placement | 동서남북으로 자리를 찾아요 | 7 | 36·42 |
-| 11 | circle-logic-source | 원탁의 이웃 자리를 찾아요 | 8 | 37·43·44 |
-| 12 | row-logic-source | 앞뒤 순서로 인원을 세어요 | 9 | 45·46 |
+| 7 | compare-order-source | 크기를 비교해 순서를 정해요 | **12** | 22~24 |
+| 8 | compare-difference-source | 수의 크기 차이를 구해요 | **13** | 25~27 |
+| 9 | balance-substitution | 도형을 바꾸어 넣어요 | 5 | 31 |
+| 10 | order-logic-source | 조건으로 순서를 정해요 | **10** | 36·37·40·41 |
+| 11 | table-logic-source | 가능한 선택을 표로 지워요 | 6 | 38·39 |
+| 12 | cardinal-placement | 동서남북으로 자리를 찾아요 | 7 | 36·42 |
+| 13 | circle-logic-source | 원탁의 이웃 자리를 찾아요 | 8 | 37·43·44 |
+| 14 | row-logic-source | 앞뒤 순서로 인원을 세어요 | 9 | 45·46 |
 
-DB `book-04` 현재: **키 142개**, sha 앞 8자리 `03137feb`. 작업 전 반드시 다시 조회해 확인한다.
+DB `book-04` 현재: **키 179개**, sha 앞 8자리 `11a0b12e`. 작업 전 반드시 다시 조회해 확인한다.
 
-## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막 커밋 `49dc836e`)
+## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막은 4권 묶음 3 · 2026-10-11)
 
 - **2권**: 교사용·학생용과 눈으로 대조해 그림·문장 정리, 분수 세로 표기, 빠졌던 물음 되살림, 34쪽 활동 04 2문항 추가.
 - **3권**: 화면을 원본 그림·문장대로, 28-(2) 답 교정, 보류였던 8-(8)·29-(1)·20쪽 (2)(3) 되살림.
@@ -80,6 +82,13 @@ DB `book-04` 현재: **키 142개**, sha 앞 8자리 `03137feb`. 작업 전 반�
   동서남북·원탁·표 단원에 문항 추가.
 - **4권 묶음 2**(16~18쪽 쌓기나무 10문항): 새 단원 `cube-min-count`(번호 11) + `hidden-cube-count`에 18쪽 아래 그림 3문항.
   쌓기나무 그림을 원본과 같은 빗각 그림(`book04-renderers.js`의 `obliqueCubes`)으로 바꿈.
+- **4권 묶음 3**(22~27쪽 비교하기 26문항): 새 단원 `compare-order-source`(번호 12)·`compare-difference-source`(번호 13).
+  그림 `source-relations`(관계식 상자, `tint`=25쪽 파랑 바탕)·`source-number-cards`·`source-clue-box`.
+  개념 설명은 4권 안내형 가족 `book4-compare-order`·`book4-compare-difference`(기준에 수를 대입, 검사기 가족 8개).
+  23쪽 그리기 8문항은 순서 보기 고르기형(`answerMode:"choice"`) — 화면은 `golden-bell.js` `choiceButtons`가
+  `shape-order-choices` 클래스를 붙여 크게, 인쇄는 20자 이하 보기를 줄바꿈 없이 묶는다.
+  **24쪽 추가 Q는 교사용 답이 틀려 관계식대로 넣고 DB `sourceNote`에 기록**. 27쪽 '민이'→'경민이', '한나'→'하나'는
+  `sourceDiscrepancy`에 기록. `sourceHold`는 28~30쪽만 남겼고 `sourceCoverage`의 16~17·22~27·36~37·40~41·44쪽을 바로잡음.
 
 ## 4. 남은 일 — 이 순서대로
 
@@ -87,52 +96,20 @@ DB `book-04` 현재: **키 142개**, sha 앞 8자리 `03137feb`. 작업 전 반�
 
 | 묶음 | 원본 쪽 | 내용 | 비고 |
 |---|---|---|---|
-| **3 (다음)** | 22~27 | 비교하기 26문항 | 아래 4-1에 사전 분석 |
-| 4 | 28~30, 31(3)·32·33 | 양팔저울 등식 8 + 저울 바꾸어 넣기 5 | `balance-substitution`(번호 5)에 이어 붙이거나 새 단원 |
+| ~~3~~ | 22~27 | 비교하기 26문항 | **완료**(3절) |
+| **4 (다음)** | 28~30, 31(3)·32·33 | 양팔저울 등식 8 + 저울 바꾸어 넣기 5 | `balance-substitution`(번호 5)에 이어 붙이거나 새 단원(번호 14). 끝나면 `sourceHold`의 28~30쪽 항목을 지운다 |
 | 5 | 4~8 | 연산 8, 숫자 1 뒤집기·돌리기 ①~⑧, 숫자판 3, 디지털 숫자 20 + 952 반 바퀴 | **그리기 문항은 고르기형으로** |
 | 6 | 10~14 | 색종이 접어 위치(알파벳) 7·반대쪽 번호 3, 두 번 접어 자른 모양 4, 자른 수의 합 4 | **그리기 문항은 고르기형으로** |
 | 보류 유지 | 2, 3 확장, 34·47 | 정삼각형 등분 그리기, 3쪽 다섯 칸 확장(교사용 전용), 47쪽 □n(원본도 빈칸뿐) | 넣지 않는다 |
 
 그다음: **5~10권 원본 대조**(같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
 
-그리고 함께 정리할 것: `book-04`의 `sourceCoverage`(쪽별 상태 표)가 묶음 1·2 반영 전 상태다
-(16~17쪽, 36~37·40~41·44쪽이 아직 `held`). 묶음 3 패치 때 같이 바로잡는다.
-`sourceHold`의 "교사용 슬라이드 22 ~30의 비교·저울" 항목은 묶음 3 후 "28~30 저울"로 좁히고, 묶음 4 후 지운다.
-
-### 4-1. 묶음 3(22~27쪽) 사전 분석 — 착수 전 상태
-
-학생용·교사용을 모두 보고 26문항을 직접 풀어 교사용과 대조해 두었다(답은 여기 적지 않는다. 직접 다시 풀 것).
-
-| 원본 | 문항 | 형식 제안 |
-|---|---|---|
-| 22 활동01 ① | 사용하지 않는 숫자카드 2문항(1~7에서 5·7 사용, 1~10에서 6·7·10 사용) | 숫자 |
-| 23 활동01 ② | 도형 크기 비교 8문항("작은 것부터 순서대로 그리시오") | **순서 보기 고르기형**(2도형 2지, 3·4도형 4지. 보기 꼴: 「가 < 나 < 다」처럼 작은 것부터 `<`로 잇기) |
-| 24 | A·B·C 큰 순서, A~D 큰 순서, 추가 Q "A와 C의 차이는?" | 칸 3개·칸 4개(글자), 숫자 |
-| 25 활동01 ③ | ○◇□△ 관계식 4상자, 물어보는 도형의 차이 | 숫자 |
-| 26 | 무게 차이, 나이 차이, 제일 뒤 사람, 가장 긴 리본 | 숫자 2, 글자 2 |
-| 27 | 키 차이, 몸무게 차이, 계단 수, 사탕 수, 달리기 거리 | 숫자 5 |
-
-반드시 알아야 할 것:
-- **24쪽 추가 Q는 교사용 답이 틀렸다.** 교사용은 A에 수를 넣어 B·C·D를 구했는데, 대입값 하나를
-  관계식과 맞지 않게 적어서 답이 틀렸다. **식대로 직접 풀어 DB에 넣고**, 그 기록의
-  `sourceNote`에 "교사용 대입값 계산 실수를 관계식으로 바로잡음" 식으로 적는다(숫자 없이).
-  원장 보고에는 이 건을 꼭 포함한다.
-- **25쪽**: 학생용은 오른쪽 물음 칸이 비어 있고, "어떤 두 도형의 차이인가"는 교사용 문구
-  ("Q) ○, △ 의 차이" 등)에만 있다. 물음 문구이므로 문항 글에 넣는다.
-- **27쪽 (1)**: 학생용 "연우와 **민이**의"는 교사용 "연우와 **경민이**의"가 맞다(등장인물에 '민이' 없음) → "경민이"로.
-  `sourceDiscrepancy`에 숫자 없이 기록.
-- **27쪽 (3)**: 등장인물은 '하나'인데 조건 두 곳이 '한나'(학생용·교사용 동일). 원장이 답하지 않아 기본안 =
-  **'하나'로 통일하고 `sourceDiscrepancy`에 기록**. 보고 때 알린다.
-- 구성안: 새 단원 2개, `balance-substitution` 바로 앞에 둔다.
-  `compare-order-source`(번호 **12**, 22~24쪽 13문항) · `compare-difference-source`(번호 **13**, 25~27쪽 13문항).
-- 그림: 22쪽 숫자 카드(쓴 카드는 빨간 사선) + 「□ + □ = 5」 줄 상자, 23·25쪽 도형 관계식 상자(○△□◇는 작은 SVG,
-  25쪽은 연한 파랑 바탕), 24쪽 「A = B + 6」 상자, 26·27쪽 조건 글은 기존 `bulletBox`(`b4-src-clues`).
-- 개념 설명: 교사용 지도 문구 "정해진 값이 없는데 수의 차이를 구하거나 크기 비교는 적당한 수를 대입해도 됨"을
-  그대로 살린 4권 안내형 가족 2개(`book4-compare-order`, `book4-compare-difference`, 렌더 함수 하나 공유) 추가 제안.
-  주어진 구조(파랑) → 기준 도형에 수 대입(금색) → 순서/차이 검산(초록, `data-book04-answer`·`data-book04-check`).
-  검사기 `FAMILIES`·`EXPECTED_ANSWER`에도 추가(대입 없이 관계식으로 독립 계산).
+### 4-1. 묶음 3에서 쓴 방식 (다음 묶음에서 그대로 쓸 것)
+- 패치 스크립트: `tools/golden-bell-book04/patch-book04-batch3.mjs`(단원 2개 추가 + `sourceHold`·`sourceCoverage` 갱신 예시).
+- 답은 학생용으로 직접 풀고, **식에서 거꾸로 다시 계산하는 별도 스크립트**로 26문항 전부 맞춰 본 뒤 DB에 넣었다
+  (22쪽 숫자카드는 가능한 짝을 모두 찾아 해가 하나뿐인지도 확인). 이 검산 스크립트에는 답이 들어가므로 저장소에 넣지 않는다.
 - 고르기형 문항: `answerMode: "choice"`, `options: [...]`(보기 문자열은 공개 가능), DB `answer`는 보기 문자열 그대로.
-  채점은 공백을 지우고 비교한다(`normalizeAnswer`).
+  채점은 공백을 지우고 비교한다(`normalizeAnswer`). 정답 보기 위치는 문항마다 섞는다.
 
 ## 5. 한 묶음 작업 절차 (묶음 1·2에서 쓴 그대로)
 
@@ -160,14 +137,17 @@ python3 -m http.server 8797 --directory <저장소 루트>   # 백그라운드�
 cd fields-classic/question-bank
 node golden-bell-protection-audit.mjs        # GOLDEN_BELL_PROTECTION_OK
 node book04-audit.mjs                         # BOOK04_AUDIT_OK
-node golden-bell-book04-guided-audit.mjs      # BOOK04_GUIDED_AUDIT_OK families=6 (가족 추가 시 수 증가)
+node golden-bell-book04-guided-audit.mjs      # BOOK04_GUIDED_AUDIT_OK families=8 (가족 추가 시 수 증가)
 node course1-review-audit.mjs                 # 누락·중복 0건
 node golden-bell-cube-animation-audit.mjs     # CUBE_SOURCE_ANIMATION_OK
 ```
 - 브라우저 검사들은 `CODEX_NODE_MODULES`(playwright·pdf-lib가 있는 node_modules 경로)가 필요하다.
-- **이미 실패하던 검사 1개**: `golden-bell-book04-hidden-cube-browser-audit.mjs`(포트 8794 서버 필요)는
-  개념 단계의 「4개」 선택 버튼이 disabled라 클릭에서 멈춘다. 묶음 작업 전부터 이 지점에서 실패했다(기준선 확인 완료).
+- **이미 실패하던 브라우저 검사 3개**(기본 포트 8794, `FIELDS_BASE_URL=http://127.0.0.1:<포트>`로 바꿀 수 있음).
+  변경 전 main을 `git worktree`로 따로 띄워 같은 지점에서 실패함을 확인했다(2026-10-11).
   **같은 지점에서 실패하면 정상**, 다른 곳에서 실패하면 이번 변경 탓이다.
+  - `golden-bell-book04-hidden-cube-browser-audit.mjs`: 개념 단계의 「4개」 선택 버튼이 disabled라 클릭에서 멈춤.
+  - `golden-bell-book02-browser-audit.mjs`: "number-splitting: source questions must begin locked".
+  - `golden-bell-book03-browser-audit.mjs`: "unit-area-shapes: source opened before concept completion".
 - 화면: `tools/golden-bell-book04/capture-lessons.mjs`(사용법은 파일 첫 줄). `playwright-core`가 설치된 폴더에 복사해 실행.
   콘솔 오류 0건이어야 하고, 찍은 그림을 원본 쪽 이미지와 나란히 놓고 눈으로 비교한다.
 - 인쇄: `tools/golden-bell-book04/print-lessons.mjs` → PDF를 이미지로 바꿔 확인.

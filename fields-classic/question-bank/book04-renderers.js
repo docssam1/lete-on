@@ -465,6 +465,39 @@ function sourceBalanceEquations(visual) {
   return `<div class="b4-clue-panel">${visual.equations.map((equation, index) => `<p><b>${index + 1}</b>${escapeHtml(side(equation.left))} = ${escapeHtml(side(equation.right))}</p>`).join("")}<p><b>물음</b>${escapeHtml(side(visual.target.left))} = ${escapeHtml(Object.keys(visual.target.right)[0])} ?개</p></div>`;
 }
 
+// 22~27쪽 비교하기: ○△□◇는 원본처럼 파란 윤곽 도형, 나머지 토큰은 글자.
+const SHAPE_ICON = {
+  circle: '<circle cx="14" cy="14" r="11.5"/>',
+  triangle: '<polygon points="14,3 26,25 2,25"/>',
+  square: '<rect x="3" y="3" width="22" height="22"/>',
+  diamond: '<polygon points="14,1.5 26.5,14 14,26.5 1.5,14"/>'
+};
+const SHAPE_NAME = { circle: "동그라미", triangle: "세모", square: "네모", diamond: "마름모" };
+function relationToken(token) {
+  if (SHAPE_ICON[token]) return `<svg class="b4-src-shape" viewBox="0 0 28 28" role="img" aria-label="${SHAPE_NAME[token]}">${SHAPE_ICON[token]}</svg>`;
+  return `<span>${escapeHtml(String(token).replace(/-/g, "−"))}</span>`;
+}
+
+function sourceRelations(visual) {
+  // 23·24·25쪽: 둥근 상자 안의 관계식 줄. tint는 25쪽처럼 연한 파랑 바탕.
+  const rows = (visual.rows || []).map((row) => `<div class="b4-src-rel-row">${row.map(relationToken).join("")}</div>`).join("");
+  return `<div class="b4-src-relations${visual.tint ? " tint" : ""}">${rows}</div>`;
+}
+
+function sourceNumberCards(visual) {
+  // 22쪽: 1~n 숫자 카드(이미 쓴 카드는 빨간 사선) + 「□ + □ = 합」 덧셈식 상자.
+  const used = new Set((visual.used || []).map(Number));
+  const cards = Array.from({ length: Number(visual.count) }, (_, i) => i + 1)
+    .map((n) => `<span class="${used.has(n) ? "used" : ""}">${n}</span>`).join("");
+  const sums = (visual.sums || []).map((sum) => `<div class="b4-src-sum-row"><i></i><b>+</b><i></i><b>=</b><span>${escapeHtml(sum)}</span></div>`).join("");
+  return `<div class="b4-src-number-cards"><div class="b4-src-cards" aria-label="숫자 카드">${cards}</div><div class="b4-src-sums">${sums}</div></div>`;
+}
+
+function sourceClueBox(visual) {
+  // 26·27쪽: 조건 글 상자.
+  return `<div class="b4-src-logic">${bulletBox(visual.clues)}</div>`;
+}
+
 export function book04Markup(visual) {
   if (!visual || visual.kind !== "book4") return "";
   switch (visual.subtype) {
@@ -495,6 +528,9 @@ export function book04Markup(visual) {
     case "source-cube-box": return sourceCubeBox(visual);
     case "source-hidden-cube": return sourceHiddenCube(visual);
     case "source-cube-topview": return sourceCubeTopView(visual);
+    case "source-relations": return sourceRelations(visual);
+    case "source-number-cards": return sourceNumberCards(visual);
+    case "source-clue-box": return sourceClueBox(visual);
     case "source-matrix": return sourceMatrix(visual);
     case "source-table-logic": return sourceTableLogic(visual);
     case "source-circle-logic": return sourceCircleLogic(visual);

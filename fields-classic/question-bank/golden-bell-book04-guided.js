@@ -10,6 +10,8 @@ const COLOR = Object.freeze({
 
 const SUPPORTED_FAMILIES = new Set([
   "book4-circle-logic-source",
+  "book4-compare-difference",
+  "book4-compare-order",
   "book4-cube-box-fill",
   "book4-fold-hole-count",
   "book4-multiplication-matrix",
@@ -484,6 +486,58 @@ function rowFrame(visual, phase) {
   return `<div style="display:flex;flex-wrap:nowrap;justify-content:center;gap:3px;width:100%;overflow:hidden">${cells}</div><div data-book04-answer="${total}" data-book04-check="${check}" style="display:grid;gap:3px;place-items:center;color:${COLOR.verify};font-weight:900"><strong style="font-size:24px">${frontPosition} + ${backPosition} - 1 = ${total}</strong><span style="font-size:13px">겹쳐 센 ${escapeHtml(person)} 한 명을 뺐습니다.</span></div>`;
 }
 
+// 22~27쪽 비교하기: 정해진 값이 없을 때 기준 하나에 적당한 수를 넣어 나머지를 차례로 구한다(교사용 지도).
+const COMPARE_GLYPH = { circle: "○", triangle: "△", square: "□", diamond: "◇" };
+const compareGlyph = (name) => COMPARE_GLYPH[name] || String(name);
+
+function solveCompare(visual) {
+  const relations = Array.isArray(visual.relations) ? visual.relations : [];
+  if (!relations.length || visual.base == null) throw new Error("Book 4 comparison model needs relations and a base.");
+  const values = new Map([[visual.base, integer(visual.baseValue, "base value", 1)]]);
+  const steps = [];
+  for (let guard = 0; guard < relations.length * 2 && steps.length < relations.length; guard += 1) {
+    for (const relation of relations) {
+      const delta = relation.op === "-" ? -integer(relation.n, "relation amount", 1) : integer(relation.n, "relation amount", 1);
+      if (values.has(relation.left) && values.has(relation.right)) continue;
+      if (values.has(relation.right)) values.set(relation.left, values.get(relation.right) + delta);
+      else if (values.has(relation.left)) values.set(relation.right, values.get(relation.left) - delta);
+      else continue;
+      steps.push(relation);
+    }
+  }
+  if (steps.length !== relations.length) throw new Error("Book 4 comparison relations are not connected.");
+  return values;
+}
+
+function compareRow(relation, color) {
+  const shape = (name) => COMPARE_GLYPH[name] ? `<b style="font-size:26px;color:${color}">${COMPARE_GLYPH[name]}</b>` : `<b style="color:${color}">${escapeHtml(name)}</b>`;
+  return `<div style="display:flex;align-items:center;gap:9px;color:${COLOR.ink};font-size:20px;font-weight:900">${shape(relation.left)}<span>=</span>${shape(relation.right)}<span>${relation.op === "-" ? "−" : "+"}</span><span>${integer(relation.n, "relation amount", 1)}</span></div>`;
+}
+
+function compareFrame(visual, phase, family) {
+  const values = solveCompare(visual);
+  const rows = `<div style="display:grid;gap:8px;padding:12px 20px;border:2px solid ${COLOR.given};border-radius:14px;background:#eaf4f8">${visual.relations.map((relation) => compareRow(relation, COLOR.given)).join("")}</div>`;
+  if (phase === "problem") return `${rows}<p style="margin:0;color:${COLOR.given};font-size:14px;font-weight:800">정해진 값이 없습니다.</p>`;
+  const chips = [...values.entries()].map(([name, value]) => `<span style="display:grid;place-items:center;min-width:66px;padding:6px 10px;border:2px solid ${COLOR.action};border-radius:10px;background:#fff8e4;color:${COLOR.ink};font-size:18px;font-weight:900">${escapeHtml(compareGlyph(name))} = ${value}</span>`).join("");
+  const organize = `${rows}<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px">${chips}</div><p style="margin:0;color:${COLOR.action};font-size:14px;font-weight:800">${escapeHtml(compareGlyph(visual.base))}에 ${values.get(visual.base)}을 넣고 나머지를 차례로 구합니다.</p>`;
+  if (phase === "organize") return organize;
+  let answer;
+  let check;
+  if (family === "book4-compare-order") {
+    const ordered = [...values.entries()].sort((a, b) => a[1] - b[1]);
+    answer = ordered.map(([name]) => compareGlyph(name)).join(",");
+    check = ordered.map(([, value]) => value).join(",");
+  } else {
+    const [a, b] = visual.target || [];
+    if (!values.has(a) || !values.has(b)) throw new Error("Book 4 comparison difference target is missing.");
+    const [big, small] = values.get(a) >= values.get(b) ? [a, b] : [b, a];
+    answer = String(values.get(big) - values.get(small));
+    check = `${values.get(big)}-${values.get(small)}=${answer}`;
+  }
+  const headline = family === "book4-compare-order" ? `작은 것부터 ${answer.replaceAll(",", " < ")}` : `${compareGlyph(visual.target[0])}와 ${compareGlyph(visual.target[1])}의 차이 ${answer}`;
+  return `${organize}<div data-book04-answer="${escapeHtml(answer)}" data-book04-check="${escapeHtml(check)}" style="display:grid;gap:3px;place-items:center;color:${COLOR.verify};font-weight:900"><strong style="font-size:23px">${escapeHtml(headline)}</strong><span style="font-size:13px">다른 수를 넣어도 순서와 차이는 같습니다.</span></div>`;
+}
+
 export function renderBook04Guided(experience, beat, step) {
   if (!experience || !SUPPORTED_FAMILIES.has(experience.family)) return "";
   const beats = Array.isArray(experience.beats) ? experience.beats : [];
@@ -498,5 +552,6 @@ export function renderBook04Guided(experience, beat, step) {
   else if (experience.family === "book4-table-logic-source") content = tableFrame(visual, phase);
   else if (experience.family === "book4-circle-logic-source") content = circleFrame(visual, phase);
   else if (experience.family === "book4-row-logic-source") content = rowFrame(visual, phase);
+  else if (experience.family === "book4-compare-order" || experience.family === "book4-compare-difference") content = compareFrame(visual, phase, experience.family);
   return phaseShell(experience, phase, safeStep, content);
 }
