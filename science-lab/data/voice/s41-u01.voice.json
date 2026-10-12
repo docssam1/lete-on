@@ -1,7 +1,7 @@
 {
  "voice": "ko-KR-Chirp3-HD-Puck",
  "fallbackVoice": "ko-KR-Neural2-C",
- "note": "둥실 고리 자석 탑(s41-u01) 스스로 공부하기 — 슬라이드별 docssam 안내. slides의 값이 없으면 deck-common의 기본 줄을 쓴다(확인 문제 = dk-choose).",
+ "note": "둥실 고리 자석 탑(s41-u01) 스스로 공부하기 — 슬라이드별 독쌤 안내. slides 값이 없으면 deck-common 기본 줄을 쓴다(확인 문제 = dk-choose). threeDCues는 후속 3D 화면 연결용 텍스트이며 OmniVoice 음성 생성·재생은 나중에 한다. Google TTS는 켜지 않는다.",
  "slides": {
   "cover": "s41u01-cover",
   "intro": "s41u01-intro",
@@ -28,6 +28,14 @@
   "creative": "s41u01-creative",
   "gifted": "s41u01-gifted",
   "end": "dk-end"
+ },
+ "threeDCues": {
+  "towerPreviewBeforePrediction": "s41u01-3d-tower-preview",
+  "towerFlipPrompt": "s41u01-3d-tower-flip",
+  "towerCompareAfterRecord": "s41u01-3d-tower-compare",
+  "towerRevealAfterPrediction": "s41u01-3d-tower-reveal",
+  "compassPredictBeforeMove": "s41u01-3d-compass-predict",
+  "compassObserveAfterMove": "s41u01-3d-compass-observe"
  },
  "lines": [
   {
@@ -77,6 +85,30 @@
   {
    "id": "s41u01-lab",
    "text": "고리를 눌러 뒤집어 보고, 탑 모양이 마음에 들면 표에 적기를 눌러 봐."
+  },
+  {
+   "id": "s41u01-3d-tower-preview",
+   "text": "고리 사이를 자세히 봐. 어디는 붙고 어디는 떠 있을까? 이유를 먼저 예상해 봐."
+  },
+  {
+   "id": "s41u01-3d-tower-flip",
+   "text": "고리를 하나 눌러 뒤집어 봐. 떠 있는 층과 탑 높이가 어떻게 바뀌었니?"
+  },
+  {
+   "id": "s41u01-3d-tower-compare",
+   "text": "기록한 두 탑을 비교해 봐. 어느 쪽에 떠 있는 층이 더 많았니?"
+  },
+  {
+   "id": "s41u01-3d-tower-reveal",
+   "text": "이제 마주 보는 면을 확인하자. 같은 극은 밀어 내고, 다른 극은 끌어당겨."
+  },
+  {
+   "id": "s41u01-3d-compass-predict",
+   "text": "자석을 가까이 가져가기 전에 예상해 봐. 나침반 바늘은 어느 쪽으로 돌까?"
+  },
+  {
+   "id": "s41u01-3d-compass-observe",
+   "text": "바늘이 움직인 방향을 살펴봐. 네 예상과 같았는지 비교해 보자."
   },
   {
    "id": "s41u01-wonder",

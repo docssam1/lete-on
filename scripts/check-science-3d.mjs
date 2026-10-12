@@ -15,12 +15,16 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let chromium;
 try { ({ chromium } = await import('playwright')); }
-catch { ({ chromium } = await import('/opt/node22/lib/node_modules/playwright/index.mjs')); }
+catch {
+  // E: Windows 작업본처럼 이 저장소에 node_modules가 없을 때는 설치된 모듈 경로를 명시해 쓴다.
+  const modulePath = process.env.SCIENCE_LAB_PLAYWRIGHT || '/opt/node22/lib/node_modules/playwright/index.mjs';
+  ({ chromium } = await import(pathToFileURL(modulePath).href));
+}
 
 // 3D 실험실이 있는 단원 — science-lab/v2/home.js 의 LABS 와 같아야 한다(새 실험을 넣으면 여기도)
 const ALL = ['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
@@ -124,6 +128,20 @@ for (const u of UNITS) {
     judge(where, await waitFitted(page));
     await shot(page, `${u}-${name}`);
     if (name === '5단계 실험(PC)') {
+      if (u === 's41-u01') {
+        // 한 쌍만 살펴보는 조작이 실제 극 방향과 함께 바뀌는지 확인한다.
+        checks += 4;
+        const inspect = page.locator('.rt-inspect');
+        const facing = page.locator('[data-r="facing"]');
+        const visible = await page.locator('[data-act="record"]').evaluate((b) => b.getBoundingClientRect().bottom < innerHeight - 40);
+        if (!visible) fail(where, 'PC 기본 화면에서 기록 단추가 하단 이동 막대에 가려짐');
+        if (await facing.textContent() !== 'N ↔ N') fail(where, '처음 마주 보는 1·2번 고리의 극 표기가 틀림');
+        await inspect.click();
+        if (await page.locator('[data-r="pair"]').textContent() !== '2·3번 사이의 극 ↻' || await facing.textContent() !== 'S ↔ N') fail(where, '다음 고리 사이로 옮겨도 마주 보는 극이 갱신되지 않음');
+        await page.locator('[data-flip="1"]').click();
+        await page.waitForTimeout(900);
+        if (await facing.textContent() !== 'N ↔ N') fail(where, '고리를 뒤집은 뒤 마주 보는 극이 갱신되지 않음');
+      }
       // ⑤ 화산: 누르기 전에는 포일이 없다
       if (u === 's41-u03b') {
         checks++;
