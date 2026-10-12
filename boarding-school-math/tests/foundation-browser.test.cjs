@@ -483,9 +483,9 @@ test("Grade 6 diagnostic page explains the real flow while public hosting keeps 
 test("Grade 6 public concept learning provides ten deep-linked, fully solved lessons without graded assessment leakage", async function () {
   const visualEvidence = {
     "6.RP.A": /8권[\s\S]*12달러[\s\S]*14권[\s\S]*21달러/,
-    "6.NS.A": /3\/4 = 6\/8[\s\S]*6개/,
+    "6.NS.A": /6개/,
     "6.NS.B": /84[\s\S]*60[\s\S]*최대공약수는 12/,
-    "6.NS.C": /-7\/4[\s\S]*-5\/3/,
+    "6.NS.C": /더 왼쪽/,
     "6.EE.A": /2³[\s\S]*8 \+ 4[\s\S]*31/,
     "6.EE.B": /6x = 42[\s\S]*x = 7/,
     "6.EE.C": /y = 3x \+ 2[\s\S]*23/,
@@ -523,6 +523,13 @@ test("Grade 6 public concept learning provides ten deep-linked, fully solved les
   await page.goto(`${baseUrl}concept-learning.html?cluster=6.EE.B`, { waitUntil: "networkidle" });
   assert.match(await page.locator("#lesson").innerText(), /6x = 42[\s\S]*x = 7/);
   assert.doesNotMatch(await page.locator("#lesson").innerText(), /4x\s*-\s*7|29/);
+  await page.goto(`${baseUrl}concept-learning.html?cluster=6.NS.A`, { waitUntil: "networkidle" });
+  assert.ok(await page.locator('math.inline-fraction[data-source-fraction="3/4"] mfrac').count() >= 1);
+  assert.ok(await page.locator('math.inline-fraction[data-source-fraction="1/8"] mfrac').count() >= 1);
+  assert.doesNotMatch(await page.locator("#lesson").innerText(), /[\u2212-]?\d+\s*\/\s*\d+/);
+  await page.goto(`${baseUrl}concept-learning.html?cluster=6.NS.C`, { waitUntil: "networkidle" });
+  assert.ok(await page.locator('[data-source-fraction="-7/4"]').count() >= 2);
+  assert.doesNotMatch(await page.locator("#lesson").innerText(), /[\u2212-]?\d+\s*\/\s*\d+/);
   const publicHtml = await page.locator("#lesson").innerHTML();
   ["qst-bnk-", "slot-bdg-", "private-authoring", "privateDraft", "scoringSpec", "rubricDraft"].forEach(function (token) {
     assert.equal(publicHtml.includes(token), false, `concept lesson leaked ${token}`);
