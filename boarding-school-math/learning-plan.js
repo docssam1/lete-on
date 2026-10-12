@@ -7,6 +7,13 @@
   const readiness = window.GFIELDSASMOMockReadiness;
   if (!engine || !localRecord) throw new Error("GFIELD learner plan dependencies did not load");
 
+  const pageQuery = new URLSearchParams(window.location.search);
+  const runtimeToken = pageQuery.get("runtime") === "local-private" ? pageQuery.get("token") : null;
+  const loopback = new Set(["127.0.0.1", "localhost", "[::1]"]).has(window.location.hostname);
+  const privateRuntime = loopback && /^[A-Za-z0-9_-]{32}$/u.test(runtimeToken || "")
+    ? Object.freeze({ token: runtimeToken })
+    : null;
+
   const priorityProfiles = Object.freeze({
     geometry: Object.freeze({ label: "기하·공간 추론", clusterId: "6.G.A", errorType: "strategy-gap", difficulty: "advanced" }),
     ratio: Object.freeze({ label: "비와 비례", clusterId: "6.RP.A", errorType: "concept-gap", difficulty: "core" }),
@@ -27,11 +34,6 @@
   function selectedPriority() {
     const value = selectedPriorityKey();
     return priorityProfiles[value];
-  }
-  function linkedPracticeSummary() {
-    if (goalId.value !== "sasmo-primary6") return null;
-    const saved = localRecord.storage.loadPractice("sasmo-g6").summary;
-    return saved && saved.attempted > 0 ? saved : null;
   }
   function linkedCompetitionEvidence() {
     if (goalId.value !== "sasmo-primary6" || typeof localRecord.storage.loadCompetitionEvidence !== "function") return null;
@@ -94,10 +96,8 @@
     const grade6Diagnostic = grade6DiagnosticPriority(linkedGrade6DiagnosticEvidence());
     const assessment = assessmentPriority(linkedAssessmentEvidence());
     const competition = linkedCompetitionEvidence();
-    const practice = linkedPracticeSummary();
     const mappedCompetition = competition && competition.priorityAxis ? localRecord.priorityForAxis(competition.priorityAxis) : null;
-    const mappedPractice = practice && practice.priorityAxis ? localRecord.priorityForAxis(practice.priorityAxis) : null;
-    return grade6Diagnostic || assessment || mappedCompetition || mappedPractice || selectedPriority();
+    return grade6Diagnostic || assessment || mappedCompetition || selectedPriority();
   }
   function createPlan() {
     return engine.buildPlan({
@@ -115,7 +115,7 @@
     text("today-problems", `${plan.today.totalProblemCount}문항 내외`);
     const competition = linkedCompetitionEvidence();
     const grade6Diagnostic = linkedGrade6DiagnosticEvidence();
-    const scoreOnlyPaper = competition && ["legacy-unreviewed", "taxonomy-review-pending"].includes(competition.diagnosticState);
+    const scoreOnlyPaper = competition && ["legacy-unreviewed", "legacy-diagnostic-superseded", "taxonomy-review-pending"].includes(competition.diagnosticState);
     text("today-description", grade6Diagnostic && grade6Diagnostic.priorities.length ? `${plan.priorities[0].label}의 ${plan.priorities[0].errorLabel}에 맞춘 오늘의 계획입니다. 학생 응답이나 정답은 학습계획에 저장하지 않습니다.` : scoreOnlyPaper ? `이 기출 기록은 점수만 연결합니다. ${plan.priorities[0].label} 학습은 현재 선택 또는 별도 유형 점검에 따르며, 검수 중인 영역 판정으로 확정한 약점이 아닙니다.` : competition && !competition.priorityAxis ? `${plan.priorities[0].label} 유지 학습을 위한 오늘의 계획입니다. 이 기출에서는 자동 확정할 약점이 없었습니다.` : `${plan.priorities[0].label} 약점에 맞춘 오늘의 계획입니다. 실제 진단 뒤에는 최대 두 약점만 함께 배정합니다.`);
     const host = document.getElementById("today-blocks");
     host.replaceChildren();
@@ -138,15 +138,16 @@
     });
   }
   function renderTeacherPack(plan) {
+    const host = document.getElementById("teacher-grid");
+    host.replaceChildren();
+    if (document.body.dataset.audience !== "teacher") return;
     text("teacher-pack-state", `${plan.priorities[0].label} · ${plan.materials.clusterId} 수업 세트`);
     const resources = [
       ["학생용 개념", "학생이 먼저 읽는 모델·대표 예제", plan.materials.studentConceptHref, "학생용 개념 열기"],
-      ["교사용 지도서", "정답·풀이·관찰 포인트를 포함한 2문항 수업 단위", plan.materials.teacherWorkbookHref, "교사용 지도서 열기"],
-      ["학생용 워크북", "수업 뒤 같은 약점의 독립 연습", plan.materials.studentWorkbookHref, "학생용 워크북 열기"],
-      ["유지 확인", plan.retention.map(function (entry) { return entry.label; }).join(" · "), plan.materials.teacherWorkbookHref.replace("mode=workbook", "mode=recheck"), "재확인 지도서 열기"]
+      ["교사용 지도서", "36문항 전체의 정답·풀이·관찰 포인트", plan.materials.teacherWorkbookHref, "교사용 지도서 열기"],
+      ["학생용 워크북", "정답을 분리한 36문항 수업·독립 연습", plan.materials.studentWorkbookHref, "학생용 워크북 열기"],
+      ["8문항 재확인", plan.retention.map(function (entry) { return entry.label; }).join(" · "), plan.materials.teacherWorkbookHref.replace("mode=workbook", "mode=recheck"), "재확인 지도서 열기"]
     ];
-    const host = document.getElementById("teacher-grid");
-    host.replaceChildren();
     resources.forEach(function (resource, index) {
       const card = document.createElement("article");
       const number = document.createElement("span");
@@ -162,8 +163,37 @@
       host.append(card);
     });
   }
+  function renderCompetitionReviewQueue(evidence) {
+    const section = document.getElementById("review-queue");
+    const list = document.getElementById("review-queue-list");
+    list.replaceChildren();
+    const queue = evidence && evidence.schemaVersion === "gfield-competition-evidence-v6" && Array.isArray(evidence.reviewQueue) ? evidence.reviewQueue : [];
+    section.hidden = queue.length === 0;
+    if (!queue.length) return;
+    text("review-queue-title", `최초 응시 다시 보기 ${queue.length}문항`);
+    text("review-queue-copy", document.body.dataset.audience === "teacher"
+      ? "학생 답과 정답은 저장하지 않았습니다. 최초 응시의 풀이 흔적을 확인할 순서이며, 오류 유형이나 약점 영역을 자동 판정한 목록이 아닙니다."
+      : "제출한 답과 정답은 저장하지 않았습니다. 최초 응시에서 다시 풀 문항을 찾기 위한 순서이며, 약점 영역을 판정한 목록이 아닙니다.");
+    queue.forEach(function (entry) {
+      const item = document.createElement("li");
+      item.className = `review-item ${entry.outcome}`;
+      const number = document.createElement("strong");
+      number.textContent = String(entry.questionNumber).padStart(2, "0");
+      const detail = document.createElement("span");
+      const outcome = entry.outcome === "incorrect" ? "오답" : "미응답";
+      const points = entry.pointsEarned < 0 ? `−${Math.abs(entry.pointsEarned)}점` : `${entry.pointsEarned}점`;
+      detail.textContent = `${entry.sectionId}영역 · ${outcome} · 득점 ${points}`;
+      const boundary = document.createElement("small");
+      boundary.textContent = entry.diagnosticEligibility === "review-required"
+        ? "문항 검수 필요 · 영역 판정 제외"
+        : entry.diagnosticEligibility === "score-only"
+          ? "점수만 반영 · 영역 판정 제외"
+          : document.body.dataset.audience === "teacher" ? "풀이의 첫 이탈 지점 확인" : "답을 보지 않고 다시 풀기";
+      item.append(number, detail, boundary);
+      list.append(item);
+    });
+  }
   function render(plan) {
-    const practiceEvidence = linkedPracticeSummary();
     const competitionEvidence = linkedCompetitionEvidence();
     const competitionSeries = linkedCompetitionSeries();
     const trend = competitionPrediction(competitionSeries);
@@ -171,25 +201,37 @@
     const assessmentEvidence = linkedAssessmentEvidence();
     const grade6Diagnostic = linkedGrade6DiagnosticEvidence();
     const competitionPriorityConfirmed = Boolean(competitionEvidence && competitionEvidence.priorityAxis);
-    const competitionLegacy = Boolean(competitionEvidence && competitionEvidence.diagnosticState === "legacy-unreviewed");
+    const competitionLegacy = Boolean(competitionEvidence && ["legacy-unreviewed", "legacy-diagnostic-superseded"].includes(competitionEvidence.diagnosticState));
     const competitionTaxonomyPending = Boolean(competitionEvidence && competitionEvidence.diagnosticState === "taxonomy-review-pending");
     const competitionScoreOnly = competitionLegacy || competitionTaxonomyPending;
-    const evidence = grade6Diagnostic || assessmentEvidence || competitionEvidence || practiceEvidence;
+    const evidence = grade6Diagnostic || assessmentEvidence || competitionEvidence;
+    text("priority-legend", competitionScoreOnly ? "영역 판정 전 직접 선택할 학습 영역" : "현재 가장 먼저 보완할 영역");
+    text("teacher-title", competitionScoreOnly ? "선택한 영역을 한 수업 세트로 엽니다." : "한 약점 군을 한 수업 세트로 엽니다.");
     text("goal-program", plan.goal.label);
     text("plan-title", `${plan.calendar.calendarWeeks}주 학습 계획`);
     const scheduleCopy = `${plan.calendar.calendarWeeks}주 동안 주 ${plan.availability.studyDaysPerWeek}일, 하루 ${plan.availability.minutesPerDay}분을 기준으로 설계했습니다. 수업 결석과 복습 여유를 고려해 전체 시간의 80%만 배정합니다.`;
-    text("plan-description", grade6Diagnostic ? `${scheduleCopy} 교사 검토가 끝난 Grade 6 42문항 진단의 점수 요약과 우선 약점을 반영했습니다. 학생 응답, 정답, 풀이 원문은 이 계획에 저장하지 않습니다.` : assessmentEvidence ? `${scheduleCopy} ${assessmentEvidence.source.label} 결과와 영역별 약점을 반영해 ${assessmentEvidence.recommendedStart.label}에서 시작하는 G·MAP 진도를 구성했습니다.` : competitionEvidence ? competitionScoreOnly ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70은 점수 이력으로만 연결했습니다. 영역 분류는 재검수 대상이어서 자동 약점 처방에 사용하지 않습니다.` : competitionPriorityConfirmed ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70과 영역별 약점을 반영해 오늘의 우선 학습을 골랐습니다.` : `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70을 연결했습니다. 충분한 약점 신호가 없어 현재 선택한 영역을 유지 학습으로 구성합니다.` : practiceEvidence ? `${scheduleCopy} SASMO 유형 점검의 첫 응답 ${practiceEvidence.firstCorrect} / ${practiceEvidence.attempted}을 반영해 오늘의 우선 학습을 골랐습니다.` : scheduleCopy);
+    text("plan-description", grade6Diagnostic ? `${scheduleCopy} 교사 검토가 끝난 Grade 6 42문항 진단의 점수 요약과 우선 약점을 반영했습니다. 학생 응답, 정답, 풀이 원문은 이 계획에 저장하지 않습니다.` : assessmentEvidence ? `${scheduleCopy} ${assessmentEvidence.source.label} 결과와 영역별 약점을 반영해 ${assessmentEvidence.recommendedStart.label}에서 시작하는 G·MAP 진도를 구성했습니다.` : competitionEvidence ? competitionScoreOnly ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70은 점수 이력으로만 연결했습니다. 영역 분류는 재검수 대상이어서 자동 약점 처방에 사용하지 않습니다.` : competitionPriorityConfirmed ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70과 영역별 약점을 반영해 오늘의 우선 학습을 골랐습니다.` : `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70을 연결했습니다. 충분한 약점 신호가 없어 현재 선택한 영역을 유지 학습으로 구성합니다.` : scheduleCopy);
     text("days-remaining", plural(plan.calendar.daysRemaining, "일", "일"));
     text("study-day-count", plural(plan.calendar.studyDays, "일", "일"));
     text("capacity-minutes", `${plan.calendar.usableMinutes.toLocaleString("ko-KR")}분`);
     const state = document.getElementById("plan-state");
-    state.textContent = grade6Diagnostic ? "42문항 진단 연결" : assessmentEvidence ? "학교 평가 연결" : competitionScoreOnly ? "기출 점수 연결" : competitionEvidence ? "기출 진단 연결" : practiceEvidence ? "예비 진단 연결" : "진단 연결 전";
+    state.textContent = grade6Diagnostic ? "42문항 진단 연결" : assessmentEvidence ? "학교 평가 연결" : competitionScoreOnly ? "기출 점수 연결" : competitionEvidence ? "기출 진단 연결" : "진단 연결 전";
     state.className = `state-chip ${evidence ? "connected" : "waiting"}`;
-    text("prediction-title", grade6Diagnostic ? "42문항 진단이 오늘의 개념과 문제 수로 이어졌습니다." : assessmentEvidence ? "학교 평가 결과가 오늘의 학습에 반영되었습니다." : competitionScoreOnly ? "기출 점수만 학습계획에 연결했습니다." : competitionEvidence ? "검증된 기출 결과가 오늘의 학습에 반영되었습니다." : practiceEvidence ? "유형 점검은 오늘의 학습에 반영되었습니다." : "예상 성적은 진단 후 계산합니다.");
-    text("prediction-copy", grade6Diagnostic ? `${grade6Diagnostic.score.earnedPoints} / ${grade6Diagnostic.score.maxPoints}점 · ${grade6Diagnostic.score.percentage}% · ${grade6Diagnostic.priorities.length ? `우선 보완 ${plan.priorities[0].label}` : "자동 확인된 약점 없음"}. 이 결과는 학교의 공식 배정·승급 판정이나 실전 예상 점수가 아닙니다.` : assessmentEvidence ? `${assessmentEvidence.source.label} · G·MAP 권장 시작 ${assessmentEvidence.recommendedStart.label} · 우선 보완 ${plan.priorities[0].label}. 이는 학교의 공식 배정이 아니며, 실전 예상 점수는 별도의 최초 모의 기록이 쌓인 뒤 계산합니다.` : competitionEvidence ? `실제 점수 ${competitionEvidence.score.rawScore} / 70 · ${competitionScoreOnly ? `영역 판정 재검수 중 · ${plan.priorities[0].label} 학습` : competitionPriorityConfirmed ? `우선 보완 ${plan.priorities[0].label}` : `자동 확정 약점 없음 · ${plan.priorities[0].label} 유지 학습`}. ${scoreOutlook}` : practiceEvidence ? `첫 응답 ${practiceEvidence.firstCorrect} / ${practiceEvidence.attempted} · 우선 보완 ${plan.priorities[0].label}. 이 10유형 점검은 공식 점수 예측이 아닙니다. 예상 범위는 전체 실전 모의의 난이도·시간·최초 응시 기록이 쌓인 뒤 계산합니다.` : `${plan.diagnostic.actionLabel}의 최초 응시 결과와 이후 실전 모의 기록이 있어야 점수 범위와 신뢰도를 계산합니다.`);
+    text("prediction-title", grade6Diagnostic ? "42문항 진단이 오늘의 개념과 문제 수로 이어졌습니다." : assessmentEvidence ? "학교 평가 결과가 오늘의 학습에 반영되었습니다." : competitionScoreOnly ? "기출 점수만 학습계획에 연결했습니다." : competitionEvidence ? "검증된 기출 결과가 오늘의 학습에 반영되었습니다." : "예상 성적은 진단 후 계산합니다.");
+    text("prediction-copy", grade6Diagnostic ? `${grade6Diagnostic.score.earnedPoints} / ${grade6Diagnostic.score.maxPoints}점 · ${grade6Diagnostic.score.percentage}% · ${grade6Diagnostic.priorities.length ? `우선 보완 ${plan.priorities[0].label}` : "자동 확인된 약점 없음"}. 이 결과는 학교의 공식 배정·승급 판정이나 실전 예상 점수가 아닙니다.` : assessmentEvidence ? `${assessmentEvidence.source.label} · G·MAP 권장 시작 ${assessmentEvidence.recommendedStart.label} · 우선 보완 ${plan.priorities[0].label}. 이는 학교의 공식 배정이 아니며, 실전 예상 점수는 별도의 최초 모의 기록이 쌓인 뒤 계산합니다.` : competitionEvidence ? `실제 점수 ${competitionEvidence.score.rawScore} / 70 · ${competitionScoreOnly ? `영역 판정 재검수 중 · ${plan.priorities[0].label} 학습` : competitionPriorityConfirmed ? `우선 보완 ${plan.priorities[0].label}` : `자동 확정 약점 없음 · ${plan.priorities[0].label} 유지 학습`}. ${scoreOutlook}` : `${plan.diagnostic.actionLabel}의 최초 응시 결과와 이후 실전 모의 기록이 있어야 점수 범위와 신뢰도를 계산합니다.`);
     const diagnosticAction = document.getElementById("diagnostic-action");
-    diagnosticAction.href = grade6Diagnostic ? "./diagnostic.html?runtime=local-qa" : assessmentEvidence ? "./assessment-entry.html" : competitionEvidence ? "./sasmo-real-paper.html" : plan.diagnostic.actionHref;
-    diagnosticAction.textContent = grade6Diagnostic ? "42문항 진단 결과 다시 보기" : assessmentEvidence ? "학교 평가 결과 다시 보기" : competitionEvidence ? "SASMO 기출 진단 다시 열기" : practiceEvidence ? "SASMO 유형 점검 이어서 하기" : `${plan.diagnostic.actionLabel} 시작`;
+    if (grade6Diagnostic) diagnosticAction.href = "./diagnostic.html?runtime=local-qa";
+    else if (assessmentEvidence) diagnosticAction.href = "./assessment-entry.html";
+    else if (competitionEvidence && privateRuntime) {
+      const returnUrl = new URL("./sasmo-real-paper.html", window.location.href);
+      returnUrl.search = "";
+      returnUrl.searchParams.set("runtime", "local-private");
+      returnUrl.searchParams.set("token", privateRuntime.token);
+      returnUrl.searchParams.set("audience", document.body.dataset.audience === "teacher" ? "teacher" : "student");
+      diagnosticAction.href = returnUrl.href;
+    } else diagnosticAction.href = competitionEvidence ? "./sasmo-real-paper.html" : plan.diagnostic.actionHref;
+    diagnosticAction.textContent = grade6Diagnostic ? "42문항 진단 결과 다시 보기" : assessmentEvidence ? "학교 평가 결과 다시 보기" : competitionEvidence ? "SASMO 기출 진단 다시 열기" : `${plan.diagnostic.actionLabel} 시작`;
+    renderCompetitionReviewQueue(competitionEvidence);
     renderToday(plan);
     renderTeacherPack(plan);
   }
@@ -198,11 +240,14 @@
     const audience = query.get("audience") === "teacher" ? "teacher" : "student";
     const studentLink = document.getElementById("student-workspace-link");
     const teacherLink = document.getElementById("teacher-workspace-link");
+    const teacherSection = document.getElementById("teacher-pack");
     const requestedGoal = query.get("goal");
     const goalQuery = requestedGoal && engine.GOALS[requestedGoal] ? `&goal=${encodeURIComponent(requestedGoal)}` : "";
+    const runtimeQuery = privateRuntime ? `&runtime=local-private&token=${encodeURIComponent(privateRuntime.token)}` : "";
     document.body.dataset.audience = audience;
-    studentLink.href = `./learning-plan.html?audience=student${goalQuery}`;
-    teacherLink.href = `./learning-plan.html?audience=teacher${goalQuery}#teacher-pack`;
+    teacherSection.hidden = audience !== "teacher";
+    studentLink.href = `./learning-plan.html?audience=student${goalQuery}${runtimeQuery}`;
+    teacherLink.href = `./learning-plan.html?audience=teacher${goalQuery}${runtimeQuery}#teacher-pack`;
     if (audience === "teacher") {
       studentLink.removeAttribute("aria-current");
       teacherLink.setAttribute("aria-current", "page");
@@ -212,11 +257,10 @@
     }
     if (audience === "teacher") {
       text("plan-audience-eyebrow", "TEACHER · G·MAP LESSON PATH");
-      document.getElementById("plan-audience-title").innerHTML = "진단 근거가<br><span>오늘의 수업이 됩니다.</span>";
+      document.getElementById("plan-audience-title").innerHTML = '<span class="headline-line">진단 근거로</span><span class="headline-line accent">오늘의 수업을</span><span class="headline-line accent">설계합니다.</span>';
       text("plan-audience-description", "학생의 현재 과정과 약점 유형을 확인하고 수업 시간에 맞춰 강사용 교안, 학생용 워크북, 숙제와 재확인을 한 수업 세트로 구성합니다.");
       text("plan-setup-title", "학생의 수업 조건을 입력하세요.");
       document.querySelector("#plan-form .primary-action").textContent = "학생 수업 계획 계산";
-      const teacherSection = document.getElementById("teacher-pack");
       const todaySection = document.querySelector(".today-section");
       todaySection.parentNode.insertBefore(teacherSection, todaySection);
       teacherSection.classList.add("audience-primary");

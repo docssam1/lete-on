@@ -80,35 +80,35 @@
 
   const roles = Object.freeze({
     student: Object.freeze({
-      kicker: "학생용 · 오늘의 학습",
-      title: "오늘 무엇을 공부할지 바로 압니다.",
-      description: "문제를 풀고, 틀린 이유를 확인하고, 필요한 개념과 다음 연습으로 바로 이동합니다.",
-      previewKicker: "DEMO LEARNER",
-      cta: "Grade 6 학생 체험 시작",
-      href: "./competition-practice.html?program=sasmo&audience=student&locale=ko",
-      liveNote: "지금 체험 가능 · GFIELD 자체 제작 유형 10개",
-      previewNote: "공식 점수나 수상 확률이 아닌 GFIELD 학습 준비 흐름입니다.",
+      kicker: "학생용 · 원본 시험과 OMR",
+      title: "실제 시험지를 그대로 풉니다.",
+      description: "2019 Grade 6 원본 문제지를 화면 또는 인쇄물로 보고, 별도 OMR에 답을 입력해 실제 배점으로 채점합니다.",
+      previewKicker: "ORIGINAL PAPER · STUDENT",
+      cta: "2019 G6 원본 시험 시작",
+      href: "./sasmo-real-paper.html?audience=student",
+      liveNote: "원본 PDF·검증팩을 이 기기에서 선택해 사용",
+      previewNote: "원본 문항은 바꾸지 않고, 답안과 채점 기록만 로컬 브라우저에서 처리합니다.",
       features: Object.freeze([
-        Object.freeze({ title: "문제 풀기", detail: "검수된 실제 유형을 학생 화면에서 풉니다." }),
-        Object.freeze({ title: "틀린 이유 확인", detail: "계산, 조건 해석, 전략 선택 오류를 구분합니다." }),
-        Object.freeze({ title: "개념과 연습 연결", detail: "먼저 배울 개념과 같은 사고 유형을 이어 봅니다." }),
-        Object.freeze({ title: "다시 확인", detail: "짧은 재확인으로 학습이 남았는지 살핍니다." })
+        Object.freeze({ title: "원본 문제지", detail: "문항·도형·선택지·순서를 바꾸지 않은 시험지를 봅니다." }),
+        Object.freeze({ title: "별도 OMR", detail: "답만 입력하고 미응답을 포함한 실제 점수를 확인합니다." }),
+        Object.freeze({ title: "문항 검토", detail: "정오와 문항 번호를 확인하고 풀이 흔적을 돌아봅니다." }),
+        Object.freeze({ title: "다음 학습", detail: "검수된 약점 근거가 있을 때만 개념과 연습을 연결합니다." })
       ])
     }),
     teacher: Object.freeze({
-      kicker: "강사용 · 근거와 수업 설계",
-      title: "풀이 결과를 다음 수업으로 바꿉니다.",
-      description: "강사는 정답만 보지 않고 영역, 오류 유형, 풀이 전략을 확인해 수업과 과제를 조정합니다.",
-      previewKicker: "PUBLIC INSTRUCTOR PREVIEW",
-      cta: "Grade 6 강사용 풀이 보기",
-      href: "./competition-practice.html?program=sasmo&audience=teacher&locale=ko",
-      liveNote: "공개 미리보기 · 계정, 학생 기록, 실제 배정 기능 없음",
-      previewNote: "강사용 공개 미리보기이며 인증된 강사 대시보드나 실제 학생 기록 화면이 아닙니다.",
+      kicker: "강사용 · 채점 근거와 관찰",
+      title: "원본 답안 근거로 수업을 준비합니다.",
+      description: "강사는 실제 배점 결과와 문항별 정오를 보고, 풀이 흔적을 확인한 뒤에만 오류 유형과 다음 수업을 정합니다.",
+      previewKicker: "ORIGINAL PAPER · INSTRUCTOR",
+      cta: "2019 G6 채점·관찰 화면 열기",
+      href: "./sasmo-real-paper.html?audience=teacher",
+      liveNote: "원본 PDF·검증팩 기반 · 학생 기록은 이 기기에만 저장",
+      previewNote: "한 회 점수만으로 공식 수상 등급이나 영역 실력을 단정하지 않습니다.",
       features: Object.freeze([
-        Object.freeze({ title: "근거 확인", detail: "문항의 정답, 풀이, 예상 오류를 함께 봅니다." }),
-        Object.freeze({ title: "수업 우선순위", detail: "선수개념 보정, 핵심, 심화 순서를 정합니다." }),
-        Object.freeze({ title: "자료 배정 설계", detail: "개념 학습, 유형 연습, 재확인을 연결합니다." }),
-        Object.freeze({ title: "변화 관찰", detail: "한 번의 점수보다 오류가 줄었는지 확인합니다." })
+        Object.freeze({ title: "원본 대조", detail: "문항 번호와 답안표를 원본 시험에 맞춰 확인합니다." }),
+        Object.freeze({ title: "실제 배점", detail: "Section A와 B의 서로 다른 배점·감점을 적용합니다." }),
+        Object.freeze({ title: "관찰 분리", detail: "점수, 영역 분류, 오류 추정을 서로 다른 근거로 다룹니다." }),
+        Object.freeze({ title: "수업 연결", detail: "풀이 흔적까지 확인한 뒤 개념·워크북·재확인을 배정합니다." })
       ])
     })
   });
@@ -122,7 +122,7 @@
     level: requestedK2 ? "K2" : Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? `G${requestedGrade}` : "G6",
     archiveGrade: requestedArchiveGrade === "all" ? "all" : requestedK2 ? "K2" : Number.isInteger(requestedGrade) && requestedGrade >= 1 && requestedGrade <= 12 ? String(requestedGrade) : "6",
     goal: "first-attempt",
-    diagnosticYear: 2020,
+    diagnosticYear: 2019,
     role: requestedRole
   };
   const levels = Object.freeze(["K2", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G10", "G11", "G12"]);
@@ -236,21 +236,25 @@
       container.append(item);
     });
     document.getElementById("diagnostic-title").textContent = `${levelLabel(state.level)} · ${goal.diagnostic}`;
-    document.getElementById("diagnostic-description").textContent = goal.diagnosticDescription;
+    document.getElementById("diagnostic-description").textContent = state.level === "G6"
+      ? "2019 Grade 6 원본 25문항은 문항·그림·선택지·순서를 바꾸지 않고 실제 배점으로 채점합니다. 영역 분류와 자동 처방 워크북은 원본 대조 검수가 끝날 때까지 잠급니다."
+      : goal.diagnosticDescription;
     const heroLevel = document.getElementById("hero-level-label");
     const heroAction = document.getElementById("hero-action-text");
     const roleContext = document.getElementById("role-preview-context");
     const diagnosticLink = document.getElementById("diagnostic-link");
     if (heroLevel) heroLevel.textContent = levelLabel(state.level);
-    if (heroAction) heroAction.textContent = `${levelLabel(state.level)} ${goal.title.split(" · ")[0]} 목표에 맞춰 준비 진단의 첫 단계를 정리합니다.`;
+    if (heroAction) heroAction.textContent = state.level === "G6"
+      ? "G6 원본 시험 → OMR 채점 → 문항 검토 → 학습계획 순서로 진행합니다."
+      : `${levelLabel(state.level)} ${goal.title.split(" · ")[0]} 목표에 맞춰 준비 진단의 첫 단계를 정리합니다.`;
     if (roleContext) roleContext.textContent = `${levelLabel(state.level)} · ${goal.title.split(" · ")[0]}`;
     if (diagnosticLink) {
       const liveGradeSix = state.level === "G6";
       diagnosticLink.href = liveGradeSix
-        ? `./competition-practice.html?program=sasmo&audience=${state.role}&locale=ko`
+        ? `./sasmo-real-paper.html?audience=${state.role}`
         : "#past-papers";
       diagnosticLink.innerHTML = liveGradeSix
-        ? `${state.role === "teacher" ? "강사용 풀이" : "학생 유형 학습"} 체험 <span aria-hidden="true">→</span>`
+        ? `${state.role === "teacher" ? "원본 채점·관찰" : "원본 25문항"} 시작 <span aria-hidden="true">→</span>`
         : `${levelLabel(state.level)} 기출 근거 보기 <span aria-hidden="true">→</span>`;
     }
   }
@@ -300,8 +304,8 @@
     sourceLink.href = source.sourcePageUrl;
     if (readiness.available) {
       if (state.diagnosticYear === 2019 && state.level === "G6") {
-        title.textContent = "2019 · G6 로컬 검수 완료 · 공개 잠금";
-        detail.textContent = "25문항 로컬 채점과 학습계획 연결을 검증했습니다. 교사가 원본 PDF와 검증팩을 제공하는 비공개 흐름이며, 공개 운영이나 공식 수상 등급 예측은 아직 아닙니다.";
+        title.textContent = "2019 · G6 원본 진단 사용 가능";
+        detail.textContent = "원본 PDF의 파일 지문을 확인한 뒤 25문항을 그대로 표시하고 실제 배점으로 채점합니다. 원본과 검증팩은 사용자가 이 기기에서 선택하며 서버로 전송하지 않습니다. 공식 수상 등급 예측은 아직 제공하지 않습니다.";
       } else {
         title.textContent = `${state.diagnosticYear} · ${levelLabel(state.level)} 원문·해설 확보 · 문항 검수 중`;
         detail.textContent = "공식 자료의 접근 경로만 확인했습니다. 25문항의 원본·정답·영역·그림을 독립 검수하고 실제 화면을 확인하기 전에는 채점과 예측에 사용하지 않습니다.";

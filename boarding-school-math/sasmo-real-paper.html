@@ -6,7 +6,7 @@
   <meta name="description" content="SASMO Grade 6 실제 기출을 이 기기 안에서 채점하고, 검수 중인 영역 관찰과 학습계획을 분리해 보여주는 GFIELD 로컬 진단실">
   <title>SASMO 실제 기출 진단실 | GFIELD Math</title>
   <link rel="stylesheet" href="./gfield-tokens.css?v=20260922-1">
-  <link rel="stylesheet" href="./sasmo-real-paper.css?v=20260925-1">
+  <link rel="stylesheet" href="./sasmo-real-paper.css?v=20261009-2">
 </head>
 <body class="gfield-ui">
   <a class="skip-link" href="#main">진단실로 바로 가기</a>
@@ -14,8 +14,8 @@
     <a class="paper-brand" href="./sasmo.html"><span>G·MAP</span><strong>SASMO</strong></a>
     <nav aria-label="SASMO 진단실 탐색">
       <a href="./sasmo.html">프로그램 소개</a>
-      <a href="./competition-practice.html?program=sasmo-g6&amp;audience=student&amp;locale=ko">유형 워크북</a>
-      <a href="./learning-plan.html?goal=sasmo-primary6">학습계획</a>
+      <a href="#paper-title" aria-current="page">2019 원본 시험</a>
+      <a id="learning-plan-nav" href="./learning-plan.html?goal=sasmo-primary6">학습계획</a>
     </nav>
   </header>
 
@@ -24,7 +24,7 @@
       <div>
         <p class="section-label">REAL PAPER · LOCAL DIAGNOSTIC</p>
         <h1 id="page-title">실제 기출을 풀고,<br>바로 다음 수업까지.</h1>
-        <p class="intro-copy">2019 SASMO Grade 6 원본 PDF를 선택해 파일 지문을 확인한 뒤 화면 또는 인쇄물로 풀고 답을 입력합니다. 채점 자료와 학생 답안은 서버로 전송하지 않습니다. 점수는 계산하되, 영역 분류는 검수 중이라 자동 약점 처방에 사용하지 않습니다.</p>
+        <p class="intro-copy">2019 SASMO Grade 6 원본 PDF를 선택해 파일 지문을 확인한 뒤 화면 또는 인쇄물로 풀고 답을 입력합니다. 현재 등록본은 제3자 공개 보관본과 문항별로 대조한 사본이며, 주최기관 공식 호스팅 여부와는 구분합니다. 채점 자료와 학생 답안은 서버로 전송하지 않습니다. 점수는 계산하되, 영역 분류는 검수 중이라 자동 약점 처방에 사용하지 않습니다.</p>
       </div>
       <dl class="format-facts" aria-label="진단 형식">
         <div><dt>문항</dt><dd>25</dd></div>
@@ -44,8 +44,9 @@
       <aside class="setup-panel" aria-labelledby="setup-title">
         <div class="panel-heading">
           <span>01</span>
-          <div><p class="section-label">TEACHER SETUP</p><h2 id="setup-title">기출 자료 준비</h2></div>
+          <div><p class="section-label" id="setup-label">STUDENT SETUP</p><h2 id="setup-title">기출 자료 준비</h2></div>
         </div>
+        <p class="runtime-note" id="runtime-note" hidden><strong>로컬 스튜디오 자동 연결</strong><span>검증된 문제지·채점팩·문항별 복습을 이 컴퓨터에서만 불러옵니다.</span></p>
 
         <label class="file-control" for="paper-file">
           <span>2019 원본 문제 PDF <small>필수</small></span>
@@ -111,7 +112,7 @@
         <span class="evidence-chip">검증 기출 1회</span>
       </header>
       <div class="score-overview">
-        <div class="score-main"><span>실제 취득점수</span><strong><b id="raw-score">—</b> / 70</strong><small id="readiness-label">채점 전</small></div>
+        <div class="score-main"><span>실제 취득점수</span><strong><b id="raw-score">—</b> / 70</strong><small id="readiness-label">채점 전</small><small class="section-score-summary" id="section-score-summary">A영역 — / 30 · B영역 — / 40</small></div>
         <dl>
           <div><dt>정답</dt><dd id="correct-count">—</dd></div>
           <div><dt>오답</dt><dd id="incorrect-count">—</dd></div>
@@ -120,7 +121,7 @@
         <p class="prediction-boundary">한 회 결과는 공식 수상 등급이나 다음 점수 예측이 아닙니다. 서로 다른 검증 기출 기록이 더 쌓여야 예상 범위를 계산합니다.</p>
       </div>
 
-      <div class="axis-heading"><h3>영역별 관찰 · 분류 검수 중</h3><p id="axis-boundary">25문항은 모두 점수에 포함합니다. 19번은 원문만으로 규칙을 하나로 정할 수 없어 영역 관찰에서 제외하고, 나머지 24문항으로 봅니다. 영역 분류 자체가 검수 중이므로 자동 약점 처방에는 사용하지 않습니다.</p></div>
+      <div class="axis-heading"><h3>영역별 관찰 · 분류 검수 중</h3><p id="axis-boundary">25문항은 모두 인쇄 정답 기준 점수에 포함합니다. 9번은 공동 최솟값 표현, 15번은 그림 규칙의 비유일성, 19번은 유한 수열 규칙의 비유일성, 21번은 원문의 ‘whole numbers’가 0을 포함하는지 불명확해 영역 관찰에서 제외합니다. 나머지 21문항만 관찰하며, 영역 분류 검수가 끝날 때까지 자동 약점 처방에는 사용하지 않습니다.</p></div>
       <div class="axis-grid" id="axis-grid"></div>
 
       <div class="next-route">
@@ -129,8 +130,8 @@
       </div>
 
       <details class="teacher-evidence">
-        <summary>교사용 문항별 관찰표 열기</summary>
-        <p>19번은 인쇄 정답 기준으로 채점하지만 영역 관찰에는 사용하지 않습니다. 다른 영역 이름도 원본 대비 분류 검수 중입니다. 오답과 미응답은 풀이 흔적과 시간을 확인한 뒤에만 오류 원인을 기록하세요.</p>
+        <summary id="question-review-summary">문항별 득점과 다시 볼 문제 열기</summary>
+        <p id="question-review-copy">각 문항의 배점·이번 득점·문항 형식·다음 확인 행동을 봅니다. 수학 영역은 가분류이며, 검수 대기 문항은 강점·약점 판단에 사용하지 않습니다.</p>
         <div class="question-evidence" id="question-evidence"></div>
       </details>
       <span class="print-watermark" aria-hidden="true">GFIELD MATH · SASMO LOCAL DIAGNOSTIC</span>
@@ -139,11 +140,11 @@
 
   <footer><span>GFIELD BOARDING SCHOOL MATHEMATICS</span><a href="./sasmo.html">SASMO 프로그램으로 돌아가기</a></footer>
 
-  <script src="./competition/sasmo-mock-catalog.js?v=20260924-1"></script>
-  <script src="./assessment/sasmo-mock-readiness.js?v=20260925-1"></script>
-  <script src="./assessment/sasmo-local-paper-session.js?v=20260925-1"></script>
-  <script src="./shared/gmap-local-learning-record.js?v=20260925-1"></script>
+  <script src="./competition/sasmo-mock-catalog.js?v=20261009-1"></script>
+  <script src="./assessment/sasmo-mock-readiness.js?v=20261007-1"></script>
+  <script src="./assessment/sasmo-local-paper-session.js?v=20261009-2"></script>
+  <script src="./shared/gmap-local-learning-record.js?v=20261007-1"></script>
   <script src="../reading-world/vendor/pdfjs/pdf.min.js?v=20260922-1"></script>
-  <script src="./sasmo-real-paper.js?v=20260925-1"></script>
+  <script src="./sasmo-real-paper.js?v=20261009-2"></script>
 </body>
 </html>

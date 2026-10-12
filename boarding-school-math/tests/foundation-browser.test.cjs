@@ -97,7 +97,9 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   await page.locator('[data-goal="sasmo"]').click();
   assert.equal(await page.locator('[data-goal="sasmo"]').getAttribute("aria-selected"), "true");
   assert.equal(await page.locator("#goal-title").textContent(), "SASMO · Grade 6 준비");
-  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./competition-practice.html?program=sasmo&audience=student&locale=ko");
+  assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./sasmo-real-paper.html?audience=student");
+  assert.match(await page.locator("#goal-status-note").innerText(), /2019 Grade 6 원본 25문항/);
+  assert.match(await page.locator("#goal-route").innerText(), /원본 확인[\s\S]*25문항 풀이·OMR[\s\S]*실제 배점 채점/);
   const original = page.locator("#goal-original");
   assert.equal(await original.getAttribute("href"), "https://form.simcc.org/2019-sasmo-year-paper/");
   assert.equal(await original.getAttribute("target"), "_blank");
@@ -214,34 +216,16 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   assert.equal(await page.locator("[data-role-jump]").count(), 2);
   assert.equal(await page.locator(".experience-proof > div").count(), 3);
   assert.equal(await page.locator('[data-level="G6"]').getAttribute("aria-selected"), "true");
-  assert.equal(await page.locator("#role-primary-link").getAttribute("href"), "./competition-practice.html?program=sasmo&audience=student&locale=ko");
-  assert.match(await page.locator("#role-availability").innerText(), /지금 체험 가능[\s\S]*10개/);
-  assert.equal(await page.locator("#mini-experience").getAttribute("data-showcase-state"), null);
-  assert.equal(await page.locator("#showcase-tabs .showcase-tab").count(), 3);
-  assert.equal(await page.locator("#showcase-question-slot .showcase-question").count(), 1);
-  assert.equal(await page.locator("#hero-demo-visual svg").count(), 1);
-  assert.equal(await page.locator("#workbook-demo-visual svg").count(), 1);
-  assert.match(await page.locator("#workbook-preview").innerText(), /SASMO Grade 6 · 10유형 워크북[\s\S]*36문항 워크북과 8문항 재확인[\s\S]*진단별 자동 처방 팩[\s\S]*검수/);
-  assert.equal(await page.locator('.workbook-actions a[href*="competition-practice"][href*="audience=student"]').getAttribute("href"), "./competition-practice.html?program=sasmo&audience=student&locale=ko");
-  assert.equal(await page.locator('.workbook-actions a[href*="competition-practice"][href*="audience=teacher"]').getAttribute("href"), "./competition-practice.html?program=sasmo&audience=teacher&locale=ko");
+  assert.equal(await page.locator("#role-primary-link").getAttribute("href"), "./sasmo-real-paper.html?audience=student");
+  assert.match(await page.locator("#role-availability").innerText(), /원본 PDF·검증팩/);
+  assert.equal(await page.locator("#mini-experience").count(), 0);
+  assert.equal(await page.locator("#source-first .source-first-grid article").count(), 3);
+  assert.equal(await page.locator(".original-contract li").count(), 3);
+  assert.equal(await page.locator('script[src*="sasmo-showcase"],script[src*="grade6-competition-type-bank"],script[src*="gmap-local-question-coach"]').count(), 0);
+  assert.match(await page.locator("#workbook-preview").innerText(), /공개 사용 중단[\s\S]*SASMO 합성 10유형 문제집[\s\S]*36문항 워크북과 8문항 재확인[\s\S]*진단별 자동 처방 팩/);
+  assert.equal(await page.locator('.workbook-actions a[href*="competition-practice"]').count(), 0);
+  assert.equal(await page.locator('.workbook-actions a[href="./sasmo-real-paper.html"]').count(), 1);
   assert.equal(await page.locator(".workbook-course-link").getAttribute("href"), "./unit-workbook.html?audience=student&mode=workbook&locale=ko&paper=A4&cluster=6.G.A");
-
-  await page.locator('[data-demo-answer="A"]').click();
-  assert.match(await page.locator("#showcase-question .feedback").innerText(), /정답은 표시하지 않/);
-  assert.doesNotMatch(await page.locator("#showcase-question .feedback").innerText(), /41/);
-  await page.locator("#showcase-question .gmap-ai-launch").waitFor();
-  await page.locator("#showcase-question .gmap-ai-launch").click();
-  await page.locator(".gmap-ai-preset").first().click();
-  assert.match(await page.locator(".gmap-ai-log").innerText(), /이웃한 두 수 사이의 변화/);
-  assert.doesNotMatch(await page.locator(".gmap-ai-log").innerText(), /정답.*41|42.?−.?1.?=.?41/);
-  await page.locator(".gmap-ai-close").click();
-  await page.locator('[data-showcase-index="1"]').click();
-  await page.locator('[data-demo-answer="A"]').click();
-  await page.locator('[data-showcase-index="2"]').click();
-  await page.locator('[data-demo-answer="A"]').click();
-  assert.equal(await page.locator("#mini-experience").getAttribute("data-showcase-complete"), "true");
-  assert.match(await page.locator("#showcase-insight").innerText(), /미니 진단이 완성[\s\S]*관찰된 강점[\s\S]*먼저 보완/);
-  assert.equal(await page.locator('.showcase-workbook-link[href="#workbook-preview"]').count(), 1);
   assert.equal(await page.locator("#k12-record-count").textContent(), "88");
   assert.equal(await page.locator("#k12-asset-count").textContent(), "144");
   assert.equal(await page.locator("#edugain-topic-count").textContent(), "158");
@@ -266,12 +250,10 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
       && window.GFIELDSASMOSourceInventory.validatePublicInventory().valid
       && window.GFIELDSASMODiagnosticFoundation.validateFoundation().valid;
   }), true);
-  assert.equal(await page.locator("#diagnostic-year").inputValue(), "2020");
+  assert.equal(await page.locator("#diagnostic-year").inputValue(), "2019");
   assert.equal(await page.locator("#diagnostic-workflow li").count(), 5);
-  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /2020[\s\S]*G6[\s\S]*문항 검수 중/);
-  assert.match(await page.locator("#diagnostic-readiness").innerText(), /원본·정답·영역·그림[\s\S]*채점과 예측에 사용하지 않/);
-  await page.locator("#diagnostic-year").selectOption("2019");
-  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /2019[\s\S]*G6[\s\S]*로컬 검수 완료[\s\S]*공개 잠금/);
+  assert.match(await page.locator("#diagnostic-readiness-title").innerText(), /2019[\s\S]*G6[\s\S]*원본 진단 사용 가능/);
+  assert.match(await page.locator("#diagnostic-readiness").innerText(), /25문항을 그대로 표시[\s\S]*실제 배점/);
   assert.equal(await page.locator("#diagnostic-source-link").getAttribute("href"), "https://form.simcc.org/2019-sasmo-year-paper/");
   assert.equal(await page.locator("#diagnostic-source-link").getAttribute("target"), "_blank");
   assert.match(await page.locator("#diagnostic-source-link").getAttribute("rel"), /noopener/);
@@ -279,9 +261,9 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
 
   await page.locator('[data-role-jump="teacher"]').click();
   assert.equal(await page.locator('[data-role="teacher"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#role-title").textContent(), /다음 수업/);
-  assert.equal(await page.locator("#role-primary-link").getAttribute("href"), "./competition-practice.html?program=sasmo&audience=teacher&locale=ko");
-  assert.match(await page.locator("#role-availability").textContent(), /공개 미리보기[\s\S]*학생 기록/);
+  assert.match(await page.locator("#role-title").textContent(), /원본 답안 근거/);
+  assert.equal(await page.locator("#role-primary-link").getAttribute("href"), "./sasmo-real-paper.html?audience=teacher");
+  assert.match(await page.locator("#role-availability").textContent(), /원본 PDF·검증팩[\s\S]*이 기기/);
   assert.equal(await page.locator("#role-features li").count(), 4);
 
   await page.locator('[data-level="K2"]').click();
@@ -299,7 +281,7 @@ test("dedicated SASMO page exposes year-grade source files and a K2-G12 preparat
   await page.locator('[data-role="teacher"]').focus();
   await page.keyboard.press("ArrowLeft");
   assert.equal(await page.locator('[data-role="student"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#role-title").textContent(), /오늘 무엇을 공부/);
+  assert.match(await page.locator("#role-title").textContent(), /실제 시험지를 그대로/);
   assert.equal((await page.locator("body").innerText()).includes("학부모"), false);
   await page.locator("#archive-grade-filter").selectOption("1");
   assert.equal(await page.locator("#archive-year-list .archive-year-card").count(), 3);
@@ -501,9 +483,9 @@ test("Grade 6 diagnostic page explains the real flow while public hosting keeps 
 test("Grade 6 public concept learning provides ten deep-linked, fully solved lessons without graded assessment leakage", async function () {
   const visualEvidence = {
     "6.RP.A": /8권[\s\S]*12달러[\s\S]*14권[\s\S]*21달러/,
-    "6.NS.A": /3\/4 = 6\/8[\s\S]*6개/,
+    "6.NS.A": /6개/,
     "6.NS.B": /84[\s\S]*60[\s\S]*최대공약수는 12/,
-    "6.NS.C": /-7\/4[\s\S]*-5\/3/,
+    "6.NS.C": /더 왼쪽/,
     "6.EE.A": /2³[\s\S]*8 \+ 4[\s\S]*31/,
     "6.EE.B": /6x = 42[\s\S]*x = 7/,
     "6.EE.C": /y = 3x \+ 2[\s\S]*23/,
@@ -541,6 +523,13 @@ test("Grade 6 public concept learning provides ten deep-linked, fully solved les
   await page.goto(`${baseUrl}concept-learning.html?cluster=6.EE.B`, { waitUntil: "networkidle" });
   assert.match(await page.locator("#lesson").innerText(), /6x = 42[\s\S]*x = 7/);
   assert.doesNotMatch(await page.locator("#lesson").innerText(), /4x\s*-\s*7|29/);
+  await page.goto(`${baseUrl}concept-learning.html?cluster=6.NS.A`, { waitUntil: "networkidle" });
+  assert.ok(await page.locator('math.inline-fraction[data-source-fraction="3/4"] mfrac').count() >= 1);
+  assert.ok(await page.locator('math.inline-fraction[data-source-fraction="1/8"] mfrac').count() >= 1);
+  assert.doesNotMatch(await page.locator("#lesson").innerText(), /[\u2212-]?\d+\s*\/\s*\d+/);
+  await page.goto(`${baseUrl}concept-learning.html?cluster=6.NS.C`, { waitUntil: "networkidle" });
+  assert.ok(await page.locator('[data-source-fraction="-7/4"]').count() >= 2);
+  assert.doesNotMatch(await page.locator("#lesson").innerText(), /[\u2212-]?\d+\s*\/\s*\d+/);
   const publicHtml = await page.locator("#lesson").innerHTML();
   ["qst-bnk-", "slot-bdg-", "private-authoring", "privateDraft", "scoringSpec", "rubricDraft"].forEach(function (token) {
     assert.equal(publicHtml.includes(token), false, `concept lesson leaked ${token}`);

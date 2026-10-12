@@ -6,13 +6,20 @@
   "use strict";
 
   const PACK_SCHEMA_VERSION = "gfield-private-sasmo-diagnostic-v2";
-  const EVIDENCE_SCHEMA_VERSION = "gfield-competition-evidence-v2";
+  const EVIDENCE_SCHEMA_VERSION = "gfield-competition-evidence-v6";
+  const REPORT_SCHEMA_VERSION = "gfield-sasmo-local-paper-report-v6";
   const FORM_ID = "sasmo-2019-g6-baseline-a";
   const SOURCE_FINGERPRINT_SHA256 = "a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b";
   const ITEM_COUNT = 25;
-  // The printed key can be used for the historical score, but Q19's finite
-  // sequence does not establish a unique pattern rule from the prompt alone.
+  // All 25 printed-key outcomes remain in the historical score. Q9 has a
+  // language-determinacy issue, Q15 has a source-rule determinacy issue,
+  // Q19's finite sequence does not determine one rule, and Q21 does not state
+  // whether zero is excluded from "whole numbers". None of the four may
+  // influence domain diagnosis or prescription.
+  const DIAGNOSTIC_EXCLUDED_QUESTION_NUMBERS = Object.freeze([9, 15, 19, 21]);
   const SCORE_ONLY_QUESTION_NUMBERS = Object.freeze([19]);
+  const REVIEW_REQUIRED_QUESTION_NUMBERS = Object.freeze([9, 15, 21]);
+  const DIAGNOSTIC_REASON_CODES = Object.freeze({ 9: "language-determinacy-review", 15: "nonunique-rule", 19: "nonunique-rule", 21: "whole-number-zero-scope-review" });
   const AXIS_IDS = Object.freeze([
     "number-operations", "patterns-algebra", "geometry-spatial",
     "combinatorics-logic", "data-probability", "problem-solving-strategies"
@@ -22,6 +29,11 @@
     "prerequisite-gap", "conceptual-misunderstanding", "procedure-error", "representation-error",
     "reasoning-error", "careless-error", "time-management"
   ]);
+  const OUTCOME_POINTS_KEYS = Object.freeze({
+    correct: "correctPoints",
+    incorrect: "incorrectPoints",
+    blank: "blankPoints"
+  });
 
   function fail(code) {
     const error = new Error(code);
@@ -112,7 +124,57 @@
     return normalizedRational(response) === normalizedRational(item.privateScoring.answerValue) ? "correct" : "incorrect";
   }
 
-  function answerSafeEvidence(analysis) {
+  function buildQuestionEvidence(form, packItems, outcomes) {
+    dense(packItems, ITEM_COUNT, "QUESTION_EVIDENCE_ITEMS_INVALID");
+    dense(outcomes, ITEM_COUNT, "QUESTION_EVIDENCE_OUTCOMES_INVALID");
+    const evidence = form.items.map(function (item, index) {
+      const outcome = outcomes[index] && outcomes[index].outcome;
+      if (!OUTCOME_POINTS_KEYS[outcome]) fail("QUESTION_EVIDENCE_OUTCOME_INVALID");
+      const section = form.sections.find(function (entry) {
+        return item.questionNumber >= entry.firstQuestionNumber && item.questionNumber < entry.firstQuestionNumber + entry.itemCount;
+      });
+      if (!section) fail("QUESTION_EVIDENCE_SECTION_MISSING");
+      const reviewRequired = REVIEW_REQUIRED_QUESTION_NUMBERS.includes(item.questionNumber);
+      const scoreOnly = SCORE_ONLY_QUESTION_NUMBERS.includes(item.questionNumber);
+      const diagnosticEligibility = reviewRequired ? "review-required" : scoreOnly ? "score-only" : "eligible";
+      return Object.freeze({
+        questionNumber: item.questionNumber,
+        sectionId: section.id,
+        responseType: packItems[index].responseType,
+        pointsPossible: section.correctPoints,
+        pointsEarned: section[OUTCOME_POINTS_KEYS[outcome]],
+        axisId: item.axisId,
+        skillId: item.skillId,
+        outcome,
+        diagnosticUse: !DIAGNOSTIC_EXCLUDED_QUESTION_NUMBERS.includes(item.questionNumber),
+        diagnosticEligibility,
+        diagnosticReasonCode: DIAGNOSTIC_REASON_CODES[item.questionNumber] || null,
+        reviewCommentCode: diagnosticEligibility !== "eligible"
+          ? "diagnostic-exclusion"
+          : outcome === "correct"
+            ? "explain-strategy"
+            : outcome === "incorrect"
+              ? "locate-first-divergence"
+              : "identify-starting-barrier",
+        workReviewRequired: reviewRequired || outcome !== "correct"
+      });
+    });
+    return Object.freeze(evidence);
+  }
+
+  function answerSafeEvidence(analysis, questionEvidence) {
+    const reviewQueue = questionEvidence.filter(function (item) {
+      return item.outcome !== "correct";
+    }).map(function (item) {
+      return Object.freeze({
+        questionNumber: item.questionNumber,
+        sectionId: item.sectionId,
+        outcome: item.outcome,
+        pointsEarned: item.pointsEarned,
+        diagnosticEligibility: item.diagnosticEligibility,
+        reviewCommentCode: item.reviewCommentCode
+      });
+    });
     const evidence = {
       schemaVersion: EVIDENCE_SCHEMA_VERSION,
       programId: "sasmo",
@@ -156,7 +218,12 @@
           evidenceState: axis.evidenceState
         };
       }),
-      scoreOnlyQuestionNumbers: analysis.diagnostic.scoreOnlyQuestionNumbers.slice(),
+      diagnosticExcludedQuestionNumbers: analysis.diagnostic.diagnosticExcludedQuestionNumbers.slice(),
+      scoreOnlyQuestionNumbers: SCORE_ONLY_QUESTION_NUMBERS.slice(),
+      reviewRequiredQuestionNumbers: REVIEW_REQUIRED_QUESTION_NUMBERS.slice(),
+      // A neutral first-attempt queue only. It deliberately excludes answers,
+      // answer keys, taxonomy labels, error types, and source locators.
+      reviewQueue,
       // The 2019 paper's primary-axis mapping is still under curriculum review.
       // Preserve per-axis observations, but never turn them into prescriptions.
       strengths: [],
@@ -201,39 +268,49 @@
         { id: "challenge", minPercent: 82, label: "상위권 도전" }
       ]
     };
-    const analysis = readiness.analyzeAttempt(form, attempt, policy, { history: settings.history || null, targetScore: settings.targetScore == null ? null : settings.targetScore, scoreOnlyQuestionNumbers: SCORE_ONLY_QUESTION_NUMBERS });
+    const analysis = readiness.analyzeAttempt(form, attempt, policy, { history: settings.history || null, targetScore: settings.targetScore == null ? null : settings.targetScore, diagnosticExcludedQuestionNumbers: DIAGNOSTIC_EXCLUDED_QUESTION_NUMBERS });
+    const questionEvidence = buildQuestionEvidence(form, pack.items, attempt.outcomes);
+    if (questionEvidence.reduce(function (sum, item) { return sum + item.pointsEarned; }, 0) !== analysis.score.rawScore) {
+      fail("ITEM_SCORE_RECONCILIATION_FAILED");
+    }
     const result = {
-      schemaVersion: "gfield-sasmo-local-paper-report-v2",
+      schemaVersion: REPORT_SCHEMA_VERSION,
       student: {
         score: analysis.score,
         readiness: analysis.readiness,
         axes: analysis.diagnostic.axes,
-        scoreOnlyQuestionNumbers: analysis.diagnostic.scoreOnlyQuestionNumbers,
+        diagnosticExcludedQuestionNumbers: analysis.diagnostic.diagnosticExcludedQuestionNumbers,
+        scoreOnlyQuestionNumbers: SCORE_ONLY_QUESTION_NUMBERS,
+        reviewRequiredQuestionNumbers: REVIEW_REQUIRED_QUESTION_NUMBERS,
         taxonomyReviewState: "pending",
         strengths: [],
         weaknesses: [],
         prediction: analysis.prediction
       },
       teacher: {
-        questionEvidence: form.items.map(function (item, index) {
-          return { questionNumber: item.questionNumber, axisId: item.axisId, skillId: item.skillId, outcome: attempt.outcomes[index].outcome, diagnosticUse: !SCORE_ONLY_QUESTION_NUMBERS.includes(item.questionNumber), workReviewRequired: attempt.outcomes[index].outcome !== "correct" };
-        }),
-        followUpRule: "19번은 인쇄 정답 기준 점수에만 포함하고 패턴 진단에서 제외합니다. 다른 영역 이름도 원본 대비 분류 검수 중이므로 자동 약점 처방에 사용하지 않습니다. 오답과 미응답은 풀이 흔적과 시간을 확인한 뒤 오류 유형을 기록하세요."
+        questionEvidence,
+        followUpRule: "9번·15번·19번·21번은 인쇄 정답 기준 점수에는 포함하지만 영역 진단에서는 제외합니다. 9번은 공동 최솟값 표현, 15번은 그림 규칙의 비유일성, 19번은 유한 수열 규칙의 비유일성, 21번은 원문의 ‘whole numbers’가 0을 포함하는지 검토해야 합니다. 다른 영역 이름도 원본 대비 분류 검수 중이므로 자동 약점 처방에 사용하지 않습니다."
       }
     };
-    result.localEvidence = answerSafeEvidence(analysis);
+    result.localEvidence = answerSafeEvidence(analysis, questionEvidence);
     return Object.freeze(result);
   }
 
   return Object.freeze({
     PACK_SCHEMA_VERSION,
     EVIDENCE_SCHEMA_VERSION,
+    REPORT_SCHEMA_VERSION,
     FORM_ID,
     ITEM_COUNT,
     AXIS_IDS,
+    DIAGNOSTIC_EXCLUDED_QUESTION_NUMBERS,
+    SCORE_ONLY_QUESTION_NUMBERS,
+    REVIEW_REQUIRED_QUESTION_NUMBERS,
+    DIAGNOSTIC_REASON_CODES,
     validatePack,
     normalizeResponses,
     outcomeFor,
+    buildQuestionEvidence,
     analyze
   });
 });

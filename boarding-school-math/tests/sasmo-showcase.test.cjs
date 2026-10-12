@@ -35,19 +35,20 @@ test("showcase diagrams are calculated from the same checked question models", f
   assert.match(cube, /data-cube-size="3"/);
 });
 
-test("workbook preview separates the live SASMO type book, curriculum repair, and pending auto-prescription", function () {
+test("public SASMO landing retires the synthetic showcase and routes to the original paper", function () {
   const html = fs.readFileSync(path.resolve(__dirname, "../sasmo.html"), "utf8");
+  assert.match(html, /id="source-first"/);
   assert.match(html, /id="workbook-preview"/);
-  assert.match(html, /SASMO Grade 6 · 10유형 워크북/);
+  assert.match(html, /SASMO 합성 10유형 문제집/);
+  assert.match(html, /공개 사용 중단 · 원본 대조 재구성/);
   assert.match(html, /36문항 워크북과 8문항 재확인/);
   assert.match(html, /진단별 자동 처방 팩/);
   assert.match(html, /검수 진행 중/);
-  assert.match(html, /competition-practice\.html\?program=sasmo&amp;audience=student&amp;locale=ko/);
-  assert.match(html, /competition-practice\.html\?program=sasmo&amp;audience=teacher&amp;locale=ko/);
-  assert.match(html, /competition-practice\.html\?program=sasmo&amp;audience=student&amp;locale=en"/);
-  assert.match(html, /competition-practice\.html\?program=sasmo&amp;audience=student&amp;locale=en-SG"/);
-  assert.match(html, /Singapore · Primary 6/);
-  assert.match(html, /competition-practice\.html\?program=sasmo&amp;audience=student&amp;locale=zh-Hans"/);
+  assert.match(html, /주최기관 제공 자료와 제3자 공개 보관본의 출처 상태를 구분/);
+  assert.match(html, /href="\.\/sasmo-real-paper\.html"/);
+  assert.doesNotMatch(html, /competition-practice\.html\?program=sasmo/);
+  assert.doesNotMatch(html, /src="\.\/sasmo-showcase\.js/);
+  assert.doesNotMatch(html, /src="\.\/competition\/grade6-competition-type-bank\.js/);
   assert.match(html, /unit-workbook\.html\?audience=student&amp;mode=workbook&amp;locale=ko&amp;paper=A4&amp;cluster=6\.G\.A/);
-  assert.doesNotMatch(html, /진단별 자동 처방 팩<\/strong><p>[^<]*(완료|체험 가능)/);
+  assert.doesNotMatch(html, /id="mini-experience"/);
 });

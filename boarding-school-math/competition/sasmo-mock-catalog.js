@@ -40,6 +40,16 @@
     }))
   });
 
+  const PRIVATE_REVIEWS = Object.freeze({
+    "sasmo-2019-g6-baseline-a": Object.freeze({
+      schemaVersion: "gfield-private-sasmo-english-review-v1",
+      packId: "sasmo-2019-g6-english-review-v1",
+      imageIndexSha256: "aa99ae06b66a294a158248536be508faee1104d1b2d6ef48c165b94353145e07",
+      studentSha256: "b5c4cf91a6e76efed5a6836d020caa6a72fb66479ec7a4e8eb09cfc035e6a64a",
+      teacherSha256: "89f8538e59e979fe64b50331d7d5fe2871df2606dd7f6730d6106042ffc2963e"
+    })
+  });
+
   const forms = Object.freeze([g6Baseline2019]);
   function getForm(formId) {
     return forms.find(function (form) { return form.formId === formId; }) || null;
@@ -47,5 +57,8 @@
   function availableFor(levelId) {
     return Object.freeze(forms.filter(function (form) { return form.levelId === String(levelId || "").trim().toUpperCase(); }));
   }
-  return Object.freeze({ FORM_SCHEMA_VERSION, forms, getForm, availableFor });
+  function getPrivateReview(formId) {
+    return PRIVATE_REVIEWS[formId] || null;
+  }
+  return Object.freeze({ FORM_SCHEMA_VERSION, forms, getForm, availableFor, getPrivateReview });
 });

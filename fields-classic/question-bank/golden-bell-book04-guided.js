@@ -9,6 +9,7 @@ const COLOR = Object.freeze({
 });
 
 const SUPPORTED_FAMILIES = new Set([
+  "book4-balance-equality",
   "book4-circle-logic-source",
   "book4-compare-difference",
   "book4-compare-order",
@@ -538,6 +539,50 @@ function compareFrame(visual, phase, family) {
   return `${organize}<div data-book04-answer="${escapeHtml(answer)}" data-book04-check="${escapeHtml(check)}" style="display:grid;gap:3px;place-items:center;color:${COLOR.verify};font-weight:900"><strong style="font-size:23px">${escapeHtml(headline)}</strong><span style="font-size:13px">다른 수를 넣어도 순서와 차이는 같습니다.</span></div>`;
 }
 
+// 28~30쪽 등식의 성질: 평형 저울의 양쪽에서 똑같은 것을 지워도 평형이 유지된다.
+const BALANCE_GLYPH = { square: ["■", "#668d42"], triangle: ["▲", "#e87f21"], circle: ["●", "#2f8da8"] };
+function balanceEqualityModel(visual) {
+  const left = visual.left || {};
+  const right = visual.right || {};
+  const names = [...new Set([...Object.keys(left), ...Object.keys(right)])];
+  const common = Object.fromEntries(names.map((name) => [name, Math.min(left[name] || 0, right[name] || 0)]));
+  const rest = (side) => Object.fromEntries(names.map((name) => [name, (side[name] || 0) - common[name]]).filter(([, count]) => count > 0));
+  const restLeft = rest(left);
+  const restRight = rest(right);
+  const unitCount = restLeft[visual.unit] || 0;
+  const perCount = restRight[visual.per] || 0;
+  if (Object.keys(restLeft).length !== 1 || Object.keys(restRight).length !== 1 || !unitCount || perCount % unitCount) {
+    throw new Error("Book 4 balance equality model must leave one kind on each side with a whole ratio.");
+  }
+  return { left, right, common, restLeft, restRight, unitCount, perCount, ratio: perCount / unitCount };
+}
+
+function balanceTokens(counts, struck, color) {
+  return Object.entries(counts).flatMap(([name, count]) => Array.from({ length: count }, (_, index) => {
+    const [glyph, fill] = BALANCE_GLYPH[name] || [escapeHtml(name), COLOR.ink];
+    const cross = index < (struck?.[name] || 0);
+    return `<span style="position:relative;display:inline-grid;place-items:center;width:26px;height:26px;color:${fill};font-size:22px;opacity:${cross ? 0.45 : 1}">${glyph}${cross ? `<i style="position:absolute;inset:0;display:grid;place-items:center;color:${color};font-size:30px;font-style:normal;font-weight:900;line-height:1">×</i>` : ""}</span>`;
+  })).join("");
+}
+
+function balanceEqualityFrame(visual, phase) {
+  const model = balanceEqualityModel(visual);
+  const frameColor = phase === "problem" ? COLOR.given : phase === "organize" ? COLOR.action : COLOR.verify;
+  const struck = phase === "problem" ? null : model.common;
+  const pan = (counts) => `<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px;min-width:120px;max-width:190px;padding:8px;border-bottom:4px solid ${frameColor}">${balanceTokens(counts, struck, COLOR.action)}</div>`;
+  const beam = `<div style="display:flex;align-items:end;justify-content:center;gap:34px">${pan(model.left)}${pan(model.right)}</div><div aria-hidden="true" style="width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:24px solid ${frameColor}"></div>`;
+  const glyph = (name) => (BALANCE_GLYPH[name] || [name])[0];
+  if (phase === "problem") return `${beam}<p style="margin:0;color:${COLOR.given};font-size:14px;font-weight:800">저울이 평형입니다.</p>`;
+  const removed = Object.entries(model.common).filter(([, count]) => count > 0).map(([name, count]) => `${glyph(name)} ${count}개`).join(", ");
+  const organize = `${beam}<p style="margin:0;color:${COLOR.action};font-size:15px;font-weight:900">양쪽에서 똑같이 ${escapeHtml(removed)}씩 지워도 평형입니다.</p>`;
+  if (phase === "organize") return organize;
+  const unit = glyph(visual.unit);
+  const per = glyph(visual.per);
+  const answer = String(model.ratio);
+  const check = `${model.unitCount}x${model.ratio}=${model.perCount}`;
+  return `${organize}<div data-book04-answer="${answer}" data-book04-check="${escapeHtml(check)}" style="display:grid;gap:3px;place-items:center;color:${COLOR.verify};font-weight:900"><strong style="font-size:22px">${unit} ${model.unitCount}개 = ${per} ${model.perCount}개 → ${unit} 1개 = ${per} ${answer}개</strong><span style="font-size:13px">남은 것끼리 나누어 한 개의 무게를 찾았습니다.</span></div>`;
+}
+
 export function renderBook04Guided(experience, beat, step) {
   if (!experience || !SUPPORTED_FAMILIES.has(experience.family)) return "";
   const beats = Array.isArray(experience.beats) ? experience.beats : [];
@@ -553,5 +598,6 @@ export function renderBook04Guided(experience, beat, step) {
   else if (experience.family === "book4-circle-logic-source") content = circleFrame(visual, phase);
   else if (experience.family === "book4-row-logic-source") content = rowFrame(visual, phase);
   else if (experience.family === "book4-compare-order" || experience.family === "book4-compare-difference") content = compareFrame(visual, phase, experience.family);
+  else if (experience.family === "book4-balance-equality") content = balanceEqualityFrame(visual, phase);
   return phaseShell(experience, phase, safeStep, content);
 }

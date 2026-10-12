@@ -4,6 +4,7 @@ import { GOLDEN_BELL_BOOKS } from "./golden-bell-data.js";
 import { renderBook04Guided } from "./golden-bell-book04-guided.js";
 
 const FAMILIES = [
+  "book4-balance-equality",
   "book4-circle-logic-source",
   "book4-compare-difference",
   "book4-compare-order",
@@ -158,7 +159,16 @@ function compareDifferenceAnswer(visual) {
   return String(Math.abs(values.get(a) - values.get(b)));
 }
 
+// 양쪽 무게를 단위 무게로 직접 맞춰 본다: 지우기 없이 unit 1개 = per k개인 k를 1부터 찾는다.
+function balanceEqualityAnswer(visual) {
+  const weigh = (side, k) => Object.entries(side).reduce((sum, [name, count]) => sum + count * (name === visual.unit ? k : name === visual.per ? 1 : NaN), 0);
+  const fits = Array.from({ length: 20 }, (_, i) => i + 1).filter((k) => weigh(visual.left, k) === weigh(visual.right, k));
+  assert.equal(fits.length, 1, "balance equality must have one ratio");
+  return String(fits[0]);
+}
+
 const EXPECTED_ANSWER = {
+  "book4-balance-equality": balanceEqualityAnswer,
   "book4-compare-order": compareOrderAnswer,
   "book4-compare-difference": compareDifferenceAnswer,
   "book4-fold-hole-count": foldAnswer,

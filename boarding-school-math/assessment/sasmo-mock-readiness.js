@@ -101,10 +101,10 @@
     });
   }
 
-  function scoreOnlyNumbers(value) {
+  function questionNumbers(value, field) {
     if (value == null) return Object.freeze([]);
-    const numbers = dense(value, "scoreOnlyQuestionNumbers");
-    if (numbers.some(function (number) { return !Number.isInteger(number) || number < 1 || number > 25; }) || new Set(numbers).size !== numbers.length) fail("scoreOnlyQuestionNumbers is invalid");
+    const numbers = dense(value, field);
+    if (numbers.some(function (number) { return !Number.isInteger(number) || number < 1 || number > 25; }) || new Set(numbers).size !== numbers.length) fail(`${field} is invalid`);
     return Object.freeze(numbers.slice().sort(function (left, right) { return left - right; }));
   }
 
@@ -207,8 +207,14 @@
     validateForm(form);
     validateAttempt(form, attempt);
     const settings = options || {};
-    const scoreOnlyQuestionNumbers = scoreOnlyNumbers(settings.scoreOnlyQuestionNumbers);
-    const scoreOnlySet = new Set(scoreOnlyQuestionNumbers);
+    const scoreOnlyQuestionNumbers = questionNumbers(settings.scoreOnlyQuestionNumbers, "scoreOnlyQuestionNumbers");
+    const diagnosticExcludedQuestionNumbers = settings.diagnosticExcludedQuestionNumbers == null
+      ? scoreOnlyQuestionNumbers
+      : questionNumbers(settings.diagnosticExcludedQuestionNumbers, "diagnosticExcludedQuestionNumbers");
+    if (settings.scoreOnlyQuestionNumbers != null && settings.diagnosticExcludedQuestionNumbers != null && JSON.stringify(scoreOnlyQuestionNumbers) !== JSON.stringify(diagnosticExcludedQuestionNumbers)) {
+      fail("diagnostic exclusion inputs conflict");
+    }
+    const diagnosticExcludedSet = new Set(diagnosticExcludedQuestionNumbers);
     const sectionScores = form.sections.map(function (section) { return scoreSection(section, attempt.outcomes); });
     const rawScore = sectionScores.reduce(function (sum, section) { return sum + section.rawScore; }, 0);
     const maxScore = sectionScores.reduce(function (sum, section) { return sum + section.maxScore; }, 0);
@@ -217,8 +223,8 @@
     const blank = sectionScores.reduce(function (sum, section) { return sum + section.blank; }, 0);
     const percentOfMax = round1(100 * rawScore / maxScore);
     const axes = axisReport(form, attempt.outcomes, new Set());
-    const diagnosticAxes = axisReport(form, attempt.outcomes, scoreOnlySet);
-    const diagnosticItemCount = 25 - scoreOnlyQuestionNumbers.length;
+    const diagnosticAxes = axisReport(form, attempt.outcomes, diagnosticExcludedSet);
+    const diagnosticItemCount = 25 - diagnosticExcludedQuestionNumbers.length;
     const diagnosticCorrect = diagnosticAxes.reduce(function (sum, axis) { return sum + axis.correct; }, 0);
     const diagnosticAverage = diagnosticItemCount ? diagnosticCorrect * 100 / diagnosticItemCount : null;
     const sufficient = diagnosticAxes.filter(function (axis) { return axis.evidenceState === "sufficient"; });
@@ -230,7 +236,7 @@
       score: Object.freeze({ rawScore, maxScore, percentOfMax, correct, incorrect, blank, sections: Object.freeze(sectionScores) }),
       readiness: Object.freeze({ band: Object.freeze(readinessBand(percentOfMax, policy)), notAnOfficialAward: true }),
       axes,
-      diagnostic: Object.freeze({ itemCount: diagnosticItemCount, scoreOnlyQuestionNumbers, axes: diagnosticAxes }),
+      diagnostic: Object.freeze({ itemCount: diagnosticItemCount, diagnosticExcludedQuestionNumbers, scoreOnlyQuestionNumbers, axes: diagnosticAxes }),
       strengths: Object.freeze(strengths),
       weaknesses: Object.freeze(weaknesses),
       prediction: buildTrendPrediction(form, rawScore, settings.history || null, settings.targetScore == null ? null : settings.targetScore)

@@ -11,6 +11,7 @@ const path = require("node:path");
 const intake = require("./validate-private-sasmo-diagnostic.cjs");
 const catalog = require("../competition/sasmo-mock-catalog.js");
 const readiness = require("../assessment/sasmo-mock-readiness.js");
+const localPaperContract = require("../assessment/sasmo-local-paper-session.js");
 
 const DEFAULT_POLICY = Object.freeze({
   bands: Object.freeze([
@@ -66,19 +67,31 @@ function reportFor(pack, responsePayload) {
   const outcomes = pack.items.map(function (item, index) {
     return Object.freeze({ questionNumber: index + 1, outcome: outcomeFor(item, responsePayload.responses.get(index + 1)) });
   });
-  const analysis = readiness.analyzeAttempt(form, { formId, outcomes }, DEFAULT_POLICY, { history: responsePayload.history, targetScore: responsePayload.targetScore });
+  const analysis = readiness.analyzeAttempt(form, { formId, outcomes }, DEFAULT_POLICY, {
+    history: responsePayload.history,
+    targetScore: responsePayload.targetScore,
+    diagnosticExcludedQuestionNumbers: localPaperContract.DIAGNOSTIC_EXCLUDED_QUESTION_NUMBERS
+  });
   return Object.freeze({
-    schemaVersion: "gfield-private-sasmo-report-v1",
+    schemaVersion: "gfield-private-sasmo-report-v5",
     sourceState: "private-reference-intake-only",
     officialAwardPrediction: false,
-    student: Object.freeze({ score: analysis.score, readiness: analysis.readiness, axes: analysis.axes, strengths: analysis.strengths, weaknesses: analysis.weaknesses, prediction: analysis.prediction }),
+    student: Object.freeze({
+      score: analysis.score,
+      readiness: analysis.readiness,
+      axes: analysis.diagnostic.axes,
+      diagnosticExcludedQuestionNumbers: localPaperContract.DIAGNOSTIC_EXCLUDED_QUESTION_NUMBERS,
+      scoreOnlyQuestionNumbers: localPaperContract.SCORE_ONLY_QUESTION_NUMBERS,
+      reviewRequiredQuestionNumbers: localPaperContract.REVIEW_REQUIRED_QUESTION_NUMBERS,
+      taxonomyReviewState: "pending",
+      strengths: Object.freeze([]),
+      weaknesses: Object.freeze([]),
+      prediction: analysis.prediction
+    }),
     teacher: Object.freeze({
       score: analysis.score,
-      questionEvidence: Object.freeze(form.items.map(function (item, index) {
-        const outcome = outcomes[index].outcome;
-        return Object.freeze({ questionNumber: item.questionNumber, axisId: item.axisId, skillId: item.skillId, outcome, workReviewRequired: outcome !== "correct" });
-      })),
-      followUpRule: "Wrong and blank responses are patterns only; assign an error type after reviewing the student's work or timing evidence."
+      questionEvidence: localPaperContract.buildQuestionEvidence(form, pack.items, outcomes),
+      followUpRule: "Questions 9, 15, 19, and 21 remain in the printed-key score but are excluded from domain diagnosis. Q9 needs language-determinacy review, Q15 needs source-rule review, Q19 does not determine one finite-sequence rule, and Q21 does not state whether zero is excluded from whole numbers. Keep all domain prescriptions locked until taxonomy review is complete."
     })
   });
 }

@@ -10,12 +10,35 @@ async function assertGeometryInsideViewBox(page,label){
 test.before(async function(){server=http.createServer(function(req,res){const file=path.resolve(root,"."+decodeURIComponent(new URL(req.url,"http://127.0.0.1").pathname));if(!file.startsWith(root)||!fs.existsSync(file)||!fs.statSync(file).isFile()){res.writeHead(404);res.end();return;}res.writeHead(200,{"content-type":type(file)});fs.createReadStream(file).pipe(res);});await new Promise(function(resolve){server.listen(0,"127.0.0.1",resolve);});url=`http://127.0.0.1:${server.address().port}/boarding-school-math/competition-practice.html`;browser=await chromium.launch({headless:true});});
 test.after(async function(){await browser.close();await new Promise(function(resolve){server.close(resolve);});});
 
-test("student solves actual SASMO, Math Kangaroo, and AMC bridge types without teacher answers",async function(){
+test("public SASMO practice entry redirects to the verified original-paper flow",async function(){
+  const page=await browser.newPage({viewport:{width:1280,height:900}});
+  await page.goto(`${url}?program=sasmo&audience=student&locale=ko`,{waitUntil:"networkidle"});
+  assert.match(page.url(),/sasmo-real-paper\.html\?audience=student$/);
+  assert.match(await page.locator("h1").innerText(),/실제 기출을 풀고/);
+  await page.close();
+});
+
+test("a public host cannot reopen the retired SASMO set with a query flag",async function(){
+  const context=await browser.newContext({viewport:{width:1280,height:900}});
+  const page=await context.newPage();
+  await page.route("http://public.example/**",async function(route){
+    const requestUrl=new URL(route.request().url());
+    const file=path.resolve(root,"."+decodeURIComponent(requestUrl.pathname));
+    if(!file.startsWith(root)||!fs.existsSync(file)||!fs.statSync(file).isFile()){await route.fulfill({status:404,body:"Not found"});return;}
+    await route.fulfill({status:200,contentType:type(file),body:fs.readFileSync(file)});
+  });
+  await page.goto("http://public.example/boarding-school-math/competition-practice.html?program=sasmo&audience=student&mode=foundation-preview",{waitUntil:"networkidle"});
+  assert.match(page.url(),/sasmo-real-paper\.html\?audience=student$/);
+  assert.equal(await page.locator('[data-item-id^="sasmo-g6-"]').count(),0);
+  await context.close();
+});
+
+test("internal foundation preview keeps the retired synthetic SASMO set available for regression QA",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});
   await page.addInitScript(function(){localStorage.clear();});
   const errors=[];
   page.on("pageerror",function(error){errors.push(error.message);});
-  await page.goto(`${url}?program=sasmo&audience=student&locale=ko`,{waitUntil:"networkidle"});
+  await page.goto(`${url}?program=sasmo&audience=student&locale=ko&mode=foundation-preview`,{waitUntil:"networkidle"});
   assert.equal(await page.locator(".program-tab").count(),3);
   assert.deepEqual(await page.locator(".program-tab span").allInnerTexts(),["Grade 6 · 10개 유형","Grades 5–6 · 10개 유형","Grade 6 기초 연결 · 10개 유형"]);
   assert.equal(await page.locator(".problem-page").count(),5);
@@ -64,21 +87,21 @@ test("student solves actual SASMO, Math Kangaroo, and AMC bridge types without t
   await page.close();
 });
 
-test("first-attempt evidence produces a provisional diagnosis while public teacher preview stays record-separated",async function(){
+test("first-attempt practice records stay separate from the public teacher preview",async function(){
   const page=await browser.newPage({viewport:{width:1280,height:900}});
   await page.addInitScript(function(){localStorage.clear();});
   const external=[];
   page.on("request",function(request){const target=new URL(request.url());if(target.hostname!=="127.0.0.1")external.push(request.url());});
-  await page.goto(`${url}?program=sasmo&audience=student&locale=en`,{waitUntil:"networkidle"});
+  await page.goto(`${url}?program=sasmo&audience=student&locale=en&mode=foundation-preview`,{waitUntil:"networkidle"});
   const rows=bank.items.filter(function(item){return item.programId==="sasmo-g6";});
   const first=page.locator('[data-item-id="'+rows[0].id+'"]');
   await first.locator('[data-answer-id="A"]').click();
   await first.locator('[data-answer-id="'+bank.answerId(rows[0])+'"]').click();
   for(const item of rows.slice(1))await page.locator('[data-item-id="'+item.id+'"] [data-answer-id="'+bank.answerId(item)+'"]').click();
   assert.equal(await page.locator("#results-jump-count").innerText(),"10 / 10");
-  assert.equal(await page.locator("#diagnostic-state").innerText(),"Preliminary analysis ready");
+  assert.equal(await page.locator("#diagnostic-state").innerText(),"Practice record ready");
   assert.equal(await page.locator(".diagnostic-overview article").first().locator("strong").innerText(),"90%");
-  assert.equal(await page.locator(".diagnostic-overview article").nth(2).locator("strong").innerText(),"Sample strong");
+  assert.equal(await page.locator(".diagnostic-overview article").nth(2).locator("strong").innerText(),"Practice sample strong");
   assert.equal(await page.locator('[data-axis="data-probability"] .domain-value b').innerText(),"Not measured");
   assert.match(await page.locator(".diagnostic-prescription").innerText(),/halving the total/i);
   await page.locator('[data-audience="teacher"]').click();
@@ -99,7 +122,7 @@ test("teacher, localization, print, keyboard, and 390px boundaries remain distin
   assert.equal(await page.locator(".choice.correct").count(),10);
   assert.equal(await page.locator('[data-audience="student"]').innerText(),"Student");
   assert.equal(await page.locator('[data-audience="teacher"]').innerText(),"Teacher");
-  assert.equal(await page.locator("#release-title").innerText(),"GFIELD-original problems");
+  assert.equal(await page.locator("#release-title").innerText(),"GFIELD-authored foundation practice");
   assert.equal(await page.locator("#practice-next-kicker").innerText(),"PUBLIC TEACHER PREVIEW");
   assert.match(await page.locator("#audience-disclosure").innerText(),/Public teacher preview/);
   assert.match(await page.locator("#audience-disclosure").innerText(),/no account, learner record, or assignment tools/i);
@@ -114,17 +137,17 @@ test("teacher, localization, print, keyboard, and 390px boundaries remain distin
   await page.locator("#locale-select").selectOption("zh-Hans");
   assert.equal(await page.locator("html").getAttribute("lang"),"zh-Hans");
   assert.equal(await page.locator('[data-audience="student"]').innerText(),"学生版");
-  assert.equal(await page.locator("#workspace-title").innerText(),"真实题型");
+  assert.equal(await page.locator("#workspace-title").innerText(),"基础练习");
   await page.locator("#locale-select").selectOption("en-SG");
   assert.equal(await page.locator("html").getAttribute("lang"),"en-SG");
-  assert.match(await page.title(),/SASMO Primary 6 practice/);
-  assert.equal(await page.locator("#page-kicker").innerText(),"SASMO SINGAPORE · PRIMARY 6 (GRADE 6)");
+  assert.match(await page.title(),/Competition problem types/);
+  assert.equal(await page.locator("#page-kicker").innerText(),"GFIELD FOUNDATION PRACTICE · GRADE 6");
   assert.equal(await page.locator('[data-audience="student"]').innerText(),"Student");
   assert.equal(await page.locator('[data-audience="teacher"]').innerText(),"Teacher");
-  assert.equal(await page.locator('.program-tab[data-program-id="sasmo-g6"] span').innerText(),"Primary 6 (Grade 6) · 10 types");
-  await page.locator('.program-tab[data-program-id="sasmo-g6"]').click();
-  assert.equal(await page.locator("#program-format").innerText(),"GFIELD practice · five-choice format");
-  assert.match(await page.locator("#diagnostic-boundary").innerText(),/not an official SASMO score, award, DSA outcome, or school placement result/i);
+  assert.equal(await page.locator(".program-tab").count(),2);
+  assert.equal(await page.locator('.program-tab[data-program-id="sasmo-g6"]').count(),0);
+  assert.equal(await page.locator("#program-format").innerText(),"GFIELD practice · five choices");
+  assert.match(await page.locator("#diagnostic-boundary").innerText(),/not contest-score, award, school-placement, diagnosis, or study-prescription evidence/i);
   assert.equal(await page.locator(".teacher-solution").count(),10);
   await page.emulateMedia({media:"print"});
   assert.equal(await page.locator(".skip-link,.site-header,.bank-toolbar,.program-browser").evaluateAll(function(nodes){return nodes.filter(function(node){return getComputedStyle(node).display!=="none";}).length;}),0);
@@ -136,9 +159,9 @@ test("teacher, localization, print, keyboard, and 390px boundaries remain distin
   assert.equal(await mobile.locator(".math-fraction").count(),7);
   assert.equal(await mobile.locator(".competition-geometry").count(),4);
   await assertGeometryInsideViewBox(mobile,"Math Kangaroo mobile");
-  await mobile.goto(`${url}?program=sasmo&audience=student&locale=en-SG`,{waitUntil:"networkidle"});
+  await mobile.goto(`${url}?program=sasmo&audience=student&locale=en-SG&mode=foundation-preview`,{waitUntil:"networkidle"});
   assert.equal(await mobile.locator("html").getAttribute("lang"),"en-SG");
-  assert.equal(await mobile.locator("#page-kicker").innerText(),"SASMO SINGAPORE · PRIMARY 6 (GRADE 6)");
+  assert.equal(await mobile.locator("#page-kicker").innerText(),"INTERNAL FOUNDATION PREVIEW · PRIMARY 6");
   assert.equal(await mobile.locator(".teacher-solution").count(),0);
   assert.doesNotMatch(await mobile.locator('[data-item-id="sasmo-g6-pattern-01"]').innerText(),/×3|−1|alternat/i);
   assert.equal(await mobile.locator(".gmap-ai-launch").count(),10);
@@ -152,10 +175,10 @@ test("teacher, localization, print, keyboard, and 390px boundaries remain distin
   await mobile.close();
 });
 
-test("SASMO ten-type workbook stays answer-separated and within an A4 print page",async function(){
+test("retired SASMO foundation preview stays answer-separated and within an A4 print page",async function(){
   const page=await browser.newPage({viewport:{width:794,height:1123}});
   await page.addInitScript(function(){localStorage.clear();});
-  await page.goto(`${url}?program=sasmo&audience=student&locale=ko`,{waitUntil:"networkidle"});
+  await page.goto(`${url}?program=sasmo&audience=student&locale=ko&mode=foundation-preview`,{waitUntil:"networkidle"});
   await page.emulateMedia({media:"print"});
   assert.equal(await page.locator(".problem-page").count(),5);
   assert.equal(await page.locator(".teacher-solution").count(),0);
@@ -163,7 +186,7 @@ test("SASMO ten-type workbook stays answer-separated and within an A4 print page
   let pageHeights=await page.locator(".problem-page").evaluateAll(function(nodes){return nodes.map(function(node){return node.getBoundingClientRect().height;});});
   pageHeights.forEach(function(height){assert.ok(height<1000,"student print page height "+height);});
 
-  await page.goto(`${url}?program=sasmo&audience=teacher&locale=ko`,{waitUntil:"networkidle"});
+  await page.goto(`${url}?program=sasmo&audience=teacher&locale=ko&mode=foundation-preview`,{waitUntil:"networkidle"});
   await page.emulateMedia({media:"print"});
   assert.equal(await page.locator(".problem-page").count(),5);
   assert.equal(await page.locator(".teacher-solution").count(),10);
@@ -171,7 +194,7 @@ test("SASMO ten-type workbook stays answer-separated and within an A4 print page
   pageHeights=await page.locator(".problem-page").evaluateAll(function(nodes){return nodes.map(function(node){return node.getBoundingClientRect().height;});});
   pageHeights.forEach(function(height){assert.ok(height<1000,"teacher print page height "+height);});
 
-  await page.goto(`${url}?program=sasmo&audience=student&locale=en-SG`,{waitUntil:"networkidle"});
+  await page.goto(`${url}?program=sasmo&audience=student&locale=en-SG&mode=foundation-preview`,{waitUntil:"networkidle"});
   await page.emulateMedia({media:"print"});
   assert.equal(await page.locator(".problem-page").count(),5);
   assert.equal(await page.locator(".teacher-solution").count(),0);

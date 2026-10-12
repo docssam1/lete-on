@@ -12,6 +12,12 @@ const intake = require("./validate-private-sasmo-diagnostic.cjs");
 
 const SCHEMA_VERSION = "gfield-private-sasmo-english-lessons-v1";
 const DELIVERY_STATE = "private-post-attempt-review";
+const REVIEW_BOUNDARY_POLICY = Object.freeze({
+  9: Object.freeze({ state: "review-required", reasonCode: "language-determinacy-review" }),
+  15: Object.freeze({ state: "review-required", reasonCode: "nonunique-rule" }),
+  19: Object.freeze({ state: "score-only", reasonCode: "nonunique-rule" }),
+  21: Object.freeze({ state: "review-required", reasonCode: "whole-number-zero-scope-review" })
+});
 const VISUAL_KINDS = new Set([
   "equation-flow", "set-diagram", "edge-double-count", "arrangement-blocks",
   "percent-bar", "angle-map", "unit-bar", "constraint-table", "counting-table",
@@ -58,7 +64,7 @@ function validateLessonPack(pack, intakePack) {
   const seen = new Set();
   lessons.forEach(function (lesson, index) {
     const ref = `lessons[${index}]`;
-    onlyKeys(lesson, ["itemId", "questionNumber", "title", "conceptGoal", "priorKnowledge", "visualModel", "steps", "whyItWorks", "commonMistake", "tryAgain", "finalAnswer", "teacherNote", "verification"], "LESSON_SHAPE_INVALID", ref);
+    onlyKeys(lesson, ["itemId", "questionNumber", "title", "conceptGoal", "priorKnowledge", "visualModel", "steps", "whyItWorks", "commonMistake", "tryAgain", "finalAnswer", "teacherNote", "verification", "reviewBoundary"], "LESSON_SHAPE_INVALID", ref);
     const itemId = `sasmo-${intakePack.paper.year}-${intakePack.paper.levelId.toLowerCase()}-q${String(index + 1).padStart(2, "0")}`;
     if (lesson.itemId !== itemId || lesson.questionNumber !== index + 1 || seen.has(lesson.itemId) || !intakeById.has(lesson.itemId)) fail("LESSON_ITEM_BINDING_INVALID", ref);
     seen.add(lesson.itemId);
@@ -83,8 +89,16 @@ function validateLessonPack(pack, intakePack) {
     text(lesson.finalAnswer.display, "LESSON_ANSWER_INVALID", `${ref}.finalAnswer.display`, /^.{1,120}$/su);
     onlyKeys(lesson.verification, ["publishedSolutionMatched", "independentMethodMatched", "sourceDiagramRequired"], "LESSON_VERIFICATION_INVALID", `${ref}.verification`);
     if (lesson.verification.publishedSolutionMatched !== true || lesson.verification.independentMethodMatched !== true || typeof lesson.verification.sourceDiagramRequired !== "boolean") fail("LESSON_VERIFICATION_INVALID", `${ref}.verification`);
+    const boundaryPolicy = REVIEW_BOUNDARY_POLICY[lesson.questionNumber];
+    if (boundaryPolicy) {
+      onlyKeys(lesson.reviewBoundary, ["state", "reasonCode", "notice"], "LESSON_REVIEW_BOUNDARY_INVALID", `${ref}.reviewBoundary`);
+      if (lesson.reviewBoundary.state !== boundaryPolicy.state || lesson.reviewBoundary.reasonCode !== boundaryPolicy.reasonCode) fail("LESSON_REVIEW_BOUNDARY_INVALID", `${ref}.reviewBoundary`);
+      text(lesson.reviewBoundary.notice, "LESSON_REVIEW_BOUNDARY_INVALID", `${ref}.reviewBoundary.notice`, /^.{40,500}$/su);
+    } else if (lesson.reviewBoundary !== undefined) {
+      fail("LESSON_REVIEW_BOUNDARY_UNEXPECTED", `${ref}.reviewBoundary`);
+    }
   });
-  return Object.freeze({ packId: pack.packId, lessonCount: lessons.length, language: pack.language, deliveryState: pack.deliveryState });
+  return Object.freeze({ packId: pack.packId, lessonCount: lessons.length, language: pack.language, deliveryState: pack.deliveryState, reviewBoundaryQuestionNumbers: Object.freeze(Object.keys(REVIEW_BOUNDARY_POLICY).map(Number)) });
 }
 
 function loadJson(filePath, code) {
@@ -123,4 +137,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = Object.freeze({ SCHEMA_VERSION, DELIVERY_STATE, VISUAL_KINDS, ValidationError, validateLessonPack, loadAndValidate });
+module.exports = Object.freeze({ SCHEMA_VERSION, DELIVERY_STATE, REVIEW_BOUNDARY_POLICY, VISUAL_KINDS, ValidationError, validateLessonPack, loadAndValidate });

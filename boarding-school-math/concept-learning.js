@@ -3,6 +3,8 @@
 
   const content = window.GFIELDGrade6ConceptLessons;
   const clinicPaths = window.GFIELDClinicPaths;
+  const MATHML_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
+  const INLINE_FRACTION_PATTERN = /([\u2212-]?)(\d+)\/(\d+)/g;
   const DOMAIN_LABELS = Object.freeze({ RP: "비와 비례", NS: "수 체계", EE: "식과 방정식", G: "기하", SP: "통계와 확률" });
   const REPRESENTATION_LABELS = Object.freeze({
     "equivalent-ratio-table": "같은 비를 나타내는 표",
@@ -17,10 +19,43 @@
     "ordered-list-and-dot-plot": "정렬 자료와 점그래프"
   });
 
+  function fractionMath(sign, numerator, denominator) {
+    const math = document.createElementNS(MATHML_NAMESPACE, "math");
+    math.classList.add("inline-fraction");
+    math.dataset.sourceFraction = `${sign ? "-" : ""}${numerator}/${denominator}`;
+    math.setAttribute("aria-label", `${sign ? "음의 " : ""}${denominator}분의 ${numerator}`);
+    if (sign) {
+      const minus = document.createElementNS(MATHML_NAMESPACE, "mo");
+      minus.textContent = "−";
+      math.append(minus);
+    }
+    const fraction = document.createElementNS(MATHML_NAMESPACE, "mfrac");
+    const top = document.createElementNS(MATHML_NAMESPACE, "mn");
+    const bottom = document.createElementNS(MATHML_NAMESPACE, "mn");
+    top.textContent = numerator;
+    bottom.textContent = denominator;
+    fraction.append(top, bottom);
+    math.append(fraction);
+    return math;
+  }
+
+  function appendMathText(node, text) {
+    const source = String(text);
+    INLINE_FRACTION_PATTERN.lastIndex = 0;
+    let cursor = 0;
+    let match;
+    while ((match = INLINE_FRACTION_PATTERN.exec(source))) {
+      if (match.index > cursor) node.append(document.createTextNode(source.slice(cursor, match.index)));
+      node.append(fractionMath(match[1], match[2], match[3]));
+      cursor = INLINE_FRACTION_PATTERN.lastIndex;
+    }
+    if (cursor < source.length) node.append(document.createTextNode(source.slice(cursor)));
+  }
+
   function element(tag, className, text) {
     const node = document.createElement(tag);
     if (className) node.className = className;
-    if (text != null) node.textContent = String(text);
+    if (text != null) appendMathText(node, text);
     return node;
   }
 
@@ -66,6 +101,28 @@
     return svg;
   }
 
+  function appendSvgFractionLabel(svg, x, y, source) {
+    const match = /^([\u2212-]?)(\d+)\/(\d+)$/.exec(source);
+    if (!match) {
+      svg.append(svgElement("text", { x, y, "text-anchor": "middle", class: "svg-label" }, source));
+      return;
+    }
+    const width = Math.max(match[2].length, match[3].length) * 9 + 8;
+    const group = svgElement("g", {
+      class: "svg-fraction-label",
+      transform: `translate(${x} ${y})`,
+      "aria-hidden": "true",
+      "data-source-fraction": `${match[1] ? "-" : ""}${match[2]}/${match[3]}`
+    });
+    if (match[1]) group.append(svgElement("text", { x: -width / 2 - 7, y: 5, "text-anchor": "middle", class: "svg-label svg-fraction-sign" }, "−"));
+    group.append(
+      svgElement("text", { x: 0, y: -4, "text-anchor": "middle", class: "svg-label svg-fraction-part" }, match[2]),
+      svgElement("line", { x1: -width / 2, y1: 1, x2: width / 2, y2: 1, class: "svg-fraction-bar" }),
+      svgElement("text", { x: 0, y: 15, "text-anchor": "middle", class: "svg-label svg-fraction-part" }, match[3])
+    );
+    svg.append(group);
+  }
+
   function renderRepresentationVisual(type) {
     const figure = visualFigure(REPRESENTATION_LABELS[type] || type);
     let svg;
@@ -75,7 +132,7 @@
     } else if (type === "fraction-strip") {
       const strip = element("div", "fraction-strip-model");
       strip.setAttribute("role", "img");
-      strip.setAttribute("aria-label", "전체 1을 8등분한 띠. 처음 6칸은 3/4 또는 6/8이고, 각 칸은 1/8입니다.");
+      strip.setAttribute("aria-label", "전체 1을 8등분한 띠. 처음 6칸은 4분의 3 또는 8분의 6이고, 각 칸은 8분의 1입니다.");
       for (let index = 0; index < 8; index += 1) strip.append(element("span", index < 6 ? "fraction-cell filled" : "fraction-cell", index < 6 ? "1/8" : ""));
       figure.append(strip, element("p", "visual-note", "3/4 = 6/8이므로 1/8짜리 묶음이 6개입니다."));
     } else if (type === "factor-tree-and-division-chain") {
@@ -88,7 +145,7 @@
       });
       figure.append(svg, element("p", "division-chain", "84 = 60 × 1 + 24 → 60 = 24 × 2 + 12 → 24 = 12 × 2 + 0"), element("p", "visual-note", "공통 소인수 2 × 2 × 3 = 12이므로 최대공약수는 12입니다."));
     } else if (type === "number-line") {
-      svg = labeledSvg("-2부터 0까지 12등분한 수직선. -7/4는 -21/12에, -5/3은 -20/12에 표시되어 있으며 -7/4가 더 왼쪽입니다.", "0 0 620 170");
+      svg = labeledSvg("음의 2부터 0까지 12등분한 수직선. 음의 4분의 7은 음의 12분의 21에, 음의 3분의 5는 음의 12분의 20에 표시되어 있으며 음의 4분의 7이 더 왼쪽입니다.", "0 0 620 170");
       svg.append(svgElement("line", { x1: 48, y1: 78, x2: 572, y2: 78, class: "axis-line" }));
       for (let index = 0; index <= 12; index += 1) {
         const x = 48 + index * 43.67;
@@ -99,7 +156,7 @@
         const x = 48 + mark[0] * 262;
         svg.append(svgElement("line", { x1: x, y1: 78, x2: x, y2: index ? 126 : 28, class: mark[2] }));
         svg.append(svgElement("circle", { cx: x, cy: 78, r: 6, class: mark[2] }));
-        svg.append(svgElement("text", { x, y: index ? 148 : 20, "text-anchor": "middle", class: "svg-label" }, mark[1]));
+        appendSvgFractionLabel(svg, x, index ? 143 : 18, mark[1]);
       });
       figure.append(svg, element("p", "visual-note", "-7/4 = -21/12이고 -5/3 = -20/12입니다. -21/12가 수직선에서 더 왼쪽입니다."));
     } else if (type === "expression-structure-tree") {

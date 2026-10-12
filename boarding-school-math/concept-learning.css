@@ -69,6 +69,8 @@ body.page-concept-learning { margin:0; color:var(--ink); background:var(--paper)
 .section-number { display:block; margin-bottom:13px; color:var(--orange); font:500 1rem Georgia,serif; }
 .lesson-section h3 { margin:0 0 24px; font-family:Georgia,"Noto Serif KR",serif; font-size:clamp(1.65rem,3vw,2.55rem); font-weight:500; letter-spacing:-.035em; }
 .lesson-copy { max-width:800px; margin:0; font-size:1.08rem; line-height:1.95; word-break:keep-all; }
+.inline-fraction { display:inline-block; margin-inline:.09em; color:inherit; font-family:"Cambria Math","STIX Two Math","Times New Roman",serif; font-size:1.06em; line-height:1; vertical-align:-.32em; }
+.inline-fraction mfrac { padding-inline:.04em; }
 .representation-card { padding:26px; border:1px solid #9cb6aa; background:var(--soft-green); }
 .representation-type { margin:0 0 9px; color:var(--green); font-size:.67rem; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
 .representation-card > strong { display:block; font-size:1.08rem; line-height:1.65; }
@@ -87,11 +89,14 @@ body.page-concept-learning { margin:0; color:var(--ink); background:var(--paper)
 .fraction-cell { display:grid; min-height:54px; place-items:center; border-right:1px solid var(--green-dark); color:transparent; background:#fff; font-size:.72rem; font-weight:800; }
 .fraction-cell:last-child { border-right:0; }
 .fraction-cell.filled { color:var(--green-dark); background:#a8cdbd; }
+.fraction-cell .inline-fraction { margin:0; font-size:1.14em; }
 .model-svg { display:block; width:100%; height:auto; overflow:visible; background:#fff; }
 .axis-line, .major-tick { stroke:var(--green-dark); stroke-width:2; }
 .minor-tick { stroke:#70897f; stroke-width:1.25; }
 .grid-line { stroke:#d7e0da; stroke-width:1; }
 .svg-label { fill:#26342d; font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif; font-size:14px; font-weight:700; }
+.svg-fraction-label .svg-label { font-size:12px; }
+.svg-fraction-bar { stroke:#26342d; stroke-width:1.4; }
 .mark-orange { stroke:var(--orange); fill:var(--orange); stroke-width:2; }
 .mark-green { stroke:var(--green); fill:var(--green); stroke-width:2; }
 .tree-line { stroke:#57796d; stroke-width:2; }

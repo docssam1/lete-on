@@ -140,3 +140,15 @@
 }
 /* 23쪽 도형 크기 순서 보기: 글자 크기로는 도형이 너무 작다 */
 .answer-choices.shape-order-choices button{min-height:52px;padding:6px 16px;color:#111;font-size:24px;line-height:1.1;letter-spacing:1px}
+
+/* 28~33쪽 양팔저울: 마름모·보라 별, 물음 줄 「● 1개 = ▲ ?개」 */
+.source-balance-board .balance-tokens.stars i{color:#7b5ea7}
+.balance-tokens.diamonds i{width:16px;height:16px;margin:3px;background:#7b5ea7;transform:rotate(45deg)}
+.balance-target-line{display:flex;flex-basis:100%;align-items:center;justify-content:center;gap:8px;color:#222;font-size:20px;font-weight:800}
+.balance-target-line .balance-tokens{max-width:none}
+.balance-target-line em{font-style:normal}
+.balance-target-line .balance-question{font-size:24px}
+@media print{
+  .gold-print-page[data-print-book="book-04"] .balance-target-line{font-size:12px;gap:2mm}
+  .balance-tokens.diamonds i{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
