@@ -498,6 +498,104 @@ function sourceClueBox(visual) {
   return `<div class="b4-src-logic">${bulletBox(visual.clues)}</div>`;
 }
 
+// 5~7쪽 숫자 돌리기와 뒤집기. 변환은 화면 좌표(아래가 +y) 2×2 행렬 [a,b,c,d] = (x,y)→(ax+by, cx+dy).
+const SCREEN_TRANSFORM = Object.freeze({
+  I: [1, 0, 0, 1], LR: [-1, 0, 0, 1], UD: [1, 0, 0, -1], R180: [-1, 0, 0, -1],
+  CW: [0, -1, 1, 0], CCW: [0, 1, -1, 0], T: [0, 1, 1, 0], AT: [0, -1, -1, 0]
+});
+const cssMatrix = (m) => `matrix(${m[0]},${m[2]},${m[1]},${m[3]},0,0)`;
+// 5쪽 보기 ①~⑧: 같은 「1」 선분에 원본 순서대로 변환을 입힌다.
+const ONE_OPTION_TRANSFORMS = ["I", "LR", "UD", "R180", "CW", "AT", "CCW", "T"];
+const CIRCLED = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧"];
+
+function oneFigure(transform = "I", size = 44) {
+  const m = SCREEN_TRANSFORM[transform];
+  const pt = ([x, y]) => [m[0] * x + m[1] * y, m[2] * x + m[3] * y].map((v) => (v * size * 0.42 + size / 2).toFixed(1));
+  const line = (a, b) => { const [x1, y1] = pt(a); const [x2, y2] = pt(b); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; };
+  return `<svg class="b4-one" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">${line([0, -1], [0, 1])}${line([0, -1], [-0.62, -0.38])}</svg>`;
+}
+
+// 돌리기 기호: 12시에서 시작해 돌린 만큼 색칠하고, 끝에 방향 화살표.
+function rotateIconInner(deg, dir = "cw", size = 30) {
+  const r = size / 2 - 3;
+  const c = size / 2;
+  const sign = dir === "cw" ? 1 : -1;
+  const at = (a) => [c + r * Math.sin((sign * a * Math.PI) / 180), c - r * Math.cos((sign * a * Math.PI) / 180)];
+  const full = deg >= 360;
+  const [ex, ey] = at(deg % 360 === 0 ? 359.9 : deg);
+  const sector = full ? `<circle class="fill" cx="${c}" cy="${c}" r="${r}"/>` : `<path class="fill" d="M${c} ${c}L${c} ${c - r}A${r} ${r} 0 ${deg > 180 ? 1 : 0} ${sign > 0 ? 1 : 0} ${ex.toFixed(1)} ${ey.toFixed(1)}Z"/>`;
+  const tip = at(Math.min(deg, 350));
+  const back = at(Math.min(deg, 350) - 28);
+  // 화살촉: 원을 따라 도는 방향(접선)으로 작은 삼각형.
+  const theta = (sign * Math.min(deg, 350) * Math.PI) / 180;
+  const d = [sign * Math.cos(theta), sign * Math.sin(theta)];
+  const n = [-d[1], d[0]];
+  const k = size / 9;
+  const head = [[tip[0] + d[0] * k, tip[1] + d[1] * k], [tip[0] - d[0] * k * 0.6 + n[0] * k * 0.8, tip[1] - d[1] * k * 0.6 + n[1] * k * 0.8], [tip[0] - d[0] * k * 0.6 - n[0] * k * 0.8, tip[1] - d[1] * k * 0.6 - n[1] * k * 0.8]];
+  const arrow = `<path class="arrow" d="M${back[0].toFixed(1)} ${back[1].toFixed(1)}A${r} ${r} 0 0 ${sign > 0 ? 1 : 0} ${tip[0].toFixed(1)} ${tip[1].toFixed(1)}"/><polygon class="arrow-head" points="${head.map((q) => q.map((v) => v.toFixed(1)).join(",")).join(" ")}"/>`;
+  return `<g class="b4-rot-icon${full ? " full" : ""}"><circle class="ring" cx="${c}" cy="${c}" r="${r}"/>${sector}<path class="cross" d="M${c} ${c - r}V${c + r}M${c - r} ${c}H${c + r}"/>${arrow}</g>`;
+}
+function rotateIcon(deg, dir = "cw", size = 30) {
+  return `<svg class="b4-rot-svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="${dir === "cw" ? "시계 방향" : "시계 반대 방향"} ${deg}도 돌리기">${rotateIconInner(deg, dir, size)}</svg>`;
+}
+
+// 뒤집기 기호: 점선 축과 축을 감는 화살표.
+function flipIcon(axis, size = 40) {
+  const c = size / 2;
+  return axis === "vertical"
+    ? `<svg class="b4-flip-icon" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="오른쪽으로 뒤집기"><path class="axis" d="M${c} 2V${size - 2}"/><ellipse class="turn" cx="${c}" cy="${c}" rx="${c - 5}" ry="4"/><path class="turn-head" d="M${size - 9} ${c - 7}l4 3-4 3"/></svg>`
+    : `<svg class="b4-flip-icon" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="아래로 뒤집기"><path class="axis" d="M2 ${c}H${size - 2}"/><ellipse class="turn" cx="${c}" cy="${c}" rx="4" ry="${c - 5}"/><path class="turn-head" d="M${c - 7} ${size - 9}l3 4 3-4"/></svg>`;
+}
+
+function opIcon(op) {
+  if (op.type === "rotate") return rotateIcon(op.deg, op.dir);
+  return flipIcon(op.axis);
+}
+
+function sourceOneFlip(visual) {
+  // 5쪽 ①: 원본처럼 「1」 둘레에 물음 하나(뒤집는 점선 축 또는 돌리기 기호)를 한 그림으로 그린다. 오른쪽에 보기 ①~⑧.
+  const op = visual.op;
+  const W = 180;
+  const c = W / 2;
+  const segs = [[[0, -1], [0, 1]], [[0, -1], [-0.62, -0.38]]];
+  const one = segs.map(([a, b]) => `<line x1="${c + a[0] * 46}" y1="${c + a[1] * 46}" x2="${c + b[0] * 46}" y2="${c + b[1] * 46}"/>`).join("");
+  let mark = "";
+  const side = op.side;
+  if (op.type === "axis") {
+    const horizontal = side === "top" || side === "bottom";
+    const pos = side === "top" || side === "left" ? 16 : W - 16;
+    mark = horizontal
+      ? `<g class="b4-flip-axis"><path class="axis" d="M24 ${pos}H${W - 24}"/><ellipse class="turn" cx="${c}" cy="${pos}" rx="6" ry="14"/><path class="turn-head" d="M${c - 4} ${pos + 9}l4 6 4-6"/></g>`
+      : `<g class="b4-flip-axis"><path class="axis" d="M${pos} 24V${W - 24}"/><ellipse class="turn" cx="${pos}" cy="${c}" rx="14" ry="6"/><path class="turn-head" d="M${pos + 9} ${c - 4}l6 4-6 4"/></g>`;
+  } else {
+    const size = 34;
+    const at = { top: [c - size / 2, 2], bottom: [c - size / 2, W - size - 2], left: [2, c - size / 2], right: [W - size - 2, c - size / 2] }[side];
+    mark = `<g transform="translate(${at[0]} ${at[1]})">${rotateIconInner(op.deg, op.dir, size)}</g>`;
+  }
+  const figure = `<svg class="b4-one-figure" viewBox="0 0 ${W} ${W}" width="${W}" height="${W}" role="img" aria-label="${op.type === "axis" ? "점선을 따라 뒤집기" : `${op.dir === "cw" ? "시계 방향" : "시계 반대 방향"} ${op.deg}도 돌리기`}"><g class="b4-one">${one}</g>${mark}</svg>`;
+  const options = ONE_OPTION_TRANSFORMS.map((t, i) => `<span><b>${CIRCLED[i]}</b>${oneFigure(t, 52)}</span>`).join("");
+  return `<div class="b4-one-flip">${figure}<div class="b4-one-options">${options}</div></div>`;
+}
+
+function digitGlyph(digit, transform = "I") {
+  return `<span class="b4-digit"><i style="transform:${cssMatrix(SCREEN_TRANSFORM[transform])}">${escapeHtml(digit)}</i></span>`;
+}
+
+function sourceDigitFlip(visual) {
+  // 6쪽 ②③: 숫자 → 기호 → (뒤집힌 숫자 또는 빈 상자) … → 빈 상자, 아래에 후보 모양.
+  const steps = visual.steps.map((step) => `<span class="b4-step-op">${opIcon(step.op)}</span>${step.show ? digitGlyph(visual.digit, step.show) : '<span class="b4-digit-box"></span>'}`).join("");
+  const row = `<div class="b4-digit-row">${digitGlyph(visual.digit)}${steps}</div>`;
+  const candidates = visual.candidates ? `<div class="b4-digit-candidates">${visual.candidates.map((t, i) => `<span><b>${CIRCLED[i]}</b>${digitGlyph(visual.digit, t)}</span>`).join("")}</div>` : "";
+  const icons = visual.iconOptions ? `<div class="b4-digit-candidates icons">${visual.iconOptions.map((op, i) => `<span><b>${CIRCLED[i]}</b>${rotateIcon(op.deg, op.dir, 34)}</span>`).join("")}</div>` : "";
+  return `<div class="b4-digit-flip">${row}${candidates}${icons}</div>`;
+}
+
+function sourceUprightBoard(visual) {
+  // 7쪽 ④: 2×2 숫자판. 셀마다 숫자와 놓인 방향(변환)을 원본대로.
+  const cells = visual.cells.map((cell) => `<span>${digitGlyph(cell.value, cell.t)}</span>`).join("");
+  return `<div class="b4-upright-board">${cells}</div>`;
+}
+
 export function book04Markup(visual) {
   if (!visual || visual.kind !== "book4") return "";
   switch (visual.subtype) {
@@ -528,6 +626,9 @@ export function book04Markup(visual) {
     case "source-cube-box": return sourceCubeBox(visual);
     case "source-hidden-cube": return sourceHiddenCube(visual);
     case "source-cube-topview": return sourceCubeTopView(visual);
+    case "source-one-flip": return sourceOneFlip(visual);
+    case "source-digit-flip": return sourceDigitFlip(visual);
+    case "source-upright-board": return sourceUprightBoard(visual);
     case "source-relations": return sourceRelations(visual);
     case "source-number-cards": return sourceNumberCards(visual);
     case "source-clue-box": return sourceClueBox(visual);
