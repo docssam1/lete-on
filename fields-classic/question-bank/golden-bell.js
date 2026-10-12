@@ -1,13 +1,13 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261011a";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261012a";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
-import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20260906b";
+import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261012a";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261011a";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261012a";
 import { book01Markup } from "./book01-renderers.js?v=20261003c";
 import { book02Markup } from "./book02-renderers.js?v=20261005d";
-import { book03Markup } from "./book03-renderers.js?v=20261011a";
-import { book04Markup } from "./book04-renderers.js?v=20261011a";
+import { book03Markup } from "./book03-renderers.js?v=20261012a";
+import { book04Markup } from "./book04-renderers.js?v=20261012a";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book07Markup } from "./book07-renderers.js?v=20260906a";
@@ -904,7 +904,7 @@ function generatedCryptarithmMarkup(visual) {
 }
 
 function book04SourceBalanceMarkup(visual) {
-  const shapes = { "네모": "squares", "세모": "triangles", "동그라미": "circles", "별": "stars" };
+  const shapes = { "네모": "squares", "세모": "triangles", "동그라미": "circles", "별": "stars", "마름모": "diamonds" };
   const load = (objects) => Object.entries(objects).map(([label, count]) => {
     if (label === "빈접시" || count == null) return '<span class="balance-question">?</span>';
     if (shapes[label]) return balanceTokensMarkup(label === "별" ? "★" : "", count, shapes[label]);
@@ -913,7 +913,13 @@ function book04SourceBalanceMarkup(visual) {
   const sameLoad = (left, right) => Object.keys(left).length === Object.keys(right).length
     && Object.entries(left).every(([key, value]) => right[key] === value);
   const equations = [...visual.equations];
-  if (!equations.some((equation) => sameLoad(equation.left, visual.target.left) || sameLoad(equation.right, visual.target.left))) equations.push(visual.target);
+  // 원본 28·29·32·33쪽처럼 물음을 저울 옆의 「● 1개 = ▲ ?개」 줄로 쓰는 문항은 targetText로 표시한다.
+  if (visual.targetText) {
+    const [[unit, count]] = Object.entries(visual.target.right);
+    const ask = `<span class="balance-target-line">${load(visual.target.left)}${Object.values(visual.target.left).every((n) => n === 1) && Object.keys(visual.target.left).length === 1 ? "<em>1개</em>" : ""}<b>=</b>${load({ [unit]: 1 })}<span class="balance-question">?</span><em>개</em></span>`;
+    return `<div class="balance-substitution single source-balance-board">${equations.map((equation) => balanceBeamMarkup(load(equation.left), load(equation.right), "level")).join("")}${ask}</div>`;
+  }
+  if (visual.targetBalance || !equations.some((equation) => sameLoad(equation.left, visual.target.left) || sameLoad(equation.right, visual.target.left))) equations.push(visual.target);
   return `<div class="balance-substitution single source-balance-board">${equations.map((equation) => balanceBeamMarkup(load(equation.left), load(equation.right), "level")).join("")}</div>`;
 }
 
