@@ -244,7 +244,7 @@
         + '<ul class="showcase-signal-list">' + rows + '</ul>'
         + '<div class="showcase-prescription"><span>관찰된 강점</span><strong>' + esc(result.strength) + '</strong><span>먼저 보완</span><strong>' + esc(result.priority) + '</strong></div>'
         + (complete
-          ? '<div class="showcase-result-actions"><a class="showcase-primary" href="./competition-practice.html?program=sasmo&audience=student&locale=ko">전체 10유형 진단 계속하기 <span aria-hidden="true">→</span></a><a class="showcase-workbook-link" href="#workbook-preview">처방 워크북 보기 <span aria-hidden="true">↓</span></a><button type="button" class="showcase-reset" id="showcase-reset">다시 체험</button></div>'
+          ? '<div class="showcase-result-actions"><a class="showcase-primary" href="./sasmo-real-paper.html?audience=student">2019 G6 원본 진단 열기 <span aria-hidden="true">→</span></a><a class="showcase-workbook-link" href="#workbook-preview">검수 상태 보기 <span aria-hidden="true">↓</span></a><button type="button" class="showcase-reset" id="showcase-reset">다시 체험</button></div>'
           : '<p class="showcase-insight-note">정답을 바로 공개하지 않습니다. 문제 안의 질문 도우미에서 한 단계 힌트를 받을 수 있습니다.</p>');
       progressNode.textContent = result.attempted + " / " + selected.length + " 응답";
       rootNode.dataset.showcaseComplete = String(complete);

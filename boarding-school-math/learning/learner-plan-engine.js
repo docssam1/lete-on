@@ -22,8 +22,8 @@
       id: "sasmo-primary6",
       label: "SASMO Primary 6",
       program: "sasmo",
-      assessmentLabel: "SASMO 준비도 점검",
-      assessmentHref: "./competition-practice.html?program=sasmo-g6&audience=student&locale=ko",
+      assessmentLabel: "SASMO 2019 Primary 6 원본 진단",
+      assessmentHref: "./sasmo-real-paper.html?audience=student",
       clusterId: "6.G.A",
       clusterLabel: "기하·공간 추론",
       scoreUnit: "/ 70"

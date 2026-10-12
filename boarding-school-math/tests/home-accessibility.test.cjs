@@ -98,8 +98,8 @@ test("official source links are external, isolated, and never embedded", async f
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   await page.goto(url, { waitUntil: "networkidle" });
   await page.locator('[data-goal="sasmo"]').click();
-  assert.match(await page.locator("#goal-primary").getAttribute("href"), /^\.\/competition-practice\.html\?program=sasmo&audience=(student|teacher)&locale=ko$/);
-  assert.match(await page.locator("#goal-status-note").innerText(), /자체 제작 실제 유형 10개/);
+  assert.match(await page.locator("#goal-primary").getAttribute("href"), /^\.\/sasmo-real-paper\.html\?audience=(student|teacher)$/);
+  assert.match(await page.locator("#goal-status-note").innerText(), /2019 Grade 6 원본 25문항/);
   const original = page.locator("#goal-original");
   assert.equal(await original.getAttribute("target"), "_blank");
   const rel = await original.getAttribute("rel");

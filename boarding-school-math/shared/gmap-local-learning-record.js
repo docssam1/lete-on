@@ -14,6 +14,13 @@
   const COMPETITION_SERIES_KEY = `${VERSION}:competition-first-attempts-v2`;
   const MAX_COMPETITION_FORMS = 8;
   const REVIEWED_2019_G6_SOURCE_SHA256 = "a2e7191c21d29fdfb5b9f8a0d08018df6d7c1b318d0e05207dcc522696074d6b";
+  const REVIEWED_2019_G6_AXIS_BY_QUESTION = Object.freeze([
+    "number-operations", "data-probability", "geometry-spatial", "combinatorics-logic", "number-operations",
+    "geometry-spatial", "patterns-algebra", "number-operations", "data-probability", "number-operations",
+    "problem-solving-strategies", "geometry-spatial", "combinatorics-logic", "number-operations", "patterns-algebra",
+    "geometry-spatial", "number-operations", "data-probability", "patterns-algebra", "patterns-algebra",
+    "combinatorics-logic", "number-operations", "geometry-spatial", "combinatorics-logic", "problem-solving-strategies"
+  ]);
   const MAX_RESPONSES_PER_ITEM = 12;
   const AXIS_PRIORITIES = Object.freeze({
     "number-operations": Object.freeze({ label: "수와 연산", clusterId: "6.RP.A", errorType: "concept-gap", difficulty: "core" }),
@@ -140,8 +147,13 @@
     };
   }
   function sanitizedCompetitionEvidence(value) {
-    if (!object(value) || !["gfield-competition-evidence-v1", "gfield-competition-evidence-v2"].includes(value.schemaVersion) || value.programId !== "sasmo" || value.verifiedRealPaper !== true || value.officialAwardPrediction !== false || !object(value.score)) return null;
+    if (!object(value) || !["gfield-competition-evidence-v1", "gfield-competition-evidence-v2", "gfield-competition-evidence-v3", "gfield-competition-evidence-v4", "gfield-competition-evidence-v5", "gfield-competition-evidence-v6"].includes(value.schemaVersion) || value.programId !== "sasmo" || value.verifiedRealPaper !== true || value.officialAwardPrediction !== false || !object(value.score)) return null;
     const versionTwo = value.schemaVersion === "gfield-competition-evidence-v2";
+    const versionThree = value.schemaVersion === "gfield-competition-evidence-v3";
+    const versionFour = value.schemaVersion === "gfield-competition-evidence-v4";
+    const versionFive = value.schemaVersion === "gfield-competition-evidence-v5";
+    const versionSix = value.schemaVersion === "gfield-competition-evidence-v6";
+    const versionedDiagnostics = versionTwo || versionThree || versionFour || versionFive || versionSix;
     if (typeof value.formId !== "string" || !/^sasmo-[0-9]{4}-g(?:[2-9]|10)-[a-z0-9-]{3,64}$/.test(value.formId) || !Number.isInteger(value.year) || typeof value.levelId !== "string") return null;
     const identity = /^sasmo-([0-9]{4})-g([2-9]|10)-/.exec(value.formId);
     if (Number(identity[1]) !== value.year || value.levelId !== `G${identity[2]}`) return null;
@@ -166,19 +178,95 @@
     if (axes.some(function (axis) { return axis.itemCount < 0 || axis.correct < 0 || axis.incorrect < 0 || axis.blank < 0 || axis.correct + axis.incorrect + axis.blank !== axis.itemCount || axis.percentage < 0 || axis.percentage > 100; })) return null;
     if (axes.length === 6 && ["correct", "incorrect", "blank"].some(function (field) { return axes.reduce(function (total, axis) { return total + axis[field]; }, 0) !== value.score[field]; })) return null;
     const taxonomyPending2019 = value.formId === "sasmo-2019-g6-baseline-a";
-    const legacy2019 = !versionTwo && taxonomyPending2019;
-    const diagnosticAxes = versionTwo ? sanitizeAxes(value.diagnosticAxes) : [];
-    if (versionTwo) {
-      if (value.formId !== "sasmo-2019-g6-baseline-a" || value.sourceFingerprintSha256 !== REVIEWED_2019_G6_SOURCE_SHA256 || !Array.isArray(value.scoreOnlyQuestionNumbers) || value.scoreOnlyQuestionNumbers.length !== 1 || value.scoreOnlyQuestionNumbers[0] !== 19) return null;
-      if (diagnosticAxes.length !== 6 || axes.length !== 6 || axes.reduce(function (total, axis) { return total + axis.itemCount; }, 0) !== 25 || diagnosticAxes.reduce(function (total, axis) { return total + axis.itemCount; }, 0) !== 24) return null;
+    const diagnosticAxes = versionedDiagnostics ? sanitizeAxes(value.diagnosticAxes) : [];
+    if (versionedDiagnostics) {
+      if (value.formId !== "sasmo-2019-g6-baseline-a" || value.sourceFingerprintSha256 !== REVIEWED_2019_G6_SOURCE_SHA256) return null;
+      if (versionTwo && (!Array.isArray(value.scoreOnlyQuestionNumbers) || value.scoreOnlyQuestionNumbers.length !== 1 || value.scoreOnlyQuestionNumbers[0] !== 19)) return null;
+      if (versionThree && (
+        !Array.isArray(value.diagnosticExcludedQuestionNumbers) || JSON.stringify(value.diagnosticExcludedQuestionNumbers) !== "[15,19]" ||
+        !Array.isArray(value.scoreOnlyQuestionNumbers) || JSON.stringify(value.scoreOnlyQuestionNumbers) !== "[19]" ||
+        !Array.isArray(value.reviewRequiredQuestionNumbers) || JSON.stringify(value.reviewRequiredQuestionNumbers) !== "[15]"
+      )) return null;
+      if (versionFour && (
+        !Array.isArray(value.diagnosticExcludedQuestionNumbers) || JSON.stringify(value.diagnosticExcludedQuestionNumbers) !== "[9,15,19]" ||
+        !Array.isArray(value.scoreOnlyQuestionNumbers) || JSON.stringify(value.scoreOnlyQuestionNumbers) !== "[19]" ||
+        !Array.isArray(value.reviewRequiredQuestionNumbers) || JSON.stringify(value.reviewRequiredQuestionNumbers) !== "[9,15]"
+      )) return null;
+      if ((versionFive || versionSix) && (
+        !Array.isArray(value.diagnosticExcludedQuestionNumbers) || JSON.stringify(value.diagnosticExcludedQuestionNumbers) !== "[9,15,19,21]" ||
+        !Array.isArray(value.scoreOnlyQuestionNumbers) || JSON.stringify(value.scoreOnlyQuestionNumbers) !== "[19]" ||
+        !Array.isArray(value.reviewRequiredQuestionNumbers) || JSON.stringify(value.reviewRequiredQuestionNumbers) !== "[9,15,21]"
+      )) return null;
+      const excludedCount = versionFive || versionSix ? 4 : versionFour ? 3 : versionThree ? 2 : 1;
+      if (diagnosticAxes.length !== 6 || axes.length !== 6 || axes.reduce(function (total, axis) { return total + axis.itemCount; }, 0) !== 25 || diagnosticAxes.reduce(function (total, axis) { return total + axis.itemCount; }, 0) !== 25 - excludedCount) return null;
       if (diagnosticAxes.some(function (axis, index) {
         const scored = axes[index];
         return axis.axisId !== scored.axisId || axis.itemCount < 0 || axis.correct < 0 || axis.incorrect < 0 || axis.blank < 0 || axis.correct + axis.incorrect + axis.blank !== axis.itemCount || axis.percentage < 0 || axis.percentage > 100 || axis.itemCount > scored.itemCount || axis.correct > scored.correct || axis.incorrect > scored.incorrect || axis.blank > scored.blank || axis.evidenceState !== (axis.itemCount >= 4 ? "sufficient" : "needs-more-evidence");
       })) return null;
-      const patternIndex = diagnosticAxes.findIndex(function (axis) { return axis.axisId === "patterns-algebra"; });
-      if (patternIndex < 0 || axes[patternIndex].itemCount - diagnosticAxes[patternIndex].itemCount !== 1 || ["correct", "incorrect", "blank"].some(function (field) { return axes.reduce(function (total, axis) { return total + axis[field]; }, 0) - diagnosticAxes.reduce(function (total, axis) { return total + axis[field]; }, 0) < 0; })) return null;
-      if (diagnosticAxes.some(function (axis, index) { return index !== patternIndex && axis.itemCount !== axes[index].itemCount; })) return null;
+      const expectedAxisExclusions = versionFive || versionSix
+        ? { "patterns-algebra": 2, "data-probability": 1, "combinatorics-logic": 1 }
+        : versionFour ? { "patterns-algebra": 2, "data-probability": 1 } : { "patterns-algebra": excludedCount };
+      const outcomeDelta = ["correct", "incorrect", "blank"].reduce(function (total, field) {
+        return total + axes.reduce(function (sum, axis) { return sum + axis[field]; }, 0) - diagnosticAxes.reduce(function (sum, axis) { return sum + axis[field]; }, 0);
+      }, 0);
+      if (outcomeDelta !== excludedCount || ["correct", "incorrect", "blank"].some(function (field) { return axes.reduce(function (total, axis) { return total + axis[field]; }, 0) - diagnosticAxes.reduce(function (total, axis) { return total + axis[field]; }, 0) < 0; })) return null;
+      if (diagnosticAxes.some(function (axis, index) { return axes[index].itemCount - axis.itemCount !== (expectedAxisExclusions[axis.axisId] || 0); })) return null;
     }
+    function expectedReviewEntry(questionNumber, outcome) {
+      const diagnosticEligibility = [9, 15, 21].includes(questionNumber) ? "review-required" : questionNumber === 19 ? "score-only" : "eligible";
+      return {
+        questionNumber,
+        sectionId: questionNumber <= 15 ? "A" : "B",
+        outcome,
+        pointsEarned: questionNumber <= 15 && outcome === "incorrect" ? -1 : 0,
+        diagnosticEligibility,
+        reviewCommentCode: diagnosticEligibility !== "eligible" ? "diagnostic-exclusion" : outcome === "incorrect" ? "locate-first-divergence" : "identify-starting-barrier"
+      };
+    }
+    let reviewQueue = [];
+    if (versionSix) {
+      if (!Array.isArray(value.reviewQueue) || value.reviewQueue.length > 25) return null;
+      const allowedKeys = ["diagnosticEligibility", "outcome", "pointsEarned", "questionNumber", "reviewCommentCode", "sectionId"];
+      reviewQueue = value.reviewQueue.map(function (entry, index) {
+        if (!object(entry) || JSON.stringify(Object.keys(entry).sort()) !== JSON.stringify(allowedKeys)) return null;
+        if (!Number.isInteger(entry.questionNumber) || entry.questionNumber < 1 || entry.questionNumber > 25 || (index > 0 && entry.questionNumber <= value.reviewQueue[index - 1].questionNumber) || !["incorrect", "blank"].includes(entry.outcome)) return null;
+        const expected = expectedReviewEntry(entry.questionNumber, entry.outcome);
+        if (allowedKeys.some(function (key) { return entry[key] !== expected[key]; })) return null;
+        return expected;
+      });
+      if (reviewQueue.some(function (entry) { return !entry; })) return null;
+      const incorrect = reviewQueue.filter(function (entry) { return entry.outcome === "incorrect"; }).length;
+      const blank = reviewQueue.filter(function (entry) { return entry.outcome === "blank"; }).length;
+      if (value.score.incorrect !== incorrect || value.score.blank !== blank || value.score.correct !== 25 - reviewQueue.length) return null;
+      const queued = new Map(reviewQueue.map(function (entry) { return [entry.questionNumber, entry]; }));
+      const expectedRawScore = REVIEWED_2019_G6_AXIS_BY_QUESTION.reduce(function (total, axisId, index) {
+        const questionNumber = index + 1;
+        const entry = queued.get(questionNumber);
+        return total + (entry ? entry.pointsEarned : questionNumber <= 15 ? 2 : 4);
+      }, 0);
+      if (expectedRawScore !== value.score.rawScore) return null;
+      function expectedAxisRows(excludedNumbers) {
+        const excluded = new Set(excludedNumbers);
+        const rows = Object.keys(AXIS_PRIORITIES).map(function (axisId) { return { axisId, itemCount: 0, correct: 0, incorrect: 0, blank: 0 }; });
+        REVIEWED_2019_G6_AXIS_BY_QUESTION.forEach(function (axisId, index) {
+          const questionNumber = index + 1;
+          if (excluded.has(questionNumber)) return;
+          const row = rows.find(function (entry) { return entry.axisId === axisId; });
+          const outcome = queued.has(questionNumber) ? queued.get(questionNumber).outcome : "correct";
+          row.itemCount += 1;
+          row[outcome] += 1;
+        });
+        return rows.map(function (row) {
+          return Object.assign(row, {
+            percentage: row.itemCount ? Math.round(1000 * row.correct / row.itemCount) / 10 : 0,
+            evidenceState: row.itemCount >= 4 ? "sufficient" : "needs-more-evidence"
+          });
+        });
+      }
+      const expectedAxes = expectedAxisRows([]);
+      const expectedDiagnosticAxes = expectedAxisRows([9, 15, 19, 21]);
+      if (JSON.stringify(axes) !== JSON.stringify(expectedAxes) || JSON.stringify(diagnosticAxes) !== JSON.stringify(expectedDiagnosticAxes)) return null;
+    } else if (Object.prototype.hasOwnProperty.call(value, "reviewQueue")) return null;
     const prediction = object(value.prediction) ? {
       state: typeof value.prediction.state === "string" ? value.prediction.state.slice(0, 60) : "collect-another-real-paper",
       officialAwardPrediction: false,
@@ -208,11 +296,14 @@
       },
       axes: axes,
       diagnosticAxes: diagnosticAxes,
-      scoreOnlyQuestionNumbers: versionTwo ? [19] : [],
-      diagnosticState: legacy2019 ? "legacy-unreviewed" : taxonomyPending2019 ? "taxonomy-review-pending" : "legacy",
-      strengths: taxonomyPending2019 ? [] : Array.isArray(value.strengths) ? value.strengths.filter(function (axisId) { return Boolean(AXIS_PRIORITIES[axisId]) && (!versionTwo || diagnosticAxes.some(function (axis) { return axis.axisId === axisId && axis.evidenceState === "sufficient"; })); }).slice(0, 2) : [],
-      weaknesses: taxonomyPending2019 ? [] : Array.isArray(value.weaknesses) ? value.weaknesses.filter(function (axisId) { return Boolean(AXIS_PRIORITIES[axisId]) && (!versionTwo || diagnosticAxes.some(function (axis) { return axis.axisId === axisId && axis.evidenceState === "sufficient"; })); }).slice(0, 2) : [],
-      priorityAxis: taxonomyPending2019 ? null : AXIS_PRIORITIES[value.priorityAxis] && (!versionTwo || diagnosticAxes.some(function (axis) { return axis.axisId === value.priorityAxis && axis.evidenceState === "sufficient"; })) ? value.priorityAxis : null,
+      diagnosticExcludedQuestionNumbers: versionFive || versionSix ? [9, 15, 19, 21] : versionFour ? [9, 15, 19] : versionThree ? [15, 19] : versionTwo ? [19] : [],
+      scoreOnlyQuestionNumbers: versionedDiagnostics ? [19] : [],
+      reviewRequiredQuestionNumbers: versionFive || versionSix ? [9, 15, 21] : versionFour ? [9, 15] : versionThree ? [15] : [],
+      ...(versionSix ? { reviewQueue } : {}),
+      diagnosticState: taxonomyPending2019 && !(versionFive || versionSix) ? "legacy-diagnostic-superseded" : taxonomyPending2019 ? "taxonomy-review-pending" : "legacy",
+      strengths: taxonomyPending2019 ? [] : Array.isArray(value.strengths) ? value.strengths.filter(function (axisId) { return Boolean(AXIS_PRIORITIES[axisId]) && (!versionedDiagnostics || diagnosticAxes.some(function (axis) { return axis.axisId === axisId && axis.evidenceState === "sufficient"; })); }).slice(0, 2) : [],
+      weaknesses: taxonomyPending2019 ? [] : Array.isArray(value.weaknesses) ? value.weaknesses.filter(function (axisId) { return Boolean(AXIS_PRIORITIES[axisId]) && (!versionedDiagnostics || diagnosticAxes.some(function (axis) { return axis.axisId === axisId && axis.evidenceState === "sufficient"; })); }).slice(0, 2) : [],
+      priorityAxis: taxonomyPending2019 ? null : AXIS_PRIORITIES[value.priorityAxis] && (!versionedDiagnostics || diagnosticAxes.some(function (axis) { return axis.axisId === value.priorityAxis && axis.evidenceState === "sufficient"; })) ? value.priorityAxis : null,
       readinessBand: typeof value.readinessBand === "string" ? value.readinessBand.slice(0, 40) : null,
       prediction: prediction,
       recordedAt: typeof value.recordedAt === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value.recordedAt) ? value.recordedAt : new Date().toISOString()

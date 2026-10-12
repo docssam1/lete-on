@@ -585,8 +585,64 @@ body.page-sasmo .site-header {
 .page-sasmo .journey-list li:last-child { background: #eef8f3; }
 .page-sasmo .archive-source-note { border-color: #d8dee8; background: #eaf0ff; }
 
+.page-sasmo .original-contract {
+  display: grid;
+  grid-template-columns: minmax(150px, .72fr) minmax(0, 1.28fr);
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid #c7d2e4;
+  background: #f8faff;
+}
+.page-sasmo .original-paper-mark {
+  min-height: 218px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #182230;
+  color: #182230;
+  background: #ffffff;
+  box-shadow: 8px 8px 0 #dce6fb;
+}
+.page-sasmo .original-paper-mark span { color: #2456c4; font-size: .7rem; font-weight: 950; letter-spacing: .16em; }
+.page-sasmo .original-paper-mark strong { font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.5rem, 2.8vw, 2.25rem); line-height: 1; }
+.page-sasmo .original-paper-mark small { color: #566274; font-size: .62rem; font-weight: 850; letter-spacing: .08em; }
+.page-sasmo .original-contract ol { margin: 0; padding: 0; display: grid; gap: 8px; list-style: none; }
+.page-sasmo .original-contract li {
+  padding: 11px 12px;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 9px;
+  border-bottom: 1px solid #d8dee8;
+}
+.page-sasmo .original-contract li:last-child { border-bottom: 0; }
+.page-sasmo .original-contract li > span { color: #2456c4; font-size: .65rem; font-weight: 950; }
+.page-sasmo .original-contract li strong { display: block; color: #182230; font-size: .78rem; }
+.page-sasmo .original-contract li p { margin: 3px 0 0; color: #566274; font-size: .67rem; line-height: 1.45; }
+
+.page-sasmo .source-first-section { padding: clamp(70px, 9vw, 116px) 0; border-block: 1px solid #d8dee8; background: #eef3fb; }
+.page-sasmo .source-first-heading { margin-bottom: 34px; }
+.page-sasmo .source-first-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid #c7d2e4; background: #ffffff; }
+.page-sasmo .source-first-grid article { min-width: 0; padding: clamp(22px, 3vw, 34px); border-right: 1px solid #c7d2e4; }
+.page-sasmo .source-first-grid article:last-child { border-right: 0; }
+.page-sasmo .source-first-grid span { color: #2456c4; font-size: .66rem; font-weight: 950; letter-spacing: .1em; }
+.page-sasmo .source-first-grid strong { margin-top: 42px; display: block; color: #182230; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.35rem, 2vw, 1.9rem); }
+.page-sasmo .source-first-grid p { min-height: 92px; margin: 12px 0 22px; color: #566274; font-size: .84rem; line-height: 1.7; }
+.page-sasmo .source-first-grid small { display: block; padding-top: 12px; border-top: 1px solid #d8dee8; color: #34445d; font-size: .68rem; font-weight: 800; line-height: 1.45; }
+.page-sasmo .source-first-action { padding: 18px 0 0; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.page-sasmo .source-first-action p { max-width: 640px; margin: 0; color: #566274; font-size: .72rem; line-height: 1.55; }
+.page-sasmo .workbook-language-note { margin: 16px 0 0; padding: 13px 15px; border-left: 3px solid #2456c4; color: #566274; background: #f5f6f8; font-size: .72rem; line-height: 1.55; }
+.page-sasmo .workbook-paper-example.source-workbook-example { grid-template-columns: 1fr; }
+.page-sasmo .source-workbook-example ol { grid-template-columns: 1fr; gap: 10px; }
+.page-sasmo .source-workbook-example li { min-height: 54px; padding: 9px 10px; border: 1px solid #d7dfe8; background: #fbfcfe; }
+
 @media (max-width: 920px) {
   .page-sasmo .role-panel { grid-template-columns: 1fr; }
+  .page-sasmo .source-first-grid { grid-template-columns: 1fr; }
+  .page-sasmo .source-first-grid article { border-right: 0; border-bottom: 1px solid #c7d2e4; }
+  .page-sasmo .source-first-grid article:last-child { border-bottom: 0; }
+  .page-sasmo .source-first-grid strong { margin-top: 18px; }
+  .page-sasmo .source-first-grid p { min-height: 0; }
 }
 
 @media (max-width: 620px) {
@@ -618,6 +674,10 @@ body.page-sasmo .site-header {
   .page-sasmo .role-panel h3 { font-size: 2.2rem; }
   .page-sasmo .role-preview { padding: 15px; }
   .page-sasmo .role-preview-heading { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .page-sasmo .original-contract { grid-template-columns: 1fr; padding: 14px; }
+  .page-sasmo .original-paper-mark { min-height: 164px; }
+  .page-sasmo .source-first-action { align-items: stretch; flex-direction: column; }
+  .page-sasmo .source-first-action .showcase-primary { width: 100%; }
 }
 
 @media print {

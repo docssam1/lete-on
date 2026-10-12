@@ -18,6 +18,7 @@
     "problem-solving-strategies": "문제 해결 전략"
   });
   const outcomeLabels = Object.freeze({ correct: "정답", incorrect: "오답", blank: "미응답" });
+  const responseTypeLabels = Object.freeze({ "multiple-choice": "객관식", "numeric-exact": "단답형" });
   const paperFile = document.getElementById("paper-file");
   const packFile = document.getElementById("pack-file");
   const paperCanvas = document.getElementById("paper-canvas");
@@ -33,6 +34,29 @@
   const answerForm = document.getElementById("answer-form");
   const answerSheet = document.getElementById("answer-sheet");
   const results = document.getElementById("results");
+  const runtimeNote = document.getElementById("runtime-note");
+  const pageParameters = new URLSearchParams(window.location.search);
+  const pageAudience = pageParameters.get("audience") === "teacher" ? "teacher" : "student";
+  const runtimeToken = pageParameters.get("runtime") === "local-private" ? pageParameters.get("token") : null;
+  const loopback = new Set(["127.0.0.1", "localhost", "[::1]"]).has(window.location.hostname);
+  const privateRuntime = loopback && /^[A-Za-z0-9_-]{32}$/u.test(runtimeToken || "")
+    ? Object.freeze({ baseUrl: new URL(`/__gfield_private/${runtimeToken}/`, window.location.origin), audience: pageAudience, token: runtimeToken })
+    : null;
+  document.body.dataset.audience = pageAudience;
+  if (privateRuntime) {
+    const planUrl = new URL("./learning-plan.html", window.location.href);
+    planUrl.search = "";
+    planUrl.searchParams.set("goal", "sasmo-primary6");
+    planUrl.searchParams.set("audience", privateRuntime.audience);
+    planUrl.searchParams.set("runtime", "local-private");
+    planUrl.searchParams.set("token", privateRuntime.token);
+    ["learning-plan-nav", "plan-link"].forEach(function (id) { document.getElementById(id).href = planUrl.href; });
+  }
+  document.getElementById("setup-label").textContent = pageAudience === "teacher" ? "TEACHER SETUP" : "STUDENT SETUP";
+  if (pageAudience === "teacher") {
+    document.getElementById("question-review-summary").textContent = "교사용 문항별 득점·관찰표와 복습 열기";
+    document.getElementById("question-review-copy").textContent = "각 문항의 실제 득점과 학생에게 확인할 다음 행동을 봅니다. 정오만으로 오류 유형을 확정하지 않습니다. 9번·15번·19번·21번은 점수에는 포함하지만 영역 관찰에는 사용하지 않으며, 다른 영역 이름도 원본 대비 분류 검수 중입니다.";
+  }
   let activePack = null;
   let paperFingerprint = null;
   let paperUrl = null;
@@ -42,6 +66,7 @@
   let resizeTimer = null;
   let paperSelectionVersion = 0;
   let packSelectionVersion = 0;
+  let privateReviewBaseUrl = null;
 
   function setSourceState(state, title, detail) {
     sourceState.dataset.state = state;
@@ -102,12 +127,12 @@
   function setAnswerInputsEnabled(enabled) {
     answerSheet.querySelectorAll("input").forEach(function (input) { input.disabled = !enabled; });
     scoreButton.disabled = !enabled;
-    document.getElementById("answer-status").textContent = enabled ? "답을 입력한 뒤 채점하세요. 미입력 문항은 빈칸으로 처리됩니다." : "2019 원본 PDF와 채점팩을 모두 선택하세요.";
+    document.getElementById("answer-status").textContent = enabled ? "답을 입력한 뒤 채점하세요. 미입력 문항은 빈칸으로 처리됩니다." : privateRuntime ? "검증된 로컬 학습 자료를 연결하는 중입니다." : "2019 원본 PDF와 채점팩을 모두 선택하세요.";
   }
   function updateDiagnosticReady() {
     const ready = Boolean(activePack && activePdf && paperFingerprint && paperFingerprint === activePack.paper.sourceFingerprintSha256);
     setAnswerInputsEnabled(ready);
-    if (ready) setSourceState("ready", "2019 Grade 6 원본 대조 완료", "선택한 PDF가 등록된 2019 원본과 일치하고 25문항 채점팩 형식을 확인했습니다.");
+    if (ready) setSourceState("ready", "2019 Grade 6 원본 대조 완료", privateRuntime ? "로컬 스튜디오가 문제지·채점팩·문항별 복습의 검증값을 모두 확인했습니다. 자료와 답안은 이 컴퓨터를 벗어나지 않습니다." : "선택한 PDF가 문항별로 대조한 제3자 공개 보관본의 파일 지문과 일치하고 25문항 채점팩 형식을 확인했습니다.");
     else if (activePack) setSourceState("waiting", "원본 PDF 대기", "등록된 2019 Grade 6 문제 PDF를 선택하면 답안 입력이 열립니다.");
     else if (paperFingerprint) setSourceState("waiting", "채점팩 대기", "원본 PDF를 확인했습니다. 이 회차의 검증된 채점팩을 선택하세요.");
   }
@@ -127,6 +152,15 @@
     activePack = pack;
     document.getElementById("pack-file-name").textContent = fileName;
     updateDiagnosticReady();
+  }
+  async function loadPackBytes(bytes, fileName, stillCurrent) {
+    if (!(bytes instanceof ArrayBuffer) || bytes.byteLength <= 0 || bytes.byteLength > 1024 * 1024) throw new Error("PACK_SIZE_INVALID");
+    if (await sha256Hex(bytes) !== catalog.getForm(session.FORM_ID).packFingerprintSha256) throw new Error("PACK_FINGERPRINT_MISMATCH");
+    if (stillCurrent && !stillCurrent()) return false;
+    const pack = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+    if (stillCurrent && !stillCurrent()) return false;
+    enablePack(pack, fileName);
+    return true;
   }
   function resetPack(message) {
     activePack = null;
@@ -268,15 +302,70 @@
     card.append(header, meter, detail);
     return card;
   }
+  function signedPoints(value) {
+    if (value > 0) return `+${value}점`;
+    if (value < 0) return `−${Math.abs(value)}점`;
+    return "0점";
+  }
+  function diagnosticStateText(item) {
+    if (item.diagnosticEligibility === "review-required") {
+      if (item.diagnosticReasonCode === "language-determinacy-review") return "표현 해석 검수 필요 · 영역 진단 제외";
+      if (item.diagnosticReasonCode === "whole-number-zero-scope-review") return "0 포함 범위 검수 필요 · 영역 진단 제외";
+      return "문항 규칙 검수 필요 · 영역 진단 제외";
+    }
+    if (item.diagnosticEligibility === "score-only") return "점수만 반영 · 영역 진단 제외";
+    return `영역 가분류 · ${axisLabels[item.axisId] || item.axisId} · 검수 중`;
+  }
+  function reviewComment(item) {
+    if (item.reviewCommentCode === "diagnostic-exclusion") {
+      return pageAudience === "teacher"
+        ? "영역 강약 판정에 쓰지 말고 원문 검수 설명과 학생 풀이를 따로 확인하세요."
+        : "점수에는 반영되지만 강점·약점 판단에는 사용하지 않습니다. 원문 검수 설명을 확인하세요.";
+    }
+    if (item.reviewCommentCode === "explain-strategy") {
+      return pageAudience === "teacher"
+        ? "학생이 풀이를 설명하게 하여 우연 정답인지 확인하세요."
+        : "풀이 방법을 한 문장으로 설명해 보세요.";
+    }
+    if (item.reviewCommentCode === "locate-first-divergence") {
+      return pageAudience === "teacher"
+        ? "답만으로 오류 유형을 정하지 말고 풀이에서 처음 달라진 단계를 확인하세요."
+        : "답을 보지 말고 다시 풀며 처음 막힌 단계를 표시하세요.";
+    }
+    return pageAudience === "teacher"
+      ? "시간 부족인지 시작 방법을 찾지 못했는지 풀이 흔적으로 구분하세요."
+      : "시간을 정해 다시 시도하고, 시작하지 못한 이유를 적으세요.";
+  }
   function questionChip(item) {
-    const chip = document.createElement("div");
+    const chip = document.createElement(privateReviewBaseUrl ? "a" : "div");
     chip.className = "question-chip";
     chip.dataset.outcome = item.outcome;
+    chip.dataset.diagnosticEligibility = item.diagnosticEligibility;
+    chip.dataset.pointsEarned = String(item.pointsEarned);
     const number = document.createElement("b");
+    const scoring = document.createElement("span");
     const state = document.createElement("span");
+    const comment = document.createElement("p");
     number.textContent = `${String(item.questionNumber).padStart(2, "0")} · ${outcomeLabels[item.outcome]}`;
-    state.textContent = item.diagnosticUse === false ? "점수만 반영 · 영역 진단 제외" : axisLabels[item.axisId] || item.axisId;
-    chip.append(number, state);
+    scoring.className = "question-scoring";
+    scoring.textContent = `Section ${item.sectionId} · ${responseTypeLabels[item.responseType] || item.responseType} · 배점 ${item.pointsPossible}점 · 이번 득점 ${signedPoints(item.pointsEarned)}`;
+    state.className = "question-taxonomy";
+    state.textContent = diagnosticStateText(item);
+    comment.className = "question-comment";
+    comment.textContent = reviewComment(item);
+    chip.append(number, scoring, state, comment);
+    if (privateReviewBaseUrl) {
+      const reviewUrl = new URL(privateReviewBaseUrl.href);
+      reviewUrl.searchParams.set("q", String(item.questionNumber));
+      chip.href = reviewUrl.href;
+      chip.target = "_blank";
+      chip.rel = "noopener noreferrer";
+      chip.classList.add("has-review-link");
+      const action = document.createElement("small");
+      action.textContent = item.diagnosticEligibility === "eligible" ? "원문·개념 복습 열기 →" : "원문·검수 설명 열기 →";
+      chip.append(action);
+    }
+    chip.setAttribute("aria-label", `${item.questionNumber}번 ${outcomeLabels[item.outcome]}, 이번 득점 ${signedPoints(item.pointsEarned)}. ${reviewComment(item)}`);
     return chip;
   }
   function renderReport(report, saveOutcome) {
@@ -286,7 +375,11 @@
     document.getElementById("incorrect-count").textContent = String(student.score.incorrect);
     document.getElementById("blank-count").textContent = String(student.score.blank);
     document.getElementById("readiness-label").textContent = `${student.readiness.band.label} · 공식 수상 등급 아님`;
-    document.getElementById("axis-boundary").textContent = `25문항은 모두 점수에 포함합니다. ${student.scoreOnlyQuestionNumbers.join("·")}번은 원문만으로 규칙을 하나로 정할 수 없어 영역 관찰에서 제외하고, 나머지 ${25 - student.scoreOnlyQuestionNumbers.length}문항으로 봅니다. 영역 분류 자체가 검수 중이므로 자동 약점 처방에는 사용하지 않습니다.`;
+    const sectionA = student.score.sections.find(function (section) { return section.id === "A"; });
+    const sectionB = student.score.sections.find(function (section) { return section.id === "B"; });
+    if (!sectionA || !sectionB) throw new Error("SASMO section score summary is unavailable");
+    document.getElementById("section-score-summary").textContent = `A영역 ${sectionA.rawScore} / ${sectionA.maxScore} · B영역 ${sectionB.rawScore} / ${sectionB.maxScore}`;
+    document.getElementById("axis-boundary").textContent = `25문항은 모두 인쇄 정답 기준 점수에 포함합니다. 9번은 공동 최솟값 표현, 15번은 그림 규칙의 비유일성, ${student.scoreOnlyQuestionNumbers.join("·")}번은 유한 수열 규칙의 비유일성, 21번은 원문의 ‘whole numbers’가 0을 포함하는지 불명확해 영역 관찰에서 제외합니다. 나머지 ${25 - student.diagnosticExcludedQuestionNumbers.length}문항만 관찰하며, 영역 분류 검수가 끝날 때까지 자동 약점 처방에는 사용하지 않습니다.`;
     const axisGrid = document.getElementById("axis-grid");
     axisGrid.replaceChildren.apply(axisGrid, student.axes.map(axisCard));
     const priority = report.localEvidence.priorityAxis;
@@ -309,6 +402,15 @@
   }
   function clearSession() {
     if (!window.confirm("이 기기의 답안과 SASMO 기출 진단 결과를 지울까요? 원본 PDF 파일은 삭제되지 않습니다.")) return;
+    if (privateRuntime && activePack && activePdf && paperFingerprint === activePack.paper.sourceFingerprintSha256) {
+      answerForm.reset();
+      results.hidden = true;
+      localRecord.storage.clearCompetitionEvidence();
+      updateAnsweredCount();
+      updateDiagnosticReady();
+      document.getElementById("answer-status").textContent = "답안과 이번 진단 결과를 지웠습니다. 검증된 로컬 자료는 연결된 상태입니다.";
+      return;
+    }
     paperSelectionVersion += 1;
     packSelectionVersion += 1;
     activePack = null;
@@ -344,10 +446,7 @@
     try {
       const bytes = await file.arrayBuffer();
       if (selectionVersion !== packSelectionVersion) return;
-      if (await sha256Hex(bytes) !== catalog.getForm(session.FORM_ID).packFingerprintSha256) throw new Error("PACK_FINGERPRINT_MISMATCH");
-      if (selectionVersion !== packSelectionVersion) return;
-      const pack = JSON.parse(new TextDecoder("utf-8").decode(bytes));
-      enablePack(pack, file.name);
+      await loadPackBytes(bytes, file.name, function () { return selectionVersion === packSelectionVersion; });
     } catch (error) {
       if (selectionVersion !== packSelectionVersion) return;
       resetPack(`검증 실패: ${error.code || (error.message === "PACK_FINGERPRINT_MISMATCH" ? error.message : "JSON_INVALID")}`);
@@ -382,4 +481,44 @@
     resizeTimer = window.setTimeout(function () { renderPdfPage(); }, 120);
   });
   window.addEventListener("beforeunload", function () { releasePdf(); revokePaperUrl(); }, { once: true });
+
+  async function privateResponse(relativePath, method) {
+    const url = new URL(relativePath, privateRuntime.baseUrl);
+    const response = await window.fetch(url.href, { method: method || "GET", cache: "no-store", credentials: "same-origin" });
+    if (!response.ok || response.headers.get("x-gfield-private-studio") !== "sasmo-2019-g6-v1") throw new Error("PRIVATE_RUNTIME_RESPONSE_INVALID");
+    return response;
+  }
+  async function loadPrivateRuntime() {
+    runtimeNote.hidden = false;
+    document.querySelector(".setup-panel").dataset.runtime = "local-private";
+    paperFile.disabled = true;
+    packFile.disabled = true;
+    document.getElementById("paper-file-name").textContent = "검증된 원본 문제지 · 자동 연결 중";
+    document.getElementById("pack-file-name").textContent = "검증된 채점팩 · 자동 연결 중";
+    setSourceState("waiting", "로컬 스튜디오 연결 중", "문제지·채점팩·문항별 복습의 검증값을 확인하고 있습니다.");
+    try {
+      const responses = await Promise.all([
+        privateResponse("pack.json"),
+        privateResponse("paper.pdf"),
+        privateResponse(`review/${privateRuntime.audience}.html`, "HEAD")
+      ]);
+      const packBytes = await responses[0].arrayBuffer();
+      const paperBytes = await responses[1].arrayBuffer();
+      await loadPackBytes(packBytes, "2019 G6 검증팩 · 로컬 자동 연결");
+      privateReviewBaseUrl = new URL(`review/${privateRuntime.audience}.html`, privateRuntime.baseUrl);
+      await showPaper(new File([paperBytes], "SASMO_2019_G6_Problem_Set.pdf", { type: "application/pdf" }));
+      if (!activePack || !activePdf || !privateReviewBaseUrl) throw new Error("PRIVATE_RUNTIME_NOT_READY");
+    } catch (error) {
+      privateReviewBaseUrl = null;
+      activePack = null;
+      paperFingerprint = null;
+      await releasePdf();
+      revokePaperUrl();
+      setAnswerInputsEnabled(false);
+      setSourceState("error", "로컬 스튜디오 연결 실패", `검증된 자료를 열지 못했습니다: ${error.code || error.message || "INVALID"}`);
+      document.getElementById("paper-file-name").textContent = "로컬 문제지 연결 실패";
+      document.getElementById("pack-file-name").textContent = "로컬 채점팩 연결 실패";
+    }
+  }
+  if (privateRuntime) loadPrivateRuntime();
 })();

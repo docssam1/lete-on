@@ -23,21 +23,20 @@ test.before(async function () {
 });
 test.after(async function () { await browser.close(); await new Promise(function (resolve) { server.close(resolve); }); });
 
-test("a student-only local SASMO first attempt survives reload and routes to a plan without an official score claim", async function () {
+test("the retired local SASMO set survives regression reload but cannot prescribe a learning plan", async function () {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
-  await page.goto(`${baseUrl}competition-practice.html?program=sasmo-g6&audience=student&locale=ko`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}competition-practice.html?program=sasmo-g6&audience=student&locale=ko&mode=foundation-preview`, { waitUntil: "networkidle" });
   await page.locator('[data-item-id="sasmo-g6-model-01"] [data-answer-id="A"]').click();
   assert.match(await page.locator("#audience-disclosure").innerText(), /이 기기의 브라우저/);
-  assert.equal(await page.locator(".diagnostic-plan-link").count(), 1);
+  assert.equal(await page.locator(".diagnostic-plan-link").count(), 0);
   await page.reload({ waitUntil: "networkidle" });
   assert.equal(await page.locator('[data-item-id="sasmo-g6-model-01"] .choice.wrong').count(), 1);
-  await page.locator(".diagnostic-plan-link").click();
-  await page.waitForURL(/learning-plan\.html/);
-  assert.equal(await page.locator("#plan-state").innerText(), "예비 진단 연결");
-  assert.match(await page.locator("#prediction-copy").innerText(), /공식 점수 예측이 아닙니다/);
-  assert.match(await page.locator("#today-description").innerText(), /문제 해결 전략/);
-  await page.goto(`${baseUrl}competition-practice.html?program=sasmo-g6&audience=teacher&locale=ko`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}learning-plan.html?goal=sasmo-primary6`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#plan-state").innerText(), "진단 연결 전");
+  assert.equal(await page.locator("#diagnostic-action").getAttribute("href"), "./sasmo-real-paper.html?audience=student");
+  assert.doesNotMatch(await page.locator("#plan-description").innerText(), /유형 점검/);
+  await page.goto(`${baseUrl}competition-practice.html?program=sasmo-g6&audience=teacher&locale=ko&mode=foundation-preview`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".teacher-evidence").count(), 0);
   assert.equal(await page.locator(".teacher-solution").count(), 10);
   await context.close();

@@ -144,3 +144,16 @@ test("score-only items remain in the 70-point score but not the diagnostic denom
   assert.throws(function () { readiness.analyzeAttempt(form(), attempt(outcomes), policy(), { scoreOnlyQuestionNumbers: [19, 19] }); }, /scoreOnlyQuestionNumbers/);
   assert.throws(function () { readiness.analyzeAttempt(form(), attempt(outcomes), policy(), { scoreOnlyQuestionNumbers: [26] }); }, /scoreOnlyQuestionNumbers/);
 });
+
+test("review-required and score-only items can share one explicit diagnostic exclusion set", function () {
+  const outcomes = Array(25).fill("correct");
+  const report = readiness.analyzeAttempt(form(), attempt(outcomes), policy(), { diagnosticExcludedQuestionNumbers: [19, 15] });
+  assert.equal(report.score.rawScore, 70);
+  assert.equal(report.diagnostic.itemCount, 23);
+  assert.deepEqual(report.diagnostic.diagnosticExcludedQuestionNumbers, [15, 19]);
+  assert.deepEqual(report.diagnostic.scoreOnlyQuestionNumbers, []);
+  assert.equal(report.diagnostic.axes.reduce(function (total, axis) { return total + axis.itemCount; }, 0), 23);
+  assert.throws(function () {
+    readiness.analyzeAttempt(form(), attempt(outcomes), policy(), { scoreOnlyQuestionNumbers: [19], diagnosticExcludedQuestionNumbers: [15, 19] });
+  }, /conflict/);
+});

@@ -34,6 +34,13 @@ test("pattern-discovery prompt hides the operation rule until the solution",func
   assert.equal(bank.solve(item.model),"41");
 });
 
+test("a known weekday cycle is classified as number work, not pattern discovery",function(){
+  const item=byId("mk56-calendar-01");
+  assert.equal(item.axis,"number-operations");
+  assert.equal(item.typeId,"weekday-cycle");
+  assert.equal(bank.solve(item.model),"Wednesday");
+});
+
 test("bounded number and counting cases are independently enumerated",function(){
   assert.deepEqual(Array.from({length:10},function(_,digit){return digit;}).filter(function(digit){return(420+digit)%9===0;}),[3]);
   const subset=byId("mk56-weights-01").model,matches=[];for(let mask=0;mask<(1<<subset.weights.length);mask+=1){const chosen=subset.weights.filter(function(_,index){return mask&(1<<index);});if(chosen.reduce(function(sum,value){return sum+value;},0)===subset.target)matches.push(chosen.length);}assert.equal(Math.min.apply(null,matches),5);
@@ -59,6 +66,6 @@ test("geometry models agree with independent coordinate, folding, and distance c
 });
 
 test("learner-fit, locale, source, and publication gates are explicit",function(){
-  bank.items.forEach(function(item){assert.equal(item.learnerFit.learnerStage,"US Grade 6 competition bridge, ages 11-12");assert.deepEqual(Object.keys(item.prompt),["ko","en","zh-Hans"]);assert.equal(item.contentOrigin,"gfield-original");assert.equal(item.officialProblem,false);assert.equal(item.releaseState,"published-public-practice");assert.equal(item.resultContract,"single-value");assert.equal(item.diagnosticEligible,false);assert.ok(["foundation","core","stretch"].includes(item.difficultyBand));});
+  bank.items.forEach(function(item){assert.equal(item.learnerFit.learnerStage,"US Grade 6 competition bridge, ages 11-12");assert.deepEqual(Object.keys(item.prompt),["ko","en","zh-Hans"]);assert.equal(item.contentOrigin,"gfield-original");assert.equal(item.officialProblem,false);assert.equal(item.releaseState,"internal-foundation-preview");assert.equal(item.resultContract,"single-value");assert.equal(item.diagnosticEligible,false);assert.ok(["foundation","core","stretch"].includes(item.difficultyBand));});
   assert.deepEqual(bank.sources.map(function(row){return row.authority;}),["SASMO / SIMCC","Math Kangaroo USA","Mathematical Association of America"]);
 });

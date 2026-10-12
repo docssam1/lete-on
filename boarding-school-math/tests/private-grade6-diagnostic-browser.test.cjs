@@ -275,7 +275,8 @@ test("Grade 6 local diagnostic turns a reviewed prerequisite error into domain a
     assert.equal(await page.locator("#plan-state").innerText(), "42문항 진단 연결");
     assert.match(await page.locator("#prediction-copy").innerText(), /41 \/ 42점[\s\S]*우선 보완/);
     assert.match(await page.locator("#today-description").innerText(), /선수개념부터 다시 연결할 약점/);
-    assert.equal(await page.locator("#teacher-grid article").count(), 4);
+    assert.equal(await page.locator("#teacher-pack").isHidden(), true);
+    assert.equal(await page.locator("#teacher-grid").getByRole("link").count(), 0);
     await noHorizontalOverflow(page, 390);
     assert.deepEqual(teacherUiViolations, []);
     assert.deepEqual(errors, []);
