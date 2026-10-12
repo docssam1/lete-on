@@ -39,7 +39,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261012a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261012a/20261012b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261012b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261012b/20261013a/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -48,31 +48,33 @@
 - 꼴: `/books/book-04/lessons/<번호>/original/items/<번호>` (칸이 있으면 `…/parts/<번호>`),
   `/books/book-04/lessons/<번호>/experience/check`, `/books/book-04/lessons/<번호>/extension`.
 - **문자열로만 연결된다.** 단원 순서를 바꿔도 번호는 그대로 둔다. 새 단원은 **아직 안 쓴 번호**를 쓴다.
-- 4권에서 지금 쓰는 단원 번호: 0~14. **다음 새 단원은 15부터.**
+- 4권에서 지금 쓰는 단원 번호: 0~16. **다음 새 단원은 17부터.**
 - 공개 데이터의 `answerRef` 하나하나에 DB 기록이 있어야 한다. 하나라도 빠지면 그 권 답 불러오기가 깨진다.
 
 ### 4권 단원 ↔ answerRef 번호 (화면 순서)
 | 화면 순서 | 단원 id | 제목 | 번호 | 원본 쪽 |
 |---|---|---|---|---|
 | 1 | polyomino-family-count | 붙인 정사각형의 모양을 세어요 | 0 | 3 |
-| 2 | cube-min-count | 쌓기나무의 개수를 세어요 | **11** | 16~17 |
-| 3 | hidden-cube-count | 보이지 않는 쌓기나무를 찾아요 | 1 | 18 |
-| 4 | fold-hole-count | 접은 종이의 구멍 수를 세어요 | 2 | 15 |
-| 5 | cube-box-fill | 상자의 빈칸을 채워요 | 3 | 19 |
-| 6 | multiplication-matrix | 가로와 세로의 곱을 맞춰요 | 4 | 20 |
-| 7 | compare-order-source | 크기를 비교해 순서를 정해요 | **12** | 22~24 |
-| 8 | compare-difference-source | 수의 크기 차이를 구해요 | **13** | 25~27 |
-| 9 | balance-equality-source | 양쪽에서 같은 것을 지워요 | **14** | 28~30 |
-| 10 | balance-substitution | 도형을 바꾸어 넣어요 | 5 | 31~33 |
-| 11 | order-logic-source | 조건으로 순서를 정해요 | **10** | 36·37·40·41 |
-| 12 | table-logic-source | 가능한 선택을 표로 지워요 | 6 | 38·39 |
-| 13 | cardinal-placement | 동서남북으로 자리를 찾아요 | 7 | 36·42 |
-| 14 | circle-logic-source | 원탁의 이웃 자리를 찾아요 | 8 | 37·43·44 |
-| 15 | row-logic-source | 앞뒤 순서로 인원을 세어요 | 9 | 45·46 |
+| 2 | flip-rotate-source | 숫자를 돌리고 뒤집어요 | **15** | 5~7 |
+| 3 | digital-flip-source | 디지털 숫자를 뒤집고 돌려요 | **16** | 4·8 |
+| 4 | cube-min-count | 쌓기나무의 개수를 세어요 | **11** | 16~17 |
+| 5 | hidden-cube-count | 보이지 않는 쌓기나무를 찾아요 | 1 | 18 |
+| 6 | fold-hole-count | 접은 종이의 구멍 수를 세어요 | 2 | 15 |
+| 7 | cube-box-fill | 상자의 빈칸을 채워요 | 3 | 19 |
+| 8 | multiplication-matrix | 가로와 세로의 곱을 맞춰요 | 4 | 20 |
+| 9 | compare-order-source | 크기를 비교해 순서를 정해요 | **12** | 22~24 |
+| 10 | compare-difference-source | 수의 크기 차이를 구해요 | **13** | 25~27 |
+| 11 | balance-equality-source | 양쪽에서 같은 것을 지워요 | **14** | 28~30 |
+| 12 | balance-substitution | 도형을 바꾸어 넣어요 | 5 | 31~33 |
+| 13 | order-logic-source | 조건으로 순서를 정해요 | **10** | 36·37·40·41 |
+| 14 | table-logic-source | 가능한 선택을 표로 지워요 | 6 | 38·39 |
+| 15 | cardinal-placement | 동서남북으로 자리를 찾아요 | 7 | 36·42 |
+| 16 | circle-logic-source | 원탁의 이웃 자리를 찾아요 | 8 | 37·43·44 |
+| 17 | row-logic-source | 앞뒤 순서로 인원을 세어요 | 9 | 45·46 |
 
-DB `book-04` 현재: **키 194개**, sha 앞 8자리 `ec0802bb`. 작업 전 반드시 다시 조회해 확인한다.
+DB `book-04` 현재: **키 301개**, sha 앞 8자리 `9d438237`. 작업 전 반드시 다시 조회해 확인한다.
 
-## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막은 4권 묶음 4 · 2026-10-12)
+## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막은 4권 묶음 5 · 2026-10-12)
 
 - **2권**: 교사용·학생용과 눈으로 대조해 그림·문장 정리, 분수 세로 표기, 빠졌던 물음 되살림, 34쪽 활동 04 2문항 추가.
 - **3권**: 화면을 원본 그림·문장대로, 28-(2) 답 교정, 보류였던 8-(8)·29-(1)·20쪽 (2)(3) 되살림.
@@ -97,6 +99,15 @@ DB `book-04` 현재: **키 194개**, sha 앞 8자리 `ec0802bb`. 작업 전 반�
   **31-(3)은 예전에 `golden-bell-recovery-data.js`(보충 문항)로 이미 들어가 있었다** — 같은 문항이 두 번 보이지 않게
   그 파일에서 4권 항목을 지웠다(답은 같음을 DB에서 확인). DB의 옛 `/recovery/…balance-empty-dish-ga…` 키는 쓰이지 않고 남아 있다.
   `sourceHold`는 34쪽(△n 빈칸)만 남김.
+- **4권 묶음 5**(4~8쪽 63문항, 단원 2개로 나눠 커밋):
+  - `flip-rotate-source`(번호 15, 5~7쪽 34문항): 5쪽 「1」 뒤집기·돌리기 12, 6쪽 두 번 뒤집기·차례로 움직이기·한 번에 바꾸기 10
+    (그리기 → 후보 고르기), 7쪽 숫자판 12(답이 여럿인 판은 `resultContract:{type:"set"}`). 개념 설명은 1권 `mirror-direction` 재사용.
+    그림: `source-one-flip`(점선 축·돌리기 기호 + 보기 ①~⑧), `source-digit-flip`, `source-upright-board`(셀마다 `{value, t}`).
+    변환은 화면 좌표 행렬 `SCREEN_TRANSFORM`(I·LR·UD·R180·CW·CCW·T·AT). **돌리기 기호 읽는 법: 12시에서 시작해 돌린 만큼 색칠, 화살표가 방향.**
+    7쪽 「6」 모양 셀은 9를 반 바퀴 돌린 것이다(교사용과 같음). 8은 반 바퀴 돌려도 같은 모양이라 답에 넣는다.
+  - `digital-flip-source`(번호 16, 4쪽 연산 8 + 8쪽 21문항): 7세그먼트 그림 `source-seven-seg`, 8쪽 ⑤는 칸 2개(바뀐 수·계산값).
+    개념 설명은 1권 `digital-transform` 재사용. 오른쪽으로 뒤집기 b↔f·c↔e, 반 바퀴 a↔d·b↔e·c↔f, 자리 순서 반대.
+  - 63문항 모두 교사용 답과 일치. `sourceHold`의 5~8쪽 항목 삭제.
 
 ## 4. 남은 일 — 이 순서대로
 
@@ -106,8 +117,8 @@ DB `book-04` 현재: **키 194개**, sha 앞 8자리 `ec0802bb`. 작업 전 반�
 |---|---|---|---|
 | ~~3~~ | 22~27 | 비교하기 26문항 | **완료**(3절) |
 | ~~4~~ | 28~33 | 양팔저울 등식 8 + 저울 바꾸어 넣기 5 | **완료**(3절) |
-| **5 (다음)** | 4~8 | 연산 8, 숫자 1 뒤집기·돌리기 ①~⑧, 숫자판 3, 디지털 숫자 20 + 952 반 바퀴 | **그리기 문항은 고르기형으로** |
-| 6 | 10~14 | 색종이 접어 위치(알파벳) 7·반대쪽 번호 3, 두 번 접어 자른 모양 4, 자른 수의 합 4 | **그리기 문항은 고르기형으로** |
+| ~~5~~ | 4~8 | 연산 8, 숫자 1 뒤집기·돌리기 ①~⑧, 숫자판 3, 디지털 숫자 20 + 952 반 바퀴 | **완료**(3절) |
+| **6 (다음)** | 10~14 | 색종이 접어 위치(알파벳) 7·반대쪽 번호 3, 두 번 접어 자른 모양 4, 자른 수의 합 4 | **그리기 문항은 고르기형으로** |
 | 보류 유지 | 2, 3 확장, 34·47 | 정삼각형 등분 그리기, 3쪽 다섯 칸 확장(교사용 전용), 47쪽 □n(원본도 빈칸뿐) | 넣지 않는다 |
 
 그다음: **5~10권 원본 대조**(같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

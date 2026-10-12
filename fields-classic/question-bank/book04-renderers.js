@@ -596,6 +596,39 @@ function sourceUprightBoard(visual) {
   return `<div class="b4-upright-board">${cells}</div>`;
 }
 
+// 8쪽 디지털 숫자: 원본처럼 끝이 뾰족한 7개 막대(a 위, b 오른쪽 위, c 오른쪽 아래, d 아래, e 왼쪽 아래, f 왼쪽 위, g 가운데).
+const SEVEN_SEGMENTS = Object.freeze({ "0": "abcdef", "1": "bc", "2": "abdeg", "3": "abcdg", "4": "bcfg", "5": "acdfg", "6": "acdefg", "7": "abcf", "8": "abcdefg", "9": "abcdfg" });
+function sevenSegDigit(digit, x = 0, h = 60) {
+  const w = h * 0.52;
+  const t = h * 0.11;
+  const g = t * 0.25;
+  const hx = (y, x0, x1) => `${x0 + t / 2 + g},${y} ${x0 + t + g},${y - t / 2} ${x1 - t - g},${y - t / 2} ${x1 - t / 2 - g},${y} ${x1 - t - g},${y + t / 2} ${x0 + t + g},${y + t / 2}`;
+  const vy = (xc, y0, y1) => `${xc},${y0 + t / 2 + g} ${xc + t / 2},${y0 + t + g} ${xc + t / 2},${y1 - t - g} ${xc},${y1 - t / 2 - g} ${xc - t / 2},${y1 - t - g} ${xc - t / 2},${y0 + t + g}`;
+  const L = t / 2;
+  const R = w - t / 2;
+  const top = t / 2;
+  const mid = h / 2;
+  const bot = h - t / 2;
+  const seg = { a: hx(top, 0, w), g: hx(mid, 0, w), d: hx(bot, 0, w), f: vy(L, top, mid), b: vy(R, top, mid), e: vy(L, mid, bot), c: vy(R, mid, bot) };
+  const on = SEVEN_SEGMENTS[String(digit)] || "";
+  return `<g transform="translate(${x} 0)">${[...on].map((k) => `<polygon points="${seg[k]}"/>`).join("")}</g>`;
+}
+function sevenSegNumber(text, h = 60, label = "") {
+  const w = h * 0.52;
+  const gap = h * 0.22;
+  const digits = [...String(text)];
+  const width = digits.length * w + (digits.length - 1) * gap;
+  return `<svg class="b4-seven" viewBox="-2 -2 ${(width + 4).toFixed(1)} ${h + 4}" width="${(width + 4).toFixed(1)}" height="${h + 4}" role="img" aria-label="디지털 숫자 ${escapeHtml(label || text)}">${digits.map((d, i) => sevenSegDigit(d, i * (w + gap), h)).join("")}</svg>`;
+}
+
+function sourceSevenSeg(visual) {
+  // 위: 0~9 디지털 숫자 띠(원본 그대로). 아래: 원래 수 ± [빈칸] = , 또는 숫자 카드.
+  const legend = visual.legend ? `<div class="b4-seven-legend">${sevenSegNumber("0123456789", 30, "0부터 9까지")}</div>` : "";
+  if (visual.card) return `<div class="b4-seven-set">${legend}<div class="b4-seven-card">${sevenSegNumber(visual.card, 56)}</div></div>`;
+  const boxes = Array.from({ length: Number(visual.boxes) || String(visual.number).length }, () => "<i></i>").join("");
+  return `<div class="b4-seven-set">${legend}<div class="b4-seven-head"><span>원래 수</span><span>${escapeHtml(visual.label)}</span></div><div class="b4-seven-row">${sevenSegNumber(visual.number, 56)}<b>${visual.op === "-" ? "−" : "+"}</b><span class="b4-seven-boxes">${boxes}</span><b>=</b><span class="b4-seven-result">?</span></div></div>`;
+}
+
 export function book04Markup(visual) {
   if (!visual || visual.kind !== "book4") return "";
   switch (visual.subtype) {
@@ -629,6 +662,7 @@ export function book04Markup(visual) {
     case "source-one-flip": return sourceOneFlip(visual);
     case "source-digit-flip": return sourceDigitFlip(visual);
     case "source-upright-board": return sourceUprightBoard(visual);
+    case "source-seven-seg": return sourceSevenSeg(visual);
     case "source-relations": return sourceRelations(visual);
     case "source-number-cards": return sourceNumberCards(visual);
     case "source-clue-box": return sourceClueBox(visual);

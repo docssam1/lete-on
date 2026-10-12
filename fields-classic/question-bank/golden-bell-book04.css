@@ -188,3 +188,23 @@
   .gold-print-page[data-print-book="book-04"] .b4-upright-board{grid-template-columns:repeat(2,13mm);grid-template-rows:repeat(2,13mm)}
   .b4-rot-icon .fill{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
+
+/* 8쪽 디지털 숫자 */
+.b4-seven polygon{fill:#2f7f96}
+.b4-seven-set{display:grid;justify-items:center;gap:14px}
+.b4-seven-legend{padding:6px 10px;border-bottom:1px dashed #9bb7c0}
+.b4-seven-head{display:grid;grid-template-columns:auto auto;gap:60px;color:#222;font-size:14px;font-weight:700}
+.b4-seven-row{display:flex;align-items:center;gap:14px;color:#222;font-size:24px;font-weight:700}
+.b4-seven-boxes{display:flex}
+.b4-seven-boxes i{display:block;width:46px;height:56px;border:1.5px solid #2f7f96;background:#fff}
+.b4-seven-boxes i+i{border-left:0}
+.b4-seven-result{color:#888}
+.b4-seven-card{padding:10px 16px;border:1.5px solid #2f7f96;border-radius:14px;background:#fff}
+@media print{
+  .gold-print-page[data-print-book="book-04"] .b4-seven-row .b4-seven{height:10mm;width:auto}
+  .gold-print-page[data-print-book="book-04"] .b4-seven-legend .b4-seven{height:6mm;width:auto}
+  .gold-print-page[data-print-book="book-04"] .b4-seven-boxes i{width:8mm;height:10mm}
+  .gold-print-page[data-print-book="book-04"] .b4-seven-row{font-size:13px;gap:2mm}
+  .gold-print-page[data-print-book="book-04"] .b4-seven-head{font-size:9px;gap:12mm}
+  .b4-seven polygon{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
