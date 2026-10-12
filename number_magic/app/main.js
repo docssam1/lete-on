@@ -6143,17 +6143,46 @@ function runPractice(body,u){
   buildNumpad($('#pad'),val=>handlePractice(val,body,u),{decimal:isDecAns,negative:!!cur.negative});
   say(first?L(cfg.intro):L(cur.prompt));
 }
+/* Pointer-based bounded manipulatives also accept native keyboard activation.
+   Delegate on their host so rerendered plates/tokens keep the same handlers. */
+function wireManipulativeKeys(host){
+  const names={ko:'교구',en:'Piece',zh:'教具'},checks={ko:'답 확인',en:'Check answer',zh:'确认答案'};
+  host.querySelectorAll('button').forEach((b,i)=>{
+    if(!b.getAttribute('aria-label')&&!b.textContent.trim())b.setAttribute('aria-label',`${names[S.lang]||names.ko} ${i+1}`);
+    if(b.matches('.nm-tm-done,.nm-nb-done'))b.setAttribute('aria-label',checks[S.lang]||checks.ko);
+    if(b.closest('.nm-g46-srow.locked'))b.disabled=true;
+  });
+  const ask=host.querySelector('.nm-nb-node.ask');
+  if(ask){ask.tabIndex=0;ask.setAttribute('role','button');ask.setAttribute('aria-label',L({ko:'빈 원 채우기. 지우기는 Backspace',en:'Fill the empty circle. Backspace removes one',zh:'填空圆，退格键可删除一个'}));}
+  const rows=host.querySelector('.nm-g46-srows');
+  if(rows){rows.tabIndex=0;rows.setAttribute('role','region');rows.setAttribute('aria-label',L({ko:'가르기 방법',en:'Different splitting methods',zh:'不同的分法'}));}
+  host.addEventListener('keydown',e=>{
+    const b=e.target.closest('button,[role="button"]');
+    if(!b||!host.contains(b)||b.disabled)return;
+    if(b.classList.contains('nm-g79-tickbtn')&&['ArrowLeft','ArrowRight'].includes(e.key)){
+      e.preventDefault();const ticks=[...host.querySelectorAll('.nm-g79-tickbtn')],i=ticks.indexOf(b);
+      ticks[Math.max(0,Math.min(ticks.length-1,i+(e.key==='ArrowLeft'?-1:1)))].focus();return;
+    }
+    if(['Backspace','Delete'].includes(e.key)&&b.matches('.nm-nb-node.ask,.nm-g46-plate,.nm-g46-half')){
+      e.preventDefault();if(e.repeat)return;
+      const tokens=b.querySelectorAll('.nm-nb-fill,.nm-g46-tk'),last=tokens[tokens.length-1];
+      if(last)last.dispatchEvent(new Event('pointerup',{bubbles:true}));return;
+    }
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();if(!e.repeat)b.dispatchEvent(new Event('pointerup',{bubbles:true}));}
+  });
+}
 function runPracticeWidget(body,u,cur,first,need){
   const cfg=u.practice;
   const gridFit=cur.widget==='g13Grid'&&cur.cols<=5;
-  body.innerHTML=`<div class="nm-dialog${gridFit?' nm-widget-dialog nm-grid-dialog':''}">
+  const widgetFit=gridFit||['g13Rep','numberBond','splitDraw','hopLine'].includes(cur.widget);
+  body.innerHTML=`<div class="nm-dialog${widgetFit?' nm-widget-dialog '+(gridFit?'nm-grid-dialog':'nm-manipulative-dialog'):''}">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
-    ${gridFit?'<div class="nm-widget-guide">':''}
+    ${widgetFit?'<div class="nm-widget-guide">':''}
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    <div class="nm-bubble" id="bub">${first&&!gridFit?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt)):numiDialogueHtml(L(cur.prompt))}</div>
-    ${gridFit?'</div><div class="nm-widget-work">':''}
+    <div class="nm-bubble" id="bub">${first&&!widgetFit?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt)):numiDialogueHtml(L(cur.prompt))}</div>
+    ${widgetFit?'</div><div class="nm-widget-work">':''}
     <div id="pracWidget" class="nm-lab-widget nm-board"></div>
-    ${gridFit?'</div>':''}
+    ${widgetFit?'</div>':''}
   </div>`;
   S.sub.started=true;
   say(first?L(cfg.intro):L(cur.prompt));
@@ -6169,6 +6198,7 @@ function runPracticeWidget(body,u,cur,first,need){
       toast(t('tryAgain'),false);
     }
   });
+  if(widgetFit&&!gridFit)wireManipulativeKeys($('#pracWidget'));
 }
 function handlePractice(val,body,u){
   const cur=S.sub.cur;const need=u.practice.count||5;
@@ -6953,16 +6983,17 @@ function stepLabWidget(body,u){
   const origTexHtml=cur.tex?labExprHtml(cur.tex):'';
   /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
   const gridFit=cur.widget==='g13Grid'&&cur.cols<=5;
-  body.innerHTML=`<div class="nm-dialog${gridFit?' nm-widget-dialog nm-grid-dialog':''}${cur.widget==='steps'?' steps-mode':''}">
+  const widgetFit=gridFit||['g13Rep','numberBond','splitDraw','hopLine'].includes(cur.widget);
+  body.innerHTML=`<div class="nm-dialog${widgetFit?' nm-widget-dialog '+(gridFit?'nm-grid-dialog':'nm-manipulative-dialog'):''}${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
-    ${gridFit?'<div class="nm-widget-guide">':''}
+    ${widgetFit?'<div class="nm-widget-guide">':''}
     <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    ${!gridFit&&origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
-    <div class="nm-bubble">${numiDialogueHtml(first&&!gridFit?L(cfg.intro):L(cur.prompt))}</div>
-    ${gridFit?'</div><div class="nm-widget-work">':''}
-    ${gridFit&&origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
+    ${!widgetFit&&origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
+    <div class="nm-bubble">${numiDialogueHtml(first&&!widgetFit?L(cfg.intro):L(cur.prompt))}</div>
+    ${widgetFit?'</div><div class="nm-widget-work">':''}
+    ${widgetFit&&origTexHtml?`<div class="nm-lab-orig"><span class="nm-lab-orig-lbl">${origLbl}</span>${origTexHtml}</div>`:''}
     <div id="labWidget" class="nm-lab-widget nm-board"></div>
-    ${gridFit?'</div>':''}
+    ${widgetFit?'</div>':''}
     <div class="nm-memo-wrap"><label>📝</label><input type="text" class="nm-memo" placeholder="메모…" autocomplete="off" spellcheck="false"></div>
   </div>`;
   S.sub.labStarted=true;
@@ -6980,6 +7011,7 @@ function stepLabWidget(body,u){
       voiceLine(u,u.voice.wrong,false);
     }
   });
+  if(widgetFit&&!gridFit)wireManipulativeKeys($('#labWidget'));
 }
 function stepLabPairs(body,u){
   const cfg=u.lab;const need=cfg.count||4;

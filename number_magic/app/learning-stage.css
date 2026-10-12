@@ -88,6 +88,92 @@
     }
   }
 }
+/* Other bounded manipulatives share the guide/work layout, not the grid's
+   container sizing. Preserve the representation and every required row. */
+@media screen {
+  .nm-manipulative-dialog .nm-lab-widget { padding: 12px !important; }
+  .nm-manipulative-dialog .nm-widget-work { justify-content: center; }
+  .nm-manipulative-dialog .nm-g46-split { gap: 6px; max-width: 100%; }
+  .nm-manipulative-dialog .nm-g46-replay { position: absolute; top: 0; right: 0; }
+  .nm-manipulative-dialog .nm-g46-left { align-self: center; padding: 0 44px; }
+  .nm-manipulative-dialog .nm-g46-srows { gap: 6px; }
+  .nm-manipulative-dialog .nm-g46-srow { padding: 4px; }
+  .nm-manipulative-dialog .nm-g46-plate { width: 104px; height: 68px; }
+  .nm-manipulative-dialog .nm-g46-pbase .nm-art-obj { width: 68px; height: 68px; }
+  .nm-manipulative-dialog .nm-g46-sk-cake .nm-g46-plate { width: 128px; height: 106px; }
+  .nm-manipulative-dialog .nm-g46-sk-cake .nm-g46-pbase { align-items: flex-end; }
+  .nm-manipulative-dialog .nm-g46-sk-cake .nm-g46-pbase .nm-art-obj { width: 96px; height: 80px; }
+  .nm-manipulative-dialog .nm-g46-ptk { inset: 4px 8px; }
+  .nm-manipulative-dialog .nm-g46-sk-cake .nm-g46-ptk { inset: 0 8px 46px; }
+  .nm-manipulative-dialog .nm-g46-ptk .nm-g46-tk { width: 20px; height: 20px; font-size: 17px; display: inline-flex; }
+  .nm-manipulative-dialog .nm-g46-ptk .nm-art-obj,
+  .nm-manipulative-dialog .nm-g46-ptk .nm-art-animal { width: 100%; height: 100%; }
+  /* The approved square PNG has wide transparent margins around one thin
+     candle. Crop only that empty display margin; do not alter the source PNG. */
+  .nm-manipulative-dialog .nm-g46-sk-cake .nm-g46-ptk .nm-g46-tk {
+    width: 12px; height: 60px; position: relative; overflow: hidden;
+  }
+  .nm-manipulative-dialog .nm-g46-sk-cake .nm-g46-ptk .nm-art-obj {
+    width: 60px; height: 60px; position: absolute; left: 50%; transform: translateX(-50%);
+  }
+  .nm-manipulative-dialog .nm-g46-pcolor { width: 44px; height: 44px; }
+  .nm-manipulative-dialog .nm-g46-sk-paint .nm-g46-srow { gap: 2px; }
+  /* A nine-token row cannot have nine 44px targets on a narrow phone.
+     Keep its original single-row topology and allow an explicit inner pan. */
+  .nm-manipulative-dialog .nm-g46-sk-paint .nm-g46-srow {
+    overflow-x: auto; justify-content: flex-start; padding-block: 6px;
+  }
+  .nm-manipulative-dialog .nm-g46-sk-paint .nm-g46-pt { width: 44px; height: 44px; flex: 0 0 44px; }
+  .nm-manipulative-dialog button:focus-visible,
+  .nm-manipulative-dialog [role="button"]:focus-visible { outline: 3px solid #16417c; outline-offset: 2px; }
+  .nm-manipulative-dialog .nm-g46-srow.bar { overflow-x: auto; justify-content: flex-start; }
+  .nm-manipulative-dialog .nm-g46-sk-bar .nm-g46-bc { max-width: none; min-width: 44px; flex: 0 0 44px; }
+  .nm-manipulative-dialog .nm-g79-hopstage { width: min(340px, 100%); }
+  .nm-manipulative-dialog .nm-g79-wrap { gap: 8px; padding: 0; }
+  .nm-manipulative-dialog .nm-nb-wrap { gap: 8px; padding: 0; }
+  .nm-manipulative-dialog .nm-ml-arena { padding: 4px; }
+  .nm-unit-view:has(.nm-manipulative-dialog) .nm-unit-bar { padding-block: 4px; }
+  .nm-unit-view:has(.nm-manipulative-dialog) .nm-flow { padding-block: 4px; }
+  /* Blank feedback keeps its eventual space; mistakes must not move the
+     confirm control off-screen. Reserve one concise feedback line. */
+  .nm-manipulative-dialog .nm-g46-msg { min-height: 24px; margin: 0; }
+  .nm-manipulative-dialog .nm-g46-msg:empty { display: block; }
+  .nm-manipulative-dialog .nm-g46-split { padding-bottom: 0; }
+  @media (max-width: 699px) {
+    .nm-unit-view:has(.nm-manipulative-dialog) { --numi-dialogue-size: 26px; }
+    .nm-manipulative-dialog .nm-widget-guide { gap: 6px; }
+    .nm-manipulative-dialog .nm-widget-guide .nm-bubble { padding: 8px; }
+    .nm-manipulative-dialog .nm-g46-srow { padding: 2px; }
+    .nm-manipulative-dialog .nm-g46-circle { width: 100px; height: 100px; }
+  }
+  @media (orientation: landscape) and (min-width: 700px) {
+    .nm-manipulative-dialog .nm-g46-split:is(.nm-g46-sk-plate, .nm-g46-sk-cake, .nm-g46-sk-paint) .nm-g46-srows {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .nm-manipulative-dialog .nm-g46-srow { min-width: 0; }
+    .nm-manipulative-dialog .nm-widget-guide { align-self: center; }
+  }
+  @media (min-height: 600px) {
+    .nm-unit-view:has(.nm-manipulative-dialog),
+    .nm-unit-view:has(.nm-manipulative-dialog) .nm-unit-inner { flex: 1 1 0; }
+    .nm-unit-view:has(.nm-manipulative-dialog) .nm-step-body { overflow: visible; }
+    .nm-unit-view .nm-dialog.nm-manipulative-dialog { flex: 1; min-height: 0; }
+    .nm-manipulative-dialog .nm-widget-work { flex: 1; min-height: 0; }
+    .nm-manipulative-dialog .nm-lab-widget { flex: 1; min-height: 0; }
+    .nm-manipulative-dialog .nm-g46-split { flex: 1; min-height: 0; max-height: 100%; }
+    .nm-manipulative-dialog .nm-g46-split > :not(.nm-g46-srows) { flex: none; }
+    .nm-manipulative-dialog .nm-g46-srows {
+      flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+      align-content: start; scrollbar-gutter: stable; padding: 4px;
+    }
+    .nm-manipulative-dialog .nm-g46-srow { flex-shrink: 0; }
+    @media (orientation: landscape) and (min-width: 700px) {
+      .nm-unit-view .nm-dialog.nm-manipulative-dialog {
+        grid-template-rows: auto minmax(0, 1fr) auto; align-items: stretch;
+      }
+    }
+  }
+}
 @font-face {
   font-family: 'NM Lesson Hand';
   src: url('../assets/fonts/nm-lesson-hand.woff2') format('woff2');
@@ -398,7 +484,7 @@
 @media screen {
   html .nm-unit-view[data-learning-band][lang]:is([data-learning-band="preschool"], [data-learning-band="elementary"]):is(:lang(ko), :lang(en)) .nm-numi-dialogue {
     font-family: 'NM Lesson Hand', var(--lesson-font);
-    font-size: 28px;
+    font-size: var(--numi-dialogue-size, 28px);
     font-weight: 400;
     font-synthesis: none;
     line-height: 1.25;
