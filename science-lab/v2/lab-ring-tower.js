@@ -37,14 +37,14 @@ export async function mountRingTower(el, opts = {}) {
   const ups = Array.from({ length: n }, (_, i) => (i % 3 === 0 ? 'N' : 'S'));
   const hex = (c) => '#' + c.toString(16).padStart(6, '0');
   el.innerHTML = `
-    <div class="lab3d">
+    <div class="lab3d lab3d--ring-tower">
       <canvas aria-label="고리 자석 탑 3D 실험. 고리를 누르면 뒤집혀요. 끌어서 돌려 볼 수 있어요."></canvas>
       <div class="lab3d-read">
         <p class="lab-read"><span>떠 있는 층</span><b data-r="floating">0</b><small>곳</small></p>
         <p class="lab-read"><span>탑 높이</span><b data-r="height">0</b><small>칸</small></p>
-        <p class="lab-read"><span>윗면 극(아래→위)</span><b data-r="shape" class="rt-shape"></b></p>
+        <button class="lab-read rt-inspect" data-act="inspect-pair" type="button" aria-label="1번과 2번 고리 사이의 마주 보는 극 살펴보기. 누르면 다음 고리 사이를 봅니다."><span data-r="pair">1·2번 사이의 극 ↻</span><b data-r="facing">N ↔ N</b><small>윗면 <span data-r="shape" class="rt-shape"></span></small></button>
       </div>
-      <p class="lab3d-tip" data-r="tip">고리를 눌러 <b>뒤집어</b> 보세요. 마주 보는 면이 <b>같은 극</b>이면 떠요.</p>
+      <p class="lab3d-tip" data-r="tip">어떤 고리는 떠 있고 어떤 고리는 붙어 있나요? 먼저 예상하고, 고리를 눌러 <b>뒤집어</b> 보세요.</p>
       <div class="lab3d-btns">
         <div class="rt-flips" role="group" aria-label="고리 뒤집기(아래에서부터)">${Array.from({ length: n }, (_, i) => `<button class="btn rt-flip" type="button" data-flip="${i}" aria-label="아래에서 ${i + 1}번째 고리 뒤집기"><i style="background:${hex(RING_COLORS[i])}"></i>${i + 1}번 ↻</button>`).join('')}</div>
         <button class="btn primary" data-act="record" type="button">표에 적기</button>
@@ -66,8 +66,21 @@ export async function mountRingTower(el, opts = {}) {
     r.traverse((o) => { if (o.isMesh) o.userData.ring = i; });
     return h;
   });
-  parts.rings[0].userData.bot.userData.badge.visible = false;       // 받침에 닿은 면·맨 위 면은 마주 보는 짝이 없다
-  parts.rings[n - 1].userData.top.userData.badge.visible = false;
+  // 한 번에 마주 보는 한 쌍만 강조한다. 모든 N/S 표를 함께 띄우면 좁은 틈에서 겹쳐 읽기 어렵다.
+  let focusPair = 0;
+  const pairButton = $('[data-act=inspect-pair]');
+  const showPair = (pair) => {
+    focusPair = pair;
+    parts.rings.forEach((r, i) => {
+      r.userData.top.userData.badge.visible = i === pair;
+      r.userData.bot.userData.badge.visible = i === pair + 1;
+    });
+    $('[data-r=pair]').textContent = `${pair + 1}·${pair + 2}번 사이의 극 ↻`;
+    $('[data-r=facing]').textContent = `${ups[pair]} ↔ ${ups[pair + 1] === 'N' ? 'S' : 'N'}`;
+    pairButton.setAttribute('aria-label', `${pair + 1}번과 ${pair + 2}번 고리 사이의 마주 보는 극 살펴보기. 누르면 다음 고리 사이를 봅니다.`);
+  };
+  showPair(0);
+  pairButton.addEventListener('click', () => showPair((focusPair + 1) % (n - 1)));
   // 세운 눈금자: 0칸 = 받침 윗면, 1칸마다 굵은 눈금과 숫자, 반 칸마다 가는 눈금
   const MAXK = n <= 4 ? 8 : 9, GH = MAXK * KAN;
   const right = new THREE.Vector3(Math.cos(VIEW_TH), 0, -Math.sin(VIEW_TH)), front = new THREE.Vector3(Math.sin(VIEW_TH), 0, Math.cos(VIEW_TH));
@@ -95,13 +108,13 @@ export async function mountRingTower(el, opts = {}) {
   line.rotation.z = Math.PI / 2; line.position.x = TW.TOWER.R_OUT + len / 2;
   const lineG = new THREE.Group(); lineG.add(line); lineG.rotation.y = Math.atan2(-gauge.position.z, gauge.position.x); root.add(lineG);   // +x 축이 눈금자를 향하게
   const hLabel = KIT.label('탑 높이 0칸', { size: 0.26 }); root.add(hLabel);
-  stage.setView({ theta: 0.5, phi: 1.28, dist: 6.6, target: [-0.3, 1.5, 0], frame: [[-1.95, 0, -2], [3.05, 3.7, 1.5]] });   // 옆에 가깝게 — 뜬 틈이 잘 보이게. frame: 고리가 다 내려앉은 뒤의 작업 공간(받침·연필·자) — 처음 떨어지는 고리에 맞추면 멀리 잡혔다가 다가온다
-  stage.fitWidth = 1.1;   // 세로로 긴 화면(가로로 크게·세로 들기)에서도 소품이 잘리지 않게
+  stage.fitMargin = 0.94;   // 기본 300px 화면에서도 교구를 또렷하게, 잘림 없이 맞춘다
+  stage.setView({ theta: 0.5, phi: 1.28, dist: 6.6, target: [-0.3, 1.5, 0], frame: [[-1.95, 0, -2], [3.05, 3.7, 1.5]] });   // 뜬 틈이 보이는 각도. frame은 받침·연필·자를 포함한 실험 공간으로 고정한다
   stage.setContactShadow({ x: -0.3, z: 0.2, w: 4.6, d: 4.0 });
 
   // 상태: 고리마다 현재 높이·속도, 뒤집기 진행
   const st = holders.map(() => ({ y: 5, v: 0, flip: -1 }));
-  let model = towerModel(ups), shown = null;
+  let model = towerModel(ups), shown = null, interacted = false;
   const target = (i) => BASE_Y + model.y[i] * KAN + T / 2;          // 고리 가운데 높이
   const read = () => {
     $('[data-r=floating]').textContent = model.floating; $('[data-r=height]').textContent = model.height;
@@ -110,15 +123,17 @@ export async function mountRingTower(el, opts = {}) {
     clip.position.y = top; lineG.position.y = top; hLabel.position.copy(gauge.position).setY(top + 0.32);
     KIT.relabel(hLabel, `탑 높이 ${model.height}칸`, { size: 0.26 });
   };
-  holders.forEach((h, i) => { st[i].y = REDUCED() ? target(i) : target(i) + 2.4 + i * 0.5; h.position.y = st[i].y; });   // 처음엔 위에서 차례로 끼워진다
+  holders.forEach((h, i) => { st[i].y = target(i); h.position.y = st[i].y; });   // 실험은 첫 조작 전 정지: 적절한 초기 시점으로 바로 관찰한다
   read();
   const flip = (i) => {
     if (st[i].flip >= 0) return;
+    interacted = true;
+    showPair(Math.min(i, n - 2));
     if (REDUCED()) { ups[i] = ups[i] === 'N' ? 'S' : 'N'; parts.setUp(parts.rings[i], ups[i]); settle(i); return; }
     st[i].flip = 0;
   };
   function settle(i) {
-    model = towerModel(ups); read();
+    model = towerModel(ups); showPair(focusPair); read();
     const touching = (a) => ups[a] === ups[a + 1];
     const below = i > 0 ? (touching(i - 1) ? '붙었어요' : '떴어요') : '', above = i < n - 1 ? (touching(i) ? '붙었어요' : '떴어요') : '';
     tip(`${i + 1}번 고리를 뒤집었어요 → 윗면이 <b>${ups[i]}극</b>. ${below ? `아래 고리와 <b>${below}</b>` : ''}${below && above ? ', ' : ''}${above ? `위 고리와 <b>${above}</b>` : ''}.`);
@@ -136,7 +151,7 @@ export async function mountRingTower(el, opts = {}) {
         continue;
       }
       let goal = target(i); const floating = i > 0 && ups[i - 1] !== ups[i];
-      if (floating && !reduce) goal += Math.sin(t * 2.3 + i * 1.7) * 0.006;   // 자석 위에 뜬 고리는 아주 살짝 흔들린다
+      if (floating && interacted && !reduce) goal += Math.sin(t * 2.3 + i * 1.7) * 0.006;   // 첫 조작 뒤에만 아주 살짝 흔들린다
       if (reduce) { s.y = goal; s.v = 0; }
       else { const a = 95 * (goal - s.y) - 10 * s.v; s.v += a * Math.min(dt, 1 / 30); s.y += s.v * Math.min(dt, 1 / 30); }
       // 아래 고리를 뚫고 내려가지 않게(붙는 쪽은 딱 맞닿는다)
