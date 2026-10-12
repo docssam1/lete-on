@@ -20,9 +20,9 @@
 .b4-src-mino-row i{display:block;width:40px;height:2px}
 
 /* 16~18쪽 쌓기나무(원본과 같은 빗각 그림) */
-.b4-src-cubes .cube-front{fill:#dcedf5;stroke:#2f7f96;stroke-width:1.2;stroke-linejoin:round}
-.b4-src-cubes .cube-top{fill:#eaf5fa;stroke:#2f7f96;stroke-width:1.2;stroke-linejoin:round}
-.b4-src-cubes .cube-side{fill:#acc0c8;stroke:#2f7f96;stroke-width:1.2;stroke-linejoin:round}
+.b4-src-cubes .cube-front{fill:#ffd45c;stroke:#a8741a;stroke-width:1.2;stroke-linejoin:round}
+.b4-src-cubes .cube-top{fill:#ffeaa6;stroke:#a8741a;stroke-width:1.2;stroke-linejoin:round}
+.b4-src-cubes .cube-side{fill:#f0b23a;stroke:#a8741a;stroke-width:1.2;stroke-linejoin:round}
 .b4-src-cubes .wall-edge{stroke:#222;stroke-width:1.3}
 .b4-src-cubes .top-label{fill:#d9473f;font-size:13px;font-weight:800;text-anchor:middle}
 .book04-visual svg.b4-src-cubes{max-width:100%;height:auto}
@@ -35,10 +35,10 @@
 /* 16·17쪽 쌓기나무 → 위에서 본 모양 */
 .b4-src-topview-set{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:22px}
 .b4-src-topview-row{display:flex;align-items:center;gap:22px}
-.b4-src-arrow{color:#2f7f96;font-size:26px;line-height:1}
+.b4-src-arrow{color:#ef6c3a;font-size:26px;line-height:1}
 .b4-src-topview rect{fill:#fff;stroke:#e03131;stroke-width:1.4}
 .b4-src-topview text{fill:#e03131;font-size:13px;font-weight:700;text-anchor:middle}
-.b4-src-cube-example{display:grid;justify-items:center;gap:4px;margin:0;padding:10px 14px;border:1.5px solid #9bb7c0;border-radius:12px;background:#fff}
+.b4-src-cube-example{display:grid;justify-items:center;gap:4px;margin:0;padding:10px 14px;border:1.5px solid #f2b84b;border-radius:12px;background:#fffaf0}
 .b4-src-cube-example figcaption{color:#222;font-size:14px;font-weight:700}
 
 /* 19쪽 상자 속 쌓기나무 */
@@ -115,20 +115,24 @@
 }
 
 /* 22~27쪽 비교하기 */
-.b4-src-relations{display:grid;gap:10px;justify-items:start;padding:14px 22px;border:1.5px solid #2f7f96;border-radius:16px;background:#fff;color:#222;font-size:20px;font-weight:600}
-.b4-src-relations.tint{border-color:transparent;background:#dcedf5}
+.b4-src-relations{display:grid;gap:10px;justify-items:start;padding:14px 22px;border:2px solid #f39a1e;border-radius:16px;background:#fff;color:#222;font-size:20px;font-weight:600}
+.b4-src-relations.tint{border-color:transparent;background:#fff4c2}
 .b4-src-rel-row{display:flex;align-items:center;gap:10px}
 .b4-src-shape{width:28px;height:28px;flex:none}
-.b4-src-shape circle,.b4-src-shape polygon,.b4-src-shape rect{fill:#fff;stroke:#2f7f96;stroke-width:1.6;stroke-linejoin:round}
+.b4-src-shape circle,.b4-src-shape polygon,.b4-src-shape rect{stroke-width:2;stroke-linejoin:round}
+.b4-src-shape circle{fill:#ffe1dc;stroke:#e8503a}
+.b4-src-shape[aria-label="세모"] polygon{fill:#dcf5e5;stroke:#2f9e5f}
+.b4-src-shape rect{fill:#dde9ff;stroke:#2f6fe0}
+.b4-src-shape[aria-label="마름모"] polygon{fill:#ece0fb;stroke:#8e5bd8}
 .b4-src-number-cards{display:grid;justify-items:center;gap:16px}
 .b4-src-cards{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
-.b4-src-cards span{position:relative;display:grid;place-items:center;width:30px;height:32px;border:1.5px solid #2f7f96;background:#dcedf5;color:#222;font-size:16px;font-weight:600;overflow:hidden}
-.b4-src-cards span.used{border-color:#e8742c;background:#fde3d0}
+.b4-src-cards span{position:relative;display:grid;place-items:center;width:30px;height:32px;border:1.5px solid #f0a500;background:#fff3c4;color:#222;font-size:16px;font-weight:600;overflow:hidden}
+.b4-src-cards span.used{border-color:#b9b9b9;background:#efefef;color:#777}
 .b4-src-cards span.used::after{content:"";position:absolute;left:-4px;right:-4px;top:50%;height:1.6px;background:#d9473f;transform:rotate(-48deg)}
-.b4-src-sums{display:grid;gap:10px;padding:16px 26px;border-radius:16px;background:#dcedf5}
+.b4-src-sums{display:grid;gap:10px;padding:16px 26px;border-radius:16px;background:#e3f6ea}
 .b4-src-sum-row{display:flex;align-items:center;gap:8px;color:#222;font-size:18px;font-weight:600}
-.b4-src-sum-row i{display:block;width:30px;height:30px;border:1.5px solid #2f7f96;background:#fff}
-.b4-src-sum-row span{display:grid;place-items:center;width:30px;height:30px;border:1.5px solid #e8742c;background:#fde3d0}
+.b4-src-sum-row i{display:block;width:30px;height:30px;border:1.5px solid #2f9e5f;background:#fff}
+.b4-src-sum-row span{display:grid;place-items:center;width:30px;height:30px;border:1.5px solid #f0a500;background:#fff3c4}
 @media print{
   .gold-print-page[data-print-book="book-04"] .b4-src-relations{gap:1.5mm;padding:2mm 4mm;font-size:11px}
   .gold-print-page[data-print-book="book-04"] .b4-src-shape{width:5mm;height:5mm}
@@ -154,31 +158,35 @@
 }
 
 /* 5~7쪽 숫자 돌리기와 뒤집기 */
-.b4-one line{stroke:#2f7f96;stroke-width:3.2;stroke-linecap:square}
-.b4-rot-icon .ring,.b4-rot-svg .ring{fill:#fff;stroke:#2f7f96;stroke-width:1.2;stroke-dasharray:2 2}
+.b4-one line{stroke:#e8503a;stroke-width:3.2;stroke-linecap:square}
+.b4-rot-icon .ring,.b4-rot-svg .ring{fill:#fff;stroke:#777;stroke-width:1.2;stroke-dasharray:2 2}
 .b4-rot-icon.full .ring{stroke-dasharray:none;stroke-width:1.8}
-.b4-rot-icon .fill{fill:#b8dde9;stroke:#2f7f96;stroke-width:1.6}
-.b4-rot-icon .cross{fill:none;stroke:#2f7f96;stroke-width:.9;stroke-dasharray:2 2}
-.b4-rot-icon .arrow{fill:none;stroke:#2f7f96;stroke-width:1.8}
-.b4-rot-icon .arrow-head{fill:#2f7f96}
-.b4-flip-icon .axis{stroke:#2f7f96;stroke-width:1.2;stroke-dasharray:3 2}
-.b4-flip-icon .turn{fill:none;stroke:#2f7f96;stroke-width:1.5}
-.b4-flip-icon .turn-head{fill:none;stroke:#2f7f96;stroke-width:1.5}
+.b4-rot-icon .fill{fill:#ffd84d;stroke:#d79a00;stroke-width:1.6}
+.b4-rot-icon .cross{fill:none;stroke:#999;stroke-width:.9;stroke-dasharray:2 2}
+.b4-rot-icon .arrow{fill:none;stroke:#e8503a;stroke-width:1.8}
+.b4-rot-icon .arrow-head{fill:#e8503a}
+.b4-flip-icon .axis{stroke:#888;stroke-width:1.2;stroke-dasharray:3 2}
+.b4-flip-icon .turn{fill:none;stroke:#f39a1e;stroke-width:1.5}
+.b4-flip-icon .turn-head{fill:none;stroke:#f39a1e;stroke-width:1.5}
 .b4-one-flip{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:28px}
 .b4-one-figure{display:block;width:180px;height:180px}
-.b4-flip-axis .axis{fill:none;stroke:#2f7f96;stroke-width:1.4;stroke-dasharray:4 3}
-.b4-flip-axis .turn,.b4-flip-axis .turn-head{fill:none;stroke:#2f7f96;stroke-width:1.8}
+.b4-flip-axis .axis{fill:none;stroke:#888;stroke-width:1.4;stroke-dasharray:4 3}
+.b4-flip-axis .turn,.b4-flip-axis .turn-head{fill:none;stroke:#f39a1e;stroke-width:1.8}
 .b4-one-options{display:grid;grid-template-columns:repeat(4,auto);gap:10px 18px}
 .b4-one-options span,.b4-digit-candidates span{display:flex;align-items:flex-start;gap:4px;color:#222;font-size:15px}
 .b4-digit-flip{display:grid;justify-items:center;gap:16px}
 .b4-digit-row{display:flex;align-items:center;gap:12px}
 .b4-digit{display:inline-grid;place-items:center;width:46px;height:56px}
 .b4-digit i{display:block;color:#111;font:700 44px/1 Arial,Helvetica,sans-serif;font-style:normal}
-.b4-digit-box{display:block;width:52px;height:52px;border:1.5px solid #2f7f96;border-radius:12px;background:#fff}
-.b4-digit-candidates{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 22px;padding:10px 14px;border-top:1px dashed #9bb7c0}
+.b4-digit-box{display:block;width:52px;height:52px;border:2px solid #8e5bd8;border-radius:12px;background:#fff}
+.b4-digit-candidates{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 22px;padding:10px 14px;border-top:1px dashed #cfcfcf}
 .b4-digit-candidates.icons span{align-items:center}
-.b4-upright-board{display:grid;grid-template-columns:repeat(2,64px);grid-template-rows:repeat(2,64px);border:1.5px solid #2f7f96}
-.b4-upright-board>span{display:grid;place-items:center;border:1px solid #2f7f96}
+.b4-upright-board{display:grid;grid-template-columns:repeat(2,64px);grid-template-rows:repeat(2,64px);border:2px solid #8e5bd8}
+.b4-upright-board>span{display:grid;place-items:center;border:1px solid #8e5bd8}
+.b4-upright-board>span:nth-child(1){background:#fff4c2}
+.b4-upright-board>span:nth-child(2){background:#dff3ff}
+.b4-upright-board>span:nth-child(3){background:#ffe4ef}
+.b4-upright-board>span:nth-child(4){background:#e3f6ea}
 @media print{
   .gold-print-page[data-print-book="book-04"] .b4-one-figure{width:32mm;height:32mm}
   .gold-print-page[data-print-book="book-04"] .b4-one-options svg{width:8mm;height:8mm}
@@ -190,16 +198,16 @@
 }
 
 /* 8쪽 디지털 숫자 */
-.b4-seven polygon{fill:#2f7f96}
+.b4-seven polygon{fill:#e8503a}
 .b4-seven-set{display:grid;justify-items:center;gap:14px}
-.b4-seven-legend{padding:6px 10px;border-bottom:1px dashed #9bb7c0}
+.b4-seven-legend{padding:6px 10px;border-bottom:1px dashed #cfcfcf}
 .b4-seven-head{display:grid;grid-template-columns:auto auto;gap:60px;color:#222;font-size:14px;font-weight:700}
 .b4-seven-row{display:flex;align-items:center;gap:14px;color:#222;font-size:24px;font-weight:700}
 .b4-seven-boxes{display:flex}
-.b4-seven-boxes i{display:block;width:46px;height:56px;border:1.5px solid #2f7f96;background:#fff}
+.b4-seven-boxes i{display:block;width:46px;height:56px;border:2px solid #2f6fe0;background:#fff}
 .b4-seven-boxes i+i{border-left:0}
 .b4-seven-result{color:#888}
-.b4-seven-card{padding:10px 16px;border:1.5px solid #2f7f96;border-radius:14px;background:#fff}
+.b4-seven-card{padding:10px 16px;border:2px solid #e8503a;border-radius:14px;background:#fff8f0}
 @media print{
   .gold-print-page[data-print-book="book-04"] .b4-seven-row .b4-seven{height:10mm;width:auto}
   .gold-print-page[data-print-book="book-04"] .b4-seven-legend .b4-seven{height:6mm;width:auto}
@@ -208,3 +216,25 @@
   .gold-print-page[data-print-book="book-04"] .b4-seven-head{font-size:9px;gap:12mm}
   .b4-seven polygon{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
+
+/* 5쪽 보기 ①~⑧: 우리 앱 풀컬러 */
+.b4-one-options span:nth-child(1) .b4-one line{stroke:#e8503a}
+.b4-one-options span:nth-child(2) .b4-one line{stroke:#f39a1e}
+.b4-one-options span:nth-child(3) .b4-one line{stroke:#d9a400}
+.b4-one-options span:nth-child(4) .b4-one line{stroke:#2f9e5f}
+.b4-one-options span:nth-child(5) .b4-one line{stroke:#1aa3c9}
+.b4-one-options span:nth-child(6) .b4-one line{stroke:#2f6fe0}
+.b4-one-options span:nth-child(7) .b4-one line{stroke:#8e5bd8}
+.b4-one-options span:nth-child(8) .b4-one line{stroke:#e0559a}
+@media print{.b4-src-cards span,.b4-src-relations.tint,.b4-upright-board>span,.b4-src-cubes polygon,.b4-one line{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+/* 4권 원본 저울: 우리 앱 풀컬러(모양 색은 관계식 그림과 같게 ●빨강 ▲초록 ■파랑 ◆보라) */
+.balance-substitution.source-balance-board .balance-beam,.balance-substitution.source-balance-board .balance-beam span{background:#f39a1e}
+.balance-substitution.source-balance-board .balance-stand{border-bottom-color:#ffd45c}
+.balance-substitution.source-balance-board .balance-stand:after{border-color:#f39a1e}
+.source-balance-board .balance-tokens.circles i{background:#e8503a}
+.source-balance-board .balance-tokens.triangles i{background:#2f9e5f}
+.source-balance-board .balance-tokens.squares i{border-color:#1f55c0;background:#2f6fe0}
+.source-balance-board .balance-tokens.diamonds i{background:#8e5bd8}
+.source-balance-board .balance-tokens.stars i{color:#f0b23a}
+.source-balance-board .balance-tokens.labeled i{border-color:#f39a1e}
+@media print{.source-balance-board .balance-beam,.source-balance-board .balance-stand,.source-balance-board .balance-tokens i{print-color-adjust:exact;-webkit-print-color-adjust:exact}}

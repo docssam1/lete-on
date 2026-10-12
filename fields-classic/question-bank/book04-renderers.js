@@ -515,6 +515,13 @@ function oneFigure(transform = "I", size = 44) {
   return `<svg class="b4-one" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">${line([0, -1], [0, 1])}${line([0, -1], [-0.62, -0.38])}</svg>`;
 }
 
+// 아이에게 쓰는 말: 각도 대신 바퀴 수로 말한다.
+function turnWords(deg, dir) {
+  const way = dir === "cw" ? "시계 방향으로" : "시계 반대 방향으로";
+  const amount = deg >= 360 ? "한 바퀴" : deg === 180 ? "반 바퀴" : deg === 270 ? "반의 반 바퀴씩 세 번" : "반의 반 바퀴";
+  return `${way} ${amount} 돌리기`;
+}
+
 // 돌리기 기호: 12시에서 시작해 돌린 만큼 색칠하고, 끝에 방향 화살표.
 function rotateIconInner(deg, dir = "cw", size = 30) {
   const r = size / 2 - 3;
@@ -536,7 +543,7 @@ function rotateIconInner(deg, dir = "cw", size = 30) {
   return `<g class="b4-rot-icon${full ? " full" : ""}"><circle class="ring" cx="${c}" cy="${c}" r="${r}"/>${sector}<path class="cross" d="M${c} ${c - r}V${c + r}M${c - r} ${c}H${c + r}"/>${arrow}</g>`;
 }
 function rotateIcon(deg, dir = "cw", size = 30) {
-  return `<svg class="b4-rot-svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="${dir === "cw" ? "시계 방향" : "시계 반대 방향"} ${deg}도 돌리기">${rotateIconInner(deg, dir, size)}</svg>`;
+  return `<svg class="b4-rot-svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="${turnWords(deg, dir)}">${rotateIconInner(deg, dir, size)}</svg>`;
 }
 
 // 뒤집기 기호: 점선 축과 축을 감는 화살표.
@@ -572,7 +579,7 @@ function sourceOneFlip(visual) {
     const at = { top: [c - size / 2, 2], bottom: [c - size / 2, W - size - 2], left: [2, c - size / 2], right: [W - size - 2, c - size / 2] }[side];
     mark = `<g transform="translate(${at[0]} ${at[1]})">${rotateIconInner(op.deg, op.dir, size)}</g>`;
   }
-  const figure = `<svg class="b4-one-figure" viewBox="0 0 ${W} ${W}" width="${W}" height="${W}" role="img" aria-label="${op.type === "axis" ? "점선을 따라 뒤집기" : `${op.dir === "cw" ? "시계 방향" : "시계 반대 방향"} ${op.deg}도 돌리기`}"><g class="b4-one">${one}</g>${mark}</svg>`;
+  const figure = `<svg class="b4-one-figure" viewBox="0 0 ${W} ${W}" width="${W}" height="${W}" role="img" aria-label="${op.type === "axis" ? "점선을 따라 뒤집기" : turnWords(op.deg, op.dir)}"><g class="b4-one">${one}</g>${mark}</svg>`;
   const options = ONE_OPTION_TRANSFORMS.map((t, i) => `<span><b>${CIRCLED[i]}</b>${oneFigure(t, 52)}</span>`).join("");
   return `<div class="b4-one-flip">${figure}<div class="b4-one-options">${options}</div></div>`;
 }

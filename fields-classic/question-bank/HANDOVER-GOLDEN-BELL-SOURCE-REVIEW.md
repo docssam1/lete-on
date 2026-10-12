@@ -22,8 +22,18 @@
 6. `fields-classic/prescription/`, `problem-bank/prescription/`은 건드리지 않는다.
 7. 분수는 반드시 위아래로 쌓은 분수 표기로 쓴다(`1/32` 같은 빗금 표기 금지).
 8. 글자는 검정, 그림은 한 가지 색(파랑)으로 몰지 않는다. 원본에 없는 접기 화살표 등은 넣지 않는다.
+   **그림은 풀컬러**(2026-10-13 원장 지시 "우리는 풀컬러 사용하자"): 모양·배치는 원본 그대로, 색은 우리 앱 색으로.
+   4권 기준 색 — ●빨강 `#e8503a` · ▲초록 `#2f9e5f` · ■파랑 `#2f6fe0` · ◆보라 `#8e5bd8`, 쌓기나무 노랑 `#ffd45c`,
+   관계식 상자 주황 테두리 `#f39a1e`, 저울 대 주황 · 받침 노랑, 보기 ①~⑧은 무지개. 옛 청록 `#2f7f96`은 쓰지 않는다.
+   인쇄에도 색이 나오도록 `print-color-adjust:exact`.
 9. 원장 PC의 C 드라이브에는 저장하지 않는다("C드라이브 저장 안돼").
 10. 커밋 메시지에 모델 이름을 쓰지 않는다.
+11. **회사 느낌을 내지 않는다**(2026-10-13): 화면·인쇄에 「FC」「필즈」「FIELDS CLASSIC」 같은 회사 이름을 쓰지 않는다.
+    책 제목 줄은 「1과정」·「골든벨」, 페이지 제목은 「골든벨 학습」. 원본 문장에 학원 이름이 나오면 「학원」으로 바꾸고
+    `sourceDiscrepancy`에 적는다(3권 14-(1-1)·(1-3) 선례). 내부 데이터 `learnerStage`의 FC 글자는 화면에 안 나오므로 그대로 둔다.
+12. **아이 말로 쓴다**(2026-10-13): 「90°·180°·270°·360°」「¼·½·¾·전체」 같은 각도·분수 말을 쓰지 않는다.
+    「시계 방향으로 반의 반 바퀴」「반 바퀴」「반의 반 바퀴씩 세 번」「한 바퀴」「오른쪽으로 뒤집기」로 쓴다.
+    원본 문장에 각도가 있으면 바꾸고 `sourceDiscrepancy`에 적는다(4권 8쪽 ⑥ 952 카드 선례). 도우미: `book04-renderers.js` `turnWords()`.
 
 ## 2. 저장 위치 (정확한 경로)
 
@@ -39,7 +49,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261012b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261012b/20261013a/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261013a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261013a/20261013b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -74,7 +84,7 @@
 
 DB `book-04` 현재: **키 301개**, sha 앞 8자리 `9d438237`. 작업 전 반드시 다시 조회해 확인한다.
 
-## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막은 4권 묶음 5 · 2026-10-12)
+## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막은 풀컬러·말 다듬기 · 2026-10-13)
 
 - **2권**: 교사용·학생용과 눈으로 대조해 그림·문장 정리, 분수 세로 표기, 빠졌던 물음 되살림, 34쪽 활동 04 2문항 추가.
 - **3권**: 화면을 원본 그림·문장대로, 28-(2) 답 교정, 보류였던 8-(8)·29-(1)·20쪽 (2)(3) 되살림.
@@ -108,6 +118,10 @@ DB `book-04` 현재: **키 301개**, sha 앞 8자리 `9d438237`. 작업 전 반�
   - `digital-flip-source`(번호 16, 4쪽 연산 8 + 8쪽 21문항): 7세그먼트 그림 `source-seven-seg`, 8쪽 ⑤는 칸 2개(바뀐 수·계산값).
     개념 설명은 1권 `digital-transform` 재사용. 오른쪽으로 뒤집기 b↔f·c↔e, 반 바퀴 a↔d·b↔e·c↔f, 자리 순서 반대.
   - 63문항 모두 교사용 답과 일치. `sourceHold`의 5~8쪽 항목 삭제.
+- **풀컬러·아이 말·회사 이름 빼기**(2026-10-13, 1절 8·11·12번 규칙): 4권 새 그림(쌓기나무·관계식·숫자카드·「1」 보기·
+  돌리기 기호·숫자판·7세그먼트·저울)과 4권 안내형 저울 개념 그림을 풀컬러로. 돌리기 기호의 읽어주기 문구(aria)를 각도 → 「반 바퀴」 말로.
+  화면 제목·표지·인쇄 대화상자에서 FC 글자 삭제(`golden-bell.js`·`golden-bell.html`), `golden-bell-selected-print-audit.mjs` 기대값도 맞춤.
+  3권 14-(1-1)·(1-3)의 학원 이름 → 「학원」, 4권 8쪽 ⑥ 「180°만큼」 → 「반 바퀴」. 캐시 꼬리표 `20261013a`.
 
 ## 4. 남은 일 — 이 순서대로
 

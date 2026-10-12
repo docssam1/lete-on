@@ -1,13 +1,13 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261012b";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261013a";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261003a";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
-import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261012b";
+import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261013a";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261012b";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261013a";
 import { book01Markup } from "./book01-renderers.js?v=20261003c";
 import { book02Markup } from "./book02-renderers.js?v=20261005d";
-import { book03Markup } from "./book03-renderers.js?v=20261012b";
-import { book04Markup } from "./book04-renderers.js?v=20261012b";
+import { book03Markup } from "./book03-renderers.js?v=20261013a";
+import { book04Markup } from "./book04-renderers.js?v=20261013a";
 import { book05Markup } from "./book05-renderers.js?v=20260905d";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book07Markup } from "./book07-renderers.js?v=20260906a";
@@ -1350,7 +1350,7 @@ function printSourceStoryboards(lesson, lessonNumber, book) {
   for (let start = 0; start < selectedSteps.length; start += framesPerPage) {
     const pageNumber = start / framesPerPage + 1;
     const frames = selectedSteps.slice(start, start + framesPerPage).map((step) => `<section class="source-animation-print-frame" data-source-item="${escapeAttribute(animation.sourceItemId)}"><h2>${step + 1}단계</h2>${sourceAnimationFrame(animation, step, { animate: false })}<p>${escapeAttribute(animation.beats[step].caption)}</p></section>`).join("");
-    pages.push(`<article class="gold-print-page source-animation-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="animation-${pageNumber}" data-watermark="${escapeAttribute(student)} · GFIELD"><header class="gold-print-head"><div><span>FC · 함께 풀어보기</span><h1>${book.label} ${lessonNumber}. ${escapeAttribute(animation.title)}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div></dl></header><p class="gold-print-concept">${escapeAttribute(animation.problem)}</p>${frames}<footer class="gold-print-footer">${book.label} · ${escapeAttribute(lesson.unit)} · 설명 ${pageNumber}</footer></article>`);
+    pages.push(`<article class="gold-print-page source-animation-print-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="animation-${pageNumber}" data-watermark="${escapeAttribute(student)} · GFIELD"><header class="gold-print-head"><div><span>함께 풀어보기</span><h1>${book.label} ${lessonNumber}. ${escapeAttribute(animation.title)}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div></dl></header><p class="gold-print-concept">${escapeAttribute(animation.problem)}</p>${frames}<footer class="gold-print-footer">${book.label} · ${escapeAttribute(lesson.unit)} · 설명 ${pageNumber}</footer></article>`);
   }
   return pages.join("");
 }
@@ -1358,14 +1358,14 @@ function printSourceStoryboards(lesson, lessonNumber, book) {
 function printLessonPage(lesson, lessonNumber, book) {
   if (lesson.experience?.kind === "course-concept") return courseConceptPrintPages(lesson, book, student) + printLessonExercises(lesson, lessonNumber, book);
   const vocabulary = lesson.id === "polyomino-family-count"
-    ? `<article class="gold-print-page polyomino-vocabulary-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="vocabulary" data-watermark="${escapeAttribute(student)} · GFIELD"><header class="gold-print-head"><div><span>FC · 개념 학습</span><h1>${book.label} ${lessonNumber}. 모양의 이름을 알아요</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div></dl></header>${polyominoVocabularyMarkup()}<footer class="gold-print-footer">${book.label} · ${escapeAttribute(lesson.unit)} · 개념</footer></article>`
+    ? `<article class="gold-print-page polyomino-vocabulary-page" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="vocabulary" data-watermark="${escapeAttribute(student)} · GFIELD"><header class="gold-print-head"><div><span>개념 학습</span><h1>${book.label} ${lessonNumber}. 모양의 이름을 알아요</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div></dl></header>${polyominoVocabularyMarkup()}<footer class="gold-print-footer">${book.label} · ${escapeAttribute(lesson.unit)} · 개념</footer></article>`
     : "";
   return vocabulary + printSourceStoryboards(lesson, lessonNumber, book) + printLessonExercises(lesson, lessonNumber, book);
 }
 
 function printBookCover(book, lessons, { includeAnswers = false, style = coverStyle, includeGames = $("printGameQR").checked } = {}) {
   const courseNumber = /^course-(\d+)$/u.exec(book.courseId || "")?.[1];
-  const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "FC";
+  const courseLabel = courseNumber ? `${Number(courseNumber)}과정` : "골든벨";
   const units = printUnits(book).filter((unit) => unit.lessons.some((lesson) => lessons.includes(lesson)));
   const range = units.map((unit) => unit.label).join(" / ");
   const games = includeGames ? printCoverGames(book, lessons, units) : [];
@@ -1373,7 +1373,7 @@ function printBookCover(book, lessons, { includeAnswers = false, style = coverSt
   const densityClass = lessons.length > 12 ? " is-dense is-crowded" : lessons.length > 6 ? " is-dense" : "";
   return `<article class="gold-print-page gold-print-cover cover-${style}${densityClass}${games.length ? " has-cover-games" : ""}" data-cover-style="${style}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="book-cover" data-print-part="cover" data-watermark="${escapeAttribute(student)} · GFIELD">
     <img class="gold-cover-art" src="./assets/fc-cover-${style === "simple" ? "grid" : "shapes"}.svg" alt="" aria-hidden="true" />
-    <header class="gold-print-cover-head"><span>FC</span><strong>${escapeAttribute(courseLabel)} · 골든벨</strong></header>
+    <header class="gold-print-cover-head"><span>GOLDEN BELL</span><strong>${escapeAttribute(courseLabel)} · 골든벨</strong></header>
     <section class="gold-print-cover-title"><small>${escapeAttribute(book.label)} · ${lessons.length === book.lessons.length ? "전체 학습" : "선택 학습"}</small><h1>${escapeAttribute(book.title || "골든벨 개념 학습")}</h1><dl class="gold-print-cover-meta"><div><dt>이름</dt><dd>${student === "DEMO" ? "" : escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></section>
     <section class="gold-print-cover-range"><h2>학습 범위</h2><p>${escapeAttribute(range)}</p><span>${includeAnswers ? "답안과 풀이 포함" : "답안 제외"}</span></section>
     <section class="gold-print-cover-concepts"><h2>유형과 핵심 개념</h2><ol>${conceptRows}</ol>${printCoverGamesMarkup(games)}</section>
@@ -1402,7 +1402,7 @@ function openPrintSettings(selectUnits) {
   const units = printUnits();
   const activeKey = units.find((unit) => unit.lessons.includes(activeLesson()))?.key;
   draftUnitKeys = new Set(unitSelections.get(activeBook().id) || [activeKey || units[0]?.key]);
-  $("coverDialogTitle").textContent = `FC ${activeBook().label} · ${selectUnits ? "선택 학습 인쇄" : "표지 배경"}`;
+  $("coverDialogTitle").textContent = `${activeBook().label} · ${selectUnits ? "선택 학습 인쇄" : "표지 배경"}`;
   $("printUnitFieldset").hidden = !selectUnits;
   $("printAnswerFieldset").hidden = !selectUnits || ["answers", "quick"].includes(draftPrintMode);
   $("printIncludeAnswers").checked = draftPrintMode === "both";
@@ -1486,7 +1486,7 @@ function renumberPrintPages(root) {
 }
 
 function printLessonExercises(lesson, lessonNumber, book) {
-  const header = (part) => `<header class="gold-print-head"><div><span>FC · GOLDEN BELL · ${part}</span><h1>${book.label} ${lessonNumber}. ${lesson.title}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></header>`;
+  const header = (part) => `<header class="gold-print-head"><div><span>GOLDEN BELL · ${part}</span><h1>${book.label} ${lessonNumber}. ${lesson.title}</h1></div><dl><div><dt>이름</dt><dd>${escapeAttribute(student)}</dd></div><div><dt>날짜</dt><dd></dd></div></dl></header>`;
   const footer = `<footer class="gold-print-footer">${book.label} · ${lesson.unit}</footer>`;
   const concept = `<p class="gold-print-concept"><strong>생각할 개념</strong><br>${lesson.representativeConcept}</p>`;
   const sourcePrintPaged = lesson.original.mode === "paged" || lesson.original.printMode === "paged";
@@ -1969,7 +1969,7 @@ function renderSummary() {
   $("coursePrintModeWrap").hidden = !book.lessons.length;
   updateCoverButton();
   $("courseSelect").value = book.courseId || "";
-  $("courseBrand").textContent = book.courseId ? `FC · ${Number(book.courseId.slice(-2))}과정` : "FC";
+  $("courseBrand").textContent = book.courseId ? `${Number(book.courseId.slice(-2))}과정` : "골든벨";
   const completed = book.lessons.filter(isLessonComplete).length;
   $("currentBookLabel").textContent = book.label;
   $("completedCount").textContent = `${completed} / ${book.lessons.length || "-"}`;

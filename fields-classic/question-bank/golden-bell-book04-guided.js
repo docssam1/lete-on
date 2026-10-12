@@ -540,7 +540,7 @@ function compareFrame(visual, phase, family) {
 }
 
 // 28~30쪽 등식의 성질: 평형 저울의 양쪽에서 똑같은 것을 지워도 평형이 유지된다.
-const BALANCE_GLYPH = { square: ["■", "#668d42"], triangle: ["▲", "#e87f21"], circle: ["●", "#2f8da8"] };
+const BALANCE_GLYPH = { square: ["■", "#2f6fe0"], triangle: ["▲", "#2f9e5f"], circle: ["●", "#e8503a"] };
 function balanceEqualityModel(visual) {
   const left = visual.left || {};
   const right = visual.right || {};
