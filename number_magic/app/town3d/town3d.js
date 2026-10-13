@@ -418,6 +418,12 @@ const CSS = `
 .t3d-stick{position:absolute;width:64px;height:64px;left:40px;top:40px;border-radius:50%;background:rgba(255,255,255,.72);border:2px solid #667569;box-shadow:0 0 0 1px rgba(255,255,255,.95);box-sizing:border-box;pointer-events:none}
 .t3d-joystick::after{content:'↕ ↔';position:absolute;bottom:8px;left:0;right:0;text-align:center;font:700 18px system-ui;color:#34473c}
 .t3d-joystick:focus-visible{outline:3px solid #173e72}
+.t3d-context-error{position:absolute;inset:0;z-index:30;display:grid;place-items:center;padding:18px;background:rgba(245,247,240,.94);color:#263c32}
+.t3d-context-card{width:min(100%,360px);max-height:100%;overflow:auto;padding:24px;border:1px solid #adbaa9;border-radius:14px;background:#fffdf7;box-shadow:0 8px 32px #24372b20;text-align:center;font:600 20px/1.5 system-ui;word-break:keep-all;overflow-wrap:break-word}
+.t3d-context-card h3{font-size:24px;margin:0 0 12px}.t3d-context-card p{margin:0 0 18px}
+.t3d-context-card button{min-height:48px;width:100%;padding:12px;border:0;border-radius:9px;background:#235b43;color:#fff;font:700 20px/1.4 system-ui;cursor:pointer}
+.t3d-context-card button:focus-visible{outline:3px solid #173e72;outline-offset:4px}.t3d-context-card button:disabled{opacity:.65;cursor:wait}
+@media(max-width:600px){.t3d-context-card{width:calc(100% - 68px);margin-right:68px;padding:18px;font-size:18px}.t3d-context-card h3{font-size:22px}}
 @media(max-height:420px){.t3d-guide{left:auto;right:12px;transform:none;font-size:20px}.t3d-guide img{height:48px}.t3d-guide small{font-size:16px}.t3d-destination{top:80px}.t3d-joystick{bottom:24px}}
 @media (max-width:480px){.t3d-lab{font-size:12px;padding:4px 9px 5px}.t3d-lab small{font-size:10px}.t3d-lab.gate{font-size:11px}}
 `;
@@ -627,17 +633,18 @@ export async function mountTown3D(container, opts){
   });
   const player = chars.find(c => c.def.role === 'player');
   const buddy = chars.find(c => c.def.role === 'buddy');
+  let contextUnavailable=false,recoveryPending=false,contextLostAt=0,recoveryTimer=0,contextMessage=null;
   const joystick=document.createElement('div');joystick.className='t3d-joystick';joystick.tabIndex=0;joystick.setAttribute('role','group');joystick.setAttribute('aria-label',L({ko:'이동 조이스틱. 방향키로도 이동할 수 있습니다.',en:'Movement joystick. Arrow keys also move.',zh:'移动摇杆，也可使用方向键。'},lang));
   joystick.innerHTML='<span class="t3d-stick"></span>';wrap.appendChild(joystick);
   const stick=joystick.firstElementChild,keys=new Set();let owner=null,vector={x:0,z:0};
   function stopMovement(){const held=owner;owner=null;if(held!==null&&joystick.hasPointerCapture?.(held)){try{joystick.releasePointerCapture(held);}catch{}}vector={x:0,z:0};keys.clear();follow=false;stick.style.transform='';if(player)player.route=[];pointers.clear();drag=null;pinch=null;}
   function joyMove(e){if(owner!==e.pointerId)return;e.preventDefault();const r=joystick.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,d=Math.hypot(dx,dy),f=Math.min(1,42/(d||1));stick.style.transform=`translate(${dx*f}px,${dy*f}px)`;vector=joystickVector(dx,dy);if(vector.x||vector.z)selectedByUser=false;if(player)player.route=[];follow=true;wake();}
-  function joyDown(e){if(owner!==null)return;e.preventDefault();owner=e.pointerId;joystick.setPointerCapture?.(owner);joyMove(e);}
+  function joyDown(e){if(contextUnavailable||owner!==null)return;e.preventDefault();owner=e.pointerId;joystick.setPointerCapture?.(owner);joyMove(e);}
   function joyEnd(e){if(owner===e.pointerId)stopMovement();}
   joystick.addEventListener('pointerdown',joyDown);joystick.addEventListener('pointermove',joyMove);
   for(const ev of ['pointerup','pointercancel','lostpointercapture'])joystick.addEventListener(ev,joyEnd);
   const moveKeys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'];
-  function movementKey(e){if(!moveKeys.includes(e.key)||!['CANVAS','DIV'].includes(e.target.tagName))return;e.preventDefault();if(owner!==null)return;keys.add(e.key);selectedByUser=false;follow=true;wake();}
+  function movementKey(e){if(!moveKeys.includes(e.key)||!['CANVAS','DIV'].includes(e.target.tagName))return;e.preventDefault();if(contextUnavailable||owner!==null)return;keys.add(e.key);selectedByUser=false;follow=true;wake();}
   function movementUp(e){keys.delete(e.key);if(!keys.size&&owner===null)stopMovement();}
   wrap.addEventListener('keydown',movementKey);window.addEventListener('keyup',movementUp);window.addEventListener('blur',stopMovement);
   wrap.addEventListener('focusout',e=>{if(keys.size&&e.relatedTarget!==canvas&&e.relatedTarget!==joystick)stopMovement();});
@@ -925,7 +932,16 @@ export async function mountTown3D(container, opts){
     }
     if(!reduce) world.animate(t, dt);
     const animating = !reduce || moving || dirty || now - lastUser < 600;
-    if(animating){ renderer.render(scene, camera); layoutLabels(); layoutChars(); dirty = false; }
+    if(animating){
+      renderer.render(scene, camera); layoutLabels(); layoutChars(); dirty = false;
+      if(recoveryPending){
+        recoveryPending=false;contextUnavailable=false;
+        const returnFocus=contextMessage?.contains(document.activeElement);
+        contextMessage?.remove();contextMessage=null;canvas.removeAttribute('aria-disabled');
+        ov.inert=false;joystick.inert=false;destination.inert=false;
+        if(returnFocus)canvas.focus({preventScroll:true});
+      }
+    }
     if(!readySent){ readySent = true; resolveReady(true); opts.onReady && opts.onReady(); }
     if(running && visible && (animating || !reduce)) raf = requestAnimationFrame(frame);
   }
@@ -933,8 +949,44 @@ export async function mountTown3D(container, opts){
 
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => { visible = es.some(x => x.isIntersecting); if(visible) wake(); }) : null;
   if(io) io.observe(wrap);
-  const onVis = () => { stopMovement();running = !document.hidden; if(running) wake(); };
+  const onVis = () => { stopMovement();running = !document.hidden&&(!contextUnavailable||recoveryPending); if(running) wake(); };
   document.addEventListener('visibilitychange', onVis);
+  function onContextLost(e){
+    if(disposed)return;
+    e.preventDefault();
+    if(contextUnavailable)return;
+    contextUnavailable=true;recoveryPending=false;contextLostAt=performance.now();
+    running=false;stopMovement();if(raf)cancelAnimationFrame(raf);raf=0;
+    canvas.setAttribute('aria-disabled','true');ov.inert=true;joystick.inert=true;destination.inert=true;
+    contextMessage=document.createElement('div');contextMessage.className='t3d-context-error';
+    const card=document.createElement('div');card.className='t3d-context-card';
+    const heading=document.createElement('h3');heading.textContent=L({ko:'마을 화면이 잠시 멈췄어요',en:'The village display paused',zh:'村庄画面暂时停止了'},lang);
+    const message=document.createElement('p');message.setAttribute('role','status');message.textContent=L({ko:'이동은 멈췄고, 마을 자리는 그대로예요.',en:'Movement stopped. Your place is preserved.',zh:'移动已停止，您的位置保持不变。'},lang);
+    const retry=document.createElement('button');retry.type='button';retry.dataset.townRestore='';retry.textContent=L({ko:'다시 연결하기',en:'Reconnect',zh:'重新连接'},lang);
+    retry.onclick=()=>{
+      if(disposed||recoveryPending)return;
+      retry.disabled=true;clearTimeout(recoveryTimer);
+      const failed=()=>{if(disposed||!contextMessage)return;retry.disabled=false;message.textContent=L({ko:'연결이 안 되면 위 메뉴로 나갔다 마을로 돌아와 주세요.',en:'If reconnection fails, leave with the menu and return to the village.',zh:'如果无法重新连接，请通过上方菜单离开后返回村庄。'},lang);};
+      try{renderer.forceContextRestore();recoveryTimer=setTimeout(failed,5000);}catch(_){failed();}
+    };
+    card.append(heading,message,retry);contextMessage.appendChild(card);wrap.appendChild(contextMessage);
+    if(wrap.contains(document.activeElement))retry.focus({preventScroll:true});
+  }
+  function onContextRestored(){
+    if(disposed||!contextUnavailable)return;
+    clearTimeout(recoveryTimer);recoveryTimer=0;
+    // GPU-generated environment pixels are not backed by an image file; rebuild them after loss.
+    try{world.restoreEnvironment();}catch(error){
+      const message=contextMessage?.querySelector('[role="status"]'),retry=contextMessage?.querySelector('button');
+      if(message)message.textContent=L({ko:'화면을 다시 만들지 못했어요. 위 메뉴로 나갔다 마을로 돌아와 주세요.',en:'The display could not be restored. Leave with the menu and return to the village.',zh:'无法恢复画面。请通过上方菜单离开后返回村庄。'},lang);
+      if(retry)retry.disabled=false;
+      console.warn('[town3d] environment restoration failed',error);return;
+    }
+    t0+=performance.now()-contextLostAt;recoveryPending=true;dirty=true;running=!document.hidden;
+    wake(); // Keep the recovery message until the first restored frame is actually drawn.
+  }
+  canvas.addEventListener('webglcontextlost',onContextLost);
+  canvas.addEventListener('webglcontextrestored',onContextRestored);
   /* 화면이 바뀌어 container 가 문서에서 빠지면(멈춰 있는 동안이라도) 스스로 푼다 */
   const alive = setInterval(() => { if(!wrap.isConnected) dispose(); }, 2000);
   const ro = 'ResizeObserver' in window ? new ResizeObserver(() => { resize(); wake(); }) : null;
@@ -945,6 +997,8 @@ export async function mountTown3D(container, opts){
     stopMovement();modalObserver.disconnect();window.removeEventListener('blur',stopMovement);window.removeEventListener('keyup',movementUp);wrap.removeEventListener('keydown',movementKey);
     if(!readySent)resolveReady(false);
     if(raf) cancelAnimationFrame(raf); raf = 0; clearInterval(alive);
+    clearTimeout(recoveryTimer);recoveryTimer=0;
+    canvas.removeEventListener('webglcontextlost',onContextLost);canvas.removeEventListener('webglcontextrestored',onContextRestored);
     if(io) io.disconnect(); if(ro) ro.disconnect(); else window.removeEventListener('resize', resize);
     document.removeEventListener('visibilitychange', onVis);
     canvas.removeEventListener('pointerdown', onDown); canvas.removeEventListener('pointermove', onMove);
@@ -1000,10 +1054,10 @@ export async function mountTown3D(container, opts){
         facing:ch.obj?ch.obj.rotation.y:0}))};},
     setLang(l){ lang = l || 'ko'; canvas.setAttribute('aria-label', L({ ko:'마을 지도 3D', en:'Village map (3D)', zh:'村庄地图 3D' }, lang)); paintLabels(); dirty = true; wake(); },
     refresh(spots){ (spots || []).forEach(s => { spotState[s.id] = Object.assign(spotState[s.id] || {}, s); }); paintLabels(); applyLocks(); wake(); },
-    zoomIn(){ cam.d /= 1.25; placeCam(); wake(); },
-    zoomOut(){ cam.d *= 1.25; placeCam(); wake(); },
-    focusPlayer(){ if(player){ follow = true; cam.d = Math.min(cam.d, 30); cam.x = player.x; cam.z = player.z + 1.5; placeCam(); wake(); } },
-    walkTo(x, z){ if(player){ selectedByUser=false;walkTo(player, x, z); follow = true; wake(); } },
+    zoomIn(){ if(contextUnavailable)return;cam.d /= 1.25; placeCam(); wake(); },
+    zoomOut(){ if(contextUnavailable)return;cam.d *= 1.25; placeCam(); wake(); },
+    focusPlayer(){ if(player&&!contextUnavailable){ follow = true; cam.d = Math.min(cam.d, 30); cam.x = player.x; cam.z = player.z + 1.5; placeCam(); wake(); } },
+    walkTo(x, z){ if(player&&!contextUnavailable){ selectedByUser=false;walkTo(player, x, z); follow = true; wake(); } },
     stopMovement,
     debug:{ scene, camera, renderer, cam, chars, placeCam, nav,canMove,movement:()=>({owner,vector:{...vector},keys:[...keys]}),scale:TOWN_SCALE,world,
       project(id){ const s = world.spots[id] || world.gates[id]; if(!s) return null; const c = s.center; return project(c.x, c.y, c.z); } }
@@ -1024,7 +1078,8 @@ function buildWorld(scene, renderer, rng, track){
     g.fillStyle = gr; g.fillRect(0, 0, w, h);
   });
   scene.fog = new THREE.Fog('#dfe7e4', 80, 190);
-  {
+  out.restoreEnvironment=()=>{
+    const previousEnvironment=scene.environment;
     const envScene = new THREE.Scene();
     const sky = new THREE.Mesh(new THREE.SphereGeometry(50, 24, 12), new THREE.MeshBasicMaterial({ side:THREE.BackSide, vertexColors:true }));
     const col = [], pa = sky.geometry.attributes.position, c = new THREE.Color();
@@ -1037,7 +1092,9 @@ function buildWorld(scene, renderer, rng, track){
     scene.environment = pm.fromScene(envScene, 0.02).texture;
     scene.environmentIntensity = 0.55;
     pm.dispose(); sky.geometry.dispose(); sky.material.dispose(); sun.geometry.dispose(); sun.material.dispose();
-  }
+    previousEnvironment?.dispose();
+  };
+  out.restoreEnvironment();
   scene.add(new THREE.HemisphereLight('#fff6e6', '#6b7a45', 1.05));
   const sunL = new THREE.DirectionalLight('#ffe6bf', 2.6);
   const SUN_OFF = new THREE.Vector3(-26, 44, 22);
