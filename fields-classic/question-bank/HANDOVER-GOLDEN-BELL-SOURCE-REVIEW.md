@@ -26,6 +26,7 @@
    4권 기준 색 — ●빨강 `#e8503a` · ▲초록 `#2f9e5f` · ■파랑 `#2f6fe0` · ◆보라 `#8e5bd8`, 쌓기나무 노랑 `#ffd45c`,
    관계식 상자 주황 테두리 `#f39a1e`, 저울 대 주황 · 받침 노랑, 보기 ①~⑧은 무지개. 옛 청록 `#2f7f96`은 쓰지 않는다.
    인쇄에도 색이 나오도록 `print-color-adjust:exact`.
+   **그림을 그리거나 색·문구를 고칠 때는 스킬 `.claude/skills/golden-bell-figure-style/SKILL.md`부터 읽는다**(색표·아이 말·실수 목록·검사기).
 9. 원장 PC의 C 드라이브에는 저장하지 않는다("C드라이브 저장 안돼").
 10. 커밋 메시지에 모델 이름을 쓰지 않는다.
 11. **회사 느낌을 내지 않는다**(2026-10-13): 화면·인쇄에 「FC」「필즈」「FIELDS CLASSIC」 같은 회사 이름을 쓰지 않는다.
@@ -49,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261013a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261013a/20261013b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261013b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261013b/20261013c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -174,6 +175,7 @@ node book04-audit.mjs                         # BOOK04_AUDIT_OK
 node golden-bell-book04-guided-audit.mjs      # BOOK04_GUIDED_AUDIT_OK families=9 (가족 추가 시 수 증가)
 node course1-review-audit.mjs                 # 누락·중복 0건
 node golden-bell-cube-animation-audit.mjs     # CUBE_SOURCE_ANIMATION_OK
+node golden-bell-style-audit.mjs             # GOLDEN_BELL_STYLE_OK (색·회사 이름·각도 말, 2026-10-13)
 ```
 - 브라우저 검사들은 `CODEX_NODE_MODULES`(playwright·pdf-lib가 있는 node_modules 경로)가 필요하다.
 - **이미 실패하던 브라우저 검사 3개**(기본 포트 8794, `FIELDS_BASE_URL=http://127.0.0.1:<포트>`로 바꿀 수 있음).
@@ -182,6 +184,9 @@ node golden-bell-cube-animation-audit.mjs     # CUBE_SOURCE_ANIMATION_OK
   - `golden-bell-book04-hidden-cube-browser-audit.mjs`: 개념 단계의 「4개」 선택 버튼이 disabled라 클릭에서 멈춤.
   - `golden-bell-book02-browser-audit.mjs`: "number-splitting: source questions must begin locked".
   - `golden-bell-book03-browser-audit.mjs`: "unit-area-shapes: source opened before concept completion".
+  - 2026-10-13 변경 전후 비교에서 같은 지점에서 실패한 것도 더 있다: `golden-bell-book03-guided-audit.mjs`("unit-area-shapes: concept check missing"),
+    `golden-bell-cover-picker-audit.mjs`, `golden-bell-progress-label-browser-audit.mjs`("book-01/digital-turn-flip/1440"),
+    `golden-bell-book01-source-browser-audit.mjs`. 비공개 답안 파일이 필요한 검사(balance·grading·selected-print 등)는 여기서 못 돌린다.
 - 화면: `tools/golden-bell-book04/capture-lessons.mjs`(사용법은 파일 첫 줄). `playwright-core`가 설치된 폴더에 복사해 실행.
   콘솔 오류 0건이어야 하고, 찍은 그림을 원본 쪽 이미지와 나란히 놓고 눈으로 비교한다.
 - 인쇄: `tools/golden-bell-book04/print-lessons.mjs` → PDF를 이미지로 바꿔 확인.
