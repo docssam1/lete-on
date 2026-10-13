@@ -918,6 +918,9 @@ function applyLabels() {
   $("#success strong").textContent = ft("success");
   $("#togetherLink").textContent = ft("together");
   $("#battleLink").textContent = ft("battle");
+  /* 책(학습지) 버튼은 지금 유형의 게임 연계 학습지로 바로 연다. 전에는 학습지 첫 화면
+     (기본 구멍 개수 문제)이 열렸다. */
+  $(".tool-panel a").href = `../../worksheet/paper-fold/?modes=game-l${state.level + 1}`;
   $("#togetherLink").href = `./play.html?mode=together&level=${state.level + 1}`;
   $("#battleLink").href = `./play.html?mode=battle&level=${state.level + 1}`;
 }
