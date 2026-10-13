@@ -9,7 +9,8 @@
    - 함께하기 10문제, 2명·4명 배틀 각 10문제를 실제 클릭으로 끝까지 푼다.
      접는 선은 종이 위 정답 선을 직접 누르고(다른 선과 먼 점), 모두 고르기는 두 정답을 누른다.
    - 문제마다 각 틀 안에서 종이 그림과 보기, 풀이 뒤 접는 선이 가려지지 않는다.
-     4명 배틀(1280x800, 틀 하나 약 620x260)에서 종이 짧은 변과 보기 크기를 잰다.
+     4명 배틀(1280x800·1024x768, 틀 하나 약 620x260·490x240)에서 종이 짧은 변과 보기 크기를 잰다.
+   - 가로 태블릿(1024x768)에서도 배틀 틀이 화면 안에 두 열로 놓인다(세로로 쌓이지 않는다).
    - 배틀에서 한 사람이 틀리면 점수(정답 3점, 틀릴 때마다 1점 깎이고 최소 1점)가 줄고
      순위표에 오답 수가 맞게 나온다. 페이지 오류가 없다. */
 
@@ -163,14 +164,19 @@ try {
   }
 
   /* 배틀: 같은 문제 묶음을 사람마다 다른 순서로. B는 문제마다 한 번 틀린다. */
-  for (const [players, viewport] of [[2, { width: 1024, height: 768 }], [4, { width: 1280, height: 800 }]]) {
+  for (const [players, viewport] of [[2, { width: 1024, height: 768 }], [4, { width: 1280, height: 800 }], [4, { width: 1024, height: 768 }]]) {
     const { page, errors } = await openRound(viewport, `mode=battle&players=${players}&level=3&count=10&seed=l3-battle`);
+    /* 가로 태블릿에서도 모든 틀이 한 화면 안에 나란히(3~4명은 2x2) 있어야 동시에 풀 수 있다.
+       전에는 1100px 미만에서 틀이 세로로 쌓였다. */
+    const frameBoxes = await page.locator("iframe").evaluateAll((nodes) => nodes.map((node) => { const box = node.getBoundingClientRect(); return { x: Math.round(box.x), y: Math.round(box.y), bottom: Math.round(box.bottom), right: Math.round(box.right) }; }));
+    assert.ok(frameBoxes.every((box) => box.bottom <= viewport.height + 1 && box.right <= viewport.width + 1), `battle ${players} at ${viewport.width}x${viewport.height}: a frame is off screen ${JSON.stringify(frameBoxes)}`);
+    assert.equal(new Set(frameBoxes.map((box) => box.x)).size, 2, `battle ${players} at ${viewport.width}x${viewport.height}: frames must sit in two columns`);
     const ids = ["A", "B", "C", "D"].slice(0, players);
     const sets = Object.fromEntries(ids.map((id) => [id, new Set()]));
     for (let index = 0; index < 10; index += 1) {
       for (const player of ids) {
         const frame = frameFor(page, player);
-        const where = `battle ${players} ${player} #${index + 1}`;
+        const where = `battle ${players} ${viewport.width} ${player} #${index + 1}`;
         checkView(await frameView(frame), `${where} before`, { minimum: players === 4 });
         const problem = await solveIn(frame, where, { wrongFirst: player === "B" });
         sets[player].add(problem.id);
@@ -201,7 +207,7 @@ try {
 
 console.log([
   "Reverse fold play check passed: level 3 in the type list and in level=3 addresses,",
-  "together 10 problems (1280x800), 2-player battle (1024x768) and 4-player battle (1280x800) solved by real taps on the paper,",
+  "together 10 problems (1280x800), 2-player battle (1024x768) and 4-player battle (1280x800, 1024x768; frames side by side on screen) solved by real taps on the paper,",
   "same set in a different order per player, accuracy points 30/20 with 10 mistakes counted, paper and shown creases never covered,",
   `4-player frames: paper short side ${Math.min(...sizes.paper)}-${Math.max(...sizes.paper)}px (min ${PAPER_MIN_PX}), shape choices ${Math.min(...sizes.choice)}-${Math.max(...sizes.choice)}px (min ${CHOICE_MIN_PX}).`
 ].join(" "));
