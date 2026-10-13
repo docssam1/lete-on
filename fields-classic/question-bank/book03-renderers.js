@@ -979,13 +979,15 @@ const CRYPT_SHAPES = Object.freeze({
   "☆": '<path d="M20 4L24.5 15.5H36.5L27 23L30.5 35L20 28L9.5 35L13 23L3.5 15.5H15.5Z"/>'
 });
 
+const CRYPT_SHAPE_NAMES = Object.freeze({ "□": "square", "△": "triangle", "◇": "diamond", "☆": "star" });
+
 export function cryptShapeIcon(symbol, size = 36) {
   const body = CRYPT_SHAPES[symbol];
-  return body ? `<svg class="b3-crypt-shape" viewBox="0 0 40 40" width="${size}" height="${size}" aria-label="${esc(symbol)}">${body}</svg>` : esc(symbol);
+  return body ? `<svg class="b3-crypt-shape ${CRYPT_SHAPE_NAMES[symbol]}" viewBox="0 0 40 40" width="${size}" height="${size}" aria-label="${esc(symbol)}">${body}</svg>` : esc(symbol);
 }
 
 function cryptarithmBoardMarkup(visual) {
-  // 원본 20~23쪽: 하늘색 카드 안의 큰 칸·도형 세로셈.
+  // 원본 20~23쪽: 카드 안의 큰 칸·도형 세로셈(카드 색은 우리 색표의 연노랑).
   const addends = visual.addends || [];
   const sum = visual.sum || [];
   const width = Math.max(1, sum.length, ...addends.map((row) => row.length));
