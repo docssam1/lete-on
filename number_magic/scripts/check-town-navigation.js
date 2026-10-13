@@ -40,7 +40,7 @@ async function checkViewport(browser,port,width){
     await shot('context-before');
     await page.locator('.t3d-cv').focus();
     await page.keyboard.down('ArrowRight');
-    await page.evaluate(()=>window.__navTown.debug.renderer.forceContextLoss());
+    await page.evaluate(external=>{const renderer=window.__navTown.debug.renderer;if(external)renderer.getContext().getExtension('WEBGL_lose_context').loseContext();else renderer.forceContextLoss();},width===390);
     await page.waitForFunction(()=>window.__navTown.debug.renderer.getContext().isContextLost());
     try{
       await page.waitForSelector('.t3d-context-error',{timeout:3000});
@@ -74,7 +74,7 @@ async function checkViewport(browser,port,width){
       assert.equal(await page.locator('.t3d-cv').count(),1,'recovery keeps one canvas');
       assert.deepEqual(await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return {progress:s.progress,coins:s.coins};}),scoredBefore,'graphics recovery must not award or remove progress/coins');
       await shot('context-restored');
-      result.contextRecovery={heldInputReleased:true,inputBlockedWhileLost:true,positionPreserved:true,real3dRetained:true,canvasCount:1,scoringUnchanged:true,boundedRetry:width===390,menuOverlap:false};
+      result.contextRecovery={lossSource:width===390?'external-gl':'renderer',heldInputReleased:true,inputBlockedWhileLost:true,positionPreserved:true,real3dRetained:true,canvasCount:1,scoringUnchanged:true,boundedRetry:width===390,menuOverlap:false};
     }catch(error){await shot('context-failure');throw error;}
   };
   try{
