@@ -22,6 +22,9 @@
   const elements = {
     tabs: document.getElementById("lesson-tabs"), clinic: document.getElementById("clinic-context"), eyebrow: document.getElementById("lesson-eyebrow"), title: document.getElementById("lesson-title"), concept: document.getElementById("lesson-concept"), problem: document.getElementById("problem-copy"), scene: document.getElementById("scene-root"), mode: document.getElementById("mode-name"), audio: document.getElementById("audio-toggle"), captions: document.getElementById("captions-toggle"), language: document.getElementById("lesson-language"), speed: document.getElementById("lesson-speed"), count: document.getElementById("step-count"), narration: document.getElementById("narration-text"), progress: document.getElementById("lesson-progress"), progressFill: document.getElementById("progress-fill"), previous: document.getElementById("previous-step"), play: document.getElementById("play-lesson"), next: document.getElementById("next-step"), restart: document.getElementById("restart-lesson"), overview: document.getElementById("show-overview"), steps: document.getElementById("step-list"), transcript: document.getElementById("lesson-transcript"), misconception: document.getElementById("teacher-misconception"), teacherPrompt: document.getElementById("teacher-prompt"), teacherSuccess: document.getElementById("teacher-success"), mathChecks: document.getElementById("math-checks")
   };
+  const MATHML_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
+  const INLINE_FRACTION_PATTERN = /([−-]?)(\d+)\s*\/\s*([1-9]\d*)/g;
+  const INLINE_FRACTION_TEST = /[−-]?\d+\s*\/\s*[1-9]\d*/;
 
   const requestedLessonIndex = source.lessons.findIndex(function (lesson) { return lesson.id === requestedLessonId; });
   let lessonIndex = requestedLessonIndex >= 0 ? requestedLessonIndex : 0;
@@ -38,6 +41,69 @@
   function currentUI() { return UI[locale]; }
   function narrationOf(beat) { return textOf(beat.narrationI18n) || beat.narration; }
   function labelOf(beat) { return textOf(beat.labelI18n) || beat.label; }
+
+  function fractionLabel(sign, numerator, denominator) {
+    const negative = sign ? (locale === "ko" ? "음의 " : locale === "zh" ? "负" : "negative ") : "";
+    if (locale === "ko") return negative + denominator + "분의 " + numerator;
+    if (locale === "zh") return negative + denominator + "分之" + numerator;
+    return negative + numerator + " over " + denominator;
+  }
+
+  function fractionMath(sign, numerator, denominator) {
+    const math = document.createElementNS(MATHML_NAMESPACE, "math");
+    math.classList.add("inline-fraction");
+    math.dataset.sourceFraction = (sign ? "-" : "") + numerator + "/" + denominator;
+    math.setAttribute("display", "inline");
+    math.setAttribute("aria-label", fractionLabel(sign, numerator, denominator));
+    if (sign) {
+      const minus = document.createElementNS(MATHML_NAMESPACE, "mo");
+      minus.textContent = "−";
+      math.append(minus);
+    }
+    const fraction = document.createElementNS(MATHML_NAMESPACE, "mfrac");
+    const top = document.createElementNS(MATHML_NAMESPACE, "mn");
+    const bottom = document.createElementNS(MATHML_NAMESPACE, "mn");
+    top.textContent = numerator;
+    bottom.textContent = denominator;
+    fraction.append(top, bottom);
+    math.append(fraction);
+    return math;
+  }
+
+  function appendMathText(node, value) {
+    const content = String(value == null ? "" : value);
+    INLINE_FRACTION_PATTERN.lastIndex = 0;
+    let cursor = 0;
+    let match;
+    while ((match = INLINE_FRACTION_PATTERN.exec(content))) {
+      if (match.index > cursor) node.append(document.createTextNode(content.slice(cursor, match.index)));
+      node.append(fractionMath(match[1], match[2], match[3]));
+      cursor = INLINE_FRACTION_PATTERN.lastIndex;
+    }
+    if (cursor < content.length) node.append(document.createTextNode(content.slice(cursor)));
+    return node;
+  }
+
+  function setMathText(node, value) {
+    node.replaceChildren();
+    return appendMathText(node, value);
+  }
+
+  function upgradeMathFractions(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const candidates = [];
+    let current;
+    while ((current = walker.nextNode())) {
+      const parent = current.parentElement;
+      if (parent && !parent.closest("svg,math,script,style") && INLINE_FRACTION_TEST.test(current.nodeValue || "")) candidates.push(current);
+    }
+    candidates.forEach(function (textNode) {
+      const wrapper = document.createElement("span");
+      wrapper.className = "math-text";
+      appendMathText(wrapper, textNode.nodeValue);
+      textNode.replaceWith(wrapper);
+    });
+  }
 
   function cancelPlayback() {
     playing = false;
@@ -90,7 +156,7 @@
     updateStepList();
     elements.mode.textContent = playing ? T.full : T.mode;
     elements.count.textContent = T.step + " " + (stepIndex + 1) + " " + T.of + " " + lesson.beats.length;
-    elements.narration.textContent = narrationOf(beat);
+    setMathText(elements.narration, narrationOf(beat));
     elements.progress.setAttribute("aria-valuemax", String(lesson.beats.length));
     elements.progress.setAttribute("aria-valuenow", String(stepIndex + 1));
     elements.progressFill.style.width = ((stepIndex + 1) / lesson.beats.length * 100) + "%";
@@ -111,6 +177,7 @@
       return '<li><button class="step-button" type="button" data-step-index="' + index + '"><span class="step-number">' + String(index + 1).padStart(2, "0") + '</span><span class="step-copy"><strong>' + labelOf(beat) + '</strong><small>' + beat.phase + '</small></span></button></li>';
     }).join("");
     elements.transcript.innerHTML = lesson.beats.map(function (beat) { return "<li>" + narrationOf(beat) + "</li>"; }).join("");
+    upgradeMathFractions(elements.transcript);
     elements.steps.querySelectorAll(".step-button").forEach(function (button) { button.addEventListener("click", function () { cancelPlayback(); applyStep(Number(button.getAttribute("data-step-index"))); }); });
   }
 
@@ -169,12 +236,14 @@
     elements.eyebrow.textContent = textOf(lesson.eyebrowI18n);
     elements.title.textContent = textOf(lesson.titleI18n);
     elements.concept.textContent = textOf(lesson.conceptI18n);
-    elements.problem.textContent = textOf(lesson.problemI18n);
+    setMathText(elements.problem, textOf(lesson.problemI18n));
     elements.scene.innerHTML = scenes.sceneFor(lesson, locale);
-    elements.misconception.textContent = lesson.teacherEvidence.likelyMisconception;
-    elements.teacherPrompt.textContent = lesson.teacherEvidence.teachingPrompt;
-    elements.teacherSuccess.textContent = lesson.teacherEvidence.successCheck;
+    upgradeMathFractions(elements.scene);
+    setMathText(elements.misconception, lesson.teacherEvidence.likelyMisconception);
+    setMathText(elements.teacherPrompt, lesson.teacherEvidence.teachingPrompt);
+    setMathText(elements.teacherSuccess, lesson.teacherEvidence.successCheck);
     elements.mathChecks.innerHTML = lesson.mathChecks.map(function (check) { return "<li>" + check.method + ": " + check.expression + " → " + check.result + "</li>"; }).join("");
+    upgradeMathFractions(elements.mathChecks);
     buildTabs();
     buildStepList(lesson);
     applyStep(0, { speak: false });
@@ -206,7 +275,7 @@
     updateStepList();
     elements.mode.textContent = currentUI().overview;
     elements.count.textContent = currentUI().complete;
-    elements.narration.textContent = currentUI().review + (textOf(lesson.verifiedAnswerI18n) || lesson.verifiedAnswer) + ".";
+    setMathText(elements.narration, currentUI().review + (textOf(lesson.verifiedAnswerI18n) || lesson.verifiedAnswer) + ".");
     elements.progress.setAttribute("aria-valuenow", String(lesson.beats.length));
     elements.progressFill.style.width = "100%";
     elements.previous.disabled = false;

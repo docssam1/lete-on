@@ -61,6 +61,9 @@ body.page-animated-math { margin: 0; overflow-x: hidden; color: var(--ink); back
 .concept-chip { flex: 0 0 auto; padding: 8px 11px; border: 1px solid #93aea1; color: var(--green-dark); background: var(--mint); font-size: .72rem; font-weight: 850; }
 .problem-label { margin: 27px 0 8px; color: var(--coral); font-size: .69rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
 .problem-copy { max-width: 930px; margin: 0; font: 500 clamp(1.18rem, 2vw, 1.5rem)/1.65 Georgia, serif; }
+.page-animated-math .inline-fraction { display:inline-block; margin-inline:.09em; color:inherit; font-family:"Cambria Math","STIX Two Math","Times New Roman",serif; font-size:1.06em; line-height:1; vertical-align:-.32em; white-space:nowrap; }
+.page-animated-math .inline-fraction mfrac { padding-inline:.04em; }
+.page-animated-math .fraction-cell .inline-fraction { margin:0; font-size:1.16em; vertical-align:middle; }
 
 .learning-layout { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 22px; align-items: start; margin-top: 22px; }
 .stage-card, .steps-card { border: 1px solid var(--line); background: var(--sheet); }

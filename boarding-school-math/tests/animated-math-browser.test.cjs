@@ -34,7 +34,9 @@ test.before(async function () {
   });
   await new Promise(function (resolve) { server.listen(0, "127.0.0.1", resolve); });
   baseUrl = `http://127.0.0.1:${server.address().port}/boarding-school-math/animated-math.html`;
-  browser = await chromium.launch({ headless: true });
+  const launchOptions = { headless: true };
+  if (process.env.GFIELD_CHROME_EXECUTABLE) launchOptions.executablePath = process.env.GFIELD_CHROME_EXECUTABLE;
+  browser = await chromium.launch(launchOptions);
 });
 test.after(async function () {
   if (browser) await browser.close();
@@ -56,7 +58,11 @@ test("ratio, fraction, GCF, signed-number, expression, equation, area, and geome
   assert.match(await page.locator("#narration-text").innerText(), /Five plus four equals nine/);
 
   await page.locator('.lesson-tab[data-lesson-index="1"]').click();
-  assert.match(await page.locator("#problem-copy").innerText(), /3\/4 m[\s\S]*1\/8 m/);
+  assert.equal(await page.locator('#problem-copy math[data-source-fraction="3/4"] mfrac').count(), 1);
+  assert.equal(await page.locator('#problem-copy math[data-source-fraction="1/8"] mfrac').count(), 1);
+  assert.equal(await page.locator('#problem-copy').evaluate(function (node) { return /\d+\s*\/\s*\d+/.test(node.innerText); }), false);
+  assert.equal(await page.locator(".fraction-equation > .math-text").count(), 1);
+  assert.ok((await page.locator(".fraction-equation").boundingBox()).height <= 70);
   assert.equal(await page.locator('[data-object="frac-answer"].is-visible').count(), 0);
   assert.equal(await page.locator('[data-object="frac-answer"]').getAttribute("aria-hidden"), "true");
   await page.locator('.step-button[data-step-index="4"]').click();
@@ -75,7 +81,9 @@ test("ratio, fraction, GCF, signed-number, expression, equation, area, and geome
   assert.match(await page.locator("#narration-text").innerText(), /greatest common factor is twelve/i);
 
   await page.locator('.lesson-tab[data-lesson-index="3"]').click();
-  assert.match(await page.locator("#problem-copy").innerText(), /-7\/4[\s\S]*-5\/3/);
+  assert.equal(await page.locator('#problem-copy math[data-source-fraction="-7/4"] mfrac').count(), 1);
+  assert.equal(await page.locator('#problem-copy math[data-source-fraction="-5/3"] mfrac').count(), 1);
+  assert.equal(await page.locator('#problem-copy').evaluate(function (node) { return /[−-]?\d+\s*\/\s*\d+/.test(node.innerText); }), false);
   assert.equal(await page.locator('[data-object="signed-answer"].is-visible').count(), 0);
   await page.locator('.step-button[data-step-index="2"]').click();
   assert.equal(await page.locator('[data-object="signed-point-a"].is-visible.is-active').count(), 1);
@@ -223,13 +231,15 @@ test("6.NS.C number-line A4 print state shows all exact comparison objects", asy
     return {
       hidden: Array.from(document.querySelectorAll(".scene-object")).filter(function (node) { return getComputedStyle(node).opacity !== "1"; }).length,
       answer: document.querySelector('[data-object="signed-answer"]').textContent,
+      answerFractions: Array.from(document.querySelectorAll('[data-object="signed-answer"] math[data-source-fraction]')).map(function (node) { return node.dataset.sourceFraction; }),
       controls: getComputedStyle(document.querySelector(".lesson-controls")).display,
       width: document.documentElement.scrollWidth,
       client: document.documentElement.clientWidth
     };
   });
   assert.equal(state.hidden, 0);
-  assert.match(state.answer, /-7\/4 < -5\/3/);
+  assert.deepEqual(state.answerFractions, ["-7/4", "-5/3"]);
+  assert.match(state.answer, /</);
   assert.equal(state.controls, "none");
   assert.equal(state.width, state.client);
   assert.deepEqual(errors, []);

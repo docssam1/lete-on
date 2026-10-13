@@ -31,7 +31,9 @@ test.before(async function () {
   });
   await new Promise(function (resolve) { server.listen(0, "127.0.0.1", resolve); });
   baseUrl = `http://127.0.0.1:${server.address().port}/boarding-school-math/clinic-practice.html`;
-  browser = await chromium.launch({ headless: true });
+  const launchOptions = { headless: true };
+  if (process.env.GFIELD_CHROME_EXECUTABLE) launchOptions.executablePath = process.env.GFIELD_CHROME_EXECUTABLE;
+  browser = await chromium.launch(launchOptions);
 });
 test.after(async function () { if (browser) await browser.close(); if (server) await new Promise(function (resolve) { server.close(resolve); }); });
 
@@ -61,6 +63,13 @@ test("6.NS.A uses the shared shell, exact fraction rules, and its own completion
   await page.goto(`${baseUrl}?cluster=6.NS.A&mode=workbook&audience=student&locale=en`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".problem-card").count(), 12);
   assert.match(await page.locator("#page-title").innerText(), /fraction division/i);
+  assert.equal(await page.locator('[data-item-id="ns-w01"] .problem-prompt math[data-source-fraction="3/4"] mfrac').count(), 1);
+  assert.equal(await page.locator('[data-item-id="ns-w01"] .problem-prompt math[data-source-fraction="1/8"] mfrac').count(), 1);
+  assert.equal(await page.locator("#clinic-content").evaluate(function (node) {
+    const copy = node.cloneNode(true);
+    copy.querySelectorAll("math,.progress-summary").forEach(function (item) { item.remove(); });
+    return /[−-]?\d+\s*\/\s*\d+/.test(copy.innerText);
+  }), false);
   const strict = page.locator('.problem-card[data-item-id="ns-w05"]');
   await strict.locator("input").fill("10/8"); await strict.locator(".response-row button").click();
   assert.equal(await strict.locator(".is-correct").count(), 0);

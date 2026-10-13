@@ -20,6 +20,9 @@
   };
   const source = registry.forCluster(state.cluster);
   source.validatePack();
+  const MATHML_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
+  const INLINE_FRACTION_PATTERN = /([−-]?)(\d+)\s*\/\s*([1-9]\d*)/g;
+  const INLINE_FRACTION_TEST = /[−-]?\d+\s*\/\s*[1-9]\d*/;
 
   const COPY = {
     ko: {
@@ -84,6 +87,60 @@
     if (className) node.className = className;
     if (value != null) node.textContent = value;
     return node;
+  }
+  function fractionLabel(sign, numerator, denominator) {
+    const negative = sign ? (state.locale === "ko" ? "음의 " : state.locale === "zh-Hans" ? "负" : "negative ") : "";
+    if (state.locale === "ko") return negative + denominator + "분의 " + numerator;
+    if (state.locale === "zh-Hans") return negative + denominator + "分之" + numerator;
+    return negative + numerator + " over " + denominator;
+  }
+  function fractionMath(sign, numerator, denominator) {
+    const math = document.createElementNS(MATHML_NAMESPACE, "math");
+    math.classList.add("inline-fraction");
+    math.dataset.sourceFraction = (sign ? "-" : "") + numerator + "/" + denominator;
+    math.setAttribute("display", "inline");
+    math.setAttribute("aria-label", fractionLabel(sign, numerator, denominator));
+    if (sign) {
+      const minus = document.createElementNS(MATHML_NAMESPACE, "mo");
+      minus.textContent = "−";
+      math.append(minus);
+    }
+    const fraction = document.createElementNS(MATHML_NAMESPACE, "mfrac");
+    const top = document.createElementNS(MATHML_NAMESPACE, "mn");
+    const bottom = document.createElementNS(MATHML_NAMESPACE, "mn");
+    top.textContent = numerator;
+    bottom.textContent = denominator;
+    fraction.append(top, bottom);
+    math.append(fraction);
+    return math;
+  }
+  function appendMathText(node, value) {
+    const content = String(value == null ? "" : value);
+    INLINE_FRACTION_PATTERN.lastIndex = 0;
+    let cursor = 0;
+    let match;
+    while ((match = INLINE_FRACTION_PATTERN.exec(content))) {
+      if (match.index > cursor) node.append(document.createTextNode(content.slice(cursor, match.index)));
+      node.append(fractionMath(match[1], match[2], match[3]));
+      cursor = INLINE_FRACTION_PATTERN.lastIndex;
+    }
+    if (cursor < content.length) node.append(document.createTextNode(content.slice(cursor)));
+    return node;
+  }
+  function upgradeMathFractions(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const candidates = [];
+    let current;
+    while ((current = walker.nextNode())) {
+      const parent = current.parentElement;
+      if (parent && !parent.closest("svg,math,script,style,.progress-summary") && INLINE_FRACTION_TEST.test(current.nodeValue || "")) candidates.push(current);
+    }
+    candidates.forEach(function (textNode) {
+      const wrapper = document.createElement("span");
+      wrapper.className = "math-text";
+      appendMathText(wrapper, textNode.nodeValue);
+      textNode.replaceWith(wrapper);
+    });
   }
   function workbookComplete() {
     try { return window.localStorage.getItem("gfield-clinic-workbook:"+state.cluster+":v1") === "complete-v1"; }
@@ -243,8 +300,10 @@
           state.revealed.add(item.id);
           const solution = el("div", "solution-box");
           solution.append(el("strong", "", c.solution + " · "), document.createTextNode(source.solutionFor(item, state.locale)));
+          upgradeMathFractions(solution);
           reveal.after(solution); reveal.remove();
         });
+        upgradeMathFractions(hint);
         card.append(hint, reveal);
       }
     });
@@ -331,12 +390,13 @@
       }
       host.append(progress, completion);
     }
+    upgradeMathFractions(host);
   }
 
-  function rerender(next) { setUrl(next); resetAttemptState(); renderChrome(); renderPractice(); document.getElementById("clinic-content").focus({ preventScroll: true }); }
+  function rerender(next) { setUrl(next); resetAttemptState(); renderChrome(); renderPractice(); upgradeMathFractions(document.querySelector(".clinic-hero")); document.getElementById("clinic-content").focus({ preventScroll: true }); }
   document.querySelectorAll("[data-audience]").forEach(function (button) { button.addEventListener("click", function () { rerender({ audience: button.dataset.audience }); }); });
   document.querySelectorAll("[data-mode]").forEach(function (button) { button.addEventListener("click", function () { rerender({ mode: button.dataset.mode }); }); });
   document.getElementById("locale-select").addEventListener("change", function (event) { rerender({ locale: event.target.value }); });
   document.getElementById("print-page").addEventListener("click", function () { window.print(); });
-  renderChrome(); renderPractice();
+  renderChrome(); renderPractice(); upgradeMathFractions(document.querySelector(".clinic-hero"));
 })();
