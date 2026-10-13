@@ -329,6 +329,63 @@ function numberRows(visual) {
   return `<div class="b5-number-rows ${visual.mode}">${rows.join("")}<strong>… ${visual.targetRow}번째 줄의 ${visual.askFirst ? "첫" : "마지막"} 수</strong></div>`;
 }
 
+// ── 골든벨 5권 원본 그림(교사용 슬라이드의 검정 문제 그대로, 빨강·파랑 답·풀이는 넣지 않는다) ──
+// 수 배열표: 주어진 수만 적고, 물을 칸은 색칠한다(원본에는 길·화살표가 없다).
+function sourceNumberTable(visual) {
+  const shaded = new Set((visual.shaded || []).map(([r, c]) => `${r}:${c}`));
+  const cells = visual.cells.flatMap((row, r) => row.map((value, c) => `<span class="${shaded.has(`${r}:${c}`) ? "shaded" : ""}">${escapeHtml(value ?? "")}</span>`)).join("");
+  return `<div class="b5-src-table" style="--columns:${visual.cells[0].length}" role="img" aria-label="수 배열표">${cells}</div>`;
+}
+
+// 숫자 카드 한 줄
+function sourceDigitCards(visual) {
+  const cards = visual.digits.map((digit) => `<span>${escapeHtml(digit)}</span>`).join("");
+  return `<div class="b5-src-cards" role="img" aria-label="숫자 카드 ${visual.digits.join(", ")}"><div>${cards}</div>${visual.ask ? `<p>${escapeHtml(visual.ask)} →</p>` : ""}</div>`;
+}
+
+// 곱셈 매트릭스: 색칠된 칸에 카드를 넣는다. 글자(A, B, C)는 색칠된 칸에 있다.
+function sourceProductGrid(visual) {
+  const shaded = new Set(visual.shaded.map(([r, c]) => `${r}:${c}`));
+  const size = visual.rowProducts.length;
+  const cells = [];
+  for (let r = 0; r < size; r += 1) {
+    for (let c = 0; c < size; c += 1) cells.push(`<span class="${shaded.has(`${r}:${c}`) ? "shaded" : ""}">${escapeHtml(visual.letters?.[r]?.[c] || "")}</span>`);
+    cells.push(`<b>${visual.rowProducts[r]}</b>`);
+  }
+  visual.columnProducts.forEach((value) => cells.push(`<b>${value}</b>`));
+  return `<div class="b5-src-product" style="--size:${size}" role="img" aria-label="곱셈 매트릭스">${cells.join("")}</div>`;
+}
+
+// 사각형 피라미드: 한 줄에 1, 3, 5…개
+function sourceSquarePyramid(visual) {
+  const rows = Array.from({ length: visual.rows }, (_, i) => `<div>${Array.from({ length: i * 2 + 1 }, () => "<i></i>").join("")}</div>`).join("");
+  return `<div class="b5-src-pyramid" role="img" aria-label="사각형을 쌓은 모양">${rows}<em>⋮</em></div>`;
+}
+
+// 삼각형 나누기: 큰 삼각형을 한 줄에 1, 3, 5…개 작은 삼각형으로
+function sourceTriangleRows(visual) {
+  const n = visual.rows, side = 30, h = side * Math.sqrt(3) / 2, w = n * side;
+  const lines = [];
+  for (let k = 1; k <= n; k += 1) {
+    const y = k * h, half = k * side / 2;
+    lines.push(`<line x1="${w / 2 - half}" y1="${y}" x2="${w / 2 + half}" y2="${y}"/>`);
+  }
+  // 두 빗변과 나란한 선
+  const slants = Array.from({ length: n + 1 }, (_, k) => `<line x1="${w / 2 + k * side / 2}" y1="${k * h}" x2="${k * side}" y2="${n * h}"/><line x1="${w / 2 - k * side / 2}" y1="${k * h}" x2="${w - k * side}" y2="${n * h}"/>`).join("");
+  return `<div class="b5-src-trirows" role="img" aria-label="작은 삼각형으로 나눈 큰 삼각형"><svg viewBox="-2 -2 ${w + 4} ${n * h + 4}">${lines.join("")}${slants}</svg><em>⋮</em></div>`;
+}
+
+// 쌓기나무 한 무더기(층마다 삼각수만큼) — 개수 글자를 붙이지 않는다.
+function sourceCubeStair(visual) {
+  const geometry = globalThis.GW_GEN;
+  const renderer = globalThis.GW_RENDER;
+  if (!geometry?.buildTriangularStairShape || !renderer?.renderIso) throw new Error("Geometry worksheet cube data is required for the cube stair visual.");
+  const map = geometry.buildTriangularStairShape(visual.stage);
+  const svg = renderer.renderIso(map, visual.stage, visual.stage, { u: 22 })
+    .replace('class="ws-iso"', `class="ws-iso b5-geometry-cubes b5-src-stair" role="img" aria-label="층층이 쌓은 쌓기나무"`);
+  return `<div class="b5-src-cube-stair">${svg}</div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -340,6 +397,12 @@ export function book05Markup(visual) {
     case "calendar-pair": return calendarPair(visual);
     case "route-grid": return routeGrid(visual);
     case "digit-cards": return digitCards(visual);
+    case "source-number-table": return sourceNumberTable(visual);
+    case "source-digit-cards": return sourceDigitCards(visual);
+    case "source-product-grid": return sourceProductGrid(visual);
+    case "source-square-pyramid": return sourceSquarePyramid(visual);
+    case "source-triangle-rows": return sourceTriangleRows(visual);
+    case "source-cube-stair": return sourceCubeStair(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);
