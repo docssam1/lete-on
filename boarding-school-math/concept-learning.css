@@ -86,10 +86,10 @@ body.page-concept-learning { margin:0; color:var(--ink); background:var(--paper)
 .model-table th { background:#e6eee8; font-weight:850; }
 .factor-model-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
 .fraction-strip-model { display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); overflow:hidden; border:2px solid var(--green-dark); }
-.fraction-cell { display:grid; min-height:54px; place-items:center; border-right:1px solid var(--green-dark); color:transparent; background:#fff; font-size:.72rem; font-weight:800; }
+.fraction-cell { display:grid; min-height:54px; place-items:center; border-right:1px solid var(--green-dark); color:transparent; background:#fff; font-size:1rem; font-weight:800; }
 .fraction-cell:last-child { border-right:0; }
 .fraction-cell.filled { color:var(--green-dark); background:#a8cdbd; }
-.fraction-cell .inline-fraction { margin:0; font-size:1.14em; }
+.fraction-cell .inline-fraction { margin:0; font-size:1.18em; vertical-align:middle; }
 .model-svg { display:block; width:100%; height:auto; overflow:visible; background:#fff; }
 .axis-line, .major-tick { stroke:var(--green-dark); stroke-width:2; }
 .minor-tick { stroke:#70897f; stroke-width:1.25; }
@@ -201,7 +201,7 @@ body.page-concept-learning { margin:0; color:var(--ink); background:var(--paper)
   .checkpoint-gate { display:grid; }
   .lesson-controls { display:grid; grid-template-columns:1fr 1fr; }
   .model-table th, .model-table td { padding:9px 4px; font-size:.76rem; }
-  .fraction-cell { min-height:44px; font-size:.59rem; }
+  .fraction-cell { min-height:44px; font-size:.82rem; }
   .balance-model { grid-template-columns:1fr; background:linear-gradient(#eef5f0 0 66%,#fff2e8 66%); }
   .balance-side { grid-template-columns:repeat(3,minmax(32px,1fr)); }
   .balance-result { justify-content:center; }
