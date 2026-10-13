@@ -48,6 +48,56 @@ async function openProblem(problem, viewport, language = "ko", name = problem.id
   return page;
 }
 
+/* D3 터치 판정 검사용 점. 그림 단위 좌표를 화면 좌표로 바꿔 돌려준다.
+   - crossing: 두 후보 선이 종이 안에서 만나는 점(있으면)
+   - empty: 종이 안에서 모든 선과 40px 넘게 떨어진 점
+   - offset: 정답 선에서 수직으로 14px 떨어졌고 다른 선과는 32px 넘게 떨어진 점 */
+async function creaseProbePoints(page, problem) {
+  return page.locator(".fold-start .reverse-diagram").evaluate((svg, choices) => {
+    const matrix = svg.getScreenCTM();
+    const scale = 160 * Math.hypot(matrix.a, matrix.b);
+    const paper = svg.querySelector(".paper-fill");
+    const toScreen = (u) => new DOMPoint(20 + u.x * 160, 20 + u.y * 160).matrixTransform(matrix);
+    const onPaper = (u) => paper.isPointInFill(new DOMPoint(20 + u.x * 160, 20 + u.y * 160));
+    const dist = (p, a, b) => {
+      const dx = b.x - a.x; const dy = b.y - a.y;
+      const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy)));
+      return Math.hypot(p.x - a.x - dx * t, p.y - a.y - dy * t) * scale;
+    };
+    let crossing = null;
+    for (let i = 0; i < choices.length && !crossing; i += 1) {
+      for (let j = i + 1; j < choices.length && !crossing; j += 1) {
+        const [a, b] = choices[i].chord; const [c, d] = choices[j].chord;
+        const den = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x);
+        if (Math.abs(den) < 1e-9) continue;
+        const t = ((c.x - a.x) * (d.y - c.y) - (c.y - a.y) * (d.x - c.x)) / den;
+        const u = ((c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x)) / den;
+        if (t < 0.05 || t > 0.95 || u < 0.05 || u > 0.95) continue;
+        const point = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+        if (onPaper(point)) crossing = toScreen(point);
+      }
+    }
+    let empty = null;
+    for (let row = 1; row < 40 && !empty; row += 1) for (let col = 1; col < 40 && !empty; col += 1) {
+      const point = { x: col / 40, y: row / 40 };
+      if (onPaper(point) && choices.every((choice) => dist(point, choice.chord[0], choice.chord[1]) > 40)) empty = toScreen(point);
+    }
+    const answer = choices.find((choice) => choice.correct);
+    const [a, b] = answer.chord;
+    const length = Math.hypot(b.x - a.x, b.y - a.y);
+    const normal = { x: -(b.y - a.y) / length, y: (b.x - a.x) / length };
+    let offset = null;
+    for (const ratio of [0.5, 0.4, 0.6, 0.3, 0.7, 0.25, 0.75, 0.2, 0.8]) for (const side of [1, -1]) {
+      if (offset) break;
+      const along = { x: a.x + (b.x - a.x) * ratio, y: a.y + (b.y - a.y) * ratio };
+      const point = { x: along.x + normal.x * side * (14 / scale), y: along.y + normal.y * side * (14 / scale) };
+      if (!onPaper(point)) continue;
+      if (choices.filter((choice) => !choice.correct).every((choice) => dist(point, choice.chord[0], choice.chord[1]) > 32)) offset = toScreen(point);
+    }
+    return { crossing: crossing && { x: crossing.x, y: crossing.y }, empty: empty && { x: empty.x, y: empty.y }, offset: offset && { x: offset.x, y: offset.y } };
+  }, problem.lineChoices.map((choice) => ({ chord: choice.chord, correct: choice.correct })));
+}
+
 /* 후보 선의 터치 면 안이면서 다른 후보의 면과 겹치지 않고 종이 위인 점을 찾아
    실제 마우스로 누른다. 보이지 않는 버튼이 아니라 종이 위의 선을 누르는지 본다. */
 async function touchLine(page, key) {
@@ -68,8 +118,10 @@ async function touchLine(page, key) {
         if (!node.isPointInFill(candidate) || !paper.isPointInFill(candidate)) continue;
         if (others.some((item) => item.isPointInFill(candidate))) continue;
         const screen = candidate.matrixTransform(matrix);
-        /* 종이 위 그 선이 실제로 클릭을 받는 점만 쓴다. 다른 요소가 덮은 점은 버린다. */
-        if (document.elementFromPoint(screen.x, screen.y) !== node) continue;
+        /* 종이 그림이 실제로 클릭을 받는 점만 쓴다. 다른 요소가 덮은 점은 버린다.
+           (D3 뒤로 띠는 pointer-events:none이고 종이 그림 전체가 터치를 받는다.) */
+        const hit = document.elementFromPoint(screen.x, screen.y);
+        if (!hit || !svg.contains(hit)) continue;
         found.push({ score: Math.hypot(row - 16, column - 16), x: screen.x, y: screen.y });
       }
     }
@@ -114,6 +166,8 @@ async function arrowInsidePaper(page) {
 }
 
 let creasePicks = 0;
+let creaseCrossingTaps = 0;
+let creaseOffsetTaps = 0;
 let multiSets = 0;
 
 try {
@@ -130,14 +184,39 @@ try {
     assert.equal(await page.locator("[data-result-revealed]").count(), 0);
     await layout(page, `${name}-crease-before`);
 
+    /* D3: 두 선이 만나는 점은 어느 선으로도 판정하지 않고, 선에서 먼 빈 곳도
+       판정하지 않는다. */
+    const probes = await creaseProbePoints(page, problem);
+    if (probes.crossing) {
+      await page.mouse.click(probes.crossing.x, probes.crossing.y);
+      await page.waitForTimeout(160);
+      assert.equal(await page.locator(".fold-start .reverse-diagram").getAttribute("data-last-touch"), "tie", `${name}/${problem.id} a tap on a crossing picked a line`);
+      assert.equal(await page.locator("#nextButton").getAttribute("hidden"), "", "a tap on a crossing solved the problem");
+      assert.equal(await page.locator("#paper .wrong").count(), 0, "a tap on a crossing was marked wrong");
+      creaseCrossingTaps += 1;
+    }
+    assert.ok(probes.empty, `${name}/${problem.id} no empty paper point to test`);
+    await page.mouse.click(probes.empty.x, probes.empty.y);
+    await page.waitForTimeout(160);
+    assert.equal(await page.locator(".fold-start .reverse-diagram").getAttribute("data-last-touch"), "miss", `${name}/${problem.id} a tap far from every crease picked a line`);
+    assert.equal(await page.locator("#nextButton").getAttribute("hidden"), "");
+
     /* 틀린 선을 누르면 풀리지 않는다. */
     const wrongKey = problem.lineChoices.find((choice) => !choice.correct).key;
     await touchLine(page, wrongKey);
     assert.equal(await page.locator("#nextButton").getAttribute("hidden"), "", "a wrong crease solved the problem");
     assert.equal(await page.locator("#paper .paper-fold-arrow").count(), 0);
 
-    /* 정답 선을 직접 누르면 풀린다. */
-    await touchLine(page, problem.answerKey);
+    /* 정답 선을 누르면 풀린다. 선에서 14px 떨어진 곳(예전 띠 밖)을 눌러도
+       가장 가까운 선이 정답이면 그 선으로 판정한다. */
+    await page.waitForFunction(() => !document.querySelector("#paper .wrong, #paper .touch-wrong"), null, { timeout: 4000 });
+    if (probes.offset) {
+      await page.mouse.click(probes.offset.x, probes.offset.y);
+      await page.waitForTimeout(240);
+      creaseOffsetTaps += 1;
+    } else {
+      await touchLine(page, problem.answerKey);
+    }
     await page.waitForTimeout(760);
     assert.equal(await page.locator("#nextButton").getAttribute("hidden"), null, `${name}/${problem.id} the correct crease did not solve the problem`);
     assert.equal(await page.locator("#paper .reverse-crease").count(), 1, "the solved picture must show only the answer crease");
@@ -248,6 +327,7 @@ try {
     `Reverse fold browser check passed: ${creasePicks} direct crease picks and ${multiSets} multi-answer sets`,
     "across 1280x800, 390x844 and 844x390, four locales, no layer badge, no arrow on a result picture,",
     "no answer shown before the answer, and a full 10-problem session.",
+    `D3 touch rule: ${creaseCrossingTaps} crossing taps left unjudged, ${viewports.length} empty-paper taps ignored, ${creaseOffsetTaps} taps 14px off the answer crease accepted.`,
     `Screenshots: ${output}`
   ].join(" "));
 } finally {
