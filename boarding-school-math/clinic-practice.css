@@ -48,6 +48,8 @@ body { color:var(--ink); background:var(--paper); }
 .problem-card.is-correct { border-color:var(--green); box-shadow:inset 4px 0 0 var(--green); }
 .problem-meta { display:flex; justify-content:space-between; gap:12px; color:var(--green); font-size:.64rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
 .problem-prompt { min-height:54px; margin:14px 0 18px; font:500 1rem/1.65 Georgia,"Noto Serif KR",serif; }
+.inline-fraction { display:inline-block; margin-inline:.09em; color:inherit; font-family:"Cambria Math","STIX Two Math","Times New Roman",serif; font-size:1.06em; line-height:1; vertical-align:-.32em; white-space:nowrap; }
+.inline-fraction mfrac { padding-inline:.04em; }
 .problem-visual { display:grid; min-height:190px; place-items:center; margin:-4px 0 18px; padding:10px; overflow:hidden; border:1px solid var(--line); background:#fbfaf5; }
 .problem-visual svg { display:block; width:min(100%,320px); height:auto; max-height:220px; }
 .clinic-relation-rule, .clinic-substitution-rule, .clinic-point-pair, .clinic-change-rule { width:min(100%,330px); display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; font:800 1.05rem/1.4 system-ui,sans-serif; }

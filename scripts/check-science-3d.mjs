@@ -129,18 +129,23 @@ for (const u of UNITS) {
     await shot(page, `${u}-${name}`);
     if (name === '5단계 실험(PC)') {
       if (u === 's41-u01') {
-        // 한 쌍만 살펴보는 조작이 실제 극 방향과 함께 바뀌는지 확인한다.
-        checks += 4;
-        const inspect = page.locator('.rt-inspect');
-        const facing = page.locator('[data-r="facing"]');
+        // 2026-10-13 재설계: 예상 전에는 답을 보이지 않는다 → 고르고 예상 → 뒤집기 → 적어야 잰 값·극이 나온다.
+        checks += 5;
+        const val = (r) => page.locator(`[data-r="${r}"]`).first().textContent();
         const visible = await page.locator('[data-act="record"]').evaluate((b) => b.getBoundingClientRect().bottom < innerHeight - 40);
         if (!visible) fail(where, 'PC 기본 화면에서 기록 단추가 하단 이동 막대에 가려짐');
-        if (await facing.textContent() !== 'N ↔ N') fail(where, '처음 마주 보는 1·2번 고리의 극 표기가 틀림');
-        await inspect.click();
-        if (await page.locator('[data-r="pair"]').textContent() !== '2·3번 사이의 극 ↻' || await facing.textContent() !== 'S ↔ N') fail(where, '다음 고리 사이로 옮겨도 마주 보는 극이 갱신되지 않음');
-        await page.locator('[data-flip="1"]').click();
-        await page.waitForTimeout(900);
-        if (await facing.textContent() !== 'N ↔ N') fail(where, '고리를 뒤집은 뒤 마주 보는 극이 갱신되지 않음');
+        const early = await page.evaluate(async () => { const { Stage } = await import('/science-lab/engine.js'); const s = [...Stage.live][0]; let n = 0; s.root.traverseVisible((o) => { if (o.isSprite && o.material?.map && o.parent?.parent?.userData?.top !== undefined) n++; }); return n; });
+        if ((await val('floating')) !== '?' || (await val('height')) !== '?' || !(await page.locator('[data-act="record"]').isDisabled()) || await page.locator('[data-act="inspect-pair"]').isVisible() || early)
+          fail(where, '첫 화면(예상 전)에 잰 값·극 표·기록 단추가 열려 있음 — 답이 먼저 보임');
+        await page.locator('[data-flip="1"]').click(); await page.waitForTimeout(400);
+        if (!(await page.locator('.rt-card [data-pred]').count())) fail(where, '고리를 고르면 「어디가 뜰까?」 예상 고르기가 떠야 함');
+        await page.locator('[data-act="flip-sel"]').click(); await page.waitForTimeout(3600);
+        if (await page.locator('[data-act="record"]').isDisabled()) fail(where, '뒤집어 내려앉은 뒤에도 「표에 적기」가 열리지 않음');
+        await page.locator('[data-act="record"]').click(); await page.waitForTimeout(700);
+        if ((await val('floating')) !== '2' || (await val('height')) !== '5.3' || (await val('facing')) !== 'N ↔ N') fail(where, `적은 뒤 공개된 값이 모델과 다름(${await val('floating')}곳 · ${await val('height')}칸 · ${await val('facing')})`);
+        await page.locator('[data-act="inspect-pair"]').click();
+        if ((await val('pair')) !== '2·3번 사이의 극 ↻' || (await val('facing')) !== 'S ↔ S') fail(where, '다음 고리 사이로 옮겨도 마주 보는 극이 갱신되지 않음');
+        await page.evaluate(() => { const s = document.scrollingElement; s.scrollTop = 0; });
       }
       // ⑤ 화산: 누르기 전에는 포일이 없다
       if (u === 's41-u03b') {
