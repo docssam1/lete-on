@@ -126,7 +126,7 @@ export async function mountRingTower(el, opts = {}) {
   // 상태
   const st = holders.map(() => ({ y: 0, v: 0 }));
   let model = towerModel(ups), shown = battle, phase = battle ? 'battle' : 'start', sel = -1, flipping = null, focusPair = 0;
-  let pred = null, predAsked = battle, lastFlip = -1, compare = null;
+  let pred = null, predAsked = battle, lastFlip = -1, compare = null, recWas = false;
   const target = (i) => BASE_Y + model.y[i] * KAN + T / 2;          // 고리 가운데 높이
   const setPhase = (p) => { phase = p; host.dataset.phase = p; };
   const showPair = (pair) => {
@@ -330,6 +330,7 @@ export async function mountRingTower(el, opts = {}) {
     if (!compare) cmpSel = [rows.length - 2, rows.length - 1];
     if (compare) root.remove(compare);   // 재질은 실험 고리와 함께 쓰는 것이 있어 여기서 내리지 않는다(무대를 닫을 때 정리)
     compare = buildCompare(); root.add(compare); live.visible = false; setPhase('compare');
+    recWas = recBtn.disabled; recBtn.disabled = true; $('[data-act=inspect-pair]').disabled = true;   // 비교 중엔 보이지 않는 실험 탑을 적거나 바꾸지 않게
     const hMax = Math.max(...cmpSel.map((k) => towerModel(upsOf(rows[k].shape)).height));
     stage.setView({ theta: VIEW_TH, phi: 1.36, dist: 9, target: [0, 1.2, 0], frame: [[-1.75 - R_OUT - 0.6, 0, -1.4], [1.75 + R_OUT + 0.2, Math.max(BASE_Y + hMax * KAN + 0.7, PEN_TOP + 0.5), 1.4]] });
     cmpBtn.textContent = '실험으로 돌아가기'; renderRows();
@@ -338,6 +339,7 @@ export async function mountRingTower(el, opts = {}) {
   }
   function closeCompare() {
     if (!compare) return; root.remove(compare); compare = null; live.visible = true;
+    recBtn.disabled = recWas; $('[data-act=inspect-pair]').disabled = false;
     setPhase(shown ? 'revealed' : 'explore'); cmpBtn.textContent = '두 탑 비교'; renderRows(); card.hidden = true;
     stage.setView({ theta: VIEW_TH, phi: PHI, dist: 6.6, target: [0, 1.5, 0], frame: shown ? BOX.overview : BOX.tower });
     tip('다시 실험해요. 고리를 골라 눌러 보세요.');
