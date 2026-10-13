@@ -15,7 +15,7 @@ const FAMILIES = [
   "book4-table-logic-source"
 ];
 
-const GIVEN = "#187fa9";
+const GIVEN = "#2f6fe0";
 const ACTION = "#d39b20";
 const VERIFY = "#16734b";
 

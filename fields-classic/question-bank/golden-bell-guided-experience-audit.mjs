@@ -221,7 +221,7 @@ for (const family of bookNineFamilies) {
     if (!frame.html.includes(`data-color-role="${expectedRole}"`)) {
       failures.push(`${lessonKey(record)} beat=${index + 1} lacks ${expectedRole} color semantics`);
     }
-    const expectedColor = phase === "problem" ? "#187fa9" : phase === "verify" ? "#16734b" : "#d39b20";
+    const expectedColor = phase === "problem" ? "#2f6fe0" : phase === "verify" ? "#16734b" : "#d39b20";
     if (!frame.html.includes(expectedColor)) {
       failures.push(`${lessonKey(record)} beat=${index + 1} does not visibly use its ${expectedRole} color`);
     }

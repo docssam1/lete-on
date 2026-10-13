@@ -1,8 +1,10 @@
+// 골든벨 색표(.claude/skills/golden-bell-figure-style): 주어진 것 파랑, 글자 검정. 하는 일 금색·확인 진초록은
+// ▲초록(#2f9e5f)과 겹치지 않게 따로 둔다 — 검사기가 확인 색이 앞 단계에 새지 않는지 이 값으로 본다.
 const COLOR = Object.freeze({
-  given: "#187fa9",
+  given: "#2f6fe0",
   action: "#d39b20",
   verify: "#16734b",
-  ink: "#233746",
+  ink: "#222222",
   muted: "#b9c5cc",
   wash: "#f5f6f8",
   paper: "#ffffff"
@@ -261,7 +263,7 @@ function matrixFrame(visual, phase) {
     const reveal = phase === "verify";
     const shown = value == null ? reveal ? solution[index] : "?" : value;
     const color = value != null ? COLOR.given : reveal ? COLOR.verify : phase === "organize" ? COLOR.action : COLOR.given;
-    const fill = value != null ? "#eaf4f8" : reveal ? "#e8f5ee" : phase === "organize" ? "#fff8e4" : COLOR.paper;
+    const fill = value != null ? "#eef3ff" : reveal ? "#e8f5ee" : phase === "organize" ? "#fff8e4" : COLOR.paper;
     return `<rect x="${originX + column * cellSize}" y="${originY + row * cellSize}" width="${cellSize}" height="${cellSize}" fill="${fill}" stroke="${color}" stroke-width="3"/><text x="${originX + column * cellSize + cellSize / 2}" y="${originY + row * cellSize + 42}" fill="${color}" font-size="23" font-weight="900" text-anchor="middle">${shown}</text>`;
   }).join("");
   const rowLabels = rows.map((value, row) => `<text x="${originX + cellSize * 2 + 34}" y="${originY + row * cellSize + 42}" fill="${phase === "problem" ? COLOR.given : COLOR.action}" font-size="17" font-weight="900" text-anchor="middle">${value}</text>`).join("");
@@ -517,7 +519,7 @@ function compareRow(relation, color) {
 
 function compareFrame(visual, phase, family) {
   const values = solveCompare(visual);
-  const rows = `<div style="display:grid;gap:8px;padding:12px 20px;border:2px solid ${COLOR.given};border-radius:14px;background:#eaf4f8">${visual.relations.map((relation) => compareRow(relation, COLOR.given)).join("")}</div>`;
+  const rows = `<div style="display:grid;gap:8px;padding:12px 20px;border:2px solid ${COLOR.given};border-radius:14px;background:#eef3ff">${visual.relations.map((relation) => compareRow(relation, COLOR.given)).join("")}</div>`;
   if (phase === "problem") return `${rows}<p style="margin:0;color:${COLOR.given};font-size:14px;font-weight:800">정해진 값이 없습니다.</p>`;
   const chips = [...values.entries()].map(([name, value]) => `<span style="display:grid;place-items:center;min-width:66px;padding:6px 10px;border:2px solid ${COLOR.action};border-radius:10px;background:#fff8e4;color:${COLOR.ink};font-size:18px;font-weight:900">${escapeHtml(compareGlyph(name))} = ${value}</span>`).join("");
   const organize = `${rows}<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px">${chips}</div><p style="margin:0;color:${COLOR.action};font-size:14px;font-weight:800">${escapeHtml(compareGlyph(visual.base))}에 ${values.get(visual.base)}을 넣고 나머지를 차례로 구합니다.</p>`;
