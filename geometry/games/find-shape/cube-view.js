@@ -144,26 +144,26 @@ export function createCubeView() {
     if (trayCache.has(key)) return trayCache.get(key);
     const group = new THREE.Group();
     const size = Math.max(width, depth);
-    const trayWidth = width + 1.0;
-    const trayDepth = depth + 1.0;
-    const board = new THREE.Mesh(new RoundedBoxGeometry(trayWidth, 0.24, trayDepth, 8, 0.16), boardMaterial);
+    const trayWidth = width + 0.62;
+    const trayDepth = depth + 0.62;
+    const board = new THREE.Mesh(new RoundedBoxGeometry(trayWidth, 0.24, trayDepth, 8, 0.12), boardMaterial);
     board.position.y = -0.15;
     board.receiveShadow = true;
     group.add(board);
-    const railX = width / 2 + 0.3;
-    const railZ = depth / 2 + 0.3;
+    const railX = width / 2 + 0.17;
+    const railZ = depth / 2 + 0.17;
     [
-      { x: 0, z: railZ, sx: width + 0.72, sz: 0.14 },
-      { x: 0, z: -railZ, sx: width + 0.72, sz: 0.14 },
-      { x: railX, z: 0, sx: 0.14, sz: depth + 0.72 },
-      { x: -railX, z: 0, sx: 0.14, sz: depth + 0.72 }
+      { x: 0, z: railZ, sx: width + 0.46, sz: 0.12 },
+      { x: 0, z: -railZ, sx: width + 0.46, sz: 0.12 },
+      { x: railX, z: 0, sx: 0.12, sz: depth + 0.46 },
+      { x: -railX, z: 0, sx: 0.12, sz: depth + 0.46 }
     ].forEach((rail) => {
       const mesh = new THREE.Mesh(new RoundedBoxGeometry(rail.sx, 0.1, rail.sz, 4, 0.05), railMaterial);
       mesh.position.set(rail.x, 0.0, rail.z);
       mesh.receiveShadow = true;
       group.add(mesh);
     });
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(width + 0.2, depth + 0.2), floorMaterial);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(width + 0.16, depth + 0.16), floorMaterial);
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = 0.012;
     floor.receiveShadow = true;
@@ -196,8 +196,8 @@ export function createCubeView() {
     if (!labels) return;
     frontLabel.material = labelMaterial(labels.front);
     rightLabel.material = labelMaterial(labels.right);
-    frontLabel.position.set(0, -0.38, depth / 2 + 0.55);
-    rightLabel.position.set(width / 2 + 0.55, -0.38, 0);
+    frontLabel.position.set(0, -0.36, depth / 2 + 0.36);
+    rightLabel.position.set(width / 2 + 0.36, -0.36, 0);
   }
 
   // The frame is the same for every option of one problem: grid size and the
@@ -210,14 +210,14 @@ export function createCubeView() {
     camera.updateMatrixWorld();
     const view = camera.matrixWorldInverse;
     let minX = Infinity; let maxX = -Infinity; let minY = Infinity; let maxY = -Infinity;
-    const halfW = width / 2 + 0.55;
-    const halfD = depth / 2 + 0.55;
-    for (const x of [-halfW, halfW]) for (const z of [-halfD, halfD]) for (const y of [-0.74, height]) {
+    const halfW = width / 2 + 0.36;
+    const halfD = depth / 2 + 0.36;
+    for (const x of [-halfW, halfW]) for (const z of [-halfD, halfD]) for (const y of [-0.7, height]) {
       const point = new THREE.Vector3(x, y, z).applyMatrix4(view);
       minX = Math.min(minX, point.x); maxX = Math.max(maxX, point.x);
       minY = Math.min(minY, point.y); maxY = Math.max(maxY, point.y);
     }
-    const padding = 1.03;
+    const padding = 1.02;
     let halfWidth = ((maxX - minX) / 2) * padding;
     let halfHeight = ((maxY - minY) / 2) * padding;
     if (halfWidth / halfHeight > aspect) halfHeight = halfWidth / aspect; else halfWidth = halfHeight * aspect;
