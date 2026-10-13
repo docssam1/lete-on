@@ -194,7 +194,7 @@
 
 @media (min-width: 1000px) and (min-height: 650px) {
   .find-shell { height: var(--app-dvh); padding-bottom: 12px; overflow: hidden; }
-  .find-shell .play-grid { overflow: hidden; }
+  .find-shell .play-grid { overflow: hidden; grid-template-columns: minmax(320px, .66fr) minmax(600px, 1.44fr); }
   .choice-grid.three .shape-choice { height: min(42vh, 360px); }
   .choice-grid:not(.three) .shape-choice { min-height: 180px; }
   .view-grid { grid-template-columns: repeat(var(--cols), minmax(28px, 58px)); grid-template-rows: repeat(var(--rows), minmax(28px, 58px)); }
