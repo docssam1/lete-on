@@ -147,6 +147,10 @@ assert.equal(messagePlayer({ origin, source: {}, data: {} }, origin, frames), nu
 assert.equal(messagePlayer({ origin: "null", source: frameA, data: {} }, "null", frames), null);
 assert.equal(messagePlayer({ origin, source: frameA, data: [] }, origin, frames), null);
 assert.deepEqual(parseOptions("?mode=remote&level=999&count=999&seed=<bad>"), { mode: "together", players: 2, level: 1, count: 10, seed: null });
+for (const level of [1, 2, 3]) assert.equal(parseOptions(`?mode=battle&level=${level}`).level, level);
+for (const level of ["", "0", "4", "3.0", "03", "three"]) assert.equal(parseOptions(`?mode=together&level=${level}`).level, 1);
+assert.equal(new URL(frameUrl(`${origin}/geometry/games/paper-fold/play.html`, { mode: "together", count: 10, level: 3, seed: "l3", players: 2 }, "A")).searchParams.get("level"), "3");
+for (const dictionary of Object.values(messages)) assert.ok(dictionary.level3, "every language names level 3");
 for (const players of ["", "0", "1", "5", "-1", "2.5", "3.0", "no", "Infinity", "NaN"]) assert.equal(parseOptions(`?mode=battle&players=${players}`).players, 2);
 for (const players of [2, 3, 4]) {
   assert.equal(parseOptions(`?mode=battle&players=${players}`).players, players);
