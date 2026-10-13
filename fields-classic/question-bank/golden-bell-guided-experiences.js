@@ -1,11 +1,11 @@
 // 분수는 빗금 대신 위아래로 쓴다.
 const fractionText = (text) => String(text ?? "").replace(/(^|[^\d/])(\d+)\/(\d+)(?![\d/])/g, (_, before, numerator, denominator) => `${before}<span class="math-frac" role="math" aria-label="${denominator}분의 ${numerator}"><i>${numerator}</i><i>${denominator}</i></span>`);
-import { book02Markup } from "./book02-renderers.js?v=20261005d";
-import { book03Markup } from "./book03-renderers.js?v=20261013a";
+import { book02Markup } from "./book02-renderers.js?v=20261013e";
+import { book03Markup } from "./book03-renderers.js?v=20261013e";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20260829b";
-import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20261013a";
-import { renderBook04Guided } from "./golden-bell-book04-guided.js?v=20261013a";
+import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20261013e";
+import { renderBook04Guided } from "./golden-bell-book04-guided.js?v=20261013e";
 import { renderBook07Guided } from "./golden-bell-book07-guided.js?v=20260918a";
 import { renderBook08Guided } from "./golden-bell-book08-guided.js?v=20260918a";
 
@@ -302,11 +302,12 @@ function bookSixSourceVisual(experience, beat, step) {
   return `<div class="book06-visual guided-book6-source" data-book6-guided-step="${step + 1}" role="img" aria-label="${beat.caption}">${itemVisual ? book06Markup(itemVisual) : ""}<p>${beat.caption}</p></div>`;
 }
 
+// 4권 안내형 COLOR와 같은 값(.claude/skills/golden-bell-figure-style). 4권 cube-min-count와 9권이 같이 쓴다.
 const BOOK_NINE_COLOR = Object.freeze({
-  given: "#187fa9",
+  given: "#2f6fe0",
   action: "#d39b20",
   verify: "#16734b",
-  ink: "#233746",
+  ink: "#222222",
   muted: "#b9c5cc",
   paper: "#ffffff",
   wash: "#f5f6f8"

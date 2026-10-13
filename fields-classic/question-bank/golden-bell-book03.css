@@ -9,7 +9,7 @@
 
 /* 13쪽 접힌 색테이프: 앞면 진한 칸, 접혀 뒷면이 보이는 연한 띠 */
 .book03-visual .b3-folded-tape-source{width:min(100%,260px)}
-.book03-visual .b3-folded-tape-source .tape-grid line{stroke:#9bb8c4;stroke-width:1;stroke-dasharray:2 3;vector-effect:non-scaling-stroke}
+.book03-visual .b3-folded-tape-source .tape-grid line{stroke:#c8c8c8;stroke-width:1;stroke-dasharray:2 3;vector-effect:non-scaling-stroke}
 .book03-visual .b3-folded-tape-source .tape-frame{fill:none;stroke:#222;stroke-width:1.4;vector-effect:non-scaling-stroke}
 .book03-visual .b3-folded-tape-source .tape-cells rect.front{fill:#e07a5f;stroke:none}
 .book03-visual .b3-folded-tape-source .tape-cells polygon.back{fill:#fcd3c1;stroke:#a8452c;stroke-width:1.6;stroke-linejoin:round;vector-effect:non-scaling-stroke}
@@ -48,8 +48,8 @@
 .book03-visual .b3-ratio-bars.source>span+span i{border-top:0;background:#c9e7c4}
 .book03-visual .b3-ratio-bars.source>span i+i{border-left:0}
 
-/* 20~23쪽 복면산 카드 */
-.book03-visual .b3-cryptarithm-board.card{padding:16px 22px;border-radius:14px;background:#e3f2fb;color:#222}
+/* 20~23쪽 복면산 카드: 연노랑 카드, 카드 안 모양은 색표(연한 바탕 + 색 선) */
+.book03-visual .b3-cryptarithm-board.card{padding:16px 22px;border-radius:14px;background:#fff4c2;color:#222}
 .book03-visual .b3-cryptarithm-board.card>div{grid-template-columns:30px repeat(var(--columns),52px)}
 .book03-visual .b3-cryptarithm-board.card i{width:52px;height:52px;border:0}
 .book03-visual .b3-cryptarithm-board.card hr{border-top-color:#222}
@@ -57,13 +57,18 @@
 .b3-crypt-shape{display:block}
 .b3-crypt-shape :is(rect,path){fill:#fff;stroke:#222;stroke-width:2.4;stroke-linejoin:round}
 .part-label .b3-crypt-shape,.answer-part-label .b3-crypt-shape{display:inline-block;vertical-align:middle}
+.b3-crypt-shape.square :is(rect,path){fill:#dde9ff;stroke:#2f6fe0}
+.b3-crypt-shape.triangle :is(rect,path){fill:#dcf5e5;stroke:#2f9e5f}
+.b3-crypt-shape.diamond :is(rect,path){fill:#ece0fb;stroke:#8e5bd8}
+.b3-crypt-shape.star :is(rect,path){fill:#fff1c7;stroke:#f0b23a}
+@media print{.b3-crypt-shape,.book03-visual .b3-cryptarithm-board.card{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 
 /* 25~26쪽 마법카드 띠 (옛 .b3-binary-strip span 규칙을 덮는다) */
 .book03-visual .b3-binary-strip.source{display:grid;gap:14px;justify-items:center}
 .book03-visual .b3-binary-strip.source>div{display:flex;max-width:100%}
 .book03-visual .b3-binary-strip.source .b3-magic-strip{display:grid;place-items:stretch;grid-template-columns:repeat(var(--count),38px);width:max-content;height:auto;padding:0;border:2px solid #222;background:#222;gap:2px;box-shadow:none}
 .book03-visual .b3-binary-strip.source .b3-magic-strip i{display:block;height:38px;background:#fff}
-.book03-visual .b3-binary-strip.source .b3-magic-strip i.colored{background:#f4877c}
+.book03-visual .b3-binary-strip.source .b3-magic-strip i.colored{background:#ff8a73}
 .book03-visual .b3-binary-strip.source .b3-magic-strip.small{grid-template-columns:repeat(var(--count),18px);gap:1px;border-width:1.5px}
 .book03-visual .b3-binary-strip.source .b3-magic-strip.small i{height:18px}
 .book03-visual .b3-binary-strip.source .b3-magic-examples{display:grid;grid-template-columns:repeat(2,max-content);gap:10px 28px;justify-content:center}
@@ -77,14 +82,14 @@
 .book03-visual .b3-star-examples{display:grid;grid-template-columns:repeat(4,minmax(0,110px));gap:6px}
 .book03-visual .b3-star-code .b3-star-piece{width:100%;height:auto}
 .book03-visual .b3-star-piece polygon{fill:#fff;stroke:#222;stroke-width:1.6;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.book03-visual .b3-star-piece polygon.colored{fill:#f4877c}
+.book03-visual .b3-star-piece polygon.colored{fill:#ff8a73}
 .book03-visual .b3-star-piece polygon.core{fill:#fff8e1}
 .book03-visual .b3-star-piece text{fill:#222;font-size:34px;font-weight:900;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:5px}
 .book03-visual .b3-star-code.source>strong{color:#222;font-size:16px}
 
 /* 27쪽 칸 무늬 */
 .book03-visual .b3-cell-code-grid{background:#222}
-.book03-visual .b3-cell-code-grid i.colored{background:#f4877c}
+.book03-visual .b3-cell-code-grid i.colored{background:#ff8a73}
 .book03-visual .b3-cell-code-examples b{color:#222;font-size:15px}
 .book03-visual .b3-cell-code-question>strong{color:#222;font-size:20px}
 
@@ -93,18 +98,18 @@
 .book03-visual .b3-magic-grid span{color:#222;font-size:20px}
 .book03-visual .b3-magic-grid span.target{background:#fff;color:#222}
 .b3-magic-loops{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
-.b3-magic-loops ellipse{fill:none;stroke:#3aa655;stroke-width:2.2;vector-effect:non-scaling-stroke}
+.b3-magic-loops ellipse{fill:none;stroke:#2f9e5f;stroke-width:2.2;vector-effect:non-scaling-stroke}
 
 /* 눌러서 색칠하는 답 칸 */
 .pick-answer{display:grid;gap:8px;justify-items:center}
 .pick-answer>span{color:#222;font-weight:800}
 .pick-grid{display:grid;grid-template-columns:repeat(var(--columns),48px);grid-template-rows:repeat(var(--rows),48px);gap:2px;padding:2px;background:#222}
 .pick-cell{border:0;border-radius:0;background:#fff;cursor:pointer}
-.pick-cell.on{background:#f4877c}
-.pick-cell:focus-visible{outline:3px solid #3aa655;outline-offset:-3px}
+.pick-cell.on{background:#ff8a73}
+.pick-cell:focus-visible{outline:3px solid #2f9e5f;outline-offset:-3px}
 .pick-star{width:200px;height:auto}
 .pick-star .pick-piece{fill:#fff;stroke:#222;stroke-width:1.6;stroke-linejoin:round;cursor:pointer}
-.pick-star .pick-piece.on{fill:#f4877c}
+.pick-star .pick-piece.on{fill:#ff8a73}
 .pick-star .pick-core{fill:#fff8e1;stroke:#222;stroke-width:1.6}
 
 @media screen and (max-width:700px){
@@ -152,3 +157,10 @@
   .gold-print-page[data-print-book="book-03"] .b3-star-examples{grid-template-columns:repeat(4,13mm)}
   .gold-print-page[data-print-book="book-03"] .b3-star-examples .b3-star-piece text{font-size:46px}
 }
+
+/* ── 2026-10-13 풀컬러 — 개념 설명(안내형) 그림. 골든벨 색표(.claude/skills/golden-bell-figure-style) ── */
+.guided-six-bundle{border-color:#e0c46c;background:#fffaf0}
+.guided-six-bundle i{background:#f0a500}
+.guided-multiple-bars>span{border-color:#2f6fe0;background:#eef3ff}
+.guided-cryptarithm-cell{border-color:#f39a1e;background:#fffaf0}
+.guided-magic-grid{width:max-content;max-width:100%;margin-inline:auto;border-color:#222;background:#222}

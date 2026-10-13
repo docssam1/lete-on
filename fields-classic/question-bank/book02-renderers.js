@@ -10,8 +10,10 @@ const SHAPES = Object.freeze({
   "filled-diamond": "◆", "filled-star": "★", "filled-heart": "♥"
 });
 
-// 도형마다 다른 색(원본 교재의 한 가지 하늘색 대신). 검은 도형·흰 도형은 색 규칙 문제용.
-const SHAPE_COLORS = Object.freeze({ circle: "#f4877c", square: "#f9c74f", triangle: "#7cc57f", diamond: "#b39ddb", star: "#ffa94d", heart: "#f48fb1" });
+// 도형마다 다른 색 — 골든벨 색표(.claude/skills/golden-bell-figure-style): ●빨강 ■파랑 ▲초록 ◆보라 ★노랑.
+// 검은 도형·흰 도형은 색 규칙 문제용이라 색표를 쓰지 않는다(SHAPE_DARK·hollow).
+const SHAPE_COLORS = Object.freeze({ circle: "#e8503a", square: "#2f6fe0", triangle: "#2f9e5f", diamond: "#8e5bd8", star: "#f0b23a", heart: "#e0559a" });
+const SHAPE_EDGES = Object.freeze({ circle: "#b8321f", square: "#1f55c0", triangle: "#1f7a45", diamond: "#6b3fb3", star: "#a8741a", heart: "#b03272" });
 const SHAPE_FILL = "#cfd8dc";
 const SHAPE_DARK = "#222";
 const SHAPE_STROKE = "#333";
@@ -21,7 +23,8 @@ export function shapeSvg(kind, x, y, r, options = {}) {
   const filled = String(kind).startsWith("filled-");
   const base = filled ? String(kind).slice(7) : String(kind);
   const fill = options.fill || (filled ? SHAPE_DARK : options.hollow ? "#fff" : SHAPE_COLORS[base] || SHAPE_FILL);
-  const stroke = options.stroke || SHAPE_STROKE;
+  const colored = !filled && !options.hollow && !options.fill && SHAPE_EDGES[base];
+  const stroke = options.stroke || colored || SHAPE_STROKE;
   const attrs = `fill="${fill}" stroke="${stroke}" stroke-width="${options.strokeWidth || 1.6}" stroke-linejoin="round"`;
   const n = (value) => Number(value.toFixed(2));
   if (base === "circle") return `<circle cx="${n(x)}" cy="${n(y)}" r="${n(r * 0.9)}" ${attrs}/>`;

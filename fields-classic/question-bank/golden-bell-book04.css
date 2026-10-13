@@ -145,9 +145,9 @@
 /* 23쪽 도형 크기 순서 보기: 글자 크기로는 도형이 너무 작다 */
 .answer-choices.shape-order-choices button{min-height:52px;padding:6px 16px;color:#111;font-size:24px;line-height:1.1;letter-spacing:1px}
 
-/* 28~33쪽 양팔저울: 마름모·보라 별, 물음 줄 「● 1개 = ▲ ?개」 */
-.source-balance-board .balance-tokens.stars i{color:#7b5ea7}
-.balance-tokens.diamonds i{width:16px;height:16px;margin:3px;background:#7b5ea7;transform:rotate(45deg)}
+/* 28~33쪽 양팔저울: 마름모(보라)·별(노랑), 물음 줄 「● 1개 = ▲ ?개」 */
+.source-balance-board .balance-tokens.stars i{color:#f0b23a}
+.balance-tokens.diamonds i{width:16px;height:16px;margin:3px;background:#8e5bd8;transform:rotate(45deg)}
 .balance-target-line{display:flex;flex-basis:100%;align-items:center;justify-content:center;gap:8px;color:#222;font-size:20px;font-weight:800}
 .balance-target-line .balance-tokens{max-width:none}
 .balance-target-line em{font-style:normal}
@@ -234,7 +234,23 @@
 .source-balance-board .balance-tokens.circles i{background:#e8503a}
 .source-balance-board .balance-tokens.triangles i{background:#2f9e5f}
 .source-balance-board .balance-tokens.squares i{border-color:#1f55c0;background:#2f6fe0}
-.source-balance-board .balance-tokens.diamonds i{background:#8e5bd8}
-.source-balance-board .balance-tokens.stars i{color:#f0b23a}
 .source-balance-board .balance-tokens.labeled i{border-color:#f39a1e}
 @media print{.source-balance-board .balance-beam,.source-balance-board .balance-stand,.source-balance-board .balance-tokens i{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+/* ── 2026-10-13 풀컬러 — 4권 예전 단원(개념·연습 그림). 골든벨 색표(.claude/skills/golden-bell-figure-style) ── */
+/* 테트로미노: 문항 그림(.b4-src-mino)과 같은 노랑 칸 */
+.polyomino-shape i{border-color:#222;background:#f9c74f}
+.b4-cell-shape rect{fill:#f9c74f;stroke:#222;stroke-width:1.5}
+.b4-cell-shape.is-target rect{fill:#fff6c9;stroke:#c68c23;stroke-dasharray:3 2}
+/* 쌓기나무: 문항 그림과 같은 노랑 3면 (공용 기하 렌더러의 회색 칠을 이 화면에서만 덮는다) */
+.book04-geometry-cubes polygon[fill="#f4f4f4"]{fill:#ffeaa6}
+.book04-geometry-cubes polygon[fill="#d7d7d7"]{fill:#ffd45c}
+.book04-geometry-cubes polygon[fill="#adadad"]{fill:#f0b23a}
+.book04-geometry-cubes polygon[stroke="#3d3d3d"]{stroke:#a8741a}
+.b4-src-cube-box .cube-front{fill:#ffd45c;stroke:#a8741a}
+.b4-src-cube-box .cube-top{fill:#ffeaa6;stroke:#a8741a}
+.b4-src-cube-box .cube-side{fill:#f0b23a;stroke:#a8741a}
+.cube-height-map span.filled{border-color:#a8741a;background:#fff4c2;color:#222}
+/* 동서남북 개념: 칸은 검정 선, 글자 검정 */
+.direction-grid>span{border-color:#555}
+@media print{.polyomino-shape i,.b4-cell-shape rect,.book04-geometry-cubes polygon,.b4-src-cube-box polygon,.cube-height-map span{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
