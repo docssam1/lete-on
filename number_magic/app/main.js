@@ -5633,7 +5633,7 @@ function mountTown3DInto(scr){
     vp.removeAttribute('aria-busy');
   };
   const muted=()=>{const mb=scr.querySelector('#townMute');return !mb||mb.textContent.indexOf('🔇')>=0;};
-  import('./town3d/town3d.js?v=20261014-town-recovery').then(m=>{
+  import('./town3d/town3d.js?v=20261014-town-recovery2').then(m=>{
     if(!box.isConnected)return null;
     return m.mountTown3D(box,{
     lang, spots, gates, characters, snapshot:townVisitSnapshot,

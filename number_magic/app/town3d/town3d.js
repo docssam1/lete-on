@@ -456,6 +456,9 @@ export async function mountTown3D(container, opts){
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias:true, powerPreference:'low-power' });
   } catch(e){ return null; }
+  // Fetch while healthy: after an external/browser loss getExtension can return null.
+  // Keep Three's cache populated so Reconnect works without forceContextLoss being called first.
+  renderer.extensions.get('WEBGL_lose_context');
   if(getComputedStyle(container).position === 'static') container.style.position = 'relative';
   container.appendChild(wrap);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
