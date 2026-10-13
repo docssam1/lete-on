@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261013e`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261013e/20261013f/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261013f`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261013f/20261013g/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -59,7 +59,7 @@
 - 꼴: `/books/book-04/lessons/<번호>/original/items/<번호>` (칸이 있으면 `…/parts/<번호>`),
   `/books/book-04/lessons/<번호>/experience/check`, `/books/book-04/lessons/<번호>/extension`.
 - **문자열로만 연결된다.** 단원 순서를 바꿔도 번호는 그대로 둔다. 새 단원은 **아직 안 쓴 번호**를 쓴다.
-- 4권에서 지금 쓰는 단원 번호: 0~16. **다음 새 단원은 17부터.**
+- 4권에서 지금 쓰는 단원 번호: 0~18. **다음 새 단원은 19부터.**
 - 공개 데이터의 `answerRef` 하나하나에 DB 기록이 있어야 한다. 하나라도 빠지면 그 권 답 불러오기가 깨진다.
 
 ### 4권 단원 ↔ answerRef 번호 (화면 순서)
@@ -70,22 +70,24 @@
 | 3 | digital-flip-source | 디지털 숫자를 뒤집고 돌려요 | **16** | 4·8 |
 | 4 | cube-min-count | 쌓기나무의 개수를 세어요 | **11** | 16~17 |
 | 5 | hidden-cube-count | 보이지 않는 쌓기나무를 찾아요 | 1 | 18 |
-| 6 | fold-hole-count | 접은 종이의 구멍 수를 세어요 | 2 | 15 |
-| 7 | cube-box-fill | 상자의 빈칸을 채워요 | 3 | 19 |
-| 8 | multiplication-matrix | 가로와 세로의 곱을 맞춰요 | 4 | 20 |
-| 9 | compare-order-source | 크기를 비교해 순서를 정해요 | **12** | 22~24 |
-| 10 | compare-difference-source | 수의 크기 차이를 구해요 | **13** | 25~27 |
-| 11 | balance-equality-source | 양쪽에서 같은 것을 지워요 | **14** | 28~30 |
-| 12 | balance-substitution | 도형을 바꾸어 넣어요 | 5 | 31~33 |
-| 13 | order-logic-source | 조건으로 순서를 정해요 | **10** | 36·37·40·41 |
-| 14 | table-logic-source | 가능한 선택을 표로 지워요 | 6 | 38·39 |
-| 15 | cardinal-placement | 동서남북으로 자리를 찾아요 | 7 | 36·42 |
-| 16 | circle-logic-source | 원탁의 이웃 자리를 찾아요 | 8 | 37·43·44 |
-| 17 | row-logic-source | 앞뒤 순서로 인원을 세어요 | 9 | 45·46 |
+| 6 | fold-position-source | 접은 색종이는 어디일까요 | **17** | 10 |
+| 7 | fold-cut-source | 접어 자르고 펼쳐요 | **18** | 11~14 |
+| 8 | fold-hole-count | 접은 종이의 구멍 수를 세어요 | 2 | 15 |
+| 9 | cube-box-fill | 상자의 빈칸을 채워요 | 3 | 19 |
+| 10 | multiplication-matrix | 가로와 세로의 곱을 맞춰요 | 4 | 20 |
+| 11 | compare-order-source | 크기를 비교해 순서를 정해요 | **12** | 22~24 |
+| 12 | compare-difference-source | 수의 크기 차이를 구해요 | **13** | 25~27 |
+| 13 | balance-equality-source | 양쪽에서 같은 것을 지워요 | **14** | 28~30 |
+| 14 | balance-substitution | 도형을 바꾸어 넣어요 | 5 | 31~33 |
+| 15 | order-logic-source | 조건으로 순서를 정해요 | **10** | 36·37·40·41 |
+| 16 | table-logic-source | 가능한 선택을 표로 지워요 | 6 | 38·39 |
+| 17 | cardinal-placement | 동서남북으로 자리를 찾아요 | 7 | 36·42 |
+| 18 | circle-logic-source | 원탁의 이웃 자리를 찾아요 | 8 | 37·43·44 |
+| 19 | row-logic-source | 앞뒤 순서로 인원을 세어요 | 9 | 45·46 |
 
-DB `book-04` 현재: **키 301개**, sha 앞 8자리 `9d438237`. 작업 전 반드시 다시 조회해 확인한다.
+DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반드시 다시 조회해 확인한다.
 
-## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막은 풀컬러·말 다듬기 · 2026-10-13)
+## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막은 4권 묶음 6 · 2026-10-13)
 
 - **2권**: 교사용·학생용과 눈으로 대조해 그림·문장 정리, 분수 세로 표기, 빠졌던 물음 되살림, 34쪽 활동 04 2문항 추가.
 - **3권**: 화면을 원본 그림·문장대로, 28-(2) 답 교정, 보류였던 8-(8)·29-(1)·20쪽 (2)(3) 되살림.
@@ -123,6 +125,15 @@ DB `book-04` 현재: **키 301개**, sha 앞 8자리 `9d438237`. 작업 전 반�
   돌리기 기호·숫자판·7세그먼트·저울)과 4권 안내형 저울 개념 그림을 풀컬러로. 돌리기 기호의 읽어주기 문구(aria)를 각도 → 「반 바퀴」 말로.
   화면 제목·표지·인쇄 대화상자에서 FC 글자 삭제(`golden-bell.js`·`golden-bell.html`), `golden-bell-selected-print-audit.mjs` 기대값도 맞춤.
   3권 14-(1-1)·(1-3)의 학원 이름 → 「학원」, 4권 8쪽 ⑥ 「180°만큼」 → 「반 바퀴」. 캐시 꼬리표 `20261013a`.
+- **4권 묶음 6**(10~14쪽 색종이 접어 자르기 18문항, 2026-10-13): 새 단원 `fold-position-source`(번호 17, 10쪽 7문항, 알파벳 고르기)·
+  `fold-cut-source`(번호 18, 11쪽 반대쪽 칸 3 · 12~13쪽 펼친 모양 4 · 14쪽 합 4). 그림은 범용 렌더러 `source-fold-panels`
+  (`book04-renderers.js`: 패널마다 종이 다각형·접는 선·접힌 가장자리·빨간 굽은 화살표·동그라미·칸 번호, 펼친 후보 ①~④).
+  **화살표 읽는 법: 접기 그림은 화살촉 = 종이가 넘어가는 쪽(반대쪽이 그 자리에 남는다). 11쪽·14쪽 04는 원본처럼 펼치는 방향.**
+  12~13쪽 그리기는 고르기형 — 자른 모양을 네 사분면에 놓고 펼친 그림(겹치면 가로세로 바꾼 것)으로 후보를 계산해 그렸다.
+  개념 설명은 15쪽 `book4-fold-hole-count` 가족을 그대로 재사용(검사기에 「재사용은 첫 사본과 같아야 함」 규칙 추가, 가족 수 9 그대로).
+  18문항 모두 독립 접기 모델 계산 = 교사용. `sourceHold`의 10~14쪽 항목 삭제, coverage 갱신.
+  ⚠ 이 묶음의 패치 스크립트는 12~13쪽 정답 보기 자리를 담고 있어 **저장소 `tools/`에 넣지 않았다**(작업자 임시 폴더에만).
+  캐시 꼬리표 `20261013f`.
 - **2·3권과 4권 예전 단원 그림 풀컬러**(2026-10-13, 원장 「색바꿔」): 2권 모양 색표·저울·세는 점·스도쿠·숫자 약속, 3권 넓이·분수 색칠 주황·복면산 카드·마법카드,
   4권 테트로미노·저울 토큰·숨은 쌓기나무 개념·상자 쌓기나무·안내형 「주어진 것」 파랑. 색이 문제 내용인 곳은 그대로 뒀다(스킬 2절 목록).
   공용이라 함께 바뀐 곳: 2·3과정 course-pattern·문제은행의 2권 모양 색, 1권 relative-order 칸 선, 9권 안내형 「주어진 것」 색.
@@ -137,10 +148,10 @@ DB `book-04` 현재: **키 301개**, sha 앞 8자리 `9d438237`. 작업 전 반�
 | ~~3~~ | 22~27 | 비교하기 26문항 | **완료**(3절) |
 | ~~4~~ | 28~33 | 양팔저울 등식 8 + 저울 바꾸어 넣기 5 | **완료**(3절) |
 | ~~5~~ | 4~8 | 연산 8, 숫자 1 뒤집기·돌리기 ①~⑧, 숫자판 3, 디지털 숫자 20 + 952 반 바퀴 | **완료**(3절) |
-| **6 (다음)** | 10~14 | 색종이 접어 위치(알파벳) 7·반대쪽 번호 3, 두 번 접어 자른 모양 4, 자른 수의 합 4 | **그리기 문항은 고르기형으로** |
+| ~~6~~ | 10~14 | 색종이 접어 위치(알파벳) 7·반대쪽 번호 3, 두 번 접어 자른 모양 4, 자른 수의 합 4 | **완료**(3절) |
 | 보류 유지 | 2, 3 확장, 34·47 | 정삼각형 등분 그리기, 3쪽 다섯 칸 확장(교사용 전용), 47쪽 □n(원본도 빈칸뿐) | 넣지 않는다 |
 
-그다음: **5~10권 원본 대조**(같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
+**4권 묶음은 모두 끝났다.** 다음: **5~10권 원본 대조**(같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
 
 ### 4-1. 묶음 3에서 쓴 방식 (다음 묶음에서 그대로 쓸 것)
 - 패치 스크립트: `tools/golden-bell-book04/patch-book04-batch3.mjs`·`patch-book04-batch4.mjs`(단원 추가 + 기존 단원에 문항 덧붙이기 + `sourceHold`·`sourceCoverage` 갱신 예시).

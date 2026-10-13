@@ -186,7 +186,12 @@ const experiences = new Map();
 for (const lesson of book.lessons || []) {
   const experience = lesson.experience;
   if (!experience || !FAMILIES.includes(experience.family)) continue;
-  assert.ok(!experiences.has(experience.family), `duplicate Book 4 guided family: ${experience.family}`);
+  // 같은 가족을 다른 단원에서 다시 쓸 수 있다(10~14쪽 단원이 15쪽 접기 개념을 재사용). 단 answerRef 경로만 다르고 나머지는 같아야 한다.
+  if (experiences.has(experience.family)) {
+    const strip = (value) => JSON.stringify(value).replace(/\/books\/book-04\/lessons\/\d+\//g, "/books/book-04/lessons/N/");
+    assert.equal(strip(experience), strip(experiences.get(experience.family)), `reused Book 4 guided family must match its first copy: ${experience.family} (${lesson.id})`);
+    continue;
+  }
   experiences.set(experience.family, experience);
 }
 

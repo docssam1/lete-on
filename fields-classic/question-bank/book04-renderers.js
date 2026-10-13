@@ -636,6 +636,82 @@ function sourceSevenSeg(visual) {
   return `<div class="b4-seven-set">${legend}<div class="b4-seven-head"><span>원래 수</span><span>${escapeHtml(visual.label)}</span></div><div class="b4-seven-row">${sevenSegNumber(visual.number, 56)}<b>${visual.op === "-" ? "−" : "+"}</b><span class="b4-seven-boxes">${boxes}</span><b>=</b><span class="b4-seven-result">?</span></div></div>`;
 }
 
+// 10~14쪽 색종이 접기·자르기. 원본 그림의 한 장(패널)을 단위 좌표(색종이 한 장 = 1)로 받아 그린다.
+// panel = { outline:[다각형], fills:[{poly, tone:"paper"|"white"|"cut"}], back:[dx,dy], lines:[[점,점]] 점선 접는 선,
+//           edges:[[점,점]] 접힌 가장자리(실선), grid:n 칸 점선, arrow:{at,dir} 빨간 굽은 화살표(화살촉 = 접히는 쪽이 넘어가는 방향), texts:[[글자,x,y]], marker:[x,y] 동그라미 }
+const FOLD_DIR = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0], ne: [0.7071, -0.7071], nw: [-0.7071, -0.7071], se: [0.7071, 0.7071], sw: [-0.7071, 0.7071] };
+
+function foldPanelBox(panel) {
+  const pts = [...(panel.outline || []), ...(panel.fills || []).flatMap((fill) => fill.poly)];
+  const xs = pts.map(([x]) => x), ys = pts.map(([, y]) => y);
+  return { x0: Math.min(...xs), y0: Math.min(...ys), x1: Math.max(...xs), y1: Math.max(...ys) };
+}
+
+function foldArrow([x, y], dir, r) {
+  const [dx, dy] = FOLD_DIR[dir] || FOLD_DIR.right;
+  const [nx, ny] = [-dy, dx];
+  const start = [x - dx * r, y - dy * r], end = [x + dx * r, y + dy * r], ctrl = [x + nx * r * 1.3, y + ny * r * 1.3];
+  const tx = end[0] - ctrl[0], ty = end[1] - ctrl[1], len = Math.hypot(tx, ty) || 1, ux = tx / len, uy = ty / len;
+  const head = `${end[0] + ux * 4},${end[1] + uy * 4} ${end[0] - ux * 2 - uy * 3.4},${end[1] - uy * 2 + ux * 3.4} ${end[0] - ux * 2 + uy * 3.4},${end[1] - uy * 2 - ux * 3.4}`;
+  return `<path class="fold-curl" d="M${start[0]} ${start[1]}Q${ctrl[0]} ${ctrl[1]} ${end[0]} ${end[1]}"/><polygon class="fold-curl-head" points="${head}"/>`;
+}
+
+function foldPanelSvg(panel, unit, ox, oy) {
+  const box = foldPanelBox(panel);
+  const tx = (x) => +(ox + (x - box.x0) * unit).toFixed(2), ty = (y) => +(oy + (y - box.y0) * unit).toFixed(2);
+  const pts = (poly) => poly.map(([x, y]) => `${tx(x)},${ty(y)}`).join(" ");
+  const [bx, by] = panel.back || [0, 0];
+  const back = panel.back && panel.outline ? `<polygon class="fold-back" points="${panel.outline.map(([x, y]) => `${tx(x) + bx},${ty(y) + by}`).join(" ")}"/>` : "";
+  const fills = (panel.fills || []).map((fill) => `<polygon class="fold-${fill.tone || "paper"}" points="${pts(fill.poly)}"/>`).join("");
+  const grid = panel.grid ? Array.from({ length: panel.grid - 1 }, (_, i) => {
+    const t = box.x0 + (box.x1 - box.x0) * (i + 1) / panel.grid, u = box.y0 + (box.y1 - box.y0) * (i + 1) / panel.grid;
+    return `<line class="fold-grid" x1="${tx(t)}" y1="${ty(box.y0)}" x2="${tx(t)}" y2="${ty(box.y1)}"/><line class="fold-grid" x1="${tx(box.x0)}" y1="${ty(u)}" x2="${tx(box.x1)}" y2="${ty(u)}"/>`;
+  }).join("") : "";
+  const lines = (panel.lines || []).map(([[x1, y1], [x2, y2]]) => `<line class="fold-crease" x1="${tx(x1)}" y1="${ty(y1)}" x2="${tx(x2)}" y2="${ty(y2)}"/>`).join("")
+    + (panel.edges || []).map(([[x1, y1], [x2, y2]]) => `<line class="fold-edge" x1="${tx(x1)}" y1="${ty(y1)}" x2="${tx(x2)}" y2="${ty(y2)}"/>`).join("");
+  const outline = panel.outline ? `<polygon class="fold-outline" points="${pts(panel.outline)}"/>` : "";
+  const size = panel.textSize || Math.max(11, Math.round(unit * 0.16));
+  const texts = (panel.texts || []).map(([text, x, y]) => `<text x="${tx(x)}" y="${ty(y)}" font-size="${size}" text-anchor="middle" dominant-baseline="central">${escapeHtml(text)}</text>`).join("");
+  const arrow = panel.arrow ? foldArrow([tx(panel.arrow.at[0]), ty(panel.arrow.at[1])], panel.arrow.dir, Math.max(7, unit * 0.09)) : "";
+  const marker = panel.marker ? `<circle class="fold-marker" cx="${tx(panel.marker[0])}" cy="${ty(panel.marker[1])}" r="${Math.max(8, unit * 0.13)}"/>` : "";
+  return { svg: `<g>${back}${fills}${grid}${lines}${outline}${texts}${arrow}${marker}</g>`, w: (box.x1 - box.x0) * unit, h: (box.y1 - box.y0) * unit };
+}
+
+function foldRowSvg(row, unit, label) {
+  const pad = 14, gap = row.noArrows ? 46 : 42;
+  const sized = row.panels.map((panel) => { const box = foldPanelBox(panel); return { panel, w: (box.x1 - box.x0) * (panel.unit || unit), h: (box.y1 - box.y0) * (panel.unit || unit) }; });
+  const height = Math.max(...sized.map((item) => item.h)) + pad * 2;
+  let x = pad, body = "";
+  sized.forEach((item, index) => {
+    if (index) {
+      const mid = height / 2;
+      body += row.noArrows ? "" : `<path class="fold-step" d="M${x - gap + 10} ${mid}H${x - 12}m-7-6 7 6-7 6"/>`;
+    }
+    body += foldPanelSvg(item.panel, item.panel.unit || unit, x, (height - item.h) / 2).svg;
+    x += item.w + gap;
+  });
+  const width = x - gap + pad;
+  return `<svg class="b4-fold-row" viewBox="0 0 ${width.toFixed(1)} ${height.toFixed(1)}" style="--fold-w:${Math.round(width)}px" role="img" aria-label="${escapeHtml(label)}">${body}</svg>`;
+}
+
+// 펼친 색종이 후보 한 장: 종이에서 잘린 모양(holes)을 빼고, 접었던 자리는 점선으로.
+// 대칭으로 펼친 조각들이 맞닿는 안쪽 선은 흰 칠로 한 번 더 덮어 지운다(바깥 테두리만 남는다).
+function foldUnfoldOption(option, index, unit) {
+  const s = unit, pad = 6, id = `b4u-${escapeHtml(option.id || index)}`;
+  const shape = (hole) => hole.circle
+    ? `<circle cx="${pad + hole.circle[0] * s}" cy="${pad + hole.circle[1] * s}" r="${hole.circle[2] * s}"/>`
+    : `<polygon points="${hole.poly.map(([x, y]) => `${pad + x * s},${pad + y * s}`).join(" ")}"/>`;
+  const holes = option.holes.map(shape).join("");
+  return `<span><svg class="b4-fold-option" viewBox="0 0 ${s + pad * 2} ${s + pad * 2}" aria-hidden="true"><defs><mask id="${id}"><rect x="0" y="0" width="${s + pad * 2}" height="${s + pad * 2}" fill="#fff"/><g fill="#000">${holes}</g></mask><clipPath id="${id}-c"><rect x="${pad}" y="${pad}" width="${s}" height="${s}"/></clipPath></defs><g mask="url(#${id})"><rect class="fold-paper" x="${pad}" y="${pad}" width="${s}" height="${s}"/><line class="fold-crease" x1="${pad + s / 2}" y1="${pad}" x2="${pad + s / 2}" y2="${pad + s}"/><line class="fold-crease" x1="${pad}" y1="${pad + s / 2}" x2="${pad + s}" y2="${pad + s / 2}"/><rect class="fold-outline" x="${pad}" y="${pad}" width="${s}" height="${s}"/></g><g class="fold-hole-edge" clip-path="url(#${id}-c)">${holes}</g><g class="fold-hole-fill" clip-path="url(#${id}-c)">${holes}</g></svg><b>${"①②③④⑤⑥"[index]}</b></span>`;
+}
+
+function sourceFoldPanels(visual) {
+  const unit = visual.unit || 84;
+  const rows = (visual.rows || []).map((row) => foldRowSvg(row, unit, visual.label || "색종이를 접는 그림")).join("");
+  const options = visual.options ? `<div class="b4-fold-options">${visual.options.map((option, index) => foldUnfoldOption(option, index, visual.optionUnit || 78)).join("")}</div>` : "";
+  return `<div class="b4-fold-panels${visual.wide ? " wide" : ""}">${rows}${options}</div>`;
+}
+
 export function book04Markup(visual) {
   if (!visual || visual.kind !== "book4") return "";
   switch (visual.subtype) {
@@ -663,6 +739,7 @@ export function book04Markup(visual) {
     case "front-back-two-orders": return frontBackTwoOrders(visual);
     case "source-number-model": return sourceNumberModel(visual);
     case "source-fold-holes": return sourceFoldHoles(visual);
+    case "source-fold-panels": return sourceFoldPanels(visual);
     case "source-cube-box": return sourceCubeBox(visual);
     case "source-hidden-cube": return sourceHiddenCube(visual);
     case "source-cube-topview": return sourceCubeTopView(visual);

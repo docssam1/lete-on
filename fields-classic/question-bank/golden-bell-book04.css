@@ -254,3 +254,32 @@
 /* 동서남북 개념: 칸은 검정 선, 글자 검정 */
 .direction-grid>span{border-color:#555}
 @media print{.polyomino-shape i,.b4-cell-shape rect,.book04-geometry-cubes polygon,.b4-src-cube-box polygon,.cube-height-map span{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+/* 10~14쪽 색종이 접어 자르기 (source-fold-panels): 종이 노랑(15쪽과 같음) · 자른 부분 주황 · 접는 선 점선 · 화살표 빨강 · 위치 표시 파랑 */
+.b4-fold-panels{display:grid;gap:10px;justify-items:center;width:100%}
+.b4-fold-row{display:block;width:var(--fold-w);max-width:100%;height:auto}
+.b4-fold-row .fold-paper,.b4-fold-option .fold-paper{fill:#fde9b8}
+.b4-fold-row .fold-white{fill:#fff}
+.b4-fold-row .fold-cut{fill:#f39a1e;stroke:#c86b12;stroke-width:1}
+.b4-fold-row .fold-back{fill:#fff;stroke:#7a5a1e;stroke-width:1}
+.b4-fold-row .fold-outline,.b4-fold-option .fold-outline{fill:none;stroke:#7a5a1e;stroke-width:1.5;stroke-linejoin:round}
+.b4-fold-row .fold-grid{stroke:#c9a95a;stroke-width:1;stroke-dasharray:3 3}
+.b4-fold-row .fold-crease,.b4-fold-option .fold-crease{stroke:#8a7a5a;stroke-width:1.1;stroke-dasharray:4 3}
+.b4-fold-row .fold-curl{fill:none;stroke:#e8503a;stroke-width:1.8;stroke-linecap:round}
+.b4-fold-row .fold-curl-head{fill:#e8503a}
+.b4-fold-row .fold-marker{fill:none;stroke:#2f6fe0;stroke-width:1.6}
+.b4-fold-row .fold-step{fill:none;stroke:#f39a1e;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.b4-fold-row text{font-weight:600}
+.b4-fold-options{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 20px;padding-top:8px;border-top:1px dashed #cfcfcf}
+.b4-fold-options>span{display:grid;justify-items:center;gap:4px}
+.b4-fold-options>span:nth-child(1) b{color:#e8503a}.b4-fold-options>span:nth-child(2) b{color:#f39a1e}.b4-fold-options>span:nth-child(3) b{color:#2f9e5f}.b4-fold-options>span:nth-child(4) b{color:#2f6fe0}
+.b4-fold-option{display:block;width:96px;height:auto}
+.b4-fold-option .fold-hole-edge>*{fill:none;stroke:#7a5a1e;stroke-width:3}
+.b4-fold-option .fold-hole-fill>*{fill:#fff;stroke:none}
+.b4-fold-row .fold-edge{stroke:#7a5a1e;stroke-width:1.5}
+@media print{
+  .gold-print-page[data-print-book="book-04"] .b4-fold-row{width:min(var(--fold-w),100%)}
+  .gold-print-page[data-print-book="book-04"] .b4-fold-options{flex-wrap:nowrap;gap:1mm 2.5mm;padding-top:1.5mm}
+  .gold-print-page[data-print-book="book-04"] .b4-fold-option{width:15mm}
+  .b4-fold-row,.b4-fold-option{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
