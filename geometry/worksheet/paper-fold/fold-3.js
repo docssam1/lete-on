@@ -207,6 +207,187 @@ async function loadSharedGameLevels(){
   }
 }
 
+/* ===== 게임 연계 3단계: 접는 방법 거꾸로 찾기 =====
+   게임 레벨 3의 문항(종이, 후보 접는 선, 한 번 접은 결과, 보기 모양)을 그대로 그린다.
+   게임은 선을 직접 누르지만 학습지는 기호로 답하므로, 후보 선에 가·나·다를 붙인다.
+   게임 데이터의 선 순서대로 붙이면 정답이 '가'·'나'에 몰리므로(12문항 중 '다' 1개)
+   정답 자리를 고르게 나눈다(아래 REVERSE_LINE_SLOTS). 같은 문항은 언제나 같은 기호·번호다.
+   규칙: 접힌 상태는 겹 수 숫자 없이 두께로만, 화살표는 정답 풀이의 첫 그림에만. */
+const REVERSE_LINE_LABELS=['가','나','다'];
+/* 정답 자리. 문항 수가 적어(종류마다 12문항) 무작위로 섞으면 한쪽으로 몰리기 쉬우므로,
+   고르게 나누되 차례가 드러나지 않는 순서를 정해 둔다.
+   접는 선: 가·나·다가 4번씩. 모두 고르기: 여섯 가지 두 자리(1·2, 1·3, 1·4, 2·3, 2·4, 3·4)가 2번씩. */
+const REVERSE_LINE_SLOTS=[2,0,1,1,2,0,0,1,2,1,0,2];
+const REVERSE_PAIRS=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+const REVERSE_PAIR_SLOTS=[3,0,5,2,4,1,0,4,2,5,1,3];
+
+function reverseIndex(level,source){
+  return level.problems.filter(problem=>problem.interaction===source.interaction).findIndex(problem=>problem.id===source.id);
+}
+
+function buildReverseProblem(level){
+  const source=level.problems[questionNumber%level.problems.length];
+  const index=reverseIndex(level,source);
+  if(source.interaction==='fold-line-pick'){
+    const answer=source.lineChoices.find(choice=>choice.key===source.answerKey);
+    const others=source.lineChoices.filter(choice=>choice!==answer);
+    if(Math.floor(index/3)%2) others.reverse();
+    const slot=REVERSE_LINE_SLOTS[index%REVERSE_LINE_SLOTS.length];
+    const ordered=others.slice(); ordered.splice(slot,0,answer);
+    const lines=ordered.map((choice,position)=>({...choice,label:REVERSE_LINE_LABELS[position]}));
+    return {kind:'game-reverse',source,lines,answer:REVERSE_LINE_LABELS[slot],
+      text:['색종이를 한 번 접었더니 오른쪽 모양이 되었습니다.','어느 선을 따라 접었는지 기호를 쓰세요.'],
+      info:`${source.id} · 접는 선 고르기`,src:'게임과 동일한 확정 문항'};
+  }
+  const correct=source.resultOptions.filter(option=>source.answerKeys.includes(option.key));
+  const wrong=source.resultOptions.filter(option=>!source.answerKeys.includes(option.key));
+  if(index%2) correct.reverse();
+  if(Math.floor(index/2)%2) wrong.reverse();
+  const pair=REVERSE_PAIRS[REVERSE_PAIR_SLOTS[index%REVERSE_PAIR_SLOTS.length]];
+  const ordered=[];
+  for(let position=0;position<4;position+=1) ordered.push(pair.includes(position)?correct.shift():wrong.shift());
+  const options=ordered.map((option,position)=>({...option,number:position+1}));
+  const answer=pair.map(position=>`${position+1}번`).join(', ');
+  return {kind:'game-reverse',source,options,answer,
+    text:['왼쪽 종이를 한 번만 접어서 만들 수 있는 모양을 모두 고르세요.','정답은 두 개입니다.'],
+    info:`${source.id} · 만들 수 있는 모양 모두 고르기`,src:'게임과 동일한 확정 문항'};
+}
+
+function reversePoint(frame,x,y,size,point){
+  return {X:x+(point.x-frame.x)/frame.size*size,Y:y+(point.y-frame.y)/frame.size*size};
+}
+function reverseTrace(ctx,frame,x,y,size,polygon){
+  ctx.beginPath();
+  polygon.forEach((point,index)=>{ const q=reversePoint(frame,x,y,size,point); index?ctx.lineTo(q.X,q.Y):ctx.moveTo(q.X,q.Y); });
+  ctx.closePath();
+}
+/* 여러 조각을 한 장처럼: 테두리를 먼저 모두 긋고 같은 조각으로 다시 덮어 안쪽 선을 지운다. */
+function reverseSilhouette(ctx,frame,x,y,size,pieces,fill,edge,width){
+  pieces.forEach(piece=>{ reverseTrace(ctx,frame,x,y,size,piece); ctx.fillStyle=fill; ctx.fill(); ctx.strokeStyle=edge; ctx.lineWidth=width; ctx.lineJoin='round'; ctx.stroke(); });
+  pieces.forEach(piece=>{ reverseTrace(ctx,frame,x,y,size,piece); ctx.fillStyle=fill; ctx.fill(); });
+}
+function drawReverseFolded(ctx,frame,x,y,size,pieces,{thickness=6,layerEdge=null}={}){
+  ctx.save();
+  ctx.translate(thickness,thickness);
+  reverseSilhouette(ctx,frame,x,y,size,pieces,'#eaa9a2',PAPER_EDGE,2.6);
+  ctx.restore();
+  reverseSilhouette(ctx,frame,x,y,size,pieces,PAPER,PAPER_EDGE,3);
+  if(layerEdge){
+    reverseTrace(ctx,frame,x,y,size,layerEdge);
+    ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=1.4; ctx.globalAlpha=.85; ctx.stroke(); ctx.globalAlpha=1;
+  }
+}
+function drawReversePaper(ctx,frame,x,y,size,paper){
+  reverseTrace(ctx,frame,x,y,size,paper);
+  ctx.fillStyle=PAPER; ctx.fill(); ctx.strokeStyle=PAPER_EDGE; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.stroke();
+}
+function drawReverseCrease(ctx,frame,x,y,size,chord,{strong=false,faded=false}={}){
+  const a=reversePoint(frame,x,y,size,chord[0]), b=reversePoint(frame,x,y,size,chord[1]);
+  ctx.save();
+  ctx.globalAlpha=faded?.35:1;
+  ctx.setLineDash(strong?[]:[9,7]);
+  ctx.strokeStyle=strong?ARROW:'#7c5d57'; ctx.lineWidth=strong?4:2.4;
+  ctx.beginPath(); ctx.moveTo(a.X,a.Y); ctx.lineTo(b.X,b.Y); ctx.stroke();
+  ctx.restore();
+}
+function drawReverseArrow(ctx,frame,x,y,size,arrow){
+  const from=reversePoint(frame,x,y,size,arrow.from), to=reversePoint(frame,x,y,size,arrow.to);
+  const angle=Math.atan2(to.Y-from.Y,to.X-from.X);
+  ctx.save();
+  ctx.strokeStyle=ARROW; ctx.fillStyle=ARROW; ctx.lineWidth=6; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(from.X,from.Y); ctx.lineTo(to.X-10*Math.cos(angle),to.Y-10*Math.sin(angle)); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(to.X+6*Math.cos(angle),to.Y+6*Math.sin(angle));
+  ctx.lineTo(to.X-16*Math.cos(angle-0.5),to.Y-16*Math.sin(angle-0.5));
+  ctx.lineTo(to.X-16*Math.cos(angle+0.5),to.Y-16*Math.sin(angle+0.5));
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+/* 기호는 선의 한 끝을 종이 밖으로 조금 늘린 자리에 둔다. 종이 밖에 있는 끝을 먼저 쓰고
+   (L자 종이의 안쪽 모서리처럼 끝이 종이 안이면 다른 끝), 다른 선에 24px 안으로 붙거나
+   다른 기호와 34px 안이면 다른 끝을 쓴다. */
+function reverseInside(polygon,point){
+  let inside=false;
+  for(let i=0,j=polygon.length-1;i<polygon.length;j=i,i+=1){
+    const a=polygon[i], b=polygon[j];
+    if((a.y>point.y)!==(b.y>point.y) && point.x<((b.x-a.x)*(point.y-a.y))/(b.y-a.y)+a.x) inside=!inside;
+  }
+  return inside;
+}
+function reverseLabelSpots(frame,x,y,size,lines,paper){
+  const placed=[];
+  return lines.map(line=>{
+    const ends=[[line.chord[0],line.chord[1]],[line.chord[1],line.chord[0]]].map(([end,other])=>{
+      const e=reversePoint(frame,x,y,size,end), o=reversePoint(frame,x,y,size,other);
+      const length=Math.hypot(e.X-o.X,e.Y-o.Y)||1;
+      const spot={X:e.X+(e.X-o.X)/length*22,Y:e.Y+(e.Y-o.Y)/length*22};
+      const unitOf=(X,Y)=>({x:frame.x+(X-x)/size*frame.size,y:frame.y+(Y-y)/size*frame.size});
+      /* 둘레 8방향 30px 중 종이에 닿는 수. L자 안쪽 모서리처럼 종이에 둘러싸인 자리는 크다. */
+      const crowded=Array.from({length:8},(_,k)=>unitOf(spot.X+30*Math.cos(k*Math.PI/4),spot.Y+30*Math.sin(k*Math.PI/4))).filter(point=>reverseInside(paper,point)).length;
+      return {...spot,outside:!reverseInside(paper,unitOf(spot.X,spot.Y)),crowded};
+    });
+    const gap=(spot)=>Math.min(Infinity,...placed.map(other=>Math.hypot(spot.X-other.X,spot.Y-other.Y)));
+    const clear=(spot)=>Math.min(Infinity,...lines.filter(other=>other!==line).map(other=>{
+      const a=reversePoint(frame,x,y,size,other.chord[0]), b=reversePoint(frame,x,y,size,other.chord[1]);
+      const dx=b.X-a.X, dy=b.Y-a.Y, t=Math.max(0,Math.min(1,((spot.X-a.X)*dx+(spot.Y-a.Y)*dy)/(dx*dx+dy*dy||1)));
+      return Math.hypot(spot.X-a.X-dx*t,spot.Y-a.Y-dy*t);
+    }));
+    const rank=(spot)=>((spot.outside?4:0)+(clear(spot)>=24?2:0)+(gap(spot)>=34?1:0))*10-spot.crowded;
+    const spot=rank(ends[1])>rank(ends[0])?ends[1]:ends[0];
+    placed.push(spot);
+    return spot;
+  });
+}
+function drawReverseLabel(ctx,spot,text,{correct=false}={}){
+  ctx.save();
+  ctx.beginPath(); ctx.arc(spot.X,spot.Y,15,0,Math.PI*2);
+  ctx.fillStyle=correct?'#e9f6ee':'#fff'; ctx.fill();
+  ctx.strokeStyle=correct?'#2e8b57':'#16417C'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle=correct?'#1f6d43':'#16417C'; ctx.font='900 17px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(text,spot.X,spot.Y+1);
+  ctx.restore();
+}
+function renderReverseGame(ctx,d,showAnswer=false){
+  header(ctx,d.text);
+  const p=d.source, frame=p.frame;
+  ctx.fillStyle='#52616b'; ctx.font='700 16px sans-serif'; ctx.textAlign='left';
+  ctx.fillText(`${p.id} · ${p.paperLabel?.ko||'종이'}`,54,112);
+  ctx.textAlign='center';
+  if(p.interaction==='fold-line-pick'){
+    const size=330, left=150, top=140, right=760;
+    drawReversePaper(ctx,frame,left,top,size,p.paper);
+    const spots=reverseLabelSpots(frame,left,top,size,d.lines,p.paper);
+    d.lines.forEach(line=>drawReverseCrease(ctx,frame,left,top,size,line.chord,{strong:showAnswer&&line.key===p.answerKey,faded:showAnswer&&line.key!==p.answerKey}));
+    if(showAnswer){ const answer=d.lines.find(line=>line.key===p.answerKey); drawReverseArrow(ctx,frame,left,top,size,answer.arrow); }
+    d.lines.forEach((line,index)=>drawReverseLabel(ctx,spots[index],line.label,{correct:showAnswer&&line.key===p.answerKey}));
+    drawStepArrow(ctx,600,top+size/2);
+    drawReverseFolded(ctx,frame,right,top,size,p.resultPieces);
+    ctx.fillStyle='#4b5a5f'; ctx.font='800 16px sans-serif';
+    ctx.fillText('펼친 종이',left+size/2,top+size+42);
+    ctx.fillText('한 번 접은 모양',right+size/2,top+size+42);
+    ctx.textAlign='left';
+    return;
+  }
+  const size=300, left=70, top=150;
+  drawReversePaper(ctx,frame,left,top,size,p.paper);
+  if(showAnswer){
+    p.creaseHints.forEach(hint=>drawReverseCrease(ctx,frame,left,top,size,hint.chord,{strong:true}));
+    drawReverseArrow(ctx,frame,left,top,size,p.creaseHints[0].arrow);
+  }
+  ctx.fillStyle='#4b5a5f'; ctx.font='800 16px sans-serif';
+  ctx.fillText('펼친 종이',left+size/2,top+size+42);
+  const box=200, gap=14, startX=430, boxTop=165;
+  d.options.forEach((option,index)=>{
+    const bx=startX+index*(box+gap), correct=showAnswer&&p.answerKeys.includes(option.key);
+    ctx.fillStyle=correct?'#f0faf3':'#fff'; ctx.fillRect(bx,boxTop,box,box);
+    ctx.strokeStyle=correct?'#2e8b57':'#abb8b1'; ctx.lineWidth=correct?4:1.6; ctx.strokeRect(bx,boxTop,box,box);
+    drawReverseFolded(ctx,frame,bx+16,boxTop+12,box-36,option.pieces,{thickness:5,layerEdge:option.pieces[1]||null});
+    ctx.beginPath(); ctx.arc(bx+20,boxTop+20,14,0,Math.PI*2); ctx.fillStyle=correct?'#2e8b57':'#16417C'; ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='900 15px sans-serif'; ctx.textBaseline='middle'; ctx.fillText(String(option.number),bx+20,boxTop+21); ctx.textBaseline='alphabetic';
+  });
+  ctx.textAlign='left';
+}
+
 /* ===== 두 번째 게임 코스: 접고 돌리고 뒤집기 ===== */
 let turnGameLevels=[];
 let turnOperations={};
@@ -280,6 +461,7 @@ function buildSharedProblem(mode){
   const levelNumber=sharedModeLevel(mode);
   const level=sharedGameLevels[levelNumber-1];
   if(!level) return null;
+  if(level.strand==='reverse-fold') return buildReverseProblem(level);
   const source=level.problems[questionNumber%level.problems.length];
   const prompts={
     1:['색종이를 한 번 또는 두 번 접어 선을 따라 잘랐습니다.','접은 순서의 반대로 펼쳐 절단선을 완성하고 조각 수를 구하세요.'],
