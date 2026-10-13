@@ -40,7 +40,7 @@ export function mountMagnetBattle(host, mountLab) {
   const mount = () => [0, 1].forEach(i => {
     const mountedRound = round;
     const el = $(`[data-team="${i + 1}"]`), rows = [];
-    mountLab(el, { rows, personal: false, lowPower: true, onRecord: list => {
+    mountLab(el, { rows, personal: false, lowPower: true, mode: 'battle', onRecord: list => {
       if (round !== mountedRound || submitted[i] || !host.isConnected) return;
       const select = $(`[data-mb-pick="${i}"]`), previous = select.value;
       select.innerHTML = '<option value="">기록을 골라 주세요</option>' + list.map((r, j) => `<option value="${j}">${j + 1}번 · ${String(r.shape).replace(/[&<>\"]/g, '')} · ${Number(r.floating)}곳 · ${Number(r.height)}칸</option>`).join('');

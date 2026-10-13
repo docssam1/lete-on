@@ -1,10 +1,11 @@
 // 4-1 Ⅰ 자석의 이용 — 고리 자석 탑: 같은 극은 밀어 내고(뜸), 다른 극은 끌어당긴다(붙음)
-// 연필은 육각 기둥(노란 칠 + 깎은 나무 + 흑연 심), 받침은 나뭇결 원판, 고리 자석은 세라믹 회색에 모서리를 깎았다.
+// 연필은 육각 기둥(채도를 낮춘 칠 + 깎은 나무 + 흑연 심), 받침은 무광 나뭇결 원판, 고리 자석은 실제 교구처럼 검은 페라이트(원장 결정 2026-10-13).
+// 고리는 색 띠가 아니라 옆면 번호 스티커로 구별한다 — 색이 극으로 오해되지 않게. 뒤집힌(윗면 S) 고리는 번호가 거꾸로 보인다.
 // 극은 색만으로 알리지 않는다 — 윗면·아랫면 데칼과 옆의 작은 표에 N/S 글자를 함께 쓴다.
 import { PALETTE as P, label, arrow, THREE, mat } from './_kit.js';
 
 const R_OUT = 0.9, R_IN = 0.28, T = 0.28, C = 0.022;       // 고리 바깥·안 반지름, 두께, 모서리 깎임
-const COLORS = [0x3b6fd1, 0xf0b429, 0x3fae5b, 0xe0743a];   // 가상 실험실(2D)과 같은 고리 구별색 — 옆면 띠로만 쓴다
+const COLORS = [0x3b6fd1, 0xf0b429, 0x3fae5b, 0xe0743a];   // 2D 대체 실험실의 고리 구별색(3D 고리에는 쓰지 않는다 — 번호 스티커로 구별)
 const N = 0xe24b4a, S = 0x3a6bc6;
 const START = ['N', 'S', 'S', 'N'], TALL = ['N', 'S', 'N', 'S'];
 const Y0 = [0.3, 0.98, 1.26, 2.09], Y1 = [0.3, 0.98, 1.76, 2.64];
@@ -51,20 +52,43 @@ let POLE = null;                                            // 장면마다 새�
 function poleKit() {
   const face = (p) => new THREE.MeshStandardMaterial({ map: poleFaceTex(p), transparent: true, roughness: 0.35, metalness: 0.05, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2 });
   const badge = (p) => new THREE.SpriteMaterial({ map: poleBadgeTex(p), transparent: true, depthWrite: false });
-  return { face: { N: face('N'), S: face('S') }, badge: { N: badge('N'), S: badge('S') } };
+  const sp = speckleTex();
+  return { face: { N: face('N'), S: face('S') }, badge: { N: badge('N'), S: badge('S') }, ringGeo: ringGeo(),
+    ferrite: new THREE.MeshPhysicalMaterial({ color: 0x3a3d43, roughness: 0.58, roughnessMap: sp, bumpMap: sp, bumpScale: 0.35, metalness: 0.05, clearcoat: 0.12, clearcoatRoughness: 0.5 }),
+    outline: new THREE.MeshBasicMaterial({ color: 0xffb21e, side: THREE.BackSide }) };
 }
 
-// ── 고리 자석 ────────────────────────────────────────────────
-function ring(color) {
-  const sh = new THREE.Shape(); sh.absarc(0, 0, R_OUT - C, 0, Math.PI * 2, false);
-  const hole = new THREE.Path(); hole.absarc(0, 0, R_IN + C, 0, Math.PI * 2, true); sh.holes.push(hole);
-  const geo = new THREE.ExtrudeGeometry(sh, { depth: T - 2 * C, bevelEnabled: true, bevelThickness: C, bevelSize: C, bevelSegments: 2, curveSegments: 48 });
-  geo.translate(0, 0, C); geo.rotateX(-Math.PI / 2);        // 바닥 = 0, 윗면 = T
-  const capM = new THREE.MeshPhysicalMaterial({ color: 0x70767d, roughness: 0.5, metalness: 0.1, clearcoat: 0.3 });
-  const sideM = new THREE.MeshPhysicalMaterial({ color: 0x858b92, roughness: 0.26, metalness: 0.12, clearcoat: 0.8, clearcoatRoughness: 0.18 });
-  const g = new THREE.Group(); const m = new THREE.Mesh(geo, [capM, sideM]); m.castShadow = m.receiveShadow = true; g.add(m);
-  const band = new THREE.Mesh(new THREE.CylinderGeometry(R_OUT + 0.003, R_OUT + 0.003, 0.07, 64, 1, true), new THREE.MeshPhysicalMaterial({ color, roughness: 0.35, clearcoat: 0.6 }));
-  band.position.y = T / 2; g.add(band);
+// ── 고리 자석: 검은 페라이트 ────────────────────────────────────────
+// 모서리를 둥글게 깎은 단면을 돌려 만든다(LatheGeometry). 소결 표면의 잔 알갱이·연마 결은 거칠기·요철 텍스처로.
+function ringGeo() {
+  const c = 0.04, pts = [], arc = (cx, cy, a0, a1) => { for (let k = 0; k <= 5; k++) { const a = a0 + (a1 - a0) * k / 5; pts.push(V2(cx + Math.cos(a) * c, cy + Math.sin(a) * c)); } };
+  arc(R_IN + c, c, Math.PI, Math.PI * 1.5); arc(R_OUT - c, c, -Math.PI / 2, 0); arc(R_OUT - c, T - c, 0, Math.PI / 2); arc(R_IN + c, T - c, Math.PI / 2, Math.PI);
+  pts.push(pts[0].clone());
+  const g = new THREE.LatheGeometry(pts, 96); g.computeVertexNormals(); return g;
+}
+function speckleTex() {
+  const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d'), r = rng(3);
+  g.fillStyle = '#808080'; g.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 26000; i++) { const v = 90 + r() * 90 | 0; g.fillStyle = `rgb(${v},${v},${v})`; g.fillRect(r() * 512, r() * 512, 1 + r() * 1.6, 1 + r() * 1.6); }
+  for (let i = 0; i < 40; i++) { const v = r() > 0.5 ? 200 : 60; g.strokeStyle = `rgba(${v},${v},${v},0.18)`; g.lineWidth = 1; g.beginPath(); const y = r() * 512; g.moveTo(0, y); g.lineTo(512, y); g.stroke(); }
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(6, 2); return t;   // 거칠기·요철용(색이 아니라 sRGB로 바꾸지 않는다)
+}
+function stickerTex(n, flipped) {   // 옆면에 붙인 종이 번호 — 윗면이 S인(뒤집힌) 고리는 번호가 거꾸로
+  return canvasTex(256, 128, (c, w, h) => {
+    if (flipped) { c.translate(w, h); c.rotate(Math.PI); }
+    c.fillStyle = '#f4f0e6'; c.beginPath(); c.roundRect(6, 10, w - 12, h - 20, 22); c.fill();
+    c.strokeStyle = 'rgba(0,0,0,0.14)'; c.lineWidth = 3; c.stroke();
+    c.fillStyle = '#1f2937'; c.font = `800 78px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(String(n), w / 2, h / 2 + 4);
+  });
+}
+function ring(n) {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(POLE.ringGeo, POLE.ferrite); body.castShadow = body.receiveShadow = true; g.add(body);
+  const len = 0.36, mk = (flipped) => new THREE.MeshStandardMaterial({ map: stickerTex(n, flipped), roughness: 0.85, transparent: true, polygonOffset: true, polygonOffsetFactor: -1 });
+  const sticker = new THREE.Mesh(new THREE.CylinderGeometry(R_OUT + 0.004, R_OUT + 0.004, 0.15, 24, 1, true, VIEW_TH - len / 2, len), mk(false));
+  sticker.position.y = T / 2; sticker.userData.mats = { N: sticker.material, S: mk(true) }; g.add(sticker);
+  // 고른 고리 표시: 몸통을 조금 키운 안쪽 면(BackSide)이 노란 테두리로 보인다
+  const outline = new THREE.Mesh(POLE.ringGeo, POLE.outline); outline.scale.set(1.035, 1.12, 1.035); outline.position.y = -T * 0.06; outline.visible = false; g.add(outline);
   // 윗면·아랫면 극 표시 — 처음엔 숨겨 두었다가 설명 비트에서 보인다. 면 데칼 + 카메라 쪽 옆에 붙은 원형 표.
   const face = (y, top) => {
     const f = new THREE.Group(); f.position.y = y; f.visible = false;
@@ -72,7 +96,7 @@ function ring(color) {
     const b = new THREE.Sprite(POLE.badge.N); b.scale.setScalar(0.3); b.renderOrder = 2;
     f.add(b); f.userData = { decal: d, badge: b }; g.add(f); return f;
   };
-  g.userData = { top: face(T + 0.002, true), bot: face(-0.002, false), up: 'N' };
+  g.userData = { top: face(T + 0.002, true), bot: face(-0.002, false), up: 'N', sticker, outline, n };
   placeBadge(g.userData.top, 0); placeBadge(g.userData.bot, 0);
   return g;
 }
@@ -87,13 +111,14 @@ function setUp(r, up) {
   r.userData.up = up;
   top.userData.decal.material = POLE.face[up]; top.userData.badge.material = POLE.badge[up];
   bot.userData.decal.material = POLE.face[dn]; bot.userData.badge.material = POLE.badge[dn];
+  const st = r.userData.sticker; if (st) st.material = st.userData.mats[up];
 }
 
 // ── 연필(육각 기둥 + 깎은 나무 + 흑연 심) ─────────────────────────
 function pencil() {
   const g = new THREE.Group(), L = PEN_TOP - 0.18;         // 받침 속 0.12 까지 박혀 있다
   const paint = canvasTex(512, 2048, (c, w, h) => {
-    c.fillStyle = '#f2c230'; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#dcc68c'; c.fillRect(0, 0, w, h);   // 채도를 낮춘 칠 — 주인공은 고리
     for (let i = 0; i < 6; i++) {                            // 면 경계는 살짝 어둡게, 가운데는 밝게(칠의 광택)
       const x0 = i * w / 6, gr = c.createLinearGradient(x0, 0, x0 + w / 6, 0);
       gr.addColorStop(0, 'rgba(150,95,0,0.28)'); gr.addColorStop(0.12, 'rgba(255,255,255,0)'); gr.addColorStop(0.5, 'rgba(255,250,215,0.18)'); gr.addColorStop(0.88, 'rgba(255,255,255,0)'); gr.addColorStop(1, 'rgba(150,95,0,0.28)');
@@ -102,10 +127,10 @@ function pencil() {
     // 카메라 쪽 면(u 0~1/6)에 세로로 찍힌 글자
     const fw = w / 6, sy = (2048 / L) / (fw / PEN_R);       // 세로·가로 픽셀 비를 맞춘다
     c.save(); c.translate(fw / 2, h * 0.06); c.scale(1, sy); c.rotate(Math.PI / 2);
-    c.fillStyle = '#1f4d2e'; c.font = `900 50px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('HB', 0, 0);
+    c.fillStyle = '#6b5a2e'; c.font = `900 50px ${FONT}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('HB', 0, 0);
     c.restore();
   });
-  const hexM = new THREE.MeshPhysicalMaterial({ map: paint, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.2, flatShading: true });
+  const hexM = new THREE.MeshPhysicalMaterial({ map: paint, roughness: 0.5, clearcoat: 0.25, clearcoatRoughness: 0.4, flatShading: true });
   const hex = new THREE.Mesh(new THREE.CylinderGeometry(PEN_R, PEN_R, L, 6, 1, true), hexM);
   hex.position.y = PEN_TOP - L / 2; hex.castShadow = true; g.add(hex);
   const woodTip = canvasTex(256, 256, (c, w, h) => {
@@ -140,10 +165,10 @@ function woodBase() {
     c.fillStyle = '#b07d47'; c.fillRect(0, 0, w, h); const r = rng(9);
     for (let i = 0; i < 26; i++) { c.fillStyle = `rgba(95,55,25,${0.1 + r() * 0.25})`; c.fillRect(0, r() * h, w, 1 + r() * 2.5); }
   }, [6, 1]);
-  const top = new THREE.Mesh(new THREE.CircleGeometry(RB - 0.05, 72), new THREE.MeshPhysicalMaterial({ map: grain, roughness: 0.55, clearcoat: 0.35, clearcoatRoughness: 0.4 }));
+  const top = new THREE.Mesh(new THREE.CircleGeometry(RB - 0.05, 72), new THREE.MeshStandardMaterial({ map: grain, roughness: 0.85 }));
   top.rotation.x = -Math.PI / 2; top.position.y = HB; top.receiveShadow = true; g.add(top);
   const prof = [V2(RB - 0.04, 0), V2(RB, 0.03), V2(RB, HB - 0.06), V2(RB - 0.012, HB - 0.025), V2(RB - 0.03, HB - 0.006), V2(RB - 0.05, HB)];
-  const rim = new THREE.Mesh(new THREE.LatheGeometry(prof, 72), new THREE.MeshPhysicalMaterial({ map: side, color: 0xf2e2cc, roughness: 0.6, clearcoat: 0.3 }));
+  const rim = new THREE.Mesh(new THREE.LatheGeometry(prof, 72), new THREE.MeshStandardMaterial({ map: side, color: 0xe2d2bc, roughness: 0.85 }));
   rim.castShadow = rim.receiveShadow = true; g.add(rim);
   const under = new THREE.Mesh(new THREE.CircleGeometry(RB - 0.04, 48), mat(0x8a6038)); under.rotation.x = Math.PI / 2; under.position.y = 0.001; g.add(under);
   const hole = new THREE.Mesh(new THREE.RingGeometry(PEN_R * 0.98, PEN_R + 0.05, 6, 1), mat(0x6b4722, { roughness: 0.9 }));
@@ -166,9 +191,9 @@ function ruler() {
 
 // 가상 실험실(v2/lab-ring-tower.js)이 같은 교구를 쓴다 — 받침·연필·자·고리 자석과 극 표시 도구.
 export const TOWER = { R_OUT, R_IN, T, COLORS, VIEW_TH, PEN_TOP, N, S };
-export function towerParts(colors = COLORS) {
+export function towerParts(n = 4) {
   POLE = poleKit();
-  return { base: woodBase(), rod: pencil(), ruler: ruler(), rings: colors.map((c) => ring(c)), setUp, placeBadge };
+  return { base: woodBase(), rod: pencil(), ruler: ruler(), rings: Array.from({ length: n }, (_, i) => ring(i + 1)), setUp, placeBadge };
 }
 
 export default {
@@ -177,7 +202,7 @@ export default {
     POLE = poleKit();
     const base = woodBase(); world.add('base', base);
     const rod = pencil(); world.add('rod', rod);
-    const rings = COLORS.map((c, i) => { const r = ring(c); r.position.y = 5 + i; world.add('r' + i, r); return r; });
+    const rings = COLORS.map((_, i) => { const r = ring(i + 1); r.position.y = 5 + i; world.add('r' + i, r); return r; });
     // 배치 규칙: 이웃한 두 고리의 윗면 극(up)이 서로 다르면 마주 보는 면이 같은 극 → 밀어 냄(뜸), 같으면 붙음.
     // 처음(아래→위) N·S·S·N → 1·2 뜸, 2·3 붙음, 3·4 뜸
     START.forEach((u, i) => setUp(rings[i], u));

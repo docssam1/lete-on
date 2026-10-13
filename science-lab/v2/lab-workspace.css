@@ -56,9 +56,10 @@
 @media print { .sl-lab-workspace { display: none !important; } }
 
 /* 3D 고리 자석 탑: 고리 뒤집기 번호 단추(고리 색 점) */
-.rt-flips { display: flex; flex: 1 1 100%; gap: 6px; flex-wrap: wrap; }
-.lab3d-btns .rt-flips .rt-flip { flex: 1 1 64px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.rt-flips { display: flex; flex: 1 1 100%; gap: 6px; flex-wrap: nowrap; }
+.lab3d-btns .rt-flips .rt-flip { flex: 1 1 0; min-width: 0; padding-inline: 4px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
 .lab3d-read .rt-inspect { text-align: left; padding: 2px 6px; border: 1px solid #c9d9f1; border-radius: 9px; background: #f2f7ff; color: #1e3a78; cursor: pointer; font-family: inherit; }
+.lab3d-read .rt-inspect[hidden] { display: none !important; }
 .lab3d-read .rt-inspect:hover, .lab3d-read .rt-inspect:focus-visible { background: #e3efff; }
 .lab3d-read .rt-inspect b { font-size: 23px; }
 .lab3d-read .rt-inspect small { font-size: 11px; white-space: nowrap; }
@@ -69,5 +70,35 @@
   .dk-3d[data-mount=lab] .lab3d--ring-tower .rt-inspect b { font-size: 1.8cqw; white-space: nowrap; }
   .dk-3d[data-mount=lab] .lab3d--ring-tower .rt-inspect small { font-size: 1cqw; }
 }
-.rt-flip i { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.7), 0 1px 2px rgba(0,0,0,.25); }
+.lab3d-btns .rt-flips .rt-flip.is-sel { border-color: #f0a51a; background: #fff6e2; box-shadow: 0 0 0 2px rgba(240,165,26,.35); }
+/* 적기 전에는 잰 값을 「?」로 가린다(예상 전에 답이 보이지 않게, 2026-10-13 재설계) */
+.lab3d-read .rt-val.is-locked b { color: #c3cbd8; }
+.lab3d-read .rt-val.is-locked small::after { content: " · 적으면 보여요"; color: #8a94a6; }
+.lab3d-btns [data-act=record]:disabled { opacity: .5; cursor: not-allowed; }
+/* 예상 고르기 · 적은 뒤 설명 · 두 탑 비교 안내 카드 */
+.rt-card { display: grid; gap: 8px; padding: 12px 14px; border: 1px solid #dfe5ef; border-radius: 12px; background: #fff; }
+.rt-card[hidden] { display: none; }
+.rt-card p { margin: 0; line-height: 1.5; }
+.rt-card .rt-q { font-weight: 700; }
+.rt-opts { display: grid; gap: 6px; }
+.rt-opt { text-align: left; padding: 9px 12px; border-radius: 10px; border: 1.5px solid #dfe5ef; background: #fff; font: inherit; cursor: pointer; }
+.rt-opt[aria-pressed=true] { border-color: #1e2a6e; background: #eef1fb; font-weight: 700; }
+.rt-opt:focus-visible, .rt-go:focus-visible { outline: 3px solid #f0a51a; outline-offset: 2px; }
+.rt-card .rt-mine { padding: 8px 10px; border-radius: 10px; background: #f0fdf4; color: #166534; font-weight: 700; }
+.rt-card .rt-mine.no { background: #fff7ed; color: #9a3412; }
+.rt-card .rt-why { padding: 8px 10px; border-radius: 10px; background: #f2f7ff; color: #1e3a78; }
+.rt-card .rt-more { font-size: .9em; color: #5b6475; }
+.lab-table tr.is-cmp td:first-child::before { content: attr(data-cmp) " · "; font-weight: 800; color: #1e2a6e; }
+.lab3d--ring-tower[data-phase=compare] ~ .lab-table tbody tr[data-row] { cursor: pointer; }
 .lab3d-read .lab-read b.rt-shape { font-size: 20px; letter-spacing: .08em; white-space: nowrap; }
+/* 학생 5단계 실험 화면: 고리 탑은 세로로 긴 교구라 300px 캔버스에서는 작아진다 — 이 실험만 높인다(덱·교재·전체 화면 규칙은 그대로) */
+#lab .lab3d--ring-tower > canvas { height: clamp(260px, calc(100dvh - 520px), 480px); }   /* 「표에 적기」가 하단 막대에 가리지 않는 만큼만 */
+/* 덱(수업 화면) 오른쪽 좁은 칸: 카드도 다른 조작판 글자(1.2~1.3cqw)에 맞춘다 — 덱 기본 글자 크기를 물려받으면 안내 줄을 덮는다 */
+@media (min-width: 761px) {
+  .dk-3d[data-mount=lab] .lab3d--ring-tower .rt-card { font-size: 1.15cqw; padding: .8cqw 1cqw; gap: .5cqw; }
+  .dk-3d[data-mount=lab] .lab3d--ring-tower .rt-card p { font-size: inherit; }
+  .dk-3d[data-mount=lab] .lab3d--ring-tower .rt-opt { font-size: 1.15cqw; padding: .55cqw .8cqw; }
+  .dk-3d[data-mount=lab] .lab3d--ring-tower .rt-go { font-size: 1.3cqw; min-height: 3.2cqw; }
+  /* 오른쪽 칸 높이가 정해져 있어 넘치면 안내 줄이 0으로 눌린다 — 카드가 열려 있을 때는 카드가 같은 말을 하므로 안내 줄을 접는다(독쌤은 글을 그대로 읽는다) */
+  .dk-3d[data-mount=lab] .lab3d--ring-tower .lab3d-tip:has(+ .rt-card:not([hidden])) { display: none; }
+}
