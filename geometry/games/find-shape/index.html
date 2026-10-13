@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>GFIELD Cube Town - Find the Shape</title>
-    <link rel="stylesheet" href="./styles.css?v=find-1" />
+    <link rel="stylesheet" href="./styles.css?v=find-2" />
     <link rel="stylesheet" href="../../shared/game-rail.css?v=2" />
     <link rel="stylesheet" href="../../shared/portrait-lock.css?v=1" />
     <script src="../../shared/viewport-fit.js?v=1"></script>
@@ -48,8 +48,8 @@
           <div class="clue-stage">
             <section id="layerClue" class="layer-clue" aria-labelledby="layerTitle"><h3 id="layerTitle" data-i18n="layerTitle">층별 쌓기나무 수</h3><div id="layerList" class="layer-list"></div></section>
             <section class="view-clues">
-              <div class="view-card"><strong data-i18n="frontView">앞에서 본 모양</strong><div id="frontView" class="view-grid" aria-label="front view"></div></div>
-              <div class="view-card"><strong data-i18n="rightView">오른쪽에서 본 모양</strong><div id="rightView" class="view-grid" aria-label="right view"></div></div>
+              <div class="view-card"><strong data-i18n="frontView">앞에서 본 모양</strong><div class="view-body"><div id="frontView" class="view-grid" aria-label="front view"></div><div class="view-axis" aria-hidden="true"><span data-i18n="axisLeft">왼쪽</span><span data-i18n="axisRight">오른쪽</span></div></div></div>
+              <div class="view-card"><strong data-i18n="rightView">오른쪽에서 본 모양</strong><div class="view-body"><div id="rightView" class="view-grid" aria-label="right view"></div><div class="view-axis" aria-hidden="true"><span data-i18n="axisFront">앞</span><span data-i18n="axisBack">뒤</span></div></div></div>
             </section>
           </div>
         </article>
@@ -89,7 +89,15 @@
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
       <div id="success" class="success" aria-hidden="true"><span class="success-rays"></span><span class="success-badge"></span><strong>SUCCESS!</strong><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </main>
-    <script type="module" src="./app.js?v=find-1"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../../vendor/three/three.module.js",
+          "three/addons/": "../../vendor/three/addons/"
+        }
+      }
+    </script>
+    <script type="module" src="./app.js?v=find-2"></script>
     <script src="../../shared/game-flow.js?v=1" defer></script>
   </body>
 </html>

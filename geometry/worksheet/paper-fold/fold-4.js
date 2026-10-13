@@ -3,7 +3,7 @@ function render(d){
   questionNumber += 1;
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
-  if(d.kind==='paper-turn') renderTurnGame(ctx,d); else if(d.kind==='game-level') renderSharedGame(ctx,d); else if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='fold-top') renderFoldTop(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
+  if(d.kind==='game-reverse') renderReverseGame(ctx,d); else if(d.kind==='paper-turn') renderTurnGame(ctx,d); else if(d.kind==='game-level') renderSharedGame(ctx,d); else if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='fold-top') renderFoldTop(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
   document.getElementById('src').textContent=d.src;
   return d;
@@ -36,7 +36,7 @@ function buildProblem(mode,difficulty){
 
 function answerText(problem){
   if(problem.kind==='paper-turn') return String(problem.answer);
-  if(problem.kind==='game-level') return String(problem.answer);
+  if(problem.kind==='game-level' || problem.kind==='game-reverse') return String(problem.answer);
   if(problem.kind==='fold-top') return `${problem.answer}`;
   if(problem.kind==='stack' && Array.isArray(problem.answer)) return problem.answer.join(' → ');
   if(problem.kind==='punch' && typeof problem.answer==='object') return Object.entries(problem.answer).map(([k,v])=>`${k} ${v}개`).join(', ');
@@ -82,6 +82,11 @@ function solutionText(problem){
     const names=problem.source.operations.map(operation=>turnOperations[operation]?.ko||operation).join(' → ');
     return `${names} 순서로 시작 모양을 움직입니다. 각 동작을 한 번씩 적용한 마지막 모양은 ${problem.answer}입니다. (${problem.source.id})`;
   }
+  if(problem.kind==='game-reverse'){
+    const p=problem.source;
+    if(p.interaction==='fold-line-pick') return `접는 선을 거울로 생각하고 접히는 쪽을 선 너머로 옮겨 봅니다. ${problem.answer} 선으로 접을 때만 두 겹이 오른쪽 모양과 똑같이 겹칩니다. (${p.id})`;
+    return `각 모양의 두 겹을 접은 선에서 펼쳐 처음 종이와 맞는지 하나씩 확인합니다. 한 번 접어서 만들 수 있는 것은 ${problem.answer}입니다. (${p.id})`;
+  }
   if(problem.kind==='game-level'){
     const p=problem.source;
     const foldNames=p.folds.map(step=>sharedAxisLabel[step.axis]).join(' → ');
@@ -108,6 +113,11 @@ function solutionImage(problem,problemImage){
   if(problem.kind==='paper-turn'){
     const canvas=document.getElementById('cv');
     const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);renderTurnGame(ctx,problem,true);
+    return canvas.toDataURL('image/jpeg',.92);
+  }
+  if(problem.kind==='game-reverse'){
+    const canvas=document.getElementById('cv');
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);renderReverseGame(ctx,problem,true);
     return canvas.toDataURL('image/jpeg',.92);
   }
   if(problem.kind==='game-level'){

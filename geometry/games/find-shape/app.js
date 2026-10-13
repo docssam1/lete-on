@@ -1,5 +1,5 @@
-import { levels, validateLevels, clueSignature } from "./levels.js?v=find-1";
-import { text } from "./i18n.js?v=find-1";
+import { levels, validateLevels, clueSignature } from "./levels.js?v=find-2";
+import { text } from "./i18n.js?v=find-2";
 import { readGameProgress, saveGameProgress } from "../../shared/profile-storage.js";
 import { syncEvolution, celebrateEvolution, updateLevelBadge } from "../../shared/evolution.js?v=evolve4-20260720a";
 
@@ -164,9 +164,61 @@ function isoSvg(grid, id) {
   </svg>`;
 }
 
+// One WebGL renderer for every choice. three.js is loaded on demand: if the
+// import map, the vendor file or WebGL is unavailable, or the context is lost,
+// the choices fall back to the flat SVG pictures instead of going blank.
+let cubeView = null;
+let pictureMode = "loading";
+import("./cube-view.js?v=find-2")
+  .then((module) => { cubeView = module.createCubeView(); })
+  .catch(() => { cubeView = null; })
+  .finally(() => { pictureMode = cubeView ? "3d" : "svg"; renderChoices(); });
+
+function useFlatPictures() {
+  cubeView = null;
+  pictureMode = "svg";
+  renderChoices();
+}
+
+function problemFrame(problem) {
+  return {
+    width: problem.target[0].length,
+    depth: problem.target.length,
+    height: Math.max(...problem.options.flatMap((grid) => grid.flat()))
+  };
+}
+
+function drawChoicePictures() {
+  if (pictureMode !== "3d" || !cubeView) return;
+  const problem = currentProblem();
+  const frame = problemFrame(problem);
+  const labels = { front: text(state.lang, "frontSide"), right: text(state.lang, "rightSide") };
+  const drawn = [];
+  try {
+    $$(".shape-choice canvas").forEach((canvas) => {
+      const index = Number(canvas.dataset.option);
+      drawn.push(cubeView.draw(problem.options[index], frame, canvas, labels));
+    });
+  } catch (error) {
+    useFlatPictures();
+    return;
+  }
+  const view = cubeView.orientation(frame);
+  elements.choiceGrid.dataset.orientation = JSON.stringify(view);
+  elements.choiceGrid.dataset.drawnCubes = drawn.join(",");
+}
+
+let pictureFrame = 0;
+function scheduleChoicePictures() {
+  cancelAnimationFrame(pictureFrame);
+  pictureFrame = requestAnimationFrame(drawChoicePictures);
+}
+
 function renderChoices() {
   const problem = currentProblem();
   elements.choiceGrid.classList.toggle("three", problem.options.length === 3);
+  elements.choiceGrid.dataset.render = pictureMode;
+  elements.choiceGrid.dataset.drawnCubes = "";
   elements.choiceGrid.replaceChildren();
   problem.options.forEach((grid, index) => {
     const button = document.createElement("button");
@@ -177,10 +229,22 @@ function renderChoices() {
     button.disabled = state.solved;
     button.setAttribute("aria-label", format("option", { number: index + 1 }));
     button.setAttribute("aria-pressed", String(state.selected === index));
-    button.innerHTML = `${isoSvg(grid, `${problem.id}-${index}`)}<span class="option-tag">${index + 1}</span>`;
+    const picture = pictureMode === "loading" ? ""
+      : pictureMode === "3d"
+      ? `<span class="shape-square" aria-hidden="true"></span><canvas class="shape-canvas" data-option="${index}" aria-hidden="true"></canvas>`
+      : isoSvg(grid, `${problem.id}-${index}`);
+    button.innerHTML = `${picture}<span class="option-tag">${index + 1}</span>`;
     button.addEventListener("click", () => selectChoice(index));
     elements.choiceGrid.append(button);
   });
+  scheduleChoicePictures();
+}
+
+{
+  let resizeTimer;
+  const redraw = () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(scheduleChoicePictures, 120); };
+  window.addEventListener("resize", redraw);
+  if ("ResizeObserver" in window) new ResizeObserver(redraw).observe(elements.choiceGrid);
 }
 
 function renderProblem() {

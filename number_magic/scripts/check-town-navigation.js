@@ -7,6 +7,7 @@ const fs=require('fs'),path=require('path'),http=require('http'),assert=require(
 const {chromium}=require('./lib/playwright');
 const ROOT=path.resolve(__dirname,'../..');
 const OUT=process.env.NM_NAV_ARTIFACTS&&path.resolve(process.env.NM_NAV_ARTIFACTS);
+const RECOVERY_ONLY=process.env.NM_NAV_RECOVERY_ONLY==='1';
 if(OUT&&!/^[EG]:[\\/]/i.test(OUT))throw Error('Artifacts must be on E: or G:');
 const MIME={'.html':'text/html; charset=utf-8','.js':'application/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.woff2':'font/woff2'};
 const server=http.createServer((req,res)=>{
@@ -34,10 +35,53 @@ async function checkViewport(browser,port,width){
     await page.waitForFunction(n=>window.__navTowns.length===n&&window.__navTown.debug.renderer.info.render.frame>0,count);
     assert.equal(await page.locator('#townWorld').evaluate(e=>getComputedStyle(e).display),'none','완료된 3D 뒤에 옛 2D 지도를 표시하지 않음');
   };
+  const checkContextRecovery=async()=>{
+    const scoredBefore=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return {progress:s.progress,coins:s.coins};});
+    await shot('context-before');
+    await page.locator('.t3d-cv').focus();
+    await page.keyboard.down('ArrowRight');
+    await page.evaluate(external=>{const renderer=window.__navTown.debug.renderer;if(external)renderer.getContext().getExtension('WEBGL_lose_context').loseContext();else renderer.forceContextLoss();},width===390);
+    await page.waitForFunction(()=>window.__navTown.debug.renderer.getContext().isContextLost());
+    try{
+      await page.waitForSelector('.t3d-context-error',{timeout:3000});
+      await shot('context-lost');
+      assert.deepEqual(await page.evaluate(()=>window.__navTown.debug.movement()),{owner:null,vector:{x:0,z:0},keys:[]},'graphics loss must release held movement');
+      const frozen=await snap();
+      await page.evaluate(()=>{document.querySelector('.t3d-cv').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));document.dispatchEvent(new Event('visibilitychange'));window.__navTown.zoomIn();window.__navTown.walkTo(12,12);});
+      await page.keyboard.down('ArrowLeft');await page.waitForTimeout(180);await page.keyboard.up('ArrowLeft');
+      assert.deepEqual(await page.evaluate(()=>window.__navTown.debug.movement()),{owner:null,vector:{x:0,z:0},keys:[]},'lost scene must not accumulate keyboard movement');
+      const still=await snap();
+      assert.deepEqual(still.camera,frozen.camera,'lost scene camera stays put');
+      const playerOf=s=>s.characters.find(c=>c.id==='player');
+      assert.equal(playerOf(still).x,playerOf(frozen).x);assert.equal(playerOf(still).z,playerOf(frozen).z);
+      await page.keyboard.up('ArrowRight');
+      const retryBounds=await page.locator('.t3d-context-card').boundingBox(),menuBounds=await page.locator('#townDex').boundingBox();
+      assert(retryBounds.x+retryBounds.width<=menuBounds.x||retryBounds.y+retryBounds.height<=menuBounds.y||menuBounds.y+menuBounds.height<=retryBounds.y,'recovery card must not sit behind the side menu');
+      if(width===390){
+        await page.evaluate(()=>{const r=window.__navTown.debug.renderer;window.__navRestore=r.forceContextRestore;r.forceContextRestore=()=>{};});
+        await page.locator('[data-town-restore]').click();
+        await page.waitForFunction(()=>!document.querySelector('[data-town-restore]').disabled,{timeout:8000});
+        assert.match(await page.locator('.t3d-context-card [role="status"]').innerText(),/위 메뉴/);
+        await page.evaluate(()=>{window.__navTown.debug.renderer.forceContextRestore=window.__navRestore;});
+      }
+      await page.locator('[data-town-restore]').click();
+      await page.waitForSelector('.t3d-context-error',{state:'detached',timeout:20000});
+      assert.equal(await page.evaluate(()=>window.__navTown.debug.renderer.getContext().isContextLost()),false);
+      assert.equal(await page.locator('#townWorld').evaluate(e=>getComputedStyle(e).display),'none','recovery must retain real 3D, not reveal old 2D');
+      const recovered=await snap();
+      for(const key of ['x','z','d'])assert.equal(recovered.camera[key],frozen.camera[key]);
+      assert.equal(playerOf(recovered).x,playerOf(frozen).x);assert.equal(playerOf(recovered).z,playerOf(frozen).z);
+      assert.equal(await page.locator('.t3d-cv').count(),1,'recovery keeps one canvas');
+      assert.deepEqual(await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return {progress:s.progress,coins:s.coins};}),scoredBefore,'graphics recovery must not award or remove progress/coins');
+      await shot('context-restored');
+      result.contextRecovery={lossSource:width===390?'external-gl':'renderer',heldInputReleased:true,inputBlockedWhileLost:true,positionPreserved:true,real3dRetained:true,canvasCount:1,scoringUnchanged:true,boundedRetry:width===390,menuOverlap:false};
+    }catch(error){await shot('context-failure');throw error;}
+  };
   try{
     await page.goto(`http://127.0.0.1:${port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
     await page.locator('.nm-title3d [data-id="game"]').click({timeout:60000});
     await waitTown(1);
+    if(RECOVERY_ONLY){await checkContextRecovery();assert.deepEqual(errors,[]);return result;}
     await page.locator('.t3d-lab[data-spot="numberland"]').focus();
     await page.waitForTimeout(350);
     assert.deepEqual((await snap()).selectedPlace,{kind:'spot',id:'numberland'},'explicit building selection is not overwritten by a nearby building');
@@ -105,6 +149,7 @@ async function checkViewport(browser,port,width){
     await page.locator('#roadBack').click();await waitTown(3);
     result.afterLearning=await snap();
     for(const k of ['x','z','d'])assert.equal(result.afterLearning.camera[k],result.before.camera[k],`학습 복귀 때 카메라 ${k} 유지`);
+    await checkContextRecovery();
     result.horizontalOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
     assert.equal(result.horizontalOverflow,false);assert.deepEqual(errors,[]);
     result.errors=errors;
@@ -120,6 +165,6 @@ async function checkViewport(browser,port,width){
     const results=[];
     for(const width of [390,1280])results.push(await checkViewport(browser,server.address().port,width));
     if(OUT)fs.writeFileSync(path.join(OUT,'town-navigation.json'),JSON.stringify(results,null,2));
-    console.log('OK: 실제 3D 마을·학습 왕복 390/1280px — 위치·확대·목록·포커스 유지, GPU 해제, 오류·가로 넘침 없음');
+    console.log(RECOVERY_ONLY?'OK: 실제 3D 그래픽 연결 복구 390/1280px — 입력 정지·위치/점수 보존·다시 연결·안내 배치':'OK: 실제 3D 마을·학습 왕복 390/1280px — 위치·확대·목록·포커스 유지, GPU 해제, 그래픽 연결 복구, 오류·가로 넘침 없음');
   }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -61,7 +61,11 @@ export function cluesOf(grid) {
     flatten(grid).filter((height) => height >= level + 1).length
   );
   const front = Array.from({ length: width }, (_, x) => Math.max(...grid.map((row) => row[x])));
-  const right = Array.from({ length: depth }, (_, z) => Math.max(...grid[z]));
+  // Seen from the right (+x) side, the front row (largest z) is on the LEFT,
+  // the same as three-views' side view. Listing z = 0 first drew the right
+  // view mirrored against the picture, so a child who read the picture
+  // correctly found no matching choice in 20 of the 30 problems.
+  const right = Array.from({ length: depth }, (_, column) => Math.max(...grid[depth - 1 - column]));
   return { layers, front, right, maxHeight };
 }
 
@@ -112,6 +116,11 @@ function problem(id, level, target, optionCount) {
   return { id, level, target: clone(target), clues: cluesOf(target), options, answer };
 }
 
+// find-l3-10 was [[0,1,1],[1,2,0],[1,0,1]]: its corner cube touched nothing,
+// so validateLevels() threw and the whole game failed to load whenever the
+// "practice" cursor reached the second level-3 round. It is now a connected
+// shape with the same layer counts (6 + 1) that no other level-3 target
+// repeats, even turned or mirrored.
 const pools = [
   {
     level: 3, stars: 3, optionCount: 3, targets: [
@@ -119,7 +128,7 @@ const pools = [
       [[0,2,1],[1,1,0],[1,1,0]], [[1,1,0],[0,2,1],[0,1,1]],
       [[0,1,1],[2,1,0],[1,0,0]], [[1,0,1],[1,2,1],[0,1,0]],
       [[1,1,0],[1,2,0],[0,1,1]], [[0,1,0],[2,1,1],[1,1,0]],
-      [[1,2,1],[0,1,0],[0,1,0]], [[0,1,1],[1,2,0],[1,0,1]]
+      [[1,2,1],[0,1,0],[0,1,0]], [[2,1,1],[1,1,0],[1,0,0]]
     ]
   },
   {
