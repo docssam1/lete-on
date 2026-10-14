@@ -397,7 +397,7 @@ function genFoldTop(difficulty){
     }
   }
   const top=packets[0][0][packets[0][0].length-1];
-  return {kind:'fold-top',grid,steps,answer:grid[top.r][top.c],
+  return {kind:'fold-top',grid,steps,top,answer:grid[top.r][top.c],
     text:[`앞면과 뒷면에 같은 수가 쓰인 종이를 그림의 순서대로 ${steps.length}번 접었습니다.`,
           '가장 위에 놓이는 수를 구하세요.'],
     info:`${rows}×${cols} 수 배열 · ${steps.length}번 접기 · 정답 ${grid[top.r][top.c]}`,src:''};

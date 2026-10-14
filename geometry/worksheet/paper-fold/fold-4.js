@@ -109,25 +109,12 @@ function solutionText(problem){
   return `접는 방향에 따라 겹치는 칸을 대응시켜 계산하면 정답은 ${answerText(problem)}입니다.`;
 }
 
+/* 정답지 그림은 유형마다 답을 크게 다시 그린다(fold-5.js). 정답지는 반 크기로 찍혀
+   문제 그림을 그대로 쓰면 그림 속 글자가 3~4pt가 된다. */
 function solutionImage(problem,problemImage){
-  if(problem.kind==='paper-turn'){
-    const canvas=document.getElementById('cv');
-    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);renderTurnGame(ctx,problem,true);
-    return canvas.toDataURL('image/jpeg',.92);
-  }
-  if(problem.kind==='game-reverse'){
-    const canvas=document.getElementById('cv');
-    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);renderReverseGame(ctx,problem,true);
-    return canvas.toDataURL('image/jpeg',.92);
-  }
-  if(problem.kind==='game-level'){
-    const canvas=document.getElementById('cv');
-    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);renderSharedGame(ctx,problem,true);
-    return canvas.toDataURL('image/jpeg',.92);
-  }
-  if(problem.kind!=='hole') return problemImage;
   const canvas=document.getElementById('cv');
-  renderHoleSolution(canvas.getContext('2d'),problem);
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+  if(!renderAnswerPicture(ctx,problem)) return problemImage;
   return canvas.toDataURL('image/jpeg',.92);
 }
 
