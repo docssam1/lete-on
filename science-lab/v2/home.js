@@ -136,9 +136,9 @@ export function pageHome($app, store, teacher) {
       <section class="h-sec" id="h-popcorn"><div class="h-wrap">
         <header class="h-sec-head"><p class="h-num">🍿</p><div><h2>팝콘실험실</h2><p>실제 키트 사진을 읽고, 조립하고, 내 생각으로 이어 가는 과학 잡지.</p></div></header>
         <div class="h-labs"><article class="h-lab feature" style="--t:#237e7a">
-          <a class="h-lab-img" href="../popcorn/charles-01/current/companion/#magazine" aria-label="팝콘실험실 샤를 1호 잡지 펼치기"><img src="../popcorn/charles-01/current/assets/cover-kit-branded.svg" alt="실제 종이 자석 악어와 물고기·당근 키트" loading="lazy" width="1200" height="675"><span class="h-badge">샤를 1호</span></a>
-          <div class="h-lab-body"><p class="h-kicker">자석 악어와 보내는 일주일</p><h3><a href="../popcorn/charles-01/current/companion/#magazine">먹이를 먹는 자석 악어</a></h3><p class="h-q">악어는 먹이의 그림을 알아볼까요?</p><p>랩코니와 봉투 열기부터 3D 조립까지. 한·영 읽기, 영상, 관찰 기록과 학생 교재를 함께 펼쳐요.</p>
-            <div class="h-lab-go"><a class="h-btn solid" href="../popcorn/charles-01/current/companion/#magazine">${ICO.book}잡지 펼치기</a><a class="h-btn" href="../popcorn/charles-01/current/companion/#build">${ICO.self}조립 시작</a><a class="h-btn" href="../popcorn/charles-01/current/companion/#book">${ICO.print}학생 교재</a></div>
+          <a class="h-lab-img" href="../popcorn/charles-01/current/companion/#home" aria-label="팝콘실험실 샤를 1호 시작하기"><img src="../popcorn/charles-01/current/assets/cover-kit-branded.svg" alt="실제 종이 자석 악어와 물고기·당근 키트" loading="lazy" width="1200" height="675"><span class="h-badge">샤를 1호</span></a>
+          <div class="h-lab-body"><p class="h-kicker">자석 악어와 보내는 일주일</p><h3><a href="../popcorn/charles-01/current/companion/#home">먹이를 먹는 자석 악어</a></h3><p class="h-q">악어는 먹이의 그림을 알아볼까요?</p><p>랩코니와 봉투 열기부터 3D 조립까지. 한·영 읽기, 영상, 관찰 기록과 학생 교재를 함께 펼쳐요.</p>
+            <div class="h-lab-go"><a class="h-btn solid" href="../popcorn/charles-01/current/companion/#home">${ICO.self}팝콘실험실 시작하기</a></div>
           </div>
         </article></div>
       </div></section>
