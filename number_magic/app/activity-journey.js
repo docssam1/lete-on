@@ -33,7 +33,7 @@ export async function mount(host,uid,lang='ko',options={}){
  if(!host?.isConnected)return null;
  host.__livingLesson?.dispose();
  const tr=(ko,en,zh)=>lang==='en'?en:lang==='zh'?zh:ko;
- let state=restoreJourney(uid,options.saved),visual=null,disposed=false,busy=false,saved=false,writing=false,timer=0,sequence=0,uiTimer=0;
+ let state=restoreJourney(uid,options.saved),visual=null,disposed=false,busy=false,saved=false,writing=false,timer=0,sequence=0,uiTimer=0,pendingDisplay=null;
  const scroller=host.closest('#screen');
  const session=globalThis.crypto?.randomUUID?.()||Date.now()+'-'+Math.random();
  const $=s=>host.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -41,12 +41,12 @@ export async function mount(host,uid,lang='ko',options={}){
  host.classList.add('nm-live-lesson','nm-journey');host.dataset.lesson=uid;
  host.innerHTML=`<header class="nm-live-head"><h2></h2><span class="nm-live-round"></span></header>
   <p class="nm-journey-caption">${tr('마법 노트 · 비채점 조작 연습','Magic notebook · unscored practice','魔法笔记 · 不计分操作练习')}</p>
-  <ol class="nm-journey-roles"></ol><p class="nm-live-question"></p>
+  <ol class="nm-journey-roles"></ol><div class="nm-journey-board"><div class="nm-journey-visual"><p class="nm-live-question"></p>
   <div class="nm-live-stage" data-renderer="loading"><div class="nm-live-loading" role="status">${tr('입체 교구를 준비하고 있어요','Preparing the 3D pieces','正在准备立体教具')}</div><div class="nm-journey-labels" aria-hidden="true"></div><div class="nm-journey-fallback"></div></div>
-  <div class="nm-journey-legend"></div><div class="nm-live-equation" aria-live="polite" aria-atomic="true"></div>
+  <div class="nm-journey-legend"></div></div><div class="nm-journey-work"><div class="nm-live-equation" aria-live="polite" aria-atomic="true"></div>
   <div class="nm-journey-evidence"></div><div class="nm-journey-controls"></div>
-  <p class="nm-live-feedback" role="status"></p><p class="nm-journey-save" role="status"></p>
-  <div class="nm-live-actions">${button('undo','',tr('되돌리기','Undo','撤回'))}${button('hint','',tr('도움 받기','Get help','提示'))}${button('reset','',tr('이 장면 처음부터','Restart scene','重做本场景'))}${button('retry','',tr('저장 다시 시도','Retry save','重试保存'))}${button('next','',tr('다음 장면','Next scene','下一场景'))}${button('town','',tr('마을로','Back to town','回到村庄'))}</div>
+  <p class="nm-live-feedback" role="status"></p></div></div><p class="nm-journey-save" role="status"></p>
+  <div class="nm-live-actions">${button('undo','',tr('되돌리기','Undo','撤回'))}${uid==='A-02'?`<details class="nm-journey-tools"><summary>${tr('도구','Tools','工具')}</summary><div>${button('hint','',tr('도움 받기','Get help','提示'))}${button('reset','',tr('이 장면 처음부터','Restart scene','重做本场景'))}${button('retry','',tr('저장 다시 시도','Retry save','重试保存'))}</div></details>`:button('hint','',tr('도움 받기','Get help','提示'))+button('reset','',tr('이 장면 처음부터','Restart scene','重做本场景'))+button('retry','',tr('저장 다시 시도','Retry save','重试保存'))}${button('next','',tr('다음 장면','Next scene','下一场景'))}${button('town','',tr('마을로','Back to town','回到村庄'))}</div>
   <p class="nm-live-render-note" hidden>${tr('입체 화면 대신 같은 조각과 조작 버튼으로 이어갑니다.','3D is unavailable. The same pieces and controls remain available.','立体画面不可用。相同棋子和操作按钮仍可继续使用。')}</p>`;
  const stage=$('.nm-live-stage');
  const numbers=(action,values,label=n=>n)=>values.map(n=>button(action,n,label(n))).join('');
@@ -104,11 +104,13 @@ export async function mount(host,uid,lang='ko',options={}){
   return [...groups.entries()].map(([key,objects])=>`<div class="nm-journey-card-group" data-group="${key}">${objects.map(o=>`<span data-object="${o.id}" data-origin="${o.origin}" class="${o.mark}" title="${o.id}">${o.mark==='stripe'?'▰':'●'}</span>`).join('')}</div>`).join('');
  }
  function render(snap=false){
-  if(disposed)return;const v=view(state),c=copy(v);
+  if(disposed)return;const displayState=pendingDisplay||state,v=view(displayState),c=copy(v);
+  const active=document.activeElement,focusAction=host.contains(active)?active.dataset.action:null,focusValue=active?.dataset.value;
   host.dataset.complete=String(v.complete);host.dataset.phase=v.phase;host.dataset.scene=v.id;host.dataset.saved=String(saved);host.dataset.kind=v.kind;
   $('h2').textContent=c.title;$('.nm-live-round').textContent=`${v.index+1} / ${v.sceneCount}`;
   $('.nm-journey-roles').innerHTML=scenes(uid).map((d,i)=>`<li${i===v.index?' aria-current="step"':''}>${i+1} ${i===v.index?esc(c.role):esc(d.word?tr('이야기','Story','故事'):i?tr('다른 수','Other numbers','其他数字'):tr('발견','Discover','发现'))}${state.states[i].verified&&state.states[i].meaning?' ✓':''}</li>`).join('');
-  $('.nm-live-question').textContent=c.question;$('.nm-live-equation').textContent=equation(state,lang);
+  host.dataset.moving=String(!!pendingDisplay);
+  $('.nm-live-question').textContent=c.question;$('.nm-live-equation').textContent=equation(displayState,lang);
   $('.nm-journey-legend').textContent=v.kind==='ten'?tr('● 원래 조각 · ▰ 옮기는 조각','● Starting pieces · ▰ Moving pieces','● 原来棋子 · ▰ 移动棋子'):v.kind==='integer'?tr('처음 수 = 출발 · 뒤 수 = 보는 쪽 · 가운데 기호 = 걷기','First number: start · Following sign: facing · Operation: walking','第一个数：起点 · 后数符号：面向 · 运算符号：走法'):tr('● A 모임 · ▰ B 모임 — 따로 나눠요','● Collection A · ▰ Collection B — divide separately','● A堆 · ▰ B堆 — 分别分组');
   const evidence=$('.nm-journey-evidence');
   if(v.kind==='common'&&v.word)$('.nm-journey-legend').textContent=v.word==='divide'?tr('● 6m 리본 · ▰ 8m 리본 — 같은 길이로 잘라요','● 6 m ribbon · ▰ 8 m ribbon — cut equal lengths','● 6米丝带 · ▰ 8米丝带 — 等长剪开'):tr('● 6분마다 · ▰ 8분마다 — 0 다음 첫 만남','● Every 6 min · ▰ Every 8 min — first meeting after zero','● 每6分钟 · ▰ 每8分钟 — 0之后的首次相遇');
@@ -127,33 +129,39 @@ export async function mount(host,uid,lang='ko',options={}){
   $('.nm-journey-fallback').innerHTML=fallback(v);
   $('[data-action="undo"]').disabled=!v.history.length||writing;
   $('[data-action="next"]').disabled=!(v.verified&&v.meaning&&saved)||v.index===v.sceneCount-1||writing;
-  $('[data-action="next"]').hidden=v.index===v.sceneCount-1;
+  $('[data-action="next"]').hidden=v.index===v.sceneCount-1||(uid==='A-02'&&!(v.verified&&v.meaning));
   $('[data-action="retry"]').hidden=saved||writing;
+  if(!saved&&!writing&&state.saveStatus==='pending'&&$('.nm-journey-tools'))$('.nm-journey-tools').open=true;
   $('.nm-journey-save').textContent=writing?tr('저장 중…','Saving…','正在保存…'):saved?tr(v.complete?'모든 장면의 개념·적용 확인을 저장했어요. 점수·코인은 바뀌지 않아요.':'조작 상태를 저장했어요.','Practice state saved; scored progress and coins are unchanged.','练习状态已保存，不改变分数和金币。'):tr('저장을 확인하지 못했어요. 다시 시도해 주세요.','Save not confirmed. Please retry.','未确认保存，请重试。');
   if(busy)host.querySelectorAll('.nm-journey-controls button,.nm-journey-controls input').forEach(b=>b.disabled=true);
-  visual?.sync(v,snap);
+  visual?.sync(view(state),snap,v);
+  if(uid==='A-02'&&focusAction){const replacement=[...host.querySelectorAll('[data-action]')].find(b=>b.dataset.action===focusAction&&b.dataset.value===focusValue&&!b.disabled&&!b.hidden);replacement?.focus({preventScroll:true});}
   options.onStatus?.({complete:v.complete,saved,assisted:v.assisted,completed:v.completed});
  }
  async function persist(quiet=false){
   writing=true;if(!quiet){saved=false;render();}const rev=state.revision,seq=state.actionSequence,output=JSON.parse(JSON.stringify(state));
   try{if(typeof options.save!=='function')throw Error('No persistence writer');output.saveStatus='saved';await options.save(output);if(disposed||rev!==state.revision||seq!==state.actionSequence)return;saved=true;state.saveStatus='saved';}
   catch{if(rev===state.revision&&seq===state.actionSequence){saved=false;state.saveStatus='pending';}}
-  finally{if(!disposed){writing=false;if(!quiet)render();else if(!saved){host.dataset.saved='false';$('.nm-journey-save').textContent=tr('이 기기의 저장을 확인하지 못했어요. 저장을 다시 시도해 주세요.','Device save not confirmed. Please retry.','未确认本机保存，请重试。');$('[data-action="retry"]').hidden=false;options.onStatus?.({complete:view(state).complete,saved:false});}}}
+  finally{if(!disposed){writing=false;if(!quiet)render();else if(!saved){host.dataset.saved='false';$('.nm-journey-save').textContent=tr('이 기기의 저장을 확인하지 못했어요. 저장을 다시 시도해 주세요.','Device save not confirmed. Please retry.','未确认本机保存，请重试。');$('[data-action="retry"]').hidden=false;if($('.nm-journey-tools'))$('.nm-journey-tools').open=true;options.onStatus?.({complete:view(state).complete,saved:false});}}}
  }
  async function dispatch(action,value){
   if(disposed||writing)return;
   if(action==='town'){options.onTown?.();return;}
   if(action==='retry'){await persist();return;}
   if(busy&&!['undo','reset'].includes(action))return;
-  const before=view(state);state=act(state,action,value,`${session}:${++sequence}`);
+  const beforeState=JSON.parse(JSON.stringify(state)),before=view(state);state=act(state,action,value,`${session}:${++sequence}`);
   if(view(state).complete)state=finalize(state);
   const after=view(state),changed=after.revision!==before.revision;
   busy=changed&&['move','start','face','step','regroup'].includes(action)&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
-  clearTimeout(timer);if(busy)timer=setTimeout(()=>{busy=false;render();},750);
+  pendingDisplay=busy&&uid==='A-02'&&action==='move'&&visual?beforeState:null;
+  clearTimeout(timer);if(busy&&!pendingDisplay)timer=setTimeout(()=>{busy=false;render();},750);
   render(action==='next'||action==='reset'||action==='undo');
   await persist();
-  if(!busy){const focus=$('.nm-journey-controls button:not(:disabled),.nm-journey-controls input');focus?.focus({preventScroll:true});}
+  if(!busy){const same=uid==='A-02'&&action==='select'?[...host.querySelectorAll('[data-action="select"]')].find(b=>b.dataset.value===String(value)):null;const focus=same||$('.nm-journey-controls button:not(:disabled),.nm-journey-controls input');focus?.focus({preventScroll:true});}
+  if(uid==='A-02'&&!['hint','retry','town'].includes(action))keepLearningVisible();
  }
+ function keepLearningVisible(){if(!scroller||disposed)return;const top=scroller.getBoundingClientRect().top+10;scroller.scrollTop+=host.getBoundingClientRect().top-top;}
+ function settled(){if(disposed||!pendingDisplay)return;pendingDisplay=null;busy=false;render();if(document.activeElement===document.body)$('.nm-journey-controls button:not(:disabled),.nm-journey-controls input')?.focus({preventScroll:true});}
  function captureUI(){if(disposed)return;const active=document.activeElement;state.ui={scrollTop:scroller?.scrollTop||0,action:host.contains(active)?active.dataset.action:null,value:host.contains(active)?active.dataset.value:null};}
  function saveUI(){clearTimeout(uiTimer);uiTimer=setTimeout(()=>{if(disposed||!saved)return;if(writing){saveUI();return;}captureUI();persist(true);},500);}
  function click(e){const b=e.target.closest('button[data-action]');if(b&&host.contains(b)&&!b.disabled){captureUI();dispatch(b.dataset.action,b.dataset.value);}}
@@ -164,11 +172,12 @@ export async function mount(host,uid,lang='ko',options={}){
  const controller={dispose,getState:()=>JSON.parse(JSON.stringify(state)),getView:()=>view(state),getManifest:()=>({version:1,unit:uid,graded:false,reward:0,roles:scenes(uid),invariants:['identity','quantity','operation-role','independent-transfer']}),getVisualState:()=>visual?.inspect(),dispatch};
  host.__livingLesson=controller;render(true);await persist();
  try{
-  const [T,chars,module]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js?v=20261003-dot-journeys'),import('./journey-stage.js')]);
+  const [T,chars,module]=await Promise.all([import('../../world-explorer/vendor/three.module.js'),import('./char3d/char3d.js?v=20261003-dot-journeys'),import('./journey-stage.js?v=20261014-arrival')]);
   if(disposed||!host.isConnected)return controller;
-  visual=module.createStage(stage,T,chars,view(state),id=>dispatch('select',id),()=>{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;busy=false;render();}});
+  visual=module.createStage(stage,T,chars,view(state),id=>dispatch('select',id),()=>{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;pendingDisplay=null;busy=false;render();}},settled);
   stage.dataset.renderer='webgl';visual.sync(view(state),true);
  }catch{if(!disposed){stage.dataset.renderer='fallback';$('.nm-live-render-note').hidden=false;}}
  if(!disposed&&options.saved?.ui)requestAnimationFrame(()=>{if(disposed)return;const ui=options.saved.ui;if(scroller)scroller.scrollTop=ui.scrollTop||0;const b=[...host.querySelectorAll('[data-action]')].find(b=>b.dataset.action===ui.action&&b.dataset.value===ui.value&&!b.disabled);b?.focus({preventScroll:true});});
+ else if(uid==='A-02')requestAnimationFrame(keepLearningVisible);
  return controller;
 }

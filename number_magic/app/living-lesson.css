@@ -108,6 +108,39 @@ html .nm-unit-view[data-learning-band] .nm-journey .nm-live-feedback{font-size:2
 @media(max-width:480px){.nm-strategy-steps li{font-size:12px;gap:4px;padding-inline:0}.nm-strategy-steps li span{font-size:10px}.nm-strategy-lesson .nm-live-stage{height:330px}.nm-strategy-lesson .nm-live-equation{font-size:23px}.nm-strategy-labels span{font-size:16px}.nm-strategy-lesson[data-kind="numberLine"] .nm-strategy-labels span[data-object^="tick-"]{font-size:14px}.nm-strategy-lesson .nm-live-feedback{min-height:0}.nm-strategy-lesson .nm-live-actions .next{margin-left:0}.nm-strategy-memory{font-size:18px}}
 }
 /* 유아 수직선 뛰기(N-07, app/hop-lesson.js) — 화면 전용 */
+/* A-02: the manipulative stays beside its current action, not above a long tool list. */
+@media screen{
+.nm-journey[data-lesson="A-02"]{margin-bottom:12px}
+.nm-journey[data-lesson="A-02"] .nm-live-head{padding-bottom:6px}
+.nm-journey[data-lesson="A-02"] .nm-live-head h2{font-size:24px;line-height:1.25}
+.nm-journey[data-lesson="A-02"] .nm-journey-caption{font-size:16px;margin:3px 0}
+.nm-journey[data-lesson="A-02"] .nm-journey-roles{font-size:16px;gap:4px 8px;margin:4px 0}
+.nm-journey[data-lesson="A-02"] .nm-live-question{margin:6px 0;line-height:1.3}
+.nm-journey[data-lesson="A-02"] .nm-live-stage{height:clamp(240px,30dvh,340px)}
+.nm-journey[data-lesson="A-02"] .nm-journey-legend{font-size:18px;margin:4px 0}
+.nm-journey[data-lesson="A-02"] .nm-live-equation{font-size:32px;min-height:48px;padding:3px 0;line-height:1.4}
+.nm-journey[data-lesson="A-02"] .nm-journey-evidence{font-size:18px;line-height:1.4;margin:4px 0}
+.nm-journey[data-lesson="A-02"] .nm-journey-controls{gap:8px;margin:8px 0}
+.nm-journey[data-lesson="A-02"] .nm-journey-controls>p{font-size:20px;margin:0;line-height:1.4}
+.nm-journey[data-lesson="A-02"] .nm-journey-piece-controls{flex-wrap:nowrap;overflow-x:auto;gap:8px;padding:3px 2px 5px}
+.nm-journey[data-lesson="A-02"] .nm-journey-piece-controls button{flex:none}
+.nm-journey[data-lesson="A-02"] .nm-live-feedback:empty{display:none}
+.nm-journey[data-lesson="A-02"] .nm-journey-save{font-size:16px;margin:4px 0;line-height:1.4}
+.nm-journey[data-lesson="A-02"] .nm-live-actions{display:flex;flex-wrap:wrap;padding-top:8px;gap:8px;align-items:start}
+html .nm-unit-view[data-learning-band] .nm-journey[data-lesson="A-02"] .nm-live-actions>button{min-width:48px;min-height:48px;font-size:18px;flex:1;padding:8px}
+.nm-journey-tools{flex:1;min-width:64px}
+.nm-journey-tools summary{min-height:48px;box-sizing:border-box;display:grid;place-items:center;border:1px solid #9cab9c;border-radius:8px;cursor:pointer;font-size:18px;font-weight:700;background:#fffef9;color:#244436}
+.nm-journey-tools summary:focus-visible{outline:3px solid #245e49;outline-offset:3px}
+.nm-journey-tools[open]{flex-basis:100%;order:4}
+.nm-journey-tools>div{display:flex;flex-wrap:wrap;gap:8px;padding-top:8px}
+@media(min-width:960px){
+.nm-journey[data-lesson="A-02"]{max-width:1100px}
+.nm-journey[data-lesson="A-02"] .nm-journey-board{display:grid;grid-template-columns:minmax(340px,1.2fr) minmax(320px,1fr);gap:24px;align-items:start}
+.nm-journey[data-lesson="A-02"] .nm-live-stage{height:clamp(300px,42dvh,440px)}
+.nm-journey[data-lesson="A-02"] .nm-journey-work{padding-top:48px}
+}
+/* Short windows and enlarged text retain readable objects and may scroll. */
+}
 @media screen{
 .nm-hop-stage{background:#eef4e6;cursor:pointer;height:clamp(220px,42vw,340px)}
 .nm-hop-svg{width:100%;height:100%;display:block}
