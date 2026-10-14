@@ -437,6 +437,15 @@ body.embedded .connect-card .paper-diagram {
   body.embedded .connect-board { gap: 64px; padding: 4px 6px; }
   body.embedded .connect-column { gap: 6px; }
 }
+/* 낮고 넓은 틀(3~4명 배틀, 틀 하나 약 620x260·490x240)에서 선 잇기를 세 줄 두 칸으로 두면
+   그림이 32~38px로 작아진다. 접어 자른 종이를 윗줄, 펼친 결과를 아랫줄에 세 개씩 놓고
+   위아래로 잇는다(선은 app.js renderConnections가 자리를 보고 위아래로 긋는다). */
+@media (orientation: landscape) and (max-height: 560px) {
+  body.embedded .paper-stage:has(.paper.activity-connect-match) { padding-top: 2px; }
+  body.embedded .connect-board { grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 28px; padding: 2px 4px; }
+  body.embedded .connect-column { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr); gap: 8px; }
+  body.embedded .connect-card { grid-template-columns: 22px minmax(0, 1fr); padding: 2px 6px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .fold-shell *, .fold-shell *::before, .fold-shell *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
