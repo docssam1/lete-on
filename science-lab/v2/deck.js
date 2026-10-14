@@ -215,7 +215,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   $app.querySelector('[data-a=prev]').onclick = prev;
   $app.querySelector('[data-a=full]').onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); } catch { /* 지원 안 함 */ } };
   const $notes = $app.querySelector('.dk-notes');
-  const toggleNotes = () => { notesOn = !notesOn; if ($notes) $notes.hidden = !notesOn; $app.querySelector('[data-a=notes]')?.setAttribute('aria-pressed', notesOn); };
+  const toggleNotes = () => { notesOn = $notes ? $notes.hidden : !notesOn; if ($notes) $notes.hidden = !notesOn; $app.querySelector('[data-a=notes]')?.setAttribute('aria-pressed', notesOn); };
   $app.querySelector('[data-a=notes]')?.addEventListener('click', toggleNotes);
   $app.querySelector('[data-a=battle]')?.addEventListener('click', () => { battle = !battle; renderDeck($app, arguments[1]); });
   if (teach) stage.addEventListener('click', (e) => { if (!e.target.closest('button,canvas,video,a,input,textarea,.dk-3d,.dk-battle')) next(); });
@@ -252,6 +252,8 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
         m.parentElement.classList.add('is-battle');
         m.outerHTML = '<div class="dk-battle dk-magnet-battle"></div>';
         mountMagnetBattle(stage.querySelector('.dk-magnet-battle'), mountLab);
+        // 4:3 태블릿·16:10·낮은 화면에서는 대결 칸이 남은 높이를 다 쓰도록 교사 노트를 접어 둔다(「노트」·N으로 연다, 다른 슬라이드의 노트 설정은 그대로)
+        if ($notes && !$notes.hidden && matchMedia('(min-width: 761px) and (max-aspect-ratio: 16/10), (min-width: 761px) and (max-height: 800px)').matches) { $notes.hidden = true; $app.querySelector('[data-a=notes]')?.setAttribute('aria-pressed', 'false'); }
       } else {
         m.parentElement.classList.add('is-battle');
         m.outerHTML = '<div class="dk-battle dk-lab-battle"></div>';

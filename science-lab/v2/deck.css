@@ -99,7 +99,7 @@
   .dk-3d[data-mount=lab] { display: grid; grid-template-columns: 1fr 27cqw; column-gap: 2cqw; row-gap: .6cqw; align-content: start; }
   .dk-3d[data-mount=lab] .lab3d { display: contents; }
   .dk-3d[data-mount=lab] > *, .dk-3d[data-mount=lab] .lab3d > * { grid-column: 2; margin: 0; padding: 0; }
-  .dk-3d[data-mount=lab] canvas { grid-column: 1 !important; grid-row: 1 / span 8; height: 36cqw !important; border-radius: 1cqw; }
+.dk-3d[data-mount=lab] canvas, .dk-3d[data-mount=lab] .rt2-svg { grid-column: 1 !important; grid-row: 1 / span 8; height: 36cqw !important; border-radius: 1cqw; }
   .dk-3d[data-mount=lab] .lab3d-read { grid-template-columns: repeat(3, 1fr); } .dk-3d[data-mount=lab] .lab-read b { font-size: 2.4cqw; }
   .dk-3d[data-mount=lab] .lab3d-tip { font-size: 1.3cqw; min-height: 0; }
   .dk-3d[data-mount=lab] .lab3d-btns .pour { min-height: 4cqw; font-size: 1.6cqw; }
@@ -151,7 +151,7 @@
 .dk-bt h3 { margin: 0 0 .6cqw; font-size: 1.9cqw; color: var(--n); }
 .dk-bt section:first-child h3 { color: #1E6FD9; } .dk-bt section:last-child h3 { color: #C2410C; }
 .dk-bt .dk-3d[data-mount=lab] { display: block; min-height: 0; }
-.dk-bt .dk-3d canvas { height: 22cqw !important; max-height: none; }
+.dk-bt .dk-3d canvas, .dk-bt .dk-3d .rt2-svg { height: 22cqw !important; max-height: none; }
 .dk-bt .lab-table { font-size: 1.1cqw; }
 .dk-labwrap.is-battle { display: block; }
 .dk-labwrap.is-battle .dk-stepside { display: none; }
@@ -168,7 +168,7 @@
 .mb-team header b { font-size: 1.8cqw; color: #1e6fd9; }
 .mb-team:nth-child(2) header b { color: #c2410c; }
 .mb-team .dk-3d[data-mount=lab] { display: block; min-height: 0; }
-.mb-team canvas { height: 14cqw !important; max-height: none; }
+.mb-team canvas, .mb-team .rt2-svg { height: 14cqw !important; max-height: none; }
 .mb-team .lab-table { display: none; }
 .mb-control { display: flex; align-items: end; gap: .5cqw; margin: .6cqw 0; }
 .mb-control label { flex: 1; min-width: 0; font-size: 1.05cqw; font-weight: 700; }
@@ -182,7 +182,7 @@
 .mb-standings { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: .8cqw; padding: .2cqw 0; background: #fff; }
 .mb-result { flex: 1; margin: .3cqw 0; padding: .8cqw 1cqw; border-radius: .6cqw; background: #eff5ff; font-size: 1.25cqw; font-weight: 700; }
 .mb-next { margin-left: auto; }
-@media (max-width: 760px) { .mb-teams { grid-template-columns: 1fr; } .mb-head h3 { font-size: 22px; } .mb-head p, .mb-team header, .mb-status, .mb-result, .mb-control label, .mb-actual { font-size: 14px; } .mb-team header b { font-size: 20px; } .mb-eyebrow { font-size: 12px; } .mb-team canvas { height: 260px !important; } .mb-control select { min-height: 44px; } .mb-actual button { min-width: 44px; min-height: 44px; } }
+@media (max-width: 760px) { .mb-teams { grid-template-columns: 1fr; } .mb-head h3 { font-size: 22px; } .mb-head p, .mb-team header, .mb-status, .mb-result, .mb-control label, .mb-actual { font-size: 14px; } .mb-team header b { font-size: 20px; } .mb-eyebrow { font-size: 12px; }.mb-team canvas, .mb-team .rt2-svg { height: 260px !important; } .mb-control select { min-height: 44px; } .mb-actual button { min-width: 44px; min-height: 44px; } }
 @media (max-width: 760px) { .dk-bt { grid-template-columns: 1fr; } }
 .dk-fix { margin: .6cqw 0 0; font-weight: 500; color: #1B2340; } .dk-fix b { color: var(--t); margin-right: .6cqw; }
 .dk-sc[hidden], .dk-go[hidden] { display: none !important; }

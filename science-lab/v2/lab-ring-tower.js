@@ -24,6 +24,14 @@ const upsOf = (shape) => String(shape || '').split('·').map((s) => s.trim()[0])
 const REDUCED = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const floatPairs = (ups) => ups.slice(1).map((u, i) => (ups[i] !== u ? i : -1)).filter((i) => i >= 0);   // 뜬 틈(i = i번째와 i+1번째 고리 사이)
 
+// 예상 보기: 고른 고리를 뒤집으면 어느 틈이 뜰지(모두 붙은 탑에서 처음 한 번 묻는다)
+function predictOptionsFor(i, n) {
+  const lo = i > 0 ? i - 1 : -1, hi = i < n - 1 ? i : -1, all = Array.from({ length: n - 1 }, (_, k) => k), nm = (p) => `${p + 1}·${p + 2}번 사이`;
+  if (lo >= 0 && hi >= 0) return [[`${nm(lo)}만 뜬다`, [lo]], [`${nm(hi)}만 뜬다`, [hi]], [`${nm(lo)}와 ${nm(hi)}가 둘 다 뜬다`, [lo, hi]], ['아무 데도 뜨지 않는다', []]];
+  const p = lo >= 0 ? lo : hi;
+  return [[`${nm(p)}가 뜬다`, [p]], ['아무 데도 뜨지 않는다', []], ['모든 고리 사이가 뜬다', all]];
+}
+
 // 3D 가상 실험실(2026-10-13 재설계 — 원장 승인안): 실제 교구처럼 검은 페라이트 고리 · 번호 스티커.
 // 흐름: ① 예상 — 모두 붙은 탑에서 시작, 고리를 고르면 「뒤집으면 어디가 뜰까?」(처음 한 번)
 //       ② 조작 — 위 고리를 빼 두고, 고른 고리를 연필 위로 빼서 반 바퀴 돌린 뒤 다시 끼운다. 내려앉으면 바뀐 틈을 가까이 본다.
@@ -58,6 +66,11 @@ export async function mountRingTower(el, opts = {}) {
     <table class="lab-table"><thead><tr><th>쌓은 모양(아래→위)</th><th>떠 있는 층</th><th>탑 높이(칸)</th></tr></thead><tbody></tbody></table>`;
   const $ = (q) => el.querySelector(q), host = $('.lab3d'), canvas = $('canvas'), tbody = $('tbody'), card = $('[data-r=card]'), recBtn = $('[data-act=record]'), cmpBtn = $('[data-act=compare]');
   const tip = (h) => { $('[data-r=tip]').innerHTML = h; };
+  const bring = (node) => {   // 학생 실험실 페이지에서만: 새로 연 카드·단추가 화면 아래(하단 고정 막대 밑)로 밀려나지 않게(덱·전체 화면은 자체 배치라 건드리지 않는다)
+    if (!node || !el.closest('#lab') || node.closest('.fl-panel')) return;
+    const r = node.getBoundingClientRect(), bar = document.querySelector('.bottom')?.getBoundingClientRect(), limit = (bar && bar.top > 0 ? bar.top : innerHeight) - 12;
+    if (r.bottom > limit) window.scrollBy(0, Math.max(0, Math.min(r.bottom - limit, r.top - 64)));   // 아래 끝이 막대 위로 오게, 위 끝은 머리띠 아래에 남게
+  };
   let stage;
   try { stage = new Stage(canvas); } catch (_) { return mountRingTower2D(el, opts); }
   const { T, VIEW_TH, R_OUT } = TW.TOWER, BASE_Y = 0.3, KAN = T;       // 1칸 = 고리 두께(월드 0.28)
@@ -159,12 +172,7 @@ export async function mountRingTower(el, opts = {}) {
     el.querySelectorAll('[data-flip]').forEach((b) => b.classList.toggle('is-sel', +b.dataset.flip === i));
   };
   // ① 예상: 처음 고른 고리에 대해서만 묻는다. 고르지 않고 뒤집어도 된다(막지 않는다).
-  const predictOptions = (i) => {
-    const lo = i > 0 ? i - 1 : -1, hi = i < n - 1 ? i : -1, all = Array.from({ length: n - 1 }, (_, k) => k), nm = (p) => `${p + 1}·${p + 2}번 사이`;
-    if (lo >= 0 && hi >= 0) return [[`${nm(lo)}만 뜬다`, [lo]], [`${nm(hi)}만 뜬다`, [hi]], [`${nm(lo)}와 ${nm(hi)}가 둘 다 뜬다`, [lo, hi]], ['아무 데도 뜨지 않는다', []]];
-    const p = lo >= 0 ? lo : hi;
-    return [[`${nm(p)}가 뜬다`, [p]], ['아무 데도 뜨지 않는다', []], ['모든 고리 사이가 뜬다', all]];
-  };
+  const predictOptions = (i) => predictOptionsFor(i, n);
   const showPredict = (i) => {
     const opts2 = predictOptions(i);
     card.hidden = false;
@@ -177,6 +185,7 @@ export async function mountRingTower(el, opts = {}) {
       tip(`예상: <b>${text}</b>. 이제 뒤집어 확인해요.`);
     }));
     card.querySelector('[data-act=flip-sel]').addEventListener('click', () => flip(i));
+    bring(card);
     tip(`${i + 1}번 고리를 골랐어요. 뒤집으면 어디가 뜰지 예상을 고르고 뒤집어 보세요.`);
   };
   const tap = (i) => {
@@ -195,6 +204,12 @@ export async function mountRingTower(el, opts = {}) {
     const from = holders.map((h) => h.position.clone());
     flipping = { i, p: 0, from, swapped: false };
     lastFlip = i;
+    // 캔버스가 화면 밖이면 엔진이 그리기를 멈춰 뒤집기가 멈춘다(가로 휴대폰에서 단추만 보고 누를 때). 학생 페이지면 탑을 보이게 올리고, 아니면 바로 끝낸다.
+    const cr = canvas.getBoundingClientRect(), seen = Math.min(cr.bottom, innerHeight) - Math.max(cr.top, 0);
+    if (seen < Math.min(cr.height, innerHeight) * 0.4) {
+      if (el.closest('#lab') && !canvas.closest('.fl-panel')) window.scrollBy(0, cr.top - 64);
+      else { finishFlip(); return; }
+    }
     if (REDUCED()) { finishFlip(); return; }
     if (!battle) glideTo(BOX.flip);
     tip(i < n - 1 ? `위 고리를 잠깐 빼 두고, ${i + 1}번 고리를 빼서 뒤집은 뒤 다시 끼워요.` : `${i + 1}번 고리를 빼서 뒤집은 뒤 다시 끼워요.`);
@@ -216,6 +231,7 @@ export async function mountRingTower(el, opts = {}) {
     setPhase('explore'); recBtn.disabled = false;
     const lo = Math.max(0, i - 1), hi = Math.min(n - 1, i + 1);
     setTimeout(() => { if (!flipping && phase === 'explore' && !compare) glideTo(ringsBox(lo, hi)); }, REDUCED() ? 0 : 550);   // 내려앉은 뒤 바뀐 틈을 가까이
+    bring(recBtn.closest('.lab3d-btns'));
     tip(`${i + 1}번 고리를 뒤집어 다시 끼웠어요. 아래·위 틈을 잘 보세요. 어디가 뜨고 어디가 붙었나요? 다 봤으면 <b>표에 적기</b>를 눌러요.`);
   }
   function tellBattle(i) {
@@ -306,6 +322,7 @@ export async function mountRingTower(el, opts = {}) {
     }
     card.hidden = false; card.innerHTML = `${mine}<p class="rt-why">${why}</p><p class="rt-more">다른 쌍은 <b>${focusPair + 1}·${focusPair + 2}번 사이의 극 ↻</b>을 눌러 봐요. 고리를 또 뒤집어 더 높은(낮은) 탑도 만들어 보세요.</p>`;
     tip(`적었어요! 떠 있는 층 <b>${m.floating}곳</b>, 탑 높이 <b>${m.height}칸</b>.`);
+    bring(recBtn.closest('.lab3d-btns'));   // 다음에 누를 번호 단추가 결과 카드에 밀려 화면 밖으로 가지 않게(탑은 화면 안에 남는 만큼만)
   });
   // 두 탑 비교: 적은 줄 두 개를 같은 눈금으로 나란히(기본은 마지막 두 줄, 표의 줄을 누르면 바꾼다)
   function buildCompare() {
@@ -355,58 +372,191 @@ export async function mountRingTower(el, opts = {}) {
   return { rows, pause() {}, dispose };
 }
 
-// WebGL이 없는 기기: 옆모습 그림으로 하는 실험실(같은 모델·같은 표)
-function mountRingTower2D(el, { rings = 4, onRecord, rows = [] } = {}) {
-  const ups = Array.from({ length: rings }, (_, i) => (i % 3 === 0 ? 'N' : 'S'));
-  const colors = ['#3b6fd1', '#f0b429', '#3fae5b', '#e0743a', '#8e5bd1'];
+// WebGL이 없는 기기: 옆모습 그림으로 하는 실험실. 3D와 같은 모델·같은 흐름(예상 → 뒤집기 → 적기 → 극 한 쌍씩 · 두 탑 비교)·같은 표.
+// 적기 전에는 잰 값을 「?」로 두고, 극(N·S)은 글자·색·읽어 주기 이름 어디에도 내지 않는다.
+function mountRingTower2D(el, opts = {}) {
+  const n = Math.max(2, Math.min(5, opts.rings || 4)), rows = opts.rows || [], onRecord = opts.onRecord, battle = opts.mode === 'battle';
+  const ups = Array.from({ length: n }, (_, i) => (battle && i % 3 !== 0 ? 'S' : 'N')), start = ups.slice();
   el.innerHTML = `
-    <div class="lab">
-      <svg class="lab-svg" viewBox="0 0 220 300" role="img" aria-label="고리 자석 탑. 고리를 누르면 뒤집혀요."></svg>
-      <div class="lab-side">
-        <p class="lab-read"><span>떠 있는 층</span><b data-r="floating">0</b></p>
-        <p class="lab-read"><span>탑 높이</span><b data-r="height">0</b><small>칸</small></p>
-        <p class="lab-tip">고리를 누르면 뒤집혀요.</p>
-        <button class="btn" data-act="record" type="button">표에 적기</button>
+    <div class="lab3d lab3d--ring-tower lab2d${battle ? ' is-battle' : ''}" data-phase="${battle ? 'battle' : 'start'}">
+      <svg class="rt2-svg" viewBox="0 0 320 300" role="img" aria-label="고리 자석 탑 옆모습 그림. 그림의 고리나 아래 번호 단추를 눌러 고르고 뒤집어요."></svg>
+      <div class="lab3d-read">
+        <p class="lab-read rt-val"><span>떠 있는 층</span><b data-r="floating">?</b><small>곳</small></p>
+        <p class="lab-read rt-val"><span>탑 높이</span><b data-r="height">?</b><small>칸</small></p>
+        <button class="lab-read rt-inspect" data-act="inspect-pair" type="button" hidden><span data-r="pair">1·2번 사이의 극 ↻</span><b data-r="facing">N ↔ N</b><small>윗면 <span data-r="shape" class="rt-shape"></span></small></button>
+      </div>
+      <p class="lab3d-tip" data-r="tip"></p>
+      <div class="rt-card" data-r="card" hidden></div>
+      <div class="lab3d-btns">
+        <div class="rt-flips" role="group" aria-label="고리 고르기·뒤집기(아래에서부터)">${Array.from({ length: n }, (_, i) => `<button class="btn rt-flip" type="button" data-flip="${i}" aria-label="아래에서 ${i + 1}번째 고리 ${battle ? '뒤집기' : '고르기·뒤집기'}">${i + 1}번 ↻</button>`).join('')}</div>
+        <button class="btn primary" data-act="record" type="button"${battle ? '' : ' disabled'}>표에 적기</button>
+        <button class="btn" data-act="compare" type="button" hidden>두 탑 비교</button>
       </div>
     </div>
     <table class="lab-table"><thead><tr><th>쌓은 모양(아래→위)</th><th>떠 있는 층</th><th>탑 높이(칸)</th></tr></thead><tbody></tbody></table>`;
-  const svg = el.querySelector('svg'), tbody = el.querySelector('tbody');
-  const SCALE = 26, BASE_Y = 270, W = 150, CX = 110;
+  const $ = (q) => el.querySelector(q), host = $('.lab3d'), svg = $('svg'), tbody = $('tbody'), card = $('[data-r=card]'), recBtn = $('[data-act=record]'), cmpBtn = $('[data-act=compare]');
+  const tip = (h) => { $('[data-r=tip]').innerHTML = h; };
+  const bring = (node) => {   // 학생 페이지에서만: 새 카드·단추를 아래 고정 막대 위로
+    if (!node || !el.closest('#lab')) return;
+    const r = node.getBoundingClientRect(), bar = document.querySelector('.bottom')?.getBoundingClientRect(), limit = (bar && bar.top > 0 ? bar.top : innerHeight) - 12;
+    if (r.bottom > limit) window.scrollBy(0, Math.max(0, Math.min(r.bottom - limit, r.top - 64)));
+  };
+  let model = towerModel(ups), shown = battle, phase = battle ? 'battle' : 'start', sel = -1, focusPair = 0;
+  let pred = null, predAsked = battle, lastFlip = -1, compare = false, cmpSel = [], recWas = false;
+  const setPhase = (p) => { phase = p; host.dataset.phase = p; };
 
+  // 그림: 1칸 = 22px. 고리는 검은 페라이트 · 번호 스티커(뒤집으면 번호가 거꾸로) · 고른 고리는 노란 테두리.
+  const K = 22, BASE = 266, RW = 120, RAD = 5;
+  const towerSvg = (u, cx, opt = {}) => {
+    const m = towerModel(u), out = [];
+    out.push(`<rect x="${cx - 74}" y="${BASE}" width="148" height="16" rx="6" fill="#b9824a"/><rect x="${cx - 74}" y="${BASE + 12}" width="148" height="4" rx="2" fill="#8d5e30"/>`);
+    out.push(`<rect x="${cx - 5}" y="${BASE - 7.4 * K}" width="10" height="${7.4 * K}" fill="#e2c48e"/><polygon points="${cx - 5},${BASE - 7.4 * K} ${cx + 5},${BASE - 7.4 * K} ${cx},${BASE - 7.4 * K - 14}" fill="#e9cf9f"/><polygon points="${cx - 2},${BASE - 7.4 * K - 9} ${cx + 2},${BASE - 7.4 * K - 9} ${cx},${BASE - 7.4 * K - 14}" fill="#333"/>`);
+    u.forEach((p, i) => {
+      const top = BASE - (m.y[i] + RING_H) * K, h = RING_H * K, flipped = opt.live && p !== start[i];
+      const tx = cx + RW / 2 - 22, ty = top + h / 2;
+      out.push(`<g class="rt2-ring" data-i="${i}"${opt.live ? ` tabindex="0" role="button" aria-label="아래에서 ${i + 1}번째 고리${battle ? ' 뒤집기' : ' 고르기·뒤집기'}"` : ' aria-hidden="true"'}>
+        <rect x="${cx - RW / 2}" y="${top + 0.5}" width="${RW}" height="${h - 1}" rx="${RAD}" fill="#34373d"${opt.live && i === sel ? ' stroke="#f0a51a" stroke-width="3"' : ''}/>
+        <rect x="${cx - RW / 2 + 3}" y="${top + 2}" width="${RW - 6}" height="2.5" rx="1.2" fill="#55595f"/>
+        <rect x="${tx - 9}" y="${ty - 6}" width="18" height="12" rx="2" fill="#f4f1e8"/>
+        <text x="${tx}" y="${ty}" font-size="10" font-weight="800" fill="#1f2937" text-anchor="middle" dominant-baseline="central"${flipped ? ` transform="rotate(180 ${tx} ${ty})"` : ''}>${i + 1}</text></g>`);
+    });
+    return { svg: out.join(''), m };
+  };
   function draw() {
-    const m = towerModel(ups);
-    const parts = [`<rect x="${CX - 70}" y="${BASE_Y}" width="140" height="14" rx="4" fill="#9aa3ad"/>`,
-      `<rect x="${CX - 5}" y="30" width="10" height="${BASE_Y - 30}" rx="4" fill="#b08b5a"/>`];
-    ups.forEach((u, i) => {
-      const top = BASE_Y - (m.y[i] + RING_H) * SCALE, h = RING_H * SCALE;
-      const topC = u === 'N' ? '#E24B4A' : '#3A6BC6', botC = u === 'N' ? '#3A6BC6' : '#E24B4A';
-      parts.push(`<g class="ring" data-i="${i}" tabindex="0" role="button" aria-label="${i + 1}번째 고리, 윗면 ${u}극. 눌러서 뒤집기">
-        <rect x="${CX - W / 2}" y="${top}" width="${W}" height="${h}" rx="6" fill="${colors[i]}"/>
-        <rect x="${CX - W / 2 + 4}" y="${top}" width="${W - 8}" height="4" rx="2" fill="${topC}"/>
-        <rect x="${CX - W / 2 + 4}" y="${top + h - 4}" width="${W - 8}" height="4" rx="2" fill="${botC}"/>
-        <text x="${CX - W / 2 + 12}" y="${top + h / 2 + 5}" font-size="13" font-weight="700" fill="#fff">${u}</text>
-        <text x="${CX + W / 2 - 14}" y="${top + h / 2 + 5}" font-size="12" fill="#fff" text-anchor="end">↻</text></g>`);
+    if (compare) {
+      const parts = cmpSel.map((k, side) => {
+        const r = rows[k], u = upsOf(r.shape), cx = side ? 236 : 84, t = towerSvg(u, cx), top = BASE - t.m.height * K, x = cx - 70;
+        return `${t.svg}<line x1="${x}" y1="${BASE}" x2="${x}" y2="${top}" stroke="#334155" stroke-width="1.6"/><line x1="${x - 5}" y1="${top}" x2="${x + 5}" y2="${top}" stroke="#334155" stroke-width="1.6"/>
+          <text x="${cx}" y="${Math.min(top, BASE - 7.4 * K - 14) - 8}" font-size="12" font-weight="800" fill="#1e2a6e" text-anchor="middle">${side ? '나' : '가'}: ${t.m.height}칸 · 떠 있는 층 ${t.m.floating}</text>`;
+      });
+      svg.setAttribute('viewBox', '0 24 320 266'); svg.innerHTML = parts.join('');
+      svg.setAttribute('aria-label', `두 탑 비교. ${cmpSel.map((k, s) => `${s ? '나' : '가'} 탑 ${rows[k].height}칸, 떠 있는 층 ${rows[k].floating}`).join('. ')}.`);
+      return;
+    }
+    const cx = 176, t = towerSvg(ups, cx, { live: true }), extra = [];
+    if (shown) {   // 적은 뒤: 세운 자 + 맨 위 고리 윗면의 빨간 집게 + 고른 한 쌍의 마주 보는 극
+      const gx = 58, top = BASE - model.height * K;
+      extra.push(`<rect x="${gx - 9}" y="${BASE - 8 * K - 4}" width="18" height="${8 * K + 4}" fill="#f7f3e8" stroke="#d6cdb5"/>`);
+      for (let k = 0; k <= 16; k++) { const y = BASE - k * K / 2, major = k % 2 === 0; extra.push(`<line x1="${gx - 9}" y1="${y}" x2="${gx - 9 + (major ? 9 : 5)}" y2="${y}" stroke="#1f2a37" stroke-width="${major ? 1.4 : .8}"/>${major ? `<text x="${gx + 7}" y="${y}" font-size="8" fill="#1f2a37" text-anchor="end" dominant-baseline="central">${k / 2}</text>` : ''}`); }
+      extra.push(`<line x1="${gx + 9}" y1="${top}" x2="${cx - RW / 2}" y2="${top}" stroke="#d8413c" stroke-width="1.4" stroke-dasharray="3 2"/><rect x="${gx - 12}" y="${top - 2.5}" width="24" height="5" rx="2" fill="#d8413c"/>
+        <text x="${gx}" y="${BASE - 8 * K - 12}" font-size="11" font-weight="800" fill="#1e2a6e" text-anchor="middle">탑 높이 ${model.height}칸</text>`);
+      const a = focusPair, yA = BASE - (model.y[a] + RING_H) * K, yB = BASE - model.y[a + 1] * K, x = cx + RW / 2 + 14;
+      const pole = (y, letter) => `<g><circle cx="${x}" cy="${y}" r="8" fill="${letter === 'N' ? '#c8423c' : '#2f5fb3'}"/><text class="rt2-pole" x="${x}" y="${y}" font-size="10" font-weight="900" fill="#fff" text-anchor="middle" dominant-baseline="central">${letter}</text></g>`;
+      // 아래 고리의 윗면(yA)은 아래쪽에, 위 고리의 아랫면(yB)은 위쪽에 — 붙어 있어도 두 표가 겹치지 않게 최소 20px 벌린다
+      const mid = (yA + yB) / 2, half = Math.max(10, (yA - yB) / 2 + 4), pLo = mid + half, pHi = mid - half;
+      extra.push(`<line x1="${cx + RW / 2 + 2}" y1="${yA}" x2="${x - 8}" y2="${pLo}" stroke="#94a3b8"/><line x1="${cx + RW / 2 + 2}" y1="${yB}" x2="${x - 8}" y2="${pHi}" stroke="#94a3b8"/>`);
+      extra.push(pole(pLo, ups[a]), pole(pHi, ups[a + 1] === 'N' ? 'S' : 'N'));
+    }
+    const had = svg.contains(document.activeElement) ? document.activeElement.dataset?.i : null;   // 키보드로 누른 고리는 다시 그린 뒤에도 초점 유지
+    svg.setAttribute('viewBox', '30 52 236 236'); svg.innerHTML = t.svg + extra.join('');
+    svg.querySelectorAll('.rt2-ring').forEach((g) => {
+      const i = +g.dataset.i;
+      g.addEventListener('click', () => tap(i));
+      g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tap(i); } });
     });
-    svg.innerHTML = parts.join('');
-    el.querySelector('[data-r=floating]').textContent = m.floating;
-    el.querySelector('[data-r=height]').textContent = m.height;
-    svg.querySelectorAll('.ring').forEach((g) => {
-      const flip = () => { const i = +g.dataset.i; ups[i] = ups[i] === 'N' ? 'S' : 'N'; draw(); };
-      g.addEventListener('click', flip);
-      g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
-    });
-    return m;
+    if (had != null) svg.querySelector(`.rt2-ring[data-i="${had}"]`)?.focus();
+  }
+  const showPair = (pair) => {
+    focusPair = Math.max(0, Math.min(n - 2, pair));
+    const a = ups[focusPair], b = ups[focusPair + 1] === 'N' ? 'S' : 'N';
+    $('[data-r=pair]').textContent = `${focusPair + 1}·${focusPair + 2}번 사이의 극 ↻`;
+    $('[data-r=facing]').textContent = `${a} ↔ ${b}`;
+    $('[data-r=shape]').textContent = ups.join(' ');
+    $('[data-act=inspect-pair]').setAttribute('aria-label', `${focusPair + 1}번과 ${focusPair + 2}번 고리 사이의 마주 보는 극: ${a}과 ${b}. 누르면 다음 고리 사이를 봅니다.`);
+  };
+  const reveal = (on) => {
+    shown = on;
+    el.querySelectorAll('.rt-val').forEach((p) => p.classList.toggle('is-locked', !on));
+    $('[data-r=floating]').textContent = on ? model.floating : '?';
+    $('[data-r=height]').textContent = on ? model.height : '?';
+    $('[data-act=inspect-pair]').hidden = !on;
+    showPair(focusPair);
+  };
+  const select = (i) => { sel = i; el.querySelectorAll('[data-flip]').forEach((b) => b.classList.toggle('is-sel', +b.dataset.flip === i)); };
+  const showPredict = (i) => {
+    const opts2 = predictOptionsFor(i, n);
+    card.hidden = false;
+    card.innerHTML = `<p class="rt-q">${i + 1}번 고리를 뒤집어 다시 끼우면, 어느 고리 사이가 뜰까요?</p>
+      <div class="rt-opts" role="group" aria-label="예상 고르기">${opts2.map(([t], k) => `<button type="button" class="rt-opt" data-pred="${k}">${t}</button>`).join('')}</div>
+      <button type="button" class="btn primary rt-go" data-act="flip-sel">${i + 1}번 뒤집어 보기 ↻</button>`;
+    card.querySelectorAll('[data-pred]').forEach((b) => b.addEventListener('click', () => {
+      const [text, pairs] = opts2[+b.dataset.pred]; pred = { ring: i, text, pairs, checked: false };
+      card.querySelectorAll('[data-pred]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      tip(`예상: <b>${text}</b>. 이제 뒤집어 확인해요.`);
+    }));
+    card.querySelector('[data-act=flip-sel]').addEventListener('click', () => flip(i));
+    bring(card);
+    tip(`${i + 1}번 고리를 골랐어요. 뒤집으면 어디가 뜰지 예상을 고르고 뒤집어 보세요.`);
+  };
+  function tap(i) {
+    if (compare) return;
+    if (battle) { flip(i); return; }
+    if (!predAsked) { predAsked = true; select(i); draw(); showPredict(i); return; }
+    flip(i);
+  }
+  function flip(i) {   // 그림에서는 바로 뒤집힌 모습으로 바꾼다(번호 스티커가 거꾸로 된다)
+    if (compare) return;
+    card.hidden = true; lastFlip = i;
+    ups[i] = ups[i] === 'N' ? 'S' : 'N'; model = towerModel(ups); select(-1);
+    showPair(i > 0 ? i - 1 : 0);
+    if (battle) { reveal(true); draw(); tellBattle(i); return; }
+    reveal(false); setPhase('explore'); recBtn.disabled = false; draw();
+    bring(recBtn.closest('.lab3d-btns'));
+    tip(`${i + 1}번 고리를 빼서 뒤집은 뒤 다시 끼웠어요. 아래·위 틈을 잘 보세요. 어디가 뜨고 어디가 붙었나요? 다 봤으면 <b>표에 적기</b>를 눌러요.`);
+  }
+  function tellBattle(i) {
+    const touching = (a) => ups[a] === ups[a + 1];
+    const below = i > 0 ? (touching(i - 1) ? '붙었어요' : '떴어요') : '', abv = i < n - 1 ? (touching(i) ? '붙었어요' : '떴어요') : '';
+    tip(`${i + 1}번 고리를 뒤집었어요. ${below ? `아래 고리와 <b>${below}</b>` : ''}${below && abv ? ', ' : ''}${abv ? `위 고리와 <b>${abv}</b>` : ''}.`);
   }
   function renderRows() {
-    tbody.innerHTML = rows.length ? rows.map((r) => `<tr><td>${r.shape}</td><td>${r.floating}</td><td>${r.height}</td></tr>`).join('')
+    tbody.innerHTML = rows.length ? rows.map((r, k) => `<tr data-row="${k}"${compare && cmpSel.includes(k) ? ` class="is-cmp" data-cmp="${cmpSel.indexOf(k) ? '나' : '가'}"` : ''}><td>${r.shape}</td><td>${r.floating}</td><td>${r.height}</td></tr>`).join('')
       : '<tr><td colspan="3" class="empty">아직 기록이 없어요.</td></tr>';
+    cmpBtn.hidden = battle || rows.length < 2;
   }
-  el.querySelector('[data-act=record]').addEventListener('click', () => {
-    const m = towerModel(ups);
-    const row = { shape: shapeOf(ups), floating: m.floating, height: m.height };
+  recBtn.addEventListener('click', () => {
+    if (!battle && phase === 'start') return;
+    const m = towerModel(ups), row = { shape: shapeOf(ups), floating: m.floating, height: m.height };
     if (!rows.some((r) => r.shape === row.shape)) rows.push(row);
     renderRows(); onRecord?.(rows);
+    if (battle) { tip(`적었어요! 탑 높이 <b>${m.height}칸</b>.`); return; }
+    setPhase('revealed'); showPair(lastFlip > 0 ? lastFlip - 1 : 0); reveal(true); draw();
+    const fp = floatPairs(ups), a = ups[focusPair], b = ups[focusPair + 1] === 'N' ? 'S' : 'N', same = a === b;
+    const why = `${focusPair + 1}·${focusPair + 2}번 사이: 마주 보는 면이 <b>${a}과 ${b}</b> — ${same ? '같은 극끼리는 서로 <b>밀어 내서</b> 떠요.' : '다른 극끼리는 서로 <b>끌어당겨</b> 붙어요.'}`;
+    let mine = '';
+    if (pred && !pred.checked) {
+      pred.checked = true; const ok = pred.pairs.length === fp.length && pred.pairs.every((p) => fp.includes(p));
+      mine = `<p class="rt-mine ${ok ? 'ok' : 'no'}">내 예상: ${pred.text} — ${ok ? '맞았어요' : '다르게 나왔어요. 어디가 떴는지 다시 볼까요?'}</p>`;
+    }
+    card.hidden = false; card.innerHTML = `${mine}<p class="rt-why">${why}</p><p class="rt-more">다른 쌍은 <b>${focusPair + 1}·${focusPair + 2}번 사이의 극 ↻</b>을 눌러 봐요. 고리를 또 뒤집어 더 높은(낮은) 탑도 만들어 보세요.</p>`;
+    tip(`적었어요! 떠 있는 층 <b>${m.floating}곳</b>, 탑 높이 <b>${m.height}칸</b>.`);
+    bring(recBtn.closest('.lab3d-btns'));   // 다음에 누를 번호 단추가 결과 카드에 밀려 화면 밖으로 가지 않게(탑은 화면 안에 남는 만큼만)
   });
-  draw(); renderRows();
-  return { rows };
+  $('[data-act=inspect-pair]').addEventListener('click', () => { showPair((focusPair + 1) % (n - 1)); draw(); });
+  el.querySelectorAll('[data-flip]').forEach((b) => b.addEventListener('click', () => tap(+b.dataset.flip)));
+  function openCompare() {
+    if (rows.length < 2) return;
+    if (!compare) cmpSel = [rows.length - 2, rows.length - 1];
+    compare = true; setPhase('compare');
+    recWas = recBtn.disabled; recBtn.disabled = true; $('[data-act=inspect-pair]').disabled = true;
+    cmpBtn.textContent = '실험으로 돌아가기'; renderRows(); draw();
+    card.hidden = false; card.innerHTML = `<p class="rt-q">두 탑을 같은 눈금으로 나란히 봐요. 떠 있는 층이 많은 탑은 어느 쪽인가요? 높이는요?</p><p class="rt-more">표에서 줄을 누르면 비교할 탑을 바꿔요.</p>`;
+    tip('두 탑을 나란히 놓았어요. 무엇이 다른지 찾아 보세요.');
+  }
+  function closeCompare() {
+    if (!compare) return; compare = false;
+    recBtn.disabled = recWas; $('[data-act=inspect-pair]').disabled = false;
+    setPhase(shown ? 'revealed' : 'explore'); cmpBtn.textContent = '두 탑 비교'; renderRows(); card.hidden = true; draw();
+    svg.setAttribute('aria-label', '고리 자석 탑 옆모습 그림. 그림의 고리나 아래 번호 단추를 눌러 고르고 뒤집어요.');
+    tip('다시 실험해요. 고리를 골라 눌러 보세요.');
+  }
+  cmpBtn.addEventListener('click', () => (compare ? closeCompare() : openCompare()));
+  tbody.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-row]'); if (!compare || !tr) return;
+    const k = +tr.dataset.row; if (cmpSel.includes(k)) return;
+    cmpSel = [cmpSel[1], k]; renderRows(); draw();
+  });
+  reveal(shown); showPair(0); draw(); renderRows();
+  tip(battle ? '고리를 눌러 <b>뒤집어</b> 목표 층 수를 만들어 보세요.' : '고리 네 개가 모두 붙어 있어요. 뒤집어 볼 고리를 하나 골라 눌러 보세요.');
+  return { rows, pause() {}, dispose() {} };
 }
