@@ -25,7 +25,7 @@ const copy={
 const signed=n=>n>0?'+'+n:n<0?'−'+Math.abs(n):'0';
 
 export async function mount(host,uid,lang,options={}){
- if(['A-02','M-02','T-DV4'].includes(uid))return (await import('./activity-journey.js')).mount(host,uid,lang,options);
+ if(['A-02','M-02','T-DV4'].includes(uid))return (await import('./activity-journey.js?v=20261014-arrival')).mount(host,uid,lang,options);
  const api=window.NM_LIVING_LESSONS;if(!host||!host.isConnected||!api||!api.has(uid))return null;
  if(api.create(uid).kind==='hop')return (await import('./hop-lesson.js?v=20261010-hop-motion')).mount(host,uid,lang);   /* 유아 수직선 뛰기(N-07) */
  if(!['ten','signed'].includes(api.create(uid).kind))return (await import('./strategy-lesson.js')).mount(host,uid,lang);
