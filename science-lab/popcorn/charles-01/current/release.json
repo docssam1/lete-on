@@ -1,5 +1,5 @@
 {
-  "version": "20261015-charles01-guided-1",
+  "version": "20261015-charles01-pouch-1",
   "studentPages": 20,
   "magazineSpreads": 5,
   "assemblyPhases": 10,
@@ -165,8 +165,8 @@
     },
     {
       "path": "companion/index.html",
-      "bytes": 25537,
-      "sha256": "163099608d20e47b5f9c8bb543faa1ecb703bd8d3027911c5522d73659483b1c"
+      "bytes": 25557,
+      "sha256": "8891eb41a9949c00e04660a53272cef8b8f0240d6d1563531421b68f195c02a5"
     },
     {
       "path": "companion/lab-content.js",
@@ -184,9 +184,14 @@
       "sha256": "af5e13117b98991e0e62bdd88902d1ddafd142e48f27ca0ac2f0e93a8fec5055"
     },
     {
+      "path": "companion/lab-pouch.js",
+      "bytes": 14375,
+      "sha256": "347170f10ef5b6de75184cdc3bbb7d7abcbcceee60f71db10ea2c74e22b1ddf1"
+    },
+    {
       "path": "companion/lab-scene.js",
-      "bytes": 44851,
-      "sha256": "2860fdc62d561a622ea63f906b96a967ee3878e9ab83663ee6c979577f2edb51"
+      "bytes": 46989,
+      "sha256": "60bfda2056cc077749d6719c9d4bd1a10721fdbac3e0379fc07d82ce1586f2bd"
     },
     {
       "path": "companion/lab-teacher.js",
@@ -195,13 +200,13 @@
     },
     {
       "path": "companion/lab-ui.js",
-      "bytes": 37825,
-      "sha256": "6b289cd6795270b7f19285a1e8d443ff5536fd51effb0e01c84461d53a2b9372"
+      "bytes": 38382,
+      "sha256": "69879ca7bbf37b9dba084283ab137d43c45e8ddd0e3aecdc2340616c05a3c542"
     },
     {
       "path": "companion/lab.css",
-      "bytes": 21193,
-      "sha256": "c74915646e2c5db094ab8093b02c55222ed3b0eb495615e916ea71fb542a448d"
+      "bytes": 20717,
+      "sha256": "b485abfe98eb26b13b876ee8f45e4aa71ac5fe65d7370a7bd136686265171849"
     },
     {
       "path": "companion/magazine.css",
@@ -377,5 +382,12 @@
     "3D 실험실"
   ],
   "guidedNextOnly": true,
-  "automaticExperimentRecording": false
+  "automaticExperimentRecording": false,
+  "pouchPresentation": {
+    "filmLayers": true,
+    "progressiveTear": true,
+    "scopedShake": true,
+    "reducedMotion": true,
+    "durationSeconds": 1.45
+  }
 }

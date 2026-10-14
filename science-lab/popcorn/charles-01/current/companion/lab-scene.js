@@ -1,5 +1,6 @@
 import { DEFAULT_LAB_STATE, deriveOutcome, normalizeLabState } from './lab-model.js';
 import { loadPaperTextures, foodCardOutline } from './lab-paper-assets.js';
+import { createKitPouch } from './lab-pouch.js?v=20261015-pouch-1';
 
 // Match the existing 9% step at 60Hz while preserving speed on slower devices.
 const MOTION_EASING_RATE=-Math.log(.91)*60;
@@ -294,26 +295,24 @@ export async function mountLabScene(host, { onAction = () => {} } = {}) {
   foodTool.traverse(item=>{if(item.isMesh)item.userData.dragFood=true;});
 
   const kit=new THREE.Group();kit.name='kit-parts';scene.add(kit);
-  const pouchMat=material({color:0xdceacc,transparent:true,opacity:.19,side:THREE.DoubleSide,depthWrite:false});
-  const pouch=card(4.5,.035,2.4,pouchMat,kit,[-.25,.12,-1.08]);pouch.rotation.z=.02;
-  card(4.5,.07,.08,material({color:0xb9cab5,transparent:true,opacity:.65}),kit,[-.25,.14,-2.28]);
-  label('투명 주머니 · 부품을 펼쳐요',kit,[-.35,.50,-2.2],2.6);
+  const pouch=createKitPouch(THREE,{registerGeometry,materials,textures});kit.add(pouch.group);
+  const kitContents=new THREE.Group();kitContents.name='kit-contents';kit.add(kitContents);
   // B, E and D template silhouettes show foldable tabs and source paper parts.
-  const bodyNet=shapeCard([[-2.0,-.48],[.10,-.48],[.10,-.75],[.85,-.75],[.85,-.45],[2.0,-.38],[2.16,0],[2.0,.38],[.85,.45],[.85,.75],[.10,.75],[.10,.48],[-2.0,.48],[-3.18,0]],printedGreen,kit);
+  const bodyNet=shapeCard([[-2.0,-.48],[.10,-.48],[.10,-.75],[.85,-.75],[.85,-.45],[2.0,-.38],[2.16,0],[2.0,.38],[.85,.45],[.85,.75],[.10,.75],[.10,.48],[-2.0,.48],[-3.18,0]],printedGreen,kitContents);
   bodyNet.rotation.x=-Math.PI/2;bodyNet.position.set(-.60,.04,-.62);
-  label('B · 몸통·다리·꼬리',kit,[-1.1,.29,-1.25],2.1);
-  const eNet=shapeCard(snoutShape,lowerPrint,kit);eNet.rotation.x=-Math.PI/2;eNet.position.set(-2.7,.04,1.2);
-  label('E · 아래턱',kit,[-1.9,.30,1.86],1.4);
-  const dNet=shapeCard([[-.9,-.25],[-.9,-.5],[.9,-.5],[.9,-.25],[1.1,-.25],[1.1,.25],[.9,.25],[.9,.5],[-.9,.5],[-.9,.25],[-1.1,.25],[-1.1,-.25]],boxMat,kit);dNet.rotation.x=-Math.PI/2;dNet.position.set(.58,.045,1.2);
-  label('D · 먹이 상자',kit,[.70,.31,1.95],1.5);
-  const kitDisc1=createDisc(kit,[2.95,.15,-.65],null,'kit-disc-N');const kitDisc2=createDisc(kit,[3.62,.15,-.65],null,'kit-disc-N2');
-  const kitBar=createBar(kit,[3.18,.26,.58],null);
-  label('동전자석 2개 · 막대자석',kit,[3.07,.70,1.5],2.1);
-  const kitFish=fish.clone(true);kitFish.position.set(2.95,.18,-1.70);kitFish.scale.setScalar(.72);kit.add(kitFish);
-  const kitCarrot=carrot.clone(true);kitCarrot.position.set(3.80,.18,-1.70);kitCarrot.scale.setScalar(.72);kit.add(kitCarrot);
+  label('B · 몸통·다리·꼬리',kitContents,[-1.1,.29,-1.25],2.1);
+  const eNet=shapeCard(snoutShape,lowerPrint,kitContents);eNet.rotation.x=-Math.PI/2;eNet.position.set(-2.7,.04,1.2);
+  label('E · 아래턱',kitContents,[-1.9,.30,1.86],1.4);
+  const dNet=shapeCard([[-.9,-.25],[-.9,-.5],[.9,-.5],[.9,-.25],[1.1,-.25],[1.1,.25],[.9,.25],[.9,.5],[-.9,.5],[-.9,.25],[-1.1,.25],[-1.1,-.25]],boxMat,kitContents);dNet.rotation.x=-Math.PI/2;dNet.position.set(.58,.045,1.2);
+  label('D · 먹이 상자',kitContents,[.70,.31,1.95],1.5);
+  const kitDisc1=createDisc(kitContents,[2.95,.15,-.65],null,'kit-disc-N');const kitDisc2=createDisc(kitContents,[3.62,.15,-.65],null,'kit-disc-N2');
+  const kitBar=createBar(kitContents,[3.18,.26,.58],null);
+  label('동전자석 2개 · 막대자석',kitContents,[3.07,.70,1.5],2.1);
+  const kitFish=fish.clone(true);kitFish.position.set(2.95,.18,-1.70);kitFish.scale.setScalar(.72);kitContents.add(kitFish);
+  const kitCarrot=carrot.clone(true);kitCarrot.position.set(3.80,.18,-1.70);kitCarrot.scale.setScalar(.72);kitContents.add(kitCarrot);
   const kitParts={'paper-B':bodyNet,'paper-E':eNet,'paper-D':dNet,'disc-1':kitDisc1,'disc-2':kitDisc2,'bar-magnet':kitBar,'fish':kitFish,'carrot':kitCarrot};
   for(const [id,item]of Object.entries(kitParts))item.traverse(child=>{child.userData.partId=id;});
-  for(let i=0;i<4;i++)paperClip(kit,[1.9+i*.28,.06,-1.5]);
+  for(let i=0;i<4;i++)paperClip(kitContents,[1.9+i*.28,.06,-1.5]);
 
   const pairs=new THREE.Group();pairs.name='magnet-pairs';scene.add(pairs);
   const pairBar=createBar(pairs,[-1.6,.67,0],'pole1');
@@ -343,7 +342,22 @@ export async function mountLabScene(host, { onAction = () => {} } = {}) {
 
   const basePositions = new Map();
   for(const [name,item] of Object.entries(parts))basePositions.set(name,item.position.clone());
-  const kitLayout = new Map(kit.children.map(item => [item, {position:item.position.clone(),scale:item.scale.clone()}]));
+  const kitLayout = new Map(kitContents.children.map((item,index) => [item, {position:item.position.clone(),scale:item.scale.clone(),index}]));
+  let pouchWasReady=true;
+  const smoothKit=value=>{const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);};
+  function updateKitLayout(){
+    const view=pouch.getSnapshot(),spread=view.contentProgress;
+    kitContents.position.set(...view.offset);kitContents.rotation.set(...view.rotation);
+    for(const [item,initial] of kitLayout){
+      const t=smoothKit((spread-Math.min(.16,initial.index*.012))/.84);
+      item.position.copy(initial.position).multiplyScalar(.57+.43*t);
+      item.scale.copy(initial.scale).multiplyScalar(.66+.34*t);
+      if(!item.isSprite)item.position.y+=(1-t)*.072+Math.sin(t*Math.PI)*.095;
+      else item.visible=spread>.94;
+    }
+    if(!pouchWasReady&&view.ready&&state.mode==='kit')onAction({type:'pouchReady'});
+    pouchWasReady=view.ready;
+  }
   const highlightMaterials = new Map();
   scene.traverse(item=>{if(item.isMesh)item.userData.baseMaterial=item.material;});
   function highlightMaterial(original){
@@ -395,8 +409,8 @@ export async function mountLabScene(host, { onAction = () => {} } = {}) {
   function applySceneState(immediate=false){
     outcome=deriveOutcome(state);const mode=state.mode;const assemblyMode=mode==='assembly';const full=mode==='feeding';
     kit.visible=mode==='kit';pairs.visible=mode==='pairs';clipScene.visible=mode==='clips';croc.visible=assemblyMode||full;
-    for(const [item,initial]of kitLayout){item.position.copy(initial.position);item.scale.copy(initial.scale);if(item!==pouch&&!state.pouchOpen){item.position.multiplyScalar(.57);item.scale.multiplyScalar(.66);}if(item.isSprite)item.visible=state.pouchOpen;}
-    pouch.material.opacity=state.pouchOpen?.19:.39;
+    pouch.setOpen(state.pouchOpen,{immediate:immediate||reduceMotion.matches||mode!=='kit'});
+    updateKitLayout();
     lowerTemplate.visible=assemblyMode&&state.assemblyStage<=1;
     foodTool.visible=(assemblyMode&&state.assemblyStage>=7)||full;
     const available=new Set(outcome.assembly.parts);
@@ -456,6 +470,8 @@ export async function mountLabScene(host, { onAction = () => {} } = {}) {
     updateGeometry(1/60);requestRender();
   }
   function updateGeometry(seconds){
+    pouch.update(Math.min(MAX_MOTION_SECONDS,seconds),{active:state.mode==='kit'&&!paused&&!document.hidden,reducedMotion:reduceMotion.matches});
+    updateKitLayout();
     const ease=motionAlpha(seconds,reduceMotion.matches);
     currentOpening+=(targetOpening-currentOpening)*ease;currentPairSeparation+=(targetPairSeparation-currentPairSeparation)*ease;
     // The lower E card folds around its back hinge; the body stays on its legs.
@@ -482,7 +498,7 @@ export async function mountLabScene(host, { onAction = () => {} } = {}) {
   }
   function resetView(){
     // Horizontal fit is calculated from the real canvas aspect, including tall phones.
-    const experimentWidth=state.mode==='pairs'||state.mode==='clips'?5.1:state.mode==='assembly'&&state.assemblyStage<3?5.4:state.mode==='assembly'&&state.assemblyStage<7?8.0:11.8;
+    const experimentWidth=state.mode==='kit'?8.9:state.mode==='pairs'||state.mode==='clips'?5.1:state.mode==='assembly'&&state.assemblyStage<3?5.4:state.mode==='assembly'&&state.assemblyStage<7?8.0:11.8;
     const targetX=state.mode==='feeding'?.10:state.mode==='assembly'&&state.assemblyStage>=3&&state.assemblyStage<7?-1.25:.30;
     const isCroc=state.mode==='feeding'||(state.mode==='assembly'&&state.assemblyStage>=3);
     let fitDistance=Math.max(state.mode==='pairs'||state.mode==='clips'?8.6:isCroc?9.3:13.6,experimentWidth/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*Math.max(.18,camera.aspect))*(isCroc?1.025:1.08));
@@ -494,6 +510,16 @@ export async function mountLabScene(host, { onAction = () => {} } = {}) {
         const point=new THREE.Vector3(x-targetX,y-1.02,z);const projectedExtent=Math.max(Math.abs(point.dot(right))/(tangent*camera.aspect),Math.abs(point.dot(up))/tangent);
         fitDistance=Math.max(fitDistance,point.dot(viewDirection)+projectedExtent*1.04);
       }
+    }
+    if(state.mode==='kit'){
+      const direction=new THREE.Vector3(1.4,8.6,10).normalize(),right=new THREE.Vector3(direction.z,0,-direction.x).normalize(),up=direction.clone().cross(right),tangent=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+      fitDistance=8.7;
+      for(const x of[-4.05,4.35])for(const y of[.02,.94])for(const z of[-3.1,2.32]){
+        const point=new THREE.Vector3(x-.12,y-.22,z+.08),extent=Math.max(Math.abs(point.dot(right))/(tangent*camera.aspect),Math.abs(point.dot(up))/tangent);
+        fitDistance=Math.max(fitDistance,point.dot(direction)+extent*1.10);
+      }
+      camera.position.copy(direction.multiplyScalar(fitDistance)).add(new THREE.Vector3(.12,.22,-.08));
+      controls.maxDistance=Math.max(25,fitDistance*1.7);controls.target.set(.12,.22,-.08);controls.update();requestRender();return;
     }
     const direction=viewDirection.multiplyScalar(fitDistance);
     camera.position.copy(direction);camera.position.x+=targetX;camera.position.y+=1.02;
@@ -517,7 +543,7 @@ export async function mountLabScene(host, { onAction = () => {} } = {}) {
   document.addEventListener('visibilitychange',visibility);reduceMotion.addEventListener('change',motionChanged);
   let contextLost=false;
   const contextNotice=document.createElement('p');contextNotice.style.cssText='position:absolute;inset:20px auto auto 20px;padding:12px;background:#fff;color:#634c32;z-index:3;max-width:80%;';contextNotice.hidden=true;contextNotice.setAttribute('role','status');host.append(contextNotice);
-  function lost(event){event.preventDefault();contextLost=true;cancelAnimationFrame(frame);frame=0;previousFrameTime=0;contextNotice.textContent='3D 화면 연결이 잠시 끊겼어요. 아래 조작과 실물 사진을 이용하거나 화면을 다시 열어 주세요.';contextNotice.hidden=false;}
+  function lost(event){event.preventDefault();contextLost=true;cancelAnimationFrame(frame);frame=0;previousFrameTime=0;contextNotice.textContent='3D 화면 연결이 잠시 끊겼어요. 아래 조작과 실물 사진을 이용하거나 화면을 다시 열어 주세요.';contextNotice.hidden=false;onAction({type:'contextLost'});}
   function restored(){contextLost=false;previousFrameTime=0;contextNotice.hidden=true;requestRender();}
   canvas.addEventListener('webglcontextlost',lost);canvas.addEventListener('webglcontextrestored',restored);
   function setState(value){if(disposed)return;const previousMode=state.mode;const oldRange=state.assemblyStage<3?0:state.assemblyStage<7?1:2;state=normalizeLabState({...state,...value});applySceneState();const newRange=state.assemblyStage<3?0:state.assemblyStage<7?1:2;if(previousMode!==state.mode||(state.mode==='assembly'&&oldRange!==newRange))resetView();}
@@ -525,6 +551,7 @@ export async function mountLabScene(host, { onAction = () => {} } = {}) {
     const projected=item=>{const world=new THREE.Vector3();item.getWorldPosition(world);const screen=world.clone().project(camera);const r=canvas.getBoundingClientRect();return{world:world.toArray(),screen:{x:r.left+(screen.x+1)*r.width/2,y:r.top+(1-screen.y)*r.height/2},visible:item.visible&&visibleAncestors(item)};};
     return {webgl:true,fallback:false,contextLost,state:{...state},outcome,boxedBarPoles:{...boxedBarPoles},paperTextureSources:[...paperAssets.sources],paperThickness:.014,exploded,paused,reducedMotion:reduceMotion.matches,
       camera:{position:camera.position.toArray(),target:controls.target.toArray(),aspect:camera.aspect},frameNumber,
+      pouch:pouch.getSnapshot(),kitPartsBounds:Object.entries(kitParts).map(([id,item])=>{const box=new THREE.Box3().setFromObject(item);return{id,min:box.min.toArray(),max:box.max.toArray(),visible:item.visible&&visibleAncestors(item)};}),
       objects:{food:projected(foodTool),upperMagnet:projected(upperMagnet),lowerMagnet:projected(lowerMagnet),pairOne:projected(state.pairKind==='bar-disc'?pairBar:pairDisc1),pairTwo:projected(pairDisc2)},
       visibleParts:Object.entries(parts).filter(([,item])=>item.visible&&visibleAncestors(item)).map(([name])=>name),
       jawRotation:lower.rotation.z,triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls,canvas:{width:canvas.width,height:canvas.height}};
@@ -532,6 +559,8 @@ export async function mountLabScene(host, { onAction = () => {} } = {}) {
   resize();applySceneState(true);render();requestRender();
   return {
     setState,getSnapshot,resetView,
+    shakePouch(){if(state.mode==='kit'){pouch.shake();requestRender();}},
+    replayPouch(){if(state.mode==='kit'&&state.pouchOpen){pouch.replay();pouchWasReady=false;updateKitLayout();requestRender();}},
     setExploded(value){exploded=Boolean(value);applySceneState();},
     setPaused(value){paused=Boolean(value);previousFrameTime=0;if(paused){cancelAnimationFrame(frame);frame=0;currentOpening=targetOpening;currentPairSeparation=targetPairSeparation;updateGeometry(1/60);controls.update();render();}else requestRender();},
     dispose(){

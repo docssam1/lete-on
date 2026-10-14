@@ -121,7 +121,7 @@ async function ensureScene(){
  if(scene){scene.setPaused(paused||document.hidden);return;}
  if(mounting)return mounting;
  mounting=(async()=>{
-  try{const sceneUrl=new URL('./lab-scene.js',import.meta.url);if(sceneAttempt)sceneUrl.searchParams.set('retry',String(sceneAttempt));const mod=await import(sceneUrl.href);$('#lab-scene-host').replaceChildren();scene=await mod.mountLabScene($('#lab-scene-host'),{onAction:handleSceneAction});
+  try{const sceneUrl=new URL('./lab-scene.js?v=20261015-pouch-1',import.meta.url);if(sceneAttempt)sceneUrl.searchParams.set('retry',String(sceneAttempt));const mod=await import(sceneUrl.href);$('#lab-scene-host').replaceChildren();scene=await mod.mountLabScene($('#lab-scene-host'),{onAction:handleSceneAction});
    const snap=scene.getSnapshot();sceneReady=snap.webgl!==false&&snap.status!=='fallback'&&Boolean($('#lab-scene-host canvas'));
    $('#lab-retry').hidden=sceneReady;scene.setState(sceneState());scene.setPaused(paused||document.hidden);updateObservation();
   }catch(error){sceneReady=false;$('#lab-scene-host').innerHTML='<div class="lab-loading">3D를 불러오지 못했어요. “3D 다시 준비”를 눌러주세요.</div>';$('#lab-retry').hidden=false;$('#lab-observation').textContent='3D가 준비되지 않아 화면 실험을 완료로 처리하지 않았어요.';}
@@ -141,21 +141,22 @@ function render(){
  $('#lab-next-hint').textContent=g.id==='pouch'&&!s.opened?'봉투를 열고 준비물을 살펴요.':g.activity.type==='assembly-training'?'먼저 사진과 모형을 번갈아 살펴요.':'내 속도로 이동해요. 하지 않은 실험은 미실행으로 남아요.';
  $('#lab-stage-list').innerHTML=list.map((x,i)=>`<button type="button" data-lab-stage="${i}" ${i===s.index?'aria-current="step"':''}>${String(i+1).padStart(2,'0')} ${e(x.title)}</button>`).join('');
  $('#lab-teacher-panel').hidden=role!=='teacher';$('#lab-teacher-content').hidden=true;if(role!=='teacher')$('#lab-teacher-content').replaceChildren();$('#lab-teacher-reveal').setAttribute('aria-expanded','false');
- renderActivity();renderRecords();updateObservation();save();
+ renderActivity();renderRecords();updateObservation();if(g.id==='pouch'&&s.opened&&sceneReady&&scene?.getSnapshot()?.pouch&&!scene.getSnapshot().pouch.ready)$('#lab-next').disabled=true;save();
 }
 function goIndex(index){const s=getSession();s.index=Math.max(0,Math.min(stages().length-1,index));prepareStage();render();}
 function setModel(patch,rerender=true){Object.assign(getSession().model,patch);if(rerender)renderActivity();updateObservation();save();}
 function handleSceneAction(a){
+ if(a.type==='pouchReady'){if(getStage().id==='pouch'&&getSession().opened){$('#lab-next').disabled=false;$('#lab-next-hint').textContent='준비물이 펼쳐졌어요. 살펴보고 다음을 눌러요.';$('#lab-activity').querySelectorAll('[data-lab-action="open"],[data-lab-action="shake"]').forEach(n=>n.disabled=false);}return;}
  if(a.type==='distance')setModel({distance:a.value},false);
  if(a.type==='flipPole'){const target=a.target;if(['pole1','pole2','upperPole','lowerPole'].includes(target))setModel({[target]:getSession().model[target]==='N'?'S':'N'});}
  if(a.type==='selectPart'){setModel({selectedPart:a.id},false);$('#lab-observation').textContent=parts[a.id]||'부품을 골랐어요.';}
- if(a.type==='contextLost'||a.type==='error'){sceneReady=false;$('#lab-retry').hidden=false;$('#lab-observation').textContent='3D 화면이 멈췄어요. 기록은 그대로 두고 다시 준비할 수 있어요.';}
+ if(a.type==='contextLost'||a.type==='error'){sceneReady=false;$('#lab-retry').hidden=false;if(getStage().id==='pouch')$('#lab-next').disabled=false;$('#lab-observation').textContent='3D 화면이 멈췄어요. 기록은 그대로 두고 다시 준비할 수 있어요.';}
 }
 function actions(action,node){
  const s=getSession(),m=s.model,g=getStage();
  if(action==='start')goIndex(1);
- if(action==='shake'){const host=$('#lab-scene-host');host.classList.remove('shake');void host.offsetWidth;host.classList.add('shake');setModel({pouchShake:Date.now()},false);}
- if(action==='open'){s.opened=true;m.pouchOpen=true;m.assemblyStage=10;const host=$('#lab-scene-host');host.classList.add('opening');setTimeout(()=>host.classList.remove('opening'),700);render();}
+ if(action==='shake')scene?.shakePouch?.();
+ if(action==='open'){const replay=s.opened;s.opened=true;m.pouchOpen=true;m.assemblyStage=10;render();if(replay)scene?.replayPouch?.();if(sceneReady&&scene?.getSnapshot()?.pouch&&!scene.getSnapshot().pouch.ready){$('#lab-next').disabled=true;$('#lab-next-hint').textContent='봉투가 열리고 준비물이 펼쳐져요.';$('#lab-activity').querySelectorAll('[data-lab-action="open"],[data-lab-action="shake"]').forEach(n=>n.disabled=true);}}
  if(action==='part'){setModel({selectedPart:node.dataset.part},false);$('#lab-observation').textContent=parts[node.dataset.part];}
  if(action==='prediction')recordText('prediction');if(action==='text')recordText();if(action==='real'){
   const text=stageDraft()['real-observation'];if(text?.trim())appendRecord('real',{text});else $('#lab-observation').textContent='실물로 관찰한 것을 먼저 적어요.';
@@ -185,7 +186,7 @@ function previous(){
 function advance(){
  const s=getSession(),g=getStage(),a=g.activity;
  let demo=guidedDemos.get(s);if(!demo||demo.id!==g.id){demo={id:g.id,cursor:0};guidedDemos.set(s,demo);}
- if(g.id==='pouch'&&!s.opened){actions('open');$('#lab-next-hint').textContent='준비물이 펼쳐졌어요. 살펴보고 다음을 눌러요.';return;}
+ if(g.id==='pouch'&&!s.opened){actions('open');return;}
  if(a.type==='assembly-training'){
   if(s.assemblyProgress!==s.assemblySelected||s.model.assemblyStage!==s.assemblySelected){actions('perform');$('#lab-next-hint').textContent=`조립 ${s.assemblySelected}단계의 모습을 살펴봐요.`;return;}
   if(s.assemblySelected<a.phaseRange[1]){s.assemblySelected++;renderActivity();$('#lab-next-hint').textContent='사진을 먼저 보고 다음을 눌러 붙이는 모습을 살펴요.';return;}
