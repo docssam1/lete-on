@@ -563,9 +563,21 @@ function renderConnections() {
   if (!board || !svg) return;
   const box = board.getBoundingClientRect();
   svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+  /* 낮고 넓은 틀에서는 펼친 결과가 모두 아랫줄에 있다(polish.css). 그때는 위아래로 잇는다. */
+  const lowest = Math.max(...[...board.querySelectorAll("[data-left]")].map((node) => node.getBoundingClientRect().bottom));
+  const highest = Math.min(...[...board.querySelectorAll("[data-right]")].map((node) => node.getBoundingClientRect().top));
+  const stacked = highest >= lowest - 1;
   svg.innerHTML = [...state.connections].map(([leftKey, rightKey]) => {
     const leftBox = board.querySelector(`[data-left="${leftKey}"]`).getBoundingClientRect();
     const rightBox = board.querySelector(`[data-right="${rightKey}"]`).getBoundingClientRect();
+    if (stacked) {
+      const x1 = leftBox.left + leftBox.width / 2 - box.left;
+      const y1 = leftBox.bottom - box.top;
+      const x2 = rightBox.left + rightBox.width / 2 - box.left;
+      const y2 = rightBox.top - box.top;
+      const bend = Math.max(8, (y2 - y1) / 2);
+      return `<path data-line-left="${leftKey}" d="M${x1} ${y1} C${x1} ${y1 + bend},${x2} ${y2 - bend},${x2} ${y2}"/>`;
+    }
     const x1 = leftBox.right - box.left;
     const y1 = leftBox.top + leftBox.height / 2 - box.top;
     const x2 = rightBox.left - box.left;
