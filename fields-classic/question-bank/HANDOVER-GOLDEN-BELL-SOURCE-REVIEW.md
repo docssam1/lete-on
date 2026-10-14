@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261014a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261014a/20261014b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261014b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261014b/20261014c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -177,7 +177,20 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 32문항 독립 검산(저장소 밖, 표는 길을 다시 만들어 공개 단서 숫자까지 대조) = 교사용 답(위 오류 3건 제외). `sourceHold` S03~S10 8건 삭제,
     coverage public 48 · hold 45. DB `book-05` 50키 → 125키, sha 앞 8자리 `dfc355cd`. 캐시 꼬리표 `20261014a`.
   - ⚠ 검산 스크립트는 문제 글에서 물음을 읽을 때 **조건 문장 뒤의 「(n) …」 부분만** 읽어야 한다(조건 속 「①번 줄의 4번째」를 먼저 잡는 실수를 했다).
-- **다음**: 보류를 주제 묶음으로 슬라이드 순서대로 — ~~수 배열·수열 3~10~~ / 연산·달력 11~15 / 최단거리 18~24 / 숫자 카드 26~32 /
+- **5권 묶음 2(슬라이드 11~15 달력 연산·요일 29문항, 2026-10-14)**: 패치 `tools/golden-bell-book05/patch-book05-batch2.mjs`(정답 없음).
+  - 새 단원 `calendar-arithmetic-source`(번호 6, 11쪽 18문항: 합과 차 5 + 달력 칸 13)·`calendar-weekday-source`(번호 7, 12~15쪽 11문항).
+  - 개념 설명: 단원 6은 `progressive-concept`에 단계별 그림(`beats[i].visual`), 단원 7은 7권 `calendar-weekday` 안내형 가족 재사용.
+  - 새 그림 `source-sum-pair`(동그라미·덧붙은 수·괄호·합) · `source-calendar-cells`(위아래/두 주/대각선 칸) · `source-month-grid`(일~토, 「일」 빨강) ·
+    `source-year-calendar`(Date로 계산한 한 해 달력, 마지막 날 노랑). 원본 사진 달력은 쓰지 않았다.
+  - 인쇄: 한 문항 그림 칸은 `max-height:74mm`로 잘린다. 큰 그림(한 해 달력)은 `:has(.b5-src-year)`로 그 제한을 풀었다.
+  - **원본 문장이 성립하지 않는 두 곳을 바로잡음(원장 지시 「성립 안 하는 건 수정해」)**:
+    14쪽 03 (3)은 같은 요일 두 날짜의 합이 될 수 없는 수(늘 홀수여야 함)라 교사용 풀이와 맞는 수로, 15쪽 05는 「첫 번째 목요일과 두 번째 일요일」이
+    어떤 달에서도 성립하지 않아 원본 그림(차 10)·교사용 풀이대로 「두 번째 목요일과 세 번째 일요일」로. 둘 다 `sourceDiscrepancy` + DB `sourceNote`.
+    ⚠ 처음엔 14쪽을 다른 수로 고칠 뻔했다 — **고친 조건도 「첫째 금요일 ≤ 7일」처럼 실제 달력에 놓이는지 검산기로 확인할 것.**
+  - 요일 답은 DB에 `["화요일","화"]`로 둘 다 받는다. 토요일 모두는 `resultContract:{type:"set"}`.
+  - 29문항 독립 검산(달의 1일 요일을 7가지 다 시험해 하나로 정해지는지 확인) = 교사용 답. 12쪽 아래 「10월 · 11 둘레 ±1 ±7」은 교사 발문 그림이라 넣지 않음.
+  - `sourceHold` S11~S15 5건 삭제, coverage public 77 · hold 40. DB `book-05` 125키 → 206키, sha 앞 8자리 `51c6b051`. 캐시 꼬리표 `20261014b`.
+- **다음**: 보류를 주제 묶음으로 슬라이드 순서대로 — ~~수 배열·수열 3~10~~ / ~~연산·달력 11~15~~ / 최단거리 18~24 / 숫자 카드 26~32 /
   곱셈구구·매트릭스 35~40 / 선분·도형식·분수 41~49 / 삼각수·둘레·사각수 51~58 / 가르기 60. 보류 사유 메모 중 「교사용 나열 누락(29쪽 (4))」,
   「둘째 표 조건 불성립(40쪽)」은 묶음 작업 때 원본으로 다시 확인할 것.
 

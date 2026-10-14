@@ -456,6 +456,54 @@ function sourceTriangleNumbers(visual) {
   return `<div class="b5-src-tri-numbers" role="img" aria-label="${escapeHtml(`삼각 배열 ${visual.rows.map((row) => row.join(" ")).join(" / ")} …`)}">${rows}<em>⋮</em></div>`;
 }
 
+// 두 수와 합: 동그라미 둘(A·B 라벨, 「+7」 같은 덧붙은 수), 오른쪽 괄호와 「합 : N」. values가 있으면 동그라미에 수를 쓴다(개념 설명용).
+function sourceSumPair(visual) {
+  const rows = visual.rows.map((row, index) => {
+    const y = 26 + index * 52;
+    const label = row.label ? `<text x="14" y="${y}" class="label">${escapeHtml(row.label)} :</text>` : "";
+    const value = visual.values?.[index] != null ? `<text x="${row.label ? 74 : 40}" y="${y}" class="value">${escapeHtml(visual.values[index])}</text>` : "";
+    const offset = row.offset ? `<text x="${row.label ? 100 : 66}" y="${y + (index ? 6 : -2)}" class="offset">${escapeHtml(row.offset)}</text>` : "";
+    return `<circle cx="${row.label ? 74 : 40}" cy="${y}" r="20"/>${label}${value}${offset}`;
+  }).join("");
+  // 괄호는 가장 긴 덧붙은 수(「+14」 등)가 끝난 뒤에 둔다.
+  const x = (visual.rows.some((row) => row.label) ? 100 : 66) + Math.max(28, ...visual.rows.map((row) => (row.offset || "").length * 12)) + 16;
+  const svg = `<svg viewBox="0 0 ${x + 92} 104">${rows}<path d="M${x - 6} 12 Q${x + 18} 18 ${x + 18} 52 Q${x + 18} 86 ${x - 6} 92" class="brace"/><text x="${x + 26}" y="52" class="sum">합 : ${escapeHtml(visual.sum)}</text></svg>`;
+  return `<div class="b5-src-sum-pair" role="img" aria-label="${escapeHtml(`두 수, 합 ${visual.sum}`)}">${svg}</div>`;
+}
+
+// 달력 일부 칸: shape "vertical"(위아래, rows칸 · 처음과 끝이 색칠) 또는 "diagonal"(2×2, 왼쪽 위와 오른쪽 아래 색칠)
+function sourceCalendarCells(visual) {
+  const cells = visual.shape === "diagonal"
+    ? [["shaded", ""], ["", "shaded"]].map((row) => `<div>${row.map((c) => `<span class="${c}"></span>`).join("")}</div>`).join("")
+    : Array.from({ length: visual.rows }, (_, i) => `<div><span class="${i === 0 || i === visual.rows - 1 ? "shaded" : ""}"></span></div>`).join("");
+  return `<div class="b5-src-cal-cells" role="img" aria-label="${escapeHtml(`달력 칸 ${visual.shape === "diagonal" ? "대각선 두 칸" : `세로 ${visual.rows}칸 중 양 끝`}, 합 ${visual.sum}`)}"><div class="cells">${cells}</div><b class="brace" aria-hidden="true"></b><strong>합 : ${escapeHtml(visual.sum)}</strong></div>`;
+}
+
+// 한 달 달력 틀: 제목, 일~토 머리글, rows줄. cells는 {r, c, value?, shaded?} 목록.
+const WEEK_HEAD = ["일", "월", "화", "수", "목", "금", "토"];
+function sourceMonthGrid(visual) {
+  const map = new Map((visual.cells || []).map((cell) => [`${cell.r}:${cell.c}`, cell]));
+  const body = Array.from({ length: visual.rows || 5 }, (_, r) => WEEK_HEAD.map((_, c) => {
+    const cell = map.get(`${r}:${c}`);
+    return `<span class="${cell?.shaded ? "shaded" : ""}">${cell?.value != null ? escapeHtml(cell.value) : ""}</span>`;
+  }).join("")).join("");
+  const head = WEEK_HEAD.map((day, c) => `<b class="${c === 0 ? "sun" : ""}">${day}</b>`).join("");
+  const title = visual.title ? `<p>${escapeHtml(visual.title)}</p>` : "";
+  return `<div class="b5-src-month" role="img" aria-label="${escapeHtml(`${visual.title || ""} 달력`)}">${title}<div class="grid">${head}${body}</div></div>`;
+}
+
+// 한 해 달력(작은 달 12개): Date로 계산. 각 달의 마지막 날에 노랑 동그라미.
+function sourceYearCalendar(visual) {
+  const months = Array.from({ length: 12 }, (_, m) => {
+    const first = new Date(Date.UTC(visual.year, m, 1)).getUTCDay();
+    const days = new Date(Date.UTC(visual.year, m + 1, 0)).getUTCDate();
+    const cells = [...Array(first).fill(""), ...Array.from({ length: days }, (_, d) => d + 1)];
+    const body = cells.map((d, i) => `<i class="${d === days ? "last" : ""}${i % 7 === 0 && d ? " sun" : ""}">${d}</i>`).join("");
+    return `<section><h4>${m + 1}</h4><div>${WEEK_HEAD.map((day, c) => `<i class="head${c === 0 ? " sun" : ""}">${day}</i>`).join("")}${body}</div></section>`;
+  }).join("");
+  return `<div class="b5-src-year" role="img" aria-label="${escapeHtml(`${visual.year}년 달력`)}"><h3>${escapeHtml(visual.year)}</h3><div class="months">${months}</div></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -476,6 +524,10 @@ export function book05Markup(visual) {
     case "source-sequence": return sourceSequence(visual);
     case "source-radial-rows": return sourceRadialRows(visual);
     case "source-triangle-numbers": return sourceTriangleNumbers(visual);
+    case "source-sum-pair": return sourceSumPair(visual);
+    case "source-calendar-cells": return sourceCalendarCells(visual);
+    case "source-month-grid": return sourceMonthGrid(visual);
+    case "source-year-calendar": return sourceYearCalendar(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);

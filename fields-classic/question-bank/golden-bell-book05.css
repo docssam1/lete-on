@@ -43,6 +43,37 @@
 .b5-src-tri-numbers>div{display:flex;gap:18px}
 .b5-src-tri-numbers span{min-width:24px;text-align:center}
 .b5-src-tri-numbers em{font-style:normal;line-height:1}
+.b5-src-sum-pair{display:grid;justify-items:center}
+.b5-src-sum-pair svg,.book05-visual .b5-src-sum-pair svg{display:block;width:min(100%,280px);height:auto;max-height:none}
+.b5-src-sum-pair circle{fill:#fff;stroke:#2f6fe0;stroke-width:2}
+.b5-src-sum-pair text{fill:#222;dominant-baseline:central;font-size:19px;font-weight:700}
+.b5-src-sum-pair text.value{text-anchor:middle}
+.b5-src-sum-pair .brace{fill:none;stroke:#555;stroke-width:1.8}
+.b5-src-cal-cells{display:flex;align-items:center;justify-content:center;gap:8px;color:#222}
+.b5-src-cal-cells .cells{display:grid;border-top:1.5px solid #555;border-left:1.5px solid #555}
+.b5-src-cal-cells .cells>div{display:flex}
+.b5-src-cal-cells span{width:52px;height:40px;border-right:1.5px solid #555;border-bottom:1.5px solid #555;background:#fff}
+.b5-src-cal-cells span.shaded{background:#ffd45c}
+.b5-src-cal-cells .brace{align-self:stretch;width:12px;border:1.8px solid #555;border-left:0;border-radius:0 14px 14px 0}
+.b5-src-cal-cells strong{font-size:19px;white-space:nowrap}
+.b5-src-month{display:grid;justify-items:center;gap:0;color:#222}
+.b5-src-month>p{margin:0;width:min(100%,322px);padding:6px 0;border:1.5px solid #555;border-bottom:0;text-align:center;font-size:20px;font-weight:800;box-sizing:border-box}
+.b5-src-month .grid{display:grid;grid-template-columns:repeat(7,min(46px,calc((100vw - 124px) / 7)));border-top:1.5px solid #555;border-left:1.5px solid #555}
+.b5-src-month .grid>*{display:grid;place-items:center;height:min(40px,calc((100vw - 124px) / 7));border-right:1.5px solid #555;border-bottom:1.5px solid #555;background:#fff;font-size:18px;font-weight:700}
+.b5-src-month .grid>b{background:#eef3fb}
+.b5-src-month .grid>b.sun{color:#e8503a}
+.b5-src-month .grid>span.shaded{background:#ffd45c}
+.b5-src-year{display:grid;justify-items:center;gap:4px;width:100%;color:#222}
+.b5-src-year h3{margin:0;color:#2f6fe0;font-size:22px}
+.b5-src-year .months{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:min(100%,720px)}
+.b5-src-year section{padding:4px;border:1px solid #c9c9c9;border-radius:4px;background:#fff}
+.b5-src-year h4{margin:0 0 2px;text-align:center;font-size:14px}
+.b5-src-year section>div{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;font-size:11px;text-align:center;line-height:1.8;font-variant-numeric:tabular-nums}
+.b5-src-year i{font-style:normal;border-radius:50%}
+.b5-src-year i.head{font-weight:800}
+.b5-src-year i.sun{color:#e8503a}
+.b5-src-year i.last{background:#ffd45c;font-weight:800}
+@media screen and (max-width:560px){.b5-src-year .months{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media print{
   .gold-print-page[data-print-book="book-05"] .b5-src-table{grid-template-columns:repeat(var(--columns),8mm)}
   .gold-print-page[data-print-book="book-05"] .b5-src-table>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>b{height:8mm;font-size:11pt}
@@ -57,5 +88,17 @@
   .gold-print-page[data-print-book="book-05"] .b5-src-seq .box{min-width:8mm;height:8mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-radial svg{width:40mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-tri-numbers{font-size:12pt;gap:2mm}
-  .b5-src-table>span.shaded,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-seq .box.shaded,.b5-src-radial .plate,.b5-src-cube-stair polygon{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .gold-print-page[data-print-book="book-05"] .b5-src-sum-pair svg{width:42mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-cal-cells span{width:9mm;height:7mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-cal-cells strong{font-size:11pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-month>p{width:56mm;font-size:11pt;padding:1mm 0}
+  .gold-print-page[data-print-book="book-05"] .b5-src-month .grid{grid-template-columns:repeat(7,8mm)}
+  .gold-print-page[data-print-book="book-05"] .b5-src-month .grid>*{height:6.5mm;font-size:10pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-year .months{grid-template-columns:repeat(6,minmax(0,1fr));gap:1.5mm;width:100%}
+  .gold-print-page[data-print-book="book-05"] .gold-print-source-item>.gold-print-visual:has(.b5-src-year),.gold-print-page[data-print-book="book-05"] .gold-print-source-item>.gold-print-visual>.book05-visual:has(.b5-src-year){max-height:none}
+  .gold-print-page[data-print-book="book-05"] .b5-src-year section{padding:1mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-year section>div{font-size:6.5pt;line-height:1.55}
+  .gold-print-page[data-print-book="book-05"] .b5-src-year h4{font-size:8pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-year h3{font-size:11pt}
+  .b5-src-table>span.shaded,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-seq .box.shaded,.b5-src-radial .plate,.b5-src-cal-cells span.shaded,.b5-src-month .grid>*,.b5-src-year i.last,.b5-src-cube-stair polygon{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
