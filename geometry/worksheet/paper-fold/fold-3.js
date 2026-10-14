@@ -505,6 +505,7 @@ function buildSharedProblem(mode){
   if(source.interaction==='hole-count') answer=`${source.unfoldedPoints.length}개`;
   if(source.interaction==='hole-result') answer=`${source.choices.findIndex(choice=>choice.key===source.answer)+1}번`;
   if(source.completeOnUnfold) answer='펼친 모양';
+  if(source.interaction==='connect-match') answer=source.pairs.map((pair,index)=>`${index+1}-${String.fromCharCode(65+source.results.findIndex(result=>result.key===pair.key))}`).join(', ');
   const foldNames=(source.folds||[source.fold]).map(step=>sharedAxisLabel[step.axis]).join(' → ');
   const text=source.interaction==='region-unfold'
     ? ['색종이를 접어 색칠한 부분을 잘랐습니다.','접은 순서의 반대로 펼친 뒤 잘린 부분을 그리세요.']
