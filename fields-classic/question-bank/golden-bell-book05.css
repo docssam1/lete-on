@@ -1,7 +1,7 @@
 /* 골든벨 5권 원본 그림(source-*) — 교사용 슬라이드의 검정 문제만 옮긴 그림.
    색은 골든벨 색표(.claude/skills/golden-bell-figure-style): 글자 검정, 물을 칸은 연노랑, 카드 노랑, 선은 회색·검정. */
-.b5-src-table{display:grid;grid-template-columns:repeat(var(--columns),46px);width:max-content;margin:auto;border-top:1.5px solid #555;border-left:1.5px solid #555}
-.b5-src-table>span{display:grid;place-items:center;height:46px;border-right:1.5px solid #555;border-bottom:1.5px solid #555;background:#fff;color:#222;font-size:20px;font-weight:700}
+.b5-src-table{--cell:min(46px,calc((100vw - 124px) / var(--columns)));display:grid;grid-template-columns:repeat(var(--columns),var(--cell));width:max-content;margin:auto;border-top:1.5px solid #555;border-left:1.5px solid #555}
+.b5-src-table>span{display:grid;place-items:center;height:var(--cell);border-right:1.5px solid #555;border-bottom:1.5px solid #555;background:#fff;color:#222;font-size:20px;font-weight:700}
 .b5-src-table>span.shaded{background:#ffd45c}
 .b5-src-cards{display:grid;gap:10px;justify-items:center}
 .b5-src-cards>div{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
@@ -25,6 +25,24 @@
 .b5-src-cube-stair polygon[fill="#d7d7d7"]{fill:#ffd45c}
 .b5-src-cube-stair polygon[fill="#adadad"]{fill:#f0b23a}
 .b5-src-cube-stair polygon[stroke="#3d3d3d"]{stroke:#a8741a}
+.b5-src-table.is-wide{--cell:min(42px,calc((100vw - 124px) / var(--columns)))}
+.b5-src-table.is-wide>span{font-size:18px}
+.b5-src-seq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 2px;color:#222;font-size:21px;font-weight:700}
+.b5-src-seq>.it{display:inline-flex;align-items:center;white-space:nowrap}
+.b5-src-seq i{font-style:normal;margin:0 6px 0 1px}
+.b5-src-seq .box{display:grid;place-items:center;min-width:40px;height:40px;padding:0 4px;border:1.5px solid #555;border-radius:4px;background:#fff}
+.b5-src-seq .box.shaded{background:#ffd45c}
+.b5-src-radial{display:grid;justify-items:center}
+.b5-src-radial svg,.book05-visual .b5-src-radial svg{display:block;width:min(100%,380px);height:auto;max-height:none}
+.b5-src-radial line{stroke:#8a8a8a;stroke-width:1.6}
+.b5-src-radial .plate{fill:#dde9ff;stroke:#2f6fe0;stroke-width:1.6}
+.b5-src-radial text{fill:#222;text-anchor:middle;dominant-baseline:central;font-size:17px;font-weight:700}
+.b5-src-radial text.label{font-size:16px}
+.b5-src-radial text.more{font-size:20px}
+.b5-src-tri-numbers{display:grid;justify-items:center;gap:6px;color:#222;font-size:21px;font-weight:700}
+.b5-src-tri-numbers>div{display:flex;gap:18px}
+.b5-src-tri-numbers span{min-width:24px;text-align:center}
+.b5-src-tri-numbers em{font-style:normal;line-height:1}
 @media print{
   .gold-print-page[data-print-book="book-05"] .b5-src-table{grid-template-columns:repeat(var(--columns),8mm)}
   .gold-print-page[data-print-book="book-05"] .b5-src-table>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>b{height:8mm;font-size:11pt}
@@ -33,5 +51,11 @@
   .gold-print-page[data-print-book="book-05"] .b5-src-pyramid i{width:6mm;height:6mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-trirows svg{width:28mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-cube-stair svg{width:40mm}
-  .b5-src-table>span.shaded,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-cube-stair polygon{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .gold-print-page[data-print-book="book-05"] .b5-src-table.is-wide{grid-template-columns:repeat(var(--columns),7mm)}
+  .gold-print-page[data-print-book="book-05"] .b5-src-table.is-wide>span{height:7mm;font-size:10pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-seq{font-size:12pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-seq .box{min-width:8mm;height:8mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-radial svg{width:40mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-tri-numbers{font-size:12pt;gap:2mm}
+  .b5-src-table>span.shaded,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-seq .box.shaded,.b5-src-radial .plate,.b5-src-cube-stair polygon{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }

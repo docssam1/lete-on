@@ -334,7 +334,9 @@ function numberRows(visual) {
 function sourceNumberTable(visual) {
   const shaded = new Set((visual.shaded || []).map(([r, c]) => `${r}:${c}`));
   const cells = visual.cells.flatMap((row, r) => row.map((value, c) => `<span class="${shaded.has(`${r}:${c}`) ? "shaded" : ""}">${escapeHtml(value ?? "")}</span>`)).join("");
-  return `<div class="b5-src-table" style="--columns:${visual.cells[0].length}" role="img" aria-label="수 배열표">${cells}</div>`;
+  const columns = visual.cells[0].length;
+  // 7칸 넘는 표는 휴대폰 화면 안에 들어오게 칸을 줄인다.
+  return `<div class="b5-src-table${columns >= 7 ? " is-wide" : ""}" style="--columns:${columns}" role="img" aria-label="수 배열표">${cells}</div>`;
 }
 
 // 숫자 카드 한 줄
@@ -386,6 +388,74 @@ function sourceCubeStair(visual) {
   return `<div class="b5-src-cube-stair">${svg}</div>`;
 }
 
+// 수열 한 줄: 앞의 수, 빈 상자(주어진 수가 든 상자 포함), 물을 상자는 색칠. more면 「…」로 이어진다.
+function sourceSequence(visual) {
+  const shaded = new Set(visual.shaded || []);
+  const parts = (visual.values || []).map((value) => `<span class="num">${escapeHtml(value)}</span>`);
+  (visual.boxes || []).forEach((value, index) => parts.push(`<span class="box${shaded.has(index) ? " shaded" : ""}">${escapeHtml(value ?? "")}</span>`));
+  if (visual.more) parts.push('<span class="num">…</span>');
+  const label = `수열 ${(visual.values || []).join(", ")}${visual.boxes?.length ? ` 뒤에 상자 ${visual.boxes.length}칸` : ""}`;
+  // 쉼표는 앞 수에 붙여 줄이 바뀌어도 줄 머리에 쉼표가 오지 않게 한다.
+  const items = parts.map((part, index) => `<span class="it">${part}${index < parts.length - 1 ? "<i>,</i>" : ""}</span>`);
+  return `<div class="b5-src-seq" role="img" aria-label="${escapeHtml(label)}">${items.join("")}</div>`;
+}
+
+// 가운데 도형에서 뻗은 갈래 줄. 갈래마다 1부터 차례로 하나씩 돌아가며 놓인 수와 끝의 「…」.
+// shape: "triangle"(3갈래 Y) | "square"(4갈래 X). 갈래 i의 수는 visual.arms[i].numbers.
+const RADIAL_GEOMETRY = {
+  triangle: {
+    polygon: [[160, 84], [104, 181], [216, 181]], length: 128, gap: 26,
+    arms: [
+      { from: [160, 84], dir: [0, -1], side: [1, 0], label: [160, 124] },
+      { from: [216, 181], dir: [0.866, 0.5], side: [0.5, -0.866], label: [194, 166] },
+      { from: [104, 181], dir: [-0.866, 0.5], side: [-0.5, -0.866], label: [126, 166] }
+    ]
+  },
+  square: {
+    polygon: [[126, 110], [194, 110], [194, 178], [126, 178]], length: 132, gap: 25,
+    arms: [
+      { from: [126, 110], dir: [-0.707, -0.707], side: [0.707, -0.707], label: [144, 128] },
+      { from: [194, 110], dir: [0.707, -0.707], side: [-0.707, -0.707], label: [176, 128] },
+      { from: [194, 178], dir: [0.707, 0.707], side: [0.707, -0.707], label: [176, 160] },
+      { from: [126, 178], dir: [-0.707, 0.707], side: [-0.707, -0.707], label: [144, 160] }
+    ]
+  }
+};
+function sourceRadialRows(visual) {
+  const geo = RADIAL_GEOMETRY[visual.shape];
+  if (!geo || geo.arms.length !== visual.arms.length) throw new Error("radial rows: shape and arm count disagree");
+  const first = 17;
+  const at = (p, d, t) => [p[0] + d[0] * t, p[1] + d[1] * t];
+  const points = [...geo.polygon];
+  const out = [`<polygon points="${geo.polygon.map((p) => p.join(",")).join(" ")}" class="plate"/>`];
+  visual.arms.forEach((arm, i) => {
+    const g = geo.arms[i];
+    const end = at(g.from, g.dir, geo.length);
+    points.push(end);
+    out.push(`<line x1="${g.from[0]}" y1="${g.from[1]}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}"/>`);
+    arm.numbers.forEach((n, k) => {
+      const [x, y] = at(at(g.from, g.dir, first + geo.gap * k), g.side, 14);
+      points.push([x, y]);
+      out.push(`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" class="num">${escapeHtml(n)}</text>`);
+    });
+    const [dx, dy] = at(at(g.from, g.dir, first + geo.gap * arm.numbers.length), g.side, 14);
+    points.push([dx, dy]);
+    out.push(`<text x="${dx.toFixed(1)}" y="${dy.toFixed(1)}" class="more">${g.dir[0] === 0 ? "⋮" : "⋯"}</text>`);
+    out.push(`<text x="${g.label[0]}" y="${g.label[1]}" class="label">${escapeHtml(arm.label)}</text>`);
+  });
+  // 그림이 차지한 범위에 여백을 더해 viewBox를 잡는다(글자 반 폭 여유 포함).
+  const xs = points.map((p) => p[0]), ys = points.map((p) => p[1]), pad = 16;
+  const box = [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) - Math.min(...xs) + pad * 2, Math.max(...ys) - Math.min(...ys) + pad * 2].map((v) => Math.round(v));
+  const desc = visual.arms.map((arm) => `${arm.label}번 줄 ${arm.numbers.join(", ")}`).join(" / ");
+  return `<div class="b5-src-radial" role="img" aria-label="${escapeHtml(`가운데에서 뻗은 ${visual.arms.length}갈래 줄: ${desc} …`)}"><svg viewBox="${box.join(" ")}" style="aspect-ratio:${box[2]}/${box[3]}">${out.join("")}</svg></div>`;
+}
+
+// 삼각 배열: 첫째 줄 1개, 둘째 줄 2개… 아래에 「⋮」
+function sourceTriangleNumbers(visual) {
+  const rows = visual.rows.map((row) => `<div>${row.map((n) => `<span>${escapeHtml(n)}</span>`).join("")}</div>`).join("");
+  return `<div class="b5-src-tri-numbers" role="img" aria-label="${escapeHtml(`삼각 배열 ${visual.rows.map((row) => row.join(" ")).join(" / ")} …`)}">${rows}<em>⋮</em></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -403,6 +473,9 @@ export function book05Markup(visual) {
     case "source-square-pyramid": return sourceSquarePyramid(visual);
     case "source-triangle-rows": return sourceTriangleRows(visual);
     case "source-cube-stair": return sourceCubeStair(visual);
+    case "source-sequence": return sourceSequence(visual);
+    case "source-radial-rows": return sourceRadialRows(visual);
+    case "source-triangle-numbers": return sourceTriangleNumbers(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);

@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261013g`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261013g/20261013h/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261014a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261014a/20261014b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -164,7 +164,20 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   원본 그림은 `book05-renderers.js`의 새 `source-*` 그림(`source-number-table`·`source-digit-cards`·`source-product-grid`·`source-square-pyramid`·
   `source-triangle-rows`·`source-cube-stair`) + `golden-bell-book05.css`. 기존 그림 함수는 문제은행(`app.js`)과 같이 쓰므로 건드리지 않았다.
   답 값은 그대로, DB 풀이 문장 8개만 원본 그림에 맞게 고침(고치기 전 값은 작업자 임시 폴더에 백업). DB `book-05` 50키, sha 앞 8자리 `a7f2d4fd`.
-- **다음**: 보류 약 280문항을 주제 묶음으로 슬라이드 순서대로 — 수 배열·수열 3~10 / 연산·달력 11~15 / 최단거리 18~24 / 숫자 카드 26~32 /
+- **5권 묶음 1(슬라이드 3~10 수 배열·수열 32문항, 2026-10-14)**: 패치 `tools/golden-bell-book05/patch-book05-batch1.mjs`(정답 없음).
+  - 3~5쪽 6문항은 기존 단원 `path-number-grid`(번호 0) items 3~8에 덧붙임. A·B·C 칸은 `parts`, A+B는 숫자 하나.
+  - 새 단원 `number-sequence-source`(번호 4, 6·7·10쪽 9문항)·`radial-rows-source`(번호 5, 8·9쪽 17문항), `mode:"paged"`.
+    개념 설명은 7권 `arithmetic-sequence` 안내형 가족을 재사용(check 문장만 단원에 맞게, 렌더러가 문장에서 모델을 계산).
+  - 새 그림 `source-sequence`(앞 수 + 상자, 물을 상자 노랑, 쉼표는 앞 수에 붙음) · `source-radial-rows`(가운데 삼각형/사각형 +
+    3·4갈래, viewBox 자동) · `source-triangle-numbers`. `source-number-table`은 칸 크기가 화면 폭에 맞춰 줄어든다(7칸 이상 `is-wide`).
+  - **조건 문장은 문제 글(`prompt`)에 넣는다** — 한 문제씩 넘기는 화면은 `conditions`를 그리지 않는다.
+  - **인쇄 쪽 나눔은 `printGroup`이 아니라 `golden-bell-print-layout.js`가 높이를 재서 자동으로 채운다.** 그림이 크면 쪽당 2문항이 된다(갈래 그림 인쇄 40mm로 6쪽).
+  - 원본 오류(앱은 바로잡은 쪽을 보여 줌): 4쪽 03 표의 한 칸 오타(`sourceDiscrepancy`)·답 칸이 앞 문항 답 복사, 7쪽 도전 (2) 교사용 답이 (1) 복사,
+    8쪽 그림의 ②·③ 표시가 문제 글과 반대(문제 글을 따름), 9쪽 (4)의 번호 오타·(5) 앞 뜻 없는 「1」, 9쪽 (9) 교사용 답 오류. 답 쪽 내역은 DB `sourceNote`.
+  - 32문항 독립 검산(저장소 밖, 표는 길을 다시 만들어 공개 단서 숫자까지 대조) = 교사용 답(위 오류 3건 제외). `sourceHold` S03~S10 8건 삭제,
+    coverage public 48 · hold 45. DB `book-05` 50키 → 125키. 캐시 꼬리표 `20261014a`.
+  - ⚠ 검산 스크립트는 문제 글에서 물음을 읽을 때 **조건 문장 뒤의 「(n) …」 부분만** 읽어야 한다(조건 속 「①번 줄의 4번째」를 먼저 잡는 실수를 했다).
+- **다음**: 보류를 주제 묶음으로 슬라이드 순서대로 — ~~수 배열·수열 3~10~~ / 연산·달력 11~15 / 최단거리 18~24 / 숫자 카드 26~32 /
   곱셈구구·매트릭스 35~40 / 선분·도형식·분수 41~49 / 삼각수·둘레·사각수 51~58 / 가르기 60. 보류 사유 메모 중 「교사용 나열 누락(29쪽 (4))」,
   「둘째 표 조건 불성립(40쪽)」은 묶음 작업 때 원본으로 다시 확인할 것.
 
