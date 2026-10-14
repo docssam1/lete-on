@@ -31,6 +31,7 @@ export function mountMagazine(host){
  function restoreRoleNotes(){const nextRole=currentRole();if(nextRole===noteRole)return;keepNotes();noteRole=nextRole;const ownNotes=roleNotes.get(noteRole)||{};noteIds.forEach(id=>{host.querySelector('#'+id).value=ownNotes[id]||'';});}
  host.addEventListener('input',event=>{if(noteIds.includes(event.target.id))keepNotes();});
  window.addEventListener('popcornlab:route',()=>queueMicrotask(restoreRoleNotes));
+ window.addEventListener('popcornlab:role',()=>queueMicrotask(restoreRoleNotes));
  const dialog=host.querySelector('dialog');
  function show(index,focus=false){page=Math.max(0,Math.min(4,index));host.querySelectorAll('[data-mag-spread]').forEach(el=>{el.hidden=Number(el.dataset.magSpread)!==page;});host.querySelectorAll('[data-mag-page]').forEach(el=>{el.setAttribute('aria-current',Number(el.dataset.magPage)===page?'page':'false');});host.querySelector('[data-mag-prev]').disabled=page===0;host.querySelector('[data-mag-next]').disabled=page===4;host.querySelector('[data-mag-counter]').textContent=`${page+1} / 5 · ${titles[page]}`;if(focus){host.querySelector(`#mag-title-${page}`).focus({preventScroll:true});host.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}}
  host.addEventListener('click',event=>{const button=event.target.closest('button,a');if(!button)return;
@@ -43,7 +44,7 @@ export function mountMagazine(host){
  });
  dialog.addEventListener('close',()=>zoomOpener?.focus({preventScroll:true}));
  dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
- const api={show,get page(){return page;},host};mounted.set(host,api);show(0);
+ const api={show,get page(){return page;},host};window.__POPCORN_MAGAZINE__=api;mounted.set(host,api);show(0);
  window.dispatchEvent(new CustomEvent('popcornlab:magazine-mounted',{detail:{host}}));
  return api;
 }
