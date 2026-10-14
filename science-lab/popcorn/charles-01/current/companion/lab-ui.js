@@ -5,6 +5,7 @@ const $=q=>document.querySelector(q), e=s=>String(s??'').replace(/[&<>"']/g,c=>(
 const copy=x=>JSON.parse(JSON.stringify(x)), key='popcorn.charles01.lab.v1';
 const trainingIds=['ready','pouch','assembly-jaw','assembly-body','assembly-food','repair'];
 const initialModel=()=>normalizeLabState({mode:'kit',assemblyStage:0,pole1:'N',pole2:'N',upperPole:'N',lowerPole:'N',food:'fish',foodPole:'S',distance:1,pouchOpen:false,hingeBlocked:false,labelsSwapped:false});
+const guidedDemos=new WeakMap();
 const createSession=()=>({index:0,model:initialModel(),assemblyProgress:0,assemblySelected:1,opened:false,records:[],drafts:{},pairs:{},lawShown:{},seen:[]});
 const sessions={self:createSession(),teacher:createSession(),training:createSession()};
 let role='self', scene=null, sceneReady=false, mounting=null, sceneAttempt=0, teacherGuides=null, paused=false, exploded=false, restoring=false, returnMagazine=false, returnReadingHash=null, wasFull=false;
@@ -74,7 +75,7 @@ function recordText(kind='explanation'){
 }
 function renderActivity(){
  const stage=getStage(),s=getSession(),m=s.model,a=stage.activity;let h='';
- if(a.type==='onboarding')h=`<p class="lab-note">화면 실험은 바로 시작할 수 있어요.<br/>실물 키트가 있다면 자석의 고정과 수량을 어른과 먼저 확인해요. 자석을 입·코·귀에 넣지 않아요. 빠지거나 느슨해진 자석이 있으면 멈추고 어른에게 알려요.</p>${row(button('start','랩코니와 시작해요','',true))}<p class="lab-note">조립만 바로 보고 싶다면 위의 “조립 도우미”를 골라요. 문제를 풀지 않아도 조립할 수 있어요.</p>`;
+ if(a.type==='onboarding')h=`<p class="lab-note">화면 실험은 바로 시작할 수 있어요.<br/>실물 키트가 있다면 자석의 고정과 수량을 어른과 먼저 확인해요. 자석을 입·코·귀에 넣지 않아요. 빠지거나 느슨해진 자석이 있으면 멈추고 어른에게 알려요.</p>${row(button('start','랩코니와 시작해요','',true))}<p class="lab-note">조립만 바로 보고 싶다면 상단의 “조립하기”를 눌러요. 문제를 풀지 않아도 조립할 수 있어요.</p>`;
  else if(a.type==='unboxing')h=row(button('shake','봉투 흔들기')+button('open',s.opened?'다시 펼쳐 보기':'봉투 뜯기','',true))+`<div class="lab-part-list">${s.opened?Object.entries(parts).map(([id,text])=>button('part',text,`data-part="${id}"`)).join(''):''}</div><p class="lab-note">화면 준비물 모형이에요. 실제 키트의 구성·수량은 따로 확인해요.</p>`;
  else if(a.type==='prediction')h=(a.questions?a.questions.map((q,i)=>field(`question${i+1}`,q)).join(''):fields(a.fields||[]))+row(button('prediction','내 예상 남기기'));
  else if(a.type==='clip-probe')h=row(button('bar','막대자석',`aria-pressed="${m.magnetType==='bar'}"`)+button('disc','동전자석',`aria-pressed="${m.magnetType==='disc'}"`))+row(['north','middle','south'].map((pos,i)=>button('clipPosition',m.magnetType==='bar'?['왼쪽 끝','가운데','오른쪽 끝'][i]:['윗면','옆면','아랫면'][i],`data-position="${pos}" aria-pressed="${m.clipPosition===pos}"`)).join(''))+`<label for="lab-material">비교할 시료</label><select id="lab-material">${[['steel','철 클립'],['wood','나무'],['plastic','플라스틱']].map(([v,t])=>`<option value="${v}" ${m.material===v?'selected':''}>${t}</option>`).join('')}</select>`+distanceControl()+recordButton()+`<p class="lab-note">극 부근과 다른 곳의 반응을 비교해요. 클립 개수는 정확한 힘의 측정값이 아니에요.</p>`;
@@ -101,7 +102,10 @@ function renderActivity(){
  else if(a.type==='source-check')h=`<p><b>${e(a.question)}</b></p>`+a.choices.map((c,i)=>`<label class="lab-choice"><input type="radio" name="lab-check" data-lab-choice value="${i+1}" ${stageDraft().choice===String(i+1)?'checked':''}><span>${i+1}. ${e(c)}</span></label>`).join('')+fields(a.fields)+row(button('text','내 선택과 이유 기록'));
  else if(a.type==='journal')h=`<p class="lab-note">화면에서 본 것은 위의 “화면 모형 기록”에서 확인해요. 실물로 해 본 것만 아래에 직접 적어요.</p>`+field('real-observation','별도로 해 본 실물 관찰')+row(button('real','실물 관찰 따로 기록'))+fields(a.fields)+row(button('text','보고서 기록'))+`<a class="text-link" href="#notes">이전 교재에 쓴 내 글도 보기 →</a>`;
  else h=fields(a.fields||[])+distanceControl()+recordButton();
+ const context=stage.id==='first-ideas'?['랩코니의 사전 이야기','랩코니가 보이지 않는 자석의 힘을 살펴보려 해요. 보이지 않는 힘을 어떤 모습으로 살펴볼지 생각하며 아래 질문을 읽어요. 철가루 실물 관찰은 어른과 밀봉 교구로 하고, 화면의 철 클립 관찰과 구분해요.']:stage.id==='food-predict'?['악어 앞에 놓인 두 먹이','완성한 악어 앞에 물고기와 당근이 놓여 있어요. 먹이를 천천히 가까이 가져가기 전에 어떤 모습일지 생각해 볼까요?']:stage.activity.type==='magnet-pairs'?['두 자석을 만나게 해 볼까요?','랩코니가 두 자석을 마주 놓으려 해요. 자석의 모양과 방향을 바꾸면 어떤 모습일지, 먼저 생각해 봐요.']:stage.id==='concept-check'?['이야기를 돌아봐요','자석과 먹이 사진을 다시 떠올려요. 질문을 읽으며 내 생각을 골라 보거나, 궁금한 점을 남겨도 좋아요.']:null;
+ if(context)h=`<aside class="lab-before-question"><img src="../assets/labconi-charles.png" alt="이야기를 들려주는 랩코니"><strong>${e(context[0])}</strong><p>${e(context[1])}</p></aside>`+h;
  $('#lab-activity').innerHTML=h;
+ window.dispatchEvent(new CustomEvent('popcornlab:guided-change'));
 }
 function prepareStage(){
  const s=getSession(),g=getStage(),m=s.model,t=g.activity.type;
@@ -117,7 +121,7 @@ async function ensureScene(){
  if(scene){scene.setPaused(paused||document.hidden);return;}
  if(mounting)return mounting;
  mounting=(async()=>{
-  try{const sceneUrl=new URL('./lab-scene.js',import.meta.url);if(sceneAttempt)sceneUrl.searchParams.set('retry',String(sceneAttempt));const mod=await import(sceneUrl.href);$('#lab-scene-host').replaceChildren();scene=await mod.mountLabScene($('#lab-scene-host'),{onAction:handleSceneAction});
+  try{const sceneUrl=new URL('./lab-scene.js?v=20261015-pouch-1',import.meta.url);if(sceneAttempt)sceneUrl.searchParams.set('retry',String(sceneAttempt));const mod=await import(sceneUrl.href);$('#lab-scene-host').replaceChildren();scene=await mod.mountLabScene($('#lab-scene-host'),{onAction:handleSceneAction});
    const snap=scene.getSnapshot();sceneReady=snap.webgl!==false&&snap.status!=='fallback'&&Boolean($('#lab-scene-host canvas'));
    $('#lab-retry').hidden=sceneReady;scene.setState(sceneState());scene.setPaused(paused||document.hidden);updateObservation();
   }catch(error){sceneReady=false;$('#lab-scene-host').innerHTML='<div class="lab-loading">3D를 불러오지 못했어요. “3D 다시 준비”를 눌러주세요.</div>';$('#lab-retry').hidden=false;$('#lab-observation').textContent='3D가 준비되지 않아 화면 실험을 완료로 처리하지 않았어요.';}
@@ -131,27 +135,28 @@ function render(){
  $('#lab-title').textContent=role==='teacher'?'선생님과 자석 악어 탐구':role==='training'?'3D 자석 악어 조립 도우미':'먹이를 먹는 자석 악어';
  $('#lab-phase').textContent=phaseLabels[g.phase];$('#lab-count').textContent=`${String(s.index+1).padStart(2,'0')} / ${list.length}`;$('#lab-day').textContent=g.day===6?'주말 선택':`${g.day}일째`;
  $('#lab-stage-tag').textContent=phaseLabels[g.phase];$('#lab-stage-title').textContent=g.title;$('#lab-instruction').textContent=g.instruction;$('#lab-caption').textContent=g.caption;
- $('.labconi-guide').classList.toggle('ready',g.id==='ready');$('#labconi-start').disabled=g.id!=='ready';
+ $('.labconi-guide').classList.toggle('ready',g.id==='ready');$('#labconi-start').disabled=g.id!=='ready';if(g.id==='ready'){$('#lab-caption').textContent='준비됐나요? 다음을 눌러 시작해요.';$('#lab-instruction').textContent='랩코니와 준비물을 살펴봐요. 다음을 누르면 봉투부터 열어 볼 수 있어요.';}
  $('#lab-help').hidden=true;$('#lab-help-toggle').setAttribute('aria-expanded','false');$('#lab-help').innerHTML=g.help.map(t=>`<p>${e(t)}</p>`).join('');
- $('#lab-prev').disabled=s.index===0;$('#lab-next').disabled=(g.id==='pouch'&&!s.opened);$('#lab-next').textContent=s.index===list.length-1?'마무리 기록 보기':'다음 탐구';
+ $('#lab-prev').disabled=s.index===0;$('#lab-next').disabled=false;$('#lab-next').textContent='다음';
  $('#lab-next-hint').textContent=g.id==='pouch'&&!s.opened?'봉투를 열고 준비물을 살펴요.':g.activity.type==='assembly-training'?'먼저 사진과 모형을 번갈아 살펴요.':'내 속도로 이동해요. 하지 않은 실험은 미실행으로 남아요.';
  $('#lab-stage-list').innerHTML=list.map((x,i)=>`<button type="button" data-lab-stage="${i}" ${i===s.index?'aria-current="step"':''}>${String(i+1).padStart(2,'0')} ${e(x.title)}</button>`).join('');
  $('#lab-teacher-panel').hidden=role!=='teacher';$('#lab-teacher-content').hidden=true;if(role!=='teacher')$('#lab-teacher-content').replaceChildren();$('#lab-teacher-reveal').setAttribute('aria-expanded','false');
- renderActivity();renderRecords();updateObservation();save();
+ renderActivity();renderRecords();updateObservation();if(g.id==='pouch'&&s.opened&&sceneReady&&scene?.getSnapshot()?.pouch&&!scene.getSnapshot().pouch.ready)$('#lab-next').disabled=true;save();
 }
 function goIndex(index){const s=getSession();s.index=Math.max(0,Math.min(stages().length-1,index));prepareStage();render();}
 function setModel(patch,rerender=true){Object.assign(getSession().model,patch);if(rerender)renderActivity();updateObservation();save();}
 function handleSceneAction(a){
+ if(a.type==='pouchReady'){if(getStage().id==='pouch'&&getSession().opened){$('#lab-next').disabled=false;$('#lab-next-hint').textContent='준비물이 펼쳐졌어요. 살펴보고 다음을 눌러요.';$('#lab-activity').querySelectorAll('[data-lab-action="open"],[data-lab-action="shake"]').forEach(n=>n.disabled=false);}return;}
  if(a.type==='distance')setModel({distance:a.value},false);
  if(a.type==='flipPole'){const target=a.target;if(['pole1','pole2','upperPole','lowerPole'].includes(target))setModel({[target]:getSession().model[target]==='N'?'S':'N'});}
  if(a.type==='selectPart'){setModel({selectedPart:a.id},false);$('#lab-observation').textContent=parts[a.id]||'부품을 골랐어요.';}
- if(a.type==='contextLost'||a.type==='error'){sceneReady=false;$('#lab-retry').hidden=false;$('#lab-observation').textContent='3D 화면이 멈췄어요. 기록은 그대로 두고 다시 준비할 수 있어요.';}
+ if(a.type==='contextLost'||a.type==='error'){sceneReady=false;$('#lab-retry').hidden=false;if(getStage().id==='pouch')$('#lab-next').disabled=false;$('#lab-observation').textContent='3D 화면이 멈췄어요. 기록은 그대로 두고 다시 준비할 수 있어요.';}
 }
 function actions(action,node){
  const s=getSession(),m=s.model,g=getStage();
  if(action==='start')goIndex(1);
- if(action==='shake'){const host=$('#lab-scene-host');host.classList.remove('shake');void host.offsetWidth;host.classList.add('shake');setModel({pouchShake:Date.now()},false);}
- if(action==='open'){s.opened=true;m.pouchOpen=true;m.assemblyStage=10;const host=$('#lab-scene-host');host.classList.add('opening');setTimeout(()=>host.classList.remove('opening'),700);render();}
+ if(action==='shake')scene?.shakePouch?.();
+ if(action==='open'){const replay=s.opened;s.opened=true;m.pouchOpen=true;m.assemblyStage=10;render();if(replay)scene?.replayPouch?.();if(sceneReady&&scene?.getSnapshot()?.pouch&&!scene.getSnapshot().pouch.ready){$('#lab-next').disabled=true;$('#lab-next-hint').textContent='봉투가 열리고 준비물이 펼쳐져요.';$('#lab-activity').querySelectorAll('[data-lab-action="open"],[data-lab-action="shake"]').forEach(n=>n.disabled=true);}}
  if(action==='part'){setModel({selectedPart:node.dataset.part},false);$('#lab-observation').textContent=parts[node.dataset.part];}
  if(action==='prediction')recordText('prediction');if(action==='text')recordText();if(action==='real'){
   const text=stageDraft()['real-observation'];if(text?.trim())appendRecord('real',{text});else $('#lab-observation').textContent='실물로 관찰한 것을 먼저 적어요.';
@@ -169,6 +174,39 @@ function actions(action,node){
  if(action==='undo'){s.assemblyProgress=Math.max(0,s.assemblySelected-1);setModel({assemblyStage:s.assemblyProgress});}
  if(action==='replay'){scene?.setState({...sceneState(),assemblyStage:Math.max(0,s.assemblySelected-1)});setTimeout(()=>{s.assemblyProgress=s.assemblySelected;setModel({assemblyStage:s.assemblySelected});},matchMedia('(prefers-reduced-motion: reduce)').matches?0:700);}
  if(action==='showLaw'){s.lawShown[g.id]=!s.lawShown[g.id];renderActivity();save();}
+}
+function previous(){
+ const s=getSession(),g=getStage();
+ if(g.activity.type==='assembly-training'){
+  if(s.assemblySelected>g.activity.phaseRange[0]){s.assemblySelected--;s.assemblyProgress=Math.min(s.assemblyProgress,s.assemblySelected);setModel({assemblyStage:s.assemblyProgress});return;}
+  const prior=stages()[s.index-1];if(prior?.activity.type==='assembly-training'){goIndex(s.index-1);s.assemblySelected=prior.activity.phaseRange[1];s.assemblyProgress=Math.min(s.assemblyProgress,s.assemblySelected);setModel({assemblyStage:s.assemblyProgress});return;}
+ }
+ goIndex(s.index-1);
+}
+function advance(){
+ const s=getSession(),g=getStage(),a=g.activity;
+ let demo=guidedDemos.get(s);if(!demo||demo.id!==g.id){demo={id:g.id,cursor:0};guidedDemos.set(s,demo);}
+ if(g.id==='pouch'&&!s.opened){actions('open');return;}
+ if(a.type==='assembly-training'){
+  if(s.assemblyProgress!==s.assemblySelected||s.model.assemblyStage!==s.assemblySelected){actions('perform');$('#lab-next-hint').textContent=`조립 ${s.assemblySelected}단계의 모습을 살펴봐요.`;return;}
+  if(s.assemblySelected<a.phaseRange[1]){s.assemblySelected++;renderActivity();$('#lab-next-hint').textContent='사진을 먼저 보고 다음을 눌러 붙이는 모습을 살펴요.';return;}
+ }
+ if(a.type==='clip-probe'){
+  const trials=[['bar','north','steel'],['bar','middle','steel'],['bar','south','steel'],['disc','north','steel'],['disc','middle','steel'],['disc','south','steel'],['bar','north','wood'],['bar','north','plastic']];
+  if(demo.cursor<trials.length){const [magnetType,clipPosition,material]=trials[demo.cursor++];setModel({magnetType,clipPosition,material,distance:0});$('#lab-next-hint').textContent=`화면 시범 ${demo.cursor} / ${trials.length} · 직접 본 모습은 따로 기록해요.`;return;}
+ }
+ if(a.type==='magnet-pairs'&&demo.cursor<a.pairIds.length){const id=a.pairIds[demo.cursor++],poles=id.slice(-2);setModel({pairKind:id.startsWith('disc')?'disc-disc':'bar-disc',pole1:poles[0],pole2:poles[1],distance:0});$('#lab-next-hint').textContent=`화면 시범 ${demo.cursor} / ${a.pairIds.length} · ${poles[0]}극과 ${poles[1]}극`;return;}
+ if(['fish-trial','carrot-trial'].includes(g.id)&&demo.cursor===0){demo.cursor++;actions('near');$('#lab-next-hint').textContent='가까이 가져온 먹이와 입의 모습을 살펴봐요.';return;}
+ if(a.type==='fair-comparison'&&demo.cursor<2){const food=demo.cursor++===0?'fish':'carrot';setModel({food,foodPole:foodEndPole(s.model,food),distance:0});$('#lab-next-hint').textContent='같은 거리에서 두 먹이의 반응을 비교해요.';return;}
+ if(a.type==='fault-repair'&&demo.cursor<3){const step=demo.cursor++;if(step===0)actions('near');else setModel({hingeBlocked:step===1,distance:0});$('#lab-next-hint').textContent=['정상 움직임을 살펴봐요.','턱이 막힌 상태와 힘을 비교해요.','막힌 부분을 풀고 다시 살펴봐요.'][step];return;}
+ if(a.type==='optional-challenge'&&demo.cursor<3){const step=demo.cursor++;if(step===0)actions('near');else actions('swapLabels');$('#lab-next-hint').textContent=['원래 이름표의 반응을 살펴봐요.','이름표만 바꾸어 같은 거리에서 살펴봐요.','이름표를 되돌려 비교해요.'][step];return;}
+ if(['concept-from-records','explain-from-evidence'].includes(a.type)&&!s.lawShown[g.id]){actions('showLaw');$('#lab-next-hint').textContent='설명을 읽고 다음으로 이어 가요.';return;}
+ if(!s.seen.includes(g.id))s.seen.push(g.id);
+ const upcoming=stages()[s.index+1]||null;
+ const event=new CustomEvent('popcornlab:before-advance',{cancelable:true,detail:{current:g,next:upcoming}});
+ window.dispatchEvent(event);
+ if(!event.defaultPrevented){if(upcoming)goIndex(s.index+1);else{$('#lab-root .lab-log-panel').open=true;location.hash='notes';}}
+ save();
 }
 function enterMode(next){if(!['self','teacher','training'].includes(next))return;role=next;render();ensureScene();}
 function route(){
@@ -198,8 +236,8 @@ $('#lab-activity').addEventListener('change',ev=>{
 });
 $('#lab-mode').addEventListener('change',ev=>{const v=ev.target.value;const hash=v==='teacher'?'teach':v==='training'?'build':'lab';if(location.hash!==`#${hash}`)location.hash=hash;else enterMode(v);});
 $('#labconi-start').addEventListener('click',()=>{if(getStage().id==='ready')goIndex(1);});
-$('#lab-prev').addEventListener('click',()=>goIndex(getSession().index-1));
-$('#lab-next').addEventListener('click',()=>{const s=getSession();if(getStage().id==='pouch'&&!s.opened)return;if(!s.seen.includes(getStage().id))s.seen.push(getStage().id);if(s.index<stages().length-1)goIndex(s.index+1);else $('#lab-root .lab-log-panel').open=true;save();});
+$('#lab-prev').addEventListener('click',previous);
+$('#lab-next').addEventListener('click',advance);
 $('#lab-stage-list-toggle').addEventListener('click',()=>{const open=$('#lab-stage-list').hidden;$('#lab-stage-list').hidden=!open;$('#lab-stage-list-toggle').setAttribute('aria-expanded',String(open));});
 $('#lab-stage-list').addEventListener('click',ev=>{const n=ev.target.closest('[data-lab-stage]');if(n)goIndex(Number(n.dataset.labStage));});
 $('#lab-help-toggle').addEventListener('click',()=>{const open=$('#lab-help').hidden;$('#lab-help').hidden=!open;$('#lab-help-toggle').setAttribute('aria-expanded',String(open));});
@@ -230,5 +268,5 @@ document.addEventListener('keydown',ev=>{
  if(ev.key==='ArrowRight'){ev.preventDefault();$('#lab-next').click();}if(ev.key==='ArrowLeft'){ev.preventDefault();$('#lab-prev').click();}if(ev.key.toLowerCase()==='f'){ev.preventDefault();toggleFull();}
 });
 window.addEventListener('pagehide',()=>scene?.setPaused(true));
-window.__POPCORN_LAB__={getState:()=>copy({role,stageId:getStage().id,session:getSession(),sceneReady}),getSnapshot:()=>scene?.getSnapshot(),goStage:id=>{const i=stages().findIndex(x=>x.id===id);if(i>=0)goIndex(i);},dispose:()=>{scene?.dispose();scene=null;sceneReady=false;}};
+window.__POPCORN_LAB__={advance,useRole:next=>{if(['self','teacher','training'].includes(next)){role=next;render();window.dispatchEvent(new CustomEvent('popcornlab:role',{detail:{role}}));}},getState:()=>copy({role,stageId:getStage().id,session:getSession(),sceneReady}),getSnapshot:()=>scene?.getSnapshot(),goStage:id=>{const i=stages().findIndex(x=>x.id===id);if(i>=0)goIndex(i);},dispose:()=>{scene?.dispose();scene=null;sceneReady=false;}};
 route();

@@ -29,7 +29,7 @@
 .dk-lab-battle :is(button, select):disabled { cursor: default; opacity: .65; }
 .dk-lab-battle .lb-lab { min-height: 240px; }
 .dk-lab-battle .lb-wait { margin: 0; padding: 48px 16px; font-size: 18px; color: var(--gf-muted); background: var(--gf-canvas); border-radius: 8px; }
-.dk-lab-battle .mb-team canvas { height: max(240px, 16cqw) !important; }
+.dk-lab-battle .mb-team canvas, .dk-lab-battle .mb-team .rt2-svg { height: max(240px, 16cqw) !important; }
 .dk-lab-battle .mb-team .modes { flex-wrap: wrap; }
 .dk-lab-battle .mb-team .modes button, .dk-lab-battle .mb-team .lab-lbl, .dk-lab-battle .mb-team .lab3d-tip { font-size: 16px; }
 .dk-lab-battle .lab-table :is(th, td) { font-size: 16px; line-height: 1.5; }
@@ -39,6 +39,6 @@
   .dk-lab-battle .mb-head { flex-wrap: wrap; }
   .dk-lab-battle .mb-teams { grid-template-columns: 1fr; }
   .dk-lab-battle .mb-standings { position: static; }
-  .dk-lab-battle .mb-team canvas { height: 260px !important; }
+.dk-lab-battle .mb-team canvas, .dk-lab-battle .mb-team .rt2-svg { height: 260px !important; }
 }
 .dk-lab-battle .mb-team .full-land > canvas { height: 100% !important; }

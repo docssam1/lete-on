@@ -199,7 +199,7 @@ assembly.forEach((item,index) => {
 pageTitles.forEach((title,index) => {
   const option = document.createElement('option');option.value = String(index + 1);option.textContent = `${index + 1}쪽 · ${title}`;$('#book-page').append(option);
 });
-renderStep();renderBook();restoreJournal();showView(location.hash.slice(1) || 'magazine');if(!location.hash)location.hash='magazine';loadResources();
+renderStep();renderBook();restoreJournal();showView(location.hash.slice(1) || 'home');if(!location.hash)location.hash='home';loadResources();
 
 window.addEventListener('hashchange',() => showView(location.hash.slice(1),true));
 window.addEventListener('popcornlab:book',event=>{bookPage=Math.max(1,Math.min(pageTitles.length,Number(event.detail.page)||1));renderBook();location.hash='book';});

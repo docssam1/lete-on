@@ -1,5 +1,5 @@
 {
-  "version": "20261014-charles01-release-1",
+  "version": "20261015-charles01-pouch-1",
   "studentPages": 20,
   "magazineSpreads": 5,
   "assemblyPhases": 10,
@@ -150,13 +150,23 @@
     },
     {
       "path": "companion/app.js",
-      "bytes": 23729,
-      "sha256": "8ff7c7050491192c4546f0fa751ce122233fb1bdfc45c83779d22b4cf130521e"
+      "bytes": 23721,
+      "sha256": "00bd458fb527aa47c82f56abd7fbe197aa2827089a3708c68034c6c2840f6c3a"
+    },
+    {
+      "path": "companion/guide.css",
+      "bytes": 7119,
+      "sha256": "6ce6dde44a51a574cb184ebc41c86f38d48c7ca6e6fbecf404ef3ac45f15cbd4"
+    },
+    {
+      "path": "companion/guide.js",
+      "bytes": 10756,
+      "sha256": "d1c52cbe9d390b1a0705bbb6f19e920931903a85434ec7514fbdeb14b153a8e8"
     },
     {
       "path": "companion/index.html",
-      "bytes": 26487,
-      "sha256": "5d6535daa2ca25d3a785aaedc194642d7c11fa308f74502765310d7bcbf5ae07"
+      "bytes": 25557,
+      "sha256": "8891eb41a9949c00e04660a53272cef8b8f0240d6d1563531421b68f195c02a5"
     },
     {
       "path": "companion/lab-content.js",
@@ -174,9 +184,14 @@
       "sha256": "af5e13117b98991e0e62bdd88902d1ddafd142e48f27ca0ac2f0e93a8fec5055"
     },
     {
+      "path": "companion/lab-pouch.js",
+      "bytes": 14375,
+      "sha256": "347170f10ef5b6de75184cdc3bbb7d7abcbcceee60f71db10ea2c74e22b1ddf1"
+    },
+    {
       "path": "companion/lab-scene.js",
-      "bytes": 44851,
-      "sha256": "2860fdc62d561a622ea63f906b96a967ee3878e9ab83663ee6c979577f2edb51"
+      "bytes": 46989,
+      "sha256": "60bfda2056cc077749d6719c9d4bd1a10721fdbac3e0379fc07d82ce1586f2bd"
     },
     {
       "path": "companion/lab-teacher.js",
@@ -185,13 +200,13 @@
     },
     {
       "path": "companion/lab-ui.js",
-      "bytes": 32542,
-      "sha256": "b960adc0464b73f8b60c889ba88f2d26869aa8b80a4c118a3b88a17b148c4f7e"
+      "bytes": 38382,
+      "sha256": "69879ca7bbf37b9dba084283ab137d43c45e8ddd0e3aecdc2340616c05a3c542"
     },
     {
       "path": "companion/lab.css",
-      "bytes": 21193,
-      "sha256": "c74915646e2c5db094ab8093b02c55222ed3b0eb495615e916ea71fb542a448d"
+      "bytes": 20717,
+      "sha256": "b485abfe98eb26b13b876ee8f45e4aa71ac5fe65d7370a7bd136686265171849"
     },
     {
       "path": "companion/magazine.css",
@@ -200,8 +215,8 @@
     },
     {
       "path": "companion/magazine.js",
-      "bytes": 18993,
-      "sha256": "761d3a37114c779fc0ce89f0b9c254fecbb23fb07791887865e5e6de14211d3d"
+      "bytes": 19108,
+      "sha256": "bf4bf1a0a38c6016961b7eed79776dd885e5efc64a9b421b0eb1f414b8bcef64"
     },
     {
       "path": "companion/reading-content.js",
@@ -245,8 +260,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 405,
-      "sha256": "1dfa8f3530ddf1b749d46492aca347eb944d62901d7d58502b4c82b9eb5faf47"
+      "bytes": 401,
+      "sha256": "a9345c319836047868abcf0790d79d4250843f495136bae3f6a7f332d1700f82"
     },
     {
       "path": "output/pdf/student-sourceframe.pdf",
@@ -358,5 +373,21 @@
       "bytes": 865,
       "sha256": "9ff08fe22a9a83e34d4d30af8e76b64dabcf567fb074a899f973a028c796676e"
     }
-  ]
+  ],
+  "entryMenuLabels": [
+    "사전 이야기",
+    "요일별 공부하기",
+    "스토리로 공부하기",
+    "조립하기",
+    "3D 실험실"
+  ],
+  "guidedNextOnly": true,
+  "automaticExperimentRecording": false,
+  "pouchPresentation": {
+    "filmLayers": true,
+    "progressiveTear": true,
+    "scopedShake": true,
+    "reducedMotion": true,
+    "durationSeconds": 1.45
+  }
 }

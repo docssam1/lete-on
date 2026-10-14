@@ -99,6 +99,149 @@ async function shot(page, name) { if (SHOTS) await page.screenshot({ path: path.
 async function done(where, page, errs) { if (errs.length) fail(where, `페이지 오류 ${errs.length}건: ${errs[0]}`); await page.close(); }
 
 // 덱의 「3D 실험실」 슬라이드 번호를 찾는다(순서가 바뀌어도 따라가게)
+// 고리 자석 탑(2026-10-13 검수 PR #318): ① 첫 화면(스크롤 0)에서 「표에 적기」 가운데를 elementFromPoint로 짚어 하단 고정 막대에 가리지 않는지,
+// 이어서 스크롤 없이 실제 마우스로 고르기 → 예상 → 뒤집기 → 적기를 누른다. ② WebGL이 없는 2D 실험실도 같은 흐름·같은 정답 비노출 규칙.
+// (locator.click은 알아서 스크롤해 가림을 놓친다 — 2026-10-13 이 검사가 그 탓에 1280×860 가림을 통과시켰다.)
+async function pressAt(page, sel) {
+  const r = await page.evaluate((sel) => {
+    const b = document.querySelector(sel); if (!b) return { why: '없음' };
+    const q = b.getBoundingClientRect(), x = q.left + q.width / 2, y = q.top + q.height / 2;
+    if (y < 0 || y > innerHeight) return { why: `화면 밖(y ${Math.round(y)})` };
+    const e = document.elementFromPoint(x, y);
+    return e && e.closest(sel) === b ? { x, y } : { why: `가림(${e ? (e.closest('.bottom') ? '하단 막대' : e.className || e.tagName) : '없음'})` };
+  }, sel);
+  if (r.why) return r.why;
+  await page.mouse.click(r.x, r.y); return '';
+}
+const ringState = (page) => page.evaluate(() => ({
+  fl: document.querySelector('[data-r=floating]')?.textContent, h: document.querySelector('[data-r=height]')?.textContent,
+  rec: document.querySelector('[data-act=record]')?.disabled, phase: document.querySelector('.lab3d--ring-tower')?.dataset.phase,
+  poles: [...document.querySelectorAll('.rt2-pole')].length,
+  ariaPole: [...document.querySelectorAll('.lab3d--ring-tower [aria-label]')].filter((e) => !e.matches('[data-act=inspect-pair]') && /[NS]극|윗면 [NS]/.test(e.getAttribute('aria-label'))).length,
+}));
+async function ringFlow(where, page, { strict }) {
+  const press = async (sel, label, wait) => {
+    let why = await pressAt(page, sel);
+    if (why && !strict) { await page.locator(sel).first().scrollIntoViewIfNeeded(); why = await pressAt(page, sel); }
+    if (why) { fail(where, `「${label}」을 스크롤 없이 누를 수 없음 — ${why}`); await page.locator(sel).first().click(); }
+    await page.waitForTimeout(wait);
+  };
+  checks += 5;
+  let s = await ringState(page);
+  if (s.fl !== '?' || s.h !== '?' || !s.rec || s.poles || s.ariaPole) fail(where, `첫 화면에 답이 보임(${JSON.stringify(s)})`);
+  if (strict) {   // 첫 화면: 아직 잠겨 있어도 「표에 적기」가 막대 밑에 숨어 있으면 안 된다
+    const hid = await page.evaluate(() => { const b = document.querySelector('[data-act=record]'), q = b.getBoundingClientRect(), y = q.top + q.height / 2; if (y > innerHeight) return '화면 밖'; const e = document.elementFromPoint(q.left + q.width / 2, y); return e && e.closest('[data-act=record]') === b ? '' : (e?.closest('.bottom') ? '하단 막대' : (e?.className || '없음')); });
+    if (hid) fail(where, `첫 화면에서 「표에 적기」가 가려짐 — ${hid}`);
+  }
+  const y0 = await page.evaluate(() => scrollY);
+  await press('[data-flip="1"]', '2번', 500);
+  if (!(await page.locator('.rt-card [data-pred]').count())) fail(where, '고리를 고르면 예상 고르기가 떠야 함');
+  if (strict) {   // 예상 카드를 열 때 페이지가 크게 밀려 탑(캔버스 윗부분)이 화면 위로 나가면 안 된다(2026-10-13 검수: 267px)
+    checks++;
+    const m = await page.evaluate(() => ({ dy: scrollY, top: document.querySelector('.lab3d--ring-tower > canvas, .lab3d--ring-tower > .rt2-svg').getBoundingClientRect().top }));
+    if (m.dy - y0 > 60 || m.top < 40) fail(where, `예상 카드를 열자 페이지가 ${Math.round(m.dy - y0)}px 밀려 탑 위쪽이 가림(캔버스 위 ${Math.round(m.top)}px)`);
+  }
+  await press('[data-pred="2"]', '예상', 300);
+  const settled = () => page.waitForFunction(() => ['explore', 'battle'].includes(document.querySelector('.lab3d--ring-tower')?.dataset.phase), null, { timeout: 15000 }).catch(() => {});   // 느린 렌더러에서도 고정 대기 대신 내려앉을 때까지
+  await press('[data-act="flip-sel"]', '뒤집어 보기', 300); await settled();
+  s = await ringState(page);
+  if (s.fl !== '?' || s.rec || s.poles || s.phase !== 'explore') fail(where, `뒤집은 뒤(적기 전) 상태가 틀림(${JSON.stringify(s)})`);
+  await press('[data-act="record"]', '표에 적기', 900);
+  if (strict) {   // 적은 뒤에도 탑(캔버스 위쪽)이 화면 안에 남아야 한다 — 자·집게를 보는 순간이다
+    checks++;
+    const top = await page.evaluate(() => document.querySelector('.lab3d--ring-tower > canvas, .lab3d--ring-tower > .rt2-svg').getBoundingClientRect().top);
+    if (top < 40) fail(where, `적은 뒤 페이지가 밀려 탑 위쪽이 가림(캔버스 위 ${Math.round(top)}px)`);
+  }
+  s = await ringState(page);
+  if (s.fl !== '2' || s.h !== '5.3' || s.phase !== 'revealed') fail(where, `적은 뒤 값이 모델과 다름(${JSON.stringify(s)})`);
+  await press('[data-flip="3"]', '4번', 300); await settled();
+  s = await ringState(page);
+  if (s.fl !== '?' || s.poles) fail(where, `다시 뒤집었는데 값·극이 그대로 보임(${JSON.stringify(s)})`);
+  await press('[data-act="record"]', '두 번째 적기', 900);
+  await press('[data-act="compare"]', '두 탑 비교', 1500);
+  s = await ringState(page);
+  if (s.phase !== 'compare' || !s.rec) fail(where, `두 탑 비교가 열리지 않았거나 비교 중 적기가 열려 있음(${JSON.stringify(s)})`);
+  await press('[data-act="compare"]', '실험으로 돌아가기', 800);
+  if ((await page.locator('.lab-table tbody tr[data-row]').count()) !== 2) fail(where, '두 번 적었는데 표가 2줄이 아님');
+}
+async function ringTowerClicks(u) {
+  for (const vp of [{ width: 1280, height: 860 }, { width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1024, height: 768 }]) {
+    const where = `${u} 실제 클릭 ${vp.width}×${vp.height}`; console.log(`  · ${where.slice(u.length + 1)}`);
+    const { page, errs } = await open(vp, `#/${u}/2/lab`); await page.waitForTimeout(3000);
+    await ringFlow(where, page, { strict: true });
+    await shot(page, `${u}-실제 클릭 ${vp.width}`);
+    await done(where, page, errs);
+  }
+  // 두 팀 대결(전자칠판·태블릿): 처음과 두 팀 확정 뒤 모두 — 두 팀의 번호 단추·표에 적기·기록 고르기·확정·O/X가 대결 칸 안쪽 스크롤 없이 보이고 실제로 눌리는지,
+  // 팀 칸 아래가 잘리지 않는지, 누르는 칸이 44px 이상인지. 4:3·16:10·낮은 화면은 16:9 틀을 풀어 남은 높이를 쓰고 교사 노트를 접는다(2026-10-14 검수).
+  const n = await labSlide(u);
+  const battleAudit = (page) => page.evaluate(() => {
+    const box = document.querySelector('.dk-magnet-battle'); if (!box) return ['대결 화면 없음'];
+    const b = box.getBoundingClientRect(), out = [];
+    const hit = (el) => { const q = el.getBoundingClientRect(), x = q.left + q.width / 2, y = q.top + q.height / 2; if (y < b.top || y > Math.min(b.bottom, innerHeight)) return false; const e = document.elementFromPoint(x, y); return !!e && (e === el || el.contains(e)); };
+    for (const t of document.querySelectorAll('.mb-team')) {
+      const name = t.querySelector('header b')?.textContent || '팀';
+      const els = t.querySelectorAll('[data-flip], [data-act=record], [data-mb-pick], [data-mb-submit], .mb-actual:not([hidden]) button');
+      if (els.length < 7) out.push(`${name} 조작부가 다 그려지지 않음(${els.length})`);
+      for (const el of els) {
+        if (!hit(el)) out.push(`${name} ${el.textContent.trim() || el.tagName} 가림`);
+        if (el.matches('button') && el.getBoundingClientRect().height < 43.5) out.push(`${name} ${el.textContent.trim()} 높이 ${Math.round(el.getBoundingClientRect().height)}px`);
+      }
+      const tb = t.getBoundingClientRect(); if (tb.bottom > b.bottom + 1) out.push(`${name} 칸 아래 ${Math.round(tb.bottom - b.bottom)}px 잘림`);
+    }
+    return out;
+  });
+  const battleClick = async (page, sel) => { const r = await page.evaluate((sel) => { const b = document.querySelector(sel); if (!b) return null; const q = b.getBoundingClientRect(), x = q.left + q.width / 2, y = q.top + q.height / 2, e = document.elementFromPoint(x, y); return e && (e === b || b.contains(e)) ? { x, y } : null; }, sel); if (!r) return `「${sel}」 못 누름`; await page.mouse.click(r.x, r.y); return ''; };
+  for (const [vp, gl] of [[{ width: 1920, height: 1080 }, true], [{ width: 1440, height: 900 }, true], [{ width: 1366, height: 768 }, true], [{ width: 1280, height: 800 }, true], [{ width: 1024, height: 768 }, true], [{ width: 1024, height: 768 }, false]]) {
+    const where = `${u} 대결 ${vp.width}×${vp.height}${gl ? '' : ' 2D'}`; console.log(`  · ${where.slice(u.length + 1)}`);
+    let br2 = null, page, errs;
+    if (gl) ({ page, errs } = await open(vp, `#/${u}/lab-class/teach/${n}`));
+    else { br2 = await chromium.launch({ args: ['--disable-gpu', '--disable-webgl', '--disable-3d-apis'] }); page = await br2.newPage({ viewport: vp }); errs = []; page.on('pageerror', (e) => errs.push(e.message)); await page.goto(BASE + `#/${u}/lab-class/teach/${n}`, { waitUntil: 'networkidle' }); }
+    await page.waitForTimeout(1500);
+    await page.getByRole('button', { name: /배틀/ }).first().click();
+    await page.waitForFunction(() => document.querySelectorAll('.mb-team [data-act=record]').length === 2, null, { timeout: 30000 }).catch(() => {});
+    await page.waitForTimeout(1500);
+    checks += 2;
+    let bad = await battleAudit(page);
+    if (bad.length) fail(where, `처음 화면: ${bad.join(', ')}`);
+    const miss = [];
+    for (const t of [0, 1]) {
+      const T = `[data-mb-team="${t}"]`;
+      for (const f of [0, 2]) {
+        miss.push(await battleClick(page, `${T} [data-flip="${f}"]`));
+        await page.waitForFunction((T) => /뒤집었어요/.test(document.querySelector(T + ' [data-r=tip]')?.textContent || ''), T, { timeout: 15000 }).catch(() => miss.push(`${t + 1}팀 뒤집기 안 끝남`));
+        await page.evaluate((T) => { document.querySelector(T + ' [data-r=tip]').textContent = ''; }, T);
+      }
+      miss.push(await battleClick(page, `${T} [data-act=record]`)); await page.waitForTimeout(400);
+      if (await page.locator(`[data-mb-pick="${t}"] option[value="0"]`).count()) await page.selectOption(`[data-mb-pick="${t}"]`, '0'); else miss.push(`${t + 1}팀 기록이 안 들어감`);
+      await page.waitForTimeout(200); miss.push(await battleClick(page, `[data-mb-submit="${t}"]`)); await page.waitForTimeout(500);
+    }
+    miss.push(await battleClick(page, '[data-mb-mark="0:O"]'), await battleClick(page, '[data-mb-mark="1:X"]'));
+    if (miss.filter(Boolean).length) fail(where, `실제 클릭 실패: ${miss.filter(Boolean).join(', ')}`);
+    bad = await battleAudit(page);
+    if (bad.length) fail(where, `두 팀 확정 뒤: ${bad.join(', ')}`);
+    await shot(page, `${u}-대결 ${vp.width}${gl ? '' : ' 2D'}`);
+    await done(where, page, errs); if (br2) await br2.close();
+  }
+  const gl0 = await chromium.launch({ args: ['--disable-gpu', '--disable-webgl', '--disable-3d-apis'] });
+  for (const [name, vp, touch] of [['2D 대체(PC)', { width: 1280, height: 860 }], ['2D 대체(폰)', { width: 390, height: 844 }, true]]) {
+    const where = `${u} ${name}`; console.log(`  · ${name}`);
+    const page = await gl0.newPage({ viewport: vp, hasTouch: !!touch }), errs = [];
+    page.on('pageerror', (e) => errs.push(e.message));
+    await page.goto(BASE + `#/${u}/2/lab`, { waitUntil: 'networkidle' }); await page.waitForTimeout(1500);
+    checks++;
+    if (!(await page.locator('.lab3d--ring-tower .rt2-svg').count())) {
+      const leak = await page.evaluate(() => [document.querySelector('[data-r=floating]')?.textContent, document.querySelector('[data-r=height]')?.textContent, document.querySelector('[data-act=record]')?.disabled, [...document.querySelectorAll('[aria-label]')].filter((e) => /윗면 [NS]극/.test(e.getAttribute('aria-label'))).length]);
+      fail(where, `WebGL을 껐는데 새 2D 실험실이 아님 — 첫 화면 떠 있는 층 ${leak[0]} · 높이 ${leak[1]} · 적기 ${leak[2] ? '잠김' : '열림'} · 극 읽어 주기 ${leak[3]}개`);
+      await done(where, page, errs); continue;
+    }
+    await ringFlow(where, page, { strict: !touch });
+    await shot(page, `${u}-${name}`);
+    await done(where, page, errs);
+  }
+  await gl0.close();
+}
+
 async function labSlide(u) {
   const { page } = await open({ width: 1440, height: 900 }, `#/${u}/lab-class/teach/1`);
   let found = 0;
@@ -130,10 +273,8 @@ for (const u of UNITS) {
     if (name === '5단계 실험(PC)') {
       if (u === 's41-u01') {
         // 2026-10-13 재설계: 예상 전에는 답을 보이지 않는다 → 고르고 예상 → 뒤집기 → 적어야 잰 값·극이 나온다.
-        checks += 5;
+        checks += 4;
         const val = (r) => page.locator(`[data-r="${r}"]`).first().textContent();
-        const visible = await page.locator('[data-act="record"]').evaluate((b) => b.getBoundingClientRect().bottom < innerHeight - 40);
-        if (!visible) fail(where, 'PC 기본 화면에서 기록 단추가 하단 이동 막대에 가려짐');
         const early = await page.evaluate(async () => { const { Stage } = await import('/science-lab/engine.js'); const s = [...Stage.live][0]; let n = 0; s.root.traverseVisible((o) => { if (o.isSprite && o.material?.map && o.parent?.parent?.userData?.top !== undefined) n++; }); return n; });
         if ((await val('floating')) !== '?' || (await val('height')) !== '?' || !(await page.locator('[data-act="record"]').isDisabled()) || await page.locator('[data-act="inspect-pair"]').isVisible() || early)
           fail(where, '첫 화면(예상 전)에 잰 값·극 표·기록 단추가 열려 있음 — 답이 먼저 보임');
@@ -175,6 +316,7 @@ for (const u of UNITS) {
     }
     await done(where, page, errs);
   }
+  if (u === 's41-u01') await ringTowerClicks(u);
   // 전체 화면(PC·폰 가로·덱): 조작판이 옆에 붙어 캔버스 비율이 크게 바뀐다.
   // 덱은 실험 칸 규칙(캔버스 높이 36cqw !important·격자)이 전체 화면에 남아 아래 절반이 비었던 적이 있다(2026-10-06) → 화면을 채우는지도 잰다
   for (const [name, vp, touch, hash] of [['전체 화면(PC)', { width: 1280, height: 760 }], ['전체 화면(폰 가로)', { width: 844, height: 390 }, true], ['전체 화면(덱)', { width: 1440, height: 900 }, false, n ? `#/${u}/lab-class/teach/${n}` : null]]) {
@@ -192,6 +334,11 @@ for (const u of UNITS) {
     else {
       if (box.top > 2 || box.h < box.vh * 0.97) fail(where, `전체 화면인데 3D가 화면 높이를 다 채우지 않음(${Math.round(box.h)}/${box.vh}px)`);
       if (box.closeX > 40) fail(where, `「닫기」가 왼쪽 위가 아니라 x ${Math.round(box.closeX)}px에 있음(조작판을 가림)`);
+    }
+    if (u === 's41-u01') {   // 좁은 옆 조작판에서 번호 단추 글자가 넘치거나 겹치지 않게(2026-10-13 한 줄 배치가 전체 화면에도 걸렸다)
+      checks++;
+      const over = await page.evaluate(() => [...document.querySelectorAll('.full-land .rt-flip, .fl-panel .rt-flip, .full-land [data-act=record], .fl-panel [data-act=record]')].filter((b) => b.offsetWidth && b.scrollWidth > b.clientWidth + 1).map((b) => b.textContent.trim()));
+      if (over.length) fail(where, `조작판 단추 글자가 넘침: ${over.join(', ')}`);
     }
     await shot(page, `${u}-${name}`);
     await done(where, page, errs);
