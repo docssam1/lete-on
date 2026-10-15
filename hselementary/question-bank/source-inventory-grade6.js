@@ -9,9 +9,9 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
     "exploration": 73,
     "example": 221,
     "mission": 339,
-    "problemVisualRequired": 583,
+    "problemVisualRequired": 564,
     "answerVisualRequired": 633,
-    "unlocked": 356
+    "unlocked": 419
   },
   "items": [
     {
@@ -11611,8 +11611,8 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e3-example-3-1",
       "sourceSection": "example",
       "sourceItemLabel": "예제 3-3-(1)",
-      "typeLabel": "두 면이 칠해진 쌓기나무 개수 구하기",
-      "commonTypeId": "two-painted-faces-count",
+      "typeLabel": "빨간색이 두 면에 칠해진 쌓기나무 수 구하기",
+      "commonTypeId": "two-red-painted-faces-count",
       "sourceVerified": true,
       "typeLanguageVerified": true,
       "generatorKey": "",
@@ -11663,7 +11663,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e3-mission-1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 1",
-      "typeLabel": "모든 면을 칠한 4×4×4 입체에서 무색 블록 수 세기",
+      "typeLabel": "모든 겉면을 칠한 정육면체에서 색칠되지 않은 쌓기나무 수 구하기",
       "commonTypeId": "painted-face-free-cubes-in-4x4x4",
       "sourceVerified": true,
       "typeLanguageVerified": true,
@@ -11671,8 +11671,8 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "difficultyBand": 1,
       "sourceTier": "advanced",
       "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
-      "problemVisualRequired": true,
+      "reviewReason": "원본은 그림 없는 문제입니다. 독립 계산과 층별 정답 그림을 검수한 3문항 묶음의 실제 화면·인쇄 검사가 남아 있습니다.",
+      "problemVisualRequired": false,
       "answerVisualRequired": true,
       "answerVisualStatus": "not-implemented",
       "generationMode": "fixed-verified-pool",
@@ -11715,7 +11715,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e3-mission-3",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 3",
-      "typeLabel": "네 면·세 면이 칠해진 블록 수로 값 만들기",
+      "typeLabel": "네 면·세 면이 색칠된 쌓기나무 수로 식의 값 구하기",
       "commonTypeId": "four-and-three-painted-faces-encoding",
       "sourceVerified": true,
       "typeLanguageVerified": true,
@@ -11723,7 +11723,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "difficultyBand": 1,
       "sourceTier": "advanced",
       "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewReason": "원본 배치와 독립 계산을 확인했습니다. 학생용 문제·풀이 연결, 작은 화면의 뒤쪽 칸 가시성, 실제 시험지 인쇄 검수가 남아 있습니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
       "answerVisualStatus": "not-implemented",
@@ -11872,20 +11872,27 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "sourceSection": "exploration",
       "sourceItemLabel": "개념탐구 4",
       "typeLabel": "평면으로 자른 쌓기나무 개수 세기",
-      "commonTypeId": "plane-cut-eight-cubes",
+      "commonTypeId": "three-vertex-rectangular-prism-cut",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4PrismCut",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0,
+      "sourceConditionsClarified": true,
+      "sourceReferencePanelRequired": true,
+      "originalSourceReleaseStatus": "locked",
+      "sourceExact": false,
+      "publisherAnswerVerified": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -11897,21 +11904,29 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-example-1",
       "sourceSection": "example",
       "sourceItemLabel": "예제 4-1",
-      "typeLabel": "모서리 가운데를 지나는 평면으로 자른 블록 수 세기",
+      "typeLabel": "여섯 모서리의 중점을 지나는 평면으로 자른 쌓기나무 수 세기",
       "commonTypeId": "plane-cut-cube-edge-midpoints",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4MidpointCut",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0,
+      "sourceConditionsClarified": true,
+      "originalSourceReleaseStatus": "locked",
+      "sourceExact": false,
+      "publisherAnswerVerified": false,
+      "handwrittenAnswerVerified": false,
+      "humanApproved": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -11923,21 +11938,29 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-example-2",
       "sourceSection": "example",
       "sourceItemLabel": "예제 4-2",
-      "typeLabel": "네 꼭짓점을 지나는 평면으로 자른 블록 수 세기",
+      "typeLabel": "네 꼭짓점을 지나는 평면으로 자른 쌓기나무 수 세기",
       "commonTypeId": "plane-cut-cube-four-vertices",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4FourVertexCut",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0,
+      "sourceConditionsClarified": true,
+      "originalSourceReleaseStatus": "locked",
+      "sourceExact": false,
+      "publisherAnswerVerified": false,
+      "handwrittenAnswerVerified": false,
+      "humanApproved": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -11949,21 +11972,29 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-example-3",
       "sourceSection": "example",
       "sourceItemLabel": "예제 4-3",
-      "typeLabel": "색칠한 블록을 반대쪽까지 빼고 남은 개수 구하기",
+      "typeLabel": "검은 칸에서 반대쪽까지 빼고 남은 쌓기나무 수 구하기",
       "commonTypeId": "remove-painted-cubes-opposite-end",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4OppositeFaceRemoval",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0,
+      "sourceConditionsClarified": true,
+      "originalSourceReleaseStatus": "locked",
+      "sourceExact": false,
+      "publisherAnswerVerified": false,
+      "handwrittenAnswerVerified": false,
+      "humanApproved": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -11976,20 +12007,28 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "sourceSection": "example",
       "sourceItemLabel": "예제 4-4",
       "typeLabel": "쌓기나무 하나를 더해 만드는 모양 수 세기",
-      "commonTypeId": "free-pentacube-extension-count",
+      "commonTypeId": "glued-six-cube-single-addition-count",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4SingleCubeAddition",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0,
+      "sourceConditionsClarified": true,
+      "originalSourceReleaseStatus": "locked",
+      "sourceExact": false,
+      "publisherAnswerVerified": false,
+      "handwrittenAnswerVerified": false,
+      "humanApproved": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -12001,21 +12040,29 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-mission-1",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 1",
-      "typeLabel": "색칠한 블록을 자르는 평면과 만나는 개수 세기",
-      "commonTypeId": "colored-cubes-plane-cut-count",
+      "typeLabel": "평면으로 잘린 어두운 쌓기나무 수 구하기",
+      "commonTypeId": "colored-rods-prism-plane-cut-count",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4ColoredPlaneCut",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0,
+      "sourceConditionsClarified": true,
+      "sourceExact": false,
+      "originalSourceReleaseStatus": "locked",
+      "publisherAnswerVerified": false,
+      "handwrittenAnswerVerified": false,
+      "humanApproved": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -12027,21 +12074,32 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-mission-2",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 2",
-      "typeLabel": "세 점을 지나는 평면으로 자른 블록 수 세기",
+      "typeLabel": "세 점을 지나는 평면으로 잘린 쌓기나무 수 구하기",
       "commonTypeId": "cuboid-three-point-plane-cut-count",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4ThreePointPrismCut",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0,
+      "sourceConditionsClarified": true,
+      "sourceLiteralAnswerUnique": true,
+      "sourceExact": false,
+      "originalSourceReleaseStatus": "locked",
+      "officialAnswerVerified": false,
+      "publisherAnswerVerified": false,
+      "handwrittenAnswerVerified": false,
+      "humanApproved": false,
+      "learnerReleaseVerified": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -12052,22 +12110,34 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "sourceItemId": "6-2-u3-e4-mission-3-1",
       "normalizedTypeId": "6-2-u3-e4-mission-3-1",
       "sourceSection": "mission",
-      "sourceItemLabel": "Mission 3-(1) 층별 단면",
-      "typeLabel": "층마다 자른 단면을 위에서 본 모양 나타내기",
+      "sourceItemLabel": "Mission 3",
+      "typeLabel": "층별 단면을 그리고 잘린 쌓기나무 수 구하기",
       "commonTypeId": "plane-cut-layer-top-views",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4LayerSectionAndCount",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "variant": 0,
+      "rawSourceItemId": "6-2-u3-e4-mission-3",
+      "sourceRelationship": "same-source-compound-owner",
+      "sourceConditionsClarified": true,
+      "sourceLiteralAnswerUnique": true,
+      "sourceExact": false,
+      "originalSourceReleaseStatus": "locked",
+      "officialAnswerVerified": false,
+      "publisherAnswerVerified": false,
+      "humanApproved": false,
+      "learnerReleaseVerified": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -12078,7 +12148,7 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "sourceItemId": "6-2-u3-e4-mission-3-2",
       "normalizedTypeId": "6-2-u3-e4-mission-3-2",
       "sourceSection": "mission",
-      "sourceItemLabel": "Mission 3-(2) 잘린 개수",
+      "sourceItemLabel": "Mission 3 · 공통 기능",
       "typeLabel": "층별 단면으로 잘린 쌓기나무 수 구하기",
       "commonTypeId": "plane-cut-layer-cube-count",
       "sourceVerified": true,
@@ -12087,13 +12157,16 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "difficultyBand": 1,
       "sourceTier": "advanced",
       "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewReason": "단면 그리기와 개수 구하기가 같은 원문의 한 문제입니다. 전체 문항으로 연결합니다.",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
       "answerVisualStatus": "not-implemented",
-      "generationMode": "fixed-verified-pool",
-      "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "generationMode": "review-locked",
+      "verifiedVariantTarget": 0,
+      "verifiedVariantCount": 0,
+      "rawSourceItemId": "6-2-u3-e4-mission-3",
+      "commonPublicTypeId": "6-2-u3-e4-mission-3-1",
+      "sourceRelationship": "same-source-compound-skill"
     },
     {
       "semester": "6-2",
@@ -12105,21 +12178,26 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-mission-4",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 4",
-      "typeLabel": "네 개 쌓기나무에 하나를 더한 모양 수 세기",
+      "typeLabel": "네 개에 하나를 더한 입체 모양 비교하기 · 조건을 명확히 한 변형",
       "commonTypeId": "free-pentacube-extension-count",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4FourCubeAddition",
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
-      "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantTarget": 1,
+      "verifiedVariantCount": 1,
+      "variant": 0,
+      "sourceConditionsClarified": true,
+      "sourceExact": false,
+      "originalAnswerDeterminate": false,
+      "originalSourceReleaseStatus": "locked"
     },
     {
       "semester": "6-2",
@@ -12131,21 +12209,26 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-mission-5",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 5",
-      "typeLabel": "색칠한 블록을 반대쪽까지 빼고 남은 개수 구하기",
+      "typeLabel": "색칠한 줄의 쌓기나무를 빼고 남은 개수 구하기",
       "commonTypeId": "remove-colored-cubes-to-opposite-end",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4RectangularColoredRemoval",
+      "variant": 0,
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
-      "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantTarget": 1,
+      "verifiedVariantCount": 1,
+      "sourceExact": false,
+      "originalSourceReleaseStatus": "locked",
+      "officialAnswerVerified": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -12157,21 +12240,26 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "normalizedTypeId": "6-2-u3-e4-mission-6",
       "sourceSection": "mission",
       "sourceItemLabel": "Mission 6",
-      "typeLabel": "두 방향 모양으로 빠진 블록을 찾아 옆 모양 그리기",
+      "typeLabel": "위와 앞에서 본 모양으로 오른쪽 모습 그리기",
       "commonTypeId": "transparent-cuboid-missing-face-view",
       "sourceVerified": true,
       "typeLanguageVerified": true,
-      "generatorKey": "",
+      "generatorKey": "sourceGrade6SecondSpaceE4TransparentRightView",
+      "variant": 0,
       "difficultyBand": 1,
       "sourceTier": "advanced",
-      "reviewLocked": true,
-      "reviewReason": "문제 그림과 정답 그림을 함께 만든 검증 문항 3개 묶음이 아직 완성되지 않았습니다.",
+      "reviewLocked": false,
+      "reviewReason": "",
       "problemVisualRequired": true,
       "answerVisualRequired": true,
-      "answerVisualStatus": "not-implemented",
+      "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
       "verifiedVariantTarget": 3,
-      "verifiedVariantCount": 0
+      "verifiedVariantCount": 3,
+      "sourceExact": false,
+      "originalSourceReleaseStatus": "locked",
+      "officialAnswerVerified": false,
+      "empiricallyCalibrated": false
     },
     {
       "semester": "6-2",
@@ -16883,11 +16971,9 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
 };
 
 const safeLockedReasons = {
+  "6-2-u3-e4-mission-3-2": "단면 그리기와 개수 구하기가 같은 원문의 한 문제여서 전체 문항으로 연결합니다.",
   "6-2-u3-e1-example-1": "원본의 블록 위치와 가려진 면을 확인하고 입체 그림을 검수해야 합니다.",
-  "6-2-u3-e1-example-2": "기호가 붙은 쌓기나무의 위치와 제거 뒤 앞·옆 모양을 확인해야 합니다.",
-  "6-2-u3-e1-mission-1": "원본의 가려진 쌓기나무 위치와 앞·옆 모양을 확인해야 합니다.",
-  "6-2-u3-e1-mission-5": "기호가 가리키는 위치와 쌓기나무를 추가한 뒤의 모양을 확인해야 합니다.",
-  "6-2-u3-e1-mission-6": "색칠된 쌓기나무의 위치와 제거 뒤 세 방향의 모양을 확인해야 합니다.",
+  "6-2-u3-e1-mission-1": "원본 배치는 확인했지만 입체 그림과 앞·옆 정답 그림의 검수가 남아 있습니다.",
   "6-2-u2-e2-mission-3": "원본 손글씨 답 판독과 답 근거 확인이 더 필요합니다.",
   "6-2-u2-e2-mission-4": "심화 교재의 공식 답 대조와 출제 화면 검수가 남아 있습니다.",
   "6-2-u2-e2-mission-6": "심화 교재의 공식 답 대조와 출제 화면 검수가 남아 있습니다.",
@@ -16907,6 +16993,11 @@ window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
 });
 
 const heightViewReleases = {
+  "6-2-u3-e1-example-2": "sourceGrade6SecondSpaceE1StackRemovalLabels",
+  "6-2-u3-e1-mission-5": "sourceGrade6SecondSpaceE1StackAddViews",
+  "6-2-u3-e1-mission-6": "sourceGrade6SecondSpaceE1StackRemoveBlackViews",
+  "6-2-u3-e1-example-1": "sourceGrade6SecondSpaceE1StackObservation",
+  "6-2-u3-e1-mission-1": "sourceGrade6SecondSpaceE1StackObservationMission1",
   "6-2-u3-e1-exploration": "sourceGrade6SecondSpaceE1HeightViews",
   "6-2-u3-e1-example-3": "sourceGrade6SecondSpaceE1ExposedArea",
   "6-2-u3-e1-mission-2": "sourceGrade6SecondSpaceE1Mission2",
@@ -16923,3 +17014,153 @@ window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
   });
   if (item.sourceItemId === "6-2-u3-e1-example-4") item.typeLabel = "세 방향의 모양과 전체 개수로 쌓기나무 모양 그리기";
 });
+
+const stackCountReleases = {
+  "6-2-u3-e2-mission-5": "sourceGrade6SecondSpaceE2NotchedVisibility",
+  "6-2-u3-e2-mission-3": "sourceGrade6SecondSpaceE2BorderDifference",
+  "6-2-u3-e2-mission-1": "sourceGrade6SecondSpaceE2StairCount",
+  "6-2-u3-e2-example-2": "sourceGrade6SecondSpaceE2TPatternCount",
+  "6-2-u3-e2-exploration-1": "sourceGrade6SecondSpaceE2StackMethodCount",
+  "6-2-u3-e2-exploration-2": "sourceGrade6SecondSpaceE2StackMinMax",
+  "6-2-u3-e2-example-1": "sourceGrade6SecondSpaceE2StackSixCellCount",
+  "6-2-u3-e2-mission-4": "sourceGrade6SecondSpaceE2StackSevenCellViews",
+  "6-2-u3-e2-mission-6": "sourceGrade6SecondSpaceE2StackFiveCellCount",
+  "6-2-u3-e2-mission-2": "sourceGrade6SecondSpaceE2StackNineCellMinMax",
+  "6-2-u3-e2-example-3": "sourceGrade6SecondSpaceE2HiddenCubes",
+  "6-2-u3-e2-example-4": "sourceGrade6SecondSpaceE2ColorExtrema"
+};
+window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
+  if (!stackCountReleases[item.sourceItemId]) return;
+  Object.assign(item, {
+    generatorKey: stackCountReleases[item.sourceItemId], variant: 0,
+    sourceVerified: true, reviewLocked: false, reviewReason: "",
+    answerVisualStatus: "verified", verifiedVariantCount: 3,
+    generationMode: "fixed-verified-pool", verifiedVariantTarget: 3
+  });
+  if (item.sourceItemId.startsWith("6-2-u3-e2-exploration-")) {
+    item.rawSourceItemId = "6-2-u3-e2-exploration";
+    item.sourceSubquestion = item.sourceItemId.endsWith("-1") ? 1 : 2;
+  } else item.rawSourceItemId = item.sourceItemId;
+  if (["6-2-u3-e2-example-2", "6-2-u3-e2-mission-1", "6-2-u3-e2-mission-3", "6-2-u3-e2-mission-5"].includes(item.sourceItemId)) {
+    item.sourceConditionsClarified = true;
+    item.originalAnswerDeterminate = false;
+    item.originalSourceReleaseStatus = "locked";
+  }
+  if (item.sourceItemId === "6-2-u3-e2-mission-1") item.typeLabel = "두 방향 계단 모양의 쌓기나무 수 구하기";
+  if (item.sourceItemId === "6-2-u3-e2-mission-3") item.typeLabel = "구멍이 있는 한 층 도형의 면의 넓이와 쌓기나무 수 비교하기";
+  if (item.sourceItemId === "6-2-u3-e2-mission-5") {
+    item.typeLabel = "앞쪽 모서리가 빈 쌓기나무의 보이는 개수와 보이지 않는 개수 비교하기";
+    item.sourceExact = false;
+  }
+});
+
+const paintedStackReleases = {
+  "6-2-u3-e3-exploration": "sourceGrade6SecondSpaceE3PaintedExploration",
+  "6-2-u3-e3-example-3-1": "sourceGrade6SecondSpaceE3ExactlyTwoRed",
+  "6-2-u3-e3-example-3-2": "sourceGrade6SecondSpaceE3AtLeastOneColor",
+  "6-2-u3-e3-example-2": "sourceGrade6SecondSpaceE3PaintBeforeRemoval",
+  "6-2-u3-e3-example-1": "sourceGrade6SecondSpaceE3PaintedFaceClasses",
+  "6-2-u3-e3-mission-1": "sourceGrade6SecondSpaceE3UnpaintedInnerCubes",
+  "6-2-u3-e3-mission-3": "sourceGrade6SecondSpaceE3PaintedFourThree",
+  "6-2-u3-e3-mission-2": "sourceGrade6SecondSpaceE3NotchedPaintedFaceClasses",
+  "6-2-u3-e3-mission-4": "sourceGrade6SecondSpaceE3AllPaintedArea",
+  "6-2-u3-e3-mission-5-1": "sourceGrade6SecondSpaceE3PaintedVolumeInverse",
+  "6-2-u3-e3-mission-5-2": "sourceGrade6SecondSpaceE3PaintedSurfaceInverse",
+  "6-2-u3-e3-mission-6-1": "sourceGrade6SecondSpaceE3PaintedOneFace",
+  "6-2-u3-e3-mission-6-2": "sourceGrade6SecondSpaceE3PaintedNoFace"
+};
+window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
+  if (!paintedStackReleases[item.sourceItemId]) return;
+  Object.assign(item, {
+    generatorKey: paintedStackReleases[item.sourceItemId], variant: 0,
+    sourceVerified: true, reviewLocked: false, reviewReason: "",
+    answerVisualStatus: "verified", verifiedVariantCount: 3,
+    generationMode: "fixed-verified-pool", verifiedVariantTarget: 3,
+    rawSourceItemId: item.sourceItemId.startsWith("6-2-u3-e3-mission-5-") ? "6-2-u3-e3-mission-5" : item.sourceItemId
+  });
+  if (item.sourceItemId.startsWith("6-2-u3-e3-mission-5-")) {
+    item.sourceSubquestion = item.sourceItemId.endsWith("-1") ? 1 : 2;
+    item.typeLabel = `두 면만 칠한 조각의 넓이로 입체의 ${item.sourceSubquestion === 1 ? "부피" : "겉넓이"} 구하기`;
+  }
+  if (item.sourceItemId.startsWith("6-2-u3-e3-mission-6-")) {
+    item.rawSourceItemId = "6-2-u3-e3-mission-6";
+    item.sourceSubquestion = item.sourceItemId.endsWith("-1") ? 1 : 2;
+    item.typeLabel = item.sourceSubquestion === 1 ? "한 면만 색칠한 쌓기나무 수 구하기" : "색칠하지 않은 쌓기나무 수 구하기";
+  }
+  if (item.sourceItemId === "6-2-u3-e3-example-2") item.typeLabel = "색칠한 뒤 빼낸 쌓기나무의 두 면 색칠 수 구하기";
+  if (item.sourceItemId === "6-2-u3-e3-exploration") {
+    item.sourceConditionsClarified = true;
+    item.originalAnswerDeterminate = false;
+    item.originalSourceReleaseStatus = "locked";
+  }
+  if (item.sourceItemId.startsWith("6-2-u3-e3-example-3-")) {
+    item.rawSourceItemId = "6-2-u3-e3-example-3";
+    item.sourceSubquestion = item.sourceItemId.endsWith("-1") ? 1 : 2;
+  }
+});
+
+(() => {
+  const profiles = {
+    exploration: ["Compound", "비례식의 빈칸과 네 가지 비를 함께 계산하기"],
+    "example-1": ["Tape", "이은 테이프의 짧은 길이와 긴 길이의 비 구하기"],
+    "example-2": ["Taps", "같은 시간에 받은 물의 양의 비 구하기"],
+    "example-3": ["EquivalentDifference", "비율과 두 수의 차로 같은 비의 개수 구하기"],
+    "example-4": ["Pinwheel", "네 직사각형의 넓이로 가로와 세로의 비 구하기"],
+    "mission-1": ["BoundedConsequent", "뒤의 수 범위에 맞는 같은 비의 개수 구하기"],
+    "mission-2": ["ChainedHeight", "이어진 두 키의 비율로 어머니와 동생 비교하기"],
+    "mission-3": ["ShiftedShares", "전체와 몇 배보다 많은 조건으로 색종이 수 비교하기"],
+    "mission-4": ["CubeEdges", "겉넓이로 모든 모서리 길이의 합의 비 구하기"],
+    "mission-5": ["DiagonalAreas", "정사각형 띠의 대각선 아래 두 넓이 비교하기"],
+    "mission-6": ["PoolPhases", "두 수도를 차례로 사용해 채운 물의 양 비교하기"]
+  };
+  window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
+    if (!item.sourceItemId.startsWith("6-2-u4-e1-")) return;
+    const suffix = item.sourceItemId.slice("6-2-u4-e1-".length), profile = profiles[suffix];
+    if (!profile) return;
+    Object.assign(item, {
+      generatorKey: `sourceGrade6SecondRatioE1${profile[0]}`, typeLabel: profile[1], variant: 0,
+      reviewLocked: false, reviewReason: "", generationMode: "fixed-verified-pool",
+      verifiedVariantTarget: 3, verifiedVariantCount: 3, answerVisualStatus: "verified",
+      problemVisualRequired: ["example-1", "example-4", "mission-5"].includes(suffix),
+      originalGivensIndependentlyRead: true, originalAnswersIndependentlyCalculated: true,
+      sourceExact: false, originalSourceReleaseStatus: "locked", officialAnswerVerified: false,
+      publisherAnswerVerified: false, humanApproved: false, empiricallyCalibrated: false
+    });
+    if (suffix === "exploration") item.sourceWholeResponseCount = 5;
+  });
+})();
+
+(() => {
+  const profiles = {
+    exploration: ["Compound", "네 비례식의 빈칸과 연못 깊이 구하기"],
+    "example-1": ["SharedSymbols", "이어진 두 비례식에서 기호의 합 구하기"],
+    "example-2": ["StrideSteps", "보폭과 걸음 수를 함께 비교해 거리 구하기"],
+    "example-3": ["EqualDrink", "같은 양을 마신 두 병의 들이 비교하기"],
+    "example-4": ["WeightedMean", "두 반 평균과 전체 평균으로 학생 수 비교하기"],
+    "mission-1": ["SharedBlank", "같은 빈칸을 이용해 다른 기호의 수 구하기"],
+    "mission-2": ["SalePrices", "할인한 가격의 관계로 두 정가 비교하기"],
+    "mission-3": ["OverlappingAreas", "삼각형과 정사각형의 겹친 넓이 비율 구하기"],
+    "mission-4": ["SpentMoney", "쓴 돈의 비율과 남은 돈의 비로 처음 돈 비교하기"],
+    "mission-5": ["LeakingBath", "물이 들어오면서 새는 욕조의 물의 양 구하기"],
+    "mission-6": ["GrowingCounts", "각각 일정한 비율로 늘어나는 두 마릿수 비교하기"]
+  };
+  window.HSE_SOURCE_INVENTORY_GRADE6.items.forEach(item => {
+    if (!item.sourceItemId.startsWith("6-2-u4-e2-")) return;
+    const suffix = item.sourceItemId.slice("6-2-u4-e2-".length), profile = profiles[suffix];
+    if (!profile) return;
+    Object.assign(item, {
+      generatorKey: `sourceGrade6SecondRatioE2${profile[0]}`, typeLabel: profile[1], variant: 0,
+      reviewLocked: false, reviewReason: "", generationMode: "fixed-verified-pool",
+      verifiedVariantTarget: 3, verifiedVariantCount: 3, answerVisualStatus: "verified",
+      problemVisualRequired: suffix === "mission-3",
+      originalGivensIndependentlyRead: true, originalAnswersIndependentlyCalculated: true,
+      sourceExact: false, originalSourceReleaseStatus: "locked", officialAnswerVerified: false,
+      publisherAnswerVerified: false, humanApproved: false, empiricallyCalibrated: false
+    });
+    if (suffix === "exploration") {
+      item.sourceWholeResponseCount = 5;
+      item.handwrittenEvidenceConflict = true;
+      item.sourceConflictStatus = "independent-review-recorded";
+    }
+  });
+})();
