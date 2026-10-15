@@ -50,7 +50,7 @@ document.addEventListener('click',ev=>{
  else if(b.hasAttribute('data-reading-language')){open(articleId,b.dataset.readingLanguage,null,videoId);}
  else if(b.hasAttribute('data-reading-banners-language')){locale=b.dataset.readingBannersLanguage==='en'?'en':'ko';hydrate();}
  else if(b.hasAttribute('data-reading-back')){disposeVideo();location.hash=returnTo.hash||'magazine';setTimeout(()=>window.scrollTo({top:returnTo.y,behavior:'instant'}),0);}
- else if(b.hasAttribute('data-reading-experiment')){pauseVideo();window.dispatchEvent(new CustomEvent('popcornreading:experiment',{detail:{stageId:current().stage,returnHash:location.hash.slice(1)}}));}
+ else if(b.hasAttribute('data-reading-experiment')){pauseVideo();window.dispatchEvent(new CustomEvent('popcornreading:experiment',{detail:{stageId:selectedVideo()?.stage||current().stage,returnHash:location.hash.slice(1)}}));}
  else if(b.hasAttribute('data-reading-play'))play();
  else if(b.hasAttribute('data-reading-close-video'))render();
  else if(b.hasAttribute('data-reading-photo'))document.querySelector('#reading-photo-dialog').showModal();
