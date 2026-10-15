@@ -24,7 +24,7 @@ import {ensureWorkspace,validateWorkspaceState,saveWorkspaceDraft,prepareWorkspa
 import {monthlyScreen,monthlyView,collectMonthlyDraft,monthlyOperations,monthlyReference,editorForItem,projectionForMonthly} from './monthly-ui.mjs';
 import {mountRoadmapScene} from './roadmap-3d.mjs';
 import {mountProgressScene} from './progress-scene.mjs';
-import {mountFullRouteMap} from './full-route-map.mjs';
+import {mountFullRouteMap} from './full-route-map.mjs?v=35';
 import {detailChoices,openDetail,detailSession,finishDetail,detailSnapshot,monthlyDetailContext,monthlyDetailEditor} from './optional-details.mjs';
 import {academyChoices,openAcademyDetail,finishAcademyDetail,collectAcademyDetail,syncHwangsoInquiry,recordHwangsoTiming,recordHwangsoBranch} from './academy-details.mjs';
 import {mountAIHelper} from './ai-ui.mjs';
@@ -33,7 +33,7 @@ import {isCompactStep,startCompact,compactScreen,collectCompact,commitCompact,co
 document.body.classList.add('roadmap-calm');
 const monthlyStyle=document.createElement('link');monthlyStyle.rel='stylesheet';monthlyStyle.href='monthly.css';document.head.append(monthlyStyle);
 const resultStyle=document.createElement('link');resultStyle.rel='stylesheet';resultStyle.href='result-view.css';document.head.append(resultStyle);
-for(const href of ['brief-details.css','result-hub.css','progress-scene.css','full-route-map.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href+'?v=34';document.head.append(link);}
+for(const href of ['brief-details.css','result-hub.css','progress-scene.css','full-route-map.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href+'?v='+(href==='full-route-map.css'?'35':'34');document.head.append(link);}
 const compactStyle=document.createElement('link');compactStyle.rel='stylesheet';compactStyle.href='compact-intake.css';document.head.append(compactStyle);
 const progressStyle=document.createElement('link');progressStyle.rel='stylesheet';progressStyle.href='progress-roadmap.css';document.head.append(progressStyle);
 const validateState=s=>{const a=validateLegacyState(s),b=validateWorkspaceState(s);return {valid:a.valid&&b.valid,errors:[...a.errors,...b.errors]};};
