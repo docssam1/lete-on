@@ -74,6 +74,16 @@
 .b5-src-year i.sun{color:#e8503a}
 .b5-src-year i.last{background:#ffd45c;font-weight:800}
 @media screen and (max-width:560px){.b5-src-year .months{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.b5-src-route,.b5-src-loops{display:grid;justify-items:center;width:100%}
+.b5-src-route svg,.book05-visual .b5-src-route svg{display:block;height:auto;max-height:none}
+.b5-src-route line.thin{stroke:#8a8a8a;stroke-width:1.4}
+.b5-src-route line.bold{stroke:#2f6fe0;stroke-width:3.6;stroke-linecap:round}
+.b5-src-route circle,.b5-src-loops circle{fill:#1f4e9c}
+.b5-src-route text,.b5-src-loops text{fill:#222;font-size:17px;font-weight:700}
+.b5-src-route text.num{fill:#d0601a;font-size:14px}
+.b5-src-loops svg,.book05-visual .b5-src-loops svg{display:block;width:min(100%,380px);height:auto;max-height:none}
+.b5-src-loops .left{fill:none;stroke:#d0801f;stroke-width:2.4}
+.b5-src-loops .right{fill:none;stroke:#2f9e5f;stroke-width:2.4}
 @media print{
   .gold-print-page[data-print-book="book-05"] .b5-src-table{grid-template-columns:repeat(var(--columns),8mm)}
   .gold-print-page[data-print-book="book-05"] .b5-src-table>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>b{height:8mm;font-size:11pt}
@@ -89,6 +99,8 @@
   .gold-print-page[data-print-book="book-05"] .b5-src-radial svg{width:40mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-tri-numbers{font-size:12pt;gap:2mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-sum-pair svg{width:42mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-route svg{width:calc(var(--route-w) * .17mm)!important;max-width:100%;max-height:none!important}
+  .gold-print-page[data-print-book="book-05"] .b5-src-loops svg{width:60mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-cal-cells span{width:9mm;height:7mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-cal-cells strong{font-size:11pt}
   .gold-print-page[data-print-book="book-05"] .b5-src-month>p{width:56mm;font-size:11pt;padding:1mm 0}

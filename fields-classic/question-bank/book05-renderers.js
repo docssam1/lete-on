@@ -504,6 +504,36 @@ function sourceYearCalendar(visual) {
   return `<div class="b5-src-year" role="img" aria-label="${escapeHtml(`${visual.year}년 달력`)}"><h3>${escapeHtml(visual.year)}</h3><div class="months">${months}</div></div>`;
 }
 
+// 최단거리 그림: rows×cols 칸. cells(그리는 칸, 없으면 전부)·bold(굵은 칸 = 길)·diagonals(칸의 왼쪽 위→오른쪽 아래)·points(점과 글자)·numbers(꼭짓점의 수, 개념 설명용)
+function sourceRoute(visual) {
+  const u = visual.unit || 58, pad = 30;
+  const cells = visual.cells || Array.from({ length: visual.rows }, (_, r) => Array.from({ length: visual.cols }, (_, c) => [r, c])).flat();
+  const X = (c) => pad + c * u, Y = (r) => pad + r * u;
+  const edges = (list) => {
+    const set = new Set();
+    for (const [r, c] of list) for (const e of [[r, c, r, c + 1], [r + 1, c, r + 1, c + 1], [r, c, r + 1, c], [r, c + 1, r + 1, c + 1]]) set.add(e.join(","));
+    return [...set].map((k) => k.split(",").map(Number));
+  };
+  const line = ([r1, c1, r2, c2], cls) => `<line class="${cls}" x1="${X(c1)}" y1="${Y(r1)}" x2="${X(c2)}" y2="${Y(r2)}"/>`;
+  const thin = edges(cells).map((e) => line(e, "thin")).join("");
+  const bold = edges(visual.bold || []).map((e) => line(e, "bold")).join("");
+  const diag = (visual.diagonals || []).map(([r, c]) => line([r, c, r + 1, c + 1], "bold")).join("");
+  const nums = (visual.numbers || []).map(({ r, c, v }) => `<text class="num" x="${X(c) + 5}" y="${Y(r) - 6}">${escapeHtml(v)}</text>`).join("");
+  const offsets = { nw: [-10, -10, "end"], se: [10, 16, "start"], ne: [8, -10, "start"], sw: [-10, 16, "end"], e: [10, 5, "start"] };
+  const pts = (visual.points || []).map(({ r, c, label, pos = "nw" }) => {
+    const [dx, dy, anchor] = offsets[pos];
+    return `<circle cx="${X(c)}" cy="${Y(r)}" r="4.5"/>${label ? `<text class="pt" x="${X(c) + dx}" y="${Y(r) + dy}" text-anchor="${anchor}">${escapeHtml(label)}</text>` : ""}`;
+  }).join("");
+  const maxR = Math.max(...cells.map(([r]) => r)) + 1, maxC = Math.max(...cells.map(([, c]) => c)) + 1;
+  const w = pad * 2 + maxC * u + 24, h = pad * 2 + maxR * u;
+  return `<div class="b5-src-route" role="img" aria-label="${escapeHtml(visual.label || "최단거리 길 그림")}"><svg viewBox="-12 0 ${w} ${h}" style="width:min(100%,${Math.max(230, Math.round(w * 1.25))}px);--route-w:${w}">${thin}${bold}${diag}${pts}${nums}</svg></div>`;
+}
+
+// 두 타원 길(23쪽): 왼쪽 타원(위·아래 두 길), 오른쪽 타원(위·가운데·아래 세 길)
+function sourceLoopRoutes() {
+  return `<div class="b5-src-loops" role="img" aria-label="출발에서 왼쪽 타원(두 길)을 지나 오른쪽 타원(세 길)으로 도착까지 가는 길"><svg viewBox="0 0 330 120"><ellipse cx="102" cy="60" rx="58" ry="32" class="left"/><ellipse cx="218" cy="60" rx="58" ry="38" class="right"/><line x1="160" y1="60" x2="276" y2="60" class="right"/><circle cx="44" cy="60" r="4.5"/><circle cx="160" cy="60" r="4.5"/><circle cx="276" cy="60" r="4.5"/><text x="38" y="64" text-anchor="end">출발</text><text x="283" y="64">도착</text></svg></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -528,6 +558,8 @@ export function book05Markup(visual) {
     case "source-calendar-cells": return sourceCalendarCells(visual);
     case "source-month-grid": return sourceMonthGrid(visual);
     case "source-year-calendar": return sourceYearCalendar(visual);
+    case "source-route": return sourceRoute(visual);
+    case "source-loop-routes": return sourceLoopRoutes(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);
