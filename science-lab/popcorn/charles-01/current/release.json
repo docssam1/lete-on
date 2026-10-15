@@ -1,5 +1,5 @@
 {
-  "version": "20261015-charles01-welcome-audio-1",
+  "version": "20261015-charles01-welcome-autoplay-1",
   "studentPages": 20,
   "magazineSpreads": 5,
   "assemblyPhases": 10,
@@ -185,13 +185,13 @@
     },
     {
       "path": "companion/guide.js",
-      "bytes": 10612,
-      "sha256": "9cd623461b411d2af704ce0bb4ae9db2cefd4af8d2ff04bb7324aef2777d59c9"
+      "bytes": 10615,
+      "sha256": "920202aedea394d3b296141d572343a82967875fc12beabc54b65efe4975d495"
     },
     {
       "path": "companion/index.html",
-      "bytes": 25229,
-      "sha256": "81101834b772f9f180cbc4a6cb4cb0c7054ec553210a278a4c82ead638093906"
+      "bytes": 25235,
+      "sha256": "f90af89b7808c02ac8495d1c6fae11b9f04704759f41ca97e959a3ebbbc56e1e"
     },
     {
       "path": "companion/inline-video.js",
@@ -310,13 +310,13 @@
     },
     {
       "path": "companion/welcome.css",
-      "bytes": 8035,
-      "sha256": "03d268ddca1c0e389af5615e3f6928fd3b5809b2271357df6a0437410ccf5ff6"
+      "bytes": 7510,
+      "sha256": "75f727e307027d4822a83f61557babcaca10f3c7a0642e9454f281b957e759dd"
     },
     {
       "path": "companion/welcome.js",
-      "bytes": 12541,
-      "sha256": "df1af1a85f598eabaa7626bb30ccacf511820d6f38816d6826c823efb3ee9561"
+      "bytes": 12494,
+      "sha256": "2a547c1b5cfb35d9f0306e68ce1d5f9260e31781dc7e007674b9f947ee6e3bdf"
     },
     {
       "path": "index.html",
@@ -472,9 +472,11 @@
       "source": "Existing Popcorn Lab advertisement ending",
       "durationSeconds": 2.55,
       "unchangedPcmExcerpt": true,
-      "playback": "Once on entry where permitted; explicit sound button otherwise",
+      "playback": "Automatic on entry where permitted; first welcome-screen interaction retries if blocked, with no separate sound button",
       "motionStartsWithActualPlayback": true,
-      "nextStopsAudio": true
+      "nextStopsAudio": true,
+      "separateSoundButton": false,
+      "navigationNeverWaitsForAudio": true
     }
   }
 }

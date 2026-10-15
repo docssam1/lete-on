@@ -1,6 +1,6 @@
 import {LAB_CONTENT} from './lab-content.js';
 import {mountMagazine} from './magazine.js?v=20261015-guided';
-import {mountWelcome} from './welcome.js?v=20261015-welcome-audio-1';
+import {mountWelcome} from './welcome.js?v=20261015-welcome-autoplay-1';
 import {mountStudy} from './study-deck.js?v=20261015-pages-1';
 import {mountPageFlow} from './page-flow.js?v=20261015-pages-1';
 
