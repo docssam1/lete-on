@@ -3,7 +3,7 @@
 // Pure integration checks; rendered UI is checked separately in Playwright.
 const assert=require('assert'),fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.resolve(__dirname,'..'),html=fs.readFileSync(path.join(root,'index.html'),'utf8');
-const world={console};world.window=world;const context=vm.createContext(world);
+const world={console,URLSearchParams};world.window=world;const context=vm.createContext(world);
 const scripts=[...html.matchAll(/<script\s+[^>]*src=["']([^"']+)["']/g)].map(x=>x[1].split('?')[0]);
 const sources=scripts.filter(x=>/^engine\/(?:generators\.js|rng\.js|threads\/[^/]+\.js)$/.test(x));
 const files=[...new Set([...sources,'data/curriculum.js','data/threads.js','data/middle-pacing.js','data/wordable.js','data/courses.js','data/stages.js',
@@ -60,14 +60,18 @@ for(const mode of ['next-wrong','one-earlier-wrong','all-skip']){
   const run=ui.initial();run.plan=plan.build('c3','result-contract');run.selection.baselineId='c3';
   const responses=run.plan.items.map((x,i)=>({id:x.id,value:mode==='all-skip'?null:mode==='next-wrong'&&x.band==='next'||mode==='one-earlier-wrong'&&i===0?Array.isArray(x.answer)?x.answer.map(n=>n+999):x.answer+999:plain(x.answer),validationFlags:{validTargets:!(mode==='one-earlier-wrong'&&i===0)},skipped:mode==='all-skip',sec:1}));
   const result=plan.summarize(run.plan,responses);result.pathRecommendation=world.NM_PLACEMENT_PATHS.recommend(run.plan,result,run.selection);
-  world.S={_diag:run,coins:321,progress:{synthetic:true},completed:['preserve']};world.screenPlacement();capture.onResult(result,run);
+  world.S={_diag:run,coins:321,progress:{synthetic:true},completed:['preserve'],roadSpeed:.85,roadAmount:1.5,roadCadence:'w1',roadManual:false};world.screenPlacement();capture.onResult(result,run);
   assert.equal(world.S.placement.course,'C3');assert.equal(world.S.coins,321);assert.deepEqual(plain(world.S.progress),{synthetic:true});
   assert.equal(world.S.placement.weak.length,mode==='one-earlier-wrong'?1:0);resultContracts++;
+  assert.equal(world.S.roadSpeed,.85,'diagnosis must keep current speed even without manual override');
+  assert.equal(world.S.roadAmount,1.5,'diagnosis must keep current amount');assert.equal(world.S.roadCadence,'w1','diagnosis must keep current frequency');
+  assert.equal(world.S.placement.autoPlan.applied,false);
+  assert.equal(world.S.placement.autoPlan.cadence,'w1','maintain label must show actual frequency');
 }
 world.NM_PLACEMENT_UI=ui;
 
 // A minimal DOM contract supplements (not replaces) the real browser transition audit.
-const stub=()=>({dataset:{},setAttribute(){},appendChild(){},before(){}});
+const stub=()=>({dataset:{},firstChild:{textContent:''},setAttribute(){},appendChild(){},before(){},after(){}});
 world.document={createElement:stub};
 let markup='',view=null;
 const screen={scrollTop:230,

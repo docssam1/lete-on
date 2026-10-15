@@ -10,7 +10,7 @@
     return String(value == null ? '' : value);
   }
   function initial() {
-    return { version: VERSION, phase: 'setup', selection: { route: 'book', age: '', grade: '', series: '', step: '', progress: '', baselineId: '', goal: 'curriculum', goalTarget: '', cadence: 'w2' },
+    return { version: VERSION, phase: 'setup', selection: { route: 'age', age: '', grade: '', semester: '1', series: '', step: '', progress: '', baselineId: '', goal: 'curriculum', goalTarget: '', cadence: 'w2' },
       seed: Date.now().toString(36), plan: null, index: 0, responses: [], result: null };
   }
   function parseNumber(raw) {
@@ -37,7 +37,13 @@
     const l = value => label(value, lang);
     const $ = selector => root.querySelector(selector);
     const all = selector => Array.from(root.querySelectorAll(selector));
-    const redraw = () => { ctx.save(); render(ctx); };
+    const redraw = () => {
+      const active = d.phase==='setup' && document.activeElement && document.activeElement.id;
+      const open = all('details').map(x=>x.open);
+      ctx.save(); render(ctx);
+      all('details').forEach((x,i)=>{x.open=!!open[i];});
+      if(active){const el=$('#'+active);if(el&&!el.disabled)el.focus({preventScroll:true});}
+    };
     const summarize = () => {
       const result = window.NM_PLACEMENT_PLAN.summarize(d.plan, d.responses);
       if (paths) result.pathRecommendation = paths.recommend(d.plan, result, d.selection);
@@ -49,7 +55,7 @@
       const previousView = $('.nm-placement');
       const changedView = !previousView || previousView.dataset.pdView !== viewKey;
       root.innerHTML = `<div class="nm-unit-bar"><button class="nm-back" id="pdBack">${t('돌아가기','Back','返回')}</button><div class="nm-unit-title">${escape(title)}</div></div>
-        <main data-pd-view="${viewKey}" class="nm-placement ${d.selection.age && /^pre/.test(d.selection.age) ? 'nm-placement-young' : ''}">
+        <main data-pd-view="${viewKey}" class="nm-placement ${d.selection.age && Number(String(d.selection.age).replace(/^pre/,'')) < 8 ? 'nm-placement-young' : ''}">
         <nav class="pd-flow" aria-label="${t('진단 순서','Assessment steps','测评步骤')}"><span${phase === 'setup' ? ' aria-current="step"' : ''}>01 ${t('기준 고르기','Starting point','选择起点')}</span><span${phase === 'question' ? ' aria-current="step"' : ''}>02 ${t('20문항 확인','20 questions','20道题')}</span><span${phase === 'result' ? ' aria-current="step"' : ''}>03 ${t('학습 제안','Learning suggestion','学习建议')}</span></nav>${body}</main>`;
       $('#pdBack').onclick = ctx.close;
       if (ctx.renderMath) ctx.renderMath(root);
@@ -59,59 +65,57 @@
     };
     const stageLabel = stage => `${stage.kind === 'foundation' ? t('유아 기초','Early foundations','幼儿基础') : t('과정','Course','课程') + ' ' + stage.course.slice(1)} · ${l(stage.label)}`;
     function setup() {
-      const s = d.selection, books = window.NM_PLACEMENT_BOOKS, core = window.NM_PLACEMENT_PLAN;
-      if (!core || !books || !paths) { shell(t('진단 자료 확인','Assessment data','测评资料'), `<p role="alert">${t('진단 자료를 불러오지 못했습니다. 새로고침 후 다시 시작해 주세요.','Assessment data could not be loaded. Reload to try again.','未能加载测评资料，请刷新后重试。')}</p>`, 'setup'); return; }
+      const s=d.selection, core=window.NM_PLACEMENT_PLAN;
+      if(!core||!paths){shell(t('진단 자료 확인','Assessment data','测评资料'),'<p role="alert">'+t('진단 자료를 불러오지 못했습니다. 새로고침해 주세요.','Assessment data could not be loaded. Please reload.','未能加载测评资料，请刷新。')+'</p>','setup');return;}
       let stages;
-      try { stages = core.stages(); } catch (_) { shell(t('진단 자료 확인','Assessment data','测评资料'), `<p role="alert">${t('과정 자료가 아직 준비되지 않았습니다.','Course data is not ready.','课程资料尚未准备好。')}</p>`, 'setup'); return; }
-      const steps = s.series ? books.getSteps(s.series) : [];
-      const resolved = s.series && s.step && s.progress ? books.resolve(s.series, s.step, s.progress) : null;
-      const mapped = s.route === 'book' && resolved && !resolved.needsTopicConfirmation && stages.some(x => x.id === resolved.baselineId);
-      const baselineId = mapped ? resolved.baselineId : s.baselineId;
-      const baseline = stages.find(x => x.id === baselineId);
-      const ages = [['','선택하지 않음','Not selected','暂不选'],['pre4','4세','Age 4','4岁'],['pre5','5세','Age 5','5岁'],['pre6','6세','Age 6','6岁'],['pre7','7세','Age 7','7岁'],['school','초등 이상','School age','小学及以上']];
-      const grades = [['','학년 선택','Select grade','选择年级'],['pre','유아','Preschool','幼儿'],...Array.from({length:6},(_,i)=>['e'+(i+1),'초'+(i+1),'Grade '+(i+1),'小学'+(i+1)+'年级']),...Array.from({length:3},(_,i)=>['m'+(i+1),'중'+(i+1),'Grade '+(i+7),'初中'+(i+1)+'年级']),['high','고등','High school','高中']];
-      shell(t('지금 배운 곳에서 시작해요','Start from what you have learned','从已学内容开始'), `<header class="pd-header"><p class="pd-kicker">NUMBERS OF MAGIC · ${t('학습 시작점 찾기','Find your starting point','找到学习起点')}</p><h1>${t('지금 배운 곳을<br>함께 확인해요.','Let’s check<br>what you have learned.','一起看看<br>已经学了什么。')}</h1><p>${t('나이만으로 난도를 정하지 않습니다. 실제로 배운 내용에서 20문항을 구성합니다.','Age alone does not set difficulty. The 20 questions are based on what you have learned.','不只按年龄定难度，依据实际已学内容安排20道题。')}</p></header>
-        <section class="pd-goal-selection" aria-labelledby="pdGoalHeading"><h2 id="pdGoalHeading">${t('어떤 학습을 준비하나요?','What are you preparing for?','准备哪种学习？')}</h2><label>${t('학습 목표','Learning goal','学习目标')}<select id="pdGoal">${paths.goals.map(x=>option(x.id,l(x.label),s.goal)).join('')}</select></label>
-        ${s.goal==='competition'?`<label>${t('목표 진도','Progress goal','目标进度')}<select id="pdGoalTarget">${option('',t('아직 정하지 않았어요','Not decided yet','尚未确定'),s.goalTarget)}${paths.targets.map(x=>option(x.id,l(x.label),s.goalTarget)).join('')}</select></label><p class="pd-note">${t('목표별 정확한 도달 시점은 자료 대조가 필요합니다. 이번 진단으로 입학 준비도를 판정하지 않습니다.','Exact target timing needs source verification. This check does not assess admission readiness.','准确的目标达成时间需要资料核对。本测评不判断入学准备度。')}</p>`:''}
-        <label class="pd-cadence">${t('학습 횟수','Study frequency','学习次数')}<select id="pdCadence">${[['w2','주 2회','Twice a week','每周两次'],['w1','주 1회','Once a week','每周一次']].map(x=>option(x[0],t(x[1],x[2],x[3]),s.cadence)).join('')}</select></label><p class="pd-note">${t('목표에 따라 학습 방향을 안내합니다. 진단 문항·채점 기준은 동일합니다.','The goal guides study planning, not the diagnostic questions or scoring.','目标影响学习建议，不改变测评题目或评分标准。')}</p></section>
-        <div class="pd-context"><label>${t('연령 · 참고 정보','Age · context only','年龄 · 参考信息')}<select id="pdAge">${ages.map(x=>option(x[0],t(x[1],x[2],x[3]),s.age)).join('')}</select></label></div>
-        <div class="pd-routes" role="group" aria-label="${t('기준 선택 방법','How to choose a starting point','起点选择方式')}">${[['book','교재 진도','Book progress','教材进度'],['school','교과 진도','School topics','学校课程进度'],['topic','배운 내용','Learned skills','已学内容']].map(x=>`<button type="button" data-route="${x[0]}" aria-pressed="${s.route===x[0]}">${t(x[1],x[2],x[3])}</button>`).join('')}</div>
-        <section class="pd-selection" aria-label="${t('실제 학습 진도','Actual learning progress','实际学习进度')}">
-        ${s.route === 'book' ? `<div class="pd-fields"><label>${t('공부한 교재','Studied book series','学过的教材')}<select id="pdSeries">${option('',t('교재 선택','Select series','选择教材'),s.series)}${books.series.map(x=>option(x.id,l(x.label),s.series)).join('')}</select></label><label>${t('권 · 단계 · 단원','Volume, stage or unit','册、阶段或单元')}<select id="pdStep"${s.series ? '' : ' disabled'}>${option('',t('실제로 공부한 범위 선택','Select studied range','选择实际学过的范围'),s.step)}${steps.map(x=>option(x.id,l(x.label),s.step)).join('')}</select></label><label>${t('진행 정도','Progress','学习进度')}<select id="pdProgress">${option('',t('진행 정도 선택','Select progress','选择进度'),s.progress)}${[['start','막 시작','Just started','刚开始'],['middle','진행 중','In progress','学习中'],['complete','해당 범위 완료','Range completed','已学完该范围']].map(x=>option(x[0],t(x[1],x[2],x[3]),s.progress)).join('')}</select></label></div><p class="pd-note">${mapped ? t('공식 단원 범위를 바탕으로 기준 후보를 연결했습니다. 이수가 실력 확인을 대신하지는 않습니다.','The official unit scope gives a starting-point candidate, not proof of mastery.','依据官方单元范围给出起点候选，不代表已经掌握。') : t('교재의 판본·권별 범위가 다릅니다. 아래에서 실제로 배운 내용을 확인해 주세요.','Editions and volumes differ. Confirm the actual learned topic below.','版本和各册范围不同，请在下方确认实际已学内容。')}</p>` : ''}
-        ${s.route === 'school' ? `<label>${t('현재 학년','Current school grade','目前年级')}<select id="pdGrade">${grades.map(x=>option(x[0],t(x[1],x[2],x[3]),s.grade)).join('')}</select></label><p class="pd-note">${t('같은 학년이라도 진도가 다릅니다. 현재 학교에서 배우는 연산 단원을 아래에서 골라 주세요. 학년 자체로 시험을 배정하지 않습니다.','Within a grade, progress differs. Choose the arithmetic topic you are learning, rather than placing by grade alone.','同年级学习进度也不同。请选择目前学习的运算内容，不仅按年级分配试题。')}</p>` : ''}
-        <label class="pd-topic">${mapped ? t('연결된 우리 기준 · 필요하면 수정','Suggested starting point · you can change it','建议起点 · 可以修改') : t('실제로 배운 내용 · 현재 단원','Learned topic · current unit','实际已学内容 · 当前单元')}<select id="pdBaseline">${option('',t('확인할 내용을 선택해 주세요','Choose a topic to check','请选择要确认的内容'),baselineId)}<optgroup label="${t('유아 · 수 감각','Preschool · number sense','幼儿 · 数感')}">${stages.filter(x=>x.kind==='foundation').map(x=>option(x.id,stageLabel(x),baselineId)).join('')}</optgroup><optgroup label="${t('교과 연산 · 기존 과정','Arithmetic · existing courses','运算 · 现有课程')}">${stages.filter(x=>x.kind!=='foundation').map(x=>option(x.id,stageLabel(x),baselineId)).join('')}</optgroup></select></label>
-        </section>
-        <section class="pd-blueprint"><h2>${t('한 번에 20문항','20 questions in one check','一次20道题')}</h2><div class="pd-bands"><div><b>6</b><span>${t('이전 진도','Earlier learning','此前进度')} · 30%</span></div><div><b>10</b><span>${t('현재 진도','Current learning','当前进度')} · 50%</span></div><div><b>4</b><span>${t('다음 진도','Next learning','后续进度')} · 20%</span></div></div><p id="pdBaselinePreview">${baseline ? escape(stageLabel(baseline)) : t('선택한 진도를 중심으로 구성합니다.','Built around the selected topic.','围绕所选进度安排。')}</p><p class="pd-note">${t('맞고 틀려도 문항 구성은 바뀌지 않습니다. 처음 기초와 마지막 과정에서는 없는 이전·다음 범위를 만들지 않고 경계를 표시합니다.','The plan stays fixed, regardless of answers. At the first and last stages, unavailable ranges are explicitly identified.','无论答对答错，题目配置保持不变。首尾阶段会明确标注不存在的前后范围。')}</p></section>
-        <p class="pd-note">${t('유아는 보호자가 지시문을 읽어 줄 수 있습니다. 답이나 세는 방법은 알려주지 마세요.','An adult may read the prompt for a young child, without helping choose or count the answer.','成人可以为幼儿读题，但不要提示答案或计数方法。')}</p><p id="pdSetupError" class="pd-error" role="alert"></p><button class="pd-primary" id="pdStart"${baseline ? '' : ' disabled'}>${t('20문항 시작','Start 20 questions','开始20道题')}</button>${baseline ? `<a class="pd-secondary pd-paper" id="pdPaper" href="placement-sheet.html?b=${encodeURIComponent(baseline.id)}&amp;l=${lang}&amp;seed=${encodeURIComponent(d.seed)}" target="_blank" rel="noopener">${t('종이 시험지로 인쇄하기 (같은 20문항)','Print as a paper sheet (same 20 questions)','打印成纸质测评卷（同样20题）')}</a><p class="pd-note">${t('인쇄본은 보호자·선생님용 정답과 채점표가 함께 나옵니다.','The printout includes an answer and marking page for adults.','打印件附有家长·教师用的答案与评分页。')}</p>` : ''}`, 'setup');
-      $('#pdAge').onchange = e => { s.age=e.target.value; redraw(); };
-      $('#pdGoal').onchange = e => { s.goal=e.target.value;s.goalTarget='';redraw(); };
-      if ($('#pdGoalTarget')) $('#pdGoalTarget').onchange = e => { s.goalTarget=e.target.value;ctx.save(); };
-      $('#pdCadence').onchange = e => { s.cadence=e.target.value;ctx.save(); };
-      if(baseline&&baseline.kind==='course'){
-        $('#pdBaselinePreview').textContent=stageLabel(baseline)+' · '+t('과정 안의 여러 연산 주제를 함께 확인','Checks several arithmetic topics in this course','同时确认该课程中的多项运算内容');
+      try{stages=core.stages();}catch(_){shell(t('진단 자료 확인','Assessment data','测评资料'),'<p role="alert">'+t('과정 자료가 아직 준비되지 않았습니다.','Course data is not ready.','课程资料尚未准备好。')+'</p>','setup');return;}
+      // Migrate setup only: never rebuild an in-progress fixed plan.
+      if(!['unlearned','school','age'].includes(s.route))s.route='age';
+      if(s.age==='school')s.age='';
+      if(/^pre/.test(s.age))s.age=s.age.slice(3);
+      const candidate=paths.startingPoint(s);
+      const baseline=stages.find(x=>x.id===(candidate?(s.baselineId||candidate):''));
+      const ages=[['',t('현재 나이 선택','Select current age','选择目前年龄')],...Array.from({length:16},(_,i)=>[String(i+4),t((i+4)+'세','Age '+(i+4),(i+4)+'岁')])];
+      const grades=[['',t('학년 선택','Select grade','选择年级')],...Array.from({length:6},(_,i)=>['e'+(i+1),t('초'+(i+1),'Grade '+(i+1),'小学'+(i+1)+'年级')]),...Array.from({length:3},(_,i)=>['m'+(i+1),t('중'+(i+1),'Grade '+(i+7),'初中'+(i+1)+'年级')]),...Array.from({length:3},(_,i)=>['h'+(i+1),t('고'+(i+1),'High school '+(i+1),'高中'+(i+1)+'年级')])];
+      const routes=[['unlearned',t('아직 배우지 않았어요','Not studied yet','还没学过')],['school',t('현행 진도로 진단','Current school level','按当前学校进度')],['age',t('나이에 맞게 진단','Age-based starting point','按年龄选择起点')]];
+      const options=(rows,selected)=>rows.map(x=>option(x[0],x[1],selected)).join('');
+      const goalFields='<label>'+t('학습 목표','Learning goal','学习目标')+'<select id="pdGoal">'+paths.goals.map(x=>option(x.id,l(x.label),s.goal)).join('')+'</select></label>'+
+        (s.goal==='competition'?'<label>'+t('목표 진도','Progress goal','目标进度')+'<select id="pdGoalTarget">'+option('',t('아직 정하지 않았어요','Not decided yet','尚未确定'),s.goalTarget)+paths.targets.map(x=>option(x.id,l(x.label),s.goalTarget)).join('')+'</select></label><p class="pd-note">'+t('목표 대응은 자료 대조가 필요합니다. 이번 연산 진단은 입학 준비도 판정이 아닙니다.','Target mapping needs verification. This arithmetic check does not assess admission readiness.','目标对应需要资料核对。本运算测评不判断入学准备度。')+'</p>':'')+
+        '<label class="pd-cadence">'+t('희망 학습 횟수 · 기존 계획은 유지','Preferred frequency · current plan stays unchanged','希望的次数 · 现有计划不变')+'<select id="pdCadence">'+options([['w2',t('주 2회','Twice a week','每周两次')],['w1',t('주 1회','Once a week','每周一次')]],s.cadence)+'</select></label>';
+      const paperQuery=baseline?new URLSearchParams({b:baseline.id,l:lang,seed:d.seed,goal:s.goal,target:s.goalTarget||'',cadence:s.cadence}).toString():'';
+      shell(t('학습 시작점 찾기','Find your starting point','找到学习起点'),
+        '<header class="pd-header"><p class="pd-kicker">NUMBERS OF MAGIC</p><h1>'+t('우리 아이의 시작점을<br>가볍게 확인해요.','Find a starting point<br>for your child.','轻松找到<br>孩子的学习起点。')+'</h1><p>'+t('아직 배우지 않았어도 괜찮아요. 나이 또는 현행 진도로 시작하고, 필요하면 더 쉬운 기초로 바꿀 수 있어요.','It is fine not to have studied yet. Begin by age or school level; earlier foundations always remain available.','还没学过也没关系。按年龄或学校进度开始，也可改选更早的基础。')+'</p></header>'+
+        '<div class="pd-context"><label>'+t('먼저, 현재 나이를 알려 주세요','First, choose your current age','先选择目前年龄')+'<select id="pdAge">'+options(ages,s.age)+'</select></label></div>'+
+        '<div class="pd-routes" role="group" aria-label="'+t('진단 시작 방법','How to begin','测评开始方式')+'">'+routes.map(x=>'<button type="button" data-route="'+x[0]+'"'+(s.age?'':' disabled')+' aria-pressed="'+(s.route===x[0])+'">'+x[1]+'</button>').join('')+'</div>'+
+        '<section class="pd-selection"'+(s.age?'':' hidden')+'>'+
+        (s.route==='school'?'<label>'+t('현재 학년','Current school grade','目前年级')+'<select id="pdGrade">'+options(grades,s.grade)+'</select></label><label>'+t('현재 학기 · 참고 기록','Current semester · context','当前学期 · 参考')+'<select id="pdSemester">'+options([['1',t('1학기','Semester 1','第一学期')],['2',t('2학기','Semester 2','第二学期')]],s.semester||'1')+'</select></label><p class="pd-note">'+t('학년 진입 과정에서 시작하는 연산 표본입니다. 학기별 전체 교과 이수 판정은 아닙니다.','An arithmetic sample from the grade-entry course, not certification of a whole semester.','从年级起点课程抽样，不代表完成整个学期。')+'</p>':'')+
+        (baseline?'<p class="pd-starting-point"><b>'+escape(stageLabel(baseline))+'</b></p><p class="pd-note">'+(s.route==='unlearned'?t('배운 적이 없다면 나이에 관계없이 수 세기부터 확인합니다.','If not studied yet, start with counting at any age.','还没学过时，不论年龄先确认数数。'):t('출발 후보이지 나이의 표준이나 실력 판정은 아닙니다. 재학 단계와 다르면 출발점을 바꿔 주세요.','A starting candidate, not an age standard or ability judgment. Change it if your school stage differs.','只是起点候选，不是年龄标准或能力判断。与在读阶段不符时可更改。'))+'</p>':'')+
+        '<details class="pd-optional"><summary>'+t('출발점 바꾸기 · 더 쉬운 기초도 선택 가능','Change starting point · earlier foundations available','更改起点 · 可选更早的基础')+'</summary><label class="pd-topic">'+t('확인할 출발점','Starting point to check','要确认的起点')+'<select id="pdBaseline"'+(candidate?'':' disabled')+'>'+option('',t('출발점 선택','Select starting point','选择起点'),baseline&&baseline.id)+
+        '<optgroup label="'+t('유아 · 수 감각','Early foundations','幼儿 · 数感')+'">'+stages.filter(x=>x.kind==='foundation').map(x=>option(x.id,stageLabel(x),baseline&&baseline.id)).join('')+'</optgroup><optgroup label="'+t('기존 교과 연산 과정','Existing arithmetic courses','现有运算课程')+'">'+stages.filter(x=>x.kind!=='foundation').map(x=>option(x.id,stageLabel(x),baseline&&baseline.id)).join('')+'</optgroup></select></label></details></section>'+
+        '<details class="pd-optional"'+(s.age?'':' hidden')+'><summary>'+t('학습 목표 · 횟수 (선택)','Goal · frequency (optional)','目标 · 次数（可选）')+'</summary><section class="pd-goal-selection">'+goalFields+'<p class="pd-note">'+t('목표는 방향만 안내합니다. 문항·채점은 동일하며 현재 속도·분량·횟수를 자동 변경하지 않습니다.','Goals guide direction only. Questions and scoring stay the same; current workload is not changed automatically.','目标只指导方向，不改变题目、评分或当前学习量。')+'</p></section></details>'+
+        '<section class="pd-blueprint"><h2>'+t('한 번에 20문항','20 questions in one check','一次20道题')+'</h2><div class="pd-bands">'+[['6','30%',t('이전 진도','Earlier learning','此前进度')],['10','50%',t('현재 진도','Current learning','当前进度')],['4','20%',t('다음 진도','Next learning','后续进度')]].map(x=>'<div><b>'+x[0]+'</b><span>'+x[2]+' · '+x[1]+'</span></div>').join('')+'</div><p id="pdBaselinePreview">'+
+        (baseline?escape(stageLabel(baseline)):t('현재 나이와 진단 방법을 고르면 출발점이 나옵니다.','Choose age and route to see a starting point.','选择年龄与方式后显示起点。'))+'</p><p class="pd-note">'+t('맞고 틀려도 문항은 바뀌지 않습니다. 첫 기초의 이전 6문항은 같은 기초의 작은 수로, 마지막 과정의 다음 4문항은 같은 과정 추가 확인으로 표시합니다.','The plan stays fixed. At the first foundation, earlier items use smaller quantities; at the final course, next items are additional checks in that course.','题目配置保持不变。最初基础的此前题使用更小数量，最后课程的后续题为同课程补充确认。')+'</p></section>'+
+        '<p class="pd-note">'+t('유아는 보호자가 지시문을 읽어 줄 수 있습니다. 답이나 세는 방법은 알려주지 마세요.','An adult may read the prompt for a young child, without helping choose or count the answer.','成人可以为幼儿读题，但不要提示答案或计数方法。')+'</p><p id="pdSetupError" class="pd-error" role="alert"></p><button class="pd-primary" id="pdStart"'+(baseline?'':' disabled')+'>'+t('20문항 시작','Start 20 questions','开始20道题')+'</button>'+
+        (baseline?'<a class="pd-secondary pd-paper" id="pdPaper" href="placement-sheet.html?'+escape(paperQuery)+'" target="_blank" rel="noopener">'+t('종이로 인쇄 · O/X 채점','Print on paper · mark O/X','打印 · 对错评分')+'</a><p class="pd-note">'+t('인쇄본에는 보호자·선생님용 정답 쪽이 포함됩니다. 아이에게는 시험 쪽만 주세요.','The printout includes an adult answer page. Give the child only the test pages.','打印件包含家长·教师答案页，请只给孩子试题页。')+'</p>':''),'setup');
+      // Keep the primary action beside the chosen starting point, before optional
+      // planning details and the longer explanation of the fixed blueprint.
+      $('.pd-selection').after($('#pdSetupError'));$('#pdSetupError').after($('#pdStart'));
+      if(baseline)$('#pdStart').after($('#pdPaper'));
+      $('#pdAge').onchange=e=>{s.age=e.target.value;s.baselineId='';redraw();};
+      all('[data-route]').forEach(el=>el.onclick=()=>{s.route=el.dataset.route;s.baselineId='';redraw();});
+      if(s.route==='school'){
+        $('#pdGrade').onchange=e=>{s.grade=e.target.value;s.baselineId='';redraw();};
+        $('#pdSemester').onchange=e=>{s.semester=e.target.value;ctx.save();};
       }
-      if(baseline&&baseline.id===stages[0].id){
-        $('#pdBaselinePreview').textContent+=' · '+t('이전 6문항: 같은 기초의 더 작은 수','Earlier six: smaller quantities in the same foundation','此前6题：同一基础中的更小数量');
-      }else if(baseline&&baseline.id===stages[stages.length-1].id){
-        $('#pdBaselinePreview').textContent+=' · '+t('다음 4문항: 다음 범위가 없어 같은 과정 추가 확인','Next four: no later range, extra checks in the same course','后续4题：无后续范围，同一课程补充确认');
-      }
-      all('[data-route]').forEach(el => el.onclick=()=>{s.route=el.dataset.route; s.baselineId=''; redraw();});
-      if ($('#pdSeries')) $('#pdSeries').onchange=e=>{s.series=e.target.value;s.step='';s.progress='';s.baselineId='';redraw();};
-      if ($('#pdStep')) $('#pdStep').onchange=e=>{s.step=e.target.value;s.baselineId='';redraw();};
-      if ($('#pdProgress')) $('#pdProgress').onchange=e=>{s.progress=e.target.value;redraw();};
-      if ($('#pdGrade')) $('#pdGrade').onchange=e=>{s.grade=e.target.value;ctx.save();};
-      $('#pdBaseline').onchange=e=>{
-        // Explicitly selecting a different topic overrides a book candidate.
-        s.baselineId=e.target.value;
-        if(mapped && s.baselineId!==resolved.baselineId) s.route='topic';
-        redraw();
-      };
+      $('#pdGoal').onchange=e=>{s.goal=e.target.value;s.goalTarget='';redraw();};
+      if(s.goal==='competition')$('#pdGoalTarget').onchange=e=>{s.goalTarget=e.target.value;redraw();};
+      $('#pdCadence').onchange=e=>{s.cadence=e.target.value;redraw();};
+      $('#pdBaseline').onchange=e=>{s.baselineId=e.target.value;redraw();};
       $('#pdStart').onclick=()=>{
         if(!baseline)return;
         $('#pdStart').disabled=true;
-        try {
-          d.plan=core.build(baseline.id,d.seed);d.selection.baselineId=baseline.id;d.index=0;d.responses=[];d.phase='question';d.questionStartedAt=Date.now();redraw();
-        } catch (_) { $('#pdSetupError').textContent=t('이 범위의 진단을 안전하게 구성하지 못했습니다. 다른 기준을 선택해 주세요.','This range could not be safely prepared. Choose another starting point.','无法安全生成该范围的测评，请选择其他起点。');$('#pdStart').disabled=false; }
+        try{d.plan=core.build(baseline.id,d.seed);s.baselineId=baseline.id;d.index=0;d.responses=[];d.phase='question';d.questionStartedAt=Date.now();redraw();}
+        catch(_){$('#pdSetupError').textContent=t('이 범위를 안전하게 구성하지 못했습니다. 출발점을 바꿔 주세요.','This range could not be safely prepared. Choose another starting point.','无法安全生成此范围，请更改起点。');$('#pdStart').disabled=false;}
       };
     }
     const tokens = (n,symbol='●') => `<div class="pd-objects" aria-label="${escape(t('수량 그림','Quantity picture','数量图'))}">${Array.from({length:n},()=>`<span class="pd-object${symbol==='●'?' pd-orb':''}" aria-hidden="true">${symbol==='●'?'':art(symbol)}</span>`).join('')}</div>`;
@@ -200,6 +204,10 @@
         ${path.schedule.targetMapping==='pending'?`<p class="pd-note">${t('목표별 정확한 도달 시점은 확인 필요입니다. 이번 연산 진단만으로 사고력·언어사고력이나 입학 준비도를 판단하지 않습니다.','Exact target timing still needs verification. This arithmetic check does not assess reasoning, language reasoning, or admission readiness.','准确的目标达成时间仍需确认。本运算测评不判断思维、语言思维或入学准备度。')}</p>`:''}
         <p class="pd-note">${t('목표별 학습 방향 제안입니다. 학습지 편성이나 기존 진도를 자동으로 바꾸지 않습니다.','These are goal-specific study suggestions, not automatic changes to worksheets or existing progress.','这是按目标提出的学习方向建议，不会自动改变练习纸编排或现有进度。')}</p>`;
       $('.pd-score').before(guidance);
+      if(window.NM_STUDY_ROUTE){
+        const planner=document.createElement('div');guidance.appendChild(planner);
+        window.NM_STUDY_ROUTE.mount(planner,{lang,course:rec.course,session:rec.session,cadence:ctx.currentCadence||path.config.cadence});
+      }
       all('[data-support]').forEach(button=>button.onclick=()=>ctx.seeCourse(path.support[Number(button.dataset.support)].course));
       if(rec.course==='C0'){
         $('.pd-recommended>span').textContent=t('유아 기초 · 선택한 본진도','Early foundations · selected main topic','幼儿基础 · 选择的主要内容');
