@@ -103,6 +103,19 @@
     generator: generatorApi.generatorKey({ ...type, semesterId: semester.id, unitId: unit.id, unitName: unit.name })
   })))));
   const typeById = new Map(types.map(type => [type.id, type]));
+  function sourceQuestionType(type) {
+    if (type?.sourceRelationship !== "same-source-compound-skill") return type;
+    const owner = typeById.get(type.commonPublicTypeId);
+    return owner && owner !== type && owner.sourceRelationship === "same-source-compound-owner"
+      && owner.rawSourceItemId && owner.rawSourceItemId === type.rawSourceItemId ? owner : null;
+  }
+  function selectedQuestionTypes() {
+    return [...new Map([...state.selected].map(id => sourceQuestionType(typeById.get(id))).filter(Boolean).map(type => [type.id, type])).values()];
+  }
+  function commonQuestionType(type) {
+    return type.sourceRelationship === "same-source-compound-skill"
+      ? sourceQuestionType(type) : type.commonPublicTypeId && typeById.get(type.commonPublicTypeId);
+  }
   let previewPopover = null;
   let previewAnchor = null;
 
@@ -163,7 +176,7 @@
 
   function typeTreeRow(type) {
     const ready = Boolean(type.generator) && !type.reviewLocked;
-    const commonType = type.commonPublicTypeId && typeById.get(type.commonPublicTypeId);
+    const commonType = commonQuestionType(type);
     const linked = !ready && Boolean(commonType?.generator && !commonType.reviewLocked);
     const selected = state.selected.has(type.id);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
@@ -187,7 +200,7 @@
       const isOpen = !state.collapsedUnits.has(unit.id);
       const readyCount = new Set(unitTypes.flatMap(type => {
         if (type.generator && !type.reviewLocked) return [type.id];
-        const commonType = type.commonPublicTypeId && typeById.get(type.commonPublicTypeId);
+        const commonType = commonQuestionType(type);
         return commonType?.generator && !commonType.reviewLocked ? [commonType.id] : [];
       })).size;
       return '<section class="tree-unit ' + (isOpen ? "is-open" : "") + '">' +
@@ -268,12 +281,13 @@
       ? `<div class="type-preview-source"><b>조건 보정 유사문항</b><small>원문 ${escapeHtml(type.sourceItemLabel)}의 풀이 구조 · 하류 방향 명시, 물살 수치 보정</small></div>`
       : `<div class="type-preview-source"><b>유형 예시</b><small>대표 문제 · ${source}</small></div>`;
     const header = title => `<header><div>${title}</div><button type="button" class="type-preview-close" data-close-type-preview aria-label="미리보기 닫기">×</button></header>`;
-    const commonType = type.commonPublicTypeId && typeById.get(type.commonPublicTypeId);
+    const commonType = commonQuestionType(type);
     if (commonType?.generator && !commonType.reviewLocked) {
       const generated = generatorApi.generate(commonType, currentLevel().rank, state.difficulty, hash(`preview:${commonType.id}`), type.commonPublicVariant ?? commonType.variant ?? 0);
       if (!generated) return;
-      const commonSourceLine = `<div class="type-preview-source"><b>공통 유형 예시</b><small>${source} · ${escapeHtml(commonType.sourceItemLabel || "공통 유형")}과 같은 풀이 방법</small></div>`;
-      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${commonSourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer class="type-preview-common-action"><span>같은 탐구의 양초 예제와 풀이가 같습니다.</span><button type="button" data-select-common-type="${escapeHtml(commonType.id)}">공통 유형 선택</button></footer>`;
+      const compound = type.sourceRelationship === "same-source-compound-skill" && sourceQuestionType(type) === commonType;
+      const commonSourceLine = `<div class="type-preview-source"><b>공통 유형 예시</b><small>${source} · ${compound ? "단면 그리기와 개수 구하기가 한 문제에 포함됩니다." : `${escapeHtml(commonType.sourceItemLabel || "공통 유형")}과 같은 풀이 방법`}</small></div>`;
+      popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${commonSourceLine}<div class="type-preview-question">${renderMathNotation(generated.prompt)}</div><footer class="type-preview-common-action"><span>${compound ? "같은 원문의 전체 문항으로 연결됩니다." : "같은 탐구의 양초 예제와 풀이가 같습니다."}</span><button type="button" data-select-common-type="${escapeHtml(commonType.id)}">공통 유형 선택</button></footer>`;
     } else if (!type.generator || type.reviewLocked) {
       const reviewReason = type.reviewReason || "원문 구조와 정답을 더 확인해야 합니다.";
       popover.innerHTML = `${header(`<span>${type.grade}학년 ${type.term}학기 · ${escapeHtml(type.unitName)}</span><strong>${escapeHtml(typeDisplayName(type))}</strong>`)}${sourceLine}<footer>검수 대기 · ${escapeHtml(reviewReason)}</footer>`;
@@ -298,7 +312,7 @@
   }
 
   function plannedQuestionTypes(selected, requestedCount = state.count) {
-    const ready = selected.filter(type => type?.generator && !type.reviewLocked);
+    const ready = [...new Map(selected.map(sourceQuestionType).filter(type => type?.generator && !type.reviewLocked).map(type => [type.id, type])).values()];
     const remaining = new Map(ready.map(type => [
       type.id,
       type.generationMode === "fixed-verified-pool"
@@ -322,7 +336,7 @@
   }
 
   function renderSummary() {
-    const selected = [...state.selected].map(id => typeById.get(id)).filter(Boolean);
+    const selected = selectedQuestionTypes();
     const plannedCount = plannedQuestionTypes(selected).length;
     $("selectedTypeCount").textContent = selected.length;
     $("selectedQuestionCount").textContent = plannedCount;
@@ -336,7 +350,7 @@
   }
 
   function setQuestionCount(value) {
-    state.count = Math.max(1, Math.min(40, Number.isFinite(value) ? value : 12));
+    state.count = Math.max(1, Math.min(120, Number.isFinite(value) ? Math.trunc(value) : 12));
     $("questionCountInput").value = String(state.count);
     document.querySelectorAll("[data-count]").forEach(button => {
       button.classList.toggle("is-active", Number(button.dataset.count) === state.count);
@@ -361,7 +375,7 @@
   }
 
   function buildQuestions() {
-    const selected = [...state.selected].map(id => typeById.get(id)).filter(type => type?.generator && !type.reviewLocked);
+    const selected = selectedQuestionTypes().filter(type => type?.generator && !type.reviewLocked);
     if (!selected.length) return;
     const plannedTypes = plannedQuestionTypes(selected);
     if (!plannedTypes.length) return;
@@ -371,7 +385,9 @@
     const seenPrompts = new Set();
     const seenAnswersByType = new Map();
     const seenPoolIndicesByType = new Map();
-    state.questions = plannedTypes.map((type, index) => {
+    const seenCompoundQuestions = new Set();
+    let nextQuestions;
+    try { nextQuestions = plannedTypes.map((type, index) => {
       const typeAnswers = seenAnswersByType.get(type.id) || new Set();
       const typePoolIndices = seenPoolIndicesByType.get(type.id) || new Set();
       let generated;
@@ -390,8 +406,19 @@
       }
       const fallbackVariant = type.generationMode === "fixed-verified-pool" ? typePoolIndices.size : index;
       generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, fallbackVariant);
+      if (!generated || typeof generated.prompt !== "string" || !generated.prompt.trim() || seenPrompts.has(generated.prompt)
+        || type.generationMode === "fixed-verified-pool" && generated.generationMode !== "fixed-verified-pool") {
+        throw new Error(`${typeDisplayName(type)}의 검증 문항을 중복 없이 구성하지 못했습니다.`);
+      }
+      if (type.sourceRelationship === "same-source-compound-owner") {
+        if (!generated || generated.sourceItemId !== type.sourceItemId || generated.rawSourceItemId !== type.rawSourceItemId
+          || generated.generator !== type.generator || generated.generationMode !== "fixed-verified-pool" || generated.verifiedVariantId !== `${type.sourceItemId}:v${generated.verifiedPoolIndex}`
+          || typeof generated.structuralFingerprint !== "string" || !generated.structuralFingerprint.trim()
+          || seenCompoundQuestions.has(generated.structuralFingerprint)) throw new Error(`${typeDisplayName(type)}의 문항 연결이나 검증 식별자가 다릅니다.`);
+        seenCompoundQuestions.add(generated.structuralFingerprint);
+      }
       if (generated.generationMode === "fixed-verified-pool") {
-        if (!Number.isInteger(generated.verifiedPoolIndex) || typePoolIndices.has(generated.verifiedPoolIndex)) {
+        if (!Number.isInteger(generated.verifiedPoolIndex) || generated.verifiedPoolIndex < 0 || generated.verifiedPoolIndex >= type.verifiedVariantCount || typePoolIndices.has(generated.verifiedPoolIndex)) {
           throw new Error(`${typeDisplayName(type)}의 검증 문항 묶음이 중복되었습니다.`);
         }
         if (generated.verifiedVariantCount !== type.verifiedVariantCount) {
@@ -404,7 +431,11 @@
       typeAnswers.add(String(generated.answer));
       seenAnswersByType.set(type.id, typeAnswers);
       return { number: index + 1, type, level, difficulty: currentDifficultyLabel(), ...generated };
-    });
+    }); } catch (error) {
+      alert(error?.message || "검증 문항을 구성하지 못했습니다. 이전 문제는 그대로 유지됩니다.");
+      return;
+    }
+    state.questions = nextQuestions;
     state.view = "problem";
     state.solutionViewerIndex = 0;
     renderWorksheet();
@@ -427,6 +458,8 @@
 
   function needsWidePrint(question) {
     const prompt = String(question?.prompt || "");
+    if (prompt.includes("source62-layer-cut-problem")) return true;
+    if (prompt.includes('data-reference-role="source-given-worked-example"')) return true;
     const fractionCount = (prompt.match(/class="math-fraction"/g) || []).length;
     const equations = [...prompt.matchAll(/class="[^"]*equation[^"]*"[^>]*>([\s\S]*?)<\/div>/g)]
       .map(match => match[1].replace(/<[^>]+>/g, " ").replace(/&nbsp;|&#160;/g, " ").replace(/\s+/g, " ").trim());
@@ -437,7 +470,16 @@
   }
 
   function problemWeight(question) {
+    if (question.sourceItemId?.startsWith("6-2-u4-e2-")) return question.sourceItemId.endsWith("exploration") ? 3 : 1.5;
+    if (question.sourceItemId?.startsWith("6-2-u4-e1-")) return question.sourceItemId.endsWith("example-4") ? 3 : 1.5;
+    if (question.prompt.includes("source62-final-problem")) return 3;
+    if (question.prompt.includes("source62-layer-cut-problem")) return 3;
+    if (question.prompt.includes('data-reference-role="source-given-worked-example"')) return 4;
+    if (question.prompt.includes("source62-t-pattern-given") && question.difficultyLevel === 0 && question.layerCue?.rows?.length > 26) return 6;
     if (question.prompt.includes("source62-stack-dotgrid")) return 1.5;
+    if (question.prompt.includes("source62-exploration-given")) return question.difficultyLevel === 2 ? 3 : 1.5;
+    if (question.prompt.includes("source62-three-point-given")) return question.difficultyLevel === 2 ? 3 : 1.5;
+    if (question.prompt.includes("source62-t-pattern-given") || question.prompt.includes("source62-stair1-given") || question.prompt.includes("source62-border-given") || question.prompt.includes("source62-notched-given") || question.prompt.includes("source62-opposite-removal-given") || question.prompt.includes("source62-cube-addition-given") || question.prompt.includes("source62-colored-cut-given")) return 3;
     const graphCount = (question.prompt.match(/class="graph-figure"/g) || []).length;
     const hasSource61VolumeE4 = question.prompt.includes("source61-volume-e4-diagram");
     const hasSource61E2Example2 = question.prompt.includes("source61-e2ex2-diagram");
@@ -533,7 +575,12 @@
       const hasSource61E2Mission6 = String(question.answerVisual || "").includes("source61-e2m6-diagram");
       const hasSource61E4Example1 = String(question.answerVisual || "").includes("source61-e4ex1-diagram");
       const hasCompactAnswerVisual = String(question.answerVisual || "").includes('data-print-weight="compact"');
-      const weight = hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 ? 8 : hasCompactAnswerVisual ? 2.5 : hasVisual ? 3 : 1;
+      const hasBorderTwoHeightTables = question.generator === "sourceGrade6SecondSpaceE2BorderDifference" && question.difficultyLevel === 2;
+      const hasNotchedTwoStates = question.generator === "sourceGrade6SecondSpaceE2NotchedVisibility" && question.difficultyLevel === 2;
+      const hasCubeAdditionClasses = question.generator === "sourceGrade6SecondSpaceE4SingleCubeAddition" || question.sourceItemId === "6-2-u3-e4-mission-4";
+      const hasColoredCutPair = ["sourceGrade6SecondSpaceE4ColoredPlaneCut", "sourceGrade6SecondSpaceE4ThreePointPrismCut"].includes(question.generator);
+      const ratioE2Text = question.sourceItemId?.startsWith("6-2-u4-e2-") && !question.answerKeyVisual;
+      const weight = ratioE2Text ? question.sourceItemId.endsWith("exploration") ? 4 : 2 : hasSource61E2Example2 || hasSource61E2Example4 || hasSource61E2Mission6 || hasSource61E4Example1 || hasBorderTwoHeightTables || hasNotchedTwoStates || hasCubeAdditionClasses ? 8 : hasColoredCutPair ? 4 : hasCompactAnswerVisual ? 2.5 : hasVisual ? 3 : 1;
       if (solutionPage.length && (solutionPage.length >= 8 || solutionWeight + weight > 8)) {
         solutionPages.push(solutionPage);
         solutionPage = [];
@@ -543,9 +590,11 @@
       solutionWeight += weight;
     });
     if (solutionPage.length) solutionPages.push(solutionPage);
+    const twoColumnAnswers = page => page.some(question => question.answerPageLayout === "two-column")
+      && page.every(question => question.answerPageLayout === "two-column" || question.prompt.includes("source62-operation-picture"));
     $("solutionView").innerHTML = solutionPages.map((page, pageIndex) => `<section class="print-page answer-page">
       <div class="page-label">정답·풀이 ${pageIndex + 1}</div>
-      <div class="solution-list">${page.map(question => `<article class="solution-item">
+      <div class="solution-list${twoColumnAnswers(page) ? " solution-list--two-column" : ""}">${page.map(question => `<article class="solution-item">
         <header><b>${question.number}</b><span>${escapeHtml(typeDisplayName(question.type))}</span><strong>${renderMathNotation(escapeHtml(question.answer))}</strong></header>
         ${question.answerVisual ? `<div class="solution-answer-visual" aria-label="정답 그림">${renderMathNotation(question.answerVisual)}</div>` : ""}
         <p>${renderMathNotation(question.solution)}</p>
@@ -642,10 +691,10 @@
 
   function renderWorksheet() {
     const student = $("studentNameInput").value.trim();
-    const selected = [...state.selected].map(id => typeById.get(id)).filter(Boolean);
+    const selected = selectedQuestionTypes();
     $("worksheetStudent").textContent = student;
     $("worksheetTitle").textContent = state.view === "problem" ? "맞춤 유사문제" : "맞춤 유사문제 정답·풀이";
-    $("worksheetMeta").textContent = `심화 문제은행 · ${currentDifficultyLabel()} · ${state.questions.length}문항 · ${state.selected.size}개 유형`;
+    $("worksheetMeta").textContent = `심화 문제은행 · ${currentDifficultyLabel()} · ${state.questions.length}문항 · ${selected.length}개 유형`;
     $("problemView").hidden = state.view !== "problem";
     $("solutionView").hidden = state.view !== "solution";
     $("answerKeyView").hidden = true;
@@ -704,13 +753,16 @@
   $("typeList").addEventListener("change", event => {
     const input = event.target.closest("input[data-type-id]");
     if (!input) return;
-    if (input.checked) state.selected.add(input.dataset.typeId); else state.selected.delete(input.dataset.typeId);
+    const type = sourceQuestionType(typeById.get(input.dataset.typeId));
+    if (!type) return;
+    if (input.checked) state.selected.add(type.id); else state.selected.delete(type.id);
     renderCatalog();
   });
   $("selectedTypeList").addEventListener("click", event => {
     const button = event.target.closest("button[data-remove-type]");
     if (!button) return;
-    state.selected.delete(button.dataset.removeType);
+    const target = sourceQuestionType(typeById.get(button.dataset.removeType));
+    for (const id of state.selected) if (sourceQuestionType(typeById.get(id))?.id === target?.id) state.selected.delete(id);
     renderCatalog();
   });
   $("generateButton").addEventListener("click", buildQuestions);
@@ -801,7 +853,7 @@
   studentNameInput.dataset.identitySource = identity.source || "none";
   studentNameInput.dataset.nameEditPermission = identity.canEditName ? "granted" : "locked";
   studentNameInput.title = identity.canEditName ? "관리자가 학생 이름 변경을 허용했습니다." : "로그인한 이름이 자동으로 적용됩니다.";
-  const reviewType = typeById.get(params.get("type"));
+  const reviewType = sourceQuestionType(typeById.get(params.get("type")));
   if (reviewType?.generator && !reviewType.reviewLocked) {
     state.level = "simwha";
     state.grade = reviewType.grade;

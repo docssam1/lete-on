@@ -72,9 +72,18 @@ async function main() {
     // Generated artifacts are immutable: fail on a different existing file instead of replacing it.
     for (const {asset,bytes} of collected) if (fs.existsSync(path.join(directory,asset.file))) assert(fs.readFileSync(path.join(directory,asset.file)).equals(bytes));
     const manifestBytes = Buffer.from(JSON.stringify(manifest,null,2) + "\n");
-    if (fs.existsSync(path.join(directory,"manifest.json"))) assert(fs.readFileSync(path.join(directory,"manifest.json")).equals(manifestBytes));
+    const manifestPath=path.join(directory,"manifest.json"),refresh=process.env.HSE_STACK_REFRESH_RUNTIME==="1";
+    if (fs.existsSync(manifestPath)) {
+      const previous=fs.readFileSync(manifestPath);
+      if (refresh) {
+        const old=JSON.parse(previous);
+        assert.deepEqual(old.assets,manifest.assets,"A runtime refresh cannot change canonical artwork or source contracts");
+        assert.deepEqual({...old,runtimeHashes:{}},{...manifest,runtimeHashes:{}},"Only runtime fingerprints may change");
+        writeVerified(path.join(evidence,"pre-refresh-stack-manifest.json"),previous);
+      } else assert(previous.equals(manifestBytes));
+    }
     for (const {asset,bytes} of collected) writeVerified(path.join(directory,asset.file),bytes);
-    writeVerified(path.join(directory,"manifest.json"),manifestBytes);
+    if(refresh)fs.writeFileSync(manifestPath,manifestBytes);else writeVerified(manifestPath,manifestBytes);
     console.log(`Exported ${collected.length} canonical answer PNGs, ${collected.reduce((n,item)=>n+item.bytes.length,0)} bytes. Source types remain locked.`);
   } finally { await browser.close(); }
 }
