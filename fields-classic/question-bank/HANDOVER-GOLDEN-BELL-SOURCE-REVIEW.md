@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261014b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261014b/20261014c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261015a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261015a/20261015b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -190,7 +190,17 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 요일 답은 DB에 `["화요일","화"]`로 둘 다 받는다. 토요일 모두는 `resultContract:{type:"set"}`.
   - 29문항 독립 검산(달의 1일 요일을 7가지 다 시험해 하나로 정해지는지 확인) = 교사용 답. 12쪽 아래 「10월 · 11 둘레 ±1 ±7」은 교사 발문 그림이라 넣지 않음.
   - `sourceHold` S11~S15 5건 삭제, coverage public 77 · hold 40. DB `book-05` 125키 → 206키, sha 앞 8자리 `51c6b051`. 캐시 꼬리표 `20261014b`.
-- **다음**: 보류를 주제 묶음으로 슬라이드 순서대로 — ~~수 배열·수열 3~10~~ / ~~연산·달력 11~15~~ / 최단거리 18~24 / 숫자 카드 26~32 /
+- **5권 묶음 3(슬라이드 18~24 파스칼 삼각형과 최단거리 27문항, 2026-10-15)**: 패치 `tools/golden-bell-book05/patch-book05-batch3.mjs`(정답 없음).
+  - 새 단원 `shortest-route-source`(번호 8, unit 「최단거리와 숫자 카드」). 개념 설명은 `progressive-concept` + 단계별 그림(1+1 → 점마다 더하기 → 이음점에서 곱).
+  - 새 그림 `source-route`: `cells`(그리는 칸, 계단 모양도 칸 목록) · `bold`(굵은 칸 = 다닐 수 있는 길) · `diagonals`(칸의 왼쪽 위→오른쪽 아래) · `points` · `numbers`(개념용).
+    `source-loop-routes`(23쪽 두 타원). **SVG를 감싼 div에 `width:100%`가 없으면 가운데 정렬 부모 안에서 줄어든다**(그림이 작게 나온 원인).
+    인쇄는 `--route-w`로 칸 크기를 모든 그림에서 같게 맞춘다.
+  - 23쪽 05는 학생용 물음이 없어 03과 같은 뜻의 물음을 붙이고 `sourceDiscrepancy`에 적음. 가·나·다·A·B(교사용 빨강)는 넣지 않음.
+  - 교사용 답 오류 4곳(18쪽 (1), 20쪽 그림 4 오타, 21쪽 그림 3·4)은 계산한 답으로 넣고 DB `sourceNote`에 기록.
+    검산기는 그림 데이터로 길 그래프를 다시 만들어 세고(대각선은 많이 쓸수록 짧음), **교사용 파랑 칸 숫자(각 점의 가짓수)로 굵은 칸 받아쓰기를 대조**했다.
+  - 16쪽(연산골든벨 사각수 표)은 문항이 아니라 보류로 남김 — 사각수 묶음(51~58) 때 함께 본다.
+  - `sourceHold` S18~S24 7건 삭제, coverage public 104 · hold 33. DB `book-05` 206키 → 235키, sha 앞 8자리 `2954986e`. 캐시 꼬리표 `20261015a`.
+- **다음**: 보류를 주제 묶음으로 슬라이드 순서대로 — ~~수 배열·수열 3~10~~ / ~~연산·달력 11~15~~ / ~~최단거리 18~24~~ / 숫자 카드 26~32 /
   곱셈구구·매트릭스 35~40 / 선분·도형식·분수 41~49 / 삼각수·둘레·사각수 51~58 / 가르기 60. 보류 사유 메모 중 「교사용 나열 누락(29쪽 (4))」,
   「둘째 표 조건 불성립(40쪽)」은 묶음 작업 때 원본으로 다시 확인할 것.
 

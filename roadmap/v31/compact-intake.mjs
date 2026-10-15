@@ -1,13 +1,14 @@
 import {trackCourses,koreaDate} from './flow.mjs';
 import {commitLearning} from './quick-flow.mjs';
 import {esc} from './intake.mjs';
+import {bookScopeOptions} from './book-scope-options.mjs';
 
 const tracks=['application','depth','thinking','arithmetic'];
 const trackLabels={application:'교과 진도',depth:'심화 진도',thinking:'사고력 진도',arithmetic:'연산 진도'};
 const academyNames=['소마','필즈','시매쓰','CMS'];
 const U='__unentered__',N='__not_started__',K='__unknown__',CUSTOM='__custom__';
 const states=new Set([U,N,K]);
-const books={application:['디딤돌 기본+응용','디딤돌 응용','쎈수학','쎈 중등 수학'],depth:['최상위 S 수학','최상위 수학'],thinking:['킨더팩토','키즈팩토','초등팩토','PRE 1031','필즈 베이직','1031 입문','1031 초급'],arithmetic:['소마셈','기적의 계산법','더클셈']};
+const books={application:['디딤돌 기본+응용','디딤돌 응용','쎈수학','쎈 중등 수학'],depth:['최상위 S 수학','최상위 수학'],thinking:['킨더팩토','키즈팩토','초등팩토','PRE 1031','필즈 베이직','1031 입문','1031 초급','1031 중급'],arithmetic:['소마셈','기적의 계산법','더클셈']};
 // Existing catalog B18/B65/B66 and source-monthly S4 names; no old-course renaming.
 const schoolRanges=[...Array.from({length:6},(_,i)=>[1,2].map(term=>`초등 ${i+1}-${term}`)).flat(),...Array.from({length:3},(_,i)=>[1,2].map(term=>`중등 ${i+1}-${term}`)).flat(),'공통수학1','공통수학2','대수','미적분Ⅰ','확률과 통계','미적분Ⅱ','기하'];
 const goalLabels={premier:'프리미어',gifted:'영재원',highSchool:'학교·진로'};
@@ -16,7 +17,7 @@ const stageValid=v=>/^(p[4-7]|초[1-6]|중[1-3]|고[1-3])$/.test(v);
 const isPreschool=v=>/^p[4-7]$/.test(v);
 const fieldName=(key,field)=>`compact:${key}:${field}`;
 const select=(name,value,options,extra='')=>`<select name="${esc(name)}" ${extra}>${options.map(([v,label])=>`<option value="${esc(v)}" ${String(value??'')===String(v)?'selected':''}>${esc(label)}</option>`).join('')}</select>`;
-const field=(name,value,label,placeholder='')=>`<label class="compact-field"><span class="sr-only">${esc(label)}</span><input name="${esc(name)}" value="${esc(value||'')}" aria-label="${esc(label)}" placeholder="${esc(placeholder||label)}" autocomplete="off"></label>`;
+const field=(name,value,label,placeholder='',extra='')=>`<label class="compact-field"><span class="sr-only">${esc(label)}</span><input name="${esc(name)}" value="${esc(value||'')}" aria-label="${esc(label)}" placeholder="${esc(placeholder||label)}" autocomplete="off" ${extra}></label>`;
 const wrapSelect=(name,value,options,label,refresh=false)=>`<label class="compact-field"><span class="sr-only">${esc(label)}</span>${select(name,value,options,`aria-label="${esc(label)}"${refresh?' data-compact-refresh':''}`)}</label>`;
 
 function seedGoal(s,key){
@@ -63,20 +64,25 @@ export function collectCompact(s,d,editedField=''){
  if(d.has('compact:birthMonth'))c.birthMonth=String(d.get('compact:birthMonth')||'');
  for(const key of tracks){
   const row=c.rows[key],choiceName=fieldName(key,'choice');
+  let bookChanged=false;
   if(d.has(choiceName)){
    const next=String(d.get(choiceName)||U);
-   if(next!==row.choice){row.choice=next;row.dirty=true;}
+   if(next!==row.choice){row.choice=next;row.dirty=true;bookChanged=true;if(next===CUSTOM)row.name='';}
    if(!states.has(next)&&next!==CUSTOM)row.name=next;
   }
   const customName=fieldName(key,'name');
-  if(row.choice===CUSTOM&&d.has(customName)){const name=String(d.get(customName)||'');if(name!==row.name)row.dirty=true;row.name=name;}
+  if(row.choice===CUSTOM&&d.has(customName)){const name=String(d.get(customName)||'');if(name!==row.name){row.dirty=true;bookChanged=true;}row.name=name;}
+  // The form still contains the previous book's scope during a change event.
+  // Drop that scope from the editable draft; saved course/history records stay intact.
+  if(bookChanged){row.volumeChoice='';row.volume='';row.pendingDraft=null;row.scopeResetPending=true;continue;}
   const volumeName=fieldName(key,'volume');
+  const customVolume=fieldName(key,'customVolume');
+  if(row.scopeResetPending){if(![volumeName,customVolume].includes(editedField))continue;delete row.scopeResetPending;}
   if(d.has(volumeName)){
    const next=String(d.get(volumeName)||'');
    if(next!==row.volumeChoice){row.volumeChoice=next;row.dirty=true;}
    if(next!==CUSTOM)row.volume=next;
   }
-  const customVolume=fieldName(key,'customVolume');
   if(row.volumeChoice===CUSTOM&&d.has(customVolume)){const value=String(d.get(customVolume)||'');if(value!==row.volume)row.dirty=true;row.volume=value;}
  }
  const a=c.academy;
@@ -100,13 +106,18 @@ function rowMarkup(s,key){
  const c=ensureCompact(s),row=c.rows[key],names=[...new Set([...books[key],...trackCourses(s,key).map(x=>x.course),...(!states.has(row.choice)&&row.choice!==CUSTOM?[row.choice]:[])].filter(Boolean))];
  const choices=[[U,'교재 선택'],[N,'아직 안 해요'],[K,'잘 모르겠어요'],...names.map(n=>[n,n]),[CUSTOM,'그 외 교재']];
  let html=wrapSelect(fieldName(key,'choice'),row.choice,choices,`${trackLabels[key]} 교재`,true);
- if(row.choice===CUSTOM)html+=field(fieldName(key,'name'),row.name,`${trackLabels[key]} 교재 이름`,'교재 이름');
+ if(row.choice===CUSTOM)html+=field(fieldName(key,'name'),row.name,`${trackLabels[key]} 교재 이름`,'교재 이름','data-compact-book-name');
  const hasBook=!states.has(row.choice);
- const ranges=['application','depth'].includes(key)?schoolRanges:key==='arithmetic'?Array.from({length:12},(_,i)=>`${i+1}권`):['입문','초급','중급','기본','심화','A단계','B단계','C단계',...Array.from({length:6},(_,i)=>`${i+1}권`)];
- const options=[['',key==='thinking'?'단계·레벨 선택':key==='arithmetic'?'단계·권 선택':'범위 선택'],...[...new Set([...ranges,row.volumeChoice!==CUSTOM?row.volumeChoice:'',row.volume].filter(Boolean))].map(v=>[v,v]),[CUSTOM,'직접 입력']];
+ const name=row.choice===CUSTOM?row.name:row.choice,record=s.courses.find(course=>course.id===row.courseId&&course.course===name);
+ const scope=['application','depth'].includes(key)?null:bookScopeOptions({track:key,bookName:name,edition:record?.edition||'',currentValue:row.volume});
+ const ranges=scope?scope.options:schoolRanges.map(value=>[value,value]);
+ const options=[['',scope?.placeholder||'범위 선택'],...ranges];
+ if(scope)options.push([scope.unknownValue,scope.unknownLabel]);
+ for(const value of [...new Set([row.volumeChoice!==CUSTOM?row.volumeChoice:'',row.volume].filter(Boolean))])if(!options.some(([id])=>id===value))options.push([value,`기존 입력 · ${value}`]);
+ options.push([CUSTOM,'직접 입력']);
  if(hasBook){
-  html+=wrapSelect(fieldName(key,'volume'),row.volumeChoice,options,key==='thinking'?'사고력 단계·레벨':key==='arithmetic'?'연산 단계·권':`${trackLabels[key]} 범위`,true);
-  if(row.volumeChoice===CUSTOM)html+=field(fieldName(key,'customVolume'),row.volume,key==='thinking'?'사고력 단계·레벨':`${trackLabels[key]} 범위`,key==='thinking'?'예: 3권 중 2권째':key==='arithmetic'?'예: P단계':'예: 중등 1-2');
+  html+=wrapSelect(fieldName(key,'volume'),row.volumeChoice,options,key==='thinking'?'사고력 권·범위':key==='arithmetic'?'연산 단계·권':`${trackLabels[key]} 범위`,true);
+  if(row.volumeChoice===CUSTOM)html+=field(fieldName(key,'customVolume'),row.volume,key==='thinking'?'사고력 권·범위':`${trackLabels[key]} 범위`,scope?.customPlaceholder||'예: 중등 1-2');
  }
  return `<div class="compact-row" data-compact-track="${key}"><h3>${trackLabels[key]}</h3><div class="compact-row-fields${hasBook?' has-scope':''}">${html}</div></div>`;
 }
