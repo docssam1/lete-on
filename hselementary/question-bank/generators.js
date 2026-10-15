@@ -30506,5 +30506,9 @@
     return { ...generators[key]({ rng: mulberry32(seed), level, variant: resolvedVariant }), generator: key };
   }
 
-  window.HSE_GENERATORS = { generatorKey, generate, names: Object.keys(generators) };
+  const polycubes = Object.freeze({ rotationTransforms: Object.freeze([...rotationTransforms]), normalizedCellsKey, canonicalPolycube, addedCubeShapeCount });
+  if (typeof module === "object" && module.exports) {
+    module.exports = polycubes;
+    if (typeof window !== "undefined" && !window.HSE_GENERATORS) window.HSE_GENERATORS = { generatorKey, generate, names: Object.keys(generators), polycubes };
+  } else window.HSE_GENERATORS = { generatorKey, generate, names: Object.keys(generators), polycubes };
 })();
