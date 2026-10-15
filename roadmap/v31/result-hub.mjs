@@ -5,7 +5,7 @@ import {compareBookPolicy} from './recommendation-policy.mjs';
 import {PURPOSE_DETAILS} from './optional-details.mjs';
 
 // Presentation only: callers own navigation, edits, persistence and plan acceptance.
-const TABS=[['current','현재'],['paths','다음 경로'],['analysis','분석지']];
+const TABS=[['current','전체 로드맵'],['paths','다음 경로'],['analysis','분석지']];
 const TRACKS={application:'교과',depth:'심화',thinking:'사고력',arithmetic:'연산'};
 const DIRECTIONS=[
  ['current','유지','지금 속도 그대로'],
@@ -110,7 +110,7 @@ export function resultHubScreen(s,data={},legacyView={}){
  else if(tab==='analysis'){content=analysis(s);tools=bookEdits(s)+goalButtons(s,{selectedOnly:true});}
  else{
   const recorded=`<section class="result-roadmap result-hub-current" data-result-roadmap>${chart||'<p>현재 학습 기록을 더하면 과정과 비교할 수 있어요.</p>'}</section>`;
-  content=preschool(s)?recorded+actions():`<div data-progress-scene></div>${actions()}<details class="result-hub-source-progress" data-source-progress><summary>교재별 진도와 원표 비교 보기</summary>${recorded}</details>`;
+  const names={...TRACKS,science:'과학',other:'타 과목'},facts=(s.courses||[]).map(c=>`<span><b>${esc(names[trackOf(c)]||'학습')}</b> ${esc(courseName(c))}</span>`).join('');content=`<section class="result-hub-recorded-summary" aria-label="입력한 학습 기록"><strong>입력한 학습 기록</strong><div>${facts||'아직 입력한 교재가 없어요.'}</div></section><p class="result-hub-reference-meaning">아래는 전체 참고 경로예요. 선택한 칸은 살펴보는 구간이며, 아이의 진도를 뜻하지 않아요.</p><div data-full-route-map></div>`+(preschool(s)?recorded+actions():`${actions()}<details class="result-hub-book-scene"><summary>수학 교재를 입체로 보기</summary><div data-progress-scene></div></details><details class="result-hub-source-progress" data-source-progress><summary>교재별 진도와 원표 비교 보기</summary>${recorded}</details>`);
   tools=goalButtons(s,{selectedOnly:true,basic:true})+bookEdits(s);
  }
  const tabs=`<nav class="result-hub-tabs" aria-label="로드맵 결과 보기">${TABS.map(([id,label])=>`<button type="button" data-result-tab="${id}" class="${id===tab?'is-active':''}"${id===tab?' aria-current="page"':''}>${label}</button>`).join('')}</nav>`;
