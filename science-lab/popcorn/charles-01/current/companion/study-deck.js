@@ -1,4 +1,4 @@
-import {READINGS, VIDEO_CARDS} from './reading-content.js';
+import {READINGS, VIDEO_CARDS} from './reading-content.js?v=20261015-modern-video-1';
 import {mountInlineVideo} from './inline-video.js?v=20261015-video-recovery-1';
 
 // These are the three existing opening stories, with their original copy.
