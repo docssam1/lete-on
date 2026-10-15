@@ -4,7 +4,7 @@ import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
 import { pageHome } from './home.js?v=9';
 import { escapeInApp } from './inapp.js';
-import { SEMS, BANK } from './units-index.js';
+import { SEMS, EXTRA, EXAMS, BANK } from './units-index.js';
 import { record, classify, analyze, remedyItems, log as readLog, clearLog } from './progress.js';
 import { writtenPracticeHtml, wireWrittenPractice } from './written-practice.js';
 import { readingHtml } from './reading.js';
@@ -615,17 +615,19 @@ async function pageExam(u, mod, L, set, mode) {
   scrollTo(0, 0);
 }
 
-// 문제은행 전체 차례 — 학기·단원마다 원문 수와 세트, 소단원 바로 가기
+// 문제은행 전체 차례 — 2022 개정 순(units-index.js SEMS). 단원마다 원문 수와 세트, 소단원 바로 가기.
+// 한 단원에 예전(2015) 교재 단원평가가 함께 있으면(also) 그 아래 한 줄 더. 2022에 없는 단원은 끝의 보충 탐구.
 function pageBank() {
   const R = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ'], total = Object.values(BANK).reduce((a, b) => a + b.n, 0);
+  const sets = (id, b) => `<span class="bc">원문 ${b.n}</span><span class="bs">${b.sets.map((n) => `<a href="#/${id}/exam/${n}">세트${n}</a>`).join('')}<a href="#/${id}/sub/E1">소단원</a></span>`;
+  const row = (no, id, title) => { const b = BANK[id]; return `<li class="${b ? 'open' : 'wait'}"><span class="bn">${no}</span><span class="bt">${esc(title)}</span>${b ? sets(id, b) : '<span class="bc">준비 중</span>'}</li>`; };
+  const exam = (id) => { const b = BANK[id], fin = id.endsWith('-fin'); return b ? `<li class="open exam"><span class="bn">${fin ? '기말' : '중간'}</span><span class="bt">${fin ? '기말평가' : '중간평가'}${/^s32/.test(id) ? ' <small>(2015 교재 3-2)</small>' : ''}</span><span class="bc">원문 ${b.n}</span><span class="bs">${b.sets.map((n) => `<a href="#/${id}/exam/${n}">세트${n}</a>`).join('')}<a href="#/${id}/sub/E1">단원별</a></span></li>` : ''; };
   $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>문제은행</h1></div></header>
-    <main class="wrap bank"><p class="step-label">초등 과학 3~6학년 · 단원평가 원문 + 유사문항</p><h2>단원별 문제은행</h2>
+    <main class="wrap bank"><p class="step-label">초등 과학 3~6학년 · 2022 개정 교육과정 순 · 단원평가 원문 + 유사문항</p><h2>단원별 문제은행</h2>
     <p class="lead">단원평가 원문 ${total}문항이 들어 있어요. 원문 한 문항마다 비슷한 문제가 하나씩 짝지어 있어, 틀리면 바로 다시 풀 수 있어요.</p>
-    ${SEMS.map((s) => `<section class="bank-sem"><h3>${s.sem.replace('-', '학년 ')}학기</h3><ol class="bank-units">${s.units.map((un) => { const b = BANK[un.id];
-      return `<li class="${b ? 'open' : 'wait'}"><span class="bn">${R[un.no - 1]}</span><span class="bt">${esc(un.title)}</span>${b
-        ? `<span class="bc">원문 ${b.n}</span><span class="bs">${b.sets.map((n) => `<a href="#/${un.id}/exam/${n}">세트${n}</a>`).join('')}<a href="#/${un.id}/sub/E1">소단원</a></span>`
-        : '<span class="bc">준비 중</span>'}</li>`; }).join('')}${['mid', 'fin'].map((k) => { const id = `s${s.sem.replace('-', '')}-${k}`, b = BANK[id];
-        return b ? `<li class="open exam"><span class="bn">${k === 'mid' ? '중간' : '기말'}</span><span class="bt">${k === 'mid' ? '중간평가' : '기말평가'}</span><span class="bc">원문 ${b.n}</span><span class="bs">${b.sets.map((n) => `<a href="#/${id}/exam/${n}">세트${n}</a>`).join('')}<a href="#/${id}/sub/E1">단원별</a></span></li>` : ''; }).join('')}</ol></section>`).join('')}</main>`;
+    ${SEMS.map((s) => `<section class="bank-sem"><h3>${s.sem.replace('-', '학년 ')}학기</h3><ol class="bank-units">${s.units.map((un) => row(R[un.no - 1], un.id, un.title)
+      + (un.also || []).filter(([id]) => BANK[id]).map(([id, name]) => row('＋', id, name)).join('')).join('')}${(EXAMS[s.sem] || []).map(exam).join('')}</ol></section>`).join('')}
+    <section class="bank-sem"><h3>보충 탐구 <small>2022 개정에 같은 단원이 없는 2015 교재 단원</small></h3><ol class="bank-units">${EXTRA.flatMap((g) => g.units.filter((u) => BANK[u.id]).map((u) => row(`${g.grade}학년`, u.id, u.title))).join('')}${EXAMS.extra.map(exam).join('')}</ol></section></main>`;
   scrollTo(0, 0);
 }
 

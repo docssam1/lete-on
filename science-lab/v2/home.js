@@ -1,6 +1,6 @@
 // 홈 = 로드맵 입구(매거진형). 표지(한 줄 약속 + 이어서 하기) → 지금 열린 실험 수업(3D 실험실 사진 카드)
 // → 3~6학년 로드맵(학기마다 정거장 줄) → 한 교재 네 가지 수업. 정거장을 누르면 소단원 시트.
-import { SEMS, READY, BOOK_UNITS, BANK } from './units-index.js';
+import { SEMS, EXTRA, READY, BOOK_UNITS, BANK, placeOf } from './units-index.js';
 import { countNeeds } from './check.js';
 
 const ROMAN = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ'];
@@ -8,23 +8,28 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 const A = '../assets/';
 
 // 열린 실험 수업(실험 교재 한 장 = 수업 하나). 사진 = 그 수업의 3D 실험실(assets/thumbs, 실제 화면 캡처).
-const LABS = [
-  { id: 's41-u01', lab: '고리 자석 방향 바꿔 탑 쌓기', skills: ['가설 설정', '변인 통제', '측정'], sem: '4-1', unit: 'Ⅰ. 자석의 이용', title: '둥실 고리 자석 탑', q: '왜 어떤 자석은 떠 있을까?', theme: '#2F5DA8' },
-  { id: 's41-u02', lab: '물의 양 바꿔 얼리고 녹이기', skills: ['가설 설정', '측정', '자료 해석'], sem: '4-1', unit: 'Ⅱ. 물의 상태 변화', title: '얼었다 녹는 물기둥', q: '얼리면 높이와 무게는 어떻게 될까?', theme: '#2A6FB0' },
-  { id: 's41-u03', lab: '기울기와 물의 양 바꿔 보기', skills: ['변인 통제', '관찰', '자료 해석'], sem: '4-1', unit: 'Ⅲ. 땅의 변화', title: '흙 언덕 물길', q: '흐르는 물은 흙을 어디로 옮길까?', theme: '#8A5A2B' },
-  { id: 's41-u03b', lab: '불 세기와 식히는 빠르기 바꿔 보기', skills: ['모형 실험', '비교', '결론 도출'], sem: '4-1', unit: 'Ⅲ. 땅의 변화', title: '화산 실험실', q: '화산에서는 무엇이 나올까?', theme: '#B23A2E' },
-  { id: 's42-u01', lab: '연못에 식물 심고 부레옥잠 눌러 보기', skills: ['관찰', '분류', '결론 도출'], sem: '4-2', unit: 'Ⅰ. 식물의 생활', title: '둥둥 부레옥잠의 비밀', q: '부레옥잠은 어떻게 물에 뜰까?', theme: '#2B7A62' },
-  { id: 's42-u02', lab: '물의 온도와 판의 냉각 바꾸어 비교하기', skills: ['변인 통제', '관찰', '자료 해석'], sem: '4-2', unit: 'Ⅱ. 물의 상태 변화', title: '보이지 않는 물의 여행 · 미니 가습기', q: '차가운 판의 물방울은 어디서 왔을까?', theme: '#287B9A', image: 'photos/s42-u02-cups.webp', imageAlt: '실온 컵과 차가운 컵 비교 · AI 실사형 설명 이미지' },
-  { id: 's42-u03', lab: '빛·물체·위치를 바꾸어 그림자 비교하기', skills: ['가설 설정', '변인 통제', '자료 해석'], sem: '4-2', unit: 'Ⅲ. 그림자와 거울', title: '빛이 그리는 그림 · 그림자 놀이 상자', q: '그림자는 왜 커졌다 작아졌다 할까?', theme: '#3D4FA8', image: 'photos/s42-u03-shadow.webp', imageAlt: '손전등과 인형 사이 거리에 따른 그림자 크기 비교 · AI 실사형 설명 이미지' },
-  { id: 's42-u04', lab: '미는 힘을 바꾸어 지층의 변화 보기', skills: ['가설 설정', '모형 실험', '결론 도출'], sem: '4-2', unit: 'Ⅳ. 화산과 지진', title: '땅이 흔들리는 까닭 · 지층 모형 지진 실험실', q: '단단한 땅은 왜 흔들릴까?', theme: '#9A4B2E' },
-  { id: 's42-u05', lab: '햇빛과 찬 공기를 바꾸어 수조 속 비 관찰하기', skills: ['가설 설정', '모형 실험', '결론 도출'], sem: '4-2', unit: 'Ⅴ. 물의 여행', title: '물 한 방울의 여행 · 수조 속 작은 지구', q: '오늘 내리는 비는 어디에서 왔을까?', theme: '#2B6F9E' },
-  { id: 's51-u01', lab: '구멍과 높이를 바꾸어 튀는 방울 세기', skills: ['변인 통제', '측정', '결론 도출'], sem: '5-1', unit: 'Ⅰ. 과학자는 어떻게 탐구할까요', title: '과학자처럼 탐구하기 · 튀는 물방울 실험실', q: '무엇이 튀는 물방울의 수를 바꿀까?', theme: '#4B3FB5' },
-  { id: 's51-u02', lab: '띠의 재료와 물의 온도를 바꾸어 열의 이동 보기', skills: ['가설 설정', '관찰', '결론 도출'], sem: '5-1', unit: 'Ⅱ. 온도와 열', title: '열이 지나가는 길 · 시온 스티커 실험실', q: '손난로의 열은 어디로 갔을까?', theme: '#C2581C' },
-  { id: 's51-u03', lab: '넣은 물의 양을 바꾸어 식용유 「태양」 띄우기', skills: ['가설 설정', '관찰', '모형으로 설명하기'], sem: '5-1', unit: 'Ⅲ. 태양계와 별', title: '병 속에 뜬 태양 · 태양계와 별', q: '태양과 행성은 어떻게 생겨났을까?', theme: '#3346A0' },
-  { id: 's52-u01', lab: '비눗물에 넣는 것을 바꾸어 비눗방울 오래 띄우기', skills: ['문제 인식', '변인 통제', '자료 변환'], sem: '5-2', unit: 'Ⅰ. 재미있는 나의 탐구', title: '비눗방울 탐구 · 나의 탐구', q: '비눗방울을 오래 띄울 수 있을까?', theme: '#6B3FA0' },
-  { id: 's51-u05', lab: '물의 온도를 바꾸어 효모빵 반죽 부풀리기', skills: ['가설 설정', '변인 통제', '측정'], sem: '5-1', unit: 'Ⅴ. 다양한 생물과 우리 생활', title: '부푸는 효모빵 · 다양한 생물과 우리 생활', q: '빵은 왜 폭신폭신할까?', theme: '#2F7D4F' },
-  { id: 's51-u04', lab: '식히는 온도를 바꾸어 병 속에 눈 내리게 하기', skills: ['가설 설정', '관찰', '자료 해석'], sem: '5-1', unit: 'Ⅳ. 용해와 용액', title: '병 속의 눈 · 용해와 용액', q: '녹아서 보이지 않는 물질은 어디로 갔을까?', theme: '#2B5FA8' },
+const LABS_ALL = [
+  { id: 's41-u01', lab: '고리 자석 방향 바꿔 탑 쌓기', skills: ['가설 설정', '변인 통제', '측정'], title: '둥실 고리 자석 탑', q: '왜 어떤 자석은 떠 있을까?', theme: '#2F5DA8' },
+  { id: 's41-u02', lab: '물의 양 바꿔 얼리고 녹이기', skills: ['가설 설정', '측정', '자료 해석'], title: '얼었다 녹는 물기둥', q: '얼리면 높이와 무게는 어떻게 될까?', theme: '#2A6FB0' },
+  { id: 's41-u03', lab: '기울기와 물의 양 바꿔 보기', skills: ['변인 통제', '관찰', '자료 해석'], title: '흙 언덕 물길', q: '흐르는 물은 흙을 어디로 옮길까?', theme: '#8A5A2B' },
+  { id: 's41-u03b', lab: '불 세기와 식히는 빠르기 바꿔 보기', skills: ['모형 실험', '비교', '결론 도출'], title: '화산 실험실', q: '화산에서는 무엇이 나올까?', theme: '#B23A2E' },
+  { id: 's42-u01', lab: '연못에 식물 심고 부레옥잠 눌러 보기', skills: ['관찰', '분류', '결론 도출'], title: '둥둥 부레옥잠의 비밀', q: '부레옥잠은 어떻게 물에 뜰까?', theme: '#2B7A62' },
+  { id: 's42-u02', lab: '물의 온도와 판의 냉각 바꾸어 비교하기', skills: ['변인 통제', '관찰', '자료 해석'], title: '보이지 않는 물의 여행 · 미니 가습기', q: '차가운 판의 물방울은 어디서 왔을까?', theme: '#287B9A', image: 'photos/s42-u02-cups.webp', imageAlt: '실온 컵과 차가운 컵 비교 · AI 실사형 설명 이미지' },
+  { id: 's42-u03', lab: '빛·물체·위치를 바꾸어 그림자 비교하기', skills: ['가설 설정', '변인 통제', '자료 해석'], title: '빛이 그리는 그림 · 그림자 놀이 상자', q: '그림자는 왜 커졌다 작아졌다 할까?', theme: '#3D4FA8', image: 'photos/s42-u03-shadow.webp', imageAlt: '손전등과 인형 사이 거리에 따른 그림자 크기 비교 · AI 실사형 설명 이미지' },
+  { id: 's42-u04', lab: '미는 힘을 바꾸어 지층의 변화 보기', skills: ['가설 설정', '모형 실험', '결론 도출'], title: '땅이 흔들리는 까닭 · 지층 모형 지진 실험실', q: '단단한 땅은 왜 흔들릴까?', theme: '#9A4B2E' },
+  { id: 's42-u05', lab: '햇빛과 찬 공기를 바꾸어 수조 속 비 관찰하기', skills: ['가설 설정', '모형 실험', '결론 도출'], title: '물 한 방울의 여행 · 수조 속 작은 지구', q: '오늘 내리는 비는 어디에서 왔을까?', theme: '#2B6F9E' },
+  { id: 's51-u01', lab: '구멍과 높이를 바꾸어 튀는 방울 세기', skills: ['변인 통제', '측정', '결론 도출'], title: '과학자처럼 탐구하기 · 튀는 물방울 실험실', q: '무엇이 튀는 물방울의 수를 바꿀까?', theme: '#4B3FB5' },
+  { id: 's51-u02', lab: '띠의 재료와 물의 온도를 바꾸어 열의 이동 보기', skills: ['가설 설정', '관찰', '결론 도출'], title: '열이 지나가는 길 · 시온 스티커 실험실', q: '손난로의 열은 어디로 갔을까?', theme: '#C2581C' },
+  { id: 's51-u03', lab: '넣은 물의 양을 바꾸어 식용유 「태양」 띄우기', skills: ['가설 설정', '관찰', '모형으로 설명하기'], title: '병 속에 뜬 태양 · 태양계와 별', q: '태양과 행성은 어떻게 생겨났을까?', theme: '#3346A0' },
+  { id: 's52-u01', lab: '비눗물에 넣는 것을 바꾸어 비눗방울 오래 띄우기', skills: ['문제 인식', '변인 통제', '자료 변환'], title: '비눗방울 탐구 · 나의 탐구', q: '비눗방울을 오래 띄울 수 있을까?', theme: '#6B3FA0' },
+  { id: 's51-u05', lab: '물의 온도를 바꾸어 효모빵 반죽 부풀리기', skills: ['가설 설정', '변인 통제', '측정'], title: '부푸는 효모빵 · 다양한 생물과 우리 생활', q: '빵은 왜 폭신폭신할까?', theme: '#2F7D4F' },
+  { id: 's51-u04', lab: '식히는 온도를 바꾸어 병 속에 눈 내리게 하기', skills: ['가설 설정', '관찰', '자료 해석'], title: '병 속의 눈 · 용해와 용액', q: '녹아서 보이지 않는 물질은 어디로 갔을까?', theme: '#2B5FA8' },
 ];
+
+// 지도 차례(2022 개정 순)대로, 보충 탐구는 끝에. 카드의 「몇 학년 몇 학기 · 단원」은 지도에서 읽는다(units-index.js).
+const ORDER = [...SEMS.flatMap((s) => s.units.flatMap((u) => [u.id, ...(u.labs || []), ...(u.id === 's41-u03' ? ['s41-u03b'] : [])])), ...EXTRA.flatMap((g) => g.units.map((u) => u.id))];
+const LABS = LABS_ALL.map((l) => ({ ...l, at: placeOf(l.id) })).sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
+const kickerOf = (at) => (!at ? '' : at.extra ? `${at.grade}학년 보충 탐구 · ${at.title}` : `${at.sem.replace('-', '학년 ')}학기 · ${ROMAN[at.no - 1]}. ${at.title}`);
 
 function stateOf(store, id) {
   if (!READY[id]) return { kind: 'locked' };
@@ -59,7 +64,7 @@ function labCard(store, l, feature) {
       ${badge}
     </a>
     <div class="h-lab-body">
-      <p class="h-kicker">${esc(l.sem.replace('-', '학년 '))}학기 · ${esc(l.unit)}</p>
+      <p class="h-kicker">${esc(kickerOf(l.at))}</p>
       <h3><a href="${startOf(l.id)}">${esc(l.title)}</a></h3>
       <p class="h-q">“${esc(l.q)}”</p>
       ${feature ? `<p class="h-exp"><span>오늘의 실험</span>${esc(l.lab)}</p><ul class="h-skills">${l.skills.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
@@ -82,14 +87,25 @@ function roadmap(store, nx) {
       return `<div class="h-sem">
         <p class="h-sem-t">${s.sem.split('-')[1]}학기 <small>${open ? `${open}개 열림` : '준비 중'}</small></p>
         <ol class="h-track" style="--n:${s.units.length}">${s.units.map((u) => {
-          const k = stateOf(store, u.id), isNext = nx && (u.id === nx.id || (READY[nx.id]?.hidden && u.id === 's41-u03' && nx.id === 's41-u03b'));
+          const k = stateOf(store, u.id), isNext = nx && placeOf(nx.id) === u;
           const label = `${s.sem.replace('-', '학년 ')}학기 ${ROMAN[u.no - 1]}. ${u.title}${k.kind === 'passed' ? ', 끝냄' : k.kind === 'locked' ? ', 준비 중' : ''}`;
           const inner = `<span class="h-dot">${k.kind === 'passed' ? ICO.flag : ROMAN[u.no - 1]}</span><span class="h-name">${esc(u.title)}</span>`;
           return `<li class="h-stop ${k.kind}${isNext ? ' next' : ''}">${READY[u.id]
             ? `<a href="${startOf(u.id)}" data-unit="${u.id}" aria-label="${esc(label)}">${inner}</a>`
             : `<button type="button" aria-label="${esc(label)}">${inner}</button>`}${isNext ? '<span class="h-here">지금 여기</span>' : ''}</li>`;
         }).join('')}</ol></div>`;
-    }).join('')}</div></div>`).join('');
+    }).join('')}${extraRow(store, g, nx)}</div></div>`).join('');
+}
+// 학년 끝 보충 탐구(2022 개정에 같은 단원이 없는 수업) — 열린 수업만 정거장으로
+function extraRow(store, g, nx) {
+  const units = (EXTRA.find((x) => x.grade === g)?.units || []).filter((u) => READY[u.id]);
+  if (!units.length) return '';
+  return `<div class="h-sem h-extra">
+    <p class="h-sem-t">보충 탐구 <small>2015 교재 단원</small></p>
+    <ol class="h-track" style="--n:${units.length}">${units.map((u, i) => {
+      const k = stateOf(store, u.id), isNext = nx && nx.id === u.id;
+      return `<li class="h-stop ${k.kind}${isNext ? ' next' : ''}"><a href="${startOf(u.id)}" data-unit="${u.id}" aria-label="${g}학년 보충 탐구 ${esc(u.title)}${k.kind === 'passed' ? ', 끝냄' : ''}"><span class="h-dot">${k.kind === 'passed' ? ICO.flag : '+'}</span><span class="h-name">${esc(u.title)}</span></a>${isNext ? '<span class="h-here">지금 여기</span>' : ''}</li>`;
+    }).join('')}</ol></div>`;
 }
 
 export function pageHome($app, store, teacher) {
@@ -180,13 +196,15 @@ export function pageHome($app, store, teacher) {
   $bg.addEventListener('click', close);
   addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
   $app.querySelectorAll('.h-stop a[data-unit]').forEach((a) => a.addEventListener('click', (e) => {
-    const u = ALL.find((x) => x.id === a.dataset.unit), r = READY[u.id];
+    const u = ALL.find((x) => x.id === a.dataset.unit) || placeOf(a.dataset.unit), r = READY[u?.id];
     if (!r?.subs) return; e.preventDefault();
-    const [g, h] = u.id.slice(1, 3).split('');
-    const labs = r.bankOnly ? [] : r.labs || [{ id: u.id, hero: r.hero }], bk = BANK[u.id];
-    $sheet.innerHTML = `<div class="grab" aria-hidden="true"></div><p class="step-label">${g}학년 ${h}학기 ${ROMAN[u.no - 1]}</p><h2 id="sheet-t">${esc(u.title)}</h2>
+    const where = u.extra ? `${u.grade}학년 보충 탐구 · 2015 교재 단원` : `${u.sem.replace('-', '학년 ')}학기 ${ROMAN[u.no - 1]}`;
+    const labs = [...(r.bankOnly ? [] : r.labs || [{ id: u.id, hero: r.hero }]), ...(u.labs || []).map((id) => ({ id, hero: READY[id]?.hero }))], bk = BANK[u.id];
+    const also = (u.also || []).filter(([id]) => BANK[id]);
+    $sheet.innerHTML = `<div class="grab" aria-hidden="true"></div><p class="step-label">${esc(where)}</p><h2 id="sheet-t">${esc(u.title)}</h2>
       ${labs.length ? '' : '<p class="lead">이 단원은 아직 실험 수업이 없어요. 소단원 문제와 단원평가로 공부해요.</p>'}<div class="labs">${labs.map((l) => { const ks = stateOf(store, l.id).kind, meta = LABS.find((x) => x.id === l.id); return `<a class="btn primary" href="${startOf(l.id)}"><b>${esc(meta?.title || l.hero)}</b><small>${l.covers ? `소단원 ${l.covers.map((c) => r.subs.findIndex((x) => x.id === c) + 1).join('·')} · ` : ''}${ks === 'doing' ? '이어서 하기' : ks === 'passed' ? '다시 보기' : '실험 수업 시작'}</small></a>`; }).join('')}</div>
       ${bk ? `<h3>단원평가 <small>원문 ${bk.n}문항</small></h3><div class="sheet-sets">${bk.sets.map((n) => `<a class="btn" href="#/${u.id}/exam/${n}">세트${n}</a>`).join('')}</div>` : ''}
+      ${also.map(([id, name]) => `<h3>단원평가 · ${esc(name)} <small>원문 ${BANK[id].n}문항</small></h3><div class="sheet-sets">${BANK[id].sets.map((n) => `<a class="btn" href="#/${id}/exam/${n}">세트${n}</a>`).join('')}</div>`).join('')}
       <h3>소단원</h3><ol class="subs">${r.subs.map((s, i) => `<li><a href="#/${u.id}/sub/${s.id}"><span class="sn">${i + 1}</span><span class="st">${esc(s.name)}</span><span class="sc">유형 ${s.types}</span></a></li>`).join('')}</ol>
       <button type="button" class="btn" data-close>닫기</button>`;
     $sheet.querySelector('[data-close]').addEventListener('click', close);

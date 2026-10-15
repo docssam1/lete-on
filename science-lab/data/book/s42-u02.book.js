@@ -17,12 +17,12 @@ export const art={
 export const chapter = {
   "unit": "s42-u02",
   "book": "GFIELD 실험 과학 영재",
-  "vol": "4-2",
-  "no": 2,
+  "vol": "4-1",
+  "no": 3,
   "title": "보이지 않는 물의 여행 · 미니 가습기",
   "theme": "#287B9A",
   "link": {
-    "course": "4학년 2학기",
+    "course": "4학년 1학기",
     "unit": "Ⅱ. 물의 상태 변화",
     "topics": [
       "증발과 끓음",
