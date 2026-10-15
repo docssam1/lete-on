@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261015a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261015a/20261015b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261015b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261015b/20261015c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -200,7 +200,16 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
     검산기는 그림 데이터로 길 그래프를 다시 만들어 세고(대각선은 많이 쓸수록 짧음), **교사용 파랑 칸 숫자(각 점의 가짓수)로 굵은 칸 받아쓰기를 대조**했다.
   - 16쪽(연산골든벨 사각수 표)은 문항이 아니라 보류로 남김 — 사각수 묶음(51~58) 때 함께 본다.
   - `sourceHold` S18~S24 7건 삭제, coverage public 104 · hold 33. DB `book-05` 206키 → 235키, sha 앞 8자리 `2954986e`. 캐시 꼬리표 `20261015a`.
-- **다음**: 보류를 주제 묶음으로 슬라이드 순서대로 — ~~수 배열·수열 3~10~~ / ~~연산·달력 11~15~~ / ~~최단거리 18~24~~ / 숫자 카드 26~32 /
+- **5권 묶음 4(슬라이드 26~32 숫자 카드·조건에 맞는 두 자리 수 48문항, 2026-10-15)**: 패치 `tools/golden-bell-book05/patch-book05-batch4.mjs`(정답 없음).
+  - 기존 단원 `digit-card-ranked-number`(번호 1)에 26~30쪽 29문항을 덧붙이고 `mode:"paged"`로 바꿈. 단원의 `sourceHold` 문장(29쪽 (4) 잠금)과 S29 보류를 지웠다 —
+    29쪽 (4)는 모두 나열해 답이 하나로 정해짐을 확인했다. 문항 순서와 `printGroup`을 쪽 순서로 다시 매김(예전엔 29쪽 문항이 25쪽 묶음에 섞여 인쇄됨). answerRef는 그대로.
+  - 새 단원 `two-digit-condition-source`(번호 9, 31~32쪽 19문항). 그림 `source-place-slots`(「___ + ___ = 8」, 빈칸 아래 십의자리·일의자리).
+    **그림 없는 문항은 `noVisual: true`** — 안 하면 단원 대표 그림(다른 조건)이 대신 나온다. 32쪽 「모두 쓰기」 4문항은 `resultContract:{type:"set"}`.
+  - 교사용 답 오류 6곳(26쪽 세 자리 5번째·29쪽 (4)·30쪽 (10)(14)·31쪽 (5)·27쪽 03 (2) 다른 카드로 풂)은 원본 문제대로 계산한 답으로 넣고 DB `sourceNote`에 기록.
+    번호 오타(28쪽 두 번째 (1)→(2), 30쪽 두 번째 (6)→(7))는 `sourceDiscrepancy`.
+  - 검산은 카드로 만들 수 있는 수를 모두 나열, 자리 조건은 10~99를 다 훑음. 32쪽 (4)~(7) 나열은 교사용과 정확히 같음.
+  - `sourceHold` S26~S32 7건 삭제, coverage public 152 · hold 26. DB `book-05` 235키 → 285키. 캐시 꼬리표 `20261015b`.
+- **다음**: 보류를 주제 묶음으로 슬라이드 순서대로 — ~~수 배열·수열 3~10~~ / ~~연산·달력 11~15~~ / ~~최단거리 18~24~~ / ~~숫자 카드 26~32~~ /
   곱셈구구·매트릭스 35~40 / 선분·도형식·분수 41~49 / 삼각수·둘레·사각수 51~58 / 가르기 60. 보류 사유 메모 중 「교사용 나열 누락(29쪽 (4))」,
   「둘째 표 조건 불성립(40쪽)」은 묶음 작업 때 원본으로 다시 확인할 것.
 

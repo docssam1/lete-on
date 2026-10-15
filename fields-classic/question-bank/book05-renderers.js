@@ -534,6 +534,12 @@ function sourceLoopRoutes() {
   return `<div class="b5-src-loops" role="img" aria-label="출발에서 왼쪽 타원(두 길)을 지나 오른쪽 타원(세 길)으로 도착까지 가는 길"><svg viewBox="0 0 330 120"><ellipse cx="102" cy="60" rx="58" ry="32" class="left"/><ellipse cx="218" cy="60" rx="58" ry="38" class="right"/><line x1="160" y1="60" x2="276" y2="60" class="right"/><circle cx="44" cy="60" r="4.5"/><circle cx="160" cy="60" r="4.5"/><circle cx="276" cy="60" r="4.5"/><text x="38" y="64" text-anchor="end">출발</text><text x="283" y="64">도착</text></svg></div>`;
 }
 
+// 자리 숫자 빈칸: 「___ + ___ = 8」 꼴. 빈칸 아래에 십의자리·일의자리.
+function sourcePlaceSlots(visual) {
+  const slot = (label) => `<span class="slot"><i></i><small>${label}</small></span>`;
+  return `<div class="b5-src-slots" role="img" aria-label="${escapeHtml(`십의 자리 ${visual.op} 일의 자리 ${visual.tail}`)}">${slot("십의자리")}<b>${escapeHtml(visual.op)}</b>${slot("일의자리")}<b>${escapeHtml(visual.tail)}</b></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -560,6 +566,7 @@ export function book05Markup(visual) {
     case "source-year-calendar": return sourceYearCalendar(visual);
     case "source-route": return sourceRoute(visual);
     case "source-loop-routes": return sourceLoopRoutes(visual);
+    case "source-place-slots": return sourcePlaceSlots(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);

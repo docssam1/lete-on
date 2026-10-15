@@ -84,6 +84,11 @@
 .b5-src-loops svg,.book05-visual .b5-src-loops svg{display:block;width:min(100%,380px);height:auto;max-height:none}
 .b5-src-loops .left{fill:none;stroke:#d0801f;stroke-width:2.4}
 .b5-src-loops .right{fill:none;stroke:#2f9e5f;stroke-width:2.4}
+.b5-src-slots{display:flex;align-items:flex-start;justify-content:center;gap:10px;color:#222}
+.b5-src-slots .slot{display:grid;justify-items:center;gap:6px}
+.b5-src-slots .slot i{display:block;width:74px;height:34px;border-bottom:2px solid #2f6fe0}
+.b5-src-slots small{font-size:14px;font-weight:700}
+.b5-src-slots b{padding-top:8px;font-size:21px}
 @media print{
   .gold-print-page[data-print-book="book-05"] .b5-src-table{grid-template-columns:repeat(var(--columns),8mm)}
   .gold-print-page[data-print-book="book-05"] .b5-src-table>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>b{height:8mm;font-size:11pt}
@@ -101,6 +106,8 @@
   .gold-print-page[data-print-book="book-05"] .b5-src-sum-pair svg{width:42mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-route svg{width:calc(var(--route-w) * .17mm)!important;max-width:100%;max-height:none!important}
   .gold-print-page[data-print-book="book-05"] .b5-src-loops svg{width:60mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-slots .slot i{width:14mm;height:7mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-slots b{font-size:12pt}
   .gold-print-page[data-print-book="book-05"] .b5-src-cal-cells span{width:9mm;height:7mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-cal-cells strong{font-size:11pt}
   .gold-print-page[data-print-book="book-05"] .b5-src-month>p{width:56mm;font-size:11pt;padding:1mm 0}
