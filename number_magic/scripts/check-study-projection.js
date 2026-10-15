@@ -10,6 +10,7 @@ assert.equal(p.remaining,6);assert.equal(p.scenarios[0].arrivalWeeks,3);assert.e
 assert.equal(p.scenarios[1].arrivalWeeks,3,'extra time cannot be converted to unsupported progress');
 for(const s of p.scenarios){assert.equal(s.points[1].done,2);assert.equal(s.points[2].done,4);assert.equal(s.points[2].frequency,2);assert.equal(s.points[2].minutes,20);}
 const faster=p.scenarios[2];assert.equal(faster.points[3].frequency,2.5);assert.equal(faster.points[4].frequency,3);assert(faster.arrivalWeeks<3);
+const observedRate=P.calculate({...input,frequency:1.47});assert.equal(observedRate.scenarios[0].points[1].done,1.47);assert.equal(observedRate.scenarios[2].points[1].frequency,1.47);assert.equal(observedRate.scenarios[2].finalFrequency,2.47);assert(Number.isInteger(observedRate.requiredFrequency),'required added schedule uses integer weekly visits');
 const review=P.calculate({...input,reviewSessions:3});assert.equal(review.scenarios[0].points[1].done,0);assert.equal(review.scenarios[0].points[1].review,2);assert.equal(review.scenarios[0].arrivalWeeks,4.5);
 const withheld=P.calculate({...input,reviewed:false});assert.equal(withheld.scenarios[2].arrivalWeeks,3);
 assert.equal(JSON.stringify([input,global.NM_COURSES]),before);

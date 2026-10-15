@@ -18,7 +18,7 @@
     const s=Object.assign({},input),list=courses(),a=list.findIndex(x=>x.id===s.startCourse),b=list.findIndex(x=>x.id===s.targetCourse);
     s.reviewed=s.reviewed===true;
     if(a<0||b<a||!num(s.startSession,1,list[a].sessions,true))throw Error('range');
-    if(!num(s.frequency,1,7,true)||!num(s.minutes,5,120,true)||!num(s.holdWeeks,1,8,true)||!num(s.rampWeeks,1,8,true)||!num(s.reviewSessions,0,50,true))throw Error('settings');
+    if(!num(s.frequency,1,7,false)||!num(s.minutes,5,120,true)||!num(s.holdWeeks,1,8,true)||!num(s.rampWeeks,1,8,true)||!num(s.reviewSessions,0,50,true))throw Error('settings');
     if(!num(s.observedWeeks,2,26,true)||!num(s.observedVisits,4,182,true)||!num(s.completedSessions,1,1000,true)||!num(s.observedMinutes,20,20000,true))throw Error('observation');
     if(s.completedSessions>list.reduce((n,x)=>n+x.sessions,0))throw Error('observation');
     if(s.observedVisits<s.observedWeeks||s.observedVisits>s.observedWeeks*7||s.observedMinutes<s.observedVisits*5)throw Error('observation');
@@ -53,12 +53,12 @@
       const atDeadline=partial(points,deadlineWeeks,remaining,s.reviewSessions,unitsPerVisit).done;
       const position=units=>{const m=milestones.find(x=>units<x.to-EPS)||milestones[milestones.length-1];return {course:m.course,session:Math.min(list.find(x=>x.id===m.course).sessions,(m.course===s.startCourse?s.startSession:1)+Math.floor(Math.max(0,units-m.from)+EPS)),complete:units>=remaining-EPS};};
       scenarios.push({kind,points,arrivalWeeks:arrival,arrivalDate:arrival===null?null:new Date(start+Math.ceil(arrival*7-EPS)*86400000).toISOString().slice(0,10),atDeadline,position:position(atDeadline),onTime:atDeadline>=remaining-EPS,
-        finalFrequency:kind==='frequency'&&s.reviewed?Math.min(7,s.frequency+1):s.frequency,finalMinutes:kind==='time'&&s.reviewed?Math.min(120,s.minutes+5):s.minutes});
+        finalFrequency:kind==='frequency'&&s.reviewed?Math.round(Math.min(7,s.frequency+1)*100)/100:s.frequency,finalMinutes:kind==='time'&&s.reviewed?Math.min(120,s.minutes+5):s.minutes});
     }
     let rampWeight=0;
     for(let week=1;week<=Math.ceil(deadlineWeeks);week++)rampWeight+=Math.max(0,Math.min(1,(week-s.holdWeeks)/s.rampWeeks))*Math.min(1,deadlineWeeks-(week-1));
-    let requiredFrequency=null;
-    for(let f=s.frequency;f<=7;f++){if((s.frequency*deadlineWeeks+(f-s.frequency)*rampWeight)*unitsPerVisit>=remaining+s.reviewSessions-1e-8){requiredFrequency=f;break;}}
+    let requiredFrequency=scenarios[0].onTime?s.frequency:null;
+    if(requiredFrequency===null)for(let f=Math.ceil(s.frequency);f<=7;f++){if((s.frequency*deadlineWeeks+(f-s.frequency)*rampWeight)*unitsPerVisit>=remaining+s.reviewSessions-1e-8){requiredFrequency=f;break;}}
     return {version:'study-projection-v1',input:s,remaining,milestones,unitsPerVisit,deadlineWeeks,scenarios,requiredFrequency,
       status:'conditional-simulation',timeCredit:'none',admissionReadiness:'not-assessed'};
   }
