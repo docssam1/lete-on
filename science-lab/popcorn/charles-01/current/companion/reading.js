@@ -1,4 +1,4 @@
-import {loadYouTubeAPI as api} from './inline-video.js?v=20261015-pages-1';
+import {loadYouTubeAPI as api} from './inline-video.js?v=20261015-video-recovery-1';
 import {READINGS,VIDEO_CARDS} from './reading-content.js';
 const host=document.querySelector('#reading-host'),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const asset=name=>new URL('../assets/'+name,import.meta.url).href;

@@ -1,5 +1,5 @@
 {
-  "version": "20261015-charles01-welcome-autoplay-1",
+  "version": "20261015-charles01-video-recovery-1",
   "studentPages": 20,
   "magazineSpreads": 5,
   "assemblyPhases": 10,
@@ -185,18 +185,18 @@
     },
     {
       "path": "companion/guide.js",
-      "bytes": 10615,
-      "sha256": "920202aedea394d3b296141d572343a82967875fc12beabc54b65efe4975d495"
+      "bytes": 10624,
+      "sha256": "d3b42d5249ea9487ae44e53fe13edcf6827d0e936f7fde2e502813fcb3941aa2"
     },
     {
       "path": "companion/index.html",
-      "bytes": 25235,
-      "sha256": "f90af89b7808c02ac8495d1c6fae11b9f04704759f41ca97e959a3ebbbc56e1e"
+      "bytes": 25251,
+      "sha256": "311742bedbde7d7cd24952251b8706e378f36ca0ee75dbd5ce02651181674416"
     },
     {
       "path": "companion/inline-video.js",
-      "bytes": 7956,
-      "sha256": "6426097d98b9aa2781f7836d8db3843a5618b14c325f42f8947e12ea1bff9ae4"
+      "bytes": 9925,
+      "sha256": "61a25a622c2cc028168097ee5b14cf2ed80dbf1f86a3206c0499139fcdeec738"
     },
     {
       "path": "companion/lab-content.js",
@@ -270,18 +270,18 @@
     },
     {
       "path": "companion/reading.js",
-      "bytes": 13091,
-      "sha256": "bd35720b88fa43bfcfdd2f1ebec266188f391b1290db0634c9af6be36352bc6e"
+      "bytes": 13100,
+      "sha256": "6f945028189a31aaf4da8a55b25d55acdeb229f678bb1cd45b3a3bda97fd54eb"
     },
     {
       "path": "companion/study-deck.css",
-      "bytes": 9102,
-      "sha256": "5be8129c607b5107c58e473ac4a2f3092ba8fc031c81da7a9f9b27e1548b626f"
+      "bytes": 9925,
+      "sha256": "393e6b3839585edc077957346a610cd3510d615ebb27f0e66d469c0878f28272"
     },
     {
       "path": "companion/study-deck.js",
-      "bytes": 19275,
-      "sha256": "41e1ba5378305a0fe40b26c26a434a583b2c4914af8f383fc04b240ced4a20cb"
+      "bytes": 19284,
+      "sha256": "4337342cb1c5d732291094ba30357e7dafa71e6bc55d700fb25ab1c691e2d48a"
     },
     {
       "path": "companion/styles.css",
@@ -477,6 +477,13 @@
       "nextStopsAudio": true,
       "separateSoundButton": false,
       "navigationNeverWaitsForAudio": true
+    },
+    "inlineVideoRecovery": {
+      "posterUntilPlayerReady": true,
+      "playerReadyTimeoutSeconds": 10,
+      "retryInPlace": true,
+      "originalSourceFallbackOnError": true,
+      "staleCallbacksCancelled": true
     }
   }
 }
