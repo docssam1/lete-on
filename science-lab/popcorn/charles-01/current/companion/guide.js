@@ -1,7 +1,7 @@
 import {LAB_CONTENT} from './lab-content.js';
 import {mountMagazine} from './magazine.js?v=20261015-guided';
 import {mountWelcome} from './welcome.js?v=20261015-welcome-autoplay-1';
-import {mountStudy} from './study-deck.js?v=20261015-video-recovery-1';
+import {mountStudy} from './study-deck.js?v=20261015-modern-video-1';
 import {mountPageFlow} from './page-flow.js?v=20261015-pages-1';
 
 const $=s=>document.querySelector(s);

@@ -1,5 +1,5 @@
 {
-  "version": "20261015-charles01-video-recovery-1",
+  "version": "20261015-charles01-modern-video-1",
   "studentPages": 20,
   "magazineSpreads": 5,
   "assemblyPhases": 10,
@@ -185,13 +185,13 @@
     },
     {
       "path": "companion/guide.js",
-      "bytes": 10624,
-      "sha256": "d3b42d5249ea9487ae44e53fe13edcf6827d0e936f7fde2e502813fcb3941aa2"
+      "bytes": 10622,
+      "sha256": "c39e5399cac80e091e9f38bf05cb3d90c9c3114e88998cd180ccc1f37c994718"
     },
     {
       "path": "companion/index.html",
-      "bytes": 25251,
-      "sha256": "311742bedbde7d7cd24952251b8706e378f36ca0ee75dbd5ce02651181674416"
+      "bytes": 25247,
+      "sha256": "b3514557a725fc225e73e4b239b5860551f6b0e4643287041f998e22d8d9b363"
     },
     {
       "path": "companion/inline-video.js",
@@ -260,8 +260,8 @@
     },
     {
       "path": "companion/reading-content.js",
-      "bytes": 8963,
-      "sha256": "169aa7398d9aeb6d4eac722dd0dfa4c5e89697668e1e9f5c48e9fa57a48d21e9"
+      "bytes": 8941,
+      "sha256": "b1b650d30b77e9c6c1710dd73c46ffd3b0626c2a5aeb7b7d30196df8ffd4251f"
     },
     {
       "path": "companion/reading.css",
@@ -270,8 +270,8 @@
     },
     {
       "path": "companion/reading.js",
-      "bytes": 13100,
-      "sha256": "6f945028189a31aaf4da8a55b25d55acdeb229f678bb1cd45b3a3bda97fd54eb"
+      "bytes": 13126,
+      "sha256": "d5a3321c800ad3d98d389c87d4b0c069c08172e04171fec814307d5bf82dc2ed"
     },
     {
       "path": "companion/study-deck.css",
@@ -280,8 +280,8 @@
     },
     {
       "path": "companion/study-deck.js",
-      "bytes": 19284,
-      "sha256": "4337342cb1c5d732291094ba30357e7dafa71e6bc55d700fb25ab1c691e2d48a"
+      "bytes": 19310,
+      "sha256": "bd9d7f8de3b8859fb0af49720fa5af8e1a0a07811b2bdfb6fcfead6a686a826d"
     },
     {
       "path": "companion/styles.css",
@@ -484,6 +484,20 @@
       "retryInPlace": true,
       "originalSourceFallbackOnError": true,
       "staleCallbacksCancelled": true
-    }
+    },
+    "curatedVideos": [
+      {
+        "videoId": "HH_h2bvHu5c",
+        "publisher": "동아출판",
+        "topic": "자석에서 철 클립이 많이 붙는 부분",
+        "durationSeconds": 93
+      },
+      {
+        "videoId": "EvPKwXyevT4",
+        "publisher": "와니사이언스",
+        "topic": "자석에 붙는 물체 비교",
+        "durationSeconds": 107
+      }
+    ]
   }
 }
