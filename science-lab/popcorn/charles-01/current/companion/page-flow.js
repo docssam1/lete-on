@@ -1,11 +1,13 @@
 // Keep the original controls and source nodes; only divide their reading surface.
 const mounted=new WeakMap();
-const atomic='p,h1,h2,h3,h4,figure,li,label,button,a,table,details,.source-step,.mag-article-head,.mag-coach,.source-report-label,.mag-issue-close,.mag-cover-number';
+const atomic='p,h1,h2,h3,h4,figure,li,label,button,a,table,details,.source-step,.mag-article-head,.mag-coach,.source-report-label,.mag-issue-close,.mag-cover-number,.page-flow-chapter';
 export function mountPageFlow(source,{onChange=()=>{}}={}){
  if(!source)return null;
  if(mounted.has(source))return mounted.get(source);
  let index=0,active=false,scheduled=0,disposed=false,pages=[],units=[];
  const originalText=source.textContent.replace(/\s+/g,' ').trim();
+ const step=source.querySelector(':scope>.source-step'),head=source.querySelector(':scope>.mag-article-head');
+ if(step&&head&&step.nextElementSibling===head){const chapter=document.createElement('div');chapter.className='page-flow-chapter';source.insertBefore(chapter,step);chapter.append(step,head);}
  function collect(node,trail=[]){
   if(node.nodeType===3){if(node.textContent.trim()){const p=document.createElement('p');p.append(node);units.push(p);}return;}
   if(node.nodeType!==1)return;

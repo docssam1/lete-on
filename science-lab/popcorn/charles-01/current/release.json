@@ -245,13 +245,13 @@
     },
     {
       "path": "companion/page-flow.js",
-      "bytes": 4348,
-      "sha256": "0d61cbef8814f8f5759232d39c5b1c8372f45b0bcff77ee8445ad0aaf8458d62"
+      "bytes": 4670,
+      "sha256": "0f3be0a9ae273f45df8079845d6f19be69d25c52a65811014dc0b7cc23cb49f5"
     },
     {
       "path": "companion/page-shell.css",
-      "bytes": 9960,
-      "sha256": "f5487963367fe393adfd226c2c68bf1ffa1d6e3915769f4f7c53310385322cdf"
+      "bytes": 10469,
+      "sha256": "7da1bd41b29b6c11c9a83efa52b6728e95d46836b10d2337b12f884ff71fa60e"
     },
     {
       "path": "companion/reading-content.js",
@@ -270,8 +270,8 @@
     },
     {
       "path": "companion/study-deck.css",
-      "bytes": 9073,
-      "sha256": "21e7a0a5f584d96700dcdebd9ce3fc679b525ce371f2495690e78cfe9499c8d7"
+      "bytes": 9102,
+      "sha256": "5be8129c607b5107c58e473ac4a2f3092ba8fc031c81da7a9f9b27e1548b626f"
     },
     {
       "path": "companion/study-deck.js",

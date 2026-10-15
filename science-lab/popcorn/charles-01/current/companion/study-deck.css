@@ -26,7 +26,7 @@
 .study-deck .study-response{display:block;font-size:13px;line-height:1.5;color:#536877}
 .study-deck .study-response textarea{display:block;width:100%;height:84px;min-height:60px;resize:none;border:1px solid #bacad5;border-radius:4px;padding:10px;font:17px/1.5 var(--sans,system-ui,sans-serif);color:#243442;background:#fff;margin-top:5px}
 .study-deck .study-source{font-size:13px;line-height:1.6;color:#536877}.study-deck .study-source a{color:#1764b5;text-underline-offset:3px}
-.study-deck .study-goal{display:flex;gap:12px}.study-deck .study-goal>span{color:#1764b5;font-size:14px;font-weight:800;padding-top:3px}.study-deck .study-goal>p{margin:0}
+.study-deck .study-goal{display:flex;gap:12px}.study-deck .study-goal>span{flex:none;white-space:nowrap;color:#1764b5;font-size:14px;font-weight:800;padding-top:3px}.study-deck .study-goal>p{margin:0}
 .study-deck button:focus-visible,.study-deck a:focus-visible,.study-deck textarea:focus-visible{outline:3px solid #1764b5;outline-offset:3px}
 .study-deck.is-video{gap:7px}.study-deck.is-video .study-heading{padding-bottom:7px}.study-deck.is-video .study-eyebrow{display:none}.study-deck.is-video #intro-title{font-size:clamp(19px,2.2vw,27px)}
 .study-deck .study-video-host{height:100%;min-height:0;min-width:0}

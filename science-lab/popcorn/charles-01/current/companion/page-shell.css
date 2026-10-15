@@ -51,8 +51,14 @@
  .page-flow-page textarea{width:100%;height:88px;min-height:70px;margin:8px 0;resize:vertical;border:1px solid #a8bac8;font-size:17px;line-height:1.5}
  .page-flow-page .source-step{position:static!important;margin:0!important;min-height:0;padding:7px 10px}
  .page-flow-page .source-step-number{width:36px;min-width:36px;height:38px;font-size:20px}
+ .page-flow-page .source-step-number small{font-size:8px;line-height:1.1;letter-spacing:0}
  .page-flow-page .source-step-title{font-size:17px}
  .page-flow-page .source-step-meta{font-size:12px}
+ .page-flow-chapter{display:grid;gap:14px}
+ .page-flow-page .mag-article-head{display:flex;align-items:center;gap:12px;margin:0;padding:0}
+ .page-flow-page .mag-article-head h2{font-size:clamp(23px,2.8vw,32px);line-height:1.25}
+ .page-flow-page .mag-article-head .mag-series{font-size:12px;line-height:1.4;margin:0 0 5px}
+ .page-flow-page .mag-section-no{width:30px;height:30px;min-width:30px;font-size:19px;margin:0}
  .page-flow-page .reading-banner{min-height:0;margin:0;padding:10px;grid-template-columns:90px 1fr}
  .page-flow-page .reading-banner-photo,.page-flow-page .reading-video-photo{height:95px}
  .page-flow-page .reading-banner-copy strong,.page-flow-page .reading-video-banner strong{font-size:20px}
