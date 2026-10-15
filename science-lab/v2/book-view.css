@@ -59,11 +59,11 @@
 .bv-video figcaption b { color: #1E3A78; margin-right: 4px; }
 /* 3D 장면·실험실: 오른쪽 화면에 크게 */
 .bv-host .stage3d canvas { height: clamp(260px, 52vh, 620px); }
-.bv-host .lab3d canvas, .bv-host .lab3d .rt2-svg { height: clamp(240px, 46vh, 560px); }
+.bv-host .lab3d canvas, .bv-host .lab3d .rt2-svg, .bv-host .lab3d .ft2-svg { height: clamp(240px, 46vh, 560px); }
 .bv-host .lab-svg { max-height: 52vh; }
 @container (min-width: 700px) {
   .bv-host[data-k="lab"] .lab3d { display: grid; grid-template-columns: minmax(0, 1fr) 250px; grid-template-rows: auto 1fr auto; }
-.bv-host[data-k="lab"] .lab3d canvas, .bv-host[data-k="lab"] .lab3d .rt2-svg { grid-column: 1; grid-row: 1 / 4; height: clamp(300px, calc(100dvh - 330px), 600px); }
+.bv-host[data-k="lab"] .lab3d canvas, .bv-host[data-k="lab"] .lab3d .rt2-svg, .bv-host[data-k="lab"] .lab3d .ft2-svg { grid-column: 1; grid-row: 1 / 4; height: clamp(300px, calc(100dvh - 330px), 600px); }
   .bv-host[data-k="lab"] .lab3d-read { grid-column: 2; grid-row: 1; padding-top: 14px; }
   .bv-host[data-k="lab"] .lab3d-tip { grid-column: 2; grid-row: 2; align-self: center; }
   .bv-host[data-k="lab"] .lab3d-btns { grid-column: 2; grid-row: 3; align-content: end; }

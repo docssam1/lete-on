@@ -35,11 +35,11 @@
 }
 .sl-lab-workspace-body > * { max-width: 1200px; margin-left: auto; margin-right: auto; }
 .sl-lab-workspace-body .lab3d { width: 100%; }
-.sl-lab-workspace-body .lab3d canvas, .sl-lab-workspace-body .lab3d .rt2-svg { width: 100%; height: clamp(320px, 55dvh, 680px); }
+.sl-lab-workspace-body .lab3d canvas, .sl-lab-workspace-body .lab3d .rt2-svg, .sl-lab-workspace-body .lab3d .ft2-svg { width: 100%; height: clamp(320px, 55dvh, 680px); }
 /* 가로 태블릿·PC: 실험과 조작부를 동시에 보며 조작한다. */
 @media (min-width: 900px) {
   .sl-lab-workspace-body .lab3d { display: grid; grid-template-columns: minmax(0, 1fr) 300px; grid-template-rows: auto 1fr auto; }
-.sl-lab-workspace-body .lab3d canvas, .sl-lab-workspace-body .lab3d .rt2-svg { grid-column: 1; grid-row: 1 / 4; height: clamp(340px, calc(100dvh - 300px), 680px); }
+.sl-lab-workspace-body .lab3d canvas, .sl-lab-workspace-body .lab3d .rt2-svg, .sl-lab-workspace-body .lab3d .ft2-svg { grid-column: 1; grid-row: 1 / 4; height: clamp(340px, calc(100dvh - 300px), 680px); }
   .sl-lab-workspace-body .lab3d-read { grid-column: 2; grid-row: 1; padding-top: 20px; }
   .sl-lab-workspace-body .lab3d-tip { grid-column: 2; grid-row: 2; align-self: center; margin: 16px; }
   .sl-lab-workspace-body .lab3d-btns { grid-column: 2; grid-row: 3; align-content: end; }
@@ -50,7 +50,7 @@
   .sl-lab-workspace-actions { width: 100%; }
   .sl-lab-workspace-actions button { flex: 1; }
   .sl-lab-workspace-body { padding-left: 12px; padding-right: 12px; }
-.sl-lab-workspace-body .lab3d canvas, .sl-lab-workspace-body .lab3d .rt2-svg { height: clamp(280px, 44dvh, 460px); }
+.sl-lab-workspace-body .lab3d canvas, .sl-lab-workspace-body .lab3d .rt2-svg, .sl-lab-workspace-body .lab3d .ft2-svg { height: clamp(280px, 44dvh, 460px); }
 }
 @media (prefers-reduced-motion: reduce) { .sl-lab-workspace { transition: none; transform: none; } }
 @media print { .sl-lab-workspace { display: none !important; } }
@@ -176,4 +176,43 @@
   .dk-stage:has(.dk-magnet-battle) { height: 100%; aspect-ratio: auto; }   /* 폭(=글자 크기)은 기존 16:9 계산 그대로, 높이만 남은 공간까지 */
   .dk-stage:has(.dk-magnet-battle) .dk-foot { display: none; }   /* 교재 이름·쪽수 줄은 대결 중에 필요 없다 — 그 높이를 팀 칸에 */
   .dk:has(.dk-magnet-battle) .dk-notes { position: fixed; left: 12px; right: 12px; bottom: 72px; z-index: 40; max-height: 40dvh; overflow: auto; border-radius: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); }
+}
+
+/* 시험관 실험(s41-u02, 2026-10-15): 예상 → 재기·적기 세 번 → 비교. 재기 전 값은 「?」와 까닭(「선을 그어 재요」·「저울에 올리면 재요」). */
+.lab3d--tube > .ft2-svg { display: block; width: 100%; height: 300px; background: #f7f4ec; }
+#lab .lab3d--tube > canvas, #lab .lab3d--tube > .ft2-svg { height: clamp(260px, calc(100dvh - 520px), 480px); }   /* 단추가 하단 막대에 가리지 않는 만큼만 */
+.lab3d--tube .lab3d-read .ft-val { display: flex; flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 4px; margin-bottom: 4px; }   /* 값과 단위를 한 줄로 — 단추가 아래로 밀리지 않게 */
+.lab3d--tube .lab3d-read .ft-val > span { flex-basis: 100%; }
+.lab3d-read .ft-val.is-locked b { color: #c3cbd8; }
+.lab3d-read .ft-val.is-locked small::after { content: " · " attr(data-why); color: #8a94a6; }
+.ft-pred { display: grid; grid-template-columns: 3em repeat(3, minmax(0, 1fr)); gap: 6px; align-items: center; }
+.ft-pred > span { font-weight: 700; }
+.ft-pred .rt-opt { text-align: center; min-height: 44px; padding: 6px 8px; }
+.ft-card .rt-q small { font-weight: 400; color: #5d6676; }
+#lab .lab3d--tube[data-phase=compare] > .lab3d-read { display: none; }   /* 비교 카드에 세 기록이 다 있다 — 단추가 화면 밖으로 밀리지 않게 */
+.ft-table caption { caption-side: bottom; text-align: left; font-size: 13px; color: #5d6676; padding-top: 6px; }
+.ft-table th[scope=row] { text-align: left; font-weight: 700; }
+.ft-extra-head { margin: 0 0 8px; }
+#lab .lab3d--tube:has(.ft-card:not([hidden]) .ft-pred) > .lab3d-read, #lab .lab3d--tube:has(.ft-card:not([hidden])) > .lab3d-tip { display: none; }
+#lab .lab3d--tube .ft-card:not([hidden]) { margin: 8px 12px; padding: 10px 12px; gap: 6px; }
+@media (min-width: 761px) {
+  #lab .lab3d--tube .ft-card:has(.ft-pred) { grid-template-columns: 1fr 1fr; column-gap: 14px; }
+  #lab .lab3d--tube .ft-card:has(.ft-pred) .rt-q { grid-column: 1 / -1; }
+  #lab .lab3d--tube .ft-pred { grid-template-columns: 2.4em repeat(3, minmax(0, 1fr)); gap: 4px; }
+  #lab .lab3d--tube .ft-pred .rt-opt { padding: 6px 4px; }
+  #lab .lab3d--tube .lab3d-btns { flex-wrap: nowrap; align-items: stretch; }
+  #lab .lab3d--tube .lab3d-btns .btn { flex: 1 1 0; min-width: 0; white-space: nowrap; }
+  #lab .lab3d--tube .lab3d-btns .btn[data-act=step] { flex: 2 1 0; }
+  #lab .lab3d--tube .lab3d-btns .fl-open { flex: 0 1 auto; }
+  #lab .fl-panel .lab3d--tube .lab3d-btns { flex-wrap: wrap; }
+  #lab .fl-panel .lab3d--tube .lab3d-btns .btn { flex: 1 1 40%; }
+  .dk-3d[data-mount=lab] .lab3d--tube .rt-card { font-size: 1.15cqw; padding: .8cqw 1cqw; gap: .5cqw; }
+  .dk-3d[data-mount=lab] .lab3d--tube .rt-card p { font-size: inherit; }
+  .dk-3d[data-mount=lab] .lab3d--tube .rt-opt { font-size: 1.15cqw; padding: .4cqw .4cqw; min-height: max(44px, 3.2cqw); }
+  .dk-3d[data-mount=lab] .lab3d--tube .ft-pred { grid-template-columns: 2.6em repeat(3, minmax(0, 1fr)); gap: .4cqw; }
+  .dk-3d[data-mount=lab] .lab3d--tube .lab3d-tip:has(+ .rt-card:not([hidden])) { display: none; }
+  .dk-3d[data-mount=lab] .lab3d--tube .lab3d-btns .btn { min-height: max(44px, 3.4cqw); }
+  .dk-3d[data-mount=lab] .ft-table caption { font-size: 1cqw; }
+  .dk-3d[data-mount=lab] .lab3d--tube .ft-val.is-locked small::after { display: block; font-size: .8em; }   /* 좁은 세 칸: 까닭은 아랫줄에 */
+  .dk-3d[data-mount=lab] .lab3d--tube[data-phase=compare] ~ .ft-table { display: none; }                  /* 비교 카드에 세 기록이 다 있다 — 슬라이드 아래로 잘리지 않게 */
 }

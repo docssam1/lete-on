@@ -99,7 +99,7 @@
   .dk-3d[data-mount=lab] { display: grid; grid-template-columns: 1fr 27cqw; column-gap: 2cqw; row-gap: .6cqw; align-content: start; }
   .dk-3d[data-mount=lab] .lab3d { display: contents; }
   .dk-3d[data-mount=lab] > *, .dk-3d[data-mount=lab] .lab3d > * { grid-column: 2; margin: 0; padding: 0; }
-.dk-3d[data-mount=lab] canvas, .dk-3d[data-mount=lab] .rt2-svg { grid-column: 1 !important; grid-row: 1 / span 8; height: 36cqw !important; border-radius: 1cqw; }
+.dk-3d[data-mount=lab] canvas, .dk-3d[data-mount=lab] .rt2-svg, .dk-3d[data-mount=lab] .ft2-svg { grid-column: 1 !important; grid-row: 1 / span 8; height: 36cqw !important; border-radius: 1cqw; }
   .dk-3d[data-mount=lab] .lab3d-read { grid-template-columns: repeat(3, 1fr); } .dk-3d[data-mount=lab] .lab-read b { font-size: 2.4cqw; }
   .dk-3d[data-mount=lab] .lab3d-tip { font-size: 1.3cqw; min-height: 0; }
   .dk-3d[data-mount=lab] .lab3d-btns .pour { min-height: 4cqw; font-size: 1.6cqw; }
@@ -151,7 +151,7 @@
 .dk-bt h3 { margin: 0 0 .6cqw; font-size: 1.9cqw; color: var(--n); }
 .dk-bt section:first-child h3 { color: #1E6FD9; } .dk-bt section:last-child h3 { color: #C2410C; }
 .dk-bt .dk-3d[data-mount=lab] { display: block; min-height: 0; }
-.dk-bt .dk-3d canvas, .dk-bt .dk-3d .rt2-svg { height: 22cqw !important; max-height: none; }
+.dk-bt .dk-3d canvas, .dk-bt .dk-3d .rt2-svg, .dk-bt .dk-3d .ft2-svg { height: 22cqw !important; max-height: none; }
 .dk-bt .lab-table { font-size: 1.1cqw; }
 .dk-labwrap.is-battle { display: block; }
 .dk-labwrap.is-battle .dk-stepside { display: none; }

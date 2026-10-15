@@ -309,9 +309,9 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
       mount3D(m, { autoplay: true, preview: !!m.dataset.preview, from: m.dataset.from || null, onDone: async () => { if (!alive()) return; await G.say('dk-scene-done', { mood: 'praise' }); auto(900); } }); return; }
     if (k === 'lab') { G.say(cue(V, 'dk-lab')); const m = stage.querySelector('[data-mount]'); let done = false;
       m.addEventListener('pointerdown', () => { if (timer) cancelAuto(); }, true);   // 실험을 더 하면 넘기지 않는다
-      let recs = 0;   // 조건을 바꿔 두 번 이상 적어야 비교가 된다
-      mountLab(m, { personal: true, onRecord: async () => { if (done) return; recs += 1;
-        if (recs < 2) { G.say('dk-lab-more', { mood: 'encourage' }); return; }
+      let recs = 0;   // 조건을 바꿔 두 번 이상 적어야 비교가 된다. 단계가 정해진 실험(시험관)은 실험실이 { complete }로 끝을 알려 주고, 중간 안내는 실험실 도움말이 한다.
+      mountLab(m, { personal: true, onRecord: async (rows, info) => { if (done) return; recs += 1;
+        if (info ? !info.complete : recs < 2) { if (!info) G.say('dk-lab-more', { mood: 'encourage' }); return; }
         done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } });
       watchLabTips(m, G); return; }
     if (k === 'test') return runTest(V);

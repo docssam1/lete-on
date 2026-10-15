@@ -1,7 +1,7 @@
 // 4-1 Ⅱ 물의 상태 변화 — 얼음 병 저울: 물이 얼면 부피는 늘고 무게는 그대로, 녹으면 부피가 다시 줄어든다
 // 병은 LatheGeometry(바닥 굴곡·몸통·홈·어깨·목·나사선·뚜껑), 물은 병 속 모양을 따라 차고,
 // 얼음이 되면 하얗게 서리가 끼고 윗면이 살짝 볼록해진다. 무게는 전자저울 LCD 에 직접 찍힌다.
-import { PALETTE as P, label, relabel, arrow, THREE, mat, lerp, clamp01, roundedBoxGeometry } from './_kit.js';
+import { PALETTE as P, label, relabel, arrow, THREE, mat, glassMat, lerp, clamp01, roundedBoxGeometry } from './_kit.js';
 
 const R = 0.55, H = 2.2, FILL = 0.5, GROW = 1.1;         // 병 반지름·높이, 처음 물 높이 비율, 얼 때 부피 배율
 const ICE = 0xd6eaf7;
@@ -198,8 +198,121 @@ function buildBeaker() {
   return g;
 }
 
-// 가상 실험실(v2/lab-freeze.js)이 같은 저울·병·얼음 통을 쓴다.
+// ── 시험관 실험(교재 「얼었다 녹는 물기둥」·이론편 22~23쪽) ──────────────────────
+// 1 cm = 0.25(월드). 시험관 길이 9 cm, 바깥 반지름 0.2. 높이는 시험관 안쪽 바닥(y = TB)부터 잰다.
+const CM = 0.25, TO = 0.2, TI = 0.172, TL = 2.25, TB = 0.028;
+const TUBE_SEG = 36;
+const TUBE_DIM = { CM, TO, TI, TL, TB, CUP_H: 0.62 };
+// 시험관 속 물(얼음) — h: 물 높이(cm), k: 언 정도(0 물 → 1 얼음). 물은 벽에서 살짝 올라가고, 얼음은 가운데가 볼록.
+function tubeWaterGeo(h, k) {
+  const top = TB + h * CM, pts = [];
+  for (let i = 0; i <= 8; i++) { const a = (i / 8) * Math.PI / 2; pts.push(V2(Math.max(0.0005, TI * Math.sin(a)), TB + TI - TI * Math.cos(a))); }
+  const lift = (s) => (1 - k) * 0.012 * Math.pow(s, 6) + k * 0.03 * (1 - s * s);
+  pts.push(V2(TI, top + lift(1)));
+  for (let i = 1; i <= 8; i++) { const s = 1 - i / 8; pts.push(V2(Math.max(0.0005, TI * s), top + lift(s))); }
+  return new THREE.LatheGeometry(pts, TUBE_SEG);
+}
+// 시험관(유리) + 고무마개 + 옆에 붙인 종이 자(0 = 안쪽 바닥, 1 mm마다 눈금, 1 cm마다 숫자). ang: 자를 붙일 방향(카메라 기준 오른쪽 앞).
+function buildTube(ang = 0.9) {
+  const g = new THREE.Group(), pts = [];
+  for (let i = 0; i <= 10; i++) { const a = (i / 10) * Math.PI / 2; pts.push(V2(Math.max(0.001, TO * Math.sin(a)), TO - TO * Math.cos(a))); }
+  pts.push(V2(TO, TL - 0.04), V2(TO + 0.022, TL - 0.015), V2(TO + 0.02, TL), V2(TO - 0.004, TL));
+  const wall = new THREE.Mesh(new THREE.LatheGeometry(pts, 48), glassMat(0xe6f1f8, 0.26)); wall.renderOrder = 3; g.add(wall);
+  const rubber = new THREE.MeshPhysicalMaterial({ color: 0x8c3f2f, roughness: 0.62, clearcoat: 0.25 });
+  const plug = new THREE.Mesh(new THREE.CylinderGeometry(TO + 0.03, TI - 0.01, 0.4, 32), rubber); plug.position.y = TL + 0.02; plug.castShadow = true; g.add(plug);
+  // 종이 자: 시험관 몸통에 감아 붙인 띠(0~7 cm)
+  const y0 = 0, y1 = TB + 7.3 * CM, arc = 0.62, W = 160, H = Math.round(W / (arc * (TO + 0.005)) * (y1 - y0));
+  const toPx = (y) => H - ((y - y0) / (y1 - y0)) * H;
+  const tex = canvasTex(W, H, (c) => {
+    c.fillStyle = '#fbf6e6'; c.fillRect(0, 0, W, H);
+    c.fillStyle = '#1f2a37'; c.textBaseline = 'middle'; c.font = '800 46px "Pretendard", "Noto Sans KR", sans-serif';
+    for (let mm = 0; mm <= 70; mm++) {
+      const y = toPx(TB + (mm / 10) * CM), major = mm % 10 === 0, half = mm % 5 === 0;
+      c.fillRect(0, y - (major ? 2.4 : 1.2), major ? 62 : half ? 44 : 26, major ? 4.8 : 2.4);
+      if (major) c.fillText(String(mm / 10), 74, y + 2);
+    }
+    c.font = '800 34px "Pretendard", "Noto Sans KR", sans-serif'; c.fillText('cm', 70, toPx(TB + 7.0 * CM) + 30);
+  });
+  tex.anisotropy = 16;
+  const ruler = new THREE.Mesh(new THREE.CylinderGeometry(TO + 0.005, TO + 0.005, y1 - y0, 16, 1, true, ang - arc / 2, arc),
+    new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85, side: THREE.DoubleSide }));
+  ruler.position.y = (y0 + y1) / 2; ruler.renderOrder = 4; g.add(ruler);
+  return g;
+}
+// 물방울(차가운 시험관 겉에 맺힌 것)과 소금 알갱이 — 시험관 겉면 앞쪽 반에 흩어 둔다. 닦으면 사라진다.
+function buildTubeDrops(seed = 11) {
+  const r = rng(seed), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3();
+  const dropM = new THREE.MeshPhysicalMaterial({ color: 0xdcefff, transparent: true, opacity: 0.55, roughness: 0.02, clearcoat: 1, depthWrite: false });
+  const drops = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 10, 8), dropM, 46);
+  for (let i = 0; i < 46; i++) {
+    const a = (r() - 0.5) * 2.6, y = 0.08 + r() * 1.2, k = 0.007 + r() * 0.009;
+    p.set(Math.sin(a) * (TO + k * 0.3), y, Math.cos(a) * (TO + k * 0.3)); q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), a); s.set(k, k * 1.35, k * 0.5);
+    m4.compose(p, q, s); drops.setMatrixAt(i, m4);
+  }
+  drops.renderOrder = 5;
+  const salt = new THREE.InstancedMesh(new THREE.BoxGeometry(0.012, 0.012, 0.012), mat(0xffffff, { roughness: 0.35 }), 40);
+  for (let i = 0; i < 40; i++) {
+    const a = (r() - 0.5) * 2.8, y = 0.06 + r() * 1.1;
+    p.set(Math.sin(a) * (TO + 0.006), y, Math.cos(a) * (TO + 0.006)); q.setFromEuler(new THREE.Euler(r() * 3, r() * 3, r() * 3)); s.setScalar(0.7 + r() * 0.7);
+    m4.compose(p, q, s); salt.setMatrixAt(i, m4);
+  }
+  return { drops, salt };
+}
+// 시험관을 세워 두는 나무 꽂이
+function buildRack() {
+  const g = new THREE.Group(), wood = new THREE.MeshPhysicalMaterial({ color: 0xc69a63, roughness: 0.6, clearcoat: 0.3 });
+  const block = new THREE.Mesh(roundedBoxGeometry(0.9, 0.34, 0.62, 0.05, 3), wood); block.position.y = 0.17; block.castShadow = block.receiveShadow = true; g.add(block);
+  const hole = new THREE.Mesh(new THREE.CylinderGeometry(TO + 0.04, TO + 0.04, 0.012, 32), mat(0x5a3d22, { roughness: 0.9 })); hole.position.y = 0.345; g.add(hole);
+  return g;
+}
+// 저울 위에 올려 0 g으로 맞춘 투명 플라스틱 컵(시험관을 세운다)
+function buildCup() {
+  const g = new THREE.Group(), H2 = TUBE_DIM.CUP_H;
+  const cup = new THREE.Mesh(new THREE.LatheGeometry([V2(0.001, 0), V2(0.26, 0), V2(0.27, 0.02), V2(0.34, H2), V2(0.355, H2 + 0.01), V2(0.345, H2 + 0.015)], 40), glassMat(0xf0f6fa, 0.3));
+  cup.renderOrder = 3; g.add(cup);
+  return g;
+}
+// 500 mL 비커: 잘게 부순 얼음 + 굵은 소금(가운데는 시험관 꽂을 자리)
+function buildIceBeaker() {
+  const g = new THREE.Group(), BR = 0.56, BH = 1.0;
+  const glass = new THREE.Mesh(new THREE.LatheGeometry([V2(0.001, 0.015), V2(BR - 0.03, 0.01), V2(BR, 0.05), V2(BR, BH), V2(BR + 0.025, BH + 0.02), V2(BR + 0.012, BH + 0.03)], 48), glassMat(0xe4f0f8, 0.24));
+  glass.renderOrder = 6; g.add(glass);
+  const r = rng(5), cubes = [];
+  for (let L = 0; L < 7; L++) {
+    const y = 0.06 + L * 0.11;
+    for (let i = 0; i < 26; i++) { const a = r() * Math.PI * 2, rr = 0.27 + r() * (BR - 0.33); cubes.push([Math.sin(a) * rr, y + r() * 0.05, Math.cos(a) * rr]); }
+  }
+  const iceM = new THREE.MeshPhysicalMaterial({ color: 0xeef7fc, transparent: true, opacity: 0.7, roughness: 0.16, clearcoat: 1 });
+  const inst = new THREE.InstancedMesh(roundedBoxGeometry(0.11, 0.09, 0.11, 0.025, 2), iceM, cubes.length), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3();
+  cubes.forEach(([x, y, z], i) => { q.setFromEuler(new THREE.Euler(r() * 3, r() * 3, r() * 3)); s.setScalar(0.8 + r() * 0.5); p.set(x, y, z); m4.compose(p, q, s); inst.setMatrixAt(i, m4); });
+  inst.renderOrder = 5; g.add(inst);
+  const salt = new THREE.InstancedMesh(new THREE.BoxGeometry(0.022, 0.022, 0.022), mat(0xffffff, { roughness: 0.4 }), 80);
+  for (let i = 0; i < 80; i++) { const a = r() * Math.PI * 2, rr = 0.25 + r() * (BR - 0.3); q.setFromEuler(new THREE.Euler(r() * 3, r() * 3, r() * 3)); s.setScalar(1); p.set(Math.sin(a) * rr, 0.8 + r() * 0.05, Math.cos(a) * rr); m4.compose(p, q, s); salt.setMatrixAt(i, m4); }
+  g.add(salt);
+  return g;
+}
+// 500 mL 비커: 따뜻한 물(얼음을 녹일 때)
+function buildWarmBeaker() {
+  const g = new THREE.Group(), BR = 0.56, BH = 1.0;
+  const glass = new THREE.Mesh(new THREE.LatheGeometry([V2(0.001, 0.015), V2(BR - 0.03, 0.01), V2(BR, 0.05), V2(BR, BH), V2(BR + 0.025, BH + 0.02), V2(BR + 0.012, BH + 0.03)], 48), glassMat(0xe4f0f8, 0.24));
+  glass.renderOrder = 6; g.add(glass);
+  const w = new THREE.Mesh(new THREE.CylinderGeometry(BR - 0.02, BR - 0.03, 0.74, 40), new THREE.MeshPhysicalMaterial({ color: 0xf3c9a0, transparent: true, opacity: 0.42, roughness: 0.05, clearcoat: 1, depthWrite: false }));
+  w.position.y = 0.4; w.renderOrder = 4; g.add(w);
+  return g;
+}
+// 마른 수건(접어 둔 것) + 닦을 때 시험관을 감싸는 수건 자락
+function buildTowel() {
+  const cloth = canvasTex(128, 128, (c, w) => { c.fillStyle = '#8fc1e3'; c.fillRect(0, 0, w, w); c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 3; for (let i = 0; i < w; i += 10) { c.beginPath(); c.moveTo(i, 0); c.lineTo(i, w); c.stroke(); } }, { repeat: [3, 2] });
+  const m = new THREE.MeshStandardMaterial({ map: cloth, roughness: 0.95 });
+  const folded = new THREE.Mesh(roundedBoxGeometry(0.95, 0.12, 0.62, 0.05, 3), m); folded.position.y = 0.06; folded.castShadow = folded.receiveShadow = true;
+  const wrap = new THREE.Mesh(new THREE.CylinderGeometry(TO + 0.07, TO + 0.07, 0.5, 28, 1, true), new THREE.MeshStandardMaterial({ map: cloth, roughness: 0.95, side: THREE.DoubleSide }));
+  wrap.visible = false;
+  return { folded, wrap };
+}
+
+// 가상 실험실(v2/lab-freeze.js)이 같은 저울·병·얼음 통·시험관을 쓴다.
 export const BOTTLE_DIM = { R, H, RW, PAN_Y, ICE };
+export { TUBE_DIM, buildTube, buildTubeDrops, buildRack, buildCup, buildIceBeaker, buildWarmBeaker, buildTowel, tubeWaterGeo };
 export { buildScale, buildBottle, buildBath, buildBeaker, waterGeo, canvasTex, rng };
 
 export default {

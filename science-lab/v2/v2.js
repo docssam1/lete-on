@@ -568,7 +568,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
     mountLab: (el, o = {}) => mountLabOf(L.explore.lab.kind)(el, { ...L.explore.lab,
       lowPower: !!o.lowPower, fixedSource: !!o.fixedSource, isActive: o.isActive, mode: o.mode,
       rows: o.personal === false ? (o.rows || []) : store.get(u).labRows || [],
-      onRecord: (rows) => { if (o.personal !== false) store.set(u, { labRows: rows }); o.onRecord?.(rows); } }),
+      onRecord: (rows, info) => { if (o.personal !== false) store.set(u, { labRows: rows }); o.onRecord?.(rows, info); } }),
     // 스스로 공부하기의 확인 문제: 첫 시도만 진단 기록에 남긴다
     onAnswer: (id, ok, picked) => { if (I[id]) record(du(u), I[id], 'deck', ok, { picked }, MISC); } });
 }

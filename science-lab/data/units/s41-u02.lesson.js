@@ -19,10 +19,10 @@ export const lesson = {
     say: [{ mood: 'talk', text: '물을 얼렸다 녹이며 재어 봐요.' }],
     modes: ['lab', 'scene', 'home'],
     lab: {
-      kind: 'freeze', amounts: [60, 100, 140],
-      goal: '물의 양을 고르고, 얼리기 전과 후의 높이·무게를 표에 적어 보세요.',
-      columns: ['상태', '물의 양(mL)', '높이(칸)', '무게(g)'],
-      rowText: (r) => `${r.state} ${r.ml} mL → 높이 ${r.height}칸, 무게 ${r.mass} g`,
+      kind: 'freeze', amounts: [60, 100, 140],   // amounts: 추가 탐구(얼음 병 저울)·두 팀 배틀용
+      goal: '시험관 속 물을 얼렸다가 녹이며, 처음 물·다 언 얼음·다 녹은 물의 높이와 무게를 재어 표에 적어 보세요.',
+      columns: ['단계', '높이(cm)', '무게(g)'],
+      rowText: (r) => `${r.step} → 높이 ${Number(r.height).toFixed(1)} cm, 무게 ${Number(r.mass).toFixed(1)} g`,
     },
     home: {
       title: '얼음 병 저울 실험', minutes: 20, guardian: true,
@@ -48,11 +48,14 @@ export const lesson = {
     say: [{ mood: 'talk', text: '물의 상태 변화를 정리해 볼까요?' }],
     analogy: '물은 모습만 바꾸는 변신 선수예요. 얼음·물·수증기로 모습이 바뀌어도 물의 양은 그대로예요.',
     principle: '물이 얼면 부피는 늘어나고 무게는 변하지 않아요. 얼음이 녹으면 부피가 다시 줄어들어요.',
+    // 시험관 기록(처음 물·다 언 얼음·다 녹은 물)에서만 말한다 — 결론은 학생이 적은 값에서 나온다.
     fromData: (rows) => {
-      const pair = rows.map((w) => [w, rows.find((i) => i.state === '얼음' && i.ml === w.ml)]).find(([w, i]) => w.state === '물' && i);
-      if (!pair) return rows.length ? '물과 얼음을 같은 양으로 한 번씩 적으면 비교해 줄게요.' : '';
-      const [w, i] = pair;
-      return `네 기록: 물 ${w.ml} mL가 얼었더니 높이는 ${w.height}칸에서 ${i.height}칸으로 늘었지만, 무게는 ${w.mass} g 그대로였어요.`;
+      const at = (s) => rows.find((r) => r && r.step === s), w = at('처음 물'), i = at('다 언 얼음'), m = at('다 녹은 물');
+      if (!w || !i) return rows.length ? '시험관 실험에서 처음 물과 다 언 얼음을 적으면 비교해 줄게요.' : '';
+      const f = (v) => Number(v).toFixed(1), dir = (a, b) => (b > a ? '늘었고' : b < a ? '줄었고' : '그대로였고');
+      const g = w.mass === i.mass ? `무게는 ${f(w.mass)} g으로 같았어요.` : `무게는 ${f(w.mass)} g에서 ${f(i.mass)} g으로 달라졌어요.`;
+      return `네 기록: 처음 물이 얼었더니 높이는 ${f(w.height)} cm에서 ${f(i.height)} cm로 ${dir(w.height, i.height)}, ${g}`
+        + (m ? ` 다 녹은 물은 높이 ${f(m.height)} cm, 무게 ${f(m.mass)} g이었어요.` : '');
     },
     cards: ['s41-u02-b01', 's41-u02-b02', 's41-u02-b03', 's41-u02-b04'],
     table: 's41-u02-b05',
@@ -78,7 +81,7 @@ export const lesson = {
       { key: 'wonder', label: '① 궁금한 점', from: 'engage.question' },
       { key: 'problem', label: '② 탐구 문제', hint: '예) 물이 얼면 부피와 무게는 어떻게 변할까?' },
       { key: 'hypothesis', label: '③ 가설(내 예상)', from: 'engage.prediction' },
-      { key: 'vars', label: '④ 조건', hint: '바꿀 조건 / 같게 할 조건 / 측정할 것', default: '바꿀 조건: 물의 상태(물, 얼음)\n같게 할 조건: 물의 양, 병, 저울\n측정할 것: 높이, 무게' },
+      { key: 'vars', label: '④ 조건', hint: '바꿀 조건 / 같게 할 조건 / 측정할 것', default: '바꿀 조건: 물의 상태(처음 물 → 다 언 얼음 → 다 녹은 물)\n같게 할 조건: 같은 시험관·고무마개, 같은 저울과 컵, 잴 때마다 바깥 물기 닦기\n측정할 것: 물(얼음) 기둥의 높이(cm), 시험관 전체의 무게(g)' },
       { key: 'materials', label: '⑤ 준비물', from: 'explore.home.materials' },
       { key: 'steps', label: '⑥ 실험 과정', from: 'explore.home.steps' },
       { key: 'result', label: '⑦ 결과', from: 'explore.lab.table' },
