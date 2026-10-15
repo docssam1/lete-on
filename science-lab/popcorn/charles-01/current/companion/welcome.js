@@ -29,7 +29,7 @@ export function mountWelcome(host, {onContinue = () => {}} = {}) {
     <figure class="welcome-friend welcome-labconi"><div class="welcome-character-motion"><img src="${asset('labconi-charles.png')}" alt="샤를 의상을 입고 맞이하는 랩코니" width="1220" height="1280" draggable="false"></div><figcaption>랩코니</figcaption></figure>
     <figure class="welcome-friend welcome-butterbee"><div class="welcome-character-motion"><img src="${asset('butterbee.png')}" alt="손을 들어 인사하는 조수 버터비" width="1280" height="1280" draggable="false"></div><figcaption>버터비</figcaption></figure>
   </div>
-  <div class="welcome-invitation"><button class="welcome-audio" type="button" aria-pressed="false"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><span>소리와 함께 보기</span></button><span class="welcome-audio-status" role="status" aria-live="polite"></span></div>`;
+  <p class="welcome-invitation">우리와 함께 자석 이야기를 만나러 가요.<span class="welcome-audio-status" role="status" aria-live="polite"></span></p>`;
 
   const media = matchMedia('(prefers-reduced-motion: reduce)');
   const animations = new Set();
@@ -38,8 +38,7 @@ export function mountWelcome(host, {onContinue = () => {}} = {}) {
   const sound=document.createElement('audio');
   sound.src=asset('welcome-brand.wav?v=20261015-welcome-audio-1');
   sound.preload='auto';sound.hidden=true;sound.loop=false;host.append(sound);
-  const soundButton=host.querySelector('.welcome-audio'),soundLabel=soundButton.querySelector('span');
-  let soundState='idle',soundEverPlayed=false,soundAttempt=0,pausedForVisibility=false;
+  let soundState='idle',soundEverPlayed=false,soundAttempt=0,pausedForVisibility=false,awaitingGesture=false;
   let audioStartedAt=null,motionStartedAt=null,lastAudioError=null;
   const visible = () => host.isConnected && !document.hidden && !host.closest('[hidden]');
   let lastVisible=visible();
@@ -47,13 +46,10 @@ export function mountWelcome(host, {onContinue = () => {}} = {}) {
     playedThisVisit, activeAnimations:[...animations].filter(a=>a.playState==='running').length,
     characterCount:host.querySelectorAll('.welcome-friend').length,
     kernelCount:host.querySelectorAll('.welcome-kernel').length, continuationSent, disposed,
-    audio:{state:soundState,everPlayed:soundEverPlayed,currentTime:sound.currentTime,duration:Number.isFinite(sound.duration)?sound.duration:null,paused:sound.paused,muted:sound.muted,volume:sound.volume,source:sound.currentSrc||sound.src,error:lastAudioError,audioStartedAt,motionStartedAt}});
+    audio:{state:soundState,everPlayed:soundEverPlayed,awaitingGesture,currentTime:sound.currentTime,duration:Number.isFinite(sound.duration)?sound.duration:null,paused:sound.paused,muted:sound.muted,volume:sound.volume,source:sound.currentSrc||sound.src,error:lastAudioError,audioStartedAt,motionStartedAt}});
   function updateSound(){
     host.dataset.welcomeAudio=soundState;
-    soundLabel.textContent=soundState==='playing'?'소리 끄기':soundState==='error'?'소리 다시 불러오기':soundEverPlayed?'소리 다시 듣기':'소리와 함께 보기';
-    soundButton.setAttribute('aria-pressed',String(soundState==='playing'));
-    soundButton.setAttribute('aria-busy',String(soundState==='loading'));
-    host.querySelector('.welcome-audio-status').textContent=soundState==='playing'?'광고의 팝콘실험실 소리와 함께 보고 있어요.':soundState==='error'?'소리를 불러오지 못했어요. 다음으로 공부를 시작할 수 있어요.':soundState==='blocked'?'소리와 함께 보기를 눌러요.':'';
+    host.querySelector('.welcome-audio-status').textContent=soundState==='playing'?'팝콘실험실의 입장 소리를 재생하고 있어요.':'';
   }
   function settleVisual() {
     if(disposed)return;
@@ -62,7 +58,7 @@ export function mountWelcome(host, {onContinue = () => {}} = {}) {
     animations.clear(); status='finished'; host.dataset.welcomeState=status;
   }
   function stopSound(next='idle',reset=true){
-    soundAttempt++;soundState=next;pausedForVisibility=false;
+    soundAttempt++;soundState=next;pausedForVisibility=false;awaitingGesture=false;
     sound.pause();if(reset){try{sound.currentTime=0;}catch{}}
     updateSound();
   }
@@ -122,7 +118,7 @@ export function mountWelcome(host, {onContinue = () => {}} = {}) {
     if(!resume){try{sound.currentTime=0;}catch{}}
     const success=()=>{
       if(disposed||token!==soundAttempt||!visible()){if(!visible())sound.pause();return;}
-      soundState='playing';soundEverPlayed=true;audioStartedAt=performance.now()-sound.currentTime*1000;
+      soundState='playing';soundEverPlayed=true;awaitingGesture=false;audioStartedAt=performance.now()-sound.currentTime*1000;
       if(resume&&status==='paused'){
         for(const animation of animations)if(animation.playState==='paused')animation.play();
         status='playing';host.dataset.welcomeState=status;
@@ -132,6 +128,7 @@ export function mountWelcome(host, {onContinue = () => {}} = {}) {
     const failure=error=>{
       if(disposed||token!==soundAttempt)return;
       lastAudioError=error?.name||'MediaError';soundState=error?.name==='NotAllowedError'?'blocked':'error';
+      awaitingGesture=visible()&&!continuationSent;
       updateSound();if(!resume&&visible())runMotion();
     };
     try{const result=sound.play();if(result?.then)result.then(success,failure);else success();}catch(error){failure(error);}
@@ -144,10 +141,17 @@ export function mountWelcome(host, {onContinue = () => {}} = {}) {
     playedThisVisit=true;return playSound();
   }
   function replay(){if(disposed||!visible())return false;started=true;playedThisVisit=true;return playSound();}
-  const soundClick=()=>{if(soundState==='playing'||soundState==='loading'){stopSound('ended');settleVisual();}else replay();};
+  // Keep the introduction automatic. A blocked browser can use the first real
+  // interaction on this screen; navigation keeps its own action and never waits.
+  function unlockSound(event){
+    if(!event.isTrusted||!awaitingGesture||disposed||!visible()||continuationSent)return;
+    if(event.type==='keydown'&&(event.repeat||!['Enter',' '].includes(event.key)))return;
+    if(event.target instanceof Element&&event.target.closest('a,button,input,select,textarea,summary,[contenteditable]'))return;
+    awaitingGesture=false;playSound();
+  }
   const soundEnded=()=>{if(!disposed){soundState='ended';updateSound();}};
-  const soundError=()=>{if(!disposed){soundAttempt++;soundState='error';lastAudioError='MediaError-'+(sound.error?.code||0);updateSound();if(!started||status==='idle')runMotion();}};
-  soundButton.addEventListener('click',soundClick);sound.addEventListener('ended',soundEnded);sound.addEventListener('error',soundError);
+  const soundError=()=>{if(!disposed){soundAttempt++;soundState='error';awaitingGesture=visible()&&!continuationSent;lastAudioError='MediaError-'+(sound.error?.code||0);updateSound();if(!started||status==='idle')runMotion();}};
+  sound.addEventListener('ended',soundEnded);sound.addEventListener('error',soundError);
   function syncVisibility(){
     if(disposed)return;
     const nowVisible=visible();
@@ -181,10 +185,12 @@ export function mountWelcome(host, {onContinue = () => {}} = {}) {
     window.removeEventListener('popcornlab:route',route);
     window.removeEventListener('hashchange',route);
     media.removeEventListener('change',preference);
-    soundButton.removeEventListener('click',soundClick);sound.removeEventListener('ended',soundEnded);sound.removeEventListener('error',soundError);
+    document.removeEventListener('click',unlockSound);document.removeEventListener('touchend',unlockSound);document.removeEventListener('keydown',unlockSound);
+    sound.removeEventListener('ended',soundEnded);sound.removeEventListener('error',soundError);
     sound.removeAttribute('src');sound.load();sound.remove();
     mounted.delete(host);
   }
+  document.addEventListener('click',unlockSound,{passive:true});document.addEventListener('touchend',unlockSound,{passive:true});document.addEventListener('keydown',unlockSound);
   document.addEventListener('visibilitychange',syncVisibility);
   window.addEventListener('popcornlab:route',route);
   window.addEventListener('hashchange',route);
