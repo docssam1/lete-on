@@ -1,5 +1,5 @@
 {
-  "version": "20261015-charles01-opening-1",
+  "version": "20261015-charles01-pages-1",
   "studentPages": 20,
   "magazineSpreads": 5,
   "assemblyPhases": 10,
@@ -180,13 +180,18 @@
     },
     {
       "path": "companion/guide.js",
-      "bytes": 14409,
-      "sha256": "5ed6159e87469d7834a7716e6c31378c8e7eca16af182f70d78d4e4a76b2c426"
+      "bytes": 10606,
+      "sha256": "e94d5e234ae359164392fc7e6e8c91474c8069cd16e15d59f81b1bbca7a245f4"
     },
     {
       "path": "companion/index.html",
-      "bytes": 25076,
-      "sha256": "423833c0ff13cf519c45646b6a2cc4d3e1986bb4c9cb3277d4bf3fc8eb930bb8"
+      "bytes": 25215,
+      "sha256": "763701b5c310aba3c7cc64d2fae408d60f9aa179a5fc1262510950526aac7864"
+    },
+    {
+      "path": "companion/inline-video.js",
+      "bytes": 7956,
+      "sha256": "6426097d98b9aa2781f7836d8db3843a5618b14c325f42f8947e12ea1bff9ae4"
     },
     {
       "path": "companion/lab-content.js",
@@ -239,6 +244,16 @@
       "sha256": "bf4bf1a0a38c6016961b7eed79776dd885e5efc64a9b421b0eb1f414b8bcef64"
     },
     {
+      "path": "companion/page-flow.js",
+      "bytes": 4670,
+      "sha256": "0f3be0a9ae273f45df8079845d6f19be69d25c52a65811014dc0b7cc23cb49f5"
+    },
+    {
+      "path": "companion/page-shell.css",
+      "bytes": 10469,
+      "sha256": "7da1bd41b29b6c11c9a83efa52b6728e95d46836b10d2337b12f884ff71fa60e"
+    },
+    {
       "path": "companion/reading-content.js",
       "bytes": 8963,
       "sha256": "169aa7398d9aeb6d4eac722dd0dfa4c5e89697668e1e9f5c48e9fa57a48d21e9"
@@ -250,8 +265,18 @@
     },
     {
       "path": "companion/reading.js",
-      "bytes": 13697,
-      "sha256": "49d440c59aa431089bbeb494af10ab0154a372dce97e8ac62a28fc80958f5a9a"
+      "bytes": 13091,
+      "sha256": "bd35720b88fa43bfcfdd2f1ebec266188f391b1290db0634c9af6be36352bc6e"
+    },
+    {
+      "path": "companion/study-deck.css",
+      "bytes": 9102,
+      "sha256": "5be8129c607b5107c58e473ac4a2f3092ba8fc031c81da7a9f9b27e1548b626f"
+    },
+    {
+      "path": "companion/study-deck.js",
+      "bytes": 19275,
+      "sha256": "41e1ba5378305a0fe40b26c26a434a583b2c4914af8f383fc04b240ced4a20cb"
     },
     {
       "path": "companion/styles.css",
@@ -430,6 +455,13 @@
     "nextImmediatelyAvailable": true,
     "introSourceStories": 4,
     "introSourceVideos": 2,
-    "storyPages": 3
+    "storyPages": 3,
+    "firstMenu": "먼저 공부하기",
+    "studyTopics": 9,
+    "inlineVideoAutoplay": "muted",
+    "videoFocusOnActualPlayback": true,
+    "pauseAndEndRestoreLayout": true,
+    "measuredPageTurns": true,
+    "magazineSourceSpreads": 5
   }
 }
