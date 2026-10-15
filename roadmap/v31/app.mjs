@@ -158,7 +158,7 @@ async function finishStep(skip=false){
  }
  const step=state.wizard.step,w=state.wizard;
  if(skip){w.skipped.push({step,at:new Date().toISOString()});}
- if(w.quick.academyDetail){advance(state,finishAcademyDetail(state,skip));}
+ if(w.quick.academyDetail){advance(state,!skip&&w.step==='hwangso'?'hwangso-reason':finishAcademyDetail(state,skip));}
  else if(detailSession(state)&&!step.startsWith('detail:')){
   if(!skip&&step==='books:other'&&w.v10.bookDrafts?.other?.bookName?.trim())addInlineBook('other');
   advance(state,finishDetail(state,skip?'later':'entered'));
