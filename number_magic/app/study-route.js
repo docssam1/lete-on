@@ -24,6 +24,12 @@
       field('holdWeeks',t('앞으로 유지·관찰할 주 수','Weeks to maintain before changes','今后先保持观察的周数'),2,1,8)+field('rampWeeks',t('조금씩 늘리는 기간(주)','Gradual ramp period (weeks)','逐步增加的周数'),2,1,8)+field('reviewSessions',t('먼저 보강할 회차 수 · 계획값','Review sessions first · planning input','先补充练习的课次数 · 计划值'),0,0,50)+'</div>'+
       '<label class="pd-reviewed"><input type="checkbox" name="reviewed">'+t('완료 상태·정확도·반복 오답을 살펴봤고, 증량하는 경우도 비교합니다.','I reviewed completion, accuracy and recurring errors, and want to compare gradual increases.','已查看完成情况、准确率及重复错题，也比较逐步增量方案。')+'</label><p class="pd-note">'+t('주 7회 이상이나 자동 증량은 제안하지 않습니다. 추가 시간은 보강에 쓰며 진도 증가로 환산하지 않습니다. 소마·필즈 입학 시점과의 대응은 별도 확인이 필요합니다.','No automatic increases or more than 7 visits/week. Extra minutes support practice, not a progress multiplier. SOMA/Fields admission timing requires separate verification.','不自动增量，不超过每周7次。额外时间用于补充练习，不直接换算进度。与SOMA/Fields入学时间的对应需另行确认。')+'</p><button type="submit" class="pd-primary">'+t('3D 경로 비교','Compare 3D paths','比较3D路线')+'</button><p class="pd-error" role="alert"></p></form><div class="pd-projection-result" aria-live="polite"></div></details>';
     const form=host.querySelector('form'),out=host.querySelector('.pd-projection-result');let ctl=null,revision=0,disposed=false;
+    form.noValidate=true; // submit handler explains the observation gate before field errors
+    const recordPanel=window.NM_STUDY_RECORD_PANEL&&window.NM_STUDY_RECORD_PANEL.mount(host,form,{lang});
+    if(recordPanel){
+      host.querySelector('.pd-route-planner > .pd-note').textContent=t('실제 기록을 기존 목표 계획에 연결합니다. 기록과 예상은 구분하고, 학습량은 자동으로 바꾸지 않습니다.','Connect actual records to the existing goal plan. Observations and forecasts stay separate; workload never changes automatically.','实际记录连接现有目标计划，区分记录与预计，不自动改变学习量。');
+      form.querySelector('h3 + .pd-note').textContent=t('같은 단계의 최근 전체 회차 기록에서 자동으로 채웁니다. 온라인 드릴만의 완료나 출력은 새 진도 회차로 세지 않습니다.','Filled automatically from recent whole-session records in the same stage. Online drills alone or printing do not count as new curriculum sessions.','从同一阶段近期完整课次记录自动填写。仅在线练习或打印不计为新课程课次。');
+    }
     const disposeScene=()=>{if(ctl){ctl.dispose();ctl=null;}};
     let controller;
     const observer=new MutationObserver(()=>{if(!host.isConnected||!form.isConnected)controller.dispose();});observer.observe(host.closest('#screen')||document.body,{childList:true,subtree:true});
@@ -32,7 +38,9 @@
     form.oninput=markStale;
     form.elements.startCourse.onchange=()=>{const c=list.find(x=>x.id===form.elements.startCourse.value);form.elements.startSession.max=c.sessions;form.elements.startSession.value=1;markStale();};
     form.onsubmit=async e=>{
-      e.preventDefault();if(!form.reportValidity())return;
+      e.preventDefault();
+      if(recordPanel&&!recordPanel.refresh().projection){form.querySelector('.pd-error').textContent=t('아직 관찰 중입니다. 현재 학습량을 유지하고 서로 다른 4일·14일 범위의 전체 학습 기록을 모아 주세요.','Still observing. Keep the current workload and collect whole-session records on 4 days spanning at least 14 days.','仍在观察，请保持当前学习量，收集跨度至少14天的4天完整学习记录。');return;}
+      if(!form.reportValidity())return;
       disposeScene();const run=++revision;form.querySelector('.pd-error').textContent='';
       let projection;
       try{projection=P.calculate(input());}catch(err){const code=err.message;form.querySelector('.pd-error').textContent=code==='observation'?t('관찰 기간·횟수·완료 회차·시간을 실제 기록에 맞게 입력해 주세요.','Enter consistent observation weeks, visits, sessions and time.','请按实际记录填写一致的观察周数、次数、课次与时间。'):code==='short-visit'?t('현재 1회 시간이 관찰 기록의 평균보다 짧습니다. 같은 속도로 예상할 수 없어 다시 확인이 필요합니다.','Current visit time is shorter than the observed average. The same pace cannot be assumed.','当前每次用时短于观察平均，不能假设保持同样进度。'):t('출발 회차·목표 과정·날짜를 확인해 주세요. 목표는 시작일 이후 3년 이내로 골라 주세요.','Check the starting session, target course and dates. Choose a target within 3 years after the start.','请检查起始课次、目标课程与日期。目标须在起始日之后3年内。');return;}
@@ -44,7 +52,8 @@
       const capacity=document.createElement('p');capacity.className='pd-note';
       capacity.textContent=projection.requiredFrequency===null?t('유지·점진 증량 기간을 포함하면, 이 목표는 주 7회 이내의 계산에서도 맞추기 어렵습니다. 목표 날짜 또는 범위를 다시 정해 주세요.','Including the hold and ramp period, this goal is not reached even within 7 visits/week. Reconsider the target date or scope.','包含保持与逐步增量期，即使每周7次也难按时达到目标，请调整日期或范围。'):
         t('같은 관찰 속도를 가정하면 목표일까지 필요한 계획은 주 '+projection.requiredFrequency+'회 이상입니다. 즉시 늘리라는 권고가 아니며, 유지 기간 뒤 조금씩 바꿔 보는 계산입니다.','At the observed rate, the target requires at least '+projection.requiredFrequency+' visits/week. This is a delayed-ramp simulation, not advice to increase immediately.','假设保持观察到的速度，目标至少需要每周'+projection.requiredFrequency+'次。这是先保持再逐步增加的模拟，并非立即增量建议。');
-      if(projection.requiredFrequency!==null&&projection.requiredFrequency>projection.input.frequency)capacity.textContent+=' '+t('추가 학습시간 예산: 주 '+((projection.requiredFrequency-projection.input.frequency)*projection.input.minutes)+'분(1회 '+projection.input.minutes+'분 기준).','Additional weekly time budget: '+((projection.requiredFrequency-projection.input.frequency)*projection.input.minutes)+' minutes, at '+projection.input.minutes+' minutes per visit.','额外每周时间预算：'+((projection.requiredFrequency-projection.input.frequency)*projection.input.minutes)+'分钟（每次'+projection.input.minutes+'分钟）。');
+      const extraMinutes=Math.ceil((projection.requiredFrequency-projection.input.frequency)*projection.input.minutes-1e-9);
+      if(projection.requiredFrequency!==null&&projection.requiredFrequency>projection.input.frequency)capacity.textContent+=' '+t('추가 학습시간 예산: 주 '+extraMinutes+'분(1회 '+projection.input.minutes+'분 기준).','Additional weekly time budget: '+extraMinutes+' minutes, at '+projection.input.minutes+' minutes per visit.','额外每周时间预算：'+extraMinutes+'分钟（每次'+projection.input.minutes+'分钟）。');
       if(!projection.input.reviewed)capacity.textContent=t('증량 비교는 학습 기록을 살펴본 뒤 선택할 수 있습니다. 지금은 유지 계획만 확인합니다.','Review study records before comparing increases. Only the unchanged plan is shown for now.','查看学习记录后才比较增量，现在只查看保持计划。');
       else if(projection.requiredFrequency===projection.input.frequency)capacity.textContent=t('현재 계획을 유지해도 목표일 안에 도달하는 계산입니다. 이 결과만으로 학습량을 늘릴 필요는 없습니다.','The unchanged plan reaches the target in this simulation. This result alone does not justify an increase.','在此模拟中，保持当前计划即可按时达到目标。不能仅凭此结果增加学习量。');
       out.appendChild(capacity);
