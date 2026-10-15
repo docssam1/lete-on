@@ -22,6 +22,9 @@
 .popcorn-welcome .welcome-kernel img{width:100%;height:100%;object-fit:contain;rotate:var(--kernel-rotation);user-select:none}
 .popcorn-welcome .welcome-kernel:nth-child(3n){width:30px;height:30px;margin:-15px 0 0 -15px}
 .popcorn-welcome .welcome-invitation{position:relative;z-index:3;line-height:1.65;font-size:18px;font-weight:650;margin:0 auto;max-width:32em;letter-spacing:-.025em}
+.popcorn-welcome .welcome-audio{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 15px;border:1px solid #bad0df;border-radius:4px;background:#fff;color:#1764b5;font-family:Pretendard,'Malgun Gothic',sans-serif;font-size:15px;font-weight:700;line-height:1.4}
+.popcorn-welcome .welcome-audio:hover{background:#edf6fc}.popcorn-welcome .welcome-audio:focus-visible{outline:3px solid #1764b5;outline-offset:3px}.popcorn-welcome .welcome-audio[aria-pressed=true]{background:#edf6fc}
+.popcorn-welcome .welcome-audio-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media(max-width:650px){
  .popcorn-welcome{padding:22px 12px 25px}
  .popcorn-welcome h1.welcome-title{font-size:64px}
