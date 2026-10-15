@@ -50,3 +50,18 @@
 .roadmap-app.ux-calm .result-hub-more>.result-more-body{padding:4px 0 15px}
 @media(min-width:800px){.roadmap-app.ux-calm .result-hub-direction{min-height:76px}.roadmap-app.ux-calm .result-hub-goal-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:360px){.roadmap-app.ux-calm .result-hub-tabs button{font-size:14px}.roadmap-app.ux-calm .result-hub-analysis dl>div{grid-template-columns:68px minmax(0,1fr);gap:10px}.roadmap-app.ux-calm .result-hub-direction{padding:11px 9px;gap:8px}.roadmap-app.ux-calm .result-hub-actions{grid-template-columns:minmax(0,1fr)}}
+
+/* Results begin with the route, rather than repeating the survey header. */
+.roadmap-app.ux-calm main.result{max-width:1240px;margin-top:12px}
+.roadmap-app.ux-calm main.result>.step-rail{display:none}
+.roadmap-app.ux-calm main.result .question-surface>.guide-row{display:none}
+.roadmap-app.ux-calm main.result .question-surface{padding:20px 24px}
+.roadmap-app.ux-calm main.result #question-title{font-size:23px;margin:0 0 12px;line-height:1.3}
+.roadmap-app.ux-calm .result-hub-tabs{margin-bottom:16px}
+.roadmap-app.ux-calm .result-hub-book-scene{margin:12px 0;border-block:1px solid #e2e7ed}
+.roadmap-app.ux-calm .result-hub-book-scene>summary{min-height:46px;display:flex;align-items:center;font-size:14px;cursor:pointer}
+@media(max-width:600px){.roadmap-app.ux-calm main.result .question-surface{padding:16px 12px}.roadmap-app.ux-calm main.result #question-title{font-size:21px}.roadmap-app.ux-calm .result-hub-tabs button{font-size:13px}}
+
+.roadmap-app.ux-calm .full-route-map>.full-route-heading{display:none}
+
+.roadmap-app.ux-calm .result-hub-recorded-summary{font-size:14px;line-height:1.6;padding:0 0 12px;border-bottom:1px solid #e2e7ed;margin:0 0 10px}.roadmap-app.ux-calm .result-hub-recorded-summary>strong{display:block;margin-bottom:4px}.roadmap-app.ux-calm .result-hub-recorded-summary>div{display:flex;flex-wrap:wrap;gap:3px 16px}.roadmap-app.ux-calm .result-hub-recorded-summary span{overflow-wrap:anywhere}.roadmap-app.ux-calm .result-hub-recorded-summary b{color:#637187;font-weight:500;margin-right:4px}.roadmap-app.ux-calm .result-hub-reference-meaning{font-size:13px;line-height:1.55;color:#637187;margin:8px 0 12px}

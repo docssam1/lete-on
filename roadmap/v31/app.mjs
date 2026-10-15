@@ -14,7 +14,7 @@ import {ensureQuick,collectQuick,commitLearning,quickScreen,preschool,syncQuickC
 import {personalBaseline} from './personal-baseline.mjs';
 import {briefDetailScreen,isBriefDetailStep} from './brief-details.mjs';
 import {briefSession,beginBrief,briefWorkingState,storeBriefDraft,commitBrief,discardBrief} from './brief-session.mjs';
-import {resultHubScreen} from './result-hub.mjs';
+import {resultHubScreen} from './result-hub.mjs?v=34';
 import {parseCourseScope} from './recommendation-policy.mjs';
 import {progressRoadmapMarkup} from './progress-roadmap.mjs';
 import {startScene,deferScene,nextScene,backScene,chooseScene,progressScene,academyBookScene,markSceneBook,anotherBookScene} from './scene-intake.mjs';
@@ -24,19 +24,20 @@ import {ensureWorkspace,validateWorkspaceState,saveWorkspaceDraft,prepareWorkspa
 import {monthlyScreen,monthlyView,collectMonthlyDraft,monthlyOperations,monthlyReference,editorForItem,projectionForMonthly} from './monthly-ui.mjs';
 import {mountRoadmapScene} from './roadmap-3d.mjs';
 import {mountProgressScene} from './progress-scene.mjs';
+import {mountFullRouteMap} from './full-route-map.mjs';
 import {detailChoices,openDetail,detailSession,finishDetail,detailSnapshot,monthlyDetailContext,monthlyDetailEditor} from './optional-details.mjs';
 import {academyChoices,openAcademyDetail,finishAcademyDetail,collectAcademyDetail,syncHwangsoInquiry,recordHwangsoTiming,recordHwangsoBranch} from './academy-details.mjs';
 import {mountAIHelper} from './ai-ui.mjs';
 import {mountResultView} from './result-view.mjs';
-import {isCompactStep,startCompact,compactScreen,collectCompact,commitCompact,compactGoalSummary} from './compact-intake.mjs';
+import {isCompactStep,startCompact,compactScreen,collectCompact,commitCompact,compactGoalSummary} from './compact-intake.mjs?v=34';
 document.body.classList.add('roadmap-calm');
 const monthlyStyle=document.createElement('link');monthlyStyle.rel='stylesheet';monthlyStyle.href='monthly.css';document.head.append(monthlyStyle);
 const resultStyle=document.createElement('link');resultStyle.rel='stylesheet';resultStyle.href='result-view.css';document.head.append(resultStyle);
-for(const href of ['brief-details.css','result-hub.css','progress-scene.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href;document.head.append(link);}
+for(const href of ['brief-details.css','result-hub.css','progress-scene.css','full-route-map.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href+'?v=34';document.head.append(link);}
 const compactStyle=document.createElement('link');compactStyle.rel='stylesheet';compactStyle.href='compact-intake.css';document.head.append(compactStyle);
 const progressStyle=document.createElement('link');progressStyle.rel='stylesheet';progressStyle.href='progress-roadmap.css';document.head.append(progressStyle);
 const validateState=s=>{const a=validateLegacyState(s),b=validateWorkspaceState(s);return {valid:a.valid&&b.valid,errors:[...a.errors,...b.errors]};};
-let progressSceneView=null;
+let progressSceneView=null,fullRouteMapView=null;
 let monthlyScene=null,monthlyBusy=false,aiHelper=null,resultView=null;
 let state,catalog,contract,personality,books,design,standard,revision=0,timer,saveTask=null,generation=0,savedGeneration=0,saveError='',conflict=false,character=null;
 const $=s=>document.querySelector(s);
@@ -97,6 +98,7 @@ function collectActual(editedField=''){
 }
 function showError(e){$('#error-message').textContent=e.message;$('#error-message').hidden=false;}
 function render(focus=true){
+ fullRouteMapView?.dispose();fullRouteMapView=null;
  progressSceneView?.dispose();progressSceneView=null;
  resultView?.dispose();resultView=null;
  aiHelper?.dispose();aiHelper=null;
@@ -125,6 +127,7 @@ function render(focus=true){
  saveStatus();const mood=step==='plan'?'happy':['goals','routes'].includes(step)?'think':'listen';character=mountCharacter($('#docssam'),mood);
  if(step==='overview')aiHelper=mountAIHelper($('[data-ai-slot]')||$('[data-result-roadmap]'),{getState:()=>state});
  if(step==='overview')resultView=mountResultView($('[data-result-roadmap]'),{state});
+ if(step==='overview'&&$('[data-full-route-map]'))fullRouteMapView=mountFullRouteMap($('[data-full-route-map]'),{state,data:{...standard,catalog,contract},onAction:action=>handleFullRouteAction(action).catch(showError)});
  if(step==='overview'&&$('[data-progress-scene]')){const host=$('[data-progress-scene]');try{progressSceneView=mountProgressScene(host,{state,data:standard});}catch{host.textContent='교재별 진도와 원표 비교에서 같은 내용을 볼 수 있어요.';host.dataset.renderer='unavailable';}if(host.dataset.renderer!=='ready')$('[data-source-progress]')?.setAttribute('open','');}
  if(step==='monthly'&&monthlyView(state).mode==='3d'){try{monthlyScene=mountRoadmapScene($('[data-monthly-scene]'),view.projection,{selectedMonth:monthlyView(state).month,onSelect:itemId=>{monthlyView(state).selectedItemId=itemId;changed();render(false);$('#monthly-selected')?.focus();}});}catch(e){$('[data-monthly-scene]').innerHTML='<p>3D 표시를 준비하지 못했습니다. 월표와 그래프에서 같은 내용을 확인할 수 있어요.</p>';}}
  if(focus){$('#main').focus({preventScroll:true});window.scrollTo({top:0});}
@@ -135,6 +138,20 @@ function transitionLearning(transition){
  // Keep the editable scene intact when validating or saving the course fails.
  state=candidate;
 }
+async function handleFullRouteAction(action){
+ if(typeof action!=='string')return;
+ const [kind,value]=action.split(':');
+ if(kind==='purpose'&&['science','gifted','competition','highSchool','other'].includes(value)){collect();advance(state,openDetail(state,value,state.wizard.step));changed();render();await persist();return;}
+ if(kind==='academy'&&['premier','hwangso'].includes(value)){collect();advance(state,openAcademyDetail(state,value,state.wizard.step));changed();render();await persist();return;}
+ if(kind==='direction'&&['current','faster','consolidate','deepen'].includes(value)){state.wizard.quick.learningDirection=value;changed();render();await persist();return;}
+ if(action==='speed'){
+  state.wizard.quick.learningDirection='faster';changed();render();
+  const panel=document.querySelector('.personal-speed-comparison');
+  if(panel){for(let e=panel;e;e=e.parentElement)if(e.tagName==='DETAILS')e.open=true;panel.scrollIntoView({block:'start'});}
+  await persist();return;
+ }
+}
+
 async function closeBrief(){
  const session=briefSession(state),academy=state.wizard.quick.academyDetail;
  if(academy){advance(state,finishAcademyDetail(state,true));}
@@ -240,9 +257,9 @@ async function handleMonthlyAction(button){
   await saveWorkspaceTransition(result.state,incoming=>incoming.workspace?.reports?.some(x=>x.id===result.report.id));render();return;
  }
 }
-document.addEventListener('input',e=>{if(monthlyBusy||!e.target.closest('#step-form')||(e.target.hasAttribute('data-scene-refresh')||e.target.hasAttribute('data-compact-refresh')))return;try{collect(e.target.name);if(e.target.name==='giftedField'){const panel=$('[data-gifted-science]');if(panel)panel.hidden=!/과학/.test(e.target.value);}changed();}catch(err){showError(err);}});
+document.addEventListener('input',e=>{if(monthlyBusy||!e.target.closest('#step-form')||(e.target.hasAttribute('data-scene-refresh')||e.target.hasAttribute('data-compact-refresh')||e.target.hasAttribute('data-compact-book-name')))return;try{collect(e.target.name);if(e.target.name==='giftedField'){const panel=$('[data-gifted-science]');if(panel)panel.hidden=!/과학/.test(e.target.value);}changed();}catch(err){showError(err);}});
 document.addEventListener('change',e=>{if(monthlyBusy||!state?.wizard||!e.target.closest('#step-form')||state.wizard.step!=='monthly'||!e.target.name.startsWith('monthly:'))return;try{collect();changed();if(['monthly:month','monthly:axis','monthly:status','monthly:recordKind','monthly:learningId','monthly:scienceStage','monthly:sourceRow','monthly:candidateStart','monthly:selectedSteps'].includes(e.target.name)){const name=e.target.name;render(false);document.querySelector(`[name="${name}"]`)?.focus({preventScroll:true});}}catch(err){showError(err);}});
-document.addEventListener('change',async e=>{if(e.target.hasAttribute('data-import-state')){try{const file=e.target.files?.[0];if(!file)return;if(file.size>4*1024*1024)throw Error('사본 크기를 확인해 주세요.');const data=JSON.parse(await file.text()),incoming=data.state||data,valid=validateState(incoming);if(!valid.valid)throw Error(valid.errors.join(' / '));const next=ensureWorkspace(ensureQuick(ensureV10(incoming))),fingerprint=s=>JSON.stringify({...s,revision:0});await saveWorkspaceTransition(next,found=>fingerprint(found)===fingerprint(next));render();}catch(err){showError(err);}finally{e.target.value='';}return;}if(!e.target.closest('#step-form'))return;try{collect(e.target.name);if(e.target.name==='reviewCourseId')state.wizard.reviewCourseId=e.target.value;changed();if(e.target.hasAttribute('data-scene-refresh')||e.target.hasAttribute('data-compact-refresh')){render(false);document.querySelector(`[name="${e.target.name}"]`)?.focus({preventScroll:true});await persist();return;}if(['speed:step','speed:startMonth'].includes(e.target.name)){if(e.target.name==='speed:step')for(const key of ['identityConfirmed','scopeConfirmed','editionConfirmed','notStarted'])state.wizard.quick.speedComparison[key]=false;render(false);const panel=document.querySelector('.personal-speed-comparison');if(panel)panel.open=true;await persist();return;}if(['stage','referenceLevel','sourceSection','learningDirection','depthStyle','drillNeed','supportTime','independentWork','reportedAge','target'].includes(e.target.name)||e.target.name.startsWith('baselineLane:')||e.target.name.startsWith('progressLane:')){const name=e.target.name,value=e.target.value;render(false);(document.querySelector(`[name="${name}"][value="${value}"]`)||document.querySelector(`[name="${name}"]`))?.focus({preventScroll:true});return;}if(['sourceCurriculum','volume','unitChoice','isbn','isbnChoice'].includes(e.target.name)&&state.wizard.step.startsWith('detail:')){if(briefSession(state)){const focusName=e.target.name;render(false);document.querySelector(`[name="${focusName}"]`)?.focus({preventScroll:true});await persist();return;}const c=state.courses.find(c=>c.id===state.wizard.pendingCourseId),panel=$('[data-curriculum-detail]'),focusName=e.target.name;if(panel){panel.innerHTML=curriculumDetail(c,books);if(focusName!=='volume')panel.querySelector(`[name=${focusName}]`)?.focus({preventScroll:true});}}else if(e.target.name==='branchCourseId'){const session=state.wizard.v10.branchSession,b=catalog.branches.find(b=>b.id===session.branchId);session.courseId=e.target.value;session.cursor=0;session.qids=branchQuestions(state,b,session.courseId);render(false);}else if(['reviewCourseId','selectedCourseIds'].includes(e.target.name))render(false);}catch(err){showError(err);}});
+document.addEventListener('change',async e=>{if(e.target.hasAttribute('data-import-state')){try{const file=e.target.files?.[0];if(!file)return;if(file.size>4*1024*1024)throw Error('사본 크기를 확인해 주세요.');const data=JSON.parse(await file.text()),incoming=data.state||data,valid=validateState(incoming);if(!valid.valid)throw Error(valid.errors.join(' / '));const next=ensureWorkspace(ensureQuick(ensureV10(incoming))),fingerprint=s=>JSON.stringify({...s,revision:0});await saveWorkspaceTransition(next,found=>fingerprint(found)===fingerprint(next));render();}catch(err){showError(err);}finally{e.target.value='';}return;}if(!e.target.closest('#step-form'))return;try{collect(e.target.name);if(e.target.name==='reviewCourseId')state.wizard.reviewCourseId=e.target.value;changed();if(e.target.hasAttribute('data-scene-refresh')||e.target.hasAttribute('data-compact-refresh')||e.target.hasAttribute('data-compact-book-name')){render(false);document.querySelector(`[name="${e.target.name}"]`)?.focus({preventScroll:true});await persist();return;}if(['speed:step','speed:startMonth'].includes(e.target.name)){if(e.target.name==='speed:step')for(const key of ['identityConfirmed','scopeConfirmed','editionConfirmed','notStarted'])state.wizard.quick.speedComparison[key]=false;render(false);const panel=document.querySelector('.personal-speed-comparison');if(panel)panel.open=true;await persist();return;}if(['stage','referenceLevel','sourceSection','learningDirection','depthStyle','drillNeed','supportTime','independentWork','reportedAge','target'].includes(e.target.name)||e.target.name.startsWith('baselineLane:')||e.target.name.startsWith('progressLane:')){const name=e.target.name,value=e.target.value;render(false);(document.querySelector(`[name="${name}"][value="${value}"]`)||document.querySelector(`[name="${name}"]`))?.focus({preventScroll:true});return;}if(['sourceCurriculum','volume','unitChoice','isbn','isbnChoice'].includes(e.target.name)&&state.wizard.step.startsWith('detail:')){if(briefSession(state)){const focusName=e.target.name;render(false);document.querySelector(`[name="${focusName}"]`)?.focus({preventScroll:true});await persist();return;}const c=state.courses.find(c=>c.id===state.wizard.pendingCourseId),panel=$('[data-curriculum-detail]'),focusName=e.target.name;if(panel){panel.innerHTML=curriculumDetail(c,books);if(focusName!=='volume')panel.querySelector(`[name=${focusName}]`)?.focus({preventScroll:true});}}else if(e.target.name==='branchCourseId'){const session=state.wizard.v10.branchSession,b=catalog.branches.find(b=>b.id===session.branchId);session.courseId=e.target.value;session.cursor=0;session.qids=branchQuestions(state,b,session.courseId);render(false);}else if(['reviewCourseId','selectedCourseIds'].includes(e.target.name))render(false);}catch(err){showError(err);}});
 let submitting=false;document.addEventListener('submit',async e=>{if(e.target.id!=='step-form')return;e.preventDefault();if(submitting)return;submitting=true;e.target.querySelector('button[type=submit]')?.setAttribute('disabled','');try{await finishStep();}catch(err){showError(err);}finally{submitting=false;$('#step-form button[type=submit]')?.removeAttribute('disabled');}});
 document.addEventListener('click',async e=>{
  const button=e.target.closest('button,a[data-workspace]');if(!button)return;
