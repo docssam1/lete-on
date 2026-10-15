@@ -1,5 +1,5 @@
 {
-  "version": "20261015-charles01-pouch-1",
+  "version": "20261015-charles01-opening-1",
   "studentPages": 20,
   "magazineSpreads": 5,
   "assemblyPhases": 10,
@@ -149,24 +149,44 @@
       "sha256": "a901353fa8381a0d916d5870d2c5835db7a3061cf70351ce58f43653ebc4a01c"
     },
     {
+      "path": "assets/welcome-popcorn-01.png",
+      "bytes": 221862,
+      "sha256": "2c99a136d22248c06b6e18f66846b5317aa2d5c4c087765ed9b24318e1154be2"
+    },
+    {
+      "path": "assets/welcome-popcorn-02.png",
+      "bytes": 230203,
+      "sha256": "61ab0eb28433de7b0140aba1a7881559c71e66d6e6d0697b0cc053e913f50c75"
+    },
+    {
+      "path": "assets/welcome-popcorn-03.png",
+      "bytes": 229478,
+      "sha256": "e3451d9a18238380a16d3c17a1c5a21a40b696b2f4d2680783843d89ba0d2860"
+    },
+    {
+      "path": "assets/welcome-popcorn-04.png",
+      "bytes": 195598,
+      "sha256": "7a940850b688eda9d65d664124068bbf81f6a8d4df9e62fdf554077e0baf6b18"
+    },
+    {
       "path": "companion/app.js",
       "bytes": 23721,
       "sha256": "00bd458fb527aa47c82f56abd7fbe197aa2827089a3708c68034c6c2840f6c3a"
     },
     {
       "path": "companion/guide.css",
-      "bytes": 7119,
-      "sha256": "6ce6dde44a51a574cb184ebc41c86f38d48c7ca6e6fbecf404ef3ac45f15cbd4"
+      "bytes": 12323,
+      "sha256": "7417b0ca73d83c4119951fe6fdfe45d4a6a78a665110fb5a765f2ee57097f479"
     },
     {
       "path": "companion/guide.js",
-      "bytes": 10756,
-      "sha256": "d1c52cbe9d390b1a0705bbb6f19e920931903a85434ec7514fbdeb14b153a8e8"
+      "bytes": 14409,
+      "sha256": "5ed6159e87469d7834a7716e6c31378c8e7eca16af182f70d78d4e4a76b2c426"
     },
     {
       "path": "companion/index.html",
-      "bytes": 25557,
-      "sha256": "8891eb41a9949c00e04660a53272cef8b8f0240d6d1563531421b68f195c02a5"
+      "bytes": 25076,
+      "sha256": "423833c0ff13cf519c45646b6a2cc4d3e1986bb4c9cb3277d4bf3fc8eb930bb8"
     },
     {
       "path": "companion/lab-content.js",
@@ -230,8 +250,8 @@
     },
     {
       "path": "companion/reading.js",
-      "bytes": 13673,
-      "sha256": "5b30e81812460457eb716c2f189b4215ea902379e3d55a5c967e0042cc9765dc"
+      "bytes": 13697,
+      "sha256": "49d440c59aa431089bbeb494af10ab0154a372dce97e8ac62a28fc80958f5a9a"
     },
     {
       "path": "companion/styles.css",
@@ -257,6 +277,16 @@
       "path": "companion/vendor/three.module.js",
       "bytes": 668513,
       "sha256": "dcd9e9aefd41f795fe65205a5a650ab2b46abc1d37697f6244da5968b27ccddd"
+    },
+    {
+      "path": "companion/welcome.css",
+      "bytes": 7353,
+      "sha256": "f714a3ed103a3db57405f4a0cd6954cfe1dfadcb1df1e310fad4e88c3e7d1fd6"
+    },
+    {
+      "path": "companion/welcome.js",
+      "bytes": 7856,
+      "sha256": "613326332fb436556bf400985abcff3d7f9e71692c4d6ce7f75c80cdffe7b9fa"
     },
     {
       "path": "index.html",
@@ -389,5 +419,17 @@
     "scopedShake": true,
     "reducedMotion": true,
     "durationSeconds": 1.45
+  },
+  "openingPresentation": {
+    "approvedCharacterIds": [
+      "labconi",
+      "starry",
+      "butterbee"
+    ],
+    "welcomeMotion": true,
+    "nextImmediatelyAvailable": true,
+    "introSourceStories": 4,
+    "introSourceVideos": 2,
+    "storyPages": 3
   }
 }
