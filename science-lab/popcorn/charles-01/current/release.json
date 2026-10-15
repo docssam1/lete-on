@@ -1,5 +1,5 @@
 {
-  "version": "20261015-charles01-pages-1",
+  "version": "20261015-charles01-welcome-audio-1",
   "studentPages": 20,
   "magazineSpreads": 5,
   "assemblyPhases": 10,
@@ -149,6 +149,11 @@
       "sha256": "a901353fa8381a0d916d5870d2c5835db7a3061cf70351ce58f43653ebc4a01c"
     },
     {
+      "path": "assets/welcome-brand.wav",
+      "bytes": 449864,
+      "sha256": "80c4843c29ac8564814c9945758515478e6eb39ac676036c1af38104ea184fe2"
+    },
+    {
       "path": "assets/welcome-popcorn-01.png",
       "bytes": 221862,
       "sha256": "2c99a136d22248c06b6e18f66846b5317aa2d5c4c087765ed9b24318e1154be2"
@@ -180,13 +185,13 @@
     },
     {
       "path": "companion/guide.js",
-      "bytes": 10606,
-      "sha256": "e94d5e234ae359164392fc7e6e8c91474c8069cd16e15d59f81b1bbca7a245f4"
+      "bytes": 10612,
+      "sha256": "9cd623461b411d2af704ce0bb4ae9db2cefd4af8d2ff04bb7324aef2777d59c9"
     },
     {
       "path": "companion/index.html",
-      "bytes": 25215,
-      "sha256": "763701b5c310aba3c7cc64d2fae408d60f9aa179a5fc1262510950526aac7864"
+      "bytes": 25229,
+      "sha256": "81101834b772f9f180cbc4a6cb4cb0c7054ec553210a278a4c82ead638093906"
     },
     {
       "path": "companion/inline-video.js",
@@ -305,13 +310,13 @@
     },
     {
       "path": "companion/welcome.css",
-      "bytes": 7353,
-      "sha256": "f714a3ed103a3db57405f4a0cd6954cfe1dfadcb1df1e310fad4e88c3e7d1fd6"
+      "bytes": 8035,
+      "sha256": "03d268ddca1c0e389af5615e3f6928fd3b5809b2271357df6a0437410ccf5ff6"
     },
     {
       "path": "companion/welcome.js",
-      "bytes": 7856,
-      "sha256": "613326332fb436556bf400985abcff3d7f9e71692c4d6ce7f75c80cdffe7b9fa"
+      "bytes": 12541,
+      "sha256": "df1af1a85f598eabaa7626bb30ccacf511820d6f38816d6826c823efb3ee9561"
     },
     {
       "path": "index.html",
@@ -462,6 +467,14 @@
     "videoFocusOnActualPlayback": true,
     "pauseAndEndRestoreLayout": true,
     "measuredPageTurns": true,
-    "magazineSourceSpreads": 5
+    "magazineSourceSpreads": 5,
+    "welcomeAudio": {
+      "source": "Existing Popcorn Lab advertisement ending",
+      "durationSeconds": 2.55,
+      "unchangedPcmExcerpt": true,
+      "playback": "Once on entry where permitted; explicit sound button otherwise",
+      "motionStartsWithActualPlayback": true,
+      "nextStopsAudio": true
+    }
   }
 }
