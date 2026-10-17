@@ -1,6 +1,6 @@
 # Grade 7 `7.NS.A` unit-screener contract — 2026-10-14
 
-Status: **locked planning artifact only; no diagnostic item, score interpretation, automatic prescription, placement decision, commit, or deployment is released**.
+Status: **the public plan remains locked and answer-free; no operational diagnostic, automatic prescription, placement decision, or deployment is released**. The 2026-10-14 planning candidate was preserved in local commit `306c575c` on 2026-10-17. Private draft authoring now occurs outside Git; the structural preflight cannot authorize release. See the current Mac continuation in `CONTINUATION_HANDOFF_2026-09-09.md` and the appended Mac QA record.
 
 ## Task contract
 
@@ -9,8 +9,8 @@ Status: **locked planning artifact only; no diagnostic item, score interpretatio
 - Learner stage: US Grade 7, approximately ages 12–13.
 - Curriculum scope: registered cluster `7.NS.A.1-3`; nine granular focus IDs from `7.NS.A.1a` through `7.NS.A.3`.
 - Prerequisites to record during item authoring: rational-number meaning, opposites and absolute value, fraction equivalence, signed number-line position, and Grade 6 fraction computation.
-- Authorized in this stage: locked metadata, slot balance, lineage checks, release gates, and tests.
-- Excluded in this stage: learner-facing prompts, choices, answers, solutions, rubrics, score cutoffs, strength/weakness thresholds, automatic assignment, public execution, student records, and third-party contest questions.
+- Authorized in the original public planning stage: locked metadata, slot balance, lineage checks, release gates, and tests. The 2026-10-17 continuation adds original private drafts and structural preflight outside Git, while preserving every public lock.
+- Excluded from this public artifact: learner-facing prompts, choices, answers, solutions, rubrics, score cutoffs, strength/weakness thresholds, automatic assignment, public execution, student records, and third-party contest questions.
 - Definition of done for this planning stage: every official clause has an explicit paraphrased evidence target, every focus has two reserved observations, difficulty and response modes are balanced, the existing diagnostic validator accepts a hypothetical approved projection, and the plan remains answer-free and non-placement.
 
 ## Reused evidence and current capability

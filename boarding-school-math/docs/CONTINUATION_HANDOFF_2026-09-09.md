@@ -1,6 +1,6 @@
 # Boarding School Math continuation handoff
 
-Updated: 2026-09-09 KST
+Updated: 2026-10-17 KST (Mac continuation; older release evidence retained below)
 
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 
@@ -12,6 +12,18 @@ This file is the short restart contract for the Boarding School Math product onl
 4. The current Git branch, working tree, `origin/main`, open pull requests, and deployment runs. Current state always outranks this dated note.
 
 Never delete or move active sessions, source originals, Drive evidence, uncommitted work, or commits that are not on the remote. Do not spawn an agent with inherited long-chat history.
+
+## Current Mac continuation — 2026-10-17
+
+- Work branch: `codex/boarding-g7-nsa-mac-20261017`. The imported 39-file candidate is preserved byte-for-byte in `306c575c4b8ee182ac78fe19c9da6683b9fd51fb`, whose parent is the recorded `75cd785d8329f79995cb6cd48a6a755da1e69788` base. The historical release manifest remains unchanged; its verifier now reads that immutable snapshot, so later changes and a clean checkout are valid.
+- Current scope: Grade 7 `7.NS.A` 36-item workbook plus eight recheck items, the locked 18-slot unit screener, and the paper O/X learning-plan demonstration. These are local implementation states, not a new deployed release. The roadmap demonstration currently uses Grade 6/SASMO pathways; it is not connected to an operational Grade 7 diagnostic.
+- A fetch observed `origin/main` at `8777377c5356f02bab36229d273ba9374ee84118`. No differences from the candidate base were found in `boarding-school-math`, the shared worksheet renderer, or the required Three.js vendor files. No merge, push, deployment, Drive synchronization, or source-chat modification was performed.
+- Mac execution uses the bundled Node 24.19.0 runtime and Playwright Chromium. Relevant sparse dependencies were materialized from the existing checkout. The latest Mac verification and remaining gates are recorded in `docs/GRADE7_NS_A_LOCAL_QA_2026-10-13.md`; older Windows results below are historical.
+- `scripts/validate-private-grade7-ns-a-authoring.cjs` checks a draft pack supplied with `--root` pointing to an absolute directory outside every Git working tree. It preserves the exact 18-slot plan, 14 automatic / 4 teacher scoring split, trilingual content, pending independent review, and locked delivery. Its success means structural preflight only; it never approves mathematical correctness or release.
+- The private draft root and local QA artifact paths are recorded in the existing external Mac continuation receipt. Do not copy private prompts, answers, rubrics, authoring scripts, or assets into this public repository. Actual reviewer/provider/model provenance must be recorded; a planned SOL/TERRA role is not evidence that that model ran.
+- All 18 private item drafts and three calculated SVGs have been written. Structural preflight and a separate exact-rational check of all 18 slots pass, including asset hashes and number-line coordinates. Local review repaired mixed-language copy, negative-numerator notation, an unasked rubric condition, and repeating-decimal acceptance consistency. This is local AI review evidence, not formal item-release approval; every private review/rights flag remains pending and delivery remains locked.
+- Public-exposure regression passes, and current/staged/untracked checks are clean. The new whole-repository assessment-marker history gate remains unverified because this `blob:none` partial clone lacks historical blobs. The audit fails closed without lazy network fetching. A complete local history scan is required before claiming the expanded history gate has passed.
+- Next sequence: complete formal item/rubric/translation/rights and full trilingual item-rendering reviews, then obtain valid immutable item releases before implementing the 18/4 authenticated-delivery adapter. Internal error-signal rationales follow the existing Korean/English scoring contract; Chinese teacher-feedback integration still needs its own localization work. Connect teacher-confirmed priorities to learning resources after those gates; automatic prescription and placement remain disabled.
 
 ## Product direction
 

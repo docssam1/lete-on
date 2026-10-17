@@ -2239,6 +2239,68 @@ test("public audit checks staged, untracked, oversized, and historical markers i
   }
 });
 
+test("public audit detects renamed assessment drafts across the repository, index, untracked files, and history", function () {
+  const workingRoot = createTempGitRepository();
+  const stagedRoot = createTempGitRepository();
+  const historyRoot = createTempGitRepository();
+  const untrackedRoot = createTempGitRepository();
+  const exclusionsRoot = createTempGitRepository();
+  const syntheticDraft = JSON.stringify({ confidentialityMarker: publicAudit.assessmentConfidentialityMarker, fixture: "synthetic audit only" });
+  try {
+    // Neither the original draft filename nor the boarding-school subtree is
+    // needed for detection: a harmless-looking renamed copy must still fail.
+    const renamed = "miscellaneous/release-notes.txt";
+    writeFixtureFile(workingRoot, renamed, "ordinary fixture\n");
+    commitAllFixtureFiles(workingRoot, "track renamed fixture destination");
+    writeFixtureFile(workingRoot, renamed, syntheticDraft);
+    assert.equal(hasFinding(publicAudit.collectFindings(workingRoot), "PRIVATE_ASSESSMENT_MARKER_TRACKED"), true);
+
+    writeFixtureFile(stagedRoot, renamed, syntheticDraft);
+    runFixtureGit(stagedRoot, ["add", "--", renamed]);
+    writeFixtureFile(stagedRoot, renamed, "working-tree marker removed\n");
+    const stagedFindings = publicAudit.collectFindings(stagedRoot);
+    assert.equal(hasFinding(stagedFindings, "PRIVATE_ASSESSMENT_MARKER_TRACKED"), true);
+    assert.equal(hasFinding(stagedFindings, "PRIVATE_ASSESSMENT_MARKER_HISTORY_PRESENT"), false);
+
+    writeFixtureFile(historyRoot, renamed, syntheticDraft);
+    commitAllFixtureFiles(historyRoot, "add synthetic assessment marker fixture");
+    fs.rmSync(path.join(historyRoot, renamed));
+    commitAllFixtureFiles(historyRoot, "remove synthetic assessment marker fixture");
+    assert.equal(hasFinding(publicAudit.collectFindings(historyRoot), "PRIVATE_ASSESSMENT_MARKER_HISTORY_PRESENT"), true);
+
+    writeFixtureFile(untrackedRoot, renamed, syntheticDraft);
+    assert.equal(hasFinding(publicAudit.collectFindings(untrackedRoot), "PRIVATE_ASSESSMENT_MARKER_UNTRACKED"), true);
+    const oversizedPath = "miscellaneous/oversized.bin";
+    writeFixtureFile(untrackedRoot, oversizedPath, "x");
+    fs.truncateSync(path.join(untrackedRoot, oversizedPath), publicAudit.maxUntrackedAuditBytes + 1);
+    assert.equal(hasFinding(publicAudit.collectFindings(untrackedRoot), "PRIVATE_ASSESSMENT_UNTRACKED_AUDIT_UNAVAILABLE"), true);
+
+    // Exempt exact implementation files only, with marker-specific exclusions.
+    publicAudit.assessmentMarkerSourcePathExclusions.forEach(function (pathspec) {
+      writeFixtureFile(exclusionsRoot, pathspec.replace(/^:!/, ""), publicAudit.assessmentConfidentialityMarker);
+    });
+    commitAllFixtureFiles(exclusionsRoot, "add exempt synthetic marker definitions");
+    assert.deepEqual(publicAudit.collectFindings(exclusionsRoot), []);
+    writeFixtureFile(exclusionsRoot, "miscellaneous/validate-private-grade7-ns-a-authoring.cjs", syntheticDraft);
+    assert.equal(hasFinding(publicAudit.collectFindings(exclusionsRoot), "PRIVATE_ASSESSMENT_MARKER_UNTRACKED"), true);
+    fs.rmSync(path.join(exclusionsRoot, "miscellaneous/validate-private-grade7-ns-a-authoring.cjs"));
+    writeFixtureFile(exclusionsRoot, "boarding-school-math/scripts/validate-private-grade6-workbook.cjs", syntheticDraft);
+    assert.equal(hasFinding(publicAudit.collectFindings(exclusionsRoot), "PRIVATE_ASSESSMENT_MARKER_UNTRACKED"), true);
+
+    const unavailable = publicAudit.collectFindings(exclusionsRoot, function (root, argumentsList) {
+      if (argumentsList[0] === "grep" && argumentsList.includes(publicAudit.assessmentConfidentialityMarker)) return { status: 2, stdout: "" };
+      if (argumentsList[0] === "rev-parse" && argumentsList[1] === "--is-shallow-repository") return { status: 0, stdout: "true\n" };
+      return spawnSync("git", argumentsList, { cwd: root, encoding: "utf8" });
+    });
+    assert.equal(hasFinding(unavailable, "PRIVATE_ASSESSMENT_MARKER_AUDIT_UNAVAILABLE"), true);
+    assert.equal(hasFinding(unavailable, "PRIVATE_ASSESSMENT_HISTORY_INCOMPLETE"), true);
+  } finally {
+    [workingRoot, stagedRoot, historyRoot, untrackedRoot, exclusionsRoot].forEach(function (root) {
+      fs.rmSync(root, { recursive: true, force: true });
+    });
+  }
+});
+
 test("private workbook preflight rejects CI, non-JSON files, and a nested junction path", function () {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "gfield-private-workbook-"));
   try {

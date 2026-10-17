@@ -153,3 +153,41 @@ The candidate worktree started at `75cd785d`. A final fetch on 2026-10-14 found 
 3. Push/merge only with separate authorization.
 4. After deployment, verify the public URL, deployed asset hashes, GitHub Pages workflow, desktop/mobile rendering, and A4/Letter print state before changing the candidate status to released.
 5. Do not present this workbook as a placement, promotion, SASMO, Math Kangaroo, or AMC prediction.
+
+## Mac continuation — 2026-10-17
+
+This section supersedes the older commit-pending note above. It records new Mac execution; it does not relabel the earlier Windows evidence as Mac evidence.
+
+### Preserved candidate and local changes
+
+- The 39 imported changed/untracked files were checked against the intake SHA-256 receipt and committed without byte changes as `306c575c4b8ee182ac78fe19c9da6683b9fd51fb` on branch `codex/boarding-g7-nsa-mac-20261017`.
+- The 38-payload historical release manifest remains unchanged. Its five-test verifier now checks the immutable commit, its one recorded parent, exact changed paths, byte lengths, and SHA-256 hashes. Clean checkouts, staging, and later commits no longer cause a false failure; altered historical payload hashes or paths still fail.
+- A fetch observed `origin/main` at `8777377c5356f02bab36229d273ba9374ee84118`. The candidate base and that remote state have no differences in this product, the shared worksheet renderer, or the required Three.js vendor subtree. This is a compatibility observation, not a merge or deployment.
+- Mac browser testing exposed 16px-high study-material links. They now provide a 44px target and visible 3px keyboard focus outline; print keeps compact inline links without the screen focus outline.
+- The private Grade 7 draft preflight is available through `npm run validate:private-grade7-ns-a -- --root <absolute-external-directory>`. It requires all 18 canonical slots, 14 automatic / 4 teacher-scored items, Korean/English/Simplified Chinese learner content, focus-specific author proof methods, exact rational number-line bounds, asset hashes, and pending review/release states. It rejects Git-root ancestry, symlinks, unsafe/oversized files, duplicate JSON keys, and active or externally referencing SVG.
+- Preflight success is structural only: `mathematicsVerified=false`, `independentReviewApproved=false`, `studentOperationAuthorized=false`, and delivery remains locked. It creates neither a release bundle nor a signed form.
+
+### Checks run on Mac
+
+- Runtime: bundled Node 24.19.0 on Darwin arm64; Playwright Chromium 151.0.7922.34. Missing sparse dependencies were materialized from the existing Git checkout, and the matching browser was installed in the local Playwright cache.
+- Updated `pretest`: **76/76 passed**, including five immutable snapshot checks and twelve private-draft preflight checks. All private test content is synthetic; real diagnostic drafts remain outside Git.
+- Shared item-release, signer-payload guard, learning-delivery, and Grade 6 SQL contract tests: **51/51 passed**. These are local static/contract checks, not a remote Supabase test or Grade 7 server deployment.
+- Workbook browser regression: **44/44 passed**. Curriculum foundation browser regression: **7/7 passed**.
+- The initial combined browser run passed 57/58, with only the Mac study-link target-height check failing. After the CSS fix and final print focus correction, the complete learning-plan browser suite passed **7/7**. All 58 covered browser cases therefore pass across the initial and focused repair runs; a single final 58-case run is not claimed.
+- Direct 390px and 1440px learning-plan inspection: no horizontal overflow, no page errors, minimum study-link height 44px, focused outline 3px. A three-page A4 browser PDF was exported, rendered through Poppler, and visually inspected; no clipping or overlap was found, and the screen focus outline is absent from print. The PDF has no form, JavaScript, or encryption. It is a QA export of the same page, not a new product document.
+- Extended public-exposure regression: **2/2 audit tests plus 1/1 existing external-authoring protection test passed**, including a renamed assessment draft outside the product directory and working-tree, staged-only, untracked, deleted-history, exact-exclusion, oversized-file, and shallow-history cases. The assessment marker is checked across the repository; the older workbook scope is preserved.
+- Current, staged, untracked, and existing scoped public checks found no leak. **Whole-repository assessment-marker history is unverified**: this checkout is a `blob:none` partial clone, and the new scan needs historical blobs that are absent locally. The initial 30-second bound failed; a bounded measurement was stopped at about 90 seconds after Git attempted lazy fetches. The audit now disables lazy fetches and fails closed on missing history rather than silently downloading the rest of the repository or claiming a pass. No assessment-history release pass is recorded.
+- Changed JavaScript syntax and `git -c core.whitespace=cr-at-eol diff --check` passed. Original CRLF bytes are preserved rather than normalized during migration.
+- Skills used: `ui-ux-pro-max` with the existing GFIELD design rules for the touch/focus repair, and `pdf` for rendered A4 verification. QA evidence is kept outside Git in the existing Mac continuation evidence location.
+
+### Remaining operational boundary
+
+All 18 original private drafts and three calculated SVGs now exist outside Git. The final private pack passes structural preflight, and a separate Python `Fraction` checker independently recomputes all 18 slots and verifies the three SVGs' hashes, tick positions, point coordinates, movement vectors, and absence of target-answer markers. Exact plan lineage and the 14/4 scoring split remain intact. The final pack hash and local review evidence are recorded only in the external continuation receipt/review record.
+
+Local review repaired four issues: a mixed-script Korean explanation, a numerator sign displayed in the wrong position, a required rubric condition missing from the prompt, and inconsistent acceptance of equivalent repeating-decimal notation. Multiple-choice sign alternatives were also made parallel in form. Learner prompts/options, solutions, and teacher-rubric evidence are trilingual; internal error-signal rationales intentionally follow the existing Korean/English-only shared schema. Chinese teacher-feedback localization is an integration gate, not a completed capability.
+
+Two numeric slots still observe only the entered scalar, even when the prompt requests an inverse or reverse check. Their private evidence explicitly records that scratch-work reasoning is not observed automatically. The 18/4 plan was not silently changed to tuple scoring, and no broader focus mastery is inferred. Local calculation/diagram checks do not replace formal release reviews or the full private-item trilingual desktop/mobile/A4/Letter rendering matrix, which remains pending.
+
+The public 18-slot plan and answer-free authoring manifest retain null item identities. Private authoring and local review are separate from item-release approval, rights approval, authenticated storage/signing, and student operation. No score thresholds, automatic prescription, placement, promotion, or competition prediction were approved. The current roadmap demonstration still uses Grade 6/SASMO pathways rather than actual Grade 7 diagnostic evidence.
+
+Before student operation: complete the independent item/rubric/translation/rights/visual reviews, create valid immutable item releases and the 18-item signed form, implement and verify the separate 18/4 delivery adapter, then connect teacher-confirmed priorities to concept learning/workbooks/recheck. Push, merge, deployment, live verification, and Drive synchronization remain separate actions and were not performed in this continuation.
