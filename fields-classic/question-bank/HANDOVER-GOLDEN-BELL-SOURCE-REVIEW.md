@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261015b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261015b/20261015c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261017a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261017a/20261017b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -209,9 +209,19 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
     번호 오타(28쪽 두 번째 (1)→(2), 30쪽 두 번째 (6)→(7))는 `sourceDiscrepancy`.
   - 검산은 카드로 만들 수 있는 수를 모두 나열, 자리 조건은 10~99를 다 훑음. 32쪽 (4)~(7) 나열은 교사용과 정확히 같음.
   - `sourceHold` S26~S32 7건 삭제, coverage public 152 · hold 26. DB `book-05` 235키 → 285키, sha 앞 8자리 `1c2ca41d`. 캐시 꼬리표 `20261015b`.
+- **5권 묶음 5(슬라이드 35~40 곱셈구구·곱셈 매트릭스 31문항, 2026-10-17)**: 패치 `tools/golden-bell-book05/patch-book05-batch5.mjs`(정답 없음).
+  - 새 단원 `multiplication-table-source`(번호 10, 35~39쪽 25문항, `mode:"paged"`). 새 그림 `source-pair-product`(A—곱—B) ·
+    `source-product-triangle`(○ 3개·□ 3개) · `source-product-ring`(사각형·오각형 고리, 빈 ○은 가·나 순서) · 39쪽 2×2 표는 기존 `source-product-grid`.
+  - 기존 단원 `checkerboard-product-matrix`(번호 2)에 40쪽 표 2~4와 도전 (1)~(3) 6문항을 덧붙이고 `mode:"paged"`로 바꿈. 단원 `sourceHold`(40쪽 보류) 삭제.
+    도전은 칸 글자를 쓰는 문항이라 DB 답을 소문자·대문자 둘 다 받게 넣었다.
+  - **성립하지 않는 원본을 고침**: 40쪽 표 2는 어떤 배치로도 8칸이 채워지지 않아(전수 탐색) 단서 수 두 개를 바꿨다. 바꿀 수 있는 최소 쌍 가운데
+    A·B 답이 교사용과 같아지는 쌍을 골랐다. 39쪽 표 4 아래 단서 하나는 뒤바뀐 오타로 보고 바로잡음. 둘 다 `sourceDiscrepancy`(단서 수만, 답 없음)와 DB `sourceNote`.
+  - 35쪽 01 (1)~(4)는 말로 쓰는 물음이라 고르기형으로 바꿈(보기 안에서 참인 것이 하나뿐인지 검산기가 성질을 계산해 확인). 37쪽 03은 「먼저 찾을 칸」 대신 A·B·C를 모두 묻는다.
+  - 검산은 빈칸에 2~9를 모두 넣어 해가 하나뿐인지 확인(매트릭스는 8칸 순열 전수). 36쪽 짝·40쪽 표 2의 A·B는 교사용 답과 같음.
+  - 개념 화면 첫 장면의 곱셈표가 좁은 칸에서 잘리던 것을 고침: `.b5-src-table`이 화면 폭(`100vw`)이 아니라 **자기 칸 폭**에 맞춰 줄어든다(`container-type` + `cqi` 글자 크기).
+  - `sourceHold` S35~S40 6건 삭제, coverage public 183 · hold 20. DB `book-05` 285키 → 358키, sha 앞 8자리 `0bd563eb`. 캐시 꼬리표 `20261017a`.
 - **다음**: 보류를 주제 묶음으로 슬라이드 순서대로 — ~~수 배열·수열 3~10~~ / ~~연산·달력 11~15~~ / ~~최단거리 18~24~~ / ~~숫자 카드 26~32~~ /
-  곱셈구구·매트릭스 35~40 / 선분·도형식·분수 41~49 / 삼각수·둘레·사각수 51~58 / 가르기 60. 보류 사유 메모 중 「교사용 나열 누락(29쪽 (4))」,
-  「둘째 표 조건 불성립(40쪽)」은 묶음 작업 때 원본으로 다시 확인할 것.
+  ~~곱셈구구·매트릭스 35~40~~ / 선분·도형식·분수 41~49 / 삼각수·둘레·사각수 51~58 / 가르기 60.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
 

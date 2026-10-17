@@ -540,6 +540,39 @@ function sourcePlaceSlots(visual) {
   return `<div class="b5-src-slots" role="img" aria-label="${escapeHtml(`십의 자리 ${visual.op} 일의 자리 ${visual.tail}`)}">${slot("십의자리")}<b>${escapeHtml(visual.op)}</b>${slot("일의자리")}<b>${escapeHtml(visual.tail)}</b></div>`;
 }
 
+// 곱셈 원·네모 그림 공용: ○는 2~9의 수(비면 글자), □는 양쪽 ○의 곱.
+const productCircle = (x, y, v, label) => `<circle cx="${x}" cy="${y}" r="21" class="c${v == null ? " blank" : ""}"/><text x="${x}" y="${y}" class="${v == null ? "lbl" : "v"}">${escapeHtml(v ?? label ?? "")}</text>`;
+const productSquare = (x, y, v) => `<rect x="${x - 21}" y="${y - 21}" width="42" height="42" class="s"/><text x="${x}" y="${y}" class="v">${escapeHtml(v)}</text>`;
+
+// A ─(곱)─ B
+function sourcePairProduct(visual) {
+  return `<div class="b5-src-prod" role="img" aria-label="${escapeHtml(`A와 B의 곱 ${visual.product}`)}"><svg viewBox="0 0 180 70" style="width:min(100%,240px)"><line x1="40" y1="44" x2="140" y2="44"/>${productCircle(40, 44, null, "A")}${productCircle(140, 44, null, "B")}<text x="90" y="24" class="v">${escapeHtml(visual.product)}</text></svg></div>`;
+}
+
+// 세 원(위 A, 왼쪽 아래 B, 오른쪽 아래 C)과 그 사이 곱 네모 셋
+function sourceProductTriangle(visual) {
+  const [ab, ac, bc] = visual.products;
+  const P = { A: [130, 30], B: [40, 180], C: [220, 180] };
+  const mid = (a, b) => [(P[a][0] + P[b][0]) / 2, (P[a][1] + P[b][1]) / 2];
+  const lines = [["A", "B"], ["A", "C"], ["B", "C"]].map(([a, b]) => `<line x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[b][0]}" y2="${P[b][1]}"/>`).join("");
+  const sq = [[mid("A", "B"), ab], [mid("A", "C"), ac], [mid("B", "C"), bc]].map(([[x, y], v]) => productSquare(x, y, v)).join("");
+  const circ = ["A", "B", "C"].map((k) => productCircle(P[k][0], P[k][1], visual.values?.[k], k)).join("");
+  return `<div class="b5-src-prod" role="img" aria-label="${escapeHtml(`세 원 A, B, C와 곱 ${visual.products.join(", ")}`)}"><svg viewBox="10 4 240 204" style="width:min(100%,300px)">${lines}${sq}${circ}</svg></div>`;
+}
+
+// 사각형·오각형 고리: 꼭짓점 ○(circles, 비면 null → 가·나 글자), 변 가운데 □(squares[i] = circles[i]×circles[i+1])
+function sourceProductRing(visual) {
+  const n = visual.circles.length;
+  const pts = n === 4 ? [[40, 40], [220, 40], [220, 200], [40, 200]]
+    : Array.from({ length: n }, (_, i) => { const a = -Math.PI / 2 + (2 * Math.PI * i) / n; return [150 + 110 * Math.cos(a), 135 + 110 * Math.sin(a)]; });
+  const lines = pts.map((p, i) => { const q = pts[(i + 1) % n]; return `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}"/>`; }).join("");
+  const sq = pts.map((p, i) => { const q = pts[(i + 1) % n]; return productSquare((p[0] + q[0]) / 2, (p[1] + q[1]) / 2, visual.squares[i]); }).join("");
+  let blank = 0;
+  const circ = pts.map((p, i) => productCircle(p[0], p[1], visual.circles[i], visual.circles[i] == null ? ["가", "나", "다"][blank++] : "")).join("");
+  const view = n === 4 ? "10 10 240 220" : "15 0 270 270";
+  return `<div class="b5-src-prod" role="img" aria-label="${escapeHtml(`곱셈 고리: 원 ${visual.circles.map((v) => v ?? "빈칸").join(", ")} / 네모 ${visual.squares.join(", ")}`)}"><svg viewBox="${view}" style="width:min(100%,300px)">${lines}${sq}${circ}</svg></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -567,6 +600,9 @@ export function book05Markup(visual) {
     case "source-route": return sourceRoute(visual);
     case "source-loop-routes": return sourceLoopRoutes(visual);
     case "source-place-slots": return sourcePlaceSlots(visual);
+    case "source-pair-product": return sourcePairProduct(visual);
+    case "source-product-triangle": return sourceProductTriangle(visual);
+    case "source-product-ring": return sourceProductRing(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);
