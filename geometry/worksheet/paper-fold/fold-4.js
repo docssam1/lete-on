@@ -2,6 +2,7 @@
 function render(d){
   questionNumber += 1;
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+  cv.height=d.kind==='game-reverse'?600:520;
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
   if(d.kind==='game-reverse') renderReverseGame(ctx,d); else if(d.kind==='paper-turn') renderTurnGame(ctx,d); else if(d.kind==='game-level') renderSharedGame(ctx,d); else if(d.kind==='hole') renderHole(ctx,d); else if(d.kind==='stack') renderStack(ctx,d); else if(d.kind==='fold-top') renderFoldTop(ctx,d); else if(d.kind==='diag-number') renderDiagNumber(ctx,d); else if(d.kind==='pieces') renderPieces(ctx,d); else if(d.kind==='punch') renderPunch(ctx,d); else if(d.kind==='num-inverse') renderNumInverse(ctx,d); else if(d.kind==='unfold-shape') renderUnfoldShape(ctx,d); else renderNumber(ctx,d);
   document.getElementById('info').textContent=d.info+' · 정답 '+d.answer;
@@ -137,8 +138,21 @@ function previewProblem(){
   return buildProblem(previewMode,selectedDifficulty());
 }
 
-function pageHtml(items,pageNo,totalPages,title,answers){
-  return `<section class="sheet-page${answers?' answer-page':''}"><header class="sheet-head"><h2>${title}${answers?' · 정답과 풀이':''}</h2><div class="sheet-meta">${pageNo} / ${totalPages}</div></header><div class="problem-grid">${items.map(item=>`<article class="problem-card"><img src="${answers?item.solutionImage:item.image}" alt="${item.no}번 색종이 접기 문제"><div class="answer-line">${answers?`정답: <span class="answer-value">${item.answer}</span>`:'답: __________'}</div>${answers?`<div class="solution-text"><strong>${item.no}번 풀이</strong> ${item.solution}</div>`:''}</article>`).join('')}</div></section>`;
+function updateRepeatNotice(items){
+  const notice=document.getElementById('repeatNotice');
+  const reverseItems=items.filter(item=>item.problem.kind==='game-reverse');
+  const total=reverseItems.length;
+  notice.hidden=total===0;
+  if(!total){ notice.textContent=''; return; }
+  const unique=new Set(reverseItems.map(item=>item.problem.source.id)).size;
+  const repeated=total-unique;
+  notice.textContent=repeated
+    ? `접는 방법 거꾸로 찾기 ${total}문항: 서로 다른 문제 ${unique}개, 반복 ${repeated}문항이 포함됩니다.`
+    : `접는 방법 거꾸로 찾기 ${total}문항은 모두 서로 다른 문제입니다.`;
+}
+
+function pageHtml(items,pageNo,totalPages,title,answers,readable=false){
+  return `<section class="sheet-page${answers?' answer-page':''}${readable?' reverse-sheet':''}"><header class="sheet-head"><h2>${title}${answers?' · 정답과 풀이':''}</h2><div class="sheet-meta">${pageNo} / ${totalPages}</div></header><div class="problem-grid">${items.map(item=>`<article class="problem-card"><img src="${answers?item.solutionImage:item.image}" alt="${item.no}번 색종이 접기 문제"><div class="answer-line">${answers?`정답: <span class="answer-value">${item.answer}</span>`:'답: __________'}</div>${answers?`<div class="solution-text"><strong>${item.no}번 풀이</strong> ${item.solution}</div>`:''}</article>`).join('')}</div></section>`;
 }
 
 function generateSheet(){
@@ -157,14 +171,17 @@ function generateSheet(){
     const image=canvas.toDataURL('image/jpeg',.9);
     items.push({no:i+1,problem,answer:answerText(problem),solution:solutionText(problem),image,solutionImage:solutionImage(problem,image)});
   }
-  const perPage=3, pages=[];
+  // 레벨 3가 섞인 경우도 같은 배율을 유지해 기호와 지시문을 줄이지 않는다.
+  const readable=items.some(item=>item.problem.kind==='game-reverse');
+  const perPage=readable?2:3, pages=[];
   const pageCount=Math.ceil(items.length/perPage);
-  for(let i=0;i<items.length;i+=perPage) pages.push(pageHtml(items.slice(i,i+perPage),i/perPage+1,pageCount,`GFIELD 색종이 접기 · ${title}`,false));
+  for(let i=0;i<items.length;i+=perPage) pages.push(pageHtml(items.slice(i,i+perPage),i/perPage+1,pageCount,`GFIELD 색종이 접기 · ${title}`,false,readable));
   if(document.getElementById('answers').checked){
-    const answerPerPage=6, answerPages=Math.ceil(items.length/answerPerPage);
-    for(let i=0;i<items.length;i+=answerPerPage) pages.push(pageHtml(items.slice(i,i+answerPerPage),i/answerPerPage+1,answerPages,`GFIELD 색종이 접기 · ${title}`,true));
+    const answerPerPage=readable?2:6, answerPages=Math.ceil(items.length/answerPerPage);
+    for(let i=0;i<items.length;i+=answerPerPage) pages.push(pageHtml(items.slice(i,i+answerPerPage),i/answerPerPage+1,answerPages,`GFIELD 색종이 접기 · ${title}`,true,readable));
   }
   document.getElementById('sheetRoot').innerHTML=pages.join('');
+  updateRepeatNotice(items);
   previewProblem();
 }
 /* HF variation 어댑터: machineReadable → 엔진 파라미터, 확정 재현 */

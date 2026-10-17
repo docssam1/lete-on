@@ -168,11 +168,11 @@ engine/threads/*.js 로 구현되어 있고, 유아용 NL 스레드(nl.js)가 �
 
 - "어드밴스는 중급 내용도 아니다" → **척추를 창의 전략에서 연산 진도로 뒤집음**.
 - 새 과정표: Level 1~3 · 과정 1~25 (`과정-로드맵.md`). 주차 = 새 유형 1~2 + 누적 혼합
-  드릴 4~6 + 4주차 Test(80%). 상위권 페이스 = 월 1과정(6세 상위권 실측 기준).
+  드릴 4~6 + 4주차 Test(80%). 빠른 아이들 참고 페이스 = 6세 3월 과정 1부터 월 1과정(원장 설명; 실측 통계나 보편 규준 아님).
 - 기존 창의 유닛 33개는 폐기하지 않고 전부 새 과정표의 마법 슬롯에 재배치.
 - 신규 소요: 검산·역연산·평균 유형, 다함식 위젯 3종(수직선 점프·십진블록·전략 병렬 비교),
   정체 감지→보강 루프(2회 연속 미달 시 보강 드릴 자동 삽입 + 시각화 단계 하강).
-- 참조 원천: 두뇌로 과정표·6세 상위권 페이스·다함책 드릴 형태·필즈 운영 로드맵
+- 참조 원천: 두뇌로 과정표·빠른 아이 진도(원장 설명)·다함책 드릴 형태·필즈 운영 로드맵
   (Drive `1adIC-1P6IlTBn2bzb8OgNSELJBK_pUvQ`)·학부모 정체 고충.
 
 
@@ -2740,3 +2740,89 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 최소 14일 범위·4일 관찰, 정확도·반복 저조·미입력·전체/부분 점수 상충을 확인하고 증량 비교를 잠급니다. 유지 기준은 실제 주 평균 학습일이며 마지막 학습 이후의 빈 날도 분모에 포함합니다. 이후 +5분 또는 주 +1회를 최소 2주에 걸쳐 비교할 뿐 학습량/횟수/속도·진도·점수·코인을 자동 변경하지 않습니다.
 
 세부 계약·검사·제한: `docs/learning-evidence-20261015.md`. 개별 유닛/몸풀기 전부의 과거 이력 수집이나 실제 계정의 기기 간 동시 이벤트 병합까지 완료한 것은 아닙니다. 원본 교재·과정·문항·다른 프로젝트는 그대로입니다. main/배포는 이 브랜치 검증과 별도입니다.
+
+### 2026-10-15 후속 — 진입 중복 제거·교재 선택 복원
+
+앞 절 기록 연결은 이후 PR #336/main `66523318`과 Pages `38700610946`로 배포됐고, 공개 파일9개 및 가상 프로필7조건을 확인했습니다. 다음 변경은 별도 브랜치 `codex/numbers-intake-books-20261015`이며 아직 공개 반영이 아닙니다.
+
+원장님 ‘나이에 맞게가 현행 진도 아냐?’ 정정을 반영해 나이·학년 / 공부한 교재 / 처음 시작으로 통합했습니다. 나이는 먼저 선택하고 실제 학년이 다를 때만 변경합니다. 중복된 출발점 강조 상자·추가 선택을 줄이고 기존 교재 API와 소마셈·기적·구몬 목록을 다시 연결했습니다. 두뇌로는 전체 단계 대응이 없어서 교재 표기 입력+내용 확인으로 두었습니다. `docs/placement-book-provenance.md` 맨 위가 현재 범위입니다.
+
+고정20·6/10/4, 진행 중 문항/응답, 학습 기록·목표·진도·분량·코인은 유지합니다. `mixed-20-v1`은 바꾸지 않고 설정 화면만 마이그레이션합니다. 확인되지 않은 권·레벨을 자동 과정으로 환산하지 않습니다. 별도 작업판이나 새 교육과정은 만들지 않았습니다. 사용 스킬은 learning-ui-editorial(중복 제거·읽기 순서)과 test-playable-web-games(실제 선택·재접속·보존)입니다.
+
+로컬 검증: 진입44·종이30패턴 및 학년 변경/교재 가드, 통합189교재 선택(확인6/직접확인183), 기존 경로7,938·유지57,750, 기록/예측108+, 과정/단계/숫자/연결self-test33 통과. 실제 진단·종이·3D8조건과 기록 연결6조건(한·영·중, 390/1280px)도 통과했습니다. 새 모바일 화면을 육안 확인했으며 원격 쓰기는 가상 프로필에서 차단했습니다. 셸 시작 지연·임시 폴더 미준비·합친 경로를 고르지 않은 옛 검사 순서는 재실행에서 해소했습니다. 전수 인쇄·실물 기기·교재 전체 대응·교사 검수는 미실행입니다.
+
+증거는 작업 기기의 `E:\Codex\work\numbers-intake-books-20261015\`의 `browser`, `records`, `QA.md`에 있습니다. **이 진입 화면 변경은 로컬 기능 브랜치 상태이며 main 미반영·미배포**입니다.
+
+## Windows C: 작업 연결 — 2026-10-16
+
+- 이 채팅의 본 프로젝트는 Numbers Magic, 저장소는 `docssam1/lete-on`의 `number_magic/`다. 최근 스킬지도/OpenCrab 조사는 별도 부수 작업이며 과학·황소 초등 프로젝트를 이어받은 것이 아니다.
+- 새 공용 지침 정본: `C:/Users/user/.codex/shared/COMMON_WORKFLOW.md`, `CODEX_STORAGE_NOTICE.md`, `PROJECT_SKILL_ROUTING.md`. 현재 User/실행 CODEX_HOME은 `C:/Users/user/.codex`, 실제 운영 스킬/SQLite 위치는 `C:/Users/user/AppData/Local/GFIELD/CodexSqlite-20261016`이다. 위치 확인만 했으며 로그인·DB·대화·설정·캐시는 복사/초기화하지 않았다.
+- 원래 작업본: `E:/Codex/worktrees/lete-on-numbers-town-20261014`. 원본 HEAD `6b0d442f3951503624156c3ccda663f952bc712c`, 브랜치 `codex/numbers-intake-books-20261015`. tracked/untracked/Numbers ignored 변경과 stash가 없음을 확인했다. 원본은 이동·삭제·변경하지 않는다.
+- 사용할 C: 작업본: `C:/Users/user/Documents/Codex/Projects/lete-on-numbers`. 같은 브랜치·HEAD를 C: Git에 받아 독립 작업 디렉터리로 연결했다. detached HEAD가 아니다. Git 공통 저장소는 `C:/Users/user/Documents/Codex/Projects/lete-on/.git`에 있으므로 이 부모 저장소도 삭제하지 않는다. E: Git alternates나 junction에 의존하는 코드 작업본이 아니다.
+- 준비돼 있던 `C:/Users/user/Documents/Codex/Projects/lete-on`은 황소 초등용 후보로 HEAD `6bd5ef98af3c4a741ea23b9188085195067c618a`의 detached/clean 상태였다. 그 작업 디렉터리의 HEAD·파일은 바꾸지 않고 C: Git 객체·브랜치와 새 worktree 등록만 추가했다. 다른 채팅의 cwd/진행 상태를 자동 변경하지 않았다.
+- 포함한 코드: `number_magic/`, `world-explorer/vendor/`, `geometry/worksheet/`, `fields-classic/calculus/`와 루트 지침. 대형 원자료·예전 검수 폴더·환경파일·의존성을 무작정 복제하지 않았다.
+- 명령 작업 디렉터리: 제품 명령은 위 C: 저장소, 검사 명령은 그 안 `number_magic/`. 이 채팅의 앱 cwd가 바탕화면에서 자동 변경됐다는 뜻은 아니며 매 명령에 workdir를 명시한다. 새 결과는 C: `Projects/_checks/numbers-c-primary-20261016/`에 둔다.
+- C: 여유는 시작 약 29.25GiB, 코드 준비 후 약 29.00GiB였다. 최신 지침의 15GiB 여유 기준을 충족했다. 원본·세션·다른 작업자 프로세스는 삭제/종료하지 않았다. 명령줄에 해당 경로가 드러난 다른 프로세스는 없었지만 이것이 전 작업자의 미사용을 보증하는 것은 아니다.
+- 원본과 필요한 추적 파일 1,479개를 대조했다. 1,463개는 바이트 일치, 16개는 CRLF/LF만 달랐고 내용은 모두 같았다. 빈 새 worktree의 최초 index가 아직 채워지지 않아 삭제 상태로 보인 것은 `read-tree -mu HEAD`로 최초 체크아웃을 완료해 해소했으며 사용자 파일을 삭제한 것이 아니다.
+- C:에서 진입·통합·기존 경로·자동 계획·학습 기록·예측·ladder·stages·about-stats·roadmap-sync self-test 총 10종 exit 0. `verification.json`과 개별 로그가 위 C: 검사 폴더에 있다. 새 문항·편성·채점 변경은 없으므로 이전 유효한 브라우저/인쇄 근거는 보존한다. 이번 위치 연결에서 브라우저·전수 A4·실물 기기 검사를 새로 실행한 것은 아니다.
+- 아직 E:에 남은 의존 자료: 기존 검수 캡처·PDF/보고서, Playwright 도구 일부, 이 대화에서 받은 원자료/첨부 일부. G:/Drive 교재 원본은 읽기 전용이다. 장기 보관은 Google Drive 5TB이나 이번에는 업로드·삭제하지 않았다. sessions/archived 정션도 E:를 사용하므로 USB 분리나 E: 전체 정리를 안내하지 않는다.
+- 이어갈 미완 범위: 진입 중복 제거·교재 선택 변경 `6b0d442f`는 아직 main 미반영/미배포다. 이후 받은 두뇌로 사진은 Level1=과정1~10, Level2=11~16, Level3=17~25의 새 근거이며 목록 등록은 아직 하지 않았다. ‘6세 3월 과정1, 한 달 한 과정’은 매우 빠른 참고 사례이지 보편 연령 기준·자동 증량 근거가 아니다. 두뇌로 번호와 우리 C번호를 동일시하지 않는다.
+- 이번 추가는 C: 연결 인수인계 문서만의 로컬 미커밋 변경이다. 푸시·PR·main 병합·재배포는 하지 않았다. 감사 스킬을 사용해 파일·Git·실행 근거를 대조했으며 별도 AI 작업/유료 API를 시작하지 않았다.
+
+## Mac mini: 두뇌로 교재 선택 후속 — 2026-10-17
+
+- 실행 기기/담당: Mac mini의 Codex (GPT-6). 저장소 `docssam1/lete-on`, 작업본 `/Users/docssam/.codex/worktrees/115e/lete-on`, 브랜치 `codex/numbers-intake-books-20261015`, 시작 HEAD `6b0d442f3951503624156c3ccda663f952bc712c`. 기존 `/Users/docssam/Developer/GFIELD/lete-on` 주 작업본의 파일·HEAD는 건드리지 않았다. 구현·문서 담당은 Codex였고 별도 Codex 에이전트가 읽기 전용 근거 확인과 최종 코드 검토를 했다. Claude에는 전달하거나 작업을 맡기지 않았다.
+- Windows 인수인계 두 파일의 스냅샷을 원래 바이트로 복원·대조했다. 원본은 `/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-primary-20261016/numbers-windows-intake/`에 SHA-256 `02cc1a23a47041f012e79115a2f5b2e59bb8a2e2f3010474c61b17a604863c35`(GPT 인수인계), `544df0141fd3c501f2b36ae2efe373c4221f0332977a01f4070991b0d9445e53`(HANDOFF)로 보존했다. Git에서 읽기 쉬운 작은 변경으로 남기려고 이번 작업본의 두 문서는 LF로 정규화하고 이 절을 추가했다. 보존 스냅샷은 수정하지 않았다.
+- 두뇌로 Level 1/2/3을 각각 교재 과정 1~10/11~16/17~25로 목록에 추가하고 기존 `contents` ID는 다른 표기용으로 유지했다. 근거는 2026-10-16 Windows 인수인계에 기록된 사용자 제공 사진 요약이다. 사진 원본은 현재 Mac 작업본과 지정된 Drive 프로젝트 위치에서 직접 확인하지 못했다. 교재 번호를 이 앱의 C과정·연령 기준으로 환산하지 않고, 실제 공부한 주제를 별도 선택하게 했다. 6세 3월 과정1·한 달 한 과정은 빠른 사례로만 남긴다.
+- 교재 경로의 숨은 기본 진행값 `middle`을 제거했다. 확인된 좁은 기적의 계산법 두 단원만 진행 입력 없이 같은 시작 후보를 돌려주며, 알 수 없는 진행값은 수동 확인으로 되돌린다. 두뇌로 모든 레벨은 자동 기준·coverage 없이 `topic-confirmation`이다. 레벨 변경 시 앞 레벨의 교재 표기와 선택한 주제를 비우고, 교재 번호와 앱 과정 번호가 다르다는 안내를 한·영·중 화면과 접근성 설명에 넣었다. 바뀐 스크립트의 브라우저 캐시 키도 갱신했다. 기존 과정·문항·채점·학습 기록은 수정하지 않았다.
+- 로컬 검증: 진입 44/종이 30패턴, 교재 통합 198선택(자동 6/직접 확인 192), 경로 7,938사례, 브라우저 8조건(한·영·중, 390/1280px 포함) 모두 통과. 외부 쓰기 0. 결과 화면은 `/Users/docssam/Documents/Codex/GFIELD-Hermes/state/runs/numbers-intake-books-mac-20261017/ko-390-dunoro-topic.png`에서 확인했다. 별도 에이전트의 읽기 전용 최종 검토에서도 차단 오류가 없었다. `git diff --check` 통과. 실물 교재 사진 원본 대조·실물 기기·교사 검수는 미완이다.
+- 이 절은 기능 브랜치의 작업·검증 기록이다. `main` 반영과 공개 배포는 별도 상태이며, 원본 사진 미확인 상태에서 두뇌로의 자동 과정 대응을 확장하지 않는다.
+
+## Mac mini 후속 공개 반영과 Windows 넘버스 인계 — 2026-10-17
+
+- 앞 절의 기능은 PR [#343](https://github.com/docssam1/lete-on/pull/343)으로 `main`의 `8777377c5356f02bab36229d273ba9374ee84118`에 병합됐다. GitHub Pages [실행 39005729697](https://github.com/docssam1/lete-on/actions/runs/39005729697)은 성공했고, 공개 파일의 바이트 일치 및 공개 390px 브라우저 동작(외부 쓰기 0)을 확인했다. 앞 절의 “기능 브랜치·미배포”는 당시 상태다.
+- 구현은 두뇌로 Level 1/2/3 교재 과정 구간과 학습 주제 수동 확인, 숨은 기본 진행값 제거까지다. 교재 과정 번호를 앱 C과정·나이로 자동 환산하지 않는다. 기존 과정·문항·채점·진도·학습 기록·점수·코인은 유지했다. 근거와 매핑 제한은 `docs/placement-book-provenance.md`를 따른다.
+- Mac 로컬 검사에서 진입 44, 교재 선택 198, 경로 7,938, 브라우저 8조건을 통과했다. 실물 교재 사진 원본 대조·실물 기기·교사 검수는 미완이며, 추가 검수가 필요할 때만 Claude에 요청한다.
+- Windows C: 원본 작업본 `C:\Users\user\Documents\Codex\Projects\lete-on-numbers`는 인계 시 `codex/numbers-intake-books-20261015` / `6b0d442f3951503624156c3ccda663f952bc712c`이고 인수인계 문서 2개가 미커밋이었다. Mac에서 기존 `number_magic/HANDOFF.md` 끝에 이 결과를 SSH로 덧붙이고 독립 읽기에서 SHA-256 `361420bdb6dd720ecbee0a83fd3e9734fe3ab3b1ed0dc5161e938d137f0444f7`을 확인했다. Windows 코드의 fetch·pull·checkout·reset은 하지 않았고 E: 원본과 C: 미커밋 문서를 보존했다. Windows Codex 대화로 직접 메시지를 보내는 시도는 원격 호스트 오류로 실패했으므로, 대화가 실제 이 파일을 읽었는지는 확인하지 못했다.
+
+## 사용자 제공 두뇌로 사진 원본 직접 대조 — 2026-10-17
+
+- Mac에서 `image(20261017-061239).png` 원본(1044×709px·1,273,751바이트, SHA-256 `664af28885e475e90c94f8dc5db5a317f1fb7951df7212c1de0fbe2c19791301`)을 실제 열어 보았다. Level 1 과정 1~10, Level 2 과정 11~16, Level 3 과정 17~25가 `data/placement-books.js`의 현재 라벨과 일치한다. 각 과정에 1~4주차 표기가 보인다. 당시 “사진 원본 미확인” 기록은 그때의 상태이며 이번 직접 대조가 최신이다.
+- 원본은 기존 [Drive 수의마법 검수 폴더](https://drive.google.com/drive/folders/14mt8MI-_M1y82er09tloHCSBkh8cpd0B)의 [파일](https://drive.google.com/file/d/1kBoTuAFS_bKijicnzZP3F7jtzWvI-UZG/view)(ID `1kBoTuAFS_bKijicnzZP3F7jtzWvI-UZG`)에 보관했다. 업로드 뒤 내려받아 바이트 수와 SHA-256이 원본과 같음을 확인했다. 사진 파일 자체는 공개 Git에 넣지 않았다.
+- 사진에는 표지·판본·발행일·나이/월령 규준이 보이지 않고 작은 교육내용 글씨는 전사 근거로 쓰기 어렵다. “6세 3월 과정 1·한 달 한 과정”은 별도 사용자 설명이지 사진에 인쇄된 기준이 아니다. 세부 주제·문항이나 앱 C과정과의 자동 대응은 검증되지 않았으므로 기존 수동 주제 확인과 `sourceVerification: unconfirmed`을 유지한다. 자세한 경계는 `docs/placement-book-provenance.md`를 따른다.
+- 기능 코드는 변경하지 않았다. 기존 진입 검사(44 시작·종이 30)와 교재 통합 검사(81 단계·198 선택, 자동 6·직접 확인 192)를 Mac에서 다시 실행해 통과했다. 실물 교재 전체·판본·교사 검수는 여전히 미완이다.
+- Windows C: 기존 `number_magic/HANDOFF.md`에도 사진 확인 결과와 Drive 위치를 SSH로 덧붙였다. 독립 읽기에서 SHA-256 `0d3e3dd3c81257d24c949a8dea7f5dcc7847165d3667bf2fbfa9ab549fabce40`과 원래 HEAD `6b0d442f`·미커밋 문서 2개 상태를 확인했다. Windows 대화가 이 추가 기록을 실제 읽었는지는 확인하지 못했다.
+
+## 빠른 아이들 두뇌로 진도 설명 재확인 — 2026-10-17
+
+- 원장 설명: **빠른 아이들은 6세 3월에 두뇌로 과정 1을 하고, 이후 한 달에 1과정씩 진행한다.** 이는 사진에 적힌 연령·월별 표나 실측 통계가 아니라 별도의 사용자 설명이다. 모든 6세의 필수 진도·입학 기준·우리 앱 C과정 자동 대응이나 학습량 자동 증량으로 사용하지 않는다.
+- 오래된 `과정-로드맵.md`의 “상위권 표준 속도”, “표준 1.5~2개월”, 사진을 월별 진도의 출처로 본 문구와 진단 문서의 출처 표기를 바로잡았다. 앱의 두뇌로 수동 주제 확인과 진단 20문항·실제 학습 기록 관찰 정책은 유지한다.
+- Windows C: 기존 `number_magic/HANDOFF.md`에도 이번 설명을 덧붙이고 독립 읽기에서 SHA-256 `fea18bab05c0c11bfca0f16143333f449397d24f31546570da9ff091e7500785`를 확인했다. 코드 HEAD `6b0d442f`와 원래 미커밋 문서 2개 상태는 유지했다. Windows 대화의 실제 열람은 미확인이다.
+
+## Mac Claude `number_magic_map` 독립 검수 후속 — 2026-10-17
+
+- 원장 요청으로 Mac Claude Desktop의 기존 `number_magic_map` 대화에 Codex가 직접 검수를 요청했다. 화면상 실행 환경은 **Claude 클라우드**, 모델은 **Opus 5.5(높음)**이었다. 기준은 `main` 병합 커밋 `a778fb6e474a19761020156b02f761dc21baa662`이며, Claude는 GitHub 파일·PR 패치·이력과 기존 Drive 사진을 읽기 전용으로 대조했다. Claude에 저장소·Drive 파일 편집, 커밋, 푸시를 맡기지 않았다.
+- Claude 판정: 두뇌로 선택지 4개(세 Level과 기타 항목)는 모두 `topic-confirmation`, `baselineId:null`이고 진단 시작점이나 학습량을 자동 배정하지 않는다. 6세 월별 설명도 제품 코드에 없다. 이 범위의 배포 차단 결함은 없었다. 대신 예전 문서의 두뇌로 기법 동일성 단정, 현재 화면과 다른 진입 경로·교재 선택 수, 과정 번호 혼동을 지적했다.
+- Claude는 Drive 사진을 내려받아 1,273,751바이트·1044×709px·SHA-256 `664af28885e475e90c94f8dc5db5a317f1fb7951df7212c1de0fbe2c19791301`을 독립 확인했다. Level 3 과정 17~20 주차 칸을 확대해 ST곱·AS곱·99단 곱·19단 곱과 제곱수 범위 **코드명 일부**를 판독했다. 앞 절의 “작은 글씨는 전사 근거로 쓰기 어렵다”는 당시 보수적 판단이며, 이번 확대 판독이 최신이다. 코드의 뜻, 창의수연 고급 A와의 기법 동일성, 실제 학원 운영, 판본·발행일은 여전히 미확인이다.
+- Codex는 `CURRICULUM-SOURCES.md`·`고급-목차.md`의 “정확히 같은 계열/교차 근거” 표현을 설계 판단과 사진의 직접 근거로 분리했다. `CURRICULUM_DESIGN.md`·`과정-로드맵.md`의 두뇌로 세션 운영 동일성 단정을 낮추고, 후자의 과정 1~25가 당시 앱 설계안 번호이며 교재·현재 C과정 대응표가 아님을 명시했다. `docs/placement-design.md`·`docs/placement-verification.md`·`docs/placement-book-provenance.md`의 진입 경로와 측정 시점을 현재 화면·검사 결과에 맞췄다. `docs/creative-stages-design-2026-09-26.md`의 나선형 복습은 우리 앱 설계로 표기했다. 제품 코드·교재 원본·채점·진도는 수정하지 않았다.
+- Mac Codex 재검: `check-placement-intake.js`는 `starts=44 paperPatterns=30`, `check-placement-integration.js`는 `stages=81 bookSelections=198 mapped=6 manual=192`로 각각 exit 0. Claude는 이 두 검사를 직접 실행하지 않았으므로 검사 실행 근거는 Mac Codex 로그다. 실물 교재 판본·실기기·교사 검수는 여전히 미완이다. 이 문서 수정의 원격 반영·배포 상태는 해당 PR과 Actions 기록으로 확인한다.
+
+## 두뇌로 교재 과정 번호 직접 선택 — 2026-10-17
+
+- 원장 후속 요청: 두뇌로의 실제 **교재 과정 번호**를 Level 안에서 선택·기록하고, 이후 로드맵 비교에 사용한다. Level 1은 1~10, Level 2는 11~16, Level 3은 17~25만 제공한다. `contents` 및 다른 교재에는 이 번호 선택을 표시하지 않는다.
+- 선택값은 진단의 `selection.bookCourseNumber`에 숫자로 저장하며 미선택은 `null`이다. 교재·Level 변경 시 지우고, 진단 완료 뒤 `placement.selection`에 보존한다. 결과·로드맵에서는 교재 Level/번호와 이 앱의 과정 번호를 따로 표시한다. 교재 번호만으로 자동 시작점을 배정하지 않고 실제 배운 내용을 계속 직접 확인한다. 월별 진도 계산과 두 번호 간 자동 대응은 후속 로드맵 비교에서 근거를 갖춰 결정한다.
+- 로컬 검수: `check-placement-intake.js`와 `check-placement-integration.js` 통과. `check-diagnosis-observe-browser.js`는 한·영·중 × 390/1280 화면, Level 변경 시 번호 초기화, 숫자 저장, 시작점 수동 확인, 결과·로드맵 표시 및 재진입 보존을 포함해 `cases=8 externalWrites=0`으로 통과했다. 공개 배포 여부는 해당 PR과 Pages 기록으로 확인한다.
+
+## 그림으로 보는 연산 지도 — Mac mini, 2026-10-17
+
+- 사용자 요청에 따라 기존 길 로드맵 옆에 이미지형 그림 지도 보기를 추가했다. Mac mini Codex 작업본 `/Users/docssam/.codex/worktrees/115e/lete-on`, 브랜치 `codex/visual-growth-map-20261017`, 시작 기준 `origin/main` `cebc4729b4ed4a8e410b3412bc22f97ee8d42360`이다. 진행 중인 두뇌로 제안 회신 PR #349의 문서는 이 브랜치에 가져오지 않았다.
+- 오리지널 5섬 그림 배경 `assets/growth-map-20261017.webp`와 실제 `NM_STAGES` 10단계 기반 버튼·설명 카드를 더했다. 현재 위치는 앱 과정에서 읽고, 단계 선택은 기존 과정 길로 연결한다. 외부 교재 원본이나 첨부 참고 화면을 공개 저장소에 넣지 않았다. 상세 구현과 이미지 생성 프롬프트는 `docs/visual-map-20261017.md`에 기록했다.
+- 로컬 검사: 새 그림 지도 브라우저 검사에서 1280px/390px, 한·영·중, 이미지 로딩·길 전환·실제 과정 이동·키보드·가로 넘침을 통과했다. WebGL2를 켠 Chromium에서도 그림 지도에서 돌아온 기존 3D 길의 마운트와 페이지 오류 0건을 확인했다. 단계 정합성 검사, JS 구문, diff 공백 검사도 통과했다. 기존 속도 비교 검사는 15항목 통과·기존 `C2` 제목 기대치 1항목 실패이며 새 지도 변경과 무관한 교육과정 기준표 검수가 필요하다.
+- 이 절은 로컬 구현·검증 상태를 뜻한다. PR/병합/공개 배포는 각각 후속 기록으로 판정한다.
+
+## 그림 지도 배포 및 길잡이 캐릭터 후속 — Mac mini, 2026-10-17
+
+- 앞 절의 그림 지도는 PR [#350](https://github.com/docssam1/lete-on/pull/350)으로 `main`의 `904c68fc80df6e5e0239866daa6ec71d9b9c638a`에 병합됐다. GitHub Pages [실행 39022445229](https://github.com/docssam1/lete-on/actions/runs/39022445229)은 성공했고 공개 URL `https://lete-on.gfieldacademy.net/number_magic/`에서 지도 이미지 디코딩·5개 지점·길 전환·페이지 오류 0건을 브라우저로 확인했다. 앞 절의 “로컬 상태”는 당시 기록이다.
+- 원장 후속 요청은 각 표지판 아래 캐릭터가 해당 과정들을 설명하게 하는 것이다. Mac mini Codex (GPT-6)가 기존 작업본 `/Users/docssam/.codex/worktrees/115e/lete-on`의 새 브랜치 `codex/visual-map-guides-20261017`에서 구현했다. 기준은 위 `main` 병합 커밋이다. 파일 담당은 Codex가 `app/main.js`, `app/styles.css`, `index.html`, `scripts/check-visual-map.js`와 이 문서이며 별도 에이전트는 캐릭터 자산·과정 문구·코드를 읽기 전용으로 검토했다. Windows·Claude 작업본은 수정하지 않았다.
+- 기존 캐릭터 누미·포코·모모·루트·무한의 승인 PNG를 다섯 지점 아래에 재사용했다. 표지판 또는 캐릭터를 누르면 실제 단계·과정 범위에 맞춘 한·영·중 말풍선과 기존 단계 카드를 보여 준다. 캐릭터 그림은 장식 대체텍스트를 비우고 선택 버튼·설명 알림으로 의미를 전달한다. 자동 음성·학습 완료·연령별 도달 시기·두뇌로 번호 대응은 추가하지 않았다. 외부 학원 원자료나 사용자가 준 참고 이미지는 공개 저장소에 넣지 않았다.
+- 로컬 검증: `check-visual-map.js` 한/영/중·1280/390px에서 캐릭터 5명 디코딩·그림 내부 배치·44px 이상 터치·설명 선택/알림·키보드·단계 10개·기존 길 왕복을 통과했다. `check-stages.js`의 10단계·74과정·557회차, JS 구문, `git diff --check`도 통과했다. 적용한 UI 참고는 GFIELD 공용 디자인 규칙과 `ui-ux-pro-max`의 버튼 의미·초점·터치 지침이며 이미지 생성 도구는 이번 후속에 사용하지 않았다. 실물 모바일 기기와 음성 낭독기는 아직 검사하지 않았다. 이 후속 절의 원격 반영·배포는 PR과 Actions 기록으로 판정한다.

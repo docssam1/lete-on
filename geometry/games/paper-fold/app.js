@@ -909,7 +909,7 @@ function applyLabels() {
   $(".exit").setAttribute("aria-label", t("back"));
   $(".exit").innerHTML = icon("back");
   $("#levelButton").textContent = t("type");
-  for (const [selector, name, label] of [["#hintButton", "hint", "hint"], ["#retryButton", "retry", "retry"], [".tool-panel a", "book", "worksheet"]]) {
+  for (const [selector, name, label] of [["#hintButton", "hint", "hint"], ["#retryButton", "retry", "retry"], ["#worksheetLink", "book", "worksheet"]]) {
     const control = $(selector);
     control.innerHTML = icon(name);
     control.title = t(label);
@@ -920,6 +920,7 @@ function applyLabels() {
   $("#battleLink").textContent = ft("battle");
   $("#togetherLink").href = `./play.html?mode=together&level=${state.level + 1}`;
   $("#battleLink").href = `./play.html?mode=battle&level=${state.level + 1}`;
+  $("#worksheetLink").href = `../../worksheet/paper-fold/?modes=game-l${state.level + 1}`;
 }
 
 ui.next.addEventListener("click", nextProblem);

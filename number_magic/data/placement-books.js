@@ -48,6 +48,15 @@ catalog.push({ id: 'changui', label: L('창의셈'), sourceUrls: [],
   steps: [pending('contents', L('출판사·판·권·단원을 확인하고 직접 선택',
     'Confirm the publisher, edition, volume and studied topic',
     '确认出版社、版本、册次和已学内容'))] });
+// Level bands are recorded in HANDOFF.md from an owner-provided photo. They
+// identify the book's printed course ranges, not this app's C courses.
+// Keep every band pending until the studied topic is confirmed separately.
+catalog.push({id:'dunoro',label:L('두뇌로'),sourceUrls:[],steps:[
+  Object.assign(pending('level-1',L('Level 1 · 교재 과정 1~10','Level 1 · book courses 1–10','Level 1 · 教材课程 1～10'),[]),{bookCourseRange:[1,10]}),
+  Object.assign(pending('level-2',L('Level 2 · 교재 과정 11~16','Level 2 · book courses 11–16','Level 2 · 教材课程 11～16'),[]),{bookCourseRange:[11,16]}),
+  Object.assign(pending('level-3',L('Level 3 · 교재 과정 17~25','Level 3 · book courses 17–25','Level 3 · 教材课程 17～25'),[]),{bookCourseRange:[17,25]}),
+  pending('contents',L('다른 레벨·단원 — 교재 표기 확인','Other level or unit — check the book','其他级别或单元 — 核对教材'),[])
+]});
 catalog.push({ id: 'kumon', label: L('구몬수학'), sourceUrls: [kumonUrl], steps: [
   ...['6A', '5A', '4A', '3A', '2A', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
     'J', 'K', 'L', 'M', 'N', 'O', 'SV', 'SM', 'SP', 'SS'].map(stage =>
@@ -123,13 +132,21 @@ function getSteps(seriesId) {
   const book = byId[seriesId];
   return book ? clone(book.steps) : [];
 }
+function getBookCourses(seriesId, stepId) {
+  const book = byId[seriesId];
+  const step = book && book.steps.find(candidate => candidate.id === stepId);
+  const range = step && step.bookCourseRange;
+  return range ? Array.from({length:range[1]-range[0]+1},(_,i)=>range[0]+i) : [];
+}
 function resolve(seriesId, stepId, progress) {
   const book = byId[seriesId];
   const step = book && book.steps.find(candidate => candidate.id === stepId);
   if (!step) return null;
-  const knownProgress = typeof progress === 'string' &&
-    Object.prototype.hasOwnProperty.call(progressNames, progress);
-  const automatic = knownProgress && step.verification === 'verified' && !!step.baselineId;
+  // The intake asks for the studied topic, not a progress percentage. The two
+  // narrow verified topics have the same starting candidate at every point.
+  const usableProgress = progress == null || progress === '' ||
+    (typeof progress === 'string' && Object.prototype.hasOwnProperty.call(progressNames, progress));
+  const automatic = usableProgress && step.verification === 'verified' && !!step.baselineId;
   return { baselineId: automatic ? step.baselineId : null,
     label: clone(step.label), verification: automatic ? 'verified' : 'topic-confirmation',
     sourceUrls: step.sourceUrls.slice(), needsTopicConfirmation: !automatic };
@@ -137,6 +154,6 @@ function resolve(seriesId, stepId, progress) {
 W.NM_PLACEMENT_BOOKS = {
   series: catalog.map(book => ({ id: book.id, label: clone(book.label),
     sourceUrls: book.sourceUrls.slice(), verification: 'topic-confirmation' })),
-  getSteps, resolve
+  getSteps, getBookCourses, resolve
 };
 })();

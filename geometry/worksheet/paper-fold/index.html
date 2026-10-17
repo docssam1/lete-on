@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GFIELD 색종이 접기 학습지</title>
-<link rel="stylesheet" href="./fold.css?v=pf-split-1">
+<link rel="stylesheet" href="./fold.css?v=pf-split-3">
 </head>
 <body>
 <!-- 지오메트리 랩으로 돌아가는 줄. 이 페이지는 랩의 "색종이 접기" 카드에서
@@ -38,13 +38,13 @@
 </select>
 </section>
 <section class="control-group"><h2>난이도</h2><div class="radio-row"><label><input type="radio" name="difficulty" value="easy">하</label><label><input type="radio" name="difficulty" value="mid" checked>중</label><label><input type="radio" name="difficulty" value="hard">상</label></div></section>
-<section class="control-group"><h2>문항 수</h2><select id="count"><option value="10">10문항</option><option value="20" selected>20문항</option><option value="30">30문항</option><option value="40">40문항</option><option value="50">50문항</option></select></section>
+<section class="control-group"><h2>문항 수</h2><select id="count"><option value="10">10문항</option><option value="20" selected>20문항</option><option value="30">30문항</option><option value="40">40문항</option><option value="50">50문항</option></select><p id="repeatNotice" class="repeat-notice" aria-live="polite" aria-atomic="true" hidden></p></section>
 <section class="control-group"><label><input type="checkbox" id="answers" checked> 정답지 포함</label></section>
 <section class="actions"><button onclick="generateSheet()">새로 만들기</button><button class="print" onclick="window.print()">인쇄</button></section></aside>
 <main class="preview-panel"><section class="type-preview"><div class="preview-head"><div><h2>유형 미리보기</h2><p>선택한 난이도의 실제 출제 예시입니다.</p></div><button class="secondary" onclick="previewProblem()">다른 문제</button></div><p id="info"></p><small class="src" id="src"></small><canvas id="cv" width="1300" height="520"></canvas></section><div id="sheetRoot"></div></main></div>
 <script src="./fold-1.js?v=pf-split-1"></script>
 <script src="./fold-2.js?v=pf-split-1"></script>
-<script src="./fold-3.js?v=pf-split-9"></script>
-<script src="./fold-4.js?v=pf-split-7"></script>
+<script src="./fold-3.js?v=pf-split-10"></script>
+<script src="./fold-4.js?v=pf-split-9"></script>
 </body>
 </html>
