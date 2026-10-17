@@ -10,7 +10,7 @@
 .answer-key-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:18px;border-top:1px solid #bdccd7;border-left:1px solid #bdccd7}
 .answer-key-grid>div{display:grid;grid-template-columns:32px minmax(0,1fr);align-items:center;min-height:43px;border-right:1px solid #bdccd7;border-bottom:1px solid #bdccd7;color:#172b42;font-size:13px}
 .answer-key-grid b{display:grid;place-items:center;align-self:stretch;background:#edf4f8;color:#315469;font-size:11px}
-.answer-key-grid span{min-width:0;padding:7px 9px;overflow-wrap:anywhere;text-align:center}
+.answer-key-grid>div>span{min-width:0;padding:7px 9px;overflow-wrap:anywhere;text-align:center}
 .solution-viewer{position:fixed;z-index:120;inset:0;display:grid;place-items:center;padding:24px;background:rgba(12,27,38,.42)}
 .solution-viewer[hidden]{display:none}
 .solution-viewer-backdrop{position:absolute;inset:0}

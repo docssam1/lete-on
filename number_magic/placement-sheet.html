@@ -23,7 +23,7 @@
      (2026-09-07, 원장 "학습지 html까지는 나오는데 스크롤이 안 된다"). 여기서 되돌린다. */
   html,body{height:auto;min-height:100%;overflow:visible}
   body,.nm-print-sheet{margin:0;background:#f4efe6;font-family:Pretendard,'Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif}
-  .ws-bar{position:sticky;top:0;z-index:5;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  .ws-bar{position:relative;z-index:5;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
     padding:10px 14px;background:#fffaf0;border-bottom:1px solid #e6dcc8}
   .ws-bar b{font-size:15px}
   .ws-bar .ws-sub{color:#6b6257;font-size:13px}
@@ -52,10 +52,11 @@
   .ws-bar .pl-tools select,.ws-bar .pl-tools input{padding:7px 8px;border:1px solid #cfe0d5;border-radius:8px;font:inherit;font-size:13px;background:#fff;max-width:230px}
   #plScore{max-width:210mm;margin:12px auto 40px;padding:14px 16px;background:#fff;border:1px solid #e6dcc8;border-radius:10px}
   #plScore h2{margin:0 0 8px;font-size:15px}
-  .pl-sc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 12px}
-  .pl-sc-item{display:flex;align-items:center;gap:6px;font-size:13px}.pl-sc-item b{min-width:20px}
-  .pl-sc-item label{cursor:pointer}.pl-sc-item input{margin-right:2px}
-  #plGo{margin-top:10px;padding:9px 16px;border:0;border-radius:10px;background:#245b60;color:#fff;font-weight:800;cursor:pointer}
+  .pl-sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:8px 12px}
+  .pl-sc-item{display:flex;align-items:center;gap:6px;font-size:14px;min-width:0}.pl-sc-item b{min-width:22px}
+  .pl-sc-item label{cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;background:#f0f5f0;border-radius:8px}.pl-sc-item input{margin-right:4px;accent-color:#245b60}
+  .pl-sc-item select{font:inherit;min-height:48px;min-width:0;max-width:140px;flex:1;border:1px solid #a5b9af;border-radius:8px;background:#fff;color:#193b3c}
+  #plGo{margin-top:10px;padding:9px 16px;min-height:48px;border:0;border-radius:10px;background:#245b60;color:#fff;font-weight:800;cursor:pointer}
   #plOut{margin-top:10px;font-size:14px;line-height:1.6}.pl-reason{color:#5c6b70}
   @media print{#plScore{display:none!important}}
 
@@ -211,6 +212,10 @@
 <script src="app/exam.js"></script>
 <script src="app/animal-art.js"></script>
 <script src="data/placement-plan.js"></script>
+<script src="data/placement-paths.js?v=20261015-observe1"></script>
+<link rel="stylesheet" href="app/placement-ui.css?v=20261015-records1">
+<script src="data/study-projection.js?v=20261015-records1"></script>
+<script src="app/study-route.js?v=20261015-records1"></script>
 <script>
 (function(){
 'use strict';
@@ -387,26 +392,37 @@ function build(){
 /* ── 화면 전용: ○×를 눌러 추천 보기(인쇄에는 안 나온다). 온라인 진단과 같은 summarize 를 쓴다 ── */
 function renderScorer(stage){
   var box = document.getElementById('plScore'); if(!box){ box = document.createElement('div'); box.id = 'plScore'; document.body.appendChild(box); }
-  var items = PLAN_NOW.items, state = {};
+  var items = PLAN_NOW.items;
   box.innerHTML = '<h2>' + esc(T('채점 입력(화면 전용)', 'Enter marks (screen only)', '输入评分（仅屏幕）')) + '</h2><div class="pl-sc-grid">' + items.map(function(it, i){
-    return '<div class="pl-sc-item"><b>' + (i + 1) + '</b>' + ['o','x','s'].map(function(k){ return '<label><input type="radio" name="q' + i + '" value="' + k + '"><span>' + (k === 'o' ? '○' : k === 'x' ? '×' : esc(T('모름','?','不会'))) + '</span></label>'; }).join('') + '</div>';
-  }).join('') + '</div><button type="button" id="plGo">' + esc(T('추천 보기', 'Show suggestion', '查看建议')) + '</button><div id="plOut"></div>';
+    return '<div class="pl-sc-item" role="group" aria-label="' + (i+1) + '">' + '<b>' + (i + 1) + '</b>' + ['o','x'].map(function(k){ return '<label><input type="radio" name="q' + i + '" value="' + k + '"><span>' + (k === 'o' ? 'O' : 'X') + '</span></label>'; }).join('') + '<select aria-label="' + esc(T('안 배움 기록','Unlearned content','未学记录')) + ' ' + (i+1) + '" data-unlearned="' + i + '"><option value="">—</option><option value="n">' + esc(T('안 배움','Not learned','未学过')) + '</option></select></div>';
+  }).join('') + '</div><button type="button" id="plGo">' + esc(T('추천 보기', 'Show suggestion', '查看建议')) + '</button><div id="plOut"></div><div id="plPlanner"></div>';
   box.querySelector('#plGo').onclick = function(){
-    var responses = [];
+    if(box.querySelector('#plPlanner').__studyRoutePanel)box.querySelector('#plPlanner').__studyRoutePanel.dispose();
+    box.querySelector('#plPlanner').replaceChildren();
+    var marks = [];
     items.forEach(function(it, i){
-      var el = box.querySelector('input[name="q' + i + '"]:checked'); if(!el) return;
-      if(el.value === 'o') responses.push({ id: it.id, value: it.answer, validationFlags: it.responseMode === 'count-tap' ? { validTargets:true } : undefined, skipped:false });
-      else if(el.value === 'x') responses.push({ id: it.id, value: -987654321, validationFlags: it.responseMode === 'count-tap' ? { validTargets:true } : undefined, skipped:false });
-      else responses.push({ id: it.id, value: null, skipped:true });
+      var el = box.querySelector('input[name="q' + i + '"]:checked');
+      marks.push(box.querySelector('[data-unlearned="'+i+'"]').value || (el ? el.value : ''));
     });
     var out = box.querySelector('#plOut');
+    out.setAttribute('role','status');out.setAttribute('aria-live','polite');
+    if(marks.some(function(x){return !x;})){
+      out.textContent=T('아직 표시하지 않은 문항이 있습니다. 20개 모두 O/X로 표시하거나 안 배움으로 기록해 주세요. 미입력은 오답이 아닙니다.','Mark all 20 items with O/X or Not learned. Unmarked items are not wrong answers.','请为20道题全部标记对错或未学过。未填写不等于错答。');
+      box.querySelector('input[name="q'+marks.indexOf('')+'"]:not(:checked)').focus();return;
+    }
     try{
-      var r = PLAN.summarize(PLAN_NOW, responses), rec = r.recommendation || {};
+      var params = new URL(location.href).searchParams;
+      var analysis=window.NM_PLACEMENT_PATHS.paperAnalysis(PLAN_NOW,marks,{goal:params.get('goal'),goalTarget:params.get('target'),cadence:params.get('cadence')});
+      var r=analysis.result, rec=analysis.path.main;
       var b = r.bands;
-      out.innerHTML = '<p><b>' + esc(T('이전','Earlier','之前')) + '</b> ' + b.previous.correct + '/' + b.previous.asked + ' · <b>' + esc(T('현재','Current','现在')) + '</b> ' + b.current.correct + '/' + b.current.asked + ' · <b>' + esc(T('다음','Next','之后')) + '</b> ' + b.next.correct + '/' + b.next.asked + ' · ' + esc(T('모름','Skipped','跳过')) + ' ' + (b.previous.skipped + b.current.skipped + b.next.skipped) + '</p>' +
-        '<p><b>' + esc(T('추천 시작','Suggested start','建议起点')) + '</b> ' + esc((rec.course || '') + ' · ' + T('회차','session','课次') + ' ' + (rec.session || '')) + (rec.label ? ' · ' + esc(L(rec.label)) : '') + '</p><p class="pl-reason">' + esc(rec.reason || '') + '</p>';
+      out.innerHTML = '<p><b>' + esc(T('이전','Earlier','之前')) + '</b> ' + b.previous.correct + '/' + b.previous.asked + ' · <b>' + esc(T('현재','Current','现在')) + '</b> ' + b.current.correct + '/' + b.current.asked + ' · <b>' + esc(T('다음','Next','之后')) + '</b> ' + b.next.correct + '/' + b.next.asked + ' · ' + esc(T('안 배움','Not learned','未学过')) + ' ' + (b.previous.skipped + b.current.skipped + b.next.skipped) + '</p>' +
+        '<p><b>' + esc(T('본진도 후보','Main-study candidate','主要进度候选')) + '</b> ' + esc((rec.course || '') + ' · ' + T('회차','session','课次') + ' ' + (rec.session || '')) + (rec.label ? ' · ' + esc(L(rec.label)) : '') + '</p><p class="pl-reason">' + esc(L(analysis.comment)) + '</p><p>'+esc(L(analysis.limitation))+'</p><h3>'+esc(T('지금은 유지 · 관찰','Maintain · observe for now','先保持并观察'))+'</h3><p>'+esc(L(analysis.workload.reasons[0]))+'</p><p>'+esc(L(analysis.workload.note))+'</p><ul>'+analysis.path.support.map(function(row){return '<li>'+esc(L(row.label))+' · X '+row.wrong+' · '+esc(T('안 배움','Not learned','未学过'))+' '+row.skipped+'</li>';}).join('')+'</ul>';
+      window.NM_STUDY_ROUTE.mount(box.querySelector('#plPlanner'),{lang:LANG,course:rec.course,session:rec.session});
     }catch(e){ out.textContent = String(e && e.message || e); }
   };
+  const invalidate=function(){box.querySelector('#plOut').textContent='';if(box.querySelector('#plPlanner').__studyRoutePanel)box.querySelector('#plPlanner').__studyRoutePanel.dispose();box.querySelector('#plPlanner').replaceChildren();};
+  box.querySelectorAll('[data-unlearned]').forEach(function(sel){sel.onchange=function(){if(sel.value)box.querySelectorAll('input[name="q'+sel.dataset.unlearned+'"]').forEach(function(el){el.checked=false;});invalidate();};});
+  box.querySelectorAll('input[type="radio"]').forEach(function(el){el.onchange=function(){box.querySelector('[data-unlearned="'+el.name.slice(1)+'"]').value='';invalidate();};});
 }
 
 /* ── 상단 도구(화면 전용) ── */

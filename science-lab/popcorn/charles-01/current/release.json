@@ -1,5 +1,5 @@
 {
-  "version": "20261015-charles01-opening-1",
+  "version": "20261015-charles01-modern-video-1",
   "studentPages": 20,
   "magazineSpreads": 5,
   "assemblyPhases": 10,
@@ -149,6 +149,11 @@
       "sha256": "a901353fa8381a0d916d5870d2c5835db7a3061cf70351ce58f43653ebc4a01c"
     },
     {
+      "path": "assets/welcome-brand.wav",
+      "bytes": 449864,
+      "sha256": "80c4843c29ac8564814c9945758515478e6eb39ac676036c1af38104ea184fe2"
+    },
+    {
       "path": "assets/welcome-popcorn-01.png",
       "bytes": 221862,
       "sha256": "2c99a136d22248c06b6e18f66846b5317aa2d5c4c087765ed9b24318e1154be2"
@@ -180,13 +185,18 @@
     },
     {
       "path": "companion/guide.js",
-      "bytes": 14409,
-      "sha256": "5ed6159e87469d7834a7716e6c31378c8e7eca16af182f70d78d4e4a76b2c426"
+      "bytes": 10622,
+      "sha256": "c39e5399cac80e091e9f38bf05cb3d90c9c3114e88998cd180ccc1f37c994718"
     },
     {
       "path": "companion/index.html",
-      "bytes": 25076,
-      "sha256": "423833c0ff13cf519c45646b6a2cc4d3e1986bb4c9cb3277d4bf3fc8eb930bb8"
+      "bytes": 25247,
+      "sha256": "b3514557a725fc225e73e4b239b5860551f6b0e4643287041f998e22d8d9b363"
+    },
+    {
+      "path": "companion/inline-video.js",
+      "bytes": 9925,
+      "sha256": "61a25a622c2cc028168097ee5b14cf2ed80dbf1f86a3206c0499139fcdeec738"
     },
     {
       "path": "companion/lab-content.js",
@@ -239,9 +249,19 @@
       "sha256": "bf4bf1a0a38c6016961b7eed79776dd885e5efc64a9b421b0eb1f414b8bcef64"
     },
     {
+      "path": "companion/page-flow.js",
+      "bytes": 4670,
+      "sha256": "0f3be0a9ae273f45df8079845d6f19be69d25c52a65811014dc0b7cc23cb49f5"
+    },
+    {
+      "path": "companion/page-shell.css",
+      "bytes": 10469,
+      "sha256": "7da1bd41b29b6c11c9a83efa52b6728e95d46836b10d2337b12f884ff71fa60e"
+    },
+    {
       "path": "companion/reading-content.js",
-      "bytes": 8963,
-      "sha256": "169aa7398d9aeb6d4eac722dd0dfa4c5e89697668e1e9f5c48e9fa57a48d21e9"
+      "bytes": 8941,
+      "sha256": "b1b650d30b77e9c6c1710dd73c46ffd3b0626c2a5aeb7b7d30196df8ffd4251f"
     },
     {
       "path": "companion/reading.css",
@@ -250,8 +270,18 @@
     },
     {
       "path": "companion/reading.js",
-      "bytes": 13697,
-      "sha256": "49d440c59aa431089bbeb494af10ab0154a372dce97e8ac62a28fc80958f5a9a"
+      "bytes": 13126,
+      "sha256": "d5a3321c800ad3d98d389c87d4b0c069c08172e04171fec814307d5bf82dc2ed"
+    },
+    {
+      "path": "companion/study-deck.css",
+      "bytes": 9925,
+      "sha256": "393e6b3839585edc077957346a610cd3510d615ebb27f0e66d469c0878f28272"
+    },
+    {
+      "path": "companion/study-deck.js",
+      "bytes": 19310,
+      "sha256": "bd9d7f8de3b8859fb0af49720fa5af8e1a0a07811b2bdfb6fcfead6a686a826d"
     },
     {
       "path": "companion/styles.css",
@@ -280,13 +310,13 @@
     },
     {
       "path": "companion/welcome.css",
-      "bytes": 7353,
-      "sha256": "f714a3ed103a3db57405f4a0cd6954cfe1dfadcb1df1e310fad4e88c3e7d1fd6"
+      "bytes": 7510,
+      "sha256": "75f727e307027d4822a83f61557babcaca10f3c7a0642e9454f281b957e759dd"
     },
     {
       "path": "companion/welcome.js",
-      "bytes": 7856,
-      "sha256": "613326332fb436556bf400985abcff3d7f9e71692c4d6ce7f75c80cdffe7b9fa"
+      "bytes": 12494,
+      "sha256": "2a547c1b5cfb35d9f0306e68ce1d5f9260e31781dc7e007674b9f947ee6e3bdf"
     },
     {
       "path": "index.html",
@@ -430,6 +460,44 @@
     "nextImmediatelyAvailable": true,
     "introSourceStories": 4,
     "introSourceVideos": 2,
-    "storyPages": 3
+    "storyPages": 3,
+    "firstMenu": "먼저 공부하기",
+    "studyTopics": 9,
+    "inlineVideoAutoplay": "muted",
+    "videoFocusOnActualPlayback": true,
+    "pauseAndEndRestoreLayout": true,
+    "measuredPageTurns": true,
+    "magazineSourceSpreads": 5,
+    "welcomeAudio": {
+      "source": "Existing Popcorn Lab advertisement ending",
+      "durationSeconds": 2.55,
+      "unchangedPcmExcerpt": true,
+      "playback": "Automatic on entry where permitted; first welcome-screen interaction retries if blocked, with no separate sound button",
+      "motionStartsWithActualPlayback": true,
+      "nextStopsAudio": true,
+      "separateSoundButton": false,
+      "navigationNeverWaitsForAudio": true
+    },
+    "inlineVideoRecovery": {
+      "posterUntilPlayerReady": true,
+      "playerReadyTimeoutSeconds": 10,
+      "retryInPlace": true,
+      "originalSourceFallbackOnError": true,
+      "staleCallbacksCancelled": true
+    },
+    "curatedVideos": [
+      {
+        "videoId": "HH_h2bvHu5c",
+        "publisher": "동아출판",
+        "topic": "자석에서 철 클립이 많이 붙는 부분",
+        "durationSeconds": 93
+      },
+      {
+        "videoId": "EvPKwXyevT4",
+        "publisher": "와니사이언스",
+        "topic": "자석에 붙는 물체 비교",
+        "durationSeconds": 107
+      }
+    ]
   }
 }

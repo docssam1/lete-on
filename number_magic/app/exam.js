@@ -1610,6 +1610,7 @@ function gridCellHtml(p, i, mode, graded, userAnswers){
    items: [{thread,level,wordType?,seed}]. meta:{title, count, onBack}. */
 function runSessionTabs(container, items, meta){
   const perType = meta.count || 20;
+  const evidence=window.NM_STUDY_RECORDS,run=evidence&&evidence.begin(container,'.nm-ws-session');
   function sessionsOf(thread){ return window.NM_STATS ? NM_STATS.sessionsOf(thread) : []; }
   /* 회차 카운터는 §3 "🔁 새 문제로 다시 (n회째)"의 n — 탭을 처음 열 때는
      그동안 채점해 온 세션 수+1에서 시작하고(NM_STATS.sessionsOf), 이번에
@@ -1622,7 +1623,8 @@ function runSessionTabs(container, items, meta){
     applyWordProblems(problems, cfg.wordType, numericSeed);
     return {
       cfg, problems, userAnswers: new Array(cfg.count).fill(''), graded: false, gradeScore: 0,
-      attemptNo: sessionsOf(cfg.thread).length + 1
+      attemptNo: sessionsOf(cfg.thread).length + 1,
+      evidenceId:evidence?evidence.id():null
     };
   }
   const tabs = items.map(buildTab);
@@ -1698,9 +1700,13 @@ function runSessionTabs(container, items, meta){
       btn.addEventListener('click', () => { activeTab = parseInt(btn.dataset.tabidx,10); render(); });
     });
     container.querySelector('#nm-ws-grade').addEventListener('click', () => {
+      const first=!t.graded;
       t.graded = true; t.gradeScore = 0;
       t.problems.forEach((p,i) => { if(matchesAnswer(t.userAnswers[i],p.answer)) t.gradeScore++; });
-      if(window.NM_STATS) NM_STATS.record(t.cfg.thread, t.cfg.level, t.gradeScore, t.cfg.count, null);
+      if(first&&window.NM_STATS) NM_STATS.record(t.cfg.thread, t.cfg.level, t.gradeScore, t.cfg.count, null);
+      if(first&&evidence)evidence.attempt({id:t.evidenceId,thread:t.cfg.thread,level:t.cfg.level,correct:t.gradeScore,total:t.cfg.count,
+        answered:t.userAnswers.filter(x=>String(x).trim()!=='').length,exposed:false,
+        course:meta.course||null,session:meta.session||null},run);
       render();
     });
     container.querySelector('#nm-ws-reroll').addEventListener('click', () => {
@@ -1711,10 +1717,12 @@ function runSessionTabs(container, items, meta){
       applyWordProblems(t.problems, t.cfg.wordType, numericSeed);
       t.userAnswers = new Array(t.cfg.count).fill('');
       t.graded = false; t.gradeScore = 0;
+      t.evidenceId=evidence?evidence.id():null;
       t.attemptNo++;
       render();
     });
     container.querySelector('#nm-ws-back').addEventListener('click', () => {
+      if(run)run.stop();
       if(meta.onBack) meta.onBack();
     });
   }
@@ -7256,6 +7264,7 @@ ${printWatermarkHtml()}
           if(!items.length) return;
           runSessionTabs(container, items, {
             title: `${courseKey} · S${sessionIdx+1}`,
+            course:courseKey,session:sessionIdx+1,
             count: roadCountMode,
             onBack: () => { render(); }
           });
@@ -7621,6 +7630,8 @@ ${printWatermarkHtml()}
     let startTime  = Date.now();
     let timerInterval = null;
     let timeLeft   = timer > 0 ? timer : Infinity;
+    const evidence=window.NM_STUDY_RECORDS,run=evidence&&evidence.begin(container,'.nm-exam-run');
+    const evidenceId=evidence?evidence.id():null;let finished=false;
 
     function render(){
       const p = problems[current];
@@ -7698,10 +7709,14 @@ ${printWatermarkHtml()}
     }
 
     function finish(){
+      if(finished)return;finished=true;
       clearInterval(timerInterval);
       const elapsed = Math.round((Date.now()-startTime)/1000);
       let score = 0;
       problems.forEach((p,i)=>{ if(matchesAnswer(answers[i],p.answer)) score++; });
+      if(evidence)evidence.attempt({id:evidenceId,thread,level,correct:score,total:count,
+        answered:answers.filter(x=>x!==null&&String(x).trim()!=='').length,exposed:false,course:null,session:null},run);
+      if(run)run.stop();
       onDone && onDone({ score, total:count, time:elapsed, problems, answers, seed, thread, level });
     }
 
@@ -8489,6 +8504,8 @@ window.examScreen = function(container, opts){
     let activeTab = 'problems'; // 'problems' | 'answers'
     let graded = false;
     let gradeScore = 0;
+    const evidence=window.NM_STUDY_RECORDS,run=evidence&&evidence.begin(container,'.nm-ws-wrap');
+    const evidenceId=evidence?evidence.id():null;let exposed=false;
 
     function render(){
       const mode = activeTab==='answers' ? 'answer' : 'online';
@@ -8547,6 +8564,7 @@ window.examScreen = function(container, opts){
       container.querySelectorAll('.nm-ws-tab').forEach(btn=>{
         btn.addEventListener('click', ()=>{
           activeTab = btn.dataset.tab;
+          if(activeTab==='answers')exposed=true;
           render();
         });
       });
@@ -8560,6 +8578,8 @@ window.examScreen = function(container, opts){
            풀고 채점한 "세션 1회"로 기록한다. NM_STATS 미로딩 시(스크립트
            누락 등) 조용히 건너뛴다 — 채점 자체는 그 어떤 경우에도 막지 않음. */
         if(window.NM_STATS) NM_STATS.record(thread, level, gradeScore, count, cfg.boost ? {boost:true} : null);
+        if(evidence)evidence.attempt({id:evidenceId,thread,level,correct:gradeScore,total:count,
+          answered:userAnswers.filter(x=>String(x).trim()!=='').length,exposed,course:null,session:null},run);
         render();
       });
 

@@ -243,8 +243,8 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      roadSpeed — 같은 기간에 회차를 더 많이 나감: 로드맵의 주차·개월을 1/배수로 줄인다(회차·내용은 그대로).
      roadAmount — 한 회차 교과 드릴 문항 수를 배수만큼(exam.js getAmount, 6의 배수·상한 지킴). */
   roadSpeed:1, roadAmount:1,
-  /* 자동 편성(2026-10-04, 원장 "자동 편성을 하고 그 이후 수동 조절 가능하도록") — 진단+목표로 속도·양을 먼저 맞춘다.
-     roadManual — 사용자가 로드맵에서 속도·양을 직접 고쳤으면 true: 이후 새 진단은 값을 덮어쓰지 않고 제안만 한다. */
+  /* roadManual records a manual planning choice. Since 2026-10-15, diagnosis
+     preserves workload regardless of this flag; observe before gradual changes. */
   roadManual:false,
   roadPrints:{}, /* 연산 로드맵 세션 인쇄 회수(2026-09-04) — {'C5-0':2, 'C7-3':1, ...}
     key=courseKey+'-'+sessionIdx. exam.js showRoadPick의 "인쇄 N장" 표시·재인쇄 버튼용,
@@ -303,7 +303,10 @@ if(!S.account)S.account={status:hadSave?'active':'trial',code:null,checkedAt:0};
    기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
 (function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();return true;}
+// The existing profile/slot and state backup own this data; no global sibling log.
+if(window.NM_STUDY_RECORDS)window.NM_STUDY_RECORDS.bind({state:()=>S,save});
+window.addEventListener('nm:study-record-error',()=>toast(S.lang==='en'?'Your score is unchanged, but the study record could not be saved. Check device storage.':S.lang==='zh'?'成绩不变，但未能保存学习记录。请检查设备存储。':'채점은 유지되지만 학습 기록을 저장하지 못했습니다. 기기 저장 공간을 확인해 주세요.',false));
 /* 학습량 배수는 인쇄 쪽(exam.js)이 읽는 자리에 옮겨 둔다 — 학생을 바꾸면 그 학생 값으로 */
 function syncAmount(){ try{ if(window.NM_EXAM&&NM_EXAM.setAmount) NM_EXAM.setAmount(S.roadAmount||1); }catch(e){} }
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
@@ -3791,14 +3794,14 @@ function screenCourseRoad(){
             <h3>${esc(L(gp.goal.label))}</h3>${gp.target?`<p>${esc(L(gp.target.label))} · ${lk('목표 대응 확인 필요','Target mapping needs verification','目标对应需要确认')}</p>`:''}
             <p>${lk('진단 때 선택한 본진도','Main study selected for this check','测评时选择的主要进度')}: ${esc(L(gp.main.label))}</p>
             <p>${lk('보강 후보','Practice candidates','补充练习候选')} ${wrong} · ${lk('재확인 후보','Recheck candidates','再确认候选')} ${recheck}</p>
-            <p>${esc(L(gp.goal.focus))}</p><p class="pd-note">${lk('진단과 목표에 맞춰 속도·양을 먼저 맞춰 두었어요. 아래 ‘속도 · 양 조절’에서 언제든 직접 바꿀 수 있고, 기존 진도 기록은 바뀌지 않아요.','Speed and amount are set from your check and goal first. Change them any time under “Speed · amount” below; your progress records are not changed.','已根据测评和目标先设好速度与分量。可随时在下方“速度 · 分量”中修改，已有进度记录不会改变。')}</p>${(()=>{const a=gp.autoPlan||S.placement.autoPlan;if(!a)return '';const same=(S.roadSpeed===a.speed&&S.roadAmount===a.amount);
-              return `<div class="pd-auto"><h4>${lk('자동 편성','Automatic plan','自动编排')}</h4>
+            <p>${esc(L(gp.goal.focus))}</p><p class="pd-note">${lk('진단 직후에는 현재 속도·분량·학습 횟수를 유지합니다. 학습 기록을 관찰한 뒤 조금씩 조정합니다.','Keep the current pace, amount and frequency after diagnosis. Observe study records before gradual changes.','测评后保持当前速度、分量与次数。观察学习记录后再逐步调整。')}</p>${(()=>{const a=gp.autoPlan||S.placement.autoPlan;if(!a)return '';if(a.version!=='observe-plan-v2')return `<p class="pd-note">${lk('이전 자동 편성 제안은 기록으로 보관합니다. 새 진단부터는 유지·관찰 원칙을 적용합니다.','Earlier automatic suggestions are retained as history. New checks use the maintain-and-observe policy.','早期自动建议保留为记录，新测评采用保持并观察的原则。')}</p>`;const same=(S.roadSpeed===a.speed&&S.roadAmount===a.amount);
+              return `<div class="pd-auto"><h4>${lk('유지 · 관찰','Maintain · observe','保持 · 观察')}</h4>
                 <p><b>${lk('속도','Speed','速度')} ${a.speed}${lk('배','×','倍')} · ${lk('양','Amount','分量')} ${a.amount}${lk('배','×','倍')} · ${a.cadence==='w1'?lk('주 1회','once a week','每周1次'):lk('주 2회','twice a week','每周2次')}</b></p>
                 <ul>${(a.reasons||[]).map(r=>`<li>${esc(L(r))}</li>`).join('')}</ul>
                 <p class="pd-note">${esc(L(a.note))} ${S.roadManual&&!same?lk('지금은 직접 고른 값을 쓰고 있어요.','You are currently using values you set yourself.','当前使用的是你自己设置的值。'):''}</p>
-                ${same?'':`<button type="button" class="pd-support-link" data-auto-apply="1">${lk('이 추천으로 맞추기','Use this suggestion','采用此建议')}</button>`}</div>`;})()}
+                </div>`;})()}
             <div class="pd-road-actions"><button type="button" class="pd-support-link" data-placement-course="${esc(gp.main.course)}">${lk('본진도 위치','Main-study location','主要进度位置')}</button>${support.length?`<button type="button" class="pd-support-link" data-placement-course="${esc(support[0].course)}">${lk('첫 보강·재확인 위치','First practice/recheck location','首个补充练习或再确认位置')}</button>`:''}</div>
-          </section>`;
+          <div data-study-route></div></section>`;
         }
       }
     }
@@ -3975,6 +3978,11 @@ function screenCourseRoad(){
 
     const keep=keepScroll?body.scrollTop:0;
     listEl.innerHTML=html;
+    if(window.NM_STUDY_ROUTE){
+      const gp=S.placement&&S.placement.pathRecommendation;
+      if(!listEl.querySelector('[data-study-route]'))listEl.insertAdjacentHTML('afterbegin','<section class="nm-card"><div data-study-route></div></section>');
+      listEl.querySelectorAll('[data-study-route]').forEach(el=>window.NM_STUDY_ROUTE.mount(el,{lang:S.lang,course:gp?gp.main.course:currentCourseKey(),session:gp?gp.main.session:1,cadence:S.roadCadence}));
+    }
     body.querySelectorAll('.nm-cr-seg button[data-cad]').forEach(el=>{
       el.onclick=()=>{ S.roadCadence=el.dataset.cad; save(); draw(true); };
     });
@@ -3986,9 +3994,6 @@ function screenCourseRoad(){
     });
     body.querySelectorAll('.nm-cr-seg button[data-amount]').forEach(el=>{
       el.onclick=()=>{ S.roadAmount=+el.dataset.amount; S.roadManual=true; save(); syncAmount(); draw(true); };
-    });
-    body.querySelectorAll('[data-auto-apply]').forEach(el=>{
-      el.onclick=()=>{ const a=S.placement&&S.placement.autoPlan; if(!a)return; S.roadSpeed=a.speed; S.roadAmount=a.amount; S.roadManual=false; a.applied=true; save(); syncAmount(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
@@ -4467,7 +4472,7 @@ function screenPlacement(){
   }
   // A saved adaptive run cannot be interpreted as a fixed 6/10/4 plan.
   if(!S._diag||S._diag.version!==ui.version){S._diag=ui.initial();save();}
-  ui.render({root:scr,state:S._diag,lang:S.lang,save,renderMath,close,
+  ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,
     pick:()=>{S._diag=null;S.view='startpick';save();render();},
     seeCourse:key=>{S._diag=null;S._roadFocus=key;S.view='courseroad';save();render();},
     onResult:(result,run)=>{
@@ -4486,18 +4491,17 @@ function screenPlacement(){
         S.placement.session=path.main.session;
         S.placement.weak=Array.from(new Set(path.support.filter(x=>x.wrong>0).map(x=>x.t)));
         // Explicitly chosen frequency is a planning preference, not acceleration.
-        S.roadCadence=path.config.cadence;
-        // 자동 편성: 목표+진단으로 속도·양 시작값을 맞춘다. 직접 고친 적이 있으면(roadManual) 제안만 저장한다.
+        // Selection is a preference; diagnosis must not replace the current load.
+        // Keep current workload. Goal/score alone cannot authorize an increase.
         try{
           const paths=window.NM_PLACEMENT_PATHS;
           if(paths&&paths.autoPlan){
-            const auto=paths.autoPlan(result,run.selection);
+            const auto=paths.autoPlan(result,run.selection,{speed:S.roadSpeed,amount:S.roadAmount,cadence:S.roadCadence});
             auto.at=Date.now();
-            auto.applied=!S.roadManual;
-            if(auto.applied){S.roadSpeed=auto.speed;S.roadAmount=auto.amount;syncAmount();}
+            auto.applied=false;
             S.placement.autoPlan=auto;
           }
-        }catch(_){/* 자동 편성은 진단 결과 저장을 막지 않는다 */}
+        }catch(_){/* Planning guidance must not prevent saving diagnosis evidence. */}
       }
     }
   });
