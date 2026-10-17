@@ -84,15 +84,19 @@
   // Existing grade-entry anchors, not semester mastery or admission standards.
   const gradeStarts = { e1:'c1', e2:'c3', e3:'c8', e4:'c13', e5:'c19', e6:'c22', m1:'c29', m2:'c32', m3:'c35', h1:'c38', h2:'c41', h3:'c45' };
   function startingPoint(selection) {
-    const s = selection || {}, age = Number(String(s.age || '').replace(/^pre/, ''));
-    if (!Number.isInteger(age) || age < 4 || age > 19) return null;
+    const s = selection || {};
     if (s.route === 'unlearned') return 'f-count5';
     if (s.route === 'school') return gradeStarts[s.grade] || null;
     if (s.route === 'book') {
-      const book=W.NM_PLACEMENT_BOOKS&&W.NM_PLACEMENT_BOOKS.resolve(s.series,s.step,s.progress);
+      const rows=Array.isArray(s.completedBooks)&&s.completedBooks.length?s.completedBooks:[s];
+      if(rows.length!==1)return null;
+      const row=rows[0];
+      const book=W.NM_PLACEMENT_BOOKS&&W.NM_PLACEMENT_BOOKS.resolve(row.series,row.step,s.progress,row.editionId);
       return book&&book.baselineId||null;
     }
     if (s.route !== 'age') return null;
+    const age = Number(String(s.age || '').replace(/^pre/, ''));
+    if (!Number.isInteger(age) || age < 4 || age > 19) return null;
     if(s.grade==='pre'&&age>=8)return 'f-count5';
     if(s.grade&&s.grade!=='pre')return gradeStarts[s.grade]||null;
     // A conservative candidate only. Every earlier foundation remains selectable.

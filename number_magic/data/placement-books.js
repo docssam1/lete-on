@@ -11,9 +11,6 @@ const gilbut = code => 'https://school.gilbut.co.kr/book/view?bookcode=' + code;
 const somaUrl = 'https://timecnp.com/bbs/board.php?bo_table=s3_3';
 const wolliUrl = 'https://1000math.com/archive';
 const kumonUrl = 'https://www.kumon.co.kr/Subject/Math';
-const confirmLabel = L('판·권·단원 내용을 확인하고 직접 선택',
-  'Check the edition, volume and studied topic, then choose a stage',
-  '确认版本、册次和已学内容后，自己选择阶段');
 
 function pending(id, label, urls) {
   return { id, label, coverage: [], sourceUrls: urls || [],
@@ -28,9 +25,103 @@ function scoped(id, label, code, coverage, baselineId) {
 }
 
 const catalog = [];
-['P', 'K', 'A', 'B', 'C'].forEach(stage => {
+// Retailer set records establish the publication year, ISBN and printed volume
+// numbers. These are bibliographic identifiers, not app-course equivalences.
+// "2019 publication" is deliberate: the source does not call it an edition.
+const somaSets = {
+  P: { count: 8, url: 'https://www.yes24.com/product/goods/75530645', isbn13: '9791158850845',
+    older: { url: 'https://www.yes24.com/product/goods/8653849', year: 2013 } },
+  K: { count: 8, url: 'https://www.yes24.com/product/goods/75529132', isbn13: '9791158850753' },
+  A: { count: 8, url: 'https://www.yes24.com/product/goods/75532218', isbn13: '9791158850944' },
+  B: { count: 8, url: 'https://www.yes24.com/product/goods/75533479', isbn13: '9791158851033' },
+  C: { count: 8, url: 'https://www.yes24.com/product/goods/75534465', isbn13: '9791158851125' },
+  D: { count: 6, url: 'https://www.yes24.com/product/goods/75525550', isbn13: '9791158851217' }
+};
+// Short topic cues paraphrase each set's public volume summary. They help a
+// parent recognize the physical book, but never authorize automatic testing.
+const somaPTopics = {
+  '2019': [
+    L('30까지 덧셈·뺄셈 5', 'Add/subtract 5 within 30', '30以内加减5'),
+    L('30까지 덧셈·뺄셈 6', 'Add/subtract 6 within 30', '30以内加减6'),
+    L('30까지 덧셈·뺄셈 10', 'Add/subtract 10 within 30', '30以内加减10'),
+    L('30까지 덧셈·뺄셈 9', 'Add/subtract 9 within 30', '30以内加减9'),
+    L('9까지 가르기·모으기', 'Split/combine through 9', '9以内数的分合'),
+    L('10 가르기·모으기', 'Split/combine 10', '10的分合'),
+    L('10 활용 덧셈', 'Add using 10', '利用10做加法'),
+    L('10 활용 뺄셈', 'Subtract using 10', '利用10做减法')
+  ],
+  '2013': [
+    L('50까지 덧셈·뺄셈 4', 'Add/subtract 4 within 50', '50以内加减4'),
+    L('50까지 덧셈·뺄셈 6', 'Add/subtract 6 within 50', '50以内加减6'),
+    L('50까지 덧셈·뺄셈 9', 'Add/subtract 9 within 50', '50以内加减9'),
+    L('100까지 덧셈·뺄셈 9', 'Add/subtract 9 within 100', '100以内加减9'),
+    L('7까지 가르기·모으기', 'Split/combine through 7', '7以内数的分合'),
+    L('9까지 가르기·모으기', 'Split/combine through 9', '9以内数的分合'),
+    L('10 가르기·모으기', 'Split/combine 10', '10的分合'),
+    L('10 활용 덧셈·뺄셈', 'Add/subtract using 10', '利用10做加减法')
+  ]
+};
+// These are short recognition cues from the 2019 set tables of contents.
+// In K1–K7 the final 1–4 follows the retailer's topic heading; it must not
+// be read as a verified operand limit or an app question-generation rule.
+const soma2019Topics = {
+  k: [
+    L('10까지 더하기·빼기 1', 'Add/subtract through 10 (1)', '10以内加减（1）'),
+    L('20까지 더하기·빼기 1', 'Add/subtract through 20 (1)', '20以内加减（1）'),
+    L('10까지 더하기·빼기 2', 'Add/subtract through 10 (2)', '10以内加减（2）'),
+    L('20까지 더하기·빼기 2', 'Add/subtract through 20 (2)', '20以内加减（2）'),
+    L('10까지 더하기·빼기 3', 'Add/subtract through 10 (3)', '10以内加减（3）'),
+    L('20까지 더하기·빼기 3', 'Add/subtract through 20 (3)', '20以内加减（3）'),
+    L('20까지 더하기·빼기 4', 'Add/subtract through 20 (4)', '20以内加减（4）'),
+    L('7까지 가르기·모으기', 'Split/combine through 7', '7以内数的分合')
+  ],
+  a: [
+    L('덧셈 기본식', 'Addition facts', '加法基本算式'),
+    L('뺄셈 기본식', 'Subtraction facts', '减法基本算式'),
+    L('세 수 더하고 빼기', 'Add/subtract three numbers', '三个数的加减'),
+    L('빈칸 있는 덧셈·뺄셈', 'Add/subtract with a missing number', '带空格的加减'),
+    L('두 자리 수와 한 자리 수 더하기', 'Two-digit plus one-digit', '两位数加一位数'),
+    L('두 자리 수에서 한 자리 수 빼기', 'Two-digit minus one-digit', '两位数减一位数'),
+    L('두 자리 수끼리 더하고 빼기', 'Add/subtract two-digit numbers', '两位数加减'),
+    L('두 자리 덧뺄의 빈칸 찾기', 'Missing number in two-digit operations', '两位数加减填空')
+  ],
+  b: [
+    L('두 자리 수끼리 더하기', 'Add two-digit numbers', '两位数相加'),
+    L('두 자리 수끼리 빼기', 'Subtract two-digit numbers', '两位数相减'),
+    L('세 자리 수 더하고 빼기', 'Three-digit addition/subtraction', '三位数加减'),
+    L('덧셈·뺄셈 활용', 'Applications of addition/subtraction', '加减法应用'),
+    L('곱셈 배우기', 'Multiplication', '乘法'),
+    L('곱셈구구', 'Multiplication facts', '乘法口诀'),
+    L('나눗셈 배우기', 'Division', '除法'),
+    L('곱셈·나눗셈 활용', 'Applications of multiplication/division', '乘除法应用')
+  ],
+  c: [
+    L('두 자리 수 곱셈', 'Two-digit multiplication', '两位数乘法'),
+    L('두 자리 수 곱셈 활용', 'Applications of two-digit multiplication', '两位数乘法应用'),
+    L('두 자리 수 나눗셈', 'Two-digit division', '两位数除法'),
+    L('세 자리 수 나눗셈 활용', 'Applications of three-digit division', '三位数除法应用'),
+    L('큰 수 곱셈', 'Multiplication of larger numbers', '较大数的乘法'),
+    L('큰 수 나눗셈', 'Division of larger numbers', '较大数的除法'),
+    L('여러 연산 섞어 계산', 'Mixed operations', '混合运算'),
+    L('혼합 계산 활용', 'Applications of mixed operations', '混合运算应用')
+  ],
+  d: [
+    L('같은 분모 분수 덧뺄 1', 'Like-denominator fraction operations (1)', '同分母分数加减（1）'),
+    L('같은 분모 분수 덧뺄 2', 'Like-denominator fraction operations (2)', '同分母分数加减（2）'),
+    L('소수 더하고 빼기', 'Decimal addition/subtraction', '小数加减'),
+    L('약수와 배수', 'Factors and multiples', '约数与倍数'),
+    L('다른 분모 분수 덧뺄 1', 'Unlike-denominator fraction operations (1)', '异分母分数加减（1）'),
+    L('다른 분모 분수 덧뺄 2', 'Unlike-denominator fraction operations (2)', '异分母分数加减（2）')
+  ]
+};
+Object.entries(somaSets).forEach(([stage, set]) => {
+  const urls = [somaUrl, set.url, ...(set.older ? [set.older.url] : [])];
   catalog.push({ id: 'soma-' + stage.toLowerCase(), label: L('소마셈 ' + stage),
-    sourceUrls: [somaUrl], steps: [pending('contents', confirmLabel, [somaUrl])] });
+    sourceUrls: urls, steps: Array.from({ length: set.count }, (_, index) => {
+      const volume = index + 1;
+      return pending('v' + volume, L(stage + volume + '권',
+        'Volume ' + stage + volume, stage + volume + '册'), urls);
+    }) });
 });
 
 catalog.push({ id: 'wolli', label: L('원리셈'), sourceUrls: [wolliUrl], steps: [
@@ -128,9 +219,50 @@ const progressNames = {
   middle: 'middle', mid: 'middle',
   complete: 'complete', completed: 'complete', end: 'complete'
 };
-function getSteps(seriesId) {
+function getEditions(seriesId) {
+  const stage = /^soma-([pkabcd])$/.exec(seriesId || '');
+  if (!stage) return [];
+  const set = somaSets[stage[1].toUpperCase()];
+  const choices = [
+    { id: '', label: L('발행본을 모르겠어요', 'Publication year unknown', '不清楚出版年份'),
+      sourceUrls: [], sourceVerification: 'unconfirmed' },
+    { id: '2019', label: L('2019년 발행본', '2019 publication', '2019年出版'),
+      publicationYear: 2019, isbn13: set.isbn13,
+      sourceUrls: [set.url], sourceVerification: 'retailer-bibliography' }
+  ];
+  if (set.older) choices.push({ id: '2013',
+    label: L('2013년 발행본', '2013 publication', '2013年出版'),
+    publicationYear: set.older.year, sourceUrls: [set.older.url],
+    sourceVerification: 'retailer-bibliography' });
+  choices.push({ id: 'other', label: L('다른 발행본', 'Other publication', '其他出版年份'),
+    sourceUrls: [], sourceVerification: 'unconfirmed' });
+  return clone(choices);
+}
+function getSteps(seriesId, editionId) {
   const book = byId[seriesId];
-  return book ? clone(book.steps) : [];
+  if (!book) return [];
+  const steps = clone(book.steps);
+  const stage = /^soma-([pkabcd])$/.exec(seriesId || '');
+  if (!stage || editionId == null || editionId === '' || editionId === 'other') return steps;
+  const edition = getEditions(seriesId).find(choice => choice.id === editionId);
+  if (!edition) return [];
+  const topics = stage[1] === 'p' ? somaPTopics[editionId]
+    : editionId === '2019' ? soma2019Topics[stage[1]] : null;
+  steps.forEach((step, index) => {
+    step.editionId = editionId;
+    step.sourceUrls = edition.sourceUrls.slice();
+    step.sourceVerification = topics ? 'retailer-topic-summary' : 'retailer-bibliography';
+    step.sourceScope = topics ? 'volume-topic-cue' : 'volume-number';
+    if (topics) {
+      step.topicSummary = clone(topics[index]);
+      const volume = stage[1].toUpperCase() + (index + 1);
+      step.label = L(
+        volume + '권 · ' + topics[index].ko,
+        'Volume ' + volume + ' · ' + topics[index].en,
+        volume + '册 · ' + topics[index].zh);
+    }
+  });
+  return steps;
 }
 function getBookCourses(seriesId, stepId) {
   const book = byId[seriesId];
@@ -138,9 +270,8 @@ function getBookCourses(seriesId, stepId) {
   const range = step && step.bookCourseRange;
   return range ? Array.from({length:range[1]-range[0]+1},(_,i)=>range[0]+i) : [];
 }
-function resolve(seriesId, stepId, progress) {
-  const book = byId[seriesId];
-  const step = book && book.steps.find(candidate => candidate.id === stepId);
+function resolve(seriesId, stepId, progress, editionId) {
+  const step = getSteps(seriesId, editionId).find(candidate => candidate.id === stepId);
   if (!step) return null;
   // The intake asks for the studied topic, not a progress percentage. The two
   // narrow verified topics have the same starting candidate at every point.
@@ -154,6 +285,6 @@ function resolve(seriesId, stepId, progress) {
 W.NM_PLACEMENT_BOOKS = {
   series: catalog.map(book => ({ id: book.id, label: clone(book.label),
     sourceUrls: book.sourceUrls.slice(), verification: 'topic-confirmation' })),
-  getSteps, getBookCourses, resolve
+  getEditions, getSteps, getBookCourses, resolve
 };
 })();

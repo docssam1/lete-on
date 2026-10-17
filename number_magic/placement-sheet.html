@@ -7,7 +7,9 @@
 <meta name="robots" content="noindex">
 <title>Numbers of Magic — 학습 시작점 확인 시험지</title>
 <!-- 학습 시작점 확인 시험지 (2026-10-04) — 온라인 고정 20문항 진단(data/placement-plan.js)과 같은 문항을 종이용으로 그린다.
-     쿼리: ?b=<시작 범위 id>&l=ko|en|zh&seed=<문자열>&n=<이름>  · 유아/초등/중등은 글씨 크기·쪽당 문항 수가 다르다(주간 학습지와 같은 매거진형 틀).
+     쿼리: ?b=<시작 범위 id>&l=ko|en|zh&seed=<문자열>&n=<이름>&route=book&books=<완료 교재 JSON 배열>
+     구형 링크의 series/step/bookCourseNumber도 받는다. route=school은 grade/semester만 표시한다.
+     유아/초등/중등은 글씨 크기·쪽당 문항 수가 다르다(주간 학습지와 같은 매거진형 틀).
      화면 아래 채점 입력은 인쇄에 나오지 않는다. 문항·정답은 전부 생성기 산출물(라이선스 원문 없음). -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
@@ -62,6 +64,13 @@
 
   .pl-page .nm-mzs-title{margin-top:5mm}
   .pl-sub{margin:0 0 2.5mm;font-size:12px;line-height:1.65;color:#5c6b70;word-break:keep-all}
+  .pl-source{margin:0 0 2mm;font-size:10.5px;line-height:1.45;color:#40545a;word-break:keep-all}
+  .pl-source b{color:#20343b}
+  .pl-source>div{margin-bottom:.7mm}
+  .pl-book-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 4mm;margin:.5mm 0 0;padding-left:4mm}
+  .pl-book-list li{padding-right:1mm}
+  .pl-keypage .pl-source{font-size:9.5px;line-height:1.35}
+  .pl-keypage .pl-book-list{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pl-fields{display:flex;gap:6mm;margin:0 0 3mm;font-size:12.5px;color:#20343b}
   .pl-fields u{display:inline-block;min-width:26mm;border-bottom:1.2px solid #20343b;text-decoration:none;height:1em;vertical-align:baseline}
   .pl-list{margin:0;padding:0;list-style:none;flex:1 1 auto;display:grid;align-content:space-between;gap:2mm 8mm;min-height:0}
@@ -211,9 +220,10 @@
 <script src="app/g1/13-15.print.js"></script>
 <script src="app/exam.js"></script>
 <script src="app/animal-art.js"></script>
+<script src="data/placement-books.js?v=20261018-soma2019-dunoro1"></script>
 <script src="data/placement-plan.js"></script>
-<script src="data/placement-paths.js?v=20261017-dunoro1"></script>
-<link rel="stylesheet" href="app/placement-ui.css?v=20261015-intake2">
+<script src="data/placement-paths.js?v=20261017-multi-book2"></script>
+<link rel="stylesheet" href="app/placement-ui.css?v=20261017-multi-book2">
 <script src="data/study-projection.js?v=20261015-records1"></script>
 <script src="app/study-route.js?v=20261015-records1"></script>
 <script>
@@ -235,6 +245,68 @@ if(!PLAN) return fail('진단 자료를 불러오지 못했어요.');
 var STAGES = PLAN.stages();
 var BASE = Q.get('b') || 'f-split9';
 if(!STAGES.some(function(s){ return s.id === BASE; })) BASE = STAGES[0].id;
+/* URL의 교재 정보는 등록된 선택지만 사용한다. 교재 번호는 앱 진단 기준 b와 별개다. */
+function validatedBook(raw, legacy){
+  var books = window.NM_PLACEMENT_BOOKS;
+  if(!books || !raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  if(!legacy && raw.bookStatus !== 'completed') return null;
+  var seriesId = raw.series, stepId = raw.step;
+  if(typeof seriesId !== 'string' || typeof stepId !== 'string') return null;
+  var series = books.series.find(function(row){ return row.id === seriesId; });
+  if(!series) return null;
+  var editionId = legacy ? '' : raw.editionId;
+  if(editionId == null) editionId = '';
+  if(typeof editionId !== 'string' || !['','2019','2013','other'].includes(editionId)) return null;
+  var editions = typeof books.getEditions === 'function' ? books.getEditions(seriesId) : [];
+  var edition = editionId && Array.isArray(editions) ? editions.find(function(row){ return row.id === editionId; }) : null;
+  if(editionId && !edition) return null;
+  var steps = books.getSteps(seriesId, editionId);
+  var step = Array.isArray(steps) && steps.find(function(row){ return row.id === stepId; });
+  if(!step) return null;
+  var courses = books.getBookCourses(seriesId, stepId);
+  if(!Array.isArray(courses)) return null;
+  var course = legacy && raw.bookCourseNumber != null && /^\d+$/.test(String(raw.bookCourseNumber)) ? Number(raw.bookCourseNumber) : raw.bookCourseNumber;
+  if(courses.length){
+    if(!Number.isInteger(course) || !courses.includes(course)) return null;
+  } else if(!legacy && course != null) return null;
+  var label = L(series.label) + ' · ' + (edition ? L(edition.label) + ' · ' : '') + L(step.label);
+  if(courses.length) label += ' · ' + T('교재 과정 ', 'book course ', '教材课程 ') + course;
+  return label;
+}
+function selectedBookLabels(){
+  var route = Q.get('route');
+  if(route && route !== 'book') return [];
+  var packed = Q.get('books');
+  if(packed !== null){
+    if(packed.length > 5000) return [];
+    var entries;
+    try{ entries = JSON.parse(packed); }catch(e){ return []; }
+    if(!Array.isArray(entries) || entries.length > 8) return [];
+    return entries.map(function(entry){ return validatedBook(entry, false); }).filter(Boolean);
+  }
+  var old = { series:Q.get('series'), step:Q.get('step'), bookCourseNumber:Q.get('bookCourseNumber') };
+  var label = validatedBook(old, true);
+  return label ? [label] : [];
+}
+function schoolScopeLabel(){
+  if(Q.get('route') !== 'school') return '';
+  var grade = Q.get('grade'), semester = Q.get('semester');
+  var match = /^(e([1-6])|m([1-3])|h([1-3]))$/.exec(grade || '');
+  if(!match || !['1','2'].includes(semester)) return '';
+  var group = match[2] ? T('초등','Elementary grade ','小学') : match[3] ? T('중등','Middle school grade ','初中') : T('고등','High school grade ','高中');
+  var year = match[2] || match[3] || match[4];
+  return LANG === 'ko' ? group + ' ' + year + '학년 · ' + semester + '학기' :
+    LANG === 'zh' ? group + year + '年级 · 第' + semester + '学期' : group + year + ' · semester ' + semester;
+}
+var COMPLETED_BOOKS = selectedBookLabels(), SCHOOL_SCOPE = schoolScopeLabel();
+function sourceHtml(stage){
+  var bookPart = COMPLETED_BOOKS.length ? '<div class="pl-books"><b>' + esc(T('완료한 교재', 'Completed books', '已完成的教材')) + ' (' + COMPLETED_BOOKS.length + '):</b><ol class="pl-book-list">' +
+    COMPLETED_BOOKS.map(function(label){ return '<li>' + esc(label) + '</li>'; }).join('') + '</ol></div>' : '';
+  var schoolPart = SCHOOL_SCOPE ? '<div class="pl-school"><b>' + esc(T('선택한 교과 진도', 'Selected school progress', '所选学校进度')) + ':</b> ' + esc(SCHOOL_SCOPE) + '</div>' : '';
+  var scope = '<div class="pl-app-scope"><b>' + esc(T('앱 진단 기준 주제', 'App diagnostic topic', '应用测评基准主题')) + ':</b> ' + esc(L(stage.label)) +
+    ' · ' + esc(T('이전 6 · 현재 10 · 다음 4', 'Earlier 6 · Current 10 · Next 4', '之前6 · 当前10 · 之后4')) + '</div>';
+  return '<div class="pl-source">' + bookPart + schoolPart + scope + '</div>';
+}
 
 /* ── 급 — 학습지와 같은 세 갈래(유아·저학년 / 초등 중고학년 / 중등 이상). 시작 범위의 과정 tier 로 정한다 ── */
 function bandOf(stage){
@@ -329,10 +401,11 @@ function page(inner, pageNo, pageTotal, stage, cls){
 }
 function firstHeader(stage, layout){
   var t1 = T('지금 어디서 시작하면 좋을까요?', 'Where should we start?', '从哪里开始最合适？');
-  var sub = T('20문항을 풀어 보면 이전에 배운 곳, 지금 배우는 곳, 다음에 배울 곳의 상태를 한 번에 볼 수 있어요. 모르는 문제는 건너뛰어도 좋아요.',
-              'These 20 questions show how steady the earlier, current and next steps are. Skipping what you do not know is fine.',
-              '做完这20道题，就能看到之前、现在和之后学习内容的掌握情况。不会的题可以先跳过。');
+  var sub = T('선택한 진단 범위와 그 앞뒤를 20문항으로 확인해요. 아직 배우지 않은 문제는 건너뛰어도 좋아요.',
+              'These 20 questions check the selected diagnostic scope and its adjacent topics. Skip topics not yet learned.',
+              '用20道题检查所选测评范围及相邻内容。尚未学过的题目可以跳过。');
   return '<h1 class="nm-mzs-title">' + esc(t1) + '</h1><p class="pl-sub">' + esc(sub) + '</p>' +
+    sourceHtml(stage) +
     '<div class="pl-fields"><span>' + esc(T('이름','Name','姓名')) + ' <u>' + esc(NAME) + '</u></span><span>' + esc(T('날짜','Date','日期')) + ' <u></u></span><span>' + esc(T('맞힌 수','Score','得分')) + ' <u></u> / 20</span></div>';
 }
 
@@ -350,10 +423,10 @@ function keyPage(plan, stage){
   var rows = plan.items.map(function(it, i){
     return '<tr class="pl-b-' + it.band + '"><td>' + (i + 1) + '</td><td>' + esc(BL[it.band]) + '</td><td>' + esc(L(it.label)) + '</td><td class="pl-ak">' + esc(ansText(it)) + '</td><td class="pl-mark">○ × ' + esc(T('모름','?','不会')) + '</td></tr>';
   }).join('');
-  return '<h1 class="nm-mzs-title">' + esc(T('보호자·선생님용 정답과 채점', 'Answers and marking (adults)', '家长·教师用答案与评分')) + '</h1>' +
+  return '<h1 class="nm-mzs-title">' + esc(T('보호자용 정답과 채점', 'Answers and marking for parents', '家长用答案与评分')) + '</h1>' +
     '<p class="pl-sub">' + esc(T('아이에게 먼저 보여 주지 마세요. 모르는 문제는 틀린 문제와 다르게 ‘모름’에 표시해요. 결과는 20문항에 근거한 연습 제안이며, 숙달이나 입학을 판정하지 않아요.',
       'Do not show this to the child first. Mark “?” for skipped items — it is different from wrong. The result is a practice suggestion from 20 questions, not a mastery or admission judgement.',
-      '请先不要给孩子看。不会的题标“不会”，与做错不同。结果只是基于20题的练习建议，不代表掌握程度或入学判断。')) + '</p>' +
+      '请先不要给孩子看。不会的题标“不会”，与做错不同。结果只是基于20题的练习建议，不代表掌握程度或入学判断。')) + '</p>' + sourceHtml(stage) +
     '<table class="pl-key"><thead><tr><th>#</th><th>' + esc(T('구간','Band','区间')) + '</th><th>' + esc(T('영역','Topic','内容')) + '</th><th>' + esc(T('정답','Answer','答案')) + '</th><th>' + esc(T('채점','Mark','评分')) + '</th></tr></thead><tbody>' + rows + '</tbody></table>' +
     '<div class="pl-tally"><span>' + esc(T('이전','Earlier','之前')) + ' <u></u>/6</span><span>' + esc(T('현재','Current','现在')) + ' <u></u>/10</span><span>' + esc(T('다음','Next','之后')) + ' <u></u>/4</span><span>' + esc(T('모름','Skipped','跳过')) + ' <u></u></span></div>' +
     '<p class="pl-sub">' + esc(T('다음 4문항은 아직 배우지 않았을 수 있는 범위예요. 다음 구간의 오답을 지금 약점으로 보지 않아요. 화면 맨 아래 ‘채점 입력’에 ○×를 넣으면 추천 시작 회차를 바로 볼 수 있어요(인쇄에는 나오지 않아요).',
