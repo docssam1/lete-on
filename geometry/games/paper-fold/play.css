@@ -50,7 +50,8 @@
 .pf-finish{display:grid;grid-template-columns:1fr auto;gap:6px 24px;align-items:center;padding:20px 0;margin-bottom:20px;border-top:3px solid var(--pf-teal);border-bottom:1px solid var(--pf-line)}.pf-finish h2{margin:0;font-size:22px}.pf-finish p{margin:0;grid-column:1}.pf-finish button{grid-column:2;grid-row:1/3}
 .pf-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(min-width:1100px){.pf-frames[data-mode=together]{max-width:1200px;margin:0 auto}}
-@media(max-width:1099px){.pf-frames[data-mode=battle]{grid-template-columns:minmax(0,1fr)}}
+/* 가로 태블릿(1024x768 등)도 배틀 틀을 한 화면에 나란히(3~4명은 2x2) 둔다. 세로로 쌓으면 동시에 풀 수 없다. */
+@media(max-width:899px),(max-width:1099px) and (orientation:portrait){.pf-frames[data-mode=battle]{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.pf-header{padding:10px 12px;gap:10px}.pf-main{padding:0 10px 28px}.pf-brand{display:grid;gap:0}.pf-brand strong{font-size:17px}.pf-brand span{font-size:12px}.pf-modes a{flex:1;padding:10px 6px;font-size:14px}.pf-settings{gap:10px;padding:12px 0}.pf-settings label:first-child{flex:1}.pf-settings button{font-size:14px;margin-left:0}.pf-settings select{padding:8px;font-size:14px}.pf-summary{grid-template-columns:1fr;padding:16px 2px;gap:10px}.pf-summary h1{font-size:22px}.pf-tallies{justify-content:space-between;gap:14px}.pf-tally{flex:1;gap:8px}.pf-tally strong{font-size:23px}.pf-shared{flex-wrap:wrap;gap:5px 10px}.pf-shared>span{width:100%}.pf-shared progress{flex:1}.pf-frame-area{height:650px}.pf-game-header{padding:10px}.pf-game-actions{padding:10px;flex-wrap:wrap}.pf-game-actions button{max-width:100%}.pf-overlay{padding:20px}.pf-overlay h3{font-size:22px}.pf-finish{grid-template-columns:1fr}.pf-finish button{grid-column:1;grid-row:auto;justify-self:start}.pf-frames{gap:24px}}
 @media(prefers-reduced-motion:reduce){.pf-play *{scroll-behavior:auto!important}}
 .pf-header-actions{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
@@ -84,7 +85,7 @@
 .pf-results>button{min-width:160px}
 .pf-overlay[data-state=waiting]{background:#f3f6f4}
 .pf-overlay[data-state=waiting] p{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--pf-player,var(--pf-teal))}
-@media(min-width:1100px){
+@media(min-width:1100px),(min-width:900px) and (orientation:landscape){
   .pf-play[data-stage=playing][data-mode=battle] .pf-main{padding:8px 12px 12px}
   .pf-play[data-stage=playing][data-mode=battle] .pf-frames{height:calc(100dvh - 76px);grid-template-rows:minmax(0,1fr);gap:12px}
   .pf-play[data-stage=playing][data-mode=battle] .pf-frames:is([data-players="3"],[data-players="4"]){grid-template-rows:repeat(2,minmax(0,1fr))}

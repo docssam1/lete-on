@@ -367,6 +367,16 @@ try {
   /* 유형 선택 화면에 세 과정이 있고, 레벨 3을 이어서 풀 수 있다. */
   const session = await openProblem(linePool[0], { width: 1280, height: 800 }, "ko", "session");
   assert.equal(await session.locator("#levelList [data-level]").count(), 3);
+  /* 책 버튼은 레벨 3 게임 연계 학습지를 연다. */
+  assert.equal(await session.locator(".tool-panel a").getAttribute("href"), "../../worksheet/paper-fold/?modes=game-l3", "the worksheet button opens the level 3 worksheet");
+  {
+    const sheet = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    monitor(sheet, "worksheet-from-book");
+    await sheet.goto(new URL(await session.locator(".tool-panel a").getAttribute("href"), session.url()).href, { waitUntil: "load" });
+    await sheet.waitForFunction(() => document.querySelectorAll(".sheet-page .problem-card img").length > 0, null, { timeout: 15000 });
+    assert.equal(await sheet.locator('.mode-button[aria-pressed="true"]').innerText(), "게임 연계 — 접는 방법 거꾸로 찾기", "the book button lands on the level 3 worksheet");
+    await sheet.close();
+  }
   for (let index = 0; index < 10; index += 1) {
     const id = await session.locator("#paper").getAttribute("data-problem-id");
     const problem = level.problems.find((item) => item.id === id);

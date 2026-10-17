@@ -314,16 +314,16 @@ function reverseInside(polygon,point){
   }
   return inside;
 }
-function reverseLabelSpots(frame,x,y,size,lines,paper){
+function reverseLabelSpots(frame,x,y,size,lines,paper,{reach=22,apart=34,clearance=24}={}){
   const placed=[];
   return lines.map(line=>{
     const ends=[[line.chord[0],line.chord[1]],[line.chord[1],line.chord[0]]].map(([end,other])=>{
       const e=reversePoint(frame,x,y,size,end), o=reversePoint(frame,x,y,size,other);
       const length=Math.hypot(e.X-o.X,e.Y-o.Y)||1;
-      const spot={X:e.X+(e.X-o.X)/length*22,Y:e.Y+(e.Y-o.Y)/length*22};
+      const spot={X:e.X+(e.X-o.X)/length*reach,Y:e.Y+(e.Y-o.Y)/length*reach};
       const unitOf=(X,Y)=>({x:frame.x+(X-x)/size*frame.size,y:frame.y+(Y-y)/size*frame.size});
       /* 둘레 8방향 30px 중 종이에 닿는 수. L자 안쪽 모서리처럼 종이에 둘러싸인 자리는 크다. */
-      const crowded=Array.from({length:8},(_,k)=>unitOf(spot.X+30*Math.cos(k*Math.PI/4),spot.Y+30*Math.sin(k*Math.PI/4))).filter(point=>reverseInside(paper,point)).length;
+      const crowded=Array.from({length:8},(_,k)=>unitOf(spot.X+(reach+8)*Math.cos(k*Math.PI/4),spot.Y+(reach+8)*Math.sin(k*Math.PI/4))).filter(point=>reverseInside(paper,point)).length;
       return {...spot,outside:!reverseInside(paper,unitOf(spot.X,spot.Y)),crowded};
     });
     const gap=(spot)=>Math.min(Infinity,...placed.map(other=>Math.hypot(spot.X-other.X,spot.Y-other.Y)));
@@ -332,58 +332,91 @@ function reverseLabelSpots(frame,x,y,size,lines,paper){
       const dx=b.X-a.X, dy=b.Y-a.Y, t=Math.max(0,Math.min(1,((spot.X-a.X)*dx+(spot.Y-a.Y)*dy)/(dx*dx+dy*dy||1)));
       return Math.hypot(spot.X-a.X-dx*t,spot.Y-a.Y-dy*t);
     }));
-    const rank=(spot)=>((spot.outside?4:0)+(clear(spot)>=24?2:0)+(gap(spot)>=34?1:0))*10-spot.crowded;
+    const rank=(spot)=>((spot.outside?4:0)+(clear(spot)>=clearance?2:0)+(gap(spot)>=apart?1:0))*10-spot.crowded;
     const spot=rank(ends[1])>rank(ends[0])?ends[1]:ends[0];
     placed.push(spot);
     return spot;
   });
 }
-function drawReverseLabel(ctx,spot,text,{correct=false}={}){
+function drawReverseLabel(ctx,spot,text,{correct=false,radius=19,font=24}={}){
   ctx.save();
-  ctx.beginPath(); ctx.arc(spot.X,spot.Y,15,0,Math.PI*2);
+  ctx.beginPath(); ctx.arc(spot.X,spot.Y,radius,0,Math.PI*2);
   ctx.fillStyle=correct?'#e9f6ee':'#fff'; ctx.fill();
   ctx.strokeStyle=correct?'#2e8b57':'#16417C'; ctx.lineWidth=2; ctx.stroke();
-  ctx.fillStyle=correct?'#1f6d43':'#16417C'; ctx.font='900 17px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle=correct?'#1f6d43':'#16417C'; ctx.font=`900 ${font}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText(text,spot.X,spot.Y+1);
   ctx.restore();
 }
+/* 글자 크기. 문제지 그림은 A4에서 폭 약 15cm(1px ≈ 0.33pt)로, 정답지 그림은 두 칸에 작게
+   (1px ≈ 0.17pt) 찍힌다. 그래서 정답지 그림은 문제 문장을 빼고(문제지와 카드 아래에 있다)
+   그림과 기호·번호를 크게 그린다. 목표: 문제지 약 7pt(문제 문장 21px ≈ 7.0pt, 기호·번호 24px ≈ 8pt),
+   정답지 6pt 이상(기호·번호 38px ≈ 6.4pt). */
+const REVERSE_TEXT={question:{label:24,labelRadius:19,number:24,numberRadius:20,caption:22,meta:18},answer:{label:38,labelRadius:28,number:38,numberRadius:28,caption:36}};
+function reverseCaption(ctx,text,x,y,px){
+  ctx.fillStyle='#4b5a5f'; ctx.font=`800 ${px}px sans-serif`; ctx.textAlign='center'; ctx.fillText(text,x,y);
+}
+function reverseNumber(ctx,x,y,number,{correct=false,radius=20,font=24}={}){
+  ctx.beginPath(); ctx.arc(x,y,radius,0,Math.PI*2); ctx.fillStyle=correct?'#2e8b57':'#16417C'; ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font=`900 ${font}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(String(number),x,y+1); ctx.textBaseline='alphabetic';
+}
+function reverseCreaseLayout(showAnswer){
+  return showAnswer?{size:340,top:40,left:140,right:820}:{size:300,top:128,left:160,right:770};
+}
+/* 그림에 실제로 쓰는 기호 자리(검사도 이 함수를 쓴다). */
+function reverseCreaseSpots(d,showAnswer){
+  const {size,top,left}=reverseCreaseLayout(showAnswer);
+  return reverseLabelSpots(d.source.frame,left,top,size,d.lines,d.source.paper,showAnswer?{reach:34,apart:62,clearance:32}:{reach:26,apart:44,clearance:26});
+}
 function renderReverseGame(ctx,d,showAnswer=false){
-  header(ctx,d.text);
-  const p=d.source, frame=p.frame;
-  ctx.fillStyle='#52616b'; ctx.font='700 16px sans-serif'; ctx.textAlign='left';
-  ctx.fillText(`${p.id} · ${p.paperLabel?.ko||'종이'}`,54,112);
-  ctx.textAlign='center';
+  const p=d.source, frame=p.frame, text=showAnswer?REVERSE_TEXT.answer:REVERSE_TEXT.question;
+  if(!showAnswer){
+    header(ctx,d.text);
+    ctx.fillStyle='#52616b'; ctx.font=`700 ${text.meta}px sans-serif`; ctx.textAlign='left';
+    ctx.fillText(`${p.id} · ${p.paperLabel?.ko||'종이'}`,54,114);
+  }
   if(p.interaction==='fold-line-pick'){
-    const size=330, left=150, top=140, right=760;
+    const {size,top,left,right}=reverseCreaseLayout(showAnswer);
     drawReversePaper(ctx,frame,left,top,size,p.paper);
-    const spots=reverseLabelSpots(frame,left,top,size,d.lines,p.paper);
+    const spots=reverseCreaseSpots(d,showAnswer);
+    /* 아래 끝에 붙은 기호와 겹치지 않게, 그림 이름은 가장 낮은 기호보다 아래에 쓴다. */
+    const captionY=Math.max(top+size+text.caption+12,...spots.map(spot=>spot.Y+text.labelRadius+text.caption+4));
     d.lines.forEach(line=>drawReverseCrease(ctx,frame,left,top,size,line.chord,{strong:showAnswer&&line.key===p.answerKey,faded:showAnswer&&line.key!==p.answerKey}));
     if(showAnswer){ const answer=d.lines.find(line=>line.key===p.answerKey); drawReverseArrow(ctx,frame,left,top,size,answer.arrow); }
-    d.lines.forEach((line,index)=>drawReverseLabel(ctx,spots[index],line.label,{correct:showAnswer&&line.key===p.answerKey}));
-    drawStepArrow(ctx,600,top+size/2);
+    d.lines.forEach((line,index)=>drawReverseLabel(ctx,spots[index],line.label,{correct:showAnswer&&line.key===p.answerKey,radius:text.labelRadius,font:text.label}));
+    drawStepArrow(ctx,(left+size+right)/2-20,top+size/2);
     drawReverseFolded(ctx,frame,right,top,size,p.resultPieces);
-    ctx.fillStyle='#4b5a5f'; ctx.font='800 16px sans-serif';
-    ctx.fillText('펼친 종이',left+size/2,top+size+42);
-    ctx.fillText('한 번 접은 모양',right+size/2,top+size+42);
+    reverseCaption(ctx,'펼친 종이',left+size/2,captionY,text.caption);
+    reverseCaption(ctx,'한 번 접은 모양',right+size/2,captionY,text.caption);
+    ctx.textAlign='left';
+    return;
+  }
+  if(showAnswer){
+    /* 정답지: 종이 왼쪽, 보기 2x2 오른쪽, 번호는 크게. */
+    const size=390, left=150, top=30, box=236, gap=12, startX=630, boxTop=12;
+    drawReversePaper(ctx,frame,left,top,size,p.paper);
+    p.creaseHints.forEach(hint=>drawReverseCrease(ctx,frame,left,top,size,hint.chord,{strong:true}));
+    drawReverseArrow(ctx,frame,left,top,size,p.creaseHints[0].arrow);
+    reverseCaption(ctx,'펼친 종이',left+size/2,top+size+66,text.caption);
+    d.options.forEach((option,index)=>{
+      const bx=startX+(index%2)*(box+gap), by=boxTop+Math.floor(index/2)*(box+gap), correct=p.answerKeys.includes(option.key);
+      ctx.fillStyle=correct?'#f0faf3':'#fff'; ctx.fillRect(bx,by,box,box);
+      ctx.strokeStyle=correct?'#2e8b57':'#abb8b1'; ctx.lineWidth=correct?6:2; ctx.strokeRect(bx,by,box,box);
+      drawReverseFolded(ctx,frame,bx+44,by+30,box-62,option.pieces,{thickness:5,layerEdge:option.pieces[1]||null});
+      reverseNumber(ctx,bx+32,by+32,option.number,{correct,radius:text.numberRadius,font:text.number});
+    });
     ctx.textAlign='left';
     return;
   }
   const size=300, left=70, top=150;
   drawReversePaper(ctx,frame,left,top,size,p.paper);
-  if(showAnswer){
-    p.creaseHints.forEach(hint=>drawReverseCrease(ctx,frame,left,top,size,hint.chord,{strong:true}));
-    drawReverseArrow(ctx,frame,left,top,size,p.creaseHints[0].arrow);
-  }
-  ctx.fillStyle='#4b5a5f'; ctx.font='800 16px sans-serif';
-  ctx.fillText('펼친 종이',left+size/2,top+size+42);
+  reverseCaption(ctx,'펼친 종이',left+size/2,top+size+44,text.caption);
   const box=200, gap=14, startX=430, boxTop=165;
   d.options.forEach((option,index)=>{
-    const bx=startX+index*(box+gap), correct=showAnswer&&p.answerKeys.includes(option.key);
-    ctx.fillStyle=correct?'#f0faf3':'#fff'; ctx.fillRect(bx,boxTop,box,box);
-    ctx.strokeStyle=correct?'#2e8b57':'#abb8b1'; ctx.lineWidth=correct?4:1.6; ctx.strokeRect(bx,boxTop,box,box);
-    drawReverseFolded(ctx,frame,bx+16,boxTop+12,box-36,option.pieces,{thickness:5,layerEdge:option.pieces[1]||null});
-    ctx.beginPath(); ctx.arc(bx+20,boxTop+20,14,0,Math.PI*2); ctx.fillStyle=correct?'#2e8b57':'#16417C'; ctx.fill();
-    ctx.fillStyle='#fff'; ctx.font='900 15px sans-serif'; ctx.textBaseline='middle'; ctx.fillText(String(option.number),bx+20,boxTop+21); ctx.textBaseline='alphabetic';
+    const bx=startX+index*(box+gap);
+    ctx.fillStyle='#fff'; ctx.fillRect(bx,boxTop,box,box);
+    ctx.strokeStyle='#abb8b1'; ctx.lineWidth=1.6; ctx.strokeRect(bx,boxTop,box,box);
+    drawReverseFolded(ctx,frame,bx+22,boxTop+16,box-40,option.pieces,{thickness:5,layerEdge:option.pieces[1]||null});
+    reverseNumber(ctx,bx+box/2,boxTop+box+32,option.number,{radius:text.numberRadius,font:text.number});
   });
   ctx.textAlign='left';
 }

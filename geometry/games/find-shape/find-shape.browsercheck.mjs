@@ -15,6 +15,8 @@
 //   - only the answer matches all three clues under that reading;
 //   - a wrong choice is rejected and the correct one is accepted;
 //   - the camera draws the front lower left and the right side lower right;
+//   - every option card has the same size and is not tall and narrow (on a
+//     landscape phone three cards in one row made the pictures small);
 //   - after a wrong try, the clue that does not match glows;
 //   - with three.js blocked, the flat SVG pictures are used and the game works;
 //   - no page error and no horizontal overflow.
@@ -100,6 +102,10 @@ try {
           pictures.forEach((picture, index) => {
             assert.ok(picture.painted > 0.08, `${where}: option ${index + 1} picture is blank (${picture.painted.toFixed(3)})`);
             assert.ok(picture.width >= 90 && picture.height >= 90, `${where}: option ${index + 1} is too small to tap (${picture.width}x${picture.height})`);
+            /* 받침 그림은 가로로 넓다. 칸이 세로로 길면(가로 폰에서 세 보기를 한 줄에 둘 때
+               약 145x300) 그림이 폭에 맞춰 작아지고 위아래가 빈다. */
+            assert.ok(picture.width / picture.height >= 0.9, `${where}: option ${index + 1} card is tall and narrow (${Math.round(picture.width)}x${Math.round(picture.height)}), the picture shrinks`);
+            assert.ok(Math.abs(picture.width - pictures[0].width) < 2 && Math.abs(picture.height - pictures[0].height) < 2, `${where}: option ${index + 1} must be the same size as option 1`);
           });
 
           // The camera must put the front edge of the tray lower left and the

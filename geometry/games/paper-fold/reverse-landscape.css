@@ -224,6 +224,13 @@
       height: auto;
       max-height: calc(100cqh - 18px);
     }
+    /* 모두 고르기는 종이 그림이 하나뿐이라 '펼친 종이' 글자를 빼고 그 높이만큼 종이를 키운다
+       (가로 태블릿 4명 배틀, 틀 약 490x240). */
+    body.embedded .fold-shell:has(.paper.activity-fold-result-multi) .fold-sequence-view.reverse-sequence.single figcaption { display: none; }
+    body.embedded .fold-shell:has(.paper.activity-fold-result-multi) .fold-sequence-view.reverse-sequence.single .reverse-diagram {
+      width: min(100%, calc(100cqh - 4px));
+      max-height: calc(100cqh - 4px);
+    }
     body.embedded .fold-shell:has(.paper.activity-fold-result-multi) .reverse-choice { container-type: size; }
     body.embedded .fold-shell:has(.paper.activity-fold-result-multi) .reverse-choice .reverse-diagram {
       width: min(100cqw, 100cqh);
