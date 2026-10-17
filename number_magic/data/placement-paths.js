@@ -89,7 +89,7 @@
     if (s.route === 'unlearned') return 'f-count5';
     if (s.route === 'school') return gradeStarts[s.grade] || null;
     if (s.route === 'book') {
-      const book=W.NM_PLACEMENT_BOOKS&&W.NM_PLACEMENT_BOOKS.resolve(s.series,s.step,s.progress||'middle');
+      const book=W.NM_PLACEMENT_BOOKS&&W.NM_PLACEMENT_BOOKS.resolve(s.series,s.step,s.progress);
       return book&&book.baselineId||null;
     }
     if (s.route !== 'age') return null;

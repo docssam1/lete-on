@@ -81,7 +81,7 @@
       const books=window.NM_PLACEMENT_BOOKS;
       const steps=books?books.getSteps(s.series):[];
       if(s.route==='book'&&steps.length===1&&!s.step)s.step=steps[0].id;
-      const resolved=s.route==='book'&&books?books.resolve(s.series,s.step,s.progress||'middle'):null;
+      const resolved=s.route==='book'&&books?books.resolve(s.series,s.step,s.progress):null;
       const candidate=paths.startingPoint(s);
       const mayChoose=!!s.age&&(s.route==='book'?!!resolved:!!candidate);
       const baseline=stages.find(x=>x.id===(mayChoose?(s.baselineId||candidate):''));
@@ -93,7 +93,8 @@
       const range='<label class="pd-topic">'+t(s.route==='book'&&resolved&&resolved.needsTopicConfirmation?'지금 공부하는 내용을 골라 주세요':'진단할 범위','Choose the study topic','选择要确认的内容')+'<select id="pdBaseline"'+(mayChoose?'':' disabled')+'>'+option('',t('내용 선택','Select topic','选择内容'),baseline&&baseline.id)+
         '<optgroup label="'+t('유아 · 수 감각','Early foundations','幼儿 · 数感')+'">'+stages.filter(x=>x.kind==='foundation').map(x=>option(x.id,stageLabel(x),baseline&&baseline.id)).join('')+'</optgroup><optgroup label="'+t('교과 연산 과정','Arithmetic courses','运算课程')+'">'+stages.filter(x=>x.kind!=='foundation').map(x=>option(x.id,stageLabel(x),baseline&&baseline.id)).join('')+'</optgroup></select></label>';
       const bookFields=s.route==='book'?'<div class="pd-fields"><label>'+t('공부한 교재','Studied book','学过的教材')+'<select id="pdSeries">'+option('',t('교재 선택','Select book','选择教材'),s.series)+(books?books.series.map(b=>option(b.id,l(b.label),s.series)).join(''):'')+'</select></label>'+
-        (steps.length>1?'<label>'+t('권·레벨·단원','Volume / level / unit','册次、级别、单元')+'<select id="pdStep">'+option('',t('선택해 주세요','Select an item','请选择'),s.step)+steps.map(x=>option(x.id,l(x.label),s.step)).join('')+'</select></label>':'')+'</div>'+
+        (steps.length>1?'<label>'+t('권·레벨·단원','Volume / level / unit','册次、级别、单元')+'<select id="pdStep"'+(s.series==='dunoro'?' aria-describedby="pdDunoroNote"':'')+'>'+option('',t('선택해 주세요','Select an item','请选择'),s.step)+steps.map(x=>option(x.id,l(x.label),s.step)).join('')+'</select></label>':'')+'</div>'+
+        (s.series==='dunoro'?'<p class="pd-note" id="pdDunoroNote">'+t('두뇌로 과정 번호와 이 앱의 과정 번호는 다릅니다. 실제 공부한 내용을 골라 주세요.','The book course numbers differ from this app’s courses. Choose the topic actually studied.','教材课程编号与本应用课程编号不同。请选择实际学过的内容。')+'</p>':'')+
         (s.series?'<label class="pd-book-detail">'+t('교재에 적힌 권·레벨·학습지 번호 (선택)','Printed volume / level / sheet number (optional)','教材标注的册次、级别、练习单编号（可选）')+'<input id="pdBookDetail" type="text" maxlength="80" value="'+escape(s.bookDetail||'')+'" autocomplete="off"></label>':'')+
         (resolved&&resolved.needsTopicConfirmation?'<p class="pd-note">'+t('교재마다 범위가 달라 아래에서 공부한 내용을 한 번 확인합니다.','Book ranges differ. Confirm the topic below.','各教材范围不同，请在下方确认学过的内容。')+'</p>'+range:''):'';
       const goalFields='<label>'+t('학습 목표','Learning goal','学习目标')+'<select id="pdGoal">'+paths.goals.map(x=>option(x.id,l(x.label),s.goal)).join('')+'</select></label>'+
@@ -125,7 +126,7 @@
       }
       if(s.route==='book'){
         $('#pdSeries').onchange=e=>{s.series=e.target.value;s.step='';s.bookDetail='';s.baselineId='';redraw();};
-        if($('#pdStep'))$('#pdStep').onchange=e=>{s.step=e.target.value;s.baselineId='';redraw();};
+        if($('#pdStep'))$('#pdStep').onchange=e=>{s.step=e.target.value;s.bookDetail='';s.baselineId='';redraw();};
         if($('#pdBookDetail'))$('#pdBookDetail').oninput=e=>{s.bookDetail=e.target.value;ctx.save();};
       }
       $('#pdGoal').onchange=e=>{s.goal=e.target.value;s.goalTarget='';redraw();};

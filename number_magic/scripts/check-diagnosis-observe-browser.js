@@ -33,10 +33,23 @@ try{
    await page.click('[data-route="book"]');await page.selectOption('#pdSeries','kumon');await page.selectOption('#pdStep','stage-i');assert(await page.locator('#pdStart').isDisabled(),'unknown book mapping needs topic confirmation');
    await page.selectOption('#pdBaseline','c35');assert.equal(await page.locator('#pdStart').isDisabled(),false);
    if(lang==='ko'&&width===390){
-    for(const series of ['soma-p','soma-k','soma-a','soma-b','soma-c','dunoro']){
+    for(const series of ['soma-p','soma-k','soma-a','soma-b','soma-c']){
      await page.selectOption('#pdSeries',series);assert.equal(await page.locator('#pdStep').count(),0,'do not show a meaningless single-item selector');assert(await page.locator('#pdStart').isDisabled());
      await page.fill('#pdBookDetail','교재 표기 참고');await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
     }
+    await page.selectOption('#pdSeries','dunoro');
+    assert.equal(await page.locator('#pdStep option').count(),5,'three recorded levels and one other-label fallback');
+    assert.equal(await page.locator('#pdStep').getAttribute('aria-describedby'),'pdDunoroNote');
+    assert((await page.locator('.pd-selection').innerText()).includes('두뇌로 과정 번호와 이 앱의 과정 번호는 다릅니다.'));
+    for(const step of ['level-1','level-2','level-3','contents']){
+     await page.selectOption('#pdStep',step);assert(await page.locator('#pdStart').isDisabled(),'printed level needs studied-topic confirmation');
+     await page.fill('#pdBookDetail','교재 표기 참고');await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
+    }
+    await page.selectOption('#pdStep','level-2');
+    assert.equal(await page.locator('#pdBookDetail').inputValue(),'','changing book level clears the old printed detail');
+    assert(await page.locator('#pdStart').isDisabled(),'changing book level clears the old topic');
+    await page.selectOption('#pdBaseline','f-split5');
+    await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));
     await page.screenshot({path:path.join(OUT,'ko-390-dunoro-topic.png')});
     await page.selectOption('#pdSeries','miracle');await page.selectOption('#pdStep','pre-2023-v1-order');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-order10');assert.equal(await page.locator('#pdStart').isDisabled(),false);
     await page.selectOption('#pdStep','elem-2021-v10');assert(await page.locator('#pdStart').isDisabled(),'whole-volume metadata must not certify a baseline');
