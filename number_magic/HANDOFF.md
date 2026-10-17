@@ -2798,3 +2798,11 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 원장 설명: **빠른 아이들은 6세 3월에 두뇌로 과정 1을 하고, 이후 한 달에 1과정씩 진행한다.** 이는 사진에 적힌 연령·월별 표나 실측 통계가 아니라 별도의 사용자 설명이다. 모든 6세의 필수 진도·입학 기준·우리 앱 C과정 자동 대응이나 학습량 자동 증량으로 사용하지 않는다.
 - 오래된 `과정-로드맵.md`의 “상위권 표준 속도”, “표준 1.5~2개월”, 사진을 월별 진도의 출처로 본 문구와 진단 문서의 출처 표기를 바로잡았다. 앱의 두뇌로 수동 주제 확인과 진단 20문항·실제 학습 기록 관찰 정책은 유지한다.
 - Windows C: 기존 `number_magic/HANDOFF.md`에도 이번 설명을 덧붙이고 독립 읽기에서 SHA-256 `fea18bab05c0c11bfca0f16143333f449397d24f31546570da9ff091e7500785`를 확인했다. 코드 HEAD `6b0d442f`와 원래 미커밋 문서 2개 상태는 유지했다. Windows 대화의 실제 열람은 미확인이다.
+
+## Mac Claude `number_magic_map` 독립 검수 후속 — 2026-10-17
+
+- 원장 요청으로 Mac Claude Desktop의 기존 `number_magic_map` 대화에 Codex가 직접 검수를 요청했다. 화면상 실행 환경은 **Claude 클라우드**, 모델은 **Opus 5.5(높음)**이었다. 기준은 `main` 병합 커밋 `a778fb6e474a19761020156b02f761dc21baa662`이며, Claude는 GitHub 파일·PR 패치·이력과 기존 Drive 사진을 읽기 전용으로 대조했다. Claude에 저장소·Drive 파일 편집, 커밋, 푸시를 맡기지 않았다.
+- Claude 판정: 두뇌로 선택지 4개(세 Level과 기타 항목)는 모두 `topic-confirmation`, `baselineId:null`이고 진단 시작점이나 학습량을 자동 배정하지 않는다. 6세 월별 설명도 제품 코드에 없다. 이 범위의 배포 차단 결함은 없었다. 대신 예전 문서의 두뇌로 기법 동일성 단정, 현재 화면과 다른 진입 경로·교재 선택 수, 과정 번호 혼동을 지적했다.
+- Claude는 Drive 사진을 내려받아 1,273,751바이트·1044×709px·SHA-256 `664af28885e475e90c94f8dc5db5a317f1fb7951df7212c1de0fbe2c19791301`을 독립 확인했다. Level 3 과정 17~20 주차 칸을 확대해 ST곱·AS곱·99단 곱·19단 곱과 제곱수 범위 **코드명 일부**를 판독했다. 앞 절의 “작은 글씨는 전사 근거로 쓰기 어렵다”는 당시 보수적 판단이며, 이번 확대 판독이 최신이다. 코드의 뜻, 창의수연 고급 A와의 기법 동일성, 실제 학원 운영, 판본·발행일은 여전히 미확인이다.
+- Codex는 `CURRICULUM-SOURCES.md`·`고급-목차.md`의 “정확히 같은 계열/교차 근거” 표현을 설계 판단과 사진의 직접 근거로 분리했다. `CURRICULUM_DESIGN.md`·`과정-로드맵.md`의 두뇌로 세션 운영 동일성 단정을 낮추고, 후자의 과정 1~25가 당시 앱 설계안 번호이며 교재·현재 C과정 대응표가 아님을 명시했다. `docs/placement-design.md`·`docs/placement-verification.md`·`docs/placement-book-provenance.md`의 진입 경로와 측정 시점을 현재 화면·검사 결과에 맞췄다. `docs/creative-stages-design-2026-09-26.md`의 나선형 복습은 우리 앱 설계로 표기했다. 제품 코드·교재 원본·채점·진도는 수정하지 않았다.
+- Mac Codex 재검: `check-placement-intake.js`는 `starts=44 paperPatterns=30`, `check-placement-integration.js`는 `stages=81 bookSelections=198 mapped=6 manual=192`로 각각 exit 0. Claude는 이 두 검사를 직접 실행하지 않았으므로 검사 실행 근거는 Mac Codex 로그다. 실물 교재 판본·실기기·교사 검수는 여전히 미완이다. 이 문서 수정의 원격 반영·배포 상태는 해당 PR과 Actions 기록으로 확인한다.
