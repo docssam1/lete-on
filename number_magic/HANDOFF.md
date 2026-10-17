@@ -2784,3 +2784,11 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 구현은 두뇌로 Level 1/2/3 교재 과정 구간과 학습 주제 수동 확인, 숨은 기본 진행값 제거까지다. 교재 과정 번호를 앱 C과정·나이로 자동 환산하지 않는다. 기존 과정·문항·채점·진도·학습 기록·점수·코인은 유지했다. 근거와 매핑 제한은 `docs/placement-book-provenance.md`를 따른다.
 - Mac 로컬 검사에서 진입 44, 교재 선택 198, 경로 7,938, 브라우저 8조건을 통과했다. 실물 교재 사진 원본 대조·실물 기기·교사 검수는 미완이며, 추가 검수가 필요할 때만 Claude에 요청한다.
 - Windows C: 원본 작업본 `C:\Users\user\Documents\Codex\Projects\lete-on-numbers`는 인계 시 `codex/numbers-intake-books-20261015` / `6b0d442f3951503624156c3ccda663f952bc712c`이고 인수인계 문서 2개가 미커밋이었다. Mac에서 기존 `number_magic/HANDOFF.md` 끝에 이 결과를 SSH로 덧붙이고 독립 읽기에서 SHA-256 `361420bdb6dd720ecbee0a83fd3e9734fe3ab3b1ed0dc5161e938d137f0444f7`을 확인했다. Windows 코드의 fetch·pull·checkout·reset은 하지 않았고 E: 원본과 C: 미커밋 문서를 보존했다. Windows Codex 대화로 직접 메시지를 보내는 시도는 원격 호스트 오류로 실패했으므로, 대화가 실제 이 파일을 읽었는지는 확인하지 못했다.
+
+## 사용자 제공 두뇌로 사진 원본 직접 대조 — 2026-10-17
+
+- Mac에서 `image(20261017-061239).png` 원본(1044×709px·1,273,751바이트, SHA-256 `664af28885e475e90c94f8dc5db5a317f1fb7951df7212c1de0fbe2c19791301`)을 실제 열어 보았다. Level 1 과정 1~10, Level 2 과정 11~16, Level 3 과정 17~25가 `data/placement-books.js`의 현재 라벨과 일치한다. 각 과정에 1~4주차 표기가 보인다. 당시 “사진 원본 미확인” 기록은 그때의 상태이며 이번 직접 대조가 최신이다.
+- 원본은 기존 [Drive 수의마법 검수 폴더](https://drive.google.com/drive/folders/14mt8MI-_M1y82er09tloHCSBkh8cpd0B)의 [파일](https://drive.google.com/file/d/1kBoTuAFS_bKijicnzZP3F7jtzWvI-UZG/view)(ID `1kBoTuAFS_bKijicnzZP3F7jtzWvI-UZG`)에 보관했다. 업로드 뒤 내려받아 바이트 수와 SHA-256이 원본과 같음을 확인했다. 사진 파일 자체는 공개 Git에 넣지 않았다.
+- 사진에는 표지·판본·발행일·나이/월령 규준이 보이지 않고 작은 교육내용 글씨는 전사 근거로 쓰기 어렵다. “6세 3월 과정 1·한 달 한 과정”은 별도 사용자 설명이지 사진에 인쇄된 기준이 아니다. 세부 주제·문항이나 앱 C과정과의 자동 대응은 검증되지 않았으므로 기존 수동 주제 확인과 `sourceVerification: unconfirmed`을 유지한다. 자세한 경계는 `docs/placement-book-provenance.md`를 따른다.
+- 기능 코드는 변경하지 않았다. 기존 진입 검사(44 시작·종이 30)와 교재 통합 검사(81 단계·198 선택, 자동 6·직접 확인 192)를 Mac에서 다시 실행해 통과했다. 실물 교재 전체·판본·교사 검수는 여전히 미완이다.
+- Windows C: 기존 `number_magic/HANDOFF.md`에도 사진 확인 결과와 Drive 위치를 SSH로 덧붙였다. 독립 읽기에서 SHA-256 `0d3e3dd3c81257d24c949a8dea7f5dcc7847165d3667bf2fbfa9ab549fabce40`과 원래 HEAD `6b0d442f`·미커밋 문서 2개 상태를 확인했다. Windows 대화가 이 추가 기록을 실제 읽었는지는 확인하지 못했다.
