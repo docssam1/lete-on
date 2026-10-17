@@ -90,6 +90,7 @@ test("learning plan connects goal, time budget, student materials, and teacher m
   assert.equal(await page.locator("#today-blocks li").count(), 5);
   assert.match(await page.locator("#today-minutes").innerText(), /45분/);
   assert.equal(await page.locator("#teacher-pack").isHidden(), true);
+  assert.equal(await page.locator("#paper-ox-panel").isHidden(), true);
   assert.equal(await page.locator("#teacher-grid").getByRole("link").count(), 0);
   assert.equal(await page.locator("#today-blocks a").count() >= 3, true);
   await page.locator("#goal-id").selectOption("sasmo-primary6");
@@ -124,6 +125,43 @@ test("learning plan stays readable at 390px and supports print styling", async f
   targets.filter(function (size) { return size[0] > 0; }).forEach(function (size) { assert.ok(size[1] >= 20); });
   await page.emulateMedia({ media: "print" });
   assert.equal(await page.locator(".plan-form").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.equal(await page.locator(".roadmap-stage").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.notEqual(await page.locator(".roadmap-analysis").evaluate(function (node) { return getComputedStyle(node).display; }), "none");
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("paper O/X drives a real 3D branch map without immediate acceleration and localizes by curriculum", async function () {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const errors = errorsFor(page);
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.waitForFunction(function () {
+    const canvas = document.getElementById("roadmap-canvas");
+    return canvas && canvas.width > 300 && canvas.height > 250;
+  });
+  assert.equal(await page.locator("#paper-ox-grid .paper-mark").count(), 42);
+  assert.equal(await page.locator("#roadmap-branches .roadmap-branch").count(), 4);
+  assert.match(await page.locator("#roadmap-lock-state").innerText(), /잠금/);
+  assert.match(await page.locator("#roadmap-decision").innerText(), /먼저 2주 유지/);
+  const canvasShot = await page.locator("#roadmap-canvas").screenshot();
+  assert.ok(canvasShot.byteLength > 5000);
+  await page.locator("#roadmap-observations").selectOption("2");
+  assert.equal(await page.locator("#roadmap-retention").isEnabled(), true);
+  await page.locator("#roadmap-retention").check();
+  assert.match(await page.locator("#roadmap-lock-state").innerText(), /가능/);
+  await page.locator("#roadmap-locale").selectOption("en");
+  assert.equal(await page.locator("#roadmap-curriculum").innerText(), "U.S. Grade & Course Path");
+  assert.match(await page.locator("#roadmap-title").innerText(), /One score does not set the speed/);
+  assert.equal(await page.locator("#roadmap-curriculum-label").innerText(), "Curriculum path");
+  assert.doesNotMatch(await page.locator(".roadmap-section").innerText(), /소마|SOMA|Soma/u);
+  await page.locator("#roadmap-locale").selectOption("zh-Hans");
+  assert.equal(await page.locator("#roadmap-curriculum").innerText(), "新加坡数学课程");
+  assert.match(await page.locator("#roadmap-title").innerText(), /一次成绩不决定提速/);
+  assert.equal(await page.locator("#roadmap-curriculum-label").innerText(), "课程体系");
+  assert.doesNotMatch(await page.locator(".roadmap-section").innerText(), /소마|SOMA|Soma/u);
+  await page.locator("#goal-id").selectOption("sasmo-primary6");
+  await page.locator("#plan-form").evaluate(function (form) { form.requestSubmit(); });
+  assert.equal(await page.locator("#paper-ox-grid .paper-mark").count(), 25);
   assert.deepEqual(errors, []);
   await page.close();
 });
@@ -134,6 +172,7 @@ test("teacher workspace changes the product focus and keeps its heading below th
   assert.equal(await page.locator("body").getAttribute("data-audience"), "teacher");
   assert.equal(await page.locator("#teacher-workspace-link").getAttribute("aria-current"), "page");
   assert.equal(await page.locator("#teacher-pack").isVisible(), true);
+  assert.equal(await page.locator("#paper-ox-panel").isVisible(), true);
   assert.equal(await page.locator("#teacher-grid").getByRole("link").count(), 4);
   assert.match(await page.locator("#teacher-grid a").nth(1).getAttribute("href"), /audience=teacher/);
   assert.match(await page.locator("#teacher-grid a").nth(3).getAttribute("href"), /mode=recheck/);

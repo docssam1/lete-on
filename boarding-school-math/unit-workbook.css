@@ -80,6 +80,7 @@ button, select { font:inherit; }
 .problem-prompt, .problem-question, .question-card, .choice-button { word-break:keep-all; overflow-wrap:break-word; }
 .math-inline-fraction { display:inline-block; margin:0 .1em; color:currentColor; font-family:var(--workbook-math); font-size:1.05em; line-height:1; vertical-align:-.2em; white-space:nowrap; }
 .math-inline-fraction mfrac { padding-inline:.06em; }
+.math-repeating-block { display:inline-block; padding-top:.04em; font-family:var(--workbook-math); line-height:1; text-decoration-line:overline; text-decoration-thickness:.07em; text-decoration-skip-ink:none; }
 .problem-question { margin:0 0 4mm; color:var(--ink); font:9.5pt/1.5 Georgia,"Noto Serif KR",serif; }
 .problem-visual { min-height:35mm; margin:0 0 4mm; display:grid; place-items:center; overflow:hidden; border:1px solid #d5deea; background:#f7f9fc; }
 .problem-visual svg { display:block; width:100%; max-height:39mm; }
@@ -226,6 +227,22 @@ button, select { font:inherit; }
 .g7rpa-line { stroke:#3565c9; stroke-width:2.4; stroke-linecap:round; }
 .g7rpa-dot { fill:#12635b; stroke:#fff; stroke-width:1.7; }
 .g7rpa-label { fill:#334b66; font:800 10px var(--gf-font-body); }
+.g7nsa-operation-model,.g7nsa-decimal-model,.g7nsa-context-model { width:min(70mm,96%); min-height:27mm; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:3mm; padding:4mm; border:1px solid #c9d4e2; background:#fff; color:var(--ink); font:800 13pt/1.25 var(--workbook-math); text-align:center; }
+.g7nsa-operation-model span,.g7nsa-decimal-model span,.g7nsa-decimal-model strong,.g7nsa-context-model span { min-width:13mm; padding:2mm 2.5mm; border:1px solid #d5deea; background:#fbfcfe; }
+.g7nsa-operation-model b,.g7nsa-decimal-model b,.g7nsa-context-model b { color:var(--primary); }
+.g7nsa-context-model i { flex-basis:100%; color:var(--muted); font:800 7.2pt/1.25 var(--workbook-sans); font-style:normal; letter-spacing:.04em; }
+.g7nsa-line-model { width:min(76mm,100%); display:grid; justify-items:center; gap:1.5mm; }
+.g7nsa-line-model p { margin:0; color:var(--muted); font:700 6.8pt/1.3 var(--workbook-sans); text-align:center; }
+.g7nsa-number-line { width:100%; max-height:43mm; height:auto; background:#fff; }
+.g7nsa-number-line.is-vertical { width:auto; max-width:58mm; max-height:55mm; }
+.g7nsa-axis { stroke:#263b54; stroke-width:1.6; }
+.g7nsa-tick { stroke:#8090a4; stroke-width:1.1; }
+.g7nsa-zero,.g7nsa-point-label { fill:#334b66; font:800 11px var(--gf-font-body); text-anchor:middle; }
+.g7nsa-number-line.is-vertical .g7nsa-zero,.g7nsa-number-line.is-vertical .g7nsa-point-label { text-anchor:start; }
+.g7nsa-given { fill:#12635b; stroke:#fff; stroke-width:2; }
+.g7nsa-direction-origin { fill:none; stroke:#9db3e6; stroke-width:1.4; stroke-dasharray:3 3; }
+.g7nsa-direction { fill:none; stroke:#3565c9; stroke-width:2.2; stroke-linecap:round; }
+.g7nsa-direction-head { fill:#3565c9; }
 .teacher-key { margin-top:auto; padding:3mm; border-left:3px solid var(--success); background:#e8f5ee; font-size:7.6pt; line-height:1.4; }
 .teacher-key strong { display:block; margin-bottom:1mm; }
 .teacher-move { margin-top:2mm; padding:2.5mm 3mm; border-left:3px solid var(--primary); background:var(--primary-soft); font-size:7.2pt; line-height:1.35; }
@@ -312,6 +329,13 @@ button, select { font:inherit; }
   [data-item-id="g7rpa-w25"] .choice-button,[data-item-id="g7rpa-w26"] .choice-button,[data-item-id="g7rpa-w27"] .choice-button,[data-item-id="g7rpa-w28"] .choice-button { min-height:6.2mm; font-size:7pt; }
   [data-item-id^="g7rpa"] .choice-list { gap:1.1mm; }
   [data-item-id^="g7rpa"] .choice-button { min-height:7mm; padding:1.1mm 2mm; font-size:7.4pt; line-height:1.16; }
+  .book-problem[data-item-id^="g7nsa"] { min-height:100mm; }
+  [data-item-id^="g7nsa"] .problem-visual { min-height:28mm; margin:2mm 0; }
+  [data-item-id^="g7nsa"] .g7nsa-operation-model,[data-item-id^="g7nsa"] .g7nsa-decimal-model,[data-item-id^="g7nsa"] .g7nsa-context-model { min-height:15mm; padding:2mm; gap:1.5mm; font-size:10pt; }
+  [data-item-id^="g7nsa"] .g7nsa-number-line { max-height:25mm; }
+  [data-item-id^="g7nsa"] .g7nsa-number-line.is-vertical { max-height:38mm; }
+  [data-item-id^="g7nsa"] .choice-list { gap:1.1mm; }
+  [data-item-id^="g7nsa"] .choice-button { min-height:7mm; padding:1.1mm 2mm; font-size:7.4pt; line-height:1.16; }
   [data-item-id^="spb"] .problem-visual { min-height:29mm; margin:1.5mm 0 2mm; }
   [data-item-id^="spb"] .spb-context { font-size:6.8pt; line-height:1.24; }
   [data-item-id^="spb"] .spb-data-strip { min-height:6.5mm; padding:1mm 1.5mm; font-size:7.3pt; }

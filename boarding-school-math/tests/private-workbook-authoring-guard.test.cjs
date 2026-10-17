@@ -2192,24 +2192,36 @@ test("private workbook source rejects duplicate JSON keys before parsing", funct
   });
 });
 
-test("public audit checks staged index and all marker history without touching this repository", function () {
+test("public audit checks staged, untracked, oversized, and historical markers in isolated repositories", function () {
   const stagedRoot = createTempGitRepository();
   const historyRoot = createTempGitRepository();
   const shallowRoot = createTempGitRepository();
+  const untrackedRoot = createTempGitRepository();
+  const oversizedRoot = createTempGitRepository();
   try {
-    writeFixtureFile(stagedRoot, "archive/draft.json", publicAudit.confidentialityMarker);
-    runFixtureGit(stagedRoot, ["add", "--", "archive/draft.json"]);
-    writeFixtureFile(stagedRoot, "archive/draft.json", "working-tree marker removed\n");
+    writeFixtureFile(stagedRoot, "boarding-school-math/archive/draft.json", publicAudit.confidentialityMarker);
+    runFixtureGit(stagedRoot, ["add", "--", "boarding-school-math/archive/draft.json"]);
+    writeFixtureFile(stagedRoot, "boarding-school-math/archive/draft.json", "working-tree marker removed\n");
     const stagedFindings = publicAudit.collectFindings(stagedRoot);
     assert.equal(hasFinding(stagedFindings, "PRIVATE_WORKBOOK_MARKER_TRACKED"), true);
     assert.equal(hasFinding(stagedFindings, "PRIVATE_WORKBOOK_MARKER_HISTORY_PRESENT"), false);
 
-    writeFixtureFile(historyRoot, "archive/deleted-draft.json", publicAudit.confidentialityMarker);
+    writeFixtureFile(historyRoot, "boarding-school-math/archive/deleted-draft.json", publicAudit.confidentialityMarker);
     commitAllFixtureFiles(historyRoot, "add private marker fixture");
-    fs.rmSync(path.join(historyRoot, "archive", "deleted-draft.json"));
+    fs.rmSync(path.join(historyRoot, "boarding-school-math", "archive", "deleted-draft.json"));
     commitAllFixtureFiles(historyRoot, "remove private marker fixture");
     const historyFindings = publicAudit.collectFindings(historyRoot);
     assert.equal(hasFinding(historyFindings, "PRIVATE_WORKBOOK_MARKER_HISTORY_PRESENT"), true);
+
+    writeFixtureFile(untrackedRoot, "boarding-school-math/learning/untracked-draft.json", publicAudit.confidentialityMarker);
+    const untrackedFindings = publicAudit.collectFindings(untrackedRoot);
+    assert.equal(hasFinding(untrackedFindings, "PRIVATE_WORKBOOK_MARKER_UNTRACKED"), true);
+
+    const oversizedPath = "boarding-school-math/learning/oversized-draft.bin";
+    writeFixtureFile(oversizedRoot, oversizedPath, "x");
+    fs.truncateSync(path.join(oversizedRoot, oversizedPath), publicAudit.maxUntrackedAuditBytes + 1);
+    const oversizedFindings = publicAudit.collectFindings(oversizedRoot);
+    assert.equal(hasFinding(oversizedFindings, "PRIVATE_WORKBOOK_UNTRACKED_AUDIT_UNAVAILABLE"), true);
 
     const shallowFindings = publicAudit.collectFindings(shallowRoot, function (root, argumentsList) {
       if (argumentsList[0] === "rev-parse" && argumentsList[1] === "--is-shallow-repository") {
@@ -2222,6 +2234,8 @@ test("public audit checks staged index and all marker history without touching t
     fs.rmSync(stagedRoot, { recursive: true, force: true });
     fs.rmSync(historyRoot, { recursive: true, force: true });
     fs.rmSync(shallowRoot, { recursive: true, force: true });
+    fs.rmSync(untrackedRoot, { recursive: true, force: true });
+    fs.rmSync(oversizedRoot, { recursive: true, force: true });
   }
 });
 

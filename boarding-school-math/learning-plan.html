@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./learning-plan.css?v=20261009-5">
+  <link rel="stylesheet" href="./learning-plan.css?v=20261015-1">
 </head>
 <body class="academy-page page-learning-plan">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -52,12 +52,48 @@
       </aside>
     </section>
 
+    <section class="roadmap-section plan-shell" aria-labelledby="roadmap-title">
+      <div class="section-heading roadmap-heading">
+        <div><p class="eyebrow">02 · PAPER O/X TO 3D ROADMAP</p><h2 id="roadmap-title">한 번의 점수가 아니라, 안정된 속도로 목표까지 갑니다.</h2></div>
+        <p id="roadmap-intro-copy">종이 진단은 O/X로 빠르게 입력합니다. 첫 결과만으로 진도를 올리지 않고 재확인 뒤에 시간·횟수·목표일 중 필요한 갈림길을 고릅니다.</p>
+      </div>
+      <div class="roadmap-controls" aria-label="로드맵 계산 조건">
+        <label><span id="roadmap-curriculum-label">교육과정 기준</span><select id="roadmap-locale"><option value="ko">한국 수학 과정</option><option value="en">U.S. Grade &amp; Course Path</option><option value="zh-Hans">新加坡数学课程</option></select></label>
+        <label><span id="roadmap-observations-label">누적 관찰</span><select id="roadmap-observations"><option value="1">1회 · 첫 진단</option><option value="2">2회 · 재확인</option><option value="3">3회 · 추세 확인</option></select></label>
+        <label class="retention-check"><input id="roadmap-retention" type="checkbox"><span><b id="roadmap-retention-label">재확인에서도 유지됨</b><small id="roadmap-retention-help">두 번째 관찰부터 선택</small></span></label>
+      </div>
+      <div class="roadmap-layout">
+        <article class="roadmap-stage" aria-labelledby="roadmap-stage-title">
+          <header><div><span id="roadmap-curriculum">한국 수학 과정</span><h3 id="roadmap-stage-title">현재 → 안정화 → 목표 경로</h3></div><span class="roadmap-demo-chip">DEMO · 실제 배정 아님</span></header>
+          <div class="roadmap-canvas-wrap">
+            <canvas id="roadmap-canvas" aria-label="현재 수준에서 안정화 구간을 거쳐 시간 또는 학습 횟수를 조정하는 3D 학습 경로"></canvas>
+            <div id="roadmap-fallback" class="roadmap-fallback" hidden>이 기기에서는 3D 대신 아래의 동일한 텍스트 경로를 제공합니다.</div>
+            <div class="roadmap-axis" aria-hidden="true"><span id="roadmap-axis-current">현재</span><span id="roadmap-axis-stable">안정화</span><span id="roadmap-axis-branch">선택</span><span id="roadmap-axis-target">목표</span></div>
+          </div>
+          <p class="roadmap-interaction" id="roadmap-interaction">마우스나 손가락으로 돌려 보세요. 파란 길은 현재 선택 경로, 세 기둥은 현재·안정화·목표 단계 비교입니다.</p>
+        </article>
+        <aside class="roadmap-analysis" aria-live="polite">
+          <div class="roadmap-state"><span id="roadmap-lock-state">속도 조정 잠금</span><strong id="roadmap-score">—</strong><small id="roadmap-paper-name">종이 진단 O/X</small></div>
+          <p id="roadmap-comment">O/X 결과를 입력하면 가장 먼저 확인할 영역과 안정화 기간을 설명합니다.</p>
+          <dl class="roadmap-metrics"><div><dt id="roadmap-current-label">현재 학습량</dt><dd id="roadmap-current-pace">—</dd></div><div><dt id="roadmap-required-label">필요 학습량</dt><dd id="roadmap-required-pace">—</dd></div><div><dt id="roadmap-stabilization-label">안정화 기간</dt><dd id="roadmap-stabilization">—</dd></div></dl>
+          <div class="roadmap-branches" id="roadmap-branches" aria-label="목표까지의 속도 조정 선택지"></div>
+          <div class="roadmap-decision"><span id="roadmap-decision-label">권장 경로</span><strong id="roadmap-decision">—</strong><small id="roadmap-decision-help">실제 배정은 재확인 결과와 교사 확인 뒤 확정합니다.</small></div>
+          <div class="level-comparison" id="level-comparison" aria-label="현재, 안정화, 목표 단계 비교"></div>
+        </aside>
+      </div>
+      <details class="paper-ox-panel" id="paper-ox-panel">
+        <summary><span id="paper-ox-label">종이 진단 O/X 입력 보기</span><strong id="paper-ox-summary">—</strong></summary>
+        <div class="paper-ox-notice"><b id="paper-ox-notice-label">설명용 가상 입력</b><span id="paper-ox-notice-copy">선택한 시험의 공개 메타데이터에 맞춰 칸 수와 영역을 구성합니다. 문항·정답은 이 화면에 넣지 않으며 실제 학생 기록으로 저장하지 않습니다.</span></div>
+        <div class="paper-ox-grid" id="paper-ox-grid"></div>
+      </details>
+    </section>
+
     <section class="today-section plan-shell" aria-labelledby="today-title">
-      <div class="section-heading"><p class="eyebrow">02 · TODAY'S STUDY</p><h2 id="today-title">오늘 무엇을, 얼마나 할까요?</h2><p id="today-description">현재 우선 약점에 맞춘 45분 학습 예시입니다. 실제 진단 뒤에는 두 개 이하의 약점만 배정합니다.</p></div>
+      <div class="section-heading"><p class="eyebrow">03 · TODAY'S STUDY</p><h2 id="today-title">오늘 무엇을, 얼마나 할까요?</h2><p id="today-description">현재 우선 약점에 맞춘 45분 학습 예시입니다. 실제 진단 뒤에는 두 개 이하의 약점만 배정합니다.</p></div>
       <div class="today-layout"><article class="today-total"><span>오늘</span><strong id="today-minutes">45분</strong><small id="today-problems">—문항</small><p>문항 수를 고정하지 않습니다. 개념 결손이면 설명 시간을 늘리고, 계산 실수면 짧은 연습을 늘립니다.</p></article><ol class="today-blocks" id="today-blocks"></ol></div>
     </section>
 
-    <section class="learning-loop" aria-labelledby="loop-title"><div class="plan-shell"><div class="section-heading"><p class="eyebrow">03 · ONE CONNECTED LOOP</p><h2 id="loop-title">수업과 숙제가 끊기지 않게 합니다.</h2></div><ol><li><b>진단</b><span>영역·유형·오류 원인 확인</span></li><li><b>개념 교재</b><span>모델·대표 예제·핵심 언어</span></li><li><b>교사 수업</b><span>수업 워크북과 관찰 포인트</span></li><li><b>가정 학습</b><span>약점 보완과 혼합 연습</span></li><li><b>재확인</b><span>1·3·7·14일 뒤 유지 확인</span></li></ol></div></section>
+    <section class="learning-loop" aria-labelledby="loop-title"><div class="plan-shell"><div class="section-heading"><p class="eyebrow">04 · ONE CONNECTED LOOP</p><h2 id="loop-title">수업과 숙제가 끊기지 않게 합니다.</h2></div><ol><li><b>진단</b><span>영역·유형·오류 원인 확인</span></li><li><b>개념 교재</b><span>모델·대표 예제·핵심 언어</span></li><li><b>교사 수업</b><span>수업 워크북과 관찰 포인트</span></li><li><b>가정 학습</b><span>약점 보완과 혼합 연습</span></li><li><b>재확인</b><span>1·3·7·14일 뒤 유지 확인</span></li></ol></div></section>
 
     <section class="teacher-section plan-shell" id="teacher-pack" aria-labelledby="teacher-title" hidden>
       <div class="section-heading"><p class="eyebrow">TEACHER · ONE LESSON PACK</p><h2 id="teacher-title">한 약점 군을 한 수업 세트로 엽니다.</h2><p>학생용 자료에는 답을 넣지 않고, 교사용 지도서에서만 풀이·관찰 포인트·정답을 확인합니다.</p></div>
@@ -68,8 +104,16 @@
   <footer class="site-footer"><span>G·MAP · 진단에서 오늘의 학습까지</span><span><a href="./index.html">전체 과정 지도</a> · <a href="./assessment-entry.html">학교 평가 입력</a> · <a href="./catalog.html?role=teacher">교사용 문제은행</a></span></footer>
   <script src="./competition/sasmo-mock-catalog.js?v=20260924-1"></script>
   <script src="./assessment/sasmo-mock-readiness.js?v=20261007-1"></script>
+  <script src="./shared/program-contract.js?v=20260924-1"></script>
+  <script src="./curriculum/us-k8-domain-spine.js?v=20260924-1"></script>
+  <script src="./curriculum/us-k8-cluster-map.js?v=20260924-1"></script>
+  <script src="./curriculum/us-k8-content-registry.js?v=20260924-1"></script>
+  <script src="./assessment/grade6-placement-plan.js?v=20260924-1"></script>
   <script src="./shared/gmap-local-learning-record.js?v=20261009-3"></script>
   <script src="./learning/learner-plan-engine.js?v=20261003-1"></script>
-  <script src="./learning-plan.js?v=20261009-3"></script>
+  <script src="./learning/roadmap-pace-engine.js?v=20261015-1"></script>
+  <script src="./learning-plan.js?v=20261015-1"></script>
+  <script type="importmap">{"imports":{"three":"../geometry/vendor/three/three.module.js"}}</script>
+  <script type="module" src="./learning-plan-roadmap-3d.js?v=20261015-1"></script>
 </body>
 </html>

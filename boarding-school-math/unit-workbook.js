@@ -13,7 +13,8 @@
     "6.G.A": window.GFIELDGrade6GAUnitWorkbook,
     "6.SP.A": window.GFIELDGrade6SPAUnitWorkbook,
     "6.SP.B": window.GFIELDGrade6SPBUnitWorkbook,
-    "7.RP.A": window.GFIELDGrade7RPAUnitWorkbook
+    "7.RP.A": window.GFIELDGrade7RPAUnitWorkbook,
+    "7.NS.A": window.GFIELDGrade7NSAUnitWorkbook
   };
   const source = sources[requestedCluster];
   if (!source) throw new Error("UNIT_WORKBOOK_SOURCE_MISSING");
@@ -56,15 +57,23 @@
   }
   function mathFraction(numerator,denominator,factor) {
     const ns="http://www.w3.org/1998/Math/MathML";
-    const math=document.createElementNS(ns,"math"); math.classList.add("math-inline-fraction"); math.setAttribute("display","inline"); math.setAttribute("aria-label",fractionLabel(numerator.replace(/^[-−]/,""),denominator)+(factor?" × "+factor:""));
+    const math=document.createElementNS(ns,"math"),row=document.createElementNS(ns,"mrow"),negative=/^[-−]/.test(numerator),signLabel=negative?(state.locale==="ko"?"음의 ":state.locale==="zh-Hans"?"负":"negative "):""; math.classList.add("math-inline-fraction"); math.setAttribute("display","inline"); math.setAttribute("aria-label",signLabel+fractionLabel(numerator.replace(/^[-−]/,""),denominator)+(factor?" × "+factor:""));row.classList.add("math-fraction-row");
     const fraction=document.createElementNS(ns,"mfrac");
-    function number(value){const negative=/^[-−]/.test(value),row=document.createElementNS(ns,"mrow");if(negative){const minus=document.createElementNS(ns,"mo");minus.textContent="−";row.append(minus);}const numberNode=document.createElementNS(ns,"mn");numberNode.textContent=value.replace(/^[-−]/,"");row.append(numberNode);return row;}
-    fraction.append(number(numerator),number(denominator)); math.append(fraction); if(factor){const identifier=document.createElementNS(ns,"mi");identifier.textContent=factor;math.append(identifier);} return math;
+    function number(value){const row=document.createElementNS(ns,"mrow"),numberNode=document.createElementNS(ns,"mn");numberNode.textContent=value.replace(/^[-−]/,"");row.append(numberNode);return row;}
+    if(negative){const minus=document.createElementNS(ns,"mo"),space=document.createElementNS(ns,"mspace");minus.textContent="−";minus.classList.add("math-fraction-sign");minus.setAttribute("form","prefix");minus.setAttribute("lspace","0em");minus.setAttribute("rspace","0em");space.classList.add("math-fraction-sign-gap");space.setAttribute("width","0.2em");row.append(minus,space);}
+    fraction.append(number(numerator),number(denominator)); row.append(fraction); if(factor){const identifier=document.createElementNS(ns,"mi");identifier.textContent=factor;row.append(identifier);} math.append(row);return math;
+  }
+  function repeatingBlock(value) {
+    const digits=String(value).replace(/\u0305/g,""),span=el("span","math-repeating-block",digits);span.dataset.repeatBlock=digits;
+    span.setAttribute("aria-label",state.locale==="ko"?"반복되는 숫자 묶음 "+digits:state.locale==="zh-Hans"?"循环节"+digits:"repeating block "+digits);return span;
+  }
+  function formalMathText(value) {
+    return String(value).replace(/(^|[\s(=:+×÷,])-(?=\d)/g,"$1−");
   }
   function appendMathText(node,value) {
-    const content=String(value==null?"":value),pattern=/([−-]?\d+)\s*([xX])\s*\/\s*([1-9]\d*)|([−-]?\d+)\s*\/\s*([1-9]\d*)/g; let cursor=0,match;
-    while((match=pattern.exec(content))){if(match.index>cursor)node.append(document.createTextNode(content.slice(cursor,match.index)));node.append(match[1]?mathFraction(match[1],match[3],match[2]):mathFraction(match[4],match[5]));cursor=pattern.lastIndex;}
-    if(cursor<content.length)node.append(document.createTextNode(content.slice(cursor))); return node;
+    const content=String(value==null?"":value),pattern=/([−-]?\d+)\s*([xX])\s*\/\s*([1-9]\d*)|([−-]?\d+)\s*\/\s*([1-9]\d*)|((?:\d\u0305)+)/g; let cursor=0,match;
+    while((match=pattern.exec(content))){if(match.index>cursor)node.append(document.createTextNode(formalMathText(content.slice(cursor,match.index))));node.append(match[1]?mathFraction(match[1],match[3],match[2]):match[4]?mathFraction(match[4],match[5]):repeatingBlock(match[6]));cursor=pattern.lastIndex;}
+    if(cursor<content.length)node.append(document.createTextNode(formalMathText(content.slice(cursor)))); return node;
   }
   function mathEl(tag,className,value){return appendMathText(el(tag,className),value);}
   function upgradeMathFractions(root) {
@@ -107,6 +116,7 @@
   }
   function renderConcepts(pageNumber) {
     const node=page(pageNumber,"concept-page");
+    node.id="unit-concepts";
     node.append(el("p","page-kicker",c().concept+" · "+source.pack.clusterId),mathEl("h2","",text(source.pack.subtitle)));
     const grid=el("div","concept-grid");
     source.pack.conceptPages.forEach(function(concept,index){ const card=el("article","concept-card"); card.append(el("span","concept-number",String(index+1)),mathEl("h3","",text(concept.title)),mathEl("p","",text(concept.body)),mathEl("p","concept-example",text(concept.example))); grid.append(card); });
@@ -167,7 +177,7 @@
     setUrl(); document.documentElement.lang=state.locale; document.body.classList.toggle("paper-letter",state.paper==="Letter"); document.body.dataset.audience=state.audience;
     let pageStyle=document.getElementById("dynamic-page-size"); if(!pageStyle){pageStyle=document.createElement("style"); pageStyle.id="dynamic-page-size"; document.head.append(pageStyle);} pageStyle.textContent="@page { size: "+state.paper+"; margin: 0; }";
     const printButton=document.getElementById("print-book"); printButton.disabled=true; printButton.dataset.ready="false";
-    document.title=text(source.pack.title)+" · GFIELD Math"; document.getElementById("concept-link").href="./concept-learning.html?cluster="+encodeURIComponent(state.cluster)+"&from=diagnostic"; document.getElementById("role-chip").textContent=state.audience==="teacher"?c().teacher:c().student; document.getElementById("edition-label").textContent=state.audience==="teacher"?c().teacherEdition:c().studentEdition; printButton.textContent=c().print;
+    document.title=text(source.pack.title)+" · GFIELD Math"; const conceptLink=document.getElementById("concept-link");conceptLink.href=source.pack.conceptDelivery==="embedded"?(state.mode==="workbook"?"#unit-concepts":"./unit-workbook.html?audience="+encodeURIComponent(state.audience)+"&mode=workbook&locale="+encodeURIComponent(state.locale)+"&paper="+encodeURIComponent(state.paper)+"&cluster="+encodeURIComponent(state.cluster)+"#unit-concepts"):"./concept-learning.html?cluster="+encodeURIComponent(state.cluster)+"&from=diagnostic"; document.getElementById("role-chip").textContent=state.audience==="teacher"?c().teacher:c().student; document.getElementById("edition-label").textContent=state.audience==="teacher"?c().teacherEdition:c().studentEdition; printButton.textContent=c().print;
     syncModeControls();
     document.getElementById("locale-label").textContent=c().language; document.getElementById("paper-label").textContent=c().paper;
     document.getElementById("locale-select").value=state.locale; document.getElementById("paper-select").value=state.paper; updateProgress();

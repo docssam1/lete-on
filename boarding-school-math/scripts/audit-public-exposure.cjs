@@ -55,9 +55,17 @@ const markerSourcePathExclusions = [
   ":!boarding-school-math/scripts/validate-private-grade6-workbook.cjs",
   ":!boarding-school-math/tests/private-workbook-authoring-guard.test.cjs"
 ];
+const markerScopePaths = ["boarding-school-math"];
+const markerExcludedFiles = new Set(markerSourcePathExclusions.map(function (pathspec) { return pathspec.replace(/^:!/, ""); }));
+const maxUntrackedAuditBytes = 16 * 1024 * 1024;
 
 function runGit(targetRepoRoot, argumentsList) {
-  return spawnSync("git", argumentsList, { cwd: targetRepoRoot, encoding: "utf8" });
+  return spawnSync("git", argumentsList, {
+    cwd: targetRepoRoot,
+    encoding: "utf8",
+    timeout: 30000,
+    maxBuffer: 4 * 1024 * 1024
+  });
 }
 
 function listedPaths(result) {
@@ -102,8 +110,8 @@ function collectFindings(targetRepoRoot = repoRoot, executeGit = runGit) {
   });
 
   [
-    { label: "working tree", argumentsList: ["grep", "-l", confidentialityMarker, "--", ".", ...markerSourcePathExclusions] },
-    { label: "staged index", argumentsList: ["grep", "--cached", "-l", confidentialityMarker, "--", ".", ...markerSourcePathExclusions] }
+    { label: "working tree", argumentsList: ["grep", "-l", confidentialityMarker, "--", ...markerScopePaths, ...markerSourcePathExclusions] },
+    { label: "staged index", argumentsList: ["grep", "--cached", "-l", confidentialityMarker, "--", ...markerScopePaths, ...markerSourcePathExclusions] }
   ].forEach(function (scan) {
     const markerSearch = executeGit(targetRepoRoot, scan.argumentsList);
     if (![0, 1].includes(markerSearch.status)) {
@@ -121,6 +129,45 @@ function collectFindings(targetRepoRoot = repoRoot, executeGit = runGit) {
     }
   });
 
+  const untracked = executeGit(targetRepoRoot, ["ls-files", "--others", "--exclude-standard", "-z", "--", ...markerScopePaths]);
+  if (untracked.status !== 0) {
+    findings.push({
+      code: "PRIVATE_WORKBOOK_UNTRACKED_AUDIT_UNAVAILABLE",
+      file: "boarding-school-math",
+      message: "The public audit could not enumerate untracked workbook files."
+    });
+  } else {
+    const marker = Buffer.from(confidentialityMarker, "utf8");
+    for (const relativePath of listedPaths(untracked)) {
+      if (markerExcludedFiles.has(relativePath)) continue;
+      try {
+        const target = path.join(targetRepoRoot, relativePath);
+        const stat = fs.lstatSync(target);
+        if (!stat.isFile() || stat.size > maxUntrackedAuditBytes) {
+          findings.push({
+            code: "PRIVATE_WORKBOOK_UNTRACKED_AUDIT_UNAVAILABLE",
+            file: relativePath,
+            message: "The public audit refuses to follow an untracked link or read an oversized untracked file."
+          });
+          continue;
+        }
+        if (fs.readFileSync(target).includes(marker)) {
+          findings.push({
+            code: "PRIVATE_WORKBOOK_MARKER_UNTRACKED",
+            file: relativePath,
+            message: "A workbook confidentiality marker appears in an unexpected untracked file."
+          });
+        }
+      } catch (_error) {
+        findings.push({
+          code: "PRIVATE_WORKBOOK_UNTRACKED_AUDIT_UNAVAILABLE",
+          file: relativePath,
+          message: "The public audit could not read an untracked workbook file."
+        });
+      }
+    }
+  }
+
   const shallowState = executeGit(targetRepoRoot, ["rev-parse", "--is-shallow-repository"]);
   if (shallowState.status !== 0) {
     findings.push({
@@ -136,7 +183,7 @@ function collectFindings(targetRepoRoot = repoRoot, executeGit = runGit) {
     });
   } else {
     const markerHistory = executeGit(targetRepoRoot, [
-      "log", "--all", `-S${confidentialityMarker}`, "--format=", "--name-only", "--", ".", ...markerSourcePathExclusions
+      "log", "--all", `-S${confidentialityMarker}`, "--format=", "--name-only", "--", ...markerScopePaths, ...markerSourcePathExclusions
     ]);
     if (markerHistory.status !== 0) {
       findings.push({
@@ -173,6 +220,9 @@ if (require.main === module) process.exitCode = reportFindings(collectFindings()
 module.exports = Object.freeze({
   collectFindings,
   confidentialityMarker,
+  markerScopePaths,
+  markerExcludedFiles,
+  maxUntrackedAuditBytes,
   markerSourcePathExclusions,
   reportFindings
 });

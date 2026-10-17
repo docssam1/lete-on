@@ -388,6 +388,42 @@ test("legacy curriculum foundation remains available without feature regression"
   assert.equal(await page.locator(".domain-item").count(), 5);
   assert.equal(await page.locator("#unit-list .unit-item").count(), 10);
 
+  await page.locator('[data-grade="7"]').click();
+  assert.equal(await page.locator("#unit-list .unit-item").count(), 10);
+  assert.equal(await page.locator('#unit-list .unit-item small').filter({ hasText: "공개 워크북" }).count(), 2);
+  assert.match(await page.locator('[data-unit-id="ccss-7-rp-a"]').innerText(), /공개 워크북/);
+  assert.match(await page.locator('[data-unit-id="ccss-7-ns-a"]').innerText(), /공개 워크북/);
+  await page.locator('[data-unit-id="ccss-7-ns-a"]').click();
+  assert.equal(await page.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=student&locale=ko&paper=A4");
+  assert.equal(await page.locator("#resource-state a").textContent(), "7.NS.A 학생용 단원 워크북 열기");
+  assert.ok((await page.locator("#resource-state a").boundingBox()).height >= 44);
+  assert.match(await page.locator("#resource-state").innerText(), /36문항 단원 워크북과 8문항 재확인/);
+  assert.equal(await page.locator("#resource-state [data-flow-stage]").count(), 6);
+  assert.match(await page.locator('#resource-state [data-flow-stage="1"]').innerText(), /진단[\s\S]*18문항 제작·독립 검수 대기[\s\S]*준비 중/);
+  assert.equal(await page.locator('#resource-state [data-flow-stage="1"]').getAttribute("data-state"), "locked");
+  assert.match(await page.locator('#resource-state [data-flow-stage="3"]').innerText(), /처방·로드맵[\s\S]*약점·기간·일일 학습량[\s\S]*교사 확정[\s\S]*준비 중/);
+  assert.equal(await page.locator('#resource-state [data-flow-stage="3"]').getAttribute("data-state"), "locked");
+  assert.match(await page.locator('#resource-state [data-flow-stage="5"]').innerText(), /단원 워크북[\s\S]*36문항 학습[\s\S]*지금 가능/);
+  assert.equal(await page.locator('#resource-state [data-flow-stage="5"]').getAttribute("data-state"), "available");
+  assert.match(await page.locator('#resource-state [data-flow-stage="6"]').innerText(), /재확인[\s\S]*8문항[\s\S]*완료 후/);
+  assert.equal(await page.locator('#resource-state [data-flow-stage="6"]').getAttribute("data-state"), "conditional");
+  assert.equal(await page.locator('#resource-state [data-flow-stage="1"] a, #resource-state [data-flow-stage="2"] a, #resource-state [data-flow-stage="3"] a').count(), 0);
+  await page.locator('[data-role="teacher"]').click();
+  assert.equal(await page.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=teacher&locale=ko&paper=A4");
+  assert.equal(await page.locator("#resource-state a").textContent(), "7.NS.A 교사용 지도서 열기");
+  await page.locator('[data-locale="en"]').click();
+  assert.equal(await page.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=teacher&locale=en&paper=A4");
+  assert.equal(await page.locator("#resource-state a").textContent(), "Open 7.NS.A teacher guide");
+  assert.match(await page.locator('#resource-state [data-flow-stage="1"]').innerText(), /Diagnostic[\s\S]*18 items awaiting authoring and independent review[\s\S]*Planned/);
+  assert.match(await page.locator('#resource-state [data-flow-stage="3"]').innerText(), /Prescription & roadmap[\s\S]*Weakness targets, schedule, and daily load[\s\S]*teacher approval/);
+  await page.locator('[data-locale="zh-Hans"]').click();
+  assert.equal(await page.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=A4");
+  assert.equal(await page.locator("#resource-state a").textContent(), "打开 7.NS.A 教师教学指南");
+  assert.match(await page.locator('#resource-state [data-flow-stage="1"]').innerText(), /诊断[\s\S]*18题等待编写并接受独立审核[\s\S]*准备中/);
+  assert.match(await page.locator('#resource-state [data-flow-stage="3"]').innerText(), /处方与学习路线[\s\S]*教师确认[\s\S]*薄弱点、学习周期与每日学习量/);
+  await page.locator('[data-locale="ko"]').click();
+
+  await page.locator('[data-grade="8"]').click();
   await page.locator('[data-role="teacher"]').click();
   assert.deepEqual(await page.locator("#resource-list li b").allTextContents(), ["수업 교안", "정답지", "해설지", "평가 루브릭", "과제 생성기", "교사용 분석"]);
 
@@ -416,6 +452,29 @@ test("legacy curriculum foundation remains available without feature regression"
   assert.match(await linkedPage.locator("#resource-list").innerText(), /교사용 분석/);
   assert.deepEqual(linkedErrors, []);
   await linkedPage.close();
+
+  const deepLinkedPage = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const deepLinkedErrors = collectErrors(deepLinkedPage);
+  await deepLinkedPage.goto(`${baseUrl}catalog.html?cluster=7.NS.A&role=teacher&locale=zh-Hans`, { waitUntil: "networkidle" });
+  assert.equal(await deepLinkedPage.locator('[data-grade="7"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator('[data-unit-id="ccss-7-ns-a"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator('[data-role="teacher"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator('[data-locale="zh-Hans"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.NS.A&mode=workbook&audience=teacher&locale=zh-Hans&paper=A4");
+  await deepLinkedPage.locator('[data-role="student"]').click();
+  let currentSearch = new URL(deepLinkedPage.url()).searchParams;
+  assert.equal(currentSearch.get("grade"), "7");
+  assert.equal(currentSearch.get("cluster"), "7.NS.A");
+  assert.equal(currentSearch.get("role"), "student");
+  assert.equal(currentSearch.get("locale"), "zh-Hans");
+  await deepLinkedPage.locator('[data-unit-id="ccss-7-rp-a"]').click();
+  currentSearch = new URL(deepLinkedPage.url()).searchParams;
+  assert.equal(currentSearch.get("cluster"), "7.RP.A");
+  await deepLinkedPage.reload({ waitUntil: "networkidle" });
+  assert.equal(await deepLinkedPage.locator('[data-unit-id="ccss-7-rp-a"]').getAttribute("aria-pressed"), "true");
+  assert.equal(await deepLinkedPage.locator("#resource-state a").getAttribute("href"), "./unit-workbook.html?cluster=7.RP.A&mode=workbook&audience=student&locale=zh-Hans&paper=A4");
+  assert.deepEqual(deepLinkedErrors, []);
+  await deepLinkedPage.close();
 });
 
 test("Grade 6 diagnostic page explains the real flow while public hosting keeps assessment content locked", async function () {

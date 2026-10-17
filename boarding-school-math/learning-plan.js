@@ -5,7 +5,9 @@
   const localRecord = window.GFIELDLocalLearningRecord;
   const catalog = window.GFIELDSASMOMockCatalog;
   const readiness = window.GFIELDSASMOMockReadiness;
-  if (!engine || !localRecord) throw new Error("GFIELD learner plan dependencies did not load");
+  const placementPlan = window.GFIELDGrade6PlacementPlan;
+  const roadmapEngine = window.GFIELDRoadmapPaceEngine;
+  if (!engine || !localRecord || !placementPlan || !roadmapEngine) throw new Error("GFIELD learner plan dependencies did not load");
 
   const pageQuery = new URLSearchParams(window.location.search);
   const runtimeToken = pageQuery.get("runtime") === "local-private" ? pageQuery.get("token") : null;
@@ -23,6 +25,11 @@
   const targetDate = document.getElementById("target-date");
   const studyDays = document.getElementById("study-days");
   const minutesPerDay = document.getElementById("minutes-per-day");
+  const roadmapLocale = document.getElementById("roadmap-locale");
+  const roadmapObservations = document.getElementById("roadmap-observations");
+  const roadmapRetention = document.getElementById("roadmap-retention");
+  const paperMarks = new Map();
+  let currentPlan = null;
 
   function isoDate(offsetDays) {
     const date = new Date();
@@ -110,6 +117,142 @@
   }
   function text(nodeId, value) { document.getElementById(nodeId).textContent = value; }
   function plural(value, singular, pluralLabel) { return `${value}${value === 1 ? singular : pluralLabel}`; }
+  function roadmapText(ko, en, zh) {
+    return roadmapLocale.value === "en" ? en : roadmapLocale.value === "zh-Hans" ? zh : ko;
+  }
+  function domainLabel(domainId) {
+    const labels = {
+      "G6-RP": ["비와 비례", "Ratios & proportional reasoning", "比与比例"],
+      "G6-NS": ["수 체계", "The Number System", "数与运算"],
+      "G6-EE": ["식과 방정식", "Expressions & equations", "代数"],
+      "G6-G": ["기하", "Geometry", "几何与测量"],
+      "G6-SP": ["통계", "Statistics", "统计"],
+      "number-operations": ["수와 연산", "Number & operations", "数与运算"],
+      "patterns-algebra": ["규칙과 대수", "Patterns & algebra", "规律与代数"],
+      "geometry-spatial": ["기하와 공간", "Geometry & spatial", "几何与空间"],
+      "data-probability": ["자료와 가능성", "Data & probability", "数据与概率"],
+      "combinatorics-logic": ["조합과 논리", "Combinatorics & logic", "组合与逻辑"],
+      "problem-solving-strategies": ["문제 해결 전략", "Problem-solving strategies", "问题解决策略"]
+    };
+    const row = labels[domainId] || [domainId, domainId, domainId];
+    return roadmapLocale.value === "en" ? row[1] : roadmapLocale.value === "zh-Hans" ? row[2] : row[0];
+  }
+  function paperProfile() {
+    if (goalId.value === "sasmo-primary6") {
+      const form = catalog.getForm("sasmo-2019-g6-baseline-a");
+      return {
+        id: "sasmo-primary6-25",
+        label: roadmapText("SASMO Primary 6 · 25문항", "SASMO Primary 6 · 25 items", "SASMO Primary 6 · 25题"),
+        entries: form.items.map(function (item) { return { id: `sasmo-${item.questionNumber}`, number: item.questionNumber, domainId: item.axisId }; })
+      };
+    }
+    return {
+      id: goalId.value === "promotion-g6" ? "promotion-g6-42" : "school-g6-42",
+      label: roadmapText("Grade 6 · 42문항 설계 슬롯", "U.S. Grade 6 · 42 planned slots", "六年级 · 42个规划题位"),
+      entries: placementPlan.plan.slots.map(function (slot, index) { return { id: `${goalId.value}-${slot.slotId}`, number: index + 1, domainId: slot.domainId }; })
+    };
+  }
+  function markFor(profile, entry, index) {
+    const key = `${profile.id}:${entry.id}`;
+    if (!paperMarks.has(key)) paperMarks.set(key, ![2, 5, 8, 11].includes(index % 13));
+    return paperMarks.get(key);
+  }
+  function paperResults(profile) {
+    return profile.entries.map(function (entry, index) {
+      return { id: entry.id, domainId: domainLabel(entry.domainId), correct: markFor(profile, entry, index) };
+    });
+  }
+  function renderPaperMarks(profile, roadmap) {
+    const host = document.getElementById("paper-ox-grid");
+    host.replaceChildren();
+    profile.entries.forEach(function (entry, index) {
+      const correct = markFor(profile, entry, index);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "paper-mark";
+      button.dataset.mark = correct ? "O" : "X";
+      button.innerHTML = `<b>${String(entry.number).padStart(2, "0")} · ${correct ? "O" : "X"}</b><small>${domainLabel(entry.domainId)}</small>`;
+      button.setAttribute("aria-label", roadmapText(`${entry.number}번 ${domainLabel(entry.domainId)} ${correct ? "O" : "X"}. 눌러서 바꾸기`, `Item ${entry.number}, ${domainLabel(entry.domainId)}, ${correct ? "O" : "X"}. Press to change.`, `第${entry.number}题，${domainLabel(entry.domainId)}，${correct ? "O" : "X"}。按下可更改。`));
+      button.addEventListener("click", function () {
+        paperMarks.set(`${profile.id}:${entry.id}`, !correct);
+        renderRoadmap(currentPlan);
+      });
+      host.append(button);
+    });
+    text("paper-ox-summary", `${roadmap.summary.correct} O · ${roadmap.summary.total - roadmap.summary.correct} X`);
+  }
+  function renderRoadmap(plan) {
+    if (!plan) return;
+    currentPlan = plan;
+    text("roadmap-title", roadmapText("한 번의 점수가 아니라, 안정된 속도로 목표까지 갑니다.", "One score does not set the speed. Build a stable route to the goal.", "一次成绩不决定提速，先稳定，再走向目标。"));
+    text("roadmap-intro-copy", roadmapText("종이 진단은 O/X로 빠르게 입력합니다. 첫 결과만으로 진도를 올리지 않고 재확인 뒤에 시간·횟수·목표일 중 필요한 갈림길을 고릅니다.", "Mark a paper test with O/X. Hold the current pace after the first result, then choose time, frequency, or a new target date after a stable recheck.", "纸笔诊断只需标记O/X。第一次结果后先保持当前进度，复测稳定后再选择增加时间、频次或调整目标日期。"));
+    text("roadmap-curriculum-label", roadmapText("교육과정 기준", "Curriculum path", "课程体系"));
+    text("roadmap-observations-label", roadmapText("누적 관찰", "Observed attempts", "累计观察"));
+    text("roadmap-retention-label", roadmapText("재확인에서도 유지됨", "Stable on recheck", "复测结果稳定"));
+    text("roadmap-retention-help", roadmapText("두 번째 관찰부터 선택", "Available from the second observation", "从第二次观察开始选择"));
+    const observationCopy = roadmapLocale.value === "en"
+      ? ["1 · First diagnostic", "2 · Recheck", "3 · Trend check"]
+      : roadmapLocale.value === "zh-Hans"
+        ? ["1次 · 首次诊断", "2次 · 复测", "3次 · 趋势确认"]
+        : ["1회 · 첫 진단", "2회 · 재확인", "3회 · 추세 확인"];
+    Array.from(roadmapObservations.options).forEach(function (option, index) { option.textContent = observationCopy[index]; });
+    text("roadmap-stage-title", roadmapText("현재 → 안정화 → 목표 경로", "Current → stabilize → target route", "当前 → 稳定 → 目标路径"));
+    document.getElementById("roadmap-canvas").setAttribute("aria-label", roadmapText("현재 수준에서 안정화 구간을 거쳐 시간 또는 학습 횟수를 조정하는 3D 학습 경로", "A 3D learning route from the current level through stabilization to time or frequency adjustments", "从当前阶段经过稳定期，再调整学习时间或频次的3D学习路径"));
+    text("roadmap-axis-current", roadmapText("현재", "Current", "当前"));
+    text("roadmap-axis-stable", roadmapText("안정화", "Stabilize", "稳定"));
+    text("roadmap-axis-branch", roadmapText("선택", "Choose", "选择"));
+    text("roadmap-axis-target", roadmapText("목표", "Target", "目标"));
+    text("roadmap-interaction", roadmapText("마우스나 손가락으로 돌려 보세요. 파란 길은 현재 선택 경로, 세 기둥은 현재·안정화·목표 단계 비교입니다.", "Drag to rotate. The blue road is the selected route; the three columns compare current, stable, and target levels.", "拖动可旋转。蓝色道路是当前选择的路径，三根柱子比较当前、稳定和目标阶段。"));
+    text("roadmap-current-label", roadmapText("현재 학습량", "Current load", "当前学习量"));
+    text("roadmap-required-label", roadmapText("필요 학습량", "Required load", "所需学习量"));
+    text("roadmap-stabilization-label", roadmapText("안정화 기간", "Stabilization", "稳定期"));
+    text("roadmap-decision-label", roadmapText("권장 경로", "Recommended route", "建议路径"));
+    text("roadmap-decision-help", roadmapText("실제 배정은 재확인 결과와 교사 확인 뒤 확정합니다.", "Confirm an actual assignment only after the recheck and teacher review.", "实际安排须在复测和教师确认后确定。"));
+    text("paper-ox-label", roadmapText("종이 진단 O/X 입력 보기", "Open paper-test O/X marks", "查看纸笔诊断O/X录入"));
+    text("paper-ox-notice-label", roadmapText("설명용 가상 입력", "Demonstration marks", "演示用模拟录入"));
+    text("paper-ox-notice-copy", roadmapText("선택한 시험의 공개 메타데이터에 맞춰 칸 수와 영역을 구성합니다. 문항·정답은 이 화면에 넣지 않으며 실제 학생 기록으로 저장하지 않습니다.", "The number of cells and domains follows the selected assessment's public metadata. No question, answer, or student record is stored here.", "题位数量和领域依据所选测评的公开元数据。此页面不放入题目或答案，也不保存真实学生记录。"));
+    const profile = paperProfile();
+    const model = roadmapEngine.buildRoadmap({
+      locale: roadmapLocale.value,
+      goalId: plan.goal.id,
+      weeksAvailable: plan.calendar.calendarWeeks,
+      studyDaysPerWeek: plan.availability.studyDaysPerWeek,
+      minutesPerDay: plan.availability.minutesPerDay,
+      observationCount: Number(roadmapObservations.value),
+      retentionPassed: roadmapRetention.checked,
+      results: paperResults(profile)
+    });
+    text("roadmap-curriculum", model.curriculum.label);
+    text("roadmap-paper-name", profile.label);
+    text("roadmap-score", `${model.summary.correct} / ${model.summary.total}`);
+    text("roadmap-lock-state", model.stability.accelerationLocked ? roadmapText("속도 조정 잠금", "Pace change locked", "暂不提速") : roadmapText("속도 조정 가능", "Pace change available", "可以调整进度"));
+    document.getElementById("roadmap-lock-state").style.color = model.stability.accelerationLocked ? "#b42332" : "#16734b";
+    text("roadmap-comment", model.comment);
+    text("roadmap-current-pace", roadmapText(`주 ${model.pace.currentCapacity}블록`, `${model.pace.currentCapacity} blocks/wk`, `每周${model.pace.currentCapacity}课时`));
+    text("roadmap-required-pace", roadmapText(`주 ${model.pace.requiredPace}블록`, `${model.pace.requiredPace} blocks/wk`, `每周${model.pace.requiredPace}课时`));
+    text("roadmap-stabilization", model.stability.stabilizationWeeks ? roadmapText(`${model.stability.stabilizationWeeks}주`, `${model.stability.stabilizationWeeks} weeks`, `${model.stability.stabilizationWeeks}周`) : roadmapText("확인 완료", "Confirmed", "已确认"));
+    text("roadmap-decision", model.stability.accelerationLocked ? roadmapText(`먼저 ${model.stability.stabilizationWeeks}주 유지 · 이후 ${model.decision}`, `Hold for ${model.stability.stabilizationWeeks} weeks first. Then: ${model.decision}`, `先保持${model.stability.stabilizationWeeks}周，再执行：${model.decision}`) : model.decision);
+    const branches = document.getElementById("roadmap-branches");
+    branches.replaceChildren();
+    model.pace.options.forEach(function (option, index) {
+      const row = document.createElement("div");
+      row.className = `roadmap-branch${option.id === model.pace.selectedOptionId ? " selected" : ""}`;
+      row.innerHTML = `<span class="branch-mark">${index + 1}</span><div><b>${option.label}</b><small>${roadmapText(`주 ${option.studyDaysPerWeek}일 · 하루 ${option.minutesPerDay}분`, `${option.studyDaysPerWeek} days/wk · ${option.minutesPerDay} min/day`, `每周${option.studyDaysPerWeek}次 · 每次${option.minutesPerDay}分钟`)}</small></div><strong>${option.feasible ? roadmapText("가능", "Enough", "可行") : roadmapText("부족", "Short", "不足")}</strong>`;
+      branches.append(row);
+    });
+    const comparison = document.getElementById("level-comparison");
+    comparison.replaceChildren();
+    model.comparison.forEach(function (entry) {
+      const cell = document.createElement("div");
+      cell.innerHTML = `<span>${entry.label}</span><strong>${entry.levelLabel}</strong><small>${entry.value}</small>`;
+      comparison.append(cell);
+    });
+    renderPaperMarks(profile, model);
+    roadmapRetention.disabled = Number(roadmapObservations.value) < 2;
+    if (roadmapRetention.disabled) roadmapRetention.checked = false;
+    window.GFIELDLatestRoadmapModel = model;
+    window.dispatchEvent(new CustomEvent("gfield-roadmap-update", { detail: model }));
+  }
   function renderToday(plan) {
     text("today-minutes", `${plan.today.totalMinutes}분`);
     text("today-problems", `${plan.today.totalProblemCount}문항 내외`);
@@ -234,6 +377,7 @@
     renderCompetitionReviewQueue(competitionEvidence);
     renderToday(plan);
     renderTeacherPack(plan);
+    renderRoadmap(plan);
   }
   function applyAudienceMode() {
     const query = new URLSearchParams(window.location.search);
@@ -246,6 +390,7 @@
     const runtimeQuery = privateRuntime ? `&runtime=local-private&token=${encodeURIComponent(privateRuntime.token)}` : "";
     document.body.dataset.audience = audience;
     teacherSection.hidden = audience !== "teacher";
+    document.getElementById("paper-ox-panel").hidden = audience !== "teacher";
     studentLink.href = `./learning-plan.html?audience=student${goalQuery}${runtimeQuery}`;
     teacherLink.href = `./learning-plan.html?audience=teacher${goalQuery}${runtimeQuery}#teacher-pack`;
     if (audience === "teacher") {
@@ -296,8 +441,16 @@
     localRecord.storage.savePlanSettings({ goalId: plan.goal.id, targetDate: targetDate.value, studyDays: Number(studyDays.value), minutesPerDay: Number(minutesPerDay.value), priority: selectedPriorityKey() });
     render(plan);
   });
+  roadmapLocale.addEventListener("change", function () { renderRoadmap(currentPlan); });
+  roadmapObservations.addEventListener("change", function () {
+    if (Number(roadmapObservations.value) < 2) roadmapRetention.checked = false;
+    renderRoadmap(currentPlan);
+  });
+  roadmapRetention.addEventListener("change", function () { renderRoadmap(currentPlan); });
   targetDate.min = isoDate(1);
   targetDate.value = isoDate(56);
+  const requestedLocale = new URLSearchParams(window.location.search).get("locale");
+  if (["ko", "en", "zh-Hans"].includes(requestedLocale)) roadmapLocale.value = requestedLocale;
   applyAudienceMode();
   restoreSettings();
   setInitialGoalFromQuery();
