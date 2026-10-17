@@ -21,11 +21,11 @@ async function overflow(page){assert(await page.evaluate(()=>document.documentEl
 try{
  browser=await chromium.launch({headless:true,args:['--disable-3d-apis','--disable-webgl','--disable-webgl2']});
  for(const lang of (process.argv.includes('--webgl-only')?[]:['ko','en','zh']))for(const width of [390,1280]){
-  const ctx=await context(browser,base,width,lang),page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+  const ctx=await context(browser,base,width,lang),page=await ctx.newPage(),errors=[];let completedBookSheetHref='';page.on('pageerror',e=>errors.push(e.message));
   try{
    await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),async el=>el.click(),{noWaitAfter:true});
    await enter(page,base);assert(await page.locator('#pdStart').isDisabled());assert.equal(await page.locator('[data-route]').count(),3);
-   assert.equal(await page.locator('#pdSeries,#pdStep,#pdProgress').count(),0,'no duplicate progress questionnaires');
+   assert.equal(await page.locator('#pdSeries,#pdStep,#pdBookCourse,#pdBookDetail,#pdProgress').count(),0,'no duplicate progress questionnaires or free-text book detail');
    await page.selectOption('#pdAge','6');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-split5');
    await page.click('[data-route="unlearned"]');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-count5');
    await page.selectOption('#pdAge','16');await page.click('[data-route="age"]');assert.equal(await page.locator('[data-route="school"],#pdSemester').count(),0,'age and school merged');
@@ -34,32 +34,44 @@ try{
    await page.selectOption('#pdBaseline','c35');assert.equal(await page.locator('#pdStart').isDisabled(),false);
    await page.selectOption('#pdSeries','dunoro');await page.selectOption('#pdStep','level-3');
    assert.deepEqual(await page.locator('#pdBookCourse option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:9},(_,i)=>String(i+17))]);
-   assert((await page.locator('.pd-book-detail').innerText()).includes(lang==='ko'?'주차·학습지':lang==='en'?'week or sheet':'周次或练习单'));
+   assert.equal(await page.locator('#pdBookDetail,.pd-book-detail').count(),0,'book detail is selected, never typed');
    await page.selectOption('#pdBookCourse','17');
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.bookCourseNumber),17,'book course number is saved as a number');
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.bookStatus),'completed','only a newly confirmed choice is recorded as completed');
    assert(await page.locator('#pdStart').isDisabled(),'book course number alone cannot select an app starting point');
-   await page.selectOption('#pdStep','level-2');assert.equal(await page.locator('#pdBookCourse').inputValue(),'');
+   await page.selectOption('#pdStep','level-2');assert.equal(await page.locator('#pdBookCourse').inputValue(),'');assert.equal(await page.locator('#pdBaseline').count(),0);
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.bookCourseNumber),null,'changing the level clears its course number');
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.bookStatus),'','changing the level clears completed status');
    await overflow(page);
    if(lang==='ko'&&width===390){
-    for(const series of ['soma-p','soma-k','soma-a','soma-b','soma-c']){
-     await page.selectOption('#pdSeries',series);assert.equal(await page.locator('#pdStep').count(),0,'do not show a meaningless single-item selector');assert(await page.locator('#pdStart').isDisabled());
-     await page.fill('#pdBookDetail','교재 표기 참고');await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
+    for(const [series,volumeCount] of [['soma-p',8],['soma-k',8],['soma-a',8],['soma-b',8],['soma-c',8],['soma-d',6]]){
+     await page.selectOption('#pdSeries',series);
+     assert.deepEqual(await page.locator('#pdStep option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:volumeCount},(_,i)=>'v'+(i+1))],series+' has every printed volume');
+     assert.equal(await page.locator('#pdBookDetail,.pd-book-detail').count(),0,'no typed volume fallback');
+     assert(await page.locator('#pdStart').isDisabled(),'a series alone is not a completed volume');
+     await page.selectOption('#pdStep','v1');assert(await page.locator('#pdStart').isDisabled(),'an unverified volume still needs a diagnostic topic');
+     await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
+     assert((await page.locator('#pdBaselinePreview').innerText()).includes('마지막 완료 교재'),'selected completed volume appears beside the question mix');
+     await page.selectOption('#pdStep','v'+volumeCount);assert.equal(await page.locator('#pdBaseline').inputValue(),'','changing a completed volume clears the old diagnostic topic');
+     assert(await page.locator('#pdStart').isDisabled(),'stale topic cannot create a sheet for a new volume');
     }
     await page.selectOption('#pdSeries','dunoro');
-    assert.equal(await page.locator('#pdStep option').count(),5,'three recorded levels and one other-label fallback');
+    assert.equal(await page.locator('#pdStep option').count(),4,'three recorded levels plus placeholder');
     assert.equal(await page.locator('#pdStep').getAttribute('aria-describedby'),'pdDunoroNote');
-    assert((await page.locator('.pd-selection').innerText()).includes('두뇌로 과정 번호와 이 앱의 과정 번호는 다릅니다.'));
-    for(const step of ['level-1','level-2','level-3','contents']){
-     await page.selectOption('#pdStep',step);assert(await page.locator('#pdStart').isDisabled(),'printed level needs studied-topic confirmation');
-     assert.equal(await page.locator('#pdBookCourse').count(),step==='contents'?0:1,'known level exposes only its printed course numbers');
-     if(step!=='contents')await page.selectOption('#pdBookCourse',step==='level-1'?'10':step==='level-2'?'16':'25');
-     await page.fill('#pdBookDetail','교재 표기 참고');await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
+    assert((await page.locator('.pd-selection').innerText()).includes('두뇌로 과정 번호와 이 앱의 과정 번호는 서로 다릅니다.'));
+    for(const [step,first,last] of [['level-1',1,10],['level-2',11,16],['level-3',17,25]]){
+     await page.selectOption('#pdStep',step);assert(await page.locator('#pdStart').isDisabled(),'completed level still needs its printed course and diagnostic topic');
+     assert.deepEqual(await page.locator('#pdBookCourse option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:last-first+1},(_,i)=>String(first+i))],step+' exposes only its printed course numbers');
+     assert.equal(await page.locator('#pdBaseline').count(),0,'a level without its last completed course cannot choose a diagnostic topic');
+     await page.selectOption('#pdBookCourse',String(last));assert.equal(await page.locator('#pdBaseline').inputValue(),'','choosing a different course clears the old topic');
+     assert(await page.locator('#pdStart').isDisabled());
+     await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
     }
     await page.selectOption('#pdStep','level-2');
-    assert.equal(await page.locator('#pdBookDetail').inputValue(),'','changing book level clears the old printed detail');
     assert.equal(await page.locator('#pdBookCourse').inputValue(),'','changing book level clears the old course number');
-    assert(await page.locator('#pdStart').isDisabled(),'changing book level clears the old topic');
+    assert.equal(await page.locator('#pdBaseline').count(),0,'changing book level clears the old topic');
+    assert(await page.locator('#pdStart').isDisabled());
+    await page.selectOption('#pdBookCourse','16');
     await page.selectOption('#pdBaseline','f-split5');
     await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));
     await page.screenshot({path:path.join(OUT,'ko-390-dunoro-topic.png')});
@@ -72,6 +84,7 @@ try{
    if(lang==='ko'&&width===390){
     const before=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return JSON.stringify({speed:s.roadSpeed,amount:s.roadAmount,cadence:s.roadCadence,coins:s.coins,progress:s.progress});});
     await page.click('#pdStart');assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.plan.items.length),20);
+    assert.deepEqual(await page.evaluate(()=>{const items=JSON.parse(localStorage.getItem('nm_state_v1'))._diag.plan.items;return items.reduce((counts,item)=>(counts[item.band]++,counts),{previous:0,current:0,next:0});}),{previous:6,current:10,next:4},'online plan keeps previous/current/next at 6/10/4');
     await page.click('#pdSkip');const saved=await page.evaluate(()=>{const d=JSON.parse(localStorage.getItem('nm_state_v1'))._diag;return JSON.stringify({seed:d.seed,plan:d.plan,index:d.index,responses:d.responses});});
     await page.reload();await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await openDiagnostic(page);
     assert.equal(await page.evaluate(()=>{const d=JSON.parse(localStorage.getItem('nm_state_v1'))._diag;return JSON.stringify({seed:d.seed,plan:d.plan,index:d.index,responses:d.responses});}),saved,'answered plan resumes unchanged');
@@ -81,19 +94,23 @@ try{
     await page.screenshot({path:path.join(OUT,'ko-390-result.png')});
     await page.click('#pdAgain');await page.selectOption('#pdAge','6');await page.click('[data-route="book"]');
     await page.selectOption('#pdSeries','dunoro');await page.selectOption('#pdStep','level-3');await page.selectOption('#pdBookCourse','17');
-    await page.selectOption('#pdBaseline','c18');await page.click('#pdStart');
+    await page.selectOption('#pdBaseline','c18');completedBookSheetHref=await page.locator('#pdPaper').getAttribute('href');
+    assert(completedBookSheetHref.includes('series=dunoro')&&completedBookSheetHref.includes('step=level-3')&&completedBookSheetHref.includes('bookCourseNumber=17'),'print link carries the selected completed book');
+    await page.click('#pdStart');
+    assert.deepEqual(await page.evaluate(()=>{const d=JSON.parse(localStorage.getItem('nm_state_v1'))._diag;return d.plan.items.reduce((counts,item)=>(counts[item.band]++,counts),{previous:0,current:0,next:0});}),{previous:6,current:10,next:4},'completed-book plan keeps previous/current/next at 6/10/4');
     for(let i=0;i<20;i++)await page.click('#pdSkip');await page.locator('#pdRoad').waitFor();
     const resultText=await page.locator('.pd-recommended').innerText();
-    assert(resultText.includes('교재 과정 17')&&resultText.includes('수의 마법 과정'),'result separates book and app course numbers');
-    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).placement.selection.bookCourseNumber),17,'result retains the selected book course for later comparison');
+    assert(resultText.includes('마지막으로 완료한 교재')&&resultText.includes('교재 과정 17')&&resultText.includes('수의 마법 과정'),'result identifies the completed book separately from the app course');
+    assert.deepEqual(await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1')).placement.selection;return {series:s.series,step:s.step,bookCourseNumber:s.bookCourseNumber};}),{series:'dunoro',step:'level-3',bookCourseNumber:17},'result retains the last completed book for later comparison');
     await page.click('#pdRoad');await page.locator('.pd-road-goal').waitFor();
     const roadText=await page.locator('.nm-cr-diagchip,.pd-road-goal').allInnerTexts();
-    assert(roadText.join(' ').includes('교재 과정 17')&&roadText.join(' ').includes('수의 마법 과정'),'roadmap separates book and app course numbers');
+    assert(roadText.join(' ').includes('마지막으로 완료한 교재')&&roadText.join(' ').includes('교재 과정 17')&&roadText.join(' ').includes('수의 마법 과정'),'roadmap separates the completed book and app course numbers');
     await page.locator('.pd-road-goal').screenshot({path:path.join(OUT,'ko-390-dunoro-roadmap-detail.png')});
     await page.screenshot({path:path.join(OUT,'ko-390-dunoro-roadmap.png')});
     await page.reload();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).placement.selection.bookCourseNumber),17,'book course number survives reload');
    }
-   await page.goto(base+'/number_magic/placement-sheet.html?b=f-count5&seed=browser-observe&l='+lang);await page.waitForFunction(()=>window.NM_WS_READY);
+   await page.goto(completedBookSheetHref?base+'/number_magic/'+completedBookSheetHref:base+'/number_magic/placement-sheet.html?b=f-count5&seed=browser-observe&l='+lang);await page.waitForFunction(()=>window.NM_WS_READY);
+   if(completedBookSheetHref){const source=await page.locator('.pl-source').innerText();assert(source.includes('마지막으로 완료한 교재')&&source.includes('Level 3')&&source.includes('교재 과정 17'),'printed sheet names the last completed book');assert.equal(await page.locator('.pl-sc-item').count(),20);}
    await page.click('#plGo');assert.match(await page.locator('#plOut').innerText(),lang==='ko'?/미입력/:lang==='en'?/Unmarked/:/未填写/);
    await page.locator('input[name="q0"][value="o"]').check();await page.selectOption('[data-unlearned="0"]','n');assert.equal(await page.locator('input[name="q0"]:checked').count(),0);
    await page.locator('input[name="q0"][value="o"]').check();assert.equal(await page.locator('[data-unlearned="0"]').inputValue(),'');

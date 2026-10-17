@@ -11,9 +11,6 @@ const gilbut = code => 'https://school.gilbut.co.kr/book/view?bookcode=' + code;
 const somaUrl = 'https://timecnp.com/bbs/board.php?bo_table=s3_3';
 const wolliUrl = 'https://1000math.com/archive';
 const kumonUrl = 'https://www.kumon.co.kr/Subject/Math';
-const confirmLabel = L('판·권·단원 내용을 확인하고 직접 선택',
-  'Check the edition, volume and studied topic, then choose a stage',
-  '确认版本、册次和已学内容后，自己选择阶段');
 
 function pending(id, label, urls) {
   return { id, label, coverage: [], sourceUrls: urls || [],
@@ -28,9 +25,24 @@ function scoped(id, label, code, coverage, baselineId) {
 }
 
 const catalog = [];
-['P', 'K', 'A', 'B', 'C'].forEach(stage => {
+// The set listings establish printed volume numbers only. A volume number is
+// not an app course, and its topic coverage still needs separate confirmation.
+const somaSets = {
+  P: { count: 8, url: 'https://www.yes24.com/product/goods/23896146' },
+  K: { count: 8, url: 'https://www.yes24.com/product/goods/23896127' },
+  A: { count: 8, url: 'https://www.yes24.com/product/goods/23895517' },
+  B: { count: 8, url: 'https://www.yes24.com/product/goods/23895543' },
+  C: { count: 8, url: 'https://www.yes24.com/product/goods/23896229' },
+  D: { count: 6, url: 'https://www.yes24.com/product/goods/75525550' }
+};
+Object.entries(somaSets).forEach(([stage, set]) => {
+  const urls = [somaUrl, set.url];
   catalog.push({ id: 'soma-' + stage.toLowerCase(), label: L('소마셈 ' + stage),
-    sourceUrls: [somaUrl], steps: [pending('contents', confirmLabel, [somaUrl])] });
+    sourceUrls: urls, steps: Array.from({ length: set.count }, (_, index) => {
+      const volume = index + 1;
+      return pending('v' + volume, L(stage + volume + '권',
+        'Volume ' + stage + volume, stage + volume + '册'), urls);
+    }) });
 });
 
 catalog.push({ id: 'wolli', label: L('원리셈'), sourceUrls: [wolliUrl], steps: [

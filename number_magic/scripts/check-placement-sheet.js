@@ -39,6 +39,28 @@ function serve(){
     await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 });
     const ids = await page.evaluate(() => NM_PLACEMENT_PLAN.stages().map(s => s.id));
     if(ids.length < 81) bad.push('시작 범위가 81개보다 적다: ' + ids.length);
+    for(const entry of [
+      { query: 'series=soma-p&step=v3', expected: '소마셈 P · P3권', completed: true },
+      { query: 'series=dunoro&step=level-3&bookCourseNumber=20', expected: '교재 과정 20', completed: true },
+      { query: 'series=dunoro&step=level-3&bookCourseNumber=2', expected: '', completed: false },
+      { query: 'series=invalid&step=v3', expected: '', completed: false },
+      { query: '', expected: '', completed: false }
+    ]){
+      const suffix = entry.query ? '&' + entry.query : '';
+      await page.goto(`http://localhost:${PORT}/placement-sheet.html?b=f-count5&seed=chk&l=ko${suffix}`);
+      await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 });
+      const result = await page.evaluate(() => {
+        const source = document.querySelector('.pl-source');
+        const rows = [...document.querySelectorAll('.pl-key tbody tr')];
+        return { source: source ? source.innerText : '',
+          bands: ['previous','current','next'].map(b => rows.filter(row => row.classList.contains('pl-b-' + b)).length),
+          questions: document.querySelectorAll('.pl-q').length };
+      });
+      if(result.source.includes('마지막으로 완료한 교재') !== entry.completed) bad.push('완료 교재 표기 오류: ' + entry.query);
+      if(entry.expected && !result.source.includes(entry.expected)) bad.push('완료 교재 라벨 오류: ' + entry.query);
+      if(!result.source.includes('앱 진단 기준 주제') || !result.source.includes('이전 6 · 현재 10 · 다음 4')) bad.push('진단 기준·문항 비율 누락: ' + entry.query);
+      if(result.questions !== 20 || result.bands.join('/') !== '6/10/4') bad.push('교재 메타데이터가 문항 편성을 변경함: ' + entry.query);
+    }
     const pick = QUICK ? ['f-count5', 'f-ten10', 'c1', 'c3', 'c12', 'c20', 'c40', 'c73'].filter(x => ids.includes(x)) : ids;
     for(const lang of QUICK ? ['ko'] : ['ko', 'en', 'zh']) for(const id of pick){
       await page.goto(`http://localhost:${PORT}/placement-sheet.html?b=${id}&seed=chk&l=${lang}`);

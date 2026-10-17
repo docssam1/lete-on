@@ -26,6 +26,23 @@ assert.equal(P.startingPoint({age:'16',route:'age',grade:'pre'}),'f-count5','exp
 assert.equal(P.startingPoint({age:'6',route:'book',series:'miracle',step:'pre-2023-v1-order',progress:'middle'}),'f-order10');
 assert.equal(P.startingPoint({age:'6',route:'book',series:'miracle',step:'pre-2023-v1-order'}),'f-order10','selected narrow topic does not need invented progress');
 assert.equal(P.startingPoint({age:'6',route:'book',series:'miracle',step:'pre-2023-v1-order',progress:'unknown'}),null,'unknown progress cannot certify a candidate');
+let somaVolumes=0;
+for(const [stage,count] of [['P',8],['K',8],['A',8],['B',8],['C',8],['D',6]]){
+ const series='soma-'+stage.toLowerCase(),steps=world.NM_PLACEMENT_BOOKS.getSteps(series);
+ assert.deepEqual(Array.from(steps,x=>x.id),Array.from({length:count},(_,i)=>'v'+(i+1)));
+ assert.deepEqual(Array.from(steps,x=>x.label.ko),Array.from({length:count},(_,i)=>stage+(i+1)+'권'));
+ for(const step of steps){
+  assert.deepEqual(Array.from(world.NM_PLACEMENT_BOOKS.getBookCourses(series,step.id)),[]);
+  assert.equal(P.startingPoint({age:'6',route:'book',series,step:step.id,progress:'complete'}),null,'a completed Soma volume never certifies an app course');
+  const resolved=world.NM_PLACEMENT_BOOKS.resolve(series,step.id,'complete');
+  assert.equal(resolved.baselineId,null);assert.equal(resolved.needsTopicConfirmation,true);
+  somaVolumes++;
+ }
+}
+const explicitTopicPlan=core.build('f-ten10','completed-volume-confirmed-topic');
+assert.equal(explicitTopicPlan.items.length,20);
+assert.deepEqual(['previous','current','next'].map(band=>explicitTopicPlan.items.filter(item=>item.band===band).length),[6,10,4],
+ 'a confirmed app topic retains the review/current/ahead 6/10/4 mix');
 const dunoroSteps=world.NM_PLACEMENT_BOOKS.getSteps('dunoro');
 assert.deepEqual(Array.from(dunoroSteps,x=>x.id),['level-1','level-2','level-3','contents']);
 assert.deepEqual(Array.from(dunoroSteps.slice(0,3),x=>x.label.ko),[
@@ -43,7 +60,7 @@ for(const step of dunoroSteps)for(const progress of ['', 'start','middle','compl
  const resolved=world.NM_PLACEMENT_BOOKS.resolve('dunoro',step.id,progress);
  assert.equal(resolved.baselineId,null);assert.equal(resolved.needsTopicConfirmation,true);
 }
-for(const series of ['soma-p','soma-k','soma-a','soma-b','soma-c','kumon','dunoro']){
+for(const series of ['soma-p','soma-k','soma-a','soma-b','soma-c','soma-d','kumon','dunoro']){
  assert(world.NM_PLACEMENT_BOOKS.series.some(x=>x.id===series));
  assert.equal(P.startingPoint({age:'6',route:'book',series,step:world.NM_PLACEMENT_BOOKS.getSteps(series)[0].id,progress:'middle'}),null,'unverified book never assigns a course');
 }
@@ -61,4 +78,4 @@ for(const id of ['f-count5','f-ten10','c3','c29','c45','c73']){
   }
   for(const marks of [[],new Array(20),Array(20).fill(''),Array(19).fill('o'),Array(20).fill('bad')])assert.throws(()=>P.paperAnalysis(plan,marks,{}),/20 marks/);
 }
-console.log('PLACEMENT_INTAKE_OK starts='+cases+' paperPatterns='+paper+' fixed20=true noSemesterCertification=true');
+console.log('PLACEMENT_INTAKE_OK starts='+cases+' paperPatterns='+paper+' somaVolumes='+somaVolumes+' fixed20=true noSemesterCertification=true');

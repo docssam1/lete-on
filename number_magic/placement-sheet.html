@@ -7,7 +7,8 @@
 <meta name="robots" content="noindex">
 <title>Numbers of Magic — 학습 시작점 확인 시험지</title>
 <!-- 학습 시작점 확인 시험지 (2026-10-04) — 온라인 고정 20문항 진단(data/placement-plan.js)과 같은 문항을 종이용으로 그린다.
-     쿼리: ?b=<시작 범위 id>&l=ko|en|zh&seed=<문자열>&n=<이름>  · 유아/초등/중등은 글씨 크기·쪽당 문항 수가 다르다(주간 학습지와 같은 매거진형 틀).
+     쿼리: ?b=<시작 범위 id>&l=ko|en|zh&seed=<문자열>&n=<이름>&series=<교재 id>&step=<권·레벨 id>&bookCourseNumber=<두뇌로 교재 과정>
+     유아/초등/중등은 글씨 크기·쪽당 문항 수가 다르다(주간 학습지와 같은 매거진형 틀).
      화면 아래 채점 입력은 인쇄에 나오지 않는다. 문항·정답은 전부 생성기 산출물(라이선스 원문 없음). -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
@@ -62,6 +63,8 @@
 
   .pl-page .nm-mzs-title{margin-top:5mm}
   .pl-sub{margin:0 0 2.5mm;font-size:12px;line-height:1.65;color:#5c6b70;word-break:keep-all}
+  .pl-source{display:flex;flex-wrap:wrap;column-gap:5mm;row-gap:1mm;margin:0 0 2mm;font-size:10.5px;line-height:1.45;color:#40545a;word-break:keep-all}
+  .pl-source b{color:#20343b}
   .pl-fields{display:flex;gap:6mm;margin:0 0 3mm;font-size:12.5px;color:#20343b}
   .pl-fields u{display:inline-block;min-width:26mm;border-bottom:1.2px solid #20343b;text-decoration:none;height:1em;vertical-align:baseline}
   .pl-list{margin:0;padding:0;list-style:none;flex:1 1 auto;display:grid;align-content:space-between;gap:2mm 8mm;min-height:0}
@@ -211,9 +214,10 @@
 <script src="app/g1/13-15.print.js"></script>
 <script src="app/exam.js"></script>
 <script src="app/animal-art.js"></script>
+<script src="data/placement-books.js?v=20261017-completed-book1"></script>
 <script src="data/placement-plan.js"></script>
 <script src="data/placement-paths.js?v=20261017-dunoro1"></script>
-<link rel="stylesheet" href="app/placement-ui.css?v=20261015-intake2">
+<link rel="stylesheet" href="app/placement-ui.css?v=20261017-completed-book1">
 <script src="data/study-projection.js?v=20261015-records1"></script>
 <script src="app/study-route.js?v=20261015-records1"></script>
 <script>
@@ -235,6 +239,26 @@ if(!PLAN) return fail('진단 자료를 불러오지 못했어요.');
 var STAGES = PLAN.stages();
 var BASE = Q.get('b') || 'f-split9';
 if(!STAGES.some(function(s){ return s.id === BASE; })) BASE = STAGES[0].id;
+/* URL의 교재 정보는 등록된 선택지만 사용한다. 교재 번호는 앱 진단 기준 b와 별개다. */
+function completedBookLabel(){
+  var books = window.NM_PLACEMENT_BOOKS;
+  if(!books) return '';
+  var seriesId = Q.get('series'), stepId = Q.get('step');
+  var series = books.series.find(function(row){ return row.id === seriesId; });
+  if(!series || !stepId) return '';
+  var step = books.getSteps(seriesId).find(function(row){ return row.id === stepId; });
+  if(!step) return '';
+  var label = L(series.label) + ' · ' + L(step.label);
+  if(seriesId === 'dunoro'){
+    var raw = Q.get('bookCourseNumber') || '';
+    if(!/^[1-9][0-9]?$/.test(raw)) return '';
+    var course = Number(raw);
+    if(!books.getBookCourses(seriesId, stepId).includes(course)) return '';
+    label += ' · ' + T('교재 과정 ', 'book course ', '教材课程 ') + course;
+  }
+  return label;
+}
+var COMPLETED_BOOK = completedBookLabel();
 
 /* ── 급 — 학습지와 같은 세 갈래(유아·저학년 / 초등 중고학년 / 중등 이상). 시작 범위의 과정 tier 로 정한다 ── */
 function bandOf(stage){
@@ -329,10 +353,14 @@ function page(inner, pageNo, pageTotal, stage, cls){
 }
 function firstHeader(stage, layout){
   var t1 = T('지금 어디서 시작하면 좋을까요?', 'Where should we start?', '从哪里开始最合适？');
-  var sub = T('20문항을 풀어 보면 이전에 배운 곳, 지금 배우는 곳, 다음에 배울 곳의 상태를 한 번에 볼 수 있어요. 모르는 문제는 건너뛰어도 좋아요.',
-              'These 20 questions show how steady the earlier, current and next steps are. Skipping what you do not know is fine.',
-              '做完这20道题，就能看到之前、现在和之后学习内容的掌握情况。不会的题可以先跳过。');
+  var sub = T('선택한 진단 범위와 그 앞뒤를 20문항으로 확인해요. 아직 배우지 않은 문제는 건너뛰어도 좋아요.',
+              'These 20 questions check the selected diagnostic scope and its adjacent topics. Skip topics not yet learned.',
+              '用20道题检查所选测评范围及相邻内容。尚未学过的题目可以跳过。');
+  var scope = '<span><b>' + esc(T('앱 진단 기준 주제', 'App diagnostic topic', '应用测评基准主题')) + ':</b> ' + esc(L(stage.label)) +
+    ' · ' + esc(T('이전 6 · 현재 10 · 다음 4', 'Earlier 6 · Current 10 · Next 4', '之前6 · 当前10 · 之后4')) + '</span>';
+  var source = (COMPLETED_BOOK ? '<span><b>' + esc(T('마지막으로 완료한 교재', 'Last completed book', '最后完成的教材')) + ':</b> ' + esc(COMPLETED_BOOK) + '</span>' : '') + scope;
   return '<h1 class="nm-mzs-title">' + esc(t1) + '</h1><p class="pl-sub">' + esc(sub) + '</p>' +
+    '<div class="pl-source">' + source + '</div>' +
     '<div class="pl-fields"><span>' + esc(T('이름','Name','姓名')) + ' <u>' + esc(NAME) + '</u></span><span>' + esc(T('날짜','Date','日期')) + ' <u></u></span><span>' + esc(T('맞힌 수','Score','得分')) + ' <u></u> / 20</span></div>';
 }
 
