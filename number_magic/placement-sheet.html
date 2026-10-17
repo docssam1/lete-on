@@ -378,7 +378,7 @@ function keyPage(plan, stage){
   var rows = plan.items.map(function(it, i){
     return '<tr class="pl-b-' + it.band + '"><td>' + (i + 1) + '</td><td>' + esc(BL[it.band]) + '</td><td>' + esc(L(it.label)) + '</td><td class="pl-ak">' + esc(ansText(it)) + '</td><td class="pl-mark">○ × ' + esc(T('모름','?','不会')) + '</td></tr>';
   }).join('');
-  return '<h1 class="nm-mzs-title">' + esc(T('보호자·선생님용 정답과 채점', 'Answers and marking (adults)', '家长·教师用答案与评分')) + '</h1>' +
+  return '<h1 class="nm-mzs-title">' + esc(T('보호자용 정답과 채점', 'Answers and marking for parents', '家长用答案与评分')) + '</h1>' +
     '<p class="pl-sub">' + esc(T('아이에게 먼저 보여 주지 마세요. 모르는 문제는 틀린 문제와 다르게 ‘모름’에 표시해요. 결과는 20문항에 근거한 연습 제안이며, 숙달이나 입학을 판정하지 않아요.',
       'Do not show this to the child first. Mark “?” for skipped items — it is different from wrong. The result is a practice suggestion from 20 questions, not a mastery or admission judgement.',
       '请先不要给孩子看。不会的题标“不会”，与做错不同。结果只是基于20题的练习建议，不代表掌握程度或入学判断。')) + '</p>' +
