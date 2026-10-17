@@ -17,14 +17,21 @@ for(const [raw,want] of [['123456789',123456789],['−23',-23],['-0.75',-.75],['
 assert.deepEqual(plain(ui.readValues(['-2','-3','4.5'])),[-2,-3,4.5]);
 assert.equal(ui.readValues(['-2','']),null);assert.equal(ui.readValues(['12','12x']),null);
 const stages=plan.stages(),ids=new Set(stages.map(x=>x.id));
-let mapped=0,pending=0;
-assert.equal(books.series.length,9);
+let mapped=0,pending=0;const automaticSteps=new Set();
+assert.equal(books.series.length,10);
 for(const series of books.series)for(const step of books.getSteps(series.id))for(const progress of ['start','middle','complete']){
   const r=books.resolve(series.id,step.id,progress);assert(r,series.id+'/'+step.id);
   if(r.needsTopicConfirmation){assert.equal(r.baselineId,null);pending++;}
-  else {assert(ids.has(r.baselineId),r.baselineId);assert.equal(plan.build(r.baselineId,'integration').items.length,20);mapped++;}
+  else {assert(ids.has(r.baselineId),r.baselineId);assert.equal(plan.build(r.baselineId,'integration').items.length,20);mapped++;automaticSteps.add(series.id+'/'+step.id);}
 }
 assert(mapped>0&&pending>0);assert.equal(books.resolve('unknown','unknown','complete'),null);
+assert.deepEqual(Array.from(automaticSteps).sort(),['miracle/pre-2023-v1-order','miracle/pre-2023-v3-ten']);
+assert.equal(books.resolve('miracle','pre-2023-v1-order','').baselineId,'f-order10');
+assert.equal(books.resolve('miracle','pre-2023-v1-order','unknown').baselineId,null);
+for(const step of books.getSteps('dunoro')){
+  const resolved=books.resolve('dunoro',step.id,'');
+  assert.equal(resolved.baselineId,null);assert.equal(resolved.needsTopicConfirmation,true);
+}
 const main=fs.readFileSync(path.join(root,'app/main.js'),'utf8');
 const entry=main.slice(main.indexOf('function screenPlacement(){'),main.indexOf('function screenLegacyPlacement(){'));
 assert(entry.includes('ui.render('));assert(entry.includes('S._diag.version!==ui.version'));
