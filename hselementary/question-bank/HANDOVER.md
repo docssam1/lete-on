@@ -2,16 +2,45 @@
 
 ## Current State
 
-- Branch: `codex/elementary-audit-sync-20260926`
-- Local page: `http://127.0.0.1:8897/hselementary/question-bank/`
-- Total runtime types: 2,005 across 6 semesters, 36 major units, and 184 subunits (checked 2026-10-10)
-- Runtime-available types: 1,155 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked types: 850
-- Source-linked runtime entries: 1,625 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 0, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester release counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/124`, 6-1 `239/412`, and 6-2 `117/477` types are runtime-available. The remainder stay review-locked.
+- Current Mac checkout: `main` at `94a69f4bdda95c1d4e47494d3852f13c409165dc`; includes PR #340 merge `ea271bec` and elementary source commit `6bd5ef98`. Older review-branch names below describe historical stages.
+- Entry point: `hselementary/question-bank/index.html`. The 2026-10-17 check used local-file browser routing, not a persistent HTTP server or the deployed site.
+- Total runtime types: 2,010 across 6 semesters, 36 major units, and 185 subunits (inventory recounted 2026-10-17)
+- Runtime-available types: 1,218 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked/non-generating records: 792, including aliases that link to a shared full source question and must not produce duplicate questions. This is not a count of 792 distinct unfinished generators.
+- Source-linked runtime entries: 1,630 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 5, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
+- Semester runtime counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/129`, 6-1 `239/412`, and 6-2 `180/477` types are available. Grade 6 source-linked records: 633 total, 419 available and 214 locked. These are local runtime counts, not a fresh deployment check.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
-- Next priority: source-backed quality review or a curriculum revision; do not add filler types merely to increase the count
+- Next content step: locate the matching official answers for the first five classified advanced 5-2 items, then implement and verify a small finite pool. Mission 1–6 on the following page are the next classification batch. Preserve all 124 legacy types and the five new source locks; grouped Kyungsi records are not advanced-source approval.
+
+## 2026-10-17 Classification Deployment Authorization
+
+- The user subsequently requested deployment of the verified local classification changes. This supersedes the earlier no-commit/push/deployment restriction for this release only; it does not authorize unlocking unverified questions.
+- Release preparation uses the latest remote main in an isolated worktree. Only the eight first-batch classification, audit and handoff files plus the curriculum cache reference in `index.html` are included. Other local projects and student records remain untouched.
+- The five new records retain their review locks and zero verified variants. Runtime availability remains 1,218; the total catalog contains 2,010 records. Source-answer gates remain pending.
+- GitHub Pages deployment and live verification are tracked in the attached pull request and the existing external Mac continuation handoff. Earlier dated no-deployment statements describe their historical stages.
+
+## 2026-10-17 5-2 First Source Classification Batch
+
+- Scope: advanced Unit 1, Exploration 1 (both subquestions retained as one item) and Examples 1-1 through 1-4, PDF page 2 / printed page 4. Five new explicit `5-2-u1-e1-*` IDs are appended after the existing subunits so all legacy IDs retain their meaning. Existing 124 semester types and their generator code are preserved. This is one source page, not completion of Unit 1.
+- Source finding: the old private unit-structure memory points to a Kyungsi question copy, not the current advanced source. Example 1-1 differs between the editions, as do several next-page Missions. The inspected answer-labelled file is also a Kyungsi question copy with handwriting, not a verified publisher solution. Another question-copy candidate does not supply the requested first-page answers. Do not transplant answers by matching example numbers.
+- Direct source review and a separate agent's calculation covered all five items. Enumeration checks the natural-number endpoints, minimum-seat conditions, overlap regions and feasible box allocations. Exploration 1 requires equivalent range wording plus a completed number line; it is not restricted to natural numbers. Printed givens are separated from handwritten solution marks. One handwritten allocation boundary conflicts with independent calculation; values and detailed counterexamples remain private.
+- Status: classification and independent source calculation complete; matching official answers, generated questions, learner-facing solutions and PC/mobile/A4 question rendering remain unverified. The specific 2026-09-16 5-2 Source Gate below still requires official-answer verification. All five records have `sourceVerified=false`, `reviewLocked=true`, zero verified variants and no generator. No new question is available; existing available count remains 1,218.
+- Public evidence: `.evidence-pipeline/grade-5-2.json` keeps this semester separate from the historical 4-2 ledger. It contains only classifications, gate status and evidence IDs. `source-5-2-range-classification-audit.js` checks the five records and exact legacy preservation; `source-5-2-range-lock-browser-audit.js` checks actual-page locks. A lock-screen check is not a generated-question or A4 pass.
+- Private evidence bundle: `grade52-unit1-20261017`, linked from the existing external Mac handoff. It contains exact Drive file IDs, original SHA-256 checks, limited source renders, independent calculation/report, a local source-memory addendum and browser results. The Drive originals and existing shared source-memory were only read; no cloud synchronization was performed.
+- Validation: classification audit passes five records, exact preservation of all 124 legacy records and six rejected negative controls. Actual-page browser audit passes 15 new lock states (five IDs × 1280/375/320px), plus existing Grade 6 problem/solution checks at 1280/375px, using 17 fresh nonpersistent contexts. Product asset hashes remain fixed during browser checks; local/session storage stays empty and all external requests are blocked. No new question/A4 rendering is claimed.
+- Full runtime regression passes 73,080 generations across 1,218 available types; release-gate and public review-reason checks pass. The older `source-item-taxonomy-audit.js` still fails two 4-2 quadrilateral assertions (type `4-2-u4-t4-8` output/answer figure and expected ready count). Both failures reproduce with the pre-task curriculum from `94a69f4b`; they are recorded as existing audit failures and were not repaired by changing unrelated geometry.
+- No commit, push, deployment, live student-backend access or student-data change was performed. Generated-question connection remains pending the matching official answer and subsequent per-item implementation/render verification.
+
+## 2026-10-17 Mac Representative Flow Check
+
+- Operator: OpenAI Codex on macOS arm64; one read-only subagent reviewed the middle-school test plan. Product code and existing student records were preserved. No dependency installation, live backend calls, commit, push, or deployment was performed.
+- Scope: the currently registered `6-2-u3-e4-mission-4` finite question, with the candidate overlay disabled. The existing `source-6-2-pentacube-mission4-bank-audit.js` exercised three difficulties at 1280, 390 and 320 pixels: nine states. Problem, solution, answer-only view, figure enlargement, full solution viewer, preview and finite-capacity selection passed. Negative controls also confirmed that the student figure cannot open the teacher gallery and a failed generation preserves the current worksheet.
+- Printing: nine A4 PDFs (three difficulties × problem/solution/answer-only), each one page. Page-size/nonblank raster checks and rendered-page review passed. The problem retains only the given figure; answer figures appear in the answer/solution views. This is a representative print check, not a fresh whole-bank mathematical or original-source audit.
+- Portability finding: the existing audit requires a Windows evidence path/browser. A private Mac runner changed only that execution setup. The first run exposed an audit timing gap: a newly inserted solution-viewer image had the correct source but `complete=false` and natural dimensions `0×0`; the audit's wait helper covered worksheet/popover images only. Adding viewer-image decode waits in the runner preserved all assertions and produced a passing run. The repository audit and product files were left unchanged; original failure evidence was retained.
+- Inventory: only the runtime audit's module-loading and inventory construction were used to recount types; its full generation sweep was not run. Current totals above agree with the README and expected audit counts.
+- Evidence bundle: `elementary-middle-mac-20261017`; exact private storage location and reusable Mac runner paths are recorded in the existing external Mac continuation handoff. It also contains the middle-school checks, initial failures, final browser results, PDF renders, network-isolation logs and source hashes. Do not put private absolute paths or source materials into this repository.
+- Limits: browser responses used unchanged local files; no live HTTP/deployment check. Whole-bank regressions, publisher-answer approval and empirical learner difficulty remain outside this check. Historical completion counts and next steps below must be read in their dated context; the current state above supersedes their aggregate counts.
 
 ## 2026-10-10 Learner Cube Reconstruction Release
 
