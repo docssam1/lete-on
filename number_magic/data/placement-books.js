@@ -61,6 +61,59 @@ const somaPTopics = {
     L('10 활용 덧셈·뺄셈', 'Add/subtract using 10', '利用10做加减法')
   ]
 };
+// These are short recognition cues from the 2019 set tables of contents.
+// In K1–K7 the final 1–4 follows the retailer's topic heading; it must not
+// be read as a verified operand limit or an app question-generation rule.
+const soma2019Topics = {
+  k: [
+    L('10까지 더하기·빼기 1', 'Add/subtract through 10 (1)', '10以内加减（1）'),
+    L('20까지 더하기·빼기 1', 'Add/subtract through 20 (1)', '20以内加减（1）'),
+    L('10까지 더하기·빼기 2', 'Add/subtract through 10 (2)', '10以内加减（2）'),
+    L('20까지 더하기·빼기 2', 'Add/subtract through 20 (2)', '20以内加减（2）'),
+    L('10까지 더하기·빼기 3', 'Add/subtract through 10 (3)', '10以内加减（3）'),
+    L('20까지 더하기·빼기 3', 'Add/subtract through 20 (3)', '20以内加减（3）'),
+    L('20까지 더하기·빼기 4', 'Add/subtract through 20 (4)', '20以内加减（4）'),
+    L('7까지 가르기·모으기', 'Split/combine through 7', '7以内数的分合')
+  ],
+  a: [
+    L('덧셈 기본식', 'Addition facts', '加法基本算式'),
+    L('뺄셈 기본식', 'Subtraction facts', '减法基本算式'),
+    L('세 수 더하고 빼기', 'Add/subtract three numbers', '三个数的加减'),
+    L('빈칸 있는 덧셈·뺄셈', 'Add/subtract with a missing number', '带空格的加减'),
+    L('두 자리 수와 한 자리 수 더하기', 'Two-digit plus one-digit', '两位数加一位数'),
+    L('두 자리 수에서 한 자리 수 빼기', 'Two-digit minus one-digit', '两位数减一位数'),
+    L('두 자리 수끼리 더하고 빼기', 'Add/subtract two-digit numbers', '两位数加减'),
+    L('두 자리 덧뺄의 빈칸 찾기', 'Missing number in two-digit operations', '两位数加减填空')
+  ],
+  b: [
+    L('두 자리 수끼리 더하기', 'Add two-digit numbers', '两位数相加'),
+    L('두 자리 수끼리 빼기', 'Subtract two-digit numbers', '两位数相减'),
+    L('세 자리 수 더하고 빼기', 'Three-digit addition/subtraction', '三位数加减'),
+    L('덧셈·뺄셈 활용', 'Applications of addition/subtraction', '加减法应用'),
+    L('곱셈 배우기', 'Multiplication', '乘法'),
+    L('곱셈구구', 'Multiplication facts', '乘法口诀'),
+    L('나눗셈 배우기', 'Division', '除法'),
+    L('곱셈·나눗셈 활용', 'Applications of multiplication/division', '乘除法应用')
+  ],
+  c: [
+    L('두 자리 수 곱셈', 'Two-digit multiplication', '两位数乘法'),
+    L('두 자리 수 곱셈 활용', 'Applications of two-digit multiplication', '两位数乘法应用'),
+    L('두 자리 수 나눗셈', 'Two-digit division', '两位数除法'),
+    L('세 자리 수 나눗셈 활용', 'Applications of three-digit division', '三位数除法应用'),
+    L('큰 수 곱셈', 'Multiplication of larger numbers', '较大数的乘法'),
+    L('큰 수 나눗셈', 'Division of larger numbers', '较大数的除法'),
+    L('여러 연산 섞어 계산', 'Mixed operations', '混合运算'),
+    L('혼합 계산 활용', 'Applications of mixed operations', '混合运算应用')
+  ],
+  d: [
+    L('같은 분모 분수 덧뺄 1', 'Like-denominator fraction operations (1)', '同分母分数加减（1）'),
+    L('같은 분모 분수 덧뺄 2', 'Like-denominator fraction operations (2)', '同分母分数加减（2）'),
+    L('소수 더하고 빼기', 'Decimal addition/subtraction', '小数加减'),
+    L('약수와 배수', 'Factors and multiples', '约数与倍数'),
+    L('다른 분모 분수 덧뺄 1', 'Unlike-denominator fraction operations (1)', '异分母分数加减（1）'),
+    L('다른 분모 분수 덧뺄 2', 'Unlike-denominator fraction operations (2)', '异分母分数加减（2）')
+  ]
+};
 Object.entries(somaSets).forEach(([stage, set]) => {
   const urls = [somaUrl, set.url, ...(set.older ? [set.older.url] : [])];
   catalog.push({ id: 'soma-' + stage.toLowerCase(), label: L('소마셈 ' + stage),
@@ -193,7 +246,8 @@ function getSteps(seriesId, editionId) {
   if (!stage || editionId == null || editionId === '' || editionId === 'other') return steps;
   const edition = getEditions(seriesId).find(choice => choice.id === editionId);
   if (!edition) return [];
-  const topics = stage[1] === 'p' ? somaPTopics[editionId] : null;
+  const topics = stage[1] === 'p' ? somaPTopics[editionId]
+    : editionId === '2019' ? soma2019Topics[stage[1]] : null;
   steps.forEach((step, index) => {
     step.editionId = editionId;
     step.sourceUrls = edition.sourceUrls.slice();
@@ -201,10 +255,11 @@ function getSteps(seriesId, editionId) {
     step.sourceScope = topics ? 'volume-topic-cue' : 'volume-number';
     if (topics) {
       step.topicSummary = clone(topics[index]);
+      const volume = stage[1].toUpperCase() + (index + 1);
       step.label = L(
-        'P' + (index + 1) + '권 · ' + topics[index].ko,
-        'Volume P' + (index + 1) + ' · ' + topics[index].en,
-        'P' + (index + 1) + '册 · ' + topics[index].zh);
+        volume + '권 · ' + topics[index].ko,
+        'Volume ' + volume + ' · ' + topics[index].en,
+        volume + '册 · ' + topics[index].zh);
     }
   });
   return steps;

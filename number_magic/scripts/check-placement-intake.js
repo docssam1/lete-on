@@ -31,6 +31,17 @@ for(const [stage,count] of [['P',8],['K',8],['A',8],['B',8],['C',8],['D',6]]){
  const series='soma-'+stage.toLowerCase(),steps=world.NM_PLACEMENT_BOOKS.getSteps(series);
  assert.deepEqual(Array.from(steps,x=>x.id),Array.from({length:count},(_,i)=>'v'+(i+1)));
  assert.deepEqual(Array.from(steps,x=>x.label.ko),Array.from({length:count},(_,i)=>stage+(i+1)+'권'));
+ const editions=world.NM_PLACEMENT_BOOKS.getEditions(series);
+ assert(editions.some(x=>x.id==='2019'),series+' has the selected publication');
+ const published=world.NM_PLACEMENT_BOOKS.getSteps(series,'2019');
+ assert.deepEqual(Array.from(published,x=>x.id),Array.from(steps,x=>x.id),'publication choice keeps saved volume IDs');
+ assert(published.every(x=>x.topicSummary&&x.sourceVerification==='retailer-topic-summary'&&x.verification==='topic-confirmation'&&!x.baselineId),
+   series+' 2019 volume cues must not certify app question coverage');
+ if(stage==='P'){
+  const older=world.NM_PLACEMENT_BOOKS.getSteps(series,'2013');
+  assert.notEqual(older[0].topicSummary.ko,published[0].topicSummary.ko,'P1 changed between published sets');
+  assert.equal(world.NM_PLACEMENT_BOOKS.getSteps(series,'')[0].topicSummary,undefined,'unknown publication stays unknown');
+ }
  for(const step of steps){
   assert.deepEqual(Array.from(world.NM_PLACEMENT_BOOKS.getBookCourses(series,step.id)),[]);
   assert.equal(P.startingPoint({age:'6',route:'book',series,step:step.id,progress:'complete'}),null,'a completed Soma volume never certifies an app course');

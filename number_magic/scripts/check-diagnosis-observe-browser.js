@@ -9,11 +9,11 @@ const server=http.createServer((req,res)=>{const file=path.resolve(ROOT,'.'+deco
 const seed=lang=>({lang,onboarded:true,name:'진단 검수',view:'placement',avatar:{kind:'boy'},character:{number:3,color:'gold'},coins:321,progress:{'A-02':{introSeen:true,steps:{}}},account:{status:'active'},r0BannerSeen:true,roadSpeed:.85,roadAmount:1.5,roadCadence:'w1',roadManual:false,cloudLinked:false});
 async function context(browser,base,width,lang){const ctx=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});await ctx.route('**/*',r=>new URL(r.request().url()).origin===base&&['GET','HEAD'].includes(r.request().method())?r.continue():r.abort());await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify(s));},seed(lang));return ctx;}
 async function openDiagnostic(page){
- await page.waitForSelector('#pdAge,#pdSkip,#townCourseRoad,#ttGame',{timeout:30000});
- if(await page.locator('#pdAge,#pdSkip').count())return;
+ await page.waitForSelector('#pdAge,#pdStart,#pdSkip,#townCourseRoad,#ttGame',{timeout:30000});
+ if(await page.locator('#pdAge,#pdStart,#pdSkip').count())return;
  if(await page.locator('#ttGame').isVisible())await page.click('#ttGame');
  for(let i=0;i<4;i++){const close=page.locator('#nmUnlockOverlayClose,#nmSymClose');if(!await close.count())break;await close.last().click();}
- await page.click('#townCourseRoad');await page.click('#crDiag');await page.waitForSelector('#pdAge,#pdSkip');
+ await page.click('#townCourseRoad');await page.click('#crDiag');await page.waitForSelector('#pdAge,#pdStart,#pdSkip');
 }
 async function enter(page,base){await page.goto(base+'/number_magic/index.html?enter=1');await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await openDiagnostic(page);}
 async function overflow(page){assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'viewport horizontal overflow');}
@@ -40,20 +40,25 @@ try{
    await page.selectOption('#pdGrade','m2');assert.equal(await page.locator('#pdBaseline').inputValue(),'c32');
    await page.click('[data-route="book"]');await page.selectOption('[data-book-series="0"]','kumon');await page.selectOption('[data-book-step="0"]','stage-i');assert(await page.locator('#pdStart').isDisabled(),'unknown book mapping needs topic confirmation');
    await page.selectOption('#pdBaseline','c35');assert.equal(await page.locator('#pdStart').isDisabled(),false);
-   await page.selectOption('[data-book-series="0"]','dunoro');await page.selectOption('[data-book-step="0"]','level-3');
-   assert.deepEqual(await page.locator('[data-book-course="0"] option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:9},(_,i)=>String(i+17))]);
+   await page.selectOption('[data-book-series="0"]','dunoro');
+   assert.equal(await page.locator('[data-book-step="0"]').count(),0,'Dunoro course is chosen directly, without a Level selector');
+   assert.deepEqual(await page.locator('[data-book-course="0"] option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:25},(_,i)=>String(i+1)),'other']);
    assert.equal(await page.locator('#pdBookDetail,.pd-book-detail').count(),0,'book detail is selected, never typed');
    await page.selectOption('[data-book-course="0"]','17');
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].bookCourseNumber),17,'book course number is saved as a number');
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].step),'level-3','Level is derived from completed course 17');
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].bookStatus),'completed','only a newly confirmed choice is recorded as completed');
    assert(await page.locator('#pdStart').isDisabled(),'book course number alone cannot select an app starting point');
-   await page.selectOption('[data-book-step="0"]','level-2');assert.equal(await page.locator('[data-book-course="0"]').inputValue(),'');assert.equal(await page.locator('#pdBaseline').inputValue(),'');
-   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].bookCourseNumber),null,'changing the level clears its course number');
-   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].bookStatus),'','changing the level clears completed status');
+   await page.selectOption('[data-book-course="0"]','11');assert.equal(await page.locator('#pdBaseline').inputValue(),'');
+   assert.deepEqual(await page.evaluate(()=>{const row=JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0];return [row.step,row.bookCourseNumber,row.bookStatus];}),['level-2',11,'completed'],'changing the book course derives Level 2 and keeps a completed selection');
+   await page.selectOption('[data-book-course="0"]','');
+   assert.deepEqual(await page.evaluate(()=>{const row=JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0];return [row.step,row.bookCourseNumber,row.bookStatus];}),['',null,''],'clearing the course clears derived Level and completed status');
    await overflow(page);
    if(lang==='ko'&&width===390){
     for(const [series,volumeCount] of [['soma-p',8],['soma-k',8],['soma-a',8],['soma-b',8],['soma-c',8],['soma-d',6]]){
      await page.selectOption('[data-book-series="0"]',series);
+     assert.equal(await page.locator('[data-book-edition="0"]').inputValue(),'2019',series+' starts with the owner-selected 2019 publication');
+     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].editionId),'2019','the default publication year is saved');
      assert.deepEqual(await page.locator('[data-book-step="0"] option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:volumeCount},(_,i)=>'v'+(i+1))],series+' has every printed volume');
      assert.equal(await page.locator('#pdBookDetail,.pd-book-detail').count(),0,'no typed volume fallback');
      assert(await page.locator('#pdStart').isDisabled(),'a series alone is not a completed volume');
@@ -63,21 +68,29 @@ try{
      await page.selectOption('[data-book-step="0"]','v'+volumeCount);assert.equal(await page.locator('#pdBaseline').inputValue(),'','changing a completed volume clears the old diagnostic topic');
      assert(await page.locator('#pdStart').isDisabled(),'stale topic cannot create a sheet for a new volume');
     }
+    await page.selectOption('[data-book-series="0"]','soma-p');
+    await page.selectOption('[data-book-edition="0"]','2013');await page.selectOption('[data-book-step="0"]','v2');
+    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].editionId),'2013','an explicit older publication is saved');
+    await page.reload();await page.locator('[data-id="diag"]:visible,#ttDiag:visible').first().click();await openDiagnostic(page);
+    assert.equal(await page.locator('[data-book-edition="0"]').inputValue(),'2013','a previously selected 2013 publication survives reload');
+    assert.equal(await page.locator('[data-book-step="0"]').inputValue(),'v2','the saved 2013 volume survives reload');
+    await page.selectOption('[data-book-series="0"]','miracle');
+    await page.selectOption('[data-book-series="0"]','soma-p');
+    assert.equal(await page.locator('[data-book-edition="0"]').inputValue(),'2019','a newly selected Soma publication starts at 2019');
     await page.selectOption('[data-book-series="0"]','dunoro');
-    assert.deepEqual((await page.locator('[data-book-step="0"] option').evaluateAll(rows=>rows.map(x=>x.value))).slice(0,4),['','level-1','level-2','level-3'],'recorded levels 1–3 are selectable');
+    assert.equal(await page.locator('[data-book-step="0"]').count(),0,'Dunoro has no separate Level step');
     assert((await page.locator('.pd-selection').innerText()).includes('두뇌로 교재 과정 번호와 이 앱의 과정 번호는 다릅니다.'));
-    for(const [step,first,last] of [['level-1',1,10],['level-2',11,16],['level-3',17,25]]){
-     await page.selectOption('[data-book-step="0"]',step);assert(await page.locator('#pdStart').isDisabled(),'completed level still needs its printed course and diagnostic topic');
-     assert.deepEqual(await page.locator('[data-book-course="0"] option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:last-first+1},(_,i)=>String(first+i))],step+' exposes only its printed course numbers');
-     assert(await page.locator('#pdBaseline').isDisabled(),'a level without its last completed course cannot choose a diagnostic topic');
-     await page.selectOption('[data-book-course="0"]',String(last));assert.equal(await page.locator('#pdBaseline').inputValue(),'','choosing a different course clears the old topic');
+    assert.deepEqual(await page.locator('[data-book-course="0"] option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:25},(_,i)=>String(i+1)),'other'],'all 25 printed course numbers are in one selector');
+    assert(await page.locator('#pdBaseline').isDisabled(),'no course means no diagnostic topic selection');
+    for(const [step,course] of [['level-1',1],['level-1',10],['level-2',11],['level-2',16],['level-3',17],['level-3',25]]){
+     await page.selectOption('[data-book-course="0"]',String(course));assert.equal(await page.locator('#pdBaseline').inputValue(),'','choosing a different course clears the old topic');
+     assert.deepEqual(await page.evaluate(()=>{const row=JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0];return [row.step,row.bookCourseNumber];}),[step,course],'boundary course derives the matching Level');
      assert(await page.locator('#pdStart').isDisabled());
      await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
     }
-    await page.selectOption('[data-book-step="0"]','level-2');
-    assert.equal(await page.locator('[data-book-course="0"]').inputValue(),'','changing book level clears the old course number');
-    assert(await page.locator('#pdBaseline').isDisabled(),'changing book level clears the old topic');
-    assert(await page.locator('#pdStart').isDisabled());
+    await page.selectOption('[data-book-course="0"]','other');
+    assert.deepEqual(await page.evaluate(()=>{const row=JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0];return [row.step,row.bookCourseNumber];}),['contents',null],'other course notation stays outside numbered Levels');
+    assert.equal(await page.locator('#pdBaseline').inputValue(),'','other course notation clears the prior app topic');
     await page.selectOption('[data-book-course="0"]','16');
     await page.selectOption('#pdBaseline','f-split5');
     await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));
@@ -100,9 +113,9 @@ try{
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).placement.autoPlan.cadence),'w1');assert.equal(await page.locator('.pd-route-planner').count(),1);
     await page.screenshot({path:path.join(OUT,'ko-390-result.png')});
     await page.click('#pdAgain');await page.click('[data-route="book"]');
-    await page.selectOption('[data-book-series="0"]','dunoro');await page.selectOption('[data-book-step="0"]','level-3');await page.selectOption('[data-book-course="0"]','17');
+    await page.selectOption('[data-book-series="0"]','dunoro');await page.selectOption('[data-book-course="0"]','17');
     await page.click('#pdAddBook');assert.equal(await page.locator('[data-book-row]').count(),2);
-    await page.selectOption('[data-book-series="1"]','soma-p');await page.selectOption('[data-book-edition="1"]','2019');await page.selectOption('[data-book-step="1"]','v1');
+    await page.selectOption('[data-book-series="1"]','soma-p');assert.equal(await page.locator('[data-book-edition="1"]').inputValue(),'2019');await page.selectOption('[data-book-step="1"]','v1');
     assert(await page.locator('#pdStart').isDisabled(),'adding another book requires a newly confirmed app topic');
     await page.selectOption('#pdBaseline','c18');completedBookSheetHref=await page.locator('#pdPaper').getAttribute('href');
     const linkedBooks=JSON.parse(new URLSearchParams(completedBookSheetHref.split('?')[1]).get('books'));

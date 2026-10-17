@@ -137,15 +137,15 @@
       const bookFields=s.route==='book'?'<div class="pd-book-list">'+s.completedBooks.map((row,i)=>{
         const steps=books?books.getSteps(row.series,row.editionId):[];
         const editions=books&&books.getEditions?books.getEditions(row.series):[];
-        const courses=books?books.getBookCourses(row.series,row.step):[];
         const isSoma=/^soma-/.test(row.series);
-        const stepPrompt=row.series==='dunoro'?t('완료한 레벨','Completed level','已完成的级别'):
-          isSoma?t('완료한 권','Completed volume','已完成的册次'):t('완료한 권·단원','Completed volume or unit','已完成的册次或单元');
+        const stepPrompt=isSoma?t('완료한 권','Completed volume','已完成的册次'):t('완료한 권·단원','Completed volume or unit','已完成的册次或单元');
+        const dunoroCourses=row.series==='dunoro'&&books?steps.filter(step=>books.getBookCourses('dunoro',step.id).length).flatMap(step=>books.getBookCourses('dunoro',step.id).map(n=>[String(n),t('교재 과정','Book course','教材课程')+' '+n+' · '+l(step.label).split(' · ')[0]])):[];
+        const dunoroSelected=row.step==='contents'?'other':String(row.bookCourseNumber||'');
         return '<div class="pd-book-row" data-book-row="'+i+'"><div class="pd-book-row-head"><strong>'+t('완료한 교재','Completed book','已完成的教材')+' '+(i+1)+'</strong>'+
           (s.completedBooks.length>1?'<button type="button" class="pd-book-remove" data-book-remove="'+i+'">'+t('삭제','Remove','删除')+'</button>':'')+'</div><div class="pd-fields"><label>'+t('교재','Book series','教材')+'<select data-book-series="'+i+'">'+option('',t('교재 선택','Select book','选择教材'),row.series)+(books?books.series.map(b=>option(b.id,l(b.label),row.series)).join(''):'')+'</select></label>'+
           (editions.length?'<label>'+t('발행본','Publication','出版年份')+'<select data-book-edition="'+i+'">'+editions.map(x=>option(x.id,l(x.label),row.editionId||'')).join('')+'</select></label>':'')+
-          (steps.length?'<label>'+stepPrompt+'<select data-book-step="'+i+'">'+option('',t('선택해 주세요','Select an item','请选择'),row.step)+steps.map(x=>option(x.id,l(x.label),row.step)).join('')+'</select></label>':'')+
-          (row.series==='dunoro'&&courses.length?'<label>'+t('완료한 교재 과정','Completed book course','已完成教材课程')+'<select data-book-course="'+i+'">'+options([['',t('완료 과정 선택','Select completed course','选择已完成课程')],...courses.map(n=>[String(n),t('교재 과정','Book course','教材课程')+' '+n])],String(row.bookCourseNumber||''))+'</select></label>':'')+'</div></div>';
+          (steps.length&&row.series!=='dunoro'?'<label>'+stepPrompt+'<select data-book-step="'+i+'">'+option('',t('선택해 주세요','Select an item','请选择'),row.step)+steps.map(x=>option(x.id,l(x.label),row.step)).join('')+'</select></label>':'')+
+          (row.series==='dunoro'?'<label>'+t('마지막으로 완료한 두뇌로 교재 과정','Last completed Dunoro book course','最后完成的두뇌로教材课程')+'<select data-book-course="'+i+'">'+options([['',t('과정 번호 선택','Select course number','选择课程编号')],...dunoroCourses,['other',t('다른 과정 표기','Other course notation','其他课程标记')]],dunoroSelected)+'</select></label>':'')+'</div></div>';
       }).join('')+'<button type="button" class="pd-book-add" id="pdAddBook"'+(s.completedBooks.length>=8?' disabled':'')+'>'+t('완료한 교재 추가','Add another completed book','添加已完成教材')+'</button><p class="pd-note">'+t('기적의 계산법과 소마셈처럼 여러 교재를 함께 기록할 수 있습니다. 모두 마지막으로 완료한 권을 고르세요.','Record more than one book, such as Miracle and SomaSem. Select the last completed volume of each.','可以同时记录多种教材；请选择每种教材最后完成的册次。')+'</p>'+
         (s.completedBooks.some(row=>row.series==='dunoro')?'<p class="pd-note">'+t('두뇌로 교재 과정 번호와 이 앱의 과정 번호는 다릅니다.','Dunoro book course numbers differ from app course numbers.','두뇌로教材课程编号与本应用课程编号不同。')+'</p>':'')+'</div>':'';
       const goalFields='<label>'+t('학습 목표','Learning goal','学习目标')+'<select id="pdGoal">'+paths.goals.map(x=>option(x.id,l(x.label),s.goal)).join('')+'</select></label>'+
@@ -193,10 +193,16 @@
         $('#pdSemester').onchange=e=>{s.semester=e.target.value;s.baselineId='';redraw();};
       }
       if(s.route==='book'){
-        all('[data-book-series]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookSeries)];row.series=e.target.value;row.editionId='';row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';redraw();});
+        all('[data-book-series]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookSeries)];row.series=e.target.value;row.editionId=/^soma-[pkabcd]$/.test(row.series)?'2019':'';row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';redraw();});
         all('[data-book-edition]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookEdition)];row.editionId=e.target.value;row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';redraw();});
         all('[data-book-step]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookStep)];row.step=e.target.value;row.bookCourseNumber=null;row.bookStatus=row.step&&row.series!=='dunoro'?'completed':'';s.baselineId='';redraw();});
-        all('[data-book-course]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookCourse)];row.bookCourseNumber=e.target.value?Number(e.target.value):null;row.bookStatus=row.bookCourseNumber?'completed':'';s.baselineId='';redraw();});
+        all('[data-book-course]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookCourse)],raw=e.target.value;
+          const n=/^[1-9][0-9]?$/.test(raw)?Number(raw):null;
+          const step=n&&books.getSteps('dunoro').find(x=>books.getBookCourses('dunoro',x.id).includes(n));
+          row.step=raw==='other'?'contents':step?step.id:'';
+          row.bookCourseNumber=step?n:null;
+          row.bookStatus=row.step?'completed':'';
+          s.baselineId='';redraw();});
         all('[data-book-remove]').forEach(el=>el.onclick=()=>{s.completedBooks.splice(Number(el.dataset.bookRemove),1);s.baselineId='';redraw();});
         $('#pdAddBook').onclick=()=>{if(s.completedBooks.length>=8)return;s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});s.baselineId='';redraw();};
       }

@@ -73,10 +73,28 @@ Claude 제안의 A안 표는 **현재 배우는 과정의 새 주제**를 기준
 별도 앱 진단 범위를 분리해 적고, 학교 진도만 선택한 시험지에는 교재 목록을 싣지 않는다.
 기존 단일 교재 결과·인쇄 링크는 읽기 호환을 유지한다.
 
+### 2026-10-18 원장 선택: 소마셈 2019년 발행본 기준
+
+새로 소마셈 P/K/A/B/C/D를 고르면 발행본을 **2019년**으로 먼저 선택한다. 사용자가
+발행본을 바꿀 수 있으며 기존에 저장된 2013년·미상·기타 기록은 자동으로 2019년으로
+바꾸지 않는다. [P](https://www.yes24.com/product/goods/75530645)와
+[K](https://www.yes24.com/product/goods/75529132)·
+[A](https://m.yes24.com/goods/detail/75532218)·
+[B](https://www.yes24.com/product/goods/75533479)·
+[C](https://www.yes24.com/product/goods/75534465)·
+[D](https://www.yes24.com/product/goods/75525550)의 2019년 세트에서 확인한
+권별 짧은 주제 단서를 선택지에 보인다. K권 표제 끝의 1~4와 D권의 (1)·(2)는
+판매처의 주제 구분을 나타내며 앱 문항의 피연산자 범위나 난이도 검증값이 아니다.
+
+두뇌로는 부모가 과정 번호 1~25 중 **마지막 완료 과정 하나를 바로 선택**한다. 앱이
+사진으로 확인한 구간에 따라 Level 1/2/3을 찾아 함께 기록한다. 다른 과정 표기도
+기존 `contents` 선택으로 남겨 둔다. 이 화면 개선은 각 과정의 주차별 주제·앱 문제
+형식까지 대조했다는 뜻이 아니며, 교재 번호를 앱 C과정 번호로 바꾸지 않는다.
+
 `data/placement-books.js`는 `window.NM_PLACEMENT_BOOKS`의 `series`, `getEditions(seriesId)`, `getSteps(seriesId, editionId)`, `getBookCourses(seriesId, stepId)`, `resolve(seriesId, stepId, progress, editionId)`를 제공한다. 라벨은 `ko/en/zh` 객체이며 고유명사는 보존한다.
 
 - `getSteps()`는 소마셈 P/K/A/B/C 각 1~8권, D 1~6권의 선택지를 준다. 권 번호는 식별 자료이며 `baselineId`가 아니다.
-- `getBookCourses()`는 두뇌로 Level 1/2/3에서 사진으로 확인한 인쇄 과정 번호 `1~10` / `11~16` / `17~25`를 숫자 배열로 제공하고 다른 항목에서는 `[]`를 반환한다. 두뇌로 경로에서는 마지막 완료 과정 번호를 선택해야 진단을 시작할 수 있다. 새 기록은 해당 `selection.completedBooks[i].bookCourseNumber`에 숫자(미선택 `null`)로 보존한다. 과거 단일 기록의 `selection.bookCourseNumber`도 읽는다. 교재나 Level을 변경하면 해당 행의 이전 번호를 지운다.
+- `getBookCourses()`는 두뇌로 Level 1/2/3에서 사진으로 확인한 인쇄 과정 번호 `1~10` / `11~16` / `17~25`를 숫자 배열로 제공하고 다른 항목에서는 `[]`를 반환한다. 화면에서 과정 1~25를 고르면 그 번호의 Level ID를 찾아 함께 기록한다. 새 기록은 해당 `selection.completedBooks[i].bookCourseNumber`에 숫자(미선택 `null`)로 보존한다. 과거 단일 기록의 `selection.bookCourseNumber`도 읽는다. 과정을 바꾸면 해당 행의 이전 앱 진단 기준을 지운다.
 - 선택한 교재 번호는 결과와 로드맵에서 이 앱의 과정 번호와 별도로 표시한다. 향후 두 로드맵을 비교할 때 사용할 입력 자료이며, 번호 간 대응표·자동 시작점·연령 기준·한 달 한 과정 자동 편성은 구현하지 않았다.
 
 - `coverage`: 현재 `data/threads.js`에 실존하는 `thread@level` **주제 후보**. 교재와 숫자 범위·표현·풀이 형식까지 같은 문항이라는 뜻이 아니다. 문제 생성이나 점수 결정에 그대로 쓰지 않는다.
