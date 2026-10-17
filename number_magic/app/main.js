@@ -3775,6 +3775,11 @@ function screenCourseRoad(){
       const pnum=String(S.placement.course).replace(/^C/,'');
       if(pc){
         const weak=S.placement.weak||[];
+        const bookSelection=S.placement.selection||{},books=window.NM_PLACEMENT_BOOKS;
+        const dunoroStep=bookSelection.route==='book'&&bookSelection.series==='dunoro'&&books
+          ?books.getSteps('dunoro').find(x=>x.id===bookSelection.step):null;
+        const bookCourseNumber=dunoroStep&&books.getBookCourses('dunoro',dunoroStep.id).includes(bookSelection.bookCourseNumber)
+          ?bookSelection.bookCourseNumber:null;
         const label=S.placement.self
           ? `${crIc('target')}<b>${lk('내가 고른 시작점','My chosen start','我选的起点')}</b>`
           : `${crIc('compass')}<b>${lk('진단 추천','Check-up suggests','测评建议')}</b>`;
@@ -3786,12 +3791,13 @@ function screenCourseRoad(){
           });
           suffix=` · ${lk('연습 필요','needs practice','需要练习')} ${weak.length}: ${names.join(', ')}`;
         }
-        html+=`<div class="nm-cr-diagchip">${label}<span>${lk('과정','Course','课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</span></div>`;
+        html+=`<div class="nm-cr-diagchip">${label}<span>${lk('수의 마법 과정','App course','本应用课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</span></div>`;
         const gp=S.placement.pathRecommendation;
         if(gp&&gp.version==='goal-path-v1'){
           const support=(gp.support||[]), wrong=support.filter(x=>x.kind==='practice').length, recheck=support.filter(x=>x.kind==='recheck').length;
           html+=`<section class="pd-road-goal" aria-label="${lk('진단 목표와 학습 경로','Assessment goal and study path','测评目标与学习路径')}">
             <h3>${esc(L(gp.goal.label))}</h3>${gp.target?`<p>${esc(L(gp.target.label))} · ${lk('목표 대응 확인 필요','Target mapping needs verification','目标对应需要确认')}</p>`:''}
+            ${dunoroStep?`<p>${lk('선택한 교재','Studied book','所选教材')}: ${lk('두뇌로','Dunoro','두뇌로')} · ${esc(L(dunoroStep.label))}${bookCourseNumber?' · '+lk('교재 과정','book course','教材课程')+' '+bookCourseNumber:''}. ${lk('교재 과정 번호와 이 앱의 과정 번호는 별개입니다.','Book and app course numbers are separate.','教材课程编号与本应用课程编号不同。')}</p>`:''}
             <p>${lk('진단 때 선택한 본진도','Main study selected for this check','测评时选择的主要进度')}: ${esc(L(gp.main.label))}</p>
             <p>${lk('보강 후보','Practice candidates','补充练习候选')} ${wrong} · ${lk('재확인 후보','Recheck candidates','再确认候选')} ${recheck}</p>
             <p>${esc(L(gp.goal.focus))}</p><p class="pd-note">${lk('진단 직후에는 현재 속도·분량·학습 횟수를 유지합니다. 학습 기록을 관찰한 뒤 조금씩 조정합니다.','Keep the current pace, amount and frequency after diagnosis. Observe study records before gradual changes.','测评后保持当前速度、分量与次数。观察学习记录后再逐步调整。')}</p>${(()=>{const a=gp.autoPlan||S.placement.autoPlan;if(!a)return '';if(a.version!=='observe-plan-v2')return `<p class="pd-note">${lk('이전 자동 편성 제안은 기록으로 보관합니다. 새 진단부터는 유지·관찰 원칙을 적용합니다.','Earlier automatic suggestions are retained as history. New checks use the maintain-and-observe policy.','早期自动建议保留为记录，新测评采用保持并观察的原则。')}</p>`;const same=(S.roadSpeed===a.speed&&S.roadAmount===a.amount);

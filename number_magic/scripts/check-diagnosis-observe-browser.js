@@ -32,6 +32,15 @@ try{
    await page.selectOption('#pdGrade','m2');assert.equal(await page.locator('#pdBaseline').inputValue(),'c32');
    await page.click('[data-route="book"]');await page.selectOption('#pdSeries','kumon');await page.selectOption('#pdStep','stage-i');assert(await page.locator('#pdStart').isDisabled(),'unknown book mapping needs topic confirmation');
    await page.selectOption('#pdBaseline','c35');assert.equal(await page.locator('#pdStart').isDisabled(),false);
+   await page.selectOption('#pdSeries','dunoro');await page.selectOption('#pdStep','level-3');
+   assert.deepEqual(await page.locator('#pdBookCourse option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:9},(_,i)=>String(i+17))]);
+   assert((await page.locator('.pd-book-detail').innerText()).includes(lang==='ko'?'주차·학습지':lang==='en'?'week or sheet':'周次或练习单'));
+   await page.selectOption('#pdBookCourse','17');
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.bookCourseNumber),17,'book course number is saved as a number');
+   assert(await page.locator('#pdStart').isDisabled(),'book course number alone cannot select an app starting point');
+   await page.selectOption('#pdStep','level-2');assert.equal(await page.locator('#pdBookCourse').inputValue(),'');
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.bookCourseNumber),null,'changing the level clears its course number');
+   await overflow(page);
    if(lang==='ko'&&width===390){
     for(const series of ['soma-p','soma-k','soma-a','soma-b','soma-c']){
      await page.selectOption('#pdSeries',series);assert.equal(await page.locator('#pdStep').count(),0,'do not show a meaningless single-item selector');assert(await page.locator('#pdStart').isDisabled());
@@ -43,10 +52,13 @@ try{
     assert((await page.locator('.pd-selection').innerText()).includes('두뇌로 과정 번호와 이 앱의 과정 번호는 다릅니다.'));
     for(const step of ['level-1','level-2','level-3','contents']){
      await page.selectOption('#pdStep',step);assert(await page.locator('#pdStart').isDisabled(),'printed level needs studied-topic confirmation');
+     assert.equal(await page.locator('#pdBookCourse').count(),step==='contents'?0:1,'known level exposes only its printed course numbers');
+     if(step!=='contents')await page.selectOption('#pdBookCourse',step==='level-1'?'10':step==='level-2'?'16':'25');
      await page.fill('#pdBookDetail','교재 표기 참고');await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
     }
     await page.selectOption('#pdStep','level-2');
     assert.equal(await page.locator('#pdBookDetail').inputValue(),'','changing book level clears the old printed detail');
+    assert.equal(await page.locator('#pdBookCourse').inputValue(),'','changing book level clears the old course number');
     assert(await page.locator('#pdStart').isDisabled(),'changing book level clears the old topic');
     await page.selectOption('#pdBaseline','f-split5');
     await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));
@@ -67,6 +79,19 @@ try{
     assert.equal(await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return JSON.stringify({speed:s.roadSpeed,amount:s.roadAmount,cadence:s.roadCadence,coins:s.coins,progress:s.progress});}),before,'results cannot change workload or achievements');
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).placement.autoPlan.cadence),'w1');assert.equal(await page.locator('.pd-route-planner').count(),1);
     await page.screenshot({path:path.join(OUT,'ko-390-result.png')});
+    await page.click('#pdAgain');await page.selectOption('#pdAge','6');await page.click('[data-route="book"]');
+    await page.selectOption('#pdSeries','dunoro');await page.selectOption('#pdStep','level-3');await page.selectOption('#pdBookCourse','17');
+    await page.selectOption('#pdBaseline','c18');await page.click('#pdStart');
+    for(let i=0;i<20;i++)await page.click('#pdSkip');await page.locator('#pdRoad').waitFor();
+    const resultText=await page.locator('.pd-recommended').innerText();
+    assert(resultText.includes('교재 과정 17')&&resultText.includes('수의 마법 과정'),'result separates book and app course numbers');
+    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).placement.selection.bookCourseNumber),17,'result retains the selected book course for later comparison');
+    await page.click('#pdRoad');await page.locator('.pd-road-goal').waitFor();
+    const roadText=await page.locator('.nm-cr-diagchip,.pd-road-goal').allInnerTexts();
+    assert(roadText.join(' ').includes('교재 과정 17')&&roadText.join(' ').includes('수의 마법 과정'),'roadmap separates book and app course numbers');
+    await page.locator('.pd-road-goal').screenshot({path:path.join(OUT,'ko-390-dunoro-roadmap-detail.png')});
+    await page.screenshot({path:path.join(OUT,'ko-390-dunoro-roadmap.png')});
+    await page.reload();assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).placement.selection.bookCourseNumber),17,'book course number survives reload');
    }
    await page.goto(base+'/number_magic/placement-sheet.html?b=f-count5&seed=browser-observe&l='+lang);await page.waitForFunction(()=>window.NM_WS_READY);
    await page.click('#plGo');assert.match(await page.locator('#plOut').innerText(),lang==='ko'?/미입력/:lang==='en'?/Unmarked/:/未填写/);
