@@ -48,6 +48,11 @@ catalog.push({ id: 'changui', label: L('창의셈'), sourceUrls: [],
   steps: [pending('contents', L('출판사·판·권·단원을 확인하고 직접 선택',
     'Confirm the publisher, edition, volume and studied topic',
     '确认出版社、版本、册次和已学内容'))] });
+// Requested by the owner; no complete verified level list/mapping is registered.
+// Keep the actual printed level as user context, never invent a numeric ladder.
+catalog.push({id:'dunoro',label:L('두뇌로'),sourceUrls:[],steps:[
+  pending('contents',L('교재에 적힌 레벨·단원 확인','Check the printed level and topic','确认教材标注的级别与单元'),[])
+]});
 catalog.push({ id: 'kumon', label: L('구몬수학'), sourceUrls: [kumonUrl], steps: [
   ...['6A', '5A', '4A', '3A', '2A', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
     'J', 'K', 'L', 'M', 'N', 'O', 'SV', 'SM', 'SP', 'SS'].map(stage =>

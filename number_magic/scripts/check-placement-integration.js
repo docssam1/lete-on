@@ -18,7 +18,7 @@ assert.deepEqual(plain(ui.readValues(['-2','-3','4.5'])),[-2,-3,4.5]);
 assert.equal(ui.readValues(['-2','']),null);assert.equal(ui.readValues(['12','12x']),null);
 const stages=plan.stages(),ids=new Set(stages.map(x=>x.id));
 let mapped=0,pending=0;
-assert.equal(books.series.length,9);
+assert.equal(books.series.length,10);
 for(const series of books.series)for(const step of books.getSteps(series.id))for(const progress of ['start','middle','complete']){
   const r=books.resolve(series.id,step.id,progress);assert(r,series.id+'/'+step.id);
   if(r.needsTopicConfirmation){assert.equal(r.baselineId,null);pending++;}
