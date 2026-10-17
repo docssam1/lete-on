@@ -2806,3 +2806,9 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - Claude는 Drive 사진을 내려받아 1,273,751바이트·1044×709px·SHA-256 `664af28885e475e90c94f8dc5db5a317f1fb7951df7212c1de0fbe2c19791301`을 독립 확인했다. Level 3 과정 17~20 주차 칸을 확대해 ST곱·AS곱·99단 곱·19단 곱과 제곱수 범위 **코드명 일부**를 판독했다. 앞 절의 “작은 글씨는 전사 근거로 쓰기 어렵다”는 당시 보수적 판단이며, 이번 확대 판독이 최신이다. 코드의 뜻, 창의수연 고급 A와의 기법 동일성, 실제 학원 운영, 판본·발행일은 여전히 미확인이다.
 - Codex는 `CURRICULUM-SOURCES.md`·`고급-목차.md`의 “정확히 같은 계열/교차 근거” 표현을 설계 판단과 사진의 직접 근거로 분리했다. `CURRICULUM_DESIGN.md`·`과정-로드맵.md`의 두뇌로 세션 운영 동일성 단정을 낮추고, 후자의 과정 1~25가 당시 앱 설계안 번호이며 교재·현재 C과정 대응표가 아님을 명시했다. `docs/placement-design.md`·`docs/placement-verification.md`·`docs/placement-book-provenance.md`의 진입 경로와 측정 시점을 현재 화면·검사 결과에 맞췄다. `docs/creative-stages-design-2026-09-26.md`의 나선형 복습은 우리 앱 설계로 표기했다. 제품 코드·교재 원본·채점·진도는 수정하지 않았다.
 - Mac Codex 재검: `check-placement-intake.js`는 `starts=44 paperPatterns=30`, `check-placement-integration.js`는 `stages=81 bookSelections=198 mapped=6 manual=192`로 각각 exit 0. Claude는 이 두 검사를 직접 실행하지 않았으므로 검사 실행 근거는 Mac Codex 로그다. 실물 교재 판본·실기기·교사 검수는 여전히 미완이다. 이 문서 수정의 원격 반영·배포 상태는 해당 PR과 Actions 기록으로 확인한다.
+
+## 두뇌로 교재 과정 번호 직접 선택 — 2026-10-17
+
+- 원장 후속 요청: 두뇌로의 실제 **교재 과정 번호**를 Level 안에서 선택·기록하고, 이후 로드맵 비교에 사용한다. Level 1은 1~10, Level 2는 11~16, Level 3은 17~25만 제공한다. `contents` 및 다른 교재에는 이 번호 선택을 표시하지 않는다.
+- 선택값은 진단의 `selection.bookCourseNumber`에 숫자로 저장하며 미선택은 `null`이다. 교재·Level 변경 시 지우고, 진단 완료 뒤 `placement.selection`에 보존한다. 결과·로드맵에서는 교재 Level/번호와 이 앱의 과정 번호를 따로 표시한다. 교재 번호만으로 자동 시작점을 배정하지 않고 실제 배운 내용을 계속 직접 확인한다. 월별 진도 계산과 두 번호 간 자동 대응은 후속 로드맵 비교에서 근거를 갖춰 결정한다.
+- 로컬 검수: `check-placement-intake.js`와 `check-placement-integration.js` 통과. `check-diagnosis-observe-browser.js`는 한·영·중 × 390/1280 화면, Level 변경 시 번호 초기화, 숫자 저장, 시작점 수동 확인, 결과·로드맵 표시 및 재진입 보존을 포함해 `cases=8 externalWrites=0`으로 통과했다. 공개 배포 여부는 해당 PR과 Pages 기록으로 확인한다.

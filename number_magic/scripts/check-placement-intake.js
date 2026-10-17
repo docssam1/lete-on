@@ -31,6 +31,12 @@ assert.deepEqual(Array.from(dunoroSteps,x=>x.id),['level-1','level-2','level-3',
 assert.deepEqual(Array.from(dunoroSteps.slice(0,3),x=>x.label.ko),[
  'Level 1 · 교재 과정 1~10','Level 2 · 교재 과정 11~16','Level 3 · 교재 과정 17~25']);
 assert(dunoroSteps.every(x=>x.sourceVerification==='unconfirmed'));
+for(const [stepId,first,last] of [['level-1',1,10],['level-2',11,16],['level-3',17,25]]){
+ const numbers=world.NM_PLACEMENT_BOOKS.getBookCourses('dunoro',stepId);
+ assert.deepEqual(Array.from(numbers),Array.from({length:last-first+1},(_,i)=>first+i));
+ for(const bookCourseNumber of numbers)assert.equal(P.startingPoint({age:'6',route:'book',series:'dunoro',step:stepId,bookCourseNumber}),null,'book course number is stored without assigning an app course');
+}
+assert.deepEqual(Array.from(world.NM_PLACEMENT_BOOKS.getBookCourses('dunoro','contents')),[]);
 for(const step of dunoroSteps)for(const progress of ['', 'start','middle','complete']){
  const selection={age:'6',route:'book',series:'dunoro',step:step.id,progress};
  assert.equal(P.startingPoint(selection),null,'book course numbers never become app course numbers');

@@ -14,7 +14,10 @@
 
 ## API와 확인 상태
 
-`data/placement-books.js`는 `window.NM_PLACEMENT_BOOKS`의 `series`, `getSteps(seriesId)`, `resolve(seriesId, stepId, progress)`를 제공한다. 라벨은 `ko/en/zh` 객체이며 고유명사는 보존한다.
+`data/placement-books.js`는 `window.NM_PLACEMENT_BOOKS`의 `series`, `getSteps(seriesId)`, `getBookCourses(seriesId, stepId)`, `resolve(seriesId, stepId, progress)`를 제공한다. 라벨은 `ko/en/zh` 객체이며 고유명사는 보존한다.
+
+- `getBookCourses()`는 두뇌로 Level 1/2/3에서 사진으로 확인한 인쇄 과정 번호 `1~10` / `11~16` / `17~25`를 숫자 배열로 제공하고 다른 항목에서는 `[]`를 반환한다. 선택한 번호는 진단의 `selection.bookCourseNumber`에 숫자(미선택 `null`)로 기록되며 결과의 `placement.selection`에도 남는다. 교재나 Level을 변경하면 이전 번호를 지운다.
+- 선택한 교재 번호는 결과와 로드맵에서 이 앱의 과정 번호와 별도로 표시한다. 향후 두 로드맵을 비교할 때 사용할 입력 자료이며, 번호 간 대응표·자동 시작점·연령 기준·한 달 한 과정 자동 편성은 구현하지 않았다.
 
 - `coverage`: 현재 `data/threads.js`에 실존하는 `thread@level` **주제 후보**. 교재와 숫자 범위·표현·풀이 형식까지 같은 문항이라는 뜻이 아니다. 문제 생성이나 점수 결정에 그대로 쓰지 않는다.
 - `sourceVerification: verified`: 공식 출판사 페이지에서 해당 판의 짧은 주제 메타데이터를 확인했다는 뜻. 프로그램의 전체 과정과 동등하다는 뜻이 아니다.
