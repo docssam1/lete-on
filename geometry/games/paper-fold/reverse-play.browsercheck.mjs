@@ -6,10 +6,12 @@
 
    확인하는 것
    - 유형 선택에 레벨 3이 있고, ?level=3 주소가 레벨 3으로 열린다(전에는 1로 바뀌었다).
-   - 함께하기 10문제, 2명·4명 배틀 각 10문제를 실제 클릭으로 끝까지 푼다.
+   - 터치 에뮬레이션에서 함께하기 10문제, 2명·4명 배틀 각 10문제를 tap으로 끝까지 푼다.
      접는 선은 종이 위 정답 선을 직접 누르고(다른 선과 먼 점), 모두 고르기는 두 정답을 누른다.
    - 문제마다 각 틀 안에서 종이 그림과 보기, 풀이 뒤 접는 선이 가려지지 않는다.
-     4명 배틀(1280x800, 틀 하나 약 620x260)에서 종이 짧은 변과 보기 크기를 잰다.
+     4명 배틀(1024x768, 1180x820, 1280x800)에서 종이 짧은 변과 보기 크기를 잰다.
+   - 배틀의 각 풀이·다음 탭 전후에 상위 플레이어 영역 전체가 겹침 없이 한 화면에 있고,
+     페이지 스크롤·넘침이 없는지 확인한다. 다음/마치기 버튼의 터치 영역은 44px 이상이다.
    - 배틀에서 한 사람이 틀리면 점수(정답 3점, 틀릴 때마다 1점 깎이고 최소 1점)가 줄고
      순위표에 오답 수가 맞게 나온다. 페이지 오류가 없다. */
 
@@ -22,6 +24,7 @@ const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(
 const byId = new Map(levels[2].problems.map((problem) => [problem.id, problem]));
 const PAPER_MIN_PX = 100;
 const CHOICE_MIN_PX = 90;
+const TOUCH_MIN_PX = 44;
 
 const browser = await chromium.launch({ headless: true });
 const sizes = { paper: [], choice: [] };
@@ -63,6 +66,50 @@ function checkView(view, where, { minimum = true } = {}) {
   sizes.choice.push(...view.choices.map((choice) => Math.round(choice.side)));
 }
 
+/* iframe 안쪽 검사만으로는 부모 페이지의 세로 적층을 잡지 못한다.
+   tap이 자동으로 화면을 옮기기 전후 모두 확인하고, 마지막 탭 뒤에는 결과 전환을 확인한다. */
+async function checkBattleViewport(page, ids, where, { result = false } = {}) {
+  const view = await page.evaluate(() => {
+    const bounds = (node) => {
+      const rect = node.getBoundingClientRect();
+      return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height };
+    };
+    return {
+      stage: document.body.dataset.stage,
+      width: innerWidth, height: innerHeight, scrollX, scrollY,
+      scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+      scrollHeight: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight),
+      framesHidden: document.querySelector("#gameFrames").hidden,
+      resultsVisible: !document.querySelector("#finishBanner").hidden,
+      panels: [...document.querySelectorAll(".pf-game")].map((panel) => ({ player: panel.dataset.player, ...bounds(panel) })),
+      actions: [...document.querySelectorAll(".pf-game-actions button:not([hidden])")].map(bounds)
+    };
+  });
+  const inside = (rect) => rect.width > 0 && rect.height > 0 && rect.left >= -1 && rect.top >= -1 && rect.right <= view.width + 1 && rect.bottom <= view.height + 1;
+  assert.equal(view.scrollX, 0, `${where}: page scrolled horizontally`);
+  assert.equal(view.scrollY, 0, `${where}: page scrolled vertically`);
+  assert.ok(view.scrollWidth <= view.width + 1, `${where}: document overflows horizontally (${view.scrollWidth}/${view.width})`);
+  assert.ok(view.scrollHeight <= view.height + 1, `${where}: document overflows vertically (${view.scrollHeight}/${view.height})`);
+  assert.equal(view.stage, result ? "result" : "playing", `${where}: unexpected session stage`);
+  if (result) {
+    assert.ok(view.framesHidden && view.resultsVisible, `${where}: results must replace the completed boards`);
+    return;
+  }
+  assert.equal(view.framesHidden, false, `${where}: player boards are hidden`);
+  assert.deepEqual(view.panels.map((panel) => panel.player), ids, `${where}: all player panels must exist`);
+  for (const panel of view.panels) assert.ok(inside(panel), `${where}: player ${panel.player} is outside the viewport (${JSON.stringify(panel)})`);
+  for (let index = 0; index < view.panels.length; index += 1) {
+    for (const other of view.panels.slice(index + 1)) {
+      const panel = view.panels[index];
+      assert.ok(panel.right <= other.left + 1 || other.right <= panel.left + 1 || panel.bottom <= other.top + 1 || other.bottom <= panel.top + 1, `${where}: player ${panel.player} overlaps ${other.player}`);
+    }
+  }
+  for (const action of view.actions) {
+    assert.ok(inside(action), `${where}: next/finish button is outside the viewport`);
+    assert.ok(action.width >= TOUCH_MIN_PX && action.height >= TOUCH_MIN_PX, `${where}: next/finish touch target is ${action.width}x${action.height}px`);
+  }
+}
+
 /* 정답 선 위에서 다른 후보 선과 가장 먼 점을 그림 기준 좌표로 돌려준다. */
 async function creasePoint(frame, problem, key) {
   return frame.locator(".fold-start .reverse-diagram").evaluate((svg, { choices, key }) => {
@@ -91,7 +138,12 @@ async function creasePoint(frame, problem, key) {
   }, { choices: problem.lineChoices.map((choice) => ({ key: choice.key, chord: choice.chord })), key });
 }
 
-async function solveIn(frame, where, { wrongFirst = false } = {}) {
+async function solveIn(frame, where, { wrongFirst = false, checkHost = async () => {} } = {}) {
+  const tap = async (locator, label, options = {}) => {
+    await checkHost(`${where} before ${label}`);
+    await locator.tap(options);
+    await checkHost(`${where} after ${label}`);
+  };
   const id = await frame.locator("#paper").getAttribute("data-problem-id");
   const problem = byId.get(id);
   assert.ok(problem, `${where}: ${id} is not a level 3 problem`);
@@ -99,19 +151,20 @@ async function solveIn(frame, where, { wrongFirst = false } = {}) {
     if (wrongFirst) {
       const wrong = problem.lineChoices.find((choice) => !choice.correct).key;
       const spot = await creasePoint(frame, problem, wrong);
-      await frame.locator(".fold-start .reverse-diagram").click({ position: spot });
+      assert.ok(spot, `${where}: no visible point on the wrong crease`);
+      await tap(frame.locator(".fold-start .reverse-diagram"), "wrong crease", { position: { x: spot.x, y: spot.y } });
       await frame.waitForTimeout(560);
     }
     const spot = await creasePoint(frame, problem, problem.answerKey);
     assert.ok(spot && spot.gap > 0.04, `${where}: no clear point on the answer crease`);
-    await frame.locator(".fold-start .reverse-diagram").click({ position: spot });
+    await tap(frame.locator(".fold-start .reverse-diagram"), "answer crease", { position: { x: spot.x, y: spot.y } });
   } else {
     if (wrongFirst) {
-      await frame.locator(`[data-shape="${problem.resultOptions.find((option) => !option.correct).key}"]`).click();
+      await tap(frame.locator(`[data-shape="${problem.resultOptions.find((option) => !option.correct).key}"]`), "wrong shape");
       await frame.waitForTimeout(600);
     }
     for (const key of problem.answerKeys) {
-      await frame.locator(`[data-shape="${key}"]`).click();
+      await tap(frame.locator(`[data-shape="${key}"]`), `answer shape ${key}`);
       await frame.waitForTimeout(200);
     }
   }
@@ -121,7 +174,7 @@ async function solveIn(frame, where, { wrongFirst = false } = {}) {
 }
 
 async function openRound(viewport, query) {
-  const page = await browser.newPage({ viewport });
+  const page = await browser.newPage({ viewport, hasTouch: true });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
@@ -133,7 +186,7 @@ async function openRound(viewport, query) {
   for (const frame of page.frames().filter((item) => item.url().includes("embedded=1"))) {
     assert.match(frame.url(), /[?&]level=3(&|$)/, "every frame must load level 3");
   }
-  await page.locator(".pf-overlay button:visible").first().click();
+  await page.locator(".pf-overlay button:visible").first().tap();
   await page.waitForTimeout(300);
   return { page, errors };
 }
@@ -152,7 +205,7 @@ try {
       const problem = await solveIn(frame, where);
       seen.add(problem.id);
       checkView(await frameView(frame), `${where} solved`, { minimum: false });
-      await page.locator(".pf-overlay button:visible").click();
+      await page.locator(".pf-overlay button:visible").tap();
       await page.waitForTimeout(250);
     }
     await page.locator("#finishBanner:not([hidden])").waitFor({ timeout: 8000 });
@@ -163,20 +216,33 @@ try {
   }
 
   /* 배틀: 같은 문제 묶음을 사람마다 다른 순서로. B는 문제마다 한 번 틀린다. */
-  for (const [players, viewport] of [[2, { width: 1024, height: 768 }], [4, { width: 1280, height: 800 }]]) {
+  for (const [players, viewport] of [
+    [2, { width: 1024, height: 768 }],
+    [4, { width: 1024, height: 768 }],
+    [4, { width: 1180, height: 820 }],
+    [4, { width: 1280, height: 800 }]
+  ]) {
     const { page, errors } = await openRound(viewport, `mode=battle&players=${players}&level=3&count=10&seed=l3-battle`);
     const ids = ["A", "B", "C", "D"].slice(0, players);
+    const scenario = `battle ${players} (${viewport.width}x${viewport.height})`;
+    const checkHost = (where) => checkBattleViewport(page, ids, where);
+    await checkHost(`${scenario} started`);
     const sets = Object.fromEntries(ids.map((id) => [id, new Set()]));
     for (let index = 0; index < 10; index += 1) {
       for (const player of ids) {
         const frame = frameFor(page, player);
-        const where = `battle ${players} ${player} #${index + 1}`;
+        const where = `${scenario} ${player} #${index + 1}`;
+        await checkHost(`${where} before solving`);
         checkView(await frameView(frame), `${where} before`, { minimum: players === 4 });
-        const problem = await solveIn(frame, where, { wrongFirst: player === "B" });
+        const problem = await solveIn(frame, where, { wrongFirst: player === "B", checkHost });
         sets[player].add(problem.id);
         checkView(await frameView(frame), `${where} solved`, { minimum: players === 4 });
-        await page.locator(`.pf-game[data-player="${player}"] .pf-game-actions button:visible`).click();
+        await checkHost(`${where} after solving / before next`);
+        await page.locator(`.pf-game[data-player="${player}"] .pf-game-actions button:visible`).tap();
         await page.waitForTimeout(200);
+        const result = index === 9 && player === ids.at(-1);
+        if (result) await page.locator("#finishBanner:not([hidden])").waitFor({ timeout: 8000 });
+        await checkBattleViewport(page, ids, `${where} after next`, { result });
       }
     }
     await page.locator("#finishBanner:not([hidden])").waitFor({ timeout: 8000 });
@@ -201,7 +267,8 @@ try {
 
 console.log([
   "Reverse fold play check passed: level 3 in the type list and in level=3 addresses,",
-  "together 10 problems (1280x800), 2-player battle (1024x768) and 4-player battle (1280x800) solved by real taps on the paper,",
+  "together 10 problems (1280x800), 2-player battle (1024x768) and 4-player battles (1024x768, 1180x820, 1280x800) solved by touch-emulated taps,",
+  "all player panels stay in the viewport before/after each battle tap, with no page scrolling, overflow or overlap; next/finish targets are at least 44px,",
   "same set in a different order per player, accuracy points 30/20 with 10 mistakes counted, paper and shown creases never covered,",
   `4-player frames: paper short side ${Math.min(...sizes.paper)}-${Math.max(...sizes.paper)}px (min ${PAPER_MIN_PX}), shape choices ${Math.min(...sizes.choice)}-${Math.max(...sizes.choice)}px (min ${CHOICE_MIN_PX}).`
 ].join(" "));

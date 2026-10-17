@@ -84,17 +84,26 @@
 .pf-results>button{min-width:160px}
 .pf-overlay[data-state=waiting]{background:#f3f6f4}
 .pf-overlay[data-state=waiting] p{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--pf-player,var(--pf-teal))}
-@media(min-width:1100px){
-  .pf-play[data-stage=playing][data-mode=battle] .pf-main{padding:8px 12px 12px}
-  .pf-play[data-stage=playing][data-mode=battle] .pf-frames{height:calc(100dvh - 76px);grid-template-rows:minmax(0,1fr);gap:12px}
+/* A landscape tablet has room for simultaneous play; keep every player's whole
+   panel in the viewport, including the host's progress and next button. */
+@media(min-width:1100px),(min-width:1024px) and (min-height:768px){
+  .pf-play[data-stage=playing][data-mode=battle] .pf-header{padding-top:calc(6px + env(safe-area-inset-top));padding-right:max(12px,env(safe-area-inset-right));padding-left:max(12px,env(safe-area-inset-left))}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-main{padding:8px max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-frames{height:calc(100dvh - 64px - env(safe-area-inset-top) - max(12px,env(safe-area-inset-bottom)));grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:8px}
   .pf-play[data-stage=playing][data-mode=battle] .pf-frames:is([data-players="3"],[data-players="4"]){grid-template-rows:repeat(2,minmax(0,1fr))}
-  .pf-play[data-stage=playing][data-mode=battle] .pf-game{display:grid;grid-template-rows:48px minmax(0,1fr) 44px;min-height:0}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game{display:grid;grid-template-rows:40px minmax(0,1fr) 48px;min-height:0}
   .pf-play[data-stage=playing][data-mode=battle] .pf-frame-area{height:100%;min-height:0}
-  .pf-play[data-stage=playing][data-mode=battle] .pf-game-header{padding:4px 10px;gap:3px 10px}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game-header{padding:2px 10px;gap:3px 10px}
   .pf-play[data-stage=playing][data-mode=battle] .pf-game-header h2{font-size:16px}
   .pf-play[data-stage=playing][data-mode=battle] .pf-game-header progress{height:6px}
   .pf-play[data-stage=playing][data-mode=battle] .pf-frame-points{font-size:17px}
-  .pf-play[data-stage=playing][data-mode=battle] .pf-game-actions{height:44px;min-height:0;padding:3px 10px;gap:8px;flex-wrap:nowrap}
-  .pf-play[data-stage=playing][data-mode=battle] .pf-game-actions button{min-height:36px;padding:4px 10px;font-size:14px}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game-actions{height:48px;min-height:0;padding:1px 10px;gap:8px;flex-wrap:nowrap}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-game-actions button{min-height:44px;padding:4px 10px;font-size:14px}
+}
+@media(min-width:1024px) and (max-width:1099px) and (min-height:768px){
+  /* Reclaim outer spacing so even the thin paper shapes stay readable. */
+  .pf-play[data-stage=playing][data-mode=battle] .pf-header{min-height:48px;padding-top:calc(2px + env(safe-area-inset-top));padding-bottom:2px}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-main{padding-top:4px;padding-bottom:max(4px,env(safe-area-inset-bottom))}
+  .pf-play[data-stage=playing][data-mode=battle] .pf-frames{height:calc(100dvh - 52px - env(safe-area-inset-top) - max(4px,env(safe-area-inset-bottom)))}
 }
 @media(max-width:600px){.pf-header-actions{gap:6px}.pf-header-actions button{padding:8px;font-size:13px}.pf-play[data-stage=playing][data-mode=battle] .pf-main{padding:8px 8px 24px}.pf-play[data-stage=playing][data-mode=battle] .pf-frame-area{height:650px}.pf-player-stats{gap:8px}.pf-game-header h2{font-size:16px}.pf-frame-points{font-size:17px}.pf-results{margin:20px auto;padding-top:18px}.pf-results h2{font-size:24px}.pf-results-table th,.pf-results-table td{padding:12px 6px}.pf-results-table thead th{font-size:12px}.pf-results-table tbody th{font-size:13px}.pf-results-table td{font-size:18px}.pf-play[data-stage=result] .pf-header{flex-wrap:wrap}.pf-play[data-stage=result] .pf-brand{display:none}}
