@@ -39,27 +39,55 @@ function serve(){
     await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 });
     const ids = await page.evaluate(() => NM_PLACEMENT_PLAN.stages().map(s => s.id));
     if(ids.length < 81) bad.push('시작 범위가 81개보다 적다: ' + ids.length);
+    const packed = entries => new URLSearchParams({ route:'book', books:JSON.stringify(entries) }).toString();
+    const finished = (series, step, bookCourseNumber = null, editionId = '') =>
+      ({ series, step, bookCourseNumber, editionId, bookStatus:'completed' });
+    const many = [finished('miracle','elem-2021-v1'), finished('dunoro','level-3',20)];
     for(const entry of [
-      { query: 'series=soma-p&step=v3', expected: '소마셈 P · P3권', completed: true },
-      { query: 'series=dunoro&step=level-3&bookCourseNumber=20', expected: '교재 과정 20', completed: true },
-      { query: 'series=dunoro&step=level-3&bookCourseNumber=2', expected: '', completed: false },
-      { query: 'series=invalid&step=v3', expected: '', completed: false },
-      { query: '', expected: '', completed: false }
+      { query: 'series=soma-p&step=v3', expected: ['소마셈 P · P3권'], completed: 1 },
+      { query: 'series=dunoro&step=level-3&bookCourseNumber=20', expected: ['교재 과정 20'], completed: 1 },
+      { query: packed(many), expected: ['기적의 계산법','교재 과정 20'], completed: 2 },
+      { query: packed([finished('soma-p','v1',null,'2019'), finished('soma-p','v1',null,'2013')]), expected: ['2019년 발행본','2013년 발행본'], completed: 2 },
+      { query: packed(Array.from({length:8}, (_, i) => finished('miracle','elem-2021-v' + (i + 1)))), expected: ['기적의 계산법'], completed: 8, checkLayout: true },
+      { query: packed(Array.from({length:8}, (_, i) => finished('soma-p','v' + (i + 1),null,'2019'))), expected: ['2019년 발행본','P8권'], completed: 8, checkLayout: true, baseline:'c73' },
+      { query: packed([finished('dunoro','level-3',2), finished('miracle','elem-2021-v2')]), expected: ['기적의 계산법'], completed: 1, absent: ['교재 과정 2'] },
+      { query: packed([Object.assign(finished('miracle','elem-2021-v1'),{bookStatus:'in-progress'})]), expected: [], completed: 0 },
+      { query: packed([finished('soma-p','v3',null,'2011')]), expected: [], completed: 0 },
+      { query: packed(Array.from({length:9}, () => finished('miracle','elem-2021-v1'))), expected: [], completed: 0 },
+      { query: 'route=school&grade=e3&semester=2&series=miracle&step=elem-2021-v1&books=' + encodeURIComponent(JSON.stringify(many)), expected: ['초등 3학년 · 2학기'], completed: 0, absent: ['기적의 계산법','두뇌로'] },
+      { query: 'route=school&grade=%3Cscript%3E&semester=2', expected: [], completed: 0, absent: ['<script>'] },
+      { query: 'series=dunoro&step=level-3&bookCourseNumber=2', expected: [], completed: 0 },
+      { query: 'series=invalid&step=v3', expected: [], completed: 0 },
+      { query: '', expected: [], completed: 0 }
     ]){
       const suffix = entry.query ? '&' + entry.query : '';
-      await page.goto(`http://localhost:${PORT}/placement-sheet.html?b=f-count5&seed=chk&l=ko${suffix}`);
+      await page.goto(`http://localhost:${PORT}/placement-sheet.html?b=${entry.baseline || 'f-count5'}&seed=chk&l=ko${suffix}`);
       await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 });
       const result = await page.evaluate(() => {
-        const source = document.querySelector('.pl-source');
+        const sources = [...document.querySelectorAll('.pl-source')].map(el => el.innerText);
         const rows = [...document.querySelectorAll('.pl-key tbody tr')];
-        return { source: source ? source.innerText : '',
+        return { sources, bookCounts: [...document.querySelectorAll('.pl-book-list')].map(el => el.children.length),
           bands: ['previous','current','next'].map(b => rows.filter(row => row.classList.contains('pl-b-' + b)).length),
           questions: document.querySelectorAll('.pl-q').length };
       });
-      if(result.source.includes('마지막으로 완료한 교재') !== entry.completed) bad.push('완료 교재 표기 오류: ' + entry.query);
-      if(entry.expected && !result.source.includes(entry.expected)) bad.push('완료 교재 라벨 오류: ' + entry.query);
-      if(!result.source.includes('앱 진단 기준 주제') || !result.source.includes('이전 6 · 현재 10 · 다음 4')) bad.push('진단 기준·문항 비율 누락: ' + entry.query);
+      if(result.sources.length !== 2) bad.push('문항·정답표의 출처 표기 수 오류: ' + entry.query);
+      for(const source of result.sources){
+        if(source.includes('완료한 교재') !== !!entry.completed) bad.push('완료 교재 표기 오류: ' + entry.query);
+        for(const expected of entry.expected) if(!source.includes(expected)) bad.push('출처 라벨 누락 ' + expected + ': ' + entry.query);
+        for(const absent of entry.absent || []) if(source.includes(absent)) bad.push('검증 안 된 출처 표기 ' + absent + ': ' + entry.query);
+        if(!source.includes('앱 진단 기준 주제') || !source.includes('이전 6 · 현재 10 · 다음 4')) bad.push('진단 기준·문항 비율 누락: ' + entry.query);
+      }
+      if(entry.completed && result.bookCounts.some(count => count !== entry.completed)) bad.push('완료 교재 목록 수 오류: ' + entry.query);
+      if(!entry.completed && result.bookCounts.length) bad.push('완료 교재 목록이 남음: ' + entry.query);
       if(result.questions !== 20 || result.bands.join('/') !== '6/10/4') bad.push('교재 메타데이터가 문항 편성을 변경함: ' + entry.query);
+      if(entry.checkLayout){
+        await page.emulateMedia({ media:'print' });
+        const tag = await page.addStyleTag({ content:'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}' });
+        const overflow = await page.evaluate(() => [...document.querySelectorAll('.nm-print-sheet .nm-w2-page')]
+          .map((el, i) => ({ page:i+1, pixels:el.scrollHeight-el.clientHeight })).filter(row => row.pixels > 3));
+        if(overflow.length) bad.push('완료 교재 8권 인쇄 넘침: ' + JSON.stringify(overflow));
+        await tag.evaluate(el => el.remove()); await page.emulateMedia({ media:'screen' });
+      }
     }
     const pick = QUICK ? ['f-count5', 'f-ten10', 'c1', 'c3', 'c12', 'c20', 'c40', 'c73'].filter(x => ids.includes(x)) : ids;
     for(const lang of QUICK ? ['ko'] : ['ko', 'en', 'zh']) for(const id of pick){

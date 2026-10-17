@@ -10,7 +10,7 @@
     return String(value == null ? '' : value);
   }
   function initial() {
-    return { version: VERSION, phase: 'setup', selection: { intakeVersion: 'completed-book-v1', route: 'age', age: '', grade: '', semester: '1', series: '', step: '', bookCourseNumber: null, bookStatus: '', progress: '', baselineId: '', goal: 'curriculum', goalTarget: '', cadence: 'w2' },
+    return { version: VERSION, phase: 'setup', selection: { intakeVersion: 'multi-source-v2', route: 'age', age: '', grade: '', semester: '1', completedBooks: [], series: '', step: '', bookCourseNumber: null, bookStatus: '', progress: '', baselineId: '', goal: 'curriculum', goalTarget: '', cadence: 'w2' },
       seed: Date.now().toString(36), plan: null, index: 0, responses: [], result: null };
   }
   function parseNumber(raw) {
@@ -65,93 +65,117 @@
       if (changedView) root.scrollTop = 0;
     };
     const stageLabel = stage => `${stage.kind === 'foundation' ? t('유아 기초','Early foundations','幼儿基础') : t('과정','Course','课程') + ' ' + stage.course.slice(1)} · ${l(stage.label)}`;
-    const completedBookChoice = (selection, requireCompletion=true) => {
+    const completedBookChoices = (selection, requireCompletion=true) => {
       const books=window.NM_PLACEMENT_BOOKS;
-      if(selection.route!=='book'||!books||(requireCompletion&&selection.bookStatus!=='completed'))return null;
-      const series=books.series.find(x=>x.id===selection.series);
-      const step=books.getSteps(selection.series).find(x=>x.id===selection.step);
-      if(!series||!step)return null;
-      const courses=books.getBookCourses(selection.series,step.id);
-      const course=courses.find(n=>n===selection.bookCourseNumber)||null;
-      if(courses.length&&!course)return null;
-      return {series,step,course};
+      if(selection.route!=='book'||!books)return [];
+      const rows=Array.isArray(selection.completedBooks)&&selection.completedBooks.length
+        ?selection.completedBooks:selection.intakeVersion==='multi-source-v2'?[]:[selection];
+      return rows.map(row=>{
+        if(requireCompletion&&row.bookStatus!=='completed')return null;
+        const series=books.series.find(x=>x.id===row.series);
+        const editionId=row.editionId||'';
+        const editions=books.getEditions?books.getEditions(row.series):[];
+        if(editionId&&(!editions.length||!editions.some(x=>x.id===editionId)))return null;
+        const edition=editions.find(x=>x.id===editionId)||null;
+        const step=books.getSteps(row.series,editionId).find(x=>x.id===row.step);
+        if(!series||!step)return null;
+        const courses=books.getBookCourses(row.series,step.id);
+        const course=courses.find(n=>n===row.bookCourseNumber)||null;
+        if(courses.length&&!course)return null;
+        return {series,step,course,edition,row};
+      }).filter(Boolean);
     };
     const completedBookText = choice => l(choice.series.label)+' · '+l(choice.step.label)+
-      (choice.course?' · '+t('교재 과정','book course','教材课程')+' '+choice.course:'');
+      (choice.course?' · '+t('교재 과정','book course','教材课程')+' '+choice.course:'')+
+      (choice.edition&&choice.edition.id?' · '+l(choice.edition.label):'');
     function setup() {
       const s=d.selection, core=window.NM_PLACEMENT_PLAN;
       if(!core||!paths){shell(t('진단 자료 확인','Assessment data','测评资料'),'<p role="alert">'+t('진단 자료를 불러오지 못했습니다. 새로고침해 주세요.','Assessment data could not be loaded. Please reload.','未能加载测评资料，请刷新。')+'</p>','setup');return;}
       let stages;
       try{stages=core.stages();}catch(_){shell(t('진단 자료 확인','Assessment data','测评资料'),'<p role="alert">'+t('과정 자료가 아직 준비되지 않았습니다.','Course data is not ready.','课程资料尚未准备好。')+'</p>','setup');return;}
       // Migrate setup only: never rebuild an in-progress fixed plan.
-      if(!['age-book-v1','completed-book-v1'].includes(s.intakeVersion)){
-        if(s.route==='school')s.route='age';else if(s.route==='age')s.grade='';
+      if(!['age-book-v1','completed-book-v1','multi-source-v2'].includes(s.intakeVersion)){
+        if(s.route==='age')s.grade='';
         s.intakeVersion='age-book-v1';
       }
-      // Old book choices meant "studied/in progress". Setup must ask again
-      // before it can record a last completed book. Answered plans are untouched.
-      if(s.intakeVersion!=='completed-book-v1'){
-        if(s.route==='book'){s.series='';s.step='';s.bookCourseNumber=null;s.baselineId='';s.bookStatus='';}
-        s.intakeVersion='completed-book-v1';
+      // Only explicitly completed single-book selections migrate. Older
+      // "studied/in progress" entries still require a fresh choice.
+      if(s.intakeVersion!=='multi-source-v2'){
+        const legacy=completedBookChoices(s);
+        s.completedBooks=s.intakeVersion==='completed-book-v1'&&s.bookStatus==='completed'&&legacy.length===1
+          ?[{series:s.series,step:s.step,bookCourseNumber:s.bookCourseNumber||null,editionId:'',bookStatus:'completed'}]:[];
+        s.series='';s.step='';s.bookCourseNumber=null;s.bookStatus='';
+        if(s.route==='book'&&!s.completedBooks.length)s.baselineId='';
+        s.intakeVersion='multi-source-v2';
       }
-      if(!['unlearned','book','age'].includes(s.route))s.route='age';
+      if(!Array.isArray(s.completedBooks))s.completedBooks=[];
+      if(!['unlearned','book','age','school'].includes(s.route))s.route='age';
+      if(!['1','2'].includes(s.semester))s.semester='1';
       if(s.age==='school')s.age='';
       if(/^pre/.test(s.age))s.age=s.age.slice(3);
       const books=window.NM_PLACEMENT_BOOKS;
-      const steps=books?books.getSteps(s.series).filter(x=>s.series!=='dunoro'||!!x.bookCourseRange):[];
-      if(s.step&&!steps.some(x=>x.id===s.step)){s.step='';s.bookCourseNumber=null;s.baselineId='';}
-      if(s.route==='book'&&steps.length===1&&!s.step)s.step=steps[0].id;
-      const bookCourses=books?books.getBookCourses(s.series,s.step):[];
-      if(!bookCourses.includes(s.bookCourseNumber))s.bookCourseNumber=null;
-      const resolved=s.route==='book'&&books?books.resolve(s.series,s.step,s.progress):null;
-      const bookChoice=completedBookChoice(s);
-      const candidate=paths.startingPoint(s);
-      const mayChoose=!!s.age&&(s.route==='book'?!!resolved&&!!bookChoice:!!candidate);
-      const baseline=stages.find(x=>x.id===(mayChoose?(s.baselineId||candidate):''));
+      if(s.route==='book'&&!s.completedBooks.length)s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});
+      const bookChoices=completedBookChoices(s);
+      const booksReady=s.route==='book'&&s.completedBooks.length>0&&s.completedBooks.length<=8&&bookChoices.length===s.completedBooks.length;
+      const single=s.route==='book'&&booksReady&&bookChoices.length===1?bookChoices[0]:null;
+      const resolved=single&&books?books.resolve(single.row.series,single.row.step,s.progress,single.row.editionId):null;
+      const candidate=s.route==='book'?(resolved&&resolved.baselineId||null):paths.startingPoint(s);
+      const mayChoose=s.route==='book'?booksReady:s.route==='school'?!!candidate:!!s.age&&!!candidate;
+      const baseline=stages.find(x=>x.id===(mayChoose?(s.baselineId||(s.route==='school'?null:candidate)):''));
       const ages=[['',t('현재 나이 선택','Select current age','选择目前年龄')],...Array.from({length:16},(_,i)=>[String(i+4),t((i+4)+'세','Age '+(i+4),(i+4)+'岁')])];
       const grades=[['pre',t('취학 전','Preschool','学龄前')],...Array.from({length:6},(_,i)=>['e'+(i+1),t('초'+(i+1),'Grade '+(i+1),'小学'+(i+1)+'年级')]),...Array.from({length:3},(_,i)=>['m'+(i+1),t('중'+(i+1),'Grade '+(i+7),'初中'+(i+1)+'年级')]),...Array.from({length:3},(_,i)=>['h'+(i+1),t('고'+(i+1),'High school '+(i+1),'高中'+(i+1)+'年级')])];
+      const schoolGrades=grades.filter(x=>x[0]!=='pre');
       const inferredGrade=Number.isInteger(Number(s.age))&&Number(s.age)>=8?grades[Math.max(1,Math.min(Number(s.age)-7,12))][0]:'pre';
-      const routes=[['age',t('나이·학년으로','Age / grade','年龄与年级')],['book',t('완료한 교재로','Completed book','已完成的教材')],['unlearned',t('처음 시작해요','First steps','初次学习')]];
+      const routes=[['age',t('나이로','By age','按年龄')],['school',t('학교 진도로','School progress','按学校进度')],['book',t('완료한 교재로','Completed books','已完成教材')],['unlearned',t('처음 시작해요','First steps','初次学习')]];
       const options=(rows,selected)=>rows.map(x=>option(x[0],x[1],selected)).join('');
-      const rangeLabel=s.route==='book'&&resolved&&resolved.needsTopicConfirmation
-        ?t('완료한 교재에서 배운 내용에 가까운 진단 범위','Diagnostic scope closest to the completed book','最接近已完成教材内容的测评范围')
+      const rangeLabel=s.route==='book'
+        ?t('완료한 교재에서 배운 내용에 가까운 이번 진단 범위','Diagnostic scope closest to the completed books','最接近已完成教材内容的本次测评范围')
+        :s.route==='school'?t('이번에 확인할 교과 내용','School topic to check','本次确认的学校内容')
         :t('진단할 범위','Diagnostic scope','测评范围');
       const range='<label class="pd-topic">'+rangeLabel+'<select id="pdBaseline"'+(mayChoose?'':' disabled')+'>'+option('',t('내용 선택','Select topic','选择内容'),baseline&&baseline.id)+
         '<optgroup label="'+t('유아 · 수 감각','Early foundations','幼儿 · 数感')+'">'+stages.filter(x=>x.kind==='foundation').map(x=>option(x.id,stageLabel(x),baseline&&baseline.id)).join('')+'</optgroup><optgroup label="'+t('교과 연산 과정','Arithmetic courses','运算课程')+'">'+stages.filter(x=>x.kind!=='foundation').map(x=>option(x.id,stageLabel(x),baseline&&baseline.id)).join('')+'</optgroup></select></label>';
-      const isSoma=/^soma-/.test(s.series);
-      const stepPrompt=s.series==='dunoro'?t('마지막으로 완료한 레벨','Last completed level','最后完成的级别'):
-        isSoma?t('마지막으로 완료한 권','Last completed volume','最后完成的册次'):
-        t('마지막으로 완료한 권·단원','Last completed volume / unit','最后完成的册次或单元');
-      const bookFields=s.route==='book'?'<div class="pd-fields"><label>'+t('완료한 교재','Completed book','已完成的教材')+'<select id="pdSeries">'+option('',t('교재 선택','Select book','选择教材'),s.series)+(books?books.series.map(b=>option(b.id,l(b.label),s.series)).join(''):'')+'</select></label>'+
-        (steps.length>1?'<label>'+stepPrompt+'<select id="pdStep"'+(s.series==='dunoro'?' aria-describedby="pdDunoroNote"':'')+'>'+option('',t('선택해 주세요','Select an item','请选择'),s.step)+steps.map(x=>option(x.id,l(x.label),s.step)).join('')+'</select></label>':'')+
-        (s.series==='dunoro'&&bookCourses.length?'<label>'+t('마지막으로 완료한 두뇌로 교재 과정','Last completed Dunoro book course','最后完成的두뇌로教材课程')+'<select id="pdBookCourse" aria-describedby="pdDunoroNote">'+options([['',t('완료 과정 선택','Select completed course','选择已完成课程')],...bookCourses.map(n=>[String(n),t('교재 과정','Book course','教材课程')+' '+n])],String(s.bookCourseNumber||''))+'</select></label>':'')+'</div>'+
-        (s.series==='dunoro'?'<p class="pd-note" id="pdDunoroNote">'+t('레벨과 마지막 완료 과정을 고르세요. 두뇌로 과정 번호와 이 앱의 과정 번호는 서로 다릅니다.','Choose the level and last completed book course. Dunoro and app course numbers differ.','请选择级别和最后完成的教材课程。教材课程编号与本应用课程编号不同。')+'</p>':'')+
-        (bookChoice&&resolved&&resolved.needsTopicConfirmation?'<p class="pd-note">'+t('같은 권도 판본에 따라 내용이 다를 수 있습니다. 완료한 내용에 가까운 진단 범위를 아래에서 확인해 주세요.','Book editions may differ. Confirm the diagnostic scope closest to what was completed.','同册不同版本的内容可能不同，请确认最接近已完成内容的测评范围。')+'</p>'+range:''):'';
+      const bookFields=s.route==='book'?'<div class="pd-book-list">'+s.completedBooks.map((row,i)=>{
+        const steps=books?books.getSteps(row.series,row.editionId):[];
+        const editions=books&&books.getEditions?books.getEditions(row.series):[];
+        const courses=books?books.getBookCourses(row.series,row.step):[];
+        const isSoma=/^soma-/.test(row.series);
+        const stepPrompt=row.series==='dunoro'?t('완료한 레벨','Completed level','已完成的级别'):
+          isSoma?t('완료한 권','Completed volume','已完成的册次'):t('완료한 권·단원','Completed volume or unit','已完成的册次或单元');
+        return '<div class="pd-book-row" data-book-row="'+i+'"><div class="pd-book-row-head"><strong>'+t('완료한 교재','Completed book','已完成的教材')+' '+(i+1)+'</strong>'+
+          (s.completedBooks.length>1?'<button type="button" class="pd-book-remove" data-book-remove="'+i+'">'+t('삭제','Remove','删除')+'</button>':'')+'</div><div class="pd-fields"><label>'+t('교재','Book series','教材')+'<select data-book-series="'+i+'">'+option('',t('교재 선택','Select book','选择教材'),row.series)+(books?books.series.map(b=>option(b.id,l(b.label),row.series)).join(''):'')+'</select></label>'+
+          (editions.length?'<label>'+t('발행본','Publication','出版年份')+'<select data-book-edition="'+i+'">'+editions.map(x=>option(x.id,l(x.label),row.editionId||'')).join('')+'</select></label>':'')+
+          (steps.length?'<label>'+stepPrompt+'<select data-book-step="'+i+'">'+option('',t('선택해 주세요','Select an item','请选择'),row.step)+steps.map(x=>option(x.id,l(x.label),row.step)).join('')+'</select></label>':'')+
+          (row.series==='dunoro'&&courses.length?'<label>'+t('완료한 교재 과정','Completed book course','已完成教材课程')+'<select data-book-course="'+i+'">'+options([['',t('완료 과정 선택','Select completed course','选择已完成课程')],...courses.map(n=>[String(n),t('교재 과정','Book course','教材课程')+' '+n])],String(row.bookCourseNumber||''))+'</select></label>':'')+'</div></div>';
+      }).join('')+'<button type="button" class="pd-book-add" id="pdAddBook"'+(s.completedBooks.length>=8?' disabled':'')+'>'+t('완료한 교재 추가','Add another completed book','添加已完成教材')+'</button><p class="pd-note">'+t('기적의 계산법과 소마셈처럼 여러 교재를 함께 기록할 수 있습니다. 모두 마지막으로 완료한 권을 고르세요.','Record more than one book, such as Miracle and SomaSem. Select the last completed volume of each.','可以同时记录多种教材；请选择每种教材最后完成的册次。')+'</p>'+
+        (s.completedBooks.some(row=>row.series==='dunoro')?'<p class="pd-note">'+t('두뇌로 교재 과정 번호와 이 앱의 과정 번호는 다릅니다.','Dunoro book course numbers differ from app course numbers.','두뇌로教材课程编号与本应用课程编号不同。')+'</p>':'')+'</div>':'';
       const goalFields='<label>'+t('학습 목표','Learning goal','学习目标')+'<select id="pdGoal">'+paths.goals.map(x=>option(x.id,l(x.label),s.goal)).join('')+'</select></label>'+
         (s.goal==='competition'?'<label>'+t('목표 진도','Progress goal','目标进度')+'<select id="pdGoalTarget">'+option('',t('아직 정하지 않았어요','Not decided yet','尚未确定'),s.goalTarget)+paths.targets.map(x=>option(x.id,l(x.label),s.goalTarget)).join('')+'</select></label><p class="pd-note">'+t('목표 대응은 자료 대조가 필요합니다. 이번 연산 진단은 입학 준비도 판정이 아닙니다.','Target mapping needs verification. This arithmetic check does not assess admission readiness.','目标对应需要资料核对。本运算测评不判断入学准备度。')+'</p>':'')+
         '<label class="pd-cadence">'+t('희망 학습 횟수 · 기존 계획은 유지','Preferred frequency · current plan stays unchanged','希望的次数 · 现有计划不变')+'<select id="pdCadence">'+options([['w2',t('주 2회','Twice a week','每周两次')],['w1',t('주 1회','Once a week','每周一次')]],s.cadence)+'</select></label>';
-      const paperParams=baseline?{b:baseline.id,l:lang,seed:d.seed,goal:s.goal,target:s.goalTarget||'',cadence:s.cadence}:null;
-      if(paperParams&&bookChoice){paperParams.series=s.series;paperParams.step=s.step;if(bookChoice.course)paperParams.bookCourseNumber=String(bookChoice.course);}
+      const paperParams=baseline?{b:baseline.id,l:lang,seed:d.seed,goal:s.goal,target:s.goalTarget||'',cadence:s.cadence,route:s.route}:null;
+      if(paperParams&&s.route==='book')paperParams.books=JSON.stringify(s.completedBooks);
+      if(paperParams&&s.route==='school'){paperParams.grade=s.grade;paperParams.semester=s.semester;}
       const paperQuery=paperParams?new URLSearchParams(paperParams).toString():'';
-      const setupHint=!s.age?t('먼저 현재 나이를 골라 주세요.','Choose the current age first.','请先选择目前年龄。'):
-        s.route==='book'&&!s.series?t('완료한 교재를 골라 주세요.','Choose the completed book.','请选择已完成的教材。'):
-        s.route==='book'&&!s.step?t('마지막으로 완료한 권 또는 레벨을 골라 주세요.','Choose the last completed volume or level.','请选择最后完成的册次或级别。'):
-        s.route==='book'&&!bookChoice?t('마지막으로 완료한 두뇌로 교재 과정을 골라 주세요.','Choose the last completed Dunoro book course.','请选择最后完成的두뇌로教材课程。'):
-        s.route==='book'&&!baseline?t('완료한 권에서 배운 내용에 가까운 진단 범위를 골라 주세요.','Choose a diagnostic scope close to what the completed book covered.','请选择接近已完成教材内容的测评范围。'):
-        '';
+      const setupHint=s.route==='book'&&!booksReady?t('교재마다 마지막으로 완료한 권 또는 과정을 골라 주세요.','Select the last completed volume or course for every book.','请选择每种教材最后完成的册次或课程。'):
+        s.route==='book'&&!baseline?t('완료한 내용에 가까운 앱 진단 범위를 확인해 주세요.','Confirm the app diagnostic scope closest to the completed topics.','请确认最接近已完成内容的应用测评范围。'):
+        s.route==='school'&&!s.grade?t('학교 학년을 골라 주세요.','Choose the school grade.','请选择学校年级。'):
+        s.route==='school'&&!baseline?t('이번에 확인할 교과 연산 내용을 골라 주세요.','Choose the school arithmetic topic to check.','请选择本次确认的学校运算内容。'):
+        !s.age?t('나이를 골라 주세요.','Choose the current age.','请选择目前年龄。'):'';
+      const schoolFields=s.route==='school'?'<div class="pd-fields"><label>'+t('학교 학년','School grade','学校年级')+'<select id="pdSchoolGrade">'+option('',t('학년 선택','Select grade','选择年级'),s.grade)+options(schoolGrades,s.grade)+'</select></label><label>'+t('학기','Semester','学期')+'<select id="pdSemester">'+options([['1',t('1학기','Semester 1','第一学期')],['2',t('2학기','Semester 2','第二学期')]],s.semester)+'</select></label></div><p class="pd-note">'+t('학년·학기는 기록용입니다. 실제 배운 단원은 아래에서 직접 고르세요.','Grade and semester are recorded. Choose the actual studied topic below.','年级和学期用于记录，请在下方选择实际学过的内容。')+'</p>'+range:'';
       shell(t('학습 시작점 찾기','Find your starting point','找到学习起点'),
-        '<header class="pd-header"><p class="pd-kicker">NUMBERS OF MAGIC</p><h1>'+t('어디부터 시작할까요?','Where shall we begin?','从哪里开始？')+'</h1><p>'+t('나이·학년이나 마지막으로 완료한 교재를 기준으로 확인해요. 처음 배우는 아이도 괜찮아요.','Use age / grade or the last completed book. First-time learners are welcome.','按年龄、年级或最后完成的教材确认，初学也没关系。')+'</p></header>'+
-        '<div class="pd-context"><label>'+t('먼저, 현재 나이를 알려 주세요','First, choose your current age','先选择目前年龄')+'<select id="pdAge">'+options(ages,s.age)+'</select></label></div>'+
-        '<div class="pd-routes" role="group" aria-label="'+t('진단 시작 방법','How to begin','测评开始方式')+'">'+routes.map(x=>'<button type="button" data-route="'+x[0]+'"'+(s.age?'':' disabled')+' aria-pressed="'+(s.route===x[0])+'">'+x[1]+'</button>').join('')+'</div>'+
-        '<section class="pd-selection"'+(s.age?'':' hidden')+'>'+
-        (s.route==='age'?'<label>'+t('현재 학년 · 다를 때만 바꿔 주세요','Current grade · change only if different','目前年级 · 不同时修改')+'<select id="pdGrade">'+options(grades,s.grade||inferredGrade)+'</select></label>':'')+bookFields+
+        '<header class="pd-header"><p class="pd-kicker">NUMBERS OF MAGIC</p><h1>'+t('어디부터 시작할까요?','Where shall we begin?','从哪里开始？')+'</h1><p>'+t('완료한 교재 여러 권 또는 학교 진도를 기준으로 확인할 수 있어요.','Choose completed books or school progress as your starting point.','可以按已完成的教材或学校进度选择起点。')+'</p></header>'+
+        '<div class="pd-routes" role="group" aria-label="'+t('진단 시작 방법','How to begin','测评开始方式')+'">'+routes.map(x=>'<button type="button" data-route="'+x[0]+'" aria-pressed="'+(s.route===x[0])+'">'+x[1]+'</button>').join('')+'</div>'+
+        '<section class="pd-selection">'+
+        (s.route==='age'||s.route==='unlearned'?'<div class="pd-context"><label>'+t('현재 나이','Current age','目前年龄')+'<select id="pdAge">'+options(ages,s.age)+'</select></label></div>':'')+
+        (s.route==='age'&&s.age?'<label>'+t('현재 학년 · 다를 때만 바꿔 주세요','Current grade · change only if different','目前年级 · 不同时修改')+'<select id="pdGrade">'+options(grades,s.grade||inferredGrade)+'</select></label>':'')+bookFields+schoolFields+
         (s.route==='unlearned'?'<p class="pd-intake-hint">'+t('수 세기부터 차근차근 확인해요.','Begin with counting, one step at a time.','从数数开始逐步确认。')+'</p>'+range:
-          s.route==='book'&&resolved&&resolved.needsTopicConfirmation?'':
+          s.route==='book'?'<p class="pd-note">'+t('여러 권을 기록해도 진단지는 한 앱 범위에서 만듭니다. 그 범위를 아래에서 확인해 주세요.','Even with several books, one app scope is used for the paper. Confirm it below.','即使记录多本教材，试卷也使用一个应用范围。请在下方确认。')+'</p>'+range:
+          s.route==='school'?'':
           '<p class="pd-intake-hint">'+(baseline?t('진단 기준 범위: ','Diagnostic scope: ','测评基准范围：')+escape(stageLabel(baseline)):escape(setupHint))+'</p><details class="pd-optional" id="pdRangeOptions"><summary>'+t('다른 내용부터 확인하기','Check a different topic','从其他内容开始确认')+'</summary>'+range+'</details>')+'</section>'+
-        '<details class="pd-optional"'+(s.age?'':' hidden')+'><summary>'+t('학습 목표 · 횟수 (선택)','Goal · frequency (optional)','目标 · 次数（可选）')+'</summary><section class="pd-goal-selection">'+goalFields+'<p class="pd-note">'+t('목표는 방향만 안내합니다. 문항·채점은 동일하며 현재 속도·분량·횟수를 자동 변경하지 않습니다.','Goals guide direction only. Questions and scoring stay the same; current workload is not changed automatically.','目标只指导方向，不改变题目、评分或当前学习量。')+'</p></section></details>'+
+        '<details class="pd-optional"><summary>'+t('학습 목표 · 횟수 (선택)','Goal · frequency (optional)','目标 · 次数（可选）')+'</summary><section class="pd-goal-selection">'+goalFields+'<p class="pd-note">'+t('목표는 방향만 안내합니다. 문항·채점은 동일하며 현재 속도·분량·횟수를 자동 변경하지 않습니다.','Goals guide direction only. Questions and scoring stay the same; current workload is not changed automatically.','目标只指导方向，不改变题目、评分或当前学习量。')+'</p></section></details>'+
         '<section class="pd-blueprint"><h2>'+t('한 번에 20문항','20 questions in one check','一次20道题')+'</h2><div class="pd-bands">'+[['6','30%',t('이전 범위 확인','Earlier scope','此前范围')],['10','50%',t('선택 범위 확인','Selected scope','所选范围')],['4','20%',t('다음 범위 맛보기','Next scope preview','后续范围预览')]].map(x=>'<div><b>'+x[0]+'</b><span>'+x[2]+' · '+x[1]+'</span></div>').join('')+'</div><p id="pdBaselinePreview">'+
-        (bookChoice?'<strong>'+t('마지막 완료 교재: ','Last completed book: ','最后完成的教材：')+escape(completedBookText(bookChoice))+'</strong><br>':'')+
-        (baseline?t('진단 기준: ','Diagnostic scope: ','测评基准：')+escape(stageLabel(baseline)):t('현재 나이와 진단 방법을 고르면 출발점이 나옵니다.','Choose age and route to see a starting point.','选择年龄与方式后显示起点。'))+'</p><p class="pd-note">'+t('맞고 틀려도 문항은 바뀌지 않습니다. 첫 기초의 이전 6문항은 같은 기초의 작은 수로, 마지막 과정의 다음 4문항은 같은 과정 추가 확인으로 표시합니다.','The plan stays fixed. At the first foundation, earlier items use smaller quantities; at the final course, next items are additional checks in that course.','题目配置保持不变。最初基础的此前题使用更小数量，最后课程的后续题为同课程补充确认。')+'</p>'+
+        (bookChoices.length?'<strong>'+t('완료한 교재: ','Completed books: ','已完成教材：')+escape(bookChoices.map(completedBookText).join(' / '))+'</strong><br>':'')+
+        (s.route==='school'&&s.grade?'<strong>'+t('학교 진도: ','School progress: ','学校进度：')+escape(l(schoolGrades.find(x=>x[0]===s.grade)?.[1]||s.grade))+' · '+escape(s.semester)+t('학기',' semester','学期')+'</strong><br>':'')+
+        (baseline?t('진단 기준: ','Diagnostic scope: ','测评基准：')+escape(stageLabel(baseline)):t('진단 방법과 내용을 고르면 출발점이 나옵니다.','Choose a route and topic to see a starting point.','选择方式和内容后显示起点。'))+'</p><p class="pd-note">'+t('맞고 틀려도 문항은 바뀌지 않습니다. 첫 기초의 이전 6문항은 같은 기초의 작은 수로, 마지막 과정의 다음 4문항은 같은 과정 추가 확인으로 표시합니다.','The plan stays fixed. At the first foundation, earlier items use smaller quantities; at the final course, next items are additional checks in that course.','题目配置保持不变。最初基础的此前题使用更小数量，最后课程的后续题为同课程补充确认。')+'</p>'+
         (s.route==='book'?'<p class="pd-note">'+t('6·10·4문항은 선택한 진단 범위의 이전·중심·다음 내용입니다. 교재 권 번호의 앞뒤와 같다고 보지 않습니다.','The 6/10/4 questions follow the selected diagnostic scope, which may differ from adjacent book volumes.','6/10/4道题按所选测评范围的前后内容编排，未必对应相邻教材册次。')+'</p>':'')+'</section>'+
         '<p class="pd-note">'+t('유아는 보호자가 지시문을 읽어 줄 수 있습니다. 답이나 세는 방법은 알려주지 마세요.','An adult may read the prompt for a young child, without helping choose or count the answer.','成人可以为幼儿读题，但不要提示答案或计数方法。')+'</p><p id="pdSetupError" class="pd-error" role="alert"></p><p id="pdStartReason" class="pd-intake-hint"'+(setupHint?'':' hidden')+'>'+escape(setupHint)+'</p><button class="pd-primary" id="pdStart"'+(baseline?'':' disabled')+'>'+t('20문항 시작','Start 20 questions','开始20道题')+'</button>'+
         (baseline?'<a class="pd-secondary pd-paper" id="pdPaper" href="placement-sheet.html?'+escape(paperQuery)+'" target="_blank" rel="noopener">'+t('종이로 인쇄 · O/X 채점','Print on paper · mark O/X','打印 · 对错评分')+'</a><p class="pd-note">'+t('인쇄본에는 보호자용 정답 쪽이 포함됩니다. 아이에게는 시험 쪽만 주세요.','The printout includes a parent answer page. Give the child only the test pages.','打印件包含家长用答案页，请只给孩子试题页。')+'</p>':''),'setup');
@@ -159,15 +183,22 @@
       // planning details and the longer explanation of the fixed blueprint.
       $('.pd-selection').after($('#pdSetupError'));$('#pdSetupError').after($('#pdStartReason'));$('#pdStartReason').after($('#pdStart'));
       if(baseline)$('#pdStart').after($('#pdPaper'));
-      $('#pdAge').onchange=e=>{s.age=e.target.value;s.grade='';s.baselineId='';redraw();};
+      if($('#pdAge'))$('#pdAge').onchange=e=>{s.age=e.target.value;s.grade='';s.baselineId='';redraw();};
       all('[data-route]').forEach(el=>el.onclick=()=>{s.route=el.dataset.route;s.baselineId='';redraw();});
       if(s.route==='age'){
-        $('#pdGrade').onchange=e=>{s.grade=e.target.value;s.baselineId='';redraw();};
+        if($('#pdGrade'))$('#pdGrade').onchange=e=>{s.grade=e.target.value;s.baselineId='';redraw();};
+      }
+      if(s.route==='school'){
+        $('#pdSchoolGrade').onchange=e=>{s.grade=e.target.value;s.baselineId='';redraw();};
+        $('#pdSemester').onchange=e=>{s.semester=e.target.value;s.baselineId='';redraw();};
       }
       if(s.route==='book'){
-        $('#pdSeries').onchange=e=>{s.series=e.target.value;s.step='';s.bookCourseNumber=null;s.bookStatus=books.getSteps(s.series).length===1?'completed':'';s.baselineId='';redraw();};
-        if($('#pdStep'))$('#pdStep').onchange=e=>{s.step=e.target.value;s.bookCourseNumber=null;s.bookStatus=s.series!=='dunoro'&&!!s.step?'completed':'';s.baselineId='';redraw();};
-        if($('#pdBookCourse'))$('#pdBookCourse').onchange=e=>{s.bookCourseNumber=e.target.value?Number(e.target.value):null;s.bookStatus=s.bookCourseNumber?'completed':'';s.baselineId='';redraw();};
+        all('[data-book-series]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookSeries)];row.series=e.target.value;row.editionId='';row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';redraw();});
+        all('[data-book-edition]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookEdition)];row.editionId=e.target.value;row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';redraw();});
+        all('[data-book-step]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookStep)];row.step=e.target.value;row.bookCourseNumber=null;row.bookStatus=row.step&&row.series!=='dunoro'?'completed':'';s.baselineId='';redraw();});
+        all('[data-book-course]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookCourse)];row.bookCourseNumber=e.target.value?Number(e.target.value):null;row.bookStatus=row.bookCourseNumber?'completed':'';s.baselineId='';redraw();});
+        all('[data-book-remove]').forEach(el=>el.onclick=()=>{s.completedBooks.splice(Number(el.dataset.bookRemove),1);s.baselineId='';redraw();});
+        $('#pdAddBook').onclick=()=>{if(s.completedBooks.length>=8)return;s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});s.baselineId='';redraw();};
       }
       $('#pdGoal').onchange=e=>{s.goal=e.target.value;s.goalTarget='';redraw();};
       if(s.goal==='competition')$('#pdGoalTarget').onchange=e=>{s.goalTarget=e.target.value;redraw();};
@@ -282,14 +313,21 @@
           $('.pd-recommended').appendChild(practice);
         }
       }
-      const bookChoice=completedBookChoice(d.selection,false);
-      if(bookChoice){
+      const bookChoices=completedBookChoices(d.selection,false);
+      if(bookChoices.length){
         const source=document.createElement('p');source.className='pd-note';
-        source.textContent=(d.selection.bookStatus==='completed'
-          ?t('마지막으로 완료한 교재','Last completed book','最后完成的教材')
-          :t('기록된 교재 · 완료 여부 미확인','Recorded book · completion unconfirmed','记录的教材 · 完成情况未确认'))+': '+completedBookText(bookChoice)+'. '+
+        source.textContent=bookChoices.map(choice=>(choice.row.bookStatus==='completed'
+          ?t('완료한 교재','Completed book','已完成的教材')
+          :t('기록된 교재 · 완료 여부 미확인','Recorded book · completion unconfirmed','记录的教材 · 完成情况未确认'))+': '+completedBookText(choice)).join(' / ')+'. '+
           t('진단 문항은 별도로 확인한 수의 마법 범위를 기준으로 만들었습니다.','Questions use the separately selected Numbers of Magic scope.','题目依据另行确认的数之魔法范围编排。');
         $('.pd-recommended').appendChild(source);
+      }
+      if(d.selection.route==='school'&&d.selection.grade){
+        const school=document.createElement('p');school.className='pd-note';
+        const match=/^([emh])([1-6])$/.exec(d.selection.grade);
+        const gradeText=match?t(match[1]==='e'?'초':match[1]==='m'?'중':'고',match[1]==='e'?'Elementary grade ':match[1]==='m'?'Middle school grade ':'High school grade ',match[1]==='e'?'小学':match[1]==='m'?'初中':'高中')+match[2]:d.selection.grade;
+        school.textContent=t('학교 진도 기록','School progress recorded','学校进度记录')+': '+gradeText+' · '+(d.selection.semester||'1')+t('학기',' semester','学期')+'. '+t('문항은 직접 선택한 앱 범위에서 만들었습니다.','Questions use the selected app topic.','题目依据所选应用内容编排。');
+        $('.pd-recommended').appendChild(school);
       }
       if(d.plan.boundaries&&(d.plan.boundaries.previous||d.plan.boundaries.next)){
         const boundary=document.createElement('p');boundary.className='pd-note';
@@ -297,7 +335,7 @@
         $('.pd-score').before(boundary);
       }
       $('#pdRoad').textContent=t('로드맵에서 본진도 보기','See main study on the roadmap','在路线图查看主要进度');
-      $('#pdRoad').onclick=()=>ctx.seeCourse(rec.course);$('#pdPick').onclick=ctx.pick;$('#pdAgain').onclick=()=>{const config=paths.normalize(d.selection),fresh=initial();Object.assign(fresh.selection,config);Object.assign(d,fresh);redraw();};
+      $('#pdRoad').onclick=()=>ctx.seeCourse(rec.course);$('#pdPick').onclick=ctx.pick;$('#pdAgain').onclick=()=>{const previous=JSON.parse(JSON.stringify(d.selection)),fresh=initial();Object.assign(fresh.selection,previous,paths.normalize(previous));Object.assign(d,fresh);redraw();};
     }
     if(d.phase==='setup')setup();else if(d.phase==='question')question();else if(d.phase==='result'&&d.result)result();else {Object.assign(d,initial());setup();}
   }

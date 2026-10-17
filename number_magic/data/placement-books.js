@@ -25,18 +25,44 @@ function scoped(id, label, code, coverage, baselineId) {
 }
 
 const catalog = [];
-// The set listings establish printed volume numbers only. A volume number is
-// not an app course, and its topic coverage still needs separate confirmation.
+// Retailer set records establish the publication year, ISBN and printed volume
+// numbers. These are bibliographic identifiers, not app-course equivalences.
+// "2019 publication" is deliberate: the source does not call it an edition.
 const somaSets = {
-  P: { count: 8, url: 'https://www.yes24.com/product/goods/23896146' },
-  K: { count: 8, url: 'https://www.yes24.com/product/goods/23896127' },
-  A: { count: 8, url: 'https://www.yes24.com/product/goods/23895517' },
-  B: { count: 8, url: 'https://www.yes24.com/product/goods/23895543' },
-  C: { count: 8, url: 'https://www.yes24.com/product/goods/23896229' },
-  D: { count: 6, url: 'https://www.yes24.com/product/goods/75525550' }
+  P: { count: 8, url: 'https://www.yes24.com/product/goods/75530645', isbn13: '9791158850845',
+    older: { url: 'https://www.yes24.com/product/goods/8653849', year: 2013 } },
+  K: { count: 8, url: 'https://www.yes24.com/product/goods/75529132', isbn13: '9791158850753' },
+  A: { count: 8, url: 'https://www.yes24.com/product/goods/75532218', isbn13: '9791158850944' },
+  B: { count: 8, url: 'https://www.yes24.com/product/goods/75533479', isbn13: '9791158851033' },
+  C: { count: 8, url: 'https://www.yes24.com/product/goods/75534465', isbn13: '9791158851125' },
+  D: { count: 6, url: 'https://www.yes24.com/product/goods/75525550', isbn13: '9791158851217' }
+};
+// Short topic cues paraphrase each set's public volume summary. They help a
+// parent recognize the physical book, but never authorize automatic testing.
+const somaPTopics = {
+  '2019': [
+    L('30까지 덧셈·뺄셈 5', 'Add/subtract 5 within 30', '30以内加减5'),
+    L('30까지 덧셈·뺄셈 6', 'Add/subtract 6 within 30', '30以内加减6'),
+    L('30까지 덧셈·뺄셈 10', 'Add/subtract 10 within 30', '30以内加减10'),
+    L('30까지 덧셈·뺄셈 9', 'Add/subtract 9 within 30', '30以内加减9'),
+    L('9까지 가르기·모으기', 'Split/combine through 9', '9以内数的分合'),
+    L('10 가르기·모으기', 'Split/combine 10', '10的分合'),
+    L('10 활용 덧셈', 'Add using 10', '利用10做加法'),
+    L('10 활용 뺄셈', 'Subtract using 10', '利用10做减法')
+  ],
+  '2013': [
+    L('50까지 덧셈·뺄셈 4', 'Add/subtract 4 within 50', '50以内加减4'),
+    L('50까지 덧셈·뺄셈 6', 'Add/subtract 6 within 50', '50以内加减6'),
+    L('50까지 덧셈·뺄셈 9', 'Add/subtract 9 within 50', '50以内加减9'),
+    L('100까지 덧셈·뺄셈 9', 'Add/subtract 9 within 100', '100以内加减9'),
+    L('7까지 가르기·모으기', 'Split/combine through 7', '7以内数的分合'),
+    L('9까지 가르기·모으기', 'Split/combine through 9', '9以内数的分合'),
+    L('10 가르기·모으기', 'Split/combine 10', '10的分合'),
+    L('10 활용 덧셈·뺄셈', 'Add/subtract using 10', '利用10做加减法')
+  ]
 };
 Object.entries(somaSets).forEach(([stage, set]) => {
-  const urls = [somaUrl, set.url];
+  const urls = [somaUrl, set.url, ...(set.older ? [set.older.url] : [])];
   catalog.push({ id: 'soma-' + stage.toLowerCase(), label: L('소마셈 ' + stage),
     sourceUrls: urls, steps: Array.from({ length: set.count }, (_, index) => {
       const volume = index + 1;
@@ -140,9 +166,48 @@ const progressNames = {
   middle: 'middle', mid: 'middle',
   complete: 'complete', completed: 'complete', end: 'complete'
 };
-function getSteps(seriesId) {
+function getEditions(seriesId) {
+  const stage = /^soma-([pkabcd])$/.exec(seriesId || '');
+  if (!stage) return [];
+  const set = somaSets[stage[1].toUpperCase()];
+  const choices = [
+    { id: '', label: L('발행본을 모르겠어요', 'Publication year unknown', '不清楚出版年份'),
+      sourceUrls: [], sourceVerification: 'unconfirmed' },
+    { id: '2019', label: L('2019년 발행본', '2019 publication', '2019年出版'),
+      publicationYear: 2019, isbn13: set.isbn13,
+      sourceUrls: [set.url], sourceVerification: 'retailer-bibliography' }
+  ];
+  if (set.older) choices.push({ id: '2013',
+    label: L('2013년 발행본', '2013 publication', '2013年出版'),
+    publicationYear: set.older.year, sourceUrls: [set.older.url],
+    sourceVerification: 'retailer-bibliography' });
+  choices.push({ id: 'other', label: L('다른 발행본', 'Other publication', '其他出版年份'),
+    sourceUrls: [], sourceVerification: 'unconfirmed' });
+  return clone(choices);
+}
+function getSteps(seriesId, editionId) {
   const book = byId[seriesId];
-  return book ? clone(book.steps) : [];
+  if (!book) return [];
+  const steps = clone(book.steps);
+  const stage = /^soma-([pkabcd])$/.exec(seriesId || '');
+  if (!stage || editionId == null || editionId === '' || editionId === 'other') return steps;
+  const edition = getEditions(seriesId).find(choice => choice.id === editionId);
+  if (!edition) return [];
+  const topics = stage[1] === 'p' ? somaPTopics[editionId] : null;
+  steps.forEach((step, index) => {
+    step.editionId = editionId;
+    step.sourceUrls = edition.sourceUrls.slice();
+    step.sourceVerification = topics ? 'retailer-topic-summary' : 'retailer-bibliography';
+    step.sourceScope = topics ? 'volume-topic-cue' : 'volume-number';
+    if (topics) {
+      step.topicSummary = clone(topics[index]);
+      step.label = L(
+        'P' + (index + 1) + '권 · ' + topics[index].ko,
+        'Volume P' + (index + 1) + ' · ' + topics[index].en,
+        'P' + (index + 1) + '册 · ' + topics[index].zh);
+    }
+  });
+  return steps;
 }
 function getBookCourses(seriesId, stepId) {
   const book = byId[seriesId];
@@ -150,9 +215,8 @@ function getBookCourses(seriesId, stepId) {
   const range = step && step.bookCourseRange;
   return range ? Array.from({length:range[1]-range[0]+1},(_,i)=>range[0]+i) : [];
 }
-function resolve(seriesId, stepId, progress) {
-  const book = byId[seriesId];
-  const step = book && book.steps.find(candidate => candidate.id === stepId);
+function resolve(seriesId, stepId, progress, editionId) {
+  const step = getSteps(seriesId, editionId).find(candidate => candidate.id === stepId);
   if (!step) return null;
   // The intake asks for the studied topic, not a progress percentage. The two
   // narrow verified topics have the same starting candidate at every point.
@@ -166,6 +230,6 @@ function resolve(seriesId, stepId, progress) {
 W.NM_PLACEMENT_BOOKS = {
   series: catalog.map(book => ({ id: book.id, label: clone(book.label),
     sourceUrls: book.sourceUrls.slice(), verification: 'topic-confirmation' })),
-  getSteps, getBookCourses, resolve
+  getEditions, getSteps, getBookCourses, resolve
 };
 })();

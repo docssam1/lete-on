@@ -45,10 +45,38 @@ Claude 제안의 A안 표는 **현재 배우는 과정의 새 주제**를 기준
 
 ## API와 확인 상태
 
-`data/placement-books.js`는 `window.NM_PLACEMENT_BOOKS`의 `series`, `getSteps(seriesId)`, `getBookCourses(seriesId, stepId)`, `resolve(seriesId, stepId, progress)`를 제공한다. 라벨은 `ko/en/zh` 객체이며 고유명사는 보존한다.
+### 2026-10-17 여러 완료 교재와 학교 진도 경로
+
+한 학생이 기적의 계산법과 소마셈처럼 여러 교재를 병행할 수 있으므로 새 진입값은
+`selection.completedBooks[]`에 교재별 마지막 완료 권·과정과 `bookStatus: completed`를
+각각 기록한다. 화면에서는 최대 8개까지 추가·삭제한다. 교재 경로와 별도로 **학교 진도만**
+선택할 수 있으며 이때 학년·학기를 기록하고 실제 배운 연산 내용을 직접 고른다. 학교
+학년은 앱 범위의 참고 시작점일 뿐 학기별 숙달이나 현재 학교 단원을 자동 증명하지 않는다.
+
+소마셈 [2019년 발행 P 세트](https://www.yes24.com/product/goods/75530645)와
+[2013년 발행 P 세트](https://www.yes24.com/product/goods/8653849)의 권별 짧은
+주제 표기가 서로 다르다. 따라서 P는 발행본 미상·2019·2013·기타, K/A/B/C/D는
+발행본 미상·2019·기타를 선택한다. 2019년 세트의 번호는
+[K](https://www.yes24.com/product/goods/75529132)·[A](https://www.yes24.com/product/goods/75532218)·
+[B](https://www.yes24.com/product/goods/75533479)·[C](https://www.yes24.com/product/goods/75534465)·
+[D](https://www.yes24.com/product/goods/75525550)에서도 확인했다.
+`getEditions(seriesId)`와 `getSteps(seriesId, editionId)`가 이 표기를 제공한다.
+발행 연도는 서지 식별값이며 판형·쇄·실제 소장 책을 자동 판별하지 않는다. 공개 자료의
+짧은 주제 단서는 원문 문제나 앱 문항과 동등하다는 뜻이 아니다.
+
+이번 시험지는 여러 완료 교재를 **진단의 배경 정보**로 보여 주고, 선택한 앱 진단 범위의
+이전 6·중심 10·다음 4문항을 만든다. 선택한 교재들의 각 직전·완료·직후 권에서
+6·10·4문항을 합성한 교재 상대 편성은 아직 아니다. 여러 교재의 주제 순서는 서로
+다르며, 기적의 계산법·소마셈·두뇌로 모든 판본과 권/과정에 대해 실제 앱 생성 문항의
+숫자 범위·올림/내림·답 형식까지 대조한 풀과 병행 가중치가 없다. 확인되지 않은
+태그만으로 교재 상대 편성이라고 표시하지 않는다. 종이 시험지에도 완료 교재 목록과
+별도 앱 진단 범위를 분리해 적고, 학교 진도만 선택한 시험지에는 교재 목록을 싣지 않는다.
+기존 단일 교재 결과·인쇄 링크는 읽기 호환을 유지한다.
+
+`data/placement-books.js`는 `window.NM_PLACEMENT_BOOKS`의 `series`, `getEditions(seriesId)`, `getSteps(seriesId, editionId)`, `getBookCourses(seriesId, stepId)`, `resolve(seriesId, stepId, progress, editionId)`를 제공한다. 라벨은 `ko/en/zh` 객체이며 고유명사는 보존한다.
 
 - `getSteps()`는 소마셈 P/K/A/B/C 각 1~8권, D 1~6권의 선택지를 준다. 권 번호는 식별 자료이며 `baselineId`가 아니다.
-- `getBookCourses()`는 두뇌로 Level 1/2/3에서 사진으로 확인한 인쇄 과정 번호 `1~10` / `11~16` / `17~25`를 숫자 배열로 제공하고 다른 항목에서는 `[]`를 반환한다. 두뇌로 경로에서는 마지막 완료 과정 번호를 선택해야 진단을 시작할 수 있다. 선택한 번호는 진단의 `selection.bookCourseNumber`에 숫자(미선택 `null`)로 기록되며 결과의 `placement.selection`에도 남는다. 교재나 Level을 변경하면 이전 번호를 지운다.
+- `getBookCourses()`는 두뇌로 Level 1/2/3에서 사진으로 확인한 인쇄 과정 번호 `1~10` / `11~16` / `17~25`를 숫자 배열로 제공하고 다른 항목에서는 `[]`를 반환한다. 두뇌로 경로에서는 마지막 완료 과정 번호를 선택해야 진단을 시작할 수 있다. 새 기록은 해당 `selection.completedBooks[i].bookCourseNumber`에 숫자(미선택 `null`)로 보존한다. 과거 단일 기록의 `selection.bookCourseNumber`도 읽는다. 교재나 Level을 변경하면 해당 행의 이전 번호를 지운다.
 - 선택한 교재 번호는 결과와 로드맵에서 이 앱의 과정 번호와 별도로 표시한다. 향후 두 로드맵을 비교할 때 사용할 입력 자료이며, 번호 간 대응표·자동 시작점·연령 기준·한 달 한 과정 자동 편성은 구현하지 않았다.
 
 - `coverage`: 현재 `data/threads.js`에 실존하는 `thread@level` **주제 후보**. 교재와 숫자 범위·표현·풀이 형식까지 같은 문항이라는 뜻이 아니다. 문제 생성이나 점수 결정에 그대로 쓰지 않는다.
