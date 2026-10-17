@@ -1275,7 +1275,37 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         detailed("수의 범위", "advancedRange", ["두 범위의 공통 조건과 합집합", "조건에서 새로운 수의 범위 구하기", "나누어 담는 개수의 범위"]),
         detailed("어림하기", "advancedRounding", ["여러 어림 방법의 결과 비교", "어림 조건을 만족하는 수 찾기", "수 카드로 만든 수를 어림하기"]),
         detailed("어림하기의 활용", "roundingApplication", ["묶음 단위와 필요한 금액 구하기", "단위 환산 뒤 묶음 수와 금액 구하기", "구간별 요금 계산하기"]),
-        detailed("어림한 수의 범위", "roundedRange", ["여러 어림 조건의 공통 범위", "배수의 어림값으로 수 찾기", "어림한 합에서 실제 합의 범위 찾기"])
+        detailed("어림한 수의 범위", "roundedRange", ["여러 어림 조건의 공통 범위", "배수의 어림값으로 수 찾기", "어림한 합에서 실제 합의 범위 찾기"]),
+        // Append source records so saved legacy subunit/type IDs retain their meaning.
+        // Classification is verified separately from answer and generation approval.
+        {
+          name: "수의 범위 · 개념탐구 1 원문 분류",
+          types: [
+            ["exploration", "개념탐구 1", "수의 범위를 말과 수직선으로 나타내기", true],
+            ["example-1-1", "예제 1-1", "자연수의 개수로 범위의 시작 수를 가장 크게 하기", false],
+            ["example-1-2", "예제 1-2", "앉는 인원과 필요한 의자 수로 전체 인원의 범위 구하기", false],
+            ["example-1-3", "예제 1-3", "두 조건을 모두 만족하는 사람 수의 범위 구하기", false],
+            ["example-1-4", "예제 1-4", "상자마다 담는 개수로 상자 수의 범위 구하기", false]
+          ].map(([suffix, sourceItemLabel, name, answerVisualRequired]) => ({
+            id: `5-2-u1-e1-${suffix}`,
+            name,
+            sourceItemId: `5-2-u1-e1-${suffix}`,
+            sourceItemLabel,
+            sourceSection: suffix === "exploration" ? "exploration" : "example",
+            sourceTier: "advanced",
+            sourcePdfPage: 2,
+            sourcePrintedPage: 4,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e1-first-page-classification",
+            sourceVerified: false,
+            reviewLocked: true,
+            reviewReason: "심화 원문 문항과 그림의 분류는 확인했으나, 대응하는 공식 답안과 생성 문항 검수가 완료되지 않아 출제하지 않습니다.",
+            generationMode: "review-locked",
+            verifiedVariantTarget: 0,
+            verifiedVariantCount: 0,
+            answerVisualRequired,
+            answerVisualStatus: answerVisualRequired ? "locked" : "not-required"
+          }))
+        }
       ],
       ["분수의 곱셈",
         detailed("분수와 자연수의 곱셈", "fractionNaturalAdvanced", ["전체에서 연속한 분수만큼 구하기", "하루와 시간의 분수량 환산하기", "곱이 자연수가 되는 수의 개수"]),
