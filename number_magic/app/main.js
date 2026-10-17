@@ -3602,11 +3602,31 @@ function screenCourseRoad(){
   const curNum=Number(String(curKey).replace(/^C/,''));
   const allStages=window.NM_STAGES||[];
   const mapGroups=[
-    {key:'first', title:{ko:'수의 출발',en:'First numbers',zh:'数字起点'}, stages:['numberland','sprout'], x:13,y:75},
-    {key:'arithmetic', title:{ko:'계산의 성장',en:'Growing calculation',zh:'计算进阶'}, stages:['leap','mastery'], x:32,y:54},
-    {key:'challenge', title:{ko:'경시의 탑',en:'Tower of Challenge',zh:'竞赛之塔'}, stages:['tower'], x:51,y:38},
-    {key:'middle', title:{ko:'중학교',en:'Middle school',zh:'初中'}, stages:['middle'], x:70,y:28},
-    {key:'high', title:{ko:'고등 수학',en:'High school maths',zh:'高中数学'}, stages:['common1','common2','algebra','calculus1'], x:89,y:16}
+    {key:'first', title:{ko:'수의 출발',en:'First numbers',zh:'数字起点'}, stages:['numberland','sprout'], x:13,y:75,
+      guide:{image:'numi-0-happy.png',name:{ko:'누미',en:'Numi',zh:'努米'},say:{
+        ko:'먼저 수를 세고 10을 만들어요. 덧셈·뺄셈을 지나 구구단과 나눗셈도 만나요!',
+        en:'Count, make 10, then learn addition, subtraction, times tables, and division!',
+        zh:'先数数、凑十，再学加减、乘法口诀和除法！'}}},
+    {key:'arithmetic', title:{ko:'계산의 성장',en:'Growing calculation',zh:'计算进阶'}, stages:['leap','mastery'], x:32,y:54,
+      guide:{image:'poco-3-happy.png',name:{ko:'포코',en:'Poco',zh:'波可'},say:{
+        ko:'큰 수를 곱하고 나누어요. 분수·소수·비율까지 계산을 넓혀 볼까요?',
+        en:'Multiply and divide bigger numbers, then explore fractions, decimals, and ratios!',
+        zh:'学习大数乘除，再探索分数、小数和比率！'}}},
+    {key:'challenge', title:{ko:'경시의 탑',en:'Tower of Challenge',zh:'竞赛之塔'}, stages:['tower'], x:51,y:38,
+      guide:{image:'momo-8-happy.png',name:{ko:'모모',en:'Momo',zh:'莫莫'},say:{
+        ko:'수의 숨은 규칙을 찾으면 계산이 짧아져요. 곱셈·진법·제곱에 도전해요!',
+        en:'Find number patterns to shorten calculations. Try multiplication, number bases, and squares!',
+        zh:'找到数字规律，计算就更简便。来挑战乘法、进位制和平方！'}}},
+    {key:'middle', title:{ko:'중학교',en:'Middle school',zh:'初中'}, stages:['middle'], x:70,y:28,
+      guide:{image:'sym-sqrt.png',name:{ko:'루트',en:'Root',zh:'根号'},say:{
+        ko:'음수와 x를 만나 수의 관계를 식과 그래프로 나타내요. 제곱근도 탐험해요!',
+        en:'Meet negative numbers and x, show connections with equations and graphs, and explore square roots!',
+        zh:'认识负数和 x，用方程与图像表示关系，再探索平方根！'}}},
+    {key:'high', title:{ko:'고등 수학',en:'High school maths',zh:'高中数学'}, stages:['common1','common2','algebra','calculus1'], x:89,y:16,
+      guide:{image:'sym-infinity.png',name:{ko:'무한',en:'Infinity',zh:'无穷大'},say:{
+        ko:'다항식·좌표·로그와 수열을 배우고, 변화율과 넓이까지 살펴봐요!',
+        en:'Explore polynomials, coordinates, logs, and sequences, then rates of change and area!',
+        zh:'学习多项式、坐标、对数与数列，再研究变化率和面积！'}}}
   ].map(g=>({...g, entries:g.stages.map(k=>allStages.find(s=>s.key===k)).filter(Boolean)}))
     .filter(g=>g.entries.length);
   const mapGroupFor=n=>mapGroups.find(g=>g.entries.some(s=>n>=s.courses.from&&n<=s.courses.to));
@@ -3637,9 +3657,9 @@ function screenCourseRoad(){
         <div class="nm-vmap-head">
           <span class="nm-cr-eyebrow">${lk('한눈에 보는 성장 단계','The stages at a glance','成长阶段一览')}</span>
           <h2 id="crVisualTitle">${lk('그림으로 보는 연산 지도','Illustrated arithmetic map','图画运算地图')}</h2>
-          <p>${lk('지도를 따라 단계를 고르고, 자세한 과정은 길 로드맵에서 살펴보세요.',
-                   'Choose a stage on the map, then explore its courses on the course road.',
-                   '沿着地图选择阶段，再到课程道路查看具体课程。')}</p>
+          <p>${lk('표지판 아래 캐릭터가 과정들을 소개해요. 자세한 과정은 길 로드맵에서 살펴보세요.',
+                   'The guides below the signs introduce each group of courses. Explore the details on the course road.',
+                   '路标下的角色会介绍各组课程。具体课程可在课程道路中查看。')}</p>
         </div>
         <div class="nm-vmap-scroll" id="crMapScroll" role="region" tabindex="0" aria-label="${lk('연산 단계 그림 지도, 좌우로 이동할 수 있음','Illustrated arithmetic map, horizontally scrollable','运算阶段图画地图，可左右滚动')}">
           <div class="nm-vmap-canvas">
@@ -3647,13 +3667,17 @@ function screenCourseRoad(){
             ${mapGroups.map((g,i)=>`<button class="nm-vmap-stop${g.key===selectedMapGroup?' is-selected':''}${g===mapGroupFor(curNum)?' is-current':''}" type="button" data-map-group="${g.key}" style="left:${g.x}%;top:${g.y}%" aria-pressed="${g.key===selectedMapGroup}" aria-label="${esc(L(g.title))}, ${mapRange(g)}${g===mapGroupFor(curNum)?', '+lk('현재 위치','current location','当前位置'):''}">
               <span class="nm-vmap-stop-top"><i>${i+1}</i><b>${esc(L(g.title))}</b></span>
               <small>${mapRange(g)}</small>${g===mapGroupFor(curNum)?`<em>${lk('현재 위치','You are here','当前位置')}</em>`:''}
+            </button><button class="nm-vmap-character${g.key===selectedMapGroup?' is-selected':''}" type="button" data-map-group="${g.key}" style="left:${g.x}%;top:${g.y}%" aria-pressed="${g.key===selectedMapGroup}" aria-label="${esc(L(g.guide.name))}: ${esc(L(g.title))} ${lk('과정 설명 보기','course explanation','课程说明')}">
+              <img src="assets/characters/${g.guide.image}" width="80" height="80" alt="" loading="lazy" decoding="async">
+              <span>${lk('설명 보기','See explanation','查看介绍')}</span>
             </button>`).join('')}
           </div>
         </div>
-        <p class="nm-vmap-scrollhint">${lk('지도는 좌우로 움직일 수 있어요. 지점을 누르면 아래에 단계가 나와요.',
-          'Scroll the map sideways. Choose a stop to see its stages below.',
-          '地图可左右滚动。选择地点后，下方会显示阶段。')}</p>
-        <div class="nm-vmap-detail" id="crMapDetail" tabindex="-1" aria-live="polite"></div>
+        <p class="nm-vmap-scrollhint">${lk('지도는 좌우로 움직일 수 있어요. 표지판이나 캐릭터를 누르면 아래에 설명과 단계가 나와요.',
+          'Scroll the map sideways. Choose a sign or guide to see the explanation and stages below.',
+          '地图可左右滚动。点击路标或角色，下方会显示介绍与阶段。')}</p>
+        <div class="nm-vmap-detail" id="crMapDetail" tabindex="-1"></div>
+        <span class="nm-vmap-live" id="crMapLive" aria-live="polite" aria-atomic="true"></span>
       </section>
       <div class="nm-cr-intro">
       <!-- 누구의 로드맵인지 (2026-09-16 원장 "선택한 학생의 연산 로드맵이 나와야지").
@@ -3707,6 +3731,12 @@ function screenCourseRoad(){
       <p>${lk('단계를 누르면 길 로드맵의 해당 과정으로 이동해요.',
                'Choose a stage to find its course on the course road.',
                '选择阶段后，将前往课程道路中的对应课程。')}</p>
+    </div><div class="nm-vmap-talk">
+      <img src="assets/characters/${g.guide.image}" width="80" height="80" alt="" aria-hidden="true" loading="lazy" decoding="async">
+      <div class="nm-vmap-talk-bubble">
+        <b>${esc(L(g.guide.name))}${lk('의 설명',"'s explanation",'的介绍')}</b>
+        <p>${esc(L(g.guide.say))}</p>
+      </div>
     </div><div class="nm-vmap-stages">${g.entries.map(s=>{
       const now=curNum>=s.courses.from&&curNum<=s.courses.to;
       const range=`${lk('과정','Courses','课程')} ${s.courses.from}${s.courses.from===s.courses.to?'':'~'+s.courses.to}`;
@@ -3762,6 +3792,8 @@ function screenCourseRoad(){
     el.onclick=ev=>{
       selectedMapGroup=el.dataset.mapGroup;
       drawMapDetail();
+      const guide=mapGroups.find(g=>g.key===selectedMapGroup).guide;
+      $('#crMapLive').textContent=`${L(guide.name)}: ${L(guide.say)}`;
       mapDetailEl.scrollIntoView({block:'start',behavior:window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
       if(ev.detail===0)mapDetailEl.focus({preventScroll:true});
     };
