@@ -233,6 +233,7 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   character_unlocked:{}, mailbox:{opened:{}},
   boost:{doneWeeks:{},log:[]}, /* 정체 감지→보강 루프(§2-4) 기록 — 부모 리포트용 */
   roadCadence:'w1', /* 연산 로드맵 주차 보기: 'w1'=주 1회반, 'w2'=주 2회반 */
+  roadView:'road', /* 같은 연산 로드맵의 길 보기 / 그림 지도 보기 */
   /* 연산 로드맵 목표 기준(속도) — 값은 ROAD_PACES의 key.
      기본값을 '표준'(p2)으로 둔다: 처음 보는 사람에게 가장 빠른 기준의 주차를
      보여 주면 그 자체가 과약속 쪽으로 기운다(원장 지시로 넣은 "연산 트랙만
@@ -279,6 +280,7 @@ if(!S.boost)S.boost={doneWeeks:{},log:[]};
 if(!S.boost.doneWeeks)S.boost.doneWeeks={};
 if(!S.boost.log)S.boost.log=[];
 if(S.roadCadence!=='w1'&&S.roadCadence!=='w2')S.roadCadence='w1';
+if(S.roadView!=='road'&&S.roadView!=='map')S.roadView='road';
 if(!S.roadPrints||typeof S.roadPrints!=='object')S.roadPrints={};
 /* 목표 기준(속도) 검증 — 값은 ROAD_PACES의 key와 같아야 한다. ROAD_PACES는 이 줄보다
    아래에서 const로 선언되므로(TDZ) 여기서는 키 목록을 그대로 적는다. 기준을 늘리면
@@ -3597,6 +3599,20 @@ function screenCourseRoad(){
   const curKey=currentCourseKey();
   const list=roadCourseList();
   const lastNum=list.length?list[list.length-1].num:0;
+  const curNum=Number(String(curKey).replace(/^C/,''));
+  const allStages=window.NM_STAGES||[];
+  const mapGroups=[
+    {key:'first', title:{ko:'수의 출발',en:'First numbers',zh:'数字起点'}, stages:['numberland','sprout'], x:13,y:75},
+    {key:'arithmetic', title:{ko:'계산의 성장',en:'Growing calculation',zh:'计算进阶'}, stages:['leap','mastery'], x:32,y:54},
+    {key:'challenge', title:{ko:'경시의 탑',en:'Tower of Challenge',zh:'竞赛之塔'}, stages:['tower'], x:51,y:38},
+    {key:'middle', title:{ko:'중학교',en:'Middle school',zh:'初中'}, stages:['middle'], x:70,y:28},
+    {key:'high', title:{ko:'고등 수학',en:'High school maths',zh:'高中数学'}, stages:['common1','common2','algebra','calculus1'], x:89,y:16}
+  ].map(g=>({...g, entries:g.stages.map(k=>allStages.find(s=>s.key===k)).filter(Boolean)}))
+    .filter(g=>g.entries.length);
+  const mapGroupFor=n=>mapGroups.find(g=>g.entries.some(s=>n>=s.courses.from&&n<=s.courses.to));
+  const mapRange=g=>`${lk('과정','Courses','课程')} ${g.entries[0].courses.from}~${g.entries[g.entries.length-1].courses.to}`;
+  let selectedMapGroup=(mapGroupFor(curNum)||mapGroups[0]||{}).key;
+  let roadView=S._roadFocus?'road':S.roadView;
 
   /* 2026-09-26 원장 "로드맵도 이제 이런 느낌으로" — 머리에 3D 길 지도(app/road3d)를 얹고, 아래 목록은
      모드 선택 3D 책상과 같은 재질(나무 책상 · 종이 카드 · 가죽+금박 · 놋쇠 꼬리표)로 입힌다.
@@ -3612,7 +3628,33 @@ function screenCourseRoad(){
       </div>
     </div>
     <div class="nm-cr-body" id="crBody">
+      <div class="nm-cr-view-switch" role="group" aria-label="${lk('로드맵 보기 방식','Roadmap view','路线图视图')}">
+        <button id="crViewRoad" type="button" aria-pressed="${roadView==='road'}">${crIc('steps')}${lk('길 로드맵','Course road','课程道路')}</button>
+        <button id="crViewMap" type="button" aria-pressed="${roadView==='map'}" ${mapGroups.length?'':'disabled'}>${crIc('compass')}${lk('그림 지도','Illustrated map','图画地图')}</button>
+      </div>
       <div class="nm-cr-hero" id="crHero"></div>
+      <section class="nm-vmap" id="crVisual" aria-labelledby="crVisualTitle" hidden>
+        <div class="nm-vmap-head">
+          <span class="nm-cr-eyebrow">${lk('한눈에 보는 성장 단계','The stages at a glance','成长阶段一览')}</span>
+          <h2 id="crVisualTitle">${lk('그림으로 보는 연산 지도','Illustrated arithmetic map','图画运算地图')}</h2>
+          <p>${lk('지도를 따라 단계를 고르고, 자세한 과정은 길 로드맵에서 살펴보세요.',
+                   'Choose a stage on the map, then explore its courses on the course road.',
+                   '沿着地图选择阶段，再到课程道路查看具体课程。')}</p>
+        </div>
+        <div class="nm-vmap-scroll" id="crMapScroll" role="region" tabindex="0" aria-label="${lk('연산 단계 그림 지도, 좌우로 이동할 수 있음','Illustrated arithmetic map, horizontally scrollable','运算阶段图画地图，可左右滚动')}">
+          <div class="nm-vmap-canvas">
+            <img class="nm-vmap-art" src="assets/growth-map-20261017.webp" width="1672" height="941" alt="" decoding="async">
+            ${mapGroups.map((g,i)=>`<button class="nm-vmap-stop${g.key===selectedMapGroup?' is-selected':''}${g===mapGroupFor(curNum)?' is-current':''}" type="button" data-map-group="${g.key}" style="left:${g.x}%;top:${g.y}%" aria-pressed="${g.key===selectedMapGroup}" aria-label="${esc(L(g.title))}, ${mapRange(g)}${g===mapGroupFor(curNum)?', '+lk('현재 위치','current location','当前位置'):''}">
+              <span class="nm-vmap-stop-top"><i>${i+1}</i><b>${esc(L(g.title))}</b></span>
+              <small>${mapRange(g)}</small>${g===mapGroupFor(curNum)?`<em>${lk('현재 위치','You are here','当前位置')}</em>`:''}
+            </button>`).join('')}
+          </div>
+        </div>
+        <p class="nm-vmap-scrollhint">${lk('지도는 좌우로 움직일 수 있어요. 지점을 누르면 아래에 단계가 나와요.',
+          'Scroll the map sideways. Choose a stop to see its stages below.',
+          '地图可左右滚动。选择地点后，下方会显示阶段。')}</p>
+        <div class="nm-vmap-detail" id="crMapDetail" tabindex="-1" aria-live="polite"></div>
+      </section>
       <div class="nm-cr-intro">
       <!-- 누구의 로드맵인지 (2026-09-16 원장 "선택한 학생의 연산 로드맵이 나와야지").
            한 기기를 형제가 같이 쓰므로 슬롯 3개가 이미 있는데, 로드맵에는 누구 것인지
@@ -3622,8 +3664,8 @@ function screenCourseRoad(){
         <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}${schoolNowLabel()?` <em class="nm-cr-who-gr">${esc(schoolNowLabel())}</em>`:''}</b></span>
         <span class="nm-cr-who-sw">${lk('바꾸기','Switch','切换')}</span>
       </button>
-      <div class="nm-cr-sub"><span class="nm-cr-eyebrow">${lk('나의 연산 길','My arithmetic path','我的运算之路')}</span>
-        <span class="nm-cr-lead">${lk('어디까지 왔고 어디로 가는지, 한 길 위에서 봐요.','Where you are and where it leads — all on one road.','走到了哪里、要去哪里，都在一条路上。')}</span></div>
+      <div class="nm-cr-sub"><span class="nm-cr-eyebrow">${lk('나의 연산 로드맵','My arithmetic roadmap','我的运算路线图')}</span>
+        <span class="nm-cr-lead">${lk('어디까지 왔고 다음에 무엇을 배우는지 살펴봐요.','See where you are and what you will learn next.','看看现在学到哪里，接下来学习什么。')}</span></div>
       <!-- 정복의 뜻은 about.html의 철학과 같은 것이어야 한다("수를 정복하기 위한
            DOCSSAM의 철학" · "어려운 수를 내가 다루기 쉬운 수로 펼쳐서"). 로드맵이
            따로 노는 은유를 만들지 않도록 그 문장을 여기서 다시 말하고 원문으로 잇는다. -->
@@ -3645,12 +3687,86 @@ function screenCourseRoad(){
   const body=$('#crBody');
   const listEl=$('#crList');
   const heroEl=$('#crHero');
+  const visualEl=$('#crVisual');
+  const mapDetailEl=$('#crMapDetail');
+  const mapScrollEl=$('#crMapScroll');
   /* 3D 지도가 처음 비출 과정 — draw(false)가 S._roadFocus 를 지우기 전에 잡아 둔다 */
   const heroFocus=S._roadFocus||null;
   const hero3dLikely=!!heroEl && road3dLikely();
   const openEx={};          /* 펼친 과정 설명(다시 그려도 유지) */
   let road3dCtl=null;       /* 3D 지도 — 설정이 바뀌면 시작 달 이름표를 다시 쓴다 */
+  let road3dStarted=false;
   function syncRoad3dTimes(){ if(road3dCtl&&road3dCtl.setTimes) road3dCtl.setTimes(roadStartLabels()); }
+
+  function drawMapDetail(){
+    const g=mapGroups.find(x=>x.key===selectedMapGroup);
+    if(!g||!mapDetailEl)return;
+    mapDetailEl.innerHTML=`<div class="nm-vmap-detail-head">
+      <span class="nm-cr-eyebrow">${lk('선택한 지도 지점','Selected map stop','选中的地图地点')} · ${mapRange(g)}</span>
+      <h3>${esc(L(g.title))}</h3>
+      <p>${lk('단계를 누르면 길 로드맵의 해당 과정으로 이동해요.',
+               'Choose a stage to find its course on the course road.',
+               '选择阶段后，将前往课程道路中的对应课程。')}</p>
+    </div><div class="nm-vmap-stages">${g.entries.map(s=>{
+      const now=curNum>=s.courses.from&&curNum<=s.courses.to;
+      const range=`${lk('과정','Courses','课程')} ${s.courses.from}${s.courses.from===s.courses.to?'':'~'+s.courses.to}`;
+      return `<button class="nm-vmap-stage${now?' is-current':''}" type="button" data-map-stage="${s.key}" aria-label="${esc(L(s.name))}, ${range}, ${lk('길 로드맵에서 보기','view on course road','在课程道路中查看')}">
+        <span class="nm-vmap-stage-heading"><b>${esc(L(s.name))}</b>${now?`<em>${lk('현재 단계','Current stage','当前阶段')}</em>`:''}</span>
+        <span class="nm-vmap-stage-meta">${range} · ${esc(L(s.band))}${s.status==='partial'?` · ${lk('일부 준비 중','Some lessons in preparation','部分内容准备中')}`:''}</span>
+        <span class="nm-vmap-stage-learn">${esc(L(s.learn))}</span>
+        <span class="nm-vmap-stage-go">${lk('길에서 보기','View on road','在道路中查看')} ${crIc('arrow')}</span>
+      </button>`;
+    }).join('')}</div>`;
+    mapDetailEl.querySelectorAll('[data-map-stage]').forEach(el=>{
+      el.onclick=()=>{
+        const stage=g.entries.find(s=>s.key===el.dataset.mapStage);
+        if(!stage)return;
+        const targetNum=curNum>=stage.courses.from&&curNum<=stage.courses.to?curNum:stage.courses.from;
+        setRoadView('road',true);
+        const node=listEl.querySelector(`.nm-cr-node[data-c="C${targetNum}"]`);
+        if(node)roadFlashRow(node,body);
+      };
+    });
+    visualEl.querySelectorAll('[data-map-group]').forEach(el=>{
+      const on=el.dataset.mapGroup===selectedMapGroup;
+      el.classList.toggle('is-selected',on);
+      el.setAttribute('aria-pressed',String(on));
+    });
+  }
+  function centerMapStop(){
+    if(!mapScrollEl||visualEl.hidden)return;
+    const stop=visualEl.querySelector(`[data-map-group="${selectedMapGroup}"]`);
+    if(stop)mapScrollEl.scrollLeft=Math.max(0,stop.offsetLeft+stop.offsetWidth/2-mapScrollEl.clientWidth/2);
+  }
+  function startRoadHero(){
+    if(!heroEl||!heroEl.isConnected||!hero3dLikely||road3dStarted)return;
+    road3dStarted=true;
+    mountRoad3DInto(heroEl,{curKey,focus:heroFocus,listEl,body,onCtl:ctl=>{ road3dCtl=ctl; }});
+  }
+  function setRoadView(mode,persist){
+    roadView=mode==='map'&&mapGroups.length?'map':'road';
+    if(persist){S.roadView=roadView;save();}
+    const isMap=roadView==='map';
+    visualEl.hidden=!isMap;
+    if(heroEl&&heroEl.isConnected)heroEl.hidden=isMap;
+    listEl.hidden=isMap;
+    $('#crViewRoad').setAttribute('aria-pressed',String(!isMap));
+    $('#crViewMap').setAttribute('aria-pressed',String(isMap));
+    if(!isMap)startRoadHero();
+    if(persist||isMap)body.scrollTop=0;
+    if(isMap)requestAnimationFrame(centerMapStop);
+  }
+  $('#crViewRoad').onclick=()=>setRoadView('road',true);
+  $('#crViewMap').onclick=()=>setRoadView('map',true);
+  visualEl.querySelectorAll('[data-map-group]').forEach(el=>{
+    el.onclick=ev=>{
+      selectedMapGroup=el.dataset.mapGroup;
+      drawMapDetail();
+      mapDetailEl.scrollIntoView({block:'start',behavior:window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+      if(ev.detail===0)mapDetailEl.focus({preventScroll:true});
+    };
+  });
+  drawMapDetail();
 
   function draw(keepScroll){
     const cad=S.roadCadence;
@@ -4064,7 +4180,9 @@ function screenCourseRoad(){
       /* 처음 열 때만 현재 위치(또는 진단이 추천한 과정)로 스크롤.
          3D 지도가 뜰 수 있으면 맨 위(지도)를 보여 주고, 지도가 그 과정을 비춘다.
          단, 다른 화면이 "이 과정을 보여 줘"(S._roadFocus)라고 보냈으면 목록의 그 과정으로 간다. */
-      if(S._roadFocus||!hero3dLikely){
+      if(roadView==='map'&&!S._roadFocus){
+        body.scrollTop=0;
+      } else if(S._roadFocus||!hero3dLikely){
         const focusKey=S._roadFocus||curKey;
         const target=listEl.querySelector(`.nm-cr-node[data-c="${focusKey}"]`)||listEl.querySelector('#crNow');
         /* 진단·시작점 고르기에서 왔으면 그 과정을 잠깐 빛나게(2026-09-28) */
@@ -4075,10 +4193,8 @@ function screenCourseRoad(){
     }
   }
   draw(false);
-  if(heroEl){
-    if(hero3dLikely) mountRoad3DInto(heroEl,{curKey,focus:heroFocus,listEl,body,onCtl:ctl=>{ road3dCtl=ctl; }});
-    else heroEl.remove();
-  }
+  if(heroEl&&!hero3dLikely)heroEl.remove();
+  setRoadView(roadView,false);
 }
 /* WebGL 을 쓸 수 있을 것 같은가(없으면 3D 지도 자리를 만들지 않고 옛 동작 그대로) */
 function road3dLikely(){
