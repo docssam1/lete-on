@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018d`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018d/20261018e/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018e`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018e/20261018f/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -255,7 +255,7 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   `tx2`로 그린 그림 요소도 함께 사라지니 그림 모양은 교사용 원본에서 읽는다.
 - **진단**: 예전 6권 문항 108개는 교사용 풀이 식을 그대로 문제로 바꾼 것(「24÷2의 값」, 그림 = 식)이라 풀이 방법이 드러나고
   수직선 그림이 비어 있었다. 5권처럼 원본 문항으로 다시 짠다. `sourceInventory`(94개)는 예전 공개 기록이고 화면에서 쓰지 않는다.
-- **묶음 계획**: 1) 2~6 수직선의 분할 ✅ · 2) 7~10 도형이 나타내는 수와 비 ✅ · 3) 12~14 둘레 ✅ · 4) 15~16 둘레 ✅ · 5) 18~21 곱셈·간편 계산 ·
+- **묶음 계획**: 1) 2~6 수직선의 분할 ✅ · 2) 7~10 도형이 나타내는 수와 비 ✅ · 3) 12~14 둘레 ✅ · 4) 15~16 둘레 ✅ · 5) 18~21 곱셈·간편 계산 ✅ ·
   6) 22~25 연속수의 합 · 7) 27~32 수와 숫자의 개수·수 만들기.
 - **그림은 5권 그림 도구를 그대로 쓴다**(`kind:"book5"`, `book05-renderers.js`). 인쇄 규칙 선택자는
   `.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"])`로 넓혔다(전부 `b5-src-*` 전용이라 다른 권에 영향 없음).
@@ -298,6 +298,14 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 15쪽 09는 원본이 ㉣까지 「모두 정사각형」이라 적었으나 ㉣은 아니어서 고침, 모눈 한 칸 1cm는 원본에 없어 적음(둘 다 `sourceDiscrepancy`).
     검산기는 둘레를 그림 좌표·모눈으로 직접 세고, 원본에 적힌 길이만으로도 계산해 둘을 맞춘다. 교사용 답과 전부 같음.
   - `sourceHold` B06-15-01·B06-16-01 삭제(6권 보류 3 → 1, 남은 것은 19쪽). DB `book-06` 753키 → 783키, sha 앞 8자리 `2080d51a`. 캐시 꼬리표 `20261018d`.
+- **6권 묶음 5(슬라이드 18~21 타일 그림 곱셈·간편하게 계산하기·같은 수로 묶기·9에 가까운 수, 47문항, 2026-10-18)**: 패치 `tools/golden-bell-book06/patch-book06-batch5.mjs`(정답 없음).
+  - 단원 8 `multiplication-source`(18·19쪽 17문항)를 자리 그대로 새로 짜고(DB `/lessons/8/` 옛 키 교체), 새 단원 17 `same-factor-source`(20·21쪽 30문항).
+  - 새 그림 `source-area-tiles`(두 칸 타일, 위에 십·일의 자리 몫, 옆에 곱하는 수, 칸은 가·나 빈칸).
+    `source-blank-equation` 토큰이 `*`로 시작하면 노란 바탕 강조(20쪽 원본 학생지의 노란 동그라미). 식 글자는 패치의 `eq("9 + 1 = …")`로 만든다(`□`는 빈칸).
+  - 교사용 빨간 짝짓기 호·「+1」 표시는 풀이라 화면에 넣지 않았다.
+  - **교사용 답이 틀린 곳 5곳**(DB `sourceNote`): 18쪽 ⑥, 19쪽 ⑧(보류 B06-19-08 — 원본 식은 하나로 풀리므로 원본 그대로, 짝 하나가 딱 떨어지지 않음),
+    20쪽 머리 상자 첫 식, 20쪽 ⑥, 21쪽 곱셈 ⑤. 모두 원본 식대로 계산한 답을 넣었다.
+  - `sourceHold` B06-19-08 삭제 → **6권 보류 0**. DB `book-06` 783키 → 811키, sha 앞 8자리 `65b6c6ef`. 캐시 꼬리표 `20261018e`.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
 
