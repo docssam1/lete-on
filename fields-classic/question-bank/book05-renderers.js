@@ -573,6 +573,70 @@ function sourceProductRing(visual) {
   return `<div class="b5-src-prod" role="img" aria-label="${escapeHtml(`곱셈 고리: 원 ${visual.circles.map((v) => v ?? "빈칸").join(", ")} / 네모 ${visual.squares.join(", ")}`)}"><svg viewBox="${view}" style="width:min(100%,300px)">${lines}${sq}${circ}</svg></div>`;
 }
 
+// 선분 나누기: pieces(같은 간격 조각 수)+total(아래 묶음), 또는 start·end(양 끝 수)+half(위 묶음, 앞 절반 길이). 가운데 점 아래는 빈 상자.
+function sourceSegment(visual) {
+  if (visual.pieces) {
+    const w = 64 * visual.pieces, x0 = 14, y = 22;
+    const ticks = Array.from({ length: visual.pieces + 1 }, (_, i) => `<line class="tick" x1="${x0 + (w * i) / visual.pieces}" y1="${y - 9}" x2="${x0 + (w * i) / visual.pieces}" y2="${y + 9}"/>`).join("");
+    const brace = `<path class="arc" d="M${x0} ${y + 3}Q${x0} ${y + 34} ${x0 + w / 2 - 24} ${y + 34}M${x0 + w / 2 + 24} ${y + 34}Q${x0 + w} ${y + 34} ${x0 + w} ${y + 3}"/>`;
+    return `<div class="b5-src-seg" role="img" aria-label="${escapeHtml(`길이 ${visual.total}인 선분을 같은 간격으로 ${visual.pieces}조각으로 자름`)}"><svg viewBox="0 0 ${w + 28} 72" style="width:min(100%,${Math.round((w + 28) * 1.5)}px);--seg-w:${w + 28}"><line class="seg" x1="${x0}" y1="${y}" x2="${x0 + w}" y2="${y}"/>${ticks}${brace}<text x="${x0 + w / 2}" y="${y + 36}">${escapeHtml(visual.total)}</text></svg></div>`;
+  }
+  const w = 240, x0 = 24, y = 50, m = x0 + w / 2;
+  const tick = (x) => `<line class="tick" x1="${x}" y1="${y - 9}" x2="${x}" y2="${y + 9}"/>`;
+  return `<div class="b5-src-seg" role="img" aria-label="${escapeHtml(`수직선 위 ${visual.start}과 ${visual.end} 사이를 똑같이 나눈 가운데 점${visual.half == null ? "" : `, 앞쪽 절반 길이 ${visual.half}`}`)}"><svg viewBox="0 0 ${w + 48} 112" style="width:min(100%,${Math.round((w + 48) * 1.5)}px);--seg-w:${w + 48}"><line class="seg" x1="${x0}" y1="${y}" x2="${x0 + w}" y2="${y}"/>${tick(x0)}${tick(m)}${tick(x0 + w)}${visual.half == null ? "" : `<path class="arc" d="M${x0} ${y - 2}Q${(x0 + m) / 2} ${y - 46} ${m} ${y - 2}"/><text x="${(x0 + m) / 2}" y="${y - 32}">${escapeHtml(visual.half)}</text>`}<text x="${x0}" y="${y + 28}">${escapeHtml(visual.start)}</text><text x="${x0 + w}" y="${y + 28}">${escapeHtml(visual.end)}</text><rect class="box" x="${m - 17}" y="${y + 13}" width="34" height="30" rx="5"/><text class="q" x="${m}" y="${y + 28}">${escapeHtml(visual.value ?? "?")}</text></svg></div>`;
+}
+
+// 도형식: 같은 모양은 같은 수. 모양 색은 색표(그림 규칙 스킬) 그대로, 오각형은 주황.
+const SHAPE_GLYPH = {
+  circle: ["동그라미", "#e8503a", "#ffe1dc", '<circle cx="17" cy="17" r="14"/>'],
+  triangle: ["세모", "#2f9e5f", "#dcf5e5", '<polygon points="17,3 31,30 3,30"/>'],
+  square: ["네모", "#2f6fe0", "#dde9ff", '<rect x="4" y="4" width="26" height="26"/>'],
+  diamond: ["마름모", "#8e5bd8", "#ece0fb", '<polygon points="17,2 32,17 17,32 2,17"/>'],
+  star: ["별", "#f0b23a", "#fff3c4", '<polygon points="17,2 21,13 32,13 23,20 26,31 17,24 8,31 11,20 2,13 13,13"/>'],
+  heart: ["하트", "#e0559a", "#fde0ee", '<path d="M17 31C3 21 2 12 7 7c4-4 9-2 10 3 1-5 6-7 10-3 5 5 4 14-10 24z"/>'],
+  pentagon: ["오각형", "#f39a1e", "#ffe9cc", '<polygon points="17,2 32,13 26,31 8,31 2,13"/>']
+};
+const shapeGlyph = (kind, value) => {
+  const [name, line, fill, body] = SHAPE_GLYPH[kind];
+  return `<span class="g" aria-label="${name}"><svg viewBox="0 0 34 34" style="--line:${line};--fill:${fill}">${body}</svg>${value == null ? "" : `<b>${escapeHtml(value)}</b>`}</span>`;
+};
+const shapeToken = (token, values) => SHAPE_GLYPH[token] ? shapeGlyph(token, values?.[token]) : `<span class="t${/^[+×=\-]$/.test(token) ? " op" : ""}">${escapeHtml(token)}</span>`;
+const shapeWords = (row) => row.map((token) => SHAPE_GLYPH[token]?.[0] ?? token).join(" ");
+
+// cards(숫자 카드)·range(수의 범위)·rows(식)·ask(「모양 = ?」 줄)
+function sourceShapeEquations(visual) {
+  const cards = visual.cards ? `<div class="cards">${visual.cards.map((d) => `<span>${escapeHtml(d)}</span>`).join("")}</div>` : "";
+  const range = visual.range ? `<p class="range">(${escapeHtml(visual.range)})</p>` : "";
+  const rows = visual.rows.map((row) => `<p>${row.map((token) => shapeToken(token, visual.values)).join("")}</p>`).join("");
+  // ask 원소: 모양 이름 하나(「○ = ?」) 또는 식 토큰 배열(「□ + ⬠ = ?」)
+  const askTokens = (a) => (Array.isArray(a) ? a : [a]);
+  const ask = (visual.ask || []).length ? `<p class="ask">${visual.ask.map((a) => `<span class="pair">${askTokens(a).map((t) => shapeToken(t)).join("")}<span class="t op">=</span><span class="t">?</span></span>`).join("")}</p>` : "";
+  const label = [visual.cards ? `숫자 카드 ${visual.cards.join(", ")}` : "", visual.range ? `범위 ${visual.range}` : "", ...visual.rows.map(shapeWords), ...(visual.ask || []).map((a) => `${shapeWords(askTokens(a))} = ?`)].filter(Boolean).join(" / ");
+  return `<div class="b5-src-shapes" role="img" aria-label="${escapeHtml(label)}">${cards}${range}<div class="board">${rows}${ask}</div></div>`;
+}
+
+// 위아래로 쌓은 분수. null 칸은 빈 상자(글자 가·나… 를 순서대로 붙임).
+const BLANK_LABELS = ["가", "나", "다", "라", "마", "바", "사", "아"];
+const fractionMarkup = (fractions, start = 0) => {
+  let blank = start;
+  const cell = (v) => (v == null ? `<i class="blank"><small>${BLANK_LABELS[blank++]}</small></i>` : `<i>${escapeHtml(v)}</i>`);
+  return fractions.map(([num, den]) => `<span class="frac">${cell(num)}<span class="bar"></span>${cell(den)}</span>`).join('<b class="eq">=</b>');
+};
+
+// 원판: pieces 조각 중 shaded 조각을 12시부터 시계 방향으로 색칠. 원판마다 아래에 분수 빈칸(가·나…)을 붙인다.
+function sourceFractionDiscs(visual) {
+  const disc = ({ pieces, shaded }) => {
+    const pt = (k) => { const a = -Math.PI / 2 + (2 * Math.PI * k) / pieces; return `${(40 + 36 * Math.cos(a)).toFixed(2)} ${(40 + 36 * Math.sin(a)).toFixed(2)}`; };
+    return `<svg viewBox="0 0 80 80">${Array.from({ length: pieces }, (_, k) => `<path class="${k < shaded ? "on" : ""}" d="M40 40L${pt(k)}A36 36 0 0 1 ${pt(k + 1)}Z"/>`).join("")}</svg>`;
+  };
+  const cols = visual.discs.map((d, k) => `<figure><figcaption>${d.pieces} 조각</figcaption>${disc(d)}${visual.fractions === false ? "" : `<span class="b5-src-fracs">${fractionMarkup([[null, null]], k * 2)}</span>`}</figure>`);
+  return `<div class="b5-src-discs" role="img" aria-label="${escapeHtml(visual.discs.map((d) => `${d.pieces}조각 원판 중 ${d.shaded}조각 색칠`).join(", "))}"><div class="row" style="--n:${visual.discs.length}">${cols.join(visual.fractions === false ? "" : '<b class="eq">=</b>')}</div></div>`;
+}
+
+function sourceFractionChain(visual) {
+  return `<div class="b5-src-fracs" role="img" aria-label="${escapeHtml(`크기가 같은 분수: ${visual.fractions.map(([n, d]) => `${d ?? "빈칸"}분의 ${n ?? "빈칸"}`).join(" = ")}`)}">${fractionMarkup(visual.fractions)}</div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -603,6 +667,10 @@ export function book05Markup(visual) {
     case "source-pair-product": return sourcePairProduct(visual);
     case "source-product-triangle": return sourceProductTriangle(visual);
     case "source-product-ring": return sourceProductRing(visual);
+    case "source-segment": return sourceSegment(visual);
+    case "source-shape-equations": return sourceShapeEquations(visual);
+    case "source-fraction-discs": return sourceFractionDiscs(visual);
+    case "source-fraction-chain": return sourceFractionChain(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);
