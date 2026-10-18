@@ -2830,7 +2830,11 @@ MD50:{ name:{ko:'일차방정식 풀이',en:'Solving Linear Equations',zh:'一�
           {id:3,label:{ko:'양변에 미지수(실전)',en:'x on both sides (main)',zh:'两边都有未知数(实战)'},params:{mode:'bothSides',wide:true},
            concept:{ko:'양변에 모두 x가 있으면 x항은 한쪽으로, 상수항은 반대쪽으로 모은 뒤 x의 계수로 나눕니다. 등호를 넘어가는 항은 부호가 바뀝니다.',
              en:'When x sits on both sides, gather the x terms on one side and the constants on the other, then divide by the coefficient of x. A term that crosses the equals sign flips its sign.',
-             zh:'两边都有x时，把x项收到一边、常数项收到另一边，再除以x的系数。越过等号的项要变号。'}}] },
+             zh:'两边都有x时，把x项收到一边、常数项收到另一边，再除以x的系数。越过等号的项要变号。'}},
+          {id:4,label:{ko:'계수가 분수·소수',en:'fraction & decimal coefficients',zh:'系数为分数·小数'},params:{mode:'fracCoef'},
+           concept:{ko:'계수에 분수가 있으면 양변에 분모의 수를, 소수가 있으면 10을 곱해 정수 계수로 바꾼 뒤 풉니다 — x/3+2=5는 x+6=15, x=9입니다.',
+             en:'Clear fractions by multiplying both sides by the denominator, or decimals by multiplying by 10, then solve: x/3+2=5 becomes x+6=15, so x=9.',
+             zh:'系数有分数时两边同乘分母，有小数时同乘10，化为整数系数再解：x/3+2=5变为x+6=15，x=9。'}}] },
 
 MD51:{ name:{ko:'정비례·반비례 값',en:'Direct & Inverse Proportion',zh:'正比例·反比例的值'}, gen:'md51_proportion', prereq:['MD50'],
   unit:'M-51',

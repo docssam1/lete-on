@@ -52,11 +52,11 @@ window.NM_STAGES = [
     name:{ko:'계산의 새싹',en:'Sprout',zh:'计算的新芽'},
     band:{ko:'6~7세 · 초등 1학년',en:'Ages 6–7 · Grade 1',zh:'6~7岁 · 小学一年级'},
     chapters:['R0','R1','G0','G1','R2','R3','R4','T4','R5','R6','R7','R8'],
-    tiers:['level1'], courses:{from:1,to:10}, weeks:75,
+    tiers:['level1'], courses:{from:1,to:7}, weeks:49,
     learn:{
-      ko:'자릿값과 모으기·가르기, 보수 5와 10, 받아올림·받아내림, 두 자리에서 네 자리 덧뺄셈, 구구단 2~9단, 나눗셈의 시작.',
-      en:'Place value, gathering and splitting, complements of 5 and 10, carrying and borrowing, two- to four-digit addition and subtraction, times tables 2–9, the start of division.',
-      zh:'位值与合分、5和10的补数、进位与退位、两位到四位数加减、2~9乘法口诀、除法入门。'},
+      ko:'100까지의 수와 보수 10, 받아올림·받아내림, 세 자리 수, 두·세 자리 덧셈과 뺄셈, 곱셈구구 2~9단, 네 자리 수.',
+      en:'Numbers to 100 and complements of 10, carrying and borrowing, three-digit numbers, two- and three-digit addition and subtraction, times tables 2–9, four-digit numbers.',
+      zh:'100以内的数与10的补数、进位与退位、三位数、两位和三位数加减、2~9乘法口诀、四位数。'},
     how:{
       ko:'수 감각의 첫 습관은 보수입니다. 8 + 7이 어려우면 7에서 2를 빌려 10을 먼저 만듭니다. 필산은 학교 진도 그대로 정확한 절차로 다지고, 같은 문제를 그 옆에서 펼쳐 다시 만듭니다.',
       en:'The first habit of number sense is the complement. If 8 + 7 is hard, borrow 2 from the 7 and make 10 first. The column method is practised exactly as school teaches it, and beside it the same problem is unfolded and remade.',
@@ -69,18 +69,18 @@ window.NM_STAGES = [
     aheadNote:{ko:'학교 진도보다 앞선 편성이라 구구단까지 이 단계에 들어 있습니다.',
       en:'The plan runs ahead of school, so times tables already sit in this stage.',
       zh:'编排比学校进度提前，所以乘法口诀已经在这一阶段。'},
-    meta:{ko:'과정 1~10 · 주 2회 기준 39주(주 1회 75주)',en:'Courses 1–10 · 39 weeks at two sheets a week (75 at one)',zh:'课程1~10 · 每周2次约39周(每周1次75周)'}
+    meta:{ko:'과정 1~7 · 주 2회 기준 25주(주 1회 49주)',en:'Courses 1–7 · 25 weeks at two sheets a week (49 at one)',zh:'课程1~7 · 每周2次约25周(每周1次49周)'}
   },
   {
     key:'leap', icon:'🚀', accent:'#16417C', status:'live',
     name:{ko:'계산의 도약',en:'Leap',zh:'计算的跃进'},
     band:{ko:'초등 1학년 말 ~ 2학년',en:'End of Grade 1 – Grade 2',zh:'小学一年级末~二年级'},
-    chapters:['T8','R9','T9','R10','R11','R12','R13','R14'],
-    tiers:['level2'], courses:{from:11,to:16}, weeks:31,
+    chapters:['T8','R9','T9','R10','R11','R12','R13','R14','T14','R15','T15'],
+    tiers:['level2'], courses:{from:8,to:16}, weeks:57,
     learn:{
-      ko:'두 자리×두 자리, 나눗셈과 역연산, 분수의 첫걸음, 세 자리×두 자리, 두 자리로 나누기, 혼합계산.',
-      en:'Two-digit × two-digit, division and inverse operations, first steps in fractions, three-digit × two-digit, dividing by two digits, mixed operations.',
-      zh:'两位数乘两位数、除法与逆运算、分数入门、三位数乘两位数、除以两位数、混合运算。'},
+      ko:'두·세 자리 × 한 자리, 나눗셈의 시작과 나머지, 두 자리 × 두 자리, 세 자리 ÷ 한 자리, 두 자리로 나누기, 큰 수, 분모가 같은 분수, 소수의 덧셈과 뺄셈.',
+      en:'Two- and three-digit × one digit, division and remainders, two-digit × two-digit, three-digit ÷ one digit, dividing by two digits, large numbers, fractions with like denominators, adding and subtracting decimals.',
+      zh:'两三位数乘一位数、除法入门与余数、两位数乘两位数、三位数除以一位数、除以两位数、大数、同分母分数、小数加减法。'},
     how:{
       ko:'분배법칙을 문자보다 수로 먼저 배웁니다. 47 × 6은 40 × 6과 7 × 6으로 쪼개고, × 5는 × 10의 절반으로 봅니다. 받아올림에서 아이가 가장 자주 멈추는 시기라, 개인별 정체 감지와 보강이 여기서 제일 많이 일합니다.',
       en:'The distributive law is learned with numbers before letters. 47 × 6 splits into 40 × 6 and 7 × 6; × 5 is seen as half of × 10. This is where children stall most often, so the per-child stall detection works hardest here.',
@@ -88,31 +88,34 @@ window.NM_STAGES = [
     example:'47 × 6 → 40 × 6 + 7 × 6 → 240 + 42 → 282',
     symbols:[
       {sym:'a/b', tr:{ko:'b로 나눈 것 중 a — 분수 막대 그림이 기호보다 먼저입니다',en:'a of b equal parts — the fraction bar picture comes before the symbol',zh:'分成b份中的a份——分数条的图先于符号'}},
-      {sym:'( )', tr:{ko:'먼저 계산할 묶음',en:'the bundle to compute first',zh:'先算的那一组'}}],
-    meta:{ko:'과정 11~16 · 주 2회 기준 16주(주 1회 31주)',en:'Courses 11–16 · 16 weeks at two sheets a week (31 at one)',zh:'课程11~16 · 每周2次约16周(每周1次31周)'}
+      {sym:'0.1', tr:{ko:'소수점 — 1보다 작은 자리를 여는 점',en:'the decimal point — the door to places below one',zh:'小数点——打开比1更小的位'}}],
+    aheadNote:{ko:'학교 진도로는 초3~4에 나오는 내용을 여기서 만납니다.',
+      en:'In school terms this covers Grade 3–4 material.',
+      zh:'按学校进度，这里学的是小学三~四年级的内容。'},
+    meta:{ko:'과정 8~16 · 주 2회 기준 30주(주 1회 57주) · 학교로는 초3~4 내용',en:'Courses 8–16 · 30 weeks at two sheets a week (57 at one) · Grade 3–4 material',zh:'课程8~16 · 每周2次约30周(每周1次57周) · 小学三~四年级内容'}
   },
   {
     key:'mastery', icon:'👑', accent:'#0E2C57', status:'live',
     name:{ko:'계산의 정복',en:'Mastery',zh:'计算的征服'},
     band:{ko:'초등 2학년 말 ~ 3학년',en:'End of Grade 2 – Grade 3',zh:'小学二年级末~三年级'},
-    chapters:['T14','R15','T15','R16','CR8','R17'],
+    chapters:['R16','CR8','R17'],
     tiers:['level3'], courses:{from:17,to:25}, weeks:53,
     learn:{
-      ko:'소수 덧뺄과 곱셈, 제곱수, 약수와 배수·소인수분해, 분모가 다른 분수, 분수 곱셈과 나눗셈, 수열, 백분율과 비율.',
-      en:'Decimal addition, subtraction and multiplication, square numbers, factors and multiples, fractions with unlike denominators, multiplying and dividing fractions, sequences, percentages and ratios.',
-      zh:'小数加减与乘法、平方数、约数与倍数与质因数分解、异分母分数、分数乘除、数列、百分数与比。'},
+      ko:'약수와 배수, 약분·통분과 분모가 다른 분수, 혼합 계산, 분수·소수의 곱셈, 제곱수와 거듭제곱, 분수의 나눗셈, 소수의 나눗셈, 비와 비율·평균.',
+      en:'Factors and multiples, simplifying and unlike denominators, mixed operations, multiplying fractions and decimals, squares and powers, dividing fractions, dividing decimals, ratio, rate and average.',
+      zh:'约数与倍数、约分通分与异分母分数、混合运算、分数与小数乘法、平方数与乘方、分数除法、小数除法、比与比率及平均数。'},
     how:{
       ko:'수 사이의 관계로 계산을 줄입니다. 2와 5는 친구라서 × 25는 × 100 ÷ 4이고, 1부터 100까지는 첫수와 끝수를 짝지어 5050입니다. 과정은 가로줄이고 계보는 세로줄이라, 마법마다 나중에 무엇으로 자라는지가 카드에 적혀 있습니다.',
       en:'Relations between numbers remove the calculation. 2 and 5 are friends, so × 25 is × 100 ÷ 4; 1 to 100 pairs first with last and gives 5050. Courses run across, lineages run down — each magic card says what it grows into later.',
       zh:'用数与数的关系省掉计算。2和5是朋友，所以×25就是×100÷4；1到100首尾配对得5050。课程是横线，脉络是竖线——每张魔法卡都写着它以后会长成什么。'},
     example:'× 25 → × 100 ÷ 4 · 1 + 2 + … + 100 → (1 + 100) × 50 → 5050',
     symbols:[
-      {sym:'0.1', tr:{ko:'소수점 — 1보다 작은 자리를 여는 점',en:'the decimal point — the door to places below one',zh:'小数点——打开比1更小的位'}},
+      {sym:'( )', tr:{ko:'먼저 계산할 묶음',en:'the bundle to compute first',zh:'先算的那一组'}},
       {sym:'n²', tr:{ko:'같은 수를 두 번 곱해라',en:'multiply the same number twice',zh:'同一个数乘两次'}},
       {sym:'%', tr:{ko:'100 중 몇',en:'how many out of 100',zh:'100中的几'}}],
-    aheadNote:{ko:'학교 진도로는 초4~5에 나오는 내용을 여기서 만납니다.',
-      en:'In school terms this covers Grade 4–5 material.',
-      zh:'按学校进度，这里学的是小学四~五年级的内容。'},
+    aheadNote:{ko:'학교 진도로는 초5~6에 나오는 내용을 여기서 만납니다.',
+      en:'In school terms this covers Grade 5–6 material.',
+      zh:'按学校进度，这里学的是小学五~六年级的内容。'},
     meta:{ko:'과정 17~25 · 주 2회 기준 29주(주 1회 53주) · 학교로는 초5~6 내용',en:'Courses 17–25 · 29 weeks at two sheets a week (53 at one) · the end of the arithmetic track',zh:'课程17~25 · 每周2次约29周(每周1次53周) · 运算段的终点'}
   },
   {
@@ -141,7 +144,7 @@ window.NM_STAGES = [
     name:{ko:'중학교 — 기호가 바뀌는 자리',en:'Middle School — where the symbols change',zh:'初中——符号改变的地方'},
     band:{ko:'중학교 1~3학년',en:'Grades 7–9',zh:'初中一~三年级'},
     chapters:['W8-1','W8-2','W8-3','W8-4','W8-5','W8-6','W8-7','W8-8','W9-1','W9-2','W9-3','W9-4','W9-5','W10-1','LAB-NUMLINE','W10-2','W10-3','W10-4','W10-5','W10-6','W10-7'],
-    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:92,
+    tiers:['middle1','middle2','middle3'], courses:{from:29,to:37}, weeks:93,
     learn:{
       ko:'정수와 유리수, 부호의 규칙, 문자와 식, 방정식과 비례, 지수와 단항식, 다항식, 연립방정식과 일차부등식, 일차함수, 경우의 수, 제곱근, 인수분해와 이차방정식, 이차함수, 산포도, 사분위수·상자그림, 산점도·상관관계.',
       en:'Integers and rationals, signs, algebraic expressions, equations and proportion, exponents and polynomials, systems and inequalities, functions, counting, roots, factorisation and quadratics, dispersion, quartiles and box plots, and scatter plots and correlation.',
@@ -155,7 +158,7 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~37 · 주 2회 기준 48주(주 1회 92주) · 실험실 2',en:'Courses 29–37 · 48 weeks at two sheets a week (92 at one) · 2 labs',zh:'课程29~37 · 每周2次约48周(每周1次92周) · 2个实验室'}
+    meta:{ko:'과정 29~37 · 주 2회 기준 49주(주 1회 93주) · 실험실 2',en:'Courses 29–37 · 49 weeks at two sheets a week (93 at one) · 2 labs',zh:'课程29~37 · 每周2次约49周(每周1次93周) · 2个实验室'}
   },
   /* 고등(2026-09-29) — 원장 "공통수학1, 공통수학2도 있어야지 / 대수 / 미적분1".
      한 칸에 네 과목을 묶어 두었던 'high' 단계를 과목마다 한 단계로 나눈다(로드맵 10단계).
