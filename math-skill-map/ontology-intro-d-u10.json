@@ -1,0 +1,323 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v49",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 D",
+    "unit": 10,
+    "title": "배수의 차-직접 해보기",
+    "printedPages": [
+      93,
+      99
+    ],
+    "sourceActivityBlocks": 16,
+    "visuallyReviewedPages": 7
+  },
+  "aggregate": {
+    "ontologyNodes": 1401,
+    "ontologyRelations": 2307,
+    "skillActionCandidates": 272,
+    "activitiesWithSkillCandidateEvidence": 531,
+    "activitiesInReviewQueue": 321,
+    "conditionalDifficultyCandidates": 547,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "newlyLinkedActivities": 16,
+    "activitySkillRelations": 28,
+    "newActivitySkillRelations": 28,
+    "newActionCandidates": 2,
+    "reusedActionCandidates": 1,
+    "conditionalDifficultyBands": 16,
+    "relationHypotheses": 4,
+    "minimumCurriculumLevelCandidates": 16,
+    "minimumCurriculumUnresolved": 0,
+    "minimumCurriculumAssignments": 0,
+    "validatedAnswers": 1,
+    "somaDirectCrossReferences": 6,
+    "somaRowsHeldBack": 3,
+    "somaNoDirectRow": 10
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "D10-RATE01",
+      "area": "relations",
+      "areaOrder": 33,
+      "label": "회당 차이를 잔여 차에 누적해 시행 횟수 복원하기",
+      "observableAction": "같은 초기량이나 대응 가능한 두 수량에서 회당 사용량·묶음량 차이를 누적해, 끝에 남은 차로 반복 횟수와 초기량을 복원한다.",
+      "activityCount": 12,
+      "printedPages": [
+        93,
+        94,
+        96,
+        97,
+        98,
+        99
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군",
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D10-REMAINDER01",
+      "area": "relations",
+      "areaOrder": 34,
+      "label": "잔여·부족 조건의 차로 공통 대상 수와 총량 복원하기",
+      "observableAction": "같은 대상에게 나누거나 배분하는 두 조건의 잔여·부족량을 비교해 대상 수를 구하고 처음 총량을 복원한다.",
+      "activityCount": 4,
+      "printedPages": [
+        95,
+        98,
+        99
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "reusedSkillActions": [
+    {
+      "id": "AR05",
+      "label": "공통 묶음을 없애 차로 미지값 구하기",
+      "newEvidenceActivities": 12,
+      "unitEvidenceActivities": 24,
+      "previouslyLinkedActivities": 0,
+      "conditionalDifficultyBands": [
+        "2",
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군",
+        "초등 3–4학년군"
+      ],
+      "note": "정적 공통 항 소거 유형을 회당 차 누적 문제에 일반 유형 근거로 연결하고, 반복 누적 행동은 별도 후보로 유지합니다."
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "bandsByAction": [
+      {
+        "id": "AR05",
+        "conditionalDifficultyBands": [
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      {
+        "id": "D10-RATE01",
+        "conditionalDifficultyBands": [
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      {
+        "id": "D10-REMAINDER01",
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      }
+    ],
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "strategy-context-only",
+    "minimumLevelCandidates": [
+      {
+        "candidate": "초등 1–2학년군",
+        "activityCount": 9,
+        "status": "strategy-dependent-candidate"
+      },
+      {
+        "candidate": "초등 3–4학년군",
+        "activityCount": 7,
+        "status": "strategy-dependent-candidate"
+      }
+    ],
+    "candidateActivities": 16,
+    "unresolvedActivities": 0,
+    "confirmedAssignments": 0,
+    "note": "1–2학년군 후보는 묶어 세기·뛰어 세기·동수누가와 쉬운 잔여 차 계산을 전제합니다. 두 배분 조건의 몫·나머지를 공식화하거나 큰 수를 형식적으로 나누는 풀이에서는 3–4학년군 내용이 필요할 수 있습니다. 학년군은 문항별 최저 학년 확정값이 아닙니다."
+  },
+  "crossReferences": {
+    "directSomaRows": 6,
+    "heldBackRelatedRows": 3,
+    "noDirectRow": 10,
+    "minimumCurriculumConfirmed": 0,
+    "note": "소마 직접 주제 후보·보류 행은 문제 해결 전략 맥락이며 학년·선수 관계를 확정하지 않습니다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "TAX-FAMILY-INTRO-D-U10-RATE-REMAINDER",
+        "label": "회당 수량 차와 잔여·부족 관계",
+        "memberSkillIds": [
+          "AR05",
+          "D10-RATE01",
+          "D10-REMAINDER01"
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "from": "AR05",
+        "to": "D10-RATE01",
+        "type": "related-but-distinct",
+        "basis": "AR05는 두 합성량에서 공통 항을 한 번 상쇄해 차를 구하고, D10-RATE01은 회당 차이가 여러 시행에 누적된 결과를 잔여량에서 복원한다."
+      },
+      {
+        "from": "D10-RATE01",
+        "to": "D10-REMAINDER01",
+        "type": "related-but-distinct",
+        "basis": "둘 다 수량 차로 반복 횟수를 구하지만 RATE01은 같은 초기량의 회당 변화가 누적되고, REMAINDER01은 두 배분 조건의 잔여·부족량을 비교한다."
+      },
+      {
+        "from": "AR05",
+        "to": "D10-REMAINDER01",
+        "type": "related-but-distinct",
+        "basis": "두 행동은 묶음 차를 비교하지만 AR05는 공통 항 소거가 중심이고 REMAINDER01은 배분 조건의 잔여·부족 부호를 함께 해석한다."
+      },
+      {
+        "from": "D10-RATE01",
+        "to": "D9-PAIRSUM01",
+        "type": "related-but-distinct",
+        "basis": "두 유형은 수량 관계를 결합하지만 D9-PAIRSUM01은 세 쌍의 정적 합을 결합하고 D10-RATE01은 회당 차의 반복 누적을 추론한다."
+      }
+    ]
+  },
+  "curriculumSource": {
+    "status": "official-source-context-only",
+    "reference": "2022 개정 교육과정 교육부 고시 제2022-33호 별책 8",
+    "sourceDigest": "bad320409dd8dd5ee040346d8e7b55d556d12e958b7a3c92778ba0e90fc97aed",
+    "gradeBandCandidates": [
+      "초등 1–2학년군",
+      "초등 3–4학년군"
+    ],
+    "standardsContext": [
+      "2수01-06",
+      "4수01-04",
+      "4수01-06"
+    ],
+    "minimumGradeConfirmed": false
+  },
+  "answerValidation": {
+    "validatedActivities": 1,
+    "status": "printed-answer-key-and-independent-recomputation",
+    "activityLabel": "심화문제 01",
+    "note": "답안과 독립 재계산이 같은 초기 수량·시행 횟수로 수렴. 공개 자료에는 문항 원문·정답 수치·정답 페이지를 싣지 않습니다."
+  },
+  "privacy": "원문 문제·정답 수치·해설, 활동 식별자, OCR 원문, 이미지·파일 경로와 해시는 공개하지 않았습니다. 난이도·교과수준·관계는 검토 후보입니다."
+}
