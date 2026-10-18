@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-18 First Five 5-2 Items: Live Deployment
+
+- User request: “배포진행”. The verified five-item change in PR #354 was merged into `main` as `f35fc95a73ea2973e20894a285c86cd029365f8b`; GitHub Pages run [1503](https://github.com/docssam1/lete-on/actions/runs/39114210648) completed successfully. The Pages deployment step itself passed.
+- Live site: [elementary question bank](https://lete-on.gfieldacademy.net/hselementary/question-bank/). A fresh-browser check confirmed that the deployed index, curriculum, new range generator and scoped CSS match the verified source bytes. The exploration produces three questions with a blank problem number line and the expected open/closed endpoints in solutions. Selecting all five types at 1280px and 320px yields 15 distinct questions, with no page errors or horizontal overflow.
+- Scope remains exactly Exploration 1 and Examples 1-1 through 1-4. The 124 earlier Grade 5-2 records remain unchanged. These five rely on user-authorized direct solutions and independent enumeration; `publisherKeyVerified=false` remains explicit. The original source, full calculations, private QA and live-browser evidence are recorded in the existing private Drive source-memory location and external Mac continuation handoff.
+- The independent-solutions section below describes the state before this deployment. This section records the subsequent verified live release. Next content batch: classify the following-page Mission 1–6 in small groups.
+
 ## 2026-10-18 First Five 5-2 Items: User-Authorized Independent Solutions
 
 - User decision: “네가 풀이하여 해결해” followed by “진행”. For exactly `5-2-u1-e1-exploration` and Examples `1-1` through `1-4`, direct source solving plus independent enumeration replaces the matching-publisher-answer prerequisite in the historical 2026-09-16 gate. All other source, learner, notation, visibility, screen/print and regression requirements still apply. This exception does not unlock the 124 legacy records or any following Mission.
