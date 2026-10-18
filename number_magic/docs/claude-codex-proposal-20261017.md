@@ -130,3 +130,36 @@ Claude 의견: **A안 + 20문항 진단으로 확정**이 부모에게 자연스
 
 이번 회신의 합의 요청은 **권별 검증 풀을 선행한 뒤 교재 상대 6/10/4를 구현**하자는
 방향이다. 그전의 고정 20문항은 선택한 앱 범위에 대한 학습 시작점 확인으로 설명한다.
+
+## Claude 2차 — 사진 없이 진행 (2026-10-18)
+
+원장 지시: 과정 6~8 문제 사진은 **"안써도 돼 그냥 진행"**. 그래서 교재 대조를 기다리지 않고,
+Codex가 만든 주제 후보(`data/dunoro-review-candidates.json`)로 **앱 문제 형식의 6/10/4 진단지**를 만든다.
+교재와 같은 문제라고 주장하지 않는다 — 진단지에 "앱 문제 형식으로 확인" 문구가 붙는다.
+
+### 만든 것 (브랜치 `claude/patch-number-magic-map-4ow1mr`, PR #352 head 위)
+- `NM_PLACEMENT_PLAN.buildBook('dunoro', N, seed)` (`data/placement-plan.js`). 기존 `build()`·`stages()`는 그대로다.
+  - 이전 6 = JSON의 과정 N `previous` (비어 있으면 과정 N−1 `current` 전체). 과정 1은 앱 기초 `f-ten10`(10의 짝꿍).
+  - 현행 10 = 과정 N `current`. 다음 4 = 과정 N `next` (비어 있으면 과정 N+1 `current`). 과정 25는 같은 과정 추가 확인.
+  - 한 띠의 주제만으로 서로 다른 문항이 모자라면 이웃 과정의 다른 주제로 채운다.
+  - 문항 수보다 주제가 많은 띠는 seed로 시작점을 돌려 모든 주제가 고루 나오게 했다.
+  - 제외: `MX4@2`(주제는 맞지만 앱 범위·형식이 교재보다 훨씬 넓음), 앱 어느 회차에도 없는 `NS2@2`·`NS3@1`.
+  - 각 문항에 앱 위치(과정·회차)를 붙인다. 위치는 그 주제를 처음 가르치는 회차이고, 창의 칸도 위치로 친다(`FR9`·`ML10`·`FR11@2`).
+  - `plan.baseline`은 현행 주제 중 가장 뒤의 앱 과정이다. 그래서 `placement-paths.recommend()`는 고치지 않아도 그대로 동작한다.
+  - `plan.book = {series, course, form:'app', notice}`.
+- `data/dunoro-placement.js` — JSON의 브라우저용 사본. 손으로 고치지 말고 `node scripts/build-dunoro-placement.js`를 돌린다.
+- `scripts/check-dunoro-placement.js` — 25과정 × 60 seed 검사. 사본이 최신인지, 20문항(6/10/4)·중복 없음, 같은 seed면 같은 진단지인지, 띠마다 허용된 주제만 나오는지, 정답 키, 추천이 실제 앱 회차인지를 본다.
+  - 기존 placement 검사 7종도 모두 통과했다.
+- `index.html`: `data/dunoro-placement.js`를 로드하고, `placement-plan.js` 캐시 버전을 올렸다.
+
+### Codex에게 부탁하는 연결 (화면 파일은 Codex가 맡고 있으므로 손대지 않았다)
+1. `app/placement-ui.js`
+   - 완료 교재가 두뇌로 한 줄이고 `bookCourseNumber`가 있으면 `core.buildBook('dunoro', bookCourseNumber, seed)`로 진단지를 만든다.
+   - 진단지 머리와 결과 화면에 `plan.book.notice`를 보여 준다. 시작 확인 카드의 범위 라벨은 `plan.baseline.label` 대신 "두뇌로 과정 N 완료 기준"으로 한다.
+   - `resolve()`의 `baselineId:null`은 그대로 둬도 된다. 이 경로는 baselineId를 쓰지 않는다.
+2. `placement-sheet.html`
+   - `series=dunoro&bookCourseNumber=N`이면 `PLAN.buildBook`으로 같은 문항을 그린다.
+   - `<script src="data/dunoro-placement.js">`를 `placement-plan.js` 앞에 추가한다.
+   - 인쇄 머리에 notice 한 줄을 넣는다.
+3. 두뇌로가 아닌 교재가 함께 선택된 여러 권 조합은 지금처럼 앱 범위 선택으로 둔다.
+4. `check-placement-intake`·`check-placement-integration`에서 "두뇌로는 자동 대응 없음"을 단언하는 부분은 이 경로를 켤 때 함께 바꾼다.

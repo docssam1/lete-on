@@ -458,6 +458,131 @@
     return { baseline: clone(baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
       boundaries: { previous: at === 0 ? 'same-foundation-smaller' : null, next: at === list.length - 1 ? 'same-course' : null } };
   }
+
+  /* Completed-book diagnosis (2026-10-18, owner: "그냥 진행" without book photos).
+   * A completed Dunoro course N gives previous = course N-1, current = course N,
+   * next = course N+1 topics, from data/dunoro-placement.js. The questions are
+   * this app's generators, so the paper is labelled "앱 문제 형식으로 확인": the
+   * book's number ranges and problem layouts were not compared. */
+  const BOOKS = { dunoro: { label: text('두뇌로', 'Dunoro', 'Dunoro'), courses: 25, data: 'NM_DUNORO_CANDIDATES' } };
+  // Topic match is right but the app range/form is far wider than the book row.
+  const BOOK_EXCLUDED = new Set(['MX4@2']);
+  const bookCache = Object.create(null);
+  let locations = null;
+  function bookData(series) {
+    const book = BOOKS[series];
+    if (!book) fail('unknown book series ' + series);
+    if (!W[book.data] && typeof require === 'function') {
+      try { require('./dunoro-placement.js'); } catch (_) { /* reported below */ }
+    }
+    const data = W[book.data];
+    if (!data || !Array.isArray(data.courses) || data.courses.length !== book.courses) fail('missing book topic data ' + series);
+    return data;
+  }
+  // First place this app teaches a thread level: its own course, a non-review
+  // drill, then the creative column (session i+1 takes creative[i % length]).
+  function locate(key) {
+    if (!locations) {
+      locations = new Map();
+      const put = (k, course, session) => { if (!locations.has(k)) locations.set(k, { course, session }); };
+      const passes = [(d, own) => !d.review && own.has(d.t), d => !d.review, 'creative', () => true];
+      passes.forEach(pass => W.NM_COURSE_SPEC.forEach(spec => {
+        const course = 'C' + spec.id, c = W.NM_COURSES[course];
+        if (!c || c.comingSoon) return;
+        const own = new Set((spec.drills || []).map(x => String(x).split('@')[0]));
+        if (pass === 'creative') {
+          const creative = spec.creative || [];
+          creative.forEach((k, i) => { if (i < (c.sessions || []).length) put(k, course, i + 1); });
+          return;
+        }
+        (c.sessions || []).forEach((s, i) => (s.drills || []).forEach(d => {
+          if (pass(d, own)) put(d.t + '@' + d.lv, course, i + 1);
+        }));
+      }));
+    }
+    return locations.get(key) || null;
+  }
+  function bookRefs(keys) {
+    const out = [];
+    (keys || []).forEach(key => {
+      const m = /^([A-Z][A-Z0-9]*)@(\d+)$/.exec(key), at = m && locate(key);
+      if (!m || !at || BOOK_EXCLUDED.has(key) || out.some(r => r.t + '@' + r.lv === key)) return;
+      const ref = { t: m[1], lv: Number(m[2]), course: at.course, session: at.session };
+      if (safeRef(ref)) out.push(ref);
+    });
+    return out;
+  }
+  // paper = the completed course the paper is for; n = the book course whose topics this band checks.
+  function bookStage(series, paper, n, band, refs, extra) {
+    const name = BOOKS[series].label;
+    return { id: series + '-' + paper + ':' + band, kind: 'book', series, bookCourse: n, form: 'app',
+      label: text(name.ko + ' 과정 ' + n + ' 내용 · 앱 문제 형식', name.en + ' course ' + n + ' topics · app problem form', name.zh + ' 课程' + n + '内容 · 本应用题型'),
+      course: refs.length ? refs[0].course : null, session: refs.length ? refs[0].session : null, refs, extra: extra || [] };
+  }
+  function bookStages(series, n) {
+    const key = series + '-' + n;
+    if (bookCache[key]) return bookCache[key];
+    dependencies();
+    const data = bookData(series), row = c => data.courses.find(x => x.course === c);
+    const total = BOOKS[series].courses;
+    if (!Number.isInteger(n) || n < 1 || n > total) fail('unknown book course ' + key);
+    const own = row(n), prior = row(n - 1), later = row(n + 1);
+    const current = bookStage(series, n, n, 'current', bookRefs(own.current));
+    if (!current.refs.length) fail('no supported source refs for ' + key);
+    // Course 1 has no earlier book course: use this app's last foundation topic.
+    const previous = prior ? bookStage(series, n, n - 1, 'previous', bookRefs(own.previous.length ? own.previous : prior.current), bookRefs(prior.current)) :
+      clone(allStages().find(stage => stage.id === 'f-ten10'));
+    const next = later ? bookStage(series, n, n + 1, 'next', bookRefs(own.next.length ? own.next : later.current), bookRefs(later.current)) :
+      Object.assign(clone(current), { id: series + '-' + n + ':next' });
+    // The main topic is the furthest app course among the completed topics.
+    const order = new Map(W.NM_COURSE_SPEC.map((s, i) => ['C' + s.id, i])), list = allStages();
+    const furthest = current.refs.reduce((a, r) => order.get(r.course) > order.get(a.course) ? r : a, current.refs[0]);
+    let baseline = null;
+    list.forEach(stage => { if (stage.kind === 'course' && order.get(stage.course) <= order.get(furthest.course)) baseline = stage; });
+    if (!baseline) fail('no app stage for ' + key);
+    bookCache[key] = { previous, current, next, baseline: clone(baseline), last: n === total };
+    return bookCache[key];
+  }
+  function stageById(id) {
+    const m = /^([a-z]+)-(\d+):(previous|current|next)$/.exec(id || '');
+    if (m && BOOKS[m[1]]) return bookStages(m[1], Number(m[2]))[m[3]];
+    return allStages().find(stage => stage.id === id);
+  }
+  function buildBook(series, course, seed) {
+    const n = Number(course), set = bookStages(series, n), seedText = seed == null ? '0' : String(seed), items = [], seen = new Set();
+    const name = BOOKS[series].label, bookId = series + '-' + n;
+    for (const band of Object.keys(BAND_COUNTS)) {
+      const stage = set[band];
+      // Book-listed refs first; the neighbouring course's other topics only fill a short band.
+      const pools = [stage.refs, stage.refs.concat((stage.extra || []).filter(r => !stage.refs.some(x => x.t === r.t && x.lv === r.lv)))];
+      let accepted = 0;
+      // A band can list more topics than it has questions: the seed picks where the cycle starts.
+      const offset = W.NM_RNG.hashSeed(seedText + '|' + bookId + '|' + band);
+      for (const refs of pools) {
+        for (let attempt = 0; refs.length && attempt < 4096 && accepted < BAND_COUNTS[band]; attempt++) {
+          const ref = refs[(offset + attempt) % refs.length], p = source(ref, seedText + '|' + bookId + '|' + band + '|' + refs.length + '|' + attempt);
+          const q = stage.kind === 'foundation' ? foundation(stage, ref, p, false, attempt) : numberQuestion(ref, p, false);
+          if (!q) continue;
+          const fp = fingerprint(q);
+          if (seen.has(fp)) continue;
+          seen.add(fp);
+          let label = clone(stage.label);
+          if (set.last && band === 'next') label = text(label.ko + ' · 다음 범위 없음: 같은 과정 추가 확인', label.en + ' · no next range: additional checks in the same course', label.zh + ' · 无下一范围：在同一课程继续确认');
+          items.push({ id: bookId + ':' + band + ':' + (accepted + 1), band, stageId: stage.id, stageLabel: clone(stage.label), domain: q.domain, label,
+            course: ref.course || stage.course, session: ref.session || stage.session, thread: ref.t, level: ref.lv, responseMode: q.responseMode,
+            renderData: q.renderData, prompt: q.prompt, answer: q.answer, fingerprint: fp });
+          accepted++;
+        }
+      }
+      if (accepted !== BAND_COUNTS[band]) fail('insufficient unique supported items for ' + stage.id + ' / ' + band + ' (' + accepted + '/' + BAND_COUNTS[band] + ')');
+    }
+    return { baseline: clone(set.baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
+      book: { series, course: n, label: clone(name), form: 'app',
+        notice: text(name.ko + ' 과정 ' + n + ' 완료 기준 · 앱 문제 형식으로 확인해요. 교재의 숫자 범위·문제 모양과 다를 수 있어요.',
+          name.en + ' course ' + n + ' completed · checked with this app’s problem forms. Number ranges and layouts may differ from the book.',
+          name.zh + ' 课程' + n + '已完成 · 用本应用的题型确认，数字范围和题目样式可能与教材不同。') },
+      boundaries: { previous: n === 1 ? 'app-foundation' : null, next: set.last ? 'same-course' : null } };
+  }
   function normalize(value, array) {
     if (Array.isArray(value)) return array && value.length && value.every(x => normalize(x, false) !== null) ? value.map(x => normalize(x, false)) : null;
     if (typeof value === 'number') return Number.isFinite(value) && !array ? value : null;
@@ -484,7 +609,7 @@
     const baseline = plan.baseline, confirmed = profile.filter(x => !x.skipped);
     const addTopic = (rec, stage, items) => {
       const practiceSessions = [], refs = items ? items.map(item => ({ course: item.course, session: item.session, t: item.thread, lv: item.level })) :
-        stage.refs.map(ref => ({ course: stage.course, session: ref.session || stage.session, t: ref.t, lv: ref.lv }));
+        stage.refs.map(ref => ({ course: ref.course || stage.course, session: ref.session || stage.session, t: ref.t, lv: ref.lv }));
       refs.forEach(ref => { if (!practiceSessions.some(r => canonical(r) === canonical(ref))) practiceSessions.push(ref); });
       return Object.assign(rec, { stageId: stage.id, label: clone(stage.label), practiceSessions });
     };
@@ -515,7 +640,7 @@
       if (!threads.some(r => r.t === x.item.thread && r.lv === x.item.level)) threads.push({ t: x.item.thread, lv: x.item.level });
     });
     return addTopic({ course: first.course, session: first.session, threads, reason: '이전·현재 문항에서 확인한 연습 필요 영역 중 실제로 가장 이른 학습 회차를 권해요. 미검사 영역의 숙달이나 입학 합격을 뜻하지 않아요.' },
-      allStages().find(stage => stage.id === first.stageId), misses.filter(x => x.item.course === first.course && x.item.session === first.session).map(x => x.item));
+      stageById(first.stageId), misses.filter(x => x.item.course === first.course && x.item.session === first.session).map(x => x.item));
   }
   function summarize(plan, responses) {
     dependencies();
@@ -541,5 +666,6 @@
     return { correct, asked: 20, bands, domains, profile, recommendation: recommendation(plan, profile) };
   }
   W.NM_PLACEMENT_PLAN = { stages, build, summarize };
+  W.NM_PLACEMENT_PLAN.buildBook = buildBook;
   if (typeof module !== 'undefined' && module.exports) module.exports = W.NM_PLACEMENT_PLAN;
 })();
