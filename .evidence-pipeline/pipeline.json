@@ -765,7 +765,7 @@
       "title": "숫자 색종이: 같은 다섯 장의 모양 예상·계산 학습지",
       "work_status": "complete",
       "evidence_status": "verified",
-      "release_status": "locked",
+      "release_status": "published",
       "owner": "codex-mac-geometry",
       "source_records": [],
       "authoring_mode": "newly-authored",
@@ -904,10 +904,31 @@
         {
           "id": "release-readback",
           "required": false,
-          "status": "pending",
-          "evidence": []
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "https://github.com/docssam1/lete-on/actions/runs/39104541010",
+              "note": "Pages succeeded; 10 runtime hashes match; same ordered five, four print modes, duplex blank and tablet/phone passed. Six Drive PDFs and 102-entry evidence ZIP downloaded and SHA256 verified."
+            }
+          ]
         }
-      ]
+      ],
+      "release": {
+        "commit": "d4cae456b5cc0e0481e359695ab91e2bae704ad0",
+        "workflow": "https://github.com/docssam1/lete-on/actions/runs/39104541010",
+        "url": "https://lete-on.gfieldacademy.net/geometry/worksheet/number-paper/",
+        "drive_folder_id": "1rtk4OCOpVHJbH2j5bdvpAclgg9eS5yUg",
+        "review_file_id": "1m2T7kQP8tg_91msDmbX4yOyJQee4NMi9",
+        "pdf_drive_ids": [
+          "1uWx88gINvp5ca7_TBNcqG9DQc-prEck3",
+          "1du7cm_9KmAJPGXiWYAENG11vcR9jsqcH",
+          "1Uc-0OfG4zrs3XWPmhHNOwfAj_Emkf2RZ",
+          "1kWjoQLFrr-zWi-SoLI-fR5extB5ltvZw",
+          "1BZylX8UuCu2mE738jDLfDtndGa7s6rJ0",
+          "1ssKZgbhxbaeqVCJud1kLxydR0R4eTZX1"
+        ]
+      }
     }
   ]
 }
