@@ -458,6 +458,135 @@
     return { baseline: clone(baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
       boundaries: { previous: at === 0 ? 'same-foundation-smaller' : null, next: at === list.length - 1 ? 'same-course' : null } };
   }
+
+  /* Completed-book diagnosis (2026-10-18). Owner: "나와 있는 교과 연산 기준으로".
+   * data/dunoro-courses.js maps each Dunoro course's listed arithmetic to this
+   * app's thread levels. A completed course N gives previous = course N-1,
+   * current = course N, next = course N+1, asked with this app's questions. */
+  const BOOKS = { dunoro: { label: text('두뇌로', 'Dunoro', 'Dunoro'), courses: 25, data: 'NM_DUNORO_COURSES' } };
+  const bookCache = Object.create(null);
+  let locations = null;
+  function bookData(series) {
+    const book = BOOKS[series];
+    if (!book) fail('unknown book series ' + series);
+    if (!W[book.data] && typeof require === 'function') {
+      try { require('./dunoro-courses.js'); } catch (_) { /* reported below */ }
+    }
+    const data = W[book.data];
+    if (!data || !Array.isArray(data.courses) || data.courses.length !== book.courses) fail('missing book topic data ' + series);
+    return data;
+  }
+  // First place this app teaches a thread level: its own course, a non-review
+  // drill, then the creative column (session i+1 takes creative[i % length]).
+  // A level taught nowhere is placed where its thread is first taught.
+  function locate(key) {
+    if (!locations) {
+      locations = new Map();
+      const put = (k, course, session) => { if (!locations.has(k)) locations.set(k, { course, session }); };
+      const passes = [(d, own) => !d.review && own.has(d.t), d => !d.review, 'creative', () => true];
+      passes.forEach(pass => W.NM_COURSE_SPEC.forEach(spec => {
+        const course = 'C' + spec.id, c = W.NM_COURSES[course];
+        if (!c || c.comingSoon) return;
+        const own = new Set((spec.drills || []).map(x => String(x).split('@')[0]));
+        if (pass === 'creative') {
+          (spec.creative || []).forEach((k, i) => { if (i < (c.sessions || []).length) { put(k, course, i + 1); put(k.split('@')[0], course, i + 1); } });
+          return;
+        }
+        (c.sessions || []).forEach((s, i) => (s.drills || []).forEach(d => {
+          if (pass(d, own)) { put(d.t + '@' + d.lv, course, i + 1); put(d.t, course, i + 1); }
+        }));
+      }));
+    }
+    return locations.get(key) || locations.get(key.split('@')[0]) || null;
+  }
+  function bookRefs(keys) {
+    const out = [];
+    (keys || []).forEach(key => {
+      const m = /^([A-Z][A-Z0-9]*)@(\d+)$/.exec(key), at = m && locate(key);
+      if (!m || !at || out.some(r => r.t + '@' + r.lv === key)) return;
+      const ref = { t: m[1], lv: Number(m[2]), course: at.course, session: at.session };
+      if (safeRef(ref)) out.push(ref);
+    });
+    return out;
+  }
+  // paper = the completed course the paper is for; row = the book course this band checks.
+  function bookStage(series, paper, row, band, refs, extra) {
+    const name = BOOKS[series].label, n = row.course;
+    return { id: series + '-' + paper + ':' + band, kind: 'book', series, bookCourse: n, topics: row.topics,
+      label: text(name.ko + ' 과정 ' + n + ' · ' + row.topics, name.en + ' course ' + n, name.zh + ' 课程' + n),
+      course: refs.length ? refs[0].course : null, session: refs.length ? refs[0].session : null, refs, extra: extra || [] };
+  }
+  function bookStages(series, n) {
+    const key = series + '-' + n;
+    if (bookCache[key]) return bookCache[key];
+    dependencies();
+    const data = bookData(series), row = c => data.courses.find(x => x.course === c);
+    const total = BOOKS[series].courses;
+    if (!Number.isInteger(n) || n < 1 || n > total) fail('unknown book course ' + key);
+    const own = row(n), prior = row(n - 1), later = row(n + 1), mine = new Set(own.refs);
+    // Spiral rows repeat (4d±4d runs through courses 6~11): the neighbour bands
+    // ask what differs from course N first, and the repeated topics only fill in.
+    const differs = list => list.filter(k => !mine.has(k));
+    const current = bookStage(series, n, own, 'current', bookRefs(own.refs));
+    if (!current.refs.length) fail('no supported source refs for ' + key);
+    const previous = prior ? bookStage(series, n, prior, 'previous', bookRefs(differs(prior.refs)), bookRefs(prior.refs)) :
+      clone(allStages().find(stage => stage.id === data.before));
+    const next = later ? bookStage(series, n, later, 'next', bookRefs(differs(later.refs)), bookRefs(later.refs)) :
+      Object.assign(clone(current), { id: series + '-' + n + ':next' });
+    // Main app topic: the middle (upper median) app course of course N's new arithmetic.
+    // One far-ahead or review topic then cannot move the whole course.
+    const order = new Map(W.NM_COURSE_SPEC.map((s, i) => ['C' + s.id, i])), list = allStages();
+    const fresh = prior ? current.refs.filter(r => !prior.refs.includes(r.t + '@' + r.lv)) : current.refs;
+    const spread = (fresh.length ? fresh : current.refs).map(r => r.course).sort((a, b) => order.get(a) - order.get(b));
+    const main = spread[Math.floor(spread.length / 2)];
+    let baseline = null;
+    list.forEach(stage => { if (stage.kind === 'course' && order.get(stage.course) <= order.get(main)) baseline = stage; });
+    if (!baseline) fail('no app stage for ' + key);
+    bookCache[key] = { previous, current, next, baseline: clone(baseline), last: n === total };
+    return bookCache[key];
+  }
+  function stageById(id) {
+    const m = /^([a-z]+)-(\d+):(previous|current|next)$/.exec(id || '');
+    if (m && BOOKS[m[1]]) return bookStages(m[1], Number(m[2]))[m[3]];
+    return allStages().find(stage => stage.id === id);
+  }
+  function buildBook(series, course, seed) {
+    const n = Number(course), set = bookStages(series, n), seedText = seed == null ? '0' : String(seed), items = [], seen = new Set();
+    const name = BOOKS[series].label, bookId = series + '-' + n;
+    for (const band of Object.keys(BAND_COUNTS)) {
+      const stage = set[band];
+      // A band's own topics first; the rest of that course only fills a short band.
+      const pools = [stage.refs, stage.refs.concat((stage.extra || []).filter(r => !stage.refs.some(x => x.t === r.t && x.lv === r.lv)))];
+      let accepted = 0;
+      // A band can list more topics than it has questions: the seed picks where the cycle starts.
+      const offset = W.NM_RNG.hashSeed(seedText + '|' + bookId + '|' + band);
+      for (const refs of pools) {
+        for (let attempt = 0; refs.length && attempt < 4096 && accepted < BAND_COUNTS[band]; attempt++) {
+          const ref = refs[(offset + attempt) % refs.length], p = source(ref, seedText + '|' + bookId + '|' + band + '|' + refs.length + '|' + attempt);
+          const q = stage.kind === 'foundation' ? foundation(stage, ref, p, false, attempt) : numberQuestion(ref, p, false);
+          if (!q) continue;
+          const fp = fingerprint(q);
+          if (seen.has(fp)) continue;
+          seen.add(fp);
+          let label = clone(stage.label);
+          if (set.last && band === 'next') label = text(label.ko + ' · 다음 범위 없음: 같은 과정 추가 확인', label.en + ' · no next range: additional checks in the same course', label.zh + ' · 无下一范围：在同一课程继续确认');
+          items.push({ id: bookId + ':' + band + ':' + (accepted + 1), band, stageId: stage.id, stageLabel: clone(stage.label), domain: q.domain, label,
+            course: ref.course || stage.course, session: ref.session || stage.session, thread: ref.t, level: ref.lv, responseMode: q.responseMode,
+            renderData: q.renderData, prompt: q.prompt, answer: q.answer, fingerprint: fp });
+          accepted++;
+        }
+      }
+      if (accepted !== BAND_COUNTS[band]) fail('insufficient unique supported items for ' + stage.id + ' / ' + band + ' (' + accepted + '/' + BAND_COUNTS[band] + ')');
+    }
+    const topics = set.current.topics;
+    return { baseline: clone(set.baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
+      book: { series, course: n, label: clone(name), topics,
+        title: text(name.ko + ' 과정 ' + n + ' 완료 기준', name.en + ' course ' + n + ' completed', name.zh + ' 课程' + n + '已完成'),
+        notice: text('이전 6 · 과정 ' + n + ' 10 · 다음 4문항으로, 과정 ' + n + '의 연산(' + topics + ')을 확인해요.',
+          '6 earlier, 10 course-' + n + ' and 4 next questions check the arithmetic of ' + name.en + ' course ' + n + '.',
+          '用前6题、课程' + n + '的10题和后4题确认' + name.zh + '课程' + n + '的运算。') },
+      boundaries: { previous: n === 1 ? 'app-foundation' : null, next: set.last ? 'same-course' : null } };
+  }
   function normalize(value, array) {
     if (Array.isArray(value)) return array && value.length && value.every(x => normalize(x, false) !== null) ? value.map(x => normalize(x, false)) : null;
     if (typeof value === 'number') return Number.isFinite(value) && !array ? value : null;
@@ -484,7 +613,7 @@
     const baseline = plan.baseline, confirmed = profile.filter(x => !x.skipped);
     const addTopic = (rec, stage, items) => {
       const practiceSessions = [], refs = items ? items.map(item => ({ course: item.course, session: item.session, t: item.thread, lv: item.level })) :
-        stage.refs.map(ref => ({ course: stage.course, session: ref.session || stage.session, t: ref.t, lv: ref.lv }));
+        stage.refs.map(ref => ({ course: ref.course || stage.course, session: ref.session || stage.session, t: ref.t, lv: ref.lv }));
       refs.forEach(ref => { if (!practiceSessions.some(r => canonical(r) === canonical(ref))) practiceSessions.push(ref); });
       return Object.assign(rec, { stageId: stage.id, label: clone(stage.label), practiceSessions });
     };
@@ -515,7 +644,7 @@
       if (!threads.some(r => r.t === x.item.thread && r.lv === x.item.level)) threads.push({ t: x.item.thread, lv: x.item.level });
     });
     return addTopic({ course: first.course, session: first.session, threads, reason: '이전·현재 문항에서 확인한 연습 필요 영역 중 실제로 가장 이른 학습 회차를 권해요. 미검사 영역의 숙달이나 입학 합격을 뜻하지 않아요.' },
-      allStages().find(stage => stage.id === first.stageId), misses.filter(x => x.item.course === first.course && x.item.session === first.session).map(x => x.item));
+      stageById(first.stageId), misses.filter(x => x.item.course === first.course && x.item.session === first.session).map(x => x.item));
   }
   function summarize(plan, responses) {
     dependencies();
@@ -541,5 +670,6 @@
     return { correct, asked: 20, bands, domains, profile, recommendation: recommendation(plan, profile) };
   }
   W.NM_PLACEMENT_PLAN = { stages, build, summarize };
+  W.NM_PLACEMENT_PLAN.buildBook = buildBook;
   if (typeof module !== 'undefined' && module.exports) module.exports = W.NM_PLACEMENT_PLAN;
 })();

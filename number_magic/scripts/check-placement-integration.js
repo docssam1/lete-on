@@ -18,7 +18,7 @@ assert.deepEqual(plain(ui.readValues(['-2','-3','4.5'])),[-2,-3,4.5]);
 assert.equal(ui.readValues(['-2','']),null);assert.equal(ui.readValues(['12','12x']),null);
 const stages=plan.stages(),ids=new Set(stages.map(x=>x.id));
 let mapped=0,pending=0;const automaticSteps=new Set();
-assert.equal(books.series.length,10);
+assert.equal(books.series.length,11);
 for(const series of books.series)for(const step of books.getSteps(series.id))for(const progress of ['start','middle','complete']){
   const r=books.resolve(series.id,step.id,progress);assert(r,series.id+'/'+step.id);
   if(r.needsTopicConfirmation){assert.equal(r.baselineId,null);pending++;}
@@ -28,6 +28,10 @@ assert(mapped>0&&pending>0);assert.equal(books.resolve('unknown','unknown','comp
 assert.deepEqual(Array.from(automaticSteps).sort(),['miracle/pre-2023-v1-order','miracle/pre-2023-v3-ten']);
 assert.equal(books.resolve('miracle','pre-2023-v1-order','').baselineId,'f-order10');
 assert.equal(books.resolve('miracle','pre-2023-v1-order','unknown').baselineId,null);
+assert.equal(world.NM_PLACEMENT_PATHS.startingPoint({route:'school',grade:'e3',age:''}),'c8');
+assert.equal(world.NM_PLACEMENT_PATHS.startingPoint({route:'school',grade:'',age:''}),null);
+assert.equal(world.NM_PLACEMENT_PATHS.startingPoint({route:'book',completedBooks:[
+  {series:'miracle',step:'pre-2023-v1-order'}, {series:'soma-p',step:'v1'}]}),null);
 for(const step of books.getSteps('dunoro')){
   const resolved=books.resolve('dunoro',step.id,'');
   assert.equal(resolved.baselineId,null);assert.equal(resolved.needsTopicConfirmation,true);
@@ -88,7 +92,28 @@ const screen={scrollTop:230,
   querySelectorAll(){return [];}};
 const state=ui.initial(),ctx={root:screen,state,lang:'ko',close(){},save(){},renderMath(){},onResult(){},seeCourse(){},pick(){}};
 ui.render(ctx);assert.equal(screen.scrollTop,0,'first entry resets old screen position');
-screen.scrollTop=123;state.selection.age='pre6';ui.render(ctx);assert.equal(screen.scrollTop,123,'same setup keeps selection position');
+const legacySetup=ui.initial();legacySetup.selection=Object.assign({},legacySetup.selection,
+  {intakeVersion:'age-book-v1',route:'book',age:'6',series:'dunoro',step:'level-1',bookCourseNumber:4,baselineId:'c1'});
+ui.render(Object.assign({},ctx,{state:legacySetup}));
+assert.equal(legacySetup.selection.intakeVersion,'multi-source-v2');
+assert.equal(legacySetup.selection.series,'','an old studied book must be selected again as completed');
+assert.equal(legacySetup.selection.bookCourseNumber,null);
+assert.equal(legacySetup.selection.completedBooks.length,1);
+assert.equal(legacySetup.selection.completedBooks[0].bookStatus,'','an old studied book is not completed');
+assert.equal(legacySetup.selection.baselineId,'');
+const completedLegacy=ui.initial();completedLegacy.selection=Object.assign({},completedLegacy.selection,
+  {intakeVersion:'completed-book-v1',route:'book',series:'miracle',step:'elem-2021-v1',bookStatus:'completed'});
+ui.render(Object.assign({},ctx,{state:completedLegacy}));
+assert.deepEqual(plain(completedLegacy.selection.completedBooks),[
+  {series:'miracle',step:'elem-2021-v1',bookCourseNumber:null,editionId:'',bookStatus:'completed'}]);
+const legacyAnswered=ui.initial();legacyAnswered.phase='question';legacyAnswered.selection=Object.assign({},legacyAnswered.selection,
+  {intakeVersion:'age-book-v1',route:'book',age:'6',series:'dunoro',step:'level-1',bookCourseNumber:4,baselineId:'c1'});
+legacyAnswered.plan=plan.build('c1','legacy-answer-preservation');legacyAnswered.index=1;
+legacyAnswered.responses=[{id:legacyAnswered.plan.items[0].id,value:null,skipped:true}];
+const oldAnswer=JSON.stringify(legacyAnswered);
+ui.render(Object.assign({},ctx,{state:legacyAnswered}));
+assert.equal(JSON.stringify(legacyAnswered.selection),JSON.stringify(JSON.parse(oldAnswer).selection),'an answered plan keeps its historical book selection');
+ui.render(ctx);screen.scrollTop=123;state.selection.age='pre6';ui.render(ctx);assert.equal(screen.scrollTop,123,'same setup keeps selection position');
 state.plan=plan.build('f-compare5','scroll-contract');state.phase='question';state.index=0;
 screen.scrollTop=234;ui.render(ctx);assert.equal(screen.scrollTop,0,'setup to first question resets');
 screen.scrollTop=75;ui.render(ctx);assert.equal(screen.scrollTop,75,'same question redraw keeps position');
