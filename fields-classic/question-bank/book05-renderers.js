@@ -673,7 +673,7 @@ function sourceDotFigures(visual) {
 // 글이 든 표: 첫 줄은 머리줄. 칸 너비는 내용에 맞춘다.
 function sourceTextTable(visual) {
   const [head, ...rows] = visual.cells;
-  const tr = (row, tag) => `<tr>${row.map((cell) => `<${tag}>${escapeHtml(cell ?? "")}</${tag}>`).join("")}</tr>`;
+  const tr = (row, tag) => `<tr>${row.map((cell) => `<${tag}${tag === "td" && BLANK_LABELS.includes(String(cell)) ? ' class="blank"' : ""}>${escapeHtml(cell ?? "")}</${tag}>`).join("")}</tr>`;
   const headed = visual.cells.length > 1 && head.some((c) => /[가-힣]/.test(String(c)));
   return `<div class="b5-src-ttable" role="img" aria-label="${escapeHtml(visual.cells.map((r) => r.join(" ")).join(" / "))}"><table>${headed ? `<thead>${tr(head, "th")}</thead>` : ""}<tbody>${(headed ? rows : visual.cells).map((r) => tr(r, "td")).join("")}</tbody></table></div>`;
 }
@@ -831,6 +831,29 @@ function sourcePencilBars(visual) {
   return `<div class="b5-src-pencil" role="img" aria-label="${escapeHtml(`${what}의 길이를 ${visual.rows.map((r) => `${r.label ?? "막대"} ${r.n}개`).join(", ")}로 잰 그림${visual.diff ? ", C는 A와 B의 길이 차이" : ""}`)}"><svg viewBox="0 0 ${L + x0 * 2} ${y + 4}" style="width:min(100%,420px)">${body}</svg></div>`;
 }
 
+// 6권: 위는 ㉠ a칸, 아래는 ㉡ b칸으로 같은 길이를 나눈 막대(왼쪽)와, ㉠ 하나·㉡ 하나를 이은 막대(오른쪽, 전체 길이 total).
+function sourceBarRatio(visual) {
+  const W = 150, x0 = 8, bx = 210, wa = W / visual.a, wb = W / visual.b, k = 210 / (wa + wb), ra = wa * k, rb = wb * k;
+  let left = "";
+  for (let i = 0; i < visual.a; i++) left += `<rect class="ga" x="${x0 + wa * i}" y="40" width="${wa}" height="26"/><text x="${x0 + wa * i + wa / 2}" y="53">㉠</text>`;
+  for (let i = 0; i < visual.b; i++) left += `<rect class="gb" x="${x0 + wb * i}" y="66" width="${wb}" height="26"/><text x="${x0 + wb * i + wb / 2}" y="79">㉡</text>`;
+  const arc = (xa, xb, up) => `<path class="arc" d="M${xa} ${up ? 52 : 80}Q${(xa + xb) / 2} ${up ? 22 : 110} ${xb} ${up ? 52 : 80}"/>`;
+  const right = `<rect class="ga" x="${bx}" y="52" width="${ra}" height="28"/><text x="${bx + ra / 2}" y="66">㉠</text><rect class="gb" x="${bx + ra}" y="52" width="${rb}" height="28"/><text x="${bx + ra + rb / 2}" y="66">㉡</text>`
+    + arc(bx, bx + ra, true) + arc(bx + ra, bx + ra + rb, true) + arc(bx, bx + ra + rb, false)
+    + `<text class="lbl" x="${bx + ra / 2}" y="22">가 cm</text><text class="lbl" x="${bx + ra + rb / 2}" y="22">나 cm</text><text x="${bx + (ra + rb) / 2}" y="118">${escapeHtml(visual.total)}cm</text>`;
+  return `<div class="b5-src-pencil" role="img" aria-label="${escapeHtml(`같은 길이를 ㉠ ${visual.a}칸, ㉡ ${visual.b}칸으로 나눈 막대와, ㉠ 하나와 ㉡ 하나를 이은 ${visual.total}cm 막대`)}"><svg viewBox="0 0 430 128" style="width:min(100%,520px)"><path class="arrow" d="M168 66H196M188 59l8 7-8 7"/>${left}${right}</svg></div>`;
+}
+
+// 6권: 수평인 저울 — 왼쪽은 공 left개, 오른쪽은 상자 right개. weight가 있으면 오른쪽에 공 하나·상자 하나와 추(weight g)를 단 두 번째 저울.
+function sourceBalanceRatio(visual) {
+  const ball = (x, y) => `<circle class="ball" cx="${x}" cy="${y}" r="9"/>`, box = (x, y) => `<rect class="box" x="${x - 9}" y="${y - 9}" width="18" height="18" rx="2"/>`;
+  const pile = (n, cx, base, draw) => Array.from({ length: n }, (_, i) => { const row = Math.floor(i / 3), col = i % 3, inRow = Math.min(3, n - row * 3); return draw(cx + (col - (inRow - 1) / 2) * 20, base - 10 - row * 20); }).join("");
+  const scale = (x, leftItems, rightItems) => `<line class="beam" x1="${x}" y1="70" x2="${x + 150}" y2="70"/><polygon class="stand" points="${x + 75},70 ${x + 64},90 ${x + 86},90"/><path class="pan" d="M${x - 8} 70h56M${x + 102} 70h56"/>${leftItems}${rightItems}`;
+  let body = scale(10, pile(visual.left, 30, 70, ball), pile(visual.right, 140, 70, box));
+  if (visual.weight != null) body += `<path class="arrow" d="M182 60H206M198 53l8 7-8 7"/>` + scale(226, ball(236, 60) + box(258, 60), `<rect class="weight" x="${346}" y="${30}" width="36" height="38" rx="3"/><text x="364" y="49">${escapeHtml(visual.weight)}g</text>`);
+  return `<div class="b5-src-balance" role="img" aria-label="${escapeHtml(`수평인 저울: 공 ${visual.left}개와 상자 ${visual.right}개${visual.weight != null ? `, 공 하나와 상자 하나는 ${visual.weight}g` : ""}`)}"><svg viewBox="0 0 ${visual.weight != null ? 400 : 180} 96" style="width:min(100%,${visual.weight != null ? 480 : 230}px)">${body}</svg></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -878,6 +901,8 @@ export function book05Markup(visual) {
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);
+    case "source-bar-ratio": return sourceBarRatio(visual);
+    case "source-balance-ratio": return sourceBalanceRatio(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);
