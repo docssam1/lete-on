@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 3949)
+Total output lines: 564
+
 {
   "schema": "gfield-public-skill-map-supplement/1",
   "checkpoint": "v50",
@@ -196,185 +199,7 @@
       "printedPages": [
         106
       ],
-      "conditionalDifficultyBands": [
-        "2",
-        "3"
-      ],
-      "minimumCurriculumLevelCandidates": [
-        "초등 1–2학년군",
-        "초등 3–4학년군"
-      ],
-      "status": "candidate-needs-teacher-review"
-    },
-    {
-      "id": "D11-CONTACT-3D01",
-      "area": "spatial",
-      "areaOrder": 13,
-      "label": "공간 배치에서 같은 크기 구의 접촉 수 최대로 만들기",
-      "observableAction": "같은 크기의 구들을 공간에 배치해 서로 맞닿는 쌍의 수를 센 뒤 더 많은 접촉을 만드는 배열을 탐색한다.",
-      "activityCount": 1,
-      "printedPages": [
-        106
-      ],
-      "conditionalDifficultyBands": [
-        "4",
-        "5"
-      ],
-      "minimumCurriculumLevelCandidates": [
-        "초등 5–6학년군"
-      ],
-      "status": "candidate-needs-teacher-review"
-    },
-    {
-      "id": "D11-CHAIN-JOIN01",
-      "area": "logic",
-      "areaOrder": 26,
-      "label": "여러 고리 사슬을 최소 절단으로 한 줄로 연결하기",
-      "observableAction": "짧은 고리 사슬 여러 개를 하나의 연속 사슬로 잇도록 여는 고리 수와 연결 순서를 최소화한다.",
-      "activityCount": 1,
-      "printedPages": [
-        107
-      ],
-      "conditionalDifficultyBands": [
-        "4",
-        "5"
-      ],
-      "minimumCurriculumLevelCandidates": [
-        "초등 3–4학년군",
-        "초등 5–6학년군"
-      ],
-      "status": "candidate-needs-teacher-review"
-    }
-  ],
-  "reusedSkillActions": [],
-  "difficulty": {
-    "status": "conditional-research-only",
-    "bandsByAction": [
-      {
-        "id": "D11-MATCH-EQ01",
-        "conditionalDifficultyBands": [
-          "3",
-          "5"
-        ]
-      },
-      {
-        "id": "D11-MATCH-SEQ01",
-        "conditionalDifficultyBands": [
-          "2",
-          "3"
-        ]
-      },
-      {
-        "id": "D11-CAL-MONTH01",
-        "conditionalDifficultyBands": [
-          "1",
-          "2"
-        ]
-      },
-      {
-        "id": "D11-CAL-WINDOW01",
-        "conditionalDifficultyBands": [
-          "2",
-          "3"
-        ]
-      },
-      {
-        "id": "D11-SCHEDULE-PAN01",
-        "conditionalDifficultyBands": [
-          "3",
-          "4"
-        ]
-      },
-      {
-        "id": "D11-CUT-RING01",
-        "conditionalDifficultyBands": [
-          "3",
-          "4"
-        ]
-      },
-      {
-        "id": "D11-TIME-CHIME01",
-        "conditionalDifficultyBands": [
-          "2",
-          "3"
-        ]
-      },
-      {
-        "id": "D11-CLIMB-THRESHOLD01",
-        "conditionalDifficultyBands": [
-          "2",
-          "3"
-        ]
-      },
-      {
-        "id": "D11-CONTACT-3D01",
-        "conditionalDifficultyBands": [
-          "4",
-          "5"
-        ]
-      },
-      {
-        "id": "D11-CHAIN-JOIN01",
-        "conditionalDifficultyBands": [
-          "4",
-          "5"
-        ]
-      }
-    ],
-    "teacherApprovedLevels": 0,
-    "bandsByActivity": [
-      {
-        "conditionalDifficultyBands": [
-          "3",
-          "4"
-        ]
-      },
-      {
-        "conditionalDifficultyBands": [
-          "2",
-          "3"
-        ]
-      },
-      {
-        "conditionalDifficultyBands": [
-          "1",
-          "2"
-        ]
-      },
-      {
-        "conditionalDifficultyBands": [
-          "2",
-          "3"
-        ]
-      },
-      {
-        "conditionalDifficultyBands": [
-          "3",
-          "4"
-        ]
-      },
-      {
-        "conditionalDifficultyBands": [
-          "3"
-        ]
-      },
-      {
-        "conditionalDifficultyBands": [
-          "3",
-          "4"
-        ]
-      },
-      {
-        "conditionalDifficultyBands": [
-          "3",
-          "4"
-        ]
-      },
-      {
-        "conditionalDifficultyBands": [
-          "3"
-        ]
-      },
+      "conditionalDifficultyBands…949 tokens truncated…  },
       {
         "conditionalDifficultyBands": [
           "3",
@@ -549,7 +374,6 @@
   "curriculumSource": {
     "status": "official-source-context-only",
     "reference": "2022 개정 교육과정 교육부 고시 제2022-33호 별책 8",
-    "sourceDigest": "bad320409dd8dd5ee040346d8e7b55d556d12e958b7a3c92778ba0e90fc97aed",
     "gradeBandCandidates": [
       "초등 1–2학년군",
       "초등 3–4학년군",
@@ -561,5 +385,5 @@
     "validatedActivities": 0,
     "status": "not-validated"
   },
-  "privacy": "공개 자료에는 원문 활동 ID·OCR 원문·정답 내용·로컬 경로·이미지 및 파일 해시를 포함하지 않습니다. 유형·난이도·학년·관계는 연구 후보입니다."
+  "privacy": "비공개 원자료의 활동 식별자·OCR 원문·정답 내용·경로·이미지 및 파일 해시는 공개하지 않습니다. 유형·난이도·교과수준·관계는 연구 후보입니다."
 }
