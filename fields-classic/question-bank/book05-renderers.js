@@ -673,7 +673,7 @@ function sourceDotFigures(visual) {
 // 글이 든 표: 첫 줄은 머리줄. 칸 너비는 내용에 맞춘다.
 function sourceTextTable(visual) {
   const [head, ...rows] = visual.cells;
-  const tr = (row, tag) => `<tr>${row.map((cell) => `<${tag}>${escapeHtml(cell ?? "")}</${tag}>`).join("")}</tr>`;
+  const tr = (row, tag) => `<tr>${row.map((cell) => `<${tag}${tag === "td" && BLANK_LABELS.includes(String(cell)) ? ' class="blank"' : ""}>${escapeHtml(cell ?? "")}</${tag}>`).join("")}</tr>`;
   const headed = visual.cells.length > 1 && head.some((c) => /[가-힣]/.test(String(c)));
   return `<div class="b5-src-ttable" role="img" aria-label="${escapeHtml(visual.cells.map((r) => r.join(" ")).join(" / "))}"><table>${headed ? `<thead>${tr(head, "th")}</thead>` : ""}<tbody>${(headed ? rows : visual.cells).map((r) => tr(r, "td")).join("")}</tbody></table></div>`;
 }
@@ -744,6 +744,116 @@ function sourceHalvingTree(visual) {
   return `<div class="b5-src-halve" role="img" aria-label="${escapeHtml(`${visual.top}을 똑같이 ${visual.levels === 2 ? "두 번" : "한 번"} 가르기`)}"><svg viewBox="0 0 ${W} ${H}" style="width:min(100%,${Math.round(W * 1.7)}px)">${body}</svg></div>`;
 }
 
+// 6권: 윗수를 ways개로 똑같이 가르기(한 단계). 빈 칸은 가·나… 순서.
+function sourceSplitTree(visual) {
+  const n = visual.ways, W = Math.max(160, n * 50 + 30), cx = W / 2, xs = Array.from({ length: n }, (_, k) => cx + (k - (n - 1) / 2) * 50);
+  const box = (x, k) => { const v = visual.values?.[k]; return `<rect x="${x - 20}" y="54" width="40" height="32" rx="4" class="${v == null ? "blank" : ""}"/><text x="${x}" y="70" class="${v == null ? "lbl" : ""}">${escapeHtml(v ?? BLANK_LABELS[k])}</text>`; };
+  return `<div class="b5-src-halve" role="img" aria-label="${escapeHtml(`${visual.top}을 똑같이 ${n}개로 가르기`)}"><svg viewBox="0 0 ${W} 90" style="width:min(100%,${Math.round(W * 1.7)}px)"><text x="${cx}" y="16" class="top">${escapeHtml(visual.top)}</text>${xs.map((x) => `<line x1="${cx}" y1="30" x2="${x}" y2="52"/>`).join("")}${xs.map(box).join("")}</svg></div>`;
+}
+
+// 6권: 「12 = 2 × □ = 4 × □」처럼 null 자리가 빈칸(가·나…)인 식.
+function sourceBlankEquation(visual) {
+  let k = 0;
+  const tokens = visual.tokens.map((t) => t == null ? `<i class="blank">${BLANK_LABELS[k++]}</i>` : `<span class="${/^[+×÷=\-:]$/.test(t) ? "op" : "t"}">${escapeHtml(t)}</span>`).join("");
+  let j = 0;
+  return `<div class="b5-src-blankeq" role="img" aria-label="${escapeHtml(visual.tokens.map((t) => t ?? `빈칸 ${BLANK_LABELS[j++]}`).join(" "))}">${tokens}</div>`;
+}
+
+// 6권: 호가 그려진 수직선. points = 묶음 경계의 수(이 수로 칸 위치를 정한다), groups = 묶음마다 칸 수·호 모양,
+// tickLabels = 눈금 아래 글자(A·B·중간), spans = 여러 칸을 묶은 큰 호(①·②·☆). 칸 위치는 공개된 경계 수로만 계산한다.
+const ARC_MARK = { circle: (x, y) => `<circle class="mk" cx="${x}" cy="${y}" r="6" style="--c:${SHAPE_GLYPH.circle[1]};--f:${SHAPE_GLYPH.circle[2]}"/>`,
+  triangle: (x, y) => `<polygon class="mk" points="${x},${y - 7} ${x + 7},${y + 5} ${x - 7},${y + 5}" style="--c:${SHAPE_GLYPH.triangle[1]};--f:${SHAPE_GLYPH.triangle[2]}"/>` };
+function sourceArcLine(visual) {
+  const x0 = 34, y = 92, pts = visual.points.map(Number), Wd = Math.min(520, Math.max(260, visual.groups.reduce((n, g) => n + g.n, 0) * 40));
+  const span = pts[pts.length - 1] - pts[0];
+  const bx = pts.map((p) => x0 + (p - pts[0]) / span * Wd);
+  const ticks = [bx[0]];
+  visual.groups.forEach((g, gi) => { for (let k = 1; k <= g.n; k++) ticks.push(bx[gi] + (bx[gi + 1] - bx[gi]) * k / g.n); });
+  const arc = (xa, xb, side, h, cls, color) => { const s = side === "under" ? 1 : -1; return `<path class="${cls}" style="--c:${color}" d="M${xa.toFixed(1)} ${y}Q${((xa + xb) / 2).toFixed(1)} ${y + s * 2 * h} ${xb.toFixed(1)} ${y}"/>`; };
+  let body = `<line class="ln" x1="${x0}" y1="${y}" x2="${x0 + Wd}" y2="${y}"/>${ticks.map((x) => `<line class="tick" x1="${x.toFixed(1)}" y1="${y - 7}" x2="${x.toFixed(1)}" y2="${y + 7}"/>`).join("")}`;
+  let start = 0;
+  visual.groups.forEach((g) => {
+    const color = g.color ?? "#f39a1e", s = g.side === "under" ? 1 : -1, show = g.arcs ?? "all";
+    for (let k = 0; k < g.n; k++) {
+      if (show === "none" || (show === "first" && k > 0)) continue;
+      const xa = ticks[start + k], xb = ticks[start + k + 1], h = Math.min(13, (xb - xa) * 0.3);
+      body += arc(xa, xb, g.side, h, "arc", color);
+      if (g.mark) body += ARC_MARK[g.mark]((xa + xb) / 2, y + s * (h + 6));
+      if (k === 0 && g.label) body += `<text class="al" x="${((xa + xb) / 2).toFixed(1)}" y="${s > 0 ? y + Math.max(h + 12, 44) : y - (h + (g.mark ? 22 : 12))}">${escapeHtml(g.label)}</text>`;
+    }
+    start += g.n;
+  });
+  (visual.spans ?? []).forEach((sp) => {
+    const xa = ticks[sp.from], xb = ticks[sp.to], s = sp.side === "under" ? 1 : -1, h = Math.min(30, (xb - xa) * 0.12 + 12);
+    body += arc(xa, xb, sp.side, h, "span", sp.color ?? "#8e5bd8") + `<text class="al" x="${((xa + xb) / 2).toFixed(1)}" y="${y + s * (h + 12)}">${escapeHtml(sp.label ?? "")}</text>`;
+  });
+  const below = (x, t) => `<text x="${x.toFixed(1)}" y="${y + 24}">${escapeHtml(t)}</text>`;
+  body += visual.points.map((p, k) => below(bx[k], p)).join("");
+  body += Object.entries(visual.tickLabels ?? {}).map(([k, t]) => below(ticks[Number(k)], t)).join("");
+  if (visual.caption) body += `<text class="cap" x="${x0 + Wd / 2}" y="20">${escapeHtml(visual.caption)}</text>`;
+  const label = `${visual.points.join("부터 ")}까지 수직선, ${visual.groups.map((g) => `${g.n}칸`).join("과 ")}${visual.caption ? `, ${visual.caption}` : ""}`;
+  return `<div class="b5-src-arcline" role="img" aria-label="${escapeHtml(label)}"><svg viewBox="0 0 ${x0 * 2 + Wd} 150" style="width:min(100%,${Math.round((x0 * 2 + Wd) * 1.2)}px)">${body}</svg></div>`;
+}
+
+// 6권: 같은 길이를 위 줄은 a칸, 아래 줄은 b칸으로 나눈 두 수직선(첫 칸에 A·B).
+function sourceRatioLines(visual) {
+  const x0 = 30, W = 400, ys = [56, 132];
+  const line = (y, n, label, color) => {
+    let s = `<line class="ln" x1="${x0}" y1="${y}" x2="${x0 + W}" y2="${y}"/>`;
+    for (let k = 0; k <= n; k++) s += `<line class="tick" x1="${x0 + W * k / n}" y1="${y - 7}" x2="${x0 + W * k / n}" y2="${y + 7}"/>`;
+    for (let k = 0; k < n; k++) { const xa = x0 + W * k / n, xb = x0 + W * (k + 1) / n; s += `<path class="arc" style="--c:${color}" d="M${xa} ${y}Q${(xa + xb) / 2} ${y - 30} ${xb} ${y}"/>`; }
+    return s + `<text class="al" x="${x0 + W / n / 2}" y="${y - 24}">${label}</text>`;
+  };
+  const body = `<line class="end" x1="${x0}" y1="${ys[0]}" x2="${x0}" y2="${ys[1]}"/><line class="end" x1="${x0 + W}" y1="${ys[0]}" x2="${x0 + W}" y2="${ys[1]}"/>${line(ys[0], visual.a, "A", "#2f9e5f")}${line(ys[1], visual.b, "B", "#f39a1e")}<text x="${x0}" y="${ys[1] + 24}">${escapeHtml(visual.start)}</text><text x="${x0 + W}" y="${ys[1] + 24}">${escapeHtml(visual.end)}</text>`;
+  return `<div class="b5-src-arcline" role="img" aria-label="${escapeHtml(`${visual.start}부터 ${visual.end}까지를 위는 A ${visual.a}칸, 아래는 B ${visual.b}칸으로 똑같이 나눈 수직선`)}"><svg viewBox="0 0 ${x0 * 2 + W} 168" style="width:min(100%,520px)">${body}</svg></div>`;
+}
+
+// 6권: 연필(또는 리코더) 길이를 같은 막대 n개로 잰 그림. diff면 A·B와 그 차이 C를 아래에 그린다.
+function sourcePencilBars(visual) {
+  const x0 = 12, L = 330;
+  const head = visual.head === "recorder"
+    ? `<rect class="rec" x="${x0}" y="10" width="${L}" height="22" rx="10"/>${[0.3, 0.4, 0.5, 0.6, 0.7].map((f) => `<circle class="hole" cx="${x0 + L * f}" cy="21" r="3.5"/>`).join("")}<rect class="mouth" x="${x0 + L - 34}" y="8" width="34" height="26" rx="12"/>`
+    : `<rect class="pen" x="${x0}" y="12" width="${L - 26}" height="18" rx="3"/><rect class="eraser" x="${x0}" y="12" width="16" height="18" rx="3"/><polygon class="tip" points="${x0 + L - 26},12 ${x0 + L},21 ${x0 + L - 26},30"/><polygon class="lead" points="${x0 + L - 8},18 ${x0 + L},21 ${x0 + L - 8},24"/>`;
+  let y = 44, body = head;
+  visual.rows.forEach((row) => {
+    const w = L / row.n;
+    for (let k = 0; k < row.n; k++) body += `<rect class="bar" style="--c:${row.color}" x="${x0 + w * k}" y="${y}" width="${w}" height="26"/><text x="${x0 + w * k + w / 2}" y="${y + 13}">${escapeHtml(row.label ?? "")}</text>`;
+    y += 34;
+  });
+  if (visual.diff) {
+    const [a, b] = visual.rows, wa = L / a.n, wb = L / b.n, dx = x0 + 70;
+    body += `<rect class="bar" style="--c:${a.color}" x="${dx}" y="${y + 6}" width="${wa}" height="24"/><text x="${dx + wa / 2}" y="${y + 18}">A</text>`;
+    body += `<rect class="bar" style="--c:${b.color}" x="${dx}" y="${y + 36}" width="${wb}" height="24"/><text x="${dx + wb / 2}" y="${y + 48}">B</text>`;
+    body += `<rect class="bar c" x="${dx + wb}" y="${y + 66}" width="${wa - wb}" height="24"/><text x="${dx + wb + (wa - wb) / 2}" y="${y + 78}">C</text><line class="guide" x1="${dx + wb}" y1="${y + 60}" x2="${dx + wb}" y2="${y + 66}"/><line class="guide" x1="${dx + wa}" y1="${y + 30}" x2="${dx + wa}" y2="${y + 66}"/>`;
+    y += 96;
+  }
+  const what = visual.head === "recorder" ? "리코더" : "연필";
+  return `<div class="b5-src-pencil" role="img" aria-label="${escapeHtml(`${what}의 길이를 ${visual.rows.map((r) => `${r.label ?? "막대"} ${r.n}개`).join(", ")}로 잰 그림${visual.diff ? ", C는 A와 B의 길이 차이" : ""}`)}"><svg viewBox="0 0 ${L + x0 * 2} ${y + 4}" style="width:min(100%,420px)">${body}</svg></div>`;
+}
+
+// 6권: 위는 ㉠ a칸, 아래는 ㉡ b칸으로 같은 길이를 나눈 막대(왼쪽)와, ㉠ 하나·㉡ 하나를 이은 막대(오른쪽, 전체 길이 total).
+function sourceBarRatio(visual) {
+  const W = 150, x0 = 8, bx = 210, wa = W / visual.a, wb = W / visual.b, k = 210 / (wa + wb), ra = wa * k, rb = wb * k;
+  let left = "";
+  for (let i = 0; i < visual.a; i++) left += `<rect class="ga" x="${x0 + wa * i}" y="40" width="${wa}" height="26"/><text x="${x0 + wa * i + wa / 2}" y="53">㉠</text>`;
+  for (let i = 0; i < visual.b; i++) left += `<rect class="gb" x="${x0 + wb * i}" y="66" width="${wb}" height="26"/><text x="${x0 + wb * i + wb / 2}" y="79">㉡</text>`;
+  const arc = (xa, xb, up) => `<path class="arc" d="M${xa} ${up ? 52 : 80}Q${(xa + xb) / 2} ${up ? 22 : 110} ${xb} ${up ? 52 : 80}"/>`;
+  const right = `<rect class="ga" x="${bx}" y="52" width="${ra}" height="28"/><text x="${bx + ra / 2}" y="66">㉠</text><rect class="gb" x="${bx + ra}" y="52" width="${rb}" height="28"/><text x="${bx + ra + rb / 2}" y="66">㉡</text>`
+    + arc(bx, bx + ra, true) + arc(bx + ra, bx + ra + rb, true) + arc(bx, bx + ra + rb, false)
+    + `<text class="lbl" x="${bx + ra / 2}" y="22">가 cm</text><text class="lbl" x="${bx + ra + rb / 2}" y="22">나 cm</text><text x="${bx + (ra + rb) / 2}" y="118">${escapeHtml(visual.total)}cm</text>`;
+  return `<div class="b5-src-pencil" role="img" aria-label="${escapeHtml(`같은 길이를 ㉠ ${visual.a}칸, ㉡ ${visual.b}칸으로 나눈 막대와, ㉠ 하나와 ㉡ 하나를 이은 ${visual.total}cm 막대`)}"><svg viewBox="0 0 430 128" style="width:min(100%,520px)"><path class="arrow" d="M168 66H196M188 59l8 7-8 7"/>${left}${right}</svg></div>`;
+}
+
+// 6권: 수평인 저울 — 왼쪽은 공 left개, 오른쪽은 상자 right개. weight가 있으면 오른쪽에 공 하나·상자 하나와 추(weight g)를 단 두 번째 저울.
+function sourceBalanceRatio(visual) {
+  const ball = (x, y) => `<circle class="ball" cx="${x}" cy="${y}" r="9"/>`, box = (x, y) => `<rect class="box" x="${x - 9}" y="${y - 9}" width="18" height="18" rx="2"/>`;
+  const pile = (n, cx, base, draw) => Array.from({ length: n }, (_, i) => { const row = Math.floor(i / 3), col = i % 3, inRow = Math.min(3, n - row * 3); return draw(cx + (col - (inRow - 1) / 2) * 20, base - 10 - row * 20); }).join("");
+  const scale = (x, leftItems, rightItems) => `<line class="beam" x1="${x}" y1="70" x2="${x + 150}" y2="70"/><polygon class="stand" points="${x + 75},70 ${x + 64},90 ${x + 86},90"/><path class="pan" d="M${x - 8} 70h56M${x + 102} 70h56"/>${leftItems}${rightItems}`;
+  let body = scale(10, pile(visual.left, 30, 70, ball), pile(visual.right, 140, 70, box));
+  if (visual.weight != null) body += `<path class="arrow" d="M182 60H206M198 53l8 7-8 7"/>` + scale(226, ball(236, 60) + box(258, 60), `<rect class="weight" x="${346}" y="${30}" width="36" height="38" rx="3"/><text x="364" y="49">${escapeHtml(visual.weight)}g</text>`);
+  return `<div class="b5-src-balance" role="img" aria-label="${escapeHtml(`수평인 저울: 공 ${visual.left}개와 상자 ${visual.right}개${visual.weight != null ? `, 공 하나와 상자 하나는 ${visual.weight}g` : ""}`)}"><svg viewBox="0 0 ${visual.weight != null ? 400 : 180} 96" style="width:min(100%,${visual.weight != null ? 480 : 230}px)">${body}</svg></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -786,6 +896,13 @@ export function book05Markup(visual) {
     case "source-perimeter": return sourcePerimeter(visual);
     case "source-stone-rows": return sourceStoneRows(visual);
     case "source-halving-tree": return sourceHalvingTree(visual);
+    case "source-split-tree": return sourceSplitTree(visual);
+    case "source-blank-equation": return sourceBlankEquation(visual);
+    case "source-arc-line": return sourceArcLine(visual);
+    case "source-ratio-lines": return sourceRatioLines(visual);
+    case "source-pencil-bars": return sourcePencilBars(visual);
+    case "source-bar-ratio": return sourceBarRatio(visual);
+    case "source-balance-ratio": return sourceBalanceRatio(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);

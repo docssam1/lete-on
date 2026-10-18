@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261017c`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261017c/20261018a/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018b/20261018c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -246,6 +246,40 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 개념 설명 캡처에서 HTML 그림(sum-line)이 빈칸으로 찍힌 것은 장면 전환 애니메이션 도중에 찍힌 것이었다(1.5초 기다리면 정상).
   - `sourceHold` 11건 삭제 → **5권 보류 0, coverage public 301**. DB `book-05` 470키 → 613키, sha 앞 8자리 `817e95c7`. 캐시 꼬리표 `20261017c`.
 - **5권 원본 대조 끝.** 남은 확인 거리: 다음 권(6권)부터 같은 방식(학생용·교사용 대조표 → 묶음).
+
+#### 6권 (교사용 슬라이드 32쪽, 2026-10-18 착수)
+- **원본**: 학생용 PDF는 판이 달라 쓸 수 없고 교사용 PPTX가 답과 맞는다. 답 없는 문제지는
+  `python3 tools/golden-bell-book05/clean-teacher-pptx.py teacher.pptx clean.pptx FF0000,0070C0,0000FF tx2`
+  (6권은 풀이 글씨가 테마색 `tx2`·`0000FF`라 지울 색을 인자로 준다). **수식(OMML)은 LibreOffice가 대체 그림으로 그려
+  수식 속 빨간 답(7~9쪽 분수 칸 등)은 남는다** — 빨간 네모 = 빈칸으로 읽는다. 지운 결과에서 △ 표시·파란 호처럼
+  `tx2`로 그린 그림 요소도 함께 사라지니 그림 모양은 교사용 원본에서 읽는다.
+- **진단**: 예전 6권 문항 108개는 교사용 풀이 식을 그대로 문제로 바꾼 것(「24÷2의 값」, 그림 = 식)이라 풀이 방법이 드러나고
+  수직선 그림이 비어 있었다. 5권처럼 원본 문항으로 다시 짠다. `sourceInventory`(94개)는 예전 공개 기록이고 화면에서 쓰지 않는다.
+- **묶음 계획**: 1) 2~6 수직선의 분할 ✅ · 2) 7~10 도형이 나타내는 수와 비 ✅ · 3) 12~14 둘레 · 4) 15~16 둘레 · 5) 18~21 곱셈·간편 계산 ·
+  6) 22~25 연속수의 합 · 7) 27~32 수와 숫자의 개수·수 만들기.
+- **그림은 5권 그림 도구를 그대로 쓴다**(`kind:"book5"`, `book05-renderers.js`). 인쇄 규칙 선택자는
+  `.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"])`로 넓혔다(전부 `b5-src-*` 전용이라 다른 권에 영향 없음).
+- **6권 묶음 1(슬라이드 2~6 가르기·수직선·수직선과 비·수직선 활용 1·2, 50문항, 2026-10-18)**: 패치 `tools/golden-bell-book06/patch-book06-batch1.mjs`(정답 없음).
+  - 단원 4 `equal-share-source`(2쪽 16문항)·단원 5 `number-line-ratio-source`(3·5쪽 14문항)는 **자리를 그대로 두고 새로 짰다**(답 DB에서
+    `/lessons/4/`·`/lessons/5/` 옛 키 31개를 지우고 새로 넣음). 새 단원 11 `number-line-ratio-compare-source`(4쪽 8문항)·12 `pencil-measure-source`(6쪽 12문항).
+  - 새 그림: `source-split-tree`(윗수를 둘·셋·넷으로) · `source-blank-equation`(null 자리가 가·나 빈칸) ·
+    `source-arc-line`(호가 그려진 수직선. **칸 위치는 공개된 경계 수 `points`로만 계산** — 눈금 값을 데이터에 적으면 답이 샌다.
+    `groups`=칸 묶음(`n`·`side`·`arcs:"first"`·`mark:"circle"|"triangle"`·`label`), `tickLabels`=눈금 아래 A·B·중간, `spans`=①·②·☆ 큰 호) ·
+    `source-ratio-lines`(같은 길이를 위 A 칸·아래 B 칸으로) · `source-pencil-bars`(연필·리코더와 막대, `diff`면 A·B·C).
+    수직선 폭은 칸 수에 따라 줄어든다(좁은 개념 칸에서도 글자가 읽히게).
+  - **원본을 바로잡은 곳**(공개 메모는 숫자 없이): 3쪽 물음 글의 끝 수가 그림과 달라 그림의 수로 맞춤(`sourceDiscrepancy`) ·
+    3쪽 23~41 ② 거리는 교사용 풀이가 그림의 칸 수와 다른 수로 나눠 틀림 → 그림대로 계산(DB `sourceNote`).
+  - 4쪽 비 뻥튀기 표는 빈칸이 없어 교사 안내(다음에 올 비 찾기)대로 다음 줄을 빈칸으로 넣음. 6쪽 연필 오른쪽 칸은 교사가 길이를 정해 주는
+    연습이라 연필 길이를 물음에 적고, 왼쪽 칸은 「가장 짧을 때」로 답을 하나로 정함. 둘 다 `sourceDiscrepancy`.
+  - `sourceHold` B06-03-03·B06-06-01 삭제(6권 보류 7 → 5). DB `book-06` 550키 → 682키, sha 앞 8자리 `25eb4b8d`. 캐시 꼬리표 `20261018a`.
+- **6권 묶음 2(슬라이드 7~10 크기가 같은 분수·분수와 비·분수, 비와 합·막대와 비·저울과 비, 24문항, 2026-10-18)**: 패치 `tools/golden-bell-book06/patch-book06-batch2.mjs`(정답 없음).
+  - 단원 6 `fraction-balance-source`(7~9쪽 15문항)를 자리 그대로 새로 짜고(DB `/lessons/6/` 옛 키 55개 교체), 새 단원 13 `bar-balance-ratio-source`(9쪽 막대와 비·10쪽 저울과 비 9문항).
+  - 새 그림: `source-bar-ratio`(㉠ a칸·㉡ b칸 막대 → ㉠ 하나·㉡ 하나를 이은 막대, 위에 가·나 cm) · `source-balance-ratio`(공·상자 저울, `weight`면 추를 단 두 번째 저울).
+    `source-text-table`은 칸 글자가 가·나…(한 글자)면 빈칸 모양으로 그린다(5권 53쪽 (4) 표도 같은 빈칸이라 그대로 맞음). □·△ 비 문항은 `source-shape-equations`.
+  - 원본 7~9쪽 수식은 대체 그림이라 답 없는 문제지에도 빨간 답이 남는다 — 빨간 네모 칸을 빈칸으로 받아씀.
+  - 7쪽 02 분수와 비는 설명 그림이라 고르기 2문항, 8쪽 03 ②는 분모·분자의 합이 교사용 안내에만 있어 물음에 합을 적음(둘 다 `sourceDiscrepancy`).
+    9쪽 막대·10쪽 저울은 비 칸 옆의 「비/실제」 표가 답을 드러내 화면에 넣지 않았고, 비는 「가장 간단한 자연수의 비」로 물어 답을 하나로 정함.
+  - 교사용 답과 전부 같음(교사용 10쪽의 g 자리에 cm로 적힌 오타는 화면에 나오지 않는 표라 고칠 것 없음). DB `book-06` 682키 → 735키, sha 앞 8자리 `1b68937e`. 캐시 꼬리표 `20261018b`.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
 
