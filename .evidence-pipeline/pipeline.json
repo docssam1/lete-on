@@ -408,6 +408,343 @@
         { "id": "release-approval", "required": true, "status": "pass", "evidence": [{ "role": "decision", "locator": "conversation:2026-09-02:user-approved-continue-main-release", "actor": "user-curriculum-lead" }] },
         { "id": "deployment", "required": true, "status": "pass", "evidence": [{ "role": "deployment", "locator": "https://lete-on.gfieldacademy.net/boarding-school-math/clinic-practice.html?cluster=6.EE.B&mode=workbook&audience=student&locale=ko", "note": "PR 154 merge c709e6e3 deployed with HTTP 200, 12 student items, zero student answer panels, 24 teacher answer and teaching panels, six model-derived equation boxes, final-answer gating, and zero mobile overflow verified live." }] }
       ]
+    },
+    {
+      "id": "geometry-number-paper-game-20261017",
+      "title": "숫자 색종이 공방: 직접 접고 자르고 펼쳐 연결된 조각 모으기",
+      "task_id": "geometry-number-paper-game-20261017",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "locked",
+      "owner": "codex-mac-geometry",
+      "source_records": [],
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "interactive-practice",
+      "delivery_surfaces": [
+        "interactive"
+      ],
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "learner_stage": "초급",
+      "scope": "40 internally authored cards in two paper activities. Basic: collect and discover the sum. Challenge: collect every target piece, then enter the integer basket sum. No formal grades or attainment claims.",
+      "gates": [
+        {
+          "id": "source-scope",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "geometry/docs/24_PAPER_ACTIVITY_CURRICULUM.md",
+              "note": "같은 내부 창작 40모양. 학습지 산술과 직접 조작 활동을 구분하며 원본 대조 범위를 확대하지 않음."
+            }
+          ]
+        },
+        {
+          "id": "learner-fit",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "geometry/games/number-paper/README.md",
+              "note": "Physical activity comes first in both modes. Challenge adds a small basket input after collection. No penalties or timer; wrong attempts preserve work. No formal score or attainment claim."
+            }
+          ]
+        },
+        {
+          "id": "math-model",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "geometry/games/number-paper/core.selftest.mjs",
+              "note": "독립 겹 이동 40문항 및 기존 학습지632조건 재통과. 기존 칸 집합 전수 검사는 회귀 검사이며 현재 UI 응답과 구분."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/help/browser-results.json",
+              "note": "Optional calculation help. 40-card/280-step unit checks; 4 languages x 4 viewports (16 open-help states). Restore 3/7, portrait focus scrolling, Escape/close/toggle, final sum, wrong-answer retention, assisted completion and persistent per-card assistance verified. No commit/push/deploy."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/ten-making/browser-results.json",
+              "note": "Make-ten strategy replaces sequential addition help. Whole partners/groups first; splitting only as needed. Independent subset enumeration for 40 cards + 7 references + 200 additional scenarios; quantity conservation and legacy checkpoint migration. UI: 6+4 then 20+8; split 2 into 1+1, make 9+1, retain leftover 1; packed checkpoint restored. 48 help layout states across four languages and four viewports passed."
+            }
+          ]
+        },
+        {
+          "id": "answer-contract",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "geometry/games/number-paper/calculation.selftest.mjs",
+              "note": "40 cards: cannot calculate before collection; 240 invalid/wrong inputs rejected; correct sum required only in challenge. Restore validates solved answers. Basic and unrelated profiles preserved."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/help/browser-results.json",
+              "note": "Optional calculation help. 40-card/280-step unit checks; 4 languages x 4 viewports (16 open-help states). Restore 3/7, portrait focus scrolling, Escape/close/toggle, final sum, wrong-answer retention, assisted completion and persistent per-card assistance verified. No commit/push/deploy."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/ten-making/browser-results.json",
+              "note": "Make-ten strategy replaces sequential addition help. Whole partners/groups first; splitting only as needed. Independent subset enumeration for 40 cards + 7 references + 200 additional scenarios; quantity conservation and legacy checkpoint migration. UI: 6+4 then 20+8; split 2 into 1+1, make 9+1, retain leftover 1; packed checkpoint restored. 48 help layout states across four languages and four viewports passed."
+            }
+          ]
+        },
+        {
+          "id": "svg-geometry",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "geometry/games/number-paper/activity.selftest.mjs",
+              "note": "현재 활동은 모델 기반 DOM/CSS 종이 면. 독립 물리 겹 이동120단계, 모든 부분 절단 footprint, union-find 분할, 4언어1252장면 검산."
+            }
+          ]
+        },
+        {
+          "id": "observability",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/activity/browser-results.json",
+              "note": "보이는 처음 숫자·접힌 절단 위치에서 독립 계산해 UI 조작으로 40개 고유 모양 완주. 숨은 앱 정답 접근 없음."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/browser-results.json",
+              "note": "Challenge: 5 cut + 5 remaining cards completed; basic 1-card regression. Four languages and four viewports, 32 calculation/error states. Wrong/correct/reload and mode checkpoint isolation verified. Physical mobile keyboard not tested."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/help/browser-results.json",
+              "note": "Optional calculation help. 40-card/280-step unit checks; 4 languages x 4 viewports (16 open-help states). Restore 3/7, portrait focus scrolling, Escape/close/toggle, final sum, wrong-answer retention, assisted completion and persistent per-card assistance verified. No commit/push/deploy."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/ten-making/browser-results.json",
+              "note": "Make-ten strategy replaces sequential addition help. Whole partners/groups first; splitting only as needed. Independent subset enumeration for 40 cards + 7 references + 200 additional scenarios; quantity conservation and legacy checkpoint migration. UI: 6+4 then 20+8; split 2 into 1+1, make 9+1, retain leftover 1; packed checkpoint restored. 48 help layout states across four languages and four viewports passed."
+            }
+          ]
+        },
+        {
+          "id": "render-pc",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/activity/browser-results.json",
+              "note": "1024×768 4언어 전 단계의 종이 경계·버튼·바구니 검수."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/browser-results.json",
+              "note": "Challenge: 5 cut + 5 remaining cards completed; basic 1-card regression. Four languages and four viewports, 32 calculation/error states. Wrong/correct/reload and mode checkpoint isolation verified. Physical mobile keyboard not tested."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/help/browser-results.json",
+              "note": "Optional calculation help. 40-card/280-step unit checks; 4 languages x 4 viewports (16 open-help states). Restore 3/7, portrait focus scrolling, Escape/close/toggle, final sum, wrong-answer retention, assisted completion and persistent per-card assistance verified. No commit/push/deploy."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/ten-making/browser-results.json",
+              "note": "Make-ten strategy replaces sequential addition help. Whole partners/groups first; splitting only as needed. Independent subset enumeration for 40 cards + 7 references + 200 additional scenarios; quantity conservation and legacy checkpoint migration. UI: 6+4 then 20+8; split 2 into 1+1, make 9+1, retain leftover 1; packed checkpoint restored. 48 help layout states across four languages and four viewports passed."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/browser-results.json",
+              "note": "Curved fold-direction cues to the right of the sheet; reversed direction and order on unfolding. 800 card/language/phase direction checks; existing 313 transitions and 1252 scenes pass. CUA 80 layout states across four languages and four viewports: no overflow, clipped cues, or controls below 44px. Predict unfolded shape before opening; no separate prediction grading."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/large-arrow/browser-results.json",
+              "note": "Replaces inset diagrams with one large curve beside the actual paper footprint. 640 direction conditions, 313 transitions and 1252 scenes passed. CUA 64 layout states: no overflow, clipped arrows or controls below 44px. Actual user checkpoint preserved using a separate local origin."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/large-arrow/centered/browser-results.json",
+              "note": "Shortened curve to 104px tablet, 80px portrait and 76px compact landscape, centred beside fold reference height. 16 phase/viewport states passed centre, clipping and overflow checks. No model or calculation changes."
+            }
+          ]
+        },
+        {
+          "id": "render-mobile",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/activity/browser-results.json",
+              "note": "667×375 4언어,844×390 2언어,390×844 4언어. 최종112상태 가로 넘침·종이 잘림·44px 미만 버튼0. 세로폰 세로 스크롤."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/browser-results.json",
+              "note": "Challenge: 5 cut + 5 remaining cards completed; basic 1-card regression. Four languages and four viewports, 32 calculation/error states. Wrong/correct/reload and mode checkpoint isolation verified. Physical mobile keyboard not tested."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/help/browser-results.json",
+              "note": "Optional calculation help. 40-card/280-step unit checks; 4 languages x 4 viewports (16 open-help states). Restore 3/7, portrait focus scrolling, Escape/close/toggle, final sum, wrong-answer retention, assisted completion and persistent per-card assistance verified. No commit/push/deploy."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/ten-making/browser-results.json",
+              "note": "Make-ten strategy replaces sequential addition help. Whole partners/groups first; splitting only as needed. Independent subset enumeration for 40 cards + 7 references + 200 additional scenarios; quantity conservation and legacy checkpoint migration. UI: 6+4 then 20+8; split 2 into 1+1, make 9+1, retain leftover 1; packed checkpoint restored. 48 help layout states across four languages and four viewports passed."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/browser-results.json",
+              "note": "Curved fold-direction cues to the right of the sheet; reversed direction and order on unfolding. 800 card/language/phase direction checks; existing 313 transitions and 1252 scenes pass. CUA 80 layout states across four languages and four viewports: no overflow, clipped cues, or controls below 44px. Predict unfolded shape before opening; no separate prediction grading."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/large-arrow/browser-results.json",
+              "note": "Replaces inset diagrams with one large curve beside the actual paper footprint. 640 direction conditions, 313 transitions and 1252 scenes passed. CUA 64 layout states: no overflow, clipped arrows or controls below 44px. Actual user checkpoint preserved using a separate local origin."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/large-arrow/centered/browser-results.json",
+              "note": "Shortened curve to 104px tablet, 80px portrait and 76px compact landscape, centred beside fold reference height. 16 phase/viewport states passed centre, clipping and overflow checks. No model or calculation changes."
+            }
+          ]
+        },
+        {
+          "id": "accessibility",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/activity/browser-results.json",
+              "note": "드래그에 탭/Enter/Space 대안. 네이티브 드래그 접기·가위·수집, 키보드 완주. 부분 절단/수집 복원, 접기 중 재시작, 포커스 자동 스크롤 수정 검수."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/browser-results.json",
+              "note": "Challenge: 5 cut + 5 remaining cards completed; basic 1-card regression. Four languages and four viewports, 32 calculation/error states. Wrong/correct/reload and mode checkpoint isolation verified. Physical mobile keyboard not tested."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/help/browser-results.json",
+              "note": "Optional calculation help. 40-card/280-step unit checks; 4 languages x 4 viewports (16 open-help states). Restore 3/7, portrait focus scrolling, Escape/close/toggle, final sum, wrong-answer retention, assisted completion and persistent per-card assistance verified. No commit/push/deploy."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/ten-making/browser-results.json",
+              "note": "Make-ten strategy replaces sequential addition help. Whole partners/groups first; splitting only as needed. Independent subset enumeration for 40 cards + 7 references + 200 additional scenarios; quantity conservation and legacy checkpoint migration. UI: 6+4 then 20+8; split 2 into 1+1, make 9+1, retain leftover 1; packed checkpoint restored. 48 help layout states across four languages and four viewports passed."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/browser-results.json",
+              "note": "Curved fold-direction cues to the right of the sheet; reversed direction and order on unfolding. 800 card/language/phase direction checks; existing 313 transitions and 1252 scenes pass. CUA 80 layout states across four languages and four viewports: no overflow, clipped cues, or controls below 44px. Predict unfolded shape before opening; no separate prediction grading."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/large-arrow/browser-results.json",
+              "note": "Replaces inset diagrams with one large curve beside the actual paper footprint. 640 direction conditions, 313 transitions and 1252 scenes passed. CUA 64 layout states: no overflow, clipped arrows or controls below 44px. Actual user checkpoint preserved using a separate local origin."
+            }
+          ]
+        },
+        {
+          "id": "negative-control",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "geometry/games/number-paper/activity.selftest.mjs",
+              "note": "틀린 순서, 중복 작업, 없는 조각, 불완전 저장 상태 거부 및 물리 절단·연결 성분 변조 대조."
+            }
+          ]
+        },
+        {
+          "id": "regression",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "geometry/games/number-paper/core.selftest.mjs",
+              "note": "공용 수학 모델·기존 학습지 렌더러·다른 게임 변경 없음. 학습지632조건 동일. 보존 결과 activity/preservation.json."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/challenge-20261018/browser-results.json",
+              "note": "Challenge: 5 cut + 5 remaining cards completed; basic 1-card regression. Four languages and four viewports, 32 calculation/error states. Wrong/correct/reload and mode checkpoint isolation verified. Physical mobile keyboard not tested."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/browser-results.json",
+              "note": "Curved fold-direction cues to the right of the sheet; reversed direction and order on unfolding. 800 card/language/phase direction checks; existing 313 transitions and 1252 scenes pass. CUA 80 layout states across four languages and four viewports: no overflow, clipped cues, or controls below 44px. Predict unfolded shape before opening; no separate prediction grading."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/direction-cues/large-arrow/browser-results.json",
+              "note": "Replaces inset diagrams with one large curve beside the actual paper footprint. 640 direction conditions, 313 transitions and 1252 scenes passed. CUA 64 layout states: no overflow, clipped arrows or controls below 44px. Actual user checkpoint preserved using a separate local origin."
+            }
+          ]
+        },
+        {
+          "id": "render-a4",
+          "required": false,
+          "status": "pending",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "geometry/games/number-paper/README.md",
+              "note": "조작 게임 UI 교체. 새 인쇄 유형·PDF/A4 검수 추가 없음."
+            }
+          ]
+        },
+        {
+          "id": "release-readback",
+          "required": false,
+          "status": "pending",
+          "evidence": [
+            {
+              "role": "audit",
+              "locator": "geometry/games/number-paper/README.md",
+              "note": "이번 활동 UI는 로컬 작성·검수. 미커밋·미push·미배포. 앞선 Geometry 배포와 구분."
+            }
+          ]
+        }
+      ],
+      "visual_material": "Glossy paper front/back faces and 3D hinges, scissors, connected physical fragments, basket and craft collection.",
+      "response_contract": "Physical fold/snip/unfold/collect first. Basic completes on collection; challenge requires a typed sum. Optional help finds whole partners for ten first, then whole groups, and splits a quantity only when necessary. The learner packs tens; final help adds tens and leftovers. Help does not auto-fill or complete. Input, assistance and versioned help checkpoints persist.",
+      "experience_status": "Local interaction verified; child/user fun playtest pending.",
+      "historical_evidence": [
+        {
+          "locator": "artifact:game-number-paper-20261017/browser-results.json",
+          "note": "Superseded quiz UI: select original cells, then type a sum. Historical evidence only."
+        },
+        {
+          "locator": "artifact:game-number-paper-20261017/gloss/review.json",
+          "note": "Superseded glossy quiz styling. Current activity uses separate activity evidence."
+        }
+      ],
+      "difficulty_modes": [
+        "play",
+        "challenge"
+      ],
+      "help_strategy": "Make ten; reference concepts: number_magic A-01 pair10, A-02 move10, tenframe. No number_magic files modified.",
+      "spatial_strategy": "Predict the unfolded shape through symmetry and reverse-order reasoning. One short curve beside the actual paper is centred at the fold reference height; it indicates the current fold or inverse opening direction.",
+      "release_authorization": {
+        "date": "2026-10-18",
+        "instruction": "배포 후 진행",
+        "scope": "Number-paper game and its playground entry only; preserve other WIP."
+      }
     }
   ]
 }

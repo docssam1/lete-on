@@ -137,8 +137,6 @@ function genNumber(askCut, preset, difficulty='mid'){
                       : Array.from({length:N},()=>Array.from({length:N},()=>R(1,numberMax)));
   const hDir = preset ? preset.hDir : pick(['up','down']);     // up: 아래가 위로 / down: 위가 아래로
   const vDir = preset ? preset.vDir : pick(['left','right']);  // left: 오른쪽이 왼쪽으로 / right: 왼쪽이 오른쪽으로
-  const packetRow = hDir==='up' ? 0 : 2;                       // 접힌 묶음이 놓이는 사분면
-  const packetCol = vDir==='left' ? 0 : 2;
 
   const cutCount = preset ? 1 : difficulty==='easy'?1:difficulty==='hard'?2:R(1,2);
   const cells=[];                                              // 묶음 안 좌표 (0~1, 0~1)
@@ -148,18 +146,8 @@ function genNumber(askCut, preset, difficulty='mid'){
     if(!cells.some(o=>o.r===c.r&&o.c===c.c)) cells.push(c);
   }
 
-  const removed=new Set();
-  for(const cell of cells){
-    const gr=packetRow+cell.r, gc=packetCol+cell.c;            // 색칠 칸의 원본 좌표
-    for(const r of [gr, N-1-gr]) for(const c of [gc, N-1-gc]) removed.add(r*N+c);
-  }
-
-  let total=0, cut=0;
-  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
-    total+=grid[r][c];
-    if(removed.has(r*N+c)) cut+=grid[r][c];
-  }
-  const remain=total-cut;
+  // 게임과 동일한 원본 칸 추적·합 계산을 사용한다. 인쇄 좌표와 문항 문법은 유지한다.
+  const {packetRow,packetCol,removed,total,cut,remain}=globalThis.GW_NUMBER_PAPER.numberPaperModel({grid,hDir,vDir,cells});
   if(remain<=0) return genNumber(askCut,null,difficulty);
 
   return {
