@@ -16,10 +16,10 @@
   <div class="topline"><span class="mark">G</span><span>G-FIELD · 사고력 교재 연구</span></div>
   <section class="hero">
     <div><div class="eyebrow">Skill map · research prototype</div><h1>수학 사고력<br>스킬 계통도</h1><p>문제의 겉모양이 아니라 학생이 실제로 해야 하는 사고 행동을 기준으로 유형을 묶고, 학년별 교과 수준과 난이도 근거를 연결해 교재·문제은행에 쓸 계통도를 만드는 연구 화면입니다.</p></div>
-    <div class="checkpoint"><strong>현재 범위 · 1031 입문 C 1–5단원</strong>수 배열·수열·도형 패턴·새 연산 기호 본문 9–47쪽, 80개 활동을 분석했습니다. 화면에는 52개 행동 유형 후보를 영역 순번으로 표시하며, 난이도와 최소 교과수준은 내용 후보로만 제시하고 학년·연령 확정과 구분합니다.</div>
+    <div class="checkpoint"><strong>현재 범위 · 1031 입문 C 1–6단원</strong>수 배열·수열·도형 패턴·새 연산 기호·입출력·부호화 본문 9–55쪽, 96개 활동을 분석했습니다. 화면에는 60개 행동 유형 후보를 영역 순번으로 표시하며, 난이도와 최소 교과수준은 내용 후보로만 제시하고 학년·연령 확정과 구분합니다.</div>
   </section>
   <section class="stats" aria-label="연구 통계">
-    <div class="stat"><b>1,279</b><span>전체 온톨로지 노드</span></div><div class="stat"><b>1,858</b><span>전체 관계</span></div><div class="stat"><b>178</b><span>행동 유형 후보</span></div><div class="stat"><b>338</b><span>후보 근거 연결 활동</span></div><div class="stat"><b>514</b><span>유형 검토 대기 활동</span></div><div class="stat"><b>0</b><span>교사 승인 유형·난이도·학년</span></div>
+    <div class="stat"><b>1,291</b><span>전체 온톨로지 노드</span></div><div class="stat"><b>1,891</b><span>전체 관계</span></div><div class="stat"><b>186</b><span>행동 유형 후보</span></div><div class="stat"><b>351</b><span>후보 근거 연결 활동</span></div><div class="stat"><b>501</b><span>유형 검토 대기 활동</span></div><div class="stat"><b>0</b><span>교사 승인 유형·난이도·학년</span></div>
   </section>
   <div class="controls">
     <label class="search"><input id="search" type="search" placeholder="사고 행동 검색" aria-label="사고 행동 검색"></label>
@@ -39,6 +39,11 @@
       <div class="family"><small>유형 가족 후보 · FAMILY-INTRO-C-U5-OPERATION-RULE-INFERENCE</small><strong>예시에서 연산 규칙 추론</strong><p>입력과 출력의 예시에서 규칙을 추론하는 공통점을 묶되 입력 가중 위치·자릿값 변환·등식 판정은 구분한다.</p></div>
       <div class="family"><small>유형 가족 후보 · FAMILY-INTRO-C-U5-REVERSE-AND-TABLE-OPERATIONS</small><strong>연산 관계 역산과 표</strong><p>연산 관계에서 누락 입력을 역산하거나 표의 행·열로 결과를 구성하는 행동을 후보 가족으로 둔다.</p></div>
       <div class="family"><small>유형 가족 후보 · FAMILY-INTRO-C-U5-ARITHMETIC-STATE-AND-GRID-PATHS</small><strong>연산 상태 추적과 격자 경로</strong><p>연산 결과를 순차 상태·격자 위치에 연결하되 방향별 상태 갱신과 나머지-경로 구성은 별도 행동으로 유지한다.</p></div>
+      <div class="family"><small>유형 가족 후보 · FAMILY-INTRO-C-U6-REPEATED-TRANSFORM</small><strong>출력 재입력 반복 변환</strong><p>기존 AR06 입력·출력 규칙 유형을 재사용하고 같은 변환을 다시 적용하는 확장 후보를 연결합니다.</p></div>
+      <div class="family"><small>유형 가족 후보 · FAMILY-INTRO-C-U6-INVARIANT-AND-SYMBOLIC-CALCULATION</small><strong>불변 조건과 기호 변환 계산</strong><p>입력 합 불변 조건과 모양별 변환 계산을 묶은 탐색 계열입니다. 각 행동은 별도 후보로 둡니다.</p></div>
+      <div class="family"><small>유형 가족 후보 · FAMILY-INTRO-C-U6-CHARACTER-CODES</small><strong>문자 대응 부호화·복호화</strong><p>한글 자음 치환·자모 코드·알파벳 순번·휴대전화 입력 행동을 구분해 묶습니다.</p></div>
+      <div class="family"><small>유형 가족 후보 · FAMILY-INTRO-C-U6-COLOR-PLACE-VALUE</small><strong>색상 기호에서 자릿값 읽기</strong><p>색으로 표시한 숫자 순서에서 자리값을 해석하는 별도 행동 후보입니다.</p></div>
+      <div class="note"><b>입문 C 6단원 검토 범위</b><br>49–55쪽 16개 활동을 대조했습니다. 기존 입출력 행동 AR06의 새 근거 4개를 확장하고 신규 행동 후보 8개에 9개 활동 근거를 연결했습니다. 기존 AR06 연결을 포함해 16개 활동 전체에 근거가 있으며, C6에서 새로 연결한 활동은 13개입니다. 조건부 난이도 16개, 최소 교과수준 내용 후보 2개, 가족 후보 4개와 계통 가설 8개를 더했습니다. 소마 목차 직접 대응 8개·직접 행 보류 8개입니다. 교사 승인·정답 검증·최소 학년 배정은 없습니다.</div>
       <div class="note"><b>입문 C 5단원 검토 범위</b><br>41–47쪽의 16개 활동을 14개 행동 후보와 17개 행동 근거 연결로 정리했습니다. 조건부 난이도 16개, 최소 교과수준 내용 후보 13개, 연산 규칙 가족 후보 4개와 계통 가설 9개를 추가했습니다. 교육과정 연결은 관련 맥락이며 최소 학년 확정이 아닙니다. 소마 목차의 직접 대응은 0건이고, 정답 검증·교사 승인은 없습니다.</div>
       <div class="note"><b>입문 C 4단원 검토 범위</b><br>33–39쪽 16개 활동 중 15개를 13개 행동 후보에 연결했습니다. p.39 마지막 그래프 활동은 규칙이 명시되지 않아 보류했습니다. 조건부 난이도 15개와 최소 교과수준 내용 후보 13개는 승인 전입니다. 소마 목차는 4개 부분 연결, 12개 직접 대응 보류, 정확 일치 0건입니다. 8개 계통 가설과 4개 유형 가족 후보는 모두 검토 전입니다. 정답 검증은 없습니다.</div>
       <div id="tree" class="tree" role="list"></div><div id="empty" class="empty">조건에 맞는 사고 행동이 없습니다.</div>
@@ -46,10 +51,10 @@
     <aside class="side">
       <section class="panel"><h2>계통 연결 가설</h2><div class="sub">화살표는 학습 설계를 위한 검토 가설이며 승인된 선수관계를 뜻하지 않습니다.</div><div id="relations"></div></section>
       <section class="panel"><h2>수준과 난이도</h2><div class="legend"><div class="legend-row"><i class="swatch" style="background:#548cb1"></i><span><b>교과 학년</b><br>초등 학년은 아직 부여하지 않았습니다. 연령이나 교재 표시만으로 확정하지 않습니다.</span></div><div class="legend-row"><i class="swatch" style="background:#bd9237"></i><span><b>조건부 난이도 후보</b><br>선수 개념 이해를 가정한 잠정 범위입니다. 교사 검토 전이며 성취 기준이 아닙니다.</span></div><div class="legend-row"><i class="swatch" style="background:#48845f"></i><span><b>영역 순번</b><br>현재 분석한 단원 안에서 정한 순번입니다. 전체 교재의 위계 순서와 구분합니다.</span></div></div></section>
-      <div class="note"><b>근거 범위</b><br>입문 C 1단원, 인쇄 쪽수 9–15. Apple Vision 로컬 OCR과 페이지 이미지의 기존 시각 검토 기록을 재사용했습니다. 원문 문항·정답은 이 화면에 싣지 않습니다.</div>
+      <div class="note"><b>근거 범위</b><br>입문 C 1–6단원, 인쇄 쪽수 9–55. Apple Vision 로컬 OCR과 페이지 이미지의 기존 시각 검토 기록을 재사용했습니다. 원문 문항·정답은 이 화면에 싣지 않습니다.</div>
     </aside>
   </div>
-  <footer class="footer">연구 체크포인트 v26 · 2026-10-19 · 입문 C 1–5단원 · 온톨로지 JSON <a href="./ontology-intro-c-u4-u5.json">보기</a> · 유형 동등성·선수관계·나선 순서의 교사 승인 0건 · 최소 교과수준·연령 확정 0건<br>이 화면은 연구 후보를 검토하기 위한 프로토타입입니다. 전체 원자료와 출처 해시는 비공개 연구 폴더에서 관리합니다.</footer>
+  <footer class="footer">연구 체크포인트 v27 · 2026-10-19 · 입문 C 1–6단원 · 온톨로지 JSON <a href="./ontology-intro-c-u4-u6.json">보기</a> · 유형 동등성·선수관계·나선 순서의 교사 승인 0건 · 최소 교과수준·연령 확정 0건<br>이 화면은 연구 후보를 검토하기 위한 프로토타입입니다. 전체 원자료와 출처 해시는 비공개 연구 폴더에서 관리합니다.</footer>
 </main>
 <script>
 'use strict';
@@ -121,6 +126,14 @@ const skills=[
  {id:"OP-INTRO-C-U5-12",n:50,title:"같은 값의 모양 기호를 정규화해 복합식 계산하기",area:'operations',difficulty:"4–5",count:1,desc:"크기가 다른 모양 기호가 같은 수를 나타냄을 적용하고 괄호·곱셈·덧셈이 함께 있는 식을 해석한다.",links:['연산 규칙 계통 후보 · candidate-needs-teacher-review'],pages:"47쪽"},
  {id:"OP-INTRO-C-U5-13",n:51,title:"반복 뺄셈으로 정의된 연산의 나머지 계산하기",area:'operations',difficulty:"4–5",count:1,desc:"왼쪽 수에서 오른쪽 수를 더 뺄 수 없을 때까지 빼고 남은 값을 연산 결과로 정한다.",links:['연산 규칙 계통 후보 · candidate-needs-teacher-review'],pages:"47쪽",curriculum:"초등 3–4학년군 곱셈 내용 후보"},
  {id:"OP-INTRO-C-U5-14",n:52,title:"연산 결과를 대응해 대각선 없는 격자 경로 구성하기",area:'operations',difficulty:"4–5",count:1,desc:"연산 결과를 격자의 값과 대응하고 출발 칸에서 대각 이동 없이 문제 순서대로 경로를 구성한다.",links:['연산 규칙 계통 후보 · candidate-needs-teacher-review'],pages:"47쪽",curriculum:"초등 3–4학년군 나머지·격자 이동 내용 후보"},
+ {id:"BOX-INTRO-C-U6-01",n:53,title:"출력값을 다시 입력해 수 변환을 반복하기",area:'operations',difficulty:"3–4",count:2,desc:"입출력 표에서 규칙을 찾아 첫 결과에 같은 규칙을 다시 적용한다.",links:['기존 AR06 입력·출력 규칙에서 반복 적용으로 확장하는 후보'],pages:"51쪽"},
+ {id:"BOX-INTRO-C-U6-02",n:54,title:"두 입력의 합 불변 조건으로 상자 결과 추론하기",area:'operations',difficulty:"2–3",count:1,desc:"두 입력의 합이 일정하다는 조건으로 마지막 출력값을 찾는다.",links:['불변 조건과 상자 변환 계통 후보'],pages:"52쪽",curriculum:"1–2학년군 덧셈·규칙 내용 후보"},
+ {id:"BOX-INTRO-C-U6-03",n:55,title:"한글 음절의 자음 치환 규칙 찾아 적용하기",area:'operations',difficulty:"2–3",count:1,desc:"여러 음절 예시에서 초성 치환 규칙을 찾아 새 음절에 적용한다.",links:['반복 모양 규칙과 구별되는 문자 부호화 행동'],pages:"53쪽"},
+ {id:"BOX-INTRO-C-U6-04",n:56,title:"색으로 구분된 숫자 순서를 자릿값으로 읽기",area:'operations',difficulty:"3–4",count:1,desc:"색이 다른 숫자 구슬의 위치 규칙으로 두 자리 무게 표시를 구성한다.",links:['자릿값과 색상 부호 표현 연결 후보'],pages:"53쪽"},
+ {id:"BOX-INTRO-C-U6-05",n:57,title:"숫자-자모 대응표에서 한글 음절 부호 복호화하기",area:'operations',difficulty:"3–4",count:1,desc:"숫자별 자음·모음 대응표를 조회해 숫자열을 한글 자모로 바꾼다.",links:['문자 대응표를 이용한 복호화 행동'],pages:"54쪽"},
+ {id:"BOX-INTRO-C-U6-06",n:58,title:"알파벳 순번으로 영문 단어 숫자 코드 만들기",area:'operations',difficulty:"3–4",count:1,desc:"알파벳과 순번의 대응을 확인해 단어의 글자를 숫자로 변환한다.",links:['한글 자모 코드와 구별되는 알파벳 순번 부호화'],pages:"54쪽"},
+ {id:"BOX-INTRO-C-U6-07",n:59,title:"모양별 변환 규칙을 계산식에 적용하기",area:'operations',difficulty:"4–5",count:1,desc:"모양별 입출력 규칙을 찾아 복합 덧셈·뺄셈식에 적용한다.",links:['기존 정의 연산 기호 계산과 연결하는 후보'],pages:"55쪽",curriculum:"3–4학년군 계산식 규칙 내용 후보"},
+ {id:"BOX-INTRO-C-U6-08",n:60,title:"휴대전화 자모 입력 규칙으로 특정 버튼 누름 횟수 세기",area:'operations',difficulty:"4–5",count:1,desc:"자모 숫자판과 연속 누르기 규칙으로 특정 버튼 사용 횟수를 센다.",links:['문자 입력 부호화 계열의 별도 계산 행동'],pages:"55쪽"}
 ];
 const relations=[
  ["겹친 두 수와 결과의 덧셈 관계 찾기","명시된 새 연산 기호를 두 입력에 적용하기","계통 가설 · 두 수의 덧셈 관계를 찾는 활동에서 별도 기호로 정의된 연산에 적용하는 표현 변이인지 검토한다."],
@@ -158,6 +171,14 @@ const relations=[
  ["겹친 두 수와 결과의 덧셈 관계 찾기","세 수의 뺄셈 관계에서 빠진 수 찾기","구별 유지 · 덧셈과 뺄셈은 연산 방향과 사고 행동이 달라 별도로 유지"],
  ["앞 단계의 합을 다음 칸에 잇는 계단형 수열 완성하기","합 피라미드에서 0을 제외한 최소 가능값 찾기","계통 가설 · 인접 합 규칙에 제약 조건과 최솟값 요구가 추가되는지 검토"],
  ["겹친 두 수와 결과의 덧셈 관계 찾기","칸의 숫자를 두 자리 수로 묶어 연산 관계 찾기","계통 가설 · 단순 합에서 자릿값 구성과 연산 탐색으로 확장되는지 검토"]
+ ["일정한 증가 수열의 규칙 찾기","입력·출력 규칙 추론하고 적용하기","계통 가설 · 수열 규칙에서 상자 입출력으로 표상이 바뀌는지 검토한다."],
+ ["입력·출력 규칙 추론하고 적용하기","출력값을 다시 입력해 수 변환을 반복하기","나선 확장 후보 · 같은 입출력 규칙을 다시 적용하는 요구가 추가된다."],
+ ["보기 등식에서 새 연산 규칙 찾기","입력·출력 규칙 추론하고 적용하기","표현 변이 후보 · 연산 규칙 추론과 상자 입출력의 연계를 검토한다."],
+ ["연산 규칙을 역으로 적용해 빠진 입력 찾기","입력·출력 규칙 추론하고 적용하기","표현 변이 후보 · 결과 역추론과 상자 사례의 연결 범위를 검토한다."],
+ ["주사위 눈을 십·일의 자리 수로 읽기","색으로 구분된 숫자 순서를 자릿값으로 읽기","표현 변이 후보 · 자리 해석과 색상 부호 표현의 연계를 검토한다."],
+ ["같은 값 모양 기호를 정규화해 복합식 계산하기","모양별 변환 규칙을 계산식에 적용하기","표현 변이 후보 · 기호식과 모양별 규칙 계산의 연계를 검토한다."],
+ ["반복 모양 마디를 찾아 빈칸에 놓기","한글 음절의 자음 치환 규칙 찾아 적용하기","구별 유지 · 반복 모양과 음절 자음 치환은 대상과 행동이 다르다."],
+ ["숫자-자모 대응표에서 한글 음절 부호 복호화하기","알파벳 순번으로 영문 단어 숫자 코드 만들기","구별 유지 · 한글 자모와 알파벳은 문자 체계와 변환 행동이 다르다."]
 ];
 const tree=document.querySelector('#tree');
 for(const s of skills){const card=document.createElement('article');card.className='skill-card';card.tabIndex=0;card.setAttribute('role','listitem');card.dataset.area=s.area||'number';card.dataset.grade='unconfirmed';card.dataset.search=(s.title+' '+s.desc+' '+s.id).toLowerCase();card.innerHTML='<span class="node">'+s.n+'</span><div class="node-title"></div><div class="node-meta"><span class="tag">영역 순번 '+s.n+'</span><span class="tag level">난이도 후보 '+s.difficulty+'</span><span class="tag grade">학년 미확정</span><span class="tag">근거 활동 '+s.count+'개</span></div><p class="node-desc"></p><div class="linklabel">'+s.id+' · 근거 '+s.pages+'</div>';card.querySelector('.node-title').textContent=s.title;card.querySelector('.node-desc').textContent=s.desc;if(s.curriculum){const tag=document.createElement('span');tag.className='tag grade';tag.textContent='최소 교과수준 내용 후보 '+s.curriculum;card.querySelector('.node-meta').append(tag)}tree.append(card)}
