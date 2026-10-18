@@ -66,8 +66,8 @@ check('마일스톤 ↔ courses.js', ()=>{
   assert.equal(tier(PC.milestone('K').course-1),'level0', 'K = 수의 나라 끝');
   // 주제 대조: 앞 과정 제목에 그 단계의 주제가 있어야 한다
   const title=n=>C['C'+n].title.ko;
-  assert.match(title(2),/받아올림/); assert.match(title(4),/두 자리/); assert.match(title(7),/구구단/);
-  assert.match(title(9),/곱셈|나머지/); assert.match(title(12),/나눗셈/);
+  assert.match(title(2),/받아내림/); assert.match(title(3),/두 자리/); assert.match(title(4),/곱셈구구/);
+  assert.match(title(9),/곱셈|나머지/); assert.match(title(11),/÷/);
   // 기준표의 모든 점이 마일스톤(또는 KMO 14+9 = 과정 2)에 걸려 있다
   PC.BENCH.forEach(b=>b.anchors.forEach(a=>{ assert(PC.milestone(a.id)||(b.key==='k'&&a.id==='C2'&&a.course===2), b.key+' '+a.id); }));
 });
