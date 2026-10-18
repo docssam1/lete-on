@@ -227,7 +227,7 @@
       },
       {
         "from": "잘못된 연산 결과를 되돌려 원래 수를 복원하고 바른 계산 재적용하기",
-        "to": "AR04",
+        "to": "끝 상태에서 연산 순서 거꾸로 복원하기",
         "type": "related-but-distinct",
         "basis": "오류 복원은 잘못된 연산에서 시작 수를 찾은 뒤 의도된 연산을 다시 적용한다.",
         "status": "hypothesis-needs-teacher-review",
