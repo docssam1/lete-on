@@ -93,10 +93,18 @@ function serve(){
     /* 두뇌로 완료 과정 진단지(dunoro=1~25): 과정표의 연산으로 이전 6 · 과정 N 10 · 다음 4 */
     const dunoro = QUICK ? [1, 7, 13, 25] : Array.from({ length: 25 }, (_, i) => i + 1);
     const somaP = QUICK ? [1, 5, 6, 8] : Array.from({ length: 8 }, (_, i) => i + 1);
+    const bookCounts = { 'soma-k':8, 'soma-a':8, 'soma-b':8, 'soma-c':8, 'soma-d':6, 'miracle-pre-2023':5, 'miracle-elem-2021':12 };
+    const otherBooks = Object.entries(bookCounts).flatMap(([series, count]) =>
+      (QUICK ? [...new Set(series === 'soma-k' ? [1, 2, count] : [1, count])] : Array.from({ length: count }, (_, i) => i + 1))
+        .map(volume => ({ id: series + volume, query: 'b=c1&bookSeries=' + series + '&bookVolume=' + volume, bookSeries: series, bookVolume: volume })));
+    const mixed = { id:'mixed3', query:'b=c1&mixBooks=1&' + packed([
+      finished('dunoro','level-3',17), finished('soma-p','v1',null,'2019'), finished('miracle','elem-2021-v6')
+    ]), mixed:true };
     const sheets = pick.map(id => ({ id, query: 'b=' + id }))
       .concat(dunoro.map(n => ({ id: 'dunoro' + n, query: 'b=c1&dunoro=' + n, dunoro: n })))
-      .concat(somaP.map(n => ({ id: 'somaP' + n, query: 'b=c1&somaP=' + n, somaP: n })));
-    for(const lang of QUICK ? ['ko'] : ['ko', 'en', 'zh']) for(const { id, query, dunoro: course, somaP: volume } of sheets){
+      .concat(somaP.map(n => ({ id: 'somaP' + n, query: 'b=c1&somaP=' + n, somaP: n })))
+      .concat(otherBooks, mixed);
+    for(const lang of QUICK ? ['ko'] : ['ko', 'en', 'zh']) for(const { id, query, dunoro: course, somaP: volume, bookSeries, bookVolume, mixed: isMixed } of sheets){
       await page.goto(`http://localhost:${PORT}/placement-sheet.html?${query}&seed=chk&l=${lang}`);
       await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 }).catch(() => {});
       await page.emulateMedia({ media: 'print' });
@@ -127,6 +135,10 @@ function serve(){
       if(volume && lang === 'ko' && !r.source.includes('소마셈 P ' + volume + '권 완료 기준')) problems.push('소마셈 P권 표기 누락');
       if(volume && lang === 'ko' && !r.source.includes('실제 교재의 문제·그림·풀이 방식과 같다는 검증은 없어요')) problems.push('소마셈 교재 형식 미검증 안내 누락');
       if(volume && r.bands !== '6/10/4') problems.push('구간 ' + r.bands);
+      if(bookSeries && lang === 'ko' && (!r.source.includes(bookVolume + '권 완료 기준') || !r.source.includes('실제 교재의 문제·숫자 범위·풀이 방식과 같다는 검증은 없어요'))) problems.push('교재 권·검증 경계 안내 누락');
+      if(bookSeries && r.bands !== '6/10/4') problems.push('구간 ' + r.bands);
+      if(isMixed && lang === 'ko' && (!r.source.includes('완료한 교재 3권 함께 확인') || !r.source.includes('모든 교재가 들어가지 않을 수 있어요'))) problems.push('병행 교재 편성 안내 누락');
+      if(isMixed && r.bands !== '6/10/4') problems.push('병행 구간 ' + r.bands);
       if(problems.length) bad.push(`${lang} ${id}: ${problems.join(' · ')}`);
       await tag.evaluate(e => e.remove()); await page.emulateMedia({ media: 'screen' });
     }

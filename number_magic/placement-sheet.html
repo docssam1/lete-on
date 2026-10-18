@@ -223,7 +223,8 @@
 <script src="data/placement-books.js?v=20261018-soma2019-dunoro1"></script>
 <script src="data/dunoro-courses.js?v=20261018-dunoro-arith1"></script>
 <script src="data/soma-p-2019.js?v=20261018-soma-p1"></script>
-<script src="data/placement-plan.js?v=20261018-soma-p1"></script>
+<script src="data/book-volume-topics.js?v=20261018-volumes1"></script>
+<script src="data/placement-plan.js?v=20261018-volumes1"></script>
 <script src="data/placement-paths.js?v=20261017-multi-book2"></script>
 <link rel="stylesheet" href="app/placement-ui.css?v=20261017-multi-book2">
 <script src="data/study-projection.js?v=20261015-records1"></script>
@@ -250,6 +251,10 @@ if(!STAGES.some(function(s){ return s.id === BASE; })) BASE = STAGES[0].id;
 /* 두뇌로 완료 과정(dunoro=1~25): 과정표의 연산으로 이전 6 · 과정 N 10 · 다음 4를 낸다. b보다 우선한다. */
 var DUNORO = /^(?:[1-9]|1\d|2[0-5])$/.test(Q.get('dunoro') || '') ? Number(Q.get('dunoro')) : 0;
 var SOMA_P = !DUNORO && /^[1-8]$/.test(Q.get('somaP') || '') ? Number(Q.get('somaP')) : 0;
+var BOOK_COUNTS = {'soma-k':8,'soma-a':8,'soma-b':8,'soma-c':8,'soma-d':6,'miracle-pre-2023':5,'miracle-elem-2021':12};
+var BOOK_SERIES = !DUNORO && !SOMA_P && Object.prototype.hasOwnProperty.call(BOOK_COUNTS,Q.get('bookSeries')) ? Q.get('bookSeries') : '';
+var BOOK_VOLUME = BOOK_SERIES && /^(?:[1-9]|1[0-2])$/.test(Q.get('bookVolume') || '') && Number(Q.get('bookVolume')) <= BOOK_COUNTS[BOOK_SERIES] ? Number(Q.get('bookVolume')) : 0;
+if(!BOOK_VOLUME) BOOK_SERIES = '';
 /* URL의 교재 정보는 등록된 선택지만 사용한다. 교재 번호는 앱 진단 기준 b와 별개다. */
 function validatedBook(raw, legacy){
   var books = window.NM_PLACEMENT_BOOKS;
@@ -304,13 +309,32 @@ function schoolScopeLabel(){
     LANG === 'zh' ? group + year + '年级 · 第' + semester + '学期' : group + year + ' · semester ' + semester;
 }
 var COMPLETED_BOOKS = selectedBookLabels(), SCHOOL_SCOPE = schoolScopeLabel();
+function mixedBookSources(){
+  if(Q.get('route') !== 'book') return [];
+  var packed=Q.get('books'), entries;
+  if(!packed || packed.length>5000) return [];
+  try{entries=JSON.parse(packed);}catch(e){return [];}
+  if(!Array.isArray(entries)||entries.length<2||entries.length>8) return [];
+  var catalog=window.NM_PLACEMENT_BOOKS, sources=[], seen=new Set();
+  for(var entry of entries){
+    if(!validatedBook(entry,false)) return [];
+    var source=catalog.diagnosticSource(entry);
+    if(!source) return [];
+    var key=source.series+':'+source.course;
+    if(seen.has(key)) return [];
+    seen.add(key);sources.push(source);
+  }
+  return sources;
+}
+var AVAILABLE_MIX_SOURCES=mixedBookSources();
+var MIX_SOURCES=Q.get('mixBooks')==='1'&&!DUNORO&&!SOMA_P&&!BOOK_SERIES?AVAILABLE_MIX_SOURCES:[];
 function sourceHtml(stage){
   var bookPart = COMPLETED_BOOKS.length ? '<div class="pl-books"><b>' + esc(T('완료한 교재', 'Completed books', '已完成的教材')) + ' (' + COMPLETED_BOOKS.length + '):</b><ol class="pl-book-list">' +
     COMPLETED_BOOKS.map(function(label){ return '<li>' + esc(label) + '</li>'; }).join('') + '</ol></div>' : '';
   var schoolPart = SCHOOL_SCOPE ? '<div class="pl-school"><b>' + esc(T('선택한 교과 진도', 'Selected school progress', '所选学校进度')) + ':</b> ' + esc(SCHOOL_SCOPE) + '</div>' : '';
   var book = PLAN_NOW && PLAN_NOW.book;
-  var otherBooksNote = book && COMPLETED_BOOKS.length > 1 ? '<br>' + esc(T('함께 기록한 다른 교재는 이 문항의 출제 기준에 포함되지 않았어요.', 'Other recorded books did not determine these questions.', '同时记录的其他教材未用于本次出题。')) : '';
-  var scope = book ? '<div class="pl-app-scope"><b>' + esc(L(book.title)) + ':</b> ' + esc(book.topics) +
+  var otherBooksNote = book && book.series!=='mixed' && COMPLETED_BOOKS.length > 1 ? '<br>' + esc(T('함께 기록한 다른 교재는 이 문항의 출제 기준에 포함되지 않았어요.', 'Other recorded books did not determine these questions.', '同时记录的其他教材未用于本次出题。')) : '';
+  var scope = book ? '<div class="pl-app-scope"><b>' + esc(L(book.title)) + ':</b> ' + esc(typeof book.topics==='string'?book.topics:L(book.topics)) +
     ' · ' + esc(book.mix ? L(book.mix) : T('이전 6 · 과정 ' + book.course + ' 10 · 다음 4', 'Earlier 6 · Course ' + book.course + ' 10 · Next 4', '之前6 · 课程' + book.course + ' 10 · 之后4')) +
     '<br>' + esc(L(book.notice)) + otherBooksNote + '</div>' :
     '<div class="pl-app-scope"><b>' + esc(T('앱 진단 기준 주제', 'App diagnostic topic', '应用测评基准主题')) + ':</b> ' + esc(L(stage.label)) +
@@ -447,10 +471,10 @@ function keyPage(plan, stage){
 /* ── 조립 ── */
 var PLAN_NOW = null;
 function build(){
-  PLAN_NOW = DUNORO ? PLAN.buildBook('dunoro', DUNORO, SEED) : SOMA_P ? PLAN.buildBook('soma-p', SOMA_P, SEED) : PLAN.build(BASE, SEED);
-  var stage = DUNORO || SOMA_P ? PLAN_NOW.baseline : STAGES.find(function(s){ return s.id === BASE; });
+  PLAN_NOW = DUNORO ? PLAN.buildBook('dunoro', DUNORO, SEED) : SOMA_P ? PLAN.buildBook('soma-p', SOMA_P, SEED) : BOOK_SERIES ? PLAN.buildBook(BOOK_SERIES, BOOK_VOLUME, SEED) : MIX_SOURCES.length ? PLAN.buildBooks(MIX_SOURCES, SEED) : PLAN.build(BASE, SEED);
+  var stage = DUNORO || SOMA_P || BOOK_SERIES || MIX_SOURCES.length ? PLAN_NOW.baseline : STAGES.find(function(s){ return s.id === BASE; });
   var layout = layoutOf(stage);
-  CODE = 'PL-' + (DUNORO ? 'dunoro' + DUNORO : SOMA_P ? 'somaP' + SOMA_P : BASE) + '-' + SEED + '-' + LANG;
+  CODE = 'PL-' + (DUNORO ? 'dunoro' + DUNORO : SOMA_P ? 'somaP' + SOMA_P : BOOK_SERIES ? BOOK_SERIES + BOOK_VOLUME : MIX_SOURCES.length ? 'mixed' + MIX_SOURCES.length : BASE) + '-' + SEED + '-' + LANG;
   var old = document.querySelector('.nm-print-sheet'); if(old) old.remove();
   var sheet = document.createElement('div');
   sheet.className = 'nm-print-sheet nm-print-age-' + layout.band + ' ' + layout.cls;
@@ -516,17 +540,25 @@ function toolbar(){
     Array.from({length:25}, function(_, i){ return '<option value="' + (i + 1) + '"' + (i + 1 === DUNORO ? ' selected' : '') + '>' + esc(T('두뇌로 과정 ' + (i + 1) + ' 완료', 'Dunoro course ' + (i + 1), 'Dunoro课程' + (i + 1))) + '</option>'; }).join('') + '</select>';
   var sp = '<select id="plSomaP" aria-label="' + esc(T('소마셈 2019 P 완료 권', 'Completed 2019 SomaSem P volume', '已完成的2019 SomaSem P册')) + '"><option value="">' + esc(T('소마셈 P권 —', 'SomaSem P volume —', 'SomaSem P册 —')) + '</option>' +
     Array.from({length:8}, function(_, i){ return '<option value="' + (i + 1) + '"' + (i + 1 === SOMA_P ? ' selected' : '') + '>' + esc(T('소마셈 P' + (i + 1) + '권 완료', 'SomaSem P volume ' + (i + 1), 'SomaSem P 第' + (i + 1) + '册')) + '</option>'; }).join('') + '</select>';
+  var other = '<select id="plOtherBook" aria-label="' + esc(T('다른 완료 교재 권', 'Other completed book volume', '其他已完成教材册次')) + '"><option value="">' + esc(T('다른 교재 권 —', 'Other book volume —', '其他教材册 —')) + '</option>' +
+    (AVAILABLE_MIX_SOURCES.length>1?'<option value="mixed"'+(MIX_SOURCES.length?' selected':'')+'>'+esc(T('완료한 교재 함께 확인', 'Check completed books together', '合并确认已完成教材'))+'</option>':'')+
+    Object.keys(BOOK_COUNTS).map(function(series){ var label=series.indexOf('soma-')===0?'소마셈 '+series.slice(-1).toUpperCase()+' · 2019':series==='miracle-pre-2023'?'기적의 계산법 예비초등 · 2023':'기적의 계산법 초등 · 2021';
+      return '<optgroup label="' + esc(label) + '">' + Array.from({length:BOOK_COUNTS[series]},function(_,i){ var n=i+1; return '<option value="'+series+':'+n+'"'+(series===BOOK_SERIES&&n===BOOK_VOLUME?' selected':'')+'>'+esc(label+' '+n+'권')+'</option>'; }).join('') + '</optgroup>'; }).join('') + '</select>';
   var lg = '<select id="plLang">' + [['ko','한국어'],['en','English'],['zh','中文']].map(function(x){ return '<option value="' + x[0] + '"' + (x[0] === LANG ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select>';
   var seedIn = '<input id="plSeed" value="' + esc(SEED) + '" size="10" aria-label="seed">';
-  var tools = document.createElement('div'); tools.className = 'pl-tools'; tools.innerHTML = sel + dn + sp + lg + seedIn;
+  var tools = document.createElement('div'); tools.className = 'pl-tools'; tools.innerHTML = sel + dn + sp + other + lg + seedIn;
   bar.insertBefore(tools, document.getElementById('wsPrint'));
   var go = function(e){ var u = new URL(location.href); u.searchParams.set('b', document.getElementById('plStage').value);
-    var changed=e&&e.target&&e.target.id, d=changed==='plStage'||changed==='plSomaP'?'':document.getElementById('plDunoro').value;
-    var p=changed==='plStage'||changed==='plDunoro'?'':document.getElementById('plSomaP').value;
+    var changed=e&&e.target&&e.target.id, d=changed==='plStage'||changed==='plSomaP'||changed==='plOtherBook'?'':document.getElementById('plDunoro').value;
+    var p=changed==='plStage'||changed==='plDunoro'||changed==='plOtherBook'?'':document.getElementById('plSomaP').value;
+    var otherValue=changed==='plStage'||changed==='plDunoro'||changed==='plSomaP'?'':document.getElementById('plOtherBook').value;
     if(d) u.searchParams.set('dunoro', d); else u.searchParams.delete('dunoro');
     if(p) u.searchParams.set('somaP', p); else u.searchParams.delete('somaP');
+    if(otherValue==='mixed'){u.searchParams.set('mixBooks','1');u.searchParams.delete('bookSeries');u.searchParams.delete('bookVolume');}
+    else if(otherValue){ var parts=otherValue.split(':');u.searchParams.delete('mixBooks');u.searchParams.set('bookSeries',parts[0]);u.searchParams.set('bookVolume',parts[1]); }
+    else {u.searchParams.delete('mixBooks');u.searchParams.delete('bookSeries');u.searchParams.delete('bookVolume');}
     u.searchParams.set('l', document.getElementById('plLang').value); u.searchParams.set('seed', document.getElementById('plSeed').value.trim() || 'sheet1'); location.href = u.toString(); };
-  ['plStage','plDunoro','plSomaP','plLang'].forEach(function(id){ document.getElementById(id).onchange = go; });
+  ['plStage','plDunoro','plSomaP','plOtherBook','plLang'].forEach(function(id){ document.getElementById(id).onchange = go; });
   document.getElementById('plSeed').onchange = go;
   document.getElementById('wsTitle').textContent = 'Numbers of Magic · ' + T('시작점 확인 시험지', 'Starting-point check sheet', '起点测评卷');
 }
