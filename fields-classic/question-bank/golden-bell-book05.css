@@ -96,7 +96,102 @@
 .b5-src-prod rect.s{fill:#ffd45c;stroke:#c99a1e;stroke-width:1.4}
 .b5-src-prod text{fill:#222;text-anchor:middle;dominant-baseline:central;font-size:19px;font-weight:700}
 .b5-src-prod text.lbl{fill:#8a5a00;font-size:17px}
+.b5-src-seg{display:grid;justify-items:center;width:100%}
+.b5-src-seg svg,.book05-visual .b5-src-seg svg{display:block;height:auto;max-height:none}
+.b5-src-seg .seg{stroke:#2f6fe0;stroke-width:2.4}
+.b5-src-seg .tick{stroke:#2f6fe0;stroke-width:2}
+.b5-src-seg .arc{fill:none;stroke:#f39a1e;stroke-width:2}
+.b5-src-seg .box{fill:#fff8dc;stroke:#8e5bd8;stroke-width:1.6}
+.b5-src-seg text{fill:#222;text-anchor:middle;dominant-baseline:central;font-size:18px;font-weight:700}
+.b5-src-shapes{display:grid;justify-items:center;gap:8px;width:100%;color:#222}
+.b5-src-shapes .cards{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.b5-src-shapes .cards span{display:grid;place-items:center;width:38px;height:46px;border:2px solid #f0a500;border-radius:7px;background:#fff3c4;font-size:21px;font-weight:800}
+.b5-src-shapes .range{margin:0;font-size:17px;font-weight:700}
+.b5-src-shapes .board{display:grid;gap:10px;padding:14px 18px;border:2px solid #f39a1e;border-radius:14px;background:#fff}
+.b5-src-shapes .board>p{display:flex;align-items:center;gap:6px;margin:0;min-height:38px}
+.b5-src-shapes .g{position:relative;display:inline-grid;place-items:center;width:36px;height:36px}
+.b5-src-shapes .g svg{width:36px;height:36px;fill:var(--fill);stroke:var(--line);stroke-width:2;stroke-linejoin:round}
+.b5-src-shapes .g b{position:absolute;inset:0;display:grid;place-items:center;font-size:16px;color:#222}
+.b5-src-shapes .t{font-size:21px;font-weight:700}
+.b5-src-shapes .t.op{min-width:18px;text-align:center}
+.b5-src-shapes .ask{flex-wrap:wrap;gap:16px!important;padding-top:6px;border-top:1px dashed #d8c08a}
+.b5-src-shapes .pair{display:inline-flex;align-items:center;gap:6px}
+@media screen and (max-width:420px){.b5-src-shapes .board{padding:10px 10px}.b5-src-shapes .board>p{gap:3px}.b5-src-shapes .g,.b5-src-shapes .g svg{width:30px;height:30px}.b5-src-shapes .t{font-size:18px}.b5-src-shapes .t.op{min-width:14px}}
+.b5-src-discs{display:grid;justify-items:center;gap:10px;width:100%;color:#222}
+.b5-src-discs .row{display:flex;align-items:flex-end;gap:10px;justify-content:center}
+.b5-src-discs .eq{padding-bottom:30px;font-size:21px}
+.b5-src-discs figure{display:grid;justify-items:center;gap:4px;margin:0}
+.b5-src-discs figcaption{font-size:16px;font-weight:700}
+.b5-src-discs svg{width:min(96px,calc((100vw - 190px) / var(--n)));height:auto}
+.b5-src-discs path{fill:#fff;stroke:#333;stroke-width:1.2}
+.b5-src-discs path.on{fill:#ffa94d}
+.b5-src-fracs{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;color:#222}
+.b5-src-fracs .frac{display:inline-grid;justify-items:center;gap:4px}
+.b5-src-fracs .bar{display:block;width:44px;height:2px;background:#222}
+.b5-src-fracs i{position:relative;display:grid;place-items:center;min-width:36px;height:34px;padding:0 3px;border:1.6px solid #8e5bd8;border-radius:4px;background:#fff;font-style:normal;font-size:19px;font-weight:700}
+.b5-src-fracs i.blank{background:#fff8dc}
+.b5-src-fracs i small{color:#8a5a00;font-size:13px;font-weight:700}
+.b5-src-fracs .eq{font-size:21px}
+@media screen and (max-width:420px){.b5-src-fracs{gap:6px 4px}.b5-src-fracs i{min-width:27px;height:29px;padding:0 1px;font-size:16px}.b5-src-fracs .bar{width:31px}.b5-src-fracs .eq,.b5-src-discs .eq{font-size:17px}.b5-src-discs .row{gap:5px}.b5-src-discs figcaption{font-size:13px}}
+.b5-src-dots{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:14px;width:100%}
+.b5-src-dots figure{display:grid;justify-items:center;gap:4px;margin:0}
+.b5-src-dots svg{display:block;max-width:100%;height:auto}
+.b5-src-dots line{stroke:#8a8a8a;stroke-width:1.4}
+.b5-src-dots figcaption{color:#222;font-size:15px;font-weight:700}
+.b5-src-ttable{display:grid;justify-items:center;width:100%;overflow-x:auto}
+.b5-src-ttable table{border-collapse:collapse;color:#222;font-size:17px;font-weight:700}
+.b5-src-ttable th,.b5-src-ttable td{padding:6px 12px;border:1.5px solid #8a8a8a;text-align:center;white-space:nowrap}
+.b5-src-ttable th{background:#fff3c4}
+.b5-src-ttable td:first-child{background:#f4f7ff}
+@media screen and (max-width:420px){.b5-src-ttable table{font-size:14px}.b5-src-ttable th,.b5-src-ttable td{padding:4px 6px;white-space:normal;word-break:keep-all}.b5-src-dots{gap:8px}.b5-src-dots svg{width:auto!important;height:calc(var(--k) * 15px + 6px)}.b5-src-dots figcaption{font-size:12px}}
+.b5-src-sumline{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;color:#222;font-size:20px;font-weight:700}
+.b5-src-sumline .tri sub{font-size:13px}
+.b5-src-sumline .fac{display:inline-flex;align-items:center;gap:4px}
+.b5-src-sumline .g svg{width:32px;height:32px;fill:var(--fill);stroke:var(--line);stroke-width:2;stroke-linejoin:round}
+.b5-src-hand,.b5-src-fan,.b5-src-perim,.b5-src-stones,.b5-src-halve{display:grid;justify-items:center;gap:6px;width:100%;color:#222}
+.b5-src-hand svg,.b5-src-fan svg,.b5-src-perim svg,.b5-src-stones svg,.b5-src-halve svg,.book05-visual .b5-src-hand svg,.book05-visual .b5-src-fan svg,.book05-visual .b5-src-perim svg,.book05-visual .b5-src-stones svg,.book05-visual .b5-src-halve svg{display:block;height:auto;max-height:none}
+.b5-src-hand p{margin:0;font-size:17px;font-weight:700}
+.b5-src-hand line{stroke-width:2}
+.b5-src-hand circle{fill:#fff;stroke:#2f6fe0;stroke-width:2}
+.b5-src-hand circle.new{fill:#fff8dc;stroke:#f39a1e;stroke-dasharray:5 4}
+.b5-src-hand text,.b5-src-perim text,.b5-src-halve text{fill:#222;text-anchor:middle;dominant-baseline:central;font-size:18px;font-weight:700}
+.b5-src-fan polygon,.b5-src-fan line{fill:none;stroke:#2f6fe0;stroke-width:1.8}
+.b5-src-fan polygon{fill:#eef4ff}
+.b5-src-fan line:last-child{stroke-linecap:round}
+.b5-src-perim polygon,.b5-src-perim rect{fill:#eef4ff;stroke:#2f6fe0;stroke-width:2}
+.b5-src-perim .tk{stroke:#e8503a;stroke-width:2}
+.b5-src-perim .arc{fill:none;stroke:#f39a1e;stroke-width:2}
+.b5-src-stones circle.b{fill:#222;stroke:#222}
+.b5-src-stones circle.w{fill:#fff;stroke:#222;stroke-width:1.6}
+.b5-src-halve polyline{fill:none;stroke:#2f6fe0;stroke-width:1.8}
+.b5-src-halve rect{fill:#fff;stroke:#8e5bd8;stroke-width:1.6}
+.b5-src-halve rect.blank{fill:#fff8dc}
+.b5-src-halve text.lbl{fill:#8a5a00;font-size:14px}
+.b5-src-halve text.top{font-size:20px}
 @media print{
+  .gold-print-page[data-print-book="book-05"] .b5-src-dots svg{width:auto!important;max-height:30mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-ttable table{font-size:10pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-ttable th,.gold-print-page[data-print-book="book-05"] .b5-src-ttable td{padding:.8mm 2mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-sumline{font-size:11pt;gap:1mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-sumline .g svg{width:6mm;height:6mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-hand svg{width:42mm!important}
+  .gold-print-page[data-print-book="book-05"] .b5-src-fan svg{width:40mm!important}
+  .gold-print-page[data-print-book="book-05"] .b5-src-perim svg{width:36mm!important}
+  .gold-print-page[data-print-book="book-05"] .b5-src-stones svg{width:44mm!important}
+  .gold-print-page[data-print-book="book-05"] .b5-src-halve svg{width:auto!important;max-width:100%;height:26mm!important}
+  .gold-print-page[data-print-book="book-05"] .b5-src-seg svg{width:calc(var(--seg-w) * .2mm)!important;max-width:100%}
+  .gold-print-page[data-print-book="book-05"] .b5-src-shapes .board{gap:1.5mm;padding:2mm 3mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-shapes .board>p{min-height:7mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-shapes .g,.gold-print-page[data-print-book="book-05"] .b5-src-shapes .g svg{width:6.5mm;height:6.5mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-shapes .t{font-size:12pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-shapes .cards span{width:6.5mm;height:8mm;font-size:11pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-discs svg{width:16mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-fracs{gap:1mm 1.2mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-fracs i{min-width:6mm;height:5.5mm;padding:0 .3mm;font-size:10pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-fracs i small{font-size:7pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-fracs .bar{width:7.5mm}
+  .gold-print-page[data-print-book="book-05"] .b5-src-fracs .eq,.gold-print-page[data-print-book="book-05"] .b5-src-discs .eq{font-size:10pt}
+  .gold-print-page[data-print-book="book-05"] .b5-src-discs .eq{padding-bottom:4mm}
   .gold-print-page[data-print-book="book-05"] .b5-src-table{grid-template-columns:repeat(var(--columns),8mm);width:calc(var(--columns) * 8mm + 1.5px)}
   .gold-print-page[data-print-book="book-05"] .b5-src-table>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>span,.gold-print-page[data-print-book="book-05"] .b5-src-product>b{height:8mm;font-size:11pt}
   .gold-print-page[data-print-book="book-05"] .b5-src-product{grid-template-columns:repeat(var(--size),8mm) 8mm}
@@ -127,5 +222,5 @@
   .gold-print-page[data-print-book="book-05"] .b5-src-year section>div{font-size:6.5pt;line-height:1.55}
   .gold-print-page[data-print-book="book-05"] .b5-src-year h4{font-size:8pt}
   .gold-print-page[data-print-book="book-05"] .b5-src-year h3{font-size:11pt}
-  .b5-src-table>span.shaded,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-seq .box.shaded,.b5-src-radial .plate,.b5-src-cal-cells span.shaded,.b5-src-prod rect.s,.b5-src-month .grid>*,.b5-src-year i.last,.b5-src-cube-stair polygon{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .b5-src-table>span.shaded,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-seq .box.shaded,.b5-src-radial .plate,.b5-src-cal-cells span.shaded,.b5-src-prod rect.s,.b5-src-month .grid>*,.b5-src-year i.last,.b5-src-cube-stair polygon,.b5-src-shapes .g svg,.b5-src-shapes .cards span,.b5-src-discs path.on,.b5-src-fracs i.blank,.b5-src-seg .box,.b5-src-dots circle,.b5-src-sumline .g svg,.b5-src-hand circle.new,.b5-src-fan polygon,.b5-src-perim polygon,.b5-src-perim rect,.b5-src-stones circle,.b5-src-halve rect.blank,.b5-src-ttable th,.b5-src-ttable td:first-child{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
