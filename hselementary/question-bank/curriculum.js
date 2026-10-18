@@ -544,6 +544,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               difficultyBand: Number.isInteger(type.difficultyBand) ? type.difficultyBand : 0,
               sourceTier: type.sourceTier || "advanced",
               sourceVerified: Boolean(type.sourceVerified),
+              ...(type.answerVerification ? { answerVerification: type.answerVerification, publisherKeyVerified: type.publisherKeyVerified } : {}),
               sourceEvidence: type.sourceEvidence || "",
               sourceItemId: type.sourceItemId || "",
               sourceItemLabel: type.sourceItemLabel || "",
@@ -1277,7 +1278,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         detailed("어림하기의 활용", "roundingApplication", ["묶음 단위와 필요한 금액 구하기", "단위 환산 뒤 묶음 수와 금액 구하기", "구간별 요금 계산하기"]),
         detailed("어림한 수의 범위", "roundedRange", ["여러 어림 조건의 공통 범위", "배수의 어림값으로 수 찾기", "어림한 합에서 실제 합의 범위 찾기"]),
         // Append source records so saved legacy subunit/type IDs retain their meaning.
-        // Classification is verified separately from answer and generation approval.
+        // The first five items use user-authorized independent solution verification.
         {
           name: "수의 범위 · 개념탐구 1 원문 분류",
           types: [
@@ -1286,7 +1287,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             ["example-1-2", "예제 1-2", "앉는 인원과 필요한 의자 수로 전체 인원의 범위 구하기", false],
             ["example-1-3", "예제 1-3", "두 조건을 모두 만족하는 사람 수의 범위 구하기", false],
             ["example-1-4", "예제 1-4", "상자마다 담는 개수로 상자 수의 범위 구하기", false]
-          ].map(([suffix, sourceItemLabel, name, answerVisualRequired]) => ({
+          ].map(([suffix, sourceItemLabel, name, answerVisualRequired], index) => ({
             id: `5-2-u1-e1-${suffix}`,
             name,
             sourceItemId: `5-2-u1-e1-${suffix}`,
@@ -1295,15 +1296,18 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             sourceTier: "advanced",
             sourcePdfPage: 2,
             sourcePrintedPage: 4,
-            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e1-first-page-classification",
-            sourceVerified: false,
-            reviewLocked: true,
-            reviewReason: "심화 원문 문항과 그림의 분류는 확인했으나, 대응하는 공식 답안과 생성 문항 검수가 완료되지 않아 출제하지 않습니다.",
-            generationMode: "review-locked",
-            verifiedVariantTarget: 0,
-            verifiedVariantCount: 0,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e1-self-solved-20261018",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-enumeration-user-authorized",
+            reviewLocked: false,
+            reviewReason: "사용자 승인에 따라 원문을 직접 풀이하고 독립 전수 검산한 유사문항입니다. 출판사 공식 답안 대조 여부는 별도로 유지합니다.",
+            generatorKey: ["source52RangeExploration", "source52RangeMaxStart", "source52RangeSeats", "source52RangeOverlap", "source52RangeBoxes"][index],
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
             answerVisualRequired,
-            answerVisualStatus: answerVisualRequired ? "locked" : "not-required"
+            answerVisualStatus: answerVisualRequired ? "verified" : "not-required"
           }))
         }
       ],

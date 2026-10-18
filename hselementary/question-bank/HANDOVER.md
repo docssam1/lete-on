@@ -1,17 +1,28 @@
 # Elementary Question Bank Handover
 
+## 2026-10-18 First Five 5-2 Items: User-Authorized Independent Solutions
+
+- User decision: “네가 풀이하여 해결해” followed by “진행”. For exactly `5-2-u1-e1-exploration` and Examples `1-1` through `1-4`, direct source solving plus independent enumeration replaces the matching-publisher-answer prerequisite in the historical 2026-09-16 gate. All other source, learner, notation, visibility, screen/print and regression requirements still apply. This exception does not unlock the 124 legacy records or any following Mission.
+- Official-key status remains false (`publisherKeyVerified=false`); handwritten work and the different Kyungsi edition are not accepted as the official answer. Public code contains new numerical variants only. Original source values, derived answers and source renders stay in the existing private Drive source-memory location.
+- Implementation: five finite generators, three distinct variants per type, and three structural difficulty offsets. The exploration keeps both questions in one item: equivalent range wording and a continuous number line. The problem line is blank; its completed open/closed endpoints and continuous segment appear only in answer/solution views.
+- Verification: 45 source-structured configurations (five types × three numerical variants × three difficulty offsets) pass independent visible-prompt enumeration, solution equations and SVG coordinate readback; 28 damaged-answer/condition/figure/gate controls are rejected. Classification adds seven negative controls and exact preservation of 124 legacy records. Actual-page QA passes 45 PC/mobile states, three mixed selections, two existing Grade 6 regressions and two DOM mutation controls in 50 fresh contexts. Each type caps at three different questions; all five cap at fifteen.
+- Printing: 45 PDFs contain exactly 45 A4 pages. All pages were rasterized and checked for nonblank output and learner text within a 12pt inset. Only literal pre-existing LETE-ON decorative watermark text is excluded from margin checks; no learner text or numbers are exempt. Selected PC/mobile/A4 problem, solution and answer-only captures were visually reviewed. This is sampled eye review, not an eye review of all 45 pages.
+- Regressions: 73,380 runtime generations; 183,450 notation generations plus real DOM fraction checks; 366,900 numeric-display and 366,900 elementary-language generations pass. Release gate and public review-reason audit pass. The separate legacy-lock browser regression passes fifteen locked states and two existing Grade 6 states. The notation audit now accepts the existing Mac browser executable and falls back to the OS home directory, preserving every assertion.
+- Release state: verified and eligible; code is prepared on `codex/grade52-independent-solutions-20261018` for GitHub version storage. The last deployed state remains PR #353 / `667aa71a`, with five classified but locked records. A later deployment must be verified separately; this work does not claim it has reached the live site.
+- Storage contract from the user: Drive owns original materials, research and QA; GitHub owns code and versions; local files support current work and temporary execution. Reuse existing file IDs and preserve permissions. The existing external Mac handoff records private Drive IDs and evidence paths without exposing them here.
+
 ## Current State
 
-- Current Mac checkout: `main` at `94a69f4bdda95c1d4e47494d3852f13c409165dc`; includes PR #340 merge `ea271bec` and elementary source commit `6bd5ef98`. Older review-branch names below describe historical stages.
+- Primary authoring checkout on Mac: `main` at `94a69f4bdda95c1d4e47494d3852f13c409165dc`; includes PR #340 merge `ea271bec` and elementary source commit `6bd5ef98`. Older review-branch names below describe historical stages.
 - Entry point: `hselementary/question-bank/index.html`. The 2026-10-17 check used local-file browser routing, not a persistent HTTP server or the deployed site.
 - Total runtime types: 2,010 across 6 semesters, 36 major units, and 185 subunits (inventory recounted 2026-10-17)
-- Runtime-available types: 1,218 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
-- Review-locked/non-generating records: 792, including aliases that link to a shared full source question and must not produce duplicate questions. This is not a count of 792 distinct unfinished generators.
+- Runtime-available types: 1,223 (all carry an individual source item ID; runtime availability is not a claim of whole-bank difficulty approval)
+- Review-locked/non-generating records: 787, including aliases that link to a shared full source question and must not produce duplicate questions. This is not a count of 787 distinct unfinished generators.
 - Source-linked runtime entries: 1,630 currently carry a source item ID (4-1: 329, 4-2: 306, 5-1: 357, 5-2: 5, 6-1: 268, 6-2: 365). A source ID alone is not proof that a generator is ready; only items that also pass source, answer, learner-fit, notation, visibility, and render gates may be published. The 5-1 Unit 6 catalog now contains all 75 directly classified source items.
-- Semester runtime counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `0/129`, 6-1 `239/412`, and 6-2 `180/477` types are available. Grade 6 source-linked records: 633 total, 419 available and 214 locked. These are local runtime counts, not a fresh deployment check.
+- Semester runtime counts: 4-1 `309/329`, 4-2 `208/306`, 5-1 `282/357`, 5-2 `5/129`, 6-1 `239/412`, and 6-2 `180/477` types are available. Grade 6 source-linked records: 633 total, 419 available and 214 locked. These are local runtime counts, not a fresh deployment check.
 - Uncatalogued placeholder types: 0; review-locked source items remain intentionally unavailable
 - Catalog coverage: all six units in grades 4, 5, and 6 for both semesters. Original-item mapping, visual quality, and difficulty review are not complete across the whole bank.
-- Next content step: locate the matching official answers for the first five classified advanced 5-2 items, then implement and verify a small finite pool. Mission 1–6 on the following page are the next classification batch. Preserve all 124 legacy types and the five new source locks; grouped Kyungsi records are not advanced-source approval.
+- Next content step: the first five items have passed the independent solution and screen/print gates above. Mission 1–6 on the following page are the next classification batch. Preserve all 124 legacy locks; grouped Kyungsi records are not advanced-source approval.
 
 ## 2026-10-17 Classification Deployment Authorization
 
