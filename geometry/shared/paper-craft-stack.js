@@ -1,6 +1,21 @@
 import {stackLayouts} from './paper-craft-stack-layouts.js?v=20261018-3';
 import {inside} from './paper-craft-model.js?v=20261018-3';
 export const topAt=(papers,q)=>{for(let i=papers.length-1;i>=0;i--)if(inside(papers[i].poly,q))return i;return -1;};
+// Route only between already chosen papers; never expose the next answer.
+export function stackConnectionPoints(p,ids){
+  const points=[];
+  ids.forEach((id,i)=>{
+    const paper=p.papers.find(x=>x.id===id);if(!paper)return;
+    const previous=p.papers.find(x=>x.id===ids[i-1]);
+    // The detached top clue needs a small detour above the group.
+    if(p.conditionTop&&previous&&[previous.id,id].includes(p.top)&&[previous.id,id].includes(p.order.at(-2)))points.push({x:previous.label.x,y:.08},{x:paper.label.x,y:.08});
+    points.push({...paper.label});
+  });return points;
+}
+export function papersOnStroke(p,a,b,radius){
+  const dx=b.x-a.x,dy=b.y-a.y,length2=dx*dx+dy*dy;
+  return p.papers.map(paper=>{const q=paper.label,t=length2?Math.max(0,Math.min(1,((q.x-a.x)*dx+(q.y-a.y)*dy)/length2)):0;return {id:paper.id,t,distance:Math.hypot(q.x-a.x-t*dx,q.y-a.y-t*dy)};}).filter(x=>x.distance<=radius).sort((a,b)=>a.t-b.t).map(x=>x.id);
+}
 // Only a visible edge lying over a lower paper supplies an ordering clue.
 // Geometric overlap hidden by a third paper is not a usable clue.
 export function visibleRelations(papers){

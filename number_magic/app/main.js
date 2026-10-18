@@ -3839,6 +3839,8 @@ function screenCourseRoad(){
     /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
     const segBtn=(attr,v,on,label)=>`<button class="${on?'on':''}" data-${attr}="${v}" aria-pressed="${on?'true':'false'}">${label}</button>`;
     const multLbl=v=>v===1?lk('기본','1×','默认'):v+lk('배','×','倍');
+    const amountLbl=v=>v===1?lk('기본','Standard','默认')
+      : v<1 ? lk(`적게 · ${v}배`,`Lighter · ${v}×`,`少量 · ${v}倍`) : lk(`많이 · ${v}배`,`More · ${v}×`,`加量 · ${v}倍`);
     html+=`<div class="nm-cr-cad" id="crPace">
       <div class="nm-cr-sec">
         <span class="nm-cr-eyebrow">${lk('학습 속도','Pace','学习速度')}</span>
@@ -3882,7 +3884,7 @@ function screenCourseRoad(){
         <div class="nm-cr-multrow"><span>${lk('속도','Speed','速度')}</span>
           <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${ROAD_MULTS_LIST.map(v=>segBtn('speed',v,speed===v,multLbl(v))).join('')}</div></div>
         <div class="nm-cr-multrow"><span>${lk('양','Amount','分量')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>segBtn('amount',v,S.roadAmount===v,multLbl(v))).join('')}</div></div>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>segBtn('amount',v,S.roadAmount===v,amountLbl(v))).join('')}</div></div>
         <details class="nm-cr-more">
           <summary>${lk('속도와 양이 뭔가요?','What do speed and amount do?','速度和分量是什么？')}</summary>
           <ul>

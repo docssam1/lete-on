@@ -1,3 +1,4 @@
+import {stackConnectionPoints} from './paper-craft-stack.js?v=20261019-1';
 import {box,square,polygonCentroid,inside,reflectInk,boundaryLayers} from './paper-craft-model.js?v=20261018-3';
 import {clipHalfPlane,reflectAcross,chordSegments,foldOnce} from '../games/paper-fold/reverse-fold.js?v=20261018-3';
 import {newMarks,markAnchor,numberGroups,withDesign} from './paper-craft-session.js?v=20261018-3';
@@ -75,16 +76,26 @@ export function renderScene(raw,s,t){
   return svg(`${arrowDefs}<g class="paper-world" transform="${fr.transform}" data-frame-x="${fr.x}" data-frame-y="${fr.y}" data-frame-scale="${fr.scale}">${body}</g>${outer}`);
 }
 function renderStack(p,s,t){
-  const gone=new Set(s.peeled),visible=s.phase==='build'?p.papers.filter(x=>s.built.includes(x.id)):p.papers.filter(x=>!gone.has(x.id));
+  const connect=!p.build&&t.stackMode==='connect',gone=new Set(s.peeled),visible=p.build?p.papers.filter(x=>s.built.includes(x.id)):connect?p.papers:p.papers.filter(x=>!gone.has(x.id));
   const guides=s.phase==='build'?p.papers.map(paper=>polygon(paper.poly,'fill="none" stroke="#d6eeeb" stroke-width=".003" stroke-dasharray=".012 .012" pointer-events="none"')).join(''):'';
-  const id=`stack-scene-${p.id}`;
-  return svg(`${stackMaterialDefs(id)}<g class="paper-world" transform="translate(25 50) scale(480)">${guides}${visible.map(paper=>action(stackPaper(paper,id),`data-action="${s.phase==='bottom'?'bottom':'paper'}" data-value="${paper.id}" aria-label="${escapeHtml(t.paper)} ${paper.id}"`)).join('')}</g>`);
+  const id=`stack-scene-${p.id}`,route=connect?stackConnectionPoints(p,s.peeled):[];
+  const connection=route.length>1?`<g pointer-events="none"><polyline class="connect-line-outline" points="${points(route)}"/><polyline class="connect-line" points="${points(route)}"/></g>`:'';
+  const labels=connect?p.papers.map(paper=>{
+    const rank=s.peeled.indexOf(paper.id),label=stackPaperLabel(paper)+(rank>=0?`<circle class="connect-step" cx="${paper.label.x+.047}" cy="${paper.label.y-.047}" r=".03"/><text class="connect-step-number" x="${paper.label.x+.047}" y="${paper.label.y-.047}">${rank+1}</text>`:'');
+    return rank<0&&s.phase!=='done'?action(`<circle cx="${paper.label.x}" cy="${paper.label.y}" r="${22.25*(t.hitScale||1)/480}" fill="transparent"/>${label}`,`data-action="paper" data-value="${paper.id}" aria-label="${escapeHtml(t.paper)} ${paper.id}"`):`<g aria-label="${escapeHtml(t.paper)} ${paper.id}">${label}</g>`;
+  }).join(''):'';
+  return svg(`${stackMaterialDefs(id)}<g class="paper-world" transform="translate(25 50) scale(480)">${guides}${visible.map(paper=>connect?stackPaper(paper,id,false):action(stackPaper(paper,id),`data-action="paper" data-value="${paper.id}" aria-label="${escapeHtml(t.paper)} ${paper.id}"`)).join('')}${connection}${labels}</g>`);
 }
 function stackMaterialDefs(id){return `<defs>${stackMaterials.map((m,i)=>`<linearGradient id="${id}-color-${i}" x1="0" y1="0" x2=".85" y2="1"><stop stop-color="${m.light}"/><stop offset=".43" stop-color="${m.base}"/><stop offset="1" stop-color="${m.deep}"/></linearGradient>`).join('')}<linearGradient id="${id}-reflection" x1="0" y1="0" x2="1" y2=".82"><stop stop-color="#ffffff" stop-opacity=".22"/><stop offset=".28" stop-color="#ffffff" stop-opacity=".05"/><stop offset=".31" stop-color="#ffffff" stop-opacity=".15"/><stop offset=".48" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><filter id="${id}-contact" x="-20%" y="-20%" width="150%" height="155%" color-interpolation-filters="sRGB"><feDropShadow dx=".003" dy=".007" stdDeviation=".004" flood-color="#102333" flood-opacity=".48"/></filter></defs>`;}
-function stackPaper(paper,id){
+function stackPaper(paper,id,label=true){
   const m=stackMaterials[paper.color],clip=`${id}-clip-${paper.id}`,b=box(paper.poly),x=paper.label?.x??b.left+.04,y=paper.label?.y??b.top+.065;
-  return `<defs><clipPath id="${clip}">${polygon(paper.poly)}</clipPath></defs>${polygon(paper.poly,`class="stack-face" fill="url(#${id}-color-${paper.color})" stroke="${m.deep}" stroke-width=".0025" filter="url(#${id}-contact)"`)}<g clip-path="url(#${clip})" pointer-events="none">${polygon(paper.poly,`fill="url(#${id}-reflection)"`)}<path d="M${b.left} ${b.bottom}V${b.top}H${b.right}" fill="none" stroke="#ffffff" stroke-opacity=".5" stroke-width=".0035"/><path d="M${b.left} ${b.bottom}H${b.right}V${b.top}" fill="none" stroke="${m.deep}" stroke-width=".006"/><circle cx="${x}" cy="${y}" r=".036" fill="${m.ink==='#ffffff'?'#102536':'#fff4c4'}" fill-opacity=".33"/><text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size=".055" font-weight="850" fill="${m.ink}">${paper.id}</text></g>`;
+  return `<defs><clipPath id="${clip}">${polygon(paper.poly)}</clipPath></defs>${polygon(paper.poly,`class="stack-face" fill="url(#${id}-color-${paper.color})" stroke="${m.deep}" stroke-width=".0025" filter="url(#${id}-contact)"`)}<g clip-path="url(#${clip})" pointer-events="none">${polygon(paper.poly,`fill="url(#${id}-reflection)"`)}<path d="M${b.left} ${b.bottom}V${b.top}H${b.right}" fill="none" stroke="#ffffff" stroke-opacity=".5" stroke-width=".0035"/><path d="M${b.left} ${b.bottom}H${b.right}V${b.top}" fill="none" stroke="${m.deep}" stroke-width=".006"/>${label?stackPaperLabel(paper):''}</g>`;
 }
+function stackPaperLabel(paper){
+  const m=stackMaterials[paper.color],b=box(paper.poly),x=paper.label?.x??b.left+.04,y=paper.label?.y??b.top+.065;
+  return `<circle cx="${x}" cy="${y}" r=".036" fill="${m.ink==='#ffffff'?'#102536':'#fff4c4'}" fill-opacity=".33"/><text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size=".055" font-weight="850" fill="${m.ink}">${paper.id}</text>`;
+}
+
 export function stackReference(p,label){const id=`stack-reference-${p.id}`;return svg(`${stackMaterialDefs(id)}<g transform="translate(25 0) scale(480)" aria-label="${escapeHtml(label)}">${p.papers.map(paper=>stackPaper(paper,id)).join('')}</g>`,'stack-reference');}
 function renderReverse(p,s,t){
   const poly=p.paper,fr=frame(square()),chords=p.lineChoices||p.creaseHints;let body=paperSurface(poly,{fill:'#b8e1ee'});

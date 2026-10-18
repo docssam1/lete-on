@@ -8,7 +8,7 @@ window.NM_UNITS['B-01'] = {
   lineage:['halves-doubles'],
   generator:'ml1_double',
   title:{ ko:'두 배 마법', en:'The Doubling Magic', zh:'翻倍魔法' },
-  subtitle:{ ko:'어떤 수든 두 배로! n × 2 = n + n', en:'Double any number! n × 2 = n + n', zh:'任意数翻倍！n × 2 = n + n' },
+  subtitle:{ ko:'두 배는 같은 수를 두 번 더한 수예요', en:'Double any number! n × 2 = n + n', zh:'任意数翻倍！n × 2 = n + n' },
   icon:'×2️⃣',
 
   practice:{
@@ -38,8 +38,8 @@ window.NM_UNITS['B-01'] = {
               en:'<b>Doubling</b> means adding the same number twice. 4 doubled = 4 in one row + 4 in another row.',
               zh:'<b>翻倍</b>就是把同一个数加两次。4翻倍 = 第一行4个 + 第二行4个。'},
         mathSteps:[{ko:'4의 두 배',en:'\\text{double of 4}',zh:'4的两倍'}, '= 4 + 4', '= 8'],
-        result:{ko:'4의 두 배는 8! 2행 배열로 시각화하면 한눈에 보여요.', en:'4 doubled is 8! A 2-row array makes it clear.', zh:'4的两倍是8！用两行排列一目了然。'},
-        book:{ko:'두 배(×2)는 같은 수를 두 번 더하는 것과 같아요. n × 2 = n + n. 배열로 그리면 실수 없이 셀 수 있어요.', en:'n × 2 = n + n. Drawing arrays helps avoid mistakes.', zh:'n × 2 = n + n。画成排列图能避免数错。'} },
+        result:{ko:'4의 두 배는 8! 4개씩 두 줄로 그리면 한눈에 보여요.', en:'4 doubled is 8! A 2-row array makes it clear.', zh:'4的两倍是8！用两行排列一目了然。'},
+        book:{ko:'두 배는 같은 수를 두 번 더한 수예요. 4의 두 배는 4+4=8이에요. 두 줄로 그려 보세요.', en:'n × 2 = n + n. Drawing arrays helps avoid mistakes.', zh:'n × 2 = n + n。画成排列图能避免数错。'} },
 
       { tag:{ko:'② 큰 수도 똑같아요', en:'2) Works for bigger numbers too', zh:'② 大数也一样'},
         head:{ko:'십의 자리와 일의 자리를 따로 두 배 해요', en:'Double the tens and ones separately', zh:'分别对十位和个位翻倍'},
@@ -48,7 +48,7 @@ window.NM_UNITS['B-01'] = {
               zh:'像13这样的两位数也没关系，<b>分别对十位和个位翻倍</b>再相加就好。'},
         mathSteps:['13 × 2', '= 10×2 + 3×2', '= 20 + 6 = 26'],
         result:{ko:'13의 두 배는 26! 자릿수별로 나눠 계산하면 쉬워요.', en:'13 doubled is 26! Splitting by place value keeps it easy.', zh:'13的两倍是26！按位分拆计算很简单。'},
-        book:{ko:'두 자리 수는 십의 자리와 일의 자리를 각각 두 배 한 뒤 더합니다. 10×2=20, 3×2=6이니 13×2=26.', en:'Double tens (10×2=20) + double ones (3×2=6) = 26.', zh:'十位翻倍(10×2=20) + 个位翻倍(3×2=6) = 26。'} },
+        book:{ko:'13을 10과 3으로 나눠 보세요. 10을 두 배 하면 20, 3을 두 배 하면 6이에요. 20과 6을 더하면 26이에요.', en:'Double tens (10×2=20) + double ones (3×2=6) = 26.', zh:'十位翻倍(10×2=20) + 个位翻倍(3×2=6) = 26。'} },
 
       { tag:{ko:'③ 두 배 패턴을 알면 빨라요', en:'3) Know the pattern — go faster!', zh:'③ 掌握规律，速度更快！'},
         head:{ko:'두 배는 항상 짝수가 나와요', en:'Doubling always gives an even number', zh:'翻倍的结果总是偶数'},

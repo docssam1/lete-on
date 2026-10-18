@@ -202,12 +202,15 @@
   .nm-gp-boxplot .nm-bp-label { font-size:9px; font-weight:650; fill:#334846; }
   .nm-gp-boxplot .nm-bp-work { fill:#fff; stroke:none; }
   .nm-gp-boxplot.nm-bp-blank .nm-bp-work { fill:#f8fbfa; stroke:#9badab; stroke-width:1; stroke-dasharray:4 3; }
-  .nm-nl { width: 62mm; height: auto; margin: 6px auto 0; display: block; }
-  .nm-nl svg:not(.nm-obj-svg) :is(line, path) { fill: none; stroke: #000; stroke-width: 1.4; }
-  .nm-nl .nm-nl-hop { stroke-dasharray: 3 2; }
-  .nm-nl .nm-nl-blank { fill: none; stroke: #000; stroke-width: 1.4; stroke-dasharray: 4 3; }
-  .nm-nl text { font-family: sans-serif; font-size: 15px; font-weight: 700; fill: #000; }
-  .nm-nl .nm-nl-step { font-size: 13px; }
+  /* 뛰어 세기 수직선은 유아 활동(.nm-nl)과 별도 이름을 쓴다. SVG 선에는 직접 스타일을 건다. */
+  .nm-jump-nl { width: 78mm; max-width: 100%; height: auto; margin: 3mm auto 1mm; display: block; }
+  .nm-jump-nl .nm-jump-nl-axis { stroke: #172e3a; stroke-width: 2; stroke-linecap: round; }
+  .nm-jump-nl .nm-jump-nl-tip { fill: #172e3a; }
+  .nm-jump-nl .nm-jump-nl-tick { stroke: #172e3a; stroke-width: 1.8; }
+  .nm-jump-nl .nm-jump-nl-hop { fill: none; stroke: #176a60; stroke-width: 2.5; stroke-linecap: round; }
+  .nm-jump-nl .nm-jump-nl-blank { fill: #fff; stroke: #172e3a; stroke-width: 1.4; stroke-dasharray: 4 3; }
+  .nm-jump-nl text { font-family: Pretendard,'Noto Sans KR','Malgun Gothic',sans-serif; font-size: 15px; font-weight: 750; fill: #172e3a; }
+  .nm-jump-nl .nm-jump-nl-step { font-size: 13px; fill: #176a60; }
 
   /* 수 묶음(모으기·가르기) — 등식 대신 그림이 문제다. 빈 동그라미가 답 자리. */
   .nm-print-item-bond { text-align: center; }
@@ -301,7 +304,7 @@
   .nm-print-age-young .nm-print-vp { font-size: 1.8em; }
   .nm-print-age-young .nm-bond { width: 40mm; }
   .nm-print-age-young .nm-b10 { --u: 1.9mm; --g: 1.3mm; }
-  .nm-print-age-young .nm-nl { max-width: 80mm; }
+  .nm-print-age-young .nm-jump-nl { max-width: 80mm; }
   .nm-print-age-young .nm-print-answer-key .nm-ak-item,
   .nm-print-age-young .nm-print-answer-key .nm-ak-guide-item { font-size: 1em; }
 
@@ -743,6 +746,10 @@
 
   /* 주간 학습지 표지(weeklyCoverHtml) — 학생 이름을 제목으로, 회차 목차 표 */
   .nm-cvw .nm-cvw-hero { position:relative; margin:auto 0 0; text-align:center; }
+  .nm-cvw-magazine-c4 .nm-cvw-cover-teaser { position:absolute; left:4mm; top:12mm; width:22mm; padding:2mm 0;
+    border-top:3px solid #245b60; text-align:left; color:#245b60; font-size:11px; line-height:1.45; font-weight:800; word-break:keep-all; }
+  .nm-cvw-magazine-c4 .nm-cvw-cover-teaser b { display:block; margin-bottom:1mm; color:#a44d2a; font-size:10px; letter-spacing:.08em; }
+  .nm-cvw-magazine-c4 .nm-cvw-cover-character { position:absolute; right:2mm; top:2mm; width:30mm; height:38mm; object-fit:contain; }
   .nm-cvw .nm-cvw-title { margin:0; font-family:'Gowun Batang','Pretendard',serif; font-size:44px; line-height:1.2;
     font-weight:700; color:#0E2C57; letter-spacing:1px; }
   .nm-cvw .nm-cvw-title i { font-style:italic; color:var(--cv-accent); font-weight:400; }
@@ -840,11 +847,13 @@
     margin-right:6px; vertical-align:baseline; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   /* 저학년 큰 숫자 한 줄식(참고 B03) */
   .nm-w2-grid-big .nm-w2-item.nm-print-item { flex-direction:row; align-items:center; justify-content:flex-start; gap:12px; }
-  .nm-w2-big { font-family:'Fredoka','Jua',Pretendard,'Noto Sans KR',sans-serif; font-weight:600;
-    font-size:calc(26px * var(--ws-fs, 1)); letter-spacing:2px; color:#111; white-space:nowrap; }
+  /* KaTeX 식과 일반식은 같은 수학 서체를 쓴다. Fredoka/Jua는 인쇄 페이지에서
+     로드되지 않아 기기별 대체 글꼴이 달랐고, 문제 일부만 둥글고 굵게 보였다. */
+  .nm-w2-big { font-family:KaTeX_Main,'Times New Roman',serif; font-weight:400;
+    font-size:calc(26px * var(--ws-fs, 1)); letter-spacing:0; color:#111; white-space:nowrap; }
   .nm-w2-abox-big { width:14mm; height:11mm; border:1.3px solid #333; border-radius:3px; display:inline-block; vertical-align:middle; margin:0 4px; }
   /* 세로 나눗셈 상자 */
-  .nm-divbox { display:inline-block; font-family:'Fredoka',Pretendard,monospace; font-size:calc(22px * var(--ws-fs, 1)); line-height:1.3; }
+  .nm-divbox { display:inline-block; font-family:KaTeX_Main,'Times New Roman',serif; font-variant-numeric:tabular-nums; font-size:calc(22px * var(--ws-fs, 1)); line-height:1.3; }
   .nm-dv-q { display:flex; justify-content:flex-start; margin-left:calc(2em + 10px); }
   .nm-dv-cell, .nm-dv-d { display:inline-block; width:1.15em; height:1.5em; margin-right:3px; text-align:center; }
   .nm-dv-cell { border:1px dashed #c3c9d6; border-radius:4px; background:#fbfcfe; }
@@ -901,7 +910,7 @@
   .nm-mn-line { font-size:calc(15px * var(--ws-fs, 1)); line-height:1.5; }
   /* 세로 분수(\\dfrac)가 줄 높이를 넘어 윗줄 분모와 아랫줄 분자가 겹쳤다(C-22 ②, 2026-09-25 A4) — 식 한 줄을 제 높이의 상자로 */
   .nm-mn-line .nm-w2-tex { font-size:calc(15px * var(--ws-fs, 1)); display:inline-block; padding:.32em 0; }
-  .nm-mn-plain { font-family:'Fredoka','Jua',Pretendard,sans-serif; letter-spacing:.5px; color:#1A2233; }
+  .nm-mn-plain { font-family:KaTeX_Main,'Times New Roman',serif; letter-spacing:0; color:#1A2233; }
   .nm-mn-result { font-size:calc(13px * var(--ws-fs, 1)); font-weight:900; color:#1F8A5A; }
   .nm-mn-check { flex:0 0 auto; margin-top:8px; border:1.5px solid #d8d3c5; border-radius:10px; padding:6px 12px; background:var(--w2-soft, #fff); }
   .nm-mn-fills { display:flex; flex-wrap:wrap; gap:6px 28px; }
@@ -921,6 +930,12 @@
   .nm-w2-train-dots i { display:block; height:7mm; border-bottom:1px dotted #C9A063; }
   /* 곁 계산 줄(원래 식과 다른 양) — "=" 대신 옅은 화살표 */
   .nm-w2-train-side { color:#A08A5C; font-weight:700; }
+  /* 과정 4: 풀이 기호·식·쓰기 줄이 한 행으로 이어져 보이게 한다. */
+  .nm-w2-course-c4 .nm-w2-item-train .nm-w2-train-expr .nm-w2-tex { font-size:calc(22px * var(--ws-fs, 1)); }
+  .nm-w2-course-c4 .nm-w2-item-train .nm-w2-train-step { display:flex; align-items:center; gap:2mm; min-height:10mm; }
+  .nm-w2-course-c4 .nm-w2-item-train .nm-w2-train-step .nm-w2-tex { font-size:calc(20px * var(--ws-fs, 1)); }
+  .nm-w2-course-c4 .nm-w2-item-train .nm-w2-train-marker { flex:0 0 5mm; text-align:center; font-size:20px; line-height:1; }
+  .nm-w2-course-c4 .nm-w2-grid-train { flex:1 1 auto !important; align-content:space-evenly !important; }
   /* 과정 빈칸 문항(2026-09-26) — 지시 한 줄. 식 줄의 최종 답은 이미 주어졌다 */
   .nm-w2-process-ask { font-size:calc(11.5px * var(--ws-fs, 1)); font-weight:700; color:#5b4a26; margin:0 0 1px; }
   /* 저학년 문장제 카드 — 번호는 빨간 동그라미(STORY), 풀이 점선 */
@@ -1189,6 +1204,78 @@
   padding:8px 12px; color:#20343b; }
 .nm-w2-board-mascot { display:none; }
 .nm-w2-board-body { flex:1; min-width:0; }
+/* 과정 4 편집형 개념 지면: 수의 역할을 글자와 색으로 함께 구분한다. */
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-lesson-body { flex:1; min-height:0; display:flex; flex-direction:column; gap:3mm; }
+.nm-w2-course-c4 .nm-w2-teaching-page:not(.nm-w2-teaching-feature) .nm-w2-lesson-body { justify-content:space-evenly; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-concept { margin:0; }
+/* 마법 노트는 큰 글씨로 읽고, 남는 세로 공간을 단계와 생각해 보기 사이에 나눈다. */
+.nm-w2-course-c4 .nm-w2-page-magic .nm-mn-stages { flex:1 1 auto; justify-content:space-evenly; gap:7mm; }
+.nm-w2-course-c4 .nm-w2-page-magic .nm-mn-head { font-size:calc(20px * var(--ws-fs, 1)); }
+.nm-w2-course-c4 .nm-w2-page-magic .nm-mn-desc { font-size:calc(14.5px * var(--ws-fs, 1)); line-height:1.65; }
+.nm-w2-course-c4 .nm-w2-page-magic .nm-mn-line,
+.nm-w2-course-c4 .nm-w2-page-magic .nm-mn-line .nm-w2-tex { font-size:calc(18px * var(--ws-fs, 1)); }
+.nm-w2-course-c4 .nm-w2-page-magic .nm-mn-result { font-size:calc(14px * var(--ws-fs, 1)); }
+.nm-w2-course-c4 .nm-w2-page-magic .nm-mn-book { font-size:calc(13.5px * var(--ws-fs, 1)); line-height:1.65; }
+.nm-w2-course-c4 .nm-w2-page-magic .nm-mn-open { margin-bottom:6mm; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-board { align-items:center; min-height:25mm; padding:3mm 4mm;
+  background:#f4f8f7; border:0; border-left:1.4mm solid #245b60; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-board-mascot { display:block; width:24mm; height:25mm; object-fit:contain; object-position:center bottom; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-mn-kicker { font-size:12px; letter-spacing:.08em; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-concept-sentence { font-size:18px; line-height:1.55; }
+.nm-w2-editorial-feature { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:3mm; flex:0 0 auto; }
+.nm-w2-editorial-hero { padding:3mm 4mm; background:#f8f5ec; border-top:1.2mm solid #c69a53; }
+.nm-w2-editorial-eyebrow { display:block; margin-bottom:1mm; font-size:10px; font-weight:900; letter-spacing:.08em; color:#245b60; }
+.nm-w2-editorial-hero h3 { margin:0 0 1mm; color:#172e3a; font-size:18px; line-height:1.25; }
+.nm-w2-editorial-hero p { margin:0; color:#3c4b51; font-size:12px; line-height:1.35; }
+.nm-w2-pair-visual { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:2mm; margin:2mm 0 1mm; }
+.nm-w2-pair-group { display:flex; flex-direction:column; align-items:center; gap:1mm; padding:1.5mm 2mm; border:1px solid #a8c3ba; border-radius:3mm; background:white; }
+.nm-w2-pair-dots { display:flex; gap:1mm; }
+.nm-w2-pair-dots i { display:block; width:5mm; height:5mm; border-radius:50%; background:#176a60;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.nm-w2-pair-group b, .nm-w2-pair-eq .nm-w2-pair-each { color:#176a60; }
+.nm-w2-pair-plus, .nm-w2-pair-equal { color:#314955; font-size:21px; font-weight:800; }
+.nm-w2-pair-total, .nm-w2-pair-eq .nm-w2-pair-all { color:#a44d2a; font-weight:900; }
+.nm-w2-pair-total { font-size:22px; }
+.nm-w2-pair-eq { text-align:center; font-size:18px; font-weight:900; letter-spacing:.01em; }
+.nm-w2-pair-eq span { display:inline-block; padding:0 2mm; }
+.nm-w2-editorial-side { display:flex; flex-direction:column; gap:2mm; }
+.nm-w2-editorial-card { flex:1; padding:2mm 3mm; background:#f4f8f7; border-top:2px solid #245b60; }
+.nm-w2-editorial-card.history { background:#fff; border-color:#c69a53; border-bottom:1px solid #dfd8c9; }
+.nm-w2-editorial-card strong { display:block; margin:0 0 1mm; color:#172e3a; font-size:13px; line-height:1.3; }
+.nm-w2-editorial-card p { margin:0; color:#43575c; font-size:11px; line-height:1.4; word-break:keep-all; }
+.nm-w2-editorial-card cite { display:block; margin-top:1mm; font-size:8px; color:#627076; font-style:normal; }
+.nm-w2-editorial-study { flex:0 0 auto; display:grid; grid-template-columns:1.5fr 1fr; gap:4mm; }
+.nm-w2-editorial-study-main { padding:4mm 5mm; background:#f8f5ec; border-top:1.2mm solid #c69a53; }
+.nm-w2-editorial-study-main h3 { margin:0 0 2mm; color:#172e3a; font-size:19px; }
+.nm-w2-editorial-study-main p { margin:0; color:#43575c; font-size:12px; line-height:1.5; }
+.nm-w2-editorial-study-aside { padding:4mm; border-top:2px solid #245b60; background:#f4f8f7; }
+.nm-w2-editorial-study-aside b { display:block; margin-bottom:2mm; color:#172e3a; font-size:14px; }
+.nm-w2-editorial-study-aside p { font-size:12px; line-height:1.5; }
+.nm-w2-editorial-study-aside cite { display:block; margin-top:2mm; color:#627076; font-size:10px; font-style:normal; }
+/* 수직선 개념 뒤의 예시·따라풀기 세 문항이 A4 바닥글 위에서 끝나게 한다. */
+.nm-w2-course-c4 .nm-w2-teaching-page:has(.nm-w2-editorial-study) .nm-w2-lesson-body { gap:2mm; }
+.nm-w2-course-c4 .nm-w2-teaching-page:has(.nm-jump-nl) .nm-w2-editorial-study-main,
+.nm-w2-course-c4 .nm-w2-teaching-page:has(.nm-jump-nl) .nm-w2-editorial-study-aside { padding:2mm 3mm; }
+.nm-w2-course-c4 .nm-w2-editorial-study .nm-jump-nl { width:68mm; margin:1mm auto 0; }
+.nm-w2-jump-eq { text-align:center; font-size:18px; font-weight:900; color:#176a60; }
+.nm-w2-jump-eq strong { color:#a44d2a; }
+/* 저학년 풀이 속 한국어는 수식용 로마체 대신 본문과 같은 한글 고딕으로 읽힌다. */
+.nm-w2-course-c4 .nm-w2-guide-chain .katex .text,
+.nm-w2-course-c4 .nm-w2-example .katex .text,
+.nm-w2-course-c4 .nm-ak-sol-step .katex .text {
+  font-family:Pretendard,'Noto Sans KR','Malgun Gothic',sans-serif;
+  font-style:normal; font-weight:700;
+}
+.nm-w2-place-big { margin:3mm 0; text-align:center; font-size:26px; font-weight:900; color:#20343b; }
+.nm-w2-place-big .tens, .nm-w2-place-row .tens { color:#176a60; }
+.nm-w2-place-big .ones, .nm-w2-place-row .ones { color:#a44d2a; }
+.nm-w2-place-row { display:flex; justify-content:space-between; gap:2mm; border-top:1px solid #ded9cf; padding:1.5mm 0;
+  font-size:15px; font-weight:850; color:#20343b; }
+.nm-w2-place-row small { font-size:10px; color:#43575c; font-weight:700; }
+.nm-w2-place-row.result { border-top:2px solid #20343b; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-example { margin:0; padding:4mm 5mm; border:0; border-left:1mm solid #b25b3f; background:#fcf8f4; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-guide { margin:0; padding:4mm 5mm; border:1px solid #cedbd8; background:#fff; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-foot { margin-top:3mm; }
 .nm-w2-concept-badge { display:block; font-size:calc(18px * var(--ws-fs, 1)); font-weight:750; color:#20343b; letter-spacing:-.2px;
   padding-bottom:4px; margin-bottom:6px; }
 .nm-print-age-young .nm-w2-concept-badge { font-family:Pretendard,'Noto Sans KR',sans-serif; font-weight:750; }
@@ -2029,12 +2116,15 @@ function setSolveMode(v){ try{ localStorage.setItem(SOLVE_MODE_KEY, v?'1':'0'); 
    ws.html 은 주소의 amt 로 window.NM_WS_AMOUNT 를 넘기고, 앱은 localStorage 에 둔다.
    진도 보기 인쇄 검사(pacingPrintActive)는 데이터 그대로(1배)를 본다. */
 const AMOUNT_KEY = 'nm_ws_amount', AMOUNTS = [0.7, 0.85, 1, 1.25, 1.5];
+let amountOverride = null;
 function normAmount(v){ v = parseFloat(v); return AMOUNTS.indexOf(v) >= 0 ? v : 1; }
 function getAmount(){
   if(pacingPrintActive) return 1;
+  if(amountOverride != null) return amountOverride;
   if(window.NM_WS_AMOUNT != null) return normAmount(window.NM_WS_AMOUNT);
   try{ return normAmount(localStorage.getItem(AMOUNT_KEY)); }catch(e){ return 1; }
 }
+function withAmount(amount, render){ const before=amountOverride; amountOverride=normAmount(amount); try{return render();}finally{amountOverride=before;} }
 function setAmount(v){ try{ localStorage.setItem(AMOUNT_KEY, String(normAmount(v))); }catch(e){} }
 function scaleCount(d, count){
   const a = getAmount();
@@ -2477,10 +2567,12 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   const totalPages = page - 1;
   const kTxt = cv.cadence === 'w2' ? lk(` · ${cv.k||1}회차`, ` · session ${cv.k||1}`, ` · 第${cv.k||1}次`) : '';
   const studentTag = cv.name ? ` · ${esc(cv.name)}` : '';
-  return `<div class="nm-print-cover nm-cvw${rows.length >= 9 ? ' nm-cvw-dense' : ''}">
+  const magazineC4 = +cv.courseNum === 4 && examLang() === 'ko';
+  return `<div class="nm-print-cover nm-cvw${rows.length >= 9 ? ' nm-cvw-dense' : ''}${magazineC4 ? ' nm-cvw-magazine-c4' : ''}">
   <div class="nm-cv-brand"><span>${worksheetBrandHtml()}</span><strong>NUMBERS <i>of</i> MAGIC${studentTag}</strong></div>
   <div class="nm-cvw-hero">
-    <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}</p>
+    ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}
+    <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}${cv.amount != null && cv.amount !== 1 ? ' · ' + esc(cv.amountLabel || `${cv.amount}×`) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
     <p class="nm-cvw-tagline">${esc(lk('선행부터 독셈, 문장제까지','From advanced work to Doc-T Math and word problems','从超前学习到巧算与应用题'))}</p>
     <div class="nm-cv-rule"></div>
@@ -2731,31 +2823,32 @@ function base10Html(b){
     + `<span class="nm-b10-op">=</span><span class="nm-b10-blank"></span></div>`;
 }
 
-/* 수직선 점프 — 마디에 눈금·수를 찍고 마디 사이를 호(arc)로 잇는다.
-   빈 마디는 네모로 비워 두고, 첫 호 위에 +step을 적어 규칙을 보인다. */
+/* 수직선 뛰어 세기 — 기준선·방향 화살표·같은 간격의 눈금을 먼저 그리고,
+   눈금 사이의 뛰는 자취는 채우지 않은 곡선으로 표시한다. */
 function numlineSvg(nl){
   if(!nl || !Array.isArray(nl.seq) || nl.seq.length < 2) return '';
   const n = nl.seq.length;
-  const L = 14, R = 246, Y = 62;
+  const L = 16, R = 244, Y = 62;
   const x = i => L + (R - L) * i / (n - 1);
-  let s = `<line x1="${L-10}" y1="${Y}" x2="${R+10}" y2="${Y}"/>`;
+  let s = `<line class="nm-jump-nl-axis" x1="7" y1="${Y}" x2="253" y2="${Y}"/>`
+    + `<path class="nm-jump-nl-tip" d="M253 ${Y}l-7 -4v8z"/>`;
   for(let i=0;i<n;i++){
     const xi = x(i);
-    s += `<line x1="${xi}" y1="${Y-5}" x2="${xi}" y2="${Y+5}"/>`;
+    s += `<line class="nm-jump-nl-tick" x1="${xi}" y1="${Y-6}" x2="${xi}" y2="${Y+6}"/>`;
     if(i === nl.blank){
-      s += `<rect class="nm-nl-blank" x="${xi-13}" y="${Y+10}" width="26" height="20"/>`;
+      s += `<rect class="nm-jump-nl-blank" x="${xi-13}" y="${Y+11}" width="26" height="20"/>`;
     } else {
-      s += `<text x="${xi}" y="${Y+22}" text-anchor="middle">${esc(String(nl.seq[i]))}</text>`;
+      s += `<text x="${xi}" y="${Y+27}" text-anchor="middle">${esc(String(nl.seq[i]))}</text>`;
     }
     if(i < n-1){
       const xm = (xi + x(i+1)) / 2;
-      s += `<path class="nm-nl-hop" d="M${xi} ${Y-7} Q ${xm} ${Y-34} ${x(i+1)} ${Y-7}"/>`;
+      s += `<path class="nm-jump-nl-hop" d="M${xi} ${Y-8} Q ${xm} ${Y-39} ${x(i+1)} ${Y-8}"/>`;
       if(i === 0){
-        s += `<text class="nm-nl-step" x="${xm}" y="${Y-28}" text-anchor="middle">+${esc(String(nl.step))}</text>`;
+        s += `<text class="nm-jump-nl-step" x="${xm}" y="${Y-31}" text-anchor="middle">+${esc(String(nl.step))}</text>`;
       }
     }
   }
-  return `<svg class="nm-nl" viewBox="0 0 260 96" role="img" aria-label="${esc(lk('수직선 점프','Number line jumps','数轴跳跃'))}">${s}</svg>`;
+  return `<svg class="nm-jump-nl" viewBox="0 0 260 98" role="img" aria-label="${esc(lk('수직선에서 뛰어 세기','Hopping on a number line','在数轴上跳着数'))}">${s}</svg>`;
 }
 
 /* ── 좌표평면(graph) 인쇄 그림 (2026-09-21) ────────────────────────
@@ -3939,6 +4032,13 @@ function wrapHangul(tex){
    높은 상자로 바꾼다. em 단위라 저학년 배율(--ws-fs)을 그대로 따라간다. 정답지는 답이 대입된 뒤라
    \square 가 남지 않는다. */
 const WRITE_BOX = '\\boxed{\\rule[-0.45em]{0pt}{1.5em}\\kern{0.4em}\\phantom{00}\\kern{0.4em}}';
+/* 풀이 과정의 한 줄 식은 큰 네모가 글줄을 자르므로 같은 자리에 쓰기 밑줄을 둔다.
+   분수 속 빈칸은 위치 구별이 중요해 기존 번호 상자를 유지한다. */
+const TRAIN_WRITE_LINE = '\\underline{\\phantom{0000}}';
+function trainTexDisplay(tex){
+  const rendered = texDisplay(tex);
+  return /\\[dt]?frac/.test(String(tex)) ? rendered : rendered.split(WRITE_BOX).join(TRAIN_WRITE_LINE);
+}
 /* ── 분수 안의 빈칸 (2026-09-21, 원장 "단 분수인 경우 정확히 어디부터 쓰는지 가이드 선이
    있어야 돼 해당 박스를 표시하던지") ──
    근의 공식 `x = (−b ± √□)/□` 을 인쇄해 보니 **상자가 분수선에 닿아** 있었다. 위 상자의
@@ -4314,7 +4414,8 @@ function trainCellPlan(p, idx, n){
   return { raw, bare, steps, ans, value:V, from: fromSteps ? 'steps' : 'solution' };
 }
 /* 곁 계산 줄 머리(원래 식과 다른 양) — "=" 대신 */
-const TRAIN_SIDE = '<span class="nm-w2-train-side" aria-hidden="true">→</span> ';
+const TRAIN_SIDE = '<span class="nm-w2-train-marker nm-w2-train-side" aria-hidden="true">→</span>';
+const TRAIN_EQUAL = '<span class="nm-w2-train-marker" aria-hidden="true">=</span>';
 /* 칸 높이 추정용 — 빈칸이 든 세로 분수 줄은 상자 두 개가 쌓여 보통 줄보다 약 16mm 높다(C21 FR11 실측) */
 const trainTallLine = t => /\\dfrac\{[^}]*\\square/.test(String(t));
 /* 창의 회차 ★줄의 곱나눗 강조(2026-09-26) — 식 줄에 없던 수(바꾼 수) 하나, 없으면 식 줄의 강조 수 */
@@ -4331,7 +4432,7 @@ function keyStepTint(stepTex, exprTex){
     done = true; return pre + '{\\color{' + (PV.COLORS ? PV.COLORS[0] : '#C62828') + '}{' + n + '}}';
   }) + rest;
 }
-function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, cellIdx, cellTotal){
+function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, cellIdx, cellTotal, inlineTrainBlank){
   let cls = 'nm-w2-item nm-print-item';
   let inner;
   /* Training Course(창의 회차, 2026-09-18) — 식 · 주황 밑줄 · "= …" 단계 줄(빈칸은 상자) · 점선 풀이 줄.
@@ -4341,6 +4442,7 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
      적용(창의) 회차에도 MD65@5 같은 그래프 레벨이 실리므로 여기서 먼저 걸러 낸다. */
   if(layoutType === 'train' && !p.graph){
     const box = '\\square';   /* texDisplay 가 쓰기 상자(WRITE_BOX)로 바꾼다 */
+    const trainDisplay = inlineTrainBlank ? trainTexDisplay : texDisplay;
     const slotAttrP = (p.__slot != null) ? ` data-slot="${esc(String(p.__slot))}"` : '';
     /* 과정 빈칸 문항(2026-09-26, applyProcessBlank) — 식과 최종 답을 주고, 풀이 줄은 채운 채 ★자리 수 하나만 □ */
     if(p.__process){
@@ -4350,9 +4452,9 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
       /* 원래 식과 같은 값인 줄만 "=" 로 잇는다 — 곁 계산은 화살표(trainStepChains, 채운 줄로 판정) */
       const Vp = cpEval(String(P.expr).split('=').pop());
       const lines = P.lines.map((t, li) =>
-        `<div class="nm-w2-train-step">${trainStepChains({ tex:P.chain[li] }, Vp) ? '= ' : TRAIN_SIDE}<span class="nm-w2-tex" data-tex="${esc(texDisplay(String(t)))}"></span></div>`).join('');
+        `<div class="nm-w2-train-step">${trainStepChains({ tex:P.chain[li] }, Vp) ? TRAIN_EQUAL : TRAIN_SIDE}<span class="nm-w2-tex" data-tex="${esc(trainDisplay(String(t)))}"></span></div>`).join('');
       return `<div class="${cls} nm-w2-item-train nm-w2-item-process" data-process="${P.form}"${slotAttrP}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askP ? `<div class="nm-print-ask nm-w2-process-ask">${esc(askP)}</div>` : ''}
-  <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(texDisplay(P.expr))}"></span></div>
+  <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(trainDisplay(P.expr))}"></span></div>
   ${lines}<div class="nm-w2-train-dots"><i></i></div></div>`;
     }
     /* 칸의 짜임(식·풀이 줄·"=" 로 이을지·답 줄)은 trainCellPlan 한 곳에서 — 높이 추정·검사기와 같은 판정 */
@@ -4384,16 +4486,16 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
     const stepLines = st.map((x, si) => {
       let t = String(x.tex).replace(/\\square/g, box);
       if(tintStep && si === (T.key || 0)) t = tintStep(t);
-      return `<div class="nm-w2-train-step${x.eq ? '' : ' nm-w2-train-sidestep'}">${x.eq ? '= ' : TRAIN_SIDE}<span class="nm-w2-tex" data-tex="${esc(texDisplay(t))}"></span></div>`;
+      return `<div class="nm-w2-train-step${x.eq ? '' : ' nm-w2-train-sidestep'}">${x.eq ? TRAIN_EQUAL : TRAIN_SIDE}<span class="nm-w2-tex" data-tex="${esc(trainDisplay(t))}"></span></div>`;
     }).join('');
     /* 답 줄 — 마지막 줄의 빈칸이 곧 답이거나 문제 식 안에 답 칸이 있으면 두지 않는다. 둘 때는 진짜 쓰기 상자로
        (전엔 \square 를 texDisplay 없이 넘겨 상자 없는 작은 "= □" 글자가 찍혔다) */
-    const ansLine = !plan.ans ? '' : `<div class="nm-w2-train-step nm-w2-train-ans">= <span class="nm-w2-tex" data-tex="${esc(texDisplay(box))}"></span></div>`;
+    const ansLine = !plan.ans ? '' : `<div class="nm-w2-train-step nm-w2-train-ans">${TRAIN_EQUAL}<span class="nm-w2-tex" data-tex="${esc(trainDisplay(box))}"></span></div>`;
     const dots = bare ? '<i></i><i></i><i></i>' : '<i></i>';
     const askHtmlT = printAskText(p) ? `<div class="nm-print-ask">${esc(printAskText(p))}</div>` : '';
     const slotAttrT = slotAttrP + (T && PVt ? ` data-cptint="${T.kind}"` : '');
     return `<div class="${cls} nm-w2-item-train"${slotAttrT}><span class="nm-w2-numrow"><span class="nm-w2-num">(${num})</span></span>${askHtmlT}
-  <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(texDisplay(raw))}"></span></div>
+  <div class="nm-w2-train-expr"><span class="nm-w2-tex" data-tex="${esc(trainDisplay(raw))}"></span></div>
   ${stepLines}${ansLine}<div class="nm-w2-train-dots">${dots}</div></div>`;
   }
   const ask = printAskText(p);
@@ -4902,6 +5004,81 @@ function w2ConceptPanelHtml(threadId, level, extra){
   ${tipHtml}
   ${extra.rampN ? `<p class="nm-w2-concept-ramp">${esc(lk(`뒤 ${extra.rampN}문항은 한 단계 어려운 문제예요 — 예시처럼 풀어 보세요.`,`The last ${extra.rampN} are one step harder — solve them like the example.`,`最后${extra.rampN}题难度高一级——照例题的方法做。`))}</p>` : ''}
 </div>`;
+}
+
+/* 과정 4의 첫 개념 지면. 같은 3은 같은 청록색, 전체 6은 갈색으로 일관되게
+   표시하고, 색을 구별하기 어려워도 '한 묶음/전체' 글자로 뜻을 읽을 수 있게 한다.
+   역사: MacTutor, Earliest Uses of Symbols of Operation (1618·1631 구분).
+   교과: 2022 개정 초등 1~2학년군 성취기준 [2수01-11]. */
+function w2C4EditorialFeatureHtml(){
+  if(examLang() !== 'ko') return '';
+  const dots = '<span class="nm-w2-pair-dots" aria-hidden="true"><i></i><i></i><i></i></span>';
+  return `<section class="nm-w2-editorial-feature" aria-label="배와 반 개념·교과·수학사">
+    <div class="nm-w2-editorial-hero">
+      <span class="nm-w2-editorial-eyebrow">그림으로 보는 오늘의 개념</span>
+      <h3>같은 수 두 묶음이 모이면?</h3>
+      <p>한 묶음에 3개씩, 똑같은 묶음이 두 개예요.</p>
+      <div class="nm-w2-pair-visual" role="img" aria-label="3개 한 묶음과 3개 한 묶음을 합하면 모두 6개">
+        <span class="nm-w2-pair-group">${dots}<b>한 묶음 3</b></span>
+        <span class="nm-w2-pair-plus" aria-hidden="true">+</span>
+        <span class="nm-w2-pair-group">${dots}<b>한 묶음 3</b></span>
+        <span class="nm-w2-pair-equal" aria-hidden="true">=</span>
+        <span class="nm-w2-pair-total">전체 6</span>
+      </div>
+      <div class="nm-w2-pair-eq"><span class="nm-w2-pair-each">3 + 3</span> = <span class="nm-w2-pair-all">6</span><br><span class="nm-w2-pair-all">6</span> ÷ 2 = <span class="nm-w2-pair-each">3</span></div>
+    </div>
+    <div class="nm-w2-editorial-side">
+      <aside class="nm-w2-editorial-card">
+        <span class="nm-w2-editorial-eyebrow">학교 수학과 이어 보기</span>
+        <strong>초등 1~2학년군 · 곱셈구구</strong>
+        <p>같은 수를 여러 번 더하는 모습을 그려 보면, 곱셈식의 뜻도 쉽게 보여요. 배우는 시기는 아이마다 달라도 괜찮아요.</p>
+        <cite>2022 개정 수학 성취기준 [2수01-11]</cite>
+      </aside>
+      <aside class="nm-w2-editorial-card history">
+        <span class="nm-w2-editorial-eyebrow">수학사의 한 장면</span>
+        <strong>× 기호도 역사가 있어요</strong>
+        <p>1631년에 나온 오트레드의 수학책에도 곱하기 기호 ×가 등장해요. 앞의 같은 묶음을 짧게 쓰는 기호이지요.</p>
+        <cite>MacTutor, Earliest Uses of Symbols of Operation</cite>
+      </aside>
+    </div>
+  </section>`;
+}
+
+function w2C4StudyFeatureHtml(threadId, level){
+  if(examLang() !== 'ko') return '';
+  if(threadId === 'ML25' && level === 1) return `<section class="nm-w2-editorial-study" aria-label="수직선 뛰어 세기 그림과 학교 연결">
+    <div class="nm-w2-editorial-study-main">
+      <span class="nm-w2-editorial-eyebrow">눈으로 따라가는 수직선</span>
+      <h3>2씩 세 번 뛰어 보세요</h3>
+      ${numlineSvg({seq:[0,2,4,6],step:2,blank:-1})}
+      <div class="nm-w2-jump-eq">2 + 2 + 2 = <strong>6</strong></div>
+    </div>
+    <aside class="nm-w2-editorial-study-aside">
+      <span class="nm-w2-editorial-eyebrow">독쌤의 설명</span>
+      <b>몇 번 뛰었나요?</b>
+      <p>한 번에 2씩, 모두 세 번 뛰었어요. 아래 예시에서는 같은 방법으로 3씩 뛰어 볼게요.</p>
+      <cite>학교 연결 · 초등 1~2학년군 곱셈구구</cite>
+    </aside>
+  </section>`;
+  if(threadId === 'AD13' && level === 2) return `<section class="nm-w2-editorial-study" aria-label="십의 자리와 일의 자리끼리 더하는 그림">
+    <div class="nm-w2-editorial-study-main">
+      <span class="nm-w2-editorial-eyebrow">숫자의 자리별로 보기</span>
+      <h3>같은 자리끼리 모아요</h3>
+      <div class="nm-w2-place-big" role="img" aria-label="34 더하기 25 더하기 47. 십의 자리는 초록색, 일의 자리는 갈색">
+        <span class="tens">3</span><span class="ones">4</span> + <span class="tens">2</span><span class="ones">5</span> + <span class="tens">4</span><span class="ones">7</span>
+      </div>
+      <div class="nm-w2-place-row"><small>십의 자리끼리</small><span class="tens">30 + 20 + 40 = 90</span></div>
+      <div class="nm-w2-place-row"><small>일의 자리끼리</small><span class="ones">4 + 5 + 7 = 16</span></div>
+      <div class="nm-w2-place-row result"><small>두 결과를 합치면</small><span><span class="tens">90</span> + <span class="ones">16</span> = 106</span></div>
+    </div>
+    <aside class="nm-w2-editorial-study-aside">
+      <span class="nm-w2-editorial-eyebrow">학교 수학과 이어 보기</span>
+      <b>두 자리 덧셈의 원리를 넓혀요</b>
+      <p>학교에서 배우는 자리값과 두 자리 덧셈을, 세 수를 더할 때에도 이용해 보세요.</p>
+      <cite>2022 개정 수학 성취기준 [2수01-06]</cite>
+    </aside>
+  </section>`;
+  return '';
 }
 
 /* 문항 tex의 \square를 답으로 채워 넣어 "완성된 식"을 만든다 — 채운 자리만
@@ -5981,7 +6158,7 @@ function renderRoundPagesBody(item, opts){
     const prevCap = pages.length === 2 ? firstCap : guideWithPractice && pages.length === 3 ? 6 : layout.perPage;
     const minPractice = midPage ? 6 : Math.min(6, Math.ceil(layout.perPage / 2));
     const joined = prev.concat(tail), size = Math.ceil(joined.length / 2), lastSize = joined.length - size;
-    if(tail.length > 0 && tail.length < minPractice && prev.length > 0 && lastSize >= minPractice
+    if(tail.length > 0 && tail.length < minPractice && prev.length > 0 && lastSize >= Math.min(minPractice, size)
       && size <= prevCap && lastSize <= layout.perPage){
       pages.splice(pages.length-2, 2, joined.slice(0,size), joined.slice(size));
       balancedPracticePages.add(pages.length-2); balancedPracticePages.add(pages.length-1);
@@ -6012,7 +6189,8 @@ function renderRoundPagesBody(item, opts){
        글리프 넘침은 auto 가 못 잡아 여유(slack)를 준다 — 상한까지 남은 만큼만. */
     const rows = fixedPitch ? `repeat(${rowsCount},minmax(${pitchUse + slack}mm,auto))` : `repeat(${rowsCount},minmax(0,1fr))`;
     const flowCol = layout.flow === 'col' ? 'grid-auto-flow:column;' : '';
-    const grow = fixedPitch ? 'flex:0 0 auto;align-content:start;' : '';
+    const grow = fixedPitch ? 'flex:0 0 auto;align-content:start;'
+      : balanced ? 'flex:1 1 auto;align-content:stretch;' : '';
     return `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:${rows};${flowCol}${grow}`;
   }
 
@@ -6046,7 +6224,8 @@ function renderRoundPagesBody(item, opts){
     const cellsHtml = pageItems.map((p, i) => {
       const isFirstRamp = !!p.__ramp && !rampTagged;
       if(isFirstRamp) rampTagged = true;
-      let h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp, layout.type, num - 1, problems.length); num++;
+      let h = w2CellHtml(p, num, item.thread, layout.type === 'vertical', isFirstRamp, layout.type, num - 1, problems.length,
+        !!(opts.editorialC4 && examLang() === 'ko')); num++;
       if(partialCol){
         const r = (i % rowsPerCol) + 1, c = Math.floor(i / rowsPerCol) + 1;
         h = h.replace(/^(\s*<div\b)/, `$1 style="grid-row:${r};grid-column:${c}"`);
@@ -6066,10 +6245,14 @@ function renderRoundPagesBody(item, opts){
         ? window.NM_PLACE_COLOR.pairLegendHtml(examLang(), pickL((window.NM_CREATIVE_PROCESS || {}).pairLegend) || '같은 색 = 짝꿍', pvPairOnPage) : '');
     /* 워터마크는 문항 페이지 안에 한 장씩(.nm-w2-wm, 화면에선 숨김) — 시트 전체 fixed 오버레이 대신 */
     /* data-cre — 창의 칸(strategy)과 적용 칸(application)을 검사기가 가를 수 있게(인쇄에는 영향 없음) */
-    return `<div class="nm-w2-page${middleSix ? ' nm-mid-six' : ''}"${item.creative ? ` data-cre="${esc(item.role || 'creative')}"` : ''}>
+    const editorialC4 = !!(first && headOnly && opts.editorialC4 && conceptHtml && examLang() === 'ko');
+    const editorialFeature = editorialC4 && item.thread === 'ML1' && item.level === 1;
+    const editorialStudy = editorialC4 && !editorialFeature ? w2C4StudyFeatureHtml(item.thread, item.level) : '';
+    return `<div class="nm-w2-page${middleSix ? ' nm-mid-six' : ''}${editorialC4 ? ' nm-w2-teaching-page' : ''}${editorialFeature || editorialStudy ? ' nm-w2-teaching-feature' : ''}"${item.creative ? ` data-cre="${esc(item.role || 'creative')}"` : ''}>
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count, {roundNo: opts.roundNo, name: opts.name, first})}
-  ${first ? strategyHtml : ''}${first ? conceptHtml : ''}${first ? exampleHtml : ''}${separateGuide ? (guidePages[pi-1] || '') : (first ? guided.html : '')}${instrHtml}${pvLegend}
+  ${editorialC4 ? `<div class="nm-w2-lesson-body">${strategyHtml}${conceptHtml}${editorialFeature ? w2C4EditorialFeatureHtml() : editorialStudy}${exampleHtml}${separateGuide ? '' : guided.html}</div>`
+    : `${first ? strategyHtml : ''}${first ? conceptHtml : ''}${first ? exampleHtml : ''}${separateGuide ? (guidePages[pi-1] || '') : (first ? guided.html : '')}`}${instrHtml}${pvLegend}
   ${headOnly ? '' : `<div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount, partial, first, balancedPracticePages.has(pi), ((pi === totalPages - 1 && !item.pacing) ? (window.NM_PRINT_HEAD_QR || 0) : 0) + (instrPage && !first ? 8 : 0))}">${cellsHtml}</div>`}
   ${(pi === totalPages - 1 && !item.pacing) ? retryQrHtml(code) : ''}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>
@@ -6183,6 +6366,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   /* roundNo: 표지 목차와 같은 회차 번호(머리띠 "1. 제곱근의 값"), name: 표지의 학생 이름(머리 이름 칸).
      optionalWord 회차가 빠지면 번호가 비지 않도록 남은 회차로 다시 매긴다. */
   const studentName = opts.cover && opts.cover.name;
+  const editorialC4 = !!(opts.cover && +opts.cover.courseNum === 4);
   const rounds = [];
   const seen=new Set();
   let droppedWord = false;
@@ -6196,7 +6380,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     const seenBefore=new Set(seen);
     let r = null, initialExhausted = null, usedItem = it;
     try {
-      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true });
+      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true, editorialC4 });
     } catch(e) {
       /* 선택 문장제의 첫 유형이 앞 교과 회차와 풀을 나눠 쓰다 모자라면
          아래의 명시된 대체 유형을 계속 시도한다. 일반 회차의 고갈은 그대로 실패한다. */
@@ -6219,7 +6403,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
         const altSeen=new Set(seen);
         let rr;
         try {
-          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen, mixed:true });
+          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen, mixed:true, editorialC4 });
         } catch(e) {
           if(e && e.code === 'NM_UNIQUE_POOL_EXHAUSTED'){ exhausted = exhausted || e; continue; }
           throw e;
@@ -6248,14 +6432,14 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     if(!r.__redo || !r.band || r.band === sheetBand) return;
     try {
       const rr = renderRoundPages(r.__redo.item, { count:r.__redo.count, name:studentName, roundNo:r.__redo.roundNo,
-        exclude:new Set(r.__redo.seenBefore), mixed:true, band:sheetBand });
+        exclude:new Set(r.__redo.seenBefore), mixed:true, band:sheetBand, editorialC4 });
       const same = rr.problems.length === r.problems.length && rr.problems.every((p, k) => problemKey(p) === problemKey(r.problems[k]));
       if(same) rounds[i] = rr;
     } catch(e){ /* 다시 짜지 못하면 처음 것을 둔다 */ }
   });
 
   const sheet = document.createElement('div');
-  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems) + sheetOptClass() + schoolTierClass(items[0]);
+  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems) + sheetOptClass() + schoolTierClass(items[0]) + (editorialC4 ? ' nm-w2-course-c4' : '');
   sheet.setAttribute('aria-hidden', 'true');
   sheet.setAttribute('lang', examLang());
   /* 문장제 회차가 빠졌다는 사실은 운영자에게만(2026-09-07) — 표지에 적지 않는다.
@@ -7866,6 +8050,7 @@ ${round.html}
     const k = Math.max(1, Math.min(2, opts.k || 1));
     const cad = (opts.cad === 'w2' || k === 2) ? 'w2' : 'w1';
     const name = opts.name || '';
+    const amount = opts.amount == null ? getAmount() : normAmount(opts.amount);
     const grade = opts.grade != null ? opts.grade : (window.NM_PRINT_GRADE ? window.NM_PRINT_GRADE() : undefined);
     const seedOf = (wk, i) => (wk + c + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
     let session = course.sessions.find(s => !s.test && s.magic && s.magic.length) || course.sessions.find(s => !s.test) || null;
@@ -7880,7 +8065,7 @@ ${round.html}
     /* 세 층 순서(2026-09-25): 교과 → 마법 노트 → 창의 전략 → 적용·문장제 → 심화.
        시드는 예전처럼 drills·creative 배열의 원래 자리 번호로 만든다 — 층을 나눠도 같은 주의
        같은 칸은 같은 문항이 나온다(이미 받은 학습지 링크와 PDF 가 달라지지 않게). */
-    const R = sessionRoleItems(course, session, (p, i) => seedOf(seedWeek + p, i));
+    const R = withAmount(amount, () => sessionRoleItems(course, session, (p, i) => seedOf(seedWeek + p, i)));
     const items = R.school.slice();
     /* 마법 노트(2026-09-18, 원장 "교과 연산 사이에 매직 오브 넘버스 개념 넣었어?") — 그 세션의 마법 유닛
        (누미의 마법 노트 단계·규칙·핵심 체크)을 교과 회차 다음, 창의 회차(Training Course) 앞에 한 장씩.
@@ -7925,7 +8110,9 @@ ${round.html}
     const stage = (window.NM_STAGE_OF_COURSE && NM_STAGE_OF_COURSE(course.order)) || null;
     /* sessionIdx(2026-09-30): 이 학생이 이 과정에서 몇 번째 회차인가(0부터). 링크 학습지는 주소의 s, 앱 편지함은
        연 봉투 수로 넘긴다. 읽을거리(언어사고력) 주제 순환과 유아 "중반부터" 판정에만 쓴다 — 문항은 그대로 주차 시드. */
-    const cover = { name, weekLabel, courseNum: course.order, courseTitle: title, k, cadence: cad, code: wsId,
+    const amountLabel = amount < 1 ? lk(`적은 연습량 ${amount}배`, `Lighter practice · ${amount}×`, `少量练习 ${amount}倍`)
+      : amount > 1 ? lk(`많은 연습량 ${amount}배`, `More practice · ${amount}×`, `加量练习 ${amount}倍`) : '';
+    const cover = { name, weekLabel, courseNum: course.order, courseTitle: title, k, cadence: cad, code: wsId, amount, amountLabel,
       stage: stage ? (stage.name.ko || '') : '',
       sessionIdx: (opts.sessionIdx != null && isFinite(+opts.sessionIdx)) ? Math.max(0, Math.floor(+opts.sessionIdx)) : null };
     const units = [].concat.apply([], (session.magic || []))
