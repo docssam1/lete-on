@@ -9,6 +9,7 @@ require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
 require("./source-5-2-range-e1.js");
+require("./source-5-2-range-missions.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -137,8 +138,8 @@ for (const [label, pattern, expected] of [
   if (!match || Number(match[1].replaceAll(",", "")) !== expected) failures.push(`README ${label} 수치가 실제 ${expected}개와 다릅니다.`);
 }
 
-if (types.length !== 2010) failures.push(`런타임 유형은 2010개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1223) failures.push(`생성 가능 유형은 1223개여야 하나 ${ready.length}개입니다.`);
+if (types.length !== 2016) failures.push(`런타임 유형은 2016개여야 하나 ${types.length}개입니다.`);
+if (ready.length !== 1229) failures.push(`생성 가능 유형은 1229개여야 하나 ${ready.length}개입니다.`);
 if (locked.length !== 787) failures.push(`검수 대기 유형은 787개여야 하나 ${locked.length}개입니다.`);
 if (ready.some(type => !type.sourceItemId)) failures.push("원문 문항 ID가 없는 유형이 생성 가능 상태입니다.");
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);

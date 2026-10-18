@@ -18,6 +18,7 @@ const expected = [
 ];
 const expectedKeys = ["source52RangeExploration", "source52RangeMaxStart", "source52RangeSeats", "source52RangeOverlap", "source52RangeBoxes"];
 const expectedIds = expected.map(([suffix]) => `5-2-u1-e1-${suffix}`);
+const missionIds = [1, 2, 3, 4, 5, 6].map(number => `5-2-u1-e1-mission-${number}`);
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -29,21 +30,22 @@ function load(curriculumSource) {
   vm.runInContext(curriculumSource, context, { filename: "curriculum.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "generators.js"), "utf8"), context, { filename: "generators.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-range-e1.js"), "utf8"), context, { filename: "source-5-2-range-e1.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-range-missions.js"), "utf8"), context, { filename: "source-5-2-range-missions.js" });
   return { curriculum: plain(context.window.HSE_CURRICULUM), api: context.window.HSE_GENERATORS };
 }
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2010, "Whole-bank classification count");
+  assert.equal(types.length, 2016, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 129, "Preserve 124 legacy records plus five source records");
+  assert.equal(semesterTypes.length, 135, "Preserve 124 legacy records plus eleven source records");
   const restored = plain(semester);
-  restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => expectedIds.includes(type.sourceItemId)));
+  restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => [...expectedIds, ...missionIds].includes(type.sourceItemId)));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
   const unit = semester.units.find(item => item.id === "5-2-u1");
-  assert.equal(unit.subunits.length, 5);
+  assert.equal(unit.subunits.length, 6);
   const legacy = unit.subunits.slice(0, 4).flatMap(group => group.types);
   assert.equal(legacy.length, 12);
   const legacyIds = [1, 2, 3, 4].flatMap(group => ["", "-2", "-3"].map(suffix => `5-2-u1-t${group}${suffix}`));
@@ -82,7 +84,7 @@ function validate(curriculum, api, baselineSemester) {
     }
     assert.match(type.sourceEvidence, /^source-memory:/);
   });
-  for (const type of semesterTypes.filter(type => !expectedIds.includes(type.id))) {
+  for (const type of semesterTypes.filter(type => ![...expectedIds, ...missionIds].includes(type.id))) {
     assert.equal(type.reviewLocked, true, `${type.id}: lock must stay on`);
     assert.equal(type.generationMode, "review-locked");
     assert.equal(api.generatorKey(type), "", `${type.id}: no generator may be exposed`);
