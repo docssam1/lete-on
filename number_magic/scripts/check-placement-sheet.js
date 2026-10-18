@@ -119,6 +119,7 @@ function serve(){
       if(r.garbage) problems.push('깨진 글자');
       if(!r.keyLast || r.keyRows !== 20) problems.push('정답표 쪽 이상 rows=' + r.keyRows);
       if(course && lang === 'ko' && !r.source.includes('두뇌로 과정 ' + course + ' 완료 기준')) problems.push('두뇌로 과정 표기 누락');
+      if(course && lang === 'ko' && !r.source.includes('교재의 실제 문제와 숫자 범위·풀이 형식이 같은지는 확인되지 않았어요')) problems.push('교재 문항 동형 미검증 안내 누락');
       if(course && r.bands !== '6/10/4') problems.push('구간 ' + r.bands);
       if(problems.length) bad.push(`${lang} ${id}: ${problems.join(' · ')}`);
       await tag.evaluate(e => e.remove()); await page.emulateMedia({ media: 'screen' });

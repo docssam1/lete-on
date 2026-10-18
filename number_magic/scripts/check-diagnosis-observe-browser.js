@@ -50,7 +50,10 @@ try{
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].bookStatus),'completed','only a newly confirmed choice is recorded as completed');
    // 두뇌로 완료 과정 하나면 그 과정의 연산으로 이전 6 · 과정 N 10 · 다음 4 진단지가 바로 준비된다.
    assert.equal(await page.locator('#pdStart').isDisabled(),false,'a completed Dunoro course starts its own 6/10/4 paper');
-   if(lang==='ko')assert((await page.locator('.pd-intake-hint').first().innerText()).includes('두뇌로 과정 17 완료 기준'),'the Dunoro scope is shown');
+   if(lang==='ko'){
+    assert((await page.locator('.pd-intake-hint').first().innerText()).includes('두뇌로 과정 17 완료 기준'),'the Dunoro scope is shown');
+    assert((await page.locator('.pd-blueprint').innerText()).includes('교재의 실제 문제와 숫자 범위·풀이 형식이 같은지는 확인되지 않았어요'),'the book paper states its unverified question format');
+   }
    assert((await page.locator('#pdPaper').getAttribute('href')).includes('dunoro=17'),'the paper link carries the Dunoro course');
    await page.selectOption('[data-book-course="0"]','11');assert.equal(await page.locator('#pdBaseline').inputValue(),'');
    assert.deepEqual(await page.evaluate(()=>{const row=JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0];return [row.step,row.bookCourseNumber,row.bookStatus];}),['level-2',11,'completed'],'changing the book course derives Level 2 and keeps a completed selection');
@@ -125,6 +128,7 @@ try{
     // 두뇌로 과정이 함께 있으면 그 과정 진단지가 기준이다(다른 교재는 기록으로 함께 인쇄).
     assert.equal(await page.locator('#pdStart').isDisabled(),false,'a Dunoro course among several books keeps its paper');
     assert((await page.locator('#pdPaper').getAttribute('href')).includes('dunoro=17'));
+    assert((await page.locator('.pd-blueprint').innerText()).includes('함께 기록한 다른 교재는 이번 문항 출제 기준에 포함되지 않아요'),'other books are identified as records only');
     await page.click('#pdRangeOptions summary');await page.selectOption('#pdBaseline','c18');completedBookSheetHref=await page.locator('#pdPaper').getAttribute('href');
     const linkedBooks=JSON.parse(new URLSearchParams(completedBookSheetHref.split('?')[1]).get('books'));
     assert.deepEqual(linkedBooks.map(x=>[x.series,x.step,x.bookCourseNumber,x.editionId]),[['dunoro','level-3',17,''],['soma-p','v1',null,'2019']],'print link carries both completed books');

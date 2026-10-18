@@ -582,9 +582,9 @@
     return { baseline: clone(set.baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
       book: { series, course: n, label: clone(name), topics,
         title: text(name.ko + ' 과정 ' + n + ' 완료 기준', name.en + ' course ' + n + ' completed', name.zh + ' 课程' + n + '已完成'),
-        notice: text('이전 6 · 과정 ' + n + ' 10 · 다음 4문항으로, 과정 ' + n + '의 연산(' + topics + ')을 확인해요.',
-          '6 earlier, 10 course-' + n + ' and 4 next questions check the arithmetic of ' + name.en + ' course ' + n + '.',
-          '用前6题、课程' + n + '的10题和后4题确认' + name.zh + '课程' + n + '的运算。') },
+        notice: text('과정표의 연산 주제를 앱 문항으로 확인해요(이전 6 · 과정 ' + n + ' 10 · 다음 4). 교재의 실제 문제와 숫자 범위·풀이 형식이 같은지는 확인되지 않았어요.',
+          'App questions check the course-table arithmetic topics (6 earlier, 10 from course ' + n + ', 4 next). Their number ranges and solution formats have not been verified against the book’s actual questions.',
+          '按课程表中的运算主题用应用题目确认（之前6题、课程' + n + '的10题、之后4题）。题目的数字范围和解题形式尚未与教材实题核对。') },
       boundaries: { previous: n === 1 ? 'app-foundation' : null, next: set.last ? 'same-course' : null } };
   }
   function normalize(value, array) {
