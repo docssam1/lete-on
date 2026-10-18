@@ -47,3 +47,6 @@
 @media(min-width:900px) and (min-height:700px){.paper-stage{width:min(calc(100% - 80px),420px)}}
 @media(max-width:600px) and (orientation:portrait){.playmat{padding-left:16px;padding-right:16px}.paper-stage{width:min(calc(100% - 58px),330px);margin-right:58px}.large-fold-arrow{width:54px;height:80px}.arrow-halo{stroke-width:9px}.arrow-ink{stroke-width:5px}.number{font-size:26px}}
 @media(max-height:520px) and (orientation:landscape){.paper-stage{width:min(calc(100% - 65px),calc(100dvh - 194px));min-width:176px;margin-right:65px}.large-fold-arrow{width:56px;height:76px}}
+
+.worksheet-link{font-size:13px;padding:9px 13px}.actions{flex-wrap:wrap}@media(max-height:520px) and (orientation:landscape){.worksheet-link{font-size:12px;padding:7px 10px}}
+@media(min-width:900px) and (min-height:700px){.paper-stage{width:min(calc(100% - 80px),420px,calc(100dvh - 345px))}}

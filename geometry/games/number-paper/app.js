@@ -1,5 +1,5 @@
 import { activities,bank,problemsFor } from './core.js?v=number-paper-1';
-import { languages,translation } from './activity-i18n.js?v=7';
+import { languages,translation } from './activity-i18n.js?v=8';
 import { initialActivity,restoreActivity,advance,piecesFor,foldGeometry,sceneShift,shiftTransform } from './activity-model.js?v=3';
 import { paperScene,foldDirections } from './activity-render.js?v=7';
 import { sessionProblems } from '../../shared/problem-pool.js';
@@ -60,6 +60,7 @@ function render(focus=false){
   $('#collectionTitle').textContent=text.collection;
   $('#collection').innerHTML=queue.map((q,i)=>`<span class="creation ${made.includes(q.id)?'made':''} ${index===i?'current':''}" style="--tilt:${i%2?-7:6}deg" aria-label="${i+1}/5${made.includes(q.id)?' ✓':''}${assistedIds.includes(q.id)?` ${text.assistedDone}`:''}">${made.includes(q.id)?'✦':i+1}</span>`).join('');
   $('#progress').textContent=`${index+1} / ${queue.length}`;$('#retry').textContent=text.retry;
+  $('#worksheetLink').textContent=text.worksheet;$('#worksheetLink').href=`../../worksheet/number-paper/?activity=${activity.id}&ids=${queue.map(q=>q.id).join(',')}&difficulty=${difficulty}&lang=${lang}`;
   $('#next').hidden=!completed||index===queue.length-1;$('#next').textContent=text.next;
   $('#practice').hidden=!completed||index!==queue.length-1;$('#practice').textContent=text.practice;$('#practice').href=`?activity=${activity.id}&level=${activity.level}&practice=1&difficulty=${difficulty}&lang=${lang}`;
   $('#status').textContent=completed?(index===queue.length-1?text.complete:''):state.phase==='cut'?`${text.cuts} ${state.cutKeys.length} / ${p().cells.length}`:'';

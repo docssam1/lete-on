@@ -759,6 +759,155 @@
         "runtime_assets_verified": 19,
         "local_and_remote_trees_equal": true
       }
+    },
+    {
+      "id": "geometry-number-paper-worksheet-20261018",
+      "title": "숫자 색종이: 같은 다섯 장의 모양 예상·계산 학습지",
+      "work_status": "complete",
+      "evidence_status": "verified",
+      "release_status": "locked",
+      "owner": "codex-mac-geometry",
+      "source_records": [],
+      "authoring_mode": "newly-authored",
+      "instructional_mode": "guided-practice",
+      "delivery_surfaces": [
+        "interactive-preview",
+        "a4-student",
+        "a4-solutions",
+        "quick-answers"
+      ],
+      "requires_response": true,
+      "contains_answer_steps": true,
+      "has_automated_checks": true,
+      "scope": "Same ordered current game selection, or up to 40 internally authored cards; shape prediction, fold symmetry and arithmetic. No formal attainment claims.",
+      "gates": [
+        {
+          "id": "source-scope",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "Existing 40 internally authored game cards; no broader source-coverage claim."
+            }
+          ]
+        },
+        {
+          "id": "learner-fit",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "Two questions per A4 page; original numbers, fold/cut conditions, blank prediction grid and calculation space. Separate solutions use reverse folds and make ten; sums below ten add directly."
+            }
+          ]
+        },
+        {
+          "id": "math-model",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "40 independent layer simulations and target/sum checks; grouping and split quantity conservation."
+            }
+          ]
+        },
+        {
+          "id": "answer-contract",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "320 multilingual question/solution renders; no rendered answers in student mode. Four print modes; deliberate answer selection."
+            }
+          ]
+        },
+        {
+          "id": "selection-order",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "Current five IDs retain order; invalid, duplicate and empty IDs rejected. Actual user selection 06 to 10 and checkpoint preserved."
+            }
+          ]
+        },
+        {
+          "id": "render-pc",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "48 worksheet states across four languages, four modes and three sizes; 32 game-link layout states across four sizes."
+            }
+          ]
+        },
+        {
+          "id": "render-mobile",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "No document horizontal overflow or footer/card overlap in final 48 worksheet states; control sizing and links verified."
+            }
+          ]
+        },
+        {
+          "id": "render-a4",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "Six Korean vector PDFs, 49 A4 pages, 18674 bounded characters. Every page rasterized and inspected; correct page numbering, answers, white response grids, intentional duplex blank."
+            }
+          ]
+        },
+        {
+          "id": "negative-control",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "Bad IDs, duplicate selections, name HTML escaping and answer separation checks. White response-grid raster probe catches incorrect fill."
+            }
+          ]
+        },
+        {
+          "id": "regression",
+          "required": true,
+          "status": "pass",
+          "evidence": [
+            {
+              "role": "test",
+              "locator": "artifact:game-number-paper-20261017/worksheet-20261018",
+              "note": "Existing game model, calculation help, storage and old paper-fold worksheet retained."
+            }
+          ]
+        },
+        {
+          "id": "release-readback",
+          "required": false,
+          "status": "pending",
+          "evidence": []
+        }
+      ]
     }
   ]
 }

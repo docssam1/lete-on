@@ -44,3 +44,4 @@ ja:{foldDirections:'折る向き',openDirections:'逆の順に開く',predictSha
 for(const lang of languages)Object.assign(strings[lang],helpText[lang],tenText[lang],directionText[lang]);
 for(const lang of languages)Object.assign(strings[lang],challengeText[lang]);
 export const translation=lang=>strings[lang]||strings.ko;
+for(const [lang,label] of Object.entries({ko:'내 종이 학습지',en:'My paper worksheet',zh:'我的折纸练习',ja:'同じ紙のプリント'}))strings[lang].worksheet=label;
