@@ -854,6 +854,84 @@ function sourceBalanceRatio(visual) {
   return `<div class="b5-src-balance" role="img" aria-label="${escapeHtml(`수평인 저울: 공 ${visual.left}개와 상자 ${visual.right}개${visual.weight != null ? `, 공 하나와 상자 하나는 ${visual.weight}g` : ""}`)}"><svg viewBox="0 0 ${visual.weight != null ? 400 : 180} 96" style="width:min(100%,${visual.weight != null ? 480 : 230}px)">${body}</svg></div>`;
 }
 
+// 6권 둘레: 길이 글자. 가·나… 한 글자면 빈칸 상자로 그리고 뒤에 단위를 붙인다.
+const QUAD_COLOR = { rect: ["#2f6fe0", "#eef4ff"], square: ["#2f9e5f", "#e3f6ea"], para: ["#f39a1e", "#fff1de"], rhombus: ["#8e5bd8", "#f1e8fd"], trapezoid: ["#e0559a", "#fde7f1"] };
+const lenLabel = (x, y, text, unit = "cm") => {
+  if (text == null) return "";
+  const s = String(text);
+  if (BLANK_LABELS.includes(s)) return `<rect class="qb" x="${x - 26}" y="${y - 12}" width="24" height="24" rx="4"/><text class="ql" x="${x - 14}" y="${y}">${s}</text><text x="${x + 12}" y="${y}">${unit}</text>`;
+  const m = s.match(/^(.+) ([가-아])$/);
+  if (m && BLANK_LABELS.includes(m[2])) return `<text x="${x}" y="${y - 13}">${escapeHtml(m[1])}</text><rect class="qb" x="${x - 26}" y="${y}" width="24" height="24" rx="4"/><text class="ql" x="${x - 14}" y="${y + 12}">${m[2]}</text><text x="${x + 12}" y="${y + 12}">${unit}</text>`;
+  return `<text x="${x}" y="${y}">${escapeHtml(/^\d+$/.test(s) ? `${s}${unit}` : s)}</text>`;
+};
+const quadPoints = (shape, x, y, W, H) => {
+  if (shape === "para") { const d = Math.min(40, W * 0.3); return [[x + d, y], [x + W, y], [x + W - d, y + H], [x, y + H]]; }
+  if (shape === "rhombus") return [[x + W / 2, y], [x + W, y + H / 2], [x + W / 2, y + H], [x, y + H / 2]];
+  if (shape === "trapezoid") { const d = W * 0.22; return [[x + d, y], [x + W - d, y], [x + W, y + H], [x, y + H]]; }
+  return [[x, y], [x + W, y], [x + W, y + H], [x, y + H]];
+};
+const poly = (pts, shape, cls = "") => `<polygon class="${cls}" style="--c:${QUAD_COLOR[shape][0]};--f:${QUAD_COLOR[shape][1]}" points="${pts.map((p) => p.map((v) => v.toFixed(1)).join(",")).join(" ")}"/>`;
+const edgeArc = (a, b, out) => { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, nx = dy / L * out, ny = -dx / L * out; return { d: `M${a[0].toFixed(1)} ${a[1].toFixed(1)}Q${(mx + nx * 2).toFixed(1)} ${(my + ny * 2).toFixed(1)} ${b[0].toFixed(1)} ${b[1].toFixed(1)}`, lx: mx + nx * 2.1, ly: my + ny * 2.1 }; };
+
+// 6권: 사각형 하나(rect·square·para·rhombus). top·side(왼쪽 변)·inner(가운데 글). w·h는 그리는 비율만.
+function sourceQuad(visual) {
+  const shape = visual.shape, maxW = 200, maxH = 120, r = (visual.w ?? 3) / (visual.h ?? 2);
+  const W = shape === "square" ? 110 : r >= maxW / maxH ? maxW : maxH * r, H = shape === "square" ? 110 : r >= maxW / maxH ? maxW / r : maxH;
+  const x = 84, y = 56, P = quadPoints(shape, x, y, W, H);
+  let body = poly(P, shape, "q");
+  const unit = visual.unit ?? "cm";
+  if (visual.top != null) { const e = edgeArc(P[0], P[1], 13); body += `<path class="arc" d="${e.d}"/>` + lenLabel(e.lx, e.ly - 6, visual.top, unit); }
+  if (visual.side != null) { const e = edgeArc(P[3], P[0], 13); body += `<path class="arc" d="${e.d}"/>` + lenLabel(e.lx - 20, e.ly, visual.side, unit); }
+  if (visual.right != null) { const e = edgeArc(P[1], P[2], 13); body += `<path class="arc" d="${e.d}"/>` + lenLabel(e.lx + 20, e.ly, visual.right, unit); }
+  if (visual.inner != null) body += lenLabel(x + W / 2, y + H / 2, visual.inner, unit);
+  if (shape === "rhombus" || shape === "square") body += P.map((p, i) => { const q = P[(i + 1) % 4]; return `<circle class="tk" cx="${((p[0] + q[0]) / 2).toFixed(1)}" cy="${((p[1] + q[1]) / 2).toFixed(1)}" r="3"/>`; }).join("");
+  const name = { rect: "직사각형", square: "정사각형", para: "평행사변형", rhombus: "마름모" }[shape];
+  return `<div class="b5-src-quad" role="img" aria-label="${escapeHtml([name, visual.top != null && `위 ${visual.top}`, visual.side != null && `옆 ${visual.side}`, visual.right != null && `오른쪽 ${visual.right}`, visual.inner].filter(Boolean).join(", "))}"><svg viewBox="0 0 ${x * 2 + W} ${y + H + 30}" style="width:min(100%,${Math.round((x * 2 + W) * 1.25)}px)">${body}</svg></div>`;
+}
+
+// 6권: 여러 가지 사각형 모음. items = [[이름표, 모양], …]
+function sourceQuadGallery(visual) {
+  const cell = 120, body = visual.items.map(([label, shape], k) => { const x = k * cell + 14, P = quadPoints(shape === "square" ? "rect" : shape, x, 14, shape === "square" ? 66 : 92, 66); return poly(P, shape, "q") + `<text x="${x + (shape === "square" ? 33 : 46)}" y="100">${escapeHtml(label)}</text>`; }).join("");
+  return `<div class="b5-src-quad" role="img" aria-label="${escapeHtml(visual.items.map(([l, s]) => `${l} ${({ rect: "직사각형", square: "정사각형", para: "평행사변형", rhombus: "마름모", trapezoid: "사다리꼴" })[s]}`).join(", "))}"><svg viewBox="0 0 ${visual.items.length * cell} 112" style="width:min(100%,${visual.items.length * 130}px)">${body}</svg></div>`;
+}
+
+// 6권: 세로 변을 맞대어 이은 도형들. parts = [{shape:"rect"|"square"|"para"|"rhombus", w, top, inner, innerNote}], left·right = 맨 끝 세로 변 글자.
+// 마름모·평행사변형은 세로 변이 같고 위아래가 비스듬하다(마름모는 비스듬한 변도 세로 변과 같은 길이).
+function sourceJoined(visual) {
+  const H = 76, unit = visual.unit ?? "cm";
+  let x = 60, body = "", labels = "", minY = 40, maxY = 40 + H, dropY = 0, last;
+  visual.parts.forEach((part) => {
+    const y = 40 + dropY;
+    let P, W;
+    if (part.shape === "rhombus" || part.shape === "para") {
+      const L = part.shape === "rhombus" ? H : (part.w ?? 1.4) * H, dy = part.drop ?? 0.4 * H, dx = Math.sqrt(Math.max(L * L - dy * dy, 400));
+      W = dx; P = [[x, y], [x + dx, y + dy], [x + dx, y + dy + H], [x, y + H]]; dropY += dy;
+    } else { W = part.shape === "square" ? H : (part.w ?? 1.6) * H; P = [[x, y], [x + W, y], [x + W, y + H], [x, y + H]]; }
+    body += poly(P, part.shape, "q");
+    minY = Math.min(minY, ...P.map((p) => p[1])); maxY = Math.max(maxY, ...P.map((p) => p[1]));
+    const cx = P.reduce((s, p) => s + p[0], 0) / 4, cy = P.reduce((s, p) => s + p[1], 0) / 4;
+    if (part.inner) labels += `<text class="in" x="${cx}" y="${cy - (part.innerNote ? 9 : 0)}">${escapeHtml(part.inner)}</text>`;
+    if (part.innerNote != null) labels += `<g class="note">${lenLabel(cx, cy + 11, part.innerNote, unit)}</g>`;
+    if (part.top != null) { const e = edgeArc(P[0], P[1], 12); labels += `<path class="arc" d="${e.d}"/>` + lenLabel(e.lx, e.ly - 6, part.top, unit); }
+    if (part.slant != null) { const e = edgeArc(P[0], P[1], 12); labels += `<path class="arc" d="${e.d}"/>` + lenLabel(e.lx + 12, e.ly - 8, part.slant, unit); }
+    x = P[1][0];
+    last = P;
+  });
+  const first = 40;
+  if (visual.left != null) { labels += `<path class="arc" d="M60 ${first}Q36 ${first + H / 2} 60 ${first + H}"/>` + lenLabel(28, first + H / 2, visual.left, unit); }
+  if (visual.right != null) { const rx = last[1][0], ty = last[1][1]; labels += `<path class="arc" d="M${rx} ${ty}Q${rx + 24} ${ty + H / 2} ${rx} ${ty + H}"/>` + lenLabel(rx + 40, ty + H / 2, visual.right, unit); }
+  const vbW = x + 90, vbH = maxY + 30;
+  return `<div class="b5-src-quad" role="img" aria-label="${escapeHtml(`이어 붙인 도형: ${visual.parts.map((p) => [p.inner ?? ({ rect: "직사각형", square: "정사각형", para: "평행사변형", rhombus: "마름모" })[p.shape], p.innerNote, p.top != null && `위 ${p.top}`].filter(Boolean).join(" ")).join(", ")}`)}"><svg viewBox="0 ${minY - 46} ${vbW} ${vbH - minY + 46}" style="width:min(100%,${Math.round(vbW * 1.15)}px)">${body}${labels}</svg></div>`;
+}
+
+// 6권: 정사각형으로 나눈 직사각형. squares = [[x, y, 한 변, 글자], …] (단위 칸)
+function sourceSquareSplit(visual) {
+  const u = 26, maxX = Math.max(...visual.squares.map(([x, , s]) => x + s)), maxY = Math.max(...visual.squares.map(([, y, s]) => y + s));
+  const fills = ["#fde7f1", "#e3f6ea", "#eef4ff", "#fff1de", "#f1e8fd", "#fff8dc"];
+  const body = visual.squares.map(([x, y, s, label], k) => `<rect x="${6 + x * u}" y="${6 + y * u}" width="${s * u}" height="${s * u}" style="fill:${fills[k % fills.length]}"/>${label ? `<text x="${6 + (x + s / 2) * u}" y="${6 + (y + s / 2) * u}">${escapeHtml(label)}</text>` : ""}`).join("");
+  return `<div class="b5-src-quad" role="img" aria-label="정사각형으로 나눈 직사각형"><svg viewBox="0 0 ${maxX * u + 12} ${maxY * u + 12}" style="width:min(100%,${Math.round((maxX * u + 12) * 1.3)}px)">${body}</svg></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -903,6 +981,10 @@ export function book05Markup(visual) {
     case "source-pencil-bars": return sourcePencilBars(visual);
     case "source-bar-ratio": return sourceBarRatio(visual);
     case "source-balance-ratio": return sourceBalanceRatio(visual);
+    case "source-quad": return sourceQuad(visual);
+    case "source-quad-gallery": return sourceQuadGallery(visual);
+    case "source-joined": return sourceJoined(visual);
+    case "source-square-split": return sourceSquareSplit(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);

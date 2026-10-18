@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018b/20261018c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018c`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018c/20261018d/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -255,7 +255,7 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   `tx2`로 그린 그림 요소도 함께 사라지니 그림 모양은 교사용 원본에서 읽는다.
 - **진단**: 예전 6권 문항 108개는 교사용 풀이 식을 그대로 문제로 바꾼 것(「24÷2의 값」, 그림 = 식)이라 풀이 방법이 드러나고
   수직선 그림이 비어 있었다. 5권처럼 원본 문항으로 다시 짠다. `sourceInventory`(94개)는 예전 공개 기록이고 화면에서 쓰지 않는다.
-- **묶음 계획**: 1) 2~6 수직선의 분할 ✅ · 2) 7~10 도형이 나타내는 수와 비 ✅ · 3) 12~14 둘레 · 4) 15~16 둘레 · 5) 18~21 곱셈·간편 계산 ·
+- **묶음 계획**: 1) 2~6 수직선의 분할 ✅ · 2) 7~10 도형이 나타내는 수와 비 ✅ · 3) 12~14 둘레 ✅ · 4) 15~16 둘레 · 5) 18~21 곱셈·간편 계산 ·
   6) 22~25 연속수의 합 · 7) 27~32 수와 숫자의 개수·수 만들기.
 - **그림은 5권 그림 도구를 그대로 쓴다**(`kind:"book5"`, `book05-renderers.js`). 인쇄 규칙 선택자는
   `.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"])`로 넓혔다(전부 `b5-src-*` 전용이라 다른 권에 영향 없음).
@@ -280,6 +280,14 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 7쪽 02 분수와 비는 설명 그림이라 고르기 2문항, 8쪽 03 ②는 분모·분자의 합이 교사용 안내에만 있어 물음에 합을 적음(둘 다 `sourceDiscrepancy`).
     9쪽 막대·10쪽 저울은 비 칸 옆의 「비/실제」 표가 답을 드러내 화면에 넣지 않았고, 비는 「가장 간단한 자연수의 비」로 물어 답을 하나로 정함.
   - 교사용 답과 전부 같음(교사용 10쪽의 g 자리에 cm로 적힌 오타는 화면에 나오지 않는 표라 고칠 것 없음). DB `book-06` 682키 → 735키, sha 앞 8자리 `1b68937e`. 캐시 꼬리표 `20261018b`.
+- **6권 묶음 3(슬라이드 12~14 여러 가지 사각형의 둘레·붙인 도형의 둘레·피보나치 사각형, 30문항, 2026-10-18)**: 패치 `tools/golden-bell-book06/patch-book06-batch3.mjs`(정답 없음).
+  - 단원 7 `perimeter-source`(12·13쪽 23문항)를 자리 그대로 새로 짜고(DB `/lessons/7/` 옛 키 교체), 새 단원 14 `joined-perimeter-source`(14쪽 7문항).
+  - 새 그림: `source-quad`(직사각형·정사각형·평행사변형·마름모 하나. `top`·`side`·`right`·`inner` 글자, 가·나 한 글자는 빈칸 상자, 「둘레 가」는 두 줄) ·
+    `source-quad-gallery`(사각형 모음) · `source-joined`(세로 변을 맞대어 이은 도형. 마름모는 비스듬한 변도 세로 변과 같은 길이) · `source-square-split`(정사각형으로 나눈 직사각형).
+  - 12쪽 사각형 소개는 설명이라 고르기 3문항, 13쪽 05·06은 교사가 수를 정해 주는 빈칸이라 원본 곱셈표의 수로 4문항을 만듦(둘 다 `sourceDiscrepancy`).
+    14쪽 붙인 도형은 원본처럼 비스듬히 돌려 놓지 않고 세로 변을 맞댄 배치로 그렸다(맞닿은 변 관계와 답은 같음).
+  - **교사용 답이 틀린 곳 2곳**(DB `sourceNote`): 12쪽 첫 직사각형 답 칸, 13쪽 02 첫 직사각형. 그림의 수로 계산한 답을 넣음.
+  - `sourceHold` B06-13-04·B06-14-01 삭제(6권 보류 5 → 3). DB `book-06` 735키 → 753키, sha 앞 8자리 `efa5fc0e`. 캐시 꼬리표 `20261018c`.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
 
