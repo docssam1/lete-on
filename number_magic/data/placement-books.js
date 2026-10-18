@@ -38,7 +38,8 @@ const somaSets = {
   D: { count: 6, url: 'https://www.yes24.com/product/goods/75525550', isbn13: '9791158851217' }
 };
 // Short topic cues paraphrase each set's public volume summary. They help a
-// parent recognize the physical book, but never authorize automatic testing.
+// parent recognize the physical book. A separately reviewed topic generator
+// may use them, but these labels alone do not certify actual publisher items.
 const somaPTopics = {
   '2019': [
     L('30까지 덧셈·뺄셈 5', 'Add/subtract 5 within 30', '30以内加减5'),

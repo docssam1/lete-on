@@ -92,8 +92,11 @@ function serve(){
     const pick = QUICK ? ['f-count5', 'f-ten10', 'c1', 'c3', 'c12', 'c20', 'c40', 'c73'].filter(x => ids.includes(x)) : ids;
     /* 두뇌로 완료 과정 진단지(dunoro=1~25): 과정표의 연산으로 이전 6 · 과정 N 10 · 다음 4 */
     const dunoro = QUICK ? [1, 7, 13, 25] : Array.from({ length: 25 }, (_, i) => i + 1);
-    const sheets = pick.map(id => ({ id, query: 'b=' + id })).concat(dunoro.map(n => ({ id: 'dunoro' + n, query: 'b=c1&dunoro=' + n, dunoro: n })));
-    for(const lang of QUICK ? ['ko'] : ['ko', 'en', 'zh']) for(const { id, query, dunoro: course } of sheets){
+    const somaP = QUICK ? [1, 5, 6, 8] : Array.from({ length: 8 }, (_, i) => i + 1);
+    const sheets = pick.map(id => ({ id, query: 'b=' + id }))
+      .concat(dunoro.map(n => ({ id: 'dunoro' + n, query: 'b=c1&dunoro=' + n, dunoro: n })))
+      .concat(somaP.map(n => ({ id: 'somaP' + n, query: 'b=c1&somaP=' + n, somaP: n })));
+    for(const lang of QUICK ? ['ko'] : ['ko', 'en', 'zh']) for(const { id, query, dunoro: course, somaP: volume } of sheets){
       await page.goto(`http://localhost:${PORT}/placement-sheet.html?${query}&seed=chk&l=${lang}`);
       await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 }).catch(() => {});
       await page.emulateMedia({ media: 'print' });
@@ -121,6 +124,9 @@ function serve(){
       if(course && lang === 'ko' && !r.source.includes('두뇌로 과정 ' + course + ' 완료 기준')) problems.push('두뇌로 과정 표기 누락');
       if(course && lang === 'ko' && !r.source.includes('교재의 실제 문제와 숫자 범위·풀이 형식이 같은지는 확인되지 않았어요')) problems.push('교재 문항 동형 미검증 안내 누락');
       if(course && r.bands !== '6/10/4') problems.push('구간 ' + r.bands);
+      if(volume && lang === 'ko' && !r.source.includes('소마셈 P ' + volume + '권 완료 기준')) problems.push('소마셈 P권 표기 누락');
+      if(volume && lang === 'ko' && !r.source.includes('실제 교재의 문제·그림·풀이 방식과 같다는 검증은 없어요')) problems.push('소마셈 교재 형식 미검증 안내 누락');
+      if(volume && r.bands !== '6/10/4') problems.push('구간 ' + r.bands);
       if(problems.length) bad.push(`${lang} ${id}: ${problems.join(' · ')}`);
       await tag.evaluate(e => e.remove()); await page.emulateMedia({ media: 'screen' });
     }

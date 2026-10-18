@@ -10,7 +10,7 @@
     return String(value == null ? '' : value);
   }
   function initial() {
-    return { version: VERSION, phase: 'setup', selection: { intakeVersion: 'multi-source-v2', route: 'age', age: '', grade: '', semester: '1', completedBooks: [], series: '', step: '', bookCourseNumber: null, bookStatus: '', progress: '', baselineId: '', goal: 'curriculum', goalTarget: '', cadence: 'w2' },
+    return { version: VERSION, phase: 'setup', selection: { intakeVersion: 'multi-source-v2', route: 'age', age: '', grade: '', semester: '1', completedBooks: [], bookFocus: '', series: '', step: '', bookCourseNumber: null, bookStatus: '', progress: '', baselineId: '', goal: 'curriculum', goalTarget: '', cadence: 'w2' },
       seed: Date.now().toString(36), plan: null, index: 0, responses: [], result: null };
   }
   function parseNumber(raw) {
@@ -121,12 +121,16 @@
       const resolved=single&&books?books.resolve(single.row.series,single.row.step,s.progress,single.row.editionId):null;
       const candidate=s.route==='book'?(resolved&&resolved.baselineId||null):paths.startingPoint(s);
       const mayChoose=s.route==='book'?booksReady:s.route==='school'?!!candidate:!!s.age&&!!candidate;
-      // 두뇌로 완료 과정이 있으면 그 과정의 연산으로 이전 6 · 과정 N 10 · 다음 4를 낸다.
-      // 아래 '다른 내용으로 확인하기'에서 앱 범위를 직접 고르면 그쪽을 쓴다.
-      const dunoroRows=booksReady?bookChoices.filter(x=>x.row.series==='dunoro'&&Number.isInteger(x.row.bookCourseNumber)):[];
-      const dunoroCourse=dunoroRows.length===1&&typeof core.buildBook==='function'&&!s.baselineId?dunoroRows[0].row.bookCourseNumber:0;
+      // A paper has one explicit book basis. Other completed books remain in
+      // the record; a manual app scope always overrides the book basis.
+      const bookSources=booksReady?bookChoices.map(x=>{
+        const row=x.row, course=row.series==='dunoro'?row.bookCourseNumber:
+          row.series==='soma-p'&&row.editionId==='2019'?Number(/^v([1-8])$/.exec(row.step)?.[1]):0;
+        return Number.isInteger(course)&&course>0?{key:row.series+':'+course,series:row.series,course,label:completedBookText(x)}:null;
+      }).filter(Boolean).filter((x,i,rows)=>rows.findIndex(y=>y.key===x.key)===i):[];
+      const focus=bookSources.find(x=>x.key===s.bookFocus)||(bookSources.length===1?bookSources[0]:null);
       let bookPlan=null;
-      if(dunoroCourse){try{bookPlan=core.buildBook('dunoro',dunoroCourse,d.seed);}catch(_){bookPlan=null;}}
+      if(focus&&typeof core.buildBook==='function'&&!s.baselineId){try{bookPlan=core.buildBook(focus.series,focus.course,d.seed);}catch(_){bookPlan=null;}}
       const baseline=bookPlan?stages.find(x=>x.id===bookPlan.baseline.id):stages.find(x=>x.id===(mayChoose?(s.baselineId||(s.route==='school'?null:candidate)):''));
       const scopeText=bookPlan?l(bookPlan.book.title)+' · '+bookPlan.book.topics:baseline?stageLabel(baseline):'';
       const ages=[['',t('현재 나이 선택','Select current age','选择目前年龄')],...Array.from({length:16},(_,i)=>[String(i+4),t((i+4)+'세','Age '+(i+4),(i+4)+'岁')])];
@@ -155,16 +159,18 @@
           (steps.length&&row.series!=='dunoro'?'<label>'+stepPrompt+'<select data-book-step="'+i+'">'+option('',t('선택해 주세요','Select an item','请选择'),row.step)+steps.map(x=>option(x.id,l(x.label),row.step)).join('')+'</select></label>':'')+
           (row.series==='dunoro'?'<label>'+t('마지막으로 완료한 두뇌로 교재 과정','Last completed Dunoro book course','最后完成的두뇌로教材课程')+'<select data-book-course="'+i+'">'+options([['',t('과정 번호 선택','Select course number','选择课程编号')],...dunoroCourses,['other',t('다른 과정 표기','Other course notation','其他课程标记')]],dunoroSelected)+'</select></label>':'')+'</div></div>';
       }).join('')+'<button type="button" class="pd-book-add" id="pdAddBook"'+(s.completedBooks.length>=8?' disabled':'')+'>'+t('완료한 교재 추가','Add another completed book','添加已完成教材')+'</button><p class="pd-note">'+t('기적의 계산법과 소마셈처럼 여러 교재를 함께 기록할 수 있습니다. 모두 마지막으로 완료한 권을 고르세요.','Record more than one book, such as Miracle and SomaSem. Select the last completed volume of each.','可以同时记录多种教材；请选择每种教材最后完成的册次。')+'</p>'+
+        (bookSources.length>1?'<label>'+t('이번 진단 기준 교재','Book for this check','本次测评依据教材')+'<select id="pdBookFocus">'+option('',t('교재 선택','Select a book','选择教材'),s.bookFocus||'')+bookSources.map(x=>option(x.key,x.label,s.bookFocus||'')).join('')+'</select></label>':'')+
         (s.completedBooks.some(row=>row.series==='dunoro')?'<p class="pd-note">'+t('두뇌로 교재 과정 번호와 이 앱의 과정 번호는 다릅니다.','Dunoro book course numbers differ from app course numbers.','두뇌로教材课程编号与本应用课程编号不同。')+'</p>':'')+'</div>':'';
       const goalFields='<label>'+t('학습 목표','Learning goal','学习目标')+'<select id="pdGoal">'+paths.goals.map(x=>option(x.id,l(x.label),s.goal)).join('')+'</select></label>'+
         (s.goal==='competition'?'<label>'+t('목표 진도','Progress goal','目标进度')+'<select id="pdGoalTarget">'+option('',t('아직 정하지 않았어요','Not decided yet','尚未确定'),s.goalTarget)+paths.targets.map(x=>option(x.id,l(x.label),s.goalTarget)).join('')+'</select></label><p class="pd-note">'+t('목표 대응은 자료 대조가 필요합니다. 이번 연산 진단은 입학 준비도 판정이 아닙니다.','Target mapping needs verification. This arithmetic check does not assess admission readiness.','目标对应需要资料核对。本运算测评不判断入学准备度。')+'</p>':'')+
         '<label class="pd-cadence">'+t('희망 학습 횟수 · 기존 계획은 유지','Preferred frequency · current plan stays unchanged','希望的次数 · 现有计划不变')+'<select id="pdCadence">'+options([['w2',t('주 2회','Twice a week','每周两次')],['w1',t('주 1회','Once a week','每周一次')]],s.cadence)+'</select></label>';
       const paperParams=baseline?{b:baseline.id,l:lang,seed:d.seed,goal:s.goal,target:s.goalTarget||'',cadence:s.cadence,route:s.route}:null;
-      if(paperParams&&bookPlan)paperParams.dunoro=String(dunoroCourse);
+      if(paperParams&&bookPlan)paperParams[focus.series==='dunoro'?'dunoro':'somaP']=String(focus.course);
       if(paperParams&&s.route==='book')paperParams.books=JSON.stringify(s.completedBooks);
       if(paperParams&&s.route==='school'){paperParams.grade=s.grade;paperParams.semester=s.semester;}
       const paperQuery=paperParams?new URLSearchParams(paperParams).toString():'';
       const setupHint=s.route==='book'&&!booksReady?t('교재마다 마지막으로 완료한 권 또는 과정을 골라 주세요.','Select the last completed volume or course for every book.','请选择每种教材最后完成的册次或课程。'):
+        s.route==='book'&&bookSources.length>1&&!focus&&!s.baselineId?t('이번 진단의 기준 교재를 골라 주세요.','Choose the book for this check.','请选择本次测评依据的教材。'):
         s.route==='book'&&!baseline?t('완료한 내용에 가까운 앱 진단 범위를 확인해 주세요.','Confirm the app diagnostic scope closest to the completed topics.','请确认最接近已完成内容的应用测评范围。'):
         s.route==='school'&&!s.grade?t('학교 학년을 골라 주세요.','Choose the school grade.','请选择学校年级。'):
         s.route==='school'&&!baseline?t('이번에 확인할 교과 연산 내용을 골라 주세요.','Choose the school arithmetic topic to check.','请选择本次确认的学校运算内容。'):
@@ -182,7 +188,7 @@
           s.route==='school'?'':
           '<p class="pd-intake-hint">'+(baseline?t('진단 기준 범위: ','Diagnostic scope: ','测评基准范围：')+escape(stageLabel(baseline)):escape(setupHint))+'</p><details class="pd-optional" id="pdRangeOptions"><summary>'+t('다른 내용부터 확인하기','Check a different topic','从其他内容开始确认')+'</summary>'+range+'</details>')+'</section>'+
         '<details class="pd-optional"><summary>'+t('학습 목표 · 횟수 (선택)','Goal · frequency (optional)','目标 · 次数（可选）')+'</summary><section class="pd-goal-selection">'+goalFields+'<p class="pd-note">'+t('목표는 방향만 안내합니다. 문항·채점은 동일하며 현재 속도·분량·횟수를 자동 변경하지 않습니다.','Goals guide direction only. Questions and scoring stay the same; current workload is not changed automatically.','目标只指导方向，不改变题目、评分或当前学习量。')+'</p></section></details>'+
-        '<section class="pd-blueprint"><h2>'+t('한 번에 20문항','20 questions in one check','一次20道题')+'</h2><div class="pd-bands">'+(bookPlan?[['6','30%',dunoroCourse>1?t('두뇌로 과정 '+(dunoroCourse-1),'Dunoro course '+(dunoroCourse-1),'Dunoro课程'+(dunoroCourse-1)):t('10까지 수의 순서','Number order to 10','10以内数的顺序')],['10','50%',t('두뇌로 과정 '+dunoroCourse,'Dunoro course '+dunoroCourse,'Dunoro课程'+dunoroCourse)],['4','20%',dunoroCourse<25?t('두뇌로 과정 '+(dunoroCourse+1),'Dunoro course '+(dunoroCourse+1),'Dunoro课程'+(dunoroCourse+1)):t('과정 25 추가 확인','More course 25','课程25补充确认')]]:
+        '<section class="pd-blueprint"><h2>'+t('한 번에 20문항','20 questions in one check','一次20道题')+'</h2><div class="pd-bands">'+(bookPlan?[['6','30%',l(bookPlan.items[0].stageLabel)],['10','50%',l(bookPlan.items[6].stageLabel)],['4','20%',l(bookPlan.items[16].label)]]:
           [['6','30%',t('이전 범위 확인','Earlier scope','此前范围')],['10','50%',t('선택 범위 확인','Selected scope','所选范围')],['4','20%',t('다음 범위 맛보기','Next scope preview','后续范围预览')]]).map(x=>'<div><b>'+x[0]+'</b><span>'+x[2]+' · '+x[1]+'</span></div>').join('')+'</div><p id="pdBaselinePreview">'+
         (bookChoices.length?'<strong>'+t('완료한 교재: ','Completed books: ','已完成教材：')+escape(bookChoices.map(completedBookText).join(' / '))+'</strong><br>':'')+
         (s.route==='school'&&s.grade?'<strong>'+t('학교 진도: ','School progress: ','学校进度：')+escape(l(schoolGrades.find(x=>x[0]===s.grade)?.[1]||s.grade))+' · '+escape(s.semester)+t('학기',' semester','学期')+'</strong><br>':'')+
@@ -204,18 +210,19 @@
         $('#pdSemester').onchange=e=>{s.semester=e.target.value;s.baselineId='';redraw();};
       }
       if(s.route==='book'){
-        all('[data-book-series]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookSeries)];row.series=e.target.value;row.editionId=/^soma-[pkabcd]$/.test(row.series)?'2019':'';row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';redraw();});
-        all('[data-book-edition]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookEdition)];row.editionId=e.target.value;row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';redraw();});
-        all('[data-book-step]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookStep)];row.step=e.target.value;row.bookCourseNumber=null;row.bookStatus=row.step&&row.series!=='dunoro'?'completed':'';s.baselineId='';redraw();});
+        if($('#pdBookFocus'))$('#pdBookFocus').onchange=e=>{s.bookFocus=e.target.value;s.baselineId='';redraw();};
+        all('[data-book-series]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookSeries)];row.series=e.target.value;row.editionId=/^soma-[pkabcd]$/.test(row.series)?'2019':'';row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';s.bookFocus='';redraw();});
+        all('[data-book-edition]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookEdition)];row.editionId=e.target.value;row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';s.bookFocus='';redraw();});
+        all('[data-book-step]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookStep)];row.step=e.target.value;row.bookCourseNumber=null;row.bookStatus=row.step&&row.series!=='dunoro'?'completed':'';s.baselineId='';s.bookFocus='';redraw();});
         all('[data-book-course]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookCourse)],raw=e.target.value;
           const n=/^[1-9][0-9]?$/.test(raw)?Number(raw):null;
           const step=n&&books.getSteps('dunoro').find(x=>books.getBookCourses('dunoro',x.id).includes(n));
           row.step=raw==='other'?'contents':step?step.id:'';
           row.bookCourseNumber=step?n:null;
           row.bookStatus=row.step?'completed':'';
-          s.baselineId='';redraw();});
-        all('[data-book-remove]').forEach(el=>el.onclick=()=>{s.completedBooks.splice(Number(el.dataset.bookRemove),1);s.baselineId='';redraw();});
-        $('#pdAddBook').onclick=()=>{if(s.completedBooks.length>=8)return;s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});s.baselineId='';redraw();};
+          s.baselineId='';s.bookFocus='';redraw();});
+        all('[data-book-remove]').forEach(el=>el.onclick=()=>{s.completedBooks.splice(Number(el.dataset.bookRemove),1);s.baselineId='';s.bookFocus='';redraw();});
+        $('#pdAddBook').onclick=()=>{if(s.completedBooks.length>=8)return;s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});s.baselineId='';s.bookFocus='';redraw();};
       }
       $('#pdGoal').onchange=e=>{s.goal=e.target.value;s.goalTarget='';redraw();};
       if(s.goal==='competition')$('#pdGoalTarget').onchange=e=>{s.goalTarget=e.target.value;redraw();};
@@ -224,7 +231,7 @@
       $('#pdStart').onclick=()=>{
         if(!baseline)return;
         $('#pdStart').disabled=true;
-        try{d.plan=bookPlan?core.buildBook('dunoro',dunoroCourse,d.seed):core.build(baseline.id,d.seed);if(!bookPlan)s.baselineId=baseline.id;d.index=0;d.responses=[];d.phase='question';d.questionStartedAt=Date.now();redraw();}
+        try{d.plan=bookPlan?core.buildBook(focus.series,focus.course,d.seed):core.build(baseline.id,d.seed);if(!bookPlan)s.baselineId=baseline.id;d.index=0;d.responses=[];d.phase='question';d.questionStartedAt=Date.now();redraw();}
         catch(_){$('#pdSetupError').textContent=t('이 범위를 안전하게 구성하지 못했습니다. 출발점을 바꿔 주세요.','This range could not be safely prepared. Choose another starting point.','无法安全生成此范围，请更改起点。');$('#pdStart').disabled=false;}
       };
     }

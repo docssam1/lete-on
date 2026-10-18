@@ -68,11 +68,18 @@ try{
      assert.deepEqual(await page.locator('[data-book-step="0"] option').evaluateAll(rows=>rows.map(x=>x.value)),['',...Array.from({length:volumeCount},(_,i)=>'v'+(i+1))],series+' has every printed volume');
      assert.equal(await page.locator('#pdBookDetail,.pd-book-detail').count(),0,'no typed volume fallback');
      assert(await page.locator('#pdStart').isDisabled(),'a series alone is not a completed volume');
-     await page.selectOption('[data-book-step="0"]','v1');assert(await page.locator('#pdStart').isDisabled(),'an unverified volume still needs a diagnostic topic');
+     await page.selectOption('[data-book-step="0"]','v1');
+     assert.equal(await page.locator('#pdStart').isDisabled(),series!=='soma-p','only 2019 P has a volume-topic paper');
+     if(series==='soma-p'){
+      const href=await page.locator('#pdPaper').getAttribute('href');assert(href.includes('somaP=1'));
+      const paper=await ctx.newPage();await paper.goto(base+'/number_magic/'+href);await paper.waitForFunction(()=>window.NM_WS_READY);
+      assert.equal(await paper.locator('.pl-q').count(),20,'2019 P1 prints all 20 questions');await overflow(paper);await paper.close();
+     }
+     if(series==='soma-p')await page.click('#pdRangeOptions summary');
      await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
      assert((await page.locator('#pdBaselinePreview').innerText()).includes('완료한 교재'),'selected completed volume appears beside the question mix');
      await page.selectOption('[data-book-step="0"]','v'+volumeCount);assert.equal(await page.locator('#pdBaseline').inputValue(),'','changing a completed volume clears the old diagnostic topic');
-     assert(await page.locator('#pdStart').isDisabled(),'stale topic cannot create a sheet for a new volume');
+     assert.equal(await page.locator('#pdStart').isDisabled(),series!=='soma-p','a new P volume uses its own paper; other volumes need a new topic');
     }
     await page.selectOption('[data-book-series="0"]','soma-p');
     await page.selectOption('[data-book-edition="0"]','2013');await page.selectOption('[data-book-step="0"]','v2');
@@ -125,8 +132,13 @@ try{
     await page.selectOption('[data-book-series="0"]','dunoro');await page.selectOption('[data-book-course="0"]','17');
     await page.click('#pdAddBook');assert.equal(await page.locator('[data-book-row]').count(),2);
     await page.selectOption('[data-book-series="1"]','soma-p');assert.equal(await page.locator('[data-book-edition="1"]').inputValue(),'2019');await page.selectOption('[data-book-step="1"]','v1');
-    // 두뇌로 과정이 함께 있으면 그 과정 진단지가 기준이다(다른 교재는 기록으로 함께 인쇄).
-    assert.equal(await page.locator('#pdStart').isDisabled(),false,'a Dunoro course among several books keeps its paper');
+    // Two supported completed books require an explicit basis for this paper.
+    assert(await page.locator('#pdStart').isDisabled(),'multiple supported books need a selected basis');
+    assert.equal(await page.locator('#pdBookFocus option').count(),3);
+    await page.selectOption('#pdBookFocus','soma-p:1');
+    assert((await page.locator('#pdPaper').getAttribute('href')).includes('somaP=1'));
+    await page.selectOption('#pdBookFocus','dunoro:17');
+    assert.equal(await page.locator('#pdStart').isDisabled(),false,'the selected Dunoro course can start');
     assert((await page.locator('#pdPaper').getAttribute('href')).includes('dunoro=17'));
     assert((await page.locator('.pd-blueprint').innerText()).includes('함께 기록한 다른 교재는 이번 문항 출제 기준에 포함되지 않아요'),'other books are identified as records only');
     await page.click('#pdRangeOptions summary');await page.selectOption('#pdBaseline','c18');completedBookSheetHref=await page.locator('#pdPaper').getAttribute('href');
