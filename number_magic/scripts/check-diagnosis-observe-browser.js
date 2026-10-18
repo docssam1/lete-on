@@ -69,17 +69,16 @@ try{
      assert.equal(await page.locator('#pdBookDetail,.pd-book-detail').count(),0,'no typed volume fallback');
      assert(await page.locator('#pdStart').isDisabled(),'a series alone is not a completed volume');
      await page.selectOption('[data-book-step="0"]','v1');
-     assert.equal(await page.locator('#pdStart').isDisabled(),series!=='soma-p','only 2019 P has a volume-topic paper');
-     if(series==='soma-p'){
-      const href=await page.locator('#pdPaper').getAttribute('href');assert(href.includes('somaP=1'));
-      const paper=await ctx.newPage();await paper.goto(base+'/number_magic/'+href);await paper.waitForFunction(()=>window.NM_WS_READY);
-      assert.equal(await paper.locator('.pl-q').count(),20,'2019 P1 prints all 20 questions');await overflow(paper);await paper.close();
-     }
-     if(series==='soma-p')await page.click('#pdRangeOptions summary');
+     assert.equal(await page.locator('#pdStart').isDisabled(),false,'every selected 2019 volume has a topic paper');
+     const href=await page.locator('#pdPaper').getAttribute('href');
+     assert(href.includes(series==='soma-p'?'somaP=1':'bookSeries='+series+'&bookVolume=1'),'print link keeps the book volume');
+     const paper=await ctx.newPage();await paper.goto(base+'/number_magic/'+href);await paper.waitForFunction(()=>window.NM_WS_READY);
+     assert.equal(await paper.locator('.pl-q').count(),20,'2019 volume prints all 20 questions');await overflow(paper);await paper.close();
+     await page.click('#pdRangeOptions summary');
      await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
      assert((await page.locator('#pdBaselinePreview').innerText()).includes('완료한 교재'),'selected completed volume appears beside the question mix');
      await page.selectOption('[data-book-step="0"]','v'+volumeCount);assert.equal(await page.locator('#pdBaseline').inputValue(),'','changing a completed volume clears the old diagnostic topic');
-     assert.equal(await page.locator('#pdStart').isDisabled(),series!=='soma-p','a new P volume uses its own paper; other volumes need a new topic');
+     assert.equal(await page.locator('#pdStart').isDisabled(),false,'each changed 2019 volume uses its own paper');
     }
     await page.selectOption('[data-book-series="0"]','soma-p');
     await page.selectOption('[data-book-edition="0"]','2013');await page.selectOption('[data-book-step="0"]','v2');
@@ -112,7 +111,10 @@ try{
     await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));
     await page.screenshot({path:path.join(OUT,'ko-390-dunoro-topic.png')});
     await page.selectOption('[data-book-series="0"]','miracle');await page.selectOption('[data-book-step="0"]','pre-2023-v1-order');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-order10');assert.equal(await page.locator('#pdStart').isDisabled(),false);
-    await page.selectOption('[data-book-step="0"]','elem-2021-v10');assert(await page.locator('#pdStart').isDisabled(),'whole-volume metadata must not certify a baseline');
+    await page.selectOption('[data-book-step="0"]','elem-2021-v10');
+    assert.equal(await page.locator('#pdStart').isDisabled(),false,'identified Miracle volume starts a topic paper');
+    assert((await page.locator('#pdPaper').getAttribute('href')).includes('bookSeries=miracle-elem-2021&bookVolume=10'),'Miracle print link preserves the identified publication and volume');
+    assert((await page.locator('.pd-blueprint').innerText()).includes('실제 교재의 문제·숫자 범위·풀이 방식과 같다는 검증은 없어요'),'whole-volume paper makes no textbook-item equivalence claim');
    }
    await page.click('[data-route="age"]');await page.selectOption('#pdAge','16');assert.equal(await page.locator('#pdBaseline').inputValue(),'c35');
    await page.locator('.pd-selection details summary').click();await page.selectOption('#pdBaseline','f-count5');assert.equal(await page.locator('.pd-selection details').getAttribute('open'),'');
@@ -134,7 +136,19 @@ try{
     await page.selectOption('[data-book-series="1"]','soma-p');assert.equal(await page.locator('[data-book-edition="1"]').inputValue(),'2019');await page.selectOption('[data-book-step="1"]','v1');
     // Two supported completed books require an explicit basis for this paper.
     assert(await page.locator('#pdStart').isDisabled(),'multiple supported books need a selected basis');
-    assert.equal(await page.locator('#pdBookFocus option').count(),3);
+    assert.equal(await page.locator('#pdBookFocus option').count(),4);
+    await page.selectOption('#pdBookFocus','all');
+    assert.equal(await page.locator('#pdStart').isDisabled(),false,'two completed books can share one 6/10/4 paper');
+    assert((await page.locator('#pdPaper').getAttribute('href')).includes('mixBooks=1'),'mixed print link keeps the combined basis');
+    assert((await page.locator('.pd-blueprint').innerText()).includes('이전 6·다음 4문항에는 모든 교재가 들어가지 않을 수 있어요'),'mixed paper explains fixed band capacity');
+    const mixedHref=await page.locator('#pdPaper').getAttribute('href');
+    const mixedPaper=await ctx.newPage();await mixedPaper.goto(base+'/number_magic/'+mixedHref);await mixedPaper.waitForFunction(()=>window.NM_WS_READY);
+    assert.equal(await mixedPaper.locator('.pl-q').count(),20,'mixed paper prints 20 questions');await overflow(mixedPaper);await mixedPaper.close();
+    await page.click('#pdStart');
+    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.plan.book.series),'mixed','online paper retains the combined basis');
+    for(let i=0;i<20;i++)await page.click('#pdSkip');await page.locator('#pdRoad').waitFor();
+    assert(!(await page.locator('.pd-note').allTextContents()).some(line=>line.includes('다른 교재는 이번 문항 출제 기준에 포함되지 않았어요')),'mixed result does not exclude its books');
+    await page.click('#pdAgain');
     await page.selectOption('#pdBookFocus','soma-p:1');
     assert((await page.locator('#pdPaper').getAttribute('href')).includes('somaP=1'));
     await page.selectOption('#pdBookFocus','dunoro:17');

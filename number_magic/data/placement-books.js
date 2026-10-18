@@ -283,9 +283,27 @@ function resolve(seriesId, stepId, progress, editionId) {
     label: clone(step.label), verification: automatic ? 'verified' : 'topic-confirmation',
     sourceUrls: step.sourceUrls.slice(), needsTopicConfirmation: !automatic };
 }
+function diagnosticSource(row) {
+  if (!row || row.bookStatus !== 'completed') return null;
+  if (row.series === 'dunoro') {
+    const n = row.bookCourseNumber;
+    return Number.isInteger(n) && getBookCourses('dunoro', row.step).includes(n) ? { series: 'dunoro', course: n } : null;
+  }
+  if (/^soma-[pkabcd]$/.test(row.series) && row.editionId === '2019') {
+    const m = /^v(\d+)$/.exec(row.step || '');
+    const n = m && Number(m[1]);
+    return n && getSteps(row.series, '2019').some(step => step.id === row.step) ? { series: row.series, course: n } : null;
+  }
+  if (row.series === 'miracle') {
+    const m = /^(pre-2023|elem-2021)-v(\d+)$/.exec(row.step || '');
+    if (!m || !getSteps('miracle').some(step => step.id === row.step)) return null;
+    return { series: 'miracle-' + m[1], course: Number(m[2]) };
+  }
+  return null;
+}
 W.NM_PLACEMENT_BOOKS = {
   series: catalog.map(book => ({ id: book.id, label: clone(book.label),
     sourceUrls: book.sourceUrls.slice(), verification: 'topic-confirmation' })),
-  getEditions, getSteps, getBookCourses, resolve
+  getEditions, getSteps, getBookCourses, resolve, diagnosticSource
 };
 })();
