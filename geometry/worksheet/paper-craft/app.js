@@ -1,6 +1,6 @@
-import {selectionFor,pagePlan,modes} from './workbook-core.js?v=20261018-3';
-import {translation} from './i18n.js?v=20261018-4';
-import {renderPages} from './render.js?v=20261018-4';
+import {selectionFor,pagePlan,modes} from './workbook-core.js?v=20261019-1';
+import {translation} from './i18n.js?v=20261019-1';
+import {renderPages} from './render.js?v=20261019-1';
 const $=s=>document.querySelector(s),url=new URL(location.href),families=['cut','punch','sort','number','top','reverse','stack'];
 let lang=['ko','en','zh','ja'].includes(url.searchParams.get('lang'))?url.searchParams.get('lang'):'ko',mode=modes.includes(url.searchParams.get('print'))?url.searchParams.get('print'):'questions',selection=selectionFor(url.searchParams);
 $('#duplex').checked=url.searchParams.get('duplex')==='1';
@@ -11,7 +11,7 @@ function render(){
   $('#count').querySelectorAll('[data-custom]').forEach(o=>o.remove());if(selection.entries.length&&![5,10,20,33].includes(selection.entries.length)){const o=document.createElement('option');o.value=String(selection.entries.length);o.textContent=o.value;o.dataset.custom='true';$('#count').append(o);}$('#count').value=String(selection.entries.length||5);
   $('#printMode').innerHTML=modes.map(key=>`<option value="${key}">${t[key]}</option>`).join('');$('#printMode').value=mode;$('#duplex').disabled=mode!=='both';$('#print').disabled=selection.error;$('#error').textContent=selection.error?t.invalid:'';
   $('#selectionStatus').textContent=selection.error?'':`${selection.fromGame?t.same:t.pool} · ${selection.entries.length}`;
-  $('#back').href='../../games/paper-craft/?lang='+lang+(selection.entries.length?'&id='+selection.entries[0].id:'');$('#pages').innerHTML=renderPages(pagePlan(selection.entries,mode,$('#duplex').checked),selection.entries,t,$('#studentName').value);
+  $('#back').href='../../games/paper-craft/?lang='+lang+(selection.entries.length?'&id='+selection.entries[0].id:'')+(url.searchParams.get('method')==='connect'?'&method=connect':'');$('#pages').innerHTML=renderPages(pagePlan(selection.entries,mode,$('#duplex').checked),selection.entries,t,$('#studentName').value);
   url.searchParams.set('lang',lang);url.searchParams.set('print',mode);url.searchParams.set('duplex',$('#duplex').checked?'1':'0');history.replaceState(null,'',url);
 }
 function changeSelection(){url.searchParams.delete('ids');url.searchParams.delete('pattern');url.searchParams.set('family',$('#family').value);url.searchParams.set('count',$('#count').value);selection=selectionFor(url.searchParams);render();}

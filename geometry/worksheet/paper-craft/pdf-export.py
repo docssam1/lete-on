@@ -43,8 +43,13 @@ class Writer:
   scale=min(width*mm/(right-left),height*mm/(bottom-top));padx=(width*mm-(right-left)*scale)/2;pady=(height*mm-(bottom-top)*scale)/2
   c.saveState();c.translate(x*mm+padx-left*scale,H-y*mm-pady+top*scale);c.scale(scale,-scale)
   if panel.get('papers'):
+   for p in panel['papers']:self.poly(p['poly'],COLORS[p['color']])
+   if panel.get('connection'):
+    route=panel['connection'];path=c.beginPath();path.moveTo(route[0]['x'],route[0]['y'])
+    for q in route[1:]:path.lineTo(q['x'],q['y'])
+    c.setLineJoin(1);c.setStrokeColor(HexColor('#ffffff'));c.setLineWidth(.018);c.drawPath(path);c.setStrokeColor(HexColor('#2456c4'));c.setLineWidth(.007);c.drawPath(path)
    for p in panel['papers']:
-    self.poly(p['poly'],COLORS[p['color']]);self.ink(p['id'],p.get('label',{}).get('x',p['poly'][0]['x']+.03),p.get('label',{}).get('y',p['poly'][0]['y']+.08)+.018,.055,center=True)
+    x=p['label']['x'];yy=p['label']['y'];c.setFillColor(HexColor(COLORS[p['color']]));c.circle(x,yy,.033,stroke=0,fill=1);self.ink(p['id'],x,yy+.018,.055,center=True)
   elif panel.get('pieces'):
    for p in panel['pieces']:self.poly(p,'#dcebf9')
   else:
@@ -82,8 +87,8 @@ class Writer:
   start=y;y=self.text(f"{n}. {p['title']}",14,y,13)+1;y=self.text(p['task'],14,y,10.5)+2
   if p.get('conditionTop'):y=self.text(T['condition']+p['conditionTop'],14,y,11)+2
   if answers:
-   panels=p['solutions'];ph=43 if p['complex'] else 34
-   y=self.figures(panels,14,y,columns=3,picture_height=ph)+2
+   panels=p['solutions'];ph=112 if p.get('connect') else 43 if p['complex'] else 34
+   y=self.figures(panels,14,y,columns=1 if p.get('connect') else 3,picture_height=ph)+2
    for line in p['solutionLines']:y=self.text(line,14,y,11 if p['complex'] else 10.5)+1
    if p['family']=='reverse' and p.get('resultOptions'):
     correct=[{'label':o['key'].upper(),'poly':p['condition'][0]['poly'],'creases':[o['chord']]} for o in p['resultOptions'] if o['correct']];y=self.figures(correct,14,y,columns=2,picture_height=40)
@@ -93,11 +98,14 @@ class Writer:
    choices=[{'label':chr(65+i),'poly':p['condition'][0]['poly'],'marks':marks} for i,marks in enumerate(p['patternOptions'])]
    y=self.figures(choices,14,y,columns=3,picture_height=43)+3;y=self.text(T['answer']+' ______',14,y,11)
   elif p['family']=='stack':
-   y=self.figures(p['condition'],14,y,columns=1,picture_height=59)+2;y=self.text(T['cutouts'],14,y,11)+2
-   for i,paper in enumerate(sorted(p['papers'],key=lambda p:p['id'])):
-    px=21+(i%4)*45;py=y+(i//4)*49;w=(paper['poly'][1]['x']-paper['poly'][0]['x'])*90;h=(paper['poly'][2]['y']-paper['poly'][1]['y'])*90
-    self.rect(px,py,w,h,COLORS[paper['color']],True);self.text(paper['id'],px+w/2-2,py+3,14,10)
-   y+=100;y=self.text(f"{T['topLabel']} _____     {T['bottomLabel']} _____",14,y,11)+2;y=self.text(T['bottomOrderLabel'] if p.get('build') else T['orderLabel'],14,y,10.5)+2
+   y=self.figures(p['condition'],14,y,columns=1,picture_height=112 if p.get('connect') else 59)+2
+   if not p.get('connect'):
+    y=self.text(T['cutouts'],14,y,11)+2
+    for i,paper in enumerate(sorted(p['papers'],key=lambda p:p['id'])):
+     px=21+(i%4)*45;py=y+(i//4)*49;w=(paper['poly'][1]['x']-paper['poly'][0]['x'])*90;h=(paper['poly'][2]['y']-paper['poly'][1]['y'])*90
+     self.rect(px,py,w,h,COLORS[paper['color']],True);self.text(paper['id'],px+w/2-2,py+3,14,10)
+    y+=100
+   y=self.text(f"{T['topLabel']} _____     {T['bottomLabel']} _____",14,y,11)+2;y=self.text(T['bottomOrderLabel'] if p.get('build') else T['orderLabel'],14,y,10.5)+2
    for i in range(len(p['papers'])):self.rect(14+i*16,y,12,10)
    y+=11
   elif p['family']=='reverse':

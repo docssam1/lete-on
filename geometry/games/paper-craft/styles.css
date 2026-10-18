@@ -20,3 +20,9 @@
 @media(max-height:520px) and (orientation:landscape){.stack-order{padding:8px}.stack-order h2{font-size:13px}.stack-order .order-trail{gap:5px;margin-top:7px}.order-trail li{min-height:36px}.order-trail li span{font-size:16px}.stack-order p{font-size:10px;margin-top:6px}.tools:has(.stack-order) .magic-done{padding:8px}.tools:has(.stack-order) .magic-done span{display:none}}
 
 @media(min-width:900px) and (min-height:700px){.tools:has(.stack-order){gap:8px}.tools:has(.stack-order) .stack-goal .stack-reference{height:90px}.stack-order{padding:10px}.order-trail li{min-height:44px}}
+
+.stack-methods{display:flex;gap:8px}.stack-methods button{flex:1;padding:8px;font-size:13px}.stack-methods button[aria-pressed=true]{background:#176b78;border-color:#104e60;color:#fff}.connect-line,.connect-line-outline{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}.connect-line-outline{stroke:#123c54;stroke-width:7px}.connect-line{stroke:#fff4b7;stroke-width:3.5px}.connect-step{fill:#fff4b7;stroke:#173e57;stroke-width:.003}.connect-step-number{fill:#173e57;font-size:.035px;font-weight:900;text-anchor:middle;dominant-baseline:middle;pointer-events:none}#stage:has(.connect-step),#stage:has(.connect-line){touch-action:none}@media(max-height:520px) and (orientation:landscape){.stack-methods button{font-size:11px;padding:6px}}
+
+#stage[data-stack-mode=connect]{touch-action:none}
+
+@media(max-height:520px) and (orientation:landscape){.tools:has(button[data-stack-mode=connect][aria-pressed=true]){gap:5px;padding:0}.tools:has(button[data-stack-mode=connect][aria-pressed=true]) .stack-order{padding:5px}.tools:has(button[data-stack-mode=connect][aria-pressed=true]) .stack-order p,.tools:has(button[data-stack-mode=connect][aria-pressed=true]) .magic-done{display:none}}

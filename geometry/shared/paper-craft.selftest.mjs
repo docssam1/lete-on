@@ -2,11 +2,14 @@ import assert from 'node:assert/strict';
 import {catalog,activityIds,buildActivity} from './paper-craft-catalog.js?v=20261018-3';
 import {polygonArea,polygonCentroid,inside,markKey,partitionPaper} from './paper-craft-model.js?v=20261018-3';
 import {act,freshSession,restoreSession,newMarks,numberGroups,withDesign} from './paper-craft-session.js?v=20261018-3';
-import {visibleRelations,topAt} from './paper-craft-stack.js?v=20261018-3';
+import {visibleRelations,topAt,stackConnectionPoints,papersOnStroke} from './paper-craft-stack.js?v=20261019-1';
 import {renderScene,renderMotion} from './paper-craft-svg.js?v=20261018-3';
 import {translation} from '../games/paper-craft/i18n.js?v=20261018-3';
 
 const close=(a,b)=>assert(Math.abs(a-b)<1e-5,`${a} != ${b}`);
+const cross=(a,b,c)=>(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
+const onSegment=(a,b,c)=>Math.abs(cross(a,b,c))<1e-10&&c.x>=Math.min(a.x,b.x)-1e-10&&c.x<=Math.max(a.x,b.x)+1e-10&&c.y>=Math.min(a.y,b.y)-1e-10&&c.y<=Math.max(a.y,b.y)+1e-10;
+const intersects=(a,b,c,d)=>cross(a,b,c)*cross(a,b,d)<0&&cross(c,d,a)*cross(c,d,b)<0||onSegment(a,b,c)||onSegment(a,b,d)||onSegment(c,d,a)||onSegment(c,d,b);
 const project=(point,folds)=>{let q={...point};for(const f of folds){const d=(q.x*f.nx+q.y*f.ny-f.c)/(f.nx*f.nx+f.ny*f.ny);if(d*f.moving>1e-7)q={x:q.x-2*d*f.nx,y:q.y-2*d*f.ny};}return q;};
 const topologicalOrders=(papers,relations)=>{let count=0;function visit(prefix){if(count>2)return;if(prefix.length===papers.length){count++;return;}for(const p of papers)if(!prefix.includes(p.id)&&relations.filter(r=>r[1]===p.id).every(r=>prefix.includes(r[0])))visit([...prefix,p.id]);}visit([]);return count;};
 let transitions=0,sorts=0,stages=0;
@@ -36,6 +39,16 @@ for(const id of activityIds){
     assert.equal(new Set(p.papers.map(x=>x.id)).size,p.papers.length);assert.deepEqual(visibleRelations(p.papers),p.visibleRelations);
     p.papers.forEach((paper,i)=>{assert.equal(topAt(p.papers,paper.label),i,'label occluded');close(polygonArea(paper.poly),polygonArea(p.papers[0].poly));});assert.equal(topologicalOrders(p.papers,p.relations),1);
     if(p.conditionTop)assert(topologicalOrders(p.papers,p.visibleRelations)>1);
+    const route=stackConnectionPoints(p,[...p.order].reverse());
+    for(let i=0;i<route.length-1;i++)for(let j=i+2;j<route.length-1;j++)assert(!intersects(route[i],route[i+1],route[j],route[j+1]),'one line without crossings or overlaps');
+    for(const paper of p.papers)assert.deepEqual(papersOnStroke(p,paper.label,paper.label,.01),[paper.id],'tap anchor');
+    const pair=p.papers.slice(0,2);assert.deepEqual(papersOnStroke(p,pair[0].label,pair[1].label,.01).filter(id=>pair.some(p=>p.id===id)),pair.map(p=>p.id),'ordered fast pointer segment');
+    if(!p.build){
+      const connected=renderScene(p,{...freshSession(p),peeled:[...p.order].reverse(),phase:'done'},{...translation('ko'),stackMode:'connect'});
+      assert.equal((connected.match(/class="stack-face"/g)||[]).length,p.papers.length,'connection keeps every paper');
+      assert.equal((connected.match(/class="connect-line"/g)||[]).length,1,'one continuous line');
+      assert.equal((connected.match(/class="connect-step"/g)||[]).length,p.papers.length,'each paper visited once');
+    }
     assert.equal(state.phase,p.build?'build':'peel');
     const sequence=p.build?p.order:[...p.order].reverse();
     assert.equal(act(p,state,'paper',sequence[1]).accepted,false,'wrong next paper');

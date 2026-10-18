@@ -18,7 +18,7 @@ export function selectionFor(params){
   const selected=params.has('ids')?params.get('ids').split(','):catalog.filter(p=>!params.get('family')||params.get('family')==='all'||p.family===params.get('family')).map(p=>p.ref+'-1').slice(0,Math.max(1,Math.min(33,Number(params.get('count'))||5)));
   try{
     if(!selected.length||selected.length>40||selected.some(id=>!activityIds.includes(id))||new Set(selected).size!==selected.length)throw Error('Invalid IDs');
-    let entries=selected.map(buildActivity);if(params.has('pattern')){if(entries.length!==1)throw Error('Pattern needs exactly one paper');entries=[customPattern(entries[0],params.get('pattern'))];}
+    let entries=selected.map(buildActivity);if(params.get('method')==='connect')entries=entries.map(p=>p.family==='stack'&&!p.build?{...p,connect:true}:p);if(params.has('pattern')){if(entries.length!==1)throw Error('Pattern needs exactly one paper');entries=[customPattern(entries[0],params.get('pattern'))];}
     return {entries,error:false,fromGame:params.has('ids')};
   }catch{return {entries:[],error:true,fromGame:params.has('ids')};}
 }

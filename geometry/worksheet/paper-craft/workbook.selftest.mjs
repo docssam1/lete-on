@@ -6,6 +6,13 @@ import {translation} from './i18n.js?v=20261018-3';
 import {freshSession,act,withDesign} from '../../shared/paper-craft-session.js?v=20261018-3';
 const ids=catalog.map(p=>p.ref+'-1'),selected=selectionFor(new URLSearchParams({ids:ids.join(',')}));assert(!selected.error);assert.equal(selected.entries.length,33);
 const reversed=[...ids].reverse();assert.deepEqual(selectionFor(new URLSearchParams({ids:reversed.join(',')})).entries.map(p=>p.id),reversed);
+for(const lang of ['ko','en','zh','ja']){
+  const connected=selectionFor(new URLSearchParams({ids:'PF-C10-1,PF-C11-1,PF-C12-1',method:'connect'})),t={...translation(lang),lang};
+  assert(!connected.error);assert(connected.entries.every(p=>p.connect));
+  const question=renderPages(pagePlan(connected.entries,'questions'),connected.entries,t),answer=renderPages(pagePlan(connected.entries,'answers'),connected.entries,t);
+  assert(question.includes(t.connectTask));assert(!question.includes('class="cutouts"'));assert(!question.includes('class="answer-connection"'),'no answer line on questions');
+  assert.equal((answer.match(/class="answer-connection"/g)||[]).length,3,'matching one-line teacher diagrams');
+}
 for(const ids of ['',',','PF-A01-1,PF-A01-1','PF-A00-1','PF-C01-4','<script>'])assert(selectionFor(new URLSearchParams({ids})).error);
 for(const p of selected.entries){const a=answerFor(p);assert(a.kind);assert(panelsFor(p,{...translation('ko'),lang:'ko'}).length);if(p.family==='number')assert.equal(a.value,a.numbers.reduce((s,n)=>s+n,0));}
 let renders=0;
