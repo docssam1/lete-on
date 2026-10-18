@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018c`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018c/20261018d/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018d`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018d/20261018e/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -255,7 +255,7 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   `tx2`로 그린 그림 요소도 함께 사라지니 그림 모양은 교사용 원본에서 읽는다.
 - **진단**: 예전 6권 문항 108개는 교사용 풀이 식을 그대로 문제로 바꾼 것(「24÷2의 값」, 그림 = 식)이라 풀이 방법이 드러나고
   수직선 그림이 비어 있었다. 5권처럼 원본 문항으로 다시 짠다. `sourceInventory`(94개)는 예전 공개 기록이고 화면에서 쓰지 않는다.
-- **묶음 계획**: 1) 2~6 수직선의 분할 ✅ · 2) 7~10 도형이 나타내는 수와 비 ✅ · 3) 12~14 둘레 ✅ · 4) 15~16 둘레 · 5) 18~21 곱셈·간편 계산 ·
+- **묶음 계획**: 1) 2~6 수직선의 분할 ✅ · 2) 7~10 도형이 나타내는 수와 비 ✅ · 3) 12~14 둘레 ✅ · 4) 15~16 둘레 ✅ · 5) 18~21 곱셈·간편 계산 ·
   6) 22~25 연속수의 합 · 7) 27~32 수와 숫자의 개수·수 만들기.
 - **그림은 5권 그림 도구를 그대로 쓴다**(`kind:"book5"`, `book05-renderers.js`). 인쇄 규칙 선택자는
   `.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"])`로 넓혔다(전부 `b5-src-*` 전용이라 다른 권에 영향 없음).
@@ -288,6 +288,16 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
     14쪽 붙인 도형은 원본처럼 비스듬히 돌려 놓지 않고 세로 변을 맞댄 배치로 그렸다(맞닿은 변 관계와 답은 같음).
   - **교사용 답이 틀린 곳 2곳**(DB `sourceNote`): 12쪽 첫 직사각형 답 칸, 13쪽 02 첫 직사각형. 그림의 수로 계산한 답을 넣음.
   - `sourceHold` B06-13-04·B06-14-01 삭제(6권 보류 5 → 3). DB `book-06` 735키 → 753키, sha 앞 8자리 `efa5fc0e`. 캐시 꼬리표 `20261018c`.
+- **6권 묶음 4(슬라이드 15~16 잘라 만든 정사각형·둘레의 차이·모눈 도형·직각으로 꺾인 도형, 22문항, 2026-10-18)**: 패치 `tools/golden-bell-book06/patch-book06-batch4.mjs`(정답 없음).
+  - 새 단원 15 `cut-grid-perimeter-source`(15쪽 15문항)·16 `bent-perimeter-source`(16쪽 7문항).
+  - 새 그림: `source-grid-shape`(모눈 도형, `rows`의 `#`이 칸. 바깥선은 채운 칸과 빈 칸 경계) ·
+    `source-ortho`(꺾인 도형. 단위 좌표 `points`, 치수 `dims`는 **도형을 시계 방향으로 도는 쪽으로 a→b**를 주면 호가 바깥으로 나간다) ·
+    `source-cut-rect`(직사각형을 잘라 가장 큰 정사각형). `source-square-split`은 `[x, y, w, h, 글자]` 다섯 칸으로 직사각형 칸도 그리고 `top`·`left` 치수를 붙인다.
+  - **색표 정리**: 둘레 그림의 직사각형·정사각형은 ■ 네모 파랑, 마름모 ◆ 보라, 정삼각형 ▲ 초록, 평행사변형 노랑·사다리꼴 하늘(그림 규칙 스킬 색표에 두 줄 추가).
+    묶음 3이 처음 나갈 때 정사각형이 초록이던 것도 이번에 함께 바뀐다(`QUAD_COLOR`).
+  - 15쪽 09는 원본이 ㉣까지 「모두 정사각형」이라 적었으나 ㉣은 아니어서 고침, 모눈 한 칸 1cm는 원본에 없어 적음(둘 다 `sourceDiscrepancy`).
+    검산기는 둘레를 그림 좌표·모눈으로 직접 세고, 원본에 적힌 길이만으로도 계산해 둘을 맞춘다. 교사용 답과 전부 같음.
+  - `sourceHold` B06-15-01·B06-16-01 삭제(6권 보류 3 → 1, 남은 것은 19쪽). DB `book-06` 753키 → 783키, sha 앞 8자리 `2080d51a`. 캐시 꼬리표 `20261018d`.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
 

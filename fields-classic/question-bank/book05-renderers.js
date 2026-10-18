@@ -855,7 +855,7 @@ function sourceBalanceRatio(visual) {
 }
 
 // 6권 둘레: 길이 글자. 가·나… 한 글자면 빈칸 상자로 그리고 뒤에 단위를 붙인다.
-const QUAD_COLOR = { rect: ["#2f6fe0", "#eef4ff"], square: ["#2f9e5f", "#e3f6ea"], para: ["#f39a1e", "#fff1de"], rhombus: ["#8e5bd8", "#f1e8fd"], trapezoid: ["#e0559a", "#fde7f1"] };
+const QUAD_COLOR = { triangle: ["#2f9e5f", "#dcf5e5"], rect: ["#2f6fe0", "#dde9ff"], square: ["#2f6fe0", "#dde9ff"], para: ["#d9a400", "#fff3c4"], rhombus: ["#8e5bd8", "#ece0fb"], trapezoid: ["#1aa3c9", "#dff3ff"] };
 const lenLabel = (x, y, text, unit = "cm") => {
   if (text == null) return "";
   const s = String(text);
@@ -926,10 +926,54 @@ function sourceJoined(visual) {
 
 // 6권: 정사각형으로 나눈 직사각형. squares = [[x, y, 한 변, 글자], …] (단위 칸)
 function sourceSquareSplit(visual) {
-  const u = 26, maxX = Math.max(...visual.squares.map(([x, , s]) => x + s)), maxY = Math.max(...visual.squares.map(([, y, s]) => y + s));
+  const box = (q) => q.length === 5 ? q : [q[0], q[1], q[2], q[2], q[3]];
+  const sq = visual.squares.map(box), u = visual.unit ?? 26, ox = visual.left ? 44 : 6, oy = visual.top ? 34 : 6;
+  const maxX = Math.max(...sq.map(([x, , w]) => x + w)), maxY = Math.max(...sq.map(([, y, , h]) => y + h));
   const fills = ["#fde7f1", "#e3f6ea", "#eef4ff", "#fff1de", "#f1e8fd", "#fff8dc"];
-  const body = visual.squares.map(([x, y, s, label], k) => `<rect x="${6 + x * u}" y="${6 + y * u}" width="${s * u}" height="${s * u}" style="fill:${fills[k % fills.length]}"/>${label ? `<text x="${6 + (x + s / 2) * u}" y="${6 + (y + s / 2) * u}">${escapeHtml(label)}</text>` : ""}`).join("");
-  return `<div class="b5-src-quad" role="img" aria-label="정사각형으로 나눈 직사각형"><svg viewBox="0 0 ${maxX * u + 12} ${maxY * u + 12}" style="width:min(100%,${Math.round((maxX * u + 12) * 1.3)}px)">${body}</svg></div>`;
+  let body = sq.map(([x, y, w, h, label], k) => `<rect x="${ox + x * u}" y="${oy + y * u}" width="${w * u}" height="${h * u}" style="fill:${fills[k % fills.length]}"/>${label ? `<text x="${ox + (x + w / 2) * u}" y="${oy + (y + h / 2) * u}">${escapeHtml(label)}</text>` : ""}`).join("");
+  if (visual.top) body += `<path class="arc" d="M${ox} ${oy}Q${ox + maxX * u / 2} ${oy - 28} ${ox + maxX * u} ${oy}"/><text x="${ox + maxX * u / 2}" y="${oy - 20}">${escapeHtml(visual.top)}</text>`;
+  if (visual.left) body += `<path class="arc" d="M${ox} ${oy + maxY * u}Q${ox - 28} ${oy + maxY * u / 2} ${ox} ${oy}"/><text x="${ox - 26}" y="${oy + maxY * u / 2}">${escapeHtml(visual.left)}</text>`;
+  return `<div class="b5-src-quad" role="img" aria-label="${escapeHtml(`정사각형으로 나눈 직사각형${visual.top ? `, 가로 ${visual.top}` : ""}${visual.left ? `, 세로 ${visual.left}` : ""}`)}"><svg viewBox="0 0 ${maxX * u + ox + 8} ${maxY * u + oy + 8}" style="width:min(100%,${Math.round((maxX * u + ox + 8) * 1.3)}px)">${body}</svg></div>`;
+}
+
+// 6권: 모눈 도형. rows의 "#"이 채운 칸(한 칸 = 1). 바깥선은 채운 칸과 빈 칸의 경계.
+function sourceGridShape(visual) {
+  const u = 30, R = visual.rows, H = R.length, W = Math.max(...R.map((r) => r.length)), on = (x, y) => R[y]?.[x] === "#";
+  let cells = "", edges = "";
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    cells += `<rect class="${on(x, y) ? "on" : "off"}" x="${4 + x * u}" y="${4 + y * u}" width="${u}" height="${u}"/>`;
+    if (!on(x, y)) continue;
+    const X = 4 + x * u, Y = 4 + y * u;
+    if (!on(x, y - 1)) edges += `M${X} ${Y}h${u}`;
+    if (!on(x, y + 1)) edges += `M${X} ${Y + u}h${u}`;
+    if (!on(x - 1, y)) edges += `M${X} ${Y}v${u}`;
+    if (!on(x + 1, y)) edges += `M${X + u} ${Y}v${u}`;
+  }
+  return `<div class="b5-src-grid" role="img" aria-label="${escapeHtml(`모눈 도형: ${R.join(" / ").replaceAll("#", "■").replaceAll(".", "□")}`)}"><svg viewBox="0 0 ${W * u + 8} ${H * u + 8}" style="width:min(100%,${W * 62 + 10}px)">${cells}<path class="edge" d="${edges}"/></svg></div>`;
+}
+
+// 6권: 직각으로 꺾인 도형. shapes = [{points, shape, text}] (단위 좌표, y는 아래로), lines = 안쪽 선, dims = [{a, b, text}].
+// dims는 도형을 시계 방향으로 도는 쪽(위 →, 오른쪽 ↓, 아래 ←, 왼쪽 ↑)으로 a→b를 주면 호가 바깥으로 나간다.
+function sourceOrtho(visual) {
+  const all = visual.shapes.flatMap((s) => s.points), minX = Math.min(...all.map((p) => p[0])), maxX = Math.max(...all.map((p) => p[0])), minY = Math.min(...all.map((p) => p[1])), maxY = Math.max(...all.map((p) => p[1]));
+  const u = Math.min(220 / (maxX - minX), 170 / (maxY - minY)), pad = 74, P = ([x, y]) => [pad + (x - minX) * u, pad + (y - minY) * u];
+  let body = visual.shapes.map((s) => poly(s.points.map(P), s.shape ?? "rect", "q") + (s.text ? `<text class="in" x="${(s.points.reduce((t, p) => t + P(p)[0], 0) / s.points.length).toFixed(1)}" y="${(s.points.reduce((t, p) => t + P(p)[1], 0) / s.points.length + (s.shape === "triangle" ? 8 : 0)).toFixed(1)}">${escapeHtml(s.text)}</text>` : "")).join("");
+  body += (visual.lines ?? []).map(([x1, y1, x2, y2]) => { const [a, b] = [P([x1, y1]), P([x2, y2])]; return `<line class="inner" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`; }).join("");
+  body += (visual.dims ?? []).map(({ a, b, text }) => { const e = edgeArc(P(a), P(b), 11), [pa, pb] = [P(a), P(b)], horizontal = Math.abs(pb[1] - pa[1]) < Math.abs(pb[0] - pa[0]); return `<path class="arc" d="${e.d}"/><text x="${(e.lx + (horizontal ? 0 : Math.sign(e.lx - (pa[0] + pb[0]) / 2) * 18)).toFixed(1)}" y="${(e.ly + (horizontal ? Math.sign(e.ly - (pa[1] + pb[1]) / 2) * 6 : 0)).toFixed(1)}">${escapeHtml(text)}</text>`; }).join("");
+  const W = pad * 2 + (maxX - minX) * u, H = pad * 2 + (maxY - minY) * u;
+  return `<div class="b5-src-quad" role="img" aria-label="${escapeHtml(`직각으로 꺾인 도형${(visual.dims ?? []).length ? `: ${visual.dims.map((d) => d.text).join(", ")}` : ""}`)}"><svg viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" style="width:min(100%,${Math.round(W * 1.15)}px)">${body}</svg></div>`;
+}
+
+// 6권: 직사각형(w × h, w > h)을 세로선에서 잘라 가장 큰 정사각형을 만드는 그림. labels = {top, left, strip}
+function sourceCutRect(visual) {
+  const k = 150 / Math.max(visual.w, visual.h), W = visual.w * k, H = visual.h * k, x = 52, y = 34, cut = x + H, sx = x + W + 70;
+  const L = visual.labels ?? {};
+  let body = `<rect class="ra" x="${x}" y="${y}" width="${W}" height="${H}"/><line class="cut" x1="${cut}" y1="${y - 6}" x2="${cut}" y2="${y + H + 6}"/><text class="sc" x="${cut}" y="${y + H + 22}">✂</text>`;
+  body += `<path class="arrow" d="M${x + W + 16} ${y + H / 2}H${sx - 16}M${sx - 24} ${y + H / 2 - 7}l8 7-8 7"/><rect class="sq" x="${sx}" y="${y}" width="${H}" height="${H}"/>`;
+  if (L.top) body += `<path class="arc" d="M${x} ${y}Q${x + W / 2} ${y - 26} ${x + W} ${y}"/><text x="${x + W / 2}" y="${y - 18}">${escapeHtml(L.top)}</text>`;
+  if (L.left) body += `<path class="arc" d="M${x} ${y + H}Q${x - 26} ${y + H / 2} ${x} ${y}"/><text x="${x - 30}" y="${y + H / 2}">${escapeHtml(L.left)}</text>`;
+  if (L.strip) body += `<text x="${cut + (W - H) / 2}" y="${y - 12}">${escapeHtml(L.strip)}</text><text x="${cut + (W - H) / 2}" y="${y + H + 14}">${escapeHtml(L.strip)}</text>`;
+  return `<div class="b5-src-quad" role="img" aria-label="${escapeHtml(`직사각형을 잘라 가장 큰 정사각형을 만드는 그림${L.top ? `, 가로 ${L.top}` : ""}${L.left ? `, 세로 ${L.left}` : ""}${L.strip ? `, 잘라 낸 폭 ${L.strip}` : ""}`)}"><svg viewBox="0 0 ${sx + H + 12} ${y + H + 34}" style="width:min(100%,${Math.round((sx + H + 12) * 1.2)}px)">${body}</svg></div>`;
 }
 
 export function book05Markup(visual) {
@@ -985,6 +1029,9 @@ export function book05Markup(visual) {
     case "source-quad-gallery": return sourceQuadGallery(visual);
     case "source-joined": return sourceJoined(visual);
     case "source-square-split": return sourceSquareSplit(visual);
+    case "source-grid-shape": return sourceGridShape(visual);
+    case "source-ortho": return sourceOrtho(visual);
+    case "source-cut-rect": return sourceCutRect(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);
