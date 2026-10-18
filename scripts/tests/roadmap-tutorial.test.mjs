@@ -168,7 +168,16 @@ test('published entry versions changed modules consistently before loading the a
  const index=readFileSync(new URL('../../roadmap/v31/index.html',import.meta.url),'utf8');
  const map=JSON.parse(index.match(/<script type="importmap">([\s\S]*?)<\/script>/)[1]).imports;
  assert.equal(map['./scene-intake.mjs'],map['./scene-intake.mjs?v=35']);
- assert.equal(map['./quick-flow.mjs'],'./quick-flow.mjs?v=36');
- assert.ok(index.indexOf('type="importmap"')<index.indexOf('type="module"'));assert.match(index,/src="app.mjs\?v=36"/);assert.match(index,/scene-ui\.css\?v=36/);
- for(const url of new Set(Object.values(map))){assert.match(url,/^\.\/(?:data\/)?[^/]+\.mjs\?v=36$/);assert.ok(readFileSync(new URL('../../roadmap/v31/'+url.slice(2).split('?')[0],import.meta.url)).length);}
+ assert.equal(map['./quick-flow.mjs'],'./quick-flow.mjs?v=37');
+ assert.ok(index.indexOf('type="importmap"')<index.indexOf('type="module"'));assert.match(index,/src="app.mjs\?v=37"/);assert.match(index,/scene-ui\.css\?v=37/);
+ for(const url of new Set(Object.values(map))){assert.match(url,/^\.\/(?:data\/)?[^/]+\.mjs\?v=37$/);assert.ok(readFileSync(new URL('../../roadmap/v31/'+url.slice(2).split('?')[0],import.meta.url)).length);}
+});
+
+
+test('a legacy completed result adopts the guide without erasing records or restarting intake',()=>{
+ const s=ensureQuick(ensureWizard(createState('2026-10-19T00:00:00.000Z')));s.wizard.step='overview';s.wizard.quick.stage='초3';
+ const c=addBook(s,'thinking','기존 교재');c.volume='K';s.wizard.academies=[{id:'old',institution:'소마',level:'P',status:'unknown'}];
+ const courses=copy(s.courses),academies=copy(s.wizard.academies);prepareTutorial(s);
+ assert.equal(s.wizard.step,'overview');assert.equal(s.wizard.quick.intakeMode,'tutorial');assert.deepEqual(s.courses,courses);assert.deepEqual(s.wizard.academies,academies);
+ s.wizard.step='intro';assert.match(tutorialEntryScreen(s).say,/안녕하세요/);assert.equal(isCompactStep(s),false);
 });
