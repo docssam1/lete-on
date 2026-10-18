@@ -637,6 +637,113 @@ function sourceFractionChain(visual) {
   return `<div class="b5-src-fracs" role="img" aria-label="${escapeHtml(`크기가 같은 분수: ${visual.fractions.map(([n, d]) => `${d ?? "빈칸"}분의 ${n ?? "빈칸"}`).join(" = ")}`)}">${fractionMarkup(visual.fractions)}</div>`;
 }
 
+// 점 삼각형·점 사각형: counts마다 한 그림. 늘어나는 층마다 다른 색(무지개 색표).
+const LAYER_COLORS = ["#e8503a", "#2f6fe0", "#d9a400", "#2f9e5f", "#e0559a", "#8e5bd8", "#f39a1e"];
+function sourceDotFigures(visual) {
+  const gap = 26, r = 8;
+  const figure = (k) => {
+    const dots = [], lines = [];
+    if (visual.shape === "square") {
+      const at = (row, col) => [r + 4 + col * gap, r + 4 + (k - 1 - row) * gap];
+      for (let row = 0; row < k; row += 1) for (let col = 0; col < k; col += 1) {
+        const [x, y] = at(row, col);
+        if (col + 1 < k) lines.push([x, y, ...at(row, col + 1)]);
+        if (row + 1 < k) lines.push([x, y, ...at(row + 1, col)]);
+        dots.push([x, y, Math.max(row, col)]);
+      }
+      const size = (k - 1) * gap + 2 * (r + 4);
+      return { w: size, h: size, dots, lines };
+    }
+    const at = (row, col) => [r + 4 + (col + (k - 1 - row) / 2) * gap, r + 4 + row * gap * 0.87];
+    for (let row = 0; row < k; row += 1) for (let col = 0; col <= row; col += 1) {
+      const [x, y] = at(row, col);
+      if (col < row) lines.push([x, y, ...at(row, col + 1)]);
+      if (row + 1 < k) { lines.push([x, y, ...at(row + 1, col)]); lines.push([x, y, ...at(row + 1, col + 1)]); }
+      dots.push([x, y, k - 1 - row + col]);
+    }
+    return { w: (k - 1) * gap + 2 * (r + 4), h: (k - 1) * gap * 0.87 + 2 * (r + 4), dots, lines };
+  };
+  const figs = visual.counts.map((k) => {
+    const f = figure(k);
+    return `<figure><svg viewBox="0 0 ${f.w.toFixed(1)} ${f.h.toFixed(1)}" style="width:${(f.w * 1.6).toFixed(0)}px;--k:${k}">${f.lines.map(([a, b, c, d]) => `<line x1="${a.toFixed(1)}" y1="${b.toFixed(1)}" x2="${c.toFixed(1)}" y2="${d.toFixed(1)}"/>`).join("")}${f.dots.map(([x, y, layer]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="${LAYER_COLORS[layer % LAYER_COLORS.length]}"/>`).join("")}</svg>${visual.labels ? `<figcaption>${escapeHtml(visual.labels[visual.counts.indexOf(k)] ?? "")}</figcaption>` : ""}</figure>`;
+  });
+  return `<div class="b5-src-dots" role="img" aria-label="${escapeHtml(`${visual.shape === "square" ? "점 사각형" : "점 삼각형"} ${visual.counts.length}개`)}">${figs.join("")}</div>`;
+}
+
+// 글이 든 표: 첫 줄은 머리줄. 칸 너비는 내용에 맞춘다.
+function sourceTextTable(visual) {
+  const [head, ...rows] = visual.cells;
+  const tr = (row, tag) => `<tr>${row.map((cell) => `<${tag}>${escapeHtml(cell ?? "")}</${tag}>`).join("")}</tr>`;
+  const headed = visual.cells.length > 1 && head.some((c) => /[가-힣]/.test(String(c)));
+  return `<div class="b5-src-ttable" role="img" aria-label="${escapeHtml(visual.cells.map((r) => r.join(" ")).join(" / "))}"><table>${headed ? `<thead>${tr(head, "th")}</thead>` : ""}<tbody>${(headed ? rows : visual.cells).map((r) => tr(r, "td")).join("")}</tbody></table></div>`;
+}
+
+// 「△n = 1 + 2 + … + n = □ × △ = 합」. example이 있으면 두 수를 쓰고, 없으면 색표의 빈 □·△.
+function sourceSumLine(visual) {
+  const terms = Array.from({ length: visual.n }, (_, i) => i + 1).join(" + ");
+  const blank = (kind) => `<span class="g">${SHAPE_GLYPH[kind] ? `<svg viewBox="0 0 34 34" style="--line:${SHAPE_GLYPH[kind][1]};--fill:${SHAPE_GLYPH[kind][2]}">${SHAPE_GLYPH[kind][3]}</svg>` : ""}</span>`;
+  const factors = visual.example ? `${visual.example[0]} × ${visual.example[1]}` : `${blank("square")}<b>×</b>${blank("triangle")}`;
+  const total = visual.total == null ? "?" : visual.total;
+  return `<div class="b5-src-sumline" role="img" aria-label="${escapeHtml(`삼각수 ${visual.n}번째 = ${terms} = ${visual.example ? visual.example.join(" 곱하기 ") : "네모 곱하기 세모"} = ${total}`)}"><span class="tri">△<sub>${visual.n}</sub></span><span>= ${terms} =</span><span class="fac">${factors}</span><span>= ${escapeHtml(total)}</span></div>`;
+}
+
+// 악수: nodes는 서로 모두 악수한 사람(선으로 이음), newNode는 새로 온 사람(점선 동그라미, 선 없음).
+const HAND_COLORS = ["#2f6fe0", "#f39a1e", "#2f9e5f", "#8e5bd8", "#e0559a", "#e8503a"];
+function sourceHandshake(visual) {
+  const all = [...visual.nodes, ...(visual.newNode ? [visual.newNode] : [])];
+  const n = all.length, R = n <= 2 ? 0 : 70;
+  const pts = n === 2 ? [[50, 60], [190, 60]] : all.map((_, i) => { const a = Math.PI + (2 * Math.PI * i) / n; return [120 + R * Math.cos(a), 95 + R * Math.sin(a)]; });
+  const lines = [];
+  visual.nodes.forEach((_, i) => visual.nodes.forEach((__, j) => { if (j > i) lines.push(`<line x1="${pts[i][0].toFixed(1)}" y1="${pts[i][1].toFixed(1)}" x2="${pts[j][0].toFixed(1)}" y2="${pts[j][1].toFixed(1)}" stroke="${HAND_COLORS[i % HAND_COLORS.length]}"/>`); }));
+  const circles = all.map((label, i) => `<circle cx="${pts[i][0].toFixed(1)}" cy="${pts[i][1].toFixed(1)}" r="20" class="${label === visual.newNode ? "new" : ""}"/><text x="${pts[i][0].toFixed(1)}" y="${pts[i][1].toFixed(1)}">${escapeHtml(label)}</text>`).join("");
+  const h = n === 2 ? 120 : 190;
+  return `<div class="b5-src-hand" role="img" aria-label="${escapeHtml(`${visual.nodes.join(", ")}가 서로 악수${visual.newNode ? `, ${visual.newNode}가 새로 옴` : ""}`)}">${visual.caption ? `<p>${escapeHtml(visual.caption)}</p>` : ""}<svg viewBox="0 0 240 ${h}" style="width:min(100%,300px)">${lines.join("")}${circles}</svg></div>`;
+}
+
+// 꼭짓점에서 밑변으로 선을 그어 cells칸으로 나눈 삼각형. cross면 가운데 가로선 하나.
+function sourceFanTriangle(visual) {
+  const apex = [70, 8], y = 170, x0 = 10, x1 = 230;
+  const lines = Array.from({ length: visual.cells - 1 }, (_, i) => { const bx = x0 + ((x1 - x0) * (i + 1)) / visual.cells; return `<line x1="${apex[0]}" y1="${apex[1]}" x2="${bx.toFixed(1)}" y2="${y}"/>`; }).join("");
+  const cy = 95, t = (cy - apex[1]) / (y - apex[1]);
+  const cross = visual.cross ? `<line x1="${(apex[0] + (x0 - apex[0]) * t).toFixed(1)}" y1="${cy}" x2="${(apex[0] + (x1 - apex[0]) * t).toFixed(1)}" y2="${cy}"/>` : "";
+  return `<div class="b5-src-fan" role="img" aria-label="${escapeHtml(`꼭짓점에서 그은 선으로 ${visual.cells}칸으로 나눈 삼각형${visual.cross ? ", 가로선 하나" : ""}`)}"><svg viewBox="0 0 240 178" style="width:min(100%,260px)"><polygon points="${apex.join(",")} ${x1},${y} ${x0},${y}"/>${lines}${cross}</svg></div>`;
+}
+
+// 둘레: 마름모(네 변 같음 표시) 또는 직사각형(가로·세로 묶음 숫자).
+function sourcePerimeter(visual) {
+  if (visual.shape === "rhombus") {
+    const P = [[100, 10], [190, 70], [100, 130], [10, 70]];
+    const ticks = P.map((p, i) => { const q = P[(i + 1) % 4], mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2, dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy), nx = -dy / L * 7, ny = dx / L * 7, ox = dx / L * 3, oy = dy / L * 3;
+      return [-1, 1].map((s) => `<line class="tk" x1="${(mx + s * ox - nx).toFixed(1)}" y1="${(my + s * oy - ny).toFixed(1)}" x2="${(mx + s * ox + nx).toFixed(1)}" y2="${(my + s * oy + ny).toFixed(1)}"/>`).join(""); }).join("");
+    return `<div class="b5-src-perim" role="img" aria-label="네 변의 길이가 같은 마름모"><svg viewBox="0 0 200 140" style="width:min(100%,220px)"><polygon points="${P.map((p) => p.join(",")).join(" ")}"/>${ticks}</svg></div>`;
+  }
+  const W = 50 + visual.w * 16, H = 34 + visual.h * 16, x = 14, y = 40;
+  return `<div class="b5-src-perim" role="img" aria-label="${escapeHtml(`가로 ${visual.w}, 세로 ${visual.h}인 직사각형`)}"><svg viewBox="0 0 ${W + 60} ${H + 56}" style="width:min(100%,${W + 90}px)"><rect x="${x}" y="${y}" width="${W}" height="${H}"/><path class="arc" d="M${x} ${y - 2}Q${x + W / 2} ${y - 30} ${x + W} ${y - 2}"/><path class="arc" d="M${x + W + 2} ${y}Q${x + W + 30} ${y + H / 2} ${x + W + 2} ${y + H}"/><text x="${x + W / 2}" y="${y - 24}">${escapeHtml(visual.w)}</text><text x="${x + W + 34}" y="${y + H / 2}">${escapeHtml(visual.h)}</text></svg></div>`;
+}
+
+// 검은 돌·흰 돌을 줄마다 번갈아 놓은 삼각 배열(검정·흰색이 문제 내용이라 색표 예외)
+function sourceStoneRows(visual) {
+  const r = 13, gap = 29, wide = Math.max(...visual.rows);
+  const W = wide * gap + 8, H = visual.rows.length * gap + 8;
+  const stones = visual.rows.flatMap((count, i) => Array.from({ length: count }, (_, j) => `<circle cx="${(4 + (W - 8) / 2 + (j - (count - 1) / 2) * gap).toFixed(1)}" cy="${4 + gap / 2 + i * gap}" r="${r}" class="${i % 2 ? "w" : "b"}"/>`)).join("");
+  return `<div class="b5-src-stones" role="img" aria-label="${escapeHtml(`검은 돌과 흰 돌을 번갈아 ${visual.rows.join(", ")}개씩 놓은 줄`)}"><svg viewBox="0 0 ${W} ${H}" style="width:min(100%,${Math.round(W * 1.3)}px)">${stones}</svg></div>`;
+}
+
+// 똑같이 가르기 나무: levels 1이면 칸 2개(가·나), 2면 칸 2개 아래 칸 4개(다~바). values는 개념 장면용.
+function sourceHalvingTree(visual) {
+  const W = visual.levels === 2 ? 300 : 160, cx = W / 2;
+  const box = (x, y, k) => { const v = visual.values?.[k]; return `<rect x="${x - 20}" y="${y}" width="40" height="32" rx="4" class="${v == null ? "blank" : ""}"/><text x="${x}" y="${y + 16}" class="${v == null ? "lbl" : ""}">${escapeHtml(v ?? BLANK_LABELS[k])}</text>`; };
+  const branch = (x, y, x1, x2, y2) => `<polyline points="${x1},${y2} ${x},${y} ${x2},${y2}"/>`;
+  let body = `<text x="${cx}" y="16" class="top">${escapeHtml(visual.top)}</text>`;
+  if (visual.levels === 2) {
+    const l = cx - 75, r = cx + 75;
+    body += branch(cx, 30, l, r, 52) + box(l, 54, 0) + box(r, 54, 1);
+    body += branch(l, 94, l - 37, l + 37, 114) + branch(r, 94, r - 37, r + 37, 114) + box(l - 37, 116, 2) + box(l + 37, 116, 3) + box(r - 37, 116, 4) + box(r + 37, 116, 5);
+  } else body += branch(cx, 30, cx - 40, cx + 40, 52) + box(cx - 40, 54, 0) + box(cx + 40, 54, 1);
+  const H = visual.levels === 2 ? 152 : 90;
+  return `<div class="b5-src-halve" role="img" aria-label="${escapeHtml(`${visual.top}을 똑같이 ${visual.levels === 2 ? "두 번" : "한 번"} 가르기`)}"><svg viewBox="0 0 ${W} ${H}" style="width:min(100%,${Math.round(W * 1.7)}px)">${body}</svg></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -671,6 +778,14 @@ export function book05Markup(visual) {
     case "source-shape-equations": return sourceShapeEquations(visual);
     case "source-fraction-discs": return sourceFractionDiscs(visual);
     case "source-fraction-chain": return sourceFractionChain(visual);
+    case "source-dot-figures": return sourceDotFigures(visual);
+    case "source-sum-line": return sourceSumLine(visual);
+    case "source-text-table": return sourceTextTable(visual);
+    case "source-handshake": return sourceHandshake(visual);
+    case "source-fan-triangle": return sourceFanTriangle(visual);
+    case "source-perimeter": return sourcePerimeter(visual);
+    case "source-stone-rows": return sourceStoneRows(visual);
+    case "source-halving-tree": return sourceHalvingTree(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);

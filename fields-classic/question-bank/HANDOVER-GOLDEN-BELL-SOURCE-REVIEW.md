@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261017b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261017b/20261017c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261017c`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261017c/20261018a/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -234,8 +234,18 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 46쪽 (7)(8)의 물음은 식(□ + 오각형 = ?)이라 문장을 「마지막 식의 값은?」으로 썼다. (8)은 ♡·□가 서로 바뀌는 두 해가 있지만 물음 값은 같다(풀이에 적음).
   - 44쪽 (3)~(5)는 「모두 쓰기」라 `resultContract:{type:"set"}`. 검산은 모양마다 카드·범위·0~9 안의 서로 다른 수를 모두 넣어 물음 값이 하나뿐인지 확인했고 교사용 답과 전부 같다.
   - `sourceHold` S41~S49 9건 삭제, coverage public 232 · hold 11. DB `book-05` 358키 → 470키, sha 앞 8자리 `87428a63`. 캐시 꼬리표 `20261017b`.
-- **다음**: 보류를 주제 묶음으로 슬라이드 순서대로 — ~~수 배열·수열 3~10~~ / ~~연산·달력 11~15~~ / ~~최단거리 18~24~~ / ~~숫자 카드 26~32~~ /
-  ~~곱셈구구·매트릭스 35~40~~ / ~~선분·도형식·분수 41~49~~ / 삼각수·둘레·사각수 51~58(16·33쪽 보류 함께) / 가르기 60.
+- **5권 묶음 7(마지막, 슬라이드 16·33·51~58·60 삼각수·둘레·사각수·가르기 69문항, 2026-10-18)**: 패치 `tools/golden-bell-book05/patch-book05-batch7.mjs`(정답 없음).
+  - 새 단원 4개: `triangle-number-source`(번호 14, 33·51~55쪽 36문항) · `perimeter-source`(번호 15, 56쪽 7문항) ·
+    `square-number-source`(번호 16, 16·57·58쪽 11문항) · `halving-tree-source`(번호 17, 60쪽 15문항). 모두 `mode:"paged"`.
+  - 새 그림: `source-dot-figures`(점 삼각형·점 사각형, 층마다 무지개 색, 휴대폰에서는 `--k`로 높이를 맞춰 한 줄에) · `source-sum-line`(「△n = 1+…+n = □ × △ = 합」,
+    짝수/홀수는 **`parity`** 필드 — `kind`라고 쓰면 `kind:"book5"`를 덮어써 그림이 사라진다) · `source-handshake` · `source-fan-triangle` · `source-perimeter` ·
+    `source-stone-rows`(검정/흰색은 문제 내용이라 색표 예외) · `source-halving-tree` · `source-text-table`(글이 든 표. 칸이 정사각형인 `source-number-table`에 글을 넣으면 줄이 깨진다).
+  - 16·33쪽은 교사 설명용 표라 표를 그림으로 넣고 고르기 물음으로 바꿈. 51·57쪽 「규칙은?」도 고르기형. 51쪽 홀수 개 줄은 □ × △ 칸이 교사용 표시뿐이라 칸을 넣음.
+    55쪽 「SE」 그림 2개는 물음 문장이 없어 06과 같은 물음을 붙임. 모두 `sourceDiscrepancy`.
+  - 교사용 답 오류 3곳(54쪽 04 (7), 57쪽 01 (2)·(5))은 계산한 답으로 넣고 DB `sourceNote`에 기록. 검산기는 이 3곳만 교사용과 다르게 나오는지 확인한다.
+  - 개념 설명 캡처에서 HTML 그림(sum-line)이 빈칸으로 찍힌 것은 장면 전환 애니메이션 도중에 찍힌 것이었다(1.5초 기다리면 정상).
+  - `sourceHold` 11건 삭제 → **5권 보류 0, coverage public 301**. DB `book-05` 470키 → 613키, sha 앞 8자리 `817e95c7`. 캐시 꼬리표 `20261017c`.
+- **5권 원본 대조 끝.** 남은 확인 거리: 다음 권(6권)부터 같은 방식(학생용·교사용 대조표 → 묶음).
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
 
