@@ -75,7 +75,7 @@ window.NM_STAGES = [
     key:'leap', icon:'🚀', accent:'#16417C', status:'live',
     name:{ko:'계산의 도약',en:'Leap',zh:'计算的跃进'},
     band:{ko:'초등 1학년 말 ~ 2학년',en:'End of Grade 1 – Grade 2',zh:'小学一年级末~二年级'},
-    chapters:['T8','R9','T9','R10','R11','R12','R13','R14','T14','R15','T15'],
+    chapters:['T8','R9','T9','R10','R11','R12','R13','R14','T14','R15','T15','CR7'],
     tiers:['level2'], courses:{from:8,to:16}, weeks:57,
     learn:{
       ko:'두·세 자리 × 한 자리, 나눗셈의 시작과 나머지, 두 자리 × 두 자리, 세 자리 ÷ 한 자리, 두 자리로 나누기, 큰 수, 분모가 같은 분수, 소수의 덧셈과 뺄셈.',
