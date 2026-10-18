@@ -48,7 +48,10 @@ try{
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].bookCourseNumber),17,'book course number is saved as a number');
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].step),'level-3','Level is derived from completed course 17');
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].bookStatus),'completed','only a newly confirmed choice is recorded as completed');
-   assert(await page.locator('#pdStart').isDisabled(),'book course number alone cannot select an app starting point');
+   // 두뇌로 완료 과정 하나면 그 과정의 연산으로 이전 6 · 과정 N 10 · 다음 4 진단지가 바로 준비된다.
+   assert.equal(await page.locator('#pdStart').isDisabled(),false,'a completed Dunoro course starts its own 6/10/4 paper');
+   if(lang==='ko')assert((await page.locator('.pd-intake-hint').first().innerText()).includes('두뇌로 과정 17 완료 기준'),'the Dunoro scope is shown');
+   assert((await page.locator('#pdPaper').getAttribute('href')).includes('dunoro=17'),'the paper link carries the Dunoro course');
    await page.selectOption('[data-book-course="0"]','11');assert.equal(await page.locator('#pdBaseline').inputValue(),'');
    assert.deepEqual(await page.evaluate(()=>{const row=JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0];return [row.step,row.bookCourseNumber,row.bookStatus];}),['level-2',11,'completed'],'changing the book course derives Level 2 and keeps a completed selection');
    await page.selectOption('[data-book-course="0"]','');
@@ -85,14 +88,17 @@ try{
     for(const [step,course] of [['level-1',1],['level-1',10],['level-2',11],['level-2',16],['level-3',17],['level-3',25]]){
      await page.selectOption('[data-book-course="0"]',String(course));assert.equal(await page.locator('#pdBaseline').inputValue(),'','choosing a different course clears the old topic');
      assert.deepEqual(await page.evaluate(()=>{const row=JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0];return [row.step,row.bookCourseNumber];}),[step,course],'boundary course derives the matching Level');
-     assert(await page.locator('#pdStart').isDisabled());
-     await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
+     assert.equal(await page.locator('#pdStart').isDisabled(),false,'course '+course+' starts its Dunoro paper');
+     assert((await page.locator('#pdPaper').getAttribute('href')).includes('dunoro='+course));
+     await page.click('#pdRangeOptions summary');await page.selectOption('#pdBaseline','f-split5');assert.equal(await page.locator('#pdStart').isDisabled(),false);
+     assert(!(await page.locator('#pdPaper').getAttribute('href')).includes('dunoro='),'a chosen app topic replaces the Dunoro paper');
     }
     await page.selectOption('[data-book-course="0"]','other');
     assert.deepEqual(await page.evaluate(()=>{const row=JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0];return [row.step,row.bookCourseNumber];}),['contents',null],'other course notation stays outside numbered Levels');
     assert.equal(await page.locator('#pdBaseline').inputValue(),'','other course notation clears the prior app topic');
     await page.selectOption('[data-book-course="0"]','16');
-    await page.selectOption('#pdBaseline','f-split5');
+    await page.screenshot({path:path.join(OUT,'ko-390-dunoro-course.png')});
+    await page.click('#pdRangeOptions summary');await page.selectOption('#pdBaseline','f-split5');
     await page.waitForFunction(()=>!document.querySelector('.nm-confetti'));
     await page.screenshot({path:path.join(OUT,'ko-390-dunoro-topic.png')});
     await page.selectOption('[data-book-series="0"]','miracle');await page.selectOption('[data-book-step="0"]','pre-2023-v1-order');assert.equal(await page.locator('#pdBaseline').inputValue(),'f-order10');assert.equal(await page.locator('#pdStart').isDisabled(),false);
@@ -116,8 +122,10 @@ try{
     await page.selectOption('[data-book-series="0"]','dunoro');await page.selectOption('[data-book-course="0"]','17');
     await page.click('#pdAddBook');assert.equal(await page.locator('[data-book-row]').count(),2);
     await page.selectOption('[data-book-series="1"]','soma-p');assert.equal(await page.locator('[data-book-edition="1"]').inputValue(),'2019');await page.selectOption('[data-book-step="1"]','v1');
-    assert(await page.locator('#pdStart').isDisabled(),'adding another book requires a newly confirmed app topic');
-    await page.selectOption('#pdBaseline','c18');completedBookSheetHref=await page.locator('#pdPaper').getAttribute('href');
+    // 두뇌로 과정이 함께 있으면 그 과정 진단지가 기준이다(다른 교재는 기록으로 함께 인쇄).
+    assert.equal(await page.locator('#pdStart').isDisabled(),false,'a Dunoro course among several books keeps its paper');
+    assert((await page.locator('#pdPaper').getAttribute('href')).includes('dunoro=17'));
+    await page.click('#pdRangeOptions summary');await page.selectOption('#pdBaseline','c18');completedBookSheetHref=await page.locator('#pdPaper').getAttribute('href');
     const linkedBooks=JSON.parse(new URLSearchParams(completedBookSheetHref.split('?')[1]).get('books'));
     assert.deepEqual(linkedBooks.map(x=>[x.series,x.step,x.bookCourseNumber,x.editionId]),[['dunoro','level-3',17,''],['soma-p','v1',null,'2019']],'print link carries both completed books');
     await overflow(page);

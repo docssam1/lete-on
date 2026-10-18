@@ -221,7 +221,8 @@
 <script src="app/exam.js"></script>
 <script src="app/animal-art.js"></script>
 <script src="data/placement-books.js?v=20261018-soma2019-dunoro1"></script>
-<script src="data/placement-plan.js"></script>
+<script src="data/dunoro-courses.js?v=20261018-dunoro-arith1"></script>
+<script src="data/placement-plan.js?v=20261018-dunoro-arith1"></script>
 <script src="data/placement-paths.js?v=20261017-multi-book2"></script>
 <link rel="stylesheet" href="app/placement-ui.css?v=20261017-multi-book2">
 <script src="data/study-projection.js?v=20261015-records1"></script>
@@ -245,6 +246,8 @@ if(!PLAN) return fail('진단 자료를 불러오지 못했어요.');
 var STAGES = PLAN.stages();
 var BASE = Q.get('b') || 'f-split9';
 if(!STAGES.some(function(s){ return s.id === BASE; })) BASE = STAGES[0].id;
+/* 두뇌로 완료 과정(dunoro=1~25): 과정표의 연산으로 이전 6 · 과정 N 10 · 다음 4를 낸다. b보다 우선한다. */
+var DUNORO = /^(?:[1-9]|1\d|2[0-5])$/.test(Q.get('dunoro') || '') ? Number(Q.get('dunoro')) : 0;
 /* URL의 교재 정보는 등록된 선택지만 사용한다. 교재 번호는 앱 진단 기준 b와 별개다. */
 function validatedBook(raw, legacy){
   var books = window.NM_PLACEMENT_BOOKS;
@@ -303,7 +306,10 @@ function sourceHtml(stage){
   var bookPart = COMPLETED_BOOKS.length ? '<div class="pl-books"><b>' + esc(T('완료한 교재', 'Completed books', '已完成的教材')) + ' (' + COMPLETED_BOOKS.length + '):</b><ol class="pl-book-list">' +
     COMPLETED_BOOKS.map(function(label){ return '<li>' + esc(label) + '</li>'; }).join('') + '</ol></div>' : '';
   var schoolPart = SCHOOL_SCOPE ? '<div class="pl-school"><b>' + esc(T('선택한 교과 진도', 'Selected school progress', '所选学校进度')) + ':</b> ' + esc(SCHOOL_SCOPE) + '</div>' : '';
-  var scope = '<div class="pl-app-scope"><b>' + esc(T('앱 진단 기준 주제', 'App diagnostic topic', '应用测评基准主题')) + ':</b> ' + esc(L(stage.label)) +
+  var book = PLAN_NOW && PLAN_NOW.book;
+  var scope = book ? '<div class="pl-app-scope"><b>' + esc(L(book.title)) + ':</b> ' + esc(book.topics) +
+    ' · ' + esc(T('이전 6 · 과정 ' + book.course + ' 10 · 다음 4', 'Earlier 6 · Course ' + book.course + ' 10 · Next 4', '之前6 · 课程' + book.course + ' 10 · 之后4')) + '</div>' :
+    '<div class="pl-app-scope"><b>' + esc(T('앱 진단 기준 주제', 'App diagnostic topic', '应用测评基准主题')) + ':</b> ' + esc(L(stage.label)) +
     ' · ' + esc(T('이전 6 · 현재 10 · 다음 4', 'Earlier 6 · Current 10 · Next 4', '之前6 · 当前10 · 之后4')) + '</div>';
   return '<div class="pl-source">' + bookPart + schoolPart + scope + '</div>';
 }
@@ -437,10 +443,10 @@ function keyPage(plan, stage){
 /* ── 조립 ── */
 var PLAN_NOW = null;
 function build(){
-  var stage = STAGES.find(function(s){ return s.id === BASE; });
+  PLAN_NOW = DUNORO ? PLAN.buildBook('dunoro', DUNORO, SEED) : PLAN.build(BASE, SEED);
+  var stage = DUNORO ? PLAN_NOW.baseline : STAGES.find(function(s){ return s.id === BASE; });
   var layout = layoutOf(stage);
-  CODE = 'PL-' + BASE + '-' + SEED + '-' + LANG;
-  PLAN_NOW = PLAN.build(BASE, SEED);
+  CODE = 'PL-' + (DUNORO ? 'dunoro' + DUNORO : BASE) + '-' + SEED + '-' + LANG;
   var old = document.querySelector('.nm-print-sheet'); if(old) old.remove();
   var sheet = document.createElement('div');
   sheet.className = 'nm-print-sheet nm-print-age-' + layout.band + ' ' + layout.cls;
@@ -458,7 +464,7 @@ function build(){
     try{ window.katex.render(el.getAttribute('data-tex'), el, { throwOnError:false, displayMode:false }); }catch(e){ el.textContent = el.getAttribute('data-tex'); }
   });
   document.title = 'Numbers of Magic — ' + CODE;
-  document.getElementById('wsSub').textContent = L(stage.label) + ' · ' + SEED;
+  document.getElementById('wsSub').textContent = (PLAN_NOW.book ? L(PLAN_NOW.book.title) : L(stage.label)) + ' · ' + SEED;
   renderScorer(stage);
 }
 
@@ -502,12 +508,15 @@ function renderScorer(stage){
 function toolbar(){
   var bar = document.getElementById('wsBar');
   var sel = '<select id="plStage" aria-label="start">' + STAGES.map(function(s){ return '<option value="' + s.id + '"' + (s.id === BASE ? ' selected' : '') + '>' + esc((s.kind === 'foundation' ? T('유아 · ','Early · ','幼儿 · ') : s.course + ' · ') + L(s.label)) + '</option>'; }).join('') + '</select>';
+  var dn = '<select id="plDunoro" aria-label="' + esc(T('두뇌로 완료 과정', 'Completed Dunoro course', '已完成的Dunoro课程')) + '"><option value="">' + esc(T('두뇌로 과정 —', 'Dunoro course —', 'Dunoro课程 —')) + '</option>' +
+    Array.from({length:25}, function(_, i){ return '<option value="' + (i + 1) + '"' + (i + 1 === DUNORO ? ' selected' : '') + '>' + esc(T('두뇌로 과정 ' + (i + 1) + ' 완료', 'Dunoro course ' + (i + 1), 'Dunoro课程' + (i + 1))) + '</option>'; }).join('') + '</select>';
   var lg = '<select id="plLang">' + [['ko','한국어'],['en','English'],['zh','中文']].map(function(x){ return '<option value="' + x[0] + '"' + (x[0] === LANG ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select>';
   var seedIn = '<input id="plSeed" value="' + esc(SEED) + '" size="10" aria-label="seed">';
-  var tools = document.createElement('div'); tools.className = 'pl-tools'; tools.innerHTML = sel + lg + seedIn;
+  var tools = document.createElement('div'); tools.className = 'pl-tools'; tools.innerHTML = sel + dn + lg + seedIn;
   bar.insertBefore(tools, document.getElementById('wsPrint'));
-  var go = function(){ var u = new URL(location.href); u.searchParams.set('b', document.getElementById('plStage').value); u.searchParams.set('l', document.getElementById('plLang').value); u.searchParams.set('seed', document.getElementById('plSeed').value.trim() || 'sheet1'); location.href = u.toString(); };
-  ['plStage','plLang'].forEach(function(id){ document.getElementById(id).onchange = go; });
+  var go = function(e){ var u = new URL(location.href); u.searchParams.set('b', document.getElementById('plStage').value);
+    var d = document.getElementById('plDunoro').value; if(e && e.target && e.target.id === 'plStage') d = ''; if(d) u.searchParams.set('dunoro', d); else u.searchParams.delete('dunoro'); u.searchParams.set('l', document.getElementById('plLang').value); u.searchParams.set('seed', document.getElementById('plSeed').value.trim() || 'sheet1'); location.href = u.toString(); };
+  ['plStage','plDunoro','plLang'].forEach(function(id){ document.getElementById(id).onchange = go; });
   document.getElementById('plSeed').onchange = go;
   document.getElementById('wsTitle').textContent = 'Numbers of Magic · ' + T('시작점 확인 시험지', 'Starting-point check sheet', '起点测评卷');
 }

@@ -90,8 +90,11 @@ function serve(){
       }
     }
     const pick = QUICK ? ['f-count5', 'f-ten10', 'c1', 'c3', 'c12', 'c20', 'c40', 'c73'].filter(x => ids.includes(x)) : ids;
-    for(const lang of QUICK ? ['ko'] : ['ko', 'en', 'zh']) for(const id of pick){
-      await page.goto(`http://localhost:${PORT}/placement-sheet.html?b=${id}&seed=chk&l=${lang}`);
+    /* 두뇌로 완료 과정 진단지(dunoro=1~25): 과정표의 연산으로 이전 6 · 과정 N 10 · 다음 4 */
+    const dunoro = QUICK ? [1, 7, 13, 25] : Array.from({ length: 25 }, (_, i) => i + 1);
+    const sheets = pick.map(id => ({ id, query: 'b=' + id })).concat(dunoro.map(n => ({ id: 'dunoro' + n, query: 'b=c1&dunoro=' + n, dunoro: n })));
+    for(const lang of QUICK ? ['ko'] : ['ko', 'en', 'zh']) for(const { id, query, dunoro: course } of sheets){
+      await page.goto(`http://localhost:${PORT}/placement-sheet.html?${query}&seed=chk&l=${lang}`);
       await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 }).catch(() => {});
       await page.emulateMedia({ media: 'print' });
       const tag = await page.addStyleTag({ content: 'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}' });
@@ -100,7 +103,8 @@ function serve(){
         pages.forEach((p, i) => { let w = p.scrollHeight - p.clientHeight; p.querySelectorAll('.pl-q,.pl-key').forEach(e => { w = Math.max(w, e.scrollHeight - e.clientHeight); }); if(w > 3) over.push((i + 1) + '쪽 +' + Math.round(w) + 'px'); });
         const text = document.querySelector('.nm-print-sheet') ? document.querySelector('.nm-print-sheet').innerText : '';
         const last = pages[pages.length - 1];
-        return { q: document.querySelectorAll('.pl-q').length, over,
+        return { q: document.querySelectorAll('.pl-q').length, over, source: [...document.querySelectorAll('.pl-source')].map(el => el.innerText).join('\n'),
+          bands: ['previous','current','next'].map(b => document.querySelectorAll('.pl-key tbody tr.pl-b-' + b).length).join('/'),
           unsupported: !!document.querySelector('.pl-unsupported'), katexErr: document.querySelectorAll('.katex-error').length,
           untex: [...document.querySelectorAll('[data-tex]')].filter(e => !e.querySelector('.katex')).length,
           garbage: /NaN|\[object|(^|\n)\s*undefined\s*(\n|$)|null\s*null/.test(text)   /* 'undefined' 단어는 수학 설명문(예: 'undefined when m=n')에 정상으로 나온다 */, keyLast: !!(last && last.classList.contains('pl-keypage')),
@@ -114,6 +118,8 @@ function serve(){
       if(r.katexErr || r.untex) problems.push('수식 오류 ' + (r.katexErr + r.untex));
       if(r.garbage) problems.push('깨진 글자');
       if(!r.keyLast || r.keyRows !== 20) problems.push('정답표 쪽 이상 rows=' + r.keyRows);
+      if(course && lang === 'ko' && !r.source.includes('두뇌로 과정 ' + course + ' 완료 기준')) problems.push('두뇌로 과정 표기 누락');
+      if(course && r.bands !== '6/10/4') problems.push('구간 ' + r.bands);
       if(problems.length) bad.push(`${lang} ${id}: ${problems.join(' · ')}`);
       await tag.evaluate(e => e.remove()); await page.emulateMedia({ media: 'screen' });
     }

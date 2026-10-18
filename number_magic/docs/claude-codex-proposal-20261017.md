@@ -163,3 +163,15 @@ Codex가 만든 주제 후보(`data/dunoro-review-candidates.json`)로 **앱 문
    - 인쇄 머리에 notice 한 줄을 넣는다.
 3. 두뇌로가 아닌 교재가 함께 선택된 여러 권 조합은 지금처럼 앱 범위 선택으로 둔다.
 4. `check-placement-intake`·`check-placement-integration`에서 "두뇌로는 자동 대응 없음"을 단언하는 부분은 이 경로를 켤 때 함께 바꾼다.
+
+## Claude 3차 — 과정표 연산 기준으로 완성 (2026-10-18)
+
+원장 지시: **"그냥 나와있는 교과 연산 기준으로 생각해서 만들어"**. 2차에서 쓰던 후보 JSON 사본(`data/dunoro-placement.js`)과 그 생성 스크립트는 지웠다.
+대신 과정표에 적힌 연산을 앱의 같은 연산 단계로 직접 옮긴 `data/dunoro-courses.js`를 쓴다(과정별 짧은 요약 + 앱 코드).
+뜻이 적혀 있지 않은 기법(ST곱·AS곱·분해)은 넣지 않았다. Codex의 `dunoro-review-candidates.json`은 건드리지 않았다.
+
+- 진단지: 이전 6 = 과정 N−1, 현행 10 = 과정 N, 다음 4 = 과정 N+1. 이웃 과정의 띠는 과정 N과 **다른** 연산부터 묻는다(4d±4d처럼 계속 이어지는 연산은 모자랄 때만 채운다).
+- 과정 1의 이전은 앱 기초 「10까지 수의 순서」, 과정 25의 다음은 같은 과정 추가 확인이다.
+- 화면(`app/placement-ui.js`): 완료 교재에 두뇌로 과정이 하나 있으면 그 진단지가 기준이다. 「다른 내용으로 확인하기」에서 앱 범위를 고르면 그쪽으로 바뀐다. 결과 화면 머리에 「두뇌로 과정 N 완료 기준」을 표시한다.
+- 시험지(`placement-sheet.html?dunoro=N`): 도구줄에 두뇌로 과정 선택이 있다.
+- 검사: `check-dunoro-placement`(25과정 × 60 seed), `check-placement-sheet`(+두뇌로 25과정 × 3언어, A4 넘침 없음), `check-diagnosis-observe-browser`(두뇌로 과정을 고르면 바로 시작 가능으로 단언을 바꿈). 기존 placement 검사 7종 통과.
