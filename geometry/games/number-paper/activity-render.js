@@ -8,6 +8,18 @@ function tile(id,p,stage,extra='',attrs='') {
 function face(p,stage,holes,ids=visibleIds(p,stage)) {
   return ids.filter(id=>!holes.has(id)).map(id=>tile(id,p,stage)).join('');
 }
+// One continuous silhouette per physical layer, including cut-away holes.
+function layerShadow(p,stage,holes,ids=visibleIds(p,stage),bounds={r:0,c:0,rows:4,cols:4},back=false) {
+  const cells=ids.filter(id=>!holes.has(id));
+  if(!cells.length)return '';
+  const path=cells.map(id=>{
+    let row=Math.floor(id/4)-bounds.r,col=id%4-bounds.c;
+    if(back){if(bounds.horizontal)row=bounds.rows-1-row;else col=bounds.cols-1-col;}
+    return `M${col*100} ${row*100}h100v100h-100Z`;
+  }).join('');
+  const depth=2**stage,dx=stage>=2?(p.vDir==='left'?-1.8:1.8):0,dy=stage?(p.hDir==='up'?-1.8:1.8)*(back&&bounds.horizontal?-1:1):0;
+  return `<svg class="paper-layers" viewBox="0 0 ${bounds.cols*100} ${bounds.rows*100}" aria-hidden="true" data-layers="${depth}" data-cells="${cells.join(',')}">${Array.from({length:depth},(_,i)=>depth-1-i).map(i=>`<path class="paper-layer ${i?'under-layer':'contact-layer'}" d="${path}" transform="translate(${i*dx} ${i*dy})"/>`).join('')}</svg>`;
+}
 function motionLayer(p,state,t) {
   const g=foldGeometry(p,state.phase),holes=holesAt(p,state.cutKeys,g.expandedStage);
   const ids=visibleIds(p,g.expandedStage).filter(id=>Math.floor(id/4)>=g.r&&Math.floor(id/4)<g.r+g.rows&&id%4>=g.c&&id%4<g.c+g.cols);
@@ -16,14 +28,14 @@ function motionLayer(p,state,t) {
     if(back){if(g.horizontal)row=g.rows-1-row;else col=g.cols-1-col;}
     return `<span class="paper-cell ${g.expandedStage||back?'paper-back':''}" style="left:${col*100/g.cols}%;top:${row*100/g.rows}%;width:${100/g.cols}%;height:${100/g.rows}%">${!g.expandedStage&&!back?`<span class="number">${p.grid[Math.floor(id/4)][id%4]}</span>`:''}</span>`;
   }).join('');
-  return `<div class="flap" style="${pos(g.r,g.c,g.rows,g.cols)};transform-origin:${g.origin};transform:rotate${g.axis}(${g.unfold?g.angle:0}deg)"><div class="flap-face front">${local()}</div><div class="flap-face back" style="transform:rotate${g.axis}(180deg)">${local(true)}</div></div>`;
+  return `<div class="flap" style="${pos(g.r,g.c,g.rows,g.cols)};transform-origin:${g.origin};transform:rotate${g.axis}(${g.unfold?g.angle:0}deg)"><div class="flap-face front">${layerShadow(p,g.expandedStage,holes,ids,g)}${local()}</div><div class="flap-face back" style="transform:rotate${g.axis}(180deg)">${layerShadow(p,g.expandedStage,holes,ids,g,true)}${local(true)}</div></div>`;
 }
 function sceneContent(p,state,t) {
   const stage=stageFor(state.phase),holes=holesAt(p,state.cutKeys,stage);
   if(state.phase==='collect'||state.phase==='done') {
     const target=new Set(piecesFor(p).flatMap(piece=>piece.cells));
     const base=Array.from({length:16},(_,id)=>id).filter(id=>!target.has(id)&&!p.removed.has(id));
-    return `<div class="paper-shadow"></div>${face(p,0,new Set(),base)}${piecesFor(p).filter(piece=>!state.collected.includes(piece.id)).map((piece,i)=>{
+    return `${layerShadow(p,0,new Set(),base)}${face(p,0,new Set(),base)}${piecesFor(p).filter(piece=>!state.collected.includes(piece.id)).map((piece,i)=>{
       const cells=new Set(piece.cells);
       const hx=(piece.cells.reduce((n,id)=>n+id%4+.5,0)/piece.cells.length-2)*7;
       const hy=(piece.cells.reduce((n,id)=>n+Math.floor(id/4)+.5,0)/piece.cells.length-2)*7||-6;
@@ -39,7 +51,7 @@ function sceneContent(p,state,t) {
   const moving=g?new Set(visibleIds(p,g.expandedStage).filter(id=>Math.floor(id/4)>=g.r&&Math.floor(id/4)<g.r+g.rows&&id%4>=g.c&&id%4<g.c+g.cols)):new Set();
   const fixedStage=g?.unfold?stage:g?.expandedStage??stage;
   const fixedIds=visibleIds(p,fixedStage).filter(id=>g?.unfold||!moving.has(id));
-  let html=`<div class="paper-shadow"></div>${face(p,fixedStage,holes,fixedIds)}${folding?motionLayer(p,state,t):''}`;
+  let html=`${layerShadow(p,g?.expandedStage??stage,holes,fixedIds)}${face(p,fixedStage,holes,fixedIds)}${folding?motionLayer(p,state,t):''}`;
   if(folding) {
     const handle= g.unfold?{r:p.packetRow,c:g.horizontal?0:p.packetCol,rows:2,cols:g.horizontal?4:2}:g;
     const arrow=g.unfold?(g.horizontal?(p.hDir==='up'?'↓':'↑'):(p.vDir==='left'?'→':'←')):(g.horizontal?(p.hDir==='up'?'↑':'↓'):(p.vDir==='left'?'←':'→'));
@@ -60,15 +72,16 @@ export function paperScene(p,state,t) {
   return `<div class="paper-object" style="transform:${shiftTransform(sceneShift(p,state.phase))}">${sceneContent(p,state,t)}</div>`;
 }
 
-// Draw directly beside the current physical footprint, without a second paper.
+// Curves sit outside the actual footprint, centred on the active fold line.
 export function foldDirections(p,state,t) {
   if(!['fold-h','fold-v','unfold-v','unfold-h'].includes(state.phase))return '';
   const g=foldGeometry(p,state.phase),stage=stageFor(state.phase);
   const direction=g.horizontal?p.hDir:p.vDir;
   const opposite={up:'down',down:'up',left:'right',right:'left'};
   const dir=g.unfold?opposite[direction]:direction;
-  const curve=g.horizontal?'M16 88C92 88 92 55 28 12M29 34L27 11L49 15':'M85 85C85 45 55 35 15 35M32 24L14 35L32 46';
+  const curve=g.horizontal?'M16 88C92 88 92 55 28 12M29 34L27 11L49 15':'M88 80C88 8 12 8 12 80M3 63L12 80L29 68';
   const transform=dir==='down'?'rotate(180 50 50)':dir==='right'?'translate(100 0) scale(-1 1)':'';
   const label=`${g.unfold?t.openDirections:t.foldDirections}: ${t.directions[dir]}`;
-  return `<svg class="large-fold-arrow" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="${label}" data-direction="${dir}" style="left:${stage>=2?75:100}%;top:50%"><g transform="${transform}"><path class="arrow-halo" d="${curve}"/><path class="arrow-ink" d="${curve}"/></g></svg>`;
+  const placement=g.horizontal?`left:${stage>=2?75:100}%;top:50%`:'left:50%;top:25%';
+  return `<svg class="large-fold-arrow ${g.horizontal?'beside-paper':'above-paper'}" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="${label}" data-direction="${dir}" style="${placement}"><g transform="${transform}"><path class="arrow-halo" d="${curve}"/><path class="arrow-ink" d="${curve}"/></g></svg>`;
 }

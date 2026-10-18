@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {bank,answerFor} from './core.js';
 import {initialActivity,advance,restoreActivity,visibleIds,projectCell,holesAt,piecesFor,foldGeometry,cutKeysFor,sceneShift,stageFor} from './activity-model.js';
-import {paperScene} from './activity-render.js';
+import {paperScene,foldDirections} from './activity-render.js';
 import {translation,languages} from './activity-i18n.js';
 const sorted=x=>[...x].sort((a,b)=>a-b);
 let transitions=0,scenes=0;
@@ -39,6 +39,15 @@ for(const p of bank){
   assert.deepEqual(advance(p,state,'cut',cutKeysFor(p)[0]),state);
   const check=()=>{
     assert.deepEqual(restoreActivity(p,state),state);
+    const geometry=paperScene(p,state,translation('ko'));
+    const holes=holesAt(p,state.cutKeys,stageFor(state.phase));
+    const layers=[...geometry.matchAll(/data-layers="(\d+)" data-cells="([\d,]+)"/g)];
+    if(!['collect','done'].includes(state.phase))for(const layer of layers){
+      // The shadow cannot refill a cut hole or introduce cells outside the sheet.
+      for(const id of layer[2].split(',').map(Number))assert(!holes.has(id));
+    }
+    if(state.phase==='cut')assert.equal(layers[0][1],'4');
+    if(state.phase==='fold-v')assert(layers.every(layer=>layer[1]==='2'));
     for(const lang of languages){const html=paperScene(p,state,translation(lang));assert(!html.includes('undefined'));assert(!html.includes('NaN'));scenes++;}
     transitions++;
   };
@@ -61,7 +70,14 @@ for(const p of bank){
   }
   for(const phase of ['fold-h','fold-v','unfold-v','unfold-h']){
     const g=foldGeometry(p,phase);assert.equal(g.rows*g.cols,g.horizontal?8:4);assert.equal(Math.abs(g.angle),180);
+    for(const lang of languages){
+      const arrow=foldDirections(p,{phase},translation(lang));
+      assert(arrow.includes(g.horizontal?'beside-paper':'above-paper'));
+      const dir=g.horizontal?p.hDir:p.vDir,opposite={up:'down',down:'up',left:'right',right:'left'};
+      assert(arrow.includes(`data-direction="${g.unfold?opposite[dir]:dir}"`));
+    }
   }
+  for(const phase of ['cut','collect','done'])assert.equal(foldDirections(p,{phase},translation('ko')),'');
 }
 // Negative controls must fail against independent physical truth.
 const p=bank[0];assert.notDeepEqual(sorted(holesAt(p,cutKeysFor(p),0)),sorted(holesAt(p,cutKeysFor(p),0)).slice(1));

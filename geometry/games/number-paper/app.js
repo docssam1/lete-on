@@ -1,7 +1,7 @@
 import { activities,bank,problemsFor } from './core.js?v=number-paper-1';
 import { languages,translation } from './activity-i18n.js?v=8';
 import { initialActivity,restoreActivity,advance,piecesFor,foldGeometry,sceneShift,shiftTransform } from './activity-model.js?v=3';
-import { paperScene,foldDirections } from './activity-render.js?v=7';
+import { paperScene,foldDirections } from './activity-render.js?v=8';
 import { sessionProblems } from '../../shared/problem-pool.js';
 import { readGameProgress,saveGameProgress } from '../../shared/profile-storage.js';
 import {difficultyFor,initialCalculation,restoreCalculation,completedActivity,phaseFor,submitCalculation} from './calculation.js?v=6';
