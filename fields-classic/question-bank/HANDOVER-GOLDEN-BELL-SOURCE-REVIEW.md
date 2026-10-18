@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018f`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018f/20261018g/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018g`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018g/20261018h/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -87,7 +87,7 @@
 
 DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반드시 다시 조회해 확인한다.
 
-## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막은 4권 묶음 6 · 2026-10-13)
+## 3. 지금까지 한 일 (전부 main 반영·배포 완료, 마지막은 6권 묶음 7 · 2026-10-18)
 
 - **2권**: 교사용·학생용과 눈으로 대조해 그림·문장 정리, 분수 세로 표기, 빠졌던 물음 되살림, 34쪽 활동 04 2문항 추가.
 - **3권**: 화면을 원본 그림·문장대로, 28-(2) 답 교정, 보류였던 8-(8)·29-(1)·20쪽 (2)(3) 되살림.
@@ -256,7 +256,7 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
 - **진단**: 예전 6권 문항 108개는 교사용 풀이 식을 그대로 문제로 바꾼 것(「24÷2의 값」, 그림 = 식)이라 풀이 방법이 드러나고
   수직선 그림이 비어 있었다. 5권처럼 원본 문항으로 다시 짠다. `sourceInventory`(94개)는 예전 공개 기록이고 화면에서 쓰지 않는다.
 - **묶음 계획**: 1) 2~6 수직선의 분할 ✅ · 2) 7~10 도형이 나타내는 수와 비 ✅ · 3) 12~14 둘레 ✅ · 4) 15~16 둘레 ✅ · 5) 18~21 곱셈·간편 계산 ✅ ·
-  6) 22~25 연속수의 합 ✅ · 7) 27~32 수와 숫자의 개수·수 만들기.
+  6) 22~25 연속수의 합 ✅ · 7) 27~32 수와 숫자의 개수·수 만들기 ✅.
 - **그림은 5권 그림 도구를 그대로 쓴다**(`kind:"book5"`, `book05-renderers.js`). 인쇄 규칙 선택자는
   `.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"])`로 넓혔다(전부 `b5-src-*` 전용이라 다른 권에 영향 없음).
 - **6권 묶음 1(슬라이드 2~6 가르기·수직선·수직선과 비·수직선 활용 1·2, 50문항, 2026-10-18)**: 패치 `tools/golden-bell-book06/patch-book06-batch1.mjs`(정답 없음).
@@ -311,6 +311,15 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 24쪽 ③~⑦의 가운데 동그라미는 원본 학생지의 빈칸이라 「가(가운데 수)·나(합)」 두 칸으로 묻는다. 22쪽 ①의 1~10 눈금은 `source-arc-line`(호 없음)으로 그림.
   - 25쪽 홀수 칸 「20은 몇 번째?」는 20이 홀수가 아니어서 19로 고쳤다(`sourceDiscrepancy`, 교사용 짝 표시와 답이 같음). 그 밖의 교사용 답은 전부 같다.
   - DB `book-06` 811키 → 832키, sha 앞 8자리 `ab20e3ac`. 캐시 꼬리표 `20261018f`.
+- **6권 묶음 7(마지막, 슬라이드 27~32 숫자와 수·수의 개수·쓴 숫자의 개수·특정 숫자의 개수·수 만들기, 41문항, 2026-10-18)**: 패치 `tools/golden-bell-book06/patch-book06-batch7.mjs`(정답 없음).
+  - 단원 10 `digit-sign-source`(27~30쪽 21문항)를 자리 그대로 새로 짜고(DB `/lessons/10/` 옛 키 교체), 새 단원 19 `make-number-source`(31·32쪽 20문항). 표지 쪽 1·11·17·26은 `cover`.
+  - 31쪽 ○ 두 칸 문항은 가·나 칸에 기호를 쓰고(「−」도 받음), 덧셈 기호 6줄·32쪽 5줄은 식을 통째로 쓴다(`text`, 띄어쓰기 무시). 그림은 `source-blank-equation`.
+  - **원본을 바로잡은 곳**(공개 메모는 숫자 없이): 27쪽 01은 설명이라 고르기로 바꿈 · 27쪽 03 「수의 개수」 문구는 「쓴 숫자의 개수」로 ·
+    31쪽 20○18○16○14○12는 **맞는 기호 배치가 두 가지**라 칸 4개 대신 식 전체를 쓰게 바꾸고 두 식 모두 정답(원장 규칙 「성립 안 하는 건 수정」) ·
+    31쪽 덧셈 기호 (5)는 답이 되는 식이 여럿이라 전부 받음(모두 `sourceDiscrepancy`).
+  - **교사용 답이 틀린 곳 1곳**(DB `sourceNote`): 32쪽 (1) 교사용 식은 계산하면 목표 수가 되지 않음 → 성립하는 식을 답으로. 검산기는 기호·붙여 쓰기를 전수 탐색해 답의 개수까지 센다.
+  - DB `book-06` 832키 → 854키, sha 앞 8자리 `ab3ccd4a`. 캐시 꼬리표 `20261018g`.
+- **6권 원본 대조 끝(보류 0).** 단원 20개(번호 0~3은 옛 단원 그대로, 4~10은 원본으로 다시 짬, 11~19는 새로 만듦). 원본 32쪽은 표지 4쪽을 빼고 전부 `implemented`.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
 
