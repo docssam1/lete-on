@@ -224,7 +224,7 @@
 <script src="data/dunoro-courses.js?v=20261018-dunoro-arith1"></script>
 <script src="data/soma-p-2019.js?v=20261018-soma-p1"></script>
 <script src="data/book-volume-topics.js?v=20261018-volumes1"></script>
-<script src="data/placement-plan.js?v=20261018-volumes1"></script>
+<script src="data/placement-plan.js?v=20261018-flexible1"></script>
 <script src="data/placement-paths.js?v=20261017-multi-book2"></script>
 <link rel="stylesheet" href="app/placement-ui.css?v=20261017-multi-book2">
 <script src="data/study-projection.js?v=20261015-records1"></script>
@@ -334,8 +334,8 @@ function sourceHtml(stage){
   var schoolPart = SCHOOL_SCOPE ? '<div class="pl-school"><b>' + esc(T('선택한 교과 진도', 'Selected school progress', '所选学校进度')) + ':</b> ' + esc(SCHOOL_SCOPE) + '</div>' : '';
   var book = PLAN_NOW && PLAN_NOW.book;
   var otherBooksNote = book && book.series!=='mixed' && COMPLETED_BOOKS.length > 1 ? '<br>' + esc(T('함께 기록한 다른 교재는 이 문항의 출제 기준에 포함되지 않았어요.', 'Other recorded books did not determine these questions.', '同时记录的其他教材未用于本次出题。')) : '';
-  var scope = book ? '<div class="pl-app-scope"><b>' + esc(L(book.title)) + ':</b> ' + esc(typeof book.topics==='string'?book.topics:L(book.topics)) +
-    ' · ' + esc(book.mix ? L(book.mix) : T('이전 6 · 과정 ' + book.course + ' 10 · 다음 4', 'Earlier 6 · Course ' + book.course + ' 10 · Next 4', '之前6 · 课程' + book.course + ' 10 · 之后4')) +
+  var scope = book ? '<div class="pl-app-scope"><b>' + esc(L(book.title)) + ':</b> ' +
+    esc(book.mix ? L(book.mix) : T('이전 6 · 과정 ' + book.course + ' 10 · 다음 4', 'Earlier 6 · Course ' + book.course + ' 10 · Next 4', '之前6 · 课程' + book.course + ' 10 · 之后4')) +
     '<br>' + esc(L(book.notice)) + otherBooksNote + '</div>' :
     '<div class="pl-app-scope"><b>' + esc(T('앱 진단 기준 주제', 'App diagnostic topic', '应用测评基准主题')) + ':</b> ' + esc(L(stage.label)) +
     ' · ' + esc(T('이전 6 · 현재 10 · 다음 4', 'Earlier 6 · Current 10 · Next 4', '之前6 · 当前10 · 之后4')) + '</div>';

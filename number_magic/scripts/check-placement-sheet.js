@@ -130,12 +130,12 @@ function serve(){
       if(r.garbage) problems.push('깨진 글자');
       if(!r.keyLast || r.keyRows !== 20) problems.push('정답표 쪽 이상 rows=' + r.keyRows);
       if(course && lang === 'ko' && !r.source.includes('두뇌로 과정 ' + course + ' 완료 기준')) problems.push('두뇌로 과정 표기 누락');
-      if(course && lang === 'ko' && !r.source.includes('교재의 실제 문제와 숫자 범위·풀이 형식이 같은지는 확인되지 않았어요')) problems.push('교재 문항 동형 미검증 안내 누락');
+      if(course && lang === 'ko' && !r.source.includes('교재와 같은 주제나 문제 형식일 필요는 없어요')) problems.push('교재 주제 일치 비필수 안내 누락');
       if(course && r.bands !== '6/10/4') problems.push('구간 ' + r.bands);
       if(volume && lang === 'ko' && !r.source.includes('소마셈 P ' + volume + '권 완료 기준')) problems.push('소마셈 P권 표기 누락');
-      if(volume && lang === 'ko' && !r.source.includes('실제 교재의 문제·그림·풀이 방식과 같다는 검증은 없어요')) problems.push('소마셈 교재 형식 미검증 안내 누락');
+      if(volume && lang === 'ko' && !r.source.includes('교재와 같은 주제나 문제 형식일 필요는 없어요')) problems.push('소마셈 주제 일치 비필수 안내 누락');
       if(volume && r.bands !== '6/10/4') problems.push('구간 ' + r.bands);
-      if(bookSeries && lang === 'ko' && (!r.source.includes(bookVolume + '권 완료 기준') || !r.source.includes('실제 교재의 문제·숫자 범위·풀이 방식과 같다는 검증은 없어요'))) problems.push('교재 권·검증 경계 안내 누락');
+      if(bookSeries && lang === 'ko' && (!r.source.includes(bookVolume + '권 완료 기준') || !r.source.includes('교재와 같은 주제나 문제 형식일 필요는 없어요'))) problems.push('교재 권·주제 일치 비필수 안내 누락');
       if(bookSeries && r.bands !== '6/10/4') problems.push('구간 ' + r.bands);
       if(isMixed && lang === 'ko' && (!r.source.includes('완료한 교재 3권 함께 확인') || !r.source.includes('모든 교재가 들어가지 않을 수 있어요'))) problems.push('병행 교재 편성 안내 누락');
       if(isMixed && r.bands !== '6/10/4') problems.push('병행 구간 ' + r.bands);

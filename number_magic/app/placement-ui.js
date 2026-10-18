@@ -132,7 +132,7 @@
       let bookPlan=null;
       if(focus&&!s.baselineId){try{bookPlan=focus.series==='mixed'?core.buildBooks(focus.sources,d.seed):core.buildBook(focus.series,focus.course,d.seed);}catch(_){bookPlan=null;}}
       const baseline=bookPlan?stages.find(x=>x.id===bookPlan.baseline.id):stages.find(x=>x.id===(mayChoose?(s.baselineId||(s.route==='school'?null:candidate)):''));
-      const scopeText=bookPlan?l(bookPlan.book.title)+' · '+(typeof bookPlan.book.topics==='string'?bookPlan.book.topics:l(bookPlan.book.topics)):baseline?stageLabel(baseline):'';
+      const scopeText=bookPlan?l(bookPlan.book.title):baseline?stageLabel(baseline):'';
       const ages=[['',t('현재 나이 선택','Select current age','选择目前年龄')],...Array.from({length:16},(_,i)=>[String(i+4),t((i+4)+'세','Age '+(i+4),(i+4)+'岁')])];
       const grades=[['pre',t('취학 전','Preschool','学龄前')],...Array.from({length:6},(_,i)=>['e'+(i+1),t('초'+(i+1),'Grade '+(i+1),'小学'+(i+1)+'年级')]),...Array.from({length:3},(_,i)=>['m'+(i+1),t('중'+(i+1),'Grade '+(i+7),'初中'+(i+1)+'年级')]),...Array.from({length:3},(_,i)=>['h'+(i+1),t('고'+(i+1),'High school '+(i+1),'高中'+(i+1)+'年级')])];
       const schoolGrades=grades.filter(x=>x[0]!=='pre');

@@ -614,12 +614,12 @@
       book: { series, course: n, label: clone(name), topics,
         title: text(series === 'dunoro' ? name.ko + ' 과정 ' + n + ' 완료 기준' : name.ko + ' ' + n + unit.ko + ' 완료 기준', name.en + ' ' + unit.en + ' ' + n + ' completed', name.zh + ' 第' + n + unit.zh + '已完成'),
         mix: series === 'dunoro' ? null : text('이전 권 6 · 완료 권 10 · 다음 권 4', 'Previous volume 6 · completed volume 10 · next volume 4', '前一册6 · 已完成册10 · 下一册4'),
-        notice: series === 'dunoro' ? text('과정표의 연산 주제를 앱 문항으로 확인해요(이전 6 · 과정 ' + n + ' 10 · 다음 4). 교재의 실제 문제와 숫자 범위·풀이 형식이 같은지는 확인되지 않았어요.',
-          'App questions check the course-table arithmetic topics (6 earlier, 10 from course ' + n + ', 4 next). Their number ranges and solution formats have not been verified against the book’s actual questions.',
-          '按课程表中的运算主题用应用题目确认（之前6题、课程' + n + '的10题、之后4题）。题目的数字范围和解题形式尚未与教材实题核对。') :
-          text('공개 목차의 연산 주제로 만든 앱 자체 문항이에요. 실제 교재의 문제·숫자 범위·풀이 방식과 같다는 검증은 없어요.',
-            'Original app questions follow public arithmetic topic headings. Their items, number ranges and solution methods have not been verified against the book.',
-            '按公开目录的运算主题制作应用题目。题目、数字范围及解法尚未与教材实题核对。') },
+        notice: series === 'dunoro' ? text('완료한 과정의 진도를 참고해 앱 문항 20개로 이전·현재·다음을 확인해요. 교재와 같은 주제나 문제 형식일 필요는 없어요.',
+          'Twenty original app questions check earlier, current and next skills around the completed course. They do not need to match the book’s topics or question format.',
+          '参考已完成课程的进度，用20道应用题确认此前、当前和后续能力。题目不必与教材主题或题型相同。') :
+          text('완료한 권의 진도를 참고해 앱 문항 20개로 이전·현재·다음을 확인해요. 교재와 같은 주제나 문제 형식일 필요는 없어요.',
+            'Twenty original app questions check earlier, current and next skills around the completed volume. They do not need to match the book’s topics or question format.',
+            '参考已完成册次的进度，用20道应用题确认此前、当前和后续能力。题目不必与教材主题或题型相同。') },
       boundaries: { previous: n === 1 && !bookData(series).beforeBook ? 'app-foundation' : null, next: set.last ? (series === 'dunoro' ? 'same-course' : 'same-volume') : null } };
   }
   // The public P contents names exact arithmetic topics, but gives no real
@@ -685,9 +685,9 @@
         mix: n === 1 ? text('앱 수 순서 6 · 완료 권 10 · 다음 권 4', 'App number order 6 · completed volume 10 · next volume 4', '应用数序6 · 已完成册10 · 下一册4') :
           n === 8 ? text('이전 권 6 · 완료 권 10 · P8 추가 4', 'Previous volume 6 · completed volume 10 · more P8 4', '前一册6 · 已完成册10 · P8补充4') :
           text('이전 권 6 · 완료 권 10 · 다음 권 4', 'Previous volume 6 · completed volume 10 · next volume 4', '前一册6 · 已完成册10 · 下一册4'),
-        notice: text('2019년 발행 세트 목차의 연산 주제로 만든 앱 자체 문항이에요. 실제 교재의 문제·그림·풀이 방식과 같다는 검증은 없어요.',
-          'Original app questions follow the 2019 set’s arithmetic headings. They have not been verified against the book’s actual items, pictures or solution methods.',
-          '按2019年套装目录中的运算主题制作应用题目。尚未与教材实题、图片或解法核对。') },
+        notice: text('완료한 권의 진도를 참고해 앱 문항 20개로 이전·현재·다음을 확인해요. 교재와 같은 주제나 문제 형식일 필요는 없어요.',
+          'Twenty original app questions check earlier, current and next skills around the completed volume. They do not need to match the book’s topics or question format.',
+          '参考已完成册次的进度，用20道应用题确认此前、当前和后续能力。题目不必与教材主题或题型相同。') },
       boundaries: { previous: n === 1 ? 'app-foundation' : null, next: n === 8 ? 'same-volume' : null } };
   }
   function buildBooks(sources, seed) {
@@ -728,11 +728,11 @@
     return { baseline: clone(baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
       book: { series: 'mixed', sources: picked.map(x => ({ series: x.series, course: x.course })),
         title: text('완료한 교재 ' + picked.length + '권 함께 확인', 'Checking ' + picked.length + ' completed books together', '合并确认' + picked.length + '本已完成教材'),
-        topics: text('교재별 연산 주제', 'Arithmetic topics from each book', '各本教材的运算主题'),
+        topics: text('교재별 학습 진도', 'Learning progress across books', '各本教材的学习进度'),
         mix: text('여러 교재의 이전 6 · 완료 10 · 다음 4', 'Across books: previous 6 · completed 10 · next 4', '跨教材：此前6 · 已完成10 · 后续4'),
-        notice: text('선택한 교재의 연산 주제에서 중복을 빼고 번갈아 문항을 골랐어요. 이전 6·다음 4문항에는 모든 교재가 들어가지 않을 수 있어요. 교재 실문항과 숫자 범위·풀이 방식의 일치는 확인되지 않았어요.',
-          'Questions alternate across selected book topics without repeats. The 6 earlier and 4 next items may not include every book. Their number ranges and solution methods have not been verified against actual book items.',
-          '按所选教材的运算主题轮流选题并去重。此前6题和后续4题可能无法覆盖每本书。数字范围及解法尚未与教材实题核对。') },
+        notice: text('서로 다른 주제의 교재도 함께 확인할 수 있어요. 완료한 교재별 진도를 참고해 앱 문항을 번갈아 뽑았어요. 이전 6·다음 4문항에는 모든 교재가 들어가지 않을 수 있어요.',
+          'Books with different topics can be checked together. Original app questions alternate across the completed books. The 6 earlier and 4 next items may not include every book.',
+          '不同主题的教材也可一起测评。依据各本已完成教材的进度轮流出应用题。此前6题和后续4题可能无法覆盖每本书。') },
       boundaries: { previous: 'mixed-topics', next: 'mixed-topics' } };
   }
   function normalize(value, array) {
