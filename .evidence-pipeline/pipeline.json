@@ -979,7 +979,7 @@
       "requires_response": true,
       "contains_answer_steps": true,
       "has_automated_checks": true,
-      "scope": "Learning actions reviewed against all33 private source images;33 authored types/126 practice variants, not copies of126 source questions or official source answers. Original games and worksheets retained.",
+      "scope": "Learning actions reviewed against all33 user-supplied source images;33 authored types/126 practice variants, not copies of126 source questions or official source answers. Original games and worksheets retained.",
       "gates": [
         {
           "id": "source-scope",
@@ -989,7 +989,7 @@
             {
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
-              "note": "Private original33 files/index verified; public action correspondence and limits recorded. Original images/identifiers excluded from public code and QA ZIP."
+              "note": "Original33 files/index verified; public action correspondence and limits recorded. Original images/identifiers excluded from public code and QA ZIP. Original-folder anyone-link reader permissions already existed and were not changed."
             }
           ]
         },
@@ -1109,7 +1109,7 @@
             {
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
-              "note": "Pages39119715795 succeeded;28 live assets match code SHA;3 live activity routes and4 worksheet modes/entry checked, console errors0. Four Drive PDFs and281-entry review ZIP fully downloaded and hashed."
+              "note": "Pages39119715795 succeeded;28 live assets match code SHA;3 live activity routes and4 worksheet modes/entry checked, console errors0. Four Drive PDFs and283-entry review ZIP fully downloaded and hashed. Metadata deployment also succeeded;29 final assets and legacy progress reload verified."
             }
           ]
         }
@@ -1121,13 +1121,15 @@
         "worksheet_url": "https://lete-on.gfieldacademy.net/geometry/worksheet/paper-craft/",
         "drive_folder_id": "1rtk4OCOpVHJbH2j5bdvpAclgg9eS5yUg",
         "review_file_id": "1m2T7kQP8tg_91msDmbX4yOyJQee4NMi9",
-        "review_sha256": "c1dec217c1284f71c0a40aefd0c83d44f3d70f3adf85467ef0ab2660e2270866",
+        "review_sha256": "b9495a0afd80bbd7d569f34b4aed30ad33835e4132470cd9e73a4309bab21e49",
         "pdf_drive_ids": [
           "1fSxvhZnDESYciro9XAqhbk1iW0RJ5cPw",
           "1QjI1ZAIWhAdXrsp0MMx6ZEPYSW0Ugm4h",
           "1u_2SZJFcrkUKxZzHmm9H2uNGnQqbSdg-",
           "1kAsSoI-VGPR3D-EB2YlD_amYBztkl-JX"
-        ]
+        ],
+        "metadata_commit": "6a99f28207f867fef7a13b94aa816eaf3775b32a",
+        "metadata_workflow": "https://github.com/docssam1/lete-on/actions/runs/39121022569"
       }
     }
   ]
