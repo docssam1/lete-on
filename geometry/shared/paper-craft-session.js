@@ -1,7 +1,7 @@
 import {markKey,polygonCentroid,markContains,inside,insideWithMargin,box,unfoldMarks} from './paper-craft-model.js?v=20261018-3';
 import {foldOnce,signatureKey} from '../games/paper-fold/reverse-fold.js?v=20261018-3';
 export const markAnchor=m=>m.kind==='circle'?m.center:polygonCentroid(m.poly);
-export const freshSession=p=>({phase:p.family==='reverse'?'experiment':p.family==='stack'?(p.conditionTop?'bottom':p.build?'build':'peel'):p.initialTurn?'turn':'fold',fold:0,worked:[],opened:0,stamped:[],collected:[],sorted:{},peeled:[],built:[],resolved:[],target:0,trial:null,tries:[],input:'',help:false,customMarks:[]});
+export const freshSession=p=>({phase:p.family==='reverse'?'experiment':p.family==='stack'?(p.build?'build':'peel'):p.initialTurn?'turn':'fold',fold:0,worked:[],opened:0,stamped:[],collected:[],sorted:{},peeled:[],built:[],resolved:[],target:0,trial:null,tries:[],input:'',help:false,customMarks:[]});
 export function designMark(p,value){
   if(!value||!['triangle','square'].includes(value.shape)||!Number.isFinite(value.x)||!Number.isFinite(value.y))return null;
   const packet=p.paperStages.at(-1),b=box(packet),r=Math.min(b.right-b.left,b.bottom-b.top)*.08,{x,y}=value;
@@ -50,7 +50,8 @@ export function act(p,previous,type,value){
   if(type==='discover'&&s.phase==='discover'){
     const marks=p.markStages.at(-1);if(Number.isInteger(value)&&value>=0&&value<marks.length&&!s.collected.includes(value)){s.collected.push(value);accepted=true;if(s.collected.length===marks.length)s.phase='done';}
   }
-  if(type==='bottom'&&s.phase==='bottom'&&value===p.bottom){s.phase='peel';accepted=true;}
+  // Accept the legacy clue action during replay without adding a separate question.
+  if(type==='bottom'&&p.conditionTop&&s.phase==='peel'&&!s.peeled.length&&!s.legacyBottom&&value===p.bottom){s.legacyBottom=true;accepted=true;}
   if(type==='paper'&&['peel','build'].includes(s.phase)){
     const values=s.phase==='build'?s.built:s.peeled,order=s.phase==='build'?p.order:[...p.order].reverse();if(value===order[values.length]){values.push(value);accepted=true;if(values.length===order.length)s.phase='done';}
   }

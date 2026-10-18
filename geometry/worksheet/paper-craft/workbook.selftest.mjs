@@ -16,7 +16,13 @@ for(const lang of ['ko','en','zh','ja'])for(const mode of ['questions','answers'
   const svgIds=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(svgIds).size,svgIds.length,'duplicate SVG masks');renders++;
 }
 for(const id of activityIds)for(const lang of ['ko','en','zh','ja']){
-  const p=buildActivity(id),t={...translation(lang),lang};for(const mode of ['questions','answers']){const html=renderPages(pagePlan([p],mode),[p],t);assert(!/undefined|NaN/.test(html));renders++;}
+  const p=buildActivity(id),t={...translation(lang),lang};for(const mode of ['questions','answers']){const html=renderPages(pagePlan([p],mode),[p],t);assert(!/undefined|NaN/.test(html));renders++;
+    if(p.family==='stack'){
+      const label=p.build?t.bottomOrderLabel:t.orderLabel;
+      assert(html.includes(label),'match the game direction');
+      if(mode==='answers')assert(solutionLines(p,t).includes(`${label}: ${(p.build?p.order:[...p.order].reverse()).join(' → ')}`));
+    }
+  }
 }
 const p=buildActivity('PF-C02-1');let s=freshSession(p);for(let i=0;i<p.folds.length;i++)s=act(p,s,'fold').state;s=act(p,s,'design',{shape:'square',x:.6,y:.75}).state;const same=customPattern(p,JSON.stringify(s.customMarks));assert.deepEqual(same.markStages,withDesign(p,s).markStages);
 assert.throws(()=>customPattern(p,'[]'));assert.throws(()=>customPattern(p,'[{"kind":"polygon","shape":"square","poly":[{"x":2,"y":2}]}]'));

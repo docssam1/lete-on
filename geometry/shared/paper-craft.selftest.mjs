@@ -36,6 +36,18 @@ for(const id of activityIds){
     assert.equal(new Set(p.papers.map(x=>x.id)).size,p.papers.length);assert.deepEqual(visibleRelations(p.papers),p.visibleRelations);
     p.papers.forEach((paper,i)=>{assert.equal(topAt(p.papers,paper.label),i,'label occluded');close(polygonArea(paper.poly),polygonArea(p.papers[0].poly));});assert.equal(topologicalOrders(p.papers,p.relations),1);
     if(p.conditionTop)assert(topologicalOrders(p.papers,p.visibleRelations)>1);
+    assert.equal(state.phase,p.build?'build':'peel');
+    const sequence=p.build?p.order:[...p.order].reverse();
+    assert.equal(act(p,state,'paper',sequence[1]).accepted,false,'wrong next paper');
+    const first=act(p,state,'paper',sequence[0]);assert(first.accepted);
+    assert.equal(act(p,first.state,'paper',sequence[0]).accepted,false,'duplicate paper');
+    assert.deepEqual(restoreSession(p,[['paper',sequence[0]]]).state,first.state,'resume ordered papers');
+    if(p.conditionTop){
+      const legacy=restoreSession(p,[['bottom',p.bottom],['paper',p.top]]);
+      assert.equal(legacy.actions.length,2,'preserve the former bottom-clue move');
+      assert.deepEqual(legacy.state.peeled,[p.top]);
+      assert.equal(act(p,legacy.state,'bottom',p.bottom).accepted,false);
+    }
   }
   assert.equal(act(p,state,'sum').accepted,false);assert.equal(act(p,state,'open').accepted,false);
   for(let safety=0;state.phase!=='done'&&safety<150;safety++){

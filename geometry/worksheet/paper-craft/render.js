@@ -29,12 +29,12 @@ export function replyPanels(p,t){
   if(['stack','reverse'].includes(p.family))return [];
   return p.paperStages.slice(0,-1).reverse().map((poly,i)=>({label:`${i+1} ${t.predict}`,poly,blank:true,numbers:p.family==='number'&&i===p.folds.length-1?p.numbers:undefined,grid:p.family==='number'&&i===p.folds.length-1,gridSize:p.gridSize,zoom:true,creases:chordSegments(poly,p.folds[p.folds.length-i-1])}));
 }
-export function taskText(p,t){return p.patternOptions?t.choiceTask:p.family==='number'?(p.askRemain?t.numberRemain:t.numberCut):p.family==='top'?t.topTask:p.family==='sort'?t.sortTask:p.family==='stack'?t.stackTask:p.family==='reverse'?t.reverseTask:t.patternTask;}
+export function taskText(p,t){return p.patternOptions?t.choiceTask:p.family==='number'?(p.askRemain?t.numberRemain:t.numberCut):p.family==='top'?t.topTask:p.family==='sort'?t.sortTask:p.family==='stack'?t.stackTask+' ('+(p.build?t.bottomOrderLabel:t.orderLabel)+')':p.family==='reverse'?t.reverseTask:t.patternTask;}
 export function solutionLines(p,t){
   const a=answerFor(p);
   if(a.kind==='number'){const groups=a.plan.filter(s=>s.kind==='make-ten'),last=a.plan.at(-1);return [a.numbers.join(' + '),...groups.map(g=>g.contributions.map(c=>c.take).join(' + ')+' = 10'+g.contributions.filter(c=>c.after>0).map(c=>` (${c.before} = ${c.take} + ${c.after})`).join('')),groups.length?`${last.tenCount*10} + ${last.remainder} = ${last.total}`:`${a.numbers.join(' + ')} = ${last.total}`];}
   if(a.kind==='sort')return [`${t.triangleCount}: ${a.triangle}`,`${t.rhombusCount}: ${a.rhombus}`,`${t.totalPieces}: ${a.triangle} + ${a.rhombus} = ${a.total}`];
-  if(a.kind==='stack')return [`${t.topLabel}: ${a.top}`,`${t.bottomLabel}: ${a.bottom}`,`${t.orderLabel}: ${a.topToBottom.join(' → ')}`];
+  if(a.kind==='stack')return [`${t.topLabel}: ${a.top}`,`${t.bottomLabel}: ${a.bottom}`,`${p.build?t.bottomOrderLabel:t.orderLabel}: ${(p.build?a.bottomToTop:a.topToBottom).join(' → ')}`];
   if(a.kind==='reverse')return [t.reverseHint,`${t.answer}: ${a.keys.map(k=>k.toUpperCase()).join(', ')}`];
   if(p.patternOptions)return [t.patternHint,`${t.answer}: ${String.fromCharCode(65+p.patternAnswer)}`];
   if(p.family==='cut')return [t.patternHint];
@@ -45,7 +45,7 @@ function card(p,n,t,answers=false){
   const panels=panelsFor(p,t,answers),prefix=`${answers?'a':'q'}-${n}`,conditions=answers?panels:panels;
   let extra='';
   if(answers){extra=`<div class="solution-lines">${solutionLines(p,t).map(line=>`<p>${e(line)}</p>`).join('')}</div>`;if(p.family==='reverse'&&p.resultOptions)extra+=`<div class="answer-folds">${p.resultOptions.filter(o=>o.correct).map((o,i)=>figure({label:o.key.toUpperCase(),poly:p.paper,creases:[o.chord]},prefix+'-crease-'+i)).join('')}</div>`;}
-  else if(p.family==='stack')extra=cutouts(p,t)+`<p class="written">${e(t.topLabel)} _____　${e(t.bottomLabel)} _____</p><p class="written">${e(t.orderLabel)} ${p.papers.map(()=>'<span class="order-box"></span>').join('')}</p>`;
+  else if(p.family==='stack')extra=cutouts(p,t)+`<p class="written">${e(t.topLabel)} _____　${e(t.bottomLabel)} _____</p><p class="written">${e(p.build?t.bottomOrderLabel:t.orderLabel)} ${p.papers.map(()=>'<span class="order-box"></span>').join('')}</p>`;
   else if(p.family==='reverse')extra=`<div class="reverse-response">${p.lineChoices?p.lineChoices.map(c=>figure({label:c.key.toUpperCase(),poly:p.paper,creases:[c.chord]},prefix+'-line-'+c.key)).join(''):p.resultOptions.map(o=>`<label><span class="paper-check"></span> ${o.key.toUpperCase()}</label>`).join('')}</div><div class="writing-space">${e(t.working)}</div>`;
   else if(p.patternOptions)extra=`<div class="reply-pictures pattern-intermediate">${replyPanels(p,t).slice(0,-1).map((panel,i)=>figure(panel,prefix+'-r-'+i)).join('')}</div><div class="pattern-answers">${p.patternOptions.map((marks,i)=>figure({label:String.fromCharCode(65+i),poly:p.paperStages[0],marks},prefix+'-option-'+i)).join('')}</div><p class="written">${e(t.answer)} ______</p>`;
   else {extra=`<div class="reply-pictures">${replyPanels(p,t).map((panel,i)=>figure(panel,prefix+'-r-'+i)).join('')}</div>`;if(p.family==='sort')extra+=`<div class="count-boxes"><p>${e(t.triangleCount)} _____</p><p>${e(t.rhombusCount)} _____</p><p>${e(t.totalPieces)} _____</p></div>`;else if(p.family==='number')extra+=`<div class="writing-space">${e(t.working)} <span>${e(t.sum)} ______</span></div>`;else if(p.family==='top')extra+=`<p class="written">${e(t.topNumber)} ______</p>`;}

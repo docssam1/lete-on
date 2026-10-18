@@ -97,7 +97,7 @@ class Writer:
    for i,paper in enumerate(sorted(p['papers'],key=lambda p:p['id'])):
     px=21+(i%4)*45;py=y+(i//4)*49;w=(paper['poly'][1]['x']-paper['poly'][0]['x'])*90;h=(paper['poly'][2]['y']-paper['poly'][1]['y'])*90
     self.rect(px,py,w,h,COLORS[paper['color']],True);self.text(paper['id'],px+w/2-2,py+3,14,10)
-   y+=100;y=self.text(f"{T['topLabel']} _____     {T['bottomLabel']} _____",14,y,11)+2;y=self.text(T['orderLabel'],14,y,10.5)+2
+   y+=100;y=self.text(f"{T['topLabel']} _____     {T['bottomLabel']} _____",14,y,11)+2;y=self.text(T['bottomOrderLabel'] if p.get('build') else T['orderLabel'],14,y,10.5)+2
    for i in range(len(p['papers'])):self.rect(14+i*16,y,12,10)
    y+=11
   elif p['family']=='reverse':

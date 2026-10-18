@@ -1,10 +1,10 @@
 import {catalog,buildActivity} from '../../shared/paper-craft-catalog.js?v=20261018-3';
-import {act,restoreSession,freshSession,newMarks,markAnchor,withDesign} from '../../shared/paper-craft-session.js?v=20261018-3';
+import {act,restoreSession,freshSession,newMarks,markAnchor,withDesign} from '../../shared/paper-craft-session.js?v=20261018-4';
 import {renderScene,renderMotion,currentPaper,resultSvg,stackReference,smallPaper,escapeHtml,stackMaterialStyle} from '../../shared/paper-craft-svg.js?v=20261018-3';
 import {inside,box,polygonCentroid} from '../../shared/paper-craft-model.js?v=20261018-3';
 import {makeTenPlan} from '../number-paper/calculation-help.js?v=2';
 import {readGameProgress,saveGameProgress} from '../../shared/profile-storage.js';
-import {languages,translation} from './i18n.js?v=20261018-3';
+import {languages,translation} from './i18n.js?v=20261018-4';
 const $=s=>document.querySelector(s),params=new URLSearchParams(location.search),familyKeys=['cut','punch','sort','number','top','reverse','stack'];
 let lang=languages.includes(params.get('lang'))?params.get('lang'):'ko',saved=readGameProgress('paper-craft'),records=saved.records&&typeof saved.records==='object'?saved.records:{},p=null,state=null,actions=[],busy=false,selectedPiece=null,selectedShape='triangle',feedback='',gesture=null,suppressClickUntil=0,suppressClickPoint=null,keyboardCursor=null;
 const t=()=>translation(lang),effective=()=>withDesign(p,state),e=escapeHtml;
@@ -25,6 +25,7 @@ function render(){
 function toolsHtml(q,text){
   const done='<div class="magic-done"><span aria-hidden="true">✦</span><strong>'+text.great+'</strong></div>';
   if(state.phase==='done'){
+    if(p.family==='stack')return done+stackOrderHtml(text);
     if(p.family==='sort')return done+`<div class="shape-baskets">${['triangle','rhombus'].map(shape=>`<div class="shape-basket"><span>${e(text[shape])}</span><strong>${Object.values(state.sorted).filter(x=>x===shape).length}</strong></div>`).join('')}</div>`;
     if(p.family==='number')return done+`<div class="number-basket"><h2>${e(text.sum)}</h2><strong class="final-sum">${p.answer}</strong><div class="tokens">${state.collected.map(id=>`<span>${p.numbers[id]}</span>`).join('')}</div></div>`;
     return done;
@@ -42,14 +43,19 @@ function toolsHtml(q,text){
     return `<div class="number-basket" data-basket="true"><h2>${e(text.basket)}</h2><div class="tokens">${numbers.map(n=>`<span>${n}</span>`).join('')}</div>${state.phase==='calculate'?`<form id="sumForm"><label for="sumInput">${e(text.sum)}</label><input id="sumInput" inputmode="numeric" type="text" maxlength="4" autocomplete="off"><button type="submit">${e(text.check)}</button></form><button id="helpLaunch" data-action="help" aria-expanded="${state.help}">${e(text.help)}</button>${help}`:''}</div>`;
   }
   if(p.family==='stack'){
-    const placed=state.phase==='build'?state.built:state.peeled;
-    return `${p.build?`<div class="stack-goal"><h2>${e(text.goal)}</h2>${stackReference(p,text.goal)}</div>`:''}<h2>${e(text.paper)}</h2>${p.conditionTop?`<p class="top-clue">${e(text.condition)}<strong>${p.conditionTop}</strong></p>`:''}<div class="paper-inventory">${[...p.papers].sort((a,b)=>a.id.localeCompare(b.id)).map(paper=>`<button data-action="${state.phase==='bottom'?'bottom':'paper'}" data-value="${paper.id}" style="${stackMaterialStyle(paper.color)}" ${placed.includes(paper.id)?'disabled':''}>${paper.id}${placed.includes(paper.id)?' ✓':''}</button>`).join('')}</div><div class="order-trail">${placed.map(id=>`<span>${id}</span>`).join('')}</div>`;
+    const placed=p.build?state.built:state.peeled;
+    return `${p.build?`<div class="stack-goal"><h2>${e(text.goal)}</h2>${stackReference(p,text.goal)}</div>`:''}${p.conditionTop?`<p class="top-clue">${e(text.condition)}<strong>${p.conditionTop}</strong></p>`:''}${stackOrderHtml(text)}<h2>${e(text.paper)}</h2><div class="paper-inventory">${[...p.papers].sort((a,b)=>a.id.localeCompare(b.id)).map(paper=>`<button data-action="paper" data-value="${paper.id}" style="${stackMaterialStyle(paper.color)}" ${placed.includes(paper.id)?'disabled':''}>${paper.id}${placed.includes(paper.id)?' ✓':''}</button>`).join('')}</div>`;
   }
   if(p.family==='reverse'){
     const options=p.resultOptions||[{pieces:p.resultPieces,key:'goal'}];return `<h2>${e(text.target)}</h2><div class="target-cards">${options.map((option,i)=>`<button data-action="target" data-value="${i}" ${p.lineChoices?'disabled':''} aria-pressed="${state.target===i}" class="${state.resolved.includes(option.key)?'found':''}">${resultSvg(p,option)}${state.resolved.includes(option.key)?'<span aria-label="'+e(text.great)+'">✓</span>':''}</button>`).join('')}</div><div class="crease-tools">${(p.lineChoices||p.creaseHints).map((_,i)=>`<button data-action="trial" data-value="${i}" aria-pressed="${state.trial?.line===i}">${e(text.tryFold)} ${i+1}</button>`).join('')}</div><div class="claims"><button data-action="claim" data-value="yes" ${state.trial?'':'disabled'}>${e(text.yes)}</button>${p.resultOptions?`<button data-action="claim" data-value="no" ${state.trial&&state.tries.length===p.creaseHints.length?'':'disabled'}>${e(text.no)}</button>`:''}</div>`;
   }
   return `<div class="paper-journal"><h2>${e(text.families[familyKeys.indexOf(p.family)])}</h2><ol>${p.folds.map((_,i)=>`<li class="${state.fold>i?'passed':''}">${i+1}<span aria-hidden="true">${state.fold>i?'✓':''}</span></li>`).join('')}</ol>${state.phase==='work'?`<p>${state.worked.length} / ${p.cuts?.length||p.marks.length}</p>`:''}</div>`;
 }
+function stackOrderHtml(text){
+  const placed=p.build?state.built:state.peeled,label=p.build?text.bottomToTop:text.topToBottom;
+  return `<section class="stack-order" aria-label="${e(label)}"><h2>${e(label)} <small>${placed.length} / ${p.papers.length}</small></h2><ol class="order-trail" aria-label="${e(label)}">${p.papers.map((_,i)=>{const paper=p.papers.find(paper=>paper.id===placed[i]);return `<li class="${paper?'filled':i===placed.length?'current':''}" ${paper?`style="${stackMaterialStyle(paper.color)}"`:''} ${i===placed.length?'aria-current="step"':''}><small>${i+1}</small><span>${paper?paper.id:'·'}</span></li>`;}).join('')}</ol><p>${e(state.phase==='done'?text.orderDone:text.orderHint)}</p></section>`;
+}
+
 function stampButton(shape,selected,text){let graphic=shape==='triangle'?'<path d="M25 5L45 42H5Z"/>':shape==='circle'?'<circle cx="25" cy="25" r="18"/>':shape==='L'?'<path d="M5 5H22V28H45V45H5Z"/>':shape==='rhombus'?'<path d="M25 3L47 25L25 47L3 25Z"/>':'<rect x="7" y="7" width="36" height="36"/>';if(shape==='other'){const m=effective().markStages.flat().find(m=>m.shape===shape);if(m?.poly){const b=box(m.poly),scale=40/Math.max(b.right-b.left,b.bottom-b.top);graphic=`<polygon points="${m.poly.map(q=>`${5+(q.x-b.left)*scale},${5+(q.y-b.top)*scale}`).join(' ')}"/>`;}}return `<button data-shape="${shape}" aria-pressed="${selected}" aria-label="${e(text[shape]||shape)}"><svg viewBox="0 0 50 50" aria-hidden="true">${graphic}</svg><span>${e(text[shape]||shape)}</span></button>`;}
 function pointInPaper(event){const svg=$('#stage .craft-svg'),g=$('#stage .paper-world');if(!svg||!g)return null;const point=svg.createSVGPoint();point.x=event.clientX;point.y=event.clientY;return point.matrixTransform(g.getScreenCTM().inverse());}
 function stampAt(point){
@@ -94,7 +100,7 @@ let resizeFrame;window.addEventListener('resize',()=>{cancelAnimationFrame(resiz
 
 let inventoryGesture=null;
 document.addEventListener('pointerdown',event=>{
-  const node=event.target.closest('.paper-inventory button');if(!node||node.disabled||state?.phase!=='build'||busy)return;
+  const node=event.target.closest('.paper-inventory button');if(!node||node.disabled||!['build','peel'].includes(state?.phase)||busy)return;
   inventoryGesture={node,id:node.dataset.value,x:event.clientX,y:event.clientY,dragged:false,ghost:null};node.setPointerCapture(event.pointerId);
 });
 document.addEventListener('pointermove',event=>{
@@ -105,6 +111,6 @@ document.addEventListener('pointermove',event=>{
 document.addEventListener('pointerup',event=>{
   const g=inventoryGesture;inventoryGesture=null;if(!g)return;g.ghost?.remove();if(!g.dragged)return;
   event.preventDefault();suppressClickUntil=Date.now()+400;suppressClickPoint={x:event.clientX,y:event.clientY};
-  if(document.elementFromPoint(event.clientX,event.clientY)?.closest('#stage'))perform('paper',g.id);
+  if(document.elementFromPoint(event.clientX,event.clientY)?.closest('#stage,.stack-order'))perform('paper',g.id);
 });
 document.addEventListener('pointercancel',()=>{inventoryGesture?.ghost?.remove();inventoryGesture=null;});
