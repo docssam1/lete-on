@@ -307,8 +307,10 @@ function sourceHtml(stage){
     COMPLETED_BOOKS.map(function(label){ return '<li>' + esc(label) + '</li>'; }).join('') + '</ol></div>' : '';
   var schoolPart = SCHOOL_SCOPE ? '<div class="pl-school"><b>' + esc(T('선택한 교과 진도', 'Selected school progress', '所选学校进度')) + ':</b> ' + esc(SCHOOL_SCOPE) + '</div>' : '';
   var book = PLAN_NOW && PLAN_NOW.book;
+  var otherBooksNote = book && COMPLETED_BOOKS.length > 1 ? '<br>' + esc(T('함께 기록한 다른 교재는 이 문항의 출제 기준에 포함되지 않았어요.', 'Other recorded books did not determine these questions.', '同时记录的其他教材未用于本次出题。')) : '';
   var scope = book ? '<div class="pl-app-scope"><b>' + esc(L(book.title)) + ':</b> ' + esc(book.topics) +
-    ' · ' + esc(T('이전 6 · 과정 ' + book.course + ' 10 · 다음 4', 'Earlier 6 · Course ' + book.course + ' 10 · Next 4', '之前6 · 课程' + book.course + ' 10 · 之后4')) + '</div>' :
+    ' · ' + esc(T('이전 6 · 과정 ' + book.course + ' 10 · 다음 4', 'Earlier 6 · Course ' + book.course + ' 10 · Next 4', '之前6 · 课程' + book.course + ' 10 · 之后4')) +
+    '<br>' + esc(L(book.notice)) + otherBooksNote + '</div>' :
     '<div class="pl-app-scope"><b>' + esc(T('앱 진단 기준 주제', 'App diagnostic topic', '应用测评基准主题')) + ':</b> ' + esc(L(stage.label)) +
     ' · ' + esc(T('이전 6 · 현재 10 · 다음 4', 'Earlier 6 · Current 10 · Next 4', '之前6 · 当前10 · 之后4')) + '</div>';
   return '<div class="pl-source">' + bookPart + schoolPart + scope + '</div>';
