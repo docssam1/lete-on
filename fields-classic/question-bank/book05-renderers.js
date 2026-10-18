@@ -754,9 +754,9 @@ function sourceSplitTree(visual) {
 // 6권: 「12 = 2 × □ = 4 × □」처럼 null 자리가 빈칸(가·나…)인 식.
 function sourceBlankEquation(visual) {
   let k = 0;
-  const tokens = visual.tokens.map((t) => t == null ? `<i class="blank">${BLANK_LABELS[k++]}</i>` : `<span class="${/^[+×÷=\-:]$/.test(t) ? "op" : "t"}">${escapeHtml(t)}</span>`).join("");
+  const tokens = visual.tokens.map((t) => t == null ? `<i class="blank">${BLANK_LABELS[k++]}</i>` : t.startsWith("*") ? `<span class="t hl">${escapeHtml(t.slice(1))}</span>` : `<span class="${/^[+×÷=\-:()]$/.test(t) ? "op" : "t"}">${escapeHtml(t)}</span>`).join("");
   let j = 0;
-  return `<div class="b5-src-blankeq" role="img" aria-label="${escapeHtml(visual.tokens.map((t) => t ?? `빈칸 ${BLANK_LABELS[j++]}`).join(" "))}">${tokens}</div>`;
+  return `<div class="b5-src-blankeq" role="img" aria-label="${escapeHtml(visual.tokens.map((t) => t == null ? `빈칸 ${BLANK_LABELS[j++]}` : t.replace(/^\*/, "")).join(" "))}">${tokens}</div>`;
 }
 
 // 6권: 호가 그려진 수직선. points = 묶음 경계의 수(이 수로 칸 위치를 정한다), groups = 묶음마다 칸 수·호 모양,
@@ -976,6 +976,14 @@ function sourceCutRect(visual) {
   return `<div class="b5-src-quad" role="img" aria-label="${escapeHtml(`직사각형을 잘라 가장 큰 정사각형을 만드는 그림${L.top ? `, 가로 ${L.top}` : ""}${L.left ? `, 세로 ${L.left}` : ""}${L.strip ? `, 잘라 낸 폭 ${L.strip}` : ""}`)}"><svg viewBox="0 0 ${sx + H + 12} ${y + H + 34}" style="width:min(100%,${Math.round((sx + H + 12) * 1.2)}px)">${body}</svg></div>`;
 }
 
+// 6권: 넓이 모형(타일) 곱셈. 위에 십의 자리 몫과 일의 자리 몫, 오른쪽에 곱하는 수. 두 칸은 빈칸 가·나.
+function sourceAreaTiles(visual) {
+  const W1 = 120, W2 = 50, H = 90, x = 20, y = 30;
+  const box = (bx, w, k) => `<rect class="tile${k}" x="${bx}" y="${y}" width="${w}" height="${H}"/><rect class="qb" x="${bx + w / 2 - 13}" y="${y + H / 2 - 13}" width="26" height="26" rx="4"/><text class="ql" x="${bx + w / 2}" y="${y + H / 2}">${BLANK_LABELS[k]}</text>`;
+  const body = box(x, W1, 0) + box(x + W1, W2, 1) + `<text x="${x + W1 / 2}" y="${y - 14}">${escapeHtml(visual.tens)}</text><text x="${x + W1 + W2 / 2}" y="${y - 14}">${escapeHtml(visual.ones)}</text><text x="${x + W1 + W2 + 22}" y="${y + H / 2}">${escapeHtml(visual.m)}</text>`;
+  return `<div class="b5-src-quad" role="img" aria-label="${escapeHtml(`타일 그림: 가로 ${visual.tens}와 ${visual.ones}, 세로 ${visual.m}. 두 칸은 빈칸 가, 나`)}"><svg viewBox="0 0 ${x + W1 + W2 + 50} ${y + H + 12}" style="width:min(100%,300px)">${body}</svg></div>`;
+}
+
 export function book05Markup(visual) {
   if (!visual || visual.kind !== "book5") return "";
   switch (visual.subtype) {
@@ -1032,6 +1040,7 @@ export function book05Markup(visual) {
     case "source-grid-shape": return sourceGridShape(visual);
     case "source-ortho": return sourceOrtho(visual);
     case "source-cut-rect": return sourceCutRect(visual);
+    case "source-area-tiles": return sourceAreaTiles(visual);
     case "digit-condition": return digitCondition(visual);
     case "multiplication-table": return multiplicationTable(visual);
     case "product-cycle": return productCycle(visual);
