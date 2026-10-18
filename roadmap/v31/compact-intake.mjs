@@ -1,5 +1,5 @@
 import {trackCourses,koreaDate} from './flow.mjs';
-import {commitLearning} from './quick-flow.mjs';
+import {commitLearning,syncQuickCourseDraft} from './quick-flow.mjs';
 import {esc} from './intake.mjs';
 import {bookScopeOptions} from './book-scope-options.mjs';
 
@@ -28,12 +28,13 @@ function seedGoal(s,key){
 }
 function makeDraft(s){
  const q=s.wizard.quick,stage=stageValid(q.stage)?q.stage:/^(초[1-6]|중[1-3]|고[1-3])$/.test(s.profile.grade)?s.profile.grade:[4,5,6,7].includes(s.profile.reportedAge)?`p${s.profile.reportedAge}`:'';
+ const pendingContext=s.wizard.step==='learning'&&q.scene?.active&&q.scene.context!=='editing';
  const rows={};
  for(const key of tracks){
   const c=s.courses.find(x=>x.id===q.courseIds?.[key])||trackCourses(s,key).at(-1);
-  const legacy=!c&&s.wizard.step==='learning'&&q.scene?.active&&q.scene.context!=='editing'&&['book','both'].includes(q.scene.choices?.[key])&&String(q.draft[`learn:${key}:name`]||'').trim()?{name:String(q.draft[`learn:${key}:name`]).trim(),volume:String(q.draft[`learn:${key}:volume`]||''),range:String(q.draft[`learn:${key}:range`]||''),completion:q.draft[`learn:${key}:completion`]||'unknown',completionInput:q.draft[`learn:${key}:completionInput`]||'unentered'}:null;
-  const choice=c?.course||legacy?.name||(s.wizard.axisStatus[key]==='not_started'?N:s.wizard.axisStatus[key]==='unknown'||s.wizard.quick.scene?.choices?.[key]==='unknown'?K:U);
-  rows[key]={choice,name:c?.course||legacy?.name||'',volumeChoice:c?.volume||legacy?.volume||'',volume:c?.volume||legacy?.volume||'',courseId:c?.id||'',dirty:false,pendingDraft:legacy,baseline:c?{name:c.course||'',volume:c.volume||'',range:c.range||'',completion:c.completion||'unknown',completionInput:c.completionInput||'',level:c.level||'unknown'}:null};
+  const legacy=pendingContext&&(['book','both'].includes(q.scene.choices?.[key])||q.scene.cursor===`${key}-book`||q.scene.cursor===`${key}-progress`||q.scene.pendingTracks?.includes(key))&&String(q.draft[`learn:${key}:name`]||'').trim()?{name:String(q.draft[`learn:${key}:name`]).trim(),volume:String(q.draft[`learn:${key}:volume`]||''),range:String(q.draft[`learn:${key}:range`]||''),completion:q.draft[`learn:${key}:completion`]||'unknown',completionInput:q.draft[`learn:${key}:completionInput`]||'unentered'}:null;
+  const choice=legacy?.name||c?.course||(s.wizard.axisStatus[key]==='not_started'?N:s.wizard.axisStatus[key]==='unknown'||s.wizard.quick.scene?.choices?.[key]==='unknown'?K:U);
+  rows[key]={choice,name:legacy?.name||c?.course||'',volumeChoice:legacy?.volume??c?.volume??'',volume:legacy?.volume??c?.volume??'',courseId:c?.id||'',dirty:false,pendingDraft:legacy,baseline:c?{name:c.course||'',volume:c.volume||'',range:c.range||'',completion:c.completion||'unknown',completionInput:c.completionInput||'',level:c.level||'unknown'}:null};
  }
  const a=s.wizard.academies.find(a=>a.id===q.academyId)||s.wizard.academies.at(-1);
  const institution=a?(academyNames.includes(a.institution)?a.institution:'other'):s.wizard.thinkingExperience==='not_started'?N:U;
@@ -155,7 +156,7 @@ function applyInterest(s,key,value){
 }
 
 export function commitCompact(s){
- const next=structuredClone(s),c=ensureCompact(next),q=next.wizard.quick;
+ const next=structuredClone(s),c=ensureCompact(next),q=next.wizard.quick,unchangedCourseIds=new Set();
  if(!stageValid(c.stage))throw Error('아이의 나이 또는 학년을 골라 주세요.');
  q.stage=c.stage;
  if(isPreschool(c.stage)){
@@ -176,16 +177,22 @@ export function commitCompact(s){
    if(!trackCourses(next,key).length){if(row.choice===N)next.wizard.axisStatus[key]='not_started';else if(row.choice===K)next.wizard.axisStatus[key]='unknown';else delete next.wizard.axisStatus[key];}
    continue;
   }
-  const name=String(row.choice===CUSTOM?row.name:row.choice).trim(),volume=String(row.volume||'').trim();
-  if(!name)throw Error(`${trackLabels[key]} 교재 이름을 적거나 교재 선택으로 바꿔 주세요.`);
-  const old=next.courses.find(x=>x.id===row.courseId);
+  const name=String(row.choice===CUSTOM?row.name:row.choice),volume=String(row.volume||'');
+  if(!name.trim())throw Error(`${trackLabels[key]} 교재 이름을 적거나 교재 선택으로 바꿔 주세요.`);
+  // Older compact drafts can lack row IDs even though quick already saved them.
+  // Recover only that explicit same-track ID; never match another record by name.
+  const old=trackCourses(next,key).find(x=>x.id===(row.courseId||q.courseIds[key]));
+  if(row.courseId&&!old)throw Error('연결된 교재 기록을 찾을 수 없어요. 로드맵에서 교재 수정으로 다시 열어 주세요.');
   // A different book is a new record; older books remain available after results.
   if(old?.course===name)q.courseIds[key]=old.id;else delete q.courseIds[key];
-  const sameScope=old?.course===name&&old.volume===volume,pending=row.pendingDraft,samePending=!!pending&&pending.name===name&&pending.volume===volume;
+  const sameBook=old?.course===name,sameScope=sameBook&&old.volume===volume,pending=row.pendingDraft,samePending=!!pending&&pending.name===name&&pending.volume===volume;
+  if(sameScope&&!samePending)unchangedCourseIds.add(old.id);
   q.draft[`learn:${key}:name`]=name;q.draft[`learn:${key}:volume`]=volume;
-  q.draft[`learn:${key}:range`]=sameScope?old.range||'':samePending?pending.range:'';
-  q.draft[`learn:${key}:completion`]=sameScope?old.completion||'unknown':samePending?pending.completion:'unknown';
-  q.draft[`learn:${key}:completionInput`]=sameScope?old.completionInput||'unentered':samePending?pending.completionInput:'unentered';
+  // Editing this record's scope leaves its other reported details untouched.
+  // A new book/ID never inherits the previous book's progress or provenance.
+  q.draft[`learn:${key}:range`]=samePending?pending.range:sameBook?old.range||'':'';
+  q.draft[`learn:${key}:completion`]=samePending?pending.completion:sameBook?old.completion||'unknown':'unknown';
+  q.draft[`learn:${key}:completionInput`]=samePending?pending.completionInput:sameBook?old.completionInput||'':'unentered';
   q.scene.choices[key]='book';
   // commitLearning inherits saved middle/high level for bare range edits.
  }
@@ -199,6 +206,15 @@ export function commitCompact(s){
   q.academyId=a.id||q.academyId||'';q.draft['academy:institution']=a.choice;q.draft['academy:name']=a.name;q.draft['academy:level']=a.level||'';
  }
  commitLearning(next);
+ // Keep this persisted draft linked to the records created/updated on submit.
+ // Previous/reload must edit those IDs, while changing books still creates one.
+ for(const key of tracks)if(!states.has(c.rows[key].choice))c.rows[key].courseId=q.courseIds[key];
+ if(!states.has(a.choice))a.id=q.academyId;
+ // Repeating an unchanged input is not a new report of learning progress.
+ for(const id of unchangedCourseIds){
+  const before=s.courses.find(course=>course.id===id),index=next.courses.findIndex(course=>course.id===id);
+  next.courses[index]=structuredClone(before);syncQuickCourseDraft(next,id);
+ }
  const thinkingBooks=trackCourses(next,'thinking').length>0,hasAcademy=next.wizard.academies.length>0;
  if(thinkingBooks||hasAcademy)next.wizard.thinkingExperience=thinkingBooks&&hasAcademy?'both':hasAcademy?'academy':'books';
  else if(c.rows.thinking.choice===N&&[U,N].includes(c.academy.choice))next.wizard.thinkingExperience='not_started';
