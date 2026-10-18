@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f3ed">
+<title>수학 사고력 스킬 계통도 | G-FIELD</title>
+<style>
+:root{color-scheme:light;--ink:#222b26;--muted:#69746d;--paper:#f5f3ed;--card:#fffefa;--line:#dce2da;--green:#236b50;--mint:#e2f2e9;--amber:#855d11;--sand:#f7efd9;--blue:#315c77;--sky:#e7f0f5;--shadow:0 12px 38px #24352c0d;font-family:Inter,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}button,input{font:inherit}.shell{max-width:1180px;margin:auto;padding:32px 24px 56px}.topline{display:flex;gap:12px;align-items:center;color:var(--green);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.mark{width:30px;height:30px;border-radius:9px;background:var(--green);display:grid;place-items:center;color:white;font-weight:900}.hero{display:grid;grid-template-columns:1.4fr .6fr;gap:24px;align-items:end;margin:24px 0 25px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:750}.hero h1{font-size:clamp(32px,5vw,54px);line-height:1.08;letter-spacing:-.045em;margin:10px 0 12px}.hero p{max-width:720px;color:#526058;line-height:1.7;margin:0}.checkpoint{padding:18px 20px;background:#e9eee7;border:1px solid #d6dfd5;border-radius:18px;color:#3f5146;font-size:13px;line-height:1.55}.checkpoint strong{display:block;color:var(--ink);font-size:14px;margin-bottom:5px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:25px 0}.stat,.panel,.skill-card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.stat{padding:16px 18px}.stat b{display:block;font-size:25px;letter-spacing:-.04em}.stat span{font-size:12px;color:var(--muted)}.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:26px 0 15px}.search{flex:1 1 230px;position:relative}.search input{width:100%;padding:12px 14px 12px 40px;border:1px solid var(--line);border-radius:12px;background:white;outline:none}.search:before{content:"⌕";position:absolute;left:14px;top:7px;font-size:24px;color:var(--muted)}.filter{padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:white;color:var(--ink)}.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(285px,.75fr);gap:16px;align-items:start}.panel{padding:22px}.panel-head{display:flex;justify-content:space-between;gap:16px;align-items:start;margin-bottom:18px}.panel h2{font-size:20px;margin:0 0 5px;letter-spacing:-.025em}.sub{font-size:12px;color:var(--muted);line-height:1.55}.pill{white-space:nowrap;border-radius:999px;background:var(--sand);color:var(--amber);padding:6px 10px;font-size:11px;font-weight:750}.family{border:1px solid #b8d7c6;background:linear-gradient(135deg,#f3faf5,#fffefa);border-radius:16px;padding:15px 17px;margin-bottom:14px}.family small{display:block;color:var(--green);font-weight:800;font-size:10px;letter-spacing:.09em;margin-bottom:6px}.family strong{font-size:16px}.family p{font-size:12px;line-height:1.5;color:var(--muted);margin:6px 0 0}.tree{display:grid;gap:10px;position:relative}.tree:before{content:"";position:absolute;left:21px;top:8px;bottom:8px;width:2px;background:#d9e6dd}.skill-card{position:relative;padding:14px 15px 14px 52px;transition:.16s ease;cursor:pointer}.skill-card:hover,.skill-card:focus-visible{transform:translateY(-1px);border-color:#82b69a;outline:none}.skill-card[hidden]{display:none}.node{position:absolute;z-index:1;left:10px;top:15px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:white;font-size:11px;font-weight:800;border:3px solid var(--card)}.node-title{font-weight:760;font-size:14px;letter-spacing:-.015em}.node-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.tag{font-size:10px;padding:4px 7px;border-radius:999px;background:#edf0ec;color:#536058}.tag.grade{background:var(--sky);color:var(--blue)}.tag.level{background:var(--sand);color:var(--amber)}.node-desc{font-size:12px;line-height:1.5;color:#5e6962;margin:7px 0 0}.linklabel{font-size:11px;color:var(--green);margin-top:8px;font-weight:680}.side{display:grid;gap:16px}.legend{display:grid;gap:10px;margin-top:14px}.legend-row{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.5;color:#526058}.swatch{flex:0 0 10px;height:10px;border-radius:50%;margin-top:4px}.relation{border-left:3px solid #c8d9ce;padding:8px 0 8px 12px;margin:12px 0;color:#4f5e55;font-size:12px;line-height:1.55}.relation b{color:#26352c}.note{padding:13px 14px;border-radius:12px;background:#f2efe7;font-size:12px;line-height:1.6;color:#5f625a}.empty{display:none;padding:20px;text-align:center;color:var(--muted);font-size:13px}.empty.show{display:block}.footer{border-top:1px solid var(--line);margin-top:23px;padding-top:15px;color:var(--muted);font-size:11px;line-height:1.6}.footer a{color:var(--green)}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.checkpoint{max-width:none}.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:460px){.shell{padding:22px 15px 40px}.stats{gap:8px}.stat{padding:13px}.stat b{font-size:22px}.panel{padding:16px}.panel-head{display:block}.pill{display:inline-block;margin-top:10px}.filter{flex:1}.node-title{font-size:13px}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="topline"><span class="mark">G</span><span>G-FIELD · 사고력 교재 연구</span></div>
+  <section class="hero">
+    <div><div class="eyebrow">Skill map · research prototype</div><h1>수학 사고력<br>스킬 계통도</h1><p>문제의 겉모양이 아니라 학생이 실제로 해야 하는 사고 행동을 기준으로 유형을 묶고, 학년별 교과 수준과 난이도 근거를 연결해 교재·문제은행에 쓸 계통도를 만드는 연구 화면입니다.</p></div>
+    <div class="checkpoint"><strong>현재 범위 · 1031 입문 C 1단원</strong>수 배열표 9–15쪽의 16개 활동을 근거로 유형 행동 후보 6개를 정리했습니다. 학년과 난이도는 검토 중인 후보값으로 표시합니다.</div>
+  </section>
+  <section class="stats" aria-label="연구 통계">
+    <div class="stat"><b>1,214</b><span>전체 온톨로지 노드</span></div><div class="stat"><b>1,658</b><span>전체 관계</span></div><div class="stat"><b>132</b><span>행동 유형 후보</span></div><div class="stat"><b>0</b><span>교사 승인 난이도·학년</span></div>
+  </section>
+  <div class="controls">
+    <label class="search"><input id="search" type="search" placeholder="사고 행동 검색" aria-label="사고 행동 검색"></label>
+    <select id="area" class="filter" aria-label="영역 필터"><option value="all">모든 사고 행동</option><option value="number">수 배열·규칙</option></select>
+    <select id="grade" class="filter" aria-label="교과 수준 필터"><option value="all">교과 수준 전체</option><option value="unconfirmed">학년 미확정만</option></select>
+  </div>
+  <div class="layout">
+    <section class="panel" aria-labelledby="tree-title">
+      <div class="panel-head"><div><h2 id="tree-title">영역별 사고 행동</h2><div class="sub">영역 안 연구 순번 · 카드를 선택하면 해당 근거와 연결 가설을 확인합니다.</div></div><span class="pill">교사 검토 전</span></div>
+      <div class="family"><small>유형 가족 후보 · FAMILY-NUMBER-ARRAY-RULES</small><strong>수 배열 규칙과 위치 추적</strong><p>숫자 배열에서 값·위치를 읽고 규칙을 적용하는 행동 후보를 묶은 가족입니다. 같은 유형이나 필수 선수 순서로 확정한 관계는 없습니다.</p></div>
+      <div id="tree" class="tree" role="list"></div><div id="empty" class="empty">조건에 맞는 사고 행동이 없습니다.</div>
+    </section>
+    <aside class="side">
+      <section class="panel"><h2>계통 연결 가설</h2><div class="sub">화살표는 학습 설계를 위한 검토 가설이며 승인된 선수관계를 뜻하지 않습니다.</div><div id="relations"></div></section>
+      <section class="panel"><h2>수준과 난이도</h2><div class="legend"><div class="legend-row"><i class="swatch" style="background:#548cb1"></i><span><b>교과 학년</b><br>초등 학년은 아직 부여하지 않았습니다. 연령이나 교재 표시만으로 확정하지 않습니다.</span></div><div class="legend-row"><i class="swatch" style="background:#bd9237"></i><span><b>조건부 난이도 후보</b><br>선수 개념 이해를 가정한 잠정 범위입니다. 교사 검토 전이며 성취 기준이 아닙니다.</span></div><div class="legend-row"><i class="swatch" style="background:#48845f"></i><span><b>영역 순번</b><br>현재 분석한 단원 안에서 정한 순번입니다. 전체 교재의 위계 순서와 구분합니다.</span></div></div></section>
+      <div class="note"><b>근거 범위</b><br>입문 C 1단원, 인쇄 쪽수 9–15. Apple Vision 로컬 OCR과 페이지 이미지의 기존 시각 검토 기록을 재사용했습니다. 원문 문항·정답은 이 화면에 싣지 않습니다.</div>
+    </aside>
+  </div>
+  <footer class="footer">연구 체크포인트 v22 · 2026-10-19 · 유형 동등성·선수관계·나선 순서의 교사 승인 0건 · 최소 교과수준 확정 0건<br>이 화면은 연구 후보를 검토하기 위한 프로토타입입니다. 전체 원자료와 출처 해시는 비공개 연구 폴더에서 관리합니다.</footer>
+</main>
+<script>
+'use strict';
+const skills=[
+ {id:'ARR-INTRO-C-01',n:1,title:'정규 수 배열에서 위치값 읽기',difficulty:'1–3',count:5,desc:'행·열 위치와 배열의 순서를 읽어 해당 위치의 값을 찾는다.',links:['결측값 복원과 연결되는 행동 후보'],pages:'9–15쪽'},
+ {id:'ARR-INTRO-C-02',n:2,title:'가로·세로 증가 규칙 적용하기',difficulty:'2–3',count:2,desc:'가로와 세로의 증가 규칙을 구분해 배열의 값을 계산한다.',links:['위치값 읽기에서 규칙 적용으로 확장하는 후보'],pages:'9–15쪽'},
+ {id:'ARR-INTRO-C-03',n:3,title:'잘린 수 배열의 결측값 복원하기',difficulty:'3–4',count:3,desc:'남아 있는 수와 배열 구조에서 규칙을 추론해 빠진 값을 채운다.',links:['위치값 읽기와 연결되는 행동 후보'],pages:'9–15쪽'},
+ {id:'ARR-INTRO-C-04',n:4,title:'수 배열과 도형 반복 주기 결합하기',difficulty:'4',count:1,desc:'수의 배열 규칙과 도형의 반복 단위를 함께 추적한다.',links:['위치값 읽기와 반복 도형 주기 연결 후보'],pages:'9–15쪽'},
+ {id:'ARR-INTRO-C-05',n:5,title:'지그재그 배열에서 번호 위치 찾기',difficulty:'4',count:1,desc:'방향이 번갈아 바뀌는 순서를 추적해 번호와 위치를 대응한다.',links:['위치값 읽기에서 순서 추적으로 확장하는 후보'],pages:'9–15쪽'},
+ {id:'ARR-INTRO-C-06',n:6,title:'대각 배열을 좌표화해 값 계산하기',difficulty:'5',count:1,desc:'대각선의 위치 관계를 좌표처럼 나타내고 규칙을 적용한다.',links:['위치값 읽기에서 좌표화로 확장하는 후보'],pages:'9–15쪽'}
+];
+const relations=[
+ ['위치값 읽기','가로·세로 규칙 적용','배열의 자리를 읽은 뒤 두 방향 규칙을 적용하는지 검토'],
+ ['위치값 읽기','결측값 복원','배열 위치를 읽는 행동이 빠진 값 추론에 어떤 발판인지 검토'],
+ ['위치값 읽기','반복 도형 주기 결합','수 배열과 도형의 반복 단위를 연결하는지 검토'],
+ ['위치값 읽기','지그재그 순서 추적','일반 배열 위치에서 방향 전환 순서로 요구 행동이 바뀌는지 검토'],
+ ['위치값 읽기','대각 위치 좌표화','위치 표현을 좌표화해 값 계산으로 확장하는지 검토']
+];
+const tree=document.querySelector('#tree');
+for(const s of skills){const card=document.createElement('article');card.className='skill-card';card.tabIndex=0;card.setAttribute('role','listitem');card.dataset.area='number';card.dataset.grade='unconfirmed';card.dataset.search=(s.title+' '+s.desc+' '+s.id).toLowerCase();card.innerHTML='<span class="node">'+s.n+'</span><div class="node-title"></div><div class="node-meta"><span class="tag">영역 순번 '+s.n+'</span><span class="tag level">난이도 후보 '+s.difficulty+'</span><span class="tag grade">학년 미확정</span><span class="tag">근거 활동 '+s.count+'개</span></div><p class="node-desc"></p><div class="linklabel">'+s.id+' · 근거 '+s.pages+'</div>';card.querySelector('.node-title').textContent=s.title;card.querySelector('.node-desc').textContent=s.desc;tree.append(card)}
+const rel=document.querySelector('#relations');for(const [a,b,why] of relations){const row=document.createElement('div');row.className='relation';row.innerHTML='<b></b> <span aria-hidden="true">→</span> <b></b><br><span></span>';row.querySelectorAll('b')[0].textContent=a;row.querySelectorAll('b')[1].textContent=b;row.querySelector('span:last-child').textContent=why;rel.append(row)}
+function filter(){const q=document.querySelector('#search').value.trim().toLowerCase(),area=document.querySelector('#area').value,grade=document.querySelector('#grade').value;let count=0;for(const card of tree.children){const show=(!q||card.dataset.search.includes(q))&&(area==='all'||card.dataset.area===area)&&(grade==='all'||card.dataset.grade===grade);card.hidden=!show;if(show)count++}document.querySelector('#empty').classList.toggle('show',count===0)}
+document.querySelector('#search').addEventListener('input',filter);document.querySelector('#area').addEventListener('change',filter);document.querySelector('#grade').addEventListener('change',filter);
+</script>
+</body>
+</html>
