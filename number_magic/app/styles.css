@@ -3137,14 +3137,24 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
   font-family:'Pretendard',sans-serif;text-align:center;cursor:pointer;transition:transform .16s,box-shadow .16s,border-color .16s}
 .nm-cr-desk .nm-vmap-stop:hover{transform:translate(-50%,-50%) translateY(-3px);box-shadow:0 10px 24px rgba(25,24,51,.28)}
 .nm-cr-desk .nm-vmap-stop.is-selected{border-color:#5b3a8f;box-shadow:0 0 0 4px rgba(255,255,255,.82),0 9px 24px rgba(72,47,125,.34)}
-.nm-cr-desk .nm-vmap-stop.is-current::after{content:'';position:absolute;inset:-7px;border:2px dashed #58369b;border-radius:21px;pointer-events:none}
+.nm-cr-desk .nm-vmap-legend{display:flex;justify-content:center;align-items:center;gap:8px 18px;flex-wrap:wrap;margin:10px auto 12px;padding:0 8px;color:var(--la-ink-2);font-size:12px;font-weight:700}
+.nm-cr-desk .nm-vmap-legend-item{display:inline-flex;align-items:center;gap:7px}
+.nm-cr-desk .nm-vmap-legend-item i{display:block;width:17px;height:17px;border-radius:50%;background:#fff}
+.nm-cr-desk .nm-vmap-legend-item.learning i{border:3px solid #246b65}
+.nm-cr-desk .nm-vmap-legend-item.recommendation i{border:2px dashed #a66d19;border-radius:5px;transform:rotate(45deg)}
+.nm-cr-desk .nm-vmap-legend-note{font-weight:600}
+.nm-cr-desk .nm-vmap-stop.is-learning::after{content:'';position:absolute;inset:-7px;border:3px solid #246b65;border-radius:21px;pointer-events:none}
+.nm-cr-desk .nm-vmap-stop.is-recommendation::before{content:'';position:absolute;inset:-13px;border:2px dashed #a66d19;border-radius:26px;pointer-events:none}
 .nm-cr-desk .nm-vmap-stop-top{display:flex;align-items:center;justify-content:center;gap:7px;width:100%}
 .nm-cr-desk .nm-vmap-stop-top i{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;font-style:normal;
   background:#514277;color:#fff;font-size:11px;font-weight:900}
 .nm-cr-desk .nm-vmap-stop-top b{font-size:13px;line-height:1.25;word-break:keep-all}
 .nm-cr-desk .nm-vmap-stop small{font-size:11px;color:#535c78;font-weight:700;white-space:nowrap}
 .nm-cr-desk .nm-vmap-stop em{position:absolute;top:-19px;left:50%;transform:translateX(-50%);padding:3px 8px;border-radius:999px;
-  color:#fff;background:#514277;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap}
+  font-size:10px;font-style:normal;font-weight:800;white-space:nowrap}
+.nm-cr-desk .nm-vmap-stop em.learning{color:#fff;background:#246b65}
+.nm-cr-desk .nm-vmap-stop em.recommendation{color:#fff;background:#8b5c15}
+.nm-cr-desk .nm-vmap-stop.is-learning.is-recommendation em.recommendation{top:-43px}
 .nm-cr-desk .nm-vmap-character{position:absolute;z-index:2;transform:translate(-50%,34px);display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:0;width:96px;min-height:100px;padding:0;border:0;background:transparent;color:#26304a;cursor:pointer;font-family:'Pretendard',sans-serif}
 .nm-cr-desk .nm-vmap-character img{display:block;width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 5px 5px rgba(25,24,51,.32));
@@ -3172,10 +3182,13 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
   border:1.5px solid #adb4c5;border-radius:12px;background:rgba(255,255,255,.9);color:var(--la-ink);text-align:left;
   font-family:'Pretendard',sans-serif;cursor:pointer;transition:border-color .16s,transform .16s,box-shadow .16s}
 .nm-cr-desk .nm-vmap-stage:hover{border-color:#5b3a8f;transform:translateY(-2px);box-shadow:0 8px 18px rgba(38,48,74,.1)}
-.nm-cr-desk .nm-vmap-stage.is-current{border-color:#5b3a8f;background:#fbf8ff}
+.nm-cr-desk .nm-vmap-stage.is-learning{border:2px solid #246b65;background:#f4faf8}
+.nm-cr-desk .nm-vmap-stage.is-recommendation{outline:2px dashed #a66d19;outline-offset:2px}
 .nm-cr-desk .nm-vmap-stage-heading{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .nm-cr-desk .nm-vmap-stage-heading b{font-size:16px;line-height:1.35;word-break:keep-all}
-.nm-cr-desk .nm-vmap-stage-heading em{padding:3px 7px;border-radius:999px;background:#514277;color:#fff;font:800 10px/1.2 'Pretendard',sans-serif}
+.nm-cr-desk .nm-vmap-stage-heading em{padding:3px 7px;border-radius:999px;color:#fff;font:800 10px/1.2 'Pretendard',sans-serif}
+.nm-cr-desk .nm-vmap-stage-heading em.learning{background:#246b65}
+.nm-cr-desk .nm-vmap-stage-heading em.recommendation{background:#8b5c15}
 .nm-cr-desk .nm-vmap-stage-meta{color:#535c78;font-size:12px;font-weight:700;line-height:1.4;word-break:keep-all}
 .nm-cr-desk .nm-vmap-stage-learn{color:var(--la-ink);font-size:13px;line-height:1.55;word-break:keep-all}
 .nm-cr-desk .nm-vmap-stage-go{display:inline-flex;align-items:center;gap:5px;margin-top:auto;padding-top:5px;color:#514277;font-size:12px;font-weight:800}

@@ -3600,6 +3600,15 @@ function screenCourseRoad(){
   const list=roadCourseList();
   const lastNum=list.length?list[list.length-1].num:0;
   const curNum=Number(String(curKey).replace(/^C/,''));
+  /* 진단으로 정한 시작점과 실제 학습 기록은 다른 사실이라 지도에서 분리한다. */
+  const touchedUid=mostRecentTouchedUnit();
+  const learnedCourseKey=touchedUid?courseForUnit(touchedUid):null;
+  const learnedCourseNum=learnedCourseKey?Number(String(learnedCourseKey).replace(/^C/,'')):null;
+  const recommendationKey=S.placement&&S.placement.course&&(window.NM_COURSES||{})[S.placement.course]?S.placement.course:null;
+  const recommendationNum=recommendationKey?Number(String(recommendationKey).replace(/^C/,'')):null;
+  const recommendationLabel=S.placement&&S.placement.self
+    ? lk('내가 고른 시작점','My chosen start','我选择的起点')
+    : lk('진단 추천 시작점','Assessment starting point','测评推荐起点');
   const allStages=window.NM_STAGES||[];
   const mapGroups=[
     {key:'first', title:{ko:'수의 출발',en:'First numbers',zh:'数字起点'}, stages:['numberland','sprout'], x:13,y:75,
@@ -3629,10 +3638,21 @@ function screenCourseRoad(){
         zh:'学习多项式、坐标、对数与数列，再研究变化率和面积！'}}}
   ].map(g=>({...g, entries:g.stages.map(k=>allStages.find(s=>s.key===k)).filter(Boolean)}))
     .filter(g=>g.entries.length);
-  const mapGroupFor=n=>mapGroups.find(g=>g.entries.some(s=>n>=s.courses.from&&n<=s.courses.to));
+  const mapGroupFor=n=>n==null?null:mapGroups.find(g=>g.entries.some(s=>n>=s.courses.from&&n<=s.courses.to));
   const mapRange=g=>`${lk('과정','Courses','课程')} ${g.entries[0].courses.from}~${g.entries[g.entries.length-1].courses.to}`;
-  let selectedMapGroup=(mapGroupFor(curNum)||mapGroups[0]||{}).key;
+  let selectedMapGroup=(mapGroupFor(learnedCourseNum)||mapGroupFor(recommendationNum)||mapGroups[0]||{}).key;
   let roadView=S._roadFocus?'road':S.roadView;
+  const mapButtons=mapGroups.map((g,i)=>{
+    const learned=g===mapGroupFor(learnedCourseNum), recommended=g===mapGroupFor(recommendationNum);
+    const status=(learned?lk('실제 학습 위치','studied location','实际学习位置')+' ':'')+(recommended?recommendationLabel:'');
+    return `<button class="nm-vmap-stop${g.key===selectedMapGroup?' is-selected':''}${learned?' is-learning':''}${recommended?' is-recommendation':''}" type="button" data-map-group="${g.key}" style="left:${g.x}%;top:${g.y}%" aria-pressed="${g.key===selectedMapGroup}" aria-label="${esc(L(g.title))}, ${mapRange(g)}${status?', '+esc(status):''}">
+      <span class="nm-vmap-stop-top"><i>${i+1}</i><b>${esc(L(g.title))}</b></span><small>${mapRange(g)}</small>
+      ${learned?`<em class="learning">${lk('학습 위치','Studied','已学习')}</em>`:''}
+      ${recommended?`<em class="recommendation">${recommendationLabel}</em>`:''}
+    </button><button class="nm-vmap-character${g.key===selectedMapGroup?' is-selected':''}" type="button" data-map-group="${g.key}" style="left:${g.x}%;top:${g.y}%" aria-pressed="${g.key===selectedMapGroup}" aria-label="${esc(L(g.guide.name))}: ${esc(L(g.title))} ${lk('과정 설명 보기','course explanation','课程说明')}">
+      <img src="assets/characters/${g.guide.image}" width="80" height="80" alt="" loading="lazy" decoding="async"><span>${lk('설명 보기','See explanation','查看介绍')}</span>
+    </button>`;
+  }).join('');
 
   /* 2026-09-26 원장 "로드맵도 이제 이런 느낌으로" — 머리에 3D 길 지도(app/road3d)를 얹고, 아래 목록은
      모드 선택 3D 책상과 같은 재질(나무 책상 · 종이 카드 · 가죽+금박 · 놋쇠 꼬리표)로 입힌다.
@@ -3661,16 +3681,15 @@ function screenCourseRoad(){
                    'The guides below the signs introduce each group of courses. Explore the details on the course road.',
                    '路标下的角色会介绍各组课程。具体课程可在课程道路中查看。')}</p>
         </div>
+        <div class="nm-vmap-legend" aria-label="${lk('지도 표식 설명','Map marker legend','地图标记说明')}">
+          ${learnedCourseNum!=null?`<span class="nm-vmap-legend-item learning"><i aria-hidden="true"></i>${lk('실제 학습 위치','Studied location','实际学习位置')}</span>`:''}
+          ${recommendationNum!=null?`<span class="nm-vmap-legend-item recommendation"><i aria-hidden="true"></i>${recommendationLabel}</span>`:''}
+          ${learnedCourseNum==null&&recommendationNum==null?`<span class="nm-vmap-legend-note">${lk('학습 기록이나 시작점을 정하면 지도에 표시돼요.','Your studied location or chosen start appears here when available.','有学习记录或选定起点后会显示在地图上。')}</span>`:''}
+        </div>
         <div class="nm-vmap-scroll" id="crMapScroll" role="region" tabindex="0" aria-label="${lk('연산 단계 그림 지도, 좌우로 이동할 수 있음','Illustrated arithmetic map, horizontally scrollable','运算阶段图画地图，可左右滚动')}">
           <div class="nm-vmap-canvas">
             <img class="nm-vmap-art" src="assets/growth-map-20261017.webp" width="1672" height="941" alt="" decoding="async">
-            ${mapGroups.map((g,i)=>`<button class="nm-vmap-stop${g.key===selectedMapGroup?' is-selected':''}${g===mapGroupFor(curNum)?' is-current':''}" type="button" data-map-group="${g.key}" style="left:${g.x}%;top:${g.y}%" aria-pressed="${g.key===selectedMapGroup}" aria-label="${esc(L(g.title))}, ${mapRange(g)}${g===mapGroupFor(curNum)?', '+lk('현재 위치','current location','当前位置'):''}">
-              <span class="nm-vmap-stop-top"><i>${i+1}</i><b>${esc(L(g.title))}</b></span>
-              <small>${mapRange(g)}</small>${g===mapGroupFor(curNum)?`<em>${lk('현재 위치','You are here','当前位置')}</em>`:''}
-            </button><button class="nm-vmap-character${g.key===selectedMapGroup?' is-selected':''}" type="button" data-map-group="${g.key}" style="left:${g.x}%;top:${g.y}%" aria-pressed="${g.key===selectedMapGroup}" aria-label="${esc(L(g.guide.name))}: ${esc(L(g.title))} ${lk('과정 설명 보기','course explanation','课程说明')}">
-              <img src="assets/characters/${g.guide.image}" width="80" height="80" alt="" loading="lazy" decoding="async">
-              <span>${lk('설명 보기','See explanation','查看介绍')}</span>
-            </button>`).join('')}
+            ${mapButtons}
           </div>
         </div>
         <p class="nm-vmap-scrollhint">${lk('지도는 좌우로 움직일 수 있어요. 표지판이나 캐릭터를 누르면 아래에 설명과 단계가 나와요.',
@@ -3738,10 +3757,12 @@ function screenCourseRoad(){
         <p>${esc(L(g.guide.say))}</p>
       </div>
     </div><div class="nm-vmap-stages">${g.entries.map(s=>{
-      const now=curNum>=s.courses.from&&curNum<=s.courses.to;
+      const learned=learnedCourseNum!=null&&learnedCourseNum>=s.courses.from&&learnedCourseNum<=s.courses.to;
+      const recommended=recommendationNum!=null&&recommendationNum>=s.courses.from&&recommendationNum<=s.courses.to;
       const range=`${lk('과정','Courses','课程')} ${s.courses.from}${s.courses.from===s.courses.to?'':'~'+s.courses.to}`;
-      return `<button class="nm-vmap-stage${now?' is-current':''}" type="button" data-map-stage="${s.key}" aria-label="${esc(L(s.name))}, ${range}, ${lk('길 로드맵에서 보기','view on course road','在课程道路中查看')}">
-        <span class="nm-vmap-stage-heading"><b>${esc(L(s.name))}</b>${now?`<em>${lk('현재 단계','Current stage','当前阶段')}</em>`:''}</span>
+      const status=(learned?lk('실제 학습 위치','studied location','实际学习位置')+' ':'')+(recommended?recommendationLabel:'');
+      return `<button class="nm-vmap-stage${learned?' is-learning':''}${recommended?' is-recommendation':''}" type="button" data-map-stage="${s.key}" aria-label="${esc(L(s.name))}, ${range}${status?', '+esc(status):''}, ${lk('길 로드맵에서 보기','view on course road','在课程道路中查看')}">
+        <span class="nm-vmap-stage-heading"><b>${esc(L(s.name))}</b>${learned?`<em class="learning">${lk('학습 위치','Studied','已学习')}</em>`:''}${recommended?`<em class="recommendation">${recommendationLabel}</em>`:''}</span>
         <span class="nm-vmap-stage-meta">${range} · ${esc(L(s.band))}${s.status==='partial'?` · ${lk('일부 준비 중','Some lessons in preparation','部分内容准备中')}`:''}</span>
         <span class="nm-vmap-stage-learn">${esc(L(s.learn))}</span>
         <span class="nm-vmap-stage-go">${lk('길에서 보기','View on road','在道路中查看')} ${crIc('arrow')}</span>
@@ -3751,7 +3772,8 @@ function screenCourseRoad(){
       el.onclick=()=>{
         const stage=g.entries.find(s=>s.key===el.dataset.mapStage);
         if(!stage)return;
-        const targetNum=curNum>=stage.courses.from&&curNum<=stage.courses.to?curNum:stage.courses.from;
+        const anchorNum=learnedCourseNum||recommendationNum||curNum;
+        const targetNum=anchorNum>=stage.courses.from&&anchorNum<=stage.courses.to?anchorNum:stage.courses.from;
         setRoadView('road',true);
         const node=listEl.querySelector(`.nm-cr-node[data-c="C${targetNum}"]`);
         if(node)roadFlashRow(node,body);

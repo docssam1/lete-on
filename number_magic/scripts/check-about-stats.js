@@ -25,4 +25,17 @@ for(const k of ['Units','Threads','Levels']){
   if(!ok)fail++;
   console.log((ok?'✓':'✗')+' '+k+': about='+nums[k]+' 실데이터='+want[k]);
 }
+const landing=fs.readFileSync(path.join(ROOT,'landing.html'),'utf8');
+const landingFacts=[
+  '<span><b>'+units+'</b><span data-i18n="pUnits">유닛</span></span>',
+  '<span><b>'+threads+'</b><span data-i18n="pThreads">유형</span></span>',
+  '유닛 '+units+' · 과정 74 · 유형 '+threads,
+  units+' units · 74 courses · '+threads+' types',
+  '单元'+units+' · 课程74 · 类型'+threads
+];
+landingFacts.forEach((fact,i)=>{
+  const ok=landing.includes(fact);
+  if(!ok)fail++;
+  console.log((ok?'✓':'✗')+' landing metric '+(i+1)+': '+(ok?'matches live data':'missing or stale'));
+});
 process.exit(fail?1:0);

@@ -41,6 +41,18 @@ server.listen(0, async () => {
     if(m) bad.push(`${c} k${k}: ${m[1].trim()}`);
     else if(!/정답지/.test(txt)) bad.push(`${c} k${k}: 10초 안에 학습지가 완성되지 않음`);
     else {
+      const daily = await page.evaluate(() => ({
+        plan: document.querySelector('.nm-cvw-daily')?.textContent || '',
+        coverDays: [...document.querySelectorAll('.nm-cvw-day-tag')].map(x => x.textContent.trim()),
+        practicePages: [...document.querySelectorAll('.nm-print-sheet .nm-w2-page .nm-w2-grid')].map(x => x.closest('.nm-w2-page')?.querySelector('.nm-w2-study-day')?.textContent.trim() || ''),
+        coverOverflow: (()=>{const e=document.querySelector('.nm-cvw');return e?e.scrollHeight-e.clientHeight:0;})()
+      }));
+      if(!daily.plan || !daily.coverDays.length) bad.push(`${c} k${k}: 10분 일차 안내가 표지에 없음`);
+      if(daily.practicePages.some(x => !x)) bad.push(`${c} k${k}: 날짜 표식이 없는 문제 쪽이 있음`);
+      if(daily.coverOverflow > 3) bad.push(`${c} k${k}: 표지 일차 안내 넘침 +${Math.round(daily.coverOverflow)}px`);
+      const planDays = +(daily.plan.match(/(\d+)일 학습/) || [])[1] || 0;
+      const markedDays = new Set(daily.coverDays.flatMap(x => [...x.matchAll(/(\d+)일차/g)].map(m => +m[1])));
+      if(planDays && markedDays.size !== planDays) bad.push(`${c} k${k}: 표지의 날짜별 분량 ${markedDays.size}일 ≠ 안내 ${planDays}일`);
       /* 지면 넘침(2026-09-25) — 인쇄 매체·A4 폭에서 칸이 내용보다 낮거나 장이 종이보다 길면 실패.
          한 유형씩 보는 check-print-overflow 는 주간 봉투의 묶음(장 전체 글씨 밴드·독셈 띠·재도전 QR)을 못 본다. */
       await page.emulateMedia({ media:'print' });
