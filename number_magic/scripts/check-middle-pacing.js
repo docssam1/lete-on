@@ -58,7 +58,9 @@ for(const page of ['index.html','drill.html','ws.html']){
   const html=fs.readFileSync(path.join(root,page),'utf8');
   for(const file of ['data/middle-pacing.js','data/graph-drawing.js']){
     assert.equal(html.split('src="'+file+'"').length-1,1,page+' must load '+file+' exactly once');
-    assert(html.indexOf('src="'+file+'"')<html.indexOf('src="app/exam.js"'),page+' data must load before exam');
+    /* exam.js 는 index.html 에서 캐시 버전(?v=)을 달고 로드된다 — 접두어로 찾는다(2026-10-18). */
+    const exam=html.indexOf('src="app/exam.js');
+    assert(exam>0&&html.indexOf('src="'+file+'"')<exam,page+' data must load before exam');
   }
 }
 console.log(JSON.stringify({ok:true,derivedFrom:'NM_COURSES',legacyIds:(data.legacyIds||[]).length,summary},null,2));
