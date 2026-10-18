@@ -743,6 +743,10 @@
 
   /* 주간 학습지 표지(weeklyCoverHtml) — 학생 이름을 제목으로, 회차 목차 표 */
   .nm-cvw .nm-cvw-hero { position:relative; margin:auto 0 0; text-align:center; }
+  .nm-cvw-magazine-c4 .nm-cvw-cover-teaser { position:absolute; left:4mm; top:12mm; width:22mm; padding:2mm 0;
+    border-top:3px solid #245b60; text-align:left; color:#245b60; font-size:11px; line-height:1.45; font-weight:800; word-break:keep-all; }
+  .nm-cvw-magazine-c4 .nm-cvw-cover-teaser b { display:block; margin-bottom:1mm; color:#a44d2a; font-size:10px; letter-spacing:.08em; }
+  .nm-cvw-magazine-c4 .nm-cvw-cover-character { position:absolute; right:2mm; top:2mm; width:30mm; height:38mm; object-fit:contain; }
   .nm-cvw .nm-cvw-title { margin:0; font-family:'Gowun Batang','Pretendard',serif; font-size:44px; line-height:1.2;
     font-weight:700; color:#0E2C57; letter-spacing:1px; }
   .nm-cvw .nm-cvw-title i { font-style:italic; color:var(--cv-accent); font-weight:400; }
@@ -1189,6 +1193,62 @@
   padding:8px 12px; color:#20343b; }
 .nm-w2-board-mascot { display:none; }
 .nm-w2-board-body { flex:1; min-width:0; }
+/* 과정 4 편집형 개념 지면: 수의 역할을 글자와 색으로 함께 구분한다. */
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-lesson-body { flex:1; min-height:0; display:flex; flex-direction:column; gap:3mm; }
+.nm-w2-course-c4 .nm-w2-teaching-page:not(.nm-w2-teaching-feature) .nm-w2-lesson-body { justify-content:space-evenly; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-concept { margin:0; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-board { align-items:center; min-height:25mm; padding:3mm 4mm;
+  background:#f4f8f7; border:0; border-left:1.4mm solid #245b60; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-board-mascot { display:block; width:24mm; height:25mm; object-fit:contain; object-position:center bottom; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-mn-kicker { font-size:12px; letter-spacing:.08em; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-concept-sentence { font-size:18px; line-height:1.55; }
+.nm-w2-editorial-feature { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:3mm; flex:0 0 auto; }
+.nm-w2-editorial-hero { padding:3mm 4mm; background:#f8f5ec; border-top:1.2mm solid #c69a53; }
+.nm-w2-editorial-eyebrow { display:block; margin-bottom:1mm; font-size:10px; font-weight:900; letter-spacing:.08em; color:#245b60; }
+.nm-w2-editorial-hero h3 { margin:0 0 1mm; color:#172e3a; font-size:18px; line-height:1.25; }
+.nm-w2-editorial-hero p { margin:0; color:#3c4b51; font-size:12px; line-height:1.35; }
+.nm-w2-pair-visual { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:2mm; margin:2mm 0 1mm; }
+.nm-w2-pair-group { display:flex; flex-direction:column; align-items:center; gap:1mm; padding:1.5mm 2mm; border:1px solid #a8c3ba; border-radius:3mm; background:white; }
+.nm-w2-pair-dots { display:flex; gap:1mm; }
+.nm-w2-pair-dots i { display:block; width:5mm; height:5mm; border-radius:50%; background:#176a60;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.nm-w2-pair-group b, .nm-w2-pair-eq .nm-w2-pair-each { color:#176a60; }
+.nm-w2-pair-plus, .nm-w2-pair-equal { color:#314955; font-size:21px; font-weight:800; }
+.nm-w2-pair-total, .nm-w2-pair-eq .nm-w2-pair-all { color:#a44d2a; font-weight:900; }
+.nm-w2-pair-total { font-size:22px; }
+.nm-w2-pair-eq { text-align:center; font-size:18px; font-weight:900; letter-spacing:.01em; }
+.nm-w2-pair-eq span { display:inline-block; padding:0 2mm; }
+.nm-w2-editorial-side { display:flex; flex-direction:column; gap:2mm; }
+.nm-w2-editorial-card { flex:1; padding:2mm 3mm; background:#f4f8f7; border-top:2px solid #245b60; }
+.nm-w2-editorial-card.history { background:#fff; border-color:#c69a53; border-bottom:1px solid #dfd8c9; }
+.nm-w2-editorial-card strong { display:block; margin:0 0 1mm; color:#172e3a; font-size:13px; line-height:1.3; }
+.nm-w2-editorial-card p { margin:0; color:#43575c; font-size:11px; line-height:1.4; word-break:keep-all; }
+.nm-w2-editorial-card cite { display:block; margin-top:1mm; font-size:8px; color:#627076; font-style:normal; }
+.nm-w2-editorial-study { flex:0 0 auto; display:grid; grid-template-columns:1.5fr 1fr; gap:4mm; }
+.nm-w2-editorial-study-main { padding:4mm 5mm; background:#f8f5ec; border-top:1.2mm solid #c69a53; }
+.nm-w2-editorial-study-main h3 { margin:0 0 2mm; color:#172e3a; font-size:19px; }
+.nm-w2-editorial-study-main p { margin:0; color:#43575c; font-size:12px; line-height:1.5; }
+.nm-w2-editorial-study-aside { padding:4mm; border-top:2px solid #245b60; background:#f4f8f7; }
+.nm-w2-editorial-study-aside b { display:block; margin-bottom:2mm; color:#172e3a; font-size:14px; }
+.nm-w2-editorial-study-aside p { font-size:12px; line-height:1.5; }
+.nm-w2-editorial-study-aside cite { display:block; margin-top:2mm; color:#627076; font-size:10px; font-style:normal; }
+.nm-w2-jump-line { display:flex; align-items:center; justify-content:space-between; gap:2mm; margin:4mm 0 3mm; }
+.nm-w2-jump-line span { display:flex; align-items:center; justify-content:center; width:11mm; height:11mm; border:1.5px solid #176a60;
+  border-radius:50%; color:#176a60; background:#fff; font-size:19px; font-weight:900; }
+.nm-w2-jump-line span:last-child { border-color:#a44d2a; color:#a44d2a; }
+.nm-w2-jump-line i { color:#176a60; font-size:20px; font-style:normal; font-weight:900; }
+.nm-w2-jump-eq { text-align:center; font-size:18px; font-weight:900; color:#176a60; }
+.nm-w2-jump-eq strong { color:#a44d2a; }
+.nm-w2-place-big { margin:3mm 0; text-align:center; font-size:26px; font-weight:900; color:#20343b; }
+.nm-w2-place-big .tens, .nm-w2-place-row .tens { color:#176a60; }
+.nm-w2-place-big .ones, .nm-w2-place-row .ones { color:#a44d2a; }
+.nm-w2-place-row { display:flex; justify-content:space-between; gap:2mm; border-top:1px solid #ded9cf; padding:1.5mm 0;
+  font-size:15px; font-weight:850; color:#20343b; }
+.nm-w2-place-row small { font-size:10px; color:#43575c; font-weight:700; }
+.nm-w2-place-row.result { border-top:2px solid #20343b; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-example { margin:0; padding:4mm 5mm; border:0; border-left:1mm solid #b25b3f; background:#fcf8f4; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-guide { margin:0; padding:4mm 5mm; border:1px solid #cedbd8; background:#fff; }
+.nm-w2-course-c4 .nm-w2-teaching-page .nm-w2-foot { margin-top:3mm; }
 .nm-w2-concept-badge { display:block; font-size:calc(18px * var(--ws-fs, 1)); font-weight:750; color:#20343b; letter-spacing:-.2px;
   padding-bottom:4px; margin-bottom:6px; }
 .nm-print-age-young .nm-w2-concept-badge { font-family:Pretendard,'Noto Sans KR',sans-serif; font-weight:750; }
@@ -2477,9 +2537,11 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   const totalPages = page - 1;
   const kTxt = cv.cadence === 'w2' ? lk(` · ${cv.k||1}회차`, ` · session ${cv.k||1}`, ` · 第${cv.k||1}次`) : '';
   const studentTag = cv.name ? ` · ${esc(cv.name)}` : '';
-  return `<div class="nm-print-cover nm-cvw${rows.length >= 9 ? ' nm-cvw-dense' : ''}">
+  const magazineC4 = +cv.courseNum === 4 && examLang() === 'ko';
+  return `<div class="nm-print-cover nm-cvw${rows.length >= 9 ? ' nm-cvw-dense' : ''}${magazineC4 ? ' nm-cvw-magazine-c4' : ''}">
   <div class="nm-cv-brand"><span>${worksheetBrandHtml()}</span><strong>NUMBERS <i>of</i> MAGIC${studentTag}</strong></div>
   <div class="nm-cvw-hero">
+    ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}
     <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
     <p class="nm-cvw-tagline">${esc(lk('선행부터 독셈, 문장제까지','From advanced work to Doc-T Math and word problems','从超前学习到巧算与应用题'))}</p>
@@ -4904,6 +4966,81 @@ function w2ConceptPanelHtml(threadId, level, extra){
 </div>`;
 }
 
+/* 과정 4의 첫 개념 지면. 같은 3은 같은 청록색, 전체 6은 갈색으로 일관되게
+   표시하고, 색을 구별하기 어려워도 '한 묶음/전체' 글자로 뜻을 읽을 수 있게 한다.
+   역사: MacTutor, Earliest Uses of Symbols of Operation (1618·1631 구분).
+   교과: 2022 개정 초등 1~2학년군 성취기준 [2수01-11]. */
+function w2C4EditorialFeatureHtml(){
+  if(examLang() !== 'ko') return '';
+  const dots = '<span class="nm-w2-pair-dots" aria-hidden="true"><i></i><i></i><i></i></span>';
+  return `<section class="nm-w2-editorial-feature" aria-label="배와 반 개념·교과·수학사">
+    <div class="nm-w2-editorial-hero">
+      <span class="nm-w2-editorial-eyebrow">그림으로 보는 오늘의 개념</span>
+      <h3>같은 수 두 묶음이 모이면?</h3>
+      <p>한 묶음에 3개씩, 똑같은 묶음이 두 개예요.</p>
+      <div class="nm-w2-pair-visual" role="img" aria-label="3개 한 묶음과 3개 한 묶음을 합하면 모두 6개">
+        <span class="nm-w2-pair-group">${dots}<b>한 묶음 3</b></span>
+        <span class="nm-w2-pair-plus" aria-hidden="true">+</span>
+        <span class="nm-w2-pair-group">${dots}<b>한 묶음 3</b></span>
+        <span class="nm-w2-pair-equal" aria-hidden="true">=</span>
+        <span class="nm-w2-pair-total">전체 6</span>
+      </div>
+      <div class="nm-w2-pair-eq"><span class="nm-w2-pair-each">3 + 3</span> = <span class="nm-w2-pair-all">6</span><br><span class="nm-w2-pair-all">6</span> ÷ 2 = <span class="nm-w2-pair-each">3</span></div>
+    </div>
+    <div class="nm-w2-editorial-side">
+      <aside class="nm-w2-editorial-card">
+        <span class="nm-w2-editorial-eyebrow">학교 수학과 이어 보기</span>
+        <strong>초등 1~2학년군 · 곱셈구구</strong>
+        <p>같은 수를 여러 번 더하는 모습을 그려 보면, 곱셈식의 뜻도 쉽게 보여요. 배우는 시기는 아이마다 달라도 괜찮아요.</p>
+        <cite>2022 개정 수학 성취기준 [2수01-11]</cite>
+      </aside>
+      <aside class="nm-w2-editorial-card history">
+        <span class="nm-w2-editorial-eyebrow">수학사의 한 장면</span>
+        <strong>× 기호도 역사가 있어요</strong>
+        <p>1631년에 나온 오트레드의 수학책에도 곱하기 기호 ×가 등장해요. 앞의 같은 묶음을 짧게 쓰는 기호이지요.</p>
+        <cite>MacTutor, Earliest Uses of Symbols of Operation</cite>
+      </aside>
+    </div>
+  </section>`;
+}
+
+function w2C4StudyFeatureHtml(threadId, level){
+  if(examLang() !== 'ko') return '';
+  if(threadId === 'ML25' && level === 1) return `<section class="nm-w2-editorial-study" aria-label="수직선 뛰어 세기 그림과 학교 연결">
+    <div class="nm-w2-editorial-study-main">
+      <span class="nm-w2-editorial-eyebrow">눈으로 따라가는 수직선</span>
+      <h3>3씩 세 번 뛰어 보세요</h3>
+      <div class="nm-w2-jump-line" role="img" aria-label="0에서 시작해 3씩 세 번 뛰면 3, 6, 9에 도착"><span>0</span><i>+3 →</i><span>3</span><i>+3 →</i><span>6</span><i>+3 →</i><span>9</span></div>
+      <div class="nm-w2-jump-eq">3 + 3 + 3 = <strong>9</strong></div>
+    </div>
+    <aside class="nm-w2-editorial-study-aside">
+      <span class="nm-w2-editorial-eyebrow">독쌤의 설명</span>
+      <b>화살표는 몇 개인가요?</b>
+      <p>한 번에 3씩, 모두 세 번 뛰었어요. ‘3을 세 번 더하기’가 곱셈의 뜻과 이어져요.</p>
+      <cite>학교 연결 · 초등 1~2학년군 곱셈구구</cite>
+    </aside>
+  </section>`;
+  if(threadId === 'AD13' && level === 2) return `<section class="nm-w2-editorial-study" aria-label="십의 자리와 일의 자리끼리 더하는 그림">
+    <div class="nm-w2-editorial-study-main">
+      <span class="nm-w2-editorial-eyebrow">숫자의 자리별로 보기</span>
+      <h3>같은 자리끼리 모아요</h3>
+      <div class="nm-w2-place-big" role="img" aria-label="34 더하기 25 더하기 47. 십의 자리는 초록색, 일의 자리는 갈색">
+        <span class="tens">3</span><span class="ones">4</span> + <span class="tens">2</span><span class="ones">5</span> + <span class="tens">4</span><span class="ones">7</span>
+      </div>
+      <div class="nm-w2-place-row"><small>십의 자리끼리</small><span class="tens">30 + 20 + 40 = 90</span></div>
+      <div class="nm-w2-place-row"><small>일의 자리끼리</small><span class="ones">4 + 5 + 7 = 16</span></div>
+      <div class="nm-w2-place-row result"><small>두 결과를 합치면</small><span><span class="tens">90</span> + <span class="ones">16</span> = 106</span></div>
+    </div>
+    <aside class="nm-w2-editorial-study-aside">
+      <span class="nm-w2-editorial-eyebrow">학교 수학과 이어 보기</span>
+      <b>두 자리 덧셈의 원리를 넓혀요</b>
+      <p>학교에서 배우는 자리값과 두 자리 덧셈을, 세 수를 더할 때에도 이용해 보세요.</p>
+      <cite>2022 개정 수학 성취기준 [2수01-06]</cite>
+    </aside>
+  </section>`;
+  return '';
+}
+
 /* 문항 tex의 \square를 답으로 채워 넣어 "완성된 식"을 만든다 — 채운 자리만
    \color{#d33}{…}로 빨갛게 감싼다(2026-09-04 재작업 지시 §3).
      · \square가 없으면 " = 색값"을 그대로 덧붙인다(예: 세로셈 아닌 맨 답 문항).
@@ -6066,10 +6203,14 @@ function renderRoundPagesBody(item, opts){
         ? window.NM_PLACE_COLOR.pairLegendHtml(examLang(), pickL((window.NM_CREATIVE_PROCESS || {}).pairLegend) || '같은 색 = 짝꿍', pvPairOnPage) : '');
     /* 워터마크는 문항 페이지 안에 한 장씩(.nm-w2-wm, 화면에선 숨김) — 시트 전체 fixed 오버레이 대신 */
     /* data-cre — 창의 칸(strategy)과 적용 칸(application)을 검사기가 가를 수 있게(인쇄에는 영향 없음) */
-    return `<div class="nm-w2-page${middleSix ? ' nm-mid-six' : ''}"${item.creative ? ` data-cre="${esc(item.role || 'creative')}"` : ''}>
+    const editorialC4 = !!(first && headOnly && opts.editorialC4 && conceptHtml && examLang() === 'ko');
+    const editorialFeature = editorialC4 && item.thread === 'ML1' && item.level === 1;
+    const editorialStudy = editorialC4 && !editorialFeature ? w2C4StudyFeatureHtml(item.thread, item.level) : '';
+    return `<div class="nm-w2-page${middleSix ? ' nm-mid-six' : ''}${editorialC4 ? ' nm-w2-teaching-page' : ''}${editorialFeature || editorialStudy ? ' nm-w2-teaching-feature' : ''}"${item.creative ? ` data-cre="${esc(item.role || 'creative')}"` : ''}>
   <div class="nm-w2-wm" aria-hidden="true">${esc(printStudentName() ? printStudentName() + ' · Numbers of Magic' : 'Numbers of Magic')}</div>
   ${w2HeadHtml(item, code, `${pi+1}/${totalPages}`, count, {roundNo: opts.roundNo, name: opts.name, first})}
-  ${first ? strategyHtml : ''}${first ? conceptHtml : ''}${first ? exampleHtml : ''}${separateGuide ? (guidePages[pi-1] || '') : (first ? guided.html : '')}${instrHtml}${pvLegend}
+  ${editorialC4 ? `<div class="nm-w2-lesson-body">${strategyHtml}${conceptHtml}${editorialFeature ? w2C4EditorialFeatureHtml() : editorialStudy}${exampleHtml}${separateGuide ? '' : guided.html}</div>`
+    : `${first ? strategyHtml : ''}${first ? conceptHtml : ''}${first ? exampleHtml : ''}${separateGuide ? (guidePages[pi-1] || '') : (first ? guided.html : '')}`}${instrHtml}${pvLegend}
   ${headOnly ? '' : `<div class="nm-w2-grid nm-w2-grid-${layout.type}" style="${gridStyleFor(rowsCount, partial, first, balancedPracticePages.has(pi), ((pi === totalPages - 1 && !item.pacing) ? (window.NM_PRINT_HEAD_QR || 0) : 0) + (instrPage && !first ? 8 : 0))}">${cellsHtml}</div>`}
   ${(pi === totalPages - 1 && !item.pacing) ? retryQrHtml(code) : ''}
   <div class="nm-w2-foot"><span class="nm-w2-foot-code">${esc(code)}</span></div>
@@ -6183,6 +6324,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
   /* roundNo: 표지 목차와 같은 회차 번호(머리띠 "1. 제곱근의 값"), name: 표지의 학생 이름(머리 이름 칸).
      optionalWord 회차가 빠지면 번호가 비지 않도록 남은 회차로 다시 매긴다. */
   const studentName = opts.cover && opts.cover.name;
+  const editorialC4 = !!(opts.cover && +opts.cover.courseNum === 4);
   const rounds = [];
   const seen=new Set();
   let droppedWord = false;
@@ -6196,7 +6338,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     const seenBefore=new Set(seen);
     let r = null, initialExhausted = null, usedItem = it;
     try {
-      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true });
+      r = renderRoundPages(it, { count: it.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:candidateSeen, mixed:true, editorialC4 });
     } catch(e) {
       /* 선택 문장제의 첫 유형이 앞 교과 회차와 풀을 나눠 쓰다 모자라면
          아래의 명시된 대체 유형을 계속 시도한다. 일반 회차의 고갈은 그대로 실패한다. */
@@ -6219,7 +6361,7 @@ function renderMixedSheetBody(items, envelopeCode, opts){
         const altSeen=new Set(seen);
         let rr;
         try {
-          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen, mixed:true });
+          rr = renderRoundPages(cand, { count: cand.count || perTypeCount, name: studentName, roundNo: rounds.length + 1, exclude:altSeen, mixed:true, editorialC4 });
         } catch(e) {
           if(e && e.code === 'NM_UNIQUE_POOL_EXHAUSTED'){ exhausted = exhausted || e; continue; }
           throw e;
@@ -6248,14 +6390,14 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     if(!r.__redo || !r.band || r.band === sheetBand) return;
     try {
       const rr = renderRoundPages(r.__redo.item, { count:r.__redo.count, name:studentName, roundNo:r.__redo.roundNo,
-        exclude:new Set(r.__redo.seenBefore), mixed:true, band:sheetBand });
+        exclude:new Set(r.__redo.seenBefore), mixed:true, band:sheetBand, editorialC4 });
       const same = rr.problems.length === r.problems.length && rr.problems.every((p, k) => problemKey(p) === problemKey(r.problems[k]));
       if(same) rounds[i] = rr;
     } catch(e){ /* 다시 짜지 못하면 처음 것을 둔다 */ }
   });
 
   const sheet = document.createElement('div');
-  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems) + sheetOptClass() + schoolTierClass(items[0]);
+  sheet.className = 'nm-print-sheet nm-print-age-' + printAgeBand(items[0], allProblems) + sheetOptClass() + schoolTierClass(items[0]) + (editorialC4 ? ' nm-w2-course-c4' : '');
   sheet.setAttribute('aria-hidden', 'true');
   sheet.setAttribute('lang', examLang());
   /* 문장제 회차가 빠졌다는 사실은 운영자에게만(2026-09-07) — 표지에 적지 않는다.
