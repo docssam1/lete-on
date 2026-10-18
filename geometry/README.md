@@ -228,3 +228,23 @@ node geometry/games/shape-transform/manipulation.browsercheck.mjs
 node geometry/worksheet/shape-transform/workbook.selftest.mjs
 node geometry/worksheet/shape-transform/workbook.browsercheck.mjs
 ```
+
+
+## 색종이 마술 공방
+
+`games/paper-craft/`는 직접 접기·자르기·무늬 만들기·조각 분류·숫자 바구니·겹친 종이 쌓기/벗기기를 제공한다.
+`worksheet/paper-craft/`는 같은 활동 ID와 자기 무늬를 받아 문제·풀이·빠른 정답을 만든다.
+출처33유형과 창작126연습의 대응 및 한계는 `docs/25_PAPER_FOLD_SOURCE_COVERAGE.md`를 따른다.
+기존 숫자 색종이 게임과 학습지는 유지한다.
+
+```sh
+node geometry/shared/paper-craft.selftest.mjs
+node geometry/shared/paper-craft-geometry.selftest.mjs
+node geometry/shared/paper-craft-reverse.selftest.mjs
+node geometry/worksheet/paper-craft/workbook.selftest.mjs
+```
+
+PDF는 `worksheet/paper-craft/export-pdf-plan.mjs --output <private-output-directory>`로
+같은 선택과 페이지 계획을 내보낸 뒤 `pdf-export.py --plan <print-plan.json>`으로 생성하고,
+`pdf-verify.py --directory <private-output-directory> --pdftoppm <pdftoppm-path>`로 전페이지 렌더한다.
+설치된 한국어 글꼴을 사용하며 글꼴·원자료 이미지는 공개 저장소에 복사하지 않는다.

@@ -3,7 +3,8 @@ import { levels as turnLevels } from "../games/paper-turn/levels.js?v=paper-turn
 import { readProfile } from "../shared/profile-storage.js";
 
 const $ = (selector) => document.querySelector(selector);
-const lang = localStorage.getItem("gfield-language") || "ko";
+const requestedLang = new URLSearchParams(location.search).get("lang");
+const lang = ["ko","en","zh","ja"].includes(requestedLang) ? requestedLang : localStorage.getItem("gfield-language") || "ko";
 const profile = readProfile();
 const points = Number(localStorage.getItem("gfield-points") || 120);
 
@@ -17,6 +18,10 @@ Object.assign(text.ko,{subtitle:"접고 펼치기, 세고 계산하기, 겹친 �
 Object.assign(text.zh,{subtitle:"依次学习折叠展开、计数计算、重叠顺序和方向追踪。",courseTwo:"课程 2 · 计数与计算",applicationTitle:"动手折纸，发现数字",applicationDesc:"折纸、剪纸、收集纸片，或用练习纸计算。",courseThree:"课程 3 · 重叠顺序",overlapTitle:"根据可见边界判断上下顺序",overlapDesc:"分别推断最上、最下和完整顺序。",courseFour:"课程 4 · 方向追踪"});
 Object.assign(text.ja,{subtitle:"折って開く、数えて計算する、重なり順と向きの追跡を順に学びます。",courseTwo:"コース 2 · 数えて計算",applicationTitle:"紙を動かして数を見つけよう",applicationDesc:"折って切って紙を集めたり、プリントで計算したりしよう。",courseThree:"コース 3 · 重なり順",overlapTitle:"見える境界から上下の順を探そう",overlapDesc:"一番上・下と全体の順を分けて考えます。",courseFour:"コース 4 · 向きの追跡"});
 Object.assign(text.en,{subtitle:"Learn fold-and-open, counting and calculation, overlap order, and direction tracking in sequence.",courseTwo:"COURSE 2 · Count and Calculate",applicationTitle:"Make paper, discover numbers",applicationDesc:"Fold, snip, and collect pieces, or explore sums on a worksheet.",courseThree:"COURSE 3 · Overlap Order",overlapTitle:"Use visible edges to find the stack order",overlapDesc:"Reason separately about the top, bottom, and full order.",courseFour:"COURSE 4 · Direction Tracking"});
+Object.assign(text.ko,{craftEyebrow:'PAPER MAGIC · 손으로 만드는 놀이',craftTitle:'접고, 자르고, 쌓으며 발견해요',craftDesc:'무늬를 만들고, 조각을 모으고, 겹친 종이를 한 장씩 찾아봐요.'});
+Object.assign(text.en,{craftEyebrow:'PAPER MAGIC · Hands-on play',craftTitle:'Fold, snip, stack, and discover',craftDesc:'Create patterns, collect pieces, and uncover paper one layer at a time.'});
+Object.assign(text.zh,{craftEyebrow:'彩纸魔法 · 动手玩',craftTitle:'折一折、剪一剪、叠一叠',craftDesc:'创作图案、收集纸片，一层层发现彩纸的秘密。'});
+Object.assign(text.ja,{craftEyebrow:'紙マジック · 手を動かそう',craftTitle:'折って、切って、重ねて発見',craftDesc:'模様を作り、かけらを集め、色紙を一枚ずつ見つけよう。'});
 const t = (key) => text[lang]?.[key] || text.ko[key];
 text.ko.calculationCount="숫자 색종이 게임 2활동 · 기존 학습지";
 text.zh.calculationCount="数字彩纸游戏2项活动 · 现有练习纸";
@@ -97,6 +102,10 @@ function renderActivities(activities,selector,accents,startIndex=0){
   });
 }
 
+renderActivities([
+  {title:{ko:'색종이 마술 공방',en:'Paper Magic Studio',zh:'彩纸魔法工坊',ja:'色紙マジック工房'},description:{ko:'가위 마술, 나만의 무늬, 숫자 바구니와 반짝이는 색종이 쌓기를 직접 즐겨요.',en:'Try scissor magic, your own patterns, number baskets, and glossy paper layers.',zh:'亲手体验剪纸魔法、自创图案、数字篮和彩纸叠层。',ja:'はさみマジック、自分の模様、数のかご、色紙の重なりで遊ぼう。'},href:'../games/paper-craft/?lang='+encodeURIComponent(lang),action:'start',stage:{ko:'직접 만들고 발견하기',en:'Make and discover',zh:'动手创造与发现',ja:'作って発見'}},
+  {title:{ko:'색종이 마술 활동지',en:'Paper Magic Activity Sheets',zh:'彩纸魔法活动纸',ja:'色紙マジックのプリント'},description:{ko:'종이를 접고 자르고 오려 붙이며 놀아요. 게임에서 만든 내 무늬도 학습지로 이어져요.',en:'Fold, cut, and build with real paper. Bring your own game pattern to a worksheet.',zh:'用真正的纸折、剪、拼。游戏里自创的图案也能打印。',ja:'本物の紙を折って切って並べよう。ゲームで作った模様もプリントにできるよ。'},href:'../worksheet/paper-craft/?family=all&count=33&lang='+encodeURIComponent(lang),stage:{ko:'문제 · 놀이 풀이 · 빠른 정답',en:'Activities · Solutions · Quick answers',zh:'活动 · 解法 · 快速答案',ja:'活動・解き方・答え'}}
+],"#craftPlayGrid",['#255f9e','#146b55']);
 renderActivities(foldWorksheetActivities,"#foldLevelGrid",["#e5b548"],foldLevels.length);
 renderActivities(calculationActivities,"#applicationGrid",["#2456c4","#e5b548","#df7562"]);
 renderActivities(overlapActivities,"#overlapGrid",["#57bba6"]);
