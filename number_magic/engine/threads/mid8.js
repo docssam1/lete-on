@@ -269,9 +269,45 @@ NM_TGEN['md49_linearExprOps'] = function (params, rng) {
 
 /* ── MD50 — 일차방정식 풀이 ── x(답)를 먼저 고르고 남은 상수를
    역산해 항상 정수해. mode: 'oneStep'(ax=c) · 'twoStep'(ax+b=c) ·
-   'bothSides'(ax+b=cx+d, 양변에 미지수, 실전). */
+   'bothSides'(ax+b=cx+d, 양변에 미지수, 실전) · 'fracCoef'(계수가 분수·소수 —
+   양변에 분모의 수나 10을 곱해 정수 계수로 바꾼 뒤 푼다). */
 NM_TGEN['md50_linearEquation'] = function (params, rng) {
   const mode = params.mode || 'oneStep';
+
+  if (mode === 'fracCoef') {
+    const x = nzInt(rng, 1, 9);
+    if (rng() < 0.5) {
+      /* x/a + b = c : 양변에 a를 곱하면 x + ab = ac */
+      const a = R(rng, 2, 6), m = nzInt(rng, 1, 5), b = nzInt(rng, 1, 9);
+      const xx = a * m, c = m + b;
+      return {
+        prompt: { ko: `분모가 있으면 양변에 분모의 수를 곱해 정수 계수로 바꾼 뒤 풉니다`,
+          en: `Multiply both sides by the denominator to clear the fraction, then solve`,
+          zh: `有分母时，两边同乘分母化为整数系数再解` },
+        tex: `\\dfrac{x}{${a}} ${wrapPlus(b)} = ${c} \\;\\Rightarrow\\; x = \\square`,
+        answer: xx, answerType: 'number', widget: 'numpad', negative: xx < 0,
+        solution: [
+          { tex: `x ${wrapPlus(a * b)} = \\square`, blank: a * c },
+          { tex: `x = ${a * c} ${wrapPlus(-a * b)} = \\square`, blank: xx }
+        ]
+      };
+    }
+    /* 0.ax + 0.b = 0.c : 양변에 10을 곱하면 ax + b = c */
+    const a = R(rng, 2, 9), b = nzInt(rng, 1, 9), c = a * x + b;
+    const dec = n => (n < 0 ? '-' : '') + (Math.abs(n) % 10 ? (Math.abs(n) / 10).toFixed(1) : String(Math.abs(n) / 10));
+    return {
+      prompt: { ko: `소수 계수는 양변에 10을 곱해 정수 계수로 바꾼 뒤 풉니다`,
+        en: `Multiply both sides by 10 to make the decimal coefficients whole, then solve`,
+        zh: `小数系数时，两边同乘10化为整数系数再解` },
+      tex: `${dec(a)}x ${b < 0 ? '- ' + dec(-b) : '+ ' + dec(b)} = ${dec(c)} \\;\\Rightarrow\\; x = \\square`,
+      answer: x, answerType: 'number', widget: 'numpad', negative: x < 0,
+      solution: [
+        { tex: `${a}x ${wrapPlus(b)} = ${c}` },
+        { tex: `${c} ${wrapPlus(-b)} = \\square`, blank: c - b },
+        { tex: `\\dfrac{${c - b}}{${a}} = \\square`, blank: x }
+      ]
+    };
+  }
 
   if (mode === 'bothSides') {
     const x = nzInt(rng, 1, params.wide ? 9 : 6);

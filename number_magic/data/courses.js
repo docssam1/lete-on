@@ -128,7 +128,9 @@ const COURSE_SPEC = [
    ],
    /* 적용(문장제 놀이)도 레벨 3까지 — 줄서기는 계단 몇째, 이야기 셈은 분류하기,
       분류하고 세기는 더 많은 쪽 비교로 갈래가 바뀐다(2026-09-20). */
-   creative:['NL9@1','NL13@1','NL15@1','NL9@2','NL13@2','NL15@2','NL9@3','NL13@3','NL15@3'],
+   /* 10주차부터 다시 1단계로 돌아가지 않게 19주 길이로 적는다(2026-10-18). */
+   creative:['NL9@1','NL13@1','NL15@1','NL9@2','NL13@2','NL15@2','NL9@3','NL13@3','NL15@3',
+     'NL9@2','NL13@2','NL15@2','NL9@3','NL13@3','NL15@3','NL9@3','NL13@3','NL15@3','NL9@3'],
    minSessions:19, maxSessions:19, noTest:true},
  /* 과정 1~12 사다리 정리(2026-09-19) — 스레드의 prereq 순서와 과정 순서를 맞춘 것.
     SB1(한 자리 뺄셈)은 어느 과정에도 없었다. 덧셈은 AD1(과정 1)로 시작하는데 뺄셈은
@@ -162,7 +164,7 @@ const COURSE_SPEC = [
    magic:[['A-16'],['A-24'],['A-13'],['A-22'],['A-14'],['A-15'],['A-23']],
    creative:['AD14@1','AD16@1','SB10@1','SB13@1','SB12@3','SB8@3','SB5@2']},
  {id:6, tier:'level1', title:{ko:'네 자리 수와 2학년 마무리',en:'Four-digit Numbers & Grade 2 Wrap-up',zh:'四位数与二年级总结'},
-   drills:['AD4@4','SB7@1', 'SB7@2','EL1@5', 'NS1@2','AD7@1', 'AD7@2','SB6@5', 'AD7@3','SB6@7', 'AD4@5','EL3@1', 'AD7@4','SB6@8'], minSessions:7,
+   drills:['AD4@4','SB7@1', 'SB7@2','EL1@5', 'NS1@2','AD7@1', 'AD7@2','SB6@5', 'AD7@3','SB6@7', 'AD4@5','EL3@1', 'AD7@4','SB6@4'], minSessions:7,
    magic:[['A-25'],['A-33'],['A-17'],['A-18'],['A-30'],['A-31'],['A-32']],
    creative:['MX7@2','EL6@1','AD14@2','AD15@2','AD15@4','AD15@5','AD15@3']},
  {id:7, tier:'level1', title:{ko:'2학년 종합 다지기',en:'Grade 2 Review',zh:'二年级综合巩固'},
@@ -174,15 +176,17 @@ const COURSE_SPEC = [
     → 세 자리×두 자리·두 자리로 나누기(61~68) → 큰 수·종합(69) → 분모가 같은 분수(71~76). 옛 편성은 나눗셈을 곱셈보다
     먼저 두고, 덧뺄 전략 노트(A-26~35)를 곱나 주에 붙여 창의 칸이 교과와 따로 놀았다 — A-26~35 는 2학년(과정 6·7)으로.
     창의 칸 = 그 회차 교과와 같은 연산의 전략(×5·×25·×9·×11·분해/약분/부풀려 나눗셈 …). magic[i]·creative[i] 가 짝. */
- {id:8, tier:'level1', title:{ko:'두·세 자리 × 한 자리',en:'Multiplying by One Digit',zh:'乘一位数'},
+ /* 2026-10-18 — 과정 8~10(3학년 곱셈·나눗셈)을 LEVEL 2(계산의 도약)로 옮겼다. 10-05 재편성 뒤로 LEVEL 1 이
+    1~2학년 덧뺄·구구(과정 1~7)와 3학년 곱셈·나눗셈(8~10)을 함께 품고 있었다. 단계 경계 = 학교 학년 경계. */
+ {id:8, tier:'level2', title:{ko:'두·세 자리 × 한 자리',en:'Multiplying by One Digit',zh:'乘一位数'},
    drills:['ML5@1','ML6@1', 'ML6@2','ML6@7', 'ML6@3','ML6@4', 'ML6@5','ML6@6', 'ML7@1','ML7@2', 'ML7@3','ML7@4', 'ML7@5','EL2@1', 'EL2@2','ML1@3'], minSessions:8,
    magic:[['B-18'],['B-19'],['B-21'],['B-22','B-23'],['C-07'],['C-06'],['C-08'],['C-02']],
    creative:['ML22@1','ML13@1','ML22@2','ML12@1','ML13@2','ML14@1','ML14@2','ML24@1']},
- {id:9, tier:'level1', title:{ko:'나눗셈의 시작과 두 자리 곱셈',en:'Division Begins & 2-digit ×',zh:'除法入门与两位数乘法'},
+ {id:9, tier:'level2', title:{ko:'나눗셈의 시작과 두 자리 곱셈',en:'Division Begins & 2-digit ×',zh:'除法入门与两位数乘法'},
    drills:['DV12@1','DV13@1', 'DV14@1','DV17@1', 'DV12@2','DV13@2', 'DV17@2','DV14@2', 'DV12@3','DV13@3', 'DV17@3','DV1@1', 'DV1@2','EL2@3', 'ML5@2','ML8@1', 'ML8@2','ML8@3', 'ML8@4','ML8@5'], minSessions:10,
    magic:[['B-24'],[],['B-16'],['B-17'],['C-16'],['C-28'],[],['B-20'],['C-26'],['C-10','C-11']],
    creative:['ML13@1','ML22@1','ML12@1','ML22@2','ML16@1','ML16@3','ML1@4','ML12@2','ML23@1','ML23@2','WP4@1','WP7@1']},
- {id:10, tier:'level1', title:{ko:'두 자리 곱셈 마무리와 나머지 나눗셈',en:'2-digit × Wrap-up & Remainders',zh:'两位数乘法总结与有余数除法'},
+ {id:10, tier:'level2', title:{ko:'두 자리 곱셈 마무리와 나머지 나눗셈',en:'2-digit × Wrap-up & Remainders',zh:'两位数乘法总结与有余数除法'},
    drills:['DV2@1','DV2@2', 'DV19@1','DV3@1', 'DV18@1','DV19@2', 'DV18@2','DV19@3', 'DV18@3','EL1@6'], minSessions:5,
    magic:[[],[],['C-13'],[],[]],
    creative:['ML16@3','ML24@2','ML15@1','ML15@2','ML21@1','WP5@1']},
@@ -197,8 +201,11 @@ const COURSE_SPEC = [
    magic:[['C-30'],['C-23'],['C-19'],[],['C-20']],
    creative:['ML19@1','ML19@2','DV10@1','DV10@2','DV11@1','WP3@2','WP8@1']},
  {id:13, tier:'level2', title:{ko:'큰 수와 나눗셈 심화',en:'Big Numbers & Advanced Division',zh:'大数与除法提高'},
-   drills:['DV5@7','EL1@3', 'NS1@3','NS1@5', 'NS1@6','EL1@1'], minSessions:3,
+   drills:['DV5@7','EL1@1', 'NS1@3','NS1@5', 'NS1@6','SB6@8'], minSessions:3,
    magic:[[],['C-09'],['H-13']],
+   /* 2026-10-18 — 다섯 자리 뺄셈(SB6@8, 심화)을 과정 6(2학년 마무리)에서 큰 수를 다루는 이 과정으로 옮겼다.
+      과정 6 의 그 자리는 0에서 빌리기(SB6@4, 4000−1234 꼴)로 채웠다. 역연산은 EL1@1 만 여기 남기고(이 레벨이 실리는
+      유일한 자리), 혼합·큰 수 역연산 EL1@3 은 과정 19 에서 다룬다. */
    /* 3회차 = 억·조 단위(NS1@6) — 큰 수의 곱을 0의 개수로 세는 H-13·CH13 이 같은 범위(2026-10-05, 과정 24 에서 옮김). */
    creative:['DV11@2','ML12@3','CH13@1','WP9@1']},
  {id:14, tier:'level2', title:{ko:'분모가 같은 분수',en:'Fractions with Like Denominators',zh:'同分母分数'},
@@ -311,13 +318,16 @@ const COURSE_SPEC = [
     시켰고 수직선 위 어디인지를 묻는 자리가 없었다. */
  {id:29, tier:'middle1', title:{ko:'소인수분해와 정수의 세계',en:'Prime Factorisation & Integers',zh:'质因数分解与整数'},
    /* 2026-09-25 — 중1-1 첫 단원 소인수분해·최대공약수(DV8·DV7)를 옛 중등 권장 편성에서 옮겨 맨 앞에 싣는다. */
-   drills:['DV8@1','DV8@2','DV8@3','DV7@2','DV7@3','MD1','MD82','MD2','MD3','CH5','MD47','MD48','MD1@2','MD82@2','MD2@2','MD3@2','CH5@2','MD47@2','MD48@2','MD1@3','MD82@3','MD2@3','MD3@3','CH5','MD47@3','MD48@3','MD1@4','MD2@4','CH5@4','MD2@5'], minSessions:15, magic:[['M-01'],['M-82'],['M-02'],['M-03'],['M-47'],['M-48']],
+   /* 2026-10-18 — 교과 칸의 순환소수(CH5)를 뺐다. 분수로 되돌리기(CH5@4)가 순환소수를 분수로(MD9, 과정 31)보다
+      먼저 나와 선수가 뒤집혀 있었다. 그 자리는 유리수 계산에 쓰는 최대공약수·최소공배수와 정수 덧뺄 복습으로 채우고,
+      순환마디 찾기는 창의 칸(CH5@1~3)에 그대로 있다. */
+   drills:['DV8@1','DV8@2','DV8@3','DV7@2','DV7@3','MD1','MD82','MD2','MD3','DV7@3','MD47','MD48','MD1@2','MD82@2','MD2@2','MD3@2','DV7@2','MD47@2','MD48@2','MD1@3','MD82@3','MD2@3','MD3@3','MD2@4','MD47@3','MD48@3','MD1@4','MD2@4','MD3@3','MD2@5'], minSessions:15, magic:[['M-01'],['M-82'],['M-02'],['M-03'],['M-47'],['M-48']],
    /* MD89(정수의 활용 — 기온·해발과 해저·수위)는 이 과정의 적용 회차다(2026-09-25). */
    creative:['MD89@1','MD3@3','MD89@2','MD82@3','MD89@3','MD48@3']},
  /* 30 — 일차방정식은 **푸는 법 다음에 쓰는 법**이 와야 한다(2026-09-21, 원장 "일차방정식의
     활용도 거리·속력·시간, 원가·정가 등 놓치지 마"). MD70 을 MD50 바로 뒤에 붙인다. */
  {id:30, tier:'middle1', title:{ko:'부호의 규칙과 방정식',en:'Rules of Sign & Equations',zh:'符号的规则与方程'},
-   drills:['MD4','MD5','MD6','MD49','MD50','MD70','MD4@2','MD5@2','MD6@2','MD49@2','MD50@2','MD70@2','MD4@3','MD5@3','MD6@3','MD49@3','MD50@3','MD70@3','MD4@4','MD4@5','MD5@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50'],['M-70']], creative:['MD70@3','MD50@3','MD6@3']},
+   drills:['MD4','MD5','MD6','MD49','MD50','MD70','MD4@2','MD5@2','MD6@2','MD49@2','MD50@2','MD70@2','MD4@3','MD5@3','MD6@3','MD49@3','MD50@3','MD70@3','MD50@4','MD4@4','MD4@5','MD5@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-49'],['M-50'],['M-70']], creative:['MD70@3','MD50@3','MD6@3']},
  /* 31 — 좌표평면(MD68)과 정비례·반비례 그래프(MD69)를 여기서 연다. 원장 "정비례 반비례는".
     MD51 은 값만 다뤘고 그래프가 없었다 — 이 둘이 뒤의 일차함수·이차함수 그래프의 바닥이다. */
   {id:31, tier:'middle1', title:{ko:'유리수·좌표와 대표값',en:'Rationals, Coordinates & Measures of Center',zh:'有理数·坐标与代表值'},
@@ -537,6 +547,11 @@ const RECENT_REVIEW = 8;       /* 복습은 같은 구간에서 가장 최근에
 const COURSE_STRATEGY = {
   /* 초등 2·6·7 의 옛 항목(ML1@1 · ML25@3·@4 · AD8@3)은 지웠다(2026-09-26) — 구구단 드릴이 창의 칸을 차지했다.
      과정 1~10 의 창의 목록은 COURSE_SPEC 의 creative 가 정본이다(설계 §4-2 표). */
+  /* 0 — 유아 19주의 창의 칸(NL5 이웃 수 · NL11 수 기계 · NL12 퍼즐)이 과정 자기 드릴에서 와서 19주 내내 1단계였다
+     (2026-10-18). 원본 15권을 따라가는 앞 9주는 1단계, 10~15주는 2단계, 레벨 3 갈래를 다지는 16~19주는 3단계. */
+  0:['NL5@1','NL11@1','NL12@1','NL5@1','NL11@1','NL12@1','NL5@1','NL11@1','NL12@1',
+     'NL5@2','NL11@2','NL12@2','NL5@2','NL11@2','NL12@2',
+     'NL5@3','NL11@3','NL12@3','NL11@3'],
   29:['CH5@1','CH5@2','CH5@3'],
   /* 30·33·34 — 두 개만 번갈아 나왔다(2026-09-26, 한 과정의 창의는 서로 다른 유형·레벨 셋 이상, 설계 §4-3).
      30 에 SB12@3(같은 수를 양쪽에 ± 해도 차는 그대로 → 등식의 성질, 설계 §2-3 계보 6) ·
@@ -633,7 +648,9 @@ const COUNT_CAP = {
   'ML3@1':30,   // 서로 다른 문항 34
   'ML3@2':30,   // 서로 다른 문항 34
   'ML3@4':30,   // 서로 다른 문항 34
-  'ML3@5':30,   // 서로 다른 문항 34
+  'ML3@5':18,   // 서로 다른 문항 32 중 8개가 ML3@4(4·8단)와 같다(7×8·9×8 …). 과정 4 8회차는 두 레벨이 한 장에 실려 ML3@4 가 24문항을 쓰므로
+                //  ML3@5 에 남는 새 문항은 24개 — 예시·따라 풀기 4를 빼고 18(2026-10-18, check-amount-sheets C4 · main 에서도 실패하던 것)
+  'ML2@5':30,   // 3·6단 — 1.5배(36)에서 서로 다른 문항이 모자랐다(2026-10-18, check-amount-sheets C4)
   'ML6@1':30,   // 서로 다른 문항 34
   'ML6@4':30,   // 서로 다른 문항 34
   'NL11@1':18,   // 서로 다른 문항 24
@@ -881,6 +898,24 @@ function buildCourses(NM_THREADS){
     const perSession = Array.isArray(spec.perSessionDrills) ? spec.perSessionDrills : null;
     const emitted = {};   /* 이 과정에서 그 스레드를 이미 몇 회차에 실었나 — 레벨을 올리는 근거 */
     let queue = [];       /* 아직 안 쓴 드릴 항목 대기줄 — 비면 배열을 다시 채운다 */
+    /* 두 번째 바퀴부터(2026-10-18) — 배열을 처음부터 다시 채우면 앞 회차가 그대로 되풀이됐다
+       (고등 48회차: C59 6~9회차 = 1~4회차). 둘째 바퀴는 **각 스레드의 이 과정 최고 레벨**을
+       섞어 싣는다. 바퀴마다 시작점을 한 칸씩 돌려 짝이 앞 바퀴와 달라지게 한다. */
+    let refills = 0;
+    const usedPicks = new Set();
+    const pickKey = list => list.map(d => d.t + '@' + d.lv).sort().join(' ');
+    /* 최고 레벨 항목들로 만들 수 있는 짝을 모두 늘어놓되, 이 과정에서 이미 실은 짝은 뒤로 미룬다 */
+    const topItems = () => {
+      const best = new Map();
+      ownDrills.forEach(d => { const b = best.get(d.t); if(!b || d.lv > b.lv) best.set(d.t, d); });
+      const list = Array.from(best.values());
+      if(list.length < 3) return list;
+      const pairs = [];
+      for(let gap = 1; gap < list.length; gap++)
+        for(let a = 0; a + gap < list.length; a++) pairs.push([list[a], list[a + gap]]);
+      const fresh = pairs.filter(p => !usedPicks.has(pickKey(p))), old = pairs.filter(p => usedPicks.has(pickKey(p)));
+      return fresh.concat(old).flat();
+    };
     const sessions = segments.map((seg, i) => {
       let drills;
       if(perSession && perSession[i]){
@@ -896,7 +931,7 @@ function buildCourses(NM_THREADS){
            한 과정이 한 스레드의 긴 계단으로 이뤄지면(과정 28 의 ML20 은 9레벨) 다른 스레드가
            모자라 주마다 드릴이 하나로 줄었다. 막아야 하는 것은 "같은 유형이 같은 레벨로 두 벌"
            찍히는 것이지, 한 주에 한 단계씩 오르는 것이 아니다. */
-        if(!queue.length) queue = ownDrills.slice();
+        if(!queue.length){ queue = refills ? topItems() : ownDrills.slice(); refills++; }
         /* 한 회차에 2개(중등은 시간이 허락하는 만큼, 남은 회차에 고르게 나눈다). 짝은 다른 스레드 먼저,
            없으면 같은 스레드라도 이미 뽑은 것과 레벨이 다른 항목. */
         let want = 2;
@@ -920,6 +955,7 @@ function buildCourses(NM_THREADS){
            DV20 약수↔배수↔공배수)는 올리지 않는다. 주마다 주제가 바뀌어 그 주 개념과
            어긋나기 때문이다. 갈래형은 과정별로 '@n' 을 손으로 박아 싣는다.
            고정 레벨('AD5@3')은 지은이가 정한 값이므로 그대로 둔다. */
+        usedPicks.add(pickKey(picked));
         drills = picked.map(d => {
           const lv = d.pin != null ? d.lv : climbLevel(d.t, d.lv, emitted[d.t] || 0);
           emitted[d.t] = (emitted[d.t] || 0) + 1;
