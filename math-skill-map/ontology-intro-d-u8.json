@@ -1,0 +1,310 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v47",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 D",
+    "unit": 8,
+    "title": "거꾸로 생각하기",
+    "printedPages": [
+      77,
+      83
+    ],
+    "sourceActivityBlocks": 15,
+    "visuallyReviewedPages": 7
+  },
+  "aggregate": {
+    "ontologyNodes": 1395,
+    "ontologyRelations": 2254,
+    "skillActionCandidates": 268,
+    "activitiesWithSkillCandidateEvidence": 505,
+    "activitiesInReviewQueue": 347,
+    "conditionalDifficultyCandidates": 515,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 15,
+    "newlyLinkedActivities": 12,
+    "activitySkillRelations": 16,
+    "newActivitySkillRelations": 13,
+    "newActionCandidates": 3,
+    "reusedActionCandidates": 1,
+    "conditionalDifficultyBands": 15,
+    "relationHypotheses": 5,
+    "minimumCurriculumLevelCandidates": 15,
+    "minimumCurriculumUnresolved": 0,
+    "minimumCurriculumAssignments": 0,
+    "validatedAnswers": 0,
+    "somaDirectCrossReferences": 14,
+    "somaRowsHeldBack": 4,
+    "somaNoDirectRow": 1
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "D8-LINE01",
+      "area": "spatial",
+      "areaOrder": 12,
+      "label": "수직선의 끝 위치에서 순서 이동을 거꾸로 적용하기",
+      "observableAction": "끝점과 오른쪽·왼쪽 이동을 수직선에 나타내고 각 이동을 역순으로 되돌려 출발 위치를 찾는다.",
+      "activityCount": 2,
+      "printedPages": [
+        77
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D8-PAIR01",
+      "area": "relations",
+      "areaOrder": 29,
+      "label": "두 수량의 상태 이동을 끝 상태에서 함께 복원하기",
+      "observableAction": "두 대상 사이의 이동 규칙과 각 시점의 보유량을 구분해 마지막 상태에서 처음 두 수량을 복원한다.",
+      "activityCount": 2,
+      "printedPages": [
+        81,
+        82
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D8-DIGSUM01",
+      "area": "rules",
+      "areaOrder": 39,
+      "label": "인접 자릿수 합 변환을 반복하고 이전 수 후보 열거하기",
+      "observableAction": "세 자리 수의 이웃한 자릿수를 더해 변환을 반복하고, 여러 이전 수가 가능한 마지막 결과에서 조건에 맞는 수를 모두 찾는다.",
+      "activityCount": 1,
+      "printedPages": [
+        83
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "reusedSkillActions": [
+    {
+      "id": "AR04",
+      "label": "끝 상태에서 연산 순서 거꾸로 복원하기",
+      "newEvidenceActivities": 8,
+      "unitEvidenceActivities": 11,
+      "previouslyLinkedActivities": 3,
+      "conditionalDifficultyBands": [
+        "2",
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "note": "곱셈구구·같은 수 더하기·양의 등분할을 쓰는 1–2학년군 내용 후보. 나눗셈식으로 풀면 3–4학년군 내용이 될 수 있어 전략별 검토가 필요합니다."
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "bandsByAction": [
+      {
+        "id": "AR04",
+        "conditionalDifficultyBands": [
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      {
+        "id": "D8-LINE01",
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "id": "D8-PAIR01",
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "id": "D8-DIGSUM01",
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      }
+    ],
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "strategy-context-only",
+    "minimumLevelCandidates": [
+      {
+        "activityCount": 15,
+        "candidate": "초등 1–2학년군",
+        "status": "strategy-dependent-candidate"
+      }
+    ],
+    "candidateActivities": 15,
+    "unresolvedActivities": 0,
+    "confirmedAssignments": 0,
+    "note": "작은 자연수의 덧셈·뺄셈, 곱셈구구, 같은 수 더하기와 등분할을 이용하는 낮은 학년군 전략을 후보로 둡니다. 나눗셈식·형식적 역산을 선택하면 3–4학년군 수준이 필요할 수 있습니다. 공식 교육과정·소마 행은 맥락 근거이며 최저 학년을 입증하지 않습니다."
+  },
+  "crossReferences": {
+    "directSomaRows": 14,
+    "heldBackRelatedRows": 4,
+    "noDirectRow": 1,
+    "minimumCurriculumConfirmed": 0,
+    "note": "소마 행과 문제 행동의 직접 대응을 후보로 두되 학년·선수 관계로 확정하지 않았습니다."
+  },
+  "taxonomy": {
+    "familyCandidates": [],
+    "existingFamilyMemberships": [
+      "FAMILY-REVERSE-RECONSTRUCTION"
+    ],
+    "relations": [
+      {
+        "from": "AR04",
+        "to": "D8-LINE01",
+        "type": "related-but-distinct",
+        "basis": "둘 다 끝 상태에서 출발 상태를 되돌리지만 AR04는 순서 연산을 역산하고 D8-LINE01은 방향·위치를 수직선에 보존한다."
+      },
+      {
+        "from": "AR04",
+        "to": "D8-PAIR01",
+        "type": "related-but-distinct",
+        "basis": "순서대로 상태를 거꾸로 추적하는 점은 공유하지만 AR04는 한 상태량을 되돌리고 D8-PAIR01은 서로 바뀌는 두 대상의 상태를 함께 복원한다."
+      },
+      {
+        "from": "AR04",
+        "to": "D8-DIGSUM01",
+        "type": "related-but-distinct",
+        "basis": "결과에서 이전 상태를 찾지만 일반 역연산은 한 단계의 입력을 되돌리고 인접 자릿수 합은 여러 이전 수가 가능해 후보를 전수한다."
+      },
+      {
+        "from": "D8-LINE01",
+        "to": "D6-MOVE01",
+        "type": "related-but-distinct",
+        "basis": "둘 다 앞·뒤 이동을 쓰지만 수직선의 최종 위치에서 출발점을 찾는 행동과 정해진 이동 결과에서 특정 눈의 횟수를 구하는 행동은 다르다."
+      },
+      {
+        "from": "D8-DIGSUM01",
+        "to": "AR06",
+        "type": "related-but-distinct",
+        "basis": "두 활동 모두 수 변환을 다루지만 AR06은 예시에서 규칙을 찾아 적용하고 D8-DIGSUM01은 주어진 규칙을 반복 적용한 뒤 여러 역상 후보를 찾는다."
+      }
+    ]
+  },
+  "curriculumSource": {
+    "status": "official-source-context-only",
+    "reference": "2022 개정 교육과정 교육부 고시 제2022-33호 별책 8",
+    "sourceDigest": "bad320409dd8dd5ee040346d8e7b55d556d12e958b7a3c92778ba0e90fc97aed",
+    "gradeBandCandidates": [
+      "초등 1–2학년군"
+    ],
+    "minimumGradeConfirmed": false
+  },
+  "privacy": "원문 문제·정답·해설, 활동 식별자, OCR 원문, 이미지·파일 경로와 해시는 공개하지 않았습니다. 난이도·교과수준·관계는 검토 후보입니다."
+}
