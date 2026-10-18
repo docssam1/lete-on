@@ -1309,6 +1309,38 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             answerVisualRequired,
             answerVisualStatus: answerVisualRequired ? "verified" : "not-required"
           }))
+        },
+        {
+          name: "수의 범위 · Mission 1–6 원문 연결",
+          types: [
+            ["1", "겹치는 두 범위에 들어가는 수와 두 수의 합"],
+            ["2", "배수의 개수로 빈 끝수 모두 찾기"],
+            ["3", "두 자리 끝수로 만드는 순서쌍 세기"],
+            ["4", "숫자 카드로 조건에 맞는 소수 세기"],
+            ["5", "필요한 최소 버스 수로 학생 수의 범위 구하기"],
+            ["6", "상자별 개수로 상자 수의 범위 구하기"]
+          ].map(([number, name], index) => ({
+            id: `5-2-u1-e1-mission-${number}`,
+            name,
+            sourceItemId: `5-2-u1-e1-mission-${number}`,
+            sourceItemLabel: `Mission ${number}`,
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 3,
+            sourcePrintedPage: 5,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e1-missions-direct-solutions-20261018",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-enumeration-user-authorized",
+            reviewLocked: false,
+            reviewReason: "사용자 요청에 따라 원문을 직접 풀이하고 독립 열거로 검산한 유사문항입니다. 출판사 정답지 대조 여부는 별도로 유지합니다.",
+            generatorKey: ["source52RangeMissionOne", "source52RangeMissionTwo", "source52RangeMissionThree", "source52RangeMissionFour", "source52RangeMissionFive", "source52RangeMissionSix"][index],
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }))
         }
       ],
       ["분수의 곱셈",
