@@ -288,7 +288,8 @@ scenario('academy and book together do not duplicate on Previous', 'Academy IDs,
   state.wizard.academies.push({id: 'synthetic-old-academy', institution: '필즈', level: '기존반', status: 'past', note: '보존할 학원 기록'});
   reopenSelected(state);
   setBook(state, 'thinking', '팩토', '1단계 B');
-  collectCompact(state, forms({'compact:academy:choice': '소마', 'compact:academy:level': '__custom__', 'compact:academy:customLevel': 'A반'}));
+  collectCompact(state, forms({'compact:academy:choice': '소마'}), 'compact:academy:choice');
+  collectCompact(state, forms({'compact:academy:level': '프리미어2'}), 'compact:academy:level');
   submit(state);
   const saved = {courses: clone(state.courses), academies: clone(state.wizard.academies)};
   for (let pass = 0; pass < 3; pass++) {
