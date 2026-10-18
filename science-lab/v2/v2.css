@@ -472,6 +472,10 @@ h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
 .src-fig img { max-width: min(100%, 420px); height: auto; border-radius: 8px; background: #fff; }
 .sub-h { margin: 14px 0 4px; font-weight: 700; color: var(--muted, #667); font-size: 14px; }
 /* 문제은행 차례(#/bank) · 지도 시트의 세트 단추 */
+.bank-catalog-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+.bank-catalog-nav a { display: inline-flex; align-items: center; text-decoration: none; font-size: 17px; }
+.bank-2022 .bank-units li.wait { opacity: 1; }
+.bank-2022 .bank-units .bs a { display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; }
 .bank-sem { margin: 22px 0 6px; }
 .bank-sem h3 { margin: 0 0 8px; }
 .bank-units { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
@@ -488,3 +492,7 @@ h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
 .sheet-sets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
 .sheet-sets .btn { text-decoration: none; display: inline-flex; align-items: center; min-height: 40px; }
 .bank-units li.exam { background: var(--soft, #f3f6fb); } .bank-units li.exam .bn { font-size: 13px; }
+.bank-assessments { margin-top: 16px; }
+.bank-assessments h4 { margin: 0 0 8px; }
+.bank-assessment-scope { flex-basis: 100%; margin: 0; font-size: 16px; }
+.bank-assessment-pending { margin: 10px 0 0; font-size: 14px; color: var(--muted, #566274); }

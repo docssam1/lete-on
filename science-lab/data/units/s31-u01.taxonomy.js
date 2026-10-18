@@ -7,7 +7,34 @@ export const taxonomy = {
   "semester": 1,
   "title": "힘과 우리 생활",
   "area": "운동과 에너지",
-  "standards": [],
+  "standards": [
+    {
+      "code": "4과01-01",
+      "text": "일상생활에서 힘과 관련된 현상에 흥미를 갖고, 물체를 밀거나 당길 때 나타나는 현상을 관찰할 수 있다."
+    },
+    {
+      "code": "4과01-02",
+      "text": "수평잡기 활동을 통해 물체의 무게를 비교할 수 있다."
+    },
+    {
+      "code": "4과01-03",
+      "text": "무게를 정확히 비교하기 위해서는 저울이 필요함을 알고, 저울을 사용해 무게를 비교할 수 있다."
+    },
+    {
+      "code": "4과01-04",
+      "text": "지레, 빗면과 같은 도구를 이용하면 물체를 들어 올릴 때 드는 힘의 크기가 달라짐을 알고, 도구가 일상생활에서 어떻게 쓰이는지 조사하여 공유할 수 있다."
+    }
+  ],
+  "standardsSource": {
+    "title": "교육부 고시 제2022-33호 [별책9] 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "attachment": "https://www.moe.go.kr/boardCnts/fileDown.do?fileSeq=1512facbda6c234a1641ac7e9c156ca2&m=&s=moe",
+    "member": "[별책9] 과학과 교육과정.hwp",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "section": "나. 성취기준 > 초등학교 3~4학년 > (1) 힘과 우리 생활",
+    "checkedAt": "2026-10-17"
+  },
+  "standardsNote": "공식 고시 첨부 HWP의 해당 단원 본문·해설·적용 시 고려 사항을 직접 대조했다. 본문 확인과 개별 문항의 적합성·채점·화면 검수 완료는 별개다.",
   "elements": [
     {
       "id": "E1",

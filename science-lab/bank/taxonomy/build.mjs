@@ -29,12 +29,15 @@ for (const unit of UNITS) {
   const out = {
     unit: t.unit, curriculum: t.curriculum, grade: t.grade, semester: t.semester, title: t.title, area: t.area,
     standards: t.standards.map((s) => ({ code: s.code, text: s.text ?? null, verified: Boolean(s.text) })),
-    standardsNote: NOTE,
+    ...(t.standardsSource ? { standardsSource: t.standardsSource } : {}),
+    standardsNote: t.standardsNote || NOTE,
     elements: t.elements,
-    types: t.types.map((x) => ({ ...x, sourceCount: count(x.id), similarCount: simCount(x.id), source: srcOf(x.id) })),
+    types: t.types.map((x) => ({ ...x, sourceCount: count(x.id), similarCount: simCount(x.id), ...(t.assessmentAuthored || t.supplementAuthored ? { authoredCount: Object.values(t.authored).filter((ty) => ty === x.id).length } : {}), source: srcOf(x.id) })),
     formats: t.formats,
     formatCounts: fmtCount,
     sourceTotal: bySrc.length,
+    ...(t.assessmentAuthored ? { authoredTotal: Object.keys(t.authored).length, authoredFormatCounts: t.assessmentFormatCounts, assessmentAuthored: true } : {}),
+    ...(t.supplementAuthored ? { authoredTotal: Object.keys(t.authored).length, authoredFormatCounts: t.supplementFormatCounts, reusedSourceUnit: t.reusedSourceUnit } : {}),
     note: 'data/units/' + unit + '.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. '
       + (bySrc.length ? `types[].source는 원문의 세트·번호다 — 원문 문장은 ${existsSync(join(unitsDir, `${unit}.source.js`)) ? `data/units/${unit}.source.js` : 'Supabase public.science_bank_source(옮기기 전 단원)'}에 있다.` : '이 단원은 새로 쓴 창작 연습이며 원문 단원평가 대응이나 DB 수록을 주장하지 않는다.'),
   };

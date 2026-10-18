@@ -1,4 +1,4 @@
-// 3-1 Ⅱ 동물의 생활 — 문제은행 단원(5단계 수업은 아직 없음). 원문은 s31-u02.source.js, 유사문항은 s31-u02.similar.js.
+// 3-1 Ⅱ 동물의 생활 — 문제은행·5E 단원(수업 원고는 s31-u02.lesson.js). 원문은 s31-u02.source.js, 유사문항은 s31-u02.similar.js.
 export const unit = {
   "id": "s31-u02",
   "course": "3-1",

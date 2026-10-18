@@ -19,7 +19,7 @@ const load = (f) => (existsSync(join(dir, f)) ? import(pathToFileURL(join(dir, f
 const only = new Set(process.argv.slice(2));
 
 let fail = 0;
-for (const f of readdirSync(dir).filter((x) => /^s\d+-(u\d+|mid|fin)\.misc\.js$/.test(x))) {
+for (const f of readdirSync(dir).filter((x) => /^(?:c22-)?s\d+-(u\d+|mid|fin)\.misc\.js$/.test(x))) {
   const u = f.replace('.misc.js', '');
   if (only.size && !only.has(u)) continue;
   const errs = [];

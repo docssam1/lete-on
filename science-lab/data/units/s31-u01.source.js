@@ -53,8 +53,8 @@ export const source = [
     },
     "explanation": "카트를 힘을 주어 밀면 카트가 움직이고, 컴퓨터 자판을 힘을 주어 누르면 자판이 눌립니다. 힘은 물체의 움직임이나 모양을 변하게 할 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -113,8 +113,8 @@ export const source = [
     },
     "explanation": "물체에 힘을 주면 물체의 모양이 변하기도 합니다. 밀가루 반죽을 힘을 주어 눌러 반죽이 얇게 펴진 것과 페트병을 힘을 주어 눌러 페트병이 납작하게 찌그러진 것은 힘에 의해 물체의 모양이 변한 경우입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -172,8 +172,8 @@ export const source = [
     },
     "explanation": "책을 많이 넣을수록 바구니가 무거워집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -233,8 +233,8 @@ export const source = [
     },
     "explanation": "카트를 밀어 움직일 때 빈 카트는 가벼워서 작은 힘이 들지만, 물건을 많이 담아 무거워진 카트는 큰 힘이 듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -295,8 +295,8 @@ export const source = [
     },
     "explanation": "물체의 가볍고 무거운 정도를 무게라고 하고, 물체가 어느 한쪽으로 기울어지지 않고 평평한 상태를 수평이라고 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -352,8 +352,8 @@ export const source = [
     },
     "explanation": "나무판자가 수평이 되도록 받침대에 올려놓은 것을 수평대라고 합니다. 이때 나무판자와 받침대가 서로 닿는 부분을 받침점이라고 합니다. 수평대의 받침점은 나무판자의 한 가운데입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -411,8 +411,8 @@ export const source = [
     },
     "explanation": "두 물체의 무게가 같을 때 받침점에서 양쪽 물체까지의 거리가 같으면 수평이 됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -470,8 +470,8 @@ export const source = [
     },
     "explanation": "두 물체의 무게가 다를 때 받침점에서 물체까지의 거리를 각각 다르게 해야 수평을 만들 수 있습니다. 이때 무거운 물체를 받침점으로부터 가까운 곳에 놓고, 가벼운 물체를 받침점으로부터 먼 곳에 놓습니다.\n무거운 물체와 가벼운 물체의 무게가 두 배 차이가 난다면 받침점으로부터 놓는 거리도 두 배 차이가 나야 수평을 만들 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -529,7 +529,7 @@ export const source = [
       "sample": "단비가 다래보다 시소의 받침점에서 더 가까이 앉는다. / 다래가 단비보다 시소의 받침점에서 더 멀리 앉는다.",
       "rubric": {
         "required": [
-          "무거운 단비가 받침점에 더 가까이 앉거나, 가벼운 다래가 받침점에서 더 멀리 앉는다"
+          "단비가 가까이 또는 다래가 멀리 앉는다"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -539,8 +539,8 @@ export const source = [
     },
     "explanation": "무게가 다른 두 사람이 시소에서 수평을 잡기 위해서는 더 무거운 사람이 받침점으로부터 가까운 곳에 앉고, 가벼운 사람이 받침점으로부터 먼 곳에 앉아야 합니다.\n[채점 기준] 단비가 다래보다 받침점에서 가까이 앉는다는 내용이나 다래가 단비보다 받침점에서 멀리 앉는다는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -601,8 +601,8 @@ export const source = [
     },
     "explanation": "수평이 된 나무판자 양쪽의 같은 거리에 두 물체를 올려놓았을 때 수평을 이루면 두 물체의 무게가 같습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -660,8 +660,8 @@ export const source = [
     },
     "explanation": "저울은 물체의 무게를 정확하게 측정할 수 있는 도구입니다. 자는 길이를 측정하는 도구, 돋보기는 작은 물체를 크게 확대하여 볼 수 있는 도구, 온도계는 온도를 측정하는 도구입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -709,8 +709,7 @@ export const source = [
       "sample": "예) 마트에서 상품의 무게에 따라 가격을 다르게 정한다. / 체육관에서 몸무게를 측정해 경기 체급을 나눈다. / 택배 상자의 무게에 따라 알맞은 택배 요금을 낸다. / 공항에서 여행용 가방의 무게를 측정해 비행기에 가방을 들고 탈 수 있는지 확인한다. 등",
       "rubric": {
         "required": [
-          "저울을 사용하는 경우 한 가지",
-          "저울을 사용하는 다른 경우 한 가지"
+          "저울을 사용하는 서로 다른 경우 두 가지"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -720,8 +719,8 @@ export const source = [
     },
     "explanation": "우리 생활에서 무게를 정확하게 측정하기 위해 저울을 사용합니다.\n[채점 기준] 우리 생활에서 저울을 사용하는 경우 두 가지를 바르게 쓰면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -780,8 +779,8 @@ export const source = [
     },
     "explanation": "무게를 비교하는 단위는 g(그램), kg(킬로그램) 등을 사용합니다. m(미터), mm(밀리미터)는 길이를 나타내는 단위, mL(밀리리터)는 부피를 나타내는 단위입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -839,8 +838,8 @@ export const source = [
     },
     "explanation": "㉠은 손잡이, ㉡은 영점 조절 나사, ㉢은 용수철, ㉣은 표시 자, ㉤은 눈금입니다. 용수철저울에서 물체를 매달면 늘어나는 부분은 용수철입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -894,8 +893,8 @@ export const source = [
     },
     "explanation": "용수철저울의 표시 자가 가리키는 눈금을 읽을 때는 표시 자와 눈높이를 맞춰 눈금을 읽습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -966,8 +965,8 @@ export const source = [
     },
     "explanation": "전자저울로 무게를 측정했을 때 표시판에 나타나는 숫자가 작을수록 더 가벼운 물체입니다. 따라서 물체를 가벼운 순서대로 나열하면 자, 연필, 색연필, 지우개 순입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1027,8 +1026,8 @@ export const source = [
     },
     "explanation": "장난감 자동차를 직접 들어 올릴 때가 지레를 이용해 들어 올릴 때보다 더 큰 힘이 들기 때문에 용수철이 더 많이 늘어납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1083,8 +1082,8 @@ export const source = [
     },
     "explanation": "빗면은 비스듬하게 기울어진 면을 이용해 물체를 움직일 수 있게 만든 도구입니다. 빗면을 이용하면 물체의 무게보다 더 작은 힘으로 물체를 들어 올릴 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1143,8 +1142,8 @@ export const source = [
     },
     "explanation": "삽은 지레를 이용하는 예이고, 경사로, 나사못, 사다리차, 구불구불한 산길은 빗면을 이용하는 예입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1203,8 +1202,8 @@ export const source = [
     },
     "explanation": "병따개를 사용하면 직접 병뚜껑을 딸 때보다 더 작은 힘으로 병뚜껑을 딸 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1263,8 +1262,8 @@ export const source = [
     },
     "explanation": "힘은 물체의 움직임이나 모양을 변하게 할 수 있습니다. 친구들의 응원이 힘이 되는 것과 힘이 들어서 누워 있는 것은 과학에서 말하는 힘에 의한 현상이 아닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1333,8 +1332,8 @@ export const source = [
     },
     "explanation": "물체를 밀면 물체가 나와 멀어지는 방향으로 움직이고, 물체를 당기면 물체가 나와 가까워지는 방향으로 움직입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1389,8 +1388,8 @@ export const source = [
     },
     "explanation": "물체를 밀어서 움직일 때 가벼운 물체일수록 더 작은 힘이 들고, 무거운 물체일수록 더 큰 힘이 듭니다. 따라서 물체가 많이 들어 더 무거운 ㉠을 당길 때 더 큰 힘이 듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1449,8 +1448,8 @@ export const source = [
     },
     "explanation": "물체의 가볍고 무거운 정도에 따라 밀거나 당겨서 움직일 때 드는 힘의 크기가 달라집니다. 물체를 밀거나 당겨서 움직일 때 가벼운 물체일수록 더 작은 힘이 들고, 무거운 물체일수록 더 큰 힘이 듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1505,8 +1504,8 @@ export const source = [
     },
     "explanation": "물체의 가볍고 무거운 정도를 무게라고 합니다. 물체의 무게는 지구가 물체를 당기는 힘의 크기와 같고, 지구는 가벼운 물체보다 무거운 물체를 더 큰 힘으로 당기고 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1565,8 +1564,8 @@ export const source = [
     },
     "explanation": "두 물체의 무게가 다를 때 받침점에서 물체까지의 거리를 각각 다르게 해야 수평을 만들 수 있습니다. 이때 무거운 물체를 받침점으로부터 가까운 곳에 놓고, 가벼운 물체를 받침점으로부터 먼 곳에 놓습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1618,8 +1617,8 @@ export const source = [
     },
     "explanation": "무게가 다른 두 물체로 수평을 잡기 위해서는 무거운 물체를 받침점으로부터 가까운 곳에 놓고, 가벼운 물체를 받침점으로부터 먼 곳에 놓아야 합니다. 배와 포도가 수평을 이루었을 때 포도가 배 보다 받침점에서 가까이 있기 때문에 포도가 배보다 더 무겁습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1668,8 +1667,7 @@ export const source = [
       "sample": "수평대 양쪽의 같은 거리에 자와 지우개를 각각 올려놓았을 때 수평을 이루면 자와 지우개의 무게가 같고, 한쪽으로 기울어지면 기울어진 쪽 물체의 무게가 더 무겁다.",
       "rubric": {
         "required": [
-          "수평대 양쪽의 같은 거리에 자와 지우개를 올린다",
-          "수평이면 무게가 같고, 기울어진 쪽이 더 무겁다"
+          "수평 잡기로 두 물체의 무게를 비교하는 방법"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -1679,8 +1677,8 @@ export const source = [
     },
     "explanation": "수평대의 나무판자 양쪽의 같은 거리에 두 물체를 각각 올려놓으면 물체의 무게를 비교할 수 있습니다. 나무판자가 수평을 이루면 두 물체의 무게가 같고, 한쪽으로 기울어지면 기울어진 쪽에 있는 물체의 무게가 더 무겁습니다.\n[채점 기준] 수평 잡기로 물체의 무게를 비교하는 방법이 포함되어 있으면 정답으로 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1739,8 +1737,8 @@ export const source = [
     },
     "explanation": "무게가 다른 두 사람이 시소의 받침점에서 같은 거리에 앉으면 더 무거운 사람 쪽으로 기울어집니다. 시소가 수평이 되게 하려면 무거운 사람이 받침점에서 더 가까운 곳으로 옮겨 앉거나 가벼운 사람이 받침점에서 더 먼 곳으로 옮겨 앉아야 합니다. 아빠가 단비보다 더 무겁기 때문에 가벼운 단비가 받침점에서 더 가까운 곳으로 옮겨 앉아도 시소는 아빠 쪽으로 기울어진 상태를 유지합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1801,8 +1799,8 @@ export const source = [
     },
     "explanation": "사람마다 느끼는 물체의 무게가 다르기 때문에 손으로 들어 보고 어림하여 비교한 물체의 무게가 사람마다 다를 수 있습니다. 물체의 무게를 정확하게 비교하기 위해서는 저울을 사용해야 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1863,8 +1861,8 @@ export const source = [
     },
     "explanation": "요리를 할 때, 택배 상자의 무게에 따라 택배 요금을 낼 때, 상품의 무게에 따라 가격을 다르게 정할 때 저울을 사용합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1925,8 +1923,8 @@ export const source = [
     },
     "explanation": "위의 용수철저울의 큰 눈금 한 칸이 나타내는 무게는 25 g이고, 작은 눈금 한 칸이 나타내는 무게는 5 g입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1988,8 +1986,8 @@ export const source = [
     },
     "explanation": "용수철저울의 표시 자가 가리키는 눈금의 숫자를 단위와 함께 읽으면 물체의 무게를 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2049,8 +2047,8 @@ export const source = [
     },
     "explanation": "전자저울의 영점 단추를 누르면 표시판에 숫자 ‘0’이 나타납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2109,8 +2107,8 @@ export const source = [
     },
     "explanation": "전자저울의 저울판 가운데에 물체를 올려놓았을 때 표시판에 나타나는 숫자가 클수록 더 무거운 물체입니다. 전자저울의 공기 방울은 저울의 수평을 맞추기 위한 것으로, 물체의 무게를 측정하기 전에 공기 방울이 원의 가운데에 오도록 하여 전자저울의 수평을 맞춰야 합니다. 표시 자는 용수철저울에서 물체의 무게를 알려 주는 부분입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2169,8 +2167,8 @@ export const source = [
     },
     "explanation": "지레는 받침점이 있는 막대를 이용해 물체를 움직일 수 있게 만든 도구입니다. 지레를 이용하면 물체의 무게보다 더 작은 힘으로 물체를 들어 올릴 수 있습니다. 비스듬하게 기울어진 면을 이용해 물체를 움직일 수 있게 만든 도구는 빗면입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2238,8 +2236,8 @@ export const source = [
     },
     "explanation": "직접 들어 올릴 때 드는 힘의 크기보다 지레를 이용해 들어 올릴 때 드는 힘의 크기가 더 작기 때문에 용수철의 길이가 더 조금 늘어납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2300,8 +2298,8 @@ export const source = [
     },
     "explanation": "빗면과 같은 도구를 이용하면 물체의 무게보다 더 작은 힘으로 물체를 들어 올릴 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2360,8 +2358,8 @@ export const source = [
     },
     "explanation": "가위, 펜치, 장도리, 손톱깎이는 지레를 이용하는 예이고, 경사로는 빗면을 이용하는 예입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2420,8 +2418,8 @@ export const source = [
     },
     "explanation": "나사못은 빗면을 이용하는 예로, 일반 못보다 작은 힘으로 벽에 고정할 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2487,8 +2485,8 @@ export const source = [
     },
     "explanation": "힘은 물체의 움직임이나 모양을 변하게 할 수 있습니다. 카트를 힘을 주어 밀면 카트의 움직임이 변합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2548,8 +2546,8 @@ export const source = [
     },
     "explanation": "페트병을 힘을 주어 누르면 페트병의 모양이 변하고, 고무 밴드를 힘을 주어 당기면 고무 밴드의 모양이 변한 것을 통해 힘은 물체의 모양을 변하게 할 수 있다는 것을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2609,8 +2607,8 @@ export const source = [
     },
     "explanation": "물체를 밀면 나와 멀어지는 방향으로 움직이고, 물체를 당기면 나와 가까워지는 방향으로 움직입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2672,8 +2670,8 @@ export const source = [
     },
     "explanation": "두 바구니의 무게를 다르게 하여 바구니의 무게에 따라 밀거나 당겨서 움직일 때 드는 힘의 크기를 비교하는 실험입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2734,8 +2732,8 @@ export const source = [
     },
     "explanation": "물체의 무게에 따라 밀거나 당겨서 움직일 때 드는 힘의 크기가 달라집니다. 물체를 밀거나 당겨서 움직일 때 가벼운 물체일수록 더 작은 힘이 들고, 무거운 물체일수록 더 큰 힘이 듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2794,8 +2792,8 @@ export const source = [
     },
     "explanation": "카트에 담긴 우유가 많을수록 더 무겁습니다. 물체를 밀어 움직일 때 무거운 물체일수록 더 큰 힘이 들기 때문에 세 번째로 큰 힘이 드는 것은 세 번째로 무거운 카트입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2851,8 +2849,8 @@ export const source = [
     },
     "explanation": "물체가 어느 한쪽으로 기울어지지 않고 평평한 상태를 수평이라고 하고, 나무판자가 수평이 되도록 받침대에 올려놓은 것을 수평대라고 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2913,8 +2911,8 @@ export const source = [
     },
     "explanation": "두 물체의 무게가 같으면 시소의 받침점에서 양쪽 같은 거리에 물체를 올려놓아야 수평이 됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2968,8 +2966,8 @@ export const source = [
     },
     "explanation": "수평이 된 나무판자 양쪽의 같은 거리에 두 물체를 각각 올려놓으면 물체의 무게를 비교할 수 있습니다. 나무판자가 수평을 이루면 두 물체의 무게가 같고, 한쪽으로 기울어지면 기울어진 쪽에 있는 물체의 무게가 더 무겁습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3018,8 +3016,7 @@ export const source = [
       "sample": "나무토막 두 개가 한 개보다 더 무겁기 때문에 나무판자가 오른쪽으로 기울어진다.",
       "rubric": {
         "required": [
-          "나무판자가 오른쪽으로 기울어진다",
-          "나무토막 두 개가 한 개보다 더 무겁다"
+          "오른쪽으로 기울어진다"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -3029,8 +3026,8 @@ export const source = [
     },
     "explanation": "수평이 된 나무판자 양쪽의 같은 거리에 무게가 다른 물체를 각각 올려놓으면 더 무거운 쪽으로 기울어집니다.\n[채점 기준] 나무판자가 오른쪽으로 기울어진다는 내용이 포함되어 있으면 정답으로 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3085,8 +3082,8 @@ export const source = [
     },
     "explanation": "수평이 된 나무판자 양쪽의 같은 거리에 두 물체를 각각 올려놓았을 때 나무판자가 수평을 이루면 두 물체의 무게가 같고, 한쪽으로 기울어지면 기울어진 쪽에 있는 물체의 무게가 더 무겁습니다. 결과를 통해 사과가 귤보다 무겁고, 포도가 사과보다 무겁다는 것을 알 수 있습니다. 따라서 포도가 가장 무거운 과일입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3144,8 +3141,8 @@ export const source = [
     },
     "explanation": "마트에서 상품에 따라 무게로 가격을 정하기도 하지만, 라면은 무게가 아닌 개수에 따라 가격을 정합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3204,8 +3201,8 @@ export const source = [
     },
     "explanation": "㉠은 영점 조절 나사로, 무게를 재기 전 표시 자가 눈금 ‘0’을 가리키도록 조절하는 나사입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3270,8 +3267,8 @@ export const source = [
     },
     "explanation": "용수철저울의 고리에 걸 수 없는 물체는 지퍼 백을 이용해 무게를 측정할 수 있습니다. 지퍼 백을 용수철저울의 고리에 걸어서 영점을 맞춘 후 지퍼 백에 물체를 넣어 무게를 측정합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3329,8 +3326,8 @@ export const source = [
     },
     "explanation": "㉠은 저울판, ㉡은 표시판, ㉢은 영점 단추입니다. 물체의 무게를 숫자로 표시하는 부분은 표시판입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3390,8 +3387,8 @@ export const source = [
     },
     "explanation": "컵의 무게는 54 g이고, 지우개의 무게는 16 g입니다. 전자저울의 표시판에 나타나는 숫자가 클수록 더 무거운 물체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3461,8 +3458,8 @@ export const source = [
     },
     "explanation": "지레를 이용해 들어 올릴 때 드는 힘의 크기보다 직접 들어 올릴 때 드는 힘의 크기가 더 크기 때문에 용수철의 길이가 더 많이 늘어납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3511,8 +3508,7 @@ export const source = [
       "sample": "예) 가위, 작은 힘으로 물체를 자를 수 있다. / 손톱깎이, 작은 힘으로 손톱을 쉽게 자를 수 있다. / 장도리, 나무나 벽에 박혀 있는 못을 작은 힘으로 쉽게 뺄 수 있다. / 병따개, 작은 힘으로 병뚜껑을 딸 수 있다. 등",
       "rubric": {
         "required": [
-          "지레를 이용하는 도구 한 가지를 쓴다",
-          "그 도구의 쓰임새를 쓴다"
+          "지레를 이용하는 도구와 그 도구의 쓰임"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -3522,8 +3518,8 @@ export const source = [
     },
     "explanation": "우리 생활에서 지레를 이용하는 예에는 가위, 손톱깎이, 병따개, 장도리, 펜치, 삽 등이 있습니다.\n[채점 기준] 지레를 이용하는 예와 그 쓰임새를 바르게 쓰면 정답으로 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3578,8 +3574,8 @@ export const source = [
     },
     "explanation": "사다리차는 빗면을 이용하는 예로, 사다리차를 이용하면 무거운 짐을 높은 곳으로 옮길 때 더 작은 힘으로 옮길 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3640,8 +3636,8 @@ export const source = [
     },
     "explanation": "펜치는 지레를 이용하는 예로, 철사 등과 같이 단단한 물체를 작은 힘으로 쉽게 끊거나 구부릴 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3696,8 +3692,8 @@ export const source = [
     },
     "explanation": "물체에 힘을 주면 물체의 모양이 변하기도 합니다. 용수철 장난감을 힘을 주어 당겨서 길게 늘인 것은 용수철 장난감이 힘에 의해 모양이 변한 경우입니다. 문을 당겨서 여는 것이나 의자를 밀어서 넣은 것은 힘이 물체의 움직임을 변하게 한 경우입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3753,8 +3749,8 @@ export const source = [
     },
     "explanation": "힘은 물체의 움직임을 변하게 할 수 있습니다. 카트를 힘을 주어 밀면 카트가 나와 멀어지는 방향으로 움직입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3819,8 +3815,8 @@ export const source = [
     },
     "explanation": "무거운 바구니일수록 밀어서 움직일 때 큰 힘이 듭니다. 바구니에 책을 많이 넣을수록 무거워지기 때문에 바구니를 밀어서 움직이게 할 때 가장 큰 힘이 드는 것은 책을 다섯 권 넣은 바구니이고, 다음으로 큰 힘이 드는 것은 책을 두 권 넣은 바구니입니다. 책을 넣지 않은 바구니를 밀어서 움직이게 할 때 가장 작은 힘이 듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3880,8 +3876,8 @@ export const source = [
     },
     "explanation": "물체의 가볍고 무거운 정도를 무게라고 하고, 물체가 어느 한쪽으로 기울어지지 않고 평평한 상태를 수평이라고 합니다. 받침점은 물체를 받침대로 받칠 때 물체와 받침대가 서로 닿는 부분이고, 수평대는 나무판자가 수평이 되도록 받침대에 올려놓은 것입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3942,8 +3938,8 @@ export const source = [
     },
     "explanation": "두 물체의 무게가 같을 때 받침점에서 양쪽 물체까지의 거리가 같으면 수평이 됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4003,8 +3999,8 @@ export const source = [
     },
     "explanation": "무게가 다른 두 물체로 수평을 잡기 위해서는 무거운 물체를 받침점으로부터 가까운 곳에 놓고, 가벼운 물체를 받침점으로부터 먼 곳에 놓아야 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4052,7 +4048,7 @@ export const source = [
       "sample": "예) 아빠가 단비보다 받침점에서 가까운 곳으로 옮겨 앉는다. / 단비가 아빠보다 받침점에서 먼 곳으로 옮겨 앉는다.",
       "rubric": {
         "required": [
-          "무거운 아빠가 받침점 가까이 옮겨 앉거나, 가벼운 단비가 받침점에서 더 멀리 옮겨 앉는다"
+          "아빠가 가까이 또는 단비가 멀리 앉는다"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -4062,8 +4058,8 @@ export const source = [
     },
     "explanation": "무게가 다른 두 사람이 시소의 받침점에서 같은 거리에 앉으면 더 무거운 사람 쪽으로 시소가 기울어집니다. 기울어진 시소가 수평이 되게 하려면 무거운 사람이 받침점에서 더 가까운 곳으로 옮겨 앉거나, 가벼운 사람이 받침점에서 더 먼 곳으로 옮겨 앉아야 합니다.\n[채점 기준] 아빠가 받침점에서 가까운 곳으로 이동한다는 내용이나 단비가 받침점에서 먼 곳으로 이동한다는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4118,8 +4114,8 @@ export const source = [
     },
     "explanation": "수평대 양쪽의 같은 거리에 두 물체를 각각 올려놓았을 때 수평을 이루면 두 물체의 무게가 같고, 한쪽으로 기울어지면 기울어진 쪽에 있는 물체의 무게가 더 무겁습니다. 배와 사과는 수평을 이루었기 때문에 무게가 같고, 사과와 포도는 포도 쪽으로 기울어졌기 때문에 사과보다 포도가 더 무겁습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4178,8 +4174,8 @@ export const source = [
     },
     "explanation": "물체의 무게를 정확하게 측정할 수 있는 도구는 저울입니다. 자는 길이를 측정하는 도구, 온도계는 온도를 측정하는 도구, 돋보기는 작은 물체를 크게 관찰할 때 사용하는 도구, 눈금실린더는 액체의 부피를 측정하는 도구입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4237,8 +4233,8 @@ export const source = [
     },
     "explanation": "병원에서 몸무게를 측정하여 알맞은 약의 용량을 정합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4297,8 +4293,8 @@ export const source = [
     },
     "explanation": "무게를 비교하는 단위는 g(그램), kg(킬로그램) 등이 있습니다. m(미터), cm(센티미터)는 길이를 나타내는 단위이고, L(리터)는 액체의 부피를 나타내는 단위입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4358,8 +4354,8 @@ export const source = [
     },
     "explanation": "㉠은 손잡이, ㉡은 영점 조절 나사, ㉢은 용수철, ㉣은 표시 자, ㉤은 눈금, ㉥은 고리입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4419,8 +4415,8 @@ export const source = [
     },
     "explanation": "㉠은 손잡이, ㉡은 영점 조절 나사, ㉢은 용수철, ㉣은 표시 자, ㉤은 눈금, ㉥은 고리입니다. 고리에 걸 수 없는 물체는 지퍼 백을 이용해 무게를 측정할 수 있습니다. 지퍼 백을 고리에 걸어서 영점을 맞춘 후 지퍼 백에 물체를 넣어 무게를 측정합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4481,8 +4477,8 @@ export const source = [
     },
     "explanation": "용수철저울에 표시된 큰 눈금 한 개가 나타내는 무게는 25 g이고, 작은 눈금 한 개가 나타내는 무게는 5 g입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4548,8 +4544,8 @@ export const source = [
     },
     "explanation": "전자저울을 평평한 곳에 놓고 저울의 수평을 맞춘 후 전원 단추를 눌러 전자저울을 작동합니다. 그리고 영점 단추를 눌러 영점을 맞추고 물체를 저울판 가운데에 올려 표시판의 숫자(물체의 무게)를 읽습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4617,8 +4613,8 @@ export const source = [
     },
     "explanation": "전자저울로 무게를 측정했을 때 표시판에 나타나는 숫자가 클수록 더 무거운 물체입니다. 따라서 물체의 무게는 필통, 지우개, 연필의 순서대로 무겁습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4678,8 +4674,8 @@ export const source = [
     },
     "explanation": "지레를 이용해 장난감 자동차를 들어 올리는 모습입니다. 지레를 이용하면 직접 들어 올릴 때보다 더 작은 힘으로 물체를 들어 올릴 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4728,8 +4724,7 @@ export const source = [
       "sample": "예) 직접 들어 올릴 때보다 빗면을 이용해 들어 올릴 때 드는 힘의 크기가 더 작다. / 빗면을 이용해 들어 올릴 때보다 직접 들어 올릴 때 드는 힘의 크기가 더 크다.",
       "rubric": {
         "required": [
-          "빗면을 이용해 들어 올릴 때 드는 힘이 더 작다",
-          "직접 들어 올릴 때와 견주어 쓴다"
+          "빗면을 이용할 때 힘이 더 작음"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -4739,8 +4734,8 @@ export const source = [
     },
     "explanation": "빗면은 비스듬하게 기울어진 면을 이용해 물체를 움직일 수 있게 만든 도구입니다. 빗면을 이용하면 물체의 무게보다 더 작은 힘으로 들어 올릴 수 있습니다.\n[채점 기준] 빗면을 이용해 들어 올릴 때가 더 작은 힘이 든다는 내용이나 직접 들어 올릴 때가 더 큰 힘이 든다는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4806,8 +4801,8 @@ export const source = [
     },
     "explanation": "가위는 지레를 이용하는 예이고, 경사로, 나사못, 사다리차는 빗면을 이용하는 예입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4868,8 +4863,8 @@ export const source = [
     },
     "explanation": "장도리는 한쪽은 뭉뚝하여 못을 박는데 사용하고, 다른 한쪽은 넓적하고 둘로 갈라져 있어 못을 뽑는데 사용하는 도구입니다. 장도리는 지레를 이용한 도구로, 장도리를 이용하면 못을 작은 힘으로 쉽게 뺄 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"

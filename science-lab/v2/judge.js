@@ -16,9 +16,10 @@
 
 // 「기체: 화산 가스」의 쌍점은 「는」으로 바꿔 둔다 — 짝짓기 답(상태: 물질)을 「기체는 화산 가스」와 같게 읽으려고
 export const norm = (s) => String(s ?? '').normalize('NFC').toLowerCase()
-  .replace(/\s*[:=]\s*/g, '는')
+  .replace(/[ⓐ-ⓩ]/g, (c) => String.fromCharCode(97 + c.charCodeAt(0) - 0x24d0)) // 교재의 Ⓐ·Ⓑ·Ⓒ도 a·b·c와 같은 실험 기호
+  .replace(/\s*[:=：＝]\s*/g, '는')
   .replace(/(\d)\.(\d)/g, '$1점$2')   // 54.0 g ≠ 540 g — 소수점은 지우지 않는다
-  .replace(/</g, '작').replace(/>/g, '큼')   // (가) < (나) ≠ (가) > (나) — 부등호도 지우지 않는다
+  .replace(/[<＜]/g, '작').replace(/[>＞]/g, '큼')   // 전각·반각 부등호의 방향을 보존한다
   .replace(/ㄱ/g, '㉠').replace(/ㄴ/g, '㉡').replace(/ㄷ/g, '㉢').replace(/ㄹ/g, '㉣').replace(/ㅁ/g, '㉤').replace(/ㅂ/g, '㉥').replace(/ㅅ/g, '㉦').replace(/ㅇ/g, '㉧')   // 낱자 ㄱ·ㄴ은 글자 속에 없으니 늘 기호(「ㄴ, 」「ㄴ이」도)
   .replace(/[㈎-㈛]/g, (c) => '가나다라마바사아자차카타파하'[c.charCodeAt(0) - 0x320e])   // ㈎~㈛ = (가)~(하)
   .replace(/[◯⭕]/g, '○').replace(/[✕✖]/g, '×')   // 큰 동그라미·곱표 꼴도 같은 기호로
@@ -49,13 +50,21 @@ function metNeed(t, n) {
   return hits(t, n.any).size >= (n.count || 1);
 }
 
-// 단답: 정답 목록과 같거나, 정답 뒤에 말끝만 붙은 경우(최대 4글자)
+// 단답: 정답 목록과 같거나 명시한 말끝만 붙은 경우.
+// 임의의 짧은 접미어는 다른 낱말일 수 있다(소금물≠소금, 북극성≠북).
+const SHORT_ENDING = /^(?:요|예요|에요|이에요|입니다|이다|다|이야|야|해요|합니다|한다|함|라고요|이라고요)$/;
+// 단답의 단위 기호는 문장부호처럼 지우지 않는다(73% ≠ 73℃).
+// 기존 낱말/조사 규칙은 유지하며, 단위 없는 답은 accepted에 명시한 경우만 인정한다.
+const shortNorm = (s) => norm(String(s ?? '')
+  .replace(/[%％]/g, '퍼센트')
+  .replace(/℃|°\s*c/gi, '섭씨도')
+  .replace(/℉|°\s*f/gi, '화씨도'));
 export function judgeShort(text, accepted) {
-  const t = norm(text); if (!t) return { st: 'empty' };
+  const t = shortNorm(text); if (!t) return { st: 'empty' };
   for (const a of accepted || []) {
-    const k = norm(a); if (!k) continue;
-    const rest = t.slice(k.length);   // 말끝(「예요」 등)만 허용 — 기호·숫자가 더 붙으면(「ㄱ, ㄷ」에 「ㄹ」) 다른 답이다
-    if (t === k || (t.startsWith(k) && rest.length <= 4 && !/^(이|가)?아니/.test(rest) && !/[㉠-㉧0-9○×]/.test(rest))) return { st: 'ok' };
+    const k = shortNorm(a); if (!k) continue;
+    const rest = t.slice(k.length);
+    if (t === k || (t.startsWith(k) && SHORT_ENDING.test(rest))) return { st: 'ok' };
   }
   return { st: 'no' };
 }

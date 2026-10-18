@@ -28,7 +28,7 @@ test('three voluntary writing guides keep reasoning, varied ideas and design sep
   assert.match(WRITING_GUIDES.ideas.steps.join(' '), /뜻이 같은 생각은 하나로/);
 });
 
-test('all 39 existing written items retain source-authored samples and criteria', async () => {
+test('all 63 written items retain authored samples and criteria', async () => {
   let count = 0;
   for (const id of ['s41-u01', 's41-u02', 's41-u03', 's42-u01']) {
     const { items } = await import(`../data/units/${id}.js`);
@@ -42,7 +42,7 @@ test('all 39 existing written items retain source-authored samples and criteria'
       assert.ok(it.answerContract.rubric.pass, it.id);
     }
   }
-  assert.equal(count, 39);
+  assert.equal(count, 63);
 });
 
 test('local judging has no network or persistent student-data writer, and no child self-check boxes', async () => {

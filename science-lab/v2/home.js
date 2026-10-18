@@ -9,6 +9,18 @@ const A = '../assets/';
 
 // 열린 실험 수업(실험 교재 한 장 = 수업 하나). 사진 = 그 수업의 3D 실험실(assets/thumbs, 실제 화면 캡처).
 const LABS = [
+  {id:'c22-s42-u04',lab:'근거 토의·해수면 피해 모형실험·날짜별 대응 실천',skills:['자료·토의','모형·한계','실천·의견'],sem:'4-2',unit:'Ⅳ. 기후변화와 우리 생활',title:'기후 자료와 모형에서 함께 실천으로 이어 가요',q:'자료·실험·실천에서 어디까지 확인했을까?',theme:'#2456c4',image:'activities/c22-s42-u04/sea-level-model.svg',imageAlt:'지필드 피해 모형 계획 · 실제 학생 결과/도시 예측이 아님'},
+  {id:'c22-s42-u03',lab:'공기 무게·압력/온도 부피·기체 조사·실제 제작과 재시험',skills:['비교·조건','설계·제작','시험·수정'],sem:'4-2',unit:'Ⅲ. 여러 가지 기체',title:'공기를 비교하고 내 장치로 설명해요',q:'어떤 조건과 근거로 공기의 성질을 설명할까?',theme:'#2456c4',image:'activities/c22-s42-u03/air-device-plan.svg',imageAlt:'지필드가 작성한 공기 인형 계획도 · 실제 학생 결과가 아님'},
+  {id:'c22-s42-u02',lab:'구성 요소·양분 역할·먹이 모형·실제 토의와 보전 실천',skills:['조사·근거','모형·수정','토의·실천'],sem:'4-2',unit:'Ⅱ. 생물과 환경',title:'생태계의 관계를 조사하고 함께 보전해요',q:'어떤 근거로 관계를 설명하고 실제로 보전할까?',theme:'#2456c4',image:'activities/c22-s42-u02/habitat-photo.webp',imageAlt:'교재의 나무와 물이 보이는 장소 사진 · 학생의 현장 관찰 결과가 아님'},
+  {id:"c22-s42-u01",lab:"여러 날 달 관찰·태양/행성 조사·실제 모형 제작·별자리·소통",skills:["관찰·근거","조사·제작","실제 설명"],sem:"4-2",unit:"Ⅰ. 밤하늘 관찰",title:"날짜가 있는 관찰에서 모형과 설명으로",q:"달과 태양계·북쪽 별자리를 어떤 근거로 설명할까?",theme:"#2456c4",image:"activities/c22-s42-u01/moon-disc.webp",imageAlt:"교재의 달 전체 사진 자료 · 학생이 실제로 관찰한 결과가 아님"},
+  { id:'s41-u04', lab:'세 무리 관찰·영향 조사/발표·소개 자료 제작/공유', skills:['관찰·근거','조사·발표','제작·공유'], sem:'4-1', unit:'Ⅳ. 다양한 생물과 우리 생활', title:'작은 생물을 관찰하고 생활의 이용을 나누어요', q:'특징과 생활 영향을 어떤 근거로 설명하고 실제로 나눌까?', theme:'#2456c4', image:'bank/s41-u04/s3-q11.webp', imageAlt:'여러 세균의 모습을 나타낸 교재 확대 사진 모음 · 색 처리와 서로 다른 배율에 유의하는 관찰 자료' },
+  { id: 'c22-s32-u04', lab: '사례·감염 과정·종이 모형·예방 행동·공유·생활 실천', skills: ['근거·토의', '모형 비교', '실천·의견'], sem: '3-2', unit: 'Ⅳ. 감염병과 건강한 생활', title: '근거로 설명하고 함께 건강한 생활을 실천해요', q: '감염 과정과 예방 행동을 어떻게 연결하고 실제 실천을 돌아볼까?', theme: '#2456c4', imageAlt: '실제 수업 화면의 여섯 종이 카드 연결 계획과 모형의 한계 안내' },
+  { id: 'c22-s32-u03', lab: '떨림·세기·높낮이·전달·관 피리·효과음·소음 줄이기', skills: ['같은 조건 비교', '제작·시험', '실천·의견'], sem: '3-2', unit: 'Ⅲ. 소리의 성질', title: '작은 소리로 관찰하고 만들며 생활을 바꿔요', q: '어떤 근거로 소리의 성질과 소음 줄이기의 효과를 설명할까?', theme: '#2456c4', imageAlt: '실제 수업 화면의 같은 자 길이 비교 계획 그림과 조건 안내' },
+  { id: 'c22-s32-u02', lab: '지구·두 물·해안 조사·밀물과 썰물·갯벌 보전', skills: ['자료 비교', '조사', '근거·설득'], sem: '3-2', unit: 'Ⅱ. 지구와 바다', title: '지구와 바다를 살피고 갯벌의 가치를 전해요', q: '어떤 근거로 바다의 특징과 갯벌의 가치를 설명할까?', theme: '#2456c4', imageAlt: '실제 수업 화면의 절벽·동굴·모래사장 사진과 조사 출처' },
+  { id: 'c22-s32-u01', lab: '재료 관찰·물질별 분류·세 상태 비교·설계', skills: ['성질 비교', '분류', '설계·소통'], sem: '3-2', unit: 'Ⅰ. 물체와 물질', title: '재료를 비교하고 물체를 설계해요', q: '같은 컵을 다른 재료로 만드는 까닭은 무엇일까?', theme: '#2456c4', imageAlt: '실제 수업 화면의 재료 관찰 표와 비교 문제' },
+  { id: 's31-u03', lab: '내 잎 관찰·두 기준 분류·설계·의견 반영', skills: ['잎 관찰', '분류', '설계·소통'], sem: '3-1', unit: 'Ⅲ. 식물의 생활', title: '잎에서 찾는 생활의 아이디어', q: '같은 잎도 기준을 바꾸면 다르게 모일까?', theme: '#2456c4', imageAlt: '잎 사진과 실제 잎 이름표를 쓰는 관찰·분류 자료' },
+  { id: 's31-u02', lab: '관찰·분류·조사·설계·의견 반영', skills: ['관찰', '분류', '설계·소통'], sem: '3-1', unit: 'Ⅱ. 동물의 생활', title: '동물에게서 찾는 생활의 아이디어', q: '같은 동물도 기준을 바꾸면 다르게 모일까?', theme: '#2456c4', imageAlt: '동물 관찰 사진과 분류 기록 화면' },
+  { id: 's31-u01', lab: '위치를 바꾸어 수평 비교하기', skills: ['예상', '비교', '측정'], sem: '3-1', unit: 'Ⅰ. 힘과 우리 생활', title: '밀고 당기고, 수평으로 비교하는 힘', q: '어디에 놓으면 수평이 될까?', theme: '#2456c4' },
   { id: 's41-u01', lab: '고리 자석 방향 바꿔 탑 쌓기', skills: ['가설 설정', '변인 통제', '측정'], sem: '4-1', unit: 'Ⅰ. 자석의 이용', title: '둥실 고리 자석 탑', q: '왜 어떤 자석은 떠 있을까?', theme: '#2F5DA8' },
   { id: 's41-u02', lab: '물의 양 바꿔 얼리고 녹이기', skills: ['가설 설정', '측정', '자료 해석'], sem: '4-1', unit: 'Ⅱ. 물의 상태 변화', title: '얼었다 녹는 물기둥', q: '얼리면 높이와 무게는 어떻게 될까?', theme: '#2A6FB0' },
   { id: 's41-u03', lab: '기울기와 물의 양 바꿔 보기', skills: ['변인 통제', '관찰', '자료 해석'], sem: '4-1', unit: 'Ⅲ. 땅의 변화', title: '흙 언덕 물길', q: '흐르는 물은 흙을 어디로 옮길까?', theme: '#8A5A2B' },
@@ -107,7 +119,7 @@ export function pageHome($app, store, teacher) {
 
     <section class="h-hero"><div class="h-wrap h-hero-in">
       <div class="h-hero-copy">
-        <p class="h-eyebrow">초등 과학 3~6학년 · 교과서 ${ALL.length}개 단원</p>
+        <p class="h-eyebrow">초등 과학 3~6학년 · 실험과 문제은행</p>
         <h1>교과서 단원마다,<br><em>실험 한 장씩.</em></h1>
         <p class="h-lede">예상하고, 3D 실험실에서 직접 해 보고, 내 말로 정리해요. 이 길을 따라가면 초등 과학이 하나로 이어져요.</p>
         <div class="h-cta">
@@ -116,7 +128,7 @@ export function pageHome($app, store, teacher) {
         </div>
         <dl class="h-stats">
           <div><dt>열린 실험 수업</dt><dd>${LABS.length}<small>개</small></dd></div>
-          <div><dt>열린 단원</dt><dd>${openN}<small>/${ALL.length}</small></dd></div>
+          <div><dt>열린 자료 단원</dt><dd>${openN}<small>/${ALL.length}</small></dd></div>
           <div><dt>모은 깃발</dt><dd>${passedN}<small>개</small></dd></div>
         </dl>
       </div>
@@ -144,7 +156,7 @@ export function pageHome($app, store, teacher) {
       </div></section>
 
       <section class="h-sec alt" id="h-map"><div class="h-wrap">
-        <header class="h-sec-head"><p class="h-num">02</p><div><h2>3학년부터 6학년까지, 한 길로</h2><p>정거장 하나가 교과서 단원 하나예요. 파란 정거장은 지금 열려 있고, 끝내면 깃발이 꽂혀요.</p></div></header>
+        <header class="h-sec-head"><p class="h-num">02</p><div><h2>기존 자료 차례</h2><p>파란 정거장은 지금 열려 있고, 끝내면 깃발이 꽂혀요. <a href="#/bank">2022 개정 32단원 차례 보기</a></p></div></header>
         <div class="h-check"><div><b>선생님 확인</b><p>이 기기에서 스스로 공부한 쓰기 답을 확인해요. 기록은 다른 기기로 전송되지 않아요.</p></div><a class="h-btn" href="#/check">확인할 답 보기${need ? ` <span class="h-check-count">${need}</span>` : ''}${ICO.arrow}</a></div>
         <div class="h-legend" aria-hidden="true"><span><i class="open"></i>열림</span><span><i class="passed"></i>끝냄</span><span><i class="locked"></i>준비 중</span></div>
         <div class="h-map">${roadmap(store, nx)}</div>
