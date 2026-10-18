@@ -847,11 +847,13 @@
     margin-right:6px; vertical-align:baseline; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   /* 저학년 큰 숫자 한 줄식(참고 B03) */
   .nm-w2-grid-big .nm-w2-item.nm-print-item { flex-direction:row; align-items:center; justify-content:flex-start; gap:12px; }
-  .nm-w2-big { font-family:'Fredoka','Jua',Pretendard,'Noto Sans KR',sans-serif; font-weight:600;
-    font-size:calc(26px * var(--ws-fs, 1)); letter-spacing:2px; color:#111; white-space:nowrap; }
+  /* KaTeX 식과 일반식은 같은 수학 서체를 쓴다. Fredoka/Jua는 인쇄 페이지에서
+     로드되지 않아 기기별 대체 글꼴이 달랐고, 문제 일부만 둥글고 굵게 보였다. */
+  .nm-w2-big { font-family:KaTeX_Main,'Times New Roman',serif; font-weight:400;
+    font-size:calc(26px * var(--ws-fs, 1)); letter-spacing:0; color:#111; white-space:nowrap; }
   .nm-w2-abox-big { width:14mm; height:11mm; border:1.3px solid #333; border-radius:3px; display:inline-block; vertical-align:middle; margin:0 4px; }
   /* 세로 나눗셈 상자 */
-  .nm-divbox { display:inline-block; font-family:'Fredoka',Pretendard,monospace; font-size:calc(22px * var(--ws-fs, 1)); line-height:1.3; }
+  .nm-divbox { display:inline-block; font-family:KaTeX_Main,'Times New Roman',serif; font-variant-numeric:tabular-nums; font-size:calc(22px * var(--ws-fs, 1)); line-height:1.3; }
   .nm-dv-q { display:flex; justify-content:flex-start; margin-left:calc(2em + 10px); }
   .nm-dv-cell, .nm-dv-d { display:inline-block; width:1.15em; height:1.5em; margin-right:3px; text-align:center; }
   .nm-dv-cell { border:1px dashed #c3c9d6; border-radius:4px; background:#fbfcfe; }
@@ -908,7 +910,7 @@
   .nm-mn-line { font-size:calc(15px * var(--ws-fs, 1)); line-height:1.5; }
   /* 세로 분수(\\dfrac)가 줄 높이를 넘어 윗줄 분모와 아랫줄 분자가 겹쳤다(C-22 ②, 2026-09-25 A4) — 식 한 줄을 제 높이의 상자로 */
   .nm-mn-line .nm-w2-tex { font-size:calc(15px * var(--ws-fs, 1)); display:inline-block; padding:.32em 0; }
-  .nm-mn-plain { font-family:'Fredoka','Jua',Pretendard,sans-serif; letter-spacing:.5px; color:#1A2233; }
+  .nm-mn-plain { font-family:KaTeX_Main,'Times New Roman',serif; letter-spacing:0; color:#1A2233; }
   .nm-mn-result { font-size:calc(13px * var(--ws-fs, 1)); font-weight:900; color:#1F8A5A; }
   .nm-mn-check { flex:0 0 auto; margin-top:8px; border:1.5px solid #d8d3c5; border-radius:10px; padding:6px 12px; background:var(--w2-soft, #fff); }
   .nm-mn-fills { display:flex; flex-wrap:wrap; gap:6px 28px; }
@@ -2114,12 +2116,15 @@ function setSolveMode(v){ try{ localStorage.setItem(SOLVE_MODE_KEY, v?'1':'0'); 
    ws.html 은 주소의 amt 로 window.NM_WS_AMOUNT 를 넘기고, 앱은 localStorage 에 둔다.
    진도 보기 인쇄 검사(pacingPrintActive)는 데이터 그대로(1배)를 본다. */
 const AMOUNT_KEY = 'nm_ws_amount', AMOUNTS = [0.7, 0.85, 1, 1.25, 1.5];
+let amountOverride = null;
 function normAmount(v){ v = parseFloat(v); return AMOUNTS.indexOf(v) >= 0 ? v : 1; }
 function getAmount(){
   if(pacingPrintActive) return 1;
+  if(amountOverride != null) return amountOverride;
   if(window.NM_WS_AMOUNT != null) return normAmount(window.NM_WS_AMOUNT);
   try{ return normAmount(localStorage.getItem(AMOUNT_KEY)); }catch(e){ return 1; }
 }
+function withAmount(amount, render){ const before=amountOverride; amountOverride=normAmount(amount); try{return render();}finally{amountOverride=before;} }
 function setAmount(v){ try{ localStorage.setItem(AMOUNT_KEY, String(normAmount(v))); }catch(e){} }
 function scaleCount(d, count){
   const a = getAmount();
@@ -2567,7 +2572,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
   <div class="nm-cv-brand"><span>${worksheetBrandHtml()}</span><strong>NUMBERS <i>of</i> MAGIC${studentTag}</strong></div>
   <div class="nm-cvw-hero">
     ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}
-    <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}</p>
+    <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}${cv.amount != null && cv.amount !== 1 ? ' · ' + esc(cv.amountLabel || `${cv.amount}×`) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
     <p class="nm-cvw-tagline">${esc(lk('선행부터 독셈, 문장제까지','From advanced work to Doc-T Math and word problems','从超前学习到巧算与应用题'))}</p>
     <div class="nm-cv-rule"></div>
@@ -6153,7 +6158,7 @@ function renderRoundPagesBody(item, opts){
     const prevCap = pages.length === 2 ? firstCap : guideWithPractice && pages.length === 3 ? 6 : layout.perPage;
     const minPractice = midPage ? 6 : Math.min(6, Math.ceil(layout.perPage / 2));
     const joined = prev.concat(tail), size = Math.ceil(joined.length / 2), lastSize = joined.length - size;
-    if(tail.length > 0 && tail.length < minPractice && prev.length > 0 && lastSize >= minPractice
+    if(tail.length > 0 && tail.length < minPractice && prev.length > 0 && lastSize >= Math.min(minPractice, size)
       && size <= prevCap && lastSize <= layout.perPage){
       pages.splice(pages.length-2, 2, joined.slice(0,size), joined.slice(size));
       balancedPracticePages.add(pages.length-2); balancedPracticePages.add(pages.length-1);
@@ -6184,7 +6189,8 @@ function renderRoundPagesBody(item, opts){
        글리프 넘침은 auto 가 못 잡아 여유(slack)를 준다 — 상한까지 남은 만큼만. */
     const rows = fixedPitch ? `repeat(${rowsCount},minmax(${pitchUse + slack}mm,auto))` : `repeat(${rowsCount},minmax(0,1fr))`;
     const flowCol = layout.flow === 'col' ? 'grid-auto-flow:column;' : '';
-    const grow = fixedPitch ? 'flex:0 0 auto;align-content:start;' : '';
+    const grow = fixedPitch ? 'flex:0 0 auto;align-content:start;'
+      : balanced ? 'flex:1 1 auto;align-content:stretch;' : '';
     return `grid-template-columns:repeat(${layout.cols},1fr);grid-template-rows:${rows};${flowCol}${grow}`;
   }
 
@@ -8044,6 +8050,7 @@ ${round.html}
     const k = Math.max(1, Math.min(2, opts.k || 1));
     const cad = (opts.cad === 'w2' || k === 2) ? 'w2' : 'w1';
     const name = opts.name || '';
+    const amount = opts.amount == null ? getAmount() : normAmount(opts.amount);
     const grade = opts.grade != null ? opts.grade : (window.NM_PRINT_GRADE ? window.NM_PRINT_GRADE() : undefined);
     const seedOf = (wk, i) => (wk + c + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
     let session = course.sessions.find(s => !s.test && s.magic && s.magic.length) || course.sessions.find(s => !s.test) || null;
@@ -8058,7 +8065,7 @@ ${round.html}
     /* 세 층 순서(2026-09-25): 교과 → 마법 노트 → 창의 전략 → 적용·문장제 → 심화.
        시드는 예전처럼 drills·creative 배열의 원래 자리 번호로 만든다 — 층을 나눠도 같은 주의
        같은 칸은 같은 문항이 나온다(이미 받은 학습지 링크와 PDF 가 달라지지 않게). */
-    const R = sessionRoleItems(course, session, (p, i) => seedOf(seedWeek + p, i));
+    const R = withAmount(amount, () => sessionRoleItems(course, session, (p, i) => seedOf(seedWeek + p, i)));
     const items = R.school.slice();
     /* 마법 노트(2026-09-18, 원장 "교과 연산 사이에 매직 오브 넘버스 개념 넣었어?") — 그 세션의 마법 유닛
        (누미의 마법 노트 단계·규칙·핵심 체크)을 교과 회차 다음, 창의 회차(Training Course) 앞에 한 장씩.
@@ -8103,7 +8110,9 @@ ${round.html}
     const stage = (window.NM_STAGE_OF_COURSE && NM_STAGE_OF_COURSE(course.order)) || null;
     /* sessionIdx(2026-09-30): 이 학생이 이 과정에서 몇 번째 회차인가(0부터). 링크 학습지는 주소의 s, 앱 편지함은
        연 봉투 수로 넘긴다. 읽을거리(언어사고력) 주제 순환과 유아 "중반부터" 판정에만 쓴다 — 문항은 그대로 주차 시드. */
-    const cover = { name, weekLabel, courseNum: course.order, courseTitle: title, k, cadence: cad, code: wsId,
+    const amountLabel = amount < 1 ? lk(`적은 연습량 ${amount}배`, `Lighter practice · ${amount}×`, `少量练习 ${amount}倍`)
+      : amount > 1 ? lk(`많은 연습량 ${amount}배`, `More practice · ${amount}×`, `加量练习 ${amount}倍`) : '';
+    const cover = { name, weekLabel, courseNum: course.order, courseTitle: title, k, cadence: cad, code: wsId, amount, amountLabel,
       stage: stage ? (stage.name.ko || '') : '',
       sessionIdx: (opts.sessionIdx != null && isFinite(+opts.sessionIdx)) ? Math.max(0, Math.floor(+opts.sessionIdx)) : null };
     const units = [].concat.apply([], (session.magic || []))
