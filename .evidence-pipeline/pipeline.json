@@ -415,7 +415,7 @@
       "task_id": "geometry-number-paper-game-20261017",
       "work_status": "complete",
       "evidence_status": "verified",
-      "release_status": "locked",
+      "release_status": "published",
       "owner": "codex-mac-geometry",
       "source_records": [],
       "authoring_mode": "newly-authored",
@@ -711,12 +711,17 @@
         {
           "id": "release-readback",
           "required": false,
-          "status": "pending",
+          "status": "pass",
           "evidence": [
             {
               "role": "audit",
               "locator": "geometry/games/number-paper/README.md",
               "note": "이번 활동 UI는 로컬 작성·검수. 미커밋·미push·미배포. 앞선 Geometry 배포와 구분."
+            },
+            {
+              "role": "test",
+              "locator": "https://github.com/docssam1/lete-on/actions/runs/39102718374",
+              "note": "Pages succeeded for f240730f. 19 deployed runtime assets matched SHA-256. Live lobby entry, challenge completion with make-ten help, typed answer and portrait layout verified; no browser errors."
             }
           ]
         }
@@ -744,6 +749,15 @@
         "date": "2026-10-18",
         "instruction": "배포 후 진행",
         "scope": "Number-paper game and its playground entry only; preserve other WIP."
+      },
+      "release": {
+        "commit": "f240730f2e6503992c6f1436fa9891a060ed377b",
+        "workflow_run": 39102718374,
+        "workflow_conclusion": "success",
+        "url": "https://lete-on.gfieldacademy.net/geometry/games/number-paper/",
+        "date": "2026-10-18",
+        "runtime_assets_verified": 19,
+        "local_and_remote_trees_equal": true
       }
     }
   ]
