@@ -9,6 +9,8 @@ require("./source-inventory-4-2-quadrilateral.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-5-2-range-e1.js");
+require("./source-5-2-range-missions.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -113,7 +115,7 @@ require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
 const notation = window.HSE_MATH_NOTATION;
-const EXPECTED_PUBLIC_TYPE_COUNT = 1218;
+const EXPECTED_PUBLIC_TYPE_COUNT = 1229;
 const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   ...type,
   semesterId: semester.id,
@@ -208,11 +210,11 @@ if (/\.math-fraction\{[^}]*vertical-align:-\.35em/.test(styleSource)) failures.p
 if (!/\.math-mixed-number\{[^}]*vertical-align:middle/.test(styleSource)) failures.push("대분수의 문장 속 수직 정렬 규칙이 없습니다.");
 
 async function auditFractionLayout() {
-  const playwrightPath = process.env.HSE_PLAYWRIGHT_PATH || path.join(process.env.USERPROFILE || "", ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "node", "node_modules", "playwright");
+  const playwrightPath = process.env.HSE_PLAYWRIGHT_PATH || path.join(process.env.USERPROFILE || require("node:os").homedir(), ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "node", "node_modules", "playwright");
   let browser;
   try {
     const { chromium } = require(playwrightPath);
-    browser = await chromium.launch({ headless: true });
+    browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
     const page = await browser.newPage({ viewport: { width: 1440, height: 720 } });
     await page.setContent(`<!doctype html><html><head><meta charset="utf-8"></head><body>
       <main id="fixture">

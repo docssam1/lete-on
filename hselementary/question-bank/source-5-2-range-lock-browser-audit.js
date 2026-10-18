@@ -12,7 +12,8 @@ assert(output && path.isAbsolute(output), "An absolute private evidence director
 fs.mkdirSync(output, { recursive: true });
 const origin = "http://127.0.0.1:8909";
 const base = `${origin}/hselementary/question-bank/`;
-const ids = ["exploration", "example-1-1", "example-1-2", "example-1-3", "example-1-4"].map(suffix => `5-2-u1-e1-${suffix}`);
+// Representative legacy locks; exact preservation of all 124 is checked by the classification audit.
+const ids = ["5-2-u1-t1", "5-2-u2-t1", "5-2-u3-t1", "5-2-u4-t1", "5-2-u5-t1"];
 const assets = ["index.html", "curriculum.js", "generators.js", "app.js"];
 const hashes = () => Object.fromEntries(assets.map(file => [file, crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname, file))).digest("hex")]));
 const before = hashes();
@@ -54,7 +55,7 @@ async function inspectLocked(browser, id, width) {
     assert.equal(await page.locator("#problemView .question-item").count(), 0);
     await page.locator('#gradeFilter [data-grade="5"]').click();
     await page.locator('#termFilter [data-term="2"]').click();
-    await page.locator("#unitFilter").selectOption("5-2-u1");
+    await page.locator("#unitFilter").selectOption(id.split("-t")[0]);
     const row = page.locator(`[data-preview-type-id="${id}"]`);
     assert.equal(await row.count(), 1);
     assert.equal(await row.locator("input").isDisabled(), true);
@@ -69,8 +70,7 @@ async function inspectLocked(browser, id, width) {
       return { id, text: popover.innerText, previewQuestions: popover.querySelectorAll(".type-preview-question").length, questionCount: document.querySelectorAll("#problemView .question-item").length, selectedCount: document.querySelector("#selectedTypeCount").textContent, locked: type.reviewLocked, verified: type.sourceVerified, key: window.HSE_GENERATORS.generatorKey(type), generated: window.HSE_GENERATORS.generate(type, 0, 0, 1, 0), overflow: document.documentElement.scrollWidth > innerWidth + 1, popoverBounds: { left: box.left, right: box.right, top: box.top, bottom: box.bottom }, localStorageKeys: Object.keys(localStorage), sessionStorageKeys: Object.keys(sessionStorage) };
     }, id);
     assert.match(state.text, /검수 대기/);
-    assert.match(state.text, /공식 답안/);
-    assert.match(state.text, /교재 4쪽/);
+    assert.match(state.text, /원본의 개별 문항/);
     assert.equal(state.previewQuestions, 0);
     assert.equal(state.questionCount, 0);
     assert.equal(parseInt(state.selectedCount, 10), 0);
@@ -119,7 +119,7 @@ async function inspectExisting(browser, width) {
     assert.deepEqual(result.localMissing, []);
     assert.deepEqual(hashes(), before, "Product assets changed during audit; rerun final files");
     result.status = "passed";
-    console.log("5-2 lock browser audit passed: 15 locked direct-URL states; 2 existing Grade 6 regressions; 17 fresh contexts; no live backend access.");
+    console.log("5-2 lock browser audit passed: 15 legacy locked direct-URL states; 2 existing Grade 6 regressions; 17 fresh contexts; no live backend access.");
   } finally {
     await browser.close();
     fs.writeFileSync(path.join(output, "lock-browser-audit.json"), JSON.stringify(result, null, 2) + "\n");

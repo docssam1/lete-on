@@ -30,7 +30,8 @@
 - games/cube-blueprint/ - 큐브 설계도
 - games/find-shape/ - 단서로 모양 찾기
 - games/minmax/ - 최대·최소 큐브 챌린지
-- games/paper-fold/ - 한 번·두 번 접어 자르기, 구멍, 숫자 색종이, 맨 위 수
+- games/paper-fold/ - 접어 자르기, 접어 구멍 뚫기, 접는 방법 거꾸로 찾기
+- games/number-paper/ - 숫자 색종이 공방: 직접 접기·가위질·역순 펼치기·조각 모으기의 2활동, 총 40모양
 - games/paper-turn/ - 색종이 접고 돌리고 뒤집기
 - games/mirror-manor/ - 거울 저택: 반쪽 칠하기·같은 거리·물건 배치·기호 반사·두 거울 5단계, 50문제
 - games/geoboard/ - 점판 공작소: 열린 선·도형 재현·정사각형·정삼각형·도형 분할 5단계, 55문제
@@ -49,12 +50,22 @@
 
 ## 색종이 생각 놀이터
 
-`origami-studio/`에서 두 개의 독립 과정을 선택합니다.
+`origami-studio/`에서 접고 펼치기, 세고 계산하기, 겹친 순서, 방향 추적을 선택합니다.
+
+`세고 계산하기`에는 숫자 색종이 게임이 연결되어 있습니다. 종이를 직접 접고 잘라 역순으로 펼친 뒤,
+잘린 조각 또는 남은 종이를 바구니에 모읍니다. 기본은 합을 보여 주고, 도전은 모두 담은 뒤 직접 합을 계산합니다.
+활동별 20모양 중 한 번에 5장을 만들며, 기존 계산·겹침 순서 학습지 카드는 계속 제공합니다.
+게임의 `내 종이 학습지`는 현재5장과 순서 그대로 `worksheet/number-paper/`로 이어집니다.
+문제·풀이·빠른 정답과 양면용 빈 면을 따로 선택하며, 펼친 모양 예상과10만들기를 종이에 이어서 풉니다.
+게임 범위와 검산 기준은 `games/number-paper/README.md`를 따릅니다.
 
 1. 접고 펼치기: 한 번 접기, 작업 위치, 대칭 도형, 잘린 수의 합
 2. 접고 돌리고 뒤집기: 뒤집기, 자른 선 되짚기, 회전, 반사, 연속 동작 추적
 
-두 과정은 각각 5레벨, 레벨마다 10문제이며 한 회차에 5문제를 풉니다. 첫 과정은 접기 횟수와 작업을 섞지 않고 `한 번 접어 자르기`, `두 번 접어 자르기`, `구멍 뚫기`, `숫자 색종이`, `맨 위 수`로 구분합니다. `worksheet/paper-fold/`에서는 같은 분류로 유형을 골라 학습지와 풀이가 포함된 정답지를 만들 수 있습니다.
+접고 펼치기 게임은 자르기·구멍 뚫기·거꾸로 찾기의 3유형이며 기본 10문제에서 최대 20문제까지
+이어서 풉니다. 방향 추적 게임은 5레벨, 레벨마다 10문제 중 한 회차에 5문제를 풉니다.
+`worksheet/paper-fold/`에서는 별도의 계산·순서 유형과 게임 연계 유형을 골라 학습지와
+풀이가 포함된 정답지를 만들 수 있습니다.
 
 ## 후속 게임 설계
 
@@ -217,3 +228,23 @@ node geometry/games/shape-transform/manipulation.browsercheck.mjs
 node geometry/worksheet/shape-transform/workbook.selftest.mjs
 node geometry/worksheet/shape-transform/workbook.browsercheck.mjs
 ```
+
+
+## 색종이 마술 공방
+
+`games/paper-craft/`는 직접 접기·자르기·무늬 만들기·조각 분류·숫자 바구니·겹친 종이 쌓기/벗기기를 제공한다.
+`worksheet/paper-craft/`는 같은 활동 ID와 자기 무늬를 받아 문제·풀이·빠른 정답을 만든다.
+출처33유형과 창작126연습의 대응 및 한계는 `docs/25_PAPER_FOLD_SOURCE_COVERAGE.md`를 따른다.
+기존 숫자 색종이 게임과 학습지는 유지한다.
+
+```sh
+node geometry/shared/paper-craft.selftest.mjs
+node geometry/shared/paper-craft-geometry.selftest.mjs
+node geometry/shared/paper-craft-reverse.selftest.mjs
+node geometry/worksheet/paper-craft/workbook.selftest.mjs
+```
+
+PDF는 `worksheet/paper-craft/export-pdf-plan.mjs --output <private-output-directory>`로
+같은 선택과 페이지 계획을 내보낸 뒤 `pdf-export.py --plan <print-plan.json>`으로 생성하고,
+`pdf-verify.py --directory <private-output-directory> --pdftoppm <pdftoppm-path>`로 전페이지 렌더한다.
+설치된 한국어 글꼴을 사용하며 글꼴·원자료 이미지는 공개 저장소에 복사하지 않는다.

@@ -20,6 +20,7 @@ on:
       - 'roadmap/**'
       - 'science-lab/**'
       - 'vocab-quiz/**'
+      - 'w/**'
       - 'world-explorer/**'
       - 'yubin-yujun-store/**'
       - 'gfield-on-admin.html'
@@ -69,6 +70,7 @@ jobs:
           mkdir -p _site/hsmiddle
           mkdir -p _site/geometry
           mkdir -p _site/number_magic
+          mkdir -p _site/w
           mkdir -p _site/personality
           mkdir -p _site/premier
           mkdir -p _site/promo/hwangso-last-month
@@ -101,6 +103,7 @@ jobs:
           test ! -e _site/hyper-focus/supabase
           test ! -e _site/hyper-focus/output
           cp -R number_magic/. _site/number_magic/
+          cp -R w/. _site/w/
           cp -R personality/. _site/personality/
           cp -R premier/. _site/premier/
           rm -rf _site/premier/qa

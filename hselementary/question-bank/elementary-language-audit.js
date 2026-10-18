@@ -6,6 +6,8 @@ require("./source-inventory-4-2-quadrilateral.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-5-2-range-e1.js");
+require("./source-5-2-range-missions.js");
 require("./source-6-2-decimal-e6-text.js");
 require("./source-6-2-decimal-e6-geometry.js");
 require("./source-6-2-decimal-e3.js");
