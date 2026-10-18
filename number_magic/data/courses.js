@@ -164,7 +164,7 @@ const COURSE_SPEC = [
    magic:[['A-16'],['A-24'],['A-13'],['A-22'],['A-14'],['A-15'],['A-23']],
    creative:['AD14@1','AD16@1','SB10@1','SB13@1','SB12@3','SB8@3','SB5@2']},
  {id:6, tier:'level1', title:{ko:'네 자리 수와 2학년 마무리',en:'Four-digit Numbers & Grade 2 Wrap-up',zh:'四位数与二年级总结'},
-   drills:['AD4@4','SB7@1', 'SB7@2','EL1@5', 'NS1@2','AD7@1', 'AD7@2','SB6@5', 'AD7@3','SB6@7', 'AD4@5','EL3@1', 'AD7@4','SB6@7'], minSessions:7,
+   drills:['AD4@4','SB7@1', 'SB7@2','EL1@5', 'NS1@2','AD7@1', 'AD7@2','SB6@5', 'AD7@3','SB6@7', 'AD4@5','EL3@1', 'AD7@4','SB6@4'], minSessions:7,
    magic:[['A-25'],['A-33'],['A-17'],['A-18'],['A-30'],['A-31'],['A-32']],
    creative:['MX7@2','EL6@1','AD14@2','AD15@2','AD15@4','AD15@5','AD15@3']},
  {id:7, tier:'level1', title:{ko:'2학년 종합 다지기',en:'Grade 2 Review',zh:'二年级综合巩固'},
@@ -203,7 +203,9 @@ const COURSE_SPEC = [
  {id:13, tier:'level2', title:{ko:'큰 수와 나눗셈 심화',en:'Big Numbers & Advanced Division',zh:'大数与除法提高'},
    drills:['DV5@7','EL1@1', 'NS1@3','NS1@5', 'NS1@6','SB6@8'], minSessions:3,
    magic:[[],['C-09'],['H-13']],
-   /* 2026-10-18 — 다섯 자리 뺄셈(SB6@8, 심화)을 과정 6(2학년 마무리)에서 큰 수를 다루는 이 과정으로 옮겼다. */
+   /* 2026-10-18 — 다섯 자리 뺄셈(SB6@8, 심화)을 과정 6(2학년 마무리)에서 큰 수를 다루는 이 과정으로 옮겼다.
+      과정 6 의 그 자리는 0에서 빌리기(SB6@4, 4000−1234 꼴)로 채웠다. 역연산은 EL1@1 만 여기 남기고(이 레벨이 실리는
+      유일한 자리), 혼합·큰 수 역연산 EL1@3 은 과정 19 에서 다룬다. */
    /* 3회차 = 억·조 단위(NS1@6) — 큰 수의 곱을 0의 개수로 세는 H-13·CH13 이 같은 범위(2026-10-05, 과정 24 에서 옮김). */
    creative:['DV11@2','ML12@3','CH13@1','WP9@1']},
  {id:14, tier:'level2', title:{ko:'분모가 같은 분수',en:'Fractions with Like Denominators',zh:'同分母分数'},
