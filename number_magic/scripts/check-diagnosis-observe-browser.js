@@ -48,11 +48,11 @@ try{
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].bookCourseNumber),17,'book course number is saved as a number');
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].step),'level-3','Level is derived from completed course 17');
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1'))._diag.selection.completedBooks[0].bookStatus),'completed','only a newly confirmed choice is recorded as completed');
-   // 두뇌로 완료 과정 하나면 그 과정의 연산으로 이전 6 · 과정 N 10 · 다음 4 진단지가 바로 준비된다.
+   // 두뇌로 완료 과정 하나면 그 진도를 기준으로 이전 6 · 현재 10 · 다음 4 진단지가 바로 준비된다.
    assert.equal(await page.locator('#pdStart').isDisabled(),false,'a completed Dunoro course starts its own 6/10/4 paper');
    if(lang==='ko'){
     assert((await page.locator('.pd-intake-hint').first().innerText()).includes('두뇌로 과정 17 완료 기준'),'the Dunoro scope is shown');
-    assert((await page.locator('.pd-blueprint').innerText()).includes('교재의 실제 문제와 숫자 범위·풀이 형식이 같은지는 확인되지 않았어요'),'the book paper states its unverified question format');
+    assert((await page.locator('.pd-blueprint').innerText()).includes('교재와 같은 주제나 문제 형식일 필요는 없어요'),'the book paper does not require identical textbook topics');
    }
    assert((await page.locator('#pdPaper').getAttribute('href')).includes('dunoro=17'),'the paper link carries the Dunoro course');
    await page.selectOption('[data-book-course="0"]','11');assert.equal(await page.locator('#pdBaseline').inputValue(),'');
@@ -114,7 +114,7 @@ try{
     await page.selectOption('[data-book-step="0"]','elem-2021-v10');
     assert.equal(await page.locator('#pdStart').isDisabled(),false,'identified Miracle volume starts a topic paper');
     assert((await page.locator('#pdPaper').getAttribute('href')).includes('bookSeries=miracle-elem-2021&bookVolume=10'),'Miracle print link preserves the identified publication and volume');
-    assert((await page.locator('.pd-blueprint').innerText()).includes('실제 교재의 문제·숫자 범위·풀이 방식과 같다는 검증은 없어요'),'whole-volume paper makes no textbook-item equivalence claim');
+    assert((await page.locator('.pd-blueprint').innerText()).includes('교재와 같은 주제나 문제 형식일 필요는 없어요'),'whole-volume paper does not require a textbook topic match');
    }
    await page.click('[data-route="age"]');await page.selectOption('#pdAge','16');assert.equal(await page.locator('#pdBaseline').inputValue(),'c35');
    await page.locator('.pd-selection details summary').click();await page.selectOption('#pdBaseline','f-count5');assert.equal(await page.locator('.pd-selection details').getAttribute('open'),'');

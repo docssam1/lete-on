@@ -72,10 +72,14 @@ for (const [id, key] of series) {
 }
 const mixes = [
   [{series:'soma-p',course:1},{series:'soma-k',course:1}],
+  // The parent may combine completed books without a shared arithmetic topic.
+  [{series:'soma-p',course:1},{series:'soma-d',course:6}],
   [{series:'dunoro',course:17},{series:'miracle-elem-2021',course:6}],
   [{series:'soma-p',course:8},{series:'soma-k',course:8},{series:'soma-a',course:8},{series:'soma-b',course:8},
     {series:'soma-c',course:8},{series:'soma-d',course:6},{series:'miracle-pre-2023',course:5},{series:'miracle-elem-2021',course:12}]
 ];
+assert.equal(world.NM_SOMA_P_2019.courses[0].refs.filter(ref => world.NM_SOMA_D_2019.courses[5].refs.includes(ref)).length,0,
+  'cross-topic mix example must have no shared topic anchors');
 for (const sources of mixes) for (let seed = 0; seed < seeds; seed++) {
   const plan = world.NM_PLACEMENT_PLAN.buildBooks(sources, seed), where = 'mix ' + sources.length + ' seed ' + seed;
   assert.deepStrictEqual(plain(plan), plain(world.NM_PLACEMENT_PLAN.buildBooks(sources, seed)), where + ': deterministic');
@@ -83,6 +87,9 @@ for (const sources of mixes) for (let seed = 0; seed < seeds; seed++) {
   assert.equal(new Set(plan.items.map(i => i.fingerprint)).size, 20, where + ': no repeated visible questions');
   for (const [band, count] of Object.entries(counts)) assert.equal(plan.items.filter(i => i.band === band).length, count, where + ': ' + band);
   for (const item of plan.items) assert(sources.some(x => x.series === item.sourceBook.series && x.course === item.sourceBook.course), where + ': source trace');
+  if (sources[0].series === 'soma-p' && sources[1].series === 'soma-d')
+    assert.equal(new Set(plan.items.filter(i => i.band === 'current').map(i => i.sourceBook.series)).size,2,
+      where + ': unrelated completed topics both contribute');
   if (sources.length === 8) assert.equal(new Set(plan.items.filter(i => i.band === 'current').map(i => i.sourceBook.series)).size, 8, where + ': each book gets a completed topic');
   assert.equal(world.NM_PLACEMENT_PLAN.summarize(plan,plan.items.map(i => ({id:i.id,value:i.answer,validationFlags:{validTargets:true}}))).correct,20,where + ': scoring');
 }
