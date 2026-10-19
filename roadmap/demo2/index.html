@@ -612,12 +612,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <section id="levelRoadmap" class="container" style="display:none">
  <div class="student-card">
   <div style="font-size:11px;letter-spacing:.14em;font-weight:900;color:#7c3aed;margin-bottom:8px">STEP 3 · LEVEL ROADMAP</div>
-  <h2>3개월 단위 레벨 L0~L12 (5세~초4)</h2>
-  <p class="sr-lead">레벨은 3개월 간격이고, 모두 같은 속도로 갑니다. 초2 3월에 2-2를 처음 하는 아이부터 중등을 하는 아이까지 들어갑니다. 보라 테두리가 우리 아이와 가장 가까운 레벨, 세로 보라 칸이 지금 달입니다.</p>
+  <h2>2~3개월 단위 레벨 L0~L13 (5세~초4)</h2>
+  <p class="sr-lead">레벨은 3개월 간격(L12만 2개월)이고, 모두 같은 속도로 갑니다. 초2 3월에 2-2를 처음 하는 아이부터 중등을 하는 아이까지 들어갑니다. 보라 테두리가 우리 아이와 가장 가까운 레벨, 세로 보라 칸이 지금 달입니다.</p>
   <h3 class="sr-title" id="lvCompareTitle"></h3>
   <div id="lvCompare"></div>
   <div class="key-rules" id="keyRules"></div>
-  <h3 class="sr-title" style="margin-top:22px">전체 레벨 L0~L12</h3>
+  <h3 class="sr-title" style="margin-top:22px">전체 레벨 L0~L13</h3>
   <div class="table-wrapper sr-wrap" id="lvTable"></div>
   <div class="sr-notes"><ul>
    <li>초등 구간은 원장님 ‘프리미어 2반 수준’ 표를 이어 붙였습니다. 사고력은 이 표보다 당기지 않았고(L0·L1·L2 같음, L3 +5개월, L4 +10개월), 교과·연산은 레벨 속도대로 이었습니다. 유아 때 이미 한 교재는 다시 넣지 않았습니다.</li>
@@ -1593,7 +1593,7 @@ function axisText(label,v){
   return n>0?`<span class="ls-chip up">${label} ${n}개월 앞섬</span>`:`<span class="ls-chip down">${label} ${-n}개월 늦음</span>`;
 }
 function fillLevelSummary(d){
-  // 3개월 단위 레벨(L0~L12) 전체에서 가장 가까운 레벨을 고른다(school-roadmap.js)
+  // 3개월 단위 레벨(L0~L13) 전체에서 가장 가까운 레벨을 고른다(school-roadmap.js)
   const best=(window.SchoolRoadmap&&SchoolRoadmap.bestGrid(d))||window.__bestLevel, box=document.getElementById('levelSummary');
   if(!best||!best.id||!box) return;
   window.__bestGrid=best;
