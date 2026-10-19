@@ -240,13 +240,15 @@ function init(){
 const P2={
   school:[['3-1 디딤돌 응용',26,27],['3-2 디딤돌 응용',28,29],['4-1 디딤돌 응용',30,32],['4-2 디딤돌 응용',33,35],['5-1 디딤돌 응용',36,38],['5-2 디딤돌 응용',39,41],['6-1 디딤돌 응용',42,44],['6-2 디딤돌 응용',45,47],['중1-1',48,50],['중1-2',51,52],['중2-1',53,56],['중2-2',57,58]],
   school2:[['3학년 최상위(선택)',36,41],['4학년 최상위 이후 꾸준히',42,47]],
-  comp:[['1031 입문 + workbook',26,29],['1031 초급',30,36],['1031 중급',37,43],['3% 1과정 + P 중급 완료',44,47],['왕수학 응용 4',48,50],['3% 2과정 주요 문항',51,53],['황소 대비',54,58]],
+  comp:[['1031 입문 + workbook',26,29],['1031 초급',30,36],['1031 중급',37,43],['3% 1과정 + P 중급 완료',44,47],['왕수학 응용 4',48,50]],
   comp2:[['성대경시 대비',36,37],['성대경시 대비',42,43],['왕수학 올림피아드 3<br>+ 대비 문항',48,50]],
   calc:[['기적의 계산법 5',23,25],['기적의 계산법 6',26,28],['기적의 계산법 7',29,31],['기적의 계산법 8',32,34],['기적의 계산법 9',35,37],['기적의 계산법 10',38,40],['기적의 계산법 11',41,43],['기적의 계산법 12',44,46],['중1 연산',47,49]]
 };
 const L_SHIFT={L0:0,L1:3,L2:7,L3:12,L4:17}; // 데모 LEVELS의 shift와 같다
+// 레벨별 공부 강도(원장님 2026-10-19). 비어 있는 레벨은 원장님 기준을 받으면 채운다.
+const L_LOAD={L0:'학원 주 4~5일 · 시험 대비 중심',L1:'학원 주 4~5일 · 시험 대비 중심',L4:'사고력 꼼꼼히 + 모의고사 · 황소 미고려도 많음'};
 const AX0=4, AX1=71; // 5세 5월 ~ 초3 12월
-const ROW_COLORS={school:'#dbeafe',school2:'#e0f2fe',comp:'#ede9fe',comp2:'#fce7f3',calc:'#dcfce7'};
+const ROW_COLORS={school:'#dbeafe',school2:'#e0f2fe',comp:'#ede9fe',comp2:'#fce7f3',calc:'#dcfce7',hwangso:'#fde68a'};
 
 function demoPrefix(key, stopText){
   const out=[];
@@ -263,25 +265,19 @@ const ACADEMY={
   soma:{label:'소마 진도',color:'#e8f2ff',points:[['소마 관찰',10],['RAY B 완료',19],['프리미어<br>RISE 시작',20],['P1 선발 희망 시<br>소마 입학',24],['프리미어 선발<br>(4월)',27]]},
   fields:{label:'필즈 진도',color:'#fff1e6',points:[['필즈<br>관찰평가',23],['1차 승급',25],['2차 승급',27],['3차 승급 ·<br>필즈 S 선발',29]]}
 };
-/* 황소 시험 달: 초2 11월 → 초3 2월 → 초3 11월 (원장님 2026-10-19 "11월 이후 2월에 볼 수도 있고 초3 11월에 할 수도").
-   레벨마다 옮긴 황소 대비 칸은 끝나는 달 이후의 가장 가까운 시험 달에 끝나도록 뒤로만 민다(기간은 그대로). */
+/* 황소는 기본 로드맵에 넣지 않는다(원장님 2026-10-19: "황소를 굳이 고려하지 않아도 학습할 수 있는 로드맵").
+   '황소 대비 보기' 키를 켜면 레벨마다 황소 개념 3개월 + 황소 모의고사 2개월(5개월)을 시험 달에 끝나도록 붙인다.
+   조건: 1031 초급을 마친 다음 달부터 시작. 3% 1과정 완료는 조건이 아니다(3% 2과정은 중1 선행 수준이라 대부분 하지 않음).
+   시험 달: 초2 11월 · 초3 2월 · 초3 11월(달력 기준, 원장님 확인). */
 const HWANGSO_EXAMS=[58,61,70];
-function snapHwangso(blocks){
-  const out=[];
-  blocks.forEach(([t,s,e])=>{
-    if(!/황소 대비/.test(t)){ out.push([t,s,e]); return; }
-    const w=HWANGSO_EXAMS.find(x=>x>=e); // 앞으로 당기지 않는다: 3% 2과정 등 앞 과정을 줄이면 안 됨(원장님 2026-10-19)
-    const ns=w==null?s:s+(w-e), ne=w==null?e:w;
-    // 시험까지 남는 기간: 3% 2과정을 하거나 모의고사로 둔다(원장님 2026-10-19)
-    // 시험 달에 맞추느라 앞으로 당겨져 앞 칸과 겹치면 앞 칸을 줄인다
-    while(out.length&&out[out.length-1][2]>=ns){ const last=out[out.length-1]; if(last[1]>=ns) out.pop(); else { last[2]=ns-1; break; } }
-    const prevEnd=out.length?out[out.length-1][2]:ns-1;
-    if(ns-prevEnd>1) out.push(['3% 2과정<br>또는 모의고사',prevEnd+1,ns-1]);
-    out.push([t,ns,ne]);
-  });
-  return out;
+function hwangsoPlan(compBlocks){
+  const c=compBlocks.find(b=>/1031 초급/.test(plain(b[0])));
+  if(!c) return [];
+  const w=HWANGSO_EXAMS.find(x=>x-4>c[2]);
+  if(w==null) return [];
+  return [['황소 개념 (3개월)',w-4,w-2],['황소 모의고사 (2개월)',w-1,w]];
 }
-const academyOn={soma:false,fields:false};
+const academyOn={soma:false,fields:false,hwangso:false};
 /* 초등 구간 이어 붙이기 (원장님 2026-10-19 "초1 4월 중등 너무 빨라, 내 자료에 그 정도 근거는 없어")
    - P2(프리미어 2반 수준) 표보다 빠르게 당기지 않는다: L0·L1·L2는 P2 시점 그대로, L3 +5 · L4 +10개월.
    - 유아(데모) 줄은 P2 첫 교재 전까지 그대로 두고, 데모에서 이미 한 교재(같은 교재 이름)는 P2에서 다시 하지 않는다. */
@@ -308,13 +304,14 @@ function joinRow(demoKey, demoShift, pBlocks, pShift){
 function levelRows(shift){
   const pShift=Math.max(0,shift-L_SHIFT.L2);
   const sh=(arr,d)=>arr.map(([t,s,e])=>[t,s+d,e+d]);
+  const comp=joinRow('thinking1',shift,P2.comp,pShift);
   return [
     {key:'school',label:'교과',blocks:joinRow('school',shift,P2.school,pShift)},
     {key:'school2',label:'교과 심화',blocks:sh(P2.school2,pShift)},
-    {key:'comp',label:'사고력·경시',blocks:snapHwangso(joinRow('thinking1',shift,P2.comp,pShift))},
+    {key:'comp',label:'사고력·경시',blocks:comp},
     {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,pShift)},
     {key:'calc',label:'연산',blocks:joinRow('calc',shift,P2.calc,pShift)}
-  ];
+  ].concat(academyOn.hwangso?[{key:'hwangso',label:'황소 대비<br><small>(선택)</small>',blocks:hwangsoPlan(comp)}]:[]);
 }
 function axisYears(){
   const names=['5세','6세','7세','초1','초2','초3'], out=[];
@@ -334,16 +331,18 @@ function renderLevels(nowM, bestId, only){
     for(let m=AX0;m<=AX1;m++){ const p=A.points.find(x=>x[1]===m); h+=p?`<td class="sr-cell" style="background:${A.color}">${p[0]}</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`; }
     h+='</tr>';
   });
-  h+=`<tr class="lv-academy"><th class="sr-group" colspan="2">황소 시험</th>`;
-  for(let m=AX0;m<=AX1;m++) h+=HWANGSO_EXAMS.includes(m)?`<td class="sr-cell" style="background:#fde68a">황소<br>시험</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
-  h+='</tr>';
-  h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
+  if(academyOn.hwangso){
+    h+=`<tr class="lv-academy"><th class="sr-group" colspan="2">황소 시험</th>`;
+    for(let m=AX0;m<=AX1;m++) h+=HWANGSO_EXAMS.includes(m)?`<td class="sr-cell" style="background:#fde68a">황소<br>시험</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
+    h+='</tr>';
+  }
+  if(academyOn.soma||academyOn.fields||academyOn.hwangso) h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
   const levels=(window.LEVELS||LEVELS).filter(L=>!only||only.includes(L.id));
   levels.forEach((L,li)=>{
     const rows=levelRows(L_SHIFT[L.id]||0), best=L.id===bestId;
     rows.forEach((r,ri)=>{
       h+=`<tr class="${best?'lv-best':''}">`;
-      if(ri===0) h+=`<th class="sr-group lv-name ${L.cls}" rowspan="${rows.length}">${L.id}<small>${L.summary}</small>${best?'<em>우리 아이</em>':''}</th>`;
+      if(ri===0) h+=`<th class="sr-group lv-name ${L.cls}" rowspan="${rows.length}">${L.id}<small>${L.summary}</small>${L_LOAD[L.id]?`<small class="lv-load">${L_LOAD[L.id]}</small>`:''}${best?'<em>우리 아이</em>':''}</th>`;
       h+=`<th class="lv-row">${r.label}</th>`;
       const cells=r.blocks.map(([t,s,e])=>[t,Math.max(s,AX0),Math.min(e,AX1)]).filter(([,s,e])=>s<=e).sort((a,b)=>a[1]-b[1]);
       let m=AX0;
@@ -390,7 +389,7 @@ function renderGraph(pair, nowM, child){
   return s+'</svg>';
 }
 let lastArgs=null;
-function setAcademy(soma,fields){ academyOn.soma=!!soma; academyOn.fields=!!fields; if(lastArgs) showLevels(...lastArgs); }
+function setAcademy(soma,fields,hwangso){ academyOn.soma=!!soma; academyOn.fields=!!fields; academyOn.hwangso=!!hwangso; if(lastArgs) showLevels(...lastArgs); }
 function showLevels(nowM,bestId,child){
   lastArgs=[nowM,bestId,child];
   const box=document.getElementById('lvTable');
