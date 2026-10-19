@@ -41,7 +41,7 @@ def load_pipe(model, vram):
         return pipe
     from diffusers import StableDiffusionXLPipeline
     dtype = torch.float16 if vram else torch.float32
-    pipe = StableDiffusionXLPipeline.from_pretrained('stabilityai/stable-diffusion-xl-base-1.0', torch_dtype=dtype, use_safetensors=True)
+    pipe = StableDiffusionXLPipeline.from_pretrained('stabilityai/stable-diffusion-xl-base-1.0', torch_dtype=dtype, use_safetensors=True, **({'variant': 'fp16'} if vram else {}))
     if vram >= 10:
         pipe.to('cuda')
     elif vram:
