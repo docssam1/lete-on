@@ -237,7 +237,7 @@ function demoPrefix(key, stopText){
 /* 학원 진도 줄(키를 켰을 때만): 데모(index.html)의 소마·필즈 진도 이슈를 그대로 쓴다.
    레벨마다 옮기지 않고 표 맨 위에 한 번만 보인다. 필즈 입학은 6세 12월 관찰평가(원장님 메모). */
 const ACADEMY={
-  soma:{label:'소마 진도',color:'#e8f2ff',points:[['소마<br>2주 입문과정',10],['RAY B 완료',19],['프리미어<br>RISE 시작',20],['P1 선발 희망 시<br>소마 입학',24],['프리미어 선발<br>(4월)',27]]},
+  soma:{label:'소마 진도',color:'#e8f2ff',points:[['소마 관찰',10],['RAY B 완료',19],['프리미어<br>RISE 시작',20],['P1 선발 희망 시<br>소마 입학',24],['프리미어 선발<br>(4월)',27]]},
   fields:{label:'필즈 진도',color:'#fff1e6',points:[['필즈<br>관찰평가',23],['1차 승급',25],['2차 승급',27],['3차 승급 ·<br>필즈 S 선발',29]]}
 };
 const academyOn={soma:false,fields:false};
