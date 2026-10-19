@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v71",
+  "checkpoint": "v101",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre C",
@@ -24,7 +24,7 @@
     "minimumCurriculumAssignments": 0,
     "confirmedSchoolGrades": 0,
     "approvedDifficultyLevels": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 10,
     "difficultyMeaning": "조건부 연구 밴드이며 교사 검토와 수행 자료가 필요하다.",
     "gradeMeaning": "최소 교과수준은 미확정이다. 교육과정 밴드는 필요한 수 세기·도형·격자 이동 등 선수 내용 참고이며 전체 과제의 최소 학년이 아니다."
   },
@@ -49,7 +49,7 @@
     "conditionalDifficultyBands": 10,
     "unresolvedMinimumCurriculumCandidates": 10,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 10,
     "familyMembershipRelations": 8,
     "relatedButDistinctRelations": 3,
     "spiralRelationCandidates": 1,
@@ -166,7 +166,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 2,
@@ -181,7 +181,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": "3–4학년군",
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -196,7 +196,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -211,7 +211,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": "3–4학년군",
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -226,7 +226,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -241,7 +241,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": "3–4학년군",
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -256,7 +256,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -271,7 +271,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": "3–4학년군",
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 9,
@@ -286,7 +286,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 10,
@@ -301,7 +301,7 @@
       "minimumCurriculumAssignment": null,
       "prerequisiteContentGradeBandCandidate": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "curriculumContextReferences": [
@@ -369,5 +369,29 @@
       "최소 교과수준은 10개 모두 미확정. 교육과정 내용 밴드는 선수 내용 맥락이며 전체 과제 최소 학년이 아니다.",
       "소마 교차는 부분 참조 3건, 관련 행 보류 6건, 정확 유형 동등성 0건."
     ]
+  },
+  "answerValidation": {
+    "validatedActivityCount": 10,
+    "answerKeyPdfPages": [
+      40,
+      41,
+      42,
+      43
+    ],
+    "answerKeySHA256": "a77069a55463c8ba64b502c36e312ac870a31dc8cd068869ec74b62301570e27",
+    "method": "Same-edition answer key visually checked; OCR assisted transcription only.",
+    "bodyPagesReused": [
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93
+    ],
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true
   }
 }
