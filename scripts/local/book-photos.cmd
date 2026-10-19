@@ -19,10 +19,18 @@ REM ============================================================
 setlocal
 cd /d "%~dp0..\.."
 
+REM 이 도구는 작업 브랜치(claude/jolly-allen-w57yqh)에 있다. 원장 PC 의 원래 작업 폴더(main)를 건드리지 않게
+REM 옆에 만든 전용 폴더(lete-on-photos, git worktree · 브랜치 없이 붙음)에서 돌리고, 돌 때마다 최신 장면 목록을 받는다.
+set SRC=claude/jolly-allen-w57yqh
 where git >nul 2>&1
 if not errorlevel 1 (
-  echo  [준비] 최신 코드 받는 중...
-  git pull --ff-only 2>nul || echo   ^(받지 못했습니다 - 지금 폴더에 있는 것으로 진행합니다^)
+  echo  [준비] 최신 장면 목록 받는 중...
+  git symbolic-ref -q HEAD >nul 2>&1
+  if errorlevel 1 (
+    git fetch origin %SRC% 2>nul && git checkout --detach FETCH_HEAD 2>nul || echo   ^(받지 못했습니다 - 지금 폴더에 있는 것으로 진행합니다^)
+  ) else (
+    git pull --ff-only 2>nul || echo   ^(받지 못했습니다 - 지금 폴더에 있는 것으로 진행합니다^)
+  )
 )
 where python >nul 2>&1
 if errorlevel 1 (

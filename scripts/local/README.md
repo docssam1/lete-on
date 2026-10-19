@@ -110,6 +110,13 @@ python scripts\omnivoice-audition.py --out audition-clone --ref ref.wav --ref-te
 교재(기후변화·감염병)의 그림을 **실사형 사진**으로 바꾸기 위한 것입니다. 클라우드 세션에는 GPU 가
 없고, 이미지 생성 서비스(Gamma 크레딧 0)·사진 사이트(위키미디어)도 막혀 있어서 PC 에서 만듭니다.
 
+- **처음 한 번 — 전용 폴더 만들기**(이 도구는 작업 브랜치에만 있어서 PC 의 main 에서는 안 보입니다. 원래 폴더는 그대로 둡니다):
+  ```
+  cd %USERPROFILE%\lete-on
+  git fetch origin claude/jolly-allen-w57yqh
+  git worktree add ..\lete-on-photos FETCH_HEAD
+  ```
+  그다음부터는 `%USERPROFILE%\lete-on-photos\scripts\local\book-photos.cmd` 더블클릭. 돌 때마다 최신 장면 목록을 알아서 받습니다.
 - 모델: **FLUX.1-schnell**(Apache 2.0, 상업 사용 가능). GPU 메모리가 10 GB 보다 적으면 SDXL base 1.0 으로 자동 전환.
 - 장면 목록: `scripts/book-photos/shots.json`(Claude 가 씁니다 — 실험 배치 장면 + 개념 사진 19장면).
 - 결과: `book-photos\<단원>\<장면>-1~3.webp` + **`book-photos\고르기.html`**(그림이 파일 안에 들어 있어 한 장만 옮겨도 보입니다).
