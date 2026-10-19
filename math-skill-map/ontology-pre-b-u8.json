@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-skill-map-supplement/1",
-  "checkpoint": "v54",
+  "checkpoint": "v89",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre B",
@@ -12,16 +12,17 @@
     ],
     "sourceActivityBlocks": 12,
     "visuallyReviewedPages": 7,
-    "answerValidated": false
+    "answerValidated": true,
+    "validationSource": "matching 1031 Pre B answer-key pp.32–35 (printed pages 70–77)"
   },
   "aggregate": {
-    "ontologyNodes": 1438,
-    "ontologyRelations": 2423,
-    "skillActionCandidates": 298,
-    "activitiesWithSkillCandidateEvidence": 578,
-    "activitiesInReviewQueue": 274,
-    "conditionalDifficultyCandidates": 584,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 852,
+    "activitiesInReviewQueue": 0,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 122,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0,
@@ -29,16 +30,16 @@
   },
   "unitCounts": {
     "mappedActivities": 12,
-    "newlyLinkedActivities": 12,
+    "newlyLinkedActivities": 0,
     "activitySkillRelations": 12,
-    "newActionCandidates": 4,
-    "reusedActionCandidates": 2,
+    "newActionCandidates": 0,
+    "reusedActionCandidates": 6,
     "conditionalDifficultyBands": 12,
     "teacherApprovedDifficultyLevels": 0,
     "minimumCurriculumLevelCandidates": 12,
     "unresolvedMinimumCurriculumCandidates": 12,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 12,
     "somaDirectCrossReferences": 12,
     "somaRowsHeldBack": 1,
     "somaSourceRows": 3
@@ -243,5 +244,5 @@
     "minimumCurriculumConfirmed": 0,
     "note": "주제 대응은 유형 동등성·최소 학년·선수 관계의 승인으로 보지 않는다."
   },
-  "privacy": "공개 파일에 활동 식별자·OCR 원문·정답 내용·이미지 해시·로컬 경로·개인 Drive 경로가 없다. 난이도·최소 교과수준·계통 연결은 검토 후보다."
+  "privacy": "공개 파일에는 문항별 답·OCR 원문·로컬 경로·이미지 해시를 포함하지 않는다. Pre B8 답안 검증 12건은 인쇄 해설 pp.32–35 대조 결과만 집계한다. 난이도·최소 교과수준·계통 연결은 교사 승인 전 후보다."
 }
