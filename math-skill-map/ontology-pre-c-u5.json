@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v66",
+  "checkpoint": "v96",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre C",
@@ -11,7 +11,8 @@
       51
     ],
     "visuallyReviewedPages": 7,
-    "sourceActivityBlocks": 11
+    "sourceActivityBlocks": 11,
+    "answerValidated": true
   },
   "interpretation": {
     "candidateOnly": true,
@@ -25,16 +26,18 @@
     "difficultyMeaning": "조건부 연구 밴드이며 교사 검토·학생 수행 자료 전 확정 난이도가 아닙니다."
   },
   "aggregate": {
-    "ontologyNodes": 1496,
-    "ontologyRelations": 2661,
-    "skillActionCandidates": 341,
-    "candidateEvidenceLinkedActivities": 691,
-    "activityReviewQueue": 162,
-    "conditionalDifficultyBands": 662,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 201,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
-    "minimumCurriculumAssignments": 0
+    "minimumCurriculumAssignments": 0,
+    "activitySkillRelations": 903,
+    "confirmedSchoolGrades": 0
   },
   "unitCounts": {
     "mappedActivities": 11,
@@ -47,7 +50,9 @@
     "minimumCurriculumContextCandidates": 11,
     "unresolvedMinimumCurriculumCandidates": 11,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0
+    "validatedAnswers": 11,
+    "newConditionalDifficultyBands": 0,
+    "minimumCurriculumAssignments": 0
   },
   "skillCandidates": [
     {
@@ -173,7 +178,7 @@
         "2수01-06"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 2,
@@ -189,7 +194,7 @@
         "2수02-01"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -205,7 +210,7 @@
         "2수02-01"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -222,7 +227,7 @@
         "2수01-06"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -238,7 +243,7 @@
         "2수02-01"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -254,7 +259,7 @@
         "2수02-01"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -270,7 +275,7 @@
         "2수02-01"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -286,7 +291,7 @@
         "2수02-01"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 9,
@@ -303,7 +308,7 @@
         "2수01-06"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 10,
@@ -320,7 +325,7 @@
         "2수01-06"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 11,
@@ -337,7 +342,7 @@
         "2수01-06"
       ],
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "taxonomy": {
@@ -430,5 +435,16 @@
     "activitiesWithoutDirectRow": 11,
     "note": "목차 행은 소마 진행도나 개인의 최소 학년을 확정하지 않습니다."
   },
-  "privacy": "공개 파일은 활동 번호·페이지·비식별 행동 요약과 후보 분류만 포함합니다. 내부 활동 식별자, OCR 원문, 정답, 원자료 해시, Drive ID, 로컬 경로는 포함하지 않습니다."
+  "privacy": "공개 파일에는 문항별 정답, OCR 원문, 개별 활동 ID, 이미지 해시, 로컬 경로를 포함하지 않는다. 답안 검증은 동일 판본 해설 pp.20–23 대조 결과만 집계한다. 난이도·최소 교과수준·계통 연결은 교사 승인 전 후보다.",
+  "answerValidation": {
+    "activitiesValidated": 11,
+    "answerKeyPdfPages": [
+      20,
+      21,
+      22,
+      23
+    ],
+    "method": "Same-edition answer-key pages were visually cross-checked against the existing body-page review.",
+    "exactAnswerValuesOmitted": true
+  }
 }
