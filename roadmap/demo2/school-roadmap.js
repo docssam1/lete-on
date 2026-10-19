@@ -322,17 +322,20 @@ function levelPlan(id, shift){
   const pShift=Math.max(0,shift-L_SHIFT.L2);
   const notTop=b=>!/최상위/.test(b.text);
   const mid=43+shift;
-  // 1) 연산이 기준(원장님 2026-10-19 "필즈 연산 진도가 교과 진도"): 기적의 계산법 7~12권을 중등 시작 직전에 끝나도록 거꾸로 놓는다.
-  const elemBooks=P2.calc.filter(b=>{const m=plain(b[0]).match(/기적의 계산법\s*(\d+)/); return m&&+m[1]>=7;}).map(([t,s,e])=>[t,e-s+1]);
-  const elemLen=elemBooks.reduce((a,b)=>a+b[1],0);
-  const elemCalc=seqFrom(mid-elemLen, elemBooks);
-  const demoCalc=(window.ROAD_L0||ROAD_L0).calc.map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]).filter(b=>b[1]<elemCalc[0][1]).map(([t,s,e])=>[t,s,Math.min(e,elemCalc[0][1]-1)]);
-  const calc=demoCalc.concat(elemCalc, seqFrom(mid, MID_CALC));   // 연산은 쉬지 않고 꾸준히
-  // 2) 교과는 연산과 같은 학년·학기: 기적 k권 → (k+1)/2 학년, 홀수 1학기·짝수 2학기. 6-2만 1개월 줄여 중등 전 여유 1개월.
+  // 1) 유아 줄(데모)은 3-2 디딤돌(3개월)까지 그대로. 원장님 2026-10-19 "3-2 3개월 하고 조금씩 늘리면 되지".
+  const demoAll=(window.ROAD_L0||ROAD_L0).school.filter(notTop).map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]);
+  const k32=demoAll.findIndex(b=>/^3-2/.test(plain(b[0])));
+  const demoSchool=demoAll.slice(0,k32+1), elemStart=demoSchool[k32][2]+1;
+  // 2) 4-1~6-2: 3개월씩 + 남는 달을 뒤 학기부터 1개월씩 늘린다. 6-2 뒤 1개월은 '여유 · 초등 대수 심화'.
+  const elemBooks=P2.calc.filter(b=>{const m=plain(b[0]).match(/기적의 계산법\s*(\d+)/); return m&&+m[1]>=7;}).map(b=>b[0]);
+  const lens=elemBooks.map(()=>3); let extra=(mid-1)-elemStart-3*lens.length;
+  for(let x=lens.length-1;extra>0;x=(x-1+lens.length)%lens.length){ lens[x]++; extra--; }
+  const elemCalc=seqFrom(elemStart, elemBooks.map((t,x)=>[t,lens[x]]));
+  // 교과는 연산과 같은 학년·학기(필즈: 연산 진도 = 교과 진도): 기적 k권 → (k+1)/2 학년, 홀수 1학기·짝수 2학기
   const derived=elemCalc.map(([t,s,e])=>{const k=+plain(t).match(/(\d+)/)[1]; return [`${Math.ceil(k/2)}-${k%2?1:2} 디딤돌 응용`,s,e];});
-  derived[derived.length-1][2]-=1;
-  const demoSchool=(window.ROAD_L0||ROAD_L0).school.filter(notTop).map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]).filter(b=>b[1]<derived[0][1]).map(([t,s,e])=>[t,s,Math.min(e,derived[0][1]-1)]);
-  if(demoSchool.length&&demoSchool[demoSchool.length-1][2]<derived[0][1]-1) demoSchool[demoSchool.length-1][2]=derived[0][1]-1; // 유아 줄과 초등 줄 사이 틈은 앞 교재를 늘려 메운다
+  elemCalc[elemCalc.length-1][2]=mid-1;   // 연산은 쉬지 않고 중등 시작 달까지
+  const demoCalc=(window.ROAD_L0||ROAD_L0).calc.map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]).filter(b=>b[1]<elemStart).map(([t,s,e])=>[t,s,Math.min(e,elemStart-1)]);
+  const calc=demoCalc.concat(elemCalc, seqFrom(mid, MID_CALC));
   const school=demoSchool.concat(derived,[['여유 · 초등 대수 심화<br><small>(선택)</small>',mid-1,mid-1]])
     .concat(seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',4])))
     .concat(seqFrom(mid+24, [['공통수학1',3],['공통수학2',3],['진로: KMO 입문 또는 이과 상위권',12]]));
