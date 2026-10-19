@@ -763,9 +763,10 @@ function head(){
   cols.forEach(c=>a+=`<th class="month-head">${c[1]}</th>`);
   a+='</tr>';
   const at=(age,mon)=>toIdx(mm(age,mon));
-  // 소마 진도 이슈 (원본 복원 + RAY/RISE 시점 변경)
+  // 소마 진도 이슈 (원본 복원 + RAY/RISE 시점 변경). 5세 입학은 관찰수업 2주 → 면담 → 12월 요일 반 배정(2026 소마 설명회)
   const soma=[
-    {i:at(5,11),t:'소마 선발'},
+    {i:at(5,11),t:'소마<br>관찰수업(2주)'},
+    {i:at(5,12),t:'요일 반<br>배정'},
     {i:at(6,8),t:'RAY B 완료'},
     {i:at(6,9),t:'프리미어<br>RISE 시작'},
     {i:at(7,1),t:'P1 선발 희망 시<br>소마 입학'},
