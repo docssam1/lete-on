@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v102",
+  "checkpoint": "v103",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre C",
@@ -35,10 +35,11 @@
     "candidateEvidenceLinkedActivities": 846,
     "activityReviewQueue": 6,
     "conditionalDifficultyBands": 852,
-    "validatedAnswers": 277,
+    "validatedAnswers": 285,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
-    "minimumCurriculumAssignments": 0
+    "minimumCurriculumAssignments": 0,
+    "activitySkillRelations": 903
   },
   "unitCounts": {
     "mappedActivities": 10,
