@@ -759,6 +759,15 @@ function sourceBlankEquation(visual) {
   return `<div class="b5-src-blankeq" role="img" aria-label="${escapeHtml(visual.tokens.map((t) => t == null ? `빈칸 ${BLANK_LABELS[j++]}` : t.replace(/^\*/, "")).join(" "))}">${tokens}</div>`;
 }
 
+// 7권: 날짜와 요일 사다리. rows = [{date, day}] — day가 null이면 빈칸(빈칸이 둘 이상일 때만 가·나 글자), day가 없으면 날짜만 쓴 중간 단계.
+function sourceDateLadder(visual) {
+  const blanks = visual.rows.filter((r) => r.day === null).length;
+  let k = 0, j = 0;
+  const cell = (r) => (r.day === null ? `<i class="blank">${blanks > 1 ? BLANK_LABELS[k++] : ""}</i>` : r.day ? `<span class="day">${escapeHtml(r.day)}</span>` : `<span class="none"></span>`);
+  const say = (r) => `${r.date} ${r.day === null ? (blanks > 1 ? `빈칸 ${BLANK_LABELS[j++]}` : "빈칸") : r.day ? `${r.day}요일` : ""}`.trim();
+  return `<div class="b5-src-dates" role="img" aria-label="${escapeHtml(visual.rows.map(say).join(", "))}">${visual.rows.map((r) => `<div><b>${escapeHtml(r.date)}</b>${cell(r)}</div>`).join("")}</div>`;
+}
+
 // 6권: 호가 그려진 수직선. points = 묶음 경계의 수(이 수로 칸 위치를 정한다), groups = 묶음마다 칸 수·호 모양,
 // tickLabels = 눈금 아래 글자(A·B·중간), spans = 여러 칸을 묶은 큰 호(①·②·☆). 칸 위치는 공개된 경계 수로만 계산한다.
 const ARC_MARK = { circle: (x, y) => `<circle class="mk" cx="${x}" cy="${y}" r="6" style="--c:${SHAPE_GLYPH.circle[1]};--f:${SHAPE_GLYPH.circle[2]}"/>`,
@@ -1028,6 +1037,7 @@ export function book05Markup(visual) {
     case "source-halving-tree": return sourceHalvingTree(visual);
     case "source-split-tree": return sourceSplitTree(visual);
     case "source-blank-equation": return sourceBlankEquation(visual);
+    case "source-date-ladder": return sourceDateLadder(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);

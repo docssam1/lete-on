@@ -226,10 +226,15 @@
 .b5-src-grid .edge{fill:none;stroke:#8e5bd8;stroke-width:3;stroke-linecap:square}
 .b5-src-blankeq{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;width:100%;color:#222;font-size:22px;font-weight:700}
 .b5-src-blankeq .hl{padding:0 4px;border-radius:999px;background:#fff3a6}
+.b5-src-dates{display:inline-grid;gap:12px;color:#222;font-size:22px;font-weight:700}
+.b5-src-dates>div{display:grid;grid-template-columns:minmax(4.2em,auto) var(--ds,40px);align-items:center;gap:14px}
+.b5-src-dates .day,.b5-src-dates i{display:inline-grid;place-items:center;width:var(--ds,40px);height:var(--ds,40px);font-style:normal}
+.b5-src-dates .day{border:2px solid #e8503a;border-radius:50%;background:#ffe1dc}
+.b5-src-dates i{border:2px solid #8e5bd8;border-radius:6px;background:#fff8dc;color:#8a5a00;font-size:15px}
 .b5-src-quad .tile0{fill:#dde9ff;stroke:#2f6fe0;stroke-width:2}
 .b5-src-quad .tile1{fill:#ffe9cc;stroke:#f39a1e;stroke-width:2}
 .b5-src-blankeq i{display:inline-grid;place-items:center;min-width:38px;height:36px;border:1.6px solid #8e5bd8;border-radius:5px;background:#fff8dc;color:#8a5a00;font-size:15px;font-style:normal}
-@media screen and (max-width:420px){.b5-src-quad text{font-size:17px}.b5-src-arcline text{font-size:27px}.b5-src-arcline text.cap{font-size:24px}.b5-src-pencil text{font-size:21px}.b5-src-blankeq{font-size:19px;gap:4px}.b5-src-blankeq i{min-width:32px;height:32px}}
+@media screen and (max-width:420px){.b5-src-quad text{font-size:17px}.b5-src-arcline text{font-size:27px}.b5-src-arcline text.cap{font-size:24px}.b5-src-pencil text{font-size:21px}.b5-src-blankeq{font-size:19px;gap:4px}.b5-src-blankeq i{min-width:32px;height:32px}.b5-src-dates{font-size:20px;--ds:36px}}
 @media print{
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-dots svg{width:auto!important;max-height:30mm}
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-ttable table{font-size:10pt}
@@ -287,6 +292,8 @@
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-arcline svg{width:auto!important;max-width:100%;height:34mm!important}
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-pencil svg{width:auto!important;max-width:100%;height:30mm!important}
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-blankeq{font-size:13pt}
+  .gold-print-page .b5-src-dates{font-size:12pt;gap:2mm;--ds:8mm}
+  .gold-print-page .b5-src-dates i{font-size:9pt}
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-blankeq i{min-width:9mm;height:8mm;font-size:9pt}
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-balance svg{width:auto!important;max-width:100%;height:24mm!important}
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-quad svg{width:auto!important;max-width:100%;height:30mm!important}

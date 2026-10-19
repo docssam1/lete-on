@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018g`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018g/20261018h/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018h`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018h/20261018i/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -325,6 +325,13 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   (빨강 답 · 파랑 235CFD 답·풀이 · 초록 097D59 풀이 · 분홍 FF00FF·초록 00B050 교사 메모. 남는 색 tx1·accent4·bg1·50319C는 문제 글·번호). 결과를 눈으로 확인함(5·12·40쪽).
   슬라이드 글자는 PPTX에서 그대로 뽑힌다(`tools/golden-bell-ocr/pptx-text.py`). OCR은 그림·수식 부분에만 필요하다.
   현재 앱: 11단원 169문항, 보류 26건(답 칸 99개) — 보류 쪽 2·3·4·7·19·22·32·38·40·45·46·52~56·61·62·64·65.
+- **7권 묶음 1a(슬라이드 2~5 달력 — 한 달 미만·한 달·한 달 이상·확인, 46문항, 2026-10-19)**: 패치 `tools/golden-bell-book07/patch-book07-batch1a.mjs`(정답 없음).
+  - 단원 4 `calendar-weekday`를 4·5쪽 원본 23문항으로 자리 그대로 다시 짜고(DB `/lessons/4/original/` 옛 키 교체, 개념·추가 학습·유사문제 키는 그대로),
+    새 단원 11 `calendar-within-month-source`(2쪽 9문항)·12 `calendar-next-month-source`(3쪽 14문항). **쪽 번호는 교사용 PDF 쪽 번호**로 고쳤다(예전 「화면 3·4」 = 실제 4·5쪽).
+  - 새 그림 `source-date-ladder`(날짜와 요일 사다리: `rows=[{date, day}]`, `day:null`은 빈칸, day가 없으면 중간 날짜). 요일 답은 입력(「금」·「금요일」 둘 다 받음), 빈칸이 둘이면 가·나 칸.
+  - **원본을 바로잡은 곳**(`sourceDiscrepancy`): 4쪽 ⑥은 물음이 ⑤와 같아 교사 풀이의 출발 날짜로 고침 · 5쪽 ⑧ 그림의 요일이 물음 글과 달라 물음 글로 · 5쪽 ⑫ 그림의 마지막 날짜가 다른 문항에서 옮겨 와 고침 · ⑫가 두 번이라 뒤의 것을 ⑬으로.
+  - **교사용 답이 틀린 곳 4곳**(DB `sourceNote`): 4쪽 ④(그달 1일에서 출발) · 4쪽 ⑤(출발 요일을 다르게 놓음) · 5쪽 ⑦ · 5쪽 ⑫. 검산기는 실제 달력(윤년 아닌 해)으로 날짜 차를 센다.
+  - 2~5쪽 보류 기록 삭제(7권 보류 26 → 22). DB `book-07` 265키 → 310키, sha 앞 8자리 `6544c147`. 캐시 꼬리표 `20261018h`.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
