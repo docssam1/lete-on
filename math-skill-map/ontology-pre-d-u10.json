@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v81",
+  "checkpoint": "v110",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -20,18 +20,23 @@
     "exactCrossTextbookTypeMatches": 0,
     "difficultyStatus": "conditional-research-only; teacher adoption pending",
     "minimumCurriculumStatus": "unresolved for every item",
-    "answersValidated": 0
+    "answersValidated": 0,
+    "validatedAnswers": 10
   },
   "aggregate": {
-    "ontologyNodes": 1630,
-    "ontologyRelations": 3087,
-    "skillActionCandidates": 408,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
     "candidateEvidenceLinkedActivities": 846,
     "reviewQueueActivities": 6,
-    "activitySkillRelations": 897,
+    "activitySkillRelations": 903,
     "conditionalDifficultyCandidates": 825,
-    "validatedAnswers": 42,
-    "minimumCurriculumAssignments": 0
+    "validatedAnswers": 357,
+    "minimumCurriculumAssignments": 0,
+    "activityReviewQueue": 6,
+    "conditionalDifficultyBands": 852,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0
   },
   "unitCounts": {
     "sourceActivityBlocks": 10,
@@ -44,7 +49,7 @@
     "conditionalDifficultyCandidates": 10,
     "unresolvedMinimumCurriculumCandidates": 10,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 10,
     "familyMembershipRelations": 3,
     "relatedButDistinctRelations": 4,
     "spiralRelationCandidates": 3,
@@ -134,7 +139,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 2,
@@ -149,7 +154,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -164,7 +169,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -179,7 +184,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -194,7 +199,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -209,7 +214,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -224,7 +229,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -239,7 +244,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 9,
@@ -254,7 +259,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 10,
@@ -269,7 +274,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "editorialNumberedTypeCandidates": [
@@ -511,5 +516,38 @@
         "assertsPrerequisiteOrder": false
       }
     ]
+  },
+  "answerValidation": {
+    "studentResponseTasksValidated": 10,
+    "modeledExamplesExcluded": 0,
+    "answerKeyPdfPages": [
+      40,
+      41,
+      42,
+      43
+    ],
+    "sameEditionAnswerPdfSha256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "renderedAnswerPageSHA256": {
+      "40": "8552d6059e9710d64ee5542744243adb61f6a098ae2765a874e41edfa245ec73",
+      "41": "77679f4c7c9b990a8fb96c105ce3002a07002404c26f53c73d4f4a3300b85df7",
+      "42": "1cd819f686adcf3f9e27f64dd84977a8bcb73f51e91e2dbd03da68dd96c28c10",
+      "43": "bc53fb1eb13a75d5bd14bfb9dd3174c3aa5c82171e5b6b79007bac716eb6973b"
+    },
+    "appleVisionOCRSidecarSHA256": "d92f9df54b03965d5b85b4cc8b6620907d04cdf69e955f92f946277071ed9b8f",
+    "preservedBodyPages": [
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93
+    ],
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true,
+    "modeledExampleActivityNumbers": [],
+    "method": "Same-edition answer-key pages visually compared with mapped body activities; local Apple Vision OCR used only as assistive transcription."
   }
 }
