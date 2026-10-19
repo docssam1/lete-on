@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v70",
+  "checkpoint": "v100",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre C",
@@ -11,7 +11,16 @@
       85
     ],
     "visuallyReviewedPages": 7,
-    "sourceActivityBlocks": 10
+    "sourceActivityBlocks": 10,
+    "bodyPagesReusedFromHashMatchedPreservedReview": [
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85
+    ]
   },
   "interpretation": {
     "candidateOnly": true,
@@ -20,21 +29,22 @@
     "minimumCurriculumAssignments": 0,
     "confirmedSchoolGrades": 0,
     "approvedDifficultyLevels": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 10,
     "difficultyMeaning": "조건부 연구 밴드이며 교사 검토와 수행 자료가 필요하다.",
     "gradeMeaning": "최소 교과수준은 미확정이다. 책 권수·소마 진도·연령을 학년으로 바꾸지 않는다."
   },
   "aggregate": {
-    "ontologyNodes": 1527,
-    "ontologyRelations": 2763,
-    "skillActionCandidates": 364,
-    "candidateEvidenceLinkedActivities": 738,
-    "activityReviewQueue": 115,
-    "conditionalDifficultyBands": 709,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 248,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
-    "minimumCurriculumAssignments": 0
+    "minimumCurriculumAssignments": 0,
+    "activitySkillRelations": 903
   },
   "unitCounts": {
     "mappedActivities": 10,
@@ -45,7 +55,7 @@
     "conditionalDifficultyBands": 10,
     "unresolvedMinimumCurriculumCandidates": 10,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 10,
     "familyMembershipRelations": 7,
     "relatedButDistinctRelations": 4,
     "spiralRelationCandidates": 2,
@@ -179,7 +189,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 2,
@@ -192,7 +202,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -205,7 +215,7 @@
       "conditionalDifficultyBand": 3,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -218,7 +228,7 @@
       "conditionalDifficultyBand": 3,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -231,7 +241,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -244,7 +254,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -257,7 +267,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -270,7 +280,7 @@
       "conditionalDifficultyBand": 3,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 9,
@@ -283,7 +293,7 @@
       "conditionalDifficultyBand": 4,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 10,
@@ -296,7 +306,7 @@
       "conditionalDifficultyBand": 4,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "taxonomy": {
@@ -368,5 +378,20 @@
       "최소 교과수준 10건은 미확정이며 소마 목차는 교과학년 근거가 아니다.",
       "블록·절단·머리끈 활동은 직접 대응하는 소마 유형을 찾지 못했다."
     ]
+  },
+  "answerValidation": {
+    "activitiesValidated": 10,
+    "answerKeyPdfPages": [
+      36,
+      37,
+      38,
+      39
+    ],
+    "sameEditionAnswerPdfSha256": "a77069a55463c8ba64b502c36e312ac870a31dc8cd068869ec74b62301570e27",
+    "method": "Same-edition answer-key pages visually compared with the existing activity mappings; Apple Vision OCR was auxiliary only.",
+    "exactAnswerValuesOmitted": true,
+    "minimumCurriculumAssignments": 0,
+    "newSkillCandidates": 0,
+    "newDifficultyBands": 0
   }
 }
