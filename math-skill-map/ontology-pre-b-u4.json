@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-skill-map-supplement/1",
-  "checkpoint": "v58",
+  "checkpoint": "v86",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre B",
@@ -12,16 +12,16 @@
     ],
     "sourceActivityBlocks": 10,
     "visuallyReviewedPages": 7,
-    "answerValidated": false
+    "answerValidated": true
   },
   "aggregate": {
-    "ontologyNodes": 1461,
-    "ontologyRelations": 2511,
-    "skillActionCandidates": 310,
-    "activitiesWithSkillCandidateEvidence": 613,
-    "activitiesInReviewQueue": 240,
-    "conditionalDifficultyCandidates": 627,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 852,
+    "activitiesInReviewQueue": 0,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 88,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0,
@@ -36,12 +36,13 @@
     "minimumCurriculumLevelCandidates": 10,
     "unresolvedMinimumCurriculumCandidates": 10,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 10,
     "directSomaCrossReferences": 0,
     "itemsWithoutDirectSomaRow": 10,
     "catalogActionCrosswalkCandidates": 3,
     "teacherApprovedTypeEquivalences": 0,
-    "sourceReviewNeededActivities": 1
+    "sourceReviewNeededActivities": 1,
+    "minimumCurriculumAssignments": 0
   },
   "areaOrderCandidates": [
     {
@@ -172,7 +173,7 @@
     ]
   },
   "curriculum": {
-    "status": "supporting-content-context-only",
+    "status": "supporting-content-context-only; minimum-grade-unassigned",
     "candidateActivities": 10,
     "unresolvedActivities": 10,
     "confirmedAssignments": 0,
@@ -180,7 +181,7 @@
       "2수01-01",
       "2수03-03"
     ],
-    "note": "짝수·홀수와 기본 평면도형은 교육과정 맥락이다. 그래프 이론의 최소 학년으로 확정하지 않았다."
+    "note": "짝수·홀수와 기본 평면도형은 내용 맥락 후보이며, 그래프 이론·노선도 추상화의 최소 학년으로 확정하지 않았다."
   },
   "taxonomy": {
     "familyCandidates": [
@@ -241,5 +242,21 @@
     "itemsWithoutDirectSomaRow": 10,
     "teacherApprovedEquivalences": 0
   },
-  "privacy": "공개 파일에 활동 식별자·OCR 원문·정답·이미지 해시·로컬 경로·개인 Drive 경로를 포함하지 않았다. 유형·난이도·교과수준·관계는 검토 후보이다."
+  "privacy": "공개 파일에 활동 식별자·OCR 원문·정답·이미지 해시·로컬 경로·개인 Drive 경로를 포함하지 않았다. 유형·난이도·교과수준·관계는 검토 후보이다. Item-level answer details and exact station network evidence remain in the private validation sidecar.",
+  "answerValidation": {
+    "activitiesValidated": 10,
+    "answerKeyPdfPages": [
+      16,
+      17,
+      18,
+      19
+    ],
+    "sourceImageHighResolutionReview": {
+      "printedPage": 43,
+      "renderDpi": 240
+    },
+    "method": "visually cross-checked rendered answer key and source page",
+    "openConstructionMayHaveMultipleValidAnswers": true,
+    "exactAnswerValuesOmitted": true
+  }
 }
