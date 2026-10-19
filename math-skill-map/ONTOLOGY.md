@@ -208,11 +208,7 @@ Pre B8 본문 71–77쪽의 12개 활동은 기존 행동 유형·조건부 난�
 기존 11개 활동 유형 연결과 조건부 난이도 후보를 재사용했습니다. 같은 판본 해설 pp.32–35와 대조해 11개 답안을 검증했습니다. 새로운 행동 유형·난이도 후보는 추가하지 않았으며, 활동별 최소 교과수준 11개는 계속 미확정입니다. 공개 자료에는 정답 값을 싣지 않습니다.
 
 
-### 1031 Pre C 9단원 논리 판단 (v100)
+### 1031 Pre C 9단원 논리 판단 (v101)
 
 해시 일치 보존 기록에서 본문 79–85쪽의 시각 검토 완료를 확인하고, 기존 10개 활동 연결과 조건부 난이도 후보를 재사용했습니다. 같은 판본 해설 pp.36–39에서 10개 답을 검증했습니다. 새 행동 유형·난이도 후보는 추가하지 않았으며, 활동별 최소 교과수준 10개는 미확정입니다. 공개 자료에는 정답 값을 싣지 않습니다.
-
-
-## 1031 Pre C 10 · 논리 퍼즐 (v101)
-
-동일 판본 해설 40–43쪽을 대조해 답안 10개를 확인했다. 보존 본문·기존 유형·조건부 난이도 분석을 재사용했으며 새 후보는 추가하지 않았다. 최소 교과수준은 10개 활동 모두 직접 근거가 없어 미확정이다. 누적 답안 검증은 258개다.
+\n\n## 1031 Pre C 10 · 논리 퍼즐 (v101)\n\nSame-edition answer key pages 40–43 checked against ten activities. Existing body review, mappings, and conditional difficulty bands were reused. No new candidates were added. Minimum curriculum level remains unresolved for all ten activities. Cumulative validated answers: 258.\n
