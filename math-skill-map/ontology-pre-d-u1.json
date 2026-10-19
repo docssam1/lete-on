@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v106",
+  "checkpoint": "v107",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -33,7 +33,7 @@
     "candidateEvidenceLinkedActivities": 846,
     "activityReviewQueue": 6,
     "conditionalDifficultyBands": 852,
-    "validatedAnswers": 313,
+    "validatedAnswers": 325,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0,
@@ -443,7 +443,7 @@
       "조건부 난이도 밴드는 통일 기준 5단계를 적용한 연구 판단이며 교사 채택 전이다.",
       "최소 교과수준 11건 미확정; 1–2학년군 표기는 수 세기·도형 식별 선수 내용 맥락일 뿐 활동 전체 최소 학년이 아니다.",
       "소마 목차는 5개 관련 행을 부분 참고로만 연결했고 정확한 유형 동등성은 0건이다.",
-      "동일 판본 해설을 대조해 학생 응답 10건 검증, 설명 예시 1개는 제외."
+      "동일 판본 해설 대조로 학생 응답 10건 검증. 설명 예시 1개는 검증 답안 수에서 제외."
     ]
   },
   "answerValidation": {
@@ -456,7 +456,7 @@
       7
     ],
     "answerKeySHA256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
-    "method": "Same-edition answer key visually checked; Apple Vision OCR used as assistive transcription.",
+    "method": "Same-edition answer-key pages visually compared; local Apple Vision OCR used only as assistive transcription.",
     "preservedBodyPages": [
       13,
       14,
