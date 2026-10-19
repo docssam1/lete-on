@@ -208,8 +208,8 @@ function init(){
    L0~L4 같은 속도로 이어 보기
    - 유아 구간: 데모(index.html)의 ROAD_L0 줄을 그대로 쓰고 레벨마다 같은 간격(shift)으로 민다.
    - 초등 구간: 원장님 '프리미어 2반 수준' 표(P2)를 이어 붙인다. 이 표의 시점이 데모 L2와 거의 같아서
-     L2를 기준(0)으로 두고 L0 −7 · L1 −4 · L3 +5 · L4 +10개월을 똑같이 민다(같은 속도).
-   - 줄마다 데모의 마지막 교재 바로 뒤에서 이어지도록 맞춘 값(OFF)을 쓴다. 기간(칸 수)은 원본 그대로다.
+     유아 구간은 데모 간격 그대로, 초등 구간은 P2보다 당기지 않는다(L0·L1·L2 = P2, L3 +5, L4 +10).
+   - 이어 붙이는 규칙은 아래 joinRow 설명 참고. 기간(칸 수)은 원본 그대로다.
    - 월 값 m: 5세 1월=0, 6세=12, 7세=24, 초1(8세)=36, 초2=48, 초3=60.
    ============================================================ */
 const P2={
@@ -219,8 +219,6 @@ const P2={
   comp2:[['성대경시 대비',36,37],['성대경시 대비',42,43],['왕수학 올림피아드 3<br>+ 대비 문항',48,50]],
   calc:[['기적의 계산법 5',23,25],['기적의 계산법 6',26,28],['기적의 계산법 7',29,31],['기적의 계산법 8',32,34],['기적의 계산법 9',35,37],['기적의 계산법 10',38,40],['기적의 계산법 11',41,43],['기적의 계산법 12',44,46],['중1 연산',47,49]]
 };
-// 줄별 이음 값(L0 기준): 데모 L0의 마지막 교재 다음 달에 P2 표 첫 칸이 오도록
-const OFF={school:-9, comp:-7, calc:-8};
 const L_SHIFT={L0:0,L1:3,L2:7,L3:12,L4:17}; // 데모 LEVELS의 shift와 같다
 const AX0=4, AX1=71; // 5세 5월 ~ 초3 12월
 const ROW_COLORS={school:'#dbeafe',school2:'#e0f2fe',comp:'#ede9fe',comp2:'#fce7f3',calc:'#dcfce7'};
@@ -259,14 +257,38 @@ function snapHwangso(blocks){
   return out;
 }
 const academyOn={soma:false,fields:false};
+/* 초등 구간 이어 붙이기 (원장님 2026-10-19 "초1 4월 중등 너무 빨라, 내 자료에 그 정도 근거는 없어")
+   - P2(프리미어 2반 수준) 표보다 빠르게 당기지 않는다: L0·L1·L2는 P2 시점 그대로, L3 +5 · L4 +10개월.
+   - 유아(데모) 줄은 P2 첫 교재 전까지 그대로 두고, 데모에서 이미 한 교재(같은 교재 이름)는 P2에서 다시 하지 않는다. */
+function itemKey(t){
+  const x=plain(t);
+  let m=x.match(/기적의 계산법\s*(\d+)/); if(m) return 'calc'+m[1];
+  m=x.match(/(\d-\d)\s*디딤돌/); if(m) return 'school'+m[1];
+  const k=STEP_ORDER.find(k=>x.includes(k)); return k||x;
+}
+function joinRow(demoKey, demoShift, pBlocks, pShift){
+  const D=(window.ROAD_L0||ROAD_L0)[demoKey].map(b=>[b.text.replace(/<br>/g,' '),b.s+demoShift,b.e+demoShift]);
+  let P=pBlocks.map(([t,s,e])=>[t,s+pShift,e+pShift]);
+  let Dk=[];
+  for(let guard=0;guard<10&&P.length;guard++){
+    const start=P[0][1];
+    Dk=D.filter(b=>b[1]<start).map(([t,s,e])=>[t,s,Math.min(e,start-1)]);
+    const done=new Set(Dk.map(b=>itemKey(b[0])));
+    const before=P.length;
+    while(P.length&&done.has(itemKey(P[0][0]))) P.shift();
+    if(P.length===before) break;
+  }
+  return Dk.concat(P);
+}
 function levelRows(shift){
+  const pShift=Math.max(0,shift-L_SHIFT.L2);
   const sh=(arr,d)=>arr.map(([t,s,e])=>[t,s+d,e+d]);
   return [
-    {key:'school',label:'교과',blocks:sh(demoPrefix('school','3-1 디딤돌'),shift).concat(sh(P2.school,OFF.school+shift))},
-    {key:'school2',label:'교과 심화',blocks:sh(P2.school2,OFF.school+shift)},
-    {key:'comp',label:'사고력·경시',blocks:snapHwangso(sh(demoPrefix('thinking1','1031 입문'),shift).concat(sh(P2.comp,OFF.comp+shift)))},
-    {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,OFF.comp+shift)},
-    {key:'calc',label:'연산',blocks:sh(demoPrefix('calc','기적의 계산법 5권'),shift).concat(sh(P2.calc,OFF.calc+shift))}
+    {key:'school',label:'교과',blocks:joinRow('school',shift,P2.school,pShift)},
+    {key:'school2',label:'교과 심화',blocks:sh(P2.school2,pShift)},
+    {key:'comp',label:'사고력·경시',blocks:snapHwangso(joinRow('thinking1',shift,P2.comp,pShift))},
+    {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,pShift)},
+    {key:'calc',label:'연산',blocks:joinRow('calc',shift,P2.calc,pShift)}
   ];
 }
 function axisYears(){
