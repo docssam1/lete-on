@@ -184,6 +184,23 @@
     ],
     "note": "교육과정 내용 맥락은 문항별 최소 학년이 아니다."
   },
+  "developmentalProgressionContext": {
+    "status": "program-window-context-only-not-item-age-or-school-grade",
+    "phase": "pre-basic",
+    "program": "초등팩토 1",
+    "ageWindow": "5세 10월–6세 2월",
+    "parallelArithmeticMaterials": [
+      "기적의 계산법 2권",
+      "기적의 계산법 3권",
+      "기적의 계산법 4권"
+    ],
+    "parallelCurriculumMaterials": [
+      "1-1 디딤돌",
+      "1-2 디딤돌",
+      "2-1 디딤돌"
+    ],
+    "note": "로드맵의 과정·병행 교재 창은 학습 경로 참고이며 Pre C2 각 활동의 적정 연령, 난이도, 최소 학년을 확정하지 않는다."
+  },
   "taxonomy": {
     "familyCandidates": [
       {
