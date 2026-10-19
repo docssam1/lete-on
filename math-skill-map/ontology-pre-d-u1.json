@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v72",
+  "checkpoint": "v102",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -22,18 +22,18 @@
     "minimumCurriculumAssignments": 0,
     "confirmedSchoolGrades": 0,
     "approvedDifficultyLevels": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 10,
     "difficultyMeaning": "통일 5단계 기준의 조건부 연구 밴드이며 교사 검토 전이다. 첫 블록은 설명 예시다.",
     "gradeMeaning": "최소 교과수준은 11개 모두 미확정이다. 일부 1–2학년군은 기본 도형·소량 수 세기 선수 내용 참고이며 전체 과제 최소 학년이 아니다."
   },
   "aggregate": {
-    "ontologyNodes": 1541,
-    "ontologyRelations": 2806,
-    "skillActionCandidates": 376,
-    "candidateEvidenceLinkedActivities": 759,
-    "activityReviewQueue": 93,
-    "conditionalDifficultyBands": 730,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 277,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0
@@ -50,7 +50,7 @@
     "conditionalDifficultyBands": 11,
     "unresolvedMinimumCurriculumCandidates": 11,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 10,
     "familyMembershipRelations": 6,
     "relatedButDistinctRelations": 3,
     "spiralRelationCandidates": 1,
@@ -192,7 +192,7 @@
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -208,7 +208,7 @@
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -224,7 +224,7 @@
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -240,7 +240,7 @@
       "prerequisiteContentGradeBandCandidate": null,
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -256,7 +256,7 @@
       "prerequisiteContentGradeBandCandidate": null,
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -272,7 +272,7 @@
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -288,7 +288,7 @@
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 9,
@@ -304,7 +304,7 @@
       "prerequisiteContentGradeBandCandidate": null,
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 10,
@@ -320,7 +320,7 @@
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 11,
@@ -336,7 +336,7 @@
       "prerequisiteContentGradeBandCandidate": "1–2학년군",
       "prerequisiteContentOnly": true,
       "modeledExampleOnly": false,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "somaProgressionContexts": [
@@ -442,7 +442,32 @@
       "조건부 난이도 밴드는 통일 기준 5단계를 적용한 연구 판단이며 교사 채택 전이다.",
       "최소 교과수준 11건 미확정; 1–2학년군 표기는 수 세기·도형 식별 선수 내용 맥락일 뿐 활동 전체 최소 학년이 아니다.",
       "소마 목차는 5개 관련 행을 부분 참고로만 연결했고 정확한 유형 동등성은 0건이다.",
-      "답안 검증 0건, 교사 승인 0건."
+      "동일 판본 해설을 대조해 학생 응답 10건 검증, 설명 예시 1개는 제외."
     ]
+  },
+  "answerValidation": {
+    "studentResponseTasksValidated": 10,
+    "modeledExamplesExcluded": 1,
+    "answerKeyPdfPages": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "answerKeySHA256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "method": "Same-edition answer key visually checked; Apple Vision OCR used as assistive transcription.",
+    "preservedBodyPages": [
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true
   }
 }
