@@ -779,6 +779,7 @@ async function route() {
   if (a === 'diagnose') return MISC ? pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student') : location.replace(`#/${u}`);
   if (a === 'report') return pageReport(u, L);
   if (a === 'records') return pageRecords(u, L);
+  if (a === 'records-book' && !b) { location.replace(`#/${u}/records-book/student`); return; }   // 학생용/교사용을 안 적으면 학생용
   if (a === 'records-book') return pageLabBook(u, mod, b || 'student', +location.hash.split('/')[4] || 1, 'records-book');
   if (a === 'daily') return pageDaily(u, mod, L, b);
   if (a === 'exam') return pageExam(u, mod, L, +b || 1, mode, isCurrent);
