@@ -240,13 +240,23 @@ const ACADEMY={
   soma:{label:'소마 진도',color:'#e8f2ff',points:[['소마 관찰',10],['RAY B 완료',19],['프리미어<br>RISE 시작',20],['P1 선발 희망 시<br>소마 입학',24],['프리미어 선발<br>(4월)',27]]},
   fields:{label:'필즈 진도',color:'#fff1e6',points:[['필즈<br>관찰평가',23],['1차 승급',25],['2차 승급',27],['3차 승급 ·<br>필즈 S 선발',29]]}
 };
+/* 황소 시험 달: 초2 11월 → 초3 2월 → 초3 11월 (원장님 2026-10-19 "11월 이후 2월에 볼 수도 있고 초3 11월에 할 수도").
+   레벨마다 옮긴 황소 대비 칸은 끝나는 달 기준 2개월 안쪽부터 가장 가까운 다음 시험 달에 끝나도록 맞춘다(기간은 그대로). */
+const HWANGSO_EXAMS=[58,61,70];
+function snapHwangso(blocks){
+  return blocks.map(([t,s,e])=>{
+    if(!/황소 대비/.test(t)) return [t,s,e];
+    const w=HWANGSO_EXAMS.find(x=>x>=e-2); if(w==null) return [t,s,e];
+    return [t,s+(w-e),w];
+  });
+}
 const academyOn={soma:false,fields:false};
 function levelRows(shift){
   const sh=(arr,d)=>arr.map(([t,s,e])=>[t,s+d,e+d]);
   return [
     {key:'school',label:'교과',blocks:sh(demoPrefix('school','3-1 디딤돌'),shift).concat(sh(P2.school,OFF.school+shift))},
     {key:'school2',label:'교과 심화',blocks:sh(P2.school2,OFF.school+shift)},
-    {key:'comp',label:'사고력·경시',blocks:sh(demoPrefix('thinking1','1031 입문'),shift).concat(sh(P2.comp,OFF.comp+shift))},
+    {key:'comp',label:'사고력·경시',blocks:snapHwangso(sh(demoPrefix('thinking1','1031 입문'),shift).concat(sh(P2.comp,OFF.comp+shift)))},
     {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,OFF.comp+shift)},
     {key:'calc',label:'연산',blocks:sh(demoPrefix('calc','기적의 계산법 5권'),shift).concat(sh(P2.calc,OFF.calc+shift))}
   ];
@@ -269,7 +279,10 @@ function renderLevels(nowM, bestId, only){
     for(let m=AX0;m<=AX1;m++){ const p=A.points.find(x=>x[1]===m); h+=p?`<td class="sr-cell" style="background:${A.color}">${p[0]}</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`; }
     h+='</tr>';
   });
-  if(academyOn.soma||academyOn.fields) h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
+  h+=`<tr class="lv-academy"><th class="sr-group" colspan="2">황소 시험</th>`;
+  for(let m=AX0;m<=AX1;m++) h+=HWANGSO_EXAMS.includes(m)?`<td class="sr-cell" style="background:#fde68a">황소<br>시험</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
+  h+='</tr>';
+  h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
   const levels=(window.LEVELS||LEVELS).filter(L=>!only||only.includes(L.id));
   levels.forEach((L,li)=>{
     const rows=levelRows(L_SHIFT[L.id]||0), best=L.id===bestId;
