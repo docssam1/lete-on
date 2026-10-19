@@ -249,75 +249,106 @@
 .book07-visual .b7-clock text.blank{font-size:26px;fill:#8a5a00}
 .book07-visual .b7-clock text.num{font-size:13px;text-anchor:middle}
 .book07-visual .b7-clock>text{text-anchor:middle}
+.b5-src-table>span.head{background:#ece0fb}
+.b5-src-table-wrap{--cell:46px;width:min(100%,calc(var(--columns) * var(--cell) + 1.5px));margin:auto}
+.b5-src-table-wrap.is-wide{--cell:42px}
+.b5-src-table-wrap>.b5-src-table{width:100%}
+.b5-src-table-notes{display:grid;grid-template-columns:repeat(var(--columns),minmax(0,1fr));height:30px}
+.b5-src-table-notes span{position:relative;display:grid;place-items:center}
+.b5-src-table-notes svg{position:absolute;left:25%;width:50%;height:14px;overflow:visible}
+.b5-src-table-notes.top svg{bottom:0}.b5-src-table-notes.bottom svg{top:0}
+.b5-src-table-notes path{fill:none;stroke:#8e5bd8;stroke-width:1.6}
+.b5-src-table-notes b{position:absolute;color:#222;font-size:15px}
+.b5-src-table-notes.top b{top:-2px}.b5-src-table-notes.bottom b{bottom:-2px}
+.b5-src-stages{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:14px 26px;max-width:100%}
+.b5-src-stages.cross{align-items:center}
+.b5-src-stages figure{display:grid;justify-items:center;gap:4px;margin:0;max-width:100%}
+.b5-src-stages figure>b{color:#222;font-size:18px}
+.b5-src-stages svg{max-width:100%;height:auto}
+.b5-src-stages.sticks line{stroke:#bf8a42;stroke-width:4.5;stroke-linecap:round}
+.b5-src-stages.sticks circle{fill:#df4c43}
+.b5-src-stages.cross circle{fill:#fff;stroke:#666;stroke-width:1.8}
+.b5-src-stages .tri{fill:#dcf5e5;stroke:#2f9e5f;stroke-width:1.6;stroke-linejoin:round}
+.b5-src-stages .sq{fill:#dde9ff;stroke:#2f6fe0;stroke-width:1.6}
+/* 7권 글 보기(「2씩 늘어납니다.」)는 기본 10px 단추로는 너무 작다 */
+.source-question-card:has(.book07-visual,.book05-visual) .answer-choices button{min-height:44px;padding:6px 14px;font-size:16px;color:#222}
+.b5-src-table>span.shaded{font-size:min(var(--font),calc(100cqi / var(--columns) * .5))}
 .b5-src-quad .tile0{fill:#dde9ff;stroke:#2f6fe0;stroke-width:2}
 .b5-src-quad .tile1{fill:#ffe9cc;stroke:#f39a1e;stroke-width:2}
 .b5-src-blankeq i{display:inline-grid;place-items:center;min-width:38px;height:36px;border:1.6px solid #8e5bd8;border-radius:5px;background:#fff8dc;color:#8a5a00;font-size:15px;font-style:normal}
 @media screen and (max-width:420px){.b5-src-quad text{font-size:17px}.b5-src-arcline text{font-size:27px}.b5-src-arcline text.cap{font-size:24px}.b5-src-pencil text{font-size:21px}.b5-src-blankeq{font-size:19px;gap:4px}.b5-src-blankeq i{min-width:32px;height:32px}.b5-src-dates{font-size:20px;--ds:36px}.b5-src-timecol table{font-size:19px}.b5-src-timecol td.pre{white-space:normal;word-break:keep-all;max-width:4.6em;line-height:1.15;padding-right:6px}.b5-src-timecol i{width:34px;height:32px}}
 @media print{
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-dots svg{width:auto!important;max-height:30mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-ttable table{font-size:10pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-ttable th,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-ttable td{padding:.8mm 2mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-sumline{font-size:11pt;gap:1mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-sumline .g svg{width:6mm;height:6mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-hand svg{width:42mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-fan svg{width:40mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-perim svg{width:36mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-stones svg{width:44mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-halve svg{width:auto!important;max-width:100%;height:26mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-seg svg{width:calc(var(--seg-w) * .2mm)!important;max-width:100%}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-shapes .board{gap:1.5mm;padding:2mm 3mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-shapes .board>p{min-height:7mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-shapes .g,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-shapes .g svg{width:6.5mm;height:6.5mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-shapes .t{font-size:12pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-shapes .cards span{width:6.5mm;height:8mm;font-size:11pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-discs svg{width:16mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-fracs{gap:1mm 1.2mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-fracs i{min-width:6mm;height:5.5mm;padding:0 .3mm;font-size:10pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-fracs i small{font-size:7pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-fracs .bar{width:7.5mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-fracs .eq,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-discs .eq{font-size:10pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-discs .eq{padding-bottom:4mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-table{grid-template-columns:repeat(var(--columns),8mm);width:calc(var(--columns) * 8mm + 1.5px)}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-table>span,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-product>span,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-product>b{height:8mm;font-size:11pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-product{grid-template-columns:repeat(var(--size),8mm) 8mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-cards span{width:8mm;height:10mm;font-size:12pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-pyramid i{width:6mm;height:6mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-trirows svg{width:28mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-cube-stair svg{width:40mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-table.is-wide{grid-template-columns:repeat(var(--columns),7mm);width:calc(var(--columns) * 7mm + 1.5px)}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-table.is-wide>span{height:7mm;font-size:10pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-seq{font-size:12pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-seq .box{min-width:8mm;height:8mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-radial svg{width:40mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-tri-numbers{font-size:12pt;gap:2mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-sum-pair svg{width:42mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-route svg{width:calc(var(--route-w) * .17mm)!important;max-width:100%;max-height:none!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-loops svg{width:60mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-slots .slot i{width:14mm;height:7mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-slots b{font-size:12pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-prod svg{width:48mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-cal-cells span{width:9mm;height:7mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-cal-cells strong{font-size:11pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-month>p{width:56mm;font-size:11pt;padding:1mm 0}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-month .grid{grid-template-columns:repeat(7,8mm)}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-month .grid>*{height:6.5mm;font-size:10pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-year .months{grid-template-columns:repeat(6,minmax(0,1fr));gap:1.5mm;width:100%}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .gold-print-source-item>.gold-print-visual:has(.b5-src-year),.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .gold-print-source-item>.gold-print-visual>.book05-visual:has(.b5-src-year){max-height:none}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-year section{padding:1mm}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-year section>div{font-size:6.5pt;line-height:1.55}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-year h4{font-size:8pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-year h3{font-size:11pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-arcline svg{width:auto!important;max-width:100%;height:34mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-pencil svg{width:auto!important;max-width:100%;height:30mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-blankeq{font-size:13pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-dots svg{width:auto!important;max-height:30mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-ttable table{font-size:10pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-ttable th,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-ttable td{padding:.8mm 2mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-sumline{font-size:11pt;gap:1mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-sumline .g svg{width:6mm;height:6mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-hand svg{width:42mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-fan svg{width:40mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-perim svg{width:36mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-stones svg{width:44mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-halve svg{width:auto!important;max-width:100%;height:26mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-seg svg{width:calc(var(--seg-w) * .2mm)!important;max-width:100%}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-shapes .board{gap:1.5mm;padding:2mm 3mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-shapes .board>p{min-height:7mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-shapes .g,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-shapes .g svg{width:6.5mm;height:6.5mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-shapes .t{font-size:12pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-shapes .cards span{width:6.5mm;height:8mm;font-size:11pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-discs svg{width:16mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-fracs{gap:1mm 1.2mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-fracs i{min-width:6mm;height:5.5mm;padding:0 .3mm;font-size:10pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-fracs i small{font-size:7pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-fracs .bar{width:7.5mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-fracs .eq,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-discs .eq{font-size:10pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-discs .eq{padding-bottom:4mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-table{grid-template-columns:repeat(var(--columns),8mm);width:calc(var(--columns) * 8mm + 1.5px)}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-table>span,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-product>span,.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-product>b{height:8mm;font-size:11pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-product{grid-template-columns:repeat(var(--size),8mm) 8mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-cards span{width:8mm;height:10mm;font-size:12pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-pyramid i{width:6mm;height:6mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-trirows svg{width:28mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-cube-stair svg{width:40mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-table.is-wide{grid-template-columns:repeat(var(--columns),7mm);width:calc(var(--columns) * 7mm + 1.5px)}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-table.is-wide>span{height:7mm;font-size:10pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-seq{font-size:12pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-seq .box{min-width:8mm;height:8mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-radial svg{width:40mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-tri-numbers{font-size:12pt;gap:2mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-sum-pair svg{width:42mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-route svg{width:calc(var(--route-w) * .17mm)!important;max-width:100%;max-height:none!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-loops svg{width:60mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-slots .slot i{width:14mm;height:7mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-slots b{font-size:12pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-prod svg{width:48mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-cal-cells span{width:9mm;height:7mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-cal-cells strong{font-size:11pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-month>p{width:56mm;font-size:11pt;padding:1mm 0}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-month .grid{grid-template-columns:repeat(7,8mm)}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-month .grid>*{height:6.5mm;font-size:10pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-year .months{grid-template-columns:repeat(6,minmax(0,1fr));gap:1.5mm;width:100%}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .gold-print-source-item>.gold-print-visual:has(.b5-src-year),.gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .gold-print-source-item>.gold-print-visual>.book05-visual:has(.b5-src-year){max-height:none}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-year section{padding:1mm}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-year section>div{font-size:6.5pt;line-height:1.55}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-year h4{font-size:8pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-year h3{font-size:11pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-arcline svg{width:auto!important;max-width:100%;height:34mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-pencil svg{width:auto!important;max-width:100%;height:30mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-blankeq{font-size:13pt}
   .gold-print-page .b5-src-dates{font-size:12pt;gap:2mm;--ds:8mm}
+  .gold-print-page .b5-src-table-wrap{width:calc(var(--columns) * 8mm + 1.5px)}
+  .gold-print-page .b5-src-table-wrap.is-wide{width:calc(var(--columns) * 7mm + 1.5px)}
+  .gold-print-page .b5-src-table-notes{height:6mm}
+  .gold-print-page .b5-src-table-notes b{font-size:9pt}
+  .gold-print-page .b5-src-stages{gap:3mm 6mm}
+  .gold-print-page .b5-src-stages svg{max-height:26mm;width:auto}
+  .gold-print-page .b5-src-stages figure>b{font-size:11pt}
   .gold-print-page .b5-src-dates i{font-size:9pt}
   .gold-print-page .b5-src-timecol table{font-size:12pt}
   .gold-print-page .b5-src-timecol i{width:9mm;height:7.5mm;font-size:9pt}
   .gold-print-page .book07-visual .b7-clock{width:42mm;max-width:100%}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-blankeq i{min-width:9mm;height:8mm;font-size:9pt}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-balance svg{width:auto!important;max-width:100%;height:24mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-quad svg{width:auto!important;max-width:100%;height:30mm!important}
-  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"]) .b5-src-grid svg{width:auto!important;max-width:100%;height:20mm!important}
-  .b5-src-table>span.shaded,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-seq .box.shaded,.b5-src-radial .plate,.b5-src-cal-cells span.shaded,.b5-src-prod rect.s,.b5-src-month .grid>*,.b5-src-year i.last,.b5-src-cube-stair polygon,.b5-src-shapes .g svg,.b5-src-shapes .cards span,.b5-src-discs path.on,.b5-src-fracs i.blank,.b5-src-seg .box,.b5-src-dots circle,.b5-src-sumline .g svg,.b5-src-hand circle.new,.b5-src-fan polygon,.b5-src-perim polygon,.b5-src-perim rect,.b5-src-stones circle,.b5-src-halve rect.blank,.b5-src-arcline .mk,.b5-src-pencil rect,.b5-src-pencil polygon,.b5-src-pencil circle,.b5-src-blankeq i,.b5-src-blankeq .hl,.b5-src-ttable td.blank,.b5-src-quad polygon,.b5-src-quad rect,.b5-src-grid rect.on,.b5-src-balance circle,.b5-src-balance rect,.b5-src-ttable th,.b5-src-ttable td:first-child{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-blankeq i{min-width:9mm;height:8mm;font-size:9pt}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-balance svg{width:auto!important;max-width:100%;height:24mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-quad svg{width:auto!important;max-width:100%;height:30mm!important}
+  .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-grid svg{width:auto!important;max-width:100%;height:20mm!important}
+  .b5-src-table>span.shaded,.b5-src-table>span.head,.b5-src-stages line,.b5-src-stages circle,.b5-src-stages .tri,.b5-src-stages .sq,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-seq .box.shaded,.b5-src-radial .plate,.b5-src-cal-cells span.shaded,.b5-src-prod rect.s,.b5-src-month .grid>*,.b5-src-year i.last,.b5-src-cube-stair polygon,.b5-src-shapes .g svg,.b5-src-shapes .cards span,.b5-src-discs path.on,.b5-src-fracs i.blank,.b5-src-seg .box,.b5-src-dots circle,.b5-src-sumline .g svg,.b5-src-hand circle.new,.b5-src-fan polygon,.b5-src-perim polygon,.b5-src-perim rect,.b5-src-stones circle,.b5-src-halve rect.blank,.b5-src-arcline .mk,.b5-src-pencil rect,.b5-src-pencil polygon,.b5-src-pencil circle,.b5-src-blankeq i,.b5-src-blankeq .hl,.b5-src-ttable td.blank,.b5-src-quad polygon,.b5-src-quad rect,.b5-src-grid rect.on,.b5-src-balance circle,.b5-src-balance rect,.b5-src-ttable th,.b5-src-ttable td:first-child{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }

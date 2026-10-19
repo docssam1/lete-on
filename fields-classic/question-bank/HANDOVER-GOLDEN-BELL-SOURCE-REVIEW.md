@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018i`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018i/20261018j/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018j`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018j/20261018k/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -338,6 +338,18 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - **골든벨 화면에서 7권 시계가 안 보이던 버그**: 시계 크기·색 CSS가 `styles.css`(교사용 문제은행)에만 있어 골든벨에서는 SVG 너비가 0이었다 → `golden-bell-book05.css`에 `.book07-visual .b7-clock` 규칙(시침 빨강·분침 파랑). 또 렌더러는 시계 글자에 「?」가 있으면 **바늘을 숨긴다** — 옛 데이터 「?시 ?분」 때문에 바늘이 안 그려졌다. 글자를 「몇 시 몇 분」으로 바꾸고 `numbers:true`로 1~12 숫자를 단다(`book07-renderers.js` `clockFace`). **7권 렌더러는 캐시 꼬리표가 따로**다: `golden-bell.js`·`app.js`의 `book07-renderers.js?v=20261019a`.
   - **교사용 답이 틀린 곳 2곳**(DB `sourceNote`): 7쪽 더하기 (5)(분끼리 더한 값 잘못 적음) · 7쪽 기차 글 문제(앞 문항 답을 옮겨 적음). 오후 몇 시 답은 「오후 1시」의 1과 13 둘 다 받는다.
   - 6·7쪽 보류 삭제(7권 보류 22 → 21). DB `book-07` 310키 → 401키, sha 앞 8자리 `0c957082`. 캐시 꼬리표 `20261018i`.
+- **7권 묶음 2(슬라이드 9~25 규칙 찾기와 수열 · 식 세워 거꾸로 풀기, 111문항, 2026-10-19)**: 패치 `tools/golden-bell-book07/patch-book07-batch2.mjs`(정답 없음).
+  - 단원 6 `multiplication-equation`(9~11쪽 31문항): 문항·순서·DB 그대로, 그림 식만 원본 모양(「3×10=□」 — 옛 데이터는 「3×10」만 있어 무엇을 구하는지 안 보였다).
+  - 단원 7 `arithmetic-sequence`를 12~17쪽 33문항으로 다시 짬(DB `/lessons/7/original/` 교체). 옛 단원은 21~25쪽을 섞어 51문항이었고, 12쪽 (1)(2)와 15·16쪽 「규칙」 문항이 없었다.
+    「규칙은 무엇입니까?」는 원본이 글로 쓰는 문항이라 3지 고르기로 바꾸고 `sourceDiscrepancy`에 적었다.
+    **옛 표 그림(`sequence-table`)은 ㉮·㉯ 자리에 답 수를 그대로 그려 공개하고 있었다** — 보호 검사기가 그림 값은 보지 않는다. 이제 원본처럼 ㉮·㉯ 칸을 색칠한 `source-number-table`(`head:true` 머리줄, 17쪽은 `arrows`로 「+4」「+3」 굽은 화살표).
+  - 단원 1 `shared-polygon-matchsticks`를 「도형에서의 등차수열」 18~19쪽 10문항으로 다시 짬(DB `/lessons/1/original/` 교체). 19쪽은 원본 절 제목이 18쪽과 같은 「3. 도형에서의 등차수열」이라 새 단원 대신 여기에 넣었다.
+    새 그림 `source-stick-stages`(성냥개비: `shape:"triangle"` 위아래 번갈아 붙인 삼각형 / `"house"` 벽을 함께 쓰는 집 모양 오각형) · `source-stone-cross`(십자 바둑돌, 문제가 「흰색 바둑돌」이라 흰 돌) · `source-shape-stages`(`roof-grid` 세모 지붕+네모 2줄 / `square-row` 네모 줄의 위·아래·양 끝 세모).
+  - 새 단원 14 `reverse-sequence-source`(20~25쪽 37문항: 20쪽 연산 체크 8 · 21~24쪽 몇 번째 수 24 · 25쪽 ?칸 5). **옛 장부는 20쪽을 「단원 표지」로 적어 문항 8개를 빠뜨리고 있었다.** 22쪽(옛 보류 「화면 상단이 잘림」)은 쪽 그림에서 수열을 읽어 넣었다.
+    개념 설명은 교사 메모(1층에서 3층까지는 2층만 올라간다)를 아이 말로 옮긴 progressive-concept.
+  - **원본을 바로잡은 곳**: 22쪽 03 수열 상자에 수 하나가 빠져 있어(같은 수를 더한다는 조건과 안 맞음) 넣음 — 교사용 답은 고친 수열로 계산한 값과 같다(DB `sourceNote`). 교사용 답이 틀린 곳은 없음.
+  - 7권 글 보기 단추가 기본 10px라 너무 작아 `golden-bell-book05.css`에서 그림이 있는 원본 문항의 보기 단추를 16px로(5·6권 고르기 문항도 같이 커짐). 5·6권 원본 그림 인쇄 규칙(`[data-print-book]`)에 7권을 넣었다(전엔 7권 인쇄에 화면 크기가 그대로 나갔다).
+  - 19·20·22쪽 보류 삭제(7권 보류 21 → 18). DB `book-07` 401키 → 427키, sha 앞 8자리 `72551235`. 캐시 꼬리표 `20261018j`.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
