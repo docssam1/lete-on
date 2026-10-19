@@ -244,11 +244,19 @@ const ACADEMY={
    레벨마다 옮긴 황소 대비 칸은 끝나는 달 기준 2개월 안쪽부터 가장 가까운 다음 시험 달에 끝나도록 맞춘다(기간은 그대로). */
 const HWANGSO_EXAMS=[58,61,70];
 function snapHwangso(blocks){
-  return blocks.map(([t,s,e])=>{
-    if(!/황소 대비/.test(t)) return [t,s,e];
-    const w=HWANGSO_EXAMS.find(x=>x>=e-2); if(w==null) return [t,s,e];
-    return [t,s+(w-e),w];
+  const out=[];
+  blocks.forEach(([t,s,e])=>{
+    if(!/황소 대비/.test(t)){ out.push([t,s,e]); return; }
+    const w=HWANGSO_EXAMS.find(x=>x>=e-2);
+    const ns=w==null?s:s+(w-e), ne=w==null?e:w;
+    // 시험까지 남는 기간: 3% 2과정을 하거나 모의고사로 둔다(원장님 2026-10-19)
+    // 시험 달에 맞추느라 앞으로 당겨져 앞 칸과 겹치면 앞 칸을 줄인다
+    while(out.length&&out[out.length-1][2]>=ns){ const last=out[out.length-1]; if(last[1]>=ns) out.pop(); else { last[2]=ns-1; break; } }
+    const prevEnd=out.length?out[out.length-1][2]:ns-1;
+    if(ns-prevEnd>1) out.push(['3% 2과정<br>또는 모의고사',prevEnd+1,ns-1]);
+    out.push([t,ns,ne]);
   });
+  return out;
 }
 const academyOn={soma:false,fields:false};
 function levelRows(shift){
