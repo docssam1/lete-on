@@ -1,7 +1,7 @@
 "use strict";
 
 // Source identity, user-authorized verification metadata, and legacy lock audit.
-// Mathematical verification is independently performed by source-5-2-range-e1-audit.js.
+// Per-source mathematics is independently checked by the corresponding focused audits.
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -19,6 +19,8 @@ const expected = [
 const expectedKeys = ["source52RangeExploration", "source52RangeMaxStart", "source52RangeSeats", "source52RangeOverlap", "source52RangeBoxes"];
 const expectedIds = expected.map(([suffix]) => `5-2-u1-e1-${suffix}`);
 const missionIds = [1, 2, 3, 4, 5, 6].map(number => `5-2-u1-e1-mission-${number}`);
+const roundingIds = ["exploration", "example-2-1", "example-2-2", "example-2-3", "example-2-4"].map(suffix => `5-2-u1-e2-${suffix}`);
+const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -31,21 +33,22 @@ function load(curriculumSource) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "generators.js"), "utf8"), context, { filename: "generators.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-range-e1.js"), "utf8"), context, { filename: "source-5-2-range-e1.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-range-missions.js"), "utf8"), context, { filename: "source-5-2-range-missions.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounding-e2.js"), "utf8"), context, { filename: "source-5-2-rounding-e2.js" });
   return { curriculum: plain(context.window.HSE_CURRICULUM), api: context.window.HSE_GENERATORS };
 }
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2016, "Whole-bank classification count");
+  assert.equal(types.length, 2021, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 135, "Preserve 124 legacy records plus eleven source records");
+  assert.equal(semesterTypes.length, 140, "Preserve 124 legacy records plus sixteen source records");
   const restored = plain(semester);
-  restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => [...expectedIds, ...missionIds].includes(type.sourceItemId)));
+  restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => allNewSourceIds.includes(type.sourceItemId)));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
   const unit = semester.units.find(item => item.id === "5-2-u1");
-  assert.equal(unit.subunits.length, 6);
+  assert.equal(unit.subunits.length, 7);
   const legacy = unit.subunits.slice(0, 4).flatMap(group => group.types);
   assert.equal(legacy.length, 12);
   const legacyIds = [1, 2, 3, 4].flatMap(group => ["", "-2", "-3"].map(suffix => `5-2-u1-t${group}${suffix}`));
@@ -84,7 +87,35 @@ function validate(curriculum, api, baselineSemester) {
     }
     assert.match(type.sourceEvidence, /^source-memory:/);
   });
-  for (const type of semesterTypes.filter(type => ![...expectedIds, ...missionIds].includes(type.id))) {
+  const roundingGroup = unit.subunits[5];
+  assert.deepEqual(roundingGroup.types.map(type => type.id), roundingIds, "All five page-6 rounding source IDs are represented");
+  const roundingKeys = ["source52RoundingExploration2", "source52RoundingExample21", "source52RoundingExample22", "source52RoundingExample23", ""];
+  roundingGroup.types.forEach((type, index) => {
+    assert.equal(type.sourceItemId, roundingIds[index]);
+    assert.equal(type.sourcePdfPage, 4);
+    assert.equal(type.sourcePrintedPage, 6);
+    assert.equal(type.sourceTier, "advanced");
+    assert.equal(type.sourceVerified, true);
+    assert.equal(type.publisherKeyVerified, false);
+    assert.equal(type.generatorKey, roundingKeys[index]);
+    assert.equal(type.reviewLocked, index === 4, "Only ambiguous Example 2-4 stays locked");
+    if (index < 4) {
+      assert.equal(type.generationMode, "fixed-verified-pool");
+      assert.equal(type.verifiedVariantTarget, 3);
+      assert.equal(type.verifiedVariantCount, 3);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(api.generatorKey(type), roundingKeys[index]);
+      for (const difficulty of [-1, 0, 1]) for (let variant = 0; variant < 3; variant++) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+      }
+    } else {
+      assert.equal(type.answerVerification, "ambiguous-source-condition");
+      assert.equal(api.generatorKey(type), "");
+      for (const difficulty of [-1, 0, 1]) assert.equal(api.generate(type, 1, difficulty, 1, 0), null);
+    }
+  });
+  for (const type of semesterTypes.filter(type => !allNewSourceIds.includes(type.id))) {
     assert.equal(type.reviewLocked, true, `${type.id}: lock must stay on`);
     assert.equal(type.generationMode, "review-locked");
     assert.equal(api.generatorKey(type), "", `${type.id}: no generator may be exposed`);
@@ -92,7 +123,7 @@ function validate(curriculum, api, baselineSemester) {
       assert.equal(api.generate(type, 0, difficulty, 1, 0), null, `${type.id}: direct generation must return null`);
     }
   }
-  return { total: types.length, semesterTypes: semesterTypes.length, legacyPreserved: 124, classified: added.length, newlyAvailable: 5 };
+  return { total: types.length, semesterTypes: semesterTypes.length, legacyPreserved: 124, classified: added.length, roundingSourceItems: 5, roundingNewlyAvailable: 4 };
 }
 
 const baselineRef = process.env.HSE_BASELINE_REF || "94a69f4bdda95c1d4e47494d3852f13c409165dc";
@@ -122,4 +153,4 @@ if (output) {
   fs.mkdirSync(output, { recursive: true });
   fs.writeFileSync(path.join(output, "classification-audit.json"), JSON.stringify(finalResult, null, 2) + "\n");
 }
-console.log(`5-2 source classification passed: ${result.classified} independently verified records, ${result.legacyPreserved} unchanged legacy records, ${negatives.length} rejected negative controls; five finite generators.`);
+console.log(`5-2 source classification passed: ${result.classified} original-range records, ${result.roundingNewlyAvailable} new rounding generators, ${result.roundingSourceItems - result.roundingNewlyAvailable} ambiguous source record locked, ${result.legacyPreserved} unchanged legacy records, ${negatives.length} rejected negative controls.`);
