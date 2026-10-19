@@ -1,5 +1,14 @@
 # Elementary Question Bank Handover
 
+## 2026-10-19 Grade 5-2 Rounding Exploration 2: Source-Checked Batch
+
+- Read the advanced source PDF page 4 / printed page 6 directly and matched the page's exact sequence: Exploration 2, Examples 2-1, 2-2, 2-3, and 2-4. The similarly named answer PDF is a different `초 5-2 경시` edition for these example numbers; handwriting was not treated as an official key.
+- Four exact source IDs for Exploration 2 and Examples 2-1 through 2-3 are connected to new, finite source-specific generators. Each has three fixed numerical variants and three difficulty offsets. The source page has no figures for these four items. Example 2-4 remains review-locked because the digit-domain wording permits two answers when zero is allowed.
+- Exact source values, per-item answer proofs, the two ambiguity witnesses, and source hashes are in the private Drive QA addendum, not this public code history. `publisherKeyVerified=false` remains explicit; the connection is based on the user's direction to solve directly and independent recomputation.
+- Independent calculation audit: 36 visible-prompt configurations passed. Browser audit: 36 isolated desktop (1280px) and mobile (375px/320px) states, 72 overflow checks, 36 problem/solution separation checks, zero page errors, and 36 blocked external requests. Student profiles/storage were not used.
+- Print audit: the four verified types appeared once each in a problem/solution A4 print fixture. The combined file contains two pages total, one problem page and one solution page; both were rasterized and visually inspected. Whole-bank regression passes 2,021 total / 1,233 available / 788 locked with 73,980 generations. Source-release and public review-reason audits pass.
+- The previous 124 generic Grade 5-2 types and existing student data remain unchanged. This entry does not claim release until the GitHub Pages deployment is separately confirmed.
+
 ## 2026-10-18 Grade 5-2 Unit 1 Mission 1–6: Verified Next Batch
 
 - User request: directly solve the next source-page Missions in detail and unlock only verified questions. On Mac, the printed conditions and six-card figure from the advanced source PDF page 3 / printed page 5 were reread separately from handwritten work. Direct proofs and independent enumeration agree across all six items. The handwritten card count was not accepted as an answer key, and `publisherKeyVerified=false` remains explicit. Exact original values, answers, figure crops and full proofs reside in the existing owner-only Drive source-memory addendum and QA files, not public Git.
