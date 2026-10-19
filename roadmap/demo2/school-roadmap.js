@@ -279,7 +279,8 @@ function hwangsoPlan(compBlocks){
 }
 const academyOn={soma:false,fields:false,hwangso:false};
 /* 초등 구간 이어 붙이기 (원장님 2026-10-19 "초1 4월 중등 너무 빨라, 내 자료에 그 정도 근거는 없어")
-   - P2(프리미어 2반 수준) 표보다 빠르게 당기지 않는다: L0·L1·L2는 P2 시점 그대로, L3 +5 · L4 +10개월.
+   - 사고력은 P2(프리미어 2반 수준) 표보다 당기지 않는다(L0·L1·L2 = P2, L3 +5, L4 +10).
+   - 교과·연산은 레벨 속도대로 잇되, 중등 시작은 아래 midFloor 바닥(초1 8월)과 여유 달로 조절한다.
    - 유아(데모) 줄은 P2 첫 교재 전까지 그대로 두고, 데모에서 이미 한 교재(같은 교재 이름)는 P2에서 다시 하지 않는다. */
 function itemKey(t){
   const x=plain(t);
@@ -287,8 +288,8 @@ function itemKey(t){
   m=x.match(/(\d-\d)\s*디딤돌/); if(m) return 'school'+m[1];
   const k=STEP_ORDER.find(k=>x.includes(k)); return k||x;
 }
-function joinRow(demoKey, demoShift, pBlocks, pShift){
-  const D=(window.ROAD_L0||ROAD_L0)[demoKey].map(b=>[b.text.replace(/<br>/g,' '),b.s+demoShift,b.e+demoShift]);
+function joinRow(demoKey, demoShift, pBlocks, pShift, demoFilter){
+  const D=(window.ROAD_L0||ROAD_L0)[demoKey].filter(b=>!demoFilter||demoFilter(b)).map(b=>[b.text.replace(/<br>/g,' '),b.s+demoShift,b.e+demoShift]);
   let P=pBlocks.map(([t,s,e])=>[t,s+pShift,e+pShift]);
   let Dk=[];
   for(let guard=0;guard<10&&P.length;guard++){
@@ -301,16 +302,34 @@ function joinRow(demoKey, demoShift, pBlocks, pShift){
   }
   return Dk.concat(P);
 }
+/* 중등 시작 바닥과 여유 달 (원장님 2026-10-19, 2026 유7 필즈 S1반 운영 로드맵 근거)
+   - 아무리 빨라도 L0의 중등 선행은 초1 8월쯤(m 43). 그 앞에 디딤돌 응용을 쉬는 여유를 최소 1개월 둔다.
+   - 레벨마다 같은 속도로 계단처럼 늦어진다. 연산의 중1 연산도 같은 바닥을 쓰고, 빈 기간은 '초등연산 보충'(S1 표). */
+const MID_FLOOR=43;
+function midFloor(blocks, isMid, filler){
+  const i=blocks.findIndex(b=>isMid(plain(b[0])));
+  if(i<0) return blocks;
+  const s0=blocks[i][1], start=Math.max(MID_FLOOR, s0+1), d=start-s0;
+  const head=blocks.slice(0,i), tail=blocks.slice(i).map(([t,s,e])=>[t,s+d,e+d]);
+  const prevEnd=head.length?head[head.length-1][2]:start-1;
+  return prevEnd+1<=start-1 ? head.concat([[filler,prevEnd+1,start-1]],tail) : head.concat(tail);
+}
 function levelRows(shift){
-  const pShift=Math.max(0,shift-L_SHIFT.L2);
+  const pShift=Math.max(0,shift-L_SHIFT.L2);   // 사고력: 원본(P2)보다 당기지 않는다
+  const lShift=shift-L_SHIFT.L2;               // 교과·연산: 레벨 속도대로, 중등은 바닥과 여유 달로 조절
   const sh=(arr,d)=>arr.map(([t,s,e])=>[t,s+d,e+d]);
   const comp=joinRow('thinking1',shift,P2.comp,pShift);
+  const notTop=b=>!/최상위/.test(b.text);
+  const school=midFloor(joinRow('school',shift,P2.school,lShift,notTop), t=>/^중\d/.test(t), '여유 · 초등 대수 심화<br><small>(선택)</small>');
+  const demoTop=(window.ROAD_L0||ROAD_L0).school.filter(b=>!notTop(b)).map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]);
+  const school2=demoTop.concat(sh(P2.school2,lShift).filter(b=>!(demoTop.some(d=>plain(d[0]).includes('3학년'))&&/3학년/.test(b[0]))));
+  const calc=midFloor(joinRow('calc',shift,P2.calc,lShift), t=>/중1 연산/.test(t), '초등연산 보충');
   return [
-    {key:'school',label:'교과',blocks:joinRow('school',shift,P2.school,pShift)},
-    {key:'school2',label:'교과 심화',blocks:sh(P2.school2,pShift)},
+    {key:'school',label:'교과',blocks:school},
+    {key:'school2',label:'교과 심화',blocks:school2},
     {key:'comp',label:'사고력·경시',blocks:comp},
     {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,pShift)},
-    {key:'calc',label:'연산',blocks:joinRow('calc',shift,P2.calc,pShift)}
+    {key:'calc',label:'연산',blocks:calc}
   ].concat(academyOn.hwangso?[{key:'hwangso',label:'황소 대비<br><small>(선택)</small>',blocks:hwangsoPlan(comp)}]:[]);
 }
 function axisYears(){
