@@ -24,3 +24,14 @@ test('확인 필요 = 기기 판정 review 이고 선생님 판정이 아직 없
   assert.equal(countNeeds(['s41-u01', 's41-u02']), 2);
   assert.equal(countNeeds(null), 2);
 });
+
+test('학기 평가의 전체 문항 ID와 교사 의견도 다른 기록을 보존하며 찾는다',()=>{
+ const original=mem['sciLab.deck'];
+ mem['sciLab.deck']=JSON.stringify({
+  's31-fin:grade:daily-s31-fin-f1-15':{at:8,tries:1,item:'s31-fin-f1-15',boxes:[{k:'daily',st:'review',text:'내 설계 설명'}]},
+  's31-mid:grade:daily-s31-mid-o2-03':{at:7,tries:1,item:'s31-mid-o2-03',boxes:[{k:'daily',st:'review',text:'판자가 반듯해요'}]},
+  's31-fin:teacher:daily-s31-fin-f1-15:daily':{v:'ok',note:'물과 연결한 설명을 확인함',at:9}
+ });
+ const rows=records(['s31-fin','s31-mid']);assert.equal(rows.length,2);assert.equal(rows[0].item,'s31-fin-f1-15');assert.equal(rows[0].teacher.note,'물과 연결한 설명을 확인함');assert.equal(countNeeds(['s31-fin']),0);assert.equal(countNeeds(['s31-mid']),1);assert.equal(JSON.parse(mem['sciLab.deck'])['s31-mid:grade:daily-s31-mid-o2-03'].boxes[0].text,'판자가 반듯해요');
+ mem['sciLab.deck']=original;
+});

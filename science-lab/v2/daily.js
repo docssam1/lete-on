@@ -1,3 +1,4 @@
+import {photoFigureHtml} from './photo-figure.js';
 // Daily Test — 스스로 공부하기의 마지막 장면(MSG 초·과·심 「Daily Test 01–09 · 채점과 첨삭」을 참고해 이 사이트에 맞게 다시 만듦).
 //  · 왼쪽: 문항을 하나씩 풀고(이전·다음), 문항마다 「말로 답하기」(받아쓴 초안 → 고쳐서 넣기)와 「스스로 체크」(점수와 별개).
 //    답안 사진은 이 기기(IndexedDB)에만 보관 — 선생님께 자동으로 보내지 않는다.
@@ -6,6 +7,7 @@
 //  · 기록: 문항마다 처음 채점한 답만 진단 기록(progress.js)에 남긴다. 규칙으로 못 가린 쓰기 답은 「선생님 확인」(check.js)에 모인다.
 //  · 아무것도 서버로 보내지 않는다(채점 계약 승인 전 — GRADING-CONTRACT-DRAFT.md).
 import { gradeDaily, summarize, diagnoseDaily, vocabOf, countWord } from './daily-grade.js';
+import { sourceCaption, sourceTableHtml, sourceChoiceHtml } from './source-presentation.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const CIRC = ['①', '②', '③', '④', '⑤'];
@@ -34,7 +36,7 @@ function fieldsHtml(it, v, misc) {
   const ac = it.answerContract;
   if (ac.type === 'single-choice' || ac.type === 'multi-choice') {
     const sel = [].concat(v ?? []).map(String);
-    return `${ac.type === 'multi-choice' ? `<p class="dt-hint">${ac.answers.length}개를 골라요.</p>` : ''}<div class="dt-choices" role="${ac.type === 'single-choice' ? 'radiogroup' : 'group'}">${it.choices.map((c, i) => `<button type="button" class="dt-choice" data-i="${i}" aria-pressed="${sel.includes(String(i))}"><i>${CIRC[i]}</i><span>${esc(c)}</span></button>`).join('')}</div>`;
+    return `${ac.type === 'multi-choice' ? `<p class="dt-hint">${ac.answers.length}개를 골라요.</p>` : ''}<div class="dt-choices" role="${ac.type === 'single-choice' ? 'radiogroup' : 'group'}">${it.choices.map((c, i) => `<button type="button" class="dt-choice" data-i="${i}" aria-pressed="${sel.includes(String(i))}"><i>${CIRC[i]}</i><span>${sourceChoiceHtml(it,c,i)}</span></button>`).join('')}</div>`;
   }
   if (ac.type === 'short-text') return `<input class="dt-in" data-f="text" type="text" autocomplete="off" aria-label="내 답" placeholder="답을 써요" value="${esc(v ?? '')}">`;
   if (ac.type === 'written-explanation') return `<textarea class="dt-in" data-f="text" rows="4" aria-label="내 답" placeholder="까닭까지 써요">${esc(v ?? '')}</textarea>`;
@@ -54,8 +56,8 @@ function promptHtml(it, v, misc) {
     return `<input class="dt-blank" data-k="${i}" type="text" size="6" aria-label="빈칸 ${i + 1}" placeholder="${CIRC[i]}" value="${esc(cur)}">`;
   });
 }
-const figHtml = (it) => (it.figure ? `<figure class="dt-fig"><img src="../${esc(it.figure)}" alt="${esc(it.figureNote || '문항 그림')}"></figure>` : '');
-const givensHtml = (it) => it.givens ? Object.entries(it.givens).map(([k, v]) => `<p class="dt-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : `<b>${esc(k === '보기' ? '〈보기〉' : k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : typeof v === 'object' ? JSON.stringify(v) : v)}</p>`).join('') : '';
+const figHtml = (it) => it.photoLabels ? photoFigureHtml(it) : (it.figure ? `<figure class="dt-fig"><img src="../${esc(it.figure)}" alt="${esc(it.figureNote || '문항 그림')}"></figure>` : '');
+const givensHtml = (it) => it.givens ? Object.entries(it.givens).map(([k, v]) => sourceTableHtml(v) || `<p class="dt-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : `<b>${esc(k === '보기' ? '〈보기〉' : k)}</b> `}${esc(Array.isArray(v) ? v.join(' / ') : typeof v === 'object' ? JSON.stringify(v) : v)}</p>`).join('') : '';
 
 function formatAnswer(it, v) {
   const ac = it.answerContract;
@@ -98,7 +100,7 @@ export function mountDaily(ctx) {
       <section class="dt-left" style="--dt-zoom:${S.zoom}">
         <div class="dt-lhead"><span class="dt-chip">스스로 공부하기</span><h2>${esc(HEAD)} ${pad(1)}–${pad(N)}</h2>
           <div class="dt-zoom" role="group" aria-label="글자 크기"><button type="button" data-z="-1">작게 −</button><output>${Math.round(S.zoom * 100)}%</output><button type="button" data-z="1">크게 +</button></div>
-          <span class="dt-src">${esc(ctx.src || `교재 ${ctx.ch.no}장 확인 문제 · 형성평가`)}</span>${ctx.tabs ? `<nav class="dt-tabs" aria-label="세트">${ctx.tabs}</nav>` : ''}</div>
+          <span class="dt-src">${esc(ctx.src || `교재 ${ctx.ch.no}장 확인 문제 · 형성평가`)}</span>${ctx.tabs ? `<nav class="dt-tabs" aria-label="${esc(ctx.tabLabel || '세트')}">${ctx.tabs}</nav>` : ''}</div>
         <div class="dt-q" aria-live="polite"></div>
         <button type="button" class="dt-grade">${countWord(N)} 문항 채점하기</button>
         <div class="dt-photo"><p>답안을 찍거나 사진을 골라 이 쪽에 붙여 두세요.</p><div class="dt-photo-box"></div>
@@ -110,13 +112,19 @@ export function mountDaily(ctx) {
       <section class="dt-right" aria-live="polite"></section>
     </main>`;
   const $L = $app.querySelector('.dt-left'), $q = $app.querySelector('.dt-q'), $R = $app.querySelector('.dt-right');
+  // 긴 시험지·큰 글씨에서는 아래 이동 단추까지 페이지와 함께 스크롤한다.
+  const fitPanel = () => $L.classList.toggle('dt-fits-screen', $L.getBoundingClientRect().height <= innerHeight - 84);
+  const panelObserver = new ResizeObserver(fitPanel);
+  panelObserver.observe($L);
+  addEventListener('resize', fitPanel);
+  fitPanel();
 
   const answered = (it) => { const v = S.answers[it.id]; return v != null && (Array.isArray(v) ? v.flat().some((x) => String(x ?? '').trim()) : String(v).trim() !== ''); };
   const paintDots = () => $app.querySelectorAll('.dt-dots button').forEach((b, i) => { const it = list[i], g = S.graded?.[it.id]; b.dataset.st = g || (answered(it) ? 'done' : ''); b.setAttribute('aria-current', String(i === S.cur)); });
 
   function drawQ() {
     const it = list[S.cur], ac = it.answerContract, v = S.answers[it.id], speakable = ['single-choice', 'short-text', 'written-explanation'].includes(ac.type);
-    $q.innerHTML = `<article class="dt-qcard" data-type="${ac.type}"><header><span class="dt-num">${pad(S.cur + 1)}</span><p>${promptHtml(it, v, misc)}</p></header>${givensHtml(it)}${figHtml(it)}${fieldsHtml(it, v, misc)}
+    $q.innerHTML = `<article class="dt-qcard" data-type="${ac.type}"><header><span class="dt-num">${pad(S.cur + 1)}</span><p>${promptHtml(it, v, misc)}</p></header>${it.sourceRef?.label ? `<p class="dt-given">${esc(sourceCaption(it.sourceRef))} · ${esc(it.sourceRef.section)}</p>` : ''}${givensHtml(it)}${figHtml(it)}${fieldsHtml(it, v, misc)}
       <div class="dt-tools">${speakable ? `<button type="button" class="dt-tool dt-speak" aria-expanded="false">${mic}<span>말로 답하기</span></button>` : ''}
         <div class="dt-self" role="group" aria-label="스스로 체크 · 점수와 별개"><span>스스로 체크</span><button type="button" data-self="sure" aria-pressed="${S.self[it.id] === 'sure'}">○ 자신 있어요</button><button type="button" data-self="unsure" aria-pressed="${S.self[it.id] === 'unsure'}">△ 헷갈려요</button></div></div>
       ${speakable ? `<section class="dt-drawer" hidden><div class="dt-row-tools"><button type="button" class="btn dt-mic">${mic}<span>마이크로 말하기</span></button><p class="dt-msg" role="status"></p></div>
@@ -205,10 +213,11 @@ export function mountDaily(ctx) {
     if (r.status === 'correct') body = `${mine}${key}<p class="dt-why">${esc(it.explanation)}</p>`;
     else if (r.status === 'wrong') {
       const M = r.m?.map((m) => misc?.misconceptions?.[m]).filter(Boolean)[0], m = r.m?.[0], step = misc?.remedy?.[m]?.step || 3;
+      const related = ctx.related?.(it, m, step) || `#/${u}/${step}`;
       const ask = r.judged?.wrong?.say || (M ? `혹시 이런 생각을 했나요? 「${M.label}」 문제를 다시 읽고, 그 답을 고른 까닭을 떠올려 봐요.` : '어느 부분에서 헷갈렸는지 개념 정리를 떠올려 볼까요?');
       body = `${mine}<div class="dt-coach"><i class="dt-face" aria-hidden="true"></i><div><span>독쌤 첨삭${M ? ` · ${esc(M.label)}` : ''}</span><p>${esc(ask)}</p></div></div>
         <details class="dt-reveal"><summary>생각해 봤어요 · 해설 보기</summary>${key}<p class="dt-why">${esc(it.explanation)}</p>${M ? `<p class="dt-fix"><span>바로잡기</span>${M.fix}</p>` : ''}</details>
-        <div class="dt-actions">${ctx.twin?.(it) ? `<button type="button" class="dt-link soft" data-twin="${esc(it.id)}">비슷한 문제로 다시 풀기</button>` : ''}<a class="dt-link" href="#/${u}/${step}">관련 화면 다시 보기 · ${STEPNAME[step]}</a></div><div class="dt-twin" data-for="${esc(it.id)}"></div>`;
+        <div class="dt-actions">${ctx.twin?.(it) ? `<button type="button" class="dt-link soft" data-twin="${esc(it.id)}">비슷한 문제로 다시 풀기</button>` : ''}<a class="dt-link" href="${esc(related)}">관련 화면 다시 보기 · ${STEPNAME[step]}</a></div><div class="dt-twin" data-for="${esc(it.id)}"></div>`;
     } else if (r.status === 'review') {
       const J = r.judged, met = J?.met || [], miss = (J?.missing || []).map((x) => x.t);
       body = `${mine}${met.length || miss.length ? `<ul class="dt-need">${met.map((t) => `<li class="ok">✓ ${esc(t)}</li>`).join('')}${miss.map((t) => `<li>□ ${esc(t)}</li>`).join('')}</ul>` : ''}
@@ -269,7 +278,7 @@ export function mountDaily(ctx) {
   drawQ();
   if (S.graded) grade(); else intro();
   ctx.say([{ mood: 'talk', text: S.graded ? '지난번 채점 결과예요. 고쳐서 다시 채점해도 돼요.' : `오늘 배운 것을 ${countWord(N)} 문항으로 확인해 봐요. 다 풀고 채점하기를 눌러요.` }]);
-  return () => { try { recog?.abort(); } catch { /* */ } if (photoUrl) URL.revokeObjectURL(photoUrl); };
+  return () => { panelObserver.disconnect(); removeEventListener('resize', fitPanel); try { recog?.abort(); } catch { /* */ } if (photoUrl) URL.revokeObjectURL(photoUrl); };
 }
 
 // 선생님 정답표(인쇄용): 문항 · 정답 · 해설 · 연결된 오개념
@@ -278,5 +287,6 @@ export function teacherKeyHtml({ u, ch, list, misc, heading = 'Daily Test', back
   <main class="wrap dt-key"><h2>${ch.no ? `${esc(ch.no)} · ` : ''}${esc(ch.title)} — ${esc(heading)} ${pad(1)}–${pad(list.length)} 정답표</h2>${tabs ? `<nav class="dt-tabs no-print">${tabs}</nav>` : ''}
   <p class="lead">쓰기 문항은 예시 답이에요. 기기 판정에서 「검토 필요」로 남은 답은 <a href="#/${u}/check">선생님 확인</a>에 모여요.</p>
   <ol class="dt-key-list">${list.map((it, i) => { const ms = new Set([...Object.values(misc?.distractors?.[it.id] || {}), misc?.typed?.[it.id]?.any, misc?.cells?.[it.id], ...[].concat(misc?.cloze?.[it.id]?.wrong || [])].filter(Boolean));
-    return `<li><p><span class="dt-num">${pad(i + 1)}</span>${esc(it.prompt)}</p><p class="dt-row key"><span>정답</span><b>${esc(formatKey(it))}</b></p><p class="dt-why">${esc(it.explanation)}</p>${ms.size ? `<p class="dt-mis">오답이면 살펴볼 오개념: ${[...ms].map((m) => esc(misc.misconceptions[m]?.label || m)).join(' · ')}</p>` : ''}</li>`; }).join('')}</ol></main>`;
+    const printed=it.printedAnswerContract,printedValue=printed?.type==='single-choice'?CIRC[printed.answer]:printed?.type==='multi-choice'?printed.answers.map(i=>CIRC[i]).join(', '):printed?.sample??printed?.answer;
+    return `<li><p><span class="dt-num">${pad(i + 1)}</span>${esc(it.prompt)}</p><p class="dt-row key"><span>${it.sourceRef?.reviewOnly?'검토 요지':'정답'}</span><b>${esc(formatKey(it))}</b></p>${it.sourceRef?.reviewOnly&&printed?`<p class="dt-printed-key">인쇄된 공식 답 참고: ${esc(printedValue)} · 자동 정오 판정 보류</p>`:''}<p class="dt-why">${esc(it.explanation)}</p>${ms.size ? `<p class="dt-mis">오답이면 살펴볼 오개념: ${[...ms].map((m) => esc(misc.misconceptions[m]?.label || m)).join(' · ')}</p>` : ''}</li>`; }).join('')}</ol></main>`;
 }

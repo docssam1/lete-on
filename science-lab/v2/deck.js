@@ -4,6 +4,11 @@
 import { judgeText, judgeShort } from './judge.js';
 import { mountMagnetBattle } from './magnet-battle.js';
 import { mountLabBattle } from './lab-battle.js';
+import { buildLifeSlides } from './deck-life.js';
+import {contentUnitOfItem} from './content-unit.js';
+import { buildForceSlides } from './deck-force.js';
+import {buildInquirySlides} from './deck-inquiry.js';
+import { buildAnimalSlides } from './deck-animal.js';
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const NUM = ['①', '②', '③', '④', '⑤', '⑥'];
 const KEY = 'sciLab.deck';
@@ -16,6 +21,10 @@ const judgeTable = (u) => { if (!TABLES.has(u)) TABLES.set(u, import(`../data/un
 const MIC = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
 export function buildSlides(ch, art, plan, similar, mode, ix = null, media = null) {
+  if (ch.inquirywork) return buildInquirySlides(ch,art,plan,similar,mode);
+  if (ch.animalwork || ch.plantwork) return buildAnimalSlides(ch, art, plan, similar, mode);
+  if (ch.forcework) return buildForceSlides(ch, art, plan, similar, mode);
+  if (ch.fieldwork) return buildLifeSlides(ch, art, plan, similar, mode);
   const teach = mode === 'teach', S = [];
   let n = 0;
   // 답 자리: 가르치기는 클릭으로 열리는 답, 스스로는 쓰기 칸 + 예시 답 보기
@@ -176,13 +185,13 @@ function watchLabTips(host, G) {
 let battle = false;   // 가르치기 · 실험 화면: 기본은 한 화면, 켜면 두 팀 배틀
 let recog = null;     // 말로 쓰기(학생이 🎤를 눌렀을 때만)
 
-export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, misc, onAnswer, myLab, ix = null, media = null }) {
+export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D, mountLab, mountModel, misc, onAnswer, myLab, ix = null, media = null }) {
   const teach = mode === 'teach', S = buildSlides(ch, art, plan, similar, mode, ix, media);
-  const i = idx === 's2' ? Math.max(0, S.findIndex((x) => x.id === 'recall')) : Math.min(S.length - 1, Math.max(0, (idx || 1) - 1)), s = S[i], p = s.phaseObj;
+  const i = idx === 's2' ? Math.max(0, S.findIndex((x) => ch.inquirywork ? x.ses === 2 : x.id === 'recall')) : Math.min(S.length - 1, Math.max(0, (idx || 1) - 1)), s = S[i], p = s.phaseObj;
   const go = (k) => { location.hash = `#/${u}/lab-class/${mode}/${k + 1}`; };
-  const phases = plan.phases.map((x) => `<span class="${x.id === s.phase ? 'on' : ''}">${esc(x.name)}${teach ? ` ${x.min}′` : ''}</span>`).join('');
-  const isLab = s.mount === 'lab';
-  $app.innerHTML = `<div class="dk dk-${mode}">
+  const phases = plan.phases.map((x) => `<span class="${x.id === s.phase ? 'on' : ''}">${esc(x.shortName || x.name)}${teach ? ` ${x.min}′` : ''}</span>`).join('');
+  const isLab = s.mount === 'lab', isModel = Boolean(s.modelLab), labForSlide = isModel ? mountModel : mountLab;
+  $app.innerHTML = `<div data-unit="${esc(u)}" class="dk dk-${mode}${ch.plantwork ? ' plant-layout' : ''}${isModel?' inquiry-model':''}${(ch.fieldwork && !isModel) || ch.forcework ? ' fieldwork-layout' : ''}">
     <div class="dk-top no-print"><a href="#/${u}/start">‹ 처음으로</a><b>${esc(ch.title)}</b><span class="dk-mode">${teach ? '가르치기 · 강사용' : '스스로 공부하기 · 학생용'}</span>
       <nav class="dk-phases">${phases}</nav></div>
     <div class="dk-stage-wrap"><section class="dk-stage ${s.layout || ''}" aria-live="polite">
@@ -191,7 +200,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     <div class="dk-bar no-print"><button class="btn" data-a="prev" ${i ? '' : 'disabled'}>‹ 이전</button>
       ${teach ? `<span class="dk-count">${s.n} / ${S.length} · ${esc(p?.name || '')}</span>` : ''}
       <button class="btn primary dk-next" data-a="next"><span class="dk-fill" aria-hidden="true"></span><span class="dk-nt">${i === S.length - 1 ? '처음으로' : '다음 ›'}</span></button>
-      ${teach && isLab ? `<button class="btn" data-a="battle" aria-pressed="${battle}" title="두 팀이 같은 문제를 나란히 실험">⚔ 배틀 ${battle ? '끄기' : ''}</button>` : ''}
+      ${teach && isLab && (!ch.fieldwork || isModel) && !ch.forcework ? `<button class="btn" data-a="battle" aria-pressed="${battle}" title="두 팀이 같은 문제를 나란히 실험">⚔ 배틀 ${battle ? '끄기' : ''}</button>` : ''}
       ${teach ? `<button class="btn" data-a="notes" aria-pressed="${notesOn}">노트</button>` : ''}<button class="btn" data-a="full">전체 화면</button></div>
     ${teach ? `<aside class="dk-notes no-print" ${notesOn ? '' : 'hidden'}><b>${esc(p?.name)} · ${p?.min}분</b> ${esc(p?.aim)}${s.say && plan.say[s.say] ? `<p>발문 · ${esc(plan.say[s.say])}</p>` : ''}<small>→ / 스페이스 / 화면 클릭: 답 열기·다음 · ← 이전 · N 노트 · F 전체 화면</small></aside>` : ''}
   </div>`;
@@ -218,10 +227,10 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   const toggleNotes = () => { notesOn = $notes ? $notes.hidden : !notesOn; if ($notes) $notes.hidden = !notesOn; $app.querySelector('[data-a=notes]')?.setAttribute('aria-pressed', notesOn); };
   $app.querySelector('[data-a=notes]')?.addEventListener('click', toggleNotes);
   $app.querySelector('[data-a=battle]')?.addEventListener('click', () => { battle = !battle; renderDeck($app, arguments[1]); });
-  if (teach) stage.addEventListener('click', (e) => { if (!e.target.closest('button,canvas,video,a,input,textarea,.dk-3d,.dk-battle')) next(); });
+  if (teach) stage.addEventListener('click', (e) => { if (!e.target.closest('button,canvas,video,a,input,textarea,.dk-3d,.dk-battle,.life-notebook,.force-lab')) next(); });
   const onKey = (e) => {
     if (!alive()) { removeEventListener('keydown', onKey); return; }
-    if (e.target.closest?.('textarea,input,select,button,video,.dk-battle')) return;
+    if (e.target.closest?.('textarea,input,select,button,video,.dk-battle,.life-notebook,.force-lab')) return;
     if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
     else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
     else if (e.key === 'f' || e.key === 'F') $app.querySelector('[data-a=full]').click();
@@ -247,17 +256,17 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     if (m?.dataset.mount === 'scene') mount3D(m, { autoplay: false, preview: !!m.dataset.preview, from: m.dataset.from || null });
     if (m?.dataset.mount === 'lab') {
       // 교사 화면에는 학생 개인 기록을 섞지 않는다 — 실험 표는 이 화면에서만 쓰고 버린다.
-      if (!battle) mountLab(m, { rows: [], personal: false });
+      if (!battle || (ch.fieldwork && !isModel) || ch.forcework) labForSlide(m, { rows: [], personal: false, tab: s.fieldTab });
       else if (u === 's41-u01') {
         m.parentElement.classList.add('is-battle');
         m.outerHTML = '<div class="dk-battle dk-magnet-battle"></div>';
-        mountMagnetBattle(stage.querySelector('.dk-magnet-battle'), mountLab);
+        mountMagnetBattle(stage.querySelector('.dk-magnet-battle'), labForSlide);
         // 4:3 태블릿·16:10·낮은 화면에서는 대결 칸이 남은 높이를 다 쓰도록 교사 노트를 접어 둔다(「노트」·N으로 연다, 다른 슬라이드의 노트 설정은 그대로)
         if ($notes && !$notes.hidden && matchMedia('(min-width: 761px) and (max-aspect-ratio: 16/10), (min-width: 761px) and (max-height: 800px)').matches) { $notes.hidden = true; $app.querySelector('[data-a=notes]')?.setAttribute('aria-pressed', 'false'); }
       } else {
         m.parentElement.classList.add('is-battle');
         m.outerHTML = '<div class="dk-battle dk-lab-battle"></div>';
-        mountLabBattle(stage.querySelector('.dk-lab-battle'), u, mountLab);
+        mountLabBattle(stage.querySelector('.dk-lab-battle'), isModel ? (ch.modelBattleUnit || u) : u, labForSlide);
       }
     }
     return;
@@ -292,6 +301,8 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
   const textLen = () => stage.querySelector('.dk-body').innerText.replace(/\s+/g, '').length;
   async function run(V) {
     const k = s.kind || 'read';
+    if (k === 'fieldwork-read') { G.say({ text: ch.fieldworkReadSay || '관찰과 기록은 여러 날 이어져요. 준비되면 다음 화면으로 가요.' }); return; }
+    if (k === 'fieldwork') { G.say({ text: ch.fieldworkSay || '직접 본 모습을 글과 그림으로 남겨요. 실제 관찰한 뒤 준비되면 다음을 눌러요.' }); labForSlide(stage.querySelector('[data-mount]'), { personal: true, tab: s.fieldTab }); return; }
     if (k === 'video') {
     // No timed page advance during watching. Browser autoplay is muted; sound is the learner's choice.
     await G.say({text:'이번에는 실제 응결 연구 영상을 살펴봐요. 작은 물방울이 생기고 커지는 모습을 찾아보세요.'});
@@ -310,7 +321,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     if (k === 'lab') { G.say(cue(V, 'dk-lab')); const m = stage.querySelector('[data-mount]'); let done = false;
       m.addEventListener('pointerdown', () => { if (timer) cancelAuto(); }, true);   // 실험을 더 하면 넘기지 않는다
       let recs = 0;   // 조건을 바꿔 두 번 이상 적어야 비교가 된다
-      mountLab(m, { personal: true, onRecord: async () => { if (done) return; recs += 1;
+      labForSlide(m, { personal: true, onRecord: async () => { if (done) return; recs += 1;
         if (recs < 2) { G.say('dk-lab-more', { mood: 'encourage' }); return; }
         done = true; await G.say('dk-lab-done', { mood: 'praise' }); auto(4000); } });
       watchLabTips(m, G); return; }
@@ -487,7 +498,7 @@ export function renderDeck($app, { u, ch, art, plan, similar, mode, idx, mount3D
     const finish = async (line, mood) => { $chk.hidden = true; tas.forEach((t) => { t.readOnly = true; }); await G.say(line, mood ? { mood } : undefined); };
     $chk.onclick = async () => {
       tries++; $chk.disabled = true;
-      const table = await J, itemTable = s.item ? await judgeTable(s.item.split('-').slice(0, 2).join('-')) : null;
+      const table = await J, itemUnit=s.item&&contentUnitOfItem(s.item), itemTable = itemUnit ? await judgeTable(itemUnit) : null;
       const rs = boxes.map((b, j) => judgeBox(b.dataset.k, tas[j].value, tries, table, itemTable));
       boxes.forEach((b, j) => {
         const r = rs[j], hy = b.dataset.k === 'hypo'; b.querySelector('.dk-fb:not(.dk-tnote)')?.remove();

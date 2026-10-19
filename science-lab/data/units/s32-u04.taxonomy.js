@@ -7,7 +7,22 @@ export const taxonomy = {
   "semester": 2,
   "title": "물질의 상태",
   "area": "물질",
-  "standards": [],
+  "standards": [
+    {
+      "code": "4과05-02",
+      "text": "물질의 세 가지 상태인 고체, 액체, 기체의 성질을 관찰하여 비교할 수 있다."
+    }
+  ],
+  "standardsSource": {
+    "title": "교육부 고시 제2022-33호 [별책9] 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "attachment": "https://www.moe.go.kr/boardCnts/fileDown.do?fileSeq=1512facbda6c234a1641ac7e9c156ca2&m=&s=moe",
+    "member": "[별책9] 과학과 교육과정.hwp",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "section": "나. 성취기준 > 초등학교3~4학년 > (5) 물체와 물질",
+    "checkedAt": "2026-10-17"
+  },
+  "standardsNote": "기존 물질의 상태 원문·짝은 현재 물체와 물질의 상태 관찰 범위에 부분 대응한다. 재료별 성질·분류와 설계 전체를 충족한 자료로 표시하지 않는다.",
   "elements": [
     {
       "id": "E1",
@@ -45,7 +60,7 @@ export const taxonomy = {
       "id": "T02",
       "element": "E2",
       "name": "고체의 성질(모양·부피가 그대로)",
-      "desc": "고체는 눈에 보이고 손으로 잡을 수 있으며, 담는 그릇이 바뀌어도 모양과 부피가 변하지 않는다."
+      "desc": "고체는 누르거나 자르지 않고 담는 그릇만 바꿀 때 모양과 부피를 유지한다. 부드러운 고체와 가루 알갱이도 구별한다."
     },
     {
       "id": "T03",

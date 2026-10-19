@@ -27,8 +27,9 @@ catch {
 }
 
 // 3D 실험실이 있는 단원 — science-lab/v2/home.js 의 LABS 와 같아야 한다(새 실험을 넣으면 여기도)
-const ALL = ['s41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
+const ALL = ['s41-u04', 's31-u01', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
 const UNITS = process.argv.slice(2).length ? process.argv.slice(2) : ALL;
+const labPath = u => `#/${u}/2/${['s41-u01','s41-u02','s41-u03','s41-u04'].includes(u) ? 'model' : 'lab'}`;
 const SHOTS = process.env.SHOTS || '';
 if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
 
@@ -167,7 +168,7 @@ async function ringFlow(where, page, { strict }) {
 async function ringTowerClicks(u) {
   for (const vp of [{ width: 1280, height: 860 }, { width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1024, height: 768 }]) {
     const where = `${u} 실제 클릭 ${vp.width}×${vp.height}`; console.log(`  · ${where.slice(u.length + 1)}`);
-    const { page, errs } = await open(vp, `#/${u}/2/lab`); await page.waitForTimeout(3000);
+    const { page, errs } = await open(vp, labPath(u)); await page.waitForTimeout(3000);
     await ringFlow(where, page, { strict: true });
     await shot(page, `${u}-실제 클릭 ${vp.width}`);
     await done(where, page, errs);
@@ -228,7 +229,7 @@ async function ringTowerClicks(u) {
     const where = `${u} ${name}`; console.log(`  · ${name}`);
     const page = await gl0.newPage({ viewport: vp, hasTouch: !!touch }), errs = [];
     page.on('pageerror', (e) => errs.push(e.message));
-    await page.goto(BASE + `#/${u}/2/lab`, { waitUntil: 'networkidle' }); await page.waitForTimeout(1500);
+    await page.goto(BASE + labPath(u), { waitUntil: 'networkidle' }); await page.waitForTimeout(1500);
     checks++;
     if (!(await page.locator('.lab3d--ring-tower .rt2-svg').count())) {
       const leak = await page.evaluate(() => [document.querySelector('[data-r=floating]')?.textContent, document.querySelector('[data-r=height]')?.textContent, document.querySelector('[data-act=record]')?.disabled, [...document.querySelectorAll('[aria-label]')].filter((e) => /윗면 [NS]극/.test(e.getAttribute('aria-label'))).length]);
@@ -244,10 +245,12 @@ async function ringTowerClicks(u) {
 
 async function labSlide(u) {
   const { page } = await open({ width: 1440, height: 900 }, `#/${u}/lab-class/teach/1`);
+  await page.locator('.dk-foot').waitFor();
+  const total = await page.locator('.dk-foot span:last-child').evaluate(e => Number(e.textContent.split('/')[1]));
   let found = 0;
-  for (let i = 1; i <= 45 && !found; i++) {
+  for (let i = 1; i <= total && !found; i++) {
     await page.evaluate((h) => { location.hash = h; }, `#/${u}/lab-class/teach/${i}`);
-    await page.waitForTimeout(120);
+    await page.waitForFunction(n => document.querySelector('.dk-foot span:last-child')?.textContent.trim().startsWith(n + ' /'), i);
     const t = await page.evaluate(() => document.querySelector('.dk-h')?.textContent || '');
     if (t.startsWith('3D 실험실')) found = i;
   }
@@ -259,8 +262,8 @@ for (const u of UNITS) {
   const n = await labSlide(u);
   const cases = [
     ['덱 실험 슬라이드', { width: 1440, height: 900 }, n ? `#/${u}/lab-class/teach/${n}` : null],
-    ['5단계 실험(PC)', { width: 1280, height: 860 }, `#/${u}/2/lab`],
-    ['5단계 실험(폰)', { width: 390, height: 844 }, `#/${u}/2/lab`, true],
+    ['5단계 실험(PC)', { width: 1280, height: 860 }, labPath(u)],
+    ['5단계 실험(폰)', { width: 390, height: 844 }, labPath(u), true],
     ['장면(PC)', { width: 1280, height: 860 }, `#/${u}/2/scene`],
     ['장면(폰)', { width: 390, height: 844 }, `#/${u}/2/scene`, true],
   ];
@@ -322,7 +325,7 @@ for (const u of UNITS) {
   for (const [name, vp, touch, hash] of [['전체 화면(PC)', { width: 1280, height: 760 }], ['전체 화면(폰 가로)', { width: 844, height: 390 }, true], ['전체 화면(덱)', { width: 1440, height: 900 }, false, n ? `#/${u}/lab-class/teach/${n}` : null]]) {
     const where = `${u} ${name}`; console.log(`  · ${name}`);
     if (name === '전체 화면(덱)' && !hash) continue;
-    const { page, errs } = await open(vp, hash || `#/${u}/2/lab`, { touch });
+    const { page, errs } = await open(vp, hash || labPath(u), { touch });
     await waitFitted(page);
     const btn = await page.$('.fl-open');
     if (!btn) { fail(where, '「전체 화면」 단추 없음'); await done(where, page, errs); continue; }

@@ -53,8 +53,8 @@ export const source = [
     },
     "explanation": "줄기가 가늘고 곧게 자라며, 꽃에 긴 털이 달려 있어 강아지 꼬리와 모양이 비슷한 식물은 강아지풀입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -108,8 +108,8 @@ export const source = [
     },
     "explanation": "맥문동은 그늘진 곳에서도 잘 자라고, 보라색 꽃이 핍니다. 뿌리는 약재로 사용하기도 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -168,8 +168,8 @@ export const source = [
     },
     "explanation": "식물의 잎을 특징에 따라 분류할 때 누가 분류하더라도 같은 결과가 나오는 분류 기준을 정해야 합니다. '잎의 크기가 큰가?'는 분류하는 사람에 따라 분류 결과가 달라지기 때문에 분류 기준으로 알맞지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -230,8 +230,8 @@ export const source = [
     },
     "explanation": "㉠은 강아지풀, ㉡은 토끼풀, ㉢은 소나무, ㉣은 단풍나무의 잎입니다. 잎의 끝이 뾰족한 것은 강아지풀(㉠), 소나무(㉢), 단풍나무(㉣)입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -300,8 +300,8 @@ export const source = [
     },
     "explanation": "토끼풀과 단풍나무는 잎의 가장자리가 톱니 모양이고, 강아지풀과 소나무는 잎의 가장자리가 매끈합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -359,8 +359,8 @@ export const source = [
     },
     "explanation": "명아주, 민들레, 토끼풀, 강아지풀은 들이나 산에 사는 풀입니다. 밤나무, 사과나무, 단풍나무, 떡갈나무는 들이나 산에 사는 나무입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -425,8 +425,8 @@ export const source = [
     },
     "explanation": "소나무는 들이나 산에 사는 나무로, 토끼풀과 명아주와 같은 풀보다 키가 크고 줄기가 굵습니다. 또한 겨울에도 잎이 초록색이고, 필요한 양분을 스스로 만듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -484,8 +484,8 @@ export const source = [
     },
     "explanation": "애기똥풀과 조팝나무는 들이나 산에 사는 식물로, 뿌리, 줄기, 잎을 구분할 수 있고, 대부분 땅에 뿌리를 내리며, 잎이 대부분 초록색입니다. 또한 줄기에 잎, 꽃, 열매가 달립니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -534,8 +534,7 @@ export const source = [
       "sample": "부레옥잠은 잎자루에 있는 공기주머니 때문에 물에 떠서 살 수 있다. / 부레옥잠은 잎자루에 공기주머니가 있다.",
       "rubric": {
         "required": [
-          "부레옥잠 속에 공기주머니(공기)가 있다",
-          "그 공기주머니가 잎자루에 있다"
+          "잎자루 속에 공기주머니 또는 공기가 있음"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -545,8 +544,8 @@ export const source = [
     },
     "explanation": "부레옥잠은 잎자루에 공기주머니가 빽빽하게 배열되어 있기 때문에 자른 부레옥잠의 잎자루를 물에 넣고 손가락으로 누르면 공기방울이 나와 물위로 올라가는 것을 관찰할 수 있습니다.\n[채점 기준] 부레옥잠 잎자루에 공기주머니가 있다는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -605,8 +604,8 @@ export const source = [
     },
     "explanation": "부들은 잎이 물 위로 높이 자라는 식물입니다. 수련과 가래는 잎이 물에 떠 있는 식물, 물상추와 개구리밥은 물에 떠서 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -666,8 +665,8 @@ export const source = [
     },
     "explanation": "뿌리가 물속의 땅에 있으며 줄기와 잎이 물의 흐름에 따라 잘 휘어지는 식물은 물속에 잠겨서 사는 식물입니다. 나사말, 검정말, 물수세미, 붕어마름은 물속에 잠겨서 사는 식물이고, 생이가래는 물에 떠서 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -726,8 +725,8 @@ export const source = [
     },
     "explanation": "알로에는 잎이 두껍고 긴 모양이며, 잎의 가장자리에 뾰족한 가시가 있습니다. 잎자루가 볼록하게 부풀어 있는 것은 부레옥잠의 특징입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -776,8 +775,7 @@ export const source = [
       "sample": "예) 두꺼운 잎이나 굵은 줄기에 물을 저장하여 건조한 환경에서 살 수 있다. 등",
       "rubric": {
         "required": [
-          "잎이나 줄기에 물을 저장한다",
-          "그래서 건조한 환경에서 살 수 있다"
+          "물 저장 또는 물 손실을 줄여 건조한 곳의 생활에 도움이 되는 특징"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -787,8 +785,8 @@ export const source = [
     },
     "explanation": "사막에 사는 식물은 대부분 두꺼운 잎이나 굵은 줄기에 물을 저장하여 건조한 환경에서 살 수 있습니다.\n[채점 기준] 건조한 환경에서 살아가기에 알맞은 특징을 썼으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -849,8 +847,8 @@ export const source = [
     },
     "explanation": "비가 거의 내리지 않아 건조하고 낮과 밤의 온도 차이가 큰 곳은 사막입니다. 선인장과 바오바브나무는 사막에 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -916,8 +914,8 @@ export const source = [
     },
     "explanation": "눈잣나무와 한라솜다리는 높은 산에 사는 식물이고, 갯메꽃과 통보리사초는 바닷가나 갯벌에 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -972,8 +970,8 @@ export const source = [
     },
     "explanation": "퉁퉁마디는 갯벌에서 자라는 식물로, 줄기가 통통하여 물을 저장할 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1032,8 +1030,8 @@ export const source = [
     },
     "explanation": "암매는 높은 산에 사는 식물입니다. 높은 산은 춥고 바람이 강하게 불며 경사가 급합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1093,8 +1091,8 @@ export const source = [
     },
     "explanation": "장미의 줄기에 가시가 있어 몸을 보호하는 특징을 이용해 철조망을 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1152,8 +1150,8 @@ export const source = [
     },
     "explanation": "민들레씨가 바람을 타고 날아가는 모습을 이용해 낙하산을 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1212,8 +1210,8 @@ export const source = [
     },
     "explanation": "단풍나무 열매가 바람을 타고 멀리 날아가는 특징을 이용해 드론의 날개를 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1271,8 +1269,8 @@ export const source = [
     },
     "explanation": "학교 화단이나 길가, 공원 등에서 여러 가지 식물을 관찰할 수 있습니다. 식물마다 뿌리, 줄기, 잎 등의 생김새가 다양하고, 식물의 생김새나 생활 방식은 식물이 사는 곳의 환경과 관련이 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1335,8 +1333,8 @@ export const source = [
     },
     "explanation": "은행나무는 키가 크고, 줄기가 굵으며, 가을에 부채 모양의 잎이 노란색으로 변합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1395,8 +1393,8 @@ export const source = [
     },
     "explanation": "㉠은 잎맥, ㉡은 잎몸, ㉢은 잎자루입니다. 잎몸에서 선처럼 보이는 것으로, 물과 양분이 지나가는 통로이며 잎의 형태를 유지해 주는 역할을 하는 것은 잎맥입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1455,8 +1453,8 @@ export const source = [
     },
     "explanation": "잎자루는 잎몸과 줄기를 연결하는 부분으로, 토끼풀은 잎자루가 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1518,8 +1516,8 @@ export const source = [
     },
     "explanation": "강아지풀과 소나무는 잎의 전체적인 모양이 길쭉하고, 단풍나무는 잎의 전체적인 모양이 길쭉하지 않습니다. 따라서 소나무는 강아지풀과 함께 '그렇다.'로 분류되어야 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1582,8 +1580,8 @@ export const source = [
     },
     "explanation": "잎이 달걀 모양이고, 황록색 꽃이 피며, 굵은 뿌리에 가늘고 긴 뿌리가 달려 있는 식물은 명아주입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1649,8 +1647,8 @@ export const source = [
     },
     "explanation": "명아주와 강아지풀은 풀이고, 밤나무와 떡갈나무는 나무입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1699,8 +1697,7 @@ export const source = [
       "sample": "예) 뿌리, 줄기, 잎을 구분할 수 있다. / 대부분 땅에 뿌리를 내린다. / 잎이 대부분 초록색이다. / 필요한 양분을 스스로 만든다. 등",
       "rubric": {
         "required": [
-          "풀과 나무의 공통점 하나",
-          "풀과 나무의 다른 공통점 하나"
+          "풀과 나무에 모두 맞는 서로 다른 공통 특징 두 가지"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -1710,8 +1707,8 @@ export const source = [
     },
     "explanation": "들이나 산에 사는 식물은 풀과 나무로 구분할 수 있습니다. 풀과 나무는 뿌리, 줄기, 잎을 구분할 수 있고, 대부분 땅에 뿌리를 내리며, 잎이 대부분 초록색입니다. 또한 줄기에 잎, 꽃, 열매가 달리고, 필요한 양분을 스스로 만듭니다.\n[채점 기준] 풀과 나무의 알맞은 공통점 두 가지를 바르게 썼으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1769,8 +1766,8 @@ export const source = [
     },
     "explanation": "부레옥잠은 잎자루에 있는 공기주머니 때문에 물에 떠서 살 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1829,8 +1826,8 @@ export const source = [
     },
     "explanation": "연꽃과 갈대는 잎이 물 위로 높이 자라는 식물입니다. 마름, 순채, 수련, 가래는 잎이 물에 떠 있는 식물, 물상추, 개구리밥은 물에 떠서 사는 식물, 물질경이, 붕어마름은 물속에 잠겨서 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1896,8 +1893,8 @@ export const source = [
     },
     "explanation": "물수세미, 나사말, 검정말은 강이나 연못의 물속에 잠겨서 사는 식물입니다. 물속에 잠겨서 사는 식물은 줄기가 가늘고, 잎이 작으며, 줄기와 잎이 물의 흐름에 따라 잘 휘어집니다. 또한 뿌리는 물속의 땅에 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1958,8 +1955,8 @@ export const source = [
     },
     "explanation": "용설란은 낮과 밤의 온도 차이가 크고, 비가 거의 내리지 않아 건조한 사막에 사는 식물입니다. 부들은 강이나 연못, 맥문동, 소나무, 애기똥풀은 들이나 산에 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2007,8 +2004,7 @@ export const source = [
       "sample": "예) 알로에는 두꺼운 잎에 물을 저장하기 때문에 사막에서 살 수 있다. 등",
       "rubric": {
         "required": [
-          "두꺼운 잎에 물을 저장한다",
-          "그래서 사막(건조한 곳)에서 살 수 있다"
+          "알로에가 물을 저장하는 특징"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -2018,8 +2014,8 @@ export const source = [
     },
     "explanation": "사막은 비가 거의 내리지 않아 건조하고 낮과 밤의 온도 차이가 큽니다. 알로에는 두꺼운 잎에 물을 저장하고 있기 때문에 건조한 사막에서 살 수 있습니다.\n[채점 기준] 사막에서 살 수 있는 특징을 바르게 썼으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2078,8 +2074,8 @@ export const source = [
     },
     "explanation": "선인장은 사막에 사는 식물로, 굵은 줄기에 물을 저장하기 때문에 선인장의 줄기를 자른 면에 휴지를 대면 휴지가 물에 젖습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2145,8 +2141,8 @@ export const source = [
     },
     "explanation": "암매와 눈잣나무는 높은 산에 사는 식물입니다. 갯메꽃은 바닷가, 남극좀새풀은 극지방에 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2204,8 +2200,8 @@ export const source = [
     },
     "explanation": "한라솜다리는 한라산 정상에서만 자라는 식물로, 키가 작고 여러 개의 줄기가 함께 모여 자라 바람이 강하게 불어도 잘 자랍니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2264,8 +2260,8 @@ export const source = [
     },
     "explanation": "통보리사초는 바닷가의 모래밭에서 자라는 식물로, 땅에 뿌리를 깊게 내려서 바람이 강하게 불어도 잘 자랍니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2326,8 +2322,8 @@ export const source = [
     },
     "explanation": "도꼬마리 열매가 뾰족한 갈고리 모양으로 생겨서 동물의 털이나 천 등에 잘 붙는 특징을 이용해 쉽게 열고 닫을 수 있는 찍찍이 테이프를 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2385,8 +2381,8 @@ export const source = [
     },
     "explanation": "단풍나무 열매가 바람을 타고 멀리 날아가는 특징을 이용해 헬리콥터 프로펠러를 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2446,8 +2442,8 @@ export const source = [
     },
     "explanation": "끈끈한 털이 많이 나 있고, 작은 벌레가 끈끈한 털에 닿으면 붙어서 도망가지 못하는 끈끈이주걱의 특징을 이용하여 설계한 생활용품입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2506,8 +2502,8 @@ export const source = [
     },
     "explanation": "강아지풀은 꽃에 긴 털이 달려 있어 강아지 꼬리와 모양이 비슷합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2563,8 +2559,8 @@ export const source = [
     },
     "explanation": "은행나무는 가을에 잎이 노란색으로 변하고, 단풍나무는 가을에 잎이 빨간색으로 변합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2613,8 +2609,7 @@ export const source = [
       "sample": "분류하는 사람에 따라 분류 결과가 달라질 수 있기 때문에 분류 기준으로 알맞지 않다.",
       "rubric": {
         "required": [
-          "사람마다 판단이 다르다",
-          "그래서 분류 결과가 달라질 수 있다"
+          "사람마다 판단이나 분류 결과가 달라질 수 있다는 까닭"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -2624,8 +2619,8 @@ export const source = [
     },
     "explanation": "식물의 잎을 분류할 때는 누가 분류하더라도 같은 결과가 나오는 분류 기준을 정해야 합니다. ‘잎의 모양이 예쁜가?’는 분류하는 사람에 따라 분류 결과가 달라질 수 있으므로 분류 기준으로 알맞지 않습니다.\n[채점 기준] 분류하는 사람에 따라 분류 결과가 달라질 수 있다는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2696,8 +2691,8 @@ export const source = [
     },
     "explanation": "토끼풀과 소나무는 잎 여러 개가 붙어 있고, 강아지풀과 단풍나무는 잎 여러 개가 붙어 있지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2763,8 +2758,8 @@ export const source = [
     },
     "explanation": "㉠은 강아지풀, ㉡은 토끼풀, ㉢은 소나무, ㉣은 단풍나무의 잎입니다. 잎의 끝이 둥근 모양인 것은 토끼풀의 잎입니다. 강아지풀, 소나무, 단풍나무의 잎은 끝이 뾰족합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2823,8 +2818,8 @@ export const source = [
     },
     "explanation": "민들레와 소나무는 들이나 산에, 연꽃은 강이나 연못에, 한라솜다리는 높은 산에, 바오바브나무는 사막에 사는 식물입니다. 사막은 비가 거의 내리지 않아 건조합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2879,8 +2874,8 @@ export const source = [
     },
     "explanation": "나무는 풀보다 키가 크고, 줄기가 굵습니다. 풀과 나무는 대부분 땅에 뿌리를 내립니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2946,8 +2941,8 @@ export const source = [
     },
     "explanation": "조팝나무는 흰색 꽃이 가지를 따라 피고, 이 모습이 튀긴 좁쌀을 붙인 것같이 보인다고 하여 이름 붙여졌습니다. 또한 뿌리, 줄기, 잎을 뚜렷하게 구분할 수 있고, 줄기에 잎, 꽃, 열매가 달리며, 필요한 양분을 스스로 만듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3005,8 +3000,8 @@ export const source = [
     },
     "explanation": "부레옥잠은 전체적인 색깔이 초록색이고, 잎은 둥글고 매끈하여 광택이 납니다. 또한 잎자루가 볼록하게 부풀어 있고, 뿌리는 수염처럼 생겼습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3067,8 +3062,8 @@ export const source = [
     },
     "explanation": "개구리밥, 물상추, 생이가래는 강이나 연못의 물에 떠서 사는 식물입니다. 물에 떠서 사는 식물은 공기주머니가 있거나 잎이 넓어서 물에 쉽게 뜨고, 수염 모양의 뿌리가 물속으로 뻗어 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3128,8 +3123,8 @@ export const source = [
     },
     "explanation": "연꽃과 같이 잎이 물 위로 높이 자라는 식물에 대한 설명입니다. 순채는 잎이 물에 떠 있는 식물, 물질경이와 붕어마름은 물속에 잠겨서 사는 식물, 부레옥잠은 물에 떠서 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3190,8 +3185,8 @@ export const source = [
     },
     "explanation": "알로에는 두꺼운 잎에 물을 저장하고 있기 때문에 사막에서 살 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3249,8 +3244,8 @@ export const source = [
     },
     "explanation": "용설란과 리돕스는 사막에 사는 식물입니다. 명아주, 밤나무, 떡갈나무는 들이나 산, 암매와 한라솜다리는 높은 산에 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3304,8 +3299,8 @@ export const source = [
     },
     "explanation": "선인장과 바오바브나무는 사막에 사는 식물로, 굵은 줄기에 물을 저장합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3354,8 +3349,7 @@ export const source = [
       "sample": "예) 키가 작거나 줄기가 옆으로 자라 강한 바람을 견딜 수 있다. 등",
       "rubric": {
         "required": [
-          "키가 작거나 줄기가 옆으로 자란다",
-          "그래서 강한 바람을 견딜 수 있다"
+          "키가 작거나 옆으로 자라는 등 높은 산의 생활에 알맞은 특징"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -3365,8 +3359,8 @@ export const source = [
     },
     "explanation": "높은 산은 춥고 바람이 강하게 불며 경사가 급합니다. 높은 산에 사는 식물은 대부분 키가 작거나 줄기가 옆으로 자라 강한 바람을 견딜 수 있습니다.\n[채점 기준] 높은 산에서 살아가기에 알맞은 특징을 썼으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3432,8 +3426,8 @@ export const source = [
     },
     "explanation": "바닷가나 갯벌에 대한 설명입니다. 갯메꽃, 퉁퉁마디, 통보리사초는 모두 바닷가나 갯벌에 사는 식물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3491,8 +3485,8 @@ export const source = [
     },
     "explanation": "눈잣나무는 높은 산의 산꼭대기에서는 강한 바람을 견디기 위해 옆으로 자라고, 바람이 약한 곳에서는 위로 자랍니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3552,8 +3546,8 @@ export const source = [
     },
     "explanation": "장미의 줄기에 가시가 있어 몸을 보호하는 특징을 이용해 철조망을 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3613,8 +3607,8 @@ export const source = [
     },
     "explanation": "연잎은 물에 젖지 않는 특징이 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3675,8 +3669,8 @@ export const source = [
     },
     "explanation": "연잎이 물에 젖지 않는 특징을 이용해 물이 스며들지 않아 젖지 않는 옷감을 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3737,8 +3731,8 @@ export const source = [
     },
     "explanation": "은행나무는 키가 크고 줄기가 굵으며, 잎이 부채 모양입니다. 또한 가을에 잎이 노란색으로 변합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3792,8 +3786,8 @@ export const source = [
     },
     "explanation": "학교 화단이나 길가, 공원 등 우리 주변에는 여러 가지 식물이 살고 있습니다. 식물마다 뿌리, 줄기, 잎, 꽃 등의 생김새가 다양하며, 식물의 생김새나 생활 방식은 식물이 사는 곳의 환경과 관련이 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3852,8 +3846,8 @@ export const source = [
     },
     "explanation": "㉠은 잎맥, ㉡은 잎몸, ㉢은 잎자루입니다. 잎몸과 줄기를 연결하는 부분은 잎자루입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3911,8 +3905,8 @@ export const source = [
     },
     "explanation": "잎의 특징에 따라 분류할 때 누가 분류하더라도 같은 결과가 나오는 분류 기준을 정해야 합니다. ‘잎이 귀엽게 생겼는가?’는 분류하는 사람에 따라 결과가 다르게 나올 수 있으므로 알맞은 분류 기준이 아닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3974,8 +3968,8 @@ export const source = [
     },
     "explanation": "소나무는 잎의 가장자리가 매끈합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4038,8 +4032,8 @@ export const source = [
     },
     "explanation": "조팝나무는 가지를 따라 핀 흰색 꽃이 튀긴 좁쌀을 붙인 것 같이 보인다고 하여 이름 붙여졌습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4100,8 +4094,8 @@ export const source = [
     },
     "explanation": "명아주와 민들레는 들이나 산에 사는 풀입니다. 뿌리, 줄기, 잎을 구분할 수 있고, 잎이 초록색이며, 줄기에 잎, 꽃, 열매가 달립니다. 또한 필요한 양분을 스스로 만듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4161,8 +4155,8 @@ export const source = [
     },
     "explanation": "들이나 산에 사는 식물은 풀과 나무로 구분할 수 있습니다. 나무는 풀보다 키가 크고, 줄기가 굵습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4221,8 +4215,8 @@ export const source = [
     },
     "explanation": "부레옥잠은 잎자루에 있는 공기주머니 때문에 물에 떠서 살 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4280,8 +4274,8 @@ export const source = [
     },
     "explanation": "연꽃은 잎이 물 위로 높이 자라는 식물입니다. 잎이 물 위로 높이 자라는 식물은 뿌리가 물속이나 물가의 땅에 있고, 대부분 키가 크고 줄기가 단단합니다. 수염 모양의 뿌리가 물속으로 뻗어 있고, 공기주머니나 넓은 잎이 있어 물에 쉽게 뜨는 것은 물에 떠서 사는 식물의 특징입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4342,8 +4336,8 @@ export const source = [
     },
     "explanation": "물속에 잠겨서 사는 식물의 특징입니다. 물속에 잠겨서 사는 식물에는 물수세미, 나사말, 검정말, 물질경이, 붕어마름 등이 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4403,8 +4397,8 @@ export const source = [
     },
     "explanation": "알로에 잎의 속 모습을 관찰한 결과를 통해 알로에는 두꺼운 잎에 물을 저장하고 있음을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4458,8 +4452,8 @@ export const source = [
     },
     "explanation": "선인장은 굵은 줄기에 물을 저장하며, 잎이 가시 모양이어서 동물이 함부로 먹지 못하고, 물이 밖으로 빠져나가는 것을 막을 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4520,8 +4514,8 @@ export const source = [
     },
     "explanation": "비가 거의 내리지 않아 건조하고 낮과 밤의 온도 차이가 큰 곳은 사막입니다. 사막에 주로 사는 식물은 용설란과 바오바브나무입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4569,8 +4563,7 @@ export const source = [
       "sample": "높은 산의 강한 바람을 견디기 위해서이다.",
       "rubric": {
         "required": [
-          "높은 산은 바람이 강하게 분다",
-          "그 바람을 견디기 위해서이다"
+          "강한 바람을 견디는 데 도움이 됨"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -4580,8 +4573,8 @@ export const source = [
     },
     "explanation": "눈잣나무는 높은 산의 산꼭대기에서는 강한 바람을 견디기 위해 옆으로 자랍니다.\n[채점 기준] 강한 바람을 견디기 위해서라는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4642,8 +4635,8 @@ export const source = [
     },
     "explanation": "높은 산에 사는 식물인 암매와 한라솜다리는 키가 작고, 여러 개의 줄기가 함께 모여 자라 바람이 강하게 불어도 잘 자랍니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4707,8 +4700,8 @@ export const source = [
     },
     "explanation": "퉁퉁마디는 갯벌에서 주로 자라고, 줄기가 통통하여 물을 저장할 수 있습니다. 또한 마디가 많고 원통 모양입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4766,8 +4759,8 @@ export const source = [
     },
     "explanation": "장미의 줄기에 가시가 있어 몸을 보호하는 특징을 이용해 철조망을 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4825,8 +4818,8 @@ export const source = [
     },
     "explanation": "도꼬마리 열매가 뾰족한 갈고리 모양으로 생겨서 동물의 털이나 천 등에 잘 붙는 특징을 이용해 쉽게 열고 닫을 수 있는 찍찍이 테이프를 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4874,8 +4867,7 @@ export const source = [
       "sample": "연잎이 물에 젖지 않는 특징을 이용해 물이 스며들지 않는 옷감을 만들었다.",
       "rubric": {
         "required": [
-          "연잎은 물에 젖지 않는다",
-          "이를 이용해 물이 스며들지 않는 옷감을 만들었다"
+          "연잎의 물에 젖지 않는 특징과 그 특징에 맞는 활용 예 한 가지"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -4885,8 +4877,8 @@ export const source = [
     },
     "explanation": "연잎은 물에 젖지 않는 특징을 가지고 있습니다.\n[채점 기준] 연잎이 물에 젖지 않는 특징과 이를 이용한 예가 내용에 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"

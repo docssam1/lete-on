@@ -28,7 +28,7 @@ async function main(){
     ]){
       const context=await browser.newContext({viewport:{width,height},reducedMotion:'reduce'});
       await context.addInitScript(language=>{
-        localStorage.setItem('nm_state_v1',JSON.stringify({lang:language,onboarded:true,name:'지도 검수',
+        localStorage.setItem('nm_state_v1',JSON.stringify({lang:language,onboarded:true,name:'지도 검수',progress:{},
           view:'courseroad',roadView:'map',account:{status:'active'},placement:{course:'C20',self:true}}));
       },lang);
       const page=await context.newPage(),errors=[];
@@ -43,8 +43,10 @@ async function main(){
       assert.equal(await page.locator('.nm-vmap-stop').count(),5,'지도 지점 5개');
       assert.equal(await page.locator('.nm-vmap-character').count(),5,'표지판 아래 안내 캐릭터 5명');
       assert(await page.locator('.nm-vmap-character img').evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode().then(()=>img.naturalWidth>0))).then(xs=>xs.every(Boolean))),'안내 캐릭터 이미지 디코딩');
-      assert.equal(await page.locator('.nm-vmap-stop.is-current').count(),1,'현재 위치 1개');
-      assert.equal(await page.locator('.nm-vmap-stage.is-current').count(),1,'현재 단계 1개');
+      assert.equal(await page.locator('.nm-vmap-stop.is-learning').count(),0,'학습 기록이 없으면 실제 학습 위치 표식 없음');
+      assert.equal(await page.locator('.nm-vmap-stop.is-recommendation').count(),1,'선택한 시작점 표식 1개');
+      assert.equal(await page.locator('.nm-vmap-stage.is-recommendation').count(),1,'선택한 시작 단계 1개');
+      assert.equal(await page.locator('.nm-vmap-legend-item.recommendation').count(),1,'선택 시작점 범례');
       assert.equal(await page.locator('.nm-vmap-character.is-selected').count(),1,'선택된 안내 캐릭터 1명');
       assert(await page.locator('.nm-vmap-talk-bubble p').textContent(),'안내 캐릭터의 과정 설명');
       const layout=await page.evaluate(()=>({
@@ -100,6 +102,20 @@ async function main(){
       await context.close();
       console.log(`✓ 그림 지도 ${lang} ${width}px · 이미지/단계/전환/키보드/폭`);
     }
+    const context=await browser.newContext({viewport:{width:1280,height:900}});
+    await context.addInitScript(()=>localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'지도 검수',
+      progress:{'B-01':{touchedAt:100}},view:'courseroad',roadView:'map',account:{status:'active'},placement:{course:'C20',self:true}})));
+    const page=await context.newPage();
+    await page.goto(`http://127.0.0.1:${server.address().port}/number_magic/index.html?enter=1`,{waitUntil:'domcontentloaded'});
+    await page.locator('#ttRoad').click();await page.locator('#crVisual:not([hidden])').waitFor({timeout:15000});
+    assert.equal(await page.locator('.nm-vmap-stop.is-learning').count(),1,'실제 학습 위치 표식 1개');
+    assert.equal(await page.locator('.nm-vmap-stop.is-recommendation').count(),1,'다른 그룹의 선택 시작점 표식 1개');
+    assert.equal(await page.locator('.nm-vmap-stop.is-learning.is-recommendation').count(),0,'두 표식이 별도 그룹에서 보임');
+    assert.equal(await page.locator('.nm-vmap-stage.is-learning').count(),1,'실제 학습 단계 1개');
+    await page.locator('.nm-vmap-stop.is-recommendation').evaluate(el=>el.click());
+    assert.equal(await page.locator('.nm-vmap-stage.is-recommendation').count(),1,'선택 시작 단계 1개');
+    await context.close();
+    console.log('✓ 그림 지도: 실제 학습 위치와 선택 시작점을 분리 표시');
   }finally{
     if(browser)await browser.close();
     await new Promise(resolve=>server.close(resolve));

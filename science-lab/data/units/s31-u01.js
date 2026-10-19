@@ -1,4 +1,4 @@
-// 3-1 Ⅰ 힘과 우리 생활 — 문제은행 단원(5단계 수업은 아직 없음). 원문은 s31-u01.source.js, 유사문항은 s31-u01.similar.js.
+// 3-1 Ⅰ 힘과 우리 생활 — 5단계 탐구·실험 교재와 함께 쓰는 문제은행. 원문은 s31-u01.source.js, 유사문항은 s31-u01.similar.js.
 export const unit = {
   "id": "s31-u01",
   "course": "3-1",

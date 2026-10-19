@@ -756,12 +756,16 @@
   .nm-cvw .nm-cvw-tagline { margin:4mm 0 0; font-size:15px; font-weight:700; letter-spacing:1px; color:#3b4756; word-break:keep-all; }
   .nm-cvw .nm-cvw-course { margin:0 0 7mm; font-size:16px; font-weight:700; color:#3b4756; }
   .nm-cvw .nm-cvw-course b { font-size:22px; font-weight:800; color:#0E2C57; }
+  .nm-cvw .nm-cvw-daily { margin:0 auto 2mm; padding:1.5mm 3mm; width:max-content; max-width:90%; border-radius:999px; background:#f2f8f6; color:#245b60; font-size:11px; font-weight:800; text-align:center; }
   .nm-cvw .nm-cvw-toc { position:relative; width:auto; margin:0 auto auto; border-collapse:collapse; font-size:12px; min-width:120mm; }
   .nm-cvw .nm-cvw-toc th { font-size:10px; font-weight:800; letter-spacing:1px; color:#7a8590; text-align:left; padding:0 4mm 2mm; border-bottom:1.5px solid #0E2C57; }
   .nm-cvw .nm-cvw-toc td { padding:3mm 4mm; border-bottom:1px solid #dcd9d1; color:#1A2233; white-space:nowrap; }
   .nm-cvw .nm-cvw-toc td.nm-cvw-no { font-family:monospace; font-weight:700; color:var(--cv-accent); }
   .nm-cvw .nm-cvw-toc td.nm-cvw-name { font-weight:800; min-width:56mm; white-space:normal; }
   .nm-cvw .nm-cvw-toc td.nm-cvw-chk { font-size:16px; text-align:center; color:#0E2C57; }
+  .nm-cvw .nm-cvw-day { font-size:11px; font-weight:800; color:#245b60; }
+  .nm-cvw .nm-cvw-day-tag { display:inline-block; padding:1mm 2mm; border:1px solid #b7d4cf; border-radius:999px; background:#f2f8f6; }
+  .nm-w2-study-day { display:inline-flex; align-items:center; flex:0 0 auto; margin-left:4px; padding:3px 8px; border:1px solid #9abbb7; border-radius:999px; color:#245b60; background:#f2f8f6; font:700 11px/1.4 Pretendard,'Noto Sans KR',sans-serif; letter-spacing:0; }
   /* 표지가 A4 한 장을 넘치지 않게(2026-09-30, 원장 "QR 칸이 넘친다") — 목차가 10줄이면 QR 칸이 28px,
      발치가 73px 종이 밖으로 나갔고 8줄이어도 코드 줄이 잘렸다(overflow:hidden 이라 조용히).
      ① 영웅부(제목) 여백을 줄이고 ② QR·발치·코드를 한 띠(.nm-cvw-foot)로 합쳐 25mm 를 벌고
@@ -769,8 +773,12 @@
   .nm-cvw .nm-cv-kicker { margin-bottom:5mm; }
   .nm-cvw .nm-cv-rule { margin:6mm auto; }
   .nm-cvw .nm-cv-meta { margin-top:6mm; padding:5mm 4mm; }
-  .nm-cvw.nm-cvw-dense .nm-cvw-toc td { padding:2mm 4mm; font-size:11.5px; }
+  .nm-cvw.nm-cvw-dense .nm-cvw-toc td { padding:1mm 3mm; font-size:11px; }
   .nm-cvw.nm-cvw-dense .nm-cvw-toc td.nm-cvw-chk { font-size:14px; }
+  .nm-cvw.nm-cvw-dense .nm-cvw-daily { margin-bottom:1mm; padding:1mm 3mm; }
+  .nm-cvw.nm-cvw-dense .nm-cvw-course { margin-bottom:3mm; }
+  .nm-cvw.nm-cvw-dense .nm-cv-meta { margin-top:3mm; padding:3mm 4mm; }
+  .nm-cvw.nm-cvw-dense .nm-cvw-foot { margin-top:3mm; padding-top:3mm; }
   .nm-cvw .nm-cvw-foot { position:relative; display:flex; align-items:stretch; gap:6mm; margin:6mm 2mm 0; padding-top:5mm;
     border-top:1px solid #c9c6be; }
   .nm-cvw .nm-cvw-foot-r { flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; align-items:flex-end;
@@ -2533,6 +2541,24 @@ function weeklyPageCount(rounds, extra){
   if(extra.answerKey !== false) page += 1;
   return page;
 }
+/* 주간 회차를 10분 안팎의 날짜별 묶음으로 안내한다. 페이지를 자르거나 문항을 바꾸지 않고,
+   순서가 이어지는 회차 단위로 나누어 표지 목차와 각 문제 쪽에 같은 날짜를 표시한다. */
+function assignStudyDays(rounds, requestedDays){
+  const practice = rounds.filter(r => (r.problems || []).length > 0);
+  if(!practice.length || !(requestedDays > 0)) return 0;
+  const dayCount = Math.min(practice.length, Math.max(1, Math.floor(requestedDays)));
+  const total = practice.reduce((n, r) => n + r.problems.length, 0);
+  const target = total / dayCount;
+  let day = 1, done = 0, remaining = practice.length;
+  rounds.forEach(r => {
+    if(!(r.problems || []).length){ r.studyDays = [Math.max(1, day - (done >= target && day > 1 ? 1 : 0))]; return; }
+    if(day < dayCount && done >= target && remaining > dayCount - day) day++;
+    r.studyDays = [day];
+    done += r.problems.length;
+    remaining--;
+  });
+  return dayCount;
+}
 /* extra: {history:bool, answerKey:bool} — 표지 뒤에 실제로 붙는 지면을 표지가 안다(2026-09-06).
    전에는 회차만 세어 "7 PAGES"라 적고 실제 PDF 는 9쪽이었다(수학사·정답지 누락).
    문장제 회차가 빠진 사실은 표지에 적지 않는다(2026-09-07) — 학부모에게 가는 표지에 태그라인의 약속과
@@ -2541,27 +2567,30 @@ function weeklyPageCount(rounds, extra){
 function weeklyCoverHtml(cv, rounds, totalCount, extra){
   extra = extra || {};
   let page = 2; // 표지가 1쪽
+  const dayLabel = day => day ? lk(`${day}일차`, `Day ${day}`, `第${day}天`) : '';
   const pTxt = (from, to) => `${from === to ? from : from + '–' + to}${esc(lk('쪽','p.','页'))}`;
   const rows = rounds.map((r, i) => {
     const n = r.problems.length, from = page, to = page + w2PagesOf(r) - 1; page = to + 1;
-    return `<tr><td class="nm-cvw-no">${i+1}</td><td class="nm-cvw-name">${esc(r.thName)}</td>
+    const ds = (r.studyDays || []).filter((d, j, a) => a.indexOf(d) === j);
+    const days = ds.length ? (ds.length === 1 ? dayLabel(ds[0]) : `${dayLabel(ds[0])}–${dayLabel(ds[ds.length-1])}`) : '';
+    return `<tr><td class="nm-cvw-day">${days ? `<span class="nm-cvw-day-tag">${esc(days)}</span>` : ''}</td><td class="nm-cvw-no">${i+1}</td><td class="nm-cvw-name">${esc(r.thName)}</td>
       <td>${n}${esc(lk('문항','','题'))}</td><td>${pTxt(from, to)}</td><td class="nm-cvw-chk">☐</td></tr>`;
   });
   /* 수학사·정답지는 번호·완료 칸 없이 — 푸는 지면이 아니라서 */
   if(extra.history){
-    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(extra.historyLabel || lk('수학사 이야기','Math history','数学史小故事'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(extra.historyLabel || lk('수학사 이야기','Math history','数学史小故事'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
   }
   if(extra.magazine){
-    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('매거진 읽을거리','Magazine read','杂志阅读'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('매거진 읽을거리','Magazine read','杂志阅读'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
   }
   if(extra.paper){
-    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('이번 주 종이 교구','This week\'s paper tool','本周纸教具'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('이번 주 종이 교구','This week\'s paper tool','本周纸教具'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
     page += 1;
   }
   if(extra.answerKey !== false){
-    rows.push(`<tr><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('정답지','Answer key','答案'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('정답지','Answer key','答案'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
   }
   const totalPages = page - 1;
@@ -2574,12 +2603,13 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}
     <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}${cv.amount != null && cv.amount !== 1 ? ' · ' + esc(cv.amountLabel || `${cv.amount}×`) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
-    <p class="nm-cvw-tagline">${esc(lk('선행부터 독셈, 문장제까지','From advanced work to Doc-T Math and word problems','从超前学习到巧算与应用题'))}</p>
+    <p class="nm-cvw-tagline">${esc(lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
     <div class="nm-cv-rule"></div>
     <p class="nm-cvw-course">${cv.name ? `<b>${esc(cv.name)}</b> · ` : ''}${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
   </div>
+  ${cv.studyDays > 1 ? `<p class="nm-cvw-daily">${esc(lk(`하루 10분씩 나눠 풀어도 좋아요 · ${cv.studyDays}일 학습`, `You can split this into about 10 minutes a day · ${cv.studyDays} days`, `也可以每天学约10分钟 · 共${cv.studyDays}天`))}</p>` : ''}
   <table class="nm-cvw-toc">
-    <thead><tr><th></th><th>${esc(lk('유형','Type','题型'))}</th><th>${esc(lk('문항','Items','题数'))}</th><th>${esc(lk('쪽','Page','页'))}</th><th>${esc(lk('완료','Done','完成'))}</th></tr></thead>
+    <thead><tr><th>${esc(lk('하루','Day','天'))}</th><th></th><th>${esc(lk('유형','Type','题型'))}</th><th>${esc(lk('문항','Items','题数'))}</th><th>${esc(lk('쪽','Page','页'))}</th><th>${esc(lk('완료','Done','完成'))}</th></tr></thead>
     <tbody>${rows.join('')}</tbody>
   </table>
   <div class="nm-cv-meta">
@@ -6477,12 +6507,22 @@ function renderMixedSheetBody(items, envelopeCode, opts){
     ? w2MagazinePageHtml(items, envelopeCode, readingAgeBand(opts, items, allProblems)) : '';
   const extraPages = (historyHtml ? 1 : 0) + (langHtml ? 1 : 0) + (magazineHtml ? 1 : 0) + (paperHtml ? 1 : 0);
   const totalPages = weeklyPageCount(rounds, { history: extraPages, answerKey: true });
+  const studyDays = opts.cover ? assignStudyDays(rounds, opts.cover.studyDays) : 0;
+  if(opts.cover && studyDays) opts.cover.studyDays = studyDays;
   const coverHtml = opts.cover ? weeklyCoverHtml(opts.cover, rounds, allProblems.length, { history: !!(historyHtml || langHtml), historyLabel: langHtml ? lk('언어사고력','Language & Thinking','语言思考力') : '', magazine: !!magazineHtml, paper: !!paperHtml, answerKey: true })
     : (getCoverOn() ? coverPageHtml(items, envelopeCode, allProblems.length) : '');
   /* 통산 쪽 번호(2026-09-06) — 회차 발치 왼쪽에 "n / 총". 회차 안 "1/2"는 머리띠에 그대로(편지함 편집기가
      회차 단위로 쓰는 표시). 문자열 후처리라 renderRoundPages 는 모른다. */
   let pg = coverHtml ? 2 : 1;
   const stampPg = html => html.replace(/<div class="nm-w2-foot">/g, () => `<div class="nm-w2-foot"><span class="nm-w2-pg">${opts.pacing?'학습 '+pg+++'쪽':pg+++' / '+totalPages}</span>`);
+  if(studyDays){
+    rounds.forEach(r => {
+      const day = r.studyDays && r.studyDays[0];
+      if(!day) return;
+      const label = esc(lk(`${day}일차`, `Day ${day}`, `第${day}天`));
+      r.html = r.html.replace(/(<span class="nm-w2-head-code">[\s\S]*?<\/span>)/g, `$1<span class="nm-w2-study-day">${label}</span>`);
+    });
+  }
   const roundsHtml = stampPg(rounds.map(r => r.html).join(''));
   const historyStamped = historyHtml ? stampPg(historyHtml) : '';
   const langStamped = langHtml ? stampPg(langHtml) : '';
@@ -8114,6 +8154,7 @@ ${round.html}
       : amount > 1 ? lk(`많은 연습량 ${amount}배`, `More practice · ${amount}×`, `加量练习 ${amount}倍`) : '';
     const cover = { name, weekLabel, courseNum: course.order, courseTitle: title, k, cadence: cad, code: wsId, amount, amountLabel,
       stage: stage ? (stage.name.ko || '') : '',
+      studyDays: Math.max(1, Math.ceil((session.minutes || 30) / 10)),
       sessionIdx: (opts.sessionIdx != null && isFinite(+opts.sessionIdx)) ? Math.max(0, Math.floor(+opts.sessionIdx)) : null };
     const units = [].concat.apply([], (session.magic || []))
       .concat([].concat.apply([], course.sessions.filter(s => !s.test).map(s => [].concat.apply([], s.magic || []))))

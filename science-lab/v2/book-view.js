@@ -22,13 +22,13 @@ function liveOf(page) {
   page.querySelectorAll('.sl-reading-player').forEach((p) => vids.push({ k: 'video', src: p.dataset.src, mp4: p.dataset.mp4, full: p.dataset.full, poster: p.querySelector('video')?.getAttribute('poster') || '', credit: page.querySelector('.sl-reading-video-caption span')?.textContent || '', title: '실제 영상', cap: p.querySelector('video')?.getAttribute('aria-label') || '', page: page.querySelector('[data-video-status] a')?.getAttribute('href') }));
   const lab = page.querySelector('[data-pop="lab"], .sl-reading-online'), scene = page.querySelector('[data-pop="scene"]');
   if (v0) out.push(vids.shift());
-  if (lab) out.push({ k: 'lab', title: '3D 실험실' });
+  if (lab) out.push({ k: 'lab', title: page.closest('.bk-inquiry') ? page.closest('.bk-inquiry').dataset.inquiryLabel || '내 관찰·분류·설계 기록' : page.closest('.bk-plant') ? '내 잎 관찰·분류·설계' : page.closest('.bk-animal') ? '동물 관찰·분류·설계' : page.closest('.bk-force') ? '수평 모형 실험' : page.closest('.bk-life') ? '관찰·그림 기록' : '3D 실험실' });
   out.push(...vids);
   if (scene) out.push({ k: 'scene', title: '3D 장면' });
   return out.map((x, i) => ({ ...x, id: x.k === 'video' ? `video:${x.src}` : x.k, n: i }));
 }
 
-export function mountBookView($app, { u, bookHtml, title, teacher = false, page = 1, scene, lab, misc, onAnswer, guide = null, sayFor = null, backHref }) {
+export function mountBookView($app, { u, bookHtml, title, teacher = false, page = 1, scene, lab, misc, onAnswer, guide = null, sayFor = null, backHref, printHref = null }) {
   $app.innerHTML = `<div class="bv ${teacher ? 'bv-teacher' : 'bv-student'}">
     <header class="bv-top no-print">
       <a class="bv-back" href="${esc(backHref)}">‹ 처음으로</a>
@@ -38,7 +38,7 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
         <button type="button" class="bv-btn" data-bv="next" aria-label="뒤쪽">›</button></nav>
       <div class="bv-tools"><button type="button" class="bv-btn" data-bv="zoom" aria-pressed="false" title="글자를 크게(폭에 맞춰 키우고 위아래로 읽기) · Z">크게 보기</button>
         <button type="button" class="bv-btn" data-bv="full" title="전체 화면 · F">전체 화면</button>
-        <button type="button" class="bv-btn primary" data-bv="print">A4 인쇄</button></div>
+        <button type="button" class="bv-btn primary" data-bv="print">${printHref?'인쇄용 보기':'A4 인쇄'}</button></div>
     </header>
     <div class="bv-main">
       <div class="bv-space" tabindex="-1"><div class="bv-sizer"><div class="bv-scale">${bookHtml}</div></div></div>
@@ -118,7 +118,7 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
 
   // ── 오른쪽 살아 있는 화면 ────────────────────────────────────────────
   const videoEls = new Map();
-  let labMounted = false, sceneMounted = false, labTipObs = null;
+  let labMounted = false, sceneMounted = false, labTipObs = null, labHandle = null;
   const labVisible = () => alive && split && activeKind === 'lab' && !liveEl.hidden && document.visibilityState !== 'hidden';
   function setLive(items) {
     split = splitCapable() && items.length > 0 && mode !== 'phone';
@@ -141,7 +141,7 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
     const wake = () => { if (wasHidden) requestAnimationFrame(() => dispatchEvent(new Event('resize'))); };   // 숨었다 나온 캔버스만 크기 다시
     videoEls.forEach((f, id) => { if (id !== item.id) { f.hidden = true; f.querySelector('video')?.pause(); } });
     if (kind === 'lab') {
-      if (!labMounted && lab) { labMounted = true; Promise.resolve(lab(hosts.lab, { isActive: labVisible })).then(() => watchTips()).catch(() => {}); }
+      if (!labMounted && lab) { labMounted = true; Promise.resolve(lab(hosts.lab, { isActive: labVisible })).then((handle) => { if (!alive) handle?.dispose?.(); else { labHandle = handle; watchTips(); } }).catch(() => {}); }
       wake();
     } else if (kind === 'scene') {
       if (!sceneMounted && scene) { sceneMounted = true; scene(hosts.scene); }
@@ -231,7 +231,7 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
   const setZoom = (z) => { zoom = z; $zoom.setAttribute('aria-pressed', String(z)); $zoom.textContent = z ? '전체 쪽 보기' : '크게 보기'; root.classList.toggle('zoom', z); relayout(); };
   $zoom.addEventListener('click', () => setZoom(!zoom));
   on('[data-bv=full]', async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); } catch { /* 지원 안 함 */ } });
-  on('[data-bv=print]', () => print());
+  on('[data-bv=print]', () => { if(printHref)location.hash=printHref;else print(); });
   scaleEl.addEventListener('dblclick', (e) => { if (!e.target.closest('button, a, input, textarea, select, video, canvas, .bk-choices, .bk-blank')) setZoom(!zoom); });
   const onKey = (e) => {
     if (!alive) return;
@@ -258,12 +258,14 @@ export function mountBookView($app, { u, bookHtml, title, teacher = false, page 
   const ro = new ResizeObserver(() => fit()); ro.observe(space);
   document.fonts?.ready.then(() => { if (alive && mode !== 'phone') { fitPages(bk); fit(); } });
   // 인쇄: 모든 쪽을 보이게(보기 틀은 CSS가 숨김)
-  const beforePrint = () => { pages.forEach((p) => { p.inert = false; p.removeAttribute('aria-hidden'); }); if (['s42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'].includes(u)) fitPages(bk); };
+  const beforePrint = () => { if (bk.classList.contains('bk-editorial')) { bk.classList.add('a4'); root.dataset.layout = 'fit'; } pages.forEach((p) => { p.inert = false; p.removeAttribute('aria-hidden'); }); if (['s41-u02', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'].includes(u)) fitPages(bk); };
+  const afterPrint = () => { if (bk.classList.contains('bk-editorial')) { bk.classList.toggle('a4', mode !== 'phone'); root.dataset.layout = mode; } };
   addEventListener('beforeprint', beforePrint);
+  addEventListener('afterprint', afterPrint);
 
   relayout(Math.max(0, Math.min(pages.length - 1, (page || 1) - 1)));
   return () => {
-    alive = false; release(); removeEventListener('keydown', onKey); removeEventListener('resize', onResize); removeEventListener('beforeprint', beforePrint);
+    alive = false; labHandle?.dispose?.(); release(); removeEventListener('keydown', onKey); removeEventListener('resize', onResize); removeEventListener('beforeprint', beforePrint); removeEventListener('afterprint', afterPrint);
     ro.disconnect(); labTipObs?.disconnect(); clearTimeout(sayTimer); videoEls.forEach((f) => f.querySelector('video')?.pause());
     guide?.destroy();
   };

@@ -1,6 +1,7 @@
 import {personalBaseline} from './personal-baseline.mjs';
 import {completionText} from './progress-display.mjs';
 import {esc} from './intake.mjs';
+import {academyRecordMarkup} from './academy-experience.mjs';
 
 const tracks=['application','depth','thinking','arithmetic'];
 const names={application:'교과',depth:'심화',thinking:'사고력',arithmetic:'연산'};
@@ -69,7 +70,7 @@ export function buildProgressRoadmap(s,data={}){
   const options=new Map();for(const record of records)for(const option of record.alternativeChoices)if(!options.has(option.rowId))options.set(option.rowId,option);
   return {track,label:names[track],records,emptyState:records.length?'':emptyState(s,track),selectedLane:s.wizard?.quick?.monthlyLanes?.[track]||'',sourceChoices:[...options.values()]};
  });
- const academies=(s.wizard?.academies||[]).map(a=>({id:a.id||'',institution:String(a.institution||''),level:String(a.level||''),sourceRole:'parent_report',isCourse:false,calendarDate:null}));
+ const academies=(s.wizard?.academies||[]).map(a=>({id:a.id||'',institution:String(a.institution||''),level:String(a.level||''),status:a.status,timingReported:a.timingReported,sourceRole:'parent_report',isCourse:false,calendarDate:null}));
  return {version:1,kind:'recorded_progress_and_source_sequence_view',title:'앞으로 이어갈 진도',lanes,academies,comparisonLevel:s.wizard?.quick?.level||'L1',referenceOnly:true,automaticApply:false,automaticPromotion:false,calendarDates:null,mastery:null};
 }
 
@@ -93,6 +94,6 @@ function laneMarkup(lane){
  return `<section class="progress-roadmap-lane${lane.records.length?'':' is-empty'}" data-progress-lane="${lane.track}"><h3>${lane.label}</h3>${lane.records.length?lane.records.map(r=>recordMarkup(r)).join(''):`<p class="progress-roadmap-empty" data-progress-input-state="${lane.emptyState}">${empty}</p>`}${evidence}</section>`;
 }
 export function progressRoadmapMarkup(s,data={}){
- const model=buildProgressRoadmap(s,data),academy=model.academies.length?`<p class="progress-roadmap-academy"><span>학원 경험</span> ${model.academies.map(a=>esc([a.institution,a.level].filter(Boolean).join(' · '))).join(' / ')}</p>`:'';
+ const model=buildProgressRoadmap(s,data),academy=model.academies.length?`<p class="progress-roadmap-academy"><span>학원 경험</span> ${model.academies.map(academyRecordMarkup).join(' / ')}</p>`:'';
  return `<section class="progress-roadmap" data-progress-roadmap aria-labelledby="progress-roadmap-title"><h2 id="progress-roadmap-title">${model.title}</h2><p class="progress-roadmap-intro">입력한 진도에서 표준 과정의 다음 순서를 비교해요.</p>${academy}<div class="progress-roadmap-lanes">${model.lanes.map(laneMarkup).join('')}</div><p class="progress-roadmap-limit">다음 과정은 자료 비교예요. 시작일·완료일이나 합격을 정한 계획이 아니에요.</p></section>`;
 }

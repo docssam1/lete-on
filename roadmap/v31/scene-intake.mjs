@@ -1,6 +1,8 @@
 import {trackCourses,TRACKS,scopeLabel} from './flow.mjs';
 import {esc} from './intake.mjs';
 import {parseCourseScope} from './recommendation-policy.mjs';
+import {academyLevelAllowed,academyLevelMarkup,academyLevelOptions,academyTiming,academyTimingMarkup} from './academy-input.mjs';
+import {tutorialLearningScreen} from './tutorial-intake.mjs';
 
 const keys=['thinking','application','depth','arithmetic'];
 const names={thinking:'사고력',application:'교과',depth:'심화',arithmetic:'연산'};
@@ -19,13 +21,13 @@ function picker(s,name,label,items,placeholder){
 }
 const latestAcademy=s=>s.wizard.academies.find(a=>a.id===(s.wizard.quick.academyId||'quick-academy'))||s.wizard.academies.at(-1);
 export function startScene(s,{track='',returnTo='position-quick',editing=false,entry='kind'}={}){
- const q=s.wizard.quick,old=q.scene;
- q.scene={version:1,active:true,cursor:track?`${track}-${entry==='book'?'book':'kind'}`:editing?'tracks':`${first(s)}-kind`,history:[],choices:{...old?.choices},pendingTracks:[],academyTouched:false,academyDrafts:{...old?.academyDrafts},context:editing?'editing':'initial',returnTo,direction:'forward'};
- for(const record of s.wizard.academies){const institution=academyNames.includes(record.institution)?record.institution:'other';q.scene.academyDrafts[institution]={name:record.institution,level:record.level||''};}
- for(const key of keys)if(!q.courseIds[key]&&trackCourses(s,key).length)delete q.draft[`learn:${key}:name`];
+ const q=s.wizard.quick,old=q.scene,tutorial=q.intakeMode==='tutorial';
+ q.scene={version:tutorial?2:1,active:true,cursor:track?`${track}-${entry==='book'?'book':'kind'}`:editing?'tracks':`${tutorial?'thinking':first(s)}-kind`,history:[],choices:{...old?.choices},pendingTracks:[],academyTouched:false,academyDrafts:{...old?.academyDrafts},context:editing?'editing':'initial',returnTo,direction:'forward'};
+ for(const record of s.wizard.academies){const institution=academyNames.includes(record.institution)?record.institution:'other';if(!tutorial||!q.scene.academyDrafts[institution])q.scene.academyDrafts[institution]={name:record.institution,level:record.level||'',timing:academyTiming(record),timingTouched:false};}
+ for(const key of keys)if(!tutorial&&!q.courseIds[key]&&trackCourses(s,key).length)delete q.draft[`learn:${key}:name`];
  if(track&&entry==='book'){q.scene.directBook=true;q.scene.choices[track]='book';}
  const a=latestAcademy(s);
- if(a){const institution=academyNames.includes(a.institution)?a.institution:'other';q.academyId=a.id;q.draft['academy:institution']=institution;q.draft['academy:name']=a.institution;q.draft['academy:level']=a.level||'';q.scene.academyDrafts[institution]={name:a.institution,level:a.level||''};}
+ if(a&&(!tutorial||!q.draft['academy:institution'])){const institution=academyNames.includes(a.institution)?a.institution:'other';q.academyId=a.id;q.draft['academy:institution']=institution;q.draft['academy:name']=a.institution;q.draft['academy:level']=a.level||'';q.draft['academy:timing']=academyTiming(a);delete q.draft['academy:timingTouched'];q.scene.academyDrafts[institution]={name:a.institution,level:a.level||'',timing:academyTiming(a),timingTouched:false};}
  return q.scene;
 }
 export function ensureScene(s){return s.wizard.quick.scene?.active?s.wizard.quick.scene:startScene(s);}
@@ -33,6 +35,17 @@ function move(s,cursor){const x=ensureScene(s);x.history.push(x.cursor);x.cursor
 export function backScene(s){const x=s.wizard.quick.scene;if(s.wizard.step!=='learning'||!x?.active||!x.history.length)return false;x.cursor=x.history.pop();x.direction='back';return true;}
 export function chooseScene(s,value){
  const x=ensureScene(s),key=x.cursor.replace(/-kind$/,'');
+ if(x.version===2&&x.cursor==='thinking-academy'){
+  if(![...academyNames,'other'].includes(value))throw Error('다녔던 학원을 골라 주세요.');
+  collectScene(s,new Map([['academy:institution',value]]));
+  return move(s,value==='other'?'thinking-academy-name':academyLevelOptions(value).ask?'thinking-academy-level':'thinking-academy-timing');
+ }
+ if(x.version===2&&x.cursor==='thinking-academy-timing'){
+  if(!['current','past','unknown'].includes(value))throw Error('다닌 시점을 골라 주세요.');
+  s.wizard.quick.draft['academy:timing']=value;s.wizard.quick.draft['academy:timingTouched']='yes';x.academyTouched=true;
+  if(x.choices.thinking==='both')return move(s,'thinking-book');
+  return afterTrack(s,'thinking');
+ }
  if(x.cursor==='tracks'){if(!keys.includes(value))throw Error('추가할 학습을 골라 주세요.');return move(s,`${value}-kind`);}
  if(!keys.includes(key)||!['book','academy','both','not_started','unknown'].includes(value)||(['academy','both'].includes(value)&&key!=='thinking'))throw Error('공부한 방법을 골라 주세요.');
  x.choices[key]=value;
@@ -47,32 +60,48 @@ export function chooseScene(s,value){
 function afterTrack(s,key){
  const x=ensureScene(s);
  if(x.context==='editing'||key==='depth'){x.active=false;return x.returnTo;}
+ if(x.version===2){if(key==='thinking')return move(s,'application-kind');if(key==='application')return move(s,'arithmetic-kind');x.active=false;return x.returnTo;}
  if(key==='application')return move(s,'thinking-kind');
  if(key==='thinking')return move(s,'arithmetic-kind');
  x.active=false;return x.returnTo;
 }
 export function collectScene(s,d,editedField=''){
  const q=s.wizard.quick,x=ensureScene(s),cursor=x.cursor;
- if(cursor==='thinking-academy'&&d.has('academy:institution')){
-  const old=q.draft['academy:institution']||'',next=String(d.get('academy:institution')||'');
+ if(x.version===2&&cursor.startsWith('thinking-academy')&&!d.has('academy:institution'))d=new Map([['academy:institution',q.draft['academy:institution']||''],...d.entries()]);
+ if(cursor.startsWith('thinking-academy')&&d.has('academy:institution')){
+  const old=q.draft['academy:institution']||'',next=String(d.get('academy:institution')||'');x.academyDrafts??={};
   if(next!==old){
-   x.academyDrafts[old]={name:q.draft['academy:name']||'',level:q.draft['academy:level']||''};
+   x.academyDrafts[old]={name:q.draft['academy:name']||'',level:q.draft['academy:level']||'',timing:q.draft['academy:timing']||'',timingTouched:q.draft['academy:timingTouched']==='yes'};
    const a=s.wizard.academies.find(a=>next==='other'?!academyNames.includes(a.institution):a.institution===next),cache=x.academyDrafts[next];
-   q.draft['academy:institution']=next;q.draft['academy:name']=cache?.name|| (a?.institution??'');q.draft['academy:level']=cache?.level||a?.level||'';
+   q.draft['academy:institution']=next;q.draft['academy:name']=cache?.name??a?.institution??'';q.draft['academy:level']=cache?.level??a?.level??'';q.draft['academy:timing']=cache?.timing??academyTiming(a);q.draft['academy:timingTouched']=cache?.timingTouched?'yes':'';
   }else{
-   if(next==='other'&&d.has('academy:name')&&String(d.get('academy:name'))!==q.draft['academy:name']){const name=String(d.get('academy:name'));q.draft['academy:name']=name;q.draft['academy:level']=s.wizard.academies.find(a=>a.institution===name)?.level||'';}
-   for(const name of ['academy:name','academy:level'])if(d.has(name))q.draft[name]=String(d.get(name));
+   const nameChanged=next==='other'&&d.has('academy:name')&&String(d.get('academy:name'))!==q.draft['academy:name'];
+   if(nameChanged){const name=String(d.get('academy:name'));q.draft['academy:name']=name;const record=s.wizard.academies.find(a=>a.institution===name);q.draft['academy:level']=record?.level||'';q.draft['academy:timing']=academyTiming(record);delete q.draft['academy:timingTouched'];}
+   if(d.has('academy:level')){
+    const selected=String(d.get('academy:level')),previous=q.draft['academy:level']||'';
+    if(!academyLevelAllowed(next,selected,previous))throw Error('반·레벨은 목록에서 선택해 주세요. 기존 입력값은 그대로 보관할 수 있어요.');
+    q.draft['academy:level']=selected;
+   }
+   if(!nameChanged&&d.has('academy:timing')){const timing=String(d.get('academy:timing')||'');if(['current','past','unknown'].includes(timing)){if(timing!==q.draft['academy:timing']||editedField==='academy:timing')q.draft['academy:timingTouched']='yes';q.draft['academy:timing']=timing;}}
   }
  }
- if(cursor.endsWith('-progress')&&d.has(`learn:${cursor.split('-')[0]}:completion`)){q.draft[`learn:${cursor.split('-')[0]}:completionInput`]=d.get(`learn:${cursor.split('-')[0]}:completion`)?'reported':'unentered';}
- if(/-(book|progress)$/.test(cursor))for(const [key,value] of d.entries())if(key.startsWith(`learn:${cursor.split('-')[0]}:`)){
-  if(cursor.endsWith('-book')&&/(name|volume)$/.test(key)&&String(value)===customChoice){x.pickerModes??={};x.pickerModes[key]='custom';continue;}
+ if(cursor.endsWith('-progress')&&d.has(`learn:${cursor.split('-')[0]}:completion`)){const name=`learn:${cursor.split('-')[0]}:completion`;if(x.version!==2||d.get(name)||editedField===name)q.draft[`learn:${cursor.split('-')[0]}:completionInput`]=d.get(name)?'reported':'unentered';}
+ if(/-(book|scope|progress)$/.test(cursor))for(const [key,value] of d.entries())if(key.startsWith(`learn:${cursor.split('-')[0]}:`)){
+  if(/-(book|scope)$/.test(cursor)&&/(name|volume)$/.test(key)&&String(value)===customChoice){x.pickerModes??={};x.pickerModes[key]='custom';continue;}
   q.draft[key]=String(value);
  }
 }
 export function nextScene(s){
  const q=s.wizard.quick,x=ensureScene(s),key=x.cursor.split('-')[0];
  if(x.cursor==='tracks'||x.cursor.endsWith('-kind'))throw Error('아는 방법을 골라 주세요. 모름으로 이어가도 괜찮아요.');
+ if(x.version===2){
+  if(x.cursor==='thinking-academy')throw Error('다녔던 학원을 골라 주세요.');
+  if(x.cursor==='thinking-academy-name'){if(!String(q.draft['academy:name']||'').trim())throw Error('학원 이름을 알려 주세요.');return move(s,'thinking-academy-timing');}
+  if(x.cursor==='thinking-academy-level')return move(s,'thinking-academy-timing');
+  if(x.cursor==='thinking-academy-timing')throw Error('다닌 시점을 골라 주세요.');
+  if(x.cursor.endsWith('-book')){if(!String(q.draft[`learn:${key}:name`]||'').trim())throw Error('교재 이름을 골라 주세요. 모르면 이전 질문에서 모름을 고를 수 있어요.');return move(s,`${key}-scope`);}
+  if(x.cursor.endsWith('-scope'))return move(s,`${key}-progress`);
+ }
  if(x.cursor==='thinking-academy'){
   const institution=q.draft['academy:institution'];
   if(institution==='other'&&!String(q.draft['academy:name']||'').trim())throw Error('학원 이름을 적거나 선택하지 않음으로 이어가 주세요.');
@@ -96,6 +125,7 @@ export function markSceneBook(s){const q=s.wizard.quick,x=ensureScene(s),key=x.c
 export function anotherBookScene(s,key){const q=s.wizard.quick,x=ensureScene(s);delete q.courseIds[key];if(q.draftCourseSnapshots)delete q.draftCourseSnapshots[key];for(const field of ['name','volume','range','completion','completionInput'])q.draft[`learn:${key}:${field}`]=field==='completionInput'?'unentered':field==='completion'?'unknown':'';if(x.pickerModes)for(const field of ['name','volume'])delete x.pickerModes[`learn:${key}:${field}`];x.cursor=`${key}-book`;x.direction='forward';x.newBook=true;}
 export function sceneScreen(s){
  const q=s.wizard.quick,x=ensureScene(s),cursor=x.cursor,key=cursor.split('-')[0],prefix=`learn:${key}:`;
+ if(x.version===2)return tutorialLearningScreen(s);
  const button=(value,label)=>`<button type="button" class="scene-option" data-scene-answer="${value}"><span>${label}</span><span aria-hidden="true">›</span></button>`;
  let title='',say='',html='',next='다음',hideNext=false,count=1;
  if(cursor==='tracks'){
@@ -105,10 +135,10 @@ export function sceneScreen(s){
   title=`${names[key]}${['application','depth'].includes(key)?'는':'은'} 어떻게 공부하고 있나요?`;say=key==='thinking'?'학원과 별도 교재를 함께 기록할 수 있어요.':'아직 하지 않았거나 잘 몰라도 괜찮아요.';
   html=`<div class="scene-options">${key==='thinking'?button('academy','학원에서 공부해요'):''}${button('book','교재로 공부해요')}${key==='thinking'?button('both','학원과 교재를 함께 해요'):''}${button('not_started','아직 따로 안 해요')}${button('unknown','잘 모르겠어요')}</div>`;hideNext=true;
  }else if(cursor==='thinking-academy'){
-  title='어느 학원에서 공부했나요?';say='기억나는 반이나 레벨만 알려주세요.';
+  title='사고력 학원에 다닌 경험이 있나요?';say='학원을 고른 뒤 기억나는 반이나 레벨을 선택해 주세요.';
   const institution=q.draft['academy:institution']||'';
   html=select('academy:institution','다녔던 학원',institution,[['','선택하지 않음'],...academyNames.map(n=>[n,n]),['other','그 외']],'data-scene-refresh');
-  if(institution){count=2;html+=institution==='other'?field('academy:name','학원 이름',q.draft['academy:name'],'placeholder="다녔던 학원 이름"'):field('academy:level','반·레벨 · 모르면 비워두세요',q.draft['academy:level'],'placeholder="기억나는 반이나 레벨"');}
+  if(institution){count=institution==='other'||academyLevelOptions(institution).ask?3:2;html+=institution==='other'?field('academy:name','학원 이름',q.draft['academy:name'],'placeholder="다녔던 학원 이름"'):academyLevelMarkup(institution,q.draft['academy:level']||'');html+=academyTimingMarkup(q.draft['academy:timing']||'');}
   html+='<p class="scene-note">학원 경험은 학습 기록입니다. 등록·합격이나 교과 진도로 판단하지 않아요.</p>';
   if(x.choices.thinking==='both')next='별도 교재 알려주기';
   else html+='<button type="button" class="scene-text-action" data-scene-academy-book>별도 사고력 교재도 함께 기록</button>';

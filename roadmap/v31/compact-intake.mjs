@@ -1,7 +1,8 @@
 import {trackCourses,koreaDate} from './flow.mjs';
-import {commitLearning} from './quick-flow.mjs';
+import {commitLearning,syncQuickCourseDraft} from './quick-flow.mjs';
 import {esc} from './intake.mjs';
 import {bookScopeOptions} from './book-scope-options.mjs';
+import {academyLevelMarkup,academyLevelAllowed,academyTiming,academyTimingMarkup,academyTimingPatch} from './academy-input.mjs';
 
 const tracks=['application','depth','thinking','arithmetic'];
 const trackLabels={application:'교과 진도',depth:'심화 진도',thinking:'사고력 진도',arithmetic:'연산 진도'};
@@ -28,20 +29,35 @@ function seedGoal(s,key){
 }
 function makeDraft(s){
  const q=s.wizard.quick,stage=stageValid(q.stage)?q.stage:/^(초[1-6]|중[1-3]|고[1-3])$/.test(s.profile.grade)?s.profile.grade:[4,5,6,7].includes(s.profile.reportedAge)?`p${s.profile.reportedAge}`:'';
+ const pendingContext=s.wizard.step==='learning'&&q.scene?.active&&q.scene.context!=='editing';
  const rows={};
  for(const key of tracks){
   const c=s.courses.find(x=>x.id===q.courseIds?.[key])||trackCourses(s,key).at(-1);
-  const legacy=!c&&s.wizard.step==='learning'&&q.scene?.active&&q.scene.context!=='editing'&&['book','both'].includes(q.scene.choices?.[key])&&String(q.draft[`learn:${key}:name`]||'').trim()?{name:String(q.draft[`learn:${key}:name`]).trim(),volume:String(q.draft[`learn:${key}:volume`]||''),range:String(q.draft[`learn:${key}:range`]||''),completion:q.draft[`learn:${key}:completion`]||'unknown',completionInput:q.draft[`learn:${key}:completionInput`]||'unentered'}:null;
-  const choice=c?.course||legacy?.name||(s.wizard.axisStatus[key]==='not_started'?N:s.wizard.axisStatus[key]==='unknown'||s.wizard.quick.scene?.choices?.[key]==='unknown'?K:U);
-  rows[key]={choice,name:c?.course||legacy?.name||'',volumeChoice:c?.volume||legacy?.volume||'',volume:c?.volume||legacy?.volume||'',courseId:c?.id||'',dirty:false,pendingDraft:legacy,baseline:c?{name:c.course||'',volume:c.volume||'',range:c.range||'',completion:c.completion||'unknown',completionInput:c.completionInput||'',level:c.level||'unknown'}:null};
+  const legacy=pendingContext&&(['book','both'].includes(q.scene.choices?.[key])||q.scene.cursor===`${key}-book`||q.scene.cursor===`${key}-progress`||q.scene.pendingTracks?.includes(key))&&String(q.draft[`learn:${key}:name`]||'').trim()?{name:String(q.draft[`learn:${key}:name`]).trim(),volume:String(q.draft[`learn:${key}:volume`]||''),range:String(q.draft[`learn:${key}:range`]||''),completion:q.draft[`learn:${key}:completion`]||'unknown',completionInput:q.draft[`learn:${key}:completionInput`]||'unentered'}:null;
+  const choice=legacy?.name||c?.course||(s.wizard.axisStatus[key]==='not_started'?N:s.wizard.axisStatus[key]==='unknown'||s.wizard.quick.scene?.choices?.[key]==='unknown'?K:U);
+  rows[key]={choice,name:legacy?.name||c?.course||'',volumeChoice:legacy?.volume??c?.volume??'',volume:legacy?.volume??c?.volume??'',courseId:c?.id||'',dirty:false,pendingDraft:legacy,baseline:c?{name:c.course||'',volume:c.volume||'',range:c.range||'',completion:c.completion||'unknown',completionInput:c.completionInput||'',level:c.level||'unknown'}:null};
  }
- const a=s.wizard.academies.find(a=>a.id===q.academyId)||s.wizard.academies.at(-1);
+ const pendingAcademy=pendingContext&&q.scene.academyTouched&&q.draft['academy:institution'];
+ const savedAcademy=s.wizard.academies.find(a=>a.id===q.academyId)||s.wizard.academies.at(-1);
+ const pendingName=pendingAcademy==='other'?q.draft['academy:name']:pendingAcademy;
+ const savedPending=pendingAcademy?s.wizard.academies.find(a=>a.institution===pendingName):null;
+ const a=pendingAcademy?{...(savedPending||{}),institution:pendingName,level:q.draft['academy:level']||'',...(q.draft['academy:timingTouched']==='yes'?academyTimingPatch(q.draft['academy:timing'],true):{})}:savedAcademy;
  const institution=a?(academyNames.includes(a.institution)?a.institution:'other'):s.wizard.thinkingExperience==='not_started'?N:U;
- return {version:1,active:true,stage,birthMonth:s.profile.reportedBirthMonth?String(s.profile.reportedBirthMonth):'',rows,academy:{choice:institution,name:a?.institution||'',levelChoice:a?.level||'',level:a?.level||'',id:a?.id||'',dirty:false},goals:Object.fromEntries(Object.keys(goalLabels).map(k=>[k,seedGoal(s,k)])),goalTouched:{},lastGoalAnswers:{...(q.compact?.lastGoalAnswers||{})}};
+ return {version:1,active:true,stage,birthMonth:s.profile.reportedBirthMonth?String(s.profile.reportedBirthMonth):'',rows,academy:{choice:institution,name:a?.institution||'',levelChoice:a?.level||'',level:a?.level||'',id:a?.id||'',dirty:false,timing:academyTiming(a),timingTouched:!!pendingAcademy&&q.draft['academy:timingTouched']==='yes'},goals:Object.fromEntries(Object.keys(goalLabels).map(k=>[k,seedGoal(s,k)])),goalTouched:{},lastGoalAnswers:{...(q.compact?.lastGoalAnswers||{})}};
+}
+function academyDrafts(s,c){
+ if(!c.academyDrafts){
+  c.academyDrafts={};
+  for(const record of s.wizard.academies){const choice=academyNames.includes(record.institution)?record.institution:'other';c.academyDrafts[choice]={choice,name:record.institution,level:record.level||'',levelChoice:record.level||'',id:record.id||'',dirty:false,timing:academyTiming(record),timingTouched:false};}
+ }
+ // A legacy custom draft remains a saved value, never a new typing field.
+ if(c.academy.levelChoice===CUSTOM)c.academy.levelChoice=c.academy.level||'';
+ return c.academyDrafts;
 }
 export function ensureCompact(s){
  const q=s.wizard.quick;
  if(!q.compact||q.compact.version!==1)q.compact=makeDraft(s);
+ academyDrafts(s,q.compact);
  return q.compact;
 }
 export function startCompact(s,{reset=false}={}){
@@ -52,7 +68,7 @@ export function startCompact(s,{reset=false}={}){
 }
 export function isCompactStep(s){
  const step=s.wizard?.step,q=s.wizard?.quick;
- if(!q)return false;
+ if(!q||q.intakeMode==='tutorial')return false;
  if(['intro','stage'].includes(step))return true;
  return step==='learning'&&(q.compact?.active===true||(!q.compact&&q.scene?.context!=='editing'));
 }
@@ -85,12 +101,26 @@ export function collectCompact(s,d,editedField=''){
   }
   if(row.volumeChoice===CUSTOM&&d.has(customVolume)){const value=String(d.get(customVolume)||'');if(value!==row.volume)row.dirty=true;row.volume=value;}
  }
- const a=c.academy;
- for(const [field,name] of [['choice','compact:academy:choice'],['name','compact:academy:name'],['levelChoice','compact:academy:level'],['level','compact:academy:customLevel']])if(d.has(name)){
-  const value=String(d.get(name)||'');if(value!==a[field])a.dirty=true;a[field]=value;
+ const a=c.academy,cache=academyDrafts(s,c),choice=d.has('compact:academy:choice')?String(d.get('compact:academy:choice')):a.choice;
+ if(choice!==a.choice){
+  cache[a.choice]=structuredClone(a);
+  const record=s.wizard.academies.find(x=>choice==='other'?!academyNames.includes(x.institution):x.institution===choice);
+  const previous=cache[choice];
+  Object.assign(a,{choice,name:previous?.name||record?.institution||(academyNames.includes(choice)?choice:''),level:previous?.level??record?.level??'',levelChoice:previous?.level??record?.level??'',id:previous?.id||record?.id||'',dirty:true,timing:previous?.timing??academyTiming(record),timingTouched:previous?.timingTouched||false});
+  // The change event still contains the previous institution's controls.
+ }else{
+  const academyNameChanged=a.choice==='other'&&d.has('compact:academy:name')&&String(d.get('compact:academy:name')||'')!==a.name;
+  if(a.choice==='other'&&d.has('compact:academy:name')){
+   const name=String(d.get('compact:academy:name')||'');
+   if(name!==a.name){const record=s.wizard.academies.find(x=>x.institution===name);a.name=name;a.id=record?.id||'';a.level=record?.level||'';a.levelChoice=a.level;a.timing=academyTiming(record);a.timingTouched=false;a.dirty=true;}
+  }
+  if(d.has('compact:academy:level')&&['소마','필즈','CMS'].includes(a.choice)){
+   const value=String(d.get('compact:academy:level')||'');
+   if(academyLevelAllowed(a.choice,value,a.level)){if(value!==a.level)a.dirty=true;a.level=value;a.levelChoice=value;}
+  }
+  if(!academyNameChanged&&d.has('compact:academy:timing')){const timing=String(d.get('compact:academy:timing')||'');if(['current','past','unknown'].includes(timing)){if(timing!==a.timing||editedField==='compact:academy:timing'){a.timingTouched=true;a.dirty=true;}a.timing=timing;}}
  }
  if(academyNames.includes(a.choice))a.name=a.choice;
- if(a.levelChoice!==CUSTOM)a.level=a.levelChoice;
  for(const key of Object.keys(goalLabels)){
   const name=`compact:goal:${key}`;
   if(d.has(name)){
@@ -123,14 +153,10 @@ function rowMarkup(s,key){
 }
 function academyMarkup(s){
  const a=ensureCompact(s).academy;
- let html=wrapSelect('compact:academy:choice',a.choice,[[U,'학원 선택'],[N,'다닌 적 없어요'],[K,'잘 모르겠어요'],...academyNames.map(n=>[n,n]),['other','그 외 학원']],'사고력 학원 경험',true);
+ let html=wrapSelect('compact:academy:choice',a.choice,[[U,'학원 선택'],[N,'다닌 적 없어요'],[K,'잘 모르겠어요'],...academyNames.map(n=>[n,n]),['other','그 외 학원']],'사고력 학원에 다닌 경험이 있나요?',true);
  if(a.choice==='other')html+=field('compact:academy:name',a.name,'학원 이름','학원 이름');
- if(!states.has(a.choice)){
-  const options=[['','반·레벨 선택'],...(a.level?[ [a.level,a.level] ]:[]),[CUSTOM,'반·레벨 입력']];
-  html+=wrapSelect('compact:academy:level',a.levelChoice,options,'학원 반·레벨',true);
-  if(a.levelChoice===CUSTOM)html+=field('compact:academy:customLevel',a.level,'학원 반·레벨','기억나는 반·레벨');
- }
- return `<div class="compact-row" data-compact-track="academy"><h3>학원 경험</h3><div class="compact-row-fields${!states.has(a.choice)?' has-scope':''}">${html}</div></div>`;
+ if(!states.has(a.choice))html+=academyLevelMarkup(a.choice,a.level,{name:'compact:academy:level',compact:true,refresh:'data-compact-refresh'})+academyTimingMarkup(a.timing||'',{name:'compact:academy:timing',compact:true,refresh:'data-compact-refresh'});
+ return `<div class="compact-row" data-compact-track="academy"><h3>사고력 학원에 다닌 경험이 있나요?</h3><div class="compact-row-fields${!states.has(a.choice)?' has-scope':''}">${html}</div></div>`;
 }
 export function compactScreen(s){
  const c=ensureCompact(s),young=isPreschool(c.stage);
@@ -155,7 +181,7 @@ function applyInterest(s,key,value){
 }
 
 export function commitCompact(s){
- const next=structuredClone(s),c=ensureCompact(next),q=next.wizard.quick;
+ const next=structuredClone(s),c=ensureCompact(next),q=next.wizard.quick,unchangedCourseIds=new Set();
  if(!stageValid(c.stage))throw Error('아이의 나이 또는 학년을 골라 주세요.');
  q.stage=c.stage;
  if(isPreschool(c.stage)){
@@ -176,29 +202,46 @@ export function commitCompact(s){
    if(!trackCourses(next,key).length){if(row.choice===N)next.wizard.axisStatus[key]='not_started';else if(row.choice===K)next.wizard.axisStatus[key]='unknown';else delete next.wizard.axisStatus[key];}
    continue;
   }
-  const name=String(row.choice===CUSTOM?row.name:row.choice).trim(),volume=String(row.volume||'').trim();
-  if(!name)throw Error(`${trackLabels[key]} 교재 이름을 적거나 교재 선택으로 바꿔 주세요.`);
-  const old=next.courses.find(x=>x.id===row.courseId);
+  const name=String(row.choice===CUSTOM?row.name:row.choice),volume=String(row.volume||'');
+  if(!name.trim())throw Error(`${trackLabels[key]} 교재 이름을 적거나 교재 선택으로 바꿔 주세요.`);
+  // Older compact drafts can lack row IDs even though quick already saved them.
+  // Recover only that explicit same-track ID; never match another record by name.
+  const old=trackCourses(next,key).find(x=>x.id===(row.courseId||q.courseIds[key]));
+  if(row.courseId&&!old)throw Error('연결된 교재 기록을 찾을 수 없어요. 로드맵에서 교재 수정으로 다시 열어 주세요.');
   // A different book is a new record; older books remain available after results.
   if(old?.course===name)q.courseIds[key]=old.id;else delete q.courseIds[key];
-  const sameScope=old?.course===name&&old.volume===volume,pending=row.pendingDraft,samePending=!!pending&&pending.name===name&&pending.volume===volume;
+  const sameBook=old?.course===name,sameScope=sameBook&&old.volume===volume,pending=row.pendingDraft,samePending=!!pending&&pending.name===name&&pending.volume===volume;
+  if(sameScope&&!samePending)unchangedCourseIds.add(old.id);
   q.draft[`learn:${key}:name`]=name;q.draft[`learn:${key}:volume`]=volume;
-  q.draft[`learn:${key}:range`]=sameScope?old.range||'':samePending?pending.range:'';
-  q.draft[`learn:${key}:completion`]=sameScope?old.completion||'unknown':samePending?pending.completion:'unknown';
-  q.draft[`learn:${key}:completionInput`]=sameScope?old.completionInput||'unentered':samePending?pending.completionInput:'unentered';
+  // Editing this record's scope leaves its other reported details untouched.
+  // A new book/ID never inherits the previous book's progress or provenance.
+  q.draft[`learn:${key}:range`]=samePending?pending.range:sameBook?old.range||'':'';
+  q.draft[`learn:${key}:completion`]=samePending?pending.completion:sameBook?old.completion||'unknown':'unknown';
+  q.draft[`learn:${key}:completionInput`]=samePending?pending.completionInput:sameBook?old.completionInput||'':'unentered';
   q.scene.choices[key]='book';
   // commitLearning inherits saved middle/high level for bare range edits.
  }
- const a=c.academy;
+ const a=c.academy,academyBefore=next.wizard.academies.find(x=>x.id===a.id&&x.institution===a.name);
  if(states.has(a.choice)){
-  q.draft['academy:institution']='';
+  q.draft['academy:institution']='';delete q.draft['academy:timing'];delete q.draft['academy:timingTouched'];
   if(!next.wizard.academies.length)next.wizard.thinkingExperience=a.choice===N?'not_started':a.choice===K?'unknown':next.wizard.thinkingExperience;
  }else{
   if(!academyNames.includes(a.choice)&&a.choice!=='other')throw Error('학원 선택을 확인해 주세요.');
   if(a.choice==='other'&&!a.name.trim())throw Error('그 외 학원 이름을 적거나 학원 선택으로 바꿔 주세요.');
-  q.academyId=a.id||q.academyId||'';q.draft['academy:institution']=a.choice;q.draft['academy:name']=a.name;q.draft['academy:level']=a.level||'';
+  q.academyId=a.id||q.academyId||'';q.draft['academy:institution']=a.choice;q.draft['academy:name']=a.name;q.draft['academy:level']=a.level||'';q.draft['academy:timing']=a.timing||'';q.draft['academy:timingTouched']=a.timingTouched?'yes':'';
  }
  commitLearning(next);
+ // Only the explicitly selected level changes; hidden or legacy fields stay exact.
+ if(academyBefore&&!states.has(a.choice)){const i=next.wizard.academies.findIndex(x=>x.id===q.academyId);if(i>=0)next.wizard.academies[i]={...(a.level===(academyBefore.level||'')?structuredClone(academyBefore):{...academyBefore,level:a.level}),...academyTimingPatch(a.timing,a.timingTouched)};}
+ // Keep this persisted draft linked to the records created/updated on submit.
+ // Previous/reload must edit those IDs, while changing books still creates one.
+ for(const key of tracks)if(!states.has(c.rows[key].choice))c.rows[key].courseId=q.courseIds[key];
+ if(!states.has(a.choice)){a.id=q.academyId;a.timingTouched=false;}
+ // Repeating an unchanged input is not a new report of learning progress.
+ for(const id of unchangedCourseIds){
+  const before=s.courses.find(course=>course.id===id),index=next.courses.findIndex(course=>course.id===id);
+  next.courses[index]=structuredClone(before);syncQuickCourseDraft(next,id);
+ }
  const thinkingBooks=trackCourses(next,'thinking').length>0,hasAcademy=next.wizard.academies.length>0;
  if(thinkingBooks||hasAcademy)next.wizard.thinkingExperience=thinkingBooks&&hasAcademy?'both':hasAcademy?'academy':'books';
  else if(c.rows.thinking.choice===N&&[U,N].includes(c.academy.choice))next.wizard.thinkingExperience='not_started';

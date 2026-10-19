@@ -58,8 +58,8 @@ export const source = [
     },
     "explanation": "페트병을 힘을 주어 누르면 납작하게 찌그러지고, 두꺼운 밀가루 반죽을 힘을 주어 누르면 반죽이 얇게 펴집니다. 카트를 힘을 주어 밀거나 의자를 힘을 주어 당기면 카트와 의자의 움직임이 변합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -117,8 +117,8 @@ export const source = [
     },
     "explanation": "바구니에 책을 많이 넣을수록 무거워지고, 무거운 물체일수록 밀거나 당겨서 움직일 때 더 큰 힘이 듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -178,8 +178,8 @@ export const source = [
     },
     "explanation": "물체의 가볍고 무거운 정도를 무게라고 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -237,8 +237,8 @@ export const source = [
     },
     "explanation": "무게가 다른 두 물체를 수평대의 나무판자 양쪽 같은 위치에 올려놓으면 더 무거운 물체 쪽으로 기울어집니다. 이때 더 무거운 물체를 받침점으로부터 가까운 곳에 놓거나 가벼운 물체를 받침점으로부터 먼 곳에 놓으면 나무판자가 수평이 됩니다.\n집게가 지우개보다 무겁기 때문에 집게를 받침점으로부터 가까운 곳으로 옮기면 나무판자가 수평이 되게 할 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -293,8 +293,8 @@ export const source = [
     },
     "explanation": "무게가 다른 두 사람이 수평을 이루었을 때 받침점에서 가까운 곳에 앉은 사람이 받침점에서 먼 곳에 앉은 사람보다 무겁습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -354,10 +354,10 @@ export const source = [
         "시소가 단비 쪽으로 기울어진다."
       ]
     },
-    "explanation": "무게가 다른 두 사람이 시소의 같은 위치에 앉으면 시소가 더 무거운 사람 쪽으로 기울어집니다. 단비가 다래보다 무겁기 때문에 시소가 단비 쪽으로 기울어집니다.",
+    "explanation": "무게가 다른 두 사람이 시소의 같은 위치에 앉으면 시소가 더 무거운 사람 쪽으로 기울어집니다. 단비가 다래보다 무겁기 때문에 시소가 단비 쪽으로 기울어집니다.\n[자료 검토] 공통 그림에서 단비가 받침점에서 더 멀리 움직이면 단비 쪽으로 기운다. 해설의 같은 위치라는 표현과 발문은 구별한다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -416,8 +416,8 @@ export const source = [
     },
     "explanation": "손으로 물체를 들어 물체의 무게를 어림할 수 있지만 여러 물체의 무게를 어림하여 비교하는 것은 정확하지 않습니다. 저울을 사용하면 여러 가지 물체의 무게를 정확하게 비교할 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -478,8 +478,8 @@ export const source = [
     },
     "explanation": "용수철저울에서 무게를 재기 전 표시 자가 눈금 ‘0’을 가리키도록 조절하는 나사는 영점 조절 나사입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -552,8 +552,8 @@ export const source = [
     },
     "explanation": "전자저울로 물체의 무게를 측정하였을 때 표시판에 나타나는 숫자가 클수록 더 무거운 물체입니다. 따라서 가장 무거운 과일은 망고이고, 가장 가벼운 과일은 귤입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -616,8 +616,8 @@ export const source = [
     },
     "explanation": "받침점이 있는 막대를 이용해 물체를 움직일 수 있게 만든 도구를 지레라고 하고, 비스듬하게 기울어진 면을 이용해 물체를 움직일 수 있게 만든 도구를 빗면이라고 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -665,8 +665,7 @@ export const source = [
       "sample": "사다리차를 이용하면 무거운 짐을 높은 곳으로 옮길 때 더 작은 힘으로 옮길 수 있다.",
       "rubric": {
         "required": [
-          "무거운 짐을 높은 곳으로 옮긴다",
-          "더 작은 힘으로 옮길 수 있다"
+          "직접 들어 올릴 때보다 작은 힘으로 옮길 수 있음"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -674,10 +673,10 @@ export const source = [
         ]
       }
     },
-    "explanation": "사다리차는 빗면을 이용하는 예로, 사다리차를 이용하면 무거운 짐을 높은 곳으로 옮길 때 더 작은 힘으로 옮길 수 있습니다.\n[채점 기준] 짐을 높은 곳으로 옮길 때 더 작은 힘으로 옮길 수 있다는 내용이 포함되어 있으면 정답으로 합니다.",
+    "explanation": "사다리차는 빗면을 이용하는 예로, 사다리차를 이용하면 무거운 짐을 높은 곳으로 옮길 때 더 작은 힘으로 옮길 수 있습니다.\n[채점 기준] 짐을 높은 곳으로 옮길 때 더 작은 힘으로 옮길 수 있다는 내용이 포함되어 있으면 정답으로 합니다.\n[자료 검토] 공식 기준의 힘의 이점을 확인한다. 실제 사다리차는 동력 장치를 함께 쓰므로 모든 장면을 단순한 빗면만으로 설명하지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -736,8 +735,8 @@ export const source = [
     },
     "explanation": "삽, 가위, 장도리, 손톱깎이는 지레를 이용하는 예이고, 나사못은 빗면을 이용하는 예입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -798,8 +797,8 @@ export const source = [
     },
     "explanation": "달팽이는 등에 딱딱한 껍데기가 있고, 다리가 없으며, 미끄러지듯이 움직입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -857,8 +856,8 @@ export const source = [
     },
     "explanation": "동물을 특징에 따라 분류할 때 누가 분류하더라도 같은 결과가 나오는 분류 기준을 정해야 합니다. ‘무섭게 생겼는가?’와 ‘몸의 길이가 긴가?’는 분류하는 사람에 따라 분류 결과가 달라질 수 있으므로 분류 기준으로 알맞지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -926,8 +925,8 @@ export const source = [
     },
     "explanation": "닭과 참새는 다리가 두 개이고, 개미와 꿀벌은 다리가 여섯 개입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -985,8 +984,8 @@ export const source = [
     },
     "explanation": "땅에 사는 동물 중에는 다리가 있어 땅 위를 걷거나 뛰어다니는 동물도 있고, 다리가 없어 기어다니는 동물도 있습니다. 개, 개미, 고양이, 공벌레는 다리로 걷거나 뛰어다니고, 뱀은 다리가 없어 기어다닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1053,8 +1052,8 @@ export const source = [
     },
     "explanation": "두더지, 땅강아지, 매미 애벌레는 땅속에 사는 동물입니다. 수달과 다슬기는 강이나 호수에 사는 동물이고, 너구리는 땅 위에 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1118,8 +1117,8 @@ export const source = [
     },
     "explanation": "고등어는 바다에 사는 동물이고, 피라미는 강이나 호수에 사는 동물입니다. 고등어와 피라미 모두 아가미가 있어 물속에서 숨을 쉴 수 있고, 여러 개의 지느러미로 헤엄쳐 다니며, 몸이 부드러운 곡선 형태입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1178,8 +1177,8 @@ export const source = [
     },
     "explanation": "개구리는 뒷다리의 발가락 사이에 물갈퀴가 있고, 물속에서 물갈퀴가 있는 발로 헤엄쳐 다닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1248,8 +1247,8 @@ export const source = [
     },
     "explanation": "나비와 잠자리는 날 수 있는 곤충으로, 두 쌍의 날개와 세 쌍의 다리가 있습니다. 또한 몸이 머리, 가슴, 배의 세 부분으로 구분됩니다. 날개가 아주 얇아 빨리 날 수 있는 것은 잠자리의 특징입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1305,13 +1304,13 @@ export const source = [
         "혹, 지방",
         "㉠ 혹 ㉡ 지방",
         "혹 지방",
-        "ㄱ 혹, ㄴ 지방"
+        "ㄱ 혹 ㄴ 지방"
       ]
     },
     "explanation": "낙타는 사막에 사는 동물로, 등의 혹에 지방을 저장해 물과 먹이가 없어도 며칠 동안 살 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1366,8 +1365,8 @@ export const source = [
     },
     "explanation": "초롱아귀는 깊은 바닷속에 사는 동물로, 빛을 내는 촉수가 있어 빛으로 먹이를 유인해 잡아먹고, 큰 입과 날카로운 이빨을 가지고 있어 먹이를 한 번 물면 놓치지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1434,8 +1433,8 @@ export const source = [
     },
     "explanation": "펭귄과 바다코끼리가 사는 극지방에 대한 설명입니다. 박쥐는 동굴에 사는 동물이고, 산양은 높은 산에 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1492,8 +1491,7 @@ export const source = [
       "sample": "㉢, 산양의 발바닥이 절벽에서 잘 미끄러지지 않는 특징을 이용해 잘 미끄러지지 않는 등산화를 만들었다.",
       "rubric": {
         "required": [
-          "㉢(산양)을 고른다",
-          "산양의 발바닥이 절벽에서 잘 미끄러지지 않는 특징"
+          "㉢ 산양의 잘 미끄러지지 않는 발과 등산화의 기능을 연결함"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -1501,10 +1499,10 @@ export const source = [
         ]
       }
     },
-    "explanation": "산양은 높은 산에 사는 동물로, 발바닥이 가파른 곳에서 잘 미끄러지지 않습니다. 이러한 특징을 이용해 잘 미끄러지지 않는 등산화 밑창을 만들었습니다.\n[채점 기준] ㉢과 산양의 발바닥이 절벽에서 잘 미끄러지지 않는 특징을 이용했다는 내용이 포함되어 있으면 정답으로 합니다.",
+    "explanation": "산양은 높은 산에 사는 동물로, 발바닥이 가파른 곳에서 잘 미끄러지지 않습니다. 이러한 특징을 이용해 잘 미끄러지지 않는 등산화 밑창을 만들었습니다.\n[채점 기준] ㉢과 산양의 발바닥이 절벽에서 잘 미끄러지지 않는 특징을 이용했다는 내용이 포함되어 있으면 정답으로 합니다.\n[자료 검토] 특징과 기능의 연결을 다루는 교재 예다. 실제 제품의 발명 유래나 모든 등산화의 성능을 입증한 자료는 아니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1565,8 +1563,8 @@ export const source = [
     },
     "explanation": "문어의 빨판이 물체에 잘 붙는 특징을 이용해 물체에 잘 붙는 흡착판을 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1626,8 +1624,8 @@ export const source = [
     },
     "explanation": "물체를 밀면 물체가 나와 멀어지는 방향으로 움직이고, 물체를 당기면 물체가 나와 가까워지는 방향으로 움직입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1685,8 +1683,8 @@ export const source = [
     },
     "explanation": "물체를 밀거나 당겨서 움직일 때 가벼운 물체일수록 더 작은 힘이 들고, 무거운 물체일수록 더 큰 힘이 듭니다. 따라서 더 가벼운 ㉡을 당길 때 더 작은 힘이 듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1735,18 +1733,18 @@ export const source = [
       "sample": "물체가 어느 한쪽으로 기울어지지 않고 평평한 상태를 말한다.",
       "rubric": {
         "required": [
-          "어느 한쪽으로 기울어지지 않은(평평한) 상태"
+          "한쪽으로 기울지 않은 평평한 상태"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
-          "수평에 대해 바르게 썼으면 정답으로 합니다. (100%)"
+          "수평에 대해 바르게 썼으면 정답으로 합니다."
         ]
       }
     },
-    "explanation": "수평은 물체가 어느 한쪽으로 기울어지지 않고 평평한 상태를 말합니다.\n[채점 기준] 수평에 대해 바르게 썼으면 정답으로 합니다. (100%)",
+    "explanation": "수평은 물체가 어느 한쪽으로 기울어지지 않고 평평한 상태를 말합니다.\n[채점 기준] 수평에 대해 바르게 썼으면 정답으로 합니다.\n[자료 검토] 원문 전사의 100%는 전사자 기입값이며 인쇄 채점 기준에 비율이 없다. 표시에서는 비율을 제외하고 기준 한 줄을 그대로 사용한다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1801,8 +1799,8 @@ export const source = [
     },
     "explanation": "나무판자의 가운데에 받침대를 놓으면 나무판자가 수평이 됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1856,8 +1854,8 @@ export const source = [
     },
     "explanation": "두 물체의 무게가 다를 때 무거운 물체를 받침점으로부터 가까운 곳에 놓고, 가벼운 물체를 받침점으로부터 먼 곳에 놓아야 수평을 만들 수 있습니다. ㉠이 ㉡보다 받침점에서 더 먼 곳에 있을 때 수평이 되었기 때문에 ㉠이 ㉡보다 더 가볍습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1916,8 +1914,8 @@ export const source = [
     },
     "explanation": "수평이 된 나무판자 양쪽의 같은 거리에 두 물체를 각각 올려놓았을 때 나무판자가 수평을 이루면 두 물체의 무게가 같고, 한쪽으로 기울어지면 기울어진 쪽에 있는 물체의 무게가 더 무겁습니다. 배는 사과와 무게가 같고, 포도는 사과보다 무겁기 때문에 포도는 배보다 무겁습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1975,8 +1973,8 @@ export const source = [
     },
     "explanation": "우리 생활에서 물체의 무게를 알기 위해 저울을 사용합니다. 온도를 측정할 때는 온도계를 사용합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2036,8 +2034,8 @@ export const source = [
     },
     "explanation": "㉠은 손잡이, ㉡은 영점 조절 나사, ㉢은 용수철, ㉣은 표시 자, ㉤은 눈금, ㉥은 고리입니다. 용수철저울에서 물체의 무게에 해당하는 숫자의 눈금을 가리키는 부분은 표시 자입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2096,8 +2094,8 @@ export const source = [
     },
     "explanation": "용수철저울의 고리에 건 물체의 무게가 무거울수록 용수철이 더 많이 늘어나 표시 자가 가리키는 눈금의 숫자가 커집니다. 용수철저울의 고리에 건 지퍼 백에서 동전을 빼면 물체의 무게가 가벼워지기 때문에 용수철이 줄어들고, 표시 자가 가리키는 눈금의 숫자가 작아집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2158,8 +2156,8 @@ export const source = [
     },
     "explanation": "전자저울을 사용할 때 먼저 평평한 곳에 놓고 저울의 수평을 맞춰야 합니다. 그리고 전원 단추를 눌러 전자저울을 작동하고, 영점 단추를 눌러 영점을 맞춘 후 물체를 저울판 가운데에 올려놓고 표시판의 숫자를 읽습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2219,8 +2217,8 @@ export const source = [
     },
     "explanation": "장난감 자동차를 직접 들어 올릴 때가 빗면이나 지레와 같은 도구를 이용해 들어 올릴 때보다 더 큰 힘이 들기 때문에 용수철의 길이가 가장 많이 늘어납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2278,8 +2276,8 @@ export const source = [
     },
     "explanation": "가위, 병따개, 장도리는 지레를 이용하는 예이고, 경사로와 구불구불한 산길은 빗면을 이용하는 예입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2338,8 +2336,8 @@ export const source = [
     },
     "explanation": "참새는 몸이 깃털로 덮여 있고, 한 쌍의 날개가 있습니다. 얇고 투명한 두 쌍의 날개가 있는 것은 잠자리입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2403,8 +2401,8 @@ export const source = [
     },
     "explanation": "뱀과 상어는 다리가 없는 동물입니다. 뱀은 기어다니고, 상어는 지느러미로 물속을 헤엄쳐 다닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2468,8 +2466,8 @@ export const source = [
     },
     "explanation": "개미와 꿀벌은 더듬이가 있는 동물이고, 토끼, 닭, 문어는 더듬이가 없는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2528,8 +2526,8 @@ export const source = [
     },
     "explanation": "지렁이는 땅속에서 생활하며 흙과 썩은 낙엽 등을 먹습니다. 큰턱으로 땅을 파서 땅속에 집을 짓는 것은 개미의 특징입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2588,8 +2586,8 @@ export const source = [
     },
     "explanation": "너구리와 딱따구리는 땅 위에 사는 동물입니다. 개미는 땅 위와 땅속을 오가며 사는 동물이고, 두더지, 땅강아지, 매미 애벌레는 땅속에 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2642,19 +2640,18 @@ export const source = [
       "sample": "개구리와 수달은 물속에서 물갈퀴가 있는 발로 헤엄쳐 다닌다.",
       "rubric": {
         "required": [
-          "물갈퀴가 있는 발을 이용한다",
-          "헤엄쳐 다닌다"
+          "물갈퀴를 이용해 헤엄치는 방법"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
-          "물갈퀴가 있는 발로 헤엄쳐 다닌다는 내용이 포함되어 있으면 정답으로 합니다. (100%)"
+          "물갈퀴가 있는 발로 헤엄쳐 다닌다는 내용이 포함되어 있으면 정답으로 합니다."
         ]
       }
     },
-    "explanation": "개구리와 수달은 강이나 호수에 사는 동물입니다. 개구리는 두 쌍의 다리가 있고, 뒷다리와 발가락 사이에 물갈퀴가 있어 물속에서 물갈퀴가 있는 발로 헤엄쳐 다닙니다. 수달은 두 쌍의 다리가 있고, 발가락 사이에 물갈퀴가 있어 물속에서 물갈퀴로 헤엄쳐 다닙니다.\n[채점 기준] 물갈퀴가 있는 발로 헤엄쳐 다닌다는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
+    "explanation": "개구리와 수달은 강이나 호수에 사는 동물입니다. 개구리는 두 쌍의 다리가 있고, 뒷다리와 발가락 사이에 물갈퀴가 있어 물속에서 물갈퀴가 있는 발로 헤엄쳐 다닙니다. 수달은 두 쌍의 다리가 있고, 발가락 사이에 물갈퀴가 있어 물속에서 물갈퀴로 헤엄쳐 다닙니다.\n[채점 기준] 물갈퀴가 있는 발로 헤엄쳐 다닌다는 내용이 포함되어 있으면 정답으로 합니다.\n[자료 검토] 원문 전사의 100%는 전사자 기입값이며 인쇄 채점 기준에 비율이 없다. 물갈퀴가 있는 발로 헤엄치는 한 방법을 하나의 기준으로 확인한다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2720,8 +2717,8 @@ export const source = [
     },
     "explanation": "게는 몸이 단단한 껍데기로 덮여 있고, 고등어는 지느러미로 바닥속을 헤엄쳐 다닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2776,8 +2773,8 @@ export const source = [
     },
     "explanation": "새나 곤충 등 날 수 있는 동물은 대부분 날개가 있고, 몸이 크기에 비해 가볍습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2836,8 +2833,8 @@ export const source = [
     },
     "explanation": "낙타는 등의 혹에 지방을 저장하여 물과 먹이가 없어도 며칠 동안 살 수 있고, 눈썹과 귀 주위의 털이 길어 모래가 잘 들어가지 않습니다. 또한 발바닥이 넓어 모래에 발이 잘 빠지지 않습니다. 큰 귀로 몸속의 열을 내보내는 것은 사막여우의 특징입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2898,8 +2895,8 @@ export const source = [
     },
     "explanation": "북극곰은 극지방에 사는 동물로, 두꺼운 피부와 촘촘하게 난 털이 추위를 막아 주고, 발바닥에 작은 돌기들이 있어 얼음 위에서 미끄러지지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2962,8 +2959,8 @@ export const source = [
     },
     "explanation": "눈표범이 사는 높은 산에 대한 설명입니다. 박쥐와 동굴옆새우는 동굴에 사는 동물이고, 초롱아귀는 깊은 바닷속에 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3022,10 +3019,10 @@ export const source = [
         "굴착기"
       ]
     },
-    "explanation": "두더지가 땅속에서 크고 단단한 앞발로 굴을 파는 특징을 이용해 단단한 땅을 파는 굴착기를 만들었습니다.",
+    "explanation": "두더지가 땅속에서 크고 단단한 앞발로 굴을 파는 특징을 이용해 단단한 땅을 파는 굴착기를 만들었습니다.\n[자료 검토] 동물 특징과 도구 기능의 연결을 다루는 교재 예이며 실제 발명 유래를 입증한 자료는 아니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3081,10 +3078,10 @@ export const source = [
         2
       ]
     },
-    "explanation": "산천어의 몸이 부드러운 곡선 모양으로 되어 있어 물속에서 빠르게 헤엄칠 수 있는 특징을 이용해 앞부분이 부드러운 곡선 모양인 고속열차를 만들었습니다.",
+    "explanation": "산천어의 몸이 부드러운 곡선 모양으로 되어 있어 물속에서 빠르게 헤엄칠 수 있는 특징을 이용해 앞부분이 부드러운 곡선 모양인 고속열차를 만들었습니다.\n[자료 검토] 교재에서 제시한 특징과 기능의 연결 예다. 특정 고속열차의 실제 발명 유래나 성능을 검증한 자료로 보지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"

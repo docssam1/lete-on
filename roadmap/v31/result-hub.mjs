@@ -3,6 +3,7 @@ import {trackOf} from './flow.mjs';
 import {progressRoadmapMarkup} from './progress-roadmap.mjs';
 import {compareBookPolicy} from './recommendation-policy.mjs';
 import {PURPOSE_DETAILS} from './optional-details.mjs';
+import {academyExperienceMarkup,academyRecordMarkup} from './academy-experience.mjs';
 
 // Presentation only: callers own navigation, edits, persistence and plan acceptance.
 const TABS=[['current','전체 로드맵'],['paths','다음 경로'],['analysis','분석지']];
@@ -89,8 +90,8 @@ function analysis(s){
   const items=courses.filter(c=>trackOf(c)===key);
   return items.length?`<span>${label} · ${items.map(c=>esc(courseName(c))).join(' / ')}</span>`:'';
  }).filter(Boolean);
- const academies=(s.wizard?.academies||[]).map(a=>[a.institution,a.level].filter(Boolean).join(' '));
- if(academies.length)lines.push(`<span>학원 경험 · ${academies.map(esc).join(' / ')}</span>`);
+ const academies=(s.wizard?.academies||[]).map(academyRecordMarkup);
+ if(academies.length)lines.push(`<span>학원 경험 · ${academies.join(' / ')}</span>`);
  const candidates=policy.candidates.slice(0,2);
  const firstSentence=text=>String(text||'').split(/(?<=[.!?])\s+/)[0];
  const reasons=candidates.length?candidates.map(c=>`<p><strong>${esc(c.title)}</strong><span>${esc(firstSentence(c.text))}</span></p>`).join(''):`<p>${esc(policy.questions[0]||policy.text)}</p>`;
@@ -110,7 +111,7 @@ export function resultHubScreen(s,data={},legacyView={}){
  else if(tab==='analysis'){content=analysis(s);tools=bookEdits(s)+goalButtons(s,{selectedOnly:true});}
  else{
   const recorded=`<section class="result-roadmap result-hub-current" data-result-roadmap>${chart||'<p>현재 학습 기록을 더하면 과정과 비교할 수 있어요.</p>'}</section>`;
-  const names={...TRACKS,science:'과학',other:'타 과목'},facts=(s.courses||[]).map(c=>`<span><b>${esc(names[trackOf(c)]||'학습')}</b> ${esc(courseName(c))}</span>`).join('');content=`<section class="result-hub-recorded-summary" aria-label="입력한 학습 기록"><strong>입력한 학습 기록</strong><div>${facts||'아직 입력한 교재가 없어요.'}</div></section><p class="result-hub-reference-meaning">아래는 전체 참고 경로예요. 선택한 칸은 살펴보는 구간이며, 아이의 진도를 뜻하지 않아요.</p><div data-full-route-map></div>`+(preschool(s)?recorded+actions():`${actions()}<details class="result-hub-book-scene"><summary>수학 교재를 입체로 보기</summary><div data-progress-scene></div></details><details class="result-hub-source-progress" data-source-progress><summary>교재별 진도와 원표 비교 보기</summary>${recorded}</details>`);
+  const names={...TRACKS,science:'과학',other:'타 과목'},facts=(s.courses||[]).map(c=>`<span><b>${esc(names[trackOf(c)]||'학습')}</b> ${esc(courseName(c))}</span>`).join('');content=`<section class="result-hub-recorded-summary" aria-label="입력한 학습 기록"><strong>입력한 학습 기록</strong><div>${facts||'아직 입력한 교재가 없어요.'}</div></section>${s.wizard?.academies?.length?`<details class="result-hub-academy-details"><summary>학원 경험과 참고 목차 보기</summary>${academyExperienceMarkup(s.wizard.academies)}</details>`:''}<p class="result-hub-reference-meaning">아래는 전체 참고 경로예요. 선택한 칸은 살펴보는 구간이며, 아이의 진도를 뜻하지 않아요.</p><div data-full-route-map></div>`+(preschool(s)?recorded+actions():`${actions()}<details class="result-hub-book-scene"><summary>수학 교재를 입체로 보기</summary><div data-progress-scene></div></details><details class="result-hub-source-progress" data-source-progress><summary>교재별 진도와 원표 비교 보기</summary>${recorded}</details>`);
   tools=goalButtons(s,{selectedOnly:true,basic:true})+bookEdits(s);
  }
  const tabs=`<nav class="result-hub-tabs" aria-label="로드맵 결과 보기">${TABS.map(([id,label])=>`<button type="button" data-result-tab="${id}" class="${id===tab?'is-active':''}"${id===tab?' aria-current="page"':''}>${label}</button>`).join('')}</nav>`;

@@ -53,8 +53,8 @@ export const source = [
     },
     "explanation": "소리가 나는 스피커는 떨림이 느껴집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -114,8 +114,8 @@ export const source = [
     },
     "explanation": "소리굽쇠 주변의 물이 튀어 오르는 것은 소리가 나는 소리굽쇠의 떨림 때문입니다. 이를 통해 물체에서 소리가 날 때에는 물체가 떨린다는 것을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -174,8 +174,8 @@ export const source = [
     },
     "explanation": "물체가 작게 떨릴 때는 작은 소리가 나고, 물체가 크게 떨릴 때는 큰 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -233,8 +233,8 @@ export const source = [
     },
     "explanation": "소리의 세기는 소리의 크고 작은 정도를 말하며, 물체가 떨리는 정도에 따라 달라집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -286,8 +286,8 @@ export const source = [
     },
     "explanation": "관의 길이가 짧을수록 높은 소리가 나고, 관의 길이가 길수록 낮은 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -343,10 +343,10 @@ export const source = [
         1
       ]
     },
-    "explanation": "뱃고동은 낮은 소리로 먼 곳까지 신호를 보냅니다. 높은 소리는 주의를 집중시키거나 불안감을 느끼게 하여 사람들이 위험을 느끼게 하기 때문에 보통 위험을 알리는 소리로 이용합니다.",
+    "explanation": "뱃고동은 낮은 소리로 먼 곳까지 신호를 보냅니다. 높은 소리는 주의를 집중시키거나 불안감을 느끼게 하여 사람들이 위험을 느끼게 하기 때문에 보통 위험을 알리는 소리로 이용합니다.\n[자료 검토] 인쇄 자료의 높은/낮은 신호 사례를 구별한다. 모든 경보음이 같은 높이라는 뜻이 아니며 소리의 높낮이만으로 먼 곳까지 들리는 정도를 확정하지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -407,8 +407,8 @@ export const source = [
     },
     "explanation": "고체인 책상을 통해 소리가 전달되어 책상을 두드리는 소리를 들을 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -473,8 +473,8 @@ export const source = [
     },
     "explanation": "스피커의 소리는 공기를 통해 전달되는데, 통 안의 공기를 빼면 소리를 전달하는 물질인 공기가 줄어들기 때문에 소리가 점점 작아집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -531,10 +531,10 @@ export const source = [
         "들립니다, 실"
       ]
     },
-    "explanation": "실을 귀에 걸고 젓가락으로 숟가락을 두드리면 숟가락을 두드리는 소리가 실을 통해 전달되어 소리가 잘 들립니다.",
+    "explanation": "실을 귀에 걸고 젓가락으로 숟가락을 두드리면 숟가락을 두드리는 소리가 실을 통해 전달되어 소리가 잘 들립니다.\n[자료 검토] 인쇄 문항은 제시한 실험을 해석한다. 실제 활동은 귀 안에 물체를 넣지 않고 선생님이 매우 작은 소리로 시범을 보인다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -591,10 +591,10 @@ export const source = [
         4
       ]
     },
-    "explanation": "실을 손으로 잡으면 실을 통한 떨림이 잘 전달되지 않아 소리가 잘 들리지 않습니다.",
+    "explanation": "실을 손으로 잡으면 실을 통한 떨림이 잘 전달되지 않아 소리가 잘 들리지 않습니다.\n[자료 검토] 인쇄 선택지·정답은 보존한다. 실의 재료·굵기·젖음·연결 상태에 따라 실제 결과는 달라질 수 있어 일반적인 개선 법칙으로 확정하지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -631,12 +631,7 @@ export const source = [
       "concept": "소리는 물체에 부딪치면 방향이 바뀌므로, 나무판으로 소리를 듣는 사람 쪽으로 반사시키면 더 크게 들린다."
     },
     "prompt": "다음은 소리가 나는 스피커를 플라스틱 통 속에 넣고 소리를 들어 보는 실험입니다. 소리가 더 잘 들리는 경우를 <보기>에서 골라 기호를 쓰세요. (단, 나무판 이외의 다른 조건은 모두 동일합니다.)",
-    "givens": {
-      "보기": [
-        "ㄱ. [그림] 플라스틱 통 속에 스피커를 넣고 통 옆에서 소리를 듣는 모습",
-        "ㄴ. [그림] 플라스틱 통 위에 나무판을 비스듬히 대어 소리가 듣는 사람 쪽으로 향하게 한 모습"
-      ]
-    },
+    "givens": null,
     "choices": null,
     "figure": "assets/bank/s32-u05/s1-q11.webp",
     "figureNote": "<보기>가 그림 두 개로 되어 있음. ㄱ: 플라스틱 통 속 스피커(라벨 '스피커') 옆에 사람이 서 있음. ㄴ: 같은 통 위쪽에 손으로 든 나무판(라벨 '나무판')을 사람 쪽으로 비스듬히 대고 있음.",
@@ -652,8 +647,8 @@ export const source = [
     },
     "explanation": "소리는 나아가다가 물체에 부딪치면 나아가는 방향이 바뀝니다. 스피커에서 나온 소리가 나무판에 부딪쳐 나아가는 방향이 소리를 듣고 있는 사람의 귀 쪽을 향하므로 소리가 더 크게 들립니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -719,8 +714,8 @@ export const source = [
     },
     "explanation": "소리가 나아가다가 물체에 부딪쳐 되돌아오는 성질을 소리의 반사라고 합니다. 소리는 딱딱한 물체에서는 잘 반사되지만, 부드러운 물체에서는 소리가 흡수되어 잘 반사되지 않습니다. 부딪치는 물체의 종류에 따라 소리가 반사되는 정도는 다릅니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -784,8 +779,8 @@ export const source = [
     },
     "explanation": "산에서 울리는 메아리는 소리가 나아가다가 산에 부딪쳐 되돌아오기 때문에 생깁니다. 동굴에서 소리를 내면 소리가 동굴 벽에 부딪쳐 되돌아오기 때문에 소리가 울립니다. 목욕탕에서 소리를 내면 소리가 목욕탕의 벽에 부딪쳐 되돌아오기 때문에 소리가 울립니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -843,8 +838,8 @@ export const source = [
     },
     "explanation": "의자를 끄는 소리가 소음이 될 수 있으므로 의자는 들어서 옮깁니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -903,10 +898,10 @@ export const source = [
         4
       ]
     },
-    "explanation": "커다란 박이 바닥으로 떨어지는 소리는 큰 물체를 바닥으로 떨어뜨려 낼 수 있습니다.",
+    "explanation": "커다란 박이 바닥으로 떨어지는 소리는 큰 물체를 바닥으로 떨어뜨려 낼 수 있습니다.\n[자료 검토] 큰 물체를 떨어뜨리는 인쇄 해설을 실제 활동으로 시키지 않는다. 안전한 빈 플라스틱 통 등을 가볍게 두드리는 대체 효과음을 비교한다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -964,8 +959,8 @@ export const source = [
     },
     "explanation": "소리가 나는 스피커에 손을 대 보면 떨림이 느껴집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1024,8 +1019,8 @@ export const source = [
     },
     "explanation": "소리굽쇠 주변의 물이 튀어 오르는 것은 소리가 나는 소리굽쇠의 떨림 때문입니다. 이를 통해 물체에서 소리가 날 때에는 물체가 떨린다는 것을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1083,8 +1078,8 @@ export const source = [
     },
     "explanation": "소리가 나는 물체를 손으로 꽉 잡으면 떨림이 멈춰 소리가 나지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1147,8 +1142,8 @@ export const source = [
     },
     "explanation": "작은북을 약하게 치면 작은 소리가 나고, 작은북을 세게 치면 큰 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1207,8 +1202,8 @@ export const source = [
     },
     "explanation": "아기를 재우거나 도서관에서 친구와 귓속말로 이야기할 때는 작은 소리를 냅니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1260,8 +1255,8 @@ export const source = [
     },
     "explanation": "음판의 길이가 짧을수록 높은 소리가 나고, 음판의 길이가 길수록 낮은 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1317,10 +1312,10 @@ export const source = [
         "ㄴ"
       ]
     },
-    "explanation": "높은 소리는 주의를 집중시키거나 불안감을 느끼게 하여 사람들이 위험을 느끼게 하기 때문에 보통 위험을 알리는 소리로 이용합니다. 따라서 화재경보기는 높은 소리로 불이 난 것을 알립니다.",
+    "explanation": "높은 소리는 주의를 집중시키거나 불안감을 느끼게 하여 사람들이 위험을 느끼게 하기 때문에 보통 위험을 알리는 소리로 이용합니다. 따라서 화재경보기는 높은 소리로 불이 난 것을 알립니다.\n[자료 검토] 이 시험 자료의 신호 예를 구별한다. 높은 소리와 큰 소리를 같은 뜻으로 쓰지 않으며 모든 경보음이 한 높이라는 뜻은 아니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1376,8 +1371,8 @@ export const source = [
     },
     "explanation": "소리의 높낮이를 다르게 하면 아름다운 음악 소리를 만들 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1435,8 +1430,8 @@ export const source = [
     },
     "explanation": "수중 발레 선수나 잠수부가 물속에서 소리를 듣는 것은 액체를 통해 소리가 전달되는 경우입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1500,8 +1495,8 @@ export const source = [
     },
     "explanation": "소리는 공기와 같은 기체, 실이나 나무와 같은 고체, 물과 같은 액체를 통해 전달됩니다. 공기가 없는 우주에서는 소리가 전달되지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1561,10 +1556,10 @@ export const source = [
         "ㄴㄱㄷㄹ"
       ]
     },
-    "explanation": "먼저 종이컵 바닥에 누름 못으로 구멍을 뚫고 구멍에 실을 넣은 후 실의 한쪽 끝에 클립을 묶어 고정합니다. 다른 종이컵도 같은 방법으로 만들어 실 전화기를 완성합니다.",
+    "explanation": "먼저 종이컵 바닥에 누름 못으로 구멍을 뚫고 구멍에 실을 넣은 후 실의 한쪽 끝에 클립을 묶어 고정합니다. 다른 종이컵도 같은 방법으로 만들어 실 전화기를 완성합니다.\n[자료 검토] 누름못 구멍은 선생님이 미리 준비하고 날카로운 부분을 정리한다. 학생은 안전한 컵·실·클립을 연결하고 실제 결과를 기록한다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1622,8 +1617,8 @@ export const source = [
     },
     "explanation": "소리는 딱딱한 물체에서는 잘 반사되지만, 부드러운 물체에서는 소리가 흡수되어 잘 반사되지 않습니다. 따라서 나무판을 들었을 때 소리를 더 잘 들을 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1678,8 +1673,8 @@ export const source = [
     },
     "explanation": "소리가 나아가다가 물체에 부딪쳐 되돌아오는 성질을 소리의 반사라고 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1736,10 +1731,10 @@ export const source = [
         1
       ]
     },
-    "explanation": "소음은 시끄럽거나 크고 높은 소리로, 들으면 머리가 아프기도 합니다. 소음은 사람의 기분을 좋지 않게 만들거나 건강을 해칠 수도 있습니다.",
+    "explanation": "소음은 시끄럽거나 크고 높은 소리로, 들으면 머리가 아프기도 합니다. 소음은 사람의 기분을 좋지 않게 만들거나 건강을 해칠 수도 있습니다.\n[자료 검토] 소음은 듣는 사람·시간·장소·활동에 따라 판단한다. 높거나 큰 소리 자체를 모두 나쁜 소리로 정하지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1799,8 +1794,8 @@ export const source = [
     },
     "explanation": "도로에는 방음벽을 설치하여 도로에서 생기는 소음을 도로 쪽으로 반사시켜 소음을 줄입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1863,8 +1858,8 @@ export const source = [
     },
     "explanation": "소리가 나는 스피커에서는 떨림이 느껴지고, 소리가 나지 않는 스피커에서는 떨림이 느껴지지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1921,10 +1916,10 @@ export const source = [
         0
       ]
     },
-    "explanation": "소리가 나지 않는 물체에서는 떨림이 느껴지지 않습니다. 전원이 꺼진 스피커에서는 소리가 나지 않습니다.",
+    "explanation": "소리가 나지 않는 물체에서는 떨림이 느껴지지 않습니다. 전원이 꺼진 스피커에서는 소리가 나지 않습니다.\n[자료 검토] 제시한 스피커의 켜짐/꺼짐 조건에서 관찰한다. 소리가 들리지 않는 모든 물체에 어떠한 떨림도 없다고 일반화하지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1983,8 +1978,8 @@ export const source = [
     },
     "explanation": "작은북을 세게 치면 북이 크게 떨리면서 좁쌀이 크게 튀어 오르고, 큰 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2042,8 +2037,8 @@ export const source = [
     },
     "explanation": "소리의 크고 작은 정도를 소리의 세기라고 하고, 소리의 높고 낮은 정도를 소리의 높낮이라고 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2102,8 +2097,8 @@ export const source = [
     },
     "explanation": "운동장에서 친구들과 축구 경기를 할 때는 목소리가 잘 들리도록 큰 소리를 냅니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2155,8 +2150,8 @@ export const source = [
     },
     "explanation": "관의 길이가 짧을수록 높은 소리가 나고, 관의 길이가 길수록 낮은 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2220,8 +2215,8 @@ export const source = [
     },
     "explanation": "높은 소리는 주의를 집중시키거나 불안감을 느끼게 하여 사람들이 위험을 느끼게 하기 때문에 보통 위험을 알리는 소리로 이용합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2281,8 +2276,8 @@ export const source = [
     },
     "explanation": "관현악단은 소리의 높낮이가 다른 여러 가지 악기를 이용하며, 악기마다 떨리는 정도를 다르게 하여 다양한 소리의 세기로 연주합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2344,10 +2339,10 @@ export const source = [
         "물,공기"
       ]
     },
-    "explanation": "스피커에서 나는 소리가 물속에서는 물을 통해 전달되고, 물과 사람의 귀 사이에서는 공기를 통해 전달됩니다.",
+    "explanation": "스피커에서 나는 소리가 물속에서는 물을 통해 전달되고, 물과 사람의 귀 사이에서는 공기를 통해 전달됩니다.\n[자료 검토] 자료의 물과 공기를 지나는 경로를 해석한다. 일반 전자 기기를 물에 넣거나 머리를 물속에 넣는 실험으로 시키지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2407,8 +2402,8 @@ export const source = [
     },
     "explanation": "소리는 고체, 액체, 기체 상태의 여러 가지 물질을 통해 전달됩니다. 우리가 듣는 대부분의 소리는 기체인 공기를 통해 전달됩니다. 우주에서는 공기가 없어 소리가 전달되지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2468,8 +2463,8 @@ export const source = [
     },
     "explanation": "땅에 귀를 대어 자동차가 지나가는 소리를 듣는 것은 고체인 땅을 통해 소리가 전달되는 경우입니다. 스피커 소리로 인해 촛불이 흔들리는 것은 기체인 공기를 통해 소리가 전달되는 예이고, 수중 발레 선수가 물속에서 음악을 듣는 것은 액체인 물을 통해 소리가 전달되는 예입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2532,8 +2527,8 @@ export const source = [
     },
     "explanation": "숟가락을 두드리는 소리가 잘 들리는 것을 통해 소리가 고체인 실을 통해 전달되었음을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2592,8 +2587,8 @@ export const source = [
     },
     "explanation": "실 전화기의 실이 팽팽할수록 실이 잘 떨려서 소리가 잘 전달됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2648,8 +2643,8 @@ export const source = [
     },
     "explanation": "소리가 나아가다가 나무판을 만나 반사되어 나아가는 방향이 바뀌었기 때문에 소리가 더 크게 들립니다. 이렇게 소리가 나아가다가 물체에 부딪쳐 되돌아오는 성질을 소리의 반사라고 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2708,8 +2703,8 @@ export const source = [
     },
     "explanation": "산에서 소리를 지르면 반대편에 있는 산에서 소리가 반사되어 메아리가 들립니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2768,8 +2763,8 @@ export const source = [
     },
     "explanation": "소리가 나아가다가 물체에 부딪쳐 되돌아오는 성질을 소리의 반사라고 합니다. 소리는 딱딱한 물체에서는 잘 반사되지만, 부드러운 물체에서는 소리가 흡수되어 잘 반사되지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2829,8 +2824,8 @@ export const source = [
     },
     "explanation": "과속 방지 턱은 자동차가 천천히 달리도록 하여 도로에서 발생하는 소음을 줄여 줍니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2886,8 +2881,8 @@ export const source = [
     },
     "explanation": "공사장 주변에 방음벽을 설치하여 소음이 공사장 밖으로 나오지 않도록 반사시킵니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2945,8 +2940,8 @@ export const source = [
     },
     "explanation": "도로에 방음벽을 설치하여 도로에서 생기는 소음을 도로 쪽으로 반사시킵니다. 공연장은 천장과 벽에 반사판을 설치하여 공연장 전체에 소리를 잘 전달합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3004,8 +2999,8 @@ export const source = [
     },
     "explanation": "주인공은 다양한 목소리를 냅니다. 인형극에 필요한 효과음은 주변의 다양한 물체를 이용하여 누구나 이해할 수 있도록 만듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3063,8 +3058,8 @@ export const source = [
     },
     "explanation": "소리가 나는 스피커에 손을 대 보면 떨림이 느껴집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3123,8 +3118,8 @@ export const source = [
     },
     "explanation": "소리가 나는 물체에서는 떨림이 느껴집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3182,8 +3177,8 @@ export const source = [
     },
     "explanation": "소리굽쇠를 손으로 움켜잡으면 소리굽쇠의 떨림이 멈춰 소리가 들리지 않게 됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3244,8 +3239,8 @@ export const source = [
     },
     "explanation": "작은북을 약하게 치면 북이 작게 떨리면서 작은 소리가 나고, 작은북을 세게 치면 북이 크게 떨리면서 큰 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3306,8 +3301,8 @@ export const source = [
     },
     "explanation": "작은북을 칠 때 좁쌀이 튀어 오르는 모습을 통해 소리의 세기는 물체가 떨리는 정도에 따라 달라진다는 것을 알 수 있습니다. 물체가 작게 떨리면 작은 소리가 나고, 물체가 크게 떨리면 큰 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3366,8 +3361,8 @@ export const source = [
     },
     "explanation": "박물관에서 관람을 하며 이야기를 할 때는 작은 소리를 내야 합니다. 나머지는 모두 큰 소리를 내는 경우입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3428,8 +3423,8 @@ export const source = [
     },
     "explanation": "음판의 길이가 짧을수록 높은 소리가 나고, 음판의 길이가 길수록 낮은 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3484,10 +3479,10 @@ export const source = [
         "높은"
       ]
     },
-    "explanation": "사람들에게 위급한 상황을 알릴 때는 크고 높은 소리를 이용합니다.",
+    "explanation": "사람들에게 위급한 상황을 알릴 때는 크고 높은 소리를 이용합니다.\n[자료 검토] 이 자료에 제시된 신호의 높낮이를 구별한다. 소리의 세기와 높낮이, 위험 신호와 소음의 판단은 각각 구별한다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3548,8 +3543,8 @@ export const source = [
     },
     "explanation": "소리의 크고 작은 정도를 소리의 세기라고 하고, 소리의 높고 낮은 정도를 소리의 높낮이라고 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3602,8 +3597,8 @@ export const source = [
     },
     "explanation": "책상을 두드리는 소리는 고체인 책상을 통해 전달됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3661,8 +3656,8 @@ export const source = [
     },
     "explanation": "소리는 대부분 기체인 공기를 통해 전달됩니다. 잠수부가 바닷속에서 뱃고동 소리를 들을 수 있는 것은 액체인 물을 통해 소리가 전달되기 때문입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3719,8 +3714,8 @@ export const source = [
     },
     "explanation": "스피커의 소리는 공기를 통해 전달되는데, 통 안의 공기를 빼면 소리를 전달하는 물질인 공기가 줄어들기 때문에 소리가 점점 작아집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3776,10 +3771,10 @@ export const source = [
         4
       ]
     },
-    "explanation": "젓가락으로 숟가락을 두드리면 고체인 실을 통해 소리가 전달되어 숟가락을 두드리는 소리가 잘 들립니다.",
+    "explanation": "젓가락으로 숟가락을 두드리면 고체인 실을 통해 소리가 전달되어 숟가락을 두드리는 소리가 잘 들립니다.\n[자료 검토] 그림과 관찰 조건을 읽는 문항이며 귀 가까이에 큰 소리를 내거나 실·손가락을 귀 안에 넣도록 시키지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3840,8 +3835,8 @@ export const source = [
     },
     "explanation": "실 전화기에서 멀리까지 소리를 전달하는 것은 실입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3877,13 +3872,7 @@ export const source = [
       "concept": "소리는 부드러운 물체보다 딱딱한 물체에서 더 잘 반사된다."
     },
     "prompt": "다음은 소리가 나는 스피커를 플라스틱 통 속에 넣고 소리를 들어 보는 실험입니다. 소리가 가장 잘 들리는 경우를 <보기>에서 골라 기호를 쓰세요. (단, 나무판, 스타이로폼판 이외의 다른 조건은 모두 동일합니다.)",
-    "givens": {
-      "보기": [
-        "ㄱ. 플라스틱 통 속 스피커(판 없음)",
-        "ㄴ. 나무판",
-        "ㄷ. 스타이로폼판"
-      ]
-    },
+    "givens": null,
     "choices": null,
     "figure": "assets/bank/s32-u05/s4-q15.webp",
     "figureNote": "<보기> 상자: 플라스틱 통 속 스피커 옆에 앉은 학생. ㄱ. 판 없음('스피커' 라벨), ㄴ. 통 위에 '나무판'을 비스듬히 대고 있음, ㄷ. 통 위에 '스타이로폼판'을 비스듬히 대고 있음.",
@@ -3900,8 +3889,8 @@ export const source = [
     },
     "explanation": "소리는 나아가다가 물체에 부딪치면 나아가는 방향이 바뀝니다. 스피커에서 나온 소리가 판에 부딪쳐 나아가는 방향이 소리를 듣고 있는 사람의 귀 쪽을 향하므로 소리가 더 크게 들립니다. 이때 소리는 부드러운 물체보다 딱딱한 물체에 부딪쳤을 때 나아가는 방향이 더 잘 바뀌므로 나무판인 경우의 소리가 가장 크게 들립니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3958,8 +3947,8 @@ export const source = [
     },
     "explanation": "소리가 나아가다가 물체에 부딪쳐 되돌아오는 성질을 소리의 반사라고 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4017,8 +4006,8 @@ export const source = [
     },
     "explanation": "목욕탕에서는 소리를 내면 소리가 목욕탕의 벽에 반사되어 되돌아오기 때문에 소리가 울립니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4076,8 +4065,8 @@ export const source = [
     },
     "explanation": "도로 주변에 방음벽을 설치하면 도로에서 생기는 소음을 도로 쪽으로 반사시켜 소음을 줄일 수 있습니다. 도로에 과속 방지 턱을 설치하면 빠르게 달리는 차의 속력을 줄여서 소음을 줄일 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4135,8 +4124,8 @@ export const source = [
     },
     "explanation": "음악을 들을 때 헤드폰을 사용하거나 스피커의 소리를 작게 하면 스피커에서 나오는 소리로 인한 소음을 줄일 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4195,8 +4184,8 @@ export const source = [
     },
     "explanation": "소음을 줄이기 위해서는 소리의 세기를 줄이거나 소리가 잘 전달되지 않도록 합니다. 또한 소리를 반사시켜 소리의 전달을 막습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
