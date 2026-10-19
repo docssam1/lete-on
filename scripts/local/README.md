@@ -8,6 +8,7 @@
 | **`omnivoice-clone.cmd`** | **지금 쓰는 우리 목소리를 복제**해 `clone\` 에 담는다 ← **먼저 이것부터** | **아니오** |
 | **`omnivoice-nm.cmd`** | **넘버스 앱 대사 약 760줄 전부**를 복제 목소리로 만들어 `number_magic/audio/omni/` 에 담는다(2026-09-29 "복제음성으로 해"). 받아 적기 검사를 못 넘은 줄은 빼고 앱이 구글 음성으로 읽는다. 끝나면 그 폴더와 `number_magic/data/tts-map-omni.js` 를 푸시 | **아니오** |
 | `omnivoice-audition.cmd` | 목소리를 새로 *설계*해 본다(누미·독쌤·할아버지 4종) | **아니오** |
+| **`book-photos.command`** | **맥(애플 칩)용** 교재 실사 사진 — mflux 로 FLUX.1-schnell 8비트(메모리 약 13 GB). 원장 맥(M5 Pro·24 GB)은 이것 | **아니오** |
 | **`book-photos.cmd`** | **교재 실사 사진**(2026-10-19 "실사 수준으로")을 장면마다 후보 3장씩 만들고 GitHub 수신 브랜치 `inbox/book-photos` 로 올린다. 끝나면 Claude 에게 "사진 올렸어" | **아니오** |
 | `_setup-omnivoice.cmd` | 위 둘이 같이 쓰는 준비 단계(가상환경·설치·GPU 확인) | — |
 
@@ -110,7 +111,16 @@ python scripts\omnivoice-audition.py --out audition-clone --ref ref.wav --ref-te
 교재(기후변화·감염병)의 그림을 **실사형 사진**으로 바꾸기 위한 것입니다. 클라우드 세션에는 GPU 가
 없고, 이미지 생성 서비스(Gamma 크레딧 0)·사진 사이트(위키미디어)도 막혀 있어서 PC 에서 만듭니다.
 
-- **처음 한 번 — 전용 폴더 만들기**(이 도구는 작업 브랜치에만 있어서 PC 의 main 에서는 안 보입니다. 원래 폴더는 그대로 둡니다):
+- **맥(원장 맥 M5 Pro · 24 GB)**: `book-photos.command` 를 쓴다. 메모리 24 GB 에서 원래 FLUX(약 24 GB)는 빠듯해서 애플 칩 전용 mflux 로 8비트 실행한다(약 13 GB). uv·mflux 는 처음 실행 때 알아서 설치. 디스크는 모델 약 34 GB + 설치 약 3 GB.
+  처음 한 번(터미널):
+  ```
+  cd ~/Developer/GFIELD/lete-on
+  git fetch origin claude/jolly-allen-w57yqh
+  git worktree add ../lete-on-photos FETCH_HEAD
+  open ../lete-on-photos/scripts/local/book-photos.command
+  ```
+  다음부터는 Finder 에서 `lete-on-photos/scripts/local/book-photos.command` 더블클릭.
+- **처음 한 번 — 전용 폴더 만들기(윈도우)**(이 도구는 작업 브랜치에만 있어서 PC 의 main 에서는 안 보입니다. 원래 폴더는 그대로 둡니다):
   ```
   cd %USERPROFILE%\lete-on
   git fetch origin claude/jolly-allen-w57yqh

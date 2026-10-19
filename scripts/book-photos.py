@@ -3,7 +3,9 @@
 원장 지시(2026-10-19): 교재 그림은 실사 수준으로. 클라우드 세션(Claude)은 GPU가 없고
 이미지 생성 서비스·사진 사이트가 막혀 있어서, 무료 공개 모델로 원장 PC에서 만든다.
 
-  모델  FLUX.1-schnell(Apache 2.0, 상업 사용 가능) — GPU 메모리 10 GB 미만이면 SDXL base 1.0(OpenRAIL++)
+  모델  FLUX.1-schnell(Apache 2.0, 상업 사용 가능)
+        · 맥(애플 칩): mflux(MLX, MIT)로 8비트 실행 — scripts/local/book-photos.command
+        · 윈도우+엔비디아: diffusers — scripts/local/book-photos.cmd (GPU 메모리 10 GB 미만이면 SDXL base 1.0)
   입력  scripts/book-photos/shots.json(장면 목록 · Claude가 쓴다)
   출력  book-photos/<단원>/<장면>-<번호>.webp(장면마다 후보 3장) + book-photos/고르기.html(한 장에 모두)
   전달  후보를 GitHub 의 별도 수신 브랜치 inbox/book-photos 로 올린다(원장 PC의 작업 폴더·main 은 건드리지 않는다).
@@ -11,7 +13,7 @@
 
 키·비용 없음. 처음 한 번 모델을 받는 데 시간이 걸린다(FLUX 약 30 GB).
 """
-import argparse, base64, io, json, os, subprocess, sys, tempfile, time
+import argparse, base64, io, json, os, shutil, subprocess, sys, tempfile, time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,7 +51,19 @@ def load_pipe(model, vram):
     return pipe
 
 
+def render_mflux(prompt, seed, w, h, quant=8):
+    """맥(애플 칩): mflux(MLX)로 같은 FLUX.1-schnell을 8비트로 돌린다 — 메모리 약 13 GB(24 GB 맥에서 여유)."""
+    from PIL import Image
+    with tempfile.TemporaryDirectory() as td:
+        png = Path(td) / 'out.png'
+        subprocess.run(['mflux-generate', '--model', 'schnell', '--quantize', str(quant), '--steps', '4', '--seed', str(seed),
+                        '--width', str(w), '--height', str(h), '--prompt', prompt, '--output', str(png)], check=True)
+        return Image.open(png).convert('RGB')
+
+
 def render(pipe, model, prompt, seed, w, h):
+    if model == 'mflux':
+        return render_mflux(prompt, seed, w, h)
     import torch
     g = torch.Generator('cpu').manual_seed(seed)
     if model == 'flux':
@@ -103,7 +117,7 @@ def main():
     ap.add_argument('--out', default='book-photos')
     ap.add_argument('--n', type=int, default=3, help='장면마다 후보 수')
     ap.add_argument('--only', default='', help='쉼표로 장면 key만 골라 만들기(예: setup,handwash)')
-    ap.add_argument('--model', default='auto', choices=['auto', 'flux', 'sdxl'])
+    ap.add_argument('--model', default='auto', choices=['auto', 'flux', 'sdxl', 'mflux'], help='auto: 맥이면 mflux, 아니면 GPU 메모리에 따라 flux/sdxl')
     ap.add_argument('--size', default='1344x768', help='가로x세로(16의 배수)')
     ap.add_argument('--no-push', action='store_true', help='GitHub 수신 브랜치로 올리지 않기')
     a = ap.parse_args()
@@ -112,9 +126,10 @@ def main():
     shots = [s for s in spec['shots'] if not a.only or s['key'] in a.only.split(',')]
     out = ROOT / a.out; out.mkdir(exist_ok=True)
     w, h = map(int, a.size.lower().split('x'))
-    vram = vram_gb()
-    model = a.model if a.model != 'auto' else ('flux' if vram >= 10 else 'sdxl')
-    print(f'  GPU 메모리 {vram:.1f} GB → 모델 {model} · 장면 {len(shots)}개 × 후보 {a.n}장 · {w}x{h}', flush=True)
+    mac = sys.platform == 'darwin' and shutil.which('mflux-generate')
+    vram = 0.0 if (a.model == 'mflux' or (a.model == 'auto' and mac)) else vram_gb()
+    model = a.model if a.model != 'auto' else ('mflux' if mac else 'flux' if vram >= 10 else 'sdxl')
+    print(f'  {"애플 칩(mflux · FLUX.1-schnell 8비트)" if model == "mflux" else f"GPU 메모리 {vram:.1f} GB"} → 모델 {model} · 장면 {len(shots)}개 × 후보 {a.n}장 · {w}x{h}', flush=True)
     pipe = None
     items, made, t0 = [], 0, time.time()
     for s in shots:
@@ -124,8 +139,8 @@ def main():
             f = d / f"{s['key']}-{i}.webp"
             if not f.exists():
                 if pipe is None:
-                    print('  모델 불러오는 중... 처음에는 받는 데 오래 걸려요.', flush=True)
-                    pipe = load_pipe(model, vram)
+                    print('  모델 불러오는 중... 처음에는 받는 데 오래 걸려요(FLUX 약 34 GB).', flush=True)
+                    pipe = load_pipe(model, vram) if model != 'mflux' else 'mflux'
                 seed = 1000 * i + sum(map(ord, s['key']))
                 t = time.time()
                 img = render(pipe, model, f"{s['prompt']} {spec['style']}", seed, w, h)
