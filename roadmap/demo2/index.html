@@ -612,12 +612,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <section id="levelRoadmap" class="container" style="display:none">
  <div class="student-card">
   <div style="font-size:11px;letter-spacing:.14em;font-weight:900;color:#7c3aed;margin-bottom:8px">STEP 3 · LEVEL ROADMAP</div>
-  <h2>L0~L4 같은 속도로 이어 보기 (5세~초4)</h2>
-  <p class="sr-lead">유아 진도에서 초등까지 레벨마다 같은 속도로 이어 그렸습니다. 보라 테두리가 우리 아이와 가장 가까운 레벨, 세로 보라 칸이 지금 달입니다.</p>
+  <h2>3개월 단위 레벨 L0~L12 (5세~초4)</h2>
+  <p class="sr-lead">레벨은 3개월 간격이고, 모두 같은 속도로 갑니다. 초2 3월에 2-2를 처음 하는 아이부터 중등을 하는 아이까지 들어갑니다. 보라 테두리가 우리 아이와 가장 가까운 레벨, 세로 보라 칸이 지금 달입니다.</p>
   <h3 class="sr-title" id="lvCompareTitle"></h3>
   <div id="lvCompare"></div>
   <div class="key-rules" id="keyRules"></div>
-  <h3 class="sr-title" style="margin-top:22px">전체 레벨 L0~L4</h3>
+  <h3 class="sr-title" style="margin-top:22px">전체 레벨 L0~L12</h3>
   <div class="table-wrapper sr-wrap" id="lvTable"></div>
   <div class="sr-notes"><ul>
    <li>초등 구간은 원장님 ‘프리미어 2반 수준’ 표를 이어 붙였습니다. 사고력은 이 표보다 당기지 않았고(L0·L1·L2 같음, L3 +5개월, L4 +10개월), 교과·연산은 레벨 속도대로 이었습니다. 유아 때 이미 한 교재는 다시 넣지 않았습니다.</li>
@@ -731,10 +731,10 @@ const ROAD_L0 = {
 
 const LEVELS=[
   {id:'L0',cls:'l0',summary:'선행이 빠른<br>프리미어 합격생',shift:0},
-  {id:'L1',cls:'l1',summary:'프리미어<br>표준 진도',shift:3},
-  {id:'L2',cls:'l2',summary:'챌린지 합격 후<br>P2·S2 선발 진도',shift:7},
-  {id:'L3',cls:'l3',summary:'소마 안정 학습<br>황소 상위권 목표',shift:12},
-  {id:'L4',cls:'l4',summary:'황소 심화 목표<br>기초 탄탄히',shift:17}
+  {id:'L1',cls:'l1',summary:'필즈 S1<br>정도 진도',shift:3},
+  {id:'L2',cls:'l2',summary:'프리미어 2반 ·<br>챌린지 정도',shift:6},
+  {id:'L3',cls:'l3',summary:'소마 안정 학습<br>황소 상위권 목표',shift:9},
+  {id:'L4',cls:'l4',summary:'황소 심화 목표<br>기초 탄탄히',shift:12}
 ];
 const FIXED_ROWS=['thinking2'];
 const rowMeta=[
@@ -1593,9 +1593,11 @@ function axisText(label,v){
   return n>0?`<span class="ls-chip up">${label} ${n}개월 앞섬</span>`:`<span class="ls-chip down">${label} ${-n}개월 늦음</span>`;
 }
 function fillLevelSummary(d){
-  const best=window.__bestLevel, box=document.getElementById('levelSummary');
+  // 3개월 단위 레벨(L0~L12) 전체에서 가장 가까운 레벨을 고른다(school-roadmap.js)
+  const best=(window.SchoolRoadmap&&SchoolRoadmap.bestGrid(d))||window.__bestLevel, box=document.getElementById('levelSummary');
   if(!best||!best.id||!box) return;
-  const L=LEVELS.find(x=>x.id===best.id);
+  window.__bestGrid=best;
+  const L=(window.SchoolRoadmap?SchoolRoadmap.GRID:LEVELS).find(x=>x.id===best.id);
   const desc=L?L.summary.replace(/<br>/g,' '):'';
   box.innerHTML=`<div class="ls-kicker">${d.name} 학생의 현재 수준</div>`+
     `<div class="ls-main"><b class="ls-level ${L?L.cls:''}">${best.id}</b><span>${desc}에 가장 가깝습니다.</span></div>`+
@@ -1628,7 +1630,7 @@ document.getElementById('diagForm').addEventListener('submit',e=>{
     applyAcademyKeys();
     document.getElementById('schoolRoadmap').style.display='block';
     document.getElementById('levelRoadmap').style.display='block';
-    if(window.SchoolRoadmap) SchoolRoadmap.showLevels(studentNowMonth(diagData.age),(window.__bestLevel||{}).id,currentPositions(diagData).thinking1);
+    if(window.SchoolRoadmap) SchoolRoadmap.showLevels(studentNowMonth(diagData.age),(window.__bestGrid||window.__bestLevel||{}).id,currentPositions(diagData).thinking1);
     const t=document.getElementById('levelSummary');
     if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
   });
@@ -1650,8 +1652,8 @@ function levelStdMonth(shift, rowKey, meta){
 }
 function levelFriendly(id){return {
   L0:'대치 프리미어 선행이 빠른 학생 기준입니다.',
-  L1:'대치 프리미어 표준 진도 학생 기준입니다.',
-  L2:'챌린지 선발 후 P2·S2 목표 / 타 지역 P1 목표 학생 기준입니다.',
+  L1:'필즈 S1반 정도 진도 학생 기준입니다.',
+  L2:'프리미어 2반 · 챌린지 정도 진도 학생 기준입니다.',
   L3:'소마 안정 학습 기준, 황소 상위권을 바라보는 학생 기준입니다.',
   L4:'황소 심화반 목표 / 기초부터 탄탄히 쌓아가는 학생 기준입니다.'
 }[id]||'';}
