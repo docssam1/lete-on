@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-skill-map-supplement/1",
-  "checkpoint": "v59",
+  "checkpoint": "v85",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre B",
@@ -12,16 +12,16 @@
     ],
     "sourceActivityBlocks": 11,
     "visuallyReviewedPages": 7,
-    "answerValidated": false
+    "answerValidated": true
   },
   "aggregate": {
-    "ontologyNodes": 1467,
-    "ontologyRelations": 2526,
-    "skillActionCandidates": 315,
-    "activitiesWithSkillCandidateEvidence": 624,
-    "activitiesInReviewQueue": 229,
-    "conditionalDifficultyCandidates": 638,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 852,
+    "activitiesInReviewQueue": 0,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 78,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0,
@@ -38,7 +38,7 @@
     "minimumCurriculumLevelCandidates": 11,
     "unresolvedMinimumCurriculumCandidates": 11,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 11,
     "directSomaCrossReferences": 0,
     "SomaCrossReferencesAwaitingReview": 11,
     "catalogRelatedButDistinctCandidates": 2
@@ -177,14 +177,14 @@
     ]
   },
   "curriculum": {
-    "status": "content-context-candidates-only",
+    "status": "content-context-candidates-only; minimum-grade-unassigned",
     "candidateActivities": 11,
     "unresolvedActivities": 11,
     "confirmedAssignments": 0,
     "contexts": [
       "초등 1–2학년군 수와 연산·기초 도형 내용 맥락"
     ],
-    "note": "문항별 최소 교과수준 후보이며 교사 검토 전이다. 문제 해결 난이도와 최소 교과수준을 분리한다."
+    "note": "기존 1–2학년군은 넓은 내용 맥락 후보일 뿐 최소 학년 배정이 아니다. 문항별 요구 수·연산·표현 근거를 확인하기 전까지 미배정으로 유지한다."
   },
   "taxonomy": {
     "familyCandidates": [
@@ -247,5 +247,17 @@
     ],
     "teacherApprovedEquivalences": 0
   },
-  "privacy": "공개 파일에 활동 식별자·OCR 원문·정답·이미지 해시·로컬 경로를 넣지 않았다. 난이도·최소 교과수준·계통 관계는 교사 검토 후보다."
+  "privacy": "공개 파일에 활동 식별자·OCR 원문·정답·이미지 해시·로컬 경로를 넣지 않았다. 난이도·최소 교과수준·계통 관계는 교사 검토 후보다. Exact item-level answer values remain in the private answer-validation sidecar.",
+  "answerValidation": {
+    "activitiesValidated": 11,
+    "sourceAnswerKeyPdfPages": [
+      12,
+      13,
+      14,
+      15
+    ],
+    "method": "visually cross-checked rendered answer-key pages",
+    "constructionAnswersMayBeNonUnique": true,
+    "exactAnswerValuesOmitted": true
+  }
 }
