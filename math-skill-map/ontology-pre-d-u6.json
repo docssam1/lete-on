@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v77",
+  "checkpoint": "v106",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -20,21 +20,21 @@
     "minimumCurriculumAssignments": 0,
     "confirmedSchoolGrades": 0,
     "approvedDifficultyLevels": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 8,
     "difficultyMeaning": "통일 5단계 기준의 조건부 연구 밴드이며 교사 검토 전이다.",
     "gradeMeaning": "공식 교육과정의 초등 1–2학년군 적용 고려 사항에 실생활 덧셈·뺄셈 문제 만들기·해결이 포함된다. 이는 학년군 맥락 후보이며 8개 문항의 최소 교과수준 확정은 아니다.",
     "numberMeaning": "기존 영역 편성 순번을 행동 후보와 의미 비교하는 데만 사용한다. 난이도·학습 순서·확정 공통 유형 번호가 아니다.",
     "skillMeaning": "문제 구성, 정보 충분성, 조건별 식 구성, 조건-질문 연결을 별도 후보로 분리했다."
   },
   "aggregate": {
-    "ontologyNodes": 1586,
-    "ontologyRelations": 2943,
-    "skillActionCandidates": 396,
-    "candidateEvidenceLinkedActivities": 806,
-    "activityReviewQueue": 46,
-    "activitySkillRelations": 857,
-    "conditionalDifficultyBands": 778,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 313,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0
@@ -48,7 +48,7 @@
     "conditionalDifficultyBands": 8,
     "unresolvedMinimumCurriculumCandidates": 8,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 8,
     "familyMembershipRelations": 4,
     "relatedButDistinctRelations": 4,
     "spiralRelationCandidates": 5,
@@ -151,7 +151,7 @@
       "minimumCurriculumLevelContextCandidate": "초등 1–2학년군",
       "minimumCurriculumLevelCandidateStatus": "context-only; item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 2,
@@ -166,7 +166,7 @@
       "minimumCurriculumLevelContextCandidate": "초등 1–2학년군",
       "minimumCurriculumLevelCandidateStatus": "context-only; item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -181,7 +181,7 @@
       "minimumCurriculumLevelContextCandidate": "초등 1–2학년군",
       "minimumCurriculumLevelCandidateStatus": "context-only; item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -196,7 +196,7 @@
       "minimumCurriculumLevelContextCandidate": "초등 1–2학년군",
       "minimumCurriculumLevelCandidateStatus": "context-only; item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -211,7 +211,7 @@
       "minimumCurriculumLevelContextCandidate": "초등 1–2학년군",
       "minimumCurriculumLevelCandidateStatus": "context-only; item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -226,7 +226,7 @@
       "minimumCurriculumLevelContextCandidate": "초등 1–2학년군",
       "minimumCurriculumLevelCandidateStatus": "context-only; item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -241,7 +241,7 @@
       "minimumCurriculumLevelContextCandidate": "초등 1–2학년군",
       "minimumCurriculumLevelCandidateStatus": "context-only; item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -256,7 +256,7 @@
       "minimumCurriculumLevelContextCandidate": "초등 1–2학년군",
       "minimumCurriculumLevelCandidateStatus": "context-only; item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "editorialNumberedTypeCandidates": [
@@ -375,4 +375,114 @@
         "relation": "related-but-distinct",
         "relationType": "related-but-distinct",
         "evidenceItemIds": [
-          "1031-unit6-p
+          "1031-unit6-pred-block-001",
+          "1031-unit6-pred-block-002"
+        ],
+        "basis": "문장제를 생성하는 행동과 주어진 정보로 질문에 답할 수 있는지 판별하는 행동은 각각 생성과 충분성 판단으로 답 요구가 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "WORD-PRED6-01",
+        "to": "WORD-PRED6-02",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "1031-unit6-pred-block-006",
+          "1031-unit6-pred-block-007"
+        ],
+        "basis": "그림·답에서 문제를 생성하는 행동과 이미 제시된 조건 문장을 질문에 대응시키는 행동은 생성 방향과 선택 제약이 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "ARITH-PRED6-01",
+        "to": "AR03",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "1031-unit6-pred-block-005"
+        ],
+        "basis": "AR03은 미지량을 포함한 관계식을 세우는 후보이며, Pre D6 활동은 알려진 분류량을 선택해 합·차식을 만들고 답한다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "FOLD07",
+        "to": "STAT-PRED3-07",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "1031-unit6-pred-block-002"
+        ],
+        "basis": "질문에 답할 정보가 충분한지 판별하는 행동과 질문에 맞는 집계 단위·표를 고르는 행동은 정보 요구를 본다는 점은 닿지만 답 가능성 판정과 자료 표현 선택은 구분한다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "spiralRelations": [
+      {
+        "from": "1031-unit6-pred-block-001",
+        "to": "1031-unit6-pred-block-003",
+        "basis": "두 수량에서 간단한 덧·뺄셈 문제를 만드는 활동에서 세 동물 집단 중 관계에 맞는 두 집단을 선택해 목표 차를 만드는 확장 후보."
+      },
+      {
+        "from": "1031-unit6-pred-block-003",
+        "to": "1031-unit6-pred-block-006",
+        "basis": "그림에서 식·질문을 한 개 구성하는 단계에서 여러 목표 답 각각에 맞는 문제를 구성하는 확장 후보."
+      },
+      {
+        "from": "1031-unit6-pred-block-006",
+        "to": "1031-unit6-pred-block-008",
+        "basis": "개수 자료로 목표 질문을 만드는 활동에서 금액·개수 단위를 구분하고 목표값별 식·문제를 구성하는 확장 후보."
+      },
+      {
+        "from": "1031-unit6-pred-block-002",
+        "to": "1031-unit6-pred-block-004",
+        "basis": "일기에서 여러 질문의 정보 충분성을 판단하는 활동에서 별도 조건 서술 속 주어지지 않은 상대 수량을 판별하는 확장 후보."
+      },
+      {
+        "from": "1031-unit6-pred-block-005",
+        "to": "1031-unit6-pred-block-007",
+        "basis": "한 질문의 분류 기준에 맞게 식을 만드는 활동에서 여러 조건 문장과 질문을 일대일 대응한 뒤 식을 구성하는 확장 후보."
+      }
+    ],
+    "limitations": [
+      "All eight activity blocks are grounded in visually reviewed pages; answer keys were not validated.",
+      "Difficulty bands are conditional research judgments pending teacher review.",
+      "Official 1–2 grade-band guidance discusses making and solving addition/subtraction problems, but item-level minimum grade assignments remain unconfirmed.",
+      "Soma rows 60 and 89 are held back because their actions differ; no exact cross-textbook equivalence is claimed.",
+      "Editorial area-order numbers are semantic comparison candidates, never approved common type IDs or learning-order numbers."
+    ]
+  },
+  "answerValidation": {
+    "studentActivityBlocksValidated": 8,
+    "modeledExamplesExcluded": 0,
+    "answerKeyPdfPages": [
+      24,
+      25,
+      26,
+      27
+    ],
+    "sameEditionAnswerPdfSha256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "method": "Same-edition answer-key pages visually compared; local Apple Vision OCR used only as assistive transcription.",
+    "preservedBodyPages": [
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61
+    ],
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true,
+    "openEndedResponsePolicy": "For problem-construction items, answer-key examples are non-exclusive; valid alternative questions remain acceptable."
+  }
+}
