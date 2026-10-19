@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018k`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018k/20261018l/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018l`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018l/20261018m/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -359,6 +359,12 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - **원본을 바로잡은 곳**(`sourceDiscrepancy`, 숫자 없이): 28쪽 03 물음 글의 감점이 표와 달라 표대로(물음 글대로면 자연수 답이 없다, DB `sourceNote`) · 39쪽 02 마지막 문장의 「대나무 죽순」을 「나무」로 · 37쪽 가게 이름에 교재 회사 이름이 들어 있어 「어느 마트」로(회사 이름 금지 규칙).
   - 교사용 답이 틀린 곳은 없다. **옛 보류 3건(32쪽 11 · 38쪽 03~04 · 40쪽 03)의 「교사용 표시와 다름」 판정은 틀렸다** — 다시 계산하면 교사용 답과 같다.
   - 32·38·40쪽 보류 삭제(7권 보류 18 → 15). DB `book-07` 427키 → 438키, sha 앞 8자리 `aa5598ab`. 캐시 꼬리표 `20261018k`.
+- **7권 묶음 4(슬라이드 45~50 활동 02 가로수 심기(닫힌 도형), 21문항·답 칸 35, 2026-10-19)**: 패치 `tools/golden-bell-book07/patch-book07-batch4.mjs`(정답 없음).
+  - 45~50쪽(1. 바둑돌 · 2. 닫힌 도형의 둘레 · 3. 호수)은 한 활동이라 단원 2 `closed-loop-planting`을 「가로수 심기(닫힌 도형)」 21문항으로 다시 짰다(DB `/lessons/2/original/` 교체). 보류였던 45·46쪽 바둑돌 11문항이 들어갔다.
+  - **옛 그림이 답을 그리고 있었다**: `polygon-points`는 변마다 나무를 다 그려 개수가 보였고, 48쪽 02 그림은 가로등 수를 적었다. 옛 문장도 「물음의 수」「호수 수」처럼 원본 조건이 빠져 있었다.
+  - 새 그림 `source-stone-polygon`(정삼각형·정사각형 둘레의 바둑돌, 빈칸 가·나…는 **빈칸 채우기 문항에만** — 다른 문항은 `blanks:false`) · `source-plot`(닫힌 도형 모양 땅, 꼭짓점과 첫 간격 자리에만 나무) · `source-lake`(둥근 호수와 위쪽 몇 개의 가로등·나무, 사이의 휴지통·의자·나무).
+  - 인쇄: 빈칸 없는 바둑돌 그림은 SVG 너비가 정해지지 않아 높이가 0이 되어 사라졌다 → 인쇄에서 고정 높이(`height:18mm`)와 높이 제한 예외.
+  - 교사용 답이 틀린 곳·원본 글 오류는 없다. 45·46쪽 보류 삭제(7권 보류 15 → 13). DB `book-07` 438키 → 465키, sha 앞 8자리 `977a83c3`. 캐시 꼬리표 `20261018l`.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

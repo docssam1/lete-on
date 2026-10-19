@@ -778,6 +778,65 @@ function sourceSwap(visual) {
   return `<div class="b5-src-swap" role="img" aria-label="${escapeHtml(`${name[visual.give.kind]} ${visual.give.count}개를 ${name[visual.get.kind]} ${visual.get.count}개로 바꾸는 그림`)}">${group(visual.give)}<b>→</b>${group(visual.get)}</div>`;
 }
 
+// 7권 45~46쪽: 바둑돌을 정삼각형·정사각형 둘레에 늘어놓은 단계. sides = 한 변의 돌 수들, 그림 아래 빈칸(가·나…)+「개」.
+function sourceStonePolygon(visual) {
+  const g = 24, r = 9;
+  const figure = (n) => {
+    const pts = new Map(), add = (x, y) => pts.set(`${x.toFixed(1)},${y.toFixed(1)}`, [x, y]);
+    let w, h;
+    if (visual.shape === "triangle") {
+      h = (n - 1) * g * 0.866; w = (n - 1) * g;
+      const A = [w / 2, 0], B = [0, h], C = [w, h];
+      for (const [P, Q] of [[A, B], [B, C], [C, A]]) for (let k = 0; k < n; k += 1) add(P[0] + (Q[0] - P[0]) * k / (n - 1), P[1] + (Q[1] - P[1]) * k / (n - 1));
+    } else {
+      w = h = (n - 1) * g;
+      for (let k = 0; k < n; k += 1) { add(k * g, 0); add(k * g, h); add(0, k * g); add(w, k * g); }
+    }
+    return { w: w + 2 * r, h: h + 2 * r, body: [...pts.values()].map(([x, y]) => `<circle cx="${(x + r).toFixed(1)}" cy="${(y + r).toFixed(1)}" r="${r}"/>`).join("") };
+  };
+  const figs = visual.sides.map(figure), H = Math.max(...figs.map((f) => f.h));
+  const items = figs.map((f, k) => `<figure><svg viewBox="-3 ${-(H - f.h) - 3} ${f.w + 6} ${H + 6}" style="width:${Math.round((f.w + 6) * 1.1)}px">${f.body}</svg>${visual.blanks === false ? "" : `<figcaption><i class="blank">${BLANK_LABELS[k]}</i> 개</figcaption>`}</figure>`).join("");
+  return `<div class="b5-src-stonepoly" role="img" aria-label="${escapeHtml(`바둑돌을 ${visual.shape === "triangle" ? "정삼각형" : "정사각형"} 둘레에 한 변에 ${visual.sides.join(", ")}개씩 놓은 그림${visual.blanks === false ? "" : ", 아래에 빈칸"}`)}">${items}</div>`;
+}
+
+// 7권 47쪽: 닫힌 도형 모양의 땅. shape: square|rect|triangle, lengths(변 이름표), gap(간격 이름표). 꼭짓점과 첫 간격 자리에만 나무를 그린다(원본 그림처럼).
+const TREE_ICON = (x, y) => `<g class="tree" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><rect x="-1.6" y="-4" width="3.2" height="8"/><path d="M0 -20 L7 -8 L4 -8 L9 -1 L-9 -1 L-4 -8 L-7 -8 Z"/></g>`;
+function sourcePlot(visual) {
+  const corner = visual.shape === "triangle" ? [[80, 12], [12, 128], [148, 128]] : visual.shape === "rect" ? [[14, 18], [166, 18], [166, 104], [14, 104]] : [[14, 14], [134, 14], [134, 134], [14, 134]];
+  const [A, B] = visual.shape === "triangle" ? [corner[0], corner[2]] : [corner[0], corner[1]];
+  const step = visual.shape === "triangle" ? 0.2 : visual.shape === "rect" ? 4 / 28 : 0.2;
+  const P = [A[0] + (B[0] - A[0]) * step, A[1] + (B[1] - A[1]) * step];
+  const outline = `<polygon class="edge" points="${corner.map((c) => c.join(",")).join(" ")}"/>`;
+  const trees = [...corner, P].map(([x, y]) => TREE_ICON(x, y)).join("");
+  const W = Math.max(...corner.map((c) => c[0])) + 40, H = Math.max(...corner.map((c) => c[1])) + 22;
+  const mid = (a, b, dx, dy) => [(a[0] + b[0]) / 2 + dx, (a[1] + b[1]) / 2 + dy];
+  const labels = visual.shape === "triangle" ? [[mid(corner[1], corner[2], 0, 16), visual.lengths[0]]]
+    : visual.shape === "rect" ? [[mid(corner[0], corner[1], 30, -6), visual.lengths[0]], [mid(corner[3], corner[0], -2, 22), visual.lengths[1]]]
+      : [[mid(corner[0], corner[1], 26, -6), visual.lengths[0]]];
+  const gapAt = mid(A, P, visual.shape === "triangle" ? 18 : 2, visual.shape === "triangle" ? 2 : 16);
+  const text = [...labels, [gapAt, visual.gap]].map(([[x, y], t]) => `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}">${escapeHtml(t)}</text>`).join("");
+  return `<div class="b5-src-plot" role="img" aria-label="${escapeHtml(`${visual.shape === "triangle" ? "정삼각형" : visual.shape === "rect" ? "직사각형" : "정사각형"} 모양의 땅, 변 ${visual.lengths.join("·")}, 간격 ${visual.gap}`)}"><svg viewBox="-12 -26 ${W + 14} ${H + 30}" style="width:min(100%,250px)">${outline}${trees}${text}</svg></div>`;
+}
+
+// 7권 48~50쪽: 둥근 호수와 둘레의 가로등·나무(위쪽 몇 개만), 사이에 놓은 것(between: bin·bench·bench2·tree2). gap = 간격 이름표.
+function sourceLake(visual) {
+  const cx = 100, cy = 96, R = 62;
+  const at = (deg, rr = R) => [cx + rr * Math.sin(deg * Math.PI / 180), cy - rr * Math.cos(deg * Math.PI / 180)];
+  const lamp = ([x, y]) => `<g class="lamp" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><rect x="-1.4" y="-16" width="2.8" height="16"/><circle cx="0" cy="-17" r="3.4"/><rect class="foot" x="-4" y="-1.5" width="8" height="3" rx="1"/></g>`;
+  const thing = visual.marker === "tree" ? (p) => TREE_ICON(p[0], p[1] - 4) : lamp;
+  const angles = visual.marker === "tree" ? [-56, -28, 0, 28, 56] : [-56, 0, 28, 56];
+  const marks = angles.map((a) => thing(at(a))).join("");
+  const between = { bin: (p) => `<rect class="bin" x="${(p[0] - 3.5).toFixed(1)}" y="${(p[1] - 8).toFixed(1)}" width="7" height="8" rx="1"/>`,
+    bench: (p) => `<rect class="bench" x="${(p[0] - 6).toFixed(1)}" y="${(p[1] - 4).toFixed(1)}" width="12" height="4" rx="1"/>`,
+    bench2: (p) => `<rect class="bench" x="${(p[0] - 11).toFixed(1)}" y="${(p[1] - 4).toFixed(1)}" width="9" height="4" rx="1"/><rect class="bench" x="${(p[0] + 2).toFixed(1)}" y="${(p[1] - 4).toFixed(1)}" width="9" height="4" rx="1"/>`,
+    tree2: (p) => TREE_ICON(p[0] - 5, p[1] - 3) + TREE_ICON(p[0] + 5, p[1] - 3) }[visual.between];
+  const extra = between ? [-28, 14, 42].map((a) => between(at(a, R + 2))).join("") : "";
+  const lab = at(14, R + 40);
+  const arc = `<path class="gaparc" d="M${at(3, R + 27).map((v) => v.toFixed(1)).join(" ")} A ${R + 27} ${R + 27} 0 0 1 ${at(25, R + 27).map((v) => v.toFixed(1)).join(" ")}"/><text x="${lab[0].toFixed(1)}" y="${(lab[1] + 4).toFixed(1)}">${escapeHtml(visual.gap)}</text>`;
+  const name = visual.marker === "tree" ? "나무" : "가로등";
+  return `<div class="b5-src-lake" role="img" aria-label="${escapeHtml(`둥근 호수 둘레의 ${name}, 간격 ${visual.gap}`)}"><svg viewBox="0 -8 220 176" style="width:min(100%,280px)"><circle class="water" cx="${cx}" cy="${cy}" r="${R}"/>${extra}${marks}${arc}</svg></div>`;
+}
+
 // 7권: 단계 그림 여러 개를 한 줄로(휴대폰에서는 줄바꿈). figs = [{w, h, body}], marks면 위에 ①②③… 번호.
 const STAGE_MARKS = ["①", "②", "③", "④", "⑤", "⑥"];
 function stageRow(cls, label, figs, marks) {
@@ -1183,6 +1242,9 @@ export function book05Markup(visual) {
     case "source-well": return sourceWell(visual);
     case "source-pond": return sourcePond(visual);
     case "source-swap": return sourceSwap(visual);
+    case "source-stone-polygon": return sourceStonePolygon(visual);
+    case "source-plot": return sourcePlot(visual);
+    case "source-lake": return sourceLake(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);
