@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v75",
+  "checkpoint": "v104",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -20,20 +20,20 @@
     "minimumCurriculumAssignments": 0,
     "confirmedSchoolGrades": 0,
     "approvedDifficultyLevels": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 9,
     "difficultyMeaning": "통일 5단계 기준의 조건부 연구 밴드이며 교사 검토 전이다.",
     "gradeMeaning": "최소 교과수준은 10개 활동 모두 미확정이다. 소마 진도 행은 진행 맥락이며 문항 최소 학년이 아니다.",
     "numberMeaning": "영역별 편성용 기존 번호를 의미 비교에만 사용하며 난이도·학습 순서·확정 공통 유형 번호로 보지 않는다."
   },
   "aggregate": {
-    "ontologyNodes": 1568,
-    "ontologyRelations": 2889,
-    "skillActionCandidates": 393,
-    "candidateEvidenceLinkedActivities": 787,
-    "activityReviewQueue": 65,
-    "activitySkillRelations": 838,
-    "conditionalDifficultyBands": 758,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 294,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0
@@ -47,7 +47,7 @@
     "conditionalDifficultyBands": 10,
     "unresolvedMinimumCurriculumCandidates": 10,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 9,
     "familyMembershipRelations": 3,
     "relatedButDistinctRelations": 3,
     "spiralRelationCandidates": 2,
@@ -146,7 +146,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false,
+      "answerValidated": true,
       "numberedTypeLinksHeldAsCandidates": true
     },
     {
@@ -161,7 +161,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false,
+      "answerValidated": true,
       "numberedTypeLinksHeldAsCandidates": true
     },
     {
@@ -176,7 +176,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false,
+      "answerValidated": true,
       "numberedTypeLinksHeldAsCandidates": true
     },
     {
@@ -191,7 +191,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false,
+      "answerValidated": true,
       "numberedTypeLinksHeldAsCandidates": true
     },
     {
@@ -206,7 +206,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false,
+      "answerValidated": true,
       "numberedTypeLinksHeldAsCandidates": true
     },
     {
@@ -221,7 +221,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false,
+      "answerValidated": true,
       "numberedTypeLinksHeldAsCandidates": true
     },
     {
@@ -236,7 +236,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false,
+      "answerValidated": true,
       "numberedTypeLinksHeldAsCandidates": true
     },
     {
@@ -251,7 +251,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false,
+      "answerValidated": true,
       "numberedTypeLinksHeldAsCandidates": true
     },
     {
@@ -266,7 +266,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
       "prerequisiteContentOnly": true,
-      "answerValidated": false,
+      "answerValidated": true,
       "numberedTypeLinksHeldAsCandidates": true
     }
   ],
@@ -444,6 +444,34 @@
       "Editorial area-order numbers are not approved common skill IDs or learning-sequence numbers.",
       "p.43 obstacle-to-edge mapping is unresolved; its item-level link to 05-010 is held back.",
       "Soma row 48 is progression context only; no exact common-type equivalence is claimed."
+    ]
+  },
+  "answerValidation": {
+    "studentResponseTasksValidated": 9,
+    "modeledExamplesExcluded": 1,
+    "answerKeyPdfPages": [
+      16,
+      17,
+      18,
+      19
+    ],
+    "sameEditionAnswerPdfSha256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "method": "Same-edition answer-key pages visually compared; local Apple Vision OCR used only as assistive transcription.",
+    "preservedBodyPages": [
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+    ],
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true,
+    "modeledExampleActivityNumbers": [
+      1
     ]
   }
 }
