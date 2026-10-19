@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-skill-map-supplement/1",
-  "checkpoint": "v60",
+  "checkpoint": "v84",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre B",
@@ -12,7 +12,7 @@
     ],
     "sourceActivityBlocks": 11,
     "visuallyReviewedPages": 7,
-    "answerValidated": false
+    "answerValidated": true
   },
   "aggregate": {
     "ontologyNodes": 1469,
@@ -20,8 +20,8 @@
     "skillActionCandidates": 317,
     "activitiesWithSkillCandidateEvidence": 629,
     "activitiesInReviewQueue": 224,
-    "conditionalDifficultyCandidates": 638,
-    "validatedAnswers": 42,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 67,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0,
@@ -40,10 +40,11 @@
     "minimumCurriculumLevelCandidates": 11,
     "unresolvedMinimumCurriculumCandidates": 11,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 11,
     "directSomaCrossReferences": 0,
     "SomaCrossReferencesAwaitingReview": 11,
-    "catalogRelatedButDistinctCandidates": 3
+    "catalogRelatedButDistinctCandidates": 3,
+    "conditionalDifficultyCandidates": 11
   },
   "areaOrderCandidates": [
     {
@@ -157,15 +158,9 @@
     ]
   },
   "curriculum": {
-    "status": "content-context-candidates-only",
-    "candidateActivities": 11,
-    "unresolvedActivities": 11,
-    "confirmedAssignments": 0,
-    "contexts": [
-      "초등 1–2학년군 쌓기나무 모양 구성 맥락",
-      "초등 5–6학년군 여러 시점 표현에서 입체 구조 추론 맥락"
-    ],
-    "note": "최소 교과수준은 문항별·교사 검토 전 후보이며 난이도와 별도 관리한다."
+    "minimumGradeAssignments": 0,
+    "status": "unassigned",
+    "note": "아이템별 요구 행동과 선수 수·연산을 더 확인하기 전에는 교재 권수나 분류 후보로 최소 학년을 추정하지 않음."
   },
   "taxonomy": {
     "familyCandidates": [
@@ -217,5 +212,17 @@
     ],
     "teacherApprovedEquivalences": 0
   },
-  "privacy": "공개 파일에는 활동 식별자, OCR 원문, 정답, 출처 이미지 해시, 로컬 경로를 넣지 않았다. 유형·난이도·최소 교과수준·계통 관계는 승인 전 후보다."
+  "privacy": "공개 파일에는 활동 식별자, OCR 원문, 정답, 출처 이미지 해시, 로컬 경로를 넣지 않았다. 유형·난이도·최소 교과수준·계통 관계는 승인 전 후보다. Exact answer values and item-level answer notes remain in the private validation sidecar. Exact answer values and item-level answer notes remain in the private validation sidecar.",
+  "answerValidation": {
+    "activitiesValidated": 11,
+    "sourceAnswerKeyPdfPages": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "validationMethod": "rendered answer-key page visual cross-check",
+    "multipleValidSolutionsPreserved": true,
+    "publicAnswerValuesOmitted": true
+  }
 }
