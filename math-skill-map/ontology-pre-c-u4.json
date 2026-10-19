@@ -93,7 +93,6 @@
   ],
   "activities": [
     {
-      "id": "1031-unit4-prec-block-001",
       "printedPage": 37,
       "label": "달력 속 원리 탐구 2",
       "observedAction": "달력의 14일을 중심으로 같은 색의 양쪽 날짜를 더했을 때 합이 같은 이유를 설명한다.",
@@ -108,10 +107,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 1
     },
     {
-      "id": "1031-unit4-prec-block-002",
       "printedPage": 37,
       "label": "확인 1",
       "observedAction": "13일의 양쪽으로 같은 크기만큼 떨어진 두 수가 아닌 날짜쌍을 찾는다.",
@@ -126,10 +125,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 2
     },
     {
-      "id": "1031-unit4-prec-block-003",
       "printedPage": 38,
       "label": "대표문제 1",
       "observedAction": "8월 달력 조각에서 같은 달의 목요일 날짜를 모두 찾는다.",
@@ -144,10 +143,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 3
     },
     {
-      "id": "1031-unit4-prec-block-004",
       "printedPage": 38,
       "label": "적용하기 1-1",
       "observedAction": "찢긴 달력 조각의 목요일 3·10일을 기준으로 그 달 월요일 날짜를 모두 쓴다.",
@@ -162,10 +161,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 4
     },
     {
-      "id": "1031-unit4-prec-block-005",
       "printedPage": 39,
       "label": "대표문제 2",
       "observedAction": "수요일 4일에서 시작하는 계단형 달력 조각의 빈 날짜를 채운다.",
@@ -180,10 +179,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 5
     },
     {
-      "id": "1031-unit4-prec-block-006",
       "printedPage": 39,
       "label": "적용하기 2-1",
       "observedAction": "토요일 3·10일이 보이는 역계단 달력 조각의 빈 날짜를 순서대로 채운다.",
@@ -198,10 +197,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 6
     },
     {
-      "id": "1031-unit4-prec-block-007",
       "printedPage": 40,
       "label": "연습문제 1",
       "observedAction": "같은 요일의 날짜를 7일 간격으로 이어 빈칸을 채운다.",
@@ -216,10 +215,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 7
     },
     {
-      "id": "1031-unit4-prec-block-008",
       "printedPage": 40,
       "label": "연습문제 2",
       "observedAction": "월요일 7일이 보이는 찢긴 달력 조각에서 토요일 날짜를 모두 찾는다.",
@@ -234,10 +233,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 8
     },
     {
-      "id": "1031-unit4-prec-block-009",
       "printedPage": 41,
       "label": "연습문제 3",
       "observedAction": "요일이 없는 1–31일 달력에서 첫째·둘째 화요일 날짜의 합이 17이라는 조건으로 요일 머리글을 채운다.",
@@ -252,10 +251,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 9
     },
     {
-      "id": "1031-unit4-prec-block-010",
       "printedPage": 41,
       "label": "연습문제 4",
       "observedAction": "날짜가 없는 대각선 달력 조각에서 색칠된 두 칸에 들어갈 날짜의 차를 구한다.",
@@ -270,10 +269,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 10
     },
     {
-      "id": "1031-unit4-prec-block-011",
       "printedPage": 42,
       "label": "심화문제 1",
       "observedAction": "9일 목요일 등 주어진 날짜·요일 조건을 이용해 다른 날짜의 요일과 8일 전 요일을 찾는다.",
@@ -293,10 +292,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 11
     },
     {
-      "id": "1031-unit4-prec-block-012",
       "printedPage": 42,
       "label": "심화문제 2",
       "observedAction": "찢긴 달력의 둘째 일요일 날짜와 셋째 금요일 날짜를 더한다.",
@@ -312,10 +311,10 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 12
     },
     {
-      "id": "1031-unit4-prec-block-013",
       "printedPage": 43,
       "label": "도전문제 3",
       "observedAction": "달력의 여러 2×2 묶음에서 네 날짜를 두 수씩 묶어 합이 같게 하고, 그 합이 12일 때 가장 큰 날짜를 역으로 찾는다.",
@@ -330,7 +329,8 @@
         "candidate": "[2수03-09] 1–2학년군 시간 단위·달력 관계",
         "note": "달력 내용 맥락 후보이며 이 활동의 최소 학년 배정은 아님."
       },
-      "answerValidation": "not-validated"
+      "answerValidation": "not-validated",
+      "activityNumber": 13
     }
   ],
   "difficulty": {
@@ -339,61 +339,61 @@
     "teacherAdoptionStatus": "pending",
     "bandsByActivity": [
       {
-        "activityId": "1031-unit4-prec-block-001",
-        "conditionalDifficultyBand": 3
+        "conditionalDifficultyBand": 3,
+        "activityNumber": 1
       },
       {
-        "activityId": "1031-unit4-prec-block-002",
-        "conditionalDifficultyBand": 2
+        "conditionalDifficultyBand": 2,
+        "activityNumber": 2
       },
       {
-        "activityId": "1031-unit4-prec-block-003",
-        "conditionalDifficultyBand": 2
+        "conditionalDifficultyBand": 2,
+        "activityNumber": 3
       },
       {
-        "activityId": "1031-unit4-prec-block-004",
-        "conditionalDifficultyBand": 3
+        "conditionalDifficultyBand": 3,
+        "activityNumber": 4
       },
       {
-        "activityId": "1031-unit4-prec-block-005",
-        "conditionalDifficultyBand": 3
+        "conditionalDifficultyBand": 3,
+        "activityNumber": 5
       },
       {
-        "activityId": "1031-unit4-prec-block-006",
-        "conditionalDifficultyBand": 3
+        "conditionalDifficultyBand": 3,
+        "activityNumber": 6
       },
       {
-        "activityId": "1031-unit4-prec-block-007",
-        "conditionalDifficultyBand": 3
+        "conditionalDifficultyBand": 3,
+        "activityNumber": 7
       },
       {
-        "activityId": "1031-unit4-prec-block-008",
-        "conditionalDifficultyBand": 3
+        "conditionalDifficultyBand": 3,
+        "activityNumber": 8
       },
       {
-        "activityId": "1031-unit4-prec-block-009",
-        "conditionalDifficultyBand": 4
+        "conditionalDifficultyBand": 4,
+        "activityNumber": 9
       },
       {
-        "activityId": "1031-unit4-prec-block-010",
-        "conditionalDifficultyBand": 2
+        "conditionalDifficultyBand": 2,
+        "activityNumber": 10
       },
       {
-        "activityId": "1031-unit4-prec-block-011",
         "conditionalDifficultyBand": 4,
         "subitemBands": [
           2,
           3,
           4
-        ]
+        ],
+        "activityNumber": 11
       },
       {
-        "activityId": "1031-unit4-prec-block-012",
-        "conditionalDifficultyBand": 3
+        "conditionalDifficultyBand": 3,
+        "activityNumber": 12
       },
       {
-        "activityId": "1031-unit4-prec-block-013",
-        "conditionalDifficultyBand": 4
+        "conditionalDifficultyBand": 4,
+        "activityNumber": 13
       }
     ],
     "note": "문항 구조에 기반한 조건부 난이도 후보이며 교사 채택 전이다. 11번의 세 소문항 밴드 [2,3,4]를 보존한다."
@@ -573,7 +573,7 @@
   },
   "privacy": {
     "publicSafe": true,
-    "excluded": "answer keys, full source text, scanned page images, private Drive IDs",
-    "note": "no answer content or source scan included"
+    "excluded": "source activity identifiers, OCR text, answer keys, scanned page images, source hashes and private Drive IDs/paths",
+    "note": "Public labels and action summaries are review candidates; no raw page text or answer content is included."
   }
 }
