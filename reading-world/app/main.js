@@ -1430,9 +1430,10 @@ function render(){if(!currentStudent){clearTownFit();if(window.TownGame)TownGame
  if(!(atTown&&townView==='game')){clearTownFit();if(window.TownGame)TownGame.destroy();}
  if(atTown){if(townView==='game'&&gameAvailable()){app.innerHTML=gameTownShell();bindGameTown();return;}if(townView==='screen'&&sqAvailable()){app.innerHTML=screenQuestScreen();bind();return;}if(townView==='notice'){app.innerHTML=noticeBoardScreen();bind();return;}if(townView==='diagnostic'){app.innerHTML=diagnosticScreen();bind();return;}if(townView==='parent'){app.innerHTML=parentDashboard();bind();return;}if(townView==='library'){app.innerHTML=libraryScreen();bind();bindLibraryAudio();bindLibraryPdf();return;}if(townView==='writing'){app.innerHTML=writingScreen();bind();bindWritingInputs();return;}app.innerHTML=town();bind();return;}let content=st.view==='home'?home():st.view==='words'?words():st.view==='originalRead'&&!hasOriginalPassage()?missingOriginal():st.view==='questions'&&!hasOriginal()?missingOriginal():st.view==='originalRead'?originalRead():st.view==='questions'?questionScreen('original'):st.view==='questionOriginalExtra'?questionScreen('originalExtra'):st.view==='questionSimilar'?questionScreen('similar'):st.view==='review'?questionScreen('review'):st.view==='coach'?coachScreen():st.view==='originalExtra'?originalExtra():st.view==='similar'?extra():report();app.innerHTML=`<div class="shell">${nav()}<main class="main">${top()}${flow()}${content}</main></div>${modal()}`;bind();}
 function makeGameChoices(){const w=L.words[st.gameIndex];return [w[1],...L.words.filter((_,i)=>i!==st.gameIndex).sort(()=>Math.random()-.5).slice(0,3).map(x=>x[1])].sort(()=>Math.random()-.5)}
-const AUDIO_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/audio';
-const LIBRARY_IMG_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/library-images';
+// 공개 파일(음성·그림) 저장소 주소 — 저장소를 옮기면(Supabase → Cloudflare R2) 이 한 줄만 바꾼다.
 const STORAGE_PUBLIC_BASE='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public';
+const AUDIO_BASE=`${STORAGE_PUBLIC_BASE}/audio`;
+const LIBRARY_IMG_BASE=`${STORAGE_PUBLIC_BASE}/library-images`;
 // Writing Village premium feedback — Edge Function endpoint. The anon key below is
 // the same public client key already shipped in store.js; the LLM API key itself
 // lives only in the Edge Function's server-side secret.

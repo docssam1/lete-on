@@ -278,6 +278,8 @@ after`로 갈아끼운다. 그래서 Supabase stem에는 ASCII 그림을 넣지 
 
 - **URL**: `https://fgahqumaldheqettmvqg.supabase.co`
 - **Anon key**: `eyJhbGci...RAqs` (store.js에 있음, 공개 가능)
+- **요금제(2026-10-19 점검)**: 조직은 Pro였다. 실사용은 무료 한도 안(파일 저장 2개 프로젝트 합 약 777MB/1GB, DB 28MB·44MB/500MB, 요청 하루 약 2,600건 — 대부분 hs_accounts·mock_results 읽기와 로그인 확인) → 원장이 대시보드 Usage에서 월 Egress(5GB) 확인 후 Free로 전환하기로 함. 무료 요금제는 자동 백업이 없어 비공개 정답 10권을 원장에게 파일로 넘겼다(저장소에 넣지 말 것).
+- **음성·그림을 R2로 옮길 때 바꿀 곳(한 줄씩)**: `reading-world/app/main.js` `STORAGE_PUBLIC_BASE` · `number_magic/app/main.js` `NM_AUDIO_BASE`(tts-map.js 주소는 생성기가 다시 읽으므로 그대로 두고 재생할 때 앞부분만 바꿔 끼움) · `reading-world/share/sophie-stories/reader.js` `AUDIO_BASE` · `reading-world/alpha-prep/app.js` `PEER_AUDIO_BASE` · `science-lab/v2/docssam.js`·`science-lab/intro/intro.js` `SUPA` · `w/index.html`(nm-worksheets). 복사 작업: `.github/workflows/migrate-storage-to-r2.yml`(손으로 실행, 버킷마다 한 번, R2 키는 `버킷이름/경로` — R2 공개 주소가 `…/storage/v1/object/public` 자리를 그대로 대신한다). 필요한 GitHub 비밀값 `R2_ACCOUNT_ID`·`R2_ACCESS_KEY_ID`·`R2_SECRET_ACCESS_KEY`.
 - **테이블 1: `readers`** — 학생 진행상황 저장 (student_id, name, book_id, lesson_id, data)
   - ⚠️ `remoteUpsert()`에 `book_id: 'cars-level-b'`, `lesson_id: 'lesson1'` 하드코딩 버그 있음 (낮은 우선순위)
 - **테이블 2: `lesson_content`** — 라이선스 원본 지문/문항 (절대 git에 올리면 안 됨)

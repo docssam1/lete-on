@@ -216,8 +216,19 @@
     loadAudio(story, segments);
   }
 
+  // Narration is regenerated only when the sentences change (scripts/generate-share-reader-audio.js),
+  // so the version comes from the text: the browser and CDN can cache until the story changes.
+  // Bump NARRATION_VOICE_VERSION when the voice or speaking rate changes.
+  const NARRATION_VOICE_VERSION = '1';
+  function narrationVersion(segments) {
+    let hash = 0x811c9dc5;
+    const text = `${NARRATION_VOICE_VERSION}|${segments.map((segment) => segment.text).join('\n')}`;
+    for (let i = 0; i < text.length; i += 1) hash = Math.imul(hash ^ text.charCodeAt(i), 0x01000193) >>> 0;
+    return hash.toString(36);
+  }
+
   async function loadAudio(story, segments) {
-    const version = Date.now();
+    const version = narrationVersion(segments);
     els.audio.src = `${AUDIO_BASE}/${story.id}.mp3?v=${version}`;
     els.audio.load();
     state.timings = [];
@@ -225,7 +236,7 @@
     els.status.textContent = 'Loading narration…';
 
     try {
-      const response = await fetch(`${AUDIO_BASE}/${story.id}.timings.json?v=${version}`, { cache: 'no-store' });
+      const response = await fetch(`${AUDIO_BASE}/${story.id}.timings.json?v=${version}`);
       if (!response.ok) throw new Error(`Timing file ${response.status}`);
       const timingData = await response.json();
       if (!Array.isArray(timingData.segments) || timingData.segments.length !== segments.length) {
