@@ -16,7 +16,7 @@
   },
   "aggregate": {
     "ontologyNodes": 1492,
-    "ontologyRelations": 2642,
+    "ontologyRelations": 2645,
     "skillActionCandidates": 337,
     "activitiesWithSkillCandidateEvidence": 685,
     "activitiesInReviewQueue": 168,
