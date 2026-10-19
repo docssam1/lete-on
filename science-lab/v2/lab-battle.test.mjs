@@ -4,6 +4,8 @@ import { LAB_BATTLE_ROUNDS, battleVerdict, matchesBattleTarget, validBattleRow }
 import { freezeModel } from './lab-freeze.js';
 import { hillModel } from './lab-hill.js';
 import { pondResult } from './lab-pond3d.js';
+import { seaModel } from '../scenes/sealevel-model.js';
+import { glitterModel, RULES as GLITTER_RULES } from '../scenes/glitter-model.js';
 
 test('물: 같은 물을 얼려도 무게는 같고, 높이는 달라진다', () => {
   const rounds = LAB_BATTLE_ROUNDS['s41-u02'];
@@ -39,6 +41,15 @@ test('연못: 각 팀의 식물·장소 결과를 기존 서식 모형으로 판
     assert.deepEqual(battleVerdict('s42-u01', round, rows, answers).ok, [true, true]);
     assert.deepEqual(battleVerdict('s42-u01', round, rows, answers.map(value => 1 - value)).ok, [false, false]);
   }
+});
+
+test('해안 마을·반짝이 손: 3D 실험 기록(모형 값)으로 두 팀을 판정한다', () => {
+  const sea = LAB_BATTLE_ROUNDS['c22-s42-u04'].map(round => round.targets.map(t => ({ ...seaModel(t.level, t.wall === '방파제 있음'), level: t.level })));
+  assert.deepEqual(LAB_BATTLE_ROUNDS['c22-s42-u04'].map((round, i) => battleVerdict('c22-s42-u04', round, sea[i], [1, 1]).answers[0]), [2, 0, 1], '4 cm가 더 많이 · 방파제 없는 쪽이 더 많이 · 넘치면 같음');
+  const gl = LAB_BATTLE_ROUNDS['c22-s32-u04'].map(round => round.targets.map(t => glitterModel(t.round, GLITTER_RULES.indexOf(t.rule))));
+  assert.deepEqual(LAB_BATTLE_ROUNDS['c22-s32-u04'].map((round, i) => battleVerdict('c22-s32-u04', round, gl[i], [1, 1]).answers[0]), [0, 2, 1], '안 씻으면 더 많이 · 차례가 늘면 더 많이 · 씻으면 그대로');
+  assert.equal(validBattleRow('c22-s42-u04', { ...sea[0][0], n: 3 }), false, '모형과 다른 수는 받지 않는다');
+  assert.equal(validBattleRow('c22-s32-u04', { ...gl[0][0], rule: '물로만 씻기' }), false);
 });
 
 test('빈 기록·엉뚱한 조건·비정상 수치·확정하지 않은 예상은 오답으로 처리하지 않는다', () => {

@@ -2,6 +2,7 @@
 //  teach(가르치기·강사용): 클릭/→/스페이스로 빈칸 답이 차례로 열리고, N으로 강사 발문 노트, F로 전체 화면.
 //  self (스스로 공부하기·학생용): 내 생각을 쓰고 '예시 답 보기', 확인 문제는 눌러서 바로 채점.
 import { judgeText, judgeShort } from './judge.js';
+import { loadJudge } from './think-merge.js';
 import { mountMagnetBattle } from './magnet-battle.js';
 import { mountLabBattle } from './lab-battle.js';
 import { buildLifeSlides } from './deck-life.js';
@@ -9,6 +10,8 @@ import {contentUnitOfItem} from './content-unit.js';
 import { buildForceSlides } from './deck-force.js';
 import {buildInquirySlides} from './deck-inquiry.js';
 import { buildAnimalSlides } from './deck-animal.js';
+// 확인 문제 키 = 유사문항의 「세트-번호」(원문 짝) 또는 문항 id(창작 문항). Daily Test(v2.js pageDaily)와 같은 규칙.
+const pickQ = (pool, k) => pool.find((s) => s.id === k) || pool.find((s) => s.sourceRef?.of && `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const NUM = ['①', '②', '③', '④', '⑤', '⑥'];
 const KEY = 'sciLab.deck';
@@ -17,7 +20,7 @@ const memo = { all() { try { return JSON.parse(localStorage.getItem(KEY)) || {};
 let notesOn = true;
 // 단원 판정표 — 없으면 null(그 단원의 쓰기 답은 선생님 확인으로)
 const TABLES = new Map();
-const judgeTable = (u) => { if (!TABLES.has(u)) TABLES.set(u, import(`../data/units/${u}.judge.js`).then((m) => m.judge).catch(() => null)); return TABLES.get(u); };
+const judgeTable = (u) => { if (!TABLES.has(u)) TABLES.set(u, loadJudge(u)); return TABLES.get(u); };
 const MIC = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
 export function buildSlides(ch, art, plan, similar, mode, ix = null, media = null) {
@@ -73,7 +76,9 @@ export function buildSlides(ch, art, plan, similar, mode, ix = null, media = nul
   // 실험 순서를 3D 실험실 옆에(원장: "실험 순서와 3D 실험실이 옆에 나와야") — 누르면 그 단계가 크게, 가르치기는 순서를 짚으며 설명
   const stepsAside = `<aside class="dk-stepside"><h3>실험 순서</h3><ol>${ch.steps.map((st, j) => `<li><button type="button" class="dk-stepi${j ? '' : ' on'}" data-st="${j}"><b>${j + 1}</b><span class="dk-art mini">${art[st.art] || ''}</span><span class="dk-stept">${esc(st.text)}</span></button></li>`).join('')}</ol></aside>`;
   add('lab', 'lab', `3D 실험실 · ${esc(ch.labTitle || '조건을 바꿔 직접 해 보기')}`, `<div class="dk-labwrap">${stepsAside}<div class="dk-3d" data-mount="lab"></div></div>`, { say: 'lab', mount: 'lab', layout: 'media', kind: 'lab' });
-  add('wonder', teach ? 'lab' : 'extend', 'Q. 이런 경우는?', `<p class="dk-q">${esc(ch.wonder.q)}</p>${ans(ch.wonder.a, 'wonder')}`, { say: 'wonder', kind: 'write' });
+  // wonderLate: 「이런 경우는?」이 같은 실험의 다른 조건이 아니라 새 상황에 개념을 적용하는 질문이면, 가르치기에서도 개념 정리 뒤에 둔다(사고력 수업)
+  const wonder = () => add('wonder', teach && !ch.wonderLate ? 'lab' : 'extend', 'Q. 이런 경우는?', `<p class="dk-q">${esc(ch.wonder.q)}</p>${ans(ch.wonder.a, 'wonder')}`, { say: 'wonder', kind: 'write' });
+  if (!(teach && ch.wonderLate)) wonder();
 
   ch.results.forEach((r, i) => add(`res${i + 1}`, 'result', `STEP 4 · 결과 ${i + 1}`, `${teach ? '' : '<div class="dk-mylab" hidden></div>'}<p class="dk-q">${esc(r.q)}</p>
     ${r.art ? `<div class="dk-art mid">${art[r.art]}</div>` : ''}
@@ -96,6 +101,7 @@ export function buildSlides(ch, art, plan, similar, mode, ix = null, media = nul
     <table class="dk-tbl note"><tr>${nt.table.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>${nt.table.rows.map((r) => `<tr><th>${esc(r[0])}</th>${r.slice(1).map((c) => `<td><span class="${teach ? 'rv' : ''}">${esc(c)}</span></td>`).join('')}</tr>`).join('')}</table></div>
     <ul class="dk-points">${nt.points.map((p) => `<li class="${teach ? 'rv' : ''}">${esc(p)}</li>`).join('')}</ul>`, { say: 'note', kind: 'read', layout: 'feature' });
   add('plus', 'concept', `개념 플러스 · ${nt.plus.title}`, `<div class="dk-two"><div class="dk-art">${art[nt.plus.art]}</div><p class="dk-big">${esc(nt.plus.text)}</p></div>`, { say: 'plus', kind: 'read', layout: 'feature plus' });
+  if (teach && ch.wonderLate) wonder();
 
   add('discuss', 'extend', 'STEP 6 · 개념 넓혀 토의하기', `<p class="dk-q">${esc(ch.discuss.q)}</p>${ans(ch.discuss.a, 'discuss')}`, { say: 'discuss', kind: 'write' });
   add('creative', 'extend', 'STEP 7 · 창의력 키우기', `<p class="dk-q">${esc(ch.creative.q)}</p>${ans(ch.creative.a, 'creative')}`, { kind: 'write' });
@@ -104,7 +110,7 @@ export function buildSlides(ch, art, plan, similar, mode, ix = null, media = nul
     <table class="dk-tbl">${g.rows.map((r) => `<tr><th>${esc(r)}</th><td>${ans(g.a[r], `gifted-${r}`)}</td></tr>`).join('')}</table>
     ${teach ? `<div class="dk-rubric rv"><b>채점 기준</b> ${g.rubric.map(esc).join(' / ')}</div>` : ''}`, { say: 'gifted', kind: 'write' });
 
-  const pick = ch.check.map((k) => similar.find((s) => `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k)).filter(Boolean);
+  const pick = ch.check.map((k) => pickQ(similar, k)).filter(Boolean);
   pick.forEach((it, i) => {
     const ac = it.answerContract, gv = it.givens;
     const givens = gv ? Object.entries(gv).map(([k, v]) => `<div class="dk-given">${/^(설명|내용|text|문항|자료|글|지문)$/.test(k) ? '' : k === '보기' ? '<b>〈보기〉</b><br>' : `<b>${esc(k)}</b> `}${Array.isArray(v) ? v.map(esc).join('<br>') : esc(typeof v === 'object' ? JSON.stringify(v) : v)}</div>`).join('') : '';

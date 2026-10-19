@@ -13,17 +13,20 @@ const R = new URL('../data/', import.meta.url);
 U.push('s31-u04');
 U.push('s31-fin');
 U.push('c22-s32-u01','c22-s32-u02','c22-s32-u04');
+if (!U.includes('c22-s42-u04')) U.push('c22-s42-u04');
 const load = async (p) => { try { return await import(new URL(p, R)); } catch (e) { if (e.code === 'ERR_MODULE_NOT_FOUND') return null; throw e; } };
 
 for (const u of U) {
   test(`${u} 판정표`, async (t) => {
-    const J = (await load(`units/${u}.judge.js`))?.judge;
+    // 사고력 수업 문항·쓰기 칸 판정표(units/<u>.think.js)는 문제은행 판정표에 더해서 본다(v2/think-merge.js와 같은 규칙).
+    const T = (await load(`units/${u}.think.js`));
+    const J0 = (await load(`units/${u}.judge.js`))?.judge, J = J0 || T?.judge ? { ...(J0 || {}), ...(T?.judge || {}) } : null;
     assert.ok(J, `${u}.judge.js 없음`);
     const book = (await load(`book/${u}.book.js`))?.chapter;
     // 수업에 실제로 있는 자유 쓰기 칸만 검사한다. 수행 안내만 있는 교재는 빈 목록을 명시한다.
     const deckExamples = book ? book.deckWrittenExamples ?? { hypo: book.hypothesis?.a, wonder: book.wonder?.a, concl0: book.conclusion?.[0]?.a } : {};
     const items = [];
-    for (const f of [`units/${u}.js`, `units/${u}.similar.js`, `units/${u}.source.js`]) { const m = await load(f); if (m) for (const v of Object.values(m)) if (Array.isArray(v)) items.push(...v.filter((x) => x?.answerContract)); }
+    for (const f of [`units/${u}.js`, `units/${u}.similar.js`, `units/${u}.source.js`, `units/${u}.think.js`]) { const m = await load(f); if (m) for (const v of Object.values(m)) if (Array.isArray(v)) items.push(...v.filter((x) => x?.answerContract)); }
 
     await t.test('① 빠진 판정표 없음', () => {
       const want = [...items.filter((x) => x.answerContract.type === 'written-explanation').map((x) => x.id), ...Object.keys(deckExamples).map((k) => `deck:${k}`)];

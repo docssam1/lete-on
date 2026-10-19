@@ -15,6 +15,10 @@ import { sunModel } from '../scenes/rising-sun-model.js';
 import { snowModel } from '../scenes/snow-model.js';
 import { breadModel } from '../scenes/bread-model.js';
 import { bubbleModel } from '../scenes/bubble-model.js';
+import { seaModel } from '../scenes/sealevel-model.js';
+import { glitterModel, RULES as GLITTER_RULES } from '../scenes/glitter-model.js';
+const sea = (title, targets) => ({ title, question: '어느 팀 마을에서 물에 닿은 집이 더 많을까요?', choices: ['1팀이 더 많음', '집 수가 같음', '2팀이 더 많음'], field: 'n', targets });
+const glitter = (title, targets) => ({ title, question: '어느 팀에서 반짝이가 묻은 친구가 더 많을까요?', choices: ['1팀이 더 많음', '친구 수가 같음', '2팀이 더 많음'], field: 'n', targets });
 const bubble = (title, targets) => ({ title, question: '어느 팀의 비눗방울이 평균적으로 더 오래 갈까요?', choices: ['1팀이 더 오래 감', '평균 시간이 같음', '2팀이 더 오래 감'], field: 'mean', targets });
 const bread = (title, targets) => ({ title, question: '어느 팀의 반죽이 40분 뒤 더 많이 부풀까요?', choices: ['1팀이 더 많이 부풂', '부피가 같음', '2팀이 더 많이 부풂'], field: 'vol', targets });
 const snow = (title, targets) => ({ title, question: '어느 팀의 병 속에 결정(눈)이 더 많이 생길까요?', choices: ['1팀이 더 많음', '결정의 양이 같음', '2팀이 더 많음'], field: 'snow', targets });
@@ -25,6 +29,16 @@ const cycle = (title, targets) => ({ title, question: '어느 팀의 수조에 �
 const quake = (title, question, choices, field, targets) => ({ title, question, choices, field, targets });
 const shadow = (title, targets) => ({ title, question: '어느 팀의 그림자가 더 클까요?', choices: ['1팀이 더 큼', '크기가 같음', '2팀이 더 큼'], field: 'size', targets });
 export const LAB_BATTLE_ROUNDS = {
+  'c22-s42-u04': [
+    sea('물높이만 바꾸기', [{ level: 2, wall: '방파제 없음' }, { level: 4, wall: '방파제 없음' }]),
+    sea('방파제가 있으면?', [{ level: 3, wall: '방파제 없음' }, { level: 3, wall: '방파제 있음' }]),
+    sea('물이 방파제보다 높아지면?', [{ level: 4, wall: '방파제 있음' }, { level: 4, wall: '방파제 없음' }]),
+  ],
+  'c22-s32-u04': [
+    glitter('손 씻기 규칙만 바꾸기', [{ rule: '손 씻기 없음', round: 3 }, { rule: 'B·D·F가 차례마다 손 씻기', round: 3 }]),
+    glitter('악수 차례만 바꾸기', [{ rule: '손 씻기 없음', round: 1 }, { rule: '손 씻기 없음', round: 2 }]),
+    glitter('손을 씻으면 늘어날까?', [{ rule: 'B·D·F가 차례마다 손 씻기', round: 1 }, { rule: 'B·D·F가 차례마다 손 씻기', round: 3 }]),
+  ],
   's52-u01': [
     bubble('넣는 것만 바꾸기', [{ add: '아무것도 넣지 않음' }, { add: '글리세린 1숟가락' }]),
     bubble('설탕은 어떨까?', [{ add: '설탕 1숟가락' }, { add: '아무것도 넣지 않음' }]),
@@ -100,6 +114,8 @@ export const LAB_BATTLE_ROUNDS = {
 const finite = (value) => typeof value === 'number' && Number.isFinite(value) && value >= 0;
 export function validBattleRow(unit, row) {
   if (!row || typeof row !== 'object') return false;
+  if (unit === 'c22-s42-u04') { try { const m = seaModel(row.level, row.wall === '방파제 있음'); return row.wall === m.wall && row.n === m.n && row.result === m.result; } catch { return false; } }
+  if (unit === 'c22-s32-u04') { const r = GLITTER_RULES.indexOf(row.rule); if (r < 0) return false; try { const m = glitterModel(row.round, r); return row.n === m.n && row.result === m.result; } catch { return false; } }
   if (unit === 's52-u01') { try { const m = bubbleModel(row.add); return row.mean === m.mean && row.result === m.result && Array.isArray(row.trials) && row.trials.join() === m.trials.join(); } catch { return false; } }
   if (unit === 's51-u05') { try { const m = breadModel(row.water); return row.vol === m.vol && row.temp === m.temp && row.result === m.result; } catch { return false; } }
   if (unit === 's51-u04') { try { const m = snowModel(row.cool); return row.snow === m.snow && row.temp === m.temp && row.result === m.result; } catch { return false; } }
@@ -122,6 +138,8 @@ export function matchesBattleTarget(unit, row, target) {
   return validBattleRow(unit, row) && Object.entries(target).every(([key, value]) => row[key] === value);
 }
 export function battleTargetText(unit, target) {
+  if (unit === 'c22-s42-u04') return `물높이 ${target.level} cm · ${target.wall}`;
+  if (unit === 'c22-s32-u04') return `${target.rule} · ${target.round}차례 뒤`;
   if (unit === 's52-u01') return target.add;
   if (unit === 's51-u05') return target.water;
   if (unit === 's51-u04') return target.cool;
@@ -138,6 +156,8 @@ export function battleTargetText(unit, target) {
   return `${target.plant} · ${target.where}`;
 }
 export function battleRowText(unit, row) {
+  if (unit === 'c22-s42-u04') return `물높이 ${row.level} cm · ${row.wall} · ${row.result}`;
+  if (unit === 'c22-s32-u04') return `${row.rule} · ${row.round}차례 · ${row.result}`;
   if (unit === 's52-u01') return `${row.add} · ${row.result}`;
   if (unit === 's51-u05') return `${row.water} · ${row.result}`;
   if (unit === 's51-u04') return `${row.cool} · ${row.result}`;

@@ -9,10 +9,12 @@ import { buildBubbleRig, buildFilmView, bubbleMat } from '../scenes/bubble-wand.
 import { buildBreadRig, buildYeastView, flourBag, sugarBowl, yeastPack, kitchenTimer } from '../scenes/bread-dough.js';
 import { labTable, labTray, beakerMesh, reagentBottle, lathe, round, fresnel, thickGlass } from '../scenes/glassware.js';
 import { puffCloud, roundedBoxGeometry } from '../scenes/_kit.js';
+import { buildSeaTown, heightAt, HOUSES as SEA_HOUSES } from '../scenes/sea-town.js';
+import { buildGlitterRoom } from '../scenes/glitter-hands.js';
 const OIL_R_ = () => 0.34;
 
 const q = new URLSearchParams(location.search), shot = q.get('shot') || 'hero';
-const SIZE = { hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
+const SIZE = { sea: [1280, 600], glit: [1280, 600], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
 const [W, H] = SIZE[shot] || SIZE[shot.split('-')[0]] || [1600, 900];
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -32,6 +34,7 @@ function studioEnv() {
 const env = studioEnv();
 const overlay = [];   // [text, x, y, opts] — 렌더 뒤 2D로 덧쓰는 글자(Pretendard)
 const callouts = [];  // { p: [x,y,z] 물체의 점, at: [px,py] 글자 자리, t, sub } — 지시선 + 글자
+const tags3 = [];     // [text, [x,y,z], opts] — 3D 점 위치에 덧쓰는 짧은 글자(이름표)
 
 function stars(n, spread, seed = 1) {
   const pos = new Float32Array(n * 3), col = new Float32Array(n * 3); let s = seed;
@@ -135,6 +138,70 @@ if (shot === 'hero' || shot === 'sizes') {
     else { camera.position.set(3.3, 2.0, 10.4); camera.lookAt(1.95, 1.45, 0);
       if (shot === 'bubble-blow') { C('터질 때까지 시간 재기', [0.35, 2.0, 0.2], 230, '다 불어진 순간부터 초시계'); C('같은 고리', [0.3, 1.15, 0.05], 430, '같은 세기로 같은 크기로 불어요'); }
       else { C('색이 바뀌어요', [0.3, 2.45, 0.35], 230, '막이 얇아지고 있어요'); C('곧 터져요', [0.0, 2.2, 0.4], 430, '막 속의 물이 증발해서'); } }
+  }
+} else if (shot.startsWith('sea')) {
+  // 해안 마을 모형(c22-s42-u04): sea-hero · sea-build · sea-start · sea-pour · sea-wall · sea-over · sea-top · sea-row
+  scene.background = new THREE.Color(0xf5f1e8); scene.environment = env; scene.environmentIntensity = 0.6;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe7dccb, 0.95)); const d = new THREE.DirectionalLight(0xffffff, 2.2); d.position.set(-3, 7, 5); scene.add(d);
+  camera = new THREE.PerspectiveCamera(22, W / H, 0.1, 200);
+  const K = 0.16, hide = (rig) => { Object.values(rig.userData.names).forEach((n) => { n.visible = false; }); rig.userData.tags.forEach((n) => { n.visible = false; }); };
+  const house = (rig, id) => { const o = rig.userData.houses.find((h) => h.userData.id === id); return [o.position.x + rig.position.x, o.position.y + 0.5, o.position.z]; };
+  const CO = (t, p, x, y, sub) => callouts.push({ t, p, at: [x, y], sub });
+  if (shot === 'sea-row') {
+    [1, 2, 3, 4].forEach((lv, i) => { const rig = buildSeaTown(); hide(rig); rig.userData.set({ level: lv, wall: false, t: 1 }); rig.position.set((i - 1.5) * 5.4, 0, 0); rig.children[0].visible = false; scene.add(rig);
+      const n = SEA_HOUSES.filter((h) => h.base <= lv).length;
+      overlay.push([`물높이 ${lv} cm`, rig.position.x, -1.45, { size: 38, color: '#1f2a44', bold: true }], [`물에 닿은 집 ${n}채`, rig.position.x, -2.35, { size: 34, color: '#1e4fa8', bold: true }]); });
+    camera.position.set(0, 9.5, 23.5); camera.lookAt(0, -0.5, 0);
+  } else {
+    const rig = buildSeaTown(); hide(rig); scene.add(rig); rig.children[0].scale.set(1.3, 1, 1.4);
+    const lv = { 'sea-hero': 1, 'sea-build': 1, 'sea-start': 1, 'sea-pour': 1.35, 'sea-wall': 1, 'sea-over': 4, 'sea-top': 1 }[shot] || 1;
+    // 실험 순서 그림(build·start·pour·wall·top)은 결과(젖은 집 고리)를 보이지 않는다 — 수업에서 예상보다 먼저 나온다
+    rig.userData.set({ level: lv, wall: shot === 'sea-wall' || shot === 'sea-over', t: 1, show: ['sea-over'].includes(shot) }); hide(rig);
+    if (shot === 'sea-build') rig.userData.water.forEach((w) => { w.visible = false; });
+    if (shot === 'sea-hero') { rig.position.x = 1.6; camera.position.set(-1.4, 4.6, 8.6); camera.lookAt(0.55, 0.35, 0);
+      overlay.push(['물이 차오르는 해안 마을', -2.75, 1.55, { size: 70, color: '#1f2a44', bold: true, align: 'left' }], ['바닷물 높이가 오르면', -2.62, 1.12, { size: 36, color: '#1e4fa8', bold: true, align: 'left' }], ['어느 집부터 물에 닿을까요?', -2.62, 0.82, { size: 36, color: '#1e4fa8', bold: true, align: 'left' }]);
+      CO('A · 언덕 위', house(rig, 'A'), 1280, 70, '바다 바로 옆'); CO('B · 낮은 모래땅', house(rig, 'B'), 1280, 730, '바다 가까이'); }
+    else if (shot === 'sea-top') { camera.position.set(0.2, 11.5, 2.6); camera.lookAt(0.2, 0, 0.1);
+      for (const h of SEA_HOUSES) tags3.push([h.id, house(rig, h.id), { size: 34, color: '#1f2a44' }]);
+      CO('물을 덜어 정리하기', [-1.8, 0.21, 0.4], 90, 520, '흘린 물은 바로 닦아요'); }
+    else { camera.position.set(-1.6, 3.9, 8.4); camera.lookAt(0.1, 0.38, 0);
+      if (shot === 'sea-build') { CO('A · 언덕 위', house(rig, 'A'), 80, 80, '바다 바로 옆'); CO('B · 낮은 모래땅', house(rig, 'B'), 80, 520, '바다 가까이'); CO('C · 강가 낮은 땅', house(rig, 'C'), 860, 540); CO('D · 마을 안쪽 평지', house(rig, 'D'), 900, 330); CO('E · 먼 언덕', house(rig, 'E'), 960, 90); }
+      if (shot === 'sea-start') CO('물높이 1 cm', [-2.18, 0.05 + K, 1.5], 120, 120, '「지금의 바다」 · 눈높이를 맞춰 읽어요');
+      if (shot === 'sea-pour') { CO('물을 조금씩 부어요', [-1.9, 0.05 + 1.35 * 0.16, -0.4], 120, 110, '1 cm → 2 cm → 3 cm → 4 cm'); CO('같은 자리에서 눈금 읽기', [-2.18, 0.05 + 1.35 * 0.16, 1.5], 120, 520, '물이 차분해진 뒤 눈높이를 맞춰요'); }
+      if (shot === 'sea-wall') { CO('방파제 3.5 cm', [-0.72, 0.05 + 3.5 * K, -0.6], 120, 110, '물가를 따라 끝에서 끝까지'); CO('처음 1 cm로 되돌린 뒤', [-2.18, 0.05 + K, 1.5], 120, 520, '같은 방법으로 다시 부어요'); }
+      if (shot === 'sea-over') { CO('물이 방파제를 넘음', [-0.72, 0.05 + 3.6 * K, 0.3], 120, 110, '물높이 4 cm > 방파제 3.5 cm'); CO('B·C·D 젖음', house(rig, 'D'), 900, 520); } }
+  }
+} else if (shot.startsWith('glit')) {
+  // 반짝이 가루 손 모형(c22-s32-u04): glit-hero · glit-start · glit-shake · glit-wash · glit-row · glit-cough · glit-sleeve
+  scene.background = new THREE.Color(0xf3f5f8); scene.environment = env; scene.environmentIntensity = 0.6;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe7dccb, 1.0)); const d = new THREE.DirectionalLight(0xffffff, 2.0); d.position.set(3, 8, 5); scene.add(d);
+  camera = new THREE.PerspectiveCamera(24, W / H, 0.1, 200);
+  const hide = (rig) => { Object.values(rig.userData.names).forEach((n) => { n.visible = false; }); rig.userData.tags.forEach((n) => { n.visible = false; }); };
+  const kidAt = (rig, f, y = 1.95) => { const k = rig.userData.kids.find((x) => x.userData.id === f); return [k.position.x + rig.position.x, y, k.position.z]; };
+  const CO = (t, p, x, y, sub) => callouts.push({ t, p, at: [x, y], sub });
+  if (shot === 'glit-row') {
+    [0, 1].forEach((rule, i) => { const rig = buildGlitterRoom(); hide(rig); rig.userData.set({ rule, round: 3, t: 1 }); rig.position.set((i - 0.5) * 4.6, 0, 0); scene.add(rig);
+      overlay.push([rule ? 'B·D·F가 차례마다 손 씻기' : '아무도 손을 씻지 않음', rig.position.x, -0.45, { size: 38, color: '#1f2a44', bold: true }], [rule ? '3차례 뒤 2명(A·B)' : '3차례 뒤 6명 모두', rig.position.x, -0.95, { size: 34, color: '#8a5a00', bold: true }]); });
+    camera.position.set(0, 7.2, 11.5); camera.lookAt(0, 0.55, 0);
+  } else {
+    const rig = buildGlitterRoom(); hide(rig); scene.add(rig);
+    const st = { 'glit-hero': { round: 0 }, 'glit-start': { round: 0 }, 'glit-all': { round: 3 }, 'glit-shake': { round: 0.5 }, 'glit-shake2': { round: 1.5, glow: 0 }, 'glit-wash': { rule: 1, round: 1.16 }, 'glit-cough': { cough: 0.42, sleeve: false }, 'glit-sleeve': { cough: 0.42, sleeve: true } }[shot] || {};
+    rig.userData.set({ rule: 0, round: 0, cough: 0, sleeve: false, t: 1, ...st }); hide(rig);
+    if (shot === 'glit-hero') { rig.position.x = 1.6; camera.position.set(-0.6, 6.0, 8.6); camera.lookAt(0.55, 0.65, 0);
+      overlay.push(['반짝이 가루 손 모형', -2.65, 1.95, { size: 68, color: '#1f2a44', bold: true, align: 'left' }], ['손으로 무엇이 옮겨 갈까요?', -2.6, 1.55, { size: 36, color: '#8a5a00', bold: true, align: 'left' }], ['손 씻기는 얼마나 도움이 될까요?', -2.6, 1.27, { size: 36, color: '#8a5a00', bold: true, align: 'left' }]);
+      CO('A의 손에만 반짝이', kidAt(rig, 'A', 1.05), 1250, 80, '병원체가 아니라 표시예요'); }
+    else if (shot === 'glit-cough' || shot === 'glit-sleeve') {
+      rig.userData.kids.forEach((k) => { k.visible = ['A', 'D'].includes(k.userData.id); }); camera.position.set(7.2, 2.6, 0.6); camera.lookAt(0, 1.05, 0);
+      for (const f of ['A', 'D']) tags3.push([f, kidAt(rig, f, 0.05), { size: 34, color: '#1f2a44' }]);
+      CO(shot === 'glit-cough' ? '기침 침방울(비말)이 앞으로 퍼짐' : '옷소매 안쪽으로 가리면', kidAt(rig, 'A', 1.55), 700, 60, shot === 'glit-cough' ? '가까이 있는 친구에게 닿을 수 있어요' : '침방울이 거의 퍼지지 않아요'); }
+    else { camera.position.set(0, 6.2, 8.0); camera.lookAt(0, 0.62, 0);
+      for (const f of ['A', 'B', 'C', 'D', 'E', 'F']) tags3.push([f, kidAt(rig, f, 2.0), { size: 30, color: '#1f2a44' }]);
+      if (shot === 'glit-all') CO('3차례 뒤 여섯 명 모두', kidAt(rig, 'D', 1.1), 760, 520, '아무도 손을 씻지 않았을 때');
+      if (shot === 'glit-start') CO('A의 손에 반짝이 가루', kidAt(rig, 'A', 1.1), 90, 90, '나머지 다섯 명은 깨끗한 손');
+      if (shot === 'glit-shake') CO('1차례: A-B·C-D·E-F 악수', kidAt(rig, 'B', 1.1), 760, 520, '악수가 끝나면 반짝이가 묻은 친구를 세어요');
+      if (shot === 'glit-shake2') CO('2차례: B-C·D-E·F-A', kidAt(rig, 'C', 1.1), 760, 520, '3차례: C-D·E-F·A-B');
+      if (shot === 'glit-wash') CO('악수 전에 B·D·F 손 씻기', kidAt(rig, 'D', 1.1), 760, 520, '비누와 흐르는 물로 30초 이상');
+    }
   }
 } else if (shot.startsWith('bread') || shot === 'mold-dish') {
   // 부푸는 효모빵: bread-hero · bread-mix · bread-start · bread-cup · bread-yeast · bread-baked · bread-row · mold-dish(읽을거리)
@@ -276,6 +343,7 @@ for (const c of callouts) {
   g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = '#1f2a44'; g.font = '800 54px Pretendard'; g.fillText(c.t, ax, ay - (c.sub ? 20 : 0));
   if (c.sub) { g.fillStyle = '#5b6577'; g.font = '600 38px Pretendard'; g.fillText(c.sub, ax, ay + 34); }
 }
+for (const [t, p, o] of tags3) { const [px, py] = proj3(p); g.font = `800 ${o.size}px Pretendard`; const w = g.measureText(t).width + 26; g.fillStyle = 'rgba(255,255,255,.92)'; g.strokeStyle = o.color; g.lineWidth = 3; g.beginPath(); g.roundRect(px - w / 2, py - o.size * 0.75, w, o.size * 1.5, o.size * 0.75); g.fill(); g.stroke(); g.fillStyle = o.color; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t, px, py + 1); }
 for (const [t, x, y, o] of overlay) { const [px, py] = toPx(x, y); g.font = `${o.bold ? 800 : 500} ${o.size}px Pretendard`; g.fillStyle = o.color; g.textAlign = o.align || 'center'; g.textBaseline = 'middle'; g.fillText(t, px, py); }
 document.body.replaceChildren(out); out.id = 'out';
 window.__done = true;

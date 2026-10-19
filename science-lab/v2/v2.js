@@ -7,6 +7,7 @@ import { pageHome } from './home.js?v=15';
 import { escapeInApp } from './inapp.js';
 import { SEMS, BANK, READY } from './units-index.js';
 import { placeLabel, placeNow } from './curriculum-place.js';
+import { withThink, loadJudge } from './think-merge.js';
 import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js';
 import { assessmentPool, assessmentRelated } from './assessment-data.js';
 import {conceptCardsHtml} from './concept-cards.js';
@@ -35,11 +36,11 @@ const UNITS = {
  'c22-s42-mid':async()=>({...(await import('../data/units/c22-s42-mid.js')),...(await import('../data/units/c22-s42-mid.similar.js')),...(await import('../data/units/c22-s42-mid.taxonomy.js')),misc:await import('../data/units/c22-s42-mid.misc.js')}),
  'c22-s41-fin':async()=>({...(await import('../data/units/c22-s41-fin.js')),...(await import('../data/units/c22-s41-fin.similar.js')),...(await import('../data/units/c22-s41-fin.taxonomy.js')),misc:await import('../data/units/c22-s41-fin.misc.js')}),
  'c22-s41-mid':async()=>({...(await import('../data/units/c22-s41-mid.js')),...(await import('../data/units/c22-s41-mid.similar.js')),...(await import('../data/units/c22-s41-mid.source.js')),...(await import('../data/units/c22-s41-mid.taxonomy.js')),misc:await import('../data/units/c22-s41-mid.misc.js')}),
- 'c22-s42-u04':async()=>({...(await import('../data/units/c22-s42-u04.js')),...(await import('../data/units/c22-s42-u04.lesson.js')),...(await import('../data/units/c22-s42-u04.similar.js')),...(await import('../data/units/c22-s42-u04.source.js')),...(await import('../data/units/c22-s42-u04.taxonomy.js')),misc:await import('../data/units/c22-s42-u04.misc.js')}),
+ 'c22-s42-u04':async()=>withThink('c22-s42-u04',{...(await import('../data/units/c22-s42-u04.js')),...(await import('../data/units/c22-s42-u04.lesson.js')),...(await import('../data/units/c22-s42-u04.similar.js')),...(await import('../data/units/c22-s42-u04.source.js')),...(await import('../data/units/c22-s42-u04.taxonomy.js')),misc:await import('../data/units/c22-s42-u04.misc.js')}),
  'c22-s42-u03':async()=>({...(await import('../data/units/c22-s42-u03.js')),...(await import('../data/units/c22-s42-u03.lesson.js')),...(await import('../data/units/c22-s42-u03.similar.js')),...(await import('../data/units/c22-s42-u03.source.js')),...(await import('../data/units/c22-s42-u03.taxonomy.js')),misc:await import('../data/units/c22-s42-u03.misc.js')}),
  'c22-s42-u02':async()=>({...(await import('../data/units/c22-s42-u02.js')),...(await import('../data/units/c22-s42-u02.lesson.js')),...(await import('../data/units/c22-s42-u02.similar.js')),...(await import('../data/units/c22-s42-u02.source.js')),...(await import('../data/units/c22-s42-u02.taxonomy.js')),misc:await import('../data/units/c22-s42-u02.misc.js')}),
  'c22-s42-u01':async()=>({...(await import('../data/units/c22-s42-u01.js')),...(await import('../data/units/c22-s42-u01.lesson.js')),...(await import('../data/units/c22-s42-u01.similar.js')),...(await import('../data/units/c22-s42-u01.source.js')),...(await import('../data/units/c22-s42-u01.taxonomy.js')),misc:await import('../data/units/c22-s42-u01.misc.js')}),
- 'c22-s32-u04':async()=>({...(await import('../data/units/c22-s32-u04.lesson.js')),...(await import('../data/units/c22-s32-u04.js')),...(await import('../data/units/c22-s32-u04.similar.js')),...(await import('../data/units/c22-s32-u04.taxonomy.js')),source:[],misc:await import('../data/units/c22-s32-u04.misc.js')}),
+ 'c22-s32-u04':async()=>withThink('c22-s32-u04',{...(await import('../data/units/c22-s32-u04.lesson.js')),...(await import('../data/units/c22-s32-u04.js')),...(await import('../data/units/c22-s32-u04.similar.js')),...(await import('../data/units/c22-s32-u04.taxonomy.js')),source:[],misc:await import('../data/units/c22-s32-u04.misc.js')}),
  'c22-s32-u03':async()=>({...(await import('../data/units/c22-s32-u03.lesson.js')),...(await import('../data/units/c22-s32-u03.js')),...(await import('../data/units/c22-s32-u03.similar.js')),...(await import('../data/units/c22-s32-u03.source.js')),...(await import('../data/units/c22-s32-u03.taxonomy.js')),misc:await import('../data/units/c22-s32-u03.misc.js')}),
  'c22-s32-u02':async()=>({...(await import('../data/units/c22-s32-u02.lesson.js')),...(await import('../data/units/c22-s32-u02.js')),...(await import('../data/units/c22-s32-u02.similar.js')),...(await import('../data/units/c22-s32-u02.taxonomy.js')),source:[],misc:await import('../data/units/c22-s32-u02.misc.js')}),
  'c22-s32-u01': async()=>({...(await import('../data/units/c22-s32-u01.js')),...(await import('../data/units/c22-s32-u01.lesson.js')),...(await import('../data/units/c22-s32-u01.similar.js')),...(await import('../data/units/c22-s32-u01.source.js')),...(await import('../data/units/c22-s32-u01.taxonomy.js')),misc:await import('../data/units/c22-s32-u01.misc.js')}),
@@ -430,6 +431,8 @@ function pageKit(u, L) {
     <p class="lead"><a href="#/${u}/1">학습 처음으로</a></p>`);
 }
 
+// 탐구 기록 앱 설정: 기본 실험이 기록 앱인 단원은 lab, 사고력 수업으로 바꾼 단원은 선택 기능 records(2026-10-19)
+const inqOf = (L) => (L.explore?.records?.kind === 'inquiry' ? L.explore.records : L.explore?.lab?.kind === 'inquiry' ? L.explore.lab : null);
 // 탐구보고서 — 자동 채움 + 기기 저장 + 인쇄
 function reportAuto(u, L) {
   const st = store.get(u), h = L.explore.home;
@@ -438,7 +441,7 @@ function reportAuto(u, L) {
   const pred = L.engage.predictions.find((p) => p.id === st.prediction);
   return {
     ...(L.explore.lab.kind === 'animal' ? (() => { try { return animalReportSections(loadAnimal(localStorage)); } catch { return {}; } })() : {}),
-    ...(L.explore.lab.kind === 'inquiry' ? (()=>{try{return inquirySections(L.explore.lab.config,loadInquiry(L.explore.lab.config,localStorage));}catch{return {};}})() : {}),
+    ...(inqOf(L) ? (()=>{try{return inquirySections(inqOf(L).config,loadInquiry(inqOf(L).config,localStorage));}catch{return {};}})() : {}),
     ...(L.explore.lab.kind === 'plant' ? (() => { try { return plantReportSections(loadPlant(localStorage)); } catch { return {}; } })() : {}),
     'engage.question': L.engage.question,
     'engage.prediction': pred ? `${pred.text}(이)라고 예상했어요.` : '',
@@ -450,19 +453,31 @@ function reportAuto(u, L) {
 function pageReport(u, L) {
   const R = L.report, auto = reportAuto(u, L), saved = store.get(u).report || {};
   frame(u, L, null, `<p class="step-label">탐구보고서</p><h2>${esc(R.title)}</h2>
-    <div class="print-bar no-print"><button class="btn" onclick="print()">A4로 인쇄</button><a class="btn" href="#/${u}/4" style="display:inline-flex;align-items:center;text-decoration:none">확장으로 돌아가기</a></div>
+    <div class="print-bar no-print"><button class="btn" onclick="print()">A4로 인쇄</button><a class="btn" href="#/${u}/${L.explore.records ? 'records' : '4'}" style="display:inline-flex;align-items:center;text-decoration:none">${L.explore.records ? '탐구 기록장으로' : '확장으로 돌아가기'}</a></div>
     <form class="report card">${R.sections.map((s) => `<label for="r-${s.key}">${esc(s.label)}</label>${s.hint ? `<p class="hint">${esc(s.hint)}</p>` : ''}
       <textarea id="r-${s.key}" data-k="${s.key}">${esc(saved[s.key] ?? (s.from ? auto[s.from] : s.default) ?? '')}</textarea>`).join('')}
     </form>
     <div class="card"><h3>스스로 점검</h3><ul class="checks">${R.checks.map((c) => `<li><label><input type="checkbox"> ${esc(c)}</label></li>`).join('')}</ul></div>`);
   $app.querySelectorAll('textarea[data-k]').forEach((t) => t.addEventListener('input', () => { const r = store.get(u).report || {}; r[t.dataset.k] = t.value; store.set(u, { report: r }); }));
-  if (L.explore.lab.kind === 'inquiry' || u === 's31-u01' || u === 's31-u02' || u === 's31-u03') {
+  if (inqOf(L) || u === 's31-u01' || u === 's31-u02' || u === 's31-u03') {
     const main = $app.querySelector('main'), printCopy = document.createElement('article');
     main.classList.add('force-report'); if (u === 's31-u02') main.classList.add('animal-report'); if (u === 's31-u03') main.classList.add('plant-report'); printCopy.className = 'force-report-print'; main.append(printCopy);
     // 인쇄에서는 스크롤되는 입력칸 대신 전체 글을 보여 주어 긴 답도 잘리지 않게 한다.
     const prepare = () => { printCopy.innerHTML = `<h1>${esc(R.title)}</h1>` + R.sections.map((s) => `<section><h2>${esc(s.label)}</h2><p>${esc(main.querySelector(`#r-${s.key}`).value || '미기록')}</p></section>`).join(''); };
     prepare(); addEventListener('beforeprint', prepare); releasePage = () => removeEventListener('beforeprint', prepare);
   }
+}
+
+// 탐구 기록장(선택 기능) — 사고력 수업으로 바꾼 단원의 예전 기록 앱. 저장 키(sciLab.inquiry.<단원>·sciLab.v2 행)는 그대로라 예전 기록이 이어진다.
+function pageRecords(u, L) {
+  const R = L.explore?.records; if (!R) { location.replace(`#/${u}/start`); return; }
+  const key = R.rowsKey || 'labRows';
+  $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/${u}/start">‹ 처음으로</a><h1>${esc(R.title)}</h1></div></header>
+    <main class="wrap records-page"><p class="step-label">${esc(placeLabel(u))} · 선택 기능</p><h2>${esc(L.title)} · 탐구 기록장</h2><p class="lead">${esc(R.note || '')}</p>
+      <p class="start-more"><a href="#/${u}/start">사고력 수업으로 돌아가기</a> · <a href="#/${u}/report">탐구보고서로 정리하기</a> · <a href="#/${u}/records-book/student">기록 교재(학생용)</a> · <a href="#/${u}/records-book/teacher">기록 교재(교사용)</a></p>
+      <div class="lab-host records-host"></div></main>`;
+  let H = null; Promise.resolve(mountLabOf(R.kind)($app.querySelector('.records-host'), { ...R, personal: true, rows: store.get(u)[key] || [], onRecord: (rows) => store.set(u, { [key]: rows }) })).then((h) => { H = h; });
+  releasePage = () => H?.dispose?.(); scrollTo(0, 0);
 }
 
 // 교재 인쇄: student(빈칸) · teacher(정답 포함) · answers(정답·해설만)
@@ -509,6 +524,8 @@ function pageBook(u, L, items, mode) {
 }
 
 // GFIELD 실험 과학 영재 — 실험 교재(웹·A4 인쇄)와 화면 수업 자료(가르치기·스스로 공부하기)
+// 사고력 수업으로 바꾸기 전의 탐구 기록 교재(선택 기능 · #/<단원>/records-book)
+const RECORDS_BOOKS = { 'c22-s42-u04': () => import('../data/book/c22-s42-u04.records-book.js'), 'c22-s32-u04': () => import('../data/book/c22-s32-u04.records-book.js') };
 const BOOKS = { 'c22-s52-u04':()=>import('../data/book/c22-s52-u04.book.js'), 'c22-s52-u03':()=>import('../data/book/c22-s52-u03.book.js'), 'c22-s52-u02':()=>import('../data/book/c22-s52-u02.book.js'), 'c22-s52-u01':()=>import('../data/book/c22-s52-u01.book.js'), 'c22-s51-u04':()=>import('../data/book/c22-s51-u04.book.js'), 'c22-s51-u03':()=>import('../data/book/c22-s51-u03.book.js'), 'c22-s51-u02':()=>import('../data/book/c22-s51-u02.book.js'), 'c22-s51-u01':()=>import('../data/book/c22-s51-u01.book.js'), 'c22-s42-u04':()=>import('../data/book/c22-s42-u04.book.js'), 'c22-s42-u03':()=>import('../data/book/c22-s42-u03.book.js'), 'c22-s42-u02':()=>import('../data/book/c22-s42-u02.book.js'), 'c22-s42-u01':()=>import('../data/book/c22-s42-u01.book.js'), 's41-u04':()=>import('../data/book/s41-u04.inquiry.book.js'), 'c22-s32-u04':()=>import('../data/book/c22-s32-u04.book.js'), 'c22-s32-u03':()=>import('../data/book/c22-s32-u03.book.js'), 'c22-s32-u02':()=>import('../data/book/c22-s32-u02.book.js'), 'c22-s32-u01':()=>import('../data/book/c22-s32-u01.book.js'), 's31-u03': () => import('../data/book/s31-u03.book.js'), 's31-u02': () => import('../data/book/s31-u02.book.js'), 's31-u01': () => import('../data/book/s31-u01.book.js'), 's31-u04': () => import('../data/book/s31-u04.book.js'), 's52-u01': () => import('../data/book/s52-u01.book.js'), 's51-u05': () => import('../data/book/s51-u05.book.js'), 's51-u04': () => import('../data/book/s51-u04.book.js'), 's51-u03': () => import('../data/book/s51-u03.book.js'), 's51-u02': () => import('../data/book/s51-u02.book.js'), 's51-u01': () => import('../data/book/s51-u01.book.js'), 's42-u05': () => import('../data/book/s42-u05.book.js'), 's42-u04': () => import('../data/book/s42-u04.book.js'), 's42-u03': () => import('../data/book/s42-u03.book.js'), 's42-u02': () => import('../data/book/s42-u02.book.js'), 's41-u01': () => import('../data/book/s41-u01.inquiry.book.js'), 's41-u02': () => import('../data/book/s41-u02.inquiry.book.js'), 's41-u03': () => import('../data/book/s41-u03.inquiry.book.js'), 's41-u03b': () => import('../data/book/s41-u03b.book.js'), 's42-u01': () => import('../data/book/s42-u01.book.js') };
 // 교재·수업 화면 위쪽: 모드를 다시 고르는 메뉴는 두지 않는다(첫 화면에서 이미 골랐다). 처음으로 + 필요하면 인쇄만.
 function labBar(u, { print = false } = {}) {
@@ -557,6 +574,7 @@ async function pageStart(u, L) {
         ${sets.length ? card(`#/${u}/exam/${sets[0]}`, '🗂️', esc(BANK[u]?.label ? bankLabel(BANK[u]) : `단원평가 · 세트${sets.join('·')}`), BANK[u]?.label ? `원문 ${src.length}문항을 묶음별로 풀고 채점해요. 틀리면 비슷한 문제로 다시 풀어요.` : `시험지 원문 ${src.length}문항을 세트별로 풀고 채점해요. 틀리면 비슷한 문제로 다시 풀어요.`, true) : ''}
         ${card(`#/${u}/lab-class/teach/1`, '🖥️', '가르치기', esc(ch.startDescriptions?.[2] || '전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요.'))}
         ${card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
+        ${L.explore?.records ? card(`#/${u}/records`, '🗂️', '탐구 기록장(선택)', '조사·실천을 따로 기록할 때 써요. 예전에 쓴 기록도 그대로 있어요.') : ''}
         ${card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
         ${ch.workbookRoute ? card(`#/${u}/${ch.workbookRoute}/student`, '📄', '교재 A4 인쇄', '학생용·교사용·해설·빠른 정답표') : ''}
         ${ch.bankPrintLabel ? [['student',ch.bankPrintLabel],['teacher','전체 문항 교사 해설'],['answers','전체 정답·해설만'],['quick','전체 빠른 정답표']].map(([mode,title])=>card(`#/${u}/print/${mode}`, '📄',esc(title),esc(ch.bankPrintDescription||'원문·짝·교재 연계 문항 · A4 인쇄'))).join('') : ''}
@@ -611,15 +629,16 @@ function bookLine(V, key, { split, live } = {}) {
   return text ? { text } : null;
 }
 let bookToken = 0;
-async function pageLabBook(u, mod, mode, pageNo = 1) {
-  const my = ++bookToken, stale = () => my !== bookToken || !location.hash.includes(`/${u}/lab-book/${mode}`);
-  if (!BOOKS[u]) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
-  const bookMod = await BOOKS[u]().catch(() => null);
+async function pageLabBook(u, mod, mode, pageNo = 1, seg = 'lab-book') {
+  const my = ++bookToken, stale = () => my !== bookToken || !location.hash.includes(`/${u}/${seg}/${mode}`);
+  const BOOK = seg === 'records-book' ? RECORDS_BOOKS[u] : BOOKS[u];
+  if (!BOOK) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
+  const bookMod = await BOOK().catch(() => null);
   if (!bookMod) { $app.innerHTML = '<main class="wrap"><p>이 단원의 실험 교재는 준비 중이에요.</p></main>'; return; }
   const teacherEd = mode === 'teacher';
   const [{ chapter, art, media }, { renderChapter }, { mountBookView }] = await Promise.all([bookMod, import('./book.js'), import('./book-view.js')]);
   if (stale()) return;
-  const L = mod.lesson;
+  const L = seg === 'records-book' && mod.lesson?.explore?.records ? { ...mod.lesson, engage: { ...mod.lesson.engage, scene: null }, explore: { ...mod.lesson.explore, lab: mod.lesson.explore.records } } : mod.lesson;
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((i) => [i.id, i]));
   const onAnswer = (kind, p) => {
     if (kind === 'item' && I[p.id]) record(du(u), I[p.id], 'book', p.ok, { picked: p.picked }, MISC);
@@ -633,7 +652,7 @@ async function pageLabBook(u, mod, mode, pageNo = 1) {
     if (stale()) return;
     guide = d.mountGuide(V, { label: '독쌤' }); sayFor = (key, o) => bookLine(V, key, o);
   }
-  releasePage = mountBookView($app, { u, bookHtml: renderChapter(chapter, art, chapter.fieldwork ? [...(mod.similar || []), ...(mod.items || [])] : mod.similar || [], { teacher: teacherEd, live: true, media }),
+  releasePage = mountBookView($app, { u, bookHtml: renderChapter(chapter, art, [...(mod.similar || []), ...(mod.items || [])], { teacher: teacherEd, live: true, media }),
     title: `${chapter.book} · ${chapter.title}`, teacher: teacherEd, page: pageNo, printHref:chapter.workbookRoute?`#/${u}/${chapter.workbookRoute}/${teacherEd?'teacher':'student'}`:null, backHref: UNITS[u] || BANK[u] ? `#/${u}/start` : '#/',
     scene: L?.engage.scene ? (el) => mount3D(el, L.engage.scene, { autoplay: true }) : null, lab: L ? readingLab(u, L, { personal: !teacherEd }) : null,
     misc: MISC, onAnswer: teacherEd ? null : onAnswer, guide, sayFor });
@@ -645,7 +664,7 @@ async function pageLabClass(u, mod, L, mode, idx) {
   const [{ chapter, art, plan, media }, { renderDeck }, ix] = await Promise.all([bookMod, import('./deck.js'), import(`../data/book/${u}.interact.js`).then((m) => m.interact).catch(() => null)]);
   const I = Object.fromEntries([...(mod.similar || []), ...(mod.items || [])].map((x) => [x.id, x]));
   const handles = []; releasePage = () => handles.forEach((h) => h.dispose?.());
-  renderDeck($app, { u, ch: chapter, art, plan, media, similar: chapter.fieldwork ? [...(mod.similar || []), ...(mod.items || [])] : mod.similar || [], mode, idx, misc: MISC, ix,
+  renderDeck($app, { u, ch: chapter, art, plan, media, similar: [...(mod.similar || []), ...(mod.items || [])], mode, idx, misc: MISC, ix,
     myLab: () => ({ cols: L.explore?.lab?.columns || [], rows: store.get(u)[labRowsKey(L)] || [] }),
     mount3D: (el, o = {}) => mount3D(el, L.engage.scene || L.explore.scene, { autoplay: !!o.autoplay, preview: o.preview || false, from: o.from || null, onDone: o.onDone }),
     mountModel: (el, o={}) => { const handle=mountLabOf(L.explore.modelLab.kind)(el,{...L.explore.modelLab,personal:o.personal!==false,lowPower:!!o.lowPower,fixedSource:!!o.fixedSource,isActive:o.isActive,mode:o.mode,rows:o.personal===false?(o.rows||[]):store.get(u).labRows||[],onRecord:rows=>{if(o.personal!==false)store.set(u,{labRows:rows});o.onRecord?.(rows);}});if(handle?.dispose)handles.push(handle);return handle; },
@@ -670,7 +689,7 @@ async function pageDaily(u, mod, L, mode) {
   if (!list.length) { $app.innerHTML = '<main class="wrap"><p>이 단원의 Daily Test는 준비 중이에요.</p></main>'; return; }
   const { mountDaily, teacherKeyHtml } = await import('./daily.js');
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC }); scrollTo(0, 0); return; }
-  const judge = await import(`../data/units/${du(u)}.judge.js`).then((m) => m.judge).catch(() => ({}));
+  const judge = (await loadJudge(du(u))) || {};
   const pool = [...similar, ...items];
   releasePage = mountDaily({ $app, u, title: `${ch.book} · ${ch.title}`, ch, list, pool, misc: MISC, judge,
     record: (it, stage, ok, detail) => record(du(u), it, stage, ok, detail, MISC),
@@ -704,7 +723,7 @@ async function pageExam(u, mod, L, set, mode, isCurrent = () => true) {
   const { mountDaily, teacherKeyHtml } = await import('./daily.js');
   if (!isCurrent()) return;
   if (mode === 'teacher') { $app.innerHTML = teacherKeyHtml({ u, ch, list, misc: MISC, heading, back: `#/${u}/exam/${set}`, tabs }); scrollTo(0, 0); return; }
-  const judge = await import(`../data/units/${du(u)}.judge.js`).then((m) => m.judge).catch(() => ({}));
+  const judge = (await loadJudge(du(u))) || {};
   if (!isCurrent()) return;
   const pool = [...similar, ...src, ...items];
   const twin = (it) => similar.find((s) => s.sourceRef?.of?.set === it.sourceRef.set && s.sourceRef?.of?.no === it.sourceRef.no);
@@ -759,6 +778,8 @@ async function route() {
   if (a === 'kit') return pageKit(u, L);
   if (a === 'diagnose') return MISC ? pageDiagnose(u, L, items, b === 'teacher' ? 'teacher' : 'student') : location.replace(`#/${u}`);
   if (a === 'report') return pageReport(u, L);
+  if (a === 'records') return pageRecords(u, L);
+  if (a === 'records-book') return pageLabBook(u, mod, b || 'student', +location.hash.split('/')[4] || 1, 'records-book');
   if (a === 'daily') return pageDaily(u, mod, L, b);
   if (a === 'exam') return pageExam(u, mod, L, +b || 1, mode, isCurrent);
   if (a === 'reading') return pageReading(u, L, b);

@@ -1,0 +1,8 @@
+/* 감염병과 건강한 생활 실험실(반짝이 가루 손 모형) */
+.gl-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#fff6dc;color:#6b4d05}
+.gl-read b{font-weight:800;color:#8a5a00}
+.gl-2d{position:relative;height:280px;border-radius:14px;background:#eef3f8;overflow:hidden}
+.gl-2d .gl-kid{position:absolute;left:calc(50% + cos(calc(-90deg + var(--i) * 60deg)) * 100px - 26px);top:calc(50% + sin(calc(-90deg + var(--i) * 60deg)) * 100px - 26px);width:52px;height:52px;border-radius:50%;background:#fff;border:3px solid #9fb4c4;display:grid;place-items:center}
+.gl-2d .gl-kid b{font:800 18px/1 var(--body,sans-serif);color:#1f2a44}
+.gl-2d .gl-kid.on{border-color:#e0a800;background:radial-gradient(circle at 30% 30%,#fff7c8,#ffd75a);box-shadow:0 0 0 6px rgba(255,210,80,.35)}
+.gl-2d .gl-round{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:800 16px/1 var(--body,sans-serif);font-style:normal;color:#5b6577}

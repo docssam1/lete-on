@@ -134,6 +134,20 @@
 - **알게 된 것**
   - 기록 앱을 넣은 탐구형 수업(`lab.kind:'inquiry'`)은 두 단원만이 아니라 **18개 단원**이다. 3-2·4-2·5-1·5-2의 c22 단원과 4-1 s41-u01~u04가 해당한다.
   - 4-1 s41-u02의 기본 수업도 탐구 기록형이다. 시험관 3D 실험실(이 브랜치 ff60e96)은 `freezeLesson`에 남아 있고 기본 수업에서는 쓰이지 않는다. ⑤에서 사고력 수업으로 바꿀 때 연결한다.
+- **② 두 단원 사고력 수업 재편(완료)** — 4-2 Ⅳ `c22-s42-u04` · 3-2 Ⅳ `c22-s32-u04`
+  - **새 3D 실험실 두 개**(엔진 자동 맞춤·revealAt·라벨 규칙은 `3D-RULES.md`대로)
+    - 해안 마을: `scenes/sea-town.js`(유리 통 속 점토 땅·집 A~E·눈금자·방파제) + `scenes/sealevel-model.js`(수치) + `v2/lab-sealevel.js`(물높이 1~4 cm · 방파제 없음/있음 · 「물 붓기」 → 「표에 적기」). 결과: 방파제 없으면 0·1·2·3채, 있으면 0·0·0·3채. **언덕 위 A는 바다와 가장 가까워도 안 젖는다** — 「가까운 집부터」 오개념을 겨냥.
+    - 반짝이 손: `scenes/glitter-hands.js` + `scenes/glitter-model.js` + `v2/lab-glitter.js`(여섯 친구 · 정해진 짝으로 3차례 악수 · 「손 씻기 없음」/「B·D·F가 차례마다 손 씻기」). 결과: 2·4·6명 / 2·2·2명. 기침 예절(소매) 장면 포함.
+    - 수치는 전부 **모형 값**이라고 화면·교재·배틀 안내에 적었다.
+  - **기본 수업 = 기본 수업 틀**(`deck.js buildSlides`): 현상 → 예상 → 3D 실험 → 결과 비교 → 개념 → 정리 → 확인 → 새 상황. 기록 앱 장 0개, 75·62장 → 23장 안팎.
+    - 데이터는 `scripts/gen-science-think-c22s42u04.mjs` · `gen-science-think-c22s32u04.mjs`(공용 `gen-science-think-lib.mjs`)가 만든다 → `data/units/<u>.think.js`(수업 문항 t01~t12·판정표·오개념), `data/book/<u>.book.js`·`.interact.js`, `data/voice/<u>.voice.json`. **고칠 땐 생성기를 고치고 다시 실행.**
+    - 문항 12개(빈칸 4·표 1·선택 6·서술 1) + 문제은행 문항. 생성기가 보기 5개·정답 자리 쏠림 ≤2·「정답이 눈에 띄게 가장 긴 보기」·보기 중복·오개념 근거 문항 유무를 검사하고 어기면 멈춘다.
+    - `think.js`는 문제은행 파일을 건드리지 않고 `v2/think-merge.js`(`withThink`·`loadJudge`)가 수업 시점에 합친다.
+    - 예상 단계 전에 결과 그림·답이 나오지 않게 교재 그림을 중립 상태로 다시 렌더했다(`tools/book-art.js` sea*/glit*, `scripts/render-book-art.mjs`).
+    - 「이런 경우는?」은 `chapter.wonderLate`로 확장 단계(정리 뒤)에 둔다.
+  - **예전 기록은 선택 기능으로 보존**: 옛 수업 파일은 `data/units/<u>.records.js`(`recordsLesson`)·`data/book/<u>.records-book.js`로 이름만 옮겼다(git mv). 시작 화면 「탐구 기록장(선택)」 → `#/<u>/records`, 기록장 교재는 `#/<u>/records-book`. 저장 키 `sciLab.inquiry.<단원>`와 보고서 화면은 그대로. 새 3D 기록은 다른 행 키(`seaRows`·`glitterRows`)라 예전 기록을 덮지 않는다.
+  - **교사용 두 팀 배틀**: `lab-battle-model.js`에 단원마다 과제 3개(물높이만 / 방파제 유무 / 물이 방파제를 넘으면 · 손 씻기 규칙만 / 차례만 / 씻으면 늘어날까).
+  - 검사: `v2/think-lessons.test.mjs`(순서·실험 전 답 비공개·기록 보존·교재 답 비공개·문항 품질·모형 수치), `lab-battle.test.mjs` 추가분, 전체 테스트 실패 0, 감사 4종 통과, `check-science-3d.mjs` 두 단원 24건 실패 0.
 
 ---
 
