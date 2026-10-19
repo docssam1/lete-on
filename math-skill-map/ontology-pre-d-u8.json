@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v79",
+  "checkpoint": "v108",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -20,18 +20,23 @@
     "exactCrossTextbookTypeMatches": 0,
     "difficultyStatus": "conditional-research-only; teacher adoption pending",
     "minimumCurriculumStatus": "unresolved for every item",
-    "answersValidated": 0
+    "answersValidated": 0,
+    "validatedAnswers": 11
   },
   "aggregate": {
-    "ontologyNodes": 1615,
-    "ontologyRelations": 3032,
-    "skillActionCandidates": 403,
-    "candidateEvidenceLinkedActivities": 828,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
     "reviewQueueActivities": 24,
-    "activitySkillRelations": 879,
+    "activitySkillRelations": 903,
     "conditionalDifficultyCandidates": 803,
-    "validatedAnswers": 42,
-    "minimumCurriculumAssignments": 0
+    "validatedAnswers": 336,
+    "minimumCurriculumAssignments": 0,
+    "activityReviewQueue": 6,
+    "conditionalDifficultyBands": 852,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0
   },
   "unitCounts": {
     "sourceActivityBlocks": 12,
@@ -44,7 +49,7 @@
     "conditionalDifficultyCandidates": 12,
     "unresolvedMinimumCurriculumCandidates": 12,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 11,
     "familyMembershipRelations": 5,
     "relatedButDistinctRelations": 4,
     "spiralRelationCandidates": 4,
@@ -181,7 +186,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -195,7 +200,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -209,7 +214,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -223,7 +228,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -237,7 +242,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -251,7 +256,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -265,7 +270,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 9,
@@ -279,7 +284,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 10,
@@ -293,7 +298,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 11,
@@ -307,7 +312,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 12,
@@ -321,7 +326,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "editorialNumberedTypeCandidates": [
@@ -667,5 +672,40 @@
       "Item-level minimum curriculum levels remain unresolved for all 12 activities.",
       "Soma roadmap rows and editorial type numbers are context/comparison candidates only; exact shared types and approved sequence remain zero."
     ]
+  },
+  "answerValidation": {
+    "studentResponseTasksValidated": 11,
+    "modeledExamplesExcluded": 1,
+    "answerKeyPdfPages": [
+      32,
+      33,
+      34,
+      35
+    ],
+    "sameEditionAnswerPdfSha256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "renderedAnswerPageSHA256": {
+      "32": "53ca7e0a92fe99824274f8fe931bde7a9ffc924439af621ee3e790723db50bd5",
+      "33": "1486e380f3a89f106d195835e8f38d6be033ce72137568d80021ae7a834b41e6",
+      "34": "1854bb9c32d74565e537bfa430fb23a00d42eb482673807c9d1016d5884acf63",
+      "35": "6d088664b9b2a4048e3c1a11dc213a51df3262c646fa93ee86182d21eed49e35"
+    },
+    "appleVisionOCRSidecarSHA256": "85118bb7f4e6bcc4b96c325edf09d208ce59d27e1fab0ed8aaa06cb20b6adcd2",
+    "preservedBodyPages": [
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77
+    ],
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true,
+    "modeledExampleActivityNumbers": [
+      1
+    ],
+    "method": "Same-edition answer-key pages visually compared with mapped body activities; local Apple Vision OCR used only as assistive transcription."
   }
 }
