@@ -61,7 +61,7 @@
     {
       "id": "PATH-PRED4-01",
       "area": "경우의 수·경로",
-      "areaOrderCandidate": 1,
+      "areaOrderCandidate": null,
       "label": "길망에서 최단 경로의 길이와 가짓수 찾기",
       "observableAction": "연결망에서 최단 길이 조건을 판별하고 가능한 최단 경로를 빠짐없이 찾아 길이와 방법 수를 말한다.",
       "activityNumbers": [
@@ -88,7 +88,7 @@
     {
       "id": "PATH-PRED4-02",
       "area": "경우의 수·경로",
-      "areaOrderCandidate": 2,
+      "areaOrderCandidate": null,
       "label": "재방문 제한이 있는 연결망의 모든 경로 세기",
       "observableAction": "최단 경로로 한정하지 않고 재방문 금지 조건 아래 연결망을 따라 가능한 경로를 열거한다.",
       "activityNumbers": [
@@ -105,7 +105,7 @@
     {
       "id": "PATH-PRED4-03",
       "area": "경우의 수·경로",
-      "areaOrderCandidate": 3,
+      "areaOrderCandidate": null,
       "label": "연결 구조별 경로 가짓수 비교하기",
       "observableAction": "여러 연결망의 지점·간선 구조를 읽어 가능한 경로 수를 비교하고 다른 구조를 고른다.",
       "activityNumbers": [
