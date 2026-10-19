@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v106",
+  "checkpoint": "v107",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -34,7 +34,7 @@
     "activityReviewQueue": 6,
     "activitySkillRelations": 903,
     "conditionalDifficultyBands": 852,
-    "validatedAnswers": 313,
+    "validatedAnswers": 325,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0
@@ -475,7 +475,7 @@
       "Whole-task minimum curriculum levels remain unresolved for all 10 activities; numeric standards are prerequisite contexts only.",
       "Soma rows are related progression context only; zero exact type equivalences.",
       "Animal-domain factual accuracy and all answer keys were not independently checked.",
-      "동일 판본 해설을 대조해 학생 응답 9건 검증, 설명 예시 1개는 제외."
+      "동일 판본 해설 대조로 학생 응답 9건 검증. 설명 예시 1개는 검증 답안 수에서 제외."
     ]
   },
   "answerValidation": {
@@ -488,7 +488,7 @@
       11
     ],
     "answerKeySHA256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
-    "method": "Same-edition answer key visually checked; Apple Vision OCR used as assistive transcription.",
+    "method": "Same-edition answer-key pages visually compared; local Apple Vision OCR used only as assistive transcription.",
     "preservedBodyPages": [
       21,
       22,
