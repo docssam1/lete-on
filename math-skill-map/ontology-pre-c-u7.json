@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v68",
+  "checkpoint": "v98",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre C",
@@ -11,7 +11,8 @@
       69
     ],
     "visuallyReviewedPages": 7,
-    "sourceActivityBlocks": 13
+    "sourceActivityBlocks": 13,
+    "answerValidated": true
   },
   "interpretation": {
     "candidateOnly": true,
@@ -25,16 +26,17 @@
     "difficultyMeaning": "조건부 연구 밴드입니다. 교사 검토와 학생 수행 자료 없이 확정 난이도로 취급하지 않습니다."
   },
   "aggregate": {
-    "ontologyNodes": 1512,
-    "ontologyRelations": 2720,
-    "skillActionCandidates": 355,
-    "candidateEvidenceLinkedActivities": 717,
-    "activityReviewQueue": 136,
-    "conditionalDifficultyBands": 688,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 227,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
-    "minimumCurriculumAssignments": 0
+    "minimumCurriculumAssignments": 0,
+    "activitySkillRelations": 903
   },
   "unitCounts": {
     "mappedActivities": 13,
@@ -47,11 +49,12 @@
     "minimumCurriculumContextCandidates": 13,
     "unresolvedMinimumCurriculumCandidates": 13,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 13,
     "familyMembershipRelations": 6,
     "relatedButDistinctRelations": 5,
     "spiralRelationCandidates": 2,
-    "exactSomaTypeMatches": 0
+    "exactSomaTypeMatches": 0,
+    "newConditionalDifficultyBands": 0
   },
   "skillCandidates": [
     {
@@ -171,7 +174,7 @@
       "conditionalDifficultyBand": 3,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 2,
@@ -184,7 +187,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -197,7 +200,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -210,7 +213,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -223,7 +226,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -236,7 +239,7 @@
       "conditionalDifficultyBand": 2,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -249,7 +252,7 @@
       "conditionalDifficultyBand": 3,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -262,7 +265,7 @@
       "conditionalDifficultyBand": 3,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 9,
@@ -275,7 +278,7 @@
       "conditionalDifficultyBand": 3,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 10,
@@ -288,7 +291,7 @@
       "conditionalDifficultyBand": 3,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 11,
@@ -301,7 +304,7 @@
       "conditionalDifficultyBand": 4,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 12,
@@ -314,7 +317,7 @@
       "conditionalDifficultyBand": 4,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 13,
@@ -327,7 +330,7 @@
       "conditionalDifficultyBand": 4,
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "taxonomy": {
@@ -428,5 +431,16 @@
     "activitiesWithoutDirectRow": 8,
     "note": "목차 행은 소마 진도·문항 유형 동등성·최소 학년을 확정하지 않습니다."
   },
-  "privacy": "공개 파일은 활동 번호·페이지·비식별 행동 요약·후보 분류만 포함합니다. 내부 활동 식별자, OCR 원문, 정답, 원자료 해시, Drive ID, 로컬 경로는 포함하지 않습니다."
+  "privacy": "공개 파일에는 문항별 정답, OCR 원문, 활동 ID, 이미지 해시, 로컬 경로를 포함하지 않는다. 답안 검증은 같은 판본 해설 pp.28–31 대조 결과만 집계한다. 난이도·최소 교과수준·계통 연결은 교사 승인 전 후보다.",
+  "answerValidation": {
+    "activitiesValidated": 13,
+    "answerKeyPdfPages": [
+      28,
+      29,
+      30,
+      31
+    ],
+    "method": "Same-edition answer-key pages were visually cross-checked against the existing body-page review.",
+    "exactAnswerValuesOmitted": true
+  }
 }
