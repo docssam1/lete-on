@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v78",
+  "checkpoint": "v107",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -20,21 +20,21 @@
     "minimumCurriculumAssignments": 0,
     "confirmedSchoolGrades": 0,
     "approvedDifficultyLevels": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 12,
     "difficultyMeaning": "통일 5단계 기준의 조건부 연구 밴드이며 교사 검토 전이다.",
     "gradeMeaning": "교육과정의 일반 문제해결 전략 지도 문구는 참고 맥락일 뿐 개별 문항의 최소 교과수준을 정하지 않는다.",
     "numberMeaning": "기존 영역 편성 순번을 행동 후보와 의미 비교하는 데만 사용한다. 난이도·학습 순서·확정 공통 유형 번호가 아니다.",
     "skillMeaning": "순차 역산, 격자 크기 복원, 양방향 순서와 전체 인원, 절반·고정량 그림 모델, 닫힌 경계 중복 제거를 별도 행동 후보로 유지한다."
   },
   "aggregate": {
-    "ontologyNodes": 1604,
-    "ontologyRelations": 2991,
-    "skillActionCandidates": 400,
-    "candidateEvidenceLinkedActivities": 819,
-    "activityReviewQueue": 33,
-    "activitySkillRelations": 870,
-    "conditionalDifficultyBands": 791,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 325,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0
@@ -48,7 +48,7 @@
     "conditionalDifficultyBands": 13,
     "unresolvedMinimumCurriculumCandidates": 13,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 12,
     "familyMembershipRelations": 5,
     "relatedButDistinctRelations": 4,
     "spiralRelationCandidates": 6,
@@ -189,7 +189,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -203,7 +203,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -217,7 +217,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -231,7 +231,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -245,7 +245,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -259,7 +259,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -273,7 +273,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 9,
@@ -287,7 +287,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 10,
@@ -301,7 +301,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 11,
@@ -315,7 +315,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 12,
@@ -329,7 +329,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 13,
@@ -343,7 +343,7 @@
       "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
       "minimumCurriculumLevelCandidateStatus": "item-specific-minimum-unresolved",
       "minimumCurriculumAssignment": null,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "editorialNumberedTypeCandidates": [
@@ -697,6 +697,34 @@
       "Answers and item-level minimum curriculum levels remain unvalidated or unresolved.",
       "Soma curriculum and arithmetic rows are progression contexts only; four candidate rows remain held back.",
       "Editorial area-order numbers are semantic comparison candidates, never approved common type IDs or learning-order numbers."
+    ]
+  },
+  "answerValidation": {
+    "studentResponseTasksValidated": 12,
+    "modeledExamplesExcluded": 1,
+    "answerKeyPdfPages": [
+      28,
+      29,
+      30,
+      31
+    ],
+    "sameEditionAnswerPdfSha256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "method": "Same-edition answer-key pages visually compared with mapped body activities; local Apple Vision OCR used only as assistive transcription.",
+    "preservedBodyPages": [
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69
+    ],
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true,
+    "modeledExampleActivityNumbers": [
+      1
     ]
   }
 }
