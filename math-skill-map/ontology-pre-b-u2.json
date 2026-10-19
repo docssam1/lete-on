@@ -179,21 +179,21 @@
         "from": "CUBE-PIECE-ASSEMBLY-PREB2-01",
         "to": "CUB06",
         "type": "related-but-distinct",
-        "basis": "B2 places given pieces to form or enumerate a target; CUB06 reconstructs a solid from view, fragment, or count constraints.",
+        "basis": "B2는 주어진 조각을 놓아 목표 입체를 구성하거나 가능한 결합을 찾고, CUB06은 시점·조각·개수 조건에서 입체 구조를 추론한다.",
         "status": "hypothesis-needs-teacher-review"
       },
       {
         "from": "CUBE-MIXED-UNIT-BLOCK-COUNT-PREB2-01",
         "to": "CUB03",
         "type": "related-but-distinct",
-        "basis": "B2 counts composite cuboid construction blocks; CUB03 infers hidden unit cubes from visible/total constraints.",
+        "basis": "B2는 복합 직육면체 블록을 구성 단위로 세고, CUB03은 보이는 수와 전체 수 조건에서 숨은 단위 큐브를 추론한다.",
         "status": "hypothesis-needs-teacher-review"
       },
       {
         "from": "CUB01",
         "to": "CUB06",
         "type": "related-but-distinct",
-        "basis": "Matching one object across viewpoints differs from inferring a solid under additional projection or count constraints.",
+        "basis": "한 입체를 여러 시점에서 대응하는 행동과 투영·개수 제약에서 입체를 추론하는 행동은 구별한다.",
         "status": "hypothesis-needs-teacher-review"
       }
     ]
