@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v99",
+  "checkpoint": "v100",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre C",
@@ -34,16 +34,17 @@
     "difficultyMeaning": "조건부 연구 밴드입니다. 교사 검토와 학생 수행 자료 없이 확정 난이도로 취급하지 않습니다."
   },
   "aggregate": {
-    "ontologyNodes": 1515,
-    "ontologyRelations": 2740,
-    "skillActionCandidates": 357,
-    "candidateEvidenceLinkedActivities": 728,
-    "activityReviewQueue": 125,
-    "conditionalDifficultyBands": 699,
-    "validatedAnswers": 238,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 248,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
-    "minimumCurriculumAssignments": 0
+    "minimumCurriculumAssignments": 0,
+    "activitySkillRelations": 903
   },
   "unitCounts": {
     "mappedActivities": 11,
