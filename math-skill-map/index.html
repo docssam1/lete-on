@@ -16,7 +16,7 @@
   <div class="topline"><span class="mark">G</span><span>G-FIELD · 사고력 교재 연구</span></div>
   <section class="hero">
     <div><div class="eyebrow">Skill map · research prototype</div><h1>수학 사고력<br>스킬 계통도</h1><p>문제의 겉모양이 아니라 학생이 실제로 해야 하는 사고 행동을 기준으로 유형을 묶고, 학년별 교과 수준과 난이도 근거를 연결해 교재·문제은행에 쓸 계통도를 만드는 연구 화면입니다.</p></div>
-    <div class="checkpoint"><strong>현재 범위 · 1031 Pre B 2–10단원 + 입문 B 12단원 + 입문 C 1–12단원 + 입문 D 1–11단원</strong>Pre B 3–10단원, 입문 B 12단원, 입문 C 1–12단원, 입문 D 1–11단원의 활동 455개를 화면 범위로 표시합니다. 행동 후보 카드는 235개입니다. Pre B10의 물의 양·수위 행동 후보 9개를 새로 연결했고, 기존 난이도 연구값을 재사용했습니다. 최소 교과수준은 문항별 후보이며 교사 승인 전입니다.</div>
+    <div class="checkpoint"><strong>현재 범위 · 1031 Pre B 2–10단원 + 입문 B 12단원 + 입문 C 1–12단원 + 입문 D 1–11단원</strong>Pre B 2–10단원, 입문 B 12단원, 입문 C 1–12단원, 입문 D 1–11단원의 활동 455개를 화면 범위로 표시합니다. 행동 후보 카드는 235개입니다. Pre B10의 물의 양·수위 행동 후보 9개를 새로 연결했고, 기존 난이도 연구값을 재사용했습니다. 최소 교과수준은 문항별 후보이며 교사 승인 전입니다.</div>
   </section>
   <section class="stats" aria-label="연구 통계">
     <div class="stat"><b>1,469</b><span>전체 온톨로지 노드</span></div><div class="stat"><b>2,536</b><span>전체 관계</span></div><div class="stat"><b>317</b><span>행동 유형 후보</span></div><div class="stat"><b>629</b><span>후보 근거 연결 활동</span></div><div class="stat"><b>224</b><span>유형 검토 대기 활동</span></div><div class="stat"><b>638</b><span>조건부 난이도 후보</span><div class="stat"><b>42</b><span>정답 검증 활동</span></div></div><div class="stat"><b>0</b><span>교사 승인 유형·난이도·학년</span></div>
@@ -3872,17 +3872,17 @@ const relations=[
   [
     "CUBE-PIECE-ASSEMBLY-PREB2-01 · 주어진 쌓기나무 조각으로 목표 입체와 가능한 조합 구성하기",
     "CUB06 · 조각·투영 조건을 만족하는 구조 추론",
-    "구별 유지 · B2 places given pieces to form or enumerate a target; CUB06 reconstructs a solid from view, fragment, or count constraints."
+    "구별 유지 · B2는 주어진 조각을 놓아 목표 입체를 구성하거나 가능한 결합을 찾고, CUB06은 시점·조각·개수 조건에서 입체 구조를 추론한다."
   ],
   [
     "CUBE-MIXED-UNIT-BLOCK-COUNT-PREB2-01 · 크기가 다른 직육면체 블록으로 목표 입체 구성 수 세기",
     "CUB03 · 가려진 큐브를 포함한 전체 수 추론",
-    "구별 유지 · B2 counts composite cuboid construction blocks; CUB03 infers hidden unit cubes from visible/total constraints."
+    "구별 유지 · B2는 복합 직육면체 블록을 구성 단위로 세고, CUB03은 보이는 수와 전체 수 조건에서 숨은 단위 큐브를 추론한다."
   ],
   [
     "CUB01 · 시점 변화 속 구조 대응",
     "CUB06 · 조각·투영 조건을 만족하는 구조 추론",
-    "구별 유지 · Matching one object across viewpoints differs from inferring a solid under additional projection or count constraints."
+    "구별 유지 · 한 입체를 여러 시점에서 대응하는 행동과 투영·개수 제약에서 입체를 추론하는 행동은 구별한다."
   ]
 ];
 const tree=document.querySelector('#tree');
