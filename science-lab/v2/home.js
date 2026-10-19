@@ -1,6 +1,8 @@
 // 홈 = 로드맵 입구(매거진형). 표지(한 줄 약속 + 이어서 하기) → 지금 열린 실험 수업(3D 실험실 사진 카드)
 // → 3~6학년 로드맵(학기마다 정거장 줄) → 한 교재 네 가지 수업. 정거장을 누르면 소단원 시트.
 import { SEMS, READY, BOOK_UNITS, BANK } from './units-index.js';
+import { SEMS_2022, contentId2022 } from './curriculum-2022.js';
+import { placeOf, placeLabel, placeNow, legacyFor } from './curriculum-place.js';
 import { countNeeds } from './check.js';
 
 const ROMAN = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ'];
@@ -45,10 +47,16 @@ function stateOf(store, id) {
   if ((st.done || []).length || st.step != null) return { kind: 'doing', st };
   return { kind: 'open', st };
 }
-const ALL = SEMS.flatMap((s) => s.units);
+// 홈 로드맵 = 2022 개정 32단원. 정거장 id = 그 자리를 채우는 내용 id(없으면 준비 중).
+const ALL = SEMS_2022.flatMap((s) => s.units.map((u) => ({ ...u, sem: s.sem, id: contentId2022(u.position) })));
+const is2022 = (id) => placeOf(id)?.era === '2022';
+// 2015 교재 단원 중 홈 아래 「예전 교과서 자료」에 보일 것(같은 단원이 2022 내용으로 쓰이는 3-1·4-1은 뺀다)
+const LEGACY = SEMS.filter((s) => ['3-2', '4-2', '5-1', '5-2'].includes(s.sem)).flatMap((s) => s.units.map((u) => ({ ...u, sem: s.sem })))
+  .filter((u) => !is2022(u.id) && (READY[u.id] || BANK[u.id]));
 // 이어서 할 곳: 진행 중인 수업 → 아직 안 끝낸 수업 → 없음
 function nextLab(store) {
-  return LABS.find((l) => stateOf(store, l.id).kind === 'doing') || LABS.find((l) => stateOf(store, l.id).kind === 'open') || null;
+  const now = LABS.filter((l) => is2022(l.id));
+  return LABS.find((l) => stateOf(store, l.id).kind === 'doing') || now.find((l) => stateOf(store, l.id).kind === 'open') || null;
 }
 const startOf = (id) => (BOOK_UNITS.has(id) ? `#/${id}/start` : READY[id]?.bankOnly ? `#/${id}/sub/E1` : `#/${id}/1`);
 const pct = (store, id) => { const k = stateOf(store, id); return k.kind === 'passed' ? 100 : Math.round(((k.st?.done || []).length / 5) * 100); };
@@ -71,7 +79,8 @@ function labCard(store, l, feature) {
       ${badge}
     </a>
     <div class="h-lab-body">
-      <p class="h-kicker">${esc(l.sem.replace('-', '학년 '))}학기 · ${esc(l.unit)}</p>
+      <p class="h-kicker"><span class="h-era${is2022(l.id) ? '' : ' old'}">${is2022(l.id) ? '2022 개정' : '2015 교재'}</span>${esc(placeLabel(l.id).replace(/^[^·]+· /, ''))}</p>
+      ${is2022(l.id) ? '' : `<p class="h-now">${esc(placeNow(l.id))}</p>`}
       <h3><a href="${startOf(l.id)}">${esc(l.title)}</a></h3>
       <p class="h-q">“${esc(l.q)}”</p>
       ${feature ? `<p class="h-exp"><span>오늘의 실험</span>${esc(l.lab)}</p><ul class="h-skills">${l.skills.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
@@ -86,35 +95,44 @@ function labCard(store, l, feature) {
 }
 
 function roadmap(store, nx) {
-  const grades = [3, 4, 5, 6];
+  const grades = [3, 4, 5, 6], here = nx && placeOf(nx.id)?.position;
   return grades.map((g) => `<div class="h-grade">
     <div class="h-grade-no"><b>${g}</b><span>학년</span></div>
-    <div class="h-sems">${SEMS.filter((s) => s.sem.startsWith(`${g}-`)).map((s) => {
-      const open = s.units.filter((u) => READY[u.id]).length;
+    <div class="h-sems">${SEMS_2022.filter((s) => s.sem.startsWith(`${g}-`)).map((s) => {
+      const open = s.units.filter((u) => READY[contentId2022(u.position)]).length;
       return `<div class="h-sem">
         <p class="h-sem-t">${s.sem.split('-')[1]}학기 <small>${open ? `${open}개 열림` : '준비 중'}</small></p>
         <ol class="h-track" style="--n:${s.units.length}">${s.units.map((u) => {
-          const k = stateOf(store, u.id), isNext = nx && (u.id === nx.id || (READY[nx.id]?.hidden && u.id === 's41-u03' && nx.id === 's41-u03b'));
-          const label = `${s.sem.replace('-', '학년 ')}학기 ${ROMAN[u.no - 1]}. ${u.title}${k.kind === 'passed' ? ', 끝냄' : k.kind === 'locked' ? ', 준비 중' : ''}`;
+          const id = contentId2022(u.position), k = id ? stateOf(store, id) : { kind: 'locked' }, isNext = here === u.position;
+          const label = `2022 개정 ${s.sem.replace('-', '학년 ')}학기 ${ROMAN[u.no - 1]}. ${u.title}${k.kind === 'passed' ? ', 끝냄' : k.kind === 'locked' ? ', 준비 중' : ''}`;
           const inner = `<span class="h-dot">${k.kind === 'passed' ? ICO.flag : ROMAN[u.no - 1]}</span><span class="h-name">${esc(u.title)}</span>`;
-          return `<li class="h-stop ${k.kind}${isNext ? ' next' : ''}">${READY[u.id]
-            ? `<a href="${startOf(u.id)}" data-unit="${u.id}" aria-label="${esc(label)}">${inner}</a>`
+          return `<li class="h-stop ${k.kind}${isNext ? ' next' : ''}">${k.kind !== 'locked'
+            ? `<a href="${startOf(id)}" data-pos="${u.position}" aria-label="${esc(label)}">${inner}</a>`
             : `<button type="button" aria-label="${esc(label)}">${inner}</button>`}${isNext ? '<span class="h-here">지금 여기</span>' : ''}</li>`;
         }).join('')}</ol></div>`;
     }).join('')}</div></div>`).join('');
 }
 
+// 2015 교재 자료: 단원평가 원문과 예전 실험 수업은 그대로 쓰되, 지금 교과서의 어느 단원과 이어지는지 함께 적는다.
+function legacyList(store) {
+  return `<ul class="h-old">${LEGACY.map((u) => {
+    const k = READY[u.id] ? stateOf(store, u.id) : { kind: 'open' }, lab = LABS.find((l) => l.id === u.id);
+    return `<li><a href="${startOf(u.id)}"><span class="h-era old">2015 교재</span><b>${esc(u.sem.replace('-', '학년 '))}학기 ${ROMAN[u.no - 1]}. ${esc(u.title)}</b>
+      <small>${esc(placeNow(u.id))}</small><em>${lab ? esc(lab.title) : BANK[u.id] ? `단원평가 원문 ${BANK[u.id].n}문항` : ''}${k.kind === 'passed' ? ' · 끝냄' : ''}</em></a></li>`;
+  }).join('')}</ul>`;
+}
+
 export function pageHome($app, store, teacher) {
   const nx = nextLab(store), go = nx || LABS[0], gok = stateOf(store, go.id);
   const need = countNeeds();
-  const passedN = ALL.filter((u) => stateOf(store, u.id).kind === 'passed').length;
+  const passedN = LABS.filter((l) => stateOf(store, l.id).kind === 'passed').length;
   const openN = ALL.filter((u) => READY[u.id]).length;
   const cta = !nx ? '다시 보기' : gok.kind === 'doing' ? '이어서 하기' : '첫 수업 시작하기';
-  const feature = go, rest = LABS.filter((l) => l !== feature);
+  const feature = go, rest = LABS.filter((l) => l !== feature && is2022(l.id)), old = LABS.filter((l) => l !== feature && !is2022(l.id));
   $app.innerHTML = `<div class="h">
     <header class="h-top"><div class="h-wrap">
       <a class="h-brand" href="#/"><img src="${A}docssam-A1-mouth-closed.webp" alt="" width="28" height="42"><span>docssam <b>과학 탐구 랩</b></span></a>
-      <nav class="h-nav" aria-label="바로 가기"><a href="#h-labs">실험 수업</a><a href="#h-map">로드맵</a><a href="#h-modes">수업 방식</a><a href="#/bank">문제은행</a><a class="h-intro" href="../intro/">교재 소개</a></nav>
+      <nav class="h-nav" aria-label="바로 가기"><a href="#h-labs">실험 수업</a><a href="#h-map">로드맵</a><a href="#h-old">예전 교과서</a><a href="#h-modes">수업 방식</a><a href="#/bank">문제은행</a><a class="h-intro" href="../intro/">교재 소개</a></nav>
     </div></header>
 
     <section class="h-hero"><div class="h-wrap h-hero-in">
@@ -127,8 +145,8 @@ export function pageHome($app, store, teacher) {
           <a class="h-btn big ghost" href="#h-map">로드맵 보기</a>
         </div>
         <dl class="h-stats">
-          <div><dt>열린 실험 수업</dt><dd>${LABS.length}<small>개</small></dd></div>
-          <div><dt>열린 자료 단원</dt><dd>${openN}<small>/${ALL.length}</small></dd></div>
+          <div><dt>2022 수업</dt><dd>${LABS.filter((l) => is2022(l.id)).length}<small>개</small></dd></div>
+          <div><dt>열린 2022 단원</dt><dd>${openN}<small>/${ALL.length}</small></dd></div>
           <div><dt>모은 깃발</dt><dd>${passedN}<small>개</small></dd></div>
         </dl>
       </div>
@@ -141,7 +159,7 @@ export function pageHome($app, store, teacher) {
 
     <main>
       <section class="h-sec" id="h-labs"><div class="h-wrap">
-        <header class="h-sec-head"><p class="h-num">01</p><div><h2>지금 열린 실험 수업</h2><p>실험 교재 한 장이 수업 하나예요. 3D 실험실에서 직접 바꿔 보고, 기록하고, 결론을 써요.</p></div></header>
+        <header class="h-sec-head"><p class="h-num">01</p><div><h2>지금 교과서(2022 개정) 수업</h2><p>지금 학교에서 배우는 단원이에요. 자료와 실험을 보고 예상하고, 교과 개념으로 설명해요.</p></div></header>
         <div class="h-labs">${labCard(store, feature, true)}${rest.map((l) => labCard(store, l, false)).join('')}</div>
       </div></section>
 
@@ -156,14 +174,20 @@ export function pageHome($app, store, teacher) {
       </div></section>
 
       <section class="h-sec alt" id="h-map"><div class="h-wrap">
-        <header class="h-sec-head"><p class="h-num">02</p><div><h2>기존 자료 차례</h2><p>파란 정거장은 지금 열려 있고, 끝내면 깃발이 꽂혀요. <a href="#/bank">2022 개정 32단원 차례 보기</a></p></div></header>
+        <header class="h-sec-head"><p class="h-num">02</p><div><h2>3~6학년 로드맵 · 2022 개정 32단원</h2><p>지금 교과서 차례예요. 파란 정거장은 열려 있고, 끝내면 깃발이 꽂혀요. 단원평가는 <a href="#/bank">문제은행</a>에서 골라요.</p></div></header>
         <div class="h-check"><div><b>선생님 확인</b><p>이 기기에서 스스로 공부한 쓰기 답을 확인해요. 기록은 다른 기기로 전송되지 않아요.</p></div><a class="h-btn" href="#/check">확인할 답 보기${need ? ` <span class="h-check-count">${need}</span>` : ''}${ICO.arrow}</a></div>
         <div class="h-legend" aria-hidden="true"><span><i class="open"></i>열림</span><span><i class="passed"></i>끝냄</span><span><i class="locked"></i>준비 중</span></div>
         <div class="h-map">${roadmap(store, nx)}</div>
       </div></section>
 
+      <section class="h-sec" id="h-old"><div class="h-wrap">
+        <header class="h-sec-head"><p class="h-num">03</p><div><h2>예전 교과서(2015) 자료</h2><p>예전 교과서 단원의 실험 수업과 단원평가예요. 학년·단원 번호가 지금 교과서와 달라요. 단원마다 지금 교과서의 어느 단원과 이어지는지 적어 두었어요.</p></div></header>
+        ${old.length ? `<div class="h-labs">${old.map((l) => labCard(store, l, false)).join('')}</div>` : ''}
+        <h3 class="h-old-t">2015 교재 단원 차례</h3>${legacyList(store)}
+      </div></section>
+
       <section class="h-sec" id="h-modes"><div class="h-wrap">
-        <header class="h-sec-head"><p class="h-num">03</p><div><h2>한 교재, 네 가지 수업</h2><p>같은 실험 한 장을 집에서도, 교실에서도, 종이로도 써요.</p></div></header>
+        <header class="h-sec-head"><p class="h-num">04</p><div><h2>한 교재, 네 가지 수업</h2><p>같은 실험 한 장을 집에서도, 교실에서도, 종이로도 써요.</p></div></header>
         <div class="h-modes">
           <a class="h-mode" href="#/${go.id}/lab-class/self/1"><span class="h-mode-ico">${ICO.self}</span><b>스스로 공부하기</b><p>독쌤이 한 단계씩 안내해요. 하나를 마치면 다음으로 저절로 넘어가요.</p><span class="h-more">해 보기${ICO.arrow}</span></a>
           <a class="h-mode" href="#/${go.id}/lab-class/teach/1"><span class="h-mode-ico">${ICO.teach}</span><b>가르치기</b><p>전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요. 두 팀 배틀까지.</p><span class="h-more">수업 화면${ICO.arrow}</span></a>
@@ -191,15 +215,18 @@ export function pageHome($app, store, teacher) {
   const close = () => { $sheet.hidden = $bg.hidden = true; };
   $bg.addEventListener('click', close);
   addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-  $app.querySelectorAll('.h-stop a[data-unit]').forEach((a) => a.addEventListener('click', (e) => {
-    const u = ALL.find((x) => x.id === a.dataset.unit), r = READY[u.id];
+  $app.querySelectorAll('.h-stop a[data-pos]').forEach((a) => a.addEventListener('click', (e) => {
+    const u = ALL.find((x) => x.position === a.dataset.pos), r = READY[u.id];
     if (!r?.subs) return; e.preventDefault();
-    const [g, h] = u.id.slice(1, 3).split('');
+    const [g, h] = u.sem.split('-');
     const labs = r.bankOnly ? [] : r.labs || [{ id: u.id, hero: r.hero }], bk = BANK[u.id];
-    $sheet.innerHTML = `<div class="grab" aria-hidden="true"></div><p class="step-label">${g}학년 ${h}학기 ${ROMAN[u.no - 1]}</p><h2 id="sheet-t">${esc(u.title)}</h2>
-      ${labs.length ? '' : '<p class="lead">이 단원은 아직 실험 수업이 없어요. 소단원 문제와 단원평가로 공부해요.</p>'}<div class="labs">${labs.map((l) => { const ks = stateOf(store, l.id).kind, meta = LABS.find((x) => x.id === l.id); return `<a class="btn primary" href="${startOf(l.id)}"><b>${esc(meta?.title || l.hero)}</b><small>${l.covers ? `소단원 ${l.covers.map((c) => r.subs.findIndex((x) => x.id === c) + 1).join('·')} · ` : ''}${ks === 'doing' ? '이어서 하기' : ks === 'passed' ? '다시 보기' : '실험 수업 시작'}</small></a>`; }).join('')}</div>
-      ${bk ? `<h3>단원평가 <small>원문 ${bk.n}문항</small></h3><div class="sheet-sets">${bk.sets.map((n) => `<a class="btn" href="#/${u.id}/exam/${n}">세트${n}</a>`).join('')}</div>` : ''}
+    const extra = Object.keys(READY).filter((id) => READY[id].hidden && placeOf(id)?.position === u.position && !labs.some((l) => l.id === id)).map((id) => ({ id, hero: READY[id].hero }));
+    const olds = legacyFor(u.position).filter((id) => READY[id] || BANK[id]);
+    $sheet.innerHTML = `<div class="grab" aria-hidden="true"></div><p class="step-label">2022 개정 · ${g}학년 ${h}학기 ${ROMAN[u.no - 1]}</p><h2 id="sheet-t">${esc(u.title)}</h2>
+      ${labs.length ? '' : '<p class="lead">이 단원은 아직 실험 수업이 없어요. 소단원 문제와 단원평가로 공부해요.</p>'}<div class="labs">${[...labs, ...extra].map((l) => { const ks = stateOf(store, l.id).kind, meta = LABS.find((x) => x.id === l.id); return `<a class="btn primary" href="${startOf(l.id)}"><b>${esc(meta?.title || l.hero)}</b><small>${l.covers ? `소단원 ${l.covers.map((c) => r.subs.findIndex((x) => x.id === c) + 1).join('·')} · ` : ''}${ks === 'doing' ? '이어서 하기' : ks === 'passed' ? '다시 보기' : '수업 시작'}</small></a>`; }).join('')}</div>
+      ${bk?.sets?.length ? `<h3>단원평가 <small>${bk.n ? `원문 ${bk.n}문항` : '창작 문항'}</small></h3><div class="sheet-sets">${bk.sets.map((n) => `<a class="btn" href="#/${u.id}/exam/${n}">세트${n}</a>`).join('')}</div>` : ''}
       <h3>소단원</h3><ol class="subs">${r.subs.map((s, i) => `<li><a href="#/${u.id}/sub/${s.id}"><span class="sn">${i + 1}</span><span class="st">${esc(s.name)}</span><span class="sc">유형 ${s.types}</span></a></li>`).join('')}</ol>
+      ${olds.length ? `<h3>예전 교과서(2015) 자료 <small>같은 내용을 다룬 예전 단원</small></h3><div class="labs">${olds.map((id) => { const p = placeOf(id), meta = LABS.find((x) => x.id === id); return `<a class="btn" href="${startOf(id)}"><b>2015 교재 · ${esc(p.sem.replace('-', '학년 '))}학기 ${ROMAN[p.no - 1]}. ${esc(p.title)}</b><small>${meta ? esc(meta.title) : `단원평가 원문 ${BANK[id]?.n || 0}문항`}</small></a>`; }).join('')}</div>` : ''}
       <button type="button" class="btn" data-close>닫기</button>`;
     $sheet.querySelector('[data-close]').addEventListener('click', close);
     $sheet.hidden = $bg.hidden = false; $sheet.querySelector('a').focus();

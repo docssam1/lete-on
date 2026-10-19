@@ -3,9 +3,10 @@ import {photoFigureHtml} from './photo-figure.js';
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
-import { pageHome } from './home.js?v=14';
+import { pageHome } from './home.js?v=15';
 import { escapeInApp } from './inapp.js';
-import { SEMS, BANK } from './units-index.js';
+import { SEMS, BANK, READY } from './units-index.js';
+import { placeLabel, placeNow } from './curriculum-place.js';
 import { curriculumBankHtml, catalogNavigation } from './bank-catalog.js';
 import { assessmentPool, assessmentRelated } from './assessment-data.js';
 import {conceptCardsHtml} from './concept-cards.js';
@@ -533,9 +534,9 @@ async function pageCheck(only) {
 async function pageStart(u, L) {
   const bookMod = BOOKS[u] ? await BOOKS[u]().catch(() => null) : null, src = BOOKX.source || [];
   const sets = [...new Set(src.map((x) => x.sourceRef.set))];
-  if (!bookMod && BANK[u]?.bankOnly && src.length) {
+  if (!bookMod && (BANK[u]?.bankOnly || READY[u]?.bankOnly) && src.length) {
     const links=[['sub/E1','소단원별 문제'],['print/student','학생 문제지'],['print/teacher','교사 해설'],['print/answers','정답·해설만'],['print/quick','빠른 정답표'],...sets.map(n=>['exam/'+n,groupLabel(BANK[u],n)])];
-    $app.innerHTML=`<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>GFIELD · 지필드</h1></div></header><main class="wrap start"><h2>${esc(L.title)}</h2><p>문제와 자료를 골라 학습해요.</p><div class="start-grid">${links.map(([path,label])=>`<a class="start-card" href="#/${u}/${path}"><b>${esc(label)}</b></a>`).join('')}</div><p>관련 원문과 독립 짝문항을 담았어요. 전체 개념·탐구 교재와 탐구 수업은 준비 중이에요.</p></main>`;
+    $app.innerHTML=`<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>GFIELD · 지필드</h1></div></header><main class="wrap start"><p class="step-label">${esc(placeLabel(u))}</p>${placeNow(u) ? `<p class="start-now">${esc(placeNow(u))}</p>` : ''}<h2>${esc(L.title)}</h2><p>문제와 자료를 골라 학습해요.</p><div class="start-grid">${links.map(([path,label])=>`<a class="start-card" href="#/${u}/${path}"><b>${esc(label)}</b></a>`).join('')}</div><p>관련 원문과 독립 짝문항을 담았어요. 전체 개념·탐구 교재와 탐구 수업은 준비 중이에요.</p></main>`;
     scrollTo(0,0);return;
   }
   if (!bookMod) { location.replace(`#/${u}`); return; }
@@ -547,7 +548,7 @@ async function pageStart(u, L) {
   const ch = bookMod.chapter, need = (await import('./check.js')).countNeeds([u]);
   const card = (href, ico, t, d, primary) => `<a class="start-card${primary ? ' primary' : ''}" href="${href}"><span class="sc-ico" aria-hidden="true">${ico}</span><b>${t}</b><span>${d}</span></a>`;
   $app.innerHTML = `<header class="top"><div class="wrap"><a class="back" href="#/">‹ 지도로</a><h1>${esc(ch.book)}</h1></div></header>
-    <main class="wrap start"><p class="step-label">${esc(ch.link?.course || '')} ${esc(ch.link?.unit || '')}</p>
+    <main class="wrap start"><p class="step-label">${esc(placeLabel(u) || `${ch.link?.course || ''} ${ch.link?.unit || ''}`)}</p>${placeNow(u) ? `<p class="start-now">${esc(placeNow(u))}</p>` : ''}
       <h2><span class="start-no">${esc(ch.no)}</span>${esc(ch.title)}</h2><p class="lead">무엇을 할까요?</p>
       <div class="start-grid">
         ${card(`#/${u}/lab-class/self/1`, '🧪', esc(ch.sessionLabels?.[0] ? '스스로 공부하기 · '+ch.sessionLabels[0] : '스스로 공부하기 · 1차시'), esc(ch.startDescriptions?.[0] || '「해 보기」 약 20분 — 예상하고, 가설 세우고, 3D 실험실에서 직접 해 봐요.'), true)}
