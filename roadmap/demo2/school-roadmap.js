@@ -247,8 +247,8 @@ const P2={
 const L_SHIFT={L0:0,L1:3,L2:7,L3:12,L4:17}; // 데모 LEVELS의 shift와 같다
 // 레벨별 공부 강도(원장님 2026-10-19). 비어 있는 레벨은 원장님 기준을 받으면 채운다.
 const L_LOAD={L0:'학원 주 4~5일 · 시험 대비 중심',L1:'학원 주 4~5일 · 시험 대비 중심',L4:'사고력 꼼꼼히 + 모의고사 · 황소 미고려도 많음'};
-const AX0=4, AX1=71; // 5세 5월 ~ 초3 12월
-const ROW_COLORS={school:'#dbeafe',school2:'#e0f2fe',comp:'#ede9fe',comp2:'#fce7f3',calc:'#dcfce7',hwangso:'#fde68a'};
+const AX0=4, AX1=83; // 5세 5월 ~ 초4 12월
+const ROW_COLORS={school:'#dbeafe',school2:'#e0f2fe',comp:'#ede9fe',comp2:'#fce7f3',calc:'#dcfce7',hwangso:'#fde68a',sci:'#ecfccb'};
 
 function demoPrefix(key, stopText){
   const out=[];
@@ -302,38 +302,60 @@ function joinRow(demoKey, demoShift, pBlocks, pShift, demoFilter){
   }
   return Dk.concat(P);
 }
-/* 중등 시작 바닥과 여유 달 (원장님 2026-10-19, 2026 유7 필즈 S1반 운영 로드맵 근거)
-   - 아무리 빨라도 L0의 중등 선행은 초1 8월쯤(m 43). 그 앞에 디딤돌 응용을 쉬는 여유를 최소 1개월 둔다.
-   - 레벨마다 같은 속도로 계단처럼 늦어진다. 연산의 중1 연산도 같은 바닥을 쓰고, 빈 기간은 '초등연산 보충'(S1 표). */
-const MID_FLOOR=43;
-function midFloor(blocks, isMid, filler){
-  const i=blocks.findIndex(b=>isMid(plain(b[0])));
-  if(i<0) return blocks;
-  const s0=blocks[i][1], start=Math.max(MID_FLOOR, s0+1), d=start-s0;
-  const head=blocks.slice(0,i), tail=blocks.slice(i).map(([t,s,e])=>[t,s+d,e+d]);
-  const prevEnd=head.length?head[head.length-1][2]:start-1;
-  return prevEnd+1<=start-1 ? head.concat([[filler,prevEnd+1,start-1]],tail) : head.concat(tail);
+/* 중등·과학 규칙 (원장님 2026-10-19)
+   - 필즈 S1 ≈ L1, L0는 그보다 조금 빠름. 중등 선행 시작: L0 초1 8월, L1 초1 11월, 그 아래는 레벨 속도대로 계단식(최소 여유 1개월).
+   - 중등은 한 번 돌리고 끝이 아니다: 학기마다 원리해설(기본) + 중등 심화(A급)를 4개월에 함께 한다.
+   - 중등 뒤: 공통수학1·2와 함께 중등 대수 심화 → 중등 기하 심화를 이어 가고, 그 뒤 KMO 또는 이과 상위권으로 갈린다.
+   - 연산: 교과와 같은 진도. 중학 연산은 2026 유7 필즈 S1 표 순서·기간, 교과 중등 시작 2개월 뒤부터(빈 기간은 초등연산 보충).
+   - 과학: 중2-1(심화 포함)이 끝난 다음 달 중등과학. 그 앞 6개월 초5·6 과학, 그 앞 12개월 실험과학(거꾸로 계산).
+     황소 대비를 켜면 L0~L3은 초2 9~10월 과학 쉼표. */
+const MID_START={L0:43,L1:46};
+const MID_SEMS=['중1-1','중1-2','중2-1','중2-2','중3-1','중3-2'];
+const MID_CALC=[['기적의 중학도형 1권',2],['기적의 중학연산 1AB',5],['기적의 중학도형 2권',2],['기적의 중학연산 2AB',4],['기적의 중학도형 3권',2],['기적의 중학연산 3AB',6]];
+function seqFrom(start, items){ const out=[]; let m=start; items.forEach(([t,n])=>{ out.push([t,m,m+n-1]); m+=n; }); return out; }
+function levelPlan(id, shift){
+  const lShift=shift-L_SHIFT.L2, pShift=Math.max(0,lShift);
+  const notTop=b=>!/최상위/.test(b.text);
+  const elemSchool=joinRow('school',shift,P2.school.filter(b=>!/^중/.test(b[0])),lShift,notTop);
+  const elemEnd=elemSchool[elemSchool.length-1][2];
+  const mid=Math.max(MID_START[id]||MID_START.L1, elemEnd+2);
+  const school=elemSchool.concat(mid-1>elemEnd?[['여유 · 초등 대수 심화<br><small>(선택)</small>',elemEnd+1,mid-1]]:[])
+    .concat(seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',4])))
+    .concat(seqFrom(mid+24, [['공통수학1',3],['공통수학2',3],['진로: KMO 입문 또는 이과 상위권',12]]));
+  const demoTop=(window.ROAD_L0||ROAD_L0).school.filter(b=>!notTop(b)).map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]);
+  const school2=demoTop
+    .concat(P2.school2.map(([t,s,e])=>[t,s+lShift,e+lShift]).filter(b=>!(demoTop.some(d=>plain(d[0]).includes('3학년'))&&/3학년/.test(b[0]))&&b[2]<mid))
+    .concat(seqFrom(mid, MID_SEMS.map(x=>[x+' 중등 심화(A급)',4])))
+    .concat(seqFrom(mid+24, [['중등 대수 심화',4],['중등 기하 심화',4]]));
+  const elemCalc=joinRow('calc',shift,P2.calc.filter(b=>!/중1 연산/.test(b[0])),lShift);
+  const cEnd=elemCalc[elemCalc.length-1][2], cMid=Math.max(mid+2,cEnd+1);
+  const calc=elemCalc.concat(cMid-1>cEnd?[['초등연산 보충',cEnd+1,cMid-1]]:[]).concat(seqFrom(cMid, MID_CALC));
+  const comp=joinRow('thinking1',shift,P2.comp,pShift);
+  // 과학: 중2-1 끝(= mid+11) 다음 달 중등과학, 거꾸로 초5·6 과학 6개월, 실험과학 12개월
+  const pause=(academyOn.hwangso&&['L0','L1','L2','L3'].includes(id))?[56,57]:[];
+  let sciStart=mid+12; if(pause.length&&sciStart>=pause[0]-1&&sciStart<=pause[1]) sciStart=pause[1]+1; // 쉼표 직전에 1달만 시작하지 않도록 쉼표 뒤로
+  const label={};
+  let m=sciStart-1, need=[['초5·6 과학',6],['실험과학',12]];
+  for(const [t,n] of need){ let k=n; while(k>0){ if(pause.includes(m)){ label[m]='쉼표 · 황소 대비'; m--; continue; } label[m]=t; m--; k--; } }
+  for(let x=sciStart;x<=AX1;x++) label[x]=pause.includes(x)?'쉼표 · 황소 대비':'중등 과학';
+  const sci=[]; Object.keys(label).map(Number).sort((a,b)=>a-b).forEach(x=>{ const t=label[x], last=sci[sci.length-1]; if(last&&last[0]===t&&last[2]===x-1) last[2]=x; else sci.push([t,x,x]); });
+  return {comp,school,school2,calc,sci,mid,pShift};
 }
 function levelRows(shift){
-  const pShift=Math.max(0,shift-L_SHIFT.L2);   // 사고력: 원본(P2)보다 당기지 않는다
-  const lShift=shift-L_SHIFT.L2;               // 교과·연산: 레벨 속도대로, 중등은 바닥과 여유 달로 조절
+  const id=Object.keys(L_SHIFT).find(k=>L_SHIFT[k]===shift)||'L2';
+  const P=levelPlan(id,shift);
   const sh=(arr,d)=>arr.map(([t,s,e])=>[t,s+d,e+d]);
-  const comp=joinRow('thinking1',shift,P2.comp,pShift);
-  const notTop=b=>!/최상위/.test(b.text);
-  const school=midFloor(joinRow('school',shift,P2.school,lShift,notTop), t=>/^중\d/.test(t), '여유 · 초등 대수 심화<br><small>(선택)</small>');
-  const demoTop=(window.ROAD_L0||ROAD_L0).school.filter(b=>!notTop(b)).map(b=>[b.text.replace(/<br>/g,' '),b.s+shift,b.e+shift]);
-  const school2=demoTop.concat(sh(P2.school2,lShift).filter(b=>!(demoTop.some(d=>plain(d[0]).includes('3학년'))&&/3학년/.test(b[0]))));
-  const calc=midFloor(joinRow('calc',shift,P2.calc,lShift), t=>/중1 연산/.test(t), '초등연산 보충');
   return [
-    {key:'school',label:'교과',blocks:school},
-    {key:'school2',label:'교과 심화',blocks:school2},
-    {key:'comp',label:'사고력·경시',blocks:comp},
-    {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,pShift)},
-    {key:'calc',label:'연산',blocks:calc}
-  ].concat(academyOn.hwangso?[{key:'hwangso',label:'황소 대비<br><small>(선택)</small>',blocks:hwangsoPlan(comp)}]:[]);
+    {key:'school',label:'교과',blocks:P.school},
+    {key:'school2',label:'교과 심화',blocks:P.school2},
+    {key:'comp',label:'사고력·경시',blocks:P.comp},
+    {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,P.pShift)},
+    {key:'calc',label:'연산',blocks:P.calc},
+    {key:'sci',label:'과학',blocks:P.sci}
+  ].concat(academyOn.hwangso?[{key:'hwangso',label:'황소 대비<br><small>(선택)</small>',blocks:hwangsoPlan(P.comp)}]:[]);
 }
 function axisYears(){
-  const names=['5세','6세','7세','초1','초2','초3'], out=[];
+  const names=['5세','6세','7세','초1','초2','초3','초4'], out=[];
   for(let m=AX0;m<=AX1;m++){ const y=Math.floor(m/12); if(!out.length||out[out.length-1].y!==y) out.push({y,name:names[y],n:0}); out[out.length-1].n++; }
   return out;
 }
@@ -355,7 +377,12 @@ function renderLevels(nowM, bestId, only){
     for(let m=AX0;m<=AX1;m++) h+=HWANGSO_EXAMS.includes(m)?`<td class="sr-cell" style="background:#fde68a">황소<br>시험</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
     h+='</tr>';
   }
-  if(academyOn.soma||academyOn.fields||academyOn.hwangso) h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
+  // 원장님 자료: 교대 영재원 초3 7~9월, 대학 부설·교육청 영재원 3학년 9~10월 → 칸이 겹치지 않게 7~8월 / 9~10월로 나눠 매년 표시
+  const GIFTED=[[66,67,'교대 영재원'],[68,69,'대학 부설·교육청 영재원'],[78,79,'교대 영재원'],[80,81,'대학 부설·교육청 영재원']];
+  h+=`<tr class="lv-academy"><th class="sr-group" colspan="2">영재원<br><small>(매년 같은 시기)</small></th>`;
+  for(let m=AX0;m<=AX1;){ const g=GIFTED.find(x=>x[0]===m); if(g){ h+=`<td class="sr-cell sr-gifted" colspan="${g[1]-g[0]+1}">${g[2]}</td>`; m=g[1]+1; } else { h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`; m++; } }
+  h+='</tr>';
+  h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
   const levels=(window.LEVELS||LEVELS).filter(L=>!only||only.includes(L.id));
   levels.forEach((L,li)=>{
     const rows=levelRows(L_SHIFT[L.id]||0), best=L.id===bestId;
