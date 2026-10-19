@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v106",
+  "checkpoint": "v107",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -33,7 +33,7 @@
     "activityReviewQueue": 6,
     "activitySkillRelations": 903,
     "conditionalDifficultyBands": 852,
-    "validatedAnswers": 313,
+    "validatedAnswers": 325,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0
@@ -456,7 +456,7 @@
       19
     ],
     "sameEditionAnswerPdfSha256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
-    "method": "Same-edition answer-key pages visually compared; local Apple Vision OCR used only as assistive transcription.",
+    "method": "Same-edition answer-key pages visually compared with mapped body activities; local Apple Vision OCR used only as assistive transcription.",
     "preservedBodyPages": [
       37,
       38,
