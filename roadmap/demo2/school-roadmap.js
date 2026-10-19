@@ -319,7 +319,51 @@ const MID_START=null; // 중등 시작 = 초1 8월(m 43) + 레벨 간격(3개월
 const MID_SEMS=['중1-1','중1-2','중2-1','중2-2','중3-1','중3-2'];
 const MID_CALC=[['기적의 중학도형 1권',2],['기적의 중학연산 1AB',5],['기적의 중학도형 2권',2],['기적의 중학연산 2AB',4],['기적의 중학도형 3권',2],['기적의 중학연산 3AB',6]];
 function seqFrom(start, items){ const out=[]; let m=start; items.forEach(([t,n])=>{ out.push([t,m,m+n-1]); m+=n; }); return out; }
+function sciPlan(mid, comp){
+  // 3) 과학: 중2-1 끝(= mid+11) 다음 달 중등과학, 거꾸로 초5·6 과학 6개월, 실험과학 12개월. 황소 대비를 켜면 L0~L3은 초2 9~10월 쉼표.
+  const hw=hwangsoPlan(comp), pause=(academyOn.hwangso&&hw.length&&hw[1][2]===58)?[56,57]:[]; // 초2 11월에 보는 레벨만 9~10월 과학 쉼표
+  let sciStart=mid+12; if(pause.length&&sciStart>=pause[0]-1&&sciStart<=pause[1]) sciStart=pause[1]+1;
+  const label={};
+  let m=sciStart-1;
+  for(const [t,n] of [['초5·6 과학',6],['실험과학',12]]){ let k=n; while(k>0){ if(pause.includes(m)){ label[m]='쉼표 · 황소 대비'; m--; continue; } label[m]=t; m--; k--; } }
+  for(let x=sciStart;x<=AX1;x++) label[x]=pause.includes(x)?'쉼표 · 황소 대비':'중등 과학';
+  const sci=[]; Object.keys(label).map(Number).sort((a,b)=>a-b).forEach(x=>{ const t=label[x], last=sci[sci.length-1]; if(last&&last[0]===t&&last[2]===x-1) last[2]=x; else sci.push([t,x,x]); });
+  return sci;
+}
+/* 천천히 가는 레벨(L10~): 원장님 2026-10-19
+   "L10부터는 그렇게 교과를 빠르게 할 수가 없어. 방학 때 선행을 좀 더 나가고 평소에는 꼼꼼하게.
+    응용 3개월 끝나고 심화 2개월, 연산은 겹치지 않게 5개월씩, 그 진도에 맞춰 사고력도 천천히."
+   "같은 진도로 앞에도 해야지. 천천히 하지만 초2에 그렇게 하는 아이들도 있으니까."
+   → 레벨은 초2 3월에 하는 학기로 정하고(L10 3-2 · L11 3-1 · L12 2-2 · L13 1-2), 그 학기가 초2 3월에 시작하도록
+     앞뒤 모두 한 학기 = 디딤돌 응용 3개월 → 심화(최상위 수학) 2개월, 연산(기적 k권 = k번째 학기) 5개월.
+     사고력·경시 병행도 같은 비율(3개월 → 5개월)로 초2 3월을 기준으로 늘린다. */
+const SLOW_FROM='L10', SLOW_AT=50, SLOW_SEM=5;
+function slowPlan(fast){
+  const R=window.ROAD_L0||ROAD_L0, notTop=b=>!/최상위/.test(b.text);
+  const now=fast.school.find(b=>b[1]<=SLOW_AT&&b[2]>=SLOW_AT&&/^\d-\d/.test(plain(b[0])));
+  const [g0,h0]=plain(now[0]).match(/^(\d)-(\d)/).slice(1).map(Number), k0=2*(g0-1)+h0;
+  const semAt=k=>SLOW_AT+(k-k0)*SLOW_SEM;
+  // 1-1 앞의 유아 준비(수학 문장 이해 · 지문 이해)는 길이 그대로 1-1 바로 앞에
+  const pre=R.school.filter(notTop).filter(b=>!/^\d-\d/.test(plain(b.text)));
+  const preLen=pre.reduce((n,b)=>n+(b.e-b.s+1),0);
+  const school=seqFrom(semAt(1)-preLen, pre.map(b=>[b.text.replace(/<br>/g,' '),b.e-b.s+1])), school2=[];
+  const calc=[[plain(R.calc[0].text),semAt(1)-preLen,semAt(2)-1]];   // 소마셈 K: 1-2(기적 2권) 전까지
+  for(let k=1;k<=12;k++){
+    const m=semAt(k), g=Math.ceil(k/2), h=k%2?1:2;
+    school.push([`${g}-${h} 디딤돌 ${g<=2?'기본+응용':'응용'}`,m,m+2]);
+    school2.push([`${g}-${h} 심화<br><small>(최상위 수학)</small>`,m+3,m+4]);
+    if(k>=2) calc.push([k>=7?`기적의 계산법 ${k}`:`기적의 계산법 ${k}권`,m,m+SLOW_SEM-1]);
+  }
+  const mid=semAt(13);
+  school.push(...seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',4])));
+  school2.push(...seqFrom(mid, MID_SEMS.map(x=>[x+' 중등 심화(A급)',4])));
+  calc.push(...seqFrom(mid, MID_CALC));
+  const stretch=arr=>arr.map(([t,a,e])=>[t,SLOW_AT+Math.round((a-SLOW_AT)*SLOW_SEM/3),SLOW_AT+Math.round((e+1-SLOW_AT)*SLOW_SEM/3)-1]);
+  const comp=stretch(fast.comp), comp2=stretch(P2.comp2.map(([t,a,e])=>[t,a+fast.pShift,e+fast.pShift]));
+  return {comp,comp2,school,school2,calc,sci:sciPlan(mid,comp),mid,pShift:fast.pShift};
+}
 function levelPlan(id, shift){
+  if(id!=='fast'&&shift>=L_SHIFT[SLOW_FROM]) return slowPlan(levelPlan('fast',shift));
   const pShift=Math.max(0,shift-L_SHIFT.L2);
   const notTop=b=>!/최상위/.test(b.text);
   const mid=43+shift;
@@ -347,14 +391,7 @@ function levelPlan(id, shift){
     .concat(seqFrom(mid, MID_SEMS.map(x=>[x+' 중등 심화(A급)',4])))
     .concat(seqFrom(mid+24, [['중등 대수 심화',4],['중등 기하 심화',4]]));
   const comp=joinRow('thinking1',shift,P2.comp,pShift);
-  // 3) 과학: 중2-1 끝(= mid+11) 다음 달 중등과학, 거꾸로 초5·6 과학 6개월, 실험과학 12개월. 황소 대비를 켜면 L0~L3은 초2 9~10월 쉼표.
-  const hw=hwangsoPlan(comp), pause=(academyOn.hwangso&&hw.length&&hw[1][2]===58)?[56,57]:[]; // 초2 11월에 보는 레벨만 9~10월 과학 쉼표
-  let sciStart=mid+12; if(pause.length&&sciStart>=pause[0]-1&&sciStart<=pause[1]) sciStart=pause[1]+1;
-  const label={};
-  let m=sciStart-1;
-  for(const [t,n] of [['초5·6 과학',6],['실험과학',12]]){ let k=n; while(k>0){ if(pause.includes(m)){ label[m]='쉼표 · 황소 대비'; m--; continue; } label[m]=t; m--; k--; } }
-  for(let x=sciStart;x<=AX1;x++) label[x]=pause.includes(x)?'쉼표 · 황소 대비':'중등 과학';
-  const sci=[]; Object.keys(label).map(Number).sort((a,b)=>a-b).forEach(x=>{ const t=label[x], last=sci[sci.length-1]; if(last&&last[0]===t&&last[2]===x-1) last[2]=x; else sci.push([t,x,x]); });
+  const sci=sciPlan(mid,comp);
   return {comp,school,school2,calc,sci,mid,pShift};
 }
 function levelRows(shift){
@@ -365,7 +402,7 @@ function levelRows(shift){
     {key:'school',label:'교과',blocks:P.school},
     {key:'school2',label:'교과 심화',blocks:P.school2},
     {key:'comp',label:'사고력·경시',blocks:P.comp},
-    {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,P.pShift)},
+    {key:'comp2',label:'경시 병행',blocks:P.comp2||sh(P2.comp2,P.pShift)},
     {key:'calc',label:'연산',blocks:P.calc},
     {key:'sci',label:'과학',blocks:P.sci}
   ].concat(academyOn.hwangso?[{key:'hwangso',label:'황소 대비<br><small>(선택)</small>',blocks:hwangsoPlan(P.comp)}]:[]);
