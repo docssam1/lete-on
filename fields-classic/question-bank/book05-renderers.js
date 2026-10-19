@@ -682,8 +682,9 @@ function sourceDotFigures(visual) {
 function sourceTextTable(visual) {
   const [head, ...rows] = visual.cells;
   const tr = (row, tag) => `<tr>${row.map((cell) => `<${tag}${tag === "td" && BLANK_LABELS.includes(String(cell)) ? ' class="blank"' : ""}>${escapeHtml(cell ?? "")}</${tag}>`).join("")}</tr>`;
-  const headed = visual.cells.length > 1 && head.some((c) => /[가-힣]/.test(String(c)));
-  return `<div class="b5-src-ttable" role="img" aria-label="${escapeHtml(visual.cells.map((r) => r.join(" ")).join(" / "))}"><table>${headed ? `<thead>${tr(head, "th")}</thead>` : ""}<tbody>${(headed ? rows : visual.cells).map((r) => tr(r, "td")).join("")}</tbody></table></div>`;
+  // head:false = 첫 줄도 몸통(첫 칸이 줄 이름인 풀이 표, 7권 26~33쪽).
+  const headed = visual.head !== false && visual.cells.length > 1 && head.some((c) => /[가-힣]/.test(String(c)));
+  return `<div class="b5-src-ttable${head.length >= 8 || visual.cells.some((r) => String(r[0]).length > 10) ? " is-wide" : ""}" role="img" aria-label="${escapeHtml(visual.cells.map((r) => r.join(" ")).join(" / "))}"><table>${headed ? `<thead>${tr(head, "th")}</thead>` : ""}<tbody>${(headed ? rows : visual.cells).map((r) => tr(r, "td")).join("")}</tbody></table></div>`;
 }
 
 // 「△n = 1 + 2 + … + n = □ × △ = 합」. example이 있으면 두 수를 쓰고, 없으면 색표의 빈 □·△.
@@ -735,6 +736,46 @@ function sourceStoneRows(visual) {
   const W = wide * gap + 8, H = visual.rows.length * gap + 8;
   const stones = visual.rows.flatMap((count, i) => Array.from({ length: count }, (_, j) => `<circle cx="${(4 + (W - 8) / 2 + (j - (count - 1) / 2) * gap).toFixed(1)}" cy="${4 + gap / 2 + i * gap}" r="${r}" class="${i % 2 ? "w" : "b"}"/>`)).join("");
   return `<div class="b5-src-stones" role="img" aria-label="${escapeHtml(`검은 돌과 흰 돌을 번갈아 ${visual.rows.join(", ")}개씩 놓은 줄`)}"><svg viewBox="0 0 ${W} ${H}" style="width:min(100%,${Math.round(W * 1.3)}px)">${stones}</svg></div>`;
+}
+
+// 7권: 그림 아래에 원본의 빈 풀이 표(cells)를 붙인다.
+const withTable = (cls, label, figure, cells) => `<div class="b5-src-withtable ${cls}" role="img" aria-label="${escapeHtml(label)}">${figure}${cells ? sourceTextTable({ cells }) : ""}</div>`;
+
+// 7권 35~36쪽: 우물(깊이 눈금)과 바닥의 달팽이. marks = 이름을 쓸 눈금(m), 1m마다 작은 눈금.
+function sourceWell(visual) {
+  const H = 150, top = 22, x0 = 20, w = 110, d = visual.depth, y = (m) => top + H - (m / d) * H;
+  const ticks = Array.from({ length: d + 1 }, (_, m) => `<line x1="${x0 + w}" x2="${x0 + w + (visual.marks.includes(m) ? 9 : 5)}" y1="${y(m).toFixed(1)}" y2="${y(m).toFixed(1)}"/>`).join("");
+  const labels = visual.marks.map((m) => `<text x="${x0 + w + 13}" y="${(y(m) + 4).toFixed(1)}">${m}m</text>`).join("");
+  const snail = `<g class="snail" transform="translate(${x0 + w / 2 - 22} ${top + H - 30}) scale(1.6)"><path class="body" d="M-6 14 Q4 8 26 10 Q34 10 34 15 Z"/><line x1="28" y1="10" x2="31" y2="1"/><line x1="31" y1="10" x2="35" y2="2"/><circle class="shell" cx="12" cy="4" r="10"/><path class="spiral" d="M12 4 m0 -5 a5 5 0 1 1 -5 5 a3 3 0 1 1 3 3"/></g>`;
+  const svg = `<svg class="well" viewBox="0 0 ${x0 + w + 52} ${top + H + 18}" style="width:min(100%,220px)"><rect class="wall" x="${x0}" y="${top}" width="${w}" height="${H}"/><ellipse class="rim" cx="${x0 + w / 2}" cy="${top}" rx="${w / 2}" ry="9"/><ellipse class="floor" cx="${x0 + w / 2}" cy="${top + H}" rx="${w / 2}" ry="9"/><g class="ruler">${ticks}</g>${labels}${snail}</svg>`;
+  return withTable("well", `깊이 ${d}m 우물 바닥의 달팽이와 날짜 표`, svg, visual.table);
+}
+
+// 7권 41~42쪽: 연못을 똑같이 나눈 칸. 처음 shaded칸만큼 개구리풀이 덮었다.
+function sourcePond(visual) {
+  const u = Math.min(85, Math.floor(260 / visual.cols)), W = visual.cols * u, Hh = visual.rows * u;
+  const cells = Array.from({ length: visual.rows * visual.cols }, (_, k) => `<rect class="${k < visual.shaded ? "on" : ""}" x="${(k % visual.cols) * u}" y="${Math.floor(k / visual.cols) * u}" width="${u}" height="${u}"/>`).join("");
+  const svg = `<svg class="pond" viewBox="-2 -2 ${W + 4} ${Hh + 4}" style="width:min(100%,${W + 4}px)">${cells}<rect class="edge" x="0" y="0" width="${W}" height="${Hh}"/></svg>`;
+  return withTable("pond", `연못을 똑같이 ${visual.rows * visual.cols}칸으로 나눈 것 중 ${visual.shaded}칸을 개구리풀이 덮은 그림`, svg, visual.table);
+}
+
+// 7권 37~38쪽: 바꾸기 그림. give/get = {kind, count}, kind: bottle(빈 병) · milk(빈 우유병) · newMilk · coupon · pizza.
+const SWAP_ICON = {
+  bottle: [34, 58, '<path class="glass" d="M12 2h10v8c0 3 9 6 9 14v30a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V24c0-8 9-11 9-14z"/><rect class="cap" x="11" y="0" width="12" height="6" rx="1.5"/>'],
+  milk: [34, 52, '<path class="milk" d="M7 4h20l4 9v34a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V13z"/><text x="17" y="34">우유</text>'],
+  newMilk: [34, 52, '<path class="milk new" d="M7 4h20l4 9v34a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V13z"/><text x="17" y="34">우유</text>'],
+  coupon: [46, 30, '<rect class="coupon" x="1" y="1" width="44" height="28" rx="2"/><text x="23" y="20">쿠폰</text>'],
+  pizza: [76, 76, '<circle class="crust" cx="38" cy="38" r="35"/><circle class="cheese" cx="38" cy="38" r="29"/>' + [[24, 26], [46, 22], [52, 42], [30, 48], [40, 34], [22, 40], [48, 56]].map(([x, y]) => `<circle class="top" cx="${x}" cy="${y}" r="5"/>`).join("")]
+};
+function sourceSwap(visual) {
+  const group = ({ kind, count }) => {
+    const [w, h, body] = SWAP_ICON[kind], cols = kind === "coupon" && count === 9 ? 3 : count, rows = Math.ceil(count / cols);
+    const icons = Array.from({ length: count }, (_, k) => `<g transform="translate(${(k % cols) * (w + 4)} ${Math.floor(k / cols) * (h + 4)})">${body}</g>`).join("");
+    const W = cols * (w + 4) - 4, H = rows * (h + 4) - 4;
+    return `<svg viewBox="-2 -2 ${W + 4} ${H + 4}" style="width:min(100%,${Math.round((W + 4) * 1.5)}px)">${icons}</svg>`;
+  };
+  const name = { bottle: "빈 병", milk: "빈 우유병", newMilk: "새 우유", coupon: "쿠폰", pizza: "피자" };
+  return `<div class="b5-src-swap" role="img" aria-label="${escapeHtml(`${name[visual.give.kind]} ${visual.give.count}개를 ${name[visual.get.kind]} ${visual.get.count}개로 바꾸는 그림`)}">${group(visual.give)}<b>→</b>${group(visual.get)}</div>`;
 }
 
 // 7권: 단계 그림 여러 개를 한 줄로(휴대폰에서는 줄바꿈). figs = [{w, h, body}], marks면 위에 ①②③… 번호.
@@ -1139,6 +1180,9 @@ export function book05Markup(visual) {
     case "source-stick-stages": return sourceStickStages(visual);
     case "source-stone-cross": return sourceStoneCross(visual);
     case "source-shape-stages": return sourceShapeStages(visual);
+    case "source-well": return sourceWell(visual);
+    case "source-pond": return sourcePond(visual);
+    case "source-swap": return sourceSwap(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);
