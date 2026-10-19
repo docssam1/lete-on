@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v106",
+  "checkpoint": "v107",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -32,7 +32,7 @@
     "activityReviewQueue": 6,
     "activitySkillRelations": 903,
     "conditionalDifficultyBands": 852,
-    "validatedAnswers": 313,
+    "validatedAnswers": 325,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0
@@ -447,8 +447,8 @@
       "OCR text was used only as a search aid; seven full-page images were visually rechecked against the preserved Mac Vision record and extraction manifest.",
       "All eight task-level minimum curriculum assignments remain unresolved. Standards and workbook rows are context only.",
       "All eight difficulty bands are five-level conditional research judgments pending teacher review.",
-      "Answer keys were not checked; exact type equivalences and teacher approvals are zero.",
-      "The Ray Prism A4-3 row supplies only a same-section title and short topic, so it is not treated as a task-level match."
+      "The Ray Prism A4-3 row supplies only a same-section title and short topic, so it is not treated as a task-level match.",
+      "Same-edition answer key visually checked against all eight activity blocks; the p.29 modeled example and Check 1 remain one combined source-ledger block."
     ]
   },
   "answerValidation": {
