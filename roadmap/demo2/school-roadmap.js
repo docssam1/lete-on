@@ -241,13 +241,13 @@ const ACADEMY={
   fields:{label:'필즈 진도',color:'#fff1e6',points:[['필즈<br>관찰평가',23],['1차 승급',25],['2차 승급',27],['3차 승급 ·<br>필즈 S 선발',29]]}
 };
 /* 황소 시험 달: 초2 11월 → 초3 2월 → 초3 11월 (원장님 2026-10-19 "11월 이후 2월에 볼 수도 있고 초3 11월에 할 수도").
-   레벨마다 옮긴 황소 대비 칸은 끝나는 달 기준 2개월 안쪽부터 가장 가까운 다음 시험 달에 끝나도록 맞춘다(기간은 그대로). */
+   레벨마다 옮긴 황소 대비 칸은 끝나는 달 이후의 가장 가까운 시험 달에 끝나도록 뒤로만 민다(기간은 그대로). */
 const HWANGSO_EXAMS=[58,61,70];
 function snapHwangso(blocks){
   const out=[];
   blocks.forEach(([t,s,e])=>{
     if(!/황소 대비/.test(t)){ out.push([t,s,e]); return; }
-    const w=HWANGSO_EXAMS.find(x=>x>=e-2);
+    const w=HWANGSO_EXAMS.find(x=>x>=e); // 앞으로 당기지 않는다: 3% 2과정 등 앞 과정을 줄이면 안 됨(원장님 2026-10-19)
     const ns=w==null?s:s+(w-e), ne=w==null?e:w;
     // 시험까지 남는 기간: 3% 2과정을 하거나 모의고사로 둔다(원장님 2026-10-19)
     // 시험 달에 맞추느라 앞으로 당겨져 앞 칸과 겹치면 앞 칸을 줄인다
