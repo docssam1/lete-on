@@ -6,6 +6,7 @@ export const workbook = {
  "semester": "3-2",
  "no": 4,
  "theme": "#b07a00",
+ "richText": true,
  "questions": [
   {
    "id": "c22-s32-u04-w001",
@@ -861,7 +862,8 @@ export const workbook = {
     }
    ],
    "lead": "틀려도 괜찮아요. 처음 생각을 그대로 써요.",
-   "kind": "check"
+   "kind": "check",
+   "layout": "two"
   },
   {
    "section": "① 감염병과 병원체",
@@ -869,11 +871,11 @@ export const workbook = {
    "blocks": [
     {
      "type": "text",
-     "text": "병을 일으키는 아주 작은 생물을 병원체라고 해요. 세균과 바이러스가 대표적이에요. 병원체는 너무 작아서 눈으로는 볼 수 없어요."
+     "text": "병을 일으키는 아주 작은 생물을 **병원체**라고 해요. 세균과 바이러스가 대표적이에요. 병원체는 너무 작아서 눈으로는 볼 수 없어요."
     },
     {
      "type": "text",
-     "text": "병원체가 몸에 들어와 생기는 병을 감염병이라고 해요. 감염병은 사람에게서 사람에게, 또는 물건이나 음식을 거쳐 옮겨 갈 수 있어요."
+     "text": "병원체가 몸에 들어와 생기는 병을 **감염병**이라고 해요. 감염병은 사람에게서 사람에게, 또는 물건이나 음식을 거쳐 옮겨 갈 수 있어요."
     },
     {
      "type": "table",
@@ -970,7 +972,7 @@ export const workbook = {
    "blocks": [
     {
      "type": "text",
-     "text": "병원체는 여러 길로 옮겨 가요. 손이나 함께 쓰는 물건이 닿아 옮겨 가는 것을 접촉, 기침·재채기의 침방울로 옮겨 가는 것을 비말이라고 해요."
+     "text": "병원체는 여러 길로 옮겨 가요. 손이나 함께 쓰는 물건이 닿아 옮겨 가는 것을 **접촉**, 기침·재채기의 침방울로 옮겨 가는 것을 **비말**이라고 해요."
     },
     {
      "type": "text",
@@ -1050,8 +1052,32 @@ export const workbook = {
      "text": "병원체는 눈에 보이지 않아서 어떻게 옮겨 가는지 보기 어려워요. 그래서 A의 손에만 반짝이 가루를 묻히고, 정해진 짝끼리 차례로 악수해 반짝이가 어디까지 옮겨 가는지 살펴봐요."
     },
     {
-     "type": "diagram",
-     "key": "start"
+     "type": "gallery",
+     "items": [
+      {
+       "src": "../assets/book/c22-s32-u04-glit-start.webp",
+       "alt": "여섯 친구가 둥글게 선 모습",
+       "cap": "여섯 친구(A~F)가 둥글게 서요."
+      },
+      {
+       "src": "../assets/book/c22-s32-u04-glit-hero.webp",
+       "alt": "A의 손에 반짝이를 묻힌 모습",
+       "cap": "처음에는 A의 손에만 반짝이를 묻혀요."
+      },
+      {
+       "src": "../assets/book/c22-s32-u04-glit-shake.webp",
+       "alt": "짝끼리 악수하는 모습",
+       "cap": "정해진 짝끼리 차례로 악수해요."
+      },
+      {
+       "src": "../assets/book/c22-s32-u04-glit-wash.webp",
+       "alt": "B·D·F가 손을 씻는 모습",
+       "cap": "규칙을 바꿔 B·D·F가 악수 전에 손을 씻어요."
+      }
+     ],
+     "numbered": true,
+     "cols": 2,
+     "credit": "3D 모형 렌더 · 학습용 모형(반짝이는 병원체가 아님)"
     },
     {
      "type": "table",
@@ -1184,7 +1210,7 @@ export const workbook = {
    "blocks": [
     {
      "type": "text",
-     "text": "손은 병원체가 옮겨 가는 가장 흔한 길이에요. 비누와 흐르는 물로 30초 이상, 손바닥·손등·손가락 사이·손가락·엄지손가락·손톱 밑까지 꼼꼼히 씻어요."
+     "text": "손은 병원체가 옮겨 가는 가장 흔한 길이에요. **비누와 흐르는 물로 30초 이상**, 손바닥·손등·손가락 사이·손가락·엄지손가락·손톱 밑까지 꼼꼼히 씻어요."
     },
     {
      "type": "diagram",
@@ -1221,12 +1247,21 @@ export const workbook = {
    "title": "침방울과 공기도 막아요",
    "blocks": [
     {
-     "type": "diagram",
-     "key": "sleeve"
+     "type": "gallery",
+     "items": [
+      {
+       "src": "../assets/book/c22-s32-u04-glit-sleeve.webp",
+       "alt": "옷소매 안쪽으로 기침을 가리는 모습",
+       "cap": "기침은 옷소매 안쪽으로"
+      }
+     ],
+     "numbered": false,
+     "cols": 1,
+     "credit": "3D 모형 렌더 · 학습용 모형"
     },
     {
      "type": "text",
-     "text": "기침이나 재채기를 할 때는 휴지나 옷소매 안쪽으로 입과 코를 가려요. 손바닥으로 가리면 침방울이 손에 묻어 다시 옮겨 가요. 교실은 쉬는 시간마다 창문을 열어 환기해요."
+     "text": "기침이나 재채기를 할 때는 휴지나 **옷소매 안쪽**으로 입과 코를 가려요. 손바닥으로 가리면 침방울이 손에 묻어 다시 옮겨 가요. 교실은 쉬는 시간마다 창문을 열어 **환기**해요."
     },
     {
      "type": "questions",
@@ -1522,7 +1557,8 @@ export const workbook = {
     }
    ],
    "lead": "",
-   "kind": "test"
+   "kind": "test",
+   "layout": "two"
   },
   {
    "section": "단원평가 2",
@@ -1554,7 +1590,8 @@ export const workbook = {
     }
    ],
    "lead": "",
-   "kind": "test"
+   "kind": "test",
+   "layout": "two"
   },
   {
    "section": "서술형 · 창의",
@@ -1580,7 +1617,8 @@ export const workbook = {
     }
    ],
    "lead": "",
-   "kind": "test"
+   "kind": "test",
+   "layout": "two"
   }
  ],
  "teacherPages": [

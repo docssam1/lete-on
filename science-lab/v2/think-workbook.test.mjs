@@ -54,7 +54,10 @@ for (const u of ['c22-s42-u04', 'c22-s32-u04']) {
     const { wb, paper } = await load(u), s = paper.workbookPaper({ mode: 'student' });
     for (const p of [...wb.pages, ...wb.teacherPages, ...wb.quickPages]) assert.ok(p.rail.length, `${p.title} 날개`);
     for (const m of s.matchAll(/src="\.\.\/assets\/book\/([^"]+)"/g)) assert.ok(fs.existsSync(new URL(`../assets/book/${m[1]}`, import.meta.url)), `그림 없음 ${m[1]}`);
-    assert.ok(count(s, /class="ed-photo"/g) >= 4, '실사형 렌더 그림 4장 이상');
+    assert.ok(count(s, /class="ed-photo"/g) + count(s, /class="ed-gallery-item"/g) >= 6, '그림(사진·렌더) 6장 이상(사진이 들어오면 늘어난다)');
+    assert.ok(count(s, /class="ed-gallery numbered"/g) >= 1, '실험 과정 ①②③ 사진 줄');
+    assert.ok(count(s, /class="ed-term"/g) >= 6, '핵심 낱말 강조');
+    assert.ok(count(s, /ed-layout-two/g) >= 3, '단원평가·준비 점검 2단');
     assert.ok(!/-(row|over)\.webp/.test(s), '결과가 적힌 그림을 문항 옆에 두지 않는다');
   });
 }

@@ -40,7 +40,9 @@ export function workbook({ U, title, semester, no, theme, misconception, criteri
     TB: (heads, rows) => ({ type: 'table', heads, rows }), EX: (question, steps, answer) => ({ type: 'example', question, steps, answer }),
     Q: (a, b = a) => ({ type: 'questions', ids: questions.slice(a - 1, b).map((q) => q.id) }),
     N: (title, text, write = 0) => ({ title, text, ...(write ? { write } : {}) }), NL: (title, items) => ({ title, items }),
-    P: (section, title, blocks, rail, lead = '', kind = 'learn', teacherNote = '') => { pages.push({ section, title, blocks, rail, lead, kind, ...(teacherNote ? { teacherNote } : {}) }); },
+    GAL: (items, { numbered = false, cols = 9, credit = '' } = {}) => { const it = items.filter(Boolean); return it.length ? { type: 'gallery', items: it, numbered, cols: Math.min(cols, it.length), credit } : null; },
+    // 블록 자리에 null 을 두면 빠진다(사진이 아직 없을 때). 단원평가·준비 점검은 짧은 문항을 2단으로(layout 'two').
+    P: (section, title, blocks, rail, lead = '', kind = 'learn', teacherNote = '') => { pages.push({ section, title, blocks: blocks.filter(Boolean), rail, lead, kind, ...(['test', 'check'].includes(kind) ? { layout: 'two' } : {}), ...(teacherNote ? { teacherNote } : {}) }); },
     questions, pages, teacherNotes,
   };
   api.build = ({ figures = {}, gen }) => {
@@ -69,7 +71,7 @@ export function workbook({ U, title, semester, no, theme, misconception, criteri
         blocks: [{ type: 'table', heads: ['번호', '형식 · 주제', '정답'], rows: part.map((q) => [String(q.no), `${q.form === 'choice' ? '객관식' : q.form === 'multi' ? '모두 고르기' : q.form === 'blank' ? '빈칸' : q.form === 'short' ? '단답' : q.form === 'match' ? '연결' : q.form === 'order' ? '순서' : q.form === 'draw' ? '그림' : '서술'} · ${q.topic}`, ['written', 'draw'].includes(q.form) ? '교사 확인(해설 쪽)' : q.form === 'choice' ? q.answer.slice(0, 1) : q.answer]) }],
         rail: [{ title: '쓰는 법', text: '채점만 빠르게 할 때 써요. 풀이와 인정 답안은 정답·해설 쪽에 있어요.' }] });
     }
-    const out = { unit: U, title, semester, no, theme, questions, pages, teacherPages, quickPages, figures };
+    const out = { unit: U, title, semester, no, theme, richText: true, questions, pages, teacherPages, quickPages, figures };
     fs.writeFileSync(R + `data/book/${U}.workbook.js`, `// ${title} — 편집 교재(문제집형 A4). scripts/${gen} 가 만든다(직접 고치지 말 것).\n// 그리는 곳: v2/think-workbook-paper.js → #/${U}/workbook/student|teacher|answers|quick\nexport const workbook = ${J(out)};\n`);
     console.log(U, '교재', pages.length, '쪽 · 해설', teacherPages.length, '쪽 · 빠른 정답', quickPages.length, '쪽 · 문항', questions.length, '· 정답 위치', pos.join('·'), '· 형식', [...forms].join(','));
   };
@@ -79,3 +81,13 @@ export function workbook({ U, title, semester, no, theme, misconception, criteri
 // 3D 렌더 사진 블록(실사형 설명 그림). 모형 값임을 그림 밑에 밝힌다.
 export const photo = (U, shot, alt, note, credit = '3D 모형 렌더 · 모형 값(실제 측정이 아님)') =>
   `<div class="ed-photo"><img src="../assets/book/${U}-${shot}.webp" alt="${alt}" loading="eager"><p class="ed-photo-note">${note}</p><small class="ed-photo-credit">${credit}</small></div>`;
+
+// 실사형 설명 사진(원장 PC에서 만든 AI 사진 · scripts/book-photos.py → assets/book/<U>-photo-<key>.webp).
+// 파일이 있으면 그 경로를, 없으면 null(그 자리는 3D 렌더로 대신하거나 블록을 뺀다).
+export const PHOTO_CREDIT = 'AI 실사형 설명 이미지 · 실제 사진 아님';
+export const photoSrc = (U, key) => (fs.existsSync(R + `assets/book/${U}-photo-${key}.webp`) ? `../assets/book/${U}-photo-${key}.webp` : null);
+export const renderSrc = (U, shot) => `../assets/book/${U}-${shot}.webp`;
+// 사진이 있으면 사진, 없으면 3D 렌더 — 갤러리 칸 하나
+export const cell = (U, key, shot, alt, cap) => { const src = photoSrc(U, key) || (shot ? renderSrc(U, shot) : null); return src ? { src, alt, cap } : null; };
+// 사진만(없으면 null) — 개념 사진처럼 대신할 렌더가 없는 칸
+export const only = (U, key, alt, cap) => { const src = photoSrc(U, key); return src ? { src, alt, cap } : null; };

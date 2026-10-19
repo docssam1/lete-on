@@ -6,7 +6,7 @@ const MODES = [['student', '학생용 교재'], ['teacher', '교사용 교재'],
 
 export function makeWorkbookPaper(wb, bookArt = {}) {
   const art = { ...bookArt, ...wb.figures };
-  const base = { editorial: true, verticalFlow: true, inlineAnswers: true, unit: wb.unit, no: wb.no, title: wb.title, semester: wb.semester, theme: wb.theme, questions: wb.questions };
+  const base = { editorial: true, verticalFlow: true, inlineAnswers: true, richText: !!wb.richText, unit: wb.unit, no: wb.no, title: wb.title, semester: wb.semester, theme: wb.theme, questions: wb.questions };
   const workbookPaper = ({ mode = 'student' } = {}) => {
     if (!MODES.some(([k]) => k === mode)) mode = 'student';
     const ch = { ...base, pages: mode === 'answers' ? wb.teacherPages : mode === 'quick' ? wb.quickPages : wb.pages, teacherPages: mode === 'teacher' ? wb.teacherPages : [] };

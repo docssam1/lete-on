@@ -70,3 +70,20 @@
 .bk-editorial .ed-key{margin:1mm 0 0!important;color:#b3261e;font-size:9.5pt;line-height:1.45;border-left:.8mm solid #b3261e;padding-left:2mm;flex-shrink:0}
 .bk-editorial .ed-key b{margin-right:1.5mm}
 @media screen and (max-width:700px){.bk-editorial:not(.a4) .ed-key{font-size:15px}}
+
+/* 지면 배치 다듬기(2026-10-19 원장: 실사 수준·배치) — 사진 줄 · 핵심 낱말 · 짧은 문항 2단 */
+.bk-editorial .ed-gallery{display:grid;grid-template-columns:repeat(var(--gallery-cols),minmax(0,1fr));gap:3mm 4mm;margin:2mm 0}
+.bk-editorial .ed-gallery-item img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:1.5mm;background:#eef1f5}
+.bk-editorial .ed-gallery-item p{margin:1.2mm 0 0!important;font-size:9pt;line-height:1.45;color:#2a3442}
+.bk-editorial .ed-gallery.numbered .ed-gallery-item p b{color:var(--bk-theme,#2456c4);font-size:10.5pt}
+.bk-editorial .ed-gallery .ed-photo-credit{grid-column:1/-1;margin-top:-1mm}
+.bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-gallery:not(.numbered)[style*="--gallery-cols:1"] img{aspect-ratio:3/1}
+.bk-editorial .ed-term{color:var(--bk-theme,#1c489d);font-weight:700;background:linear-gradient(transparent 62%,color-mix(in srgb,var(--bk-theme,#2456c4) 18%,transparent) 62%)}
+/* 단원평가·준비 점검: 짧은 문항(객관식·모두 고르기·빈칸·단답)은 2단, 서술·그림·연결·순서는 한 줄 전체 */
+@media(min-width:701px),print{
+ .bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-layout-two .ed-questions{display:grid;grid-template-columns:1fr 1fr;column-gap:6mm;row-gap:3mm;grid-auto-rows:1fr}
+ .bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-layout-two .ed-question:is([data-form="written"],[data-form="draw"],[data-form="match"],[data-form="order"]){grid-column:1/-1}
+ .bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-layout-two .ed-question{border-bottom:none;border-top:.35mm solid #c9d3e2;padding-top:2mm}
+ .bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-layout-two .ed-choices li{font-size:9.6pt;line-height:1.45}
+}
+@media screen and (max-width:700px){.bk-editorial:not(.a4) .ed-gallery{grid-template-columns:1fr 1fr}.bk-editorial:not(.a4) .ed-gallery-item p{font-size:14px}}
