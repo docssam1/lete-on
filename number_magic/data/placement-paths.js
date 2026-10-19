@@ -62,37 +62,65 @@
       schedule: { cadence: config.cadence, weeks: null, targetMapping: config.goal === 'curriculum' ? 'not-applicable' : 'pending',
         reason: text('실제 학습 속도와 보강량을 확인한 뒤 기간을 조정합니다.', 'Adjust the timeline after observing learning pace and practice needs.', '确认实际学习速度和补充练习量后，再调整周期。') } };
   }
-  /* ── 자동 편성(2026-10-04, 원장 "자동 편성을 하고 그 이후 수동 조절 가능하도록") ──
-     진단 결과 + 고른 목표 → 로드맵의 '속도'·'양' 시작값. 이 값은 **처음 맞춰 두는 값**이고, 로드맵의 '속도 · 양 조절'에서
-     언제든 직접 바꾼다(바꾸면 그 뒤 새 진단이 덮어쓰지 않고 제안만 한다).
-     · 목표 기본값: 교과=속도 1·양 1 / 소마·필즈=양 1.25(수를 바꾸고 조건을 읽는 연습을 더) / 이과 최상위=속도 1.25(선수 연산을 먼저).
-     · 진단 보정(이전 6·현재 10 의 맞힌 수만 본다. 다음 4문항은 승급 근거로 쓰지 않는다):
-         안정(이전 ≥5 그리고 현재 ≥9) → 속도 한 칸 위로 / 흔들림(현재 ≤5 또는 이전 ≤3) → 속도 한 칸 아래로 + 양 한 칸 위로.
-       모름은 맞힌 것으로 세지 않는다. 한 문제 실수로 크게 움직이지 않게 한 칸씩만, 속도는 0.85~1.5 안에서만 움직인다.
-     · 숫자는 설계 시작값이며 실제 학습 기록으로 검증한 것이 아니다. 합격·숙달·도달 시점을 뜻하지 않는다. */
+  /* 2026-10-15: maintain current workload and observe first. This supersedes
+   * the 10-04 score/goal-based starting-multiplier policy. Historical results
+   * stay unchanged; no function here awards mastery or predicts admission. */
   const MULTS = [0.7, 0.85, 1, 1.25, 1.5];
-  const step = (v, d, lo, hi) => MULTS[Math.max(MULTS.indexOf(lo), Math.min(MULTS.indexOf(hi), MULTS.indexOf(v) + d))];
-  function autoPlan(result, selection) {
+  function autoPlan(result, selection, current) {
     if (!result || !result.bands) throw new Error('Diagnosis result is required');
     const config = normalize(selection), b = result.bands;
     const prev = (b.previous && b.previous.correct) || 0, cur = (b.current && b.current.correct) || 0;
-    let speed = 1, amount = 1;
+    /* Supersedes the 10-04 automatic adjustment: the 10-15 decision requires
+       observation before any increase. O/X is not a measure of learning speed. */
+    const speed = current && MULTS.includes(current.speed) ? current.speed : 1;
+    const amount = current && MULTS.includes(current.amount) ? current.amount : 1;
     const reasons = [];
-    if (config.goal === 'competition') { amount = 1.25; reasons.push(text('소마·필즈 목표: 수를 바꾸고 조건을 읽는 연습을 조금 더 하도록 양을 1.25배로 시작해요.', 'SOMA/Fields goal: start with 1.25× amount for more number-restructuring and condition-reading practice.', '目标为SOMA/Fields：分量从1.25倍开始，多练换数计算和读条件。')); }
-    else if (config.goal === 'science') { speed = 1.25; reasons.push(text('이과 최상위권 준비: 다음 교과에 필요한 선수 연산을 먼저 만나도록 속도를 1.25배로 시작해요.', 'Advanced science-math prep: start at 1.25× speed so prerequisite arithmetic arrives sooner.', '理科高阶准备：速度从1.25倍开始，先接触后续所需的先修运算。')); }
-    else reasons.push(text('탄탄한 교과 학습: 정해 둔 편성 그대로(속도 1배·양 1배)로 시작해요.', 'Strong school foundation: start with the set plan (1× speed, 1× amount).', '扎实的学校学习：按既定安排（速度1倍、分量1倍）开始。'));
-    let basis = 'goal';
-    if (prev >= 5 && cur >= 9) {
-      speed = step(speed, 1, 0.85, 1.5); basis = 'stable';
-      reasons.push(text('이전 ' + prev + '/6 · 현재 ' + cur + '/10으로 안정적이라 속도를 한 칸 올렸어요.', 'Earlier ' + prev + '/6 and current ' + cur + '/10 look steady, so speed moves up one step.', '之前' + prev + '/6、现在' + cur + '/10较稳定，速度上调一档。'));
-    } else if (cur <= 5 || prev <= 3) {
-      speed = step(speed, -1, 0.85, 1.5); amount = step(amount, 1, 1, 1.5); basis = 'shaky';
-      reasons.push(text('이전 ' + prev + '/6 · 현재 ' + cur + '/10이라 속도는 한 칸 낮추고 양은 한 칸 늘려 더 많이 연습하도록 했어요.', 'Earlier ' + prev + '/6 and current ' + cur + '/10: speed moves down one step and amount up one step for more practice.', '之前' + prev + '/6、现在' + cur + '/10：速度下调一档、分量上调一档，多做练习。'));
-    } else reasons.push(text('이전 ' + prev + '/6 · 현재 ' + cur + '/10이라 목표 기본값을 그대로 둬요.', 'Earlier ' + prev + '/6 and current ' + cur + '/10: keep the goal default.', '之前' + prev + '/6、现在' + cur + '/10：保持目标默认值。'));
-    return { version: 'auto-plan-v1', goal: config.goal, cadence: config.cadence, speed, amount, basis, evidence: { previous: prev, current: cur }, reasons,
-      note: text('처음 맞춰 둔 값이에요. ‘속도 · 양 조절’에서 언제든 바꿀 수 있고, 정답이나 합격을 뜻하지 않아요.', 'These are starting values. Change them any time under “Speed · amount”; they do not predict results or admission.', '这是起始值，可随时在“速度 · 分量”中修改；不代表结果或录取。') };
+    reasons.push(text('진단 직후에는 지금의 속도와 분량을 유지합니다.', 'Keep the current pace and amount immediately after this check.', '测评后先保持当前速度与分量。'));
+    reasons.push(text('완료한 학습, 정확도, 반복되는 오답과 실제 걸린 시간을 관찰한 뒤 조금씩 조정합니다.', 'Observe completed study, accuracy, recurring errors and actual study time before gradual changes.', '观察完成的学习、准确率、重复错题和实际用时，再逐步调整。'));
+    return { version: 'observe-plan-v2', goal: config.goal, cadence: current && ['w1','w2'].includes(current.cadence) ? current.cadence : config.cadence, preferredCadence:config.cadence, speed, amount, basis: 'observe', applied: false,
+      evidence: { previous: prev, current: cur }, reasons,
+      note: text('점수만으로 학습시간이나 횟수를 늘리지 않습니다. 관찰 기록이 없으면 목표 도달일은 아직 계산하지 않습니다.', 'Scores alone do not increase study time or frequency. Without observation records, no target arrival date is calculated.', '不会只凭分数增加学习时间或次数。没有观察记录，暂不计算目标到达日期。') };
   }
-  const api = { goals: clone(goals), targets: clone(targets), normalize, recommend, autoPlan };
+  // Existing grade-entry anchors, not semester mastery or admission standards.
+  const gradeStarts = { e1:'c1', e2:'c3', e3:'c8', e4:'c13', e5:'c19', e6:'c22', m1:'c29', m2:'c32', m3:'c35', h1:'c38', h2:'c41', h3:'c45' };
+  function startingPoint(selection) {
+    const s = selection || {};
+    if (s.route === 'unlearned') return 'f-count5';
+    if (s.route === 'school') return gradeStarts[s.grade] || null;
+    if (s.route === 'book') {
+      const rows=Array.isArray(s.completedBooks)&&s.completedBooks.length?s.completedBooks:[s];
+      if(rows.length!==1)return null;
+      const row=rows[0];
+      const book=W.NM_PLACEMENT_BOOKS&&W.NM_PLACEMENT_BOOKS.resolve(row.series,row.step,s.progress,row.editionId);
+      return book&&book.baselineId||null;
+    }
+    if (s.route !== 'age') return null;
+    const age = Number(String(s.age || '').replace(/^pre/, ''));
+    if (!Number.isInteger(age) || age < 4 || age > 19) return null;
+    if(s.grade==='pre'&&age>=8)return 'f-count5';
+    if(s.grade&&s.grade!=='pre')return gradeStarts[s.grade]||null;
+    // A conservative candidate only. Every earlier foundation remains selectable.
+    if (age <= 5) return 'f-count5';
+    if (age === 6) return 'f-split5';
+    if (age === 7) return 'f-ten10';
+    const grades = ['e1','e2','e3','e4','e5','e6','m1','m2','m3','h1','h2','h3'];
+    return gradeStarts[grades[Math.min(age - 8, grades.length - 1)]];
+  }
+  function paperAnalysis(plan, marks, selection) {
+    if (!plan || !Array.isArray(plan.items) || !Array.isArray(marks) || marks.length !== 20 || Array.from(marks).some(x => !['o','x','n'].includes(x)))
+      throw new Error('Complete all 20 marks first');
+    const responses = plan.items.map((it, i) => ({ id:it.id, skipped:marks[i]==='n',
+      value:marks[i]==='o'?clone(it.answer):null, validationFlags:{validTargets:true} }));
+    const result = W.NM_PLACEMENT_PLAN.summarize(plan, responses);
+    const notLearned = {previous:0,current:0,next:0};
+    plan.items.forEach((it,i)=>{ if(marks[i]==='n') notLearned[it.band]++; });
+    return { result, path:recommend(plan,result,selection), notLearned, workload:autoPlan(result,selection),
+      comment:text('이전·현재의 X는 보강 후보입니다. 안 배운 내용은 먼저 설명하고 다시 확인합니다. 다음 진도의 X만으로 현재 진도 부족을 판단하지 않습니다.',
+        'Earlier/current X marks suggest focused practice. Teach unlearned content before rechecking. Next-stage X marks alone do not show a current-stage gap.',
+        '此前与当前的错题是补充练习候选。未学内容先讲解再确认，不仅凭后续题的错答判断当前进度不足。'),
+      limitation:text('O/X만으로 풀이 속도나 틀린 원인을 알 수 없습니다.', 'O/X marks alone cannot reveal solution speed or error causes.', '仅凭对错无法判断解题速度或错误原因。') };
+  }
+  const api = { goals: clone(goals), targets: clone(targets), normalize, recommend, autoPlan, startingPoint, paperAnalysis };
   W.NM_PLACEMENT_PATHS = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })();

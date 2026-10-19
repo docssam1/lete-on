@@ -6,6 +6,7 @@ import {parseCourseScope} from './recommendation-policy.mjs';
 import {bookType} from './book-types.mjs';
 import {personalSpeedComparison,personalSpeedMarkup} from './personal-speed.mjs';
 import {completionText} from './progress-display.mjs';
+import {academyExperienceMarkup} from './academy-experience.mjs';
 
 // A source-relative comparison. This module never changes records or creates child calendar dates.
 const clone=x=>structuredClone(x);
@@ -206,7 +207,7 @@ function axisMarkup(axis,b,s,data){
  const selected=axis.records.find(r=>r.selectedLane)?.selectedLane||'';
  const choice=options.size>1?`<label class="field baseline-lane"><span>${esc(axis.label)}의 원표 비교 기준</span><select name="baselineLane:${esc(axis.track)}"><option value="" ${selected?'':'selected'}>기존 기준으로 후보 비교</option>${[...options].map(([id,label])=>`<option value="${esc(id)}" ${selected===id?'selected':''}>${esc(label)}</option>`).join('')}</select></label>`:'';
  const academies=axis.track==='thinking'&&Array.isArray(s.wizard?.academies)?s.wizard.academies:[];
- const academyExperience=academies.length?`<ul class="baseline-records baseline-academies">${academies.map(a=>`<li class="baseline-record"><strong>${esc(a.institution||'학원 이름 미입력')}</strong><span>${a.level?'반·레벨 · '+esc(a.level):'반·레벨 미입력'}</span><p class="note">학원 경험으로 기록했어요. 교재 진도나 완료 여부를 뜻하지 않습니다.</p></li>`).join('')}</ul>`:'';
+ const academyExperience=academyExperienceMarkup(academies,{intro:false,topics:false});
  const empty=emptyAxisMarkup(axis,s,academies.length>0);
  const rows=b.monthlyRows.filter(x=>x.track===axis.track);
  const sourceAgeNote=rows.some(x=>x.section==='S1')?'<p class="note">5~7세 유아 표준 시기를 표시한 원표입니다. 아이의 실제 나이에 맞춘 개인 일정이 아닙니다.</p>':'';

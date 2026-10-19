@@ -7,6 +7,8 @@ import {BOOK_TYPES,bookType} from './book-types.mjs';
 import {collectScene,sceneScreen,extraLearningMarkup} from './scene-intake.mjs';
 import {referenceDisplayUrls,sourcePositionNote} from './result-view.mjs';
 import {schoolResultMarkup} from './school-result.mjs';
+import {academyTimingPatch} from './academy-input.mjs';
+import {academyRecordMarkup} from './academy-experience.mjs';
 const choices=(name,value,items)=>`<fieldset class="choices"><legend class="sr-only">선택해 주세요</legend>${items.map(([v,t])=>`<label class="option"><input type="radio" name="${name}" value="${esc(v)}" ${value===v?'checked':''}><span>${esc(t)}</span></label>`).join('')}</fieldset>`;
 const select=(name,label,value,items,extra='')=>`<label class="field"><span>${label}</span><select name="${name}" ${extra}>${items.map(([v,t])=>`<option value="${esc(v)}" ${String(value??'')===String(v)?'selected':''}>${esc(t)}</option>`).join('')}</select></label>`;
 const input=(name,label,value='',extra='')=>`<label class="field"><span>${label}</span><input name="${name}" value="${esc(value)}" ${extra}></label>`;
@@ -69,8 +71,8 @@ export function commitLearning(s,{sceneOnly=false}={}){
  if(institution&&(!sceneOnly||q.scene?.academyTouched)){
   const name=institution==='other'?q.draft['academy:name']?.trim():institution;if(!name)throw Error('그 외 학원 이름을 적어 주세요.');
   const old=s.wizard.academies.find(a=>a.id===(q.academyId||'quick-academy')),existing=old?.institution===name?old:s.wizard.academies.find(a=>a.institution===name);
-  const a={...(existing||{}),id:existing?.id||(old?'quick-academy-'+crypto.randomUUID():'quick-academy'),institution:name,level:q.draft['academy:level']||'',status:existing?.status||'unknown'},i=s.wizard.academies.findIndex(x=>x.id===a.id);
-  if(i<0)s.wizard.academies.push(a);else s.wizard.academies[i]=a;q.academyId=a.id;
+  const a={...(existing||{status:'unknown'}),id:existing?.id||(old?'quick-academy-'+crypto.randomUUID():'quick-academy'),institution:name,level:q.draft['academy:level']||'',...academyTimingPatch(q.draft['academy:timing'],q.draft['academy:timingTouched']==='yes')},i=s.wizard.academies.findIndex(x=>x.id===a.id);
+  if(i<0)s.wizard.academies.push(a);else s.wizard.academies[i]=a;q.academyId=a.id;delete q.draft['academy:timingTouched'];
  }
  if(sceneOnly&&q.scene){q.scene.pendingTracks=[];q.scene.academyTouched=false;}
 }
@@ -132,7 +134,7 @@ function learningSummary(s,{compact=false}={}){
  return '<div class="learning-summary'+(compact?' is-compact':'')+'"'+(compact?' style="--compact-columns:'+Math.min(visible.length,3)+'"':'')+'>'+visible.map(key=>{
   const cs=trackCourses(s,key),academies=key==='thinking'?s.wizard.academies:[];
   const courses=cs.map(c=>{const type=bookType(c);return '<strong>'+esc(c.course)+' '+learningVolume(c)+'</strong><span>'+esc(completionText(c))+(c.range?' · '+esc(c.range):'')+'</span>'+(!compact&&type?'<small class="book-type">'+esc(type.type)+'</small>':'');}).join('');
-  const experience=academies.map(a=>'<strong>'+esc(a.institution)+(a.level?' · '+esc(a.level):'')+'</strong><span>학원 경험 · 교과 진도와 별도</span>').join('');
+  const experience=academies.map(a=>academyRecordMarkup(a)+'<span>학원 경험</span>').join('');
   const answer=s.wizard.quick.scene?.choices?.[key];
   const empty=s.wizard.axisStatus?.[key]==='not_started'?'아직 따로 하지 않았어요':answer==='unknown'?'잘 모르겠다고 답했어요':'아직 입력하지 않았어요';
   return '<section data-summary-track="'+key+'"><h2>'+TRACKS[key].label+'</h2>'+(courses+experience||'<span>'+empty+'</span>')+'</section>';

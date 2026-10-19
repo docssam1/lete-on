@@ -40,9 +40,14 @@ function clockFace(item, index) {
     const y2 = 82 - Math.cos(angle) * 67;
     return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
   }).join("");
+  // numbers: 원본처럼 1~12 숫자를 단다(시각 읽기 원본 문항). 거울 시계에는 쓰지 않는다.
+  const numbers = item.numbers ? Array.from({ length: 12 }, (_, k) => {
+    const angle = (k + 1) * Math.PI / 6;
+    return `<text class="num" x="${(90 + Math.sin(angle) * 51).toFixed(1)}" y="${(82 - Math.cos(angle) * 51 + 4.5).toFixed(1)}">${k + 1}</text>`;
+  }).join("") : "";
   const transform = item.mirrored ? "translate(180 0) scale(-1 1)" : "";
   const hands = hidden ? `<text class="blank" x="90" y="91">?</text>` : `<line class="hour" x1="90" y1="82" x2="${hour.x}" y2="${hour.y}"/><line class="minute" x1="90" y1="82" x2="${minute.x}" y2="${minute.y}"/><circle class="pin" cx="90" cy="82" r="5"/>`;
-  return `<svg class="b7-clock" viewBox="0 0 180 178" role="img" aria-label="${escapeHtml(item.label || `시계 ${index + 1}`)}"><g transform="${transform}"><circle cx="90" cy="82" r="70"/>${ticks}${hands}</g><text x="90" y="170">${escapeHtml(item.label || "시계")}</text></svg>`;
+  return `<svg class="b7-clock" viewBox="0 0 180 178" role="img" aria-label="${escapeHtml(item.label || `시계 ${index + 1}`)}"><g transform="${transform}"><circle cx="90" cy="82" r="70"/>${ticks}${numbers}${hands}</g><text x="90" y="170">${escapeHtml(item.label || "시계")}</text></svg>`;
 }
 
 function clocks(visual) {

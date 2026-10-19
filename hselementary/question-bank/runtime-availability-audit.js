@@ -8,6 +8,8 @@ require("./source-inventory-4-1.js");
 require("./source-inventory-grade6.js");
 require("./curriculum.js");
 require("./generators.js");
+require("./source-5-2-range-e1.js");
+require("./source-5-2-range-missions.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -25,6 +27,84 @@ require("./source-6-2-decimal-e4.js");
 require("./source-6-2-e2-geometry.js");
 require("./source-6-2-height-views.js");
 require("./source-6-2-stack-questions.js");
+require("./source-6-2-stack-observation.js");
+window.HSE_SOURCE_GRADE6_STACK_OPERATION_QUESTION_CONTRACTS = require("./source-6-2-stack-operation-question-contracts.js");
+require("./source-6-2-stack-operation-questions.js");
+window.HSE_SOURCE_GRADE6_STACK_COUNT_PRESENTATION = require("./source-6-2-stack-count-presentation.js");
+require("./source-6-2-stack-count-questions.js");
+window.HSE_SOURCE_GRADE6_STACK_HIDDEN_EXAMPLE3_PRESENTATION = require("./source-6-2-stack-hidden-example3-presentation.js");
+require("./source-6-2-stack-hidden-example3-questions.js");
+window.HSE_SOURCE_GRADE6_STACK_COLOR_EXAMPLE4_PRESENTATION = require("./source-6-2-stack-color-example4-presentation.js");
+require("./source-6-2-stack-color-example4-questions.js");
+window.HSE_SOURCE_GRADE6_PAINTED_STACKS_PRESENTATION = require("./source-6-2-painted-stacks-presentation.js");
+require("./source-6-2-painted-stacks-questions.js");
+window.HSE_SOURCE_GRADE6_PAINTED_MISSION3_PRESENTATION = require("./source-6-2-painted-mission3-presentation.js");
+require("./source-6-2-painted-mission3-questions.js");
+window.HSE_SOURCE_GRADE6_PAINTED_MISSION5_PRESENTATION = require("./source-6-2-painted-mission5-presentation.js");
+require("./source-6-2-painted-mission5-questions.js");
+window.HSE_SOURCE_GRADE6_PAINTED_MISSION6_PRESENTATION = require("./source-6-2-painted-mission6-presentation.js");
+require("./source-6-2-painted-mission6-questions.js");
+window.HSE_SOURCE_GRADE6_PAINTED_EXAMPLE2_PRESENTATION = require("./source-6-2-painted-example2-presentation.js");
+require("./source-6-2-painted-example2-questions.js");
+window.HSE_SOURCE_GRADE6_PAINTED_EXAMPLE3_PRESENTATION = require("./source-6-2-painted-example3-presentation.js");
+require("./source-6-2-painted-example3-questions.js");
+window.HSE_SOURCE_GRADE6_PAINTED_EXPLORATION_PRESENTATION = require("./source-6-2-painted-exploration-presentation.js");
+require("./source-6-2-painted-exploration-questions.js");
+window.HSE_SOURCE_GRADE6_T_PATTERN_EXAMPLE2_PRESENTATION = require("./source-6-2-t-pattern-example2-presentation.js");
+require("./source-6-2-t-pattern-example2-questions.js");
+window.HSE_SOURCE_GRADE6_STAIR_MISSION1_PRESENTATION = require("./source-6-2-stair-mission1-presentation.js");
+require("./source-6-2-stair-mission1-questions.js");
+window.HSE_SOURCE_GRADE6_BORDER_MISSION3_PRESENTATION = require("./source-6-2-border-mission3-presentation.js");
+require("./source-6-2-border-mission3-questions.js");
+window.HSE_SOURCE_GRADE6_NOTCHED_MISSION5_PRESENTATION = require("./source-6-2-notched-mission5-presentation.js");
+require("./source-6-2-notched-mission5-questions.js");
+window.HSE_SOURCE_GRADE6_PLANE_CUT_ASSETS = require("./source-6-2-plane-cut-assets.js");
+window.HSE_SOURCE_GRADE6_PLANE_CUT_PRESENTATION = require("./source-6-2-plane-cut-presentation.js");
+require("./source-6-2-plane-cut-questions.js");
+window.HSE_SOURCE_GRADE6_MIDPOINT_CUT_MODELS = require("./source-6-2-midpoint-cut-models.js");
+window.HSE_SOURCE_GRADE6_MIDPOINT_CUT_ASSETS = require("./source-6-2-midpoint-cut-assets.js");
+window.HSE_SOURCE_GRADE6_MIDPOINT_CUT_PRESENTATION = require("./source-6-2-midpoint-cut-presentation.js");
+require("./source-6-2-midpoint-cut-questions.js");
+window.HSE_SOURCE_GRADE6_FOUR_VERTEX_CUT_MODELS = require("./source-6-2-four-vertex-cut-models.js");
+window.HSE_SOURCE_GRADE6_FOUR_VERTEX_CUT_ASSETS = require("./source-6-2-four-vertex-cut-assets.js");
+window.HSE_SOURCE_GRADE6_FOUR_VERTEX_CUT_CONTRACTS = require("./source-6-2-four-vertex-cut-contracts.js");
+window.HSE_SOURCE_GRADE6_FOUR_VERTEX_CUT_PRESENTATION = require("./source-6-2-four-vertex-cut-presentation.js");
+require("./source-6-2-four-vertex-cut-questions.js");
+window.HSE_SOURCE_GRADE6_OPPOSITE_REMOVAL_MODELS = require("./source-6-2-opposite-removal-models.js");
+window.HSE_SOURCE_GRADE6_OPPOSITE_REMOVAL_ASSETS = require("./source-6-2-opposite-removal-assets.js");
+window.HSE_SOURCE_GRADE6_OPPOSITE_REMOVAL_CONTRACTS = require("./source-6-2-opposite-removal-contracts.js");
+window.HSE_SOURCE_GRADE6_OPPOSITE_REMOVAL_PRESENTATION = require("./source-6-2-opposite-removal-presentation.js");
+require("./source-6-2-opposite-removal-questions.js");
+window.HSE_SOURCE_GRADE6_CUBE_ADDITION_MODELS = require("./source-6-2-cube-addition-models.js");
+window.HSE_SOURCE_GRADE6_CUBE_ADDITION_ASSETS = require("./source-6-2-cube-addition-assets.js");
+window.HSE_SOURCE_GRADE6_CUBE_ADDITION_PRESENTATION = require("./source-6-2-cube-addition-presentation.js");
+require("./source-6-2-cube-addition-questions.js");
+window.HSE_SOURCE_GRADE6_COLORED_CUT_MISSION1_MODELS = require("./source-6-2-colored-cut-mission1-models.js");
+window.HSE_SOURCE_GRADE6_COLORED_CUT_MISSION1_ASSETS = require("./source-6-2-colored-cut-mission1-assets.js");
+window.HSE_SOURCE_GRADE6_COLORED_CUT_MISSION1_PRESENTATION = require("./source-6-2-colored-cut-mission1-presentation.js");
+require("./source-6-2-colored-cut-mission1-questions.js");
+window.HSE_SOURCE_GRADE6_THREE_POINT_CUT_MISSION2_MODELS = require("./source-6-2-three-point-cut-mission2-models.js");
+window.HSE_SOURCE_GRADE6_THREE_POINT_CUT_MISSION2_CONTRACTS = require("./source-6-2-three-point-cut-mission2-contracts.js");
+window.HSE_SOURCE_GRADE6_THREE_POINT_CUT_MISSION2_PRESENTATION = require("./source-6-2-three-point-cut-mission2-presentation.js");
+window.HSE_SOURCE_GRADE6_THREE_POINT_CUT_MISSION2_ASSETS = require("./source-6-2-three-point-cut-mission2-assets.js");
+window.HSE_SOURCE_GRADE6_THREE_POINT_CUT_MISSION2_BANK_PRESENTATION = require("./source-6-2-three-point-cut-mission2-bank-presentation.js");
+require("./source-6-2-three-point-cut-mission2-questions.js");
+window.HSE_SOURCE_GRADE6_LAYER_CUT_MISSION3_CONTRACTS = require("./source-6-2-layer-cut-mission3-contracts.js");
+window.HSE_SOURCE_GRADE6_LAYER_CUT_MISSION3_BANK_PRESENTATION = require("./source-6-2-layer-cut-mission3-bank-presentation.js");
+require("./source-6-2-layer-cut-mission3-questions.js");
+window.HSE_SOURCE_GRADE6_PENTACUBE_MISSION4_MODELS = require("./source-6-2-pentacube-mission4-models.js");
+window.HSE_SOURCE_GRADE6_PENTACUBE_MISSION4_ASSETS = require("./source-6-2-pentacube-mission4-assets.js");
+window.HSE_SOURCE_GRADE6_PENTACUBE_MISSION4_CONTRACTS = require("./source-6-2-pentacube-mission4-contracts.js");
+window.HSE_SOURCE_GRADE6_PENTACUBE_MISSION4_PRESENTATION = require("./source-6-2-pentacube-mission4-presentation.js");
+require("./source-6-2-pentacube-mission4-questions.js");
+window.HSE_SOURCE_GRADE6_E4_FINAL_MISSIONS_PRESENTATION = require("./source-6-2-e4-final-missions-presentation.js");
+require("./source-6-2-e4-final-missions-questions.js");
+window.HSE_SOURCE_GRADE6_RATIO_E1_CONTRACTS = require("./source-6-2-ratio-e1-contracts.js");
+window.HSE_SOURCE_GRADE6_RATIO_E1_PRESENTATION = require("./source-6-2-ratio-e1-presentation.js");
+require("./source-6-2-ratio-e1-questions.js");
+window.HSE_SOURCE_GRADE6_RATIO_E2_CONTRACTS = require("./source-6-2-ratio-e2-contracts.js");
+window.HSE_SOURCE_GRADE6_RATIO_E2_PRESENTATION = require("./source-6-2-ratio-e2-presentation.js");
+require("./source-6-2-ratio-e2-questions.js");
 require("./source-6-2-decimal-e6-geometry.js");
 require("./source-grade6-volume-e2.js");
 require("./source-grade6-volume-e3-mission3.js");
@@ -52,25 +132,25 @@ const readme = fs.readFileSync(path.join(__dirname, "README.md"), "utf8");
 for (const [label, pattern, expected] of [
   ["전체", /런타임 ([\d,]+)개 세부 유형 항목/, types.length],
   ["생성 가능", /현재 생성 가능:[^\n]*?([\d,]+)개 유형/, ready.length],
-  ["검수 대기", /검수 대기:[^\n]*?([\d,]+)개 유형/, locked.length]
+  ["검수 대기", /검수 대기(?:·공통 기능 연결)?:[^\n]*?([\d,]+)개 (?:유형|기록)/, locked.length]
 ]) {
   const match = readme.match(pattern);
   if (!match || Number(match[1].replaceAll(",", "")) !== expected) failures.push(`README ${label} 수치가 실제 ${expected}개와 다릅니다.`);
 }
 
-if (types.length !== 2005) failures.push(`런타임 유형은 2005개여야 하나 ${types.length}개입니다.`);
-if (ready.length !== 1155) failures.push(`생성 가능 유형은 1155개여야 하나 ${ready.length}개입니다.`);
-if (locked.length !== 850) failures.push(`검수 대기 유형은 850개여야 하나 ${locked.length}개입니다.`);
+if (types.length !== 2016) failures.push(`런타임 유형은 2016개여야 하나 ${types.length}개입니다.`);
+if (ready.length !== 1229) failures.push(`생성 가능 유형은 1229개여야 하나 ${ready.length}개입니다.`);
+if (locked.length !== 787) failures.push(`검수 대기 유형은 787개여야 하나 ${locked.length}개입니다.`);
 if (ready.some(type => !type.sourceItemId)) failures.push("원문 문항 ID가 없는 유형이 생성 가능 상태입니다.");
 if (sourceGrade6.length !== 633) failures.push(`6학년 원문 세부 유형은 633개여야 하나 ${sourceGrade6.length}개입니다.`);
-if (sourceGrade6.filter(type => !type.reviewLocked).length !== 356 || sourceGrade6.filter(type => type.reviewLocked).length !== 277) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
+if (sourceGrade6.filter(type => !type.reviewLocked).length !== 419 || sourceGrade6.filter(type => type.reviewLocked).length !== 214) failures.push("6학년 원문 세부 유형의 생성 가능·잠금 수가 다릅니다.");
 if (!sourceGrade6.every(type => {
   if (!type.answerVisualRequired) return false;
   if (type.generationMode === "review-locked") {
     return type.reviewLocked && type.verifiedVariantTarget === 0 && type.verifiedVariantCount === 0;
   }
   return type.generationMode === "fixed-verified-pool"
-    && type.verifiedVariantTarget === (type.sourceItemId === "6-1-u2-e4-example-4-1" ? 1 : 3);
+    && type.verifiedVariantTarget === (["6-1-u2-e4-example-4-1", "6-2-u3-e4-mission-4", "6-2-u3-e4-mission-5"].includes(type.sourceItemId) ? 1 : 3);
 })) failures.push("6학년 원문 세부 유형의 정답 그림·고정 문항 계약이 다릅니다.");
 
 for (const type of ready) {

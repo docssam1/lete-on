@@ -42,6 +42,13 @@ test('단답: 단원 낱말 목록의 다른 낱말은 틀림, 모르는 말은 
   assert.equal(gradeDaily(it, '잘모르겠는말ㅋ', { misc, vocab }).status, 'review');
 });
 
+test('단답 접두어가 같아도 다른 알려진 낱말은 오답이고 미등록 표현은 검토한다', () => {
+  const it={answerContract:{type:'short-text',answer:'별',accepted:['별']}};
+  assert.equal(gradeDaily(it,'별자리',{vocab:new Set(['별','별자리'])}).status,'wrong');
+  assert.equal(gradeDaily(it,'별자리',{}).status,'review');
+  assert.equal(gradeDaily(it,'별이에요',{}).status,'correct');
+});
+
 test('서술: 판정표 예시대로 — 맞는 답은 맞음, 오개념 문장은 틀림(오개념 id 포함), 일부·엉뚱한 말은 검토', async () => {
   let seen = 0;
   for (const u of UNITS) {

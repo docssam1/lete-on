@@ -18,13 +18,47 @@ const load = async (f) => import(pathToFileURL(join(UNITS, f)).href + `?t=${Date
 // 문제은행만 있는 새 단원(5단계 수업 없음)은 보조 파일이 아직 없다 — 빈 것에서 시작한다.
 const loadOr = async (f, empty) => (existsSync(join(UNITS, f)) ? load(f) : empty);
 
+// 새 단원의 자체 교재는 여러 학년·여러 책을 함께 쓸 수 있다. 대상 학년과 원본 교재 학년을 섞지 않는다.
+export function sourceRefFor(o, cfg) {
+  const legacy = { type: 'original', set: o.set, no: o.no, page: o.page, sourceId: `${cfg.sourceId}-set${o.set}`, edition: cfg.single ? cfg.edition : `${cfg.edition} 세트${o.set}`, course: cfg.course, unit: cfg.unitLabel };
+  if (!cfg.sourceBooks) return legacy;
+  const p = o.provenance, b = cfg.sourceBooks[p?.book];
+  if (!b) throw new Error(`원문 ${o.set}-${o.no}: 교재 출처 없음 ${p?.book}`);
+  for (const key of ['sourceId', 'file', 'course', 'unitLabel']) if (!b[key]) throw new Error(`교재 ${p.book}: ${key} 없음`);
+  if (!Number.isInteger(o.page) || o.page < 1 || o.page > b.pages) throw new Error(`원문 ${o.set}-${o.no}: 교재 쪽수 범위 밖`);
+  if (!p.section || !p.originalNo) throw new Error(`원문 ${o.set}-${o.no}: 교재 절·원래 문항 번호 없음`);
+  return { ...legacy, sourceId: b.sourceId, edition: b.file, course: b.course, unit: b.unitLabel,
+    label: cfg.sourceLabel || '교재 문항', section: p.section, originalNo: p.originalNo };
+}
+
+export function sourceGivensFor(o, cfg) {
+  const key=`${o.set}-${o.no}`;
+  if(Object.hasOwn(cfg.sourceGivensOverrides||{},key))return cfg.sourceGivensOverrides[key];
+  const context = cfg.sourceBooks && o.provenance?.context;
+  if (!context) return o.givens ?? null;
+  const { 지문, ...rest } = o.givens || {};
+  return { 지문: [context, 지문].filter(Boolean).join('\n'), ...rest };
+}
+
+export function sourceRubricFor(o, cfg, key) {
+  // 원문 전사는 보존하고, 인쇄에 없던 전사자의 비율 기입은 표시에서 제외한다.
+  return (o.rubric || []).map((r) => cfg.unprintedRubricRatios?.includes(key) ? { ...r, ratio: null } : r);
+}
+
+export function sourceExplanationFor(o, cfg, key) {
+  const rub = sourceRubricFor(o, cfg, key).map((r) => (r.ratio ? `${r.criterion} (${r.ratio})` : r.criterion));
+  const original = rub.length ? `${o.explanation}\n[채점 기준] ${rub.join(' / ')}` : o.explanation;
+  const note = cfg.sourceNotes?.[key];
+  return note ? `${original}\n[자료 검토] ${note}` : original;
+}
+
 function contract(x, cfg, key) {
   const circ = [...String(x.answer)].filter((c) => CIRC.includes(c)).map((c) => CIRC.indexOf(c));
   if (x.choices && circ.length === 1) return { type: 'single-choice', answer: circ[0], accepted: [circ[0]] };
   if (x.choices && circ.length > 1) return { type: 'multi-choice', answers: circ };
   if (x.format === '서술형') {
     const req = cfg.required[`src:${key}`]; if (!req) throw new Error(`서술형 ${key} 채점 요소(required) 없음`);
-    return { type: 'written-explanation', sample: x.answer, rubric: { required: req, pass: '채점 기준을 모두 담으면 정답', criteria: (x.rubric || []).map((r) => (r.ratio ? `${r.criterion} (${r.ratio})` : r.criterion)) } };
+    return { type: 'written-explanation', sample: x.answer, rubric: { required: req, pass: '채점 기준을 모두 담으면 정답', criteria: sourceRubricFor(x, cfg, key).map((r) => (r.ratio ? `${r.criterion} (${r.ratio})` : r.criterion)) } };
   }
   return { type: 'short-text', answer: x.answer, accepted: uniq([x.answer, ...(x.accepted || []), ...(cfg.accept?.[key] || [])]) };
 }
@@ -33,7 +67,9 @@ export async function importUnit(cfg) {
   const { unit, dir } = cfg, date = cfg.date;
   const M = JSON.parse(readFileSync(join(dir, 'map.json'), 'utf8'));
   const figmap = existsSync(join(dir, 'figmap.json')) ? JSON.parse(readFileSync(join(dir, 'figmap.json'), 'utf8')) : {};
-  const sets = [1, 2, 3, 4].filter((s) => existsSync(join(dir, `set${s}.json`)));
+  const requestedSets = cfg.sets ?? [1, 2, 3, 4];
+  if (!Array.isArray(requestedSets) || new Set(requestedSets).size !== requestedSets.length || requestedSets.some(s => !Number.isInteger(s) || s < 1)) throw new Error('원문 묶음 번호는 서로 다른 양의 정수여야 합니다.');
+  const sets = requestedSets.filter((s) => existsSync(join(dir, `set${s}.json`)));
   const orig = sets.flatMap((s) => JSON.parse(readFileSync(join(dir, `set${s}.json`), 'utf8')).map((x) => ({ ...x, set: s, key: `${s}-${x.no}` })));
   const sim = Object.fromEntries(readdirSync(join(dir, 'sim')).filter((f) => f.endsWith('.json')).flatMap((f) => JSON.parse(readFileSync(join(dir, 'sim', f), 'utf8'))).map((x) => [x.key, x]));
   for (const [k, fix] of Object.entries(cfg.patchSim || {})) fix(sim[k]);
@@ -46,16 +82,16 @@ export async function importUnit(cfg) {
 
   const tax = (type, format) => ({ curriculum: '2022 개정', grade: cfg.grade, semester: cfg.semester, unit: cfg.uKey, area: cfg.area, element: EL[type], type, format, level: '기본', track: '교과' });
   const source = orig.map((o) => {
-    const type = M.map[o.key], ac = contract(o, cfg, o.key), rub = (o.rubric || []).map((r) => (r.ratio ? `${r.criterion} (${r.ratio})` : r.criterion));
+    const type = M.map[o.key], ac = contract(o, cfg, o.key);
     return {
       id: `${unit}-o${o.set}-${String(o.no).padStart(2, '0')}`, status: 'verified',
-      sourceRef: { type: 'original', set: o.set, no: o.no, page: o.page, sourceId: `${cfg.sourceId}-set${o.set}`, edition: cfg.single ? cfg.edition : `${cfg.edition} 세트${o.set}`, course: cfg.course, unit: cfg.unitLabel },
-      taxonomy: { ...tax(type, o.format), topic: o.topic, concept: o.concept },
-      prompt: o.prompt, givens: o.givens ?? null, choices: o.choices ? o.choices.map((c) => c.replace(/^[①②③④⑤]\s*/, '')) : null,
+      sourceRef: sourceRefFor(o, cfg),
+      taxonomy: { ...tax(type, o.format), topic: cfg.sourceBooks && o.topic === type ? TYPE[type].name : o.topic, concept: cfg.sourceBooks && o.concept === type ? TYPE[type].name : o.concept },
+      prompt: o.prompt, givens: sourceGivensFor(o, cfg), choices: o.choices ? o.choices.map((c) => c.replace(/^[①②③④⑤]\s*/, '')) : null,
       figure: figmap[o.key] ? `assets/bank/${unit}/${figmap[o.key]}.webp` : null, figureNote: o.figure?.note ?? null,
       visualModel: null, variantRules: null, responseContract: ac.type, answerContract: ac,
-      explanation: rub.length ? `${o.explanation}\n[채점 기준] ${rub.join(' / ')}` : o.explanation,
-      evidence: { checkedBy: 'Claude', date, gates: ['source', 'answer'], against: '정답 및 풀이', note: o.uncertain || undefined },
+      explanation: sourceExplanationFor(o, cfg, o.key),
+      evidence: { checkedBy: '원문 대조', date, gates: ['source', 'answer'], against: cfg.sourceBooks ? '교사용 교재의 정답·해설' : '정답 및 풀이', note: o.uncertain || undefined },
     };
   });
   const similar = orig.map((o, i) => {
@@ -68,7 +104,7 @@ export async function importUnit(cfg) {
       id: `${unit}-v${String(i + 1).padStart(3, '0')}`, status: 'authored', sourceRef: { type: 'similar', of: { set: o.set, no: o.no } },
       taxonomy: tax(type, r.fmt), prompt: r.prompt, givens: r.givens ?? null, choices: r.choices ?? null, visualModel: null, variantRules: null,
       responseContract: ac.type, answerContract: ac, explanation: r.explanation,
-      evidence: { checkedBy: 'Claude', date, gates: ['science', 'answer'] },
+      evidence: { checkedBy: '문항 검수', date, gates: ['science', 'answer'] },
     };
   });
   const idOf = Object.fromEntries(orig.flatMap((o, i) => [[`src:${o.key}`, source[i].id], [`sim:${o.key}`, similar[i].id]]));
@@ -76,16 +112,23 @@ export async function importUnit(cfg) {
   // 분류 체계
   const { taxonomy: oldTx } = await loadOr(`${unit}.taxonomy.js`, { taxonomy: { title: cfg.unitTitle, standards: [] } });
   const authored = Object.fromEntries(Object.entries(cfg.lessonTypes || {}).map(([b, t]) => [`${unit}-${b}`, t]));
-  const taxonomy = { unit, curriculum: '2022 개정', grade: cfg.grade, semester: cfg.semester, title: oldTx.title, area: cfg.area, standards: oldTx.standards || [],
+  const standardsSource = cfg.standardsSource || oldTx.standardsSource, standardsNote = cfg.standardsNote || oldTx.standardsNote;
+  const taxonomy = { unit, curriculum: '2022 개정', grade: cfg.grade, semester: cfg.semester, title: oldTx.title, area: cfg.area, standards: cfg.standards || oldTx.standards || [],
+    ...(standardsSource ? { standardsSource } : {}), ...(standardsNote ? { standardsNote } : {}),
     elements: cfg.elements, types: Object.entries(TYPE).map(([id, t]) => ({ id, element: t.element, name: t.name, desc: t.desc })),
     formats: ['선택형', '단답형', '서술형'], sources: Object.fromEntries(orig.map((o) => [o.key, [M.map[o.key], o.format]])), authored };
-  writeFileSync(join(UNITS, `${unit}.taxonomy.js`), `// ${cfg.title} — 2022 개정 교육과정 기준 분류. 유형(types)은 단원평가 세트1~4 원문 ${orig.length}문항을 실제로 나눈 결과다.\n// sources = 원문 (세트-번호) → [유형, 형식]. 원문 자체는 ${unit}.source.js.\nexport const taxonomy = ${js(taxonomy)};\n`);
-  writeFileSync(join(UNITS, `${unit}.source.js`), `// ${cfg.title} — 단원평가 원문 ${orig.length}문항(${cfg.edition} 세트${sets.join('·')}). 시험지를 그대로 옮기고 정답 및 풀이와 대조했다.\n// 원장 지시(2026-10-09): 원문을 그대로 문제은행에 쓴다. 그림은 시험지에서 잘라 낸 것(assets/bank/${unit}/).\nexport const source = ${js(source)};\n`);
+  const sourceDescription = cfg.sourceBooks ? '교재별 원래 쪽수·문항 번호를 보존한 교재' : '단원평가 세트1~4';
+  writeFileSync(join(UNITS, `${unit}.taxonomy.js`), `// ${cfg.title} — 2022 개정 교육과정 기준 분류. 유형(types)은 ${sourceDescription} 원문 ${orig.length}문항을 실제로 나눈 결과다.\n// sources = 원문 (세트-번호) → [유형, 형식]. 원문 자체는 ${unit}.source.js.\nexport const taxonomy = ${js(taxonomy)};\n`);
+  const sourceHeader = cfg.sourceBooks
+    ? `// ${cfg.title} — 교재 원문 ${orig.length}문항. 교재별 실제 출처는 각 sourceRef에 보존하며 교사용 정답·해설과 대조했다.\n// 그림은 교재에서 잘라 낸 것(assets/bank/${unit}/). 인쇄 해설과 보충 설명은 [자료 검토] 표시로 구분한다.\n`
+    : `// ${cfg.title} — 단원평가 원문 ${orig.length}문항(${cfg.edition} 세트${sets.join('·')}). 시험지를 그대로 옮기고 정답 및 풀이와 대조했다.\n// 원장 지시(2026-10-09): 원문을 그대로 문제은행에 쓴다. 그림은 시험지에서 잘라 낸 것(assets/bank/${unit}/).\n`;
+  writeFileSync(join(UNITS, `${unit}.source.js`), `${sourceHeader}export const source = ${js(source)};\n`);
   writeFileSync(join(UNITS, `${unit}.similar.js`), `// ${cfg.title} — 유사문항 ${similar.length} (창작). 원문 1문항당 1개, 같은 유형·난이도로 상황과 물체를 바꿨다. of = 짝이 되는 원문 (세트, 번호).\nexport const similar = ${js(similar)};\n`);
 
   // 레슨 문항 유형을 새 분류로
   const fresh = !existsSync(join(UNITS, `${unit}.js`));
-  const U = fresh ? { unit: { id: unit, course: cfg.course.replace('초등 ', ''), no: cfg.no, title: cfg.unitTitle, domain: cfg.area, sources: {} }, items: [] } : await load(`${unit}.js`);
+  const U0 = fresh ? { unit: { id: unit, course: cfg.course.replace('초등 ', ''), no: cfg.no, title: cfg.unitTitle, domain: cfg.area, sources: {} }, items: [] } : await load(`${unit}.js`);
+  const U = { unit: U0.unit, items: cfg.items ?? U0.items };
   for (const it of U.items) { const t = authored[it.id]; if (!t) throw new Error(`레슨 문항 유형 없음 ${it.id}`); it.taxonomy = { ...it.taxonomy, element: EL[t], type: t, concept: TYPE[t].name }; }
   U.unit.sources = { ...U.unit.sources, bank: [`data/units/${unit}.source.js`] };
   const head = fresh ? `// ${cfg.title} — 문제은행 단원(5단계 수업은 아직 없음). 원문은 ${unit}.source.js, 유사문항은 ${unit}.similar.js.\n` : readFileSync(join(UNITS, `${unit}.js`), 'utf8').match(/^(\/\/.*\n)*/)[0];
@@ -108,6 +151,7 @@ export async function importUnit(cfg) {
     else misc.typed[it.id] = { any: m };
   };
   orig.forEach((o, i) => { const m = cfg.mFix?.[o.key] || sim[o.key].m || null; tag(similar[i], m); tag(source[i], m); });
+  for (const it of U.items) if (cfg.lessonMis?.[it.id]) tag(it, cfg.lessonMis[it.id]);
   const order = ['misconceptions', 'distractors', 'typed', 'cloze', 'cells', 'remedy', 'bookChips', 'written'];
   const keys = [...order.filter((k) => k in misc), ...Object.keys(misc).filter((k) => !order.includes(k) && k !== 'default')];
   writeFileSync(join(UNITS, `${unit}.misc.js`), keys.map((k) => `export const ${k} = ${js(misc[k])};`).join('\n') + '\n');
@@ -116,7 +160,16 @@ export async function importUnit(cfg) {
   const { judge: J0 } = await loadOr(`${unit}.judge.js`, { judge: {} });
   const judge = Object.fromEntries(Object.entries(J0).filter(([k]) => !/-v\d+$/.test(k)));
   for (const [k, v] of Object.entries(cfg.judge)) { if (!idOf[k]) throw new Error(`판정표 키 ${k}`); judge[idOf[k]] = v; }
-  writeFileSync(join(UNITS, `${unit}.judge.js`), `export const judge = ${js(judge)};\n`);
+  for (const [k, v] of Object.entries(cfg.lessonJudge || {})) {
+    if (!U.items.some((it) => it.id === k)) throw new Error(`보충 판정표에 없는 문항 ${k}`);
+    judge[k] = v;
+  }
+  for (const [k, v] of Object.entries(cfg.deckJudge || {})) {
+    if (!['deck:hypo', 'deck:wonder', 'deck:concl0'].includes(k)) throw new Error(`수업 판정표 키 오류 ${k}`);
+    judge[k] = v;
+  }
+  const orderedJudge = cfg.lessonJudge ? Object.fromEntries(Object.entries(judge).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) : judge;
+  writeFileSync(join(UNITS, `${unit}.judge.js`), `export const judge = ${js(orderedJudge)};\n`);
 
   // 교재 확인 문제·형성평가 키(세트-번호)
   const bookF = join(ROOT, 'data', 'book', `${unit}.book.js`);
@@ -157,16 +210,16 @@ export async function importSourceOnly(cfg) {
   const twinM = (o) => { const s = similar.find((x) => x.sourceRef?.of?.set === o.set && x.sourceRef?.of?.no === o.no); if (!s) return null;
     return Object.values(misc.distractors?.[s.id] || {})[0] || misc.typed?.[s.id]?.any || null; };
   const source = orig.map((o) => {
-    const type = tx.sources[o.key][0], ac = contract(o, cfg, o.key), rub = (o.rubric || []).map((r) => (r.ratio ? `${r.criterion} (${r.ratio})` : r.criterion));
+    const type = tx.sources[o.key][0], ac = contract(o, cfg, o.key);
     const it = {
       id: `${unit}-o${o.set}-${String(o.no).padStart(2, '0')}`, status: 'verified',
       sourceRef: { type: 'original', set: o.set, no: o.no, page: o.page, sourceId: `${cfg.sourceId}-set${o.set}`, edition: `${cfg.edition} 세트${o.set}`, course: cfg.course, unit: cfg.unitLabel },
       taxonomy: { curriculum: '2022 개정', grade: tx.grade, semester: tx.semester, unit: cfg.uKey, area: tx.area, element: EL[type], type, format: o.format, level: '기본', track: '교과', topic: o.topic, concept: o.concept },
-      prompt: o.prompt, givens: o.givens ?? null, choices: o.choices ? o.choices.map((c) => c.replace(/^[①②③④⑤]\s*/, '')) : null,
+      prompt: o.prompt, givens: sourceGivensFor(o, cfg), choices: o.choices ? o.choices.map((c) => c.replace(/^[①②③④⑤]\s*/, '')) : null,
       figure: figmap[o.key] ? `assets/bank/${unit}/${figmap[o.key]}.webp` : null, figureNote: o.figure?.note ?? null,
       visualModel: null, variantRules: null, responseContract: ac.type, answerContract: ac,
-      explanation: rub.length ? `${o.explanation}\n[채점 기준] ${rub.join(' / ')}` : o.explanation,
-      evidence: { checkedBy: 'Claude', date, gates: ['source', 'answer'], against: '정답 및 풀이', note: o.uncertain || undefined },
+      explanation: sourceExplanationFor(o, cfg, o.key),
+      evidence: { checkedBy: '원문 대조', date, gates: ['source', 'answer'], against: '정답 및 풀이', note: o.uncertain || undefined },
     };
     const m = cfg.mFix?.[o.key] || twinM(o);
     if (ac.type === 'written-explanation') add.written[it.id] = { partial: [] };

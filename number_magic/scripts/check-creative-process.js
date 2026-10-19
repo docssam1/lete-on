@@ -240,11 +240,14 @@ server.listen(0, async () => {
         document.querySelectorAll('.nm-print-sheet .nm-w2-page[data-cre]').forEach(p => {
           const code = (p.querySelector('.nm-w2-foot-code') || {}).textContent || '?';
           const r = byCode.get(code) || { role:p.getAttribute('data-cre'), cells:[], pairPages:0, pairLegends:0 };
-          p.querySelectorAll('.nm-w2-item-train').forEach(e => r.cells.push({
+          p.querySelectorAll('.nm-w2-item-train').forEach(e => {
+            const tex = [...e.querySelectorAll('[data-tex]')].map(x => x.getAttribute('data-tex')).join(' ');
+            r.cells.push({
             num:+((e.querySelector('.nm-w2-num') || {}).textContent || '0').replace(/\D/g, ''),
             process:e.classList.contains('nm-w2-item-process'), form:e.getAttribute('data-process'),
-            boxes:[...e.querySelectorAll('[data-tex]')].map(x => x.getAttribute('data-tex')).join(' ').split('\\boxed{').length - 1,
-            tint:e.getAttribute('data-cptint'), ask:(e.querySelector('.nm-w2-process-ask') || {}).textContent || '' }));
+            writeSlots:tex.split('\\boxed{').length - 1 + tex.split('\\underline{\\phantom{0000}}').length - 1,
+            tint:e.getAttribute('data-cptint'), ask:(e.querySelector('.nm-w2-process-ask') || {}).textContent || '' });
+          });
           if(p.querySelector('[data-cptint="pair"]')) r.pairPages++;
           if(p.querySelector('.nm-pv-legend-pair')) r.pairLegends++;
           byCode.set(code, r);
@@ -268,7 +271,7 @@ server.listen(0, async () => {
           if(!(proc.length < want && g)) fail.push(`B · ${tag}: 과정 빈칸 칸 ${proc.length}/${want}`);
           else notes.push(`${tag}: 과정 빈칸 ${proc.length}/${want} — ${th}@${lv} 생성기에 과정 줄 없음(A 에서 확인)`);
         }
-        proc.forEach(x => { if(x.boxes !== 1) fail.push(`B · ${tag} (${x.num}): 과정 빈칸 칸의 빈칸 상자 ${x.boxes}개`);
+        proc.forEach(x => { if(x.writeSlots !== 1) fail.push(`B · ${tag} (${x.num}): 과정 빈칸 칸의 쓰기 자리 ${x.writeSlots}개`);
           if(!x.ask.trim()) fail.push(`B · ${tag} (${x.num}): 과정 빈칸 지시문이 없다`); });
         r.cells.filter(x => x.tint).forEach(x => { domTint++;
           if((x.num - 1) % cfg.colorEvery !== cfg.colorOffset) fail.push(`B · ${tag} (${x.num}): 색이 (2)(5)… 자리가 아니다`);

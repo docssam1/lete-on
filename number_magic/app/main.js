@@ -233,6 +233,7 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
   character_unlocked:{}, mailbox:{opened:{}},
   boost:{doneWeeks:{},log:[]}, /* 정체 감지→보강 루프(§2-4) 기록 — 부모 리포트용 */
   roadCadence:'w1', /* 연산 로드맵 주차 보기: 'w1'=주 1회반, 'w2'=주 2회반 */
+  roadView:'road', /* 같은 연산 로드맵의 길 보기 / 그림 지도 보기 */
   /* 연산 로드맵 목표 기준(속도) — 값은 ROAD_PACES의 key.
      기본값을 '표준'(p2)으로 둔다: 처음 보는 사람에게 가장 빠른 기준의 주차를
      보여 주면 그 자체가 과약속 쪽으로 기운다(원장 지시로 넣은 "연산 트랙만
@@ -243,8 +244,8 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      roadSpeed — 같은 기간에 회차를 더 많이 나감: 로드맵의 주차·개월을 1/배수로 줄인다(회차·내용은 그대로).
      roadAmount — 한 회차 교과 드릴 문항 수를 배수만큼(exam.js getAmount, 6의 배수·상한 지킴). */
   roadSpeed:1, roadAmount:1,
-  /* 자동 편성(2026-10-04, 원장 "자동 편성을 하고 그 이후 수동 조절 가능하도록") — 진단+목표로 속도·양을 먼저 맞춘다.
-     roadManual — 사용자가 로드맵에서 속도·양을 직접 고쳤으면 true: 이후 새 진단은 값을 덮어쓰지 않고 제안만 한다. */
+  /* roadManual records a manual planning choice. Since 2026-10-15, diagnosis
+     preserves workload regardless of this flag; observe before gradual changes. */
   roadManual:false,
   roadPrints:{}, /* 연산 로드맵 세션 인쇄 회수(2026-09-04) — {'C5-0':2, 'C7-3':1, ...}
     key=courseKey+'-'+sessionIdx. exam.js showRoadPick의 "인쇄 N장" 표시·재인쇄 버튼용,
@@ -279,6 +280,7 @@ if(!S.boost)S.boost={doneWeeks:{},log:[]};
 if(!S.boost.doneWeeks)S.boost.doneWeeks={};
 if(!S.boost.log)S.boost.log=[];
 if(S.roadCadence!=='w1'&&S.roadCadence!=='w2')S.roadCadence='w1';
+if(S.roadView!=='road'&&S.roadView!=='map')S.roadView='road';
 if(!S.roadPrints||typeof S.roadPrints!=='object')S.roadPrints={};
 /* 목표 기준(속도) 검증 — 값은 ROAD_PACES의 key와 같아야 한다. ROAD_PACES는 이 줄보다
    아래에서 const로 선언되므로(TDZ) 여기서는 키 목록을 그대로 적는다. 기준을 늘리면
@@ -303,7 +305,10 @@ if(!S.account)S.account={status:hadSave?'active':'trial',code:null,checkedAt:0};
    기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
 (function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}cloudPushSoon();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();return true;}
+// The existing profile/slot and state backup own this data; no global sibling log.
+if(window.NM_STUDY_RECORDS)window.NM_STUDY_RECORDS.bind({state:()=>S,save});
+window.addEventListener('nm:study-record-error',()=>toast(S.lang==='en'?'Your score is unchanged, but the study record could not be saved. Check device storage.':S.lang==='zh'?'成绩不变，但未能保存学习记录。请检查设备存储。':'채점은 유지되지만 학습 기록을 저장하지 못했습니다. 기기 저장 공간을 확인해 주세요.',false));
 /* 학습량 배수는 인쇄 쪽(exam.js)이 읽는 자리에 옮겨 둔다 — 학생을 바꾸면 그 학생 값으로 */
 function syncAmount(){ try{ if(window.NM_EXAM&&NM_EXAM.setAmount) NM_EXAM.setAmount(S.roadAmount||1); }catch(e){} }
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
@@ -3594,6 +3599,60 @@ function screenCourseRoad(){
   const curKey=currentCourseKey();
   const list=roadCourseList();
   const lastNum=list.length?list[list.length-1].num:0;
+  const curNum=Number(String(curKey).replace(/^C/,''));
+  /* 진단으로 정한 시작점과 실제 학습 기록은 다른 사실이라 지도에서 분리한다. */
+  const touchedUid=mostRecentTouchedUnit();
+  const learnedCourseKey=touchedUid?courseForUnit(touchedUid):null;
+  const learnedCourseNum=learnedCourseKey?Number(String(learnedCourseKey).replace(/^C/,'')):null;
+  const recommendationKey=S.placement&&S.placement.course&&(window.NM_COURSES||{})[S.placement.course]?S.placement.course:null;
+  const recommendationNum=recommendationKey?Number(String(recommendationKey).replace(/^C/,'')):null;
+  const recommendationLabel=S.placement&&S.placement.self
+    ? lk('내가 고른 시작점','My chosen start','我选择的起点')
+    : lk('진단 추천 시작점','Assessment starting point','测评推荐起点');
+  const allStages=window.NM_STAGES||[];
+  const mapGroups=[
+    {key:'first', title:{ko:'수의 출발',en:'First numbers',zh:'数字起点'}, stages:['numberland','sprout'], x:13,y:75,
+      guide:{image:'numi-0-happy.png',name:{ko:'누미',en:'Numi',zh:'努米'},say:{
+        ko:'먼저 수를 세고 10을 만들어요. 덧셈·뺄셈을 지나 구구단과 나눗셈도 만나요!',
+        en:'Count, make 10, then learn addition, subtraction, times tables, and division!',
+        zh:'先数数、凑十，再学加减、乘法口诀和除法！'}}},
+    {key:'arithmetic', title:{ko:'계산의 성장',en:'Growing calculation',zh:'计算进阶'}, stages:['leap','mastery'], x:32,y:54,
+      guide:{image:'poco-3-happy.png',name:{ko:'포코',en:'Poco',zh:'波可'},say:{
+        ko:'큰 수를 곱하고 나누어요. 분수·소수·비율까지 계산을 넓혀 볼까요?',
+        en:'Multiply and divide bigger numbers, then explore fractions, decimals, and ratios!',
+        zh:'学习大数乘除，再探索分数、小数和比率！'}}},
+    {key:'challenge', title:{ko:'경시의 탑',en:'Tower of Challenge',zh:'竞赛之塔'}, stages:['tower'], x:51,y:38,
+      guide:{image:'momo-8-happy.png',name:{ko:'모모',en:'Momo',zh:'莫莫'},say:{
+        ko:'수의 숨은 규칙을 찾으면 계산이 짧아져요. 곱셈·진법·제곱에 도전해요!',
+        en:'Find number patterns to shorten calculations. Try multiplication, number bases, and squares!',
+        zh:'找到数字规律，计算就更简便。来挑战乘法、进位制和平方！'}}},
+    {key:'middle', title:{ko:'중학교',en:'Middle school',zh:'初中'}, stages:['middle'], x:70,y:28,
+      guide:{image:'sym-sqrt.png',name:{ko:'루트',en:'Root',zh:'根号'},say:{
+        ko:'음수와 x를 만나 수의 관계를 식과 그래프로 나타내요. 제곱근도 탐험해요!',
+        en:'Meet negative numbers and x, show connections with equations and graphs, and explore square roots!',
+        zh:'认识负数和 x，用方程与图像表示关系，再探索平方根！'}}},
+    {key:'high', title:{ko:'고등 수학',en:'High school maths',zh:'高中数学'}, stages:['common1','common2','algebra','calculus1'], x:89,y:16,
+      guide:{image:'sym-infinity.png',name:{ko:'무한',en:'Infinity',zh:'无穷大'},say:{
+        ko:'다항식·좌표·로그와 수열을 배우고, 변화율과 넓이까지 살펴봐요!',
+        en:'Explore polynomials, coordinates, logs, and sequences, then rates of change and area!',
+        zh:'学习多项式、坐标、对数与数列，再研究变化率和面积！'}}}
+  ].map(g=>({...g, entries:g.stages.map(k=>allStages.find(s=>s.key===k)).filter(Boolean)}))
+    .filter(g=>g.entries.length);
+  const mapGroupFor=n=>n==null?null:mapGroups.find(g=>g.entries.some(s=>n>=s.courses.from&&n<=s.courses.to));
+  const mapRange=g=>`${lk('과정','Courses','课程')} ${g.entries[0].courses.from}~${g.entries[g.entries.length-1].courses.to}`;
+  let selectedMapGroup=(mapGroupFor(learnedCourseNum)||mapGroupFor(recommendationNum)||mapGroups[0]||{}).key;
+  let roadView=S._roadFocus?'road':S.roadView;
+  const mapButtons=mapGroups.map((g,i)=>{
+    const learned=g===mapGroupFor(learnedCourseNum), recommended=g===mapGroupFor(recommendationNum);
+    const status=(learned?lk('실제 학습 위치','studied location','实际学习位置')+' ':'')+(recommended?recommendationLabel:'');
+    return `<button class="nm-vmap-stop${g.key===selectedMapGroup?' is-selected':''}${learned?' is-learning':''}${recommended?' is-recommendation':''}" type="button" data-map-group="${g.key}" style="left:${g.x}%;top:${g.y}%" aria-pressed="${g.key===selectedMapGroup}" aria-label="${esc(L(g.title))}, ${mapRange(g)}${status?', '+esc(status):''}">
+      <span class="nm-vmap-stop-top"><i>${i+1}</i><b>${esc(L(g.title))}</b></span><small>${mapRange(g)}</small>
+      ${learned?`<em class="learning">${lk('학습 위치','Studied','已学习')}</em>`:''}
+      ${recommended?`<em class="recommendation">${recommendationLabel}</em>`:''}
+    </button><button class="nm-vmap-character${g.key===selectedMapGroup?' is-selected':''}" type="button" data-map-group="${g.key}" style="left:${g.x}%;top:${g.y}%" aria-pressed="${g.key===selectedMapGroup}" aria-label="${esc(L(g.guide.name))}: ${esc(L(g.title))} ${lk('과정 설명 보기','course explanation','课程说明')}">
+      <img src="assets/characters/${g.guide.image}" width="80" height="80" alt="" loading="lazy" decoding="async"><span>${lk('설명 보기','See explanation','查看介绍')}</span>
+    </button>`;
+  }).join('');
 
   /* 2026-09-26 원장 "로드맵도 이제 이런 느낌으로" — 머리에 3D 길 지도(app/road3d)를 얹고, 아래 목록은
      모드 선택 3D 책상과 같은 재질(나무 책상 · 종이 카드 · 가죽+금박 · 놋쇠 꼬리표)로 입힌다.
@@ -3609,7 +3668,36 @@ function screenCourseRoad(){
       </div>
     </div>
     <div class="nm-cr-body" id="crBody">
+      <div class="nm-cr-view-switch" role="group" aria-label="${lk('로드맵 보기 방식','Roadmap view','路线图视图')}">
+        <button id="crViewRoad" type="button" aria-pressed="${roadView==='road'}">${crIc('steps')}${lk('길 로드맵','Course road','课程道路')}</button>
+        <button id="crViewMap" type="button" aria-pressed="${roadView==='map'}" ${mapGroups.length?'':'disabled'}>${crIc('compass')}${lk('그림 지도','Illustrated map','图画地图')}</button>
+      </div>
       <div class="nm-cr-hero" id="crHero"></div>
+      <section class="nm-vmap" id="crVisual" aria-labelledby="crVisualTitle" hidden>
+        <div class="nm-vmap-head">
+          <span class="nm-cr-eyebrow">${lk('한눈에 보는 성장 단계','The stages at a glance','成长阶段一览')}</span>
+          <h2 id="crVisualTitle">${lk('그림으로 보는 연산 지도','Illustrated arithmetic map','图画运算地图')}</h2>
+          <p>${lk('표지판 아래 캐릭터가 과정들을 소개해요. 자세한 과정은 길 로드맵에서 살펴보세요.',
+                   'The guides below the signs introduce each group of courses. Explore the details on the course road.',
+                   '路标下的角色会介绍各组课程。具体课程可在课程道路中查看。')}</p>
+        </div>
+        <div class="nm-vmap-legend" aria-label="${lk('지도 표식 설명','Map marker legend','地图标记说明')}">
+          ${learnedCourseNum!=null?`<span class="nm-vmap-legend-item learning"><i aria-hidden="true"></i>${lk('실제 학습 위치','Studied location','实际学习位置')}</span>`:''}
+          ${recommendationNum!=null?`<span class="nm-vmap-legend-item recommendation"><i aria-hidden="true"></i>${recommendationLabel}</span>`:''}
+          ${learnedCourseNum==null&&recommendationNum==null?`<span class="nm-vmap-legend-note">${lk('학습 기록이나 시작점을 정하면 지도에 표시돼요.','Your studied location or chosen start appears here when available.','有学习记录或选定起点后会显示在地图上。')}</span>`:''}
+        </div>
+        <div class="nm-vmap-scroll" id="crMapScroll" role="region" tabindex="0" aria-label="${lk('연산 단계 그림 지도, 좌우로 이동할 수 있음','Illustrated arithmetic map, horizontally scrollable','运算阶段图画地图，可左右滚动')}">
+          <div class="nm-vmap-canvas">
+            <img class="nm-vmap-art" src="assets/growth-map-20261017.webp" width="1672" height="941" alt="" decoding="async">
+            ${mapButtons}
+          </div>
+        </div>
+        <p class="nm-vmap-scrollhint">${lk('지도는 좌우로 움직일 수 있어요. 표지판이나 캐릭터를 누르면 아래에 설명과 단계가 나와요.',
+          'Scroll the map sideways. Choose a sign or guide to see the explanation and stages below.',
+          '地图可左右滚动。点击路标或角色，下方会显示介绍与阶段。')}</p>
+        <div class="nm-vmap-detail" id="crMapDetail" tabindex="-1"></div>
+        <span class="nm-vmap-live" id="crMapLive" aria-live="polite" aria-atomic="true"></span>
+      </section>
       <div class="nm-cr-intro">
       <!-- 누구의 로드맵인지 (2026-09-16 원장 "선택한 학생의 연산 로드맵이 나와야지").
            한 기기를 형제가 같이 쓰므로 슬롯 3개가 이미 있는데, 로드맵에는 누구 것인지
@@ -3619,8 +3707,8 @@ function screenCourseRoad(){
         <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}${schoolNowLabel()?` <em class="nm-cr-who-gr">${esc(schoolNowLabel())}</em>`:''}</b></span>
         <span class="nm-cr-who-sw">${lk('바꾸기','Switch','切换')}</span>
       </button>
-      <div class="nm-cr-sub"><span class="nm-cr-eyebrow">${lk('나의 연산 길','My arithmetic path','我的运算之路')}</span>
-        <span class="nm-cr-lead">${lk('어디까지 왔고 어디로 가는지, 한 길 위에서 봐요.','Where you are and where it leads — all on one road.','走到了哪里、要去哪里，都在一条路上。')}</span></div>
+      <div class="nm-cr-sub"><span class="nm-cr-eyebrow">${lk('나의 연산 로드맵','My arithmetic roadmap','我的运算路线图')}</span>
+        <span class="nm-cr-lead">${lk('어디까지 왔고 다음에 무엇을 배우는지 살펴봐요.','See where you are and what you will learn next.','看看现在学到哪里，接下来学习什么。')}</span></div>
       <!-- 정복의 뜻은 about.html의 철학과 같은 것이어야 한다("수를 정복하기 위한
            DOCSSAM의 철학" · "어려운 수를 내가 다루기 쉬운 수로 펼쳐서"). 로드맵이
            따로 노는 은유를 만들지 않도록 그 문장을 여기서 다시 말하고 원문으로 잇는다. -->
@@ -3642,12 +3730,97 @@ function screenCourseRoad(){
   const body=$('#crBody');
   const listEl=$('#crList');
   const heroEl=$('#crHero');
+  const visualEl=$('#crVisual');
+  const mapDetailEl=$('#crMapDetail');
+  const mapScrollEl=$('#crMapScroll');
   /* 3D 지도가 처음 비출 과정 — draw(false)가 S._roadFocus 를 지우기 전에 잡아 둔다 */
   const heroFocus=S._roadFocus||null;
   const hero3dLikely=!!heroEl && road3dLikely();
   const openEx={};          /* 펼친 과정 설명(다시 그려도 유지) */
   let road3dCtl=null;       /* 3D 지도 — 설정이 바뀌면 시작 달 이름표를 다시 쓴다 */
+  let road3dStarted=false;
   function syncRoad3dTimes(){ if(road3dCtl&&road3dCtl.setTimes) road3dCtl.setTimes(roadStartLabels()); }
+
+  function drawMapDetail(){
+    const g=mapGroups.find(x=>x.key===selectedMapGroup);
+    if(!g||!mapDetailEl)return;
+    mapDetailEl.innerHTML=`<div class="nm-vmap-detail-head">
+      <span class="nm-cr-eyebrow">${lk('선택한 지도 지점','Selected map stop','选中的地图地点')} · ${mapRange(g)}</span>
+      <h3>${esc(L(g.title))}</h3>
+      <p>${lk('단계를 누르면 길 로드맵의 해당 과정으로 이동해요.',
+               'Choose a stage to find its course on the course road.',
+               '选择阶段后，将前往课程道路中的对应课程。')}</p>
+    </div><div class="nm-vmap-talk">
+      <img src="assets/characters/${g.guide.image}" width="80" height="80" alt="" aria-hidden="true" loading="lazy" decoding="async">
+      <div class="nm-vmap-talk-bubble">
+        <b>${esc(L(g.guide.name))}${lk('의 설명',"'s explanation",'的介绍')}</b>
+        <p>${esc(L(g.guide.say))}</p>
+      </div>
+    </div><div class="nm-vmap-stages">${g.entries.map(s=>{
+      const learned=learnedCourseNum!=null&&learnedCourseNum>=s.courses.from&&learnedCourseNum<=s.courses.to;
+      const recommended=recommendationNum!=null&&recommendationNum>=s.courses.from&&recommendationNum<=s.courses.to;
+      const range=`${lk('과정','Courses','课程')} ${s.courses.from}${s.courses.from===s.courses.to?'':'~'+s.courses.to}`;
+      const status=(learned?lk('실제 학습 위치','studied location','实际学习位置')+' ':'')+(recommended?recommendationLabel:'');
+      return `<button class="nm-vmap-stage${learned?' is-learning':''}${recommended?' is-recommendation':''}" type="button" data-map-stage="${s.key}" aria-label="${esc(L(s.name))}, ${range}${status?', '+esc(status):''}, ${lk('길 로드맵에서 보기','view on course road','在课程道路中查看')}">
+        <span class="nm-vmap-stage-heading"><b>${esc(L(s.name))}</b>${learned?`<em class="learning">${lk('학습 위치','Studied','已学习')}</em>`:''}${recommended?`<em class="recommendation">${recommendationLabel}</em>`:''}</span>
+        <span class="nm-vmap-stage-meta">${range} · ${esc(L(s.band))}${s.status==='partial'?` · ${lk('일부 준비 중','Some lessons in preparation','部分内容准备中')}`:''}</span>
+        <span class="nm-vmap-stage-learn">${esc(L(s.learn))}</span>
+        <span class="nm-vmap-stage-go">${lk('길에서 보기','View on road','在道路中查看')} ${crIc('arrow')}</span>
+      </button>`;
+    }).join('')}</div>`;
+    mapDetailEl.querySelectorAll('[data-map-stage]').forEach(el=>{
+      el.onclick=()=>{
+        const stage=g.entries.find(s=>s.key===el.dataset.mapStage);
+        if(!stage)return;
+        const anchorNum=learnedCourseNum||recommendationNum||curNum;
+        const targetNum=anchorNum>=stage.courses.from&&anchorNum<=stage.courses.to?anchorNum:stage.courses.from;
+        setRoadView('road',true);
+        const node=listEl.querySelector(`.nm-cr-node[data-c="C${targetNum}"]`);
+        if(node)roadFlashRow(node,body);
+      };
+    });
+    visualEl.querySelectorAll('[data-map-group]').forEach(el=>{
+      const on=el.dataset.mapGroup===selectedMapGroup;
+      el.classList.toggle('is-selected',on);
+      el.setAttribute('aria-pressed',String(on));
+    });
+  }
+  function centerMapStop(){
+    if(!mapScrollEl||visualEl.hidden)return;
+    const stop=visualEl.querySelector(`[data-map-group="${selectedMapGroup}"]`);
+    if(stop)mapScrollEl.scrollLeft=Math.max(0,stop.offsetLeft+stop.offsetWidth/2-mapScrollEl.clientWidth/2);
+  }
+  function startRoadHero(){
+    if(!heroEl||!heroEl.isConnected||!hero3dLikely||road3dStarted)return;
+    road3dStarted=true;
+    mountRoad3DInto(heroEl,{curKey,focus:heroFocus,listEl,body,onCtl:ctl=>{ road3dCtl=ctl; }});
+  }
+  function setRoadView(mode,persist){
+    roadView=mode==='map'&&mapGroups.length?'map':'road';
+    if(persist){S.roadView=roadView;save();}
+    const isMap=roadView==='map';
+    visualEl.hidden=!isMap;
+    if(heroEl&&heroEl.isConnected)heroEl.hidden=isMap;
+    listEl.hidden=isMap;
+    $('#crViewRoad').setAttribute('aria-pressed',String(!isMap));
+    $('#crViewMap').setAttribute('aria-pressed',String(isMap));
+    if(!isMap)startRoadHero();
+    if(persist||isMap)body.scrollTop=0;
+    if(isMap)requestAnimationFrame(centerMapStop);
+  }
+  $('#crViewRoad').onclick=()=>setRoadView('road',true);
+  $('#crViewMap').onclick=()=>setRoadView('map',true);
+  visualEl.querySelectorAll('[data-map-group]').forEach(el=>{
+    el.onclick=ev=>{
+      selectedMapGroup=el.dataset.mapGroup;
+      drawMapDetail();
+      const guide=mapGroups.find(g=>g.key===selectedMapGroup).guide;
+      $('#crMapLive').textContent=`${L(guide.name)}: ${L(guide.say)}`;
+      mapDetailEl.scrollIntoView({block:'start',behavior:window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+      if(ev.detail===0)mapDetailEl.focus({preventScroll:true});
+    };
+  });
+  drawMapDetail();
 
   function draw(keepScroll){
     const cad=S.roadCadence;
@@ -3688,6 +3861,8 @@ function screenCourseRoad(){
     /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
     const segBtn=(attr,v,on,label)=>`<button class="${on?'on':''}" data-${attr}="${v}" aria-pressed="${on?'true':'false'}">${label}</button>`;
     const multLbl=v=>v===1?lk('기본','1×','默认'):v+lk('배','×','倍');
+    const amountLbl=v=>v===1?lk('기본','Standard','默认')
+      : v<1 ? lk(`적게 · ${v}배`,`Lighter · ${v}×`,`少量 · ${v}倍`) : lk(`많이 · ${v}배`,`More · ${v}×`,`加量 · ${v}倍`);
     html+=`<div class="nm-cr-cad" id="crPace">
       <div class="nm-cr-sec">
         <span class="nm-cr-eyebrow">${lk('학습 속도','Pace','学习速度')}</span>
@@ -3731,7 +3906,7 @@ function screenCourseRoad(){
         <div class="nm-cr-multrow"><span>${lk('속도','Speed','速度')}</span>
           <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${ROAD_MULTS_LIST.map(v=>segBtn('speed',v,speed===v,multLbl(v))).join('')}</div></div>
         <div class="nm-cr-multrow"><span>${lk('양','Amount','分量')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>segBtn('amount',v,S.roadAmount===v,multLbl(v))).join('')}</div></div>
+          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>segBtn('amount',v,S.roadAmount===v,amountLbl(v))).join('')}</div></div>
         <details class="nm-cr-more">
           <summary>${lk('속도와 양이 뭔가요?','What do speed and amount do?','速度和分量是什么？')}</summary>
           <ul>
@@ -3772,6 +3947,28 @@ function screenCourseRoad(){
       const pnum=String(S.placement.course).replace(/^C/,'');
       if(pc){
         const weak=S.placement.weak||[];
+        const bookSelection=S.placement.selection||{},books=window.NM_PLACEMENT_BOOKS;
+        // Old results have one recorded book; only an explicit completed status
+        // confirms it. A school-route result must never show stale book fields.
+        const multipleBooks=Array.isArray(bookSelection.completedBooks);
+        const savedBooks=bookSelection.route==='book'&&books
+          ?(multipleBooks?bookSelection.completedBooks.slice(0,8):[bookSelection]):[];
+        const recordedBooks=savedBooks.map(item=>{
+          if(!item||typeof item!=='object')return null;
+          const series=books.series.find(x=>x.id===item.series);
+          if(!series)return null;
+          const editions=typeof books.getEditions==='function'?books.getEditions(item.series):[];
+          const edition=editions.find(x=>x.id===item.editionId);
+          if(item.editionId&&!edition)return null;
+          const step=books.getSteps(item.series,item.editionId||undefined).find(x=>x.id===item.step);
+          if(!step)return null;
+          const courses=books.getBookCourses(item.series,step.id);
+          const course=courses.includes(item.bookCourseNumber)?item.bookCourseNumber:null;
+          if(courses.length&&!course)return null;
+          const text=[L(series.label),edition&&item.editionId?L(edition.label):'',L(step.label),
+            course?lk('교재 과정','book course','教材课程')+' '+course:''].filter(Boolean).map(esc).join(' · ');
+          return {text,completed:item.bookStatus==='completed'};
+        }).filter(row=>row&&(!multipleBooks||row.completed));
         const label=S.placement.self
           ? `${crIc('target')}<b>${lk('내가 고른 시작점','My chosen start','我选的起点')}</b>`
           : `${crIc('compass')}<b>${lk('진단 추천','Check-up suggests','测评建议')}</b>`;
@@ -3783,22 +3980,26 @@ function screenCourseRoad(){
           });
           suffix=` · ${lk('연습 필요','needs practice','需要练习')} ${weak.length}: ${names.join(', ')}`;
         }
-        html+=`<div class="nm-cr-diagchip">${label}<span>${lk('과정','Course','课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</span></div>`;
+        html+=`<div class="nm-cr-diagchip">${label}<span>${lk('수의 마법 과정','App course','本应用课程')} ${pnum} · ${esc(L(pc.title))}${suffix}</span></div>`;
         const gp=S.placement.pathRecommendation;
         if(gp&&gp.version==='goal-path-v1'){
           const support=(gp.support||[]), wrong=support.filter(x=>x.kind==='practice').length, recheck=support.filter(x=>x.kind==='recheck').length;
           html+=`<section class="pd-road-goal" aria-label="${lk('진단 목표와 학습 경로','Assessment goal and study path','测评目标与学习路径')}">
             <h3>${esc(L(gp.goal.label))}</h3>${gp.target?`<p>${esc(L(gp.target.label))} · ${lk('목표 대응 확인 필요','Target mapping needs verification','目标对应需要确认')}</p>`:''}
+            ${recordedBooks.map((book,index)=>`<p>${book.completed
+              ?(multipleBooks?lk('완료한 교재','Completed book','已完成的教材')+' '+(index+1):lk('마지막으로 완료한 교재','Last completed book','最后完成的教材'))
+              :lk('기록된 교재 · 완료 여부 미확인','Recorded book · completion unconfirmed','记录的教材 · 完成情况未确认')}: ${book.text}</p>`).join('')}
+            ${recordedBooks.length?`<p class="pd-note">${lk('진단 범위는 별도로 선택한 수의 마법 내용입니다.','The diagnostic scope was selected separately in Numbers of Magic.','测评范围是另行选择的数之魔法内容。')}</p>`:''}
             <p>${lk('진단 때 선택한 본진도','Main study selected for this check','测评时选择的主要进度')}: ${esc(L(gp.main.label))}</p>
             <p>${lk('보강 후보','Practice candidates','补充练习候选')} ${wrong} · ${lk('재확인 후보','Recheck candidates','再确认候选')} ${recheck}</p>
-            <p>${esc(L(gp.goal.focus))}</p><p class="pd-note">${lk('진단과 목표에 맞춰 속도·양을 먼저 맞춰 두었어요. 아래 ‘속도 · 양 조절’에서 언제든 직접 바꿀 수 있고, 기존 진도 기록은 바뀌지 않아요.','Speed and amount are set from your check and goal first. Change them any time under “Speed · amount” below; your progress records are not changed.','已根据测评和目标先设好速度与分量。可随时在下方“速度 · 分量”中修改，已有进度记录不会改变。')}</p>${(()=>{const a=gp.autoPlan||S.placement.autoPlan;if(!a)return '';const same=(S.roadSpeed===a.speed&&S.roadAmount===a.amount);
-              return `<div class="pd-auto"><h4>${lk('자동 편성','Automatic plan','自动编排')}</h4>
+            <p>${esc(L(gp.goal.focus))}</p><p class="pd-note">${lk('진단 직후에는 현재 속도·분량·학습 횟수를 유지합니다. 학습 기록을 관찰한 뒤 조금씩 조정합니다.','Keep the current pace, amount and frequency after diagnosis. Observe study records before gradual changes.','测评后保持当前速度、分量与次数。观察学习记录后再逐步调整。')}</p>${(()=>{const a=gp.autoPlan||S.placement.autoPlan;if(!a)return '';if(a.version!=='observe-plan-v2')return `<p class="pd-note">${lk('이전 자동 편성 제안은 기록으로 보관합니다. 새 진단부터는 유지·관찰 원칙을 적용합니다.','Earlier automatic suggestions are retained as history. New checks use the maintain-and-observe policy.','早期自动建议保留为记录，新测评采用保持并观察的原则。')}</p>`;const same=(S.roadSpeed===a.speed&&S.roadAmount===a.amount);
+              return `<div class="pd-auto"><h4>${lk('유지 · 관찰','Maintain · observe','保持 · 观察')}</h4>
                 <p><b>${lk('속도','Speed','速度')} ${a.speed}${lk('배','×','倍')} · ${lk('양','Amount','分量')} ${a.amount}${lk('배','×','倍')} · ${a.cadence==='w1'?lk('주 1회','once a week','每周1次'):lk('주 2회','twice a week','每周2次')}</b></p>
                 <ul>${(a.reasons||[]).map(r=>`<li>${esc(L(r))}</li>`).join('')}</ul>
                 <p class="pd-note">${esc(L(a.note))} ${S.roadManual&&!same?lk('지금은 직접 고른 값을 쓰고 있어요.','You are currently using values you set yourself.','当前使用的是你自己设置的值。'):''}</p>
-                ${same?'':`<button type="button" class="pd-support-link" data-auto-apply="1">${lk('이 추천으로 맞추기','Use this suggestion','采用此建议')}</button>`}</div>`;})()}
+                </div>`;})()}
             <div class="pd-road-actions"><button type="button" class="pd-support-link" data-placement-course="${esc(gp.main.course)}">${lk('본진도 위치','Main-study location','主要进度位置')}</button>${support.length?`<button type="button" class="pd-support-link" data-placement-course="${esc(support[0].course)}">${lk('첫 보강·재확인 위치','First practice/recheck location','首个补充练习或再确认位置')}</button>`:''}</div>
-          </section>`;
+          <div data-study-route></div></section>`;
         }
       }
     }
@@ -3975,6 +4176,11 @@ function screenCourseRoad(){
 
     const keep=keepScroll?body.scrollTop:0;
     listEl.innerHTML=html;
+    if(window.NM_STUDY_ROUTE){
+      const gp=S.placement&&S.placement.pathRecommendation;
+      if(!listEl.querySelector('[data-study-route]'))listEl.insertAdjacentHTML('afterbegin','<section class="nm-card"><div data-study-route></div></section>');
+      listEl.querySelectorAll('[data-study-route]').forEach(el=>window.NM_STUDY_ROUTE.mount(el,{lang:S.lang,course:gp?gp.main.course:currentCourseKey(),session:gp?gp.main.session:1,cadence:S.roadCadence}));
+    }
     body.querySelectorAll('.nm-cr-seg button[data-cad]').forEach(el=>{
       el.onclick=()=>{ S.roadCadence=el.dataset.cad; save(); draw(true); };
     });
@@ -3986,9 +4192,6 @@ function screenCourseRoad(){
     });
     body.querySelectorAll('.nm-cr-seg button[data-amount]').forEach(el=>{
       el.onclick=()=>{ S.roadAmount=+el.dataset.amount; S.roadManual=true; save(); syncAmount(); draw(true); };
-    });
-    body.querySelectorAll('[data-auto-apply]').forEach(el=>{
-      el.onclick=()=>{ const a=S.placement&&S.placement.autoPlan; if(!a)return; S.roadSpeed=a.speed; S.roadAmount=a.amount; S.roadManual=false; a.applied=true; save(); syncAmount(); draw(true); };
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
@@ -4053,7 +4256,9 @@ function screenCourseRoad(){
       /* 처음 열 때만 현재 위치(또는 진단이 추천한 과정)로 스크롤.
          3D 지도가 뜰 수 있으면 맨 위(지도)를 보여 주고, 지도가 그 과정을 비춘다.
          단, 다른 화면이 "이 과정을 보여 줘"(S._roadFocus)라고 보냈으면 목록의 그 과정으로 간다. */
-      if(S._roadFocus||!hero3dLikely){
+      if(roadView==='map'&&!S._roadFocus){
+        body.scrollTop=0;
+      } else if(S._roadFocus||!hero3dLikely){
         const focusKey=S._roadFocus||curKey;
         const target=listEl.querySelector(`.nm-cr-node[data-c="${focusKey}"]`)||listEl.querySelector('#crNow');
         /* 진단·시작점 고르기에서 왔으면 그 과정을 잠깐 빛나게(2026-09-28) */
@@ -4064,10 +4269,8 @@ function screenCourseRoad(){
     }
   }
   draw(false);
-  if(heroEl){
-    if(hero3dLikely) mountRoad3DInto(heroEl,{curKey,focus:heroFocus,listEl,body,onCtl:ctl=>{ road3dCtl=ctl; }});
-    else heroEl.remove();
-  }
+  if(heroEl&&!hero3dLikely)heroEl.remove();
+  setRoadView(roadView,false);
 }
 /* WebGL 을 쓸 수 있을 것 같은가(없으면 3D 지도 자리를 만들지 않고 옛 동작 그대로) */
 function road3dLikely(){
@@ -4280,10 +4483,12 @@ function startPlacement(){
   const ui=window.NM_PLACEMENT_UI,paths=window.NM_PLACEMENT_PATHS;
   if(!ui)S._diag=null;
   else if(!S._diag||S._diag.version!==ui.version||S._diag.phase==='result'){
-    const previous=S._diag&&S._diag.version===ui.version?S._diag.selection:
-      S.placement&&S.placement.pathRecommendation&&S.placement.pathRecommendation.config;
+    const previous=S._diag&&S._diag.version===ui.version&&S._diag.selection
+      ?S._diag.selection:S.placement&&S.placement.selection;
+    const previousConfig=S.placement&&S.placement.pathRecommendation&&S.placement.pathRecommendation.config;
     S._diag=ui.initial();
-    if(paths)Object.assign(S._diag.selection,paths.normalize(previous));
+    if(previous)Object.assign(S._diag.selection,JSON.parse(JSON.stringify(previous)));
+    if(paths)Object.assign(S._diag.selection,paths.normalize(previous||previousConfig));
   }
   // Re-entry resumes a compatible fixed plan/setup; it never regenerates
   // answered questions or reinterprets a legacy adaptive run.
@@ -4467,14 +4672,14 @@ function screenPlacement(){
   }
   // A saved adaptive run cannot be interpreted as a fixed 6/10/4 plan.
   if(!S._diag||S._diag.version!==ui.version){S._diag=ui.initial();save();}
-  ui.render({root:scr,state:S._diag,lang:S.lang,save,renderMath,close,
+  ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,
     pick:()=>{S._diag=null;S.view='startpick';save();render();},
     seeCourse:key=>{S._diag=null;S._roadFocus=key;S.view='courseroad';save();render();},
     onResult:(result,run)=>{
       S.placement={at:Date.now(),version:ui.version,course:result.recommendation.course,
         session:result.recommendation.session,asked:result.asked,correct:result.correct,
         age:run.selection.age||null,grade:run.selection.grade||null,
-        baselineId:run.plan.baseline.id,selection:Object.assign({},run.selection),
+        baselineId:run.plan.baseline.id,selection:JSON.parse(JSON.stringify(run.selection)),
         bands:result.bands,domains:result.domains,profile:result.profile,
         recommendation:JSON.parse(JSON.stringify(result.recommendation)),
         weak:Array.from(new Set(result.profile.filter(p=>p.ok===false).map(p=>p.t))),slow:[],
@@ -4486,18 +4691,17 @@ function screenPlacement(){
         S.placement.session=path.main.session;
         S.placement.weak=Array.from(new Set(path.support.filter(x=>x.wrong>0).map(x=>x.t)));
         // Explicitly chosen frequency is a planning preference, not acceleration.
-        S.roadCadence=path.config.cadence;
-        // 자동 편성: 목표+진단으로 속도·양 시작값을 맞춘다. 직접 고친 적이 있으면(roadManual) 제안만 저장한다.
+        // Selection is a preference; diagnosis must not replace the current load.
+        // Keep current workload. Goal/score alone cannot authorize an increase.
         try{
           const paths=window.NM_PLACEMENT_PATHS;
           if(paths&&paths.autoPlan){
-            const auto=paths.autoPlan(result,run.selection);
+            const auto=paths.autoPlan(result,run.selection,{speed:S.roadSpeed,amount:S.roadAmount,cadence:S.roadCadence});
             auto.at=Date.now();
-            auto.applied=!S.roadManual;
-            if(auto.applied){S.roadSpeed=auto.speed;S.roadAmount=auto.amount;syncAmount();}
+            auto.applied=false;
             S.placement.autoPlan=auto;
           }
-        }catch(_){/* 자동 편성은 진단 결과 저장을 막지 않는다 */}
+        }catch(_){/* Planning guidance must not prevent saving diagnosis evidence. */}
       }
     }
   });

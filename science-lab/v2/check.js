@@ -39,7 +39,7 @@ function lookup(r, ch, similar) {
   if (r.k === 'daily') {   // Daily Test(v2/daily.js)에서 규칙으로 못 가린 답
     const it = similar.find((x) => x.id === r.item), ac = it?.answerContract;
     const a = !ac ? '' : ac.type === 'written-explanation' ? ac.sample : ac.type === 'cloze' ? ac.blanks.map((b) => b.answer).join(' · ') : ac.answer;
-    return { q: it?.prompt, a, where: 'Daily Test' };
+    return { q: it?.prompt, a, where: ch.assessment ? '학기 평가' : 'Daily Test' };
   }
   return { q: r.k, a: '', where: '' };
 }
@@ -53,15 +53,15 @@ export async function renderCheck($app, { units, loadUnit, only = null }) {
     const rs = records(list).filter((r) => data[r.u]), need = rs.filter(needs);
     const shown = tab === 'need' ? need : rs;
     const groups = list.map((u) => [u, shown.filter((r) => r.u === u)]).filter(([, g]) => g.length);
-    $app.innerHTML = `<header class="top no-print"><div class="wrap"><a class="back" href="${only ? `#/${only}/start` : '#/'}">‹ ${only ? '단원으로' : '지도로'}</a><h1>선생님 확인</h1></div></header>
+    $app.innerHTML = `<header class="top no-print"><div class="wrap"><a class="back" href="${esc(only ? data[only]?.back || `#/${only}/start` : '#/')}">‹ ${esc(only ? data[only]?.backLabel || '단원으로' : '지도로')}</a><h1>선생님 확인</h1></div></header>
     <main class="wrap check">
       <p class="lead">이 기기에서 스스로 공부한 쓰기 답이에요. 기기 안에서 먼저 판정했고, 규칙으로 가리지 못한 답만 「확인 필요」에 모여요.</p>
       <p class="ck-note">답은 이 기기에만 있어요. 서버로 보내지 않아요.</p>
       <div class="ck-bar no-print" role="tablist"><button type="button" role="tab" aria-selected="${tab === 'need'}" data-tab="need">확인 필요 <b>${need.length}</b></button>
         <button type="button" role="tab" aria-selected="${tab === 'all'}" data-tab="all">전체 <b>${rs.length}</b></button>
         <button type="button" class="btn ck-print" data-act="print">인쇄</button></div>
-      ${groups.length ? groups.map(([u, g]) => `<section class="ck-unit"><h2>${esc(data[u].ch.no)} · ${esc(data[u].ch.title)}</h2>${g.map((r) => card(r, data[u])).join('')}</section>`).join('')
-        : `<p class="ck-empty">${tab === 'need' ? '확인할 답이 없어요. 아이들이 쓴 답은 모두 기기에서 판정됐어요.' : '아직 이 기기에 쓰기 기록이 없어요.'}</p>`}
+      ${groups.length ? groups.map(([u, g]) => `<section class="ck-unit"><h2>${data[u].ch.no ? `${esc(data[u].ch.no)} · ` : ''}${esc(data[u].ch.title)}</h2>${g.map((r) => card(r, data[u])).join('')}</section>`).join('')
+        : `<p class="ck-empty">${tab === 'need' ? '현재 확인이 필요한 답이 없어요.' : '아직 이 기기에 쓰기 기록이 없어요.'}</p>`}
     </main>`;
     $app.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => { tab = b.dataset.tab; draw(); }));
     $app.querySelector('[data-act=print]').addEventListener('click', () => print());

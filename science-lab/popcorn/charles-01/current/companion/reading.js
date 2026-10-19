@@ -1,8 +1,9 @@
-import {READINGS,VIDEO_CARDS} from './reading-content.js';
+import {loadYouTubeAPI as api} from './inline-video.js?v=20261015-video-recovery-1';
+import {READINGS,VIDEO_CARDS} from './reading-content.js?v=20261015-modern-video-1';
 const host=document.querySelector('#reading-host'),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const asset=name=>new URL('../assets/'+name,import.meta.url).href;
 const words={ko:{read:'읽어 보기',watch:'영상 함께 보기',language:'읽기 언어',back:'읽던 곳으로',source:'읽기의 근거',think:'잠깐, 내 생각은?',memo:'내 생각을 적어 보세요. 정답을 맞히지 않아도 실험으로 갈 수 있어요.',record:'내 기록으로 옮기기',noted:'내 설명 기록으로 남겼어요.',notes:'나의 기록 보기',start:'직접 해 보기',play:'이 화면에서 영상 열기',close:'영상 접기',videoNote:'원본 한국어 시연 · 영상을 본 것과 내가 실물로 관찰한 것은 따로 남겨요.',ready:'재생 버튼을 눌러요.',loading:'영상을 준비하고 있어요.',unavailable:'영상을 불러오지 못했어요. 사진과 직접 실험으로 계속 탐구할 수 있어요.',original:'출처 원영상',summary:'출처를 확인해 팝콘실험실에서 새로 쓴 짧은 읽기입니다.',observed:'재생을 확인했어요. 관찰한 부분을 내 말로 적어 보세요.',vocabulary:'작은 낱말 노트'},en:{read:'Read the story',watch:'Watch together',language:'Reading language',back:'Back to where I was',source:'Sources for this story',think:'Pause and think',memo:'Write your idea. You can explore without answering first.',record:'Save to my notes',noted:'Saved as your own explanation.',notes:'Open my notes',start:'Try it yourself',play:'Open the video here',close:'Close video',videoNote:'Original demonstration in Korean · Keep watching a video separate from observing your real kit.',ready:'Press the player’s play button.',loading:'Preparing the video.',unavailable:'The video could not load. Continue with the photographs and your own experiment.',original:'Original video source',summary:'A short original Popcorn Lab reading based on the sources below.',observed:'Playback is confirmed. Describe what you noticed in your own words.',vocabulary:'A tiny word notebook'}};
-let locale='ko',articleId='compass',videoId=null,returnTo={hash:'magazine',y:0},player=null,apiPromise=null,currentLoad=0;
+let locale='ko',articleId='compass',videoId=null,returnTo={hash:'magazine',y:0},player=null,currentLoad=0;
 const drafts=new Map();
 const current=()=>READINGS.find(r=>r.id===articleId)||READINGS[0];
 const selectedVideo=()=>VIDEO_CARDS.find(v=>v.id===videoId);
@@ -33,11 +34,6 @@ function route(){
  if(!a||!READINGS.some(r=>r.id===a)){articleId='compass';videoId=null;}else{articleId=a;videoId=view==='watch'?id:null;}
  locale=lang==='en'?'en':'ko';render();hydrate();
 }
-function api(){
- if(window.YT?.Player)return Promise.resolve(window.YT);
- if(apiPromise)return apiPromise;
- apiPromise=new Promise((resolve,reject)=>{const previous=window.onYouTubeIframeAPIReady;window.onYouTubeIframeAPIReady=()=>{previous?.();resolve(window.YT);};const script=document.createElement('script');script.src='https://www.youtube.com/iframe_api';script.referrerPolicy='strict-origin-when-cross-origin';script.onerror=()=>{apiPromise=null;script.remove();reject(Error('video-api-unavailable'));};document.head.append(script);setTimeout(()=>{if(!window.YT?.Player){apiPromise=null;reject(Error('video-api-timeout'));}},15000);});return apiPromise;
-}
 async function play(){
  const v=selectedVideo();if(!v)return;const load=++currentLoad,status=document.querySelector('#reading-player-status'),frame=document.querySelector('#reading-player-frame');status.textContent=words[locale].loading;
  const iframe=document.createElement('iframe');iframe.id='reading-youtube';iframe.title=v[locale].title;iframe.width='640';iframe.height='360';iframe.allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen';iframe.allowFullscreen=true;iframe.referrerPolicy='strict-origin-when-cross-origin';iframe.src=`https://www.youtube-nocookie.com/embed/${v.videoId}?enablejsapi=1&origin=${encodeURIComponent(location.origin)}&playsinline=1&rel=0&autoplay=0`;frame.replaceChildren(iframe);document.querySelector('[data-reading-close-video]').hidden=false;
@@ -50,7 +46,7 @@ document.addEventListener('click',ev=>{
  else if(b.hasAttribute('data-reading-language')){open(articleId,b.dataset.readingLanguage,null,videoId);}
  else if(b.hasAttribute('data-reading-banners-language')){locale=b.dataset.readingBannersLanguage==='en'?'en':'ko';hydrate();}
  else if(b.hasAttribute('data-reading-back')){disposeVideo();location.hash=returnTo.hash||'magazine';setTimeout(()=>window.scrollTo({top:returnTo.y,behavior:'instant'}),0);}
- else if(b.hasAttribute('data-reading-experiment')){pauseVideo();window.dispatchEvent(new CustomEvent('popcornreading:experiment',{detail:{stageId:current().stage,returnHash:location.hash.slice(1)}}));}
+ else if(b.hasAttribute('data-reading-experiment')){pauseVideo();window.dispatchEvent(new CustomEvent('popcornreading:experiment',{detail:{stageId:selectedVideo()?.stage||current().stage,returnHash:location.hash.slice(1)}}));}
  else if(b.hasAttribute('data-reading-play'))play();
  else if(b.hasAttribute('data-reading-close-video'))render();
  else if(b.hasAttribute('data-reading-photo'))document.querySelector('#reading-photo-dialog').showModal();

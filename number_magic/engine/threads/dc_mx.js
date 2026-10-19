@@ -322,7 +322,9 @@ NM_TGEN['dc2_decMul'] = function(params, rng) {
     const head = `${aStr} \\times ${bStr}`;
     const steps = [
       { tex: `${ai} \\times ${bi} = \\square`, blank: prod },
-      { tex: `\\square \\div ${sc} = \\square.\\square`, blank: [prod, pInt, +pFrac] }   /* 곱을 미리 보여 주지 않는다 */
+      /* 곱을 미리 보여 주지 않는다. 세로셈은 3.06 처럼 소수 첫째 자리가 0 인 곱도 내므로, 그 0 은 틀에 적어 둔다
+         (빈칸에 6 만 넣으면 "306 ÷ 100 = 3.6" 이라는 거짓 등식이 찍혔다 — check-train-steps, 2026-10-18). */
+      { tex: `\\square \\div ${sc} = \\square.${pFrac.match(/^0*/)[0]}\\square`, blank: [prod, pInt, +pFrac] }
     ];
     const P = vert ? {
       ko: `세로셈으로 계산해요: ${aStr} × ${bStr}. 자연수처럼 곱한 뒤, 두 수의 소수 자릿수를 더한 만큼 곱의 소수점을 왼쪽으로 옮겨 찍어요.`,

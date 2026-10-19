@@ -53,8 +53,8 @@ export const source = [
     },
     "explanation": "머리에 더듬이가 있고 일곱 쌍의 다리가 있으며 건드리면 몸을 공처럼 둥글게 만드는 것은 공벌레입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -108,8 +108,8 @@ export const source = [
     },
     "explanation": "금붕어는 여러 개의 지느러미를 이용하여 헤엄치고, 아가미가 있어 물속에서 숨을 쉴 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -170,8 +170,8 @@ export const source = [
     },
     "explanation": "개미, 꿀벌, 달팽이는 모두 더듬이가 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -229,8 +229,8 @@ export const source = [
     },
     "explanation": "동물을 분류할 때는 누가 분류하더라도 같은 결과가 나오는 분류 기준을 정해야 합니다. ‘몸의 길이가 긴가?’는 분류하는 사람에 따라 분류 결과가 달라질 수 있으므로 분류 기준으로 알맞지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -298,8 +298,8 @@ export const source = [
     },
     "explanation": "닭, 참새, 잠자리는 날개가 있는 동물이고, 뱀, 문어, 고양이는 날개가 없는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -357,8 +357,8 @@ export const source = [
     },
     "explanation": "두더지, 지렁이, 땅강아지, 매미 애벌레는 주로 땅속에 사는 동물입니다. 너구리는 땅 위에, 뱀과 개미는 땅 위와 땅속을 오가며 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -416,8 +416,8 @@ export const source = [
     },
     "explanation": "딱따구리의 모습입니다. 딱따구리는 몸이 깃털로 덮여 있고, 날개를 이용해 날아다닙니다. 또한 곧고 날카로운 부리로 나무에 구멍을 내어 먹이를 잡아먹습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -482,8 +482,8 @@ export const source = [
     },
     "explanation": "개미는 세 쌍의 다리가 있고, 큰턱으로 땅을 파서 땅속에 집을 짓습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -531,8 +531,7 @@ export const source = [
       "sample": "예) 발가락 사이에 물갈퀴가 있어 물속에서 헤엄쳐 다닐 수 있다. 등",
       "rubric": {
         "required": [
-          "발에 물갈퀴가 있다",
-          "물속에서 헤엄쳐 다닐 수 있다"
+          "물갈퀴가 있는 발로 물속을 헤엄치는 특징"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -542,8 +541,8 @@ export const source = [
     },
     "explanation": "수달은 강이나 호수에서 땅과 물을 오가며 생활하는 동물입니다. 발가락 사이에 물갈퀴가 있으며, 물속에서는 물갈퀴가 있는 발로 헤엄쳐 다닙니다.\n[채점 기준] 물갈퀴가 있는 발로 헤엄쳐 다닌다는 내용과 같이 강이나 호수에서 살아가기에 알맞은 특징이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -610,8 +609,8 @@ export const source = [
     },
     "explanation": "전복과 다슬기는 배발을 이용해 물속 바위에 붙어서 기어다닙니다. 개구리는 땅에서 다리로 뛰어 다니고, 물속에서는 물갈퀴가 있는 발로 헤엄쳐 다닙니다. 고등어는 물속에서 지느러미로 헤엄쳐 다닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -678,8 +677,8 @@ export const source = [
     },
     "explanation": "개구리와 다슬기는 강이나 호수에 사는 동물이고, 전복과 고등어는 갯벌이나 바다에 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -738,8 +737,8 @@ export const source = [
     },
     "explanation": "매미는 몸이 머리, 가슴, 배의 세 부분으로 구분되고, 얇은 막처럼 생긴 날개 두 쌍이 있습니다. 나무 수액을 먹고 나무 사이를 날아다니며, 수컷이 소리를 냅니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -788,8 +787,7 @@ export const source = [
       "sample": "예) 한 쌍의 날개가 있다. / 한 쌍의 다리가 있다. / 몸이 깃털로 덮여 있다. / 날 수 있다. / 몸이 크기에 비해 가볍다. 등",
       "rubric": {
         "required": [
-          "날 수 있는 새의 공통점 한 가지(예: 한 쌍의 날개가 있다)",
-          "공통점 한 가지 더(예: 몸이 깃털로 덮여 있다)"
+          "날 수 있는 새의 서로 다른 공통 특징 두 가지"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -799,8 +797,8 @@ export const source = [
     },
     "explanation": "까치와 왜가리는 날 수 있는 새로, 한 쌍의 날개와 다리가 있고, 몸이 깃털로 덮여 있습니다.\n[채점 기준] 날 수 있는 새의 특징 두 가지를 바르게 썼으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -861,8 +859,8 @@ export const source = [
     },
     "explanation": "사막은 비가 거의 내리지 않아 건조하고 낮과 밤의 온도 차이가 큽니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -917,8 +915,8 @@ export const source = [
     },
     "explanation": "낙타는 사막에 사는 동물로, 등의 혹에 지방을 저장하여 물과 먹이가 없어도 며칠 동안 살 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -979,8 +977,8 @@ export const source = [
     },
     "explanation": "북극곰은 극지방에 사는 동물로, 두꺼운 피부와 촘촘하게 난 털이 추위를 막아 주고, 발바닥에 작은 돌기들이 있어 얼음 위에서 미끄러지지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1038,8 +1036,8 @@ export const source = [
     },
     "explanation": "박쥐와 동굴옆새우는 동굴에 사는 동물입니다. 메기와 물방개는 강이나 호수, 초롱아귀는 깊은 바닷속에 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1100,8 +1098,8 @@ export const source = [
     },
     "explanation": "산양과 눈표범은 높은 산에 사는 동물입니다. 높은 산은 춥고 바람이 많이 불며, 경사가 급합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1159,8 +1157,8 @@ export const source = [
     },
     "explanation": "상어의 피부에 비늘이 있어 물이 잘 흐르는 특징을 이용해 물속에서 빠르게 헤엄칠 수 있도록 돕는 전신 수영복을 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1218,8 +1216,8 @@ export const source = [
     },
     "explanation": "수리의 발이 먹이를 잘 잡고 놓치지 않는 특징을 이용해 물건을 잡아 옮길 수 있는 집게 차를 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1277,8 +1275,8 @@ export const source = [
     },
     "explanation": "참새는 몸이 깃털로 덮여 있고 한 쌍의 날개와 다리가 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1337,8 +1335,8 @@ export const source = [
     },
     "explanation": "달팽이는 다리가 없고 미끄러지듯이 움직입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1393,8 +1391,8 @@ export const source = [
     },
     "explanation": "동물을 관찰할 때 동물을 함부로 만지지 않도록 주의합니다. 크기가 작은 동물은 돋보기와 같은 관찰 도구를 이용하여 관찰합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1456,8 +1454,8 @@ export const source = [
     },
     "explanation": "토끼는 새끼를 낳는 동물이기 때문에 ‘그렇지 않다.’로 분류되어야 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1525,8 +1523,8 @@ export const source = [
     },
     "explanation": "상어, 금붕어, 메기는 지느러미가 있는 동물이고, 뱀, 달팽이, 꿀벌은 지느러미가 없는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1587,8 +1585,8 @@ export const source = [
     },
     "explanation": "매미 애벌레는 앞다리로 땅속에 굴을 파고 나무뿌리의 수액을 빨아 먹으며 생활합니다. 다 자라면 땅 위로 올라와 나무에서 껍질을 벗고 매미가 됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1647,8 +1645,8 @@ export const source = [
     },
     "explanation": "두더지는 몸 윗면이 털로 덮여 있고, 짧은 꼬리가 있으며, 삽 같은 앞발로 땅속에 굴을 파서 생활합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1709,8 +1707,8 @@ export const source = [
     },
     "explanation": "뱀, 지렁이, 달팽이는 다리가 없어 기어다니고, 너구리는 다리로 걷거나 뛰어 다닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1770,8 +1768,8 @@ export const source = [
     },
     "explanation": "조개와 게는 갯벌이나 바다에 사는 동물입니다. 조개는 도끼 모양의 발로 갯벌을 기어다니고, 게는 다리로 갯벌을 걸어 다닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1820,8 +1818,7 @@ export const source = [
       "sample": "예) 수달, 물속에서 물갈퀴가 있는 발로 헤엄쳐 다닌다. / 메기, 지느러미로 물속을 헤엄쳐 다닌다. / 다슬기, 배발을 이용해 물속 바위에 붙어서 기어다닌다. 등",
       "rubric": {
         "required": [
-          "강이나 호수에 사는 동물 이름",
-          "그 동물이 강이나 호수에서 살아가기에 알맞은 특징"
+          "강·호수 동물 이름과 그 동물에 맞는 몸의 특징"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -1831,8 +1828,8 @@ export const source = [
     },
     "explanation": "강이나 호수에 사는 동물에는 수달, 개구리, 메기, 다슬기, 물방개, 피라미 등이 있습니다. 강이나 호수에 사는 동물은 강이나 호수에서 살아가기에 알맞은 특징을 가지고 있습니다.\n[채점 기준] 강이나 호수에 사는 동물과 그 동물의 특징을 바르게 썼으면 정답으로 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1893,8 +1890,8 @@ export const source = [
     },
     "explanation": "고등어는 바다에 사는 동물로, 몸이 부드러운 곡선 모양이고, 지느러미로 헤엄쳐 다니며, 새우나 작은 물고기 등을 먹습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1960,8 +1957,8 @@ export const source = [
     },
     "explanation": "매미와 잠자리는 두 쌍의 날개가 있고, 왜가리와 직박구리는 한 쌍의 날개가 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2022,8 +2019,8 @@ export const source = [
     },
     "explanation": "갈매기와 나비는 날 수 있는 동물로, 날개가 있고 몸이 크기에 비해 가볍습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2083,8 +2080,8 @@ export const source = [
     },
     "explanation": "주로 극지방에 사는 북극여우의 모습입니다. 극지방은 눈과 얼음으로 덮여 있고 바람이 강하게 불며 매우 춥습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2142,8 +2139,8 @@ export const source = [
     },
     "explanation": "사막 도마뱀은 몸이 비늘로 덮여 있어 체온을 잘 조절할 수 있고, 발바닥과 피부로 물을 흡수할 수 있습니다. 또한 서 있거나 이동할 때 한 번에 두 발씩 번갈아 들어 올리며 열을 식힙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2192,8 +2189,7 @@ export const source = [
       "sample": "추운 극지방에서 추위를 견디기 위해 여러 마리가 서로 몸을 맞댄다.",
       "rubric": {
         "required": [
-          "극지방이 매우 춥다",
-          "몸을 맞대어 추위를 견딘다"
+          "추위를 견디거나 몸을 따뜻하게 유지하려는 까닭"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -2203,8 +2199,8 @@ export const source = [
     },
     "explanation": "펭귄은 주로 극지방에 사는 동물로, 몸이 물에 젖지 않는 깃털로 덮여 있고, 여러 마리가 서로 몸을 맞대 추위를 견딥니다.\n[채점 기준] 추위를 견디기 위해서라는 내용이 포함되어 있으면 정답으로 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2267,8 +2263,8 @@ export const source = [
     },
     "explanation": "초롱아귀는 깊은 바닷속에 사는 동물로, 빛을 내는 촉수가 있어 빛으로 먹이를 유인해 잡아먹습니다. 또한 큰 입과 날카로운 이빨을 가지고 있어 먹이를 한 번 물면 놓치지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2334,8 +2330,8 @@ export const source = [
     },
     "explanation": "높은 산에 대한 설명으로, 높은 산에 사는 동물은 산양과 눈표범입니다. 박쥐는 동굴에, 초롱아귀는 깊은 바닷속에 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2396,8 +2392,8 @@ export const source = [
     },
     "explanation": "문어의 빨판이 물체에 잘 붙는 특징을 이용해 물체에 잘 붙는 흡착판을 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2458,8 +2454,8 @@ export const source = [
     },
     "explanation": "산천어의 몸이 부드러운 곡선 모양으로 되어 있어 물속에서 빠르게 헤엄칠 수 있는 특징을 이용해 앞부분이 부드러운 곡선 모양인 고속열차를 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2517,8 +2513,8 @@ export const source = [
     },
     "explanation": "학교 화단에서 잠자리, 고양이, 공벌레, 달팽이 등 여러 가지 동물을 관찰할 수 있습니다. 가오리는 바다에 사는 동물로, 학교 화단에서 관찰할 수 없습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2579,8 +2575,8 @@ export const source = [
     },
     "explanation": "참새는 몸이 깃털로 덮여 있고 한 쌍의 날개와 다리가 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2640,8 +2636,8 @@ export const source = [
     },
     "explanation": "동물은 특징에 따라 여러 가지 분류 기준을 정해 분류할 수 있는데, 누가 분류하더라도 같은 결과가 나오는 분류 기준을 정해야 합니다. 여러 가지 동물을 특징에 따라 분류하면 동물을 이해하는 데 도움이 됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2700,8 +2696,8 @@ export const source = [
     },
     "explanation": "금붕어와 상어는 물에 사는 동물로, 여러 개의 지느러미로 헤엄쳐 다닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2768,8 +2764,8 @@ export const source = [
     },
     "explanation": "개미, 꿀벌, 문어는 다리가 있는 동물이고, 달팽이와 지렁이는 다리가 없는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2836,8 +2832,8 @@ export const source = [
     },
     "explanation": "개미와 꿀벌은 더듬이가 있는 동물이고, 토끼와 뱀은 더듬이가 없는 동물입니다. 따라서 ㉠은 ‘그렇지 않다.’ ㉡은 ‘그렇다.’입니다. 달팽이는 더듬이가 있는 동물이기 때문에 ‘그렇다.’인 ㉡에 해당합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2895,8 +2891,8 @@ export const source = [
     },
     "explanation": "뱀과 개미는 땅 위와 땅속을 오가며 생활하는 동물입니다. 개와 너구리는 땅 위에서, 땅강아지는 땅속에서 생활하는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2951,8 +2947,8 @@ export const source = [
     },
     "explanation": "매미 애벌레는 앞다리로 땅속에 굴을 파고 나무뿌리의 수액을 빨아 먹으며 생활합니다. 다 자라면 땅 위로 올라와 나무에서 껍질을 벗고 매미가 됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3011,8 +3007,8 @@ export const source = [
     },
     "explanation": "땅에 사는 동물 중에는 다리가 있어 땅 위를 걷거나 뛰어다니는 동물도 있고, 다리가 없어 기어다니는 동물도 있으며, 날개가 있는 동물은 날아다니기도 합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3078,8 +3074,8 @@ export const source = [
     },
     "explanation": "메기는 강이나 호수의 바닥에서 생활하는 동물로, 몸은 끈끈한 점액으로 덮여 있고, 지느러미로 물속을 헤엄쳐 다닙니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3127,7 +3123,7 @@ export const source = [
       "sample": "예) 몸이 딱딱한 껍데기로 덮여 있다. / 배발을 이용해 물속 바위에 붙어서 기어다닌다. 등",
       "rubric": {
         "required": [
-          "몸이 딱딱한 껍데기로 덮여 있거나, 배발로 물속 바위에 붙어 기어다닌다"
+          "껍데기·배발·물속 생활 등 두 동물에게 맞는 공통점 한 가지"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -3137,8 +3133,8 @@ export const source = [
     },
     "explanation": "다슬기와 전복은 몸이 딱딱한 껍데기로 덮여 있고, 배발을 이용해 물속 바위에 붙어서 기어다닙니다. 다슬기는 강이나 호수에 사는 동물이고, 전복은 갯벌이나 바다에 사는 동물입니다.\n[채점 기준] 다슬기와 전복의 공통점을 바르게 썼으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3204,8 +3200,8 @@ export const source = [
     },
     "explanation": "게와 조개는 주로 갯벌에 사는 동물입니다. 가오리는 바다에 사는 동물이고, 피라미는 강이나 호수에 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3259,8 +3255,8 @@ export const source = [
     },
     "explanation": "잠자리는 두 쌍의 날개로 날아다니는 동물입니다. 잠자리의 날개는 아주 얇아 빨리 날 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3319,8 +3315,8 @@ export const source = [
     },
     "explanation": "왜가리는 강이나 연못 등 물가에서 생활하는 동물로, 한 쌍의 날개로 날아다니며, 긴 부리로 물고기나 개구리 등을 잡아먹습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3385,8 +3381,8 @@ export const source = [
     },
     "explanation": "㉠은 낙타, ㉡은 북극곰, ㉢은 사막여우, ㉣은 바다코끼리입니다. 큰 귀로 몸속의 열을 내보내 체온 조절을 하는 동물은 사막여우입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3453,8 +3449,8 @@ export const source = [
     },
     "explanation": "낙타와 사막여우는 사막에 사는 동물이고, 북극곰과 바다코끼리는 극지방에 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3513,8 +3509,8 @@ export const source = [
     },
     "explanation": "초롱아귀는 깊은 바닷속에 사는 동물입니다. 깊은 바닷속은 햇빛이 거의 닿지 않아서 춥고 어두우며, 산소가 부족합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3562,8 +3558,7 @@ export const source = [
       "sample": "초음파를 이용해 먹이를 찾는다.",
       "rubric": {
         "required": [
-          "초음파를 이용한다",
-          "먹이를 찾는다"
+          "초음파를 이용하여 먹이를 찾음"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -3573,8 +3568,8 @@ export const source = [
     },
     "explanation": "박쥐는 동굴에 사는 동물로, 눈이 잘 보이지 않지만 초음파를 이용해 먹이를 찾거나 지형을 파악합니다.\n[채점 기준] 초음파를 이용해 먹이를 찾는다는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3635,8 +3630,8 @@ export const source = [
     },
     "explanation": "홍합이 세찬 파도에도 바위에서 떨어지지 않고 붙어 있는 특징을 이용해 물속에서도 사용할 수 있는 접착제를 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3701,8 +3696,8 @@ export const source = [
     },
     "explanation": "문어의 빨판이 물체에 잘 붙는 특징을 이용해 물체에 잘 붙는 흡착판을 만들었고, 오리의 발에 물갈퀴가 있어 수영을 잘 하는 특징을 이용해 물속에서 수영하는 것을 도와주는 물갈퀴를 만들었습니다. 산천어의 몸이 부드러운 곡선 모양으로 되어 있어 물속에서 빠르게 헤엄칠 수 있는 특징을 이용해 앞부분이 부드러운 곡선 모양인 고속열차를 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3761,8 +3756,8 @@ export const source = [
     },
     "explanation": "공벌레는 머리에 더듬이가 있고 일곱 쌍의 다리가 있습니다. 건드리면 몸을 공처럼 둥글게 만듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3822,8 +3817,8 @@ export const source = [
     },
     "explanation": "다리가 없고 미끄러지듯이 움직이며 등에 딱딱한 껍데기가 있는 동물은 달팽이입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3874,8 +3869,7 @@ export const source = [
       "sample": "알맞은 분류 기준이 아니다. 분류하는 사람에 따라 분류 결과가 달라질 수 있기 때문이다.",
       "rubric": {
         "required": [
-          "알맞은 분류 기준이 아니다",
-          "분류하는 사람에 따라 분류 결과가 달라질 수 있다"
+          "알맞지 않다는 판단과 사람마다 결과가 달라질 수 있다는 까닭"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -3885,8 +3879,8 @@ export const source = [
     },
     "explanation": "동물을 분류할 때 분류 기준은 누가 분류하더라도 같은 결과가 나오는 것으로 정해야 합니다. ‘몸집이 큰가?’와 같은 상대적인 기준은 분류하는 사람에 따라 분류 결과가 달라질 수 있기 때문에 분류 기준으로 알맞지 않습니다.\n[채점 기준] 알맞은 분류 기준이 아니며, 분류하는 사람에 따라 분류 결과가 달라질 수 있기 때문이라는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3954,8 +3948,8 @@ export const source = [
     },
     "explanation": "개, 고양이, 토끼는 새끼를 낳는 동물이고, 닭, 뱀, 꿀벌은 알을 낳는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4019,8 +4013,8 @@ export const source = [
     },
     "explanation": "개미는 땅 위와 땅속을 오가며 생활하는 동물로, 큰턱으로 땅을 파서 땅속에 집을 짓습니다. 딱따구리와 너구리는 땅 위에서 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4079,8 +4073,8 @@ export const source = [
     },
     "explanation": "뱀과 지렁이는 다리가 없고 기어다닙니다. 뱀은 몸이 비늘로 덮여 있고, 땅 위와 땅속을 오가며 생활합니다. 지렁이는 고리 모양의 마디가 많고 흙과 썩은 낙엽 등을 먹습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4138,8 +4132,8 @@ export const source = [
     },
     "explanation": "두더지는 몸 윗면이 털로 덮여 있고 주둥이가 가늘고 깁니다. 삽 같은 앞발로 땅속에 굴을 파서 생활하고, 땅속에서 먹이를 잡아먹습니다. 가늘고 긴 주둥이로 나무에 구멍을 내어 먹이를 잡아먹는 특징을 가진 동물은 딱따구리입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4200,8 +4194,8 @@ export const source = [
     },
     "explanation": "수달과 메기는 강이나 호수에서 사는 동물입니다. 수달은 땅과 물을 오가며 생활하고, 메기는 강이나 호수의 바닥에서 생활합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4260,8 +4254,8 @@ export const source = [
     },
     "explanation": "개구리는 뒷다리에 물갈퀴가 있어 물속에서 헤엄쳐 다닐 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4326,8 +4320,8 @@ export const source = [
     },
     "explanation": "게는 갯벌에서 사는 동물이고, 전복과 고등어는 바다에서 사는 동물입니다. 다슬기는 강이나 호수에서 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4386,8 +4380,8 @@ export const source = [
     },
     "explanation": "까치, 갈매기, 왜가리, 직박구리와 같은 새는 한 쌍의 날개가 있고, 매미와 같은 곤충은 두 쌍의 날개가 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4446,8 +4440,8 @@ export const source = [
     },
     "explanation": "새나 곤충 등 날 수 있는 동물은 대부분 날개가 있고, 몸이 크기에 비해 가볍습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4507,8 +4501,8 @@ export const source = [
     },
     "explanation": "낙타 등의 혹에는 지방이 저장되어 있습니다. 혹에 저장되어 있는 지방으로 인해 물과 먹이를 구하기 힘든 사막에서 며칠 동안 물과 먹이가 없어도 살 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4559,8 +4553,7 @@ export const source = [
       "sample": "낙타는 발바닥이 넓어 모래에 발이 잘 빠지지 않는다. 이로 인해 사막의 모래 위를 잘 걸어 다닐 수 있다.",
       "rubric": {
         "required": [
-          "발바닥이 넓다",
-          "모래에 발이 잘 빠지지 않는다"
+          "넓은 발바닥 덕분에 모래에 발이 잘 빠지지 않음"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -4570,8 +4563,8 @@ export const source = [
     },
     "explanation": "사막에서는 모래에 발이 빠지기 때문에 빠르게 이동하기 어렵습니다. 하지만 낙타는 넓은 발바닥을 가지고 있어 모래에 발이 잘 빠지지 않아 사막을 빠르고 쉽게 이동할 수 있습니다.\n[채점 기준] 낙타의 발바닥이 넓고, 이로 인해 발이 모래에 잘 빠지지 않는다는 내용이 포함되어 있으면 정답으로 합니다. (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4638,8 +4631,8 @@ export const source = [
     },
     "explanation": "눈과 얼음으로 덮여 있고, 바람이 강하게 불며 매우 추운 환경은 극지방의 환경입니다. 펭귄과 바다코끼리는 극지방에서 사는 동물이고, 사막여우와 사막 거북은 사막에서 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4698,8 +4691,8 @@ export const source = [
     },
     "explanation": "초롱아귀는 깊은 바닷속에서 사는 동물입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4765,8 +4758,8 @@ export const source = [
     },
     "explanation": "높은 산은 춥고 나무가 자라기 힘들며 경사가 급합니다. 산양은 몸이 털로 덮여 있어 추위를 견딜 수 있고, 발굽 바닥이 말랑해서 바위 위에서 미끄러지지 않아 높은 산에서 살 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4825,8 +4818,8 @@ export const source = [
     },
     "explanation": "문어의 빨판이 물체에 잘 붙는 특징을 이용해 물체에 잘 붙는 흡착판을 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4884,8 +4877,8 @@ export const source = [
     },
     "explanation": "산천어는 몸이 부드러운 곡선 모양으로 되어 있어 물속에서 빠르게 헤엄칠 수 있습니다. 이러한 특징을 이용해 앞부분이 부드러운 곡선 모양인 고속열차를 만들었습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4943,8 +4936,8 @@ export const source = [
     },
     "explanation": "수리의 발은 먹이를 잘 잡고 놓치지 않는 특징을 가지고 있습니다. 이런 특징을 이용해 집게 차를 만들면 물건을 잘 잡고 놓치지 않을 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"

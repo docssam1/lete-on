@@ -2,10 +2,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { rubricOf, validateJudgement, scoreWritten, gradeWritten, buildGradeRequest, norm } from './written-score.mjs';
-import { similar } from '../data/units/s41-u03.similar.js';
-import * as misc from '../data/units/s41-u03.misc.js';
-
-const item = similar.find((i) => i.id === 's41-u03-v014');       // 화강암 알갱이가 큰 까닭 (요소 2개, 규칙 2개)
+// 계산 엔진의 다중 기준·상한/감점 검사는 고정된 시험 자료를 쓴다.
+// 실제 문항의 인쇄 기준을 바꿔 이 계산 예시에 맞추지 않는다.
+const item = {id:'written-fixture',answerContract:{type:'written-explanation',rubric:{required:['땅속 깊은 곳에서 식음','천천히 식어 알갱이가 크게 자람']}}};
+const misc = {written:{'written-fixture':{partial:[
+  {id:'p1',when:'마그마가 빨리 식어서 알갱이가 크다고 씀',cap:0,m:'M10'},
+  {id:'p2',when:'암석 이름을 현무암으로 바꿔 씀',deduct:1,m:'M10'},
+]}}};
 const rb = rubricOf(item, misc);
 const [c1, c2] = rb.criteria.map((c) => c.id);
 const J = (met1, ev1, met2, ev2, partial = []) => ({
@@ -17,7 +20,7 @@ test('정규 루브릭: 현행 required → 요소 1점씩, 총점 = 합, 버전
   assert.equal(rb.total, 2);
   assert.equal(rb.partial.length, 2);
   assert.equal(rubricOf(item, misc).version, rb.version);           // 같은 데이터 → 같은 버전
-  assert.match(rb.version, /^s41-u03-v014@[0-9a-f]{8}$/);
+  assert.match(rb.version, /^written-fixture@[0-9a-f]{8}$/);
 });
 
 test('요소 문장을 고치면 요소 id와 버전이 바뀐다', () => {

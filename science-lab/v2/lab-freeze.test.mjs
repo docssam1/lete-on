@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TUBE, TUBE_STEPS, tubeRows, tubeReading, freezeModel } from './lab-freeze.js';
-import { lesson } from '../data/units/s41-u02.lesson.js';
+import { freezeLesson as lesson } from '../data/units/s41-u02.lesson.js';   // 시험관 수업(main에서 기본 수업이 탐구 기록형 lesson으로 바뀌어 이름을 따로 가리킨다)
 
 const rec = (step, height, mass) => ({ step, height, mass });
 const three = [rec('처음 물', TUBE.water, TUBE.mass), rec('다 언 얼음', TUBE.ice, TUBE.mass), rec('다 녹은 물', TUBE.water, TUBE.mass)];

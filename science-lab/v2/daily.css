@@ -6,7 +6,7 @@
 :root[data-theme="dark"] { --dt-ok: #6FD1A0; --dt-ok-bg: #173628; --dt-no: #FF8A80; --dt-no-bg: #3A1D1B; --dt-rv: #F5C76A; --dt-rv-bg: #3A2E14; }
 
 .dt-wrap { max-width: 1240px; margin: 0 auto; padding: 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
-@media (min-width: 960px) { .dt-wrap { grid-template-columns: minmax(380px, 5fr) minmax(0, 6fr); align-items: start; } .dt-left { position: sticky; top: 68px; } }
+@media (min-width: 960px) { .dt-wrap { grid-template-columns: minmax(380px, 5fr) minmax(0, 6fr); align-items: start; } .dt-left.dt-fits-screen { position: sticky; top: 68px; } }
 
 /* ── 왼쪽: 풀기 ── */
 .dt-left { --dt-zoom: 1; font-size: calc(1em * var(--dt-zoom)); background: var(--card); border: 1px solid var(--k-line); border-radius: 20px; box-shadow: var(--k-shadow); padding: 16px; display: grid; gap: 14px; }
@@ -45,6 +45,7 @@
 .dt-self button { min-height: 36px; padding: 0 10px; border: 1px solid var(--k-line); border-radius: 999px; background: var(--card); color: var(--ink); cursor: pointer; }
 .dt-self button[aria-pressed="true"] { background: var(--k-navy); border-color: var(--k-navy); color: var(--k-on); }
 .dt-drawer { margin-top: 12px; padding: 12px; border: 1px dashed var(--k-navy2); border-radius: 12px; background: var(--card); display: grid; gap: 10px; }
+.dt-drawer[hidden] { display: none; }
 .dt-drawer label { display: grid; gap: 6px; font-size: .88em; color: var(--sub); }
 .dt-draft { padding: 8px 10px; border: 1px solid var(--k-line); border-radius: 10px; background: var(--bg); color: var(--ink); resize: vertical; }
 .dt-row-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }

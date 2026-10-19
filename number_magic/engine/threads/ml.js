@@ -88,13 +88,13 @@ NM_TGEN['ml_jumpTT'] = function(params, rng) {
   const product = t * n;
   return {
     prompt: ask === 'hops' ? {
-      ko: `수직선에서 ${t}씩 뛰었습니다. 호를 세어 몇 번 뛰었는지 □에 씁니다.`,
-      en: `The line hops by ${t}. Count the arcs and write the number of hops.`,
-      zh: `数轴上每次跳${t}。数一数弧线，写出跳了几次。`
+      ko: `0에서 ${t}씩 뛰었어요. 몇 번 뛰었나요? □에 써 보세요.`,
+      en: `Start at 0 and hop by ${t}. How many hops? Write it in the box.`,
+      zh: `从0开始，每次跳${t}。跳了几次？写在方框里。`
     } : {
-      ko: `${t}씩 ${n}번 뛰었습니다. 마지막에 도착한 수를 □에 씁니다.`,
-      en: `Hop ${n} times by ${t}. Write the number reached at the end.`,
-      zh: `每次跳${t}，跳${n}次。写出最后到达的数。`
+      ko: `0에서 ${t}씩 ${n}번 뛰었어요. 마지막에 도착한 수를 □에 써 보세요.`,
+      en: `Start at 0 and hop ${n} times by ${t}. Write the number you reach.`,
+      zh: `从0开始，每次跳${t}，跳${n}次。写出最后到达的数。`
     },
     tex: ask === 'hops'
       ? `${sum} = ${t} \\times \\square = ${product}`
@@ -104,7 +104,7 @@ NM_TGEN['ml_jumpTT'] = function(params, rng) {
     numline: { start: 0, step: t, seq, blank: ask === 'total' ? n : -1 },
     solution: [
       ask === 'hops'
-        ? { tex: `\\text{호의 수} = \\square`, blank: n }
+        ? { tex: `\\text{뛴 횟수} = \\square`, blank: n }
         : { tex: `${t} \\times ${n} = \\square`, blank: product },
       ask === 'hops'
         ? { tex: `${t} \\times \\square = ${product}`, blank: n }

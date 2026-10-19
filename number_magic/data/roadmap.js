@@ -246,7 +246,9 @@ window.NM_ROADMAP = {
       id:'R15', icon:'🌸', grade:'창의',
       edu:{ko:'곱셈 알고리즘',en:'Creative strategy',zh:'创意策略'},
       theme:{ko:'6단계 · 곱셈 알고리즘 여행',en:'Stage 6 · A Tour of Multiplication',zh:'第6阶 · 乘法算法之旅'},
-      units:['C-15','C-13','C-10','C-11','C-14','C-30'] },
+      /* C-12 엑스맨·C-23 VEDA 교차 곱셈(2026-10-18) — 학습지 과정 11·12(계산의 도약)에서 쓰는 곱셈 알고리즘이라
+         R16(계산의 정복)에서 이 장으로 옮겼다. 지도가 학습지보다 한 단계 늦게 보였다. */
+      units:['C-15','C-13','C-10','C-11','C-14','C-30','C-12','C-23'] },
 
     /* ─────── T15 : 초4-2~초5-1 소수·혼합계산 ─────── */
     {
@@ -260,19 +262,28 @@ window.NM_ROADMAP = {
       tip:{ko:'0.1이 5개면 0.5! 그리고 (3+4)×2는 괄호 먼저 — 순서를 지켜야 답이 맞아요.',en:'Five 0.1s = 0.5! And (3+4)×2 needs brackets first — order matters!',zh:'五个0.1等于0.5！(3+4)×2要先算括号——顺序很重要！'}
     },
 
+    /* ─────── CR7 : 분수의 첫걸음 (2026-10-18, CR8 에서 나눔) ───────
+       같은 분모 분수의 덧뺄(C-21)은 학습지 과정 14(계산의 도약)에서 쓴다. CR8 의 나머지 분수·소수 유닛은
+       과정 18~23(계산의 정복)이라, 이 한 유닛만 도약 단계의 장으로 떼어 냈다. */
+    {
+      id:'CR7', icon:'🍰', grade:'창의',
+      edu:{ko:'분수의 첫걸음',en:'Creative strategy',zh:'创意策略'},
+      theme:{ko:'분수의 첫걸음 — 같은 분모끼리',en:'First Steps in Fractions — Like Denominators',zh:'分数入门——同分母'},
+      units:['C-21'] },
+
     /* ─────── R16 : 마스터의 길 ─────── */
     {
       id:'R16', icon:'🔗', grade:'창의',
       edu:{ko:'수의 관계',en:'Creative strategy',zh:'创意策略'},
-      theme:{ko:'7단계 · 수의 관계 — VEDA·차이곱·가우스',en:'Stage 7 · Relationships Between Numbers',zh:'第7阶 · 数的关系'},
-      units:['C-23','C-24','C-12','C-05'] },
+      theme:{ko:'7단계 · 수의 관계 — 차이곱·가우스',en:'Stage 7 · Relationships Between Numbers',zh:'第7阶 · 数的关系'},
+      units:['C-24','C-05'] },
 
     /* ─────── CR8 : 창의 8단계 · 분수와 소수 ─────── */
     {
       id:'CR8', icon:'🎨', grade:'창의',
       edu:{ko:'분수와 소수',en:'Creative strategy',zh:'创意策略'},
       theme:{ko:'8단계 · 분수와 소수',en:'Stage 8 · Fractions and Decimals',zh:'第8阶 · 分数与小数'},
-      units:['C-21','C-22','C-31','C-32','C-25','C-33','C-35'] },
+      units:['C-22','C-31','C-32','C-25','C-33','C-35'] },
 
     /* ─────── R17 : 약수와 배수 ─────── */
     {

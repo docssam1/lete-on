@@ -416,6 +416,11 @@ export const PAPER_SHAPES = {
     label: { ko: "오각형 종이", zh: "五边形纸", ja: "五角形の紙", en: "Pentagon paper" },
     polygon: [pt(0.5, 0.08), pt(0.92, 0.4), pt(0.76, 0.9), pt(0.24, 0.9), pt(0.08, 0.4)]
   },
+  trapezoid: {
+    id: "trapezoid",
+    label: { ko: "사각형 종이", zh: "四边形纸", ja: "四角形の紙", en: "Quadrilateral paper" },
+    polygon: [pt(0.28, 0.15), pt(0.72, 0.15), pt(0.72, 0.56), pt(0.28, 0.9)]
+  },
   lshape: {
     id: "lshape",
     label: { ko: "L자 종이", zh: "L形纸", ja: "L字の紙", en: "L-shaped paper" },

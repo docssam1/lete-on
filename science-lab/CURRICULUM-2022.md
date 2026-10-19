@@ -3,6 +3,9 @@
 원장 지시: 「지금 우리 개정된 교과 과정에 맞는 내용인지도 꼭 확인해야돼」.
 2026학년도에는 초등 전 학년이 2022 개정 교육과정을 쓴다. 그래서 단원마다 2022 개정 성취기준 코드와 맞춰 보았다.
 
+
+> **2026-10-19 갱신:** 아래 「반영」 절의 지도 재배치(`units-index.js` SEMS·EXTRA·placeOf, 교재 15권의 vol·no)는 main에 들어가지 않았다. main에서는 Codex가 `v2/curriculum-2022.js`(SEMS_2022 · CONTENT · 출판사 목차 8권 근거)로 2022 차례를 따로 만들었다. 작업 브랜치에 main을 합칠 때 그쪽을 기준으로 삼고 이 브랜치의 재배치는 되돌렸다. 성취기준 대조표와 「남은 일」의 내용 차이는 여전히 참고 자료다.
+
 ## 근거와 방법
 
 - **성취기준 코드·단원 구조**는 [DECK6/korean-elementary-learning-map](https://github.com/DECK6/korean-elementary-learning-map)에서 가져왔다.

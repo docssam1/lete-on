@@ -3,11 +3,21 @@
 // 홀수 쪽은 옆날개가 오른쪽, 짝수 쪽은 왼쪽(책을 펼쳤을 때 바깥쪽).
 // 학생용은 빈칸·쓰는 줄, 교사용(teacher)은 같은 자리에 답·채점 기준을 빨간 글씨로 넣는다.
 import { readingHtml } from './reading.js';
+import { renderLifeChapter } from './book-life.js';
+import { renderForceChapter } from './book-force.js';
+import {renderInquiryChapter} from './book-inquiry.js';
+import {renderEditorialChapter} from './book-editorial.js';
+import { renderAnimalChapter } from './book-animal.js';
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const NUM = ['①', '②', '③', '④', '⑤', '⑥'];
 const BL = 'ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝ';
 
 export function renderChapter(ch, art, similar, { teacher = false, live = false, media = null } = {}) {
+  if (ch.editorial) return renderEditorialChapter(ch,art,{teacher});
+  if (ch.inquirywork) return renderInquiryChapter(ch,art,similar,{teacher,live});
+  if (ch.animalwork || ch.plantwork) return renderAnimalChapter(ch, art, similar, { teacher, live });
+  if (ch.forcework) return renderForceChapter(ch, art, similar, { teacher, live });
+  if (ch.fieldwork) return renderLifeChapter(ch, art, similar, { teacher, live });
   let pageNo = 0, noteNo = 0;
   // live: 웹 화면용 — 영상이 쪽 안에서 재생되고, 누르면 3D·실험실이 책 밖으로 튀어나온다. 인쇄에는 늘 그림·QR만 남는다.
   const web = (h) => (live ? `<div class="bk-web">${h}</div>` : '');
@@ -152,6 +162,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
 //  빈자리가 남으면 → 쓰는 줄을 늘리고, 그래도 남으면 꼭지 사이 간격을 고르게 벌린다.
 //  넘치면 → 글자를 0.25pt씩 줄인다(최소 9pt).
 export function fitPages(root) {
+  if (root.classList.contains('bk-life')) return;
   if (matchMedia('(max-width: 700px)').matches && !root.classList.contains('a4')) return;
   const mm = (() => { const d = document.createElement('div'); d.style.width = '100mm'; root.appendChild(d); const w = d.getBoundingClientRect().width / 100; d.remove(); return w; })();
   root.querySelectorAll('.bk-page').forEach((pg) => {

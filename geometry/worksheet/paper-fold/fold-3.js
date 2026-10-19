@@ -304,8 +304,8 @@ function drawReverseArrow(ctx,frame,x,y,size,arrow){
   ctx.restore();
 }
 /* 기호는 선의 한 끝을 종이 밖으로 조금 늘린 자리에 둔다. 종이 밖에 있는 끝을 먼저 쓰고
-   (L자 종이의 안쪽 모서리처럼 끝이 종이 안이면 다른 끝), 다른 선에 24px 안으로 붙거나
-   다른 기호와 34px 안이면 다른 끝을 쓴다. */
+   (L자 종이의 안쪽 모서리처럼 끝이 종이 안이면 다른 끝), 다른 선에 32px 안으로 붙거나
+   다른 기호와 52px 안이면 다른 끝을 쓴다. */
 function reverseInside(polygon,point){
   let inside=false;
   for(let i=0,j=polygon.length-1;i<polygon.length;j=i,i+=1){
@@ -320,10 +320,10 @@ function reverseLabelSpots(frame,x,y,size,lines,paper){
     const ends=[[line.chord[0],line.chord[1]],[line.chord[1],line.chord[0]]].map(([end,other])=>{
       const e=reversePoint(frame,x,y,size,end), o=reversePoint(frame,x,y,size,other);
       const length=Math.hypot(e.X-o.X,e.Y-o.Y)||1;
-      const spot={X:e.X+(e.X-o.X)/length*22,Y:e.Y+(e.Y-o.Y)/length*22};
+      const spot={X:e.X+(e.X-o.X)/length*32,Y:e.Y+(e.Y-o.Y)/length*32};
       const unitOf=(X,Y)=>({x:frame.x+(X-x)/size*frame.size,y:frame.y+(Y-y)/size*frame.size});
-      /* 둘레 8방향 30px 중 종이에 닿는 수. L자 안쪽 모서리처럼 종이에 둘러싸인 자리는 크다. */
-      const crowded=Array.from({length:8},(_,k)=>unitOf(spot.X+30*Math.cos(k*Math.PI/4),spot.Y+30*Math.sin(k*Math.PI/4))).filter(point=>reverseInside(paper,point)).length;
+      /* 둘레 8방향 40px 중 종이에 닿는 수. L자 안쪽 모서리처럼 종이에 둘러싸인 자리는 크다. */
+      const crowded=Array.from({length:8},(_,k)=>unitOf(spot.X+40*Math.cos(k*Math.PI/4),spot.Y+40*Math.sin(k*Math.PI/4))).filter(point=>reverseInside(paper,point)).length;
       return {...spot,outside:!reverseInside(paper,unitOf(spot.X,spot.Y)),crowded};
     });
     const gap=(spot)=>Math.min(Infinity,...placed.map(other=>Math.hypot(spot.X-other.X,spot.Y-other.Y)));
@@ -332,7 +332,7 @@ function reverseLabelSpots(frame,x,y,size,lines,paper){
       const dx=b.X-a.X, dy=b.Y-a.Y, t=Math.max(0,Math.min(1,((spot.X-a.X)*dx+(spot.Y-a.Y)*dy)/(dx*dx+dy*dy||1)));
       return Math.hypot(spot.X-a.X-dx*t,spot.Y-a.Y-dy*t);
     }));
-    const rank=(spot)=>((spot.outside?4:0)+(clear(spot)>=24?2:0)+(gap(spot)>=34?1:0))*10-spot.crowded;
+    const rank=(spot)=>((spot.outside?4:0)+(clear(spot)>=32?2:0)+(gap(spot)>=52?1:0))*10-spot.crowded;
     const spot=rank(ends[1])>rank(ends[0])?ends[1]:ends[0];
     placed.push(spot);
     return spot;
@@ -340,21 +340,24 @@ function reverseLabelSpots(frame,x,y,size,lines,paper){
 }
 function drawReverseLabel(ctx,spot,text,{correct=false}={}){
   ctx.save();
-  ctx.beginPath(); ctx.arc(spot.X,spot.Y,15,0,Math.PI*2);
+  ctx.beginPath(); ctx.arc(spot.X,spot.Y,24,0,Math.PI*2);
   ctx.fillStyle=correct?'#e9f6ee':'#fff'; ctx.fill();
   ctx.strokeStyle=correct?'#2e8b57':'#16417C'; ctx.lineWidth=2; ctx.stroke();
-  ctx.fillStyle=correct?'#1f6d43':'#16417C'; ctx.font='900 17px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle=correct?'#1f6d43':'#16417C'; ctx.font='900 28px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText(text,spot.X,spot.Y+1);
   ctx.restore();
 }
 function renderReverseGame(ctx,d,showAnswer=false){
-  header(ctx,d.text);
+  // A4 너비에서 지시문 약 12pt, 기호 약 10.7pt. 다른 유형의 공통 header는 유지한다.
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  ctx.fillStyle='#16417C'; ctx.font='900 32px sans-serif';
+  ctx.fillText(String(questionNumber),30,48);
+  ctx.fillStyle='#333'; ctx.font='600 32px sans-serif';
+  d.text.forEach((line,index)=>ctx.fillText(line,100,48+index*42));
   const p=d.source, frame=p.frame;
-  ctx.fillStyle='#52616b'; ctx.font='700 16px sans-serif'; ctx.textAlign='left';
-  ctx.fillText(`${p.id} · ${p.paperLabel?.ko||'종이'}`,54,112);
   ctx.textAlign='center';
   if(p.interaction==='fold-line-pick'){
-    const size=330, left=150, top=140, right=760;
+    const size=330, left=150, top=170, right=760;
     drawReversePaper(ctx,frame,left,top,size,p.paper);
     const spots=reverseLabelSpots(frame,left,top,size,d.lines,p.paper);
     d.lines.forEach(line=>drawReverseCrease(ctx,frame,left,top,size,line.chord,{strong:showAnswer&&line.key===p.answerKey,faded:showAnswer&&line.key!==p.answerKey}));
@@ -362,28 +365,28 @@ function renderReverseGame(ctx,d,showAnswer=false){
     d.lines.forEach((line,index)=>drawReverseLabel(ctx,spots[index],line.label,{correct:showAnswer&&line.key===p.answerKey}));
     drawStepArrow(ctx,600,top+size/2);
     drawReverseFolded(ctx,frame,right,top,size,p.resultPieces);
-    ctx.fillStyle='#4b5a5f'; ctx.font='800 16px sans-serif';
-    ctx.fillText('펼친 종이',left+size/2,top+size+42);
-    ctx.fillText('한 번 접은 모양',right+size/2,top+size+42);
+    ctx.fillStyle='#4b5a5f'; ctx.font='800 28px sans-serif';
+    ctx.fillText('펼친 종이',left+size/2,586);
+    ctx.fillText('한 번 접은 모양',right+size/2,586);
     ctx.textAlign='left';
     return;
   }
-  const size=300, left=70, top=150;
+  const size=300, left=70, top=190;
   drawReversePaper(ctx,frame,left,top,size,p.paper);
   if(showAnswer){
     p.creaseHints.forEach(hint=>drawReverseCrease(ctx,frame,left,top,size,hint.chord,{strong:true}));
     drawReverseArrow(ctx,frame,left,top,size,p.creaseHints[0].arrow);
   }
-  ctx.fillStyle='#4b5a5f'; ctx.font='800 16px sans-serif';
-  ctx.fillText('펼친 종이',left+size/2,top+size+42);
-  const box=200, gap=14, startX=430, boxTop=165;
+  ctx.fillStyle='#4b5a5f'; ctx.font='800 28px sans-serif';
+  ctx.fillText('펼친 종이',left+size/2,586);
+  const box=200, gap=14, startX=430, boxTop=220;
   d.options.forEach((option,index)=>{
     const bx=startX+index*(box+gap), correct=showAnswer&&p.answerKeys.includes(option.key);
     ctx.fillStyle=correct?'#f0faf3':'#fff'; ctx.fillRect(bx,boxTop,box,box);
     ctx.strokeStyle=correct?'#2e8b57':'#abb8b1'; ctx.lineWidth=correct?4:1.6; ctx.strokeRect(bx,boxTop,box,box);
     drawReverseFolded(ctx,frame,bx+16,boxTop+12,box-36,option.pieces,{thickness:5,layerEdge:option.pieces[1]||null});
-    ctx.beginPath(); ctx.arc(bx+20,boxTop+20,14,0,Math.PI*2); ctx.fillStyle=correct?'#2e8b57':'#16417C'; ctx.fill();
-    ctx.fillStyle='#fff'; ctx.font='900 15px sans-serif'; ctx.textBaseline='middle'; ctx.fillText(String(option.number),bx+20,boxTop+21); ctx.textBaseline='alphabetic';
+    ctx.beginPath(); ctx.arc(bx+box/2,boxTop+box+36,24,0,Math.PI*2); ctx.fillStyle=correct?'#2e8b57':'#16417C'; ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='900 28px sans-serif'; ctx.textBaseline='middle'; ctx.fillText(String(option.number),bx+box/2,boxTop+box+37); ctx.textBaseline='alphabetic';
   });
   ctx.textAlign='left';
 }

@@ -12,8 +12,9 @@ const assets=["source-6-2-stack-models.js","source-6-2-stack-renderer.mjs","sour
 const hashes=()=>Object.fromEntries(assets.map(n=>[n,crypto.createHash("sha256").update(fs.readFileSync(path.join(__dirname,n))).digest("hex")]));
 const originalHashes=hashes();
 async function pixels(page,options={}) {
-  return page.evaluate(({reference,poison})=>{
+  return page.evaluate(({reference,poison,markedReference=[]})=>{
     const data=window.stackReview.stack.inspect(), colors=[0xc5d9dc,0xdbe5e3,0xfafcf8,0xd2d6d5,0xe2eee8,0xe7ece8], errors=[];
+    const markedKeys=new Set(markedReference.map(cell=>cell.join(','))),markedColors=[0x333333,0x444444,0x555555,0x444444,0x3d3d3d,0x4d4d4d];
     if(reference)data.cells=reference;
     function transform(m,v){return [0,1,2,3].map(r=>m[r]*v[0]+m[r+4]*v[1]+m[r+8]*v[2]+m[r+12]*v[3]);}
     function unproject(x,y,z){const a=transform(data.projectionInverse,[x,y,z,1]), b=transform(data.world,a.map(n=>n/a[3]));return b.slice(0,3).map(n=>n/b[3]);}
@@ -54,7 +55,7 @@ async function pixels(page,options={}) {
       return false;
     }
     function edgePixel(rgb){
-      return [...colors,0xffffff].some(color=>{
+      return [...colors,...(markedKeys.size ? markedColors : []),0xffffff].some(color=>{
         const face=[color>>16&255,color>>8&255,color&255],d=face.map(v=>v-17);
         const t=Math.max(0,Math.min(1,rgb.reduce((s,v,i)=>s+(v-17)*d[i],0)/d.reduce((s,v)=>s+v*v,0)));
         return rgb.every((v,i)=>Math.abs(v-(17+t*d[i]))<=4);
@@ -65,7 +66,7 @@ async function pixels(page,options={}) {
       const i=(y*data.width+x)*4;
       if(data.pixels[i]<245||data.pixels[i+1]<245||data.pixels[i+2]<245){visible++;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}
     }
-    const seen=new Set();let poisonExercised=false;
+    const seen=new Set(), seenFaces=new Set();let poisonExercised=false;
     for(let y=3;y<data.height;y+=8)for(let x=3;x<data.width;x+=8){
       const nx=(x+.5)/data.width*2-1,ny=1-(y+.5)/data.height*2;
       const origin=unproject(nx,ny,-1),far=unproject(nx,ny,1), dir=far.map((v,i)=>v-origin[i]);
@@ -77,13 +78,13 @@ async function pixels(page,options={}) {
         continue;
       }
       const {face,hit,cell}=hits[0],axis=Math.floor(face/2);
-      const expected=colors[face],rgb=[expected>>16&255,expected>>8&255,expected&255],i=(y*data.width+x)*4;
+      const expected=(markedKeys.has(cell.join(',')) ? markedColors : colors)[face],rgb=[expected>>16&255,expected>>8&255,expected&255],i=(y*data.width+x)*4;
       if(poison==='red-near-edge'&&!poisonExercised&&hit.some((v,i)=>i!==axis&&Math.abs(Math.abs(v-cell[i])-.5)<.06)&&!visibleEdgeNear(x+.5,y+.5)){
         data.pixels.set([255,0,0],i);poisonExercised=true;
       }
       const actual=[...data.pixels.slice(i,i+3)];
       if(rgb.some((v,k)=>Math.abs(actual[k]-v)>3)&&!(edgePixel(actual)&&visibleEdgeNear(x+.5,y+.5)))errors.push({x,y,face,cell,hit,expected:rgb,actual});
-      seen.add(cell.join(','));checked++;
+      seen.add(cell.join(','));seenFaces.add([...cell,face].join(','));checked++;
     }
     const frame=document.querySelector('#scene').getBoundingClientRect(),labelErrors=[];
     for(const el of document.querySelectorAll('.source62-stack-direction')){
@@ -91,11 +92,12 @@ async function pixels(page,options={}) {
       if(box.left<frame.left||box.right>frame.right||box.top<frame.top||box.bottom>frame.bottom)labelErrors.push('Direction clipped');
       if(style.color!=='rgb(0, 0, 0)'||+style.fontWeight!==400||parseFloat(style.fontSize)<14)labelErrors.push('Direction typography');
     }
-    return {errors:errors.slice(0,10),poisonExercised,labelErrors,checked,visible,seen:seen.size,cubeCount:data.cubeCount,meshCount:data.meshCount,revision:data.revision,
+    return {errors:errors.slice(0,10),poisonExercised,labelErrors,checked,visible,seen:seen.size,seenFaces:[...seenFaces],cubeCount:data.cubeCount,meshCount:data.meshCount,revision:data.revision,
       margin:Math.min(minX,minY,data.width-1-maxX,data.height-1-maxY),bounds:[minX,minY,maxX,maxY],overflow:document.documentElement.scrollWidth>innerWidth+1};
   },options);
 }
-(async()=>{
+module.exports = {pixels};
+if (require.main === module) (async()=>{
   const browser=await chromium.launch({headless:true,executablePath:process.env.HSE_CHROMIUM_EXECUTABLE,args:["--enable-unsafe-swiftshader"]});
   const rows=[];
   try{
@@ -142,7 +144,8 @@ async function pixels(page,options={}) {
         await page.emulateMedia({media:'print'});
         const file=path.join(out,`${prefix}-a4.pdf`);
         await page.pdf({path:file,format:'A4',printBackground:true,preferCSSPageSize:true});
-        const pages=+execFileSync(process.env.HSE_PDFINFO_EXECUTABLE,[file],{encoding:'utf8'}).match(/^Pages:\s+(\d+)/m)[1];
+        const pages=process.env.HSE_PDFINFO_EXECUTABLE ? +execFileSync(process.env.HSE_PDFINFO_EXECUTABLE,[file],{encoding:'utf8'}).match(/^Pages:\s+(\d+)/m)[1]
+          : +execFileSync(process.env.HSE_PYTHON_EXECUTABLE,['-B','-c','import pymupdf,sys; print(len(pymupdf.open(sys.argv[1])))',file],{encoding:'utf8'}).trim();
         assert.equal(pages,1,'One source stack and views fit one A4');
         const print=await page.evaluate(()=>({ready:document.querySelector('#scene').dataset.printReady,img:document.querySelector('.source62-stack-print')?.naturalWidth,canvas:getComputedStyle(document.querySelector('canvas')).display}));
         assert.equal(print.ready,'true');assert(print.img>100);assert.equal(print.canvas,'none');

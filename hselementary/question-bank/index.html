@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f3f5f4">
   <title>LETE-ON | 황소 초등 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=bank-20260930b">
-  <link rel="stylesheet" href="./worksheet-tools.css?v=bank-20260921a">
+  <link rel="stylesheet" href="./styles.css?v=bank-20261015k">
+  <link rel="stylesheet" href="./worksheet-tools.css?v=bank-20261015j">
   <link rel="stylesheet" href="./typography.css?v=bank-20260924a">
+  <link rel="stylesheet" href="./source-5-2-range-e1.css?v=grade52-self-solved-20261018">
+  <link rel="stylesheet" href="./source-5-2-range-missions.css?v=grade52-missions-20261018">
   <link rel="stylesheet" href="./source-6-2-decimal-e5-unit.css?v=bank-20261003a">
   <link rel="stylesheet" href="./source-6-2-e3-digit-count.css?v=bank-20261003a">
   <link rel="stylesheet" href="./source-6-2-e3-card-maximum.css?v=bank-20261003a">
@@ -19,6 +21,13 @@
   <link rel="stylesheet" href="./source-6-2-e2-geometry.css?v=bank-20261003a">
   <link rel="stylesheet" href="./source-6-2-height-views.css?v=bank-20261003d">
   <link rel="stylesheet" href="./source-6-2-stack-questions.css?v=bank-20261010a">
+  <link rel="stylesheet" href="./source-6-2-stack-observation.css?v=bank-20261012a">
+  <link rel="stylesheet" href="./source-6-2-stack-operation-questions.css?v=bank-20261012a">
+  <link rel="stylesheet" href="./source-6-2-stack-count-questions.css?v=bank-20261012a">
+  <link rel="stylesheet" href="./source-6-2-stack-hidden-example3-questions.css?v=bank-20261012d">
+  <link rel="stylesheet" href="./source-6-2-stack-color-example4-questions.css?v=bank-20261012e">
+  <link rel="stylesheet" href="./source-6-2-painted-stacks-questions.css?v=bank-20261012n">
+  <link rel="stylesheet" href="./source-6-2-painted-mission3-questions.css?v=bank-20261013b">
 </head>
 <body>
   <div class="app-shell">
@@ -102,7 +111,7 @@
                   <button type="button" data-count="30">30</button>
                   <button type="button" data-count="40">40</button>
                 </div>
-                <label class="count-input" for="questionCountInput"><span>직접 입력</span><input id="questionCountInput" class="input-number" type="number" min="1" max="40" step="1" value="12"></label>
+                <label class="count-input" for="questionCountInput"><span>직접 입력</span><input id="questionCountInput" class="input-number" type="number" min="1" max="120" step="1" value="12"></label>
               </div>
             </div>
 
@@ -204,9 +213,11 @@
 
   <script defer src="./source-inventory-4-1.js?v=bank-20260913f"></script>
   <script defer src="./source-inventory-4-2-quadrilateral.js?v=bank-20260922d"></script>
-  <script defer src="./source-inventory-grade6.js?v=bank-20261010a"></script>
-  <script defer src="./curriculum.js?v=bank-20261003a"></script>
-  <script defer src="./generators.js?v=bank-20261003a"></script>
+  <script defer src="./source-inventory-grade6.js?v=bank-20261015k"></script>
+  <script defer src="./curriculum.js?v=grade52-missions-20261018"></script>
+  <script defer src="./generators.js?v=bank-20261015d"></script>
+  <script defer src="./source-5-2-range-e1.js?v=grade52-self-solved-20261018"></script>
+  <script defer src="./source-5-2-range-missions.js?v=grade52-missions-20261018"></script>
   <script defer src="./source-4-2-perpendicular-parallel.js?v=bank-20260924a"></script>
   <script defer src="./source-4-2-parallel-angle.js?v=bank-20260924a"></script>
   <script defer src="./source-4-2-parallel-angle-chain-one.js?v=bank-20260922d"></script>
@@ -227,11 +238,155 @@
   <script defer src="./source-6-2-height-views.js?v=bank-20261003d"></script>
   <script defer src="./source-6-2-stack-models.js?v=bank-20261010a"></script>
   <script defer src="./source-6-2-stack-questions.js?v=bank-20261010a"></script>
+  <script defer src="./source-6-2-stack-observation.js?v=bank-20261012a"></script>
+  <script defer src="./source-6-2-stack-operations.js?v=bank-20261012a"></script>
+  <script defer src="./source-6-2-stack-operation-question-contracts.js?v=bank-20261012a"></script>
+  <script defer src="./source-6-2-stack-operation-questions.js?v=bank-20261012a"></script>
+  <script defer src="./source-6-2-stack-count-models.js?v=bank-20261012c"></script>
+  <script defer src="./source-6-2-stack-count-contracts.js?v=bank-20261012c"></script>
+  <script defer src="./source-6-2-stack-count-presentation.js?v=bank-20261012a"></script>
+  <script defer src="./source-6-2-stack-count-questions.js?v=bank-20261012c"></script>
+  <script defer src="./source-6-2-stack-hidden-example3-models.js?v=bank-20261012d"></script>
+  <script defer src="./source-6-2-stack-hidden-example3-contracts.js?v=bank-20261012d"></script>
+  <script defer src="./source-6-2-stack-hidden-example3-presentation.js?v=bank-20261012d"></script>
+  <script defer src="./source-6-2-stack-hidden-example3-questions.js?v=bank-20261012d"></script>
+  <script defer src="./source-6-2-stack-color-example4-models.js?v=bank-20261012e"></script>
+  <script defer src="./source-6-2-stack-color-example4-contracts.js?v=bank-20261012e"></script>
+  <script defer src="./source-6-2-stack-color-example4-presentation.js?v=bank-20261012e"></script>
+  <script defer src="./source-6-2-stack-color-example4-questions.js?v=bank-20261012e"></script>
+  <script defer src="./source-6-2-painted-stacks-models.js?v=bank-20261012h"></script>
+  <script defer src="./source-6-2-painted-stacks-contracts.js?v=bank-20261012o"></script>
+  <script defer src="./source-6-2-painted-stacks-presentation.js?v=bank-20261013h"></script>
+  <script defer src="./source-6-2-painted-stacks-questions.js?v=bank-20261012h"></script>
+  <script defer src="./source-6-2-painted-mission3-models.js?v=bank-20261012j"></script>
+  <script defer src="./source-6-2-painted-mission3-contracts.js?v=bank-20261012j"></script>
+  <script defer src="./source-6-2-painted-mission3-presentation.js?v=bank-20261015i"></script>
+  <script defer src="./source-6-2-painted-mission3-questions.js?v=bank-20261012j"></script>
+  <script defer src="./source-6-2-painted-mission5-scale.js?v=bank-20261012k"></script>
+  <script defer src="./source-6-2-painted-mission5-models.js?v=bank-20261012k"></script>
+  <script defer src="./source-6-2-painted-mission5-contracts.js?v=bank-20261012k"></script>
+  <script defer src="./source-6-2-painted-mission5-presentation.js?v=bank-20261012k"></script>
+  <script defer src="./source-6-2-painted-mission5-questions.js?v=bank-20261012k"></script>
+  <script defer src="./source-6-2-painted-mission6-models.js?v=bank-20261013b"></script>
+  <script defer src="./source-6-2-painted-mission6-contracts.js?v=bank-20261013c"></script>
+  <script defer src="./source-6-2-painted-mission6-presentation.js?v=bank-20261013b"></script>
+  <script defer src="./source-6-2-painted-mission6-questions.js?v=bank-20261013b"></script>
+  <link rel="stylesheet" href="./source-6-2-painted-example2-questions.css?v=bank-20261013d">
+  <script defer src="./source-6-2-painted-removal.js?v=bank-20261013d"></script>
+  <script defer src="./source-6-2-painted-example2-models.js?v=bank-20261013d"></script>
+  <script defer src="./source-6-2-painted-example2-contracts.js?v=bank-20261013d"></script>
+  <script defer src="./source-6-2-painted-example2-presentation.js?v=bank-20261013e"></script>
+  <script defer src="./source-6-2-painted-example2-questions.js?v=bank-20261013d"></script>
+  <link rel="stylesheet" href="./source-6-2-painted-example3-questions.css?v=bank-20261013g">
+  <script defer src="./source-6-2-painted-color-classifier.js?v=bank-20261013f"></script>
+  <script defer src="./source-6-2-painted-example3-models.js?v=bank-20261013f"></script>
+  <script defer src="./source-6-2-painted-example3-contracts.js?v=bank-20261013f"></script>
+  <script defer src="./source-6-2-painted-example3-presentation.js?v=bank-20261013h"></script>
+  <script defer src="./source-6-2-painted-example3-questions.js?v=bank-20261013f"></script>
+  <link rel="stylesheet" href="./source-6-2-painted-exploration-questions.css?v=bank-20261013l">
+  <script defer src="./source-6-2-painted-exploration-models.js?v=bank-20261013j"></script>
+  <script defer src="./source-6-2-painted-exploration-contracts.js?v=bank-20261013m"></script>
+  <script defer src="./source-6-2-painted-exploration-presentation.js?v=bank-20261013j"></script>
+  <script defer src="./source-6-2-painted-exploration-questions.js?v=bank-20261013l"></script>
+  <link rel="stylesheet" href="./source-6-2-t-pattern-example2-questions.css?v=bank-20261013p">
+  <script defer src="./source-6-2-stack-pattern-models.js?v=bank-20261013p"></script>
+  <script defer src="./source-6-2-t-pattern-example2-contracts.js?v=bank-20261014a"></script>
+  <script defer src="./source-6-2-t-pattern-example2-presentation.js?v=bank-20261014a"></script>
+  <script defer src="./source-6-2-t-pattern-example2-questions.js?v=bank-20261015a"></script>
+  <link rel="stylesheet" href="./source-6-2-stair-mission1-questions.css?v=bank-20261013s">
+  <script defer src="./source-6-2-stair-mission1-contracts.js?v=bank-20261014a"></script>
+  <script defer src="./source-6-2-stair-mission1-presentation.js?v=bank-20261014a"></script>
+  <script defer src="./source-6-2-stair-mission1-questions.js?v=bank-20261015a"></script>
+  <link rel="stylesheet" href="./source-6-2-border-mission3-questions.css?v=bank-20261013t">
+  <script defer src="./source-6-2-border-mission3-contracts.js?v=bank-20261013t"></script>
+  <script defer src="./source-6-2-border-mission3-figures.js?v=bank-20261013t"></script>
+  <script defer src="./source-6-2-border-mission3-presentation.js?v=bank-20261013t"></script>
+  <script defer src="./source-6-2-border-mission3-questions.js?v=bank-20261013t"></script>
+  <link rel="stylesheet" href="./source-6-2-notched-mission5-questions.css?v=bank-20261013u">
+  <script defer src="./source-6-2-notched-mission5-models.js?v=bank-20261013u"></script>
+  <script defer src="./source-6-2-notched-mission5-contracts.js?v=bank-20261014a"></script>
+  <script defer src="./source-6-2-notched-mission5-presentation.js?v=bank-20261014a"></script>
+  <script defer src="./source-6-2-notched-mission5-questions.js?v=bank-20261015a"></script>
+  <link rel="stylesheet" href="./source-6-2-plane-cut-questions.css?v=bank-20261014c">
+  <script defer src="./source-6-2-plane-cut-models.js?v=bank-20261014b"></script>
+  <script defer src="./source-6-2-plane-cut-assets.js?v=bank-20261014b"></script>
+  <script defer src="./source-6-2-plane-cut-reference.js?v=bank-20261014b"></script>
+  <script defer src="./source-6-2-plane-cut-contracts.js?v=bank-20261014b"></script>
+  <script defer src="./source-6-2-plane-cut-presentation.js?v=bank-20261014b"></script>
+  <script defer src="./source-6-2-plane-cut-questions.js?v=bank-20261014c"></script>
+  <link rel="stylesheet" href="./source-6-2-midpoint-cut-questions.css?v=bank-20261014e">
+  <script defer src="./source-6-2-midpoint-cut-models.js?v=bank-20261014d"></script>
+  <script defer src="./source-6-2-midpoint-cut-assets.js?v=bank-20261014d"></script>
+  <script defer src="./source-6-2-midpoint-cut-contracts.js?v=bank-20261014d"></script>
+  <script defer src="./source-6-2-midpoint-cut-presentation.js?v=bank-20261014d"></script>
+  <script defer src="./source-6-2-midpoint-cut-questions.js?v=bank-20261014d"></script>
+  <link rel="stylesheet" href="./source-6-2-four-vertex-cut-questions.css?v=bank-20261014f">
+  <script defer src="./source-6-2-four-vertex-cut-models.js?v=bank-20261014f"></script>
+  <script defer src="./source-6-2-four-vertex-cut-assets.js?v=bank-20261014f"></script>
+  <script defer src="./source-6-2-four-vertex-cut-contracts.js?v=bank-20261014f"></script>
+  <script defer src="./source-6-2-four-vertex-cut-presentation.js?v=bank-20261014f"></script>
+  <script defer src="./source-6-2-four-vertex-cut-questions.js?v=bank-20261014f"></script>
+  <link rel="stylesheet" href="./source-6-2-opposite-removal-questions.css?v=bank-20261015b">
+  <script defer src="./source-6-2-opposite-removal-models.js?v=bank-20261015b"></script>
+  <script defer src="./source-6-2-opposite-removal-assets.js?v=bank-20261015b"></script>
+  <script defer src="./source-6-2-opposite-removal-contracts.js?v=bank-20261015b"></script>
+  <script defer src="./source-6-2-opposite-removal-presentation.js?v=bank-20261015b"></script>
+  <script defer src="./source-6-2-opposite-removal-questions.js?v=bank-20261015b"></script>
+  <link rel="stylesheet" href="./source-6-2-cube-addition-questions.css?v=bank-20261015d">
+  <script defer src="./source-6-2-cube-addition-models.js?v=bank-20261015d"></script>
+  <script defer src="./source-6-2-cube-addition-assets.js?v=bank-20261015d"></script>
+  <script defer src="./source-6-2-cube-addition-contracts.js?v=bank-20261015d"></script>
+  <script defer src="./source-6-2-cube-addition-presentation.js?v=bank-20261015d"></script>
+  <script defer src="./source-6-2-cube-addition-questions.js?v=bank-20261015d"></script>
+  <link rel="stylesheet" href="./source-6-2-colored-cut-mission1-questions.css?v=bank-20261015e">
+  <script defer src="./source-6-2-colored-cut-mission1-models.js?v=bank-20261015e"></script>
+  <script defer src="./source-6-2-colored-cut-mission1-assets.js?v=bank-20261015e"></script>
+  <script defer src="./source-6-2-colored-cut-mission1-contracts.js?v=bank-20261015e"></script>
+  <script defer src="./source-6-2-colored-cut-mission1-presentation.js?v=bank-20261015e"></script>
+  <script defer src="./source-6-2-colored-cut-mission1-questions.js?v=bank-20261015e"></script>
+  <link rel="stylesheet" href="./source-6-2-three-point-cut-mission2-questions.css?v=bank-20261015f">
+  <script defer src="./source-6-2-three-point-cut-mission2-models.js?v=bank-20261015f"></script>
+  <script defer src="./source-6-2-three-point-cut-mission2-assets.js?v=bank-20261015f"></script>
+  <script defer src="./source-6-2-three-point-cut-mission2-contracts.js?v=bank-20261015f"></script>
+  <script defer src="./source-6-2-three-point-cut-mission2-presentation.js?v=bank-20261015f"></script>
+  <script defer src="./source-6-2-three-point-cut-mission2-bank-presentation.js?v=bank-20261015f"></script>
+  <script defer src="./source-6-2-three-point-cut-mission2-questions.js?v=bank-20261015f"></script>
+  <link rel="stylesheet" href="./source-6-2-layer-cut-mission3-questions.css?v=bank-20261015g">
+  <script defer src="./source-6-2-layer-cut-mission3-models.js?v=bank-20261015g"></script>
+  <script defer src="./source-6-2-layer-cut-mission3-contracts.js?v=bank-20261015g"></script>
+  <script defer src="./source-6-2-layer-cut-mission3-presentation.js?v=bank-20261015g"></script>
+  <script defer src="./source-6-2-layer-cut-mission3-bank-presentation.js?v=bank-20261015g"></script>
+  <script defer src="./source-6-2-layer-cut-mission3-questions.js?v=bank-20261015g"></script>
+  <script defer src="./source-6-2-pentacube-mission4-models.js?v=bank-20261015h"></script>
+  <script defer src="./source-6-2-pentacube-mission4-contracts.js?v=bank-20261015h"></script>
+  <script defer src="./source-6-2-pentacube-mission4-assets.js?v=bank-20261015h"></script>
+  <script defer src="./source-6-2-pentacube-mission4-presentation.js?v=bank-20261015h"></script>
+  <script defer src="./source-6-2-pentacube-mission4-questions.js?v=bank-20261015h"></script>
+  <link rel="stylesheet" href="./source-6-2-e4-final-missions-questions.css?v=bank-20261015i">
+  <script defer src="./source-6-2-colored-removal-mission5-models.js?v=bank-20261015i"></script>
+  <script defer src="./source-6-2-colored-removal-mission5-contracts.js?v=bank-20261015i"></script>
+  <script defer src="./source-6-2-transparent-mission6-models.js?v=bank-20261015i"></script>
+  <script defer src="./source-6-2-transparent-mission6-contracts.js?v=bank-20261015i"></script>
+  <script defer src="./source-6-2-transparent-mission6-figures.js?v=bank-20261015i"></script>
+  <script defer src="./source-6-2-e4-final-missions-assets.js?v=bank-20261015i"></script>
+  <script defer src="./source-6-2-e4-final-missions-presentation.js?v=bank-20261015i"></script>
+  <script defer src="./source-6-2-e4-final-missions-questions.js?v=bank-20261015i"></script>
+  <link rel="stylesheet" href="./source-6-2-ratio-e1-questions.css?v=bank-20261015j">
+  <script defer src="./source-6-2-ratio-e1-models.js?v=bank-20261015j"></script>
+  <script defer src="./source-6-2-ratio-e1-contracts.js?v=bank-20261015j"></script>
+  <script defer src="./source-6-2-ratio-e1-figures.js?v=bank-20261015j"></script>
+  <script defer src="./source-6-2-ratio-e1-presentation.js?v=bank-20261015j"></script>
+  <script defer src="./source-6-2-ratio-e1-questions.js?v=bank-20261015j"></script>
+  <link rel="stylesheet" href="./source-6-2-ratio-e2-questions.css?v=bank-20261015k">
+  <script defer src="./source-6-2-ratio-e2-models.js?v=bank-20261015k"></script>
+  <script defer src="./source-6-2-ratio-e2-contracts.js?v=bank-20261015k"></script>
+  <script defer src="./source-6-2-ratio-e2-presentation.js?v=bank-20261015k"></script>
+  <script defer src="./source-6-2-ratio-e2-questions.js?v=bank-20261015k"></script>
   <script defer src="./source-6-2-decimal-e6-geometry.js?v=bank-20261003a"></script>
   <script defer src="./source-grade6-volume-e4.js?v=bank-20260906a"></script>
   <script defer src="./source-grade6-surface-e1.js?v=bank-20260906a"></script>
   <script defer src="./math-notation.js?v=bank-20260827l"></script>
   <script defer src="./identity.js?v=identity-20260824a"></script>
-  <script defer src="./app.js?v=bank-20261010a"></script>
+  <script defer src="./app.js?v=bank-20261015k"></script>
 </body>
 </html>

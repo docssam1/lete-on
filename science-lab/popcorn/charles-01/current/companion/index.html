@@ -12,9 +12,12 @@
   <script type="module" src="./lab-ui.js?v=20261015-pouch-1"></script>
   <script type="module" src="./magazine.js?v=20261015-guided"></script>
   <link rel="stylesheet" href="./reading.css">
-  <script type="module" src="./reading.js"></script>
-  <link rel="stylesheet" href="./guide.css?v=20261015-guided">
-  <script type="module" src="./guide.js?v=20261015-guided"></script>
+  <script type="module" src="./reading.js?v=20261015-modern-video-1"></script>
+  <link rel="stylesheet" href="./guide.css?v=20261015-opening-1">
+  <link rel="stylesheet" href="./welcome.css?v=20261015-welcome-autoplay-1" data-popcorn-welcome="true">
+  <link rel="stylesheet" href="./study-deck.css?v=20261015-video-recovery-1">
+  <link rel="stylesheet" href="./page-shell.css?v=20261015-pages-1">
+  <script type="module" src="./guide.js?v=20261015-modern-video-1"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">학습 내용으로 건너뛰기</a>
@@ -28,7 +31,7 @@
 
   <div class="navigation-wrap">
     <nav class="main-nav" aria-label="학습 메뉴">
-      <a href="#intro" data-view="intro">사전 이야기</a>
+      <a href="#intro" data-view="intro">먼저 공부하기</a>
       <a href="#week" data-view="week">요일별 공부하기</a>
       <a href="#magazine" data-view="magazine">스토리로 공부하기</a>
       <a href="#build" data-view="build">조립하기</a>
@@ -37,9 +40,8 @@
   </div>
 
   <main id="main" tabindex="-1">
-    <section class="screen home-screen guide-start" data-screen="home" aria-labelledby="home-title">
-      <div class="source-step"><span class="source-step-number"><small>UNIT</small>1</span><strong class="source-step-title">팝콘실험실 샤를 1호</strong></div>
-      <div class="hero"><div class="hero-copy"><h1 id="home-title">랩코니와 자석 악어를 만나요.</h1><p class="hero-description">오늘은 무엇을 해 볼까요?<br>아래에서 고르거나, ‘다음’으로 함께 시작해요.</p></div><figure class="hero-photo"><img src="../assets/cover-kit-branded.svg" alt="실제 종이 자석 악어와 물고기·당근" width="720" height="560"><figcaption>먹이를 먹는 자석 악어</figcaption></figure></div>
+    <section class="screen home-screen guide-start" data-screen="home" aria-labelledby="welcome-title">
+      <div id="welcome-host"></div>
       <div class="home-index" id="home-index" aria-label="공부하는 방법 다섯 가지"></div>
     </section>
     <section class="screen intro-screen" data-screen="intro" aria-labelledby="intro-title" hidden><div id="intro-host"></div></section>

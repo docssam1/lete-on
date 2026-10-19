@@ -85,7 +85,7 @@ export const art = {
 import { riverReading } from '../reading/other-units.reading.js';
 export const chapter = {
   reading: riverReading,
-  unit: 's41-u03', book: 'GFIELD 실험 과학 영재', vol: '4-1', no: 4, title: '흙 언덕 물길',
+  unit: 's41-u03', book: 'GFIELD 실험 과학 영재', vol: '4-1', no: 3, title: '흙 언덕 물길',
   link: { course: '4학년 1학기', unit: 'Ⅲ. 땅의 변화', topics: ['흐르는 물에 의한 땅의 변화', '강 주변 지형'] },
   skills: ['가설 설정', '변인 통제', '관찰', '자료 해석', '결론 도출'],
   labTitle: '기울기와 물의 양 바꿔 보기',

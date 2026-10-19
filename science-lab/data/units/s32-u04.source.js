@@ -53,8 +53,8 @@ export const source = [
     },
     "explanation": "손으로 잡을 수 있어 전달하기 쉬우며, 그릇에 담았을 때 모양이 변하지 않는 것은 고체인 나무 막대입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -112,8 +112,8 @@ export const source = [
     },
     "explanation": "나무 막대는 눈에 보이고, 만져 보면 딱딱합니다. 물은 눈에 보이고, 투명하며, 잡으면 흘러내려 손에 잡히지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -171,8 +171,8 @@ export const source = [
     },
     "explanation": "고체인 나무 막대는 담는 그릇이 달라져도 모양과 부피가 변하지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -230,8 +230,8 @@ export const source = [
     },
     "explanation": "고체는 눈으로 볼 수 있고, 손으로 잡을 수 있으며, 담는 그릇에 따라 모양과 부피가 변하지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -291,8 +291,8 @@ export const source = [
     },
     "explanation": "물은 담는 그릇에 따라 모양은 변하지만 부피는 변하지 않는 액체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -357,8 +357,8 @@ export const source = [
     },
     "explanation": "우리 주변에서 볼 수 있는 액체에는 물, 우유, 간장, 식초, 액상 세제, 바닷물, 물약, 알코올 등이 있습니다.\n꿀이나 식용유는 끈끈한 성질이 있기 때문에 액체가 아니라고 생각할 수 있습니다. 하지만 담는 그릇에 따라 모양은 변하지만 부피는 변하지 않는 액체의 성질을 가지고 있으므로 액체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -418,8 +418,8 @@ export const source = [
     },
     "explanation": "물속에서 플라스틱병을 누르면 플라스틱병 입구에서 공기 방울이 생겨 위로 올라와 사라지고, 보글보글 소리가 납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -478,8 +478,8 @@ export const source = [
     },
     "explanation": "부표는 공기가 들어 있어 물 위에 떠 있을 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -537,8 +537,8 @@ export const source = [
     },
     "explanation": "구멍이 뚫린 플라스틱 컵으로 누르면 구멍으로 공기가 빠져나가 페트병 뚜껑이 물 위에 그대로 있게 됩니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -609,8 +609,8 @@ export const source = [
     },
     "explanation": "구멍이 뚫리지 않은 ㄱ 플라스틱 컵 안에는 공기가 가득 차 있고, 구멍이 뚫린 ㄴ 컵 안에는 공기 일부와 많은 양의 물이 차 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -671,8 +671,8 @@ export const source = [
     },
     "explanation": "주사기 속 공기가 이동하면서 스타이로폼 공이 붙은 주사기의 피스톤을 밀기 때문에 스타이로폼 공이 밖으로 밀려 나갑니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -732,8 +732,8 @@ export const source = [
     },
     "explanation": "선풍기를 켜면 공기가 이동하여 바람이 붑니다. 축구공, 공기베개, 풍선 놀이 틀은 공기가 공간을 차지하는 성질을 이용한 예입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -797,8 +797,8 @@ export const source = [
     },
     "explanation": "고체, 액체, 기체는 모두 무게가 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -854,10 +854,10 @@ export const source = [
         4
       ]
     },
-    "explanation": "우리가 공기의 무게를 느끼지 못하는 까닭은 공기가 우리를 누르고 있는 힘만큼 우리 몸 안에서도 똑같은 크기의 힘으로 밀어내고 있기 때문입니다.",
+    "explanation": "우리가 공기의 무게를 느끼지 못하는 까닭은 공기가 우리를 누르고 있는 힘만큼 우리 몸 안에서도 똑같은 크기의 힘으로 밀어내고 있기 때문입니다.\n[자료 검토] 공기에도 무게가 있다. 공기 압력의 평형과 무게를 느끼는 일을 단순히 같은 뜻으로 다루지 않으며, 이 단원은 공기 압력의 원리를 필수로 요구하지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -906,8 +906,7 @@ export const source = [
       "sample": "풍선 속 공기가 이동하여 풍선 밖으로 빠져나오기 때문에 풍선 로켓이 앞으로 나아갑니다.",
       "rubric": {
         "required": [
-          "풍선 속 공기 때문에 로켓이 움직인다",
-          "풍선 속 공기가 이동해 풍선 밖으로 빠져나온다"
+          "공기가 이동하여 풍선 로켓이 나아가는 까닭을 설명함"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -918,8 +917,8 @@ export const source = [
     },
     "explanation": "풍선 입구를 쥐고 있던 손을 놓으면 풍선 속 공기가 빠져나오면서 로켓이 실을 따라 움직이게 됩니다.\n[채점 기준] 정답: 공기가 이동하기 때문에 풍선 로켓이 앞으로 나아간다고 쓴 경우 (100%) / 부분 정답: 공기로 인해 풍선 로켓이 움직이지만 그 내용을 정확하게 쓰지 않은 경우 (30%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -978,8 +977,8 @@ export const source = [
     },
     "explanation": "나무 막대는 고유의 색과 무늬가 있어 불투명합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1038,8 +1037,8 @@ export const source = [
     },
     "explanation": "물은 담는 그릇의 모양에 따라 모양이 바뀝니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1098,8 +1097,8 @@ export const source = [
     },
     "explanation": "물은 눈에 보이고 만질 수 있지만 흘러내려서 손으로 잡을 수 없습니다. 공기는 보이지 않으며 손으로 잡을 수 없어 전달하는 느낌이 나지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1149,8 +1148,7 @@ export const source = [
       "sample": "㉤, 부피도 변하지 않습니다.",
       "rubric": {
         "required": [
-          "잘못된 부분(㉤)의 부피를 다룬다",
-          "부피도 변하지 않는다로 고친다"
+          "잘못된 기호 ㉤과 부피는 변하지 않는다는 수정을 함께 씀"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -1161,8 +1159,8 @@ export const source = [
     },
     "explanation": "플라스틱 막대는 나무 막대와 같이 담는 그릇의 모양에 관계없이 모양과 부피가 변하지 않습니다.\n[채점 기준] 기호와 잘못된 내용을 바르게 수정한 경우 (100%) / 잘못된 내용을 수정한 것이 정확하지 않은 경우 (30%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1221,8 +1219,8 @@ export const source = [
     },
     "explanation": "컵, 연필, 지우개, 유리구슬은 고체이고, 알코올은 액체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1281,8 +1279,8 @@ export const source = [
     },
     "explanation": "물은 무색투명합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1341,8 +1339,8 @@ export const source = [
     },
     "explanation": "꿀은 액체이고, 숟가락은 고체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1401,8 +1399,8 @@ export const source = [
     },
     "explanation": "풍선 속의 공기가 빠져나오면서 바람 소리가 들리고, 얼굴 주변으로 무엇인가 지나가는 느낌이 듭니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1460,10 +1458,10 @@ export const source = [
         "일정한 공간을 차지합니다."
       ]
     },
-    "explanation": "축구공은 공기가 일정한 공간을 차지하는 성질을 이용한 것입니다.",
+    "explanation": "축구공은 공기가 일정한 공간을 차지하는 성질을 이용한 것입니다.\n[자료 검토] 공간을 차지한다는 뜻이며 공기의 부피가 어떤 조건에서도 일정하다는 뜻은 아니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1520,8 +1518,8 @@ export const source = [
     },
     "explanation": "왼쪽 주사기의 피스톤을 밀면 주사기 속 공기가 이동하면서 오른쪽 주사기의 피스톤을 밀어냅니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1582,8 +1580,8 @@ export const source = [
     },
     "explanation": "바람을 불어 비눗방울을 만드는 것과 공기 주입기를 이용해 자전거 타이어에 공기를 채우는 것은 공기가 다른 곳으로 이동할 수 있는 성질을 이용한 것입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1633,10 +1631,10 @@ export const source = [
         "기체"
       ]
     },
-    "explanation": "담긴 그릇을 항상 가득 채우는 것은 기체입니다.",
+    "explanation": "담긴 그릇을 항상 가득 채우는 것은 기체입니다.\n[자료 검토] 닫힌 용기 안에서 기체가 이용 가능한 빈 공간에 고르게 퍼진다는 성질을 다룬다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1696,8 +1694,8 @@ export const source = [
     },
     "explanation": "공기 주입 마개를 여러 번 누르면 페트병 안으로 공기가 들어가 페트병의 무게가 늘어납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1751,8 +1749,8 @@ export const source = [
     },
     "explanation": "공기 주입 마개를 여러 번 누르면 페트병 안으로 공기가 들어가 페트병의 무게가 늘어납니다. 이를 통해 기체인 공기는 무게가 있음을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1811,8 +1809,8 @@ export const source = [
     },
     "explanation": "비닐장갑 닭 장난감은 고체인 빨대, 비닐장갑, 종이컵 등과 기체인 공기를 이용한 장난감입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1866,8 +1864,8 @@ export const source = [
     },
     "explanation": "나무 막대는 딱딱하여 손으로 잡을 수 있으며, 담는 그릇에 따라 모양이 달라지지 않습니다. 공기는 눈에 보이지 않고 손에 잡히지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1926,8 +1924,8 @@ export const source = [
     },
     "explanation": "공기는 눈으로 볼 수 없고 만지는 느낌이 없어 제대로 전달했는지 알 수 없습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -1986,8 +1984,8 @@ export const source = [
     },
     "explanation": "공기는 손으로 잡을 수 없고 눈에 보이지 않지만, 물은 손으로 만질 수 있고 눈에 보입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2045,8 +2043,8 @@ export const source = [
     },
     "explanation": "나무 막대와 같이 플라스틱 막대도 담는 그릇의 모양과 관계없이 모양과 부피가 변하지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2105,8 +2103,8 @@ export const source = [
     },
     "explanation": "고체는 손으로 잡을 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2168,8 +2166,8 @@ export const source = [
     },
     "explanation": "가방, 모래, 신발, 소금은 고체이고, 사이다는 액체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2230,8 +2228,8 @@ export const source = [
     },
     "explanation": "여러 가지 모양의 그릇에 담았을 때 그릇의 모양에 따라 주스의 모양이 달라지는 것을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2292,8 +2290,8 @@ export const source = [
     },
     "explanation": "처음에 사용한 그릇으로 다시 옮기면 주스의 높이가 처음과 같습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2351,8 +2349,8 @@ export const source = [
     },
     "explanation": "주사기의 피스톤을 밀면 주사기 안에 있던 공기가 주사기 끝에서 공기 방울로 나와 위로 올라갑니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2412,8 +2410,8 @@ export const source = [
     },
     "explanation": "공기가 다른 곳으로 이동하는 성질 때문에 바람이 붑니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2474,8 +2472,8 @@ export const source = [
     },
     "explanation": "튜브, 부표, 축구공, 풍선 미끄럼틀 안에는 모두 공기가 들어 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2534,10 +2532,10 @@ export const source = [
         4
       ]
     },
-    "explanation": "바닥에 구멍이 뚫린 플라스틱 컵을 수조 바닥까지 밀어 넣으면 컵 안의 공기가 구멍으로 빠져나가고 물이 들어옵니다. 페트병 뚜껑은 물 위의 같은 높이에 계속 떠 있고, 수조 속 물 높이는 변화가 없습니다.",
+    "explanation": "바닥에 구멍이 뚫린 플라스틱 컵을 수조 바닥까지 밀어 넣으면 컵 안의 공기가 구멍으로 빠져나가고 물이 들어옵니다. 페트병 뚜껑은 물 위의 같은 높이에 계속 떠 있고, 수조 속 물 높이는 변화가 없습니다.\n[자료 검토] 인쇄된 비교 그림과 정답은 그대로 둔다. 구멍 있는 컵도 컵 벽 자체가 공간을 차지하므로 실제 수조 수면이 정확히 같다고 단정하지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2588,8 +2586,7 @@ export const source = [
       "sample": "컵 안의 공기가 빠져나가지 않아 물을 밀어 내기 때문에 페트병 뚜껑이 수조 바닥으로 밀려 내려갑니다.",
       "rubric": {
         "required": [
-          "페트병 뚜껑이 수조 바닥으로 내려간다",
-          "컵 안의 공기가 빠져나가지 못하고 물을 밀어 낸다"
+          "뚜껑이 내려가는 변화를 공기가 빠져나가지 못하고 공간을 차지하는 까닭과 연결함"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -2600,8 +2597,8 @@ export const source = [
     },
     "explanation": "바닥에 구멍이 뚫리지 않은 컵을 수조 바닥까지 밀어 넣으면 컵 안의 공기가 빠져나가지 않으므로 페트병 뚜껑이 수조 바닥으로 내려가고, 수조의 물 높이가 약간 높아집니다.\n[채점 기준] 페트병 뚜껑의 변화와 그 까닭을 옳게 쓴 경우 (100%) / 페트병 뚜껑의 변화는 옳게 썼으나 그 까닭을 틀리게 쓴 경우 (30%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2650,8 +2647,7 @@ export const source = [
       "sample": "스타이로폼 공을 붙이지 않은 주사기의 피스톤을 밀면 스타이로폼 공이 바깥쪽으로 움직이고, 피스톤을 당기면 스타이로폼 공이 다시 제자리로 돌아옵니다.",
       "rubric": {
         "required": [
-          "피스톤을 밀면 스타이로폼 공이 바깥쪽으로 움직인다",
-          "피스톤을 당기면 스타이로폼 공이 제자리로 돌아온다"
+          "공이 움직였다가 다시 제자리로 돌아오는 왕복 변화를 설명함"
         ],
         "pass": "채점 기준을 모두 담으면 정답",
         "criteria": [
@@ -2661,8 +2657,8 @@ export const source = [
     },
     "explanation": "주사기의 피스톤을 밀면 주사기 속 공기가 이동하면서 오른쪽 주사기의 피스톤을 밀어내고, 왼쪽 주사기의 피스톤을 당기면 오른쪽 주사기의 피스톤이 제자리로 돌아옵니다. 이때 주사기 끝에 붙어 있는 스타이로폼 공도 같이 움직입니다.\n[채점 기준] 스타이로폼 공이 움직였다가 다시 제자리로 돌아온다고 쓴 경우 (100%)",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2721,8 +2717,8 @@ export const source = [
     },
     "explanation": "비눗물은 공기가 이동하는 성질과 관련이 없습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2777,8 +2773,8 @@ export const source = [
     },
     "explanation": "기체는 다른 곳으로 이동할 수 있고 담는 그릇에 따라 모양과 부피가 변합니다. 또한, 담긴 그릇을 항상 가득 채우는 성질이 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2844,8 +2840,8 @@ export const source = [
     },
     "explanation": "공기도 무게가 있기 때문에 공기를 채운 페트병이 공기를 채우기 전의 페트병보다 더 무겁습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2915,8 +2911,8 @@ export const source = [
     },
     "explanation": "페트병 무게의 변화를 통해 기체인 공기도 무게가 있음을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -2974,10 +2970,10 @@ export const source = [
         "우리가 공기의 무게를 느끼지 못하는 까닭은 공기가 위쪽으로 계속 올라가고 있기 때문입니다."
       ]
     },
-    "explanation": "우리가 공기의 무게를 느끼지 못하는 까닭은 공기가 우리를 누르고 있는 힘만큼 우리 몸 안에서도 똑같은 크기의 힘으로 밀어내고 있기 때문입니다.",
+    "explanation": "우리가 공기의 무게를 느끼지 못하는 까닭은 공기가 우리를 누르고 있는 힘만큼 우리 몸 안에서도 똑같은 크기의 힘으로 밀어내고 있기 때문입니다.\n[자료 검토] 공기에도 무게가 있다. 공기 압력의 평형과 공기 무게를 느끼는 일은 구별하며 압력 개념을 필수로 요구하지 않는다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3032,8 +3028,8 @@ export const source = [
     },
     "explanation": "풍선 입구를 쥐고 있던 손을 놓으면 풍선 속 공기가 빠져나오면서 로켓이 실을 따라 움직입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3088,8 +3084,8 @@ export const source = [
     },
     "explanation": "손으로 잡을 수 없고 친구에게 전달하는지 알 수 없는 것은 공기입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3147,8 +3143,8 @@ export const source = [
     },
     "explanation": "물은 눈에 보이고, 손으로 만질 수 있지만, 흘러내려서 전달하기 어렵습니다. 손으로 잡고 전달할 수 있는 것은 나무 막대입니다. 눈에 보이지 않고 손에 잡히지 않아 전달한 것인지 알 수 없는 것은 공기입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3206,8 +3202,8 @@ export const source = [
     },
     "explanation": "나무 막대와 같은 고체는 담는 그릇이 달라져도 모양과 부피가 모두 변하지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3265,8 +3261,8 @@ export const source = [
     },
     "explanation": "고체는 비교적 단단하며, 손으로 잡을 수 있고, 담는 그릇이 바뀌어도 모양과 부피가 바뀌지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3327,8 +3323,8 @@ export const source = [
     },
     "explanation": "눈으로 볼 수 있지만 흘러내려 손으로 잡을 수 없는 것은 액체입니다. 식초는 액체, 연필과 지우개는 고체, 산소와 공기는 기체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3386,8 +3382,8 @@ export const source = [
     },
     "explanation": "물은 담는 그릇에 따라 모양이 변하지만 부피는 변하지 않습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3445,8 +3441,8 @@ export const source = [
     },
     "explanation": "액체는 담는 그릇에 따라 모양은 변하지만 부피는 변하지 않는 물질의 상태입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3504,8 +3500,8 @@ export const source = [
     },
     "explanation": "액체는 손으로 잡기 어렵고 흘러내리는 성질이 있습니다. 소금은 알갱이의 크기가 작은 고체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3564,8 +3560,8 @@ export const source = [
     },
     "explanation": "간장은 액체이고, 클립, 연필, 스펀지, 스타이로폼 공은 고체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3630,8 +3626,8 @@ export const source = [
     },
     "explanation": "부채로 만든 바람, 선풍기로 만든 바람, 바람에 의해 움직이는 광고 인형을 통해 우리 주변에 공기가 있다는 것을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3689,8 +3685,8 @@ export const source = [
     },
     "explanation": "바닥에 구멍이 뚫리지 않은 컵을 수조 바닥까지 밀어 넣으면 컵 안의 공기가 빠져나가지 않으므로 페트병 뚜껑이 수조 바닥으로 내려가고, 수조의 물 높이가 약간 높아집니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3750,8 +3746,8 @@ export const source = [
     },
     "explanation": "페트병 뚜껑과 수조 속 물의 높이 변화를 통해 공기는 공간을 차지한다는 것을 알 수 있습니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3808,10 +3804,10 @@ export const source = [
         4
       ]
     },
-    "explanation": "공기베개는 공기를 넣어 모양을 잡는 물체입니다. 이를 통해 공기가 일정한 공간을 차지한다는 것을 알 수 있습니다.",
+    "explanation": "공기베개는 공기를 넣어 모양을 잡는 물체입니다. 이를 통해 공기가 일정한 공간을 차지한다는 것을 알 수 있습니다.\n[자료 검토] 일정한 공간이라는 교재 표현은 공간을 차지한다는 뜻으로 읽는다. 기체의 부피가 항상 일정하다는 뜻은 아니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3863,8 +3859,8 @@ export const source = [
     },
     "explanation": "왼쪽 주사기의 피스톤을 밀면 주사기 속 공기가 이동하면서 오른쪽 주사기의 피스톤을 밀어내고, 왼쪽 주사기의 피스톤을 당기면 오른쪽 주사기의 피스톤이 제자리로 돌아옵니다. 이때 주사기 끝에 붙어 있는 스타이로폼 공도 같이 움직입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3920,10 +3916,10 @@ export const source = [
         4
       ]
     },
-    "explanation": "기체인 공기는 담는 그릇을 항상 가득 채우고, 담는 그릇에 따라 모양이나 부피가 변합니다.",
+    "explanation": "기체인 공기는 담는 그릇을 항상 가득 채우고, 담는 그릇에 따라 모양이나 부피가 변합니다.\n[자료 검토] 풍선 안에서 기체가 고르게 퍼져 용기의 빈 공간을 채우는 모습을 비교한다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -3992,8 +3988,8 @@ export const source = [
     },
     "explanation": "공기 주입 마개를 누르면 페트병 안으로 공기가 더 많이 들어가 페트병의 무게가 늘어납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4061,8 +4057,8 @@ export const source = [
     },
     "explanation": "공기 주입 마개를 누르는 횟수가 늘어날수록 페트병 안 공기의 양이 많아져 무게가 늘어납니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4121,8 +4117,8 @@ export const source = [
     },
     "explanation": "고체는 담는 그릇이 바뀌어도 모양이 변하지 않지만, 액체와 기체는 담는 그릇이 바뀌면 모양이 변합니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4188,8 +4184,8 @@ export const source = [
     },
     "explanation": "나무는 고체, 물, 주스, 바닷물은 액체, 공기는 기체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"
@@ -4249,8 +4245,8 @@ export const source = [
     },
     "explanation": "빨대와 탁구공은 고체, 공기는 기체입니다.",
     "evidence": {
-      "checkedBy": "Claude",
-      "date": "2026-10-09",
+      "checkedBy": "원문 대조",
+      "date": "2026-10-17",
       "gates": [
         "source",
         "answer"

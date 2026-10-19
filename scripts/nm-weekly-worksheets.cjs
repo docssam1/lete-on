@@ -8,7 +8,8 @@
  *
  * env: SUPABASE_SERVICE_ROLE_KEY(필수) · SUPABASE_URL(기본 프로젝트) · BASE_URL(기본: 저장소 루트를 로컬로 띄움)
  *      WEEK(주차 강제, 예 2026-W36) · DRY=1(업로드 없이 PDF만 ./out/ 에)
- * 수동: node scripts/nm-weekly-worksheets.cjs --name 홍길동 --course C4 [--cadence w2]   (연락처 없이 한 명만; w2면 k=1,2 두 벌)
+ * 수동: node scripts/nm-weekly-worksheets.cjs --name 홍길동 --course C4 [--cadence w2] [--amount 0.7|0.85|1|1.25|1.5]
+ *       주 2회는 k=1,2 두 벌. 분량은 기본 1배, --amount 또는 프로필 roadAmount 설정을 따른다.
  */
 'use strict';
 const path = require('path');
@@ -33,6 +34,8 @@ function kstWeekKey() {
   return `${d.getUTCFullYear()}-W${String(wk).padStart(2, '0')}`;
 }
 const WEEK = process.env.WEEK || kstWeekKey();
+const AMOUNTS = [0.7, 0.85, 1, 1.25, 1.5];
+const amountOf = (value) => { const n = Number(value); return AMOUNTS.includes(n) ? n : 1; };
 
 async function sb(pathname, init = {}) {
   const r = await fetch(SB_URL + pathname, { ...init, headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, ...(init.headers || {}) } });
@@ -42,14 +45,14 @@ async function sb(pathname, init = {}) {
 
 async function listTargets() {
   const name = argOf('--name'), course = argOf('--course');
-  if (name) return [{ name, courseKey: course || '', cadence: argOf('--cadence') === 'w2' ? 'w2' : 'w1' }];
+  if (name) return [{ name, courseKey: course || '', cadence: argOf('--cadence') === 'w2' ? 'w2' : 'w1', amount: amountOf(argOf('--amount') || 1) }];
   const contacts = await sb('/rest/v1/nm_contacts?select=profile_name&active=eq.true&consent=eq.true');
   const names = [...new Set(contacts.map(c => c.profile_name).filter(Boolean))];
   const out = [];
   for (const n of names) {
     const prof = await sb(`/rest/v1/nm_profiles?select=state&name=eq.${encodeURIComponent(n)}&limit=1`);
     const st = prof && prof[0] && prof[0].state || {};
-    out.push({ name: n, courseKey: st.weeklyDigest && st.weeklyDigest.courseKey || '', cadence: st.roadCadence === 'w2' ? 'w2' : 'w1' });
+    out.push({ name: n, courseKey: st.weeklyDigest && st.weeklyDigest.courseKey || '', cadence: st.roadCadence === 'w2' ? 'w2' : 'w1', amount: amountOf(st.roadAmount) });
   }
   return out;
 }
@@ -84,7 +87,7 @@ async function main() {
       if (!t.courseKey) { console.log(`[ws] skip ${t.name}: weeklyDigest.courseKey 없음(앱에서 로드맵을 아직 안 열었음)`); skip++; continue; }
       const ks = t.cadence === 'w2' ? [1, 2] : [1]; // 주 2회반은 그 주 학습지 두 벌
       for (const k of ks) {
-      const url = `${base}/number_magic/ws.html?w=${WEEK}&c=${encodeURIComponent(t.courseKey)}&n=${encodeURIComponent(t.name)}&k=${k}&cad=${t.cadence}&auto=0`;
+      const url = `${base}/number_magic/ws.html?w=${WEEK}&c=${encodeURIComponent(t.courseKey)}&n=${encodeURIComponent(t.name)}&k=${k}&cad=${t.cadence}&amt=${t.amount || 1}&auto=0`;
       const page = await browser.newPage({ viewport: { width: 900, height: 1200 } });
       try {
         await page.goto(url, { waitUntil: 'load', timeout: 60000 });
@@ -95,7 +98,7 @@ async function main() {
         if (!fonts.pretendard) console.warn(`[ws] ${t.name}: Pretendard 미로딩(${JSON.stringify(fonts)}) — 시스템 한글 글꼴로 대체됨`);
         await page.emulateMedia({ media: 'print' });
         const pdf = await page.pdf({ format: 'A4', printBackground: true, margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' } });
-        const token = crypto.createHmac('sha256', KEY || 'dry').update(`${t.name}|${WEEK}|${t.courseKey}${k > 1 ? '|' + k : ''}`).digest('hex').slice(0, 8); // 8자: 단문(90바이트) 짧은 링크(/w/)용
+        const token = crypto.createHmac('sha256', KEY || 'dry').update(`${t.name}|${WEEK}|${t.courseKey}|a${t.amount || 1}${k > 1 ? '|k' + k : ''}`).digest('hex').slice(0, 8); // 분량·회차가 달라지면 정적 PDF URL도 달라진다.
         const objPath = `${WEEK}/${token}.pdf`;
         if (DRY) { fs.writeFileSync(path.join(outDir, objPath.replace('/', '_')), pdf); console.log(`[ws] DRY ${t.name} k=${k} → out/${objPath.replace('/', '_')} (${pdf.length}B)`); okN++; continue; }
         await sb(`/storage/v1/object/nm-worksheets/${objPath}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf', 'x-upsert': 'true' }, body: pdf });

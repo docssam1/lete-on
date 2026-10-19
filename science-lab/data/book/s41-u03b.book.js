@@ -53,7 +53,7 @@ export const art = {
 
 export const chapter = {
   reading,
-  unit: 's41-u03b', book: 'GFIELD 실험 과학 영재', vol: '4-1', no: 5, title: '화산 실험실', theme: '#B23A2E',
+  unit: 's41-u03b', book: 'GFIELD 실험 과학 영재', vol: '4-1', no: 4, title: '화산 실험실', theme: '#B23A2E',
   link: { course: '4학년 1학기', unit: 'Ⅲ. 땅의 변화', topics: ['화산과 화산 분출물', '화강암과 현무암', '화산 활동과 지진'] },
   skills: ['관찰', '모형 실험', '비교', '자료 해석', '결론 도출'],
   labTitle: '불 세기와 식히는 빠르기 바꿔 보기',

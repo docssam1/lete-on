@@ -544,6 +544,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               difficultyBand: Number.isInteger(type.difficultyBand) ? type.difficultyBand : 0,
               sourceTier: type.sourceTier || "advanced",
               sourceVerified: Boolean(type.sourceVerified),
+              ...(type.answerVerification ? { answerVerification: type.answerVerification, publisherKeyVerified: type.publisherKeyVerified } : {}),
               sourceEvidence: type.sourceEvidence || "",
               sourceItemId: type.sourceItemId || "",
               sourceItemLabel: type.sourceItemLabel || "",
@@ -1275,7 +1276,72 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         detailed("수의 범위", "advancedRange", ["두 범위의 공통 조건과 합집합", "조건에서 새로운 수의 범위 구하기", "나누어 담는 개수의 범위"]),
         detailed("어림하기", "advancedRounding", ["여러 어림 방법의 결과 비교", "어림 조건을 만족하는 수 찾기", "수 카드로 만든 수를 어림하기"]),
         detailed("어림하기의 활용", "roundingApplication", ["묶음 단위와 필요한 금액 구하기", "단위 환산 뒤 묶음 수와 금액 구하기", "구간별 요금 계산하기"]),
-        detailed("어림한 수의 범위", "roundedRange", ["여러 어림 조건의 공통 범위", "배수의 어림값으로 수 찾기", "어림한 합에서 실제 합의 범위 찾기"])
+        detailed("어림한 수의 범위", "roundedRange", ["여러 어림 조건의 공통 범위", "배수의 어림값으로 수 찾기", "어림한 합에서 실제 합의 범위 찾기"]),
+        // Append source records so saved legacy subunit/type IDs retain their meaning.
+        // The first five items use user-authorized independent solution verification.
+        {
+          name: "수의 범위 · 개념탐구 1 원문 분류",
+          types: [
+            ["exploration", "개념탐구 1", "수의 범위를 말과 수직선으로 나타내기", true],
+            ["example-1-1", "예제 1-1", "자연수의 개수로 범위의 시작 수를 가장 크게 하기", false],
+            ["example-1-2", "예제 1-2", "앉는 인원과 필요한 의자 수로 전체 인원의 범위 구하기", false],
+            ["example-1-3", "예제 1-3", "두 조건을 모두 만족하는 사람 수의 범위 구하기", false],
+            ["example-1-4", "예제 1-4", "상자마다 담는 개수로 상자 수의 범위 구하기", false]
+          ].map(([suffix, sourceItemLabel, name, answerVisualRequired], index) => ({
+            id: `5-2-u1-e1-${suffix}`,
+            name,
+            sourceItemId: `5-2-u1-e1-${suffix}`,
+            sourceItemLabel,
+            sourceSection: suffix === "exploration" ? "exploration" : "example",
+            sourceTier: "advanced",
+            sourcePdfPage: 2,
+            sourcePrintedPage: 4,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e1-self-solved-20261018",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-enumeration-user-authorized",
+            reviewLocked: false,
+            reviewReason: "사용자 승인에 따라 원문을 직접 풀이하고 독립 전수 검산한 유사문항입니다. 출판사 공식 답안 대조 여부는 별도로 유지합니다.",
+            generatorKey: ["source52RangeExploration", "source52RangeMaxStart", "source52RangeSeats", "source52RangeOverlap", "source52RangeBoxes"][index],
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired,
+            answerVisualStatus: answerVisualRequired ? "verified" : "not-required"
+          }))
+        },
+        {
+          name: "수의 범위 · Mission 1–6 원문 연결",
+          types: [
+            ["1", "겹치는 두 범위에 들어가는 수와 두 수의 합"],
+            ["2", "배수의 개수로 빈 끝수 모두 찾기"],
+            ["3", "두 자리 끝수로 만드는 순서쌍 세기"],
+            ["4", "숫자 카드로 조건에 맞는 소수 세기"],
+            ["5", "필요한 최소 버스 수로 학생 수의 범위 구하기"],
+            ["6", "상자별 개수로 상자 수의 범위 구하기"]
+          ].map(([number, name], index) => ({
+            id: `5-2-u1-e1-mission-${number}`,
+            name,
+            sourceItemId: `5-2-u1-e1-mission-${number}`,
+            sourceItemLabel: `Mission ${number}`,
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 3,
+            sourcePrintedPage: 5,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e1-missions-direct-solutions-20261018",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-enumeration-user-authorized",
+            reviewLocked: false,
+            reviewReason: "사용자 요청에 따라 원문을 직접 풀이하고 독립 열거로 검산한 유사문항입니다. 출판사 정답지 대조 여부는 별도로 유지합니다.",
+            generatorKey: ["source52RangeMissionOne", "source52RangeMissionTwo", "source52RangeMissionThree", "source52RangeMissionFour", "source52RangeMissionFive", "source52RangeMissionSix"][index],
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }))
+        }
       ],
       ["분수의 곱셈",
         detailed("분수와 자연수의 곱셈", "fractionNaturalAdvanced", ["전체에서 연속한 분수만큼 구하기", "하루와 시간의 분수량 환산하기", "곱이 자연수가 되는 수의 개수"]),

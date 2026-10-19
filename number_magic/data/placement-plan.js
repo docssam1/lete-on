@@ -104,8 +104,8 @@
     const symbol = p.emoji || '●';
     let domain, responseMode, renderData, prompt = p.prompt, answer = p.answer;
     switch (stage.id) {
-      case 'f-count5':
-        if (!Array.isArray(p.items) || p.widget !== 'tapCount' || p.answer > (small ? 3 : 5)) return null;   // 숫자·틀 위젯 굴림은 진단의 '그림 눌러 세기'가 아니다
+      case 'f-count5': case 'f-count9':
+        if (!Array.isArray(p.items) || p.widget !== 'tapCount' || p.answer > (small ? 3 : stage.id === 'f-count9' ? 9 : 5)) return null;   // 숫자·틀 위젯 굴림은 진단의 '그림 눌러 세기'가 아니다
         domain = 'counting'; responseMode = 'count-tap';
         renderData = { items: p.items.map(x => ({ symbol: x.e, target: x.t === true })), targetSymbol: p.emoji };
         prompt = text('목표 그림과 같은 그림을 모두 눌러요.', 'Tap every object matching the target picture.', '点选所有与目标图形相同的物体。');
@@ -458,6 +458,283 @@
     return { baseline: clone(baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
       boundaries: { previous: at === 0 ? 'same-foundation-smaller' : null, next: at === list.length - 1 ? 'same-course' : null } };
   }
+
+  /* Completed-book diagnosis (2026-10-18). Owner: "나와 있는 교과 연산 기준으로".
+   * data/dunoro-courses.js maps each Dunoro course's listed arithmetic to this
+   * app's thread levels. A completed course N gives previous = course N-1,
+   * current = course N, next = course N+1, asked with this app's questions. */
+  const BOOKS = {
+    dunoro: { label: text('두뇌로', 'Dunoro', 'Dunoro'), courses: 25, data: 'NM_DUNORO_COURSES', unit: text('과정', 'course', '课程') },
+    'soma-p': { label: text('소마셈 P · 2019년 발행본', 'SomaSem P · 2019 publication', 'SomaSem P · 2019年出版'), courses: 8,
+      data: 'NM_SOMA_P_2019', unit: text('권', 'volume', '册') },
+    'soma-k': { label: text('소마셈 K · 2019년 발행본', 'SomaSem K · 2019 publication', 'SomaSem K · 2019年出版'), courses: 8, data: 'NM_SOMA_K_2019', unit: text('권', 'volume', '册') },
+    'soma-a': { label: text('소마셈 A · 2019년 발행본', 'SomaSem A · 2019 publication', 'SomaSem A · 2019年出版'), courses: 8, data: 'NM_SOMA_A_2019', unit: text('권', 'volume', '册') },
+    'soma-b': { label: text('소마셈 B · 2019년 발행본', 'SomaSem B · 2019 publication', 'SomaSem B · 2019年出版'), courses: 8, data: 'NM_SOMA_B_2019', unit: text('권', 'volume', '册') },
+    'soma-c': { label: text('소마셈 C · 2019년 발행본', 'SomaSem C · 2019 publication', 'SomaSem C · 2019年出版'), courses: 8, data: 'NM_SOMA_C_2019', unit: text('권', 'volume', '册') },
+    'soma-d': { label: text('소마셈 D · 2019년 발행본', 'SomaSem D · 2019 publication', 'SomaSem D · 2019年出版'), courses: 6, data: 'NM_SOMA_D_2019', unit: text('권', 'volume', '册') },
+    'miracle-pre-2023': { label: text('기적의 계산법 예비초등 · 2023판', 'Miracle Calculation preschool · 2023', '奇迹计算法学前 · 2023版'), courses: 5, data: 'NM_MIRACLE_PRE_2023', unit: text('권', 'volume', '册') },
+    'miracle-elem-2021': { label: text('기적의 계산법 초등 · 2021판', 'Miracle Calculation elementary · 2021', '奇迹计算法小学 · 2021版'), courses: 12, data: 'NM_MIRACLE_ELEM_2021', unit: text('권', 'volume', '册') }
+  };
+  const bookCache = Object.create(null);
+  let locations = null;
+  function bookData(series) {
+    const book = BOOKS[series];
+    if (!book) fail('unknown book series ' + series);
+    if (!W[book.data] && typeof require === 'function') {
+      try { require(series === 'dunoro' ? './dunoro-courses.js' : series === 'soma-p' ? './soma-p-2019.js' : './book-volume-topics.js'); } catch (_) { /* reported below */ }
+    }
+    const data = W[book.data];
+    if (!data || !Array.isArray(data.courses) || data.courses.length !== book.courses) fail('missing book topic data ' + series);
+    return data;
+  }
+  // First place this app teaches a thread level: its own course, a non-review
+  // drill, then the creative column (session i+1 takes creative[i % length]).
+  // A level taught nowhere is placed where its thread is first taught.
+  function locate(key) {
+    if (!locations) {
+      locations = new Map();
+      const put = (k, course, session) => { if (!locations.has(k)) locations.set(k, { course, session }); };
+      const passes = [(d, own) => !d.review && own.has(d.t), d => !d.review, 'creative', () => true];
+      passes.forEach(pass => W.NM_COURSE_SPEC.forEach(spec => {
+        const course = 'C' + spec.id, c = W.NM_COURSES[course];
+        if (!c || c.comingSoon) return;
+        const own = new Set((spec.drills || []).map(x => String(x).split('@')[0]));
+        if (pass === 'creative') {
+          (spec.creative || []).forEach((k, i) => { if (i < (c.sessions || []).length) { put(k, course, i + 1); put(k.split('@')[0], course, i + 1); } });
+          return;
+        }
+        (c.sessions || []).forEach((s, i) => (s.drills || []).forEach(d => {
+          if (pass(d, own)) { put(d.t + '@' + d.lv, course, i + 1); put(d.t, course, i + 1); }
+        }));
+      }));
+    }
+    return locations.get(key) || locations.get(key.split('@')[0]) || null;
+  }
+  function bookRefs(keys) {
+    const out = [];
+    const foundationBookRefs = { 'NL1@1':'f-count5', 'NL1@2':'f-count9', 'NL4@1':'f-order10', 'NL7@1':'f-order10',
+      'NL2@2':'f-split9', 'NL2@3':'f-join9', 'NL6@1':'f-ten10' };
+    (keys || []).forEach(key => {
+      const m = /^([A-Z][A-Z0-9]*)@(\d+)$/.exec(key), at = m && locate(key);
+      if (!m || !at || out.some(r => r.t + '@' + r.lv === key)) return;
+      const ref = { t: m[1], lv: Number(m[2]), course: at.course, session: at.session };
+      if (foundationBookRefs[key]) { ref.foundationStageId = foundationBookRefs[key]; out.push(ref); }
+      else if (safeRef(ref)) out.push(ref);
+    });
+    return out;
+  }
+  // paper = the completed course the paper is for; row = the book course this band checks.
+  function bookStage(series, paper, row, band, refs, extra, sourceSeries) {
+    const from = sourceSeries || series, name = BOOKS[from].label, unit = BOOKS[from].unit, n = row.course;
+    return { id: series + '-' + paper + ':' + band, kind: 'book', series: from, bookCourse: n, topics: row.topics, maxNumber: row.maxNumber || null,
+      label: text(name.ko + ' ' + n + unit.ko + ' · ' + row.topics, name.en + ' ' + unit.en + ' ' + n, name.zh + ' ' + n + unit.zh),
+      course: refs.length ? refs[0].course : null, session: refs.length ? refs[0].session : null, refs, extra: extra || [] };
+  }
+  function bookStages(series, n) {
+    const key = series + '-' + n;
+    if (bookCache[key]) return bookCache[key];
+    dependencies();
+    const data = bookData(series), row = c => data.courses.find(x => x.course === c);
+    const total = BOOKS[series].courses;
+    if (!Number.isInteger(n) || n < 1 || n > total) fail('unknown book course ' + key);
+    const own = row(n), prior = row(n - 1), later = row(n + 1), mine = new Set(own.refs);
+    // Spiral rows repeat (4d±4d runs through courses 6~11): the neighbour bands
+    // ask what differs from course N first, and the repeated topics only fill in.
+    const differs = list => list.filter(k => !mine.has(k));
+    const current = bookStage(series, n, own, 'current', bookRefs(own.refs));
+    if (!current.refs.length) fail('no supported source refs for ' + key);
+    const beforeBook = !prior && data.beforeBook;
+    const beforeRow = beforeBook && bookData(beforeBook.series).courses.find(x => x.course === beforeBook.course);
+    const previous = prior ? bookStage(series, n, prior, 'previous', bookRefs(differs(prior.refs)), bookRefs(prior.refs)) :
+      beforeRow ? bookStage(series, n, beforeRow, 'previous', bookRefs(differs(beforeRow.refs)), bookRefs(beforeRow.refs), beforeBook.series) :
+      clone(allStages().find(stage => stage.id === data.before));
+    const next = later ? bookStage(series, n, later, 'next', bookRefs(differs(later.refs)), bookRefs(later.refs)) :
+      Object.assign(clone(current), { id: series + '-' + n + ':next' });
+    // Main app topic: the middle (upper median) app course of course N's new arithmetic.
+    // One far-ahead or review topic then cannot move the whole course.
+    const order = new Map(W.NM_COURSE_SPEC.map((s, i) => ['C' + s.id, i])), list = allStages();
+    const fresh = prior ? current.refs.filter(r => !prior.refs.includes(r.t + '@' + r.lv)) : current.refs;
+    const spread = (fresh.length ? fresh : current.refs).map(r => r.course).sort((a, b) => order.get(a) - order.get(b));
+    const main = spread[Math.floor(spread.length / 2)];
+    let baseline = null;
+    list.forEach(stage => { if (stage.kind === 'course' && order.get(stage.course) <= order.get(main)) baseline = stage; });
+    if (!baseline) baseline = list.find(stage => stage.id === (series === 'soma-p' && n === 5 ? 'f-split9' : data.before));
+    if (!baseline) fail('no app stage for ' + key);
+    bookCache[key] = { previous, current, next, baseline: clone(baseline), last: n === total };
+    return bookCache[key];
+  }
+  function stageById(id) {
+    const m = /^([a-z][a-z0-9-]*)-(\d+):(previous|current|next)$/.exec(id || '');
+    if (m && BOOKS[m[1]]) return bookStages(m[1], Number(m[2]))[m[3]];
+    return allStages().find(stage => stage.id === id);
+  }
+  function buildBook(series, course, seed) {
+    if (series === 'soma-p') return buildSomaP(course, seed);
+    const n = Number(course), set = bookStages(series, n), seedText = seed == null ? '0' : String(seed), items = [], seen = new Set();
+    const name = BOOKS[series].label, unit = BOOKS[series].unit, bookId = series + '-' + n;
+    for (const band of Object.keys(BAND_COUNTS)) {
+      const stage = set[band];
+      // A band's own topics first; the rest of that course only fills a short band.
+      const pools = [stage.refs, stage.refs.concat((stage.extra || []).filter(r => !stage.refs.some(x => x.t === r.t && x.lv === r.lv)))];
+      let accepted = 0;
+      // A band can list more topics than it has questions: the seed picks where the cycle starts.
+      const offset = W.NM_RNG.hashSeed(seedText + '|' + bookId + '|' + band);
+      for (const refs of pools) {
+        for (let attempt = 0; refs.length && attempt < 4096 && accepted < BAND_COUNTS[band]; attempt++) {
+          const ref = refs[(offset + attempt) % refs.length], p = source(ref, seedText + '|' + bookId + '|' + band + '|' + refs.length + '|' + attempt);
+          const foundationStage = ref.foundationStageId && { id: ref.foundationStageId };
+          const q = foundationStage ? foundation(foundationStage, ref, p, false, attempt) :
+            stage.kind === 'foundation' ? foundation(stage, ref, p, false, attempt) : numberQuestion(ref, p, false);
+          if (!q) continue;
+          if (stage.maxNumber) {
+            const shown = (q.renderData.tex || '').match(/\d+/g) || [];
+            const answer = Array.isArray(q.answer) ? q.answer : [q.answer];
+            const numeric = shown.map(Number).concat(answer);
+            for (const field of ['whole','known','left','right','target']) {
+              const value = q.renderData[field];
+              if (typeof value === 'number') numeric.push(value);
+            }
+            if (numeric.some(value => value < 0 || value > stage.maxNumber)) continue;
+          }
+          const fp = fingerprint(q);
+          if (seen.has(fp)) continue;
+          seen.add(fp);
+          let label = clone(stage.label);
+          if (set.last && band === 'next') label = text(label.ko + ' · 다음 범위 없음: 같은 ' + unit.ko + ' 추가 확인', label.en + ' · no next range: additional checks in the same ' + unit.en, label.zh + ' · 无下一范围：在同一' + unit.zh + '继续确认');
+          items.push({ id: bookId + ':' + band + ':' + (accepted + 1), band, stageId: stage.id, stageLabel: clone(stage.label), domain: q.domain, label,
+            course: ref.course || stage.course, session: ref.session || stage.session, thread: ref.t, level: ref.lv, responseMode: q.responseMode,
+            renderData: q.renderData, prompt: q.prompt, answer: q.answer, fingerprint: fp });
+          accepted++;
+        }
+      }
+      if (accepted !== BAND_COUNTS[band]) fail('insufficient unique supported items for ' + stage.id + ' / ' + band + ' (' + accepted + '/' + BAND_COUNTS[band] + ')');
+    }
+    const topics = set.current.topics;
+    return { baseline: clone(set.baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
+      book: { series, course: n, label: clone(name), topics,
+        title: text(series === 'dunoro' ? name.ko + ' 과정 ' + n + ' 완료 기준' : name.ko + ' ' + n + unit.ko + ' 완료 기준', name.en + ' ' + unit.en + ' ' + n + ' completed', name.zh + ' 第' + n + unit.zh + '已完成'),
+        mix: series === 'dunoro' ? null : text('이전 권 6 · 완료 권 10 · 다음 권 4', 'Previous volume 6 · completed volume 10 · next volume 4', '前一册6 · 已完成册10 · 下一册4'),
+        notice: series === 'dunoro' ? text('완료한 과정의 진도를 참고해 앱 문항 20개로 이전·현재·다음을 확인해요. 교재와 같은 주제나 문제 형식일 필요는 없어요.',
+          'Twenty original app questions check earlier, current and next skills around the completed course. They do not need to match the book’s topics or question format.',
+          '参考已完成课程的进度，用20道应用题确认此前、当前和后续能力。题目不必与教材主题或题型相同。') :
+          text('완료한 권의 진도를 참고해 앱 문항 20개로 이전·현재·다음을 확인해요. 교재와 같은 주제나 문제 형식일 필요는 없어요.',
+            'Twenty original app questions check earlier, current and next skills around the completed volume. They do not need to match the book’s topics or question format.',
+            '参考已完成册次的进度，用20道应用题确认此前、当前和后续能力。题目不必与教材主题或题型相同。') },
+      boundaries: { previous: n === 1 && !bookData(series).beforeBook ? 'app-foundation' : null, next: set.last ? (series === 'dunoro' ? 'same-course' : 'same-volume') : null } };
+  }
+  // The public P contents names exact arithmetic topics, but gives no real
+  // item images. These original app questions keep P1–P4 within 30 with the
+  // named step, and P5–P8 on the named number-bond/ten-crossing topic.
+  function somaPCandidates(n) {
+    const out = [], put = (tex, answer, domain, thread, level) => out.push({ tex, answer, domain, thread, level });
+    if (n === 0) {
+      for (let a = 1; a <= 8; a++) put(a + ',\\square,' + (a + 2), a + 1, 'order', 'NL4', 1);
+    } else if (n <= 4) {
+      const step = [0, 5, 6, 10, 9][n];
+      for (let a = 1; a + step <= 30; a++) put(a + '+' + step + '=\\square', a + step, 'addition', 'AD3', 1);
+      for (let a = step + 1; a <= 30; a++) put(a + '-' + step + '=\\square', a - step, 'subtraction', 'SB3', 1);
+    } else if (n <= 6) {
+      const limit = n === 5 ? 9 : 10;
+      for (let a = 1; a < limit; a++) for (let b = 1; a + b <= limit; b++) {
+        if (n === 6 && a + b !== 10) continue;
+        put(a + '+' + b + '=\\square', a + b, 'joining', n === 5 ? 'NS2' : 'NS3', 2);
+        put((a + b) + '-' + a + '=\\square', b, 'splitting', n === 5 ? 'NS2' : 'NS3', 2);
+      }
+    } else if (n === 7) {
+      for (let a = 6; a <= 9; a++) for (let b = 2; b <= 9; b++)
+        if (a + b > 10) put(a + '+' + b + '=\\square', a + b, 'addition', 'AD2', 1);
+    } else if (n === 8) {
+      for (let a = 11; a <= 18; a++) for (let b = 2; b <= 9; b++)
+        if (a - b >= 2 && a - b <= 9) put(a + '-' + b + '=\\square', a - b, 'subtraction', 'SB2', 1);
+    }
+    return out;
+  }
+  function buildSomaP(course, seed) {
+    const n = Number(course), set = bookStages('soma-p', n), seedText = seed == null ? '0' : String(seed);
+    const items = [], seen = new Set(), order = { previous: n - 1, current: n, next: n === 8 ? 8 : n + 1 };
+    for (const band of Object.keys(BAND_COUNTS)) {
+      const volume = order[band], stage = set[band], pool = somaPCandidates(volume);
+      const rng = W.NM_RNG.mulberry32(W.NM_RNG.hashSeed(seedText + '|soma-p-' + n + '|' + band));
+      for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+      const domains = [...new Set(pool.map(x => x.domain))], queues = domains.map(domain => pool.filter(x => x.domain === domain));
+      const balanced = [];
+      while (queues.some(queue => queue.length)) queues.forEach(queue => { if (queue.length) balanced.push(queue.shift()); });
+      let accepted = 0;
+      for (const candidate of balanced) {
+        const q = { domain: candidate.domain, responseMode: 'number',
+          prompt: clone(NEUTRAL_BLANK), answer: candidate.answer,
+          renderData: { tex: candidate.tex, steps: [], answerType: 'number', answerCount: 1 } };
+        const fp = fingerprint(q);
+        if (seen.has(fp)) continue;
+        seen.add(fp);
+        const anchor = volume === 0 ? { course: 'C0', session: 2 } : bookRefs([candidate.thread + '@' + candidate.level])[0];
+        if (!anchor) fail('missing app practice anchor for Soma P ' + candidate.thread);
+        let label = clone(stage.label);
+        if (n === 8 && band === 'next') label = text(label.ko + ' · 다음 권 없음: 8권 추가 확인', label.en + ' · no next volume: more volume 8 checks', label.zh + ' · 无下一册：补充确认第8册');
+        items.push({ id: 'soma-p-' + n + ':' + band + ':' + (accepted + 1), band, stageId: stage.id, stageLabel: clone(stage.label),
+          domain: q.domain, label, course: anchor.course, session: anchor.session, thread: candidate.thread, level: candidate.level,
+          responseMode: q.responseMode, renderData: q.renderData, prompt: q.prompt, answer: q.answer, fingerprint: fp });
+        if (++accepted === BAND_COUNTS[band]) break;
+      }
+      if (accepted !== BAND_COUNTS[band]) fail('insufficient unique Soma P items for volume ' + volume + ' / ' + band);
+    }
+    const name = BOOKS['soma-p'].label;
+    return { baseline: clone(set.baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
+      book: { series: 'soma-p', course: n, label: clone(name), topics: set.current.topics,
+        title: text('소마셈 P ' + n + '권 완료 기준', 'SomaSem P volume ' + n + ' completed', 'SomaSem P 第' + n + '册已完成'),
+        mix: n === 1 ? text('앱 수 순서 6 · 완료 권 10 · 다음 권 4', 'App number order 6 · completed volume 10 · next volume 4', '应用数序6 · 已完成册10 · 下一册4') :
+          n === 8 ? text('이전 권 6 · 완료 권 10 · P8 추가 4', 'Previous volume 6 · completed volume 10 · more P8 4', '前一册6 · 已完成册10 · P8补充4') :
+          text('이전 권 6 · 완료 권 10 · 다음 권 4', 'Previous volume 6 · completed volume 10 · next volume 4', '前一册6 · 已完成册10 · 下一册4'),
+        notice: text('완료한 권의 진도를 참고해 앱 문항 20개로 이전·현재·다음을 확인해요. 교재와 같은 주제나 문제 형식일 필요는 없어요.',
+          'Twenty original app questions check earlier, current and next skills around the completed volume. They do not need to match the book’s topics or question format.',
+          '参考已完成册次的进度，用20道应用题确认此前、当前和后续能力。题目不必与教材主题或题型相同。') },
+      boundaries: { previous: n === 1 ? 'app-foundation' : null, next: n === 8 ? 'same-volume' : null } };
+  }
+  function buildBooks(sources, seed) {
+    if (!Array.isArray(sources) || sources.length < 2 || sources.length > 8) fail('mix needs 2–8 completed books');
+    const picked = [], keys = new Set(), seedText = seed == null ? '0' : String(seed);
+    sources.forEach(sourceBook => {
+      const series = sourceBook && sourceBook.series, course = sourceBook && Number(sourceBook.course);
+      const key = series + ':' + course;
+      if (!BOOKS[series] || !Number.isInteger(course) || course < 1 || course > BOOKS[series].courses || keys.has(key)) fail('invalid or repeated book source ' + key);
+      keys.add(key);
+      picked.push({ series, course, plan: buildBook(series, course, seedText + '|mix|' + key) });
+    });
+    const items = [], seen = new Set();
+    for (const band of Object.keys(BAND_COUNTS)) {
+      const pools = picked.map(x => x.plan.items.filter(item => item.band === band));
+      const indexes = picked.map(() => 0);
+      const offset = W.NM_RNG.hashSeed(seedText + '|mix|' + band) % picked.length;
+      let accepted = 0;
+      while (accepted < BAND_COUNTS[band]) {
+        let added = false;
+        for (let j = 0; j < picked.length && accepted < BAND_COUNTS[band]; j++) {
+          const at = (offset + j) % picked.length, pool = pools[at];
+          while (indexes[at] < pool.length && seen.has(pool[indexes[at]].fingerprint)) indexes[at]++;
+          if (indexes[at] >= pool.length) continue;
+          const item = clone(pool[indexes[at]++]), sourceBook = picked[at];
+          seen.add(item.fingerprint);
+          item.id = 'mixed:' + band + ':' + (accepted + 1);
+          item.sourceBook = { series: sourceBook.series, course: sourceBook.course };
+          items.push(item);
+          accepted++;
+          added = true;
+        }
+        if (!added) fail('insufficient unique mixed items in ' + band);
+      }
+    }
+    const all = allStages(), order = new Map(all.map((stage, i) => [stage.id, i]));
+    const baseline = picked.map(x => x.plan.baseline).sort((a, b) => order.get(a.id) - order.get(b.id))[0];
+    return { baseline: clone(baseline), counts: clone(BAND_COUNTS), items, seed: seedText,
+      book: { series: 'mixed', sources: picked.map(x => ({ series: x.series, course: x.course })),
+        title: text('완료한 교재 ' + picked.length + '권 함께 확인', 'Checking ' + picked.length + ' completed books together', '合并确认' + picked.length + '本已完成教材'),
+        topics: text('교재별 학습 진도', 'Learning progress across books', '各本教材的学习进度'),
+        mix: text('여러 교재의 이전 6 · 완료 10 · 다음 4', 'Across books: previous 6 · completed 10 · next 4', '跨教材：此前6 · 已完成10 · 后续4'),
+        notice: text('서로 다른 주제의 교재도 함께 확인할 수 있어요. 완료한 교재별 진도를 참고해 앱 문항을 번갈아 뽑았어요. 이전 6·다음 4문항에는 모든 교재가 들어가지 않을 수 있어요.',
+          'Books with different topics can be checked together. Original app questions alternate across the completed books. The 6 earlier and 4 next items may not include every book.',
+          '不同主题的教材也可一起测评。依据各本已完成教材的进度轮流出应用题。此前6题和后续4题可能无法覆盖每本书。') },
+      boundaries: { previous: 'mixed-topics', next: 'mixed-topics' } };
+  }
   function normalize(value, array) {
     if (Array.isArray(value)) return array && value.length && value.every(x => normalize(x, false) !== null) ? value.map(x => normalize(x, false)) : null;
     if (typeof value === 'number') return Number.isFinite(value) && !array ? value : null;
@@ -484,7 +761,7 @@
     const baseline = plan.baseline, confirmed = profile.filter(x => !x.skipped);
     const addTopic = (rec, stage, items) => {
       const practiceSessions = [], refs = items ? items.map(item => ({ course: item.course, session: item.session, t: item.thread, lv: item.level })) :
-        stage.refs.map(ref => ({ course: stage.course, session: ref.session || stage.session, t: ref.t, lv: ref.lv }));
+        stage.refs.map(ref => ({ course: ref.course || stage.course, session: ref.session || stage.session, t: ref.t, lv: ref.lv }));
       refs.forEach(ref => { if (!practiceSessions.some(r => canonical(r) === canonical(ref))) practiceSessions.push(ref); });
       return Object.assign(rec, { stageId: stage.id, label: clone(stage.label), practiceSessions });
     };
@@ -494,6 +771,11 @@
     const candidates = profile.filter(x => x.band !== 'next' && !x.skipped && x.ok === false);
     if (!candidates.length) return addTopic({ course: baseline.course, session: baseline.kind === 'foundation' ? 1 : baseline.session,
       threads: baseline.refs.map(r => ({ t: r.t, lv: r.lv })), reason: '이전·현재 확인에서 다른 보강 주제가 필요한 오답 근거가 없어 선택한 주제를 유지해요. 다음 4문항만으로 진도를 확정하지 않아요. 유아 회차 번호는 능력 순서가 아닙니다.' }, baseline);
+    if (baseline.kind === 'foundation' && plan.book) {
+      const item = plan.items.find(x => x.id === candidates[0].id);
+      return addTopic({ course: item.course, session: item.session, threads: [{ t: item.thread, lv: item.level }],
+        reason: '완료 교재 진단에서 확인한 이전·완료 범위의 연산 주제와 가까운 앱 연습 위치예요. 교재 풀이 방식의 일치나 숙달을 뜻하지 않아요.' }, stageById(item.stageId), [item]);
+    }
     if (baseline.kind === 'foundation') {
       // C0 sessions spiral through topics; session 17 is not a higher ability
       // than session 3. Choose the earliest tested foundation TOPIC, and record
@@ -515,7 +797,7 @@
       if (!threads.some(r => r.t === x.item.thread && r.lv === x.item.level)) threads.push({ t: x.item.thread, lv: x.item.level });
     });
     return addTopic({ course: first.course, session: first.session, threads, reason: '이전·현재 문항에서 확인한 연습 필요 영역 중 실제로 가장 이른 학습 회차를 권해요. 미검사 영역의 숙달이나 입학 합격을 뜻하지 않아요.' },
-      allStages().find(stage => stage.id === first.stageId), misses.filter(x => x.item.course === first.course && x.item.session === first.session).map(x => x.item));
+      stageById(first.stageId), misses.filter(x => x.item.course === first.course && x.item.session === first.session).map(x => x.item));
   }
   function summarize(plan, responses) {
     dependencies();
@@ -541,5 +823,7 @@
     return { correct, asked: 20, bands, domains, profile, recommendation: recommendation(plan, profile) };
   }
   W.NM_PLACEMENT_PLAN = { stages, build, summarize };
+  W.NM_PLACEMENT_PLAN.buildBook = buildBook;
+  W.NM_PLACEMENT_PLAN.buildBooks = buildBooks;
   if (typeof module !== 'undefined' && module.exports) module.exports = W.NM_PLACEMENT_PLAN;
 })();
