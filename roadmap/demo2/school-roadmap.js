@@ -215,25 +215,22 @@ function demoPrefix(key, stopText){
   }
   return out;
 }
-/* 학원 진도 줄(키를 켰을 때만). L0 = 올해 프리미어1·필즈 S1 흐름 기준, 다른 레벨은 같은 간격으로 민다.
-   근거: 데모 소마 이슈 줄(소마 선발 5세 11월·RAY B 완료 6세 8월·RISE 6세 9월·프리미어 선발 7세 4~5월),
-   2023 황소 로드맵의 프리미어 초급·중급·고급 기간, 2026 유7 S1반 운영 로드맵의 더클래식 1~4과정 기간,
-   원장님 메모(필즈 6세 12월 관찰평가, 1과정부터 기존 진도). */
+/* 학원 진도 줄(키를 켰을 때만): 데모(index.html)의 소마·필즈 진도 이슈를 그대로 쓴다.
+   레벨마다 옮기지 않고 표 맨 위에 한 번만 보인다. 필즈 입학은 6세 12월 관찰평가(원장님 메모). */
 const ACADEMY={
-  soma:{label:'소마 진도',color:'#fef3c7',blocks:[['소마 RAY',10,19],['프리미어 RISE',20,27],['프리미어 선발',28,28],['프리미어 초급 8권 · 주2회',29,40],['프리미어 중급 8권',41,52],['프리미어 고급 · 대수5권/기하5권',53,62]]},
-  fields:{label:'필즈 진도',color:'#ffedd5',blocks:[['필즈 관찰평가',23,23],['더클래식 1과정',24,36],['더클래식 2과정',37,51],['더클래식 3과정 (기하·대수)',52,59],['더클래식 4과정',60,68]]}
+  soma:{label:'소마 진도',color:'#e8f2ff',points:[['소마 선발',10],['RAY B 완료',19],['프리미어<br>RISE 시작',20],['P1 선발 희망 시<br>소마 입학',24],['프리미어 선발<br>(4월)',27]]},
+  fields:{label:'필즈 진도',color:'#fff1e6',points:[['필즈<br>관찰평가',23],['1차 승급',25],['2차 승급',27],['3차 승급 ·<br>필즈 S 선발',29]]}
 };
 const academyOn={soma:false,fields:false};
 function levelRows(shift){
   const sh=(arr,d)=>arr.map(([t,s,e])=>[t,s+d,e+d]);
-  const extra=['soma','fields'].filter(k=>academyOn[k]).map(k=>({key:k,label:ACADEMY[k].label,blocks:sh(ACADEMY[k].blocks,shift)}));
-  return extra.concat([
+  return [
     {key:'school',label:'교과',blocks:sh(demoPrefix('school','3-1 디딤돌'),shift).concat(sh(P2.school,OFF.school+shift))},
     {key:'school2',label:'교과 심화',blocks:sh(P2.school2,OFF.school+shift)},
     {key:'comp',label:'사고력·경시',blocks:sh(demoPrefix('thinking1','1031 입문'),shift).concat(sh(P2.comp,OFF.comp+shift))},
     {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,OFF.comp+shift)},
     {key:'calc',label:'연산',blocks:sh(demoPrefix('calc','기적의 계산법 5권'),shift).concat(sh(P2.calc,OFF.calc+shift))}
-  ]);
+  ];
 }
 function axisYears(){
   const names=['5세','6세','7세','초1','초2','초3'], out=[];
@@ -247,6 +244,13 @@ function renderLevels(nowM, bestId, only){
   h+='</colgroup><thead><tr><th colspan="2" rowspan="2" class="sr-corner"></th>'+years.map(y=>`<th colspan="${y.n}" class="sr-year">${y.name}</th>`).join('')+'</tr><tr>';
   for(let m=AX0;m<=AX1;m++) h+=`<th class="sr-mon${m===nowM?' lv-now':''}">${m%12+1}</th>`;
   h+='</tr></thead><tbody>';
+  ['soma','fields'].filter(k=>academyOn[k]).forEach(k=>{
+    const A=ACADEMY[k];
+    h+=`<tr class="lv-academy"><th class="sr-group" colspan="2">${A.label}</th>`;
+    for(let m=AX0;m<=AX1;m++){ const p=A.points.find(x=>x[1]===m); h+=p?`<td class="sr-cell" style="background:${A.color}">${p[0]}</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`; }
+    h+='</tr>';
+  });
+  if(academyOn.soma||academyOn.fields) h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
   const levels=(window.LEVELS||LEVELS).filter(L=>!only||only.includes(L.id));
   levels.forEach((L,li)=>{
     const rows=levelRows(L_SHIFT[L.id]||0), best=L.id===bestId;
@@ -260,7 +264,7 @@ function renderLevels(nowM, bestId, only){
         if(s<m) continue; // 겹치면 앞 칸 우선
         for(;m<s;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
         const swap=false;
-        h+=`<td class="sr-cell${swap?' sr-swap':''}" colspan="${e-s+1}" style="background:${ROW_COLORS[r.key]||ACADEMY[r.key].color}">${t}</td>`;
+        h+=`<td class="sr-cell${swap?' sr-swap':''}" colspan="${e-s+1}" style="background:${ROW_COLORS[r.key]}">${t}</td>`;
         m=e+1;
       }
       for(;m<=AX1;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;

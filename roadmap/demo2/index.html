@@ -202,6 +202,7 @@ th,td{border:1px solid var(--line);padding:7px 5px;height:45px;vertical-align:mi
 .academy-keys{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 10px}
 .academy-keys label{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 14px;border:1.5px solid #cbd5e1;border-radius:999px;font-size:14px;font-weight:800;color:#334155;cursor:pointer;background:#fff}
 .academy-keys input{width:18px;height:18px}
+.academy-note{align-self:center;font-size:12px;color:#64748b}
 .sr-notes ul{margin:10px 0 0;padding-left:18px;font-size:13px;color:#334155;line-height:1.7}
 .delta-legend{margin-top:12px;font-size:12px;color:#64748b;line-height:1.55}@media(max-width:700px){.level-delta{grid-template-columns:1fr}}
 #studentResult{display:none;margin-top:24px}.student-card{border:2px solid #1e3a8a;border-radius:16px;padding:22px;background:#fff;box-shadow:0 15px 35px rgba(30,58,138,.08)}.student-card h2{margin:0;color:#1e3a8a;font-size:23px;letter-spacing:-.05em}.student-card .sub{margin:8px 0 15px;font-size:13px;line-height:1.6;color:#64748b}.student-table{width:100%;border-collapse:collapse;font-size:12px}.student-table th,.student-table td{border:1px solid #dbe3ee;padding:10px;text-align:left;line-height:1.55}.student-table th{width:115px;background:#f8fafc;color:#334155}.comment{margin-top:15px;padding:16px;border-left:5px solid #7c3aed;border-radius:10px;background:#f5f3ff;line-height:1.75;font-size:13px;color:#334155}.comment b{color:#5b21b6}
@@ -549,6 +550,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="academy-keys" id="academyKeys">
     <label><input type="checkbox" id="keySoma"> 소마 진도 보기</label>
     <label><input type="checkbox" id="keyFields"> 필즈 진도 보기</label>
+  <span class="academy-note">입학·선발 시기 표시이며, 시작 진도는 반 레벨에 따라 다릅니다.</span>
   </div>
   <div class="purple-top-guide"><span>보라색 선은 각 과정의 현재 기준 진도입니다.</span></div>
   <div class="mobile-rotate-hint">📱 모바일에서는 로드맵을 가로로 보시면 더 편합니다. (좌우로 넘겨 보세요)</div>
@@ -620,6 +622,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
    <li>참고: 이렇게 옮기면 L4의 초등 시점이 ‘소마 챌린지 수준·황소 대비’ 표와 1~2개월 안으로 맞습니다.</li>
    <li>연산 기준(수의 마법): 기적의 계산법 1·2권 ≈ 과정 1~2, 3·4권 ≈ 과정 3~7, 5·6권 ≈ 과정 8~12, 7·8권 ≈ 과정 13~18, 9권 이후 ≈ 과정 19~. 상위권은 월 1과정, 표준은 1.5~2개월에 1과정입니다.</li>
    <li>황소 대비 칸도 같이 옮겨지므로 실제 시험 달과는 다를 수 있습니다.</li>
+   <li>소마·필즈 진도 키를 켜면 나오는 줄은 입학·선발·승급 시기만 표시합니다. 입학 시기가 시작 진도는 아니며, 시작 진도는 들어간 반의 레벨에 따라 다릅니다.</li>
   </ul></div>
  </div>
 </section>
@@ -768,9 +771,9 @@ function head(){
     {i:at(7,1),t:'P1 선발 희망 시<br>소마 입학'},
     {i:at(7,4),t:'프리미어 선발<br>(4월)'}
   ].filter(x=>x.i>=0&&x.i<N);
-  // 필즈 진도 이슈 (원본 복원)
+  // 필즈 진도 이슈 (원본 복원, 입학은 6세 12월 관찰평가 — 원장님 2026-10-18)
   const fields=[
-    {i:at(7,1),t:'필즈 입문 ·<br>입학 테스트'},
+    {i:at(6,12),t:'필즈<br>관찰평가'},
     {i:at(7,2),t:'1차 승급'},
     {i:at(7,4),t:'2차 승급'},
     {i:at(7,6),t:'3차 승급 ·<br>필즈 S 선발'}
