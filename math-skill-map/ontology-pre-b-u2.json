@@ -1,0 +1,221 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v60",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre B",
+    "unit": 2,
+    "title": "쌓기나무 시점·숨은 수·조각 구성",
+    "printedPages": [
+      21,
+      27
+    ],
+    "sourceActivityBlocks": 11,
+    "visuallyReviewedPages": 7,
+    "answerValidated": false
+  },
+  "aggregate": {
+    "ontologyNodes": 1469,
+    "ontologyRelations": 2536,
+    "skillActionCandidates": 317,
+    "activitiesWithSkillCandidateEvidence": 629,
+    "activitiesInReviewQueue": 224,
+    "conditionalDifficultyCandidates": 638,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 11,
+    "preexistingEvidenceRelationsReused": 6,
+    "newlyLinkedActivities": 5,
+    "activitySkillRelations": 11,
+    "newActionCandidates": 2,
+    "reusedActionCandidates": 3,
+    "conditionalDifficultyBandsReused": 11,
+    "newDifficultyCandidates": 0,
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumLevelCandidates": 11,
+    "unresolvedMinimumCurriculumCandidates": 11,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 0,
+    "directSomaCrossReferences": 0,
+    "SomaCrossReferencesAwaitingReview": 11,
+    "catalogRelatedButDistinctCandidates": 3
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "CUB01",
+      "n": 35,
+      "area": "spatial",
+      "title": "시점 변화 속 같은 쌓기나무 구조 대응하기",
+      "difficulty": "2–3",
+      "count": 4,
+      "desc": "위·앞·옆 등 보는 방향이 바뀌어도 높이와 상대 위치가 보존되는 같은 입체 구조를 대응한다.",
+      "links": [
+        "CUB06 구조 제약 추론과 구별되는 후보"
+      ],
+      "pages": "21–25쪽",
+      "curriculum": "초등 5–6학년군 내용 맥락 후보"
+    },
+    {
+      "id": "CUB03",
+      "n": 36,
+      "area": "spatial",
+      "title": "보이는 수와 전체 수에서 가려진 쌓기나무 추론하기",
+      "difficulty": "3",
+      "count": 7,
+      "desc": "보이는 큐브와 전체 조건을 구분해 가려진 단위 쌓기나무 수를 추론한다.",
+      "links": [
+        "혼합 크기 블록 수 세기와 구별되는 후보"
+      ],
+      "pages": "22–24쪽",
+      "curriculum": "초등 5–6학년군 내용 맥락 후보"
+    },
+    {
+      "id": "CUB08",
+      "n": 37,
+      "area": "spatial",
+      "title": "한 개 이동 조건에서 가능한 쌓기나무 구조 찾기",
+      "difficulty": "4",
+      "count": 1,
+      "desc": "정확히 한 큐브를 옮기는 조건에서 가능한 구조를 찾고 전체 수 보존을 확인한다.",
+      "links": [
+        "기존 행동 후보 재사용"
+      ],
+      "pages": "26쪽",
+      "curriculum": "초등 1–2학년군 내용 맥락 후보"
+    },
+    {
+      "id": "CUBE-PIECE-ASSEMBLY-PREB2-01",
+      "n": 38,
+      "area": "spatial",
+      "title": "주어진 쌓기나무 조각으로 목표 입체와 가능한 조합 구성하기",
+      "difficulty": "4",
+      "count": 3,
+      "desc": "고정된 쌓기나무 조각을 회전·배치하고 부분 구조의 맞물림을 확인해 목표 입체를 만들거나 가능한 조합을 빠짐없이 찾는다.",
+      "links": [
+        "CUB06 구조 제약 추론과 구별되는 후보"
+      ],
+      "pages": "23, 25, 27쪽",
+      "curriculum": "초등 1–2학년군 내용 맥락 후보"
+    },
+    {
+      "id": "CUBE-MIXED-UNIT-BLOCK-COUNT-PREB2-01",
+      "n": 39,
+      "area": "spatial",
+      "title": "크기가 다른 직육면체 블록으로 목표 입체 구성 수 세기",
+      "difficulty": "3",
+      "count": 1,
+      "desc": "단위 정육면체 대신 길쭉한 직육면체 블록을 구성 단위로 삼아 목표 입체에 필요한 블록 수를 센다.",
+      "links": [
+        "CUB03 숨은 단위 큐브 추론과 구별되는 후보"
+      ],
+      "pages": "26쪽",
+      "curriculum": "초등 1–2학년군 내용 맥락 후보"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only-reused-from-v59",
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBand": 2
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 4
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 4
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 4
+      },
+      {
+        "conditionalDifficultyBand": 4
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "content-context-candidates-only",
+    "candidateActivities": 11,
+    "unresolvedActivities": 11,
+    "confirmedAssignments": 0,
+    "contexts": [
+      "초등 1–2학년군 쌓기나무 모양 구성 맥락",
+      "초등 5–6학년군 여러 시점 표현에서 입체 구조 추론 맥락"
+    ],
+    "note": "최소 교과수준은 문항별·교사 검토 전 후보이며 난이도와 별도 관리한다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "FAMILY-STACKING-CUBES",
+        "label": "쌓기나무 배열·투영·구성 계통 후보"
+      }
+    ],
+    "relations": [
+      {
+        "from": "CUBE-PIECE-ASSEMBLY-PREB2-01",
+        "to": "CUB06",
+        "type": "related-but-distinct",
+        "basis": "B2 places given pieces to form or enumerate a target; CUB06 reconstructs a solid from view, fragment, or count constraints.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "CUBE-MIXED-UNIT-BLOCK-COUNT-PREB2-01",
+        "to": "CUB03",
+        "type": "related-but-distinct",
+        "basis": "B2 counts composite cuboid construction blocks; CUB03 infers hidden unit cubes from visible/total constraints.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "CUB01",
+        "to": "CUB06",
+        "type": "related-but-distinct",
+        "basis": "Matching one object across viewpoints differs from inferring a solid under additional projection or count constraints.",
+        "status": "hypothesis-needs-teacher-review"
+      }
+    ]
+  },
+  "crossReferences": {
+    "directSomaRows": 0,
+    "SomaReviewStatus": "not-confirmed-in-this-pass",
+    "relatedCatalogCandidates": [
+      {
+        "code": "02-004",
+        "relation": "related-but-distinct"
+      },
+      {
+        "code": "02-005",
+        "relation": "related-but-distinct"
+      },
+      {
+        "code": "02-001",
+        "relation": "related-but-distinct"
+      }
+    ],
+    "teacherApprovedEquivalences": 0
+  },
+  "privacy": "공개 파일에는 활동 식별자, OCR 원문, 정답, 출처 이미지 해시, 로컬 경로를 넣지 않았다. 유형·난이도·최소 교과수준·계통 관계는 승인 전 후보다."
+}
