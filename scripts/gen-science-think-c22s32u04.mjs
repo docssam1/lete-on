@@ -96,7 +96,7 @@ const chapter = {
   title: '반짝이 가루가 알려 준 손 씻기 · 감염병과 건강한 생활', theme: '#b07a00',
   link: { course: '3학년 2학기', unit: 'Ⅳ. 감염병과 건강한 생활', topics: ['감염병과 병원체', '옮겨 가는 길(접촉·비말·공기·물과 음식)', '예방 수칙과 실천'] },
   skills: ['예상', '변인 통제', '모형으로 설명하기', '자료 해석', '결론 도출'],
-  wonderLate: true,
+  wonderLate: true, thinkWorkbook: true, workbookRoute: 'workbook',
   labTitle: '손 씻기 규칙을 바꾸어 반짝이가 옮겨 가는 정도 비교하기',
   selfLink: '모형 결과를 생활 속 손 씻기·기침 예절과 이어 설명했나요?',
   summary: ['병원체가 몸에 들어와 생기는 병을 <b>감염병</b>이라고 해요.', '감염병은 <b>손(접촉)·침방울(비말)·공기·물과 음식</b> 등 여러 길로 옮겨 가요.',

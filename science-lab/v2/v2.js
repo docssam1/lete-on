@@ -573,10 +573,10 @@ async function pageStart(u, L) {
         ${card(`#/${u}/daily`, '📝', 'Daily Test · 채점과 첨삭', '확인 문제를 한 문항씩 풀고 한꺼번에 채점해요. 틀린 문제는 독쌤이 먼저 되물어요.', true)}
         ${sets.length ? card(`#/${u}/exam/${sets[0]}`, '🗂️', esc(BANK[u]?.label ? bankLabel(BANK[u]) : `단원평가 · 세트${sets.join('·')}`), BANK[u]?.label ? `원문 ${src.length}문항을 묶음별로 풀고 채점해요. 틀리면 비슷한 문제로 다시 풀어요.` : `시험지 원문 ${src.length}문항을 세트별로 풀고 채점해요. 틀리면 비슷한 문제로 다시 풀어요.`, true) : ''}
         ${card(`#/${u}/lab-class/teach/1`, '🖥️', '가르치기', esc(ch.startDescriptions?.[2] || '전자칠판 수업 화면. 영상·3D 실험·문제, 답은 선생님이 차례로 열어요.'))}
-        ${card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
+        ${ch.thinkWorkbook ? card(`#/${u}/workbook/student`, '📗', '학생용 교재', '문제집형 A4 · 개념 정리·유형 연습·자료 해석·단원평가') : card(`#/${u}/lab-book/student`, '📗', '학생용 교재', '웹에서 보기 · A4로 인쇄하기')}
         ${L.explore?.records ? card(`#/${u}/records`, '🗂️', '탐구 기록장(선택)', '조사·실천을 따로 기록할 때 써요. 예전에 쓴 기록도 그대로 있어요.') : ''}
-        ${card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
-        ${ch.workbookRoute ? card(`#/${u}/${ch.workbookRoute}/student`, '📄', '교재 A4 인쇄', '학생용·교사용·해설·빠른 정답표') : ''}
+        ${ch.thinkWorkbook ? card(`#/${u}/workbook/teacher`, '📕', '교사용 교재', '문항 아래 정답 · 정답·해설 · 빠른 정답표') + card(`#/${u}/lab-book/student`, '📖', '수업 교재(웹)', '수업 화면과 같은 차례 · 3D 실험실이 쪽 옆에 열려요') : card(`#/${u}/lab-book/teacher`, '📕', '교사용 교재', '정답·지도 팁 포함 · A4로 인쇄하기')}
+        ${ch.workbookRoute && !ch.thinkWorkbook ? card(`#/${u}/${ch.workbookRoute}/student`, '📄', '교재 A4 인쇄', '학생용·교사용·해설·빠른 정답표') : ''}
         ${ch.bankPrintLabel ? [['student',ch.bankPrintLabel],['teacher','전체 문항 교사 해설'],['answers','전체 정답·해설만'],['quick','전체 빠른 정답표']].map(([mode,title])=>card(`#/${u}/print/${mode}`, '📄',esc(title),esc(ch.bankPrintDescription||'원문·짝·교재 연계 문항 · A4 인쇄'))).join('') : ''}
       </div>
       <p class="start-more"><a href="#/${u}/1">5단계 탐구 화면으로 보기</a> · <a href="#/${u}/daily/teacher">Daily Test 정답표</a> ·${sets.length ? ` <a href="#/${u}/exam/${sets[0]}/teacher">${esc(bankLabel(BANK[u]))} 정답표</a> ·` : ''} <a href="#/${u}/check">선생님 확인${need ? ` <b class="start-badge">${need}</b>` : ''}</a></p></main>`;

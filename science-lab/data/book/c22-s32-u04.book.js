@@ -36,6 +36,8 @@ export const chapter = {
     "결론 도출"
   ],
   "wonderLate": true,
+  "thinkWorkbook": true,
+  "workbookRoute": "workbook",
   "labTitle": "손 씻기 규칙을 바꾸어 반짝이가 옮겨 가는 정도 비교하기",
   "selfLink": "모형 결과를 생활 속 손 씻기·기침 예절과 이어 설명했나요?",
   "summary": [

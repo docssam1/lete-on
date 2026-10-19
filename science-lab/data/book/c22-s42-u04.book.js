@@ -35,6 +35,8 @@ export const chapter = {
     "결론 도출"
   ],
   "wonderLate": true,
+  "thinkWorkbook": true,
+  "workbookRoute": "workbook",
   "labTitle": "물높이와 방파제를 바꾸어 물에 닿는 집 세기",
   "selfLink": "모형 결과를 실제 바닷가의 땅 높이와 이어 설명했나요?",
   "summary": [

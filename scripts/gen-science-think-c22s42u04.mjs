@@ -100,7 +100,7 @@ const chapter = {
   title: '물이 차오르는 해안 마을 · 기후변화와 우리 생활', theme: '#2456c4',
   link: { course: '4학년 2학기', unit: 'Ⅳ. 기후변화와 우리 생활', topics: ['날씨·기후와 평년 비교', '해수면 상승 피해 모형실험', '기후변화 대응'] },
   skills: ['자료 해석', '예상', '변인 통제', '모형으로 설명하기', '결론 도출'],
-  wonderLate: true,
+  wonderLate: true, thinkWorkbook: true, workbookRoute: 'workbook',
   labTitle: '물높이와 방파제를 바꾸어 물에 닿는 집 세기',
   selfLink: '모형 결과를 실제 바닷가의 땅 높이와 이어 설명했나요?',
   summary: ['하루의 상태는 <b>날씨</b>, 오랜 기간의 평균적인 날씨는 <b>기후</b>예요. 기후는 같은 기준의 <b>평년</b>값과 비교해요.',

@@ -6,7 +6,10 @@ export async function withThink(u, mod) {
   if (!t) return mod;
   const base = mod.misc || {}, add = t.misc || {}, misc = {};
   for (const k of new Set([...Object.keys(base), ...Object.keys(add)])) misc[k] = plain(base[k]) || plain(add[k]) ? { ...(base[k] || {}), ...(add[k] || {}) } : base[k];
-  return { ...mod, items: [...(mod.items || []), ...(t.items || [])], misc };
+  // 편집 교재(문제집형 A4)가 있으면 #/<u>/workbook 으로 연다 — data/book/<u>.workbook.js
+  const [wb, book] = await Promise.all([import(`../data/book/${u}.workbook.js`).catch(() => null), import(`../data/book/${u}.book.js`).catch(() => null)]);
+  const paper = wb ? (await import('./think-workbook-paper.js')).makeWorkbookPaper(wb.workbook, book?.art) : {};
+  return { ...mod, items: [...(mod.items || []), ...(t.items || [])], misc, ...paper };
 }
 // 판정표 = 문제은행 판정표 + 사고력 수업 판정표(같은 키면 수업 쪽)
 export const loadJudge = (u) => Promise.all([

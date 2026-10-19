@@ -1,49 +1,49 @@
 /* 선택 적용: 메모/활동 제목은 손글씨, 본문·문항·수치는 기존 정자체를 유지한다. */
 @font-face{font-family:Gaegu;src:url('../assets/fonts/gaegu-700.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]){
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]){
  --ed-hand:Gaegu,Pretendard,sans-serif;
  print-color-adjust:exact;-webkit-print-color-adjust:exact;
 }
 /* .ed-full-height는 지면마다 내용의 고유 높이를 보존하고 남은 높이만 나눈다. */
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]).ed-full-height .ed-layout{align-items:stretch}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]).ed-full-height .ed-main{display:flex;flex-direction:column;height:100%;min-height:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) :is(.ed-note h3,.ed-field h3){font-family:var(--ed-hand);font-size:13pt;font-weight:700;line-height:1.3}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-main>:is(.ed-kicker,h2,.ed-lead){flex:none}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-flow{display:flex;flex-direction:column;justify-content:space-between;gap:3mm;flex:1;min-height:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-block{display:flex;flex-direction:column;flex:none;min-height:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) :is(.ed-block-questions,.ed-block-field){flex:1 0 auto}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-block>:first-child{margin-top:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-block>:last-child{margin-bottom:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-questions{display:flex;flex-direction:column;gap:3mm;flex:1}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-question{display:flex;flex-direction:column;flex:1 0 auto;margin-bottom:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-question>*{flex-shrink:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-question::after{content:"";display:block;flex:1;min-height:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(8mm - .3mm),#d7dee9 calc(8mm - .3mm),#d7dee9 8mm)}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-field{display:flex;flex-direction:column;flex:1;margin:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-field>:is(h3,.ed-hint){flex-shrink:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-field>.ed-lines{flex:1;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(8mm - .3mm),#aebdd2 calc(8mm - .3mm),#aebdd2 8mm)}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-field>.ed-lines i{visibility:hidden;height:8mm}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-rail{display:flex;flex-direction:column;justify-content:space-between;gap:5mm}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-note{margin:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-note:has(.ed-lines){display:flex;flex-direction:column;flex:1}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-note .ed-lines{flex:1;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(8mm - .3mm),#c4d0e2 calc(8mm - .3mm),#c4d0e2 8mm)}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-note .ed-lines i{visibility:hidden;height:8mm}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]).ed-full-height .ed-layout{align-items:stretch}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]).ed-full-height .ed-main{display:flex;flex-direction:column;height:100%;min-height:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) :is(.ed-note h3,.ed-field h3){font-family:var(--ed-hand);font-size:13pt;font-weight:700;line-height:1.3}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-main>:is(.ed-kicker,h2,.ed-lead){flex:none}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-flow{display:flex;flex-direction:column;justify-content:space-between;gap:3mm;flex:1;min-height:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-block{display:flex;flex-direction:column;flex:none;min-height:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) :is(.ed-block-questions,.ed-block-field){flex:1 0 auto}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-block>:first-child{margin-top:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-block>:last-child{margin-bottom:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-questions{display:flex;flex-direction:column;gap:3mm;flex:1}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-question{display:flex;flex-direction:column;flex:1 0 auto;margin-bottom:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-question>*{flex-shrink:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-question::after{content:"";display:block;flex:1;min-height:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(8mm - .3mm),#d7dee9 calc(8mm - .3mm),#d7dee9 8mm)}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-field{display:flex;flex-direction:column;flex:1;margin:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-field>:is(h3,.ed-hint){flex-shrink:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-field>.ed-lines{flex:1;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(8mm - .3mm),#aebdd2 calc(8mm - .3mm),#aebdd2 8mm)}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-field>.ed-lines i{visibility:hidden;height:8mm}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-rail{display:flex;flex-direction:column;justify-content:space-between;gap:5mm}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-note{margin:0}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-note:has(.ed-lines){display:flex;flex-direction:column;flex:1}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-note .ed-lines{flex:1;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(8mm - .3mm),#c4d0e2 calc(8mm - .3mm),#c4d0e2 8mm)}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-note .ed-lines i{visibility:hidden;height:8mm}
 @media(min-width:701px),print{
  .bk-editorial[data-unit="c22-s51-u04"] .ed-practice .ed-questions{display:grid;grid-template-columns:1fr 1fr;column-count:auto;gap:4mm}
  .bk-editorial[data-unit="c22-s51-u04"] .ed-practice .ed-question{display:flex}
 }
 @media screen and (max-width:700px){
- .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) :is(.ed-note h3,.ed-field h3){font-size:23px}
- .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]).ed-full-height .ed-main{height:auto}
- .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-flow{gap:22px}
- .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-question{flex:none}
- .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-question::after{display:none}
- .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-rail{gap:24px}
+ .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) :is(.ed-note h3,.ed-field h3){font-size:23px}
+ .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]).ed-full-height .ed-main{height:auto}
+ .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-flow{gap:22px}
+ .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-question{flex:none}
+ .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-question::after{display:none}
+ .bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-rail{gap:24px}
 }
 /* 문단과 블록의 간격을 중복해서 더하지 않는다. */
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-flow{gap:2mm}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-questions{gap:2mm}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-field>h3{margin-top:0;margin-bottom:1.5mm}
-@media screen and (max-width:700px){.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-flow{gap:22px}}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-flow{gap:2mm}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-questions{gap:2mm}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-field>h3{margin-top:0;margin-bottom:1.5mm}
+@media screen and (max-width:700px){.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-flow{gap:22px}}
 /* 내용이 긴 쪽은 필기 줄/본문을 줄이지 않고 블록 사이 중복 간격만 조정한다. */
 .bk-editorial[data-unit="c22-s51-u02"] .ed-questions:has([data-question="light-book-29"]),
 .bk-editorial[data-unit="c22-s51-u02"] .ed-questions:has([data-question="light-book-62"]){gap:1mm}
@@ -51,7 +51,22 @@
 .bk-editorial[data-unit="c22-s51-u03"] .ed-flow:has(>.ed-block-field:nth-child(6)),
 .bk-editorial[data-unit="c22-s52-u01"] .ed-report-process .ed-flow{gap:1mm}
 .bk-editorial[data-unit="c22-s52-u01"] .ed-questions:has([data-question="mixture-book-85"]) .ed-question{padding-bottom:0}
-.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"]) .ed-field>.ed-drawing{flex:1 0 auto}
+.bk-editorial:is([data-unit="c22-s51-u02"],[data-unit="c22-s51-u03"],[data-unit="c22-s51-u04"],[data-unit="c22-s52-u01"],[data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-field>.ed-drawing{flex:1 0 auto}
 @media screen and (max-width:700px){
  .bk-editorial[data-unit="c22-s51-u03"] .ed-inquiry .ed-flow,.bk-editorial[data-unit="c22-s51-u03"] .ed-flow:has(>.ed-block-field:nth-child(6)),.bk-editorial[data-unit="c22-s52-u01"] .ed-report-process .ed-flow{gap:22px}
 }
+
+/* 교과 연결 사고력 편집 교재(c22-s42-u04 기후변화 · c22-s32-u04 감염병) — v2/think-workbook-paper.js */
+.think-workbook-tools{padding:16px;display:flex;flex-wrap:wrap;gap:10px;max-width:1100px;margin:auto;align-items:center}
+.think-workbook-tools p{width:100%;margin:0;color:#4c596c}
+.think-workbook-tools .btn.on{background:#182230;color:#fff;border-color:#182230}
+@media print{.think-workbook-tools{display:none!important}}
+@media screen and (max-width:700px){.think-workbook-print .bk-page{height:auto;overflow:visible}}
+.bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-photo img{max-height:62mm}
+.bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-opener .ed-photo img{max-height:108mm}
+.bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-choices{grid-template-columns:1fr}
+.bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-diagram svg{max-height:62mm}
+/* 교사용: 문항 바로 아래 정답(빨간 글씨). 학생용에는 이 줄이 아예 없다. */
+.bk-editorial .ed-key{margin:1mm 0 0!important;color:#b3261e;font-size:9.5pt;line-height:1.45;border-left:.8mm solid #b3261e;padding-left:2mm;flex-shrink:0}
+.bk-editorial .ed-key b{margin-right:1.5mm}
+@media screen and (max-width:700px){.bk-editorial:not(.a4) .ed-key{font-size:15px}}
