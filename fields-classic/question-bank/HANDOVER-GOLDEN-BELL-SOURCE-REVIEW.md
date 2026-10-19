@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018h`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018h/20261018i/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018i`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018i/20261018j/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -332,6 +332,12 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - **원본을 바로잡은 곳**(`sourceDiscrepancy`): 4쪽 ⑥은 물음이 ⑤와 같아 교사 풀이의 출발 날짜로 고침 · 5쪽 ⑧ 그림의 요일이 물음 글과 달라 물음 글로 · 5쪽 ⑫ 그림의 마지막 날짜가 다른 문항에서 옮겨 와 고침 · ⑫가 두 번이라 뒤의 것을 ⑬으로.
   - **교사용 답이 틀린 곳 4곳**(DB `sourceNote`): 4쪽 ④(그달 1일에서 출발) · 4쪽 ⑤(출발 요일을 다르게 놓음) · 5쪽 ⑦ · 5쪽 ⑫. 검산기는 실제 달력(윤년 아닌 해)으로 날짜 차를 센다.
   - 2~5쪽 보류 기록 삭제(7권 보류 26 → 22). DB `book-07` 265키 → 310키, sha 앞 8자리 `6544c147`. 캐시 꼬리표 `20261018h`.
+- **7권 묶음 1b(슬라이드 6~7 시간 변환·시각 읽기·시간 계산, 43문항, 2026-10-19)**: 패치 `tools/golden-bell-book07/patch-book07-batch1b.mjs`(정답 없음).
+  - 새 단원 13 `time-unit-source`(6쪽 1. 시간 변환 14 + 확장하기 4), 단원 5 `clock-reading`(6쪽 2. 시각 읽기 6, 답은 시·분 두 칸), 단원 0 `elapsed-time`(7쪽 19문항: 더하기 5·빼기 5·오후−오전 3·걸린 시간 2·글 문제 4)을 자리 그대로 다시 짬(DB `/lessons/0/original/`·`/lessons/5/original/` 옛 키 교체).
+  - 새 그림 `source-time-column`(시·분 세로셈: `rows=[{pre,h,hu,m,mu}]`, `result={pre,hu,mu}` — `hu`가 없으면 분 칸 하나). 시간 바꾸기 식은 `source-blank-equation`.
+  - **골든벨 화면에서 7권 시계가 안 보이던 버그**: 시계 크기·색 CSS가 `styles.css`(교사용 문제은행)에만 있어 골든벨에서는 SVG 너비가 0이었다 → `golden-bell-book05.css`에 `.book07-visual .b7-clock` 규칙(시침 빨강·분침 파랑). 또 렌더러는 시계 글자에 「?」가 있으면 **바늘을 숨긴다** — 옛 데이터 「?시 ?분」 때문에 바늘이 안 그려졌다. 글자를 「몇 시 몇 분」으로 바꾸고 `numbers:true`로 1~12 숫자를 단다(`book07-renderers.js` `clockFace`). **7권 렌더러는 캐시 꼬리표가 따로**다: `golden-bell.js`·`app.js`의 `book07-renderers.js?v=20261019a`.
+  - **교사용 답이 틀린 곳 2곳**(DB `sourceNote`): 7쪽 더하기 (5)(분끼리 더한 값 잘못 적음) · 7쪽 기차 글 문제(앞 문항 답을 옮겨 적음). 오후 몇 시 답은 「오후 1시」의 1과 13 둘 다 받는다.
+  - 6·7쪽 보류 삭제(7권 보류 22 → 21). DB `book-07` 310키 → 401키, sha 앞 8자리 `0c957082`. 캐시 꼬리표 `20261018i`.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

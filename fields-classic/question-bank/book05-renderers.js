@@ -768,6 +768,20 @@ function sourceDateLadder(visual) {
   return `<div class="b5-src-dates" role="img" aria-label="${escapeHtml(visual.rows.map(say).join(", "))}">${visual.rows.map((r) => `<div><b>${escapeHtml(r.date)}</b>${cell(r)}</div>`).join("")}</div>`;
 }
 
+// 7권: 시·분 세로셈. rows = [{pre, h, hu, m, mu}] (pre는 「+」「-」「오전」 같은 앞글자), result = {pre, hu, mu} — 답 줄은 빈칸 두 개.
+// 빈칸 글자는 답 칸 이름(가·나)과 맞춘다. 분만 있는 줄은 h를 비운다.
+function sourceTimeColumn(visual) {
+  const td = (v, c = "") => `<td class="${c}">${escapeHtml(v ?? "")}</td>`;
+  const tr = (r) => `<tr>${td(r.pre, "pre")}${td(r.h, "n")}${td(r.h == null || r.h === "" ? "" : r.hu, "u")}${td(r.m, "n")}${td(r.mu, "u")}</tr>`;
+  const res = visual.result;
+  const blank = (k) => `<td class="n"><i class="blank">${BLANK_LABELS[k]}</i></td>`;
+  // 분만 묻는 답 줄(res.hu 없음)은 빈칸 하나
+  const resRow = res.hu == null ? `${td(res.pre, "pre")}${td("")}${td("")}${blank(0)}${td(res.mu, "u")}` : `${td(res.pre, "pre")}${blank(0)}${td(res.hu, "u")}${blank(1)}${td(res.mu, "u")}`;
+  const sayRes = res.hu == null ? `${res.pre || ""} 빈칸 가 ${res.mu}` : `${res.pre || ""} 빈칸 가 ${res.hu} 빈칸 나 ${res.mu}`;
+  const say = [...visual.rows.map((r) => [r.pre, r.h && `${r.h}${r.hu}`, r.m && `${r.m}${r.mu}`].filter(Boolean).join(" ")), sayRes.trim()].join(", ");
+  return `<div class="b5-src-timecol" role="img" aria-label="${escapeHtml(say)}"><table><tbody>${visual.rows.map(tr).join("")}<tr class="res">${resRow}</tr></tbody></table></div>`;
+}
+
 // 6권: 호가 그려진 수직선. points = 묶음 경계의 수(이 수로 칸 위치를 정한다), groups = 묶음마다 칸 수·호 모양,
 // tickLabels = 눈금 아래 글자(A·B·중간), spans = 여러 칸을 묶은 큰 호(①·②·☆). 칸 위치는 공개된 경계 수로만 계산한다.
 const ARC_MARK = { circle: (x, y) => `<circle class="mk" cx="${x}" cy="${y}" r="6" style="--c:${SHAPE_GLYPH.circle[1]};--f:${SHAPE_GLYPH.circle[2]}"/>`,
@@ -1038,6 +1052,7 @@ export function book05Markup(visual) {
     case "source-split-tree": return sourceSplitTree(visual);
     case "source-blank-equation": return sourceBlankEquation(visual);
     case "source-date-ladder": return sourceDateLadder(visual);
+    case "source-time-column": return sourceTimeColumn(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);
