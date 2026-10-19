@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v74",
+  "checkpoint": "v103",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre D",
@@ -20,19 +20,19 @@
     "minimumCurriculumAssignments": 0,
     "confirmedSchoolGrades": 0,
     "approvedDifficultyLevels": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 8,
     "difficultyMeaning": "통일 5단계 기준의 조건부 연구 밴드이며 교사 검토 전이다.",
     "gradeMeaning": "최소 교과수준은 8개 활동 모두 미확정이다. 교육과정 학년군과 소마 진도 행은 내용 맥락일 뿐 문항 최소 학년이 아니다."
   },
   "aggregate": {
-    "ontologyNodes": 1560,
-    "ontologyRelations": 2866,
-    "skillActionCandidates": 390,
-    "candidateEvidenceLinkedActivities": 777,
-    "activityReviewQueue": 75,
-    "activitySkillRelations": 828,
-    "conditionalDifficultyBands": 748,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 285,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0
@@ -46,7 +46,7 @@
     "conditionalDifficultyBands": 8,
     "unresolvedMinimumCurriculumCandidates": 8,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 8,
     "familyMembershipRelations": 8,
     "relatedButDistinctRelations": 3,
     "spiralRelationCandidates": 2,
@@ -194,7 +194,7 @@
       "prerequisiteCurriculumContextCandidates": [],
       "prerequisiteContentOnly": true,
       "modeledExampleIncludedInSourceBlock": true,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 2,
@@ -212,7 +212,7 @@
       ],
       "prerequisiteContentOnly": true,
       "modeledExampleIncludedInSourceBlock": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 3,
@@ -228,7 +228,7 @@
       "prerequisiteCurriculumContextCandidates": [],
       "prerequisiteContentOnly": true,
       "modeledExampleIncludedInSourceBlock": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 4,
@@ -244,7 +244,7 @@
       "prerequisiteCurriculumContextCandidates": [],
       "prerequisiteContentOnly": true,
       "modeledExampleIncludedInSourceBlock": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 5,
@@ -260,7 +260,7 @@
       "prerequisiteCurriculumContextCandidates": [],
       "prerequisiteContentOnly": true,
       "modeledExampleIncludedInSourceBlock": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 6,
@@ -276,7 +276,7 @@
       "prerequisiteCurriculumContextCandidates": [],
       "prerequisiteContentOnly": true,
       "modeledExampleIncludedInSourceBlock": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 7,
@@ -292,7 +292,7 @@
       "prerequisiteCurriculumContextCandidates": [],
       "prerequisiteContentOnly": true,
       "modeledExampleIncludedInSourceBlock": false,
-      "answerValidated": false
+      "answerValidated": true
     },
     {
       "activityNumber": 8,
@@ -310,7 +310,7 @@
       ],
       "prerequisiteContentOnly": true,
       "modeledExampleIncludedInSourceBlock": false,
-      "answerValidated": false
+      "answerValidated": true
     }
   ],
   "somaProgressionContexts": [
@@ -450,5 +450,20 @@
       "Answer keys were not checked; exact type equivalences and teacher approvals are zero.",
       "The Ray Prism A4-3 row supplies only a same-section title and short topic, so it is not treated as a task-level match."
     ]
+  },
+  "answerValidation": {
+    "studentActivityBlocksValidated": 8,
+    "answerKeyPdfPages": [
+      12,
+      13,
+      14,
+      15
+    ],
+    "answerKeySHA256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "method": "Same-edition answer-key visuals checked; OCR assistive only.",
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true
   }
 }
