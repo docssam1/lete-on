@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-skill-map-supplement/1",
-  "checkpoint": "v64",
+  "checkpoint": "v94",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre C",
@@ -12,16 +12,16 @@
     ],
     "sourceActivityBlocks": 10,
     "visuallyReviewedPages": 7,
-    "answerValidated": false
+    "answerValidated": true
   },
   "aggregate": {
-    "ontologyNodes": 1489,
-    "ontologyRelations": 2621,
-    "skillActionCandidates": 334,
-    "activitiesWithSkillCandidateEvidence": 672,
-    "activitiesInReviewQueue": 181,
-    "conditionalDifficultyCandidates": 638,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 846,
+    "activitiesInReviewQueue": 6,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 177,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0,
@@ -38,7 +38,7 @@
     "minimumCurriculumLevelCandidates": 10,
     "unresolvedMinimumCurriculumCandidates": 10,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 10,
     "directSomaMatchCandidates": 1,
     "partialSomaReferences": 8,
     "relatedButDistinctSomaReferences": 10
@@ -234,5 +234,16 @@
     "teacherApprovedEquivalences": 0,
     "note": "Yes/No 행의 직접 내용 일치 후보 1개만 직접으로 두고, 나머지는 부분 또는 관련·구별 후보로 제한했다."
   },
-  "privacy": "공개 데이터에는 활동 식별자, OCR 원문, 답안, 출처 해시, 로컬 경로가 포함되지 않는다. 유형·난이도·교과수준·관계는 검토 전 후보이다."
+  "privacy": "공개 파일에는 문항별 정답, OCR 원문, 활동 ID, 이미지 해시, 로컬 경로를 포함하지 않는다. 답안 근거 10건은 같은 판본 해설 pp.12–15 대조 결과만 집계한다. 유형·조건부 난이도·최소 교과수준은 교사 승인 전 후보이며 최소 학년 배정은 0건이다.",
+  "answerValidation": {
+    "activitiesValidated": 10,
+    "answerKeyPdfPages": [
+      12,
+      13,
+      14,
+      15
+    ],
+    "method": "Same-edition answer-key pages were rendered and visually cross-checked against existing body-page review; local Apple Vision OCR was used as a supporting text check.",
+    "exactAnswerValuesOmitted": true
+  }
 }
