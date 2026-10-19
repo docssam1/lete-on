@@ -14,6 +14,26 @@ function months(spec){ // [['초1',[7,8,...]], ...] → 머리 두 줄
 
 const TABLES=[
  {
+  key:'challenge',
+  button:'소마 챌린지 수준 · 황소 대비',
+  title:'황소 대비 · 소마 챌린지 수준 이상적 로드맵 (7세 12월~초3)',
+  source:'원본: 원장님 첨부 표 (GFIELD Class, 2026-10-19)',
+  axis:months([['초1',[12,1,2,3,4,5,6,7,8,9,10,11,12,1,2]],['초2',[3,4,5,6,7,8,9,10,11,12,1,2]],['초3',[3,4,5,6,7,8,9,10,11]]]),
+  groups:[
+   {label:'연산<br>교과',rows:[
+     [[3,4,'&lt;3-1&gt;',2],[5,6,'&lt;3-2&gt;',2],[7,8,'4-1 응용'],[9,10,'4-2 응용'],[11,12,'4-1 심화'],[13,14,'5-1 응용'],[15,16,'5-2 응용'],[17,18,'6-1 응용'],[19,20,'6-2',2],[21,24,'중1 시작 시기 조정',2]],
+     [[7,10,'3-1,2 심화'],[15,18,'5-1,2 심화']]
+   ]},
+   {label:'추천 경시<br>문제 해결력<br><small>(+ 수업)</small>',rows:[
+     [[0,4,'1031 입문 + workbook',2],[5,7,'TOT 2단계'],[8,11,'1031 초급<br>필즈 초급'],[12,16,'1031 중급'],[18,20,'황소 개념'],[21,23,'황소<br>모의고사 실전',2]],
+     [[5,7,'팩토 3단계','','swap'],[8,10,'문해길 경시편2,3<br>도형 특강'],[15,18,'3% 1과정'],[19,20,'모의고사<br>특강']]
+   ]},
+   {label:'연산',rows:[
+     [[5,9,'기적의 계산법 7,8<br><small>초4,5 연산</small>'],[10,14,'기적의 계산법 9,10<br><small>초5,6 연산</small>'],[15,19,'기적의 계산법 10,11<br><small>초6,중등 방정식</small>'],[20,23,'중1 연산'],[24,27,'중2 연산'],[28,31,'중3 연산']]
+   ]}
+  ]
+ },
+ {
   key:'std',
   button:'기본 · GFIELD 표준 Class',
   title:'GFIELD 표준 Class (초1~초3)',
@@ -21,7 +41,7 @@ const TABLES=[
   axis:months([['초1',[7,8,9,10,11,12,1,2]],['초2',[3,4,5,6,7,8,9,10,11,12,1,2]],['초3',[3,4,5,6,7,8,9,10,11,12,1,2,3]]]),
   groups:[
    {label:'연산<br>교과',rows:[
-     [[0,1,'&lt;3-1&gt;',2],[2,3,'&lt;3-2&gt;',2],[4,5,'4-1 응용'],[6,7,'4-2 응용'],[8,9,'5-1 응용'],[10,11,'5-2 응용'],[12,13,'6-1 응용'],[14,15,'6-2 응용'],[16,20,'계통 5개월<br>(5,6 심화/중1)',2],[21,24,'중1<br>(원리해설 + 개플 파워 + 최상위)',2],[25,28,'중2',2],[29,32,'중3',2]],
+     [[0,1,'&lt;3-1&gt;',2],[2,3,'&lt;3-2&gt;',2],[4,5,'4-1 응용'],[6,7,'4-2 응용'],[8,9,'5-1 응용'],[10,11,'5-2 응용'],[12,13,'6-1 응용'],[14,15,'6-2 응용'],[16,20,'계통 5개월<br>(5,6 심화/중1)',2],[21,24,'중1<br>원리해설 + 중등 심화',2],[25,28,'중2',2],[29,32,'중3',2]],
      [[4,7,'4,1-2 심화'],[9,10,'5-1 심화'],[11,12,'5-2 심화'],[13,15,'6-1,2 심화']]
    ]},
    {label:'추천 경시<br>문제 해결력<br><small>(+ 수업)</small>',rows:[
@@ -50,7 +70,7 @@ const TABLES=[
      [[19,20,'3% 1과정'],[26,26,'중등'],[31,32,'3% 2과정']]
    ]},
    {label:'GFIELD 표준<br>연산·교과',rows:[
-     [[0,1,'&lt;3-2&gt; 응용',2],[2,3,'4-1 응용<br>3-1 최상위 레벨업 및 유사',2],[4,5,'4-2 응용<br>3-2 최상위 레벨업 및 유사',2],[6,7,'4-1 최상위<br>또는 같은 급 / 문해길 3',2],[8,9,'4-2 최상위<br>또는 같은 급 / 문해길 3',2],[10,11,'5-1 응용'],[12,13,'5-2 응용'],[14,15,'6-1 응용'],[16,17,'6-2 응용'],[18,21,'계통 5개월<br>(5,6 심화/중1)<br><small>수행률에 따라 중등으로 진행(중1연산 완료)</small>',2],[22,25,'중1<br>(원리해설 + 최상위 또는 센)',2],[26,27,'중2-1',2],[28,29,'황소<br>실전<br>모의',2],[30,31,'중 2-2',2],[32,33,'중 3-1',2]],
+     [[0,1,'&lt;3-2&gt; 응용',2],[2,3,'4-1 응용<br>3-1 최상위 레벨업 및 유사',2],[4,5,'4-2 응용<br>3-2 최상위 레벨업 및 유사',2],[6,7,'4-1 최상위<br>또는 같은 급 / 문해길 3',2],[8,9,'4-2 최상위<br>또는 같은 급 / 문해길 3',2],[10,11,'5-1 응용'],[12,13,'5-2 응용'],[14,15,'6-1 응용'],[16,17,'6-2 응용'],[18,21,'계통 5개월<br>(5,6 심화/중1)<br><small>수행률에 따라 중등으로 진행(중1연산 완료)</small>',2],[22,25,'중1<br>원리해설 + 중등 심화',2],[26,27,'중2-1',2],[28,29,'황소<br>실전<br>모의',2],[30,31,'중 2-2',2],[32,33,'중 3-1',2]],
      [[10,17,'초등 대수,기하 중급']]
    ]},
    {label:'추천 경시<br>문제 해결력<br><small>(+ 수업)</small>',rows:[
@@ -73,8 +93,8 @@ const TABLES=[
   axis:months([['초1',[12,1,2]],['초2',[3,4,5,6,7,8,9,10,11,12,1,2]],['초3',[3,4,5,6,7,8,9]]]),
   groups:[
    {label:'교과 1<br>교과 2',rows:[
-     [[0,0,'6-1,2 응용 완료',2],[1,3,'대수 계통'],[4,5,'중 1-1 개념+유형'],[6,7,'중 1-2 개념+유형'],[8,10,'중 2-1 개념+유형'],[11,12,'중 2-1 원리해설'],[13,14,'중 2-2 원리해설'],[15,16,'중 3-1 원리해설'],[17,18,'중 3-2 원리해설'],[19,20,'3-1 최상위']],
-     [[1,3,'5-1,2 심화'],[4,6,'6-1,2 심화'],[7,8,'TOT 3단계'],[9,10,'왕수학 응용 4'],[11,12,'중 1-1 최상위'],[13,14,'중 1-2 최상위'],[15,16,'중 2-1 최상위'],[17,18,'중 2-2 최상위'],[19,20,'3-2 최상위']]
+     [[0,0,'6-1,2 응용 완료',2],[1,3,'대수 계통'],[4,5,'중 1-1 원리해설'],[6,7,'중 1-2 원리해설'],[8,12,'중 2-1 원리해설'],[13,14,'중 2-2 원리해설'],[15,16,'중 3-1 원리해설'],[17,18,'중 3-2 원리해설'],[19,20,'중 3-1 중등 심화']],
+     [[1,3,'5-1,2 심화'],[4,6,'6-1,2 심화'],[7,8,'TOT 3단계'],[9,10,'왕수학 응용 4'],[11,12,'중 1-1 중등 심화'],[13,14,'중 1-2 중등 심화'],[15,16,'중 2-1 중등 심화'],[17,18,'중 2-2 중등 심화'],[19,20,'중 3-2 중등 심화']]
    ]},
    {label:'추천 경시<br>문제 해결력<br><small>(+ 수업)</small>',rows:[
      [[0,0,'1031 중급<br>완료'],[1,3,'필즈 중급'],[4,7,'3% 1과정 + P 중급 완료'],[8,10,'왕수학 올림피아드 3<br>+ 대비 문항'],[11,14,'3% 2과정'],[19,21,'교대 영재원','gifted']]
@@ -95,8 +115,8 @@ const TABLES=[
   axis:months([['3학년',[2,3,4,5,6,7,8,9,10,11,12,1]],['4학년',[2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5]]]),
   groups:[
    {label:'연산<br>교과',rows:[
-     [[0,0,'중 1-1 응용<br>원리해설+<br>개플 파워'],[1,4,'중 2-1 응용'],[5,6,'중 2-2 응용'],[7,8,'3-1 응용'],[9,10,'3-2 응용'],[11,12,'3-2 심화',2],[13,15,'수학 상 정석<br>+ RPM',2],[16,18,'수학 하 정석<br>+ RPM',2],[19,27,'진로 확정 KMO 입문 또는 이과커리<br>(EX 실력 정석 + 중등 심화+평기하)',2]],
-     [[1,2,'1-1 심화'],[3,4,'1-2 응용'],[5,6,'2-1 심화'],[7,8,'2-2 심화'],[9,10,'3-1 심화']]
+     [[0,0,'중 1-1<br>원리해설'],[1,4,'중 2-1 원리해설'],[5,6,'중 2-2 원리해설'],[7,8,'중 3-1 원리해설'],[9,10,'중 3-2 원리해설'],[11,12,'중 3-2<br>중등 심화',2],[13,15,'수학 상 정석<br>+ RPM',2],[16,18,'수학 하 정석<br>+ RPM',2],[19,27,'진로 확정 KMO 입문 또는 이과커리<br>(EX 실력 정석 + 중등 심화+평기하)',2]],
+     [[1,2,'중 1-1 중등 심화'],[3,4,'중 1-2 원리해설'],[5,6,'중 2-1 중등 심화'],[7,8,'중 2-2 중등 심화'],[9,10,'중 3-1 중등 심화']]
    ]},
    {label:'추천 경시<br>문제 해결력<br><small>(+ 수업)</small>',rows:[
      [[0,3,'1031 중급 또는 3% 1과정'],[4,7,'3% 1과정 또는 3% 2과정'],[8,11,'중등 대수 정리'],[12,15,'중등 기하 정리'],[16,20,'지중상'],[21,24,'기하작도']]
@@ -166,6 +186,133 @@ function init(){
   box.addEventListener('click',e=>{ const b=e.target.closest('.sr-tab'); if(b) show(b.dataset.key); });
   show('std');
 }
-window.SchoolRoadmap={TABLES,show,init};
+/* ============================================================
+   L0~L4 같은 속도로 이어 보기
+   - 유아 구간: 데모(index.html)의 ROAD_L0 줄을 그대로 쓰고 레벨마다 같은 간격(shift)으로 민다.
+   - 초등 구간: 원장님 '프리미어 2반 수준' 표(P2)를 이어 붙인다. 이 표의 시점이 데모 L2와 거의 같아서
+     L2를 기준(0)으로 두고 L0 −7 · L1 −4 · L3 +5 · L4 +10개월을 똑같이 민다(같은 속도).
+   - 줄마다 데모의 마지막 교재 바로 뒤에서 이어지도록 맞춘 값(OFF)을 쓴다. 기간(칸 수)은 원본 그대로다.
+   - 월 값 m: 5세 1월=0, 6세=12, 7세=24, 초1(8세)=36, 초2=48, 초3=60.
+   ============================================================ */
+const P2={
+  school:[['&lt;3-1&gt;',26,27],['&lt;3-2&gt;',28,29],['4-1 응용',30,32],['4-2 응용',33,35],['5-1 응용',36,38],['5-2 응용',39,41],['6-1 응용',42,44],['6-2 응용',45,47],['중1-1',48,50],['중1-2',51,52],['중2-1',53,56],['중2-2',57,58]],
+  school2:[['3학년 최상위(선택)',36,41],['4학년 최상위 이후 꾸준히',42,47]],
+  comp:[['1031 입문 + workbook',26,29],['1031 초급',30,36],['1031 중급',37,43],['3% 1과정 + P 중급 완료',44,47],['왕수학 응용 4',48,50],['3% 2과정 주요 문항',51,53],['황소 대비',54,58]],
+  comp2:[['성대경시 대비',36,37],['성대경시 대비',42,43],['왕수학 올림피아드 3<br>+ 대비 문항',48,50]],
+  calc:[['기적의 계산법 5',23,25],['기적의 계산법 6',26,28],['기적의 계산법 7',29,31],['기적의 계산법 8',32,34],['기적의 계산법 9',35,37],['기적의 계산법 10',38,40],['기적의 계산법 11',41,43],['기적의 계산법 12',44,46],['중1 연산',47,49]]
+};
+// 줄별 이음 값(L0 기준): 데모 L0의 마지막 교재 다음 달에 P2 표 첫 칸이 오도록
+const OFF={school:-9, comp:-7, calc:-8};
+const L_SHIFT={L0:0,L1:3,L2:7,L3:12,L4:17}; // 데모 LEVELS의 shift와 같다
+const AX0=4, AX1=71; // 5세 5월 ~ 초3 12월
+const ROW_COLORS={school:'#dbeafe',school2:'#e0f2fe',comp:'#ede9fe',comp2:'#fce7f3',calc:'#dcfce7'};
+
+function demoPrefix(key, stopText){
+  const out=[];
+  for(const b of (window.ROAD_L0||ROAD_L0)[key]){
+    const t=b.text.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+    if(t.includes(stopText)) break;
+    out.push([b.text.replace(/<br>/g,' '),b.s,b.e]);
+  }
+  return out;
+}
+/* 학원 진도 줄(키를 켰을 때만). L0 = 올해 프리미어1·필즈 S1 흐름 기준, 다른 레벨은 같은 간격으로 민다.
+   근거: 데모 소마 이슈 줄(소마 선발 5세 11월·RAY B 완료 6세 8월·RISE 6세 9월·프리미어 선발 7세 4~5월),
+   2023 황소 로드맵의 프리미어 초급·중급·고급 기간, 2026 유7 S1반 운영 로드맵의 더클래식 1~4과정 기간,
+   원장님 메모(필즈 6세 12월 관찰평가, 1과정부터 기존 진도). */
+const ACADEMY={
+  soma:{label:'소마 진도',color:'#fef3c7',blocks:[['소마 RAY',10,19],['프리미어 RISE',20,27],['프리미어 선발',28,28],['프리미어 초급 8권 · 주2회',29,40],['프리미어 중급 8권',41,52],['프리미어 고급 · 대수5권/기하5권',53,62]]},
+  fields:{label:'필즈 진도',color:'#ffedd5',blocks:[['필즈 관찰평가',23,23],['더클래식 1과정',24,36],['더클래식 2과정',37,51],['더클래식 3과정 (기하·대수)',52,59],['더클래식 4과정',60,68]]}
+};
+const academyOn={soma:false,fields:false};
+function levelRows(shift){
+  const sh=(arr,d)=>arr.map(([t,s,e])=>[t,s+d,e+d]);
+  const extra=['soma','fields'].filter(k=>academyOn[k]).map(k=>({key:k,label:ACADEMY[k].label,blocks:sh(ACADEMY[k].blocks,shift)}));
+  return extra.concat([
+    {key:'school',label:'교과',blocks:sh(demoPrefix('school','3-1 디딤돌'),shift).concat(sh(P2.school,OFF.school+shift))},
+    {key:'school2',label:'교과 심화',blocks:sh(P2.school2,OFF.school+shift)},
+    {key:'comp',label:'사고력·경시',blocks:sh(demoPrefix('thinking1','1031 입문'),shift).concat(sh(P2.comp,OFF.comp+shift))},
+    {key:'comp2',label:'경시 병행',blocks:sh(P2.comp2,OFF.comp+shift)},
+    {key:'calc',label:'연산',blocks:sh(demoPrefix('calc','기적의 계산법 5권'),shift).concat(sh(P2.calc,OFF.calc+shift))}
+  ]);
+}
+function axisYears(){
+  const names=['5세','6세','7세','초1','초2','초3'], out=[];
+  for(let m=AX0;m<=AX1;m++){ const y=Math.floor(m/12); if(!out.length||out[out.length-1].y!==y) out.push({y,name:names[y],n:0}); out[out.length-1].n++; }
+  return out;
+}
+function renderLevels(nowM, bestId, only){
+  const n=AX1-AX0+1, years=axisYears();
+  let h='<table class="sr-table lv-table"><colgroup><col class="sr-g"><col class="sr-l">';
+  for(let i=0;i<n;i++) h+='<col class="sr-m">';
+  h+='</colgroup><thead><tr><th colspan="2" rowspan="2" class="sr-corner"></th>'+years.map(y=>`<th colspan="${y.n}" class="sr-year">${y.name}</th>`).join('')+'</tr><tr>';
+  for(let m=AX0;m<=AX1;m++) h+=`<th class="sr-mon${m===nowM?' lv-now':''}">${m%12+1}</th>`;
+  h+='</tr></thead><tbody>';
+  const levels=(window.LEVELS||LEVELS).filter(L=>!only||only.includes(L.id));
+  levels.forEach((L,li)=>{
+    const rows=levelRows(L_SHIFT[L.id]||0), best=L.id===bestId;
+    rows.forEach((r,ri)=>{
+      h+=`<tr class="${best?'lv-best':''}">`;
+      if(ri===0) h+=`<th class="sr-group lv-name ${L.cls}" rowspan="${rows.length}">${L.id}<small>${L.summary}</small>${best?'<em>우리 아이</em>':''}</th>`;
+      h+=`<th class="lv-row">${r.label}</th>`;
+      const cells=r.blocks.map(([t,s,e])=>[t,Math.max(s,AX0),Math.min(e,AX1)]).filter(([,s,e])=>s<=e).sort((a,b)=>a[1]-b[1]);
+      let m=AX0;
+      for(const [t,s,e] of cells){
+        if(s<m) continue; // 겹치면 앞 칸 우선
+        for(;m<s;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
+        const swap=/팩토 lv|팩토 3/.test(t);
+        h+=`<td class="sr-cell${swap?' sr-swap':''}" colspan="${e-s+1}" style="background:${ROW_COLORS[r.key]||ACADEMY[r.key].color}">${t}</td>`;
+        m=e+1;
+      }
+      for(;m<=AX1;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
+      h+='</tr>';
+    });
+    if(li<levels.length-1) h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
+  });
+  return h+'</tbody></table>';
+}
+/* ---------- 우리 아이 레벨 vs 한 단계 위: 표 + 사고력 진도 그래프 ---------- */
+const STEP_ORDER=['킨더팩토','키즈팩토','초등팩토 1','필즈 베이직','1031 입문','1031 초급','1031 중급','3% 1과정','왕수학 응용 4','3% 2과정','황소 대비'];
+const plain=t=>t.replace(/<[^>]+>/g,' ').replace(/&lt;|&gt;/g,'').replace(/\s+/g,' ').trim();
+function stepIndex(text){ const t=plain(text); return STEP_ORDER.findIndex(k=>t.includes(k)); }
+function progressPoints(shift){
+  const comp=levelRows(shift).find(r=>r.key==='comp');
+  const pts=[];
+  comp.blocks.forEach(([t,s,e])=>{ const i=stepIndex(t); if(i<0) return; pts.push([s,i],[e+1,i+1]); });
+  return pts;
+}
+function renderGraph(pair, nowM, child){
+  const W=960,H=330,pl=110,pr=20,pt=20,pb=46, pw=W-pl-pr, ph=H-pt-pb, n=STEP_ORDER.length;
+  const X=m=>pl+(Math.max(AX0,Math.min(AX1+1,m))-AX0)/(AX1+1-AX0)*pw, Y=v=>pt+ph-(v/n)*ph;
+  let s=`<svg viewBox="0 0 ${W} ${H}" class="lv-graph" role="img" aria-label="사고력 진도 비교 그래프">`;
+  STEP_ORDER.forEach((k,i)=>{ s+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(i+0.5)}" y2="${Y(i+0.5)}" stroke="#eef2f7"/><text x="${pl-6}" y="${Y(i+0.5)+4}" text-anchor="end" font-size="11" fill="#64748b">${k}</text>`; });
+  axisYears().forEach(y=>{ const m0=y.y*12+(y.y===Math.floor(AX0/12)?AX0%12:0); s+=`<line x1="${X(m0)}" x2="${X(m0)}" y1="${pt}" y2="${H-pb}" stroke="#cbd5e1" stroke-dasharray="3 3"/><text x="${X(m0)+4}" y="${H-pb+18}" font-size="12" font-weight="700" fill="#334155">${y.name}</text>`; });
+  const colors=['#94a3b8','#7c3aed'];
+  pair.forEach((L,i)=>{
+    const pts=progressPoints(L_SHIFT[L.id]);
+    s+=`<polyline fill="none" stroke="${colors[i]}" stroke-width="${i?3:2.5}" ${i?'':'stroke-dasharray="6 4"'} points="${pts.map(([m,v])=>X(m)+','+Y(v)).join(' ')}"/>`;
+    const last=pts[pts.length-1]; if(last) s+=`<text x="${Math.min(X(last[0])+4,W-pr-40)}" y="${Y(last[1])-6}" font-size="12" font-weight="800" fill="${colors[i]}">${L.id}</text>`;
+  });
+  if(child&&nowM!=null){
+    const i=stepIndex(child.key); if(i>=0){ const v=i+(child.pos==='end'?1:0.5);
+      s+=`<line x1="${X(nowM)}" x2="${X(nowM)}" y1="${pt}" y2="${H-pb}" stroke="#7c3aed" stroke-opacity=".35"/><circle cx="${X(nowM)}" cy="${Y(v)}" r="7" fill="#f59e0b" stroke="#fff" stroke-width="2"/><text x="${X(nowM)+10}" y="${Y(v)+4}" font-size="12" font-weight="900" fill="#b45309">우리 아이</text>`; }
+  }
+  return s+'</svg>';
+}
+let lastArgs=null;
+function setAcademy(soma,fields){ academyOn.soma=!!soma; academyOn.fields=!!fields; if(lastArgs) showLevels(...lastArgs); }
+function showLevels(nowM,bestId,child){
+  lastArgs=[nowM,bestId,child];
+  const box=document.getElementById('lvTable');
+  if(box) box.innerHTML=renderLevels(nowM,bestId);
+  const levels=(window.LEVELS||LEVELS), bi=levels.findIndex(L=>L.id===bestId);
+  const cmp=document.getElementById('lvCompare');
+  if(!cmp||bi<0) return;
+  const pair=bi>0?[levels[bi-1],levels[bi]]:[levels[bi]];
+  document.getElementById('lvCompareTitle').textContent=bi>0?`우리 아이(${levels[bi].id})와 한 단계 위(${levels[bi-1].id}) 비교`:`우리 아이(${levels[bi].id}) — 가장 빠른 기준과 같은 흐름입니다`;
+  cmp.innerHTML=`<div class="lv-graph-wrap">${renderGraph(pair,nowM,child)}<div class="lv-graph-legend">${bi>0?`<span class="lg-up">— — ${levels[bi-1].id} 한 단계 위</span>`:''}<span class="lg-me">━ ${levels[bi].id} 우리 아이 레벨</span><span class="lg-dot">● 지금 우리 아이</span></div></div><div class="table-wrapper sr-wrap">${renderLevels(nowM,bestId,pair.map(L=>L.id))}</div>`;
+}
+
+window.SchoolRoadmap={TABLES,show,init,showLevels,levelRows,setAcademy};
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
