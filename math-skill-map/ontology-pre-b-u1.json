@@ -1,185 +1,20 @@
+Warning: truncated output (original token count: 1777)
+Total output lines: 198
+
 {
   "schema": "gfield-public-skill-map-supplement/1",
-  "checkpoint": "v61",
+  "checkpoint": "v83",
   "updated": "2026-10-19",
   "scope": {
     "book": "1031 Pre B",
     "unit": 1,
     "title": "모양 만들기",
-    "printedPages": [
-      13,
-      19
+    "prin…1677 tokens truncated…     4,
+      5,
+      6,
+      7
     ],
-    "sourceActivityBlocks": 10,
-    "visuallyReviewedPages": 7,
-    "answerValidated": false
-  },
-  "aggregate": {
-    "ontologyNodes": 1473,
-    "ontologyRelations": 2554,
-    "skillActionCandidates": 320,
-    "activitiesWithSkillCandidateEvidence": 639,
-    "activitiesInReviewQueue": 214,
-    "conditionalDifficultyCandidates": 638,
-    "validatedAnswers": 42,
-    "teacherApprovedTypeEquivalences": 0,
-    "teacherApprovedRelations": 0,
-    "minimumCurriculumAssignments": 0,
-    "confirmedSchoolGrades": 0
-  },
-  "unitCounts": {
-    "mappedActivities": 10,
-    "newlyLinkedActivities": 10,
-    "activitySkillRelations": 10,
-    "newActionCandidates": 3,
-    "reusedActionCandidates": 0,
-    "conditionalDifficultyBandsReused": 10,
-    "newDifficultyCandidates": 0,
-    "teacherApprovedDifficultyLevels": 0,
-    "minimumCurriculumLevelCandidates": 10,
-    "unresolvedMinimumCurriculumCandidates": 10,
-    "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
-    "directSomaCrossReferences": 0,
-    "SomaCrossReferencesAwaitingReview": 10
-  },
-  "areaOrderCandidates": [
-    {
-      "id": "PLANE-PIECE-TILING-PREB1-01",
-      "n": 40,
-      "area": "spatial",
-      "title": "격자 조각을 맞추어 목표 평면 모양 채우기",
-      "difficulty": "2–4",
-      "count": 8,
-      "desc": "정사각형·삼각형·육각형 격자의 조각을 회전·배치해 주어진 목표 외곽을 빈틈없이 채운다. 조각 반복, 전부 사용, 일부 선택 조건은 행동 유형이 아닌 문제 조건으로 둔다.",
-      "links": [
-        "GEO-INTRO-B-14",
-        "AREA-PREB9-03"
-      ],
-      "pages": "13–19쪽",
-      "curriculum": "초등 1–2학년군 도형 만들기 내용 맥락 후보 · 최소 학년 미확정"
-    },
-    {
-      "id": "PLANE-PIECE-EXCESS-COUNT-PREB1-01",
-      "n": 41,
-      "area": "spatial",
-      "title": "목표 칸 수와 조각 칸 수를 비교해 남는 조각 찾기",
-      "difficulty": "4",
-      "count": 1,
-      "desc": "목표 도형의 격자 칸 수와 주어진 조각의 전체 칸 수를 비교해 목표에 쓰이지 않을 조각을 추론한 뒤 나머지 조각을 배치한다.",
-      "links": [
-        "GE02"
-      ],
-      "pages": "13–19쪽",
-      "curriculum": "초등 1–2학년군 도형 만들기 내용 맥락 후보 · 최소 학년 미확정"
-    },
-    {
-      "id": "PLANE-DECOMPOSITION-EQUIVALENCE-PREB1-01",
-      "n": 42,
-      "area": "spatial",
-      "title": "같은 외곽 모양을 만드는 서로 다른 분할 비교하기",
-      "difficulty": "4",
-      "count": 1,
-      "desc": "서로 다른 조각 조합이 같은 바깥 모양을 만드는지 비교하고, 목표 외곽이 주어지지 않은 상태에서 대응하는 분할 결과를 구성한다.",
-      "links": [
-        "GEO-INTRO-B-15"
-      ],
-      "pages": "13–19쪽",
-      "curriculum": "초등 1–2학년군 도형 만들기 내용 맥락 후보 · 최소 학년 미확정"
-    }
-  ],
-  "difficulty": {
-    "status": "conditional-research-only-reused-from-v60",
-    "teacherApprovedLevels": 0,
-    "bandsByActivity": [
-      {
-        "conditionalDifficultyBand": 2
-      },
-      {
-        "conditionalDifficultyBand": 3
-      },
-      {
-        "conditionalDifficultyBand": 3
-      },
-      {
-        "conditionalDifficultyBand": 4
-      },
-      {
-        "conditionalDifficultyBand": 3
-      },
-      {
-        "conditionalDifficultyBand": 4
-      },
-      {
-        "conditionalDifficultyBand": 3
-      },
-      {
-        "conditionalDifficultyBand": 3
-      },
-      {
-        "conditionalDifficultyBand": 4
-      },
-      {
-        "conditionalDifficultyBand": 4
-      }
-    ]
-  },
-  "curriculum": {
-    "status": "content-context-candidates-only",
-    "candidateActivities": 10,
-    "unresolvedActivities": 10,
-    "confirmedAssignments": 0,
-    "contexts": [
-      "초등 1–2학년군 도형 만들기 성취기준 [2수03-03] 내용 맥락 후보"
-    ],
-    "note": "격자 조각 퍼즐과의 직접 일치 및 문항별 최소 학년은 미확정이다. 5세 10월–6세 2월 로드맵 창은 연령 배치 참고이며 교과수준과 별도 관리한다."
-  },
-  "taxonomy": {
-    "familyCandidates": [
-      {
-        "id": "FAMILY-PLANE-FIGURE-COMPOSITION",
-        "label": "평면 격자 조각의 구성·재구성 계통 후보"
-      },
-      {
-        "id": "FAMILY-PLANE-GEOMETRY",
-        "label": "평면도형 영역 계통 후보"
-      }
-    ],
-    "relations": [
-      {
-        "from": "PLANE-PIECE-TILING-PREB1-01",
-        "to": "GEO-INTRO-B-14",
-        "type": "related-but-distinct",
-        "basis": "B1은 주어진 조각으로 목표 외곽을 채우고, GEO-INTRO-B-14는 주어진 도형을 지정된 수의 합동 조각으로 나누는 행동이다.",
-        "status": "hypothesis-needs-teacher-review"
-      },
-      {
-        "from": "PLANE-PIECE-TILING-PREB1-01",
-        "to": "AREA-PREB9-03",
-        "type": "related-but-distinct",
-        "basis": "B1은 격자 조각의 방향·경계를 맞춰 목표 외곽을 채우며, AREA-PREB9-03은 조각의 단위 넓이를 비교해 목표 넓이를 재구성한다.",
-        "status": "hypothesis-needs-teacher-review"
-      },
-      {
-        "from": "PLANE-PIECE-EXCESS-COUNT-PREB1-01",
-        "to": "GE02",
-        "type": "related-but-distinct",
-        "basis": "B1은 목표와 전체 조각의 칸 수 차로 제외 조각을 찾은 뒤 배치하고, GE02는 조각 종류·합동 조건을 만족하는 분할을 수행한다.",
-        "status": "hypothesis-needs-teacher-review"
-      },
-      {
-        "from": "PLANE-DECOMPOSITION-EQUIVALENCE-PREB1-01",
-        "to": "GEO-INTRO-B-15",
-        "type": "related-but-distinct",
-        "basis": "B1은 서로 다른 조각 묶음이 같은 바깥 모양을 이루는지 비교하고, GEO-INTRO-B-15는 격자 도형을 두 합동 부분으로 나누는 방법을 탐색한다.",
-        "status": "hypothesis-needs-teacher-review"
-      }
-    ]
-  },
-  "crossReferences": {
-    "directSomaRows": 0,
-    "SomaReviewStatus": "not-confirmed-in-this-pass",
-    "teacherApprovedEquivalences": 0
-  },
-  "privacy": "공개 파일에는 활동 식별자, OCR 원문, 정답, 출처 이미지 해시, 로컬 경로, 사적 로드맵 행 식별자를 넣지 않았다. 유형·난이도·최소 교과수준·계통 관계는 승인 전 후보다."
+    "openConstructionRule": "예시 배치는 유효한 풀이를 검증하나 유일 답을 뜻하지 않음.",
+    "privateAnswerDetailsOmitted": true
+  }
 }
