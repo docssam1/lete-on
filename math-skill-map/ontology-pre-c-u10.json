@@ -29,13 +29,13 @@
     "gradeMeaning": "최소 교과수준은 미확정이다. 교육과정 밴드는 필요한 수 세기·도형·격자 이동 등 선수 내용 참고이며 전체 과제의 최소 학년이 아니다."
   },
   "aggregate": {
-    "ontologyNodes": 1534,
-    "ontologyRelations": 2785,
-    "skillActionCandidates": 370,
-    "candidateEvidenceLinkedActivities": 748,
-    "activityReviewQueue": 104,
-    "conditionalDifficultyBands": 719,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 258,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0
@@ -394,4 +394,4 @@
     "minimumCurriculumAssignments": 0,
     "exactAnswerValuesOmitted": true
   }
-}
+}\n
