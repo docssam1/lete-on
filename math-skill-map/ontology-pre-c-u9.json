@@ -37,13 +37,14 @@
     "ontologyNodes": 1640,
     "ontologyRelations": 3099,
     "skillActionCandidates": 414,
-    "mappedActivities": 846,
+    "candidateEvidenceLinkedActivities": 846,
     "activityReviewQueue": 6,
-    "activitySkillRelations": 903,
     "conditionalDifficultyBands": 852,
     "validatedAnswers": 258,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0,
-    "residualIntroCSourceHolds": 2
+    "activitySkillRelations": 903
   },
   "unitCounts": {
     "mappedActivities": 10,
@@ -393,4 +394,4 @@
     "newSkillCandidates": 0,
     "newDifficultyBands": 0
   }
-}
+}\n
