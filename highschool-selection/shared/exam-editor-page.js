@@ -28,6 +28,7 @@
     academyProfileFilters: document.getElementById("academy-profile-filters"),
     catalogIncludeCandidates: document.getElementById("catalog-include-candidates"),
     candidateSearchForm: document.getElementById("candidate-search-form"),
+    candidateRetry: document.getElementById("candidate-retry"),
     candidateQuery: document.getElementById("candidate-query"),
     candidateContext: document.getElementById("candidate-context"),
     candidateAnalysis: document.getElementById("candidate-analysis"),
@@ -39,7 +40,10 @@
     viewMode: document.getElementById("view-mode"),
     sortMode: document.getElementById("sort-mode"),
     summaryItems: document.getElementById("summary-items"),
+    mobileSelectionCount: document.getElementById("mobile-selection-count"),
+    mobileSummary: document.querySelector(".editor-mobile-summary"),
     summaryScore: document.getElementById("summary-score"),
+    scoreSaveStatus: document.getElementById("score-save-status"),
     summaryScopes: document.getElementById("summary-scopes"),
     summaryDifficulty: document.getElementById("summary-difficulty"),
     checkReadiness: document.getElementById("check-readiness"),
@@ -51,6 +55,8 @@
     questionPageDialog: document.getElementById("question-page-dialog"),
     questionPageTitle: document.getElementById("question-page-title"),
     questionPageImage: document.getElementById("question-page-image"),
+    questionPageStatus: document.getElementById("question-page-status"),
+    questionPageRetry: document.getElementById("question-page-retry"),
     closeQuestionPage: document.getElementById("close-question-page"),
     toast: document.getElementById("editor-toast")
   };
@@ -64,12 +70,19 @@
     selectedPlacementId: null,
     busy: false,
     searchSequence: 0,
+    candidateStatus: "ready",
+    candidateError: "",
+    composing: false,
+    previewSequence: 0,
+    previewController: null,
+    previewTrigger: null,
     draggedPlacementId: null,
     serverDrafts: [],
     profileMode: null
   };
   const scoreTimers = new Map();
   const pendingScores = new Map();
+  let searchTimer;
 
   const difficultyLabels = { lowered: "하향", standard: "기준", raised: "상향" };
   const domainLabels = { algebra: "대수", geometry: "기하" };
@@ -84,7 +97,8 @@
   };
   const reviewCheckLabels = {
     classification: "교육과정 분류", locator: "원본 위치", difficulty: "난이도", response: "답안 형식",
-    keyCheck: "답 확인", method: "풀이법", variants: "쌍둥이·유사문항", usageApproval: "시험지 사용 승인"
+    keyCheck: "답 확인", content: "문항 본문", presentation: "원본 그림·화면·인쇄",
+    method: "풀이법", variants: "쌍둥이·유사문항", usageApproval: "시험지 사용 승인"
   };
   const taxonomyLabels = {
     merge_existing: "기존 유형 병합", alias_existing: "기존 유형 별칭", alias_internal_group: "생수 내부 유형군",
@@ -155,9 +169,9 @@
     return data;
   }
 
-  async function requestImage(path) {
+  async function requestImage(path, signal) {
     if (!apiBase) throw Object.assign(new Error("운영 편집 서버가 연결되지 않았습니다."), { status: 503 });
-    const response = await fetch(apiBase + path, { credentials: "include", headers: { Accept: "image/png" } });
+    const response = await fetch(apiBase + path, { signal, credentials: "include", headers: { Accept: "image/png" } });
     if (!response.ok) {
       const data = await response.json().catch(function () { return {}; });
       if (response.status === 401) loginRedirect();
@@ -229,6 +243,10 @@
   }
 
   function applyPacket(packet, options) {
+    if (!state.packet || state.packet.draftId !== packet.draftId) {
+      invalidateCandidateSearch();
+      state.metadata.clear();
+    }
     state.packet = packet;
     updateMetadata(packet.selectedItems);
     const draft = packet.draft;
@@ -348,6 +366,18 @@
 
   function renderCandidates() {
     elements.candidateList.replaceChildren();
+    elements.candidateRetry.hidden = state.candidateStatus !== "error";
+    if (state.candidateStatus !== "ready") {
+      const loading = state.candidateStatus === "loading";
+      elements.candidateCount.textContent = loading ? "불러오는 중" : "확인 필요";
+      elements.candidateEmpty.textContent = loading ? "현재 검색 조건의 문항을 불러오고 있습니다."
+        : state.candidateError || "자료를 불러오지 못했습니다. 다시 불러오세요.";
+      elements.candidateEmpty.hidden = false;
+      return;
+    }
+    elements.candidateEmpty.textContent = state.candidateMode === "catalog"
+      ? "선택한 시험형과 검색어에 맞는 문항이 없습니다. 조건을 바꾸거나 검색어를 지워 보세요."
+      : "현재 범위와 검색어에 맞는 검수 문항이 없습니다. 조건을 바꾸거나 검색어를 지워 보세요.";
     if (state.candidateMode === "catalog") {
       state.candidates.forEach(function (candidate) {
         const row = make("article", "candidate-row is-catalog");
@@ -359,11 +389,15 @@
         title.append(make("strong", "", candidate.typeLabel), make("code", "", sourceReference));
         const badges = make("div", "candidate-badges");
         (candidate.profiles || []).forEach(function (profile) {
-          const suffix = profile.status === "candidate" ? " · 후보" : profile.status === "approved" ? " · 승인" : "";
-          badges.append(candidateBadge(`${profile.label}${suffix}`, profile.status === "candidate" ? "warning" : "profile"));
+          const otherSourceRound = profile.status === "source_verified_not_current_exam_claim";
+          const suffix = otherSourceRound ? " · 다른 회차 원본" : profile.status === "candidate" ? " · 후보" : profile.status === "approved" ? " · 승인" : "";
+          badges.append(candidateBadge(`${profile.label}${suffix}`, profile.status === "candidate" || otherSourceRound ? "warning" : "profile"));
         });
         if (candidate.domainGroup) badges.append(candidateBadge(domainLabels[candidate.domainGroup] || candidate.domainGroup, "domain"));
         if ((candidate.profiles || []).some(function (profile) { return profile.status === "candidate"; })) badges.append(candidateBadge("학원형 후보", "warning"));
+        if ((candidate.profiles || []).some(function (profile) { return profile.status === "source_verified_not_current_exam_claim"; })) {
+          badges.append(candidateBadge("현 모집 시험지로 주장 금지", "warning"));
+        }
         if (candidate.conceptStatus === "unit_only") badges.append(candidateBadge("세부유형 분류 전", "warning"));
         if (candidate.conceptStatus === "pending") badges.append(candidateBadge("공통 유형 연결 대기", "warning"));
         if (candidate.taxonomyReviewStatus) badges.append(candidateBadge(taxonomyLabels[candidate.taxonomyReviewStatus] || "유형 검수 대기", "taxonomy"));
@@ -390,7 +424,7 @@
         row.append(main, actions);
         elements.candidateList.append(row);
       });
-      elements.candidateCount.textContent = `${state.candidates.length}개`;
+      elements.candidateCount.textContent = `표시 ${state.candidates.length}문항`;
       elements.candidateEmpty.hidden = state.candidates.length > 0;
       return;
     }
@@ -416,7 +450,7 @@
       row.append(main, button);
       elements.candidateList.append(row);
     });
-    elements.candidateCount.textContent = `${state.candidates.length}개`;
+    elements.candidateCount.textContent = `표시 ${state.candidates.length}문항`;
     elements.candidateEmpty.hidden = state.candidates.length > 0;
   }
 
@@ -457,7 +491,10 @@
       scoreInput.type = "number";
       scoreInput.min = "0.5";
       scoreInput.step = "0.5";
-      scoreInput.value = String(placement.score);
+      const pendingScore = pendingScores.get(placement.placementId);
+      scoreInput.value = pendingScore && pendingScore.draftId === state.packet.draftId
+        ? String(pendingScore.score) : String(placement.score);
+      if (pendingScore && pendingScore.draftId === state.packet.draftId) pendingScore.input = scoreInput;
       scoreInput.dataset.scorePlacement = placement.placementId;
       scoreInput.disabled = state.busy || placement.locked || state.packet.migrationRequired;
       score.append(scoreInput);
@@ -485,7 +522,11 @@
       if (metadata && Object.hasOwn(counts, metadata.difficultyBand)) counts[metadata.difficultyBand] += 1;
     });
     elements.summaryItems.textContent = draft.placements.length;
+    elements.mobileSelectionCount.textContent = draft.placements.length;
     elements.summaryScore.textContent = Number.isInteger(score) ? score : score.toFixed(1);
+    const unsaved = Array.from(pendingScores.values()).filter(item => item.draftId === state.packet.draftId);
+    elements.scoreSaveStatus.hidden = unsaved.length === 0;
+    elements.scoreSaveStatus.textContent = unsaved.some(item => item.attempts > 0) ? "배점 저장 재시도 중" : "배점 저장 중";
     elements.summaryScopes.textContent = draft.scopeKeys.length;
     elements.summaryDifficulty.textContent = `난도 하 ${counts.lowered} · 중 ${counts.standard} · 상 ${counts.raised}`;
   }
@@ -590,8 +631,42 @@
     }
   }
 
+  function invalidateCandidateSearch() {
+    clearTimeout(searchTimer);
+    ++state.searchSequence;
+    state.candidates = [];
+    state.representativeAnalyses = [];
+    state.candidateStatus = "ready";
+    elements.candidateList.removeAttribute("aria-busy");
+    if (elements.questionPageDialog.open) elements.questionPageDialog.close();
+    clearQuestionPage();
+  }
+
+  function acceptCandidates(packet) {
+    const seen = new Set();
+    // Count stable item IDs, not academy tags. Never merge distinct items by name.
+    state.candidates = (packet.items || []).filter(function (item) {
+      const id = state.candidateMode === "catalog" ? item.questionId : item.itemId;
+      if (!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+    state.candidateStatus = "ready";
+    state.candidateError = "";
+  }
+
+  function failCandidates(error) {
+    state.candidates = [];
+    state.candidateStatus = error.status === 401 || error.status === 403 ? "denied" : "error";
+    state.candidateError = state.candidateStatus === "denied"
+      ? "이 자료를 볼 권한이 없습니다. 학생 승인 화면에서 기존 권한을 확인하세요."
+      : "문항을 불러오지 못했습니다. 검색어와 담은 문항은 유지됩니다. 다시 불러오세요.";
+  }
+
   async function searchCandidates() {
+    clearTimeout(searchTimer);
     if (!state.packet) return;
+    invalidateCandidateSearch();
     if (state.packet.migrationRequired) {
       state.candidates = [];
       state.representativeAnalyses = [];
@@ -599,10 +674,14 @@
       return;
     }
     const sequence = ++state.searchSequence;
+    state.candidateStatus = "loading";
+    renderCandidates();
+    renderRepresentativeAnalyses();
     elements.candidateList.setAttribute("aria-busy", "true");
     if (state.candidateMode === "catalog") {
       const profiles = Array.from(elements.academyProfileFilters.querySelectorAll("input[value]:checked")).map(input => input.value);
       if (!profiles.length) {
+        state.candidateStatus = "ready";
         state.candidates = [];
         state.representativeAnalyses = [];
         renderCandidates();
@@ -617,13 +696,13 @@
       try {
         const packet = await request(`/admin/question-bank/catalog?${catalogParams}`);
         if (sequence !== state.searchSequence) return;
-        state.candidates = packet.items || [];
+        acceptCandidates(packet);
         state.representativeAnalyses = packet.representativeAnalyses || [];
         renderCandidateMode();
         renderCandidates();
       } catch (error) {
         if (sequence !== state.searchSequence) return;
-        state.candidates = [];
+        failCandidates(error);
         state.representativeAnalyses = [];
         renderCandidateMode();
         renderCandidates();
@@ -642,6 +721,7 @@
     if (state.candidateMode !== "new") {
       const metadata = placement && placementMeta(placement);
       if (!placement || !metadata) {
+        state.candidateStatus = "ready";
         state.candidates = [];
         renderCandidates();
         elements.candidateList.removeAttribute("aria-busy");
@@ -654,14 +734,14 @@
     try {
       const packet = await request(`/admin/exam-editor/candidates?${params}`);
       if (sequence !== state.searchSequence) return;
-      state.candidates = packet.items || [];
+      acceptCandidates(packet);
       updateMetadata(state.candidates);
       renderCandidates();
-      renderPlacements();
+      // Searching changes the candidate pane, not an in-progress score input.
       renderSummary();
     } catch (error) {
       if (sequence !== state.searchSequence) return;
-      state.candidates = [];
+      failCandidates(error);
       renderCandidates();
       setAlert(error.message, "error");
     } finally {
@@ -784,6 +864,7 @@
   });
 
   elements.changeDraft.addEventListener("click", function () {
+    invalidateCandidateSearch();
     setWorkspace(false);
     state.candidateMode = "new";
     elements.changeDraft.textContent = "다른 초안";
@@ -822,7 +903,47 @@
     await searchCandidates();
   });
 
-  elements.candidateSearchForm.addEventListener("submit", function (event) { event.preventDefault(); searchCandidates(); });
+  elements.candidateQuery.addEventListener("compositionstart", function () {
+    state.composing = true;
+    invalidateCandidateSearch();
+    state.candidateStatus = "loading";
+    renderCandidates();
+  });
+  function scheduleCandidateSearch() {
+    invalidateCandidateSearch();
+    state.candidateStatus = "loading";
+    renderCandidates();
+    renderRepresentativeAnalyses();
+    if (!state.composing) searchTimer = setTimeout(searchCandidates, 250);
+  }
+  elements.candidateQuery.addEventListener("compositionend", function () {
+    state.composing = false;
+    scheduleCandidateSearch();
+  });
+  elements.candidateQuery.addEventListener("input", scheduleCandidateSearch);
+  elements.candidateQuery.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && (event.isComposing || state.composing || event.keyCode === 229)) event.preventDefault();
+  });
+  elements.candidateSearchForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (!state.composing) searchCandidates();
+  });
+  elements.candidateRetry.addEventListener("click", searchCandidates);
+  elements.workspace.addEventListener("focusin", function (event) {
+    const target = event.target;
+    requestAnimationFrame(function () {
+      if (!target.isConnected || document.activeElement !== target || elements.mobileSummary.contains(target)) return;
+      const bar = elements.mobileSummary.getBoundingClientRect();
+      if (!bar.height) return;
+      const rect = target.getBoundingClientRect();
+      const header = document.querySelector(".site-header").getBoundingClientRect();
+      // Fixed mobile tools must not cover keyboard focus. Scroll margins alone
+      // do not reliably affect browser focus scrolling, especially number inputs.
+      const delta = rect.bottom > bar.top - 12 ? rect.bottom - bar.top + 12
+        : rect.top < header.bottom + 12 ? rect.top - header.bottom - 12 : 0;
+      if (delta) window.scrollBy({ top: delta, behavior: "instant" });
+    });
+  });
   elements.candidateScope.addEventListener("change", searchCandidates);
   elements.academyProfileFilters.addEventListener("change", function () {
     state.representativeAnalyses = [];
@@ -833,18 +954,7 @@
   elements.candidateList.addEventListener("click", async function (event) {
     const preview = event.target.closest("[data-page-preview-id]");
     if (preview && !preview.disabled) {
-      setBusy(preview, true, "불러오는 중");
-      try {
-        const blob = await requestImage(`/admin/question-bank/items/${encodeURIComponent(preview.dataset.pagePreviewId)}/page-preview`);
-        if (elements.questionPageImage.src) URL.revokeObjectURL(elements.questionPageImage.src);
-        elements.questionPageImage.src = URL.createObjectURL(blob);
-        elements.questionPageTitle.textContent = `${preview.dataset.pagePreviewId} 원본 페이지`;
-        elements.questionPageDialog.showModal();
-      } catch (error) {
-        setAlert(error.message, "error");
-      } finally {
-        setBusy(preview, false);
-      }
+      await openQuestionPage(preview);
       return;
     }
     const button = event.target.closest("[data-candidate-id]");
@@ -881,10 +991,62 @@
     }
   });
 
+  function clearQuestionPage() {
+    ++state.previewSequence;
+    if (state.previewController) state.previewController.abort();
+    state.previewController = null;
+    if (elements.questionPageImage.getAttribute("src")) URL.revokeObjectURL(elements.questionPageImage.src);
+    elements.questionPageImage.removeAttribute("src");
+    elements.questionPageImage.hidden = true;
+    elements.questionPageRetry.hidden = true;
+    elements.questionPageStatus.textContent = "";
+  }
+
+  async function openQuestionPage(preview) {
+    clearQuestionPage();
+    const sequence = state.previewSequence;
+    const searchSequence = state.searchSequence;
+    state.previewTrigger = preview;
+    const controller = new AbortController();
+    state.previewController = controller;
+    const current = () => sequence === state.previewSequence && searchSequence === state.searchSequence && elements.questionPageDialog.open;
+    const label = preview.closest(".candidate-row")?.querySelector(".candidate-title strong")?.textContent;
+    elements.questionPageTitle.textContent = label ? `${label} · 원본 페이지` : "원본 페이지";
+    elements.questionPageStatus.textContent = "원본 페이지를 불러오고 있습니다.";
+    if (!elements.questionPageDialog.open) elements.questionPageDialog.showModal();
+    elements.closeQuestionPage.focus();
+    try {
+      const blob = await requestImage(`/admin/question-bank/items/${encodeURIComponent(preview.dataset.pagePreviewId)}/page-preview`, controller.signal);
+      if (!current()) return;
+      elements.questionPageImage.src = URL.createObjectURL(blob);
+      await elements.questionPageImage.decode();
+      if (!current()) return;
+      elements.questionPageImage.hidden = false;
+      elements.questionPageStatus.textContent = "";
+    } catch (error) {
+      if (!current() || error.name === "AbortError") return;
+      if (elements.questionPageImage.getAttribute("src")) URL.revokeObjectURL(elements.questionPageImage.src);
+      elements.questionPageImage.removeAttribute("src");
+      elements.questionPageImage.hidden = true;
+      const denied = error.status === 401 || error.status === 403;
+      elements.questionPageStatus.textContent = denied
+        ? "이 원본을 볼 권한이 없습니다. 학생 승인 화면에서 기존 권한을 확인하세요."
+        : "원본 페이지를 불러오지 못했습니다. 다시 불러오세요.";
+      elements.questionPageRetry.hidden = denied;
+    }
+  }
+
+  elements.questionPageRetry.addEventListener("click", function () {
+    if (state.previewTrigger && state.previewTrigger.isConnected) openQuestionPage(state.previewTrigger);
+  });
   elements.closeQuestionPage.addEventListener("click", function () { elements.questionPageDialog.close(); });
   elements.questionPageDialog.addEventListener("close", function () {
-    if (elements.questionPageImage.src) URL.revokeObjectURL(elements.questionPageImage.src);
-    elements.questionPageImage.removeAttribute("src");
+    if (elements.questionPageDialog.open) return;
+    clearQuestionPage();
+    const trigger = state.previewTrigger;
+    state.previewTrigger = null;
+    if (trigger && trigger.isConnected) trigger.focus();
+    else if (!elements.workspace.hidden) elements.candidateQuery.focus();
   });
   elements.questionPageDialog.addEventListener("click", function (event) {
     if (event.target === elements.questionPageDialog) elements.questionPageDialog.close();
@@ -941,11 +1103,13 @@
     if (!Number.isFinite(pending.score) || pending.score <= 0) {
       if (pendingScores.get(placementId) === pending) pendingScores.delete(placementId);
       renderPlacements();
+      renderSummary();
       setAlert("배점은 0보다 큰 숫자여야 합니다.", "error");
       return false;
     }
     if (!current || current.score === pending.score) {
       if (pendingScores.get(placementId) === pending) pendingScores.delete(placementId);
+      renderSummary();
       return true;
     }
     pending.saving = true;
@@ -962,9 +1126,11 @@
     }
     if (changed) {
       pendingScores.delete(placementId);
+      renderSummary();
       return true;
     }
     pending.attempts = Number(pending.attempts || 0) + 1;
+    renderSummary();
     const retryDelay = Math.min(8000, 700 * (2 ** Math.min(4, pending.attempts - 1)));
     scoreTimers.set(placementId, setTimeout(function () { flushScoreSave(placementId); }, retryDelay));
     return false;
@@ -992,6 +1158,7 @@
       saving: false
     });
     scoreTimers.set(placementId, setTimeout(function () { flushScoreSave(placementId); }, delay));
+    renderSummary();
   }
 
   elements.placementList.addEventListener("input", function (event) {

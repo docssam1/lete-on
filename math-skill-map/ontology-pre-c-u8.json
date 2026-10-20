@@ -1,0 +1,353 @@
+{
+  "schema": "gfield-public-math-skill-ontology-supplement/1",
+  "checkpoint": "v110",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre C",
+    "unit": 8,
+    "title": "○× 추리",
+    "printedPages": [
+      71,
+      77
+    ],
+    "visuallyReviewedPages": 7,
+    "sourceActivityBlocks": 11,
+    "bodyPagesReusedFromHashMatchedPreservedReview": [
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77
+    ]
+  },
+  "interpretation": {
+    "candidateOnly": true,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0,
+    "approvedDifficultyLevels": 0,
+    "validatedAnswers": 11,
+    "gradeMeaning": "활동별 최소 교과수준은 미확정입니다. 표의 기호 읽기, 부정 명제 해석, 기준 시점과 참·거짓 조건을 공식 성취기준에 대조해야 합니다.",
+    "difficultyMeaning": "조건부 연구 밴드입니다. 교사 검토와 학생 수행 자료 없이 확정 난이도로 취급하지 않습니다."
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "mappedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 357,
+    "minimumCurriculumAssignments": 0,
+    "residualIntroCSourceHolds": 2,
+    "candidateEvidenceLinkedActivities": 846,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 11,
+    "previouslyMappedActivities": 0,
+    "newlyLinkedActivities": 11,
+    "activitySkillRelations": 15,
+    "newActionCandidates": 2,
+    "reusedActionCandidates": 1,
+    "conditionalDifficultyBands": 11,
+    "minimumCurriculumContextCandidates": 11,
+    "unresolvedMinimumCurriculumCandidates": 11,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 11,
+    "familyMembershipRelations": 2,
+    "relatedButDistinctRelations": 2,
+    "spiralRelationCandidates": 1,
+    "exactSomaTypeMatches": 0,
+    "somaCrossReferencedActivities": 11,
+    "somaSourceRows": 2,
+    "relatedRowsHeldBack": 4
+  },
+  "skillCandidates": [
+    {
+      "id": "LOG-PREC8-01",
+      "area": "논리·추론",
+      "areaOrderCandidate": 75,
+      "label": "부정·확정 단서로 일대일 대응 좁히기",
+      "observableAction": "서로 다른 대상과 속성의 일대일 대응에서 확정·부정 단서를 후보 칸에 표시하고 행·열의 유일성으로 남은 대응을 좁힌다.",
+      "activityNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "1",
+        "2",
+        "3",
+        "2",
+        "3",
+        "2",
+        "3",
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "LOG-PREC8-02",
+      "area": "논리·추론",
+      "areaOrderCandidate": 76,
+      "label": "부정문·응답의 진릿값을 추론해 대응에 반영하기",
+      "observableAction": "진술 자체의 참·거짓과 진술 속 부정 표현을 분리해 ○·× 응답 또는 거짓말 규칙을 해석한 뒤 대상의 속성 대응을 결정한다.",
+      "activityNumbers": [
+        3,
+        5,
+        6,
+        8,
+        10
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "2",
+        "3",
+        "4",
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "reusedSkillCandidates": [
+    {
+      "id": "LOG-INTRO-C-U9-11",
+      "label": "속성 대응과 비교 관계를 함께 추론하기",
+      "activityNumbers": [
+        11
+      ],
+      "basis": "별명과 사람의 일대일 대응을 운동·키·나이의 비교 관계로 좁히는 행동이 기존 속성 대응·비교 행동과 맞아 기존 후보를 재사용한다. 교사 승인 동등성은 아니다."
+    }
+  ],
+  "activities": [
+    {
+      "activityNumber": 1,
+      "printedPage": 71,
+      "label": "이야기 속 원리 탐구 02",
+      "observedAction": "사슴·호랑이·여우가 각각 하나씩 딴 세 과일과 진술 세 개를 ○× 표에 놓아 범인을 추론한다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-01"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 2,
+      "printedPage": 71,
+      "label": "확인 1",
+      "observedAction": "민우·형식·현아가 서로 다른 과일을 좋아할 때 세 진술로 각각의 과일을 찾는다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-01"
+      ],
+      "conditionalDifficultyBand": 1,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 3,
+      "printedPage": 72,
+      "label": "대표문제 1",
+      "observedAction": "세호·민정·소라가 기르는 강아지·토끼·고양이를 ○× 표에서 각각 추론한다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-01",
+        "LOG-PREC8-02"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 4,
+      "printedPage": 73,
+      "label": "대표문제 2",
+      "observedAction": "경찰관·꽃집 주인·의사의 경찰서·병원·꽃집 위치를 ○× 표로 정한다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-01"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 5,
+      "printedPage": 74,
+      "label": "연습문제 1",
+      "observedAction": "제동·민우·서린의 버스·비행기·기차를 부정문 두 열의 ○× 표로 정한다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-01",
+        "LOG-PREC8-02"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 6,
+      "printedPage": 74,
+      "label": "연습문제 2",
+      "observedAction": "사슴·토끼·말의 당근·사과·풀 섭취를 진실·거짓 응답으로 추론한다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-01",
+        "LOG-PREC8-02"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 7,
+      "printedPage": 75,
+      "label": "연습문제 3",
+      "observedAction": "도영·희주·영호의 나이가 각각 8·9·10살일 때 내년 나이와 부정 조건으로 각 나이를 추론한다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-01"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 8,
+      "printedPage": 75,
+      "label": "연습문제 4",
+      "observedAction": "거짓말을 하면 얼굴이 빨개지는 두 도깨비 중 한 명만 요술방망이를 가진 조건에서 응답의 참·거짓을 연결한다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-02"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 9,
+      "printedPage": 76,
+      "label": "심화문제 1",
+      "observedAction": "태민·수정·윤아·시훈에게 서로 다른 숫자 3·5·7·8을 진술 조건으로 대응한다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-01"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 10,
+      "printedPage": 76,
+      "label": "심화문제 2",
+      "observedAction": "지훈·채린·원호·보라에게 김·이·박·최의 성을 ○× 응답과 자기소개로 대응한다.",
+      "candidateSkillIds": [
+        "LOG-PREC8-01",
+        "LOG-PREC8-02"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 11,
+      "printedPage": 77,
+      "label": "도전문제 3",
+      "observedAction": "강이·소연·지민의 서로 다른 별명을 운동·키·나이 단서로 추론하고 ○× 표를 완성한다.",
+      "candidateSkillIds": [
+        "LOG-INTRO-C-U9-11"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    }
+  ],
+  "taxonomy": {
+    "familyCandidateId": "FAMILY-OX-ONE-TO-ONE-DEDUCTION",
+    "familyLabel": "○× 표·일대일 대응 추리",
+    "familyMembershipRelations": 2,
+    "relatedButDistinctRelations": [
+      {
+        "from": "LOG-PREC8-01",
+        "to": "LOG-INTRO-C-U9-14",
+        "evidenceItemIds": [
+          "1031-unit8-prec-block-009"
+        ],
+        "basis": "서로 다른 항목을 사람에게 하나씩 대응시키는 공통점은 있으나, C8은 범주·진술의 OX 제거이고 U9-14는 숫자 배정에 공유 합 조건이 더해져 같은 행동으로 합치지 않는다."
+      },
+      {
+        "from": "LOG-PREC8-02",
+        "to": "LOG-INTRO-C-U9-11",
+        "evidenceItemIds": [
+          "1031-unit8-prec-block-010"
+        ],
+        "basis": "두 행동 모두 진술을 활용하지만 C8은 부정문·응답의 진릿값을 대응으로 바꾸고, U9-11은 서로 다른 속성의 비교 관계를 연결한다."
+      }
+    ],
+    "spiralRelations": [
+      {
+        "fromSkillId": "LOG-PREC8-01",
+        "toSkillId": "LOG-PREC8-02",
+        "type": "spiral-extension-candidate",
+        "status": "hypothesis-needs-teacher-review",
+        "evidenceItemIds": [
+          "1031-unit8-prec-block-001",
+          "1031-unit8-prec-block-008",
+          "1031-unit8-prec-block-010"
+        ],
+        "basis": "행·열 유일성에 따라 대응 후보를 제거하는 행동에 진술의 부정·응답 진릿값까지 반영하는 확장이 가능하다는 가설이다. 선수 순서나 교과 학년은 승인하지 않는다.",
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "somaCrosswalk": {
+      "crossReferencedItems": 11,
+      "sourceRows": [
+        {
+          "code": "C2-3 1",
+          "itemCount": 5
+        },
+        {
+          "code": "E1-3 2",
+          "itemCount": 6
+        }
+      ],
+      "relatedRowsHeldBack": 4,
+      "exactTypeMatches": 0,
+      "status": "partial-reference-only"
+    }
+  },
+  "answerValidation": {
+    "activitiesValidated": 11,
+    "answerKeyPdfPages": [
+      32,
+      33,
+      34,
+      35
+    ],
+    "sameEditionAnswerPdfSha256": "a77069a55463c8ba64b502c36e312ac870a31dc8cd068869ec74b62301570e27",
+    "method": "Same-edition answer-key pages were visually compared with mapped source activities; local Apple Vision OCR was assistive only.",
+    "exactAnswerValuesOmitted": true,
+    "minimumCurriculumAssignments": 0
+  }
+}

@@ -19,10 +19,10 @@ export const freezeLesson = {
     say: [{ mood: 'talk', text: '물을 얼렸다 녹이며 재어 봐요.' }],
     modes: ['lab', 'scene', 'home'],
     lab: {
-      kind: 'freeze', amounts: [60, 100, 140],
-      goal: '물의 양을 고르고, 얼리기 전과 후의 높이·무게를 표에 적어 보세요.',
-      columns: ['상태', '물의 양(mL)', '높이(칸)', '무게(g)'],
-      rowText: (r) => `${r.state} ${r.ml} mL → 높이 ${r.height}칸, 무게 ${r.mass} g`,
+      kind: 'freeze', amounts: [60, 100, 140],   // amounts: 추가 탐구(얼음 병 저울)·두 팀 배틀용
+      goal: '시험관 속 물을 얼렸다가 녹이며, 처음 물·다 언 얼음·다 녹은 물의 높이와 무게를 재어 표에 적어 보세요.',
+      columns: ['단계', '높이(cm)', '무게(g)'],
+      rowText: (r) => `${r.step} → 높이 ${Number(r.height).toFixed(1)} cm, 무게 ${Number(r.mass).toFixed(1)} g`,
     },
     home: {
       title: '얼음 병 저울 실험', minutes: 20, guardian: true,
@@ -48,11 +48,14 @@ export const freezeLesson = {
     say: [{ mood: 'talk', text: '물의 상태 변화를 정리해 볼까요?' }],
     analogy: '얼음·물·수증기는 모두 물이에요. 같은 용기에서 물의 출입 없이 얼리거나 녹일 때 무게를 비교해요. 열린 접시에서는 증발한 물이 공기 중으로 나가요.',
     principle: '물이 얼면 부피는 늘어나고 무게는 변하지 않아요. 얼음이 녹으면 부피가 다시 줄어들어요.',
+    // 시험관 기록(처음 물·다 언 얼음·다 녹은 물)에서만 말한다 — 결론은 학생이 적은 값에서 나온다.
     fromData: (rows) => {
-      const pair = rows.map((w) => [w, rows.find((i) => i.state === '얼음' && i.ml === w.ml)]).find(([w, i]) => w.state === '물' && i);
-      if (!pair) return rows.length ? '물과 얼음을 같은 양으로 한 번씩 적으면 비교해 줄게요.' : '';
-      const [w, i] = pair;
-      return `네 기록: 물 ${w.ml} mL가 얼었더니 높이는 ${w.height}칸에서 ${i.height}칸으로 늘었지만, 무게는 ${w.mass} g 그대로였어요.`;
+      const at = (s) => rows.find((r) => r && r.step === s), w = at('처음 물'), i = at('다 언 얼음'), m = at('다 녹은 물');
+      if (!w || !i) return rows.length ? '시험관 실험에서 처음 물과 다 언 얼음을 적으면 비교해 줄게요.' : '';
+      const f = (v) => Number(v).toFixed(1), dir = (a, b) => (b > a ? '늘었고' : b < a ? '줄었고' : '그대로였고');
+      const g = w.mass === i.mass ? `무게는 ${f(w.mass)} g으로 같았어요.` : `무게는 ${f(w.mass)} g에서 ${f(i.mass)} g으로 달라졌어요.`;
+      return `네 기록: 처음 물이 얼었더니 높이는 ${f(w.height)} cm에서 ${f(i.height)} cm로 ${dir(w.height, i.height)}, ${g}`
+        + (m ? ` 다 녹은 물은 높이 ${f(m.height)} cm, 무게 ${f(m.mass)} g이었어요.` : '');
     },
     cards: ['s41-u02-b01', 's41-u02-b02', 's41-u02-b03', 's41-u02-b04'],
     table: 's41-u02-b05',
@@ -78,7 +81,7 @@ export const freezeLesson = {
       { key: 'wonder', label: '① 궁금한 점', from: 'engage.question' },
       { key: 'problem', label: '② 탐구 문제', hint: '예) 물이 얼면 부피와 무게는 어떻게 변할까?' },
       { key: 'hypothesis', label: '③ 가설(내 예상)', from: 'engage.prediction' },
-      { key: 'vars', label: '④ 조건', hint: '바꿀 조건 / 같게 할 조건 / 측정할 것', default: '바꿀 조건: 물의 상태(물, 얼음)\n같게 할 조건: 물의 양, 병, 저울\n측정할 것: 높이, 무게' },
+      { key: 'vars', label: '④ 조건', hint: '바꿀 조건 / 같게 할 조건 / 측정할 것', default: '바꿀 조건: 물의 상태(처음 물 → 다 언 얼음 → 다 녹은 물)\n같게 할 조건: 같은 시험관·고무마개, 같은 저울과 컵, 잴 때마다 바깥 물기 닦기\n측정할 것: 물(얼음) 기둥의 높이(cm), 시험관 전체의 무게(g)' },
       { key: 'materials', label: '⑤ 준비물', from: 'explore.home.materials' },
       { key: 'steps', label: '⑥ 실험 과정', from: 'explore.home.steps' },
       { key: 'result', label: '⑦ 결과', from: 'explore.lab.table' },
@@ -92,7 +95,7 @@ export const freezeLesson = {
 // 현행 전체 단원: 위 얼음 병 수업 정의와 기존 모형/저장 기록은 보존한다.
 import {inquiry} from '../activities/s41-u02.inquiry.js';
 const q=n=>`s41-u02-b${String(n).padStart(2,'0')}`;
-export const lesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'다섯 변화 관찰·물을 얻는 장치 만들기',
+export const recordsLesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'다섯 변화 관찰·물을 얻는 장치 만들기',
  engage:{say:[{mood:'thinking',text:'끓이지 않은 물도 어디로 갈까요?'},{mood:'talk',text:'관찰한 근거로 물을 모으는 장치를 만들어요.'}],question:'얼음·물·수증기로 바뀌는 모습을 어떻게 확인하고 물을 따로 모을까요?',predictions:[{id:'observe',text:'조건과 실제 관찰을 확인해 상태 변화와 수집 경로를 설명한다.'},{id:'heat',text:'물을 반드시 끓여야만 수증기가 되므로 다른 관찰은 필요 없다.'},{id:'more',text:'아직 모르므로 관찰하고 장치를 만들어 더 확인하고 싶다.'}],answer:'observe',predictionNote:'예상과 실제 결과를 나중에 근거로 비교해요.'},
  explore:{say:[{mood:'talk',text:'직접 관찰·자료·계획을 구별해 남겨요.'}],modes:['lab','model','scene','home'],modeLabels:{lab:'내 물 탐구 기록',model:'물기둥 모형',scene:'얼음 병3D',home:'실제 활동 방법'},scene:'freeze-bottle',modelLab:freezeLesson.explore.lab,modelLabel:'얼었다 녹는 물기둥 모형',modelNotice:'무게는 물+병(가정20g)의 모형 값이며, 높이 칸은 실제cm가 아니에요.',
  lab:{kind:'inquiry',config:inquiry,rowsKey:'waterInquiryRows',goal:'여덟 활동의 실제 조건·관찰·설계·제작·시험·의견과 미실행 계획을 구별해 보관해요.',columns:['활동','보관한 기록'],rowText:r=>r.title},
@@ -102,3 +105,10 @@ export const lesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'다�
  evaluate:{say:[{mood:'encourage',text:'자료 응답과 실제 만든 근거를 따로 확인해요.'}],items:[q(47),q(55),q(63)],pass:2,performanceNote:'자료 문제를 맞혔다고 실제 관찰·장치 만들기·시험·의견 교환을 한 것으로 세지 않아요. 실제 수행은 선생님과 근거를 확인해요.'},
  report:{title:'물의 상태 변화 · 관찰과 장치 만들기 보고서',sections:[{key:'waterQuestion',label:'① 알아볼 문제·직접/자료/계획 구별'},...inquiry.activities.map((a,i)=>({key:'water_'+a.id,from:'inquiry.'+a.id,label:`${i+2}. ${a.title} · 조건과 실제 근거`})),{key:'waterMore',label:'⑩ 더 확인할 점·다음 계획'}],checks:['물의 세 상태·주변 예와 직접/자료를 구별했나요?','같은 용기의 높이·전체 무게·단위·출입·겉 물기를 확인했나요?','증발과 끓음의 공통점·교사 시범 안전을 설명했나요?','컵 바깥의 응결과 누수/흘림을 비교했나요?','장치를 실제 만들었는지·고정·직접 혼입 방지를 확인했나요?','물방울과 컵 수집·실제 의견·수정·재시험·미확인을 구별했나요?']}
 };
+
+// 2026-10-20 ⑤ 같은 패턴 정리: 기본 수업 = 위 freezeLesson(3D 실험 수업 · 예상→실험→개념). 탐구 기록 앱은 선택 기능(#/s41-u02/records)으로 옮겼다
+// — 저장 키 sciLab.inquiry.s41-u02와 보고서 화면(#/s41-u02/report)은 그대로 기록장과 이어진다. 기록 교재는 #/s41-u02/records-book.
+export const lesson = { ...freezeLesson,
+  explore: { ...freezeLesson.explore, records: { ...recordsLesson.explore.lab, title: '탐구 기록장(선택)', note: '다섯 변화 관찰·물을 얻는 장치 제작과 의견을 따로 기록하고 싶을 때 써요. 수업은 기록 없이도 끝까지 할 수 있어요.' } },
+  elaborate: { ...freezeLesson.elaborate, report: false },
+  report: recordsLesson.report };

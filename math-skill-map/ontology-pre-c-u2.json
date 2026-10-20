@@ -1,0 +1,293 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v93",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre C",
+    "unit": 2,
+    "title": "여러 가지 규칙",
+    "printedPages": [
+      21,
+      27
+    ],
+    "sourceActivityBlocks": 13,
+    "visuallyReviewedPages": 7,
+    "answerValidated": true
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 846,
+    "activitiesInReviewQueue": 6,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 167,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 13,
+    "newlyLinkedActivities": 13,
+    "activitySkillRelations": 13,
+    "newActionCandidates": 6,
+    "reusedActionCandidates": 2,
+    "conditionalDifficultyBandsReused": 13,
+    "newDifficultyCandidates": 0,
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumLevelCandidates": 13,
+    "unresolvedMinimumCurriculumCandidates": 13,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 13,
+    "directSomaMatchCandidates": 6,
+    "partialSomaReferences": 1,
+    "relatedButDistinctSomaReferences": 6
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "PAT-MATRIX-ATTRIBUTE-RULE-DECOMPOSITION-PREC2-01",
+      "n": 48,
+      "area": "pattern",
+      "title": "행·열에서 여러 그림 속성의 규칙을 나눠 빈칸 채우기",
+      "difficulty": "3–4",
+      "count": 4,
+      "desc": "행렬의 행·열을 비교해 외곽 모양, 안쪽 모양, 색, 방향 등 속성별 규칙을 분리하고 다시 결합해 비어 있는 칸을 완성한다.",
+      "links": [
+        "PAT-MATRIX-OVERLAY-COMPOSITION-PREC2-01",
+        "PAT-MULTI-CYCLE-ANALYSIS-PREC1-01"
+      ],
+      "pages": "21–27쪽",
+      "curriculum": "초등 1–2학년군 규칙 찾기 내용 맥락 후보 · 최소 학년 미확정"
+    },
+    {
+      "id": "PAT-MATRIX-OVERLAY-COMPOSITION-PREC2-01",
+      "n": 49,
+      "area": "pattern",
+      "title": "두 그림의 겹침 관계를 적용해 행렬의 결과 도형 만들기",
+      "difficulty": "3",
+      "count": 1,
+      "desc": "행렬의 각 행에서 두 도형이 겹쳐 만들어 내는 결과를 찾아 같은 합성 관계를 빈칸에 구성한다.",
+      "links": [],
+      "pages": "21–27쪽",
+      "curriculum": "초등 1–2학년군 규칙 찾기 내용 맥락 후보 · 최소 학년 미확정"
+    },
+    {
+      "id": "PAT-PERIMETER-CYCLIC-MOVEMENT-PREC2-01",
+      "n": 50,
+      "area": "pattern",
+      "title": "격자 둘레의 순환 이동으로 지정 차례의 위치 찾기",
+      "difficulty": "3",
+      "count": 1,
+      "desc": "가장자리 구멍을 따라 움직이는 물체의 방향과 이동 칸 수를 추적해 지정된 차례의 위치를 찾는다.",
+      "links": [
+        "PAT-GRID-POSITION-TRANSFORMATION-PREC2-01"
+      ],
+      "pages": "21–27쪽",
+      "curriculum": "초등 1–2학년군 규칙 찾기 내용 맥락 후보 · 최소 학년 미확정"
+    },
+    {
+      "id": "PAT-GRID-POSITION-TRANSFORMATION-PREC2-01",
+      "n": 51,
+      "area": "pattern",
+      "title": "격자 도형의 위치·방향 변화 규칙으로 상태 복원하기",
+      "difficulty": "3",
+      "count": 2,
+      "desc": "격자에서 둘 이상의 도형이 이동하거나 회전하는 순서를 추적해 다음 상태 또는 연속된 빈 상태를 복원한다.",
+      "links": [],
+      "pages": "21–27쪽",
+      "curriculum": "초등 1–2학년군 규칙 찾기 내용 맥락 후보 · 최소 학년 미확정"
+    },
+    {
+      "id": "PAT-MULTIPLE-RULE-TYPE-ISOLATION-PREC2-01",
+      "n": 52,
+      "area": "pattern",
+      "title": "서로 다른 변화 규칙을 나눠 각 배열의 다음 상태 만들기",
+      "difficulty": "3",
+      "count": 1,
+      "desc": "한 문항에 제시된 여러 배열을 비교해 개수 증감, 위치 이동처럼 서로 다른 변화 규칙을 각 배열에 따로 적용한다.",
+      "links": [
+        "PAT-MATRIX-ATTRIBUTE-RULE-DECOMPOSITION-PREC2-01"
+      ],
+      "pages": "21–27쪽",
+      "curriculum": "초등 1–2학년군 규칙 찾기 내용 맥락 후보 · 최소 학년 미확정"
+    },
+    {
+      "id": "PAT-ROTATING-SECTOR-STATE-RECONSTRUCTION-PREC2-01",
+      "n": 53,
+      "area": "pattern",
+      "title": "회전 원판의 구역별 도형과 개수 변화를 추적해 빈 상태 채우기",
+      "difficulty": "3",
+      "count": 2,
+      "desc": "분할 원판이 회전하는 순서에서 각 구역의 도형 종류와 개수 변화를 추적해 빠진 중간 또는 다음 그림을 완성한다.",
+      "links": [
+        "PAT-PERIMETER-CYCLIC-MOVEMENT-PREC2-01",
+        "PAT-INTRO-C-U3-04"
+      ],
+      "pages": "21–27쪽",
+      "curriculum": "초등 1–2학년군 규칙 찾기 내용 맥락 후보 · 최소 학년 미확정"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only-reused-from-v62",
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 4
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "content-context-candidates-only",
+    "candidateActivities": 13,
+    "unresolvedActivities": 13,
+    "confirmedAssignments": 0,
+    "contexts": [
+      "[2수02-01] 도형·무늬 배열의 규칙 찾기 및 표현",
+      "[2수01-01] 수 세기·순서 추적 (차례·칸 수를 묻는 활동의 맥락 후보)"
+    ],
+    "note": "교육과정 내용 맥락은 문항별 최소 학년이 아니다."
+  },
+  "developmentalProgressionContext": {
+    "status": "program-window-context-only-not-item-age-or-school-grade",
+    "phase": "pre-basic",
+    "program": "초등팩토 1",
+    "ageWindow": "5세 10월–6세 2월",
+    "parallelArithmeticMaterials": [
+      "기적의 계산법 2권",
+      "기적의 계산법 3권",
+      "기적의 계산법 4권"
+    ],
+    "parallelCurriculumMaterials": [
+      "1-1 디딤돌",
+      "1-2 디딤돌",
+      "2-1 디딤돌"
+    ],
+    "note": "로드맵의 과정·병행 교재 창은 학습 경로 참고이며 Pre C2 각 활동의 적정 연령, 난이도, 최소 학년을 확정하지 않는다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "FAMILY-PRE-C-MATRIX-AND-VISUAL-RULES",
+        "label": "행렬·그림 규칙 추론 계통 후보"
+      },
+      {
+        "id": "FAMILY-CHANGE-RULE",
+        "label": "변화 규칙 일반화"
+      }
+    ],
+    "relations": [
+      {
+        "from": "PAT-MATRIX-ATTRIBUTE-RULE-DECOMPOSITION-PREC2-01",
+        "to": "PAT-MATRIX-OVERLAY-COMPOSITION-PREC2-01",
+        "type": "related-but-distinct",
+        "basis": "행·열에서 여러 속성의 독립 규칙을 분리하는 행동과 두 그림의 겹침·합성 결과를 찾는 행동은 같은 행렬 표상을 써도 관계 연산이 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "PAT-MATRIX-ATTRIBUTE-RULE-DECOMPOSITION-PREC2-01",
+        "to": "PAT-MULTI-CYCLE-ANALYSIS-PREC1-01",
+        "type": "related-but-distinct",
+        "basis": "행렬의 행·열 속성 규칙을 결합하는 행동과 서로 길이가 다른 주기 속성을 차례에 맞춰 결합하는 행동은 규칙의 배치 구조가 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "PAT-PERIMETER-CYCLIC-MOVEMENT-PREC2-01",
+        "to": "PAT-GRID-POSITION-TRANSFORMATION-PREC2-01",
+        "type": "related-but-distinct",
+        "basis": "격자 외곽을 따라 이동하는 하나의 물체 추적과 격자 안 복수 도형의 위치·방향 변환은 상태 공간이 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "PAT-ROTATING-SECTOR-STATE-RECONSTRUCTION-PREC2-01",
+        "to": "PAT-PERIMETER-CYCLIC-MOVEMENT-PREC2-01",
+        "type": "related-but-distinct",
+        "basis": "분할 원판의 회전과 구역별 속성 변화 추적은 외곽 경로에서 물체 하나의 이동 칸 수를 세는 행동과 구별한다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "PAT-MULTIPLE-RULE-TYPE-ISOLATION-PREC2-01",
+        "to": "PAT-MATRIX-ATTRIBUTE-RULE-DECOMPOSITION-PREC2-01",
+        "type": "related-but-distinct",
+        "basis": "별도 배열마다 서로 다른 변화 규칙을 적용하는 행동과 한 행렬 안의 속성 규칙을 나누어 빈칸을 완성하는 행동은 분류 단위가 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "PAT-ROTATING-SECTOR-STATE-RECONSTRUCTION-PREC2-01",
+        "to": "PAT-INTRO-C-U3-04",
+        "type": "related-but-distinct",
+        "basis": "여러 구역의 도형과 수량을 함께 추적하는 원판 상태 복원과 숫자 카드 한 장의 반복 회전 방향 찾기는 관련 변환이지만 산출 대상과 속성 수가 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      }
+    ]
+  },
+  "crossReferences": {
+    "somaSourceRows": [
+      {
+        "code": "A1-3 4",
+        "title": "스도쿠와 매트릭스"
+      },
+      {
+        "code": "A4-1 4",
+        "title": "유추하기 Ⅱ"
+      },
+      {
+        "code": "C1-3 3",
+        "title": "규칙 찾기"
+      }
+    ],
+    "directMatchCandidates": 6,
+    "partialMatches": 1,
+    "relatedButDistinct": 6,
+    "teacherApprovedEquivalences": 0,
+    "note": "매트릭스 행은 6개 활동의 직접 연결 후보, 나머지는 부분·관련 항목 후보로 구분했다. 교사 승인은 없다."
+  },
+  "privacy": "공개 파일에는 문항별 정답·OCR 원문·활동 ID·이미지 해시·로컬 경로를 포함하지 않는다. 답안 근거 13건은 인쇄 해설 pp.8–11 대조 결과만 집계한다. 난이도·최소 교과수준·계통 연결은 교사 승인 전 후보다.",
+  "answerValidation": {
+    "activitiesValidated": 13,
+    "answerKeyPdfPages": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "method": "Rendered same-edition answer-key pages were visually cross-checked against the existing body-page review.",
+    "exactAnswerValuesOmitted": true
+  }
+}

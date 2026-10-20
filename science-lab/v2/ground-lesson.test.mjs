@@ -1,5 +1,6 @@
+// 2026-10-20: 기본 수업은 3D 실험 수업으로 되돌렸다(lab-lessons.test.mjs). 이 파일은 선택 기능으로 옮긴 탐구 기록장·기록 교재(records)가 예전대로 동작하는지 본다.
 import test from 'node:test';import assert from 'node:assert/strict';
-import{inquiry}from'../data/activities/s41-u03.inquiry.js';import{lesson,hillLesson}from'../data/units/s41-u03.lesson.js';import{chapter,art,plan}from'../data/book/s41-u03.inquiry.book.js';import{items}from'../data/units/s41-u03.js';import{source}from'../data/units/s41-u03.source.js';
+import{inquiry}from'../data/activities/s41-u03.inquiry.js';import{recordsLesson as lesson,hillLesson}from'../data/units/s41-u03.lesson.js';import{chapter,art,plan}from'../data/book/s41-u03.inquiry.book.js';import{items}from'../data/units/s41-u03.js';import{source}from'../data/units/s41-u03.source.js';
 import{emptyInquiry,saveInquiry,validInquiry,inquiryError,inquirySections,inquiryKey}from'./inquiry-records.js';import{buildSlides}from'./deck.js';import{renderChapter}from'./book.js';
 test('땅 여덟 활동은 흐르는 물·화산 모형·두 암석·영향 조사·대처 실천을 독립 언덕 기록과 연결한다',()=>{
  assert.deepEqual(inquiry.activities.map(a=>a.id),['hill','river','volcano','materials','rocks','classify','impact','practice']);assert.equal(source.length,80);assert.equal(items.length,82);

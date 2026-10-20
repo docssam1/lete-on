@@ -1,0 +1,234 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v32",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 D",
+    "unit": 4,
+    "title": "하나를 기준으로 나타내기",
+    "printedPages": [
+      43,
+      49
+    ],
+    "sourceActivityBlocks": 16,
+    "visuallyReviewedPages": 7
+  },
+  "aggregate": {
+    "ontologyNodes": 1369,
+    "ontologyRelations": 2142,
+    "skillActionCandidates": 246,
+    "activitiesWithSkillCandidateEvidence": 451,
+    "activitiesInReviewQueue": 401,
+    "conditionalDifficultyCandidates": 452,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "newlyLinkedActivities": 16,
+    "newActionCandidates": 5,
+    "reusedActionCandidates": 2,
+    "conditionalDifficultyBands": 16,
+    "relationHypotheses": 2,
+    "familyCandidates": 2,
+    "minimumCurriculumLevelCandidates": 14,
+    "minimumCurriculumUnresolved": 2,
+    "minimumCurriculumAssignments": 0,
+    "validatedAnswers": 0
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "D4-REL01",
+      "area": "relations",
+      "areaOrder": 12,
+      "label": "기준량을 잡고 연쇄된 수량 차이로 목표량 구하기",
+      "observableAction": "알려진 기준량에서 부족·초과 또는 감소 조건을 방향에 맞게 순서대로 적용해 연쇄 비교 대상의 수를 구한다.",
+      "activityCount": 9,
+      "printedPages": [
+        43,
+        44,
+        46,
+        47,
+        48
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군",
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D4-REL02",
+      "area": "relations",
+      "areaOrder": 13,
+      "label": "집단별 차이 관계로 전체 인원을 구성한 뒤 알려진 부분합 빼기",
+      "observableAction": "각 집단의 기준 인원과 상대 차이를 순서대로 계산해 전체 인원을 구성하고 알려진 성별 부분합을 빼 나머지를 구한다.",
+      "activityCount": 2,
+      "printedPages": [
+        45
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군",
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D4-REL03",
+      "area": "relations",
+      "areaOrder": 14,
+      "label": "두 속성의 변화를 집단별로 누적해 총량의 최댓값·최솟값 비교하기",
+      "observableAction": "여러 집단의 남녀별 증감량을 별도로 갱신해 각 집단 합계를 만든 뒤 최댓값과 최솟값의 차를 비교한다.",
+      "activityCount": 1,
+      "printedPages": [
+        46
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D4-REL04",
+      "area": "relations",
+      "areaOrder": 15,
+      "label": "중간 대상 기준의 배수 관계를 연쇄 적용해 전체량 구하기",
+      "observableAction": "앞 단계 대상의 수를 다음 배수 기준으로 삼아 곱셈 관계를 연쇄 적용하고 전체 수를 합산한다.",
+      "activityCount": 1,
+      "printedPages": [
+        47
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D4-REL05",
+      "area": "relations",
+      "areaOrder": 16,
+      "label": "대상별 속성 관계를 색·종류별로 나누어 전체 수량 복원하기",
+      "observableAction": "사람과 구슬 색의 축을 분리해 각 수량의 비교 기준을 연결하고 목표 대상의 색별 수를 합산한다.",
+      "activityCount": 1,
+      "printedPages": [
+        49
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [],
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "bandsByAction": [
+      {
+        "id": "D4-REL01",
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "id": "D4-REL02",
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "id": "D4-REL03",
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "id": "D4-REL04",
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "id": "D4-REL05",
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      }
+    ],
+    "teacherApprovedLevels": 0
+  },
+  "curriculum": {
+    "status": "strategy-context-only",
+    "minimumLevelCandidates": 14,
+    "unresolvedActivities": 2,
+    "confirmedAssignments": 0,
+    "contextOnlyStandards": [
+      "2수01-06",
+      "2수01-07",
+      "2수01-08",
+      "2수01-09",
+      "2수01-11",
+      "4수01-03",
+      "4수02-03"
+    ],
+    "note": "교과 기준은 풀이 전략의 맥락 후보이며 문항 최소 학년·연령의 확정값이 아닙니다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "label": "기준량에서 비교 관계를 연쇄 적용",
+        "members": [
+          "기준량을 잡고 연쇄된 수량 차이로 목표량 구하기",
+          "중간 대상 기준의 배수 관계를 연쇄 적용해 전체량 구하기"
+        ],
+        "status": "hypothesis-needs-teacher-review",
+        "assertsEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "label": "여러 범주별 수량을 정리해 목표량 비교·합산",
+        "members": [
+          "집단별 차이 관계로 전체 인원을 구성한 뒤 알려진 부분합 빼기",
+          "두 속성의 변화를 집단별로 누적해 총량의 최댓값·최솟값 비교하기",
+          "대상별 속성 관계를 색·종류별로 나누어 전체 수량 복원하기"
+        ],
+        "status": "hypothesis-needs-teacher-review",
+        "assertsEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "relations": [
+      {
+        "from": "기준량을 잡고 연쇄된 수량 차이로 목표량 구하기",
+        "to": "두 대상 비교를 연결해 순서 추론하기",
+        "type": "related-but-distinct",
+        "basis": "둘 다 비교 관계를 연결하지만 D4는 수량을 계산하고 C9는 대상의 순서를 정한다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "기준량을 잡고 연쇄된 수량 차이로 목표량 구하기",
+        "to": "중간 대상 기준의 배수 관계를 연쇄 적용해 전체량 구하기",
+        "type": "related-but-distinct",
+        "basis": "연쇄 관계 적용은 공유하지만 덧셈·뺄셈 차이 연결과 배수 기준 연결은 계산 행동이 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      }
+    ]
+  },
+  "privacy": "원문 문항·답·활동 ID·파일 경로·이미지/파일 해시는 공개하지 않습니다."
+}

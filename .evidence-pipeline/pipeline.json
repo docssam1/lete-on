@@ -1002,6 +1002,11 @@
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
               "note": "Children fold, cut, stamp their own pattern, predict one opening, sort/collect pieces, build/peel equal-size paper. Existing number-paper play retained."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:paper-path-20261018/ui-review.json",
+              "note": "Optional continuous connect-line method retains all papers. Existing build and peel methods and accepted action histories remain available; no timer or grades."
             }
           ]
         },
@@ -1014,6 +1019,11 @@
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
               "note": "126 activities,321 physical stages,1904 transitions;3456 number projections,40804 partial-fold samples,1808 ink transforms,181/257 raster checks and72 topology checks."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:paper-path-20261018/check-1.log",
+              "note": "Current126 activities/321 physical stages/1900 accepted transitions;16 complete connection routes independently checked for crossings, touches and overlaps. The detached top-clue route uses an upper detour without changing paper positions or answers."
             }
           ]
         },
@@ -1026,6 +1036,11 @@
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
               "note": "Intermediate/final responses preserved; correct multi-choice/multi-answer contracts; no answer leakage in student worksheets; one-sided number-print convention explicit."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:paper-order-20261018/ui-review.json",
+              "note": "Bottom-to-top and top-to-bottom complete sequences; wrong or duplicate papers rejected. Former bottom-clue action replays without loss;undo/reload restored7/8."
             }
           ]
         },
@@ -1038,6 +1053,11 @@
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
               "note": "Game IDs/order and custom pattern JSON roundtrip; invalid, duplicate, nonfinite, out-of-bound and malformed-square patterns rejected."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:paper-path-20261018/ui-review.json",
+              "note": "Same ordered game IDs and method=connect reach the worksheet; question diagrams have0 answer lines and four teacher diagrams have4 lines."
             }
           ]
         },
@@ -1050,6 +1070,11 @@
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
               "note": "396 actual viewport game states and12 studio entry states;1024x768 scenes fit one screen, no clipped paper/arrows or horizontal overflow."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:paper-path-20261018/game-layout-48.json",
+              "note": "Connection method:48 actual iframe states across4 languages and1024x768/390x844/667x375; final horizontal overflow0 and tablet/landscape tools fit. Earlier frame observer errors retained separately from standalone app logs."
             }
           ]
         },
@@ -1062,6 +1087,11 @@
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
               "note": "390x844 and667x375:10 representative activities completed each (20 routes);48 actual worksheet layout states; not a claim of physical-device testing."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:paper-path-20261018/ui-review.json",
+              "note": "Portrait and landscape completion;native drag accepted two papers in one gesture;6/8-paper cases;minimum active letter target44.4px. No physical-device claim."
             }
           ]
         },
@@ -1074,6 +1104,11 @@
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
               "note": "Four Korean vector PDFs,66 A4 pages, all rendered and visually reviewed in13 contact sheets; bounded text, blank response space, diagrams/footers preserved. Internal actual odd-duplex fixture:3 question pages,blank4,answers5-7; all7 pages rendered and reviewed."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:paper-path-20261018/output/pdf/pdf-visual-review.json",
+              "note": "Existing full-type PDFs retained; order-direction revision58 pages fully reviewed. Added one connection-play PDF:4 questions+4 solutions,all8 rendered/reviewed, no clipping or question-answer leakage."
             }
           ]
         },
@@ -1098,6 +1133,11 @@
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
               "note": "Old number-paper4 checks and worksheet, old paper-fold112-problem and24 reverse-problem regressions; clean-release mandatory5 checks pass; original mixed root HEAD/progress retained."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:paper-path-20261018/checks.json",
+              "note": "Model126 activities and worksheet1024 baseline renders plus new route/retained-paper/connection-sheet assertions and mandatory5 release checks passed. No runtime changes in the2026-10-20 record consolidation."
             }
           ]
         },
@@ -1110,27 +1150,60 @@
               "role": "test",
               "locator": "artifact:paper-full-types-20261018/release/validation-summary.json",
               "note": "Pages39119715795 succeeded;28 live assets match code SHA;3 live activity routes and4 worksheet modes/entry checked, console errors0. Four Drive PDFs and283-entry review ZIP fully downloaded and hashed. Metadata deployment also succeeded;29 final assets and legacy progress reload verified."
+            },
+            {
+              "role": "test",
+              "locator": "artifact:paper-path-20261018/release.json",
+              "note": "Pages39137161385 and39139362048 succeeded. Final12 live runtime files matched;production line play8/8 with8 retained papers and standalone errors/warnings0. Existing completed record preserved. Added PDF and346-entry archive fully downloaded and hashed;prior archive entries and receipt fields preserved."
             }
           ]
         }
       ],
       "release": {
-        "commit": "d041af9850c39067038113dc18fc0fb2b00956de",
-        "workflow": "https://github.com/docssam1/lete-on/actions/runs/39119715795",
+        "commit": "b8f71283446ef693a4bb0cd8dcd8ba45fba03f70",
+        "workflow": "https://github.com/docssam1/lete-on/actions/runs/39139362048",
         "url": "https://lete-on.gfieldacademy.net/geometry/games/paper-craft/",
         "worksheet_url": "https://lete-on.gfieldacademy.net/geometry/worksheet/paper-craft/",
+        "date": "2026-10-19",
+        "runtime_assets_verified": 12,
         "drive_folder_id": "1rtk4OCOpVHJbH2j5bdvpAclgg9eS5yUg",
         "review_file_id": "1m2T7kQP8tg_91msDmbX4yOyJQee4NMi9",
-        "review_sha256": "b9495a0afd80bbd7d569f34b4aed30ad33835e4132470cd9e73a4309bab21e49",
+        "review_sha256": "648a6d49253bd83d855751a0ec8f078ad901b391688344ceda67a8ad9731e54e",
+        "review_entry_count": 346,
         "pdf_drive_ids": [
           "1fSxvhZnDESYciro9XAqhbk1iW0RJ5cPw",
           "1QjI1ZAIWhAdXrsp0MMx6ZEPYSW0Ugm4h",
           "1u_2SZJFcrkUKxZzHmm9H2uNGnQqbSdg-",
-          "1kAsSoI-VGPR3D-EB2YlD_amYBztkl-JX"
-        ],
-        "metadata_commit": "6a99f28207f867fef7a13b94aa816eaf3775b32a",
-        "metadata_workflow": "https://github.com/docssam1/lete-on/actions/runs/39121022569"
-      }
+          "1kAsSoI-VGPR3D-EB2YlD_amYBztkl-JX",
+          "1ltYMEk7c6yN-1vhQ-l5t-G5Rbb9MdqQh"
+        ]
+      },
+      "release_history": [
+        {
+          "commit": "d041af9850c39067038113dc18fc0fb2b00956de",
+          "workflow": "https://github.com/docssam1/lete-on/actions/runs/39119715795",
+          "url": "https://lete-on.gfieldacademy.net/geometry/games/paper-craft/",
+          "worksheet_url": "https://lete-on.gfieldacademy.net/geometry/worksheet/paper-craft/",
+          "drive_folder_id": "1rtk4OCOpVHJbH2j5bdvpAclgg9eS5yUg",
+          "review_file_id": "1m2T7kQP8tg_91msDmbX4yOyJQee4NMi9",
+          "review_sha256": "b9495a0afd80bbd7d569f34b4aed30ad33835e4132470cd9e73a4309bab21e49",
+          "pdf_drive_ids": [
+            "1fSxvhZnDESYciro9XAqhbk1iW0RJ5cPw",
+            "1QjI1ZAIWhAdXrsp0MMx6ZEPYSW0Ugm4h",
+            "1u_2SZJFcrkUKxZzHmm9H2uNGnQqbSdg-",
+            "1kAsSoI-VGPR3D-EB2YlD_amYBztkl-JX"
+          ],
+          "metadata_commit": "6a99f28207f867fef7a13b94aa816eaf3775b32a",
+          "metadata_workflow": "https://github.com/docssam1/lete-on/actions/runs/39121022569"
+        },
+        {
+          "commit": "bea33ed4801198498d2dc23a6ee919abb11f6394",
+          "workflow": "https://github.com/docssam1/lete-on/actions/runs/39137161385",
+          "date": "2026-10-18",
+          "runtime_assets_verified": 9,
+          "note": "전체 순서 칸·완료 순서 보존·기존 기록 재생과 학습지 방향 일치."
+        }
+      ]
     }
   ]
 }

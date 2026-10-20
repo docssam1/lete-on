@@ -2,8 +2,9 @@
 // 아이에게 "예시 답과 비슷한가요?"를 맡기지 않는다(원장 2026-09-30). 규칙으로 가릴 수 없는 답·종이 답은 선생님 확인.
 import { judgeText } from './judge.js';
 import {contentUnitOfItem} from './content-unit.js';
+import { loadJudge } from './think-merge.js';
 const TABLES = new Map();
-const tableFor = (id) => { const u = contentUnitOfItem(id); if (!u) return Promise.resolve(null); if (!TABLES.has(u)) TABLES.set(u, import(`../data/units/${u}.judge.js`).then((m) => m.judge).catch(() => null)); return TABLES.get(u); };
+const tableFor = (id) => { const u = contentUnitOfItem(id); if (!u) return Promise.resolve(null); if (!TABLES.has(u)) TABLES.set(u, loadJudge(u)); return TABLES.get(u); };
 const esc = (s) => String(s ?? '').replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c]));
 let serial = 0;
 

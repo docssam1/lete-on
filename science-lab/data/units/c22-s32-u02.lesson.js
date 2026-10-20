@@ -1,10 +1,58 @@
-import {inquiry} from '../activities/c22-s32-u02.inquiry.js';
-const q=n=>`${inquiry.unit}-b${String(n).padStart(2,'0')}`;
-export const lesson={unitId:inquiry.unit,grade:3,title:inquiry.title,hero:'육지·바다 관찰과 갯벌 보전',
- engage:{observationBased:true,say:[{mood:'thinking',text:'지구 사진 한 장으로 지구 전체의 바다 넓이를 알 수 있을까요?'}],question:'육지와 바다의 특징을 무엇으로 비교하고, 갯벌을 지킬 까닭을 어떻게 전할까요?',predictions:[{id:'evidence',text:'자료의 범위와 실제 관찰 근거를 확인해야 한다.'},{id:'one',text:'사진 한 장에서 파란 부분만 세면 언제나 알 수 있다.'},{id:'more',text:'여러 방향과 장소를 더 알아보고 싶다.'}],answer:'evidence',predictionNote:'내 예상과 확인한 자료를 나중에 비교해요.'},
- explore:{say:[{mood:'talk',text:'자료에서 확인한 내용과 직접 한 관찰을 구별해요.'}],modes:['lab','home'],modeLabels:{lab:'내 지구·바다 탐구 기록',home:'실제 활동 방법'},lab:{kind:'inquiry',config:inquiry,goal:'여섯 활동의 대상·출처·같은 조건·실제 결과와 설명·의견을 보관해요.',columns:['활동','보관한 기록'],rowText:r=>r.title},home:{title:'여러 자료와 안전한 비교로 알아보는 지구와 바다',minutes:180,duration:'여러 차시로 나누며 실제 관찰·조사·설명 시간은 별도로 확보해요.',guardian:true,materials:[{name:'지구본·전 지구 지도·지구 사진과 자료 출처',qty:'여러 방향과 범위 확인',have:'home'},{name:'바닷물·육지 물·같은 증발 그릇·양을 재는 도구',qty:'시료별 출처·같은 양',have:'home'},{name:'교사용 가열 장치·끓임쪽·보호 안경',qty:'선생님이 준비·조작',have:'home'},{name:'해안 지형 사진·같은 장소의 연속 수면 자료·갯벌 조사 자료',qty:'장소·시각·출처 확인',have:'home'},{name:'기록지·그림 도구·홍보 자료',qty:'실제 조사에 맞게 준비',have:'home'}],steps:inquiry.activities.map(a=>a.title+' — '+a.steps.join(' ')),safety:['가열은 선생님이 준비·조작해요. 보호 안경·끓임쪽·안전 거리·충분히 식힘을 확인해요. 물과 남은 물질을 맛보지 않아요.','해안 현장 방문은 보호자·선생님과 지역 출입 안내·날씨·물때·안전한 길을 확인해요. 물길이나 동굴·절벽에 접근하지 않아요.','사진 조사와 실제 방문을 구별해요. 모르는 장소·시각·특징을 만들어 채우지 않고 더 확인으로 남겨요.']}},
- explain:{say:[{mood:'talk',text:'보이는 범위와 비교 조건을 가리키며 설명해요.'}],analogy:'책의 한 쪽만 보고 책 전체의 그림 수를 정할 수 없듯이, 지구의 한쪽 모습만으로 전체 넓이를 확정할 수 없어요.',principle:'지구는 대기로 둘러싸여 있고 전체적으로 바다가 육지보다 넓어요. 두 물은 같은 조건에서 가열 뒤 남은 물질을 비교해요. 해안 지형은 보이는 특징으로 조사하고 같은 곳의 연속 자료로 밀물·썰물을 설명해요.',cards:[q(1),q(17),q(26),q(41)],table:q(51),miniTest:[q(33),q(57)],fromData:rows=>rows.length?`보관한 활동 ${rows.length}개에서 출처·날짜·기준점·실제 결과를 열어 설명해요. 저장 수는 실제 수행이나 공식 점수가 아니에요.`:'아직 보관한 활동이 없어요. 조사한 자료와 실제 활동을 구별해 근거를 남겨요.'},
- elaborate:{say:[{mood:'thinking',text:'갯벌의 어떤 가치를 누구에게 알리고 싶나요?'}],reading:{title:'근거와 행동을 연결하는 갯벌 보전',text:'국가유산포털의 「한국의 갯벌」은 서천·고창·신안·보성-순천 갯벌을 소개하고 이동하는 물새의 중요한 서식지임을 설명해요. 지역과 자료를 확인하여 어떤 생물이 어떻게 이용하는지 조사해요. 국립생태원 지도서는 생물의 서식지·물 정화 등 자연이 주는 도움을 알아보고 보전 활동으로 연결하도록 해요. 친구를 설득할 때는 “소중해요”라는 말에 그치지 않고 조사 근거와 출처, 정해진 길로 다니기 같은 실천 제안을 연결해요. 자료 만들기와 실제 설명·질문·수정은 따로 기록해요. 조사 출처: 국가유산포털 「한국의 갯벌」, 국립생태원 「초등교원을 위한 생태계서비스 지도서」.'},items:[q(65),q(73),q(80)],report:true,reportNote:'보관한 여섯 활동의 자료·근거·의견으로 정리해요. 그림까지 담은 자료는 내 탐구 기록에서 내려받아요.'},
- evaluate:{say:[{mood:'encourage',text:'자료 응답과 내 실제 수행 근거를 따로 살펴요.'}],items:[q(19),q(50),q(72)],pass:2,performanceNote:'자료 문제 응답은 실제 지구본 관찰·가열 비교·조사·홍보의 수행 증거를 대신하지 않아요. 열린 설명은 선생님과 타당성을 확인해요.'},
- report:{title:'지구와 바다 탐구보고서',sections:[{key:'question',label:'① 알아본 문제·실제 활동과 자료 조사'},...inquiry.activities.map((a,i)=>({key:a.id,from:'inquiry.'+a.id,label:`${i+2}. ${a.title} · 출처와 근거`})),{key:'more',label:'⑧ 더 알아볼 점·다음 계획'}],checks:['지구의 한쪽 모습과 전체 범위를 구별하고 대기·육지·바다를 설명했나요?','같은 양·그릇·가열 조건과 안전·식힘·실제 결과를 남겼나요?','해안 지형을 보이는 특징과 자료 출처로 비교했나요?','같은 곳·기준점·연속 시각으로 물 높이의 방향을 설명했나요?','우리나라 갯벌의 생물·가치·출처와 보전 행동을 연결했나요?','홍보 자료 작성과 실제 설명·질문·수정을 구별했나요?']}
+// 3-2 Ⅱ 지구와 바다(2022 개정) — 교과 연결 사고력 수업(5단계 화면 구성). 문항 id는 c22-s32-u02.think.js(t01~t12)와 문제은행(b) 참조.
+// 예전 기본 수업이던 탐구 기록 앱(6활동)은 explore.records(선택 기능, #/c22-s32-u02/records)로 옮겼다 — 저장 키 sciLab.inquiry.c22-s32-u02는 그대로.
+import { recordsLesson } from './c22-s32-u02.records.js';
+import { WATERS } from '../../scenes/seawater-model.js';
+const t = (n) => `c22-s32-u02-t${String(n).padStart(2, '0')}`;
+export const lesson = {
+  unitId: 'c22-s32-u02', grade: 3, title: '지구와 바다', hero: '증발 접시 두 개',
+  engage: {
+    say: [{ mood: 'thinking', text: '바닷물과 수돗물, 둘 다 투명한데 같은 물일까요?' }, { mood: 'talk', text: '맛보지 않고 증발 접시로 알아봐요.' }],
+    scene: 'evap-dishes',
+    question: '같은 양의 바닷물과 수돗물을 가열해 물을 모두 날려 보내면, 접시에 무엇이 남을까요?',
+    predictions: [{ id: '0', text: '두 접시 모두 아무것도 안 남아요' }, { id: '1', text: '두 접시 모두 흰 알갱이가 남아요' }, { id: '2', text: '바닷물 접시에만 흰 알갱이가 남아요' }],
+    answer: '2',
+    wrongNote: '실험 결과와 비교하며 두 접시에 남은 것을 다시 살펴봐요.',
+  },
+  explore: {
+    say: [{ mood: 'talk', text: '물의 양과 가열 방법은 같게, 물의 종류만 달라요.' }],
+    modes: ['lab', 'scene', 'home'],
+    lab: { kind: 'seawater', rowsKey: 'seawaterRows', goal: '물의 양을 고르고 「가열하기」 → 물이 다 마르면 두 접시를 비교해 「표에 적기」를 눌러요. 물의 양을 바꿔서도 해 봐요.',
+      columns: ['물의 양', ...WATERS.map((w) => `${w} 접시`)], rowText: (r) => `${r.ml} mL → ${WATERS.map((w) => `${w} ${r[w]}`).join(' · ')}` },
+    home: {
+      title: '집에서 소금물 말려 보기', minutes: 15, guardian: true, duration: '햇볕 드는 곳에 2~3일 두어요',
+      materials: [{ name: '작은 접시 2개', qty: '2개', have: 'home' }, { name: '소금물(물 100 mL에 소금 1숟가락)과 맹물', qty: '각 2숟가락', have: 'home' }, { name: '이름표', qty: '2장', have: 'home' }],
+      steps: ['두 접시에 소금물과 맹물을 같은 양 담고 이름표를 붙여요.',
+        '햇볕 드는 창가에 두고 날마다 물이 줄어드는 모습을 살펴요.',
+        '물이 다 마르면 두 접시에 남은 것을 돋보기로 비교해요. 맛보지 않아요.'],
+      safety: ['가스레인지로 가열하지 않아요. 보호자와 함께 해요.'], qr: null,
+    },
+    // 선택 기능: 예전 탐구 기록 앱(육지·바다 조사·두 물 비교·해안 지형·물 높이·갯벌 조사·설득 기록). 수업 흐름에는 넣지 않는다.
+    records: { ...recordsLesson.explore.lab, title: '탐구 기록장(선택)', note: '실제 조사·현장 관찰·갯벌 보전 홍보와 의견을 따로 기록하고 싶을 때 써요. 수업은 기록 없이도 끝까지 할 수 있어요.' },
+  },
+  explain: {
+    say: [{ mood: 'talk', text: '바닷물에는 눈에 보이지 않는 소금 같은 물질이 녹아 있어요.' }],
+    analogy: '설탕을 녹인 물이 투명해도 단맛이 나듯, 바닷물에도 소금 같은 물질이 보이지 않게 녹아 있어요. 물만 날아가면 녹아 있던 것이 남아요.',
+    principle: '지구는 대기로 둘러싸여 있고 바다가 육지보다 넓어요. 바닷물에는 소금 같은 물질이 녹아 있어 증발시키면 흰 알갱이가 남고, 바닷가의 물 높이는 밀물과 썰물로 오르내려요.',
+    cards: [t(1), t(2), t(3), t(4)],
+    table: t(5),
+    miniTest: [t(6), t(7)],
+    fromData: (rows) => {
+      if (!rows.length) return '';
+      const a = rows.map((r) => `${r.ml} mL에서 바닷물 ${r.seaG} g`).join(', ');
+      return `네 기록: ${a} · 수돗물은 거의 남지 않았어요. 물의 양이 늘면 남는 양은 어떻게 달라졌나요?`;
+    },
+  },
+  elaborate: {
+    say: [{ mood: 'thinking', text: '바닷물에 녹아 있는 소금은 어떻게 얻을까요?' }],
+    items: [t(8), t(12), 'c22-s32-u02-b25'],
+    reading: { title: '바닷물로 소금 얻기', text: '서해안의 염전에서는 넓고 얕은 밭에 바닷물을 가두어 햇볕과 바람에 말려요. 물이 증발하면 바닷물에 녹아 있던 소금이 남아요. 증발 접시에서 본 흰 알갱이와 같은 원리예요.' },
+    report: false,
+  },
+  evaluate: {
+    say: [{ mood: 'praise', text: '바닷물과 수돗물이 어떻게 다른지 설명할 수 있나요?' }],
+    items: [t(9), t(10), t(11)],
+    pass: 2,
+  },
+  // 보고서 화면(#/c22-s32-u02/report)은 선택 기능인 탐구 기록장과 이어진다.
+  report: recordsLesson.report,
 };

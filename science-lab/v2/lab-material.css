@@ -1,0 +1,11 @@
+/* 물체와 물질 실험실(같은 모양 막대 네 개) */
+.mt-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#eef4fb;color:#29466e}
+.mt-read{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:6px}
+.mt-read li{background:#fff;border:1px solid #d9e2ec;border-radius:12px;padding:8px 10px;font-size:15px;line-height:1.4}
+.mt-read li b{display:block;font-weight:800;color:#1f2a44;white-space:nowrap}
+.mt-read li span{color:#2456c4;font-weight:700}
+.mt-2d{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:18px;border-radius:14px;background:#eef3f8}
+.mt-2d .mt-bar{display:grid;gap:6px;justify-items:center;padding:14px 6px;border-radius:12px;background:#fff;border:2px solid #c8d4e0}
+.mt-2d .mt-bar b{font:800 17px/1 var(--body,sans-serif);color:#1f2a44}
+.mt-2d .mt-bar i{font-style:normal;font-size:14px;color:#2456c4;font-weight:700;text-align:center;min-height:2.6em}
+.mt-2d .mt-bar[data-m="금속"]{border-color:#9aa4b0}.mt-2d .mt-bar[data-m="플라스틱"]{border-color:#9cc8f0}.mt-2d .mt-bar[data-m="나무"]{border-color:#d9a066}.mt-2d .mt-bar[data-m="고무"]{border-color:#3b3a3f}

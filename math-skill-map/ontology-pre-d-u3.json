@@ -1,0 +1,469 @@
+{
+  "schema": "gfield-public-math-skill-ontology-supplement/1",
+  "checkpoint": "v110",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre D",
+    "unit": 3,
+    "title": "표와 그래프",
+    "printedPages": [
+      29,
+      35
+    ],
+    "visuallyReviewedPages": 7,
+    "sourceActivityBlocks": 8
+  },
+  "interpretation": {
+    "candidateOnly": true,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0,
+    "approvedDifficultyLevels": 0,
+    "validatedAnswers": 8,
+    "difficultyMeaning": "통일 5단계 기준의 조건부 연구 밴드이며 교사 검토 전이다.",
+    "gradeMeaning": "최소 교과수준은 8개 활동 모두 미확정이다. 교육과정 학년군과 소마 진도 행은 내용 맥락일 뿐 문항 최소 학년이 아니다."
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 357,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unitCounts": {
+    "sourceActivityBlocks": 8,
+    "mappedActivities": 8,
+    "newActionCandidates": 8,
+    "reusedActionCandidates": 0,
+    "activitySkillRelations": 8,
+    "conditionalDifficultyBands": 8,
+    "unresolvedMinimumCurriculumCandidates": 8,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 8,
+    "familyMembershipRelations": 8,
+    "relatedButDistinctRelations": 3,
+    "spiralRelationCandidates": 2,
+    "exactSomaTypeMatches": 0,
+    "somaCrossReferencedActivities": 7,
+    "somaSourceRows": 1,
+    "relatedRowsHeldBack": 4,
+    "rayPrismContextRows": 1,
+    "rayPrismExactTypeMatches": 0
+  },
+  "skillCandidates": [
+    {
+      "id": "STAT-PRED3-01",
+      "area": "자료·그래프",
+      "areaOrderCandidate": 1,
+      "label": "범주별 자료를 세어 빈도 표상에 기록하기",
+      "observableAction": "그림이나 생활 자료를 분명한 범주 기준으로 나누어 수량을 세고 표·동그라미 그래프의 항목명과 빈도를 채운다.",
+      "activityNumbers": [
+        1
+      ],
+      "conditionalDifficultyBands": [
+        "2"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "STAT-PRED3-02",
+      "area": "자료·그래프",
+      "areaOrderCandidate": 2,
+      "label": "한 집단의 두 분류별 빈도를 비교해 차이 말하기",
+      "observableAction": "같은 대상 집단에서 서로 다른 두 속성의 범주별 인원수를 세고, 비교 대상의 수 차를 구해 많고 적음을 표현한다.",
+      "activityNumbers": [
+        2
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "STAT-PRED3-03",
+      "area": "자료·그래프",
+      "areaOrderCandidate": 3,
+      "label": "자료 표와 그래프의 범주·빈도 대응을 복원하기",
+      "observableAction": "표의 항목·빈도와 그래프의 축·표식 높이를 대응해 서로의 빈칸을 완성한다.",
+      "activityNumbers": [
+        3
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "STAT-PRED3-04",
+      "area": "자료·그래프",
+      "areaOrderCandidate": 4,
+      "label": "질문이 요구하는 분류 기준에 맞춰 자료를 세어 표 완성하기",
+      "observableAction": "질문에서 묻는 기준 속성을 골라 그림 자료를 분류하고 각 범주의 빈도를 해당 표에 기록한다.",
+      "activityNumbers": [
+        4
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "STAT-PRED3-05",
+      "area": "자료·그래프",
+      "areaOrderCandidate": 5,
+      "label": "범주별 수량을 원그래프의 부분·전체 관계로 대응하기",
+      "observableAction": "전체 수량과 범주별 수량의 비를 비교해 원의 반·사분·삼분 영역이 알맞은 그래프를 고른다.",
+      "activityNumbers": [
+        5
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "STAT-PRED3-06",
+      "area": "자료·그래프",
+      "areaOrderCandidate": 6,
+      "label": "이원표의 행·열 전체 조건에서 공통 항목 찾기",
+      "observableAction": "행 또는 열의 모든 칸이 지정 조건을 만족하는지 확인해 모든 날짜에 해당하는 항목이나 모든 항목을 만족한 날짜를 찾는다.",
+      "activityNumbers": [
+        6
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "STAT-PRED3-07",
+      "area": "자료·그래프",
+      "areaOrderCandidate": 7,
+      "label": "질문 단위와 자료 집계 방식에 맞는 표 고르기",
+      "observableAction": "질문이 개인별 값인지 범주별 빈도인지 확인하고 각 질문을 알맞은 변수·집계 단위를 가진 표에 대응한다.",
+      "activityNumbers": [
+        7
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "STAT-PRED3-08",
+      "area": "자료·그래프",
+      "areaOrderCandidate": 8,
+      "label": "자료 한 범주의 수를 바꾼 뒤 최솟값 다시 찾기",
+      "observableAction": "범주별 자료를 표·그래프에 옮긴 뒤 특정 범주의 수량이 바뀌었을 때 전체 빈도를 갱신하고 가장 작은 범주를 다시 찾는다.",
+      "activityNumbers": [
+        8
+      ],
+      "conditionalDifficultyBands": [
+        "5"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "activities": [
+    {
+      "activityNumber": 1,
+      "printedPage": 29,
+      "label": "원리 탐구 2·확인 1",
+      "observedAction": "그림 속 물건을 종류별로 세고 동그라미 그래프의 이름을 채운다.",
+      "candidateSkillIds": [
+        "STAT-PRED3-01"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": true,
+      "modeledExampleIncludedInSourceBlock": true,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 2,
+      "printedPage": 30,
+      "label": "대표문제 1",
+      "observedAction": "반 학생의 성별·안경 착용 수를 표로 세고 차이를 기사에 쓴다.",
+      "candidateSkillIds": [
+        "STAT-PRED3-02"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteCurriculumContextCandidates": [
+        "2수01-06"
+      ],
+      "prerequisiteContentOnly": true,
+      "modeledExampleIncludedInSourceBlock": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 3,
+      "printedPage": 31,
+      "label": "대표문제 2",
+      "observedAction": "책 종류별 표와 동그라미 그래프를 함께 완성한다.",
+      "candidateSkillIds": [
+        "STAT-PRED3-03"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": true,
+      "modeledExampleIncludedInSourceBlock": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 4,
+      "printedPage": 32,
+      "label": "연습문제 1",
+      "observedAction": "꽃 그림을 두 기준으로 분류해 질문에 맞는 표를 완성한다.",
+      "candidateSkillIds": [
+        "STAT-PRED3-04"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": true,
+      "modeledExampleIncludedInSourceBlock": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 5,
+      "printedPage": 33,
+      "label": "연습문제 2",
+      "observedAction": "8명의 장래 희망을 나타낸 원그래프를 선택한다.",
+      "candidateSkillIds": [
+        "STAT-PRED3-05"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": true,
+      "modeledExampleIncludedInSourceBlock": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 6,
+      "printedPage": 33,
+      "label": "연습문제 3",
+      "observedAction": "3일 생활 계획표에서 항상 지킨 항목과 모든 항목을 지킨 날을 찾는다.",
+      "candidateSkillIds": [
+        "STAT-PRED3-06"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": true,
+      "modeledExampleIncludedInSourceBlock": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 7,
+      "printedPage": 34,
+      "label": "심화문제 1",
+      "observedAction": "질문 네 개를 서로 다른 표에 대응한다.",
+      "candidateSkillIds": [
+        "STAT-PRED3-07"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": true,
+      "modeledExampleIncludedInSourceBlock": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 8,
+      "printedPage": 35,
+      "label": "도전문제 2",
+      "observedAction": "여행지별 붙임 딱지 그림으로 표·그래프를 완성하고 수 변화 후 최솟값을 비교한다.",
+      "candidateSkillIds": [
+        "STAT-PRED3-08"
+      ],
+      "conditionalDifficultyBand": 5,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteCurriculumContextCandidates": [
+        "2수01-06"
+      ],
+      "prerequisiteContentOnly": true,
+      "modeledExampleIncludedInSourceBlock": false,
+      "answerValidated": true
+    }
+  ],
+  "somaProgressionContexts": [
+    {
+      "code": "A4-3 1",
+      "topic": "표와 그래프",
+      "area": "확률과 통계",
+      "description": "종류별로 개수를 세어 표를 만들고, 표를 보고 막대 그래프를 만들어 어떤 것이 가장 많은지 알아봅니다.",
+      "curriculumReference": "초2-1 5. 분류하기",
+      "activityNumbers": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8
+      ],
+      "relation": "related-progression-context-only"
+    }
+  ],
+  "rayPrismProgressionContexts": [
+    {
+      "code": "A4-3",
+      "topic": "표와 그래프",
+      "subtopic": "가방가게 주인의 고민",
+      "sheet": "ray kids",
+      "row": 108,
+      "activityNumbers": [],
+      "relation": "same-section-title-only; body-content-not-established"
+    }
+  ],
+  "curriculumContextReferences": [
+    {
+      "standard": "2수04-02",
+      "gradeBand": "초등 1–2학년군",
+      "contextOnly": true,
+      "minimumGradeClaim": false
+    },
+    {
+      "standard": "2수04-03",
+      "gradeBand": "초등 1–2학년군",
+      "contextOnly": true,
+      "minimumGradeClaim": false
+    },
+    {
+      "standard": "4수04-03",
+      "gradeBand": "초등 3–4학년군",
+      "contextOnly": true,
+      "minimumGradeClaim": false
+    },
+    {
+      "standard": "2수01-06",
+      "gradeBand": "초등 1–2학년군",
+      "contextOnly": true,
+      "minimumGradeClaim": false
+    }
+  ],
+  "taxonomy": {
+    "relatedButDistinctRelations": [
+      {
+        "from": "STAT-PRED3-04",
+        "to": "LOG-PRED2-05",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "1031-unit3-block-025",
+          "pre-d-p26-q심화2"
+        ],
+        "basis": "두 개 기준의 교차 칸에 놓는다는 점은 닮았지만, 도미노 분류는 개별 물체의 합·포함 여부로 칸을 정하고 이 활동은 자료 집합의 기준별 빈도를 세어 표를 완성한다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "STAT-PRED3-07",
+        "to": "D6-MULTI01",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "1031-unit3-block-028",
+          "1031-unit6-introd-block-003"
+        ],
+        "basis": "두 활동 모두 표를 읽지만, 이 활동은 질문에 맞는 자료 단위·집계 구조를 선택하고 D6-MULTI01은 표를 수량 관계 계산 도구로 사용한다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "STAT-PRED3-05",
+        "to": "D3-SET01",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "1031-unit3-block-026",
+          "pre-d-p21-q확인1"
+        ],
+        "basis": "범주를 나누어 표상한다는 공통점은 있지만, 원그래프는 전체와 부분의 비를 원의 영역으로 표현하고 집합 유형은 소속 조건에 따라 원소를 벤 영역에 배치한다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "spiralRelations": [
+      {
+        "from": "STAT-PRED3-01",
+        "to": "STAT-PRED3-03",
+        "relation": "spiral-extension-candidate",
+        "relationType": "spiral-extension-candidate",
+        "evidenceItemIds": [
+          "1031-unit3-block-022",
+          "1031-unit3-block-024"
+        ],
+        "basis": "범주별 빈도를 표상에 옮기는 행동에서 표와 그래프의 범주·축·빈도를 상호 변환하는 행동으로 확장될 수 있다는 같은 단원 내 계통 가설. 선수 순서·학년·유형 동등성은 미확정.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "STAT-PRED3-03",
+        "to": "STAT-PRED3-08",
+        "relation": "spiral-extension-candidate",
+        "relationType": "spiral-extension-candidate",
+        "evidenceItemIds": [
+          "1031-unit3-block-024",
+          "1031-unit3-block-029"
+        ],
+        "basis": "고정 자료의 표·그래프 대응 복원에서 원자료를 두 표상으로 구성하고 범주 값을 수정한 뒤 최솟값까지 재비교하는 확장 가설. 선수 순서·학년·유형 동등성은 미확정.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "limitations": [
+      "Activity count preserves the existing source ledger: p.29 has one combined record for a modeled example and Check 1.",
+      "OCR text was used only as a search aid; seven full-page images were visually rechecked against the preserved Mac Vision record and extraction manifest.",
+      "All eight task-level minimum curriculum assignments remain unresolved. Standards and workbook rows are context only.",
+      "All eight difficulty bands are five-level conditional research judgments pending teacher review.",
+      "The Ray Prism A4-3 row supplies only a same-section title and short topic, so it is not treated as a task-level match.",
+      "Same-edition answer key visually checked against all eight activity blocks; the p.29 modeled example and Check 1 remain one combined source-ledger block."
+    ]
+  },
+  "answerValidation": {
+    "studentActivityBlocksValidated": 8,
+    "answerKeyPdfPages": [
+      12,
+      13,
+      14,
+      15
+    ],
+    "answerKeySHA256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "method": "Same-edition answer-key visuals checked; OCR assistive only.",
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true
+  }
+}

@@ -1,5 +1,6 @@
+// 2026-10-20: 기본 수업은 사고력 수업(think-lessons.test.mjs)으로 바뀌었다. 이 파일은 선택 기능으로 옮긴 탐구 기록장·기록 교재(records)가 예전대로 동작하는지 본다.
 import test from 'node:test';import assert from 'node:assert/strict';
-import {inquiry} from '../data/activities/c22-s32-u03.inquiry.js';import {lesson} from '../data/units/c22-s32-u03.lesson.js';import {chapter,art,plan} from '../data/book/c22-s32-u03.book.js';import {items} from '../data/units/c22-s32-u03.js';
+import {inquiry} from '../data/activities/c22-s32-u03.inquiry.js';import {recordsLesson as lesson} from '../data/units/c22-s32-u03.records.js';import {chapter,art,plan} from '../data/book/c22-s32-u03.records-book.js';import {items} from '../data/units/c22-s32-u03.js';
 import {emptyInquiry,saveInquiry,validInquiry,inquiryError,inquirySections} from './inquiry-records.js';import {buildSlides} from './deck.js';import {renderChapter} from './book.js';import {BANK,BOOK_UNITS} from './units-index.js';
 test('소리 수업은 일곱 실제 활동·조건·안전·보고서를 연결하며 기존 원문70개를 유지한다',()=>{
  assert.deepEqual(inquiry.activities.map(a=>a.id),['vibration','intensity','pitch','transmission','panpipe','effects','noise']);assert(BOOK_UNITS.has(inquiry.unit));assert(BANK[inquiry.unit].lesson);assert.equal(BANK[inquiry.unit].n,70);assert.equal(BANK[inquiry.unit].supplement,64);

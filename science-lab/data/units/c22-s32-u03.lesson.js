@@ -1,10 +1,57 @@
-import {inquiry} from '../activities/c22-s32-u03.inquiry.js';
-const q=n=>`${inquiry.unit}-b${String(n).padStart(2,'0')}`;
-export const lesson={unitId:inquiry.unit,grade:3,title:inquiry.title,hero:'떨림·소리 비교·제작과 소음 줄이기',
- engage:{observationBased:true,say:[{mood:'thinking',text:'높은 소리는 언제나 큰 소리일까요? 작은 목소리로도 높은 음을 낼 수 있을까요?'}],question:'소리의 떨림·세기·높낮이와 전달을 어떤 근거로 설명할까요?',predictions:[{id:'compare',text:'같은 조건에서 크기와 높낮이를 따로 비교해야 한다.'},{id:'same',text:'높은 소리는 언제나 큰 소리이므로 구별할 필요가 없다.'},{id:'more',text:'여러 물체와 감각으로 더 확인하고 싶다.'}],answer:'compare',predictionNote:'예상은 나중에 실제 비교 근거와 다시 살펴요.'},
- explore:{say:[{mood:'talk',text:'소리는 작게, 근거는 구체적으로 남겨요.'}],modes:['lab','home'],modeLabels:{lab:'내 소리 탐구 기록',home:'실제 활동 방법'},lab:{kind:'inquiry',config:inquiry,goal:'일곱 활동에서 물체·같은 조건·실제 결과와 제작·실천·의견을 구별해 보관해요.',columns:['활동','보관한 기록'],rowText:r=>r.title},home:{title:'안전한 작은 소리로 비교하고 만들어 보는 탐구',minutes:220,duration:'여러 차시로 나누어요. 실제 제작·소음 줄이기 실천과 의견 듣기는 별도로 시간을 정해요.',guardian:true,materials:[{name:'작은북·북채·큰 종잇조각',qty:'작은 소리·거리를 두고 관찰',have:'home'},{name:'소리굽쇠·고무망치·물 그릇',qty:'선생님 시범',have:'home'},{name:'안전한 플라스틱 자·길이 도구·고정 도구',qty:'선생님이 고정 확인',have:'home'},{name:'컵·실·클립',qty:'구멍·날카로운 부분은 선생님 준비',have:'home'},{name:'방수 소리/관찰 장치 또는 전달 자료',qty:'교사 장치·자료 출처 확인',have:'home'},{name:'같은 재료·굵기의 길이 다른 관·테이프',qty:'선생님 절단·끝 다듬기·개인 도구',have:'home'},{name:'종이·천·빈 플라스틱 통·기록 도구',qty:'효과음과 소음 줄이기 계획에 맞게',have:'home'}],steps:inquiry.activities.map(a=>a.title+' — '+a.steps.join(' ')),safety:['작은 소리로 짧게 비교해요. 귀 가까이 큰 소리를 내거나 실·물체를 귀 안에 넣지 않아요. 불편하면 멈추고 선생님에게 알려요.','소리굽쇠 시범·자 고정·컵 구멍·관 절단과 끝 다듬기는 선생님이 준비·확인해요. 금이 간 자·거친 관·무거운 낙하·유리 깨기는 쓰지 않아요.','관 피리는 개인용으로 쓰고 부드럽게 불어요. 실을 몸에 감지 않아요. 일반 전자 기기나 귀·머리를 물속에 넣지 않아요.','여러 감각으로 참여하고 서로 같은 느낌을 강요하지 않아요. 실행하지 않은 관찰·제작·소통은 계획이나 자료 관찰로 구별해요.']}},
- explain:{say:[{mood:'talk',text:'소리의 크기와 높낮이를 따로 말하고 비교 조건을 가리켜요.'}],analogy:'같은 글자를 작은 크기와 큰 크기로 쓸 수 있듯이, 같은 높은 음도 작게 또는 조금 더 크게 낼 수 있어요. 비유 뒤에는 실제 소리 비교로 확인해요.',principle:'소리가 나는 물체는 떨려요. 크고 작은 정도는 세기, 높고 낮은 정도는 높낮이예요. 같은 조건의 길이 비교로 높낮이를 살피고 여러 물질을 통한 전달을 관찰해요. 불편한 소리는 상황에 맞게 줄이며 실제 효과와 의견을 확인해요.',cards:[q(2),q(18),q(26),q(35)],table:q(36),miniTest:[q(42),q(46)],fromData:rows=>rows.length?`보관한 활동 ${rows.length}개의 실제 조건·결과·의견을 열어 설명해요. 저장 수는 실제 수행이나 공식 점수가 아니에요.`:'아직 보관한 활동이 없어요. 실제 관찰·자료·계획을 구별하여 근거를 남겨요.'},
- elaborate:{say:[{mood:'thinking',text:'관 피리와 효과음을 만들어 본 근거를 소음 줄이기에도 쓸 수 있을까요?'}],reading:{title:'필요한 소리와 불편한 소리',text:'소리는 말과 음악을 전하고 안전을 알려 주기도 해요. 같은 음악도 쉬는 사람에게는 불편하고 연주하는 사람에게는 필요한 소리일 수 있어요. 높은 소리나 큰 소리를 모두 나쁜 것으로 정하지 않고 듣는 사람·시간·장소·활동을 함께 살펴요. 문을 살살 닫거나 의자 다리에 알맞은 덮개를 쓰는 등 가능한 행동을 정하고 비슷한 조건에서 전후를 비교해요. 실제로 들은 의견에 따라 행동이나 시간을 고쳐 보세요. 경보음을 없애거나 소리를 더 크게 덮는 방법은 쓰지 않아요. 참고: 교육부 「과학과 교육과정」4과07-03과 확인한 지필드 이론·실험의 소리 본문.'},items:[q(51),q(56),q(64)],report:true,reportNote:'일곱 활동의 실제 조건·그림·제작·실천·의견을 정리해요. 그림이 담긴 자료는 내 탐구 기록에서 내려받아요.'},
- evaluate:{say:[{mood:'encourage',text:'자료 문제 응답과 내가 실제로 한 활동의 근거를 따로 확인해요.'}],items:[q(22),q(38),q(62)],pass:2,performanceNote:'자료 문제를 맞혔다고 실제 소리 내기·관 피리 제작·소음 줄이기·의견 교환을 수행한 것으로 세지 않아요. 열린 설명은 선생님과 타당성을 확인해요.'},
- report:{title:'소리의 성질 탐구보고서',sections:[{key:'question',label:'① 알아볼 문제·실제 활동과 자료 구별'},...inquiry.activities.map((a,i)=>({key:a.id,from:'inquiry.'+a.id,label:`${i+2}. ${a.title} · 조건과 실제 근거`})),{key:'more',label:'⑨ 더 알아볼 점·다음 계획'}],checks:['소리와 떨림을 안전한 여러 감각의 근거로 연결했나요?','같은 북·듣는 위치에서 두드리는 정도와 세기를 비교했나요?','같은 자의 실제 길이·단위·고정 조건으로 높낮이를 비교했나요?','공기·고체·물의 전달 경로와 직접/자료 관찰을 구별했나요?','관 피리의 안전한 조립·시험·실제 수정 근거를 남겼나요?','효과음의 세기·높낮이와 실제 의견을 연결했나요?','소음 줄이기 전후의 실제 행동·결과·상대 의견과 계획을 구별했나요?']}
+// 3-2 Ⅲ 소리의 성질(2022 개정) — 교과 연결 사고력 수업(5단계 화면 구성). 문항 id는 c22-s32-u03.think.js(t01~t12)와 문제은행(b) 참조.
+// 예전 기본 수업이던 탐구 기록 앱(7활동)은 explore.records(선택 기능, #/c22-s32-u03/records)로 옮겼다 — 저장 키 sciLab.inquiry.c22-s32-u03은 그대로.
+import { recordsLesson } from './c22-s32-u03.records.js';
+const t = (n) => `c22-s32-u03-t${String(n).padStart(2, '0')}`;
+export const lesson = {
+  unitId: 'c22-s32-u03', grade: 3, title: '소리의 성질', hero: '책상 끝 자 튕기기',
+  engage: {
+    say: [{ mood: 'thinking', text: '소리가 날 때 물체는 어떻게 움직일까요?' }, { mood: 'talk', text: '책상 끝에서 자를 튕겨 알아봐요.' }],
+    scene: 'ruler-desk',
+    question: '자를 책상 밖으로 길게(15 cm) 내밀고 튕기면, 짧게(5 cm) 내밀 때와 비교해 소리가 어떻게 될까요?',
+    predictions: [{ id: '0', text: '더 높은 소리가 나요' }, { id: '1', text: '더 낮은 소리가 나요' }, { id: '2', text: '높낮이는 같고 더 큰 소리가 나요' }],
+    answer: '1',
+    wrongNote: '실험 결과와 비교하며 길이를 바꿨을 때 달라진 것이 높낮이인지 세기인지 다시 들어 봐요.',
+  },
+  explore: {
+    say: [{ mood: 'talk', text: '높낮이를 볼 땐 길이만, 세기를 볼 땐 튕기는 세기만 바꿔요.' }],
+    modes: ['lab', 'scene', 'home'],
+    lab: { kind: 'ruler', rowsKey: 'rulerRows', goal: '내민 길이와 세기를 고르고 「튕기기」 → 떨림을 보고 소리를 들은 뒤 「표에 적기」를 눌러요. 「손으로 잡기」로 떨림도 멈춰 봐요.',
+      columns: ['내민 길이', '세기', '높낮이', '소리의 세기', '떨림'], rowText: (r) => `${r.len} cm · ${r.strength} → ${r.pitch} · ${r.loud} · ${r.swing}` },
+    home: {
+      title: '집에서 고무줄 기타 만들기', minutes: 20, guardian: true,
+      materials: [{ name: '빈 상자나 통', qty: '1개', have: 'home' }, { name: '굵기가 같은 고무줄', qty: '3개', have: 'home' }, { name: '연필 2자루(받침)', qty: '2개', have: 'home' }],
+      steps: ['상자에 고무줄 세 개를 걸고, 연필 받침 사이의 길이가 서로 다르게 해요.',
+        '같은 세기로 튕기며 길이에 따라 높낮이가 어떻게 다른지 들어요.',
+        '한 고무줄을 약하게, 세게 튕기며 소리의 세기를 비교해요.'],
+      safety: ['고무줄이 얼굴 쪽으로 튀지 않게 조심해요. 보호자와 함께 해요.'], qr: null,
+    },
+    // 선택 기능: 예전 탐구 기록 앱(떨림·세기·높낮이·전달·관 피리·효과음·소음 실천 기록). 수업 흐름에는 넣지 않는다.
+    records: { ...recordsLesson.explore.lab, title: '탐구 기록장(선택)', note: '실제 악기 만들기·효과음·소음 줄이기 실천과 의견을 따로 기록하고 싶을 때 써요. 수업은 기록 없이도 끝까지 할 수 있어요.' },
+  },
+  explain: {
+    say: [{ mood: 'talk', text: '크게 떨리면 큰 소리, 빨리 떨리면 높은 소리가 나요.' }],
+    analogy: '그네를 크게 밀면 크게 흔들리고(세기), 줄이 짧은 그네는 빨리 왔다 갔다 해요(높낮이). 소리도 떨림의 크기와 빠르기로 달라져요.',
+    principle: '소리는 물체가 떨려서 나요. 크게 떨리면 큰 소리, 빨리 떨리면 높은 소리가 나고, 소리는 고체·액체·기체를 통해 전달돼요.',
+    cards: [t(1), t(2), t(3), t(4)],
+    table: t(5),
+    miniTest: [t(6), t(7)],
+    fromData: (rows) => {
+      if (!rows.length) return '';
+      const s = rows.filter((r) => r.strength === '세게').map((r) => `${r.len} cm ${r.pitch}`).join(', ');
+      return `네 기록: ${rows.length}가지 조건${s ? ` · 세게 튕길 때 ${s}` : ''}. 길이를 바꾸면 무엇이, 세기를 바꾸면 무엇이 달라졌나요?`;
+    },
+  },
+  elaborate: {
+    say: [{ mood: 'thinking', text: '악기는 어떻게 높고 낮은 소리를 낼까요?' }],
+    items: [t(8), t(12), 'c22-s32-u03-b35'],
+    reading: { title: '길이가 다른 관 피리', text: '빨대를 길이가 다르게 잘라 나란히 붙이고 끝을 막아 불면 팬파이프가 돼요. 짧은 빨대는 높은 소리, 긴 빨대는 낮은 소리가 나요. 관 속 공기가 떨리는 길이가 달라서예요.' },
+    report: false,
+  },
+  evaluate: {
+    say: [{ mood: 'praise', text: '세기와 높낮이를 구별해 설명할 수 있나요?' }],
+    items: [t(9), t(10), t(11)],
+    pass: 2,
+  },
+  // 보고서 화면(#/c22-s32-u03/report)은 선택 기능인 탐구 기록장과 이어진다.
+  report: recordsLesson.report,
 };

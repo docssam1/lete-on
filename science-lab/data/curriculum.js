@@ -477,3 +477,23 @@ export const UNITS = [
 
 export const unitById = (id) => UNITS.find((u) => u.id === id);
 export const unitsOfPart = (p) => UNITS.filter((u) => u.part === p);
+
+// ── 영역(2026-10-20 원장: "파트에는 영역별로 있어야지") ─────────────────────────────
+// 보관소의 거르기·선반·카드 순서는 지도자료 차례(PART A·B·C)가 아니라 과학 영역을 따른다.
+// 영역 이름은 2022 개정 과학과 내용 영역(운동과 에너지 · 물질 · 생명 · 지구와 우주). 지도자료 차례(part·no·source)는 출처 표시로 남긴다.
+// 판단이 갈린 것: inquiry(탐구 과정 한 바퀴)는 탐구 과정을 익히는 실험이지만 다루는 현상(낙하 높이·물줄기 굵기와 튀는 물)이 에너지라 운동과 에너지,
+// onggi(옹기)는 그릇 재질을 바꾸지만 재는 것이 음식이 상하는 정도(미생물)라 생명으로 두었다.
+export const DOMAINS = [
+  { id: 'energy', title: '운동과 에너지', en: 'MOTION & ENERGY', color: '#d08a4c' },
+  { id: 'matter', title: '물질', en: 'MATTER', color: '#5a8fd0' },
+  { id: 'life', title: '생명', en: 'LIFE', color: '#5fae7e' },
+  { id: 'earth', title: '지구와 우주', en: 'EARTH & SPACE', color: '#9a7fd0' },
+];
+export const DOMAIN_OF = {
+  inquiry: 'energy', hotwater: 'energy', top: 'energy', wing: 'energy', subway: 'energy', ttukbaegi: 'energy', tunnel: 'energy',
+  bubble: 'matter', powders: 'matter', charcoal: 'matter', osmosis: 'matter',
+  muscle: 'life', spider: 'life', seed: 'life', onggi: 'life',
+};
+export const domainOf = (u) => DOMAINS.find((d) => d.id === DOMAIN_OF[u.id]);
+// 영역 순서로 늘어놓은 실험(보관소 카드·이전/다음 순서). 같은 영역 안에서는 지도자료 차례.
+export const ORDERED = DOMAINS.flatMap((d) => UNITS.filter((u) => DOMAIN_OF[u.id] === d.id));

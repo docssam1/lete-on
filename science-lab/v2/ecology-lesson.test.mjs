@@ -1,5 +1,6 @@
+// 2026-10-20: 기본 수업은 사고력 수업(think-lessons.test.mjs)으로 바뀌었다. 이 파일은 선택 기능으로 옮긴 탐구 기록장·기록 교재(records)가 예전대로 동작하는지 본다.
 import test from 'node:test';import assert from 'node:assert/strict';
-import {inquiry} from '../data/activities/c22-s42-u02.inquiry.js';import {lesson} from '../data/units/c22-s42-u02.lesson.js';import {chapter,art,plan} from '../data/book/c22-s42-u02.book.js';import {items} from '../data/units/c22-s42-u02.js';
+import {inquiry} from '../data/activities/c22-s42-u02.inquiry.js';import {recordsLesson as lesson} from '../data/units/c22-s42-u02.records.js';import {chapter,art,plan} from '../data/book/c22-s42-u02.records-book.js';import {items} from '../data/units/c22-s42-u02.js';
 import {emptyInquiry,saveInquiry,validInquiry,inquiryError,inquirySections,inquiryKey,inquiryReportHtml} from './inquiry-records.js';import {buildSlides} from './deck.js';import {renderChapter} from './book.js';import {BANK,BOOK_UNITS,READY} from './units-index.js';
 test('생물과 환경은 세 기준의 조사·양분 역할·먹이그물·실제 토의와 실천을 독립 기록한다',()=>{
  assert.deepEqual(inquiry.activities.map(a=>a.id),['survey','elements','roles','relations','make','impact','discuss','practice','share']);assert.deepEqual([...new Set(inquiry.activities.map(a=>a.standard))],['4과14-01','4과14-02','4과14-03']);assert.equal(inquiryKey(inquiry),'sciLab.inquiry.c22-s42-u02');assert.equal(lesson.explore.lab.rowsKey,'ecologyInquiryRows');assert(BOOK_UNITS.has(inquiry.unit));assert(BANK[inquiry.unit].lesson);assert(!READY[inquiry.unit].bankOnly);

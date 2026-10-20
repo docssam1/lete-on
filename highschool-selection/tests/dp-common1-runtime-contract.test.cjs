@@ -1,5 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const os = require("node:os");
+const path = require("node:path");
 const contracts = require("../server/exam-contracts.js");
 const privateConfig = require("../server/private-config.js");
 
@@ -26,7 +28,7 @@ test("DP common math 1 remains locked until the owner confirms the whole round",
     students: [],
     exams: {
       [EXAM_ID]: {
-        pageAssetRoot: "C:/private/dp-common1/pages",
+        pageAssetRoot: path.join(os.tmpdir(), "dp-common1", "pages"),
         pageCount: 10,
         questionCount: 30,
         releaseStatus: "review_pending",

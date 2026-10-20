@@ -1,0 +1,323 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v114",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 B",
+    "unit": 4,
+    "title": "도형의 개수",
+    "printedPages": [
+      32,
+      39
+    ],
+    "sourceActivityBlocks": 16
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 868,
+    "validatedAnswers": 413,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "unitSkillActionCandidatesReused": 3,
+    "preexistingCrossUnitSkillNodesReused": 2,
+    "activitySkillRelationsReused": 16,
+    "conditionalDifficultyBandsAssigned": 16,
+    "conditionalDifficultyBandDistribution": {
+      "2": 3,
+      "3": 8,
+      "4": 5
+    },
+    "validatedStudentResponses": 14,
+    "workedRepresentativeExamplesExcluded": 2,
+    "newSkillCandidates": 0,
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "skills": [
+    {
+      "id": "GEO-INTRO-B-22",
+      "name": "분할 그림에서 크기별 도형 세기",
+      "domain": "평면도형·도형 수 세기",
+      "observableAction": "점선으로 나뉜 도형 그림에서 기준 도형을 식별하고 크기가 다른 합성 도형을 빠짐없이 찾아 센다.",
+      "evidenceItemIds": [
+        "1031-unit4-introb-block-003",
+        "1031-unit4-introb-block-004",
+        "1031-unit4-introb-block-007",
+        "1031-unit4-introb-block-008",
+        "1031-unit4-introb-block-010",
+        "1031-unit4-introb-block-011",
+        "1031-unit4-introb-block-012",
+        "1031-unit4-introb-block-016"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "GEO-INTRO-B-23",
+      "name": "점선 절단 뒤 생기는 조각 수 세기",
+      "domain": "평면도형·도형 수 세기",
+      "observableAction": "절단선을 따라 실제로 나뉘는 영역의 경계를 추적하고 모양별 조각 수를 센다.",
+      "evidenceItemIds": [
+        "1031-unit4-introb-block-001",
+        "1031-unit4-introb-block-002",
+        "1031-unit4-introb-block-005",
+        "1031-unit4-introb-block-006",
+        "1031-unit4-introb-block-013"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "GEO-INTRO-B-24",
+      "name": "도형 종류별 개수 비교하기",
+      "domain": "평면도형·도형 수 세기",
+      "observableAction": "복합 그림에서 지정된 도형 종류별 개수를 센 뒤 최댓값·최솟값의 차를 구한다.",
+      "evidenceItemIds": [
+        "1031-unit4-introb-block-014"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "FOLD03",
+      "name": "접은 상태의 절단과 펼친 모양 대응",
+      "domain": "공간·변환(접기·자르기)",
+      "observableAction": "접은 종이의 절단 위치와 방향을 펼친 결과의 경계·구멍·대칭 구조에 대응한다.",
+      "evidenceItemIds": [
+        "1031-unit4-introb-block-009"
+      ],
+      "status": "existing-source-bound-skill-candidate-reused"
+    },
+    {
+      "id": "GEO-INTRO-B-19",
+      "name": "기준 도형으로 덮을 조각 수 구하기",
+      "domain": "평면도형·분할과 덮기",
+      "observableAction": "기준 조각과 목표 외곽을 비교하여 목표를 덮는 데 필요한 조각 수를 구한다.",
+      "evidenceItemIds": [
+        "1031-unit4-introb-block-015"
+      ],
+      "status": "existing-cross-unit-skill-candidate-reused"
+    }
+  ],
+  "activities": {
+    "1031-unit4-introb-block-001": {
+      "page": 33,
+      "label": "상황 속 원리 탐구 01",
+      "skillIds": [
+        "GEO-INTRO-B-23"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-002": {
+      "page": 33,
+      "label": "한번 더 01-1",
+      "skillIds": [
+        "GEO-INTRO-B-23"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-003": {
+      "page": 33,
+      "label": "상황 속 원리 탐구 02",
+      "skillIds": [
+        "GEO-INTRO-B-22"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-004": {
+      "page": 33,
+      "label": "한번 더 02-1",
+      "skillIds": [
+        "GEO-INTRO-B-22"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-005": {
+      "page": 34,
+      "label": "대표문제 01",
+      "skillIds": [
+        "GEO-INTRO-B-23"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-006": {
+      "page": 34,
+      "label": "유제 01",
+      "skillIds": [
+        "GEO-INTRO-B-23"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-007": {
+      "page": 35,
+      "label": "대표문제 02",
+      "skillIds": [
+        "GEO-INTRO-B-22"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-008": {
+      "page": 35,
+      "label": "유제 02",
+      "skillIds": [
+        "GEO-INTRO-B-22"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-009": {
+      "page": 36,
+      "label": "연습문제 01",
+      "skillIds": [
+        "FOLD03"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-010": {
+      "page": 36,
+      "label": "연습문제 02",
+      "skillIds": [
+        "GEO-INTRO-B-22"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-011": {
+      "page": 37,
+      "label": "연습문제 03",
+      "skillIds": [
+        "GEO-INTRO-B-22"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-012": {
+      "page": 37,
+      "label": "연습문제 04",
+      "skillIds": [
+        "GEO-INTRO-B-22"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-013": {
+      "page": 38,
+      "label": "연습문제 05",
+      "skillIds": [
+        "GEO-INTRO-B-23"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-014": {
+      "page": 38,
+      "label": "연습문제 06",
+      "skillIds": [
+        "GEO-INTRO-B-24"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-015": {
+      "page": 39,
+      "label": "심화문제 01",
+      "skillIds": [
+        "GEO-INTRO-B-19"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit4-introb-block-016": {
+      "page": 39,
+      "label": "심화문제 02",
+      "skillIds": [
+        "GEO-INTRO-B-22"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    }
+  },
+  "spiralRelationCandidates": [
+    {
+      "id": "SPIRAL-GEO-CLASSIFICATION-TO-SHAPE-COUNT",
+      "fromSkillId": "GEO-INTRO-B-02",
+      "toSkillId": "GEO-INTRO-B-22",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "도형의 모양과 경계를 식별해 분류한다.",
+      "addedDemand": "겹치는 분할 그림에서 크기가 다른 합성 도형까지 체계적으로 찾아 센다.",
+      "status": "hypothesis-needs-teacher-review"
+    },
+    {
+      "id": "SPIRAL-GEO-PARTITION-TO-PIECE-COUNT",
+      "fromSkillId": "GEO-INTRO-B-14",
+      "toSkillId": "GEO-INTRO-B-23",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "도형을 경계에 따라 여러 조각으로 나누거나 조각의 모양을 확인한다.",
+      "addedDemand": "여러 절단선의 교차 구조에서 실제 생긴 조각을 도형 종류별로 세고 수 연산까지 한다.",
+      "status": "hypothesis-needs-teacher-review"
+    },
+    {
+      "id": "SPIRAL-GEO-SHAPE-COUNT-TO-CATEGORY-COMPARISON",
+      "fromSkillId": "GEO-INTRO-B-22",
+      "toSkillId": "GEO-INTRO-B-24",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "합성 그림 안의 크고 작은 도형을 종류별로 센다.",
+      "addedDemand": "도형 종류별 개수를 비교하고 최댓값과 최솟값의 차를 계산한다.",
+      "status": "hypothesis-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only; teacher approval pending",
+    "candidateBandDistribution": {
+      "2": 3,
+      "3": 8,
+      "4": 5
+    },
+    "rubric": "shared 5-band conditional thinking-demand criteria"
+  },
+  "curriculum": {
+    "officialGradeBandContext": [],
+    "minimumCurriculumAssignments": 0,
+    "note": "공식 성취기준은 내용 맥락이며 문항별 최소 수준 판정이 아니다."
+  },
+  "answerValidation": {
+    "sameBookAnswerKeyPages": [
+      111,
+      112
+    ],
+    "studentResponsesValidated": 14,
+    "workedRepresentativeExamplesExcluded": 2,
+    "exactAnswerValuesOmitted": true
+  },
+  "privacy": "정답 값, OCR 문구, 로컬 경로, 원자료 이미지 해시는 공개 자료에 포함하지 않는다. 행동·나선·난이도는 후보 상태."
+}

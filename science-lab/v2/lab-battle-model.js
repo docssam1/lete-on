@@ -15,6 +15,24 @@ import { sunModel } from '../scenes/rising-sun-model.js';
 import { snowModel } from '../scenes/snow-model.js';
 import { breadModel } from '../scenes/bread-model.js';
 import { bubbleModel } from '../scenes/bubble-model.js';
+import { seaModel } from '../scenes/sealevel-model.js';
+import { glitterModel, RULES as GLITTER_RULES } from '../scenes/glitter-model.js';
+import { MATERIALS, TESTS as MAT_TESTS, materialRow, materialResult } from '../scenes/material-model.js';
+import { WATERS as SEA_WATERS, AMOUNTS as SEA_AMOUNTS, evapRow } from '../scenes/seawater-model.js';
+import { rulerRow } from '../scenes/ruler-model.js';
+import { moonRow } from '../scenes/moon-model.js';
+import { meadowRow, CHANGES as MEADOW_CHANGES } from '../scenes/meadow-model.js';
+const sea = (title, targets) => ({ title, question: '어느 팀 마을에서 물에 닿은 집이 더 많을까요?', choices: ['1팀이 더 많음', '집 수가 같음', '2팀이 더 많음'], field: 'n', targets });
+// 막대 네 개: 두 팀이 같은 시험을 하고, 팀마다 맡은 막대 하나의 결과를 비교한다(기록 한 줄에 네 막대가 다 있다)
+// 증발 접시: 팀마다 맡은 접시(물의 종류)와 물의 양 — 기록 한 줄에 두 접시가 함께 있다
+const ruler = (title, field, targets) => ({ title, question: field === 'rank' ? '어느 팀의 자에서 더 높은 소리가 날까요?' : '어느 팀의 자에서 더 큰 소리가 날까요?', choices: field === 'rank' ? ['1팀이 더 높음', '높낮이가 같음', '2팀이 더 높음'] : ['1팀이 더 큼', '크기가 같음', '2팀이 더 큼'], field, targets });
+// 같은 시각(저녁 7시쯤)에 본 달만 비교한다 — lit: 밝게 보이는 부분(%) · pos: 서쪽에서 떨어진 정도(클수록 동쪽)
+const moon = (title, field, targets) => ({ title, question: field === 'lit' ? '어느 팀의 달이 더 넓게 밝게 보일까요?' : '같은 시각, 어느 팀의 달이 더 동쪽 하늘에 보일까요?', choices: field === 'lit' ? ['1팀의 달이 더 넓게 밝음', '밝은 부분이 같음', '2팀의 달이 더 넓게 밝음'] : ['1팀의 달이 더 동쪽', '같은 자리', '2팀의 달이 더 동쪽'], field, targets });
+// 풀밭 먹이 관계: 두 팀이 맡은 「바꾼 것」으로 3년 지켜본 뒤 field(grass·rabbit·fox)의 수를 비교한다
+const meadow = (title, field, targets) => { const n = { grass: '풀이', rabbit: '토끼가', fox: '여우가' }[field]; return { title, question: `3년 뒤 어느 팀의 풀밭에 ${n} 더 많을까요?`, choices: ['1팀이 더 많음', '수가 같음', '2팀이 더 많음'], field, targets }; };
+const seawater = (title, targets) => ({ title, question: '물이 모두 날아간 뒤 어느 팀의 접시에 더 많이 남을까요?', choices: ['1팀 접시에 더 많이 남음', '남은 양이 같음', '2팀 접시에 더 많이 남음'], field: 'sea', targets });
+const material = (title, question, choices, targets) => ({ title, question, choices, field: 'mat', targets });
+const glitter = (title, targets) => ({ title, question: '어느 팀에서 반짝이가 묻은 친구가 더 많을까요?', choices: ['1팀이 더 많음', '친구 수가 같음', '2팀이 더 많음'], field: 'n', targets });
 const bubble = (title, targets) => ({ title, question: '어느 팀의 비눗방울이 평균적으로 더 오래 갈까요?', choices: ['1팀이 더 오래 감', '평균 시간이 같음', '2팀이 더 오래 감'], field: 'mean', targets });
 const bread = (title, targets) => ({ title, question: '어느 팀의 반죽이 40분 뒤 더 많이 부풀까요?', choices: ['1팀이 더 많이 부풂', '부피가 같음', '2팀이 더 많이 부풂'], field: 'vol', targets });
 const snow = (title, targets) => ({ title, question: '어느 팀의 병 속에 결정(눈)이 더 많이 생길까요?', choices: ['1팀이 더 많음', '결정의 양이 같음', '2팀이 더 많음'], field: 'snow', targets });
@@ -25,12 +43,52 @@ const cycle = (title, targets) => ({ title, question: '어느 팀의 수조에 �
 const quake = (title, question, choices, field, targets) => ({ title, question, choices, field, targets });
 const shadow = (title, targets) => ({ title, question: '어느 팀의 그림자가 더 클까요?', choices: ['1팀이 더 큼', '크기가 같음', '2팀이 더 큼'], field: 'size', targets });
 export const LAB_BATTLE_ROUNDS = {
+  'c22-s42-u02': [
+    meadow('여우가 사라지면 토끼는?', 'rabbit', [{ change: '그대로' }, { change: '여우가 사라짐' }]),
+    meadow('토끼가 사라지면 풀은?', 'grass', [{ change: '토끼가 사라짐' }, { change: '그대로' }]),
+    meadow('가뭄이 들면 여우는?', 'fox', [{ change: '풀이 줄어듦(가뭄)' }, { change: '그대로' }]),
+  ],
+  'c22-s42-u01': [
+    moon('3일과 7일 · 밝은 부분 비교', 'lit', [{ day: 7 }, { day: 3 }]),
+    moon('7일과 15일 · 같은 시각의 자리', 'pos', [{ day: 7 }, { day: 15 }]),
+    moon('같은 시각이면 같은 자리일까?', 'pos', [{ day: 15 }, { day: 3 }]),
+  ],
+  'c22-s42-u04': [
+    sea('물높이만 바꾸기', [{ level: 2, wall: '방파제 없음' }, { level: 4, wall: '방파제 없음' }]),
+    sea('방파제가 있으면?', [{ level: 3, wall: '방파제 없음' }, { level: 3, wall: '방파제 있음' }]),
+    sea('물이 방파제보다 높아지면?', [{ level: 4, wall: '방파제 있음' }, { level: 4, wall: '방파제 없음' }]),
+  ],
+  'c22-s32-u04': [
+    glitter('손 씻기 규칙만 바꾸기', [{ rule: '손 씻기 없음', round: 3 }, { rule: 'B·D·F가 차례마다 손 씻기', round: 3 }]),
+    glitter('악수 차례만 바꾸기', [{ rule: '손 씻기 없음', round: 1 }, { rule: '손 씻기 없음', round: 2 }]),
+    glitter('손을 씻으면 늘어날까?', [{ rule: 'B·D·F가 차례마다 손 씻기', round: 1 }, { rule: 'B·D·F가 차례마다 손 씻기', round: 3 }]),
+  ],
+  'c22-s32-u03': [
+    ruler('내민 길이만 바꾸기', 'rank', [{ len: 15, strength: '세게' }, { len: 5, strength: '세게' }]),
+    ruler('튕기는 세기만 바꾸기', 'amp', [{ len: 10, strength: '세게' }, { len: 10, strength: '약하게' }]),
+    ruler('세게 튕기면 높아질까?', 'rank', [{ len: 10, strength: '약하게' }, { len: 10, strength: '세게' }]),
+  ],
+  'c22-s32-u02': [
+    seawater('물의 종류만 바꾸기', [{ ml: 20, water: '바닷물' }, { ml: 20, water: '수돗물' }]),
+    seawater('바닷물의 양만 바꾸기', [{ ml: 10, water: '바닷물' }, { ml: 40, water: '바닷물' }]),
+    seawater('같은 조건으로 재현하기', [{ ml: 20, water: '바닷물' }, { ml: 20, water: '바닷물' }]),
+  ],
+  'c22-s32-u01': [
+    material('같은 시험, 다른 막대', '같은 힘으로 가운데를 누르면 어느 팀의 막대가 더 많이 휠까요?', ['1팀 막대가 더 많이 휨', '휘는 정도가 같음', '2팀 막대가 더 많이 휨'], [{ test: '구부려 보기', mat: '고무' }, { test: '구부려 보기', mat: '금속' }]),
+    material('어느 막대가 더 단단할까?', '같은 힘으로 누르면 어느 팀의 막대가 더 많이 들어갈까요?', ['1팀 막대가 더 많이 들어감', '들어간 정도가 같음', '2팀 막대가 더 많이 들어감'], [{ test: '눌러 보기', mat: '플라스틱' }, { test: '눌러 보기', mat: '나무' }]),
+    material('무르면 물에 뜰까?', '물에 넣으면 어느 팀의 막대가 뜰까요?', ['1팀 막대만 뜸', '두 막대가 같음', '2팀 막대만 뜸'], [{ test: '물에 넣기', mat: '고무' }, { test: '물에 넣기', mat: '나무' }]),
+  ],
   's52-u01': [
     bubble('넣는 것만 바꾸기', [{ add: '아무것도 넣지 않음' }, { add: '글리세린 1숟가락' }]),
     bubble('설탕은 어떨까?', [{ add: '설탕 1숟가락' }, { add: '아무것도 넣지 않음' }]),
     bubble('같은 조건으로 재현하기', [{ add: '설탕 1숟가락' }, { add: '설탕 1숟가락' }]),
   ],
   's51-u05': [
+    bread('물의 온도만 바꾸기', [{ water: '찬물(10 ℃)' }, { water: '따뜻한 물(40 ℃)' }]),
+    bread('너무 뜨거운 물이면?', [{ water: '따뜻한 물(40 ℃)' }, { water: '뜨거운 물(70 ℃)' }]),
+    bread('같은 조건으로 재현하기', [{ water: '따뜻한 물(40 ℃)' }, { water: '따뜻한 물(40 ℃)' }]),
+  ],
+  's41-u04': [
     bread('물의 온도만 바꾸기', [{ water: '찬물(10 ℃)' }, { water: '따뜻한 물(40 ℃)' }]),
     bread('너무 뜨거운 물이면?', [{ water: '따뜻한 물(40 ℃)' }, { water: '뜨거운 물(70 ℃)' }]),
     bread('같은 조건으로 재현하기', [{ water: '따뜻한 물(40 ℃)' }, { water: '따뜻한 물(40 ℃)' }]),
@@ -100,8 +158,15 @@ export const LAB_BATTLE_ROUNDS = {
 const finite = (value) => typeof value === 'number' && Number.isFinite(value) && value >= 0;
 export function validBattleRow(unit, row) {
   if (!row || typeof row !== 'object') return false;
+  if (unit === 'c22-s42-u04') { try { const m = seaModel(row.level, row.wall === '방파제 있음'); return row.wall === m.wall && row.n === m.n && row.result === m.result; } catch { return false; } }
+  if (unit === 'c22-s32-u04') { const r = GLITTER_RULES.indexOf(row.rule); if (r < 0) return false; try { const m = glitterModel(row.round, r); return row.n === m.n && row.result === m.result; } catch { return false; } }
+  if (unit === 'c22-s42-u02') { if (!MEADOW_CHANGES.includes(row.change)) return false; const m = meadowRow(row.change); return ['grass', 'rabbit', 'fox', 'result'].every((k) => row[k] === m[k]); }
+  if (unit === 'c22-s42-u01') { try { const m = moonRow(row.day); return m.time === '저녁 7시쯤' && ['time', 'name', 'dir', 'side', 'lit', 'pos'].every((k) => row[k] === m[k]); } catch { return false; } }
+  if (unit === 'c22-s32-u03') { try { const m = rulerRow(row.len, row.strength); return ['pitch', 'loud', 'swing', 'rank', 'amp'].every((k) => row[k] === m[k]); } catch { return false; } }
+  if (unit === 'c22-s32-u02') { if (!SEA_AMOUNTS.includes(row.ml)) return false; const m = evapRow(row.ml); return SEA_WATERS.every((w) => row[w] === m[w]) && row.seaG === m.seaG && row.tapG === m.tapG; }
+  if (unit === 'c22-s32-u01') { if (!MAT_TESTS.includes(row.test)) return false; const m = materialRow(row.test); return MATERIALS.every((k) => row[k] === m[k]); }
   if (unit === 's52-u01') { try { const m = bubbleModel(row.add); return row.mean === m.mean && row.result === m.result && Array.isArray(row.trials) && row.trials.join() === m.trials.join(); } catch { return false; } }
-  if (unit === 's51-u05') { try { const m = breadModel(row.water); return row.vol === m.vol && row.temp === m.temp && row.result === m.result; } catch { return false; } }
+  if (['s51-u05', 's41-u04'].includes(unit)) { try { const m = breadModel(row.water); return row.vol === m.vol && row.temp === m.temp && row.result === m.result; } catch { return false; } }
   if (unit === 's51-u04') { try { const m = snowModel(row.cool); return row.snow === m.snow && row.temp === m.temp && row.result === m.result; } catch { return false; } }
   if (unit === 's51-u03') { try { const m = sunModel(row.ml); return row.height === m.height && row.shape === m.shape && row.result === m.result; } catch { return false; } }
   if (unit === 's51-u02') { try { const m = heatModel(row.material, row.water); return row.changed === m.changed && row.yellow === m.yellow && row.result === m.result; } catch { return false; } }
@@ -119,11 +184,20 @@ export function validBattleRow(unit, row) {
 }
 
 export function matchesBattleTarget(unit, row, target) {
+  if (unit === 'c22-s32-u01') return validBattleRow(unit, row) && row.test === target.test;
+  if (unit === 'c22-s32-u02') return validBattleRow(unit, row) && row.ml === target.ml;   // 맡은 접시(water)는 기록 한 줄 안에 있다   // 맡은 막대(mat)는 기록 한 줄 안에 있다
   return validBattleRow(unit, row) && Object.entries(target).every(([key, value]) => row[key] === value);
 }
 export function battleTargetText(unit, target) {
+  if (unit === 'c22-s42-u04') return `물높이 ${target.level} cm · ${target.wall}`;
+  if (unit === 'c22-s32-u04') return `${target.rule} · ${target.round}차례 뒤`;
+  if (unit === 'c22-s32-u01') return `${target.mat} 막대 · ${target.test}`;
+  if (unit === 'c22-s32-u02') return `${target.water} 접시 · ${target.ml} mL`;
+  if (unit === 'c22-s42-u02') return `풀밭 · ${target.change}`;
+  if (unit === 'c22-s42-u01') return `음력 ${target.day}일 · 저녁 7시쯤`;
+  if (unit === 'c22-s32-u03') return `자 ${target.len} cm · ${target.strength} 튕기기`;
   if (unit === 's52-u01') return target.add;
-  if (unit === 's51-u05') return target.water;
+  if (['s51-u05', 's41-u04'].includes(unit)) return target.water;
   if (unit === 's51-u04') return target.cool;
   if (unit === 's51-u03') return `넣은 물 ${target.ml} mL`;
   if (unit === 's51-u02') return `${target.material} · ${target.water}`;
@@ -138,8 +212,15 @@ export function battleTargetText(unit, target) {
   return `${target.plant} · ${target.where}`;
 }
 export function battleRowText(unit, row) {
+  if (unit === 'c22-s42-u04') return `물높이 ${row.level} cm · ${row.wall} · ${row.result}`;
+  if (unit === 'c22-s32-u04') return `${row.rule} · ${row.round}차례 · ${row.result}`;
+  if (unit === 'c22-s32-u01') return `${row.test} · ${MATERIALS.map((m) => `${m} ${row[m]}`).join(', ')}`;
+  if (unit === 'c22-s32-u02') return `${row.ml} mL · 바닷물 ${row.바닷물} · 수돗물 ${row.수돗물}`;
+  if (unit === 'c22-s42-u02') return `${row.change} · 풀 ${row.grass} · 토끼 ${row.rabbit} · 여우 ${row.fox}`;
+  if (unit === 'c22-s42-u01') return `음력 ${row.day}일 · ${row.name} · ${row.dir}`;
+  if (unit === 'c22-s32-u03') return `${row.len} cm · ${row.strength} · ${row.pitch} · ${row.loud}`;
   if (unit === 's52-u01') return `${row.add} · ${row.result}`;
-  if (unit === 's51-u05') return `${row.water} · ${row.result}`;
+  if (['s51-u05', 's41-u04'].includes(unit)) return `${row.water} · ${row.result}`;
   if (unit === 's51-u04') return `${row.cool} · ${row.result}`;
   if (unit === 's51-u03') return `물 ${row.ml} mL · ${row.result}`;
   if (unit === 's51-u02') return `${row.material} · ${row.water} · ${row.result}`;
@@ -153,7 +234,9 @@ export function battleRowText(unit, row) {
   if (unit === 's41-u03b') return `${row.cond} · ${row.result}`;
   return `${row.plant} · ${row.where} · ${row.result}`;
 }
-function score(round, row) {
+function score(round, row, i) {
+  if (round.field === 'mat') return materialResult(row.test, round.targets[i].mat).v;
+  if (round.field === 'sea') return round.targets[i].water === '바닷물' ? row.seaG : row.tapG;
   if (round.field === 'crystal') return row.result.startsWith('큰') ? 1 : 0;
   if (round.field === 'smoke') return row.result.startsWith('연기 많이') ? 1 : 0;
   return row[round.field];
@@ -163,7 +246,7 @@ export function battleVerdict(unit, round, rows, predictions) {
       || rows.some((row, i) => !matchesBattleTarget(unit, row, round.targets[i]))
       || predictions.some(value => !Number.isInteger(value) || value < 0 || value >= round.choices.length)) return null;
   const answers = round.field === 'habitat' ? rows.map(row => row.ok ? 0 : 1) : (() => {
-    const [a, b] = rows.map(row => score(round, row));
+    const [a, b] = rows.map((row, i) => score(round, row, i));
     const answer = Math.abs(a - b) < 1e-6 ? 1 : a > b ? 0 : 2;
     return [answer, answer];
   })();

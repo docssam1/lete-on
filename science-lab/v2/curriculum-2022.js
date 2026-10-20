@@ -49,6 +49,9 @@ const CONTENT = {
   's41-u02': { contentId:'s41-u02', review:'bank/work/s41u02/review-20261018.json', lessonReview:'bank/work/s41u02/lesson-review-20261018.json' },
 };
 
+// 2022 자리 → 그 자리를 채우는 내용 id(없으면 null). 이름표는 curriculum-place.js가 이것으로 정한다.
+export const contentId2022 = (position) => CONTENT[position]?.contentId || null;
+
 // BANK[position]을 대신 쓰지 않는다. 같은 위치의 기존 단원은 다른 내용일 수 있다.
 export function bankFor2022(position, bank) {
   const link = CONTENT[position];

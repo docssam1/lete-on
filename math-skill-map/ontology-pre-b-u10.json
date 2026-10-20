@@ -1,0 +1,362 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v91",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre B",
+    "unit": 10,
+    "title": "물의 양 비교·용기 용량",
+    "printedPages": [
+      87,
+      93
+    ],
+    "sourceActivityBlocks": 10,
+    "visuallyReviewedPages": 7,
+    "answerValidated": true
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 846,
+    "activitiesInReviewQueue": 6,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 141,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 10,
+    "previouslyMappedActivities": 0,
+    "newlyLinkedActivities": 10,
+    "activitySkillRelations": 10,
+    "visibleActionCandidates": 9,
+    "newActionCandidates": 9,
+    "conditionalDifficultyBands": 10,
+    "newConditionalDifficultyBands": 0,
+    "relationHypotheses": 3,
+    "minimumCurriculumLevelCandidates": 10,
+    "unresolvedMinimumCurriculumCandidates": 10,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 10,
+    "somaDirectCrossReferences": 10,
+    "somaRowsHeldBack": 2,
+    "somaNoDirectRow": 0
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "WAT-PREB10-01",
+      "area": "measurement",
+      "areaOrder": 28,
+      "label": "같은 물체의 수위 변화를 되돌려 최종 높이 찾기",
+      "observableAction": "물체를 넣을 때의 수위 변화량과 개수를 사용해 모두 꺼낸 뒤의 수위를 거꾸로 복원한다.",
+      "activityCount": 1,
+      "printedPages": [
+        87
+      ],
+      "conditionalDifficultyBands": [
+        "2"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "WAT-PREB10-02",
+      "area": "measurement",
+      "areaOrder": 29,
+      "label": "용기 모양과 수위를 함께 고려해 물의 양 비교하기",
+      "observableAction": "용기의 모양과 물높이를 함께 고려해 서로 다른 용기에 담긴 물의 양을 비교·배열한다.",
+      "activityCount": 2,
+      "printedPages": [
+        88,
+        90
+      ],
+      "conditionalDifficultyBands": [
+        "2"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "WAT-PREB10-03",
+      "area": "measurement",
+      "areaOrder": 30,
+      "label": "서로 다른 물체를 차례로 빼며 수위 상태 추적하기",
+      "observableAction": "물체별 수위 변화량과 제거 순서를 적용해 중간·최종 수위 상태를 추적한다.",
+      "activityCount": 1,
+      "printedPages": [
+        89
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "WAT-PREB10-04",
+      "area": "measurement",
+      "areaOrder": 31,
+      "label": "물체를 꺼냈을 때의 수위 변화로 부피 대응하기",
+      "observableAction": "물체를 꺼낼 때 줄어드는 수위를 물체별 부피 차이에 대응해 결과 그림을 고른다.",
+      "activityCount": 1,
+      "printedPages": [
+        91
+      ],
+      "conditionalDifficultyBands": [
+        "2"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "WAT-PREB10-05",
+      "area": "measurement",
+      "areaOrder": 32,
+      "label": "서로 다른 수위 변화량을 합성해 같은 물의 양 찾기",
+      "observableAction": "물체마다 다른 수위 변화량을 합성해 기준 물의 양과 같은 조건을 만족하는 보기를 찾는다.",
+      "activityCount": 1,
+      "printedPages": [
+        91
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "WAT-PREB10-06",
+      "area": "measurement",
+      "areaOrder": 33,
+      "label": "반복 투입 변화량으로 넘침에 필요한 최소 개수 구하기",
+      "observableAction": "물체 한 개가 높이는 수위와 남은 여유를 비교해 넘침에 필요한 최소 개수를 정한다.",
+      "activityCount": 1,
+      "printedPages": [
+        90
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "WAT-PREB10-07",
+      "area": "measurement",
+      "areaOrder": 34,
+      "label": "가득 참·절반·넘침 조건으로 용기 용량 추론하기",
+      "observableAction": "여러 번의 옮겨 붓기 조건을 결합해 용기 용량의 상대 관계를 추론한다.",
+      "activityCount": 1,
+      "printedPages": [
+        92
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "WAT-PREB10-08",
+      "area": "measurement",
+      "areaOrder": 35,
+      "label": "같은 시작량에서 부은 양과 남은 양 순서 정하기",
+      "observableAction": "같은 초기량에서 용기별로 부은 양을 비교하고 남은 물의 양 순서를 정한다.",
+      "activityCount": 1,
+      "printedPages": [
+        92
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "WAT-PREB10-09",
+      "area": "measurement",
+      "areaOrder": 36,
+      "label": "같은 부피를 다른 모양 용기로 옮겨 수위 예측하기",
+      "observableAction": "보존되는 액체의 양과 용기 모양을 함께 사용해 옮긴 뒤의 수위를 그린다.",
+      "activityCount": 1,
+      "printedPages": [
+        93
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "strategy-context-only",
+    "minimumLevelCandidates": [
+      {
+        "candidate": "초등 1–2학년군",
+        "activityCount": 3,
+        "status": "strategy-dependent-unconfirmed"
+      },
+      {
+        "candidate": "초등 3–4학년군",
+        "activityCount": 7,
+        "status": "strategy-dependent-unconfirmed"
+      }
+    ],
+    "candidateActivities": 10,
+    "unresolvedActivities": 10,
+    "confirmedAssignments": 0,
+    "standardsContext": [
+      "2수03 (양의 비교 내용 영역)",
+      "4수03-17",
+      "4수03-18"
+    ],
+    "note": "직접 확인한 교육과정 내용은 맥락 후보일 뿐이며, 눈금 없는 수위·용기 추론의 최소 학년을 확정하지 않는다."
+  },
+  "crossReferences": {
+    "directSomaRows": 10,
+    "heldBackRelatedRows": 2,
+    "noDirectRow": 0,
+    "minimumCurriculumConfirmed": 0,
+    "note": "소마 행 205는 눈금 없는 측정의 주제 대응 후보이며 최저 학년이나 선수 순서 근거가 아니다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "FAMILY-CAPACITY-WATER-DISPLACEMENT",
+        "label": "용기 용량·물의 양·수위 변화",
+        "parentFamilyId": "FAMILY-MEASUREMENT",
+        "memberSkillIds": [
+          "WAT-PREB10-01",
+          "WAT-PREB10-02",
+          "WAT-PREB10-03",
+          "WAT-PREB10-04",
+          "WAT-PREB10-05",
+          "WAT-PREB10-06",
+          "WAT-PREB10-07",
+          "WAT-PREB10-08",
+          "WAT-PREB10-09"
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "from": "WAT-PREB10-01",
+        "to": "WAT-PREB10-03",
+        "type": "spiral-extension-candidate",
+        "basis": "하나의 같은 변화량을 되돌리는 활동에서 여러 물체의 서로 다른 변화와 중간 상태를 추적하는 활동으로 조건이 늘어난다. 선수 순서 승인은 없다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "WAT-PREB10-02",
+        "to": "WAT-PREB10-08",
+        "type": "spiral-extension-candidate",
+        "basis": "용기 모양을 고려해 양을 비교하는 행동이 공통 초기량에서 부은 양을 비교해 잔량 순서를 정하는 상황으로 확장될 수 있다. 유형 동등성·선수 순서는 미승인이다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "WAT-PREB10-07",
+        "to": "WAT-PREB10-09",
+        "type": "spiral-extension-candidate",
+        "basis": "용기 용량의 상대 관계를 여러 조건으로 추론하는 행동과 같은 부피를 다른 모양의 용기에 옮겨 수위를 예측하는 행동은 용량 추론을 공유하나 별도 후보로 둔다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "WAT-PREB10-07",
+        "to": "CUB11",
+        "type": "related-but-distinct",
+        "basis": "고체 단위 큐브로 상자 공간을 세는 행동과 액체의 가득 참·절반·넘침 조건을 결합하는 행동은 용량 맥락만 관련되고 표상·행동은 구별한다.",
+        "status": "hypothesis-needs-teacher-review"
+      }
+    ]
+  },
+  "privacy": "공개 파일에는 문항별 정답·OCR 원문·활동 ID·이미지 해시·로컬 경로를 포함하지 않는다. 답안 근거 10건은 인쇄 해설 pp.40–43 대조 결과만 집계한다. 난이도·최소 교과수준·계통 연결은 교사 승인 전 후보다.",
+  "answerValidation": {
+    "activitiesValidated": 10,
+    "answerKeyPdfPages": [
+      40,
+      41,
+      42,
+      43
+    ],
+    "method": "Rendered answer-key pages were visually cross-checked against existing page review.",
+    "exactAnswerValuesOmitted": true
+  }
+}

@@ -1,13 +1,59 @@
-import {inquiry} from '../activities/s41-u04.inquiry.js';
-const q=n=>`s41-u04-b${String(n).padStart(2,'0')}`;
-const bread={kind:'bread',goal:'정해진 세 온도 조건에서 모형 반죽의 변화를 실행하고 기록해요. 가상 mL·분을 실제 측정값으로 쓰지 않아요. 학생이 뜨거운 물로 따라 하는 절차가 아니에요.',columns:['모형 물 조건','모형 부피','모형 모습'],rowText:r=>`${r.water} · 가상 부피 ${r.vol}mL · ${r.shape} (실측 아님)`};
-export const lesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'작은 생물 관찰·생활 영향 발표·소개 자료 공유',
- engage:{say:[{mood:'thinking',text:'작은 생물을 어떤 근거로 설명할까요?'},{mood:'talk',text:'본 것과 알아본 것을 나누어 남겨요.'}],question:'균류·원생생물·세균의 특징과 생활 영향을 어떻게 알아보고 생명과학 이용 사례를 다른 사람과 나눌까요?',predictions:[{id:'evidence',text:'표본·사진·영상의 관찰 근거와 출처를 확인하고 직접 발표·공유한다.'},{id:'looks',text:'겉모양 한 가지만 보면 사는 곳과 모든 생활 영향을 알 수 있다.'},{id:'more',text:'아직 모르므로 관찰하고 조사해 예상과 비교하고 싶다.'}],answer:'evidence',predictionNote:'처음 예상과 관찰·조사 뒤의 설명을 비교해요.'},
- explore:{say:[{mood:'talk',text:'여덟 활동의 실제 근거를 차근차근 남겨요.'}],modes:['lab','model','scene','home'],modeLabels:{lab:'내 생물 탐구 기록',model:'효모빵 가상 모형',scene:'효모빵3D',home:'실제 활동 방법'},scene:'bread-dough',modelLab:bread,modelLabel:'생명과학 이용 사례 · 효모빵 가상 모형',modelNotice:'세 온도·40분·mL는 정해진 모형 예시예요. 모든 효모의 최적 온도나 실제 측정값을 뜻하지 않으며 학생 가열 실험 지시가 아니에요.',
- lab:{kind:'inquiry',config:inquiry,rowsKey:'biologyInquiryRows',goal:'관찰·비교·조사·실제 발표·소개 자료 제작·실제 공유와 의견을 각각 보관해요. 미실행 계획은 그대로 표시해요.',columns:['활동','보관한 기록'],rowText:r=>r.title},
- home:{title:'작은 생물을 관찰하고 조사·발표·공유하기',minutes:240,duration:'여러 차시에 나누는 계획 예시예요. 관찰 준비·조사·발표·자료 제작·공유 시간을 실제 수업에 맞춰 조절해요.',guardian:true,materials:[{name:'교사가 확인한 식용 버섯 표본·곰팡이 사진/봉인 표본',qty:'직접/자료·알레르기 대체 참여 확인',have:'home'},{name:'교사 준비 해캄·짚신벌레 표본 또는 사진/영상',qty:'도구·배율/눈금·영상 여부 확인',have:'home'},{name:'출처 있는 세균 사진/영상·생활 영향/이용 사례 자료',qty:'대상·기관·제목·확인 날짜',have:'home'},{name:'기록 도구·소개 자료를 만들 종이/디지털 도구',qty:'실제 발표·공유 대상과 방법',have:'home'}],steps:inquiry.activities.map(a=>a.title+' — '+a.steps.join(' ')),safety:['미지 세균을 채취·배양하거나 용기를 열지 않아요. 세균은 교사 선정 사진·영상으로 관찰해요.','곰팡이를 새로 기르거나 개봉·냄새 맡기·섭취하지 않아요. 야생 버섯을 채집·시식하지 않아요.','현미경·유리 표본은 교사가 준비하고 안전하게 안내해요. 불편이나 알레르기가 있으면 대체 자료로 참여해요. 활동 뒤 교사의 정리·손 씻기 안내를 따라요.','효모빵3D는 정해진 가상 모형이에요. 뜨거운 물·불·가열·실험 음식 맛보기를 학생 절차로 따라 하지 않아요. 공유 기록에는 상대의 실명·연락처를 쓰지 않아요.']}},
- explain:{say:[{mood:'talk',text:'관찰과 출처를 짚어 특징을 설명해요.'}],analogy:'관찰 기록은 근거를 담은 작은 도감이에요. 보인 모습·자료 설명·추측을 나누어야 다른 사람이 같은 근거를 확인할 수 있어요.',principle:'균류·원생생물·세균의 사례를 관찰해 특징과 사는 곳을 설명해요. 생물 무리와 이로움/해로움을 같은 기준으로 섞지 않아요. 생활 영향은 대상과 조건·출처를 조사해 발표하고, 생명과학 소개 자료는 실제로 만들어 공유하며 의견으로 보완해요.',cards:[9,17,25,33].map(q),table:q(40),miniTest:[q(6),q(32)],fromData:rows=>rows.length?`보관한 활동 ${rows.length}개의 실제 관찰·출처·발표·제작·공유 근거를 열어 설명해요. 기록 수는 수행 완료나 공식 성적이 아니에요.`:'보관한 기록이 아직 없어요. 직접 한 일·자료에서 확인한 일·앞으로 계획을 구별해 남겨요.'},
- elaborate:{say:[{mood:'thinking',text:'만든 자료를 실제로 나누면 무엇이 달라질까요?'}],reading:{title:'생물의 작용에서 소개 자료와 실제 소통으로',text:'효모를 이용한 빵 만들기는 생물의 작용을 생활에 이용하는 한 사례예요. 효모가 만든 기체와 반죽의 변화는 자료의 조건을 확인해 설명해요. 가상 모형의 값이 실제 관찰 결과를 대신하지는 않아요. 소개 자료에는 어떤 생물이 어떤 작용을 하며 어떻게 이용되는지, 생활에 어떤 변화를 주는지와 출처를 넣어요. 자료를 저장한 뒤에는 사람에게 실제로 보여 주었는지 확인해요. 받은 질문·의견과 확인한 근거로 자료를 보완하고, 아직 하지 못한 일은 다음 계획으로 남겨요.'},items:[q(41),q(56),q(64)],report:true,reportNote:'여덟 활동의 관찰·조사·발표·제작·공유와 실제 의견을 정리해요. 그림과 본문이 담긴 탐구 기록을 내려받아 보관할 수 있어요.'},
- evaluate:{say:[{mood:'encourage',text:'문제 응답과 실제 수행 근거를 함께 살펴요.'}],items:[q(21),q(46),q(58)],pass:2,performanceNote:'문제 정답은 실제 관찰·조사 발표·소개 자료 제작/공유의 증명이 아니에요. 실제 수행은 선생님과 근거를 확인해요.'},
- report:{title:'다양한 생물 · 관찰·발표·제작·공유 보고서',sections:[{key:'biologyQuestion',label:'① 알아볼 문제·직접/자료/계획 구별'},...inquiry.activities.map((a,i)=>({key:'biology_'+a.id,from:'inquiry.'+a.id,label:`${i+2}. ${a.title} · 실제 내용과 근거`})),{key:'biologyMore',label:'⑩ 더 확인할 점·다음 계획'}],checks:['버섯/곰팡이·해캄/짚신벌레·세균의 관찰 자료와 조건을 남겼나요?','보인 특징·사는 곳의 출처·추측/미확인을 나눴나요?','세 무리의 생활 영향을 조건·출처와 함께 조사했나요?','실제 발표 내용·질문·답과 미발표 계획을 구별했나요?','소개 자료의 실제 본문/그림·출처·생물 작용과 이용을 남겼나요?','실제 공유·의견 미수신·수정/재공유와 앞으로 계획을 구별했나요?']}
+// 4-1 Ⅳ 다양한 생물과 우리 생활(2022 개정) — 교과 연결 사고력 수업(5단계 화면 구성). 문항 id는 s41-u04.think.js(t01~t12)와 문제은행(b) 참조.
+// 예전 기본 수업이던 탐구 기록 앱(8활동)은 explore.records(선택 기능, #/s41-u04/records)로 옮겼다 — 저장 키 sciLab.inquiry.s41-u04는 그대로.
+// 3D 실험실은 이미 있던 효모빵 반죽 실험실(v2/lab-bread.js · scenes/bread-dough.js)을 쓴다.
+import { recordsLesson } from './s41-u04.records.js';
+const t = (n) => `s41-u04-t${String(n).padStart(2, '0')}`;
+export const lesson = {
+  unitId: 's41-u04', grade: 4, title: '다양한 생물과 우리 생활', hero: '부푸는 효모빵 반죽',
+  engage: {
+    say: [{ mood: 'thinking', text: '빵은 어떻게 폭신하게 부풀까요?' }, { mood: 'talk', text: '반죽 속 작은 생물, 효모를 만나 봐요.' }],
+    scene: 'bread-dough',
+    question: '같은 재료에 찬물·따뜻한 물·뜨거운 물을 넣어 반죽하고 40분 두면, 어느 반죽이 가장 많이 부풀까요?',
+    predictions: [{ id: '0', text: '찬물 반죽' }, { id: '1', text: '따뜻한 물 반죽' }, { id: '2', text: '뜨거운 물 반죽' }],
+    answer: '1',
+    wrongNote: '실험 결과와 비교하며 효모가 생물이라는 점을 떠올려 봐요.',
+  },
+  explore: {
+    say: [{ mood: 'talk', text: '물의 온도만 다르게, 재료의 양과 시간은 똑같이 해요.' }],
+    modes: ['lab', 'scene', 'home'],
+    lab: { kind: 'bread', rowsKey: 'breadRows', goal: '물을 고르고 발효를 시작해요 → 40분 뒤 부피를 읽고 「표에 적기」를 눌러요. 세 물을 모두 비교해 봐요.',
+      notice: '부피(mL)는 모형 값이에요. 뜨거운 물(70 ℃)은 3D 모형에서만 비교하고 실제로는 쓰지 않아요.',
+      columns: ['반죽한 물', '40분 뒤 부피', '모습'], rowText: (r) => `${r.water} → ${r.result}` },
+    home: {
+      title: '집에서 효모 풍선 만들기', minutes: 30, guardian: true,
+      materials: [{ name: '작은 페트병 2개', qty: '2개', have: 'home' }, { name: '설탕·건조 효모', qty: '1숟가락씩', have: 'home' }, { name: '풍선 2개', qty: '2개', have: 'home' }, { name: '찬물과 따뜻한 물(목욕물 정도)', qty: '각 100 mL', have: 'home' }],
+      steps: ['두 병에 설탕과 효모를 똑같이 넣고, 한 병에는 찬물, 다른 병에는 따뜻한 물을 넣어요.',
+        '병 입구에 풍선을 씌우고 30분 동안 풍선이 부푸는 정도를 비교해요.',
+        '효모가 만든 기체가 풍선을 부풀린 것이라는 것을 이야기해요.'],
+      safety: ['뜨거운 물은 쓰지 않아요. 보호자와 함께 하고, 효모 물은 마시지 않아요.'], qr: null,
+    },
+    // 선택 기능: 예전 탐구 기록 앱(관찰·조사·발표·소개 자료 제작·공유 기록). 수업 흐름에는 넣지 않는다.
+    records: { ...recordsLesson.explore.lab, title: '탐구 기록장(선택)', note: '실제 표본 관찰·생활 영향 조사 발표·소개 자료 공유를 따로 기록하고 싶을 때 써요. 수업은 기록 없이도 끝까지 할 수 있어요.' },
+  },
+  explain: {
+    say: [{ mood: 'talk', text: '효모는 생물이라 따뜻할 때 가장 활발해요.' }],
+    analogy: '효모는 반죽 속 작은 일꾼이에요. 따뜻하면 부지런히 설탕을 먹고 기체를 내뿜지만, 너무 추우면 느릿느릿, 너무 뜨거우면 쓰러져 버려요.',
+    principle: '버섯·곰팡이·효모는 균류, 짚신벌레·해캄은 원생생물, 아주 작은 세균도 있어요. 효모는 따뜻할 때 이산화탄소를 만들어 빵을 부풀리고, 균류·세균은 생활에 이로운 일도 해로운 일도 해요.',
+    cards: [t(1), t(2), t(3), t(4)],
+    table: t(5),
+    miniTest: [t(6), t(7)],
+    fromData: (rows) => {
+      if (!rows.length) return '';
+      const best = rows.reduce((a, b) => (b.vol > a.vol ? b : a));
+      return `네 기록: ${rows.map((r) => `${r.water} ${r.vol} mL`).join(', ')} · 가장 많이 부푼 반죽은 ${best.water}이에요. 왜 그럴까요?`;
+    },
+  },
+  elaborate: {
+    say: [{ mood: 'thinking', text: '작은 생물은 우리 생활에서 또 어떤 일을 할까요?' }],
+    items: [t(8), t(12), 's41-u04-b36'],
+    reading: { title: '곰팡이가 세균을 막은 접시', text: '세균을 기르던 접시에 푸른곰팡이가 자라자 곰팡이 둘레에 세균이 자라지 못한 맑은 고리가 생겼어요. 곰팡이가 만든 물질이 세균의 자람을 막았기 때문이에요. 이 물질을 연구해 항생제를 만들었어요.' },
+    report: false,
+  },
+  evaluate: {
+    say: [{ mood: 'praise', text: '효모가 빵을 부풀리는 까닭을 설명할 수 있나요?' }],
+    items: [t(9), t(10), t(11)],
+    pass: 2,
+  },
+  // 보고서 화면(#/s41-u04/report)은 선택 기능인 탐구 기록장과 이어진다.
+  report: recordsLesson.report,
 };

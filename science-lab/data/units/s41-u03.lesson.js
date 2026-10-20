@@ -93,7 +93,7 @@ export const hillLesson = {
 
 import {inquiry} from '../activities/s41-u03.inquiry.js';
 const q=n=>`s41-u03-b${String(n).padStart(2,'0')}`;
-export const lesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'물길·화산 모형·암석 분류·대처 실천',
+export const recordsLesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'물길·화산 모형·암석 분류·대처 실천',
  engage:{say:[{mood:'thinking',text:'땅의 변화는 어떤 근거로 알까요?'},{mood:'talk',text:'관찰·자료·모형을 구별해 살펴요.'}],question:'물길·화산·암석을 어떻게 알아보고 화산·지진의 영향에 안전하게 대처할까요?',predictions:[{id:'evidence',text:'같은 조건의 관찰·출처 있는 자료와 모형의 한계를 확인한다.'},{id:'looks',text:'한 장의 사진이나 산의 겉모양으로 모든 과정과 대처를 정한다.'},{id:'more',text:'아직 모르므로 관찰하고 실제로 연습하며 더 확인하고 싶다.'}],answer:'evidence',predictionNote:'예상과 실제 근거를 나중에 비교해요.'},
  explore:{say:[{mood:'talk',text:'직접 한 일과 자료·계획을 나눠 남겨요.'}],modes:['lab','model','scene','home'],modeLabels:{lab:'내 땅 탐구 기록',model:'언덕 물길 모형',scene:'언덕3D',home:'실제 활동 방법'},scene:'hill-stream',modelLab:hillLesson.explore.lab,modelLabel:'흙 언덕 물길 가상 모형',modelNotice:'깎인 흙·쌓인 흙의 가상 칸은 실제cm나 무게가 아니에요. 실제 강의 모든 조건을 재현하지 않아요.',
  lab:{kind:'inquiry',config:inquiry,rowsKey:'groundInquiryRows',goal:'여덟 활동의 조건·관찰·모형·분류·조사·실제 연습/의견과 미실행 계획을 구별해 보관해요.',columns:['활동','보관한 기록'],rowText:r=>r.title},
@@ -103,3 +103,10 @@ export const lesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'물�
  evaluate:{say:[{mood:'encourage',text:'자료 답과 실제 수행의 근거를 따로 봐요.'}],items:[q(48),q(64),q(72)],pass:2,performanceNote:'자료 문제 정답은 실제 관찰·모형 제작·분류·대처 실천·소통의 증명이 아니에요. 실제 수행은 선생님과 근거를 확인해요.'},
  report:{title:'땅의 변화 · 관찰·분류·대처 보고서',sections:[{key:'groundQuestion',label:'① 알아볼 문제·직접/자료/모형/계획'},...inquiry.activities.map((a,i)=>({key:'ground_'+a.id,from:'inquiry.'+a.id,label:`${i+2}. ${a.title} · 조건과 실제 근거`})),{key:'groundMore',label:'⑩ 더 확인할 점·다음 계획'}],checks:['처음 언덕·물 양/붓는 위치/시간·한 조건 비교를 확인했나요?','강 지형 자료의 위치/시기·작용 근거·모형 한계를 구별했나요?','화산 모형의 대응/한계와 실제 분출물의 상태를 나눴나요?','두 암석의 특징·분류/수정·실제 의견을 남겼나요?','화산 피해/이용·지진 피해를 출처와 함께 조사했나요?','대처 계획과 실제 연습/어려움/보완·미실천을 구별했나요?']}
 };
+
+// 2026-10-20 ⑤ 같은 패턴 정리: 기본 수업 = 위 hillLesson(3D 실험 수업 · 예상→실험→개념). 탐구 기록 앱은 선택 기능(#/s41-u03/records)으로 옮겼다
+// — 저장 키 sciLab.inquiry.s41-u03와 보고서 화면(#/s41-u03/report)은 그대로 기록장과 이어진다. 기록 교재는 #/s41-u03/records-book.
+export const lesson = { ...hillLesson,
+  explore: { ...hillLesson.explore, records: { ...recordsLesson.explore.lab, title: '탐구 기록장(선택)', note: '물길·화산 모형·암석 분류·대처 실천을 따로 기록하고 싶을 때 써요. 수업은 기록 없이도 끝까지 할 수 있어요.' } },
+  elaborate: { ...hillLesson.elaborate, report: false },
+  report: recordsLesson.report };

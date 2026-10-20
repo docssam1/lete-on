@@ -1,5 +1,6 @@
+// 2026-10-20: 기본 수업은 3D 실험 수업으로 되돌렸다(lab-lessons.test.mjs). 이 파일은 선택 기능으로 옮긴 탐구 기록장·기록 교재(records)가 예전대로 동작하는지 본다.
 import test from 'node:test';import assert from 'node:assert/strict';
-import{inquiry}from'../data/activities/s41-u02.inquiry.js';import{lesson,freezeLesson}from'../data/units/s41-u02.lesson.js';import{chapter,art,plan}from'../data/book/s41-u02.inquiry.book.js';import{items}from'../data/units/s41-u02.js';import{source}from'../data/units/s41-u02.source.js';
+import{inquiry}from'../data/activities/s41-u02.inquiry.js';import{recordsLesson as lesson,freezeLesson}from'../data/units/s41-u02.lesson.js';import{chapter,art,plan}from'../data/book/s41-u02.inquiry.book.js';import{items}from'../data/units/s41-u02.js';import{source}from'../data/units/s41-u02.source.js';
 import{emptyInquiry,saveInquiry,validInquiry,inquiryError,inquirySections,inquiryKey}from'./inquiry-records.js';import{buildSlides}from'./deck.js';import{renderChapter}from'./book.js';
 test('물 여덟 활동은 다섯 변화와 설계·실제 만들기·시험을 연결하고 얼음 모형 저장을 분리한다',()=>{
  assert.deepEqual(inquiry.activities.map(a=>a.id),['states','freeze','evaporate','boil','condense','design','make','review']);assert.equal(source.length,80);assert.equal(items.length,78);

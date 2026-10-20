@@ -31,6 +31,7 @@ const userExamLibraryCore = require("../data/user-exam-library-core.js");
 const examGenerationPlanner = require("../data/exam-generation-planner.js");
 const userExamLibraryStoreModule = require("./user-exam-library-store.js");
 const userExamScopeInventoryModule = require("./user-exam-scope-inventory.js");
+const userExamAssetsModule = require("./user-exam-assets.js");
 
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -210,6 +211,15 @@ function practiceSignatureInput(record, item, asset, subject, expires) {
   };
 }
 
+function userExamSignatureInput(recipe, item, asset, subject, expires) {
+  return {
+    subject,
+    examId: `user-exam:${recipe.examId}:${item.itemVersionId}:${asset.assetKey}:${asset.assetRevision}`,
+    pageNumber: item.order,
+    expires
+  };
+}
+
 function validImageMagic(buffer, mimeType) {
   if (mimeType === "image/png") return buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
   if (mimeType === "image/jpeg") return buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
@@ -327,9 +337,22 @@ function createApp(options) {
     data: opts.privateUserExamScopeInventory,
     filePath: opts.privateUserExamScopeInventoryPath
   });
+  const loadUserExamAsset = opts.loadUserExamAsset || userExamAssetsModule.createLoader({
+    data: opts.privateUserExamAssets,
+    filePath: opts.privateUserExamAssetsPath
+  });
   const loadAcademyQuestionCatalog = opts.loadAcademyQuestionCatalog || academyQuestionCatalogModule.createLoader({
     projectData: opts.privateProjectQuestionIndex,
     projectFilePath: opts.privateProjectQuestionIndexPath,
+    itemRelations: opts.privateProjectItemRelations,
+    itemRelationsPath: opts.privateProjectItemRelationsPath,
+    itemRelationsSha256: opts.privateProjectItemRelationsSha256,
+    contentData: opts.privateProjectContentData,
+    contentFilePath: opts.privateProjectContentDbPath,
+    contentSha256: opts.privateProjectContentDbSha256,
+    visualAuditData: opts.privateProjectVisualAuditData,
+    visualAuditFilePath: opts.privateProjectVisualAuditPath,
+    visualAuditSha256: opts.privateProjectVisualAuditSha256,
     data: opts.privateAcademyQuestionDb,
     filePath: opts.privateAcademyQuestionDbPath
   });
@@ -407,6 +430,16 @@ function createApp(options) {
     catch (_) { throw new HttpError(503, "승인된 학원·학기 출제 범위를 확인해 주세요."); }
   }
 
+  function currentRenderableUserExamItem(registry, item) {
+    const candidate = registry.getCandidate(item.itemId, item.itemVersionId);
+    if (!candidate || examEditorCore.validateCandidate(candidate).length) {
+      throw new HttpError(423, "현재 검수된 버전의 문항만 시험지로 열 수 있습니다.");
+    }
+    const asset = loadUserExamAsset && loadUserExamAsset(item.itemId, item.itemVersionId);
+    if (!asset) throw new HttpError(423, "이 시험지의 검수된 문항 이미지가 아직 모두 준비되지 않았습니다.");
+    return { candidate, asset };
+  }
+
   function userExamFailure(error, missingStatus) {
     if (error instanceof HttpError) throw error;
     if (error && error.code === "USER_EXAM_ACCESS_MISSING") {
@@ -481,8 +514,27 @@ function createApp(options) {
     visit(value, null);
   }
 
+  function sourceQuestionKey(candidate) {
+    const source = candidate.lineage && candidate.lineage.sourceAsset;
+    if (!source) return null;
+    const locator = source.itemLocator && source.itemLocator.code;
+    if (!locator && !source.bbox) return null;
+    const identity = [source.sourceFingerprint, source.pageNumber, locator || JSON.stringify(source.bbox), source.assetVariant].join(":");
+    return `sha256:${crypto.createHash("sha256").update(identity).digest("hex")}`;
+  }
+
+  function variationKeys(candidate) {
+    const sourceKey = sourceQuestionKey(candidate);
+    return [
+      candidate.variantId && `variantId:${candidate.variantId}`,
+      candidate.contentFingerprint && `contentFingerprint:${candidate.contentFingerprint}`,
+      sourceKey && `sourceQuestionKey:${sourceKey}`
+    ].filter(Boolean);
+  }
+
   function approvedLibraryItems(bodyItems, registry, generationMode, academyId, scopeApproval, scopeInventory) {
     if (!Array.isArray(bodyItems) || !bodyItems.length) throw new HttpError(400, "승인된 문항 ID와 버전을 하나 이상 보내 주세요.");
+    const seenVariations = new Set();
     return bodyItems.map(function (item, index) {
       exactKeys(item, new Set(["itemId", "itemVersionId", "order", "score"]), `사용자 시험 ${index + 1}번 문항`);
       const candidate = registry.getCandidate(security.clean(item.itemId), security.clean(item.itemVersionId));
@@ -494,6 +546,10 @@ function createApp(options) {
       }
       try { scopeInventory.assertItemScope(candidate.curriculum.key, scopeApproval.target, scopeApproval.requestedScopes); }
       catch (_) { throw new HttpError(409, "선택한 학원·학기와 출제 범위에 맞는 문항만 담을 수 있습니다."); }
+      variationKeys(candidate).forEach(function (key) {
+        if (seenVariations.has(key)) throw new HttpError(409, "같은 문항 변형을 한 시험지에 두 번 담을 수 없습니다.");
+        seenVariations.add(key);
+      });
       return { itemId: candidate.id, itemVersionId: candidate.itemVersionId, order: item.order, score: item.score };
     });
   }
@@ -504,7 +560,14 @@ function createApp(options) {
     const modes = generationMode === "academy_prep"
       ? [security.clean(academyId).toUpperCase()]
       : questionBankCore.PROGRAM_MODES;
-    const excluded = new Set(excludedItemIds || []);
+    const excluded = new Set((excludedItemIds || []).map(function (item) { return typeof item === "string" ? item : item.itemId; }));
+    const excludedIdentities = new Set();
+    (excludedItemIds || []).forEach(function (item) {
+      if (typeof item === "string") return;
+      const candidate = registry.getCandidate(item.itemId, item.itemVersionId);
+      if (!candidate) return;
+      variationKeys(candidate).forEach(function (key) { excludedIdentities.add(key); });
+    });
     const byId = new Map();
     modes.forEach(function (mode) {
       const matches = typeof registry.searchAll === "function"
@@ -513,6 +576,8 @@ function createApp(options) {
       matches.forEach(function (entry) {
         const candidate = entry.candidate;
         if (excluded.has(candidate.id) || byId.has(candidate.id)) return;
+        const sourceKey = sourceQuestionKey(candidate);
+        if (variationKeys(candidate).some(function (key) { return excludedIdentities.has(key); })) return;
         try { scopeInventory.assertItemScope(candidate.curriculum.key, scopeApproval.target, scopeKeys); }
         catch (_) { return; }
         byId.set(candidate.id, {
@@ -521,6 +586,9 @@ function createApp(options) {
           curriculumPath: candidate.curriculum.key,
           typeCode: candidate.typeCode,
           familyId: candidate.variant.familyId,
+          variantId: candidate.variantId,
+          contentFingerprint: candidate.contentFingerprint,
+          sourceQuestionKey: sourceKey,
           domainGroup: candidate.domainGroup,
           difficultyBand: candidate.difficultyBand,
           inputType: candidate.inputType,
@@ -532,7 +600,7 @@ function createApp(options) {
   }
 
   function generateUserExam(library, registry, context, input, parent) {
-    const parentItems = parent ? parent.items.map(function (item) { return item.itemId; }) : [];
+    const parentItems = parent ? parent.items : [];
     const requestedConditions = parent ? null : {
       scopeKeys: input.scopeKeys,
       difficultyWeights: input.difficultyWeights,
@@ -1255,12 +1323,53 @@ function createApp(options) {
       throw new HttpError(405, "허용되지 않은 요청입니다.");
     }
 
+    if (pathname === "/admin/user-exam-library/options" && request.method === "GET") {
+      requireAdmin(currentUser(request, loadConfig, sessionSecret, cookieName, now));
+      const library = requireUserExamLibrary();
+      const scopeInventory = requireUserExamScopeInventory();
+      if (Array.from(url.searchParams.keys()).length) throw new HttpError(400, "문제은행 권한 선택지 조회에는 검색 조건을 지정할 수 없습니다.");
+      const plans = library.listPlans().map(function (plan) {
+        return {
+          planId: plan.planId,
+          maxSavedExamCount: plan.maxSavedExamCount,
+          maxRecentExamCount: plan.maxRecentExamCount,
+          temporaryRetentionDays: plan.temporaryRetentionDays
+        };
+      });
+      const targets = scopeInventory.listTargets();
+      sendJson(response, 200, { plans, targets, planCount: plans.length, targetCount: targets.length });
+      return true;
+    }
+
     if (pathname === "/user-exam-library/access" && request.method === "GET") {
       const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
       const library = requireUserExamLibrary();
       if (Array.from(url.searchParams.keys()).length) throw new HttpError(400, "이용 권한 조회에는 검색 조건을 지정할 수 없습니다.");
       try { sendJson(response, 200, publicUserExamAccess(library.assignment(context.user.studentId))); }
       catch (error) { userExamFailure(error, 403); }
+      return true;
+    }
+
+    if (pathname === "/user-exam-library/options" && request.method === "GET") {
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      const library = requireUserExamLibrary();
+      const scopeInventory = requireUserExamScopeInventory();
+      if (Array.from(url.searchParams.keys()).length) throw new HttpError(400, "시험 구성 선택지 조회에는 검색 조건을 지정할 수 없습니다.");
+      let access;
+      try { access = library.assignment(context.user.studentId); }
+      catch (error) { userExamFailure(error, 403); }
+      const targets = scopeInventory.listTargets().filter(function (target) {
+        try {
+          userExamLibraryCore.assertTargetEntitled(
+            access.assignment.entitlements,
+            target.generationMode,
+            target.academyId,
+            target.semesterId
+          );
+          return true;
+        } catch (_) { return false; }
+      });
+      sendJson(response, 200, { targets, count: targets.length });
       return true;
     }
 
@@ -1359,6 +1468,58 @@ function createApp(options) {
         return true;
       }
       throw new HttpError(405, "허용되지 않은 요청입니다.");
+    }
+
+    const userExamPrintMatch = pathname.match(/^\/user-exam-library\/exams\/([^/]+)\/print-manifest$/);
+    if (userExamPrintMatch) {
+      if (request.method !== "GET") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      if (Array.from(url.searchParams.keys()).length) throw new HttpError(400, "시험지 열기 요청에는 검색 조건을 지정할 수 없습니다.");
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      if (context.user.role !== "student") throw new HttpError(404, "사용자 시험을 찾을 수 없습니다.");
+      const library = requireUserExamLibrary();
+      let recipe;
+      try { recipe = library.read(context.user.studentId, decodeURIComponent(userExamPrintMatch[1]), now()); }
+      catch (error) { userExamFailure(error, 404); }
+      if (!recipe) throw new HttpError(404, "사용자 시험을 찾을 수 없습니다.");
+      if (!loadUserExamAsset) throw new HttpError(423, "검수된 문항 이미지 저장소가 아직 연결되지 않았습니다.");
+      const registry = requireExamEditorRegistry();
+      const expires = Math.floor(now() / 1000) + assetTtlSeconds;
+      const subject = security.opaqueSubject(context.user.studentId, assetSecret);
+      const origin = publicOrigin(request, configuredOrigin);
+      const items = [];
+      for (const item of recipe.items.slice().sort(function (left, right) { return left.order - right.order; })) {
+        const renderable = currentRenderableUserExamItem(registry, item);
+        if (!await readVerifiedPracticeAsset(renderable.asset)) {
+          throw new HttpError(423, "이 시험지의 검수된 문항 이미지가 아직 모두 준비되지 않았습니다.");
+        }
+        const extension = evidenceExtension(renderable.asset.mimeType);
+        if (!extension) throw new HttpError(423, "검수된 문항 이미지 형식이 올바르지 않습니다.");
+        const signature = security.signPageAsset(
+          userExamSignatureInput(recipe, item, renderable.asset, subject, expires),
+          assetSecret
+        );
+        items.push({
+          number: item.order,
+          score: item.score,
+          inputType: renderable.candidate.inputType,
+          mimeType: renderable.asset.mimeType,
+          url: `${origin}/user-exam-assets/${encodeURIComponent(recipe.examId)}/item-${String(item.order).padStart(3, "0")}${extension}?sub=${subject}&exp=${expires}&sig=${encodeURIComponent(signature)}`
+        });
+      }
+      const layout = Object.assign({ paperSize: "A4", columns: 2, itemsPerPage: 4, fontScale: 1 }, recipe.layout || {});
+      sendJson(response, 200, {
+        examId: recipe.examId,
+        generationMode: recipe.generationMode,
+        academyId: recipe.selectionSnapshot.academyId,
+        semesterId: recipe.selectionSnapshot.semesterId,
+        questionCount: items.length,
+        pageCount: Math.ceil(items.length / layout.itemsPerPage),
+        assetPolicy: "signed-item-images",
+        expiresAt: new Date(expires * 1000).toISOString(),
+        layout,
+        items
+      });
+      return true;
     }
 
     const userExamMatch = pathname.match(/^\/user-exam-library\/exams\/([^/]+)(?:\/(save|similar))?$/);
@@ -1703,7 +1864,8 @@ function createApp(options) {
       const record = await store.get(attemptId);
       if (!record || record.studentId !== context.user.studentId) throw new HttpError(404, "분석지를 찾을 수 없습니다.");
       requireExamAccess(context, record.examId);
-      sendJson(response, 200, record.report);
+      // Label only the authenticated owner's report; never save this read as a new result.
+      sendJson(response, 200, Object.assign({}, record.report, { displayName: context.user.name }));
       return true;
     }
 
@@ -1733,6 +1895,45 @@ function createApp(options) {
       else fs.createReadStream(asset).pipe(response);
       return true;
     }
+    match = pathname.match(/^\/user-exam-assets\/([^/]+)\/item-(\d{3})(\.png|\.jpg|\.webp)$/);
+    if (match) {
+      if (request.method !== "GET" && request.method !== "HEAD") throw new HttpError(405, "허용되지 않은 요청입니다.");
+      const context = currentUser(request, loadConfig, sessionSecret, cookieName, now);
+      if (context.user.role !== "student") throw new HttpError(404, "문항 이미지를 찾을 수 없습니다.");
+      const library = requireUserExamLibrary();
+      let recipe;
+      try { recipe = library.read(context.user.studentId, decodeURIComponent(match[1]), now()); }
+      catch (error) { userExamFailure(error, 404); }
+      if (!recipe || !loadUserExamAsset) throw new HttpError(404, "문항 이미지를 찾을 수 없습니다.");
+      const position = Number(match[2]);
+      const item = recipe.items.find(function (candidate) { return candidate.order === position; });
+      if (!item) throw new HttpError(404, "문항 이미지를 찾을 수 없습니다.");
+      const renderable = currentRenderableUserExamItem(requireExamEditorRegistry(), item);
+      const expires = Number(url.searchParams.get("exp"));
+      const subject = String(url.searchParams.get("sub") || "");
+      const signature = String(url.searchParams.get("sig") || "");
+      const currentSeconds = Math.floor(now() / 1000);
+      if (!Number.isInteger(expires) || expires <= currentSeconds || expires > currentSeconds + assetTtlSeconds + 5) {
+        throw new HttpError(403, "문항 이미지 링크가 만료되었습니다.");
+      }
+      const expectedSubject = security.opaqueSubject(context.user.studentId, assetSecret);
+      if (subject !== expectedSubject
+          || evidenceExtension(renderable.asset.mimeType) !== match[3]
+          || !security.verifyPageAsset(userExamSignatureInput(recipe, item, renderable.asset, subject, expires), signature, assetSecret)) {
+        throw new HttpError(403, "문항 이미지 서명이 올바르지 않습니다.");
+      }
+      const assetBytes = await readVerifiedPracticeAsset(renderable.asset);
+      if (!assetBytes) throw new HttpError(404, "문항 이미지를 찾을 수 없습니다.");
+      setSecurityHeaders(response);
+      response.statusCode = 200;
+      response.setHeader("Content-Type", renderable.asset.mimeType);
+      response.setHeader("Cache-Control", "private, no-store");
+      response.setHeader("Content-Disposition", `inline; filename="user-exam-item-${String(position).padStart(3, "0")}${match[3]}"`);
+      if (request.method === "HEAD") response.end();
+      else response.end(assetBytes);
+      return true;
+    }
+
     match = pathname.match(/^\/practice-assets\/([^/]+)\/item-(\d{3})(\.png|\.jpg|\.webp)$/);
     if (match) {
       if (request.method !== "GET" && request.method !== "HEAD") throw new HttpError(405, "허용되지 않은 요청입니다.");

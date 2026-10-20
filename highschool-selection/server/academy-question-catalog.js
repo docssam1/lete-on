@@ -2,6 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const crypto = require("node:crypto");
 const selector = require("../scripts/select-question-bank.cjs");
 const dbCore = require("../scripts/build-dolpa-question-db.cjs");
 const dbAudit = require("../scripts/audit-dolpa-question-db.cjs");
@@ -11,7 +12,7 @@ const dolpaScopes = require("../data/dolpa-target-scopes.js");
 
 function clean(value) { return String(value == null ? "" : value).trim(); }
 
-function representativeAnalyses(index, profileIds) {
+function representativeAnalyses(index, profileIds, itemRelations, contentData, visualAuditData) {
   const requested = new Set((profileIds || []).map(clean).filter(Boolean));
   const plans = (index.sourceBanks || []).flatMap(bank => {
     const plan = bank.representativePlan;
@@ -24,7 +25,11 @@ function representativeAnalyses(index, profileIds) {
     limit: 1000,
     allowedStatuses: projectSelector.CANDIDATE_ALLOWED_STATUSES,
     allowedConceptStatuses: ["mapped", "unit_only", "pending"],
-    includeReviewCandidates: true
+    includeReviewCandidates: true,
+    contentData,
+    visualAuditData,
+    itemRelations,
+    deduplicateExact: Array.isArray(itemRelations)
   }).items;
   return plans.map(plan => {
     const rows = selected.filter(row => row.sourceBankId === plan.sourceBankId
@@ -150,6 +155,10 @@ function createProjectCatalog(index, options) {
   const audit = projectAudit.audit(index);
   if (!audit.ok) throw new Error(`project question catalog is invalid: ${audit.issues.join(", ")}`);
   const opts = options || {};
+  const contentData = opts.contentData || null;
+  const visualAuditData = opts.visualAuditData || null;
+  const itemRelations = Array.isArray(opts.itemRelations) ? opts.itemRelations : null;
+  if (itemRelations) projectSelector.exactMathItemMap(index, itemRelations);
   const locatorCatalog = opts.locatorDatabase ? createDolpaCatalog(opts.locatorDatabase) : null;
   const profiles = (index.academyProfiles || []).map(profile => Object.freeze({
     profileId: profile.profileId,
@@ -170,7 +179,7 @@ function createProjectCatalog(index, options) {
     const fits = (sourceItem && sourceItem.academyFits || row.academyFits || [])
       .filter(fit => fit && profileLabels.has(fit.profileId) && fit.status !== "excluded");
     const pageLocator = locator(row.itemId);
-    const classificationVerified = row.conceptStatus === "mapped";
+    const classificationVerified = row.conceptStatus === "mapped" && row.classificationStatus === "verified";
     return Object.freeze({
       questionId: row.itemId,
       paperId: row.sourceBankId,
@@ -191,6 +200,8 @@ function createProjectCatalog(index, options) {
       responseKind: row.responseKind,
       responseStatus: row.responseStatus,
       learnerFit: row.learnerFit,
+      contentVerified: row.contentVerified,
+      presentationVerified: row.presentationVerified,
       releaseEligible: row.releaseEligible,
       releaseBlockReason: row.releaseBlockReason,
       reviewChecks: Object.freeze({
@@ -199,10 +210,12 @@ function createProjectCatalog(index, options) {
         difficulty: false,
         response: false,
         keyCheck: row.answerStatus === "verified",
+        content: row.contentVerified,
+        presentation: row.presentationVerified,
         learnerFit: row.learnerFitPassed,
         method: false,
         variants: false,
-        usageApproval: fits.some(fit => fit.status === "approved")
+        usageApproval: row.usageApproved
       }),
       targetId: targetId || null,
       profiles: fits.map(fit => Object.freeze({
@@ -223,13 +236,17 @@ function createProjectCatalog(index, options) {
       allowedConceptStatuses: includeCandidates
         ? ["mapped", "unit_only", "pending"]
         : ["mapped", "unit_only"],
-      includeReviewCandidates: includeCandidates === true
+      includeReviewCandidates: includeCandidates === true,
+      contentData,
+      visualAuditData,
+      itemRelations,
+      deduplicateExact: Boolean(itemRelations)
     }).items;
   }
 
   return Object.freeze({
     profiles() { return profiles.slice(); },
-    analyses(profileIds) { return representativeAnalyses(index, profileIds); },
+    analyses(profileIds) { return representativeAnalyses(index, profileIds, itemRelations, contentData, visualAuditData); },
     privateLocator(itemId) { return locator(itemId); },
     search(options) {
       const searchOptions = options || {};
@@ -259,16 +276,67 @@ function createCatalog(database, options) {
 function createLoader(options) {
   const opts = options || {};
   if (opts.projectData) {
-    const catalog = createProjectCatalog(opts.projectData, { locatorDatabase: opts.data });
+    const catalog = createProjectCatalog(opts.projectData, { locatorDatabase: opts.data, itemRelations: opts.itemRelations,
+      contentData: opts.contentData, visualAuditData: opts.visualAuditData });
     return function () { return catalog; };
   }
   const projectFilePath = clean(opts.projectFilePath || process.env.HIGHSELECT_PRIVATE_PROJECT_QUESTION_INDEX_PATH);
   if (projectFilePath) {
     const projectResolved = path.resolve(projectFilePath);
     const locatorResolved = clean(opts.filePath || process.env.HIGHSELECT_PRIVATE_ACADEMY_QUESTION_DB_PATH);
+    const relationsResolved = clean(opts.itemRelationsPath || process.env.HIGHSELECT_PRIVATE_PROJECT_ITEM_RELATIONS_PATH);
+    const relationsSha256 = clean(opts.itemRelationsSha256 || process.env.HIGHSELECT_PRIVATE_PROJECT_ITEM_RELATIONS_SHA256).toUpperCase();
+    const contentResolved = clean(opts.contentFilePath || process.env.HIGHSELECT_PRIVATE_PROJECT_CONTENT_DB_PATH);
+    const contentSha256 = clean(opts.contentSha256 || process.env.HIGHSELECT_PRIVATE_PROJECT_CONTENT_DB_SHA256).toUpperCase();
+    const visualAuditResolved = clean(opts.visualAuditFilePath || process.env.HIGHSELECT_PRIVATE_PROJECT_VISUAL_AUDIT_PATH);
+    const visualAuditSha256 = clean(opts.visualAuditSha256 || process.env.HIGHSELECT_PRIVATE_PROJECT_VISUAL_AUDIT_SHA256).toUpperCase();
     return function () {
       const locatorDatabase = opts.data || (locatorResolved ? JSON.parse(fs.readFileSync(path.resolve(locatorResolved), "utf8")) : null);
-      return createProjectCatalog(JSON.parse(fs.readFileSync(projectResolved, "utf8")), { locatorDatabase });
+      const indexBytes = fs.readFileSync(projectResolved);
+      const index = JSON.parse(indexBytes.toString("utf8"));
+      const indexHash = crypto.createHash("sha256").update(indexBytes).digest("hex").toUpperCase();
+      let contentData = null;
+      if (contentResolved) {
+        if (!/^[A-F0-9]{64}$/.test(contentSha256)) throw new Error("private content DB requires a pinned SHA-256");
+        const contentBytes = fs.readFileSync(path.resolve(contentResolved));
+        if (crypto.createHash("sha256").update(contentBytes).digest("hex").toUpperCase() !== contentSha256) {
+          throw new Error("private content DB SHA-256 mismatch");
+        }
+        contentData = JSON.parse(contentBytes.toString("utf8"));
+        if (projectSelector.contentPacks(contentData).some(pack => clean(pack.inputSha256?.index).toUpperCase() !== indexHash)) {
+          throw new Error("private content DB does not match the project index");
+        }
+      }
+      let visualAuditData = null;
+      if (visualAuditResolved) {
+        if (!contentData || !/^[A-F0-9]{64}$/.test(visualAuditSha256)) {
+          throw new Error("private visual audit requires a pinned SHA-256 and content DB");
+        }
+        const visualBytes = fs.readFileSync(path.resolve(visualAuditResolved));
+        if (crypto.createHash("sha256").update(visualBytes).digest("hex").toUpperCase() !== visualAuditSha256) {
+          throw new Error("private visual audit SHA-256 mismatch");
+        }
+        visualAuditData = JSON.parse(visualBytes.toString("utf8"));
+        if (visualAuditData.contentDbSha256 !== contentSha256) {
+          throw new Error("private visual audit does not match the content DB");
+        }
+      }
+      let itemRelations = null;
+      if (relationsResolved) {
+        if (!/^[A-F0-9]{64}$/.test(relationsSha256)) throw new Error("private item relations require a pinned SHA-256");
+        const overlayBytes = fs.readFileSync(path.resolve(relationsResolved));
+        if (crypto.createHash("sha256").update(overlayBytes).digest("hex").toUpperCase() !== relationsSha256) {
+          throw new Error("private item relations SHA-256 mismatch");
+        }
+        const overlay = JSON.parse(overlayBytes.toString("utf8"));
+        if (overlay.schemaVersion !== "dolpa-item-relations/v1" || overlay.visibility !== "private"
+            || overlay.integrationPolicy?.releaseStatus !== "locked"
+            || overlay.baseIndex?.sha256 !== indexHash || !Array.isArray(overlay.relations)) {
+          throw new Error("private item relations do not match the project index");
+        }
+        itemRelations = overlay.relations;
+      }
+      return createProjectCatalog(index, { locatorDatabase, itemRelations, contentData, visualAuditData });
     };
   }
   if (opts.data) {

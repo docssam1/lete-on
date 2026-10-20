@@ -1,0 +1,289 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v30",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 D",
+    "unit": 3,
+    "title": "겹치는 부분의 크기",
+    "printedPages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+    ],
+    "sourceActivityBlocks": 16,
+    "visuallyReviewedPages": 7
+  },
+  "aggregate": {
+    "ontologyNodes": 1362,
+    "ontologyRelations": 2108,
+    "skillActionCandidates": 241,
+    "activitiesWithSkillCandidateEvidence": 435,
+    "activitiesInReviewQueue": 417,
+    "conditionalDifficultyCandidates": 436,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "newlyLinkedActivities": 16,
+    "conditionalDifficultyBands": 16,
+    "validatedAnswers": 0,
+    "newActionCandidates": 10,
+    "relationHypotheses": 2,
+    "minimumCurriculumLevelCandidates": 14,
+    "minimumCurriculumUnresolved": 2,
+    "minimumCurriculumAssignments": 0
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "D3-AR08",
+      "area": "measurement",
+      "areaOrder": 10,
+      "label": "두 구간의 길이에서 겹친 길이를 빼 전체 길이 구하기",
+      "observableAction": "각 구간 길이를 더하고 공유된 구간을 한 번 빼서 합친 전체 길이를 산출한다.",
+      "activityCount": 4,
+      "printedPages": [
+        35
+      ],
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보",
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D3-AR09",
+      "area": "measurement",
+      "areaOrder": 11,
+      "label": "두 구간의 합과 전체 길이에서 겹친 길이 역산하기",
+      "observableAction": "두 구간 길이의 합과 합쳐진 전체 길이의 차를 공유 구간으로 해석한다.",
+      "activityCount": 1,
+      "printedPages": [
+        39
+      ],
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보",
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D3-AR10",
+      "area": "measurement",
+      "areaOrder": 12,
+      "label": "일직선의 쌍별 거리 관계로 미지 구간 복원하기",
+      "observableAction": "일직선 위 점들의 쌍별 거리를 표와 선분 그림으로 대응시키고 알려진 구간을 더하거나 빼 미지 거리를 복원한다.",
+      "activityCount": 3,
+      "printedPages": [
+        36,
+        38
+      ],
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보",
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D3-SET01",
+      "area": "logic",
+      "areaOrder": 16,
+      "label": "두 목록의 원소를 벤 다이어그램 영역에 분류하기",
+      "observableAction": "두 대상의 목록에서 공통 항목과 각자만 가진 항목을 구분해 벤 다이어그램의 세 영역에 배치한다.",
+      "activityCount": 1,
+      "printedPages": [
+        38
+      ],
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevelCandidate": null,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D3-SET02",
+      "area": "logic",
+      "areaOrder": 17,
+      "label": "전체와 두 집합의 크기로 공통 원소 수 추론하기",
+      "observableAction": "두 집합의 원소 수 합에서 전체 합집합의 크기를 빼 중복된 교집합을 복원한다.",
+      "activityCount": 2,
+      "printedPages": [
+        37
+      ],
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보",
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D3-SET03",
+      "area": "logic",
+      "areaOrder": 18,
+      "label": "두 집합의 공통 인원을 중복 제거해 전체 인원 구하기",
+      "observableAction": "두 집합의 원소 수 합에서 두 번 센 교집합을 한 번 제외해 합집합의 크기를 구한다.",
+      "activityCount": 1,
+      "printedPages": [
+        39
+      ],
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보",
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D3-SET04",
+      "area": "logic",
+      "areaOrder": 19,
+      "label": "두 집합의 크기와 교집합으로 정확히 한 집합에 속한 수 구하기",
+      "observableAction": "두 집합의 원소 수에서 공통 부분을 각각 제외하고, 한쪽에만 속한 두 부분을 합산한다.",
+      "activityCount": 1,
+      "printedPages": [
+        40
+      ],
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보",
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D3-AR11",
+      "area": "measurement",
+      "areaOrder": 13,
+      "label": "두 겹침이 있는 같은 막대 세 개의 단위 길이 복원하기",
+      "observableAction": "세 막대의 길이를 같은 미지량으로 두고 두 이음매의 중복 길이를 제거한 전체 관계에서 한 막대 길이를 추론한다.",
+      "activityCount": 1,
+      "printedPages": [
+        40
+      ],
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevelCandidate": null,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D3-SET05",
+      "area": "logic",
+      "areaOrder": 20,
+      "label": "두 집합과 교집합으로 어느 쪽에도 속하지 않는 수 구하기",
+      "observableAction": "합집합을 먼저 계산하고 전체에서 빼 두 집합 모두에 속하지 않는 수를 구한다.",
+      "activityCount": 1,
+      "printedPages": [
+        41
+      ],
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보",
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D3-SET06",
+      "area": "logic",
+      "areaOrder": 21,
+      "label": "전체·두 집합·바깥 인원으로 한 집합에만 속한 수 구하기",
+      "observableAction": "전체에서 아무 집합에도 속하지 않은 수를 제외해 합집합을 구하고 교집합을 추론한 뒤 한 집합에만 속한 수를 구한다.",
+      "activityCount": 1,
+      "printedPages": [
+        41
+      ],
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보",
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "bandsByAction": [
+      {
+        "id": "D3-AR08",
+        "conditionalDifficultyBand": "2"
+      },
+      {
+        "id": "D3-AR09",
+        "conditionalDifficultyBand": "2"
+      },
+      {
+        "id": "D3-AR10",
+        "conditionalDifficultyBand": "3"
+      },
+      {
+        "id": "D3-SET01",
+        "conditionalDifficultyBand": "2"
+      },
+      {
+        "id": "D3-SET02",
+        "conditionalDifficultyBand": "2"
+      },
+      {
+        "id": "D3-SET03",
+        "conditionalDifficultyBand": "2"
+      },
+      {
+        "id": "D3-SET04",
+        "conditionalDifficultyBand": "3"
+      },
+      {
+        "id": "D3-AR11",
+        "conditionalDifficultyBand": "3"
+      },
+      {
+        "id": "D3-SET05",
+        "conditionalDifficultyBand": "3"
+      },
+      {
+        "id": "D3-SET06",
+        "conditionalDifficultyBand": "3"
+      }
+    ],
+    "teacherApprovedLevels": 0
+  },
+  "curriculum": {
+    "strategyDependentCandidates": 14,
+    "unresolvedActivities": 2,
+    "confirmedAssignments": 0,
+    "contextOnlyStandards": [
+      "2수01-06",
+      "2수01-07"
+    ],
+    "note": "두 자리 수 덧셈·뺄셈 및 관계 이해는 해당 풀이 전략의 교육과정 맥락 후보다. 집합·겹침 자체의 직접 기준이나 문항의 최소 학년·연령으로 확정하지 않았다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "label": "구간 겹침으로 전체·공유 길이 추론",
+        "members": [
+          "두 구간의 길이에서 겹친 길이를 빼 전체 길이 구하기",
+          "두 구간의 합과 전체 길이에서 겹친 길이 역산하기",
+          "두 겹침이 있는 같은 막대 세 개의 단위 길이 복원하기"
+        ],
+        "status": "hypothesis-needs-teacher-review",
+        "assertsEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "label": "두 집합의 공통·고유·바깥 원소 수 추론",
+        "members": [
+          "전체와 두 집합의 크기로 공통 원소 수 추론하기",
+          "두 집합의 공통 인원을 중복 제거해 전체 인원 구하기",
+          "두 집합의 크기와 교집합으로 정확히 한 집합에 속한 수 구하기",
+          "두 집합과 교집합으로 어느 쪽에도 속하지 않는 수 구하기",
+          "전체·두 집합·바깥 인원으로 한 집합에만 속한 수 구하기"
+        ],
+        "status": "hypothesis-needs-teacher-review",
+        "assertsEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "relations": [
+      {
+        "from": "두 구간의 길이에서 겹친 길이를 빼 전체 길이 구하기",
+        "to": "두 구간의 합과 전체 길이에서 겹친 길이 역산하기",
+        "type": "related-but-distinct",
+        "basis": "두 구간의 공유 길이와 전체 길이 관계를 쓰지만 한 활동은 전체 길이, 다른 활동은 겹친 길이를 구한다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "전체와 두 집합의 크기로 공통 원소 수 추론하기",
+        "to": "두 집합과 교집합으로 어느 쪽에도 속하지 않는 수 구하기",
+        "type": "spiral-reappearance-or-extension-candidate",
+        "basis": "공통 부분을 추론하는 행동에서 전체 집합 밖의 원소를 찾는 단계로 확장될 수 있으나 직접적인 선수 순서를 뜻하지 않는다.",
+        "status": "hypothesis-needs-teacher-review"
+      }
+    ]
+  },
+  "privacy": "Public supplement excludes source activity IDs, question text, answer text, source hashes, and private paths."
+}
