@@ -29,7 +29,7 @@ catch {
 // 3D 실험실이 있는 단원 — science-lab/v2/home.js 의 LABS 와 같아야 한다(새 실험을 넣으면 여기도)
 const ALL = ['c22-s42-u04', 'c22-s32-u04', 'c22-s32-u01', 'c22-s32-u02', 'c22-s32-u03', 's41-u04', 's31-u01', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
 const UNITS = process.argv.slice(2).length ? process.argv.slice(2) : ALL;
-const labPath = u => `#/${u}/2/${['s41-u04'].includes(u) ? 'model' : 'lab'}`;   // s41-u01~u03은 2026-10-20부터 3D 실험이 기본(lab) — 기록 앱은 선택 기능
+const labPath = u => `#/${u}/2/lab`;   // 2026-10-20부터 4-1 단원도 3D 실험이 기본(lab) — 기록 앱은 선택 기능
 const SHOTS = process.env.SHOTS || '';
 if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
 

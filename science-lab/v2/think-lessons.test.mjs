@@ -14,7 +14,7 @@ import { rulerRow } from '../scenes/ruler-model.js';
 
 const UNITS = { 'c22-s42-u04': { lab: 'sealevel', scene: 'sea-town', rowsKey: 'climateInquiryRows' }, 'c22-s32-u04': { lab: 'glitter', scene: 'glitter-hands', rowsKey: undefined },
   'c22-s32-u01': { lab: 'material', scene: 'material-bars', rowsKey: undefined }, 'c22-s32-u02': { lab: 'seawater', scene: 'evap-dishes', rowsKey: undefined },
-  'c22-s32-u03': { lab: 'ruler', scene: 'ruler-desk', rowsKey: undefined } };
+  'c22-s32-u03': { lab: 'ruler', scene: 'ruler-desk', rowsKey: undefined }, 's41-u04': { lab: 'bread', scene: 'bread-dough', rowsKey: 'biologyInquiryRows' } };
 const load = async (u) => {
   const [book, ix, unit, think, similar, lesson, records] = await Promise.all([import(`../data/book/${u}.book.js`), import(`../data/book/${u}.interact.js`), import(`../data/units/${u}.js`),
     import(`../data/units/${u}.think.js`), import(`../data/units/${u}.similar.js`).catch(() => ({ similar: [] })), import(`../data/units/${u}.lesson.js`), import(`../data/units/${u}.records.js`)]);

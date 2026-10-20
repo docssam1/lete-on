@@ -7,6 +7,7 @@ import { pondResult } from './lab-pond3d.js';
 import { seaModel } from '../scenes/sealevel-model.js';
 import { glitterModel, RULES as GLITTER_RULES } from '../scenes/glitter-model.js';
 import { materialRow } from '../scenes/material-model.js';
+import { breadModel } from '../scenes/bread-model.js';
 import { evapRow } from '../scenes/seawater-model.js';
 import { rulerRow } from '../scenes/ruler-model.js';
 
@@ -93,4 +94,9 @@ test('자 튕기기: 길이는 높낮이, 세기는 크기만 바꾼다', () => 
   const rounds = LAB_BATTLE_ROUNDS['c22-s32-u03'], rows = (r) => r.targets.map((t) => rulerRow(t.len, t.strength));
   assert.deepEqual(rounds.map((r) => battleVerdict('c22-s32-u03', r, rows(r), [1, 1]).answers[0]), [2, 0, 1], '짧은 자가 더 높음 · 세게가 더 큼 · 세게 튕겨도 높낮이는 같음');
   assert.equal(validBattleRow('c22-s32-u03', { ...rulerRow(15, '세게'), pitch: '높은 소리' }), false);
+});
+
+test('4-1 다양한 생물: 효모빵 배틀은 5-1과 같은 모형으로 판정한다', () => {
+  const rounds = LAB_BATTLE_ROUNDS['s41-u04'], rows = (r) => r.targets.map((t) => ({ water: t.water, ...breadModel(t.water) }));
+  assert.deepEqual(rounds.map((r) => battleVerdict('s41-u04', r, rows(r), [1, 1]).answers[0]), [2, 0, 1], '따뜻한 물이 더 · 너무 뜨거우면 덜 · 같은 조건은 같음');
 });

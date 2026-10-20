@@ -1,5 +1,6 @@
+// 2026-10-20: 기본 수업은 사고력 수업(think-lessons.test.mjs)으로 바뀌었다. 이 파일은 선택 기능으로 옮긴 탐구 기록장·기록 교재(records)가 예전대로 동작하는지 본다.
 import test from 'node:test';import assert from 'node:assert/strict';
-import{inquiry}from'../data/activities/s41-u04.inquiry.js';import{lesson}from'../data/units/s41-u04.lesson.js';import{chapter,art,plan}from'../data/book/s41-u04.inquiry.book.js';import{items}from'../data/units/s41-u04.js';import{source}from'../data/units/s41-u04.source.js';
+import{inquiry}from'../data/activities/s41-u04.inquiry.js';import{recordsLesson as lesson}from'../data/units/s41-u04.records.js';import{chapter,art,plan}from'../data/book/s41-u04.inquiry.book.js';import{items}from'../data/units/s41-u04.js';import{source}from'../data/units/s41-u04.source.js';
 import{emptyInquiry,saveInquiry,validInquiry,inquiryError,inquirySections,inquiryKey,inquiryReportHtml}from'./inquiry-records.js';import{buildSlides}from'./deck.js';import{renderChapter}from'./book.js';import{BANK,BOOK_UNITS}from'./units-index.js';
 test('현행 생물 세 성취기준은 관찰·조사/발표·자료 제작/공유를 각각 기록한다',()=>{
  assert.deepEqual(inquiry.activities.map(a=>a.id),['fungi','protists','bacteria','compare','research','present','create','share']);assert.equal(source.length,75);assert.equal(items.length,64);assert(BOOK_UNITS.has(inquiry.unit));assert(BANK[inquiry.unit].lesson);

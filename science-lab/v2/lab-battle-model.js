@@ -72,6 +72,11 @@ export const LAB_BATTLE_ROUNDS = {
     bread('너무 뜨거운 물이면?', [{ water: '따뜻한 물(40 ℃)' }, { water: '뜨거운 물(70 ℃)' }]),
     bread('같은 조건으로 재현하기', [{ water: '따뜻한 물(40 ℃)' }, { water: '따뜻한 물(40 ℃)' }]),
   ],
+  's41-u04': [
+    bread('물의 온도만 바꾸기', [{ water: '찬물(10 ℃)' }, { water: '따뜻한 물(40 ℃)' }]),
+    bread('너무 뜨거운 물이면?', [{ water: '따뜻한 물(40 ℃)' }, { water: '뜨거운 물(70 ℃)' }]),
+    bread('같은 조건으로 재현하기', [{ water: '따뜻한 물(40 ℃)' }, { water: '따뜻한 물(40 ℃)' }]),
+  ],
   's51-u04': [
     snow('식히는 온도만 바꾸기', [{ cool: '그대로 두기(60 ℃)' }, { cool: '실온에서 식히기(20 ℃)' }]),
     snow('더 차갑게 식혀 보기', [{ cool: '얼음물에 식히기(0 ℃)' }, { cool: '실온에서 식히기(20 ℃)' }]),
@@ -143,7 +148,7 @@ export function validBattleRow(unit, row) {
   if (unit === 'c22-s32-u02') { if (!SEA_AMOUNTS.includes(row.ml)) return false; const m = evapRow(row.ml); return SEA_WATERS.every((w) => row[w] === m[w]) && row.seaG === m.seaG && row.tapG === m.tapG; }
   if (unit === 'c22-s32-u01') { if (!MAT_TESTS.includes(row.test)) return false; const m = materialRow(row.test); return MATERIALS.every((k) => row[k] === m[k]); }
   if (unit === 's52-u01') { try { const m = bubbleModel(row.add); return row.mean === m.mean && row.result === m.result && Array.isArray(row.trials) && row.trials.join() === m.trials.join(); } catch { return false; } }
-  if (unit === 's51-u05') { try { const m = breadModel(row.water); return row.vol === m.vol && row.temp === m.temp && row.result === m.result; } catch { return false; } }
+  if (['s51-u05', 's41-u04'].includes(unit)) { try { const m = breadModel(row.water); return row.vol === m.vol && row.temp === m.temp && row.result === m.result; } catch { return false; } }
   if (unit === 's51-u04') { try { const m = snowModel(row.cool); return row.snow === m.snow && row.temp === m.temp && row.result === m.result; } catch { return false; } }
   if (unit === 's51-u03') { try { const m = sunModel(row.ml); return row.height === m.height && row.shape === m.shape && row.result === m.result; } catch { return false; } }
   if (unit === 's51-u02') { try { const m = heatModel(row.material, row.water); return row.changed === m.changed && row.yellow === m.yellow && row.result === m.result; } catch { return false; } }
@@ -172,7 +177,7 @@ export function battleTargetText(unit, target) {
   if (unit === 'c22-s32-u02') return `${target.water} 접시 · ${target.ml} mL`;
   if (unit === 'c22-s32-u03') return `자 ${target.len} cm · ${target.strength} 튕기기`;
   if (unit === 's52-u01') return target.add;
-  if (unit === 's51-u05') return target.water;
+  if (['s51-u05', 's41-u04'].includes(unit)) return target.water;
   if (unit === 's51-u04') return target.cool;
   if (unit === 's51-u03') return `넣은 물 ${target.ml} mL`;
   if (unit === 's51-u02') return `${target.material} · ${target.water}`;
@@ -193,7 +198,7 @@ export function battleRowText(unit, row) {
   if (unit === 'c22-s32-u02') return `${row.ml} mL · 바닷물 ${row.바닷물} · 수돗물 ${row.수돗물}`;
   if (unit === 'c22-s32-u03') return `${row.len} cm · ${row.strength} · ${row.pitch} · ${row.loud}`;
   if (unit === 's52-u01') return `${row.add} · ${row.result}`;
-  if (unit === 's51-u05') return `${row.water} · ${row.result}`;
+  if (['s51-u05', 's41-u04'].includes(unit)) return `${row.water} · ${row.result}`;
   if (unit === 's51-u04') return `${row.cool} · ${row.result}`;
   if (unit === 's51-u03') return `물 ${row.ml} mL · ${row.result}`;
   if (unit === 's51-u02') return `${row.material} · ${row.water} · ${row.result}`;
