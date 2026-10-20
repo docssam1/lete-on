@@ -256,3 +256,29 @@ html:has(.archive-theme), body:has(.archive-theme) { background: #0b0a09; }
 .arch-pills button:disabled { opacity: .45; cursor: default; }
 .arch-empty { margin: 4px 0 12px; color: var(--ar-mute); font-size: 13px; }
 @media (max-width: 760px) { .arch-pills button:nth-child(n) { margin-right: 0; } .arch-pills { gap: 6px; } }
+
+/* ── 실험실 느낌(2026-10-20 원장: "좀 실험실 느낌으로") · 스크롤·클릭으로 넘기는 카드 ─────────── */
+.archive-theme { --ar-bg: #071011; --ar-amber: #5fd0c6; --ar-line: rgba(200, 240, 240, .1); --ar-mute: #85999a; }
+html:has(.archive-theme), body:has(.archive-theme) { background: #071011; }
+.arch-top, .archive-theme .topbar { background: rgba(7, 16, 17, .92); }
+.arch-track { position: relative; }
+.arch-stage { position: sticky; top: 52px; }
+.arch-card { transition: none; background: linear-gradient(180deg, rgba(16, 26, 27, .97), rgba(9, 15, 16, .97));
+  background-image: linear-gradient(rgba(170, 230, 230, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(170, 230, 230, .045) 1px, transparent 1px), linear-gradient(180deg, rgba(16, 26, 27, .97), rgba(9, 15, 16, .97));
+  background-size: 22px 22px, 22px 22px, auto; box-shadow: inset 0 1px 0 rgba(210, 250, 250, .08), 0 -2px 0 rgba(95, 208, 198, .22), 0 30px 60px rgba(0, 0, 0, .65); }
+.arch-card::before, .arch-card::after { content: ""; position: absolute; width: 14px; height: 14px; border-color: rgba(95, 208, 198, .5); border-style: solid; pointer-events: none; }
+.arch-card::before { top: 10px; left: 10px; border-width: 1px 0 0 1px; } .arch-card::after { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
+.arch-card.front { cursor: pointer; }
+.arch-wall { color: #bfd9d8; opacity: .55; left: 7%; top: 7%; transform: none; }
+.arch-wall b { transform: scaleY(1.1); }
+.ac-open { background: #d9f3ef; } .ac-open:hover { background: #f0fffc; }
+.arch-pills button.on { background: #d9f3ef; border-color: #d9f3ef; }
+.arch-resume { top: auto; bottom: 14%; }
+.archive-theme .opened { background: radial-gradient(ellipse at 50% 0%, rgba(95, 208, 198, .10), transparent 60%); }
+.archive-theme .folder-label { background: linear-gradient(180deg, #102021, #0a1314); }
+/* 실험 화면 낱장 = 실험 노트(모눈종이) */
+.archive-theme .section { background-color: #f5f8f6; background-image: linear-gradient(rgba(60, 120, 140, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(60, 120, 140, .07) 1px, transparent 1px); background-size: 20px 20px; }
+.archive-theme .section > h2 .step { background: #0d2a2b; color: #d9f3ef; }
+@media (max-width: 760px) { .arch-wall { top: 13%; left: 6%; } .arch-resume { bottom: auto; top: 3%; } }
+/* 카드(z 1000 안팎)보다 알약·넘기기 단추·이어서 보기가 위에 오게 */
+.arch-pills, .arch-ctrl, .arch-resume { z-index: 2000; }

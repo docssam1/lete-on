@@ -4,18 +4,18 @@
   "shots": [
     {
       "unit": "science-lab-v1",
-      "key": "archive-corridor",
+      "key": "lab-room",
       "size": "1792x1008",
-      "use": "과학 탐구 프로그램(v1) 첫 화면 배경 — 기록 보관소 복도",
-      "prompt": "A long dark underground archive corridor in cinematic low light, seen from slightly left of center with a strong one-point perspective toward a vanishing point on the right third of the frame. On the left, a tall raw board-formed concrete wall, softly lit and empty. On the right, floor-to-ceiling glass-fronted steel archive cabinets filled with rows of file boxes and folders, receding into the distance. Thin warm white LED light strips run along the ceiling edges and converge at the vanishing point. A polished dark stone floor with long glossy reflections of the light strips. Deep shadows, muted warm grey and bronze tones, moody museum atmosphere, empty, no people. The center of the frame is dark open space. Cinematic architectural photograph, photorealistic, shot on a full-frame camera with a 24mm lens, rich shadow detail, no text, no letters, no signs, no logos, no watermark.",
+      "use": "과학 탐구 프로그램(v1) 첫 화면 배경 — 어두운 과학 실험실",
+      "prompt": "A modern school science laboratory at night in cinematic low light, strong one-point perspective down the length of the room toward a vanishing point slightly right of center. On the left, tall glass-fronted cabinets filled with rows of glass beakers, Erlenmeyer flasks, round-bottom flasks and test tubes, faintly backlit. On the right, a long black epoxy lab bench with reagent bottles, a small sink with a gooseneck faucet and a microscope, receding into the distance. Slim cool-white LED ceiling light bars at regular intervals. Polished grey floor with soft reflections. Teal and cool grey tones, deep shadows, empty room, no people, the center of the frame is open dark space. Cinematic architectural photograph, photorealistic, shot on a full-frame camera with a 24mm lens, rich shadow detail, no text, no letters, no signs, no logos, no watermark.",
       "style": false
     },
     {
       "unit": "science-lab-v1",
-      "key": "archive-desk",
+      "key": "lab-bench",
       "size": "1792x1008",
-      "use": "과학 탐구 프로그램(v1) 실험 화면 배경 — 보관소 열람 책상",
-      "prompt": "Top-down view of a large dark walnut reading desk in a dim archive reading room, a single warm desk lamp pool of light in the center, the desk surface mostly empty and dark, an open grey cardboard archive box and a few manila folders at the far edges, a brass paper clip, soft vignette, muted bronze and charcoal tones, empty center area, no text, no people. Cinematic architectural photograph, photorealistic, shot on a full-frame camera with a 24mm lens, rich shadow detail, no text, no letters, no signs, no logos, no watermark.",
+      "use": "과학 탐구 프로그램(v1) 실험 화면 배경 — 실험대 위",
+      "prompt": "Top-down view of a dark black epoxy laboratory bench under a single cool white lamp, the center of the bench mostly empty and dark, a few pieces of clean glassware (a beaker, an Erlenmeyer flask, a test tube rack) and a lab notebook with grid paper at the far edges, soft vignette, teal and charcoal tones. Photorealistic, no text, no letters, no logos, no people.",
       "style": false
     },
     {
