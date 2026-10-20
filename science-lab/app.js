@@ -18,7 +18,7 @@ let stage = null, player = null; // 현재 유닛의 3D
 function route() {
   const h = location.hash.replace(/^#\/?/, '');
   const m = h.match(/^u\/([\w-]+)/);
-  teardown3D();
+  teardown3D(); homeOff?.(); homeOff = null;
   if (m && unitById(m[1])) renderUnit(unitById(m[1])); else renderHome();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
@@ -27,10 +27,10 @@ function teardown3D() { if (player) { player.stop(); if (player._offKey) player.
 function topbar(backHref) {
   const done = UNITS.filter((u) => store.unit(u.id).quizBest >= 2).length;
   return `<header class="topbar"><div class="wrap">
-    <a class="brand" href="#/"><span class="mark">⚗</span>지필드 과학 탐구 랩<small>Science Inquiry Lab</small></a>
+    <a class="brand" href="#/"><span class="mark">⚗</span>GFIELD<small>/SCIENCE-INQUIRY</small></a>
     <span class="spacer"></span>
-    ${backHref ? `<a class="back" href="${backHref}">← 서류철 묶음</a>` : ''}
-    <span class="progress-pill">완료 ${done}/${UNITS.length}</span>
+    ${backHref ? `<a class="back" href="${backHref}">← 보관소</a>` : ''}
+    <span class="progress-pill">확인 ${done}/${UNITS.length}</span>
   </div></header>`;
 }
 function footer() {
@@ -40,45 +40,118 @@ function footer() {
   </div></footer>`;
 }
 
-// 홈 = 서류철 묶음(2026-10-19 원장: "이 사이트를 서류철처럼"). 실험 한 건 = 서류철 한 권.
-// 색인 탭(PART A·B·C)으로 찾고, 꼬리표 달린 서류철을 열어 실험 자료를 펼친다. 진도(sciLab.v1)는 도장으로 보인다.
-function folderCard(u, p) {
-  const s = store.unit(u.id), quiz = s.quizBest != null ? `확인 ${s.quizBest}/3` : '확인 전';
-  return `<a class="folder" href="#/u/${u.id}" style="--tab:${p.color}">
-    <span class="folder-tab">${p.id}-${u.no}</span>
-    <span class="folder-body">
-      <span class="folder-sheet" aria-hidden="true"></span>
-      <h3>${esc(u.title)}</h3><p>${esc(u.sub)}</p>
-      <span class="folder-exp"><b>실험</b>${esc(u.activity.title)}</span>
-      <span class="stamps"><span class="stamp ${s.videoDone ? 'on' : ''}">${s.videoDone ? '3D 실험 봄' : '3D 실험 전'}</span><span class="stamp ${s.quizBest >= 2 ? 'gold' : s.quizBest != null ? 'on' : ''}">${quiz}</span></span>
-    </span>
-  </a>`;
+// 홈 = 과학 탐구 기록 보관소(2026-10-20 원장: hugh-kim.space 「THE ARCHIVE」 느낌을 과학 탐구 프로그램에).
+// 어두운 보관소 복도에 실험 15건이 문서 카드로 줄지어 있다. 맨 앞 카드를 열면 그 실험(#/u/<id>)으로 간다.
+// 넘기기: 휠·← →·↑ ↓·끌기(밀기)·뒤 카드 누르기. 거르기: 바닥의 PART 알약·검색. 진도(sciLab.v1)는 카드의 도장으로 보인다.
+// 복도 배경은 실사 사진(assets/book/science-lab-v1-photo-archive-corridor.webp, 원장 맥에서 생성)이 있으면 그것, 없으면 아래 SVG 복도.
+// 실사 복도 사진을 들여오면(scripts/import-book-photos.py archive-corridor=N) 아래를 그 경로로 바꾼다: './assets/book/science-lab-v1-photo-archive-corridor.webp'
+const CORRIDOR = null;
+let homeOff = null;
+function corridorSvg() {
+  const VX = 1170, VT = 250, VB = 300, W = 1600, H = 900, f = (k) => 1 - 0.78 ** k;   // 복도 원근: 소실점(VX, VT~VB)
+  const frames = Array.from({ length: 14 }, (_, k) => { const t = f(k + 1), x = W - (W - VX - 40) * t, y1 = VT * t, y2 = H - (H - VB) * t; return `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>`; }).join('');
+  const shelves = [120, 230, 340, 450, 560, 670, 780].map((y) => `<line x1="${W}" y1="${y}" x2="${VX + 40}" y2="${VT + (y / H) * (VB - VT)}"/>`).join('');
+  return `<svg class="arch-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .55 0 0 0 0 .5 0 0 0 0 .45 0 0 0 .5 0"/></filter>
+      <filter id="glow"><feGaussianBlur stdDeviation="4"/></filter>
+      <linearGradient id="wall" x1="0" x2="1"><stop offset="0" stop-color="#14120f"/><stop offset=".45" stop-color="#2b2723"/><stop offset=".8" stop-color="#1b1916"/><stop offset="1" stop-color="#0f0e0c"/></linearGradient>
+      <linearGradient id="floor" y1="0" y2="1"><stop offset="0" stop-color="#0d0c0b"/><stop offset="1" stop-color="#26221d"/></linearGradient>
+      <linearGradient id="glass" x1="1" x2="0"><stop offset="0" stop-color="#1c1a17"/><stop offset="1" stop-color="#0c0b0a"/></linearGradient>
+      <radialGradient id="wash" cx=".38" cy=".38" r=".5"><stop offset="0" stop-color="#cdb79a" stop-opacity=".16"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+      <radialGradient id="vig" cx=".55" cy=".45" r=".85"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".75"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="#0b0a09"/>
+    <polygon points="0,0 ${W},0 ${VX + 40},${VT} ${VX - 40},${VT}" fill="#0e0d0c"/>
+    <polygon points="0,0 ${VX - 40},${VT} ${VX - 40},${VB} 0,${H}" fill="url(#wall)"/>
+    <polygon points="0,0 ${VX - 40},${VT} ${VX - 40},${VB} 0,${H}" fill="url(#wash)"/>
+    <polygon points="0,0 ${VX - 40},${VT} ${VX - 40},${VB} 0,${H}" filter="url(#grain)" opacity=".22"/>
+    <polygon points="0,${H} ${VX - 40},${VB} ${VX + 40},${VB} ${W},${H}" fill="url(#floor)"/>
+    <polygon points="${W},0 ${VX + 40},${VT} ${VX + 40},${VB} ${W},${H}" fill="url(#glass)"/>
+    <g stroke="#6d6253" stroke-opacity=".55" stroke-width="2">${frames}</g>
+    <g stroke="#4a4239" stroke-opacity=".7" stroke-width="1.4">${shelves}</g>
+    <g stroke="#f3e2c4" stroke-width="3"><line x1="330" y1="0" x2="${VX - 30}" y2="${VT + 2}"/><line x1="1490" y1="0" x2="${VX + 30}" y2="${VT + 2}"/></g>
+    <g stroke="#f3e2c4" stroke-width="9" opacity=".35" filter="url(#glow)"><line x1="330" y1="0" x2="${VX - 30}" y2="${VT + 2}"/><line x1="1490" y1="0" x2="${VX + 30}" y2="${VT + 2}"/></g>
+    <g stroke="#f3e2c4" stroke-width="2" opacity=".18" filter="url(#glow)"><line x1="560" y1="${H}" x2="${VX - 20}" y2="${VB}"/><line x1="1450" y1="${H}" x2="${VX + 20}" y2="${VB}"/></g>
+    <rect width="${W}" height="${H}" fill="url(#vig)"/>
+  </svg>`;
+}
+function stampsHtml(s) {
+  const quiz = s.quizBest != null ? `확인 ${s.quizBest}/3` : '확인 전';
+  return `<span class="stamps"><span class="stamp ${s.videoDone ? 'on' : ''}">${s.videoDone ? '3D 실험 봄' : '3D 실험 전'}</span><span class="stamp ${s.quizBest >= 2 ? 'gold' : s.quizBest != null ? 'on' : ''}">${quiz}</span></span>`;
 }
 function renderHome() {
   const done = UNITS.filter((u) => store.unit(u.id).quizBest >= 2).length;
+  const partOf = (u) => PARTS.find((p) => p.id === u.part);
   const last = UNITS.map((u) => [u, store.unit(u.id).updatedAt || 0]).filter(([, t]) => t).sort((a, b) => b[1] - a[1])[0]?.[0];
-  $app.innerHTML = `${topbar()}
-  <main class="wrap binder">
-    <section class="cover">
-      <div class="cover-label">
-        <small>GFIELD · 지필드 과학 탐구 랩</small>
-        <h1>실험으로 배우는 과학 서류철</h1>
-        <p>실험 한 건이 서류철 한 권이에요. 꼬리표를 보고 서류철을 열면 <b>개념 → 3D 실험 → 탐구 활동 → 토론 → 확인</b> 순서로 자료가 들어 있어요.</p>
-      </div>
-      <div class="cover-meta">
-        <span class="cover-count"><b>${UNITS.length}</b>권</span><span class="cover-count"><b>${done}</b>권 확인 완료</span>
-        ${last ? `<a class="cover-resume" href="#/u/${last.id}">이어서 보기 <b>${esc(last.title)}</b></a>` : ''}
-      </div>
-      <p class="src">출처: 서울특별시과학전시관, 『2009 초등학교 과학탐구토론 지도자료』 (1부 탐구 과정·활동, 3부 탐구 주제)</p>
+  $app.innerHTML = `<header class="arch-top"><a class="arch-brand" href="#/"><b>GFIELD</b><span>/SCIENCE-INQUIRY</span></a>
+      <label class="arch-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="실험 찾기… (Ctrl+/)" aria-label="실험 찾기" autocomplete="off"></label>
+      <span class="arch-progress">확인 ${done}/${UNITS.length}</span></header>
+  <main class="archive">
+    <section class="arch-stage" aria-label="과학 탐구 기록 보관소 — 실험 카드">
+      <div class="arch-bg">${corridorSvg()}<img class="arch-photo" alt="" hidden></div>
+      <div class="arch-wall" aria-hidden="true"><small>GFIELD · SCIENCE INQUIRY RECORDS</small><b>THE INQUIRY ARCHIVE</b><span>과학 탐구 기록 보관소</span></div>
+      <div class="arch-stack" tabindex="0" aria-roledescription="카드 넘기기" aria-label="실험 카드 묶음. 왼쪽·오른쪽 화살표로 넘기고 Enter로 열어요."></div>
+      <nav class="arch-pills" aria-label="PART 거르기">${PARTS.map((p) => `<button type="button" data-part="${p.id}" style="--tab:${p.color}">PART ${p.id} <b>${UNITS.filter((u) => u.part === p.id).length}</b></button>`).join('')}<button type="button" data-part="" class="all on">ALL <b>${UNITS.length}</b></button></nav>
+      <div class="arch-ctrl"><button type="button" data-step="-1" aria-label="앞 카드">‹</button><span class="arch-count" aria-live="polite"></span><button type="button" data-step="1" aria-label="뒤 카드">›</button><small>휠 · ← → · 밀기로 넘겨요</small></div>
+      ${last ? `<a class="arch-resume" href="#/u/${last.id}">이어서 보기 <b>${esc(last.title)}</b></a>` : ''}
     </section>
-    <nav class="index-tabs" aria-label="서류철 차례">${PARTS.map((p) => `<button type="button" data-part="${p.id}" style="--tab:${p.color}"><b>PART ${p.id}</b><span>${esc(p.title)}</span><small>${UNITS.filter((u) => u.part === p.id).length}권</small></button>`).join('')}</nav>
-    ${PARTS.map((p) => `<section class="drawer" id="part-${p.id}" style="--tab:${p.color}">
-      <header class="divider"><span class="divider-tab">PART ${p.id}</span><div><h2>${esc(p.title)}</h2><p>${esc(p.sub)}</p></div></header>
-      <div class="folders">${UNITS.filter((u) => u.part === p.id).map((u) => folderCard(u, p)).join('')}</div>
-    </section>`).join('')}
+    <section class="wrap arch-index" aria-label="전체 실험 목록">
+      <h2>보관 목록 <small>실험 ${UNITS.length}건 · 출처 『2009 초등학교 과학탐구토론 지도자료』(서울특별시과학전시관)</small></h2>
+      ${PARTS.map((p) => `<div class="arch-shelf" style="--tab:${p.color}"><h3><span>PART ${p.id}</span>${esc(p.title)} <small>${esc(p.sub)}</small></h3><ol>${UNITS.filter((u) => u.part === p.id).map((u) => `<li><a href="#/u/${u.id}"><span class="no">${p.id}-${u.no}</span><b>${esc(u.title)}</b><span class="exp">${esc(u.activity.title)}</span>${stampsHtml(store.unit(u.id))}</a></li>`).join('')}</ol></div>`).join('')}
+    </section>
   </main>${footer()}`;
-  // 색인 탭: 해시 라우터를 건드리지 않고 그 칸으로 스크롤한다
-  $app.querySelectorAll('.index-tabs button').forEach((b) => b.addEventListener('click', () => document.getElementById(`part-${b.dataset.part}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })));
+
+  const $stack = $app.querySelector('.arch-stack'), $count = $app.querySelector('.arch-count'), $q = $app.querySelector('.arch-search input');
+  let list = UNITS.slice(), cur = 0, part = '', query = '';
+  const cardHtml = (u) => { const p = partOf(u), s = store.unit(u.id);
+    return `<article class="arch-card" data-id="${u.id}" style="--tab:${p.color}">
+      <div class="ac-meta"><span><i></i>PART ${p.id} · ${esc(p.title)} · ${p.id}-${u.no}</span><span class="ac-src">지도자료 ${esc(u.source)}</span></div>
+      <h3>${esc(u.title)}</h3><p class="ac-sub">${esc(u.sub)}</p><p class="ac-lead">${esc(u.concept.lead)}</p>
+      <div class="ac-foot"><span class="ac-exp"><b>실험</b>${esc(u.activity.title)}</span>${stampsHtml(s)}<a class="ac-open" href="#/u/${u.id}">서류 열기 →</a></div>
+    </article>`; };
+  const layout = () => {
+    const phone = innerWidth < 760, cards = [...$stack.children];
+    cards.forEach((el, k) => {
+      const d = k - cur, t = d < 0 ? 0 : 1 - 1 / (1 + 0.42 * d);
+      const x = phone ? 0 : t * 30, y = phone ? -t * 46 : -t * 62, sc = 1 - t * 0.86;   // 소실점(오른쪽 위)으로 작아지며 물러난다
+      el.style.transform = d < 0 ? 'translate3d(-6%, 30%, 0) scale(1.06)' : `translate3d(${x}vw, ${y}vh, 0) scale(${sc})`;
+      el.style.opacity = d < 0 ? 0 : d > 9 ? 0 : 1;
+      el.style.zIndex = 100 - Math.abs(d);
+      el.style.filter = d > 0 ? `brightness(${Math.max(0.35, 1 - d * 0.12)})` : '';
+      el.classList.toggle('front', d === 0); el.setAttribute('aria-hidden', String(d !== 0));
+      el.querySelectorAll('a').forEach((a) => (a.tabIndex = d === 0 ? 0 : -1));
+    });
+    $count.textContent = list.length ? `${String(cur + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}` : '찾는 실험이 없어요';
+  };
+  const build = () => {
+    list = UNITS.filter((u) => (!part || u.part === part) && (!query || `${u.title} ${u.sub} ${u.activity.title}`.includes(query)));
+    cur = Math.min(cur, Math.max(0, list.length - 1));
+    $stack.innerHTML = list.map(cardHtml).join(''); layout();
+  };
+  const go = (n) => { if (!list.length) return; cur = Math.max(0, Math.min(list.length - 1, cur + n)); layout(); };
+  // 넘기기: 휠(한 번에 한 장), 화살표, 밀기, 뒤 카드 누르기
+  let wheelLock = 0;
+  $stack.addEventListener('wheel', (e) => { e.preventDefault(); const now = Date.now(); if (now - wheelLock < 380 || Math.abs(e.deltaY) < 8) return; wheelLock = now; go(e.deltaY > 0 ? 1 : -1); }, { passive: false });
+  let sx = null, sy = null;
+  $stack.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; });
+  $stack.addEventListener('pointerup', (e) => { if (sx == null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.max(Math.abs(dx), Math.abs(dy)) > 40) go((Math.abs(dx) > Math.abs(dy) ? -dx : -dy) > 0 ? 1 : -1); });
+  $stack.addEventListener('click', (e) => { const card = e.target.closest('.arch-card'); if (!card) return; const k = [...$stack.children].indexOf(card); if (k !== cur) { e.preventDefault(); cur = k; layout(); } else if (!e.target.closest('a')) location.hash = `#/u/${card.dataset.id}`; });
+  $app.querySelectorAll('.arch-ctrl [data-step]').forEach((b) => b.addEventListener('click', () => go(+b.dataset.step)));
+  $app.querySelectorAll('.arch-pills button').forEach((b) => b.addEventListener('click', () => { part = b.dataset.part; cur = 0; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', x === b)); build(); }));
+  // 검색은 전체 실험에서 찾는다(PART 거르기를 ALL로 되돌림)
+  $q.addEventListener('input', () => { query = $q.value.trim(); cur = 0; if (query && part) { part = ''; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', !x.dataset.part)); } build(); });
+  $q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && list[cur]) location.hash = `#/u/${list[cur].id}`; });
+  const onKey = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === '/') { e.preventDefault(); $q.focus(); return; }
+    if (e.target.matches('input,select,textarea')) return;
+    if (['ArrowRight', 'ArrowDown'].includes(e.key) && document.activeElement?.closest('.arch-stage')) { e.preventDefault(); go(1); }
+    if (['ArrowLeft', 'ArrowUp'].includes(e.key) && document.activeElement?.closest('.arch-stage')) { e.preventDefault(); go(-1); }
+    if (e.key === 'Enter' && document.activeElement === $stack && list[cur]) location.hash = `#/u/${list[cur].id}`;
+  };
+  document.addEventListener('keydown', onKey); addEventListener('resize', layout);
+  homeOff = () => { document.removeEventListener('keydown', onKey); removeEventListener('resize', layout); };
+  // 실사 복도 사진이 있으면 SVG 위에 깐다(없으면 SVG 복도 그대로)
+  if (CORRIDOR) { const $ph = $app.querySelector('.arch-photo'); $ph.onload = () => { $ph.hidden = false; $app.querySelector('.arch-stage').classList.add('has-photo'); }; $ph.src = CORRIDOR; }
+  build();
 }
 
 function renderUnit(u) {
@@ -139,8 +212,8 @@ function renderUnit(u) {
       <p class="score" id="score"></p>
     </section>
     <div class="wrap unit-nav">
-      ${prev ? `<a href="#/u/${prev.id}"><b>← 이전 서류철</b>${esc(prev.title)}</a>` : '<span></span>'}
-      ${next ? `<a class="next" href="#/u/${next.id}"><b>다음 서류철 →</b>${esc(next.title)}</a>` : `<a class="next" href="#/"><b>서류철 묶음으로</b>전체 차례</a>`}
+      ${prev ? `<a href="#/u/${prev.id}"><b>← 이전 기록</b>${esc(prev.title)}</a>` : '<span></span>'}
+      ${next ? `<a class="next" href="#/u/${next.id}"><b>다음 기록 →</b>${esc(next.title)}</a>` : `<a class="next" href="#/"><b>보관소로</b>전체 실험</a>`}
     </div>
   </main>${footer()}`;
 

@@ -143,9 +143,10 @@ def main():
                     pipe = load_pipe(model, vram) if model != 'mflux' else 'mflux'
                 seed = 1000 * i + sum(map(ord, s['key']))
                 t = time.time()
-                img = render(pipe, model, f"{s['prompt']} {spec['style']}", seed, w, h)
+                sw, sh = map(int, s['size'].lower().split('x')) if s.get('size') else (w, h)
+                img = render(pipe, model, f"{s['prompt']} {spec['style'] if s.get('style', True) else ''}", seed, sw, sh)
                 img.save(f, 'WEBP', quality=88)
-                (d / f"{s['key']}-{i}.json").write_text(json.dumps({'unit': s['unit'], 'key': s['key'], 'seed': seed, 'model': model, 'size': [w, h], 'prompt': s['prompt']}, ensure_ascii=False, indent=1), encoding='utf-8')
+                (d / f"{s['key']}-{i}.json").write_text(json.dumps({'unit': s['unit'], 'key': s['key'], 'seed': seed, 'model': model, 'size': [sw, sh], 'prompt': s['prompt']}, ensure_ascii=False, indent=1), encoding='utf-8')
                 made += 1
                 print(f"  [{made}] {s['unit']} {s['key']}-{i}  {time.time() - t:.1f}초", flush=True)
             files.append(f)

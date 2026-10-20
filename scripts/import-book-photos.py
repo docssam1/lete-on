@@ -27,8 +27,9 @@ def main(argv):
         unit = SHOTS[key]['unit']
         f = src / unit / f'{key}-{n}.webp'
         im = Image.open(f).convert('RGB')
-        if im.width > 1600:
-            im = im.resize((1600, round(im.height * 1600 / im.width)), Image.LANCZOS)
+        cap = 1800 if unit == 'science-lab-v1' else 1600   # 보관소 배경은 화면 전체에 깔리므로 조금 크게
+        if im.width > cap:
+            im = im.resize((cap, round(im.height * cap / im.width)), Image.LANCZOS)
         out = ROOT / 'science-lab/assets/book' / f'{unit}-photo-{key}.webp'
         im.save(out, 'WEBP', quality=82, method=6)
         print(f'  {key}-{n} → {out.relative_to(ROOT)} ({out.stat().st_size // 1024} KB)')
