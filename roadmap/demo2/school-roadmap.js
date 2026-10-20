@@ -431,7 +431,8 @@ function conceptRows(){
   const ip=early.findIndex(b=>/1031 입문/.test(plain(b[0])));
   const comp=upTo(early.slice(0,ip),early[ip][1]).concat([['1031 입문 + workbook',early[ip][1],53],['TOT 2단계',54,56],['1031 초급',57,63],
     ['3% 1과정',64,67]]);
-  const calc=upTo(R('calc'),56).concat(sem.map((x,i)=>[`기적의 계산법 ${9+i}`,56+2*i,57+2*i]),[['초등연산 보충',64,67]],seqFrom(mid, MID_CALC));
+  // 연산은 교과보다 한 권 앞: 초2 9~10월 = 기적 10권(원장님 2026-10-20). 초2 3월부터 기적 7~12권을 2개월씩.
+  const calc=upTo(R('calc'),50).concat([7,8,9,10,11,12].map((k,i)=>[`기적의 계산법 ${k}`,50+2*i,51+2*i]),[['초등연산 보충',62,67]],seqFrom(mid, MID_CALC));
   const hw=[['황소 공부<br><small>(편입 위주)</small>',59,60],['황소 시험',61,61],['황소 4-1 편입<br><small>(합격 시)</small>',62,62],
     ['황소 심화 개념 3개월<br><small>(심화 고려 시)</small>',65,67],['황소 심화 모의고사 2개월<br><small>(심화 고려 시)</small>',68,69],['황소 합격 후 고민<br><small>(중등 라인은 계속)</small>',70,70]]; // 원장님 손그림 2026-10-20
   // 영재원(원장님이 준 모집요강 2026-10-20 확인)
