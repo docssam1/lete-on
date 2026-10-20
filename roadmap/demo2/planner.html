@@ -118,6 +118,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 .rep{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
 .rep .card{padding:20px}
 .rep h2{margin:0 0 14px;font-size:24px}
+.bk-card h2{font-size:20px;margin-bottom:6px}
 .big{font-size:32px;font-weight:900;margin:0 0 6px;color:#3b2a7a}
 .stages{display:grid;gap:12px}
 .stg{background:#f7f3fd;border:1px solid var(--line);border-radius:16px;padding:12px}
@@ -134,6 +135,12 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 .cm dd{margin:0;font-size:13.5px;line-height:1.7}
 .ritem{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
 .ritem:first-of-type{border-top:0}
+.bk-card{margin-top:16px}
+.bk{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:8px;background:#fff}
+.bk.now{border-color:var(--p);box-shadow:0 0 0 2px #ddd0ff;background:#f7f2ff}
+.bk h4{margin:0 0 4px;font-size:15px;color:#3b2a7a}.bk h4 span{font-size:11px;background:var(--p);color:#fff;border-radius:999px;padding:1px 8px;margin-left:4px}
+.bk p{margin:3px 0;font-size:13px;display:flex;gap:8px}.bk p small{flex:none;width:52px;color:var(--p);font-weight:800}
+.bk-note{font-size:13px;line-height:1.6;color:#4a4170;background:#fff7e6;border-radius:12px;padding:10px 12px;margin:10px 0 0}
 .ritem .ic{width:52px;height:52px;border-radius:50%;background:var(--pl);display:grid;place-items:center;font-size:22px;flex:none}
 .ritem small{display:block;color:var(--p);font-weight:800;font-size:13px}
 .ritem b{font-size:17px}
@@ -192,7 +199,8 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 
  <section class="view" id="vrep"><div class="rep">
   <div class="card"><h2>학년별 공부 흐름</h2><div class="stages" id="stages"></div></div>
-  <div class="card"><p class="big"><span id="who2">우리 아이</span>의 성장 분석지</p><div id="repItems"></div></div>
+  <div><div class="card"><p class="big"><span id="who2">우리 아이</span>의 성장 분석지</p><div id="repItems"></div></div>
+  <div class="card bk-card"><h2>교재 길잡이</h2><div id="books"></div></div></div>
  </div></section>
 </main>
 
@@ -288,6 +296,8 @@ function draw(){
   const lvName=$('level').selectedOptions[0].textContent;
   $('repItems').innerHTML=[['📖','현재 학습',`${strip(cur('school'))} · ${strip(cur('comp'))}`],['👤','기준 레벨',`${lvName} · ${plan.bandName}`],['💡','다음 과정',next?`${next.title} (${P.label(next.m)})`:'—'],['📅','다음 확인','학습 경험 후 조정 · 경로는 언제든 바꿀 수 있어요']]
     .map(([i,a,b])=>`<div class="ritem"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
+  const bg=P.bookGuide(plan);
+  $('books').innerHTML=bg.stages.map(st=>`<div class="bk${st.now?' now':''}"><h4>${st.stage}${st.now?' <span>지금</span>':''}</h4>${st.rows.map(([l,b])=>`<p><small>${l}</small>${b}</p>`).join('')}</div>`).join('')+`<p class="bk-note">${bg.note}</p>`;
 }
 // 3D 맵: three.js(map3d.js, 수의 나라와 같은 three · 아이 캐릭터). WebGL 이 없으면 CSS 맵.
 let map3d=null, mapBusy=null, mapNext=null, map3dFailed=false;

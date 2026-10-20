@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018n`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018n/20261018o/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018o`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018o/20261018p/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -384,6 +384,8 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - **원본을 바로잡은 곳**(`sourceDiscrepancy`): 65쪽 01·66쪽 04 물음 글에 다른 문항의 과목·운동 이름이 남아 있던 것.
   - 64·65쪽 보류 삭제. DB `book-07` 506키 그대로(옛 단원 3 키를 같은 수로 교체), sha 앞 8자리 `4cb24452`. 캐시 꼬리표 `20261018n`.
 - **7권 끝(2026-10-20)**: 66쪽 전부 대조. 17단원 · 공개 318문항 · 답 칸 392. 남은 보류는 **52쪽 01 (1) 한 자리 대칭수 1건**(답 칸 1)과 표지 4쪽(1·8·34·51쪽, 문항 없음)뿐. 52쪽은 원장이 「한 자리 수도 대칭수로 볼지」 정해 주면 풀 수 있다.
+- **7권 보충 문항 겹침 정리(2026-10-20)**: `golden-bell-recovery-data.js`의 7권 보충 4문항(22쪽 확인 04 (1)~(3), 38쪽 확인 03)이 묶음 2·3에서 원본 문항으로 이미 들어가 있어 **화면에 두 번** 나왔다(4권 31-(3)과 같은 실수). 보충 데이터에서 7권 묶음을 지웠다(남은 것은 8권 3·4쪽 8문항). `golden-bell-recovery.js`의 보충 데이터 import 꼬리표도 올렸다(`20261020a` — 이 파일은 캐시 꼬리표 5파일과 따로 논다). DB의 옛 `/recovery/…/book-07/…` 키는 4권 때처럼 쓰이지 않은 채 남겨 둔다. `golden-bell-book07-recovery-audit.mjs`·`golden-bell-book08-recovery-audit.mjs`는 저장소 밖 정규화 파일을 받아 들여올 때만 쓰는 일회성 검사기라 평소에는 안 돈다. 캐시 꼬리표 `20261018o`.
+  **새 권을 다시 짤 때는 먼저 `golden-bell-recovery-data.js`에 그 권 묶음이 있는지 본다.** 8권은 3·4쪽이 걸려 있다.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
