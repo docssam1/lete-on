@@ -18,7 +18,7 @@ const CALC=[...Array.from({length:12},(_,i)=>[`기적의 계산법 ${i+1}`,0]),
   ['기적의 중학연산 1AB',5],['기적의 중학도형 1권',2],['기적의 중학연산 2AB',4],['기적의 중학도형 2권',2],['기적의 중학연산 3AB',6],['기적의 중학도형 3권',2]];
 // 1031 중급은 예시 로드맵에서 지웠다(원장님 2026-10-20). 지금 중급을 하고 있는 레벨만 거친다(skip).
 const COMP=[['초등팩토 1 (PRE 1031 기본)',5],['필즈 베이직 (PRE 1031 심화)',5],['1031 입문 + workbook',4],['TOT 2단계',3],['1031 초급',7],['1031 중급',7,'skip'],['3% 1과정',4],['왕수학 응용 4',3,'skip']];
-const GRADES=['5세','6세','7세','초1','초2','초3','초4','초5','초6','중1'];
+const GRADES=['5세','6세','7세','초1','초2','초3','초4','초5','초6','중1','중2','중3','고1'];
 
 // 학년(1~6)·월 → m, m → 학년·월·연도
 function mOf(grade,mon){ return 36+12*(grade-1)+(mon>=3?mon-1:mon-1+12); }
@@ -36,11 +36,75 @@ function seq(start,items){ const out=[]; let t=start; items.forEach(([txt,n])=>{
 const BAND={
   A:{name:'선행형',elemS:null,topDown:1,sys:false,midLen:4,midBook:'원리해설',deep:'A급',deepLag:0,compStop:null,hw:true},
   B:{name:'예시형',elemS:null,topDown:1,sys:true, midLen:3,midBook:'원리해설',deep:'A급',deepLag:2,compStop:null,hw:true},
-  C:{name:'천천히형',elemS:5,topDown:0,sys:true, midLen:4,midBook:'개념원리',deep:'RPM',deepLag:0,compStop:'1031 초급',hw:false}
+  C:{name:'천천히형',elemS:5,topDown:0,sys:true, midLen:4,midBook:'개념원리',deep:'RPM',deepLag:0,compStop:'1031 초급',hw:false},
+  D:{name:'영과고형',elemS:null,topDown:1,sys:false,midLen:3,midBook:'개념응용 · 최상위라이트',deep:'에이급',deepLag:0,compStop:null,hw:true,fixed:true}
 };
-function bandOf(id){ const k=+String(id).replace(/\D/g,''); return id==='ex'?'B':k<=3?'A':k<=9?'B':'C'; }
+/* D 영과고형 "최소 대비"(원장님 2026-10-20, 스타워즈 TOP CLASS·CMS 영재학교/과학고 로드맵·타우루스·수학 학습 로드맵 책):
+   초3 6월부터 초등 개념응용·최상위 학기당 3개월(4-1 → 6-2, 9개월) → 초4 3월 중1-1 개념응용·최상위라이트 (15개월, 에이급 병행)
+   → 초5 6월 중3-2 에이급 + 수학(상) 기본정석 → 초5 12월 수학(상) 실력정석·수학(하) 기본정석 → 초6 3월 KMO 입문
+   → 초6~중1 고등 수Ⅰ·Ⅱ + KMO 1차 집중 → 중2 5월까지 예비과정, 중2 6월~ 영재학교 실전과정 → 중3 7~8월 영재학교 전형 / 9~11월 과학고 전형
+   과학: 초3~5 초등 과학 심화 정리 + 영재원 대비, 중등 물화생지 1회독 → 초6 물·화 심화(하이탑) → 중1 물1·화1 정리 → 중2 물1·화1 심화·통합과학
+   경시: 3% 1과정(초3 12월~) → 3% 2과정(초4 6월~) → 기초경시 → 경시입문 → KMO 입문(초6 3월) → KMO 1차 → KMO 2차
+   비교과(전국 대회, 경험 계획표): 초5~ 대한민국학생발명전시회·전국학생창의력챔피언대회·발명창의력10종경기·청소년과학탐구대회, 중1~ YIP·학생과학탐구올림픽
+   영재원: 초3~5 서울교대 → 초6~중1 연세대·서울대 */
+function buildD(o){
+  const now=mOf(o.grade,o.mon), A0=mOf(o.grade,3), A1=mOf(9,12), warn=[], yearOf=m=>o.year+(Math.floor(m/12)-Math.floor(now/12));
+  const M=(g,mon)=>mOf(g,mon); // g: 1~6 초, 7~9 중
+  const school=[], school2=[], comp=[], calc=[], sci=[], hw=[], giftA=[], giftB=[], giftP=[], exam=[], contest=[];
+  // ---- 수학 교과(스타워즈 TOP CLASS)
+  const elem=[['4-1',M(3,6)],['5-1',M(3,9)],['6-1',M(3,12)]];
+  elem.forEach(([sm,t],i)=>{ const g=sm[0]; school.push([`${g}-1 개념응용 · 최상위`,t,t+2]); school2.push([`${g}-2 개념응용 · 최상위`,t,t+2]); });
+  const mids=[['중1-1',M(4,3)],['중1-2',M(4,6)],['중2-1',M(4,9)],['중2-2',M(4,12)],['중3-1',M(5,3)],['중3-2',M(5,6)]];
+  mids.forEach(([sm,t],i)=>{ school.push([`${sm} 개념응용 · 최상위라이트`,t,t+2]); if(i>0) school2.push([`${mids[i-1][0]} 에이급`,t,t+2]); });
+  school2.push(['중3-2 에이급',M(5,6),M(5,11)]);
+  school.push(['수학(상) 기본정석',M(5,6),M(5,11)],['수학(상) 실력정석 · 수학(하) 기본정석',M(5,12),M(6,2)],['고등 수Ⅰ·Ⅱ 기본·응용 · 확률과 통계',M(6,3),M(7,2)]);
+  if(o.kmo==='go') school.push(['고등 수Ⅰ·Ⅱ 심화 (KMO 병행)',M(7,3),M(8,2)],['미적분 1회독 · 중등 심화(내신)',M(8,3),M(9,6)],['영재고 입학 전 미적분 완성',M(9,7),M(9,12)]);
+  else school.push(['고등 수Ⅰ·Ⅱ 심화 → 중1 겨울 미적분 선행',M(7,3),M(8,2)],['미적분 완성 · 기하 · 확통 (과학고 로드맵)',M(8,3),M(9,6)],['중등 심화(내신) · 고등 대비',M(9,7),M(9,12)]);
+  // ---- 경시
+  // KB T3: KMO 는 초5 겨울~초6 3월 시작, 선수 = 공통수학 심화·수Ⅰ·순열조합. 중1 1차 경험 뒤 갈림길(원장님 2026-10-20 "KMO 중등 1차 상 한번 타보고 고등 선행에 집중하는 아이들도")
+  comp.push(['3% 1과정',M(3,12),M(4,5)],['3% 2과정',M(4,6),M(4,11)],['기초경시',M(4,12),M(5,5)],['경시입문',M(5,6),M(5,11)],['KMO 입문<br><small>선수: 공통수학 심화 · 수Ⅰ · 순열조합</small>',M(6,3),M(6,8)],['KMO 1차 집중',M(6,9),M(7,5)]);
+  if(o.kmo==='go'){ comp.push(['중등 KMO 1차 (중1)',M(7,6),M(7,6)],['KMO 2차 · 영역별 심화 (대수+조합 또는 대수+기하)',M(7,7),M(8,5)],['고등 KMO 1차 (중2)',M(8,6),M(8,6)]); }
+  else { comp.push(['중등 KMO 1차 (중1) · 상 받고 전환',M(7,6),M(7,6)],['영재고 대비 영역별 심화 2개 (대수+조합 / 대수+기하)',M(7,7),M(8,5)]); }
+  // ---- 연산(중등 전까지 교과와 같이)
+  calc.push(['기적의 계산법 7~12 (초4~6 연산)',M(3,6),M(4,2)],['중1 연산 익숙하게',M(4,3),M(4,8)],['중2·3 연산 완성',M(4,9),M(5,5)]);
+  // ---- 과학
+  sci.push(['초등 과학 심화 정리 · 영재원 대비<br><small>최상위 줄기과학 · 안쌤 과학 100제 · 맛있는 영재 과학</small>',M(3,3),M(5,2)],['중등 과학 1회독<br><small>오투 · 최상위 줄기과학 중등(물화생지)</small>',M(5,3),M(5,12)],
+    ['중등 물·화 심화<br><small>하이탑 + 융합과학</small>',M(6,3),M(6,12)],['물1·화1 정리 · 통합과학',M(7,3),M(7,12)],['물1·화1 심화 · 영재과학 이론',M(8,3),M(8,12)],['기출 적중 · 캠프 대비(실험·글쓰기·토론·면접)',M(9,3),M(9,8)]);
+  // ---- 입시(CMS 영재학교·과학고 로드맵)
+  exam.push(['영재학교 예비과정<br><small>중등수학 → KJMO · 고등입문 → KMO · 중등과학</small>',M(6,3),M(8,5)],['영재기본이론 · 고등수학이론 · 영재과학이론',M(8,6),M(8,8)],['기출분석 · 영재수학/과학 문풀 · 고등 물화생지',M(8,9),M(8,12)],
+    ['기출변형 · 창의수학/과학 · 자소서',M(9,1),M(9,4)],['적중예상 · Final · 학교별 모의고사',M(9,5),M(9,6)],['영재학교 전형 · 캠프 대비',M(9,7),M(9,8)],['과학고 전형 · 면접',M(9,9),M(9,11)],['내신 대비 or 자사고·의대 트랙',M(9,12),M(9,12)]);
+  // ---- 영재원(교대 초3~5, 연·서울대 초6~중1) + 대비 3개월
+  giftB.push(['서울교대 과학영재교육원 지원·선발',M(3,7),M(3,9)],['교대 영재원 (합격 시)',M(4,3),M(4,12)]);
+  giftA.push(['연세대·서울대 영재교육원 (공동 온라인 선교육 6월 → 지원 9~12월)',M(6,6),M(6,12)],['대학부설 영재원 (합격 시)',M(7,3),M(7,12)]);
+  giftP.push(['영재원 대비 3개월 (교대)<br><small>안쌤 수학 100제 3 · 단원별·유형별 · 맛있는 영재 수학 3 · 파이널</small>',M(3,4),M(3,6)],['영재원 대비 3개월 (대학부설)<br><small>안쌤 수학 100제 6 · 단원별·유형별 · 맛있는 영재 수학 6 · 파이널</small>',M(6,3),M(6,5)]);
+  // ---- 황소(초2 11월 시험은 이 표 전)
+  // ---- 비교과 전국 대회(경험 계획표, 전국만)
+  const C=[[5,'대한민국학생발명전시회 · 전국학생창의력챔피언대회'],[5,'발명창의력10종경기 · 청소년과학탐구대회'],[6,'대한민국학생발명전시회 · 창의력챔피언대회'],[6,'청소년과학탐구대회 · 과학동아리활동발표'],
+    [7,'YIP청소년발명가 · 학생과학탐구올림픽'],[7,'창의력챔피언대회 · 코딩프로젝트챌린지'],[8,'학생과학탐구올림픽 · 발명전시회'],[8,'에너지환경탐구대회 · 코딩챌린지'],[9,'학생과학탐구올림픽 (중3)']];
+  C.forEach(([g,t],i)=>{ contest.push([t,M(g,i%2?9:4),M(g,i%2?10:5)]); });
+  const flags=[[M(6,3),'KMO 입문'],[M(7,6),o.kmo==='go'?'KMO 계속':'KMO 1차 → 고등 선행'],[M(9,7),'영재학교 전형'],[M(9,9),'과학고 전형']];
+  const bubbles=[[M(5,6),`${label(M(5,6))} 돌파 · 생크 · 이든 응시 고려`]];
+  const rows=[
+    {key:'school',label:'수학 교과',blocks:school,color:'#dbeafe',lane:'수학'},
+    {key:'school2',label:'수학 심화',blocks:school2,color:'#e0f2fe',lane:'수학'},
+    {key:'comp',label:'경시',blocks:comp,color:'#ede9fe',lane:'수학'},
+    {key:'calc',label:'연산',blocks:calc,color:'#dcfce7',lane:'수학'},
+    {key:'sci',label:'과학',blocks:sci,color:'#ecfccb',lane:'과학'},
+    {key:'exam',label:'영과고 입시',blocks:exam,color:'#ffe4e6',lane:'입시'},
+    {key:'contest',label:'비교과 대회(전국)',blocks:contest,color:'#fef9c3',lane:'입시'},
+    {key:'giftP',label:'영재원 대비',blocks:giftP,color:'#fdf2e0',lane:'영재원'},
+    {key:'giftB',label:'영재원 · 교대',blocks:giftB,color:'#fae8ff',lane:'영재원'},
+    {key:'giftA',label:'영재원 · 대학부설',blocks:giftA,color:'#fce7f3',lane:'영재원'}
+  ];
+  if(!o.gifted){ rows.splice(rows.findIndex(r=>r.key==='giftP'),3); }
+  rows.forEach(r=>{ r.blocks=r.blocks.map(([x,s,e])=>[x,Math.max(s,A0),Math.min(e,A1),e-s+1]).filter(b=>b[1]<=b[2]); });
+  if(now>M(3,6)) warn.push(`영과고형은 초3 6월 4-1부터 시작하는 최소 대비 기준이에요. 지금(${label(now)}) 앞 칸은 이미 지났다고 보고, 남은 칸부터 맞춰 보세요.`);
+  return {now,A0,A1,mid:M(4,3),rows,flags,bubbles,warn,label,yearOf,band:'D',bandName:'영과고형',kmo:o.kmo};
+}
+function bandOf(id){ const k=+String(id).replace(/\D/g,''); return id==='ex'?'B':k<=3?'A':k<=9?'B':'C'; } // D 영과고형은 묶음에서 직접 고른다
 
 function build(o){
+  if(o.band==='D') return buildD(o);
   const B=BAND[o.band]||BAND.B;
   const now=mOf(o.grade,o.mon), A0=mOf(o.grade,3), A1=A0+45, S=B.elemS||o.speed, warn=[]; // A1: 초5 12월까지(원장님 2026-10-20 "늘리자")
   const yearOf=m=>o.year+(Math.floor(m/12)-Math.floor(now/12));
@@ -209,11 +273,12 @@ function milestones(P){
   const R=k=>(P.rows.find(r=>r.key===k)||{blocks:[]}).blocks;
   const at=(k,m)=>{ const b=R(k).find(x=>x[1]<=m&&x[2]>=m); return b?b[0]:''; };
   const short=t=>t.replace(/ 디딤돌.*| 원리해설| \(.*\)/g,'');
-  const sch=R('school'), elem=sch.filter(b=>/디딤돌/.test(b[0])), sys=sch.find(b=>/계통/.test(b[0])), mids=sch.filter(b=>/원리해설/.test(b[0]));
+  const sch=R('school'), elem=sch.filter(b=>/디딤돌|개념응용 · 최상위$/.test(b[0])), sys=sch.find(b=>/계통/.test(b[0])), mids=sch.filter(b=>/원리해설|개념원리|^중1-1 개념응용/.test(b[0]));
   const out=[{m:P.now,kind:'now',title:'현재 · '+label(P.now),sub:[short(at('school',P.now)),at('comp',P.now).replace(/\s*\(.*\)/,'')].filter(Boolean).join(' · '),icon:'📍'}];
-  if(elem.length&&elem[elem.length-1][2]>P.now) out.push({m:elem[elem.length-1][2],kind:'step',title:'초등 교과 완료',sub:'디딤돌 6-2 · '+label(elem[elem.length-1][2]),icon:'📘'});
+  if(elem.length&&elem[elem.length-1][2]>P.now) out.push({m:elem[elem.length-1][2],kind:'step',title:'초등 교과 완료',sub:(P.band==='D'?'6-2 개념응용·최상위':'디딤돌 6-2')+' · '+label(elem[elem.length-1][2]),icon:'📘'});
   if(sys&&sys[1]>P.now){ const c=at('comp',sys[1]); out.push({m:sys[1],kind:'step',title:'계통 · 대수 정리',sub:(/3%/.test(c)?'3% 1과정 함께 · ':'')+label(sys[1]),icon:'🧮'}); }
-  if(mids.length&&mids[0][1]>P.now) out.push({m:mids[0][1],kind:'step',title:'중등 시작',sub:'중1-1 원리해설 · '+label(mids[0][1]),icon:'🏫'});
+  if(mids.length&&mids[0][1]>P.now) out.push({m:mids[0][1],kind:'step',title:'중등 시작',sub:mids[0][0].replace(/<br>.*$/,'').replace(/^중1-1 /,'중1-1 ')+' · '+label(mids[0][1]),icon:'🏫'});
+  if(P.band==='D'){ const ex=R('exam').find(b=>/영재학교 전형/.test(b[0])); if(ex) out.push({m:ex[1],kind:'step',title:'영재학교 전형',sub:label(ex[1])+' · 캠프 대비',icon:'🏆'}); const k=R('comp').find(b=>/KMO 입문/.test(b[0])); if(k&&k[1]>P.now) out.push({m:k[1],kind:'step',title:'KMO 입문',sub:label(k[1]),icon:'🥇'}); }
   const g=R('giftA').find(b=>/영재원 수업/.test(b[0])); if(g) out.push({m:g[1],kind:'gift',title:'영재원 (합격 시)',sub:label(g[1])+' 수업 시작',icon:'🔭'});
   P.bubbles.forEach(([m,t])=>out.push({m,kind:'step',title:'중등 학원 응시 고려',sub:t.replace(/ 응시 고려$/,'').replace(/^\S+ \S+ /,'')+' · '+label(m),icon:'🎯'}));
   const s=R('sci').find(b=>/중등 과학/.test(b[0])); if(s&&s[1]<=P.A1) out.push({m:s[1],kind:'sci',title:'중등 과학',sub:label(s[1])+' · 오투 · 최상위 줄기과학',icon:'🧪'});
@@ -253,6 +318,7 @@ function bindMap(box){
 
 /* ---------- 분석지: 학년마다 서술(몇 개월 주기로, 언제 무엇을 시작·완료) ---------- */
 function narrative(P){
+  if(P.band==='D') return narrativeD(P);
   /* 학년마다: 월별 줄(3월~2월)에 시작·이슈를 찍고, 교과·사고력·심화·연산 항목별로 코멘트를 쓴다(원장님 2026-10-20). */
   const R=k=>(P.rows.find(r=>r.key===k)||{blocks:[]}).blocks;
   const mon=m=>(m%12+1)+'월', nm=t=>t.replace(/<br>.*$/,'').replace(/\s*\(.*\)/,'').trim(), len=b=>b[3]||(b[2]-b[1]+1);
@@ -272,6 +338,8 @@ function narrative(P){
     inY(R('hw')).forEach(x=>{ put(x[1],nm(x[0]),'issues'); });
     inY(R('giftA').concat(R('giftB'))).forEach(x=>{ put(x[1],nm(x[0]).replace(/ · .*/,''),'issues'); });
     inY(R('giftP')).forEach(x=>{ put(x[1],'영재원 대비 시작','issues'); });
+    inY(R('exam')).forEach(x=>{ if(x[1]>=lo) put(x[1],nm(x[0]),'issues'); });
+    inY(R('contest')).forEach(x=>{ if(x[1]>=lo) put(x[1],'대회: '+nm(x[0]).split(' · ')[0],'issues'); });
     inY(R('sci')).forEach(x=>{ if(x[1]>=lo) put(x[1],nm(x[0])+' 시작','issues'); });
     P.bubbles.forEach(([m,t])=>{ if(m>=a&&m<=b) put(m,t.replace(/^\S+ \S+ /,'').replace(/ 고려$/,''),'issues'); });
     // ---- 항목별 코멘트
@@ -290,6 +358,8 @@ function narrative(P){
         else if(en) out.push(`하던 ${jo(w,'은','는')} ${mon(x[2])}까지 완료해요.`);
         else out.push(`${jo(w,'은','는')} ${label(x[2])}까지 쭉 이어 가요.`); });
       const cEnd=last(comp); if(P.band==='C'&&cEnd&&/1031 초급/.test(cEnd[0])&&cEnd[2]<=b) out.push('1031 초급까지 하면 사고력은 여기서 끝이에요. 그다음은 교과 심화로 넘어가요.');
+      if(P.band==='D'&&comp.some(x=>/KMO 입문/.test(x[0]))) out.push('KMO는 공통수학 심화와 수Ⅰ, 순열·조합을 끝낸 뒤 시작해요. 영재학교 입시에 KMO가 필수는 아니라서, 중1 1차를 본 뒤 계속 갈지 고등 선행으로 돌릴지 정해요.');
+      if(P.band==='D'&&comp.some(x=>/상 받고 전환/.test(x[0]))) out.push('이 길은 중1 KMO 1차에서 상을 한 번 받고 고등 선행에 집중하는 쪽이에요. 영재고 대비는 영역 두 개만 깊게 가요.');
       const c3=comp.find(x=>/3%/.test(x[0])); if(c3&&c3[2]<=b&&last(comp)===c3){ const hw=R('hw').find(x=>/시험$/.test(nm(x[0]))&&x[1]>c3[2]&&x[1]<=b); out.push(hw?`3% 1과정은 ${label(hw[1])} 황소 시험 전에 마치는 게 목표예요.`:`3% 1과정까지 하면 사고력 라인은 일단 마무리예요.`); }
       if(out.length) items.push({label:'사고력',text:out.join(' ')}); }
     { const sAll=s2.filter(x=>/최상위 S/.test(x[0])), sS=P.band==='C'?[]:sAll, sC=P.band==='C'?sAll:[], gap=s2.find(x=>/고민/.test(x[0])), sA=s2.filter(x=>/A급/.test(x[0])), sR=s2.filter(x=>/RPM/.test(x[0])), out=[];
@@ -306,6 +376,8 @@ function narrative(P){
       if(out.length) items.push({label:'연산',text:out.join(' ')}); }
     { const sc=inY(R('sci')).filter(x=>x[1]>=lo); const head=t=>t.replace(/<br>.*$/,''), book=t=>(t.match(/<small>(.*?)<\/small>/)||[,''])[1];
       if(sc.length) items.push({label:'과학',text:sc.map((x,i)=>`${mon(x[1])}부터 ${i<sc.length-1?head(x[0]):jo(head(x[0]),'을','를')}`).join(', ')+' 시작해요.'+(sc.some(x=>/중등 과학/.test(x[0]))?' 중2-1 심화가 끝난 다음 달이에요.':'')+' 교재는 '+sc.map(x=>book(x[0])).filter(Boolean).join(' / ')+'.'}); }
+    { const ex=inY(R('exam')); if(ex.length) items.push({label:'영과고 입시',text:ex.map(x=>`${mon(x[1])}${x[2]>x[1]&&x[2]<=b?'~'+mon(x[2]):''} ${nm(x[0])}`).join(', ')+'.'});
+      const ct=inY(R('contest')); if(ct.length) items.push({label:'비교과',text:'전국 대회: '+ct.map(x=>`${mon(x[1])}~${mon(x[2])} ${nm(x[0])}`).join(', ')+'. 지역·시 대회는 거주 지역 공고를 따로 봐야 해요.'}); }
     { const ev=inY(R('hw')); if(ev.length) items.push({label:'황소',text:ev.map(x=>`${mon(x[1])}${x[2]>x[1]?'~'+mon(x[2]):''} ${nm(x[0])}`).join(', ')+'.'+(ev.some(x=>/시험$/.test(nm(x[0])))?' 시험 결과를 보고 다음을 정해요.':'')});
       const gv=inY(R('giftA').concat(R('giftB'))), gp=inY(R('giftP'));
       if(gv.length||gp.length){ let t=gv.map(x=>`${mon(x[1])}${x[2]>x[1]&&x[2]<=b?'~'+mon(x[2]):''} ${nm(x[0]).replace(/ · .*/,'')}`).join(', ')+'.';
@@ -315,5 +387,63 @@ function narrative(P){
   }).filter(y=>y.items.length);
 }
 
-window.Planner={narrative,build,BAND,bandOf,renderTable,renderSimple,render3D,bind3D,render3DMap,bindMap,milestones,mOf,label,SEM,CALC,COMP,MID};
+/* ---------- D 영과고형 서술(학년마다 월별 줄 + 항목별 코멘트). 공용 narrative 는 디딤돌·원리해설 기준이라 따로 쓴다. ---------- */
+function narrativeD(P){
+  const R=k=>(P.rows.find(r=>r.key===k)||{blocks:[]}).blocks;
+  const mon=m=>(m%12+1)+'월', head=t=>t.replace(/<br>.*$/,'').replace(/\s*\((?!상|하)[^)]*\)/g,'').trim(), book=t=>(t.match(/<small>(.*?)<\/small>/)||[,''])[1], len=b=>b[3]||(b[2]-b[1]+1);
+  const jo=(w,a,b)=>{ const c=w.replace(/[^가-힣0-9A-Za-z]+$/,'').slice(-1), code=c.charCodeAt(0); let has; if(/[가-힣]/.test(c)) has=(code-0xAC00)%28>0; else if(/[0-9]/.test(c)) has=/[013678]/.test(c); else has=/[lmnr]/i.test(c); return w+(has?a:b); };
+  const span=(x,b)=>`${mon(x[1])}${x[2]>x[1]?'~'+(x[2]<=b?mon(x[2]):label(x[2])):''}`;
+  const years=[]; for(let a=P.A0;a<=P.A1;a+=12) years.push([a,Math.min(a+11,P.A1)]);
+  return years.map(([a,b])=>{
+    const g=label(a).split(' ')[0], lo=Math.max(a,P.now);
+    const inY=bs=>bs.filter(x=>x[2]>=lo&&x[1]<=b).sort((p,q)=>p[1]-q[1]), st=x=>x[1]>=lo;
+    const months=[]; for(let m=a;m<=b;m++) months.push({m,mon:mon(m),now:m===P.now,past:m<P.now,starts:[],issues:[]});
+    const put=(m,text,kind)=>{ const c=months.find(x=>x.m===m); if(c) c[kind].push(text); };
+    inY(R('school')).forEach(x=>{ if(st(x)) put(x[1],head(x[0]).replace(/ 개념응용.*$/,'').replace(' 기본·응용 · 확률과 통계',''),'starts'); });
+    inY(R('comp')).forEach(x=>{ if(st(x)) put(x[1],head(x[0]),'starts'); });
+    inY(R('exam')).forEach(x=>{ if(st(x)) put(x[1],head(x[0]).split(' · ')[0],'issues'); });
+    inY(R('contest')).forEach(x=>{ if(st(x)) put(x[1],'대회: '+head(x[0]).split(' · ')[0],'issues'); });
+    inY(R('giftP')).forEach(x=>{ if(st(x)) put(x[1],'영재원 대비 시작','issues'); });
+    inY(R('giftA').concat(R('giftB'))).forEach(x=>{ if(st(x)) put(x[1],head(x[0]).replace(/ \(합격 시\)/,''),'issues'); });
+    inY(R('sci')).forEach(x=>{ if(st(x)) put(x[1],head(x[0])+' 시작','issues'); });
+    P.flags.forEach(([m,t])=>{ if(m>=lo&&m<=b&&!/KMO 입문/.test(t)) put(m,t,'issues'); });
+    const items=[], S=(label,arr)=>{ if(arr.length) items.push({label,text:arr.join(' ')}); };
+    // 수학 교과
+    { const sc=inY(R('school')), el=sc.filter(x=>/개념응용 · 최상위$/.test(x[0])), md=sc.filter(x=>/최상위라이트/.test(x[0])), hi=sc.filter(x=>/정석|고등|미적분|기하/.test(x[0])), out=[];
+      if(el.length) out.push(`${mon(Math.max(el[0][1],lo))}부터 ${el[0][0].split(' ')[0]}에서 ${el[el.length-1][0].split(' ')[0]}까지 한 학기 3개월씩, 개념응용과 최상위를 같이 해요. 초등 교과는 1학기 줄, 2학기는 심화 줄에서 같은 속도로 나가요.`);
+      if(md.length){ const f=md[0], l=md[md.length-1]; out.push(f[1]>=lo&&/중1-1/.test(f[0])?`${mon(f[1])}에 중1-1로 중등을 시작해요. 개념응용과 최상위라이트를 한 학기 3개월씩, ${l[2]<=b?mon(l[2]):label(l[2])}까지 ${l[0].split(' ')[0]}까지 가요. 15개월 속진이라 에이급을 한 학기 뒤에서 따라붙여요.`:`중등은 ${f[0].split(' ')[0]}부터 이어서 3개월씩, ${l[2]<=b?mon(l[2]):label(l[2])}까지 ${l[0].split(' ')[0]}을 해요.`); }
+      hi.forEach(x=>{ out.push(`${st(x)?mon(x[1])+'부터':'이어서'} ${jo(head(x[0]),'을','를')} ${x[2]<=b?mon(x[2])+'까지':label(x[2])+'까지'} 해요.`); });
+      S('수학 교과',out); }
+    // 수학 심화
+    { const s2=inY(R('school2')), el=s2.filter(x=>/개념응용 · 최상위$/.test(x[0])), eg=s2.filter(x=>/에이급/.test(x[0])), out=[];
+      if(el.length) out.push(`2학기(${el[0][0].split(' ')[0]}~${el[el.length-1][0].split(' ')[0]})는 같은 3개월 안에 심화 줄로 같이 가요.`);
+      if(eg.length){ const f=eg[0], l=eg[eg.length-1]; out.push(`에이급은 ${mon(Math.max(f[1],lo))}부터 ${f[0].split(' ')[0]}에서 ${l[0].split(' ')[0]}까지, 교과보다 한 학기 뒤에서 따라가요.${/중3-2/.test(l[0])&&l[2]<=b?' 중3-2 에이급은 6개월을 두고 고등 정석과 겹쳐 가요.':''}`); }
+      S('수학 심화',out); }
+    // 경시
+    { const cp=inY(R('comp')), out=[];
+      cp.forEach(x=>{ const w=head(x[0]); if(/KMO 1차$|KMO 1차 · 상|고등 KMO 1차/.test(w)){ out.push(`${mon(x[1])}에 ${w.replace(/ · 상 받고 전환/,'')}를 봐요.`); return; }
+        if(st(x)) out.push(`${mon(x[1])}에 ${jo(w,'을','를')} 시작해 ${x[2]<=b?mon(x[2])+'까지 '+len(x)+'개월':label(x[2])+'까지'}${x[2]<=b?'에 끝내요.':' 가요.'}`); else out.push(`하던 ${jo(w,'은','는')} ${x[2]<=b?mon(x[2])+'까지 완료해요.':label(x[2])+'까지 이어 가요.'}`); });
+      if(cp.some(x=>/KMO 입문/.test(x[0])&&st(x))) out.push('KMO는 공통수학 심화와 수Ⅰ, 순열·조합을 끝낸 뒤 시작해요. 영재학교 입시에 KMO가 필수는 아니라서, 중1 1차를 본 뒤 계속 갈지 고등 선행으로 돌릴지 정해요.');
+      if(cp.some(x=>/상 받고 전환/.test(x[0]))) out.push('이 길은 중1 KMO 1차에서 상을 한 번 받고 고등 선행에 집중하는 쪽이에요. 영재고 대비는 영역 두 개만 깊게 가요.');
+      if(cp.some(x=>/KMO 2차/.test(x[0]))) out.push('이 길은 KMO를 계속 가는 쪽이에요. 2차와 영역별 심화를 하면서 영재고 입학 전까지 미적분 1회독을 맞춰요.');
+      S('경시',out); }
+    // 연산
+    { const out=inY(R('calc')).map(x=>`${st(x)?mon(x[1])+'부터':'이어서'} ${jo(head(x[0]),'을','를')} ${x[2]<=b?mon(x[2]):label(x[2])}까지 해요.`); S('연산',out); }
+    // 과학
+    { const sc=inY(R('sci')), out=sc.map(x=>{ const bk=book(x[0]); return `${st(x)?mon(x[1])+'부터':'이어서'} ${jo(head(x[0]),'을','를')} ${x[2]<=b?mon(x[2]):label(x[2])}까지 해요.${bk?' 교재는 '+bk+'.':''}`; }); S('과학',out); }
+    // 입시
+    { const ex=inY(R('exam')), out=[];
+      ex.forEach(x=>{ const w=head(x[0]); if(/예비과정/.test(w)){ if(st(x)) out.push(`${mon(x[1])}부터 ${label(x[2])}까지 영재학교 예비과정이에요. 중등수학에서 KJMO, 고등 입문·심화에서 KMO, 중등과학 순으로 깊이를 쌓아요.`); return; }
+        out.push(`${span(x,b)} ${w}.`); });
+      if(ex.some(x=>/영재학교 전형/.test(x[0]))) out.push('영재학교 전형은 7~8월, 과학고는 9~11월이에요(학교별로 다르니 당해 요강 확인). 떨어지면 12월부터 내신 대비나 자사고·의대 트랙으로 갈아타요.');
+      S('영과고 입시',out); }
+    // 비교과·영재원
+    { const ct=inY(R('contest')); if(ct.length) items.push({label:'비교과',text:'전국 대회: '+ct.map(x=>`${mon(x[1])}~${mon(x[2])} ${head(x[0])}`).join(', ')+'. 지역·시 대회는 거주 지역 공고를 따로 봐요. 수상보다 탐구 과정 기록이 학생부·자소서에 남아요.'});
+      const gv=inY(R('giftA').concat(R('giftB'))), gp=inY(R('giftP'));
+      if(gv.length||gp.length){ let t=gv.map(x=>`${span(x,b)} ${head(x[0])}`).join(', ')+'.'; if(gp.length){ t+=` 영재원은 시험 전 3개월만 따로 공부해요(${gp.map(x=>mon(x[1])+'~'+mon(x[2])).join(', ')}). 교재는 ${book(gp[0][0])}.`; } items.push({label:'영재원',text:t}); } }
+    return {title:g,months,items};
+  }).filter(y=>y.items.length);
+}
+
+window.Planner={narrativeD,narrative,build,BAND,bandOf,renderTable,renderSimple,render3D,bind3D,render3DMap,bindMap,milestones,mOf,label,SEM,CALC,COMP,MID};
 })();

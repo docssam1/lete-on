@@ -86,6 +86,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 .print{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-weight:800;font-size:13px;cursor:pointer}
 .scroll{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 .pl-table{border-collapse:collapse;table-layout:fixed;min-width:1900px;width:100%}
+.pl-table.wide{min-width:3300px}
 .pl-table th,.pl-table td{border:1px solid #ece6f8;text-align:center;font-size:10.5px;padding:5px 2px;line-height:1.35;vertical-align:middle}
 .pl-table tbody th{width:120px;background:#f7f3fd;font-size:11.5px}
 .pl-table td{height:46px}
@@ -176,6 +177,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
    <div class="card"><h3>🧭 다음 길 고르기</h3>
     <div class="choice"><div class="q">황소</div><div class="seg" data-k="hwOn"><button data-v="1" class="on">고려</button><button data-v="0">안 고려</button></div>
      <div class="sub-opts" id="hwOpts"><label>시험 <select id="hw"></select></label><label>입학 뒤 심화 <input type="checkbox" id="hwDeep" checked></label><label>초4 중등 시험 <input type="checkbox" id="hwMid" checked></label></div></div>
+    <div class="choice" id="kmoChoice"><div class="q">KMO (영과고형)</div><div class="seg" data-k="kmo"><button data-v="go">계속 (2차·영역 심화)</button><button data-v="switch" class="on">1차 상 → 고등 선행</button></div></div>
     <div class="choice"><div class="q">영재원</div><div class="seg" data-k="gifted"><button data-v="1" class="on">고려</button><button data-v="0">안 고려</button></div></div>
    </div>
   </div>
@@ -201,10 +203,10 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
  <form id="ctl" onsubmit="return false">
  <fieldset><legend>기준</legend>
   <label>레벨 <select id="level"></select></label>
-  <label>묶음 <select id="band"><option value="A">A 선행형 (L0~L3)</option><option value="B" selected>B 예시형 (L4~L9)</option><option value="C">C 천천히형 (L10~L13)</option></select></label>
+  <label>묶음 <select id="band"><option value="A">A 선행형 (L0~L3)</option><option value="B" selected>B 예시형 (L4~L9)</option><option value="C">C 천천히형 (L10~L13)</option><option value="D">D 영과고형 (최소 대비 · 중3까지)</option></select></label>
   <label>이름(선택) <input id="name" placeholder="표시만 · 저장 안 함" autocomplete="off"></label>
   <label>올해 <input id="year" type="number" min="2020" max="2100"></label>
-  <label>학년 <select id="grade"><option value="1">초1</option><option value="2" selected>초2</option><option value="3">초3</option></select></label>
+  <label>학년 <select id="grade"><option value="1">초1</option><option value="2" selected>초2</option><option value="3">초3</option><option value="4">초4</option><option value="5">초5</option><option value="6">초6</option></select></label>
   <label>월 <select id="mon"></select></label>
  </fieldset>
  <fieldset><legend>지금 진도</legend>
@@ -221,7 +223,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 (function(){
 const $=id=>document.getElementById(id), P=Planner;
 const opt=(el,list,sel)=>{ el.innerHTML=list.map(([v,t])=>`<option value="${v}"${String(v)===String(sel)?' selected':''}>${t}</option>`).join(''); };
-const state={hwOn:'1',gifted:'1',planMode:'table'};
+const state={hwOn:'1',gifted:'1',planMode:'table',kmo:'switch'};
 const d=new Date(); $('year').value=d.getFullYear();
 opt($('mon'),[3,4,5,6,7,8,9,10,11,12,1,2].map(m=>[m,m+'월']),d.getMonth()+1);
 opt($('school'),[...Array.from({length:12},(_,i)=>[i+1,P.SEM(i+1)+' 디딤돌']),[13,'계통 · 대수 정리'],...P.MID.map((x,i)=>[14+i,x+' 원리해설'])],9);
@@ -248,7 +250,7 @@ function setSeg(k,v){ state[k]=String(v); document.querySelectorAll(`.seg[data-k
 function applyLevel(){
   const id=$('level').value; if(id==='manual') return;
   const set=(k,v)=>{ $(k).value=String(v); };
-  $('band').value=P.bandOf(id); $('speed').disabled=P.bandOf(id)==='C';
+  if($('band').value!=='D') $('band').value=P.bandOf(id); $('speed').disabled=['C','D'].includes($('band').value);
   if(id==='ex'){ Object.entries(EX).forEach(([k,v])=>set(k,v)); hwOptions(); setSeg('hwOn',1); return; }
   const L=LV.find(l=>l.id===id), now=P.mOf(+$('grade').value,+$('mon').value);
   const sb=(at(L.school,now)&&schoolIdx(at(L.school,now)[0])!=null)?at(L.school,now):nextOf(L.school,now,/^\d-\d|^중|계통|여유/);
@@ -262,27 +264,29 @@ function applyLevel(){
   if(E!=null&&[...$('hw').options].some(o=>o.value===String(E))){ set('hw',E); setSeg('hwOn',1); } else setSeg('hwOn',0);
 }
 function read(){ const on=state.hwOn==='1'; return {band:$('band').value,grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,
-  hw:on&&$('hw').value?$('hw').value:'none',hwDeep:on&&$('hwDeep').checked,hwMid:on&&$('hwMid').checked,gifted:state.gifted==='1'}; }
+  hw:on&&$('hw').value?$('hw').value:'none',hwDeep:on&&$('hwDeep').checked,hwMid:on&&$('hwMid').checked,gifted:state.gifted==='1',kmo:state.kmo}; }
 function draw(){
   const o=read(), plan=P.build(o); lastPlan=plan; const nm=$('name').value.trim()||'우리 아이';
   $('who').textContent=nm; $('who2').textContent=nm;
   $('hwOpts').style.display=state.hwOn==='1'?'grid':'none';
-  document.querySelector('.seg[data-k="hwOn"]').closest('.choice').style.display=plan.band==='C'?'none':'block';
+  document.querySelector('.seg[data-k="hwOn"]').closest('.choice').style.display=['C','D'].includes(plan.band)?'none':'block';
+  $('kmoChoice').style.display=plan.band==='D'?'block':'none';
   $('warn').innerHTML=plan.warn.map(w=>`<div class="warn">⚠ ${w}</div>`).join('');
   const R=k=>(plan.rows.find(r=>r.key===k)||{blocks:[]}).blocks, cur=k=>{ const b=R(k).find(x=>x[1]<=plan.now&&x[2]>=plan.now); return b?b[0]:'—'; };
-  $('nowItems').innerHTML=[['📘','교과',cur('school')],['💡','사고력',cur('comp')],['➕','연산',cur('calc')]].map(([i,a,b])=>`<div class="item"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
+  const strip=t=>t.replace(/<br>.*$/,'');
+  $('nowItems').innerHTML=[['📘','교과',strip(cur('school'))],['💡',plan.band==='D'?'경시':'사고력',strip(cur('comp'))],['➕','연산',strip(cur('calc'))]].map(([i,a,b])=>`<div class="item"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
   const ms=P.milestones(plan), steps=ms.main.filter(x=>x.kind!=='now'), next=steps[0], later=steps[1];
   $('dNow').innerHTML=`● 현재 <small>${P.label(plan.now)} · ${cur('school').replace(/ 디딤돌.*/,'')}</small>`;
   $('dNext').innerHTML=next?`⚑ 다음 과정 <small>${next.title} · ${P.label(next.m)}</small>`:'⚑ 다음 과정';
   $('dLater').innerHTML=later?`⌖ 그다음 <small>${later.title} · ${P.label(later.m)}</small>`:'⌖ 시기 미정';
   drawMap(P.milestones(plan));
-  $('tbl').innerHTML=P.renderTable(plan); $('simple').innerHTML=P.renderSimple(plan);
+  $('tbl').innerHTML=P.renderTable(plan); if(plan.A1-plan.A0>50) $('tbl').querySelector('table').classList.add('wide'); $('simple').innerHTML=P.renderSimple(plan);
   $('tbl').style.display=state.planMode==='table'?'block':'none'; $('simple').style.display=state.planMode==='simple'?'block':'none';
   $('stages').innerHTML=P.narrative(plan).map(y=>`<div class="stg"><h4>${y.title}</h4>
     <div class="mrow">${y.months.map(c=>`<div class="mc${c.now?' now':''}${c.past?' past':''}"><b>${c.mon}</b>${c.starts.map(t=>`<span class="st">${t}</span>`).join('')}${c.issues.map(t=>`<span class="is">${t}</span>`).join('')}</div>`).join('')}</div>
     <dl class="cm">${y.items.map(it=>`<dt>${it.label}</dt><dd>${it.text}</dd>`).join('')}</dl></div>`).join('');
   const lvName=$('level').selectedOptions[0].textContent;
-  $('repItems').innerHTML=[['📖','현재 학습',`${cur('school')} · ${cur('comp')}`],['👤','기준 레벨',`${lvName} · ${plan.bandName}`],['💡','다음 과정',next?`${next.title} (${P.label(next.m)})`:'—'],['📅','다음 확인','학습 경험 후 조정 · 경로는 언제든 바꿀 수 있어요']]
+  $('repItems').innerHTML=[['📖','현재 학습',`${strip(cur('school'))} · ${strip(cur('comp'))}`],['👤','기준 레벨',`${lvName} · ${plan.bandName}`],['💡','다음 과정',next?`${next.title} (${P.label(next.m)})`:'—'],['📅','다음 확인','학습 경험 후 조정 · 경로는 언제든 바꿀 수 있어요']]
     .map(([i,a,b])=>`<div class="ritem"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
 }
 // 3D 맵: three.js(map3d.js, 수의 나라와 같은 three · 아이 캐릭터). WebGL 이 없으면 CSS 맵.
