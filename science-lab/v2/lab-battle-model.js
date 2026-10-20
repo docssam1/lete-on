@@ -19,9 +19,11 @@ import { seaModel } from '../scenes/sealevel-model.js';
 import { glitterModel, RULES as GLITTER_RULES } from '../scenes/glitter-model.js';
 import { MATERIALS, TESTS as MAT_TESTS, materialRow, materialResult } from '../scenes/material-model.js';
 import { WATERS as SEA_WATERS, AMOUNTS as SEA_AMOUNTS, evapRow } from '../scenes/seawater-model.js';
+import { rulerRow } from '../scenes/ruler-model.js';
 const sea = (title, targets) => ({ title, question: '어느 팀 마을에서 물에 닿은 집이 더 많을까요?', choices: ['1팀이 더 많음', '집 수가 같음', '2팀이 더 많음'], field: 'n', targets });
 // 막대 네 개: 두 팀이 같은 시험을 하고, 팀마다 맡은 막대 하나의 결과를 비교한다(기록 한 줄에 네 막대가 다 있다)
 // 증발 접시: 팀마다 맡은 접시(물의 종류)와 물의 양 — 기록 한 줄에 두 접시가 함께 있다
+const ruler = (title, field, targets) => ({ title, question: field === 'rank' ? '어느 팀의 자에서 더 높은 소리가 날까요?' : '어느 팀의 자에서 더 큰 소리가 날까요?', choices: field === 'rank' ? ['1팀이 더 높음', '높낮이가 같음', '2팀이 더 높음'] : ['1팀이 더 큼', '크기가 같음', '2팀이 더 큼'], field, targets });
 const seawater = (title, targets) => ({ title, question: '물이 모두 날아간 뒤 어느 팀의 접시에 더 많이 남을까요?', choices: ['1팀 접시에 더 많이 남음', '남은 양이 같음', '2팀 접시에 더 많이 남음'], field: 'sea', targets });
 const material = (title, question, choices, targets) => ({ title, question, choices, field: 'mat', targets });
 const glitter = (title, targets) => ({ title, question: '어느 팀에서 반짝이가 묻은 친구가 더 많을까요?', choices: ['1팀이 더 많음', '친구 수가 같음', '2팀이 더 많음'], field: 'n', targets });
@@ -44,6 +46,11 @@ export const LAB_BATTLE_ROUNDS = {
     glitter('손 씻기 규칙만 바꾸기', [{ rule: '손 씻기 없음', round: 3 }, { rule: 'B·D·F가 차례마다 손 씻기', round: 3 }]),
     glitter('악수 차례만 바꾸기', [{ rule: '손 씻기 없음', round: 1 }, { rule: '손 씻기 없음', round: 2 }]),
     glitter('손을 씻으면 늘어날까?', [{ rule: 'B·D·F가 차례마다 손 씻기', round: 1 }, { rule: 'B·D·F가 차례마다 손 씻기', round: 3 }]),
+  ],
+  'c22-s32-u03': [
+    ruler('내민 길이만 바꾸기', 'rank', [{ len: 15, strength: '세게' }, { len: 5, strength: '세게' }]),
+    ruler('튕기는 세기만 바꾸기', 'amp', [{ len: 10, strength: '세게' }, { len: 10, strength: '약하게' }]),
+    ruler('세게 튕기면 높아질까?', 'rank', [{ len: 10, strength: '약하게' }, { len: 10, strength: '세게' }]),
   ],
   'c22-s32-u02': [
     seawater('물의 종류만 바꾸기', [{ ml: 20, water: '바닷물' }, { ml: 20, water: '수돗물' }]),
@@ -132,6 +139,7 @@ export function validBattleRow(unit, row) {
   if (!row || typeof row !== 'object') return false;
   if (unit === 'c22-s42-u04') { try { const m = seaModel(row.level, row.wall === '방파제 있음'); return row.wall === m.wall && row.n === m.n && row.result === m.result; } catch { return false; } }
   if (unit === 'c22-s32-u04') { const r = GLITTER_RULES.indexOf(row.rule); if (r < 0) return false; try { const m = glitterModel(row.round, r); return row.n === m.n && row.result === m.result; } catch { return false; } }
+  if (unit === 'c22-s32-u03') { try { const m = rulerRow(row.len, row.strength); return ['pitch', 'loud', 'swing', 'rank', 'amp'].every((k) => row[k] === m[k]); } catch { return false; } }
   if (unit === 'c22-s32-u02') { if (!SEA_AMOUNTS.includes(row.ml)) return false; const m = evapRow(row.ml); return SEA_WATERS.every((w) => row[w] === m[w]) && row.seaG === m.seaG && row.tapG === m.tapG; }
   if (unit === 'c22-s32-u01') { if (!MAT_TESTS.includes(row.test)) return false; const m = materialRow(row.test); return MATERIALS.every((k) => row[k] === m[k]); }
   if (unit === 's52-u01') { try { const m = bubbleModel(row.add); return row.mean === m.mean && row.result === m.result && Array.isArray(row.trials) && row.trials.join() === m.trials.join(); } catch { return false; } }
@@ -162,6 +170,7 @@ export function battleTargetText(unit, target) {
   if (unit === 'c22-s32-u04') return `${target.rule} · ${target.round}차례 뒤`;
   if (unit === 'c22-s32-u01') return `${target.mat} 막대 · ${target.test}`;
   if (unit === 'c22-s32-u02') return `${target.water} 접시 · ${target.ml} mL`;
+  if (unit === 'c22-s32-u03') return `자 ${target.len} cm · ${target.strength} 튕기기`;
   if (unit === 's52-u01') return target.add;
   if (unit === 's51-u05') return target.water;
   if (unit === 's51-u04') return target.cool;
@@ -182,6 +191,7 @@ export function battleRowText(unit, row) {
   if (unit === 'c22-s32-u04') return `${row.rule} · ${row.round}차례 · ${row.result}`;
   if (unit === 'c22-s32-u01') return `${row.test} · ${MATERIALS.map((m) => `${m} ${row[m]}`).join(', ')}`;
   if (unit === 'c22-s32-u02') return `${row.ml} mL · 바닷물 ${row.바닷물} · 수돗물 ${row.수돗물}`;
+  if (unit === 'c22-s32-u03') return `${row.len} cm · ${row.strength} · ${row.pitch} · ${row.loud}`;
   if (unit === 's52-u01') return `${row.add} · ${row.result}`;
   if (unit === 's51-u05') return `${row.water} · ${row.result}`;
   if (unit === 's51-u04') return `${row.cool} · ${row.result}`;

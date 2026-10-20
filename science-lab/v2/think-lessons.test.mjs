@@ -10,9 +10,11 @@ import { seaModel, LEVELS } from '../scenes/sealevel-model.js';
 import { glitterModel } from '../scenes/glitter-model.js';
 import { materialRow, hardest, bendiest, floaters, seeThrough } from '../scenes/material-model.js';
 import { evapRow, AMOUNTS } from '../scenes/seawater-model.js';
+import { rulerRow } from '../scenes/ruler-model.js';
 
 const UNITS = { 'c22-s42-u04': { lab: 'sealevel', scene: 'sea-town', rowsKey: 'climateInquiryRows' }, 'c22-s32-u04': { lab: 'glitter', scene: 'glitter-hands', rowsKey: undefined },
-  'c22-s32-u01': { lab: 'material', scene: 'material-bars', rowsKey: undefined }, 'c22-s32-u02': { lab: 'seawater', scene: 'evap-dishes', rowsKey: undefined } };
+  'c22-s32-u01': { lab: 'material', scene: 'material-bars', rowsKey: undefined }, 'c22-s32-u02': { lab: 'seawater', scene: 'evap-dishes', rowsKey: undefined },
+  'c22-s32-u03': { lab: 'ruler', scene: 'ruler-desk', rowsKey: undefined } };
 const load = async (u) => {
   const [book, ix, unit, think, similar, lesson, records] = await Promise.all([import(`../data/book/${u}.book.js`), import(`../data/book/${u}.interact.js`), import(`../data/units/${u}.js`),
     import(`../data/units/${u}.think.js`), import(`../data/units/${u}.similar.js`).catch(() => ({ similar: [] })), import(`../data/units/${u}.lesson.js`), import(`../data/units/${u}.records.js`)]);
@@ -80,4 +82,6 @@ test('3D 모형 수치 = 교재 결과 표', () => {
   assert.equal(materialRow('물에 넣기').고무, '가라앉아요', '무른 고무도 가라앉는다(단단함과 뜨는 것은 다른 성질)');
   assert.deepEqual(AMOUNTS.map((ml) => evapRow(ml).seaG), [0.35, 0.7, 1.4], '바닷물 약 3.5 % · 양에 비례');
   assert.ok(AMOUNTS.every((ml) => evapRow(ml).tapG === 0), '수돗물은 거의 남지 않음');
+  assert.deepEqual([5, 10, 15].map((l) => rulerRow(l, '세게').rank), [3, 2, 1], '짧을수록 높은 소리');
+  assert.equal(rulerRow(10, '세게').rank, rulerRow(10, '약하게').rank, '세기는 높낮이를 바꾸지 않는다');
 });

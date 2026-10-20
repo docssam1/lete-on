@@ -13,6 +13,7 @@ import { mountSeaLevel } from './lab-sealevel.js';
 import { mountGlitter } from './lab-glitter.js';
 import { mountMaterial } from './lab-material.js';
 import { mountSeawater } from './lab-seawater.js';
+import { mountRuler } from './lab-ruler.js';
 import { mountBubble } from './lab-bubble.js';
 import { mountFreeze } from './lab-freeze.js';
 import { mountHill3D } from './lab-hill3d.js';
@@ -23,7 +24,7 @@ import { mountForce } from './lab-force.js';
 import { mountAnimal } from './lab-animal.js';
 import {mountInquiry} from './lab-inquiry.js';
 import { mountPlant } from './lab-plant.js';
-export const LABS = { sealevel: mountSeaLevel, glitter: mountGlitter, material: mountMaterial, seawater: mountSeawater, inquiry: mountInquiry, plant: mountPlant, animal: mountAnimal, force: mountForce, life: mountLife, 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D, pond: mountPond3D, volcano: mountVolcano3D, humidifier: mountHumidifier, shadow: mountShadow, quake: mountQuake, cycle: mountCycle, splash: mountSplash, heat: mountHeat, sun: mountSun, snow: mountSnow, bread: mountBread, bubble: mountBubble };
+export const LABS = { sealevel: mountSeaLevel, glitter: mountGlitter, material: mountMaterial, seawater: mountSeawater, ruler: mountRuler, inquiry: mountInquiry, plant: mountPlant, animal: mountAnimal, force: mountForce, life: mountLife, 'ring-tower': mountRingTower, freeze: mountFreeze, hill: mountHill3D, pond: mountPond3D, volcano: mountVolcano3D, humidifier: mountHumidifier, shadow: mountShadow, quake: mountQuake, cycle: mountCycle, splash: mountSplash, heat: mountHeat, sun: mountSun, snow: mountSnow, bread: mountBread, bubble: mountBubble };
 // 3D 실험실(캔버스가 있는 것)에는 「전체 화면」 단추를 붙인다. 실험실 파일은 건드리지 않고 마운트 뒤에 끼운다.
 export const mountLabOf = (kind) => {
   const f = LABS[kind] || mountRingTower;

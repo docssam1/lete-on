@@ -8,6 +8,7 @@ import { seaModel } from '../scenes/sealevel-model.js';
 import { glitterModel, RULES as GLITTER_RULES } from '../scenes/glitter-model.js';
 import { materialRow } from '../scenes/material-model.js';
 import { evapRow } from '../scenes/seawater-model.js';
+import { rulerRow } from '../scenes/ruler-model.js';
 
 test('물: 같은 물을 얼려도 무게는 같고, 높이는 달라진다', () => {
   const rounds = LAB_BATTLE_ROUNDS['s41-u02'];
@@ -86,4 +87,10 @@ test('증발 접시: 팀마다 맡은 접시의 남은 양을 비교한다', () 
   assert.deepEqual(rounds.map((r) => battleVerdict('c22-s32-u02', r, rows(r), [1, 1]).answers[0]), [0, 2, 1], '바닷물이 더 · 양이 많으면 더 · 같은 조건은 같음');
   assert.equal(validBattleRow('c22-s32-u02', { ...evapRow(20), 수돗물: '흰 알갱이 약 0.7 g' }), false);
   assert.equal(matchesBattleTarget('c22-s32-u02', evapRow(40), rounds[0].targets[0]), false, '다른 양의 기록은 고를 수 없다');
+});
+
+test('자 튕기기: 길이는 높낮이, 세기는 크기만 바꾼다', () => {
+  const rounds = LAB_BATTLE_ROUNDS['c22-s32-u03'], rows = (r) => r.targets.map((t) => rulerRow(t.len, t.strength));
+  assert.deepEqual(rounds.map((r) => battleVerdict('c22-s32-u03', r, rows(r), [1, 1]).answers[0]), [2, 0, 1], '짧은 자가 더 높음 · 세게가 더 큼 · 세게 튕겨도 높낮이는 같음');
+  assert.equal(validBattleRow('c22-s32-u03', { ...rulerRow(15, '세게'), pitch: '높은 소리' }), false);
 });

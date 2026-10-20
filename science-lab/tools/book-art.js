@@ -13,10 +13,11 @@ import { buildSeaTown, heightAt, HOUSES as SEA_HOUSES } from '../scenes/sea-town
 import { buildGlitterRoom } from '../scenes/glitter-hands.js';
 import { buildMaterialBench } from '../scenes/material-bars.js';
 import { buildEvapBench } from '../scenes/evap-dishes.js';
+import { buildRulerDesk } from '../scenes/ruler-desk.js';
 const OIL_R_ = () => 0.34;
 
 const q = new URLSearchParams(location.search), shot = q.get('shot') || 'hero';
-const SIZE = { sea: [1280, 600], glit: [1280, 600], mat: [1280, 600], 'mat-hero': [1800, 820], 'mat-row': [1500, 720], sw: [1280, 600], 'sw-hero': [1800, 820], 'sw-row': [1500, 720], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
+const SIZE = { sea: [1280, 600], glit: [1280, 600], mat: [1280, 600], 'mat-hero': [1800, 820], 'mat-row': [1500, 720], sw: [1280, 600], 'sw-hero': [1800, 820], 'sw-row': [1500, 720], rl: [1280, 600], 'rl-hero': [1800, 820], 'rl-row': [1500, 720], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
 const [W, H] = SIZE[shot] || SIZE[shot.split('-')[0]] || [1600, 900];
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -204,6 +205,27 @@ if (shot === 'hero' || shot === 'sizes') {
       if (shot === 'glit-shake2') CO('2차례: B-C·D-E·F-A', kidAt(rig, 'C', 1.1), 760, 520, '3차례: C-D·E-F·A-B');
       if (shot === 'glit-wash') CO('악수 전에 B·D·F 손 씻기', kidAt(rig, 'D', 1.1), 760, 520, '비누와 흐르는 물로 30초 이상');
     }
+  }
+} else if (shot.startsWith('rl-')) {
+  // 책상 끝 자 튕기기(c22-s32-u03): rl-hero · rl-start · rl-pluck(떨리는 중) · rl-15 · rl-row(5 cm와 15 cm 비교)
+  scene.background = new THREE.Color(0xf3f5f8); scene.environment = env; scene.environmentIntensity = 0.65;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe7dccb, 1.0)); const d = new THREE.DirectionalLight(0xffffff, 2.1); d.position.set(2, 6, 5); scene.add(d);
+  camera = new THREE.PerspectiveCamera(24, W / H, 0.1, 200);
+  const CO = (t, p, x, y, sub) => callouts.push({ t, p, at: [x, y], sub }), TIP = (L) => [0.5 + L * 0.075, 0.02, 0];
+  const one = (o, x = 0, z = 0) => { const rig = buildRulerDesk({ letters: false }); rig.position.set(x, 0, z); rig.userData.set({ len: 10, strength: '세게', on: false, p: 0, hold: 0, ...o }); scene.add(rig); return rig; };
+  if (shot === 'rl-row') {
+    one({ len: 5, on: true, p: 0.06 }, 0, -0.75); one({ len: 15, on: true, p: 0.1 }, 0, 0.75);
+    camera.position.set(2.6, 3.4, 5.4); camera.lookAt(0.55, 0, 0);
+    CO('5 cm — 빨리 떨려 높은 소리', [0.5 + 5 * 0.075, 0.05, -0.75], 760, 90, '고리 간격이 좁아요'); CO('15 cm — 천천히 떨려 낮은 소리', [0.5 + 15 * 0.075, 0.05, 0.75], 760, 620, '고리 간격이 넓어요');
+  } else {
+    const st = { 'rl-hero': { len: 10 }, 'rl-start': { len: 10 }, 'rl-pluck': { len: 10, on: true, p: 0.06 }, 'rl-15': { len: 15 } }[shot] || {};
+    one(st, shot === 'rl-hero' ? 0.9 : 0);
+    camera.position.set(2.4, 2.4, 4.6); camera.lookAt(0.55, 0, 0);
+    if (shot === 'rl-hero') { camera.position.set(1.8, 2.4, 5.4); camera.lookAt(0.9, 0.05, 0);
+      overlay.push(['책상 끝 자 튕기기', -1.4, 0.72, { size: 62, color: '#1f2a44', bold: true, align: 'left' }], ['길게 내밀면 소리는 어떻게 될까요?', -1.35, 0.5, { size: 34, color: '#5b4cc4', bold: true, align: 'left' }]); }
+    if (shot === 'rl-start') CO('책상 밖으로 10 cm', TIP(10), 760, 470, '책으로 눌러 고정해요');
+    if (shot === 'rl-pluck') CO('끝을 튕기면 떨려요', TIP(10), 760, 470, '떨리는 모습을 보며 들어요');
+    if (shot === 'rl-15') CO('15 cm로 길게 내밀기', TIP(15), 760, 470, '같은 세기로 튕겨요');
   }
 } else if (shot.startsWith('sw-')) {
   // 증발 접시 두 개(c22-s32-u02): sw-hero · sw-start · sw-heat(가열 중) · sw-40 · sw-row(결과)
