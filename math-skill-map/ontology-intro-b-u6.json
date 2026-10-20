@@ -1,0 +1,379 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v116",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 B",
+    "unit": 6,
+    "title": "쌓기나무",
+    "printedPages": [
+      48,
+      55
+    ],
+    "sourceActivityBlocks": 16
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 900,
+    "validatedAnswers": 441,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "existingSkillActionCandidatesReused": 4,
+    "existingSkillEvidenceExtensionsReused": 3,
+    "activitySkillRelationsReused": 17,
+    "conditionalDifficultyBandsAssigned": 16,
+    "conditionalDifficultyBandDistribution": {
+      "1": 2,
+      "2": 4,
+      "3": 7,
+      "4": 3
+    },
+    "validatedStudentResponses": 14,
+    "workedRepresentativeExamplesExcluded": 2,
+    "newSkillCandidates": 0,
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "skills": [
+    {
+      "id": "CUB02",
+      "name": "점유 칸과 윗면 수 세기",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "위에서 본 투영에서 쌓기나무가 놓인 칸을 세고, 총 큐브 수와 구분한다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-003",
+        "1031-unit6-introb-block-004"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "CUB03",
+      "name": "가려진 큐브를 포함한 전체 수 추론",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "보이는 부분과 조건을 이용해 숨은 큐브를 추론하고 전체 수를 계산한다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-001",
+        "1031-unit6-introb-block-002",
+        "1031-unit6-introb-block-005",
+        "1031-unit6-introb-block-006",
+        "1031-unit6-introb-block-009"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "CUB04",
+      "name": "세 관점 투영 읽기",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "위·앞·옆에서 본 윤곽을 격자에 대응하고 각 투영의 칸 수를 센다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-007",
+        "1031-unit6-introb-block-008"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "CUB05",
+      "name": "정면 높이도 구성",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "정면도를 그리고 각 위치의 기둥 높이를 표시한다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-010"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "CUB06",
+      "name": "조각·투영 조건을 만족하는 구조 추론",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "주어진 전체 수·조각 수 또는 다중 투영 조건을 만족하는 쌓기 구조를 추론한다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-015",
+        "1031-unit6-introb-block-016"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "CUB07",
+      "name": "투영 불변 조건에서 최대 추가",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "세 방향 투영 윤곽을 유지하며 더할 수 있는 큐브 수의 최댓값을 찾는다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-016"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "CUB11",
+      "name": "상자 용량에서 필요한 추가 큐브 수 구하기",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "한 층의 큐브 수로 상자의 전체 용량을 정하고, 이미 들어 있는 수를 빼 필요한 큐브를 구한다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-011"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "CUB12",
+      "name": "완성한 수와 남은 수로 처음 개수 복원하기",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "완성된 입체에 남은 큐브 수를 합쳐 처음 주어진 전체 수를 복원한다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-012"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "CUB13",
+      "name": "보이는 큐브와 가려진 큐브의 수 비교하기",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "전체 수, 보이는 큐브 수, 가려진 큐브 수 사이의 관계를 이용해 두 수의 차를 구한다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-013"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "CUB14",
+      "name": "큐브 제거 뒤 한 방향 투영 갱신하기",
+      "domain": "쌓기나무 배열·투영·구성",
+      "observableAction": "입체에서 지정된 큐브를 제거한 뒤, 지정된 시점의 투영 격자에서 달라지는 칸을 찾는다.",
+      "evidenceItemIds": [
+        "1031-unit6-introb-block-014"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    }
+  ],
+  "activities": {
+    "1031-unit6-introb-block-001": {
+      "page": 49,
+      "label": "상황 속 원리 탐구 01",
+      "skillIds": [
+        "CUB03"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-002": {
+      "page": 49,
+      "label": "확실하게 한번 더 01-1",
+      "skillIds": [
+        "CUB03"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-003": {
+      "page": 49,
+      "label": "상황 속 원리 탐구 02",
+      "skillIds": [
+        "CUB02"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "1",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-004": {
+      "page": 49,
+      "label": "확실하게 한번 더 02-1",
+      "skillIds": [
+        "CUB02"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "1",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-005": {
+      "page": 50,
+      "label": "대표문제 01",
+      "skillIds": [
+        "CUB03"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-006": {
+      "page": 50,
+      "label": "유제 01",
+      "skillIds": [
+        "CUB03"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-007": {
+      "page": 51,
+      "label": "대표문제 02",
+      "skillIds": [
+        "CUB04"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-008": {
+      "page": 51,
+      "label": "유제 02",
+      "skillIds": [
+        "CUB04"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-009": {
+      "page": 52,
+      "label": "연습문제 01",
+      "skillIds": [
+        "CUB03"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-010": {
+      "page": 52,
+      "label": "연습문제 02",
+      "skillIds": [
+        "CUB05"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-011": {
+      "page": 53,
+      "label": "연습문제 03",
+      "skillIds": [
+        "CUB11"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-012": {
+      "page": 53,
+      "label": "연습문제 04",
+      "skillIds": [
+        "CUB12"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-013": {
+      "page": 54,
+      "label": "연습문제 05",
+      "skillIds": [
+        "CUB13"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-014": {
+      "page": 54,
+      "label": "연습문제 06",
+      "skillIds": [
+        "CUB14"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-015": {
+      "page": 55,
+      "label": "심화문제 01",
+      "skillIds": [
+        "CUB06"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit6-introb-block-016": {
+      "page": 55,
+      "label": "심화문제 02",
+      "skillIds": [
+        "CUB06",
+        "CUB07"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    }
+  },
+  "spiralRelationCandidates": [
+    {
+      "id": "SPIRAL-CUBE-FOOTPRINT-TO-BOX-CAPACITY",
+      "fromSkillId": "CUB02",
+      "toSkillId": "CUB11",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "위에서 본 투영의 점유 칸 수를 세고 총 큐브 수와 구분한다.",
+      "addedDemand": "경계가 있는 상자의 전체 층 용량과 현재 채워진 수를 함께 이용해 빈 칸을 구한다.",
+      "status": "hypothesis-needs-teacher-review"
+    },
+    {
+      "id": "SPIRAL-CUBE-HIDDEN-COUNT-TO-COMPARISON",
+      "fromSkillId": "CUB03",
+      "toSkillId": "CUB13",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "보이는 부분과 조건을 이용해 가려진 큐브 수 또는 전체 수를 추론한다.",
+      "addedDemand": "전체 수 조건으로 보이는 수와 가려진 수를 각각 비교해 차를 계산한다.",
+      "status": "hypothesis-needs-teacher-review"
+    },
+    {
+      "id": "SPIRAL-CUBE-STATIC-PROJECTION-TO-UPDATED-PROJECTION",
+      "fromSkillId": "CUB04",
+      "toSkillId": "CUB14",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "주어진 입체를 특정 방향에서 본 투영 격자와 대응한다.",
+      "addedDemand": "일부 큐브를 제거한 뒤 가려짐과 투영 칸의 변화를 다시 추적한다.",
+      "status": "hypothesis-needs-teacher-review"
+    },
+    {
+      "id": "SPIRAL-CUBE-COUNT-PARTS-TO-RESTORE-INITIAL-WHOLE",
+      "fromSkillId": "CUB03",
+      "toSkillId": "CUB12",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "입체 그림과 수량 조건에서 전체 큐브 수를 복원한다.",
+      "addedDemand": "숨은 큐브 수가 아니라 이미 사용한 수와 남은 수의 합으로 최초 전체를 역으로 복원한다.",
+      "status": "hypothesis-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only; teacher approval pending",
+    "candidateBandDistribution": {
+      "1": 2,
+      "2": 4,
+      "3": 7,
+      "4": 3
+    },
+    "rubric": "shared 5-band conditional thinking-demand criteria"
+  },
+  "curriculum": {
+    "minimumCurriculumAssignments": 0,
+    "note": "공식 교과 맥락과 문항별 최소 교과수준 판정은 별개이며, 이 단원은 수준을 배정하지 않았다."
+  },
+  "answerValidation": {
+    "sameBookAnswerKeyPages": [
+      114
+    ],
+    "studentResponsesValidated": 14,
+    "workedRepresentativeExamplesExcluded": 2,
+    "exactAnswerValuesOmitted": true
+  },
+  "privacy": "정답 값, OCR 문구, 로컬 경로, 원자료 이미지 해시는 공개 자료에 포함하지 않는다. 행동·나선·난이도는 후보 상태."
+}

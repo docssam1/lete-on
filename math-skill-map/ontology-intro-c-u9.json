@@ -1,0 +1,500 @@
+{
+  "schema": "gfield-public-math-skill-ontology-supplement/1",
+  "checkpoint": "v30",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 C",
+    "units": [
+      9
+    ],
+    "unit9PrintedPages": "75–81",
+    "unit9Activities": 16,
+    "unit9MappedActivities": 16,
+    "unit9HeldActivities": 0,
+    "aggregateCoverageUnits": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "aggregateCoverageActivities": 144,
+    "aggregateActionTypeCandidates": 95,
+    "description": "C9 추론하기의 유형·가족·관계 후보와 C1–C9 통합 통계. 공개 자료에서 문항·정답·비공개 활동 ID·해시는 제외."
+  },
+  "interpretation": "관찰 가능한 수학 행동을 유형 후보로 분리합니다. 난이도는 조건부 연구 범위이고 학년·연령 및 교사 승인은 별도입니다. 계통도 간선은 연결 가설로서 선수 순서를 확정하지 않습니다.",
+  "aggregate": {
+    "ontologyNodes": 1338,
+    "ontologyRelations": 2009,
+    "skillActionCandidates": 221,
+    "candidateEvidenceLinkedActivities": 397,
+    "activityReviewQueue": 455,
+    "conditionalDifficultyBands": 436,
+    "somaItemCrossReferences": 387,
+    "teacherApprovedTypes": 0,
+    "approvedDifficultyLevels": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unit9Counts": {
+    "skillCandidates": 14,
+    "activityBlocks": 16,
+    "mappedActivities": 16,
+    "heldActivities": 0,
+    "activitySkillRelations": 16,
+    "conditionalDifficultyBands": 16,
+    "minimumCurriculumContentCandidates": 14,
+    "minimumCurriculumAssignments": 0,
+    "somaItemCrossReferences": 14,
+    "somaItemsWithoutDirectRow": 2,
+    "familyCandidates": 4,
+    "familyMembershipRelations": 15,
+    "relationHypotheses": 8,
+    "curriculumContextRelations": 3,
+    "answerValidatedActivities": 0
+  },
+  "skillCandidates": [
+    {
+      "id": "LOG-INTRO-C-U9-01",
+      "displayNumber": 1,
+      "label": "공통 기준과의 비교로 세 대상 순서 정하기",
+      "area": "논리·추론",
+      "observableAction": "공통 기준 대상보다 크거나 작은 관계를 이용해 다른 세 대상의 상대 순서를 정한다.",
+      "printedPages": "75쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "1–2",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "공통 기준 대상보다 크거나 작은 관계를 이용해 다른 세 대상의 상대 순서를 정한다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-02",
+      "displayNumber": 2,
+      "label": "두 대상 비교를 연결해 순서 추론하기",
+      "area": "논리·추론",
+      "observableAction": "공유 대상을 포함한 두 비교 관계를 방향에 맞게 연결해 대상 순서를 정한다.",
+      "printedPages": "75쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "1–2",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "공유 대상을 포함한 두 비교 관계를 방향에 맞게 연결해 대상 순서를 정한다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-03",
+      "displayNumber": 3,
+      "label": "서로 붙은 두 대상의 공통 이웃 찾기",
+      "area": "논리·추론",
+      "observableAction": "선형 배열에서 주어진 두 쌍의 인접 관계가 겹치는 대상을 가운데 위치로 판별한다.",
+      "printedPages": "75쪽",
+      "activityCount": 2,
+      "conditionalDifficultyBand": "1–2",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "선형 배열에서 주어진 두 쌍의 인접 관계가 겹치는 대상을 가운데 위치로 판별한다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-04",
+      "displayNumber": 4,
+      "label": "두 행 좌석의 위치 제약을 함께 적용하기",
+      "area": "논리·추론",
+      "observableAction": "두 행 좌석에서 앞뒤·같은 줄 금지·번호 조건을 교차 적용해 가능한 자리를 좁힌다.",
+      "printedPages": "76쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "2–4",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "두 행 좌석에서 앞뒤·같은 줄 금지·번호 조건을 교차 적용해 가능한 자리를 좁힌다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-05",
+      "displayNumber": 5,
+      "label": "방향·간격 단서로 일렬 위치 판별하기",
+      "area": "논리·추론",
+      "observableAction": "일렬 배열에서 오른쪽, 앞·뒤, 한 명 사이 등의 방향·거리 조건으로 지정 위치를 찾는다.",
+      "printedPages": "76–77쪽",
+      "activityCount": 2,
+      "conditionalDifficultyBand": "2–3",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "일렬 배열에서 오른쪽, 앞·뒤, 한 명 사이 등의 방향·거리 조건으로 지정 위치를 찾는다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-06",
+      "displayNumber": 6,
+      "label": "부분 순서와 끝자리 조건으로 배열 정하기",
+      "area": "논리·추론",
+      "observableAction": "일부 순서 관계를 만들고 특정 대상이 맨 앞·뒤일 수 없다는 조건으로 가능한 배열을 판별한다.",
+      "printedPages": "77쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "2–4",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "일부 순서 관계를 만들고 특정 대상이 맨 앞·뒤일 수 없다는 조건으로 가능한 배열을 판별한다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-07",
+      "displayNumber": 7,
+      "label": "절대 달과 상대 순위로 순서 정하기",
+      "area": "논리·추론",
+      "observableAction": "한 대상의 달을 기준점으로 두고 상대적인 선후 관계와 유일 순위 조건을 결합한다.",
+      "printedPages": "78쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "2–3",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "한 대상의 달을 기준점으로 두고 상대적인 선후 관계와 유일 순위 조건을 결합한다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-08",
+      "displayNumber": 8,
+      "label": "앞·뒤 순위를 환산해 사이 인원 세기",
+      "area": "논리·추론",
+      "observableAction": "앞·뒤 기준으로 주어진 순위를 한 방향 위치로 바꾸고 두 위치 사이의 대상을 센다.",
+      "printedPages": "78쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "1–3",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "앞·뒤 기준으로 주어진 순위를 한 방향 위치로 바꾸고 두 위치 사이의 대상을 센다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-09",
+      "displayNumber": 9,
+      "label": "뒤 기준 위치 관계를 결합해 끝자리 찾기",
+      "area": "논리·추론",
+      "observableAction": "뒤에서 센 순위와 칸 간격 조건을 연결해 줄의 마지막 위치에 놓인 대상을 찾는다.",
+      "printedPages": "79쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "2–3",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "뒤에서 센 순위와 칸 간격 조건을 연결해 줄의 마지막 위치에 놓인 대상을 찾는다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-10",
+      "displayNumber": 10,
+      "label": "저울 비교와 결합 무게로 최솟값 추론하기",
+      "area": "논리·추론",
+      "observableAction": "양팔저울의 방향과 결합 물체 비교를 독립 관계로 바꾸어 가장 가벼운 대상을 찾는다.",
+      "printedPages": "79쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "2–4",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "양팔저울의 방향과 결합 물체 비교를 독립 관계로 바꾸어 가장 가벼운 대상을 찾는다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-11",
+      "displayNumber": 11,
+      "label": "속성 대응과 비교 관계를 함께 추론하기",
+      "area": "논리·추론",
+      "observableAction": "사람과 색의 일대일 대응을 만들고 서로 다른 두 속성의 비교 조건을 연결해 누락 속성을 찾는다.",
+      "printedPages": "80쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "3–4",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "사람과 색의 일대일 대응을 만들고 서로 다른 두 속성의 비교 조건을 연결해 누락 속성을 찾는다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-12",
+      "displayNumber": 12,
+      "label": "수 배열에 이웃·쌍합 제약 적용하기",
+      "area": "논리·추론",
+      "observableAction": "서로 다른 수를 여러 칸에 배치하면서 주어진 이웃 차와 두 쌍 합의 차를 함께 만족시킨다.",
+      "printedPages": "80쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "3–5",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "서로 다른 수를 여러 칸에 배치하면서 주어진 이웃 차와 두 쌍 합의 차를 함께 만족시킨다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-13",
+      "displayNumber": 13,
+      "label": "연산자·숫자 카드 배열 후 식 계산하기",
+      "area": "논리·추론",
+      "observableAction": "숫자와 연산자 카드를 관계 조건에 맞춰 배열한 뒤 완성된 식의 값을 계산한다.",
+      "printedPages": "81쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "3–5",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "숫자와 연산자 카드를 관계 조건에 맞춰 배열한 뒤 완성된 식의 값을 계산한다."
+    },
+    {
+      "id": "LOG-INTRO-C-U9-14",
+      "displayNumber": 14,
+      "label": "일대일 수 배정과 공유 합 조건으로 값 찾기",
+      "area": "논리·추론",
+      "observableAction": "서로 다른 번호를 사람에게 하나씩 배정하고 공유 변수가 있는 합 조건과 제외 조건을 결합한다.",
+      "printedPages": "81쪽",
+      "activityCount": 1,
+      "conditionalDifficultyBand": "3–4",
+      "minimumCurriculumLevelContentCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "approvedDifficulty": null,
+      "status": "candidate-needs-teacher-review",
+      "description": "서로 다른 번호를 사람에게 하나씩 배정하고 공유 변수가 있는 합 조건과 제외 조건을 결합한다."
+    }
+  ],
+  "families": [
+    {
+      "id": "FAMILY-INTRO-C-U9-01",
+      "label": "비교 관계 연결과 순서 추론",
+      "members": [
+        "LOG-INTRO-C-U9-01",
+        "LOG-INTRO-C-U9-02",
+        "LOG-INTRO-C-U9-10"
+      ],
+      "status": "candidate-needs-teacher-review",
+      "basis": "대소·무게 비교 관계를 연결해 순서나 극값을 찾는 행동 가족 후보. 공통 기준·추이 관계·저울 해석의 세부 행동은 분리 유지한다."
+    },
+    {
+      "id": "FAMILY-INTRO-C-U9-02",
+      "label": "선형 위치·순위 관계 추론",
+      "members": [
+        "LOG-INTRO-C-U9-03",
+        "LOG-INTRO-C-U9-05",
+        "LOG-INTRO-C-U9-06",
+        "LOG-INTRO-C-U9-07",
+        "LOG-INTRO-C-U9-08",
+        "LOG-INTRO-C-U9-09"
+      ],
+      "status": "candidate-needs-teacher-review",
+      "basis": "앞뒤·사이·인접·순위로 위치를 추론하는 계통 후보. 요구하는 배열 크기와 출력 행동은 다르게 보존한다."
+    },
+    {
+      "id": "FAMILY-INTRO-C-U9-03",
+      "label": "여러 조건을 만족하는 배치·할당",
+      "members": [
+        "LOG-INTRO-C-U9-04",
+        "LOG-INTRO-C-U9-12",
+        "LOG-INTRO-C-U9-13",
+        "LOG-INTRO-C-U9-14"
+      ],
+      "status": "candidate-needs-teacher-review",
+      "basis": "유한 대상들을 위치나 사람에 대응시키며 여러 조건을 적용하는 가족 후보. 격자 좌석·수 배열·연산자 배열·사람 할당은 별도 유형이다."
+    },
+    {
+      "id": "FAMILY-INTRO-C-U9-04",
+      "label": "속성·수 관계를 교차 연결하는 추론",
+      "members": [
+        "LOG-INTRO-C-U9-11",
+        "LOG-INTRO-C-U9-14"
+      ],
+      "status": "candidate-needs-teacher-review",
+      "basis": "둘 이상의 관계 축을 공유 변수나 일대일 대응으로 연결하는 후보 가족. 색·무게 대응과 사람·번호 합 관계의 등가를 주장하지 않는다."
+    }
+  ],
+  "relations": [
+    {
+      "id": "REL-CNT-INTRO-C-U8-09-LOG-INTRO-C-U9-12",
+      "from": "CNT-INTRO-C-U8-09",
+      "to": "LOG-INTRO-C-U9-12",
+      "type": "spiral-reappearance-or-extension-candidate",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "두 자리 수 만들기에서 여러 칸 수열·연산자 카드 배치로 배열 길이와 동시 조건이 늘어나는 후보. 배치 유형은 동일하다고 확정하지 않는다.",
+      "assertsPrerequisiteOrder": false,
+      "assertsSkillEquivalence": false,
+      "assertsMinimumGrade": false
+    },
+    {
+      "id": "REL-LOG-INTRO-C-U9-01-LOG-INTRO-C-U9-02",
+      "from": "LOG-INTRO-C-U9-01",
+      "to": "LOG-INTRO-C-U9-02",
+      "type": "spiral-reappearance-or-extension-candidate",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "공통 기준 비교에서 대상 간 비교 관계를 연결하는 행동으로 표현이 바뀌는 후보.",
+      "assertsPrerequisiteOrder": false,
+      "assertsSkillEquivalence": false,
+      "assertsMinimumGrade": false
+    },
+    {
+      "id": "REL-LOG-INTRO-C-U9-03-LOG-INTRO-C-U9-05",
+      "from": "LOG-INTRO-C-U9-03",
+      "to": "LOG-INTRO-C-U9-05",
+      "type": "spiral-reappearance-or-extension-candidate",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "공통 이웃에서 가운데를 찾는 관계를 방향·간격 조건이 있는 일렬 위치 추론으로 확장하는 후보.",
+      "assertsPrerequisiteOrder": false,
+      "assertsSkillEquivalence": false,
+      "assertsMinimumGrade": false
+    },
+    {
+      "id": "REL-LOG-INTRO-C-U9-05-LOG-INTRO-C-U9-06",
+      "from": "LOG-INTRO-C-U9-05",
+      "to": "LOG-INTRO-C-U9-06",
+      "type": "spiral-reappearance-or-extension-candidate",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "직접 방향·거리 조건에서 가능한 부분순서를 만들고 끝자리 제약을 거르는 요구가 늘어나는 후보.",
+      "assertsPrerequisiteOrder": false,
+      "assertsSkillEquivalence": false,
+      "assertsMinimumGrade": false
+    },
+    {
+      "id": "REL-LOG-INTRO-C-U9-08-LOG-INTRO-C-U9-09",
+      "from": "LOG-INTRO-C-U9-08",
+      "to": "LOG-INTRO-C-U9-09",
+      "type": "spiral-reappearance-or-extension-candidate",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "앞·뒤 순위 환산과 사이 인원 세기에서 여러 뒤 위치 관계를 결합해 끝자리를 추론하는 표현 확장 후보.",
+      "assertsPrerequisiteOrder": false,
+      "assertsSkillEquivalence": false,
+      "assertsMinimumGrade": false
+    },
+    {
+      "id": "REL-LOG-INTRO-C-U9-12-LOG-INTRO-C-U9-13",
+      "from": "LOG-INTRO-C-U9-12",
+      "to": "LOG-INTRO-C-U9-13",
+      "type": "spiral-reappearance-or-extension-candidate",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "수 카드 배치에 연산자 카드를 추가하고 식 계산까지 요구하는 복합 활동 후보. 배열 유형과 계산 단계는 분리 유지한다.",
+      "assertsPrerequisiteOrder": false,
+      "assertsSkillEquivalence": false,
+      "assertsMinimumGrade": false
+    },
+    {
+      "id": "REL-LOG-INTRO-C-U9-12-LOG-INTRO-C-U9-14",
+      "from": "LOG-INTRO-C-U9-12",
+      "to": "LOG-INTRO-C-U9-14",
+      "type": "spiral-reappearance-or-extension-candidate",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "수 전체를 위치에 배치하는 활동에서 번호를 사람에게 일대일 대응시키고 합 등식을 푸는 활동으로 표상이 변하는 후보.",
+      "assertsPrerequisiteOrder": false,
+      "assertsSkillEquivalence": false,
+      "assertsMinimumGrade": false
+    },
+    {
+      "id": "REL-LOG-INTRO-C-U9-02-LOG-INTRO-C-U9-10",
+      "from": "LOG-INTRO-C-U9-02",
+      "to": "LOG-INTRO-C-U9-10",
+      "type": "spiral-reappearance-or-extension-candidate",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "비교 관계 연결에서 저울 그림·결합 무게를 해석해 최솟값을 추론하는 표현 확장 후보. 무게 단위 계산 선수관계는 주장하지 않는다.",
+      "assertsPrerequisiteOrder": false,
+      "assertsSkillEquivalence": false,
+      "assertsMinimumGrade": false
+    }
+  ],
+  "curriculumContext": {
+    "status": "minimum-grade-unassigned",
+    "contextOnlyRelations": 3,
+    "note": "교육과정 기준은 무게 비교의 내용 맥락만 연결합니다. 복합 관계 추론의 최소 학년을 지정하지 않습니다."
+  },
+  "difficultyBands": [
+    {
+      "skillId": "LOG-INTRO-C-U9-01",
+      "band": "1–2",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-02",
+      "band": "1–2",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-03",
+      "band": "1–2",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-04",
+      "band": "2–4",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-05",
+      "band": "2–3",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-06",
+      "band": "2–4",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-07",
+      "band": "2–3",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-08",
+      "band": "1–3",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-09",
+      "band": "2–3",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-10",
+      "band": "2–4",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-11",
+      "band": "3–4",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-12",
+      "band": "3–5",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-13",
+      "band": "3–5",
+      "status": "research-only-needs-teacher-review"
+    },
+    {
+      "skillId": "LOG-INTRO-C-U9-14",
+      "band": "3–4",
+      "status": "research-only-needs-teacher-review"
+    }
+  ],
+  "somaCrosswalkSummary": {
+    "directCandidateLinks": 14,
+    "itemsWithoutDirectRow": 2,
+    "referencesAlreadyIncludedInAggregate": true
+  },
+  "exclusions": [
+    "원문 문항",
+    "정답",
+    "비공개 연구 경로",
+    "원본 해시",
+    "원본 활동 ID",
+    "학생 개인정보"
+  ]
+}

@@ -1,0 +1,262 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v87",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre B",
+    "unit": 6,
+    "title": "면 조각·그림자·시점별 투영으로 입체 추론",
+    "printedPages": [
+      53,
+      59
+    ],
+    "sourceActivityBlocks": 10,
+    "visuallyReviewedPages": 7,
+    "answerValidated": true,
+    "validationSource": "matching 1031 Pre B answer-key pp.24–27 (printed pages 52–59)"
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 852,
+    "activitiesInReviewQueue": 0,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 98,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 10,
+    "newlyLinkedActivities": 0,
+    "activitySkillRelations": 10,
+    "newActionCandidates": 0,
+    "reusedActionCandidates": 5,
+    "conditionalDifficultyBands": 10,
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumLevelCandidates": 10,
+    "unresolvedMinimumCurriculumCandidates": 10,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 10,
+    "somaDirectCrossReferences": 5,
+    "somaRowsHeldBack": 3,
+    "somaItemsWithoutDirectRow": 5,
+    "somaSourceRows": 2
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "CUB06",
+      "area": "spatial",
+      "areaOrder": 22,
+      "label": "조각·투영 조건을 만족하는 구조 추론",
+      "observableAction": "주어진 전체 수·조각 수 또는 다중 투영 조건을 만족하는 쌓기 구조를 추론한다.",
+      "activityCount": 2,
+      "printedPages": [
+        58,
+        59
+      ],
+      "conditionalDifficultyBands": [
+        "4",
+        "5"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 5–6학년군"
+      ],
+      "status": "reused-candidate-needs-teacher-review"
+    },
+    {
+      "id": "SOLID-FACE-PREB6-01",
+      "area": "spatial",
+      "areaOrder": 23,
+      "label": "면 조각의 모양·개수로 만들 수 있는 입체 판별하기",
+      "observableAction": "제시된 평면 조각의 모양과 개수를 입체의 밑면·옆면 구성과 대조해 만들 수 있는 입체 후보를 가린다.",
+      "activityCount": 3,
+      "printedPages": [
+        53,
+        55
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "SHADOW-PREB6-01",
+      "area": "spatial",
+      "areaOrder": 24,
+      "label": "시점별 그림자 윤곽으로 가능한 입체 후보 찾기",
+      "observableAction": "위·옆 등 관찰 방향에 따른 그림자 바깥 윤곽을 비교해 가능한 입체 후보를 찾고 그림자 내부선과 구별한다.",
+      "activityCount": 2,
+      "printedPages": [
+        54
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "PROJECTION-PREB6-01",
+      "area": "spatial",
+      "areaOrder": 25,
+      "label": "합성 입체와 한 방향 투영을 대응하기",
+      "observableAction": "합성 입체의 가림과 윤곽을 반영해 위·앞에서 본 평면 모양과 입체 후보를 대응한다.",
+      "activityCount": 2,
+      "printedPages": [
+        56,
+        57
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 5–6학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "NET-PREB6-01",
+      "area": "spatial",
+      "areaOrder": 26,
+      "label": "면 배열의 경계와 개수로 입체 가능성 판단하기",
+      "observableAction": "한 평면 윤곽 안의 면 경계를 나누어 읽고 각 면의 모양과 개수가 입체 후보의 구성과 맞는지 판단한다.",
+      "activityCount": 1,
+      "printedPages": [
+        57
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 5–6학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "5"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "item-specific-content-context-only",
+    "candidateActivities": 10,
+    "unresolvedActivities": 10,
+    "confirmedAssignments": 0,
+    "contexts": [
+      "2수03-02",
+      "6수03-05",
+      "6수03-06",
+      "6수03-10"
+    ],
+    "note": "공식 기준은 교육과정 맥락이며 문항별 최소 학년을 확정하지 않는다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "FAMILY-SOLID-FACE-VIEW-REASONING",
+        "label": "면 구성·그림자·시점 투영 입체 추론 계통",
+        "parentCandidate": "FAMILY-SOLID-GEOMETRY",
+        "memberSkillIds": [
+          "SOLID-FACE-PREB6-01",
+          "SHADOW-PREB6-01",
+          "PROJECTION-PREB6-01",
+          "NET-PREB6-01",
+          "CUB06"
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "from": "SOLID-FACE-PREB6-01",
+        "to": "NET-PREB6-01",
+        "type": "spiral-extension-candidate",
+        "basis": "면 조각의 모양·개수 대조에서 면 경계의 평면 배열까지 고려하는 확장 후보이다. 선수 순서는 미승인이다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "SHADOW-PREB6-01",
+        "to": "PROJECTION-PREB6-01",
+        "type": "related-but-distinct",
+        "basis": "그림자 윤곽은 내부 모서리 선을 나타내지 않을 수 있지만 정투영 그림은 보이는 면·경계 정보를 포함할 수 있어 별도 행동으로 유지한다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "PROJECTION-PREB6-01",
+        "to": "CUB06",
+        "type": "spiral-extension-candidate",
+        "basis": "한 방향 투영을 합성 입체와 맞추는 행동에서 두세 방향 투영을 동시에 만족하는 구조 추론으로 확장될 수 있다. 선수 관계는 미승인이다.",
+        "status": "hypothesis-needs-teacher-review"
+      }
+    ]
+  },
+  "crossReferences": {
+    "directSomaItems": 5,
+    "itemsWithoutDirectRow": 5,
+    "heldBackRows": 3,
+    "minimumCurriculumConfirmed": 0,
+    "note": "직접 연결 5개 활동 외 관련 3행은 보류했다."
+  },
+  "privacy": "공개 파일에 문항별 답, OCR 원문, 로컬 경로, 이미지 해시는 포함하지 않았다. B6의 답안 검증 10건은 인쇄 해설 pp.24–27 대조 결과만 집계한다. 난이도·최소 교과수준·계통 연결은 검토 후보다."
+}

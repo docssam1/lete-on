@@ -1,0 +1,263 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v85",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre B",
+    "unit": 3,
+    "title": "성냥개비 이동·수 구성·도형 조작",
+    "printedPages": [
+      29,
+      35
+    ],
+    "sourceActivityBlocks": 11,
+    "visuallyReviewedPages": 7,
+    "answerValidated": true
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 852,
+    "activitiesInReviewQueue": 0,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 78,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 11,
+    "newlyLinkedActivities": 11,
+    "activitySkillRelations": 11,
+    "newActionCandidates": 5,
+    "reusedActionCandidates": 1,
+    "conditionalDifficultyBands": 11,
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumLevelCandidates": 11,
+    "unresolvedMinimumCurriculumCandidates": 11,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 11,
+    "directSomaCrossReferences": 0,
+    "SomaCrossReferencesAwaitingReview": 11,
+    "catalogRelatedButDistinctCandidates": 2
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "MATCH-FIGURE-TRANSFORM-PREB3-01",
+      "n": 33,
+      "area": "spatial",
+      "title": "이동한 막대와 고정 부분을 비교해 도형 방향 바꾸기",
+      "difficulty": "2–3–4",
+      "count": 4,
+      "desc": "정해진 수의 막대를 옮겨 전체 도형의 목표 방향을 만들고 이동한 부분과 고정 부분을 구분한다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "29–34쪽",
+      "curriculum": "초등 1–2학년군 내용 후보"
+    },
+    {
+      "id": "MATCHSTICK-OPTIMIZE-NUMERAL-PREB3-01",
+      "n": 28,
+      "area": "logic",
+      "title": "막대 수 제한에서 가장 큰 수 구성하기",
+      "difficulty": "3",
+      "count": 1,
+      "desc": "각 숫자 표시에 필요한 막대 수와 전체 자원 제한을 함께 고려해 만들 수 있는 가장 큰 수를 구성한다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "30–30쪽",
+      "curriculum": "초등 1–2학년군 내용 후보"
+    },
+    {
+      "id": "MATCHSTICK-POLYGON-CONSTRUCT-PREB3-01",
+      "n": 34,
+      "area": "spatial",
+      "title": "막대를 더하거나 옮겨 목표 도형 여러 개 구성하기",
+      "difficulty": "3–5",
+      "count": 3,
+      "desc": "막대의 변 공유와 크기 조건을 고려해 제한된 막대로 목표 도형의 개수를 구성한다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "31–35쪽",
+      "curriculum": "초등 1–2학년군 내용 후보"
+    },
+    {
+      "id": "MATCHSTICK-DIGIT-OPERATIONS-PREB3-01",
+      "n": 36,
+      "area": "operations",
+      "title": "지시된 추가·제거·이동으로 숫자 모양 바꾸기",
+      "difficulty": "3",
+      "count": 1,
+      "desc": "화살표가 지정한 막대 추가·제거·이동을 구별해 숫자 표현을 단계적으로 바꾼다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "32–32쪽",
+      "curriculum": "초등 1–2학년군 내용 후보"
+    },
+    {
+      "id": "MATCHSTICK-MULTI-SOLUTION-EQUATION-PREB3-01",
+      "n": 44,
+      "area": "rules",
+      "title": "막대 한 개 이동으로 서로 다른 참인 식 여러 개 만들기",
+      "difficulty": "5",
+      "count": 1,
+      "desc": "막대 수 제한과 숫자·연산 기호 모양을 함께 고려해 서로 다른 참인 등식을 복수로 만든다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "34–34쪽",
+      "curriculum": "초등 1–2학년군 내용 후보"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "5"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "5"
+        ]
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "content-context-candidates-only; minimum-grade-unassigned",
+    "candidateActivities": 11,
+    "unresolvedActivities": 11,
+    "confirmedAssignments": 0,
+    "contexts": [
+      "초등 1–2학년군 수와 연산·기초 도형 내용 맥락"
+    ],
+    "note": "기존 1–2학년군은 넓은 내용 맥락 후보일 뿐 최소 학년 배정이 아니다. 문항별 요구 수·연산·표현 근거를 확인하기 전까지 미배정으로 유지한다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "FAMILY-MATCHSTICK-TRANSFORM-CONSTRUCT-REASONING",
+        "label": "성냥개비 이동·수 구성·도형 조작 계통 후보",
+        "memberSkillIds": [
+          "MATCH-FIGURE-TRANSFORM-PREB3-01",
+          "MATCHSTICK-OPTIMIZE-NUMERAL-PREB3-01",
+          "MATCHSTICK-POLYGON-CONSTRUCT-PREB3-01",
+          "MATCHSTICK-DIGIT-OPERATIONS-PREB3-01",
+          "MATCHSTICK-MULTI-SOLUTION-EQUATION-PREB3-01",
+          "D11-MATCH-EQ01"
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "from": "MATCH-FIGURE-TRANSFORM-PREB3-01",
+        "to": "MATCHSTICK-POLYGON-CONSTRUCT-PREB3-01",
+        "type": "related-but-distinct",
+        "basis": "기존 막대를 옮겨 방향을 바꾸는 행동과 막대를 추가·재배치해 여러 폐합 도형을 구성하는 행동은 도구는 같아도 목표와 조작 제약이 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "MATCHSTICK-DIGIT-OPERATIONS-PREB3-01",
+        "to": "D11-MATCH-SEQ01",
+        "type": "related-but-distinct",
+        "basis": "화살표가 추가·제거·이동을 지정하는 숫자 변환과 한 막대를 재배치해 목표 숫자열을 만드는 행동은 적용 연산과 목표 조건이 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "D11-MATCH-EQ01",
+        "to": "MATCHSTICK-MULTI-SOLUTION-EQUATION-PREB3-01",
+        "type": "spiral-extension-candidate",
+        "basis": "참인 등식 한 개를 찾는 행동에서 서로 다른 참인 등식을 두 개 산출하는 활동으로 해의 개수 조건이 확장된다. 선수 순서는 미승인.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "MATCHSTICK-POLYGON-CONSTRUCT-PREB3-01",
+        "to": "PAT-INTRO-C-U3-05",
+        "type": "related-but-distinct",
+        "basis": "막대를 더해 삼각형 여러 개를 구성하는 활동과 공유 변에 따른 막대 수 규칙을 계산하는 활동은 도형 재료가 같지만 산출 행동이 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      }
+    ]
+  },
+  "crossReferences": {
+    "directSomaRows": 0,
+    "SomaReviewStatus": "not-confirmed-in-this-pass",
+    "relatedCatalogCandidates": [
+      {
+        "code": "03-045",
+        "relation": "related-but-distinct"
+      },
+      {
+        "code": "05-049",
+        "relation": "related-but-distinct"
+      }
+    ],
+    "teacherApprovedEquivalences": 0
+  },
+  "privacy": "공개 파일에 활동 식별자·OCR 원문·정답·이미지 해시·로컬 경로를 넣지 않았다. 난이도·최소 교과수준·계통 관계는 교사 검토 후보다. Exact item-level answer values remain in the private answer-validation sidecar.",
+  "answerValidation": {
+    "activitiesValidated": 11,
+    "sourceAnswerKeyPdfPages": [
+      12,
+      13,
+      14,
+      15
+    ],
+    "method": "visually cross-checked rendered answer-key pages",
+    "constructionAnswersMayBeNonUnique": true,
+    "exactAnswerValuesOmitted": true
+  }
+}

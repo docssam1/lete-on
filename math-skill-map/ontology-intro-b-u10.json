@@ -1,0 +1,336 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v120",
+  "updated": "2026-10-20",
+  "scope": {
+    "book": "1031 입문 B",
+    "unit": 10,
+    "title": "시계 보기",
+    "printedPages": [
+      83,
+      89
+    ],
+    "sourceActivityBlocks": 10
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 428,
+    "candidateEvidenceLinkedActivities": 869,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 939,
+    "conditionalDifficultyBands": 958,
+    "validatedAnswers": 491,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unitCounts": {
+    "reusedSkillCandidates": 8,
+    "mappedActivities": 10,
+    "newSkillCandidates": 0,
+    "newMappings": 0,
+    "validatedStudentResponses": 8,
+    "workedRepresentativeExamplesExcluded": 2,
+    "conditionalDifficultyBandsAssigned": 10,
+    "conditionalDifficultyBandDistribution": {
+      "1": 2,
+      "2": 5,
+      "3": 1,
+      "4": 2
+    },
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "skills": [
+    {
+      "id": "GEO-INTRO-B-05",
+      "name": "단일 반사변환 적용하기",
+      "domain": "평면도형·변환",
+      "observableAction": "지정된 좌우 또는 상하 뒤집기를 도형에 한 번 적용해 결과를 표현한다.",
+      "evidenceItemIds": [
+        "1031-unit10-intro-b-block-002",
+        "1031-unit10-intro-b-block-007",
+        "1031-unit10-intro-b-block-008"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-01",
+      "name": "시계 바늘 위치에서 시각 읽기",
+      "domain": "측정·시간",
+      "observableAction": "시침·분침의 위치를 분 단위 시각으로 해석한다.",
+      "evidenceItemIds": [
+        "1031-unit10-intro-b-block-001",
+        "1031-unit10-intro-b-block-004"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-02",
+      "name": "시계 바늘 회전 결과 찾기",
+      "domain": "측정·시간",
+      "observableAction": "주어진 바늘의 회전 방향과 각도에 따라 도착 위치를 찾는다.",
+      "evidenceItemIds": [
+        "1031-unit10-intro-b-block-003"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-03",
+      "name": "복수 시각 순서 비교하기",
+      "domain": "측정·시간",
+      "observableAction": "여러 시계를 읽고 시각을 이른 순서로 배열한다.",
+      "evidenceItemIds": [
+        "1031-unit10-intro-b-block-005"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-04",
+      "name": "거울 시계에서 실제 시각 복원하기",
+      "domain": "측정·시간",
+      "observableAction": "거울상 시계의 반전된 문자판·바늘을 해석해 실제 시각을 복원한다.",
+      "evidenceItemIds": [
+        "1031-unit10-intro-b-block-002",
+        "1031-unit10-intro-b-block-007"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-05",
+      "name": "반사 대칭인 시계 조건 찾기",
+      "domain": "측정·시간",
+      "observableAction": "실제 시계와 거울상이 같아지는 시각 조건을 탐색한다.",
+      "evidenceItemIds": [
+        "1031-unit10-intro-b-block-006"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-06",
+      "name": "시계 거울상 나타내기",
+      "domain": "측정·시간",
+      "observableAction": "주어진 시각을 시계에 표현한 뒤 거울상 바늘 위치를 그린다.",
+      "evidenceItemIds": [
+        "1031-unit10-intro-b-block-008"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-07",
+      "name": "회전·거울 일치 조건에서 회전 횟수 구하기",
+      "domain": "측정·시간",
+      "observableAction": "바늘 회전 주기와 거울상 일치 조건을 결합해 가능한 회전 횟수를 구한다.",
+      "evidenceItemIds": [
+        "1031-unit10-intro-b-block-009"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-08",
+      "name": "복합 시계 조건으로 시각 추론하기",
+      "domain": "측정·시간",
+      "observableAction": "거울상 일치와 분침·시침 위치 조건을 교차해 가능한 시각을 추론한다.",
+      "evidenceItemIds": [
+        "1031-unit10-intro-b-block-010"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    }
+  ],
+  "activities": {
+    "1031-unit10-intro-b-block-001": {
+      "page": 84,
+      "label": "대표문제 1",
+      "skillIds": [
+        "TIME-INTRO-B-01"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": 1,
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit10-intro-b-block-002": {
+      "page": 85,
+      "label": "대표문제 2",
+      "skillIds": [
+        "GEO-INTRO-B-05",
+        "TIME-INTRO-B-04"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": 2,
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit10-intro-b-block-003": {
+      "page": 86,
+      "label": "연습문제 1",
+      "skillIds": [
+        "TIME-INTRO-B-02"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": 2,
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit10-intro-b-block-004": {
+      "page": 86,
+      "label": "연습문제 2",
+      "skillIds": [
+        "TIME-INTRO-B-01"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": 1,
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit10-intro-b-block-005": {
+      "page": 87,
+      "label": "연습문제 3",
+      "skillIds": [
+        "TIME-INTRO-B-03"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": 2,
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit10-intro-b-block-006": {
+      "page": 87,
+      "label": "연습문제 4",
+      "skillIds": [
+        "TIME-INTRO-B-05"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": 3,
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit10-intro-b-block-007": {
+      "page": 88,
+      "label": "연습문제 5",
+      "skillIds": [
+        "GEO-INTRO-B-05",
+        "TIME-INTRO-B-04"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": 2,
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit10-intro-b-block-008": {
+      "page": 88,
+      "label": "연습문제 6",
+      "skillIds": [
+        "GEO-INTRO-B-05",
+        "TIME-INTRO-B-06"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": 2,
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit10-intro-b-block-009": {
+      "page": 89,
+      "label": "심화문제 1",
+      "skillIds": [
+        "TIME-INTRO-B-07"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": 4,
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit10-intro-b-block-010": {
+      "page": 89,
+      "label": "심화문제 2",
+      "skillIds": [
+        "TIME-INTRO-B-08"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": 4,
+      "minimumCurriculumLevel": null
+    }
+  },
+  "difficulty": {
+    "status": "conditional; teacher adoption pending",
+    "distribution": {
+      "1": 2,
+      "2": 5,
+      "3": 1,
+      "4": 2
+    },
+    "records": [
+      {
+        "itemId": "1031-unit10-intro-b-block-001",
+        "conditionalBand": 1,
+        "basis": "시침·분침의 익숙한 위치를 읽어 9시 30분을 직접 답한다."
+      },
+      {
+        "itemId": "1031-unit10-intro-b-block-002",
+        "conditionalBand": 2,
+        "basis": "거울 변환 한 번을 적용하고 실제 시각을 읽는다."
+      },
+      {
+        "itemId": "1031-unit10-intro-b-block-003",
+        "conditionalBand": 2,
+        "basis": "분침에 반 바퀴 회전을 적용해 한 위치를 찾는다."
+      },
+      {
+        "itemId": "1031-unit10-intro-b-block-004",
+        "conditionalBand": 1,
+        "basis": "분침의 55분과 그에 따른 시침 위치를 함께 읽는다."
+      },
+      {
+        "itemId": "1031-unit10-intro-b-block-005",
+        "conditionalBand": 2,
+        "basis": "여러 시각을 읽은 뒤 이른 순서를 정한다."
+      },
+      {
+        "itemId": "1031-unit10-intro-b-block-006",
+        "conditionalBand": 3,
+        "basis": "거울 대칭 조건이 성립하는 다른 시각을 찾는다."
+      },
+      {
+        "itemId": "1031-unit10-intro-b-block-007",
+        "conditionalBand": 2,
+        "basis": "거울 변환을 실제 시각 판독에 적용한다."
+      },
+      {
+        "itemId": "1031-unit10-intro-b-block-008",
+        "conditionalBand": 2,
+        "basis": "주어진 시각을 표현하고 바늘에 좌우 반사를 적용해 그린다."
+      },
+      {
+        "itemId": "1031-unit10-intro-b-block-009",
+        "conditionalBand": 4,
+        "basis": "초기 시각, 거울상 일치, 바늘의 순환 주기를 연결해 완전 회전 횟수를 구한다."
+      },
+      {
+        "itemId": "1031-unit10-intro-b-block-010",
+        "conditionalBand": 4,
+        "basis": "거울 대칭·분침 위치·시각 순서 조건을 교차해 가능한 시각을 좁힌다."
+      }
+    ]
+  },
+  "curriculum": {
+    "minimumCurriculumAssignments": 0,
+    "ageOrGradeInferred": false
+  },
+  "answerValidation": {
+    "validatedStudentResponses": 8,
+    "workedExamplesExcluded": 2,
+    "sameEditionAnswerPage": 118,
+    "privateAnswerAudit": "not included"
+  },
+  "somaCrosswalk": {
+    "crossReferencedActivities": 8,
+    "sourceRows": 4,
+    "itemsWithoutDirectRow": 2,
+    "relatedRowsHeldBack": 2,
+    "minimumCurriculumLevelsConfirmed": 0
+  },
+  "assistantReview": {
+    "model": "Claude Haiku 5.5",
+    "role": "second opinion only",
+    "sourceImagesSent": false,
+    "verbatimSourceTextSent": false,
+    "finalTeacherApproval": false
+  },
+  "privacy": {
+    "containsAnswerKeyText": false,
+    "containsPrivateStudentData": false,
+    "teacherApprovalClaimed": false
+  }
+}
