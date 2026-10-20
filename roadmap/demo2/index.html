@@ -183,6 +183,10 @@ th,td{border:1px solid var(--line);padding:7px 5px;height:45px;vertical-align:mi
 .sr-legend{margin-top:10px;font-size:12px;color:#64748b}
 .sr-gifted-chip{display:inline-block;padding:1px 8px;border-radius:6px;background:#fde68a;color:#78350f;font-weight:900}
 .lv-table{min-width:2300px} #lvConcept .lv-table{min-width:1400px}
+.lv-bubble-cell{padding:6px 2px 10px;border:none;background:transparent;vertical-align:bottom;text-align:right}
+.lv-bubble{position:relative;display:inline-block;background:#fff;border:2px solid #7c3aed;color:#4c1d95;font-weight:800;font-size:12px;border-radius:14px;padding:6px 10px;white-space:nowrap;box-shadow:0 2px 6px rgba(124,58,237,.18)}
+.lv-bubble::after{content:'';position:absolute;right:10px;bottom:-9px;border:8px solid transparent;border-top-color:#7c3aed;border-bottom:0}
+.lv-bubble::before{content:'';position:absolute;right:12px;bottom:-5px;border:6px solid transparent;border-top-color:#fff;border-bottom:0;z-index:1}
 .key-rules{margin:4px 0 18px;padding:16px 18px;border:2px solid #f59e0b;border-radius:14px;background:#fffbeb}
 .key-rules .kr-title{font-size:16px;font-weight:900;color:#92400e;margin-bottom:6px}
 .key-rules ul{margin:0;padding-left:18px;font-size:14px;line-height:1.75;color:#1f2937}

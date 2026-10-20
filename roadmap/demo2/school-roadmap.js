@@ -444,6 +444,7 @@ function conceptRows(){
     ['강남서초 영재원 수·과융합<br><small>11월 지원 · 12/5 평가</small>',70,71],['최종<br>발표',73,73],
     ['초4 영재원 수업 (합격 시)<br><small>강남서초 수·과융합 또는 가천대(브릿지 상위 15%)</small>',74,83]];
   return [
+    {key:'bubble',label:'',blocks:[['초4 9월 돌파 · 생크 · 이든 1-1 응시',75,80]]}, // 말풍선(원장님 2026-10-20)
     {key:'school',label:'교과',blocks:school},
     {key:'school2',label:'교과 심화',blocks:school2},
     {key:'comp',label:'사고력·경시',blocks:comp},
@@ -495,7 +496,7 @@ function renderLevels(nowM, bestId, only, custom, from, to){
         if(s<m) continue; // 겹치면 앞 칸 우선
         for(;m<s;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
         const swap=false;
-        h+=`<td class="sr-cell${swap?' sr-swap':''}" colspan="${e-s+1}" style="background:${(ROW_COLORS[r.key]||'#f1f5f9')}">${t}</td>`;
+        h+=r.key==='bubble'?`<td class="lv-bubble-cell" colspan="${e-s+1}"><span class="lv-bubble">${t}</span></td>`:`<td class="sr-cell${swap?' sr-swap':''}" colspan="${e-s+1}" style="background:${(ROW_COLORS[r.key]||'#f1f5f9')}">${t}</td>`;
         m=e+1;
       }
       for(;m<=A1;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
