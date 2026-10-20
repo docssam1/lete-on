@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>갈림길 로드맵 조정</title>
+<style>
+:root{--ink:#122b4d;--sub:#526780;--line:#cbd9e9;--navy:#173a67;--bg:#edf2f8;--card:#fff;--accent:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:1500px;margin:auto;padding:22px 16px 40px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:3px solid var(--navy);padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap}
+.eyebrow{font-size:11px;letter-spacing:2px;color:#3278b7;font-weight:800}
+h1{font-size:26px;margin:4px 0;letter-spacing:-.5px}
+.sub{color:var(--sub);font-size:13px;margin:0}
+.controls{background:var(--navy);color:#fff;border-radius:12px;padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 16px}
+.controls fieldset{border:1px solid rgba(255,255,255,.25);border-radius:9px;padding:8px 10px 10px;margin:0}
+.controls legend{font-size:11px;font-weight:800;letter-spacing:.5px;color:#bfdbfe;padding:0 4px}
+.controls label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;margin-top:6px}
+select,input{font:inherit;font-size:12px;padding:5px 6px;border:1px solid #a8bdd6;border-radius:6px;background:#fff;color:var(--navy);max-width:62%}
+input[type=checkbox]{max-width:none}
+.tabs{display:flex;gap:6px;margin:16px 0 8px;flex-wrap:wrap}
+.tabs button{font:inherit;font-size:13px;font-weight:800;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--navy);cursor:pointer}
+.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tabs .print{margin-left:auto;font-weight:600}
+.view{display:none}.view.on{display:block}
+.warn{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;border-radius:9px;padding:9px 12px;font-size:12px;margin:8px 0}
+.scroll{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:10px}
+.pl-table{border-collapse:collapse;table-layout:fixed;min-width:1400px;width:100%}
+.pl-table th,.pl-table td{border:1px solid var(--line);text-align:center;font-size:10.5px;padding:5px 2px;line-height:1.35;vertical-align:middle}
+.pl-table tbody th{width:120px;background:#eff4fa;font-size:11px}
+.pl-table td{height:46px}
+.pl-corner{width:120px;background:#eff4fa}
+.pl-year{background:var(--navy);color:#fff;font-size:12px}
+.pl-mon{background:#f0f5fc}
+.pl-now{box-shadow:inset 0 -3px 0 var(--accent);background:#ede9fe!important}
+.pl-empty{background:#fff}
+.pl-bubble-row td,.pl-bubble-row th{border:none;background:transparent;height:auto;padding:6px 2px 10px}
+.pl-bubble-cell{text-align:right!important;vertical-align:bottom!important}
+.pl-bubble{position:relative;display:inline-block;background:#fff;border:2px solid var(--accent);color:#4c1d95;font-weight:800;font-size:12px;border-radius:14px;padding:5px 10px;white-space:nowrap}
+.pl-bubble::after{content:'';position:absolute;right:10px;bottom:-9px;border:8px solid transparent;border-top-color:var(--accent);border-bottom:0}
+.pl-bubble::before{content:'';position:absolute;right:12px;bottom:-5px;border:6px solid transparent;border-top-color:#fff;border-bottom:0;z-index:1}
+/* 간단 보기 */
+.sp-wrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 16px 20px;overflow-x:auto}
+.sp-axis,.sp-flags,.sp-track{position:relative;margin-left:96px;min-width:900px}
+.sp-axis{height:26px;border-bottom:2px solid var(--navy)}
+.sp-axis span{position:absolute;bottom:4px;font-size:12px;font-weight:800;transform:translateX(2px)}
+.sp-now{position:absolute;top:0;bottom:-400px;width:2px;background:var(--accent);opacity:.6}
+.sp-now b{position:absolute;top:-2px;left:4px;font-size:11px;color:var(--accent);font-style:normal;white-space:nowrap}
+.sp-flags{height:42px}
+.sp-flags span{position:absolute;top:6px;font-size:11px;font-weight:800;color:#92400e;white-space:nowrap;border-left:2px solid #f59e0b;padding-left:4px}
+.sp-flags small{display:block;font-weight:600;color:#a16207}
+.sp-row{display:flex;align-items:center;margin-top:10px}
+.sp-label{width:96px;flex:none;font-weight:900;font-size:15px}
+.sp-label small{display:block;font-size:11px;color:var(--sub);font-weight:600}
+.sp-track{flex:1;height:44px;margin-left:0}
+.sp-bar{position:absolute;top:4px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:var(--ink);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 6px;border:1px solid rgba(23,58,103,.12)}
+/* 3D */
+.d3-note{font-size:12px;color:var(--sub);margin:4px 0 8px}
+.d3-stage{position:relative;height:620px;background:radial-gradient(ellipse at 50% 30%,#ffffff 0%,#dfe9f6 70%);border:1px solid var(--line);border-radius:14px;overflow:hidden;perspective:1800px;cursor:grab;touch-action:none}
+.d3-board{position:absolute;left:50%;top:52%;transform-style:preserve-3d;background:#f8fafc;border:1px solid #cbd5e1;box-shadow:0 30px 60px rgba(23,58,103,.18)}
+.d3-lane{position:absolute;left:0;border-bottom:1px dashed #cbd5e1;transform-style:preserve-3d}
+.d3-lname{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:900;color:var(--navy);line-height:1.2;text-align:right}
+.d3-box{position:absolute;transform-style:preserve-3d}
+.d3-top{position:absolute;inset:0;background:var(--c);transform:translateZ(var(--z));border:1px solid rgba(23,58,103,.25);border-radius:4px;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;padding:2px;overflow:hidden;line-height:1.2}
+.d3-front{position:absolute;left:0;right:0;bottom:0;height:var(--z);transform-origin:bottom;transform:rotateX(-90deg);background:var(--c);filter:brightness(.82);border:1px solid rgba(23,58,103,.2)}
+.d3-side{position:absolute;top:0;bottom:0;right:0;width:var(--z);transform-origin:right;transform:rotateY(90deg);background:var(--c);filter:brightness(.7)}
+.d3-tick{position:absolute;top:0;border-left:2px solid #94a3b8}
+.d3-tick span{position:absolute;bottom:100%;left:4px;font-size:14px;font-weight:900;color:#334155;white-space:nowrap}
+.d3-nowline{position:absolute;top:0;background:rgba(124,58,237,.18);border-left:2px solid var(--accent);border-right:2px solid var(--accent)}
+.d3-flag{position:absolute;transform-style:preserve-3d}
+.d3-pole{position:absolute;left:0;bottom:0;width:3px;height:120px;background:#b45309;transform-origin:bottom;transform:rotateX(-90deg)}
+.d3-pole span{position:absolute;left:4px;top:0;background:#fde68a;border:1px solid #f59e0b;color:#78350f;font-size:12px;font-weight:900;padding:3px 7px;border-radius:4px;white-space:nowrap}
+.foot{font-size:11px;color:var(--sub);margin-top:10px;line-height:1.6}
+@media(max-width:700px){h1{font-size:21px}.d3-stage{height:440px}}
+@page{size:A3 landscape;margin:10mm}
+@media print{body{background:#fff}.controls,.tabs,.d3-note,#v3d,#vsimple{display:none!important}#vtable{display:block!important}.pl-table{min-width:0}.pl-table th,.pl-table td{font-size:7px;padding:2px 1px}.pl-table td{height:34px}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div><div class="eyebrow">GFIELD · 갈림길 로드맵</div><h1><span id="who">우리 아이</span> 갈림길 로드맵</h1>
+ <p class="sub">지금 진도와 선택을 바꾸면 상세 표 · 간단 보기 · 3D가 함께 바뀝니다. 입력한 내용은 저장되지 않습니다.</p></div>
+</header>
+
+<form class="controls" id="ctl" onsubmit="return false">
+ <fieldset><legend>지금</legend>
+  <label>이름(선택) <input id="name" placeholder="표시만 · 저장 안 함" autocomplete="off"></label>
+  <label>올해 <input id="year" type="number" min="2020" max="2100"></label>
+  <label>학년 <select id="grade"><option value="1">초1</option><option value="2" selected>초2</option><option value="3">초3</option></select></label>
+  <label>월 <select id="mon"></select></label>
+ </fieldset>
+ <fieldset><legend>지금 진도</legend>
+  <label>교과 <select id="school"></select></label>
+  <label>남은 개월 <select id="schoolLeft"></select></label>
+  <label>사고력 <select id="comp"></select></label>
+  <label>남은 개월 <select id="compLeft"></select></label>
+ </fieldset>
+ <fieldset><legend>연산 · 속도</legend>
+  <label>연산 <select id="calc"></select></label>
+  <label>남은 개월 <select id="calcLeft"></select></label>
+  <label>교과 속도 <select id="speed"><option value="2" selected>한 학기 2개월</option><option value="3">한 학기 3개월</option></select></label>
+ </fieldset>
+ <fieldset><legend>황소 · 영재원</legend>
+  <label>황소 <select id="hw"></select></label>
+  <label>심화 고려 <input type="checkbox" id="hwDeep" checked></label>
+  <label>초4 중등 시험 고려 <input type="checkbox" id="hwMid" checked></label>
+  <label>영재원 <select id="gifted"><option value="AB" selected>가천대·교육청 + 교대</option><option value="A">가천대·교육청</option><option value="B">교대</option><option value="none">안 함</option></select></label>
+ </fieldset>
+</form>
+
+<div id="warn"></div>
+<div class="tabs" role="tablist">
+ <button type="button" data-v="vtable" class="on">상세 표</button>
+ <button type="button" data-v="vsimple">간단 보기</button>
+ <button type="button" data-v="v3d">3D 보기</button>
+ <button type="button" class="print" onclick="window.print()">인쇄 / PDF (A3 가로)</button>
+</div>
+<section class="view on" id="vtable"><div class="scroll" id="tbl"></div></section>
+<section class="view" id="vsimple"><div id="simple"></div></section>
+<section class="view" id="v3d"><p class="d3-note">보여주기용입니다. 끌어서 돌려 보세요. 정확한 달은 상세 표를 보세요.</p><div id="d3"></div></section>
+
+<p class="foot">규칙: 교과 디딤돌 응용 → 6-2 다음 계통·대수 정리 4개월 → 중등 원리해설 3개월씩. 교과 심화는 한 학년 아래 최상위 S, 중등 시작 2개월 뒤부터 중등 심화(A급) 4개월씩. 연산은 기적의 계산법 다음 중학연산 1AB → 도형 순(필즈 S1 기간). 과학은 중2-1 심화 다음 달 중등과학. 황소 대비는 1031 초급을 마친 뒤(편입 2월 시험은 2개월 준비). 영재원 일정은 2027학년도 강남서초 · 2026년도 가천대 브릿지 모집요강 기준이며 해마다 바뀔 수 있습니다. 1·2월은 앞 학년입니다.</p>
+</main>
+<script src="planner.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id), P=Planner;
+const opt=(el,list,sel)=>{ el.innerHTML=list.map(([v,t])=>`<option value="${v}"${String(v)===String(sel)?' selected':''}>${t}</option>`).join(''); };
+const d=new Date(); $('year').value=d.getFullYear();
+opt($('mon'),[3,4,5,6,7,8,9,10,11,12,1,2].map(m=>[m,m+'월']),d.getMonth()+1);
+opt($('school'),[...Array.from({length:12},(_,i)=>[i+1,P.SEM(i+1)+' 디딤돌']),[13,'계통 · 대수 정리'],...P.MID.map((x,i)=>[14+i,x+' 원리해설'])],9);
+opt($('comp'),P.COMP.map((c,i)=>[i,c[0]]),4);
+opt($('calc'),P.CALC.map((c,i)=>[i,c[0]]),9);
+const months=n=>Array.from({length:n},(_,i)=>[i+1,(i+1)+'개월']);
+opt($('schoolLeft'),months(4),1); opt($('compLeft'),months(7),7); opt($('calcLeft'),months(6),1);
+function hwOptions(){
+  const g=+$('grade').value, now=P.mOf(g,+$('mon').value), A0=P.mOf(g,3), list=[['none','안 함']];
+  for(let m=now+2;m<=A0+33;m++) if(m%12===10||m%12===1) list.push([m,`${P.label(m)} 시험${m%12===1?' (편입)':''}`]);
+  const cur=$('hw').value; opt($('hw'),list,list.some(x=>String(x[0])===cur)?cur:(list.find(x=>x[0]!=='none'&&x[0]%12===1)||list[0])[0]);
+}
+function read(){ return {grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,hw:$('hw').value,hwDeep:$('hwDeep').checked,hwMid:$('hwMid').checked,gifted:$('gifted').value}; }
+function draw(){
+  const o=read(), plan=P.build(o), nm=$('name').value.trim();
+  $('who').textContent=nm||'우리 아이';
+  $('warn').innerHTML=plan.warn.map(w=>`<div class="warn">⚠ ${w}</div>`).join('');
+  $('tbl').innerHTML=P.renderTable(plan);
+  $('simple').innerHTML=P.renderSimple(plan);
+  $('d3').innerHTML=P.render3D(plan); if($('v3d').classList.contains('on')) P.bind3D($('d3'));
+}
+document.querySelectorAll('.tabs [data-v]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tabs [data-v]').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===b.dataset.v));
+  if(b.dataset.v==='v3d') P.bind3D($('d3'));
+}));
+$('ctl').addEventListener('input',e=>{ if(e.target.id==='grade'||e.target.id==='mon') hwOptions(); draw(); });
+$('ctl').addEventListener('change',e=>{ if(e.target.id==='grade'||e.target.id==='mon') hwOptions(); draw(); });
+hwOptions(); draw();
+})();
+</script>
+</body>
+</html>
