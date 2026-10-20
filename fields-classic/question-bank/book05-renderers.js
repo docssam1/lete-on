@@ -867,6 +867,17 @@ function sourceDistanceArcs(visual) {
   return `<div class="b5-src-distarcs" role="img" aria-label="${escapeHtml(label)}"><svg viewBox="0 -10 ${W} 152" style="width:min(100%,340px)">${body}</svg></div>`;
 }
 
+// 7권 63~66쪽: 원본의 빈 벤 다이어그램. 두 원의 이름표 「이름( )」, universe면 바깥 상자에 「전체( )」·「둘 다 싫음( )」.
+// 칸 안의 수는 학생이 채우는 자리라 그리지 않는다.
+function sourceVenn(visual) {
+  const u = !!visual.universe, H = u ? 228 : 170, cy = u ? 118 : 96;
+  const tag = (x, y, t, w = 92) => `<rect class="tag" x="${x - w / 2}" y="${y - 13}" width="${w}" height="24" rx="5"/><text x="${x}" y="${y + 4}">${escapeHtml(t)}( )</text>`;
+  let body = "";
+  if (u) body += `<rect class="uni" x="12" y="26" width="276" height="${H - 34}" rx="2"/>${tag(70, 26, "전체", 80)}${tag(150, H - 10, "둘 다 싫음", 112)}`;
+  body += `<circle cx="118" cy="${cy}" r="56"/><circle cx="182" cy="${cy}" r="56"/>${tag(106, cy - 58, visual.labels[0])}${tag(196, cy - 58, visual.labels[1])}`;
+  return `<div class="b5-src-venn" role="img" aria-label="${escapeHtml(`${visual.labels.join("와 ")}의 벤 다이어그램${u ? ", 전체와 둘 다 싫음 칸" : ""}`)}"><svg viewBox="0 0 300 ${H + 6}" style="width:min(100%,380px)">${body}</svg></div>`;
+}
+
 // 7권: 단계 그림 여러 개를 한 줄로(휴대폰에서는 줄바꿈). figs = [{w, h, body}], marks면 위에 ①②③… 번호.
 const STAGE_MARKS = ["①", "②", "③", "④", "⑤", "⑥"];
 function stageRow(cls, label, figs, marks) {
@@ -1278,6 +1289,7 @@ export function book05Markup(visual) {
     case "source-note-box": return sourceNoteBox(visual);
     case "source-swap-sub": return sourceSwapSub(visual);
     case "source-distance-arcs": return sourceDistanceArcs(visual);
+    case "source-venn": return sourceVenn(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);

@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018m`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018m/20261018n/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018n`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018n/20261018o/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -375,6 +375,15 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - **원본을 바로잡은 곳**(`sourceDiscrepancy`): 61쪽 장소 이름(교재 회사 이름)을 「학원」으로 · 61쪽 02의 번호 (2)가 두 번이라 뒤의 것을 (4)로.
   - **보류로 남긴 것 1건**: 52쪽 01 (1) 한 자리 대칭수 — 교사용 풀이는 「없다」인데 물음 글의 정의(앞뒤로 읽어 같은 수)로는 한 자리 수도 해당해 답이 하나로 정해지지 않는다. 7권 보류 13 → 7(표지 4 · 52쪽 1 · 64쪽 · 65쪽).
   - DB `book-07` 465키 → 506키, sha 앞 8자리 `43280ff4`. 캐시 꼬리표 `20261018m`.
+- **7권 묶음 6(슬라이드 63~66 벤 다이어그램 · 벤 다이어그램 2, 15문항, 2026-10-20) — 7권 마지막 묶음**: 패치 `tools/golden-bell-book07/patch-book07-batch6.mjs`(정답 없음).
+  - 단원 3 `venn-overlap-all`을 원본 15문항으로 다시 짰다(DB `/lessons/3/original/` 교체).
+  - **옛 그림이 답을 그리고 있었다**: `venn`은 모든 칸의 수(겹친 부분 = 답 포함)를 적었고, 추가 학습·유사문제도 같았다. 새 그림 `source-venn`은 원 두 개와 「이름( )」 칸만, 65·66쪽은 바깥 사각형(전체)과 「둘 다 싫음」 자리 표시. 물음 글에 수가 다 있다.
+  - 묶음 4·5에서 남은 옛 연습 그림도 바꿨다: 단원 2 연습 → `source-lake`, 단원 10 연습 → `source-swap-sub`(옛 그림에 물음에 없는 범위가 적혀 있었다).
+  - 검산기는 겹친 수·둘 다 아닌 수·전체를 전수로 넣어 조건에 맞는 경우가 하나뿐인지 확인한 뒤 칸을 센다.
+  - **교사용 답이 틀린 곳 1곳**(DB `sourceNote`): 65쪽 02 — 교사용 칸의 수를 다 더하면 전체 학생 수가 되지 않는다. 물음 글의 조건대로 계산한 답을 쓴다.
+  - **원본을 바로잡은 곳**(`sourceDiscrepancy`): 65쪽 01·66쪽 04 물음 글에 다른 문항의 과목·운동 이름이 남아 있던 것.
+  - 64·65쪽 보류 삭제. DB `book-07` 506키 그대로(옛 단원 3 키를 같은 수로 교체), sha 앞 8자리 `4cb24452`. 캐시 꼬리표 `20261018n`.
+- **7권 끝(2026-10-20)**: 66쪽 전부 대조. 17단원 · 공개 318문항 · 답 칸 392. 남은 보류는 **52쪽 01 (1) 한 자리 대칭수 1건**(답 칸 1)과 표지 4쪽(1·8·34·51쪽, 문항 없음)뿐. 52쪽은 원장이 「한 자리 수도 대칭수로 볼지」 정해 주면 풀 수 있다.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
