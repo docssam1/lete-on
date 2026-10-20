@@ -8,8 +8,10 @@ import { renderChapter } from './book.js';
 import { judgeText } from './judge.js';
 import { seaModel, LEVELS } from '../scenes/sealevel-model.js';
 import { glitterModel } from '../scenes/glitter-model.js';
+import { materialRow, hardest, bendiest, floaters, seeThrough } from '../scenes/material-model.js';
 
-const UNITS = { 'c22-s42-u04': { lab: 'sealevel', scene: 'sea-town', rowsKey: 'climateInquiryRows' }, 'c22-s32-u04': { lab: 'glitter', scene: 'glitter-hands', rowsKey: undefined } };
+const UNITS = { 'c22-s42-u04': { lab: 'sealevel', scene: 'sea-town', rowsKey: 'climateInquiryRows' }, 'c22-s32-u04': { lab: 'glitter', scene: 'glitter-hands', rowsKey: undefined },
+  'c22-s32-u01': { lab: 'material', scene: 'material-bars', rowsKey: undefined } };
 const load = async (u) => {
   const [book, ix, unit, think, similar, lesson, records] = await Promise.all([import(`../data/book/${u}.book.js`), import(`../data/book/${u}.interact.js`), import(`../data/units/${u}.js`),
     import(`../data/units/${u}.think.js`), import(`../data/units/${u}.similar.js`).catch(() => ({ similar: [] })), import(`../data/units/${u}.lesson.js`), import(`../data/units/${u}.records.js`)]);
@@ -73,4 +75,6 @@ test('3D 모형 수치 = 교재 결과 표', () => {
   assert.deepEqual(seaModel(4, false).wet, ['B', 'C', 'D'], '언덕 위 A는 4 cm에서도 젖지 않는다');
   assert.deepEqual([1, 2, 3].map((r) => glitterModel(r, 0).n), [2, 4, 6]);
   assert.deepEqual([1, 2, 3].map((r) => glitterModel(r, 1).n), [2, 2, 2]);
+  assert.deepEqual([hardest(), bendiest(), floaters(), seeThrough()], ['금속', '고무', ['나무'], ['플라스틱']], '막대 네 개: 단단함·휨·뜸·투명');
+  assert.equal(materialRow('물에 넣기').고무, '가라앉아요', '무른 고무도 가라앉는다(단단함과 뜨는 것은 다른 성질)');
 });

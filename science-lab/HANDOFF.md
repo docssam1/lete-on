@@ -178,6 +178,13 @@
   - 글꼴: 제목 세리프 Noto Serif KR 700(OFL) — `assets/fonts/noto-serif-kr/`에 v1 글에 쓰인 글자 묶음 29개(약 630 KB)만. v1 글을 새로 쓰다 빠진 글자는 Pretendard로 보인다(그때 묶음을 다시 고른다).
   - 복도 실사 사진: `shots.json`에 `archive-corridor`·`archive-desk`(unit `science-lab-v1`, 1792×1008, 어두운 영화 톤) 추가. 들여온 뒤 `app.js`의 `const CORRIDOR = null` 을 그 경로로 바꾼다(없을 때 404 안 나게 상수로 둠).
   - 지킨 것: 주소 `#/u/<id>`, 요소 id(concept·video·activity·discuss·quiz·stage 등), `engine.js`·장면 무변경, 진도 `sciLab.v1` 그대로.
+- **⑤ 같은 패턴(기록 앱이 기본 수업인 단원) 정리 — 진행 중(2026-10-20 원장 「진행」)**
+  - 실제 범위(앱이 여는 교재로 다시 셈): c22 13단원(3-2 Ⅰ~Ⅲ · 4-2 Ⅰ~Ⅲ · 5-1 Ⅱ~Ⅳ · 5-2 Ⅰ~Ⅳ, 기록 장 38~88장) + **4-1 s41-u01~u04**(앱의 BOOKS가 `*.inquiry.book.js`를 열어 기록 장 47~54장). s41은 3D 실험 교재(`s41-u0N.book.js`, 30장)가 이미 있어 그쪽으로 되돌리는 일이 남았다.
+  - 단원마다 같은 순서: ①옛 수업·교재를 `git mv`로 `<u>.records.js`(`recordsLesson`)·`<u>.records-book.js` ②3D 실험실(장면·모형·`v2/lab-*.js`·`mounts.js` LABS·CSS) ③`scripts/gen-science-think-<u>.mjs`(공용 lib) → think·book·interact·voice ④새 `<u>.lesson.js` ⑤`v2.js` UNITS를 `withThink`로, `RECORDS_BOOKS`에 추가 ⑥배틀 과제 3개 ⑦`think-lessons.test.mjs` UNITS·`check-science-3d.mjs` ALL ⑧교재 그림(`tools/book-art.js` + `render-book-art.mjs`) ⑨홈 카드 글·썸네일(3D 화면 캡처, 결과가 드러나지 않은 상태).
+  - **3-2 Ⅰ 물체와 물질(c22-s32-u01) 완료**: 3D 「같은 모양 막대 네 개」(`scenes/material-bars.js`·`material-model.js`·`v2/lab-material.js`) — 금속·플라스틱(투명한 아크릴)·나무·고무 막대를 비춰 보기·눌러 보기·구부려 보기·물에 넣기로 같은 방법 시험. 결과는 「이 모형의 막대」 값(나무만 뜸 · 플라스틱만 비침 · 금속이 가장 단단 · 고무가 가장 잘 휨, 무른 고무도 가라앉음). 겨냥한 오개념: 모양·크기가 같으면 성질도 같다, 단단하면 가라앉는다, 「플라스틱은 뜬다」처럼 넓히기. 수업 25장(기록 장 0), 문항 12, 3D 검사 12건 실패 0.
+  - 공용 lib 고침: `tax.unit`·`unit.no`를 단원 id에서 읽는다(예전엔 u04 고정).
+  - 판정표 주의(이번에 겪음): 판정기는 바로 뒤에 부정이 붙은 조각을 버린다. 「잘깨지」처럼 부정과 붙기 쉬운 조각을 정규식 앞쪽에 두면 그 조각이 먼저 잡혀 버려지고 뒤의 「깨지지않」은 아예 검사되지 않는다. ex.part 예시는 조건 하나만 맞는 글로 쓴다.
+  - 덤: 감염병·기후 단원 홈 카드 글과 썸네일이 옛 기록 화면 그대로였던 것을 새 수업·3D 캡처로 바꿈.
   - 확인: PC 1440·폰 390 — 15카드, 휠·화살표 넘기기, PART C 거르기(10), 검색(거미 1), 서류 열기 → 3D 재생, 진도 보존, 페이지 오류 0, 가로 넘침 0.
 
 ---

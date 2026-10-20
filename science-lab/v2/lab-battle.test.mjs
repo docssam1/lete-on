@@ -6,6 +6,7 @@ import { hillModel } from './lab-hill.js';
 import { pondResult } from './lab-pond3d.js';
 import { seaModel } from '../scenes/sealevel-model.js';
 import { glitterModel, RULES as GLITTER_RULES } from '../scenes/glitter-model.js';
+import { materialRow } from '../scenes/material-model.js';
 
 test('물: 같은 물을 얼려도 무게는 같고, 높이는 달라진다', () => {
   const rounds = LAB_BATTLE_ROUNDS['s41-u02'];
@@ -69,4 +70,12 @@ test('새 대결에는 모든 단원에서 서로 다른 세 과제가 나온다
     assert.equal(rounds.length, 3);
     assert.equal(new Set(rounds.map(round => JSON.stringify([round.field, round.targets]))).size, 3);
   }
+});
+
+test('막대 네 개: 같은 시험에서 팀마다 맡은 막대를 비교한다', () => {
+  const rounds = LAB_BATTLE_ROUNDS['c22-s32-u01'], rows = (r) => r.targets.map((t) => materialRow(t.test));
+  assert.deepEqual(rounds.map((r) => battleVerdict('c22-s32-u01', r, rows(r), [1, 1]).answers[0]), [0, 2, 2], '고무가 더 휨 · 나무가 더 들어감 · 무른 고무는 가라앉고 나무가 뜸');
+  for (const r of rounds) assert.equal(r.targets[0].test, r.targets[1].test, '두 팀은 같은 시험');
+  assert.equal(validBattleRow('c22-s32-u01', { ...materialRow('물에 넣기'), 고무: '떠요' }), false, '모형과 다른 기록은 받지 않는다');
+  assert.equal(matchesBattleTarget('c22-s32-u01', materialRow('비춰 보기'), rounds[0].targets[0]), false, '다른 시험 기록은 고를 수 없다');
 });

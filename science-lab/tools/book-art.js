@@ -11,10 +11,11 @@ import { labTable, labTray, beakerMesh, reagentBottle, lathe, round, fresnel, th
 import { puffCloud, roundedBoxGeometry } from '../scenes/_kit.js';
 import { buildSeaTown, heightAt, HOUSES as SEA_HOUSES } from '../scenes/sea-town.js';
 import { buildGlitterRoom } from '../scenes/glitter-hands.js';
+import { buildMaterialBench } from '../scenes/material-bars.js';
 const OIL_R_ = () => 0.34;
 
 const q = new URLSearchParams(location.search), shot = q.get('shot') || 'hero';
-const SIZE = { sea: [1280, 600], glit: [1280, 600], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
+const SIZE = { sea: [1280, 600], glit: [1280, 600], mat: [1280, 600], 'mat-hero': [1800, 820], 'mat-row': [1500, 720], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
 const [W, H] = SIZE[shot] || SIZE[shot.split('-')[0]] || [1600, 900];
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -203,6 +204,32 @@ if (shot === 'hero' || shot === 'sizes') {
       if (shot === 'glit-wash') CO('악수 전에 B·D·F 손 씻기', kidAt(rig, 'D', 1.1), 760, 520, '비누와 흐르는 물로 30초 이상');
     }
   }
+} else if (shot.startsWith('mat')) {
+  // 같은 모양 막대 네 개(c22-s32-u01): mat-hero · mat-start · mat-see · mat-press · mat-bend · mat-water(넣기 전) · mat-row(결과)
+  scene.background = new THREE.Color(0xf3f5f8); scene.environment = env; scene.environmentIntensity = 0.65;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe7dccb, 1.0)); const d = new THREE.DirectionalLight(0xffffff, 2.1); d.position.set(2, 7, 6); scene.add(d);
+  camera = new THREE.PerspectiveCamera(24, W / H, 0.1, 200);
+  const rig = buildMaterialBench({ letters: false }); scene.add(rig);
+  const X = (i) => (i - 1.5) * 1.15, CO = (t, p, x, y, sub) => callouts.push({ t, p, at: [x, y], sub });
+  // 결과가 드러나기 전 장면만 단계 그림으로 쓴다(예상 전 답 비공개): 세우는 중 · 누르기 직전 · 휘기 직전 · 물통 위로 옮기는 중
+  const st = { 'mat-hero': { test: -1 }, 'mat-start': { test: -1 }, 'mat-see': { test: 0, p: 0.2 }, 'mat-press': { test: 1, p: 0.1 }, 'mat-bend': { test: 2, p: 0.12 }, 'mat-water': { test: 3, p: 0.42 }, 'mat-row': { test: 3, p: 1 } }[shot] || { test: -1 };
+  rig.userData.set({ p: 0, t: 1, done: [], ...st });
+  const names = ['금속', '플라스틱', '나무', '고무'];
+  if (shot === 'mat-hero') { rig.position.x = 1.0; camera.position.set(-0.4, 3.3, 8.4); camera.lookAt(0.55, 0.45, 0.35);
+    overlay.push(['같은 모양 막대 네 개', -2.95, 1.9, { size: 64, color: '#1f2a44', bold: true, align: 'left' }], ['모양이 같으면 성질도 같을까요?', -2.9, 1.52, { size: 36, color: '#2456c4', bold: true, align: 'left' }]);
+    names.forEach((m, i) => tags3.push([m, [X(i) + 1.0, 0.62, 0], { size: 30, color: '#1f2a44' }])); }
+  else if (shot === 'mat-row') { camera.position.set(0, 3.0, 7.6); camera.lookAt(0, 0.4, 0.4);
+    names.forEach((m, i) => tags3.push([m, [X(i), 1.0, -0.2], { size: 30, color: '#1f2a44' }]));
+    overlay.push(['물에 넣기 — 나무 막대만 떠요 · 금속·플라스틱·고무 막대는 가라앉아요', 0, 1.78, { size: 34, color: '#1f2a44', bold: true }],
+      ['비춰 보기 — 플라스틱 막대로만 줄무늬가 비쳐요 · 구부려 보기 — 고무 막대가 가장 많이 휘어요', 0, 1.55, { size: 27, color: '#2456c4', bold: true }],
+      ['눌러 보기 — 금속 막대가 가장 단단하고, 고무 막대가 가장 쑥 들어갔다가 돌아와요', 0, 1.36, { size: 27, color: '#2456c4', bold: true }]); }
+  else { camera.position.set(0, 3.0, 7.6); camera.lookAt(0, 0.45, 0.4);
+    names.forEach((m, i) => tags3.push([m, [X(i), 1.05, -0.2], { size: 30, color: '#1f2a44' }]));
+    if (shot === 'mat-start') CO('모양·크기가 같은 막대 네 개', [X(0), 0.36, 0], 90, 520, '만든 물질만 달라요');
+    if (shot === 'mat-see') CO('줄무늬 판 앞에 세워요', [X(3), 0.6, 0.1], 760, 520, '뒤의 줄무늬가 비쳐 보일까요?');
+    if (shot === 'mat-press') CO('같은 무게로 눌러요', [X(3), 0.6, 0], 760, 520, '얼마나 들어가는지 비교해요');
+    if (shot === 'mat-bend') CO('받침 두 개 위에 걸쳐요', [X(3), 0.36, 0], 760, 520, '같은 무게로 가운데를 눌러요');
+    if (shot === 'mat-water') CO('물통에 함께 넣어요', [X(3), 0.8, 0.6], 760, 520, '뜰까요, 가라앉을까요?'); }
 } else if (shot.startsWith('bread') || shot === 'mold-dish') {
   // 부푸는 효모빵: bread-hero · bread-mix · bread-start · bread-cup · bread-yeast · bread-baked · bread-row · mold-dish(읽을거리)
   scene.background = new THREE.Color(shot === 'bread-yeast' ? 0xeef1f6 : 0xf5f1e8); scene.environment = env; scene.environmentIntensity = 0.55;

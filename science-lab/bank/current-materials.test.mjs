@@ -7,8 +7,9 @@ import {similar} from '../data/units/c22-s32-u01.similar.js';
 import {similar as legacySimilar} from '../data/units/s32-u04.similar.js';
 import {taxonomy} from '../data/units/c22-s32-u01.taxonomy.js';
 import {judge} from '../data/units/c22-s32-u01.judge.js';
-import {lesson} from '../data/units/c22-s32-u01.lesson.js';
-import {chapter,art,plan} from '../data/book/c22-s32-u01.book.js';
+// 2026-10-20: 기본 수업은 사고력 수업(v2/think-lessons.test.mjs)으로 바뀌었다. 여기서는 선택 기능으로 옮긴 탐구 기록장·기록 교재(records)가 예전대로 동작하는지 본다.
+import {recordsLesson as lesson} from '../data/units/c22-s32-u01.records.js';
+import {chapter,art,plan} from '../data/book/c22-s32-u01.records-book.js';
 import {renderChapter} from '../v2/book.js';
 import {buildSlides} from '../v2/deck.js';
 import {gradeDaily,vocabOf} from '../v2/daily-grade.js';

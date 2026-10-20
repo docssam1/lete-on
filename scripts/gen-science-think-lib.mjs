@@ -13,7 +13,7 @@ export function buildThink(o) {
   const { U, P, T, STD, NAME, Q, MISC, JUDGE, LINES, chapter, plan, interact, grade, semester, area, course, title } = o;
   const EV = { checkedBy: 'Claude', date: DATE, gates: ['curriculum-2022', 'science', 'answer', 'choice-length'] };
   const fmtOf = { cloze: '서술형', table: '서술형', sc: '선택형', wr: '서술형' };
-  const tax = (q) => ({ curriculum: '2022 개정', grade, semester, unit: 'u04', area, element: T[q.T], type: q.T, standard: STD[T[q.T]], format: fmtOf[q.kind],
+  const tax = (q) => ({ curriculum: '2022 개정', grade, semester, unit: U.slice(-3), area, element: T[q.T], type: q.T, standard: STD[T[q.T]], format: fmtOf[q.kind],
     level: q.level || '기본', track: '교과', topic: NAME[q.T], concept: NAME[q.T], inquirySkill: NAME[q.T] });
   const ac = (q) => {
     if (q.kind === 'cloze') return { type: 'cloze', blanks: q.blanks.map((b) => (Array.isArray(b) ? { answer: b[0], accepted: b } : { answer: b, accepted: [b] })) };
@@ -58,7 +58,7 @@ export function buildThink(o) {
     const used = JSON.stringify([misc.distractors, misc.cloze, misc.cells, judge]).includes(`"${m}"`);
     if (!used) throw new Error(`${m} 근거 문항 없음`);
   }
-  const unit = { id: `${U}-think`, course, no: 4, title: `${title} · 사고력 수업 문항`, domain: area };
+  const unit = { id: `${U}-think`, course, no: Number(U.slice(-2)), title: `${title} · 사고력 수업 문항`, domain: area };
   fs.writeFileSync(R + `data/units/${U}.think.js`, `// ${title} — 사고력 수업 문항·판정표·오개념 보충. scripts/${o.gen || `gen-science-think-${U.replace(/-/g, '')}.mjs`} 가 만든다(직접 고치지 말 것).
 export const unit = ${J(unit)};
 export const items = ${J(items)};
