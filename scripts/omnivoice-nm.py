@@ -16,7 +16,7 @@
   1) 언어별 참조 → 복제 프롬프트를 한 번만 만든다.
   2) 한 줄씩 만들고, 기대 길이의 1.25배를 넘으면(꼬리 반복) 길이를 고정해 다시.
   3) 같은 모델의 Whisper 로 **다시 받아 적어** 원문과 비교(글자 오류율 CER). 최대 3번 다시 만들어
-     가장 나은 것을 쓰고, 끝까지 CER > 0.35 면 **싣지 않는다** — 그 줄은 앱이 구글 음성으로 읽는다.
+     가장 나은 것을 쓰고, 끝까지 CER > 0.12 면 **싣지 않는다** — 그 줄은 앱이 구글 음성으로 읽는다.
      엉뚱하게 읽은 음성을 아이에게 들려주지 않기 위해서다. 숫자는 비교에서 뺀다
      ("3" 을 Whisper 가 "삼"·"셋"·"3" 무엇으로 적을지 정해져 있지 않다).
   4) number_magic/audio/omni/<lang>-<sha1 앞 12자>.mp3 로 저장(글이 같으면 건너뜀, 글이 바뀌면 새 파일).
@@ -38,7 +38,7 @@ MAP = os.path.join(NM, "data", "tts-map-omni.js")
 WORK = os.path.join(ROOT, ".omni-nm-work")          # .gitignore 대상
 VOICE = "nm-clone-v1"
 SR = 24000
-CER_OK, CER_RETRY, TRIES = 0.35, 0.12, 3
+CER_OK, CER_RETRY, TRIES = 0.12, 0.12, 3
 LANGS = ("ko", "en", "zh")
 ASR_LANG = {"ko": "korean", "en": "english", "zh": "chinese"}
 
@@ -170,6 +170,18 @@ def listen_page(refs, made, path):
     return path
 
 
+def save_report(path, report):
+    """한 줄씩 원자적으로 저장해 중단 후에도 검수 결과를 보존한다."""
+    old = {}
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as handle:
+            old = json.load(handle)
+    old.update(report)
+    with open(path + ".tmp", "w", encoding="utf-8") as handle:
+        json.dump(old, handle, ensure_ascii=False, indent=1)
+    os.replace(path + ".tmp", path)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--shard", default="", help="k/n — n 조각 중 k 번째(0부터)만")
@@ -182,6 +194,9 @@ def main():
     ap.add_argument("--no-check", action="store_true")
     ap.add_argument("--manifest-only", action="store_true")
     ap.add_argument("--device", default="auto")
+    ap.add_argument("--asr-device", default="cpu", help="받아쓰기 검수 장치(기본 cpu: GPU 메모리는 음성 생성에 사용)")
+    ap.add_argument("--asr-model", help="받아쓰기 모델 이름 또는 기존 로컬 캐시 경로")
+    ap.add_argument("--tries", type=int, default=TRIES, help="문장별 최대 생성 횟수(기본 3)")
     ap.add_argument("--speed", type=float, default=None)
     ap.add_argument("--model", default="k2-fsa/OmniVoice")
     a = ap.parse_args()
@@ -203,6 +218,7 @@ def main():
         todo = todo[:a.limit]
     print(f"이번에 만들 것 {len(todo)}줄 (참조 언어 {sorted(refs)})", flush=True)
 
+    rp = os.path.join(a.out, f"report{'-' + a.shard.replace('/', 'of') if a.shard else ''}.json")
     made, report = [], {}
     if todo:
         import torch
@@ -213,7 +229,7 @@ def main():
         from omnivoice import OmniVoice
         model = OmniVoice.from_pretrained(a.model, device_map=dev, dtype=torch.float16 if dev.startswith("cuda") else torch.float32)
         if not a.no_check:
-            model.load_asr_model()
+            model.load_asr_model(model_name=a.asr_model, device=a.asr_device)
         prompts = {l: model.create_voice_clone_prompt(ref_audio=refs[l][0], ref_text=refs[l][1]) for l in refs}
         use_lang = [True]
 
@@ -231,7 +247,8 @@ def main():
             lang, text = t["lang"], t["text"]; say = spoken(text)
             label = f"{t['unitId']} {t['key']} [{lang}]"
             exp = expected(lang, say) / (a.speed or 1.0); dur = None; best = None; ts = time.time()
-            for k in range(TRIES):
+            tries = max(1, a.tries)
+            for k in range(tries):
                 try:
                     y = gen(lang, say, dur).reshape(-1)
                 except Exception as e:
@@ -239,7 +256,7 @@ def main():
                 if len(y) / SR > exp * 1.25:
                     print(f"    ↻ {label} 너무 김 {len(y) / SR:.1f}초 > 기대 {exp:.1f}초", flush=True)
                     dur = round(exp * 1.08, 2)
-                    if k < TRIES - 1:
+                    if k < tries - 1:
                         continue
                 if a.no_check:
                     best = (0.0, "", y); break
@@ -260,14 +277,13 @@ def main():
             if ok:
                 wav = os.path.join(WORK, "tmp.wav"); write_wav(wav, y)
                 mp3 = os.path.join(a.out, f); to_mp3(wav, mp3); made.append((lang, text, mp3))
+            save_report(rp, report)
             print(f"  {'✓' if ok else '✗ 뺌'} [{n}/{len(todo)}] {label} {len(y) / SR:.1f}초 · CER {c:.2f} · {time.time() - ts:.0f}초", flush=True)
         el = time.time() - t0
         print(f"만든 음성 {len(made)}개 / 뺀 것 {len(todo) - len(made)}개 · {el:.0f}초 · RTF {el / max(audio_s, 1e-6):.1f}", flush=True)
 
-    rp = os.path.join(a.out, f"report{'-' + a.shard.replace('/', 'of') if a.shard else ''}.json")
     if report:
-        old = json.load(open(rp, encoding="utf-8")) if os.path.exists(rp) else {}
-        old.update(report); json.dump(old, open(rp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        save_report(rp, report)
     if a.out == OUT:
         write_map(OUT)
         if made:
