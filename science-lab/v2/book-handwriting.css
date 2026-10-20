@@ -77,6 +77,8 @@
 .bk-editorial .ed-gallery-item p{margin:1.2mm 0 0!important;font-size:9pt;line-height:1.45;color:#2a3442}
 .bk-editorial .ed-gallery.numbered .ed-gallery-item p b{color:var(--bk-theme,#2456c4);font-size:10.5pt}
 .bk-editorial .ed-gallery .ed-photo-credit{grid-column:1/-1;margin-top:-1mm}
+/* 3D 렌더는 가로 2.13:1 이라 16:9 로 자르면 양옆 이름표가 잘린다 → 두 단원 사진 칸을 렌더 비율에 맞춘다 */
+.bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-gallery-item img{aspect-ratio:32/15}
 .bk-editorial:is([data-unit="c22-s42-u04"],[data-unit="c22-s32-u04"]) .ed-gallery:not(.numbered)[style*="--gallery-cols:1"] img{aspect-ratio:3/1}
 .bk-editorial .ed-term{color:var(--bk-theme,#1c489d);font-weight:700;background:linear-gradient(transparent 62%,color-mix(in srgb,var(--bk-theme,#2456c4) 18%,transparent) 62%)}
 /* 단원평가·준비 점검: 짧은 문항(객관식·모두 고르기·빈칸·단답)은 2단, 서술·그림·연결·순서는 한 줄 전체 */

@@ -975,6 +975,29 @@ export const workbook = {
      ]
     },
     {
+     "type": "gallery",
+     "items": [
+      {
+       "src": "../assets/book/c22-s42-u04-photo-heatwave.webp",
+       "alt": "햇볕이 강한 여름 거리",
+       "cap": "폭염"
+      },
+      {
+       "src": "../assets/book/c22-s42-u04-photo-downpour.webp",
+       "alt": "많은 비로 물에 잠긴 낮은 길",
+       "cap": "집중호우"
+      },
+      {
+       "src": "../assets/book/c22-s42-u04-photo-drought.webp",
+       "alt": "물이 말라 갈라진 저수지 바닥",
+       "cap": "가뭄"
+      }
+     ],
+     "numbered": false,
+     "cols": 3,
+     "credit": "AI 실사형 설명 이미지 · 실제 사진 아님"
+    },
+    {
      "type": "text",
      "text": "한 번의 소나기나 하루의 추위는 기후변화의 증거가 아니에요. 여러 해에 걸쳐 같은 방향으로 달라지는지 살펴봐요."
     },
@@ -1058,6 +1081,19 @@ export const workbook = {
       "숲을 베어 내 이산화 탄소를 흡수하는 나무가 줄어든다"
      ],
      "ordered": false
+    },
+    {
+     "type": "gallery",
+     "items": [
+      {
+       "src": "../assets/book/c22-s42-u04-photo-smokestack.webp",
+       "alt": "굴뚝에서 연기가 나오는 화력 발전소와 석탄 더미",
+       "cap": "석탄을 태워 전기를 만드는 화력 발전소"
+      }
+     ],
+     "numbered": false,
+     "cols": 1,
+     "credit": "AI 실사형 설명 이미지 · 실제 사진 아님"
     },
     {
      "type": "example",
@@ -1149,12 +1185,12 @@ export const workbook = {
      "type": "gallery",
      "items": [
       {
-       "src": "../assets/book/c22-s42-u04-sea-build.webp",
+       "src": "../assets/book/c22-s42-u04-photo-setup.webp",
        "alt": "점토로 만든 해안 마을 모형",
        "cap": "통에 점토 땅을 만들고 집 A~E를 붙여요."
       },
       {
-       "src": "../assets/book/c22-s42-u04-sea-pour.webp",
+       "src": "../assets/book/c22-s42-u04-photo-pour.webp",
        "alt": "통에 물을 붓는 모습",
        "cap": "물높이 1 cm(지금의 바다)에서 시작해 물을 조금씩 부어요."
       },
@@ -1171,7 +1207,7 @@ export const workbook = {
      ],
      "numbered": true,
      "cols": 2,
-     "credit": "3D 모형 렌더 · 모형 값(실제 측정이 아님)"
+     "credit": "3D 모형 렌더(모형 값) · 실사형 사진은 AI 설명 이미지(실제 사진 아님)"
     },
     {
      "type": "table",
@@ -1274,10 +1310,15 @@ export const workbook = {
        "src": "../assets/book/c22-s42-u04-sea-wall.webp",
        "alt": "방파제를 세운 모형",
        "cap": "모형의 방파제(3.5 cm)"
+      },
+      {
+       "src": "../assets/book/c22-s42-u04-photo-seawall.webp",
+       "alt": "파도를 막는 바닷가의 콘크리트 방파제",
+       "cap": "실제 바닷가의 방파제"
       }
      ],
      "numbered": false,
-     "cols": 1,
+     "cols": 2,
      "credit": "3D 모형 렌더(모형 값) · 실사형 사진은 AI 설명 이미지(실제 사진 아님)"
     },
     {
@@ -1343,6 +1384,24 @@ export const workbook = {
        "방파제, 빗물 펌프장, 낮은 땅에 집 짓지 않기"
       ]
      ]
+    },
+    {
+     "type": "gallery",
+     "items": [
+      {
+       "src": "../assets/book/c22-s42-u04-photo-lightswitch.webp",
+       "alt": "빈 교실의 전등 스위치를 끄는 손",
+       "cap": "줄이기 — 빈 교실 불 끄기"
+      },
+      {
+       "src": "../assets/book/c22-s42-u04-photo-seawall.webp",
+       "alt": "바닷가의 방파제",
+       "cap": "대비하기 — 방파제"
+      }
+     ],
+     "numbered": false,
+     "cols": 2,
+     "credit": "AI 실사형 설명 이미지 · 실제 사진 아님"
     },
     {
      "type": "example",
@@ -1622,6 +1681,19 @@ export const workbook = {
     {
      "type": "heading",
      "text": "읽기 자료 · 낮은 섬나라"
+    },
+    {
+     "type": "gallery",
+     "items": [
+      {
+       "src": "../assets/book/c22-s42-u04-photo-atoll.webp",
+       "alt": "바다 높이와 거의 같은 낮고 평평한 산호섬",
+       "cap": "낮고 평평한 산호섬(설명 이미지)"
+      }
+     ],
+     "numbered": false,
+     "cols": 1,
+     "credit": "AI 실사형 설명 이미지 · 실제 사진 아님"
     },
     {
      "type": "text",
@@ -2341,7 +2413,7 @@ export const workbook = {
   }
  ],
  "figures": {
-  "hero": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s42-u04-sea-hero.webp\" alt=\"유리 통 속 해안 마을 모형. 바다 옆 언덕과 낮은 평지에 집 다섯 채가 있다.\" loading=\"eager\"><p class=\"ed-photo-note\">바다 바로 옆 언덕 위의 집 A와 안쪽 낮은 땅의 집 D — 어느 집이 먼저 물에 닿을까요?</p><small class=\"ed-photo-credit\">3D 모형 렌더 · 모형 값(실제 측정이 아님)</small></div>",
+  "hero": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s42-u04-photo-setup.webp\" alt=\"투명한 통 속에 점토로 만든 해안 마을 모형과 작은 집들, 세워 둔 자\" loading=\"eager\"><p class=\"ed-photo-note\">바다 바로 옆 언덕 위의 집과 안쪽 낮은 땅의 집 — 어느 집이 먼저 물에 닿을까요?</p><small class=\"ed-photo-credit\">AI 실사형 설명 이미지 · 실제 사진 아님</small></div>",
   "build": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s42-u04-sea-build.webp\" alt=\"점토로 만든 해안 마을 모형과 눈금자\" loading=\"eager\"><p class=\"ed-photo-note\">통·점토 땅·집 위치는 그대로 두고 물높이만 바꿔요.</p><small class=\"ed-photo-credit\">3D 모형 렌더 · 모형 값(실제 측정이 아님)</small></div>",
   "start": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s42-u04-sea-start.webp\" alt=\"물높이 1 cm에서 시작하는 해안 마을 모형\" loading=\"eager\"><p class=\"ed-photo-note\">물높이 1 cm(지금의 바다)에서 시작해 1 cm씩 높여요. 집 A~E의 땅 높이는 앞쪽 표를 봐요.</p><small class=\"ed-photo-credit\">3D 모형 렌더 · 모형 값(실제 측정이 아님)</small></div>",
   "over": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s42-u04-sea-over.webp\" alt=\"물이 방파제를 넘어 안쪽 낮은 땅까지 들어온 모형\" loading=\"eager\"><p class=\"ed-photo-note\">방파제(3.5 cm)보다 물이 높아지면 넘쳐 들어와요.</p><small class=\"ed-photo-credit\">3D 모형 렌더 · 모형 값(실제 측정이 아님)</small></div>",

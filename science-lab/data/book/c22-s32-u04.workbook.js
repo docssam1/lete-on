@@ -979,6 +979,29 @@ export const workbook = {
      "text": "실내 공기를 떠다니다 옮겨 가기도 하고, 상한 음식이나 깨끗하지 않은 물로 옮겨 가기도 해요. 컵이나 수저를 함께 쓰면 침으로 옮겨 갈 수 있어요."
     },
     {
+     "type": "gallery",
+     "items": [
+      {
+       "src": "../assets/book/c22-s32-u04-photo-doorknob.webp",
+       "alt": "문손잡이를 잡는 손",
+       "cap": "접촉 — 손·물건"
+      },
+      {
+       "src": "../assets/book/c22-s32-u04-photo-sneeze.webp",
+       "alt": "재채기할 때 퍼지는 작은 침방울",
+       "cap": "비말 — 기침·재채기"
+      },
+      {
+       "src": "../assets/book/c22-s32-u04-photo-cooking.webp",
+       "alt": "채소를 씻고 물을 끓이는 부엌",
+       "cap": "물·음식"
+      }
+     ],
+     "numbered": false,
+     "cols": 3,
+     "credit": "AI 실사형 설명 이미지 · 실제 사진 아님"
+    },
+    {
      "type": "diagram",
      "key": "routes",
      "caption": "옮겨 가는 길과 막는 행동"
@@ -1055,7 +1078,7 @@ export const workbook = {
      "type": "gallery",
      "items": [
       {
-       "src": "../assets/book/c22-s32-u04-glit-start.webp",
+       "src": "../assets/book/c22-s32-u04-photo-glitter-circle.webp",
        "alt": "여섯 친구가 둥글게 선 모습",
        "cap": "여섯 친구(A~F)가 둥글게 서요."
       },
@@ -1077,7 +1100,7 @@ export const workbook = {
      ],
      "numbered": true,
      "cols": 2,
-     "credit": "3D 모형 렌더 · 학습용 모형(반짝이는 병원체가 아님)"
+     "credit": "3D 모형 렌더(학습용 모형) · 실사형 사진은 AI 설명 이미지(실제 사진 아님)"
     },
     {
      "type": "table",
@@ -1211,6 +1234,24 @@ export const workbook = {
     {
      "type": "text",
      "text": "손은 병원체가 옮겨 가는 가장 흔한 길이에요. **비누와 흐르는 물로 30초 이상**, 손바닥·손등·손가락 사이·손가락·엄지손가락·손톱 밑까지 꼼꼼히 씻어요."
+    },
+    {
+     "type": "gallery",
+     "items": [
+      {
+       "src": "../assets/book/c22-s32-u04-photo-handwash.webp",
+       "alt": "비누 거품으로 손을 씻는 모습",
+       "cap": "비누 거품을 내어 30초 이상"
+      },
+      {
+       "src": "../assets/book/c22-s32-u04-photo-glitter-left.webp",
+       "alt": "물로만 헹군 뒤 손가락 사이와 손톱 밑에 남은 반짝이",
+       "cap": "물로만 헹구면 남는 곳"
+      }
+     ],
+     "numbered": false,
+     "cols": 2,
+     "credit": "AI 실사형 설명 이미지 · 실제 사진 아님"
     },
     {
      "type": "diagram",
@@ -2313,7 +2354,7 @@ export const workbook = {
   }
  ],
  "figures": {
-  "hero": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s32-u04-glit-hero.webp\" alt=\"여섯 친구가 둘러서 악수하는 반짝이 가루 손 모형\" loading=\"eager\"><p class=\"ed-photo-note\">A의 손에만 반짝이를 묻히고 악수하면 반짝이는 어디까지 옮겨 갈까요?</p><small class=\"ed-photo-credit\">3D 모형 렌더 · 학습용 모형(반짝이는 병원체가 아님)</small></div>",
+  "hero": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s32-u04-photo-glitter-shake.webp\" alt=\"반짝이 가루가 묻은 두 손이 악수하는 모습\" loading=\"eager\"><p class=\"ed-photo-note\">한 사람의 손에 묻은 반짝이가 악수할 때 옮겨 가요. 눈에 보이지 않는 병원체도 이렇게 옮겨 갈 수 있어요.</p><small class=\"ed-photo-credit\">AI 실사형 설명 이미지 · 실제 사진 아님</small></div>",
   "start": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s32-u04-glit-start.webp\" alt=\"여섯 친구 A~F가 둥글게 선 모습\" loading=\"eager\"><p class=\"ed-photo-note\">처음에는 A의 손에만 반짝이가 있어요.</p><small class=\"ed-photo-credit\">3D 모형 렌더 · 학습용 모형(반짝이는 병원체가 아님)</small></div>",
   "shake": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s32-u04-glit-shake.webp\" alt=\"두 친구씩 짝을 지어 악수하는 모습\" loading=\"eager\"><p class=\"ed-photo-note\">정해진 짝끼리 악수해요. 반짝이가 있는 손과 닿은 손에 반짝이가 옮겨 가요.</p><small class=\"ed-photo-credit\">3D 모형 렌더 · 학습용 모형(반짝이는 병원체가 아님)</small></div>",
   "wash": "<div class=\"ed-photo\"><img src=\"../assets/book/c22-s32-u04-glit-wash.webp\" alt=\"B·D·F가 비누로 손을 씻는 모습\" loading=\"eager\"><p class=\"ed-photo-note\">「B·D·F가 차례마다 손 씻기」 — 악수 전에 세 친구가 손을 씻어요.</p><small class=\"ed-photo-credit\">3D 모형 렌더 · 학습용 모형(반짝이는 병원체가 아님)</small></div>",

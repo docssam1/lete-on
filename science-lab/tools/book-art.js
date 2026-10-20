@@ -198,7 +198,7 @@ if (shot === 'hero' || shot === 'sizes') {
       for (const f of ['A', 'B', 'C', 'D', 'E', 'F']) tags3.push([f, kidAt(rig, f, 2.0), { size: 30, color: '#1f2a44' }]);
       if (shot === 'glit-all') CO('3차례 뒤 여섯 명 모두', kidAt(rig, 'D', 1.1), 760, 520, '아무도 손을 씻지 않았을 때');
       if (shot === 'glit-start') CO('A의 손에 반짝이 가루', kidAt(rig, 'A', 1.1), 90, 90, '나머지 다섯 명은 깨끗한 손');
-      if (shot === 'glit-shake') CO('1차례: A-B·C-D·E-F 악수', kidAt(rig, 'B', 1.1), 760, 520, '악수가 끝나면 반짝이가 묻은 친구를 세어요');
+      if (shot === 'glit-shake') CO('1차례: A-B·C-D·E-F 악수', kidAt(rig, 'B', 1.1), 630, 520, '악수가 끝나면 반짝이가 묻은 친구를 세어요');
       if (shot === 'glit-shake2') CO('2차례: B-C·D-E·F-A', kidAt(rig, 'C', 1.1), 760, 520, '3차례: C-D·E-F·A-B');
       if (shot === 'glit-wash') CO('악수 전에 B·D·F 손 씻기', kidAt(rig, 'D', 1.1), 760, 520, '비누와 흐르는 물로 30초 이상');
     }

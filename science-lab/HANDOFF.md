@@ -161,6 +161,11 @@
     - 도구: `scripts/local/book-photos.cmd` → `scripts/book-photos.py`(FLUX.1-schnell, Apache 2.0 · 메모리 부족 시 SDXL), 장면 목록 `scripts/book-photos/shots.json`(19장면: 실험 배치 + 개념 사진), 후보 3장씩 → `inbox/book-photos` 브랜치(후보만 담은 고아 커밋, PC 작업 폴더·main 무관). PC에서는 `git worktree add ..\lete-on-photos FETCH_HEAD` 전용 폴더에서 돌린다(README).
     - 받으면: `git fetch origin inbox/book-photos` → 임시 폴더에 풀기 → 눈으로 고르기 → `python3 scripts/import-book-photos.py <폴더> setup=2 ...` → 교재 생성기 2개 다시 실행. 사진 자리는 이미 있다(`photoSrc`·`cell`·`only` — 사진이 있으면 사진, 없으면 3D 렌더로 대신하거나 블록을 뺀다). 표기 「AI 실사형 설명 이미지 · 실제 사진 아님」.
     - 19장면을 모두 넣은 상태도 임시 그림으로 A4 넘침 0을 확인해 두었다.
+    - **2026-10-20 사진 반영**: 원장 맥에서 Codex가 FLUX.2 Klein 4B(mflux)로 57장을 만들어 Drive(폴더 id `1EQePp4V6FxrW87v7EoYNm-aBqsRhV0PG`)에 올림(수신 브랜치는 안 씀). 16장을 골라 넣었다: 기후 setup·pour·heatwave·downpour·drought·smokestack·atoll·seawall·lightswitch, 감염병 glitter-shake·glitter-circle·glitter-left·handwash·sneeze·doorknob·cooking.
+      - **뺀 것**: 기침 예절(sleeve) — 후보가 전부 팔꿈치가 아니라 **손·주먹으로 가리는** 모습이라 잘못 가르친다 → 3D 렌더 유지. 환기(ventilation) — 창문이 닫혀 있다 → 자리 비움. 사과 재배지(orchard) — 지면에 자리가 없어 넣지 않음.
+      - **가짜 한글 고침(원장 「한글 간판 같은게 어색」)**: 지우개(inpaint)는 색 얼룩이 남아 버렸다. 대신 heatwave = 간판 판을 바탕색 평면으로 칠한 「빈 간판」(깃발·세로 간판은 다각형 안만), downpour = 물에 잠긴 길 쪽으로 잘라 먼 간판은 서서히 흐리게·번호판 흐리게, glitter-circle = 스웨터의 큰 글씨만(글자 바로 바깥 천 색으로 메움 · 곰 그림·칠판 메모는 그대로). 도구는 세션 임시 폴더에만 있었다 — 같은 일이 또 생기면 **inpaint 대신 「바탕색 평면 + 다각형」**이 낫다는 것만 기억할 것.
+      - 두 단원 사진 칸 비율을 3D 렌더(2.13:1)에 맞춰 32/15로 — 16:9로 자르면 렌더 양옆 이름표가 잘렸다. `glit-shake` 렌더는 이름표가 그림 밖으로 나가 있어 글자 자리를 옮겨 다시 렌더.
+      - 실험실 배경 `lab-room`·`lab-bench`(v1)는 아직 안 만들어짐 — 맥에서 `--only lab-room,lab-bench`로 만들면 들여와 `app.js` `CORRIDOR`에 연결.
   - **지면 배치 다듬기**: 실험 과정 ①②③④ 사진 줄(`gallery` 블록), 사례 사진 줄, 핵심 낱말 강조(`**낱말**` → `.ed-term`, opt-in `richText`), 단원평가·준비 점검의 짧은 문항 2단(`layout:'two'`, 서술·그림·연결·순서는 한 줄 전체).
   - **남은 것**: 그림은 3D 모형 렌더와 도표뿐이다. 실제 사진(폭염·투발루·손 씻기 등)은 유료 이미지 생성이나 사진 사용 허락이 필요해 넣지 않았다 — 원장 결정 필요. 기후 단원 시작 화면의 「옛 에너지/날씨 대응 관련 발췌」 카드 이름은 문제은행 쪽 이름표(`BANK` label)라 이번에 손대지 않았다.
 - **④ 과학 탐구 프로그램(v1 `/science-lab/`) — 「과학 탐구 기록 보관소」(원장 2026-10-20: hugh-kim.space 「THE ARCHIVE」 느낌)**
