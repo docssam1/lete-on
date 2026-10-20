@@ -450,7 +450,9 @@ function conceptRows(){
     {key:'hwangso',label:'황소',blocks:hw},
     {key:'calc',label:'연산',blocks:calc},
     {key:'sci',label:'과학',blocks:sciPlan(mid+2,comp)}, // 중2-1 심화(A급)가 초4 10월에 끝나 다음 달 중등과학
-    {key:'gifted',label:'영재원 코스',blocks:gifted}
+    {key:'gifted',label:'영재원 코스<br><small>(가천대·교육청)</small>',blocks:gifted},
+    // 교대 영재원: 서울교대 과학영재교육원 초4~6(서울시교육청 목록). 선발 시기는 원장님 자료(초3 7~9월). 대학부설 합격자는 교육청 영재원 지원 불가.
+    {key:'gifted',label:'교대 영재원',blocks:[['서울교대 과학영재교육원 지원·선발<br><small>(초3 7~9월)</small>',66,68],['교대 영재원 수업 (합격 시, 초4)<br><small>합격하면 교육청 영재원은 지원 불가</small>',74,83]]}
   ];
 }
 const CONCEPT={id:'예시',cls:'l2',summary:'초2 9월 5-1부터<br>2개월 단위 → 초3 9월 중등<br>(원장님 손그림)',rows:null};
