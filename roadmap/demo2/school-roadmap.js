@@ -272,7 +272,7 @@ const ACADEMY={
 /* 황소는 기본 로드맵에 넣지 않는다(원장님 2026-10-19: "황소를 굳이 고려하지 않아도 학습할 수 있는 로드맵").
    '황소 대비 보기' 키를 켜면 레벨마다 황소 개념 3개월 + 황소 모의고사 2개월(5개월)을 시험 달에 끝나도록 붙인다.
    조건: 1031 초급을 마친 다음 달부터 시작. 3% 1과정 완료는 조건이 아니다(3% 2과정은 중1 선행 수준이라 대부분 하지 않음).
-   시험 달: 초2 11월 · 초3 2월 · 초3 11월(달력 기준, 원장님 확인). */
+   시험 달: 초2 11월 · 초3 2월 · 초3 11월(달력 기준, 원장님 확인). 11월 시험 → 12월 입학, 2월 시험 → 3월 입학. */
 const HWANGSO_EXAMS=[58,61,70];
 function hwangsoPlan(compBlocks){
   const c=compBlocks.find(b=>/1031 초급/.test(plain(b[0])));
@@ -427,7 +427,8 @@ function renderLevels(nowM, bestId, only){
   });
   if(academyOn.hwangso){
     h+=`<tr class="lv-academy"><th class="sr-group" colspan="2">황소 시험</th>`;
-    for(let m=AX0;m<=AX1;m++) h+=HWANGSO_EXAMS.includes(m)?`<td class="sr-cell" style="background:#fde68a">황소<br>시험</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
+    // 11월 시험 → 12월 입학, 2월 시험 → 3월 입학(원장님 2026-10-20)
+    for(let m=AX0;m<=AX1;m++) h+=HWANGSO_EXAMS.includes(m)?`<td class="sr-cell" style="background:#fde68a">황소<br>시험</td>`:HWANGSO_EXAMS.includes(m-1)?`<td class="sr-cell" style="background:#fef3c7">황소<br>입학</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
     h+='</tr>';
   }
   // 원장님 자료: 교대 영재원 초3 7~9월, 대학 부설·교육청 영재원 3학년 9~10월 → 칸이 겹치지 않게 7~8월 / 9~10월로 나눠 매년 표시
