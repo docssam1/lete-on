@@ -424,7 +424,7 @@ function conceptRows(){
   const upTo=(arr,cut)=>arr.filter(b=>b[1]<cut).map(([t,a,e])=>[t,a,Math.min(e,cut-1)]);
   const sem=['5-1','5-2','6-1','6-2'], mid=68;
   const school=upTo(R('school'),56).concat(sem.map((x,i)=>[x+' 디딤돌 응용',56+2*i,57+2*i]),[['계통 (5·6학년·중1)<br><small>대수 정리</small>',64,67]],
-    seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',4])));
+    seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',3]))); // 원리해설 3개월 단위(원장님 2026-10-20)
   const school2=upTo(R('school2'),57).concat(['4-1','4-2','5-1','5-2'].map((x,i)=>[x+' 최상위 S',57+2*i,58+2*i]),
     [['황소 대비 고려에 따라 고민<br><small>+ 중등 쎈</small>',65,mid+1]],seqFrom(mid+2, MID_SEMS.map(x=>[x+' 중등 심화(A급)',4]))); // 중등 심화는 초3 11월부터(원장님 2026-10-20)
   const early=R('comp').filter(b=>!/1031 (초급|중급)|3%|왕수학/.test(plain(b[0])));
