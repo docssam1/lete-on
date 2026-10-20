@@ -96,8 +96,11 @@ function build(o){
   if(o.hwMid&&B.hw){ const N=mOf(4,11); hw.push(['황소 중등 시험 대비 3개월',N-3,N-1],['황소 중등 시험 (고려)',N,N]); flags.push([N,'황소 중등 시험']); }
   // ---- 영재원 (2026-10-20 모집요강 기준). 초3 11월이 지났으면 초4 기준(수학·과학 초4 지원 → 초5)
   const gy=now<=mOf(3,11)?3:4, d=12*(gy-3);
-  const giftA=[], giftB=[];
-  if(o.gifted){ // 영재원은 고려 / 안 고려 하나로(원장님 2026-10-20)
+  const giftA=[], giftB=[], giftP=[];
+  const GBOOK=g=>g<=2?`안쌤 수학 100제 ${g}`:`안쌤 수학 100제 ${g} · 영재 사고력 수학 단원별·유형별 · 맛있는 영재 수학 ${g}`;
+  if(o.gifted){
+    // 시험 전 3개월만 공부: 교대(7~9월 선발) → 4~6월, 교육청(11월 지원·12월 평가) → 8~10월
+    giftP.push([`영재원 대비 3개월 (교대)<br><small>${GBOOK(gy)}</small>`,63+d,65+d],[`영재원 대비 3개월 (교육청)<br><small>${GBOOK(gy)}</small>`,67+d,69+d]); // 영재원은 고려 / 안 고려 하나로(원장님 2026-10-20)
     giftA.push([`가천대 브릿지 접수 · 온라인 과제 (초${gy} 대상)`,61+d,63+d],['가천대 브릿지 관찰수업 (5월 면접 · 5~9월 토)',64+d,68+d],
       [gy===3?'강남서초 영재원 수·과융합 (11월 지원 · 12/5 평가)':'강남서초 영재원 수학·과학 (11월 지원 · 12월 평가)',70+d,71+d],['최종 발표',73+d,73+d],
       [`초${gy+1} 영재원 수업 (합격 시)`,74+d,83+d]);
@@ -115,6 +118,7 @@ function build(o){
     {key:'calc',label:'연산',blocks:calc,color:'#dcfce7',lane:'수학'},
     {key:'sci',label:'과학',blocks:sci,color:'#ecfccb',lane:'과학'},
     {key:'hw',label:'황소 · 선택',blocks:hw,color:'#fde68a',lane:'황소'},
+    {key:'giftP',label:'영재원 대비',blocks:giftP,color:'#fdf2e0',lane:'영재원'},
     {key:'giftA',label:'영재원 · 가천대·교육청',blocks:giftA,color:'#fce7f3',lane:'영재원'},
     {key:'giftB',label:'영재원 · 교대',blocks:giftB,color:'#fae8ff',lane:'영재원'}
   ].filter(r=>r.blocks.length||['school','school2','comp','calc','sci'].includes(r.key));
@@ -149,7 +153,7 @@ function simpleRows(P){
   if(mids.length) math.push([`중등 ${mids[0][0].split(' ')[0]} → ${mids[mids.length-1][0].split(' ')[0]}`,mids[0][1],mids[mids.length-1][2]]);
   const think=R('comp').map(b=>[b[0].replace(/\s*\(.*\)/,''),b[1],b[2]]);
   const short=b=>[b[0].replace(/\s*\(.*\)/,'').replace(/ · .*/,''),b[1],b[2]];
-  const giftA=R('giftA').map(short), giftB=R('giftB').map(short);
+  const giftA=R('giftP').concat(R('giftA')).sort((p,q)=>p[1]-q[1]).map(short), giftB=R('giftB').map(short);
   return [
     {label:'수학',sub:'교과',blocks:math,color:'#bfdbfe'},
     {label:'수학',sub:'사고력',blocks:think,color:'#ddd6fe'},
@@ -261,6 +265,7 @@ function narrative(P){
     comp.forEach(x=>{ if(x[1]>=lo) put(x[1],nm(x[0]).replace(' + workbook',''),'starts'); });
     inY(R('hw')).forEach(x=>{ put(x[1],nm(x[0]),'issues'); });
     inY(R('giftA').concat(R('giftB'))).forEach(x=>{ put(x[1],nm(x[0]).replace(/ · .*/,''),'issues'); });
+    inY(R('giftP')).forEach(x=>{ put(x[1],'영재원 대비 시작','issues'); });
     inY(R('sci')).forEach(x=>{ if(x[1]>=lo) put(x[1],nm(x[0])+' 시작','issues'); });
     P.bubbles.forEach(([m,t])=>{ if(m>=a&&m<=b) put(m,t.replace(/^\S+ \S+ /,'').replace(/ 고려$/,''),'issues'); });
     // ---- 항목별 코멘트
@@ -295,7 +300,10 @@ function narrative(P){
       if(out.length) items.push({label:'연산',text:out.join(' ')}); }
     { const sc=inY(R('sci')).filter(x=>x[1]>=lo); if(sc.length) items.push({label:'과학',text:sc.map(x=>`${mon(x[1])}부터 ${nm(x[0])}`).join(', ')+'을 시작해요.'+(sc.some(x=>/중등 과학/.test(x[0]))?' 중2-1 심화가 끝난 다음 달이에요.':'')}); }
     { const ev=inY(R('hw')); if(ev.length) items.push({label:'황소',text:ev.map(x=>`${mon(x[1])}${x[2]>x[1]?'~'+mon(x[2]):''} ${nm(x[0])}`).join(', ')+'.'+(ev.some(x=>/시험$/.test(nm(x[0])))?' 시험 결과를 보고 다음을 정해요.':'')});
-      const gv=inY(R('giftA').concat(R('giftB'))); if(gv.length) items.push({label:'영재원',text:gv.map(x=>`${mon(x[1])}${x[2]>x[1]&&x[2]<=b?'~'+mon(x[2]):''} ${nm(x[0]).replace(/ · .*/,'')}`).join(', ')+'.'}); }
+      const gv=inY(R('giftA').concat(R('giftB'))), gp=inY(R('giftP'));
+      if(gv.length||gp.length){ let t=gv.map(x=>`${mon(x[1])}${x[2]>x[1]&&x[2]<=b?'~'+mon(x[2]):''} ${nm(x[0]).replace(/ · .*/,'')}`).join(', ')+'.';
+        if(gp.length){ const bk=gp[0][0].replace(/<[^>]+>/g,' ').replace(/.*3개월 \(.*?\)\s*/,'').trim(); t+=` 영재원은 시험 전 3개월만 따로 공부해요(${gp.map(x=>mon(x[1])+'~'+mon(x[2])).join(', ')}). 교재는 ${bk}.`; }
+        items.push({label:'영재원',text:t}); } }
     return {title:g,months,items};
   }).filter(y=>y.items.length);
 }
