@@ -95,7 +95,7 @@ export const freezeLesson = {
 // 현행 전체 단원: 위 얼음 병 수업 정의와 기존 모형/저장 기록은 보존한다.
 import {inquiry} from '../activities/s41-u02.inquiry.js';
 const q=n=>`s41-u02-b${String(n).padStart(2,'0')}`;
-export const lesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'다섯 변화 관찰·물을 얻는 장치 만들기',
+export const recordsLesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'다섯 변화 관찰·물을 얻는 장치 만들기',
  engage:{say:[{mood:'thinking',text:'끓이지 않은 물도 어디로 갈까요?'},{mood:'talk',text:'관찰한 근거로 물을 모으는 장치를 만들어요.'}],question:'얼음·물·수증기로 바뀌는 모습을 어떻게 확인하고 물을 따로 모을까요?',predictions:[{id:'observe',text:'조건과 실제 관찰을 확인해 상태 변화와 수집 경로를 설명한다.'},{id:'heat',text:'물을 반드시 끓여야만 수증기가 되므로 다른 관찰은 필요 없다.'},{id:'more',text:'아직 모르므로 관찰하고 장치를 만들어 더 확인하고 싶다.'}],answer:'observe',predictionNote:'예상과 실제 결과를 나중에 근거로 비교해요.'},
  explore:{say:[{mood:'talk',text:'직접 관찰·자료·계획을 구별해 남겨요.'}],modes:['lab','model','scene','home'],modeLabels:{lab:'내 물 탐구 기록',model:'물기둥 모형',scene:'얼음 병3D',home:'실제 활동 방법'},scene:'freeze-bottle',modelLab:freezeLesson.explore.lab,modelLabel:'얼었다 녹는 물기둥 모형',modelNotice:'무게는 물+병(가정20g)의 모형 값이며, 높이 칸은 실제cm가 아니에요.',
  lab:{kind:'inquiry',config:inquiry,rowsKey:'waterInquiryRows',goal:'여덟 활동의 실제 조건·관찰·설계·제작·시험·의견과 미실행 계획을 구별해 보관해요.',columns:['활동','보관한 기록'],rowText:r=>r.title},
@@ -105,3 +105,10 @@ export const lesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'다�
  evaluate:{say:[{mood:'encourage',text:'자료 응답과 실제 만든 근거를 따로 확인해요.'}],items:[q(47),q(55),q(63)],pass:2,performanceNote:'자료 문제를 맞혔다고 실제 관찰·장치 만들기·시험·의견 교환을 한 것으로 세지 않아요. 실제 수행은 선생님과 근거를 확인해요.'},
  report:{title:'물의 상태 변화 · 관찰과 장치 만들기 보고서',sections:[{key:'waterQuestion',label:'① 알아볼 문제·직접/자료/계획 구별'},...inquiry.activities.map((a,i)=>({key:'water_'+a.id,from:'inquiry.'+a.id,label:`${i+2}. ${a.title} · 조건과 실제 근거`})),{key:'waterMore',label:'⑩ 더 확인할 점·다음 계획'}],checks:['물의 세 상태·주변 예와 직접/자료를 구별했나요?','같은 용기의 높이·전체 무게·단위·출입·겉 물기를 확인했나요?','증발과 끓음의 공통점·교사 시범 안전을 설명했나요?','컵 바깥의 응결과 누수/흘림을 비교했나요?','장치를 실제 만들었는지·고정·직접 혼입 방지를 확인했나요?','물방울과 컵 수집·실제 의견·수정·재시험·미확인을 구별했나요?']}
 };
+
+// 2026-10-20 ⑤ 같은 패턴 정리: 기본 수업 = 위 freezeLesson(3D 실험 수업 · 예상→실험→개념). 탐구 기록 앱은 선택 기능(#/s41-u02/records)으로 옮겼다
+// — 저장 키 sciLab.inquiry.s41-u02와 보고서 화면(#/s41-u02/report)은 그대로 기록장과 이어진다. 기록 교재는 #/s41-u02/records-book.
+export const lesson = { ...freezeLesson,
+  explore: { ...freezeLesson.explore, records: { ...recordsLesson.explore.lab, title: '탐구 기록장(선택)', note: '다섯 변화 관찰·물을 얻는 장치 제작과 의견을 따로 기록하고 싶을 때 써요. 수업은 기록 없이도 끝까지 할 수 있어요.' } },
+  elaborate: { ...freezeLesson.elaborate, report: false },
+  report: recordsLesson.report };

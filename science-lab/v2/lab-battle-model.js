@@ -18,8 +18,11 @@ import { bubbleModel } from '../scenes/bubble-model.js';
 import { seaModel } from '../scenes/sealevel-model.js';
 import { glitterModel, RULES as GLITTER_RULES } from '../scenes/glitter-model.js';
 import { MATERIALS, TESTS as MAT_TESTS, materialRow, materialResult } from '../scenes/material-model.js';
+import { WATERS as SEA_WATERS, AMOUNTS as SEA_AMOUNTS, evapRow } from '../scenes/seawater-model.js';
 const sea = (title, targets) => ({ title, question: '어느 팀 마을에서 물에 닿은 집이 더 많을까요?', choices: ['1팀이 더 많음', '집 수가 같음', '2팀이 더 많음'], field: 'n', targets });
 // 막대 네 개: 두 팀이 같은 시험을 하고, 팀마다 맡은 막대 하나의 결과를 비교한다(기록 한 줄에 네 막대가 다 있다)
+// 증발 접시: 팀마다 맡은 접시(물의 종류)와 물의 양 — 기록 한 줄에 두 접시가 함께 있다
+const seawater = (title, targets) => ({ title, question: '물이 모두 날아간 뒤 어느 팀의 접시에 더 많이 남을까요?', choices: ['1팀 접시에 더 많이 남음', '남은 양이 같음', '2팀 접시에 더 많이 남음'], field: 'sea', targets });
 const material = (title, question, choices, targets) => ({ title, question, choices, field: 'mat', targets });
 const glitter = (title, targets) => ({ title, question: '어느 팀에서 반짝이가 묻은 친구가 더 많을까요?', choices: ['1팀이 더 많음', '친구 수가 같음', '2팀이 더 많음'], field: 'n', targets });
 const bubble = (title, targets) => ({ title, question: '어느 팀의 비눗방울이 평균적으로 더 오래 갈까요?', choices: ['1팀이 더 오래 감', '평균 시간이 같음', '2팀이 더 오래 감'], field: 'mean', targets });
@@ -41,6 +44,11 @@ export const LAB_BATTLE_ROUNDS = {
     glitter('손 씻기 규칙만 바꾸기', [{ rule: '손 씻기 없음', round: 3 }, { rule: 'B·D·F가 차례마다 손 씻기', round: 3 }]),
     glitter('악수 차례만 바꾸기', [{ rule: '손 씻기 없음', round: 1 }, { rule: '손 씻기 없음', round: 2 }]),
     glitter('손을 씻으면 늘어날까?', [{ rule: 'B·D·F가 차례마다 손 씻기', round: 1 }, { rule: 'B·D·F가 차례마다 손 씻기', round: 3 }]),
+  ],
+  'c22-s32-u02': [
+    seawater('물의 종류만 바꾸기', [{ ml: 20, water: '바닷물' }, { ml: 20, water: '수돗물' }]),
+    seawater('바닷물의 양만 바꾸기', [{ ml: 10, water: '바닷물' }, { ml: 40, water: '바닷물' }]),
+    seawater('같은 조건으로 재현하기', [{ ml: 20, water: '바닷물' }, { ml: 20, water: '바닷물' }]),
   ],
   'c22-s32-u01': [
     material('같은 시험, 다른 막대', '같은 힘으로 가운데를 누르면 어느 팀의 막대가 더 많이 휠까요?', ['1팀 막대가 더 많이 휨', '휘는 정도가 같음', '2팀 막대가 더 많이 휨'], [{ test: '구부려 보기', mat: '고무' }, { test: '구부려 보기', mat: '금속' }]),
@@ -124,6 +132,7 @@ export function validBattleRow(unit, row) {
   if (!row || typeof row !== 'object') return false;
   if (unit === 'c22-s42-u04') { try { const m = seaModel(row.level, row.wall === '방파제 있음'); return row.wall === m.wall && row.n === m.n && row.result === m.result; } catch { return false; } }
   if (unit === 'c22-s32-u04') { const r = GLITTER_RULES.indexOf(row.rule); if (r < 0) return false; try { const m = glitterModel(row.round, r); return row.n === m.n && row.result === m.result; } catch { return false; } }
+  if (unit === 'c22-s32-u02') { if (!SEA_AMOUNTS.includes(row.ml)) return false; const m = evapRow(row.ml); return SEA_WATERS.every((w) => row[w] === m[w]) && row.seaG === m.seaG && row.tapG === m.tapG; }
   if (unit === 'c22-s32-u01') { if (!MAT_TESTS.includes(row.test)) return false; const m = materialRow(row.test); return MATERIALS.every((k) => row[k] === m[k]); }
   if (unit === 's52-u01') { try { const m = bubbleModel(row.add); return row.mean === m.mean && row.result === m.result && Array.isArray(row.trials) && row.trials.join() === m.trials.join(); } catch { return false; } }
   if (unit === 's51-u05') { try { const m = breadModel(row.water); return row.vol === m.vol && row.temp === m.temp && row.result === m.result; } catch { return false; } }
@@ -144,13 +153,15 @@ export function validBattleRow(unit, row) {
 }
 
 export function matchesBattleTarget(unit, row, target) {
-  if (unit === 'c22-s32-u01') return validBattleRow(unit, row) && row.test === target.test;   // 맡은 막대(mat)는 기록 한 줄 안에 있다
+  if (unit === 'c22-s32-u01') return validBattleRow(unit, row) && row.test === target.test;
+  if (unit === 'c22-s32-u02') return validBattleRow(unit, row) && row.ml === target.ml;   // 맡은 접시(water)는 기록 한 줄 안에 있다   // 맡은 막대(mat)는 기록 한 줄 안에 있다
   return validBattleRow(unit, row) && Object.entries(target).every(([key, value]) => row[key] === value);
 }
 export function battleTargetText(unit, target) {
   if (unit === 'c22-s42-u04') return `물높이 ${target.level} cm · ${target.wall}`;
   if (unit === 'c22-s32-u04') return `${target.rule} · ${target.round}차례 뒤`;
   if (unit === 'c22-s32-u01') return `${target.mat} 막대 · ${target.test}`;
+  if (unit === 'c22-s32-u02') return `${target.water} 접시 · ${target.ml} mL`;
   if (unit === 's52-u01') return target.add;
   if (unit === 's51-u05') return target.water;
   if (unit === 's51-u04') return target.cool;
@@ -170,6 +181,7 @@ export function battleRowText(unit, row) {
   if (unit === 'c22-s42-u04') return `물높이 ${row.level} cm · ${row.wall} · ${row.result}`;
   if (unit === 'c22-s32-u04') return `${row.rule} · ${row.round}차례 · ${row.result}`;
   if (unit === 'c22-s32-u01') return `${row.test} · ${MATERIALS.map((m) => `${m} ${row[m]}`).join(', ')}`;
+  if (unit === 'c22-s32-u02') return `${row.ml} mL · 바닷물 ${row.바닷물} · 수돗물 ${row.수돗물}`;
   if (unit === 's52-u01') return `${row.add} · ${row.result}`;
   if (unit === 's51-u05') return `${row.water} · ${row.result}`;
   if (unit === 's51-u04') return `${row.cool} · ${row.result}`;
@@ -187,6 +199,7 @@ export function battleRowText(unit, row) {
 }
 function score(round, row, i) {
   if (round.field === 'mat') return materialResult(row.test, round.targets[i].mat).v;
+  if (round.field === 'sea') return round.targets[i].water === '바닷물' ? row.seaG : row.tapG;
   if (round.field === 'crystal') return row.result.startsWith('큰') ? 1 : 0;
   if (round.field === 'smoke') return row.result.startsWith('연기 많이') ? 1 : 0;
   return row[round.field];

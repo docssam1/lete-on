@@ -12,10 +12,11 @@ import { puffCloud, roundedBoxGeometry } from '../scenes/_kit.js';
 import { buildSeaTown, heightAt, HOUSES as SEA_HOUSES } from '../scenes/sea-town.js';
 import { buildGlitterRoom } from '../scenes/glitter-hands.js';
 import { buildMaterialBench } from '../scenes/material-bars.js';
+import { buildEvapBench } from '../scenes/evap-dishes.js';
 const OIL_R_ = () => 0.34;
 
 const q = new URLSearchParams(location.search), shot = q.get('shot') || 'hero';
-const SIZE = { sea: [1280, 600], glit: [1280, 600], mat: [1280, 600], 'mat-hero': [1800, 820], 'mat-row': [1500, 720], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
+const SIZE = { sea: [1280, 600], glit: [1280, 600], mat: [1280, 600], 'mat-hero': [1800, 820], 'mat-row': [1500, 720], sw: [1280, 600], 'sw-hero': [1800, 820], 'sw-row': [1500, 720], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
 const [W, H] = SIZE[shot] || SIZE[shot.split('-')[0]] || [1600, 900];
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -203,6 +204,29 @@ if (shot === 'hero' || shot === 'sizes') {
       if (shot === 'glit-shake2') CO('2차례: B-C·D-E·F-A', kidAt(rig, 'C', 1.1), 760, 520, '3차례: C-D·E-F·A-B');
       if (shot === 'glit-wash') CO('악수 전에 B·D·F 손 씻기', kidAt(rig, 'D', 1.1), 760, 520, '비누와 흐르는 물로 30초 이상');
     }
+  }
+} else if (shot.startsWith('sw-')) {
+  // 증발 접시 두 개(c22-s32-u02): sw-hero · sw-start · sw-heat(가열 중) · sw-40 · sw-row(결과)
+  scene.background = new THREE.Color(0xf3f5f8); scene.environment = env; scene.environmentIntensity = 0.65;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xe7dccb, 1.0)); const d = new THREE.DirectionalLight(0xffffff, 2.1); d.position.set(2, 7, 5); scene.add(d);
+  camera = new THREE.PerspectiveCamera(24, W / H, 0.1, 200);
+  const CO = (t, p, x, y, sub) => callouts.push({ t, p, at: [x, y], sub }), DX = [-0.95, 0.95];
+  const st = { 'sw-hero': { ml: 20 }, 'sw-start': { ml: 20 }, 'sw-heat': { ml: 20, heat: 1, p: 0.35, t: 2.2 }, 'sw-40': { ml: 40 }, 'sw-row': { ml: 20, p: 1 } }[shot] || { ml: 20 };
+  const one = (x, o) => { const rig = buildEvapBench({ letters: false }); rig.position.x = x; rig.userData.set({ heat: 0, p: 0, t: 1, ...o }); scene.add(rig); return rig; };
+  if (shot === 'sw-row') {
+    one(0, st); camera.position.set(0, 4.5, 3.2); camera.lookAt(0, 0.2, 0);
+    DX.forEach((x, i) => tags3.push([i ? '수돗물 20 mL' : '바닷물 20 mL', [x, 0.8, -0.55], { size: 30, color: '#1f2a44' }]));
+    CO('흰 알갱이 약 0.7 g', [DX[0], 0.28, 0], 60, 645, '바닷물에 녹아 있던 물질'); CO('거의 남지 않음', [DX[1], 0.28, 0], 920, 645, '수돗물 접시');
+  } else {
+    const rig = one(shot === 'sw-hero' ? 0.9 : 0, st);
+    if (shot === 'sw-hero') { camera.position.set(-0.2, 2.9, 6.2); camera.lookAt(0.55, 0.3, 0);
+      overlay.push(['증발 접시 두 개', -1.95, 1.55, { size: 64, color: '#1f2a44', bold: true, align: 'left' }], ['투명한 두 물, 정말 같은 물일까요?', -1.9, 1.22, { size: 36, color: '#1f6fa8', bold: true, align: 'left' }]);
+      DX.forEach((x, i) => tags3.push([i ? '수돗물' : '바닷물', [x + 0.9, 0.95, 0], { size: 30, color: '#1f2a44' }])); }
+    else { camera.position.set(0, 3.1, 5.6); camera.lookAt(0, 0.3, 0);
+      DX.forEach((x, i) => tags3.push([i ? '수돗물' : '바닷물', [x, 0.95, 0], { size: 30, color: '#1f2a44' }]));
+      if (shot === 'sw-start') CO('같은 양 20 mL씩', [DX[0], 0.4, 0.2], 60, 470, '눈금 실린더로 맞춰요');
+      if (shot === 'sw-heat') CO('같은 전열기로 가열', [DX[1], 0.2, 0.45], 760, 470, '김이 나며 물이 줄어요');
+      if (shot === 'sw-40') CO('40 mL씩 담아 다시', [DX[0], 0.45, 0.2], 60, 470, '두 접시 모두 똑같이'); }
   }
 } else if (shot.startsWith('mat')) {
   // 같은 모양 막대 네 개(c22-s32-u01): mat-hero · mat-start · mat-see · mat-press · mat-bend · mat-water(넣기 전) · mat-row(결과)

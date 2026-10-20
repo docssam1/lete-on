@@ -185,6 +185,9 @@
   - 공용 lib 고침: `tax.unit`·`unit.no`를 단원 id에서 읽는다(예전엔 u04 고정).
   - 판정표 주의(이번에 겪음): 판정기는 바로 뒤에 부정이 붙은 조각을 버린다. 「잘깨지」처럼 부정과 붙기 쉬운 조각을 정규식 앞쪽에 두면 그 조각이 먼저 잡혀 버려지고 뒤의 「깨지지않」은 아예 검사되지 않는다. ex.part 예시는 조건 하나만 맞는 글로 쓴다.
   - 덤: 감염병·기후 단원 홈 카드 글과 썸네일이 옛 기록 화면 그대로였던 것을 새 수업·3D 캡처로 바꿈.
+  - **4-1 s41-u01~u03 완료**: 새로 만들 것 없이 이미 있던 3D 실험 수업(`ringTowerLesson`·`freezeLesson`(시험관)·`hillLesson`)을 기본으로 되돌림. `lesson.js` 끝에서 `lesson = {...실험 수업, explore.records, elaborate.report:false, report: recordsLesson.report}`, 기록형은 `recordsLesson`으로 이름만 바꿈. `v2.js` BOOKS → `s41-u0N.book.js`(3D 실험 교재), RECORDS_BOOKS → `*.inquiry.book.js`. 검사기 `labPath`도 lab 탭으로. 새 검사 `v2/lab-lessons.test.mjs`. s41-u04는 3D 실험 교재가 없어 c22 단원처럼 따로 만든다(효모빵 실험실 재사용 예정).
+  - **3-2 Ⅱ 지구와 바다(c22-s32-u02) 완료**: 3D 「증발 접시 두 개」(`scenes/evap-dishes.js`·`seawater-model.js`·`v2/lab-seawater.js`) — 바닷물·수돗물을 같은 양(10/20/40 mL) 가열, 바닷물 접시에만 흰 알갱이(바닷물 약 3.5 %로 계산한 모형 값 0.35·0.7·1.4 g). 겨냥한 오개념: 투명하면 녹은 것이 없다, 증발하면 소금도 날아간다, 육지가 더 넓다, 밀물·썰물=파도. 밀물·썰물·갯벌은 개념 쪽(설명 그림 · 실제 측정값 아님)과 문항으로. 수업 3D 검사 12건 실패 0.
+  - **실수 주의**: `v2.js`를 고친 뒤엔 `node --check`(스크립트로 읽음)만 믿지 말고 `node --input-type=module -e "import('./science-lab/v2/v2.js')"`로 모듈로 읽어 볼 것 — 괄호 하나가 남아 앱 전체가 빈 화면이 됐는데 `--check`는 통과했다(이번에 3D 검사기가 잡음).
   - 확인: PC 1440·폰 390 — 15카드, 휠·화살표 넘기기, PART C 거르기(10), 검색(거미 1), 서류 열기 → 3D 재생, 진도 보존, 페이지 오류 0, 가로 넘침 0.
 
 ---
