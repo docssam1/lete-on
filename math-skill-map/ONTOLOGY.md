@@ -318,3 +318,10 @@ Pre D10 본문 87–93쪽의 기존 10개 활동 분류·행동 연결·조건�
 ## 1031 입문 B 11단원 시계 연산 (v124)
 
 본문 91–97쪽의 10개 활동과 기존 유형·난이도·소마 진도 대조를 재사용했다. 같은 판 해설 p.119와 독립 재계산으로 학생 답안 8건을 검증했으며 대표 풀이 예시 2건은 응답 통계에서 제외했다. 기존 온톨로지 집계에서 후보 행동 10개(신규 8개, 재사용 2개), 활동 연결 10건, 관계 11건, 조건부 난이도 10건을 공개 보충자료로 문서화했다. 난이도 분포는 2단계 3건, 3단계 3건, 4단계 4건이며 교사 승인 전이다. 소마는 진도 맥락으로만 쓰고 문항별 최소 교과수준은 확정하지 않았다. 정답 값과 OCR 자료는 공개 파일에서 제외했다. 누적 답안 검증은 499건이다. [공개 보충 자료](./ontology-intro-b-u11.json).
+
+
+## 2026-10-20 checkpoint v125 — Intro B12 answer validation
+
+1031 Intro B12 (찢어진 달력, printed pages 99–105) reuses the existing activity mapping, ten conditional difficulty candidates, minimum-curriculum candidates, and Soma progression crosswalk. The same-edition printed answer key on page 120 and independent recalculation validate eight student-response activities; two worked representative examples are excluded. This adds eight to the cumulative validated-answer count (507). No new type, relation, difficulty band, minimum curriculum assignment, or teacher approval is asserted. Exact answers and OCR text remain in the private research record.
+
+Current aggregate: 1,640 ontology nodes, 3,099 relations, 428 skill-action candidates, 869 mapped activities, 939 activity-skill relations, 958 conditional difficulty candidates, and 507 validated answers. Minimum curriculum assignments and teacher-approved equivalences remain zero. See [the public Intro B12 supplement](ontology-intro-b-u12.json) and [research screen](index.html).
