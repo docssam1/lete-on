@@ -77,17 +77,17 @@
   "asr": "Perfect. You're a 10 maker now.",
   "cer": 0.125,
   "ok": false,
-  "sec": 2.38
+  "sec": 2.4
  },
  "zh-a5f0041b20e0.mp3": {
   "unit": "A-01",
   "key": "finish",
   "lang": "zh",
   "text": "完美！你现在是凑十魔法师啦！",
-  "asr": "完美你现在是凑事魔法师了",
+  "asr": "完美你现在是凑食魔法师了",
   "cer": 0.167,
   "ok": false,
-  "sec": 3.13
+  "sec": 3.15
  },
  "ko-5dcd56331311.mp3": {
   "unit": "A-01",
@@ -144,10 +144,10 @@
   "key": "correct1",
   "lang": "zh",
   "text": "找到啦！",
-  "asr": "找到了。",
-  "cer": 0.333,
-  "ok": false,
-  "sec": 1.01
+  "asr": "找到啦!",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.03
  },
  "ko-3702f760b7b1.mp3": {
   "unit": "A-01",
@@ -184,10 +184,10 @@
   "key": "wrong0",
   "lang": "ko",
   "text": "음~ 다시 해볼까?",
-  "asr": "다시 해볼까?",
-  "cer": 0.167,
-  "ok": false,
-  "sec": 1.48
+  "asr": "음, 다시 해볼까?",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.84
  },
  "en-c66aafbb0459.mp3": {
   "unit": "A-01",
@@ -254,8 +254,8 @@
   "key": "practice-intro",
   "lang": "en",
   "text": "Different magic this time! We'll split a number in two — like 7 into 3 and 4. I'll give you the number and one part — tell me what's left.",
-  "asr": "Different magic this time. We'll split a number in two to. Like seven into three and four. I'll give you the number and one part. Tell me what's left.",
-  "cer": 0.163,
+  "asr": "Different magic this time. We'll split a number in two. Like seven into three and four. I'll give you the number and one part. Tell me what's left.",
+  "cer": 0.143,
   "ok": false,
   "sec": 9.92
  },
@@ -327,7 +327,7 @@
   "asr": "完美你现在是班数字魔法师了",
   "cer": 0.154,
   "ok": false,
-  "sec": 3.34
+  "sec": 3.33
  },
  "ko-633592ff9193.mp3": {
   "unit": "A-03",
@@ -654,10 +654,10 @@
   "key": "lab-intro",
   "lang": "zh",
   "text": "真正的魔法！在两位数里找出个位配对，先加它们。",
-  "asr": "真正的魔法在两位树里找出各位配对先加他们",
-  "cer": 0.15,
-  "ok": false,
-  "sec": 5.19
+  "asr": "真正的魔法在两位数里找出各位配对先加他们",
+  "cer": 0.1,
+  "ok": true,
+  "sec": 5.07
  },
  "ko-d077ecdde34d.mp3": {
   "unit": "A-06",
@@ -694,10 +694,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "준비 운동! 두 자리 수에서 십의 자리 부분이 얼마인지 맞혀봐요.",
-  "asr": "영재교육 노관호입니다 준비운동 두 자릿수에서 12자리 부분이 얼마인지 맞춰봐요",
-  "cer": 0.56,
-  "ok": false,
-  "sec": 5.68
+  "asr": "준비 운동. 두 자리 수에서 10의 자리 부분이 얼마인지 맞춰봐요.",
+  "cer": 0.08,
+  "ok": true,
+  "sec": 4.84
  },
  "en-9ade6e8d03f3.mp3": {
   "unit": "A-07",
@@ -784,10 +784,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "준비 운동! 이 수에서 얼마를 더하면 다음 딱 떨어지는 10이 될까요?",
-  "asr": "지필드 영재기 노가노입니다. 이 수에서 얼마를 더하면 다음 딱 떨어지는 10이 될까요?",
-  "cer": 0.48,
-  "ok": false,
-  "sec": 6.24
+  "asr": "준비운동. 이 수에서 얼마를 더하면 다음 딱 떨어지는 10이 될까요?",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 5.35
  },
  "en-e5a67e227975.mp3": {
   "unit": "A-08",
@@ -1097,7 +1097,7 @@
   "asr": "真正的魔法时刻先剪到整时歇一下再剪完",
   "cer": 0.167,
   "ok": false,
-  "sec": 4.7
+  "sec": 4.6
  },
  "ko-60bd879ba87b.mp3": {
   "unit": "A-11",
@@ -1124,20 +1124,20 @@
   "key": "finish",
   "lang": "zh",
   "text": "完美！你现在是歇一下减法达人啦！",
-  "asr": "完美你现在是歇一下简法达人了",
-  "cer": 0.143,
-  "ok": false,
-  "sec": 3.62
+  "asr": "完美你现在是歇一下减法达人了",
+  "cer": 0.071,
+  "ok": true,
+  "sec": 3.63
  },
  "ko-c69849990019.mp3": {
   "unit": "A-12",
   "key": "practice-intro",
   "lang": "ko",
   "text": "준비 운동! 더하는 수끼리 먼저 더해보는 연습이야.",
-  "asr": "녹아놓습니다. 준비운동 더하는 수길이 먼저 더해보는 연습이야.",
-  "cer": 0.4,
-  "ok": false,
-  "sec": 4.24
+  "asr": "준비 운동 더하는 수끼리 먼저 더해보는 연습이야",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.92
  },
  "en-f21b758d6519.mp3": {
   "unit": "A-12",
@@ -1237,7 +1237,7 @@
   "asr": "Warm up. Practice setting aside 100 from around 100.",
   "cer": 0.163,
   "ok": false,
-  "sec": 4.59
+  "sec": 4.8
  },
  "zh-30823392e168.mp3": {
   "unit": "A-13",
@@ -1247,7 +1247,7 @@
   "asr": "热热身练习从整百里拿出一百",
   "cer": 0.182,
   "ok": false,
-  "sec": 3.76
+  "sec": 3.6
  },
  "ko-f2f108c57c22.mp3": {
   "unit": "A-13",
@@ -1277,7 +1277,7 @@
   "asr": "真正的魔法时刻拿出一个摆来剪",
   "cer": 0.143,
   "ok": false,
-  "sec": 3.68
+  "sec": 3.41
  },
  "ko-0f40f8727ab7.mp3": {
   "unit": "A-13",
@@ -1307,17 +1307,17 @@
   "asr": "完美你现在是拆摆魔法师了",
   "cer": 0.167,
   "ok": false,
-  "sec": 3.14
+  "sec": 3.08
  },
  "ko-1314b8534cb7.mp3": {
   "unit": "A-14",
   "key": "practice-intro",
   "lang": "ko",
   "text": "준비 운동! 세 자리 수를 100과 나머지로 나눠볼까?",
-  "asr": "노간호입니다. 준비운동 3자릿수를 100과 나머지로 나눠볼까?",
-  "cer": 0.444,
-  "ok": false,
-  "sec": 5.04
+  "asr": "준비운동 세자리 수를 100과 나머지로 나눠볼까?",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 4.32
  },
  "en-adc81dc4ba7e.mp3": {
   "unit": "A-14",
@@ -1354,7 +1354,7 @@
   "key": "lab-intro",
   "lang": "en",
   "text": "Real magic time! Shift a hundred over to calculate.",
-  "asr": "Real magic time, shift 100 over to calculate.",
+  "asr": "Real magic time. Shift 100 over to calculate.",
   "cer": 0.195,
   "ok": false,
   "sec": 3.76
@@ -1484,10 +1484,10 @@
   "key": "finish",
   "lang": "zh",
   "text": "完美！你现在是拆数魔法师啦！",
-  "asr": "完美你现在是拆树魔法师了",
-  "cer": 0.167,
-  "ok": false,
-  "sec": 3.15
+  "asr": "完美,你现在是拆树魔法师啦?",
+  "cer": 0.083,
+  "ok": true,
+  "sec": 3.14
  },
  "ko-2ae755e9205f.mp3": {
   "unit": "A-16",
@@ -1577,7 +1577,7 @@
   "asr": "完美你现在是暗卫乡家魔法师了",
   "cer": 0.357,
   "ok": false,
-  "sec": 3.63
+  "sec": 3.45
  },
  "ko-ae4bf24fa531.mp3": {
   "unit": "A-17",
@@ -1657,7 +1657,7 @@
   "asr": "Perfect. You're a four-digit splitter now.",
   "cer": 0.138,
   "ok": false,
-  "sec": 3.12
+  "sec": 3.08
  },
  "zh-2faef0ae1825.mp3": {
   "unit": "A-17",
@@ -1697,17 +1697,17 @@
   "asr": "先练习指甲百味",
   "cer": 0.429,
   "ok": false,
-  "sec": 2.08
+  "sec": 1.96
  },
  "ko-61b0ff10658a.mp3": {
   "unit": "A-18",
   "key": "lab-intro",
   "lang": "ko",
   "text": "앞에서부터 차례로 더하는 마법을 써봐요!",
-  "asr": "노가노입니다. 앞에서부터 차례로 더하는 마법을 써봐요.",
-  "cer": 0.353,
-  "ok": false,
-  "sec": 3.88
+  "asr": "앞에서부터 차례로 더하는 마법을 써봐요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.27
  },
  "en-bfae704ba109.mp3": {
   "unit": "A-18",
@@ -1944,10 +1944,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "빼지는 수를 □0으로 만드는 마법 수를 찾아봐요!",
-  "asr": "누구 안녕하세요? 빼지는 수를 정으로 만드는 마법 수를 찾아봐요.",
-  "cer": 0.444,
-  "ok": false,
-  "sec": 4.44
+  "asr": "빼지는 수를 DB점으로 만드는 마법 수를 찾아봐요.",
+  "cer": 0.056,
+  "ok": true,
+  "sec": 3.75
  },
  "en-44135c5b2323.mp3": {
   "unit": "A-21",
@@ -1974,10 +1974,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "빼지는 수를 □0으로 내려봐요!",
-  "asr": "빼지는 수를 세밑점으로 내려봐요.",
-  "cer": 0.273,
-  "ok": false,
-  "sec": 2.92
+  "asr": "빼지는 수를 2령으로 내려봐요.",
+  "cer": 0.091,
+  "ok": true,
+  "sec": 2.47
  },
  "en-b102ef02816b.mp3": {
   "unit": "A-21",
@@ -2024,10 +2024,10 @@
   "key": "finish",
   "lang": "zh",
   "text": "完美！你是同减减法魔法师！",
-  "asr": "完美,你是铜简简法魔法师。",
+  "asr": "完美你是铜简简法魔法师",
   "cer": 0.273,
   "ok": false,
-  "sec": 2.91
+  "sec": 2.87
  },
  "ko-c9074503d12b.mp3": {
   "unit": "A-22",
@@ -2087,7 +2087,7 @@
   "asr": "拆分两步剪的魔法",
   "cer": 0.125,
   "ok": false,
-  "sec": 2.16
+  "sec": 2.0
  },
  "ko-bcb7afc968cb.mp3": {
   "unit": "A-22",
@@ -2244,18 +2244,18 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "두 수가 비슷하면 □0+□0 전략!",
-  "asr": "지필드 영재교육 전략",
-  "cer": 0.778,
+  "asr": "두 수가 비슷하면 섭진 전략.",
+  "cer": 0.222,
   "ok": false,
-  "sec": 2.83
+  "sec": 2.47
  },
  "en-ff507bdd90b3.mp3": {
   "unit": "A-24",
   "key": "lab-intro",
   "lang": "en",
   "text": "Similar sizes? Use the □0+□0 strategy!",
-  "asr": "Similar sizes, use the crowd of strategy.",
-  "cer": 0.269,
+  "asr": "Similar sizes? Use the Toptic strategy.",
+  "cer": 0.231,
   "ok": false,
   "sec": 3.2
  },
@@ -2264,9 +2264,9 @@
   "key": "lab-intro",
   "lang": "zh",
   "text": "两数相近？用整十+整十策略！",
-  "asr": "两术相近用整时怕整时策略",
-  "cer": 0.364,
-  "ok": false,
+  "asr": "两数相近用整十四整十策略",
+  "cer": 0.091,
+  "ok": true,
   "sec": 2.95
  },
  "ko-4519aee564a3.mp3": {
@@ -2394,10 +2394,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "999를 1000-1로 바꾸는 마법 연습이에요!",
-  "asr": "9를 천다일로 바꾸는 마법 연습이에요.",
-  "cer": 0.25,
-  "ok": false,
-  "sec": 4.99
+  "asr": "999를 1000-1로 바꾸는 마법 연습이에요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 4.48
  },
  "en-4fb84efee08c.mp3": {
   "unit": "A-26",
@@ -2414,20 +2414,20 @@
   "key": "practice-intro",
   "lang": "zh",
   "text": "练习把999换成1000-1的魔法！",
-  "asr": "练习把999换成1000代11的魔法",
+  "asr": "练习把999换成1000带1的魔法",
   "cer": 0.125,
   "ok": false,
-  "sec": 4.47
+  "sec": 4.25
  },
  "ko-5347a9339519.mp3": {
   "unit": "A-26",
   "key": "lab-intro",
   "lang": "ko",
   "text": "999 마법 열차 출발! +1000 하고 -1!",
-  "asr": "안녕하세요 영재교육 노관호입니다",
-  "cer": 1.875,
+  "asr": "999 마법 열차 출발. 록스천하고 1.",
+  "cer": 0.375,
   "ok": false,
-  "sec": 4.22
+  "sec": 3.84
  },
  "en-d5e1406f31a4.mp3": {
   "unit": "A-26",
@@ -2514,10 +2514,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "\"끝 - 시작 + 1\" 마법으로 세어봐요!",
-  "asr": "언제 꺼야 되냐? 끝! 구하시다",
-  "cer": 1.0,
+  "asr": "끝 시작 플러스 1 마법으로 세어봐요.",
+  "cer": 0.273,
   "ok": false,
-  "sec": 3.08
+  "sec": 2.64
  },
  "en-2ab902608084.mp3": {
   "unit": "A-27",
@@ -2527,7 +2527,7 @@
   "asr": "Count with the end minus start plus 1 magic.",
   "cer": 0.36,
   "ok": false,
-  "sec": 2.87
+  "sec": 2.88
  },
  "zh-8f7e2d9a6493.mp3": {
   "unit": "A-27",
@@ -2564,10 +2564,10 @@
   "key": "finish",
   "lang": "zh",
   "text": "完美！你是计数魔法师！",
-  "asr": "完美,你是技术魔法师。",
+  "asr": "完美,你是技术魔法师",
   "cer": 0.222,
   "ok": false,
-  "sec": 2.43
+  "sec": 2.3
  },
  "ko-d41395189f8c.mp3": {
   "unit": "A-28",
@@ -2604,10 +2604,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "가우스처럼 빠르게! 짝을 찾아요!",
-  "asr": "짝을 찾아요.",
-  "cer": 0.615,
-  "ok": false,
-  "sec": 1.05
+  "asr": "가우스처럼 빠르게 짝을 찾아요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.64
  },
  "en-228f4b1fe98e.mp3": {
   "unit": "A-28",
@@ -2687,17 +2687,17 @@
   "asr": "找出减数据时差多少",
   "cer": 0.25,
   "ok": false,
-  "sec": 2.73
+  "sec": 2.6
  },
  "ko-77c9d82cbe33.mp3": {
   "unit": "A-29",
   "key": "lab-intro",
   "lang": "ko",
   "text": "부족한 수 마법! □0 빼고 d 더해요!",
-  "asr": "집 부르바 운제기",
-  "cer": 1.0,
-  "ok": false,
-  "sec": 2.62
+  "asr": "부족한 수 마법. 1형 빼고 D 더해요.",
+  "cer": 0.091,
+  "ok": true,
+  "sec": 2.65
  },
  "en-922fe4c315ca.mp3": {
   "unit": "A-29",
@@ -2754,10 +2754,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "백의 자리부터 먼저 빼는 연습이에요!",
-  "asr": "과외입니다. 베개 자리부터 먼저 빼는 연습이에요.",
-  "cer": 0.467,
+  "asr": "베개 자리부터 먼저 빼는 연습이에요.",
+  "cer": 0.133,
   "ok": false,
-  "sec": 3.44
+  "sec": 2.95
  },
  "en-42952eb9558d.mp3": {
   "unit": "A-30",
@@ -2897,7 +2897,7 @@
   "asr": "先剪简单的无压力剪法",
   "cer": 0.2,
   "ok": false,
-  "sec": 2.72
+  "sec": 2.63
  },
  "ko-abe7d37a7e67.mp3": {
   "unit": "A-31",
@@ -2924,10 +2924,10 @@
   "key": "finish",
   "lang": "zh",
   "text": "完美！你是先简后难魔法师！",
-  "asr": "完美你是先俭后男魔法师",
+  "asr": "完美你是先剪后男魔法师",
   "cer": 0.182,
   "ok": false,
-  "sec": 2.91
+  "sec": 2.79
  },
  "ko-bdcbd5cc33f9.mp3": {
   "unit": "A-32",
@@ -2984,10 +2984,10 @@
   "key": "lab-intro",
   "lang": "zh",
   "text": "两数都拆分，按位相减！",
-  "asr": "两树都拆分暗卫相解",
-  "cer": 0.444,
+  "asr": "两树都拆分暗位相减",
+  "cer": 0.222,
   "ok": false,
-  "sec": 2.43
+  "sec": 2.36
  },
  "ko-4dc01aea82bd.mp3": {
   "unit": "A-32",
@@ -3044,10 +3044,10 @@
   "key": "practice-intro",
   "lang": "zh",
   "text": "利用和与差求两数的魔法！",
-  "asr": "利用何语插球两树的魔法",
-  "cer": 0.455,
+  "asr": "利用和宇插球两树的魔法",
+  "cer": 0.364,
   "ok": false,
-  "sec": 2.86
+  "sec": 2.8
  },
  "ko-a15fd98279fb.mp3": {
   "unit": "A-33",
@@ -3077,7 +3077,7 @@
   "asr": "用何语差求出两数",
   "cer": 0.25,
   "ok": false,
-  "sec": 2.11
+  "sec": 2.1
  },
  "ko-0f1160851324.mp3": {
   "unit": "A-33",
@@ -3104,10 +3104,10 @@
   "key": "finish",
   "lang": "zh",
   "text": "完美！你是和差魔法师！",
-  "asr": "完美你是合插魔法师",
+  "asr": "完美,你是何插魔法师",
   "cer": 0.222,
   "ok": false,
-  "sec": 2.39
+  "sec": 2.41
  },
  "ko-ee58406545df.mp3": {
   "unit": "A-34",
@@ -3144,10 +3144,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "합과 차 마법 Level 2! 더 큰 수로!",
-  "asr": "안녕하세요 합과차 마법 레벨 2 더 큰 수록",
-  "cer": 0.889,
+  "asr": "합과차 마법 레벨 2 더 큰 수로",
+  "cer": 0.222,
   "ok": false,
-  "sec": 3.0
+  "sec": 2.55
  },
  "en-339757b697dd.mp3": {
   "unit": "A-34",
@@ -3164,10 +3164,10 @@
   "key": "lab-intro",
   "lang": "zh",
   "text": "和差魔法2级！更大的数！",
-  "asr": "和插魔法二级更大的数",
-  "cer": 0.222,
-  "ok": false,
-  "sec": 2.65
+  "asr": "和差魔法二级更大的数",
+  "cer": 0.111,
+  "ok": true,
+  "sec": 2.6
  },
  "ko-e47357195111.mp3": {
   "unit": "A-34",
@@ -3194,10 +3194,10 @@
   "key": "finish",
   "lang": "zh",
   "text": "完美！你是和差2魔法师！",
-  "asr": "完美,你是何插二魔法师?",
+  "asr": "完美你是合叉二魔法师",
   "cer": 0.333,
   "ok": false,
-  "sec": 2.72
+  "sec": 2.67
  },
  "ko-851ea3d88f84.mp3": {
   "unit": "A-35",
@@ -3347,17 +3347,17 @@
   "asr": "对其小数点再相加",
   "cer": 0.125,
   "ok": false,
-  "sec": 2.15
+  "sec": 2.12
  },
  "ko-6ddfaaa2a9e7.mp3": {
   "unit": "A-36",
   "key": "finish",
   "lang": "ko",
   "text": "완벽해! 소수 덧셈 마법사야! 🔵✨",
-  "asr": "안녕하세요. 소우더테에게는?",
-  "cer": 1.091,
-  "ok": false,
-  "sec": 2.64
+  "asr": "완벽해 소수 더셈 마법사야.",
+  "cer": 0.091,
+  "ok": true,
+  "sec": 2.28
  },
  "en-ba7c21bf60b6.mp3": {
   "unit": "A-36",
@@ -3374,10 +3374,10 @@
   "key": "finish",
   "lang": "zh",
   "text": "完美！你是小数加法魔法师！",
-  "asr": "完美你是小树家法魔法师",
-  "cer": 0.182,
-  "ok": false,
-  "sec": 2.9
+  "asr": "完美,你是小树加法魔法师。",
+  "cer": 0.091,
+  "ok": true,
+  "sec": 2.95
  },
  "ko-6ff1b5723918.mp3": {
   "unit": "A-37",
@@ -3534,10 +3534,10 @@
   "key": "finish",
   "lang": "ko",
   "text": "완벽해! 소수혼합 마법사야! 🟣✨",
-  "asr": "완벽해. 소수훈한 마법사야.",
-  "cer": 0.182,
-  "ok": false,
-  "sec": 2.6
+  "asr": "완벽해. 소수혼한 마법사야.",
+  "cer": 0.091,
+  "ok": true,
+  "sec": 2.24
  },
  "en-351d463c45b1.mp3": {
   "unit": "A-38",
@@ -3564,10 +3564,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "2~9단 전체를 섞어서 연습할 거야. 어떤 단이 나와도 당황하지 말고 침착하게! 준비됐지?",
-  "asr": "지필든 전체를 섞어서 살 거야. 어떤 단위 나와도 당황하지 말고 침착하게 준비됐지?",
-  "cer": 0.212,
-  "ok": false,
-  "sec": 7.3
+  "asr": "2구단 전체를 섞어서 연습할 거야. 어떤 단이 나와도 당황하지 말고 침착하게 준비됐지.",
+  "cer": 0.03,
+  "ok": true,
+  "sec": 6.87
  },
  "en-aa7dbe100aa7.mp3": {
   "unit": "B-16",
@@ -3584,10 +3584,10 @@
   "key": "practice-intro",
   "lang": "zh",
   "text": "我们要混合练习2到9的所有乘法口诀。不管出现哪个，冷静应对！准备好了吗？",
-  "asr": "我们要混合练习二到九的所有惩罚口诀不管出现哪个冷静应对准备好了吗",
+  "asr": "我们要混合练习二到九的所有惩罚口诀不管出现哪个冷静应对准备好了吗?",
   "cer": 0.133,
   "ok": false,
-  "sec": 8.13
+  "sec": 8.09
  },
  "ko-5935d0be24bf.mp3": {
   "unit": "B-16",
@@ -3624,20 +3624,20 @@
   "key": "finish",
   "lang": "ko",
   "text": "완벽해! 2~9단 완전 정복! 📊✨",
-  "asr": "완벽해! 이 구단 완전 정복!",
-  "cer": 0.25,
+  "asr": "완벽해. 2구단 완전 정복.",
+  "cer": 0.125,
   "ok": false,
-  "sec": 2.37
+  "sec": 2.28
  },
  "en-75f7cc779295.mp3": {
   "unit": "B-16",
   "key": "finish",
   "lang": "en",
   "text": "Perfect! 2-9 times tables fully conquered!",
-  "asr": "Perfect. Two to nine times tables fully conquered.",
-  "cer": 0.281,
+  "asr": "Perfect. Two nine times tables fully conquered.",
+  "cer": 0.219,
   "ok": false,
-  "sec": 3.59
+  "sec": 3.6
  },
  "zh-9412e6071f67.mp3": {
   "unit": "B-16",
@@ -3747,17 +3747,17 @@
   "asr": "是时候找对了从这些数里找出成绩是十的两个",
   "cer": 0.158,
   "ok": false,
-  "sec": 5.46
+  "sec": 5.38
  },
  "ko-dfc0b288aa20.mp3": {
   "unit": "C-02",
   "key": "finish",
   "lang": "ko",
   "text": "완벽해! 쌍 곱 달인! 🔟✨",
-  "asr": "완벽해! 쌍국 달인!",
-  "cer": 0.143,
+  "asr": "완벽해. 쌍곱다린.",
+  "cer": 0.286,
   "ok": false,
-  "sec": 1.93
+  "sec": 1.94
  },
  "en-3026f0735437.mp3": {
   "unit": "C-02",
@@ -3774,10 +3774,10 @@
   "key": "finish",
   "lang": "zh",
   "text": "完美！凑10乘法达人！",
-  "asr": "完美凑时惩罚达人",
-  "cer": 0.429,
+  "asr": "完美凑成法达人",
+  "cer": 0.143,
   "ok": false,
-  "sec": 2.56
+  "sec": 2.5
  },
  "ko-e5f9af9847de.mp3": {
   "unit": "C-02",
@@ -3854,18 +3854,18 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "누미랑 같이 세어 보자! 톡톡 누르면서 하나, 둘, 셋!",
-  "asr": "지필드 영재균호건입니다. 톡톡 누르면서 둘 셋 셋",
-  "cer": 0.737,
-  "ok": false,
-  "sec": 4.48
+  "asr": "누미랑 같이 세워보자. 톡톡 누르면서 하나, 둘, 셋.",
+  "cer": 0.053,
+  "ok": true,
+  "sec": 3.84
  },
  "en-d70ff8650f02.mp3": {
   "unit": "N-01",
   "key": "practice-intro",
   "lang": "en",
   "text": "Let's count with Numi! Tap along — one, two, three!",
-  "asr": "Let's count with Numi. Tap along. 1, 2, 3.",
-  "cer": 0.306,
+  "asr": "Let's count with NuMe. Tap along, 1, 2, 3.",
+  "cer": 0.333,
   "ok": false,
   "sec": 3.52
  },
@@ -3974,10 +3974,10 @@
   "key": "correct1",
   "lang": "ko",
   "text": "우와, 잘 셌어! 🐤",
-  "asr": "우와, 잘 태워?",
+  "asr": "우와, 잘 태워.",
   "cer": 0.4,
   "ok": false,
-  "sec": 1.13
+  "sec": 1.75
  },
  "en-bde1abe671f7.mp3": {
   "unit": "N-01",
@@ -4024,10 +4024,10 @@
   "key": "wrong0",
   "lang": "ko",
   "text": "음~ 다시 하나씩 세어 볼까?",
-  "asr": "다시 하나씩 세워볼까?",
-  "cer": 0.2,
-  "ok": false,
-  "sec": 2.15
+  "asr": "음 다시 하나씩 세워볼까?",
+  "cer": 0.1,
+  "ok": true,
+  "sec": 2.16
  },
  "en-d30ccafe35fe.mp3": {
   "unit": "N-01",
@@ -4227,7 +4227,7 @@
   "asr": "顺序对了",
   "cer": 0.25,
   "ok": false,
-  "sec": 1.76
+  "sec": 1.17
  },
  "ko-47e25933400e.mp3": {
   "unit": "N-02",
@@ -4264,10 +4264,10 @@
   "key": "wrong0",
   "lang": "ko",
   "text": "음~ 몇씩 변하는지 다시 볼까?",
-  "asr": "몇씩 표현하는지 다시 볼까?",
-  "cer": 0.273,
-  "ok": false,
-  "sec": 1.94
+  "asr": "음, 몇씩 변하는지 다시 볼까?",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.28
  },
  "en-3dde40ec07de.mp3": {
   "unit": "N-02",
@@ -4317,17 +4317,17 @@
   "asr": "一级一级竖楼梯",
   "cer": 0.143,
   "ok": false,
-  "sec": 2.0
+  "sec": 1.95
  },
  "ko-5eec6bb554ba.mp3": {
   "unit": "N-02",
   "key": "rule",
   "lang": "ko",
   "text": "앞으로는 1씩 커지고, 거꾸로는 1씩 작아져요!",
-  "asr": "안녕하세요. 앞으로는 일씩 커지고 거꾸로는 일씩 작아져요.",
-  "cer": 0.412,
-  "ok": false,
-  "sec": 4.02
+  "asr": "앞으로는 1씩 커지고 거꾸로는 1씩 작아져요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.82
  },
  "en-706708b5fcbc.mp3": {
   "unit": "N-02",
@@ -4337,7 +4337,7 @@
   "asr": "Forward grows by one. Backward shrinks by one.",
   "cer": 0.194,
   "ok": false,
-  "sec": 3.47
+  "sec": 3.45
  },
  "zh-ffee40d6e046.mp3": {
   "unit": "N-02",
@@ -4347,7 +4347,7 @@
   "asr": "往前每次大一倒着每次小一",
   "cer": 0.2,
   "ok": false,
-  "sec": 3.22
+  "sec": 3.23
  },
  "ko-3c0280ba3ea9.mp3": {
   "unit": "N-03",
@@ -4407,7 +4407,7 @@
   "asr": "这次来图格子正好图对数量哦",
   "cer": 0.154,
   "ok": false,
-  "sec": 3.38
+  "sec": 3.25
  },
  "ko-a11f4ae4f28b.mp3": {
   "unit": "N-03",
@@ -4437,7 +4437,7 @@
   "asr": "鼓掌叙述小侦探诞生了",
   "cer": 0.2,
   "ok": false,
-  "sec": 2.72
+  "sec": 2.59
  },
  "ko-4f2601303020.mp3": {
   "unit": "N-03",
@@ -4464,10 +4464,10 @@
   "key": "correct0",
   "lang": "zh",
   "text": "叮！完全正确！",
-  "asr": "丁 完全正确",
+  "asr": "钉完全正确",
   "cer": 0.2,
   "ok": false,
-  "sec": 1.92
+  "sec": 1.76
  },
  "ko-edd0de65ce29.mp3": {
   "unit": "N-03",
@@ -4564,10 +4564,10 @@
   "key": "wrong1",
   "lang": "ko",
   "text": "하나씩 손가락으로 세어 볼까?",
-  "asr": "녹아놓습니다. 하나씩 손가락으로 세어볼까?",
-  "cer": 0.5,
-  "ok": false,
-  "sec": 2.78
+  "asr": "하나씩 손가락으로 세어볼까?",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.37
  },
  "en-1ce096022401.mp3": {
   "unit": "N-03",
@@ -4584,10 +4584,10 @@
   "key": "wrong1",
   "lang": "zh",
   "text": "用手指一个一个数数看？",
-  "asr": "用手指一个一个竖竖看",
-  "cer": 0.2,
-  "ok": false,
-  "sec": 2.61
+  "asr": "用手指一个一个数数看",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.59
  },
  "ko-e08df5a18897.mp3": {
   "unit": "N-03",
@@ -4654,10 +4654,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "옛날 사람들의 숫자예요! 숫자를 먼저 톡 — 같은 수의 기호를 골라 이어요!",
-  "asr": "치필달 사람들의 숫자예요 얘는 숫자를 먼저 톡 같은 수의 기호를 골라 이어요",
-  "cer": 0.179,
-  "ok": false,
-  "sec": 6.34
+  "asr": "옛날 사람들의 숫자예요. 숫자를 먼저 톡 같은 수의 기호를 골라 이어요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 5.46
  },
  "en-eea0a9bc7c35.mp3": {
   "unit": "N-04",
@@ -4684,10 +4684,10 @@
   "key": "finish",
   "lang": "ko",
   "text": "짝짝짝! 기수법 마법사 탄생! 🖍️✨",
-  "asr": "짝짝! 기술법 마법사 탄생!",
-  "cer": 0.182,
-  "ok": false,
-  "sec": 2.64
+  "asr": "짝짝짝 기수법 마법사 탄생",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.23
  },
  "en-b3498e6d624e.mp3": {
   "unit": "N-04",
@@ -4707,7 +4707,7 @@
   "asr": "鼓掌技术法魔法师诞生了",
   "cer": 0.182,
   "ok": false,
-  "sec": 2.94
+  "sec": 2.86
  },
  "ko-89fd1c33d62f.mp3": {
   "unit": "N-04",
@@ -4734,20 +4734,20 @@
   "key": "correct0",
   "lang": "zh",
   "text": "叮！数量正好！",
-  "asr": "丁,数量正好。",
+  "asr": "钉数量正好",
   "cer": 0.2,
   "ok": false,
-  "sec": 1.87
+  "sec": 1.64
  },
  "ko-32f4f531563f.mp3": {
   "unit": "N-04",
   "key": "correct1",
   "lang": "ko",
   "text": "묶음이 완벽해요! ✨",
-  "asr": "묵춤이 임벽해요?",
-  "cer": 0.429,
-  "ok": false,
-  "sec": 1.57
+  "asr": "묶음이 완벽해요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.92
  },
  "en-c6d0d6b1db6b.mp3": {
   "unit": "N-04",
@@ -4864,40 +4864,40 @@
   "key": "rule",
   "lang": "ko",
   "text": "4개는 그대로, 5번째는 사선으로 묶어요!",
-  "asr": "녹아놓습니다. 네 개는 그대로 다섯 번째는 사선으로 묶어요.",
-  "cer": 0.6,
+  "asr": "4개는 그대로 다섯 번째는 사선으로 묶어요.",
+  "cer": 0.133,
   "ok": false,
-  "sec": 4.08
+  "sec": 3.48
  },
  "en-38fac25eda58.mp3": {
   "unit": "N-04",
   "key": "rule",
   "lang": "en",
   "text": "Four stay plain, the 5th is bundled!",
-  "asr": "For Stay Plain, the fifth is bundled.",
-  "cer": 0.148,
-  "ok": false,
-  "sec": 2.76
+  "asr": "Four stay plain. The fifth is bundled.",
+  "cer": 0.111,
+  "ok": true,
+  "sec": 2.84
  },
  "zh-44a473f82488.mp3": {
   "unit": "N-04",
   "key": "rule",
   "lang": "zh",
   "text": "4笔直接画，第5笔捆一下！",
-  "asr": "四笔直接画第五笔捆一下",
+  "asr": "四笔直接画,第五笔捆一下。",
   "cer": 0.222,
   "ok": false,
-  "sec": 3.04
+  "sec": 2.84
  },
  "ko-19690fdb4246.mp3": {
   "unit": "N-05",
   "key": "practice-intro",
   "lang": "ko",
   "text": "친구들이 줄을 섰어요! 이야기를 듣고 콕 짚어 봐요. 🔊 버튼을 누르면 다시 들을 수 있어요",
-  "asr": "안녕하십니까 영재교육 노가노입니다 친구들이 줄을 섰어요 이야기를 듣고 콕 짚어봐요 버튼을 누르면 다시 들을 수 있어요",
-  "cer": 0.471,
-  "ok": false,
-  "sec": 7.64
+  "asr": "친구들이 줄을 섰어요. 이야기를 듣고 콕 짚어봐요. 버튼을 누르면 다시 들을 수 있어요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 6.52
  },
  "en-8ac7b1c21169.mp3": {
   "unit": "N-05",
@@ -4924,10 +4924,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "몇 명인 수와 몇째인 수는 달라요! 묻는 쪽의 수 카드를 콕!",
-  "asr": "몇 명인 수와 몇째인 수는 달라요? 묻는 수와 몇 쪽의 수가들을 콕",
-  "cer": 0.273,
-  "ok": false,
-  "sec": 5.04
+  "asr": "몇 명인 수와 몇째인 수는 달라요. 묻는 쪽에 수 카드를 콕.",
+  "cer": 0.045,
+  "ok": true,
+  "sec": 4.32
  },
  "en-fea43bcfa2c3.mp3": {
   "unit": "N-05",
@@ -4977,7 +4977,7 @@
   "asr": "股掌生活叙述博士诞生了",
   "cer": 0.273,
   "ok": false,
-  "sec": 2.94
+  "sec": 2.96
  },
  "ko-8895fb608dd7.mp3": {
   "unit": "N-05",
@@ -5037,17 +5037,17 @@
   "asr": "台阶数字也对了",
   "cer": 0.143,
   "ok": false,
-  "sec": 2.02
+  "sec": 1.98
  },
  "ko-fbb28b8fd536.mp3": {
   "unit": "N-05",
   "key": "wrong0",
   "lang": "ko",
   "text": "음~ 🔊 버튼으로 다시 들어볼까요?",
-  "asr": "녹아놓습니다. 버튼으로 다시 들어볼까요?",
-  "cer": 0.5,
-  "ok": false,
-  "sec": 2.74
+  "asr": "음, 버튼으로 다시 들어볼까요?",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.43
  },
  "en-59fff5ebd987.mp3": {
   "unit": "N-05",
@@ -5074,10 +5074,10 @@
   "key": "wrong1",
   "lang": "ko",
   "text": "손가락으로 하나씩 세어 봐요",
-  "asr": "노가노입니다 손가락으로 하나씩 세어봐요",
-  "cer": 0.5,
-  "ok": false,
-  "sec": 2.76
+  "asr": "손가락으로 하나씩 세어봐요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.35
  },
  "en-ffd8a8847a42.mp3": {
   "unit": "N-05",
@@ -5104,10 +5104,10 @@
   "key": "rule",
   "lang": "ko",
   "text": "줄서기는 방향대로, 계단은 아래에서부터 세어요!",
-  "asr": "지필드, 영재교육, 노가눔 계단은 아래에서부터 세워요.",
-  "cer": 0.55,
-  "ok": false,
-  "sec": 4.52
+  "asr": "줄 서기는 방향대로 계단은 아래에서부터 세어요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.88
  },
  "en-60ff1c6c21ce.mp3": {
   "unit": "N-05",
@@ -5124,20 +5124,20 @@
   "key": "rule",
   "lang": "zh",
   "text": "排队按方向数，台阶从下往上数！",
-  "asr": "排对岸方向数台阶从下往上数",
-  "cer": 0.154,
-  "ok": false,
-  "sec": 3.44
+  "asr": "排对按方向数台阶从下往上数",
+  "cer": 0.077,
+  "ok": true,
+  "sec": 3.38
  },
  "ko-6d484e4aacdb.mp3": {
   "unit": "N-06",
   "key": "practice-intro",
   "lang": "ko",
   "text": "왼쪽 원과 오른쪽 원을 모으면 위에 몇 개가 될까? 위쪽 원을 톡톡 채워 봐!",
-  "asr": "지필드형과 영재교육 노간호입니다 왼쪽 원을 위에 몇 개가 될까? 위쪽 원을 톡톡 채워봐",
-  "cer": 0.643,
-  "ok": false,
-  "sec": 6.36
+  "asr": "왼쪽 원과 오른쪽 원을 모으면 위에 몇 개가 될까? 위쪽 원을 톡톡 채워봐.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 5.44
  },
  "en-d3a6bbd28cba.mp3": {
   "unit": "N-06",
@@ -5217,7 +5217,7 @@
   "asr": "鼓掌纷纷小精灵诞生了",
   "cer": 0.2,
   "ok": false,
-  "sec": 2.7
+  "sec": 2.58
  },
  "ko-f574d5100531.mp3": {
   "unit": "N-06",
@@ -5274,10 +5274,10 @@
   "key": "correct2",
   "lang": "zh",
   "text": "分分小天才！",
-  "asr": "芬芬小天才",
+  "asr": "纷纷小天才",
   "cer": 0.4,
   "ok": false,
-  "sec": 1.88
+  "sec": 1.52
  },
  "ko-0a9b09988729.mp3": {
   "unit": "N-06",
@@ -5304,7 +5304,7 @@
   "key": "wrong0",
   "lang": "zh",
   "text": "嗯，再看看上面的数？",
-  "asr": "嗯再看看上面的树",
+  "asr": "嗯,再看看上面的树。",
   "cer": 0.125,
   "ok": false,
   "sec": 2.03
@@ -5334,20 +5334,20 @@
   "key": "wrong1",
   "lang": "zh",
   "text": "慢慢来，一个一个填！",
-  "asr": "慢慢来一个一个甜",
-  "cer": 0.125,
-  "ok": false,
-  "sec": 2.21
+  "asr": "慢慢来一个一个填",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.18
  },
  "ko-b557f7480ca3.mp3": {
   "unit": "N-06",
   "key": "rule",
   "lang": "ko",
   "text": "가르고 모아도 전체 수는 변하지 않아요!",
-  "asr": "노관우입니다. 가르고 모아도 전체수는 변하지 않아요?",
-  "cer": 0.375,
-  "ok": false,
-  "sec": 3.63
+  "asr": "가르고 모아도 전체 수는 변하지 않아요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.16
  },
  "en-55c8b6c7b59f.mp3": {
   "unit": "N-06",
@@ -5374,10 +5374,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "주사위를 눌러 굴려 봐! 나온 눈과 더해서 답을 써요.",
-  "asr": "지필드 영재교육? 노관 올려봐. 나온 눈과 더해서 답을 써요.",
-  "cer": 0.5,
-  "ok": false,
-  "sec": 4.6
+  "asr": "주사위를 눌러 굴려봐. 나온 눈과 더해서 답을 써요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.96
  },
  "en-005ae6dfda61.mp3": {
   "unit": "N-07",
@@ -5404,10 +5404,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "개구리가 뛴 모습이에요. 빈 칸에 알맞은 수를 써 봐!",
-  "asr": "안녕하세요. 지필드 영재교육 노간호입니다. 개구리가 뜬 모습에 알맞은 수를 써봐.",
-  "cer": 1.2,
-  "ok": false,
-  "sec": 4.46
+  "asr": "개구리가 뛴 모습이에요. 빈칸에 알맞은 수를 써봐.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.94
  },
  "en-b39278f31880.mp3": {
   "unit": "N-07",
@@ -5444,10 +5444,10 @@
   "key": "finish",
   "lang": "en",
   "text": "Clap clap! A Dice & Frog Expert is born!",
-  "asr": "Clap clap, a dice and frog expert earn.",
-  "cer": 0.241,
-  "ok": false,
-  "sec": 2.83
+  "asr": "Clap clap, a dice and frog expert is born.",
+  "cer": 0.103,
+  "ok": true,
+  "sec": 2.84
  },
  "zh-61f4468d0e00.mp3": {
   "unit": "N-07",
@@ -5464,10 +5464,10 @@
   "key": "correct1",
   "lang": "ko",
   "text": "폴짝! 🐸",
-  "asr": "훌쩍!",
-  "cer": 1.0,
-  "ok": false,
-  "sec": 0.77
+  "asr": "폴짝",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 0.8
  },
  "en-164e552697c4.mp3": {
   "unit": "N-07",
@@ -5584,18 +5584,18 @@
   "key": "rule",
   "lang": "ko",
   "text": "앞으로 뛰면 +, 되돌아오면 −예요!",
-  "asr": "앞으로 뛰면",
-  "cer": 0.583,
-  "ok": false,
-  "sec": 2.15
+  "asr": "앞으로 뛰면 되돌아오면 얘요.",
+  "cer": 0.083,
+  "ok": true,
+  "sec": 2.48
  },
  "en-60076fac4a11.mp3": {
   "unit": "N-07",
   "key": "rule",
   "lang": "en",
   "text": "Hop forward is +, hop back is −!",
-  "asr": "Hop forward is plus. Hop back.",
-  "cer": 0.286,
+  "asr": "Hop forward is plus hop back is.",
+  "cer": 0.19,
   "ok": false,
   "sec": 2.2
  },
@@ -5604,20 +5604,20 @@
   "key": "rule",
   "lang": "zh",
   "text": "往前跳是＋，往回跳是－！",
-  "asr": "往前跳试Press往回跳试",
+  "asr": "往前跳试Parse往回跳试",
   "cer": 0.25,
   "ok": false,
-  "sec": 2.29
+  "sec": 2.31
  },
  "ko-fbcda0482780.mp3": {
   "unit": "N-08",
   "key": "practice-intro",
   "lang": "ko",
   "text": "수 기계에 수를 넣으면 규칙대로 바뀌어 나와요! 규칙을 보고 답을 구해요",
-  "asr": "기기에 수를 넣으면 규칙대로 바뀌어 나와요.",
-  "cer": 0.414,
-  "ok": false,
-  "sec": 5.36
+  "asr": "숙이계에 수를 넣으면 규칙대로 바뀌어 나와요. 규칙을 보고 답을 구해요.",
+  "cer": 0.069,
+  "ok": true,
+  "sec": 5.53
  },
  "en-a4342f8fc219.mp3": {
   "unit": "N-08",
@@ -5644,10 +5644,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "이번엔 규칙이 숨었어요! 예시 두 개를 보고 비밀 규칙을 추리해서 답해요",
-  "asr": "안녕하세요. 이번엔 규칙이 숨었어요. 예시 2개를 보고 비밀 규칙을 추리해서 답해요.",
-  "cer": 0.207,
-  "ok": false,
-  "sec": 6.48
+  "asr": "이번엔 규칙이 숨었어요. 예시 두 개를 보고 비밀 규칙을 추리해서 답해요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 5.54
  },
  "en-01b2d9351bdd.mp3": {
   "unit": "N-08",
@@ -5727,7 +5727,7 @@
   "asr": "丁,找到规则了。",
   "cer": 0.333,
   "ok": false,
-  "sec": 1.92
+  "sec": 1.94
  },
  "ko-284d77a6db1a.mp3": {
   "unit": "N-08",
@@ -5794,10 +5794,10 @@
   "key": "wrong0",
   "lang": "ko",
   "text": "음~ 예시 두 개를 다시 비교해 볼까요?",
-  "asr": "안녕하세요 예시 두 개를 다시 비교해 볼까요?",
-  "cer": 0.357,
-  "ok": false,
-  "sec": 3.32
+  "asr": "음, 예시 두 개를 다시 비교해 볼까요?",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.84
  },
  "en-75cd68bdb0ba.mp3": {
   "unit": "N-08",
@@ -5884,10 +5884,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "동전을 던져 볼까? 별무늬와 달무늬가 몇 개 나오는지 보고 식을 채워요!",
-  "asr": "노관호입니다. 동전을 던져볼까? 별무늬와 달무늬가 몇 개 나오는지 보고식을 채워요.",
-  "cer": 0.214,
-  "ok": false,
-  "sec": 6.29
+  "asr": "동전을 던져볼까? 별무늬와 달무늬가 몇 개 나오는지 보고식을 채워요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 5.39
  },
  "en-a00f968a360b.mp3": {
   "unit": "N-09",
@@ -5967,17 +5967,17 @@
   "asr": "鼓掌鼠竖小圆钉诞生了",
   "cer": 0.4,
   "ok": false,
-  "sec": 2.68
+  "sec": 2.63
  },
  "ko-4eff57839b8f.mp3": {
   "unit": "N-09",
   "key": "correct1",
   "lang": "ko",
   "text": "가지가 딱 맞아! 🌳",
-  "asr": "안녕하세요? 딱 맞아.",
-  "cer": 0.833,
-  "ok": false,
-  "sec": 1.92
+  "asr": "가지가 딱 맞아.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.61
  },
  "en-2d483290a459.mp3": {
   "unit": "N-09",
@@ -5994,10 +5994,10 @@
   "key": "correct1",
   "lang": "zh",
   "text": "枝杈正合适！",
-  "asr": "知叉正合适",
+  "asr": "之差正合适",
   "cer": 0.4,
   "ok": false,
-  "sec": 1.88
+  "sec": 1.64
  },
  "ko-b32efef9aa64.mp3": {
   "unit": "N-09",
@@ -6057,7 +6057,7 @@
   "asr": "嗯,把两根枝叉夹起来看看。",
   "cer": 0.182,
   "ok": false,
-  "sec": 2.87
+  "sec": 2.9
  },
  "ko-fad7ce96528f.mp3": {
   "unit": "N-09",
@@ -6094,10 +6094,10 @@
   "key": "rule",
   "lang": "ko",
   "text": "가지 두 개를 더하면 원 하나예요!",
-  "asr": "안녕하세요. 가지 두 개를 더하면 원 하나예요.",
-  "cer": 0.385,
-  "ok": false,
-  "sec": 2.81
+  "asr": "가지 두 개를 더하면 원 하나예요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.6
  },
  "en-aa11ea1f96f1.mp3": {
   "unit": "N-09",
@@ -6154,10 +6154,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "이번엔 조사하기! 그림을 하나씩 짚어 종류별로 세고, 표에 알맞은 수를 써요",
-  "asr": "안녕하세요. 지필드 영재교육 조사하기. 그림을 하나씩 짚어 종류별로 세고 표에 알맞은 수를 써요.",
-  "cer": 0.4,
-  "ok": false,
-  "sec": 6.73
+  "asr": "이번엔 조사하기. 그림을 하나씩 짚어 종류별로 세고 표에 알맞은 수를 써요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 5.71
  },
  "en-7ac556ff10f8.mp3": {
   "unit": "N-10",
@@ -6334,20 +6334,20 @@
   "key": "wrong1",
   "lang": "zh",
   "text": "一个一个指着数",
-  "asr": "一个一个指着树",
-  "cer": 0.143,
-  "ok": false,
-  "sec": 2.04
+  "asr": "一个一个指着数",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.68
  },
  "ko-ef3457951b61.mp3": {
   "unit": "N-10",
   "key": "rule",
   "lang": "ko",
   "text": "나눠 담고, 세고, 비교해요!",
-  "asr": "남여 담고 세고 비교해요",
-  "cer": 0.2,
-  "ok": false,
-  "sec": 2.44
+  "asr": "나눠 담고 세고 비교해요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.15
  },
  "en-46c3305cc5ed.mp3": {
   "unit": "N-10",
@@ -6374,10 +6374,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "별이 몇 개인지 보고, 식의 빈칸에 알맞은 수를 써요! 별은 전체의 수예요",
-  "asr": "지필드 영재교육 노관호입니다. 시계 빈칸에 알맞은 수를 써요. 별은 전체의 수예요.",
-  "cer": 0.536,
-  "ok": false,
-  "sec": 6.32
+  "asr": "별이 몇 개인지 보고 시계 빈칸에 알맞은 수를 써요. 별은 전체의 수예요.",
+  "cer": 0.071,
+  "ok": true,
+  "sec": 5.43
  },
  "en-14b4bb54a38e.mp3": {
   "unit": "N-11",
@@ -6404,10 +6404,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "숫자 카드로 식을 만들어요! 카드를 눌러 칸에 넣고, 답이 목표 수가 되는 식을 만들어 봐요",
-  "asr": "숫자 카드로 식을 만듭니다. 숫자 카드로 식을 만들어요. 칸에 넣고 답이 목표수가 되는 식을 만들어 봐요.",
-  "cer": 0.343,
-  "ok": false,
-  "sec": 6.92
+  "asr": "숫자 카드로 식을 만들어요. 카드를 눌러 칸에 넣고 답이 목표수가 되는 식을 만들어 봐요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 6.47
  },
  "en-17b1fd64648a.mp3": {
   "unit": "N-11",
@@ -6434,10 +6434,10 @@
   "key": "finish",
   "lang": "ko",
   "text": "완벽해요! 식 박사 탄생! 🔢✨",
-  "asr": "집필요. 식박사 탄생.",
-  "cer": 0.333,
-  "ok": false,
-  "sec": 2.2
+  "asr": "완벽해요. 식박사 탄생.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.08
  },
  "en-6e472dde62e9.mp3": {
   "unit": "N-11",
@@ -6464,10 +6464,10 @@
   "key": "correct0",
   "lang": "ko",
   "text": "딩동! 식이 딱 맞아요 ✨",
-  "asr": "식이 딱 맞아요",
-  "cer": 0.25,
-  "ok": false,
-  "sec": 1.14
+  "asr": "딩동! 식이 딱 맞아요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.99
  },
  "en-e0543afe0e3a.mp3": {
   "unit": "N-11",
@@ -6487,7 +6487,7 @@
   "asr": "丁算是完全正确",
   "cer": 0.286,
   "ok": false,
-  "sec": 2.07
+  "sec": 1.9
  },
  "ko-47b04f32a058.mp3": {
   "unit": "N-11",
@@ -6514,10 +6514,10 @@
   "key": "correct2",
   "lang": "ko",
   "text": "별을 잘 읽었어요! 🎉",
-  "asr": "시네요.",
-  "cer": 0.857,
-  "ok": false,
-  "sec": 0.87
+  "asr": "별을 잘 읽었어요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.9
  },
  "en-56b49c87592d.mp3": {
   "unit": "N-11",
@@ -6634,10 +6634,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "무당벌레 등의 점을 세 칸으로 갈라요! 한 칸은 보여 줬어요. 나머지 두 칸에 수를 써서 모두 합하면 맞아요",
-  "asr": "지필드, 영재교육, 노관호입니다. 무대 칸으로 갈라요. 한 칸은 보여줬어요. 나머지 두 칸의 수를 써서 모두 합하면 맞아요.",
-  "cer": 0.39,
-  "ok": false,
-  "sec": 9.16
+  "asr": "무당벌레 등의 점을 3칸으로 갈라요. 한 칸은 보여줬어요. 나머지 두 칸의 수를 써서 모두 합하면 맞아요.",
+  "cer": 0.049,
+  "ok": true,
+  "sec": 7.84
  },
  "en-b831ca7d0af9.mp3": {
   "unit": "N-12",
@@ -6784,10 +6784,10 @@
   "key": "correct2",
   "lang": "zh",
   "text": "合起来也对啦！",
-  "asr": "合起来也对了",
-  "cer": 0.167,
-  "ok": false,
-  "sec": 1.83
+  "asr": "合起来也对啦",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.65
  },
  "ko-be669f014953.mp3": {
   "unit": "N-12",
@@ -6824,10 +6824,10 @@
   "key": "wrong1",
   "lang": "ko",
   "text": "양쪽 식의 값을 하나씩 계산해 봐요",
-  "asr": "녹아놓습니다. 양쪽 시계값 하나씩 계산해봐요.",
-  "cer": 0.643,
-  "ok": false,
-  "sec": 2.93
+  "asr": "양쪽 식의 값을 하나씩 계산해 봐요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.75
  },
  "en-170af23b3ddb.mp3": {
   "unit": "N-12",
@@ -6854,10 +6854,10 @@
   "key": "rule",
   "lang": "ko",
   "text": "모두 합해서 같게! 저울은 양쪽 값이 같을 때 수평이에요!",
-  "asr": "노가노입니다. 모두 합해서 같게 저울은 양쪽 값이 같을 때 수평이",
-  "cer": 0.364,
-  "ok": false,
-  "sec": 5.04
+  "asr": "모두 합해서 같게. 저울은 양쪽 값이 같을 때 수평이에요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 4.31
  },
  "en-80c09b243c1f.mp3": {
   "unit": "N-12",
@@ -6884,10 +6884,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "격자 위에 길이 있어요! 1부터 차례대로 톡톡 이어 봐요",
-  "asr": "집트 영재교육 길이 있어요? 1부터 차례대로 톡톡 이어봐요",
-  "cer": 0.286,
-  "ok": false,
-  "sec": 5.08
+  "asr": "격자 위에 길이 있어요. 일부터 차례대로 톡톡 이어봐요.",
+  "cer": 0.048,
+  "ok": true,
+  "sec": 4.36
  },
  "en-7ff91eef224c.mp3": {
   "unit": "N-13",
@@ -6914,17 +6914,17 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "십자 퍼즐 시간! 위+아래와 왼쪽+오른쪽이 같도록 빈 칸의 답을 골라요",
-  "asr": "십자포즈 시간, 위, 아래와 왼쪽, 오른쪽이 같다고 빈칸의 답을 골라요.",
-  "cer": 0.148,
-  "ok": false,
-  "sec": 4.07
+  "asr": "십자 퍼즐 시간. 위비 아래와 왼쪽 푸즈 오른쪽이 같도록 빈칸의 답을 골라요.",
+  "cer": 0.111,
+  "ok": true,
+  "sec": 5.24
  },
  "en-4652e6ed68a7.mp3": {
   "unit": "N-13",
   "key": "lab-intro",
   "lang": "en",
   "text": "Cross puzzle time! Pick the answer so top+bottom equals left+right",
-  "asr": "Cross-puzzle time. Pick the answer so top plus bottom equals left plus right.",
+  "asr": "Cross puzzle time. Pick the answer so top plus bottom equals left plus right.",
   "cer": 0.148,
   "ok": false,
   "sec": 4.88
@@ -6997,7 +6997,7 @@
   "asr": "钉完全吻合",
   "cer": 0.2,
   "ok": false,
-  "sec": 1.86
+  "sec": 1.74
  },
  "ko-67de14b711d0.mp3": {
   "unit": "N-13",
@@ -7054,10 +7054,10 @@
   "key": "correct2",
   "lang": "zh",
   "text": "路连得真好！",
-  "asr": "陆连的真好",
-  "cer": 0.4,
-  "ok": false,
-  "sec": 1.37
+  "asr": "路连得真好",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.53
  },
  "ko-28781c110d5d.mp3": {
   "unit": "N-13",
@@ -7074,20 +7074,20 @@
   "key": "wrong0",
   "lang": "en",
   "text": "Hmm, add top+bottom first?",
-  "asr": "Hmm, add topless bottom first.",
-  "cer": 0.2,
-  "ok": false,
-  "sec": 2.11
+  "asr": "Hmm, add top bottom first.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 2.09
  },
  "zh-a3d9a5f1c35e.mp3": {
   "unit": "N-13",
   "key": "wrong0",
   "lang": "zh",
   "text": "嗯，先加上+下试试？",
-  "asr": "嗯先加上屁下试试",
+  "asr": "嗯先加上扑下试试",
   "cer": 0.143,
   "ok": false,
-  "sec": 2.08
+  "sec": 2.07
  },
  "ko-b77e64b180af.mp3": {
   "unit": "N-13",
@@ -7124,10 +7124,10 @@
   "key": "rule",
   "lang": "ko",
   "text": "위+아래 = 왼쪽+오른쪽!",
-  "asr": "치",
-  "cer": 1.0,
+  "asr": "위부 아래 왼쪽 푸 오른쪽.",
+  "cer": 0.25,
   "ok": false,
-  "sec": 0.55
+  "sec": 2.03
  },
  "en-52dbb87a67ba.mp3": {
   "unit": "N-13",
@@ -7144,7 +7144,7 @@
   "key": "rule",
   "lang": "zh",
   "text": "上＋下＝左＋右！",
-  "asr": "上牌下左牌是右",
+  "asr": "上是下左是是右",
   "cer": 0.75,
   "ok": false,
   "sec": 1.84
@@ -7154,10 +7154,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "탤리(산가지) 막대를 세어 봐요! 4개는 그대로, 5번째는 사선으로 묶여요",
-  "asr": "텔릿 3가지. 악대를 세어봐요. 4개는 그대로 3번째는 사선으로 묶여요.",
-  "cer": 0.148,
-  "ok": false,
-  "sec": 5.44
+  "asr": "텔리 3가지 막대를 세어봐요. 4개는 그대로 5번째는 사선으로 묶여요.",
+  "cer": 0.074,
+  "ok": true,
+  "sec": 5.75
  },
  "en-39c1c3047024.mp3": {
   "unit": "N-14",
@@ -7167,27 +7167,27 @@
   "asr": "Count the tally marks. Up to four stay plain. The fifth is bundled with a diagonal.",
   "cer": 0.121,
   "ok": false,
-  "sec": 5.75
+  "sec": 5.84
  },
  "zh-8d9a3d73d87b.mp3": {
   "unit": "N-14",
   "key": "practice-intro",
   "lang": "zh",
   "text": "数一数计数符号！4笔以内直接画，第5笔斜着捆一下",
-  "asr": "数一数技术符号4笔以内直接画5笔斜着捆一下",
-  "cer": 0.15,
-  "ok": false,
-  "sec": 5.72
+  "asr": "数一数技术符号4笔以内直接画第5笔斜着捆一下",
+  "cer": 0.1,
+  "ok": true,
+  "sec": 5.63
  },
  "ko-119955ddc1f7.mp3": {
   "unit": "N-14",
   "key": "lab-intro",
   "lang": "ko",
   "text": "이번엔 화살표 규칙 찾기! 1씩 늘거나 줄어드는 빈 칸을 골라요",
-  "asr": "안녕하세요. 환제교육도관원입니다. 일식 늘거나 줄어드는 빈칸을 골라요.",
-  "cer": 0.708,
-  "ok": false,
-  "sec": 5.1
+  "asr": "이번엔 화살표 규칙 찾기. 일식 늘거나 줄어드는 빈칸을 골라요.",
+  "cer": 0.083,
+  "ok": true,
+  "sec": 4.83
  },
  "en-310de89c2acd.mp3": {
   "unit": "N-14",
@@ -7277,37 +7277,37 @@
   "asr": "找到规律了",
   "cer": 0.2,
   "ok": false,
-  "sec": 1.4
+  "sec": 1.42
  },
  "ko-ced4b013f37d.mp3": {
   "unit": "N-14",
   "key": "correct2",
   "lang": "ko",
   "text": "묶어 세기 완벽! ✨",
-  "asr": "지필드 영재교육 노관호입니다.",
-  "cer": 2.167,
+  "asr": "묶어 쐬기 완벽.",
+  "cer": 0.167,
   "ok": false,
-  "sec": 1.68
+  "sec": 1.83
  },
  "zh-8de2c0ff020e.mp3": {
   "unit": "N-14",
   "key": "correct2",
   "lang": "zh",
   "text": "成捆数得真棒！",
-  "asr": "成捆术祖的真棒",
-  "cer": 0.5,
+  "asr": "成捆树的真棒",
+  "cer": 0.333,
   "ok": false,
-  "sec": 2.0
+  "sec": 1.72
  },
  "ko-f3512a5b67f8.mp3": {
   "unit": "N-14",
   "key": "wrong0",
   "lang": "ko",
   "text": "음~ 묶음부터 세어 볼까요?",
-  "asr": "묶음부터 세워볼까요?",
-  "cer": 0.2,
-  "ok": false,
-  "sec": 1.96
+  "asr": "음, 묶음부터 세워볼까요?",
+  "cer": 0.1,
+  "ok": true,
+  "sec": 2.16
  },
  "en-d841a12a3a08.mp3": {
   "unit": "N-14",
@@ -7384,10 +7384,10 @@
   "key": "rule",
   "lang": "zh",
   "text": "先数捆(5)，再跟着箭头规律走！",
-  "asr": "先竖捆舞再跟着箭头规律走",
-  "cer": 0.182,
-  "ok": false,
-  "sec": 3.32
+  "asr": "先数捆武再跟着箭头规律走",
+  "cer": 0.091,
+  "ok": true,
+  "sec": 3.24
  },
  "ko-7c3cf2278401.mp3": {
   "unit": "N-15",
@@ -7424,10 +7424,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "이번엔 분류하기! 섞인 걸 톡톡 눌러 바구니에 담고, 개수를 세어 봐요",
-  "asr": "노관우입니다. 이번에는 분류하기. 섞인 걸 톡톡 눌러 바구니에 담고 개수를 세어봐요.",
-  "cer": 0.296,
-  "ok": false,
-  "sec": 5.43
+  "asr": "이번엔 분류하기. 섞인 걸 톡톡 눌러 바구니에 담고 개수를 세어봐요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 5.23
  },
  "en-bcf480579a4a.mp3": {
   "unit": "N-15",
@@ -7494,10 +7494,10 @@
   "key": "correct1",
   "lang": "ko",
   "text": "분류도 완벽! 🧺",
-  "asr": "안녕하세요. 분류도 완벽!",
-  "cer": 1.0,
-  "ok": false,
-  "sec": 1.84
+  "asr": "분류도 완벽.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 1.29
  },
  "en-22284591ef6a.mp3": {
   "unit": "N-15",
@@ -7554,10 +7554,10 @@
   "key": "wrong1",
   "lang": "ko",
   "text": "더하는 건지 빼는 건지 다시 생각해봐요",
-  "asr": "노관어입니다. 더하는 건지 빼는 건지 다시 생각해봐요.",
-  "cer": 0.375,
-  "ok": false,
-  "sec": 3.64
+  "asr": "더하는 건지 빼는 건지 다시 생각해봐요.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.1
  },
  "en-8493c3c8e18f.mp3": {
   "unit": "N-15",
