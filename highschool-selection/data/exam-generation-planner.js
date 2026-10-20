@@ -85,7 +85,8 @@
   function normalizeCandidate(input, index) {
     exactKeys(input, new Set([
       "itemId", "itemVersionId", "curriculumPath", "typeCode", "familyId",
-      "difficultyBand", "inputType", "score", "domainGroup"
+      "difficultyBand", "inputType", "score", "domainGroup",
+      "variantId", "sourceQuestionKey", "contentFingerprint"
     ]), `candidates[${index}]`);
     const difficultyBand = clean(input.difficultyBand);
     invariant(DIFFICULTIES.includes(difficultyBand), `candidates[${index}].difficultyBand is invalid`);
@@ -96,6 +97,9 @@
       curriculumPath: curriculumPath(input.curriculumPath, `candidates[${index}].curriculumPath`),
       typeCode: token(input.typeCode, `candidates[${index}].typeCode`),
       familyId: input.familyId == null ? itemId : token(input.familyId, `candidates[${index}].familyId`),
+      variantId: input.variantId == null ? null : token(input.variantId, `candidates[${index}].variantId`),
+      sourceQuestionKey: input.sourceQuestionKey == null ? null : token(input.sourceQuestionKey, `candidates[${index}].sourceQuestionKey`),
+      contentFingerprint: input.contentFingerprint == null ? null : token(input.contentFingerprint, `candidates[${index}].contentFingerprint`),
       domainGroup: clean(input.domainGroup) || null,
       difficultyBand,
       inputType: clean(input.inputType),
@@ -368,6 +372,43 @@
     return null;
   }
 
+  // Two records may have different item/type/family IDs and still be the same fixed variation.
+  // Keep all approved candidates available until quotas are solved, then branch only on a
+  // collision. Every valid solution excludes at least one member of each colliding pair.
+  function duplicateVariationPair(selected) {
+    const seen = new Map();
+    for (const candidate of selected) {
+      for (const field of ["variantId", "sourceQuestionKey", "contentFingerprint"]) {
+        if (!candidate[field]) continue;
+        const key = `${field}:${candidate[field]}`;
+        if (seen.has(key)) return [seen.get(key), candidate];
+        seen.set(key, candidate);
+      }
+    }
+    return null;
+  }
+
+  function selectCollisionFree(candidates, select) {
+    const visited = new Set();
+    function visit(excluded) {
+      const signature = Array.from(excluded).sort().join("|");
+      if (visited.has(signature)) return null;
+      visited.add(signature);
+      const selected = select(candidates.filter(function (candidate) { return !excluded.has(candidate.itemId); }));
+      if (!selected) return null;
+      const pair = duplicateVariationPair(selected);
+      if (!pair) return selected;
+      for (const candidate of pair) {
+        const next = new Set(excluded);
+        next.add(candidate.itemId);
+        const alternative = visit(next);
+        if (alternative) return alternative;
+      }
+      return null;
+    }
+    return visit(new Set());
+  }
+
   function planExam(candidateInput, optionsInput) {
     invariant(Array.isArray(candidateInput), "candidates must be an array");
     const options = normalizeOptions(optionsInput);
@@ -383,30 +424,33 @@
     const difficultyQuota = allocate(options.questionCount, options.difficultyWeights, DIFFICULTIES);
     const responseQuota = allocate(options.questionCount, options.responseWeights, RESPONSE_GROUPS);
     if (options.domainQuotas) {
-      const selectedByDomain = selectWithDomainQuotas(candidates, options, difficultyQuota, responseQuota);
+      const selectedByDomain = selectCollisionFree(candidates, function (available) {
+        return selectWithDomainQuotas(available, options, difficultyQuota, responseQuota);
+      });
       invariant(selectedByDomain, "eligible candidates cannot satisfy the requested domain, difficulty, response, and family quotas");
       return finalizePlan(selectedByDomain, options, difficultyQuota, responseQuota);
     }
-    const cells = {};
-    DIFFICULTIES.forEach(function (difficulty) {
-      RESPONSE_GROUPS.forEach(function (group) { cells[`${difficulty}:${group}`] = []; });
-    });
-    candidates.forEach(function (candidate) { cells[`${candidate.difficultyBand}:${candidate.responseGroup}`].push(candidate); });
-    Object.values(cells).forEach(function (items) {
-      items.sort(function (left, right) {
-        return fnv1a32(`${options.seed}:${left.itemId}:${left.itemVersionId}`) - fnv1a32(`${options.seed}:${right.itemId}:${right.itemVersionId}`)
-          || left.itemId.localeCompare(right.itemId);
+    const selected = selectCollisionFree(candidates, function (available) {
+      const cells = {};
+      DIFFICULTIES.forEach(function (difficulty) {
+        RESPONSE_GROUPS.forEach(function (group) { cells[`${difficulty}:${group}`] = []; });
       });
+      available.forEach(function (candidate) { cells[`${candidate.difficultyBand}:${candidate.responseGroup}`].push(candidate); });
+      Object.values(cells).forEach(function (items) {
+        items.sort(function (left, right) {
+          return fnv1a32(`${options.seed}:${left.itemId}:${left.itemVersionId}`) - fnv1a32(`${options.seed}:${right.itemId}:${right.itemVersionId}`)
+            || left.itemId.localeCompare(right.itemId);
+        });
+      });
+      const availability = Object.fromEntries(Object.entries(cells).map(function ([key, items]) { return [key, items.length]; }));
+      const matrices = cellPlans(difficultyQuota, responseQuota, availability);
+      for (const matrix of matrices) {
+        const match = selectWithFamilyCapacity(cells, matrix, options.maxPerFamily);
+        if (match) return match;
+      }
+      return null;
     });
-    const availability = Object.fromEntries(Object.entries(cells).map(function ([key, items]) { return [key, items.length]; }));
-    const matrices = cellPlans(difficultyQuota, responseQuota, availability);
-    invariant(matrices.length > 0, "eligible candidates cannot satisfy the requested difficulty and response ratios");
-    let selected = null;
-    for (const matrix of matrices) {
-      selected = selectWithFamilyCapacity(cells, matrix, options.maxPerFamily);
-      if (selected) break;
-    }
-    invariant(selected, "family diversity limit leaves too few eligible candidates");
+    invariant(selected, "eligible candidates cannot satisfy the requested difficulty, response, family, and variation quotas");
     return finalizePlan(selected, options, difficultyQuota, responseQuota);
   }
 

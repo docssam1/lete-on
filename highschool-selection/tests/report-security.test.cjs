@@ -98,6 +98,59 @@ function validReport() {
 
 function clone(value) { return JSON.parse(JSON.stringify(value)); }
 
+test("verified advanced difficulty remains a separate report band", () => {
+  const report = validReport();
+  report.items[1].difficulty = "advanced";
+  const result = security.validateReport(report, context);
+  assert.equal(result.items[1].difficulty, "advanced");
+  assert.deepEqual(result.byDifficulty.map(row => row.label), ["standard", "advanced"]);
+});
+
+test("binary report rejects partial credit instead of discarding it", () => {
+  for (const earnedPoints of [1, null, "0", -1, Infinity]) {
+    const report = validReport();
+    report.items[1].earnedPoints = earnedPoints;
+    assert.throws(() => security.validateReport(report, context), /부분점수/);
+  }
+  const report = validReport();
+  report.items[0].earnedPoints = 2;
+  report.items[1].earnedPoints = 0;
+  assert.equal(security.validateReport(report, context).score, 2);
+});
+
+test("accepts the owner display name from the authenticated no-store report only", () => {
+  assert.equal(security.validateReport(validReport(), context).displayName, null);
+  const report = validReport(); report.displayName = "검사용 학생";
+  assert.equal(security.validateReport(report, context).displayName, "검사용 학생");
+  for (const value of ["", null, 3, true, ["이름"], {}]) {
+    report.displayName = value;
+    assert.throws(() => security.validateReport(report, context));
+  }
+});
+
+test("coaching chooses domains by earned points rather than number-correct rate", () => {
+  const { buildReport } = require("../server/report-builder.js");
+  const source = validReport().items[0];
+  const items = [["A", 9, "correct"], ["A", 1, "wrong"], ["B", 1, "correct"], ["B", 1, "correct"], ["B", 4, "wrong"]]
+    .map(([domain, points, state], index) => ({ number: index + 1, state, classification: { ...source, domain, points, evidence: ["synthetic-score-review"] } }));
+  const report = buildReport({ attemptId: "test", studentId: "test", exam: { examId: "test", title: "검사용" }, submittedAt: "2026-09-06T00:00:00Z", scored: { items, gradingVersion: "test" } });
+  assert.equal(report.comments.find(item => item.type === "weakness").evidence.aggregate.label, "B");
+  assert.equal(report.comments.find(item => item.type === "strength").evidence.aggregate.label, "A");
+  const weightedContext = { attemptId: "test", session: { studentId: "test" }, exams: [{ ...context.exams[0], id: "test", title: "검사용", questionCount: 5 }] };
+  const validated = security.validateReport(report, weightedContext);
+  assert.equal(validated.comments.find(item => item.type === "strength").evidence.aggregate.earnedRate, 90);
+  assert.equal(validated.comments.find(item => item.type === "weakness").evidence.aggregate.earnedRate, 33.3);
+  const fabricated = clone(report);
+  fabricated.comments.find(item => item.type === "strength").evidence.aggregate.earnedRate = 100;
+  assert.throws(() => security.validateReport(fabricated, weightedContext), /배점 근거/);
+  const wrongDomain = clone(report);
+  wrongDomain.comments.find(item => item.type === "strength").evidence.aggregate = clone(report.comments.find(item => item.type === "weakness").evidence.aggregate);
+  assert.throws(() => security.validateReport(wrongDomain, weightedContext), /강점 코멘트/);
+  const invalidBasis = clone(report);
+  invalidBasis.comments.find(item => item.type === "strength").evidence.aggregate.selectionBasis = "guessed";
+  assert.throws(() => security.validateReport(invalidBasis, weightedContext), /비교 기준/);
+});
+
 test("accepts only an exact student, attempt, and released verified exam report", () => {
   const report = security.validateReport(validReport(), context);
   assert.equal(report.examTitle, "SH 진단 1회");
@@ -116,6 +169,15 @@ test("accepts only an exact student, attempt, and released verified exam report"
   assert.deepEqual(report.previousAttempt.groups.resolved, [1]);
   assert.deepEqual(report.previousAttempt.groups.unresolved, [2]);
   assert.deepEqual(report.cutline, { available: false, message: "합격 기준 확인 필요 — 점수/진단만 제공" });
+});
+
+test("a previously unattempted item is not classified as a resolved mistake", () => {
+  const report = validReport();
+  report.previousAttempt.items[0].state = "blank";
+  const comparison = security.validateReport(report, context).previousAttempt.groups;
+  assert.deepEqual(comparison.newly_attempted, [1]);
+  assert.deepEqual(comparison.resolved, []);
+  assert.deepEqual(comparison.unresolved, [2]);
 });
 
 test("rejects mismatched student, attempt, exam title, and unverified exam gates", () => {
@@ -311,7 +373,7 @@ test("report page has printable output and no local report/cache/answer fallback
   assert.equal(html.includes("academy-evaluation-profiles.js"), true);
   assert.equal(html.includes("window.print()"), true);
   assert.equal(html.includes("@media print"), true);
-  assert.equal(page.includes('item.state === "correct" ? "○" : "×"'), true);
+  assert.equal(page.includes('item.state === "wrong" ? { symbol: "×", label: "오답" } : { symbol: "—", label: "미응시" }'), true);
   assert.equal(page.includes("문항별 O/X"), false);
   assert.equal(page.includes("학원별 평가 프로필"), true);
   assert.equal(page.includes("HIGHSELECT_ACADEMY_EVALUATION_PROFILES.resolve"), true);

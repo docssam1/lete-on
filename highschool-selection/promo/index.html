@@ -11,7 +11,7 @@
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav">
     <a class="brand" href="../"><span class="brand-mark">SL</span><span>선발·누적 진단 연구소<small>GFIELD SELECTION LAB</small></span></a>
-    <div class="nav-links"><a class="button ghost" href="#programs">시험 유형</a><a class="button accent" href="../login.html">승인번호로 입장</a></div>
+    <div class="nav-links"><a class="button ghost" href="#academy-entry">대비과정</a><a class="button accent" href="../login.html">승인번호로 입장</a></div>
   </nav></header>
   <main id="main">
     <section class="hero"><div class="shell hero-grid">
@@ -19,7 +19,15 @@
       <aside class="diagnostic-preview" aria-label="진단 분석지 구성 미리보기"><header><span>DIAGNOSTIC PRINT</span><span>A4</span></header><div class="preview-score"><span>문항별 결과</span><strong>○ <i>×</i></strong><small>총점 · 정답률 · 정답 문항 수</small></div><div class="preview-axes"><div><b>01</b><span>영역별 수행률</span></div><div><b>02</b><span>학년·학기·단원</span></div><div><b>03</b><span>세부유형·난이도</span></div><div><b>04</b><span>근거 있는 코멘트</span></div></div><footer>오답 → 승인된 유사문제 세트</footer></aside>
     </div><div class="shell proof-strip" aria-label="프로그램 핵심 근거"><span><b>40문항</b> 황소 고등 첫 원본</span><span><b>회차별</b> 지점·과정 커트라인</span><span><b>7종</b> 근거 기반 코멘트</span><span><b>3단계</b> 원본→쌍둥이→유사</span></div></section>
 
+    <section class="section academy-entry-section" id="academy-entry"><div class="shell">
+      <div class="section-head"><h2>학원을 고르면<br>실제 대비과정이 열립니다.</h2><p>응시 학년보다 지원 과정을 먼저 고릅니다. 각 과정은 승인된 표준 시험지가 있어야 신청과 판매를 열 수 있습니다.</p></div>
+      <div class="academy-launcher" id="academy-launcher" aria-label="학원 선택"></div>
+      <div class="academy-course-stage" id="academy-course-stage" aria-live="polite"></div>
+    </div></section>
+
     <section class="section" id="programs"><div class="shell"><div class="section-head"><h2>검색 결과와 원본으로 확인한 시험 유형</h2><p>공식 원문, 공식 게시물 미러, 독립 정리, 실제 원본·익명 결과를 구분했습니다. 수치와 커트라인은 표시된 회차에만 적용합니다.</p></div><div class="evidence-note"><b>근거 표기</b><span>A 공식 원문</span><span>B 공식 게시물 미러</span><span>C 독립 정리</span><span>관찰 실제 원본·익명 결과</span><span>확인 필요 미검증</span></div><div class="profile-grid" id="program-grid"></div><p class="source-policy" id="source-policy"></p></div></section>
+
+    <section class="section bulletin-section" id="updates"><div class="shell"><div class="section-head"><h2>대치 학원 공지와<br>교육 뉴스</h2><p>공지는 공식 원문과 미러를 구분하고, 본문을 복사하지 않고 제목·날짜·원문 링크만 보여줍니다.</p></div><div class="bulletin-grid"><section class="bulletin-board"><header><div><p class="eyebrow">Academy notices</p><h3>학원 공지</h3></div><span>대치 기준</span></header><div class="bulletin-list" id="academy-notices"></div></section><aside class="bulletin-board compact"><header><div><p class="eyebrow">Education news</p><h3>교육 뉴스</h3></div><span id="education-source-label"></span></header><div class="bulletin-list" id="education-news"></div></aside></div></div></section>
     <section class="section" id="flow"><div class="shell"><div class="section-head"><h2>응시 뒤에 남는 것</h2><p>총점만 전달하지 않습니다. 학생이 다음에 무엇을 공부해야 하는지 인쇄 가능한 한 장으로 정리합니다.</p></div><div class="grid-3">
       <article class="feature"><span class="num">01</span><h3>문항별 ○/×</h3><p>입력형, 복수답, 그림 확인형을 문항별로 설정하고 공백·쉼표·단위 표기를 정규화합니다.</p></article>
       <article class="feature"><span class="num">02</span><h3>학기·단원·유형</h3><p>영역별 수행률, 학년·학기·단원별 수행률, 세부유형·난이도별 수행률을 함께 봅니다.</p></article>
@@ -31,8 +39,13 @@
   </main>
   <footer class="footer"><div class="shell"><span>GFIELD 선발·누적 진단</span><span>원본 시험지와 답안은 공개 저장소에 올리지 않습니다.</span></div></footer>
   <script src="../data/public-exam-profiles.js"></script>
+  <script src="../data/catalog.js"></script>
+  <script src="../data/academy-engagement.js"></script>
+  <script src="../data/standard-exam-policy.js"></script>
   <script>
     const data=HIGHSELECT_PUBLIC_PROFILES;
+    const engagement=HIGHSELECT_ACADEMY_ENGAGEMENT;
+    const standardPolicy=HIGHSELECT_STANDARD_EXAM_POLICY;
     const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const stateLabel={verified:'확인',observed:'관찰',confirmed:'운영 확정',"needs-review":'확인 필요'};
     const grid=document.getElementById('program-grid');
@@ -45,6 +58,39 @@
       return `<article class="profile-card"><header><span>${String(i+1).padStart(2,'0')}</span><b>${esc(profile.eyebrow)}</b></header><h3>${esc(profile.publicName)}</h3><p>${esc(profile.summary)}</p><ul class="fact-list">${facts}</ul>${cutlineBox}<div class="style-note"><b>출제 대비 방향</b><p>${esc(profile.style)}</p></div><p class="caveat">${esc(profile.caveat)}</p>${links?`<details><summary>공개 근거 보기</summary><div class="source-list">${links}</div></details>`:''}</article>`;
     }).join('');
     document.getElementById('source-policy').textContent=`확인일 ${data.updatedAt} · ${data.evidencePolicy}`;
+
+    const launcher=document.getElementById('academy-launcher');
+    const stage=document.getElementById('academy-course-stage');
+    let selectedProgram=engagement.programs[0]?.code||'';
+    function renderLauncher(){
+      launcher.innerHTML=engagement.programs.map(program=>`<button class="academy-orb ${program.code===selectedProgram?'is-active':''}" style="--academy-accent:${esc(program.accent)}" data-program="${esc(program.code)}" aria-pressed="${program.code===selectedProgram}"><span>${esc(program.shortName)}</span><small>${esc(program.publicName)}</small></button>`).join('');
+    }
+    function actionFor(program,course,resolved){
+      if(!resolved.canApply) return `<button class="button soft" disabled>${esc(resolved.label)}</button>`;
+      if(!engagement.application.surveyUrl) return `<button class="button soft" disabled>신청 설문 연결 대기</button>`;
+      return `<a class="button accent" href="${esc(engagement.application.surveyUrl)}" target="_blank" rel="noopener noreferrer">신청하기</a>`;
+    }
+    function renderCourses(){
+      const program=engagement.programs.find(item=>item.code===selectedProgram);
+      if(!program){stage.innerHTML='';return;}
+      const courses=program.courses.map(course=>{
+        const resolved=standardPolicy.resolve(program.code,course.id,HIGHSELECT_CATALOG);
+        const count=resolved.exam&&resolved.exam.questionCount?`${resolved.exam.questionCount}문항`:'문항 구성 필요';
+        const reviewed=resolved.progress.reviewedQuestionCount;
+        const target=resolved.progress.targetQuestionCount;
+        const reviewLabel=target===null?'회차별 문항 수 확인 필요':`검수 완료 ${reviewed}/${target}문항`;
+        return `<article class="course-card"><div class="course-card-head"><div><span>${esc(program.shortName)} · ${esc(course.scope)}</span><h4>${esc(course.label)}</h4></div><em class="standard-state ${esc(resolved.state)}">${esc(resolved.label)}</em></div><dl><div><dt>시험 성격</dt><dd>${esc(program.examNature)}</dd></div><div><dt>표준 시험지</dt><dd>${resolved.exam?`${esc(resolved.exam.title)} · ${esc(count)}`:'아직 연결된 표준 시험지가 없습니다.'}</dd></div><div><dt>문항 형식</dt><dd>${esc(resolved.responseMixLabel)}</dd></div><div><dt>검수 현황</dt><dd>${esc(reviewLabel)}${resolved.blockers.length?` · 남은 확인: ${esc(resolved.blockers.join(', '))}`:''}</dd></div></dl><div class="course-actions">${actionFor(program,course,resolved)}<small>${resolved.canApply?'표준 시험지 승인 완료':'표준 시험지 승인 전에는 신청·판매를 열지 않습니다.'}</small></div></article>`;
+      }).join('');
+      stage.innerHTML=`<aside class="academy-brief" style="--academy-accent:${esc(program.accent)}"><p class="eyebrow">${esc(program.publicName)}</p><h3>${esc(program.examNature)}</h3><ol>${program.preparation.map(item=>`<li>${esc(item)}</li>`).join('')}</ol><p class="standard-rule"><b>표준 시험지 필수</b>${esc(engagement.standardExamPolicy.supplementalSource)}</p></aside><div class="course-list">${courses}</div>`;
+    }
+    launcher.addEventListener('click',event=>{const button=event.target.closest('[data-program]');if(!button)return;selectedProgram=button.dataset.program;renderLauncher();renderCourses();});
+    renderLauncher();renderCourses();
+
+    const notices=engagement.programs.flatMap(program=>(program.updates||[]).map(item=>({...item,program:program.publicName}))).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+    document.getElementById('academy-notices').innerHTML=notices.length?notices.map(item=>`<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer"><span><b>${esc(item.program)}</b>${esc(item.title)}</span><small>${esc(item.date)} · ${esc(item.sourceKind)}</small></a>`).join(''):'<p class="bulletin-empty">확인된 공지가 없습니다.</p>';
+    const education=engagement.educationNews;
+    document.getElementById('education-source-label').textContent=education.sourceLabel;
+    document.getElementById('education-news').innerHTML=education.items.length?education.items.map(item=>`<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer"><span>${esc(item.title)}</span><small>${esc(item.date)}</small></a>`).join(''):`<p class="bulletin-empty">${esc(education.note)}</p>`;
   </script>
 </body>
 </html>

@@ -25,7 +25,7 @@ function fixture() {
       }]
     },
     hwangsoRound: { items: [] },
-    wonmathManifests: [{ items: [{ examNumber: 1, majorUnit: "함수", minorUnit: "일차함수", typeId: "M2-FUNC-LINE" }] }],
+    wonmathManifests: [{ items: [{ examNumber: 1, bookId: "AG_G7_ALG_VAR", majorUnit: "함수", minorUnit: "일차함수", typeId: "M2-FUNC-LINE" }] }],
     hwangsoMiddle: { items: [] }
   };
 }
@@ -112,6 +112,34 @@ function saengsuFixture() {
   };
 }
 
+function blacklabelFixture() {
+  return {
+    sourcePairs: [{ pairId: "BLACKLABEL-2025-M11", problemSha256: "problem", solutionSha256: "solution" }],
+    items: [{
+      itemId: "ITM.BLACKLABEL.2025-M11-P011.Q01",
+      sourceItemId: "M11-P011-Q01",
+      sourceTypeId: "BL25-TYP-M11-LINE-INTERSECTION",
+      unitTypeId: "M2-FUNC-LINE",
+      sourceLocator: { problemSourceMemoryId: "blacklabel-2025-m11-problem", pdfPage: 11, printedQuestionNumber: 1 },
+      classification: {
+        semester: "중1-1",
+        majorUnit: "함수",
+        minorUnit: "일차함수",
+        detailType: "두 직선의 교점 구하기",
+        solutionArchetype: "두 직선의 식을 연립해 교점 좌표를 구한다.",
+        status: "verified"
+      },
+      answerCheck: { canonicalAnswer: "비공개", status: "source_solution_and_independent_math_verified" },
+      overlap: { status: "exact_solution_structure", matchedSourceTypeId: "DP-T1" },
+      visualAudit: { status: "not_required" },
+      academyFits: [{ profileId: "WM_BASIC", status: "candidate" }],
+      questionBankEligible: true,
+      mockExamEligible: false,
+      releaseStatus: "locked"
+    }]
+  };
+}
+
 test("같은 교육과정 위치와 같은 세부 유형은 공통 개념 하나로 합친다", () => {
   const index = builder.buildIndex(fixture());
   const family = index.conceptFamilies.find(item => item.canonicalLabel === "두 직선의 교점 구하기");
@@ -126,6 +154,65 @@ test("단원 수준 분류는 세부 유형으로 억지 병합하지 않는다"
   const wonmath = index.items.find(item => item.sourceBankId === "WONMATH-M21");
   assert.equal(wonmath.conceptStatus, "unit_only");
   assert.equal(wonmath.conceptFamilyId, null);
+});
+
+test("돌파 원본 색인은 본문·정답이 없는 공개용 목록이지 출제 가능 문항 DB가 아니다", () => {
+  const index = builder.buildIndex(fixture());
+  const bank = index.sourceBanks.find(item => item.sourceBankId === "DOLPA-ORIGINAL");
+  const item = index.items.find(candidate => candidate.sourceBankId === "DOLPA-ORIGINAL");
+  assert.equal(bank.status, "index_verified_content_locked");
+  assert.equal(bank.materializationStatus, "metadata_index_only");
+  assert.equal(item.materializationStatus, "metadata_index_only");
+  assert.equal(item.releaseStatus, "locked");
+  assert.equal(Object.hasOwn(item, "promptParts"), false);
+  assert.equal(Object.hasOwn(item, "answer"), false);
+});
+
+test("돌파 별도 원본 문항은 기존 번호를 덮어쓰지 않고 잠금 상태로 추가한다", () => {
+  const input = fixture();
+  input.dolpaSourceAddenda = [{
+    visibility: "private",
+    sourceBankId: "DOLPA-ORIGINAL",
+    mergeGate: { ready: false },
+    mockExam: { candidateExamId: "test-mock", releaseStatus: "locked" },
+    source: { sourceId: "DP-SRC-OTHER", sourceFingerprint: "fingerprint", sourcePdfSha256: "pdfhash" },
+    sourceTypes: [{ sourceTypeId: "DP-T2", sourceQuestionId: "DP-Q2", semester: "중3-1",
+      majorUnit: "문자와 식", minorUnit: "이차방정식", detailType: "매출 변화율",
+      solvingModel: "quadratic", visualModel: "none", answerContract: "single-value",
+      responseKind: "input", difficulty: "standard", conceptFamilyId: null,
+      detailPrecision: "source_and_answer_verified_type_relation_pending", releaseStatus: "locked", evidence: [] }],
+    items: [{ sourceQuestionId: "DP-Q2", sourceKey: "DP-SRC-OTHER:p9:q25", sourceTypeId: "DP-T2", mockSlot: 8,
+      materializationStatus: "private_source_candidate", releaseStatus: "locked",
+      academyFits: [{ profileId: "DP_STANDARD", status: "source_verified_not_current_exam_claim" }] }]
+  }];
+  const index = builder.buildIndex(input);
+  const original = index.items.find(item => item.sourceItemId === "DP-Q1");
+  const added = index.items.find(item => item.sourceItemId === "DP-Q2");
+  assert.ok(original);
+  assert.equal(added.conceptFamilyId, null);
+  assert.equal(added.conceptStatus, "pending");
+  assert.equal(added.releaseStatus, "locked");
+  assert.equal(added.usageApproved, false);
+  assert.equal(index.sourceBanks.find(bank => bank.sourceBankId === "DOLPA-ORIGINAL").itemCount, 2);
+  const forbidden = [];
+  require("../scripts/project-question-bank-core.cjs").walkForbidden(index, "", forbidden);
+  assert.deepEqual(forbidden, []);
+  assert.equal(JSON.stringify(index).includes("privateContentRef"), false);
+  input.dolpaSourceAddenda[0].items[0].sourceQuestionId = "DP-Q1";
+  assert.throws(() => builder.buildIndex(input), /출처·중복 상태/);
+});
+
+test("에이급만 사용한 원수학 대비 임시 세트는 원수학 원본으로 표시하거나 자동 출제하지 않는다", () => {
+  const index = builder.buildIndex(fixture());
+  const bank = index.sourceBanks.find(item => item.sourceBankId === "WONMATH-M21");
+  const item = index.items.find(candidate => candidate.sourceBankId === "WONMATH-M21");
+  assert.equal(bank.officialWonmathPastPaper, false);
+  assert.equal(bank.status, "a_grade_only_rebuild_required");
+  assert.match(bank.label, /에이급 기반/);
+  assert.deepEqual(bank.sourceComposition, [{ sourceBookId: "AG_G7_ALG_VAR", itemCount: 1 }]);
+  assert.equal(item.releaseStatus, "locked");
+  assert.equal(item.usageApproved, false);
+  assert.deepEqual(item.academyFits, [{ profileId: "WM_BASIC", status: "candidate" }]);
 });
 
 test("검수된 돌파 풀이 방법은 공용 유형에 연결하고 미검수 방법은 비워 둔다", () => {
@@ -317,6 +404,34 @@ test("생수 검수 연결 대상이 사라지면 조용히 새 유형으로 만
   input.saengsuLegacy.types[0].canonicalMergeStatus = "merge_existing";
   input.saengsuLegacy.types[0].canonicalTarget = { sourceBankId: "DOLPA-ORIGINAL", sourceTypeId: "MISSING" };
   assert.throws(() => builder.buildIndex(input), /연결 대상이 공통 인덱스에 없습니다/);
+});
+
+test("블랙라벨 문항은 원수학 기출로 가장하지 않고 잠긴 후보로 공통 DB에 연결한다", () => {
+  const input = fixture();
+  input.blacklabelMiddle = blacklabelFixture();
+  const index = builder.buildIndex(input);
+  const bank = index.sourceBanks.find(item => item.sourceBankId === "BLACKLABEL-2025-M1");
+  const item = index.items.find(candidate => candidate.sourceBankId === "BLACKLABEL-2025-M1");
+  const dolpa = index.items.find(candidate => candidate.sourceItemId === "DP-Q1");
+  assert.equal(bank.itemCount, 1);
+  assert.equal(bank.officialWonmathPastPaper, false);
+  assert.equal(bank.academyFitStatus, "candidate");
+  assert.equal(item.releaseStatus, "locked");
+  assert.equal(item.usageApproved, false);
+  assert.equal(item.answerStatus, "verified");
+  assert.equal(item.domainGroup, "algebra");
+  assert.equal(item.conceptStatus, "mapped");
+  assert.equal(item.canonicalConceptFamilyId, dolpa.conceptFamilyId);
+  assert.deepEqual(item.academyFits, [{ profileId: "WM_BASIC", status: "candidate" }]);
+  assert.equal(JSON.stringify(item).includes("canonicalAnswer"), false);
+  assert.deepEqual(audit.audit(index).issues, []);
+});
+
+test("블랙라벨은 답 검산이나 잠금이 빠진 문항을 공통 DB에 넣지 않는다", () => {
+  const input = fixture();
+  input.blacklabelMiddle = blacklabelFixture();
+  input.blacklabelMiddle.items[0].answerCheck.status = "pending";
+  assert.throws(() => builder.buildIndex(input), /검수 상태/);
 });
 
 test("공통 인덱스에는 원문·정답·경로를 넣지 않고 전체 검사를 통과한다", () => {

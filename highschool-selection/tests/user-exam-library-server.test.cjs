@@ -1,6 +1,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const crypto = require("node:crypto");
+const fs = require("node:fs");
 const http = require("node:http");
+const os = require("node:os");
 const path = require("node:path");
 
 const { createApp } = require("../server/app.js");
@@ -187,6 +190,7 @@ async function start(options = {}) {
     privateUserExamScopeInventory: Object.prototype.hasOwnProperty.call(options, "scopeInventory")
       ? options.scopeInventory
       : scopeInventory(),
+    privateUserExamAssets: options.privateUserExamAssets,
     cookieSecure: false,
     now: () => NOW,
     staticRoot: path.join(__dirname, "..")
@@ -270,6 +274,33 @@ test("user access and admin assignment APIs enforce their roles", async t => {
   assert.equal(access.status, 200);
   assert.equal((await access.json()).plan.maxSavedExamCount, 1);
 
+  const options = await fetch(`${env.base}/user-exam-library/options`, { headers: { Cookie: student } });
+  assert.equal(options.status, 200);
+  assert.deepEqual(await options.json(), {
+    targets: [
+      { generationMode: "academy_prep", academyId: "DP", semesterId: "M2-1", scopeKeys: ["G8/M01"] },
+      { generationMode: "academy_prep", academyId: "SM", semesterId: "CM1", scopeKeys: ["G8/M01"] }
+    ],
+    count: 2
+  });
+
+  assert.equal((await fetch(`${env.base}/admin/user-exam-library/options`, { headers: { Cookie: student } })).status, 403);
+  const adminOptions = await fetch(`${env.base}/admin/user-exam-library/options`, { headers: { Cookie: admin } });
+  assert.equal(adminOptions.status, 200);
+  assert.deepEqual(await adminOptions.json(), {
+    plans: [
+      { planId: "basic", maxSavedExamCount: 1, maxRecentExamCount: 5, temporaryRetentionDays: 7 },
+      { planId: "plus", maxSavedExamCount: 3, maxRecentExamCount: 10, temporaryRetentionDays: 14 }
+    ],
+    targets: [
+      { generationMode: "academy_prep", academyId: "DP", semesterId: "M2-1", scopeKeys: ["G8/M01"] },
+      { generationMode: "academy_prep", academyId: "SM", semesterId: "CM1", scopeKeys: ["G8/M01"] },
+      { generationMode: "learning", academyId: null, semesterId: "M2-1", scopeKeys: ["G8/M01"] }
+    ],
+    planCount: 2,
+    targetCount: 3
+  });
+
   assert.equal((await fetch(`${env.base}/admin/user-exam-library/users/student_one`, { headers: { Cookie: student } })).status, 403);
   const before = await fetch(`${env.base}/admin/user-exam-library/users/student_one`, { headers: { Cookie: admin } });
   assert.equal(before.status, 200);
@@ -323,6 +354,65 @@ test("create/list/read use server identities and approved current item versions 
 
   assert.equal((await createExam(env.base, student, createBody({ items: [{ itemId: DP_ONE.id, itemVersionId: "old-version", order: 1, score: 1 }] }))).status, 409);
   assert.equal((await createExam(env.base, student, createBody({ items: [{ itemId: LOCKED.id, itemVersionId: LOCKED.itemVersionId, order: 1, score: 1 }] }))).status, 409);
+});
+
+test("owner-only print manifest signs verified item-version assets without answer or source data", async t => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "highselect-user-exam-print-"));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const assetPath = path.join(root, "item.png");
+  const bytes = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 1, 2, 3]);
+  fs.writeFileSync(assetPath, bytes);
+  const assetRevision = `sha256:${crypto.createHash("sha256").update(bytes).digest("hex")}`;
+  const env = await start({
+    privateUserExamAssets: {
+      schemaVersion: "highselect-private-user-exam-assets/v1",
+      assets: {
+        [DP_ONE.id]: {
+          assetKey: "user.exam.dp.one",
+          itemVersionId: DP_ONE.itemVersionId,
+          assetPath,
+          mimeType: "image/png",
+          assetRevision
+        }
+      }
+    }
+  });
+  t.after(() => env.server.close());
+  const student = await login(env.base, "학생하나", "STUDENT-ONE");
+  const other = await login(env.base, "학생둘", "STUDENT-TWO");
+  const created = await (await createExam(env.base, student)).json();
+
+  const manifestResponse = await fetch(`${env.base}/user-exam-library/exams/${created.examId}/print-manifest`, { headers: { Cookie: student } });
+  assert.equal(manifestResponse.status, 200);
+  const manifest = await manifestResponse.json();
+  assert.equal(manifest.assetPolicy, "signed-item-images");
+  assert.equal(manifest.questionCount, 1);
+  assert.equal(manifest.pageCount, 1);
+  assert.deepEqual(manifest.layout, { paperSize: "A4", columns: 2, itemsPerPage: 4, fontScale: 1 });
+  assert.deepEqual(Object.keys(manifest.items[0]).sort(), ["inputType", "mimeType", "number", "score", "url"]);
+  assertNoPrivateFields(manifest);
+
+  const signed = new URL(manifest.items[0].url);
+  assert.equal(signed.protocol, "https:");
+  assert.equal(signed.pathname, `/user-exam-assets/${created.examId}/item-001.png`);
+  const delivered = await fetch(`${env.base}${signed.pathname}${signed.search}`, { headers: { Cookie: student } });
+  assert.equal(delivered.status, 200);
+  assert.equal(delivered.headers.get("cache-control"), "private, no-store");
+  assert.deepEqual(Buffer.from(await delivered.arrayBuffer()), bytes);
+  assert.equal((await fetch(`${env.base}${signed.pathname}${signed.search}`)).status, 401);
+  assert.equal((await fetch(`${env.base}${signed.pathname}${signed.search}`, { headers: { Cookie: other } })).status, 404);
+  signed.searchParams.set("sig", "tampered");
+  assert.equal((await fetch(`${env.base}${signed.pathname}${signed.search}`, { headers: { Cookie: student } })).status, 403);
+});
+
+test("print manifest stays locked when an exact verified item asset is unavailable", async t => {
+  const env = await start();
+  t.after(() => env.server.close());
+  const student = await login(env.base, "학생하나", "STUDENT-ONE");
+  const created = await (await createExam(env.base, student)).json();
+  const response = await fetch(`${env.base}/user-exam-library/exams/${created.examId}/print-manifest`, { headers: { Cookie: student } });
+  assert.equal(response.status, 423);
+  assert.match((await response.json()).message, /이미지 저장소/);
 });
 
 test("academy mode matching and explicit entitlements fail closed", async t => {
@@ -508,6 +598,57 @@ test("automatic generation returns 403 for missing entitlement and 409 for too f
   }));
   assert.equal(shortage.status, 409);
   assert.match((await shortage.json()).message, /문항이 부족/);
+});
+
+test("automatic generation rejects two registry aliases of the same source question", async t => {
+  const first = makeQuestion(410, "DP", "approved", { difficultyBand: "standard", inputType: "input" });
+  const second = makeQuestion(411, "DP", "approved", { difficultyBand: "standard", inputType: "input" });
+  second.lineage = { ...second.lineage, sourceAsset: first.lineage.sourceAsset };
+  const duplicateRegistry = {
+    schemaVersion: "highselect-private-exam-editor-registry/v1",
+    candidates: { [first.id]: first, [second.id]: second },
+    relations: {}
+  };
+  const env = await start({ registry: duplicateRegistry });
+  t.after(() => env.server.close());
+  const student = await login(env.base, "학생하나", "STUDENT-ONE");
+  const response = await fetch(`${env.base}/user-exam-library/generate`, {
+    method: "POST",
+    headers: userHeaders(student, env.base),
+    body: JSON.stringify(generateBody({
+      scopeKeys: ["G8/M01"],
+      questionCount: 2,
+      difficultyWeights: { lowered: 0, standard: 1, raised: 0 },
+      responseWeights: { objective: 0, subjective: 1 }
+    }))
+  });
+  assert.equal(response.status, 409);
+  assert.match((await response.json()).message, /문항이 부족/);
+});
+
+test("manual selection rejects two fixed types that point to one source variation", async t => {
+  const first = makeQuestion(420, "DP");
+  const second = makeQuestion(421, "DP");
+  second.lineage = { ...second.lineage, sourceAsset: first.lineage.sourceAsset };
+  second.typeCode = "OTHER_FIXED_TYPE";
+  const env = await start({ registry: {
+    schemaVersion: "highselect-private-exam-editor-registry/v1",
+    candidates: { [first.id]: first, [second.id]: second },
+    relations: {}
+  } });
+  t.after(() => env.server.close());
+  const student = await login(env.base, "학생하나", "STUDENT-ONE");
+  const response = await createExam(env.base, student, createBody({
+    selectionSnapshot: {
+      academyId: "DP", semesterId: "M2-1",
+      conditions: selectionConditions(["G8/M01"], 2)
+    },
+    items: [first, second].map(function (item, index) {
+      return { itemId: item.id, itemVersionId: item.itemVersionId, order: index + 1, score: 1 };
+    })
+  }));
+  assert.equal(response.status, 409);
+  assert.match((await response.json()).message, /같은 문항 변형/);
 });
 
 test("SM automatic generation persists and enforces the exact algebra 15 and geometry 15 split", async t => {
