@@ -430,7 +430,7 @@ function conceptRows(){
   const early=R('comp').filter(b=>!/1031 (초급|중급)|3%|왕수학/.test(plain(b[0])));
   const ip=early.findIndex(b=>/1031 입문/.test(plain(b[0])));
   const comp=upTo(early.slice(0,ip),early[ip][1]).concat([['1031 입문 + workbook',early[ip][1],53],['TOT 2단계',54,56],['1031 초급',57,63],
-    ['3% 1과정<br><small>(황소 대비 겸)</small>',64,67],['1031 중급',71,77]]);
+    ['3% 1과정<br><small>(황소 대비 겸)</small>',64,67]]);
   const calc=upTo(R('calc'),56).concat(sem.map((x,i)=>[`기적의 계산법 ${9+i}`,56+2*i,57+2*i]),[['초등연산 보충',64,67]],seqFrom(mid, MID_CALC));
   const hw=[['황소 모의고사',68,69],['황소 시험',70,70],['황소 입학<br><small>(합격 시)</small>',71,71]];
   const gifted=[['영재원 대비<br><small>(사고력 서술·과학 탐구)</small>',62,65],['교대 영재원 선발',66,67],['대학 부설·교육청 영재원 선발',68,69],['영재원 수업<br><small>(합격 시)</small>',74,83]];
