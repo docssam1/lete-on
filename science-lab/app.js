@@ -1,5 +1,5 @@
 // 지필드 과학 탐구 랩 — 라우터·화면. 데이터는 data/curriculum.js, 3D는 engine.js + scenes/*.js
-import { PARTS, UNITS, unitById } from './data/curriculum.js';
+import { UNITS, unitById, DOMAINS, ORDERED, domainOf } from './data/curriculum.js';
 import { Stage, Player } from './engine.js';
 
 const $app = document.getElementById('app');
@@ -80,7 +80,6 @@ function stampsHtml(s) {
 }
 function renderHome() {
   const done = UNITS.filter((u) => store.unit(u.id).quizBest >= 2).length;
-  const partOf = (u) => PARTS.find((p) => p.id === u.part);
   const last = UNITS.map((u) => [u, store.unit(u.id).updatedAt || 0]).filter(([, t]) => t).sort((a, b) => b[1] - a[1])[0]?.[0];
   $app.innerHTML = `<header class="arch-top"><a class="arch-brand" href="#/"><b>GFIELD</b><span>/SCIENCE-INQUIRY</span></a>
       <label class="arch-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="실험 찾기… (Ctrl+/)" aria-label="실험 찾기" autocomplete="off"></label>
@@ -90,21 +89,21 @@ function renderHome() {
       <div class="arch-bg">${corridorSvg()}<img class="arch-photo" alt="" hidden></div>
       <div class="arch-wall" aria-hidden="true"><small>GFIELD · SCIENCE INQUIRY RECORDS</small><b>THE INQUIRY ARCHIVE</b><span>과학 탐구 기록 보관소</span></div>
       <div class="arch-stack" tabindex="0" aria-roledescription="카드 넘기기" aria-label="실험 카드 묶음. 왼쪽·오른쪽 화살표로 넘기고 Enter로 열어요."></div>
-      <nav class="arch-pills" aria-label="PART 거르기">${PARTS.map((p) => `<button type="button" data-part="${p.id}" style="--tab:${p.color}">PART ${p.id} <b>${UNITS.filter((u) => u.part === p.id).length}</b></button>`).join('')}<button type="button" data-part="" class="all on">ALL <b>${UNITS.length}</b></button></nav>
+      <nav class="arch-pills" aria-label="영역 거르기">${DOMAINS.map((d) => { const n = ORDERED.filter((u) => domainOf(u) === d).length; return `<button type="button" data-dom="${d.id}" style="--tab:${d.color}"${n ? '' : ' disabled title="준비 중"'}>${esc(d.title)} <b>${n || '준비 중'}</b></button>`; }).join('')}<button type="button" data-dom="" class="all on">ALL <b>${UNITS.length}</b></button></nav>
       <div class="arch-ctrl"><button type="button" data-step="-1" aria-label="앞 카드">‹</button><span class="arch-count" aria-live="polite"></span><button type="button" data-step="1" aria-label="뒤 카드">›</button><small>휠 · ← → · 밀기로 넘겨요</small></div>
       ${last ? `<a class="arch-resume" href="#/u/${last.id}">이어서 보기 <b>${esc(last.title)}</b></a>` : ''}
     </section>
     <section class="wrap arch-index" aria-label="전체 실험 목록">
       <h2>보관 목록 <small>실험 ${UNITS.length}건 · 출처 『2009 초등학교 과학탐구토론 지도자료』(서울특별시과학전시관)</small></h2>
-      ${PARTS.map((p) => `<div class="arch-shelf" style="--tab:${p.color}"><h3><span>PART ${p.id}</span>${esc(p.title)} <small>${esc(p.sub)}</small></h3><ol>${UNITS.filter((u) => u.part === p.id).map((u) => `<li><a href="#/u/${u.id}"><span class="no">${p.id}-${u.no}</span><b>${esc(u.title)}</b><span class="exp">${esc(u.activity.title)}</span>${stampsHtml(store.unit(u.id))}</a></li>`).join('')}</ol></div>`).join('')}
+      ${DOMAINS.map((d) => { const us = ORDERED.filter((u) => domainOf(u) === d); return `<div class="arch-shelf" style="--tab:${d.color}"><h3><span>${d.en}</span>${esc(d.title)} <small>실험 ${us.length}건</small></h3>${us.length ? `<ol>${us.map((u) => `<li><a href="#/u/${u.id}"><span class="no">${u.part}-${u.no}</span><b>${esc(u.title)}</b><span class="exp">${esc(u.activity.title)}</span>${stampsHtml(store.unit(u.id))}</a></li>`).join('')}</ol>` : '<p class="arch-empty">준비 중 — 지구와 우주 영역의 탐구 실험을 채울 자리예요.</p>'}</div>`; }).join('')}
     </section>
   </main>${footer()}`;
 
   const $stack = $app.querySelector('.arch-stack'), $count = $app.querySelector('.arch-count'), $q = $app.querySelector('.arch-search input');
-  let list = UNITS.slice(), cur = 0, part = '', query = '';
-  const cardHtml = (u) => { const p = partOf(u), s = store.unit(u.id);
-    return `<article class="arch-card" data-id="${u.id}" style="--tab:${p.color}">
-      <div class="ac-meta"><span><i></i>PART ${p.id} · ${esc(p.title)} · ${p.id}-${u.no}</span><span class="ac-src">지도자료 ${esc(u.source)}</span></div>
+  let list = ORDERED.slice(), cur = 0, dom = '', query = '';
+  const cardHtml = (u) => { const d = domainOf(u), s = store.unit(u.id);
+    return `<article class="arch-card" data-id="${u.id}" style="--tab:${d.color}">
+      <div class="ac-meta"><span><i></i>${esc(d.title)} · ${d.en}</span><span class="ac-src">지도자료 ${u.part}-${u.no} · ${esc(u.source)}</span></div>
       <h3>${esc(u.title)}</h3><p class="ac-sub">${esc(u.sub)}</p><p class="ac-lead">${esc(u.concept.lead)}</p>
       <div class="ac-foot"><span class="ac-exp"><b>실험</b>${esc(u.activity.title)}</span>${stampsHtml(s)}<a class="ac-open" href="#/u/${u.id}">서류 열기 →</a></div>
     </article>`; };
@@ -123,7 +122,7 @@ function renderHome() {
     $count.textContent = list.length ? `${String(cur + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}` : '찾는 실험이 없어요';
   };
   const build = () => {
-    list = UNITS.filter((u) => (!part || u.part === part) && (!query || `${u.title} ${u.sub} ${u.activity.title}`.includes(query)));
+    list = ORDERED.filter((u) => (!dom || domainOf(u).id === dom) && (!query || `${u.title} ${u.sub} ${u.activity.title} ${domainOf(u).title}`.includes(query)));
     cur = Math.min(cur, Math.max(0, list.length - 1));
     $stack.innerHTML = list.map(cardHtml).join(''); layout();
   };
@@ -136,9 +135,9 @@ function renderHome() {
   $stack.addEventListener('pointerup', (e) => { if (sx == null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.max(Math.abs(dx), Math.abs(dy)) > 40) go((Math.abs(dx) > Math.abs(dy) ? -dx : -dy) > 0 ? 1 : -1); });
   $stack.addEventListener('click', (e) => { const card = e.target.closest('.arch-card'); if (!card) return; const k = [...$stack.children].indexOf(card); if (k !== cur) { e.preventDefault(); cur = k; layout(); } else if (!e.target.closest('a')) location.hash = `#/u/${card.dataset.id}`; });
   $app.querySelectorAll('.arch-ctrl [data-step]').forEach((b) => b.addEventListener('click', () => go(+b.dataset.step)));
-  $app.querySelectorAll('.arch-pills button').forEach((b) => b.addEventListener('click', () => { part = b.dataset.part; cur = 0; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', x === b)); build(); }));
+  $app.querySelectorAll('.arch-pills button').forEach((b) => b.addEventListener('click', () => { dom = b.dataset.dom; cur = 0; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', x === b)); build(); }));
   // 검색은 전체 실험에서 찾는다(PART 거르기를 ALL로 되돌림)
-  $q.addEventListener('input', () => { query = $q.value.trim(); cur = 0; if (query && part) { part = ''; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', !x.dataset.part)); } build(); });
+  $q.addEventListener('input', () => { query = $q.value.trim(); cur = 0; if (query && dom) { dom = ''; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', !x.dataset.dom)); } build(); });
   $q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && list[cur]) location.hash = `#/u/${list[cur].id}`; });
   const onKey = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === '/') { e.preventDefault(); $q.focus(); return; }
@@ -155,14 +154,14 @@ function renderHome() {
 }
 
 function renderUnit(u) {
-  const part = PARTS.find((p) => p.id === u.part);
-  const idx = UNITS.indexOf(u), prev = UNITS[idx - 1], next = UNITS[idx + 1];
+  const d = domainOf(u), mine = ORDERED.filter((x) => domainOf(x) === d);
+  const idx = ORDERED.indexOf(u), prev = ORDERED[idx - 1], next = ORDERED[idx + 1];   // 이전·다음도 영역 순서
   const s = store.unit(u.id);
   $app.innerHTML = `${topbar('#/')}
-  <main class="opened" style="--tab:${part.color}">
+  <main class="opened" style="--tab:${d.color}">
     <div class="wrap unit-head folder-label">
-      <span class="label-tab">${part.id}-${u.no}</span>
-      <div class="crumb"><span class="tag" style="background:${part.color};color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700">PART ${part.id}</span><span>${esc(part.title)} · ${u.no}/${UNITS.filter((x) => x.part === u.part).length}</span><span>·</span><span>지도자료 ${esc(u.source)}</span></div>
+      <span class="label-tab">${d.en}</span>
+      <div class="crumb"><span class="tag" style="background:${d.color};color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700">${esc(d.title)}</span><span>${mine.indexOf(u) + 1}/${mine.length}</span><span>·</span><span>지도자료 ${u.part}-${u.no} · ${esc(u.source)}</span></div>
       <h1>${esc(u.title)}</h1><p class="sub">${esc(u.sub)}</p>
       ${u.note ? `<div class="note">${esc(u.note)}</div>` : ''}
     </div>

@@ -250,3 +250,9 @@ html:has(.archive-theme), body:has(.archive-theme) { background: #0b0a09; }
 /* 뒤쪽 카드는 꼬리표·제목만 보이게(앞 카드 옆으로 단추가 비치지 않게) */
 .arch-card:not(.front) :is(.ac-lead, .ac-foot) { visibility: hidden; }
 @media (max-width: 760px) { .arch-wall { top: 12%; } .archive-theme .topbar .wrap { gap: 8px; } .archive-theme .brand small { display: none; } }
+/* 영역 알약 5개(운동과 에너지·물질·생명·지구와 우주·ALL) — 바닥을 따라 비스듬히 */
+.arch-pills button:nth-child(1) { margin-right: 168px; } .arch-pills button:nth-child(2) { margin-right: 126px; } .arch-pills button:nth-child(3) { margin-right: 84px; } .arch-pills button:nth-child(4) { margin-right: 42px; }
+.arch-pills { gap: 18px; }
+.arch-pills button:disabled { opacity: .45; cursor: default; }
+.arch-empty { margin: 4px 0 12px; color: var(--ar-mute); font-size: 13px; }
+@media (max-width: 760px) { .arch-pills button:nth-child(n) { margin-right: 0; } .arch-pills { gap: 6px; } }
