@@ -136,17 +136,19 @@ function renderHome() {
   const STEP = () => innerHeight * (innerWidth < 760 ? 0.36 : 0.42);
   const base = () => $track.getBoundingClientRect().top + scrollY - 52;      // 위 막대(52px) 아래에 붙기 시작하는 스크롤 위치
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let pos = 0;
+  // pos = 스크롤이 가리키는 카드 자리(목표), shown = 화면에 그린 자리. shown이 pos를 부드럽게 따라가서 휠 한 칸에도 카드가 뚝뚝 끊기지 않고 미끄러진다.
+  let pos = 0, shown = 0, anim = 0, lastT = 0, lift = 0;   // lift: 1 = 화면 아래에 내려가 있음 → 0 = 제자리(영역을 눌렀을 때 쑥 올라오기)
   const layout = () => {
     const phone = innerWidth < 760, cards = [...$stack.children];
     cards.forEach((el, k) => {
-      const d = k - pos;
+      const d = k - shown;
       if (d < 0) {   // 이미 지나간 카드: 앞으로 빠지며 사라진다
         const p = Math.min(1, -d);
         el.style.transform = `translate3d(${-6 * p}%, ${30 * p}%, 0) scale(${1 + 0.06 * p})`; el.style.opacity = Math.max(0, 1 - p * 1.3); el.style.filter = '';
       } else {       // 소실점 쪽으로 작아지며 물러난다
         const t = 1 - 1 / (1 + 0.42 * d), x = phone ? 0 : t * 8, y = phone ? -t * 44 : -t * 54, sc = 1 - t * 0.86;
-        el.style.transform = `translate3d(${x}vw, ${y}vh, 0) scale(${sc})`; el.style.opacity = d > 9 ? 0 : 1;
+        const up = lift * (70 + d * 6);   // 뒤 카드일수록 조금 늦게 올라와 묶음이 차례로 따라 선다
+        el.style.transform = `translate3d(${x}vw, ${y + up}vh, 0) scale(${sc})`; el.style.opacity = d > 9 ? 0 : String(Math.max(0, 1 - lift * 1.1));
         el.style.filter = d > 0.02 ? `brightness(${Math.max(0.35, 1 - d * 0.12)})` : '';
       }
       el.style.zIndex = String(1000 - Math.round(Math.abs(d) * 10));
@@ -157,17 +159,25 @@ function renderHome() {
   };
   const sizeTrack = () => { $track.style.height = `calc(100dvh - 52px + ${Math.max(0, list.length - 1) * STEP()}px)`; };
   let raf = 0;
-  const fromScroll = () => { raf = 0; pos = list.length ? Math.max(0, Math.min(list.length - 1, (scrollY - base()) / STEP())) : 0; cur = Math.round(pos); layout(); };
+  const tick = (t) => {
+    const dt = Math.min(0.05, (t - (lastT || t)) / 1000); lastT = t;
+    shown += (pos - shown) * (1 - Math.exp(-dt * 9)); lift *= Math.exp(-dt * 7);
+    if (Math.abs(pos - shown) < 0.002 && lift < 0.002) { shown = pos; lift = 0; anim = 0; lastT = 0; } else anim = requestAnimationFrame(tick);
+    layout();
+  };
+  const glide = () => { if (reduced) { shown = pos; lift = 0; layout(); return; } if (!anim) anim = requestAnimationFrame(tick); };
+  const fromScroll = () => { raf = 0; pos = list.length ? Math.max(0, Math.min(list.length - 1, (scrollY - base()) / STEP())) : 0; cur = Math.round(pos); glide(); };
   // 스크롤이 멈추면 가장 가까운 카드에 맞춘다(두 카드가 반쯤 겹친 채 멈추지 않게). 카드 구간 밖(아래 실험 목록)에서는 그대로 둔다.
   let settle = 0;
   const snap = () => { const p = (scrollY - base()) / STEP(); if (list.length > 1 && p > 0.02 && p < list.length - 1 - 0.02 && Math.abs(p - Math.round(p)) > 0.02) jump(Math.round(p)); };
   const onScroll = () => { if (!raf) raf = requestAnimationFrame(fromScroll); clearTimeout(settle); settle = setTimeout(snap, 160); };
   const jump = (k) => { if (!list.length) return; k = Math.max(0, Math.min(list.length - 1, k)); scrollTo({ top: base() + k * STEP(), behavior: reduced ? 'auto' : 'smooth' }); };
   const go = (n) => jump(cur + n);
-  const build = () => {
+  const build = (rise = false) => {
     list = ORDERED.filter((u) => (!dom || domainOf(u).id === dom) && (!query || `${u.title} ${u.sub} ${u.activity.title} ${domainOf(u).title}`.includes(query)));
     $stack.innerHTML = list.map(cardHtml).join(''); sizeTrack();
     if (scrollY > base()) scrollTo({ top: Math.max(0, base()), behavior: 'auto' });   // 거르기·검색을 바꾸면 첫 카드부터
+    if (rise && !reduced) { shown = 0; lift = 1; layout(); }   // 영역을 누르면 그 영역의 첫 카드가 아래에서 쑥 올라와 맨 앞에 선다(원장 2026-10-20)
     fromScroll();
   };
   $stack.addEventListener('click', (e) => {
@@ -176,7 +186,7 @@ function renderHome() {
     if (k !== cur) jump(k); else if (cur < list.length - 1) go(1); else $app.querySelector('.arch-index').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
   });
   $app.querySelectorAll('.arch-ctrl [data-step]').forEach((b) => b.addEventListener('click', () => go(+b.dataset.step)));
-  $app.querySelectorAll('.arch-pills button').forEach((b) => b.addEventListener('click', () => { dom = b.dataset.dom; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', x === b)); build(); }));
+  $app.querySelectorAll('.arch-pills button').forEach((b) => b.addEventListener('click', () => { dom = b.dataset.dom; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', x === b)); build(true); }));
   // 검색은 전체 실험에서 찾는다(영역 거르기를 ALL로 되돌림)
   $q.addEventListener('input', () => { query = $q.value.trim(); if (query && dom) { dom = ''; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', !x.dataset.dom)); } build(); });
   $q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && list[cur]) location.hash = `#/u/${list[cur].id}`; });
@@ -189,7 +199,7 @@ function renderHome() {
   };
   const onResize = () => { sizeTrack(); fromScroll(); };
   document.addEventListener('keydown', onKey); addEventListener('resize', onResize); addEventListener('scroll', onScroll, { passive: true });
-  homeOff = () => { clearTimeout(settle); document.removeEventListener('keydown', onKey); removeEventListener('resize', onResize); removeEventListener('scroll', onScroll); };
+  homeOff = () => { clearTimeout(settle); cancelAnimationFrame(anim); document.removeEventListener('keydown', onKey); removeEventListener('resize', onResize); removeEventListener('scroll', onScroll); };
   // 실사 복도 사진이 있으면 SVG 위에 깐다(없으면 SVG 복도 그대로)
   if (CORRIDOR) { const $ph = $app.querySelector('.arch-photo'); $ph.onload = () => { $ph.hidden = false; $app.querySelector('.arch-stage').classList.add('has-photo'); }; $ph.src = CORRIDOR; }
   build();
