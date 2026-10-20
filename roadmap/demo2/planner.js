@@ -79,7 +79,13 @@ function build(o){
   for(let i=o.calc;i<CALC.length;i++){ const n=CALC[i][1]||S, left=i===o.calc?Math.min(o.calcLeft,n):n; calc.push([CALC[i][0],t-(i===o.calc?n-left:0),t+left-1]); t+=left; }
   // ---- 과학: 중2-1 중등 심화 끝 다음 달
   const sciStart=mid2[2][2]+1; // 중2-1 심화(A급 또는 RPM) 끝 다음 달
-  const sci=[['실험과학',sciStart-18,sciStart-7],['초5·6 과학',sciStart-6,sciStart-1],['중등 과학',sciStart,sciStart+11]];
+  // 과학 교재(안쌤 과학 학습 로드맵, 원장님 2026-10-20 "넣어도 될 것 같아"). 시기는 그대로, 블록이 걸치는 학년의 책을 적는다.
+  const gradeOf=m=>Math.max(1,Math.min(6,Math.floor((m-36)/12)+1+(m%12<2?-1:0)));
+  const expBook=(a,b)=>{ const gs=[...new Set([gradeOf(a),gradeOf(b)])]; const nm=g=>g<=2?'팩토사이언스 노벨·에디슨':g<=4?'팩토사이언스 퀴리·뉴턴':'팩토사이언스 아인슈타인'; return [...new Set(gs.map(nm))].join(' → '); };
+  const sci=[[`실험과학<br><small>${expBook(sciStart-18,sciStart-7)}</small>`,sciStart-18,sciStart-7],
+    ['초5·6 과학<br><small>최상위 줄기과학 5·6 · 안쌤 과학 100제 · 맛있는 영재 과학</small>',sciStart-6,sciStart-1],
+    ['중등 과학<br><small>오투 과학 수준 · 최상위 줄기과학 중등</small>',sciStart,sciStart+11],
+    ['물·화 심화<br><small>하이탑 + 융합과학</small>',sciStart+12,sciStart+23]]; // 원장님 2026-10-20
   // ---- 황소
   const hw=[], flags=[];
   const compEnd=(re)=>{ const b=comp.find(x=>re.test(x[0])); return b?b[2]:null; };
@@ -97,7 +103,7 @@ function build(o){
   // ---- 영재원 (2026-10-20 모집요강 기준). 초3 11월이 지났으면 초4 기준(수학·과학 초4 지원 → 초5)
   const gy=now<=mOf(3,11)?3:4, d=12*(gy-3);
   const giftA=[], giftB=[], giftP=[];
-  const GBOOK=g=>g<=2?`안쌤 수학 100제 ${g}`:`안쌤 수학 100제 ${g} · 영재 사고력 수학 단원별·유형별 · 맛있는 영재 수학 ${g}`;
+  const GBOOK=g=>g<=2?`안쌤 수학 100제 ${g}`:`안쌤 수학 100제 ${g} · 영재 사고력 수학 단원별·유형별 · 맛있는 영재 수학 ${g} · 파이널 50제 (초${g<=4?'3~4':'5~6'})`;
   if(o.gifted){
     // 시험 전 3개월만 공부: 교대(7~9월 선발) → 4~6월, 교육청(11월 지원·12월 평가) → 8~10월
     giftP.push([`영재원 대비 3개월 (교대)<br><small>${GBOOK(gy)}</small>`,63+d,65+d],[`영재원 대비 3개월 (교육청)<br><small>${GBOOK(gy)}</small>`,67+d,69+d]); // 영재원은 고려 / 안 고려 하나로(원장님 2026-10-20)
@@ -152,12 +158,12 @@ function simpleRows(P){
   if(sys) math.push(['계통 · 대수 정리',sys[1],sys[2]]);
   if(mids.length) math.push([`중등 ${mids[0][0].split(' ')[0]} → ${mids[mids.length-1][0].split(' ')[0]}`,mids[0][1],mids[mids.length-1][2]]);
   const think=R('comp').map(b=>[b[0].replace(/\s*\(.*\)/,''),b[1],b[2]]);
-  const short=b=>[b[0].replace(/\s*\(.*\)/,'').replace(/ · .*/,''),b[1],b[2]];
+  const short=b=>[b[0].replace(/<br>.*$/,'').replace(/\s*\(.*\)/,'').replace(/ · .*/,''),b[1],b[2]];
   const giftA=R('giftP').concat(R('giftA')).sort((p,q)=>p[1]-q[1]).map(short), giftB=R('giftB').map(short);
   return [
     {label:'수학',sub:'교과',blocks:math,color:'#bfdbfe'},
     {label:'수학',sub:'사고력',blocks:think,color:'#ddd6fe'},
-    {label:'과학',sub:'',blocks:R('sci'),color:'#d9f99d'}
+    {label:'과학',sub:'',blocks:R('sci').map(b=>[b[0].replace(/<br>.*$/,''),b[1],b[2]]),color:'#d9f99d'}
   ].concat(giftA.length?[{label:'영재원',sub:'가천대·교육청',blocks:giftA,color:'#fbcfe8'}]:[],giftB.length?[{label:'영재원',sub:'교대',blocks:giftB,color:'#f5d0fe'}]:[]);
 }
 function renderSimple(P){
@@ -210,7 +216,7 @@ function milestones(P){
   if(mids.length&&mids[0][1]>P.now) out.push({m:mids[0][1],kind:'step',title:'중등 시작',sub:'중1-1 원리해설 · '+label(mids[0][1]),icon:'🏫'});
   const g=R('giftA').find(b=>/영재원 수업/.test(b[0])); if(g) out.push({m:g[1],kind:'gift',title:'영재원 (합격 시)',sub:label(g[1])+' 수업 시작',icon:'🔭'});
   P.bubbles.forEach(([m,t])=>out.push({m,kind:'step',title:'중등 학원 응시 고려',sub:t.replace(/ 응시 고려$/,'').replace(/^\S+ \S+ /,'')+' · '+label(m),icon:'🎯'}));
-  const s=R('sci').find(b=>/중등 과학/.test(b[0])); if(s&&s[1]<=P.A1) out.push({m:s[1],kind:'sci',title:'중등 과학',sub:label(s[1]),icon:'🧪'});
+  const s=R('sci').find(b=>/중등 과학/.test(b[0])); if(s&&s[1]<=P.A1) out.push({m:s[1],kind:'sci',title:'중등 과학',sub:label(s[1])+' · 오투 · 최상위 줄기과학',icon:'🧪'});
   out.sort((a,b)=>a.m-b.m);
   const hw=R('hw').filter(b=>/시험/.test(b[0])&&!/대비/.test(b[0])).map(b=>({m:b[1],kind:'branch',title:b[0].replace(/\s*\(.*\)/,''),sub:label(b[1])+' · 선택',icon:'🐂'}));
   return {main:out,branch:hw};
@@ -249,7 +255,7 @@ function bindMap(box){
 function narrative(P){
   /* 학년마다: 월별 줄(3월~2월)에 시작·이슈를 찍고, 교과·사고력·심화·연산 항목별로 코멘트를 쓴다(원장님 2026-10-20). */
   const R=k=>(P.rows.find(r=>r.key===k)||{blocks:[]}).blocks;
-  const mon=m=>(m%12+1)+'월', nm=t=>t.replace(/\s*\(.*\)/,'').trim(), len=b=>b[3]||(b[2]-b[1]+1);
+  const mon=m=>(m%12+1)+'월', nm=t=>t.replace(/<br>.*$/,'').replace(/\s*\(.*\)/,'').trim(), len=b=>b[3]||(b[2]-b[1]+1);
   const jo=(w,a,b)=>{ const c=w.replace(/[^가-힣0-9A-Za-z]+$/,'').slice(-1), code=c.charCodeAt(0); let has; if(/[가-힣]/.test(c)) has=(code-0xAC00)%28>0; else if(/[0-9]/.test(c)) has=/[013678]/.test(c); else has=/[lmnr]/i.test(c); return w+(has?a:b); };
   const sem=t=>t.split(' ')[0];
   const years=[]; for(let a=P.A0;a<=P.A1;a+=12) years.push([a,Math.min(a+11,P.A1)]);
@@ -298,7 +304,8 @@ function narrative(P){
       if(gj.length){ const f=gj[0], l=last(gj); out.push(gj.length>1?`기적의 계산법 ${f[0].match(/\d+/)[0]}권에서 ${l[0].match(/\d+/)[0]}권까지 ${len(gj[1])}개월에 한 권씩 해요. ${P.band==='C'?'교과와 같은 학기를 한 권으로, 겹치지 않게 가요.':'교과보다 한 학기 앞서 가는 속도예요.'}`:`기적의 계산법 ${f[0].match(/\d+/)[0]}권을 ${mon(f[2])}까지 끝내요.`); }
       if(mj.length){ const f=mj[0]; out.push(`${f[1]>=lo?mon(f[1])+'부터':'이어서'} ${mj.map(x=>x[0].replace('기적의 ','')).join(' → ')} 순서로 중학 연산을 해요.`); if(f[1]>=lo&&/1AB/.test(f[0])) out.push('초등 계산이 끝나면 바로 중학연산 1AB부터 들어가요.'); }
       if(out.length) items.push({label:'연산',text:out.join(' ')}); }
-    { const sc=inY(R('sci')).filter(x=>x[1]>=lo); if(sc.length) items.push({label:'과학',text:sc.map(x=>`${mon(x[1])}부터 ${nm(x[0])}`).join(', ')+'을 시작해요.'+(sc.some(x=>/중등 과학/.test(x[0]))?' 중2-1 심화가 끝난 다음 달이에요.':'')}); }
+    { const sc=inY(R('sci')).filter(x=>x[1]>=lo); const head=t=>t.replace(/<br>.*$/,''), book=t=>(t.match(/<small>(.*?)<\/small>/)||[,''])[1];
+      if(sc.length) items.push({label:'과학',text:sc.map((x,i)=>`${mon(x[1])}부터 ${i<sc.length-1?head(x[0]):jo(head(x[0]),'을','를')}`).join(', ')+' 시작해요.'+(sc.some(x=>/중등 과학/.test(x[0]))?' 중2-1 심화가 끝난 다음 달이에요.':'')+' 교재는 '+sc.map(x=>book(x[0])).filter(Boolean).join(' / ')+'.'}); }
     { const ev=inY(R('hw')); if(ev.length) items.push({label:'황소',text:ev.map(x=>`${mon(x[1])}${x[2]>x[1]?'~'+mon(x[2]):''} ${nm(x[0])}`).join(', ')+'.'+(ev.some(x=>/시험$/.test(nm(x[0])))?' 시험 결과를 보고 다음을 정해요.':'')});
       const gv=inY(R('giftA').concat(R('giftB'))), gp=inY(R('giftP'));
       if(gv.length||gp.length){ let t=gv.map(x=>`${mon(x[1])}${x[2]>x[1]&&x[2]<=b?'~'+mon(x[2]):''} ${nm(x[0]).replace(/ · .*/,'')}`).join(', ')+'.';
