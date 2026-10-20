@@ -60,6 +60,17 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 .m3-pin{position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50% 50% 50% 0;background:#7c3aed;transform:translateZ(60px) var(--bx) rotate(-45deg);box-shadow:0 0 0 6px #ddd0ff}
 .m3-tree{position:absolute;transform-style:preserve-3d}
 .m3-tree i{position:absolute;left:-14px;bottom:0;width:28px;height:40px;transform-origin:bottom;transform:var(--bx) scale(var(--s));border-radius:50% 50% 45% 45%;background:radial-gradient(circle at 40% 30%,#c9dba6,#8fae6b);box-shadow:0 10px 0 -6px #7a5b3a}
+.m3g{position:relative;height:760px;border-radius:24px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:#efe4fa}
+.m3g canvas{display:block;width:100%;height:100%;cursor:grab}
+.m3g-labels{position:absolute;inset:0;pointer-events:none}
+.m3g-card{position:absolute;left:0;top:0;background:#fff;border:1px solid #e3d8f7;border-radius:14px;padding:7px 12px;text-align:center;white-space:nowrap;box-shadow:0 8px 20px rgba(60,30,120,.16)}
+.m3g-card .i{display:block;font-size:20px;line-height:1}
+.m3g-card b{display:block;font-size:15px}
+.m3g-card small{display:block;font-size:11.5px;color:var(--sub);font-weight:700}
+.m3g-card.k-now{background:var(--p);color:#fff;border-color:var(--p)}
+.m3g-card.k-now small{color:#e9ddff}
+.m3g-card.k-branch{border-color:#f5c542;background:#fffaf0}
+@media(max-width:900px){.m3g{height:520px}.m3g-card b{font-size:13px}.m3g-card small{font-size:10.5px}}
 .maphint{position:absolute;right:16px;top:14px;z-index:5;background:#ffffffd9;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:800;color:#5b4f86}
 .dock{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:30;width:min(1460px,calc(100% - 24px));display:flex;align-items:center;gap:10px;padding:10px 12px;background:#ffffffee;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);backdrop-filter:blur(8px);overflow-x:auto}
 .step{display:flex;align-items:center;gap:8px;border-radius:999px;padding:9px 16px;font-weight:800;font-size:13px;white-space:nowrap;background:#f6f2fd;color:#4a4170}
@@ -107,11 +118,11 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 .rep .card{padding:20px}
 .rep h2{margin:0 0 14px;font-size:24px}
 .big{font-size:32px;font-weight:900;margin:0 0 6px;color:#3b2a7a}
-.stages{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stages{display:grid;gap:12px}
 .stg{background:#f7f3fd;border:1px solid var(--line);border-radius:16px;padding:12px}
-.stg h4{margin:0 0 6px;font-size:14px;color:#5b3fb4}
-.stg li{font-size:12px;margin:3px 0}
-.stg ul{padding-left:16px;margin:0}
+.stg h4{margin:0 0 6px;font-size:18px;color:#5b3fb4}
+.stg p{font-size:14px;line-height:1.7;margin:4px 0}
+.stg .done{margin-top:8px;background:#fff;border:1px dashed #c4b5fd;border-radius:12px;padding:8px 12px;font-size:13px;color:#5b3fb4}
 .ritem{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
 .ritem:first-of-type{border-top:0}
 .ritem .ic{width:52px;height:52px;border-radius:50%;background:var(--pl);display:grid;place-items:center;font-size:22px;flex:none}
@@ -126,7 +137,18 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 .drawer select,.drawer input{font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;max-width:62%}
 .drawer .close{float:right;border:0;background:var(--pl);border-radius:999px;padding:6px 12px;font-weight:800;cursor:pointer}
 @media(max-width:900px){.side{position:static;width:auto;margin-bottom:12px}.m3-stage{height:520px}.rep{grid-template-columns:1fr}.stages{grid-template-columns:1fr 1fr}.nav button{padding:8px;font-size:13px}.ttl{font-size:15px}.logo{font-size:18px}}
-@media(max-width:560px){.top{flex-wrap:wrap}.nav{order:3;width:100%;margin-left:0}.dock .step small{display:none}.maphint{display:none}}
+@media(max-width:560px){.top{flex-wrap:wrap}.nav{order:3;width:100%;margin-left:0}.dock .step small{display:none}.m3g{position:relative;height:760px;border-radius:24px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:#efe4fa}
+.m3g canvas{display:block;width:100%;height:100%;cursor:grab}
+.m3g-labels{position:absolute;inset:0;pointer-events:none}
+.m3g-card{position:absolute;left:0;top:0;background:#fff;border:1px solid #e3d8f7;border-radius:14px;padding:7px 12px;text-align:center;white-space:nowrap;box-shadow:0 8px 20px rgba(60,30,120,.16)}
+.m3g-card .i{display:block;font-size:20px;line-height:1}
+.m3g-card b{display:block;font-size:15px}
+.m3g-card small{display:block;font-size:11.5px;color:var(--sub);font-weight:700}
+.m3g-card.k-now{background:var(--p);color:#fff;border-color:var(--p)}
+.m3g-card.k-now small{color:#e9ddff}
+.m3g-card.k-branch{border-color:#f5c542;background:#fffaf0}
+@media(max-width:900px){.m3g{height:520px}.m3g-card b{font-size:13px}.m3g-card small{font-size:10.5px}}
+.maphint{display:none}}
 @page{size:A3 landscape;margin:10mm}
 @media print{.top,.dock,.side,.drawer,#vmap,#vrep,.plan-head .seg,.print,#simple{display:none!important}#vplan{display:block!important}#tbl{display:block!important}body{background:#fff}.pl-table{min-width:0}.pl-table th,.pl-table td{font-size:7px;padding:2px 1px}.pl-table td{height:34px}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
@@ -159,7 +181,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
  </section>
 
  <section class="view" id="vrep"><div class="rep">
-  <div class="card"><h2>성장 모습 예시</h2><div class="stages" id="stages"></div></div>
+  <div class="card"><h2>학년별 공부 흐름</h2><div class="stages" id="stages"></div></div>
   <div class="card"><p class="big"><span id="who2">우리 아이</span>의 성장 분석지</p><div id="repItems"></div></div>
  </div></section>
 </main>
@@ -232,7 +254,7 @@ function applyLevel(){
 function read(){ const on=state.hwOn==='1'; return {grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,
   hw:on&&$('hw').value?$('hw').value:'none',hwDeep:on&&$('hwDeep').checked,hwMid:on&&$('hwMid').checked,gifted:state.gifted==='1'}; }
 function draw(){
-  const o=read(), plan=P.build(o), nm=$('name').value.trim()||'우리 아이';
+  const o=read(), plan=P.build(o); lastPlan=plan; const nm=$('name').value.trim()||'우리 아이';
   $('who').textContent=nm; $('who2').textContent=nm;
   $('hwOpts').style.display=state.hwOn==='1'?'grid':'none';
   $('warn').innerHTML=plan.warn.map(w=>`<div class="warn">⚠ ${w}</div>`).join('');
@@ -242,18 +264,26 @@ function draw(){
   $('dNow').innerHTML=`● 현재 <small>${P.label(plan.now)} · ${cur('school').replace(/ 디딤돌.*/,'')}</small>`;
   $('dNext').innerHTML=next?`⚑ 다음 과정 <small>${next.title} · ${P.label(next.m)}</small>`:'⚑ 다음 과정';
   $('dLater').innerHTML=later?`⌖ 그다음 <small>${later.title} · ${P.label(later.m)}</small>`:'⌖ 시기 미정';
-  $('map').innerHTML=P.render3DMap(plan); P.bindMap($('map'));
+  drawMap(P.milestones(plan));
   $('tbl').innerHTML=P.renderTable(plan); $('simple').innerHTML=P.renderSimple(plan);
   $('tbl').style.display=state.planMode==='table'?'block':'none'; $('simple').style.display=state.planMode==='simple'?'block':'none';
-  const grp=[[plan.A0,plan.A0+11],[plan.A0+12,plan.A0+23],[plan.A0+24,plan.A0+33]];
-  $('stages').innerHTML=grp.map(([a,b])=>{ const names=[...new Set(['school','comp'].flatMap(k=>R(k).filter(x=>x[2]>=a&&x[1]<=b).map(x=>x[0].replace(/\s*\(.*\)/,'').replace(/ 디딤돌 응용| 원리해설/,''))))].slice(0,6);
-    return `<div class="stg"><h4>${P.label(a).split(' ')[0]}</h4><ul>${names.map(n=>`<li>${n}</li>`).join('')}</ul></div>`; }).join('')+
-    `<div class="stg"><h4>선택</h4><ul><li>황소: ${o.hw==='none'?'안 고려':P.label(+o.hw)+' 시험'}</li><li>영재원: ${o.gifted?'고려':'안 고려'}</li></ul></div>`;
+  $('stages').innerHTML=P.narrative(plan).map(y=>`<div class="stg"><h4>${y.title}</h4>${y.paras.map(t=>`<p>${t}</p>`).join('')}${y.done.length?`<div class="done">이때 완료할 것 · <b>${y.done.join(' · ')}</b></div>`:''}</div>`).join('');
   const lvName=$('level').selectedOptions[0].textContent;
   $('repItems').innerHTML=[['📖','현재 학습',`${cur('school')} · ${cur('comp')}`],['👤','기준 레벨',lvName],['💡','다음 과정',next?`${next.title} (${P.label(next.m)})`:'—'],['📅','다음 확인','학습 경험 후 조정 · 경로는 언제든 바꿀 수 있어요']]
     .map(([i,a,b])=>`<div class="ritem"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
 }
-function showView(v){ document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id===v)); if(v==='vmap') P.bindMap($('map')); }
+// 3D 맵: three.js(map3d.js, 수의 나라와 같은 three · 아이 캐릭터). WebGL 이 없으면 CSS 맵.
+let map3d=null, mapBusy=null, mapNext=null, map3dFailed=false;
+function drawMap(ms){
+  if(map3dFailed){ $('map').innerHTML=P.render3DMap(lastPlan); P.bindMap($('map')); return; }
+  mapNext=ms; if(mapBusy) return;
+  mapBusy=(async()=>{ while(mapNext){ const d=mapNext; mapNext=null;
+    try{ if(!map3d){ const mod=await import('./map3d.js'); map3d=await mod.mountMap3D($('map'),d,{left:innerWidth>900?5.5:0}); if(!map3d) throw new Error('no webgl'); } else await map3d.update(d); }
+    catch(e){ console.warn('[map3d]',e); map3dFailed=true; $('map').innerHTML=P.render3DMap(lastPlan); P.bindMap($('map')); break; } }
+    mapBusy=null; })();
+}
+let lastPlan=null;
+function showView(v){ document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id===v)); if(v==='vmap'&&map3dFailed) P.bindMap($('map')); }
 document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.v)));
 document.querySelectorAll('.seg').forEach(s=>s.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; setSeg(s.dataset.k,b.dataset.v); draw(); }));
 ['hw','hwDeep','hwMid'].forEach(id=>$(id).addEventListener('change',()=>{ $('level').value='manual'; draw(); }));

@@ -17,7 +17,7 @@ const MID=['중1-1','중1-2','중2-1','중2-2','중3-1','중3-2'];
 const CALC=[...Array.from({length:12},(_,i)=>[`기적의 계산법 ${i+1}`,0]),
   ['기적의 중학연산 1AB',5],['기적의 중학도형 1권',2],['기적의 중학연산 2AB',4],['기적의 중학도형 2권',2],['기적의 중학연산 3AB',6],['기적의 중학도형 3권',2]];
 // 1031 중급은 예시 로드맵에서 지웠다(원장님 2026-10-20). 지금 중급을 하고 있는 레벨만 거친다(skip).
-const COMP=[['초등팩토 1 (PRE 1031 기본)',5],['필즈 베이직 (PRE 1031 심화)',5],['1031 입문 + workbook',4],['TOT 2단계',3],['1031 초급',7],['1031 중급',7,'skip'],['3% 1과정',4],['왕수학 응용 4',3]];
+const COMP=[['초등팩토 1 (PRE 1031 기본)',5],['필즈 베이직 (PRE 1031 심화)',5],['1031 입문 + workbook',4],['TOT 2단계',3],['1031 초급',7],['1031 중급',7,'skip'],['3% 1과정',4],['왕수학 응용 4',3,'skip']];
 const GRADES=['5세','6세','7세','초1','초2','초3','초4','초5','초6','중1'];
 
 // 학년(1~6)·월 → m, m → 학년·월·연도
@@ -218,5 +218,49 @@ function bindMap(box){
   window.addEventListener('resize',fit); fit();
 }
 
-window.Planner={build,renderTable,renderSimple,render3D,bind3D,render3DMap,bindMap,milestones,mOf,label,SEM,CALC,COMP,MID};
+
+/* ---------- 분석지: 학년마다 서술(몇 개월 주기로, 언제 무엇을 시작·완료) ---------- */
+function narrative(P){
+  const R=k=>(P.rows.find(r=>r.key===k)||{blocks:[]}).blocks;
+  const mon=m=>(m%12+1)+'월', nm=t=>t.replace(/\s*\(.*\)/,'').trim();
+  const jo=(w,a,b)=>{ const c=w.replace(/[^가-힣0-9A-Za-z]+$/,'').slice(-1), code=c.charCodeAt(0); let has; if(/[가-힣]/.test(c)) has=(code-0xAC00)%28>0; else if(/[0-9]/.test(c)) has=/[013678]/.test(c); else has=/[lmnr]/i.test(c); return w+(has?a:b); };
+  const range=(x,y)=>x===y?x:`${x} → ${y}`;
+  const len=b=>b[2]-b[1]+1;
+  const pace=bs=>{ const c={}; bs.forEach(b=>{ c[len(b)]=(c[len(b)]||0)+1; }); return +Object.keys(c).sort((a,b)=>c[b]-c[a])[0]; };
+  const years=[]; for(let a=P.A0;a<=P.A1;a+=12) years.push([a,Math.min(a+11,P.A1)]);
+  return years.map(([a,b])=>{
+    const g=label(a).split(' ')[0], inY=bs=>bs.filter(x=>x[2]>=Math.max(a,P.now,a)&&x[1]<=b), out=[], done=[];
+    // 교과
+    const sch=inY(R('school')), dd=sch.filter(x=>/디딤돌/.test(x[0])), sys=sch.find(x=>/계통/.test(x[0])), md=sch.filter(x=>/원리해설/.test(x[0]));
+    if(dd.length) out.push(dd.length>1?`교과는 ${mon(Math.max(dd[0][1],P.now,a))}부터 디딤돌 응용을 한 학기 ${pace(dd)}개월 주기로 ${dd[0][0].split(' ')[0]} → ${dd[dd.length-1][0].split(' ')[0]}까지 나갑니다.`:`교과는 ${mon(Math.max(dd[0][1],P.now,a))}부터 ${len(dd[0])}개월 동안 ${jo(dd[0][0].split(' ')[0]+' 디딤돌 응용','을','를')} 마칩니다.`);
+    if(sys) out.push(`${mon(sys[1])}부터 ${len(sys)}개월은 계통(5·6학년·중1)으로 대수를 정리합니다.`);
+    if(md.length) out.push(`${mon(Math.max(md[0][1],P.now,a))}부터 중등 원리해설을 ${pace(md)}개월 주기로 ${range(md[0][0].split(' ')[0],md[md.length-1][0].split(' ')[0])}까지 갑니다.`);
+    // 교과 심화
+    const s2=inY(R('school2')), sS=s2.filter(x=>/최상위/.test(x[0])), gap=s2.find(x=>/고민/.test(x[0])), sA=s2.filter(x=>/A급/.test(x[0]));
+    if(sS.length) out.push(`심화는 한 학년 아래 최상위 S를 ${pace(sS)}개월 주기로 ${range(sS[0][0].split(' ')[0],sS[sS.length-1][0].split(' ')[0])}까지, 교과보다 1개월 늦게 함께 합니다.`);
+    if(gap) out.push(`${mon(Math.max(gap[1],P.now,a))}~${mon(gap[2])}에는 황소 대비 여부에 따라 고민하면서 중등 쎈을 풉니다.`);
+    if(sA.length) out.push(`${mon(Math.max(sA[0][1],P.now,a))}부터 중등 심화(A급)를 ${pace(sA)}개월 주기로 ${range(sA[0][0].split(' ')[0],sA[sA.length-1][0].split(' ')[0])}까지 합니다.`);
+    // 사고력
+    inY(R('comp')).forEach(x=>{ const st=x[1]>=a&&x[1]>=P.now, en=x[2]<=b;
+      const w=nm(x[0]); out.push(st?`${jo(w,'을','를')} ${mon(x[1])}에 시작해 ${en?`${mon(x[2])}까지 완료합니다.`:`${label(x[2])}까지 이어 갑니다.`}`:`${jo(w,'은','는')} ${en?`${mon(x[2])}까지 완료합니다.`:`${label(x[2])}까지 이어 갑니다.`}`); if(en) done.push(w); });
+    // 연산
+    const ca=inY(R('calc'));
+    if(ca.length){ const gj=ca.filter(x=>/계산법/.test(x[0])), mj=ca.filter(x=>/중학/.test(x[0]));
+      if(gj.length) out.push(`연산은 기적의 계산법 ${gj[0][0].match(/\d+/)[0]} → ${gj[gj.length-1][0].match(/\d+/)[0]}권을 ${pace(gj)}개월씩 합니다.`);
+      if(mj.length) out.push(`${mon(Math.max(mj[0][1],P.now,a))}부터 ${mj.map(x=>x[0].replace('기적의 ','')).join(' → ')} 순서로 중학 연산을 합니다.`);
+      const last=ca.filter(x=>x[2]<=b).pop(); if(last) done.push(last[0].replace('기적의 ','')); }
+    if(dd.length&&dd[dd.length-1][2]<=b) done.unshift('교과 '+dd[dd.length-1][0].split(' ')[0]);
+    if(md.length&&md[md.length-1][2]<=b) done.unshift('중등 '+md[md.length-1][0].split(' ')[0]+' 원리해설');
+    // 과학
+    const sc=inY(R('sci')).filter(x=>x[1]>=a); if(sc.length) out.push('과학은 '+sc.map(x=>`${mon(x[1])}부터 ${nm(x[0])}`).join(', ')+'을 시작합니다.');
+    // 황소 · 영재원
+    const ev=inY(R('hw')).map(x=>`${mon(x[1])}${x[2]>x[1]?'~'+mon(x[2]):''} ${nm(x[0])}`);
+    if(ev.length) out.push('황소(선택): '+ev.join(', ')+'.');
+    const gv=inY(R('giftA').concat(R('giftB'))).sort((p,q)=>p[1]-q[1]).map(x=>`${mon(x[1])}${x[2]>x[1]&&x[2]<=b?'~'+mon(x[2]):''} ${nm(x[0]).replace(/ · .*/,'')}`);
+    if(gv.length) out.push('영재원(고려 시): '+gv.join(', ')+'.');
+    return {title:g, paras:out, done};
+  }).filter(y=>y.paras.length);
+}
+
+window.Planner={narrative,build,renderTable,renderSimple,render3D,bind3D,render3DMap,bindMap,milestones,mOf,label,SEM,CALC,COMP,MID};
 })();
