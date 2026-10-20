@@ -449,7 +449,7 @@ function conceptRows(){
     {key:'comp',label:'사고력·경시',blocks:comp},
     {key:'hwangso',label:'황소',blocks:hw},
     {key:'calc',label:'연산',blocks:calc},
-    {key:'sci',label:'과학',blocks:sciPlan(mid,comp)},
+    {key:'sci',label:'과학',blocks:sciPlan(mid+2,comp)}, // 중2-1 심화(A급)가 초4 10월에 끝나 다음 달 중등과학
     {key:'gifted',label:'영재원 코스',blocks:gifted}
   ];
 }
