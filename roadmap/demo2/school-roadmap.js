@@ -423,16 +423,16 @@ function conceptRows(){
   const base=levelRows(L_SHIFT.L9), R=k=>(base.find(r=>r.key===k)||{blocks:[]}).blocks;
   const upTo=(arr,cut)=>arr.filter(b=>b[1]<cut).map(([t,a,e])=>[t,a,Math.min(e,cut-1)]);
   const sem=['5-1','5-2','6-1','6-2'], mid=68;
-  const school=upTo(R('school'),56).concat(sem.map((x,i)=>[x+' 디딤돌 응용',56+2*i,57+2*i]),[['초등 대수 정리',64,67]],
+  const school=upTo(R('school'),56).concat(sem.map((x,i)=>[x+' 디딤돌 응용',56+2*i,57+2*i]),[['계통 (5·6학년·중1)<br><small>대수 정리</small>',64,67]],
     seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',4])));
-  const school2=upTo(R('school2'),57).concat(sem.map((x,i)=>[x+' 최상위 S',57+2*i,58+2*i]),
+  const school2=upTo(R('school2'),57).concat(['4-1','4-2','5-1','5-2'].map((x,i)=>[x+' 최상위 S',57+2*i,58+2*i]),
     seqFrom(mid, MID_SEMS.map(x=>[x+' 중등 심화(A급)',4])));
   const early=R('comp').filter(b=>!/1031 (초급|중급)|3%|왕수학/.test(plain(b[0])));
   const ip=early.findIndex(b=>/1031 입문/.test(plain(b[0])));
   const comp=upTo(early.slice(0,ip),early[ip][1]).concat([['1031 입문 + workbook',early[ip][1],53],['TOT 2단계',54,56],['1031 초급',57,63],
-    ['3% 1과정<br><small>(황소 대비 겸)</small>',64,67]]);
+    ['3% 1과정',64,67]]);
   const calc=upTo(R('calc'),56).concat(sem.map((x,i)=>[`기적의 계산법 ${9+i}`,56+2*i,57+2*i]),[['초등연산 보충',64,67]],seqFrom(mid, MID_CALC));
-  const hw=[['황소 모의고사',68,69],['황소 시험',70,70],['황소 입학<br><small>(합격 시)</small>',71,71]];
+  const hw=[['황소 공부<br><small>(편입 위주)</small>',59,60],['황소 시험',61,61],['황소 4-1 편입<br><small>(합격 시)</small>',62,62]]; // 원장님 손그림 2026-10-20
   const gifted=[['영재원 대비<br><small>(사고력 서술·과학 탐구)</small>',62,65],['교대 영재원 선발',66,67],['대학 부설·교육청 영재원 선발',68,69],['영재원 수업<br><small>(합격 시)</small>',74,83]];
   return [
     {key:'school',label:'교과',blocks:school},
@@ -444,7 +444,7 @@ function conceptRows(){
     {key:'gifted',label:'영재원 코스',blocks:gifted}
   ];
 }
-const CONCEPT={id:'예시',cls:'l2',summary:'초2 9월 5-1부터<br>2개월 단위 → 초3 9월 중등',rows:null};
+const CONCEPT={id:'예시',cls:'l2',summary:'초2 9월 5-1부터<br>2개월 단위 → 초3 9월 중등<br>(원장님 손그림)',rows:null};
 function renderLevels(nowM, bestId, only, custom){
   const n=AX1-AX0+1, years=axisYears();
   let h='<table class="sr-table lv-table"><colgroup><col class="sr-g"><col class="sr-l">';
