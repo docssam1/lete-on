@@ -114,15 +114,23 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 .sp-track{flex:1;height:44px;margin-left:0}
 .sp-bar{position:absolute;top:4px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 6px;border:1px solid rgba(91,63,180,.12)}
 .warn{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;border-radius:12px;padding:9px 12px;font-size:12px;margin:0 0 10px}
-.rep{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.rep{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
 .rep .card{padding:20px}
 .rep h2{margin:0 0 14px;font-size:24px}
 .big{font-size:32px;font-weight:900;margin:0 0 6px;color:#3b2a7a}
 .stages{display:grid;gap:12px}
 .stg{background:#f7f3fd;border:1px solid var(--line);border-radius:16px;padding:12px}
 .stg h4{margin:0 0 6px;font-size:18px;color:#5b3fb4}
-.stg p{font-size:14px;line-height:1.7;margin:4px 0}
-.stg .done{margin-top:8px;background:#fff;border:1px dashed #c4b5fd;border-radius:12px;padding:8px 12px;font-size:13px;color:#5b3fb4}
+.mrow{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin:8px 0 10px}
+.mc{background:#fff;border:1px solid var(--line);border-radius:10px;padding:5px 3px;min-height:54px;font-size:10px;line-height:1.25;text-align:center}
+.mc b{display:block;font-size:11px;color:#5b3fb4;margin-bottom:3px}
+.mc.now{border-color:var(--p);box-shadow:0 0 0 2px #ddd0ff;background:#f3ecff}
+.mc.past{opacity:.45}
+.mc .st{display:block;background:#e7defb;color:#3b2a7a;border-radius:6px;padding:2px 3px;margin-top:2px;font-weight:800}
+.mc .is{display:block;background:#fff1cc;color:#8a5a00;border-radius:6px;padding:2px 3px;margin-top:2px;font-weight:700}
+.cm{display:grid;grid-template-columns:64px 1fr;gap:6px 10px;margin:0}
+.cm dt{font-weight:900;color:#5b3fb4;font-size:13px;padding-top:2px}
+.cm dd{margin:0;font-size:13.5px;line-height:1.7}
 .ritem{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
 .ritem:first-of-type{border-top:0}
 .ritem .ic{width:52px;height:52px;border-radius:50%;background:var(--pl);display:grid;place-items:center;font-size:22px;flex:none}
@@ -136,7 +144,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 .drawer label{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;margin-top:8px}
 .drawer select,.drawer input{font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;max-width:62%}
 .drawer .close{float:right;border:0;background:var(--pl);border-radius:999px;padding:6px 12px;font-weight:800;cursor:pointer}
-@media(max-width:900px){.side{position:static;width:auto;margin-bottom:12px}.m3-stage{height:520px}.rep{grid-template-columns:1fr}.stages{grid-template-columns:1fr 1fr}.nav button{padding:8px;font-size:13px}.ttl{font-size:15px}.logo{font-size:18px}}
+@media(max-width:900px){.side{position:static;width:auto;margin-bottom:12px}.m3-stage{height:520px}.rep{grid-template-columns:1fr}.mrow{grid-template-columns:repeat(6,1fr)}.cm{grid-template-columns:1fr}.nav button{padding:8px;font-size:13px}.ttl{font-size:15px}.logo{font-size:18px}}
 @media(max-width:560px){.top{flex-wrap:wrap}.nav{order:3;width:100%;margin-left:0}.dock .step small{display:none}.m3g{position:relative;height:760px;border-radius:24px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:#efe4fa}
 .m3g canvas{display:block;width:100%;height:100%;cursor:grab}
 .m3g-labels{position:absolute;inset:0;pointer-events:none}
@@ -267,7 +275,9 @@ function draw(){
   drawMap(P.milestones(plan));
   $('tbl').innerHTML=P.renderTable(plan); $('simple').innerHTML=P.renderSimple(plan);
   $('tbl').style.display=state.planMode==='table'?'block':'none'; $('simple').style.display=state.planMode==='simple'?'block':'none';
-  $('stages').innerHTML=P.narrative(plan).map(y=>`<div class="stg"><h4>${y.title}</h4>${y.paras.map(t=>`<p>${t}</p>`).join('')}${y.done.length?`<div class="done">이때 완료할 것 · <b>${y.done.join(' · ')}</b></div>`:''}</div>`).join('');
+  $('stages').innerHTML=P.narrative(plan).map(y=>`<div class="stg"><h4>${y.title}</h4>
+    <div class="mrow">${y.months.map(c=>`<div class="mc${c.now?' now':''}${c.past?' past':''}"><b>${c.mon}</b>${c.starts.map(t=>`<span class="st">${t}</span>`).join('')}${c.issues.map(t=>`<span class="is">${t}</span>`).join('')}</div>`).join('')}</div>
+    <dl class="cm">${y.items.map(it=>`<dt>${it.label}</dt><dd>${it.text}</dd>`).join('')}</dl></div>`).join('');
   const lvName=$('level').selectedOptions[0].textContent;
   $('repItems').innerHTML=[['📖','현재 학습',`${cur('school')} · ${cur('comp')}`],['👤','기준 레벨',lvName],['💡','다음 과정',next?`${next.title} (${P.label(next.m)})`:'—'],['📅','다음 확인','학습 경험 후 조정 · 경로는 언제든 바꿀 수 있어요']]
     .map(([i,a,b])=>`<div class="ritem"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
