@@ -1,6 +1,6 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v29",
+  "checkpoint": "v127",
   "updated": "2026-10-20",
   "scope": {
     "book": "1031 입문 C",
@@ -20,7 +20,10 @@
     "unit1WorkedExamplesExcluded": 2,
     "unit1ConditionalDifficultyBandsReused": 14,
     "unit1UnbandedHeld": 2,
-    "unit1AnswerValuesPublished": 0
+    "unit1AnswerValuesPublished": 0,
+    "unit1RequiredMathSkillProfilesCoded": 0,
+    "unit1CurriculumUnitTypeLinksCoded": 0,
+    "unit1CurriculumCrosswalkStatus": "not-yet-coded-under-v127-schema"
   },
   "interpretation": {
     "candidateOnly": true,
@@ -30,7 +33,10 @@
     "answerValidatedActivities": 0,
     "gradeMeaning": "초등 1–2학년군은 교육과정 내용 맥락 후보이며 문항별 최소 학년 배정이 아님",
     "difficultyMeaning": "조건부 연구 밴드이며 교사 승인 전",
-    "unit1AnswerValidation": "Same-edition answer-key cross-check completed; values and OCR evidence remain in the private research folder."
+    "unit1AnswerValidation": "Same-edition answer-key cross-check completed; values and OCR evidence remain in the private research folder.",
+    "gradeAssignmentTarget": false,
+    "legacyMinimumCurriculumFields": "provenance-only; excluded from current metrics and recommendations",
+    "requiredMathSkillAndCurriculumCrosswalk": "Separate item-level prerequisite math skills from curriculum area/unit/type links; not yet coded for this unit."
   },
   "aggregate": {
     "ontologyNodes": 1258,
@@ -39,7 +45,8 @@
     "candidateEvidenceLinkedActivities": 322,
     "activityReviewQueue": 530,
     "conditionalDifficultyBands": 356,
-    "somaItemCrossReferences": 379
+    "somaItemCrossReferences": 379,
+    "publishedScreenAnswerValidations": 519
   },
   "unitCounts": {
     "skillCandidates": 13,
@@ -50,7 +57,13 @@
     "somaActivitiesWithoutDirectRow": 12,
     "somaExactMatches": 0,
     "familyCandidates": 4,
-    "relationHypotheses": 8
+    "relationHypotheses": 8,
+    "unit1SameEditionStudentResponseChecks": 14,
+    "unit1NewlyValidatedAnswers": 12,
+    "unit1WorkedExamplesExcluded": 2,
+    "unit1ConditionalDifficultyBandsReused": 14,
+    "unit1UnbandedHeld": 2,
+    "unit1AnswerValuesPublished": 0
   },
   "skillCandidates": [
     {
