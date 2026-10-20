@@ -1854,10 +1854,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "빼는 수를 □0으로 만드는 마법 수를 찾아봐요!",
-  "asr": "빼는 수를 요멍으로 만드는 마법 수를 찾아봐요",
-  "cer": 0.118,
+  "asr": "빼는 수를 10의 배수로 만드는 마법 수를 찾아봐요.",
+  "cer": 0.05,
   "ok": true,
-  "sec": 2.96
+  "sec": 4.35
  },
  "en-4706cca8b4e5.mp3": {
   "unit": "A-20",
@@ -1884,10 +1884,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "마법의 d를 찾아서 □0으로 만들어봐요!",
-  "asr": "마법의 D를 찾아서 셋 0으로 만들어봐요.",
-  "cer": 0.071,
+  "asr": "마법의 D를 찾아서 10의 배수로 만들어봐요.",
+  "cer": 0.059,
   "ok": true,
-  "sec": 3.28
+  "sec": 3.92
  },
  "en-617af2bd1774.mp3": {
   "unit": "A-20",
@@ -1944,10 +1944,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "빼지는 수를 □0으로 만드는 마법 수를 찾아봐요!",
-  "asr": "빼지는 수를 DB점으로 만드는 마법 수를 찾아봐요.",
-  "cer": 0.056,
+  "asr": "빼지는 수를 10의 배수로 만드는 마법수를 찾아봐요.",
+  "cer": 0.048,
   "ok": true,
-  "sec": 3.75
+  "sec": 3.3
  },
  "en-44135c5b2323.mp3": {
   "unit": "A-21",
@@ -1974,10 +1974,10 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "빼지는 수를 □0으로 내려봐요!",
-  "asr": "빼지는 수를 2령으로 내려봐요.",
-  "cer": 0.091,
+  "asr": "빼지는 수를 10의 배수로 내려봐요.",
+  "cer": 0.071,
   "ok": true,
-  "sec": 2.47
+  "sec": 2.99
  },
  "en-b102ef02816b.mp3": {
   "unit": "A-21",
@@ -2124,10 +2124,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "빼지는 수를 다음 □0으로 올리는 수를 찾아봐요!",
-  "asr": "집. 빼지는 수를 다음 정으로 올리는 수를 찾아봐요.",
-  "cer": 0.111,
+  "asr": "빼지는 수를 다음 10의 배수으로 올리는 수를 찾아봐요.",
+  "cer": 0.0,
   "ok": true,
-  "sec": 3.47
+  "sec": 4.55
  },
  "en-d1dd6b01a941.mp3": {
   "unit": "A-23",
@@ -2214,10 +2214,10 @@
   "key": "practice-intro",
   "lang": "ko",
   "text": "수를 가장 가까운 □0으로 어림하는 연습이에요!",
-  "asr": "수를 가장 가까운 후정으로 어림하는 연습이에요.",
-  "cer": 0.111,
+  "asr": "수를 가장 가까운 10의 배수로 어림하는 연습이에요.",
+  "cer": 0.048,
   "ok": true,
-  "sec": 3.55
+  "sec": 4.52
  },
  "en-5f23fefc961e.mp3": {
   "unit": "A-24",
@@ -2244,20 +2244,20 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "두 수가 비슷하면 □0+□0 전략!",
-  "asr": "두 수가 비슷하면 섭진 전략.",
-  "cer": 0.222,
-  "ok": false,
-  "sec": 2.47
+  "asr": "두 수가 비슷하면 10의 배수끼리 더하기 전략.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.82
  },
  "en-ff507bdd90b3.mp3": {
   "unit": "A-24",
   "key": "lab-intro",
   "lang": "en",
   "text": "Similar sizes? Use the □0+□0 strategy!",
-  "asr": "Similar sizes? Use the Toptic strategy.",
-  "cer": 0.231,
-  "ok": false,
-  "sec": 3.2
+  "asr": "Similar sizes? Use the addition strategy strategy.",
+  "cer": 0.0,
+  "ok": true,
+  "sec": 3.8
  },
  "zh-c5f042dd9f99.mp3": {
   "unit": "A-24",
@@ -2694,30 +2694,30 @@
   "key": "lab-intro",
   "lang": "ko",
   "text": "부족한 수 마법! □0 빼고 d 더해요!",
-  "asr": "부족한 수 마법. 1형 빼고 D 더해요.",
-  "cer": 0.091,
+  "asr": "부족한 수 마법 10개씩 빼고 D 더해요.",
+  "cer": 0.071,
   "ok": true,
-  "sec": 2.65
+  "sec": 2.9
  },
  "en-922fe4c315ca.mp3": {
   "unit": "A-29",
   "key": "lab-intro",
   "lang": "en",
   "text": "Deficiency magic! Subtract □0 then add d!",
-  "asr": "Deficiency magic. Subtract of then add D.",
-  "cer": 0.065,
+  "asr": "Deficiency magic. Subtract a multiple of 10 then add D.",
+  "cer": 0.067,
   "ok": true,
-  "sec": 3.24
+  "sec": 4.12
  },
  "zh-775acd940520.mp3": {
   "unit": "A-29",
   "key": "lab-intro",
   "lang": "zh",
   "text": "不足数魔法！减□0再加d！",
-  "asr": "不足数魔法减SOB0再加D",
-  "cer": 0.0,
+  "asr": "不足数魔法减十再加地",
+  "cer": 0.111,
   "ok": true,
-  "sec": 2.59
+  "sec": 2.43
  },
  "ko-6329a99af6f1.mp3": {
   "unit": "A-29",
@@ -6604,30 +6604,30 @@
   "key": "rule",
   "lang": "ko",
   "text": "더하면 전체! 빼면 나머지 부분! □는 전체와 부분으로 찾아요!",
-  "asr": "더하면 전체, 빼면 나머지 부분, 뺀는 전체와 부분으로 찾아요.",
-  "cer": 0.043,
+  "asr": "더하면 전체, 빼면 나머지 부분, 빈칸은 전체와 부분으로 찾아요.",
+  "cer": 0.04,
   "ok": true,
-  "sec": 5.02
+  "sec": 4.87
  },
  "en-b85892ebd92f.mp3": {
   "unit": "N-11",
   "key": "rule",
   "lang": "en",
   "text": "Add to get the whole! Subtract to get the other part! Find □ with the whole and parts!",
-  "asr": "Add to get the whole. Subtract to get the other part. Find dyed with the whole and parts.",
-  "cer": 0.062,
+  "asr": "Add to get the whole. Subtract to get the other part. Find the missing number with the whole and parts.",
+  "cer": 0.0,
   "ok": true,
-  "sec": 5.93
+  "sec": 7.05
  },
  "zh-a6878444afb7.mp3": {
   "unit": "N-11",
   "key": "rule",
   "lang": "zh",
   "text": "加起来是总数！减掉是另一部分！用总数和部分找□！",
-  "asr": "加起来是总数减调是另一部分用总数和部分找sabi",
-  "cer": 0.05,
+  "asr": "加起来是总数减掉是另一部分用总数和部分找位之数",
+  "cer": 0.087,
   "ok": true,
-  "sec": 5.23
+  "sec": 5.79
  },
  "ko-c432a5d5daea.mp3": {
   "unit": "N-12",

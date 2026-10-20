@@ -67,8 +67,17 @@ def fname(lang, text):
 EMOJI = re.compile("[\U0001F000-\U0001FFFF☀-➿⬀-⯿️‍]")
 
 
-def spoken(text):
-    return re.sub(r"\s{2,}", " ", EMOJI.sub("", text)).strip()
+def spoken(lang, text):
+    """Turn display-only math placeholders into words the voice can read."""
+    text = EMOJI.sub("", text)
+    replacements = {
+        "ko": (("□0+□0", "열 개씩 더하기"), ("□0", "열 개씩"), ("□", "빈칸")),
+        "en": (("□0+□0", "addition strategy"), ("□0", "tens"), ("□", "the missing number")),
+        "zh": (("□0+□0", "十加十"), ("□0", "十"), ("□", "未知数")),
+    }
+    for source, replacement in replacements.get(lang, ()):
+        text = text.replace(source, replacement)
+    return re.sub(r"\s{2,}", " ", text).strip()
 
 
 def letters(lang, s):
@@ -244,7 +253,7 @@ def main():
 
         t0 = time.time(); audio_s = 0.0
         for n, t in enumerate(todo, 1):
-            lang, text = t["lang"], t["text"]; say = spoken(text)
+            lang, text = t["lang"], t["text"]; say = spoken(lang, text)
             label = f"{t['unitId']} {t['key']} [{lang}]"
             exp = expected(lang, say) / (a.speed or 1.0); dur = None; best = None; ts = time.time()
             tries = max(1, a.tries)
