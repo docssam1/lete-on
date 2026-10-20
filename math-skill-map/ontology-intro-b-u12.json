@@ -1,7 +1,7 @@
 {
   "schema": "gfield-public-skill-map-supplement/1",
-  "checkpoint": "v51",
-  "updated": "2026-10-19",
+  "checkpoint": "v125",
+  "updated": "2026-10-20",
   "scope": {
     "book": "1031 입문 B",
     "unit": 12,
@@ -12,16 +12,16 @@
     ],
     "sourceActivityBlocks": 10,
     "visuallyReviewedPages": 7,
-    "answerValidated": false
+    "answerValidated": true
   },
   "aggregate": {
-    "ontologyNodes": 1416,
-    "ontologyRelations": 2344,
-    "skillActionCandidates": 282,
-    "activitiesWithSkillCandidateEvidence": 547,
-    "activitiesInReviewQueue": 305,
-    "conditionalDifficultyCandidates": 563,
-    "validatedAnswers": 42,
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 428,
+    "activitiesWithSkillCandidateEvidence": 869,
+    "activitiesInReviewQueue": 6,
+    "conditionalDifficultyCandidates": 958,
+    "validatedAnswers": 507,
     "teacherApprovedTypeEquivalences": 0,
     "teacherApprovedRelations": 0,
     "minimumCurriculumAssignments": 0,
@@ -38,12 +38,13 @@
     "conditionalDifficultyBands": 10,
     "relationHypotheses": 7,
     "minimumCurriculumLevelCandidates": 10,
-    "unresolvedMinimumCurriculumCandidates": 0,
+    "unresolvedMinimumCurriculumCandidates": 10,
     "confirmedMinimumCurriculumAssignments": 0,
-    "validatedAnswers": 0,
+    "validatedAnswers": 8,
     "somaDirectCrossReferences": 10,
     "somaRowsHeldBack": 2,
-    "somaNoDirectRow": 0
+    "somaNoDirectRow": 0,
+    "workedExamplesExcluded": 2
   },
   "areaOrderCandidates": [
     {
@@ -400,5 +401,19 @@
       }
     ]
   },
-  "privacy": "공개 자료에는 활동 식별자·OCR 원문·정답 내용·로컬 경로·원자료 이미지 해시를 포함하지 않습니다. 난이도·최소 교과수준·유형 관계는 검토 후보입니다."
+  "privacy": "공개 자료에는 활동 식별자·OCR 원문·정답 내용·로컬 경로·원자료 이미지 해시를 포함하지 않습니다. 난이도·최소 교과수준·유형 관계는 검토 후보입니다.",
+  "answerValidation": {
+    "status": "partial-student-response-validation-complete",
+    "sameEditionAnswerKeyPrintedPage": 120,
+    "studentResponsesValidated": 8,
+    "workedRepresentativeExamplesExcluded": 2,
+    "bodyActivityBlocks": 10,
+    "method": "same-edition printed key cross-check plus independent recalculation",
+    "localOcr": {
+      "engine": "Apple Vision",
+      "observations": 79,
+      "externalRequests": 0
+    },
+    "exactAnswersIncluded": false
+  }
 }
