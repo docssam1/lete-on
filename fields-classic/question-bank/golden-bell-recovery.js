@@ -1,4 +1,4 @@
-import { GOLDEN_BELL_RECOVERY } from "./golden-bell-recovery-data.js?v=20261012a";
+import { GOLDEN_BELL_RECOVERY } from "./golden-bell-recovery-data.js?v=20261020a";
 import { hasProtectedAnswer, hydrateProtectedAnswers } from "./golden-bell-protected.js?v=20260906c";
 
 export function appendProtectedRecoveryItems(book, records, groups = GOLDEN_BELL_RECOVERY) {
