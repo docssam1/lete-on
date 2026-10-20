@@ -1,7 +1,7 @@
 {
   "schema": "gfield-public-math-skill-ontology-supplement/1",
-  "checkpoint": "v25",
-  "updated": "2026-10-19",
+  "checkpoint": "v29",
+  "updated": "2026-10-20",
   "scope": {
     "book": "1031 입문 C",
     "units": [
@@ -13,7 +13,14 @@
     "unit4PrintedPages": "33–39",
     "unit4Activities": 16,
     "unit4MappedActivities": 15,
-    "unit4HeldActivities": 1
+    "unit4HeldActivities": 1,
+    "unit1PrintedPages": "9–15",
+    "unit1StudentResponseActivities": 14,
+    "unit1SameEditionAnswerChecks": 14,
+    "unit1WorkedExamplesExcluded": 2,
+    "unit1ConditionalDifficultyBandsReused": 14,
+    "unit1UnbandedHeld": 2,
+    "unit1AnswerValuesPublished": 0
   },
   "interpretation": {
     "candidateOnly": true,
@@ -22,7 +29,8 @@
     "approvedDifficultyLevels": 0,
     "answerValidatedActivities": 0,
     "gradeMeaning": "초등 1–2학년군은 교육과정 내용 맥락 후보이며 문항별 최소 학년 배정이 아님",
-    "difficultyMeaning": "조건부 연구 밴드이며 교사 승인 전"
+    "difficultyMeaning": "조건부 연구 밴드이며 교사 승인 전",
+    "unit1AnswerValidation": "Same-edition answer-key cross-check completed; values and OCR evidence remain in the private research folder."
   },
   "aggregate": {
     "ontologyNodes": 1258,
