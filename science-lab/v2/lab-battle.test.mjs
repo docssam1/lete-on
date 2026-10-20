@@ -11,6 +11,7 @@ import { breadModel } from '../scenes/bread-model.js';
 import { evapRow } from '../scenes/seawater-model.js';
 import { rulerRow } from '../scenes/ruler-model.js';
 import { moonRow } from '../scenes/moon-model.js';
+import { meadowRow } from '../scenes/meadow-model.js';
 
 test('물: 같은 물을 얼려도 무게는 같고, 높이는 달라진다', () => {
   const rounds = LAB_BATTLE_ROUNDS['s41-u02'];
@@ -107,4 +108,10 @@ test('같은 시각 달 관찰: 날이 지날수록 더 넓게 밝고 더 동쪽
   assert.deepEqual(rounds.map((r) => battleVerdict('c22-s42-u01', r, rows(r), [1, 1]).answers[0]), [0, 2, 0], '7일이 더 밝음 · 15일이 더 동쪽 · 15일이 3일보다 동쪽');
   assert.equal(validBattleRow('c22-s42-u01', { ...moonRow(7), dir: '서쪽' }), false);
   assert.equal(validBattleRow('c22-s42-u01', moonRow(22)), false, '새벽 관찰은 저녁 배틀과 섞지 않는다');
+});
+
+test('풀밭 먹이 관계: 여우가 사라지면 토끼 늘고, 토끼가 사라지면 풀 늘고, 가뭄이면 여우도 준다', () => {
+  const rounds = LAB_BATTLE_ROUNDS['c22-s42-u02'], rows = (r) => r.targets.map((t) => meadowRow(t.change));
+  assert.deepEqual(rounds.map((r) => battleVerdict('c22-s42-u02', r, rows(r), [1, 1]).answers[0]), [2, 0, 2]);
+  assert.equal(validBattleRow('c22-s42-u02', { ...meadowRow('여우가 사라짐'), rabbit: 5 }), false);
 });

@@ -1,0 +1,11 @@
+/* 생물과 환경 실험실(풀밭 먹이 관계) */
+.md-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#eef6e8;color:#2c4a1f}
+.md-year{margin:4px 0 0;font-weight:800;color:#2c4a1f;font-size:15px}
+.md-read{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px}
+.md-read li{background:#fff;border:1px solid #d9e2ec;border-radius:12px;padding:8px 10px;font-size:15px;line-height:1.4}
+.md-read li b{display:block;font-weight:800;color:#1f2a44;white-space:nowrap}
+.md-read li span{color:#2f7a2a;font-weight:700}
+.md-read .md-res{grid-column:1/-1}
+.md-2d{display:grid;gap:10px;padding:16px;border-radius:14px;background:#eef6e8}
+.md-2d p{margin:0;display:grid;grid-template-columns:52px 1fr;align-items:center;gap:8px;font-size:15px}
+.md-2d .md-bar{display:block;height:18px;border-radius:9px;background:#5a9a3a;transition:width .3s;width:0}

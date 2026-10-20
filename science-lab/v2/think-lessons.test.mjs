@@ -12,11 +12,12 @@ import { materialRow, hardest, bendiest, floaters, seeThrough } from '../scenes/
 import { evapRow, AMOUNTS } from '../scenes/seawater-model.js';
 import { rulerRow } from '../scenes/ruler-model.js';
 import { moonRow } from '../scenes/moon-model.js';
+import { meadowRow } from '../scenes/meadow-model.js';
 
 const UNITS = { 'c22-s42-u04': { lab: 'sealevel', scene: 'sea-town', rowsKey: 'climateInquiryRows' }, 'c22-s32-u04': { lab: 'glitter', scene: 'glitter-hands', rowsKey: undefined },
   'c22-s32-u01': { lab: 'material', scene: 'material-bars', rowsKey: undefined }, 'c22-s32-u02': { lab: 'seawater', scene: 'evap-dishes', rowsKey: undefined },
   'c22-s32-u03': { lab: 'ruler', scene: 'ruler-desk', rowsKey: undefined }, 's41-u04': { lab: 'bread', scene: 'bread-dough', rowsKey: 'biologyInquiryRows' },
-  'c22-s42-u01': { lab: 'moon', scene: 'moon-sky', rowsKey: 'skyInquiryRows' } };
+  'c22-s42-u01': { lab: 'moon', scene: 'moon-sky', rowsKey: 'skyInquiryRows' }, 'c22-s42-u02': { lab: 'meadow', scene: 'meadow-field', rowsKey: 'ecologyInquiryRows' } };
 const load = async (u) => {
   const [book, ix, unit, think, similar, lesson, records] = await Promise.all([import(`../data/book/${u}.book.js`), import(`../data/book/${u}.interact.js`), import(`../data/units/${u}.js`),
     import(`../data/units/${u}.think.js`), import(`../data/units/${u}.similar.js`).catch(() => ({ similar: [] })), import(`../data/units/${u}.lesson.js`), import(`../data/units/${u}.records.js`)]);
@@ -90,4 +91,8 @@ test('3D 모형 수치 = 교재 결과 표', () => {
   assert.deepEqual([3, 7, 15, 22, 26].map((d) => moonRow(d).name), ['초승달', '상현달', '보름달', '하현달', '그믐달']);
   assert.ok([3, 7, 15].map((d) => moonRow(d).lit).every((v, i, a) => !i || v > a[i - 1]), '보름까지 밝은 부분이 커진다');
   assert.deepEqual([22, 26].map((d) => moonRow(d).time), ['새벽 6시쯤', '새벽 6시쯤'], '하현·그믐은 새벽 관찰');
+  assert.deepEqual(['rabbitT', 'grassT'].map((k) => meadowRow('여우가 사라짐')[k]), ['늘어남', '줄어듦'], '여우가 사라지면 토끼 늘고 풀 줄어듦');
+  assert.deepEqual(['grassT', 'foxT'].map((k) => meadowRow('토끼가 사라짐')[k]), ['늘어남', '줄어듦'], '토끼가 사라지면 풀 늘고 여우 줄어듦');
+  assert.deepEqual(['rabbitT', 'foxT'].map((k) => meadowRow('풀이 줄어듦(가뭄)')[k]), ['줄어듦', '줄어듦'], '가뭄이면 토끼·여우 모두 줄어듦');
+  assert.equal(meadowRow('그대로').result, '풀·토끼·여우 모두 그대로');
 });

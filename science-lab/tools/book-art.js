@@ -15,11 +15,12 @@ import { buildMaterialBench } from '../scenes/material-bars.js';
 import { buildEvapBench } from '../scenes/evap-dishes.js';
 import { buildRulerDesk } from '../scenes/ruler-desk.js';
 import { buildMoonSky, skyPos } from '../scenes/moon-sky.js';
+import { buildMeadow } from '../scenes/meadow-field.js';
 import { moonModel } from '../scenes/moon-model.js';
 const OIL_R_ = () => 0.34;
 
 const q = new URLSearchParams(location.search), shot = q.get('shot') || 'hero';
-const SIZE = { sea: [1280, 600], glit: [1280, 600], mat: [1280, 600], 'mat-hero': [1800, 820], 'mat-row': [1500, 720], sw: [1280, 600], 'sw-hero': [1800, 820], 'sw-row': [1500, 720], rl: [1280, 600], 'rl-hero': [1800, 820], 'rl-row': [1500, 720], mo: [1280, 600], 'mo-hero': [1800, 820], 'mo-row': [1500, 720], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
+const SIZE = { sea: [1280, 600], glit: [1280, 600], mat: [1280, 600], 'mat-hero': [1800, 820], 'mat-row': [1500, 720], sw: [1280, 600], 'sw-hero': [1800, 820], 'sw-row': [1500, 720], rl: [1280, 600], 'rl-hero': [1800, 820], 'rl-row': [1500, 720], mo: [1280, 600], 'mo-hero': [1800, 820], 'mo-row': [1500, 720], md: [1280, 600], 'md-hero': [1800, 820], 'md-row': [1500, 720], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
 const [W, H] = SIZE[shot] || SIZE[shot.split('-')[0]] || [1600, 900];
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -207,6 +208,27 @@ if (shot === 'hero' || shot === 'sizes') {
       if (shot === 'glit-shake2') CO('2차례: B-C·D-E·F-A', kidAt(rig, 'C', 1.1), 760, 520, '3차례: C-D·E-F·A-B');
       if (shot === 'glit-wash') CO('악수 전에 B·D·F 손 씻기', kidAt(rig, 'D', 1.1), 760, 520, '비누와 흐르는 물로 30초 이상');
     }
+  }
+} else if (shot.startsWith('md-')) {
+  // 풀밭 먹이 관계(c22-s42-u02): md-hero · md-start(풀·토끼·여우 처음 수) · md-row(3년 뒤 「그대로」와 「여우가 사라짐」 나란히)
+  scene.background = new THREE.Color(0xf3f5f8); scene.environment = env; scene.environmentIntensity = 0.6;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xd9e6c8, 1.1)); const d = new THREE.DirectionalLight(0xffffff, 2.2); d.position.set(3, 7, 4); scene.add(d);
+  camera = new THREE.PerspectiveCamera(24, W / H, 0.1, 200);
+  const CO = (t, p, x, y, sub) => callouts.push({ t, p, at: [x, y], sub });
+  const one = (o, x = 0) => { const f = buildMeadow(); f.position.x = x; f.userData.set({ change: '그대로', year: 0, t: 0.3, ...o }); scene.add(f); return f; };
+  if (shot === 'md-row') {
+    const a = one({ change: '그대로', year: 3 }, -2.75), b = one({ change: '여우가 사라짐', year: 3 }, 2.75);
+    camera.position.set(0, 7.4, 9.6); camera.lookAt(0, -0.3, 0);
+    tags3.push(['그대로 · 3년 뒤', [-2.75, 0.2, -2.1], { size: 34, color: '#1f2a44' }], ['여우가 사라짐 · 3년 뒤', [2.75, 0.2, -2.1], { size: 34, color: '#c2581c' }]);
+    overlay.push(['풀 60 · 토끼 12 · 여우 3', -2.75, -2.9, { size: 34, color: '#2c4a1f', bold: true }], ['풀 28 · 토끼 28 · 여우 0', 2.75, -2.9, { size: 34, color: '#c2581c', bold: true }]);
+    void a; void b;
+  } else {
+    const X0 = shot === 'md-hero' ? 1.6 : -0.75, f = one({}, X0);
+    camera.position.set(0.4, 4.0, 6.6); camera.lookAt(0.4, 0.1, 0.1);
+    if (shot === 'md-hero') { camera.position.set(0.6, 3.6, 6.8); camera.lookAt(0.6, 0.1, 0.1);
+      overlay.push(['풀밭 먹이 관계', -2.3, 1.15, { size: 62, color: '#1f2a44', bold: true, align: 'left' }], ['여우가 사라지면 풀밭은 더 좋아질까요?', -2.3, 0.88, { size: 32, color: '#3d8a35', bold: true, align: 'left' }]); }
+    if (shot === 'md-start') { const r = f.userData.rabbits[0].position, x = f.userData.foxes[0].position;
+      CO('여우 3마리', [x.x + X0, 0.3, x.z], 820, 110, '토끼를 먹어요'); CO('토끼 12마리', [r.x + X0, 0.2, r.z], 820, 300, '풀을 먹어요'); CO('풀 60포기', [X0 + 1.2, 0.12, 0.9], 820, 490, '햇빛으로 양분을 만들어요'); }
   }
 } else if (shot.startsWith('mo-')) {
   // 같은 시각 달 관찰(c22-s42-u01): mo-hero · mo-draw(달 없이 방향·기준물) · mo-start(3일 초승달) · mo-row(3·7·15일 같은 크기로 함께)

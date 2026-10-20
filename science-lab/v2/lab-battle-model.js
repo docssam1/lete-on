@@ -21,12 +21,15 @@ import { MATERIALS, TESTS as MAT_TESTS, materialRow, materialResult } from '../s
 import { WATERS as SEA_WATERS, AMOUNTS as SEA_AMOUNTS, evapRow } from '../scenes/seawater-model.js';
 import { rulerRow } from '../scenes/ruler-model.js';
 import { moonRow } from '../scenes/moon-model.js';
+import { meadowRow, CHANGES as MEADOW_CHANGES } from '../scenes/meadow-model.js';
 const sea = (title, targets) => ({ title, question: '어느 팀 마을에서 물에 닿은 집이 더 많을까요?', choices: ['1팀이 더 많음', '집 수가 같음', '2팀이 더 많음'], field: 'n', targets });
 // 막대 네 개: 두 팀이 같은 시험을 하고, 팀마다 맡은 막대 하나의 결과를 비교한다(기록 한 줄에 네 막대가 다 있다)
 // 증발 접시: 팀마다 맡은 접시(물의 종류)와 물의 양 — 기록 한 줄에 두 접시가 함께 있다
 const ruler = (title, field, targets) => ({ title, question: field === 'rank' ? '어느 팀의 자에서 더 높은 소리가 날까요?' : '어느 팀의 자에서 더 큰 소리가 날까요?', choices: field === 'rank' ? ['1팀이 더 높음', '높낮이가 같음', '2팀이 더 높음'] : ['1팀이 더 큼', '크기가 같음', '2팀이 더 큼'], field, targets });
 // 같은 시각(저녁 7시쯤)에 본 달만 비교한다 — lit: 밝게 보이는 부분(%) · pos: 서쪽에서 떨어진 정도(클수록 동쪽)
 const moon = (title, field, targets) => ({ title, question: field === 'lit' ? '어느 팀의 달이 더 넓게 밝게 보일까요?' : '같은 시각, 어느 팀의 달이 더 동쪽 하늘에 보일까요?', choices: field === 'lit' ? ['1팀의 달이 더 넓게 밝음', '밝은 부분이 같음', '2팀의 달이 더 넓게 밝음'] : ['1팀의 달이 더 동쪽', '같은 자리', '2팀의 달이 더 동쪽'], field, targets });
+// 풀밭 먹이 관계: 두 팀이 맡은 「바꾼 것」으로 3년 지켜본 뒤 field(grass·rabbit·fox)의 수를 비교한다
+const meadow = (title, field, targets) => { const n = { grass: '풀이', rabbit: '토끼가', fox: '여우가' }[field]; return { title, question: `3년 뒤 어느 팀의 풀밭에 ${n} 더 많을까요?`, choices: ['1팀이 더 많음', '수가 같음', '2팀이 더 많음'], field, targets }; };
 const seawater = (title, targets) => ({ title, question: '물이 모두 날아간 뒤 어느 팀의 접시에 더 많이 남을까요?', choices: ['1팀 접시에 더 많이 남음', '남은 양이 같음', '2팀 접시에 더 많이 남음'], field: 'sea', targets });
 const material = (title, question, choices, targets) => ({ title, question, choices, field: 'mat', targets });
 const glitter = (title, targets) => ({ title, question: '어느 팀에서 반짝이가 묻은 친구가 더 많을까요?', choices: ['1팀이 더 많음', '친구 수가 같음', '2팀이 더 많음'], field: 'n', targets });
@@ -40,6 +43,11 @@ const cycle = (title, targets) => ({ title, question: '어느 팀의 수조에 �
 const quake = (title, question, choices, field, targets) => ({ title, question, choices, field, targets });
 const shadow = (title, targets) => ({ title, question: '어느 팀의 그림자가 더 클까요?', choices: ['1팀이 더 큼', '크기가 같음', '2팀이 더 큼'], field: 'size', targets });
 export const LAB_BATTLE_ROUNDS = {
+  'c22-s42-u02': [
+    meadow('여우가 사라지면 토끼는?', 'rabbit', [{ change: '그대로' }, { change: '여우가 사라짐' }]),
+    meadow('토끼가 사라지면 풀은?', 'grass', [{ change: '토끼가 사라짐' }, { change: '그대로' }]),
+    meadow('가뭄이 들면 여우는?', 'fox', [{ change: '풀이 줄어듦(가뭄)' }, { change: '그대로' }]),
+  ],
   'c22-s42-u01': [
     moon('3일과 7일 · 밝은 부분 비교', 'lit', [{ day: 7 }, { day: 3 }]),
     moon('7일과 15일 · 같은 시각의 자리', 'pos', [{ day: 7 }, { day: 15 }]),
@@ -152,6 +160,7 @@ export function validBattleRow(unit, row) {
   if (!row || typeof row !== 'object') return false;
   if (unit === 'c22-s42-u04') { try { const m = seaModel(row.level, row.wall === '방파제 있음'); return row.wall === m.wall && row.n === m.n && row.result === m.result; } catch { return false; } }
   if (unit === 'c22-s32-u04') { const r = GLITTER_RULES.indexOf(row.rule); if (r < 0) return false; try { const m = glitterModel(row.round, r); return row.n === m.n && row.result === m.result; } catch { return false; } }
+  if (unit === 'c22-s42-u02') { if (!MEADOW_CHANGES.includes(row.change)) return false; const m = meadowRow(row.change); return ['grass', 'rabbit', 'fox', 'result'].every((k) => row[k] === m[k]); }
   if (unit === 'c22-s42-u01') { try { const m = moonRow(row.day); return m.time === '저녁 7시쯤' && ['time', 'name', 'dir', 'side', 'lit', 'pos'].every((k) => row[k] === m[k]); } catch { return false; } }
   if (unit === 'c22-s32-u03') { try { const m = rulerRow(row.len, row.strength); return ['pitch', 'loud', 'swing', 'rank', 'amp'].every((k) => row[k] === m[k]); } catch { return false; } }
   if (unit === 'c22-s32-u02') { if (!SEA_AMOUNTS.includes(row.ml)) return false; const m = evapRow(row.ml); return SEA_WATERS.every((w) => row[w] === m[w]) && row.seaG === m.seaG && row.tapG === m.tapG; }
@@ -184,6 +193,7 @@ export function battleTargetText(unit, target) {
   if (unit === 'c22-s32-u04') return `${target.rule} · ${target.round}차례 뒤`;
   if (unit === 'c22-s32-u01') return `${target.mat} 막대 · ${target.test}`;
   if (unit === 'c22-s32-u02') return `${target.water} 접시 · ${target.ml} mL`;
+  if (unit === 'c22-s42-u02') return `풀밭 · ${target.change}`;
   if (unit === 'c22-s42-u01') return `음력 ${target.day}일 · 저녁 7시쯤`;
   if (unit === 'c22-s32-u03') return `자 ${target.len} cm · ${target.strength} 튕기기`;
   if (unit === 's52-u01') return target.add;
@@ -206,6 +216,7 @@ export function battleRowText(unit, row) {
   if (unit === 'c22-s32-u04') return `${row.rule} · ${row.round}차례 · ${row.result}`;
   if (unit === 'c22-s32-u01') return `${row.test} · ${MATERIALS.map((m) => `${m} ${row[m]}`).join(', ')}`;
   if (unit === 'c22-s32-u02') return `${row.ml} mL · 바닷물 ${row.바닷물} · 수돗물 ${row.수돗물}`;
+  if (unit === 'c22-s42-u02') return `${row.change} · 풀 ${row.grass} · 토끼 ${row.rabbit} · 여우 ${row.fox}`;
   if (unit === 'c22-s42-u01') return `음력 ${row.day}일 · ${row.name} · ${row.dir}`;
   if (unit === 'c22-s32-u03') return `${row.len} cm · ${row.strength} · ${row.pitch} · ${row.loud}`;
   if (unit === 's52-u01') return `${row.add} · ${row.result}`;
