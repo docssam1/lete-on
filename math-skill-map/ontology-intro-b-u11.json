@@ -1,0 +1,339 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v124",
+  "updated": "2026-10-20",
+  "scope": {
+    "book": "1031 입문 B",
+    "unit": 11,
+    "title": "시계 연산",
+    "printedPages": [
+      91,
+      97
+    ],
+    "sourceActivityBlocks": 10,
+    "sourceBookPdfSHA256": "f1ec0930cdb8ee9ba6ae72cf62fc5ece2e0285fbf174a72e3c30291b09b5917d"
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 428,
+    "candidateEvidenceLinkedActivities": 869,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 939,
+    "conditionalDifficultyBands": 958,
+    "validatedAnswers": 499,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unitCounts": {
+    "documentedSkillCandidates": 10,
+    "newSkillCandidatesInThisUnit": 8,
+    "reusedSkillCandidates": 2,
+    "mappedActivities": 10,
+    "activitySkillRelations": 11,
+    "validatedStudentResponses": 8,
+    "workedRepresentativeExamplesExcluded": 2,
+    "conditionalDifficultyBandsAssigned": 10,
+    "conditionalDifficultyBandDistribution": {
+      "1": 0,
+      "2": 3,
+      "3": 3,
+      "4": 4
+    },
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "skills": [
+    {
+      "id": "TIME-INTRO-B-01",
+      "name": "시계 바늘 위치에서 시각 읽기",
+      "domain": "측정·시간",
+      "observableAction": "시침·분침의 위치를 분 단위 시각으로 해석한다.",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-004"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-02",
+      "name": "시계 바늘 회전 결과 찾기",
+      "domain": "측정·시간",
+      "observableAction": "주어진 바늘의 회전 방향과 각도에 따라 도착 위치를 찾는다.",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-003",
+        "1031-unit11-intro-b-block-006"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-09",
+      "name": "연속 활동의 경과 시간 합성",
+      "domain": "측정·시간",
+      "observableAction": "여러 구간의 분을 합성하고 시 넘김 처리",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-001"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-10",
+      "name": "시계 오차의 시간 누적",
+      "domain": "측정·시간",
+      "observableAction": "시간당 일정한 오차를 누적해 표시 시각 계산",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-002"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-11",
+      "name": "시계 오차의 시간당 변화율 구하기",
+      "domain": "측정·시간",
+      "observableAction": "총 오차와 경과 시간에서 시간당 오차율 계산",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-008"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-12",
+      "name": "두 시각 사이의 경과 시간 구하기",
+      "domain": "측정·시간",
+      "observableAction": "시작·끝 시각을 읽어 경과 시간 계산",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-004"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-13",
+      "name": "시간을 일과 시간으로 환산하기",
+      "domain": "측정·시간",
+      "observableAction": "24시간 단위로 시간량을 일과 나머지 시간으로 표현",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-005"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-14",
+      "name": "종료 시각과 활동 시간에서 시작 시각 역산하기",
+      "domain": "측정·시간",
+      "observableAction": "종료 시각에서 여러 활동 시간을 거꾸로 빼 시작 시각 계산",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-007"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-15",
+      "name": "반복 간격 활동의 동시 작동 수 추론하기",
+      "domain": "측정·시간",
+      "observableAction": "반복 간격과 작동 지속 시간의 겹침을 분석해 최대 동시 수 계산",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-009"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "TIME-INTRO-B-16",
+      "name": "시계 오차율로 고장 시작 시각 역산하기",
+      "domain": "측정·시간",
+      "observableAction": "시각 차와 시간당 오차율로 시계가 고장 난 시점 역산",
+      "evidenceItemIds": [
+        "1031-unit11-intro-b-block-010"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    }
+  ],
+  "activities": [
+    {
+      "itemId": "1031-unit11-intro-b-block-001",
+      "pdfPage": 92,
+      "printedLabel": "대표문제 01",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-09"
+      ],
+      "conditionalBand": 4,
+      "answerState": "worked-example-excluded"
+    },
+    {
+      "itemId": "1031-unit11-intro-b-block-002",
+      "pdfPage": 93,
+      "printedLabel": "대표문제 02",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-10"
+      ],
+      "conditionalBand": 4,
+      "answerState": "worked-example-excluded"
+    },
+    {
+      "itemId": "1031-unit11-intro-b-block-003",
+      "pdfPage": 94,
+      "printedLabel": "연습문제 01",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-02"
+      ],
+      "conditionalBand": 2,
+      "answerState": "validated"
+    },
+    {
+      "itemId": "1031-unit11-intro-b-block-004",
+      "pdfPage": 94,
+      "printedLabel": "연습문제 02",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-01",
+        "TIME-INTRO-B-12"
+      ],
+      "conditionalBand": 2,
+      "answerState": "validated"
+    },
+    {
+      "itemId": "1031-unit11-intro-b-block-005",
+      "pdfPage": 95,
+      "printedLabel": "연습문제 03",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-13"
+      ],
+      "conditionalBand": 2,
+      "answerState": "validated"
+    },
+    {
+      "itemId": "1031-unit11-intro-b-block-006",
+      "pdfPage": 95,
+      "printedLabel": "연습문제 04",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-02"
+      ],
+      "conditionalBand": 3,
+      "answerState": "validated"
+    },
+    {
+      "itemId": "1031-unit11-intro-b-block-007",
+      "pdfPage": 96,
+      "printedLabel": "연습문제 05",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-14"
+      ],
+      "conditionalBand": 3,
+      "answerState": "validated"
+    },
+    {
+      "itemId": "1031-unit11-intro-b-block-008",
+      "pdfPage": 96,
+      "printedLabel": "연습문제 06",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-11"
+      ],
+      "conditionalBand": 3,
+      "answerState": "validated"
+    },
+    {
+      "itemId": "1031-unit11-intro-b-block-009",
+      "pdfPage": 97,
+      "printedLabel": "심화문제 01",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-15"
+      ],
+      "conditionalBand": 4,
+      "answerState": "validated"
+    },
+    {
+      "itemId": "1031-unit11-intro-b-block-010",
+      "pdfPage": 97,
+      "printedLabel": "심화문제 02",
+      "skillCandidateIds": [
+        "TIME-INTRO-B-16"
+      ],
+      "conditionalBand": 4,
+      "answerState": "validated"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only-needs-teacher-review",
+    "distribution": {
+      "1": 0,
+      "2": 3,
+      "3": 3,
+      "4": 4
+    },
+    "records": [
+      {
+        "itemId": "1031-unit11-intro-b-block-001",
+        "band": 4,
+        "status": "research-only-needs-teacher-review"
+      },
+      {
+        "itemId": "1031-unit11-intro-b-block-002",
+        "band": 4,
+        "status": "research-only-needs-teacher-review"
+      },
+      {
+        "itemId": "1031-unit11-intro-b-block-003",
+        "band": 2,
+        "status": "research-only-needs-teacher-review"
+      },
+      {
+        "itemId": "1031-unit11-intro-b-block-004",
+        "band": 2,
+        "status": "research-only-needs-teacher-review"
+      },
+      {
+        "itemId": "1031-unit11-intro-b-block-005",
+        "band": 2,
+        "status": "research-only-needs-teacher-review"
+      },
+      {
+        "itemId": "1031-unit11-intro-b-block-006",
+        "band": 3,
+        "status": "research-only-needs-teacher-review"
+      },
+      {
+        "itemId": "1031-unit11-intro-b-block-007",
+        "band": 3,
+        "status": "research-only-needs-teacher-review"
+      },
+      {
+        "itemId": "1031-unit11-intro-b-block-008",
+        "band": 3,
+        "status": "research-only-needs-teacher-review"
+      },
+      {
+        "itemId": "1031-unit11-intro-b-block-009",
+        "band": 4,
+        "status": "research-only-needs-teacher-review"
+      },
+      {
+        "itemId": "1031-unit11-intro-b-block-010",
+        "band": 4,
+        "status": "research-only-needs-teacher-review"
+      }
+    ]
+  },
+  "curriculum": {
+    "minimumCurriculumAssignments": 0,
+    "ageOrGradeInferred": false,
+    "status": "curriculum-context-candidates-do-not-establish-item-minimums"
+  },
+  "answerValidation": {
+    "validatedStudentResponses": 8,
+    "workedExamplesExcluded": 2,
+    "sameEditionAnswerPage": 119,
+    "privateAnswerAudit": true,
+    "answerValuesPublished": false
+  },
+  "somaCrosswalk": {
+    "crossReferencedActivities": 9,
+    "sourceRows": 5,
+    "itemsWithoutDirectRow": 1,
+    "relatedRowsHeldBack": 2,
+    "minimumCurriculumLevelsConfirmed": 0,
+    "interpretation": "Soma references are program-progression context; they are not item-level skill equivalence, prerequisite, or minimum-grade claims."
+  },
+  "privacy": {
+    "containsAnswerKeyText": false,
+    "containsPrivateStudentData": false,
+    "teacherApprovalClaimed": false
+  }
+}

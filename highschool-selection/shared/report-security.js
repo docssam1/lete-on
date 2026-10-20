@@ -1,10 +1,10 @@
 (function (root) {
   "use strict";
 
-  const STATES = new Set(["correct", "wrong"]);
-  const DIFFICULTIES = new Set(["lowered", "standard", "raised"]);
+  const STATES = new Set(["correct", "wrong", "blank"]);
+  const DIFFICULTIES = new Set(["lowered", "standard", "raised", "advanced"]);
   const COMMENT_TYPES = new Set([
-    "summary", "strength", "weakness", "domain-specific", "item-prescription", "next-action", "round-comparison"
+    "summary", "strength", "weakness", "domain-specific", "item-prescription", "unattempted", "next-action", "round-comparison"
   ]);
   const DIMENSIONS = {
     overall: "overall",
@@ -98,6 +98,10 @@
     if (!STATES.has(item.state)) fail(`${index + 1}번 문항의 채점 상태가 올바르지 않습니다.`);
     const points = number(item.points, `${index + 1}번 배점`);
     if (points <= 0) fail(`${index + 1}번 배점이 올바르지 않습니다.`);
+    // The current report contract is binary. Never silently erase partial credit.
+    if (own(item, "earnedPoints") && (typeof item.earnedPoints !== "number" || !Number.isFinite(item.earnedPoints) || !sameNumber(item.earnedPoints, item.state === "correct" ? points : 0))) {
+      fail(`${index + 1}번 부분점수 채점 규칙을 확인해야 합니다.`);
+    }
     if (item.reviewStatus !== "verified" && item.classificationStatus !== "verified" && item.classificationVerified !== true) {
       fail(`${index + 1}번 문항 분류가 검증되지 않았습니다.`);
     }
@@ -128,11 +132,12 @@
     const groups = new Map();
     items.forEach(function (item) {
       const label = item[property];
-      if (!groups.has(label)) groups.set(label, { label, correctCount: 0, questionCount: 0, wrongNumbers: [] });
+      if (!groups.has(label)) groups.set(label, { label, correctCount: 0, questionCount: 0, wrongNumbers: [], blankNumbers: [] });
       const group = groups.get(label);
       group.questionCount += 1;
       if (item.state === "correct") group.correctCount += 1;
-      else group.wrongNumbers.push(item.number);
+      else if (item.state === "wrong") group.wrongNumbers.push(item.number);
+      else if (item.state === "blank") group.blankNumbers.push(item.number);
     });
     return Array.from(groups.values(), function (group) {
       return Object.assign(group, { rate: percentage(group.correctCount, group.questionCount) });
@@ -239,10 +244,12 @@
         !sameNumber(previous.totalPoints, totalPoints) || !sameNumber(previous.score, score) || !sameNumber(previous.accuracy, accuracy)) {
       fail("직전 회차 합계가 문항 결과와 일치하지 않습니다.");
     }
-    const groups = { shaky: [], unresolved: [], resolved: [], stable: [] };
+    const groups = { shaky: [], unresolved: [], resolved: [], stable: [], not_attempted: [], newly_attempted: [] };
     normalizedItems.forEach(function (previousItem, index) {
       const currentItem = items[index];
-      if (previousItem.state === "correct" && currentItem.state === "wrong") groups.shaky.push(currentItem.number);
+      if (currentItem.state === "blank") groups.not_attempted.push(currentItem.number);
+      else if (previousItem.state === "blank") groups.newly_attempted.push(currentItem.number);
+      else if (previousItem.state === "correct" && currentItem.state === "wrong") groups.shaky.push(currentItem.number);
       else if (previousItem.state === "wrong" && currentItem.state === "wrong") groups.unresolved.push(currentItem.number);
       else if (previousItem.state === "wrong" && currentItem.state === "correct") groups.resolved.push(currentItem.number);
       else groups.stable.push(currentItem.number);
@@ -261,7 +268,14 @@
     };
   }
 
-  function validateAggregateEvidence(value, aggregates) {
+  function domainPoints(items, label) {
+    const matches = items.filter(function (item) { return item.domain === label; });
+    const totalPoints = matches.reduce(function (sum, item) { return sum + item.points; }, 0);
+    const earnedPoints = matches.reduce(function (sum, item) { return sum + (item.state === "correct" ? item.points : 0); }, 0);
+    return { earnedPoints, totalPoints, earnedRate: percentage(earnedPoints, totalPoints) };
+  }
+
+  function validateAggregateEvidence(value, aggregates, items) {
     if (!value || typeof value !== "object") fail("코멘트 집계 근거가 올바르지 않습니다.");
     const dimension = DIMENSIONS[value.dimension];
     const label = text(value.label, "코멘트 집계 라벨", 160);
@@ -272,7 +286,16 @@
     if (dimension === "overall" && (!sameNumber(value.score, row.score) || !sameNumber(value.totalPoints, row.totalPoints))) {
       fail("종합 코멘트의 점수 근거가 일치하지 않습니다.");
     }
-    return {
+    let weighted = {};
+    if (own(value, "selectionBasis")) {
+      if (value.selectionBasis !== "earned-points" || dimension !== "domain") fail("영역 코멘트의 비교 기준이 올바르지 않습니다.");
+      weighted = domainPoints(items, label);
+      if (["earnedPoints", "totalPoints", "earnedRate"].some(function (key) {
+        return typeof value[key] !== "number" || !Number.isFinite(value[key]) || !sameNumber(value[key], weighted[key]);
+      })) fail("영역 코멘트의 배점 근거가 일치하지 않습니다.");
+      weighted.selectionBasis = "earned-points";
+    }
+    return Object.assign({
       dimension,
       label,
       correctCount: row.correctCount,
@@ -280,7 +303,7 @@
       rate: row.rate,
       score: dimension === "overall" ? row.score : undefined,
       totalPoints: dimension === "overall" ? row.totalPoints : undefined
-    };
+    }, weighted);
   }
 
   function validateComparisonEvidence(value, comparison) {
@@ -305,7 +328,7 @@
     return { status: "approved", setId: text(value.setId, "유사문제 세트", 160) };
   }
 
-  function validateComments(comments, items, aggregates, comparison, correctCount, wrongCount) {
+  function validateComments(comments, items, aggregates, comparison, correctCount, wrongCount, blankCount) {
     if (!Array.isArray(comments) || !comments.length) fail("근거가 있는 학습 코멘트가 없습니다.");
     const itemByNumber = new Map(items.map(function (item) { return [item.number, item]; }));
     const present = new Set();
@@ -319,7 +342,7 @@
         itemNumbers = exactNumbers(source.itemNumbers, "학습 코멘트");
         if (itemNumbers.some(function (number) { return !itemByNumber.has(number); })) fail("학습 코멘트 문항 근거가 시험 범위를 벗어났습니다.");
       }
-      if (own(source, "aggregate")) aggregateEvidence = validateAggregateEvidence(source.aggregate, aggregates);
+      if (own(source, "aggregate")) aggregateEvidence = validateAggregateEvidence(source.aggregate, aggregates, items);
       if (own(source, "comparison")) comparisonEvidence = validateComparisonEvidence(source.comparison, comparison);
       if (!itemNumbers && !aggregateEvidence && !comparisonEvidence) fail("학습 코멘트가 검증된 근거에 연결되지 않았습니다.");
       if (itemNumbers && aggregateEvidence && aggregateEvidence.dimension !== "overall" && itemNumbers.some(function (number) {
@@ -331,17 +354,26 @@
       if (comment.type === "summary" && (!aggregateEvidence || aggregateEvidence.dimension !== "overall")) fail("종합 코멘트는 전체 합계에 연결되어야 합니다.");
       if (comment.type === "strength") {
         if (!aggregateEvidence || aggregateEvidence.dimension === "overall") fail("강점 코멘트는 분류 집계에 연결되어야 합니다.");
-        const maxRate = Math.max.apply(null, aggregates[aggregateEvidence.dimension].map(function (row) { return row.rate; }));
-        if (aggregateEvidence.rate !== maxRate) fail("강점 코멘트가 가장 안정적인 집계와 일치하지 않습니다.");
+        const weighted = aggregateEvidence.selectionBasis === "earned-points";
+        const maxRate = Math.max.apply(null, aggregates[aggregateEvidence.dimension].map(function (row) { return weighted ? domainPoints(items, row.label).earnedRate : row.rate; }));
+        if ((weighted ? aggregateEvidence.earnedRate : aggregateEvidence.rate) !== maxRate) fail("강점 코멘트가 가장 안정적인 집계와 일치하지 않습니다.");
       }
       if (comment.type === "weakness") {
         if (!aggregateEvidence || aggregateEvidence.dimension === "overall" || aggregateEvidence.rate >= 100) fail("약점 코멘트는 오답이 있는 분류 집계에 연결되어야 합니다.");
-        const minRate = Math.min.apply(null, aggregates[aggregateEvidence.dimension].map(function (row) { return row.rate; }));
-        if (aggregateEvidence.rate !== minRate) fail("약점 코멘트가 가장 낮은 집계와 일치하지 않습니다.");
+        const currentRow = aggregates[aggregateEvidence.dimension].find(function (row) { return row.label === aggregateEvidence.label; });
+        if (!currentRow || !currentRow.wrongNumbers.length) fail("약점 코멘트는 실제 오답이 있는 분류에만 연결할 수 있습니다.");
+        const weighted = aggregateEvidence.selectionBasis === "earned-points";
+        const minRate = Math.min.apply(null, aggregates[aggregateEvidence.dimension].filter(function (row) { return row.wrongNumbers.length; })
+          .map(function (row) { return weighted ? domainPoints(items, row.label).earnedRate : row.rate; }));
+        if ((weighted ? aggregateEvidence.earnedRate : aggregateEvidence.rate) !== minRate) fail("약점 코멘트가 가장 낮은 집계와 일치하지 않습니다.");
       }
       if (comment.type === "domain-specific" && (!aggregateEvidence || aggregateEvidence.dimension !== "domain")) fail("영역 코멘트는 영역별 집계에 연결되어야 합니다.");
       if (comment.type === "item-prescription") {
         if (!itemNumbers || itemNumbers.some(function (number) { return itemByNumber.get(number).state !== "wrong"; })) fail("오답 처방은 오답 문항에만 연결할 수 있습니다.");
+      }
+      if (comment.type === "unattempted") {
+        const blanks = items.filter(function (item) { return item.state === "blank"; }).map(function (item) { return item.number; });
+        if (!itemNumbers || itemNumbers.join(",") !== blanks.join(",")) fail("미응시 안내는 실제 빈 답안 전체에만 연결할 수 있습니다.");
       }
       if (comment.type === "next-action" && !aggregateEvidence && (!itemNumbers || itemNumbers.every(function (number) { return itemByNumber.get(number).state === "correct"; }))) {
         fail("다음 행동 코멘트는 보완 근거에 연결되어야 합니다.");
@@ -357,9 +389,11 @@
         similarProblemSet
       };
     });
-    const required = ["summary", "domain-specific", "next-action"];
+    const required = ["summary", "next-action"];
+    if (correctCount || wrongCount) required.push("domain-specific");
     if (correctCount) required.push("strength");
     if (wrongCount) required.push("weakness", "item-prescription");
+    if (blankCount) required.push("unattempted");
     if (comparison) required.push("round-comparison");
     required.forEach(function (type) { if (!present.has(type)) fail(`필수 학습 코멘트(${type})가 없습니다.`); });
     return result;
@@ -496,7 +530,8 @@
     });
     const items = sourceItems.map(validateItem);
     const correctCount = items.filter(function (item) { return item.state === "correct"; }).length;
-    const wrongCount = items.length - correctCount;
+    const wrongCount = items.filter(function (item) { return item.state === "wrong"; }).length;
+    const blankCount = items.filter(function (item) { return item.state === "blank"; }).length;
     const totalPoints = items.reduce(function (sum, item) { return sum + item.points; }, 0);
     const score = items.reduce(function (sum, item) { return sum + (item.state === "correct" ? item.points : 0); }, 0);
     const accuracy = percentage(correctCount, items.length);
@@ -504,6 +539,9 @@
       fail("서버 채점 합계가 문항별 결과와 일치하지 않습니다.");
     }
     if (own(report, "wrongCount") && report.wrongCount !== wrongCount) fail("서버 오답 합계가 문항별 결과와 일치하지 않습니다.");
+    if ((blankCount && !own(report, "blankCount")) || (own(report, "blankCount") && report.blankCount !== blankCount)) {
+      fail("서버 미응시 합계가 문항별 결과와 일치하지 않습니다.");
+    }
     const aggregates = {
       overall: overallAggregate(items, correctCount, score, totalPoints),
       domain: aggregate(items, "domain"),
@@ -523,10 +561,13 @@
       submittedAt,
       score
     }, items, totalPoints);
-    const comments = validateComments(report.comments, items, aggregates, previousAttempt, correctCount, wrongCount);
+    const comments = validateComments(report.comments, items, aggregates, previousAttempt, correctCount, wrongCount, blankCount);
     const cutline = validateCutlineDecision(report.cutlineDecision, context && context.cutlinePolicies, exam, items, score, totalPoints, correctCount);
+    if (own(report, "displayName") && typeof report.displayName !== "string") fail("학생 표시 이름이 올바르지 않습니다.");
+    const displayName = own(report, "displayName") ? text(report.displayName, "학생 표시 이름", 80) : null;
     return {
       attemptId: expectedAttemptId,
+      displayName,
       examId,
       examTitle: exam.title,
       submittedAt,
@@ -535,6 +576,7 @@
       questionCount: items.length,
       correctCount,
       wrongCount,
+      blankCount,
       totalPoints,
       score,
       accuracy,

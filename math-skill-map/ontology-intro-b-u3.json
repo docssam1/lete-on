@@ -1,0 +1,347 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v113",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 B",
+    "unit": 3,
+    "title": "도형 나누기",
+    "printedPages": [
+      24,
+      31
+    ],
+    "sourceActivityBlocks": 16
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 399,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "skillActionCandidatesReused": 8,
+    "activitySkillRelationsReused": 16,
+    "conditionalDifficultyBandsReused": 16,
+    "validatedStudentResponses": 14,
+    "workedRepresentativeExamplesExcluded": 2,
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "teacherApprovedDifficultyLevels": 0
+  },
+  "skills": [
+    {
+      "id": "GEO-INTRO-B-14",
+      "name": "합동인 여러 조각으로 도형 나누기",
+      "domain": "평면도형·분할과 덮기",
+      "observableAction": "주어진 평면도형을 지정된 수의 서로 합동인 조각으로 나누는 선을 찾는다.",
+      "evidenceItemIds": [
+        "1031-unit3-block-030",
+        "1031-unit3-block-031",
+        "1031-unit3-block-032",
+        "1031-unit3-block-033",
+        "1031-unit3-block-034",
+        "1031-unit3-block-035",
+        "1031-unit3-block-036",
+        "1031-unit3-block-037",
+        "1031-unit3-block-038"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "GEO-INTRO-B-15",
+      "name": "격자 도형의 합동 분할 방법 찾기",
+      "domain": "평면도형·분할과 덮기",
+      "observableAction": "격자선을 따라 도형을 두 합동 부분으로 나누고 서로 다른 분할을 탐색한다.",
+      "evidenceItemIds": [
+        "1031-unit3-block-039"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "GEO-INTRO-B-16",
+      "name": "겹치지 않게 단위 도형 최대 배치하기",
+      "domain": "평면도형·분할과 덮기",
+      "observableAction": "격자 영역에서 단위 도형끼리 겹치지 않도록 놓아 배치 개수를 최대화한다.",
+      "evidenceItemIds": [
+        "1031-unit3-block-040"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "GEO-INTRO-B-17",
+      "name": "제약이 있는 격자 영역 빈틈없이 덮기",
+      "domain": "평면도형·분할과 덮기",
+      "observableAction": "장애 칸과 회전 가능한 블록 조건을 지키며 목표 격자 영역을 빈틈없이 채운다.",
+      "evidenceItemIds": [
+        "1031-unit3-block-041"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "GEO-INTRO-B-18",
+      "name": "격자 속 지정 무늬의 개수 세기",
+      "domain": "평면도형·분할과 덮기",
+      "observableAction": "큰 격자 안에서 지정된 작은 무늬가 나타나는 위치를 중복 없이 세어 센다.",
+      "evidenceItemIds": [
+        "1031-unit3-block-042"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "GEO-INTRO-B-19",
+      "name": "기준 도형으로 덮을 조각 수 구하기",
+      "domain": "평면도형·분할과 덮기",
+      "observableAction": "기준 조각과 목표 외곽을 비교하여 목표를 덮는 데 필요한 조각 수를 구한다.",
+      "evidenceItemIds": [
+        "1031-unit3-block-043"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "GEO-INTRO-B-20",
+      "name": "수의 합 조건을 함께 만족하도록 분할하기",
+      "domain": "평면도형·분할과 덮기",
+      "observableAction": "도형을 합동 조각으로 나누면서 각 조각에 속한 숫자 합도 같게 만든다.",
+      "evidenceItemIds": [
+        "1031-unit3-block-044"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    },
+    {
+      "id": "GEO-INTRO-B-21",
+      "name": "대칭으로 같은 분할을 묶어 경우 세기",
+      "domain": "평면도형·분할과 덮기",
+      "observableAction": "회전·뒤집기로 서로 같아지는 절단 결과를 하나로 취급하여 분할 방법 수를 센다.",
+      "evidenceItemIds": [
+        "1031-unit3-block-045"
+      ],
+      "status": "source-bound-skill-candidate-needs-review"
+    }
+  ],
+  "activities": {
+    "1031-unit3-block-030": {
+      "page": 25,
+      "label": "도입 01",
+      "skillIds": [
+        "GEO-INTRO-B-14"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-031": {
+      "page": 25,
+      "label": "도입 01-1",
+      "skillIds": [
+        "GEO-INTRO-B-14"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-032": {
+      "page": 25,
+      "label": "도입 02",
+      "skillIds": [
+        "GEO-INTRO-B-14"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-033": {
+      "page": 25,
+      "label": "도입 02-1",
+      "skillIds": [
+        "GEO-INTRO-B-14"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-034": {
+      "page": 26,
+      "label": "대표문제 01",
+      "skillIds": [
+        "GEO-INTRO-B-14"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-035": {
+      "page": 26,
+      "label": "유제 01",
+      "skillIds": [
+        "GEO-INTRO-B-14"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-036": {
+      "page": 27,
+      "label": "대표문제 02",
+      "skillIds": [
+        "GEO-INTRO-B-14"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-037": {
+      "page": 27,
+      "label": "유제 02",
+      "skillIds": [
+        "GEO-INTRO-B-14"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-038": {
+      "page": 28,
+      "label": "연습문제 01",
+      "skillIds": [
+        "GEO-INTRO-B-14"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-039": {
+      "page": 28,
+      "label": "연습문제 02",
+      "skillIds": [
+        "GEO-INTRO-B-15"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-040": {
+      "page": 29,
+      "label": "연습문제 03",
+      "skillIds": [
+        "GEO-INTRO-B-16"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-041": {
+      "page": 29,
+      "label": "연습문제 04",
+      "skillIds": [
+        "GEO-INTRO-B-17"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-042": {
+      "page": 30,
+      "label": "연습문제 05",
+      "skillIds": [
+        "GEO-INTRO-B-18"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-043": {
+      "page": 30,
+      "label": "연습문제 06",
+      "skillIds": [
+        "GEO-INTRO-B-19"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-044": {
+      "page": 31,
+      "label": "심화문제 01",
+      "skillIds": [
+        "GEO-INTRO-B-20"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit3-block-045": {
+      "page": 31,
+      "label": "심화문제 02",
+      "skillIds": [
+        "GEO-INTRO-B-21"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "5",
+      "minimumCurriculumLevel": null
+    }
+  },
+  "spiralRelationCandidates": [
+    {
+      "id": "SPIRAL-GEO-PARTITION-FROM-COMPOSITE",
+      "fromSkillId": "GEO-INTRO-B-04",
+      "toSkillId": "GEO-INTRO-B-14",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "도형의 부분과 전체를 비교하고 경계선을 추론한다.",
+      "addedDemand": "전체를 둘 이상의 합동 조각으로 분할하고 조각 수·모양 조건을 함께 만족한다.",
+      "status": "hypothesis-needs-teacher-review"
+    },
+    {
+      "id": "SPIRAL-GEO-TRANSFORM-TO-TILE",
+      "fromSkillId": "GEO-INTRO-B-12",
+      "toSkillId": "GEO-INTRO-B-17",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "같은 도형에 변환을 적용하고 결과 모양을 비교한다.",
+      "addedDemand": "회전 가능한 조각을 장애 칸이 있는 격자 영역에 배치해 빈틈없이 채운다.",
+      "status": "hypothesis-needs-teacher-review"
+    },
+    {
+      "id": "SPIRAL-GEO-CONGRUENT-TO-ARITHMETIC-PARTITION",
+      "fromSkillId": "GEO-INTRO-B-14",
+      "toSkillId": "GEO-INTRO-B-20",
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "합동인 조각으로 전체를 등분한다.",
+      "addedDemand": "각 조각의 수 합까지 같게 하는 조건을 동시에 만족한다.",
+      "status": "hypothesis-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only; teacher approval pending",
+    "candidateBandDistribution": {
+      "2": 4,
+      "3": 3,
+      "4": 8,
+      "5": 1
+    }
+  },
+  "curriculum": {
+    "officialGradeBandContext": [
+      "초등 3–4학년군"
+    ],
+    "minimumCurriculumAssignments": 0,
+    "note": "공식 성취기준은 내용 맥락이며 문항별 최소 수준 판정이 아니다."
+  },
+  "answerValidation": {
+    "sameBookAnswerKeyPages": [
+      110,
+      111
+    ],
+    "studentResponsesValidated": 14,
+    "workedRepresentativeExamplesExcluded": 2,
+    "exactAnswerValuesOmitted": true
+  },
+  "privacy": "정답 값, OCR 문구, 로컬 경로, 원자료 이미지 해시는 공개 자료에 포함하지 않는다. 행동·나선·난이도는 후보 상태."
+}

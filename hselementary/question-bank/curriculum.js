@@ -1311,6 +1311,41 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
           }))
         },
         {
+          name: "어림하기 · 개념탐구 2 원문 분류",
+          types: [
+            ["exploration", "개념탐구 2", "올림·버림·반올림하여 나타내기", "source52RoundingExploration2"],
+            ["example-2-1", "예제 2-1", "올림과 반올림의 결과가 같은 수 찾기", "source52RoundingExample21"],
+            ["example-2-2", "예제 2-2", "각각 어림한 인구의 합과 실제 합의 어림값 비교하기", "source52RoundingExample22"],
+            ["example-2-3", "예제 2-3", "두 자리 어림 조건을 모두 만족하는 수 찾기", "source52RoundingExample23"],
+            ["example-2-4", "예제 2-4", "숫자 조건과 반올림 결과로 빈 숫자 구하기", ""]
+          ].map(([suffix, sourceItemLabel, name, generatorKey]) => ({
+            id: `5-2-u1-e2-${suffix}`,
+            name,
+            sourceItemId: `5-2-u1-e2-${suffix}`,
+            sourceItemLabel,
+            sourceSection: suffix === "exploration" ? "exploration" : "example",
+            sourceTier: "advanced",
+            sourcePdfPage: 4,
+            sourcePrintedPage: 6,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e2-direct-review-20261019",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: generatorKey ? "independent-calculation-user-authorized" : "ambiguous-source-condition",
+            reviewLocked: !generatorKey,
+            reviewReason: generatorKey
+              ? "원문 조건과 정답을 독립 계산했습니다. 공식 출판사 답안 대조 여부는 별도로 유지합니다."
+              : "원문은 숫자 자릿수의 0 허용 여부를 명시하지 않아 둘째 숫자 답이 하나로 정해지지 않습니다. 원문 문구 검토 전까지 잠급니다.",
+            ...(generatorKey ? {
+              generatorKey,
+              generationMode: "fixed-verified-pool",
+              verifiedVariantTarget: 3,
+              verifiedVariantCount: 3,
+              answerVisualRequired: false,
+              answerVisualStatus: "not-required"
+            } : {})
+          }))
+        },
+        {
           name: "수의 범위 · Mission 1–6 원문 연결",
           types: [
             ["1", "겹치는 두 범위에 들어가는 수와 두 수의 합"],

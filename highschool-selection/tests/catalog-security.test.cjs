@@ -55,7 +55,11 @@ test("WM middle2-1 entry is a separate corrected 40-item locked blueprint", () =
   assert.equal(exam.sourceStatus, "official_structure_verified");
   assert.equal(exam.answerStatus, "not_authored");
   assert.equal(exam.releaseStatus, "blocked");
-  assert.deepEqual(Array.from(exam.sourceCandidates, item => item.poolId), ["HS_G7", "DP_G7", "AG_G7_OOP", "HX_G7_OOP", "SM_G7_OOP"]);
+  assert.deepEqual(Array.from(exam.sourceCandidates, item => item.poolId), ["HS_G7", "SW_G7", "DP_G7", "AG_G7_OOP", "BL_G7_2025", "LIMITED_G7_OOP", "SUPERMATH_G7_OOP", "MATHGOD_G7_OOP", "LINEUP_GEO_MIDDLE_OOP", "DD_HIGH_G7", "HX_G7_OOP", "INSIGHT_G7_OOP"]);
+  assert.equal(exam.sourceDiversityStatus, "pending");
+  assert.deepEqual(Array.from(exam.requiredSourceLineup), ["HS_G7", "SW_G7", "LIMITED_G7_OOP", "SUPERMATH_G7_OOP", "MATHGOD_G7_OOP", "DD_HIGH_G7"]);
+  assert.equal(exam.sourcePortfolioAcrossFourRounds.length, 12);
+  assert.deepEqual([exam.difficultyMix.standard, exam.difficultyMix.raised, exam.difficultyMix.lowered, exam.difficultyMix.level], [16, 24, 0, "highest"]);
   assert.equal(exam.note.includes("35/50"), false);
 });
 

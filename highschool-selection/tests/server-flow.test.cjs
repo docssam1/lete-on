@@ -226,6 +226,38 @@ test("SH-R01 completes login, schema, submission and no-store diagnostic report 
   assert.equal(validated.cutline.available, false);
 });
 
+test("submitted blanks remain unattempted in the private report rather than becoming mistakes", async t => {
+  const env = await start();
+  t.after(() => env.server.close());
+  const auth = await login(env.base);
+  const schemaResponse = await fetch(`${env.base}/exams/${EXAM_ID}/response-schema`, { headers: { Cookie: auth.cookie } });
+  assert.equal(schemaResponse.status, 200);
+  const schema = await schemaResponse.json();
+  const answers = payloadFrom(schema);
+  answers[0].value = "";
+  answers[1].value = "not-correct";
+  const submit = await fetch(`${env.base}/exams/${EXAM_ID}/attempts`, {
+    method: "POST", headers: { Cookie: auth.cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ answers })
+  });
+  assert.equal(submit.status, 201);
+  const { attemptId } = await submit.json();
+  const response = await fetch(`${env.base}/attempts/${attemptId}/report`, { headers: { Cookie: auth.cookie } });
+  assert.equal(response.status, 200);
+  const report = await response.json();
+  safeWalk(report);
+  const validated = reportSecurity.validateReport(report, {
+    attemptId, session: { studentId: "student_a" },
+    catalog: { exams: [{ id: EXAM_ID, title: "황소 고등 선발 대비 1회", questionCount: 40,
+      programId: "SH", curriculumVersion: "2022-revised", releaseStatus: "released",
+      answerStatus: "verified", classificationStatus: "verified" }] }
+  });
+  assert.deepEqual(validated.items.slice(0, 2).map(item => item.state), ["blank", "wrong"]);
+  assert.deepEqual([validated.correctCount, validated.wrongCount, validated.blankCount], [38, 1, 1]);
+  assert.equal(validated.score, 38);
+  assert.equal(validated.weakPriorities.some(item => item.evidence.includes(1)), false);
+});
+
 test("all student endpoints fail closed before the full private release gate is complete", async t => {
   const root = makePages();
   const env = await start({ root, config: privateConfig(root, false) });

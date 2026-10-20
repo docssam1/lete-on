@@ -1,0 +1,262 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v86",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre B",
+    "unit": 4,
+    "title": "도형의 연결 상태 · 한붓 경로·연결 불변량·노선도 추상화",
+    "printedPages": [
+      37,
+      43
+    ],
+    "sourceActivityBlocks": 10,
+    "visuallyReviewedPages": 7,
+    "answerValidated": true
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 852,
+    "activitiesInReviewQueue": 0,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 88,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 10,
+    "activitySkillRelations": 10,
+    "newActionCandidates": 5,
+    "conditionalDifficultyBands": 10,
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumLevelCandidates": 10,
+    "unresolvedMinimumCurriculumCandidates": 10,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 10,
+    "directSomaCrossReferences": 0,
+    "itemsWithoutDirectSomaRow": 10,
+    "catalogActionCrosswalkCandidates": 3,
+    "teacherApprovedTypeEquivalences": 0,
+    "sourceReviewNeededActivities": 1,
+    "minimumCurriculumAssignments": 0
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "EULER-TRAVERSE-PREB4-01",
+      "n": 5,
+      "area": "combinatorics",
+      "title": "모든 선을 한 번씩 지나는 경로 구성",
+      "difficulty": "2–3–4",
+      "count": 3,
+      "desc": "연결 그림의 각 선을 중복 없이 한 번씩 지나도록 경로를 구성하고 시작·끝점을 정한다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "37–41쪽",
+      "curriculum": "초등 1–2학년군 내용 후보"
+    },
+    {
+      "id": "EULER-FEASIBILITY-PREB4-01",
+      "n": 6,
+      "area": "combinatorics",
+      "title": "홀수 차수 점으로 한붓그리기 가능성 판정",
+      "difficulty": "3–4",
+      "count": 2,
+      "desc": "그림의 각 점에 만나는 선 수를 세고 홀수점 수로 한붓그리기 가능성을 판정한다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "39–41쪽",
+      "curriculum": "초등 1–2학년군 내용 후보"
+    },
+    {
+      "id": "TOPO-TRANSFORM-PREB4-01",
+      "n": 31,
+      "area": "spatial",
+      "title": "연결·고리·분기 보존으로 모양 비교",
+      "difficulty": "3–4",
+      "count": 3,
+      "desc": "자르거나 다시 잇지 않는 연속 변형에서 끝점·고리·분기와 연결 관계를 비교해 같은 구조를 찾는다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "38–42쪽",
+      "curriculum": "초등 3–4학년군 내용 후보"
+    },
+    {
+      "id": "EULER-REPAIR-PREB4-01",
+      "n": 8,
+      "area": "combinatorics",
+      "title": "선 추가로 한붓그리기 조건 복구",
+      "difficulty": "5",
+      "count": 1,
+      "desc": "홀수점의 짝을 바꾸는 새 선의 양 끝점을 선택해 한붓그리기가 가능하도록 연결 그림을 수정한다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "42–42쪽",
+      "curriculum": "초등 1–2학년군 내용 후보"
+    },
+    {
+      "id": "NETWORK-ABSTRACT-PREB4-01",
+      "n": 32,
+      "area": "spatial",
+      "title": "노선 연결만 남겨 간단한 연결도로 표현",
+      "difficulty": "5",
+      "count": 1,
+      "desc": "실제 지도에서 지형 세부를 덜어 내고 역과 노선의 연결 관계를 보존한 간단한 노선도를 구성한다.",
+      "links": [
+        "후보 · 교사 검토 전"
+      ],
+      "pages": "43–43쪽",
+      "curriculum": "초등 3–4학년군 내용 후보"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "5"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "5"
+        ]
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "supporting-content-context-only; minimum-grade-unassigned",
+    "candidateActivities": 10,
+    "unresolvedActivities": 10,
+    "confirmedAssignments": 0,
+    "contexts": [
+      "2수01-01",
+      "2수03-03"
+    ],
+    "note": "짝수·홀수와 기본 평면도형은 내용 맥락 후보이며, 그래프 이론·노선도 추상화의 최소 학년으로 확정하지 않았다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "FAMILY-GRAPH-CONNECTION-AND-ROUTES",
+        "label": "연결 그림·한붓 경로·위상 변형 계통 후보",
+        "memberSkillIds": [
+          "EULER-TRAVERSE-PREB4-01",
+          "EULER-FEASIBILITY-PREB4-01",
+          "TOPO-TRANSFORM-PREB4-01",
+          "EULER-REPAIR-PREB4-01",
+          "NETWORK-ABSTRACT-PREB4-01"
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "from": "EULER-TRAVERSE-PREB4-01",
+        "to": "EULER-FEASIBILITY-PREB4-01",
+        "type": "spiral-extension-candidate",
+        "basis": "주어진 길을 실제로 따라 그리는 행동에서 여러 그림의 가능성을 차수 조건으로 판정하는 행동으로 확장될 수 있다. 선수 관계는 미승인.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "EULER-FEASIBILITY-PREB4-01",
+        "to": "EULER-REPAIR-PREB4-01",
+        "type": "spiral-extension-candidate",
+        "basis": "홀수점 수로 가능 여부를 판정한 뒤 선을 추가해 조건을 바꾸는 활동으로 확장될 수 있다. 선수 관계는 미승인.",
+        "status": "hypothesis-needs-teacher-review"
+      }
+    ]
+  },
+  "crossReferences": {
+    "catalogCandidates": [
+      {
+        "skillId": "EULER-TRAVERSE-PREB4-01",
+        "catalogCode": "05-005",
+        "recordRow": 610,
+        "relation": "same-action-candidate",
+        "basis": "프리미어 초급 원자료 610행은 모든 선을 한 번씩 지나는 한붓그리기를 직접 기록한다. Pre B의 그림·조건과 행동이 맞는 후보이나 교재 간 등가 승인 전이다."
+      },
+      {
+        "skillId": "EULER-FEASIBILITY-PREB4-01",
+        "catalogCode": "05-006",
+        "recordRow": 611,
+        "relation": "same-action-candidate",
+        "basis": "프리미어 초급 원자료 611행은 가능한 한붓그림을 모두 표시하는 행동을 기록한다. 본문 후보와 직접 행동 대응으로 연결하되 등가 유형 승인은 보류한다."
+      },
+      {
+        "skillId": "EULER-REPAIR-PREB4-01",
+        "catalogCode": "05-005",
+        "recordRow": 610,
+        "relation": "related-but-distinct-candidate",
+        "basis": "선 추가로 홀수 차수를 바꾸는 그래프 수정은 주어진 선을 한 번씩 지나는 실행과 관련되지만 추가 조작 행동이 있으므로 구별한다."
+      }
+    ],
+    "directSomaRows": 0,
+    "itemsWithoutDirectSomaRow": 10,
+    "teacherApprovedEquivalences": 0
+  },
+  "privacy": "공개 파일에 활동 식별자·OCR 원문·정답·이미지 해시·로컬 경로·개인 Drive 경로를 포함하지 않았다. 유형·난이도·교과수준·관계는 검토 후보이다. Item-level answer details and exact station network evidence remain in the private validation sidecar.",
+  "answerValidation": {
+    "activitiesValidated": 10,
+    "answerKeyPdfPages": [
+      16,
+      17,
+      18,
+      19
+    ],
+    "sourceImageHighResolutionReview": {
+      "printedPage": 43,
+      "renderDpi": 240
+    },
+    "method": "visually cross-checked rendered answer key and source page",
+    "openConstructionMayHaveMultipleValidAnswers": true,
+    "exactAnswerValuesOmitted": true
+  }
+}

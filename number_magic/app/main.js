@@ -662,12 +662,17 @@ function updateLiveFill(sel,vals){
   math(fillLiveTex(tex,vals),spans[0]);
 }
 let _ttsCache={};
+/* 음성 파일 위치 — 저장소를 옮기면(Supabase → Cloudflare R2) NM_AUDIO_BASE 한 줄만 바꾼다.
+   tts-map.js 안의 주소는 생성기(scripts/generate-nm-audio.js)가 다시 읽으므로 원래 주소 그대로 두고, 재생할 때 앞부분만 바꿔 끼운다. */
+const NM_SUPABASE_PUBLIC='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/';
+const NM_AUDIO_BASE=NM_SUPABASE_PUBLIC;
+const assetUrl=(u)=>(u&&u.startsWith(NM_SUPABASE_PUBLIC)?NM_AUDIO_BASE+u.slice(NM_SUPABASE_PUBLIC.length):u);
 function say(text){
   if(!text)return;
   const lang=S.lang||'ko';
   /* 2026-09-29 — OmniVoice 복제 음성(data/tts-map-omni.js)이 먼저, 없으면 구글(tts-map.js), 그다음 기기 음성 */
   const omni=window.NM_TTS_OMNI,map=window.NM_TTS_MAP;
-  const url=(omni&&omni[lang]&&omni[lang][text])||(map&&map[lang]&&map[lang][text]);
+  const url=assetUrl((omni&&omni[lang]&&omni[lang][text])||(map&&map[lang]&&map[lang][text]));
   if(url){
     try{
       speechSynthesis.cancel();

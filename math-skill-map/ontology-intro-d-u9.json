@@ -1,0 +1,313 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v48",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 D",
+    "unit": 9,
+    "title": "차를 이용하여 풀기",
+    "printedPages": [
+      85,
+      91
+    ],
+    "sourceActivityBlocks": 16,
+    "visuallyReviewedPages": 7
+  },
+  "aggregate": {
+    "ontologyNodes": 1398,
+    "ontologyRelations": 2272,
+    "skillActionCandidates": 270,
+    "activitiesWithSkillCandidateEvidence": 515,
+    "activitiesInReviewQueue": 337,
+    "conditionalDifficultyCandidates": 531,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "newlyLinkedActivities": 10,
+    "activitySkillRelations": 17,
+    "newActivitySkillRelations": 11,
+    "newActionCandidates": 2,
+    "reusedActionCandidates": 1,
+    "conditionalDifficultyBands": 16,
+    "relationHypotheses": 4,
+    "minimumCurriculumLevelCandidates": 16,
+    "minimumCurriculumUnresolved": 0,
+    "minimumCurriculumAssignments": 0,
+    "validatedAnswers": 0,
+    "somaDirectCrossReferences": 5,
+    "somaRowsHeldBack": 4,
+    "somaNoDirectRow": 11
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "D9-PAIRSUM01",
+      "area": "relations",
+      "areaOrder": 31,
+      "label": "세 쌍의 합을 결합해 세 대상의 수량 복원하기",
+      "observableAction": "세 대상이 두 번씩 포함된 쌍별 합을 결합해 전체 합을 구하고, 한 쌍을 빼 원하는 대상의 수량을 복원한다.",
+      "activityCount": 4,
+      "printedPages": [
+        87,
+        90,
+        91
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D9-COMP01",
+      "area": "relations",
+      "areaOrder": 32,
+      "label": "전체량에서 부분합을 빼 누락 수량 복원하기",
+      "observableAction": "서로 겹치지 않는 여러 범주의 전체량에서 알려진 부분합을 빼 빠진 범주의 수량을 구한다.",
+      "activityCount": 1,
+      "printedPages": [
+        89
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "reusedSkillActions": [
+    {
+      "id": "AR05",
+      "label": "공통 묶음을 없애 차로 미지값 구하기",
+      "newEvidenceActivities": 6,
+      "unitEvidenceActivities": 12,
+      "previouslyLinkedActivities": 6,
+      "conditionalDifficultyBands": [
+        "2",
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군",
+        "초등 3–4학년군"
+      ],
+      "note": "공통 구성량을 소거하는 기존 후보를 재사용했습니다. 실제 산술 범위·표현·단계 수에 따라 최소 교과수준은 달라질 수 있습니다."
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "bandsByAction": [
+      {
+        "id": "AR05",
+        "conditionalDifficultyBands": [
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      {
+        "id": "D9-PAIRSUM01",
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "id": "D9-COMP01",
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      }
+    ],
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "strategy-context-only",
+    "minimumLevelCandidates": [
+      {
+        "candidate": "초등 1–2학년군",
+        "activityCount": 5,
+        "status": "strategy-dependent-candidate"
+      },
+      {
+        "candidate": "초등 3–4학년군",
+        "activityCount": 11,
+        "status": "strategy-dependent-candidate"
+      }
+    ],
+    "candidateActivities": 16,
+    "unresolvedActivities": 0,
+    "confirmedAssignments": 0,
+    "note": "1–2학년군 후보는 묶어 세기·동수누가·두 자리 수 덧셈·뺄셈과 직관적 차 비교를 전제합니다. 세 자리 수 계산, 곱셈·나눗셈식, 세 쌍의 합을 형식화하는 풀이에서는 3–4학년군 내용이 필요할 수 있습니다. 학년군 표시는 문항별 최저 학년 확정이 아닙니다."
+  },
+  "crossReferences": {
+    "directSomaRows": 5,
+    "heldBackRelatedRows": 4,
+    "noDirectRow": 11,
+    "minimumCurriculumConfirmed": 0,
+    "note": "세 쌍의 합 문제는 소마 D4-2 4행과 직접 주제 대응 후보, 거스름돈 문제는 C1-2 2행과 계산 맥락 대응 후보입니다. 소마 차례는 학년·선수관계를 확정하지 않습니다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "TAX-FAMILY-INTRO-D-U9-COMPOSITE-RELATIONS",
+        "label": "합성량의 차·쌍별 합·전체 보완 관계",
+        "memberSkillIds": [
+          "AR05",
+          "D9-PAIRSUM01",
+          "D9-COMP01"
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "from": "AR05",
+        "to": "D9-PAIRSUM01",
+        "type": "related-but-distinct",
+        "basis": "AR05는 두 합성량에서 공통 구성 항을 지워 차를 구하고, D9-PAIRSUM01은 세 쌍의 합에서 각 대상이 두 번씩 등장하는 구조를 결합한다. 일부 풀이 연산은 비슷하지만 입력 관계와 복원 절차가 달라 별도 행동 후보로 둔다."
+      },
+      {
+        "from": "AR05",
+        "to": "D9-COMP01",
+        "type": "related-but-distinct",
+        "basis": "두 행동 모두 뺄셈을 쓰지만 AR05는 두 묶음에 공통으로 있는 구성량을 상쇄하고, D9-COMP01은 서로 겹치지 않는 전체와 알려진 부분합의 여집합을 구한다."
+      },
+      {
+        "from": "D9-PAIRSUM01",
+        "to": "D9-COMP01",
+        "type": "related-but-distinct",
+        "basis": "둘 다 합성 수량에서 미지량을 복원하지만 쌍별 합을 결합하는 관계와 전체에서 부분합을 빼는 관계는 다르다."
+      },
+      {
+        "from": "D9-PAIRSUM01",
+        "to": "AR02",
+        "type": "related-but-distinct",
+        "basis": "AR02는 두 양의 합과 차로 두 양을 복원하고, D9-PAIRSUM01은 세 양이 두 번씩 포함된 세 쌍의 합으로 세 대상을 복원한다."
+      }
+    ]
+  },
+  "curriculumSource": {
+    "status": "official-source-context-only",
+    "reference": "2022 개정 교육과정 교육부 고시 제2022-33호 별책 8",
+    "sourceDigest": "bad320409dd8dd5ee040346d8e7b55d556d12e958b7a3c92778ba0e90fc97aed",
+    "gradeBandCandidates": [
+      "초등 1–2학년군",
+      "초등 3–4학년군"
+    ],
+    "standardsContext": [
+      "2수01-06",
+      "4수01-03",
+      "4수01-04",
+      "4수01-06"
+    ],
+    "minimumGradeConfirmed": false
+  },
+  "privacy": "원문 문제·정답·해설, 활동 식별자, OCR 원문, 이미지·파일 경로와 해시는 공개하지 않았습니다. 난이도·교과수준·관계는 검토 후보입니다."
+}

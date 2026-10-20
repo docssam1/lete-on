@@ -120,6 +120,7 @@ function createMemoryStore(initial) {
 
   return {
     snapshot() { return root; },
+    listPlans() { return Object.freeze(Object.values(root.plans)); },
     assignment(ownerId) {
       const context = assignmentContext(root, ownerId);
       return Object.freeze({ plan: context.plan, assignment: context.assignment });
@@ -229,6 +230,7 @@ function createFileStore(filePath) {
   }
   return {
     snapshot() { return load(); },
+    listPlans() { return createMemoryStore(load()).listPlans(); },
     assignment(ownerId) { return createMemoryStore(load()).assignment(ownerId); },
     list(ownerId, at) { return createMemoryStore(load()).list(ownerId, at); },
     read(ownerId, examId, at) { return createMemoryStore(load()).read(ownerId, examId, at); },

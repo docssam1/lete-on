@@ -1,0 +1,267 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v45",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 D",
+    "unit": 6,
+    "title": "표 만들기",
+    "printedPages": [
+      61,
+      67
+    ],
+    "sourceActivityBlocks": 16,
+    "visuallyReviewedPages": 7
+  },
+  "aggregate": {
+    "ontologyNodes": 1383,
+    "ontologyRelations": 2206,
+    "skillActionCandidates": 257,
+    "activitiesWithSkillCandidateEvidence": 477,
+    "activitiesInReviewQueue": 375,
+    "conditionalDifficultyCandidates": 484,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "newlyLinkedActivities": 12,
+    "newActionCandidates": 6,
+    "reusedActionCandidates": 1,
+    "conditionalDifficultyBands": 16,
+    "relationHypotheses": 5,
+    "familyCandidates": 1,
+    "minimumCurriculumLevelCandidates": 14,
+    "minimumCurriculumUnresolved": 2,
+    "minimumCurriculumAssignments": 0,
+    "validatedAnswers": 0
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "D6-MULTI01",
+      "area": "relations",
+      "areaOrder": 19,
+      "label": "전체합과 배수 관계로 두 수량 복원하기",
+      "observableAction": "두 수량의 총합과 배수 관계를 동시에 표에 반영해 각 양을 찾는다.",
+      "activityCount": 2,
+      "printedPages": [
+        61
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D6-MULTI02",
+      "area": "relations",
+      "areaOrder": 20,
+      "label": "공통 기준량의 여러 배를 더해 전체 수량 찾기",
+      "observableAction": "한 기준량에서 여러 배수 수량을 만들고 전체합 조건을 만족하는 기준량을 찾는다.",
+      "activityCount": 2,
+      "printedPages": [
+        63
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D6-UNIT01",
+      "area": "relations",
+      "areaOrder": 21,
+      "label": "개수 합과 단위값 합을 함께 써서 종류별 개수 찾기",
+      "observableAction": "전체 항목 수와 항목별 단위값 총합을 함께 보존해 종류별 개수를 복원한다.",
+      "activityCount": 5,
+      "printedPages": [
+        62,
+        66,
+        67
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D6-RATE01",
+      "area": "relations",
+      "areaOrder": 22,
+      "label": "매일의 증감량을 누적해 처음 앞서는 시점 찾기",
+      "observableAction": "두 수량의 서로 다른 하루 변화량을 누적하고 처음으로 한 양이 다른 양보다 커지는 시점을 찾는다.",
+      "activityCount": 1,
+      "printedPages": [
+        64
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D6-RANGE01",
+      "area": "relations",
+      "areaOrder": 23,
+      "label": "정해진 합에서 곱의 열린 범위를 만족하는 수쌍 찾기",
+      "observableAction": "합이 고정된 정수 쌍 중 곱이 경계값 사이에 엄격히 놓이는 경우를 찾는다.",
+      "activityCount": 1,
+      "printedPages": [
+        64
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D6-MOVE01",
+      "area": "relations",
+      "areaOrder": 24,
+      "label": "앞·뒤 이동량을 부호 있는 합으로 나타내 횟수 추론하기",
+      "observableAction": "앞으로 가는 이동과 뒤로 가는 이동을 부호가 다른 변화량으로 합산해 특정 눈이 나온 횟수를 구한다.",
+      "activityCount": 1,
+      "printedPages": [
+        67
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [],
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "bandsByAction": [
+      {
+        "id": "D6-MULTI01",
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "id": "D6-MULTI02",
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "id": "D6-UNIT01",
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "id": "D6-RATE01",
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "id": "D6-RANGE01",
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      },
+      {
+        "id": "D6-MOVE01",
+        "conditionalDifficultyBands": [
+          "4"
+        ]
+      }
+    ],
+    "teacherApprovedLevels": 0
+  },
+  "curriculum": {
+    "status": "strategy-context-only",
+    "minimumLevelCandidates": 14,
+    "unresolvedActivities": 2,
+    "confirmedAssignments": 0,
+    "contextOnlyStandards": [
+      "2수01-06",
+      "2수01-07",
+      "2수01-11",
+      "4수01-04"
+    ],
+    "note": "교과 기준은 풀이 전략의 맥락 후보이며 문항 최소 학년·연령의 확정값이 아닙니다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "label": "총량과 비교관계로 미지량 복원",
+        "members": [
+          "합과 차로 두 양 복원하기",
+          "전체합과 배수 관계로 두 수량 복원하기",
+          "공통 기준량의 여러 배를 더해 전체 수량 찾기"
+        ],
+        "status": "hypothesis-needs-teacher-review",
+        "assertsEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "relations": [
+      {
+        "from": "전체합과 배수 관계로 두 수량 복원하기",
+        "to": "공통 기준량의 여러 배를 더해 전체 수량 찾기",
+        "type": "related-but-distinct",
+        "basis": "두 경우 모두 전체합과 배수 관계를 표로 검토하지만 두 대상과 여러 대상의 기준량 구성은 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "합과 차로 두 양 복원하기",
+        "to": "전체합과 배수 관계로 두 수량 복원하기",
+        "type": "related-but-distinct",
+        "basis": "합·차 관계와 합·배수 관계는 전체량을 사용하지만 두 번째 조건과 연산 행동이 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "개수 합과 단위값 합을 함께 써서 종류별 개수 찾기",
+        "to": "앞·뒤 이동량을 부호 있는 합으로 나타내 횟수 추론하기",
+        "type": "related-but-distinct",
+        "basis": "단위값을 누적하는 총합과 앞·뒤 방향이 있는 순이동은 가중 합을 쓸 수 있어도 해석 조건은 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "매일의 증감량을 누적해 처음 앞서는 시점 찾기",
+        "to": "하루 단위량을 구해 일정한 속도로 목표량의 기간 환산하기",
+        "type": "related-but-distinct",
+        "basis": "둘 다 기간별 변화량을 다루지만 한쪽은 처음 앞서는 시점을 찾고 다른 쪽은 일정 단위량으로 전체 기간을 환산한다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "정해진 합에서 곱의 열린 범위를 만족하는 수쌍 찾기",
+        "to": "전체합과 배수 관계로 두 수량 복원하기",
+        "type": "related-but-distinct",
+        "basis": "둘 다 수쌍 후보를 검토하지만 열린 곱 범위와 합·배수 등식이라는 판정 구조가 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      }
+    ]
+  },
+  "privacy": "원문 문항·답·활동 ID·파일 경로·이미지/파일 해시는 공개하지 않습니다."
+}

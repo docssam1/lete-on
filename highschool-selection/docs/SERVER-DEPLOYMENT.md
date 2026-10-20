@@ -16,6 +16,8 @@
 - `GET /practice-sets/:practiceSetId/pages` (승인 렌더 자산 연결 전 잠금)
 - `POST /practice-sets/:practiceSetId/attempts` (검수 채점기 연결 전 잠금)
 - `GET /page-assets/:examId/page-NN.png?sub=...&exp=...&sig=...`
+- `GET /user-exam-library/exams/:examId/print-manifest`
+- `GET /user-exam-assets/:examId/item-NNN.ext?sub=...&exp=...&sig=...`
 - `GET /admin/access-grants`
 - `POST /admin/access-grants`
 - `PUT /admin/access-grants/:grantId`
@@ -48,11 +50,22 @@
 | `HIGHSELECT_PRIVATE_PRACTICE_ASSETS_PATH` | 중립 문항 ID를 검수된 단일 이미지 자산에 연결하는 비공개 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_EXAM_EDITOR_REGISTRY_PATH` | 시험지 후보의 현재 버전·공개 검수 상태와 교체 근거를 보관하는 비공개 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_EXAM_DRAFTS_PATH` | 관리자 시험지 초안·revision·배치 이력을 저장하는 비공개 JSON 절대경로 |
+| `HIGHSELECT_PRIVATE_USER_EXAM_ASSETS_PATH` | 사용자 시험에 넣을 문항 ID·정확한 문항 버전·검수 이미지 해시를 연결하는 비공개 JSON 절대경로 |
 | `HIGHSELECT_PRIVATE_ACADEMY_QUESTION_DB_PATH` | 학기·대단원·소단원·세부 유형과 학원형 사용 상태를 보관하는 비공개 문항 DB 절대경로 |
 | `HIGHSELECT_PRIVATE_PROJECT_QUESTION_INDEX_PATH` | 돌파·생수·원수학·이든·황소·깊은생각 문항을 함께 찾는 비공개 공통 문항 인덱스 절대경로 |
+| `HIGHSELECT_PRIVATE_PROJECT_CONTENT_DB_PATH` | 공통 인덱스에 연결할 비공개 실제 문항 본문·풀이 DB 절대경로. 지정하지 않으면 색인 문항은 관리자 검수 후보로만 남고 사용 가능으로 판정되지 않습니다. |
+| `HIGHSELECT_PRIVATE_PROJECT_CONTENT_DB_SHA256` | 위 본문 DB의 고정 SHA-256. 파일 지문이나 `inputSha256.index`가 현재 인덱스와 다르면 로딩을 거부합니다. |
+| `HIGHSELECT_PRIVATE_PROJECT_VISUAL_AUDIT_PATH` | 원본 그림 필요 여부와 문항별 PC·모바일·A4 검수 증거를 담은 비공개 감사 JSON 절대경로. 지정하지 않으면 본문·답이 승인되어도 공통 인덱스 문항은 출제 가능으로 판정되지 않습니다. |
+| `HIGHSELECT_PRIVATE_PROJECT_VISUAL_AUDIT_SHA256` | 위 감사 파일의 고정 SHA-256. 파일 지문과 `contentDbSha256` 연결이 틀리면 로딩을 거부합니다. |
+| `HIGHSELECT_PRIVATE_PROJECT_ITEM_RELATIONS_PATH` | 검수된 정확 중복 관계를 담은 비공개 `dolpa-item-relations/v1` JSON 절대경로. 지정하면 공통 문항 검색에서 원본 출처 ID는 보존하고 동일 수학 문항만 한 번 표시합니다. |
+| `HIGHSELECT_PRIVATE_PROJECT_ITEM_RELATIONS_SHA256` | 위 관계 파일을 연결할 때 필수인 검수 완료 파일의 SHA-256. 파일 내용이 바뀌면 로딩을 거부합니다. |
 | `HIGHSELECT_PRIVATE_ACADEMY_ASSET_ROOT` | 관리자만 보는 문항 원본 페이지 폴더. 각 원본 ID 폴더 안에 `manifest.json`과 검수된 PNG를 둡니다. |
 | `HIGHSELECT_ATTEMPT_STORE_PATH` | 제출 결과 저장 JSON 절대경로 |
 | `HIGHSELECT_PUBLIC_ORIGIN` | `https://` 운영 출처. 생략 시 프록시 Host를 HTTPS로 사용 |
+
+공통 문항의 본문·정답 구조 확인(`contentVerified`)과 실제 출제 화면 확인(`presentationVerified`)은 별개입니다. 비공개 시각 감사 파일은 `private-source-visual-audit/v1` 형식으로 문항마다 원본 문항 ID, 원본 지문 SHA-256, `visualRequirement`(`none`·`table`·`diagram`·`graph`·`number_line`)을 명시합니다. 출제 승인에는 필요한 표·그림 조각이 본문에 있어야 하고, 원본 구조·단일 정답의 가시성, PC·모바일·A4 검사 결과와 산출물 SHA-256이 모두 `approved`여야 합니다. 원본 이미지와 답안은 감사 파일이나 공개 저장소에 넣지 않습니다.
+
+공통 문항 중복 제거는 유형명이나 개념군 ID만으로 하지 않습니다. 비공개 관계 파일의 `same_math_item`에 명시된 출처 문항에만 적용하며, 관계 파일의 고정 SHA-256이나 `baseIndex.sha256`이 실제 파일과 다르면 서버는 로딩을 거부합니다. 이 관계 파일은 원본 PDF와 공식 답을 대조해 별도 감사한 뒤 연결해야 합니다. 관계 파일을 연결해도 문항 승인·답안 공개·시험 조립 승인이 자동으로 생기지 않습니다.
 
 운영 쿠키는 기본적으로 `HttpOnly; Secure; SameSite=Lax`입니다. `HIGHSELECT_COOKIE_SECURE=false`는 로컬 격리 시험에서만 사용할 수 있습니다.
 
@@ -129,9 +142,13 @@ detailType, difficulty(lowered|standard|raised), evidence[]
 
 `HIGHSELECT_PRIVATE_EXAM_DRAFTS_PATH`는 `highselect-private-exam-drafts/v1` JSON입니다. 초안은 원문 문항을 복제하지 않고 배치 ID, 중립 문항 ID, 문항 버전, 순서, 배점, 교체 근거 ID만 저장합니다. 변경 요청은 관리자 세션, 같은 `Origin`, `X-Highselect-Admin: 1`, JSON 형식과 현재 초안 revision을 모두 요구합니다. 다른 화면이 먼저 저장했거나 문항 버전이 바뀌면 `409`로 닫고 자동 덮어쓰지 않습니다.
 
+`HIGHSELECT_PRIVATE_USER_EXAM_ASSETS_PATH`는 `highselect-private-user-exam-assets/v1` JSON입니다. 각 중립 문항 ID에 `assetKey`, `itemVersionId`, 비공개 이미지 절대경로, `image/png|jpeg|webp`, `sha256:` 해시를 연결합니다. 학생이 시험지를 열 때 서버는 보관된 시험의 문항 ID와 버전, 현재 승인된 문항 버전, 이미지 파일의 실제 해시를 모두 다시 확인합니다. 하나라도 다르면 시험 전체를 `423`으로 잠급니다. 통과한 문항만 학생·시험·순서·문항 버전·이미지 해시·만료시각에 묶인 짧은 서명 주소로 전달합니다. 답, 풀이, 원본 경로, 내부 자산 키와 해시는 화면 응답에 넣지 않습니다.
+
+학생 인쇄 화면의 기본 배치는 A4 2단·한 쪽 4문항입니다. 문항 순서는 왼쪽 위·아래에 1·2번, 오른쪽 위·아래에 3·4번으로 이어집니다. 모든 이미지가 로드되기 전에는 인쇄 버튼을 열지 않습니다.
+
 `HIGHSELECT_PRIVATE_ACADEMY_QUESTION_DB_PATH`는 관리자 문제은행의 `분류 문항` 탭에서만 읽습니다. 돌파형·생수형·원수학 기본형·원수학 듀얼형·이든형·황소형·깊은생각형을 서로 다른 시험형으로 관리하며, `source_verified` 또는 `approved`인 문항만 기본 검색 결과에 보입니다. 분류만 끝나고 풀이법·유사문항 검수가 남은 문항은 이 목록에서 확인할 수 있지만 시험지에 바로 담을 수 없습니다.
 
-`HIGHSELECT_PRIVATE_PROJECT_QUESTION_INDEX_PATH`가 설정되면 관리자 문제은행은 공통 인덱스를 먼저 사용합니다. 기존 돌파 DB 경로는 원본 페이지 위치 확인용으로 함께 둘 수 있습니다. 세부 유형까지 확인된 문항은 정상 분류로, 단원까지만 확인된 원수학 문항은 “세부유형 분류 전”으로 표시합니다. 분류 전 문항은 목록에서 빠뜨리지 않되 자동 시험 조립에는 넣지 않습니다.
+`HIGHSELECT_PRIVATE_PROJECT_QUESTION_INDEX_PATH`가 설정되면 관리자 문제은행은 공통 인덱스를 먼저 사용합니다. 기존 돌파 DB 경로는 원본 페이지 위치 확인용으로 함께 둘 수 있습니다. 세부 유형까지 확인된 문항은 정상 분류로, 단원까지만 확인된 원수학 문항은 “세부유형 분류 전”으로 표시합니다. 분류 전 문항은 목록에서 빠뜨리지 않되 자동 시험 조립에는 넣지 않습니다. 색인만으로는 문항 사용 승인이 생기지 않습니다. 비공개 본문 DB에서 문제·답 확인·상세 풀이와 공개 승인 상태를 검사하고, 문항 자체의 사용 승인과 해당 학원형 승인까지 모두 확인해야 `releaseEligible`이 됩니다. 현재 돌파 공수1 30문항 본문 DB v2는 비공개·잠금 상태이므로 관리자 후보 검수용이며 공개 조립용이 아닙니다.
 
 `HIGHSELECT_PRIVATE_ACADEMY_ASSET_ROOT`는 원본 전체 PDF가 아니라 문항이 있는 검수 페이지 PNG만 읽습니다. 화면에는 원본 경로나 답안 페이지를 보내지 않으며, 관리자로 로그인한 요청에서 문항 ID와 검수된 쪽 연결이 모두 맞을 때만 이미지를 전달합니다. 현재 돌파 중2-2 원본은 3~10쪽을 연결했고, 원본 PDF를 찾지 못한 회차는 버튼을 `원본 준비 중`으로 둡니다.
 

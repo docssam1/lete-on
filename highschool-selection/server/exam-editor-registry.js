@@ -58,7 +58,8 @@ function normalizeCandidate(value, key) {
   exactKeys(value, new Set([
     "id", "itemVersionId", "mode", "writer", "curriculum", "provenance", "answerVerification",
     "inputType", "generationKind", "difficultyBand", "variant", "lineage", "userApproval",
-    "singleAnswerAudit", "figureAudit", "reviewStatus", "typeCode", "domainGroup"
+    "singleAnswerAudit", "figureAudit", "reviewStatus", "typeCode", "domainGroup",
+    "variantId", "contentFingerprint"
   ]), `candidates.${key}`);
   const itemId = token(value.id, `candidates.${key}.id`);
   if (itemId !== key) fail(`candidates.${key}.id does not match key`);
@@ -75,6 +76,8 @@ function normalizeCandidate(value, key) {
     typeCode: token(value.typeCode, `candidates.${key}.typeCode`),
     difficultyBand: clean(value.difficultyBand),
     domainGroup: value.domainGroup == null || value.domainGroup === "" ? null : clean(value.domainGroup),
+    variantId: optionalToken(value.variantId, `candidates.${key}.variantId`),
+    contentFingerprint: optionalToken(value.contentFingerprint, `candidates.${key}.contentFingerprint`),
     inputType: clean(value.inputType),
     generationKind: clean(value.generationKind),
     variant: questionBankCore.createVariantRecord(Object.assign({ mode }, value.variant)),

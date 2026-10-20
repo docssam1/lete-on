@@ -1,0 +1,477 @@
+{
+  "schema": "gfield-public-math-skill-ontology-supplement/1",
+  "checkpoint": "v110",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre D",
+    "unit": 4,
+    "title": "길 찾기",
+    "printedPages": [
+      37,
+      43
+    ],
+    "visuallyReviewedPages": 7,
+    "sourceActivityBlocks": 10
+  },
+  "interpretation": {
+    "candidateOnly": true,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0,
+    "approvedDifficultyLevels": 0,
+    "validatedAnswers": 9,
+    "difficultyMeaning": "통일 5단계 기준의 조건부 연구 밴드이며 교사 검토 전이다.",
+    "gradeMeaning": "최소 교과수준은 10개 활동 모두 미확정이다. 소마 진도 행은 진행 맥락이며 문항 최소 학년이 아니다.",
+    "numberMeaning": "영역별 편성용 기존 번호를 의미 비교에만 사용하며 난이도·학습 순서·확정 공통 유형 번호로 보지 않는다."
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 357,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unitCounts": {
+    "sourceActivityBlocks": 10,
+    "mappedActivities": 10,
+    "newActionCandidates": 3,
+    "reusedActionCandidates": 0,
+    "activitySkillRelations": 10,
+    "conditionalDifficultyBands": 10,
+    "unresolvedMinimumCurriculumCandidates": 10,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 9,
+    "familyMembershipRelations": 3,
+    "relatedButDistinctRelations": 3,
+    "spiralRelationCandidates": 2,
+    "editorialNumberedTypeCrosswalkCandidates": 5,
+    "approvedCommonTypeNumberAssignments": 0,
+    "exactSomaTypeMatches": 0,
+    "somaCrossReferencedActivities": 3,
+    "relatedRowsHeldBack": 2
+  },
+  "skillCandidates": [
+    {
+      "id": "PATH-PRED4-01",
+      "area": "경우의 수·경로",
+      "areaOrderCandidate": null,
+      "label": "길망에서 최단 경로의 길이와 가짓수 찾기",
+      "observableAction": "연결망에서 최단 길이 조건을 판별하고 가능한 최단 경로를 빠짐없이 찾아 길이와 방법 수를 말한다.",
+      "activityNumbers": [
+        1,
+        2,
+        4,
+        6,
+        8,
+        9,
+        10
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "2",
+        "4",
+        "3",
+        "4",
+        "4",
+        "5"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "PATH-PRED4-02",
+      "area": "경우의 수·경로",
+      "areaOrderCandidate": null,
+      "label": "재방문 제한이 있는 연결망의 모든 경로 세기",
+      "observableAction": "최단 경로로 한정하지 않고 재방문 금지 조건 아래 연결망을 따라 가능한 경로를 열거한다.",
+      "activityNumbers": [
+        3,
+        5
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "3"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "PATH-PRED4-03",
+      "area": "경우의 수·경로",
+      "areaOrderCandidate": null,
+      "label": "연결 구조별 경로 가짓수 비교하기",
+      "observableAction": "여러 연결망의 지점·간선 구조를 읽어 가능한 경로 수를 비교하고 다른 구조를 고른다.",
+      "activityNumbers": [
+        7
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "activities": [
+    {
+      "activityNumber": 1,
+      "printedPage": 37,
+      "label": "상황 속 원리 탐구 2",
+      "observedAction": "놀이터까지 간 길의 칸 수를 비교해 A에서 B까지 가장 짧은 길이 여러 가지임을 설명한다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-01"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": false,
+      "numberedTypeLinksHeldAsCandidates": true
+    },
+    {
+      "activityNumber": 2,
+      "printedPage": 37,
+      "label": "확인 1",
+      "observedAction": "미정에서 솔이까지 가는 가장 짧은 길을 모두 그린다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-01"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": true,
+      "numberedTypeLinksHeldAsCandidates": true
+    },
+    {
+      "activityNumber": 3,
+      "printedPage": 38,
+      "label": "대표문제 1",
+      "observedAction": "준호가 학교에 가는 모든 방법을 찾는다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-02"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": true,
+      "numberedTypeLinksHeldAsCandidates": true
+    },
+    {
+      "activityNumber": 4,
+      "printedPage": 39,
+      "label": "대표문제 2",
+      "observedAction": "구급차가 병원까지 가는 가장 짧은 길을 모두 찾는다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-01"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": true,
+      "numberedTypeLinksHeldAsCandidates": true
+    },
+    {
+      "activityNumber": 5,
+      "printedPage": 40,
+      "label": "연습문제 1",
+      "observedAction": "택시가 건물까지 가는 길을 모두 그린다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-02"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": true,
+      "numberedTypeLinksHeldAsCandidates": true
+    },
+    {
+      "activityNumber": 6,
+      "printedPage": 40,
+      "label": "연습문제 2",
+      "observedAction": "소방차가 불이 난 곳까지 가는 가장 짧은 길을 모두 그린다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-01"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": true,
+      "numberedTypeLinksHeldAsCandidates": true
+    },
+    {
+      "activityNumber": 7,
+      "printedPage": 41,
+      "label": "연습문제 3",
+      "observedAction": "집에서 우체국까지 가는 방법의 가짓수가 다른 길망 하나를 찾는다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-03"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": true,
+      "numberedTypeLinksHeldAsCandidates": true
+    },
+    {
+      "activityNumber": 8,
+      "printedPage": 41,
+      "label": "연습문제 4",
+      "observedAction": "버스가 정류장까지 가는 가장 짧은 길을 모두 그린다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-01"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": true,
+      "numberedTypeLinksHeldAsCandidates": true
+    },
+    {
+      "activityNumber": 9,
+      "printedPage": 42,
+      "label": "심화문제 1",
+      "observedAction": "학교까지의 가장 짧은 길 중 문구점 경유, 문구점 회피, 제한 없는 경우를 각각 센다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-01"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": true,
+      "numberedTypeLinksHeldAsCandidates": true
+    },
+    {
+      "activityNumber": 10,
+      "printedPage": 43,
+      "label": "도전문제 2",
+      "observedAction": "막힌 길을 피해 뱀이 알까지 가는 가장 짧은 길을 그리고 방법 수를 구한다.",
+      "candidateSkillIds": [
+        "PATH-PRED4-01"
+      ],
+      "conditionalDifficultyBand": 5,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentOnly": true,
+      "answerValidated": true,
+      "numberedTypeLinksHeldAsCandidates": true
+    }
+  ],
+  "somaProgressionContext": {
+    "code": "A4-3 3",
+    "topic": "경우의 수",
+    "description": "모든 경우를 색칠·매트릭스 표로 구하고 간단한 길 가짓수를 알아봄.",
+    "activityNumbers": [
+      3,
+      5,
+      7
+    ],
+    "relation": "progression-context-only",
+    "exactTypeEquivalence": false
+  },
+  "editorialNumberedTypeCandidates": [
+    {
+      "code": "05-001",
+      "label": "격자 최단경로의 방법 수",
+      "relationCandidate": "related-but-distinct",
+      "basis": "Pre D4의 일부 그림은 격자이지만 활동 전체에는 비격자 연결망도 있다. 격자 특화 번호를 단원 전체 공통 유형으로 부여하지 않는다.",
+      "assignedAsCommonType": false,
+      "activityNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "code": "05-002",
+      "label": "통행 제약 아래 최단경로의 방법 수",
+      "relationCandidate": "related-but-distinct",
+      "basis": "재방문 금지·간선 재사용 금지·장애물 회피 조건은 연관되나 제약의 대상이 서로 다르며, 원본 조건의 간선별 확인도 일부 보류다.",
+      "assignedAsCommonType": false,
+      "activityNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "code": "05-003",
+      "label": "필수점을 지나는 최단경로 방법 수",
+      "relationCandidate": "condition-extension",
+      "basis": "p.42의 문구점 경유 소문항만 필수 경유점 조건에 대응한다. 같은 활동 블록의 회피·무제한 소문항에는 이 번호를 부여하지 않는다.",
+      "assignedAsCommonType": false,
+      "activityNumbers": [
+        9
+      ]
+    },
+    {
+      "code": "05-009",
+      "label": "격자 최단 경로 방법 수",
+      "relationCandidate": "related-but-distinct",
+      "basis": "기존 번호표에 05-001과 유사한 격자 최단경로 표제가 별도 존재한다. 중복 표제의 범위 차이를 확정하기 전 새 공통 유형 번호로 사용하지 않는다.",
+      "assignedAsCommonType": false,
+      "activityNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "code": "05-010",
+      "label": "막힌 격자 최단경로 경우",
+      "relationCandidate": "candidate-needs-source-detail",
+      "basis": "p.43은 막힌 격자 최단경로를 묻지만 장애물의 정확한 차단 간선 위치는 현재 원본 렌더에서 확정하지 않아 문항 직접 연결을 보류한다.",
+      "assignedAsCommonType": false,
+      "activityNumbers": [
+        10
+      ]
+    }
+  ],
+  "taxonomy": {
+    "familyCandidate": {
+      "id": "FAMILY-PATH-ENUMERATION-AND-SHORTEST-ROUTE-PRED4",
+      "label": "Pre D4 경로 열거·최단 경로 행동 후보군",
+      "status": "candidate-needs-teacher-review"
+    },
+    "relatedButDistinctRelations": [
+      {
+        "from": "PATH-PRED4-01",
+        "to": "PATH-PRED4-02",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "1031-unit4-pred-block-003",
+          "1031-unit4-pred-block-004"
+        ],
+        "basis": "두 행동 모두 연결망의 경로를 열거하지만, 하나는 모든 경로를 세고 다른 하나는 최단 길이 조건으로 일부 경로만 골라 센다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "PATH-PRED4-01",
+        "to": "CNT-INTRO-C-U7-04",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "1031-unit4-pred-block-003"
+        ],
+        "basis": "단계별 선택을 곱하거나 합쳐 세는 행동과 순환 연결망에서 재방문 금지 경로를 열거하는 행동은 결과 공간과 중복 방지 조건이 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "PATH-PRED4-01",
+        "to": "MEAS-INTRO-B-16",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "1031-unit4-pred-block-006"
+        ],
+        "basis": "벽돌 변 연결망에서 최단 경로 하나를 선택하는 행동과 여러 최단 경로의 수를 세는 행동은 답 요구가 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "spiralRelations": [
+      {
+        "from": "PATH-PRED4-02",
+        "to": "PATH-PRED4-01",
+        "relation": "spiral-extension-candidate",
+        "relationType": "spiral-extension-candidate",
+        "evidenceItemIds": [
+          "1031-unit4-pred-block-003",
+          "1031-unit4-pred-block-004"
+        ],
+        "basis": "모든 경로를 재방문 없이 열거한 뒤 최단 길이 조건을 추가해 경로 수를 거르는 확장 후보. 학습 순서·필수 선수 관계는 미승인.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "PATH-PRED4-01",
+        "to": "PATH-PRED4-03",
+        "relation": "spiral-extension-candidate",
+        "relationType": "spiral-extension-candidate",
+        "evidenceItemIds": [
+          "1031-unit4-pred-block-006",
+          "1031-unit4-pred-block-007"
+        ],
+        "basis": "한 길망의 경로 수 산출에서 여러 연결 구조의 경로 수 비교로 확장되는 후보. 학습 순서는 미승인.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "limitations": [
+      "All 10 activities are page-grounded; answers have not been validated.",
+      "Difficulty bands are conditional research values only.",
+      "Minimum curriculum level, school grade, and age suitability remain unresolved for all 10 activities.",
+      "Editorial area-order numbers are not approved common skill IDs or learning-sequence numbers.",
+      "p.43 obstacle-to-edge mapping is unresolved; its item-level link to 05-010 is held back.",
+      "Soma row 48 is progression context only; no exact common-type equivalence is claimed."
+    ]
+  },
+  "answerValidation": {
+    "studentResponseTasksValidated": 9,
+    "modeledExamplesExcluded": 1,
+    "answerKeyPdfPages": [
+      16,
+      17,
+      18,
+      19
+    ],
+    "sameEditionAnswerPdfSha256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "method": "Same-edition answer-key pages visually compared with mapped body activities; local Apple Vision OCR used only as assistive transcription.",
+    "preservedBodyPages": [
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+    ],
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true,
+    "modeledExampleActivityNumbers": [
+      1
+    ]
+  }
+}

@@ -66,6 +66,16 @@ function normalize(raw) {
 function create(raw) {
   const data = normalize(raw);
   return Object.freeze({
+    listTargets() {
+      return Object.freeze(Object.values(data.targets).map(function (target) {
+        return Object.freeze({
+          generationMode: target.generationMode,
+          academyId: target.academyId,
+          semesterId: target.semesterId,
+          scopeKeys: Object.freeze(target.scopeKeys.slice())
+        });
+      }));
+    },
     requireTarget(generationModeInput, academyIdInput, semesterIdInput, requestedScopesInput) {
       const generationMode = clean(generationModeInput);
       const academyId = academyIdInput == null ? null : clean(academyIdInput);

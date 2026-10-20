@@ -1,0 +1,249 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v94",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre C",
+    "unit": 3,
+    "title": "규칙 상자",
+    "printedPages": [
+      29,
+      35
+    ],
+    "sourceActivityBlocks": 10,
+    "visuallyReviewedPages": 7,
+    "answerValidated": true
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "activitiesWithSkillCandidateEvidence": 846,
+    "activitiesInReviewQueue": 6,
+    "conditionalDifficultyCandidates": 852,
+    "validatedAnswers": 177,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 10,
+    "newlyLinkedActivities": 7,
+    "activitySkillRelations": 7,
+    "newActionCandidates": 3,
+    "reusedActionCandidates": 1,
+    "conditionalDifficultyBandsReused": 10,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumLevelCandidates": 10,
+    "unresolvedMinimumCurriculumCandidates": 10,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 10,
+    "directSomaMatchCandidates": 1,
+    "partialSomaReferences": 8,
+    "relatedButDistinctSomaReferences": 10
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "PAT-VISUAL-OPERATOR-CHAIN-PREC3-01",
+      "n": 55,
+      "area": "operations",
+      "title": "기호별 시각 변환을 순서대로 적용해 도형 상태 만들기",
+      "difficulty": "3–4",
+      "count": 3,
+      "desc": "손 모양·태양·달·별과 같은 기호가 나타내는 색·모양·겹침·방향 변환을 구분하고, 제시된 순서대로 적용해 최종 도형 상태를 만든다.",
+      "links": [
+        "AR06",
+        "BOX-INTRO-C-U6-01"
+      ],
+      "pages": "29–35쪽",
+      "curriculum": "초등 1–2학년군 내용 맥락 후보 · 최소 학년 미확정"
+    },
+    {
+      "id": "PAT-BOOLEAN-STATE-CYCLE-PREC3-01",
+      "n": 56,
+      "area": "rules",
+      "title": "예·아니오 조건에 따른 도형 상태 변화와 주기 추적",
+      "difficulty": "3",
+      "count": 1,
+      "desc": "예·아니오 입력에 따라 도형 상태가 바뀌는 조건 규칙을 적용하고, 반복 입력 뒤 상태가 되돌아오는 주기를 추적한다.",
+      "links": [
+        "PAT-ROTATING-SECTOR-STATE-RECONSTRUCTION-PREC2-01"
+      ],
+      "pages": "29–35쪽",
+      "curriculum": "초등 1–2학년군 내용 맥락 후보 · 최소 학년 미확정"
+    },
+    {
+      "id": "PAT-DIAGRAM-TO-NUMERIC-CODE-PREC3-01",
+      "n": 57,
+      "area": "logic",
+      "title": "그림 속성을 세어 숫자 부호 규칙으로 바꾸기",
+      "difficulty": "4",
+      "count": 1,
+      "desc": "선분 도형의 속성을 정해진 방식으로 세고, 여러 그림과 출력 부호의 대응에서 수열 형태의 부호 규칙을 추론해 새 그림에 적용한다.",
+      "links": [
+        "AR06"
+      ],
+      "pages": "29–35쪽",
+      "curriculum": "초등 1–2학년군 내용 맥락 후보 · 최소 학년 미확정"
+    },
+    {
+      "id": "AR06",
+      "n": 54,
+      "area": "rules",
+      "title": "입력·출력 규칙 추론하고 적용하기",
+      "difficulty": "2–4",
+      "count": 5,
+      "desc": "입력과 출력의 사례를 비교해 수 변환 규칙을 찾고, 새 입력이나 연쇄 상자에 적용한다.",
+      "links": [],
+      "pages": "29–35쪽",
+      "curriculum": "초등 1–2학년군 연산·규칙 내용 맥락 후보 · 최소 학년 미확정",
+      "reused": true
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only-reused-existing-study",
+    "teacherApprovedLevels": 0,
+    "bandsByActivity": [
+      {
+        "conditionalDifficultyBand": 2
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 3
+      },
+      {
+        "conditionalDifficultyBand": 4
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "content-context-candidates-only",
+    "candidateActivities": 10,
+    "unresolvedActivities": 10,
+    "confirmedAssignments": 0,
+    "contexts": [
+      "[2수01-01] 수 세기·수량화",
+      "[2수01-06] 덧셈·뺄셈",
+      "[2수01-07] 덧셈·뺄셈 관계",
+      "[2수02-01] 물체·무늬·수 배열 규칙"
+    ],
+    "note": "교육과정 내용 맥락은 문항별 최소 학년이 아니다."
+  },
+  "developmentalProgressionContext": {
+    "phase": "pre-basic",
+    "programLabel": "초등팩토 1",
+    "ageWindow": "5세 10월–6세 2월",
+    "parallelArithmeticMaterials": [
+      "기적의 계산법 2권",
+      "기적의 계산법 3권",
+      "기적의 계산법 4권"
+    ],
+    "parallelCurriculumMaterials": [
+      "1-1 디딤돌",
+      "1-2 디딤돌",
+      "2-1 디딤돌"
+    ],
+    "quality": "source-reference-only-not-item-age-or-school-grade",
+    "note": "과정·병행 교재 창은 경로 참고이며 개별 활동의 권장 연령이나 최소 학년을 확정하지 않는다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "FAMILY-PRE-C-RULE-BOX-AND-TRANSFORMATION",
+        "label": "규칙 상자·기호 변환 행동 계통 후보"
+      },
+      {
+        "id": "FAMILY-CHANGE-RULE",
+        "label": "변화 규칙 일반화"
+      }
+    ],
+    "relations": [
+      {
+        "from": "PAT-VISUAL-OPERATOR-CHAIN-PREC3-01",
+        "to": "AR06",
+        "type": "related-but-distinct",
+        "basis": "시각 기호가 도형 상태를 바꾸는 명령을 순서대로 실행하는 행동과 수 입력·출력 예에서 수 변환 규칙을 찾아 적용하는 행동은 입력·출력의 표상과 변환 도메인이 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "PAT-VISUAL-OPERATOR-CHAIN-PREC3-01",
+        "to": "BOX-INTRO-C-U6-01",
+        "type": "related-but-distinct",
+        "basis": "서로 다른 시각 명령을 차례로 합성하는 행동과 동일 수 변환 규칙의 출력을 다음 입력으로 재사용하는 반복 행동은 규칙 실행 방식이 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "PAT-BOOLEAN-STATE-CYCLE-PREC3-01",
+        "to": "PAT-ROTATING-SECTOR-STATE-RECONSTRUCTION-PREC2-01",
+        "type": "related-but-distinct",
+        "basis": "예·아니오 조건에 따라 도형 상태가 주기적으로 바뀌는 행동과 원판 구역의 도형·수량을 회전 순서로 추적하는 행동은 상태 변화의 원인과 표상이 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "PAT-DIAGRAM-TO-NUMERIC-CODE-PREC3-01",
+        "to": "AR06",
+        "type": "related-but-distinct",
+        "basis": "그림의 선분·점 속성을 수량으로 추출해 부호열로 바꾸는 행동과 입력 수에서 출력 수 규칙을 추론하는 행동은 정보의 표상 변환 요구가 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      }
+    ]
+  },
+  "crossReferences": {
+    "somaSourceRows": [
+      {
+        "code": "A4-1 4",
+        "title": "유추하기 Ⅱ"
+      },
+      {
+        "code": "B2-3 3",
+        "title": "수 매트릭스"
+      },
+      {
+        "code": "B3-2 2",
+        "title": "Yes or No"
+      },
+      {
+        "code": "C1-3 3",
+        "title": "규칙 찾기"
+      }
+    ],
+    "directMatchCandidates": 1,
+    "partialMatches": 8,
+    "relatedButDistinct": 10,
+    "teacherApprovedEquivalences": 0,
+    "note": "Yes/No 행의 직접 내용 일치 후보 1개만 직접으로 두고, 나머지는 부분 또는 관련·구별 후보로 제한했다."
+  },
+  "privacy": "공개 파일에는 문항별 정답, OCR 원문, 활동 ID, 이미지 해시, 로컬 경로를 포함하지 않는다. 답안 근거 10건은 같은 판본 해설 pp.12–15 대조 결과만 집계한다. 유형·조건부 난이도·최소 교과수준은 교사 승인 전 후보이며 최소 학년 배정은 0건이다.",
+  "answerValidation": {
+    "activitiesValidated": 10,
+    "answerKeyPdfPages": [
+      12,
+      13,
+      14,
+      15
+    ],
+    "method": "Same-edition answer-key pages were rendered and visually cross-checked against existing body-page review; local Apple Vision OCR was used as a supporting text check.",
+    "exactAnswerValuesOmitted": true
+  }
+}

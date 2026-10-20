@@ -385,7 +385,10 @@ test("academy profile catalog prefers the project-wide index when it is connecte
   const env = await start(undefined, { privateProjectQuestionIndex: projectQuestionIndex() });
   t.after(() => env.server.close());
   const admin = await login(env.base);
-  const response = await fetch(`${env.base}/admin/question-bank/catalog?profiles=WM_BASIC`, { headers: { Cookie: admin.cookie } });
+  const defaultResponse = await fetch(`${env.base}/admin/question-bank/catalog?profiles=WM_BASIC`, { headers: { Cookie: admin.cookie } });
+  assert.equal(defaultResponse.status, 200);
+  assert.equal((await defaultResponse.json()).count, 0);
+  const response = await fetch(`${env.base}/admin/question-bank/catalog?profiles=WM_BASIC&includeCandidates=1`, { headers: { Cookie: admin.cookie } });
   assert.equal(response.status, 200);
   const packet = await response.json();
   assert.equal(packet.count, 1);

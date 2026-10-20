@@ -7,8 +7,9 @@
   <meta http-equiv="Cache-Control" content="no-store">
   <title>시험지 편집 · 선발·누적 진단</title>
   <link rel="stylesheet" href="../shared/app.css?v=20260902-editor6">
+  <link rel="stylesheet" href="../shared/exam-editor-design.css?v=20260906">
 </head>
-<body class="exam-editor-body">
+<body class="exam-editor-body gfield-ui">
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header">
     <nav class="shell nav">
@@ -24,7 +25,7 @@
   <main id="main" class="shell app-main exam-editor-page">
     <div class="editor-page-head">
       <div>
-        <p class="eyebrow">Verified Question Bank</p>
+        <p class="eyebrow">문제은행 · 시험지 구성</p>
         <h1>시험지 조립</h1>
         <p>검수 완료 문항만 담고, 순서·배점·범위를 한 화면에서 조정합니다.</p>
       </div>
@@ -36,13 +37,19 @@
 
     <div class="notice" id="editor-alert" role="status" aria-live="polite">관리자 권한과 편집 저장소를 확인하고 있습니다.</div>
 
+    <details class="panel standard-coverage-panel">
+      <summary id="standard-coverage-title">과정별 표준 시험지 현황 보기</summary>
+      <p>표준 시험지가 없거나 필요한 승인이 끝나지 않은 과정은 신청·판매할 수 없습니다.</p>
+      <div class="standard-coverage-grid" id="standard-coverage-grid"></div>
+    </details>
+
     <section class="panel editor-start" id="editor-start" aria-labelledby="start-title">
       <div class="editor-start-copy">
-        <p class="eyebrow">Start</p>
+        <p class="eyebrow">시험지 시작</p>
         <h2 id="start-title">새 시험지를 만들거나 기존 초안을 엽니다</h2>
         <p>범위 코드는 교육과정 경로를 줄마다 하나씩 입력합니다. 예: <code>G10/M01</code></p>
         <article class="catalog-launch-card" aria-labelledby="catalog-launch-title">
-          <span class="editor-overline">Read-only Analysis</span>
+          <span class="editor-overline">참고 분석</span>
           <h3 id="catalog-launch-title">생수 공통수학1 입반 참고 분석</h3>
           <p>중2-2·중3-1·중3-2 범위의 대수·기하 구성을 확인합니다. 검수가 끝나지 않은 문항은 시험지에 담을 수 없습니다.</p>
           <button class="accent compact-button" type="button" id="open-catalog-analysis" disabled>분석 보기</button>
@@ -67,6 +74,7 @@
     </section>
 
     <section id="editor-workspace" hidden>
+      <a class="editor-mobile-summary" href="#draft-pane-title"><span>담은 문항 <b id="mobile-selection-count">0</b>문항</span><span>현재 시험지 보기 ↓</span></a>
       <div class="editor-command-bar">
         <div class="editor-draft-identity">
           <span class="editor-overline">현재 초안</span>
@@ -87,8 +95,8 @@
       <div class="editor-layout">
         <section class="editor-pane candidate-pane" aria-labelledby="candidate-title">
           <header class="editor-pane-head">
-            <div><span class="editor-overline">Question Bank</span><h2 id="candidate-title">검수 문항</h2></div>
-            <span class="editor-count" id="candidate-count">0개</span>
+            <div><span class="editor-overline">문제은행</span><h2 id="candidate-title">검수 문항</h2></div>
+            <span class="editor-count" id="candidate-count" aria-live="polite">0문항</span>
           </header>
           <div class="candidate-tools">
             <div class="editor-segmented" id="candidate-mode" aria-label="후보 종류">
@@ -115,11 +123,12 @@
           </div>
           <div class="candidate-list" id="candidate-list" aria-live="polite"></div>
           <div class="editor-empty" id="candidate-empty" hidden>조건에 맞는 검수 문항이 없습니다.</div>
+          <button class="ghost compact-button candidate-retry" id="candidate-retry" type="button" hidden>다시 불러오기</button>
         </section>
 
         <section class="editor-pane draft-pane" aria-labelledby="draft-pane-title">
           <header class="editor-pane-head draft-pane-head">
-            <div><span class="editor-overline">Selected Items</span><h2 id="draft-pane-title">현재 시험지</h2></div>
+            <div><span class="editor-overline">담은 문항</span><h2 id="draft-pane-title" tabindex="-1">현재 시험지</h2></div>
             <div class="editor-view-switch" id="view-mode" aria-label="보기 모드">
               <button type="button" data-view="question">문제</button>
               <button type="button" data-view="question_answer">문제·정답</button>
@@ -130,7 +139,8 @@
           <div class="draft-controls">
             <div class="draft-summary" aria-label="시험지 요약">
               <span><b id="summary-items">0</b>문항</span>
-              <span><b id="summary-score">0</b>점</span>
+              <span>저장된 배점 합계 <b id="summary-score">0</b>점</span>
+              <span id="score-save-status" aria-live="polite" hidden></span>
               <span><b id="summary-scopes">0</b>범위</span>
               <span id="summary-difficulty">난도 -</span>
             </div>
@@ -150,14 +160,28 @@
   </main>
 
   <dialog class="question-page-dialog" id="question-page-dialog" aria-labelledby="question-page-title">
-    <header><div><span class="editor-overline">Original Page</span><h2 id="question-page-title">원본 페이지</h2></div><button class="ghost compact-button" id="close-question-page" type="button">닫기</button></header>
-    <div class="question-page-stage"><img id="question-page-image" alt="선택한 문항이 있는 원본 시험지 페이지"></div>
+    <header><div><span class="editor-overline">문항 확인</span><h2 id="question-page-title">원본 페이지</h2></div><button class="ghost compact-button" id="close-question-page" type="button" autofocus>닫기</button></header>
+    <div class="question-page-stage"><p id="question-page-status" role="status" aria-live="polite"></p><img id="question-page-image" alt="선택한 문항이 있는 원본 시험지 페이지" hidden><button class="ghost compact-button" id="question-page-retry" type="button" hidden>다시 불러오기</button></div>
     <p>선택한 문항이 들어 있는 원본 페이지입니다. 답안 페이지는 표시하지 않습니다.</p>
   </dialog>
   <div class="editor-toast" id="editor-toast" role="status" aria-live="polite" hidden></div>
   <footer class="footer"><div class="shell"><span>GFIELD 운영자 전용</span><span>검수 문항 메타데이터만 표시 · 원문·정답 비노출</span></div></footer>
   <script src="../shared/runtime.js"></script>
+  <script src="../data/catalog.js"></script>
+  <script src="../data/academy-engagement.js"></script>
+  <script src="../data/standard-exam-policy.js"></script>
   <script src="../shared/auth.js"></script>
-  <script src="../shared/exam-editor-page.js?v=20260902-editor16"></script>
+  <script>
+    (function(){
+      const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+      const engagement=HIGHSELECT_ACADEMY_ENGAGEMENT,policy=HIGHSELECT_STANDARD_EXAM_POLICY;
+      document.getElementById('standard-coverage-grid').innerHTML=engagement.programs.map(program=>{
+        const rows=program.courses.map(course=>({course,status:policy.resolve(program.code,course.id,HIGHSELECT_CATALOG)}));
+        const ready=rows.filter(row=>row.status.canSell).length;
+        return `<details class="standard-coverage-card"><summary><span style="--academy-accent:${esc(program.accent)}">${esc(program.shortName)}</span><b>${ready}/${rows.length} 사용 가능</b></summary><ul>${rows.map(row=>{const progress=row.status.progress,target=progress.targetQuestionCount,reviewed=progress.reviewedQuestionCount,shortfall=progress.reviewShortfall;const countLine=target===null?'문항 수: 회차별 확인':`계획 ${target} · 검수 ${reviewed} · 부족 ${shortfall}`;return `<li><div><strong>${esc(row.course.label)}</strong><small>${esc(countLine)}</small><small>${esc(row.status.responseMixLabel)}</small>${row.status.blockers.length?`<small>남은 확인: ${esc(row.status.blockers.join(', '))}</small>`:''}</div><em class="standard-state ${esc(row.status.state)}">${esc(row.status.label)}</em></li>`;}).join('')}</ul></details>`;
+      }).join('');
+    })();
+  </script>
+  <script src="../shared/exam-editor-page.js?v=20260906-editor17"></script>
 </body>
 </html>

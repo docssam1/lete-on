@@ -333,10 +333,18 @@ function numberRows(visual) {
 // 수 배열표: 주어진 수만 적고, 물을 칸은 색칠한다(원본에는 길·화살표가 없다).
 function sourceNumberTable(visual) {
   const shaded = new Set((visual.shaded || []).map(([r, c]) => `${r}:${c}`));
-  const cells = visual.cells.flatMap((row, r) => row.map((value, c) => `<span class="${shaded.has(`${r}:${c}`) ? "shaded" : ""}">${escapeHtml(value ?? "")}</span>`)).join("");
+  const cells = visual.cells.flatMap((row, r) => row.map((value, c) => `<span class="${shaded.has(`${r}:${c}`) ? "shaded" : visual.head && r === 0 ? "head" : ""}">${escapeHtml(value ?? "")}</span>`)).join("");
   const columns = visual.cells[0].length;
   // 7칸 넘는 표는 휴대폰 화면 안에 들어오게 칸을 줄인다.
-  return `<div class="b5-src-table${columns >= 7 ? " is-wide" : ""}" style="--columns:${columns}" role="img" aria-label="수 배열표">${cells}</div>`;
+  const wide = columns >= 7 ? " is-wide" : "";
+  // head: 첫 줄을 머리줄(연보라)로. arrows: [{row:"top"|"bottom", at, label}] — at번째 칸에서 다음 칸으로 넘어가는 굽은 화살표(7권 17쪽 「+4」).
+  const table = `<div class="b5-src-table${wide}" style="--columns:${columns}" role="img" aria-label="${escapeHtml(visual.label || "수 배열표")}">${cells}</div>`;
+  if (!visual.arrows?.length) return table;
+  const notes = (row) => {
+    const marks = visual.arrows.filter((a) => a.row === row).map((a) => `<span style="grid-column:${a.at + 1} / span 2"><svg viewBox="0 0 40 12" preserveAspectRatio="none"><path d="${row === "top" ? "M10 11 Q20 -3 30 11" : "M10 1 Q20 15 30 1"}"/><path class="tip" d="${row === "top" ? "M27 7 L30 11 L31 6" : "M27 5 L30 1 L31 6"}"/></svg><b>${escapeHtml(a.label)}</b></span>`).join("");
+    return marks ? `<div class="b5-src-table-notes ${row}" style="--columns:${columns}">${marks}</div>` : "";
+  };
+  return `<div class="b5-src-table-wrap${wide}" style="--columns:${columns}">${notes("top")}${table}${notes("bottom")}</div>`;
 }
 
 // 숫자 카드 한 줄
@@ -674,8 +682,9 @@ function sourceDotFigures(visual) {
 function sourceTextTable(visual) {
   const [head, ...rows] = visual.cells;
   const tr = (row, tag) => `<tr>${row.map((cell) => `<${tag}${tag === "td" && BLANK_LABELS.includes(String(cell)) ? ' class="blank"' : ""}>${escapeHtml(cell ?? "")}</${tag}>`).join("")}</tr>`;
-  const headed = visual.cells.length > 1 && head.some((c) => /[가-힣]/.test(String(c)));
-  return `<div class="b5-src-ttable" role="img" aria-label="${escapeHtml(visual.cells.map((r) => r.join(" ")).join(" / "))}"><table>${headed ? `<thead>${tr(head, "th")}</thead>` : ""}<tbody>${(headed ? rows : visual.cells).map((r) => tr(r, "td")).join("")}</tbody></table></div>`;
+  // head:false = 첫 줄도 몸통(첫 칸이 줄 이름인 풀이 표, 7권 26~33쪽).
+  const headed = visual.head !== false && visual.cells.length > 1 && head.some((c) => /[가-힣]/.test(String(c)));
+  return `<div class="b5-src-ttable${head.length >= 8 || visual.cells.some((r) => String(r[0]).length > 10) ? " is-wide" : ""}" role="img" aria-label="${escapeHtml(visual.cells.map((r) => r.join(" ")).join(" / "))}"><table>${headed ? `<thead>${tr(head, "th")}</thead>` : ""}<tbody>${(headed ? rows : visual.cells).map((r) => tr(r, "td")).join("")}</tbody></table></div>`;
 }
 
 // 「△n = 1 + 2 + … + n = □ × △ = 합」. example이 있으면 두 수를 쓰고, 없으면 색표의 빈 □·△.
@@ -727,6 +736,221 @@ function sourceStoneRows(visual) {
   const W = wide * gap + 8, H = visual.rows.length * gap + 8;
   const stones = visual.rows.flatMap((count, i) => Array.from({ length: count }, (_, j) => `<circle cx="${(4 + (W - 8) / 2 + (j - (count - 1) / 2) * gap).toFixed(1)}" cy="${4 + gap / 2 + i * gap}" r="${r}" class="${i % 2 ? "w" : "b"}"/>`)).join("");
   return `<div class="b5-src-stones" role="img" aria-label="${escapeHtml(`검은 돌과 흰 돌을 번갈아 ${visual.rows.join(", ")}개씩 놓은 줄`)}"><svg viewBox="0 0 ${W} ${H}" style="width:min(100%,${Math.round(W * 1.3)}px)">${stones}</svg></div>`;
+}
+
+// 7권: 그림 아래에 원본의 빈 풀이 표(cells)를 붙인다.
+const withTable = (cls, label, figure, cells) => `<div class="b5-src-withtable ${cls}" role="img" aria-label="${escapeHtml(label)}">${figure}${cells ? sourceTextTable({ cells }) : ""}</div>`;
+
+// 7권 35~36쪽: 우물(깊이 눈금)과 바닥의 달팽이. marks = 이름을 쓸 눈금(m), 1m마다 작은 눈금.
+function sourceWell(visual) {
+  const H = 150, top = 22, x0 = 20, w = 110, d = visual.depth, y = (m) => top + H - (m / d) * H;
+  const ticks = Array.from({ length: d + 1 }, (_, m) => `<line x1="${x0 + w}" x2="${x0 + w + (visual.marks.includes(m) ? 9 : 5)}" y1="${y(m).toFixed(1)}" y2="${y(m).toFixed(1)}"/>`).join("");
+  const labels = visual.marks.map((m) => `<text x="${x0 + w + 13}" y="${(y(m) + 4).toFixed(1)}">${m}m</text>`).join("");
+  const snail = `<g class="snail" transform="translate(${x0 + w / 2 - 22} ${top + H - 30}) scale(1.6)"><path class="body" d="M-6 14 Q4 8 26 10 Q34 10 34 15 Z"/><line x1="28" y1="10" x2="31" y2="1"/><line x1="31" y1="10" x2="35" y2="2"/><circle class="shell" cx="12" cy="4" r="10"/><path class="spiral" d="M12 4 m0 -5 a5 5 0 1 1 -5 5 a3 3 0 1 1 3 3"/></g>`;
+  const svg = `<svg class="well" viewBox="0 0 ${x0 + w + 52} ${top + H + 18}" style="width:min(100%,220px)"><rect class="wall" x="${x0}" y="${top}" width="${w}" height="${H}"/><ellipse class="rim" cx="${x0 + w / 2}" cy="${top}" rx="${w / 2}" ry="9"/><ellipse class="floor" cx="${x0 + w / 2}" cy="${top + H}" rx="${w / 2}" ry="9"/><g class="ruler">${ticks}</g>${labels}${snail}</svg>`;
+  return withTable("well", `깊이 ${d}m 우물 바닥의 달팽이와 날짜 표`, svg, visual.table);
+}
+
+// 7권 41~42쪽: 연못을 똑같이 나눈 칸. 처음 shaded칸만큼 개구리풀이 덮었다.
+function sourcePond(visual) {
+  const u = Math.min(85, Math.floor(260 / visual.cols)), W = visual.cols * u, Hh = visual.rows * u;
+  const cells = Array.from({ length: visual.rows * visual.cols }, (_, k) => `<rect class="${k < visual.shaded ? "on" : ""}" x="${(k % visual.cols) * u}" y="${Math.floor(k / visual.cols) * u}" width="${u}" height="${u}"/>`).join("");
+  const svg = `<svg class="pond" viewBox="-2 -2 ${W + 4} ${Hh + 4}" style="width:min(100%,${W + 4}px)">${cells}<rect class="edge" x="0" y="0" width="${W}" height="${Hh}"/></svg>`;
+  return withTable("pond", `연못을 똑같이 ${visual.rows * visual.cols}칸으로 나눈 것 중 ${visual.shaded}칸을 개구리풀이 덮은 그림`, svg, visual.table);
+}
+
+// 7권 37~38쪽: 바꾸기 그림. give/get = {kind, count}, kind: bottle(빈 병) · milk(빈 우유병) · newMilk · coupon · pizza.
+const SWAP_ICON = {
+  bottle: [34, 58, '<path class="glass" d="M12 2h10v8c0 3 9 6 9 14v30a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V24c0-8 9-11 9-14z"/><rect class="cap" x="11" y="0" width="12" height="6" rx="1.5"/>'],
+  milk: [34, 52, '<path class="milk" d="M7 4h20l4 9v34a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V13z"/><text x="17" y="34">우유</text>'],
+  newMilk: [34, 52, '<path class="milk new" d="M7 4h20l4 9v34a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V13z"/><text x="17" y="34">우유</text>'],
+  coupon: [46, 30, '<rect class="coupon" x="1" y="1" width="44" height="28" rx="2"/><text x="23" y="20">쿠폰</text>'],
+  pizza: [76, 76, '<circle class="crust" cx="38" cy="38" r="35"/><circle class="cheese" cx="38" cy="38" r="29"/>' + [[24, 26], [46, 22], [52, 42], [30, 48], [40, 34], [22, 40], [48, 56]].map(([x, y]) => `<circle class="top" cx="${x}" cy="${y}" r="5"/>`).join("")]
+};
+function sourceSwap(visual) {
+  const group = ({ kind, count }) => {
+    const [w, h, body] = SWAP_ICON[kind], cols = kind === "coupon" && count === 9 ? 3 : count, rows = Math.ceil(count / cols);
+    const icons = Array.from({ length: count }, (_, k) => `<g transform="translate(${(k % cols) * (w + 4)} ${Math.floor(k / cols) * (h + 4)})">${body}</g>`).join("");
+    const W = cols * (w + 4) - 4, H = rows * (h + 4) - 4;
+    return `<svg viewBox="-2 -2 ${W + 4} ${H + 4}" style="width:min(100%,${Math.round((W + 4) * 1.5)}px)">${icons}</svg>`;
+  };
+  const name = { bottle: "빈 병", milk: "빈 우유병", newMilk: "새 우유", coupon: "쿠폰", pizza: "피자" };
+  return `<div class="b5-src-swap" role="img" aria-label="${escapeHtml(`${name[visual.give.kind]} ${visual.give.count}개를 ${name[visual.get.kind]} ${visual.get.count}개로 바꾸는 그림`)}">${group(visual.give)}<b>→</b>${group(visual.get)}</div>`;
+}
+
+// 7권 45~46쪽: 바둑돌을 정삼각형·정사각형 둘레에 늘어놓은 단계. sides = 한 변의 돌 수들, 그림 아래 빈칸(가·나…)+「개」.
+function sourceStonePolygon(visual) {
+  const g = 24, r = 9;
+  const figure = (n) => {
+    const pts = new Map(), add = (x, y) => pts.set(`${x.toFixed(1)},${y.toFixed(1)}`, [x, y]);
+    let w, h;
+    if (visual.shape === "triangle") {
+      h = (n - 1) * g * 0.866; w = (n - 1) * g;
+      const A = [w / 2, 0], B = [0, h], C = [w, h];
+      for (const [P, Q] of [[A, B], [B, C], [C, A]]) for (let k = 0; k < n; k += 1) add(P[0] + (Q[0] - P[0]) * k / (n - 1), P[1] + (Q[1] - P[1]) * k / (n - 1));
+    } else {
+      w = h = (n - 1) * g;
+      for (let k = 0; k < n; k += 1) { add(k * g, 0); add(k * g, h); add(0, k * g); add(w, k * g); }
+    }
+    return { w: w + 2 * r, h: h + 2 * r, body: [...pts.values()].map(([x, y]) => `<circle cx="${(x + r).toFixed(1)}" cy="${(y + r).toFixed(1)}" r="${r}"/>`).join("") };
+  };
+  const figs = visual.sides.map(figure), H = Math.max(...figs.map((f) => f.h));
+  const items = figs.map((f, k) => `<figure><svg viewBox="-3 ${-(H - f.h) - 3} ${f.w + 6} ${H + 6}" style="width:${Math.round((f.w + 6) * 1.1)}px">${f.body}</svg>${visual.blanks === false ? "" : `<figcaption><i class="blank">${BLANK_LABELS[k]}</i> 개</figcaption>`}</figure>`).join("");
+  return `<div class="b5-src-stonepoly" role="img" aria-label="${escapeHtml(`바둑돌을 ${visual.shape === "triangle" ? "정삼각형" : "정사각형"} 둘레에 한 변에 ${visual.sides.join(", ")}개씩 놓은 그림${visual.blanks === false ? "" : ", 아래에 빈칸"}`)}">${items}</div>`;
+}
+
+// 7권 47쪽: 닫힌 도형 모양의 땅. shape: square|rect|triangle, lengths(변 이름표), gap(간격 이름표). 꼭짓점과 첫 간격 자리에만 나무를 그린다(원본 그림처럼).
+const TREE_ICON = (x, y) => `<g class="tree" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><rect x="-1.6" y="-4" width="3.2" height="8"/><path d="M0 -20 L7 -8 L4 -8 L9 -1 L-9 -1 L-4 -8 L-7 -8 Z"/></g>`;
+function sourcePlot(visual) {
+  const corner = visual.shape === "triangle" ? [[80, 12], [12, 128], [148, 128]] : visual.shape === "rect" ? [[14, 18], [166, 18], [166, 104], [14, 104]] : [[14, 14], [134, 14], [134, 134], [14, 134]];
+  const [A, B] = visual.shape === "triangle" ? [corner[0], corner[2]] : [corner[0], corner[1]];
+  const step = visual.shape === "triangle" ? 0.2 : visual.shape === "rect" ? 4 / 28 : 0.2;
+  const P = [A[0] + (B[0] - A[0]) * step, A[1] + (B[1] - A[1]) * step];
+  const outline = `<polygon class="edge" points="${corner.map((c) => c.join(",")).join(" ")}"/>`;
+  const trees = [...corner, P].map(([x, y]) => TREE_ICON(x, y)).join("");
+  const W = Math.max(...corner.map((c) => c[0])) + 40, H = Math.max(...corner.map((c) => c[1])) + 22;
+  const mid = (a, b, dx, dy) => [(a[0] + b[0]) / 2 + dx, (a[1] + b[1]) / 2 + dy];
+  const labels = visual.shape === "triangle" ? [[mid(corner[1], corner[2], 0, 16), visual.lengths[0]]]
+    : visual.shape === "rect" ? [[mid(corner[0], corner[1], 30, -6), visual.lengths[0]], [mid(corner[3], corner[0], -2, 22), visual.lengths[1]]]
+      : [[mid(corner[0], corner[1], 26, -6), visual.lengths[0]]];
+  const gapAt = mid(A, P, visual.shape === "triangle" ? 18 : 2, visual.shape === "triangle" ? 2 : 16);
+  const text = [...labels, [gapAt, visual.gap]].map(([[x, y], t]) => `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}">${escapeHtml(t)}</text>`).join("");
+  return `<div class="b5-src-plot" role="img" aria-label="${escapeHtml(`${visual.shape === "triangle" ? "정삼각형" : visual.shape === "rect" ? "직사각형" : "정사각형"} 모양의 땅, 변 ${visual.lengths.join("·")}, 간격 ${visual.gap}`)}"><svg viewBox="-12 -26 ${W + 14} ${H + 30}" style="width:min(100%,250px)">${outline}${trees}${text}</svg></div>`;
+}
+
+// 7권 48~50쪽: 둥근 호수와 둘레의 가로등·나무(위쪽 몇 개만), 사이에 놓은 것(between: bin·bench·bench2·tree2). gap = 간격 이름표.
+function sourceLake(visual) {
+  const cx = 100, cy = 96, R = 62;
+  const at = (deg, rr = R) => [cx + rr * Math.sin(deg * Math.PI / 180), cy - rr * Math.cos(deg * Math.PI / 180)];
+  const lamp = ([x, y]) => `<g class="lamp" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><rect x="-1.4" y="-16" width="2.8" height="16"/><circle cx="0" cy="-17" r="3.4"/><rect class="foot" x="-4" y="-1.5" width="8" height="3" rx="1"/></g>`;
+  const thing = visual.marker === "tree" ? (p) => TREE_ICON(p[0], p[1] - 4) : lamp;
+  const angles = visual.marker === "tree" ? [-56, -28, 0, 28, 56] : [-56, 0, 28, 56];
+  const marks = angles.map((a) => thing(at(a))).join("");
+  const between = { bin: (p) => `<rect class="bin" x="${(p[0] - 3.5).toFixed(1)}" y="${(p[1] - 8).toFixed(1)}" width="7" height="8" rx="1"/>`,
+    bench: (p) => `<rect class="bench" x="${(p[0] - 6).toFixed(1)}" y="${(p[1] - 4).toFixed(1)}" width="12" height="4" rx="1"/>`,
+    bench2: (p) => `<rect class="bench" x="${(p[0] - 11).toFixed(1)}" y="${(p[1] - 4).toFixed(1)}" width="9" height="4" rx="1"/><rect class="bench" x="${(p[0] + 2).toFixed(1)}" y="${(p[1] - 4).toFixed(1)}" width="9" height="4" rx="1"/>`,
+    tree2: (p) => TREE_ICON(p[0] - 5, p[1] - 3) + TREE_ICON(p[0] + 5, p[1] - 3) }[visual.between];
+  const extra = between ? [-28, 14, 42].map((a) => between(at(a, R + 2))).join("") : "";
+  const lab = at(14, R + 40);
+  const arc = `<path class="gaparc" d="M${at(3, R + 27).map((v) => v.toFixed(1)).join(" ")} A ${R + 27} ${R + 27} 0 0 1 ${at(25, R + 27).map((v) => v.toFixed(1)).join(" ")}"/><text x="${lab[0].toFixed(1)}" y="${(lab[1] + 4).toFixed(1)}">${escapeHtml(visual.gap)}</text>`;
+  const name = visual.marker === "tree" ? "나무" : "가로등";
+  return `<div class="b5-src-lake" role="img" aria-label="${escapeHtml(`둥근 호수 둘레의 ${name}, 간격 ${visual.gap}`)}"><svg viewBox="0 -8 220 176" style="width:min(100%,280px)"><circle class="water" cx="${cx}" cy="${cy}" r="${R}"/>${extra}${marks}${arc}</svg></div>`;
+}
+
+// 7권 53~56쪽: 조건 상자(• 줄) 또는 「보기」 상자. lines = 줄 글자들, title이 있으면 상자 위 이름표.
+function sourceNoteBox(visual) {
+  const lines = visual.lines.map((t) => `<li>${escapeHtml(t)}</li>`).join("");
+  return `<div class="b5-src-notebox${visual.title ? " titled" : ""}" role="img" aria-label="${escapeHtml(`${visual.title ? `${visual.title}: ` : ""}${visual.lines.join(" / ")}`)}">${visual.title ? `<b>${escapeHtml(visual.title)}</b>` : ""}<ul class="${visual.title ? "plain" : ""}">${lines}</ul></div>`;
+}
+
+// 7권 57~60쪽: 두 자리 수 □△에서 앞뒤를 바꾼 △□를 빼는 세로셈(□ 파랑 네모, △ 초록 세모). result = 차.
+function sourceSwapSub(visual) {
+  const sq = (x, y) => `<rect class="sq" x="${x}" y="${y}" width="26" height="26"/>`, tri = (x, y) => `<polygon class="tri" points="${x + 13},${y} ${x + 26},${y + 26} ${x},${y + 26}"/>`;
+  const digits = String(visual.result).split("").map((d, k) => `<text x="${40 + k * 36 + 13}" y="104">${escapeHtml(d)}</text>`).join("");
+  return `<div class="b5-src-swapsub" role="img" aria-label="${escapeHtml(`네모 세모에서 세모 네모를 빼면 ${visual.result}`)}"><svg viewBox="0 0 122 116" style="width:min(100%,150px)">${sq(40, 6)}${tri(76, 6)}<text class="op" x="18" y="62">-</text>${tri(40, 42)}${sq(76, 42)}<line x1="12" y1="78" x2="110" y2="78"/>${digits}</svg></div>`;
+}
+
+// 7권 61~62쪽: 수직선 위의 점과 두 점 사이 거리 호. points = [{label, at(0~100)}], arcs = [{from, to, side:"over"|"under", label, blank}].
+function sourceDistanceArcs(visual) {
+  const W = 300, x0 = 16, y = 70, X = (p) => x0 + p.at / 100 * (W - 2 * x0);
+  const pts = visual.points.map((p) => ({ ...p, x: X(p) })), by = Object.fromEntries(pts.map((p) => [p.label, p]));
+  let body = `<line class="ln" x1="${pts[0].x}" y1="${y}" x2="${pts[pts.length - 1].x}" y2="${y}"/>`;
+  body += pts.map((p) => `<line class="tick" x1="${p.x}" y1="${y - 6}" x2="${p.x}" y2="${y + 6}"/><text class="pt" x="${p.x}" y="${y + 22}">${escapeHtml(p.label)}</text>`).join("");
+  let k = 0;
+  visual.arcs.forEach((a) => {
+    const xa = by[a.from].x, xb = by[a.to].x, s = a.side === "under" ? 1 : -1, h = Math.min(46, Math.max(14, (xb - xa) * 0.22));
+    const mx = (xa + xb) / 2, ly = y + s * h + (s > 0 ? 18 : -4);
+    body += `<path class="arc${a.blank ? " ask" : ""}" d="M${xa.toFixed(1)} ${y}Q${mx.toFixed(1)} ${(y + s * 2 * h).toFixed(1)} ${xb.toFixed(1)} ${y}"/>`;
+    body += a.blank ? `<rect class="blank" x="${(mx - 15).toFixed(1)}" y="${(y - h - 26).toFixed(1)}" width="30" height="20" rx="3"/><text class="bl" x="${mx.toFixed(1)}" y="${(y - h - 11).toFixed(1)}">${BLANK_LABELS[k++]}</text>` : a.label ? `<text class="al" x="${mx.toFixed(1)}" y="${ly.toFixed(1)}">${escapeHtml(a.label)}</text>` : "";
+  });
+  const label = `수직선 위의 ${visual.points.map((p) => p.label).join(", ")}${visual.arcs.filter((a) => a.label).map((a) => `, ${a.from}~${a.to} ${a.label}`).join("")}`;
+  return `<div class="b5-src-distarcs" role="img" aria-label="${escapeHtml(label)}"><svg viewBox="0 -10 ${W} 152" style="width:min(100%,340px)">${body}</svg></div>`;
+}
+
+// 7권 63~66쪽: 원본의 빈 벤 다이어그램. 두 원의 이름표 「이름( )」, universe면 바깥 상자에 「전체( )」·「둘 다 싫음( )」.
+// 칸 안의 수는 학생이 채우는 자리라 그리지 않는다.
+function sourceVenn(visual) {
+  const u = !!visual.universe, H = u ? 228 : 170, cy = u ? 118 : 96;
+  const tag = (x, y, t, w = 92) => `<rect class="tag" x="${x - w / 2}" y="${y - 13}" width="${w}" height="24" rx="5"/><text x="${x}" y="${y + 4}">${escapeHtml(t)}( )</text>`;
+  let body = "";
+  if (u) body += `<rect class="uni" x="12" y="26" width="276" height="${H - 34}" rx="2"/>${tag(70, 26, "전체", 80)}${tag(150, H - 10, "둘 다 싫음", 112)}`;
+  body += `<circle cx="118" cy="${cy}" r="56"/><circle cx="182" cy="${cy}" r="56"/>${tag(106, cy - 58, visual.labels[0])}${tag(196, cy - 58, visual.labels[1])}`;
+  return `<div class="b5-src-venn" role="img" aria-label="${escapeHtml(`${visual.labels.join("와 ")}의 벤 다이어그램${u ? ", 전체와 둘 다 싫음 칸" : ""}`)}"><svg viewBox="0 0 300 ${H + 6}" style="width:min(100%,380px)">${body}</svg></div>`;
+}
+
+// 7권: 단계 그림 여러 개를 한 줄로(휴대폰에서는 줄바꿈). figs = [{w, h, body}], marks면 위에 ①②③… 번호.
+const STAGE_MARKS = ["①", "②", "③", "④", "⑤", "⑥"];
+function stageRow(cls, label, figs, marks) {
+  const items = figs.map((f, k) => `<figure>${marks ? `<b>${STAGE_MARKS[k]}</b>` : ""}<svg viewBox="${-6} ${-6} ${f.w + 12} ${f.h + 12}" style="width:${Math.round((f.w + 12) * (cls === "sticks" ? 1.5 : 1.15))}px">${f.body}</svg></figure>`).join("");
+  return `<div class="b5-src-stages ${cls}" role="img" aria-label="${escapeHtml(label)}">${items}</div>`;
+}
+
+// 7권 18쪽: 성냥개비로 만든 모양을 하나씩 늘린 단계. shape: "triangle"(위·아래로 번갈아 붙인 삼각형) | "house"(벽을 함께 쓰는 집 모양 오각형).
+// 막대는 끝을 조금 띄워 한 개씩 보이게 하고, 한쪽 끝에 빨간 머리를 단다.
+function sourceStickStages(visual) {
+  const s = 40;
+  const figure = (n) => {
+    const edges = new Map();
+    const add = (a, b) => { const key = [a, b].map((p) => p.join(",")).sort().join("|"); if (!edges.has(key)) edges.set(key, [a, b]); };
+    let w, h;
+    if (visual.shape === "triangle") {
+      h = s * 0.866;
+      const T = (j) => [s / 2 + j * s, 0], B = (j) => [j * s, h];
+      for (let i = 0; i < n; i += 1) {
+        const k = Math.floor(i / 2);
+        if (i % 2 === 0) { add(B(k), B(k + 1)); add(B(k), T(k)); add(B(k + 1), T(k)); }
+        else { add(T(k), T(k + 1)); add(T(k), B(k + 1)); add(T(k + 1), B(k + 1)); }
+      }
+      w = Math.max(...[...edges.values()].flat().map((p) => p[0]));
+    } else {
+      const r = s * 0.62; h = r + s; w = n * s;
+      for (let j = 0; j <= n; j += 1) add([j * s, r], [j * s, r + s]);
+      for (let j = 0; j < n; j += 1) { add([j * s, r + s], [(j + 1) * s, r + s]); add([j * s, r], [j * s + s / 2, 0]); add([j * s + s / 2, 0], [(j + 1) * s, r]); }
+    }
+    const body = [...edges.values()].map(([[x1, y1], [x2, y2]]) => {
+      const len = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / len, uy = (y2 - y1) / len, cut = 3.5;
+      const a = [x1 + ux * cut, y1 + uy * cut], b = [x2 - ux * cut, y2 - uy * cut];
+      return `<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}"/><circle cx="${b[0].toFixed(1)}" cy="${b[1].toFixed(1)}" r="3.4"/>`;
+    }).join("");
+    return { w, h, body };
+  };
+  const name = visual.shape === "triangle" ? "삼각형" : "집 모양 오각형";
+  return stageRow("sticks", `성냥개비로 만든 ${name}을 ${visual.stages.join("개, ")}개로 늘린 그림`, visual.stages.map(figure), false);
+}
+
+// 7권 19쪽: 가운데 돌 하나에서 네 방향으로 한 개씩 늘어나는 십자 모양 바둑돌. 문제가 「흰색 바둑돌」이라 흰 돌로 그린다(색표 예외).
+function sourceStoneCross(visual) {
+  const g = 22, r = 9;
+  const figure = (k) => {
+    const c = (k - 1) * g + r, pts = [[c, c]];
+    for (let d = 1; d < k; d += 1) pts.push([c + d * g, c], [c - d * g, c], [c, c + d * g], [c, c - d * g]);
+    return { w: 2 * c, h: 2 * c, body: pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("") };
+  };
+  return stageRow("cross", `흰색 바둑돌을 십자 모양으로 놓은 ${visual.stages.length}개의 그림`, visual.stages.map(figure), true);
+}
+
+// 7권 19쪽: 세모·네모로 만든 모양을 하나씩 늘린 단계. layout: "roof-grid"(세모 지붕 아래 네모 2줄) | "square-row"(네모 한 줄의 위·아래·양 끝에 세모).
+function sourceShapeStages(visual) {
+  const tri = (pts) => `<polygon class="tri" points="${pts.map((p) => p.map((v) => v.toFixed(1)).join(",")).join(" ")}"/>`;
+  const sq = (x, y, u) => `<rect class="sq" x="${x}" y="${y}" width="${u}" height="${u}"/>`;
+  const figure = (k) => {
+    const parts = [];
+    if (visual.layout === "roof-grid") {
+      const u = 18, th = 30;
+      for (let j = 0; j < k; j += 1) parts.push(tri([[j * 2 * u, th], [j * 2 * u + u, 0], [(j + 1) * 2 * u, th]]));
+      for (let row = 0; row < 2; row += 1) for (let col = 0; col < 2 * k; col += 1) parts.push(sq(col * u, th + row * u, u));
+      return { w: 2 * k * u, h: th + 2 * u, body: parts.join("") };
+    }
+    const u = 30, t = 22, x0 = t;
+    for (let j = 0; j < k; j += 1) {
+      const x = x0 + j * u;
+      parts.push(tri([[x, t], [x + u / 2, 0], [x + u, t]]), tri([[x, t + u], [x + u / 2, t + u + t], [x + u, t + u]]), sq(x, t, u));
+    }
+    parts.push(tri([[x0, t], [0, t + u / 2], [x0, t + u]]), tri([[x0 + k * u, t], [x0 + k * u + t, t + u / 2], [x0 + k * u, t + u]]));
+    return { w: k * u + 2 * t, h: u + 2 * t, body: parts.join("") };
+  };
+  const what = visual.layout === "roof-grid" ? "세모 지붕 아래에 네모를 두 줄 붙인" : "네모 한 줄의 위·아래·양 끝에 세모를 붙인";
+  return stageRow("shapes", `${what} 모양을 ${visual.stages.length}단계로 늘린 그림`, visual.stages.map(figure), false);
 }
 
 // 똑같이 가르기 나무: levels 1이면 칸 2개(가·나), 2면 칸 2개 아래 칸 4개(다~바). values는 개념 장면용.
@@ -1053,6 +1277,19 @@ export function book05Markup(visual) {
     case "source-blank-equation": return sourceBlankEquation(visual);
     case "source-date-ladder": return sourceDateLadder(visual);
     case "source-time-column": return sourceTimeColumn(visual);
+    case "source-stick-stages": return sourceStickStages(visual);
+    case "source-stone-cross": return sourceStoneCross(visual);
+    case "source-shape-stages": return sourceShapeStages(visual);
+    case "source-well": return sourceWell(visual);
+    case "source-pond": return sourcePond(visual);
+    case "source-swap": return sourceSwap(visual);
+    case "source-stone-polygon": return sourceStonePolygon(visual);
+    case "source-plot": return sourcePlot(visual);
+    case "source-lake": return sourceLake(visual);
+    case "source-note-box": return sourceNoteBox(visual);
+    case "source-swap-sub": return sourceSwapSub(visual);
+    case "source-distance-arcs": return sourceDistanceArcs(visual);
+    case "source-venn": return sourceVenn(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);
