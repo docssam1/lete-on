@@ -52,7 +52,7 @@ const BAND={
    S: 초3 과학동아·실험 → 초4 초등 4-1~6-2(2개월/학기) → 초5 중등 생물·지학·물리·화학 → 초6 화학·물리 심화 → 7월 갈림길(물리올림 대비반 / 프리올림) → 중1·2 올림피아드 대비 → 중2 8월~ 영재고 실전
    A: S 를 한 해 늦춤 — 초4 줄기과학 → 초5 중등 생물·지학 → 초6 중등 물리·화학 → 중1 프리올림 물리·화학반 → 중2 올림피아드 대비 → 중3 영재고 실전
    J(자사·이과 상위): 초5 중등 생물·지학 → 초6 중등 물리·화학 → 중1 물리·화학 심화반 → 중2 화학1·물리1 기초 → 중3 물리올림 또는 화학올림(선택) · 내신
-   물리인증(9→5급)·과탐토·과학 실험대회·물리/화학 올림 달은 원장님 표. 물리인증·pre KJSO 는 2026 공식 일정 미확인(확인 필요). */
+   물리인증(9→5급)·과탐토·과학 실험대회·물리/화학 올림 달은 원장님 표. pre KJSO 는 KJSO 공식 안내(2026 접수 4/20~6/19) 확인. 물리인증은 2026 공식 일정 미확인(확인 필요). */
 const SCI_BOOK={elem:'최상위 줄기과학 · 과학 100제',mid:'오투 · 최상위 줄기과학 중등',deep:'하이탑',hi:'완자 · 하이탑 고등',olym:'올림피아드 기본서'};
 function sciTrack(track, M, kmo){
   const sci=[], sciIssue=[];
@@ -124,7 +124,7 @@ function buildD(o){
   for(let g=3;g<=6;g++){ CT.push([g,4,4,'성대경시 (4월)'],[g,10,10,'성대경시 (10월)'],[g,4,4,'서울교대 초등수학 창의사고력대회'],[g,6,6,'AI·SW 사고력 올림피아드'],[g,7,7,'서울교대 초등과학 창의사고력대회']); }
   for(let g=4;g<=6;g++) CT.push([g,5,7,'청소년과학탐구대회 (산출물)']);
   for(let g=5;g<=6;g++) CT.push([g,6,9,'자연관찰탐구대회 (예선)'],[g,4,4,'대한민국 과학축제'],[g,11,11,'과학 싹 큰 잔치']);
-  CT.push([5,4,4,'KAIST 사이버영재 접수'],[6,4,4,'KAIST 사이버영재 접수'],[6,6,6,'대학부설 공동 온라인 선교육 접수'],[5,6,6,'pre KJSO 접수(4월 말)·6월~익년 1월 (2026 확인 필요)']);
+  CT.push([5,4,4,'KAIST 사이버영재 접수'],[6,4,4,'KAIST 사이버영재 접수'],[6,6,6,'대학부설 공동 온라인 선교육 접수'],[5,4,6,'KJSO·pre KJSO 접수 (4/20~6/19) · 교육 6월~익년 1월']);
   CT.push([7,4,5,'YIP청소년발명가 · 학생과학탐구올림픽'],[7,9,10,'창의력챔피언대회 · 코딩프로젝트챌린지'],[7,6,8,'KJSO 1단계'],[8,4,5,'학생과학탐구올림픽 · 발명전시회'],[8,9,10,'에너지환경탐구대회 · 코딩챌린지'],[9,4,5,'학생과학탐구올림픽 (중3)']);
   CT.forEach(([g,a,b,t])=>contest.push([t,M(g,a),M(g,b)]));
   const flags=[[M(6,3),'KMO 입문'],[M(6,7),o.kmo==='go'?'물리올림 대비반':'프리올림 화학/물리'],[M(7,6),o.kmo==='go'?'KMO 계속':'KMO 1차 → 고등 선행'],[M(9,7),'영재학교 전형'],[M(9,9),'과학고 전형']];
@@ -564,5 +564,20 @@ function narrativeD(P){
   }).filter(y=>y.items.length);
 }
 
-window.Planner={narrativeD,narrative,build,BAND,bandOf,renderTable,renderSimple,render3D,bind3D,render3DMap,bindMap,milestones,mOf,label,SEM,CALC,COMP,MID};
+/* 교재 길잡이 — 원장님 2026-10-20 프라이빗노트 자료 요지("진도는 따라잡힌다, 더 어렵게 공부한 아이가 이긴다").
+   단계마다 기본 → 응용 → 심화 → 경시. 심화는 한 권으로 끝내지 않는다(초등 2권, 중등 심화·경시 합쳐 3권). */
+const BOOKS=[
+  {stage:'초등',re:/디딤돌|개념응용 · 최상위$|^\d-\d/,rows:[['기본','디딤돌 기본 · 개념원리 쎈'],['응용','디딤돌 응용 · 큐브수학S standard'],['심화','최상위 S · 점프왕수학 — 두 권'],['경시','올림피아드 왕수학 · 3% 올림피아드 · HME · 성대경시']]},
+  {stage:'중등',re:/원리해설|개념원리|최상위라이트|^중\d/,rows:[['기본','개념원리 · 쎈'],['응용','RPM · 일품'],['심화','에이급 · 블랙라벨 · 절대강자 최상위 — 심화·경시 합쳐 세 권'],['경시','KJMO']]},
+  {stage:'고1',re:/공통수학|정석|수Ⅰ|수Ⅱ|대수|미적분|기하|확률|수능|중3 내신/,rows:[['기본','공통수학 개념서'],['심화','실력정석 · 블랙라벨'],['경시','KMO']]}
+];
+function bookGuide(P){
+  const R=k=>(P.rows.find(r=>r.key===k)||{blocks:[]}).blocks, cur=R('school').find(b=>b[1]<=P.now&&b[2]>=P.now);
+  const t=cur?cur[0].replace(/<br>.*$/,''):'', idx=Math.max(0,BOOKS.findIndex(b=>b.re.test(t)));
+  const capC=P.band==='C';
+  return {now:idx,stages:BOOKS.map((b,i)=>({stage:b.stage,now:i===idx,rows:capC?b.rows.filter(r=>r[0]!=='경시').map(r=>r[0]==='심화'&&b.stage==='중등'?['응용 반복','RPM 두 번 · 에이급은 안 함']:r):b.rows})),
+    note:capC?'천천히형은 응용을 두껍게 반복하는 게 먼저예요. 심화는 최상위 S 한 권까지만 보고, 경시는 하지 않아요.':'진도는 결국 따라잡혀요. 마지막에 이기는 건 더 어렵게 공부한 아이예요. 심화 문제집은 한 권으로 끝내지 말고 쉬운 심화 → 어려운 심화로 계단을 쪼개서 두세 권 풀어요.'};
+}
+
+window.Planner={bookGuide,narrativeD,narrative,build,BAND,bandOf,renderTable,renderSimple,render3D,bind3D,render3DMap,bindMap,milestones,mOf,label,SEM,CALC,COMP,MID};
 })();
