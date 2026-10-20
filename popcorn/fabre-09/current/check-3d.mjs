@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 const {chromium}=await import(process.env.SCIENCE_PLAYWRIGHT||'playwright');
-const base=process.env.PILOT_URL||'http://127.0.0.1:39246/science-lab/popcorn/fabre-09/current/';
+const base=process.env.PILOT_URL||'http://127.0.0.1:39246/popcorn/fabre-09/current/';
 const browser=await chromium.launch({args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const out=process.env.PILOT_SHOTS; if(out)await mkdir(out,{recursive:true});
 const results=[];
@@ -22,15 +22,15 @@ try{
    assert.equal(box.need,false,`${name}/${id} fit pending`);results.push({view:name,id,...box});
   }
   for(const id of ['socket','switch','assembly']){
-   await page.evaluate(async id=>{const {THREE}=await import('../../../scenes/_kit.js');window.rig.set({id,demo:true});window.rig.stage.root.updateMatrixWorld(true);window.demoPoints=[];window.rig.stage.root.traverseVisible(o=>{if(!o.isMesh||o.userData.noFrame||o.userData.isLabel)return;const b=new THREE.Box3().setFromObject(o);for(let i=0;i<8;i++)window.demoPoints.push([i&1?b.max.x:b.min.x,i&2?b.max.y:b.min.y,i&4?b.max.z:b.min.z]);});},id);
+   await page.evaluate(async id=>{const {THREE}=await import('../../../science-lab/scenes/_kit.js');window.rig.set({id,demo:true});window.rig.stage.root.updateMatrixWorld(true);window.demoPoints=[];window.rig.stage.root.traverseVisible(o=>{if(!o.isMesh||o.userData.noFrame||o.userData.isLabel)return;const b=new THREE.Box3().setFromObject(o);for(let i=0;i<8;i++)window.demoPoints.push([i&1?b.max.x:b.min.x,i&2?b.max.y:b.min.y,i&4?b.max.z:b.min.z]);});},id);
    await page.waitForFunction(()=>!window.rig.stage._needFit);
-   const bounds=await page.evaluate(async()=>{const {THREE}=await import('../../../scenes/_kit.js');const s=window.rig.stage;const p=window.demoPoints.map(p=>new THREE.Vector3(...p).project(s.camera));return {x0:Math.min(...p.map(v=>v.x)),x1:Math.max(...p.map(v=>v.x)),y0:Math.min(...p.map(v=>v.y)),y1:Math.max(...p.map(v=>v.y))};});
+   const bounds=await page.evaluate(async()=>{const {THREE}=await import('../../../science-lab/scenes/_kit.js');const s=window.rig.stage;const p=window.demoPoints.map(p=>new THREE.Vector3(...p).project(s.camera));return {x0:Math.min(...p.map(v=>v.x)),x1:Math.max(...p.map(v=>v.x)),y0:Math.min(...p.map(v=>v.y)),y1:Math.max(...p.map(v=>v.y))};});
    assert.ok(bounds.x0>=-1.01&&bounds.x1<=1.01&&bounds.y0>=-1.01&&bounds.y1<=1.01,`${name}/${id} initial demo geometry clipped: ${JSON.stringify(bounds)}`);
    results.push({view:name,id:id+'-demo',...bounds});
   }
   if(out)await page.screenshot({path:out+'/3d-'+name+'.png'});console.log('PASS 3D',name);
  }
  assert.equal(errors.length,0,errors.join('\n'));await page.evaluate(()=>window.rig.dispose());
- const live=await page.evaluate(async()=>{const {Stage}=await import('../../../engine.js');return Stage.live.size;});assert.equal(live,0);
+ const live=await page.evaluate(async()=>{const {Stage}=await import('../../../science-lab/engine.js');return Stage.live.size;});assert.equal(live,0);
  console.log('3D PILOT PASS',results.length,'cases, 0 failed');if(out)await writeFile(out+'/3d-qa.json',JSON.stringify({passed:results.length,failed:0,results},null,2));
 }finally{await browser.close();}

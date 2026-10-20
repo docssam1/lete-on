@@ -1,5 +1,5 @@
-@font-face { font-family: WorkbookLab; src: url('../../../assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
-@font-face { font-family: WorkbookDisplay; src: url('../../../assets/fonts/gaegu-700.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: WorkbookLab; src: url('../../../science-lab/assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: WorkbookDisplay; src: url('../../../science-lab/assets/fonts/gaegu-700.woff2') format('woff2'); font-weight: 700; font-display: swap; }
 
 /* One type and page system for the living book and its printed edition. */
 .science-workbook, .workbook-standalone, .workbook-print-root {

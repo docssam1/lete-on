@@ -5,7 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const { chromium } = await import(process.env.SCIENCE_PLAYWRIGHT || 'playwright');
-const base = process.env.PILOT_URL || 'http://127.0.0.1:39247/science-lab/popcorn/fabre-09/current/';
+const base = process.env.PILOT_URL || 'http://127.0.0.1:39247/popcorn/fabre-09/current/';
 const out = process.env.PILOT_SHOTS;
 const key = 'popcorn.fabre09.current.v1';
 const observations = ['one', 'series', 'parallel', 'series-remove', 'parallel-remove'];
@@ -56,7 +56,7 @@ async function start(page, mode) {
 
 async function snapshot(page, remember = false) {
   return page.evaluate(async remember => {
-    const { Stage } = await import('../../../engine.js');
+    const { Stage } = await import('../../../science-lab/engine.js');
     const stage = [...Stage.live].find(s => s.canvas?.id === 'model' && s.canvas.isConnected);
     if (remember) window.__studyOriginalStage = stage;
     const physicalCells = [], pointLights = [];

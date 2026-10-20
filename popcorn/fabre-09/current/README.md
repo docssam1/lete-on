@@ -4,7 +4,7 @@
 
 ## 실행
 
-저장소 루트에서 정적 서버를 실행하고 `science-lab/popcorn/fabre-09/current/`를 연다. HTML을 파일로 직접 열면 모듈과 음성을 불러올 수 없다.
+저장소 루트에서 정적 서버를 실행하고 `popcorn/fabre-09/current/`를 연다. HTML을 파일로 직접 열면 모듈과 음성을 불러올 수 없다.
 
 ## 세 가지 진입
 

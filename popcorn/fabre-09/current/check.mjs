@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 const {chromium}=await import(process.env.SCIENCE_PLAYWRIGHT||'playwright');
-const base=process.env.PILOT_URL||'http://127.0.0.1:39246/science-lab/popcorn/fabre-09/current/';
+const base=process.env.PILOT_URL||'http://127.0.0.1:39246/popcorn/fabre-09/current/';
 const out=process.env.PILOT_SHOTS; if(out)await mkdir(out,{recursive:true});
 const browser=await chromium.launch({args:process.env.PILOT_GPU==='hardware'?[]:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 let count=0;const notes=[],errors=[];const ok=(v,label)=>{assert.ok(v,label);count++;notes.push(label);console.log("PASS",label);};
@@ -50,7 +50,7 @@ try{
  const jump=async index=>{await page.locator('[data-action=steps]').click();await page.locator(`[data-step="${index}"]`).click();};
  await jump(3);await page.locator('[data-compare=parallel]').click();await page.locator('[data-cell="1"]').uncheck();
  await jump(13);
- const cells=()=>page.evaluate(async()=>{const {Stage}=await import('../../../engine.js');const s=[...Stage.live].find(s=>s.canvas.id==='model'&&s.canvas.isConnected);const counts=[];s.root.traverse(o=>{if(o.userData.cellParts)counts.push(o.userData.cellParts.filter(c=>c.visible).length);});return counts;});
+ const cells=()=>page.evaluate(async()=>{const {Stage}=await import('../../../science-lab/engine.js');const s=[...Stage.live].find(s=>s.canvas.id==='model'&&s.canvas.isConnected);const counts=[];s.root.traverse(o=>{if(o.userData.cellParts)counts.push(o.userData.cellParts.filter(c=>c.visible).length);});return counts;});
  ok((await cells()).every(n=>n===0),'step menu keeps assembly holders empty after comparison');
  await jump(14);ok((await cells()).every(n=>n===3),'step menu restores both cells for completed experiment');
  await page.locator('[data-position=high]').click();ok((await page.locator('#reading').textContent()).includes('3 V'),'restored cells supply 2-stage voltage');
@@ -60,7 +60,7 @@ try{
  ok(await page.locator('#guide').count()===0,'teacher has no automatic character voice');
  await page.locator('[data-action=next]').click();await page.locator('[data-action=home]').click();
  ok(before===await page.evaluate(()=>localStorage.getItem('popcorn.fabre09.current.v1')),'teacher navigation preserves learner record');
- const live=await page.evaluate(async()=>{const {Stage}=await import('../../../engine.js');return Stage.live.size;});ok(live===1,'one live 3D stage after repeated navigation');
+ const live=await page.evaluate(async()=>{const {Stage}=await import('../../../science-lab/engine.js');return Stage.live.size;});ok(live===1,'one live 3D stage after repeated navigation');
  const physics=await page.evaluate(async()=>{const {circuitState}=await import('./model.js');return [circuitState({mode:'series',cell1:false}),circuitState({mode:'parallel',cell1:false}),circuitState({mode:'stand',position:'low',cell2:false}),circuitState({mode:'stand',position:'high',cell2:false})];});
  ok(physics[0].volts===0&&physics[1].volts===1.5&&physics[2].volts===1.5&&physics[3].volts===0,'source-derived circuit invariants');
  const voices=await page.evaluate(async()=>{const m=await(await fetch('assets/audio/voices.json')).json();return Object.keys(m.lines).length;});ok(voices===24,'24 actual Numi voice files');

@@ -163,16 +163,6 @@ export function pageHome($app, store, teacher) {
         <div class="h-labs">${labCard(store, feature, true)}${rest.map((l) => labCard(store, l, false)).join('')}</div>
       </div></section>
 
-      <section class="h-sec" id="h-popcorn"><div class="h-wrap">
-        <header class="h-sec-head"><p class="h-num">🍿</p><div><h2>팝콘실험실</h2><p>실제 키트 사진을 읽고, 조립하고, 내 생각으로 이어 가는 과학 잡지.</p></div></header>
-        <div class="h-labs"><article class="h-lab feature" style="--t:#237e7a">
-          <a class="h-lab-img" href="../popcorn/charles-01/current/companion/#home" aria-label="팝콘실험실 샤를 1호 시작하기"><img src="../popcorn/charles-01/current/assets/cover-kit-branded.svg" alt="실제 종이 자석 악어와 물고기·당근 키트" loading="lazy" width="1200" height="675"><span class="h-badge">샤를 1호</span></a>
-          <div class="h-lab-body"><p class="h-kicker">자석 악어와 보내는 일주일</p><h3><a href="../popcorn/charles-01/current/companion/#home">먹이를 먹는 자석 악어</a></h3><p class="h-q">악어는 먹이의 그림을 알아볼까요?</p><p>랩코니와 봉투 열기부터 3D 조립까지. 한·영 읽기, 영상, 관찰 기록과 학생 교재를 함께 펼쳐요.</p>
-            <div class="h-lab-go"><a class="h-btn solid" href="../popcorn/charles-01/current/companion/#home">${ICO.self}팝콘실험실 시작하기</a></div>
-          </div>
-        </article></div>
-      </div></section>
-
       <section class="h-sec alt" id="h-map"><div class="h-wrap">
         <header class="h-sec-head"><p class="h-num">02</p><div><h2>3~6학년 로드맵 · 2022 개정 32단원</h2><p>지금 교과서 차례예요. 파란 정거장은 열려 있고, 끝내면 깃발이 꽂혀요. 단원평가는 <a href="#/bank">문제은행</a>에서 골라요.</p></div></header>
         <div class="h-check"><div><b>선생님 확인</b><p>이 기기에서 스스로 공부한 쓰기 답을 확인해요. 기록은 다른 기기로 전송되지 않아요.</p></div><a class="h-btn" href="#/check">확인할 답 보기${need ? ` <span class="h-check-count">${need}</span>` : ''}${ICO.arrow}</a></div>

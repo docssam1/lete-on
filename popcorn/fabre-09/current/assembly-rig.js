@@ -1,6 +1,6 @@
 // Presentation for the build-only deck. The original lesson rig and circuit stay intact.
 import {createRig} from './model.js?v=3';
-import {THREE} from '../../../scenes/_kit.js';
+import {THREE} from '../../../science-lab/scenes/_kit.js';
 
 export function createAssemblyRig(canvas){
  const rig=createRig(canvas),{stage,parts,wires}=rig,root=parts.A.parent;

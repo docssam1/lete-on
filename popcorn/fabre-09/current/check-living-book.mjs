@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {mkdir,writeFile} from 'node:fs/promises';
 const {chromium}=await import(process.env.SCIENCE_PLAYWRIGHT||'playwright');
-const base=process.env.PILOT_URL||'http://127.0.0.1:39247/science-lab/popcorn/fabre-09/current/';
+const base=process.env.PILOT_URL||'http://127.0.0.1:39247/popcorn/fabre-09/current/';
 const out=process.env.PILOT_SHOTS;if(!out)throw new Error('PILOT_SHOTS must name an evidence directory');
 await mkdir(out,{recursive:true});
 const browser=await chromium.launch();const cases=[];

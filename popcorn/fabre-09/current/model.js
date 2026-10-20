@@ -1,5 +1,5 @@
-import {THREE,mat,label,roundedBoxGeometry} from '../../../scenes/_kit.js';
-import {Stage} from '../../../engine.js';
+import {THREE,mat,label,roundedBoxGeometry} from '../../../science-lab/scenes/_kit.js';
+import {Stage} from '../../../science-lab/engine.js';
 export function circuitState({mode='stand',position='off',cell1=true,cell2=true}={}){
  let volts=0,active=[];
  if(mode==='one'){if(cell1){volts=1.5;active=['wire1','wire2','junction','wirelow'];}}

@@ -5,7 +5,7 @@ import {join} from 'node:path';
 import {STUDENT_PAGE_COUNT} from './workbook-pages.js';
 import {TEACHER_PAGE_COUNT} from './workbook-teacher.js';
 const {chromium}=await import(process.env.SCIENCE_PLAYWRIGHT||'playwright');
-const base=process.env.PILOT_URL||'http://127.0.0.1:39247/science-lab/popcorn/fabre-09/current/';
+const base=process.env.PILOT_URL||'http://127.0.0.1:39247/popcorn/fabre-09/current/';
 const out=process.env.PILOT_PDF_OUT||fileURLToPath(new URL('./docs/',import.meta.url));
 await mkdir(out,{recursive:true});
 const browser=await chromium.launch();

@@ -6,7 +6,7 @@ import {TEACHER_PAGE_COUNT} from './workbook-teacher.js';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const base = process.env.PILOT_URL || 'http://127.0.0.1:39247/science-lab/popcorn/fabre-09/current/';
+const base = process.env.PILOT_URL || 'http://127.0.0.1:39247/popcorn/fabre-09/current/';
 const out = process.env.PILOT_SHOTS || 'E:/Codex/visualizations/2026/10/06/popcorn-fabre09/workbook-qa';
 const key = 'popcorn.fabre09.current.v1';
 const timeout = Number(process.env.PILOT_TIMEOUT) || 45000;
@@ -45,7 +45,7 @@ async function start(page, mode = 'self') {
   await page.locator('.lesson-head h1').waitFor();
   // A fallback must fail this suite: the real 3D model is part of the contract.
   await page.waitForFunction(async () => {
-    const { Stage } = await import('../../../engine.js');
+    const { Stage } = await import('../../../science-lab/engine.js');
     return [...Stage.live].some(stage => stage.canvas?.id === 'model' && stage.canvas.isConnected);
   });
 }
@@ -68,7 +68,7 @@ async function selectObservation(page, id) {
 }
 async function snapshot(page, remember = false) {
   return page.evaluate(async remember => {
-    const { Stage } = await import('../../../engine.js');
+    const { Stage } = await import('../../../science-lab/engine.js');
     const stage = [...Stage.live].find(item => item.canvas?.id === 'model' && item.canvas.isConnected);
     if (remember) window.__workbookOriginalStage = stage;
     const physicalCells = [], pointLights = [];
