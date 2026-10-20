@@ -16,7 +16,8 @@ const SEM=k=>`${Math.ceil(k/2)}-${k%2?1:2}`;
 const MID=['중1-1','중1-2','중2-1','중2-2','중3-1','중3-2'];
 const CALC=[...Array.from({length:12},(_,i)=>[`기적의 계산법 ${i+1}`,0]),
   ['기적의 중학연산 1AB',5],['기적의 중학도형 1권',2],['기적의 중학연산 2AB',4],['기적의 중학도형 2권',2],['기적의 중학연산 3AB',6],['기적의 중학도형 3권',2]];
-const COMP=[['초등팩토 1 (PRE 1031 기본)',5],['필즈 베이직 (PRE 1031 심화)',5],['1031 입문 + workbook',4],['TOT 2단계',3],['1031 초급',7],['3% 1과정',4]];
+// 1031 중급은 예시 로드맵에서 지웠다(원장님 2026-10-20). 지금 중급을 하고 있는 레벨만 거친다(skip).
+const COMP=[['초등팩토 1 (PRE 1031 기본)',5],['필즈 베이직 (PRE 1031 심화)',5],['1031 입문 + workbook',4],['TOT 2단계',3],['1031 초급',7],['1031 중급',7,'skip'],['3% 1과정',4],['왕수학 응용 4',3]];
 const GRADES=['5세','6세','7세','초1','초2','초3','초4','초5','초6','중1'];
 
 // 학년(1~6)·월 → m, m → 학년·월·연도
@@ -50,7 +51,7 @@ function build(o){
   // ---- 사고력
   const ci=o.comp, comp=[];
   let t=now; comp.push([COMP[ci][0],t-(COMP[ci][1]-o.compLeft),t+o.compLeft-1]); t+=o.compLeft;
-  for(let i=ci+1;i<COMP.length;i++){ comp.push([COMP[i][0],t,t+COMP[i][1]-1]); t+=COMP[i][1]; }
+  for(let i=ci+1;i<COMP.length;i++){ if(COMP[i][2]==='skip') continue; comp.push([COMP[i][0],t,t+COMP[i][1]-1]); t+=COMP[i][1]; }
   // ---- 연산
   const calc=[]; t=now;
   for(let i=o.calc;i<CALC.length;i++){ const n=CALC[i][1]||S, left=i===o.calc?Math.min(o.calcLeft,n):n; calc.push([CALC[i][0],t-(i===o.calc?n-left:0),t+left-1]); t+=left; }
@@ -74,13 +75,13 @@ function build(o){
   // ---- 영재원 (2026-10-20 모집요강 기준). 초3 11월이 지났으면 초4 기준(수학·과학 초4 지원 → 초5)
   const gy=now<=mOf(3,11)?3:4, d=12*(gy-3);
   const giftA=[], giftB=[];
-  if(o.gifted==='A'||o.gifted==='AB'){
+  if(o.gifted){ // 영재원은 고려 / 안 고려 하나로(원장님 2026-10-20)
     giftA.push([`가천대 브릿지 접수 · 온라인 과제 (초${gy} 대상)`,61+d,63+d],['가천대 브릿지 관찰수업 (5월 면접 · 5~9월 토)',64+d,68+d],
       [gy===3?'강남서초 영재원 수·과융합 (11월 지원 · 12/5 평가)':'강남서초 영재원 수학·과학 (11월 지원 · 12월 평가)',70+d,71+d],['최종 발표',73+d,73+d],
       [`초${gy+1} 영재원 수업 (합격 시)`,74+d,83+d]);
     flags.push([73+d,'영재원 발표']);
   }
-  if(o.gifted==='B'||o.gifted==='AB'){
+  if(o.gifted){
     giftB.push(['서울교대 과학영재교육원 지원·선발 (7~9월)',66+d,68+d],[`교대 영재원 수업 (합격 시, 초${gy+1}) · 합격하면 서울 교육청 영재원 지원 불가`,74+d,83+d]);
   }
   // ---- 말풍선: 중3-1 원리해설 시작 달에 중등 학원 응시 고려
@@ -170,5 +171,52 @@ function bind3D(box){
   window.addEventListener('resize',fit); fit();
 }
 
-window.Planner={build,renderTable,renderSimple,render3D,bind3D,mOf,label,SEM,CALC,COMP,MID};
+
+/* ---------- 3D 맵(시안 UX): 큰 이정표를 섬으로, 보라 점선 길로 잇는다. 보여주기용 ---------- */
+function milestones(P){
+  const R=k=>(P.rows.find(r=>r.key===k)||{blocks:[]}).blocks;
+  const at=(k,m)=>{ const b=R(k).find(x=>x[1]<=m&&x[2]>=m); return b?b[0]:''; };
+  const short=t=>t.replace(/ 디딤돌.*| 원리해설| \(.*\)/g,'');
+  const sch=R('school'), elem=sch.filter(b=>/디딤돌/.test(b[0])), sys=sch.find(b=>/계통/.test(b[0])), mids=sch.filter(b=>/원리해설/.test(b[0]));
+  const out=[{m:P.now,kind:'now',title:'현재 · '+label(P.now),sub:[short(at('school',P.now)),at('comp',P.now).replace(/\s*\(.*\)/,'')].filter(Boolean).join(' · '),icon:'📍'}];
+  if(elem.length&&elem[elem.length-1][2]>P.now) out.push({m:elem[elem.length-1][2],kind:'step',title:'초등 교과 완료',sub:'디딤돌 6-2 · '+label(elem[elem.length-1][2]),icon:'📘'});
+  if(sys&&sys[1]>P.now){ const c=at('comp',sys[1]); out.push({m:sys[1],kind:'step',title:'계통 · 대수 정리',sub:(/3%/.test(c)?'3% 1과정 함께 · ':'')+label(sys[1]),icon:'🧮'}); }
+  if(mids.length&&mids[0][1]>P.now) out.push({m:mids[0][1],kind:'step',title:'중등 시작',sub:'중1-1 원리해설 · '+label(mids[0][1]),icon:'🏫'});
+  const g=R('giftA').find(b=>/영재원 수업/.test(b[0])); if(g) out.push({m:g[1],kind:'gift',title:'영재원 (합격 시)',sub:label(g[1])+' 수업 시작',icon:'🔭'});
+  P.bubbles.forEach(([m,t])=>out.push({m,kind:'step',title:'중등 학원 응시 고려',sub:t.replace(/ 응시 고려$/,'').replace(/^\S+ \S+ /,'')+' · '+label(m),icon:'🎯'}));
+  const s=R('sci').find(b=>/중등 과학/.test(b[0])); if(s&&s[1]<=P.A1) out.push({m:s[1],kind:'sci',title:'중등 과학',sub:label(s[1]),icon:'🧪'});
+  out.sort((a,b)=>a.m-b.m);
+  const hw=R('hw').filter(b=>/시험/.test(b[0])&&!/대비/.test(b[0])).map(b=>({m:b[1],kind:'branch',title:b[0].replace(/\s*\(.*\)/,''),sub:label(b[1])+' · 선택',icon:'🐂'}));
+  return {main:out,branch:hw};
+}
+function render3DMap(P){
+  const {main,branch}=milestones(P), W=1500, H=820;
+  // 섬 자리: 왼쪽 아래(현재)에서 오른쪽 위(중등 이후)로 굽이치는 길
+  const pts=main.map((x,i)=>{ const t=main.length>1?i/(main.length-1):0; return {x:160+t*(W-360),y:H-170-t*(H-400)+Math.sin(t*Math.PI*2.2)*80}; });
+  // 갈래 섬: 해당 구간 가운데에서 길과 직각으로 오른쪽 아래로 비켜 둔다
+  const bpts=branch.map((x,i)=>{ const k=main.findIndex(mm=>mm.m>=x.m), j=Math.max(1,k<0?main.length-1:k), a=pts[j-1], b=pts[j]||a;
+    let dx=b.x-a.x, dy=b.y-a.y, L=Math.hypot(dx,dy)||1; const px=-dy/L, py=dx/L, sgn=(px+py)>0?1:-1;
+    return {x:(a.x+b.x)/2+sgn*px*210,y:(a.y+b.y)/2+sgn*py*210}; });
+  let path=''; pts.forEach((p,i)=>{ if(i){ const q=pts[i-1], cx=(q.x+p.x)/2; path+=` C ${cx} ${q.y}, ${cx} ${p.y}, ${p.x} ${p.y}`; } else path='M '+p.x+' '+p.y; });
+  let bpath=bpts.map((b,i)=>{ const k=main.findIndex(mm=>mm.m>=branch[i].m), j=Math.max(1,k<0?main.length-1:k), a=pts[j-1], c=pts[j]||a, mx=(a.x+c.x)/2, my=(a.y+c.y)/2; return `<path d="M ${mx} ${my} Q ${(mx+b.x)/2+30} ${(my+b.y)/2-30}, ${b.x} ${b.y}" class="m3-bpath"/>`; }).join('');
+  let h=`<div class="m3-stage"><div class="m3-plane" style="width:${W}px;height:${H}px">`;
+  h+=`<svg class="m3-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><path d="${path}" class="m3-path-glow"/><path d="${path}" class="m3-path"/>${bpath}</svg>`;
+  // 나무
+  for(let i=0;i<46;i++){ const x=(i*317)%W, y=(i*191)%H; if(pts.concat(bpts).some(p=>Math.hypot(p.x-x,p.y-y)<120)) continue; h+=`<div class="m3-tree" style="left:${x}px;top:${y}px;--s:${0.7+((i*7)%5)/10}"><i></i></div>`; }
+  const island=(p,m,cls)=>`<div class="m3-island ${cls}" style="left:${p.x}px;top:${p.y}px"><div class="m3-rock"></div><div class="m3-top"></div><div class="m3-card"><span class="m3-ico">${m.icon}</span><b>${m.title}</b><small>${m.sub}</small></div>${m.kind==='now'?'<div class="m3-pin"></div>':''}</div>`;
+  main.forEach((m,i)=>{ h+=island(pts[i],m,'k-'+m.kind); });
+  branch.forEach((m,i)=>{ h+=island(bpts[i],m,'k-branch'); });
+  return h+'</div></div>';
+}
+function bindMap(box){
+  const st=box.querySelector('.m3-stage'), pl=box.querySelector('.m3-plane'); if(!pl) return;
+  let rx=50, rz=-24, drag=null;
+  const fit=()=>{ const s=Math.min(0.95,st.clientWidth/1500*0.92); pl.style.transform=`translate(-50%,-50%) scale(${s}) rotateX(${rx}deg) rotateZ(${rz}deg)`; pl.style.setProperty('--bx',`rotateZ(${-rz}deg) rotateX(${-rx}deg)`); };
+  st.onpointerdown=e=>{ drag=[e.clientX,e.clientY,rx,rz]; st.setPointerCapture(e.pointerId); };
+  st.onpointermove=e=>{ if(!drag) return; rz=Math.max(-50,Math.min(10,drag[3]+(e.clientX-drag[0])*0.2)); rx=Math.max(25,Math.min(65,drag[2]-(e.clientY-drag[1])*0.2)); fit(); };
+  st.onpointerup=()=>{ drag=null; };
+  window.addEventListener('resize',fit); fit();
+}
+
+window.Planner={build,renderTable,renderSimple,render3D,bind3D,render3DMap,bindMap,milestones,mOf,label,SEM,CALC,COMP,MID};
 })();

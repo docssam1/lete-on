@@ -3,131 +3,194 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>갈림길 로드맵 조정</title>
+<title>나의 성장 로드맵</title>
 <style>
-:root{--ink:#122b4d;--sub:#526780;--line:#cbd9e9;--navy:#173a67;--bg:#edf2f8;--card:#fff;--accent:#7c3aed}
+:root{--ink:#2a1f4d;--sub:#6b6290;--line:#e6dff5;--p:#6d3fd6;--pl:#efe8fd;--bg1:#f7f3fd;--bg2:#efe7fb;--card:#ffffffee;--shadow:0 10px 30px rgba(84,52,160,.12)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased}
-main{max-width:1500px;margin:auto;padding:22px 16px 40px}
-header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:3px solid var(--navy);padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap}
-.eyebrow{font-size:11px;letter-spacing:2px;color:#3278b7;font-weight:800}
-h1{font-size:26px;margin:4px 0;letter-spacing:-.5px}
-.sub{color:var(--sub);font-size:13px;margin:0}
-.controls{background:var(--navy);color:#fff;border-radius:12px;padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 16px}
-.controls fieldset{border:1px solid rgba(255,255,255,.25);border-radius:9px;padding:8px 10px 10px;margin:0}
-.controls legend{font-size:11px;font-weight:800;letter-spacing:.5px;color:#bfdbfe;padding:0 4px}
-.controls label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;margin-top:6px}
-select,input{font:inherit;font-size:12px;padding:5px 6px;border:1px solid #a8bdd6;border-radius:6px;background:#fff;color:var(--navy);max-width:62%}
-input[type=checkbox]{max-width:none}
-.tabs{display:flex;gap:6px;margin:16px 0 8px;flex-wrap:wrap}
-.tabs button{font:inherit;font-size:13px;font-weight:800;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--navy);cursor:pointer}
-.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
-.tabs .print{margin-left:auto;font-weight:600}
+body{margin:0;color:var(--ink);font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased;background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh}
+button,select,input{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:12px 22px;background:#ffffffcc;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.logo{font-weight:900;font-size:22px;letter-spacing:.5px;color:#3b2a7a}
+.logo-sep{width:1px;height:22px;background:#d6cdef}
+.ttl{font-weight:800;font-size:19px}
+.chip{background:#e7defb;color:#5b3fb4;font-size:12px;font-weight:800;border-radius:999px;padding:3px 10px}
+.nav{margin-left:auto;display:flex;gap:4px}
+.nav button{border:0;background:none;padding:10px 14px;font-weight:800;font-size:15px;color:#4a4170;cursor:pointer;border-bottom:3px solid transparent}
+.nav button.on{color:var(--p);border-bottom-color:var(--p)}
+.gear{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;font-weight:800;cursor:pointer}
+main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 .view{display:none}.view.on{display:block}
-.warn{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;border-radius:9px;padding:9px 12px;font-size:12px;margin:8px 0}
-.scroll{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+.mapwrap{position:relative}
+.side{position:absolute;left:14px;top:14px;z-index:5;width:300px;display:flex;flex-direction:column;gap:12px}
+.side .card{padding:14px}
+.side h3{margin:0 0 4px;font-size:16px}
+.item{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:8px}
+.item .ic{width:34px;height:34px;border-radius:50%;background:var(--pl);display:grid;place-items:center;flex:none}
+.item small{display:block;color:var(--sub);font-size:11px;font-weight:700}
+.item b{font-size:13.5px}
+.choice{margin-top:12px}
+.choice .q{font-size:13px;font-weight:800;margin-bottom:6px}
+.seg{display:flex;background:var(--pl);border-radius:999px;padding:3px}
+.seg button{flex:1;border:0;background:none;border-radius:999px;padding:7px 8px;font-size:12.5px;font-weight:800;color:#5b4f86;cursor:pointer}
+.seg button.on{background:var(--p);color:#fff;box-shadow:0 4px 10px rgba(109,63,214,.35)}
+.sub-opts{margin-top:8px;display:grid;gap:6px;font-size:12px}
+.sub-opts label{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sub-opts select{font-size:12px;padding:5px 6px;border:1px solid var(--line);border-radius:8px;background:#fff;max-width:62%}
+.m3-stage{position:relative;height:760px;border-radius:24px;overflow:hidden;perspective:2000px;cursor:grab;touch-action:none;background:radial-gradient(ellipse at 70% 10%,#fff6e8 0%,transparent 45%),radial-gradient(ellipse at 20% 90%,#e9defb 0%,transparent 55%),linear-gradient(180deg,#f3ecfd 0%,#e7dcf8 100%);border:1px solid var(--line);box-shadow:var(--shadow)}
+.m3-plane{position:absolute;left:60%;top:39%;transform-style:preserve-3d;background:radial-gradient(ellipse at 50% 50%,#f6f0e6 0%,#efe6f7 60%,transparent 75%);border-radius:50%}
+.m3-svg{position:absolute;left:0;top:0;overflow:visible}
+.m3-path-glow{fill:none;stroke:#b794f6;stroke-width:34;stroke-linecap:round;opacity:.35;filter:blur(6px)}
+.m3-path{fill:none;stroke:#7c3aed;stroke-width:12;stroke-linecap:round;stroke-dasharray:26 18}
+.m3-bpath{fill:none;stroke:#f59e0b;stroke-width:8;stroke-linecap:round;stroke-dasharray:14 14;opacity:.8}
+.m3-island{position:absolute;width:0;height:0;transform-style:preserve-3d}
+.m3-rock,.m3-top{position:absolute;left:-95px;top:-70px;width:190px;height:140px;border-radius:50%}
+.m3-rock{background:radial-gradient(ellipse at 50% 30%,#d9cfe6,#a99bbd);box-shadow:0 0 0 1px #c4b8d8}
+.m3-top{background:radial-gradient(ellipse at 40% 35%,#fbf7ef,#efe6d6);transform:translateZ(26px);box-shadow:inset 0 0 0 6px #e2d5f3,0 0 0 2px #cdbbe8}
+.k-now .m3-top{background:radial-gradient(ellipse at 40% 35%,#8b5cf6,#5b2fc0);box-shadow:inset 0 0 0 6px #a78bfa,0 0 30px #a78bfa}
+.k-branch .m3-top{background:radial-gradient(ellipse at 40% 35%,#fff3d1,#fde3a1);box-shadow:inset 0 0 0 6px #fcd34d}
+.k-gift .m3-top{background:radial-gradient(ellipse at 40% 35%,#fdf0fa,#f6d7ef);box-shadow:inset 0 0 0 6px #f0abfc}
+.m3-card{position:absolute;left:0;top:0;transform:translateZ(30px) var(--bx) translate(-50%,-115%);background:#fff;border-radius:14px;padding:8px 12px;min-width:150px;text-align:center;box-shadow:0 8px 20px rgba(60,30,120,.18);border:1px solid #e3d8f7;white-space:nowrap}
+.m3-card b{display:block;font-size:16px}
+.m3-card small{display:block;font-size:12px;color:var(--sub);font-weight:700;margin-top:2px}
+.m3-ico{font-size:22px;display:block}
+.k-now .m3-card{background:var(--p);color:#fff;border-color:var(--p)}
+.k-now .m3-card small{color:#e9ddff}
+.k-branch .m3-card{border-color:#fcd34d}
+.m3-pin{position:absolute;left:-14px;top:-14px;width:28px;height:28px;border-radius:50% 50% 50% 0;background:#7c3aed;transform:translateZ(60px) var(--bx) rotate(-45deg);box-shadow:0 0 0 6px #ddd0ff}
+.m3-tree{position:absolute;transform-style:preserve-3d}
+.m3-tree i{position:absolute;left:-14px;bottom:0;width:28px;height:40px;transform-origin:bottom;transform:var(--bx) scale(var(--s));border-radius:50% 50% 45% 45%;background:radial-gradient(circle at 40% 30%,#c9dba6,#8fae6b);box-shadow:0 10px 0 -6px #7a5b3a}
+.maphint{position:absolute;right:16px;top:14px;z-index:5;background:#ffffffd9;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:800;color:#5b4f86}
+.dock{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:30;width:min(1460px,calc(100% - 24px));display:flex;align-items:center;gap:10px;padding:10px 12px;background:#ffffffee;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);backdrop-filter:blur(8px);overflow-x:auto}
+.step{display:flex;align-items:center;gap:8px;border-radius:999px;padding:9px 16px;font-weight:800;font-size:13px;white-space:nowrap;background:#f6f2fd;color:#4a4170}
+.step.cur{background:var(--p);color:#fff}
+.step small{font-weight:700;opacity:.85}
+.dots{flex:1;min-width:24px;border-top:2px dashed #c9b8ef}
+.dock .vsw{display:flex;gap:4px;background:#f3eefc;border-radius:16px;padding:4px;margin-left:8px}
+.dock .vsw button{border:0;background:none;border-radius:12px;padding:8px 14px;font-weight:800;font-size:13px;cursor:pointer;color:#4a4170;white-space:nowrap}
+.dock .vsw button.on{background:var(--p);color:#fff}
+.plan-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 12px;flex-wrap:wrap}
+.plan-head h2{margin:0;font-size:22px}
+.plan-head .seg{width:260px}
+.print{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-weight:800;font-size:13px;cursor:pointer}
+.scroll{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 .pl-table{border-collapse:collapse;table-layout:fixed;min-width:1400px;width:100%}
-.pl-table th,.pl-table td{border:1px solid var(--line);text-align:center;font-size:10.5px;padding:5px 2px;line-height:1.35;vertical-align:middle}
-.pl-table tbody th{width:120px;background:#eff4fa;font-size:11px}
+.pl-table th,.pl-table td{border:1px solid #ece6f8;text-align:center;font-size:10.5px;padding:5px 2px;line-height:1.35;vertical-align:middle}
+.pl-table tbody th{width:120px;background:#f7f3fd;font-size:11.5px}
 .pl-table td{height:46px}
-.pl-corner{width:120px;background:#eff4fa}
-.pl-year{background:var(--navy);color:#fff;font-size:12px}
-.pl-mon{background:#f0f5fc}
-.pl-now{box-shadow:inset 0 -3px 0 var(--accent);background:#ede9fe!important}
+.pl-corner{width:120px;background:#f7f3fd}
+.pl-year{background:#5b3fb4;color:#fff;font-size:12px}
+.pl-mon{background:#f3eefc}
+.pl-now{box-shadow:inset 0 -3px 0 var(--p);background:#ede5fd!important}
 .pl-empty{background:#fff}
 .pl-bubble-row td,.pl-bubble-row th{border:none;background:transparent;height:auto;padding:6px 2px 10px}
 .pl-bubble-cell{text-align:right!important;vertical-align:bottom!important}
-.pl-bubble{position:relative;display:inline-block;background:#fff;border:2px solid var(--accent);color:#4c1d95;font-weight:800;font-size:12px;border-radius:14px;padding:5px 10px;white-space:nowrap}
-.pl-bubble::after{content:'';position:absolute;right:10px;bottom:-9px;border:8px solid transparent;border-top-color:var(--accent);border-bottom:0}
+.pl-bubble{position:relative;display:inline-block;background:#fff;border:2px solid var(--p);color:#4c1d95;font-weight:800;font-size:12px;border-radius:14px;padding:5px 10px;white-space:nowrap}
+.pl-bubble::after{content:'';position:absolute;right:10px;bottom:-9px;border:8px solid transparent;border-top-color:var(--p);border-bottom:0}
 .pl-bubble::before{content:'';position:absolute;right:12px;bottom:-5px;border:6px solid transparent;border-top-color:#fff;border-bottom:0;z-index:1}
-/* 간단 보기 */
-.sp-wrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 16px 20px;overflow-x:auto}
-.sp-axis,.sp-flags,.sp-track{position:relative;margin-left:96px;min-width:900px}
-.sp-axis{height:26px;border-bottom:2px solid var(--navy)}
+.sp-wrap{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 16px 20px;overflow-x:auto;box-shadow:var(--shadow)}
+.sp-axis,.sp-flags,.sp-track{position:relative;margin-left:110px;min-width:900px}
+.sp-axis{height:26px;border-bottom:2px solid #5b3fb4}
 .sp-axis span{position:absolute;bottom:4px;font-size:12px;font-weight:800;transform:translateX(2px)}
-.sp-now{position:absolute;top:0;bottom:-400px;width:2px;background:var(--accent);opacity:.6}
-.sp-now b{position:absolute;top:-2px;left:4px;font-size:11px;color:var(--accent);font-style:normal;white-space:nowrap}
+.sp-now{position:absolute;top:0;bottom:-400px;width:2px;background:var(--p);opacity:.6}
+.sp-now b{position:absolute;top:-2px;left:4px;font-size:11px;color:var(--p);font-style:normal;white-space:nowrap}
 .sp-flags{height:42px}
 .sp-flags span{position:absolute;top:6px;font-size:11px;font-weight:800;color:#92400e;white-space:nowrap;border-left:2px solid #f59e0b;padding-left:4px}
 .sp-flags small{display:block;font-weight:600;color:#a16207}
 .sp-row{display:flex;align-items:center;margin-top:10px}
-.sp-label{width:96px;flex:none;font-weight:900;font-size:15px}
+.sp-label{width:110px;flex:none;font-weight:900;font-size:15px}
 .sp-label small{display:block;font-size:11px;color:var(--sub);font-weight:600}
 .sp-track{flex:1;height:44px;margin-left:0}
-.sp-bar{position:absolute;top:4px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:var(--ink);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 6px;border:1px solid rgba(23,58,103,.12)}
-/* 3D */
-.d3-note{font-size:12px;color:var(--sub);margin:4px 0 8px}
-.d3-stage{position:relative;height:620px;background:radial-gradient(ellipse at 50% 30%,#ffffff 0%,#dfe9f6 70%);border:1px solid var(--line);border-radius:14px;overflow:hidden;perspective:1800px;cursor:grab;touch-action:none}
-.d3-board{position:absolute;left:50%;top:52%;transform-style:preserve-3d;background:#f8fafc;border:1px solid #cbd5e1;box-shadow:0 30px 60px rgba(23,58,103,.18)}
-.d3-lane{position:absolute;left:0;border-bottom:1px dashed #cbd5e1;transform-style:preserve-3d}
-.d3-lname{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:900;color:var(--navy);line-height:1.2;text-align:right}
-.d3-box{position:absolute;transform-style:preserve-3d}
-.d3-top{position:absolute;inset:0;background:var(--c);transform:translateZ(var(--z));border:1px solid rgba(23,58,103,.25);border-radius:4px;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;padding:2px;overflow:hidden;line-height:1.2}
-.d3-front{position:absolute;left:0;right:0;bottom:0;height:var(--z);transform-origin:bottom;transform:rotateX(-90deg);background:var(--c);filter:brightness(.82);border:1px solid rgba(23,58,103,.2)}
-.d3-side{position:absolute;top:0;bottom:0;right:0;width:var(--z);transform-origin:right;transform:rotateY(90deg);background:var(--c);filter:brightness(.7)}
-.d3-tick{position:absolute;top:0;border-left:2px solid #94a3b8}
-.d3-tick span{position:absolute;bottom:100%;left:4px;font-size:14px;font-weight:900;color:#334155;white-space:nowrap}
-.d3-nowline{position:absolute;top:0;background:rgba(124,58,237,.18);border-left:2px solid var(--accent);border-right:2px solid var(--accent)}
-.d3-flag{position:absolute;transform-style:preserve-3d}
-.d3-pole{position:absolute;left:0;bottom:0;width:3px;height:120px;background:#b45309;transform-origin:bottom;transform:rotateX(-90deg)}
-.d3-pole span{position:absolute;left:4px;top:0;background:#fde68a;border:1px solid #f59e0b;color:#78350f;font-size:12px;font-weight:900;padding:3px 7px;border-radius:4px;white-space:nowrap}
-.foot{font-size:11px;color:var(--sub);margin-top:10px;line-height:1.6}
-@media(max-width:700px){h1{font-size:21px}.d3-stage{height:440px}}
+.sp-bar{position:absolute;top:4px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 6px;border:1px solid rgba(91,63,180,.12)}
+.warn{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;border-radius:12px;padding:9px 12px;font-size:12px;margin:0 0 10px}
+.rep{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.rep .card{padding:20px}
+.rep h2{margin:0 0 14px;font-size:24px}
+.big{font-size:32px;font-weight:900;margin:0 0 6px;color:#3b2a7a}
+.stages{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stg{background:#f7f3fd;border:1px solid var(--line);border-radius:16px;padding:12px}
+.stg h4{margin:0 0 6px;font-size:14px;color:#5b3fb4}
+.stg li{font-size:12px;margin:3px 0}
+.stg ul{padding-left:16px;margin:0}
+.ritem{display:flex;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.ritem:first-of-type{border-top:0}
+.ritem .ic{width:52px;height:52px;border-radius:50%;background:var(--pl);display:grid;place-items:center;font-size:22px;flex:none}
+.ritem small{display:block;color:var(--p);font-weight:800;font-size:13px}
+.ritem b{font-size:17px}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:min(380px,100%);background:#fff;z-index:50;box-shadow:-10px 0 40px rgba(60,30,120,.18);transform:translateX(105%);transition:transform .25s;padding:18px;overflow:auto}
+.drawer.on{transform:none}
+.drawer h3{margin:0 0 6px}
+.drawer fieldset{border:1px solid var(--line);border-radius:14px;margin:12px 0;padding:8px 12px 12px}
+.drawer legend{font-size:12px;font-weight:900;color:var(--p);padding:0 4px}
+.drawer label{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;margin-top:8px}
+.drawer select,.drawer input{font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;max-width:62%}
+.drawer .close{float:right;border:0;background:var(--pl);border-radius:999px;padding:6px 12px;font-weight:800;cursor:pointer}
+@media(max-width:900px){.side{position:static;width:auto;margin-bottom:12px}.m3-stage{height:520px}.rep{grid-template-columns:1fr}.stages{grid-template-columns:1fr 1fr}.nav button{padding:8px;font-size:13px}.ttl{font-size:15px}.logo{font-size:18px}}
+@media(max-width:560px){.top{flex-wrap:wrap}.nav{order:3;width:100%;margin-left:0}.dock .step small{display:none}.maphint{display:none}}
 @page{size:A3 landscape;margin:10mm}
-@media print{body{background:#fff}.controls,.tabs,.d3-note,#v3d,#vsimple{display:none!important}#vtable{display:block!important}.pl-table{min-width:0}.pl-table th,.pl-table td{font-size:7px;padding:2px 1px}.pl-table td{height:34px}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media print{.top,.dock,.side,.drawer,#vmap,#vrep,.plan-head .seg,.print,#simple{display:none!important}#vplan{display:block!important}#tbl{display:block!important}body{background:#fff}.pl-table{min-width:0}.pl-table th,.pl-table td{font-size:7px;padding:2px 1px}.pl-table td{height:34px}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
-<main>
-<header>
- <div><div class="eyebrow">GFIELD · 갈림길 로드맵</div><h1><span id="who">우리 아이</span> 갈림길 로드맵</h1>
- <p class="sub">기본값은 대치 소마 A2 → A1 정도 아이(우리 레벨 L8~L9)의 예시입니다. 지금 진도와 선택을 바꾸면 상세 표 · 간단 보기 · 3D가 함께 바뀝니다. 입력한 내용은 저장되지 않습니다.</p></div>
-</header>
+<div class="top">
+ <span class="logo">GFIELD</span><span class="logo-sep"></span><span class="ttl"><span id="who">우리 아이</span>의 성장 로드맵</span><span class="chip">시안</span>
+ <nav class="nav"><button data-v="vmap" class="on">3D 맵</button><button data-v="vplan">월별 계획</button><button data-v="vrep">분석지</button></nav>
+ <button class="gear" id="openSet">우리 아이 설정</button>
+</div>
 
-<form class="controls" id="ctl" onsubmit="return false">
- <fieldset><legend>지금</legend>
+<main>
+ <div id="warn"></div>
+ <section class="view on" id="vmap"><div class="mapwrap">
+  <div class="side">
+   <div class="card"><h3>📅 이번 달</h3><div id="nowItems"></div></div>
+   <div class="card"><h3>🧭 다음 길 고르기</h3>
+    <div class="choice"><div class="q">황소</div><div class="seg" data-k="hwOn"><button data-v="1" class="on">고려</button><button data-v="0">안 고려</button></div>
+     <div class="sub-opts" id="hwOpts"><label>시험 <select id="hw"></select></label><label>입학 뒤 심화 <input type="checkbox" id="hwDeep" checked></label><label>초4 중등 시험 <input type="checkbox" id="hwMid" checked></label></div></div>
+    <div class="choice"><div class="q">영재원</div><div class="seg" data-k="gifted"><button data-v="1" class="on">고려</button><button data-v="0">안 고려</button></div></div>
+   </div>
+  </div>
+  <span class="maphint">끌어서 돌려 보세요 · 보여주기용</span>
+  <div id="map"></div>
+ </div></section>
+
+ <section class="view" id="vplan">
+  <div class="plan-head"><h2>월별 계획</h2><div class="seg" data-k="planMode"><button data-v="table" class="on">상세 표</button><button data-v="simple">간단 보기</button></div><button class="print" onclick="window.print()">인쇄 / PDF</button></div>
+  <div class="scroll" id="tbl"></div><div id="simple" style="display:none"></div>
+ </section>
+
+ <section class="view" id="vrep"><div class="rep">
+  <div class="card"><h2>성장 모습 예시</h2><div class="stages" id="stages"></div></div>
+  <div class="card"><p class="big"><span id="who2">우리 아이</span>의 성장 분석지</p><div id="repItems"></div></div>
+ </div></section>
+</main>
+
+<div class="dock"><span class="step cur" id="dNow">● 현재</span><span class="dots"></span><span class="step" id="dNext">⚑ 다음 과정</span><span class="dots"></span><span class="step" id="dLater">⌖ 시기 미정</span>
+ <div class="vsw"><button data-v="vmap" class="on">3D 맵</button><button data-v="vplan">월별 계획</button><button data-v="vrep">분석지</button></div></div>
+
+<aside class="drawer" id="drawer"><button class="close" id="closeSet">닫기</button><h3>우리 아이 설정</h3>
+ <form id="ctl" onsubmit="return false">
+ <fieldset><legend>기준</legend>
+  <label>레벨 <select id="level"></select></label>
   <label>이름(선택) <input id="name" placeholder="표시만 · 저장 안 함" autocomplete="off"></label>
   <label>올해 <input id="year" type="number" min="2020" max="2100"></label>
   <label>학년 <select id="grade"><option value="1">초1</option><option value="2" selected>초2</option><option value="3">초3</option></select></label>
   <label>월 <select id="mon"></select></label>
  </fieldset>
  <fieldset><legend>지금 진도</legend>
-  <label>교과 <select id="school"></select></label>
-  <label>남은 개월 <select id="schoolLeft"></select></label>
-  <label>사고력 <select id="comp"></select></label>
-  <label>남은 개월 <select id="compLeft"></select></label>
- </fieldset>
- <fieldset><legend>연산 · 속도</legend>
-  <label>연산 <select id="calc"></select></label>
-  <label>남은 개월 <select id="calcLeft"></select></label>
+  <label>교과 <select id="school"></select></label><label>남은 개월 <select id="schoolLeft"></select></label>
+  <label>사고력 <select id="comp"></select></label><label>남은 개월 <select id="compLeft"></select></label>
+  <label>연산 <select id="calc"></select></label><label>남은 개월 <select id="calcLeft"></select></label>
   <label>교과 속도 <select id="speed"><option value="2" selected>한 학기 2개월</option><option value="3">한 학기 3개월</option></select></label>
- </fieldset>
- <fieldset><legend>황소 · 영재원</legend>
-  <label>황소 <select id="hw"></select></label>
-  <label>심화 고려 <input type="checkbox" id="hwDeep" checked></label>
-  <label>초4 중등 시험 고려 <input type="checkbox" id="hwMid" checked></label>
-  <label>영재원 <select id="gifted"><option value="AB" selected>가천대·교육청 + 교대</option><option value="A">가천대·교육청</option><option value="B">교대</option><option value="none">안 함</option></select></label>
- </fieldset>
-</form>
+ </fieldset></form>
+</aside>
 
-<div id="warn"></div>
-<div class="tabs" role="tablist">
- <button type="button" data-v="vtable" class="on">상세 표</button>
- <button type="button" data-v="vsimple">간단 보기</button>
- <button type="button" data-v="v3d">3D 보기</button>
- <button type="button" class="print" onclick="window.print()">인쇄 / PDF (A3 가로)</button>
-</div>
-<section class="view on" id="vtable"><div class="scroll" id="tbl"></div></section>
-<section class="view" id="vsimple"><div id="simple"></div></section>
-<section class="view" id="v3d"><p class="d3-note">보여주기용입니다. 끌어서 돌려 보세요. 정확한 달은 상세 표를 보세요.</p><div id="d3"></div></section>
-
-<p class="foot">규칙: 교과 디딤돌 응용 → 6-2 다음 계통·대수 정리 4개월 → 중등 원리해설 3개월씩. 교과 심화는 한 학년 아래 최상위 S, 중등 시작 2개월 뒤부터 중등 심화(A급) 4개월씩. 연산은 기적의 계산법 다음 중학연산 1AB → 도형 순(필즈 S1 기간). 과학은 중2-1 심화 다음 달 중등과학. 황소 대비는 1031 초급을 마친 뒤(편입 2월 시험은 2개월 준비). 영재원 일정은 2027학년도 강남서초 · 2026년도 가천대 브릿지 모집요강 기준이며 해마다 바뀔 수 있습니다. 1·2월은 앞 학년입니다.</p>
-</main>
+<script src="planner-levels.js"></script>
 <script src="planner.js"></script>
 <script>
 (function(){
 const $=id=>document.getElementById(id), P=Planner;
 const opt=(el,list,sel)=>{ el.innerHTML=list.map(([v,t])=>`<option value="${v}"${String(v)===String(sel)?' selected':''}>${t}</option>`).join(''); };
+const state={hwOn:'1',gifted:'1',planMode:'table'};
 const d=new Date(); $('year').value=d.getFullYear();
 opt($('mon'),[3,4,5,6,7,8,9,10,11,12,1,2].map(m=>[m,m+'월']),d.getMonth()+1);
 opt($('school'),[...Array.from({length:12},(_,i)=>[i+1,P.SEM(i+1)+' 디딤돌']),[13,'계통 · 대수 정리'],...P.MID.map((x,i)=>[14+i,x+' 원리해설'])],9);
@@ -135,28 +198,72 @@ opt($('comp'),P.COMP.map((c,i)=>[i,c[0]]),4);
 opt($('calc'),P.CALC.map((c,i)=>[i,c[0]]),9);
 const months=n=>Array.from({length:n},(_,i)=>[i+1,(i+1)+'개월']);
 opt($('schoolLeft'),months(4),1); opt($('compLeft'),months(7),7); opt($('calcLeft'),months(6),1);
+
+// 레벨: 고르면 그 레벨의 '지금 진도'를 레벨표에서 읽어 채운다(앞으로는 예시 로드맵 규칙)
+const LV=window.PLANNER_LEVELS||[];
+opt($('level'),[['ex','예시 · 대치 소마 A2→A1 정도 (L8~L9)'],...LV.map(l=>[l.id,`${l.id} · ${l.summary}`]),['manual','직접 입력']],'ex');
+const EX={school:9,schoolLeft:1,comp:4,compLeft:7,calc:9,calcLeft:1,speed:2};
+const at=(bs,m)=>bs.find(b=>b[1]<=m&&b[2]>=m);
+const nextOf=(bs,m,re)=>bs.filter(b=>b[2]>=m&&(!re||re.test(b[0]))).sort((a,b)=>a[1]-b[1])[0];
+function schoolIdx(t){ let r=t.match(/^(\d)-(\d)/); if(r) return 2*(+r[1]-1)+(+r[2]); if(/계통|여유/.test(t)) return 13; r=t.match(/^중(\d)-(\d)/); if(r) return 14+2*(+r[1]-1)+(+r[2]-1); return null; }
+function compIdx(t){ const K=[/초등팩토 1|킨더|키즈/,/필즈 베이직/,/1031 입문/,/TOT/,/1031 초급/,/1031 중급/,/3% 1과정/,/왕수학|3% 2과정|황소/]; const i=K.findIndex(re=>re.test(t)); return i<0?null:i; }
+function calcIdx(t){ let r=t.match(/기적의 계산법 (\d+)/); if(r) return +r[1]-1; if(/소마셈/.test(t)) return 1; const i=P.CALC.findIndex(c=>t.includes(c[0].replace('기적의 ',''))); return i<0?null:i; }
 function hwOptions(){
-  const g=+$('grade').value, now=P.mOf(g,+$('mon').value), A0=P.mOf(g,3), list=[['none','안 함']];
-  for(let m=now+2;m<=A0+33;m++) if(m%12===10||m%12===1) list.push([m,`${P.label(m)} 시험${m%12===1?' (편입)':''}`]);
-  const cur=$('hw').value; opt($('hw'),list,list.some(x=>String(x[0])===cur)?cur:(list.find(x=>x[0]!=='none'&&x[0]%12===1)||list[0])[0]);
+  const g=+$('grade').value, now=P.mOf(g,+$('mon').value), A0=P.mOf(g,3), list=[];
+  for(let m=now+2;m<=A0+33;m++) if(m%12===10||m%12===1) list.push([m,`${P.label(m)}${m%12===1?' (편입)':''}`]);
+  const cur=$('hw').value; opt($('hw'),list,list.some(x=>String(x[0])===cur)?cur:((list.find(x=>x[0]%12===1)||list[0]||[''])[0]));
 }
-function read(){ return {grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,hw:$('hw').value,hwDeep:$('hwDeep').checked,hwMid:$('hwMid').checked,gifted:$('gifted').value}; }
+function setSeg(k,v){ state[k]=String(v); document.querySelectorAll(`.seg[data-k="${k}"] button`).forEach(b=>b.classList.toggle('on',b.dataset.v===String(v))); }
+function applyLevel(){
+  const id=$('level').value; if(id==='manual') return;
+  const set=(k,v)=>{ $(k).value=String(v); };
+  if(id==='ex'){ Object.entries(EX).forEach(([k,v])=>set(k,v)); hwOptions(); setSeg('hwOn',1); return; }
+  const L=LV.find(l=>l.id===id), now=P.mOf(+$('grade').value,+$('mon').value);
+  const sb=(at(L.school,now)&&schoolIdx(at(L.school,now)[0])!=null)?at(L.school,now):nextOf(L.school,now,/^\d-\d|^중|계통|여유/);
+  if(sb){ set('school',schoolIdx(sb[0])); set('schoolLeft',Math.min(4,Math.max(1,sb[1]>now?sb[2]-sb[1]+1:sb[2]-now+1))); }
+  const cb=at(L.comp,now)||nextOf(L.comp,now), ck=cb&&compIdx(cb[0]);
+  if(ck!=null){ set('comp',ck); set('compLeft',Math.min(7,Math.max(1,cb[1]>now?P.COMP[ck][1]:cb[2]-now+1))); }
+  const kb=at(L.calc,now)||nextOf(L.calc,now), kk=kb&&calcIdx(kb[0]);
+  if(kk!=null){ set('calc',kk); set('calcLeft',Math.min(6,Math.max(1,kb[1]>now?kb[2]-kb[1]+1:kb[2]-now+1))); }
+  set('speed',+id.slice(1)>=10?3:2);
+  hwOptions(); const E=L.hwExam;
+  if(E!=null&&[...$('hw').options].some(o=>o.value===String(E))){ set('hw',E); setSeg('hwOn',1); } else setSeg('hwOn',0);
+}
+function read(){ const on=state.hwOn==='1'; return {grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,
+  hw:on&&$('hw').value?$('hw').value:'none',hwDeep:on&&$('hwDeep').checked,hwMid:on&&$('hwMid').checked,gifted:state.gifted==='1'}; }
 function draw(){
-  const o=read(), plan=P.build(o), nm=$('name').value.trim();
-  $('who').textContent=nm||'우리 아이';
+  const o=read(), plan=P.build(o), nm=$('name').value.trim()||'우리 아이';
+  $('who').textContent=nm; $('who2').textContent=nm;
+  $('hwOpts').style.display=state.hwOn==='1'?'grid':'none';
   $('warn').innerHTML=plan.warn.map(w=>`<div class="warn">⚠ ${w}</div>`).join('');
-  $('tbl').innerHTML=P.renderTable(plan);
-  $('simple').innerHTML=P.renderSimple(plan);
-  $('d3').innerHTML=P.render3D(plan); if($('v3d').classList.contains('on')) P.bind3D($('d3'));
+  const R=k=>(plan.rows.find(r=>r.key===k)||{blocks:[]}).blocks, cur=k=>{ const b=R(k).find(x=>x[1]<=plan.now&&x[2]>=plan.now); return b?b[0]:'—'; };
+  $('nowItems').innerHTML=[['📘','교과',cur('school')],['💡','사고력',cur('comp')],['➕','연산',cur('calc')]].map(([i,a,b])=>`<div class="item"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
+  const ms=P.milestones(plan), steps=ms.main.filter(x=>x.kind!=='now'), next=steps[0], later=steps[1];
+  $('dNow').innerHTML=`● 현재 <small>${P.label(plan.now)} · ${cur('school').replace(/ 디딤돌.*/,'')}</small>`;
+  $('dNext').innerHTML=next?`⚑ 다음 과정 <small>${next.title} · ${P.label(next.m)}</small>`:'⚑ 다음 과정';
+  $('dLater').innerHTML=later?`⌖ 그다음 <small>${later.title} · ${P.label(later.m)}</small>`:'⌖ 시기 미정';
+  $('map').innerHTML=P.render3DMap(plan); P.bindMap($('map'));
+  $('tbl').innerHTML=P.renderTable(plan); $('simple').innerHTML=P.renderSimple(plan);
+  $('tbl').style.display=state.planMode==='table'?'block':'none'; $('simple').style.display=state.planMode==='simple'?'block':'none';
+  const grp=[[plan.A0,plan.A0+11],[plan.A0+12,plan.A0+23],[plan.A0+24,plan.A0+33]];
+  $('stages').innerHTML=grp.map(([a,b])=>{ const names=[...new Set(['school','comp'].flatMap(k=>R(k).filter(x=>x[2]>=a&&x[1]<=b).map(x=>x[0].replace(/\s*\(.*\)/,'').replace(/ 디딤돌 응용| 원리해설/,''))))].slice(0,6);
+    return `<div class="stg"><h4>${P.label(a).split(' ')[0]}</h4><ul>${names.map(n=>`<li>${n}</li>`).join('')}</ul></div>`; }).join('')+
+    `<div class="stg"><h4>선택</h4><ul><li>황소: ${o.hw==='none'?'안 고려':P.label(+o.hw)+' 시험'}</li><li>영재원: ${o.gifted?'고려':'안 고려'}</li></ul></div>`;
+  const lvName=$('level').selectedOptions[0].textContent;
+  $('repItems').innerHTML=[['📖','현재 학습',`${cur('school')} · ${cur('comp')}`],['👤','기준 레벨',lvName],['💡','다음 과정',next?`${next.title} (${P.label(next.m)})`:'—'],['📅','다음 확인','학습 경험 후 조정 · 경로는 언제든 바꿀 수 있어요']]
+    .map(([i,a,b])=>`<div class="ritem"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
 }
-document.querySelectorAll('.tabs [data-v]').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.tabs [data-v]').forEach(x=>x.classList.toggle('on',x===b));
-  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===b.dataset.v));
-  if(b.dataset.v==='v3d') P.bind3D($('d3'));
-}));
-$('ctl').addEventListener('input',e=>{ if(e.target.id==='grade'||e.target.id==='mon') hwOptions(); draw(); });
-$('ctl').addEventListener('change',e=>{ if(e.target.id==='grade'||e.target.id==='mon') hwOptions(); draw(); });
-hwOptions(); draw();
+function showView(v){ document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id===v)); if(v==='vmap') P.bindMap($('map')); }
+document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.v)));
+document.querySelectorAll('.seg').forEach(s=>s.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; setSeg(s.dataset.k,b.dataset.v); draw(); }));
+['hw','hwDeep','hwMid'].forEach(id=>$(id).addEventListener('change',()=>{ $('level').value='manual'; draw(); }));
+$('openSet').onclick=()=>$('drawer').classList.add('on'); $('closeSet').onclick=()=>$('drawer').classList.remove('on');
+const PROG=['school','schoolLeft','comp','compLeft','calc','calcLeft','speed'];
+$('ctl').addEventListener('change',e=>{ const id=e.target.id;
+  if(id==='grade'||id==='mon'){ hwOptions(); applyLevel(); } else if(id==='level') applyLevel(); else if(PROG.includes(id)) $('level').value='manual';
+  draw(); });
+$('name').addEventListener('input',draw);
+hwOptions(); applyLevel(); draw();
 })();
 </script>
 </body>
