@@ -272,7 +272,7 @@ const ACADEMY={
 /* 황소는 기본 로드맵에 넣지 않는다(원장님 2026-10-19: "황소를 굳이 고려하지 않아도 학습할 수 있는 로드맵").
    '황소 대비 보기' 키를 켜면 레벨마다 황소 개념 3개월 + 황소 모의고사 2개월(5개월)을 시험 달에 끝나도록 붙인다.
    조건: 1031 초급을 마친 다음 달부터 시작. 3% 1과정 완료는 조건이 아니다(3% 2과정은 중1 선행 수준이라 대부분 하지 않음).
-   시험 달: 초2 11월 · 초3 2월 · 초3 11월(달력 기준, 원장님 확인). 11월 시험 → 12월 입학, 2월 시험 → 3월 입학. */
+   시험 달: 초2 11월 · 초2 2월(겨울방학, 개학 전) · 초3 11월. 11월 시험 → 12월 입학, 2월 시험 → 3월 입학. */
 const HWANGSO_EXAMS=[58,61,70];
 function hwangsoPlan(compBlocks){
   const c=compBlocks.find(b=>/1031 초급/.test(plain(b[0])));
@@ -407,9 +407,13 @@ function levelRows(shift){
     {key:'sci',label:'과학',blocks:P.sci}
   ].concat(academyOn.hwangso?[{key:'hwangso',label:'황소 대비<br><small>(선택)</small>',blocks:hwangsoPlan(P.comp)}]:[]);
 }
+// 학년은 3월에 바뀐다(원장님 2026-10-20 "개학 안 한 2월은 2학년"). 초1 입학 전 1·2월은 7세, 초2 1·2월은 초1로 읽는다.
+// 유아 5세·6세는 달력 그대로(필즈 S1 표도 7세 1월부터 시작해 다음 해 2월까지 7세).
+function schoolYear(m){ const y=Math.floor(m/12); return (y>=3&&m%12<2)?y-1:y; }
+function monthLabel(m){ return ['5세','6세','7세','초1','초2','초3','초4','초5','초6'][schoolYear(m)]+' '+(m%12+1)+'월'; }
 function axisYears(){
   const names=['5세','6세','7세','초1','초2','초3','초4'], out=[];
-  for(let m=AX0;m<=AX1;m++){ const y=Math.floor(m/12); if(!out.length||out[out.length-1].y!==y) out.push({y,name:names[y],n:0}); out[out.length-1].n++; }
+  for(let m=AX0;m<=AX1;m++){ const y=schoolYear(m); if(!out.length||out[out.length-1].y!==y) out.push({y,m0:m,name:names[y],n:0}); out[out.length-1].n++; }
   return out;
 }
 function renderLevels(nowM, bestId, only){
@@ -475,7 +479,7 @@ function renderGraph(pair, nowM, child){
   const X=m=>pl+(Math.max(AX0,Math.min(AX1+1,m))-AX0)/(AX1+1-AX0)*pw, Y=v=>pt+ph-(v/n)*ph;
   let s=`<svg viewBox="0 0 ${W} ${H}" class="lv-graph" role="img" aria-label="사고력 진도 비교 그래프">`;
   STEP_ORDER.forEach((k,i)=>{ s+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(i+0.5)}" y2="${Y(i+0.5)}" stroke="#eef2f7"/><text x="${pl-6}" y="${Y(i+0.5)+4}" text-anchor="end" font-size="11" fill="#64748b">${k}</text>`; });
-  axisYears().forEach(y=>{ const m0=y.y*12+(y.y===Math.floor(AX0/12)?AX0%12:0); s+=`<line x1="${X(m0)}" x2="${X(m0)}" y1="${pt}" y2="${H-pb}" stroke="#cbd5e1" stroke-dasharray="3 3"/><text x="${X(m0)+4}" y="${H-pb+18}" font-size="12" font-weight="700" fill="#334155">${y.name}</text>`; });
+  axisYears().forEach(y=>{ const m0=y.m0; s+=`<line x1="${X(m0)}" x2="${X(m0)}" y1="${pt}" y2="${H-pb}" stroke="#cbd5e1" stroke-dasharray="3 3"/><text x="${X(m0)+4}" y="${H-pb+18}" font-size="12" font-weight="700" fill="#334155">${y.name}</text>`; });
   const colors=['#94a3b8','#7c3aed'];
   pair.forEach((L,i)=>{
     const pts=progressPoints(L.shift);
@@ -530,6 +534,6 @@ function bestGrid(d){
   return best;
 }
 gridSummaries();
-window.SchoolRoadmap={TABLES,show,init,showLevels,levelRows,setAcademy,GRID,bestGrid};
+window.SchoolRoadmap={monthLabel,TABLES,show,init,showLevels,levelRows,setAcademy,GRID,bestGrid};
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
