@@ -411,9 +411,9 @@ function levelRows(shift){
 // 유아 5세·6세는 달력 그대로(필즈 S1 표도 7세 1월부터 시작해 다음 해 2월까지 7세).
 function schoolYear(m){ const y=Math.floor(m/12); return (y>=3&&m%12<2)?y-1:y; }
 function monthLabel(m){ return ['5세','6세','7세','초1','초2','초3','초4','초5','초6'][schoolYear(m)]+' '+(m%12+1)+'월'; }
-function axisYears(){
+function axisYears(a0=AX0,a1=AX1){
   const names=['5세','6세','7세','초1','초2','초3','초4'], out=[];
-  for(let m=AX0;m<=AX1;m++){ const y=schoolYear(m); if(!out.length||out[out.length-1].y!==y) out.push({y,m0:m,name:names[y],n:0}); out[out.length-1].n++; }
+  for(let m=a0;m<=a1;m++){ const y=schoolYear(m); if(!out.length||out[out.length-1].y!==y) out.push({y,m0:m,name:names[y],n:0}); out[out.length-1].n++; }
   return out;
 }
 /* 예시 로드맵(원장님 2026-10-20): 초2 9월 5-1 응용부터 2개월 단위, 10월부터 최상위 S 병행,
@@ -453,29 +453,30 @@ function conceptRows(){
   ];
 }
 const CONCEPT={id:'예시',cls:'l2',summary:'초2 9월 5-1부터<br>2개월 단위 → 초3 9월 중등<br>(원장님 손그림)',rows:null};
-function renderLevels(nowM, bestId, only, custom){
-  const n=AX1-AX0+1, years=axisYears();
+function renderLevels(nowM, bestId, only, custom, from, to){
+  const A0=from??AX0, A1=to??AX1;
+  const n=A1-A0+1, years=axisYears(A0,A1);
   let h='<table class="sr-table lv-table"><colgroup><col class="sr-g"><col class="sr-l">';
   for(let i=0;i<n;i++) h+='<col class="sr-m">';
   h+='</colgroup><thead><tr><th colspan="2" rowspan="2" class="sr-corner"></th>'+years.map(y=>`<th colspan="${y.n}" class="sr-year">${y.name}</th>`).join('')+'</tr><tr>';
-  for(let m=AX0;m<=AX1;m++) h+=`<th class="sr-mon${m===nowM?' lv-now':''}">${m%12+1}</th>`;
+  for(let m=A0;m<=A1;m++) h+=`<th class="sr-mon${m===nowM?' lv-now':''}">${m%12+1}</th>`;
   h+='</tr></thead><tbody>';
   ['soma','fields'].filter(k=>academyOn[k]).forEach(k=>{
     const A=ACADEMY[k];
     h+=`<tr class="lv-academy"><th class="sr-group" colspan="2">${A.label}</th>`;
-    for(let m=AX0;m<=AX1;m++){ const p=A.points.find(x=>x[1]===m); h+=p?`<td class="sr-cell" style="background:${A.color}">${p[0]}</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`; }
+    for(let m=A0;m<=A1;m++){ const p=A.points.find(x=>x[1]===m); h+=p?`<td class="sr-cell" style="background:${A.color}">${p[0]}</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`; }
     h+='</tr>';
   });
   if(academyOn.hwangso){
     h+=`<tr class="lv-academy"><th class="sr-group" colspan="2">황소 시험</th>`;
     // 11월 시험 → 12월 입학, 2월 시험 → 3월 입학(원장님 2026-10-20)
-    for(let m=AX0;m<=AX1;m++) h+=HWANGSO_EXAMS.includes(m)?`<td class="sr-cell" style="background:#fde68a">황소<br>시험</td>`:HWANGSO_EXAMS.includes(m-1)?`<td class="sr-cell" style="background:#fef3c7">황소<br>입학</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
+    for(let m=A0;m<=A1;m++) h+=HWANGSO_EXAMS.includes(m)?`<td class="sr-cell" style="background:#fde68a">황소<br>시험</td>`:HWANGSO_EXAMS.includes(m-1)?`<td class="sr-cell" style="background:#fef3c7">황소<br>입학</td>`:`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
     h+='</tr>';
   }
   // 원장님 자료: 교대 영재원 초3 7~9월, 대학 부설·교육청 영재원 3학년 9~10월 → 칸이 겹치지 않게 7~8월 / 9~10월로 나눠 매년 표시
   const GIFTED=[[66,67,'교대 영재원'],[68,69,'대학 부설·교육청 영재원'],[78,79,'교대 영재원'],[80,81,'대학 부설·교육청 영재원']];
   h+=`<tr class="lv-academy"><th class="sr-group" colspan="2">영재원<br><small>(매년 같은 시기)</small></th>`;
-  for(let m=AX0;m<=AX1;){ const g=GIFTED.find(x=>x[0]===m); if(g){ h+=`<td class="sr-cell sr-gifted" colspan="${g[1]-g[0]+1}">${g[2]}</td>`; m=g[1]+1; } else { h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`; m++; } }
+  for(let m=A0;m<=A1;){ const g=GIFTED.find(x=>x[0]===m); if(g){ h+=`<td class="sr-cell sr-gifted" colspan="${g[1]-g[0]+1}">${g[2]}</td>`; m=g[1]+1; } else { h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`; m++; } }
   h+='</tr>';
   h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
   const levels=custom||GRID.filter(L=>!only||only.includes(L.id));
@@ -485,8 +486,8 @@ function renderLevels(nowM, bestId, only, custom){
       h+=`<tr class="${best?'lv-best':''}">`;
       if(ri===0) h+=`<th class="sr-group lv-name ${L.cls}" rowspan="${rows.length}">${L.id}<small>${L.summary}</small>${L_LOAD[L.id]?`<small class="lv-load">${L_LOAD[L.id]}</small>`:''}${best?'<em>우리 아이</em>':''}</th>`;
       h+=`<th class="lv-row">${r.label}</th>`;
-      const cells=r.blocks.map(([t,s,e])=>[t,Math.max(s,AX0),Math.min(e,AX1)]).filter(([,s,e])=>s<=e).sort((a,b)=>a[1]-b[1]);
-      let m=AX0;
+      const cells=r.blocks.map(([t,s,e])=>[t,Math.max(s,A0),Math.min(e,A1)]).filter(([,s,e])=>s<=e).sort((a,b)=>a[1]-b[1]);
+      let m=A0;
       for(const [t,s,e] of cells){
         if(s<m) continue; // 겹치면 앞 칸 우선
         for(;m<s;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
@@ -494,7 +495,7 @@ function renderLevels(nowM, bestId, only, custom){
         h+=`<td class="sr-cell${swap?' sr-swap':''}" colspan="${e-s+1}" style="background:${(ROW_COLORS[r.key]||'#f1f5f9')}">${t}</td>`;
         m=e+1;
       }
-      for(;m<=AX1;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
+      for(;m<=A1;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
       h+='</tr>';
     });
     if(li<levels.length-1) h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
@@ -536,7 +537,7 @@ function showLevels(nowM,bestId,child){
   const box=document.getElementById('lvTable');
   if(box) box.innerHTML=renderLevels(nowM,bestId);
   const cbox=document.getElementById('lvConcept');
-  if(cbox){ CONCEPT.rows=conceptRows(); cbox.innerHTML=renderLevels(nowM,null,null,[CONCEPT]); }
+  if(cbox){ CONCEPT.rows=conceptRows(); cbox.innerHTML=renderLevels(nowM,null,null,[CONCEPT],50,AX1); } // 예시는 초2 3월부터(원장님 2026-10-20)
   const levels=GRID, bi=levels.findIndex(L=>L.id===bestId);
   const cmp=document.getElementById('lvCompare');
   if(!cmp||bi<0) return;
