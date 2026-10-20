@@ -28,40 +28,62 @@ function label(m){ return GRADES[schoolYear(m)]+' '+(m%12+1)+'월'; }
 function seq(start,items){ const out=[]; let t=start; items.forEach(([txt,n])=>{ out.push([txt,t,t+n-1]); t+=n; }); return out; }
 
 /* o = {grade, mon, year, school, schoolLeft, comp, compLeft, calc, calcLeft, speed, hw, hwDeep, hwMid, gifted} */
+/* 표준(원장님 2026-10-20 "표준화 시켜"): 속도에 따라 세 묶음.
+   A 선행형(L0~L3): 계통 없이 바로 중등. 원리해설 4개월/학기, 중등 심화(A급) 같이. 사고력 초급→중급→3%1→왕수학 응용 4. 황소 초2 11월.
+   B 예시형(L4~L9): 6-2 뒤 계통 4개월 → 원리해설 3개월/학기, 2개월 뒤 A급. 사고력 초급→3%1(중급 생략). 황소는 선택.
+   C 천천히형(L10~L13): 초등은 응용 3개월+심화(최상위) 2개월, 연산 5개월. 중등은 개념원리(개념)+RPM(응용) 4개월/학기, 2년. A급 없음.
+     사고력은 1031 초급으로 끝("이제 사고력 끝"). 황소 없음. */
+const BAND={
+  A:{name:'선행형',elemS:null,topDown:1,sys:false,midLen:4,midBook:'원리해설',deep:'A급',deepLag:0,compStop:null,hw:true},
+  B:{name:'예시형',elemS:null,topDown:1,sys:true, midLen:3,midBook:'원리해설',deep:'A급',deepLag:2,compStop:null,hw:true},
+  C:{name:'천천히형',elemS:5,topDown:0,sys:true, midLen:4,midBook:'개념원리',deep:'RPM',deepLag:0,compStop:'1031 초급',hw:false}
+};
+function bandOf(id){ const k=+String(id).replace(/\D/g,''); return id==='ex'?'B':k<=3?'A':k<=9?'B':'C'; }
+
 function build(o){
-  const now=mOf(o.grade,o.mon), A0=mOf(o.grade,3), A1=A0+33, S=o.speed, warn=[];
+  const B=BAND[o.band]||BAND.B;
+  const now=mOf(o.grade,o.mon), A0=mOf(o.grade,3), A1=A0+33, S=B.elemS||o.speed, warn=[];
   const yearOf=m=>o.year+(Math.floor(m/12)-Math.floor(now/12));
   // ---- 교과
   const school=[], school2=[];
   let mid;
   if(o.school<=12){
-    let t=now-(S-o.schoolLeft);
+    const appLen=B.elemS?3:S;
+    let t=now-(appLen-Math.min(o.schoolLeft,appLen));
     for(let k=o.school;k<=12;k++){
-      school.push([`${SEM(k)} 디딤돌 ${k<=4?'기본+응용':'응용'}`,t,t+S-1]);
-      if(k-2>=1) school2.push([`${SEM(k-2)} 최상위 S`,t+1,t+S]);
+      if(B.elemS){ // C: 응용 3개월 → 같은 학기 심화 2개월
+        school.push([`${SEM(k)} 디딤돌 ${k<=4?'기본+응용':'응용'}`,t,t+2]);
+        school2.push([`${SEM(k)} 심화 (최상위 수학)`,t+3,t+4]);
+      } else {
+        school.push([`${SEM(k)} 디딤돌 ${k<=4?'기본+응용':'응용'}`,t,t+S-1]);
+        if(k-2>=1) school2.push([`${SEM(k-2)} 최상위 S`,t+1,t+S]);
+      }
       t+=S;
     }
-    school.push(['계통 (5·6학년·중1) · 대수 정리',t,t+3]); mid=t+4;
+    if(B.sys){ school.push(['계통 (5·6학년·중1) · 대수 정리',t,t+3]); mid=t+4; }
+    else { school.push(['여유 · 초등 대수 심화',t,t]); mid=t+1; }
   } else if(o.school===13){ school.push(['계통 (5·6학년·중1) · 대수 정리',now-(4-o.schoolLeft),now+o.schoolLeft-1]); mid=now+o.schoolLeft; }
-  else { mid=now-(o.school-14)*3-(3-o.schoolLeft); }
-  seq(mid, MID.map(x=>[x+' 원리해설',3])).forEach(b=>school.push(b));
+  else { mid=now-(o.school-14)*B.midLen-(B.midLen-o.schoolLeft); }
+  seq(mid, MID.map(x=>[x+' '+B.midBook,B.midLen])).forEach(b=>school.push(b));
   const s2end=school2.length?school2[school2.length-1][2]:now-1;
-  if(mid+1>=s2end+1) school2.push(['황소 대비 고려에 따라 고민 + 중등 쎈',Math.max(s2end+1,now),mid+1]);
-  const mid2=seq(mid+2, MID.map(x=>[x+' 중등 심화(A급)',4])); mid2.forEach(b=>school2.push(b));
+  if(B.deepLag>0&&mid+B.deepLag-1>=s2end+1) school2.push(['황소 대비 고려에 따라 고민 + 중등 쎈',Math.max(s2end+1,now),mid+B.deepLag-1]);
+  const deepName=B.deep==='A급'?x=>x+' 중등 심화(A급)':x=>x+' RPM (응용)';
+  const mid2=seq(mid+B.deepLag, MID.map(x=>[deepName(x),B.midLen])); mid2.forEach(b=>school2.push(b));
   // ---- 사고력
   const ci=o.comp, comp=[];
   let t=now; comp.push([COMP[ci][0],t-(COMP[ci][1]-o.compLeft),t+o.compLeft-1]); t+=o.compLeft;
-  for(let i=ci+1;i<COMP.length;i++){ if(COMP[i][2]==='skip') continue; comp.push([COMP[i][0],t,t+COMP[i][1]-1]); t+=COMP[i][1]; }
+  const stopAt=B.compStop?COMP.findIndex(c=>c[0]===B.compStop):COMP.length-1;
+  for(let i=ci+1;i<COMP.length&&i<=stopAt;i++){ if(COMP[i][2]==='skip'&&o.band!=='A') continue; comp.push([COMP[i][0],t,t+COMP[i][1]-1]); t+=COMP[i][1]; }
   // ---- 연산
   const calc=[]; t=now;
   for(let i=o.calc;i<CALC.length;i++){ const n=CALC[i][1]||S, left=i===o.calc?Math.min(o.calcLeft,n):n; calc.push([CALC[i][0],t-(i===o.calc?n-left:0),t+left-1]); t+=left; }
   // ---- 과학: 중2-1 중등 심화 끝 다음 달
-  const sciStart=mid2[2][2]+1;
+  const sciStart=mid2[2][2]+1; // 중2-1 심화(A급 또는 RPM) 끝 다음 달
   const sci=[['실험과학',sciStart-18,sciStart-7],['초5·6 과학',sciStart-6,sciStart-1],['중등 과학',sciStart,sciStart+11]];
   // ---- 황소
   const hw=[], flags=[];
   const compEnd=(re)=>{ const b=comp.find(x=>re.test(x[0])); return b?b[2]:null; };
-  if(o.hw!=='none'){
+  if(o.hw!=='none'&&B.hw){
     const E=+o.hw, feb=(E%12)===1;
     if(feb){ hw.push(['황소 공부 (편입 위주)',E-2,E-1]); }
     else { hw.push(['황소 개념 3개월',E-5,E-3],['황소 모의고사 2개월',E-2,E-1]);
@@ -71,7 +93,7 @@ function build(o){
     if(o.hwDeep){ let N=E+1; while(N%12!==10) N++; if(N-5<=E+1) N+=12;
       hw.push(['심화 개념 3개월 (심화 고려 시)',N-5,N-3],['심화 모의고사 2개월',N-2,N-1],['합격 후 고민 (중등 라인은 계속)',N,N]); }
   }
-  if(o.hwMid){ const N=mOf(4,11); hw.push(['황소 중등 시험 대비 3개월',N-3,N-1],['황소 중등 시험 (고려)',N,N]); flags.push([N,'황소 중등 시험']); }
+  if(o.hwMid&&B.hw){ const N=mOf(4,11); hw.push(['황소 중등 시험 대비 3개월',N-3,N-1],['황소 중등 시험 (고려)',N,N]); flags.push([N,'황소 중등 시험']); }
   // ---- 영재원 (2026-10-20 모집요강 기준). 초3 11월이 지났으면 초4 기준(수학·과학 초4 지원 → 초5)
   const gy=now<=mOf(3,11)?3:4, d=12*(gy-3);
   const giftA=[], giftB=[];
@@ -97,7 +119,7 @@ function build(o){
     {key:'giftB',label:'영재원 · 교대',blocks:giftB,color:'#fae8ff',lane:'영재원'}
   ].filter(r=>r.blocks.length||['school','school2','comp','calc','sci'].includes(r.key));
   rows.forEach(r=>{ r.blocks=r.blocks.map(([x,s,e])=>[x,Math.max(s,A0),Math.min(e,A1)]).filter(b=>b[1]<=b[2]); });
-  return {now,A0,A1,mid,rows,flags,bubbles,warn,label,yearOf};
+  return {now,A0,A1,mid,rows,flags,bubbles,warn,label,yearOf,band:o.band,bandName:B.name};
 }
 
 /* ---------- 상세 표 ---------- */
@@ -243,29 +265,32 @@ function narrative(P){
     P.bubbles.forEach(([m,t])=>{ if(m>=a&&m<=b) put(m,t.replace(/^\S+ \S+ /,'').replace(/ 고려$/,''),'issues'); });
     // ---- 항목별 코멘트
     const items=[];
-    { const dd=sch.filter(x=>/디딤돌/.test(x[0])), sys=sch.find(x=>/계통/.test(x[0])), md=sch.filter(x=>/원리해설/.test(x[0])), out=[];
+    { const dd=sch.filter(x=>/디딤돌/.test(x[0])), sys=sch.find(x=>/계통/.test(x[0])), md=sch.filter(x=>/원리해설|개념원리/.test(x[0])), out=[]; const mbook=md.length&&/개념원리/.test(md[0][0])?'개념원리':'원리해설';
       if(dd.length){ const pace=len(dd[dd.length>1?1:0]), done=last(dd);
-        out.push(dd.length>1?`${mon(Math.max(dd[0][1],lo))}부터 한 학기를 ${pace}개월씩, ${sem(dd[0][0])}에서 ${sem(done[0])}까지 디딤돌 응용으로 나가요.`:`${mon(Math.max(dd[0][1],lo))}~${mon(dd[0][2])} ${jo(sem(dd[0][0])+' 디딤돌 응용','을','를')} 마무리해요.`);
+        out.push(dd.length>1?(P.band==='C'?`${mon(Math.max(dd[0][1],lo))}부터 ${sem(dd[0][0])}에서 ${sem(done[0])}까지 디딤돌 응용으로 나가요. 응용 3개월에 같은 학기 심화 2개월을 붙여 한 학기 5개월이에요.`:`${mon(Math.max(dd[0][1],lo))}부터 한 학기를 ${pace}개월씩, ${sem(dd[0][0])}에서 ${sem(done[0])}까지 디딤돌 응용으로 나가요.`):`${mon(Math.max(dd[0][1],lo))}~${mon(dd[0][2])} ${jo(sem(dd[0][0])+' 디딤돌 응용','을','를')} 마무리해요.`);
         if(done[2]<=b) out.push(`${mon(done[2])}이면 초등 교과가 ${sem(done[0])}까지 끝나요.`); }
       if(sys) out.push(`${mon(Math.max(sys[1],lo))}부터 ${len(sys)}개월은 5·6학년과 중1을 계통으로 묶어 대수를 정리해요. 중등에 들어가기 전에 빈 곳을 메우는 시간이에요.`);
       if(md.length){ const f=md[0], l=last(md), end=l[2]<=b?mon(l[2]):label(l[2]);
-        out.push(f[1]>=lo&&/^중1-1/.test(f[0])?`${mon(f[1])}에 ${sem(f[0])} 원리해설로 중등을 시작해요. 한 학기 ${len(f)}개월씩 ${end}까지 ${sem(l[0])}까지 가요.`:`중등 원리해설을 ${sem(f[0])}부터 이어서 ${len(f)}개월씩, ${end}까지 ${jo(sem(l[0]),'을','를')} 봐요.`); }
+        out.push(f[1]>=lo&&/^중1-1/.test(f[0])?`${mon(f[1])}에 ${sem(f[0])} ${mbook}로 중등을 시작해요. 한 학기 ${len(f)}개월씩 ${end}까지 ${sem(l[0])}까지 가요.${P.band==='C'?' 개념서는 개념원리, 응용서는 RPM으로 2년에 걸쳐 가요.':P.band==='A'?' 계통 없이 바로 들어가요.':''}`:`중등 ${mbook}를 ${sem(f[0])}부터 이어서 ${len(f)}개월씩, ${end}까지 ${jo(sem(l[0]),'을','를')} 봐요.`); }
       if(out.length) items.push({label:'교과',text:out.join(' ')}); }
     { const out=[]; comp.forEach(x=>{ const w=nm(x[0]).replace(' + workbook',''), en=x[2]<=b, st=x[1]>=lo;
         if(st&&en) out.push(`${mon(x[1])}에 ${jo(w,'을','를')} 시작해 ${mon(x[2])}까지 ${len(x)}개월에 끝내요.`);
         else if(st) out.push(`${mon(x[1])}에 ${jo(w,'을','를')} 시작해요. ${label(x[2])}까지 ${len(x)}개월 과정이에요.`);
         else if(en) out.push(`하던 ${jo(w,'은','는')} ${mon(x[2])}까지 완료해요.`);
         else out.push(`${jo(w,'은','는')} ${label(x[2])}까지 쭉 이어 가요.`); });
-      const c3=comp.find(x=>/3%/.test(x[0])); if(c3&&c3[2]<=b){ const hw=R('hw').find(x=>/시험$/.test(nm(x[0]))&&x[1]>c3[2]&&x[1]<=b); out.push(hw?`3% 1과정은 ${label(hw[1])} 황소 시험 전에 마치는 게 목표예요.`:`3% 1과정까지 하면 사고력 라인은 일단 마무리예요.`); }
+      const cEnd=last(comp); if(P.band==='C'&&cEnd&&/1031 초급/.test(cEnd[0])&&cEnd[2]<=b) out.push('1031 초급까지 하면 사고력은 여기서 끝이에요. 그다음은 교과 심화로 넘어가요.');
+      const c3=comp.find(x=>/3%/.test(x[0])); if(c3&&c3[2]<=b&&last(comp)===c3){ const hw=R('hw').find(x=>/시험$/.test(nm(x[0]))&&x[1]>c3[2]&&x[1]<=b); out.push(hw?`3% 1과정은 ${label(hw[1])} 황소 시험 전에 마치는 게 목표예요.`:`3% 1과정까지 하면 사고력 라인은 일단 마무리예요.`); }
       if(out.length) items.push({label:'사고력',text:out.join(' ')}); }
-    { const sS=s2.filter(x=>/최상위/.test(x[0])), gap=s2.find(x=>/고민/.test(x[0])), sA=s2.filter(x=>/A급/.test(x[0])), out=[];
+    { const sS=s2.filter(x=>/최상위 S/.test(x[0])), sC=s2.filter(x=>/심화 \(최상위/.test(x[0])), gap=s2.find(x=>/고민/.test(x[0])), sA=s2.filter(x=>/A급/.test(x[0])), sR=s2.filter(x=>/RPM/.test(x[0])), out=[];
+      if(sC.length) out.push(`응용을 마친 학기마다 바로 심화(최상위)를 2개월씩 해요. ${sC.length>1?`${sem(sC[0][0])}에서 ${sem(last(sC)[0])}까지예요.`:`이번엔 ${sem(sC[0][0])}이에요.`}`);
+      if(sR.length){ const f=sR[0], l=last(sR); out.push(`중등은 A급 대신 RPM을 응용서로 ${len(f)}개월씩, ${l[2]<=b?mon(l[2]):label(l[2])}까지 ${jo(sem(l[0]),'을','를')} 풀어요.`); }
       if(sS.length){ const f=sS[0], l=last(sS); out.push(`교과보다 한 학년 아래 최상위 S를 ${mon(Math.max(f[1],lo))}부터 ${len(f)}개월씩 ${sem(f[0])}에서 ${sem(l[0])}까지, 교과보다 한 달 늦게 따라가요.`); }
       if(gap) out.push(`${mon(Math.max(gap[1],lo))}~${mon(gap[2])}은 황소를 볼지에 따라 달라요. 이 사이에는 중등 쎈으로 기본을 다져요.`);
       if(sA.length){ const f=sA[0], l=last(sA), end=l[2]<=b?mon(l[2]):label(l[2]);
         out.push(f[1]>=lo&&/^중1-1/.test(f[0])?`${mon(f[1])}부터 중등 심화(A급)를 ${len(f)}개월씩 시작해 ${end}까지 ${jo(sem(l[0]),'을','를')} 해요. 원리해설보다 두 달 뒤에 따라가는 거예요.`:`중등 심화(A급)는 ${sem(f[0])}부터 ${len(f)}개월씩, ${end}까지 ${jo(sem(l[0]),'을','를')} 해요.`); }
       if(out.length) items.push({label:'심화',text:out.join(' ')}); }
     { const gj=calc.filter(x=>/계산법/.test(x[0])), mj=calc.filter(x=>/중학/.test(x[0])), out=[];
-      if(gj.length){ const f=gj[0], l=last(gj); out.push(gj.length>1?`기적의 계산법 ${f[0].match(/\d+/)[0]}권에서 ${l[0].match(/\d+/)[0]}권까지 ${len(gj[1])}개월에 한 권씩 해요. 교과보다 한 학기 앞서 가는 속도예요.`:`기적의 계산법 ${f[0].match(/\d+/)[0]}권을 ${mon(f[2])}까지 끝내요.`); }
+      if(gj.length){ const f=gj[0], l=last(gj); out.push(gj.length>1?`기적의 계산법 ${f[0].match(/\d+/)[0]}권에서 ${l[0].match(/\d+/)[0]}권까지 ${len(gj[1])}개월에 한 권씩 해요. ${P.band==='C'?'교과와 같은 학기를 한 권으로, 겹치지 않게 가요.':'교과보다 한 학기 앞서 가는 속도예요.'}`:`기적의 계산법 ${f[0].match(/\d+/)[0]}권을 ${mon(f[2])}까지 끝내요.`); }
       if(mj.length){ const f=mj[0]; out.push(`${f[1]>=lo?mon(f[1])+'부터':'이어서'} ${mj.map(x=>x[0].replace('기적의 ','')).join(' → ')} 순서로 중학 연산을 해요.`); if(f[1]>=lo&&/1AB/.test(f[0])) out.push('초등 계산이 끝나면 바로 중학연산 1AB부터 들어가요.'); }
       if(out.length) items.push({label:'연산',text:out.join(' ')}); }
     { const sc=inY(R('sci')).filter(x=>x[1]>=lo); if(sc.length) items.push({label:'과학',text:sc.map(x=>`${mon(x[1])}부터 ${nm(x[0])}`).join(', ')+'을 시작해요.'+(sc.some(x=>/중등 과학/.test(x[0]))?' 중2-1 심화가 끝난 다음 달이에요.':'')}); }
@@ -275,5 +300,5 @@ function narrative(P){
   }).filter(y=>y.items.length);
 }
 
-window.Planner={narrative,build,renderTable,renderSimple,render3D,bind3D,render3DMap,bindMap,milestones,mOf,label,SEM,CALC,COMP,MID};
+window.Planner={narrative,build,BAND,bandOf,renderTable,renderSimple,render3D,bind3D,render3DMap,bindMap,milestones,mOf,label,SEM,CALC,COMP,MID};
 })();

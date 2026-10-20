@@ -201,6 +201,7 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
  <form id="ctl" onsubmit="return false">
  <fieldset><legend>기준</legend>
   <label>레벨 <select id="level"></select></label>
+  <label>묶음 <select id="band"><option value="A">A 선행형 (L0~L3)</option><option value="B" selected>B 예시형 (L4~L9)</option><option value="C">C 천천히형 (L10~L13)</option></select></label>
   <label>이름(선택) <input id="name" placeholder="표시만 · 저장 안 함" autocomplete="off"></label>
   <label>올해 <input id="year" type="number" min="2020" max="2100"></label>
   <label>학년 <select id="grade"><option value="1">초1</option><option value="2" selected>초2</option><option value="3">초3</option></select></label>
@@ -227,7 +228,7 @@ opt($('school'),[...Array.from({length:12},(_,i)=>[i+1,P.SEM(i+1)+' 디딤돌'])
 opt($('comp'),P.COMP.map((c,i)=>[i,c[0]]),4);
 opt($('calc'),P.CALC.map((c,i)=>[i,c[0]]),9);
 const months=n=>Array.from({length:n},(_,i)=>[i+1,(i+1)+'개월']);
-opt($('schoolLeft'),months(4),1); opt($('compLeft'),months(7),7); opt($('calcLeft'),months(6),1);
+opt($('schoolLeft'),months(4),1); opt($('compLeft'),months(7),7); // 교재별 길이는 applyLevel 에서 다시 맞춘다 opt($('calcLeft'),months(6),1);
 
 // 레벨: 고르면 그 레벨의 '지금 진도'를 레벨표에서 읽어 채운다(앞으로는 예시 로드맵 규칙)
 const LV=window.PLANNER_LEVELS||[];
@@ -236,7 +237,7 @@ const EX={school:9,schoolLeft:1,comp:4,compLeft:7,calc:9,calcLeft:1,speed:2};
 const at=(bs,m)=>bs.find(b=>b[1]<=m&&b[2]>=m);
 const nextOf=(bs,m,re)=>bs.filter(b=>b[2]>=m&&(!re||re.test(b[0]))).sort((a,b)=>a[1]-b[1])[0];
 function schoolIdx(t){ let r=t.match(/^(\d)-(\d)/); if(r) return 2*(+r[1]-1)+(+r[2]); if(/계통|여유/.test(t)) return 13; r=t.match(/^중(\d)-(\d)/); if(r) return 14+2*(+r[1]-1)+(+r[2]-1); return null; }
-function compIdx(t){ const K=[/초등팩토 1|킨더|키즈/,/필즈 베이직/,/1031 입문/,/TOT/,/1031 초급/,/1031 중급/,/3% 1과정/,/왕수학|3% 2과정|황소/]; const i=K.findIndex(re=>re.test(t)); return i<0?null:i; }
+function compIdx(t){ const K=[/초등팩토 1|킨더|키즈/,/필즈 베이직/,/1031 입문/,/TOT/,/1031 초급/,/1031 중급/,/3% 1과정/,/왕수학 응용 4/]; const i=K.findIndex(re=>re.test(t)); return i<0?null:i; }
 function calcIdx(t){ let r=t.match(/기적의 계산법 (\d+)/); if(r) return +r[1]-1; if(/소마셈/.test(t)) return 1; const i=P.CALC.findIndex(c=>t.includes(c[0].replace('기적의 ',''))); return i<0?null:i; }
 function hwOptions(){
   const g=+$('grade').value, now=P.mOf(g,+$('mon').value), A0=P.mOf(g,3), list=[];
@@ -247,6 +248,7 @@ function setSeg(k,v){ state[k]=String(v); document.querySelectorAll(`.seg[data-k
 function applyLevel(){
   const id=$('level').value; if(id==='manual') return;
   const set=(k,v)=>{ $(k).value=String(v); };
+  $('band').value=P.bandOf(id); $('speed').disabled=P.bandOf(id)==='C';
   if(id==='ex'){ Object.entries(EX).forEach(([k,v])=>set(k,v)); hwOptions(); setSeg('hwOn',1); return; }
   const L=LV.find(l=>l.id===id), now=P.mOf(+$('grade').value,+$('mon').value);
   const sb=(at(L.school,now)&&schoolIdx(at(L.school,now)[0])!=null)?at(L.school,now):nextOf(L.school,now,/^\d-\d|^중|계통|여유/);
@@ -259,12 +261,13 @@ function applyLevel(){
   hwOptions(); const E=L.hwExam;
   if(E!=null&&[...$('hw').options].some(o=>o.value===String(E))){ set('hw',E); setSeg('hwOn',1); } else setSeg('hwOn',0);
 }
-function read(){ const on=state.hwOn==='1'; return {grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,
+function read(){ const on=state.hwOn==='1'; return {band:$('band').value,grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,
   hw:on&&$('hw').value?$('hw').value:'none',hwDeep:on&&$('hwDeep').checked,hwMid:on&&$('hwMid').checked,gifted:state.gifted==='1'}; }
 function draw(){
   const o=read(), plan=P.build(o); lastPlan=plan; const nm=$('name').value.trim()||'우리 아이';
   $('who').textContent=nm; $('who2').textContent=nm;
   $('hwOpts').style.display=state.hwOn==='1'?'grid':'none';
+  document.querySelector('.seg[data-k="hwOn"]').closest('.choice').style.display=plan.band==='C'?'none':'block';
   $('warn').innerHTML=plan.warn.map(w=>`<div class="warn">⚠ ${w}</div>`).join('');
   const R=k=>(plan.rows.find(r=>r.key===k)||{blocks:[]}).blocks, cur=k=>{ const b=R(k).find(x=>x[1]<=plan.now&&x[2]>=plan.now); return b?b[0]:'—'; };
   $('nowItems').innerHTML=[['📘','교과',cur('school')],['💡','사고력',cur('comp')],['➕','연산',cur('calc')]].map(([i,a,b])=>`<div class="item"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
@@ -279,7 +282,7 @@ function draw(){
     <div class="mrow">${y.months.map(c=>`<div class="mc${c.now?' now':''}${c.past?' past':''}"><b>${c.mon}</b>${c.starts.map(t=>`<span class="st">${t}</span>`).join('')}${c.issues.map(t=>`<span class="is">${t}</span>`).join('')}</div>`).join('')}</div>
     <dl class="cm">${y.items.map(it=>`<dt>${it.label}</dt><dd>${it.text}</dd>`).join('')}</dl></div>`).join('');
   const lvName=$('level').selectedOptions[0].textContent;
-  $('repItems').innerHTML=[['📖','현재 학습',`${cur('school')} · ${cur('comp')}`],['👤','기준 레벨',lvName],['💡','다음 과정',next?`${next.title} (${P.label(next.m)})`:'—'],['📅','다음 확인','학습 경험 후 조정 · 경로는 언제든 바꿀 수 있어요']]
+  $('repItems').innerHTML=[['📖','현재 학습',`${cur('school')} · ${cur('comp')}`],['👤','기준 레벨',`${lvName} · ${plan.bandName}`],['💡','다음 과정',next?`${next.title} (${P.label(next.m)})`:'—'],['📅','다음 확인','학습 경험 후 조정 · 경로는 언제든 바꿀 수 있어요']]
     .map(([i,a,b])=>`<div class="ritem"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
 }
 // 3D 맵: three.js(map3d.js, 수의 나라와 같은 three · 아이 캐릭터). WebGL 이 없으면 CSS 맵.
@@ -298,7 +301,7 @@ document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.addEvent
 document.querySelectorAll('.seg').forEach(s=>s.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; setSeg(s.dataset.k,b.dataset.v); draw(); }));
 ['hw','hwDeep','hwMid'].forEach(id=>$(id).addEventListener('change',()=>{ $('level').value='manual'; draw(); }));
 $('openSet').onclick=()=>$('drawer').classList.add('on'); $('closeSet').onclick=()=>$('drawer').classList.remove('on');
-const PROG=['school','schoolLeft','comp','compLeft','calc','calcLeft','speed'];
+const PROG=['school','schoolLeft','comp','compLeft','calc','calcLeft','speed','band'];
 $('ctl').addEventListener('change',e=>{ const id=e.target.id;
   if(id==='grade'||id==='mon'){ hwOptions(); applyLevel(); } else if(id==='level') applyLevel(); else if(PROG.includes(id)) $('level').value='manual';
   draw(); });
