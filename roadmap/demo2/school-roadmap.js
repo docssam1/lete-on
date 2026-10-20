@@ -432,7 +432,8 @@ function conceptRows(){
   const comp=upTo(early.slice(0,ip),early[ip][1]).concat([['1031 입문 + workbook',early[ip][1],53],['TOT 2단계',54,56],['1031 초급',57,63],
     ['3% 1과정',64,67]]);
   const calc=upTo(R('calc'),56).concat(sem.map((x,i)=>[`기적의 계산법 ${9+i}`,56+2*i,57+2*i]),[['초등연산 보충',64,67]],seqFrom(mid, MID_CALC));
-  const hw=[['황소 공부<br><small>(편입 위주)</small>',59,60],['황소 시험',61,61],['황소 4-1 편입<br><small>(합격 시)</small>',62,62]]; // 원장님 손그림 2026-10-20
+  const hw=[['황소 공부<br><small>(편입 위주)</small>',59,60],['황소 시험',61,61],['황소 4-1 편입<br><small>(합격 시)</small>',62,62],
+    ['황소 심화 개념 3개월<br><small>(심화 고려 시)</small>',65,67],['황소 심화 모의고사 2개월<br><small>(심화 고려 시)</small>',68,69]]; // 원장님 손그림 2026-10-20
   const gifted=[['영재원 대비<br><small>(사고력 서술·과학 탐구)</small>',62,65],['교대 영재원 선발',66,67],['대학 부설·교육청 영재원 선발',68,69],['영재원 수업<br><small>(합격 시)</small>',74,83]];
   return [
     {key:'school',label:'교과',blocks:school},
