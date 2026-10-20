@@ -837,6 +837,36 @@ function sourceLake(visual) {
   return `<div class="b5-src-lake" role="img" aria-label="${escapeHtml(`둥근 호수 둘레의 ${name}, 간격 ${visual.gap}`)}"><svg viewBox="0 -8 220 176" style="width:min(100%,280px)"><circle class="water" cx="${cx}" cy="${cy}" r="${R}"/>${extra}${marks}${arc}</svg></div>`;
 }
 
+// 7권 53~56쪽: 조건 상자(• 줄) 또는 「보기」 상자. lines = 줄 글자들, title이 있으면 상자 위 이름표.
+function sourceNoteBox(visual) {
+  const lines = visual.lines.map((t) => `<li>${escapeHtml(t)}</li>`).join("");
+  return `<div class="b5-src-notebox${visual.title ? " titled" : ""}" role="img" aria-label="${escapeHtml(`${visual.title ? `${visual.title}: ` : ""}${visual.lines.join(" / ")}`)}">${visual.title ? `<b>${escapeHtml(visual.title)}</b>` : ""}<ul class="${visual.title ? "plain" : ""}">${lines}</ul></div>`;
+}
+
+// 7권 57~60쪽: 두 자리 수 □△에서 앞뒤를 바꾼 △□를 빼는 세로셈(□ 파랑 네모, △ 초록 세모). result = 차.
+function sourceSwapSub(visual) {
+  const sq = (x, y) => `<rect class="sq" x="${x}" y="${y}" width="26" height="26"/>`, tri = (x, y) => `<polygon class="tri" points="${x + 13},${y} ${x + 26},${y + 26} ${x},${y + 26}"/>`;
+  const digits = String(visual.result).split("").map((d, k) => `<text x="${40 + k * 36 + 13}" y="104">${escapeHtml(d)}</text>`).join("");
+  return `<div class="b5-src-swapsub" role="img" aria-label="${escapeHtml(`네모 세모에서 세모 네모를 빼면 ${visual.result}`)}"><svg viewBox="0 0 122 116" style="width:min(100%,150px)">${sq(40, 6)}${tri(76, 6)}<text class="op" x="18" y="62">-</text>${tri(40, 42)}${sq(76, 42)}<line x1="12" y1="78" x2="110" y2="78"/>${digits}</svg></div>`;
+}
+
+// 7권 61~62쪽: 수직선 위의 점과 두 점 사이 거리 호. points = [{label, at(0~100)}], arcs = [{from, to, side:"over"|"under", label, blank}].
+function sourceDistanceArcs(visual) {
+  const W = 300, x0 = 16, y = 70, X = (p) => x0 + p.at / 100 * (W - 2 * x0);
+  const pts = visual.points.map((p) => ({ ...p, x: X(p) })), by = Object.fromEntries(pts.map((p) => [p.label, p]));
+  let body = `<line class="ln" x1="${pts[0].x}" y1="${y}" x2="${pts[pts.length - 1].x}" y2="${y}"/>`;
+  body += pts.map((p) => `<line class="tick" x1="${p.x}" y1="${y - 6}" x2="${p.x}" y2="${y + 6}"/><text class="pt" x="${p.x}" y="${y + 22}">${escapeHtml(p.label)}</text>`).join("");
+  let k = 0;
+  visual.arcs.forEach((a) => {
+    const xa = by[a.from].x, xb = by[a.to].x, s = a.side === "under" ? 1 : -1, h = Math.min(46, Math.max(14, (xb - xa) * 0.22));
+    const mx = (xa + xb) / 2, ly = y + s * h + (s > 0 ? 18 : -4);
+    body += `<path class="arc${a.blank ? " ask" : ""}" d="M${xa.toFixed(1)} ${y}Q${mx.toFixed(1)} ${(y + s * 2 * h).toFixed(1)} ${xb.toFixed(1)} ${y}"/>`;
+    body += a.blank ? `<rect class="blank" x="${(mx - 15).toFixed(1)}" y="${(y - h - 26).toFixed(1)}" width="30" height="20" rx="3"/><text class="bl" x="${mx.toFixed(1)}" y="${(y - h - 11).toFixed(1)}">${BLANK_LABELS[k++]}</text>` : a.label ? `<text class="al" x="${mx.toFixed(1)}" y="${ly.toFixed(1)}">${escapeHtml(a.label)}</text>` : "";
+  });
+  const label = `수직선 위의 ${visual.points.map((p) => p.label).join(", ")}${visual.arcs.filter((a) => a.label).map((a) => `, ${a.from}~${a.to} ${a.label}`).join("")}`;
+  return `<div class="b5-src-distarcs" role="img" aria-label="${escapeHtml(label)}"><svg viewBox="0 -10 ${W} 152" style="width:min(100%,340px)">${body}</svg></div>`;
+}
+
 // 7권: 단계 그림 여러 개를 한 줄로(휴대폰에서는 줄바꿈). figs = [{w, h, body}], marks면 위에 ①②③… 번호.
 const STAGE_MARKS = ["①", "②", "③", "④", "⑤", "⑥"];
 function stageRow(cls, label, figs, marks) {
@@ -1245,6 +1275,9 @@ export function book05Markup(visual) {
     case "source-stone-polygon": return sourceStonePolygon(visual);
     case "source-plot": return sourcePlot(visual);
     case "source-lake": return sourceLake(visual);
+    case "source-note-box": return sourceNoteBox(visual);
+    case "source-swap-sub": return sourceSwapSub(visual);
+    case "source-distance-arcs": return sourceDistanceArcs(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);

@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018l`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018l/20261018m/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018m`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018m/20261018n/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -365,6 +365,16 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 새 그림 `source-stone-polygon`(정삼각형·정사각형 둘레의 바둑돌, 빈칸 가·나…는 **빈칸 채우기 문항에만** — 다른 문항은 `blanks:false`) · `source-plot`(닫힌 도형 모양 땅, 꼭짓점과 첫 간격 자리에만 나무) · `source-lake`(둥근 호수와 위쪽 몇 개의 가로등·나무, 사이의 휴지통·의자·나무).
   - 인쇄: 빈칸 없는 바둑돌 그림은 SVG 너비가 정해지지 않아 높이가 0이 되어 사라졌다 → 인쇄에서 고정 높이(`height:18mm`)와 높이 제한 예외.
   - 교사용 답이 틀린 곳·원본 글 오류는 없다. 45·46쪽 보류 삭제(7권 보류 15 → 13). DB `book-07` 438키 → 465키, sha 앞 8자리 `977a83c3`. 캐시 꼬리표 `20261018l`.
+- **7권 묶음 5(슬라이드 52~62 팔린드롬과 대칭수 · 자릿수 바꾸어 빼기 · 수직선 위의 거리, 43문항·답 칸 58, 2026-10-20)**: 패치 `tools/golden-bell-book07/patch-book07-batch5.mjs`(정답 없음). 51쪽은 「04 팔린드롬과 벤다이어그램」 표지.
+  - 새 단원 15 `palindrome-source`(52~56쪽 15문항), 단원 10 `reverse-digits`를 57~60쪽 15문항으로 다시(DB `/lessons/10/original/` 교체), 새 단원 16 `distance-line-source`(61~62쪽 13문항). 새 단원 둘은 progressive-concept 개념 설명과 추가 학습을 붙였다.
+  - **「모두 구하시오」(53·54쪽)**는 4권처럼 `inputMode:"text"` + `resultContract:{type:"set"}` — 쉼표로 쓰면 순서와 띄어쓰기에 상관없이 채점된다. 옛 보류 사유(학생 입력 형식을 고정 못 함)는 이걸로 풀린다.
+  - 달력(55쪽)·시계(56쪽)는 보기의 표기대로 전수 열거해 확인했다. 06은 **날짜 수**를 센다(1월 11일과 11월 1일은 같은 수지만 다른 날짜 — 교사용 답이 이 방식). 시계 「A시부터 B시 사이」는 A시 0분부터 B시가 되기 전까지(교사용 답과 같다).
+  - 57~60쪽은 원본 그림 □△ − △□ = 차(원래 수가 큰 쪽, 바꾼 수도 두 자리)를 그린 `source-swap-sub`. 옛 데이터는 08(차 72)에도 「가장 큰 수·가장 작은 수」 칸을 붙였는데 원본에는 (1)만 있다.
+  - 새 그림: `source-note-box`(조건 상자·「보기」 상자) · `source-swap-sub` · `source-distance-arcs`(수직선 위 점과 거리 호, 묻는 호는 파랑 + 빈칸).
+  - **교사용 답이 틀린 곳 2곳**(DB `sourceNote`): 61쪽 02 (3)의 둘째·셋째 칸, (4)의 세 칸 — 앞 문항 (1)·(2)의 답을 그대로 옮겨 적었다. 그림의 거리로 다시 계산한 답을 쓴다.
+  - **원본을 바로잡은 곳**(`sourceDiscrepancy`): 61쪽 장소 이름(교재 회사 이름)을 「학원」으로 · 61쪽 02의 번호 (2)가 두 번이라 뒤의 것을 (4)로.
+  - **보류로 남긴 것 1건**: 52쪽 01 (1) 한 자리 대칭수 — 교사용 풀이는 「없다」인데 물음 글의 정의(앞뒤로 읽어 같은 수)로는 한 자리 수도 해당해 답이 하나로 정해지지 않는다. 7권 보류 13 → 7(표지 4 · 52쪽 1 · 64쪽 · 65쪽).
+  - DB `book-07` 465키 → 506키, sha 앞 8자리 `43280ff4`. 캐시 꼬리표 `20261018m`.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

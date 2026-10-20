@@ -311,6 +311,24 @@
 .b5-src-lake .lamp rect{fill:#555}.b5-src-lake .lamp circle{fill:#ffd45c;stroke:#a8741a}
 .b5-src-lake .bin{fill:#8e5bd8}.b5-src-lake .bench{fill:#a8741a}
 .b5-src-lake .gaparc{fill:none;stroke:#8e5bd8;stroke-width:1.3;stroke-dasharray:3 2}
+.b5-src-notebox{position:relative;width:min(100%,420px);margin:auto;padding:14px 18px 12px;border:1.6px solid #8e5bd8;border-radius:8px;background:#fff;color:#222;font-size:17px;font-weight:700}
+.b5-src-notebox.titled{padding-top:18px}
+.b5-src-notebox>b{position:absolute;top:-12px;left:16px;padding:0 8px;background:#fff;color:#8e5bd8;font-size:15px}
+.b5-src-notebox ul{margin:0;padding-left:20px;line-height:1.75}
+.b5-src-notebox ul.plain{padding-left:0;list-style:none}
+.b5-src-swapsub{display:grid;justify-items:center}
+.b5-src-swapsub .sq{fill:#dde9ff;stroke:#2f6fe0;stroke-width:1.8}
+.b5-src-swapsub .tri{fill:#dcf5e5;stroke:#2f9e5f;stroke-width:1.8;stroke-linejoin:round}
+.b5-src-swapsub line{stroke:#222;stroke-width:1.6}
+.b5-src-swapsub text{font-size:24px;font-weight:700;fill:#222;text-anchor:middle}
+.b5-src-distarcs{display:grid;justify-items:center}
+.b5-src-distarcs .ln,.b5-src-distarcs .tick{stroke:#555;stroke-width:1.5}
+.b5-src-distarcs .arc{fill:none;stroke:#8e5bd8;stroke-width:1.5}
+.b5-src-distarcs .arc.ask{stroke:#2f6fe0;stroke-width:1.8}
+.b5-src-distarcs text{font-size:12px;font-weight:700;fill:#222;text-anchor:middle}
+.b5-src-distarcs .pt{font-size:13px}
+.b5-src-distarcs .blank{fill:#fff8dc;stroke:#8e5bd8;stroke-width:1.5}
+.b5-src-distarcs .bl{font-size:12px;fill:#8a5a00}
 .source-question-card:has(.book07-visual,.book05-visual) .answer-choices button{min-height:44px;padding:6px 14px;font-size:16px;color:#222}
 .b5-src-table>span.shaded{font-size:min(var(--font),calc(100cqi / var(--columns) * .5))}
 .b5-src-quad .tile0{fill:#dde9ff;stroke:#2f6fe0;stroke-width:2}
@@ -398,5 +416,5 @@
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-balance svg{width:auto!important;max-width:100%;height:24mm!important}
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-quad svg{width:auto!important;max-width:100%;height:30mm!important}
   .gold-print-page:is([data-print-book="book-05"],[data-print-book="book-06"],[data-print-book="book-07"]) .b5-src-grid svg{width:auto!important;max-width:100%;height:20mm!important}
-  .b5-src-table>span.shaded,.b5-src-table>span.head,.b5-src-stonepoly circle,.b5-src-stonepoly i.blank,.b5-src-plot svg *,.b5-src-lake svg *,.b5-src-withtable svg *,.b5-src-swap svg *,.b5-src-stages line,.b5-src-stages circle,.b5-src-stages .tri,.b5-src-stages .sq,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-seq .box.shaded,.b5-src-radial .plate,.b5-src-cal-cells span.shaded,.b5-src-prod rect.s,.b5-src-month .grid>*,.b5-src-year i.last,.b5-src-cube-stair polygon,.b5-src-shapes .g svg,.b5-src-shapes .cards span,.b5-src-discs path.on,.b5-src-fracs i.blank,.b5-src-seg .box,.b5-src-dots circle,.b5-src-sumline .g svg,.b5-src-hand circle.new,.b5-src-fan polygon,.b5-src-perim polygon,.b5-src-perim rect,.b5-src-stones circle,.b5-src-halve rect.blank,.b5-src-arcline .mk,.b5-src-pencil rect,.b5-src-pencil polygon,.b5-src-pencil circle,.b5-src-blankeq i,.b5-src-blankeq .hl,.b5-src-ttable td.blank,.b5-src-quad polygon,.b5-src-quad rect,.b5-src-grid rect.on,.b5-src-balance circle,.b5-src-balance rect,.b5-src-ttable th,.b5-src-ttable td:first-child{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .b5-src-table>span.shaded,.b5-src-table>span.head,.b5-src-swapsub svg *,.b5-src-distarcs svg *,.b5-src-stonepoly circle,.b5-src-stonepoly i.blank,.b5-src-plot svg *,.b5-src-lake svg *,.b5-src-withtable svg *,.b5-src-swap svg *,.b5-src-stages line,.b5-src-stages circle,.b5-src-stages .tri,.b5-src-stages .sq,.b5-src-product>span.shaded,.b5-src-cards span,.b5-src-pyramid i,.b5-src-seq .box.shaded,.b5-src-radial .plate,.b5-src-cal-cells span.shaded,.b5-src-prod rect.s,.b5-src-month .grid>*,.b5-src-year i.last,.b5-src-cube-stair polygon,.b5-src-shapes .g svg,.b5-src-shapes .cards span,.b5-src-discs path.on,.b5-src-fracs i.blank,.b5-src-seg .box,.b5-src-dots circle,.b5-src-sumline .g svg,.b5-src-hand circle.new,.b5-src-fan polygon,.b5-src-perim polygon,.b5-src-perim rect,.b5-src-stones circle,.b5-src-halve rect.blank,.b5-src-arcline .mk,.b5-src-pencil rect,.b5-src-pencil polygon,.b5-src-pencil circle,.b5-src-blankeq i,.b5-src-blankeq .hl,.b5-src-ttable td.blank,.b5-src-quad polygon,.b5-src-quad rect,.b5-src-grid rect.on,.b5-src-balance circle,.b5-src-balance rect,.b5-src-ttable th,.b5-src-ttable td:first-child{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
