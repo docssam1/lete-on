@@ -87,7 +87,7 @@ export const ringTowerLesson = {
 // 현행 단원은 재료·거리·극·나침반·생활 설계를 모두 다룬다. 위 고리 탑 원고는 보존한다.
 import {inquiry} from '../activities/s41-u01.inquiry.js';
 const q=n=>`s41-u01-b${String(n).padStart(2,'0')}`;
-export const lesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'자석 관찰·비교·생활 속 장치 설계',
+export const recordsLesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'자석 관찰·비교·생활 속 장치 설계',
  engage:{observationBased:true,say:[{mood:'thinking',text:'반짝이는 금속은 모두 자석에 붙을까요? 실제 시료를 살펴봐요.'}],question:'자석과 물체·두 자석 사이의 힘을 어떤 관찰로 설명하고 생활에 이용할까요?',predictions:[{id:'observe',text:'재료와 조건을 확인하여 실제 결과를 비교해야 한다.'},{id:'metal',text:'금속은 모두 붙으므로 비교할 필요가 없다.'},{id:'more',text:'아직 모르므로 여러 시료와 자석으로 더 확인하고 싶다.'}],answer:'observe',predictionNote:'예상과 실제 결과는 나중에 근거로 비교해요.'},
  explore:{say:[{mood:'talk',text:'같게 할 조건과 실제 결과를 구별해 남겨요.'}],modes:['lab','model','scene','home'],modeLabels:{lab:'내 자석 탐구 기록',model:'고리 탑 모형',scene:'고리 탑 3D',home:'실제 활동 방법'},scene:'ring-tower',modelLab:ringTowerLesson.explore.lab,
  lab:{kind:'inquiry',config:inquiry,rowsKey:'magnetInquiryRows',goal:'일곱 활동의 실제 조건·관찰·설계·의견과 아직 할 계획을 구별해 보관해요.',columns:['활동','보관한 기록'],rowText:r=>r.title},
@@ -97,3 +97,10 @@ export const lesson={unitId:inquiry.unit,grade:4,title:inquiry.title,hero:'자�
  evaluate:{say:[{mood:'encourage',text:'자료 문제와 실제 관찰·설계의 근거를 따로 확인해요.'}],items:[q(3),q(27),q(51)],pass:2,performanceNote:'자료 문제를 맞혔다고 실제 관찰·장치 제작·시험·의견 교환을 한 것으로 세지 않아요. 열린 설계와 실제 수행은 선생님과 근거를 확인해요.'},
  report:{title:'자석의 이용 · 관찰과 생활 속 설계 보고서',sections:[{key:'magnetQuestion',label:'① 알아볼 문제·직접 관찰과 자료/계획 구별'},...inquiry.activities.map((a,i)=>({key:'magnet_'+a.id,from:'inquiry.'+a.id,label:`${i+2}. ${a.title} · 조건과 실제 근거`})),{key:'magnetMore',label:'⑨ 더 확인할 점·다음 계획'}],checks:['시료의 확인한 재료·예상·실제 결과를 구별했나요?','거리·단위·사이 판·같게 한 조건과 한계를 밝혔나요?','마주 보는 극·고리 가이드·실제/모형을 구별했나요?','나침반의 외부 조건과 실제 방향을 설명했나요?','장치의 목적·부품·성질·고정·확인 계획을 연결했나요?','실제 제작·시험·의견·수정과 앞으로 할 일을 구별했나요?']}
 };
+
+// 2026-10-20 ⑤ 같은 패턴 정리: 기본 수업 = 위 ringTowerLesson(3D 실험 수업 · 예상→실험→개념). 탐구 기록 앱은 선택 기능(#/s41-u01/records)으로 옮겼다
+// — 저장 키 sciLab.inquiry.s41-u01와 보고서 화면(#/s41-u01/report)은 그대로 기록장과 이어진다. 기록 교재는 #/s41-u01/records-book.
+export const lesson = { ...ringTowerLesson,
+  explore: { ...ringTowerLesson.explore, records: { ...recordsLesson.explore.lab, title: '탐구 기록장(선택)', note: '자석 관찰·분류·생활 속 장치 설계와 의견을 따로 기록하고 싶을 때 써요. 수업은 기록 없이도 끝까지 할 수 있어요.' } },
+  elaborate: { ...ringTowerLesson.elaborate, report: false },
+  report: recordsLesson.report };

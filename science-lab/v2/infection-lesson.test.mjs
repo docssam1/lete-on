@@ -1,5 +1,6 @@
+// 2026-10-19: 기본 수업은 사고력 수업(think-lessons.test.mjs)으로 바뀌었다. 이 파일은 선택 기능으로 옮긴 탐구 기록장·기록 교재(records)가 예전대로 동작하는지 본다.
 import test from 'node:test';import assert from 'node:assert/strict';
-import {inquiry} from '../data/activities/c22-s32-u04.inquiry.js';import {lesson} from '../data/units/c22-s32-u04.lesson.js';import {chapter,art,plan} from '../data/book/c22-s32-u04.book.js';import {items} from '../data/units/c22-s32-u04.js';
+import {inquiry} from '../data/activities/c22-s32-u04.inquiry.js';import {recordsLesson as lesson} from '../data/units/c22-s32-u04.records.js';import {chapter,art,plan} from '../data/book/c22-s32-u04.records-book.js';import {items} from '../data/units/c22-s32-u04.js';
 import {emptyInquiry,saveInquiry,validInquiry,inquiryError,inquirySections} from './inquiry-records.js';import {buildSlides} from './deck.js';import {renderChapter} from './book.js';import {BANK,BOOK_UNITS} from './units-index.js';
 test('감염병 수업의 일곱 활동을 연결하되 원문·임상 진단·공식 성적을 만들어 내지 않는다',()=>{
  assert.deepEqual(inquiry.activities.map(a=>a.id),['cases','routes','model','handwash','habits','share','practice']);assert(BOOK_UNITS.has(inquiry.unit));assert(BANK[inquiry.unit].lesson);assert(BANK[inquiry.unit].sourcePending);assert.equal(BANK[inquiry.unit].n,0);assert.deepEqual(BANK[inquiry.unit].sets,[]);

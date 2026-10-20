@@ -72,7 +72,42 @@ test("fails closed when a requested ratio or family cap cannot be met", () => {
     candidate(1, "lowered", "input", "same"),
     candidate(2, "standard", "input", "same"),
     candidate(3, "raised", "input", "same")
-  ], options({ questionCount: 3, responseWeights: { objective: 0, subjective: 1 } })), /family diversity/);
+  ], options({ questionCount: 3, responseWeights: { objective: 0, subjective: 1 } })), /cannot satisfy/);
+});
+
+test("never repeats one fixed variation under different item, type, and family IDs", () => {
+  const sameA = { ...candidate(1, "standard", "input"), variantId: "shared-variant", sourceQuestionKey: "source-1" };
+  const sameB = { ...candidate(2, "standard", "input"), typeCode: "OTHER_TYPE", variantId: "shared-variant" };
+  const distinct = { ...candidate(3, "standard", "input"), sourceQuestionKey: "source-2" };
+  const result = planner.planExam([sameA, sameB, distinct], options({
+    questionCount: 2,
+    difficultyWeights: { lowered: 0, standard: 1, raised: 0 },
+    responseWeights: { objective: 0, subjective: 1 }
+  }));
+  assert.equal(result.items.length, 2);
+  assert(result.items.some(item => item.itemId === distinct.itemId));
+  assert.equal(result.items.filter(item => [sameA.itemId, sameB.itemId].includes(item.itemId)).length, 1);
+  assert.throws(() => planner.planExam([sameA, sameB], options({
+    questionCount: 2,
+    difficultyWeights: { lowered: 0, standard: 1, raised: 0 },
+    responseWeights: { objective: 0, subjective: 1 }
+  })), /cannot satisfy/);
+});
+
+test("keeps domain quotas while resolving duplicate source and content identities", () => {
+  const algebra = { ...candidate(1, "standard", "input", null, "algebra"), sourceQuestionKey: "same-source" };
+  const geometryAlias = { ...candidate(2, "standard", "input", null, "geometry"), sourceQuestionKey: "same-source" };
+  const geometryOther = { ...candidate(3, "standard", "input", null, "geometry"), contentFingerprint: "same-content" };
+  const geometryCopy = { ...candidate(4, "standard", "input", null, "geometry"), contentFingerprint: "same-content" };
+  const result = planner.planExam([algebra, geometryAlias, geometryOther, geometryCopy], options({
+    questionCount: 2,
+    difficultyWeights: { lowered: 0, standard: 1, raised: 0 },
+    responseWeights: { objective: 0, subjective: 1 },
+    domainQuotas: { algebra: 1, geometry: 1 }
+  }));
+  assert(result.items.some(item => item.itemId === algebra.itemId));
+  assert.equal(result.items.filter(item => [geometryOther.itemId, geometryCopy.itemId].includes(item.itemId)).length, 1);
+  assert(!result.items.some(item => item.itemId === geometryAlias.itemId));
 });
 
 test("reassigns an earlier cell deterministically when greedy family selection would fail", () => {

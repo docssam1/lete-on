@@ -1,0 +1,11 @@
+/* 밤하늘과 우리 실험실(같은 시각 달 관찰) */
+.mo-note{font-size:15px;line-height:1.6;padding:10px 14px;border-radius:14px;background:#eef1fb;color:#24305e}
+.mo-read{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px}
+.mo-read li{background:#fff;border:1px solid #d9e2ec;border-radius:12px;padding:8px 10px;font-size:15px;line-height:1.4}
+.mo-read li b{display:block;font-weight:800;color:#1f2a44;white-space:nowrap}
+.mo-read li span{color:#2f4fb0;font-weight:700}
+.mo-2d{position:relative;height:220px;border-radius:14px;background:linear-gradient(#0b1636,#2d4a80);overflow:hidden}
+.mo-2d .mo-moon{position:absolute;top:60px;width:56px;height:56px;margin-left:-28px;border-radius:50%;background:#2a2f3c;transition:left .4s,opacity .4s;overflow:hidden}
+.mo-2d .mo-moon::after{content:"";position:absolute;inset:0;border-radius:50%;background:#efe9d8;clip-path:inset(0 0 0 calc((1 - var(--lit,1)) * 100%))}
+.mo-2d .mo-moon[data-side="l"]::after{clip-path:inset(0 calc((1 - var(--lit,1)) * 100%) 0 0)}
+.mo-2d .mo-dirs{position:absolute;left:0;right:0;bottom:8px;display:flex;justify-content:space-between;padding:0 6%;color:#cfd8ef;font-weight:800}

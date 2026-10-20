@@ -1,0 +1,446 @@
+{
+  "schema": "gfield-public-math-skill-ontology-supplement/1",
+  "checkpoint": "v98",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre C",
+    "unit": 7,
+    "title": "순서와 자리",
+    "printedPages": [
+      63,
+      69
+    ],
+    "visuallyReviewedPages": 7,
+    "sourceActivityBlocks": 13,
+    "answerValidated": true
+  },
+  "interpretation": {
+    "candidateOnly": true,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0,
+    "approvedDifficultyLevels": 0,
+    "validatedAnswers": 0,
+    "gradeMeaning": "활동별 최소 교과수준은 미확정입니다. 순서수·상대 위치·경로 추론에 필요한 언어와 조건 처리 수준을 문항별로 따로 확인해야 합니다.",
+    "difficultyMeaning": "조건부 연구 밴드입니다. 교사 검토와 학생 수행 자료 없이 확정 난이도로 취급하지 않습니다."
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 227,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "activitySkillRelations": 903
+  },
+  "unitCounts": {
+    "mappedActivities": 13,
+    "previouslyMappedActivities": 0,
+    "newlyLinkedActivities": 13,
+    "activitySkillRelations": 13,
+    "newActionCandidates": 6,
+    "reusedActionCandidates": 0,
+    "conditionalDifficultyBands": 13,
+    "minimumCurriculumContextCandidates": 13,
+    "unresolvedMinimumCurriculumCandidates": 13,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "validatedAnswers": 13,
+    "familyMembershipRelations": 6,
+    "relatedButDistinctRelations": 5,
+    "spiralRelationCandidates": 2,
+    "exactSomaTypeMatches": 0,
+    "newConditionalDifficultyBands": 0
+  },
+  "skillCandidates": [
+    {
+      "id": "AMIDA-PREC7-01",
+      "area": "논리·추론",
+      "areaOrderCandidate": 69,
+      "label": "사다리 가로선을 구성해 목표 대응 만들기",
+      "observableAction": "세로줄의 시작·도착 대상을 따라가며 인접 세로줄 사이 가로선을 배치해 지정된 짝 대응을 만든다.",
+      "activityNumbers": [
+        1,
+        2,
+        13
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "2",
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "AMIDA-PREC7-02",
+      "area": "논리·추론",
+      "areaOrderCandidate": 70,
+      "label": "사다리 가로선을 지워 목표 대응으로 바꾸기",
+      "observableAction": "기존 가로선이 만드는 전체 경로를 추적하고 하나의 선을 제거해 요구된 짝 또는 순위 대응으로 바꾼다.",
+      "activityNumbers": [
+        5,
+        6,
+        12
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "2",
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "AMIDA-PREC7-03",
+      "area": "논리·추론",
+      "areaOrderCandidate": 71,
+      "label": "짝 대응을 위한 사다리 가로선 수 최소화하기",
+      "observableAction": "동물과 먹이의 목표 짝을 모두 만족시키면서 추가할 가로선 수를 가능한 한 적게 정한다.",
+      "activityNumbers": [
+        8
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "ORD-PREC7-01",
+      "area": "논리·추론",
+      "areaOrderCandidate": 72,
+      "label": "앞뒤·사이·순위 조건으로 선형 순서 정하기",
+      "observableAction": "절대 위치, 상대 순서, 사이·인접·부정 조건을 결합해 대상의 한 줄 순서 또는 순위를 정한다.",
+      "activityNumbers": [
+        3,
+        4,
+        9
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "2",
+        "3"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "ORD-PREC7-02",
+      "area": "논리·추론",
+      "areaOrderCandidate": 73,
+      "label": "겹치는 쌍별 관찰로 전체 순서 복원하기",
+      "observableAction": "인접한 두 대상씩 보여 주는 여러 관찰을 연결해 전체 순서를 복원하고 함께 나오지 않은 조건도 적용한다.",
+      "activityNumbers": [
+        7
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "POS-PREC7-01",
+      "area": "논리·추론",
+      "areaOrderCandidate": 74,
+      "label": "원형·마주 본 자리의 기준 방향을 적용하기",
+      "observableAction": "원형 또는 서로 마주 보는 자리에서 사람 기준 왼쪽·오른쪽과 옆자리·맞은편 단서를 결합해 인물의 위치를 정한다.",
+      "activityNumbers": [
+        10,
+        11
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "activities": [
+    {
+      "activityNumber": 1,
+      "printedPage": 63,
+      "label": "이야기 속 원리 탐구 02",
+      "observedAction": "가로선 두 개를 배치해 세 사람과 1·2·3등의 목표 대응을 만든다.",
+      "candidateSkillIds": [
+        "AMIDA-PREC7-01"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 2,
+      "printedPage": 63,
+      "label": "확인 1",
+      "observedAction": "도구와 공이 서로 맞게 연결되도록 사다리 가로선 두 개를 그린다.",
+      "candidateSkillIds": [
+        "AMIDA-PREC7-01"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 3,
+      "printedPage": 64,
+      "label": "대표문제 1",
+      "observedAction": "앞뒤·사이·바로 앞 단서로 네 물건의 선형 순서를 정한다.",
+      "candidateSkillIds": [
+        "ORD-PREC7-01"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 4,
+      "printedPage": 64,
+      "label": "적용하기 1-1",
+      "observedAction": "가장 앞·사이 조건을 결합해 네 학생의 줄 선 순서를 정한다.",
+      "candidateSkillIds": [
+        "ORD-PREC7-01"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 5,
+      "printedPage": 65,
+      "label": "대표문제 2",
+      "observedAction": "동물 간 목표 짝이 되도록 사다리의 가로선 한 개를 지운다.",
+      "candidateSkillIds": [
+        "AMIDA-PREC7-02"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 6,
+      "printedPage": 65,
+      "label": "적용하기 2-1",
+      "observedAction": "같은 도형끼리 연결되도록 사다리의 가로선 한 개를 지운다.",
+      "candidateSkillIds": [
+        "AMIDA-PREC7-02"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 7,
+      "printedPage": 66,
+      "label": "연습문제 1",
+      "observedAction": "이웃한 두 옷씩 보이는 사진들을 연결해 다섯 옷의 전체 순서를 복원한다.",
+      "candidateSkillIds": [
+        "ORD-PREC7-02"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 8,
+      "printedPage": 66,
+      "label": "연습문제 2",
+      "observedAction": "동물과 먹이의 짝을 연결하면서 가로선 수를 최소화한다.",
+      "candidateSkillIds": [
+        "AMIDA-PREC7-03"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 9,
+      "printedPage": 67,
+      "label": "연습문제 3",
+      "observedAction": "확정 순위·상대 순위·마지막이 아니라는 조건으로 네 동물의 순위를 정한다.",
+      "candidateSkillIds": [
+        "ORD-PREC7-01"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 10,
+      "printedPage": 67,
+      "label": "연습문제 4",
+      "observedAction": "원형으로 마주 선 네 사람의 좌우 단서로 빈 자리를 정한다.",
+      "candidateSkillIds": [
+        "POS-PREC7-01"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 11,
+      "printedPage": 68,
+      "label": "심화문제 1",
+      "observedAction": "마주 보는 가족 자리·옆자리·사람 기준 좌우 단서를 결합해 경빈의 왼쪽 사람을 찾는다.",
+      "candidateSkillIds": [
+        "POS-PREC7-01"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 12,
+      "printedPage": 68,
+      "label": "심화문제 2",
+      "observedAction": "다른 세 순위는 유지하면서 사다리 선 하나를 지워 1등과 4등을 바꾼다.",
+      "candidateSkillIds": [
+        "AMIDA-PREC7-02"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 13,
+      "printedPage": 69,
+      "label": "도전문제 3",
+      "observedAction": "직업과 도구가 맞게 연결되도록 기존 사다리에 가로선 하나를 추가한다.",
+      "candidateSkillIds": [
+        "AMIDA-PREC7-01"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "answerValidated": true
+    }
+  ],
+  "taxonomy": {
+    "familyCandidateId": "FAMILY-ORDER-POSITION-AND-LADDER-REASONING",
+    "familyLabel": "순서·자리·사다리 추론",
+    "familyMembershipRelations": 6,
+    "relatedButDistinctRelations": [
+      {
+        "from": "ORD-PREC7-01",
+        "to": "LOG-INTRO-C-U9-06",
+        "basis": "부분 순서·추가 조건으로 배열을 좁히는 구조는 닿지만 C7의 짧은 앞뒤·사이 배치와 끝자리 조건을 포함한 기존 행동은 구분한다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "ORD-PREC7-01",
+        "to": "LOG-INTRO-C-U9-07",
+        "basis": "고정 순위와 상대 순위의 결합을 공유하나 달력 날짜 순서와 경주 도착 순위는 소재·단서가 다르다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "POS-PREC7-01",
+        "to": "LOG-INTRO-C-U9-04",
+        "basis": "좌석 제약을 결합하지만 C7의 원형·마주 보는 관점 변화와 기존 두 행 좌석 모델은 표상 차이를 보존한다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "AMIDA-PREC7-01",
+        "to": "SP02",
+        "basis": "출발에서 도착까지 경로를 구성한다는 공통점만으로 사다리의 인접 줄 교환과 격자 경로 제약을 같은 유형으로 합치지 않는다.",
+        "status": "hypothesis-needs-teacher-review"
+      },
+      {
+        "from": "AMIDA-PREC7-03",
+        "to": "AMIDA-PREC7-01",
+        "basis": "목표 짝에 맞게 선을 배치하는 행동을 공유하나 최소 선 수 최적화 요구를 별도 행동 후보로 보존한다.",
+        "status": "hypothesis-needs-teacher-review"
+      }
+    ],
+    "spiralRelations": [
+      {
+        "from": "AMIDA-PREC7-01",
+        "to": "AMIDA-PREC7-02",
+        "status": "spiral-extension-candidate",
+        "basis": "목표 대응을 구성하는 데서 기존 경로를 수정하며 다른 경로의 불변 조건까지 유지하는 쪽으로 요구가 늘어나는 가설이며 선수 순서는 미승인."
+      },
+      {
+        "from": "ORD-PREC7-01",
+        "to": "POS-PREC7-01",
+        "status": "spiral-extension-candidate",
+        "basis": "선형 위치를 정하는 데서 원형·마주 보는 좌우 기준을 함께 처리하는 확장 가설이며 선수 순서는 미승인."
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "minimum level unresolved",
+    "standardsContext": [],
+    "candidateActivities": 13,
+    "unresolvedActivities": 13,
+    "confirmedAssignments": 0,
+    "note": "교재 로드맵은 프로그램·병행 교재의 배치 참고만 제공하며 활동별 최소 교과수준을 확정하지 않습니다. 순서수 내용 맥락도 조건 결합·공간 배치 추론 난이도의 직접 근거가 아닙니다."
+  },
+  "crossReferences": {
+    "exactTypeMatches": 0,
+    "partialReferences": [
+      {
+        "row": "C1-3 1 연역적 논리",
+        "status": "partial-topic-match",
+        "note": "조건과 전제로 순서·자리를 유추하는 내용 참고. 1031의 개별 순서·사다리·좌석 행동과 유형 동등성은 승인하지 않는다."
+      },
+      {
+        "row": "B1-3 4 동물들의 달리기 경주",
+        "status": "partial-topic-match",
+        "note": "순서수·순위 위치의 내용 참고. 부정 조건·사다리 변환·상대 위치는 별도 행동으로 둔다."
+      },
+      {
+        "row": "C2-3 1 논리추리",
+        "status": "partial-topic-match",
+        "note": "조건으로 순서나 위치를 정하는 내용 참고. 좌우 관점·사다리 경로는 직접 일치로 보지 않는다."
+      }
+    ],
+    "heldBackRelatedRows": [
+      {
+        "row": "A3-3 3 수의 순서",
+        "status": "related-but-distinct",
+        "note": "순서수 표현을 익히는 활동이며 다중 조건 배치·경로 설계와는 과제가 다르다."
+      },
+      {
+        "row": "B4-1 1 방향과 위치",
+        "status": "related-but-distinct",
+        "note": "위치를 말하고 찾는 활동이며 여러 단서 결합·마주 보는 좌우 추론과는 과제가 다르다."
+      },
+      {
+        "row": "D1-3 1 연역적 추리",
+        "status": "related-but-distinct",
+        "note": "순서·위치 추론의 상위 설명이지만 더 직접적인 목차 행과 중복 연결하지 않는다."
+      }
+    ],
+    "activitiesWithoutDirectRow": 8,
+    "note": "목차 행은 소마 진도·문항 유형 동등성·최소 학년을 확정하지 않습니다."
+  },
+  "privacy": "공개 파일에는 문항별 정답, OCR 원문, 활동 ID, 이미지 해시, 로컬 경로를 포함하지 않는다. 답안 검증은 같은 판본 해설 pp.28–31 대조 결과만 집계한다. 난이도·최소 교과수준·계통 연결은 교사 승인 전 후보다.",
+  "answerValidation": {
+    "activitiesValidated": 13,
+    "answerKeyPdfPages": [
+      28,
+      29,
+      30,
+      31
+    ],
+    "method": "Same-edition answer-key pages were visually cross-checked against the existing body-page review.",
+    "exactAnswerValuesOmitted": true
+  }
+}

@@ -2,11 +2,15 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const crypto = require("node:crypto");
 const grading = require("../shared/grading.js");
 const shR01Metadata = require("../data/sh-r01-diagnostic-metadata.js");
 
 const TYPES = new Set(["input", "multi_input", "ordered_list", "unordered_set", "self_check"]);
-const DIFFICULTIES = new Set(["lowered", "standard", "raised"]);
+const DIFFICULTIES = new Set(["lowered", "standard", "raised", "advanced"]);
+const SOURCE_ORDER_SHA256 = Object.freeze({
+  "dp-common1-basic-entry-mock-r01": "0ccf823fffefc88306d5d40153f3d2697eb1b705fef34a2f6cbac5d9b6653908"
+});
 const FORBIDDEN_PUBLIC_TEXT = /(?:https?:\/\/|[A-Za-z]:[\\/]|\\\\|\.pdf\b|\.hwp\b)/i;
 
 function fail(message) { throw new Error(message); }
@@ -101,6 +105,13 @@ function normalize(raw) {
     const examId = entry[0], exam = entry[1];
     if (!exam || exam.classificationStatus !== "verified") fail(`${examId} scorer is not verified`);
     const items = Array.isArray(exam.items) ? exam.items : [];
+    if (SOURCE_ORDER_SHA256[examId]) {
+      const order = items.map(function (item) {
+        return [item && item.number, item && item.sourceQuestionId, item && item.responseType];
+      });
+      const actual = crypto.createHash("sha256").update(JSON.stringify(order)).digest("hex");
+      if (actual !== SOURCE_ORDER_SHA256[examId]) fail(`${examId} private source item order does not match the reviewed paper`);
+    }
     exams[examId] = Object.freeze({
       gradingVersion: text(exam.gradingVersion, `${examId} gradingVersion`, 100),
       classificationStatus: "verified",
@@ -138,7 +149,7 @@ function createAdapter(options) {
         const result = grading.evaluate(answerValue(answer), validateAnswerSpec(question, item));
         return Object.freeze({
           number: item.number,
-          state: result.state === "correct" ? "correct" : "wrong",
+          state: result.state,
           classification: item.classification
         });
       });

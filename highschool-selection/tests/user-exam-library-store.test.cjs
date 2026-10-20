@@ -119,7 +119,8 @@ test("file store persists compact recipes and assignment changes", () => {
   const store = storeModule.createFileStore(filePath);
   store.create("learner1", recipe("file1"));
   const reopened = storeModule.createFileStore(filePath);
-  assert.equal(reopened.read("learner1", "file1").items[0].itemVersionId, "v1");
+  // Persistence is checked at the fixture date, before its temporary expiry.
+  assert.equal(reopened.read("learner1", "file1", "2026-08-31T00:00:00Z").items[0].itemVersionId, "v1");
   reopened.setAssignment({
     ownerId: "learner1", planId: "basic", updatedAt: "2026-08-31T00:00:00Z",
     entitlements: [{ kind: "academy_all", academyId: "DP" }]

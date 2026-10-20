@@ -1,0 +1,506 @@
+{
+  "schema": "gfield-public-math-skill-ontology-supplement/1",
+  "checkpoint": "v110",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 Pre D",
+    "unit": 2,
+    "title": "분류하기",
+    "printedPages": [
+      21,
+      27
+    ],
+    "visuallyReviewedPages": 7,
+    "sourceActivityBlocks": 10,
+    "studentResponseTasks": 9,
+    "modeledExamples": 1
+  },
+  "interpretation": {
+    "candidateOnly": true,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0,
+    "approvedDifficultyLevels": 0,
+    "validatedAnswers": 9,
+    "difficultyMeaning": "통일 5단계 기준의 조건부 연구 밴드이며 교사 채택 전이다. 첫 블록은 설명 예시다.",
+    "gradeMeaning": "최소 교과수준은 전체 10개 활동 모두 미확정이다. 1–2학년군 표기는 수 세기·수 비교·두 자리 수 덧셈 선수 내용 맥락이며 전체 과제 최소 학년이 아니다."
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 414,
+    "candidateEvidenceLinkedActivities": 846,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 903,
+    "conditionalDifficultyBands": 852,
+    "validatedAnswers": 357,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unitCounts": {
+    "sourceActivityBlocks": 10,
+    "studentResponseTasks": 9,
+    "modeledExamples": 1,
+    "mappedActivities": 10,
+    "newlyLinkedActivities": 10,
+    "activitySkillRelations": 10,
+    "newActionCandidates": 6,
+    "reusedActionCandidates": 1,
+    "conditionalDifficultyBands": 10,
+    "unresolvedMinimumCurriculumCandidates": 10,
+    "confirmedMinimumCurriculumAssignments": 0,
+    "prerequisiteContentContextActivities": 2,
+    "validatedAnswers": 9,
+    "familyMembershipRelations": 7,
+    "relatedButDistinctRelations": 4,
+    "spiralRelationCandidates": 1,
+    "exactSomaTypeMatches": 0,
+    "somaCrossReferencedActivities": 6,
+    "somaSourceRows": 3,
+    "relatedRowsHeldBack": 3
+  },
+  "skillCandidates": [
+    {
+      "id": "LOG-PRED2-01",
+      "area": "논리·추론",
+      "areaOrderCandidate": 90,
+      "label": "계층 분류 결과에서 단계별 기준을 추론하고 새 사례에 적용하기",
+      "observableAction": "분류 트리의 가지마다 놓인 항목을 비교해 단계별 기준을 복원하고 새 항목 모음에 같은 분류 규칙을 적용한다.",
+      "activityNumbers": [
+        3,
+        7
+      ],
+      "conditionalDifficultyBands": [
+        "4",
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "LOG-PRED2-02",
+      "area": "논리·추론",
+      "areaOrderCandidate": 91,
+      "label": "표의 속성을 벤 다이어그램 교집합의 공통 조건으로 바꾸기",
+      "observableAction": "분류 표에서 두 모임의 속성을 읽고 두 조건을 모두 만족하는 도형이 들어갈 교집합 영역을 찾아 기호로 고른다.",
+      "activityNumbers": [
+        4
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "LOG-PRED2-03",
+      "area": "논리·추론",
+      "areaOrderCandidate": 92,
+      "label": "전체 항목을 빠짐없이 두 모임으로 나누는 기준 판별하기",
+      "observableAction": "각 후보 기준이 제시된 전체 항목을 서로 겹치지 않는 두 범주로 빠짐없이 나누는지 검사한다.",
+      "activityNumbers": [
+        5
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "LOG-PRED2-04",
+      "area": "논리·추론",
+      "areaOrderCandidate": 93,
+      "label": "한 모임에만 속하는 벤 다이어그램 영역의 조건 적용하기",
+      "observableAction": "한 기준은 만족하고 다른 기준은 만족하지 않는 영역을 해석해 해당 범주에 속하는 항목을 찾는다.",
+      "activityNumbers": [
+        6
+      ],
+      "conditionalDifficultyBands": [
+        "2"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "LOG-PRED2-05",
+      "area": "논리·추론",
+      "areaOrderCandidate": 94,
+      "label": "수량 조건 두 개로 도미노를 분류표에 배치하기",
+      "observableAction": "도미노 점을 세고 두 칸의 합과 특정 수의 포함 여부를 각각 판정해 두 기준이 교차하는 표의 칸에 놓는다.",
+      "activityNumbers": [
+        9
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "LOG-PRED2-06",
+      "area": "논리·추론",
+      "areaOrderCandidate": 95,
+      "label": "노선도에서 두 노선·세 노선 공통 역을 찾아 벤 영역에 대응하기",
+      "observableAction": "색으로 구별된 노선도에서 지정된 노선이 함께 지나는 역을 찾고 두 집합 또는 세 집합의 교집합 영역과 대응한다.",
+      "activityNumbers": [
+        10
+      ],
+      "conditionalDifficultyBands": [
+        "4"
+      ],
+      "minimumCurriculumAssignments": 0,
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "activities": [
+    {
+      "activityNumber": 1,
+      "printedPage": 21,
+      "label": "원리탐구2",
+      "observedAction": "두 모임에 모두 속하는 동물을 벤 다이어그램의 겹치는 부분에 놓는 설명을 읽는다.",
+      "candidateSkillIds": [
+        "D3-SET01"
+      ],
+      "conditionalDifficultyBand": 1,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": false,
+      "modeledExampleOnly": true,
+      "answerValidated": false
+    },
+    {
+      "activityNumber": 2,
+      "printedPage": 21,
+      "label": "확인1",
+      "observedAction": "탈것과 날개가 있는 것의 두 분류 기준에 따라 그림 기호를 벤 다이어그램에 배치한다.",
+      "candidateSkillIds": [
+        "D3-SET01"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": false,
+      "modeledExampleOnly": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 3,
+      "printedPage": 22,
+      "label": "대표1",
+      "observedAction": "두 단계로 분류된 단추 그림에서 각 분기 기준과 이름을 역으로 찾는다.",
+      "candidateSkillIds": [
+        "LOG-PRED2-01"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": false,
+      "modeledExampleOnly": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 4,
+      "printedPage": 23,
+      "label": "대표2",
+      "observedAction": "두 모임의 공통 속성을 추론해 겹친 영역에 들어갈 도형을 고른다.",
+      "candidateSkillIds": [
+        "LOG-PRED2-02"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": false,
+      "modeledExampleOnly": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 5,
+      "printedPage": 24,
+      "label": "연습1",
+      "observedAction": "제시된 동물을 빠짐없이 두 모임으로 나눌 수 있는 기준을 모두 고른다.",
+      "candidateSkillIds": [
+        "LOG-PRED2-03"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": false,
+      "modeledExampleOnly": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 6,
+      "printedPage": 24,
+      "label": "연습2",
+      "observedAction": "벤 다이어그램에서 한 모임에만 속하는 부분의 단어를 찾는다.",
+      "candidateSkillIds": [
+        "LOG-PRED2-04"
+      ],
+      "conditionalDifficultyBand": 2,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": false,
+      "modeledExampleOnly": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 7,
+      "printedPage": 25,
+      "label": "연습3",
+      "observedAction": "도형 분류 트리의 기준을 추론하고 새 분류 사례를 같은 기준에 대응한다.",
+      "candidateSkillIds": [
+        "LOG-PRED2-01"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": false,
+      "modeledExampleOnly": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 8,
+      "printedPage": 26,
+      "label": "심화1",
+      "observedAction": "1부터 10까지 수를 홀수 여부와 5보다 큰지에 따라 벤 다이어그램에 배치한다.",
+      "candidateSkillIds": [
+        "D3-SET01"
+      ],
+      "conditionalDifficultyBand": 3,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": "1–2학년군",
+      "prerequisiteCurriculumContextCandidates": [
+        "2수01-01",
+        "2수01-03"
+      ],
+      "prerequisiteContentOnly": true,
+      "modeledExampleOnly": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 9,
+      "printedPage": 26,
+      "label": "심화2",
+      "observedAction": "도미노 그림을 두 수의 합과 숫자 5의 포함 여부로 이중 분류표에 넣는다.",
+      "candidateSkillIds": [
+        "LOG-PRED2-05"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": "1–2학년군",
+      "prerequisiteCurriculumContextCandidates": [
+        "2수01-06"
+      ],
+      "prerequisiteContentOnly": true,
+      "modeledExampleOnly": false,
+      "answerValidated": true
+    },
+    {
+      "activityNumber": 10,
+      "printedPage": 27,
+      "label": "도전3",
+      "observedAction": "지하철 노선도에서 두 노선 또는 세 노선에 공통으로 속하는 역을 찾는다.",
+      "candidateSkillIds": [
+        "LOG-PRED2-06"
+      ],
+      "conditionalDifficultyBand": 4,
+      "difficultyStatus": "conditional-research-only; teacher-adoption-pending",
+      "minimumCurriculumAssignment": null,
+      "prerequisiteContentGradeBandCandidate": null,
+      "prerequisiteCurriculumContextCandidates": [],
+      "prerequisiteContentOnly": false,
+      "modeledExampleOnly": false,
+      "answerValidated": true
+    }
+  ],
+  "somaProgressionContexts": [
+    {
+      "code": "A1-1 4",
+      "topic": "분류하기 Ⅰ",
+      "activities": [
+        2,
+        5
+      ],
+      "relation": "related-context-only"
+    },
+    {
+      "code": "A2-1 4",
+      "topic": "분류하기 Ⅱ",
+      "activities": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "relation": "related-context-only"
+    },
+    {
+      "code": "B1-2 1",
+      "topic": "곰돌이 분류하기",
+      "activities": [
+        2,
+        4,
+        5,
+        7
+      ],
+      "relation": "related-context-only"
+    }
+  ],
+  "curriculumContextReferences": [
+    {
+      "standard": "[2수01-01]",
+      "gradeBand": "1–2학년군",
+      "activityNumbers": [
+        8
+      ],
+      "contextOnly": true,
+      "minimumGradeClaim": false
+    },
+    {
+      "standard": "[2수01-03]",
+      "gradeBand": "1–2학년군",
+      "activityNumbers": [
+        8
+      ],
+      "contextOnly": true,
+      "minimumGradeClaim": false
+    },
+    {
+      "standard": "[2수01-06]",
+      "gradeBand": "1–2학년군",
+      "activityNumbers": [
+        9
+      ],
+      "contextOnly": true,
+      "minimumGradeClaim": false
+    }
+  ],
+  "taxonomy": {
+    "relatedButDistinctRelations": [
+      {
+        "from": "LOG-PRED2-01",
+        "to": "LOG-PRED1-02",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "pre-d-p22-q대표1",
+          "pre-d-p25-q연습3"
+        ],
+        "basis": "분류 트리의 결과로 단계별 가지 조건을 역추론하는 행동과 포함·제외 예시에서 범주 규칙을 추론하는 행동은 관련되지만 증거 형식과 적용 단위가 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "LOG-PRED2-04",
+        "to": "D3-SET04",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "pre-d-p24-q연습2"
+        ],
+        "basis": "한 집합만 만족하는 영역의 항목을 논리 조건으로 찾는 행동과 두 집합의 크기·교집합에서 정확히 한 집합에 속한 수를 계산하는 행동은 관련되지만 목표 산출이 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "LOG-PRED2-05",
+        "to": "D3-SET01",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "pre-d-p26-q심화2"
+        ],
+        "basis": "두 속성으로 분류한다는 점은 관련되나 도미노 수를 계산해 교차표에 놓는 행동과 두 목록의 원소를 벤 영역에 배치하는 행동은 계산 요구와 표현이 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "LOG-PRED2-06",
+        "to": "D3-SET01",
+        "relation": "related-but-distinct",
+        "relationType": "related-but-distinct",
+        "evidenceItemIds": [
+          "pre-d-p27-q도전3"
+        ],
+        "basis": "벤 영역을 사용한다는 점은 관련되나 노선도를 따라 두·세 노선 공통 역을 찾아 집합 영역으로 변환하는 행동은 주어진 두 목록의 원소를 배치하는 행동과 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsSkillEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "spiralRelations": [
+      {
+        "from": "D3-SET01",
+        "to": "LOG-PRED2-06",
+        "relation": "spiral-extension-candidate",
+        "relationType": "spiral-extension-candidate",
+        "evidenceItemIds": [
+          "1031-unit3-block-070",
+          "pre-d-p21-q확인1",
+          "pre-d-p27-q도전3"
+        ],
+        "basis": "두 목록의 항목을 두 집합 벤 영역에 배치하는 행동에서 출발해 색 노선도상의 역 소속을 추적하고 두 집합 및 세 집합의 교집합으로 변환하는 반복·확장 가설이다. 내용 순서·학년·필수 선수관계를 확정하지 않는다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "limitations": [
+      "All 10 activity blocks were page-grounded visually; OCR remains a transcription candidate.",
+      "The first block is an explanatory model, not an independent student response.",
+      "Conditional bands are five-level research judgments pending teacher adoption.",
+      "Whole-task minimum curriculum levels remain unresolved for all 10 activities; numeric standards are prerequisite contexts only.",
+      "Soma rows are related progression context only; zero exact type equivalences.",
+      "Animal-domain factual accuracy and all answer keys were not independently checked.",
+      "동일 판본 해설 대조로 학생 응답 9건 검증. 설명 예시 1개는 검증 답안 수에서 제외."
+    ]
+  },
+  "answerValidation": {
+    "studentResponseTasksValidated": 9,
+    "modeledExamplesExcluded": 1,
+    "answerKeyPdfPages": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "answerKeySHA256": "7b08cacd202544f50ae5857776c747e3c68ce4c81511dff7f43b18e03dd0bbd0",
+    "method": "Same-edition answer-key pages visually compared; local Apple Vision OCR used only as assistive transcription.",
+    "preservedBodyPages": [
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "newSkillCandidates": 0,
+    "newDifficultyCandidates": 0,
+    "minimumCurriculumAssignments": 0,
+    "exactAnswerValuesOmitted": true
+  }
+}

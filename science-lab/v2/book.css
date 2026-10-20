@@ -185,7 +185,7 @@
   .bk-pop-wrap { padding: 0; }
   .bk-pop, .bk-pop.wide { width: 100%; max-width: none; height: 100dvh; max-height: 100dvh; border-radius: 0; display: flex; flex-direction: column; }
   .bk-pop-body { flex: 1; overflow: auto; padding: 10px 10px calc(10px + env(safe-area-inset-bottom)); }
-.bk-pop .lab3d canvas, .bk-pop .stage3d canvas, .bk-pop .lab3d .rt2-svg { height: 40dvh; min-height: 230px; }
+.bk-pop .lab3d canvas, .bk-pop .stage3d canvas, .bk-pop .lab3d .rt2-svg, .bk-pop .lab3d .ft2-svg { height: 40dvh; min-height: 230px; }
   .bk-pop .lab-steps li { font-size: 12px; padding: 3px 8px 3px 3px; }
   /* 휴대폰 한 줄 읽기: 표가 화면을 넘지 않게 */
   .bk:not(.a4) .bk-tbl { table-layout: fixed; max-width: 100%; }
@@ -194,7 +194,7 @@
   .bk:not(.a4) .bk-tbl.chk .st { width: 16mm; }
 }
 @media (max-width: 360px) {
-.bk-pop .lab3d canvas, .bk-pop .stage3d canvas, .bk-pop .lab3d .rt2-svg { height: 30dvh; min-height: 190px; }
+.bk-pop .lab3d canvas, .bk-pop .stage3d canvas, .bk-pop .lab3d .rt2-svg, .bk-pop .lab3d .ft2-svg { height: 30dvh; min-height: 190px; }
 }
 /* 탐구보고서 · 형성평가 */
 .bk-banner.report span { background: #1E6B8F; box-shadow: 1mm 1mm 0 #0d3d53; } .bk-banner.report::after { border-color: #9ecbe0; }

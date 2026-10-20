@@ -8,6 +8,8 @@
 | **`omnivoice-clone.cmd`** | **지금 쓰는 우리 목소리를 복제**해 `clone\` 에 담는다 ← **먼저 이것부터** | **아니오** |
 | **`omnivoice-nm.cmd`** | **넘버스 앱 대사 약 760줄 전부**를 복제 목소리로 만들어 `number_magic/audio/omni/` 에 담는다(2026-09-29 "복제음성으로 해"). 받아 적기 검사를 못 넘은 줄은 빼고 앱이 구글 음성으로 읽는다. 끝나면 그 폴더와 `number_magic/data/tts-map-omni.js` 를 푸시 | **아니오** |
 | `omnivoice-audition.cmd` | 목소리를 새로 *설계*해 본다(누미·독쌤·할아버지 4종) | **아니오** |
+| **`book-photos.command`** | **맥(애플 칩)용** 교재 실사 사진 — mflux 로 FLUX.1-schnell 8비트(메모리 약 13 GB). 원장 맥(M5 Pro·24 GB)은 이것 | **아니오** |
+| **`book-photos.cmd`** | **교재 실사 사진**(2026-10-19 "실사 수준으로")을 장면마다 후보 3장씩 만들고 GitHub 수신 브랜치 `inbox/book-photos` 로 올린다. 끝나면 Claude 에게 "사진 올렸어" | **아니오** |
 | `_setup-omnivoice.cmd` | 위 둘이 같이 쓰는 준비 단계(가상환경·설치·GPU 확인) | — |
 
 ## omnivoice-clone.cmd ← 원장 지시(2026-09-21): "그냥 우리 나온 목소리 복제해"
@@ -102,3 +104,34 @@ python scripts\omnivoice-audition.py --out audition-clone --ref ref.wav --ref-te
 시청 결과가 좋으면 그때 **운영 생성기**를 만듭니다 — 로컬 GPU 로 MP3 를 만들어 Supabase 에
 올리는 스크립트. 글자당 요금이 0 이 됩니다. 들어 보기 전에 먼저 만들지 않는 이유는,
 한국어 품질이 기대에 못 미치면 그 스크립트가 통째로 헛일이기 때문입니다.
+
+
+## book-photos.cmd ← 원장 지시(2026-10-19): "실사 수준으로 만들어야 하는거 알지"
+
+교재(기후변화·감염병)의 그림을 **실사형 사진**으로 바꾸기 위한 것입니다. 클라우드 세션에는 GPU 가
+없고, 이미지 생성 서비스(Gamma 크레딧 0)·사진 사이트(위키미디어)도 막혀 있어서 PC 에서 만듭니다.
+
+- **맥(원장 맥 M5 Pro · 24 GB)**: `book-photos.command` 를 쓴다. 메모리 24 GB 에서 원래 FLUX(약 24 GB)는 빠듯해서 애플 칩 전용 mflux 로 8비트 실행한다(약 13 GB). uv·mflux 는 처음 실행 때 알아서 설치. 디스크는 모델 약 34 GB + 설치 약 3 GB.
+  처음 한 번(터미널):
+  ```
+  cd ~/Developer/GFIELD/lete-on
+  git fetch origin claude/jolly-allen-w57yqh
+  git worktree add ../lete-on-photos FETCH_HEAD
+  open ../lete-on-photos/scripts/local/book-photos.command
+  ```
+  다음부터는 Finder 에서 `lete-on-photos/scripts/local/book-photos.command` 더블클릭.
+- **처음 한 번 — 전용 폴더 만들기(윈도우)**(이 도구는 작업 브랜치에만 있어서 PC 의 main 에서는 안 보입니다. 원래 폴더는 그대로 둡니다):
+  ```
+  cd %USERPROFILE%\lete-on
+  git fetch origin claude/jolly-allen-w57yqh
+  git worktree add ..\lete-on-photos FETCH_HEAD
+  ```
+  그다음부터는 `%USERPROFILE%\lete-on-photos\scripts\local\book-photos.cmd` 더블클릭. 돌 때마다 최신 장면 목록을 알아서 받습니다.
+- 모델: **FLUX.1-schnell**(Apache 2.0, 상업 사용 가능). GPU 메모리가 10 GB 보다 적으면 SDXL base 1.0 으로 자동 전환.
+- 장면 목록: `scripts/book-photos/shots.json`(Claude 가 씁니다 — 실험 배치 장면 + 개념 사진 19장면).
+- 결과: `book-photos\<단원>\<장면>-1~3.webp` + **`book-photos\고르기.html`**(그림이 파일 안에 들어 있어 한 장만 옮겨도 보입니다).
+- 전달: 후보만 담은 커밋을 **`inbox/book-photos` 브랜치**로 올립니다. 이 PC 의 작업 폴더·현재 브랜치·main 은 건드리지 않습니다.
+  올리기만 실패하면 `book-photos` 폴더를 구글 드라이브에 올리고 알려 주세요.
+- 처음 한 번은 모델(약 30 GB)을 받느라 오래 걸립니다. 끊겨도 다시 실행하면 이미 만든 사진은 건너뜁니다.
+- 일부 장면만 다시: 검은 창에서 `scripts\local\book-photos.cmd --only setup,handwash`
+- 교재에는 "AI 실사형 설명 이미지 · 실제 사진 아님"으로 밝힙니다(자원과 에너지 교재와 같은 규칙).

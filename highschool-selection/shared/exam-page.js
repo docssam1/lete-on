@@ -9,6 +9,16 @@
   const submitState = document.getElementById("submit-state");
   const responseContract = HIGHSELECT_RESPONSE_CONTRACT;
   let questionSchema = null;
+  const dpChoiceFormats = exam && exam.id === "dp-common1-entry-202405"
+    ? window.HIGHSELECT_DP_CM1_ENTRY_202405_REVIEW_INVENTORY?.inventory?.items
+    : exam && exam.id === "dp-common1-basic-entry-mock-r01"
+      ? window.HIGHSELECT_DP_CM1_BASIC_ENTRY_R01_FORMAT?.items
+    : null;
+
+  function printFormatFor(number) {
+    if (!dpChoiceFormats) return null;
+    return dpChoiceFormats[number - 1]?.responseFormatCandidate || null;
+  }
 
   function esc(value) { const span = document.createElement("span"); span.textContent = String(value == null ? "" : value); return span.innerHTML; }
   function lock(title, message, action) {
@@ -40,7 +50,15 @@
     list.forEach(function (page, index) {
       const section = document.createElement("section"); section.className = "paper-page";
       const image = document.createElement("img"); image.src = page.url; image.alt = `${exam.title} ${index + 1}쪽`; image.loading = index > 1 ? "lazy" : "eager"; image.referrerPolicy = "no-referrer";
-      section.append(image, watermark()); pages.append(section);
+      const zoom = document.createElement("button"); zoom.type = "button"; zoom.className = "paper-zoom-toggle screen-only";
+      zoom.textContent = "확대해서 읽기"; zoom.setAttribute("aria-label", `${index + 1}쪽 확대해서 읽기`); zoom.setAttribute("aria-pressed", "false");
+      zoom.onclick = function () {
+        const enlarged = section.classList.toggle("is-zoomed");
+        zoom.textContent = enlarged ? "전체 쪽 보기" : "확대해서 읽기";
+        zoom.setAttribute("aria-label", `${index + 1}쪽 ${enlarged ? "전체 쪽 보기" : "확대해서 읽기"}`);
+        zoom.setAttribute("aria-pressed", enlarged ? "true" : "false");
+      };
+      section.append(image, watermark(), zoom); pages.append(section);
     });
   }
   function storageKey(number) { return `highselect-answer:${session.studentId}:${exam.id}:${number}`; }
@@ -54,7 +72,26 @@
     document.getElementById("save-state").textContent=`답안 자동 저장 · ${answered}/${questionSchema.questions.length}문항 입력`;
   }
   function inputFor(question) {
-    const cell = document.createElement("label"); cell.className = "answer-cell"; cell.append(document.createTextNode(question.number + "번"));
+    const printFormat = printFormatFor(question.number);
+    const cell = document.createElement(printFormat === "single_choice" ? "div" : "label"); cell.className = "answer-cell"; cell.append(document.createTextNode(question.number + "번"));
+    if (printFormat === "single_choice") {
+      if (question.responseType !== "input") throw new Error("선택형 문항의 채점 형식이 일치하지 않습니다.");
+      const box = document.createElement("div"); box.className = "answer-choice-buttons";
+      const saved = readRaw(question.number);
+      ["①", "②", "③", "④", "⑤"].forEach(function (symbol, index) {
+        const value = String(index + 1);
+        const button = document.createElement("button"); button.type = "button"; button.textContent = symbol;
+        button.setAttribute("aria-label", `${question.number}번 ${value}번 선택`);
+        button.setAttribute("aria-pressed", saved === value || saved === symbol ? "true" : "false");
+        button.onclick = function () {
+          localStorage.setItem(storageKey(question.number), value);
+          box.querySelectorAll("button").forEach(function (item) { item.setAttribute("aria-pressed", item === button ? "true" : "false"); });
+          updateAnswered();
+        };
+        box.append(button);
+      });
+      cell.append(box); return cell;
+    }
     if (question.responseType === "self_check") {
       const box = document.createElement("div"); box.className = "ox"; box.dataset.number = question.number;
       ["o", "x"].forEach(function (value) { const button = document.createElement("button"); button.type = "button"; button.textContent = value.toUpperCase(); button.dataset.value = value; button.onclick = function () { localStorage.setItem(storageKey(question.number), value); box.querySelectorAll("button").forEach(function (item) { item.className = item.dataset.value === value ? `selected-${value}` : ""; }); updateAnswered(); }; box.append(button); });
@@ -82,6 +119,12 @@
   }
   function renderAnswers(schema) {
     const list = HIGHSELECT_EXAM_SECURITY.validateResponseSchema(schema, exam, session, HIGHSELECT_RUNTIME);
+    if (["dp-common1-entry-202405", "dp-common1-basic-entry-mock-r01"].includes(exam.id) && (
+      !Array.isArray(dpChoiceFormats) || dpChoiceFormats.length !== list.length ||
+      dpChoiceFormats.some(function (item, index) {
+        return item.number !== index + 1 || !["single_choice", "short_answer"].includes(item.responseFormatCandidate) || list[index].responseType !== "input";
+      })
+    )) throw new Error("시험지의 선택형·주관식 구성과 답안 입력 형식이 일치하지 않습니다.");
     questionSchema = { examId: schema.examId, questions: list };
     const grid = document.getElementById("answer-grid"); grid.innerHTML = ""; list.forEach(function (question) { grid.append(inputFor(question)); }); panel.hidden = false; updateAnswered();
   }

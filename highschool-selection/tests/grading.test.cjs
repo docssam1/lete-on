@@ -3,6 +3,7 @@ const grading = require("../shared/grading.js");
 
 assert.equal(grading.normalize(" １，２００ cm ", { ignoreUnit: true }), "1200");
 assert.deepEqual(grading.fraction("6/8"), [3, 4]);
+assert.deepEqual(grading.fraction(String.raw`\frac{6}{8}`), [3, 4]);
 assert.deepEqual(grading.fraction("8분의 6"), [3, 4]);
 assert.deepEqual(grading.fraction("-3"), [-3, 1]);
 assert.equal(grading.normalize(" ① "), "1");
@@ -40,6 +41,30 @@ assert.equal(grading.evaluate("8분의 6", {
   mode: "fraction-equivalent",
   answers: ["3/4"]
 }).state, "correct");
+
+const surdAnswer = { type: "input", mode: "quadratic-surd-equivalent", answers: ["2+3√7"] };
+for (const value of ["2+3√7", "3√7+2", "2+√63", "2+3sqrt(7)", String.raw`2+3\sqrt{7}`, "2+6√7/2", "2+3√7+√2-√2"]) {
+  assert.equal(grading.evaluate(value, surdAnswer).state, "correct", `equivalent radical: ${value}`);
+}
+for (const value of ["2+3√8", "2+3√7/0", "2+sqrt(7)+3", "2+3√7+1", "2+3√1000001", "2+3√7+"]) {
+  assert.equal(grading.evaluate(value, surdAnswer).state, "wrong", `non-equivalent or invalid radical: ${value}`);
+}
+
+const coordinateAnswer = { type: "input", mode: "coordinate-fraction-equivalent", answers: ["D(2,1/2)", "(2,1/2)"] };
+for (const value of ["D(2,2/4)", "d( 2, 3/6 )", "(2,1/2)", String.raw`D(2,\frac{2}{4})`]) {
+  assert.equal(grading.evaluate(value, coordinateAnswer).state, "correct", `equivalent coordinate: ${value}`);
+}
+for (const value of ["E(2,1/2)", "D(2,2/3)", "D(1/2,2)", "D(2,1/0)", "D(2,1/2,3)"]) {
+  assert.equal(grading.evaluate(value, coordinateAnswer).state, "wrong", `wrong coordinate: ${value}`);
+}
+const radicalFractionAnswer = { type: "input", mode: "radical-fraction-equivalent", answers: ["√3/3"] };
+for (const value of ["√3/3", "sqrt(3)/3", "√12/6", "2√3/6", String.raw`\frac{\sqrt{12}}{6}`]) {
+  assert.equal(grading.evaluate(value, radicalFractionAnswer).state, "correct", `equivalent radical fraction: ${value}`);
+}
+for (const value of ["√3/2", "√12/3", "√3/0"]) {
+  assert.equal(grading.evaluate(value, radicalFractionAnswer).state, "wrong", `wrong radical fraction: ${value}`);
+}
+assert.equal(grading.evaluate(String.raw`\frac{1+2}{3}`, { type: "input", mode: "fraction-equivalent", answers: ["1"] }).state, "wrong");
 
 assert.equal(grading.evaluate(["2", "5"], {
   type: "multi_input",

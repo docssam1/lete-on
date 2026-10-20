@@ -17,6 +17,10 @@ function data(overrides = {}) {
 
 test("approved inventory binds academy, semester, requested scope, and actual curriculum", () => {
   const inventory = inventoryModule.create(data());
+  assert.deepEqual(inventory.listTargets(), [
+    { generationMode: "academy_prep", academyId: "DP", semesterId: "M2-1", scopeKeys: ["G8/M01"] },
+    { generationMode: "learning", academyId: null, semesterId: "M2-1", scopeKeys: ["G8/M01", "G8/M02"] }
+  ]);
   const approval = inventory.requireTarget("academy_prep", "DP", "M2-1", ["G8/M01/S1"]);
   assert.equal(inventory.assertItemScope("G8/M01/S1/D1", approval.target, approval.requestedScopes), true);
   assert.throws(() => inventory.requireTarget("academy_prep", "DP", "M1-2", ["G8/M01"]), /not approved/);

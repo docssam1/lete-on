@@ -1,5 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const os = require("node:os");
+const path = require("node:path");
 const contracts = require("../server/exam-contracts.js");
 const privateConfig = require("../server/private-config.js");
 
@@ -26,7 +28,7 @@ test("verified artifacts still remain locked until the final round confirmation"
     students: [],
     exams: {
       [EXAM_ID]: {
-        pageAssetRoot: "C:/private/dp-middle22/pages",
+        pageAssetRoot: path.join(os.tmpdir(), "dp-middle22", "pages"),
         pageCount: 10,
         questionCount: 30,
         releaseStatus: "review_pending",

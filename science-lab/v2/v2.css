@@ -496,3 +496,4 @@ h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
 .bank-assessments h4 { margin: 0 0 8px; }
 .bank-assessment-scope { flex-basis: 100%; margin: 0; font-size: 16px; }
 .bank-assessment-pending { margin: 10px 0 0; font-size: 14px; color: var(--muted, #566274); }
+.start-now { margin: -4px 0 10px; color: var(--sub); font-size: 14px; }

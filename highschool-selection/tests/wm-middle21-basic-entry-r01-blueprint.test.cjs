@@ -32,9 +32,15 @@ test("middle basic and middle advanced-dual are modeled separately from high dua
   assert.match(data.courseModel.namingWarning, /서로 다른 과정/);
 });
 
-test("A-grade and discontinued grade1 references are candidate pools, not released originals", () => {
-  assert.deepEqual(data.sourcePools.map(pool => pool.id), ["HS_G7", "DP_G7", "AG_G7_OOP", "HX_G7_OOP", "SM_G7_OOP"]);
-  assert.equal(data.sourcePools.every(pool => pool.status === "private-candidate-locked"), true);
+test("the full middle-school advanced portfolio is indexed as locked candidates", () => {
+  assert.deepEqual(data.sourcePools.map(pool => pool.id), ["HS_G7", "SW_G7", "DP_G7", "AG_G7_OOP", "BL_G7_2025", "LIMITED_G7_OOP", "SUPERMATH_G7_OOP", "MATHGOD_G7_OOP", "LINEUP_GEO_MIDDLE_OOP", "DD_HIGH_G7", "HX_G7_OOP", "INSIGHT_G7_OOP"]);
+  assert.equal(data.sourcePools.every(pool => /candidate-locked$/.test(pool.status)), true);
+  assert.deepEqual(Array.from(data.blueprint.sourceMix.requiredPerRound), ["HS_G7", "SW_G7", "LIMITED_G7_OOP", "SUPERMATH_G7_OOP", "MATHGOD_G7_OOP", "DD_HIGH_G7"]);
+  assert.equal(data.blueprint.sourceMix.minimumSourceFamilies, 8);
+  assert.equal(data.blueprint.sourceMix.maximumItemsPerSourceFamily, 6);
+  assert.equal(data.blueprint.sourceMix.portfolioAcrossFourRounds.length, 12);
+  assert.deepEqual(data.blueprint.difficultyMix, { status: "owner-confirmed-target", standard: 16, raised: 24, lowered: 0, level: "highest" });
+  assert.deepEqual(data.items.reduce((counts, item) => ((counts[item.difficultyBand] = (counts[item.difficultyBand] || 0) + 1), counts), {}), { standard: 16, raised: 24 });
   assert.equal(data.items.every(item => !Object.hasOwn(item, "prompt") && !Object.hasOwn(item, "answer")), true);
 });
 

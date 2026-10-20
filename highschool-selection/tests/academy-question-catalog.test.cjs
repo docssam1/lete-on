@@ -2,11 +2,53 @@
 
 const assert = require("node:assert/strict");
 const test = require("node:test");
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
+const crypto = require("node:crypto");
 const builder = require("../scripts/build-dolpa-question-db.cjs");
 const ledgerCore = require("../scripts/build-dolpa-work-ledger.cjs");
 const catalogModule = require("../server/academy-question-catalog.js");
 
 const learnerFitPass = Object.freeze({ overall: "pass", dimensions: Object.freeze({ language: "pass", representations: "pass", prerequisites: "pass", reasoningLoad: "pass", responseMode: "pass" }) });
+
+function approvedContent(value, indexHash = null) {
+  return { schemaVersion: "private-question-content/v1", visibility: "private", releaseStatus: "approved",
+    inputSha256: indexHash ? { index: indexHash } : {},
+    itemCount: value.items.length, items: value.items.map(item => ({ canonicalItemId: item.itemId, sourceItem: {
+      questionId: item.sourceItemId, promptParts: [{ kind: "text", value: "synthetic" }],
+      sourceAssetSha256: "a".repeat(64),
+      answer: { match: true }, solution: { summary: "synthetic", steps: ["one", "two"] },
+      response: { kind: item.responseKind || "single_choice" },
+      choices: [1, 2, 3, 4, 5], releaseStatus: "approved", mockExamEligible: true
+    } })) };
+}
+
+function approvedVisualAudit(value, contentDbSha256 = null) {
+  return { schemaVersion: "private-source-visual-audit/v1", visibility: "private", contentDbSha256,
+    itemCount: value.items.length, items: value.items.map(item => ({
+      canonicalItemId: item.itemId, sourceQuestionId: item.sourceItemId,
+      sourceSha256: "a".repeat(64), visualRequirement: "none", sourceAuditStatus: "source_checked",
+      renderStatus: "approved", renderEvidence: {
+        visualReview: "approved", sourceVisualMatch: true, singleAnswerVisible: true,
+        layoutAuditSha256: "b".repeat(64), a4PdfSha256: "c".repeat(64),
+        visualProfiles: ["desktop", "mobile", "a4"].map(surface => ({ surface, status: "pass", artifactSha256: "d".repeat(64) }))
+      }
+    })) };
+}
+
+function approvedProjectCatalogOptions(value) {
+  return { contentData: approvedContent(value), visualAuditData: approvedVisualAudit(value) };
+}
+
+function approvedProjectIndex(value) {
+  const approved = structuredClone(value);
+  for (const item of approved.items) {
+    item.usageApproved = true;
+    for (const fit of item.academyFits || []) if (fit.status === "source_verified") fit.status = "approved";
+  }
+  return approved;
+}
 
 function database(options) {
   const opts = options || {};
@@ -152,15 +194,17 @@ test("돌파 시험 대상이 정해지면 범위 밖 원본 문항을 구성 �
   assert.equal(inside.search({ profileIds: ["DP_STANDARD"], targetId: "dp-middle2-2-transfer" }).length, 1);
 });
 
-test("공통 문항 인덱스에서는 학원형별 원본과 단원 분류 대기 문항을 함께 찾는다", () => {
-  const catalog = catalogModule.createCatalog(projectIndex());
+test("공통 문항 인덱스는 검수된 원본과 단원 분류 대기 문항을 구분한다", () => {
+  const value = approvedProjectIndex(projectIndex());
+  const catalog = catalogModule.createCatalog(value, approvedProjectCatalogOptions(value));
   const dolpa = catalog.search({ profileIds: ["DP_STANDARD"], query: "교점" });
   assert.equal(dolpa.length, 1);
   assert.equal(dolpa[0].questionId, "DOLPA-ORIGINAL:DP-Q-AAAAAAAAAAAA-001");
   assert.equal(dolpa[0].sourceLabel, "돌파 원본 시험");
   assert.equal(dolpa[0].reviewChecks.classification, true);
 
-  const wonmath = catalog.search({ profileIds: ["WM_BASIC"] });
+  assert.equal(catalog.search({ profileIds: ["WM_BASIC"] }).length, 0);
+  const wonmath = catalog.search({ profileIds: ["WM_BASIC"], query: "소인수분해", includeCandidates: true });
   assert.equal(wonmath.length, 1);
   assert.equal(wonmath[0].conceptStatus, "unit_only");
   assert.equal(wonmath[0].typeLabel, "소인수분해");
@@ -171,6 +215,103 @@ test("공통 문항 인덱스에서는 학원형별 원본과 단원 분류 대�
   const candidates = catalog.search({ profileIds: ["WM_BASIC"], query: "교점", includeCandidates: true });
   assert.equal(candidates.length, 1);
   assert.deepEqual(candidates[0].profiles, [{ profileId: "WM_BASIC", label: "원수학 기본형", status: "candidate" }]);
+});
+
+test("관리자 공통 문항 검색은 검수된 정확 중복 관계만 한 문항으로 보여 준다", () => {
+  const value = approvedProjectIndex(projectIndex());
+  value.items[2].academyFits.push({ profileId: "DP_STANDARD", status: "approved" });
+  value.items[2].learnerFit = learnerFitPass;
+  const contentData = approvedContent(value);
+  const visualAuditData = approvedVisualAudit(value);
+  const plain = catalogModule.createProjectCatalog(value, { contentData, visualAuditData }).search({ profileIds: ["DP_STANDARD"] });
+  assert.equal(plain.length, 2);
+  const itemRelations = [{
+    kind: "same_math_item",
+    itemIds: [value.items[0].itemId, value.items[2].itemId],
+    canonicalMathItemId: value.items[0].itemId
+  }];
+  const reviewed = catalogModule.createProjectCatalog(value, { itemRelations, contentData, visualAuditData }).search({ profileIds: ["DP_STANDARD"] });
+  assert.equal(reviewed.length, 1);
+  assert.equal(reviewed[0].questionId, value.items[0].itemId);
+  assert.equal(JSON.stringify(reviewed).includes("canonicalMathItemId"), false);
+});
+
+test("비공개 관계 파일은 고정 SHA와 인덱스 SHA가 맞을 때만 로딩된다", t => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "highselect-rel-"));
+  t.after(() => {
+    assert.equal(path.dirname(path.resolve(dir)), path.resolve(os.tmpdir()));
+    assert.match(path.basename(dir), /^highselect-rel-/);
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+  const value = approvedProjectIndex(projectIndex());
+  value.items[2].academyFits.push({ profileId: "DP_STANDARD", status: "approved" });
+  value.items[2].learnerFit = learnerFitPass;
+  const indexFile = path.join(dir, "index.json");
+  const overlayFile = path.join(dir, "relations.json");
+  const contentFile = path.join(dir, "content.json");
+  const visualAuditFile = path.join(dir, "visual-audit.json");
+  const sha256 = bytes => crypto.createHash("sha256").update(bytes).digest("hex").toUpperCase();
+  const indexBytes = Buffer.from(JSON.stringify(value));
+  fs.writeFileSync(indexFile, indexBytes);
+  const overlay = {
+    schemaVersion: "dolpa-item-relations/v1", visibility: "private",
+    baseIndex: { sha256: sha256(indexBytes) }, integrationPolicy: { releaseStatus: "locked" },
+    relations: [{ kind: "same_math_item", itemIds: [value.items[0].itemId, value.items[2].itemId], canonicalMathItemId: value.items[0].itemId }],
+    privateAnswerMarker: "must-not-leak"
+  };
+  const overlayBytes = Buffer.from(JSON.stringify(overlay));
+  fs.writeFileSync(overlayFile, overlayBytes);
+  const contentBytes = Buffer.from(JSON.stringify(approvedContent(value, sha256(indexBytes))));
+  fs.writeFileSync(contentFile, contentBytes);
+  const visualBytes = Buffer.from(JSON.stringify(approvedVisualAudit(value, sha256(contentBytes))));
+  fs.writeFileSync(visualAuditFile, visualBytes);
+  const options = { projectFilePath: indexFile, itemRelationsPath: overlayFile, itemRelationsSha256: sha256(overlayBytes),
+    contentFilePath: contentFile, contentSha256: sha256(contentBytes),
+    visualAuditFilePath: visualAuditFile, visualAuditSha256: sha256(visualBytes) };
+  assert.throws(() => catalogModule.createLoader({ ...options, itemRelationsSha256: "invalid" })(), /pinned SHA-256/);
+  assert.throws(() => catalogModule.createLoader({ ...options, itemRelationsSha256: "0".repeat(64) })(), /SHA-256 mismatch/);
+  assert.throws(() => catalogModule.createLoader({ ...options, contentSha256: "invalid" })(), /pinned SHA-256/);
+  assert.throws(() => catalogModule.createLoader({ ...options, contentSha256: "0".repeat(64) })(), /private content DB SHA-256 mismatch/);
+  assert.throws(() => catalogModule.createLoader({ ...options, visualAuditSha256: "invalid" })(), /pinned SHA-256/);
+  assert.throws(() => catalogModule.createLoader({ ...options, visualAuditSha256: "0".repeat(64) })(), /visual audit SHA-256 mismatch/);
+  const wrongVisual = { ...approvedVisualAudit(value, "0".repeat(64)) };
+  const wrongVisualBytes = Buffer.from(JSON.stringify(wrongVisual));
+  fs.writeFileSync(visualAuditFile, wrongVisualBytes);
+  assert.throws(() => catalogModule.createLoader({ ...options, visualAuditSha256: sha256(wrongVisualBytes) })(),
+    /does not match the content DB/);
+  fs.writeFileSync(visualAuditFile, visualBytes);
+  const rows = catalogModule.createLoader(options)().search({ profileIds: ["DP_STANDARD"] });
+  assert.equal(rows.length, 1);
+  assert.equal(JSON.stringify(rows).includes("must-not-leak"), false);
+  const withoutVisualAudit = catalogModule.createLoader({ ...options, visualAuditFilePath: "", visualAuditSha256: "" })();
+  assert.equal(withoutVisualAudit.search({ profileIds: ["DP_STANDARD"] }).length, 0);
+  assert.equal(withoutVisualAudit.search({ profileIds: ["DP_STANDARD"], includeCandidates: true })[0].releaseBlockReason,
+    "presentation_not_verified");
+  const noContent = catalogModule.createLoader({
+    projectFilePath: indexFile, itemRelationsPath: overlayFile, itemRelationsSha256: sha256(overlayBytes)
+  })();
+  assert.equal(noContent.search({ profileIds: ["DP_STANDARD"] }).length, 0);
+  const reviewOnly = noContent.search({ profileIds: ["DP_STANDARD"], includeCandidates: true });
+  assert.equal(reviewOnly[0].contentVerified, false);
+  assert.equal(reviewOnly[0].releaseBlockReason, "content_not_verified");
+  const wrongIndexContent = approvedContent(value, "0".repeat(64));
+  const wrongIndexBytes = Buffer.from(JSON.stringify(wrongIndexContent));
+  fs.writeFileSync(contentFile, wrongIndexBytes);
+  assert.throws(() => catalogModule.createLoader({ ...options, contentSha256: sha256(wrongIndexBytes) })(), /does not match the project index/);
+  fs.writeFileSync(contentFile, contentBytes);
+  const mismatched = { ...overlay, baseIndex: { sha256: "0".repeat(64) } };
+  const mismatchedBytes = Buffer.from(JSON.stringify(mismatched));
+  fs.writeFileSync(overlayFile, mismatchedBytes);
+  assert.throws(() => catalogModule.createLoader({ ...options, itemRelationsSha256: sha256(mismatchedBytes) })(), /do not match/);
+});
+
+test("개념군에 연결됐어도 교사 분류 검수 중이면 완료로 표시하지 않는다", () => {
+  const value = projectIndex();
+  value.items[0].classificationStatus = "source_checked_teacher_review_pending";
+  const rows = catalogModule.createCatalog(value).search({ profileIds: ["DP_STANDARD"], includeCandidates: true });
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].conceptStatus, "mapped");
+  assert.equal(rows[0].reviewChecks.classification, false);
 });
 
 test("한 학원형으로 검색해도 문항에 근거가 있는 다른 학원형 태그를 함께 보존한다", () => {
@@ -186,7 +327,7 @@ test("한 학원형으로 검색해도 문항에 근거가 있는 다른 학원�
 test("공통 문항 인덱스도 학습 적합성 미검수 문항은 관리자 후보에서만 보인다", () => {
   const value = projectIndex();
   delete value.items[0].learnerFit;
-  const catalog = catalogModule.createCatalog(value);
+  const catalog = catalogModule.createCatalog(value, approvedProjectCatalogOptions(value));
   assert.equal(catalog.search({ profileIds: ["DP_STANDARD"] }).length, 0);
   const rows = catalog.search({ profileIds: ["DP_STANDARD"], includeCandidates: true });
   assert.equal(rows.length, 1);
@@ -258,7 +399,7 @@ test("생수형은 대수·기하 각 15문항의 모든 확인과 사용 승인
   value.summary.itemCount = 33;
   value.summary.mappedItemCount = 32;
   value.summary.pendingItemCount = 0;
-  const catalog = catalogModule.createCatalog(value);
+  const catalog = catalogModule.createCatalog(value, approvedProjectCatalogOptions(value));
   const analysis = catalog.analyses(["SM_STANDARD"])[0];
   assert.equal(analysis.canCompose, true);
   assert.equal(analysis.status, "ready");
@@ -271,7 +412,7 @@ test("생수형은 대수·기하 각 15문항의 모든 확인과 사용 승인
 
   value.items[29 + 3].usageApproved = false;
   value.items[29 + 3].academyFits = [{ profileId: "SM_STANDARD", status: "candidate" }];
-  const locked = catalogModule.createCatalog(value).analyses(["SM_STANDARD"])[0];
+  const locked = catalogModule.createCatalog(value, approvedProjectCatalogOptions(value)).analyses(["SM_STANDARD"])[0];
   assert.equal(locked.canCompose, false);
   assert.equal(locked.domain.geometry.ready, 14);
   assert.match(locked.blockers.join(" "), /기하 문항이 15개보다 적습니다/);

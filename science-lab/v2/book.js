@@ -8,6 +8,8 @@ import { renderForceChapter } from './book-force.js';
 import {renderInquiryChapter} from './book-inquiry.js';
 import {renderEditorialChapter} from './book-editorial.js';
 import { renderAnimalChapter } from './book-animal.js';
+// 확인 문제 키 = 유사문항의 「세트-번호」(원문 짝) 또는 문항 id(창작 문항). Daily Test(v2.js pageDaily)와 같은 규칙.
+const pickQ = (pool, k) => pool.find((s) => s.id === k) || pool.find((s) => s.sourceRef?.of && `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const NUM = ['①', '②', '③', '④', '⑤', '⑥'];
 const BL = 'ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝ';
@@ -144,7 +146,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
 
   // 10. 형성평가(수업 끝 5분 · 성취기준 확인)
   if (ch.formative) {
-    const F = ch.formative, pickF = F.items.map((k) => similar.find((s) => `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k)).filter(Boolean);
+    const F = ch.formative, pickF = F.items.map((k) => pickQ(similar, k)).filter(Boolean);
     out.push(page(`${banner('형성평가', 'check')}<p class="bk-hint">수업을 마치며 5분 동안 풀어요. 맞은 개수로 다음 공부를 정해요.</p>
       <ol class="bk-items">${pickF.map(itemHtml).join('')}</ol>
       <div class="bk-box self"><h4>성취기준 확인</h4><table class="bk-tbl chk"><tbody>${F.standards.map((c) => `<tr><td>${esc(c)}</td><td class="st">○ △ ✕</td></tr>`).join('')}</tbody></table>
@@ -152,7 +154,7 @@ export function renderChapter(ch, art, similar, { teacher = false, live = false,
   }
 
   // 11. 교과 확인 문제
-  const pick = ch.check.map((k) => similar.find((s) => `${s.sourceRef.of.set}-${s.sourceRef.of.no}` === k)).filter(Boolean);
+  const pick = ch.check.map((k) => pickQ(similar, k)).filter(Boolean);
   out.push(page(`${banner('교과 확인 문제', 'check')}<ol class="bk-items">${pick.map(itemHtml).join('')}</ol>`, { cls: 'check', say: 'check' }));
 
   return `<div data-unit="${esc(ch.unit)}" class="bk ${teacher ? 'bk-t' : ''} ${live ? 'live' : ''}" style="--bk-theme:${ch.theme || '#2F7D4F'};--bk-thumb-top:${60 + (ch.no - 1) * 22}mm">${out.join('')}</div>`;

@@ -64,9 +64,9 @@
       programCode: "DP",
       trackId: "middle-entry",
       scopeKey: "elementary-cumulative",
-      scopeLabel: "중1 입학 선수 과정",
+      scopeLabel: "중1 과정 입학 · 초5-1~초6-2 누적",
       evidenceStatus: "observed",
-      evidenceRefs: ["OBSERVATION:DP-MIDDLE-ENTRY"]
+      evidenceRefs: ["PUBLIC:DP-SEOCHO-ENTRY-2026-09", "OBSERVATION:DP-MIDDLE-ENTRY"]
     },
     {
       id: "DP:middle-transfer",

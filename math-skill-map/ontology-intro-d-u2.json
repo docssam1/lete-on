@@ -1,0 +1,157 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v33",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 D",
+    "unit": 2,
+    "title": "두 수의 크기를 같게",
+    "printedPages": [
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33
+    ],
+    "sourceActivityBlocks": 16,
+    "visuallyReviewedPages": 7
+  },
+  "aggregate": {
+    "ontologyNodes": 1350,
+    "ontologyRelations": 2066,
+    "skillActionCandidates": 231,
+    "activitiesWithSkillCandidateEvidence": 419,
+    "activitiesInReviewQueue": 433,
+    "conditionalDifficultyCandidates": 436,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "newlyLinkedActivities": 6,
+    "conditionalDifficultyBands": 16,
+    "validatedAnswers": 0,
+    "reusedActionCandidates": 2,
+    "newActionCandidates": 1,
+    "relationHypotheses": 2,
+    "minimumCurriculumLevelCandidates": 14,
+    "minimumCurriculumUnresolved": 2,
+    "minimumCurriculumAssignments": 0
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "AR01",
+      "areaOrder": 1,
+      "label": "수량을 옮겨 같게 만들기",
+      "observableAction": "두 양의 차와 이동 전후의 변화를 비교해 양쪽을 같게 만드는 양을 찾는다.",
+      "activityCount": 8,
+      "printedPages": [
+        27,
+        30,
+        32,
+        33
+      ],
+      "conditionalDifficultyBand": "2–3",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보; 구체물·막대그림 전략 기준",
+      "minimumCurriculumAssignment": null,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "AR02",
+      "areaOrder": 2,
+      "label": "합과 차로 두 양 복원하기",
+      "observableAction": "전체량과 차이 또는 균등 이동 조건을 함께 사용해 처음 두 양을 복원한다.",
+      "activityCount": 7,
+      "printedPages": [
+        28,
+        29,
+        31,
+        32
+      ],
+      "conditionalDifficultyBand": "2–3",
+      "minimumCurriculumLevelCandidate": "초등 1–2학년군 후보; 구체물·막대그림 전략 기준",
+      "minimumCurriculumAssignment": null,
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "AR07",
+      "areaOrder": 3,
+      "label": "같은 양을 덜어 낸 뒤 남은 비율로 변화량 역산하기",
+      "observableAction": "두 양에서 같은 양을 덜어 차이가 보존되는 점과 남은 양의 비율을 결합해 공통 변화량을 추론한다.",
+      "activityCount": 1,
+      "printedPages": [
+        33
+      ],
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevelCandidate": null,
+      "minimumCurriculumAssignment": null,
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "bandsByAction": [
+      {
+        "id": "AR01",
+        "conditionalDifficultyBand": "2–3"
+      },
+      {
+        "id": "AR02",
+        "conditionalDifficultyBand": "2–3"
+      },
+      {
+        "id": "AR07",
+        "conditionalDifficultyBand": "4"
+      }
+    ],
+    "teacherApprovedLevels": 0
+  },
+  "curriculum": {
+    "strategyDependentCandidates": 14,
+    "unresolvedActivities": 2,
+    "confirmedAssignments": 0,
+    "contextOnlyStandards": [
+      "2수01-06",
+      "2수01-07",
+      "2수01-09",
+      "4수01-05",
+      "4수02-03"
+    ],
+    "note": "초등 1–2학년군 후보는 구체물·막대그림을 통한 두 자리 수 덧셈·뺄셈 전략을 전제로 한다. 형식적 나눗셈은 3–4학년군 내용을 요구할 수 있다. 공식 교육과정 맥락은 문항의 최소 학년 배정이 아니다."
+  },
+  "relations": [
+    {
+      "from": "AR02",
+      "to": "AR07",
+      "relationType": "spiral-reappearance-or-extension-candidate",
+      "status": "hypothesis-needs-teacher-review",
+      "assertsSkillEquivalence": false,
+      "assertsPrerequisiteOrder": false,
+      "assertsMinimumGrade": false,
+      "basis": "합·차 복원에서 공통 감소와 잔량의 비율을 결합하는 행동으로 요구가 확장되는 후보."
+    },
+    {
+      "from": "AR01",
+      "to": "AR07",
+      "relationType": "related-but-distinct",
+      "status": "hypothesis-needs-teacher-review",
+      "assertsSkillEquivalence": false,
+      "assertsPrerequisiteOrder": false,
+      "assertsMinimumGrade": false,
+      "basis": "양 사이로 양을 옮기는 행동과 양쪽에서 같은 양을 제거한 뒤 변화량을 역산하는 행동을 구별한다."
+    }
+  ],
+  "exclusions": [
+    "원문 문항 문구",
+    "정답 텍스트",
+    "원본 활동 ID",
+    "비공개 파일 경로·해시",
+    "학생 개인정보"
+  ]
+}

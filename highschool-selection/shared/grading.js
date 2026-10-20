@@ -13,6 +13,10 @@
   function normalize(raw, options) {
     const opts = options || {};
     let value = halfWidth(raw).trim().toLowerCase();
+    // Accept only atomic LaTeX fractions; composite numerators need a parser
+    // that preserves parentheses and must not be flattened into a/b+c.
+    value = value.replace(/\\(?:dfrac|tfrac|frac)\{\\sqrt\{(\d+)\}\}\{(-?\d+)\}/g, "√$1/$2");
+    value = value.replace(/\\(?:dfrac|tfrac|frac)\{(-?\d+)\}\{(-?\d+)\}/g, "$1/$2");
     value = value.replace(/[−–—]/g, "-").replace(/，/g, ",");
     if (opts.ignoreWhitespace !== false) value = value.replace(/\s+/g, "");
     if (opts.ignoreUnit) {
@@ -42,6 +46,70 @@
     const sign = Number(match[2]) < 0 ? -1 : 1;
     return [sign * Number(match[1]) / divisor, sign * Number(match[2]) / divisor];
   }
+  function surdExpression(raw, options) {
+    let value = normalize(raw, options)
+      .replace(/\\sqrt\{(\d+)\}/g, "√$1")
+      .replace(/sqrt\((\d+)\)/g, "√$1")
+      .replace(/sqrt(\d+)/g, "√$1")
+      .replace(/√[({](\d+)[)}]/g, "√$1");
+    if (!value || value.length > 120 || !/^[+\-\d/*√]+$/.test(value)) return null;
+    const terms = value.match(/[+-]?[^+-]+/g);
+    if (!terms || terms.join("") !== value || terms.length > 12) return null;
+    const coefficients = new Map();
+    function rational(text) {
+      const match = String(text).match(/^(\d+)(?:\/(\d+))?$/);
+      if (!match) return null;
+      const numerator = Number(match[1]), denominator = Number(match[2] || 1);
+      if (!Number.isSafeInteger(numerator) || !Number.isSafeInteger(denominator) || denominator === 0 || numerator > 1e9 || denominator > 1e9) return null;
+      const divisor = gcd(numerator, denominator);
+      return [numerator / divisor, denominator / divisor];
+    }
+    function add(radicand, numerator, denominator) {
+      const old = coefficients.get(radicand) || [0, 1];
+      const nextN = old[0] * denominator + numerator * old[1];
+      const nextD = old[1] * denominator;
+      if (!Number.isSafeInteger(nextN) || !Number.isSafeInteger(nextD) || nextD === 0) return false;
+      const divisor = gcd(nextN, nextD);
+      coefficients.set(radicand, [nextN / divisor, nextD / divisor]);
+      return true;
+    }
+    for (const rawTerm of terms) {
+      const sign = rawTerm[0] === "-" ? -1 : 1;
+      const term = /^[+-]/.test(rawTerm) ? rawTerm.slice(1) : rawTerm;
+      const radical = term.match(/^(\d+(?:\/\d+)?)?(\*)?√(\d+)(?:\/(\d+))?$/);
+      if (!radical) {
+        const scalar = rational(term);
+        if (!scalar || !add(1, sign * scalar[0], scalar[1])) return null;
+        continue;
+      }
+      if (radical[2] && !radical[1]) return null;
+      const factor = rational(radical[1] || "1");
+      const trailing = rational(radical[4] || "1");
+      let radicand = Number(radical[3]);
+      if (!factor || !trailing || !Number.isSafeInteger(radicand) || radicand < 1 || radicand > 1e6) return null;
+      let outside = 1;
+      for (let divisor = 2; divisor * divisor <= radicand; divisor += 1) {
+        while (radicand % (divisor * divisor) === 0) {
+          radicand /= divisor * divisor;
+          outside *= divisor;
+        }
+      }
+      const numerator = sign * factor[0] * outside;
+      const denominator = factor[1] * trailing[0];
+      if (!Number.isSafeInteger(numerator) || !Number.isSafeInteger(denominator) || !add(radicand, numerator, denominator)) return null;
+    }
+    return [...coefficients.entries()].filter(([, fraction]) => fraction[0] !== 0)
+      .sort((left, right) => left[0] - right[0]).map(([radicand, fraction]) => `${radicand}:${fraction[0]}/${fraction[1]}`).join("|") || "0";
+  }
+  function coordinateFractionPair(raw, options) {
+    const value = normalize(raw, options);
+    const match = value.match(/^([a-z])?\(([^(),]+),([^(),]+)\)$/);
+    if (!match) return null;
+    const x = fraction(match[2], options);
+    const y = fraction(match[3], options);
+    if (!x || !y || !x.every(Number.isSafeInteger) || !y.every(Number.isSafeInteger)) return null;
+    return { label: match[1] || null, x, y };
+  }
   function equalScalar(actual, expected, spec) {
     const opts = spec.normalize || {};
     const a = normalize(actual, opts), e = normalize(expected, opts);
@@ -54,6 +122,16 @@
     if (spec.mode === "fraction-equivalent") {
       const af = fraction(a, opts), ef = fraction(e, opts);
       return !!af && !!ef && af[0] === ef[0] && af[1] === ef[1];
+    }
+    if (spec.mode === "coordinate-fraction-equivalent") {
+      const ap = coordinateFractionPair(a, opts), ep = coordinateFractionPair(e, opts);
+      return !!ap && !!ep && ap.label === ep.label
+        && ap.x[0] === ep.x[0] && ap.x[1] === ep.x[1]
+        && ap.y[0] === ep.y[0] && ap.y[1] === ep.y[1];
+    }
+    if (spec.mode === "quadratic-surd-equivalent" || spec.mode === "radical-fraction-equivalent") {
+      const parsedActual = surdExpression(a, opts), parsedExpected = surdExpression(e, opts);
+      return parsedActual !== null && parsedExpected !== null && parsedActual === parsedExpected;
     }
     return a === e;
   }

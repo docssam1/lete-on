@@ -18,6 +18,8 @@
       evaluationCriteria: Object.freeze([
         "40문항 전체의 문항별 정확도와 풀이 구조 안정성을 함께 평가",
         "수·식, 함수·좌표, 평면·입체도형, 경우의 수·확률의 누적 균형을 평가",
+        "편입은 기존 반의 결원을 채우는 시험이므로 지점·월·대상 과정의 현재 진도 범위를 각각 확인",
+        "고등과정 배정은 기본정석 Light·기본정석 Plus·실력정석을 구분하되 동일 회차의 배정 근거가 있을 때만 표시",
         "공개 레벨 컷은 지점·과정·회차가 일치해 별도 승인된 경우에만 판정에 사용"
       ]),
       decisionPolicy: "현재 1회는 진단 우선이며 외부 레벨 컷을 자동 적용하지 않음"
@@ -31,9 +33,11 @@
       reportTitle: "돌파 입학·편입 진단",
       primaryAxes: Object.freeze(["지원 과정", "종료 단원 도달도", "전·후반 난도", "세부유형", "취약 유형 우선순위"]),
       evaluationCriteria: Object.freeze([
-        "중1 입학, 중등 편입, 공통수학 입학을 서로 다른 범위로 평가",
+        "지원 과정명을 가장 먼저 확정하고 중1 과정, 공통수학1·2 기본/실력, 대수 기본, 중간 편입을 서로 다른 시험으로 평가",
+        "초5·초6·중1 등의 응시 가능 학년은 자격 조건으로만 기록하고 문항 범위와 유형 분류에는 사용하지 않음",
         "편입형은 시작 학기명이 아니라 시험 범위가 끝나는 단원으로 관리",
-        "원장반·상위반은 복합 조건과 경계·그래프 감사 비중을 높여 별도 평가"
+        "공통수학1·2 기본, 공통수학1·2 실력, 대수 기본을 실제 과정별로 분리",
+        "노동현 실력 모의고사는 원장반·상위 심화에 우선 사용하는 문항 풀로 두고 구과정 단원 매핑·정답 검수 후 다른 심화 세트에도 공유"
       ]),
       decisionPolicy: "실제 회차의 기준이 일치하고 승인된 경우에만 합격 판정"
     }),
@@ -101,7 +105,7 @@
 
   const examOverrides = Object.freeze({
     "sh-selection-r01": Object.freeze({ scope: "중등 누적 40문항", duration: "110분", paperVariant: "황소 고등 선발 1회" }),
-    "dp-middle1-entry": Object.freeze({ scope: "초5-1~초6-2 누적", duration: "확인 필요", paperVariant: "돌파 중1 입학" }),
+    "dp-middle1-entry": Object.freeze({ scope: "중1 과정 입학 · 초5-1~초6-2 누적", duration: "2시간 공개 사례", paperVariant: "돌파 중1 과정 입학" }),
     "dp-middle2-2-transfer": Object.freeze({ scope: "중1-1~중2-1 전 범위(일차함수까지)", duration: "현재 회차 확인 필요", paperVariant: "돌파 중2-2 입반 대비" }),
     "dp-common1-entry-202405": Object.freeze({ scope: "중2-1~중3-2", duration: "회차 확인 필요", paperVariant: "돌파 공통수학1 입학" }),
     "wm-middle21-basic-entry-r01": Object.freeze({ scope: "중1 대수 20 + 중1 기하 20 · 통계 제외", duration: "각 50분 · 전체 전형 창 120분", paperVariant: "원수학 중2-1 기본반 신입" }),
@@ -117,5 +121,5 @@
     return Object.freeze({ profile, exam: examOverrides[String(examId || "")] || null });
   }
 
-  return Object.freeze({ updatedAt: "2026-08-24", profiles, examOverrides, resolve });
+  return Object.freeze({ updatedAt: "2026-09-03", profiles, examOverrides, resolve });
 });

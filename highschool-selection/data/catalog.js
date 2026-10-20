@@ -15,9 +15,9 @@
       id: "DP",
       name: "돌파수학 입학·편입",
       shortName: "돌파",
-      description: "중1 입학·공통수학1 입학·편입 시험 대비",
-      scope: "중등 심화 또는 공통수학1",
-      levels: ["중1 입학", "공통수학1 입학", "편입", "상위반"],
+      description: "중1 과정, 공통수학1·2 기본·실력, 대수 기본과 중간 편입 시험 대비",
+      scope: "중1 과정부터 공통수학·대수까지 지원 과정별 공식 범위와 현재 진도를 회차별 분리",
+      levels: ["중1 과정", "공통수학1 기본", "공통수학2 기본", "공통수학1 실력", "공통수학2 실력", "대수 기본", "중간 편입", "원장반·상위 심화 대비"],
       accent: "#315c85"
     },
     {
@@ -97,10 +97,10 @@
     {
       id: "dp-middle1-entry",
       programId: "DP",
-      title: "돌파 중1 입학 진단",
-      track: "중1 입학",
+      title: "돌파 중1 과정 입학 진단",
+      track: "중1 과정 입학",
       curriculumVersion: "2022-revised",
-      scopeLabel: "초5-1~초6-2 누적 · 30문항",
+      scopeLabel: "중1 과정 입학 · 초5-1~초6-2 누적 · 30문항",
       questionCount: 30,
       pageCount: null,
       sourceRole: "user-observation",
@@ -110,15 +110,15 @@
       releaseStatus: "blocked",
       assetPolicy: "signed-page-images",
       visible: true,
-      note: "익명 성적표에서 30문항과 2·3·4점 배점 구조를 확인했습니다. 시험 원본·답안·공식 컷을 확인하기 전에는 열리지 않습니다."
+      note: "공식 공지에서 중1 과정 입학 운영을 확인했고, 익명 성적표에서 초5-1~초6-2 누적 30문항과 2·3·4점 배점 구조를 관찰했습니다. 시험 원본·답안과 동일 회차 공식 범위를 확인하기 전에는 학생용으로 열리지 않습니다."
     },
     {
       id: "dp-common1-entry",
       programId: "DP",
-      title: "돌파 공통수학1 입학 진단",
-      track: "공통수학1 입학",
+      title: "돌파 공통수학1 기본 입학 진단",
+      track: "공통수학1 기본 입학",
       curriculumVersion: "2022-revised",
-      scopeLabel: "공통수학1 · 실제 원본 유형 감사 중",
+      scopeLabel: "중2·중3 전 과정 · 30문항 · 실제 원본 유형 감사 중",
       questionCount: 30,
       pageCount: null,
       sourceRole: "actual",
@@ -187,19 +187,30 @@
       pageCount: null,
       sourceRole: "research-blueprint",
       sourceStatus: "official_structure_verified",
+      sourceDiversityStatus: "pending",
       answerStatus: "not_authored",
       classificationStatus: "blueprint_mapped",
       releaseStatus: "blocked",
       assetPolicy: "signed-page-images",
       visible: true,
       sourceCandidates: [
-        { poolId: "HS_G7", role: "middle-depth-reference", status: "private_candidate_locked" },
+        { poolId: "HS_G7", role: "hwangso-middle-reference", status: "private_classification_candidate_locked" },
+        { poolId: "SW_G7", role: "hwangso-base-advanced-reference", status: "private_indexing_candidate_locked" },
         { poolId: "DP_G7", role: "entrance-style-reference", status: "private_candidate_locked" },
         { poolId: "AG_G7_OOP", role: "advanced-grade1-reference", status: "private_candidate_locked" },
-        { poolId: "HX_G7_OOP", role: "advanced-grade1-reference", status: "private_candidate_locked" },
-        { poolId: "SM_G7_OOP", role: "advanced-grade1-reference", status: "private_candidate_locked" }
+        { poolId: "BL_G7_2025", role: "current-grade1-depth-reference", status: "private_verified_candidate_locked" },
+        { poolId: "LIMITED_G7_OOP", role: "limited-grade1-reference", status: "private_indexing_candidate_locked" },
+        { poolId: "SUPERMATH_G7_OOP", role: "supermath-grade1-reference", status: "private_indexing_candidate_locked" },
+        { poolId: "MATHGOD_G7_OOP", role: "mathgod-grade1-reference", status: "private_indexing_candidate_locked" },
+        { poolId: "LINEUP_GEO_MIDDLE_OOP", role: "lineup-geometry-reference", status: "private_format_review_candidate_locked" },
+        { poolId: "DD_HIGH_G7", role: "didimdol-high-grade1-reference", status: "private_image_indexing_candidate_locked" },
+        { poolId: "HX_G7_OOP", role: "hyper-highest-grade1-reference", status: "private_indexing_candidate_locked" },
+        { poolId: "INSIGHT_G7_OOP", role: "insight-grade1-reference", status: "private_indexing_candidate_locked" }
       ],
-      note: "최초 공지는 25+25였으나 같은 2026년 1월 신입 전형 시행 전에 공식 변경 공지로 20+20·각 50분으로 정정됐고, 2026년 7월 전형 창도 120분으로 재확인했습니다. 실제 첫 시행이 40문항이었을 가능성은 높지만 성적표·실물 시험지로 최종 확정하기 전까지 합격선과 문항은 공개하지 않습니다. A급·절판 중1 심화 자료는 원문 공개가 아닌 비공개 후보 풀로만 색인합니다."
+      requiredSourceLineup: ["HS_G7", "SW_G7", "LIMITED_G7_OOP", "SUPERMATH_G7_OOP", "MATHGOD_G7_OOP", "DD_HIGH_G7"],
+      sourcePortfolioAcrossFourRounds: ["HS_G7", "SW_G7", "DP_G7", "AG_G7_OOP", "BL_G7_2025", "LIMITED_G7_OOP", "SUPERMATH_G7_OOP", "MATHGOD_G7_OOP", "LINEUP_GEO_MIDDLE_OOP", "DD_HIGH_G7", "HX_G7_OOP", "INSIGHT_G7_OOP"],
+      difficultyMix: { standard: 16, raised: 24, lowered: 0, level: "highest" },
+      note: "최초 공지는 25+25였으나 같은 2026년 1월 신입 전형 시행 전에 공식 변경 공지로 20+20·각 50분으로 정정됐고, 2026년 7월 전형 창도 120분으로 재확인했습니다. 실제 첫 시행이 40문항이었을 가능성은 높지만 성적표·실물 시험지로 최종 확정하기 전까지 합격선과 문항은 공개하지 않습니다. 황소 중등·STARWARS·리미티드·SUPERMATH·수학의 신·최상위수학을 포함해 한 회에 여덟 출처 이상을 섞고, 기준 심화 16문항·올림 24문항으로 구성합니다. 교재 문항을 원수학 기출로 표시하지 않습니다."
     },
     {
       id: "wm-algebra-geometry-diagnostic",

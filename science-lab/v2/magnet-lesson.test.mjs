@@ -1,5 +1,6 @@
+// 2026-10-20: 기본 수업은 3D 실험 수업으로 되돌렸다(lab-lessons.test.mjs). 이 파일은 선택 기능으로 옮긴 탐구 기록장·기록 교재(records)가 예전대로 동작하는지 본다.
 import test from 'node:test';import assert from 'node:assert/strict';
-import {inquiry} from '../data/activities/s41-u01.inquiry.js';import {lesson,ringTowerLesson} from '../data/units/s41-u01.lesson.js';import {chapter,art,plan} from '../data/book/s41-u01.inquiry.book.js';import {items} from '../data/units/s41-u01.js';import {source} from '../data/units/s41-u01.source.js';
+import {inquiry} from '../data/activities/s41-u01.inquiry.js';import {recordsLesson as lesson,ringTowerLesson} from '../data/units/s41-u01.lesson.js';import {chapter,art,plan} from '../data/book/s41-u01.inquiry.book.js';import {items} from '../data/units/s41-u01.js';import {source} from '../data/units/s41-u01.source.js';
 import {emptyInquiry,saveInquiry,validInquiry,inquiryError,inquirySections,inquiryKey} from './inquiry-records.js';import {buildSlides} from './deck.js';import {renderChapter} from './book.js';import {BANK} from './units-index.js';
 test('자석 일곱 활동은 현행 세 범위·실제 기록·원문80과 기존 고리 모형을 함께 연결한다',()=>{
  assert.deepEqual(inquiry.activities.map(a=>a.id),['materials','gap','poles','tower','compass','design','review']);assert.equal(source.length,80);assert.equal(BANK[inquiry.unit].n,80);assert.equal(BANK[inquiry.unit].supplement,90);assert(BANK[inquiry.unit].lesson);

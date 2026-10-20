@@ -1,0 +1,479 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v117",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 B",
+    "unit": 7,
+    "title": "단위길이",
+    "printedPages": [
+      58,
+      65
+    ],
+    "sourceActivityBlocks": 16
+  },
+  "aggregate": {
+    "ontologyNodes": 1640,
+    "ontologyRelations": 3099,
+    "skillActionCandidates": 415,
+    "candidateEvidenceLinkedActivities": 847,
+    "activityReviewQueue": 6,
+    "activitySkillRelations": 904,
+    "conditionalDifficultyBands": 916,
+    "validatedAnswers": 455,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "existingSkillActionCandidatesReused": 10,
+    "newSkillCandidates": 1,
+    "activitySkillRelations": 16,
+    "conditionalDifficultyBandsAssigned": 16,
+    "conditionalDifficultyBandDistribution": {
+      "1": 3,
+      "2": 4,
+      "3": 6,
+      "4": 3
+    },
+    "validatedStudentResponses": 14,
+    "workedRepresentativeExamplesExcluded": 2,
+    "teacherApprovedDifficultyLevels": 0,
+    "minimumCurriculumAssignments": 0
+  },
+  "skills": [
+    {
+      "id": "MEAS-INTRO-B-01",
+      "name": "임의 단위 반복으로 길이 재기",
+      "domain": "길이 측정",
+      "observableAction": "같은 크기의 임의 단위를 선분에 반복해 놓고, 빈틈없이 들어가는 단위 수로 길이를 나타낸다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-001",
+        "1031-unit7-introb-block-003"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-02",
+      "name": "자 원점에서 cm 눈금 읽기",
+      "domain": "길이 측정",
+      "observableAction": "0에서 시작하는 자의 눈금과 1cm 단위를 대응시켜 선분의 길이를 읽는다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-002",
+        "1031-unit7-introb-block-004"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-03",
+      "name": "서로 다른 임의 단위로 같은 길이 나타내기",
+      "domain": "길이 측정",
+      "observableAction": "한 물체의 길이를 두 가지 비표준 단위로 표현하고 공통 단위 기준으로 등가 관계를 구한다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-005",
+        "1031-unit7-introb-block-006"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-04",
+      "name": "비원점 눈금 차로 길이 읽기",
+      "domain": "길이 측정",
+      "observableAction": "시작점과 끝점의 눈금 차를 계산해 물체 길이를 구한다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-009"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-05",
+      "name": "cm 눈금 사이 길이 어림하기",
+      "domain": "길이 측정",
+      "observableAction": "정수 cm 눈금 사이에 놓인 물체의 길이를 가까운 cm 값으로 어림한다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-012"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-06",
+      "name": "같은 길이에서 단위 크기 비 비교하기",
+      "domain": "길이 측정",
+      "observableAction": "같은 길이를 재는 두 단위의 반복 횟수 관계에서 단위 크기 비 또는 필요한 걸음 수 차이를 추론한다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-010",
+        "1031-unit7-introb-block-013"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-07",
+      "name": "반복 단위의 다단계 길이 관계 풀기",
+      "domain": "길이 측정",
+      "observableAction": "하나의 반복 단위 길이와 여러 사람의 키 관계를 연결해 미지의 전체 길이를 구한다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-014"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-08",
+      "name": "격자에서 닫힌 도형의 둘레 구하기",
+      "domain": "길이 측정",
+      "observableAction": "단위 격자에서 가로·세로 길이를 읽고 닫힌 다각형의 모든 변 길이를 합한다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-007"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-09",
+      "name": "눈금 격자에서 열린 경로 길이 합산하기",
+      "domain": "길이 측정",
+      "observableAction": "눈금 격자 위의 꺾인 열린 선분을 구간별로 세고 실제 단위 길이로 환산해 합한다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-008",
+        "1031-unit7-introb-block-011"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-10",
+      "name": "등간격 눈금에서 배수 지점 찾기",
+      "domain": "길이 측정",
+      "observableAction": "눈금 간격이 일정한 수직선·철사에서 주어진 길이의 배수에 해당하는 위치를 찾는다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-015"
+      ],
+      "status": "page-grounded-action-candidate"
+    },
+    {
+      "id": "MEAS-INTRO-B-11",
+      "name": "접힌 띠의 전체 길이 복원",
+      "domain": "길이 측정·도형 변환",
+      "observableAction": "격자 단위와 접힌 띠의 겹친 선분을 읽어 접히기 전 연속된 전체 길이를 복원한다.",
+      "evidenceItemIds": [
+        "1031-unit7-introb-block-016"
+      ],
+      "status": "page-grounded-action-candidate"
+    }
+  ],
+  "activities": {
+    "1031-unit7-introb-block-001": {
+      "page": 59,
+      "label": "원리 01",
+      "skillIds": [
+        "MEAS-INTRO-B-01"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "1",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-002": {
+      "page": 59,
+      "label": "원리 02",
+      "skillIds": [
+        "MEAS-INTRO-B-02"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "1",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-003": {
+      "page": 59,
+      "label": "확인하기 01-1",
+      "skillIds": [
+        "MEAS-INTRO-B-01"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "1",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-004": {
+      "page": 59,
+      "label": "확인하기 02-1",
+      "skillIds": [
+        "MEAS-INTRO-B-02"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-005": {
+      "page": 60,
+      "label": "대표문제 01",
+      "skillIds": [
+        "MEAS-INTRO-B-03"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-006": {
+      "page": 60,
+      "label": "유제 01",
+      "skillIds": [
+        "MEAS-INTRO-B-03"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-007": {
+      "page": 61,
+      "label": "대표문제 02",
+      "skillIds": [
+        "MEAS-INTRO-B-08"
+      ],
+      "answerStatus": "worked-example-excluded",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-008": {
+      "page": 61,
+      "label": "유제 02",
+      "skillIds": [
+        "MEAS-INTRO-B-09"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-009": {
+      "page": 62,
+      "label": "연습문제 01",
+      "skillIds": [
+        "MEAS-INTRO-B-04"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-010": {
+      "page": 62,
+      "label": "연습문제 02",
+      "skillIds": [
+        "MEAS-INTRO-B-06"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-011": {
+      "page": 63,
+      "label": "연습문제 03",
+      "skillIds": [
+        "MEAS-INTRO-B-09"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-012": {
+      "page": 63,
+      "label": "연습문제 04",
+      "skillIds": [
+        "MEAS-INTRO-B-05"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "2",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-013": {
+      "page": 64,
+      "label": "연습문제 05",
+      "skillIds": [
+        "MEAS-INTRO-B-06"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-014": {
+      "page": 64,
+      "label": "연습문제 06",
+      "skillIds": [
+        "MEAS-INTRO-B-07"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-015": {
+      "page": 65,
+      "label": "심화문제 01",
+      "skillIds": [
+        "MEAS-INTRO-B-10"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "3",
+      "minimumCurriculumLevel": null
+    },
+    "1031-unit7-introb-block-016": {
+      "page": 65,
+      "label": "심화문제 02",
+      "skillIds": [
+        "MEAS-INTRO-B-11"
+      ],
+      "answerStatus": "validated",
+      "conditionalDifficultyBand": "4",
+      "minimumCurriculumLevel": null
+    }
+  },
+  "spiralRelationCandidates": [
+    {
+      "id": "MEAS-INTRO-B-SPIRAL-01",
+      "fromSkillId": "MEAS-INTRO-B-01",
+      "toSkillId": "MEAS-INTRO-B-02",
+      "fromEvidenceItemIds": [
+        "1031-unit7-introb-block-001",
+        "1031-unit7-introb-block-003"
+      ],
+      "toEvidenceItemIds": [
+        "1031-unit7-introb-block-002",
+        "1031-unit7-introb-block-004"
+      ],
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "임의 단위 반복",
+      "addedDemand": "cm 표준 눈금·원점 해석 추가",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "임의 단위의 반복으로 길이를 재는 행동에서 cm 표준 단위 눈금 읽기로 간다. 반복 횟수라는 핵심은 이어지지만 표준 눈금 체계가 추가된다. 같은 단원 안의 원문 활동을 비교한 후보이며 필수 선수관계, 승인 난이도, 학년 순서를 확정하지 않는다."
+    },
+    {
+      "id": "MEAS-INTRO-B-SPIRAL-02",
+      "fromSkillId": "MEAS-INTRO-B-02",
+      "toSkillId": "MEAS-INTRO-B-04",
+      "fromEvidenceItemIds": [
+        "1031-unit7-introb-block-002",
+        "1031-unit7-introb-block-004"
+      ],
+      "toEvidenceItemIds": [
+        "1031-unit7-introb-block-012"
+      ],
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "눈금과 끝점 대응",
+      "addedDemand": "어림·근삿값 추가",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "정확한 cm 눈금 읽기에서 두 정수 눈금 사이의 위치를 어림하는 행동으로 확장한다. 눈금 판독에 길이 양감과 근삿값 표현이 추가된다. 같은 단원 안의 원문 활동을 비교한 후보이며 필수 선수관계, 승인 난이도, 학년 순서를 확정하지 않는다."
+    },
+    {
+      "id": "MEAS-INTRO-B-SPIRAL-03",
+      "fromSkillId": "MEAS-INTRO-B-03",
+      "toSkillId": "MEAS-INTRO-B-06",
+      "fromEvidenceItemIds": [
+        "1031-unit7-introb-block-005",
+        "1031-unit7-introb-block-006"
+      ],
+      "toEvidenceItemIds": [
+        "1031-unit7-introb-block-010",
+        "1031-unit7-introb-block-013"
+      ],
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "길이 차를 수로 표현",
+      "addedDemand": "단위 간 역비례·배수 관계 추가",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "한 번의 비원점 눈금 차에서 같은 길이에 대한 서로 다른 단위의 반복 횟수 관계 추론으로 확장한다. 눈금 차는 선행 요소일 수 있으나 순서는 가설이다. 같은 단원 안의 원문 활동을 비교한 후보이며 필수 선수관계, 승인 난이도, 학년 순서를 확정하지 않는다."
+    },
+    {
+      "id": "MEAS-INTRO-B-SPIRAL-04",
+      "fromSkillId": "MEAS-INTRO-B-02",
+      "toSkillId": "MEAS-INTRO-B-09",
+      "fromEvidenceItemIds": [
+        "1031-unit7-introb-block-002",
+        "1031-unit7-introb-block-004"
+      ],
+      "toEvidenceItemIds": [
+        "1031-unit7-introb-block-008",
+        "1031-unit7-introb-block-011"
+      ],
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "격자 단위 길이 읽기",
+      "addedDemand": "여러 구간 누적·경로 전환 추가",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "단일 선분 길이 읽기에서 격자 경로의 여러 구간을 환산하고 누적하는 것으로 확장한다. 구간 합산과 축척 해석이 추가된다. 같은 단원 안의 원문 활동을 비교한 후보이며 필수 선수관계, 승인 난이도, 학년 순서를 확정하지 않는다."
+    },
+    {
+      "id": "MEAS-INTRO-B-SPIRAL-05",
+      "fromSkillId": "MEAS-INTRO-B-09",
+      "toSkillId": "MEAS-INTRO-B-08",
+      "fromEvidenceItemIds": [
+        "1031-unit7-introb-block-008",
+        "1031-unit7-introb-block-011"
+      ],
+      "toEvidenceItemIds": [
+        "1031-unit7-introb-block-007"
+      ],
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "변 길이·격자 읽기",
+      "addedDemand": "닫힌 경계의 완전한 변 합산 추가",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "측정 가능한 변 길이를 부분적으로 읽는 행동에서 닫힌 도형 둘레를 구성하고 모든 변을 합하는 것으로 넓힌다. 둘레 학습 순서는 Soma의 진도 행 후보를 포함해 확인이 필요하다. 같은 단원 안의 원문 활동을 비교한 후보이며 필수 선수관계, 승인 난이도, 학년 순서를 확정하지 않는다."
+    },
+    {
+      "id": "MEAS-INTRO-B-SPIRAL-06",
+      "fromSkillId": "MEAS-INTRO-B-09",
+      "toSkillId": "MEAS-INTRO-B-11",
+      "fromEvidenceItemIds": [
+        "1031-unit7-introb-block-008",
+        "1031-unit7-introb-block-011"
+      ],
+      "toEvidenceItemIds": [
+        "1031-unit7-introb-block-016"
+      ],
+      "relationType": "spiral-extension-candidate",
+      "carryoverAction": "격자 단위로 선분 길이 읽기·합산",
+      "addedDemand": "접힌 겹침을 해석해 원래 연속 길이 복원",
+      "status": "hypothesis-needs-teacher-review",
+      "basis": "격자 경로 길이 합산에서 접힘으로 가려진 띠의 연속 길이를 복원하는 요구가 추가된다. 이는 종이접기 대칭/반사 유형과 동치로 보지 않는다. 같은 단원 증거에 근거한 후보이며 필수 선수관계·교사 승인·학년 순서를 확정하지 않는다."
+    }
+  ],
+  "difficulty": {
+    "status": "conditional; teacher adoption pending",
+    "bands": [
+      {
+        "level": 1,
+        "label": "최하"
+      },
+      {
+        "level": 2,
+        "label": "하"
+      },
+      {
+        "level": 3,
+        "label": "중"
+      },
+      {
+        "level": 4,
+        "label": "상"
+      },
+      {
+        "level": 5,
+        "label": "최상"
+      }
+    ],
+    "distribution": {
+      "1": 3,
+      "2": 4,
+      "3": 6,
+      "4": 3
+    },
+    "allItemsConditional": true
+  },
+  "curriculum": {
+    "officialContext": "2022 elementary measurement context, including 2수03-10",
+    "minimumCurriculumAssignments": 0,
+    "ageOrGradeInferred": false
+  },
+  "answerValidation": {
+    "validatedStudentResponses": 14,
+    "workedExamplesExcluded": 2,
+    "sameEditionAnswerPage": 115,
+    "privateAnswerAudit": "not included in this public file"
+  },
+  "privacy": {
+    "containsAnswerKeyText": false,
+    "containsPrivateStudentData": false,
+    "teacherApprovalClaimed": false
+  }
+}

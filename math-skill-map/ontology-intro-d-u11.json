@@ -1,0 +1,389 @@
+Warning: truncated output (original token count: 3949)
+Total output lines: 564
+
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v50",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 D",
+    "unit": 11,
+    "title": "재치있게 풀기",
+    "printedPages": [
+      101,
+      107
+    ],
+    "sourceActivityBlocks": 16,
+    "visuallyReviewedPages": 7
+  },
+  "aggregate": {
+    "ontologyNodes": 1416,
+    "ontologyRelations": 2344,
+    "skillActionCandidates": 282,
+    "activitiesWithSkillCandidateEvidence": 547,
+    "activitiesInReviewQueue": 305,
+    "conditionalDifficultyCandidates": 563,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "newlyLinkedActivities": 16,
+    "activitySkillRelations": 16,
+    "newActivitySkillRelations": 16,
+    "newActionCandidates": 10,
+    "reusedActionCandidates": 0,
+    "conditionalDifficultyBands": 16,
+    "relationHypotheses": 7,
+    "minimumCurriculumLevelCandidates": 16,
+    "minimumCurriculumUnresolved": 0,
+    "minimumCurriculumAssignments": 0,
+    "validatedAnswers": 0,
+    "somaDirectCrossReferences": 8,
+    "somaRowsHeldBack": 12,
+    "somaNoDirectRow": 8
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "D11-MATCH-EQ01",
+      "area": "rules",
+      "areaOrder": 40,
+      "label": "성냥개비 숫자·연산 기호를 바꾸어 등식 성립시키기",
+      "observableAction": "디지털 숫자와 연산 부호에 놓인 성냥개비를 정해진 수만큼 옮기거나 더해 등식이 참이 되도록 바꾼다.",
+      "activityCount": 6,
+      "printedPages": [
+        101,
+        102,
+        104,
+        107
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "5"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군",
+        "초등 5–6학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D11-MATCH-SEQ01",
+      "area": "rules",
+      "areaOrder": 41,
+      "label": "성냥개비 이동으로 목표 숫자열 만들기",
+      "observableAction": "숫자열의 성냥개비 하나를 옮겨 목표 자릿값 배열을 만든다.",
+      "activityCount": 1,
+      "printedPages": [
+        101
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군",
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D11-CAL-MONTH01",
+      "area": "measurement",
+      "areaOrder": 15,
+      "label": "달력에서 월별 날짜 수 세기",
+      "observableAction": "달력의 월별 날짜 수를 비교해 조건을 만족하는 달의 개수를 센다.",
+      "activityCount": 1,
+      "printedPages": [
+        101
+      ],
+      "conditionalDifficultyBands": [
+        "1",
+        "2"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D11-CAL-WINDOW01",
+      "area": "measurement",
+      "areaOrder": 16,
+      "label": "연속한 달의 날짜 합을 비교해 최솟값 구하기",
+      "observableAction": "연속된 여러 달을 한 구간으로 묶어 각 구간의 날짜 합을 비교한다.",
+      "activityCount": 1,
+      "printedPages": [
+        101
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군",
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D11-SCHEDULE-PAN01",
+      "area": "logic",
+      "areaOrder": 24,
+      "label": "동시 작업 조건으로 최소 조리 시간 계획하기",
+      "observableAction": "제한된 조리 공간에서 여러 대상의 앞뒤 작업을 겹쳐 배치해 전체 완료 시간을 줄인다.",
+      "activityCount": 2,
+      "printedPages": [
+        103
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군",
+        "초등 5–6학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D11-CUT-RING01",
+      "area": "logic",
+      "areaOrder": 25,
+      "label": "순환 고리를 분리하는 최소 절단 수 찾기",
+      "observableAction": "하나의 순환 사슬을 모든 고리가 분리되도록 자르는 최소 횟수를 찾는다.",
+      "activityCount": 1,
+      "printedPages": [
+        105
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군",
+        "초등 5–6학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D11-TIME-CHIME01",
+      "area": "measurement",
+      "areaOrder": 17,
+      "label": "반복 종소리 규칙에서 마지막 시각 찾기",
+      "observableAction": "정각의 시각별 종 횟수와 30분 종을 시간순으로 놓고 마지막 사건 시각을 판단한다.",
+      "activityCount": 1,
+      "printedPages": [
+        105
+      ],
+      "conditionalDifficultyBands": [
+        "2",
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군",
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D11-CLIMB-THRESHOLD01",
+      "area": "relations",
+      "areaOrder": 35,
+      "label": "낮의 상승량과 밤의 하강량으로 도달 시점 계산하기",
+      "observableAction": "반복되는 순증가량을 누적하되 목표 높이에 도달한 뒤에는 하강이 없다는 종료 조건을 적용한다.",
+      "activityCount": 1,
+      "printedPages": [
+        106
+      ],
+      "conditionalDifficultyBands…949 tokens truncated…  },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "2",
+          "3"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4",
+          "5"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4",
+          "5"
+        ]
+      },
+      {
+        "conditionalDifficultyBands": [
+          "4",
+          "5"
+        ]
+      }
+    ]
+  },
+  "curriculum": {
+    "status": "strategy-context-only",
+    "minimumLevelCandidates": [
+      {
+        "candidate": "초등 1–2학년군",
+        "activityCount": 5,
+        "status": "strategy-dependent-candidate"
+      },
+      {
+        "candidate": "초등 3–4학년군",
+        "activityCount": 9,
+        "status": "strategy-dependent-candidate"
+      },
+      {
+        "candidate": "초등 5–6학년군",
+        "activityCount": 2,
+        "status": "strategy-dependent-candidate"
+      }
+    ],
+    "candidateActivities": 16,
+    "unresolvedActivities": 0,
+    "confirmedAssignments": 0,
+    "note": "후보 학년군은 문제풀이 전략과 표상에 따라 달라질 수 있으며 각 문항의 최소 학년 확정값이 아니다."
+  },
+  "crossReferences": {
+    "directSomaRows": 8,
+    "heldBackRelatedRows": 12,
+    "noDirectRow": 8,
+    "minimumCurriculumConfirmed": 0,
+    "note": "소마 직접 주제 후보·보류 행은 병행 교재 맥락이며 학년·선수 관계를 확정하지 않는다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "id": "TAX-FAMILY-INTRO-D-U11-REASONING",
+        "label": "사고 행동의 표상·시간·최적화·변화 계통",
+        "memberSkillIds": [
+          "FAMILY-D11-SYMBOL-TRANSFORM",
+          "FAMILY-D11-CALENDAR-TIME",
+          "FAMILY-D11-CONSTRAINT-OPTIMIZATION",
+          "FAMILY-D11-REPEATED-CHANGE"
+        ]
+      },
+      {
+        "id": "FAMILY-D11-SYMBOL-TRANSFORM",
+        "label": "기호·숫자 표상의 변환",
+        "memberSkillIds": [
+          "D11-MATCH-EQ01",
+          "D11-MATCH-SEQ01"
+        ],
+        "parentFamilyId": "TAX-FAMILY-INTRO-D-U11-REASONING"
+      },
+      {
+        "id": "FAMILY-D11-CALENDAR-TIME",
+        "label": "달력·시간 사건의 순서와 비교",
+        "memberSkillIds": [
+          "D11-CAL-MONTH01",
+          "D11-CAL-WINDOW01",
+          "D11-TIME-CHIME01"
+        ],
+        "parentFamilyId": "TAX-FAMILY-INTRO-D-U11-REASONING"
+      },
+      {
+        "id": "FAMILY-D11-CONSTRAINT-OPTIMIZATION",
+        "label": "제약 아래 배치·절단·접촉 최적화",
+        "memberSkillIds": [
+          "D11-SCHEDULE-PAN01",
+          "D11-CUT-RING01",
+          "D11-CONTACT-3D01",
+          "D11-CHAIN-JOIN01"
+        ],
+        "parentFamilyId": "TAX-FAMILY-INTRO-D-U11-REASONING"
+      },
+      {
+        "id": "FAMILY-D11-REPEATED-CHANGE",
+        "label": "반복 변화와 도달 임계",
+        "memberSkillIds": [
+          "D11-CLIMB-THRESHOLD01"
+        ],
+        "parentFamilyId": "TAX-FAMILY-INTRO-D-U11-REASONING"
+      }
+    ],
+    "relations": [
+      {
+        "from": "D11-CAL-MONTH01",
+        "to": "CAL-INTRO-B-03",
+        "type": "related-but-distinct",
+        "basis": "월별 날짜 수를 세는 행동은 부분 달력에서 날짜·요일을 복원하는 행동과 달력 지식을 공유하지만 과제 목표는 다르다."
+      },
+      {
+        "from": "D11-TIME-CHIME01",
+        "to": "TIME-INTRO-B-12",
+        "type": "related-but-distinct",
+        "basis": "반복 종 사건을 시간순으로 판단하는 행동은 두 시각 사이 경과시간 계산과 시간 축을 공유하나 구하는 값이 다르다."
+      },
+      {
+        "from": "D11-CLIMB-THRESHOLD01",
+        "to": "D6-MOVE01",
+        "type": "related-but-distinct",
+        "basis": "반복 이동량을 누적하지만 목표에 닿은 뒤 마지막 하강을 제외하는 종료 임계 조건이 추가된다."
+      },
+      {
+        "from": "D11-CUT-RING01",
+        "to": "MEAS-INTRO-D-U1-04",
+        "type": "related-but-distinct",
+        "basis": "절단 최소화가 공통 조작이지만 여기서는 시간·비용 산정이 아니라 순환 구조를 분리하는 최소 횟수가 목표다."
+      },
+      {
+        "from": "D11-CHAIN-JOIN01",
+        "to": "D11-CUT-RING01",
+        "type": "related-but-distinct",
+        "basis": "둘 다 고리 절단 수를 최소화하지만 한 문제는 순환을 분리하고 다른 문제는 여러 사슬을 하나로 연결한다."
+      },
+      {
+        "from": "D11-CONTACT-3D01",
+        "to": "FAMILY-SOLID-GEOMETRY",
+        "type": "related-to-domain-candidate",
+        "basis": "구의 3차원 배치와 접촉을 다루는 후보이며 기존 입체도형 계열에 연결할 영역 후보로 둔다."
+      },
+      {
+        "from": "D11-SCHEDULE-PAN01",
+        "to": "TIME-INTRO-B-09",
+        "type": "related-but-distinct",
+        "basis": "경과 시간과 작업 순서를 공유하지만 프라이팬 용량 제약 아래 병렬 일정을 최소화하는 행동을 별도 후보로 둔다."
+      }
+    ]
+  },
+  "curriculumSource": {
+    "status": "official-source-context-only",
+    "reference": "2022 개정 교육과정 교육부 고시 제2022-33호 별책 8",
+    "gradeBandCandidates": [
+      "초등 1–2학년군",
+      "초등 3–4학년군",
+      "초등 5–6학년군"
+    ],
+    "minimumGradeConfirmed": false
+  },
+  "answerValidation": {
+    "validatedActivities": 0,
+    "status": "not-validated"
+  },
+  "privacy": "비공개 원자료의 활동 식별자·OCR 원문·정답 내용·경로·이미지 및 파일 해시는 공개하지 않습니다. 유형·난이도·교과수준·관계는 연구 후보입니다."
+}

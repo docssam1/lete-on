@@ -77,7 +77,7 @@ function saengsuRepresentativePlan(database) {
   };
 }
 
-function adaptDolpa(database) {
+function adaptDolpa(database, sourceAddenda = []) {
   const types = database.typeCatalog.map(type => sourceType("DOLPA-ORIGINAL", type.typeId, {
     semester: type.semester,
     majorUnit: type.majorUnit,
@@ -94,10 +94,72 @@ function adaptDolpa(database) {
     solutionArchetype: question.method && question.method.status === "verified" ? question.method.solutionArchetype : null,
     classificationStatus: question.classification.status,
     detailPrecision: "verified",
+    materializationStatus: "metadata_index_only",
+    releaseStatus: "locked",
     academyFits: question.usageProfiles.map(usage => ({ profileId: usage.profileId, status: usage.status }))
   }));
+  const seenQuestionIds = new Set(items.map(item => item.sourceItemId));
+  const seenTypeIds = new Set(types.map(type => type.sourceTypeId));
+  for (const addendum of sourceAddenda) {
+    if (!addendum || addendum.visibility !== "private" || addendum.sourceBankId !== "DOLPA-ORIGINAL"
+      || addendum.mergeGate?.ready !== false || addendum.mockExam?.releaseStatus !== "locked"
+      || !Array.isArray(addendum.sourceTypes) || !Array.isArray(addendum.items)) {
+      throw new Error("돌파 추가 출처는 비공개·잠금 상태로만 색인할 수 있습니다.");
+    }
+    const addendumTypes = new Map();
+    for (const type of addendum.sourceTypes) {
+      if (!type.sourceTypeId || !type.sourceQuestionId || seenTypeIds.has(type.sourceTypeId)
+        || type.releaseStatus !== "locked" || type.conceptFamilyId !== null
+        || type.detailPrecision !== "source_and_answer_verified_type_relation_pending") {
+        throw new Error(`돌파 추가 유형의 잠금·중복 상태를 확인해 주세요: ${type.sourceTypeId || "ID 없음"}`);
+      }
+      seenTypeIds.add(type.sourceTypeId);
+      addendumTypes.set(type.sourceTypeId, type);
+      types.push(sourceType("DOLPA-ORIGINAL", type.sourceTypeId, {
+        semester: type.semester,
+        majorUnit: type.majorUnit,
+        minorUnit: type.minorUnit,
+        detailType: type.detailType,
+        solutionArchetype: type.solvingModel,
+        detailPrecision: "candidate",
+        status: "source_verified_type_relation_pending_locked",
+        evidence: type.evidence
+      }));
+    }
+    for (const item of addendum.items) {
+      const type = addendumTypes.get(item.sourceTypeId);
+      if (!type || type.sourceQuestionId !== item.sourceQuestionId || !item.sourceKey
+        || seenQuestionIds.has(item.sourceQuestionId) || item.releaseStatus !== "locked"
+        || item.materializationStatus !== "private_source_candidate") {
+        throw new Error(`돌파 추가 문항의 출처·중복 상태를 확인해 주세요: ${item.sourceQuestionId || "ID 없음"}`);
+      }
+      seenQuestionIds.add(item.sourceQuestionId);
+      items.push({
+        itemId: `DOLPA-ORIGINAL:${item.sourceQuestionId}`,
+        sourceBankId: "DOLPA-ORIGINAL",
+        sourceItemId: item.sourceQuestionId,
+        sourceTypeId: item.sourceTypeId,
+        sourceKey: item.sourceKey,
+        sourceId: addendum.source.sourceId,
+        sourceFingerprint: addendum.source.sourceFingerprint,
+        sourcePdfSha256: addendum.source.sourcePdfSha256,
+        mockExamId: addendum.mockExam.candidateExamId,
+        mockSlot: item.mockSlot,
+        responseKind: type.responseKind,
+        answerContract: type.answerContract,
+        difficulty: type.difficulty,
+        visualModel: type.visualModel,
+        classificationStatus: "source_verified_type_relation_pending",
+        detailPrecision: "candidate",
+        materializationStatus: "private_source_candidate",
+        releaseStatus: "locked",
+        usageApproved: false,
+        academyFits: item.academyFits.map(fit => ({ profileId: fit.profileId, status: fit.status }))
+      });
+    }
+  }
   return {
-    bank: { sourceBankId: "DOLPA-ORIGINAL", academyId: "DP", label: "돌파 원본 시험", itemCount: items.length, status: "verified" },
+    bank: { sourceBankId: "DOLPA-ORIGINAL", academyId: "DP", label: "돌파 원본 시험 유형 색인", itemCount: items.length, status: "index_verified_content_locked", materializationStatus: "metadata_index_only" },
     types,
     items
   };
@@ -155,11 +217,14 @@ function adaptHwangsoRound(metadata) {
 function adaptWonmathManifests(manifests, detailReviews) {
   const typesById = new Map();
   const items = [];
+  const sourceBookCounts = new Map();
   const reviewByItemId = new Map(((detailReviews && detailReviews.reviews) || []).map(review => [review.sourceItemId, review]));
   const usedReviewIds = new Set();
   manifests.forEach((manifest, roundIndex) => {
     const round = String(roundIndex + 1).padStart(2, "0");
     manifest.items.forEach(item => {
+      const sourceBookId = String(item.bookId || "UNKNOWN");
+      sourceBookCounts.set(sourceBookId, (sourceBookCounts.get(sourceBookId) || 0) + 1);
       const sourceItemId = `R${round}-Q${String(item.examNumber).padStart(2, "0")}`;
       const sourceUnitTypeId = String(item.typeId);
       const review = reviewByItemId.get(sourceItemId);
@@ -197,15 +262,30 @@ function adaptWonmathManifests(manifests, detailReviews) {
         sourceTypeId,
         classificationStatus: verified ? review.classificationStatus : "verified_unit_only",
         detailPrecision: verified ? "verified" : "unit_only",
-        academyFits: [{ profileId: "WM_BASIC", status: "source_verified" }]
+        sourceBookId,
+        releaseStatus: "locked",
+        usageApproved: false,
+        academyFits: [{ profileId: "WM_BASIC", status: "candidate" }]
       });
     });
   });
   const unknownReviewIds = Array.from(reviewByItemId.keys()).filter(id => !usedReviewIds.has(id));
   if (unknownReviewIds.length) throw new Error(`원수학 세부유형 검수표에 구성표에 없는 문항이 있습니다: ${unknownReviewIds.join(", ")}`);
   const allVerified = items.length > 0 && items.every(item => item.detailPrecision === "verified");
+  const sourceComposition = Array.from(sourceBookCounts, ([sourceBookId, itemCount]) => ({ sourceBookId, itemCount }))
+    .sort((left, right) => left.sourceBookId.localeCompare(right.sourceBookId));
+  const allAgrade = sourceComposition.length > 0 && sourceComposition.every(source => /^AG_/.test(source.sourceBookId));
   return {
-    bank: { sourceBankId: "WONMATH-M21", academyId: "WM", label: "원수학 중2-1 기본반 4회", itemCount: items.length, status: allVerified ? "reviewed_detail" : "review_in_progress" },
+    bank: {
+      sourceBankId: "WONMATH-M21",
+      academyId: "WM",
+      label: allAgrade ? "에이급 기반 원수학 중2-1 대비 임시 4회" : "원수학 중2-1 대비 모의고사 후보",
+      itemCount: items.length,
+      officialWonmathPastPaper: false,
+      academyFitStatus: "candidate",
+      sourceComposition,
+      status: allAgrade ? "a_grade_only_rebuild_required" : allVerified ? "mixed_mock_candidate_locked" : "review_in_progress"
+    },
     types: Array.from(typesById.values()),
     items
   };
@@ -358,14 +438,99 @@ function adaptSaengsuLegacy(database) {
   };
 }
 
+function adaptBlacklabelMiddle(index) {
+  const sourceBankId = "BLACKLABEL-2025-M1";
+  const sourcePairs = Array.isArray(index && index.sourcePairs) ? index.sourcePairs : [];
+  const sourceItems = Array.isArray(index && index.items) ? index.items : [];
+  if (!sourcePairs.length || !sourceItems.length) throw new Error("블랙라벨 중1 문항 인덱스가 비어 있습니다.");
+
+  const seenItemIds = new Set();
+  const seenTypeIds = new Set();
+  const types = [];
+  const items = sourceItems.map(item => {
+    const classification = item.classification || {};
+    const answerCheck = item.answerCheck || {};
+    const sourceLocator = item.sourceLocator || {};
+    const sourceTypeId = String(item.sourceTypeId || "").trim();
+    const sourceItemId = String(item.sourceItemId || "").trim();
+    const domainGroup = classification.semester === "중1-1" ? "algebra"
+      : classification.semester === "중1-2" ? "geometry" : null;
+    if (!sourceItemId || !sourceTypeId || seenItemIds.has(sourceItemId) || seenTypeIds.has(sourceTypeId)) {
+      throw new Error(`블랙라벨 문항·유형 ID를 확인해 주세요: ${sourceItemId || "ID 없음"}`);
+    }
+    if (classification.status !== "verified" || answerCheck.status !== "source_solution_and_independent_math_verified"
+      || item.questionBankEligible !== true || item.mockExamEligible !== false || item.releaseStatus !== "locked"
+      || !Number.isSafeInteger(Number(sourceLocator.pdfPage)) || !domainGroup) {
+      throw new Error(`블랙라벨 문항 검수 상태를 확인해 주세요: ${sourceItemId}`);
+    }
+    seenItemIds.add(sourceItemId);
+    seenTypeIds.add(sourceTypeId);
+    const exactOverlap = item.overlap && item.overlap.status === "exact_solution_structure";
+    const relatedSeparate = item.overlap && item.overlap.status === "related_not_equivalent";
+    const canonicalTarget = exactOverlap && item.overlap.matchedSourceTypeId
+      ? { sourceBankId: "DOLPA-ORIGINAL", sourceTypeId: item.overlap.matchedSourceTypeId, relation: "merge_existing" }
+      : null;
+    types.push(sourceType(sourceBankId, sourceTypeId, {
+      semester: classification.semester,
+      majorUnit: classification.majorUnit,
+      minorUnit: classification.minorUnit,
+      detailType: classification.detailType,
+      solutionArchetype: classification.solutionArchetype,
+      detailPrecision: "verified",
+      status: "reviewed_detail_locked",
+      taxonomyReviewStatus: exactOverlap ? "merge_existing" : relatedSeparate ? "keep_separate" : "verified_new_type",
+      domainGroup,
+      evidence: [`blacklabel:${sourceItemId}:p${sourceLocator.pdfPage}`]
+    }));
+    return {
+      itemId: `${sourceBankId}:${sourceItemId}`,
+      sourceBankId,
+      sourceItemId,
+      sourceUnitTypeId: item.unitTypeId,
+      sourceTypeId,
+      domainGroup,
+      classificationStatus: "reviewed_detail_locked",
+      detailPrecision: "verified",
+      answerStatus: "verified",
+      visualStatus: item.visualAudit && item.visualAudit.status || "not_required",
+      releaseStatus: "locked",
+      usageApproved: false,
+      questionBankEligible: true,
+      mockExamEligible: false,
+      taxonomyReviewStatus: exactOverlap ? "merge_existing" : relatedSeparate ? "keep_separate" : "verified_new_type",
+      canonicalTarget,
+      academyFits: (item.academyFits || []).map(fit => ({ profileId: fit.profileId, status: fit.status })),
+      sourceLocator: {
+        sourceId: sourceLocator.problemSourceMemoryId,
+        pdfPage: Number(sourceLocator.pdfPage),
+        questionNumber: sourceLocator.printedQuestionNumber
+      }
+    };
+  });
+  return {
+    bank: {
+      sourceBankId,
+      academyId: null,
+      label: "블랙라벨 2025 중1 STEP 2",
+      itemCount: items.length,
+      officialWonmathPastPaper: false,
+      academyFitStatus: "candidate",
+      status: "private_verified_release_locked"
+    },
+    types,
+    items
+  };
+}
+
 function buildIndex(inputs) {
   const adapters = [
-    adaptDolpa(inputs.dolpa),
+    adaptDolpa(inputs.dolpa, inputs.dolpaSourceAddenda || []),
     adaptSharedTypes(inputs.sharedTypes),
     adaptHwangsoRound(inputs.hwangsoRound),
     adaptWonmathManifests(inputs.wonmathManifests, inputs.wonmathDetailReviews),
     adaptHwangsoMiddle(inputs.hwangsoMiddle, inputs.hwangsoCurriculumReviews),
-    ...(inputs.saengsuLegacy ? [adaptSaengsuLegacy(inputs.saengsuLegacy)] : [])
+    ...(inputs.saengsuLegacy ? [adaptSaengsuLegacy(inputs.saengsuLegacy)] : []),
+    ...(inputs.blacklabelMiddle ? [adaptBlacklabelMiddle(inputs.blacklabelMiddle)] : [])
   ];
   const sourceTypes = adapters.flatMap(adapter => adapter.types);
   const conceptFamilies = core.createConceptFamilies(sourceTypes);
@@ -377,7 +542,7 @@ function buildIndex(inputs) {
       ? `${item.canonicalTarget.sourceBankId}:${item.canonicalTarget.sourceTypeId}`
       : null;
     const reviewedTargetFamilyId = targetKey ? familyBySourceType.get(targetKey) || null : null;
-    if (targetKey && !reviewedTargetFamilyId) throw new Error(`검수된 생수 유형 연결 대상이 공통 인덱스에 없습니다: ${targetKey}`);
+    if (targetKey && !reviewedTargetFamilyId) throw new Error(`검수된 유형 연결 대상이 공통 인덱스에 없습니다: ${targetKey}`);
     const conceptFamilyId = reviewedTargetFamilyId || ownFamilyId;
     const conceptStatus = reviewedTargetFamilyId || item.detailPrecision === "verified"
       ? "mapped"
@@ -455,6 +620,7 @@ function buildIndex(inputs) {
 function loadInputs(config) {
   return {
     dolpa: readJson(config.dolpaDb),
+    dolpaSourceAddenda: (config.dolpaSourceAddenda || []).map(readJson),
     sharedTypes: readJson(config.sharedTypeIndex),
     hwangsoRound: require(path.resolve(config.hwangsoRoundModule)).metadata,
     wonmathManifests: config.wonmathManifests.map(readJson),
@@ -462,6 +628,7 @@ function loadInputs(config) {
     hwangsoMiddle: readJson(config.hwangsoMiddleIndex),
     hwangsoCurriculumReviews: config.hwangsoCurriculumReviews ? readJson(config.hwangsoCurriculumReviews) : null,
     saengsuLegacy: config.saengsuLegacyCandidateDb ? readJson(config.saengsuLegacyCandidateDb) : null,
+    blacklabelMiddle: config.blacklabelMiddleIndex ? readJson(config.blacklabelMiddleIndex) : null,
     reviewDecisions: config.reviewDecisions ? readJson(config.reviewDecisions) : { candidates: [] }
   };
 }
@@ -484,6 +651,7 @@ module.exports = Object.freeze({
   adaptWonmathManifests,
   adaptHwangsoMiddle,
   adaptSaengsuLegacy,
+  adaptBlacklabelMiddle,
   buildIndex,
   loadInputs
 });

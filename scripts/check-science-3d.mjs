@@ -27,9 +27,9 @@ catch {
 }
 
 // 3D 실험실이 있는 단원 — science-lab/v2/home.js 의 LABS 와 같아야 한다(새 실험을 넣으면 여기도)
-const ALL = ['s41-u04', 's31-u01', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
+const ALL = ['c22-s42-u04', 'c22-s42-u01', 'c22-s42-u02', 'c22-s32-u04', 'c22-s32-u01', 'c22-s32-u02', 'c22-s32-u03', 's41-u04', 's31-u01', 's41-u01', 's41-u02', 's41-u03', 's41-u03b', 's42-u01', 's42-u02', 's42-u03', 's42-u04', 's42-u05', 's51-u01', 's51-u02', 's51-u03', 's51-u04', 's51-u05', 's52-u01'];
 const UNITS = process.argv.slice(2).length ? process.argv.slice(2) : ALL;
-const labPath = u => `#/${u}/2/${['s41-u01','s41-u02','s41-u03','s41-u04'].includes(u) ? 'model' : 'lab'}`;
+const labPath = u => `#/${u}/2/lab`;   // 2026-10-20부터 4-1 단원도 3D 실험이 기본(lab) — 기록 앱은 선택 기능
 const SHOTS = process.env.SHOTS || '';
 if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
 
@@ -243,6 +243,135 @@ async function ringTowerClicks(u) {
   await gl0.close();
 }
 
+// 물의 상태 변화 시험관 실험(2026-10-15 지시서): 예상 → 빨간 선·저울·적기 → 얼리기 → 파란 선 → 저울(닦기 전 더 무거움, 적기 잠김) → 닦기 → 적기
+// → 녹이기 → 자로 재기 → 닦기 → 저울 → 적기 → 비교. 고치기 전 실패(세 번째 기록이 사라짐 · 「표에 적기」 가림 · 재기 전 결론 문장 · 저울 0 g인데 화면 120 g)를 다시 잡는다.
+const tubeState = (page) => page.evaluate(() => {
+  const host = document.querySelector('.lab3d--tube'), q = (s) => host?.querySelector(s);
+  return { ph: host?.dataset.phase, lcd: host?.dataset.lcd, h: q('[data-r=h]')?.textContent, m: q('[data-r=m]')?.textContent, tip: q('[data-r=tip]')?.textContent || '',
+    busy: !!q('[data-act=step]') && q('[data-act=step]').disabled && q('[data-act=record]').disabled && host.dataset.phase !== 'compare' && host.dataset.phase !== 'predict',
+    rec: q('[data-act=record]')?.disabled, rows: [...document.querySelectorAll('.ft-table tbody tr')].map((r) => [...r.cells].slice(1).map((c) => c.textContent)), card: q('.ft-card:not([hidden])')?.textContent || '' };
+});
+// 결론(높이가 올라감·무게가 같음)을 말하는 문장 — 비교 단계 전에는 안내 줄에 나오면 안 된다
+const VERDICT = /높아졌|올라갔|올라왔|늘어났|그대로예요|그대로였|같아요|같았|돌아왔/;
+async function tubeFlow(where, page, { strict, scope = '' }) {
+  const S = (sel) => `${scope} ${sel}`.trim();
+  const press = async (sel, label) => {
+    let why = await pressAt(page, S(sel));
+    if (why && !strict) { await page.evaluate((sel) => document.querySelector(sel)?.scrollIntoView({ block: 'center' }), S(sel)); await page.waitForTimeout(150); why = await pressAt(page, S(sel)); }   // 폰: 사람처럼 가운데로 올려 누른다
+    if (why) { fail(where, `「${label}」을 스크롤 없이 누를 수 없음 — ${why}`); await page.locator(S(sel)).first().click(); }
+  };
+  const settle = () => page.waitForFunction((sc) => { const h = document.querySelector(`${sc} .lab3d--tube`.trim()); if (!h) return true; const a = h.querySelector('[data-act=step]'), r = h.querySelector('[data-act=record]'); return h.dataset.phase === 'compare' || !a.disabled || !r.disabled; }, scope, { timeout: 25000 }).catch(() => {});
+  const consistent = async (tag) => { const s = await tubeState(page); checks++; if (s.m !== '?' && s.m !== s.lcd) fail(where, `${tag}: 무게 칸 ${s.m}인데 저울은 ${s.lcd}`); return s; };
+  let s = await tubeState(page);
+  checks += 3;
+  if (!s.ph) { fail(where, '시험관 실험실이 뜨지 않음'); return; }
+  if (s.h !== '?' || s.m !== '?' || !s.rec || VERDICT.test(s.tip)) fail(where, `첫 화면에 값·결론이 보임(${JSON.stringify(s)})`);
+  if (strict) for (const sel of ['[data-act=step]', '[data-ph="1"]', '[data-pm="1"]']) {
+    const hid = await page.evaluate((sel) => { const b = document.querySelector(sel); if (!b) return '없음'; const q = b.getBoundingClientRect(), y = q.top + q.height / 2; if (y > innerHeight || y < 0) return `화면 밖(y ${Math.round(y)})`; const e = document.elementFromPoint(q.left + q.width / 2, y); return e && e.closest(sel) === b ? '' : (e?.closest('.bottom') ? '하단 막대' : (e?.className || '없음')); }, S(sel));
+    if (hid) fail(where, `첫 화면에서 「${sel}」이 가려짐 — ${hid}`);
+  }
+  const y0 = await page.evaluate(() => scrollY);
+  await press('[data-ph="0"]', '높이 예상'); await press('[data-pm="1"]', '무게 예상'); await press('[data-act=step]', '예상하고 시작'); await settle();
+  const expect = [['mark1', 'step', '빨간 선 긋기'], ['weigh1', 'step', '저울에 올리기'], ['rec1', 'record', '표에 적기 ①'], ['freeze', 'step', '얼리기'], ['mark2', 'step', '파란 선 긋기'], ['weigh2', 'step', '저울에 올리기 ②'],
+    ['wipe2', 'step', '수건으로 닦기'], ['rec2', 'record', '표에 적기 ②'], ['melt', 'step', '녹이기'], ['read3', 'step', '자로 높이 재기'], ['wipe3', 'step', '수건으로 닦기 ③'], ['weigh3', 'step', '저울에 올리기 ③'], ['rec3', 'record', '표에 적기 ③']];
+  for (const [ph, act, label] of expect) {
+    s = await tubeState(page);
+    if (s.ph !== ph) { fail(where, `단계가 ${ph}가 아니라 ${s.ph}`); return; }
+    checks++;
+    if (ph !== 'rec3' && VERDICT.test(s.tip + s.card)) fail(where, `${ph}: 비교 전에 결론 문장이 나옴 — 「${s.tip}」`);
+    if (ph === 'mark2' && s.h !== '?') fail(where, `얼린 뒤 선을 긋기 전에 높이가 보임(${s.h})`);
+    if (ph === 'wipe2') { checks++; if (!s.rec || s.m !== '33.1') fail(where, `닦기 전 저울(${s.m} g)에서 「표에 적기」가 ${s.rec ? '잠김' : '열려 있음'} — 33.1 g · 잠김이어야 함`); }
+    await press(`[data-act=${act}]`, label); await settle();
+    await consistent(label);
+  }
+  s = await tubeState(page);
+  checks += 2;
+  const want = [['4.0', '32.5'], ['4.4', '32.5'], ['4.0', '32.5']];
+  if (JSON.stringify(s.rows) !== JSON.stringify(want)) fail(where, `세 기록이 따로 남지 않음 — ${JSON.stringify(s.rows)}`);
+  if (s.ph !== 'compare' || !/4\.0 → 4\.4 → 4\.0/.test(s.card) || !/모형 값/.test(s.card)) fail(where, `비교 카드가 기록에서 나오지 않음(${s.ph} · ${s.card.slice(0, 60)})`);
+  if (strict) {   // 실험하는 동안 페이지가 밀려 시험관(캔버스 위쪽)이 머리띠 밑으로 들어가면 안 된다
+    checks++; const m = await page.evaluate((sc) => ({ dy: scrollY, top: document.querySelector(`${sc} .lab3d--tube > canvas, ${sc} .lab3d--tube > .ft2-svg`.trim()).getBoundingClientRect().top }), scope);
+    if (m.top < 40) fail(where, `실험하는 동안 페이지가 ${Math.round(m.dy - y0)}px 밀려 실험대 위쪽이 가림(캔버스 위 ${Math.round(m.top)}px)`);
+  }
+  if (strict) {   // 비교 단계: 추가 탐구·처음부터가 스크롤 없이 보이고 눌린다
+    for (const sel of ['[data-act=extra]', '[data-act=restart]']) { checks++; const hid = await page.evaluate((sel) => { const b = document.querySelector(sel); if (!b || b.hidden) return '없음'; const q = b.getBoundingClientRect(), y = q.top + q.height / 2; if (y > innerHeight || y < 0) return `화면 밖(y ${Math.round(y)})`; const e = document.elementFromPoint(q.left + q.width / 2, y); return e && e.closest(sel) === b ? '' : (e?.closest('.bottom') ? '하단 막대' : (e?.className || '없음')); }, S(sel)); if (hid) fail(where, `비교 단계에서 「${sel}」이 가려짐 — ${hid}`); }
+  }
+  await shot(page, `${where.replace(/[^\w가-힣× ]/g, '')}-비교`);
+  await press('[data-act=restart]', '처음부터');
+  s = await tubeState(page);
+  checks++;
+  if (s.ph !== 'predict' || s.h !== '?' || s.m !== '?' || s.rows.some((r) => r.join() !== '—,—')) fail(where, `「처음부터」 뒤 표·값이 비지 않음(${JSON.stringify(s)})`);
+}
+async function tubeClicks(u) {
+  for (const vp of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 1280, height: 860 }]) {
+    const where = `${u} 실제 클릭 ${vp.width}×${vp.height}`; console.log(`  · ${where.slice(u.length + 1)}`);
+    const { page, errs } = await open(vp, `#/${u}/2/lab`); await page.waitForFunction(() => document.querySelector('.lab3d--tube canvas'), null, { timeout: 20000 }).catch(() => {}); await page.waitForTimeout(1500);
+    await shot(page, `${u}-첫 화면 ${vp.width}`);
+    await tubeFlow(where, page, { strict: true });
+    await done(where, page, errs);
+  }
+  for (const [name, vp] of [['폰 세로', { width: 390, height: 844 }], ['폰 가로', { width: 844, height: 390 }]]) {
+    const where = `${u} ${name}`; console.log(`  · ${name}`);
+    const { page, errs } = await open(vp, `#/${u}/2/lab`, { touch: true }); await page.waitForTimeout(3000);
+    await tubeFlow(where, page, { strict: false });
+    await done(where, page, errs);
+  }
+  // 덱(가르치기): 전자칠판 1920×1080 · 노트북 · 4:3 — 교사가 한 단계씩 눌러 연다. 전자칠판은 전체 화면에서도.
+  const n = await labSlide(u);
+  for (const [vp, full] of [[{ width: 1920, height: 1080 }, false], [{ width: 1366, height: 768 }, false], [{ width: 1024, height: 768 }, false], [{ width: 1920, height: 1080 }, true]]) {
+    const where = `${u} 덱 ${vp.width}×${vp.height}${full ? ' 전체 화면' : ''}`; console.log(`  · ${where.slice(u.length + 1)}`);
+    const { page, errs } = await open(vp, `#/${u}/lab-class/teach/${n}`); await page.waitForTimeout(3500);
+    if (full) { await page.click('.fl-open'); await page.waitForTimeout(1200); }
+    await shot(page, `${u}-덱 ${vp.width}${full ? ' 전체' : ''} 첫 화면`);
+    await tubeFlow(where, page, { strict: !full });
+    await done(where, page, errs);
+  }
+  // 추가 탐구(병) ↔ 시험관: 기록이 섞이지 않고 돌아오면 시험관 기록이 그대로
+  {
+    const where = `${u} 추가 탐구`; console.log('  · 추가 탐구');
+    const { page, errs } = await open({ width: 1440, height: 900 }, `#/${u}/2/lab`); await page.waitForTimeout(3000);
+    await page.evaluate(() => { for (const b of document.querySelectorAll('.rt-opt')) if (/올라간다|그대로다/.test(b.textContent)) b.click(); });
+    await page.evaluate(() => { const r = window.matchMedia; window.matchMedia = (q) => (/reduced-motion/.test(q) ? { matches: true, addEventListener() {}, removeEventListener() {} } : r(q)); });
+    for (let i = 0; i < 20; i++) { const ph = await page.evaluate(() => document.querySelector('.lab3d--tube')?.dataset.phase); if (ph === 'compare') break; await page.evaluate(() => { const h = document.querySelector('.lab3d--tube'), a = h.querySelector('[data-act=step]'), r = h.querySelector('[data-act=record]'); (!r.disabled ? r : a).click(); }); await page.waitForTimeout(600); }
+    await page.click('[data-act=extra]'); await page.waitForTimeout(2500);
+    checks += 2;
+    if (!(await page.locator('.lab3d--bottle').count()) || !(await page.locator('[data-act=back]').count())) fail(where, '추가 탐구(병 실험)가 열리지 않음');
+    await shot(page, `${u}-추가 탐구`);
+    await page.click('[data-act=back]'); await page.waitForTimeout(2500);
+    const rows = await page.evaluate(() => [...document.querySelectorAll('.ft-table tbody tr[data-row]')].length);
+    if (rows !== 3) fail(where, `시험관으로 돌아오니 기록이 ${rows}줄`);
+    await done(where, page, errs);
+  }
+  // 두 팀 배틀은 병 실험 그대로(배틀 문제가 병 기록에 묶여 있다) — 병 실험이 뜨고, 얼리는 동안 결론을 먼저 말하지 않는지
+  {
+    const where = `${u} 대결`; console.log('  · 대결(병)');
+    const { page, errs } = await open({ width: 1440, height: 900 }, `#/${u}/lab-class/teach/${n}`); await page.waitForTimeout(1500);
+    await page.getByRole('button', { name: /배틀/ }).first().click(); await page.waitForTimeout(800);
+    for (const i of [0, 1]) { await page.selectOption(`[data-lb-predict="${i}"]`, '1'); await page.click(`[data-lb-lock="${i}"]`); }
+    await page.waitForFunction(() => document.querySelectorAll('.dk-lab-battle .lab3d--bottle').length === 2, null, { timeout: 30000 }).catch(() => {});
+    checks += 2;
+    if ((await page.locator('.dk-lab-battle .lab3d--bottle').count()) !== 2 || (await page.locator('.dk-lab-battle .lab3d--tube').count())) fail(where, '두 팀 실험실이 병 실험이 아님');
+    await page.locator('[data-team="1"] [data-act=toggle]').click();
+    await page.waitForFunction(() => /표에 적어요/.test(document.querySelector('[data-team="1"] [data-r=tip]')?.textContent || ''), null, { timeout: 15000 }).catch(() => {});
+    const tip = await page.locator('[data-team="1"] [data-r=tip]').textContent();
+    if (VERDICT.test(tip) || /\d+칸/.test(tip)) fail(where, `병을 얼린 뒤 안내가 결론·값을 먼저 말함 — 「${tip}」`);
+    await shot(page, `${u}-대결`);
+    await done(where, page, errs);
+  }
+  const gl0 = await chromium.launch({ args: ['--disable-gpu', '--disable-webgl', '--disable-3d-apis'] });
+  for (const [name, vp, touch] of [['2D 대체(PC)', { width: 1366, height: 768 }], ['2D 대체(폰)', { width: 390, height: 844 }, true]]) {
+    const where = `${u} ${name}`; console.log(`  · ${name}`);
+    const page = await gl0.newPage({ viewport: vp, hasTouch: !!touch }), errs = [];
+    page.on('pageerror', (e) => errs.push(e.message));
+    await page.goto(BASE + `#/${u}/2/lab`, { waitUntil: 'networkidle' }); await page.waitForTimeout(1500);
+    checks++;
+    if (!(await page.locator('.lab3d--tube .ft2-svg').count())) { fail(where, 'WebGL을 껐는데 2D 시험관 실험실이 아님'); await done(where, page, errs); continue; }
+    await tubeFlow(where, page, { strict: !touch });
+    await done(where, page, errs);
+  }
+  await gl0.close();
+}
+
 async function labSlide(u) {
   const { page } = await open({ width: 1440, height: 900 }, `#/${u}/lab-class/teach/1`);
   await page.locator('.dk-foot').waitFor();
@@ -320,6 +449,7 @@ for (const u of UNITS) {
     await done(where, page, errs);
   }
   if (u === 's41-u01') await ringTowerClicks(u);
+  if (u === 's41-u02') await tubeClicks(u);
   // 전체 화면(PC·폰 가로·덱): 조작판이 옆에 붙어 캔버스 비율이 크게 바뀐다.
   // 덱은 실험 칸 규칙(캔버스 높이 36cqw !important·격자)이 전체 화면에 남아 아래 절반이 비었던 적이 있다(2026-10-06) → 화면을 채우는지도 잰다
   for (const [name, vp, touch, hash] of [['전체 화면(PC)', { width: 1280, height: 760 }], ['전체 화면(폰 가로)', { width: 844, height: 390 }, true], ['전체 화면(덱)', { width: 1440, height: 900 }, false, n ? `#/${u}/lab-class/teach/${n}` : null]]) {

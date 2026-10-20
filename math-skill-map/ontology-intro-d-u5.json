@@ -1,0 +1,247 @@
+{
+  "schema": "gfield-public-skill-map-supplement/1",
+  "checkpoint": "v33",
+  "updated": "2026-10-19",
+  "scope": {
+    "book": "1031 입문 D",
+    "unit": 5,
+    "title": "□를 이용하여 식 세우기",
+    "printedPages": [
+      51,
+      57
+    ],
+    "sourceActivityBlocks": 16,
+    "visuallyReviewedPages": 7
+  },
+  "aggregate": {
+    "ontologyNodes": 1376,
+    "ontologyRelations": 2175,
+    "skillActionCandidates": 251,
+    "activitiesWithSkillCandidateEvidence": 461,
+    "activitiesInReviewQueue": 391,
+    "conditionalDifficultyCandidates": 468,
+    "validatedAnswers": 42,
+    "teacherApprovedTypeEquivalences": 0,
+    "teacherApprovedRelations": 0,
+    "minimumCurriculumAssignments": 0,
+    "confirmedSchoolGrades": 0
+  },
+  "unitCounts": {
+    "mappedActivities": 16,
+    "newlyLinkedActivities": 10,
+    "newActionCandidates": 5,
+    "reusedActionCandidates": 1,
+    "conditionalDifficultyBands": 16,
+    "relationHypotheses": 3,
+    "familyCandidates": 2,
+    "minimumCurriculumLevelCandidates": 14,
+    "minimumCurriculumUnresolved": 2,
+    "minimumCurriculumAssignments": 0,
+    "validatedAnswers": 0
+  },
+  "areaOrderCandidates": [
+    {
+      "id": "D5-EQ01",
+      "area": "relations",
+      "areaOrder": 14,
+      "label": "배수 관계와 전체합으로 기준량 복원하기",
+      "observableAction": "한 양의 배수량과 전체합을 식으로 연결해 기준량 및 목표량을 구한다.",
+      "activityCount": 2,
+      "printedPages": [
+        53
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D5-EQ02",
+      "area": "relations",
+      "areaOrder": 15,
+      "label": "같은 미지량이 여러 항에 놓인 식에서 기준량 구하기",
+      "observableAction": "같은 시작 수가 변화량 또는 여러 대상의 합에 반복되는 조건을 하나의 관계식으로 구성해 값을 복원한다.",
+      "activityCount": 2,
+      "printedPages": [
+        56,
+        57
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D5-ERR01",
+      "area": "relations",
+      "areaOrder": 16,
+      "label": "잘못된 연산 결과를 되돌려 원래 수를 복원하고 바른 계산 재적용하기",
+      "observableAction": "잘못된 연산 결과를 역으로 되돌려 시작 수를 찾고 의도된 연산으로 다시 계산한다.",
+      "activityCount": 4,
+      "printedPages": [
+        52,
+        56,
+        57
+      ],
+      "conditionalDifficultyBands": [
+        "3",
+        "4"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 1–2학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D5-DIV01",
+      "area": "relations",
+      "areaOrder": 17,
+      "label": "남은 수량을 제외한 뒤 균등 분배 몫 구하기",
+      "observableAction": "전체에서 남겨 둔 수량을 제외하고 남은 양을 인원수로 나눠 한 사람 몫을 구한다.",
+      "activityCount": 1,
+      "printedPages": [
+        55
+      ],
+      "conditionalDifficultyBands": [
+        "2"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    },
+    {
+      "id": "D5-RATE01",
+      "area": "relations",
+      "areaOrder": 18,
+      "label": "하루 단위량을 구해 일정한 속도로 목표량의 기간 환산하기",
+      "observableAction": "전체량을 기간으로 나눠 단위 기간량을 구한 뒤 다른 전체량에 적용해 필요한 기간을 산출한다.",
+      "activityCount": 1,
+      "printedPages": [
+        55
+      ],
+      "conditionalDifficultyBands": [
+        "3"
+      ],
+      "minimumCurriculumLevelCandidates": [
+        "초등 3–4학년군"
+      ],
+      "status": "candidate-needs-teacher-review"
+    }
+  ],
+  "difficulty": {
+    "status": "conditional-research-only",
+    "bandsByAction": [
+      {
+        "id": "D5-EQ01",
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      },
+      {
+        "id": "D5-EQ02",
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "id": "D5-ERR01",
+        "conditionalDifficultyBands": [
+          "3",
+          "4"
+        ]
+      },
+      {
+        "id": "D5-DIV01",
+        "conditionalDifficultyBands": [
+          "2"
+        ]
+      },
+      {
+        "id": "D5-RATE01",
+        "conditionalDifficultyBands": [
+          "3"
+        ]
+      }
+    ],
+    "teacherApprovedLevels": 0
+  },
+  "curriculum": {
+    "status": "strategy-context-only",
+    "minimumLevelCandidates": 14,
+    "unresolvedActivities": 2,
+    "confirmedAssignments": 0,
+    "contextOnlyStandards": [
+      "2수01-06",
+      "2수01-07",
+      "2수01-08",
+      "2수01-09",
+      "2수01-11",
+      "4수01-03",
+      "4수01-04",
+      "4수01-05",
+      "4수01-06"
+    ],
+    "note": "교과 기준은 풀이 전략의 맥락 후보이며 문항 최소 학년·연령의 확정값이 아닙니다."
+  },
+  "taxonomy": {
+    "familyCandidates": [
+      {
+        "label": "□ 관계식으로 전체량·기준량 구성",
+        "members": [
+          "□로 미지량 관계식 세우기",
+          "배수 관계와 전체합으로 기준량 복원하기",
+          "같은 미지량이 여러 항에 놓인 식에서 기준량 구하기"
+        ],
+        "status": "hypothesis-needs-teacher-review",
+        "assertsEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "label": "나눗셈으로 몫과 단위량 해석",
+        "members": [
+          "남은 수량을 제외한 뒤 균등 분배 몫 구하기",
+          "하루 단위량을 구해 일정한 속도로 목표량의 기간 환산하기"
+        ],
+        "status": "hypothesis-needs-teacher-review",
+        "assertsEquivalence": false,
+        "assertsPrerequisiteOrder": false
+      }
+    ],
+    "relations": [
+      {
+        "from": "배수 관계와 전체합으로 기준량 복원하기",
+        "to": "같은 미지량이 여러 항에 놓인 식에서 기준량 구하기",
+        "type": "related-but-distinct",
+        "basis": "배수 두 대상의 합과 동일 미지량이 변화식 양쪽에 놓이는 관계는 다르다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "잘못된 연산 결과를 되돌려 원래 수를 복원하고 바른 계산 재적용하기",
+        "to": "끝 상태에서 연산 순서 거꾸로 복원하기",
+        "type": "related-but-distinct",
+        "basis": "오류 복원은 잘못된 연산에서 시작 수를 찾은 뒤 의도된 연산을 다시 적용한다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      },
+      {
+        "from": "남은 수량을 제외한 뒤 균등 분배 몫 구하기",
+        "to": "하루 단위량을 구해 일정한 속도로 목표량의 기간 환산하기",
+        "type": "related-but-distinct",
+        "basis": "둘 다 몫을 계산하지만 하나는 공평 분배, 다른 하나는 단위 기간량을 새 전체량에 적용한다.",
+        "status": "hypothesis-needs-teacher-review",
+        "assertsPrerequisiteOrder": false
+      }
+    ]
+  },
+  "privacy": "원문 문항·답·활동 ID·파일 경로·이미지/파일 해시는 공개하지 않습니다."
+}
