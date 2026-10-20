@@ -243,7 +243,7 @@ function compIdx(t){ const K=[/초등팩토 1|킨더|키즈/,/필즈 베이직/,
 function calcIdx(t){ let r=t.match(/기적의 계산법 (\d+)/); if(r) return +r[1]-1; if(/소마셈/.test(t)) return 1; const i=P.CALC.findIndex(c=>t.includes(c[0].replace('기적의 ',''))); return i<0?null:i; }
 function hwOptions(){
   const g=+$('grade').value, now=P.mOf(g,+$('mon').value), A0=P.mOf(g,3), list=[];
-  for(let m=now+2;m<=A0+45;m++) if(m%12===10||m%12===1) list.push([m,`${P.label(m)}${m%12===1?' (편입)':''}`]);
+  for(let m=now+2;m<=Math.min(A0+45,P.mOf(4,11));m++) if(m%12===10||m%12===1) list.push([m,`${P.label(m)}${m%12===1?' (편입)':''}`]);
   const cur=$('hw').value; opt($('hw'),list,list.some(x=>String(x[0])===cur)?cur:((list.find(x=>x[0]%12===1)||list[0]||[''])[0]));
 }
 function setSeg(k,v){ state[k]=String(v); document.querySelectorAll(`.seg[data-k="${k}"] button`).forEach(b=>b.classList.toggle('on',b.dataset.v===String(v))); }
