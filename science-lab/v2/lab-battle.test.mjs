@@ -10,6 +10,7 @@ import { materialRow } from '../scenes/material-model.js';
 import { breadModel } from '../scenes/bread-model.js';
 import { evapRow } from '../scenes/seawater-model.js';
 import { rulerRow } from '../scenes/ruler-model.js';
+import { moonRow } from '../scenes/moon-model.js';
 
 test('물: 같은 물을 얼려도 무게는 같고, 높이는 달라진다', () => {
   const rounds = LAB_BATTLE_ROUNDS['s41-u02'];
@@ -99,4 +100,11 @@ test('자 튕기기: 길이는 높낮이, 세기는 크기만 바꾼다', () => 
 test('4-1 다양한 생물: 효모빵 배틀은 5-1과 같은 모형으로 판정한다', () => {
   const rounds = LAB_BATTLE_ROUNDS['s41-u04'], rows = (r) => r.targets.map((t) => ({ water: t.water, ...breadModel(t.water) }));
   assert.deepEqual(rounds.map((r) => battleVerdict('s41-u04', r, rows(r), [1, 1]).answers[0]), [2, 0, 1], '따뜻한 물이 더 · 너무 뜨거우면 덜 · 같은 조건은 같음');
+});
+
+test('같은 시각 달 관찰: 날이 지날수록 더 넓게 밝고 더 동쪽에 보인다', () => {
+  const rounds = LAB_BATTLE_ROUNDS['c22-s42-u01'], rows = (r) => r.targets.map((t) => moonRow(t.day));
+  assert.deepEqual(rounds.map((r) => battleVerdict('c22-s42-u01', r, rows(r), [1, 1]).answers[0]), [0, 2, 0], '7일이 더 밝음 · 15일이 더 동쪽 · 15일이 3일보다 동쪽');
+  assert.equal(validBattleRow('c22-s42-u01', { ...moonRow(7), dir: '서쪽' }), false);
+  assert.equal(validBattleRow('c22-s42-u01', moonRow(22)), false, '새벽 관찰은 저녁 배틀과 섞지 않는다');
 });

@@ -1,5 +1,6 @@
+// 2026-10-20: 기본 수업은 사고력 수업(think-lessons.test.mjs)으로 바뀌었다. 이 파일은 선택 기능으로 옮긴 탐구 기록장·기록 교재(records)가 예전대로 동작하는지 본다.
 import test from 'node:test';import assert from 'node:assert/strict';
-import {inquiry} from '../data/activities/c22-s42-u01.inquiry.js';import {lesson} from '../data/units/c22-s42-u01.lesson.js';import {chapter,art,plan} from '../data/book/c22-s42-u01.book.js';import {items} from '../data/units/c22-s42-u01.js';
+import {inquiry} from '../data/activities/c22-s42-u01.inquiry.js';import {recordsLesson as lesson} from '../data/units/c22-s42-u01.records.js';import {chapter,art,plan} from '../data/book/c22-s42-u01.records-book.js';import {items} from '../data/units/c22-s42-u01.js';
 import {emptyInquiry,saveInquiry,validInquiry,inquiryError,inquirySections,inquiryKey,inquiryReportHtml} from './inquiry-records.js';import {buildSlides} from './deck.js';import {renderChapter} from './book.js';import {inquiryPhotosHtml} from './inquiry-cards.js';import {BANK,BOOK_UNITS,READY} from './units-index.js';
 test('밤하늘은 세 성취기준의 실제 여러날 관찰·조사·설계/제작·별자리/소통을 독립 기록한다',()=>{
  assert.deepEqual(inquiry.activities.map(a=>a.id),['surface','moonlog','compare','sun','planets','design','make','north','share']);assert.deepEqual([...new Set(inquiry.activities.map(a=>a.standard))],['4과13-01','4과13-02','4과13-03']);assert.equal(inquiryKey(inquiry),'sciLab.inquiry.c22-s42-u01');assert.equal(lesson.explore.lab.rowsKey,'skyInquiryRows');assert(BOOK_UNITS.has(inquiry.unit));assert(BANK[inquiry.unit].lesson);assert(!READY[inquiry.unit].bankOnly);

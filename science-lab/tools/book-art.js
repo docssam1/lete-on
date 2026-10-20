@@ -14,10 +14,12 @@ import { buildGlitterRoom } from '../scenes/glitter-hands.js';
 import { buildMaterialBench } from '../scenes/material-bars.js';
 import { buildEvapBench } from '../scenes/evap-dishes.js';
 import { buildRulerDesk } from '../scenes/ruler-desk.js';
+import { buildMoonSky, skyPos } from '../scenes/moon-sky.js';
+import { moonModel } from '../scenes/moon-model.js';
 const OIL_R_ = () => 0.34;
 
 const q = new URLSearchParams(location.search), shot = q.get('shot') || 'hero';
-const SIZE = { sea: [1280, 600], glit: [1280, 600], mat: [1280, 600], 'mat-hero': [1800, 820], 'mat-row': [1500, 720], sw: [1280, 600], 'sw-hero': [1800, 820], 'sw-row': [1500, 720], rl: [1280, 600], 'rl-hero': [1800, 820], 'rl-row': [1500, 720], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
+const SIZE = { sea: [1280, 600], glit: [1280, 600], mat: [1280, 600], 'mat-hero': [1800, 820], 'mat-row': [1500, 720], sw: [1280, 600], 'sw-hero': [1800, 820], 'sw-row': [1500, 720], rl: [1280, 600], 'rl-hero': [1800, 820], 'rl-row': [1500, 720], mo: [1280, 600], 'mo-hero': [1800, 820], 'mo-row': [1500, 720], 'sea-hero': [1800, 820], 'glit-hero': [1800, 820], 'sea-row': [1500, 720], 'glit-row': [1500, 720], hero: [1800, 820], sizes: [1800, 760], sun: [1280, 600], 'sun-row': [1500, 720], snow: [1280, 600], 'snow-row': [1500, 720], 'snow-hero': [1800, 820], 'float-row': [1500, 720], 'bread-hero': [1800, 820], 'bread-row': [1500, 720], 'mold-dish': [1500, 720], bread: [1280, 600], 'bubble-hero': [1800, 820], 'bubble-row': [1500, 720], 'bubble-cluster': [1500, 720], bubble: [1280, 600] };
 const [W, H] = SIZE[shot] || SIZE[shot.split('-')[0]] || [1600, 900];
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -206,6 +208,20 @@ if (shot === 'hero' || shot === 'sizes') {
       if (shot === 'glit-wash') CO('악수 전에 B·D·F 손 씻기', kidAt(rig, 'D', 1.1), 760, 520, '비누와 흐르는 물로 30초 이상');
     }
   }
+} else if (shot.startsWith('mo-')) {
+  // 같은 시각 달 관찰(c22-s42-u01): mo-hero · mo-draw(달 없이 방향·기준물) · mo-start(3일 초승달) · mo-row(3·7·15일 같은 크기로 함께)
+  scene.background = new THREE.Color(0x0b1636);
+  camera = new THREE.PerspectiveCamera(24, W / H, 0.1, 200);
+  const hw = 3.45, dist = Math.max(hw / (W / H), 1.5) / Math.tan((12 * Math.PI) / 180); camera.position.set(0, 1.05, dist); camera.lookAt(0, 1.05, 0);
+  const row = shot === 'mo-row', rig = buildMoonSky({ letters: false, markR: row ? 0.27 : 0.13, markGlow: 1 }); scene.add(rig);
+  rig.userData.set(row ? { day: 15, p: 1, shown: true, marks: [3, 7] } : { day: 3, p: 1, shown: shot !== 'mo-draw', marks: [] });
+  const at = (d, dy = 0) => { const [x, y] = skyPos(moonModel(d).fromWest); return [x, y + dy, 0]; }, CO = (t, p, x, y, sub) => callouts.push({ t, p, at: [x, y], sub, light: true });
+  for (const [t, fw] of [['동', 180], ['남', 90], ['서', 0]]) tags3.push([t, [skyPos(fw)[0], -0.22, 0], { size: shot === 'mo-hero' ? 40 : 34, color: '#24305e' }]);
+  if (shot === 'mo-hero') overlay.push(['같은 시각 달 관찰', -3.25, 2.3, { size: 72, color: '#ffffff', bold: true, align: 'left' }], ['며칠 뒤 같은 시각, 달은 어디에 보일까요?', -3.2, 1.98, { size: 38, color: '#f2c94c', bold: true, align: 'left' }]);
+  if (shot === 'mo-draw') CO('건물·나무를 기준물로', [0.15, 0.3, 0], 560, 130, '남쪽을 보면 왼쪽이 동쪽, 오른쪽이 서쪽');
+  if (shot === 'mo-start') { tags3.push(['음력 3일 · 초승달', at(3, 0.45), { size: 32, color: '#24305e' }]); overlay.push(['저녁 7시쯤 · 서쪽 하늘에 가느다란 초승달', -3.25, 2.3, { size: 40, color: '#ffffff', bold: true, align: 'left' }]); }
+  if (row) { for (const d of [3, 7, 15]) tags3.push([`${d}일 ${moonModel(d).name}`, at(d, d === 7 ? -0.45 : 0.45), { size: 32, color: '#24305e' }]);   // 7일은 하늘 꼭대기라 아래에
+    overlay.push(['같은 시각(저녁 7시쯤) · 날이 지날수록 서쪽 → 동쪽, 밝은 부분이 커져요', 0, 2.42, { size: 34, color: '#ffffff', bold: true }]); }
 } else if (shot.startsWith('rl-')) {
   // 책상 끝 자 튕기기(c22-s32-u03): rl-hero · rl-start · rl-pluck(떨리는 중) · rl-15 · rl-row(5 cm와 15 cm 비교)
   scene.background = new THREE.Color(0xf3f5f8); scene.environment = env; scene.environmentIntensity = 0.65;
@@ -413,8 +429,8 @@ for (const c of callouts) {
   const [px, py] = proj3(c.p), [ax, ay] = c.at;
   g.strokeStyle = '#c2581c'; g.lineWidth = 3.5; g.beginPath(); g.moveTo(px, py); g.lineTo(ax - 30, ay); g.lineTo(ax - 10, ay); g.stroke();
   g.fillStyle = '#fff'; g.beginPath(); g.arc(px, py, 9, 0, Math.PI * 2); g.fill(); g.lineWidth = 4; g.stroke();
-  g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = '#1f2a44'; g.font = '800 54px Pretendard'; g.fillText(c.t, ax, ay - (c.sub ? 20 : 0));
-  if (c.sub) { g.fillStyle = '#5b6577'; g.font = '600 38px Pretendard'; g.fillText(c.sub, ax, ay + 34); }
+  g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = c.light ? '#ffffff' : '#1f2a44'; g.font = '800 54px Pretendard'; g.fillText(c.t, ax, ay - (c.sub ? 20 : 0));
+  if (c.sub) { g.fillStyle = c.light ? '#cfd8ef' : '#5b6577'; g.font = '600 38px Pretendard'; g.fillText(c.sub, ax, ay + 34); }
 }
 for (const [t, p, o] of tags3) { const [px, py] = proj3(p); g.font = `800 ${o.size}px Pretendard`; const w = g.measureText(t).width + 26; g.fillStyle = 'rgba(255,255,255,.92)'; g.strokeStyle = o.color; g.lineWidth = 3; g.beginPath(); g.roundRect(px - w / 2, py - o.size * 0.75, w, o.size * 1.5, o.size * 0.75); g.fill(); g.stroke(); g.fillStyle = o.color; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t, px, py + 1); }
 for (const [t, x, y, o] of overlay) { const [px, py] = toPx(x, y); g.font = `${o.bold ? 800 : 500} ${o.size}px Pretendard`; g.fillStyle = o.color; g.textAlign = o.align || 'center'; g.textBaseline = 'middle'; g.fillText(t, px, py); }

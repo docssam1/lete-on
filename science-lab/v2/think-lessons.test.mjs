@@ -11,10 +11,12 @@ import { glitterModel } from '../scenes/glitter-model.js';
 import { materialRow, hardest, bendiest, floaters, seeThrough } from '../scenes/material-model.js';
 import { evapRow, AMOUNTS } from '../scenes/seawater-model.js';
 import { rulerRow } from '../scenes/ruler-model.js';
+import { moonRow } from '../scenes/moon-model.js';
 
 const UNITS = { 'c22-s42-u04': { lab: 'sealevel', scene: 'sea-town', rowsKey: 'climateInquiryRows' }, 'c22-s32-u04': { lab: 'glitter', scene: 'glitter-hands', rowsKey: undefined },
   'c22-s32-u01': { lab: 'material', scene: 'material-bars', rowsKey: undefined }, 'c22-s32-u02': { lab: 'seawater', scene: 'evap-dishes', rowsKey: undefined },
-  'c22-s32-u03': { lab: 'ruler', scene: 'ruler-desk', rowsKey: undefined }, 's41-u04': { lab: 'bread', scene: 'bread-dough', rowsKey: 'biologyInquiryRows' } };
+  'c22-s32-u03': { lab: 'ruler', scene: 'ruler-desk', rowsKey: undefined }, 's41-u04': { lab: 'bread', scene: 'bread-dough', rowsKey: 'biologyInquiryRows' },
+  'c22-s42-u01': { lab: 'moon', scene: 'moon-sky', rowsKey: 'skyInquiryRows' } };
 const load = async (u) => {
   const [book, ix, unit, think, similar, lesson, records] = await Promise.all([import(`../data/book/${u}.book.js`), import(`../data/book/${u}.interact.js`), import(`../data/units/${u}.js`),
     import(`../data/units/${u}.think.js`), import(`../data/units/${u}.similar.js`).catch(() => ({ similar: [] })), import(`../data/units/${u}.lesson.js`), import(`../data/units/${u}.records.js`)]);
@@ -84,4 +86,8 @@ test('3D 모형 수치 = 교재 결과 표', () => {
   assert.ok(AMOUNTS.every((ml) => evapRow(ml).tapG === 0), '수돗물은 거의 남지 않음');
   assert.deepEqual([5, 10, 15].map((l) => rulerRow(l, '세게').rank), [3, 2, 1], '짧을수록 높은 소리');
   assert.equal(rulerRow(10, '세게').rank, rulerRow(10, '약하게').rank, '세기는 높낮이를 바꾸지 않는다');
+  assert.deepEqual([3, 7, 15].map((d) => moonRow(d).dir), ['서쪽', '남쪽', '동쪽'], '같은 시각(저녁)의 달은 서쪽 → 동쪽');
+  assert.deepEqual([3, 7, 15, 22, 26].map((d) => moonRow(d).name), ['초승달', '상현달', '보름달', '하현달', '그믐달']);
+  assert.ok([3, 7, 15].map((d) => moonRow(d).lit).every((v, i, a) => !i || v > a[i - 1]), '보름까지 밝은 부분이 커진다');
+  assert.deepEqual([22, 26].map((d) => moonRow(d).time), ['새벽 6시쯤', '새벽 6시쯤'], '하현·그믐은 새벽 관찰');
 });
