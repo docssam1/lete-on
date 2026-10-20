@@ -29,7 +29,7 @@ function topbar(backHref) {
   return `<header class="topbar"><div class="wrap">
     <a class="brand" href="#/"><span class="mark">⚗</span>지필드 과학 탐구 랩<small>Science Inquiry Lab</small></a>
     <span class="spacer"></span>
-    ${backHref ? `<a class="back" href="${backHref}">← 전체 순서</a>` : ''}
+    ${backHref ? `<a class="back" href="${backHref}">← 서류철 묶음</a>` : ''}
     <span class="progress-pill">완료 ${done}/${UNITS.length}</span>
   </div></header>`;
 }
@@ -40,23 +40,45 @@ function footer() {
   </div></footer>`;
 }
 
+// 홈 = 서류철 묶음(2026-10-19 원장: "이 사이트를 서류철처럼"). 실험 한 건 = 서류철 한 권.
+// 색인 탭(PART A·B·C)으로 찾고, 꼬리표 달린 서류철을 열어 실험 자료를 펼친다. 진도(sciLab.v1)는 도장으로 보인다.
+function folderCard(u, p) {
+  const s = store.unit(u.id), quiz = s.quizBest != null ? `확인 ${s.quizBest}/3` : '확인 전';
+  return `<a class="folder" href="#/u/${u.id}" style="--tab:${p.color}">
+    <span class="folder-tab">${p.id}-${u.no}</span>
+    <span class="folder-body">
+      <span class="folder-sheet" aria-hidden="true"></span>
+      <h3>${esc(u.title)}</h3><p>${esc(u.sub)}</p>
+      <span class="folder-exp"><b>실험</b>${esc(u.activity.title)}</span>
+      <span class="stamps"><span class="stamp ${s.videoDone ? 'on' : ''}">${s.videoDone ? '3D 실험 봄' : '3D 실험 전'}</span><span class="stamp ${s.quizBest >= 2 ? 'gold' : s.quizBest != null ? 'on' : ''}">${quiz}</span></span>
+    </span>
+  </a>`;
+}
 function renderHome() {
-  const cards = (p) => UNITS.filter((u) => u.part === p.id).map((u) => {
-    const s = store.unit(u.id);
-    return `<a class="card" href="#/u/${u.id}">
-      <span class="no">${p.id}-${u.no}</span><h3>${esc(u.title)}</h3><p>${esc(u.sub)}</p>
-      <span class="badges"><span class="badge ${s.videoDone ? 'on' : ''}">🎬 3D ${s.videoDone ? '봤어요' : ''}</span><span class="badge ${s.quizBest >= 2 ? 'gold' : ''}">✎ 확인 ${s.quizBest != null ? s.quizBest + '/3' : ''}</span></span>
-    </a>`;
-  }).join('');
+  const done = UNITS.filter((u) => store.unit(u.id).quizBest >= 2).length;
+  const last = UNITS.map((u) => [u, store.unit(u.id).updatedAt || 0]).filter(([, t]) => t).sort((a, b) => b[1] - a[1])[0]?.[0];
   $app.innerHTML = `${topbar()}
-  <main class="wrap">
-    <section class="hero">
-      <h1>개념으로 이해하고, 3D로 실험을 봅니다</h1>
-      <p>초등 과학탐구토론 지도자료의 차례 그대로 열다섯 단원. 단원마다 핵심 개념 → 3D 애니메이션 실험 → 탐구 활동 설계 → 토론 질문 → 확인 문제 순서로 갑니다.</p>
+  <main class="wrap binder">
+    <section class="cover">
+      <div class="cover-label">
+        <small>GFIELD · 지필드 과학 탐구 랩</small>
+        <h1>실험으로 배우는 과학 서류철</h1>
+        <p>실험 한 건이 서류철 한 권이에요. 꼬리표를 보고 서류철을 열면 <b>개념 → 3D 실험 → 탐구 활동 → 토론 → 확인</b> 순서로 자료가 들어 있어요.</p>
+      </div>
+      <div class="cover-meta">
+        <span class="cover-count"><b>${UNITS.length}</b>권</span><span class="cover-count"><b>${done}</b>권 확인 완료</span>
+        ${last ? `<a class="cover-resume" href="#/u/${last.id}">이어서 보기 <b>${esc(last.title)}</b></a>` : ''}
+      </div>
       <p class="src">출처: 서울특별시과학전시관, 『2009 초등학교 과학탐구토론 지도자료』 (1부 탐구 과정·활동, 3부 탐구 주제)</p>
     </section>
-    ${PARTS.map((p) => `<section class="part"><div class="part-head"><span class="tag" style="background:${p.color}">PART ${p.id}</span><div><h2>${esc(p.title)}</h2><p>${esc(p.sub)}</p></div></div><div class="grid">${cards(p)}</div></section>`).join('')}
+    <nav class="index-tabs" aria-label="서류철 차례">${PARTS.map((p) => `<button type="button" data-part="${p.id}" style="--tab:${p.color}"><b>PART ${p.id}</b><span>${esc(p.title)}</span><small>${UNITS.filter((u) => u.part === p.id).length}권</small></button>`).join('')}</nav>
+    ${PARTS.map((p) => `<section class="drawer" id="part-${p.id}" style="--tab:${p.color}">
+      <header class="divider"><span class="divider-tab">PART ${p.id}</span><div><h2>${esc(p.title)}</h2><p>${esc(p.sub)}</p></div></header>
+      <div class="folders">${UNITS.filter((u) => u.part === p.id).map((u) => folderCard(u, p)).join('')}</div>
+    </section>`).join('')}
   </main>${footer()}`;
+  // 색인 탭: 해시 라우터를 건드리지 않고 그 칸으로 스크롤한다
+  $app.querySelectorAll('.index-tabs button').forEach((b) => b.addEventListener('click', () => document.getElementById(`part-${b.dataset.part}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })));
 }
 
 function renderUnit(u) {
@@ -64,20 +86,21 @@ function renderUnit(u) {
   const idx = UNITS.indexOf(u), prev = UNITS[idx - 1], next = UNITS[idx + 1];
   const s = store.unit(u.id);
   $app.innerHTML = `${topbar('#/')}
-  <main>
-    <div class="wrap unit-head">
+  <main class="opened" style="--tab:${part.color}">
+    <div class="wrap unit-head folder-label">
+      <span class="label-tab">${part.id}-${u.no}</span>
       <div class="crumb"><span class="tag" style="background:${part.color};color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700">PART ${part.id}</span><span>${esc(part.title)} · ${u.no}/${UNITS.filter((x) => x.part === u.part).length}</span><span>·</span><span>지도자료 ${esc(u.source)}</span></div>
       <h1>${esc(u.title)}</h1><p class="sub">${esc(u.sub)}</p>
       ${u.note ? `<div class="note">${esc(u.note)}</div>` : ''}
     </div>
-    <nav class="tabs"><div class="wrap">
+    <nav class="tabs" aria-label="서류철 안의 자료"><div class="wrap">
       <a href="#/u/${u.id}" data-to="concept" class="on">① 개념</a><a href="#/u/${u.id}" data-to="video">② 3D 실험</a><a href="#/u/${u.id}" data-to="activity">③ 탐구 활동</a><a href="#/u/${u.id}" data-to="discuss">④ 토론</a><a href="#/u/${u.id}" data-to="quiz">⑤ 확인</a>
     </div></nav>
-    <section class="wrap section" id="concept"><h2><span class="step">STEP 1</span>개념</h2><p class="lead">${esc(u.concept.lead)}</p>
+    <section class="wrap section sheet" id="concept"><h2><span class="step">STEP 1</span>개념</h2><p class="lead">${esc(u.concept.lead)}</p>
       <div class="points">${u.concept.points.map(([b, t]) => `<div class="point"><b>${esc(b)}</b><span>${esc(t)}</span></div>`).join('')}</div>
       <div class="terms">${u.concept.terms.map(([t, d]) => `<span class="term"><b>${esc(t)}</b>${esc(d)}</span>`).join('')}</div>
     </section>
-    <section class="wrap section" id="video"><h2><span class="step">STEP 2</span>3D 실험 보기</h2><p class="lead">재생을 누르면 실험이 한 단계씩 그려집니다. 화면을 끌면 돌려 볼 수 있고, 자막을 누르면 그 장면으로 갑니다.</p>
+    <section class="wrap section sheet" id="video"><h2><span class="step">STEP 2</span>3D 실험 보기</h2><p class="lead">재생을 누르면 실험이 한 단계씩 그려집니다. 화면을 끌면 돌려 볼 수 있고, 자막을 누르면 그 장면으로 갑니다.</p>
       <div class="stage">
         <canvas id="stage" aria-label="3D 실험 장면"></canvas>
         <div class="caption" id="caption"><span class="idx">장면 1</span>불러오는 중…</div>
@@ -95,7 +118,7 @@ function renderUnit(u) {
       <div class="transcript" id="transcript"></div>
       <p class="hint">자막이 원본입니다. 음성은 기기의 읽어 주기 기능이라 브라우저마다 목소리가 다를 수 있고, 꺼 두어도 학습에 지장이 없습니다.</p>
     </section>
-    <section class="wrap section" id="activity"><h2><span class="step">STEP 3</span>탐구 활동 — ${esc(u.activity.title)}</h2>
+    <section class="wrap section sheet" id="activity"><h2><span class="step">STEP 3</span>탐구 활동 — ${esc(u.activity.title)}</h2>
       <div class="activity">
         <div class="box"><h3>절차</h3><ol>${u.activity.steps.map((t) => `<li>${esc(t)}</li>`).join('')}</ol></div>
         <div>
@@ -108,16 +131,16 @@ function renderUnit(u) {
         </div>
       </div>
     </section>
-    <section class="wrap section" id="discuss"><h2><span class="step">STEP 4</span>토론 · 반론</h2><p class="lead">먼저 스스로 답을 말해 본 뒤 힌트를 엽니다. 반론은 "근거가 무엇입니까?", "그 실험만으로 알 수 있습니까?"에서 시작합니다.</p>
+    <section class="wrap section sheet" id="discuss"><h2><span class="step">STEP 4</span>토론 · 반론</h2><p class="lead">먼저 스스로 답을 말해 본 뒤 힌트를 엽니다. 반론은 "근거가 무엇입니까?", "그 실험만으로 알 수 있습니까?"에서 시작합니다.</p>
       <div class="discuss">${u.discuss.map((d) => `<details><summary>${esc(d.q)}</summary><p>${esc(d.hint)}</p></details>`).join('')}</div>
     </section>
-    <section class="wrap section" id="quiz"><h2><span class="step">STEP 5</span>확인 문제</h2><p class="lead">세 문제. 고르면 바로 풀이가 보입니다.${s.quizBest != null ? ` 최고 기록 ${s.quizBest}/3.` : ''}</p>
+    <section class="wrap section sheet" id="quiz"><h2><span class="step">STEP 5</span>확인 문제</h2><p class="lead">세 문제. 고르면 바로 풀이가 보입니다.${s.quizBest != null ? ` 최고 기록 ${s.quizBest}/3.` : ''}</p>
       <div class="quiz" id="quiz">${u.quiz.map((q, qi) => `<div class="q" data-q="${qi}"><p class="stem">${qi + 1}. ${esc(q.q)}</p><div class="choices">${q.c.map((c, ci) => `<button data-c="${ci}"><span class="l">${LETTERS[ci]}</span><span>${esc(c)}</span></button>`).join('')}</div><p class="why" hidden></p></div>`).join('')}</div>
       <p class="score" id="score"></p>
     </section>
     <div class="wrap unit-nav">
-      ${prev ? `<a href="#/u/${prev.id}"><b>← 이전</b>${esc(prev.title)}</a>` : '<span></span>'}
-      ${next ? `<a class="next" href="#/u/${next.id}"><b>다음 →</b>${esc(next.title)}</a>` : `<a class="next" href="#/"><b>처음으로</b>전체 순서</a>`}
+      ${prev ? `<a href="#/u/${prev.id}"><b>← 이전 서류철</b>${esc(prev.title)}</a>` : '<span></span>'}
+      ${next ? `<a class="next" href="#/u/${next.id}"><b>다음 서류철 →</b>${esc(next.title)}</a>` : `<a class="next" href="#/"><b>서류철 묶음으로</b>전체 차례</a>`}
     </div>
   </main>${footer()}`;
 
