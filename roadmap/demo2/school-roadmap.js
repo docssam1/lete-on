@@ -252,7 +252,7 @@ const L_SHIFT=Object.fromEntries(GRID.map(g=>[g.id,g.shift]));
 // 레벨별 공부 강도(원장님 2026-10-19). 비어 있는 레벨은 원장님 기준을 받으면 채운다.
 const L_LOAD={L0:'학원 주 4~5일 · 시험 대비 중심',L1:'학원 주 4~5일 · 시험 대비 중심',L6:'사고력 꼼꼼히 + 모의고사 · 황소 미고려도 많음'};
 const AX0=4, AX1=83; // 5세 5월 ~ 초4 12월
-const ROW_COLORS={school:'#dbeafe',school2:'#e0f2fe',comp:'#ede9fe',comp2:'#fce7f3',calc:'#dcfce7',hwangso:'#fde68a',sci:'#ecfccb'};
+const ROW_COLORS={school:'#dbeafe',school2:'#e0f2fe',comp:'#ede9fe',comp2:'#fce7f3',calc:'#dcfce7',hwangso:'#fde68a',sci:'#ecfccb',gifted:'#fce7f3'};
 
 function demoPrefix(key, stopText){
   const out=[];
@@ -416,7 +416,36 @@ function axisYears(){
   for(let m=AX0;m<=AX1;m++){ const y=schoolYear(m); if(!out.length||out[out.length-1].y!==y) out.push({y,m0:m,name:names[y],n:0}); out[out.length-1].n++; }
   return out;
 }
-function renderLevels(nowM, bestId, only){
+/* 예시 로드맵(원장님 2026-10-20): 초2 9월 5-1 응용부터 2개월 단위, 10월부터 최상위 S 병행,
+   초3 5월 대수 정리 → 초3 9월 중등. 사고력은 초2 10월 1031 초급 → 초3 5월 3% 1과정(황소 대비 겸) → 초3 11월 황소.
+   영재원 코스도 함께. 초2 8월까지는 L9(초2 3월 4-1)와 같다. */
+function conceptRows(){
+  const base=levelRows(L_SHIFT.L9), R=k=>(base.find(r=>r.key===k)||{blocks:[]}).blocks;
+  const upTo=(arr,cut)=>arr.filter(b=>b[1]<cut).map(([t,a,e])=>[t,a,Math.min(e,cut-1)]);
+  const sem=['5-1','5-2','6-1','6-2'], mid=68;
+  const school=upTo(R('school'),56).concat(sem.map((x,i)=>[x+' 디딤돌 응용',56+2*i,57+2*i]),[['초등 대수 정리',64,67]],
+    seqFrom(mid, MID_SEMS.map(x=>[x+' 원리해설',4])));
+  const school2=upTo(R('school2'),57).concat(sem.map((x,i)=>[x+' 최상위 S',57+2*i,58+2*i]),
+    seqFrom(mid, MID_SEMS.map(x=>[x+' 중등 심화(A급)',4])));
+  const early=R('comp').filter(b=>!/1031 (초급|중급)|3%|왕수학/.test(plain(b[0])));
+  const ip=early.findIndex(b=>/1031 입문/.test(plain(b[0])));
+  const comp=upTo(early.slice(0,ip),early[ip][1]).concat([['1031 입문 + workbook',early[ip][1],53],['TOT 2단계',54,56],['1031 초급',57,63],
+    ['3% 1과정<br><small>(황소 대비 겸)</small>',64,67],['1031 중급',71,77]]);
+  const calc=upTo(R('calc'),56).concat(sem.map((x,i)=>[`기적의 계산법 ${9+i}`,56+2*i,57+2*i]),[['초등연산 보충',64,67]],seqFrom(mid, MID_CALC));
+  const hw=[['황소 모의고사',68,69],['황소 시험',70,70],['황소 입학<br><small>(합격 시)</small>',71,71]];
+  const gifted=[['영재원 대비<br><small>(사고력 서술·과학 탐구)</small>',62,65],['교대 영재원 선발',66,67],['대학 부설·교육청 영재원 선발',68,69],['영재원 수업<br><small>(합격 시)</small>',74,83]];
+  return [
+    {key:'school',label:'교과',blocks:school},
+    {key:'school2',label:'교과 심화',blocks:school2},
+    {key:'comp',label:'사고력·경시',blocks:comp},
+    {key:'hwangso',label:'황소',blocks:hw},
+    {key:'calc',label:'연산',blocks:calc},
+    {key:'sci',label:'과학',blocks:sciPlan(mid,comp)},
+    {key:'gifted',label:'영재원 코스',blocks:gifted}
+  ];
+}
+const CONCEPT={id:'예시',cls:'l2',summary:'초2 9월 5-1부터<br>2개월 단위 → 초3 9월 중등',rows:null};
+function renderLevels(nowM, bestId, only, custom){
   const n=AX1-AX0+1, years=axisYears();
   let h='<table class="sr-table lv-table"><colgroup><col class="sr-g"><col class="sr-l">';
   for(let i=0;i<n;i++) h+='<col class="sr-m">';
@@ -441,9 +470,9 @@ function renderLevels(nowM, bestId, only){
   for(let m=AX0;m<=AX1;){ const g=GIFTED.find(x=>x[0]===m); if(g){ h+=`<td class="sr-cell sr-gifted" colspan="${g[1]-g[0]+1}">${g[2]}</td>`; m=g[1]+1; } else { h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`; m++; } }
   h+='</tr>';
   h+=`<tr class="sr-gap"><td colspan="${n+2}"></td></tr>`;
-  const levels=GRID.filter(L=>!only||only.includes(L.id));
+  const levels=custom||GRID.filter(L=>!only||only.includes(L.id));
   levels.forEach((L,li)=>{
-    const rows=levelRows(L_SHIFT[L.id]||0), best=L.id===bestId;
+    const rows=L.rows||levelRows(L_SHIFT[L.id]||0), best=L.id===bestId;
     rows.forEach((r,ri)=>{
       h+=`<tr class="${best?'lv-best':''}">`;
       if(ri===0) h+=`<th class="sr-group lv-name ${L.cls}" rowspan="${rows.length}">${L.id}<small>${L.summary}</small>${L_LOAD[L.id]?`<small class="lv-load">${L_LOAD[L.id]}</small>`:''}${best?'<em>우리 아이</em>':''}</th>`;
@@ -454,7 +483,7 @@ function renderLevels(nowM, bestId, only){
         if(s<m) continue; // 겹치면 앞 칸 우선
         for(;m<s;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
         const swap=false;
-        h+=`<td class="sr-cell${swap?' sr-swap':''}" colspan="${e-s+1}" style="background:${ROW_COLORS[r.key]}">${t}</td>`;
+        h+=`<td class="sr-cell${swap?' sr-swap':''}" colspan="${e-s+1}" style="background:${(ROW_COLORS[r.key]||'#f1f5f9')}">${t}</td>`;
         m=e+1;
       }
       for(;m<=AX1;m++) h+=`<td class="sr-empty${m===nowM?' lv-now':''}"></td>`;
@@ -498,6 +527,8 @@ function showLevels(nowM,bestId,child){
   lastArgs=[nowM,bestId,child];
   const box=document.getElementById('lvTable');
   if(box) box.innerHTML=renderLevels(nowM,bestId);
+  const cbox=document.getElementById('lvConcept');
+  if(cbox){ CONCEPT.rows=conceptRows(); cbox.innerHTML=renderLevels(nowM,null,null,[CONCEPT]); }
   const levels=GRID, bi=levels.findIndex(L=>L.id===bestId);
   const cmp=document.getElementById('lvCompare');
   if(!cmp||bi<0) return;
