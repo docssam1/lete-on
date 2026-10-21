@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018o`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018o/20261018p/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018p`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018p/20261018q/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -385,7 +385,24 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 64·65쪽 보류 삭제. DB `book-07` 506키 그대로(옛 단원 3 키를 같은 수로 교체), sha 앞 8자리 `4cb24452`. 캐시 꼬리표 `20261018n`.
 - **7권 끝(2026-10-20)**: 66쪽 전부 대조. 17단원 · 공개 318문항 · 답 칸 392. 남은 보류는 **52쪽 01 (1) 한 자리 대칭수 1건**(답 칸 1)과 표지 4쪽(1·8·34·51쪽, 문항 없음)뿐. 52쪽은 원장이 「한 자리 수도 대칭수로 볼지」 정해 주면 풀 수 있다.
 - **7권 보충 문항 겹침 정리(2026-10-20)**: `golden-bell-recovery-data.js`의 7권 보충 4문항(22쪽 확인 04 (1)~(3), 38쪽 확인 03)이 묶음 2·3에서 원본 문항으로 이미 들어가 있어 **화면에 두 번** 나왔다(4권 31-(3)과 같은 실수). 보충 데이터에서 7권 묶음을 지웠다(남은 것은 8권 3·4쪽 8문항). `golden-bell-recovery.js`의 보충 데이터 import 꼬리표도 올렸다(`20261020a` — 이 파일은 캐시 꼬리표 5파일과 따로 논다). DB의 옛 `/recovery/…/book-07/…` 키는 4권 때처럼 쓰이지 않은 채 남겨 둔다. `golden-bell-book07-recovery-audit.mjs`·`golden-bell-book08-recovery-audit.mjs`는 저장소 밖 정규화 파일을 받아 들여올 때만 쓰는 일회성 검사기라 평소에는 안 돈다. 캐시 꼬리표 `20261018o`.
-  **새 권을 다시 짤 때는 먼저 `golden-bell-recovery-data.js`에 그 권 묶음이 있는지 본다.** 8권은 3·4쪽이 걸려 있다.
+  **새 권을 다시 짤 때는 먼저 `golden-bell-recovery-data.js`에 그 권 묶음이 있는지 본다.** (8권 3·4쪽은 묶음 1에서 정리해 이제 보충 데이터는 비어 있다.)
+
+#### 8권 (교사용 슬라이드 39쪽, 2026-10-20 착수)
+- **원본**: Drive `더클래식_1과정_8N30권_골든벨_230227(E2용) (2).pptx`(교사용, 39장)와 **`더클래식_1과정_8N30권_골든벨_필기삭제.pptx`(답 없는 문제지)**. 8권은 필기삭제본이 따로 있어 `clean-teacher-pptx.py`가 필요 없다(두 판을 나란히 그려 대조). 글자는 `pptx-text.py 필기삭제.pptx`로 그대로 뽑힌다. 받은 파일·쪽 그림은 저장소 밖에만.
+  같은 폴더의 `수업용_…_매트릭스와_복면산.pdf`는 **본교재**(`BOOK08-SOURCE-AUDIT.md`의 164문항)라 골든벨 대조 대상이 아니다.
+- **구성**: 표지 1·12·20·30쪽. 활동 덩이 = 묶음 계획: 1) 2~6 덧셈 매트릭스·묶음수 ✅ · 2) 7~11 도형이 나타내는 수·곱셈 매트릭스 · 3) 13~19 피라미드 복면산·복면산 · 4) 21~29 연산 체크·주고받기·합차·배수 · 5) 31~39 거꾸로 풀기·가진 만큼 주기·분수 그림.
+- **옛 8권 데이터의 특징**: 문항마다 `sourceCheck.model`(DB에도 `…/sourceCheck/model` 키)이 붙어 있지만 골든벨 화면은 읽지 않는다 — 단원을 다시 짤 때 함께 교체한다. 장부는 묶음 1에서 7권과 같은 쪽 장부(`pageLedger`, 표지는 `title:true`)로 바꿨다. 아직 대조하지 않은 쪽의 옛 보류(`S8-S9` 같은 범위)는 첫 쪽에 답 칸 수를, 나머지 쪽에는 기록 1건만 적었다.
+- **그림은 5권 그림 도구**(`kind:"book5"`). 원본 기호 ○□△☆◇◎는 `book05-renderers.js` `SOURCE_SYMBOL`로 모양 색표에 잇는다(◎ 겹동그라미 = 하늘 `#1aa3c9` · 바탕 `#dff3ff`, 색표 예외 색). 인쇄 규칙 선택자 목록에 `book-08`을 더했다.
+- **8권 묶음 1(슬라이드 2~6 덧셈 매트릭스·묶음수, 21문항·답 칸 23, 2026-10-21)**: 패치 `tools/golden-bell-book08/patch-book08-batch1.mjs`(정답 없음, 인자 2개: 데이터·보충 데이터 경로).
+  - 단원 0 `addition-sum-matrix`를 2·3·5·6쪽 16문항으로 다시 짰다(DB `/lessons/0/original/` 교체). 새 단원 7 `bundle-number-source`(4쪽 묶음수 연습 4 + 5쪽 저울 (5) ①~③)는 **화면에서 단원 0 바로 뒤**에 넣었다 — answerRef 번호는 7이고 화면 자리는 1이다.
+  - **보충 문항 겹침**: 3쪽 4문항과 4쪽 4문항이 `golden-bell-recovery-data.js`에 보충 문항으로 이미 있었다 → 8권 묶음을 지웠다(남은 보충 묶음 없음). DB의 옛 `/recovery/…/book-08/…`·`/faithful/…` 키는 쓰이지 않은 채 남겨 둔다.
+  - **옛 개념 설명이 원본 (1)번을 그대로 풀어 그 답까지 보여 주고 있었다**(`visualProgression`). 원본에 없는 새 예시로 바꾸고, 장면마다 그림을 직접 단다(`beats[].visual`). 옛 유사문제는 표 옆에 도형값을 적어 둔 덧셈표라 새 매트릭스로 바꿨다(DB 답 교체).
+  - 새 그림: `source-sum-grid`(칸마다 도형, 오른쪽 가로 합·아래 세로 합, `null` = 빈 칸 물음, `""` = 원본에도 합이 없는 자리) · `source-kitchen-scales`(주방 저울, ○ 빨간 공 · □ 파란 상자, 위에서부터 쌓인 줄). 4쪽 도형식은 기존 `source-shape-equations`.
+  - 5·6쪽 물음의 「표시된 묶음」은 선생님이 수업 중 그리는 표시라 문제지에 없다 → 「같은 도형의 묶음을 찾아」로(`sourceDiscrepancy`). 4쪽 아래 「모두 더한 합을 이용한 방법도 설명해 주세요」 상자는 교사용 안내라 문항으로 넣지 않고 단원 7 개념 설명 4단계에 옮겼다.
+  - **원본을 바로잡은 곳 1곳**: 6쪽 (8) 첫째 가로줄 합에 숫자 하나가 빠져 있다(나머지 일곱 줄로 도형값이 하나로 정해지고 이 줄만 맞지 않음, 0~40 전수로 확인) → 그 값으로 고침(`sourceDiscrepancy` + DB `sourceNote`). 빈 칸은 이 줄과 관계없고 교사용 답과 같다. 교사용 답이 틀린 곳은 없다.
+  - 검산기는 매트릭스·도형식·저울을 정확한 분수 연립방정식으로 풀어 해가 하나뿐인지(rank)·모든 줄이 맞는지·0 이상 정수인지 본다. **검산기가 새 단원 키를 화면 자리(1)로 만들었다가 넣기 전에 잡았다** → 키는 언제나 공개 데이터의 `answerRef`에서 읽고, 공개 answerRef 집합과 정확히 같은지 검사한다.
+  - 3·4·5·6쪽 보류 삭제(8권 보류 10 → 7). DB `book-08` 109키 → 127키, sha 앞 8자리 `a79e346d`. 캐시 꼬리표 `20261018p`(보충 데이터 import `20261021a`).
+  - `golden-bell-guided-experience-audit.mjs`는 9권 개념 설명 7건으로 실패한다 — 이번 변경 전에도 똑같다(9권 대조 때 볼 것).
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

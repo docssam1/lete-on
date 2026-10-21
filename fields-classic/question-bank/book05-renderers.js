@@ -602,7 +602,8 @@ const SHAPE_GLYPH = {
   diamond: ["마름모", "#8e5bd8", "#ece0fb", '<polygon points="17,2 32,17 17,32 2,17"/>'],
   star: ["별", "#f0b23a", "#fff3c4", '<polygon points="17,2 21,13 32,13 23,20 26,31 17,24 8,31 11,20 2,13 13,13"/>'],
   heart: ["하트", "#e0559a", "#fde0ee", '<path d="M17 31C3 21 2 12 7 7c4-4 9-2 10 3 1-5 6-7 10-3 5 5 4 14-10 24z"/>'],
-  pentagon: ["오각형", "#f39a1e", "#ffe9cc", '<polygon points="17,2 32,13 26,31 8,31 2,13"/>']
+  pentagon: ["오각형", "#f39a1e", "#ffe9cc", '<polygon points="17,2 32,13 26,31 8,31 2,13"/>'],
+  dcircle: ["겹동그라미", "#1aa3c9", "#dff3ff", '<circle cx="17" cy="17" r="14"/><circle cx="17" cy="17" r="7" fill="none"/>']
 };
 const shapeGlyph = (kind, value) => {
   const [name, line, fill, body] = SHAPE_GLYPH[kind];
@@ -876,6 +877,40 @@ function sourceVenn(visual) {
   if (u) body += `<rect class="uni" x="12" y="26" width="276" height="${H - 34}" rx="2"/>${tag(70, 26, "전체", 80)}${tag(150, H - 10, "둘 다 싫음", 112)}`;
   body += `<circle cx="118" cy="${cy}" r="56"/><circle cx="182" cy="${cy}" r="56"/>${tag(106, cy - 58, visual.labels[0])}${tag(196, cy - 58, visual.labels[1])}`;
   return `<div class="b5-src-venn" role="img" aria-label="${escapeHtml(`${visual.labels.join("와 ")}의 벤 다이어그램${u ? ", 전체와 둘 다 싫음 칸" : ""}`)}"><svg viewBox="0 0 300 ${H + 6}" style="width:min(100%,380px)">${body}</svg></div>`;
+}
+
+// 8권: 원본 기호(○□△☆◇◎)를 모양 색표 이름으로.
+const SOURCE_SYMBOL = { "○": "circle", "□": "square", "△": "triangle", "☆": "star", "◇": "diamond", "◎": "dcircle" };
+const symbolGlyph = (s) => (SOURCE_SYMBOL[s] ? shapeGlyph(SOURCE_SYMBOL[s]) : `<span class="t">${escapeHtml(s)}</span>`);
+
+// 8권 2~6쪽 덧셈 매트릭스: 칸마다 도형, 오른쪽에 가로 합, 아래에 세로 합. 합이 null인 자리는 빈 상자(물음).
+function sourceSumGrid(visual) {
+  const cols = visual.cells[0].length;
+  const total = (v) => (v == null ? `<b class="blank"></b>` : `<b>${escapeHtml(v)}</b>`);
+  const rows = visual.cells.map((row, r) => `${row.map((s) => `<span class="cell">${symbolGlyph(s)}</span>`).join("")}${total(visual.rows[r])}`).join("");
+  const bottom = `${visual.cols.map(total).join("")}<i></i>`;
+  const word = (s) => SHAPE_GLYPH[SOURCE_SYMBOL[s]]?.[0] ?? s;
+  const label = `${visual.cells.length}줄 ${cols}칸 덧셈 매트릭스. ${visual.cells.map((row, r) => `${r + 1}번째 가로줄 ${row.map(word).join(" ")}, 합 ${visual.rows[r] ?? "빈칸"}`).join(". ")}. 세로줄 합 ${visual.cols.map((v) => v ?? "빈칸").join(", ")}`;
+  return `<div class="b5-src-sumgrid" role="img" aria-label="${escapeHtml(label)}"><div class="grid" style="--cols:${cols}">${rows}${bottom}</div></div>`;
+}
+
+// 8권 4~5쪽 주방 저울: rows는 위에서부터 쌓인 줄, ○는 빨간 공 · □는 파란 상자. ask는 「□ = ?」 줄(numbered면 ①②③).
+function sourceKitchenScales(visual) {
+  const S = 22;
+  const scale = ({ rows, weight }) => {
+    const h = rows.length * S;
+    const items = rows.map((row, r) => row.map((s, k) => {
+      const x = 60 + (k - (row.length - 1) / 2) * S, y = 8 + r * S;
+      return s === "○" ? `<circle class="ball" cx="${x}" cy="${y + S / 2}" r="${S / 2 - 1}"/>` : `<rect class="cube" x="${x - S / 2 + 1}" y="${y + 1}" width="${S - 2}" height="${S - 2}" rx="2"/>`;
+    }).join("")).join("");
+    const top = 8 + h;
+    return `<svg viewBox="0 0 120 ${top + 70}" style="width:120px">${items}<path class="pan" d="M16 ${top}h88l-6 6H22z"/><line class="stem" x1="60" y1="${top + 6}" x2="60" y2="${top + 14}"/><rect class="body" x="30" y="${top + 14}" width="60" height="44" rx="6"/><rect class="screen" x="37" y="${top + 22}" width="46" height="26" rx="3"/><text x="60" y="${top + 41}">${escapeHtml(weight)}</text></svg>`;
+  };
+  const askTokens = (a) => (Array.isArray(a) ? a : [a]);
+  const ask = (visual.ask || []).map((a, k) => `<span class="pair">${visual.numbered ? `<b class="no">${STAGE_MARKS[k]}</b>` : ""}${askTokens(a).map((t) => (SOURCE_SYMBOL[t] ? symbolGlyph(t) : `<span class="t op">${escapeHtml(t)}</span>`)).join("")}<span class="t op">=</span><span class="t">?</span></span>`).join("");
+  const word = (s) => (s === "○" ? "공" : s === "□" ? "상자" : s);
+  const label = `${visual.scales.map(({ rows, weight }, k) => `저울 ${k + 1}: ${rows.flat().map(word).join(", ")}, ${weight}`).join(". ")}${(visual.ask || []).length ? `. 물음: ${visual.ask.map((a) => `${askTokens(a).map((t) => SHAPE_GLYPH[SOURCE_SYMBOL[t]]?.[0] ?? t).join(" ")} = ?`).join(", ")}` : ""}`;
+  return `<div class="b5-src-kscales" role="img" aria-label="${escapeHtml(label)}"><div class="scales">${visual.scales.map(scale).join("")}</div>${ask ? `<p class="ask">${ask}</p>` : ""}</div>`;
 }
 
 // 7권: 단계 그림 여러 개를 한 줄로(휴대폰에서는 줄바꿈). figs = [{w, h, body}], marks면 위에 ①②③… 번호.
@@ -1290,6 +1325,8 @@ export function book05Markup(visual) {
     case "source-swap-sub": return sourceSwapSub(visual);
     case "source-distance-arcs": return sourceDistanceArcs(visual);
     case "source-venn": return sourceVenn(visual);
+    case "source-sum-grid": return sourceSumGrid(visual);
+    case "source-kitchen-scales": return sourceKitchenScales(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);
