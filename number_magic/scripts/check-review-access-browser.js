@@ -15,6 +15,7 @@ try{
   await c.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1')){localStorage.setItem('nm_state_v1',JSON.stringify(s));localStorage.setItem('nm_state_slot1','keep-real-slot');localStorage.setItem('nm_active_slot','2');localStorage.setItem('nm_guardian_session_v1','keep-real-guardian-session');}},original);
   await p.goto(base+'/number_magic/about.html');await p.locator('.skipbtn').click();await p.waitForURL('**/access.html');assert.equal(await p.locator('#guardian-link').count(),1);
   await p.locator('.access-lang[data-lang="'+lang+'"]').click();
+  assert.equal(await p.locator('#login-user').isVisible(),false);await p.click('#open-book');await p.waitForSelector('#login-user');
   assert.equal(await p.locator('[role="tab"],#review-form,#review-submit').count(),0,'one common login form, no master selector');
   assert.equal(await p.locator('form').count(),1);
   for(const id of ['login-user','login-password','login-submit']){const box=await p.locator('#'+id).boundingBox();assert(box.width>=44&&box.height>=44,id+' touch size');}
@@ -45,7 +46,7 @@ try{
  await c.route('**/auth/v1/token?grant_type=password',r=>{const d=r.request().postDataJSON();authCalls.push(d);if(d.password!=='Guardian-fixture-1')return r.fulfill({status:400,json:{error_description:'do-not-display-'+d.password}});return r.fulfill({json:{access_token:'guardian-fixture-token',refresh_token:'guardian-fixture-refresh',expires_in:3600,user:{id:'guardian-fixture-owner',email:d.email}}});});
  await c.route('**/functions/v1/nm-membership',r=>r.fulfill({json:{membership:{userId:'guardian-fixture-owner',status:'trial',canUse:true,trialEndsAt:new Date(Date.now()+86400000).toISOString(),serverNow:new Date().toISOString()},contact:{registered:true,smsConsent:false,phoneMasked:'010-****-1234'}}}));
  await c.addInitScript(lang=>{if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify({lang,onboarded:true,name:'Existing fixture',avatar:{kind:'boy'},view:'town',account:{status:'active'},progress:{}}));},lang);
- await p.goto(base+'/number_magic/access.html?lang='+lang+'&ws=fixture-sheet');
+ await p.goto(base+'/number_magic/access.html?lang='+lang+'&ws=fixture-sheet');await p.click('#open-book');
  await p.fill('#login-user','guardian@example.test');await p.fill('#login-password','Wrong-fixture');await p.click('#login-submit');await p.waitForFunction(()=>!document.getElementById('login-submit').disabled);assert.equal(await p.inputValue('#login-password'),'');assert(!(await p.locator('#login-status').innerText()).includes('Wrong-fixture'));
  await p.fill('#login-password','Guardian-fixture-1');await p.click('#login-submit');await p.waitForURL('**/index.html?**');
  await p.waitForFunction(()=>!!window.NM_PROFILE_AUTH?.peek());await p.waitForFunction(()=>document.getElementById('nmGuardBack')?.textContent.match(/학습 화면|Learning screen|学习界面/));
@@ -56,7 +57,7 @@ try{
  await p.reload();await p.waitForURL(/access\.html/);assert.equal(authCalls.length,2,'no automatic password submission after reload');
  // Even auth=1 may not restore a previous login without the freshly consumed ticket.
  await p.goto(base+'/number_magic/index.html?enter=1&auth=1');await p.waitForSelector('#nmGuardEmail');assert.equal(await p.evaluate(()=>NM_PROFILE_AUTH.peek()),null);
- await p.click('#nmGuardBack');await p.waitForURL('**/access.html');await p.click('#guardian-link');await p.waitForSelector('#nmGuardSend');
+ await p.click('#nmGuardBack');await p.waitForURL('**/access.html');await p.click('#open-book');await p.click('#guardian-link');await p.waitForSelector('#nmGuardSend');
  assert.deepEqual(errors,[]);report.push({lang,sharedEmailLogin:true,noDuplicateLogin:true,signupRecoveryAvailable:true,reloadRequiresLogin:true,passwordRequests:authCalls.length,externalWrites:0});await c.close();
  }
  if(OUT)fs.writeFileSync(path.join(OUT,'review-access.json'),JSON.stringify(report,null,2));console.log('OK: approval skip/guardian route, ko/en/zh390/1280px, full learning-only review, separate points/progress/slots/guardian data, no stored credentials, logout/invalid session');

@@ -4,46 +4,73 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>수의 마법 · 승인·로그인</title>
+<meta name="theme-color" content="#F3F7FC">
+<title>수의 마법 · Numbers of Magic</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="app/access.css?v=20261021-login4">
+<link rel="stylesheet" href="app/access.css?v=20261021-book1">
 </head>
 <body class="nm-access">
-<main class="access-wrap" id="main">
-  <header class="access-head">
-    <p class="brand-mark">Numbers of Magic</p>
+<header class="access-head">
+  <a class="brand-mark" href="about.html"><img src="assets/characters/numi-0.png" alt="" width="38" height="44"><span>GFIELD<span class="brand-sub">Numbers of Magic</span></span></a>
+  <nav class="head-actions" aria-label="Language and login">
     <div class="access-langs" role="group" aria-label="Language">
       <button type="button" class="access-lang" data-lang="ko" aria-pressed="true">한국어</button>
-      <button type="button" class="access-lang" data-lang="en" aria-pressed="false">English</button>
+      <button type="button" class="access-lang" data-lang="en" aria-pressed="false">EN</button>
       <button type="button" class="access-lang" data-lang="zh" aria-pressed="false">中文</button>
     </div>
-  </header>
-  <h1 data-i18n="title">수의 마법 · 승인·로그인</h1>
-  <p class="lead" data-i18n="lead">이메일 또는 아이디로 로그인해 주세요.</p>
-  <section class="card primary-card" aria-labelledby="login-title">
-    <h2 id="login-title" data-i18n="loginTitle">로그인</h2>
-    <form id="login-form" novalidate>
-      <div class="field">
-        <label for="login-user" data-i18n="user">이메일 또는 아이디</label>
-        <input id="login-user" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="254">
-      </div>
-      <div class="field">
-        <label for="login-password" data-i18n="password">비밀번호</label>
-        <input id="login-password" name="password" type="password" autocomplete="current-password" maxlength="128">
-      </div>
-      <button id="login-submit" class="btn primary" type="submit" data-i18n="login">로그인</button>
-      <p id="login-status" class="status" role="status" aria-live="polite"></p>
-    </form>
-    <a id="guardian-link" href="index.html?enter=1&amp;auth=1" data-i18n="signup">처음이거나 비밀번호를 잊었어요</a>
-  </section>
-
-  <nav class="links" aria-label="Other">
-    <a id="preview-link" href="index.html?enter=1" data-i18n="preview">가입 전 둘러보기</a>
-    <a href="about.html" data-i18n="back">소개로 돌아가기</a>
+    <button id="open-login" class="text-button" type="button" data-i18n="login" aria-haspopup="dialog" aria-controls="login-book">로그인</button>
   </nav>
+</header>
+<main class="welcome" id="main">
+  <section class="welcome-copy" aria-labelledby="welcome-title">
+    <p class="eyebrow" data-i18n="eyebrow">하루 10분, 숫자와 친해지는 시간</p>
+    <h1 id="welcome-title"><span data-i18n="heroLine">생각을 펼치면,</span><strong data-i18n="heroTitle">수의 마법</strong></h1>
+    <p class="welcome-description" data-i18n="heroDescription">보고, 만지고, 스스로 발견하는 연산.
+숫자 친구들과 나만의 배움을 시작해요.</p>
+    <button id="open-book" class="btn hero-cta" type="button" aria-haspopup="dialog" aria-controls="login-book"><span data-i18n="browse">둘러보기</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button>
+    <a class="story-link" href="about.html" data-i18n="story">수의 마법 이야기 읽기</a>
+  </section>
+  <div class="welcome-art">
+    <svg class="math-orbit" viewBox="0 0 640 640" aria-hidden="true"><circle cx="320" cy="320" r="270"/><ellipse cx="320" cy="320" rx="310" ry="115" transform="rotate(-28 320 320)"/><path d="M44 180h26m-13-13v26M570 450h20m-10-10v20"/></svg>
+    <span class="math-mark mark-two" aria-hidden="true">2</span><span class="math-mark mark-plus" aria-hidden="true">+</span><span class="math-mark mark-five" aria-hidden="true">5</span>
+    <button type="button" id="cover-open" class="hero-book" aria-haspopup="dialog" aria-controls="login-book" aria-label="책 펼치기"><span class="cover-rule" aria-hidden="true"></span><span class="cover-edition">GFIELD · MATH ADVENTURE</span><span class="cover-title" data-i18n="bookTitle">수의 마법</span><span class="cover-subtitle">Numbers of Magic</span><span class="cover-figures" aria-hidden="true"><img class="cover-boy" src="assets/characters/kid-boy.png" alt="" width="512" height="512"><img class="cover-girl" src="assets/characters/kid-girl.png" alt="" width="512" height="512"></span><span class="cover-caption" data-i18n="coverCaption">생각이 자라는 나만의 모험</span></button>
+    <p class="book-invitation" data-i18n="invitation">책을 펼치면, 배움이 시작돼요.</p>
+  </div>
 </main>
+<footer class="welcome-footer"><span>GFIELD ACADEMY</span><span data-i18n="footer">작은 발견이 쌓여, 단단한 수학으로.</span></footer>
+<dialog id="login-book" class="book-dialog" aria-labelledby="login-title">
+  <div class="book-spread">
+    <section class="book-left" aria-labelledby="page-title">
+      <p class="page-kicker">NUMBERS OF MAGIC</p>
+      <h2 id="page-title" data-i18n="pageTitle">오늘은 어떤 발견을
+만나게 될까요?</h2>
+      <p class="page-intro" data-i18n="pageIntro">숫자 친구들이 기다리고 있어요.
+우리, 다음 이야기를 함께 펼쳐요.</p>
+      <div class="page-characters" aria-hidden="true"><img src="assets/characters/kid-boy.png" alt="" width="512" height="512"><img src="assets/characters/kid-girl.png" alt="" width="512" height="512"></div>
+      <span class="page-number" aria-hidden="true">01</span>
+    </section>
+    <section class="book-right">
+      <button id="close-book" type="button" class="close-book" aria-label="책 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+      <div class="login-content">
+        <p class="page-kicker" data-i18n="loginKicker">나의 배움 이어가기</p>
+        <h2 id="login-title" data-i18n="loginTitle">반가워요!</h2>
+        <p class="lead" data-i18n="lead">이메일 또는 아이디로 로그인해 주세요.</p>
+        <form id="login-form" novalidate>
+          <div class="field"><label for="login-user" data-i18n="user">이메일 또는 아이디</label><input id="login-user" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="254" autofocus></div>
+          <div class="field"><label for="login-password" data-i18n="password">비밀번호</label><input id="login-password" name="password" type="password" autocomplete="current-password" maxlength="128"></div>
+          <button id="login-submit" class="btn" type="submit" data-i18n="login">로그인</button>
+          <p id="login-status" class="status" role="status" aria-live="polite"></p>
+        </form>
+        <a id="guardian-link" class="page-link" href="index.html?enter=1&amp;auth=1" data-i18n="signup">처음이거나 비밀번호를 잊었어요</a>
+        <div class="trial-entry"><span data-i18n="trialQuestion">먼저 경험해 보고 싶다면</span><a id="preview-link" class="page-link" href="index.html?enter=1" data-i18n="preview">가입 전에 체험하기</a></div>
+      </div>
+      <span class="page-number" aria-hidden="true">02</span>
+    </section>
+    <div class="opening-cover" aria-hidden="true"><span class="cover-rule" aria-hidden="true"></span><span class="cover-edition">GFIELD · MATH ADVENTURE</span><span class="cover-title" data-i18n="bookTitle">수의 마법</span><span class="cover-subtitle">Numbers of Magic</span><span class="cover-figures" aria-hidden="true"><img class="cover-boy" src="assets/characters/kid-boy.png" alt="" width="512" height="512"><img class="cover-girl" src="assets/characters/kid-girl.png" alt="" width="512" height="512"></span><span class="cover-caption" data-i18n="coverCaption">생각이 자라는 나만의 모험</span></div>
+  </div>
+</dialog>
 <script src="app/review-session.js?v=20261021-review1"></script>
 <script src="app/profile-auth.js?v=20261021-login4"></script>
-<script src="app/access.js?v=20261021-login4"></script>
+<script src="app/access.js?v=20261021-book1"></script>
 </body>
 </html>
