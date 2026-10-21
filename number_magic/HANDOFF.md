@@ -3078,3 +3078,5 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 검증: `check-character-state.js`(8외형/9의상/70서로 다른 초상화, 마이그레이션·정확한 차감·소유권·부분 복원·기록 보존), `check-character-closet-browser.js`(390/1280px·한영중, 이름/여러 캐릭터/재접속·취소·중복 차감·잔액 부족·저장 실패·다른 창 갱신 후 진도 보존·코인 이력·44px/16px·가로 넘침), 기존 `check-program-safety-browser.js`(25+회원2, 외부 쓰기0)가 통과했다.
 - 실제 WebGL `check-town-navigation.js`는 390/1280px에서 여섯 목적지 실제 입장/복귀, 선택한 이름/의상, 건물까지 왕복 충돌 경로, 조이스틱 두 손가락/화면 밖 드래그/취소/blur, 방향키, 카메라/학습 목록/포커스 유지, GPU 해제/컨텍스트 복구를 확인했다. 터치 입력은 Chromium CDP 모의 입력이며 실물 휴대폰 사용자의 전수 사용성 평가라고 표시하지 않는다.
 - 검수 근거: `/tmp/nm-characters-20261021`의 `closet/closet.json`, `town/town-navigation.json`, 화면 캡처 및 로그. 코드와 재현 검사는 Git에 보관한다. 실제 문자·이메일·회원 변경·음성 재생성·Drive 업로드는 하지 않았다. 사용자 미추적 `docs/claude-design-review-20261018.md`는 수정·스테이징하지 않았다. 운영 배포 결과는 후속 기록으로 구분한다.
+
+- **운영 반영 완료:** 기능은 main `c24189d9`에 반영됐고 Pages [실행 39542552069](https://github.com/docssam1/lete-on/actions/runs/39542552069)이 성공했다. 운영 도메인의 변경된 화면·스크립트·스타일·카탈로그·초상화 **81파일 전부 HTTP 200 및 로컬 검증본과 SHA-256 일치**를 확인했다. 결과는 기존 검수 산출물 폴더의 `deployment.json`에 보관했다. 핵심 결과와 화면도 이 채팅의 기존 시각화 폴더 아래 `nm-character-review-20261021`에 복사했다. 배포 확인 뒤 이 완료 문구만 추가하며 기능 코드는 그대로다.
