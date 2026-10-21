@@ -1,6 +1,6 @@
 # Boarding School Math continuation handoff
 
-Updated: 2026-10-17 KST (Mac continuation; older release evidence retained below)
+Updated: 2026-10-21 KST (Mac continuation; older release evidence retained below)
 
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 
@@ -24,6 +24,12 @@ Never delete or move active sessions, source originals, Drive evidence, uncommit
 - All 18 private item drafts and three calculated SVGs have been written. Structural preflight and a separate exact-rational check of all 18 slots pass, including asset hashes and number-line coordinates. Local review repaired mixed-language copy, negative-numerator notation, an unasked rubric condition, and repeating-decimal acceptance consistency. This is local AI review evidence, not formal item-release approval; every private review/rights flag remains pending and delivery remains locked.
 - Public-exposure regression passes, and current/staged/untracked checks are clean. The new whole-repository assessment-marker history gate remains unverified because this `blob:none` partial clone lacks historical blobs. The audit fails closed without lazy network fetching. A complete local history scan is required before claiming the expanded history gate has passed.
 - Next sequence: complete formal item/rubric/translation/rights and full trilingual item-rendering reviews, then obtain valid immutable item releases before implementing the 18/4 authenticated-delivery adapter. Internal error-signal rationales follow the existing Korean/English scoring contract; Chinese teacher-feedback integration still needs its own localization work. Connect teacher-confirmed priorities to learning resources after those gates; automatic prescription and placement remain disabled.
+
+## User-provided Grade 6 roadmap reference — 2026-10-21
+
+The user supplied a 2025-02-27 `math_in_depth` post titled “Digital SAT Math 800을 목표로 한 단계별 학습법 (2) 6학년 편” as planning context. Its useful sequence is Grade 6 number/operation, early algebra, geometry, data, and word-problem foundations; explaining why a method works and trying multiple solutions; then optional AMC 8 problem-solving practice, introductory SAT-style word/data questions, and cumulative review. AoPS, Khan Academy, Singapore Math, and other named books or sites are examples from the post, not approved requirements or verified endorsements.
+
+Use the post's four three-month blocks as a discussion example, not fixed pacing. Set time and advancement from reviewed diagnostic evidence, repeat observations, learner workload, and teacher confirmation. Keep school-course progress, AMC 8 competition work, and SAT-style exposure as distinct goals and evidence streams. Do not turn the post's predicted Grade 7 Algebra 1 mastery or SAT 800 framing into a product guarantee, placement decision, or automatic acceleration rule. No curriculum catalog, assessment, or learner-facing schedule changed from this reference alone.
 
 ## Product direction
 
