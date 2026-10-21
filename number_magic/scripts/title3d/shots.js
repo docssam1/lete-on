@@ -18,6 +18,8 @@ const server = http.createServer((req, res) => {
 });
 const cases = [
   { name:'desk-ko', w:1280, h:800, lang:'ko' },
+  { name:'photo-ko', w:1280, h:735, lang:'ko' },
+  { name:'landscape-ko', w:960, h:552, lang:'ko', mobile:true },
   { name:'phone-ko', w:390, h:844, lang:'ko', mobile:true },
   { name:'desk-en', w:1280, h:800, lang:'en' },
   { name:'phone-en', w:390, h:844, lang:'en', mobile:true },
