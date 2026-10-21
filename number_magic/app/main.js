@@ -7886,7 +7886,7 @@ function renderGuardianCard(){
     <p>${lk('다른 기기에서 이어하려면 보호자 이메일을 인증해 주세요.','Verify a guardian email to continue on another device.','请验证监护人邮箱，以便在其他设备上继续学习。')}</p>
     <label for="nmGuardEmail">${lk('보호자 이메일','Guardian email','监护人邮箱')}</label>
     <div class="nm-idcard-row"><input id="nmGuardEmail" type="email" autocomplete="email" placeholder="name@example.com"><button class="nm-btn" id="nmGuardSend">${lk('인증 메일 받기','Send verification email','发送验证邮件')}</button></div>
-    <label for="nmGuardToken">${lk('인증번호 (메일에 있는 경우)','Verification code (if included in email)','验证码（如邮件中提供）')}</label>
+    <label for="nmGuardToken">${lk('메일 인증번호','Email verification code','邮箱验证码')}</label>
     <div class="nm-idcard-row"><input id="nmGuardToken" inputmode="numeric" autocomplete="one-time-code" maxlength="12"><button class="nm-btn" id="nmGuardVerify">${lk('이메일 인증','Verify email','验证邮箱')}</button></div>
     <p class="nm-idcard-msg" id="nmGuardMsg" role="status" aria-live="polite"></p></div>`;
   const message=()=>$('#nmGuardMsg');
@@ -7897,7 +7897,7 @@ function renderGuardianCard(){
     message().textContent=lk('이메일 인증을 확인하고 있어요…','Processing email verification…','正在处理邮箱验证…');
     try{
       if(verify){await guardianAuth.verifyEmail(email,token);}
-      else{await guardianAuth.sendEmail(email);message().textContent=lk('메일의 인증 링크를 열어 주세요. 인증번호가 있다면 위에 입력해도 돼요.','Open the verification link in your email, or enter the code if one is included.','请打开邮件中的验证链接；如有验证码，也可在上方输入。');}
+      else{await guardianAuth.sendEmail(email);message().textContent=lk('메일로 받은 인증번호를 위에 입력하고 ‘이메일 인증’을 눌러 주세요.','Enter the code from your email above, then select Verify email.','请在上方输入邮件中的验证码，然后点击验证邮箱。');}
     }catch(e){
       const msg=message();if(msg)msg.textContent=e.code==='storage'?lk('이 기기에 인증 정보를 저장하지 못했어요. 브라우저의 저장 공간·설정을 확인해 주세요.','Could not save sign-in. Check this browser’s storage and settings.','无法保存登录信息，请检查浏览器的存储和设置。'):e.status===429?lk('요청이 많아요. 잠시 후 다시 시도해 주세요.','Too many requests. Try again later.','请求过多，请稍后重试。'):lk('이메일·인증번호 또는 연결 상태를 확인하고 다시 시도해 주세요.','Check your email, code and connection, then try again.','请检查邮箱、验证码和网络连接，然后重试。');
     }finally{btn.disabled=false;}
