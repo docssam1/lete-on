@@ -133,7 +133,7 @@ class Writer:
   if kind=='quick':
    for i,id in enumerate(page['entries']):
     p=lookup[id];n=doc['entries'].index(p)+1;y=41+i*36;self.text(n,14,y,12,9);self.text(p['title'],26,y,10.5,122);a=p['answer'];value=p['quickAnswer'];self.text(value,26,y+8,10.5,122)
-    if a['kind']=='pattern':self.diagram({'poly':p['condition'][0]['poly'],'marks':a['stages'][-1]},158,y,34,34)
+    if a['kind']=='pattern':self.diagram(p['solutions'][0] if p.get('cutPlan') else {'poly':p['condition'][0]['poly'],'marks':a['stages'][-1]},158,y,34,34)
     self.line(14,y+35,196,y+35)
   else:
    per=len(page['entries']);height=233 if per==1 else 115

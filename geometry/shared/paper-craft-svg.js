@@ -1,7 +1,8 @@
 import {stackConnectionPoints} from './paper-craft-stack.js?v=20261019-1';
 import {box,square,polygonCentroid,inside,reflectInk,boundaryLayers} from './paper-craft-model.js?v=20261018-3';
 import {clipHalfPlane,reflectAcross,chordSegments,foldOnce} from '../games/paper-fold/reverse-fold.js?v=20261018-3';
-import {newMarks,markAnchor,numberGroups,withDesign} from './paper-craft-session.js?v=20261018-3';
+import {newMarks,markAnchor,numberGroups,withDesign} from './paper-craft-session.js?v=20261021-4';
+import {placedCut} from './paper-craft-cut-plan.js?v=20261021-4';
 export const escapeHtml=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const points=poly=>poly.map(p=>`${p.x},${p.y}`).join(' ');
 export const polygonPath=poly=>poly.map((p,i)=>`${i?'L':'M'}${p.x} ${p.y}`).join('')+'Z';
@@ -63,7 +64,11 @@ export function renderScene(raw,s,t){
     const chord=chordSegments(poly,f)[0];if(chord?.length===2)body+=`<path d="M${chord[0].x} ${chord[0].y}L${chord[1].x} ${chord[1].y}" stroke="#8c6833" stroke-width="${2/fr.scale}" stroke-dasharray="${6/fr.scale} ${5/fr.scale}" pointer-events="none"/>`;
   }
   if(s.phase==='turn')body+=action(polygon(poly,'fill="transparent"'),`data-action="turn" aria-label="${escapeHtml(t.turn)}"`);
-  if(work){const items=p.cuts?.length?p.cuts:p.marks;body+=items.filter((_,i)=>!s.worked.includes(i)).map(item=>{const i=items.indexOf(item),a=Array.isArray(item)?{x:item[0].x*.72+item[1].x*.28,y:item[0].y*.72+item[1].y*.28}:markAnchor(item),r=24*hit/fr.scale;return action(`<circle cx="${a.x}" cy="${a.y}" r="${r}" fill="#fff6e6" stroke="#9c3857" stroke-width="${2/fr.scale}"/><text x="${a.x}" y="${a.y+8*hit/fr.scale}" text-anchor="middle" fill="#9c3857" font-size="${24*hit/fr.scale}" pointer-events="none">${p.cuts?.length||p.family==='cut'?'✂':'＋'}</text>`,`data-action="work" data-value="${i}" aria-label="${escapeHtml(t.tool)} ${i+1}"`);}).join('');}
+  if(work&&p.cutPlan){
+    body+=`<defs><clipPath id="cut-plan-clip">${polygon(poly)}</clipPath></defs><g clip-path="url(#cut-plan-clip)" pointer-events="none">${s.cutPlacements.map((q,i)=>{const m=placedCut(p,i,q);return m?markSvg(m,`class="cut-preview" fill="#fff6e6" fill-opacity=".5" stroke="#9c3857" stroke-width="${2/fr.scale}" stroke-dasharray="${5/fr.scale} ${3/fr.scale}"`):'';}).join('')}</g>`;
+    body+=polygon(poly,`fill="transparent" data-cut-surface="true" role="button" tabindex="0" aria-label="${escapeHtml(t.cutPlace)}"`);
+  }
+  if(work&&!p.cutPlan){const items=p.cuts?.length?p.cuts:p.marks;body+=items.filter((_,i)=>!s.worked.includes(i)).map(item=>{const i=items.indexOf(item),a=Array.isArray(item)?{x:item[0].x*.72+item[1].x*.28,y:item[0].y*.72+item[1].y*.28}:markAnchor(item),r=24*hit/fr.scale;return action(`<circle cx="${a.x}" cy="${a.y}" r="${r}" fill="#fff6e6" stroke="#9c3857" stroke-width="${2/fr.scale}"/><text x="${a.x}" y="${a.y+8*hit/fr.scale}" text-anchor="middle" fill="#9c3857" font-size="${24*hit/fr.scale}" pointer-events="none">${p.cuts?.length||p.family==='cut'?'✂':'＋'}</text>`,`data-action="work" data-value="${i}" aria-label="${escapeHtml(t.tool)} ${i+1}"`);}).join('');}
   if(s.phase==='design')body+=polygon(poly,`fill="transparent" data-design-surface="true" role="button" tabindex="0" aria-label="${escapeHtml(t.prompts.design)}"`);
   if(s.phase==='predict'){
     body+=polygon(poly,`fill="transparent" data-predict-surface="true" role="button" tabindex="0" aria-label="${escapeHtml(t.prompts.predict)}"`);
