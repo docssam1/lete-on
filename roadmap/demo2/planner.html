@@ -168,28 +168,31 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 @page{size:A3 landscape;margin:10mm}
 @media print{.top,.dock,.side,.drawer,#vmap,#vrep,.plan-head .seg,.print,#simple{display:none!important}#vplan{display:block!important}#tbl{display:block!important}body{background:#fff}.pl-table{min-width:0}.pl-table th,.pl-table td{font-size:7px;padding:2px 1px}.pl-table td{height:34px}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="planner-ux.css">
 </head>
-<body>
+<body class="questioning">
 <div class="top">
  <span class="logo">GFIELD</span><span class="logo-sep"></span><span class="ttl"><span id="who">우리 아이</span>의 성장 로드맵</span><span class="chip">시안</span>
  <nav class="nav"><button data-v="vmap" class="on">3D 맵</button><button data-v="vplan">월별 계획</button><button data-v="vrep">분석지</button></nav>
- <button class="gear" id="openSet">우리 아이 설정</button>
+ <button class="gear" id="openSet">답변 바꾸기</button>
 </div>
 
 <main>
+ <section id="conversation" class="conversation" aria-labelledby="questionTitle">
+ <div class="guide"><img src="../docssam.jpg" alt="독쌤"><span>독쌤과 성장 로드맵<br><small id="questionStep"></small></span></div>
+ <h1 id="questionTitle" tabindex="-1"></h1><p id="questionHelp"></p><div id="questionOptions" class="question-options"></div>
+ <div class="question-actions"><button id="questionBack">이전</button><button id="useExample">예시로 바로 보기</button></div>
+ </section>
+ <div class="result-intro"><div><small>GFIELD · 학습 경로</small><h1>우리 아이가 이어갈 길</h1><p id="answerSummary"></p></div><button id="detailSet" class="gear">상세 조정</button></div>
+ <div id="intakeSummary" class="intake-summary" hidden></div>
  <div id="warn"></div>
  <section class="view on" id="vmap"><div class="mapwrap">
-  <div class="side">
-   <div class="card"><h3>📅 이번 달</h3><div id="nowItems"></div></div>
-   <div class="card"><h3>🧭 다음 길 고르기</h3>
-    <div class="choice"><div class="q">황소</div><div class="seg" data-k="hwOn"><button data-v="1" class="on">고려</button><button data-v="0">안 고려</button></div>
-     <div class="sub-opts" id="hwOpts"><label>시험 <select id="hw"></select></label><label>입학 뒤 심화 <input type="checkbox" id="hwDeep" checked></label><label>초4 중등 시험 <input type="checkbox" id="hwMid" checked></label></div></div>
-    <div class="choice" id="kmoChoice"><div class="q">KMO (영과고형)</div><div class="seg" data-k="kmo"><button data-v="go">계속 (2차·영역 심화)</button><button data-v="switch" class="on">1차 상 → 고등 선행</button></div></div>
-    <div class="choice"><div class="q">영재원</div><div class="seg" data-k="gifted"><button data-v="1" class="on">고려</button><button data-v="0">안 고려</button></div></div>
-   </div>
-  </div>
-  <span class="maphint">끌어서 돌려 보세요 · 보여주기용</span>
-  <div id="map"></div>
+  <div id="sourceProfile" hidden></div>
+  <div id="routeChoices" class="route-choices"></div>
+  <div class="map-heading"><div><h2>갈림길 한눈에 보기</h2><p>선택한 길은 보라색 점선, 다른 길은 옅은 실선이에요.</p></div></div>
+  <div id="map"></div><p class="map-note">이정표 간격은 실제 기간에 비례하지 않아요. 정확한 월과 병행 과정은 월별 계획에서 확인해 주세요.</p><div id="mapList" class="map-list"></div>
+  <details class="current-details"><summary>이번 달 공부 보기</summary><div id="nowItems"></div></details>
  </div></section>
 
  <section class="view" id="vplan">
@@ -207,121 +210,30 @@ main{max-width:1500px;margin:0 auto;padding:18px 18px 120px}
 <div class="dock"><span class="step cur" id="dNow">● 현재</span><span class="dots"></span><span class="step" id="dNext">⚑ 다음 과정</span><span class="dots"></span><span class="step" id="dLater">⌖ 시기 미정</span>
  <div class="vsw"><button data-v="vmap" class="on">3D 맵</button><button data-v="vplan">월별 계획</button><button data-v="vrep">분석지</button></div></div>
 
-<aside class="drawer" id="drawer"><button class="close" id="closeSet">닫기</button><h3>우리 아이 설정</h3>
- <form id="ctl" onsubmit="return false">
+<aside class="drawer" id="drawer" inert role="dialog" aria-modal="true" aria-label="상세 조정"><button class="close" id="closeSet">닫기</button><h3>우리 아이 설정</h3>
+ <p>선택한 답은 이 화면을 닫아도 유지돼요.</p><form id="ctl" onsubmit="return false">
  <fieldset><legend>기준</legend>
   <label>레벨 <select id="level"></select></label>
   <label>묶음 <select id="band"><option value="A">A 선행형 (L0~L3)</option><option value="B" selected>B 예시형 (L4~L9)</option><option value="C">C 천천히형 (L10~L13)</option><option value="D">D 영과고형 (최소 대비 · 중3까지)</option></select></label>
-  <label>이름(선택) <input id="name" placeholder="표시만 · 저장 안 함" autocomplete="off"></label>
+  <input id="name" type="hidden" value="">
   <label>올해 <input id="year" type="number" min="2020" max="2100"></label>
   <label>학년 <select id="grade"><option value="1">초1</option><option value="2" selected>초2</option><option value="3">초3</option><option value="4">초4</option><option value="5">초5</option><option value="6">초6</option></select></label>
   <label>월 <select id="mon"></select></label>
  </fieldset>
- <fieldset><legend>지금 진도</legend>
+ <fieldset class="academic-fields"><legend>지금 진도</legend>
   <label>교과 <select id="school"></select></label><label>남은 개월 <select id="schoolLeft"></select></label>
   <label>사고력 <select id="comp"></select></label><label>남은 개월 <select id="compLeft"></select></label>
   <label>연산 <select id="calc"></select></label><label>남은 개월 <select id="calcLeft"></select></label>
   <label>교과 속도 <select id="speed"><option value="2" selected>한 학기 2개월</option><option value="3">한 학기 3개월</option></select></label>
- </fieldset></form>
+ </fieldset>
+ <details><summary>시험 세부 옵션</summary><fieldset id="hwOpts"><legend>생각하는 황소 시험</legend><label>시험 <select id="hw"></select></label><label>입학 뒤 심화 <input type="checkbox" id="hwDeep" checked></label><label>초4 중등 시험 <input type="checkbox" id="hwMid" checked></label></fieldset><fieldset id="kmoChoice"><legend>KMO 갈림길</legend><div class="seg" data-k="kmo"><button type="button" data-v="go">계속 · 2차와 영역 심화</button><button type="button" data-v="switch" class="on">1차 상 → 고등 선행</button></div></fieldset></details>
+ <p class="schedule-note">일정은 과거 자료를 참고한 계획이에요. 당해 공고 확인이 필요합니다. 과학·내신의 1~2월은 원자료의 달력 연도 기준(3월 전 학년)입니다.</p></form>
 </aside>
 
 <script src="planner-levels.js"></script>
 <script src="planner.js"></script>
-<script>
-(function(){
-const $=id=>document.getElementById(id), P=Planner;
-const opt=(el,list,sel)=>{ el.innerHTML=list.map(([v,t])=>`<option value="${v}"${String(v)===String(sel)?' selected':''}>${t}</option>`).join(''); };
-const state={hwOn:'1',gifted:'1',planMode:'table',kmo:'switch'};
-const d=new Date(); $('year').value=d.getFullYear();
-opt($('mon'),[3,4,5,6,7,8,9,10,11,12,1,2].map(m=>[m,m+'월']),d.getMonth()+1);
-opt($('school'),[...Array.from({length:12},(_,i)=>[i+1,P.SEM(i+1)+' 디딤돌']),[13,'계통 · 대수 정리'],...P.MID.map((x,i)=>[14+i,x+' 원리해설'])],9);
-opt($('comp'),P.COMP.map((c,i)=>[i,c[0]]),4);
-opt($('calc'),P.CALC.map((c,i)=>[i,c[0]]),9);
-const months=n=>Array.from({length:n},(_,i)=>[i+1,(i+1)+'개월']);
-opt($('schoolLeft'),months(4),1); opt($('compLeft'),months(7),7); // 교재별 길이는 applyLevel 에서 다시 맞춘다 opt($('calcLeft'),months(6),1);
-
-// 레벨: 고르면 그 레벨의 '지금 진도'를 레벨표에서 읽어 채운다(앞으로는 예시 로드맵 규칙)
-const LV=window.PLANNER_LEVELS||[];
-opt($('level'),[['ex','예시 · 대치 소마 A2→A1 정도 (L8~L9)'],...LV.map(l=>[l.id,`${l.id} · ${l.summary}`]),['manual','직접 입력']],'ex');
-const EX={school:9,schoolLeft:1,comp:4,compLeft:7,calc:9,calcLeft:1,speed:2};
-const at=(bs,m)=>bs.find(b=>b[1]<=m&&b[2]>=m);
-const nextOf=(bs,m,re)=>bs.filter(b=>b[2]>=m&&(!re||re.test(b[0]))).sort((a,b)=>a[1]-b[1])[0];
-function schoolIdx(t){ let r=t.match(/^(\d)-(\d)/); if(r) return 2*(+r[1]-1)+(+r[2]); if(/계통|여유/.test(t)) return 13; r=t.match(/^중(\d)-(\d)/); if(r) return 14+2*(+r[1]-1)+(+r[2]-1); return null; }
-function compIdx(t){ const K=[/초등팩토 1|킨더|키즈/,/필즈 베이직/,/1031 입문/,/TOT/,/1031 초급/,/1031 중급/,/3% 1과정/,/왕수학 응용 4/]; const i=K.findIndex(re=>re.test(t)); return i<0?null:i; }
-function calcIdx(t){ let r=t.match(/기적의 계산법 (\d+)/); if(r) return +r[1]-1; if(/소마셈/.test(t)) return 1; const i=P.CALC.findIndex(c=>t.includes(c[0].replace('기적의 ',''))); return i<0?null:i; }
-function hwOptions(){
-  const g=+$('grade').value, now=P.mOf(g,+$('mon').value), A0=P.mOf(g,3), list=[];
-  for(let m=now+2;m<=Math.min(A0+45,P.mOf(4,11));m++) if(m%12===10||m%12===1) list.push([m,`${P.label(m)}${m%12===1?' (편입)':''}`]);
-  const cur=$('hw').value; opt($('hw'),list,list.some(x=>String(x[0])===cur)?cur:((list.find(x=>x[0]%12===1)||list[0]||[''])[0]));
-}
-function setSeg(k,v){ state[k]=String(v); document.querySelectorAll(`.seg[data-k="${k}"] button`).forEach(b=>b.classList.toggle('on',b.dataset.v===String(v))); }
-function applyLevel(){
-  const id=$('level').value; if(id==='manual') return;
-  const set=(k,v)=>{ $(k).value=String(v); };
-  if($('band').value!=='D') $('band').value=P.bandOf(id); $('speed').disabled=['C','D'].includes($('band').value);
-  if(id==='ex'){ Object.entries(EX).forEach(([k,v])=>set(k,v)); hwOptions(); setSeg('hwOn',1); return; }
-  const L=LV.find(l=>l.id===id), now=P.mOf(+$('grade').value,+$('mon').value);
-  const sb=(at(L.school,now)&&schoolIdx(at(L.school,now)[0])!=null)?at(L.school,now):nextOf(L.school,now,/^\d-\d|^중|계통|여유/);
-  if(sb){ set('school',schoolIdx(sb[0])); set('schoolLeft',Math.min(4,Math.max(1,sb[1]>now?sb[2]-sb[1]+1:sb[2]-now+1))); }
-  const cb=at(L.comp,now)||nextOf(L.comp,now), ck=cb&&compIdx(cb[0]);
-  if(ck!=null){ set('comp',ck); set('compLeft',Math.min(7,Math.max(1,cb[1]>now?P.COMP[ck][1]:cb[2]-now+1))); }
-  const kb=at(L.calc,now)||nextOf(L.calc,now), kk=kb&&calcIdx(kb[0]);
-  if(kk!=null){ set('calc',kk); set('calcLeft',Math.min(6,Math.max(1,kb[1]>now?kb[2]-kb[1]+1:kb[2]-now+1))); }
-  set('speed',+id.slice(1)>=10?3:2);
-  hwOptions(); const E=L.hwExam;
-  if(E!=null&&[...$('hw').options].some(o=>o.value===String(E))){ set('hw',E); setSeg('hwOn',1); } else setSeg('hwOn',0);
-}
-function read(){ const on=state.hwOn==='1'; return {band:$('band').value,grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,
-  hw:on&&$('hw').value?$('hw').value:'none',hwDeep:on&&$('hwDeep').checked,hwMid:on&&$('hwMid').checked,gifted:state.gifted==='1',kmo:state.kmo}; }
-function draw(){
-  const o=read(), plan=P.build(o); lastPlan=plan; const nm=$('name').value.trim()||'우리 아이';
-  $('who').textContent=nm; $('who2').textContent=nm;
-  $('hwOpts').style.display=state.hwOn==='1'?'grid':'none';
-  document.querySelector('.seg[data-k="hwOn"]').closest('.choice').style.display=['C','D'].includes(plan.band)?'none':'block';
-  $('kmoChoice').style.display=plan.band==='D'?'block':'none';
-  $('warn').innerHTML=plan.warn.map(w=>`<div class="warn">⚠ ${w}</div>`).join('');
-  const R=k=>(plan.rows.find(r=>r.key===k)||{blocks:[]}).blocks, cur=k=>{ const b=R(k).find(x=>x[1]<=plan.now&&x[2]>=plan.now); return b?b[0]:'—'; };
-  const strip=t=>t.replace(/<br>.*$/,'');
-  $('nowItems').innerHTML=[['📘','교과',strip(cur('school'))],['💡',plan.band==='D'?'경시':'사고력',strip(cur('comp'))],['➕','연산',strip(cur('calc'))]].map(([i,a,b])=>`<div class="item"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
-  const ms=P.milestones(plan), steps=ms.main.filter(x=>x.kind!=='now'), next=steps[0], later=steps[1];
-  $('dNow').innerHTML=`● 현재 <small>${P.label(plan.now)} · ${cur('school').replace(/ 디딤돌.*/,'')}</small>`;
-  $('dNext').innerHTML=next?`⚑ 다음 과정 <small>${next.title} · ${P.label(next.m)}</small>`:'⚑ 다음 과정';
-  $('dLater').innerHTML=later?`⌖ 그다음 <small>${later.title} · ${P.label(later.m)}</small>`:'⌖ 시기 미정';
-  drawMap(P.milestones(plan));
-  $('tbl').innerHTML=P.renderTable(plan); if(plan.A1-plan.A0>50) $('tbl').querySelector('table').classList.add('wide'); $('simple').innerHTML=P.renderSimple(plan);
-  $('tbl').style.display=state.planMode==='table'?'block':'none'; $('simple').style.display=state.planMode==='simple'?'block':'none';
-  $('stages').innerHTML=P.narrative(plan).map(y=>`<div class="stg"><h4>${y.title}</h4>
-    <div class="mrow">${y.months.map(c=>`<div class="mc${c.now?' now':''}${c.past?' past':''}"><b>${c.mon}</b>${c.starts.map(t=>`<span class="st">${t}</span>`).join('')}${c.issues.map(t=>`<span class="is">${t}</span>`).join('')}</div>`).join('')}</div>
-    <dl class="cm">${y.items.map(it=>`<dt>${it.label}</dt><dd>${it.text}</dd>`).join('')}</dl></div>`).join('');
-  const lvName=$('level').selectedOptions[0].textContent;
-  $('repItems').innerHTML=[['📖','현재 학습',`${strip(cur('school'))} · ${strip(cur('comp'))}`],['👤','기준 레벨',`${lvName} · ${plan.bandName}`],['💡','다음 과정',next?`${next.title} (${P.label(next.m)})`:'—'],['📅','다음 확인','학습 경험 후 조정 · 경로는 언제든 바꿀 수 있어요']]
-    .map(([i,a,b])=>`<div class="ritem"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
-  const bg=P.bookGuide(plan);
-  $('books').innerHTML=bg.stages.map(st=>`<div class="bk${st.now?' now':''}"><h4>${st.stage}${st.now?' <span>지금</span>':''}</h4>${st.rows.map(([l,b])=>`<p><small>${l}</small>${b}</p>`).join('')}</div>`).join('')+`<p class="bk-note">${bg.note}</p>`;
-}
-// 3D 맵: three.js(map3d.js, 수의 나라와 같은 three · 아이 캐릭터). WebGL 이 없으면 CSS 맵.
-let map3d=null, mapBusy=null, mapNext=null, map3dFailed=false;
-function drawMap(ms){
-  if(map3dFailed){ $('map').innerHTML=P.render3DMap(lastPlan); P.bindMap($('map')); return; }
-  mapNext=ms; if(mapBusy) return;
-  mapBusy=(async()=>{ while(mapNext){ const d=mapNext; mapNext=null;
-    try{ if(!map3d){ const mod=await import('./map3d.js'); map3d=await mod.mountMap3D($('map'),d,{left:innerWidth>900?5.5:0}); if(!map3d) throw new Error('no webgl'); } else await map3d.update(d); }
-    catch(e){ console.warn('[map3d]',e); map3dFailed=true; $('map').innerHTML=P.render3DMap(lastPlan); P.bindMap($('map')); break; } }
-    mapBusy=null; })();
-}
-let lastPlan=null;
-function showView(v){ document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id===v)); if(v==='vmap'&&map3dFailed) P.bindMap($('map')); }
-document.querySelectorAll('.nav button,.dock .vsw button').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.v)));
-document.querySelectorAll('.seg').forEach(s=>s.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; setSeg(s.dataset.k,b.dataset.v); draw(); }));
-['hw','hwDeep','hwMid'].forEach(id=>$(id).addEventListener('change',()=>{ $('level').value='manual'; draw(); }));
-$('openSet').onclick=()=>$('drawer').classList.add('on'); $('closeSet').onclick=()=>$('drawer').classList.remove('on');
-const PROG=['school','schoolLeft','comp','compLeft','calc','calcLeft','speed','band'];
-$('ctl').addEventListener('change',e=>{ const id=e.target.id;
-  if(id==='grade'||id==='mon'){ hwOptions(); applyLevel(); } else if(id==='level') applyLevel(); else if(PROG.includes(id)) $('level').value='manual';
-  draw(); });
-$('name').addEventListener('input',draw);
-hwOptions(); applyLevel(); draw();
-})();
-</script>
+<script src="demo-content.js"></script>
+<script src="planner-intake.js"></script>
+<script src="planner-ui.js"></script>
 </body>
 </html>
