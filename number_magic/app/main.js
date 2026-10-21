@@ -1497,9 +1497,6 @@ function screenTown(){
       <button class="nm-iconbtn" id="townZin" aria-label="${S.lang==='ko'?'확대':S.lang==='en'?'Zoom in':'放大'}">＋</button>
       <button class="nm-iconbtn" id="townZout" aria-label="${S.lang==='ko'?'축소':S.lang==='en'?'Zoom out':'缩小'}">－</button>
     </div>
-    <nav class="nm-town-destinations" aria-label="${S.lang==='ko'?'바로 들어가기':S.lang==='en'?'Enter a building':'直接进入建筑'}">
-      ${TOWN_SPOTS.map(sp=>`<button type="button" data-travel="${sp.tier}"><span class="destination-icon" aria-hidden="true">${({numberland:'📖',beginner:'🏛️',intermediate:'🏠',advanced:'⛰️',_theater:'📝',_closet:'🪄'})[sp.tier]}</span><span>${esc(townDestinationLabel(sp.tier))}</span></button>`).join('')}
-    </nav>
     <div class="nm-tmodal" id="tmodal">
       <div class="nm-tmcard">
         <h3 id="tmTitle"></h3><p id="tmDesc"></p>
@@ -1507,13 +1504,18 @@ function screenTown(){
         <button class="close" id="tmClose">${S.lang==='ko'?'닫기':S.lang==='en'?'Close':'关闭'}</button>
       </div>
     </div>`;
-  scr.querySelectorAll('[data-travel]').forEach(b=>{b.onclick=()=>enterTownDestination(b.dataset.travel);});
   const tools=scr.querySelector('.nm-town-hud.info'),toolbox=document.createElement('details');
   toolbox.className='nm-town-toolbox';
   toolbox.innerHTML=`<summary>${S.lang==='ko'?'마을 메뉴':S.lang==='en'?'Village menu':'村庄菜单'} ☰</summary><div class="nm-town-tool-list"></div>`;
-  const list=toolbox.querySelector('div');while(tools.firstChild)list.appendChild(tools.firstChild);tools.appendChild(toolbox);
+  const panel=toolbox.querySelector('div'), more=document.createElement('details');
+  more.className='nm-town-more';
+  more.innerHTML=`<summary>${S.lang==='ko'?'더 보기':S.lang==='en'?'More':'更多'}</summary><div class="nm-town-extra-list"></div>`;
+  const list=more.querySelector('div');while(tools.firstChild)list.appendChild(tools.firstChild);
+  panel.appendChild(scr.querySelector('#roadBanner'));panel.appendChild(more);tools.appendChild(toolbox);
+  toolbox.open=matchMedia('(min-width:760px), (min-width:600px) and (max-height:500px)').matches;
   ['townCourseRoad','townDex','townMagazine','townMail','townReport'].forEach(id=>{const button=scr.querySelector('#'+id);const label=document.createElement('span');label.textContent=button.title;button.appendChild(label);});
   TOWN_GATES.forEach(g=>{const button=document.createElement('button');button.type='button';button.className='nm-iconbtn';button.dataset.townGate=g.id;button.textContent=g.icon+' '+L(g.name);button.onclick=()=>showGateLinksModal(g);list.appendChild(button);});
+  list.appendChild(scr.querySelector('.nm-town-hud.ctrls'));
   toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
   townCleanup=initTownWorld(scr);
   // The illustrated village is now the default. Buildings open without walking or camera controls.
@@ -5394,7 +5396,7 @@ function mountTitle3DInto(scr, summary, badge){
   const chips=[];   /* 동전은 모듈이 coins 로 따로 그린다 */
   if(S.attend&&S.attend.days)chips.push({icon:'📅',text:{ko:`${S.attend.days}일`,en:`Day ${S.attend.days}`,zh:`第${S.attend.days}天`}});
   if(badge)chips.push({icon:'🏅',text:badge.label,gold:true});
-  import('./title3d/title3d.js?v=20261021-entry2').then(m=>{
+  import('./title3d/title3d.js?v=20261021-original-desk1').then(m=>{
     const choices=m.DEFAULT_CHOICES.map(c=>c.id==='continue'&&summary?Object.assign({},c,{sub:summary}):c);
     return m.mountTitle3D(box,{
       lang:S.lang, choices,

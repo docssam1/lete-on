@@ -16,16 +16,17 @@ try{if(out)fs.mkdirSync(out,{recursive:true});for(const [width,height,lang]of [[
  assert.equal(await p.locator('.nm-town3d,.t3d-joystick').count(),0,'no 3D town controls');assert((await p.locator('#townWorld').evaluate(e=>getComputedStyle(e).backgroundImage)).includes('assets/map.jpg'),'keep original painted map');
  const before=await p.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return{coins:s.coins,progress:s.progress};});
  const view=await p.evaluate(()=>{const a=document.querySelector('#townVp').getBoundingClientRect(),m=document.querySelector('#townWorld').getBoundingClientRect();return{within:m.x>=a.x-1&&m.y>=a.y-1&&m.right<=a.right+1&&m.bottom<=a.bottom+1,overflow:document.documentElement.scrollWidth>innerWidth};});assert(view.within,'whole painted map fits by default');assert.equal(view.overflow,false);
- const buttons=await p.locator('[data-travel]').evaluateAll(es=>es.map(e=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return{id:e.dataset.travel,w:r.width,h:r.height,x:r.x,y:r.y,right:r.right,bottom:r.bottom,hit:hit===e||e.contains(hit)};}));
+ assert.equal(await p.locator('[data-travel],.nm-town-destinations').count(),0,'no duplicate building toolbar');
+ const buttons=await p.locator('.nm-zone[data-spot]').evaluateAll(es=>es.map(e=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return{id:e.dataset.spot,w:r.width,h:r.height,x:r.x,y:r.y,right:r.right,bottom:r.bottom,hit:hit===e||e.contains(hit)};}));
  assert.equal(buttons.length,6);assert(buttons.every(e=>e.w>=44&&e.h>=44&&e.x>=0&&e.y>=0&&e.right<=width&&e.bottom<=height&&e.hit),'all direct entrances visible and tappable '+JSON.stringify(buttons));
  if(out)await p.screenshot({path:path.join(out,`${width}-${height}-${lang}-town.png`)});
  // Real touch/click and keyboard routes enter immediately; no intermediate confirmation modal.
  for(const id of ['numberland','beginner','intermediate','advanced','_theater','_closet']){
-  const button=p.locator('[data-travel="'+id+'"]');if(id==='beginner'){await button.focus();await p.keyboard.press('Enter');}else await button.click();
+  const button=p.locator('.nm-zone[data-spot="'+id+'"]');if(id==='beginner'){await button.focus();await p.keyboard.press('Enter');}else await button.click();
   const back=id==='_closet'?'#backCloset':id==='_theater'?'#backExam':'#backTown';await p.waitForSelector(back);assert.equal(await p.locator('#tmodal.on').count(),0);await p.click(back);await p.waitForSelector('#townVp.is-illustrated');
  }
  await p.locator('.nm-zone[data-spot="beginner"]').click();await p.waitForSelector('#backTown');await p.click('#backTown');await p.waitForSelector('#townVp.is-illustrated');
- await p.locator('.nm-town-toolbox summary').click();assert.equal(await p.locator('[data-town-gate]').count(),3,'all outside-world gates remain accessible on mobile');
+ if(await p.locator('.nm-town-toolbox').getAttribute('open')===null)await p.locator('.nm-town-toolbox > summary').click();await p.locator('.nm-town-more > summary').click();assert.equal(await p.locator('[data-town-gate]').count(),3,'all outside-world gates remain accessible on mobile');
  assert.equal(await p.locator('#townDex').isVisible(),true);await p.keyboard.press('Escape');assert.equal(await p.locator('.nm-town-toolbox').getAttribute('open'),null);
  const after=await p.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return{coins:s.coins,progress:s.progress};});assert.deepEqual(after,before,'navigation does not award points or change learning progress');assert.deepEqual(errors,[]);assert.deepEqual(externalWrites,[]);report.push({width,height,lang,wholeMapVisible:true,oneTapEntrances:6,keyboardEntrance:true,coinsAndProgressPreserved:true,externalWrites:0});await c.close();
  }if(out)fs.writeFileSync(path.join(out,'town.json'),JSON.stringify(report,null,2));console.log('ILLUSTRATED_TOWN_OK '+JSON.stringify(report));}finally{await b.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

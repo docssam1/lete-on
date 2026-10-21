@@ -48,9 +48,9 @@ const server=http.createServer((req,res)=>{const f=path.resolve(ROOT,'.'+decodeU
    await page.locator('#charChipBtn').click();await page.waitForSelector('#nmc-name');
    assert.equal((await state()).coins,0,'stale balance cannot overwrite another tab');assert.equal((await state()).character_unlocked.color_pink,undefined);assert.equal((await state()).progress.external.done,true,'reload and subsequent saves retain the other tab’s progress');
    await page.locator('#backCloset').click();
-   assert.equal(await page.locator('[data-travel]').count(),6);
-   assert.equal(await page.locator('[data-travel="_closet"]').evaluate(e=>{const a=e.getBoundingClientRect(),b=e.parentElement.getBoundingClientRect();return a.top>=b.top&&a.bottom<=b.bottom;}),true,'all six destinations fit at this viewport');
-   await page.locator('.nm-town-toolbox summary').click();await page.keyboard.press('Escape');assert.equal(await page.locator('.nm-town-toolbox').getAttribute('open'),null);
+   assert.equal(await page.locator('[data-travel],.nm-town-destinations').count(),0);
+   assert.equal(await page.locator('.nm-zone[data-spot="_closet"]').isVisible(),true,'closet remains on the painted map');
+   if(await page.locator('.nm-town-toolbox').getAttribute('open')===null)await page.locator('.nm-town-toolbox > summary').click();await page.locator('.nm-town-toolbox > summary').focus();await page.keyboard.press('Escape');assert.equal(await page.locator('.nm-town-toolbox').getAttribute('open'),null);
    assert.deepEqual(errors,[]);reports.push({width,lang,purchaseExactlyOnce:true,storageFailureRollback:true,stalePurchaseRejected:true,namesEscaped:true,collectionPreserved:true,studentPreserved:true,metrics});await ctx.close();
   }
   if(OUT)fs.writeFileSync(path.join(OUT,'closet.json'),JSON.stringify(reports,null,2));console.log('OK: closet ko/en/zh, 390/1280px — avatars/names/persistence, preview/cancel/exact-once purchase, insufficient/stale balance, failed-storage rollback, point history,44px controls');
