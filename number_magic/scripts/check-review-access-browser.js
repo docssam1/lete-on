@@ -14,7 +14,7 @@ try{
   const original={lang,name:'Real learner fixture',onboarded:true,view:'town',avatar:{kind:'girl'},character:{number:3,color:'blue'},coins:777,progress:{'N-01':{done:true,steps:{stamp:true}}},guardianManaged:true,cloudLinked:true,cloudOwnerId:'real-owner-fixture',account:{status:'trial'}};
   await c.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1')){localStorage.setItem('nm_state_v1',JSON.stringify(s));localStorage.setItem('nm_state_slot1','keep-real-slot');localStorage.setItem('nm_active_slot','2');localStorage.setItem('nm_guardian_session_v1','keep-real-guardian-session');}},original);
   await p.goto(base+'/number_magic/about.html');await p.locator('.skipbtn').click();await p.waitForURL('**/access.html');assert.equal(await p.locator('#guardian-link').count(),1);
-  await p.locator('.access-lang[data-lang="'+lang+'"]').click();
+  await p.selectOption('#access-language',lang);
   assert.equal(await p.locator('#login-user').isVisible(),false);await p.click('#open-book');await p.waitForSelector('#login-user');
   assert.equal(await p.locator('[role="tab"],#review-form,#review-submit').count(),0,'one common login form, no master selector');
   assert.equal(await p.locator('form').count(),1);

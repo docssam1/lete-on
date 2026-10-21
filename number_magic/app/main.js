@@ -1326,7 +1326,7 @@ const TOWN_SPOTS=[
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
-const TOWN_ALWAYS_OPEN=['_closet']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
+const TOWN_ALWAYS_OPEN=['_closet','_theater']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
 
 /* 마을세계관-설계.md §3 — 형제 서비스로 나가는 관문(표지판). 절대 잠그지 않는다
    (자유 선택 원칙) — 열려 있으면 새 탭으로 나가고, 아직 없으면 "준비 중"으로만
@@ -1430,19 +1430,19 @@ function screenTown(){
   let zones='';
   TOWN_SPOTS.forEach(sp=>{
     const tier=tierById(sp.tier);
-    const open=sp.tier==='_theater'?false:TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tier);
+    const open=TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tier);
     zones+=`<button class="nm-zone ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
       ${open?'<div class="nm-halo"></div>':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
-      <span class="nm-zlabel">${typeof sp.tag==='string'?sp.tag:L(sp.tag)}<small>${L(sp.sub)}</small></span>
+      <span class="nm-zlabel">${esc(townDestinationLabel(sp.tier))}<small>${sp.tier.startsWith('_')?'':esc(typeof sp.tag==='string'?sp.tag.replace(/^\S+\s*/, ''):L(sp.tag))}</small></span>
     </button>`;
   });
   let gates='';
   TOWN_GATES.forEach(g=>{
-    gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">🪧 ${g.icon} <span>${esc(L(g.name))}</span></button>`;
+    gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">${g.icon} <span>${esc(L(g.name))}</span></button>`;
   });
-  scr.classList.add('nm-town');
+  scr.classList.add('nm-town','nm-town-illustrated');
   scr.innerHTML=`
-    <div id="townVp" class="is-3d-pending" aria-busy="true">
+    <div id="townVp" class="is-illustrated" aria-label="${S.lang==='ko'?'마을 지도':S.lang==='en'?'Village map':'村庄地图'}">
       <div id="townWorld">
         <div class="ncloud a"><span class="puff" style="width:64px;height:64px;left:0;top:-8px"></span><span class="puff" style="width:48px;height:48px;left:44px;top:0"></span><span class="puff" style="width:40px;height:40px;left:78px;top:6px"></span><span class="num">7</span></div>
         <div class="ncloud b"><span class="puff" style="width:70px;height:70px;left:0;top:-10px"></span><span class="puff" style="width:50px;height:50px;left:50px;top:2px"></span><span class="num">10</span></div>
@@ -1493,17 +1493,13 @@ function screenTown(){
     </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
-      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'내 위치로':S.lang==='en'?'My location':'我的位置'}">📍</button>
+      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'지도 전체 보기':S.lang==='en'?'Show whole map':'查看全图'}">⛶</button>
       <button class="nm-iconbtn" id="townZin" aria-label="${S.lang==='ko'?'확대':S.lang==='en'?'Zoom in':'放大'}">＋</button>
       <button class="nm-iconbtn" id="townZout" aria-label="${S.lang==='ko'?'축소':S.lang==='en'?'Zoom out':'缩小'}">－</button>
     </div>
-    <details class="nm-town-travel" id="townTravel">
-      <summary>${S.lang==='ko'?'🚪 바로 들어가기':S.lang==='en'?'🚪 Go directly':'🚪 直接进入'}</summary>
-      <div class="nm-town-travel-list" aria-label="${S.lang==='ko'?'마을 목적지':S.lang==='en'?'Town destinations':'小镇目的地'}">
-        <p>${S.lang==='ko'?'걷지 않고도 들어갈 수 있어요.':S.lang==='en'?'Enter without walking there.':'不用走过去也能进入。'}</p>
-        ${TOWN_SPOTS.map(sp=>`<button type="button" data-travel="${sp.tier}">${esc(sp.tier==='_theater'?(S.lang==='ko'?'학습지 · 시험':S.lang==='en'?'Worksheets & tests':'学习单和测试'):L(sp.sub))}${sp.tier==='_theater'?'':sp.tier==='_closet'||tierOpen(tierById(sp.tier))?'':' 🔒'}</button>`).join('')}
-      </div>
-    </details>
+    <nav class="nm-town-destinations" aria-label="${S.lang==='ko'?'바로 들어가기':S.lang==='en'?'Enter a building':'直接进入建筑'}">
+      ${TOWN_SPOTS.map(sp=>`<button type="button" data-travel="${sp.tier}"><span class="destination-icon" aria-hidden="true">${({numberland:'📖',beginner:'🏛️',intermediate:'🏠',advanced:'⛰️',_theater:'📝',_closet:'🪄'})[sp.tier]}</span><span>${esc(townDestinationLabel(sp.tier))}</span></button>`).join('')}
+    </nav>
     <div class="nm-tmodal" id="tmodal">
       <div class="nm-tmcard">
         <h3 id="tmTitle"></h3><p id="tmDesc"></p>
@@ -1511,10 +1507,16 @@ function screenTown(){
         <button class="close" id="tmClose">${S.lang==='ko'?'닫기':S.lang==='en'?'Close':'关闭'}</button>
       </div>
     </div>`;
-  scr.querySelectorAll('[data-travel]').forEach(b=>{b.onclick=()=>{const menu=$('#townTravel');if(menu)menu.open=false;townSpotAction(b.dataset.travel);};});
-  $('#townTravel').addEventListener('keydown',e=>{if(e.key==='Escape'){e.currentTarget.open=false;e.currentTarget.querySelector('summary').focus();}});
+  scr.querySelectorAll('[data-travel]').forEach(b=>{b.onclick=()=>enterTownDestination(b.dataset.travel);});
+  const tools=scr.querySelector('.nm-town-hud.info'),toolbox=document.createElement('details');
+  toolbox.className='nm-town-toolbox';
+  toolbox.innerHTML=`<summary>${S.lang==='ko'?'마을 메뉴':S.lang==='en'?'Village menu':'村庄菜单'} ☰</summary><div class="nm-town-tool-list"></div>`;
+  const list=toolbox.querySelector('div');while(tools.firstChild)list.appendChild(tools.firstChild);tools.appendChild(toolbox);
+  ['townCourseRoad','townDex','townMagazine','townMail','townReport'].forEach(id=>{const button=scr.querySelector('#'+id);const label=document.createElement('span');label.textContent=button.title;button.appendChild(label);});
+  TOWN_GATES.forEach(g=>{const button=document.createElement('button');button.type='button';button.className='nm-iconbtn';button.dataset.townGate=g.id;button.textContent=g.icon+' '+L(g.name);button.onclick=()=>showGateLinksModal(g);list.appendChild(button);});
+  toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
   townCleanup=initTownWorld(scr);
-  mountTown3DInto(scr);
+  // The illustrated village is now the default. Buildings open without walking or camera controls.
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
@@ -6043,6 +6045,15 @@ function mountTown3DInto(scr){
   }).catch(revealFallback);
 }
 /* 마을 건물 탭 → 안내 모달(2D 지도·3D 마을 공통) */
+function townDestinationLabel(id){
+  if(id==='_theater')return S.lang==='ko'?'학습지·시험':S.lang==='en'?'Worksheets':'学习单';
+  if(id==='_closet')return S.lang==='ko'?'옷장':S.lang==='en'?'Closet':'衣橱';
+  const sp=TOWN_SPOTS.find(x=>x.tier===id);return sp?L(sp.sub):'';
+}
+function enterTownDestination(id){
+  if(id==='_closet'||id==='_theater'){S.view=id==='_closet'?'closet':'exam';save();render();return;}
+  const tier=tierById(id);if(tierOpen(tier))enterTier(id);else townSpotAction(id);
+}
 function townSpotAction(id){
   if(id==='_theater'){
     const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
@@ -6070,16 +6081,14 @@ function initTownWorld(scr){
   let cam={x:0,y:0,scale:1},minS=1,maxS=3;
   const BBOX=computeContentBBox(W,H,.04);
 
-  /* 최소 배율 = 화면 꽉 채우기(cover). 예전엔 "건물 전부 보이기(bbox contain)"와 비교해
-     더 작은 쪽을 골랐는데, 세로 모바일에서 지도가 화면 절반만 차지하고 위아래가 하늘색으로
-     비는 레터박스가 생겼다(1536×1024 지도에선 더 심함). 건물은 드래그·탭 이동으로 언제든
-     닿을 수 있으므로 화면은 항상 지도로 채우고, 첫 화면만 bbox 중심(광장·타운홀)에 맞춘다. */
+  /* 처음에는 원본 만화풍 지도 전체를 보여 준다. 확대·드래그는 선택 사항이며,
+     건물 입장에는 캐릭터 이동이나 카메라 조작이 필요하지 않다. */
   function fit(){
-    const coverS=Math.max(vp.clientWidth/W,vp.clientHeight/H);
+    const coverS=Math.min(vp.clientWidth/W,vp.clientHeight/H);
     minS=coverS;
     if(cam.scale<minS)cam.scale=minS;
   }
-  function apply(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
+  function apply(){world.style.setProperty('--town-map-scale',String(cam.scale));world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
   function bound(){
     const mx=vp.clientWidth-W*cam.scale, my=vp.clientHeight-H*cam.scale;
     cam.x = mx>=0 ? Math.min(mx,Math.max(0,cam.x)) : Math.min(0,Math.max(mx,cam.x));
@@ -6087,9 +6096,8 @@ function initTownWorld(scr){
   }
   function center(){
     cam.scale=minS;
-    const bcx=BBOX.x+BBOX.w/2, bcy=BBOX.y+BBOX.h/2;
-    cam.x=vp.clientWidth/2-bcx*cam.scale;
-    cam.y=vp.clientHeight/2-bcy*cam.scale;
+    cam.x=(vp.clientWidth-W*cam.scale)/2;
+    cam.y=(vp.clientHeight-H*cam.scale)/2;
     bound();apply();
   }
   /* 따라가는 카메라 — 지도를 통째로 보여주는 대신 플레이어 가까이(cover×FOLLOW_ZOOM)
@@ -6097,7 +6105,7 @@ function initTownWorld(scr){
      손으로 지도를 끌면 따라가기를 잠시 끄고(자유 둘러보기), 지도를 탭해 걷게 하거나
      📍 버튼을 누르면 다시 켠다. */
   const FOLLOW_ZOOM=1.7;
-  let follow=true;
+  let follow=false;
   function playerWorld(){const p=(typeof player!=='undefined')?player:null;return p?{x:p.x/100*W,y:p.y/100*H}:{x:BBOX.x+BBOX.w/2,y:BBOX.y+BBOX.h/2};}
   function focusPlayer(immediate){
     const pw=playerWorld();
@@ -6144,19 +6152,19 @@ function initTownWorld(scr){
   zin.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale*1.25,r.left+r.width/2,r.top+r.height/2);};
   zout.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale/1.25,r.left+r.width/2,r.top+r.height/2);};
   const meBtn=scr.querySelector('#townMe');
-  if(meBtn)meBtn.onclick=()=>{follow=true;cam.scale=Math.min(maxS,minS*FOLLOW_ZOOM);focusPlayer(true);};
+  if(meBtn)meBtn.onclick=()=>{follow=false;center();};
   function onWheel(e){e.preventDefault();zoomTo(cam.scale*(e.deltaY<0?1.1:.9),e.clientX,e.clientY);}
   vp.addEventListener('wheel',onWheel,{passive:false});
 
-  requestAnimationFrame(()=>{fit();cam.scale=Math.min(maxS,minS*FOLLOW_ZOOM);focusPlayer(true);});
-  function onResize(){fit();bound();apply();}
+  requestAnimationFrame(()=>{fit();center();});
+  function onResize(){fit();center();}
   addEventListener('resize',onResize);
 
   /* 건물 클릭 */
   scr.querySelectorAll('.nm-zone').forEach(z=>{
-    z.addEventListener('pointerup',e=>{
+    z.addEventListener('click',e=>{
       if(moved)return;e.stopPropagation();
-      townSpotAction(z.dataset.spot);
+      enterTownDestination(z.dataset.spot);
     });
   });
   scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');
@@ -6165,7 +6173,7 @@ function initTownWorld(scr){
   /* 관문 표지판 탭(§3) — .nm-zone과 같은 패턴(드래그면 무시, 지도 탭-이동과 충돌
      안 하게 stopPropagation). */
   scr.querySelectorAll('.nm-gate').forEach(g=>{
-    g.addEventListener('pointerup',e=>{
+    g.addEventListener('click',e=>{
       if(moved)return;e.stopPropagation();
       const gate=TOWN_GATES.find(x=>x.id===g.dataset.gate);
       if(gate)showGateLinksModal(gate);
@@ -6197,7 +6205,7 @@ function initTownWorld(scr){
   const myName=avatarName();
   const nbs=[
     {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.22,player:true,
-      lines:[L({ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`}),L({ko:'지도를 콕 찍으면 내가 걸어가!',en:'Tap the map and I will walk there!',zh:'点一下地图，我就走过去！'})]},
+      lines:[L({ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`}),L({ko:'건물을 누르면 바로 들어갈 수 있어!',en:'Tap a building to enter!',zh:'点击建筑就能进入！'})]},
     {el:scr.querySelector('#nbBuddy'),x:37,y:63,tx:37,ty:63,spd:.22,buddy:true,
       lines:[L({ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'}),L({ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'})]},
     {el:scr.querySelector('#nbElder'),x:31,y:52,tx:31,ty:52,spd:0,still:true,
@@ -6251,24 +6259,6 @@ function initTownWorld(scr){
      충돌하지 않도록: 드래그하지 않은 "가벼운 탭"일 때만 목적지로 삼는다. */
   let pinched=false;
   vp.addEventListener('pointermove',()=>{if(pts.size>=2)pinched=true;});
-  vp.addEventListener('pointerup',e=>{
-    if(moved){return;}
-    if(pinched){pinched=false;return;}
-    if(modal.classList.contains('on'))return;
-    const r=vp.getBoundingClientRect();
-    const wx=(e.clientX-r.left-cam.x)/cam.scale;   // 월드 px
-    const wy=(e.clientY-r.top -cam.y)/cam.scale;
-    let px=wx/W*100, py=wy/H*100;                  // 월드 %
-    if(px<2||px>98||py<4||py>96)return;            // 지도 밖 무시
-    const me=nbs[0];
-    me.tx=px; me.ty=py; follow=true;
-    /* 목적지 표시(잠깐 반짝) */
-    const ping=document.createElement('div');
-    ping.className='nb-ping';
-    ping.style.left=px+'%';ping.style.top=py+'%';
-    world.appendChild(ping);
-    setTimeout(()=>ping.remove(),700);
-  });
   nbs.forEach(n=>{
     n.el.addEventListener('pointerup',e=>{
       if(moved)return;e.stopPropagation();
@@ -6283,9 +6273,11 @@ function initTownWorld(scr){
   /* 음소거 버튼: 배경음악+물소리(Web Audio)와 숫자친구 TTS를 함께 켜고 끔 */
   const mb=scr.querySelector('#townMute');
   mb.textContent=muted?'🔇':'🔈';
+  mb.setAttribute('aria-label',S.lang==='ko'?(muted?'마을 소리 켜기':'마을 소리 끄기'):S.lang==='en'?(muted?'Turn village sound on':'Turn village sound off'):(muted?'开启村庄声音':'关闭村庄声音'));
   mb.onclick=()=>{
     muted=!muted;
     mb.textContent=muted?'🔇':'🔈';
+  mb.setAttribute('aria-label',S.lang==='ko'?(muted?'마을 소리 켜기':'마을 소리 끄기'):S.lang==='en'?(muted?'Turn village sound on':'Turn village sound off'):(muted?'开启村庄声音':'关闭村庄声音'));
     if(muted){
       stopVoice();
       if(stopAmbience){stopAmbience();stopAmbience=null;}

@@ -14,6 +14,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(ROOT,'.'+decodeU
   for(const [width,lang]of [[390,'ko'],[1280,'ko'],[390,'en'],[390,'zh']]){
    const ctx=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),page=await ctx.newPage(),errors=[];
    page.on('pageerror',e=>errors.push(e.message));await page.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());
+   await page.route('**/app/entry.js?*',r=>r.fulfill({contentType:'application/javascript',body:'window.NM_ENTRY={mode:"fixture"};'}));
    await page.addInitScript(lang=>{if(!localStorage.getItem('nm_state_v1')){const d=new Date(),day=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');localStorage.setItem('nm_state_v1',JSON.stringify({lang,onboarded:true,name:'학생 기록',avatar:{kind:'girl'},character:{number:3,color:'blue',hat:'none',cape:'none',bg:'plain'},character_unlocked:{},coins:100,progress:{'N-01':{done:true,steps:{stamp:true}}},account:{status:'active'},attend:{last:day,days:1},coinLedger:[{amount:3,reason:'attendance',at:new Date().toISOString()}]}));}},lang);
    const state=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')));
    const act=a=>page.locator(`[data-nmc-act="${a}"]`),tab=t=>page.locator(`.nmc-tab[data-tab="${t}"]`),item=(t,id)=>page.locator(`[data-nmc-act="item"][data-type="${t}"][data-id="${id}"]`);
@@ -46,10 +47,10 @@ const server=http.createServer((req,res)=>{const f=path.resolve(ROOT,'.'+decodeU
    await page.locator('.nm-title3d [data-id="game"]:visible,#ttGame:visible').first().click({timeout:60000});
    await page.locator('#charChipBtn').click();await page.waitForSelector('#nmc-name');
    assert.equal((await state()).coins,0,'stale balance cannot overwrite another tab');assert.equal((await state()).character_unlocked.color_pink,undefined);assert.equal((await state()).progress.external.done,true,'reload and subsequent saves retain the other tab’s progress');
-   await page.locator('#backCloset').click();await page.locator('#townTravel > summary').click();
+   await page.locator('#backCloset').click();
    assert.equal(await page.locator('[data-travel]').count(),6);
    assert.equal(await page.locator('[data-travel="_closet"]').evaluate(e=>{const a=e.getBoundingClientRect(),b=e.parentElement.getBoundingClientRect();return a.top>=b.top&&a.bottom<=b.bottom;}),true,'all six destinations fit at this viewport');
-   await page.keyboard.press('Escape');assert.equal(await page.locator('#townTravel').getAttribute('open'),null);
+   await page.locator('.nm-town-toolbox summary').click();await page.keyboard.press('Escape');assert.equal(await page.locator('.nm-town-toolbox').getAttribute('open'),null);
    assert.deepEqual(errors,[]);reports.push({width,lang,purchaseExactlyOnce:true,storageFailureRollback:true,stalePurchaseRejected:true,namesEscaped:true,collectionPreserved:true,studentPreserved:true,metrics});await ctx.close();
   }
   if(OUT)fs.writeFileSync(path.join(OUT,'closet.json'),JSON.stringify(reports,null,2));console.log('OK: closet ko/en/zh, 390/1280px — avatars/names/persistence, preview/cancel/exact-once purchase, insufficient/stale balance, failed-storage rollback, point history,44px controls');

@@ -5,7 +5,7 @@
   "ko": {
     "title": "수의 마법 · Numbers of Magic",
     "lead": "이메일 또는 아이디로 로그인해 주세요.",
-    "loginTitle": "반가워요!",
+    "loginTitle": "로그인",
     "user": "이메일 또는 아이디",
     "password": "비밀번호",
     "login": "로그인",
@@ -36,12 +36,15 @@
     "loginKicker": "나의 배움 이어가기",
     "trialQuestion": "먼저 경험해 보고 싶다면",
     "openLabel": "책 펼치기",
-    "closeLabel": "책 닫기"
+    "closeLabel": "책 닫기",
+    "coverKicker": "숫자가 마법이 되는 곳",
+    "coverEdition": "계산하는 힘, 읽고 생각하는 힘",
+    "magicWriting": "수는, 펼치면 쉬워진다"
   },
   "en": {
     "title": "Numbers of Magic · GFIELD",
     "lead": "Log in with your email or username.",
-    "loginTitle": "Welcome back!",
+    "loginTitle": "Login",
     "user": "Email or username",
     "password": "Password",
     "login": "Log in",
@@ -63,7 +66,7 @@
     "heroDescription": "See, touch and discover how numbers work.\nYour own learning adventure starts here.",
     "browse": "Explore",
     "story": "Read our story",
-    "bookTitle": "Numbers\nof Magic",
+    "bookTitle": "The magic of numbers",
     "coverCaption": "An adventure for curious minds",
     "invitation": "Open the book. Let the learning begin.",
     "footer": "Small discoveries. Lasting understanding.",
@@ -72,12 +75,15 @@
     "loginKicker": "YOUR NEXT CHAPTER",
     "trialQuestion": "Curious to try it first?",
     "openLabel": "Open the book",
-    "closeLabel": "Close the book"
+    "closeLabel": "Close the book",
+    "coverKicker": "Where numbers become magic",
+    "coverEdition": "Calculate. Read. Think.",
+    "magicWriting": "Unfold numbers. Find the pattern."
   },
   "zh": {
     "title": "数字魔法 · GFIELD",
     "lead": "请使用邮箱或账号登录。",
-    "loginTitle": "欢迎回来！",
+    "loginTitle": "登录",
     "user": "邮箱或账号",
     "password": "密码",
     "login": "登录",
@@ -108,28 +114,57 @@
     "loginKicker": "继续我的学习",
     "trialQuestion": "想先体验一下？",
     "openLabel": "翻开书本",
-    "closeLabel": "合上书本"
+    "closeLabel": "合上书本",
+    "coverKicker": "数字化为魔法的地方",
+    "coverEdition": "会计算，会阅读，会思考",
+    "magicWriting": "展开数字，发现规律"
   }
 };
   var lang = 'ko', busy = false;
   var $ = function(id) { return document.getElementById(id); };
   var form=$('login-form'), user=$('login-user'), code=$('login-password'),
       btn=$('login-submit'), status=$('login-status'), authReady=null;
-  var book=$('login-book'), close=$('close-book'), opener=null;
+  var book=$('login-book'), close=$('close-book'), opener=null, finishOpening=null;
+  var scene=document.querySelector('[data-scene="cover"]'), spread=book.querySelector('.book-spread');
+  var motion=matchMedia('(prefers-reduced-motion:reduce)');
+  function writeInvitation() {
+    var line=$('page-title'),text=T[lang].magicWriting;
+    line.setAttribute('aria-label',text);line.replaceChildren();
+    Array.from(text).forEach(function(ch,i){var letter=document.createElement('span');letter.className='ink-letter';letter.setAttribute('aria-hidden','true');letter.style.setProperty('--ink-delay',(i*65)+'ms');letter.textContent=ch;line.appendChild(letter);});
+  }
   function openBook(ev) {
-    if (book.open) return;
+    if(book.open)return;
     opener=ev.currentTarget;
-    book.classList.remove('is-open');
-    book.showModal(); book.scrollTop=0;
-    requestAnimationFrame(function(){requestAnimationFrame(function(){if(book.open)book.classList.add('is-open');});});
+    var source=$('cover-open').getBoundingClientRect(),face=document.querySelector('.book-cover-face').cloneNode(true);
+    var originals=document.querySelectorAll('.book-cover-face canvas');
+    face.querySelectorAll('canvas').forEach(function(n,i){var im=document.createElement('img');im.src=originals[i].toDataURL();im.className=n.className;n.replaceWith(im);});
+    [face].concat(Array.from(face.querySelectorAll('[id]'))).forEach(function(n){n.removeAttribute('id');});
+    if(window.NMCoverMath)NMCoverMath.setActive(false);
+    book.showModal();book.scrollTop=0;book.classList.add('is-open');scene.classList.add('is-login-open');
+    if(motion.matches){writeInvitation();return;}
+    book.classList.add('is-opening');
+    var target=spread.getBoundingClientRect(),stage=document.createElement('div'),board=document.createElement('div'),back=document.createElement('span');
+    stage.className='cover-opening-stage';stage.inert=true;stage.setAttribute('aria-hidden','true');
+    board.className='cover-opening-board';back.className='cover-opening-back';
+    board.style.width=source.width+'px';board.style.height=source.height+'px';board.append(face,back);stage.append(board);book.append(stage);
+    var start=null,raf=0,finished=false;
+    var smooth=function(p){return p*p*(3-2*p);},mix=function(a,b,p){return a+(b-a)*p;};
+    function finish(){if(finished)return;finished=true;cancelAnimationFrame(raf);stage.remove();spread.style.removeProperty('transform');spread.style.removeProperty('transform-origin');spread.style.removeProperty('clip-path');book.classList.remove('is-opening');finishOpening=null;window.removeEventListener('resize',finish);document.removeEventListener('visibilitychange',hidden);if(book.open)writeInvitation();}
+    function hidden(){if(document.hidden)finish();}
+    function draw(now){if(start===null)start=now;var p=Math.min(1,(now-start)/1400),e=smooth(p),hingeX=mix(source.left,target.left+target.width/2,e),y=mix(source.top,target.top,e),w=mix(source.width,target.width/2,e),h=mix(source.height,target.height,e),angle=-180*smooth(Math.min(1,p/.93));
+      stage.dataset.progress=p.toFixed(3);board.style.transform='translate3d('+hingeX+'px,'+y+'px,0) scale('+w/source.width+','+h/source.height+') rotateY('+angle+'deg)';board.style.opacity=String(1-smooth(Math.max(0,(p-.86)/.14)));
+      spread.style.transformOrigin='0 0';spread.style.transform='translate('+(hingeX-w-target.left)+'px,'+(y-target.top)+'px) scale('+(2*w/target.width)+','+(h/target.height)+')';spread.style.clipPath='inset(0 0 0 '+(50*(1-smooth(Math.max(0,Math.min(1,(p-.45)/.45)))))+'%)';
+      if(p<1)raf=requestAnimationFrame(draw);else finish();
+    }
+    finishOpening=finish;draw(performance.now());window.addEventListener('resize',finish,{once:true});document.addEventListener('visibilitychange',hidden);
   }
   function closeBook() {
-    if (busy) return;
-    book.classList.remove('is-open'); book.close();
-    code.value=''; setStatus('');
-    if (opener) opener.focus();
+    if(busy)return;
+    if(finishOpening)finishOpening();
+    book.classList.remove('is-open');book.close();scene.classList.remove('is-login-open');
+    code.value='';setStatus('');if(window.NMCoverMath)NMCoverMath.setActive(true);if(opener)opener.focus();
   }
-  ['open-book','open-login','cover-open'].forEach(function(id){$(id).addEventListener('click',openBook);});
+  ['open-book','cover-open'].forEach(function(id){$(id).addEventListener('click',openBook);});
   close.addEventListener('click',closeBook);
   book.addEventListener('cancel',function(ev){ev.preventDefault();closeBook();});
   book.addEventListener('click',function(ev){if(ev.target===book)closeBook();});
@@ -171,9 +206,7 @@
     Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) {
       if (d[el.getAttribute('data-i18n')] != null) el.textContent = d[el.getAttribute('data-i18n')];
     });
-    Array.prototype.forEach.call(document.querySelectorAll('.access-lang'), function (b) {
-      b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false');
-    });
+    $('access-language').value=lang;
     $('guardian-link').href = q('index.html?enter=1&auth=1');
     $('preview-link').href = q('index.html?enter=1');
     status.textContent = '';
@@ -185,9 +218,7 @@
     try { localStorage.setItem(KEY, l); } catch (e) {}
     apply();
   }
-  Array.prototype.forEach.call(document.querySelectorAll('.access-lang'), function (b) {
-    b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); });
-  });
+  $('access-language').addEventListener('change',function(){setLang(this.value);});
 
 
   form.addEventListener('submit', async function(ev) {
