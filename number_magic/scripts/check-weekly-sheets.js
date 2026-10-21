@@ -34,6 +34,7 @@ server.listen(0, async () => {
   /* WS_DETAIL=1 이면 넘친 쪽의 종류(그리드 판정·쪽 클래스)를 함께 적는다 */
   await page.addInitScript(d => { window.__nmWsDetail = d; }, !!process.env.WS_DETAIL);
   for(const c of courses) for(const k of [1, 2]){
+    const before=bad.length;
     await page.goto(`http://localhost:${port}/ws.html?w=2026-W39&c=${c}&n=check&k=${k}&cad=w2&auto=0${amtQ}`);
     let txt = '';
     for(let i = 0; i < 40; i++){ await page.waitForTimeout(250); txt = await page.evaluate(() => document.body.innerText); if(/문제가 생겼어요|정답지/.test(txt)) break; }
@@ -69,11 +70,13 @@ server.listen(0, async () => {
       });
       await tag.evaluate(e => e.remove()); await page.emulateMedia({ media:'screen' });
       if(over.length) bad.push(`${c} k${k}: 지면 넘침 ${over.slice(0, 4).join(', ')}${over.length > 4 ? ` 외 ${over.length - 4}` : ''}`);
-      else ok++;
+      const keyOverflow=await page.locator('.nm-print-answer-key .nm-ak-item').evaluateAll(items=>items.filter(e=>e.scrollWidth>e.clientWidth+3).length);
+      if(keyOverflow)bad.push(`${c} k${k}: 정답 ${keyOverflow}칸 가로 넘침`);
+      if(bad.length===before)ok++;
     }
   }
   await browser.close(); server.close();
-  console.log(`주간 학습지 ${ok + bad.length}장 중 ${ok}장 정상${amtArg ? ' (학습량 ' + amtArg + '배)' : ''}`);
+  console.log(`주간 학습지 ${courses.length * 2}장 중 ${ok}장 정상${amtArg ? ' (학습량 ' + amtArg + '배)' : ''}`);
   if(bad.length){ console.log(`\n✗ 실패 ${bad.length}장`); bad.forEach(b => console.log('  ' + b)); process.exit(1); }
   console.log('통과 — 모든 과정의 주간 학습지가 끝까지 만들어진다.');
 });

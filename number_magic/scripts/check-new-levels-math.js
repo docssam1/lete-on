@@ -37,7 +37,7 @@ for (const f of ['engine/rng.js', 'engine/generators.js']) {
 for (const f of fs.readdirSync(path.join(ROOT, 'engine/threads'))) {
   eval(fs.readFileSync(path.join(ROOT, 'engine/threads', f), 'utf8'));
 }
-eval(fs.readFileSync(path.join(ROOT, 'data/threads.js'), 'utf8'));
+require(path.join(ROOT, 'data/threads.js'));
 
 const N = parseInt(process.argv[2], 10) || 4000;
 const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { const t = b; b = a % b; a = t; } return a || 1; };

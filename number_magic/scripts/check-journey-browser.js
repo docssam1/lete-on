@@ -3,7 +3,7 @@
 const fs=require('fs'),path=require('path'),http=require('http'),assert=require('node:assert/strict');
 const {chromium}=require('./lib/playwright');
 const ROOT=path.resolve(__dirname,'../..'),OUT=process.env.NM_JOURNEY_ARTIFACTS&&path.resolve(process.env.NM_JOURNEY_ARTIFACTS);
-if(OUT&&!/^[EG]:[\\/]/i.test(OUT))throw Error('Artifacts must be on E: or G:');
+if(OUT&&process.platform==='win32'&&!/^[EG]:[\\/]/i.test(OUT))throw Error('Artifacts must be on E: or G:');
 const MIME={'.js':'application/javascript','.css':'text/css','.html':'text/html','.png':'image/png','.woff2':'font/woff2','.svg':'image/svg+xml','.webp':'image/webp'};
 const server=http.createServer((req,res)=>{const file=path.resolve(ROOT,'.'+decodeURIComponent(req.url.split('?')[0]));if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile()){res.writeHead(404);return res.end();}res.setHeader('Content-Type',MIME[path.extname(file)]||'application/octet-stream');fs.createReadStream(file).pipe(res);});
 const synthetic=uid=>({lang:'ko',onboarded:true,name:'교구 검수',view:'unit',unit:uid,step:'discover',sub:{},avatar:{kind:'boy'},character:{number:3,color:'gold'},cloudLinked:false,placement:{course:uid==='M-02'?'C29':'C1',self:true},symbolDex:{'+':{},'-':{},'−':{},'=':{},'□':{},'×':{}},progress:{[uid]:{introSeen:true,steps:{}}},coins:0,account:{status:'active'},r0BannerSeen:true});
