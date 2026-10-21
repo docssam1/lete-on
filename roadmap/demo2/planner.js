@@ -189,7 +189,7 @@ function hiChain(start,band){
 }
 
 function build(o){
-  if(o.band==='D') return buildD(o);
+  if(o.band==='D'&&!o.personalSchool) return buildD(o);
   const B=BAND[o.band]||BAND.B;
   const now=mOf(o.grade,o.mon), A0=mOf(o.grade,3), A1=mOf(9,12), S=B.elemS||o.speed, warn=[]; // A1: 중3 12월까지(원장님 2026-10-20 "공통적인 부분까지 쭉")
   const yearOf=m=>o.year+(Math.floor(m/12)-Math.floor(now/12));

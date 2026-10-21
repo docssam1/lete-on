@@ -6,11 +6,18 @@
         → 등급 유닛목록 → 유닛[프랙티스→디스커버→핵심체크→랩→아레나→도장]
    진단 스킵(B안): 프랙티스 진입 시 "바로 넘어갈래? / 한번 볼래?"
    ============================================================ */
-(()=>{
+(async()=>{
 'use strict';
+// Review is a separately authenticated, learning-only session. A URL/local flag
+// alone never activates it; failed verification returns to the login page.
+const reviewRequested=new URLSearchParams(location.search).get('review')==='1';
+const review=reviewRequested&&window.NM_REVIEW_SESSION?await NM_REVIEW_SESSION.ready():null;
+if(reviewRequested&&!review){location.replace('access.html?reason=expired');return;}
+const REVIEW=!!review;
+if(REVIEW)NM_REVIEW_SESSION.guard();
 const app=document.getElementById('app');
 const GEN=window.NM_GEN, CUR=window.NM_CURRICULUM, UNITS=window.NM_UNITS;
-const membership=window.NM_MEMBERSHIP;
+const membership=REVIEW?null:window.NM_MEMBERSHIP;
 
 /* NM_TGEN 브리지: 레거시 NM_GEN + 스레드 생성기(NM_TGEN) 통합. params 전달 포함. */
 function genProblem(cfg, level){
@@ -223,7 +230,7 @@ const t=k=>{
 const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
 
 /* ---------- 상태 + 저장 ---------- */
-const KEY='nm_state_v1';
+const KEY=REVIEW?'nm_review_state_v1_'+review.username:'nm_state_v1';
 /* onboarded는 defaults()에 넣지 않음(항상 undefined로 시작) —
    완전 신규 설치(hadSave===false)일 때만 온보딩을 요구하기 위한 표식.
    defaults()에 박아두면 구버전 저장본(onboarded 필드 없음)과 병합 시에도
@@ -285,6 +292,19 @@ function load(){
   return defaults();
 }
 let S=load();
+const requestedLang=new URLSearchParams(location.search).get('lang');
+if(['ko','en','zh'].includes(requestedLang))S.lang=requestedLang;
+if(REVIEW){
+  S.onboarded=true;S.name='학습 점검';S.cloudLinked=false;S.cloudOwnerId=null;S.guardianManaged=false;
+  S.account={status:'active',code:null,checkedAt:0};
+  if(!hadSave){S.coins=1000;S.avatar={kind:'boy',name:'점검 마법사'};}
+  document.body.classList.add('nm-review-mode');
+  const bar=document.createElement('div');bar.className='nm-review-banner';
+  const label=document.createElement('span');label.textContent='학습 점검 · '+review.username;
+  const exit=document.createElement('button');exit.type='button';exit.id='nmReviewLogout';exit.textContent='점검 로그아웃';
+  exit.onclick=async()=>{exit.disabled=true;await NM_REVIEW_SESSION.logout();location.replace('access.html');};
+  bar.append(label,exit);document.body.appendChild(bar);
+}
 const ROAD_MULTS_LIST=[0.7,0.85,1,1.25,1.5];
 normalizeLoadedState(hadSave);
 function normalizeLoadedState(existingLocalProfile){
@@ -326,7 +346,7 @@ if(!S.account)S.account={status:existingLocalProfile?'active':'trial',code:null,
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 }
 
-function save(){applyAdminSettings();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();if(membership)membership.refreshIfDue();if(booted&&S.view==='courseroad')Promise.resolve().then(renderPersonalPlan);return true;}
+function save(){if(REVIEW&&!NM_REVIEW_SESSION.active())return false;applyAdminSettings();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();if(membership)membership.refreshIfDue();if(booted&&S.view==='courseroad')Promise.resolve().then(renderPersonalPlan);return true;}
 // The existing profile/slot and state backup own this data; no global sibling log.
 if(window.NM_STUDY_RECORDS)window.NM_STUDY_RECORDS.bind({state:()=>S,save});
 window.addEventListener('nm:study-record-error',()=>toast(S.lang==='en'?'Your score is unchanged, but the study record could not be saved. Check device storage.':S.lang==='zh'?'成绩不变，但未能保存学习记录。请检查设备存储。':'채점은 유지되지만 학습 기록을 저장하지 못했습니다. 기기 저장 공간을 확인해 주세요.',false));
@@ -340,8 +360,8 @@ function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
    nm_state_slot1|2|3 = 비활성 슬롯 백업(활성 슬롯은 백업이 없고 nm_state_v1 자체가 원본),
    nm_active_slot = 지금 nm_state_v1이 몇 번 슬롯인지(기본 1, 기존 사용자는 이 키가
    아예 없어도 1로 취급되므로 마이그레이션이 따로 필요 없다). */
-const SLOT_COUNT=3, SLOT_ACTIVE_KEY='nm_active_slot';
-function slotKey(n){ return 'nm_state_slot'+n; }
+const SLOT_COUNT=3, SLOT_ACTIVE_KEY=REVIEW?'nm_review_active_slot_'+review.username:'nm_active_slot';
+function slotKey(n){ return (REVIEW?'nm_review_slot_'+review.username+'_':'nm_state_slot')+n; }
 function activeSlot(){
   try{ const n=parseInt(localStorage.getItem(SLOT_ACTIVE_KEY),10); return (n>=1&&n<=SLOT_COUNT)?n:1; }
   catch(e){ return 1; }
@@ -435,6 +455,7 @@ function externalBlocked(){return !accountActive();}
 window.NM_GATE={trialUnitSet,isTrialUnit,unitLocked,accountActive,externalBlocked,trialLevelOpen};
 /* 체험 범위 밖의 유닛은 학원 승인 상태를 확인한다. */
 function accountActive(){
+  if(REVIEW)return NM_REVIEW_SESSION.active();
   if(membership&&guardianAuth?.peek())return S.cloudLinked&&S.cloudOwnerId===guardianAuth.peek().user.id&&!guardianAuth.requiresPassword()&&membership.contactReady()&&membership.canUse();
   return !S.guardianManaged&&!!(S.account&&S.account.status==='active'); // preserve local approvals only until guardian enrollment
 }
@@ -449,8 +470,8 @@ function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 const SB_URL='https://fgahqumaldheqettmvqg.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
 const sbHdr=()=>({apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'});
-const guardianAuth=window.NM_PROFILE_AUTH;
-let guardianEntry=false,booted=false,guardianContactEditing=false;
+const guardianAuth=REVIEW?null:window.NM_PROFILE_AUTH;
+let guardianEntry=!REVIEW&&new URLSearchParams(location.search).get('auth')==='1',booted=false,guardianContactEditing=false;
 if(guardianAuth){
   guardianAuth.configure({url:SB_URL,anonKey:SB_KEY});
   const refreshGuardianUI=()=>{
@@ -491,6 +512,7 @@ function applyAdminSettings(){
   return changed;
 }
 async function cloudCredentials(){
+  if(REVIEW)throw new Error('learning_review_only');
   if(!guardianAuth)throw new Error('guardian_auth_required');
   await guardianAuth.ready();
   if(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())throw new Error('password_setup_required');
@@ -590,6 +612,7 @@ async function reverifyAccountIfNeeded(){
 
 let cloudTimer=null,cloudSyncError=false;
 function cloudPushSoon(){
+  if(REVIEW)return;
   clearTimeout(cloudTimer);
   if(!S.cloudLinked||!S.name||!S.cloudOwnerId)return;
   const name=S.name,owner=S.cloudOwnerId,state=JSON.parse(JSON.stringify(S));
@@ -1043,6 +1066,11 @@ function bgKeyForView(){
 function render(){
   syncAmount();
   window.NM_LANG=S.lang;
+  if(REVIEW){
+    const label=document.querySelector('.nm-review-banner span'),exit=document.getElementById('nmReviewLogout');
+    if(label)label.textContent=(S.lang==='en'?'Learning review':S.lang==='zh'?'学习检查':'학습 점검')+' · '+review.username;
+    if(exit)exit.textContent=S.lang==='en'?'Review logout':S.lang==='zh'?'退出检查':'점검 로그아웃';
+  }
   document.documentElement.lang=S.lang==='zh'?'zh-CN':S.lang;
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
   document.documentElement.dataset.nmBand=NM_BAND;
@@ -1056,7 +1084,7 @@ function render(){
     screenWorksheetHelper(wsHelperId);
     return;
   }
-  if(guardianEntry&&!S.onboarded){
+  if(guardianEntry){
     app.innerHTML='<div id="screen"></div>';
     screenGuardianEntry();return;
   }
@@ -1109,9 +1137,9 @@ function cycleLang(){stopVoice();const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.
    ============================================================ */
 function screenGuardianEntry(){
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
-  $('#screen').innerHTML=`<div class="nm-step-body nm-closet-wrap"><button class="nm-btn ghost" id="nmGuardBack">${lk('처음부터 시작하기','Start a new learner','新学生开始')}</button><h1>${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</h1><div id="nm-guardian-slot"></div><div id="nm-idcard-slot"></div></div>`;
+  $('#screen').innerHTML=`<div class="nm-step-body nm-closet-wrap"><button class="nm-btn ghost" id="nmGuardBack">${lk('학습 화면으로','Learning screen','学习界面')}</button><h1>${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</h1><div id="nm-guardian-slot"></div><div id="nm-idcard-slot"></div><div id="nm-account-slot"></div></div>`;
   $('#nmGuardBack').onclick=()=>{guardianEntry=false;if(guardianAuth&&guardianAuth.cancelLink)guardianAuth.cancelLink();render();};
-  renderIdCard();
+  renderIdCard();renderAccountCard();
 }
 function screenWelcome(){
   const scr=$('#screen');
@@ -7708,13 +7736,14 @@ function screenCloset(){
   </div>
   <div class="nm-step-body nm-closet-wrap">
     <div id="nm-closet-cnt"></div>
-    <div id="nm-slots-slot"></div>
+    ${REVIEW?'':`    <div id="nm-slots-slot"></div>
     <details class="nm-closet-settings">
       <summary>${lk('계정 · 알림 설정','Account & notifications','账号·通知设置')}</summary>
       <div id="nm-guardian-slot"></div>
       <div id="nm-idcard-slot"></div>
       <div id="nm-account-slot"></div>
     </details>
+`}
   </div>`;
   $('#backCloset').onclick=()=>{S.view='town';save();render();};
   renderIdCard();
@@ -7772,6 +7801,7 @@ function screenCloset(){
    (readSlotState로 다시 읽지 않음 — 방금 옷장에서 바꾼 값이 아직 저장 전일 수 있어서가
    아니라, 활성 슬롯의 원본은 항상 S이기 때문), 나머지 두 슬롯은 백업 키를 읽는다. */
 function renderSlotCards(){
+  if(REVIEW)return;
   const slot=$('#nm-slots-slot');
   if(!slot)return;
   const ko=S.lang==='ko', en=S.lang==='en';
@@ -7834,6 +7864,7 @@ function renderSlotCards(){
    번호는 nm_contacts에만 insert(anon은 조회 불가 — nm_profiles와 분리).
    등록 여부는 로컬 플래그(S.notifyReg)로만 표시(번호 원문은 로컬에도 안 남김). */
 function renderNotifyCard(){
+  if(REVIEW)return;
   const slot=$('#nm-account-slot');
   if(!slot)return;
   slot.querySelectorAll('.nm-notify-card').forEach(el=>el.remove());
@@ -7925,6 +7956,7 @@ function renderNotifyCard(){
   };
 }
 function renderAccountCard(){
+  if(REVIEW)return;
   const slot=$('#nm-account-slot');
   if(!slot)return;
   if(membership&&!guardianAuth?.peek()&&(S.guardianManaged||S.account?.status!=='active')){
@@ -8151,6 +8183,7 @@ function renderGuardianCard(){
   $('#nmGuardVerify').onclick=()=>request(true);
 }
 function renderIdCard(){
+  if(REVIEW)return;
   const slot=$('#nm-idcard-slot');
   if(!slot)return;
   renderGuardianCard();

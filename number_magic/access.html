@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>수의 마법 · 승인·로그인</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="app/access.css">
+</head>
+<body class="nm-access">
+<main class="access-wrap" id="main">
+  <header class="access-head">
+    <p class="brand-mark">Numbers of Magic</p>
+    <div class="access-langs" role="group" aria-label="Language">
+      <button type="button" class="access-lang" data-lang="ko" aria-pressed="true">한국어</button>
+      <button type="button" class="access-lang" data-lang="en" aria-pressed="false">English</button>
+      <button type="button" class="access-lang" data-lang="zh" aria-pressed="false">中文</button>
+    </div>
+  </header>
+  <h1 data-i18n="title">수의 마법 · 승인·로그인</h1>
+  <p class="lead" data-i18n="lead">시작하는 방법을 선택해 주세요.</p>
+
+  <section class="card primary-card" aria-labelledby="g-title">
+    <h2 id="g-title" data-i18n="gTitle">보호자 로그인·가입</h2>
+    <p data-i18n="gDesc">인증된 보호자 이메일로 인증 코드를 받고, 비밀번호를 설정해 가입합니다. 회원 승인 상태는 로그인 후 확인됩니다.</p>
+    <p class="muted" data-i18n="gTrial">이메일 인증 후 30일 동안 체험할 수 있어요. 정식 이용은 학원 승인 후 시작됩니다.</p>
+    <a id="guardian-link" class="btn primary" href="index.html?enter=1&amp;auth=1" data-i18n="gBtn">보호자 이메일로 로그인·가입</a>
+  </section>
+
+  <section class="card" aria-label="Master review">
+    <details id="review-details">
+      <summary data-i18n="rSummary">마스터 점검 로그인</summary>
+      <form id="review-form" novalidate>
+        <p class="muted" data-i18n="rDesc">전체 학습 기능을 확인하는 점검용 계정입니다. 학생 관리 권한은 없으며 실제 학생 진도·포인트와 따로 저장됩니다.</p>
+        <div class="field">
+          <label for="review-user" data-i18n="rUser">아이디</label>
+          <input id="review-user" name="review-user" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="64">
+        </div>
+        <div class="field">
+          <label for="review-code" data-i18n="rCode">확인 코드</label>
+          <input id="review-code" name="review-code" type="password" autocomplete="current-password" maxlength="72">
+        </div>
+        <button id="review-submit" class="btn primary" type="submit" data-i18n="rBtn">마스터 점검 로그인</button>
+        <p id="review-status" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </details>
+  </section>
+
+  <nav class="links" aria-label="Other">
+    <a id="preview-link" href="index.html?enter=1" data-i18n="preview">가입 전 둘러보기</a>
+    <a href="about.html" data-i18n="back">소개로 돌아가기</a>
+  </nav>
+</main>
+<script src="app/review-session.js?v=20261021-review1"></script>
+<script src="app/access.js"></script>
+</body>
+</html>
