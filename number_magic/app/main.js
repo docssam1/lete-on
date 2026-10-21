@@ -8,9 +8,14 @@
    ============================================================ */
 (async()=>{
 'use strict';
+if(!window.NM_ENTRY||window.NM_ENTRY.mode==='blocked'){
+  if(!window.NM_ENTRY)location.replace('access.html');
+  return;
+}
 // Review is a separately authenticated, learning-only session. A URL/local flag
 // alone never activates it; failed verification returns to the login page.
 const reviewRequested=new URLSearchParams(location.search).get('review')==='1';
+if(reviewRequested&&NM_ENTRY.mode!=='review'){location.replace('access.html');return;}
 const review=reviewRequested&&window.NM_REVIEW_SESSION?await NM_REVIEW_SESSION.ready():null;
 if(reviewRequested&&!review){location.replace('access.html?reason=expired');return;}
 const REVIEW=!!review;
@@ -456,6 +461,7 @@ window.NM_GATE={trialUnitSet,isTrialUnit,unitLocked,accountActive,externalBlocke
 /* 체험 범위 밖의 유닛은 학원 승인 상태를 확인한다. */
 function accountActive(){
   if(REVIEW)return NM_REVIEW_SESSION.active();
+  if(window.NM_ENTRY?.mode==='preview')return false;
   if(membership&&guardianAuth?.peek())return S.cloudLinked&&S.cloudOwnerId===guardianAuth.peek().user.id&&!guardianAuth.requiresPassword()&&membership.contactReady()&&membership.canUse();
   return !S.guardianManaged&&!!(S.account&&S.account.status==='active'); // preserve local approvals only until guardian enrollment
 }
@@ -471,9 +477,9 @@ const SB_URL='https://fgahqumaldheqettmvqg.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
 const sbHdr=()=>({apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'});
 const guardianAuth=REVIEW?null:window.NM_PROFILE_AUTH;
-let guardianEntry=!REVIEW&&new URLSearchParams(location.search).get('auth')==='1',booted=false,guardianContactEditing=false;
+let guardianEntry=!REVIEW&&(new URLSearchParams(location.search).get('auth')==='1'||!!window.NM_ENTRY?.guardianUserId),booted=false,guardianContactEditing=false;
 if(guardianAuth){
-  guardianAuth.configure({url:SB_URL,anonKey:SB_KEY});
+  guardianAuth.configure({url:SB_URL,anonKey:SB_KEY,freshEntry:['guardian','preview'].includes(window.NM_ENTRY?.mode),entryUserId:window.NM_ENTRY?.guardianUserId});
   const refreshGuardianUI=()=>{
     if(!booted)return;
     if(guardianAuth.pendingLink&&guardianAuth.pendingLink()){
@@ -481,6 +487,7 @@ if(guardianAuth){
       const details=$('.nm-closet-settings');if(details)details.open=true;
     }
     renderIdCard();renderNotifyCard();
+    refreshEntryContinue();
   };
   /* ready()가 늦게 끝나 한 번 더 그릴 때, 이미 입력 중인 이메일·인증번호·비밀번호 칸을 지우지 않는다.
      (인증 성공·로그아웃 같은 실제 변화는 onChange가 따로 그린다.) */
@@ -498,6 +505,7 @@ if(membership&&guardianAuth){
     const changed=applyAdminSettings();
     if(changed){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}syncAmount();}
     renderIdCard();renderAccountCard();renderNotifyCard();
+    refreshEntryContinue();
     if(S.view==='courseroad')renderPersonalPlan();
   });
 }
@@ -782,40 +790,14 @@ function updateLiveFill(sel,vals){
   if(!/\\square/.test(tex))return;
   math(fillLiveTex(tex,vals),spans[0]);
 }
-let _ttsCache={},_ttsActive=null,_ttsRun=0;
+let lessonVersion=0;
+function lessonLater(fn,ms){const version=lessonVersion;return setTimeout(()=>{if(version===lessonVersion)fn();},ms);}
 function stopVoice(){
-  _ttsRun++;
-  if(_ttsActive){try{_ttsActive.pause();}catch(e){}_ttsActive=null;}
-  try{speechSynthesis.cancel();}catch(e){}
+  window.NM_VOICE?.stop();
 }
-/* 음성 파일 위치 — 저장소를 옮기면(Supabase → Cloudflare R2) NM_AUDIO_BASE 한 줄만 바꾼다.
-   tts-map.js 안의 주소는 생성기(scripts/generate-nm-audio.js)가 다시 읽으므로 원래 주소 그대로 두고, 재생할 때 앞부분만 바꿔 끼운다. */
-const NM_SUPABASE_PUBLIC='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/';
-const NM_AUDIO_BASE=NM_SUPABASE_PUBLIC;
-const assetUrl=(u)=>(u&&u.startsWith(NM_SUPABASE_PUBLIC)?NM_AUDIO_BASE+u.slice(NM_SUPABASE_PUBLIC.length):u);
 function say(text){
-  if(!text)return;
-  stopVoice();
-  const run=_ttsRun;
-  const lang=S.lang||'ko';
-  /* 2026-09-29 — OmniVoice 복제 음성(data/tts-map-omni.js)이 먼저, 없으면 구글(tts-map.js), 그다음 기기 음성 */
-  const omni=window.NM_TTS_OMNI,map=window.NM_TTS_MAP;
-  const url=assetUrl((omni&&omni[lang]&&omni[lang][text])||(map&&map[lang]&&map[lang][text]));
-  if(url){
-    try{
-      let a=_ttsCache[url];
-      if(!a){a=new Audio(url);_ttsCache[url]=a;}
-      _ttsActive=a;
-      a.currentTime=0;
-      a.play().catch(()=>{if(run===_ttsRun)_sayWeb(text,lang);});
-      return;
-    }catch(e){}
-  }
-  _sayWeb(text,lang);
+  if(text)window.NM_VOICE?.say(text,S.lang||'ko');
 }
-function _sayWeb(text,lang){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='zh'?'zh-CN':lang==='en'?'en-US':'ko-KR';u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){}}
-/* 성공 효과음 — 지오메트리 큐비와 같은 자체 제작 클립(assets/audio/success/). 실패해도 조용히 무시 */
-const _sfxCache={};
 /* 파일 없는 짧은 효과음은 WebAudio로 합성 — tap(숫자판)·stamp(도장)·wrong(오답). 아주 작게. */
 let _actx=null;
 function beep(seq,gain){
@@ -832,31 +814,16 @@ function beep(seq,gain){
 }
 function playSfx(kind){
   if(kind==='tap'){beep([[880,0,.05]],.12);return;}
+  stopVoice();
   if(kind==='stamp'){beep([[523,0,.12],[784,.12,.18]],.25);return;}
   if(kind==='wrong'){beep([[220,0,.16]],.15);return;}
-  try{
-    const lang=(S.lang==='en'||S.lang==='zh')?S.lang:'ko';
-    const url='assets/audio/success/'+lang+'/'+kind+'.mp3';
-    let a=_sfxCache[url];
-    if(!a){a=new Audio(url);_sfxCache[url]=a;}
-    a.currentTime=0;a.volume=.85;
-    a.play().catch(()=>{});
-    return a;   // success/great-job/good-job는 효과음이 아니라 언어별 음성 클립이라
-                // 호출자가 끝나기를 기다렸다가 다음 안내 음성을 이어 틀 수 있게 돌려준다
-  }catch(e){}
+  // Feedback is a short wordless chime, so it cannot introduce an older speaker.
+  beep([[523,0,.08],[659,.08,.08],[784,.16,.12]],.12);
 }
 window.NM_SFX=playSfx;
-/* 2026-09-14 — "success"/"great-job" 같은 음성형 효과음과 뒤이은 안내 음성이 동시에
-   틀어져 겹쳐 들리던 문제(원장 확인) 수정. sfxAudio가 끝난 뒤에 say()를 부른다.
-   'ended' 이벤트가 어떤 이유로 안 오면(재생 실패 등) 900ms 뒤 강제로 이어 말한다
-   (클립이 전부 1초 미만이라 충분한 여유). sfxAudio가 없으면(beep류) 바로 말한다. */
+/* The legacy API stays compatible; feedback now contains no spoken words or delayed callbacks. */
 function sayAfterSfx(sfxAudio,text){
-  if(sfxAudio&&typeof sfxAudio.addEventListener==='function'){
-    let done=false;const go=()=>{if(done)return;done=true;say(text);};
-    sfxAudio.addEventListener('ended',go,{once:true});
-    sfxAudio.addEventListener('error',go,{once:true});
-    setTimeout(go,900);
-  }else say(text);
+  say(text);
 }
 window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재낭독용으로 사용
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
@@ -1064,6 +1031,8 @@ function bgKeyForView(){
 }
 
 function render(){
+  lessonVersion++;
+  stopVoice();
   syncAmount();
   window.NM_LANG=S.lang;
   if(REVIEW){
@@ -1079,7 +1048,7 @@ function render(){
   window.NM_CURRENT_UNIT=S.unit||null;                    // widgets.js가 "N-* 유닛인가"를 판정할 때 씀(오답 소리·표정 등, 유아 전용 반응)
   if(townCleanup){townCleanup();townCleanup=null;}
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
-  if(wsHelperId){
+  if(wsHelperId&&!guardianEntry){
     app.innerHTML='<div id="screen"></div>';
     screenWorksheetHelper(wsHelperId);
     return;
@@ -1138,8 +1107,15 @@ function cycleLang(){stopVoice();const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.
 function screenGuardianEntry(){
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
   $('#screen').innerHTML=`<div class="nm-step-body nm-closet-wrap"><button class="nm-btn ghost" id="nmGuardBack">${lk('학습 화면으로','Learning screen','学习界面')}</button><h1>${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</h1><div id="nm-guardian-slot"></div><div id="nm-idcard-slot"></div><div id="nm-account-slot"></div></div>`;
-  $('#nmGuardBack').onclick=()=>{guardianEntry=false;if(guardianAuth&&guardianAuth.cancelLink)guardianAuth.cancelLink();render();};
+  const canContinue=()=>!!guardianAuth?.peek()&&!guardianAuth.requiresPassword()&&membership?.contactReady();
+  if(!canContinue())$('#nmGuardBack').textContent=lk('승인·로그인으로','Approval / login','审批·登录');
+  $('#nmGuardBack').onclick=()=>{if(!canContinue()){location.assign('access.html');return;}guardianEntry=false;S.view='title';render();};
   renderIdCard();renderAccountCard();
+}
+function refreshEntryContinue(){
+  const b=document.getElementById('nmGuardBack');if(!b)return;
+  const ready=!!guardianAuth?.peek()&&!guardianAuth.requiresPassword()&&membership?.contactReady();
+  b.textContent=ready?(S.lang==='ko'?'학습 화면으로':S.lang==='en'?'Learning screen':'学习界面'):(S.lang==='ko'?'승인·로그인으로':S.lang==='en'?'Approval / login':'审批·登录');
 }
 function screenWelcome(){
   const scr=$('#screen');
@@ -1350,7 +1326,7 @@ const TOWN_SPOTS=[
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
-const TOWN_ALWAYS_OPEN=['_closet']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
+const TOWN_ALWAYS_OPEN=['_closet','_theater']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
 
 /* 마을세계관-설계.md §3 — 형제 서비스로 나가는 관문(표지판). 절대 잠그지 않는다
    (자유 선택 원칙) — 열려 있으면 새 탭으로 나가고, 아직 없으면 "준비 중"으로만
@@ -1454,19 +1430,19 @@ function screenTown(){
   let zones='';
   TOWN_SPOTS.forEach(sp=>{
     const tier=tierById(sp.tier);
-    const open=sp.tier==='_theater'?false:TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tier);
+    const open=TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tier);
     zones+=`<button class="nm-zone ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
       ${open?'<div class="nm-halo"></div>':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
-      <span class="nm-zlabel">${typeof sp.tag==='string'?sp.tag:L(sp.tag)}<small>${L(sp.sub)}</small></span>
+      <span class="nm-zlabel">${esc(townDestinationLabel(sp.tier))}<small>${sp.tier.startsWith('_')?'':esc(typeof sp.tag==='string'?sp.tag.replace(/^\S+\s*/, ''):L(sp.tag))}</small></span>
     </button>`;
   });
   let gates='';
   TOWN_GATES.forEach(g=>{
-    gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">🪧 ${g.icon} <span>${esc(L(g.name))}</span></button>`;
+    gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">${g.icon} <span>${esc(L(g.name))}</span></button>`;
   });
-  scr.classList.add('nm-town');
+  scr.classList.add('nm-town','nm-town-illustrated');
   scr.innerHTML=`
-    <div id="townVp" class="is-3d-pending" aria-busy="true">
+    <div id="townVp" class="is-illustrated" aria-label="${S.lang==='ko'?'마을 지도':S.lang==='en'?'Village map':'村庄地图'}">
       <div id="townWorld">
         <div class="ncloud a"><span class="puff" style="width:64px;height:64px;left:0;top:-8px"></span><span class="puff" style="width:48px;height:48px;left:44px;top:0"></span><span class="puff" style="width:40px;height:40px;left:78px;top:6px"></span><span class="num">7</span></div>
         <div class="ncloud b"><span class="puff" style="width:70px;height:70px;left:0;top:-10px"></span><span class="puff" style="width:50px;height:50px;left:50px;top:2px"></span><span class="num">10</span></div>
@@ -1517,17 +1493,10 @@ function screenTown(){
     </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
-      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'내 위치로':S.lang==='en'?'My location':'我的位置'}">📍</button>
+      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'지도 맞추기':S.lang==='en'?'Fit map':'调整地图'}">⛶</button>
       <button class="nm-iconbtn" id="townZin" aria-label="${S.lang==='ko'?'확대':S.lang==='en'?'Zoom in':'放大'}">＋</button>
       <button class="nm-iconbtn" id="townZout" aria-label="${S.lang==='ko'?'축소':S.lang==='en'?'Zoom out':'缩小'}">－</button>
     </div>
-    <details class="nm-town-travel" id="townTravel">
-      <summary>${S.lang==='ko'?'🚪 바로 들어가기':S.lang==='en'?'🚪 Go directly':'🚪 直接进入'}</summary>
-      <div class="nm-town-travel-list" aria-label="${S.lang==='ko'?'마을 목적지':S.lang==='en'?'Town destinations':'小镇目的地'}">
-        <p>${S.lang==='ko'?'걷지 않고도 들어갈 수 있어요.':S.lang==='en'?'Enter without walking there.':'不用走过去也能进入。'}</p>
-        ${TOWN_SPOTS.map(sp=>`<button type="button" data-travel="${sp.tier}">${esc(sp.tier==='_theater'?(S.lang==='ko'?'학습지 · 시험':S.lang==='en'?'Worksheets & tests':'学习单和测试'):L(sp.sub))}${sp.tier==='_theater'?'':sp.tier==='_closet'||tierOpen(tierById(sp.tier))?'':' 🔒'}</button>`).join('')}
-      </div>
-    </details>
     <div class="nm-tmodal" id="tmodal">
       <div class="nm-tmcard">
         <h3 id="tmTitle"></h3><p id="tmDesc"></p>
@@ -1535,10 +1504,24 @@ function screenTown(){
         <button class="close" id="tmClose">${S.lang==='ko'?'닫기':S.lang==='en'?'Close':'关闭'}</button>
       </div>
     </div>`;
-  scr.querySelectorAll('[data-travel]').forEach(b=>{b.onclick=()=>{const menu=$('#townTravel');if(menu)menu.open=false;townSpotAction(b.dataset.travel);};});
-  $('#townTravel').addEventListener('keydown',e=>{if(e.key==='Escape'){e.currentTarget.open=false;e.currentTarget.querySelector('summary').focus();}});
+  const tools=scr.querySelector('.nm-town-hud.info'),toolbox=document.createElement('details');
+  toolbox.className='nm-town-toolbox';
+  toolbox.innerHTML=`<summary>${S.lang==='ko'?'마을 메뉴':S.lang==='en'?'Village menu':'村庄菜单'} ☰</summary><div class="nm-town-tool-list"></div>`;
+  const panel=toolbox.querySelector('div'), more=document.createElement('details');
+  more.className='nm-town-more';
+  more.innerHTML=`<summary>${S.lang==='ko'?'더 보기':S.lang==='en'?'More':'更多'}</summary><div class="nm-town-extra-list"></div>`;
+  const list=more.querySelector('div');
+  const places=document.createElement('nav');places.className='nm-town-place-list';places.setAttribute('aria-label',S.lang==='ko'?'지도 속 장소':S.lang==='en'?'Map locations':'地图地点');
+  TOWN_SPOTS.forEach(sp=>{const b=document.createElement('button');b.type='button';b.className='nm-iconbtn';b.dataset.place=sp.tier;b.textContent=townDestinationLabel(sp.tier);b.onclick=()=>enterTownDestination(sp.tier);places.appendChild(b);});list.appendChild(places);
+  while(tools.firstChild)list.appendChild(tools.firstChild);
+  panel.appendChild(scr.querySelector('#roadBanner'));panel.appendChild(more);tools.appendChild(toolbox);
+  toolbox.open=matchMedia('(min-width:760px), (min-width:600px) and (max-height:500px)').matches;
+  ['townCourseRoad','townDex','townMagazine','townMail','townReport'].forEach(id=>{const button=scr.querySelector('#'+id);const label=document.createElement('span');label.textContent=button.title;button.appendChild(label);});
+  TOWN_GATES.forEach(g=>{const button=document.createElement('button');button.type='button';button.className='nm-iconbtn';button.dataset.townGate=g.id;button.textContent=g.icon+' '+L(g.name);button.onclick=()=>showGateLinksModal(g);list.appendChild(button);});
+  list.appendChild(scr.querySelector('.nm-town-hud.ctrls'));
+  toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
   townCleanup=initTownWorld(scr);
-  mountTown3DInto(scr);
+  // The illustrated village is now the default. Buildings open without walking or camera controls.
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
@@ -5416,7 +5399,7 @@ function mountTitle3DInto(scr, summary, badge){
   const chips=[];   /* 동전은 모듈이 coins 로 따로 그린다 */
   if(S.attend&&S.attend.days)chips.push({icon:'📅',text:{ko:`${S.attend.days}일`,en:`Day ${S.attend.days}`,zh:`第${S.attend.days}天`}});
   if(badge)chips.push({icon:'🏅',text:badge.label,gold:true});
-  import('./title3d/title3d.js').then(m=>{
+  import('./title3d/title3d.js?v=20261021-original-desk2').then(m=>{
     const choices=m.DEFAULT_CHOICES.map(c=>c.id==='continue'&&summary?Object.assign({},c,{sub:summary}):c);
     return m.mountTitle3D(box,{
       lang:S.lang, choices,
@@ -6067,6 +6050,15 @@ function mountTown3DInto(scr){
   }).catch(revealFallback);
 }
 /* 마을 건물 탭 → 안내 모달(2D 지도·3D 마을 공통) */
+function townDestinationLabel(id){
+  if(id==='_theater')return S.lang==='ko'?'학습지·시험':S.lang==='en'?'Worksheets':'学习单';
+  if(id==='_closet')return S.lang==='ko'?'옷장':S.lang==='en'?'Closet':'衣橱';
+  const sp=TOWN_SPOTS.find(x=>x.tier===id);return sp?L(sp.sub):'';
+}
+function enterTownDestination(id){
+  if(id==='_closet'||id==='_theater'){S.view=id==='_closet'?'closet':'exam';save();render();return;}
+  const tier=tierById(id);if(tierOpen(tier))enterTier(id);else townSpotAction(id);
+}
 function townSpotAction(id){
   if(id==='_theater'){
     const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
@@ -6094,16 +6086,14 @@ function initTownWorld(scr){
   let cam={x:0,y:0,scale:1},minS=1,maxS=3;
   const BBOX=computeContentBBox(W,H,.04);
 
-  /* 최소 배율 = 화면 꽉 채우기(cover). 예전엔 "건물 전부 보이기(bbox contain)"와 비교해
-     더 작은 쪽을 골랐는데, 세로 모바일에서 지도가 화면 절반만 차지하고 위아래가 하늘색으로
-     비는 레터박스가 생겼다(1536×1024 지도에선 더 심함). 건물은 드래그·탭 이동으로 언제든
-     닿을 수 있으므로 화면은 항상 지도로 채우고, 첫 화면만 bbox 중심(광장·타운홀)에 맞춘다. */
+  /* 지도를 화면 가득 채운다. 좁은 세로 화면의 바깥 건물은 드래그하거나
+     측면 메뉴의 장소 목록으로 입장한다. 캐릭터 이동은 필요하지 않다. */
   function fit(){
     const coverS=Math.max(vp.clientWidth/W,vp.clientHeight/H);
     minS=coverS;
     if(cam.scale<minS)cam.scale=minS;
   }
-  function apply(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
+  function apply(){world.style.setProperty('--town-map-scale',String(cam.scale));world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
   function bound(){
     const mx=vp.clientWidth-W*cam.scale, my=vp.clientHeight-H*cam.scale;
     cam.x = mx>=0 ? Math.min(mx,Math.max(0,cam.x)) : Math.min(0,Math.max(mx,cam.x));
@@ -6111,9 +6101,8 @@ function initTownWorld(scr){
   }
   function center(){
     cam.scale=minS;
-    const bcx=BBOX.x+BBOX.w/2, bcy=BBOX.y+BBOX.h/2;
-    cam.x=vp.clientWidth/2-bcx*cam.scale;
-    cam.y=vp.clientHeight/2-bcy*cam.scale;
+    cam.x=(vp.clientWidth-W*cam.scale)/2;
+    cam.y=(vp.clientHeight-H*cam.scale)/2;
     bound();apply();
   }
   /* 따라가는 카메라 — 지도를 통째로 보여주는 대신 플레이어 가까이(cover×FOLLOW_ZOOM)
@@ -6121,7 +6110,7 @@ function initTownWorld(scr){
      손으로 지도를 끌면 따라가기를 잠시 끄고(자유 둘러보기), 지도를 탭해 걷게 하거나
      📍 버튼을 누르면 다시 켠다. */
   const FOLLOW_ZOOM=1.7;
-  let follow=true;
+  let follow=false;
   function playerWorld(){const p=(typeof player!=='undefined')?player:null;return p?{x:p.x/100*W,y:p.y/100*H}:{x:BBOX.x+BBOX.w/2,y:BBOX.y+BBOX.h/2};}
   function focusPlayer(immediate){
     const pw=playerWorld();
@@ -6168,19 +6157,19 @@ function initTownWorld(scr){
   zin.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale*1.25,r.left+r.width/2,r.top+r.height/2);};
   zout.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale/1.25,r.left+r.width/2,r.top+r.height/2);};
   const meBtn=scr.querySelector('#townMe');
-  if(meBtn)meBtn.onclick=()=>{follow=true;cam.scale=Math.min(maxS,minS*FOLLOW_ZOOM);focusPlayer(true);};
+  if(meBtn)meBtn.onclick=()=>{follow=false;center();};
   function onWheel(e){e.preventDefault();zoomTo(cam.scale*(e.deltaY<0?1.1:.9),e.clientX,e.clientY);}
   vp.addEventListener('wheel',onWheel,{passive:false});
 
-  requestAnimationFrame(()=>{fit();cam.scale=Math.min(maxS,minS*FOLLOW_ZOOM);focusPlayer(true);});
-  function onResize(){fit();bound();apply();}
+  requestAnimationFrame(()=>{fit();center();});
+  function onResize(){fit();center();}
   addEventListener('resize',onResize);
 
   /* 건물 클릭 */
   scr.querySelectorAll('.nm-zone').forEach(z=>{
-    z.addEventListener('pointerup',e=>{
+    z.addEventListener('click',e=>{
       if(moved)return;e.stopPropagation();
-      townSpotAction(z.dataset.spot);
+      enterTownDestination(z.dataset.spot);
     });
   });
   scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');
@@ -6189,7 +6178,7 @@ function initTownWorld(scr){
   /* 관문 표지판 탭(§3) — .nm-zone과 같은 패턴(드래그면 무시, 지도 탭-이동과 충돌
      안 하게 stopPropagation). */
   scr.querySelectorAll('.nm-gate').forEach(g=>{
-    g.addEventListener('pointerup',e=>{
+    g.addEventListener('click',e=>{
       if(moved)return;e.stopPropagation();
       const gate=TOWN_GATES.find(x=>x.id===g.dataset.gate);
       if(gate)showGateLinksModal(gate);
@@ -6221,7 +6210,7 @@ function initTownWorld(scr){
   const myName=avatarName();
   const nbs=[
     {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.22,player:true,
-      lines:[L({ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`}),L({ko:'지도를 콕 찍으면 내가 걸어가!',en:'Tap the map and I will walk there!',zh:'点一下地图，我就走过去！'})]},
+      lines:[L({ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`}),L({ko:'건물을 누르면 바로 들어갈 수 있어!',en:'Tap a building to enter!',zh:'点击建筑就能进入！'})]},
     {el:scr.querySelector('#nbBuddy'),x:37,y:63,tx:37,ty:63,spd:.22,buddy:true,
       lines:[L({ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'}),L({ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'})]},
     {el:scr.querySelector('#nbElder'),x:31,y:52,tx:31,ty:52,spd:0,still:true,
@@ -6275,24 +6264,6 @@ function initTownWorld(scr){
      충돌하지 않도록: 드래그하지 않은 "가벼운 탭"일 때만 목적지로 삼는다. */
   let pinched=false;
   vp.addEventListener('pointermove',()=>{if(pts.size>=2)pinched=true;});
-  vp.addEventListener('pointerup',e=>{
-    if(moved){return;}
-    if(pinched){pinched=false;return;}
-    if(modal.classList.contains('on'))return;
-    const r=vp.getBoundingClientRect();
-    const wx=(e.clientX-r.left-cam.x)/cam.scale;   // 월드 px
-    const wy=(e.clientY-r.top -cam.y)/cam.scale;
-    let px=wx/W*100, py=wy/H*100;                  // 월드 %
-    if(px<2||px>98||py<4||py>96)return;            // 지도 밖 무시
-    const me=nbs[0];
-    me.tx=px; me.ty=py; follow=true;
-    /* 목적지 표시(잠깐 반짝) */
-    const ping=document.createElement('div');
-    ping.className='nb-ping';
-    ping.style.left=px+'%';ping.style.top=py+'%';
-    world.appendChild(ping);
-    setTimeout(()=>ping.remove(),700);
-  });
   nbs.forEach(n=>{
     n.el.addEventListener('pointerup',e=>{
       if(moved)return;e.stopPropagation();
@@ -6307,9 +6278,11 @@ function initTownWorld(scr){
   /* 음소거 버튼: 배경음악+물소리(Web Audio)와 숫자친구 TTS를 함께 켜고 끔 */
   const mb=scr.querySelector('#townMute');
   mb.textContent=muted?'🔇':'🔈';
+  mb.setAttribute('aria-label',S.lang==='ko'?(muted?'마을 소리 켜기':'마을 소리 끄기'):S.lang==='en'?(muted?'Turn village sound on':'Turn village sound off'):(muted?'开启村庄声音':'关闭村庄声音'));
   mb.onclick=()=>{
     muted=!muted;
     mb.textContent=muted?'🔇':'🔈';
+  mb.setAttribute('aria-label',S.lang==='ko'?(muted?'마을 소리 켜기':'마을 소리 끄기'):S.lang==='en'?(muted?'Turn village sound on':'Turn village sound off'):(muted?'开启村庄声音':'关闭村庄声音'));
     if(muted){
       stopVoice();
       if(stopAmbience){stopAmbience();stopAmbience=null;}
@@ -6450,13 +6423,12 @@ function flowBar(){
 }
 
 function screenUnit(){
+  lessonVersion++;
+  stopVoice();
   const scr=$('#screen');const u=UNITS[S.unit];
-  /* 독쌤 학습 안내 띠 — 유닛의 "첫 화면"에서만(연습 이후 체크/랩/아레나/도장엔 안 뜸).
-     enterUnit()은 유닛에 따라 'intro'(u.introVideo)·'range'(u.ranges)·'practice' 중
-     하나로 곧장 진입시킨다(널이 아님) — 셋 다 "학습 흐름 진짜 시작 전" 화면이라 전부
-     첫 화면으로 친다. 지도에서 S.step이 비어 진입하면 discover이므로 중복 안내 띠를 싣지 않는다.
-     unitFlowOf(u)[0].key는 항상 'practice'(§curriculum.js unitFlow). */
-  const isFirstUnitStep = S.step==='range' || S.step==='intro' || S.step===unitFlowOf(u)[0].key;
+  /* Video/range selection keeps the host strip. Practice now has a separate
+     explanation screen, so it does not repeat that strip above the question. */
+  const isFirstUnitStep = S.step==='range' || S.step==='intro';
   const learningBand=u.tier==='basic'?'preschool':(/^(middle|high)/.test(u.tier||'')||['algebra','calculus1'].includes(u.tier))?'secondary':'elementary';
   scr.innerHTML=`<div class="nm-unit-view" lang="${esc(S.lang)}" data-learning-band="${learningBand}" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
     <div class="nm-unit-bar">
@@ -6489,7 +6461,7 @@ function stepUnitIntro(body,u){
   body.querySelector('.nm-uintro-skip').onclick=done;
   vid.addEventListener('ended',done);
   vid.addEventListener('error',done);
-  setTimeout(done,15000);
+  lessonLater(done,15000);
 }
 
 function gotoStep(k){S.step=k;save();screenUnit();}
@@ -6518,21 +6490,27 @@ function runPractice(body,u){
   const cur=S.sub.cur;
   const first=S.sub.pIdx===0&&!S.sub.started;
   /* 조작 위젯 문제(유아 tapCount 등)는 넘패드 대신 위젯 렌더 */
+  if(first&&L(cfg.intro)){
+    body.innerHTML=`<div class="nm-practice-intro"><div class="nm-practice-explanation">${numiDialogueHtml(L(cfg.intro))}</div><div class="nm-practice-intro-actions"><button class="nm-btn ghost" id="nmLessonReplay">${L({ko:'설명 다시 듣기',en:'Replay explanation',zh:'重听说明'})}</button><button class="nm-btn" id="nmLessonBegin">${L({ko:'문제 풀기',en:'Try the question',zh:'开始答题'})}</button></div></div>`;
+    $('#nmLessonReplay').onclick=()=>say(L(cfg.intro));
+    $('#nmLessonBegin').onclick=()=>{stopVoice();S.sub.started=true;runPractice(body,u);};
+    say(L(cfg.intro));return;
+  }
   if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
   const isMulti=Array.isArray(cur.answer);
   if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
-  body.innerHTML=`<div class="nm-dialog">
+  body.innerHTML=`<div class="nm-dialog nm-answer-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
-    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-answer-guide"><div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt)):numiDialogueHtml(L(cur.prompt))}</div>
-    <div class="nm-board">
+    </div><div class="nm-answer-work"><div class="nm-board">
       ${pracTex}
       <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     </div>
     <div class="nm-numpad" id="pad"></div>
-    <div class="nm-hint">${t('numpadHint')}</div>
+    <div class="nm-hint">${t('numpadHint')}</div></div>
   </div>`;
   S.sub.started=true;
   renderMath(body);
@@ -6572,7 +6550,7 @@ function wireManipulativeKeys(host){
 function runPracticeWidget(body,u,cur,first,need){
   const cfg=u.practice;
   const gridFit=cur.widget==='g13Grid'&&cur.cols<=5;
-  const widgetFit=gridFit||['g13Rep','numberBond','splitDraw','hopLine'].includes(cur.widget);
+  const widgetFit=true; // Every widget keeps its guide separate from its work area.
   body.innerHTML=`<div class="nm-dialog${widgetFit?' nm-widget-dialog '+(gridFit?'nm-grid-dialog':'nm-manipulative-dialog'):''}">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     ${widgetFit?'<div class="nm-widget-guide">':''}
@@ -6589,9 +6567,9 @@ function runPracticeWidget(body,u,cur,first,need){
       if(NM_WIDGETS._isYoungBand&&NM_WIDGETS._isYoungBand())NM_WIDGETS._correctTone();
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.cur=null;
-      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');lessonLater(()=>gotoStep('discover'),700);return;}
       S.sub.cur=genProblem(cfg,'practice');save();
-      setTimeout(()=>runPractice(body,u),650);
+      lessonLater(()=>runPractice(body,u),650);
     }else{
       toast(t('tryAgain'),false);
     }
@@ -6607,9 +6585,9 @@ function handlePractice(val,body,u){
       if(multiEquals(cur.answer)){
         toast(t('correct'),true);numiHappy();
         S.sub.pIdx++;S.sub.mvals=null;S.sub.cur=null;
-        if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+        if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');lessonLater(()=>gotoStep('discover'),700);return;}
         S.sub.cur=genProblem(u.practice,'practice');save();
-        setTimeout(()=>runPractice(body,u),650);
+        lessonLater(()=>runPractice(body,u),650);
       }else{toast(t('tryAgain'),false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-lab-expr',S.sub.mvals);}
       return;
     }
@@ -6617,9 +6595,9 @@ function handlePractice(val,body,u){
     if(parseFloat(inp)===cur.answer){
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.inp='';S.sub.cur=null;
-      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');lessonLater(()=>gotoStep('discover'),700);return;}
       S.sub.cur=genProblem(u.practice,'practice');save();
-      setTimeout(()=>runPractice(body,u),650);
+      lessonLater(()=>runPractice(body,u),650);
     }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-lab-expr','');}
     return;
   }
@@ -7328,8 +7306,8 @@ function stepCheck(body,u){
         if(multiEquals(fill.answer)){
           toast(t('correct'),true);numiHappy();
           S.sub.fi++;S.sub.mvals=null;
-          if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
-          else setTimeout(()=>stepCheck(body,u),700);
+          if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};lessonLater(()=>openQuestion(body,u),700);}
+          else lessonLater(()=>stepCheck(body,u),700);
         }else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);multiClear(fill.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-fill',S.sub.mvals);}
         return;
       }
@@ -7337,8 +7315,8 @@ function stepCheck(body,u){
       if(parseFloat(inp)===fill.answer){
         toast(t('correct'),true);numiHappy();
         S.sub.fi++;S.sub.inp='';
-        if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
-        else setTimeout(()=>stepCheck(body,u),700);
+        if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};lessonLater(()=>openQuestion(body,u),700);}
+        else lessonLater(()=>stepCheck(body,u),700);
       }
       else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-fill','');}
       return;}
@@ -7381,7 +7359,7 @@ function stepLabWidget(body,u){
   const origTexHtml=cur.tex?labExprHtml(cur.tex):'';
   /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
   const gridFit=cur.widget==='g13Grid'&&cur.cols<=5;
-  const widgetFit=gridFit||['g13Rep','numberBond','splitDraw','hopLine'].includes(cur.widget);
+  const widgetFit=true; // Every widget keeps its guide separate from its work area.
   body.innerHTML=`<div class="nm-dialog${widgetFit?' nm-widget-dialog '+(gridFit?'nm-grid-dialog':'nm-manipulative-dialog'):''}${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     ${widgetFit?'<div class="nm-widget-guide">':''}
@@ -7402,9 +7380,9 @@ function stepLabWidget(body,u){
       if(NM_WIDGETS._isYoungBand&&NM_WIDGETS._isYoungBand())NM_WIDGETS._correctTone();
       {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
       S.sub.li++;S.sub.cur=null;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');lessonLater(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
-      setTimeout(()=>stepLab(body,u),650);
+      lessonLater(()=>stepLab(body,u),650);
     }else{
       voiceLine(u,u.voice.wrong,false);
     }
@@ -7491,9 +7469,9 @@ function handleLabNumpad(val,body,u){
       if(multiEquals(cur.answer)){
         {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
         S.sub.li++;S.sub.mvals=null;S.sub.cur=null;
-        if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+        if(S.sub.li>=need){markStepDone(S.unit,'lab');lessonLater(()=>gotoStep(afterLabKey(u)),700);return;}
         S.sub.cur=genProblem(u.lab,'main');save();
-        setTimeout(()=>stepLab(body,u),650);
+        lessonLater(()=>stepLab(body,u),650);
       }else{voiceLine(u,u.voice.wrong,false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-lab-expr',S.sub.mvals);}
       return;
     }
@@ -7501,9 +7479,9 @@ function handleLabNumpad(val,body,u){
     if(parseFloat(inp)===cur.answer){
       {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');lessonLater(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
-      setTimeout(()=>stepLab(body,u),650);
+      lessonLater(()=>stepLab(body,u),650);
     }else{voiceLine(u,u.voice.wrong,false);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-lab-expr','');}
     return;
   }
@@ -7547,8 +7525,8 @@ function pickTile(el,i,n,body,u){
       voiceLine(u,u.voice.correct,true,{force:true,afterSfx:sfx});
       S.sub.li++;S.sub.cur=null;S.sub.pairsFound=0;
       const need=u.lab.count||4;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
-      setTimeout(()=>stepLab(body,u),900);
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');lessonLater(()=>gotoStep(afterLabKey(u)),800);return;}
+      lessonLater(()=>stepLab(body,u),900);
     }else{voiceLine(u,u.voice.wrong,false,{force:true});p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
   };
 }
@@ -7645,7 +7623,7 @@ function stepStamp(body,u){
   playSfx('stamp');confetti();const sfx=playSfx("great-job");sayAfterSfx(sfx,L(u.voice.finish));
   bindLineageEvoCard(body);
   $('#toMap').onclick=exitUnit;
-  if(newLineageBadge)setTimeout(()=>showLineageBadgeOverlay(newLineageBadge),700);
+  if(newLineageBadge)lessonLater(()=>showLineageBadgeOverlay(newLineageBadge),700);
 }
 
 /* ---------- 공통 UI 조각 ---------- */
@@ -8395,19 +8373,10 @@ function screenWorksheetHelper(wsId){
   renderMath(scr);
 }
 
-/* 타이틀 화면 게이트(§14) — "인트로 애니메이션 후"를 이 앱에서는 about.html이
-   ?enter=1을 달고 돌아오는 순간으로 본다(index.html의 기존 인트로→about 흐름,
-   되돌리지 않음). 진행 기록(mostRecentTouchedUnit)이 있는 온보딩된 프로필에서만
-   S.view를 'title'로 바꾼다 — save()는 하지 않는다(타이틀은 저장 상태가 아니라
-   "이번 진입"에서만 한 번 보이는 화면이라, 새로고침해도 URL에 enter=1이 없으면
-   바로 이전 화면으로 돌아간다). 신규 설치·진행 없음은 그대로 온보딩→마을. */
+/* A deliberate login/preview entry opens the mode selector. Reloads are handled
+   by entry.js and always return to approval/login. */
 function maybeShowTitle(){
-  if(!S.onboarded) return;
-  /* 재접속이면 항상 타이틀(모드 선택)부터 — enter=1·진행 기록 조건을 없앴다
-     (2026-09-01 원장 지적: 재접속인데 인트로/온보딩부터 나오면 안 된다).
-     진행이 없어도 타이틀은 안전하다(이어서 모험 → 마을로 낙하). 학습지
-     도우미(?ws=)는 render()가 이보다 먼저 분기하므로 영향 없다. */
-  S.view='title';
+  if(S.onboarded)S.view='title';
 }
 /* ---------- 시작 ---------- */
 function boot(){

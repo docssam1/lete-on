@@ -15,7 +15,7 @@ const server=http.createServer((req,res)=>{
   const base='http://127.0.0.1:'+server.address().port;
   const browser=await chromium.launch({headless:true,args:['--disable-3d-apis','--disable-webgl','--disable-webgl2']});
   let checks=0;
-  const context=async()=>{const c=await browser.newContext({viewport:{width:390,height:900},reducedMotion:'reduce'});await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());return c;};
+  const context=async()=>{const c=await browser.newContext({viewport:{width:390,height:900},reducedMotion:'reduce'});await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());await c.route('**/app/entry.js*',r=>r.fulfill({contentType:'application/javascript',body:'window.NM_ENTRY={mode:"fixture"};'}));return c;};
   try{
     for(const lang of ['ko','en','zh']){
       const ctx=await context(),page=await ctx.newPage();

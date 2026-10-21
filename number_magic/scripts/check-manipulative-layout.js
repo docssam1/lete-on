@@ -23,6 +23,7 @@ async function run(){
   for(const {v:[width,height,lang],f} of cases){
    const ctx=await browser.newContext({viewport:{width,height},hasTouch:width<700,serviceWorkers:'block'});
    await ctx.route('**/*',r=>!r.request().url().startsWith(base)||!['GET','HEAD'].includes(r.request().method())?r.abort():r.continue());
+   await ctx.route('**/app/entry.js*',r=>r.fulfill({contentType:'application/javascript',body:'window.NM_ENTRY={mode:"fixture"};'}));
    await ctx.addInitScript(({unit,lang})=>localStorage.setItem('nm_state_v1',JSON.stringify({lang,name:'교구검수',onboarded:true,view:'unit',unit,step:'lab',avatar:{kind:'boy'},placement:{course:'C0',self:true},account:{status:'active'},symbolDex:{'+':{},'-':{},'−':{},'×':{},'÷':{},'=':{},'□':{}},progress:{[unit]:{introSeen:true,steps:{},touchedAt:1}}})),{unit:f.unit,lang});
    const page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.setDefaultNavigationTimeout(120000);
    await page.goto(base+'/number_magic/index.html?enter=1',{waitUntil:'domcontentloaded'});
@@ -37,6 +38,7 @@ async function run(){
    },f);
    await page.locator(`[data-step="${f.step||'lab'}"]`).click();
    if(await page.locator('#skipNo').count())await page.locator('#skipNo').click();
+   if(await page.locator('#nmLessonBegin').count())await page.locator('#nmLessonBegin').click();
    await page.locator(f.root).waitFor();await page.evaluate(()=>document.fonts.ready);
    async function snapshot(label){
     const m=await page.evaluate(root=>{

@@ -3098,3 +3098,73 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 근거: `/tmp/nm-review-access-20261021`의 JSON·로그·화면. 기존 미추적 Claude 디자인 문서는 보존했다. 서버 반영은 완료됐으며 정적 화면의 main·Pages 상태는 배포 확인 기록과 구분한다.
 
 - **운영 반영 완료:** 기능은 main `6f687650`에 반영됐고 Pages [실행 39553228284](https://github.com/docssam1/lete-on/actions/runs/39553228284)이 성공했다. about·access HTML, 로그인 JS/CSS, 점검 세션, main·styles·index **8파일 모두 운영 HTTP 200 및 로컬 파일과 일치**를 확인했다. 옆 브라우저에서 소개를 새로고침하고 실제 ‘넘어가기’를 눌러 승인 화면으로 이동한 뒤, 요청한 점검 계정으로 로그인해 모드 선택 화면과 ‘학습 점검’ 표시를 확인했다. 계정에는 학생 관리 권한이 없다. 결과·화면은 이 채팅의 기존 시각화 폴더 아래 `nm-review-access-20261021`에 보관했다.
+
+### 음성 중첩·작은 화면·자동 접속 재검수 — 2026-10-21
+
+- 사용자 실제 제보에 따라 앞선 검사의 누락을 수정했다. 앞선 음성 검사는 안내 MP3끼리의 전환/실패만 확인해, 별도 성공 음성·900ms 강제 후속 안내·화면을 떠난 뒤의 예약 호출을 놓쳤다. 화면 검사도 점검 띠로 줄어든 실제 높이와 일부 비격자 위젯을 충분히 다루지 않았다. 전수 청취/전체 프로그램 무결점으로 표현하지 않는다.
+- `app/voice.js`가 현재 `NM_TTS_OMNI`만 재생한다. index의 예전 Google 연결표 로딩, 기기 TTS fallback, 예전 성공 안내 MP3 재생 경로를 제거했다. 성공 피드백은 말 없는 짧은 합성음이며, 녹음이 없는 동적 문장은 화면 글을 유지한다. 기존 녹음 자산은 삭제/재합성/재업로드하지 않았다. 안내 교체·화면 전환·학습 단계 전환·탭 숨김/퇴장 때 정지하며, BroadcastChannel로 같은 사이트 탭의 중복 낭독을 막는다. 늦은 재생 실패가 다른 목소리를 시작하지 않는다. 실험실의 다시 듣기도 같은 재생기를 이용한다.
+- 연습의 첫 설명을 ‘설명 다시 듣기 → 문제 풀기’로 분리했다. 문제 화면은 안내/문제·숫자판을 명시적으로 묶으며 작은 화면에서도 주요 응답 버튼이 보이도록 한다. 위젯은 안내와 작업 구역을 분리하고 무조건 확대되던 장면 대신 실제 가용 높이에 맞춘다. 3D 메뉴는 작은 화면에서 고정 행에 배치해 투영 좌표를 보정한 뒤 다시 겹치던 문제를 막는다. 아주 낮은 가로 휴대폰·긴 읽을거리/큰 활동판의 읽기 가능한 스크롤 fallback까지 무조건 없앤 것은 아니다.
+- 원장님 명시 답변: **다시 열 때마다 승인·로그인부터**. `app/entry.js`는 직접 index 접근·새로고침·이전 방문 복구를 access로 돌린다. 둘러보기/마스터는 사용자가 방금 선택/로그인한 1회·60초 진입 표만 소비한다. 마스터 권한은 그 뒤에도 기존 서버 세션으로 별도 검증한다. 보호자 로그인 화면은 저장된 인증을 자동 복원하지 않고 다른 탭의 로그인도 가져오지 않는다. 학습 기록·캐릭터·학생 슬롯은 삭제하지 않는다. 둘러보기로 예전 로컬 승인 권한을 재사용할 수 없다. index의 옛 자동 인트로 재생도 제거했다. 소개 페이지와 수업별 영상/자산은 유지한다.
+- `?ws=`와 언어는 승인 진입을 거쳐 이어갈 수 있게 전달한다. 로그인하지 않은 보호자 화면의 학습 복귀 버튼은 승인 화면으로 돌아가며, 로그인·비밀번호 지정·연락처 등록 뒤 학습으로 이동한다. `auth=1&review=1` 조합으로 옛 점검 토큰을 자동 재사용하는 경로도 막았다. 서버/회원 기간/승인 권한·문항·정답은 변경하지 않았다.
+- 검사 근거는 `/tmp/nm-audio-entry-20261021`이다. 현재 OmniVoice 764개 전부 디코딩 통과, 3언어 재생·빠른 전환·과거 실패 무시 검사 통과. 새 브라우저 검사는 390×667·603×673·1280×720 및 390×844 한영중에서 모드 버튼 충돌·44px 터치·실제 학습 숫자판/확인·정답 제출·화면 이탈/예약 음성/다중 탭 정지·재진입 로그인 정책을 확인한다. 별도 WebGL 검사 결과/운영 반영은 후속 완료 기록으로 구분한다.
+- 기존 profile-auth 38건(신규 자동 복원 차단 포함), 가입/회원 브라우저 25+2건, 교구/격자 화면 회귀 검사도 실행했다. 기존 비진입 회귀 검사에는 로컬 서버에서만 entry fixture를 주입해 그 검사 대상과 새 진입 정책 검사를 분리했다. 운영 쓰기·실제 문자/이메일 발송은 하지 않는다. 기존 사용자 미추적 Claude 검수 문서는 수정/스테이징하지 않는다.
+
+- 로컬 완료 확인: 실제 WebGL 3D 메뉴 5조건과 대체 2D 메뉴 5조건, 각 조건의 N-01/N-06/A-01 활동 15화면씩에서 버튼 충돌·응답 위치·가용 영역을 검사했다. 셈 그림은 작은 판에서 물건 끝이 잘리지 않도록 48px 누름 영역의 행으로 정렬하며 그림/종류/개수/정답은 유지한다. 숫자판 정답 제출 후 다음 문제로 넘어가는 동작도 확인했다. 9개 격자 화면 조건 및 32개 교구 조건의 입력/전환 검사가 통과했다. 음성 재생/가입·회원/학습 점검 계정 회귀 검사도 최종 통과했다. 정식 배포 확인은 아래 후속 기록에 남긴다.
+
+- 배포 캐시 보완: 본체/CSS뿐 아니라 동적 3D 메뉴 import와 실험실 6페이지의 공용 음성 스크립트에도 버전 주소를 붙였다. 재접속 시 이전 캐시와 수정된 재생/배치 코드가 섞이지 않게 한다. 내용/문항 변경은 없다.
+
+- **운영 반영 완료:** 기능 main `d9ae39a4` 및 캐시 보완 main `b7c00f70`을 반영했다. Pages [실행 39603411620](https://github.com/docssam1/lete-on/actions/runs/39603411620) 성공. 변경된 운영 화면·스크립트·스타일·실험실 HTML **17파일 전부 HTTP 200, 로컬 검증본과 SHA-256 일치**를 확인했다. 운영 index에 점검 URL로 새로 접속해도 승인·로그인 화면으로 이동함을 옆 브라우저에서 확인했고, 그 화면을 열어 두었다. 기존 열린 학습 창은 이전 JS가 실행 중일 수 있으므로 새 접속 화면에서 다시 시작해야 한다. 이 완료 기록 외 기능 소스는 검증본 그대로다. 증거는 이 채팅의 기존 시각화 폴더 아래 `nm-audio-entry-20261021`의 `deployment.json`, 화면 및 검사 결과에 보관했다.
+
+
+### 승인·로그인 창의 마스터 점검 통합 — 2026-10-21
+
+- 사용자 요청에 따라 승인·로그인 한 카드 상단에 보호자 로그인 / 마스터 점검 탭을 배치했다. 접혀 있던 별도 점검 메뉴를 없애고, 같은 창에서 마스터 입력칸을 바로 열 수 있다. 마스터는 기존 서버 검증·학습 전용 권한을 사용하며 이메일 인증을 요구하지 않는다. 보호자 안내는 기존 회원 이메일/비밀번호와 최초 가입 인증을 구분한다.
+- 한영중, 390/1280px, 방향키·Home/End 탭 이동, 44px 이상 입력/버튼, 탭 변경 시 코드 폐기, 오류 후 재시도, 점검 진도/포인트 분리·로그아웃·잘못된 세션 차단 및 보호자 진입 검사를 통과했다. 기존 음성/재접속/학습 화면 브라우저 검사도 실행했다. 모의 인증만 사용하며 실제 이메일/문자 전송과 서버 변경은 없다.
+- 담당 Codex, 기존 ui-ux-pro-max/GFIELD UI 기준 적용. 증거 `/tmp/nm-unified-login-20261021`. 운영 배포 완료 여부는 후속 검증으로 구분한다. 기존 미추적 Claude 디자인 문서는 보존한다.
+
+- **운영 반영 완료:** main `c264d504` 및 Pages 실행 [39605015268](https://github.com/docssam1/lete-on/actions/runs/39605015268) 성공. 로그인 HTML/JS/CSS 3파일 운영 HTTP 200, 검증본과 SHA-256 일치. 옆 브라우저에서 새로고침하고 마스터 점검 탭을 열어 같은 창의 입력 화면을 확인했다. 증거 `nm-unified-login-20261021`을 이 채팅의 기존 시각화 폴더에 보관했다. 실제 로그인 정보는 입력/저장하지 않았다.
+
+
+### 공통 로그인 입력창으로 단순화 — 2026-10-21
+
+- 사용자 정정: 점검 선택 버튼 자체가 불필요하다. 직전 두 탭 설계를 대체하고 이메일 또는 아이디 / 비밀번호 / 로그인 한 폼만 표시한다. 이메일은 기존 보호자 비밀번호 인증, 아이디는 기존 학습 점검 서버 인증으로 보낸다. 별도 마스터 버튼·탭·안내는 로그인 화면에서 없앴다. 서버 검증 전 클라이언트의 아이디만으로 권한을 부여하지 않는다.
+- 가입/비밀번호 복구는 기존 이메일 OTP→비밀번호 설정→연락처 등록 경로를 이용한다. 정상 이메일 로그인 직후의 단일 진입 표(60초·1회)에 사용자 id만 담아, 같은 id의 로그인 세션을 한 번 연결한다. 비밀번호/토큰은 진입 표나 URL에 담지 않는다. 재접속·새로고침에는 기존 로그인 창 우선 정책을 유지하며 다른 탭 로그인 자동 수용도 차단한다. 점검 권한/진도 분리는 기존대로 서버가 검증한다.
+- Codex가 기존 UI 및 Supabase 스킬 기준으로 구현했다. Supabase 공식 비밀번호 인증 문서와 현재 변경 로그 확인, 신규 서버 API/DDL/권한 변경 없음. profile-auth 39건과 기존 가입/회원 브라우저 25+2건, 음성/재접속/활동 화면 5조건 검사를 통과했다. 공통 폼의 양쪽 인증과 이메일 로그인 후 중복 로그인 방지, 실제 발송 없는 회귀 검사 결과는 `/tmp/nm-single-login-20261021`에 둔다. 기존 사용자 미추적 Claude 문서는 보존했다. 배포 상태는 후속 기록으로 구분한다.
+
+- **운영 반영 완료:** main `d64a5a4a`와 Pages [39606095075](https://github.com/docssam1/lete-on/actions/runs/39606095075) 성공. 런타임 7파일 전부 운영 HTTP 200/로컬 검증본과 SHA-256 일치. 공통 폼에서 마스터/보호자 양쪽 인증, 한영중 이메일 로그인 직후 두 번째 로그인 없음·재접속 로그인 요구·가입/복구 링크 통과. 옆 창에서 별도 점검 선택 버튼 없이 이메일 또는 아이디 / 비밀번호 / 로그인만 표시됨을 확인했다. 결과·실제 화면은 이 채팅의 기존 시각화 폴더 아래 `nm-single-login-20261021`에 보관했다.
+
+
+### 마법책 첫 화면·책 펼침 로그인 — 2026-10-21
+
+- 사용자 정정: 기존 네모 로그인 폼을 첫 화면으로 쓰지 않고 수의 마법다운 입구로 디자인하며, 둘러보기를 누르면 책이 열리며 로그인이 나타나도록 한다. 파랑 표지·기존 유준/유빈 PNG를 사용한 마법책 입구와 두 쪽 속지를 구현했다. 표지/둘러보기/상단 로그인은 동일한 책을 연다. 가입 전 실제 체험은 책 안의 별도 링크로 유지한다. 방금 만든 공통 이메일/아이디 로그인·서버 권한은 그대로 이용한다.
+- 표지가 경첩을 중심으로 넘어가고 오른쪽 속지에 입력칸이 나타난다. 좁은 휴대폰은 오른쪽 속지를 넓게 보여준다. native dialog와 키보드 초점 순환·ESC/닫기·닫은 뒤 입력 비밀번호 폐기·reduced motion을 적용했다. 애니메이션이 끝나야만 인증을 할 수 있는 추가 대기는 없다. 자동 음성/영상 재생은 없다.
+- Codex가 기존 GFIELD 디자인/UI UX 스킬을 적용했다. 기존 승인 캐릭터 원본과 마을/3D·문항은 변경하지 않는다. 375/390/734/1280px와 667×375 가로 화면, 한영중, 실제 표지 전환·대체 정지 화면·포커스/44px/16px·가짜 API의 기존 계정 인증 회귀·5조건 학습 화면 검사를 통과했다. 실제 외부 인증/메일/문자 호출 없음. 근거 `/tmp/nm-book-entry-20261021`.
+- 마을에 대한 의견은 사용자에게 전달했다: 현재 완성도/길 찾기는 기존 만화풍, 조작 재미는 3D가 좋고 기본 만화풍+선택 3D를 제안했다. 마을 기본값은 이 의견만으로 바꾸지 않았다. 기존 미추적 Claude 디자인 문서는 보존했다. main/배포 완료는 후속 검증으로 구분한다.
+
+- 표지 전환의 초반이 너무 빠르게 사라지지 않도록 회전 가속을 조정하고 CSS 캐시 주소를 갱신했다. 7조건 실제 애니메이션/정지 화면 검사를 다시 통과했다. 기능 main `8e3e8728`와 회전 보완 `a937b946`까지 원격 반영됐으나 자동 Pages 실행이 아직 생기지 않아 운영 반영 확인을 계속한다.
+
+
+### 원래 초록 마법책 복구·로그인 연출 / 만화풍 마을 기본 전환 — 2026-10-21
+
+- 사용자 지적 수용: 기존에 힘들게 만든 디자인을 확인하지 않고 새 파랑 책/캐릭터 입구를 만든 것은 잘못이었다. 그 입구를 걷어내고 `promo/index.html`의 실제 초록 가죽 마법책 표지 구조, `promo/book.css`, `promo/front-page.css`, `grimoire-emerald.webp`, `promo/cover-math.js`를 그대로 재사용한다. 해당 원본 자산/스크립트/소개는 수정하지 않았다. 언어 선택과 영중 표지 문구도 원래 것에 맞췄다.
+- 둘러보기/책 클릭 시 기존 표지의 실제 위치·별 캔버스·현재 숫자 모습을 복제해 책등을 축으로 1.4초 동안 펼치며 같은 책 속 로그인으로 이어진다. 비디오·새 음성은 재생하지 않는다. 원래 수식 `8+7→8+2+5→10+5→15`는 클릭 전 자동 반복, 로그인 중 일시정지, 닫으면 재개한다. 왼쪽 속지의 기존 표어는 마법사가 글을 쓰듯 글자별로 보이며, 입력칸/로그인 동작은 글쓰기 완료를 기다리지 않는다. 닫기/ESC/초점 순환/동작 줄이기/크기변경·탭 숨김 정리를 유지했다.
+- 사용자 새 지시: 3D 마을 이동이 어려우므로 기존 만화풍 마을을 개선해 기본으로 바꾼다. 기존 `assets/map.jpg`, 건물 위치·캐릭터·분수는 유지한다. 최초 카메라는 전체 지도, 건물/큰 하단 6개 버튼은 이동·확인 모달 없이 직접 입장(잠긴 학습은 기존 제한). 마을 메뉴에 로드맵·도감·잡지·우편·리포트·외부 관문 3개를 모으며 작은 화면에서도 접근 가능하다. 확대/지도 전체 보기는 선택 조작이다. 3D 마을 모듈과 학생 데이터는 보존하고 자동 3D 전환만 멈췄다.
+- 검증: 마법책 375/390/734/1280 및 가로 화면 7조건, 실제 자동 숫자 이동·동치식 4단계·표지 회전·글자쓰기·로그인 양쪽/중복 로그인 없음·별도 점검 권한 검사 통과. 마을 한영중·6조건에서 전체 지도/6곳 한 번 입장·키보드·외부 관문 보존·포인트/진도 유지 통과. 옷장 한영중 4조건의 이름/꾸미기/정확히 1회 결제/실패 롤백 회귀와 배포용 roadmap-sync self-test 33·ladder·stages·about-stats 통과. 실제 이메일/문자/프로필 서버 쓰기 없음.
+- 담당 Codex, 기존 UI UX/GFIELD 스킬 적용. 근거 `/tmp/nm-original-book-20261021`; 이전 파랑 책 이미지는 현행 디자인이 아니다. 사용자 미추적 Claude 디자인 문서는 보존한다. 자동 Pages 실행이 재개됐으므로 앞선 GitHub 로그인 요청은 더 이상 필요하지 않다. 최신 수정의 운영 반영은 후속 배포 확인으로 구분한다.
+
+- 복구·마을 기능 main `0ecb6d82` 반영. 원래 표지 자산/수식 코드/지도 원본을 수정하지 않았음을 diff로 확인했다. 실제 숫자 반복→물리 표지 열림→글자쓰기·로그인을 녹화한 `original-book-preview.webm`과 6조건 마을 화면을 이 채팅의 기존 시각화 폴더 아래 `nm-original-book-20261021`에 저장했다. 현재 최신 배포 실행 생성은 기다리는 중이며, GitHub 공식 상태의 Actions/Pages는 정상이다.
+
+- **운영 반영 완료:** 기능 main `0ecb6d82`, 배포 대상 `acb3c4a2`, Pages [39613924267](https://github.com/docssam1/lete-on/actions/runs/39613924267) 성공. 운영 런타임 6파일과 기존 표지/CSS/숫자 애니메이션/지도 5파일 모두 HTTP 200·로컬 검증본과 SHA-256 일치. 운영 브라우저에서 원래 표지→둘러보기→책 펼침/글자쓰기→기존 마스터 서버 로그인→만화풍 마을 입장을 실제 확인했다. 점검 계정은 실제 학생 데이터와 분리되며 첫 출석 점검 코인 3만 반영됐다. 운영 마을 창을 유지하고 임시 GitHub/로컬 미리보기 탭과 전용 로컬 서버는 정리했다. `deployment.json`, `cover-live.png`, `open-live.png`, `town-live.png`, 원래 책 연출 영상은 기존 시각화 폴더의 `nm-original-book-20261021`에 보관했다. 이 기록 외 런타임은 검증본 그대로다.
+
+
+### Original desk and compact village panel — 2026-10-21
+
+- User confirmed restoration of the original wizard desk, then specified the bright forest / white desk background from the attached photo. Restore book, green leather mat, props, paper tags, brass controls and original logo from `2fda3cc63`; retain the existing bright forest, sill, ash desk and daylight. Keep compact 44px control rows, all nine routes, keyboard/reduced-motion behavior and scene cleanup. No new art or voice.
+- Additional request: remove the village's duplicate six-button building toolbar and large lower banners. Buildings open directly from the original map. Learning Journey and Grade Rooms move into a small right panel; existing tools, outside gates, zoom and mute are under More. The portrait phone panel starts closed and supports keyboard/Escape. Account permissions, student data and point/progress rules are unchanged.
+- Codex used the existing GFIELD / UI UX guidance. Local evidence: `/tmp/nm-original-desk-20261021`. Passed six village viewport/language cases (all buildings, keyboard, whole map, no duplicate toolbar, preserved progress/coins), four closet regression cases, five actual WebGL app/layout/voice/entry cases, desktop 3D props and nine controls, and roadmap-sync self-test 33 / ladder / stages / about-stats. No production emails, SMS or student writes. The user untracked Claude review document is preserved. Main publication and actual Pages deployment are recorded separately after verification.
+
+- Feature published to main `474cd2809ca0eb67ba27f07f8e9d8f72f70a6374`; remote tree matched the verified local tree `67737994d9870d0e8c1b752757b7c35ec01c631c` before publication. Five actual WebGL app cases, desktop nine-button/prop/keyboard checks, six map cases and four closet cases all passed. Artifacts are in the chat visualization folder under `nm-desk-panel-20261021`. Pages completion is still pending; source publication is not deployment confirmation.
+
+- Latest user correction supersedes the contain/whole-map presentation above: the village illustration must fill the entire screen, with no flat blue margins. The camera now starts at cover scale and the viewport reaches all screen edges. The small side panel overlays the map. On narrow screens the More panel retains text entries to reach cropped buildings without joystick/walking. Six viewport/language cases passed again for full image coverage, map/menu routes, keyboard and preserved coins/progress. Final map proofs are `full-town` (earlier `town` images show the superseded letterboxed layout).
+
+- Final full-screen map source is main `619939d8e85644f5fc28a24db3e8db9593f3d4c9` (tree matched locally before publication). At 2026-10-21 14:48 UTC Pages run 39619947274 started for the earlier `c75cdfc2` revision; that is not proof of the final cover-scale map deployment. Verify the final four runtime file SHA-256 values, then the actual UI. Current `nm-desk-panel-20261021/deployment.json` records pending status until those match.

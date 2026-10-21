@@ -29,7 +29,7 @@ const server=http.createServer((req,res)=>{
   const context=await browser.newContext();await context.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());
   const page=await context.newPage();
   await page.addInitScript(()=>{
-   window.__played=[];window.__fallback=0;const play=HTMLMediaElement.prototype.play;
+   sessionStorage.setItem('nm_entry_once_v1',JSON.stringify({mode:'preview',at:Date.now()}));window.__played=[];window.__fallback=0;const play=HTMLMediaElement.prototype.play;
    HTMLMediaElement.prototype.play=function(){window.__played.push(this);return play.call(this);};
    speechSynthesis.speak=()=>window.__fallback++;
   });
@@ -42,7 +42,7 @@ const server=http.createServer((req,res)=>{
    const line=unique.find(t=>t.lang===lang&&t.key==='practice-intro');
    await page.evaluate(t=>__VOICE_CHECK.say(t.text,t.lang),line);
    await page.waitForFunction(()=>{const a=__played.at(-1);return a&&!a.paused&&a.currentTime>0.1;});
-   assert.equal(await page.evaluate(()=>__played.at(-1).getAttribute('src')),map[lang][line.text]);
+   assert.equal(await page.evaluate(()=>new URL(__played.at(-1).src).pathname.split('/').slice(-3).join('/')),map[lang][line.text]);
   }
   // A rapid next prompt must stop the previous narration; rejected old play promises must not speak late.
   const lines=unique.filter(t=>t.lang==='ko'&&t.key==='practice-intro').slice(0,2);
