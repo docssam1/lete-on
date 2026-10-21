@@ -31,6 +31,12 @@ The user supplied a 2025-02-27 `math_in_depth` post titled “Digital SAT Math 8
 
 Use the post's four three-month blocks as a discussion example, not fixed pacing. Set time and advancement from reviewed diagnostic evidence, repeat observations, learner workload, and teacher confirmation. Keep school-course progress, AMC 8 competition work, and SAT-style exposure as distinct goals and evidence streams. Do not turn the post's predicted Grade 7 Algebra 1 mastery or SAT 800 framing into a product guarantee, placement decision, or automatic acceleration rule. No curriculum catalog, assessment, or learner-facing schedule changed from this reference alone.
 
+## User-provided AMC 10/12 learning reference — 2026-10-21
+
+The user supplied a 2026-09-04 `math_in_depth` post about AMC 10/12 preparation. Treat its four stages—concept, topic-based reasoning, connections across topics, and timed practice—as a competition-path design reference. Algebra, number theory, geometry, and combinatorics are the example concept areas. Topic practice should ask why a method applies, whether another method works, and what changes when a condition changes. Mixed problems should check whether a learner can select and connect concepts without a topic label.
+
+For later practice, record more than a mock score: time spent, concept gaps, missing ideas, calculation errors, and unnecessarily long solutions. Skipping and returning to a question and solving some problems without answer choices are useful skills to observe. Past papers and AIME-style extensions require separate source-rights and learner-readiness decisions; the post's suggested question ranges and qualification strategy are not official cutoffs or a basis for automatic routing. This reference does not change the current student-facing schedule or authorize a competition-readiness claim.
+
 ## Product direction
 
 GFIELD Math is a student/teacher system that connects diagnosis, domain analysis, concept learning, clinic practice, printable unit workbooks, rechecks, and teacher-reviewed progression. It covers US school mathematics and keeps competition pathways such as SASMO, Math Kangaroo, AMC 8, AMC 10, and AMC 12 distinct from course placement. It must not present a school-specific progression rule as an official US national cut.
