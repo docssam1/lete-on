@@ -31,6 +31,12 @@ The user supplied a 2025-02-27 `math_in_depth` post titled “Digital SAT Math 8
 
 Use the post's four three-month blocks as a discussion example, not fixed pacing. Set time and advancement from reviewed diagnostic evidence, repeat observations, learner workload, and teacher confirmation. Keep school-course progress, AMC 8 competition work, and SAT-style exposure as distinct goals and evidence streams. Do not turn the post's predicted Grade 7 Algebra 1 mastery or SAT 800 framing into a product guarantee, placement decision, or automatic acceleration rule. No curriculum catalog, assessment, or learner-facing schedule changed from this reference alone.
 
+## User-provided Grade 7 advanced-track roadmap — 2026-10-21
+
+The user supplied a Grade 7 plan with Algebra 1, introductory geometry, AMC 10 problem solving, and advanced SAT Math exposure across four three-month blocks. Its useful teaching emphasis is to understand concepts thoroughly, explain reasoning, and broaden approaches to unfamiliar problems. AoPS Introduction to Algebra is a suggested resource, not a required purchase or an approved item source. Keep school-course mastery, competition exploration, and SAT exposure as separate optional goals.
+
+For the current `7.NS.A` work, use reviewed evidence about rational-number meaning, signed operations, and explanations to identify any prerequisite repair before considering an Algebra 1 bridge. The locked 18-slot screener cannot yet assign a track; an overall score alone cannot certify Algebra 1, AMC 10, or SAT readiness. The proposed three-month blocks and prediction of easy Grade 8 Geometry mastery are illustrative, not fixed pace or outcome guarantees. Do not accelerate, assign AMC/SAT practice, or change a school course solely because of grade; require teacher confirmation, school context, and learner interest/workload. No diagnostic item, release gate, or student-facing route changed from this reference.
+
 ## User-provided AMC 10/12 learning reference — 2026-10-21
 
 The user supplied a 2026-09-04 `math_in_depth` post about AMC 10/12 preparation. Treat its four stages—concept, topic-based reasoning, connections across topics, and timed practice—as a competition-path design reference. Algebra, number theory, geometry, and combinatorics are the example concept areas. Topic practice should ask why a method applies, whether another method works, and what changes when a condition changes. Mixed problems should check whether a learner can select and connect concepts without a topic label.
