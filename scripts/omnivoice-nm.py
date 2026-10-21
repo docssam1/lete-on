@@ -70,6 +70,9 @@ EMOJI = re.compile("[\U0001F000-\U0001FFFF☀-➿⬀-⯿️‍]")
 def spoken(lang, text):
     """Turn display-only math placeholders into words the voice can read."""
     text = EMOJI.sub("", text)
+    if lang == "ko":
+        text = text.replace("+1000 하고 -1", "플러스 천 하고 마이너스 일")
+        text = text.replace("끝 - 시작 + 1", "끝 수 빼기 시작, 더하기 일")
     replacements = {
         "ko": (("□0+□0", "열 개씩 더하기"), ("□0", "열 개씩"), ("□", "빈칸")),
         "en": (("□0+□0", "addition strategy"), ("□0", "tens"), ("□", "the missing number")),
