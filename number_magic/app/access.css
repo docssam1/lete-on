@@ -18,7 +18,11 @@ h2{margin:0 0 8px;font-size:20px;color:var(--navy)}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:8px 18px;font:inherit;font-size:16px;font-weight:700;border-radius:6px;border:1.5px solid var(--navy);background:#fff;color:var(--navy);cursor:pointer;text-decoration:none;max-width:100%;text-align:center}
 .btn.primary{background:var(--navy);color:#fff}
 .btn:disabled{opacity:.55;cursor:not-allowed}
-summary{min-height:44px;display:flex;align-items:center;font-weight:800;color:var(--navy);cursor:pointer}
+.access-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.access-tabs [role=tab]{min-height:48px;padding:8px;font:inherit;font-weight:700;line-height:1.4;border:1.5px solid var(--navy);border-radius:6px;background:#fff;color:var(--navy);cursor:pointer}
+.access-tabs [aria-selected=true]{background:var(--navy);color:#fff}
+.nm-access [hidden]{display:none!important}
+#review-submit,#guardian-link{width:100%}
 .field{display:flex;flex-direction:column;gap:4px;margin:0 0 12px}
 .field label{font-weight:700;font-size:14px;color:var(--navy)}
 input[type=text],input[type=password]{width:100%;min-height:44px;padding:8px 12px;font:inherit;font-size:16px;color:var(--ink);background:#fff;border:1.5px solid var(--muted);border-radius:6px}

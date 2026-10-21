@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <title>수의 마법 · 승인·로그인</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="app/access.css?v=20261021-entry2">
+<link rel="stylesheet" href="app/access.css?v=20261021-login3">
 </head>
 <body class="nm-access">
 <main class="access-wrap" id="main">
@@ -21,16 +21,20 @@
   <h1 data-i18n="title">수의 마법 · 승인·로그인</h1>
   <p class="lead" data-i18n="lead">시작하는 방법을 선택해 주세요.</p>
 
-  <section class="card primary-card" aria-labelledby="g-title">
+  <section class="card primary-card" aria-label="Login">
+    <div class="access-tabs" role="tablist" aria-label="Login">
+      <button id="guardian-tab" type="button" role="tab" aria-controls="guardian-panel" aria-selected="true" tabindex="0" data-i18n="gTab">보호자 로그인</button>
+      <button id="review-tab" type="button" role="tab" aria-controls="review-panel" aria-selected="false" tabindex="-1" data-i18n="rTab">마스터 점검</button>
+    </div>
+    <div id="guardian-panel" role="tabpanel" aria-labelledby="guardian-tab">
     <h2 id="g-title" data-i18n="gTitle">보호자 로그인·가입</h2>
-    <p data-i18n="gDesc">인증된 보호자 이메일로 인증 코드를 받고, 비밀번호를 설정해 가입합니다. 회원 승인 상태는 로그인 후 확인됩니다.</p>
+    <p data-i18n="gDesc">가입한 보호자는 이메일과 비밀번호로 로그인합니다. 처음 가입할 때만 이메일 인증 후 비밀번호를 만듭니다.</p>
     <p class="muted" data-i18n="gTrial">이메일 인증 후 30일 동안 체험할 수 있어요. 정식 이용은 학원 승인 후 시작됩니다.</p>
     <a id="guardian-link" class="btn primary" href="index.html?enter=1&amp;auth=1" data-i18n="gBtn">보호자 이메일로 로그인·가입</a>
-  </section>
-
-  <section class="card" aria-label="Master review">
-    <details id="review-details">
-      <summary data-i18n="rSummary">마스터 점검 로그인</summary>
+    </div>
+    <div id="review-panel" role="tabpanel" aria-labelledby="review-tab" hidden>
+      <h2 data-i18n="rSummary">마스터 점검 로그인</h2>
+      <p data-i18n="rHint">이메일 인증 없이 점검용 아이디와 확인 코드로 로그인합니다.</p>
       <form id="review-form" novalidate>
         <p class="muted" data-i18n="rDesc">전체 학습 기능을 확인하는 점검용 계정입니다. 학생 관리 권한은 없으며 실제 학생 진도·포인트와 따로 저장됩니다.</p>
         <div class="field">
@@ -44,7 +48,7 @@
         <button id="review-submit" class="btn primary" type="submit" data-i18n="rBtn">마스터 점검 로그인</button>
         <p id="review-status" class="status" role="status" aria-live="polite"></p>
       </form>
-    </details>
+    </div>
   </section>
 
   <nav class="links" aria-label="Other">
@@ -53,6 +57,6 @@
   </nav>
 </main>
 <script src="app/review-session.js?v=20261021-review1"></script>
-<script src="app/access.js?v=20261021-entry2"></script>
+<script src="app/access.js?v=20261021-login3"></script>
 </body>
 </html>

@@ -14,7 +14,19 @@ try{
   const original={lang,name:'Real learner fixture',onboarded:true,view:'town',avatar:{kind:'girl'},character:{number:3,color:'blue'},coins:777,progress:{'N-01':{done:true,steps:{stamp:true}}},guardianManaged:true,cloudLinked:true,cloudOwnerId:'real-owner-fixture',account:{status:'trial'}};
   await c.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1')){localStorage.setItem('nm_state_v1',JSON.stringify(s));localStorage.setItem('nm_state_slot1','keep-real-slot');localStorage.setItem('nm_active_slot','2');localStorage.setItem('nm_guardian_session_v1','keep-real-guardian-session');}},original);
   await p.goto(base+'/number_magic/about.html');await p.locator('.skipbtn').click();await p.waitForURL('**/access.html');assert.equal(await p.locator('#guardian-link').count(),1);
-  await p.locator('.access-lang[data-lang="'+lang+'"]').click();await p.locator('#review-details > summary').click();await p.fill('#review-user','review-fixture');await p.fill('#review-code','wrong-fixture');await p.click('#review-submit');await p.waitForFunction(()=>!document.getElementById('review-submit').disabled);assert.equal(await p.locator('#review-code').inputValue(),'');
+  await p.locator('.access-lang[data-lang="'+lang+'"]').click();
+  assert.equal(await p.locator('#guardian-tab').getAttribute('aria-selected'),'true');
+  assert.equal(await p.locator('#review-panel').isVisible(),false);
+  await p.locator('#guardian-tab').focus();await p.keyboard.press('ArrowRight');
+  assert.equal(await p.locator('#review-tab').getAttribute('aria-selected'),'true');
+  assert.equal(await p.locator('#guardian-panel').isVisible(),false);
+  await p.fill('#review-code','discard-on-tab-change');await p.locator('#review-tab').focus();await p.keyboard.press('Home');
+  assert.equal(await p.locator('#review-code').inputValue(),'');
+  await p.keyboard.press('End');assert.equal(await p.locator('#review-panel').isVisible(),true);
+  assert.equal(p.url().includes('access.html'),true,'changing login type stays in the same window');
+  for(const id of ['guardian-tab','review-tab','review-user','review-code','review-submit']){const box=await p.locator('#'+id).boundingBox();assert(box.width>=44&&box.height>=44,id+' touch size');}
+  if(OUT)await p.screenshot({path:path.join(OUT,`${width}-${lang}-master-login.png`)});
+  await p.fill('#review-user','review-fixture');await p.fill('#review-code','wrong-fixture');await p.click('#review-submit');await p.waitForFunction(()=>!document.getElementById('review-submit').disabled);assert.equal(await p.locator('#review-code').inputValue(),'');
   await p.fill('#review-code','fixture-only-code');await p.click('#review-submit');await p.waitForURL('**/index.html?**review=1**');await p.waitForFunction(()=>!!window.NM_GATE);
   assert.equal(await p.locator('.nm-review-banner').count(),1);assert.equal(await p.evaluate(()=>Object.keys(NM_UNITS).filter(k=>NM_GATE.unitLocked(k)).length),0,'all learning units available to a validated review session');
   const rawOriginal=JSON.stringify(original);const untouched=()=>p.evaluate(raw=>({normal:localStorage.getItem('nm_state_v1')===raw,slot:localStorage.getItem('nm_state_slot1'),active:localStorage.getItem('nm_active_slot'),guardian:localStorage.getItem('nm_guardian_session_v1')}),rawOriginal);
