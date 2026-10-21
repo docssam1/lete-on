@@ -4,7 +4,7 @@ const fs = require('fs'), path = require('path');
 const ROOT = path.resolve(__dirname, '..'); global.window = global;
 for (const f of ['engine/rng.js', 'engine/generators.js']) { try { eval(fs.readFileSync(path.join(ROOT, f), 'utf8')); } catch (e) {} }
 for (const f of fs.readdirSync(path.join(ROOT, 'engine/threads'))) eval(fs.readFileSync(path.join(ROOT, 'engine/threads', f), 'utf8'));
-eval(fs.readFileSync(path.join(ROOT, 'data/threads.js'), 'utf8'));
+require(path.join(ROOT, 'data/threads.js'));
 
 const HANGUL = /[가-힣㄰-㆏]/;
 const HANJA  = /[一-鿿]/;

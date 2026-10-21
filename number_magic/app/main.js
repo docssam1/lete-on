@@ -266,9 +266,27 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      원장 지시의 핵심이 "계산이 되는 것과 문장제를 이해하는 것은 다르다"이므로
      한 점수로 합치지 않는다. 어떤 것도 잠그지 않고 안내에만 쓴다. */
   checkups:{} };}
-function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
-const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
+let hadSave=false; // 파싱에 성공한 프로필만 기존 사용자로 취급한다.
+function load(){
+  let raw=null;
+  try{
+    raw=localStorage.getItem(KEY);
+    const r=JSON.parse(raw);
+    if(r&&typeof r==='object'&&!Array.isArray(r)){
+      hadSave=true;
+      return {...defaults(),...r};
+    }
+  }catch(e){}
+  // 손상된 원본을 보존하고 새 체험 프로필의 온보딩으로 복구한다.
+  if(raw!==null)try{
+    if(localStorage.getItem(KEY+'_recovery')===null)localStorage.setItem(KEY+'_recovery',raw);
+  }catch(e){}
+  return defaults();
+}
 let S=load();
+const ROAD_MULTS_LIST=[0.7,0.85,1,1.25,1.5];
+normalizeLoadedState(hadSave);
+function normalizeLoadedState(existingLocalProfile){
 if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 // 기존 저장본에 character 필드 없으면 기본값 채움
 if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
@@ -287,10 +305,9 @@ if(!S.roadPrints||typeof S.roadPrints!=='object')S.roadPrints={};
    이 줄도 같이 늘릴 것 — 모르는 키가 남아도 roadPaceDef()가 첫 기준으로 되돌린다. */
 if(['p0','p1','p2','p3','p4'].indexOf(S.roadPace)<0)S.roadPace='p2';
 /* 속도·양 배수 — 줄이기 30%(0.7)부터 늘리기 1.5배까지(원장 2026-09-25) */
-const ROAD_MULTS_LIST=[0.7,0.85,1,1.25,1.5];
 if(ROAD_MULTS_LIST.indexOf(S.roadSpeed)<0)S.roadSpeed=1;
 if(ROAD_MULTS_LIST.indexOf(S.roadAmount)<0)S.roadAmount=1;
-if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
+if(typeof S.onboarded!=='boolean')S.onboarded=existingLocalProfile; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 /* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
    hadSave(저장본이 이미 있었는지)로만 "신규 설치 vs 기존 프로필"을 구분해야
@@ -300,11 +317,13 @@ if(S.name===undefined)S.name='';
    완전 신규 설치(hadSave===false)만 체험으로 시작하고, 이미 쓰던 프로필은 승인번호 없이도
    active 로 남긴다(위 주석의 grandfather — 재원생이 게이트 도입으로 잠기면 안 된다).
    전에는 이 줄이 무조건 'active' 였다가 잠깐 무조건 'trial' 이었는데, 둘 다 한쪽을 깨뜨린다. */
-if(!S.account)S.account={status:hadSave?'active':'trial',code:null,checkedAt:0};
+if(!S.account)S.account={status:existingLocalProfile?'active':'trial',code:null,checkedAt:0};
 /* 소급 마이그레이션: 과거 완료(done) 유닛에 steps.stamp가 빠져 로드맵 별이 안 켜지던 버그 —
    기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
 (function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
+}
+
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();return true;}
 // The existing profile/slot and state backup own this data; no global sibling log.
 if(window.NM_STUDY_RECORDS)window.NM_STUDY_RECORDS.bind({state:()=>S,save});
@@ -411,36 +430,74 @@ function externalBlocked(){return !accountActive();}
 /* 검증 하네스(Playwright)가 화면을 헤집지 않고 게이트 판정을 확인할 수 있게 — 읽기 전용 조회만.
    window.feedbackFx 와 같은 목적의 훅이다. */
 window.NM_GATE={trialUnitSet,isTrialUnit,unitLocked,accountActive,externalBlocked,trialLevelOpen};
-/* 원장 지시 2026-09-03 "우선 승인번호 없이도 모두 열리도록": 계정 상태와 무관하게 항상 열림.
-   승인번호 입력·재검증 코드는 그대로 두었으니, 게이트를 되살릴 때는 아래 한 줄만
-   `return !!(S.account&&S.account.status==='active');` 로 되돌리면 된다. */
+/* 체험 범위 밖의 유닛은 학원 승인 상태를 확인한다. */
 function accountActive(){return !!(S.account&&S.account.status==='active');}
 function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 
 /* ---------- 클라우드 프로필 (Supabase nm_profiles) ----------
-   캐릭터 이름 = 고유 아이디. 온보딩에서 이름이 비어 있지 않고 중복이 아니면
-   그 이름으로 클레임(insert)되고, 이후 진행상황(S 전체)이 이름 아래로 동기화된다.
-   같은 이름이 이미 있으면 "이건 나예요(이어하기) / 다른 이름 쓸래요"를 고른다.
+   보호자 이메일 인증 뒤 owner_id와 이름을 함께 확인한다.
+   같은 이름만으로 다른 보호자의 기록을 읽거나 덮어쓰지 못하게 서버 RLS도 제한한다.
    네트워크가 안 되면 조용히 로컬 전용으로 동작(앱 사용을 막지 않음).
    cloudLinked가 true인 프로필만 push — 클레임 절차 없이 이름만 같은 옛 로컬
    사용자가 남의 클라우드 저장본을 덮어쓰는 사고를 막는다. */
 const SB_URL='https://fgahqumaldheqettmvqg.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
 const sbHdr=()=>({apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'});
+const guardianAuth=window.NM_PROFILE_AUTH;
+let guardianEntry=false,booted=false;
+if(guardianAuth){
+  guardianAuth.configure({url:SB_URL,anonKey:SB_KEY});
+  const refreshGuardianUI=()=>{
+    if(!booted)return;
+    if(guardianAuth.pendingLink&&guardianAuth.pendingLink()){
+      guardianEntry=!S.onboarded;S.view='closet';render();
+      const details=$('.nm-closet-settings');if(details)details.open=true;
+    }
+    renderIdCard();renderNotifyCard();
+  };
+  guardianAuth.ready().then(refreshGuardianUI).catch(()=>{});
+  guardianAuth.onChange(refreshGuardianUI);
+}
+async function cloudCredentials(){
+  if(!guardianAuth)throw new Error('guardian_auth_required');
+  await guardianAuth.ready();
+  const session=await guardianAuth.getSession();
+  if(!session||!session.user||!session.user.id)throw new Error('guardian_auth_required');
+  return {owner:session.user.id,headers:{...sbHdr(),Authorization:'Bearer '+session.access_token}};
+}
 async function cloudGet(name){
-  const url=`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(name)}&select=name,state`;
-  const r=await fetch(url,{headers:sbHdr()});
+  const auth=await cloudCredentials();
+  const url=`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(name)}&owner_id=eq.${encodeURIComponent(auth.owner)}&select=name,state,owner_id`;
+  const r=await fetch(url,{headers:auth.headers});
   if(!r.ok)throw new Error('cloudGet '+r.status);
   const rows=await r.json();
+  if(!isGuardianOwner(auth.owner))throw new Error('guardian_changed');
   return rows[0]||null;
 }
+function isGuardianOwner(owner){
+  const current=guardianAuth&&guardianAuth.peek();
+  return !!(current&&current.user.id===owner);
+}
+function backupBeforeCloudResume(owner){
+  if(!isGuardianOwner(owner))return false;
+  try{
+    const backup=JSON.stringify(S);localStorage.setItem(KEY+'_preresume',backup);
+    if(localStorage.getItem(KEY+'_preresume')!==backup)throw new Error('storage');
+    return true;
+  }catch(e){
+    toast(S.lang==='ko'?'이 기기의 기록을 보관하지 못해 이어하기를 멈췄어요. 저장 공간을 확인해 주세요.':S.lang==='en'?'Could not back up this device’s progress. Check storage before continuing.':'无法备份本设备的进度，请检查存储空间后重试。',false);
+    return false;
+  }
+}
 async function cloudClaim(name,state){
+  const auth=await cloudCredentials();
   const r=await fetch(`${SB_URL}/rest/v1/nm_profiles`,{
-    method:'POST',headers:sbHdr(),
-    body:JSON.stringify({name,state,updated_at:new Date().toISOString()})});
+    method:'POST',headers:auth.headers,
+    body:JSON.stringify({name,state:{...state,cloudOwnerId:auth.owner},owner_id:auth.owner,updated_at:new Date().toISOString()})});
   if(r.status===409)return false;           // 그 사이 누가 선점 (중복)
   if(!r.ok)throw new Error('cloudClaim '+r.status);
-  return true;
+  if(!isGuardianOwner(auth.owner))throw new Error('guardian_changed');
+  return {owner:auth.owner};
 }
 /* ---------- 승인번호 (nm_codes, Phase 2B) ----------
    RLS가 이미 "active=true 행만 select 가능"으로 걸려 있으므로, code로만 조회해서
@@ -497,15 +554,22 @@ async function reverifyAccountIfNeeded(){
   }catch(e){ /* 오프라인 — 다음에 다시 시도 */ }
 }
 
-let cloudTimer=null;
+let cloudTimer=null,cloudSyncError=false;
 function cloudPushSoon(){
-  if(!S.cloudLinked||!S.name)return;
   clearTimeout(cloudTimer);
-  cloudTimer=setTimeout(()=>{
-    fetch(`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(S.name)}`,{
-      method:'PATCH',headers:sbHdr(),
-      body:JSON.stringify({state:S,updated_at:new Date().toISOString()})
-    }).catch(()=>{});                       // 오프라인이면 다음 save 때 재시도
+  if(!S.cloudLinked||!S.name||!S.cloudOwnerId)return;
+  const name=S.name,owner=S.cloudOwnerId,state=JSON.parse(JSON.stringify(S));
+  cloudTimer=setTimeout(async()=>{
+    try{
+      const auth=await cloudCredentials();
+      if(auth.owner!==owner)return;
+      const response=await fetch(`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(name)}&owner_id=eq.${encodeURIComponent(owner)}&select=name`,{
+        method:'PATCH',headers:{...auth.headers,Prefer:'return=representation'},
+        body:JSON.stringify({state,updated_at:new Date().toISOString()})
+      });
+      if(!response.ok||!(await response.json()).length)throw new Error('cloud_save_failed');
+      if(isGuardianOwner(owner)&&cloudSyncError){cloudSyncError=false;renderIdCard();}
+    }catch(e){if(isGuardianOwner(owner)){cloudSyncError=true;renderIdCard();}} // 기기 저장은 유지하며 다음 save 때 재시도한다.
   },1500);
 }
 /* 주간 요약 — 알림 발송(Edge Function weekly-notify)이 프로필 state에서 읽는다.
@@ -947,6 +1011,10 @@ function render(){
     screenWorksheetHelper(wsHelperId);
     return;
   }
+  if(guardianEntry&&!S.onboarded){
+    app.innerHTML='<div id="screen"></div>';
+    screenGuardianEntry();return;
+  }
   if(!S.onboarded){
     app.innerHTML='<div id="screen"></div>';
     screenWelcome();
@@ -994,6 +1062,12 @@ function cycleLang(){const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];
    온보딩 — 캐릭터+이름 선택 → "짠!" 구름 등장 연출 → 마을 입장
    완전 신규 설치(localStorage 없던 상태)에서만 1회 등장(hadSave 참고)
    ============================================================ */
+function screenGuardianEntry(){
+  const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+  $('#screen').innerHTML=`<div class="nm-step-body nm-closet-wrap"><button class="nm-btn ghost" id="nmGuardBack">${lk('처음부터 시작하기','Start a new learner','新学生开始')}</button><h1>${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</h1><div id="nm-guardian-slot"></div><div id="nm-idcard-slot"></div></div>`;
+  $('#nmGuardBack').onclick=()=>{guardianEntry=false;if(guardianAuth&&guardianAuth.cancelLink)guardianAuth.cancelLink();render();};
+  renderIdCard();
+}
 function screenWelcome(){
   const scr=$('#screen');
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
@@ -1024,12 +1098,14 @@ function screenWelcome(){
           </button>
         </div>
         <button class="nm-btn nm-ob-go" id="obAvNext"${ob.avatar?'':' disabled'}>${lk('다음 ›','Next ›','下一步 ›')}</button>
+        <button class="nm-btn ghost nm-ob-go" id="obGuardian">${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</button>
       </div>
     </div>`;
     scr.querySelectorAll('[data-av]').forEach(b=>{
       b.onclick=()=>{ ob.avatar=b.dataset.av; stepAvatar(); };
     });
     $('#obAvNext').onclick=()=>{ if(ob.avatar) stepGrade(); };
+    $('#obGuardian').onclick=()=>{guardianEntry=true;render();};
   }
 
   /* 2단계 — 학년(2026-09-16 원장 "나이도 입력해야 돼").
@@ -1090,7 +1166,7 @@ function screenWelcome(){
     const name=(ob.name||'').trim();
     if(!name){ toast(t('obNeedName'),false); return; }
     ob.name=name;
-    /* 이름 중복 확인: 유일하면 이 이름이 곧 아이디가 되어 클라우드에 기억된다 */
+    /* 보호자 인증 상태에서만 클라우드 이름을 확인한다. 미인증이면 기기에 저장한다. */
     const btn=$('#obGo');
     btn.disabled=true;
     btn.textContent=S.lang==='ko'?'이름 확인 중…':S.lang==='en'?'Checking name…':'检查名字中…';
@@ -1102,8 +1178,14 @@ function screenWelcome(){
     /* 유일한 이름 → 클레임 */
     try{
       const okClaim=await cloudClaim(name,{});
-      if(!okClaim){ const again=await cloudGet(name).catch(()=>null); askResume(name, again||{state:{}}); return; }
-      ob.claimed=true;
+      if(!okClaim){
+        const again=await cloudGet(name).catch(()=>null);
+        if(again){askResume(name,again);return;}
+        btn.disabled=false;btn.textContent=t('obGo');
+        toast(S.lang==='ko'?'기존 기록은 학원에 보호자 연결을 요청하거나 다른 이름을 사용해 주세요.':S.lang==='en'?'Ask your academy to link the existing profile, or choose another name.':'请联系学院关联原有记录，或使用其他名字。',false);
+        return;
+      }
+      ob.claimedOwner=okClaim.owner;
       reveal(name);
     }catch(e){ reveal(name); }              // 클레임 실패 시에도 앱은 계속
   }
@@ -1121,14 +1203,16 @@ function screenWelcome(){
       </div>
     </div>`;
     $('#obResume').onclick=()=>{
+      if(!backupBeforeCloudResume(existing.owner_id))return;
+      guardianEntry=false;
       const st=existing&&existing.state?existing.state:{};
       S={...defaults(),...st};
       S.name=name; S.onboarded=true; S.cloudLinked=true;
-      /* 클라우드에서 되불러온 프로필 = 이미 쓰던 학생이다 → 승인번호 없이도 active(grandfather).
-         부팅 때의 hadSave 판정은 이 시점 이후라 여기서 한 번 더 봐야 한다. 안 그러면 새 기기에서
-         이어하기 한 재원생이 체험으로 잠긴다 — 클라우드 19명 중 10명이 account 키 자체가 없다
-         (게이트 도입 전에 저장된 프로필, 2026-09-06 확인). */
-      if(!S.account||!S.account.status)S.account={status:'active',code:null,checkedAt:0};
+      S.cloudOwnerId=existing.owner_id;
+      if(!S.account||!S.account.status)S.account={status:'trial',code:null,checkedAt:0};
+      normalizeLoadedState(false);
+      // 보호자 인증은 기록 소유권만 확인한다. 학원 승인 상태는 별도로 유지한다.
+
       if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
       if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
       save(); render();
@@ -1172,7 +1256,7 @@ function screenWelcome(){
     S.name = ob.name;
     if(ob.grade!=null) setSchoolGrade(ob.grade);
     S.onboarded = true;
-    if(ob.claimed)S.cloudLinked = true;   // 이름 클레임 성공 → 이후 진행상황 자동 동기화
+    if(ob.claimedOwner&&isGuardianOwner(ob.claimedOwner)){S.cloudLinked=true;S.cloudOwnerId=ob.claimedOwner;}
     save();
     render();
   }
@@ -7550,6 +7634,7 @@ function screenCloset(){
     <div id="nm-slots-slot"></div>
     <details class="nm-closet-settings">
       <summary>${lk('계정 · 알림 설정','Account & notifications','账号·通知设置')}</summary>
+      <div id="nm-guardian-slot"></div>
       <div id="nm-idcard-slot"></div>
       <div id="nm-account-slot"></div>
     </details>
@@ -7656,10 +7741,16 @@ function renderSlotCards(){
 function renderNotifyCard(){
   const slot=$('#nm-account-slot');
   if(!slot)return;
+  slot.querySelectorAll('.nm-notify-card').forEach(el=>el.remove());
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
   const div=document.createElement('div');
   div.className='nm-idcard nm-notify-card';
+  const guardian=guardianAuth&&guardianAuth.peek();
+  if(!guardian||!S.cloudLinked||S.cloudOwnerId!==guardian.user.id){
+    div.textContent=lk('문자 알림은 보호자 이메일과 학생 기록을 연결한 뒤 등록할 수 있어요.','Connect a guardian email and learner profile before registering text alerts.','关联监护人邮箱和学生记录后，即可登记短信通知。');
+    slot.appendChild(div);return;
+  }
   if(S.notifyReg){
     div.innerHTML=`📱 ${lk('학부모 알림 등록됨','Parent alerts registered','家长通知已登记')} (${esc(S.notifyReg)}) · ${lk('해지는 학원에 문의','Contact academy to opt out','退订请联系学院')}`;
     slot.appendChild(div);
@@ -7708,8 +7799,10 @@ function renderNotifyCard(){
     }
     msgEl.textContent='…';
     try{
+      const auth=await cloudCredentials();
+      if(auth.owner!==S.cloudOwnerId)throw new Error('guardian_auth_required');
       const r=await fetch(`${SB_URL}/rest/v1/nm_contacts`,{
-        method:'POST',headers:sbHdr(),
+        method:'POST',headers:auth.headers,
         body:JSON.stringify({profile_name:S.name||('#'+(S.character&&S.character.number)),
           phone:raw,consent:true,consent_at:new Date().toISOString(),
           send_dow:($('#nmNotifyDow').value==='')?null:Number($('#nmNotifyDow').value),
@@ -7767,24 +7860,72 @@ function renderAccountCard(){
   }
 }
 
-/* ---------- 아이디 등록 카드 (옷장 상단) ----------
-   온보딩을 이미 지난 기존 사용자도 여기서 이름을 아이디로 등록할 수 있다.
-   등록된 뒤에는 상태 표시만 남는다. */
+/* ---------- 보호자 이메일 인증·학생 기록 연결 (설정) ---------- */
+function renderGuardianCard(){
+  const slot=$('#nm-guardian-slot');if(!slot)return;
+  const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+  const session=guardianAuth&&guardianAuth.peek();
+  const pending=guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink();
+  if(pending&&!session){
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('이 이메일로 로그인할까요?','Sign in with this email?','使用此邮箱登录？')}</div><p><b>${esc(pending.email||'')}</b></p><p>${lk('내 보호자 이메일인지 확인해 주세요. 학생 기록을 연결하면 이 이메일로 다른 기기에서 이어할 수 있어요.','Check that this is your guardian email. Connected learner records can be accessed with this email on other devices.','请确认这是您的监护人邮箱。关联后，可使用此邮箱在其他设备上查看学生记录。')}</p><div class="nm-idcard-row"><button class="nm-btn" id="nmGuardAccept">${lk('내 이메일이 맞아요','This is my email','这是我的邮箱')}</button><button class="nm-btn ghost" id="nmGuardCancel">${lk('취소','Cancel','取消')}</button></div><p id="nmGuardLinkMsg" role="status"></p></div>`;
+    $('#nmGuardAccept').onclick=async()=>{try{await guardianAuth.confirmLink();}catch(e){$('#nmGuardLinkMsg').textContent=lk('로그인 정보를 저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요.','Could not save sign-in. Check browser storage settings.','无法保存登录信息，请检查浏览器存储设置。');}};
+    $('#nmGuardCancel').onclick=()=>{guardianAuth.cancelLink();renderIdCard();};
+    return;
+  }
+  if(session){
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('보호자 이메일 인증 완료','Guardian email verified','监护人邮箱已验证')}</div><p>${esc(session.user.email||'')}</p><button class="nm-btn ghost" id="nmGuardOut">${lk('이메일 로그아웃','Sign out of email','退出邮箱登录')}</button></div>`;
+    $('#nmGuardOut').onclick=async()=>{
+      S.cloudLinked=false;S.cloudOwnerId=null;save();
+      try{await guardianAuth.signOut();}
+      catch(e){toast(lk('로그인 정보를 지우지 못했어요. 이 브라우저의 사이트 데이터를 확인해 주세요.','Could not remove sign-in. Check this browser’s site data.','无法清除登录信息，请检查浏览器的网站数据。'),false);}
+      // onChange가 즉시 갱신한다. 늦은 로그아웃 응답이 새 로그인 입력을 지우지 않는다.
+    };
+    return;
+  }
+  slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('보호자 이메일로 기록 연결','Connect records with a guardian email','用监护人邮箱关联记录')}</div>
+    <p>${lk('다른 기기에서 이어하려면 보호자 이메일을 인증해 주세요.','Verify a guardian email to continue on another device.','请验证监护人邮箱，以便在其他设备上继续学习。')}</p>
+    <label for="nmGuardEmail">${lk('보호자 이메일','Guardian email','监护人邮箱')}</label>
+    <div class="nm-idcard-row"><input id="nmGuardEmail" type="email" autocomplete="email" placeholder="name@example.com"><button class="nm-btn" id="nmGuardSend">${lk('인증 메일 받기','Send verification email','发送验证邮件')}</button></div>
+    <label for="nmGuardToken">${lk('인증번호 (메일에 있는 경우)','Verification code (if included in email)','验证码（如邮件中提供）')}</label>
+    <div class="nm-idcard-row"><input id="nmGuardToken" inputmode="numeric" autocomplete="one-time-code" maxlength="12"><button class="nm-btn" id="nmGuardVerify">${lk('이메일 인증','Verify email','验证邮箱')}</button></div>
+    <p class="nm-idcard-msg" id="nmGuardMsg" role="status" aria-live="polite"></p></div>`;
+  const message=()=>$('#nmGuardMsg');
+  async function request(verify){
+    const btn=$(verify?'#nmGuardVerify':'#nmGuardSend'),email=$('#nmGuardEmail').value.trim(),token=$('#nmGuardToken').value.trim();
+    if(!guardianAuth){message().textContent=lk('인증 도구를 불러오지 못했어요. 새로고침해 주세요.','Reload to load email verification.','请刷新页面以加载邮箱验证。');return;}
+    btn.disabled=true;
+    message().textContent=lk('이메일 인증을 확인하고 있어요…','Processing email verification…','正在处理邮箱验证…');
+    try{
+      if(verify){await guardianAuth.verifyEmail(email,token);}
+      else{await guardianAuth.sendEmail(email);message().textContent=lk('메일의 인증 링크를 열어 주세요. 인증번호가 있다면 위에 입력해도 돼요.','Open the verification link in your email, or enter the code if one is included.','请打开邮件中的验证链接；如有验证码，也可在上方输入。');}
+    }catch(e){
+      const msg=message();if(msg)msg.textContent=e.code==='storage'?lk('이 기기에 인증 정보를 저장하지 못했어요. 브라우저의 저장 공간·설정을 확인해 주세요.','Could not save sign-in. Check this browser’s storage and settings.','无法保存登录信息，请检查浏览器的存储和设置。'):e.status===429?lk('요청이 많아요. 잠시 후 다시 시도해 주세요.','Too many requests. Try again later.','请求过多，请稍后重试。'):lk('이메일·인증번호 또는 연결 상태를 확인하고 다시 시도해 주세요.','Check your email, code and connection, then try again.','请检查邮箱、验证码和网络连接，然后重试。');
+    }finally{btn.disabled=false;}
+  }
+  $('#nmGuardSend').onclick=()=>request(false);
+  $('#nmGuardVerify').onclick=()=>request(true);
+}
 function renderIdCard(){
   const slot=$('#nm-idcard-slot');
   if(!slot)return;
+  renderGuardianCard();
   const ko=S.lang==='ko', en=S.lang==='en';
-  if(S.cloudLinked){
-    slot.innerHTML=`<div class="nm-idcard linked">☁️ ${ko?'아이디':en?'ID':'账号'}: <b>${esc(S.name)}</b> · ${ko?'자동 저장 중':en?'Auto-saving':'自动保存中'} ✓</div>`;
+  const guardian=guardianAuth&&guardianAuth.peek();
+  if(!guardian){
+    slot.innerHTML=`<div class="nm-idcard">${ko?'학습 기록은 이 기기에 저장돼요. 보호자 이메일을 인증하면 기록을 연결할 수 있어요.':en?'Learning records are saved on this device. Verify a guardian email to connect them.':'学习记录保存在本设备上。验证监护人邮箱后即可关联记录。'}</div>`;
+    return;
+  }
+  if(S.cloudLinked&&S.cloudOwnerId===guardian.user.id){
+    slot.innerHTML=`<div class="nm-idcard linked">☁️ ${ko?'연결된 학생':en?'Connected learner':'已关联学生'}: <b>${esc(S.name)}</b> · ${ko?'보호자 이메일에 연결됨':en?'Connected to guardian email':'已关联监护人邮箱'}${cloudSyncError?`<p role="status">${ko?'이 기기에 저장했어요. 클라우드 저장에 실패해 다음 저장 때 다시 시도해요.':en?'Saved on this device. Cloud save failed; it will retry on the next save.':'已保存在本设备上，云端保存失败，将在下次保存时重试。'}</p>`:''}</div>`;
     return;
   }
   slot.innerHTML=`<div class="nm-idcard">
-    <div class="nm-idcard-t">☁️ ${ko?'아이디 등록':en?'Register your ID':'注册账号'}</div>
+    <div class="nm-idcard-t">☁️ ${S.onboarded?(ko?'학생 기록 연결':en?'Connect learner records':'关联学生记录'):(ko?'이어할 학생 이름':en?'Learner name to continue':'继续学习的学生姓名')}</div>
     <div class="nm-idcard-row">
       <input id="idName" maxlength="8" placeholder="${t('obNamePh')}" value="${esc(S.name||'')}">
-      <button class="nm-btn" id="idClaim">${ko?'등록':en?'Register':'注册'}</button>
+      <button class="nm-btn" id="idClaim">${S.onboarded?(ko?'연결':en?'Connect':'关联'):(ko?'이어하기':en?'Continue':'继续')}</button>
     </div>
-    <div class="nm-idcard-msg" id="idMsg">${ko?'이름이 곧 아이디! 등록하면 다른 기기에서도 이름만 치면 이어서 할 수 있어요.':en?'Your name becomes your ID — continue on any device by typing it.':'名字就是账号！在任何设备上输入名字即可继续。'}</div>
+    <div class="nm-idcard-msg" id="idMsg" role="status">${ko?'이 학생의 기록을 인증한 보호자 이메일에 연결해요. 예전 기록의 보호자 연결은 학원에 요청해 주세요.':en?'Connect this learner to the verified guardian email. Ask your academy to link an older profile.':'将学生记录关联到已验证的监护人邮箱。旧记录请联系学院关联。'}</div>
   </div>`;
   $('#idClaim').onclick=claimFromCloset;
   $('#idName').addEventListener('keydown',e=>{if(e.key==='Enter')claimFromCloset();});
@@ -7804,15 +7945,17 @@ function renderIdCard(){
       return;
     }
     if(!existing){
+      if(!S.onboarded){btn.disabled=false;msg.textContent=ko?'이 이메일에 연결된 학생을 찾지 못했어요. 예전 기록은 학원에 연결을 요청하거나 처음부터 시작해 주세요.':en?'No learner with this name is linked to this email. Ask your academy to link an older record, or start a new learner.':'未找到与此邮箱关联的学生。请联系学院关联旧记录，或新建学生。';return;}
       try{
         const okClaim=await cloudClaim(name,S);
         if(okClaim){
-          S.name=name; S.cloudLinked=true; save();
+          S.name=name; S.cloudLinked=true; S.cloudOwnerId=okClaim.owner; save();
           toast(ko?'아이디 등록 완료! ✨':en?'ID registered! ✨':'注册成功！✨',true);
           render(); S.view='closet';  // 칩 이름 갱신 후 옷장 유지
           return;
         }
-        existing=await cloudGet(name).catch(()=>null)||{state:{}};
+        existing=await cloudGet(name).catch(()=>null);
+        if(!existing){btn.disabled=false;msg.textContent=ko?'기존 기록의 보호자 연결을 학원에 요청하거나 다른 이름을 사용해 주세요.':en?'Ask your academy to link the older profile, or choose another name.':'请联系学院关联旧记录，或使用其他名字。';return;}
       }catch(e){ btn.disabled=false; msg.textContent=ko?'등록에 실패했어요. 잠시 후 다시!':en?'Failed — try again soon.':'注册失败，请稍后再试。'; return; }
     }
     /* 이미 있는 이름 → 이어하기 / 다른 이름 */
@@ -7823,14 +7966,16 @@ function renderIdCard(){
         <button class="nm-btn ghost" id="idOther">${ko?'다른 이름 쓸게요':en?'Try another':'换个名字'}</button>
       </div>`;
     $('#idResume').onclick=()=>{
+      if(!backupBeforeCloudResume(existing.owner_id))return;
+      guardianEntry=false;
       const st=existing&&existing.state?existing.state:{};
       S={...defaults(),...st};
       S.name=name; S.onboarded=true; S.cloudLinked=true;
-      /* 클라우드에서 되불러온 프로필 = 이미 쓰던 학생이다 → 승인번호 없이도 active(grandfather).
-         부팅 때의 hadSave 판정은 이 시점 이후라 여기서 한 번 더 봐야 한다. 안 그러면 새 기기에서
-         이어하기 한 재원생이 체험으로 잠긴다 — 클라우드 19명 중 10명이 account 키 자체가 없다
-         (게이트 도입 전에 저장된 프로필, 2026-09-06 확인). */
-      if(!S.account||!S.account.status)S.account={status:'active',code:null,checkedAt:0};
+      S.cloudOwnerId=existing.owner_id;
+      if(!S.account||!S.account.status)S.account={status:'trial',code:null,checkedAt:0};
+      normalizeLoadedState(false);
+      // 보호자 인증은 기록 소유권만 확인한다. 학원 승인 상태는 별도로 유지한다.
+
       if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
       if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
       S.view='closet';
@@ -7980,9 +8125,13 @@ function maybeShowTitle(){
 }
 /* ---------- 시작 ---------- */
 function boot(){
+  if(booted)return;
   if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">데이터 로딩 실패 — 스크립트 순서를 확인하세요.</p>';return;}
-  maybeShowTitle();
+  booted=true;
+  if(guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink()){guardianEntry=!S.onboarded;S.view='closet';}
+  else maybeShowTitle();
   render();
+  const details=$('.nm-closet-settings');if(details&&guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink())details.open=true;
   reverifyAccountIfNeeded(); // 승인번호 회수 동기화 — 실패해도 조용히 무시(오프라인에서 안 잠금)
 }
 if(window.katex)boot(); else{const t2=setInterval(()=>{if(window.katex){clearInterval(t2);boot();}},60);setTimeout(()=>{if(!window.katex)boot();},1500);}

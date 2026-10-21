@@ -605,7 +605,7 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-ex-sec-magic{border-color:#e2d5f5}
 .nm-ex-sec-magic:hover{border-color:#8b5cf6;box-shadow:0 4px 16px rgba(139,92,246,.15)}
 .nm-ex-sec-icon{font-size:32px;line-height:1}
-.nm-ex-sec-name{font-size:14px;font-weight:800;color:#1a2233}
+.nm-ex-sec-name{font-size:14px;font-weight:800;color:#1a2233;word-break:keep-all;text-wrap:balance}
 .nm-ex-sec-desc{font-size:11px;color:#7a8aa0;line-height:1.4}
 
 .nm-ex-form-wrap{display:flex;flex-direction:column;gap:0;padding:0}
@@ -842,6 +842,7 @@ table.nm-cexpr td .ones{padding:0 .09em;border-radius:.18em;display:inline-block
 .nm-idcard-row input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:11px;
   padding:10px 13px;font-size:15px;font-weight:700;font-family:'Pretendard',sans-serif;outline:none}
 .nm-idcard-row input:focus{border-color:var(--blue)}
+.nm-idcard-row input[type="email"],#nmGuardToken{font-size:16px;min-height:44px}
 .nm-idcard-row .nm-btn{padding:10px 18px;font-size:14px;flex:none}
 .nm-idcard-msg{font-size:12.5px;color:var(--sub);line-height:1.55;margin-top:8px}
 
@@ -1862,7 +1863,7 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
   border:1.5px solid var(--blue-deep);color:#fff}
 .nm-dex-sym{font-size:30px;font-weight:900;color:var(--blue-deep);line-height:1}
 .nm-dex-card.big .nm-dex-sym{font-size:42px}
-.nm-dex-read{font-size:11.5px;font-weight:800;color:var(--sub)}
+.nm-dex-read{font-size:11.5px;font-weight:800;color:var(--sub);word-break:keep-all;text-wrap:balance}
 .nm-dex-card.collected .nm-dex-read{color:var(--gold-deep)}
 .nm-dex-translate{font-size:12.5px;font-weight:800;line-height:1.4}
 .nm-dex-birth{font-size:10.5px;color:rgba(255,255,255,.8);line-height:1.5}
@@ -3114,7 +3115,7 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 /* 그림 지도 — 일러스트는 배경, 단계·상태·이동은 실제 버튼으로 둔다. */
 .nm-cr-desk .nm-cr-hero[hidden],.nm-cr-desk .nm-vmap[hidden],.nm-cr-desk #crList[hidden]{display:none!important}
 .nm-cr-desk .nm-cr-view-switch{position:sticky;top:8px;z-index:6;display:flex;gap:5px;width:max-content;max-width:100%;margin:14px auto 16px;padding:5px;
-  border:1px solid var(--la-line);border-radius:999px;background:rgba(255,255,255,.78);box-shadow:var(--la-shadow)}
+  border:1px solid var(--la-line);border-radius:999px;background:#fff;box-shadow:var(--la-shadow)}
 .nm-cr-desk .nm-cr-view-switch button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;
   padding:0 18px;border:0;border-radius:999px;background:transparent;color:var(--la-ink-2);
   font:700 14px/1.2 'Pretendard',sans-serif;cursor:pointer;white-space:nowrap}
