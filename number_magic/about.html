@@ -424,8 +424,8 @@ p.lead{font-size:17px;color:var(--sub);max-width:56ch;margin:0}
         <div class="frame"><img src="assets/images/characters/greek.png" alt="Greek mathematician"><span class="cap" data-i18n="charGreek">그리스 수학자</span></div>
         <div class="frame"><img src="assets/images/characters/scholar.png" alt="Scholar"><span class="cap" data-i18n="charScholar">학자</span></div>
         <div class="frame"><img src="assets/images/characters/wig.png" alt="Early modern mathematician"><span class="cap" data-i18n="charWig">근세 수학자</span></div>
-        <div class="frame"><img src="assets/images/characters/boy.png" alt="Boy"><span class="cap" data-i18n="charBoy">소년</span></div>
-        <div class="frame"><img src="assets/images/characters/girl.png" alt="Girl"><span class="cap" data-i18n="charGirl">소녀</span></div>
+        <div class="frame"><img src="assets/images/characters/boy.png" alt="유준"><span class="cap" data-i18n="charBoy">유준</span></div>
+        <div class="frame"><img src="assets/images/characters/girl.png" alt="유빈"><span class="cap" data-i18n="charGirl">유빈</span></div>
         <div class="frame"><img src="assets/images/characters/shepherd.png" alt="Shepherd"><span class="cap" data-i18n="charShepherd">양치기</span></div>
         <div class="frame"><img src="assets/images/characters/scribe.png" alt="Scribe"><span class="cap" data-i18n="charScribe">필경사</span></div>
         <div class="frame"><img src="assets/images/characters/merchant.png" alt="Merchant"><span class="cap" data-i18n="charMerchant">상인</span></div>
@@ -502,7 +502,7 @@ const ABOUT_TR={
     charLinkBtn:'기호 마법단과 숫자 친구들, 전부 만나러 가기 →',
     histKicker:'Math History · 역사 속 수학자들', histLead:'역사 속 수학자들과 함께, <b>95편의 수학사 만화</b>에서 다시 만나요.',
     charKing:'왕', charSage:'현자', charGreek:'그리스 수학자', charScholar:'학자', charWig:'근세 수학자',
-    charBoy:'소년', charGirl:'소녀', charShepherd:'양치기', charScribe:'필경사', charMerchant:'상인',
+    charBoy:'유준', charGirl:'유빈', charShepherd:'양치기', charScribe:'필경사', charMerchant:'상인',
     charAstronomer:'천문학자', charNumi:'누미',
     qLine1:'DOCSSAM은 연산을 빨리하는 방법이 아닙니다.', qLine2:'숫자의 규칙을 익혀 <span class="accent">사고력</span>을 키우는 것.',
     ctaKicker:'Welcome · 입장',
@@ -548,7 +548,7 @@ const ABOUT_TR={
     charLinkBtn:'Meet the whole Symbol Wizard team and Number Friends →',
     histKicker:'Math History · Mathematicians of the Past', histLead:'Meet them again across <b>95 comics of math history</b>, alongside mathematicians from the past.',
     charKing:'King', charSage:'Sage', charGreek:'Greek Mathematician', charScholar:'Scholar', charWig:'Early Modern Mathematician',
-    charBoy:'Boy', charGirl:'Girl', charShepherd:'Shepherd', charScribe:'Scribe', charMerchant:'Merchant',
+    charBoy:'Yujun', charGirl:'Yubin', charShepherd:'Shepherd', charScribe:'Scribe', charMerchant:'Merchant',
     charAstronomer:'Astronomer', charNumi:'Numi',
     qLine1:"Doc-T isn't about calculating fast.", qLine2:'It\'s about mastering number patterns to grow real <span class="accent">thinking skills</span>.',
     ctaKicker:'Welcome · Step Inside',
@@ -594,7 +594,7 @@ const ABOUT_TR={
     charLinkBtn:'认识全部符号魔法团和数字朋友们 →',
     histKicker:'数学史 · 历史中的数学家们', histLead:'与历史中的数学家们相遇，在<b>95篇数学史漫画</b>里再次登场。',
     charKing:'国王', charSage:'贤者', charGreek:'希腊数学家', charScholar:'学者', charWig:'近代数学家',
-    charBoy:'男孩', charGirl:'女孩', charShepherd:'牧羊人', charScribe:'抄写员', charMerchant:'商人',
+    charBoy:'宥俊', charGirl:'宥彬', charShepherd:'牧羊人', charScribe:'抄写员', charMerchant:'商人',
     charAstronomer:'天文学家', charNumi:'努米',
     qLine1:'独先生不是让你算得更快的方法。', qLine2:'而是通过掌握数字规律来培养<span class="accent">思维能力</span>。',
     ctaKicker:'欢迎 · 进入',
@@ -620,6 +620,7 @@ function applyAboutLang(lang){
     const key=el.getAttribute('data-i18n');
     if(dict[key]!=null)el.innerHTML=dict[key];
   });
+  document.querySelectorAll('.filmstrip.history .frame').forEach(frame=>{const caption=frame.querySelector('[data-i18n]'),img=frame.querySelector('img');if(caption&&img)img.alt=caption.textContent;});
   document.querySelectorAll('.langbtn').forEach(b=>{
     b.classList.toggle('active',b.dataset.lang===lang);
   });

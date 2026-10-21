@@ -8,7 +8,7 @@ const {chromium}=require('./lib/playwright');
 const ROOT=path.resolve(__dirname,'../..');
 const OUT=process.env.NM_NAV_ARTIFACTS&&path.resolve(process.env.NM_NAV_ARTIFACTS);
 const RECOVERY_ONLY=process.env.NM_NAV_RECOVERY_ONLY==='1';
-if(OUT&&!/^[EG]:[\\/]/i.test(OUT))throw Error('Artifacts must be on E: or G:');
+// Accept the caller's explicit local artifact directory on Mac and Windows.
 const MIME={'.html':'text/html; charset=utf-8','.js':'application/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.woff2':'font/woff2'};
 const server=http.createServer((req,res)=>{
   const file=path.resolve(ROOT,'.'+decodeURIComponent(req.url.split('?')[0]));
@@ -28,7 +28,7 @@ async function checkViewport(browser,port,width){
   page.on('pageerror',e=>errors.push(e.message));
   page.on('dialog',d=>d.accept());
   await page.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());
-  await page.addInitScript(()=>localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'동선 검사',view:'town',avatar:{kind:'boy'},character:{number:3,color:'gold'},cloudLinked:false,progress:{},coins:0,account:{status:'active'},r0BannerSeen:true,attend:{last:new Date().toISOString().slice(0,10),days:1}})));
+  await page.addInitScript(()=>localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'동선 검사',view:'town',avatar:{id:'nav-kid',name:'숲 마법사',look:'forest-boy',kind:'boy',outfit:'royal'},character_unlocked:{outfit_royal:true},character:{number:3,color:'gold'},cloudLinked:false,progress:{},coins:0,account:{status:'active'},r0BannerSeen:true,attend:{last:new Date().toISOString().slice(0,10),days:1}})));
   const snap=()=>page.evaluate(()=>window.__navTown.snapshot());
   const waitTown=async count=>{
     await page.waitForSelector('#townVp.is-3d',{timeout:60000});
@@ -150,6 +150,36 @@ async function checkViewport(browser,port,width){
     result.afterLearning=await snap();
     for(const k of ['x','z','d'])assert.equal(result.afterLearning.camera[k],result.before.camera[k],`학습 복귀 때 카메라 ${k} 유지`);
     await checkContextRecovery();
+    let mounts=3;
+    const model=await page.evaluate(()=>window.__navTown.debug.chars.find(c=>c.def.role==='player').def.model);
+    assert.equal(model.palette.outfit,'#6a3fc4','town uses the selected human outfit, not the legacy default');
+    const entered=[];
+    for(const id of ['numberland','beginner','intermediate','advanced','_closet','_theater']){
+      await page.locator('#townTravel > summary').click();
+      const destination=page.locator(`[data-travel="${id}"]`);
+      assert((await destination.boundingBox()).height>=44);
+      assert((await destination.innerText()).trim().length>1,'destination has a readable label');
+      await destination.click();await page.waitForSelector('#tmodal.on');
+      assert.equal(await page.locator('#townTravel').getAttribute('open'),null);
+      assert.deepEqual(await page.evaluate(()=>window.__navTown.debug.movement()),{owner:null,vector:{x:0,z:0},keys:[]});
+      if(!await page.locator('#tmGo').isVisible()){
+        entered.push({id,available:false});await page.locator('#tmClose').click();continue;
+      }
+      const before=await snap();await page.locator('#tmGo').click();
+      const back=id==='_closet'?'#backCloset':id==='_theater'?'#backExam':'#backTown';
+      await page.waitForSelector(back);
+      if(id==='_closet'){
+        assert.equal(await page.locator('#nmc-preview .nm-human[data-look="forest-boy"]').count(),1);
+        assert.equal(await page.locator('#nmc-preview .nm-human[data-outfit="royal"]').count(),1);
+      }
+      await page.locator(back).click();await waitTown(++mounts);
+      const after=await snap();for(const k of ['x','z','d'])assert.equal(after.camera[k],before.camera[k]);
+      entered.push({id,available:true,returnPositionPreserved:true});
+    }
+    result.directEntry=entered;
+    await page.locator('#townTravel > summary').focus();await page.keyboard.press('Enter');
+    assert.equal(await page.locator('#townTravel').getAttribute('open'),'','keyboard opens destinations');
+    await shot('direct-entry');await page.locator('#townTravel > summary').click();
     result.horizontalOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
     assert.equal(result.horizontalOverflow,false);assert.deepEqual(errors,[]);
     result.errors=errors;
