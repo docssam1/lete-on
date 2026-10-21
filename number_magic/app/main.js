@@ -758,7 +758,12 @@ function updateLiveFill(sel,vals){
   if(!/\\square/.test(tex))return;
   math(fillLiveTex(tex,vals),spans[0]);
 }
-let _ttsCache={};
+let _ttsCache={},_ttsActive=null,_ttsRun=0;
+function stopVoice(){
+  _ttsRun++;
+  if(_ttsActive){try{_ttsActive.pause();}catch(e){}_ttsActive=null;}
+  try{speechSynthesis.cancel();}catch(e){}
+}
 /* 음성 파일 위치 — 저장소를 옮기면(Supabase → Cloudflare R2) NM_AUDIO_BASE 한 줄만 바꾼다.
    tts-map.js 안의 주소는 생성기(scripts/generate-nm-audio.js)가 다시 읽으므로 원래 주소 그대로 두고, 재생할 때 앞부분만 바꿔 끼운다. */
 const NM_SUPABASE_PUBLIC='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/';
@@ -766,17 +771,19 @@ const NM_AUDIO_BASE=NM_SUPABASE_PUBLIC;
 const assetUrl=(u)=>(u&&u.startsWith(NM_SUPABASE_PUBLIC)?NM_AUDIO_BASE+u.slice(NM_SUPABASE_PUBLIC.length):u);
 function say(text){
   if(!text)return;
+  stopVoice();
+  const run=_ttsRun;
   const lang=S.lang||'ko';
   /* 2026-09-29 — OmniVoice 복제 음성(data/tts-map-omni.js)이 먼저, 없으면 구글(tts-map.js), 그다음 기기 음성 */
   const omni=window.NM_TTS_OMNI,map=window.NM_TTS_MAP;
   const url=assetUrl((omni&&omni[lang]&&omni[lang][text])||(map&&map[lang]&&map[lang][text]));
   if(url){
     try{
-      speechSynthesis.cancel();
       let a=_ttsCache[url];
       if(!a){a=new Audio(url);_ttsCache[url]=a;}
+      _ttsActive=a;
       a.currentTime=0;
-      a.play().catch(()=>_sayWeb(text,lang));
+      a.play().catch(()=>{if(run===_ttsRun)_sayWeb(text,lang);});
       return;
     }catch(e){}
   }
@@ -1089,7 +1096,7 @@ function render(){
   else screenTown();
   renderMath();
 }
-function cycleLang(){const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];save();render();}
+function cycleLang(){stopVoice();const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];save();render();}
 
 /* ============================================================
    온보딩 — 캐릭터+이름 선택 → "짠!" 구름 등장 연출 → 마을 입장
@@ -6272,7 +6279,7 @@ function initTownWorld(scr){
     muted=!muted;
     mb.textContent=muted?'🔇':'🔈';
     if(muted){
-      speechSynthesis.cancel();
+      stopVoice();
       if(stopAmbience){stopAmbience();stopAmbience=null;}
     }else{
       if(!stopAmbience)stopAmbience=startAmbience();
@@ -6282,6 +6289,7 @@ function initTownWorld(scr){
   return function cleanup(){
     clearInterval(fountainTimer);
     clearInterval(sparkTimer);
+    stopVoice();
     cancelAnimationFrame(walkRAF);
     removeEventListener('resize',onResize);
     if(stopAmbience){stopAmbience();stopAmbience=null;}
