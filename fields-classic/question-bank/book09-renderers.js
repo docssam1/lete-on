@@ -131,6 +131,38 @@ function cubeLayers(visual) {
   return `<div class="b9-layer-wrap"><div class="layers">${visual.layers.map((layer, index) => smallGrid(layer, `${index + 1}층`)).join("")}</div>${profiles}</div>`;
 }
 
+// 판서 5~6쪽: 위에서 본 칸(top, 줄마다 칸이 있으면 1) · 앞(왼쪽 줄부터 층수) · 오른쪽 옆(앞줄부터 층수)을 칸 그림으로.
+function viewCells(cells, cls, unit) {
+  const rows = cells.length;
+  const cols = Math.max(...cells.map((row) => row.length));
+  const rects = cells.flatMap((row, r) => row.map((on, c) => on ? `<rect class="${cls}" x="${c * unit + 2}" y="${r * unit + 2}" width="${unit}" height="${unit}"/>` : "")).join("");
+  return `<svg viewBox="0 0 ${cols * unit + 4} ${rows * unit + 4}" width="${cols * unit + 4}" height="${rows * unit + 4}" aria-hidden="true">${rects}</svg>`;
+}
+
+function profileCells(heights) {
+  const max = Math.max(1, ...heights);
+  return Array.from({ length: max }, (_, row) => heights.map((h) => (max - row <= h ? 1 : 0)));
+}
+
+function cubeThreeViews(visual) {
+  const unit = 32;
+  const figures = [
+    visual.top ? [viewCells(visual.top, "top", unit), "위"] : null,
+    [viewCells(profileCells(visual.front), "front", unit), "앞"],
+    [viewCells(profileCells(visual.side), "side", unit), "오른쪽 옆"]
+  ].filter(Boolean);
+  return `<div class="b9-three-views" role="img" aria-label="쌓기나무를 위·앞·오른쪽 옆에서 본 모양">${figures.map(([svg, label]) => `<figure>${svg}<figcaption>${label}</figcaption></figure>`).join("")}</div>`;
+}
+
+function cubeLayerGrids(visual) {
+  const unit = 32;
+  return `<div class="b9-three-views layers" role="img" aria-label="쌓기나무를 층별로 위에서 본 모양">${visual.layers.map((layer, k) => {
+    const rows = layer.length, cols = Math.max(...layer.map((row) => row.length));
+    const cells = layer.flatMap((row, r) => row.map((on, c) => `<rect class="${on ? "top" : "empty"}" x="${c * unit + 2}" y="${r * unit + 2}" width="${unit}" height="${unit}"/>`)).join("");
+    return `<figure><figcaption>〈${k + 1}층〉</figcaption><svg viewBox="0 0 ${cols * unit + 4} ${rows * unit + 4}" width="${cols * unit + 4}" height="${rows * unit + 4}" aria-hidden="true">${cells}</svg></figure>`;
+  }).join("")}</div>`;
+}
+
 function fullCubeMap(width, depth, height) {
   return Array.from({ length: depth }, () => Array.from({ length: width }, () => height));
 }
@@ -240,6 +272,8 @@ export function book09Markup(visual) {
     case "area-grid": return areaGrid(visual);
     case "cube-solid-views": return cubeSolidViews(visual);
     case "cube-layers": return cubeLayers(visual);
+    case "cube-three-views": return cubeThreeViews(visual);
+    case "cube-layer-grids": return cubeLayerGrids(visual);
     case "cube-box": return cubeBox(visual);
     case "cube-model-choice": return cubeModelChoice(visual);
     case "magic-grid": return magicGrid(visual);
