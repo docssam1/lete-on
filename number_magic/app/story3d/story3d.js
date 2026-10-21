@@ -156,7 +156,7 @@ export async function mountStory3D(container, opts){
   try {
     const m = await import('../char3d/char3d.js');
     const kind = opts.avatar && opts.avatar.kind === 'girl' ? 'girl' : 'boy';
-    kid = m.makeCharacter(THREE, { kind, height:0.5, blob:false });
+    kid = m.makeCharacter(THREE, { ...(globalThis.NM_HUMANS?globalThis.NM_HUMANS.model(opts.avatar):{kind}), height:0.5, blob:false });
   } catch(e){ console.warn('[story3d] char3d', e); kid = null; }
   if(!root.isConnected){ if(kid) kid.dispose(); return null; }
 

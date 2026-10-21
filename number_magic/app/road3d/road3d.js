@@ -297,7 +297,7 @@ export async function mountRoad3D(container, opts){
   try {
     const m = await import('../char3d/char3d.js');
     if(root.isConnected){
-      kid = m.makeCharacter(THREE, { kind:(opts.avatar && opts.avatar.kind) === 'girl' ? 'girl' : 'boy', height:1.4, blob:false });
+      kid = m.makeCharacter(THREE, { ...(globalThis.NM_HUMANS?globalThis.NM_HUMANS.model(opts.avatar):{kind:opts.avatar?.kind==='girl'?'girl':'boy'}), height:1.4, blob:false });
       world.setPawn(kid);
     }
   } catch(e){ console.warn('[road3d] char3d', e); kid = null; }

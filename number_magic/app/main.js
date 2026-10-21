@@ -293,6 +293,7 @@ if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
 if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
 if(!S.character_unlocked)S.character_unlocked={};
+if(window.NM_CHARACTER_STATE){S.coins=NM_CHARACTER_STATE.balance(S);NM_CHARACTER_STATE.normalizeAvatars(S,window.NM_HUMANS);}
 if(!S.seenUnlocks)S.seenUnlocks={};
 if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
 if(!S.boost)S.boost={doneWeeks:{},log:[]};
@@ -869,7 +870,7 @@ function feedbackFx(ok){
 }
 window.feedbackFx=feedbackFx; // 검증 하네스(Playwright)가 실제 정답 없이도 표정 스와핑을 확인할 수 있게
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
-function coinAdd(n){S.coins+=n;save();
+function coinAdd(n,reason){if(!NM_CHARACTER_STATE.reward(S,n,reason))return;save();
   /* 화면 전환 없이 코인이 바뀌는 경우(출석 카드 등) 상단 🪙 표시를 바로 맞춘다 */
   document.querySelectorAll('.nm-coins b').forEach(b=>{b.textContent=S.coins;});}
 
@@ -891,7 +892,7 @@ function checkAttendance(){
   const today=todayKey();
   if(S.attend && S.attend.last===today) return null;
   S.attend={last:today, days:(S.attend&&S.attend.days||0)+1};
-  coinAdd(3);
+  coinAdd(3,'attendance');
   return S.attend.days;
 }
 /* 주간 보너스 — "그 주 봉투를 다 풀었다"의 정의(마을세계관-설계.md §6):
@@ -917,7 +918,7 @@ function maybeAwardWeeklyBonus(weekKey){
   if(!S.weeklyBonus) S.weeklyBonus={};
   if(S.weeklyBonus[weekKey]) return;
   S.weeklyBonus[weekKey]=true;
-  coinAdd(10);
+  coinAdd(10,'weekly');
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   toast(lk('한 주를 다 마쳤어요! 🪙 +10','You finished the week! 🪙 +10','完成了一周！🪙 +10'), true);
 }
@@ -1004,6 +1005,8 @@ let hqPuzzle=null; /* 수학사 퀴즈(§3 남쪽 항구) — 현재 화면의 �
    "onboarded는 defaults()에 넣지 않음" 참고): 기존 저장본(온보딩 이전)과 병합돼도
    "아직 안 골랐음"을 구분해야 마을 이주 모달이 뜬다. 읽을 땐 항상 이 헬퍼로. */
 function avatarKind(){ return (S.avatar&&S.avatar.kind)||'boy'; }
+function avatarProfile(){return window.NM_HUMANS?NM_HUMANS.clean(S.avatar||{kind:'boy'}):{kind:avatarKind()};}
+function avatarName(){return avatarProfile().name||S.name||charIdLabel(S.character);}
 /* 캐릭터 라벨(이름 없을 때 표시) — 기호 캐릭터는 숫자 대신 글리프로. */
 function charIdLabel(ch){
   if(ch && ch.symbol){
@@ -1015,8 +1018,8 @@ function charIdLabel(ch){
 /* 상단 칩의 내용물(사람 아바타 미니 렌더 + 이름표) — 옷장에서 라이브 패치할 때도
    이 함수로 innerHTML만 갈아끼운다(버튼 요소 자체는 유지해 onclick이 안 끊긴다). */
 function charChipInner(){
-  const mini = window.renderHumanChar ? window.renderHumanChar(avatarKind(), 30) : '🪄';
-  const label = S.name ? esc(S.name) : charIdLabel(S.character);
+  const mini = window.renderHumanChar ? window.renderHumanChar(avatarProfile(), 30) : '🪄';
+  const label = esc(avatarName());
   return `${mini}<span class="nm-char-chip-name">${label}</span>`;
 }
 function charChipHTML(){
@@ -1039,6 +1042,8 @@ function bgKeyForView(){
 
 function render(){
   syncAmount();
+  window.NM_LANG=S.lang;
+  document.documentElement.lang=S.lang==='zh'?'zh-CN':S.lang;
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
   document.documentElement.dataset.nmBand=NM_BAND;
   document.documentElement.dataset.nmBg=bgKeyForView();   // 설명·안내 화면 뒤에 깔 사진(styles.css body::before)
@@ -1113,7 +1118,7 @@ function screenWelcome(){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const ob = { number:S.character.number||3, color:S.character.color||'blue',
     bg:S.character.bg||'plain', cape:S.character.cape||'none',
-    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&S.avatar.kind)||null, grade:null };
+    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&(S.avatar.look||S.avatar.kind))||null, grade:null };
   const NUMS=[0,1,2,3,4,5,6,7,8,9];
 
   /* 1단계 — 나(사람 아바타) 고르기. 고를 때까지 "다음"이 비활성. */
@@ -1123,20 +1128,12 @@ function screenWelcome(){
       <div class="nm-ob-card">
         <h1 class="nm-ob-title">${lk('넌 누구야?','Who are you?','你是谁？')}</h1>
         <p class="nm-ob-sub">${lk('마법 마을에 들어갈 나를 골라요','Pick yourself for the magic village','选一个进入魔法村的你')}</p>
-        <!-- 이름 유준·유빈(2026-09-09, 원장 지시) — "남자아이"/"여자아이"라는 성별 라벨 대신
-             실제 이름을 붙였다(처음엔 하늘·보라로 튜닉 색을 땄다가, 원장이 유준·유빈으로 다시 지음).
-             내부 식별자(data-av="boy"/"girl", renderHumanChar·HUMAN_IMG 키)는 손대지 않았다 —
-             화면에 보이는 이름만 바뀐다. -->
         <div class="nm-av-row">
-          <button class="nm-av-card${ob.avatar==='boy'?' sel':''}" data-av="boy">
-            ${window.renderHumanChar?window.renderHumanChar('boy',120):''}
-            <span>${lk('유준','Yujun','宥俊')}</span>
-          </button>
-          <button class="nm-av-card${ob.avatar==='girl'?' sel':''}" data-av="girl">
-            ${window.renderHumanChar?window.renderHumanChar('girl',120):''}
-            <span>${lk('유빈','Yubin','宥彬')}</span>
-          </button>
+          ${(window.NM_HUMANS?NM_HUMANS.looks:[]).map(look=>`<button class="nm-av-card${ob.avatar===look.id?' sel':''}" data-av="${look.id}" aria-pressed="${ob.avatar===look.id}">
+            ${window.renderHumanChar?window.renderHumanChar(NM_HUMANS.clean({look:look.id}),90):''}
+            <span>${esc(L(look))}</span></button>`).join('')}
         </div>
+        <p class="nm-ob-sub">${lk('이름은 직접 정하고, 옷장에서 캐릭터를 더 만들 수 있어요.','Choose a name and add more characters in the closet.','可以自己取名，也可以在衣橱添加更多角色。')}</p>
         <button class="nm-btn nm-ob-go" id="obAvNext"${ob.avatar?'':' disabled'}>${lk('다음 ›','Next ›','下一步 ›')}</button>
         <button class="nm-btn ghost nm-ob-go" id="obGuardian">${lk('가입 · 보호자 이메일로 이어하기','Register · Continue with guardian email','注册 · 使用监护人邮箱继续')}</button>
       </div>
@@ -1180,7 +1177,7 @@ function screenWelcome(){
         <h1 class="nm-ob-title">${lk('함께 갈 숫자 친구를 골라요','Pick a number friend to go with you','选一个一起走的数字朋友')}</h1>
         <p class="nm-ob-sub">${t('obSub')}</p>
         <div class="nm-ob-stage" id="obStage">
-          <div class="nm-ob-pick" id="obChar">${window.renderPartyHtml?window.renderPartyHtml(ob.avatar,ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'')}</div>
+          <div class="nm-ob-pick" id="obChar">${window.renderPartyHtml?window.renderPartyHtml(NM_HUMANS.clean({look:ob.avatar}),ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'')}</div>
         </div>
         <div class="nm-ob-nav">
           <button class="nm-ob-arrow" id="obPrev">‹</button>
@@ -1198,7 +1195,7 @@ function screenWelcome(){
     $('#obGo').onclick=go;
   }
   function drawChar(){
-    $('#obChar').innerHTML = window.renderPartyHtml?window.renderPartyHtml(ob.avatar,ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'');
+    $('#obChar').innerHTML = window.renderPartyHtml?window.renderPartyHtml(NM_HUMANS.clean({look:ob.avatar}),ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'');
     $('.nm-ob-num').textContent='#'+ob.number;
   }
 
@@ -1277,7 +1274,7 @@ function screenWelcome(){
       <div class="nm-ob-card">
         <div class="nm-ob-reveal" id="obReveal">
           <div class="ncloud nm-ob-rcloud" id="obCloud">${puffHtml}</div>
-          <div class="nm-ob-rchar" id="obRchar">${window.renderPartyHtml?window.renderPartyHtml(ob.avatar,ob,140):(window.renderNumiChar?window.renderNumiChar(ob,140):'')}</div>
+          <div class="nm-ob-rchar" id="obRchar">${window.renderPartyHtml?window.renderPartyHtml(NM_HUMANS.clean({look:ob.avatar}),ob,140):(window.renderNumiChar?window.renderNumiChar(ob,140):'')}</div>
           <div class="nm-ob-welcome" id="obWelcomeMsg">${esc(t('obWelcome')(name))}</div>
         </div>
       </div>
@@ -1292,7 +1289,8 @@ function screenWelcome(){
 
   function finish(){
     S.character = {number:ob.number,color:ob.color,bg:ob.bg,cape:ob.cape,hat:ob.hat};
-    S.avatar = {kind:ob.avatar};
+    S.avatar = NM_HUMANS.clean({id:'avatar-1',look:ob.avatar});
+    S.avatarCollection=[S.avatar];
     S.name = ob.name;
     if(ob.grade!=null) setSchoolGrade(ob.grade);
     S.onboarded = true;
@@ -1449,8 +1447,8 @@ function screenTown(){
         ${zones}
         ${gates}
         <div class="nb nb-player nb-walker" id="nbNumi"><div class="speech"></div>
-          <div class="nb-name">${S.name?esc(S.name):'#'+S.character.number}</div>
-          <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker(avatarKind(),60):(window.renderHumanChar?window.renderHumanChar(avatarKind(),56):'<img src="assets/characters/kid-boy.png" alt="">')}</div>
+          <div class="nb-name">${esc(avatarName())}</div>
+          <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker(avatarProfile(),60):(window.renderHumanChar?window.renderHumanChar(avatarProfile(),56):'<img src="assets/characters/kid-boy.png" alt="">')}</div>
           <div class="shadow"></div></div>
         <div class="nb nb-buddy" id="nbBuddy"><div class="speech"></div>
           <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,44):''}</div>
@@ -1491,10 +1489,17 @@ function screenTown(){
     </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
-      <button class="nm-iconbtn" id="townMe" title="내 위치">📍</button>
-      <button class="nm-iconbtn" id="townZin">＋</button>
-      <button class="nm-iconbtn" id="townZout">－</button>
+      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'내 위치로':S.lang==='en'?'My location':'我的位置'}">📍</button>
+      <button class="nm-iconbtn" id="townZin" aria-label="${S.lang==='ko'?'확대':S.lang==='en'?'Zoom in':'放大'}">＋</button>
+      <button class="nm-iconbtn" id="townZout" aria-label="${S.lang==='ko'?'축소':S.lang==='en'?'Zoom out':'缩小'}">－</button>
     </div>
+    <details class="nm-town-travel" id="townTravel">
+      <summary>${S.lang==='ko'?'🚪 바로 들어가기':S.lang==='en'?'🚪 Go directly':'🚪 直接进入'}</summary>
+      <div class="nm-town-travel-list" aria-label="${S.lang==='ko'?'마을 목적지':S.lang==='en'?'Town destinations':'小镇目的地'}">
+        <p>${S.lang==='ko'?'걷지 않고도 들어갈 수 있어요.':S.lang==='en'?'Enter without walking there.':'不用走过去也能进入。'}</p>
+        ${TOWN_SPOTS.map(sp=>`<button type="button" data-travel="${sp.tier}">${esc(sp.tier==='_theater'?(S.lang==='ko'?'학습지 · 시험':S.lang==='en'?'Worksheets & tests':'学习单和测试'):L(sp.sub))}${sp.tier==='_theater'?'':sp.tier==='_closet'||tierOpen(tierById(sp.tier))?'':' 🔒'}</button>`).join('')}
+      </div>
+    </details>
     <div class="nm-tmodal" id="tmodal">
       <div class="nm-tmcard">
         <h3 id="tmTitle"></h3><p id="tmDesc"></p>
@@ -1502,6 +1507,8 @@ function screenTown(){
         <button class="close" id="tmClose">${S.lang==='ko'?'닫기':S.lang==='en'?'Close':'关闭'}</button>
       </div>
     </div>`;
+  scr.querySelectorAll('[data-travel]').forEach(b=>{b.onclick=()=>{const menu=$('#townTravel');if(menu)menu.open=false;townSpotAction(b.dataset.travel);};});
+  $('#townTravel').addEventListener('keydown',e=>{if(e.key==='Escape'){e.currentTarget.open=false;e.currentTarget.querySelector('summary').focus();}});
   townCleanup=initTownWorld(scr);
   mountTown3DInto(scr);
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
@@ -1554,15 +1561,12 @@ function showAvatarMigrateModal(){
   wrap.innerHTML=`<div class="nm-gate-card">
     <h3>${lk('너는 누구야?','Who are you?','你是谁？')}</h3>
     <p>${lk('마법 마을에 들어갈 나를 골라요','Pick yourself for the magic village','选一个进入魔法村的你')}</p>
-    <div class="nm-av-row">
-      <button class="nm-av-card" data-av="boy">${window.renderHumanChar?window.renderHumanChar('boy',110):''}<span>${lk('유준','Yujun','宥俊')}</span></button>
-      <button class="nm-av-card" data-av="girl">${window.renderHumanChar?window.renderHumanChar('girl',110):''}<span>${lk('유빈','Yubin','宥彬')}</span></button>
-    </div>
+    <div class="nm-av-row">${NM_HUMANS.looks.map(look=>`<button class="nm-av-card" data-av="${look.id}">${window.renderHumanChar?window.renderHumanChar(NM_HUMANS.clean({look:look.id}),90):''}<span>${esc(L(look))}</span></button>`).join('')}</div>
   </div>`;
   document.body.appendChild(wrap);
   wrap.querySelectorAll('[data-av]').forEach(b=>{
     b.onclick=()=>{
-      S.avatar={kind:b.dataset.av};
+      S.avatar=NM_HUMANS.clean({id:'avatar-1',look:b.dataset.av});S.avatarCollection=[S.avatar];
       save();
       wrap.remove();
       render();
@@ -1874,8 +1878,8 @@ function mountStory3DInto(scr,stages,current,nextId,o){
   const u=nextId&&UNITS[nextId];
   const here=u?{label:S.lang==='ko'?'여기부터!':S.lang==='en'?'Start here!':'从这里！',sub:L(u.title)}:null;
   const fail=()=>{ box.remove(); hero.classList.remove('is-3d'); if(hero.isConnected&&o.onFail)o.onFail(); };
-  import('./story3d/story3d.js').then(m=>m.mountStory3D(box,{
-    lang:S.lang, stages, current, here, avatar:{kind:avatarKind()},
+  import('./story3d/story3d.js?v=20261021-characters1').then(m=>m.mountStory3D(box,{
+    lang:S.lang, stages, current, here, avatar:avatarProfile(),
     onStage:o.onStage, onHere:o.onHere
   })).then(ctl=>{
     if(!ctl){ fail(); return; }
@@ -2111,7 +2115,7 @@ function _renderMiniGame(){
       const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10');save();_renderMiniGame();};
       const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
         clearInterval(mgTimer);mgTimer=null;
-        S.coins+=(mg.pairs*3);
+        coinAdd(mg.pairs*3,'game');
         S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10']=true;
         const back=S._fromRoadmap?'roadmap':'town';
         S.view=back;S._fromRoadmap=false;save();render();
@@ -2194,7 +2198,7 @@ function _renderMiniGame(){
     if(mg.done){
       const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10_3');save();_renderMiniGame();};
       const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
-        clearInterval(mgTimer);mgTimer=null;S.coins+=(mg.triples*5);
+        clearInterval(mgTimer);mgTimer=null;coinAdd(mg.triples*5,'game');
         S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10_3']=true;
         const back=S._fromRoadmap?'roadmap':'town';S.view=back;S._fromRoadmap=false;save();render();
       };
@@ -3059,7 +3063,7 @@ function finishCheckup(k){
   if(!k.rewarded){
     k.rewarded=true;
     const got=(k.calcOk+(k.creOk||0)+k.wpOk)*3;
-    if(got>0 && !prevRewarded) coinAdd(got);
+    if(got>0 && !prevRewarded) coinAdd(got,'history');
   }
   save();
 }
@@ -3349,15 +3353,15 @@ function openStudentSwitch(){
     if(n===active){
       cards+=`<div class="nm-slot-card active">
         <span class="nm-slot-badge">${lk('지금','Now','当前')}</span>
-        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,56):''}</div>
-        <div class="nm-slot-name">${S.name?esc(S.name):'#'+S.character.number}</div>
+        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,56):''}</div>
+        <div class="nm-slot-name">${esc(avatarName())}</div>
       </div>`;
       continue;
     }
     const st=readSlotState(n);
     if(st&&(st.onboarded||st.name)){
       const ch=Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},st.character||{});
-      const avk=(st.avatar&&st.avatar.kind)||'boy';
+      const avk=st.avatar||{kind:'boy'};
       cards+=`<button class="nm-slot-card" data-slot="${n}">
         <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avk,ch,56):''}</div>
         <div class="nm-slot-name">${st.name?esc(st.name):'#'+ch.number}</div>
@@ -3845,7 +3849,7 @@ function screenCourseRoad(){
            한 기기를 형제가 같이 쓰므로 슬롯 3개가 이미 있는데, 로드맵에는 누구 것인지
            표시가 없어 남의 진도를 자기 것으로 읽을 수 있었다. 칩을 누르면 바로 바꾼다. -->
       <button class="nm-cr-who" id="crWho">
-        <span class="nm-cr-who-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,34):''}</span>
+        <span class="nm-cr-who-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,34):''}</span>
         <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}${schoolNowLabel()?` <em class="nm-cr-who-gr">${esc(schoolNowLabel())}</em>`:''}</b></span>
         <span class="nm-cr-who-sw">${lk('바꾸기','Switch','切换')}</span>
       </button>
@@ -4257,7 +4261,7 @@ function screenCourseRoad(){
         const isPlaced=!!(S.placement&&S.placement.course===x.key);
         const placedChip=isPlaced?`<span class="nm-cr-placed">${S.placement.self?lk('내가 고른 시작점','My chosen start','我选的起点'):lk('진단 추천','Check-up pick','测评推荐')}</span>`:'';
         html+=`<div class="nm-cr-row ${ci%2?'right':'left'}${isPlaced?' placed':''}">
-          ${isNow?`<div class="nm-cr-here">${window.renderHumanChar?window.renderHumanChar(avatarKind(),44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
+          ${isNow?`<div class="nm-cr-here">${window.renderHumanChar?window.renderHumanChar(avatarProfile(),44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
           <button class="nm-cr-node ${st}${locked?' trial-locked':''}" data-c="${x.key}" style="--acc:${tierDef.accent}"${isNow?' id="crNow"':''}>
             <span class="nm-cr-num">${x.num}${isDone?`<i class="nm-cr-flag">${crIc('check')}</i>`:''}</span>
             <span class="nm-cr-nbody">
@@ -4469,9 +4473,9 @@ function mountRoad3DInto(heroEl, o){
       if(t) t.scrollIntoView({block:'center'});
     }
   };
-  import('./road3d/road3d.js').then(m=>m.mountRoad3D(heroEl,{
+  import('./road3d/road3d.js?v=20261021-characters1').then(m=>m.mountRoad3D(heroEl,{
     lang:S.lang, courses, bands, checkups, current:curKey, goal:goalKey, focus:o.focus,
-    avatar:{kind:avatarKind()},
+    avatar:avatarProfile(),
     onCourse:id=>roadFlashRow(o.listEl.querySelector(`.nm-cr-node[data-c="${id}"]`),o.body),
     onCheckup:num=>roadFlashRow(o.listEl.querySelector(`.nm-cr-check[data-chk="${num}"]`),o.body)
   })).then(ctl=>{
@@ -5303,7 +5307,7 @@ function screenTitle(){
       </div>
       <!-- 캐릭터 크기 88→136(2026-09-16, 원장 "캐릭터를 더 키워야지"). 원본 해상도로 크게 그려야
            흐려지지 않는다 — CSS 확대가 아니라 렌더 크기 자체를 키운다. -->
-      <div class="nm-title-char">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,136):''}</div>
+      <div class="nm-title-char">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,136):''}</div>
       <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>
       <div class="nm-title-stats">
         <span class="nm-title-chip">🪙 ${S.coins}</span>
@@ -5389,8 +5393,8 @@ function mountTitle3DInto(scr, summary, badge){
     return m.mountTitle3D(box,{
       lang:S.lang, choices,
       onPick:id=>{const b=document.getElementById(BTN[id]);if(b)b.click();},
-      player:px=>window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,px):'',
-      name:S.name||'', coins:S.coins, chips, extraHtml:lineageBadgeRowHtml()
+      player:px=>window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,px):'',
+      name:avatarName(), coins:S.coins, chips, extraHtml:lineageBadgeRowHtml()
     });
   }).then(ctl=>{
     if(!ctl){revealFallback();return;}
@@ -5516,7 +5520,7 @@ function unlockPreviewChar(item){
 function unlockOverlayHtml(item){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const previewChar=unlockPreviewChar(item);
-  const partyHtml=window.renderPartyHtml?window.renderPartyHtml(avatarKind(),previewChar,96)
+  const partyHtml=window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),previewChar,96)
     :(window.renderNumiChar?window.renderNumiChar(previewChar,96):'');
   const line=esc(lk('새 친구가 왔어! 옷장에서 고르면 나랑 같이 다니는 친구가 돼.','A new friend arrived! Pick them in the closet and they will walk with you.','新朋友来了！在衣橱里选它，它就会陪你一起走。'));
   return `<div class="nm-gate-overlay nm-unlock-overlay" id="nmUnlockOverlay">
@@ -5638,7 +5642,7 @@ function screenBoost(){
     S.boost.log.push({weekKey:b.weekKey, thread:b.threadId, level:b.level, score:b.score, need:b.need, ts:Date.now()});
     if(S.boost.log.length>30) S.boost.log.splice(0, S.boost.log.length-30);
     const already = !!S._boostRewarded;
-    if(!already){ coinAdd(6); S._boostRewarded=true; }
+    if(!already){ coinAdd(6,'boost'); S._boostRewarded=true; }
     maybeAwardWeeklyBonus(b.weekKey); /* §6 — 몸풀기까지 끝나면 그 주가 완료됐을 수 있다 */
     scr.innerHTML=`<div class="nm-unit-bar">
       <div class="nm-unit-title">🌟 ${lk('몸풀기 완료!','Warm-up Complete!','热身完成！')}</div>
@@ -5871,12 +5875,12 @@ function screenMailbox(){
   });
 }
 
-function showTownModal(title,desc,onGo){
+function showTownModal(title,desc,onGo,goText){
   const modal=$('#tmodal');
   $('#tmTitle').textContent=title;
   $('#tmDesc').textContent=desc;
   const go=$('#tmGo');
-  if(onGo){go.style.display='block';go.textContent=(S.lang==='ko'?'유닛 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=()=>{modal.classList.remove('on');onGo();};}
+  if(onGo){go.style.display='block';go.textContent=goText||(S.lang==='ko'?'유닛 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=()=>{modal.classList.remove('on');onGo();};}
   else go.style.display='none';
   modal.classList.add('on');
 }
@@ -5956,7 +5960,7 @@ function mountTown3DInto(scr){
   const gates=TOWN_GATES.map(g=>({ id:g.id, icon:g.icon, name:g.name }));
   const walker=(k,n)=>window.renderWalker?window.renderWalker(k,n):'';
   const numi=(c,n)=>window.renderNumiChar?window.renderNumiChar(c,n):'';
-  const myName=S.name?S.name:('#'+S.character.number);
+  const myName=avatarName();
   /* 진짜 3D 캐릭터(app/char3d) 모델 — html 은 모델을 못 만들 때의 빌보드 대체용으로 그대로 둔다.
      버디: 기호 캐릭터는 S.character.symbol(id), 숫자는 number. char3d 는 0~10 과 기호 10종만 빚으므로
      그 밖의 숫자(11·20·42…)는 모델 없이 옛 그림으로 보여 준다(엉뚱한 숫자가 서 있지 않게). */
@@ -5969,7 +5973,7 @@ function mountTown3DInto(scr){
     return ok?{kind:'buddy',buddy:{number:id,color:c.color,hat:c.hat||'none',cape:c.cape||'none'}}:null;
   })();
   const characters=[
-    { id:'player', role:'player', html:walker(avatarKind(),60), model:{kind:avatarKind()==='girl'?'girl':'boy'}, name:myName, at:'plaza',
+    { id:'player', role:'player', html:walker(avatarProfile(),60), model:NM_HUMANS.model(avatarProfile()), name:myName, at:'plaza',
       lines:[{ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`},{ko:'길을 콕 찍으면 내가 걸어가!',en:'Tap a path and I will walk there!',zh:'点一下小路，我就走过去！'}] },
     { id:'buddy', role:'buddy', html:numi(S.character,44), model:buddyModel||undefined,
       lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'},{ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'}] },
@@ -5998,7 +6002,7 @@ function mountTown3DInto(scr){
     vp.removeAttribute('aria-busy');
   };
   const muted=()=>{const mb=scr.querySelector('#townMute');return !mb||mb.textContent.indexOf('🔇')>=0;};
-  import('./town3d/town3d.js?v=20261014-town-recovery2').then(m=>{
+  import('./town3d/town3d.js?v=20261021-characters1').then(m=>{
     if(!box.isConnected)return null;
     return m.mountTown3D(box,{
     lang, spots, gates, characters, snapshot:townVisitSnapshot,
@@ -6040,14 +6044,14 @@ function townSpotAction(id){
     const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
     const examDesc=S.lang==='ko'?'시드 학습지를 인쇄하거나 타이머 시험을 볼 수 있어요.':
       S.lang==='en'?'Print a seeded worksheet or take a timed exam.':'打印带种子的学习单，或进行限时考试。';
-    showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();});
+    showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();},S.lang==='ko'?'학습지 · 시험 열기 →':S.lang==='en'?'Open worksheets & tests →':'打开学习单和测试 →');
     return;
   }
   if(id==='_closet'){
     const cl=S.lang==='ko'?'🪄 마법사 옷장':S.lang==='en'?"🪄 Wizard's Closet":'🪄 魔法师衣橱';
-    const cd=S.lang==='ko'?'숫자·색·표정·모자·배경을 골라 내 캐릭터를 꾸며요!':
+    const cd=S.lang==='ko'?'캐릭터를 더 만들고 이름·옷·숫자 친구를 골라 꾸며요!':
       S.lang==='en'?'Customize your number character!':'选择数字、颜色、表情、帽子和背景，打造专属角色！';
-    showTownModal(cl, cd, ()=>{S.view='closet';save();render();});
+    showTownModal(cl, cd, ()=>{S.view='closet';save();render();},S.lang==='ko'?'옷장 들어가기 →':S.lang==='en'?'Enter closet →':'进入衣橱 →');
     return;
   }
   const tier=tierById(id);
@@ -6186,7 +6190,7 @@ function initTownWorld(scr){
      그 자리로 걸어간다. nbBuddy(동행 숫자/기호 캐릭터)는 플레이어를 살짝 뒤에서
      따라다닌다(pick() 대상 아님). nbElder·nbDoc는 정자·도서관 앞에 서 있는 정지
      NPC(spd:0, still:true — walk()에서 아예 움직이지 않는다). Poco/Momo는 계속 자유 배회. */
-  const myName=S.name?S.name:('#'+S.character.number);
+  const myName=avatarName();
   const nbs=[
     {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.22,player:true,
       lines:[L({ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`}),L({ko:'지도를 콕 찍으면 내가 걸어가!',en:'Tap the map and I will walk there!',zh:'点一下地图，我就走过去！'})]},
@@ -7125,7 +7129,7 @@ function bindHistQuizPuzzle(scr,uid,comic){
       S.histQuiz.done[uid]=true;
       hqPuzzle.checked='ok';
       save();
-      if(!already){ coinAdd(2); toast('🪙 +2',true); }
+      if(!already){ coinAdd(2,'training'); toast('🪙 +2',true); }
       screenHistQuiz();
     }else{
       hqPuzzle.checked='no';                              // 고른 순서는 그대로 둔다 — 다시 보고 고치게
@@ -7216,7 +7220,7 @@ function screenReport(){
      아레나 점수 등 다른 화면의 .nm-score는 그대로 두기 위해 리포트 전용 클래스로 분리). */
   const scoreHtml = totalUnitsDone===0
     ? `<div class="nm-rp-empty">
-        <div class="nm-rp-empty-ava">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,72):''}</div>
+        <div class="nm-rp-empty-ava">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,72):''}</div>
         <p class="nm-rp-empty-msg">${lk('첫 유닛을 시작해 볼까요?','Shall we start the first unit?','开始第一个单元吧？')}</p>
         <button class="nm-btn full" id="rpToTown">${lk('마을로 가기','Go to town','前往小镇')}</button>
       </div>`
@@ -7592,7 +7596,7 @@ function stepStamp(body,u){
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
   let newLineageBadge=null;
-  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
+  if(!already){coinAdd(s.coins||20,'unit');S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
     S.progress[S.unit].steps=S.progress[S.unit].steps||{};S.progress[S.unit].steps.stamp=true; /* 로드맵 별점이 stepDone('stamp')를 보므로 반드시 기록(기존 누락 버그 수정) */
     S.progress[S.unit].touchedAt=Date.now();
     /* N-15(수의 나라 마지막 유닛) 최초 완주 — R0 추천 배너를 다음 마을 진입 때 1회 띄우도록 예약.
@@ -7724,22 +7728,40 @@ function screenCloset(){
       unlocked: S.character_unlocked,
       coins: S.coins,
       lang: S.lang,
-      onSave(newChar, newUnlocked, coinsSpent){
-        S.character = newChar;
-        S.character_unlocked = newUnlocked;
-        if(coinsSpent) S.coins = Math.max(0, S.coins - coinsSpent);
-        save();
-        // 상단 칩만 업데이트
-        const chip=$('#charChipBtn');
-        if(chip)chip.innerHTML=charChipInner();
-        const ci=$('.nm-coins b');
-        if(ci)ci.textContent=S.coins;
+      human: avatarProfile(),
+      avatars: S.avatarCollection || [avatarProfile()],
+      ledger: S.coinLedger || [],
+      onSave(newChar){
+        const before=S.character;S.character=newChar;
+        if(!save()){S.character=before;return false;}
+        const chip=$('#charChipBtn');if(chip)chip.innerHTML=charChipInner();
+        return true;
       },
-      onSaveAvatar(kind){
-        S.avatar={kind};
-        save();
-        const chip=$('#charChipBtn');
-        if(chip)chip.innerHTML=charChipInner();
+      onPurchase(type,id){
+        // A second tab may have spent/earned coins since this screen opened.
+        // Reject stale purchases rather than overwriting that tab's progress.
+        try{const disk=JSON.parse(localStorage.getItem(KEY)||'null');
+          if(disk&&(NM_CHARACTER_STATE.balance(disk)!==S.coins||JSON.stringify(disk.character_unlocked||{})!==JSON.stringify(S.character_unlocked||{}))){
+            // Keep subsequent navigation saves from writing the stale wallet or
+            // progress back over the other tab while the reload is starting.
+            S=Object.assign(defaults(),disk);normalizeLoadedState(true);
+            window.location.reload();
+            return {ok:false,message:S.lang==='ko'?'다른 화면의 기록으로 새로고침해요. 다시 골라 주세요.':S.lang==='en'?'Reloading the other window’s record. Please choose again.':'正在刷新另一窗口的记录，请重新选择。'};
+          }
+        }catch(e){return {ok:false};}
+        const before={coins:S.coins,coinLedger:S.coinLedger,character_unlocked:S.character_unlocked};
+        const result=NM_CHARACTER_STATE.purchase(S,type,id,window.NM_AVATAR,window.NM_HUMANS);
+        if(!result.ok)return result;
+        if(result.spent&&!save()){Object.assign(S,before);return {ok:false};}
+        document.querySelectorAll('.nm-coins b').forEach(el=>{el.textContent=S.coins;});
+        return {...result,ledger:S.coinLedger||[]};
+      },
+      onSaveHuman(active,all){
+        const before={avatar:S.avatar,avatarCollection:S.avatarCollection};
+        if(!NM_CHARACTER_STATE.humans(S,active,all,NM_HUMANS))return false;
+        if(!save()){Object.assign(S,before);return false;}
+        const chip=$('#charChipBtn');if(chip)chip.innerHTML=charChipInner();
+        return true;
       }
     });
   }
@@ -7761,7 +7783,7 @@ function renderSlotCards(){
       const nm=S.name?esc(S.name):('#'+S.character.number);
       cards+=`<div class="nm-slot-card active">
         <span class="nm-slot-badge">${ko?'지금':en?'Now':'当前'}</span>
-        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,56):''}</div>
+        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,56):''}</div>
         <div class="nm-slot-name">${nm}</div>
       </div>`;
       continue;
@@ -7770,7 +7792,7 @@ function renderSlotCards(){
     const hasData = st && (st.onboarded || st.name);
     if(hasData){
       const ch=Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},st.character||{});
-      const avk=(st.avatar&&st.avatar.kind)||'boy';
+      const avk=st.avatar||{kind:'boy'};
       const nm=st.name?esc(st.name):('#'+ch.number);
       cards+=`<button class="nm-slot-card" data-slot="${n}" title="${ko?'전환':en?'Switch':'切换'}">
         <span class="nm-slot-del" data-del="${n}" title="${ko?'지우기':en?'Delete':'删除'}">✕</span>

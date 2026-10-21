@@ -3820,3 +3820,20 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-personal-plan-grid article{padding:12px;border:1px solid #d2dedc;border-radius:12px;background:#fff}
 .nm-personal-plan h4{margin:0 0 8px;font-size:17px}.nm-personal-plan h4 small{display:block;font-size:14px;font-weight:500}
 .nm-personal-plan-grid p{margin:7px 0}.nm-personal-plan-grid span{display:block;font-size:14px}.nm-personal-plan aside{margin-top:14px;padding:14px;border-radius:12px;background:#edf4f2}.nm-personal-plan a{color:#245c70;text-decoration:underline}
+
+/* Town destinations remain reachable without dragging, walking or precise 3D taps. */
+.nm-town-travel{position:absolute;bottom:188px;left:12px;z-index:22;width:154px;font-size:15px;color:#16417c;touch-action:manipulation}
+.nm-town-travel summary{box-sizing:border-box;min-height:48px;display:flex;align-items:center;justify-content:center;padding:10px 8px;border:1px solid #9db4ce;border-radius:12px;background:#fff;box-shadow:0 3px 14px #16417c20;cursor:pointer;font-weight:800;list-style:none}
+.nm-town-travel summary::-webkit-details-marker{display:none}
+.nm-town-travel summary:focus-visible,.nm-town-travel button:focus-visible{outline:3px solid #16417c;outline-offset:3px}
+.nm-town-travel[open] summary{background:#e8f0fa}
+.nm-town-travel-list{position:absolute;bottom:56px;left:0;width:214px;max-height:min(440px,56vh);overflow-y:auto;box-sizing:border-box;display:grid;gap:8px;padding:12px;background:#fff;border:1px solid #9db4ce;border-radius:12px;box-shadow:0 8px 24px #16417c30}
+.nm-town-travel-list p{margin:0 0 2px;font-size:14px;line-height:1.5;color:#45556b}
+.nm-town-travel-list button{min-height:48px;padding:10px;text-align:left;border:1px solid #c8d5e5;border-radius:8px;background:#f5f8fc;color:#16417c;font:inherit;font-size:16px;font-weight:700;line-height:1.4;cursor:pointer;white-space:normal;overflow-wrap:anywhere}
+@media(max-height:500px){.nm-town-travel{bottom:24px;left:180px}.nm-town-travel-list{max-height:65vh}}
+/* Character selection can grow beyond the original two portraits. */
+.nm-ob .nm-av-row,#nmAvMigrate .nm-av-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:12px;max-height:48vh;overflow:auto;padding:4px}
+.nm-ob .nm-av-card,#nmAvMigrate .nm-av-card{min-width:0;min-height:44px}
+.nm-ob .nm-av-card span,#nmAvMigrate .nm-av-card span{font-size:15px;line-height:1.4}
+
+.nm-tmcard .close{min-height:44px;min-width:72px;font-size:16px;color:#53647b}
