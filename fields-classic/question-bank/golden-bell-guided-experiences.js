@@ -1,11 +1,11 @@
 // 분수는 빗금 대신 위아래로 쓴다.
 const fractionText = (text) => String(text ?? "").replace(/(^|[^\d/])(\d+)\/(\d+)(?![\d/])/g, (_, before, numerator, denominator) => `${before}<span class="math-frac" role="math" aria-label="${denominator}분의 ${numerator}"><i>${numerator}</i><i>${denominator}</i></span>`);
-import { book02Markup } from "./book02-renderers.js?v=20261018u";
-import { book03Markup } from "./book03-renderers.js?v=20261018u";
+import { book02Markup } from "./book02-renderers.js?v=20261018v";
+import { book03Markup } from "./book03-renderers.js?v=20261018v";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20261021a";
-import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20261018u";
-import { renderBook04Guided } from "./golden-bell-book04-guided.js?v=20261018u";
+import { GOLDEN_BELL_BOOKS as COURSE_ONE_BOOKS } from "./golden-bell-data.js?v=20261018v";
+import { renderBook04Guided } from "./golden-bell-book04-guided.js?v=20261018v";
 import { renderBook07Guided } from "./golden-bell-book07-guided.js?v=20260918a";
 import { renderBook08Guided } from "./golden-bell-book08-guided.js?v=20260918a";
 

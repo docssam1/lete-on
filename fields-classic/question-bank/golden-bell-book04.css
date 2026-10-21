@@ -80,6 +80,10 @@
 @media print{
   .gold-print-page[data-print-book="book-04"] .b4-source-fold-holes{width:72mm}
   .gold-print-page[data-print-book="book-04"] .b4-src-hidden-pair{gap:5mm}
+  /* 9권 판서도 같은 빗각 쌓기나무를 쓴다. 좁은 칸에서 A·B 두 그림이 줄바꿈되어 아래 그림이 잘리지 않게 한 줄로. */
+  .gold-print-page[data-print-book="book-09"] .b4-src-hidden-pair{flex-wrap:nowrap;gap:4mm}
+  .gold-print-page[data-print-book="book-09"] .b4-src-cubes{width:auto;max-width:100%;height:auto;max-height:34mm}
+  .gold-print-page[data-print-book="book-09"] .b4-src-hidden-pair figcaption{font-size:9px}
   .gold-print-page[data-print-book="book-04"] .b4-src-cubes{width:auto;max-height:30mm}
   .gold-print-page[data-print-book="book-04"] .b4-src-topview{width:auto;max-height:22mm}
   .gold-print-page[data-print-book="book-04"] .b4-src-cube-example{padding:1.5mm 2.5mm}

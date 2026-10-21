@@ -367,7 +367,9 @@ function obliqueCubes(map, { s = 36, walls = false, labels = false, label = "쌓
 
 function sourceHiddenCube(visual) {
   // 원본 18쪽: 위 세 문제는 「전체」「보이는 것」 두 그림, 아래 세 문제는 그림 하나. 층수·개수는 적지 않는다.
-  if (visual.single) return `<div class="b4-src-hidden-pair single"><figure>${obliqueCubes(visual.map, { s: 44 })}</figure></div>`;
+  // 9권 판서도 같은 빗각 그림을 쓴다: walls(벽 모서리 세 줄)는 그림 하나에도, figures는 이름 붙은 그림 여러 개(A·B).
+  if (visual.figures) return `<div class="b4-src-hidden-pair">${visual.figures.map((f) => `<figure>${obliqueCubes(f.map, { s: 34, walls: !!f.walls })}<figcaption>${escapeHtml(f.label)}</figcaption></figure>`).join("")}</div>`;
+  if (visual.single) return `<div class="b4-src-hidden-pair single"><figure>${obliqueCubes(visual.map, { s: Number(visual.size) || 44, walls: !!visual.walls })}</figure></div>`;
   return `<div class="b4-src-hidden-pair"><figure>${obliqueCubes(visual.map)}<figcaption>전체</figcaption></figure><figure>${obliqueCubes(visual.map, { walls: true })}<figcaption>보이는 것</figcaption></figure></div>`;
 }
 
