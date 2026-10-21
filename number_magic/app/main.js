@@ -1493,7 +1493,7 @@ function screenTown(){
     </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
-      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'지도 전체 보기':S.lang==='en'?'Show whole map':'查看全图'}">⛶</button>
+      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'지도 맞추기':S.lang==='en'?'Fit map':'调整地图'}">⛶</button>
       <button class="nm-iconbtn" id="townZin" aria-label="${S.lang==='ko'?'확대':S.lang==='en'?'Zoom in':'放大'}">＋</button>
       <button class="nm-iconbtn" id="townZout" aria-label="${S.lang==='ko'?'축소':S.lang==='en'?'Zoom out':'缩小'}">－</button>
     </div>
@@ -1510,7 +1510,10 @@ function screenTown(){
   const panel=toolbox.querySelector('div'), more=document.createElement('details');
   more.className='nm-town-more';
   more.innerHTML=`<summary>${S.lang==='ko'?'더 보기':S.lang==='en'?'More':'更多'}</summary><div class="nm-town-extra-list"></div>`;
-  const list=more.querySelector('div');while(tools.firstChild)list.appendChild(tools.firstChild);
+  const list=more.querySelector('div');
+  const places=document.createElement('nav');places.className='nm-town-place-list';places.setAttribute('aria-label',S.lang==='ko'?'지도 속 장소':S.lang==='en'?'Map locations':'地图地点');
+  TOWN_SPOTS.forEach(sp=>{const b=document.createElement('button');b.type='button';b.className='nm-iconbtn';b.dataset.place=sp.tier;b.textContent=townDestinationLabel(sp.tier);b.onclick=()=>enterTownDestination(sp.tier);places.appendChild(b);});list.appendChild(places);
+  while(tools.firstChild)list.appendChild(tools.firstChild);
   panel.appendChild(scr.querySelector('#roadBanner'));panel.appendChild(more);tools.appendChild(toolbox);
   toolbox.open=matchMedia('(min-width:760px), (min-width:600px) and (max-height:500px)').matches;
   ['townCourseRoad','townDex','townMagazine','townMail','townReport'].forEach(id=>{const button=scr.querySelector('#'+id);const label=document.createElement('span');label.textContent=button.title;button.appendChild(label);});
@@ -5396,7 +5399,7 @@ function mountTitle3DInto(scr, summary, badge){
   const chips=[];   /* 동전은 모듈이 coins 로 따로 그린다 */
   if(S.attend&&S.attend.days)chips.push({icon:'📅',text:{ko:`${S.attend.days}일`,en:`Day ${S.attend.days}`,zh:`第${S.attend.days}天`}});
   if(badge)chips.push({icon:'🏅',text:badge.label,gold:true});
-  import('./title3d/title3d.js?v=20261021-original-desk1').then(m=>{
+  import('./title3d/title3d.js?v=20261021-original-desk2').then(m=>{
     const choices=m.DEFAULT_CHOICES.map(c=>c.id==='continue'&&summary?Object.assign({},c,{sub:summary}):c);
     return m.mountTitle3D(box,{
       lang:S.lang, choices,
@@ -6083,10 +6086,10 @@ function initTownWorld(scr){
   let cam={x:0,y:0,scale:1},minS=1,maxS=3;
   const BBOX=computeContentBBox(W,H,.04);
 
-  /* 처음에는 원본 만화풍 지도 전체를 보여 준다. 확대·드래그는 선택 사항이며,
-     건물 입장에는 캐릭터 이동이나 카메라 조작이 필요하지 않다. */
+  /* 지도를 화면 가득 채운다. 좁은 세로 화면의 바깥 건물은 드래그하거나
+     측면 메뉴의 장소 목록으로 입장한다. 캐릭터 이동은 필요하지 않다. */
   function fit(){
-    const coverS=Math.min(vp.clientWidth/W,vp.clientHeight/H);
+    const coverS=Math.max(vp.clientWidth/W,vp.clientHeight/H);
     minS=coverS;
     if(cam.scale<minS)cam.scale=minS;
   }
