@@ -81,8 +81,14 @@
       access_token: access,
       refresh_token: str(raw.refresh_token) || '',
       expires_at: exp,
-      user: { id: u.id, email: typeof u.email === 'string' ? u.email : '' }
+      user: { id: u.id, email: typeof u.email === 'string' ? u.email : '' },
+      // Private flag only; never derived from user_metadata. Legacy sessions default to false.
+      password_setup_pending: raw.password_setup_pending === true
     };
+  }
+
+  function requiresPassword() {
+    return !!session && session.password_setup_pending === true;
   }
 
   function publicView(sess) {
@@ -197,12 +203,13 @@
     if (session && session.user.id !== cand.user.id) {
       return Promise.reject(makeError('Sign out before using a link for a different account', undefined, 'identity'));
     }
-    try { persist(cand); } catch (e) { return Promise.reject(e); }
+    var next = Object.assign({}, cand, { password_setup_pending: true });
+    try { persist(next); } catch (e) { return Promise.reject(e); }
     authVersion++;
     candidate = null;
-    session = cand;
+    session = next;
     emit();
-    return Promise.resolve(publicView(cand));
+    return Promise.resolve(publicView(next));
   }
 
   function ready() {
@@ -240,6 +247,8 @@
         if (version !== authVersion) return null;
         var sess = normalize(data);
         if (!sess) throw makeError('Invalid refresh response', 502, 'invalid');
+        // Preserve the private flag from the live session; the server response never controls it.
+        sess.password_setup_pending = !!session && session.user.id === sess.user.id && session.password_setup_pending === true;
         session = sess;
         try { persist(sess); } catch (e) { /* keep in memory; stored copy may be stale */ }
         emit();
@@ -299,11 +308,78 @@
       if (version !== authVersion) throw makeError('Sign-in was cancelled', undefined, 'cancelled');
       var sess = normalize(data);
       if (!sess || !sess.refresh_token) throw makeError('Invalid sign-in response', 502, 'invalid');
+      sess.password_setup_pending = true;
       persist(sess);
       session = sess;
       emit();
       return publicView(sess);
     });
+  }
+
+  // Never forward server text for password requests: it could echo the password.
+  function passwordError(err, loginMode) {
+    if (!err || err.code !== 'http') return err;
+    var st = err.status;
+    var msg;
+    if (st === 429) msg = 'Too many attempts. Try again later';
+    else if (loginMode && (st === 400 || st === 401 || st === 403)) msg = 'Email or password is incorrect';
+    else if (!loginMode && st === 422) msg = 'That password was not accepted';
+    else if (!loginMode && (st === 401 || st === 403)) msg = 'Sign in again to set a password';
+    else msg = 'Request failed';
+    return makeError(msg, st, 'http');
+  }
+
+  function setPassword(password, confirm) {
+    if (typeof password !== 'string' || password.length < 8) {
+      return Promise.reject(makeError('Password must be at least 8 characters', 400, 'invalid_password'));
+    }
+    if (password.length > 128) {
+      return Promise.reject(makeError('Password must be at most 128 characters', 400, 'invalid_password'));
+    }
+    if (typeof confirm !== 'string' || confirm !== password) {
+      return Promise.reject(makeError('Passwords do not match', 400, 'mismatch'));
+    }
+    return getSession().then(function (s) {
+      if (!s) throw makeError('Sign in first', 401, 'nosession');
+      var version = authVersion;
+      var uid = s.user.id;
+      return request('PUT', '/auth/v1/user', { token: s.access_token, body: { password: password } })
+        .catch(function (err) { throw passwordError(err, false); })
+        .then(function (data) {
+          if (version !== authVersion || !session || session.user.id !== uid) {
+            throw makeError('Sign-in changed; password was not applied here', undefined, 'cancelled');
+          }
+          if (!isObj(data) || data.id !== uid) throw makeError('Invalid password response', 502, 'invalid');
+          if (session.password_setup_pending === true) {
+            var next = Object.assign({}, session, { password_setup_pending: false });
+            persist(next); // throws on failure; flag stays pending
+            session = next;
+            emit();
+          }
+          return publicView(session);
+        });
+    });
+  }
+
+  function signInWithPassword(email, password) {
+    if (!validEmail(email)) return Promise.reject(makeError('Enter a valid email address', 400, 'invalid_email'));
+    if (typeof password !== 'string' || !password || password.length > 128) {
+      return Promise.reject(makeError('Enter your password', 400, 'invalid_password'));
+    }
+    var version = ++authVersion;
+    return request('POST', '/auth/v1/token?grant_type=password', {
+      body: { email: email.trim(), password: password }
+    }).catch(function (err) { throw passwordError(err, true); })
+      .then(function (data) {
+        if (version !== authVersion) throw makeError('Sign-in was cancelled', undefined, 'cancelled');
+        var sess = normalize(data);
+        if (!sess || !sess.refresh_token) throw makeError('Invalid sign-in response', 502, 'invalid');
+        sess.password_setup_pending = false;
+        persist(sess);
+        session = sess;
+        emit();
+        return publicView(sess);
+      });
   }
 
   function signOut() {
@@ -352,6 +428,9 @@
     getSession: getSession,
     sendEmail: sendEmail,
     verifyEmail: verifyEmail,
+    requiresPassword: requiresPassword,
+    setPassword: setPassword,
+    signInWithPassword: signInWithPassword,
     signOut: signOut,
     pendingLink: pendingLink,
     confirmLink: confirmLink,

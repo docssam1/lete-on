@@ -10,6 +10,7 @@
 'use strict';
 const app=document.getElementById('app');
 const GEN=window.NM_GEN, CUR=window.NM_CURRICULUM, UNITS=window.NM_UNITS;
+const membership=window.NM_MEMBERSHIP;
 
 /* NM_TGEN 브리지: 레거시 NM_GEN + 스레드 생성기(NM_TGEN) 통합. params 전달 포함. */
 function genProblem(cfg, level){
@@ -324,7 +325,7 @@ if(!S.account)S.account={status:existingLocalProfile?'active':'trial',code:null,
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 }
 
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();return true;}
+function save(){applyAdminSettings();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();if(membership)membership.refreshIfDue();if(booted&&S.view==='courseroad')Promise.resolve().then(renderPersonalPlan);return true;}
 // The existing profile/slot and state backup own this data; no global sibling log.
 if(window.NM_STUDY_RECORDS)window.NM_STUDY_RECORDS.bind({state:()=>S,save});
 window.addEventListener('nm:study-record-error',()=>toast(S.lang==='en'?'Your score is unchanged, but the study record could not be saved. Check device storage.':S.lang==='zh'?'成绩不变，但未能保存学习记录。请检查设备存储。':'채점은 유지되지만 학습 기록을 저장하지 못했습니다. 기기 저장 공간을 확인해 주세요.',false));
@@ -417,10 +418,11 @@ function trialUnitSet(){
   if(set.size)_trialSet=set;   // 데이터 미로딩(스크립트 순서)이면 캐시하지 않는다
   return set;
 }
-function isTrialUnit(uid){return trialUnitSet().has(uid);}
+function isTrialUnit(uid){if(membership&&guardianAuth?.peek()&&['expired','revoked'].includes(membership.snapshot().membership?.status))return false;return trialUnitSet().has(uid);}
 /* 체험에서 열리는 마을 챕터인가(등급 안 레벨 index, 0부터) */
 function trialLevelOpen(tierId,idx){
   if(accountActive())return true;
+  if(membership&&guardianAuth?.peek()&&['expired','revoked'].includes(membership.snapshot().membership?.status))return false;
   const isTown=TOWN_SPOTS.some(sp=>sp.tier===tierId);
   return isTown ? idx<TRIAL_LEVELS_PER_TIER : true;  // 마을 건물만 2챕터 제한
 }
@@ -431,7 +433,10 @@ function externalBlocked(){return !accountActive();}
    window.feedbackFx 와 같은 목적의 훅이다. */
 window.NM_GATE={trialUnitSet,isTrialUnit,unitLocked,accountActive,externalBlocked,trialLevelOpen};
 /* 체험 범위 밖의 유닛은 학원 승인 상태를 확인한다. */
-function accountActive(){return !!(S.account&&S.account.status==='active');}
+function accountActive(){
+  if(membership&&guardianAuth?.peek())return S.cloudLinked&&S.cloudOwnerId===guardianAuth.peek().user.id&&!guardianAuth.requiresPassword()&&membership.contactReady()&&membership.canUse();
+  return !!(S.account&&S.account.status==='active'); // preserve existing local approvals until guardian enrollment
+}
 function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 
 /* ---------- 클라우드 프로필 (Supabase nm_profiles) ----------
@@ -444,7 +449,7 @@ const SB_URL='https://fgahqumaldheqettmvqg.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
 const sbHdr=()=>({apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'});
 const guardianAuth=window.NM_PROFILE_AUTH;
-let guardianEntry=false,booted=false;
+let guardianEntry=false,booted=false,guardianContactEditing=false;
 if(guardianAuth){
   guardianAuth.configure({url:SB_URL,anonKey:SB_KEY});
   const refreshGuardianUI=()=>{
@@ -455,12 +460,38 @@ if(guardianAuth){
     }
     renderIdCard();renderNotifyCard();
   };
-  guardianAuth.ready().then(refreshGuardianUI).catch(()=>{});
+  /* ready()가 늦게 끝나 한 번 더 그릴 때, 이미 입력 중인 이메일·인증번호·비밀번호 칸을 지우지 않는다.
+     (인증 성공·로그아웃 같은 실제 변화는 onChange가 따로 그린다.) */
+  guardianAuth.ready().then(()=>{
+    const typing=['#nmGuardEmail','#nmGuardToken','#nmGuardLoginPassword','#nmGuardNewPassword','#nmGuardConfirmPassword','#nmGuardPhone']
+      .some(sel=>{const el=document.querySelector(sel);return !!el&&(el.value!==''||document.activeElement===el);});
+    if(!typing)refreshGuardianUI();
+  }).catch(()=>{});
   guardianAuth.onChange(refreshGuardianUI);
+}
+if(membership&&guardianAuth){
+  membership.configure({url:SB_URL,anonKey:SB_KEY,auth:guardianAuth,profileName:()=>S.cloudLinked?S.name:null});
+  membership.onChange(()=>{
+    if(!booted)return;
+    const changed=applyAdminSettings();
+    if(changed){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}syncAmount();}
+    renderIdCard();renderAccountCard();renderNotifyCard();
+    if(S.view==='courseroad')renderPersonalPlan();
+  });
+}
+function applyAdminSettings(){
+  const record=membership&&membership.snapshot();const p=record&&record.settings;
+  if(!p||p.profileName!==S.name||record.owner!==S.cloudOwnerId)return false;
+  const changed=!S.adminPlan||S.adminPlan.version!==p.version;
+  S.adminPlan={...p};S.roadSpeed=p.speed;S.roadAmount=p.amount;S.roadCadence=p.cadence;S.roadPace='p2';
+  if(p.entryYear)S.schoolAge={entryYear:p.entryYear,setAt:Date.parse(p.updatedAt)||Date.now()};
+  return changed;
 }
 async function cloudCredentials(){
   if(!guardianAuth)throw new Error('guardian_auth_required');
   await guardianAuth.ready();
+  if(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())throw new Error('password_setup_required');
+  if(membership&&!membership.contactReady())throw new Error('contact_required');
   const session=await guardianAuth.getSession();
   if(!session||!session.user||!session.user.id)throw new Error('guardian_auth_required');
   return {owner:session.user.id,headers:{...sbHdr(),Authorization:'Bearer '+session.access_token}};
@@ -1098,7 +1129,7 @@ function screenWelcome(){
           </button>
         </div>
         <button class="nm-btn nm-ob-go" id="obAvNext"${ob.avatar?'':' disabled'}>${lk('다음 ›','Next ›','下一步 ›')}</button>
-        <button class="nm-btn ghost nm-ob-go" id="obGuardian">${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</button>
+        <button class="nm-btn ghost nm-ob-go" id="obGuardian">${lk('가입 · 보호자 이메일로 이어하기','Register · Continue with guardian email','注册 · 使用监护人邮箱继续')}</button>
       </div>
     </div>`;
     scr.querySelectorAll('[data-av]').forEach(b=>{
@@ -2594,6 +2625,7 @@ function roadBaseMonths(){
   return w/4;
 }
 function roadPaceMult(key){
+  if(window.NM_LEARNING_PLAN)return NM_LEARNING_PLAN.paceMultiplier(window.NM_COURSES,key);
   const base=roadBaseMonths();
   if(!base) return 1;
   return (base+roadPaceDef(key).off)/base;
@@ -3670,6 +3702,18 @@ function paceCompareHtml(){
     <ul class="nm-pc-scope"><li>${T('scope1')}</li><li>${T('scope2')}</li><li>${T('scope3')}</li></ul>${srcHtml}</div>`;
 }
 
+function renderPersonalPlan(){
+  if(S.view!=='courseroad'||!window.NM_LEARNING_PLAN||!window.NM_COURSES)return;
+  const bar=document.querySelector('#screen .nm-cr-header, #screen .nm-unit-bar');if(!bar)return;
+  let box=document.getElementById('nmPersonalPlan');
+  if(!box){box=document.createElement('details');box.id='nmPersonalPlan';box.className='nm-personal-plan';bar.insertAdjacentElement('afterend',box);}
+  const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+  const p=S.adminPlan,now=new Date(),today=new Date(+now+9*3600000).toISOString().slice(0,10);
+  const settings=p&&NM_COURSES[p.courseKey]?p:{courseKey:currentCourseKey(),sessionIndex:1,speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2',entryYear:S.schoolAge?.entryYear,startDate:today};
+  let result;try{result=NM_LEARNING_PLAN.project(NM_COURSES,settings,{months:12,lang:S.lang,now});}catch(e){return;}
+  const reference=NM_LEARNING_PLAN.recommend(NM_COURSES,settings,{lang:S.lang});
+  box.innerHTML=`<summary>${lk('나의 월별 로드맵 · 12개월','My monthly roadmap · 12 months','我的月度路线图 · 12个月')}</summary><div class="nm-personal-plan-body"><p>${p?lk('학원에서 정한 개인별 시작점과 속도를 적용했어요.','Your academy’s individual starting point and pace are applied.','已应用学院设置的个人起点和速度。'):lk('현재 선택한 시작점과 속도로 예상했어요.','Estimated from your selected starting point and pace.','根据所选起点和速度估算。')} ${lk('실제 학습에 따라 달라질 수 있어요. 학년은 매년 3월에 바뀌어요.','Actual progress may vary. Grades change each March.','实际进度可能不同，年级每年3月变更。')}</p><p>${lk('시작','Start','开始')}: ${esc(settings.startDate)} · ${settings.speed}${lk('배 속도','× pace','倍速度')} · ${lk('주','Per week','每周')} ${settings.cadence==='w2'?2:1}${lk('회',' sessions','次')}</p><div class="nm-personal-plan-grid" role="list">${result.rows.map(row=>`<article role="listitem"><h4>${esc(row.month)} <small>${esc(row.schoolLabel)}</small></h4>${row.courseLabels.length?row.courseLabels.map((label,i)=>`<p><b>${esc(label)}</b><span>${esc(row.sessionLabels[i])}</span></p>`).join(''):`<p>${lk('예상 과정 없음','No course projected','暂无预计课程')}</p>`}</article>`).join('')}</div><aside><h4>${esc(reference.title)}</h4><p>${esc(reference.advice)}</p><p>${esc(reference.reference)}</p>${reference.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>`).join(' · ')}</aside></div>`;
+}
 function screenCourseRoad(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
@@ -4360,6 +4404,7 @@ function screenCourseRoad(){
   draw(false);
   if(heroEl&&!hero3dLikely)heroEl.remove();
   setRoadView(roadView,false);
+  renderPersonalPlan();
 }
 /* WebGL 을 쓸 수 있을 것 같은가(없으면 3D 지도 자리를 만들지 않고 옛 동작 그대로) */
 function road3dLikely(){
@@ -5365,6 +5410,12 @@ function lineageBadgeRowHtml(){
    없는 완전 신규 학생은 과정1부터. */
 function currentCourseKey(){
   const uid = mostRecentTouchedUnit();
+  if(S.adminPlan&&(window.NM_COURSES||{})[S.adminPlan.courseKey]){
+    const changed=Date.parse(S.adminPlan.updatedAt)||0;
+    const recent=uid&&S.progress[uid];
+    const actual=uid&&courseForUnit(uid);
+    if(!recent||recent.touchedAt<=changed||!actual||+actual.slice(1)<+S.adminPlan.courseKey.slice(1))return S.adminPlan.courseKey;
+  }
   if(uid){
     const cid = courseForUnit(uid);
     if(cid) return cid;
@@ -5479,8 +5530,13 @@ function showUnlockOverlay(queue){
   $('#nmUnlockOverlay').addEventListener('click', e=>{ if(e.target.id==='nmUnlockOverlay') close(); });
 }
 /* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
-function primarySessionOf(course){
+function primarySessionOf(course,courseKey){
   if(!course || !course.sessions) return null;
+  const p=S.adminPlan;
+  if(p&&p.courseKey===courseKey&&course.sessions[p.sessionIndex-1]){
+    const s=course.sessions[p.sessionIndex-1];
+    return s.test?{...s,drills:s.pool||[],magic:[]}:s;
+  }
   const withMagic = course.sessions.find(s => !s.test && s.magic && s.magic.length);
   return withMagic || course.sessions.find(s => !s.test) || null;
 }
@@ -5495,7 +5551,7 @@ function envelopeForWeek(weekKey){
   const courseKey = currentCourseKey();
   const course = NM_COURSES[courseKey];
   if(!course) return null;
-  const session = primarySessionOf(course);
+  const session = primarySessionOf(course,courseKey);
   if(!session) return null;
   const placements = (session.drills||[]).map((d,i) => ({
     order: i+1, thread: d.t, level: d.lv, count: d.n,
@@ -5676,9 +5732,9 @@ function screenMailbox(){
     </div>
     <div class="nm-step-body nm-wsh-wrap">
       <div class="nm-card nm-gate-card-inline">
-        <div class="nm-card-h">🔒 ${lk('편지함은 학원 승인 후 열려요','The mailbox unlocks after academy approval','学院授权后才能开启信箱')}</div>
-        <p class="nm-wsh-sentence">${lk('승인번호가 있으면 지금 바로 열 수 있어요.','If you already have a code, you can unlock it right now.','有授权码即可立即解锁。')}</p>
-        <button class="nm-btn full" id="mbGate">🔑 ${lk('승인번호 입력','Enter code','输入授权码')}</button>
+        <div class="nm-card-h">🔒 ${lk('가입·이용기간을 확인해 주세요','Check registration and membership','请确认注册和使用期限')}</div>
+        <p class="nm-wsh-sentence">${lk('가입 후 30일 체험할 수 있어요. 이후에는 학원에서 6개월·1년 이용을 승인해요.','Registration includes a 30-day trial. Your academy can then approve 6 months or 1 year.','注册后可体验30天，之后可由学院开通6个月或1年。')}</p>
+        <button class="nm-btn full" id="mbGate">${lk('가입·이용 상태 보기','View registration and membership','查看注册及使用状态')}</button>
       </div>
     </div>`;
     $('#mbBack').onclick=()=>{S.view='town';save();render();};
@@ -5763,6 +5819,7 @@ function screenMailbox(){
          마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
       const wk = (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
         ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey(),
+            startSession:S.adminPlan?.courseKey===env.courseKey?S.adminPlan.sessionIndex:null,
             /* 몇 번째 회차인가 = 이 주 전에 연 봉투 수(2026-09-30, 언어사고력 주제 순환·유아 중반 판정) */
             sessionIdx: Object.keys((S.mailbox && S.mailbox.opened) || {}).filter(function(wk){ return wk < env.weekKey; }).length }) : null;
       const items = wk ? wk.items : env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
@@ -5837,6 +5894,12 @@ function gateModalHtml(){
   </div>`;
 }
 function showGateModal(){
+  if(membership&&guardianAuth){
+    S.view='closet';save();render();
+    const details=$('.nm-closet-settings');if(details)details.open=true;
+    const card=$('#nm-guardian-slot');if(card)card.scrollIntoView({block:'start'});
+    return;
+  }
   if($('#nmGateModal'))return;
   document.body.insertAdjacentHTML('beforeend',gateModalHtml());
   const close=()=>{const m=$('#nmGateModal');if(m)m.remove();};
@@ -7747,9 +7810,18 @@ function renderNotifyCard(){
   const div=document.createElement('div');
   div.className='nm-idcard nm-notify-card';
   const guardian=guardianAuth&&guardianAuth.peek();
-  if(!guardian||!S.cloudLinked||S.cloudOwnerId!==guardian.user.id){
+  if(!guardian||(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())||!S.cloudLinked||S.cloudOwnerId!==guardian.user.id){
     div.textContent=lk('문자 알림은 보호자 이메일과 학생 기록을 연결한 뒤 등록할 수 있어요.','Connect a guardian email and learner profile before registering text alerts.','关联监护人邮箱和学生记录后，即可登记短信通知。');
     slot.appendChild(div);return;
+  }
+  if(membership){
+    const contact=membership.snapshot().contact;
+    const text=document.createElement('p');text.textContent=contact?.registered
+      ?(contact.phoneMasked||'')+' · '+(contact.smsConsent?lk('학습지 문자 수신 동의','Worksheet texts enabled','已同意接收学习单短信'):lk('문자 수신 미동의','Worksheet texts disabled','未同意接收短信'))
+      :lk('가입 화면에서 보호자 전화번호를 등록해 주세요.','Register a guardian phone to complete signup.','请在注册界面填写监护人手机号。');
+    const edit=document.createElement('button');edit.className='nm-btn ghost';edit.textContent=lk('휴대폰·문자 동의 변경','Change phone or text consent','修改手机号或短信同意');
+    edit.onclick=()=>{guardianContactEditing=true;renderIdCard();$('#nm-guardian-slot')?.scrollIntoView({block:'start'});};
+    div.append(text,edit);slot.appendChild(div);return;
   }
   if(S.notifyReg){
     div.innerHTML=`📱 ${lk('학부모 알림 등록됨','Parent alerts registered','家长通知已登记')} (${esc(S.notifyReg)}) · ${lk('해지는 학원에 문의','Contact academy to opt out','退订请联系学院')}`;
@@ -7824,6 +7896,15 @@ function renderAccountCard(){
   const slot=$('#nm-account-slot');
   if(!slot)return;
   const ko=S.lang==='ko', en=S.lang==='en';
+  if(membership&&guardianAuth?.peek()){
+    const state=membership.snapshot(),m=state.membership;
+    const lk=(a,b,c)=>ko?a:en?b:c;
+    const label=!m?lk('가입 정보 확인','Checking registration','确认注册信息'):m.status==='trial'?lk('30일 무료 체험','30-day free trial','30天免费体验'):m.status==='paid'?(m.plan==='six_month'?lk('6개월 이용권','6-month plan','6个月使用权'):lk('1년 이용권','1-year plan','1年使用权')):m.status==='revoked'?lk('이용권 해지','Plan revoked','使用权已撤销'):lk('이용 기간 만료','Access period ended','使用期已结束');
+    const end=m&&(m.status==='trial'?m.trialEndsAt:m.endsAt);
+    const until=end?new Date(end).toLocaleString(ko?'ko-KR':en?'en-US':'zh-CN',{timeZone:'Asia/Seoul'}):'';
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${esc(label)}</div>${until?`<p>${lk('이용 기한','Valid until','有效期至')}: ${esc(until)} (KST)</p>`:''}<p>${lk('정식 이용권은 6개월·1년 중 학원에서 승인해 드려요. 학습 기록은 이용 기간이 끝나도 보존돼요.','Your academy approves a 6-month or 1-year plan. Study records are kept after access ends.','学院可开通6个月或1年使用权。使用期结束后仍保留学习记录。')}</p><button class="nm-btn ghost" id="nmMemberRefresh">${lk('이용권 다시 확인','Refresh membership','刷新使用权')}</button></div>`;
+    $('#nmMemberRefresh').onclick=()=>membership.refresh(true);return;
+  }
   const acc=S.account||{status:'trial'};
   if(acc.status==='active'){
     slot.innerHTML=`<div class="nm-idcard linked">🔓 ${ko?'학원 승인 완료':en?'Academy approved':'学院已授权'}${acc.code?` · <b>${esc(acc.code)}</b>`:''} · ${ko?'모든 유닛 이용 가능':en?'All units unlocked':'全部单元已解锁'} ✓</div>`;
@@ -7861,6 +7942,34 @@ function renderAccountCard(){
 }
 
 /* ---------- 보호자 이메일 인증·학생 기록 연결 (설정) ---------- */
+function renderGuardianContact(slot,lk){
+  if(!membership)return false;
+  const state=membership.snapshot();
+  if(membership.contactReady()&&!guardianContactEditing)return false;
+  const logout=async()=>{guardianContactEditing=false;S.cloudLinked=false;S.cloudOwnerId=null;save();try{await guardianAuth.signOut();}catch(e){toast(lk('로그아웃 정보를 확인해 주세요.','Check browser sign-out data.','请检查浏览器退出信息。'),false);}};
+  if(state.loading||!state.membership){
+    slot.innerHTML=`<div class="nm-idcard"><p role="status">${state.error?lk('회원 정보를 불러오지 못했어요. 연결을 확인하고 다시 시도해 주세요.','Could not load membership. Check your connection and retry.','无法加载会员信息，请检查网络后重试。'):lk('가입 정보를 확인하고 있어요…','Checking registration…','正在确认注册信息…')}</p><button class="nm-btn" id="nmGuardContactRetry">${lk('다시 확인','Retry','重试')}</button><button class="nm-btn ghost" id="nmGuardOut">${lk('로그아웃','Sign out','退出')}</button></div>`;
+    $('#nmGuardContactRetry').onclick=()=>membership.refresh(true);$('#nmGuardOut').onclick=logout;return true;
+  }
+  slot.innerHTML=`<div class="nm-idcard nm-guard-card"><h3 class="nm-idcard-t">${lk('보호자 휴대폰 번호 · 가입 완료','Guardian phone · Complete registration','监护人手机号 · 完成注册')}</h3><p>${lk('이메일은 학생별로 구분하고, 형제는 같은 보호자 전화번호를 사용할 수 있어요.','Each learner uses a separate email. Siblings may share a guardian phone number.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。')}</p>
+    <form id="nmGuardContactForm" novalidate><div class="nm-guard-field"><label for="nmGuardPhone">${lk('보호자 휴대폰 번호','Guardian mobile number','监护人手机号')}</label><input id="nmGuardPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="13" placeholder="010-0000-0000"></div>
+    <label class="nm-notify-consent"><input id="nmGuardPhoneConsent" type="checkbox" required><span>${lk('보호자 연락·학습 안내를 위한 전화번호 수집·이용에 동의합니다.','I agree to collection and use of this number for guardian contact and learning guidance.','同意为监护人联系和学习指导收集、使用该号码。')}</span></label>
+    <label class="nm-notify-consent"><input id="nmGuardSmsConsent" type="checkbox"><span>${lk('학습지·진도 문자 안내를 받겠습니다. (선택)','Send me worksheet and progress texts. (Optional)','接收学习单和进度短信。（可选）')}</span></label>
+    <button class="nm-btn" id="nmGuardContactSave" type="submit">${lk('저장하고 가입 완료','Save and complete registration','保存并完成注册')}</button><button class="nm-btn ghost" id="nmGuardOut" type="button">${lk('로그아웃','Sign out','退出')}</button>
+    <p class="nm-idcard-msg" id="nmGuardContactMsg" role="status" aria-live="polite"></p></form></div>`;
+  $('#nmGuardOut').onclick=logout;
+  $('#nmGuardContactForm').onsubmit=async event=>{
+    event.preventDefault();const button=$('#nmGuardContactSave'),msg=$('#nmGuardContactMsg');if(button.disabled)return;
+    const phone=$('#nmGuardPhone').value.replace(/\D/g,'');
+    if(!/^01\d{8,9}$/.test(phone)){msg.textContent=lk('휴대폰 번호를 확인해 주세요.','Check the mobile number.','请检查手机号。');return;}
+    if(!$('#nmGuardPhoneConsent').checked){msg.textContent=lk('전화번호 수집·이용 동의를 확인해 주세요.','Please confirm phone collection consent.','请确认同意收集和使用手机号。');return;}
+    button.disabled=true;guardianContactEditing=false;
+    try{await membership.registerContact(phone,true,$('#nmGuardSmsConsent').checked);}
+    catch(e){const current=$('#nmGuardContactMsg');if(current)current.textContent=lk('저장하지 못했어요. 연결을 확인하고 다시 시도해 주세요.','Could not save. Check the connection and retry.','无法保存，请检查网络后重试。');}
+    finally{button.disabled=false;}
+  };
+  return true;
+}
 function renderGuardianCard(){
   const slot=$('#nm-guardian-slot');if(!slot)return;
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
@@ -7872,6 +7981,60 @@ function renderGuardianCard(){
     $('#nmGuardCancel').onclick=()=>{guardianAuth.cancelLink();renderIdCard();};
     return;
   }
+  if(session&&guardianAuth.requiresPassword&&guardianAuth.requiresPassword()){
+    /* 이메일 인증(OTP·메일 링크) 직후: 비밀번호를 만들기 전에는 학생 기록 연결·이어하기를 열지 않는다.
+       비밀번호는 입력칸 값으로만 쓰고 상태·저장소에 남기지 않는다. 화면 갱신은 onChange가 맡는다. */
+    slot.innerHTML=`<div class="nm-idcard nm-guard-card"><div class="nm-idcard-t">${lk('비밀번호를 만들어 주세요','Create a password','请设置密码')}</div>
+      <p>${esc(session.user.email||'')}</p>
+      <p id="nmGuardPasswordHint">${lk('이메일 인증이 끝났어요. 다음부터 이메일과 비밀번호로 로그인할 수 있게 비밀번호를 만들어 주세요. 비밀번호를 저장하기 전에는 학생 기록을 연결할 수 없어요.','Your email is verified. Create a password so you can sign in with your email and password next time. Learner records stay locked until the password is saved.','邮箱已验证。请设置密码，以后可用邮箱和密码登录。保存密码之前，无法关联学生记录。')}</p>
+      <form class="nm-guard-form" id="nmGuardPasswordForm" novalidate>
+        <div class="nm-guard-field"><label for="nmGuardNewPassword">${lk('새 비밀번호 (8자 이상)','New password (8+ characters)','新密码（至少8位）')}</label>
+          <input id="nmGuardNewPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" aria-describedby="nmGuardPasswordHint" required></div>
+        <div class="nm-guard-field"><label for="nmGuardConfirmPassword">${lk('비밀번호 확인','Confirm password','确认密码')}</label>
+          <input id="nmGuardConfirmPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+        <div class="nm-idcard-row"><button class="nm-btn" type="submit" id="nmGuardPasswordSave">${lk('비밀번호 저장','Save password','保存密码')}</button>
+          <button class="nm-btn ghost" type="button" id="nmGuardOut">${lk('이메일 로그아웃','Sign out of email','退出邮箱登录')}</button></div>
+        <p class="nm-idcard-msg" id="nmGuardPasswordMsg" role="status" aria-live="polite"></p>
+      </form></div>`;
+    const passwordError=e=>{
+      const c=e&&e.code,s=e&&e.status;
+      if(c==='invalid_password')return lk('비밀번호는 8자 이상 128자 이하로 입력해 주세요.','Use a password of 8 to 128 characters.','密码需为8至128位。');
+      if(c==='mismatch')return lk('비밀번호가 서로 달라요. 다시 확인해 주세요.','The passwords do not match. Check them and try again.','两次输入的密码不一致，请检查后重试。');
+      if(c==='storage')return lk('이 기기에 로그인 정보를 저장하지 못했어요. 브라우저의 저장 공간·설정을 확인해 주세요.','Could not save sign-in on this device. Check this browser’s storage and settings.','无法在本设备保存登录信息，请检查浏览器的存储和设置。');
+      if(c==='cancelled')return lk('로그인 상태가 바뀌어 비밀번호를 적용하지 않았어요. 다시 시도해 주세요.','Your sign-in changed, so the password was not applied. Try again.','登录状态已变化，密码未生效。请重试。');
+      if(c==='network')return lk('연결에 실패했어요. 인터넷을 확인하고 다시 시도해 주세요.','Connection failed. Check your internet and try again.','连接失败，请检查网络后重试。');
+      if(s===429)return lk('요청이 많아요. 잠시 후 다시 시도해 주세요.','Too many attempts. Try again later.','请求过多，请稍后重试。');
+      if(s===422)return lk('이 비밀번호는 사용할 수 없어요. 다른 비밀번호를 입력해 주세요.','That password was not accepted. Try a different one.','该密码不可用，请换一个密码。');
+      if(c==='nosession'||s===401||s===403)return lk('로그인이 만료됐어요. 로그아웃한 뒤 이메일 인증을 다시 해 주세요.','Your sign-in expired. Sign out and verify your email again.','登录已过期。请退出后重新验证邮箱。');
+      return lk('비밀번호를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.','Could not save the password. Try again later.','无法保存密码，请稍后重试。');
+    };
+    $('#nmGuardPasswordForm').onsubmit=async ev=>{
+      ev.preventDefault();
+      const pwEl=$('#nmGuardNewPassword'),cfEl=$('#nmGuardConfirmPassword'),btn=$('#nmGuardPasswordSave'),msg=$('#nmGuardPasswordMsg');
+      if(btn.disabled)return;
+      const pw=pwEl.value,cf=cfEl.value;
+      if(pw.length<8||pw.length>128){msg.textContent=passwordError({code:'invalid_password'});return;}
+      if(pw!==cf){msg.textContent=passwordError({code:'mismatch'});return;}
+      btn.disabled=true;
+      msg.textContent=lk('비밀번호를 저장하고 있어요…','Saving your password…','正在保存密码…');
+      try{await guardianAuth.setPassword(pw,cf);}
+      catch(e){
+        if(!msg.isConnected)return;
+        pwEl.value='';cfEl.value='';
+        msg.textContent=passwordError(e);btn.disabled=false;
+        return;
+      }
+      // 성공하면 onChange가 이미 화면을 다시 그렸다. 여기서 또 그리지 않는다.
+      if(msg.isConnected){pwEl.value='';cfEl.value='';btn.disabled=false;}
+    };
+    $('#nmGuardOut').onclick=async()=>{
+      S.cloudLinked=false;S.cloudOwnerId=null;save();
+      try{await guardianAuth.signOut();}
+      catch(e){toast(lk('로그인 정보를 지우지 못했어요. 이 브라우저의 사이트 데이터를 확인해 주세요.','Could not remove sign-in. Check this browser’s site data.','无法清除登录信息，请检查浏览器的网站数据。'),false);}
+    };
+    return;
+  }
+  if(session&&renderGuardianContact(slot,lk))return;
   if(session){
     slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('보호자 이메일 인증 완료','Guardian email verified','监护人邮箱已验证')}</div><p>${esc(session.user.email||'')}</p><button class="nm-btn ghost" id="nmGuardOut">${lk('이메일 로그아웃','Sign out of email','退出邮箱登录')}</button></div>`;
     $('#nmGuardOut').onclick=async()=>{
@@ -7880,16 +8043,61 @@ function renderGuardianCard(){
       catch(e){toast(lk('로그인 정보를 지우지 못했어요. 이 브라우저의 사이트 데이터를 확인해 주세요.','Could not remove sign-in. Check this browser’s site data.','无法清除登录信息，请检查浏览器的网站数据。'),false);}
       // onChange가 즉시 갱신한다. 늦은 로그아웃 응답이 새 로그인 입력을 지우지 않는다.
     };
+    const contact=membership&&membership.snapshot().contact;
+    if(contact&&contact.registered){
+      const line=document.createElement('p');line.textContent=(contact.phoneMasked||'')+' · '+(contact.smsConsent?lk('학습지 문자 수신 동의','Worksheet texts enabled','已同意接收学习单短信'):lk('문자 수신 미동의','Worksheet texts disabled','未同意接收短信'));slot.firstElementChild.appendChild(line);
+      const edit=document.createElement('button');edit.className='nm-btn ghost';edit.textContent=lk('휴대폰·문자 동의 변경','Change phone or text consent','修改手机号或短信同意');edit.onclick=()=>{guardianContactEditing=true;renderIdCard();};slot.firstElementChild.appendChild(edit);
+    }
     return;
   }
-  slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('보호자 이메일로 기록 연결','Connect records with a guardian email','用监护人邮箱关联记录')}</div>
-    <p>${lk('다른 기기에서 이어하려면 보호자 이메일을 인증해 주세요.','Verify a guardian email to continue on another device.','请验证监护人邮箱，以便在其他设备上继续学习。')}</p>
-    <label for="nmGuardEmail">${lk('보호자 이메일','Guardian email','监护人邮箱')}</label>
-    <div class="nm-idcard-row"><input id="nmGuardEmail" type="email" autocomplete="email" placeholder="name@example.com"><button class="nm-btn" id="nmGuardSend">${lk('인증 메일 받기','Send verification email','发送验证邮件')}</button></div>
-    <label for="nmGuardToken">${lk('메일 인증번호','Email verification code','邮箱验证码')}</label>
-    <div class="nm-idcard-row"><input id="nmGuardToken" inputmode="numeric" autocomplete="one-time-code" maxlength="12"><button class="nm-btn" id="nmGuardVerify">${lk('이메일 인증','Verify email','验证邮箱')}</button></div>
-    <p class="nm-idcard-msg" id="nmGuardMsg" role="status" aria-live="polite"></p></div>`;
+  slot.innerHTML=`<div class="nm-idcard nm-guard-card"><div class="nm-idcard-t">${lk('보호자 이메일로 기록 연결','Connect records with a guardian email','用监护人邮箱关联记录')}</div>
+    <p>${lk('학생마다 이메일을 따로 사용해요. 형제는 보호자 전화번호가 같아도 돼요. 가입 후 30일 동안 체험할 수 있어요.','Use a separate email for each learner. Siblings may share a guardian phone. Registration includes a 30-day trial.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。注册后可体验30天。')}</p>
+    <div class="nm-guard-field"><label for="nmGuardEmail">${lk('보호자 이메일','Guardian email','监护人邮箱')}</label>
+    <input id="nmGuardEmail" type="email" autocomplete="email" placeholder="name@example.com"></div>
+    <section class="nm-guard-sec" aria-labelledby="nmGuardLoginTitle"><h4 id="nmGuardLoginTitle">${lk('비밀번호가 있어요','I already have a password','我已有密码')}</h4>
+    <form class="nm-guard-form" id="nmGuardLoginForm" novalidate>
+      <div class="nm-guard-field"><label for="nmGuardLoginPassword">${lk('비밀번호','Password','密码')}</label>
+      <input id="nmGuardLoginPassword" type="password" maxlength="128" autocomplete="current-password"></div>
+      <div class="nm-idcard-row"><button class="nm-btn" type="submit" id="nmGuardLogin">${lk('이메일·비밀번호로 로그인','Sign in with email and password','用邮箱和密码登录')}</button></div>
+      <p class="nm-idcard-msg" id="nmGuardLoginMsg" role="status" aria-live="polite"></p>
+    </form></section>
+    <section class="nm-guard-sec" aria-labelledby="nmGuardOtpTitle"><h4 id="nmGuardOtpTitle">${lk('처음이거나 비밀번호를 잊었어요','First visit or forgot password','首次使用或忘记密码')}</h4>
+    <p>${lk('위 이메일로 인증번호를 받아 본인 확인을 한 뒤, 새 비밀번호를 만들어요.','Get a code at the email above, verify it, then create a new password.','通过上方邮箱获取验证码并验证后，再设置新密码。')}</p>
+    <div class="nm-idcard-row"><button class="nm-btn" id="nmGuardSend">${lk('인증 메일 받기','Send verification email','发送验证邮件')}</button></div>
+    <div class="nm-guard-field"><label for="nmGuardToken">${lk('메일 인증번호','Email verification code','邮箱验证码')}</label>
+    <div class="nm-idcard-row"><input id="nmGuardToken" inputmode="numeric" autocomplete="one-time-code" maxlength="12"><button class="nm-btn" id="nmGuardVerify">${lk('이메일 인증','Verify email','验证邮箱')}</button></div></div>
+    <p class="nm-idcard-msg" id="nmGuardMsg" role="status" aria-live="polite"></p></section></div>`;
   const message=()=>$('#nmGuardMsg');
+  const loginError=e=>{
+    const c=e&&e.code,s=e&&e.status;
+    if(c==='invalid_email')return lk('이메일 주소를 확인해 주세요.','Enter a valid email address.','请输入有效的邮箱地址。');
+    if(c==='invalid_password')return lk('비밀번호를 입력해 주세요.','Enter your password.','请输入密码。');
+    if(c==='storage')return lk('이 기기에 로그인 정보를 저장하지 못했어요. 브라우저의 저장 공간·설정을 확인해 주세요.','Could not save sign-in on this device. Check this browser’s storage and settings.','无法在本设备保存登录信息，请检查浏览器的存储和设置。');
+    if(c==='cancelled')return lk('로그인이 취소됐어요. 다시 시도해 주세요.','Sign-in was cancelled. Try again.','登录已取消，请重试。');
+    if(c==='network')return lk('연결에 실패했어요. 인터넷을 확인하고 다시 시도해 주세요.','Connection failed. Check your internet and try again.','连接失败，请检查网络后重试。');
+    if(s===429)return lk('시도가 너무 많아요. 잠시 후 다시 해 주세요.','Too many attempts. Try again later.','尝试次数过多，请稍后再试。');
+    if(s===400||s===401||s===403)return lk('이메일 또는 비밀번호가 맞지 않아요. 처음이거나 비밀번호를 잊었다면 아래 인증번호로 로그인해 주세요.','Email or password is incorrect. If this is your first visit or you forgot it, use the email code below.','邮箱或密码不正确。若首次使用或忘记密码，请使用下方验证码。');
+    return lk('로그인하지 못했어요. 잠시 후 다시 시도해 주세요.','Could not sign in. Try again later.','无法登录，请稍后重试。');
+  };
+  $('#nmGuardLoginForm').onsubmit=async ev=>{
+    ev.preventDefault();
+    const btn=$('#nmGuardLogin'),pwEl=$('#nmGuardLoginPassword'),msg=$('#nmGuardLoginMsg');
+    if(btn.disabled)return;
+    if(!guardianAuth){msg.textContent=lk('인증 도구를 불러오지 못했어요. 새로고침해 주세요.','Reload to load email sign-in.','请刷新页面以加载邮箱登录。');return;}
+    const email=$('#nmGuardEmail').value.trim(),pw=pwEl.value;
+    if(!email){msg.textContent=loginError({code:'invalid_email'});return;}
+    if(!pw){msg.textContent=loginError({code:'invalid_password'});return;}
+    btn.disabled=true;
+    msg.textContent=lk('로그인하고 있어요…','Signing in…','正在登录…');
+    try{await guardianAuth.signInWithPassword(email,pw);}
+    catch(e){
+      if(!msg.isConnected)return;
+      pwEl.value='';msg.textContent=loginError(e);btn.disabled=false;
+      return;
+    }
+    // 성공하면 onChange가 이미 화면을 다시 그렸다. 여기서 또 그리지 않는다.
+    if(msg.isConnected){pwEl.value='';btn.disabled=false;}
+  };
   async function request(verify){
     const btn=$(verify?'#nmGuardVerify':'#nmGuardSend'),email=$('#nmGuardEmail').value.trim(),token=$('#nmGuardToken').value.trim();
     if(!guardianAuth){message().textContent=lk('인증 도구를 불러오지 못했어요. 새로고침해 주세요.','Reload to load email verification.','请刷新页面以加载邮箱验证。');return;}
@@ -7913,6 +8121,14 @@ function renderIdCard(){
   const guardian=guardianAuth&&guardianAuth.peek();
   if(!guardian){
     slot.innerHTML=`<div class="nm-idcard">${ko?'학습 기록은 이 기기에 저장돼요. 보호자 이메일을 인증하면 기록을 연결할 수 있어요.':en?'Learning records are saved on this device. Verify a guardian email to connect them.':'学习记录保存在本设备上。验证监护人邮箱后即可关联记录。'}</div>`;
+    return;
+  }
+  if(guardianAuth.requiresPassword&&guardianAuth.requiresPassword()){
+    slot.innerHTML=`<div class="nm-idcard">${ko?'비밀번호 설정을 마치면 학생 기록을 연결할 수 있어요.':en?'Finish setting your password to connect learner records.':'完成密码设置后即可关联学生记录。'}</div>`;
+    return;
+  }
+  if(membership&&!membership.contactReady()){
+    slot.innerHTML=`<div class="nm-idcard">${ko?'휴대폰 등록을 마치면 학생 기록을 연결할 수 있어요.':en?'Finish phone registration to connect learner records.':'完成手机号登记后即可关联学生记录。'}</div>`;
     return;
   }
   if(S.cloudLinked&&S.cloudOwnerId===guardian.user.id){
@@ -7955,7 +8171,7 @@ function renderIdCard(){
           return;
         }
         existing=await cloudGet(name).catch(()=>null);
-        if(!existing){btn.disabled=false;msg.textContent=ko?'기존 기록의 보호자 연결을 학원에 요청하거나 다른 이름을 사용해 주세요.':en?'Ask your academy to link the older profile, or choose another name.':'请联系学院关联旧记录，或使用其他名字。';return;}
+        if(!existing){btn.disabled=false;msg.textContent=ko?'이 이메일에 이미 학생이 있으면 기존 학생 이름으로 이어해 주세요. 다른 학생은 별도 이메일을 사용해 주세요. 기존 기록 연결은 학원에 문의해 주세요.':en?'If this email already has a learner, continue with that learner’s name. Use a separate email for another learner. Contact your academy to link older records.':'若此邮箱已关联学生，请使用原学生姓名继续。其他学生请使用不同邮箱。关联旧记录请联系学院。';return;}
       }catch(e){ btn.disabled=false; msg.textContent=ko?'등록에 실패했어요. 잠시 후 다시!':en?'Failed — try again soon.':'注册失败，请稍后再试。'; return; }
     }
     /* 이미 있는 이름 → 이어하기 / 다른 이름 */
@@ -7998,9 +8214,9 @@ function screenExam(){
     </div>
     <div class="nm-step-body nm-wsh-wrap">
       <div class="nm-card nm-gate-card-inline">
-        <div class="nm-card-h">🔒 ${ko?'학습지 인쇄는 학원 승인 후 열려요':en?'Worksheet printing unlocks after academy approval':'学院授权后才能打印学习单'}</div>
-        <p class="nm-wsh-sentence">${ko?'승인번호가 있으면 지금 바로 열 수 있어요.':en?'If you already have a code, you can unlock it right now.':'有授权码即可立即解锁。'}</p>
-        <button class="nm-btn full" id="examGate">🔑 ${ko?'승인번호 입력':en?'Enter code':'输入授权码'}</button>
+        <div class="nm-card-h">🔒 ${ko?'가입·이용기간을 확인해 주세요':en?'Check registration and membership':'请确认注册和使用期限'}</div>
+        <p class="nm-wsh-sentence">${ko?'이메일 인증 후 30일 체험할 수 있어요. 이후에는 학원에서 6개월 또는 1년 이용을 승인해요.':en?'Verify your email for a 30-day trial. Your academy can then approve 6 months or 1 year.':'验证邮箱后可体验30天，之后可由学院批准6个月或1年的使用期。'}</p>
+        <button class="nm-btn full" id="examGate">${ko?'가입·이용 상태 보기':en?'View registration and membership':'查看注册及使用状态'}</button>
       </div>
     </div>`;
     $('#backExam').onclick=()=>{S.view='town';save();render();};

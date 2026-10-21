@@ -3794,3 +3794,29 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
     linear-gradient(180deg,var(--sc-a,#fff8e6),var(--sc-b,#f3e3bd))}
 .nm-kid-hero .nm-art-obj{width:1.1em;height:1.1em;vertical-align:middle}
 .nm-unit-ic .nm-art-obj{width:1.1em;height:1.1em;vertical-align:middle}
+
+/* 보호자 이메일·비밀번호 카드 — 390px에서도 가로로 넘치지 않고, 입력은 16px(iOS 확대 방지)·44px 이상 */
+.nm-guard-card{box-sizing:border-box;max-width:100%;min-width:0;overflow-wrap:anywhere;word-break:keep-all}
+.nm-guard-card p,.nm-guard-card label,.nm-guard-card .nm-idcard-t{word-break:keep-all;overflow-wrap:break-word}
+.nm-guard-card b{overflow-wrap:anywhere;word-break:break-all}
+.nm-guard-card .nm-idcard-row{display:flex;flex-wrap:wrap;gap:8px;min-width:0;max-width:100%}
+.nm-guard-card .nm-guard-field{display:flex;flex-direction:column;gap:4px;margin:8px 0;min-width:0}
+.nm-guard-card .nm-guard-field label{font-size:13px;font-weight:800}
+.nm-guard-card input[type=email],
+.nm-guard-card input[type=password],
+.nm-guard-card input[type=text],
+.nm-guard-card input:not([type]){box-sizing:border-box;width:100%;min-width:0;min-height:44px;font-size:16px;line-height:1.3;padding:8px 12px;font-family:inherit}
+.nm-guard-card .nm-idcard-row input{flex:1 1 160px;width:auto}
+.nm-guard-card .nm-btn{min-height:44px;max-width:100%;white-space:normal;word-break:keep-all;overflow-wrap:break-word;line-height:1.25}
+.nm-guard-card .nm-idcard-row .nm-btn{flex:1 1 auto}
+.nm-guard-card .nm-guard-form{margin:0;padding:0;border:0;min-width:0}
+.nm-guard-card .nm-guard-sec{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.nm-guard-card .nm-guard-sec>h4{margin:0 0 4px;font-size:14px;font-weight:900;word-break:keep-all;overflow-wrap:break-word}
+.nm-guard-card .nm-idcard-msg,.nm-guard-card .nm-guard-status{word-break:keep-all;overflow-wrap:break-word;min-height:1.3em}
+.nm-personal-plan{flex:none;margin:12px 16px;border:1px solid #ccdada;border-radius:16px;background:#fffcf4;color:#173c47;max-height:65vh;overflow:auto;word-break:keep-all;overflow-wrap:anywhere}
+.nm-personal-plan>summary{cursor:pointer;padding:14px 18px;font-weight:800;min-height:48px}
+.nm-personal-plan-body{padding:0 18px 18px;font-size:16px;line-height:1.65}
+.nm-personal-plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px}
+.nm-personal-plan-grid article{padding:12px;border:1px solid #d2dedc;border-radius:12px;background:#fff}
+.nm-personal-plan h4{margin:0 0 8px;font-size:17px}.nm-personal-plan h4 small{display:block;font-size:14px;font-weight:500}
+.nm-personal-plan-grid p{margin:7px 0}.nm-personal-plan-grid span{display:block;font-size:14px}.nm-personal-plan aside{margin-top:14px;padding:14px;border-radius:12px;background:#edf4f2}.nm-personal-plan a{color:#245c70;text-decoration:underline}
