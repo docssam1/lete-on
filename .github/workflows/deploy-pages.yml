@@ -15,6 +15,7 @@ on:
       - 'personality/**'
       - 'premier/**'
       - 'promo/hwangso-last-month/**'
+      - 'popcorn/**'
       - 'promo/popcorn-lab/**'
       - 'reading-world/**'
       - 'roadmap/**'
@@ -74,6 +75,7 @@ jobs:
           mkdir -p _site/personality
           mkdir -p _site/premier
           mkdir -p _site/promo/hwangso-last-month
+          mkdir -p _site/popcorn
           mkdir -p _site/promo/popcorn-lab
           mkdir -p _site/reading-world
           mkdir -p _site/roadmap
@@ -116,6 +118,14 @@ jobs:
           rm -rf _site/science-lab/bank/tools _site/science-lab/bank/audit.mjs _site/science-lab/bank/taxonomy/build.mjs
           find _site/science-lab -type f -name '*.md' -delete
           test ! -e _site/science-lab/bank/tools
+          # 팝콘 실험실은 과학 탐구 랩과 다른 프로그램이라 /popcorn/ 에 둔다(2026-10-20 원장). 옛 주소(/science-lab/popcorn/…)는 새 주소로 넘긴다 — 북마크·QR 유지
+          cp -R popcorn/. _site/popcorn/
+          find _site/popcorn -type f -name '*.md' -delete
+          (cd popcorn && find . -type f -name '*.html') | while read -r f; do
+            mkdir -p "_site/science-lab/popcorn/$(dirname "$f")"
+            printf '%s\n' '<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><title>팝콘 실험실 · 주소가 옮겨졌어요</title><script>location.replace(location.href.replace("/science-lab/popcorn/","/popcorn/"))</script><p>팝콘 실험실 주소가 옮겨졌어요. <a href="/popcorn/">새 주소로 가기</a></p>' > "_site/science-lab/popcorn/$f"
+          done
+          test -f _site/science-lab/popcorn/charles-01/current/companion/index.html
           cp -R vocab-quiz/. _site/vocab-quiz/
           cp -R world-explorer/. _site/world-explorer/
           cp -R yubin-yujun-store/. _site/yubin-yujun-store/

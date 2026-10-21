@@ -3,7 +3,7 @@ import {photoFigureHtml} from './photo-figure.js';
 // 화면과 교재는 같은 단원 데이터(data/units/*.js)를 쓴다.
 import { towerModel } from './lab-ring-tower.js';
 import { mount3D, LABS, mountLabOf } from './mounts.js';
-import { pageHome } from './home.js?v=15';
+import { pageHome } from './home.js?v=16';
 import { escapeInApp } from './inapp.js';
 import { SEMS, BANK, READY } from './units-index.js';
 import { placeLabel, placeNow } from './curriculum-place.js';
