@@ -435,7 +435,7 @@ window.NM_GATE={trialUnitSet,isTrialUnit,unitLocked,accountActive,externalBlocke
 /* 체험 범위 밖의 유닛은 학원 승인 상태를 확인한다. */
 function accountActive(){
   if(membership&&guardianAuth?.peek())return S.cloudLinked&&S.cloudOwnerId===guardianAuth.peek().user.id&&!guardianAuth.requiresPassword()&&membership.contactReady()&&membership.canUse();
-  return !!(S.account&&S.account.status==='active'); // preserve existing local approvals until guardian enrollment
+  return !S.guardianManaged&&!!(S.account&&S.account.status==='active'); // preserve local approvals only until guardian enrollment
 }
 function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 
@@ -481,8 +481,10 @@ if(membership&&guardianAuth){
 }
 function applyAdminSettings(){
   const record=membership&&membership.snapshot();const p=record&&record.settings;
-  if(!p||p.profileName!==S.name||record.owner!==S.cloudOwnerId)return false;
-  const changed=!S.adminPlan||S.adminPlan.version!==p.version;
+  let changed=false;
+  if(record?.contact?.registered&&S.cloudLinked&&record.owner===S.cloudOwnerId&&record.owner===guardianAuth?.peek()?.user.id&&!S.guardianManaged){S.guardianManaged=true;changed=true;}
+  if(!p||p.profileName!==S.name||record.owner!==S.cloudOwnerId)return changed;
+  changed=changed||!S.adminPlan||S.adminPlan.version!==p.version;
   S.adminPlan={...p};S.roadSpeed=p.speed;S.roadAmount=p.amount;S.roadCadence=p.cadence;S.roadPace='p2';
   if(p.entryYear)S.schoolAge={entryYear:p.entryYear,setAt:Date.parse(p.updatedAt)||Date.now()};
   return changed;
@@ -7895,6 +7897,11 @@ function renderNotifyCard(){
 function renderAccountCard(){
   const slot=$('#nm-account-slot');
   if(!slot)return;
+  if(membership&&!guardianAuth?.peek()&&(S.guardianManaged||S.account?.status!=='active')){
+    const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('이메일 가입 · 이용권','Email registration · Membership','邮箱注册 · 使用权')}</div><p>${lk('위에서 이메일로 로그인해 주세요. 처음 가입하면 30일 체험하고, 이후에는 6개월·1년 이용권을 학원에서 승인해 드려요.','Sign in above with your email. New registration includes a 30-day trial; your academy then approves a 6-month or 1-year plan.','请在上方使用邮箱登录。首次注册可体验30天，之后由学院开通6个月或1年使用权。')}</p></div>`;
+    return;
+  }
   const ko=S.lang==='ko', en=S.lang==='en';
   if(membership&&guardianAuth?.peek()){
     const state=membership.snapshot(),m=state.membership;

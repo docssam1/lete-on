@@ -182,6 +182,8 @@ const server=http.createServer((req,res)=>{
     assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).progress),original.progress);checks++;
     await page.click('#nmGuardOut');await page.waitForSelector('#nmGuardEmail');
     assert.equal(await page.evaluate(()=>localStorage.getItem('nm_guardian_session_v1')),null);
+    assert.equal(await page.evaluate(()=>NM_GATE.accountActive()),false,'logout cannot reactivate a legacy local approval after guardian enrollment');
+    assert.equal(await page.locator('#accCode').count(),0,'enrolled learner is not offered a legacy approval-code bypass');
     assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).progress),original.progress);checks++;
     assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2)),'email controls fit mobile viewport');
     // Later sign-in works with email + password (no OTP), and a wrong password shows a safe message.
