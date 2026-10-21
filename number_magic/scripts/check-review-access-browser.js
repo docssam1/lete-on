@@ -15,19 +15,12 @@ try{
   await c.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1')){localStorage.setItem('nm_state_v1',JSON.stringify(s));localStorage.setItem('nm_state_slot1','keep-real-slot');localStorage.setItem('nm_active_slot','2');localStorage.setItem('nm_guardian_session_v1','keep-real-guardian-session');}},original);
   await p.goto(base+'/number_magic/about.html');await p.locator('.skipbtn').click();await p.waitForURL('**/access.html');assert.equal(await p.locator('#guardian-link').count(),1);
   await p.locator('.access-lang[data-lang="'+lang+'"]').click();
-  assert.equal(await p.locator('#guardian-tab').getAttribute('aria-selected'),'true');
-  assert.equal(await p.locator('#review-panel').isVisible(),false);
-  await p.locator('#guardian-tab').focus();await p.keyboard.press('ArrowRight');
-  assert.equal(await p.locator('#review-tab').getAttribute('aria-selected'),'true');
-  assert.equal(await p.locator('#guardian-panel').isVisible(),false);
-  await p.fill('#review-code','discard-on-tab-change');await p.locator('#review-tab').focus();await p.keyboard.press('Home');
-  assert.equal(await p.locator('#review-code').inputValue(),'');
-  await p.keyboard.press('End');assert.equal(await p.locator('#review-panel').isVisible(),true);
-  assert.equal(p.url().includes('access.html'),true,'changing login type stays in the same window');
-  for(const id of ['guardian-tab','review-tab','review-user','review-code','review-submit']){const box=await p.locator('#'+id).boundingBox();assert(box.width>=44&&box.height>=44,id+' touch size');}
-  if(OUT)await p.screenshot({path:path.join(OUT,`${width}-${lang}-master-login.png`)});
-  await p.fill('#review-user','review-fixture');await p.fill('#review-code','wrong-fixture');await p.click('#review-submit');await p.waitForFunction(()=>!document.getElementById('review-submit').disabled);assert.equal(await p.locator('#review-code').inputValue(),'');
-  await p.fill('#review-code','fixture-only-code');await p.click('#review-submit');await p.waitForURL('**/index.html?**review=1**');await p.waitForFunction(()=>!!window.NM_GATE);
+  assert.equal(await p.locator('[role="tab"],#review-form,#review-submit').count(),0,'one common login form, no master selector');
+  assert.equal(await p.locator('form').count(),1);
+  for(const id of ['login-user','login-password','login-submit']){const box=await p.locator('#'+id).boundingBox();assert(box.width>=44&&box.height>=44,id+' touch size');}
+  if(OUT)await p.screenshot({path:path.join(OUT,`${width}-${lang}-login.png`)});
+  await p.fill('#login-user','review-fixture');await p.fill('#login-password','wrong-fixture');await p.click('#login-submit');await p.waitForFunction(()=>!document.getElementById('login-submit').disabled);assert.equal(await p.locator('#login-password').inputValue(),'');
+  await p.fill('#login-password','fixture-only-code');await p.click('#login-submit');await p.waitForURL('**/index.html?**review=1**');await p.waitForFunction(()=>!!window.NM_GATE);
   assert.equal(await p.locator('.nm-review-banner').count(),1);assert.equal(await p.evaluate(()=>Object.keys(NM_UNITS).filter(k=>NM_GATE.unitLocked(k)).length),0,'all learning units available to a validated review session');
   const rawOriginal=JSON.stringify(original);const untouched=()=>p.evaluate(raw=>({normal:localStorage.getItem('nm_state_v1')===raw,slot:localStorage.getItem('nm_state_slot1'),active:localStorage.getItem('nm_active_slot'),guardian:localStorage.getItem('nm_guardian_session_v1')}),rawOriginal);
   assert.deepEqual(await untouched(),{normal:true,slot:'keep-real-slot',active:'2',guardian:'keep-real-guardian-session'});
@@ -44,8 +37,27 @@ try{
   valid=false;await p.evaluate(()=>{sessionStorage.setItem('nm_review_session_v1',JSON.stringify({token:'a'.repeat(64)}));sessionStorage.setItem('nm_entry_once_v1',JSON.stringify({mode:'review',at:Date.now()}));});await p.goto(base+'/number_magic/index.html?enter=1&review=1');await p.waitForURL('**/access.html?reason=expired');assert.equal(await p.locator('.nm-review-banner').count(),0);assert.equal((await untouched()).normal,true);
   assert.deepEqual(errors,[]);assert.deepEqual(backend,[],'review never calls real guardian/profile/contact/membership APIs');report.push({width,lang,approvalEntry:true,allUnitsUnlocked:true,realProfileAndGuardianPreserved:true,pointsIsolated:true,logout:true,rejectedSessionClosed:true,errors});await c.close();
  }
- // The guardian approval route opens even with an existing onboarded learner.
- const c=await b.newContext(),p=await c.newPage();await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());await c.addInitScript(()=>localStorage.setItem('nm_state_v1',JSON.stringify({lang:'ko',onboarded:true,name:'Existing fixture',avatar:{kind:'boy'},view:'town',account:{status:'active'},progress:{}})));
- await p.goto(base+'/number_magic/access.html');await p.click('#guardian-link');await p.waitForSelector('#nmGuardEmail');assert.equal(await p.locator('#nmGuardBack').count(),1);await c.close();
+ // Email and username share the same form. Same-visit auth crosses once; reload asks again.
+ for(const lang of ['ko','en','zh']){
+ const c=await b.newContext({viewport:{width:390,height:667}}),p=await c.newPage(),authCalls=[],reviewCalls=[],errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());
+ await c.route('**/functions/v1/nm-review',r=>{reviewCalls.push(r.request().postDataJSON());return r.abort();});
+ await c.route('**/auth/v1/token?grant_type=password',r=>{const d=r.request().postDataJSON();authCalls.push(d);if(d.password!=='Guardian-fixture-1')return r.fulfill({status:400,json:{error_description:'do-not-display-'+d.password}});return r.fulfill({json:{access_token:'guardian-fixture-token',refresh_token:'guardian-fixture-refresh',expires_in:3600,user:{id:'guardian-fixture-owner',email:d.email}}});});
+ await c.route('**/functions/v1/nm-membership',r=>r.fulfill({json:{membership:{userId:'guardian-fixture-owner',status:'trial',canUse:true,trialEndsAt:new Date(Date.now()+86400000).toISOString(),serverNow:new Date().toISOString()},contact:{registered:true,smsConsent:false,phoneMasked:'010-****-1234'}}}));
+ await c.addInitScript(lang=>{if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify({lang,onboarded:true,name:'Existing fixture',avatar:{kind:'boy'},view:'town',account:{status:'active'},progress:{}}));},lang);
+ await p.goto(base+'/number_magic/access.html?lang='+lang+'&ws=fixture-sheet');
+ await p.fill('#login-user','guardian@example.test');await p.fill('#login-password','Wrong-fixture');await p.click('#login-submit');await p.waitForFunction(()=>!document.getElementById('login-submit').disabled);assert.equal(await p.inputValue('#login-password'),'');assert(!(await p.locator('#login-status').innerText()).includes('Wrong-fixture'));
+ await p.fill('#login-password','Guardian-fixture-1');await p.click('#login-submit');await p.waitForURL('**/index.html?**');
+ await p.waitForFunction(()=>!!window.NM_PROFILE_AUTH?.peek());await p.waitForFunction(()=>document.getElementById('nmGuardBack')?.textContent.match(/학습 화면|Learning screen|学习界面/));
+ assert.equal(await p.locator('#nmGuardLoginForm,#nmGuardPasswordForm,.nm-review-banner').count(),0,'no second login or password setup');assert.equal(authCalls.length,2);assert.equal(reviewCalls.length,0,'email credentials never reach review API');assert(p.url().includes('ws=fixture-sheet'));
+ assert.equal(await p.evaluate(()=>sessionStorage.getItem('nm_entry_once_v1')),null,'handoff consumed');
+ const stored=await p.evaluate(()=>JSON.stringify({...localStorage,...sessionStorage}));assert(!stored.includes('Guardian-fixture-1')&&!stored.includes('Wrong-fixture'),'passwords never persisted');
+ await p.click('#nmGuardBack');await p.waitForFunction(()=>!document.getElementById('nmGuardBack'));
+ await p.reload();await p.waitForURL(/access\.html/);assert.equal(authCalls.length,2,'no automatic password submission after reload');
+ // Even auth=1 may not restore a previous login without the freshly consumed ticket.
+ await p.goto(base+'/number_magic/index.html?enter=1&auth=1');await p.waitForSelector('#nmGuardEmail');assert.equal(await p.evaluate(()=>NM_PROFILE_AUTH.peek()),null);
+ await p.click('#nmGuardBack');await p.waitForURL('**/access.html');await p.click('#guardian-link');await p.waitForSelector('#nmGuardSend');
+ assert.deepEqual(errors,[]);report.push({lang,sharedEmailLogin:true,noDuplicateLogin:true,signupRecoveryAvailable:true,reloadRequiresLogin:true,passwordRequests:authCalls.length,externalWrites:0});await c.close();
+ }
  if(OUT)fs.writeFileSync(path.join(OUT,'review-access.json'),JSON.stringify(report,null,2));console.log('OK: approval skip/guardian route, ko/en/zh390/1280px, full learning-only review, separate points/progress/slots/guardian data, no stored credentials, logout/invalid session');
 }finally{await b.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

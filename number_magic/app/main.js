@@ -477,9 +477,9 @@ const SB_URL='https://fgahqumaldheqettmvqg.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
 const sbHdr=()=>({apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'});
 const guardianAuth=REVIEW?null:window.NM_PROFILE_AUTH;
-let guardianEntry=!REVIEW&&new URLSearchParams(location.search).get('auth')==='1',booted=false,guardianContactEditing=false;
+let guardianEntry=!REVIEW&&(new URLSearchParams(location.search).get('auth')==='1'||!!window.NM_ENTRY?.guardianUserId),booted=false,guardianContactEditing=false;
 if(guardianAuth){
-  guardianAuth.configure({url:SB_URL,anonKey:SB_KEY,freshEntry:['guardian','preview'].includes(window.NM_ENTRY?.mode)});
+  guardianAuth.configure({url:SB_URL,anonKey:SB_KEY,freshEntry:['guardian','preview'].includes(window.NM_ENTRY?.mode),entryUserId:window.NM_ENTRY?.guardianUserId});
   const refreshGuardianUI=()=>{
     if(!booted)return;
     if(guardianAuth.pendingLink&&guardianAuth.pendingLink()){

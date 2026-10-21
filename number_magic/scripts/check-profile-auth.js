@@ -663,6 +663,18 @@ test('fresh entry clears only old authentication and ignores another tab login',
   assert.strictEqual(env.auth.peek(),null);assert.strictEqual(env.calls.length,0);
 });
 
+test('same-visit handoff restores only matching guardian and still ignores other-tab login', async () => {
+  for(const id of ['u1','other-user']){
+    const env=makeEnv({storage:{[KEY]:JSON.stringify(mkSession()),nm_state_v1:'keep-learner'},handler:()=>{throw new Error('unexpected network');}});
+    env.auth.configure({url:URL_BASE,anonKey:'anon-test',freshEntry:true,entryUserId:id});
+    const view=await env.auth.ready();
+    assert.strictEqual(view&&view.user.id,id==='u1'?'u1':null);
+    env.fire('storage',{key:KEY,newValue:JSON.stringify(mkSession({user:{id:'other-user'}}))});
+    assert.strictEqual(env.auth.peek()?.user.id,id==='u1'?'u1':undefined);
+    assert.strictEqual(env.data.nm_state_v1,'keep-learner');
+  }
+});
+
 (async () => {
   let failed = 0;
   for (const [name, fn] of tests) {

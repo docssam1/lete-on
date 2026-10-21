@@ -2,92 +2,72 @@
   'use strict';
   var KEY = 'nm_access_lang';
   var T = {
-    ko: {
-      title: '수의 마법 · 승인·로그인', lead: '시작하는 방법을 선택해 주세요.',
-      gTab: '보호자 로그인', rTab: '마스터 점검',
-      gTitle: '보호자 로그인·가입',
-      gDesc: '가입한 보호자는 이메일과 비밀번호로 로그인합니다. 처음 가입할 때만 이메일 인증 후 비밀번호를 만듭니다.',
-      gTrial: '이메일 인증 후 30일 동안 체험할 수 있어요. 정식 이용은 학원 승인 후 시작됩니다.',
-      gBtn: '보호자 이메일로 로그인·가입',
-      rSummary: '마스터 점검 로그인',
-      rHint: '이메일 인증 없이 점검용 아이디와 확인 코드로 로그인합니다.',
-      rDesc: '전체 학습 기능을 확인하는 점검용 계정입니다. 학생 관리 권한은 없으며 실제 학생 진도·포인트와 따로 저장됩니다.',
-      rUser: '아이디', rCode: '확인 코드', rBtn: '마스터 점검 로그인',
-      preview: '가입 전 둘러보기', back: '소개로 돌아가기',
-      empty: '아이디와 확인 코드를 입력해 주세요.', busy: '확인 중입니다…', ok: '확인되었습니다. 이동합니다…',
-      invalid_credentials: '아이디 또는 확인 코드가 올바르지 않습니다.',
-      rate_limited: '시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.',
-      network: '네트워크 연결을 확인해 주세요.',
-      storage: '이 브라우저에서 저장 공간을 사용할 수 없습니다.',
-      unavailable: '지금은 이용할 수 없습니다. 잠시 후 다시 시도해 주세요.'
-    },
-    en: {
-      title: 'Numbers of Magic · Approval & Login', lead: 'Choose how you would like to begin.',
-      gTab: 'Guardian login', rTab: 'Master review',
-      gTitle: 'Guardian login / sign up',
-      gDesc: 'Returning guardians log in with their email and password. Email verification and password setup are only needed when signing up.',
-      gTrial: 'Try the program for 30 days after email verification. Full membership starts after academy approval.',
-      gBtn: 'Log in / sign up with guardian email',
-      rSummary: 'Master review login',
-      rHint: 'Log in with your review username and code. Email verification is not required.',
-      rDesc: 'A review account for checking all learning features. It has no student management access, and its data is stored separately from real student progress and points.',
-      rUser: 'Username', rCode: 'Code', rBtn: 'Master review login',
-      preview: 'Look around before signing up', back: 'Back to introduction',
-      empty: 'Please enter the username and code.', busy: 'Checking…', ok: 'Verified. Moving on…',
-      invalid_credentials: 'The username or code is incorrect.',
-      rate_limited: 'Too many attempts. Please try again later.',
-      network: 'Please check your network connection.',
-      storage: 'Storage is unavailable in this browser.',
-      unavailable: 'Unavailable right now. Please try again later.'
-    },
-    zh: {
-      title: '数字魔法 · 审批·登录', lead: '请选择开始方式。',
-      gTab: '监护人登录', rTab: '主账号检查',
-      gTitle: '监护人登录·注册',
-      gDesc: '已注册的监护人使用邮箱和密码登录。首次注册时才需验证邮箱并设置密码。',
-      gTrial: '邮箱验证后可体验30天，正式会员在学苑审批后开始使用。',
-      gBtn: '使用监护人邮箱登录·注册',
-      rSummary: '主账号检查登录',
-      rHint: '使用检查账号和验证码登录，无需邮箱验证。',
-      rDesc: '这是用于查看全部学习功能的检查账号。没有学生管理权限,数据与真实学生的进度和积分分开保存。',
-      rUser: '账号', rCode: '验证码', rBtn: '主账号检查登录',
-      preview: '注册前先看看', back: '返回介绍',
-      empty: '请输入账号和验证码。', busy: '正在确认…', ok: '已确认,正在跳转…',
-      invalid_credentials: '账号或验证码不正确。',
-      rate_limited: '尝试次数过多,请稍后再试。',
-      network: '请检查网络连接。',
-      storage: '此浏览器无法使用存储空间。',
-      unavailable: '目前无法使用,请稍后再试。'
-    }
-  };
-  var lang = 'ko', busy = false;
-  var $ = function (id) { return document.getElementById(id); };
-  var form = $('review-form'), user = $('review-user'), code = $('review-code'),
-      btn = $('review-submit'), status = $('review-status');
-
-  var tabs = [$('guardian-tab'), $('review-tab')];
-  function selectTab(index, focus) {
-    if (busy) return;
-    var changed = tabs[index].getAttribute('aria-selected') !== 'true';
-    tabs.forEach(function (tab, i) {
-      tab.setAttribute('aria-selected', String(i === index));
-      tab.tabIndex = i === index ? 0 : -1;
-      $(tab.getAttribute('aria-controls')).hidden = i !== index;
-    });
-    if (changed) { code.value = ''; setStatus(''); }
-    if (focus) tabs[index].focus();
+  "ko": {
+    "title": "수의 마법 · 승인·로그인",
+    "lead": "이메일 또는 아이디로 로그인해 주세요.",
+    "loginTitle": "로그인",
+    "user": "이메일 또는 아이디",
+    "password": "비밀번호",
+    "login": "로그인",
+    "signup": "처음이거나 비밀번호를 잊었어요",
+    "preview": "가입 전 둘러보기",
+    "back": "소개로 돌아가기",
+    "empty": "이메일 또는 아이디와 비밀번호를 입력해 주세요.",
+    "busy": "로그인하고 있어요…",
+    "ok": "확인되었습니다. 이동합니다…",
+    "invalid_credentials": "이메일·아이디 또는 비밀번호가 맞지 않습니다.",
+    "invalid_email": "이메일 주소를 확인해 주세요.",
+    "rate_limited": "시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+    "network": "네트워크 연결을 확인해 주세요.",
+    "storage": "이 브라우저에서 저장 공간을 사용할 수 없습니다.",
+    "unavailable": "지금은 이용할 수 없습니다. 잠시 후 다시 시도해 주세요."
+  },
+  "en": {
+    "title": "Numbers of Magic · Approval & Login",
+    "lead": "Log in with your email or username.",
+    "loginTitle": "Login",
+    "user": "Email or username",
+    "password": "Password",
+    "login": "Log in",
+    "signup": "First visit or forgot your password?",
+    "preview": "Look around before signing up",
+    "back": "Back to introduction",
+    "empty": "Enter your email or username and password.",
+    "busy": "Signing in…",
+    "ok": "Verified. Moving on…",
+    "invalid_credentials": "The email, username or password is incorrect.",
+    "invalid_email": "Enter a valid email address.",
+    "rate_limited": "Too many attempts. Please try again later.",
+    "network": "Please check your network connection.",
+    "storage": "Storage is unavailable in this browser.",
+    "unavailable": "Unavailable right now. Please try again later."
+  },
+  "zh": {
+    "title": "数字魔法 · 审批·登录",
+    "lead": "请使用邮箱或账号登录。",
+    "loginTitle": "登录",
+    "user": "邮箱或账号",
+    "password": "密码",
+    "login": "登录",
+    "signup": "首次使用或忘记密码？",
+    "preview": "注册前先看看",
+    "back": "返回介绍",
+    "empty": "请输入邮箱或账号及密码。",
+    "busy": "正在登录…",
+    "ok": "已确认，正在跳转…",
+    "invalid_credentials": "邮箱、账号或密码不正确。",
+    "invalid_email": "请输入有效的邮箱地址。",
+    "rate_limited": "尝试次数过多，请稍后再试。",
+    "network": "请检查网络连接。",
+    "storage": "此浏览器无法使用存储空间。",
+    "unavailable": "目前无法使用，请稍后再试。"
   }
-  tabs.forEach(function (tab, index) {
-    tab.addEventListener('click', function () { selectTab(index, false); });
-    tab.addEventListener('keydown', function (ev) {
-      var next;
-      if (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft') next = 1 - index;
-      if (ev.key === 'Home') next = 0;
-      if (ev.key === 'End') next = 1;
-      if (next != null) { ev.preventDefault(); selectTab(next, true); }
-    });
-  });
-
+};
+  var lang = 'ko', busy = false;
+  var $ = function(id) { return document.getElementById(id); };
+  var form=$('login-form'), user=$('login-user'), code=$('login-password'),
+      btn=$('login-submit'), status=$('login-status'), authReady=null;
+  var SB_URL="https://fgahqumaldheqettmvqg.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs";
   function ok(l) { return l === 'ko' || l === 'en' || l === 'zh'; }
   function initial() {
     try { var s = localStorage.getItem(KEY); if (ok(s)) return s; } catch (e) {}
@@ -104,7 +84,7 @@
     if (ws) url += '&ws=' + encodeURIComponent(ws);
     return url;
   }
-  function grant(mode) { sessionStorage.setItem('nm_entry_once_v1', JSON.stringify({mode:mode,at:Date.now()})); }
+  function grant(mode, userId) { sessionStorage.setItem('nm_entry_once_v1', JSON.stringify({mode:mode,at:Date.now(),userId:userId||null})); }
   $('preview-link').addEventListener('click', function(ev){
     try { grant('preview'); } catch(e) { ev.preventDefault(); setStatus(T[lang].storage,'err'); }
   });
@@ -133,31 +113,51 @@
     b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); });
   });
 
-  form.addEventListener('submit', function (ev) {
+
+  form.addEventListener('submit', async function(ev) {
     ev.preventDefault();
     if (busy) return;
-    var u = user.value.trim(), c = code.value;
-    if (!u || !c || new TextEncoder().encode(c).length > 72 || u.length > 64) { setStatus(T[lang].empty, 'err'); return; }
-    var api = window.NM_REVIEW_SESSION;
-    if (!api || typeof api.login !== 'function') { code.value = ''; setStatus(T[lang].unavailable, 'err'); return; }
-    busy = true; btn.disabled = true; tabs.forEach(function(t){t.disabled=true;}); setStatus(T[lang].busy);
-    var p;
-    try { p = Promise.resolve(api.login(u, c)); } catch (e) { p = Promise.reject(e); }
-    p.then(function () {
-      code.value = '';
-      try { grant('review'); } catch(e) { setStatus(T[lang].storage, 'err'); busy=false;btn.disabled=false;tabs.forEach(function(t){t.disabled=false;});return; }
-      setStatus(T[lang].ok, 'ok');
-      location.assign(q('index.html?enter=1&review=1'));
-    }, function (err) {
-      code.value = '';
-      var k = err && err.code;
-      setStatus(T[lang][k] && k !== 'title' ? T[lang][k] : T[lang].unavailable, 'err');
-      busy = false; btn.disabled = false; tabs.forEach(function(t){t.disabled=false;});
-      code.focus();
-    });
+    var identity=user.value.trim(), password=code.value;
+    if (!identity || !password) { setStatus(T[lang].empty,'err'); return; }
+    // Route credentials by identifier only. Permissions still come from the validating server.
+    var guardian=identity.indexOf('@')!==-1;
+    if (!guardian && (identity.length>64 || new TextEncoder().encode(password).length>72)) {
+      code.value=''; setStatus(T[lang].invalid_credentials,'err'); return;
+    }
+    busy=true; btn.disabled=true; user.disabled=true; code.disabled=true;
+    $('guardian-link').setAttribute('aria-disabled','true');
+    setStatus(T[lang].busy);
+    try {
+      if (guardian) {
+        var auth=window.NM_PROFILE_AUTH;
+        if (!auth) throw {code:'unavailable'};
+        if (!authReady) {
+          auth.configure({url:SB_URL,anonKey:SB_KEY,freshEntry:true});
+          authReady=auth.ready();
+        }
+        await authReady;
+        var signed=await auth.signInWithPassword(identity,password);
+        grant('guardian',signed.user.id);
+      } else {
+        if (!window.NM_REVIEW_SESSION) throw {code:'unavailable'};
+        await NM_REVIEW_SESSION.login(identity,password);
+        grant('review');
+      }
+      code.value=''; setStatus(T[lang].ok,'ok');
+      location.assign(q(guardian?'index.html?enter=1':'index.html?enter=1&review=1'));
+    } catch(e) {
+      code.value='';
+      var key=e&&e.code;
+      if (e&&e.status===429) key='rate_limited';
+      else if (e&&[400,401,403].indexOf(e.status)!==-1&&key!=='invalid_email') key='invalid_credentials';
+      setStatus(T[lang][key]||T[lang].unavailable,'err');
+      busy=false; btn.disabled=false; user.disabled=false; code.disabled=false;
+      $('guardian-link').removeAttribute('aria-disabled'); code.focus();
+    }
   });
-
-  var requested = new URLSearchParams(location.search).get('lang');
-  lang = ok(requested) ? requested : initial();
+  $('guardian-link').addEventListener('click',function(ev){if(busy)ev.preventDefault();});
+  $('preview-link').addEventListener('click',function(ev){if(busy)ev.preventDefault();});
+  var requested=new URLSearchParams(location.search).get('lang');
+  lang=ok(requested)?requested:initial();
   apply();
 })();

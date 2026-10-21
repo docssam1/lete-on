@@ -140,7 +140,7 @@
 
   function configure(c) {
     if (!isObj(c) || !str(c.url) || !str(c.anonKey)) throw makeError('Invalid auth configuration', undefined, 'config');
-    cfg = { url: c.url.replace(/\/+$/, ''), anonKey: c.anonKey, freshEntry: c.freshEntry === true };
+    cfg = { url: c.url.replace(/\/+$/, ''), anonKey: c.anonKey, freshEntry: c.freshEntry === true, entryUserId: str(c.entryUserId) };
   }
 
   function parseHash() {
@@ -217,8 +217,11 @@
     var startVersion = authVersion;
     readyPromise = Promise.resolve().then(function () {
       // The login route always asks for credentials again. Keep learner data intact.
-      if (cfg && cfg.freshEntry) { session = null; removeStored(); }
-      var stored = cfg && cfg.freshEntry ? null : readStored();
+      var stored = readStored();
+      // Only the identity just signed in on access.html can cross its single-use hand-off.
+      if (cfg && cfg.freshEntry && (!cfg.entryUserId || !stored || stored.user.id !== cfg.entryUserId)) {
+        session = null; removeStored(); stored = null;
+      }
       if (stored && (stored.expires_at > now() || stored.refresh_token)) session = stored;
       else if (stored) removeStored();
       var h = parseHash();
