@@ -37,6 +37,12 @@ The user supplied a 2026-09-04 `math_in_depth` post about AMC 10/12 preparation.
 
 For later practice, record more than a mock score: time spent, concept gaps, missing ideas, calculation errors, and unnecessarily long solutions. Skipping and returning to a question and solving some problems without answer choices are useful skills to observe. Past papers and AIME-style extensions require separate source-rights and learner-readiness decisions; the post's suggested question ranges and qualification strategy are not official cutoffs or a basis for automatic routing. This reference does not change the current student-facing schedule or authorize a competition-readiness claim.
 
+## User-provided AMC 8 learner-interest reference — 2026-10-21
+
+The user supplied a 2026-08-10 `math_in_depth` post about strong younger AMC 8 learners who lose interest when preparation becomes repetitive formula and test-skill drilling. Treat this as a learner-experience design concern, not as evidence that any named academy causes that outcome. A high competition score by itself must not increase question volume, trigger acceleration, or label a child. During teacher review, ask what the learner enjoys, whether the current workload still feels sustainable, and whether the learner can explain and explore ideas rather than merely recall a solution pattern.
+
+For these learners, offer choices such as explaining why a result holds, finding another method, changing a condition, or exploring a self-selected challenge. Timed practice can be one option after understanding, with room for untimed investigation and rest. The post's MOEMS/AMC/AIME ordering and numerical score comparisons are illustrative opinions, not official prerequisites, equivalencies, or placement thresholds. Any future motivation or workload observations belong in an authorized private teacher workflow, not a public static student record. No current assessment or student-facing pace rule changed from this reference.
+
 ## Product direction
 
 GFIELD Math is a student/teacher system that connects diagnosis, domain analysis, concept learning, clinic practice, printable unit workbooks, rechecks, and teacher-reviewed progression. It covers US school mathematics and keeps competition pathways such as SASMO, Math Kangaroo, AMC 8, AMC 10, and AMC 12 distinct from course placement. It must not present a school-specific progression rule as an official US national cut.
