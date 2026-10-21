@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018q`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018q/20261018r/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018r`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018r/20261018s/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -410,6 +410,13 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - **교사용 답이 틀린 곳 2곳**(DB `sourceNote`): 9쪽 (5) ㉡ 칸(다른 문자와 같은 수로 적힘 — 「서로 다른 수」·첫째 식과 안 맞음) · 10쪽 아래 (1) 첫째 가로줄(같은 수를 두 번 적음). 식대로 다시 계산한 답을 쓴다.
   - **원본을 바로잡은 곳**(`sourceDiscrepancy`): 9쪽 둘째 문항 번호 (4) → (6) · 10쪽 위 물음 「한 줄의 위의 곱」 → 「한 줄 위의 곱」.
   - 8·9·10·11쪽 보류 삭제(8권 보류 7 → 5). DB `book-08` 127키 → 211키, sha 앞 8자리 `dbb72241`. 캐시 꼬리표 `20261018q`.
+- **8권 묶음 3(슬라이드 13~19 피라미드 복면산·복면산, 32문항·답 칸 76, 2026-10-21)**: 패치 `tools/golden-bell-book08/patch-book08-batch3.mjs`(정답 없음).
+  - 단원 2 `pyramid-cryptarithm`을 13~15쪽 13문항(같은 모양·여러 모양 피라미드, 빈칸의 합), 단원 3 `vertical-shape-cryptarithm`을 16쪽 5문항(복면산 연습 4 + 도전)으로 다시 짰다(DB `/lessons/2·3/original/` 교체). 17~19쪽 14문항은 **새 단원 9 `crypt-source`** — 화면에서 단원 3 바로 뒤.
+  - 새 그림 `source-crypt`(원본 세로셈: 오른쪽 맞춤, 숫자·모양·`_` 빈칸(칸마다 따로)·㉠ 이름 붙은 빈칸, `pool` 숫자 카드 줄). **옛 16쪽 도전은 원본의 빈칸과 ㉠을 도형으로 바꿔 그리고 있었다** → 원본대로. 단원 3 개념 설명은 장면 그림이 없어 원본 (1)~(4) 그림 묶음을 보여 주고 있었다 → 새 예시로 장면마다 그림.
+  - 규칙(물음 글에 적음): 같은 모양 = 같은 숫자, 다른 모양 = 다른 숫자. 검산기(`cryptsolve.mjs`, 저장소 밖)는 여기에 「두 자리 이상 수의 맨 앞은 0이 아님」을 더해 전수로 푼다. 15쪽 도전 (5)는 **합이 두 가지**(교사용도 「답이 두 가지」) → 쉼표로 모두 쓰는 문항.
+  - **원본을 바로잡은 곳**(`sourceDiscrepancy` + DB `sourceNote`): 17쪽 (3) 결과 가운데 칸이 □로 그려져 있어 그대로 풀면 (2)번과 같은 답이 나오고 교사용 풀이(가운데 칸에 △의 숫자)와 맞지 않는다 → 가운데 칸을 △로. 고친 그림의 답은 하나뿐이고 교사용 답과 같다.
+  - **교사용 답이 틀린 곳 2곳**(DB `sourceNote`): 17쪽 (2) 답 칸의 △(□와 같은 숫자로 적힘) · 19쪽 (14) 답 칸(모양과 숫자가 엇갈림). 교사용 그림에 채운 숫자와는 맞으므로 그림대로 계산한 답을 쓴다.
+  - 15쪽·17~19쪽 보류 삭제(8권 보류 5 → 3: 23~29 · 32~34 · 35~39). DB `book-08` 211키 → 260키, sha 앞 8자리 `a4102c61`. 캐시 꼬리표 `20261018r`.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

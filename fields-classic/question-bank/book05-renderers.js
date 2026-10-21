@@ -917,6 +917,19 @@ function sourceKitchenScales(visual) {
   return `<div class="b5-src-kscales" role="img" aria-label="${escapeHtml(label)}"><div class="scales">${visual.scales.map(scale).join("")}</div>${ask ? `<p class="ask">${ask}</p>` : ""}</div>`;
 }
 
+// 8권 13~19쪽 세로셈 복면산: rows(더하는 수, 위에서부터)와 result를 오른쪽 맞춤으로. 글자마다
+// 숫자 · 모양(○□△☆◇) · "_" 빈칸(칸마다 다른 숫자가 들어갈 수 있음) · ㉠ 이름 붙은 빈칸. pool은 위의 숫자 카드 줄.
+function sourceCrypt(visual) {
+  const width = Math.max(...[...visual.rows, visual.result].map((r) => [...r].length));
+  const cell = (ch) => (SOURCE_SYMBOL[ch] ? `<span class="c">${symbolGlyph(ch)}</span>` : ch === "_" ? `<span class="c"><i class="blank"></i></span>`
+    : /[㉠-㉭]/.test(ch) ? `<span class="c"><i class="blank named">${ch}</i></span>` : `<span class="c d">${escapeHtml(ch)}</span>`);
+  const line = (r, op = "") => `<span class="op">${op}</span>${"<span class=\"c\"></span>".repeat(width - [...r].length)}${[...r].map(cell).join("")}`;
+  const rows = visual.rows.map((r, k) => line(r, k === visual.rows.length - 1 ? "+" : "")).join("");
+  const word = (ch) => (SOURCE_SYMBOL[ch] ? SHAPE_GLYPH[SOURCE_SYMBOL[ch]][0] : ch === "_" ? "빈칸" : ch);
+  const label = `세로 덧셈. ${visual.rows.map((r) => [...r].map(word).join(" ")).join(" 더하기 ")} 는 ${[...visual.result].map(word).join(" ")}`;
+  return `<div class="b5-src-crypt" role="img" aria-label="${escapeHtml(label)}">${visual.pool ? `<p class="b5-src-pool">${escapeHtml(visual.pool.join(" "))}</p>` : ""}<div class="board" style="--w:${width}">${rows}<hr>${line(visual.result)}</div></div>`;
+}
+
 // 7권: 단계 그림 여러 개를 한 줄로(휴대폰에서는 줄바꿈). figs = [{w, h, body}], marks면 위에 ①②③… 번호.
 const STAGE_MARKS = ["①", "②", "③", "④", "⑤", "⑥"];
 function stageRow(cls, label, figs, marks) {
@@ -1331,6 +1344,7 @@ export function book05Markup(visual) {
     case "source-venn": return sourceVenn(visual);
     case "source-sum-grid": return sourceSumGrid(visual);
     case "source-kitchen-scales": return sourceKitchenScales(visual);
+    case "source-crypt": return sourceCrypt(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);
