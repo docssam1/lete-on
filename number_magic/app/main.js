@@ -5399,7 +5399,7 @@ function mountTitle3DInto(scr, summary, badge){
   const chips=[];   /* 동전은 모듈이 coins 로 따로 그린다 */
   if(S.attend&&S.attend.days)chips.push({icon:'📅',text:{ko:`${S.attend.days}일`,en:`Day ${S.attend.days}`,zh:`第${S.attend.days}天`}});
   if(badge)chips.push({icon:'🏅',text:badge.label,gold:true});
-  import('./title3d/title3d.js?v=20261022-pearl1').then(m=>{
+  import('./title3d/title3d.js?v=20261022-spatial1').then(m=>{
     const choices=m.DEFAULT_CHOICES.map(c=>c.id==='continue'&&summary?Object.assign({},c,{sub:summary}):c);
     return m.mountTitle3D(box,{
       lang:S.lang, choices,

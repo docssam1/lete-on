@@ -240,10 +240,10 @@ const CSS = `
 .t3d.short .t3d-chip{font-size:12px;padding:2px 9px 2px 5px}
 @media (prefers-reduced-motion:reduce){.t3d canvas.t3d-gl{transition:none}.t3d-btn{transition:none}.t3d-word,.t3d-btn.primary::before{animation:none}}
 .t3d.still .t3d-word,.t3d.still .t3d-btn.primary::before{animation:none}
-.t3d.compact .t3d-btn:not(.primary){width:calc((100% - 32px)/2);max-width:none!important}
-.t3d.compact .t3d-btn.pill{width:calc((100% - 48px)/4)!important;flex-direction:column;padding:6px 3px;gap:3px;text-align:center;justify-content:center}
-.t3d.compact .t3d-btn.pill b{font-size:12px;line-height:1.2}
-@media(max-height:700px){.t3d.compact .t3d-story{display:none}}
+.t3d.tight .t3d-hud{max-width:calc(30% - 8px);align-items:flex-end}
+.t3d.tight .t3d-hello{max-width:100%;box-sizing:border-box;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;font-size:12px;line-height:1.35;padding:6px 8px;text-align:center}
+.t3d.tight .t3d-chips{gap:4px;justify-content:flex-end}
+.t3d.tight .t3d-chip{font-size:11px;padding:3px 6px 3px 4px}
 @media (forced-colors:active){.t3d-btn{border:2px solid ButtonText;background:ButtonFace;color:ButtonText}.t3d-btn::before,.t3d-btn::after{display:none}.t3d-word{-webkit-text-fill-color:CanvasText;background:none}}
 .t3d-raster{position:fixed;left:-10000px;top:0;pointer-events:none}
 .t3d-raster .nm-human img{width:100%;height:100%;object-fit:contain;display:block}
@@ -466,7 +466,9 @@ export async function mountTitle3D(container, opts){
   /* ---------- 구도(가로/세로) ---------- */
   let layout = null, narrow = false;
   const sizes = {};
+  let placedLabels = null;
   function measure(){
+    placedLabels = null;
     Object.keys(btns).forEach(id => { const b = btns[id]; sizes[id] = [b.offsetWidth, b.offsetHeight]; });
     sizes._hud = [hud.offsetWidth, hud.offsetHeight];
     sizes._logo = [logo.offsetWidth, logo.offsetHeight];
@@ -475,13 +477,13 @@ export async function mountTitle3D(container, opts){
     [VW, VH] = sizeOf();
     r.setSize(VW, VH, false);
     cam.aspect = VW / VH;
-    const portrait = VW / VH < 0.9 || (VW < 760 && VH >= 540);
+    const portrait = VW / VH < 0.9;
+    const stackedHeader = portrait;
     const short = !portrait && VH < 560;
     narrow = VW < 560 || portrait;
     root.classList.toggle('narrow', narrow);
     root.classList.toggle('short', short);
-    // Wide screens keep the photo's object-adjacent labels; small/very short screens use safe rows.
-    root.classList.toggle('compact', portrait || VW < 760 || VH < 460);
+    root.classList.toggle('tight', !portrait && VW < 900);
     root.style.setProperty('--t3d-logo', (narrow ? Math.min(40, VW * 0.098) : short ? Math.max(26, VH * 0.07) : Math.min(54, Math.max(38, VH * 0.062))) + 'px');
     root.style.setProperty('--t3d-logosub', (narrow ? 12 : short ? 11 : 14) + 'px');
     /* 버튼 폭 한도 — 세로: 모드 2칸, 소품 4칸 */
@@ -495,7 +497,7 @@ export async function mountTitle3D(container, opts){
     layout = portrait ? 'portrait' : short ? 'wide' : 'landscape';
     applyLayout(layout);
     /* HUD 자리: 가로 = 오른쪽 위 구석, 세로 = 로고 아래 가운데 */
-    if(portrait){ hud.style.left = '50%'; hud.style.right = ''; hud.style.transform = 'translateX(-50%)'; }
+    if(stackedHeader){ hud.style.left = '50%'; hud.style.right = ''; hud.style.transform = 'translateX(-50%)'; }
     else { hud.style.left = ''; hud.style.right = short ? '12px' : '22px'; hud.style.transform = ''; hud.style.top = short ? '10px' : '22px'; }
     logo.style.top = (portrait ? 12 : short ? 8 : 16) + 'px';
     /* 로고가 폭을 넘으면 글자를 줄인다(가로는 오른쪽 인사 쪽지와도 안 겹치게) */
@@ -503,12 +505,12 @@ export async function mountTitle3D(container, opts){
     if(lk){
       const cur = parseFloat(getComputedStyle(root).getPropertyValue('--t3d-logo')) || 46;
       let room = VW - 28;
-      if(!portrait){ const hw = hud.offsetWidth || 0; room = Math.min(room, (VW / 2 - hw - (short ? 12 : 22) - 14) * 2); }
+      if(!stackedHeader){ const hw = hud.offsetWidth || 0; room = Math.min(room, (VW / 2 - hw - (short ? 12 : 22) - 14) * 2); }
       const lw = lk.offsetWidth;
       if(lw > room && room > 60) root.style.setProperty('--t3d-logo', Math.max(18, Math.floor(cur * room / lw)) + 'px');
     }
     measure();
-    if(portrait) hud.style.top = (logo.offsetTop + sizes._logo[1] + 10) + 'px';
+    if(stackedHeader) hud.style.top = (logo.offsetTop + sizes._logo[1] + 10) + 'px';
     fitCamera();
     wake(true);
   }
@@ -523,7 +525,7 @@ export async function mountTitle3D(container, opts){
     const dir = new THREE.Vector3(0, Math.sin(pitch), Math.cos(pitch));
     const T = new THREE.Vector3(...L.target);
     let d = L.dist;
-    const topPad = layout === 'portrait' ? (hud.offsetTop + sizes._hud[1] + 8) : (logo.offsetTop + sizes._logo[1] + 8);
+    const topPad = Math.max(hud.offsetTop + sizes._hud[1], logo.offsetTop + sizes._logo[1]) + 8;
     const side = 12, bot = 12;
     const availW = VW - side * 2, availH = VH - topPad - bot;
     const pts = [];
@@ -561,38 +563,77 @@ export async function mountTitle3D(container, opts){
 
   /* ---------- 버튼 위치(매 프레임) + 겹침 풀기 ---------- */
   function placeLabels(){
-    const rects = [];
-    Object.values(objs).forEach(o => {
-      const s = sizes[o.id]; if(!s) return;
-      const [ax, ay] = proj(o.anchorW);
-      let [x, y] = labelPos(o, ax, ay, s);
-      rects.push({ o, x, y, w:s[0], h:s[1] });
-    });
-    /* 겹치면 아래 것을 내린다 — 물건 발밑에 붙는 구도라 거의 안 겹치지만 좁은 폭·긴 번역에 대비 */
-    rects.sort((a, b) => a.y - b.y);
-    for(let pass = 0; pass < 6; pass++){
-      for(let i = 0; i < rects.length; i++) for(let j = i + 1; j < rects.length; j++){
-        const a = rects[i], b = rects[j];
-        if(a.x < b.x + b.w + 4 && b.x < a.x + a.w + 4 && a.y < b.y + b.h + 4 && b.y < a.y + a.h + 4){
-          /* 같은 줄이면 옆으로 벌리고, 아니면 아래 것을 내린다 */
-          if(Math.abs(a.y - b.y) < Math.min(a.h, b.h) * 0.5){
-            const L0 = a.x < b.x ? a : b, R0 = L0 === a ? b : a, ov = L0.x + L0.w + 6 - R0.x;
-            if(ov > 0){ L0.x -= ov / 2; R0.x += ov / 2; }
-          } else { const ov = a.y + a.h + 4 - b.y; if(ov > 0) b.y += ov; }
-        }
-      }
-    }
-    // Projecting, clamping, then spreading labels can push them back on top of
-    // one another. Compact screens get stable rows with real 44px hit targets.
-    if(root.classList.contains('compact')){
-      const rows=[['continue'],['diag','game'],['sheet','road'],['story','dex','hist','magazine']];
-      const heights=rows.map(ids=>Math.max(44,...ids.map(id=>sizes[id]?.[1]||0)));
-      let y=VH-12-heights.reduce((a,b)=>a+b,0)-24;
-      rows.forEach((ids,i)=>{
-        const gap=8,cell=(VW-24-(ids.length-1)*gap)/ids.length;
-        ids.forEach((id,j)=>{const R=rects.find(r=>r.o.id===id);if(R){R.x=12+j*(cell+gap)+(cell-R.w)/2;R.y=y;}});
-        y+=heights[i]+8;
+    const rects = placedLabels || [];
+    if(!placedLabels){
+      const minY = Math.max(hud.offsetTop + sizes._hud[1], logo.offsetTop + sizes._logo[1]) + 4;
+      Object.values(objs).forEach(o => {
+        const size = sizes[o.id]; if(!size) return;
+        const [ax, ay] = proj(o.anchorW), [x, y] = labelPos(o, ax, ay, size);
+        const R = { o, x, y, w:size[0], h:size[1], tx:x, ty:y };
+        R.x = Math.max(6, Math.min(VW - R.w - 6, R.x));
+        R.y = Math.max(minY, Math.min(VH - R.h - 6, R.y));
+        rects.push(R);
       });
+      // Keep each label beside its own prop. Separate inside the available area,
+      // so the final edge clamp cannot put already-separated labels back together.
+      const overlap = (a,b) => Math.max(0, Math.min(a.x+a.w+4,b.x+b.w+4)-Math.max(a.x,b.x)) * Math.max(0,Math.min(a.y+a.h+4,b.y+b.h+4)-Math.max(a.y,b.y));
+      // Leave a visible spot on each prop for direct selection as well as its label.
+      scene.updateMatrixWorld(true);
+      const canvasBounds=canvas.getBoundingClientRect();
+      const propSpots=(layout==='portrait'&&VH<740?[]:Object.values(objs)).flatMap(o=>{
+        const ps=o.box.map(proj),xs=ps.map(p=>p[0]),ys=ps.map(p=>p[1]);
+        const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+        let best=null;
+        for(let j=1;j<24;j++)for(let i=1;i<24;i++){
+          const x=Math.round(x0+(x1-x0)*i/24),y=Math.round(y0+(y1-y0)*j/24);
+          if(x<14||x>VW-14||y<minY+14||y>VH-14)continue;
+          if(![[0,0],[-3,0],[3,0],[0,-3],[0,3]].every(([dx,dy])=>hitAt({clientX:x+dx+canvasBounds.left,clientY:y+dy+canvasBounds.top})===o.id))continue;
+          const spot={x:x-14,y:y-14,w:28,h:28};
+          const score=rects.reduce((n,R)=>n+overlap(R,spot),0)*1000+(x-(x0+x1)/2)**2+(y-(y0+y1)/2)**2;
+          if(!best||score<best.score)best={...spot,score};
+        }
+        return best?[best]:[];
+      });
+      const cost = (a,b) => {
+        let n=0;
+        for(const R of [a,b].filter(Boolean)){
+          const weight=R.o.primary?3:1;
+          n+=weight*((R.x-R.tx)**2+(R.y-R.ty)**2);
+          for(const q of rects)if(q.o!==a.o&&q.o!==b?.o)n+=5000*overlap(R,q);
+          for(const q of propSpots)n+=1000000*overlap(R,q);
+        }
+        return n;
+      };
+      for(let pass=0;pass<40;pass++){
+        let changed=false;
+        for(let i=0;i<rects.length;i++)for(let j=i+1;j<rects.length;j++){
+          const a=rects[i],b=rects[j];if(!overlap(a,b))continue;
+          const candidates=[];
+          for(const axis of ['x','y']){
+            const dim=axis==='x'?'w':'h',end=axis==='x'?VW:VH,start=axis==='x'?6:minY;
+            const A={...a},B={...b},left=A[axis]+A[dim]/2<=B[axis]+B[dim]/2?A:B,right=left===A?B:A;
+            const needed=left[axis]+left[dim]+4-right[axis];
+            const ls=Math.max(0,left[axis]-start),rs=Math.max(0,end-right[dim]-6-right[axis]);
+            if(needed<=0||ls+rs+0.01<needed)continue;
+            const lw=left.o.primary?3:1,rw=right.o.primary?3:1;
+            let dl=Math.min(ls,needed*rw/(lw+rw)),dr=Math.min(rs,needed-dl);
+            dl+=Math.min(ls-dl,Math.max(0,needed-dl-dr));
+            left[axis]-=dl;right[axis]+=dr;
+            candidates.push({A,B,cost:cost(A,B)});
+          }
+          candidates.sort((u,v)=>u.cost-v.cost);
+          if(candidates.length){const c=candidates[0];a.x=c.A.x;a.y=c.A.y;b.x=c.B.x;b.y=c.B.y;changed=true;}
+        }
+        for(const R of rects)for(const q of propSpots){
+          if(!overlap(R,q))continue;
+          const moves=[{x:q.x-R.w-4},{x:q.x+q.w+4},{y:q.y-R.h-4},{y:q.y+q.h+4}]
+            .map(m=>({...R,...m})).filter(m=>m.x>=6&&m.x+m.w<=VW-6&&m.y>=minY&&m.y+m.h<=VH-6)
+            .map(m=>({m,c:cost(m)})).sort((a,b)=>a.c-b.c);
+          if(moves.length&&moves[0].c<cost(R)){R.x=moves[0].m.x;R.y=moves[0].m.y;changed=true;}
+        }
+        if(!changed)break;
+      }
+      placedLabels=rects;
     }
     rects.forEach(R => {
       R.x = Math.max(6, Math.min(VW - R.w - 6, R.x)); R.y = Math.max(6, Math.min(VH - R.h - 6, R.y));
@@ -639,6 +680,7 @@ export async function mountTitle3D(container, opts){
   document.addEventListener('visibilitychange', onVis);
   let rt = 0;
   const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { if(!disposed) relayout(); }, 60); };
+  if(document.fonts?.addEventListener) document.fonts.addEventListener('loadingdone', onResize);
   const ro = 'ResizeObserver' in window ? new ResizeObserver(onResize) : null;
   if(ro) ro.observe(root); else window.addEventListener('resize', onResize);
 
@@ -646,6 +688,7 @@ export async function mountTitle3D(container, opts){
     if(disposed) return; disposed = true;
     if(raf) cancelAnimationFrame(raf); raf = 0;
     clearTimeout(rt);
+    if(document.fonts?.removeEventListener) document.fonts.removeEventListener('loadingdone', onResize);
     if(io) io.disconnect(); if(ro) ro.disconnect(); else window.removeEventListener('resize', onResize);
     document.removeEventListener('visibilitychange', onVis);
     canvas.removeEventListener('pointermove', onMove); canvas.removeEventListener('pointerleave', onLeave); canvas.removeEventListener('click', onClick);

@@ -18,6 +18,9 @@ const server = http.createServer((req, res) => {
 });
 const cases = [
   { name:'desk-ko', w:1280, h:800, lang:'ko' },
+  { name:'review-pane', w:734, h:686, lang:'ko' },
+  { name:'small-tablet', w:603, h:625, lang:'ko' },
+  { name:'short-phone', w:390, h:619, lang:'ko', mobile:true },
   { name:'photo-ko', w:1280, h:735, lang:'ko' },
   { name:'landscape-ko', w:960, h:552, lang:'ko', mobile:true },
   { name:'phone-ko', w:390, h:844, lang:'ko', mobile:true },
@@ -67,6 +70,14 @@ server.listen(0, async () => {
     if(rd !== 'ok'){ bad.push(c.name + ': ' + rd); await ctx.close(); continue; }
     await page.waitForTimeout(2500);
     await page.screenshot({ path:path.join(OUT, c.name + '.png') });
+    // Photo restoration: near-square panes must keep a readable central book
+    // and separate prop labels, rather than shrinking the scene above a toolbar.
+    const sceneMetrics=await page.evaluate(()=>{const d=window.__t3d._debug,pts=d.objs.continue.box.map(p=>d.proj(p));return{layout:d.layout,bookWidth:Math.max(...pts.map(p=>p[0]))-Math.min(...pts.map(p=>p[0])),modeWidths:[...document.querySelectorAll('.t3d-btn[data-id="diag"],.t3d-btn[data-id="game"],.t3d-btn[data-id="sheet"],.t3d-btn[data-id="road"]')].map(b=>b.getBoundingClientRect().width)};});
+    if(c.w>=560&&c.w/c.h>=.9){
+      if(sceneMetrics.bookWidth<Math.min(130,c.w*.2))bad.push(c.name+': central book is too small');
+      if(sceneMetrics.modeWidths.some(w=>w>=c.w*.4))bad.push(c.name+': mode controls became wide toolbar rows');
+    }
+    fs.writeFileSync(path.join(OUT,c.name+'-scene.json'),JSON.stringify(sceneMetrics,null,2));
     /* 버튼 상자: 화면 안, 44px 이상, 서로 안 겹침 */
     const rects = await page.evaluate(() => [...document.querySelectorAll('.t3d-btn')].map(b => { const r = b.getBoundingClientRect(); return { id:b.dataset.id, x:r.left, y:r.top, w:r.width, h:r.height }; }));
     const logoR = await page.evaluate(() => { const r = document.querySelector('.t3d-logo').getBoundingClientRect(); const h = document.querySelector('.t3d-hud').getBoundingClientRect(); return [r, h].map(q => ({ x:q.left, y:q.top, w:q.width, h:q.height })); });
@@ -77,7 +88,7 @@ server.listen(0, async () => {
       if(a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h) bad.push(`${c.name}: 겹침 ${a.id}↔${b.id}`); }
     const hs = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     if(hs > 0) bad.push(`${c.name}: 가로 스크롤 ${hs}px`);
-    if(!quick && (c.name === 'desk-ko' || c.name === 'phone-ko')){
+    if(!quick && ['desk-ko','phone-ko','review-pane','small-tablet'].includes(c.name)){
       /* 버튼 클릭 */
       for(const id of IDS){ await page.evaluate(() => { window.__picks = []; }); await page.waitForTimeout(450);
         await page.click(`.t3d-btn[data-id="${id}"]`); const p = await page.evaluate(() => window.__picks.slice());
@@ -94,7 +105,12 @@ server.listen(0, async () => {
             const X = Math.round(x), Y = Math.round(y);
             if(ok(X, Y) && ok(X - 3, Y) && ok(X + 3, Y) && ok(X, Y - 3) && ok(X, Y + 3)) return [X, Y]; }
           return null; }, id);
-        if(!pt){ bad.push(`${c.name}: 3D ${id} 누를 자리 없음`); continue; }
+        if(!pt){
+          const diagnostic=await page.evaluate(id=>{const d=window.__t3d._debug,ps=d.objs[id].box.map(d.proj),xs=ps.map(p=>p[0]),ys=ps.map(p=>p[1]);let hits=[];
+            for(let y=Math.max(0,Math.floor(Math.min(...ys)));y<Math.min(innerHeight,Math.max(...ys));y+=3)for(let x=Math.max(0,Math.floor(Math.min(...xs)));x<Math.min(innerWidth,Math.max(...xs));x+=3)if(d.hitAt(x,y)===id){const el=document.elementFromPoint(x,y);hits.push({x,y,el:el?.closest('[data-id]')?.getAttribute('data-id')||el?.className});}
+            return{bounds:ps,hits};},id);
+          fs.writeFileSync(path.join(OUT,c.name+'-'+id+'-blocked.json'),JSON.stringify(diagnostic,null,2));
+          bad.push(`${c.name}: 3D ${id} 누를 자리 없음`); continue; }
         await page.mouse.move(pt[0], pt[1]); await page.waitForTimeout(120);
         const lit = await page.evaluate(id => document.querySelector(`.t3d-btn[data-id="${id}"]`).classList.contains('on'), id);
         if(!lit) bad.push(`${c.name}: 3D ${id} 위에 올려도 버튼 강조 없음`);
