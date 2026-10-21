@@ -430,6 +430,229 @@ test('delayed logout cannot clear a newer verify', async () => {
   assert.strictEqual(JSON.parse(env.data[KEY]).access_token, 'at-new');
 });
 
+const PW = 'correct-horse-battery';
+const userBody = (id) => ({ id, email: 'g@example.test' });
+const pendingStore = (over) => ({ [KEY]: JSON.stringify(mkSession(Object.assign({ password_setup_pending: true }, over))) });
+const waitFor = async (fn) => { while (!fn()) await new Promise((r) => setTimeout(r, 0)); };
+const noPassword = (env) => {
+  assert.ok(!Object.values(env.data).some((v) => String(v).includes(PW)), 'password stored');
+};
+
+test('verifyEmail sets pending flag before persist/emit; link confirm too', async () => {
+  const env = makeEnv({ handler: () => jsonRes(200, { access_token: 'at', refresh_token: 'rt', expires_in: 3600, user: { id: 'u9', email: 'g@example.test' } }) });
+  assert.strictEqual(env.auth.requiresPassword(), false);
+  let seen = null;
+  env.auth.onChange(() => { seen = { req: env.auth.requiresPassword(), stored: JSON.parse(env.data[KEY]).password_setup_pending }; });
+  const view = await env.auth.verifyEmail('g@example.test', '123456');
+  assert.deepStrictEqual(seen, { req: true, stored: true });
+  assert.strictEqual(env.auth.requiresPassword(), true);
+  assert.deepStrictEqual(Object.keys(view).sort(), ['expires_at', 'user']);
+  assert.deepStrictEqual(Object.keys(env.auth.peek()).sort(), ['expires_at', 'user']);
+
+  const env2 = makeEnv({ hash: HASH_OK, handler: userHandler('u7') });
+  await env2.auth.ready();
+  assert.strictEqual(env2.auth.requiresPassword(), false);
+  let seen2 = null;
+  env2.auth.onChange(() => { if (env2.auth.peek()) seen2 = { req: env2.auth.requiresPassword(), stored: JSON.parse(env2.data[KEY]).password_setup_pending }; });
+  await env2.auth.confirmLink();
+  assert.deepStrictEqual(seen2, { req: true, stored: true });
+});
+
+test('legacy session defaults false; flag restores; metadata never authorizes', async () => {
+  const legacy = makeEnv({ storage: { [KEY]: JSON.stringify(mkSession()) }, handler: () => { throw new Error('no call'); } });
+  await legacy.auth.ready();
+  assert.strictEqual(legacy.auth.requiresPassword(), false);
+  const meta = makeEnv({ storage: { [KEY]: JSON.stringify(mkSession({ user: { id: 'u1', email: 'g@example.test', user_metadata: { password_setup_pending: true }, password_setup_pending: true } })) }, handler: () => { throw new Error('no call'); } });
+  await meta.auth.ready();
+  assert.strictEqual(meta.auth.requiresPassword(), false);
+  const pend = makeEnv({ storage: pendingStore(), handler: () => { throw new Error('no call'); } });
+  await pend.auth.ready();
+  assert.strictEqual(pend.auth.requiresPassword(), true);
+  // cross-tab restore
+  const tab = makeEnv({ handler: () => { throw new Error('no call'); } });
+  tab.data[KEY] = JSON.stringify(mkSession({ password_setup_pending: true }));
+  tab.fire('storage', { key: KEY });
+  assert.strictEqual(tab.auth.requiresPassword(), true);
+});
+
+test('refresh preserves pending flag and ignores server-supplied flag', async () => {
+  const body = (flag) => ({ access_token: 'at-2', refresh_token: 'rt-2', expires_in: 3600, password_setup_pending: flag, user: { id: 'u1', email: 'g@example.test' } });
+  const a = makeEnv({ storage: pendingStore({ expires_at: nowS() + 30 }), handler: () => jsonRes(200, body(false)) });
+  assert.strictEqual((await a.auth.getSession()).access_token, 'at-2');
+  assert.strictEqual(a.auth.requiresPassword(), true);
+  assert.strictEqual(JSON.parse(a.data[KEY]).password_setup_pending, true);
+  const b = makeEnv({ storage: { [KEY]: JSON.stringify(mkSession({ expires_at: nowS() + 30 })) }, handler: () => jsonRes(200, body(true)) });
+  await b.auth.getSession();
+  assert.strictEqual(b.auth.requiresPassword(), false);
+  assert.strictEqual(JSON.parse(b.data[KEY]).password_setup_pending, false);
+});
+
+test('setPassword validation, mismatch and no-session make no requests', async () => {
+  const env = makeEnv({ storage: pendingStore(), handler: () => { throw new Error('no call'); } });
+  await env.auth.ready();
+  await rejects(env.auth.setPassword('short', 'short'));
+  await rejects(env.auth.setPassword(undefined, undefined));
+  await rejects(env.auth.setPassword('x'.repeat(129), 'x'.repeat(129)));
+  const e = await rejects(env.auth.setPassword(PW, PW + '!'));
+  assert.strictEqual(e.code, 'mismatch');
+  assert.ok(!e.message.includes(PW));
+  assert.strictEqual(env.calls.length, 0);
+  assert.strictEqual(env.auth.requiresPassword(), true);
+  const none = makeEnv({ handler: () => { throw new Error('no call'); } });
+  const e2 = await rejects(none.auth.setPassword(PW, PW));
+  assert.strictEqual(e2.code, 'nosession');
+  assert.strictEqual(none.calls.length, 0);
+  // boundaries are accepted
+  const ok = makeEnv({ storage: pendingStore(), handler: () => jsonRes(200, userBody('u1')) });
+  await ok.auth.setPassword('x'.repeat(8), 'x'.repeat(8));
+  await ok.auth.setPassword('y'.repeat(128), 'y'.repeat(128));
+});
+
+test('setPassword request shape, clears flag, stores no password', async () => {
+  const env = makeEnv({ storage: pendingStore(), handler: () => jsonRes(200, userBody('u1')) });
+  let events = 0;
+  env.auth.onChange(() => events++);
+  const view = await env.auth.setPassword(PW, PW);
+  const c = env.calls[0];
+  assert.strictEqual(c.init.method, 'PUT');
+  assert.strictEqual(c.url, URL_BASE + '/auth/v1/user');
+  assert.strictEqual(c.init.headers.Authorization, 'Bearer at-1');
+  assert.strictEqual(c.init.headers.apikey, 'anon-test');
+  assert.deepStrictEqual(c.body, { password: PW });
+  assert.deepStrictEqual(Object.keys(view).sort(), ['expires_at', 'user']);
+  assert.strictEqual(env.auth.requiresPassword(), false);
+  assert.strictEqual(JSON.parse(env.data[KEY]).password_setup_pending, false);
+  assert.strictEqual(events, 1);
+  noPassword(env);
+  assert.ok(!JSON.stringify(env.auth.peek()).includes(PW));
+});
+
+test('setPassword HTTP failure keeps flag and never echoes password', async () => {
+  for (const st of [422, 401, 429, 500]) {
+    const env = makeEnv({ storage: pendingStore(), handler: () => jsonRes(st, { msg: 'Password ' + PW + ' is too weak', error_description: PW }) });
+    const e = await rejects(env.auth.setPassword(PW, PW));
+    assert.strictEqual(e.status, st);
+    assert.ok(!e.message.includes(PW));
+    assert.strictEqual(env.auth.requiresPassword(), true);
+    assert.strictEqual(JSON.parse(env.data[KEY]).password_setup_pending, true);
+    noPassword(env);
+  }
+  const net = makeEnv({ storage: pendingStore(), handler: async () => { throw new Error('offline ' + PW); } });
+  const e = await rejects(net.auth.setPassword(PW, PW));
+  assert.ok(!e.message.includes(PW));
+  assert.strictEqual(net.auth.requiresPassword(), true);
+});
+
+test('setPassword requires server response for the same user id', async () => {
+  for (const body of [{ id: 'u2' }, {}, [1], null]) {
+    const env = makeEnv({ storage: pendingStore(), handler: () => jsonRes(200, body) });
+    await rejects(env.auth.setPassword(PW, PW));
+    assert.strictEqual(env.auth.requiresPassword(), true);
+    assert.strictEqual(JSON.parse(env.data[KEY]).password_setup_pending, true);
+  }
+});
+
+test('setPassword storage failure is not reported as saved', async () => {
+  const opts = { storage: pendingStore(), handler: () => jsonRes(200, userBody('u1')) };
+  const env = makeEnv(opts);
+  await env.auth.ready();
+  opts.failWrite = true;
+  const e = await rejects(env.auth.setPassword(PW, PW));
+  assert.strictEqual(e.code, 'storage');
+  assert.strictEqual(env.auth.requiresPassword(), true);
+  assert.strictEqual(JSON.parse(env.data[KEY]).password_setup_pending, true);
+});
+
+test('late setPassword response after signOut or account change cannot apply', async () => {
+  let release;
+  const gate = new Promise((r) => { release = r; });
+  const handler = async (url, init) => {
+    if (init.method === 'PUT') { await gate; return jsonRes(200, userBody('u1')); }
+    return jsonRes(204, '');
+  };
+  const env = makeEnv({ storage: pendingStore(), handler });
+  const p = env.auth.setPassword(PW, PW);
+  await waitFor(() => env.calls.some((c) => c.init.method === 'PUT'));
+  await env.auth.signOut();
+  release();
+  const e = await rejects(p);
+  assert.strictEqual(e.code, 'cancelled');
+  assert.strictEqual(env.auth.peek(), null);
+  assert.strictEqual(env.auth.requiresPassword(), false);
+  assert.strictEqual(env.data[KEY], undefined);
+
+  let release2;
+  const gate2 = new Promise((r) => { release2 = r; });
+  const env2 = makeEnv({ storage: pendingStore(), handler: async () => { await gate2; return jsonRes(200, userBody('u1')); } });
+  const p2 = env2.auth.setPassword(PW, PW);
+  await waitFor(() => env2.calls.length > 0);
+  env2.data[KEY] = JSON.stringify(mkSession({ access_token: 'at-other', user: { id: 'u5', email: 'o@example.test' }, password_setup_pending: true }));
+  env2.fire('storage', { key: KEY });
+  release2();
+  await rejects(p2);
+  assert.strictEqual(env2.auth.peek().user.id, 'u5');
+  assert.strictEqual(env2.auth.requiresPassword(), true);
+  assert.strictEqual(JSON.parse(env2.data[KEY]).user.id, 'u5');
+});
+
+test('signInWithPassword success: request shape, flag false, no password stored', async () => {
+  const env = makeEnv({ handler: () => jsonRes(200, { access_token: 'atp', refresh_token: 'rtp', expires_in: 3600, password_setup_pending: true, user: { id: 'u3', email: 'g@example.test' } }) });
+  let seen = null;
+  env.auth.onChange(() => { seen = JSON.parse(env.data[KEY]).password_setup_pending; });
+  const view = await env.auth.signInWithPassword(' g@example.test ', PW);
+  const c = env.calls[0];
+  assert.strictEqual(c.init.method, 'POST');
+  assert.strictEqual(c.url, URL_BASE + '/auth/v1/token?grant_type=password');
+  assert.deepStrictEqual(c.body, { email: 'g@example.test', password: PW });
+  assert.strictEqual(view.user.id, 'u3');
+  assert.deepStrictEqual(Object.keys(view).sort(), ['expires_at', 'user']);
+  assert.strictEqual(seen, false);
+  assert.strictEqual(env.auth.requiresPassword(), false);
+  assert.strictEqual(JSON.parse(env.data[KEY]).access_token, 'atp');
+  noPassword(env);
+});
+
+test('signInWithPassword failures do not persist or expose password', async () => {
+  const env0 = makeEnv({ handler: () => { throw new Error('no call'); } });
+  await rejects(env0.auth.signInWithPassword('nope', PW));
+  await rejects(env0.auth.signInWithPassword('g@example.test', ''));
+  await rejects(env0.auth.signInWithPassword('g@example.test', 'x'.repeat(129)));
+  assert.strictEqual(env0.calls.length, 0);
+  for (const st of [400, 401, 429, 500]) {
+    const env = makeEnv({ handler: () => jsonRes(st, { msg: 'bad ' + PW + ' for g@example.test', error_description: PW }) });
+    const e = await rejects(env.auth.signInWithPassword('g@example.test', PW));
+    assert.strictEqual(e.status, st);
+    assert.ok(!e.message.includes(PW));
+    assert.strictEqual(env.data[KEY], undefined);
+    assert.strictEqual(env.auth.peek(), null);
+  }
+  for (const body of [[1], { access_token: 'x', refresh_token: 'y', expires_in: 3600 }, { access_token: 'x', expires_in: 3600, user: { id: 'u' } }]) {
+    const env = makeEnv({ handler: () => jsonRes(200, body) });
+    await rejects(env.auth.signInWithPassword('g@example.test', PW));
+    assert.strictEqual(env.data[KEY], undefined);
+  }
+  const net = makeEnv({ handler: async () => { throw new Error('offline ' + PW); } });
+  assert.ok(!(await rejects(net.auth.signInWithPassword('g@example.test', PW))).message.includes(PW));
+  const fw = makeEnv({ failWrite: true, handler: () => jsonRes(200, { access_token: 'a', refresh_token: 'r', expires_in: 3600, user: { id: 'u3' } }) });
+  const e = await rejects(fw.auth.signInWithPassword('g@example.test', PW));
+  assert.strictEqual(e.code, 'storage');
+  assert.strictEqual(fw.auth.peek(), null);
+});
+
+test('late signInWithPassword response after signOut cannot apply', async () => {
+  let release;
+  const gate = new Promise((r) => { release = r; });
+  const env = makeEnv({ handler: async () => { await gate; return jsonRes(200, { access_token: 'atp', refresh_token: 'rtp', expires_in: 3600, user: { id: 'u3', email: 'g@example.test' } }); } });
+  const p = env.auth.signInWithPassword('g@example.test', PW);
+  await waitFor(() => env.calls.length > 0);
+  await env.auth.signOut();
+  release();
+  const e = await rejects(p);
+  assert.strictEqual(e.code, 'cancelled');
+  assert.strictEqual(env.auth.peek(), null);
+  assert.strictEqual(env.data[KEY], undefined);
+});
+
 (async () => {
   let failed = 0;
   for (const [name, fn] of tests) {

@@ -12,8 +12,24 @@
 </head><body>
 <p id="m">학습지를 여는 중…</p>
 <script>
-(function(){
+(async function(){
   var q = (location.search || '').replace(/^\?/, '').trim();
+  var shared = new URLSearchParams(location.search).get('m');
+  if(shared !== null){
+    var message=document.getElementById('m');
+    if(!/^[0-9a-f]{32}$/.test(shared)){message.textContent='학습지 주소를 확인해 주세요.';return;}
+    try{
+      var response=await fetch('https://fgahqumaldheqettmvqg.supabase.co/functions/v1/nm-membership',{
+        method:'POST',headers:{'Content-Type':'application/json',apikey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs'},body:JSON.stringify({action:'resolve_worksheet',token:shared})
+      });
+      var result=await response.json(),cfg=result.config;
+      if(!response.ok||!cfg||!/^C(?:[0-6]?\d|7[0-3])$/.test(cfg.courseKey)||!/^\d{4}-W(?:0[1-9]|[1-4]\d|5[0-3])$/.test(cfg.week)||![1,2].includes(cfg.k)||![0.7,0.85,1,1.25,1.5].includes(cfg.amount)||!['w1','w2'].includes(cfg.cadence)||!Number.isInteger(cfg.sessionIndex)||cfg.sessionIndex<1||cfg.sessionIndex>1000)throw new Error('invalid_link');
+      var destination=new URL('../number_magic/ws.html',location.href);
+      destination.search=new URLSearchParams({c:cfg.courseKey,w:cfg.week,k:String(cfg.k),cad:cfg.cadence,amt:String(cfg.amount),s:String(cfg.sessionIndex),p:'1',auto:'0'}).toString();
+      message.textContent='맞춤 학습지를 여는 중…';location.replace(destination.href);
+    }catch(e){message.textContent='학습지 링크가 만료되었거나 연결하지 못했어요. 학원에 새 링크를 요청해 주세요.';}
+    return;
+  }
   var m = /^(\d{2})(\d{2})\.([A-Za-z0-9_-]+)$/.exec(q);
   var el = document.getElementById('m');
   if(!m){ el.textContent = '주소가 올바르지 않아요.'; return; }

@@ -8149,7 +8149,11 @@ ${round.html}
     const grade = opts.grade != null ? opts.grade : (window.NM_PRINT_GRADE ? window.NM_PRINT_GRADE() : undefined);
     const seedOf = (wk, i) => (wk + c + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
     let session = course.sessions.find(s => !s.test && s.magic && s.magic.length) || course.sessions.find(s => !s.test) || null;
-    if(k === 2 && session){
+    const exact = Number(opts.startSession);
+    if(Number.isInteger(exact)&&exact>=1&&exact<=course.sessions.length){
+      const selected=course.sessions[exact-1];
+      session=selected.test?{...selected,drills:selected.pool||[],school:selected.pool||[],magic:[],creative:[],application:[],stretch:[]}:selected;
+    }else if(k === 2 && session){
       const list = course.sessions.filter(s => !s.test);
       const idx = list.indexOf(session);
       if(list.length > 1) session = list[(idx + 1) % list.length];

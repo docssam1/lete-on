@@ -217,7 +217,7 @@
      세션 선택(주 2회 두 번째 회차)·필산 회차·독셈 회차·문장제(대안 포함)·표지·마법 유닛 전부 그쪽. */
   /* s = 이 과정에서 몇 번째 회차인가(1부터) — 없으면 모름. 언어사고력 주제 순환·유아 "중반부터" 판정용(2026-09-30). */
   var sParam = parseInt(q.get('s') || '', 10);
-  var wk = NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad, sessionIdx: isNaN(sParam) ? null : sParam - 1 });
+  var wk = NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad, sessionIdx: isNaN(sParam) ? null : sParam - 1, startSession:q.get('p')==='1'?sParam:null });
   if(!wk) return fail(text('이 과정에는 아직 학습지가 없어요.','No worksheet is available for this course yet.','本课程暂时没有学习单。'));
   var items = wk.items, wsId = wk.wsId, cover = wk.cover, units = wk.units, title = wk.title;
   document.title = 'Numbers of Magic' + (name ? ' · ' + name : '') + ' — ' + wsId;
