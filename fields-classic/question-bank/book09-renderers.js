@@ -78,8 +78,11 @@ function areaGrid(visual) {
   const width = visual.gridWidth * cell;
   const height = visual.gridHeight * cell;
   const grid = `${Array.from({ length: visual.gridWidth + 1 }, (_, index) => `<line x1="${index * cell}" y1="0" x2="${index * cell}" y2="${height}"/>`).join("")}${Array.from({ length: visual.gridHeight + 1 }, (_, index) => `<line x1="0" y1="${index * cell}" x2="${width}" y2="${index * cell}"/>`).join("")}`;
-  const points = visual.points.map(([x,y]) => `${x * cell},${y * cell}`).join(" ");
-  return `<svg class="b9-svg b9-area-grid" viewBox="-2 -2 ${width + 4} ${height + 4}" role="img" aria-label="모눈 위 색칠한 도형"><g class="grid">${grid}</g><polygon points="${points}"/></svg>`;
+  // 도형 여러 개(polygons) · 칠하지 않는 직사각형 틀(frame) · 안쪽 선(lines)을 함께 그린다. 옛 데이터는 points 하나.
+  const shapes = (visual.polygons || [visual.points]).map((points) => `<polygon points="${points.map(([x, y]) => `${x * cell},${y * cell}`).join(" ")}"/>`).join("");
+  const frame = visual.frame ? `<rect class="frame" x="${visual.frame[0] * cell}" y="${visual.frame[1] * cell}" width="${(visual.frame[2] - visual.frame[0]) * cell}" height="${(visual.frame[3] - visual.frame[1]) * cell}"/>` : "";
+  const lines = (visual.lines || []).map(([x1, y1, x2, y2]) => `<line class="inner" x1="${x1 * cell}" y1="${y1 * cell}" x2="${x2 * cell}" y2="${y2 * cell}"/>`).join("");
+  return `<svg class="b9-svg b9-area-grid" viewBox="-2 -2 ${width + 4} ${height + 4}" role="img" aria-label="모눈 위 색칠한 도형"><g class="grid">${grid}</g>${shapes}${frame}${lines}</svg>`;
 }
 
 function isoMap(map, compact = false) {

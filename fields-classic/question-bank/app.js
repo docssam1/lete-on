@@ -2,14 +2,14 @@ import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?
 import { GENERATORS } from "./generators.js?v=20260918b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261003c";
-import { book02Markup } from "./book02-renderers.js?v=20261018t";
-import { book03Markup } from "./book03-renderers.js?v=20261018t";
-import { book04Markup } from "./book04-renderers.js?v=20261018t";
-import { book05Markup } from "./book05-renderers.js?v=20261018t";
+import { book02Markup } from "./book02-renderers.js?v=20261018u";
+import { book03Markup } from "./book03-renderers.js?v=20261018u";
+import { book04Markup } from "./book04-renderers.js?v=20261018u";
+import { book05Markup } from "./book05-renderers.js?v=20261018u";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book07Markup } from "./book07-renderers.js?v=20261019a";
 import { book08Markup } from "./book08-renderers.js?v=20260905d";
-import { book09Markup } from "./book09-renderers.js?v=20260911a";
+import { book09Markup } from "./book09-renderers.js?v=20261021a";
 import { book10Markup } from "./book10-renderers.js?v=20260822k";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
 

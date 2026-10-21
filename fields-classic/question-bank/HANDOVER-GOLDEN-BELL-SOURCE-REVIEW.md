@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018t`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018t/20261018u/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018u`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018u/20261018v/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -436,6 +436,18 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 교사용 답이 틀린 곳 5곳(DB `sourceNote`): 9쪽 (5) · 10쪽 아래 (1) · 17쪽 (2) · 19쪽 (14) · 26쪽 (6). 원본 그림·숫자를 바로잡은 곳: 6쪽 (8) · 17쪽 (3).
   - answerRef 번호와 화면 자리가 다르다: 새 단원 7~15는 각 원 단원 바로 뒤에 끼워 넣었다. 키는 언제나 공개 데이터의 `answerRef`에서 읽을 것.
   - 다음은 9권. `golden-bell-guided-experience-audit.mjs`의 9권 개념 설명 7건 실패를 그때 함께 본다.
+#### 9권 (교사용 판서 11쪽, 2026-10-21 착수)
+- **원본**: Drive 폴더 `더클래식_1과정_9N30권_골든벨_230817`의 쪽 그림 11장(`…(1)_1.png`~`_11.png`). **PPT가 아니라 선생님이 모눈 노트에 손으로 쓴 판서**다. 같은 PDF(12MB)와 답 지운 판 `더클래식_1과정_9N30권_골든벨_필기삭제중.pdf`(13MB)는 Drive 도구 한도(10MB)를 넘어 받지 못했다 → 교사용 판에서 **검정 선만 문제로 옮기고** 빨강·파랑 필기(답·풀이)는 대조에만 쓴다. 받은 파일은 저장소 밖에만.
+- **모눈 좌표 읽기**: 쪽 그림 2845×2134에서 노트 모눈은 x 63.3px(시작 93) · y 53.3px(시작 131) 간격 — 칸 번호 격자를 겹쳐 그린 뒤 꼭짓점을 칸 번호로 받아쓴다.
+- **10~11쪽은 10권 내용**(제목 「<10권> 01. 연속수의 합」 — 네이피어 곱셈·수의 개수·연속수의 합). 원장 결정(2026-10-21): **10권으로 옮긴다.** 9권은 1~9쪽만 대조하고, 9권의 `consecutive-sum-pairing`(11쪽에서 가져온 단원)은 10권 대조 때 10권으로 옮긴다.
+- **묶음 계획**: 1) 1~2쪽 넓이 ✅ · 2) 2~4쪽 쌓기나무 개수·숨은 쌓기나무·페인트칠·앞/옆 모양 · 3) 5~6쪽 층별 모양·최대/최소 · 4) 7~8쪽 마방진 · 5) 9쪽 원형진·삼각진. 쌓기나무 입체는 `book09-renderers.js` `isoMap`(높이 지도 → `GW_RENDER.renderIso`)을 쓴다.
+- **장부는 9권 고유 꼴**(`sourceCoverage.pages[].slots[]`, 슬롯마다 released/held + holdId). 8권처럼 바꾸지 않고 그대로 쓴다.
+- **9권 묶음 1(판서 1~2쪽 01-2 도형의 넓이 Q1 (1)~(5), 25문항, 2026-10-21)**: 패치 `tools/golden-bell-book09/patch-book09-batch1.mjs`(정답 없음).
+  - 단원 0 `unit-area-and-half`를 4문항 → 25문항으로(DB `/lessons/0/original/` 교체, 옛 `sourceCheck` 키도 지움). 보류 S1-05(복합 도형) 해제.
+  - 그림: `book09-renderers.js` `areaGrid()`에 `polygons`(조각 여러 개 — 고양이) · `frame`(칠하지 않는 직사각형 틀 — 2쪽 4)·5)) · `lines`(정사각형 대각선)를 더했다. 넓이 칠은 색표대로 주황 `#ffa94d`·선 `#333`(옛 청록 선을 바꿈, 추가 학습·유사문제 그림도 같이 바뀜).
+  - 개념 설명: 옛 모델이 원본 1)의 첫 도형과 같았고 개념 확인 문제도 원본 삼각형과 같은 답이었다 → 원본에 없는 ㄱ자 도형과 다른 확인 문제로. 장면을 4개(`phase` problem·organize·calculate·verify)로 늘려 guided 검사의 9권 넓이 실패 2건이 없어졌다(남은 9권 실패: 마방진·연속수·쌓기나무 가족 중복 — 해당 묶음에서).
+  - 검산기는 꼭짓점 공식과 1/60칸 점 세기 두 가지로 넓이를 구해 같은지 본다. **교사용 답과 다른 곳 없음.**
+  - DB `book-09` 56키 → 73키, sha 앞 8자리 `cce7534e`. 캐시 꼬리표 `20261018u`.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
