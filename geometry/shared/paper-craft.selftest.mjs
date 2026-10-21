@@ -1,3 +1,4 @@
+import {cutAnchor} from './paper-craft-cut-plan.js?v=20261021-1';
 import assert from 'node:assert/strict';
 import {catalog,activityIds,buildActivity} from './paper-craft-catalog.js?v=20261018-3';
 import {polygonArea,polygonCentroid,inside,markKey,partitionPaper} from './paper-craft-model.js?v=20261018-3';
@@ -70,7 +71,7 @@ for(const id of activityIds){
       case 'fold':step('fold');break;
       case 'design':
         if(!state.customMarks.length)step('design',{shape:'triangle',...polygonCentroid(p.paperStages.at(-1))});else step('design-finish');break;
-      case 'work':{const count=p.cuts?.length||p.marks.length;step('work',Array.from({length:count},(_,i)=>i).find(i=>!state.worked.includes(i)));break;}
+      case 'work':{if(p.cutPlan){const index=p.marks.findIndex((_,i)=>!state.cutPlacements[i]);if(index<0)step('cut-check');else step('place-cut',{index,...cutAnchor(p.marks[index])});break;}const count=p.cuts?.length||p.marks.length;step('work',Array.from({length:count},(_,i)=>i).find(i=>!state.worked.includes(i)));break;}
       case 'predict':{const marks=newMarks(effective,state.opened);assert(marks.length);step('predict',marks.findIndex((_,i)=>!state.stamped.includes(i)));break;}
       case 'choose-pattern':{
         assert.equal(act(p,state,'pattern',(p.patternAnswer+1)%3).accepted,false);

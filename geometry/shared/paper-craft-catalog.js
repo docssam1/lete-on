@@ -92,6 +92,6 @@ export function buildActivity(id){
     const correct=variant%3;spec.patternOptions=[turned,moved];spec.patternOptions.splice(correct,0,final);spec.patternAnswer=correct;
   }
   if(spec.stages)spec.depths=spec.stages.map(layerDepth);
-  return {...meta,...spec,id,variant,revision:'paper-craft-20261018-1'};
+  return {...meta,...spec,id,variant,cutPlan:meta.family==='cut',revision:meta.family==='cut'?'paper-craft-cut-plan-20261021-1':'paper-craft-20261018-1'};
 }
 export const activityIds=catalog.flatMap(p=>Array.from({length:p.variants},(_,i)=>`${p.ref}-${i+1}`));

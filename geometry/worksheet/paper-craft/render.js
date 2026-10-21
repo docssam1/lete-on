@@ -1,8 +1,8 @@
 import {stackConnectionPoints} from '../../shared/paper-craft-stack.js?v=20261019-1';
 import {square,box,polygonCentroid} from '../../shared/paper-craft-model.js?v=20261018-3';
 import {chordSegments} from '../../games/paper-fold/reverse-fold.js?v=20261018-3';
-import {paperSurface,polygonPath,escapeHtml,colors} from '../../shared/paper-craft-svg.js?v=20261018-3';
-import {answerFor,complex} from './workbook-core.js?v=20261018-3';
+import {paperSurface,polygonPath,escapeHtml,colors} from '../../shared/paper-craft-svg.js?v=20261021-4';
+import {answerFor,complex} from './workbook-core.js?v=20261021-4';
 const e=escapeHtml;
 export function foldLabel(f,t){const dx=-f.nx*f.moving,dy=-f.ny*f.moving;if(Math.abs(dx)>.1&&Math.abs(dy)>.1)return dx>0?(dy>0?'↘':'↗'):(dy>0?'↙':'↖');return Math.abs(dx)>.7?(dx>0?'→':'←'):(dy>0?'↓':'↑');}
 export function panelSvg(panel,id){
@@ -22,15 +22,20 @@ export function panelsFor(p,t,answers=false){
   const panels=p.paperStages.map((poly,i)=>({label:i===0?t.first+' · '+foldLabel(p.folds[0],t):`${i} ${t.folded} ${i<p.folds.length?foldLabel(p.folds[i],t):''}`,poly,numbers:i===0||p.family==='top'&&i<p.folds.length?p.numbers:undefined,layers:p.family==='top'&&i!==p.folds.length?(i===0?p.sourceLayers:p.stages[i]):undefined,depth:p.depths[i].max,grid:i===0&&!!p.numbers&&p.family!=='top',gridSize:p.gridSize,creases:i<p.folds.length?chordSegments(poly,p.folds[i]):[]}));
   if(p.initialTurn)panels[0].label=t.first+' · '+t.turnFirst+' · '+foldLabel(p.folds[0],t);
   panels[panels.length-1]={label:t.zoom,poly:p.paperStages.at(-1),marks:p.marks,cuts:p.cuts||[],depth:p.depths.at(-1).max,gridSize:p.gridSize,zoom:true};
+  if(p.cutPlan&&!answers){
+    panels[panels.length-1]={label:t.cutResponse,poly:p.paperStages.at(-1),depth:p.depths.at(-1).max,gridSize:p.gridSize,zoom:true};
+    panels.push({label:t.cutGoal,poly:p.paperStages[0],marks:p.markStages.at(-1),gridSize:p.gridSize});
+  }
   if(answers)panels.splice(0,panels.length-1);
   if(answers)for(let i=1;i<=p.folds.length;i++)panels.push({label:`${i} ${t.undoFold}`,poly:p.paperStages[p.folds.length-i],marks:p.markStages[i],cuts:i===p.folds.length?p.allCuts||[]:[],depth:p.depths[p.folds.length-i].max,numbers:p.family==='number'&&i===p.folds.length?p.numbers:undefined,targets:p.family==='number'&&i===p.folds.length?p.target:[],grid:p.family==='number'&&i===p.folds.length,gridSize:p.gridSize,zoom:true});
   return panels;
 }
 export function replyPanels(p,t){
   if(['stack','reverse'].includes(p.family))return [];
+  if(p.cutPlan)return [{label:t.cutResponse,poly:p.paperStages.at(-1),blank:true,gridSize:p.gridSize,zoom:true}];
   return p.paperStages.slice(0,-1).reverse().map((poly,i)=>({label:`${i+1} ${t.predict}`,poly,blank:true,numbers:p.family==='number'&&i===p.folds.length-1?p.numbers:undefined,grid:p.family==='number'&&i===p.folds.length-1,gridSize:p.gridSize,zoom:true,creases:chordSegments(poly,p.folds[p.folds.length-i-1])}));
 }
-export function taskText(p,t){return p.connect?t.connectTask:p.patternOptions?t.choiceTask:p.family==='number'?(p.askRemain?t.numberRemain:t.numberCut):p.family==='top'?t.topTask:p.family==='sort'?t.sortTask:p.family==='stack'?t.stackTask+' ('+(p.build?t.bottomOrderLabel:t.orderLabel)+')':p.family==='reverse'?t.reverseTask:t.patternTask;}
+export function taskText(p,t){return p.cutPlan?t.cutPlanTask:p.connect?t.connectTask:p.patternOptions?t.choiceTask:p.family==='number'?(p.askRemain?t.numberRemain:t.numberCut):p.family==='top'?t.topTask:p.family==='sort'?t.sortTask:p.family==='stack'?t.stackTask+' ('+(p.build?t.bottomOrderLabel:t.orderLabel)+')':p.family==='reverse'?t.reverseTask:t.patternTask;}
 export function solutionLines(p,t){
   const a=answerFor(p);
   if(a.kind==='number'){const groups=a.plan.filter(s=>s.kind==='make-ten'),last=a.plan.at(-1);return [a.numbers.join(' + '),...groups.map(g=>g.contributions.map(c=>c.take).join(' + ')+' = 10'+g.contributions.filter(c=>c.after>0).map(c=>` (${c.before} = ${c.take} + ${c.after})`).join('')),groups.length?`${last.tenCount*10} + ${last.remainder} = ${last.total}`:`${a.numbers.join(' + ')} = ${last.total}`];}
@@ -38,7 +43,7 @@ export function solutionLines(p,t){
   if(a.kind==='stack')return [`${t.topLabel}: ${a.top}`,`${t.bottomLabel}: ${a.bottom}`,`${p.build?t.bottomOrderLabel:t.orderLabel}: ${(p.build?a.bottomToTop:a.topToBottom).join(' → ')}`];
   if(a.kind==='reverse')return [t.reverseHint,`${t.answer}: ${a.keys.map(k=>k.toUpperCase()).join(', ')}`];
   if(p.patternOptions)return [t.patternHint,`${t.answer}: ${String.fromCharCode(65+p.patternAnswer)}`];
-  if(p.family==='cut')return [t.patternHint];
+  if(p.family==='cut')return [p.cutPlan?t.cutPlanHint:t.patternHint];
   return [t.patternHint,...(a.topNumber?[`${t.topNumber}: ${a.topNumber}`]:[]),`${t.discover}: ${a.count}`];
 }
 function cutouts(p,t){return `<div class="cutouts"><h3>${e(t.cutouts)}</h3><div>${[...p.papers].sort((a,b)=>a.id.localeCompare(b.id)).map(paper=>`<span style="--paper:${colors[paper.color]};--paper-width:${(paper.poly[1].x-paper.poly[0].x)*90}mm;--paper-height:${(paper.poly[2].y-paper.poly[1].y)*90}mm">${paper.id}</span>`).join('')}</div></div>`;}
@@ -53,7 +58,7 @@ function card(p,n,t,answers=false){
   return `<article class="activity-card ${complex(p)?'complex':''} family-${p.family} ${p.connect?'connect-activity':''} ${answers?'solution':''} ${p.patternOptions?'pattern-choice-activity':''}" data-activity-id="${p.id}"><h2>${n}. ${e(t.lang==='ko'?p.title:t.families[['cut','punch','sort','number','top','reverse','stack'].indexOf(p.family)])}</h2><p class="task">${e(taskText(p,t))}</p>${p.conditionTop?`<p class="condition">${e(t.condition)}${p.conditionTop}</p>`:''}<div class="condition-pictures">${conditions.map((panel,i)=>figure(panel,prefix+'-c-'+i)).join('')}</div>${extra}</article>`;
 }
 export function quickAnswer(p,t){const a=answerFor(p);if(a.kind==='number')return String(a.value);if(p.patternOptions)return `${t.answer}: ${String.fromCharCode(65+p.patternAnswer)}`;if(p.family==='cut')return t.answer+' →';if(p.family==='top')return `${t.topNumber}: ${a.topNumber} · ${t.discover}: ${a.count}`;if(a.kind==='pattern')return `${t.discover}: ${a.count}`;return solutionLines(p,t).at(-1);}
-function quickCard(p,n,t){const a=answerFor(p),lines=solutionLines(p,t),picture=['cut','punch','top'].includes(p.family)?figure({label:'',poly:p.paperStages[0],marks:p.markStages.at(-1)},'quick-'+n):'';return `<article class="quick-row" data-activity-id="${p.id}"><b>${n}</b><div><strong>${e(t.lang==='ko'?p.title:t.families[['cut','punch','sort','number','top','reverse','stack'].indexOf(p.family)])}</strong><p>${e(quickAnswer(p,t))}</p></div>${picture}</article>`;}
+function quickCard(p,n,t){const a=answerFor(p),lines=solutionLines(p,t),picture=['cut','punch','top'].includes(p.family)?figure({label:'',poly:p.cutPlan?p.paperStages.at(-1):p.paperStages[0],marks:p.cutPlan?p.marks:p.markStages.at(-1),zoom:p.cutPlan},'quick-'+n):'';return `<article class="quick-row" data-activity-id="${p.id}"><b>${n}</b><div><strong>${e(t.lang==='ko'?p.title:t.families[['cut','punch','sort','number','top','reverse','stack'].indexOf(p.family)])}</strong><p>${e(quickAnswer(p,t))}</p></div>${picture}</article>`;}
 export function renderPages(plan,entries,t,name=''){
   return plan.map(page=>{
     if(page.kind==='blank')return '<section class="sheet duplex-blank" aria-label="duplex blank"></section>';
