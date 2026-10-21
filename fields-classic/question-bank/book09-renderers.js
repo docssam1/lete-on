@@ -179,7 +179,7 @@ function cubeModelChoice(visual) {
 }
 
 function magicGrid(visual) {
-  return `<div class="b9-magic-grid" style="--size:${visual.size}">${visual.shown.map((value) => `<span class="${typeof value === "string" ? "target" : ""}">${esc(value)}</span>`).join("")}</div>${visual.lineSum ? `<strong class="b9-line-sum">한 줄의 합 ${visual.lineSum}</strong>` : ""}`;
+  return `<div class="b9-magic-grid" style="--size:${visual.size}">${visual.shown.map((value) => (value == null || value === "" ? `<span class="empty"></span>` : `<span class="${typeof value === "string" ? "target" : ""}">${esc(value)}</span>`)).join("")}</div>${visual.lineSum ? `<strong class="b9-line-sum">한 줄의 합 ${visual.lineSum}</strong>` : ""}`;
 }
 
 function consecutiveSum(visual) {

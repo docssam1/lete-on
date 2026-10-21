@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018w`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018w/20261018x/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018x`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018x/20261018y/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -440,7 +440,7 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
 - **원본**: Drive 폴더 `더클래식_1과정_9N30권_골든벨_230817`의 쪽 그림 11장(`…(1)_1.png`~`_11.png`). **PPT가 아니라 선생님이 모눈 노트에 손으로 쓴 판서**다. 같은 PDF(12MB)와 답 지운 판 `더클래식_1과정_9N30권_골든벨_필기삭제중.pdf`(13MB)는 Drive 도구 한도(10MB)를 넘어 받지 못했다 → 교사용 판에서 **검정 선만 문제로 옮기고** 빨강·파랑 필기(답·풀이)는 대조에만 쓴다. 받은 파일은 저장소 밖에만.
 - **모눈 좌표 읽기**: 쪽 그림 2845×2134에서 노트 모눈은 x 63.3px(시작 93) · y 53.3px(시작 131) 간격 — 칸 번호 격자를 겹쳐 그린 뒤 꼭짓점을 칸 번호로 받아쓴다.
 - **10~11쪽은 10권 내용**(제목 「<10권> 01. 연속수의 합」 — 네이피어 곱셈·수의 개수·연속수의 합). 원장 결정(2026-10-21): **10권으로 옮긴다.** 9권은 1~9쪽만 대조하고, 9권의 `consecutive-sum-pairing`(11쪽에서 가져온 단원)은 10권 대조 때 10권으로 옮긴다.
-- **묶음 계획**: 1) 1~2쪽 넓이 ✅ · 2) 2~4쪽 쌓기나무 개수·숨은 쌓기나무·페인트칠·앞/옆 모양 ✅ · 3) 5~6쪽 층별 모양·최대/최소 ✅ · 4) 7~8쪽 마방진 · 5) 9쪽 원형진·삼각진. 쌓기나무 입체는 `book09-renderers.js` `isoMap`(높이 지도 → `GW_RENDER.renderIso`)을 쓴다.
+- **묶음 계획**: 1) 1~2쪽 넓이 ✅ · 2) 2~4쪽 쌓기나무 개수·숨은 쌓기나무·페인트칠·앞/옆 모양 ✅ · 3) 5~6쪽 층별 모양·최대/최소 ✅ · 4) 7~8쪽 마방진 ✅ · 5) 9쪽 원형진·삼각진. 쌓기나무 입체는 `book09-renderers.js` `isoMap`(높이 지도 → `GW_RENDER.renderIso`)을 쓴다.
 - **장부는 9권 고유 꼴**(`sourceCoverage.pages[].slots[]`, 슬롯마다 released/held + holdId). 8권처럼 바꾸지 않고 그대로 쓴다.
 - **9권 묶음 1(판서 1~2쪽 01-2 도형의 넓이 Q1 (1)~(5), 25문항, 2026-10-21)**: 패치 `tools/golden-bell-book09/patch-book09-batch1.mjs`(정답 없음).
   - 단원 0 `unit-area-and-half`를 4문항 → 25문항으로(DB `/lessons/0/original/` 교체, 옛 `sourceCheck` 키도 지움). 보류 S1-05(복합 도형) 해제.
@@ -462,6 +462,14 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - Q2는 원본 순서대로 묻는다(1)은 최소·최대, 2)~4)는 최대·최소 — `sourceDiscrepancy`). 원본 그림에 겹친 필기 층수는 옮기지 않았다.
   - 검산기는 위에서 본 칸마다 1층~최고층을 모두 넣어 보고 앞·옆 모양이 같은 배치를 전부 찾아 개수의 최소·최대를 낸다(Q1은 최소=최대인지도 확인). 층별 모양은 위층 칸 아래에 아래층 칸이 있는지 확인한 뒤 높이 지도로 바꿔 앞·옆을 센다. **교사용 답과 다른 곳 없음.**
   - 보류 13 → 10. DB `book-09` 130키 → 166키, sha 앞 8자리 `f016dc17`. 캐시 꼬리표 `20261018w`(`book09-renderers.js` import·`golden-bell.css` 링크는 `20261021b`).
+- **9권 묶음 4(판서 7~8쪽 03-1 마방진 Q1 마방진의 성질 · Q2 겹치는 칸 찾기, 21문항·답 칸 29, 2026-10-21)**: 패치 `tools/golden-bell-book09/patch-book09-batch4.mjs`(정답 없음).
+  - 단원 2 `magic-square-missing`을 2문항 → 21문항으로 다시 만듦(DB `/lessons/2/original/` 교체, 옛 `sourceCheck` 키도 지움). Q1 1) 한 줄의 합과 □ 2 · 2) 가운데 수로 □·A + B 6 · Q2 1) 겹치는 칸으로 A 6 · 2) 먼저 구할 칸 찾기 2(칸 이름 + A·B·한 줄의 합 — 칸 이름은 소문자도 정답) · 3) 4칸·5칸 마방진 A 또는 A + B 5.
+  - **옛 데이터 오류**: 옛 두 문항은 판서 7쪽인데 6쪽으로 적혀 있었고, 판서에서 **필기로 채운 수까지 주어진 수로** 옮겨 「한 줄의 합」이 그림에 나와 있었다(원본은 그 합을 묻는다) → 검정 글씨만 옮김. 판서의 칸 이름 a~d·겹치는 칸 동그라미는 필기라 옮기지 않았다. 1)의 「가장 먼저 찾을 수 있는 칸」 물음은 필기 칸 이름으로 답하는 것이라 받지 않는다(`sourceDiscrepancy`).
+  - **옛 장부 오류**: 8쪽 보류 2건(「점 칸」「삼각진」)은 실제로는 9쪽 내용이었다(8쪽은 전부 마방진). 9쪽은 보류 S9-Q1·S9-Q2가 그대로 맡는다. 보류 10 → 5.
+  - 그림: `magic-grid`의 `shown`에 `null`(빈 칸)을 허용(`book09-renderers.js`). 4칸·5칸도 `size`로 그대로 그린다. 개념 설명은 4장면(`phase`)으로 바꿔 guided 검사의 9권 마방진 실패 2건이 없어졌다(남은 9권 실패: 연속수 2건·쌓기나무 가족 중복 1건).
+  - **5칸 마방진에는 「가운데 수를 사이에 둔 두 수의 합 = 가운데 수의 2배」가 성립하지 않는다**(3칸만). 검산기 풀이 문장이 한때 이 규칙을 5칸 문항에 써서 맞는 답에 틀린 이유를 붙였다 → 3칸에만 쓰고, 문장의 계산이 답과 같은지도 검사기가 확인한다.
+  - 검산기는 칸마다 미지수, 한 줄의 합도 미지수로 두고 모든 가로·세로·대각선 = 한 줄의 합 연립식을 분수로 정확히 풀어 구할 값이 하나로 정해지는지 본다. 「먼저 구할 칸」은 두 줄만으로 정해지는 칸이 하나뿐인지 확인한다. **교사용 답과 다른 곳 없음.**
+  - DB `book-09` 166키 → 195키, sha 앞 8자리 `91ed7420`. 캐시 꼬리표 `20261018x`(`book09-renderers.js` import는 `20261021c`).
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
