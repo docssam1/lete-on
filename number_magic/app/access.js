@@ -69,7 +69,16 @@
     return 'ko';
   }
   function setStatus(msg, cls) { status.textContent = msg || ''; status.className = 'status' + (cls ? ' ' + cls : ''); }
-  function q(base) { return base + '&lang=' + encodeURIComponent(lang); }
+  function q(base) {
+    var url = base + '&lang=' + encodeURIComponent(lang);
+    var ws = new URLSearchParams(location.search).get('ws');
+    if (ws) url += '&ws=' + encodeURIComponent(ws);
+    return url;
+  }
+  function grant(mode) { sessionStorage.setItem('nm_entry_once_v1', JSON.stringify({mode:mode,at:Date.now()})); }
+  $('preview-link').addEventListener('click', function(ev){
+    try { grant('preview'); } catch(e) { ev.preventDefault(); setStatus(T[lang].storage,'err'); }
+  });
   function apply() {
     var d = T[lang];
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
@@ -107,6 +116,7 @@
     try { p = Promise.resolve(api.login(u, c)); } catch (e) { p = Promise.reject(e); }
     p.then(function () {
       code.value = '';
+      try { grant('review'); } catch(e) { setStatus(T[lang].storage, 'err'); busy=false;btn.disabled=false;return; }
       setStatus(T[lang].ok, 'ok');
       location.assign(q('index.html?enter=1&review=1'));
     }, function (err) {
@@ -118,6 +128,7 @@
     });
   });
 
-  lang = initial();
+  var requested = new URLSearchParams(location.search).get('lang');
+  lang = ok(requested) ? requested : initial();
   apply();
 })();

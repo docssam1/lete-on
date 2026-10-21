@@ -3844,3 +3844,27 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 .nm-review-banner button:focus-visible{outline:3px solid #f0d68b;outline-offset:2px}
 body.nm-review-mode #app{margin-top:48px;height:calc(100dvh - 48px)}
 body.nm-review-mode .nm-title3d{top:48px}
+/* Fit the available app area, including the persistent review bar. */
+.nm-title,.nm-ob{min-height:0;height:100%;flex:1 0 auto}
+.nm-ob{align-items:safe center}
+@media(max-width:759px){
+  .nm-title-card{padding:16px;gap:4px}
+  .nm-title-char{display:none}
+  .nm-title-logo-kr{font-size:28px}
+  .nm-title-btns{gap:8px;margin-top:8px}
+  .nm-title-blk{padding:8px;gap:2px;min-height:70px}
+  .nm-title-blk-ico{display:none}
+  .nm-title-sub-row{display:grid;grid-template-columns:1fr 1fr}
+  .nm-title-pill{min-height:44px;padding:6px 8px}
+}
+@media(max-height:740px){
+  .nm-title-card{padding:16px;gap:4px}
+  .nm-title-char{display:none}
+  .nm-title-logo-kr{font-size:26px}
+  .nm-title-btns{gap:8px;margin-top:8px}
+  .nm-title-blk{padding:8px;gap:2px}
+  .nm-title-blk-ico{display:none}
+  .nm-title-pill{min-height:44px;padding:6px 10px}
+  .nm-ob{padding:12px}
+  .nm-ob-card{padding:18px 16px}
+}

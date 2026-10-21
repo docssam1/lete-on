@@ -29,7 +29,7 @@ try{
   await p.click('#nmReviewLogout');await p.waitForURL('**/access.html');assert(requests.some(x=>x.action==='logout'));assert.equal((await untouched()).normal,true);
   if(OUT)await p.screenshot({path:path.join(OUT,`${width}-${lang}-access.png`)});
   // A URL flag and fake stored token do not unlock the app if the server rejects it.
-  valid=false;await p.evaluate(()=>sessionStorage.setItem('nm_review_session_v1',JSON.stringify({token:'a'.repeat(64)})));await p.goto(base+'/number_magic/index.html?enter=1&review=1');await p.waitForURL('**/access.html?reason=expired');assert.equal(await p.locator('.nm-review-banner').count(),0);assert.equal((await untouched()).normal,true);
+  valid=false;await p.evaluate(()=>{sessionStorage.setItem('nm_review_session_v1',JSON.stringify({token:'a'.repeat(64)}));sessionStorage.setItem('nm_entry_once_v1',JSON.stringify({mode:'review',at:Date.now()}));});await p.goto(base+'/number_magic/index.html?enter=1&review=1');await p.waitForURL('**/access.html?reason=expired');assert.equal(await p.locator('.nm-review-banner').count(),0);assert.equal((await untouched()).normal,true);
   assert.deepEqual(errors,[]);assert.deepEqual(backend,[],'review never calls real guardian/profile/contact/membership APIs');report.push({width,lang,approvalEntry:true,allUnitsUnlocked:true,realProfileAndGuardianPreserved:true,pointsIsolated:true,logout:true,rejectedSessionClosed:true,errors});await c.close();
  }
  // The guardian approval route opens even with an existing onboarded learner.

@@ -240,6 +240,10 @@ const CSS = `
 .t3d.short .t3d-chip{font-size:12px;padding:2px 9px 2px 5px}
 @media (prefers-reduced-motion:reduce){.t3d canvas.t3d-gl{transition:none}.t3d-btn{transition:none}.t3d-word,.t3d-btn.primary::before{animation:none}}
 .t3d.still .t3d-word,.t3d.still .t3d-btn.primary::before{animation:none}
+.t3d.compact .t3d-btn:not(.primary){width:calc((100% - 32px)/2);max-width:none!important}
+.t3d.compact .t3d-btn.pill{width:calc((100% - 48px)/4)!important;flex-direction:column;padding:6px 3px;gap:3px;text-align:center;justify-content:center}
+.t3d.compact .t3d-btn.pill b{font-size:12px;line-height:1.2}
+@media(max-height:700px){.t3d.compact .t3d-story{display:none}}
 @media (forced-colors:active){.t3d-btn{border:2px solid ButtonText;background:ButtonFace;color:ButtonText}.t3d-btn::before,.t3d-btn::after{display:none}.t3d-word{-webkit-text-fill-color:CanvasText;background:none}}
 .t3d-raster{position:fixed;left:-10000px;top:0;pointer-events:none}
 .t3d-raster .nm-human img{width:100%;height:100%;object-fit:contain;display:block}
@@ -471,11 +475,12 @@ export async function mountTitle3D(container, opts){
     [VW, VH] = sizeOf();
     r.setSize(VW, VH, false);
     cam.aspect = VW / VH;
-    const portrait = VW / VH < 0.9;
+    const portrait = VW / VH < 0.9 || (VW < 760 && VH >= 540);
     const short = !portrait && VH < 560;
     narrow = VW < 560 || portrait;
     root.classList.toggle('narrow', narrow);
     root.classList.toggle('short', short);
+    root.classList.toggle('compact', VW < 760 || VH < 600);
     root.style.setProperty('--t3d-logo', (narrow ? Math.min(40, VW * 0.098) : short ? Math.max(26, VH * 0.07) : Math.min(54, Math.max(38, VH * 0.062))) + 'px');
     root.style.setProperty('--t3d-logosub', (narrow ? 12 : short ? 11 : 14) + 'px');
     /* 버튼 폭 한도 — 세로: 모드 2칸, 소품 4칸 */
@@ -575,6 +580,18 @@ export async function mountTitle3D(container, opts){
           } else { const ov = a.y + a.h + 4 - b.y; if(ov > 0) b.y += ov; }
         }
       }
+    }
+    // Projecting, clamping, then spreading labels can push them back on top of
+    // one another. Compact screens get stable rows with real 44px hit targets.
+    if(root.classList.contains('compact')){
+      const rows=[['continue'],['diag','game'],['sheet','road'],['story','dex','hist','magazine']];
+      const heights=rows.map(ids=>Math.max(44,...ids.map(id=>sizes[id]?.[1]||0)));
+      let y=VH-12-heights.reduce((a,b)=>a+b,0)-24;
+      rows.forEach((ids,i)=>{
+        const gap=8,cell=(VW-24-(ids.length-1)*gap)/ids.length;
+        ids.forEach((id,j)=>{const R=rects.find(r=>r.o.id===id);if(R){R.x=12+j*(cell+gap)+(cell-R.w)/2;R.y=y;}});
+        y+=heights[i]+8;
+      });
     }
     rects.forEach(R => {
       R.x = Math.max(6, Math.min(VW - R.w - 6, R.x)); R.y = Math.max(6, Math.min(VH - R.h - 6, R.y));

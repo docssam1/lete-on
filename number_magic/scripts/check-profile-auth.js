@@ -653,6 +653,16 @@ test('late signInWithPassword response after signOut cannot apply', async () => 
   assert.strictEqual(env.data[KEY], undefined);
 });
 
+test('fresh entry clears only old authentication and ignores another tab login', async () => {
+  const env=makeEnv({storage:{[KEY]:JSON.stringify(mkSession()),nm_state_v1:'keep-learner'},handler:()=>{throw new Error('unexpected network');}});
+  env.auth.configure({url:URL_BASE,anonKey:'anon-test',freshEntry:true});
+  assert.strictEqual(await env.auth.ready(),null);
+  assert.strictEqual(env.data[KEY],undefined);
+  assert.strictEqual(env.data.nm_state_v1,'keep-learner');
+  env.data[KEY]=JSON.stringify(mkSession());env.fire('storage',{key:KEY,newValue:env.data[KEY]});
+  assert.strictEqual(env.auth.peek(),null);assert.strictEqual(env.calls.length,0);
+});
+
 (async () => {
   let failed = 0;
   for (const [name, fn] of tests) {

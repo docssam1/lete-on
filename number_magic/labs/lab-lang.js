@@ -16,6 +16,13 @@
 'use strict';
 
 var LANG='ko';
+var appBase=new URL('../',document.currentScript.src),voiceReady=null;
+function loadVoice(){
+  if(voiceReady)return voiceReady;
+  function script(path){return new Promise(function(resolve,reject){var s=document.createElement('script');s.src=new URL(path,appBase).href;s.onload=resolve;s.onerror=reject;document.head.appendChild(s);});}
+  voiceReady=script('data/tts-map-omni.js').then(function(){return script('app/voice.js?v=20261021-voice2');});
+  return voiceReady;
+}
 try{
   var st=JSON.parse(localStorage.getItem('nm_state_v1')||'{}');
   if(st.lang==='en'||st.lang==='zh'||st.lang==='ko')LANG=st.lang;
@@ -54,15 +61,11 @@ window.LabLang={
   speak:function(SAY,root){
     (root||document).querySelectorAll('.speak').forEach(function(b){
       b.onclick=function(){
-        if(!window.speechSynthesis)return;
-        speechSynthesis.cancel();
         var k=b.getAttribute('data-say');
         var src=(k&&SAY[k]!=null)?SAY[k]:SAY;
         var txt=T(src);
         if(!txt)return;
-        var u=new SpeechSynthesisUtterance(txt);
-        u.lang=window.LabLang.voice;u.rate=.95;
-        speechSynthesis.speak(u);
+        loadVoice().then(function(){if(document.visibilityState!=='hidden')window.NM_VOICE.say(txt,LANG);}).catch(function(){});
       };
     });
   }

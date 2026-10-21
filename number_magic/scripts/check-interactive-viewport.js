@@ -17,6 +17,7 @@ async function run(){
   for(const [lang,width,height,cols,mode='paint',step='lab'] of cases){
    const ctx=await browser.newContext({viewport:{width,height},serviceWorkers:'block'});
    await ctx.route('**/*',r=>!r.request().url().startsWith(base)||!['GET','HEAD'].includes(r.request().method())?r.abort():r.continue());
+   await ctx.route('**/app/entry.js*',r=>r.fulfill({contentType:'application/javascript',body:'window.NM_ENTRY={mode:"fixture"};'}));
    await ctx.addInitScript(({lang})=>localStorage.setItem('nm_state_v1',JSON.stringify({
     lang,name:'화면검수',onboarded:true,view:'unit',unit:'N-01',step:'lab',avatar:{kind:'boy'},
     placement:{course:'C0',self:true},account:{status:'active'},
@@ -45,6 +46,7 @@ async function run(){
    },{cols,mode});
    await page.locator(`[data-step="${step}"]`).click();
    if(await page.locator('#skipNo').count())await page.locator('#skipNo').click();
+   if(await page.locator('#nmLessonBegin').count())await page.locator('#nmLessonBegin').click();
    await page.locator('.nm-g13-gframe').waitFor();await page.evaluate(()=>document.fonts.ready);
    // Both initial introduction and subsequent question must fit.
    async function metrics(label){
