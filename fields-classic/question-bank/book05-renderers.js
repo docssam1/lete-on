@@ -359,11 +359,13 @@ function sourceProductGrid(visual) {
   const size = visual.rowProducts.length;
   const cells = [];
   for (let r = 0; r < size; r += 1) {
-    for (let c = 0; c < size; c += 1) cells.push(`<span class="${shaded.has(`${r}:${c}`) ? "shaded" : ""}">${escapeHtml(visual.letters?.[r]?.[c] || "")}</span>`);
+    for (let c = 0; c < size; c += 1) cells.push(`<span class="${shaded.has(`${r}:${c}`) ? (visual.shadedEmpty ? "shaded blocked" : "shaded") : ""}">${escapeHtml(visual.letters?.[r]?.[c] || "")}</span>`);
     cells.push(`<b>${visual.rowProducts[r]}</b>`);
   }
   visual.columnProducts.forEach((value) => cells.push(`<b>${value}</b>`));
-  return `<div class="b5-src-product" style="--size:${size}" role="img" aria-label="곱셈 매트릭스">${cells.join("")}</div>`;
+  const grid = `<div class="b5-src-product" style="--size:${size}" role="img" aria-label="${escapeHtml(`곱셈 매트릭스. 가로줄 곱 ${visual.rowProducts.join(", ")}. 세로줄 곱 ${visual.columnProducts.join(", ")}${visual.shadedEmpty ? ". 색칠된 칸에는 수가 들어가지 않습니다" : ""}`)}">${cells.join("")}</div>`;
+  // 8권 10~11쪽: 판 위에 넣을 수 목록(「2, 3, 4, …, 9」)
+  return visual.pool ? `<div class="b5-src-product-wrap"><p class="b5-src-pool">${escapeHtml(visual.pool.join(", "))}</p>${grid}</div>` : grid;
 }
 
 // 사각형 피라미드: 한 줄에 1, 3, 5…개
@@ -603,7 +605,9 @@ const SHAPE_GLYPH = {
   star: ["별", "#f0b23a", "#fff3c4", '<polygon points="17,2 21,13 32,13 23,20 26,31 17,24 8,31 11,20 2,13 13,13"/>'],
   heart: ["하트", "#e0559a", "#fde0ee", '<path d="M17 31C3 21 2 12 7 7c4-4 9-2 10 3 1-5 6-7 10-3 5 5 4 14-10 24z"/>'],
   pentagon: ["오각형", "#f39a1e", "#ffe9cc", '<polygon points="17,2 32,13 26,31 8,31 2,13"/>'],
-  dcircle: ["겹동그라미", "#1aa3c9", "#dff3ff", '<circle cx="17" cy="17" r="14"/><circle cx="17" cy="17" r="7" fill="none"/>']
+  dcircle: ["겹동그라미", "#1aa3c9", "#dff3ff", '<circle cx="17" cy="17" r="14"/><circle cx="17" cy="17" r="7" fill="none"/>'],
+  squarein: ["속 네모", "#2f6fe0", "#dde9ff", '<rect x="4" y="4" width="26" height="26"/><rect x="11" y="11" width="12" height="12" fill="#2f6fe0"/>'],
+  dot: ["까만 동그라미", "#e8503a", "#e8503a", '<circle cx="17" cy="17" r="14"/>']
 };
 const shapeGlyph = (kind, value) => {
   const [name, line, fill, body] = SHAPE_GLYPH[kind];
@@ -880,7 +884,7 @@ function sourceVenn(visual) {
 }
 
 // 8권: 원본 기호(○□△☆◇◎)를 모양 색표 이름으로.
-const SOURCE_SYMBOL = { "○": "circle", "□": "square", "△": "triangle", "☆": "star", "◇": "diamond", "◎": "dcircle" };
+const SOURCE_SYMBOL = { "○": "circle", "□": "square", "△": "triangle", "☆": "star", "◇": "diamond", "◎": "dcircle", "▣": "squarein", "●": "dot" };
 const symbolGlyph = (s) => (SOURCE_SYMBOL[s] ? shapeGlyph(SOURCE_SYMBOL[s]) : `<span class="t">${escapeHtml(s)}</span>`);
 
 // 8권 2~6쪽 덧셈 매트릭스: 칸마다 도형, 오른쪽에 가로 합, 아래에 세로 합. 합이 null인 자리는 빈 상자(물음).
