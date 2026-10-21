@@ -3047,3 +3047,9 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 이 절은 서버 적용·로컬 검증 기록이다. main·Pages 반영 상태는 후속 완료 기록으로 확인한다. 음성 제작은 이번 범위에서 제외했다.
 
 - 후속 로그인 전환 검사: 보호자 이메일·연락처·학생 소유권 연결이 끝난 로컬 기록에는 전환 표시를 보존한다. 이후 로그아웃이 예전 로컬 승인을 되살리지 않으며, 원래 진도와 승인 원본 값은 지우지 않는다.
+
+#### main·운영 사이트 완료 확인
+
+- 기능 코드 `f567680d`와 로그인 전환 보완 `d5a596ee`가 main에 반영됐다. Pages [실행 39537333560](https://github.com/docssam1/lete-on/actions/runs/39537333560) 성공을 확인했다. 앞선 실행 39537160750은 후속 커밋 배포로 취소됐으므로 실패로 집계하지 않는다.
+- 운영 도메인의 index·main·profile-auth·membership·learning-plan·styles·exam·admin HTML/JS/CSS·ws·짧은 링크 **12파일이 HTTP 200이며 로컬 검증본과 SHA-256 일치**했다. 관리자 주소는 `https://lete-on.gfieldacademy.net/number_magic/admin.html`, 학습자 주소는 `https://lete-on.gfieldacademy.net/number_magic/`이다.
+- 마지막 로그아웃 회귀 포함 브라우저 25+2조건, 개인 로드맵/링크 20조건, 관리자 브라우저도 통과했다. 근거는 기존 로컬 검수 산출물 폴더의 `live-membership.json`·`membership-deployment.json`·각 검사 로그와 개인 로드맵 스크린샷에 보관했다. 사용자 미추적 Claude 디자인 검수 문서는 그대로 남겼다.
