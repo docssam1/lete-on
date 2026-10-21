@@ -45,15 +45,15 @@ function applyLevel(){
 function read(){ const on=state.hwOn==='1'; return {band:$('band').value,grade:+$('grade').value,mon:+$('mon').value,year:+$('year').value,school:+$('school').value,schoolLeft:+$('schoolLeft').value,comp:+$('comp').value,compLeft:+$('compLeft').value,calc:+$('calc').value,calcLeft:+$('calcLeft').value,speed:+$('speed').value,
   hw:on&&$('hw').value?$('hw').value:'none',hwDeep:on&&$('hwDeep').checked,hwMid:on&&$('hwMid').checked,gifted:state.gifted==='1',kmo:state.kmo}; }
 function draw(){
-  const profile=I.profile(answers,intakeFields());drawIntake(profile);if(I.sourceMode(answers,intakeFields())){drawSourceProfile(profile);return;}
-  const o=read(), plan=P.build(o); lastPlan=plan; const nm=$('name').value.trim()||'우리 아이';
+  const profile=I.profile(answers,intakeFields(),read());drawIntake(profile);if(I.sourceMode(answers,intakeFields())){drawSourceProfile(profile);return;}
+  const o=read(), plan=I.buildPlan(answers,intakeFields(),o); lastPlan=plan; const nm=$('name').value.trim()||'우리 아이';
   $('who').textContent=nm; $('who2').textContent=nm;
   $('hwOpts').style.display=state.hwOn==='1'&&['A','B'].includes(plan.band)?'block':'none';
   $('kmoChoice').style.display=plan.band==='D'?'block':'none';
   $('warn').innerHTML=plan.warn.map(w=>`<div class="warn">⚠ ${w}</div>`).join('');
   const R=k=>(plan.rows.find(r=>r.key===k)||{blocks:[]}).blocks, cur=k=>{ const b=R(k).find(x=>x[1]<=plan.now&&x[2]>=plan.now); return b?b[0]:'—'; };
   const strip=t=>t.replace(/<br>.*$/,'');
-  $('nowItems').innerHTML=[['📘','교과',strip(cur('school'))],['💡',plan.band==='D'?'경시':'사고력',strip(cur('comp'))],['➕','연산',strip(cur('calc'))]].map(([i,a,b])=>`<div class="item"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
+  $('nowItems').innerHTML=[['📘','교과',strip(cur('school'))],['📗','심화',strip(cur('school2'))],['💡',plan.band==='D'?'경시':'사고력',strip(cur('comp'))],['➕','연산',strip(cur('calc'))]].map(([i,a,b])=>`<div class="item"><span class="ic">${i}</span><div><small>${a}</small><b>${b}</b></div></div>`).join('');
   const ms=P.milestones(plan), steps=ms.main.filter(x=>x.kind!=='now'&&x.m>plan.now), next=steps[0], later=steps[1];
   $('dNow').innerHTML=`● 현재 <small>${P.label(plan.now)} · ${cur('school').replace(/ 디딤돌.*/,'')}</small>`;
   $('dNext').innerHTML=next?`⚑ 다음 과정 <small>${next.title} · ${P.label(next.m)}</small>`:'⚑ 다음 과정';
@@ -63,7 +63,7 @@ function draw(){
   saveDraft();
   $('tbl').innerHTML=P.renderTable(plan); if(plan.A1-plan.A0>50) $('tbl').querySelector('table').classList.add('wide'); $('simple').innerHTML=P.renderSimple(plan);
   $('tbl').style.display=state.planMode==='table'?'block':'none'; $('simple').style.display=state.planMode==='simple'?'block':'none';
-  $('stages').innerHTML=P.narrative(plan).map(y=>`<div class="stg"><h4>${y.title}</h4>
+  $('stages').innerHTML=I.narrative(plan).map(y=>`<div class="stg"><h4>${y.title}</h4>
     <div class="mrow">${y.months.map(c=>`<div class="mc${c.now?' now':''}${c.past?' past':''}"><b>${c.mon}</b>${c.starts.map(t=>`<span class="st">${t}</span>`).join('')}${c.issues.map(t=>`<span class="is">${t}</span>`).join('')}</div>`).join('')}</div>
     <dl class="cm">${y.items.map(it=>`<dt>${it.label}</dt><dd>${it.text}</dd>`).join('')}</dl></div>`).join('');
   const lvName=$('level').selectedOptions[0].textContent;
@@ -90,27 +90,49 @@ document.querySelectorAll('.seg').forEach(s=>s.addEventListener('click',e=>{ con
 $('openSet').onclick=()=>ask('age'); $('detailSet').onclick=()=>{ $('drawer').inert=false; $('drawer').classList.add('on'); $('closeSet').focus(); }; $('closeSet').onclick=()=>{ $('drawer').classList.remove('on'); $('drawer').inert=true; $('detailSet').focus(); };
 document.addEventListener('keydown',e=>{if(!$('drawer').classList.contains('on'))return;if(e.key==='Escape')$('closeSet').click();if(e.key==='Tab'){const list=[...$('drawer').querySelectorAll('button,select,input,summary')].filter(x=>!x.disabled&&x.offsetParent);const first=list[0],last=list.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 const PROG=['school','schoolLeft','comp','compLeft','calc','calcLeft','speed','band'];
-$('ctl').addEventListener('change',e=>{ const id=e.target.id;
-  if(id==='grade'){answers.grade=$('grade').value;if(answers.age){const y=5+Math.floor(P.mOf(+$('grade').value,+$('mon').value)/12);answers.age=y<=9?String(y):'older';}} const savedHw=state.hwOn; if(id==='grade'||id==='mon'){if(answers.age){if(answers.age==='older'){const y=5+Math.floor(P.mOf(+$('grade').value,+$('mon').value)/12);if(y<=9)answers.age=String(y);}const changes=I.fieldChanges(answers,intakeFields(),'age');Object.entries(changes).forEach(([k,v])=>$(k).value=v);hwOptions();}else{hwOptions();applyLevel();}} else if(id==='level') applyLevel(); if(PROG.includes(id)) $('level').value='manual';if(answers.age)syncDetailedAnswers(id); if(Object.hasOwn(answers,'hw'))setSeg('hwOn',savedHw);
-  $('speed').disabled=['C','D'].includes($('band').value); draw(); });
+$('ctl').addEventListener('change',e=>{
+ const id=e.target.id,savedHw=state.hwOn;
+ if(id==='grade'){answers.grade=$('grade').value;if(answers.age){const y=5+Math.floor(P.mOf(+$('grade').value,+$('mon').value)/12);answers.age=y<=9?String(y):'older';}}
+ if(id==='grade'||id==='mon'){
+  if(answers.age){if(answers.age==='older'){const y=5+Math.floor(P.mOf(+$('grade').value,+$('mon').value)/12);if(y<=9)answers.age=String(y);}applyAnswerChanges('age');hwOptions();}
+  else{hwOptions();applyLevel();}
+ }else if(id==='level'){applyLevel();syncDetailedAnswers(id);Object.keys(manualPeriods).forEach(k=>delete manualPeriods[k]);}
+ else if(id==='band'||id==='speed'){applyAnswerChanges(id);}
+ else if(PROG.includes(id)){
+  if(answers.age)syncDetailedAnswers(id);
+  for(const axis of ['school','comp','calc'])if(id===axis||id===axis+'Left')manualPeriods[axis+'Left']=true;
+ }
+ if(PROG.includes(id))$('level').value='manual';
+ if(Object.hasOwn(answers,'hw'))setSeg('hwOn',savedHw);
+ $('speed').disabled=['C','D'].includes($('band').value);draw();
+});
 $('name').addEventListener('input',draw);
 
-const answers={}, history=[];let completed=false;
+const answers={}, history=[],manualPeriods={},pendingStatus={};let completed=false,legacyDraft=null;
 const storageKey='gfield.demo2.v1';
 const draftIds=['level','band','year','grade','mon','school','schoolLeft','comp','compLeft','calc','calcLeft','speed','hw','hwDeep','hwMid'];
-function saveDraft(){try{sessionStorage.setItem(storageKey,JSON.stringify({version:1,answers,history,completed,question,state,fields:Object.fromEntries(draftIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:$(id).value]))}));}catch{}}
-function restoreDraft(){try{const d=JSON.parse(sessionStorage.getItem(storageKey));if(d?.version!==1)return false;for(const id of draftIds){const v=d.fields?.[id];if(v===undefined)continue;if($(id).type==='checkbox')$(id).checked=!!v;else if(id!=='hw')$(id).value=String(v);}hwOptions();if([...$('hw').options].some(o=>o.value===d.fields.hw))$('hw').value=d.fields.hw;Object.assign(answers,d.answers);Object.assign(state,d.state);Object.keys(state).forEach(k=>setSeg(k,state[k]));history.push(...(d.history||[]));completed=!!d.completed;$('speed').disabled=['C','D'].includes($('band').value);if(completed)finish();else{draw();ask(questionOrder().includes(d.question)?d.question:'age');}return true;}catch{return false;}}
+function saveDraft(){try{sessionStorage.setItem(storageKey,JSON.stringify({version:2,answers,history,completed,question,state,manualPeriods,pendingStatus,legacyDraft,fields:Object.fromEntries(draftIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:$(id).value]))}));}catch{}}
+function restoreDraft(){try{const d=JSON.parse(sessionStorage.getItem(storageKey));if(![1,2].includes(d?.version))return false;legacyDraft=d.version===1?d:d.legacyDraft||null;Object.assign(manualPeriods,d.manualPeriods||{});Object.assign(pendingStatus,d.pendingStatus||{});for(const id of draftIds){const v=d.fields?.[id];if(v===undefined)continue;if($(id).type==='checkbox')$(id).checked=!!v;else if(id!=='hw')$(id).value=String(v);}hwOptions();if([...$('hw').options].some(o=>o.value===d.fields.hw))$('hw').value=d.fields.hw;Object.assign(answers,d.answers);Object.assign(state,d.state);Object.keys(state).forEach(k=>setSeg(k,state[k]));history.push(...(d.history||[]));completed=!!d.completed;$('speed').disabled=['C','D'].includes($('band').value);const missing=I.firstMissing(answers,intakeFields());if(completed&&!missing)finish();else{draw();const order=questionOrder();ask(missing&&(completed||order.indexOf(missing)<order.indexOf(d.question))?missing:order.includes(d.question)?d.question:missing||'age');}return true;}catch{return false;}}
 let question='age';
 function syncDetailedAnswers(id){
- const all=id==='level';
- if(all||['school','schoolLeft'].includes(id)){const n=+$('school').value;answers.school=n<=6?P.SEM(n):'advanced';if(n>6)answers.schoolExact=String(n);}
+ const all=id==='level';for(const [axis,status]of [['school','schoolStatus'],['comp','thinkingStatus'],['calc','calcStatus']])if(all||id===axis||id===axis+'Left')delete pendingStatus[status];
+ if(all||['school','schoolLeft'].includes(id)){const n=+$('school').value;answers.schoolCourse=n<=12?'elem':'mid';answers.school=n<=12?P.SEM(n):'advanced';if(n>=13)answers.schoolExact=String(n);answers.schoolBook=n<=12?(I.schoolBooks.includes(answers.schoolBook)&&!I.middleBook(answers.schoolBook)?answers.schoolBook:'디딤돌 응용'):I.middleBook(answers.schoolBook)?answers.schoolBook:'개념원리';answers.schoolStatus='progress';}
  if(all||['comp','compLeft'].includes(id)){const n=+$('comp').value;answers.thinking=({0:'초등팩토',1:'PRE 1031',2:'1031 입문',4:'1031 초급'})[n]||'advanced';if(n===1)answers.preDone='1';if(answers.thinking==='advanced')answers.compExact=String(n);answers.thinkingStatus='progress';}
  if(all||['calc','calcLeft'].includes(id)){const n=+$('calc').value;answers.calc=n>=1&&n<=5?'기적의 계산법 '+(n+1)+'권':'advanced';if(answers.calc==='advanced')answers.calcExact=String(n);answers.calcStatus='progress';}
 }
-function intakeFields(){return {grade:$('grade').value,mon:$('mon').value,band:$('band').value,speed:$('speed').value};}
+function intakeFields(){return {grade:$('grade').value,mon:$('mon').value,band:$('band').value,speed:$('speed').value,pendingStatus};}
 function questionOrder(){return I.order(answers,intakeFields());}
+function applyAnswerChanges(key){
+ const result=I.fieldChanges(answers,intakeFields(),key);
+ if(!['band','speed','age','grade'].includes(key)){
+  const axis=key.startsWith('school')?'school':key.startsWith('calc')?'calc':['thinking','thinkingStatus','compExact','preDone'].includes(key)?'comp':null;
+  if(axis)delete manualPeriods[axis+'Left'];
+ }
+ Object.entries(result).forEach(([k,v])=>{if($(k)&&!(['band','speed'].includes(key)&&manualPeriods[k]))$(k).value=v;});
+}
+
 function ask(key){
- const order=questionOrder();if(!order.includes(key)){const next=order.find(k=>!Object.hasOwn(answers,k));if(next)ask(next);else finish();return;}
+ const order=questionOrder();if(!order.includes(key)){const next=I.firstMissing(answers,intakeFields());if(next)ask(next);else finish();return;}
  question=key;completed=false;document.body.classList.add('questioning');$('conversation').hidden=false;
  const [title,help,options]=I.questions(answers,intakeFields())[key];$('questionTitle').textContent=title;$('questionHelp').textContent=help;
  $('questionStep').textContent='질문 '+(order.indexOf(key)+1)+' / '+order.length+' · 언제든 바꿀 수 있어요';$('questionOptions').dataset.question=key;
@@ -118,10 +140,10 @@ function ask(key){
  $('questionBack').disabled=!history.length;saveDraft();requestAnimationFrame(()=>$('questionTitle').focus({preventScroll:true}));
 }
 function finish(){completed=true;document.body.classList.remove('questioning');$('conversation').hidden=true;draw();showView('vmap');}
-$('questionOptions').onclick=e=>{const b=e.target.closest('[data-answer]');if(!b)return;const key=question,v=b.dataset.answer;answers[key]=v;if(key==='age'&&v==='older'&&+answers.grade<(+$('mon').value<3?2:3))delete answers.grade;history.push(key);
+$('questionOptions').onclick=e=>{const b=e.target.closest('[data-answer]');if(!b)return;const key=question,v=b.dataset.answer,previous=answers[key];answers[key]=v;const dependent=({schoolCourse:'schoolStatus',deepCourse:'deepStatus',schoolBook:'schoolStatus',school:'schoolStatus',schoolExact:'schoolStatus',deepBook:'deepStatus',deepStage:'deepStatus',thinking:'thinkingStatus',compExact:'thinkingStatus',calc:'calcStatus',calcExact:'calcStatus'})[key];if(dependent&&previous!==v)pendingStatus[dependent]=true;if(key.endsWith('Status'))delete pendingStatus[key];if(key==='age'&&v==='older'&&+answers.grade<(+$('mon').value<3?2:3))delete answers.grade;history.push(key);
  if(key==='hw'||key==='gifted')setSeg(key==='hw'?'hwOn':'gifted',v);
- else {const changes=I.fieldChanges(answers,intakeFields(),key);Object.entries(changes).forEach(([k,value])=>{if($(k))$(k).value=value;});if(!['age','grade'].includes(key))$('level').value='manual';if(key==='age'||key==='grade')hwOptions();}
- const revisit=key==='age'&&v==='older'?'grade':key==='thinking'&&v==='advanced'?'compExact':key==='thinking'&&v==='PRE 1031'&&answers.thinkingStatus?'preDone':key==='school'&&v==='advanced'?'schoolExact':key==='calc'&&v==='advanced'?'calcExact':null;const next=revisit||questionOrder().find(k=>!Object.hasOwn(answers,k));if(next)ask(next);else finish();
+ else {if(key==='schoolExact')answers.school='advanced';applyAnswerChanges(key);if(!['age','grade'].includes(key))$('level').value='manual';if(key==='age'||key==='grade')hwOptions();}
+ const revisit=key==='schoolCourse'&&!I.special(v)?'schoolBook':key==='deepCourse'&&!I.special(v)?'deepBook':key==='thinkingExperience'&&v==='yes'?'thinking':key==='schoolBook'&&!I.special(v)?(I.middleBook(v)?'schoolExact':'school'):key==='deepBook'&&!I.special(v)?'deepStage':key==='age'&&v==='older'?'grade':key==='thinking'&&v==='advanced'?'compExact':key==='thinking'&&v==='PRE 1031'&&answers.thinkingStatus?'preDone':key==='school'&&v==='advanced'?'schoolExact':key==='calc'&&v==='advanced'?'calcExact':null;const next=revisit||I.firstMissing(answers,intakeFields());if(next)ask(next);else finish();
 };
 $('questionBack').onclick=()=>{let key;do{key=history.pop();}while(key&&!questionOrder().includes(key));if(key)ask(key);};
 $('useExample').onclick=()=>{finish();};
@@ -142,8 +164,13 @@ function drawRoutes(plan){
 $('routeChoices').onclick=e=>{const b=e.target.closest('[data-fork-choice]');if(!b)return;const k=b.dataset.forkChoice==='hw'?'hwOn':'gifted';setSeg(k,b.dataset.value);answers[k==='hwOn'?'hw':'gifted']=b.dataset.value;draw();};
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function drawIntake(profile){
- const fields=intakeFields(),items=I.summary(answers,fields),source=I.sourceMode(answers,fields);document.body.classList.toggle('source-mode',source);
- $('intakeSummary').hidden=!answers.age;$('intakeSummary').innerHTML=items.map(it=>`<div class="answer-chip"><button data-edit="${it.key}"><small>${it.label}</small><b>${esc(it.text)}</b></button>${['thinking','calc'].includes(it.key)&&answers[it.key]?`<button class="answer-status" data-edit="${it.key}Status" aria-label="${it.label} 진행 상태 바꾸기">상태 바꾸기</button>`:''}</div>`).join('');
+ const fields=intakeFields(),active=I.effective(answers),items=I.summary(answers,fields),source=I.sourceMode(answers,fields);document.body.classList.toggle('source-mode',source);
+ $('intakeSummary').hidden=!answers.age;$('intakeSummary').innerHTML=items.map(it=>{
+ const edit=it.key==='school'?'schoolCourse':it.key==='deepBook'?'deepCourse':it.key==='thinking'?'thinkingExperience':it.key;
+ const statusKey=({thinking:'thinkingStatus',school:'schoolStatus',deepBook:'deepStatus',calc:'calcStatus'})[it.key];
+ const canStatus=it.key==='thinking'?!I.noThinking(answers)&&answers.thinking:it.key==='school'?I.schoolBooks.includes(active.schoolBook):it.key==='deepBook'?I.deepBooks.includes(active.deepBook):it.key==='calc'?!I.special(answers.calc)&&answers.calc:false;
+ return `<div class="answer-chip"><button data-edit="${edit}"><small>${it.label}</small><b>${esc(it.text)}</b></button>${canStatus?`<button class="answer-status" data-edit="${statusKey}" aria-label="${it.label} 진행 상태 바꾸기">상태 바꾸기</button>`:''}</div>`;
+ }).join('');
  $('sourceProfile').hidden=!answers.age;const best=profile.comparison.best;
  $('sourceProfile').innerHTML=best?`<details class="source-comparison"><summary>학습 균형 보기 · 가까운 진도 예시 ${best.id}</summary><p>다섯 가지 진도 예시와 비교했어요. 합격이나 지원 자격을 뜻하지 않아요.</p><div class="level-comparison">${profile.comparison.levels.map(l=>`<span class="${l.id===best.id?'closest':''}"><b>${l.id}</b><small>${esc(l.shortSummary.replace(/황소/g,'생각하는 황소'))}</small>${D.fmtSigned(l.avg)}</span>`).join('')}</div><p>${best.bothOK?'교과와 연산이 현재 사고력 학습을 함께 받쳐주고 있어요.':'사고력과 교과·연산의 속도를 함께 살펴보면 좋아요.'}</p></details>`:'';
 }
@@ -152,12 +179,12 @@ function drawSourceProfile(profile){
  const fields=intakeFields(),items=I.summary(answers,fields).slice(1),ms=I.milestones(answers,fields,profile),plan={sourceProfile:profile,now:profile.now,band:'source',choices:{hw:answers.hw==='1',gifted:answers.gifted==='1'}};lastPlan=plan;
  $('who').textContent='우리 아이';$('who2').textContent='우리 아이';$('hwOpts').style.display='none';$('kmoChoice').style.display='none';$('warn').innerHTML='';
  $('nowItems').innerHTML=items.map(it=>`<div class="item"><div><small>${it.label}</small><b>${esc(it.text)}</b></div></div>`).join('');
- const labels={school:'교과',thinking1:'사고력',calc:'연산'};
- const plans=profile.rows.map(row=>{const actual=items.find(i=>i.key===(row.key==='thinking1'?'thinking':row.key));return `<section class="intake-plan-card"><h3>${labels[row.key]}</h3><p class="intake-current">지금 · ${esc(actual?.text||row.current.shortText)}</p><ol>${row.remaining.slice(0,4).map((b,i)=>`<li><b>${esc(b.sourceCurrent?actual?.text.replace(/ 진행 중$/,'')||b.shortText:b.shortText)}</b><small>${D.labelMonth(b.remainingStart)}~${D.labelMonth(b.e)}</small></li>`).join('')||'<li>다음 단계는 학습을 확인하며 정해요.</li>'}</ol></section>`;}).join('');
- const missing=items.filter(it=>!profile.rows.some(r=>(r.key==='thinking1'?'thinking':r.key)===it.key)).map(it=>`<section class="intake-plan-card"><h3>${it.label}</h3><p class="intake-current">지금 · ${esc(it.text)}</p><p>다음 단계는 실제 진도를 확인하며 정해요.</p></section>`).join('');
+ const labels={school:'교과',thinking1:'사고력',deep:'심화',calc:'연산'};
+ const plans=profile.rows.map(row=>{const actual=items.find(i=>i.key===(row.key==='thinking1'?'thinking':row.key==='deep'?'deepBook':row.key));return `<section class="intake-plan-card"><h3>${labels[row.key]}</h3><p class="intake-current">지금 · ${esc(actual?.text||row.current.shortText)}</p><ol>${row.remaining.slice(0,4).map((b,i)=>`<li><b>${esc(b.sourceCurrent?actual?.text.replace(/ 진행 중$/,'')||b.shortText:b.shortText)}</b><small>${D.labelMonth(b.remainingStart)}~${D.labelMonth(b.e)}</small></li>`).join('')||'<li>다음 단계는 학습을 확인하며 정해요.</li>'}</ol></section>`;}).join('');
+ const missing=items.filter(it=>!profile.rows.some(r=>(r.key==='thinking1'?'thinking':r.key==='deep'?'deepBook':r.key)===it.key)).map(it=>`<section class="intake-plan-card"><h3>${it.label}</h3><p class="intake-current">지금 · ${esc(it.text)}</p><p>다음 단계는 실제 진도를 확인하며 정해요.</p></section>`).join('');
  $('tbl').innerHTML=(plans+missing)?`<div class="intake-plan">${plans}${missing}</div>`:'<p>답을 더하면 현재 과정과 다음 학습을 함께 볼 수 있어요.</p>';$('simple').innerHTML=$('tbl').innerHTML;
  $('tbl').style.display=state.planMode==='table'?'block':'none';$('simple').style.display=state.planMode==='simple'?'block':'none';
- $('stages').innerHTML=items.map(it=>`<div class="stg"><h4>${it.label}</h4><p>${esc(it.text)}을 기준으로 이어갈 학습을 살펴봐요.</p></div>`).join('');
+ $('stages').innerHTML=items.map(it=>`<div class="stg"><h4>${it.label}</h4><p>${esc(it.text)} · 이 답을 기준으로 학습을 살펴봐요.</p></div>`).join('');
  $('repItems').innerHTML=items.map(it=>`<div class="ritem"><div><small>${it.label}</small><b>${esc(it.text)}</b></div></div>`).join('');
  $('books').innerHTML=profile.rows.map(row=>`<div class="bk"><h4>${labels[row.key]}</h4><p>${esc(row.current.shortText)}</p>${row.next?`<p><small>다음 예시</small>${esc(row.next.shortText)}</p>`:'<p>이후 단계는 학습을 확인하며 정해요.</p>'}</div>`).join('')+`<p class="bk-note">진행 중인 과정은 진도 예시의 중간 지점으로 보고 있어요. 실제 학습 속도에 맞춰 조정해 주세요.</p><details><summary>함께 보는 학습</summary>${D.originalRows().filter(r=>['thinking2','home'].includes(r.key)).map(r=>`<h4>${esc(r.shortTitle)}</h4><p>${r.blocks.map(b=>esc(D.shortText(b.text))).join(' · ')}</p>`).join('')}</details>`;
  $('dNow').innerHTML='● 현재 <small>'+profile.nowLabel+'</small>';$('dNext').innerHTML=ms.main[1]?'다음 · '+esc(ms.main[1].title):'다음 학습 확인';$('dLater').innerHTML=ms.main[2]?'함께 · '+esc(ms.main[2].title):'학습 속도에 맞춰 조정';

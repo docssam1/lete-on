@@ -24,3 +24,7 @@ body{background:#f5f6f8;font-size:16px}button{cursor:pointer;min-height:44px}but
 @media(max-width:700px){.intake-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.intake-plan{grid-template-columns:1fr}.intake-plan-card{padding:14px}.source-comparison{padding:10px 12px}.source-comparison summary{font-size:13px}.question-options[data-question="thinking"] button,.question-options[data-question="calc"] button{font-size:16px;min-height:68px}}
 
 .level-comparison span{min-width:120px;flex:1}.level-comparison span small{display:block;margin:4px 0;color:var(--sub);line-height:1.5}
+
+/* Four subjects remain separate; age is the smaller, fifth summary item. */
+.intake-summary{grid-template-columns:repeat(5,minmax(0,1fr))}.intake-plan{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:700px){.intake-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.intake-summary>.answer-chip:first-child{grid-column:1/-1}.intake-plan{grid-template-columns:1fr}}
