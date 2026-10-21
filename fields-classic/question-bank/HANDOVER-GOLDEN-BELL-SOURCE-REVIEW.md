@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018r`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018r/20261018s/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018s`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018s/20261018t/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -417,6 +417,13 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - **원본을 바로잡은 곳**(`sourceDiscrepancy` + DB `sourceNote`): 17쪽 (3) 결과 가운데 칸이 □로 그려져 있어 그대로 풀면 (2)번과 같은 답이 나오고 교사용 풀이(가운데 칸에 △의 숫자)와 맞지 않는다 → 가운데 칸을 △로. 고친 그림의 답은 하나뿐이고 교사용 답과 같다.
   - **교사용 답이 틀린 곳 2곳**(DB `sourceNote`): 17쪽 (2) 답 칸의 △(□와 같은 숫자로 적힘) · 19쪽 (14) 답 칸(모양과 숫자가 엇갈림). 교사용 그림에 채운 숫자와는 맞으므로 그림대로 계산한 답을 쓴다.
   - 15쪽·17~19쪽 보류 삭제(8권 보류 5 → 3: 23~29 · 32~34 · 35~39). DB `book-08` 211키 → 260키, sha 앞 8자리 `a4102c61`. 캐시 꼬리표 `20261018r`.
+- **8권 묶음 4(슬라이드 21~29 연산 체크·주고 받기·합차·합과 배수·차와 배수·응용, 47문항·답 칸 62, 2026-10-21)**: 패치 `tools/golden-bell-book08/patch-book08-batch4.mjs`(정답 없음).
+  - 단원 4 `picture-division`(21쪽 연산 체크 14, 그림 없음 — 원본도 식만)과 단원 5 `equalize-transfer`(22~23쪽 주고 받기 6)를 원본 문장대로 다시 짰다(DB `/lessons/4·5/original/` 교체). 옛 단원 4 물음 「그림의 같은 크기 묶음 관계를…」은 원본에 없던 문장. 단원 5 개념 설명은 장면 그림이 없어 원본 그림 묶음을 쓰고 있었다 → 새 예시(14개·8개 접시).
+  - 새 단원 10 `sum-difference-source`(24~25쪽 합차 7) · 11 `sum-multiple-source`(26~27쪽 합과 배수·차와 배수 12) · 12 `sum-multiple-applied-source`(28~29쪽 응용 8)를 단원 5 뒤에 차례로.
+  - 새 그림: `source-plates`(22쪽 접시와 구슬) · `source-sumdiff`(「A : ○○○ + 5」 줄, 오른쪽 합 괄호, `diff`는 한 줄 몇 칸 위·아래 괄호와 수). 24쪽 (3)(4)는 `source-shape-equations`(○·△ 두 칸).
+  - 검산기는 그림의 동그라미 수와 덧붙은 수, 물음 글의 조건(「~보다 N개 더」「~에게 N개 주면 같아진다」「~의 N배」「N배보다 M 많다/적다」)을 식으로 옮겨 0~150 전수로 풀고, 문장제마다 풀이 문장을 따로 적었다.
+  - **교사용 답이 틀린 곳 1곳**(DB `sourceNote`): 26쪽 (6) — 「B가 A의 8배」인데 교사용 그림·답은 A를 동그라미 8개로 그려 A와 B가 바뀌었다. 물음 글대로 계산한 답을 쓴다.
+  - 23~29쪽 보류 삭제(8권 보류 3 → 2: 32~34 · 35~39). DB `book-08` 260키 → 328키, sha 앞 8자리 `9aaeae42`. 캐시 꼬리표 `20261018s`.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

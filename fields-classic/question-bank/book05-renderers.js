@@ -930,6 +930,45 @@ function sourceCrypt(visual) {
   return `<div class="b5-src-crypt" role="img" aria-label="${escapeHtml(label)}">${visual.pool ? `<p class="b5-src-pool">${escapeHtml(visual.pool.join(" "))}</p>` : ""}<div class="board" style="--w:${width}">${rows}<hr>${line(visual.result)}</div></div>`;
 }
 
+// 8권 22쪽 주고받기: 접시 두 개(구슬 수만큼)와 가운데 화살표, 접시 아래 「N개」.
+function sourcePlates(visual) {
+  const plate = (n, cx) => {
+    const per = n > 20 ? 9 : n > 10 ? 7 : 5, rows = Math.ceil(n / per), r = 7, gap = 15;
+    const balls = Array.from({ length: n }, (_, k) => { const row = Math.floor(k / per), inRow = row === rows - 1 ? n - row * per : per, col = k % per;
+      return `<circle class="ball" cx="${(cx + (col - (inRow - 1) / 2) * gap).toFixed(1)}" cy="${(62 - (rows - 1 - row) * 12).toFixed(1)}" r="${r}"/>`; }).join("");
+    return `<ellipse class="plate" cx="${cx}" cy="70" rx="78" ry="20"/><ellipse class="rim" cx="${cx}" cy="68" rx="62" ry="13"/>${balls}<text x="${cx}" y="112">${n}개</text>`;
+  };
+  const [a, b] = visual.plates;
+  return `<div class="b5-src-plates" role="img" aria-label="${escapeHtml(`왼쪽 접시 구슬 ${a}개, 오른쪽 접시 구슬 ${b}개`)}"><svg viewBox="0 0 400 122" style="width:min(100%,440px)">${plate(a, 90)}<path class="arrow" d="M178 70H218M210 62l10 8-10 8"/>${plate(b, 310)}</svg></div>`;
+}
+
+// 8권 24·26~29쪽 합차·배수: 줄마다 「이름 : ○○○ + 5」, 오른쪽에 「합 : N」 괄호, diff = 한 줄의 몇 칸 위/아래 괄호와 수.
+function sourceSumDiff(visual) {
+  const r = 12, gap = 30, x0 = 62, rowH = 52, top = visual.diff?.side === "above" && visual.diff.row === 0 ? 40 : 22;
+  const ys = visual.rows.map((_, i) => top + i * rowH);
+  let maxX = 0, body = "";
+  visual.rows.forEach((row, i) => {
+    body += `<text class="lbl" x="8" y="${ys[i] + 5}">${escapeHtml(row.label)} :</text>`;
+    for (let k = 0; k < row.n; k += 1) body += `<circle cx="${x0 + k * gap}" cy="${ys[i]}" r="${r}"/>`;
+    let x = x0 + (row.n - 1) * gap + r;
+    if (row.extra) { body += `<text class="ex" x="${x + 8}" y="${ys[i] + 5}">${escapeHtml(row.extra)}</text>`; x += 14 + row.extra.length * 9; }
+    maxX = Math.max(maxX, x);
+  });
+  if (visual.diff) {
+    const { row, from, n, value, side } = visual.diff, xa = x0 + from * gap - r, xb = x0 + (from + n - 1) * gap + r, y = side === "above" ? ys[row] - r - 6 : ys[row] + r + 6, d = side === "above" ? -6 : 6;
+    body += `<path class="br" d="M${xa} ${y}v${d}H${xb}v${-d}M${(xa + xb) / 2} ${y + d}v${d}"/><text class="num" x="${(xa + xb) / 2}" y="${side === "above" ? y + d * 2 - 4 : y + d * 2 + 14}">${escapeHtml(value)}</text>`;
+  }
+  let w = maxX + 20;
+  if (visual.sum != null) {
+    const ya = ys[0] - r - 2, yb = ys.at(-1) + r + 2, bx = maxX + 14;
+    body += `<path class="br" d="M${bx} ${ya}h6V${yb}h-6M${bx + 6} ${(ya + yb) / 2}h6"/><text class="sumt" x="${bx + 18}" y="${(ya + yb) / 2 + 6}">합 : ${escapeHtml(visual.sum)}</text>`;
+    w = bx + 90;
+  }
+  const h = ys.at(-1) + r + (visual.diff?.side === "below" ? 40 : 16);
+  const label = `${visual.rows.map((row) => `${row.label} 동그라미 ${row.n}개${row.extra ? ` ${row.extra}` : ""}`).join(", ")}${visual.sum != null ? `, 합 ${visual.sum}` : ""}${visual.diff ? `, ${visual.rows[visual.diff.row].label}의 동그라미 ${visual.diff.n}개가 ${visual.diff.value}` : ""}`;
+  return `<div class="b5-src-sumdiff" role="img" aria-label="${escapeHtml(label)}"><svg viewBox="0 0 ${w} ${h}" style="width:min(100%,${Math.round(w * 1.25)}px)">${body}</svg></div>`;
+}
+
 // 7권: 단계 그림 여러 개를 한 줄로(휴대폰에서는 줄바꿈). figs = [{w, h, body}], marks면 위에 ①②③… 번호.
 const STAGE_MARKS = ["①", "②", "③", "④", "⑤", "⑥"];
 function stageRow(cls, label, figs, marks) {
@@ -1345,6 +1384,8 @@ export function book05Markup(visual) {
     case "source-sum-grid": return sourceSumGrid(visual);
     case "source-kitchen-scales": return sourceKitchenScales(visual);
     case "source-crypt": return sourceCrypt(visual);
+    case "source-plates": return sourcePlates(visual);
+    case "source-sumdiff": return sourceSumDiff(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);
