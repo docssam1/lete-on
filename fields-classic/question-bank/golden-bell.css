@@ -649,3 +649,4 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(
 
 .book09-visual .b9-mcards{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:0 0 8px}.book09-visual .b9-mcards span{display:grid;place-items:center;min-width:30px;height:32px;border:1.5px solid #333;background:#fff;color:#222;font-size:15px;font-weight:900}.book09-visual .b9-magic-cross,.book09-visual .b9-magic-triangle{max-height:220px}
 @media print{.book09-visual .b9-magic-cross circle,.book09-visual .b9-magic-triangle circle{print-color-adjust:exact;-webkit-print-color-adjust:exact}.gold-print-page .b9-magic-cross,.gold-print-page .b9-magic-triangle{width:auto!important;height:38mm!important;max-height:38mm;max-width:100%}.gold-print-page .b9-mcards span{min-width:6mm;height:6mm;font-size:10px}}
+@media print{.gold-print-page .b1-line-card-board svg{width:auto!important;height:40mm!important;max-width:100%}}
