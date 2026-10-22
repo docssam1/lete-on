@@ -6250,7 +6250,6 @@ function initTownWorld(scr){
   let stopAmbience=null;
   const player=nbs[0];
   let lastTick=0;
-  player.heading={x:1,y:0};
   function walk(now){
     const dt=lastTick?Math.min(.05,Math.max(0,(now-lastTick)/1000)):0;lastTick=now;
     nbs.forEach(n=>{
@@ -6259,8 +6258,8 @@ function initTownWorld(scr){
       if(n.still){if(root)root.classList.remove('walking');return;}
       if(n.buddy){
         const gap=48/cam.scale;
-        n.tx=Math.min(98,Math.max(2,player.x-player.heading.x*gap/W*100));
-        n.ty=Math.min(98,Math.max(2,player.y-player.heading.y*gap/H*100+1));
+        n.tx=Math.min(98,Math.max(2,player.x-gap/W*100));
+        n.ty=Math.min(98,Math.max(2,player.y+1));
       }
       const dx=(n.tx-n.x)*W/100,dy=(n.ty-n.y)*H/100,d=Math.hypot(dx,dy);
       if(d<.8){
@@ -6276,9 +6275,8 @@ function initTownWorld(scr){
       const step=Math.min(d,n.velocity*dt);
       n.x+=dx/d*step/W*100;n.y+=dy/d*step/H*100;
       n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
-      if(n.player){player.heading={x:dx/d,y:dy/d};if(follow)focusPlayer(false);}
-      if(root){root.classList.add('walking');root.dataset.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'w':'e'):(dy<0?'n':'s');}
-      else n.el.querySelector('.nb-img').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';
+      if(n.player&&follow)focusPlayer(false);
+      if(root){root.classList.add('walking');root.dataset.dir='s';}
     });
     walkRAF=requestAnimationFrame(walk);
   }
