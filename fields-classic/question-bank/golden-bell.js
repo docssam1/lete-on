@@ -1,22 +1,23 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261019c";
-import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261019c";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261019d";
+import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261019d";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
-import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261019c";
+import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261019d";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261019c";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261019d";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
-import { book02Markup } from "./book02-renderers.js?v=20261019c";
-import { book03Markup } from "./book03-renderers.js?v=20261019c";
-import { book04Markup } from "./book04-renderers.js?v=20261019c";
-import { book05Markup } from "./book05-renderers.js?v=20261019c";
+import { book02Markup } from "./book02-renderers.js?v=20261019d";
+import { book03Markup } from "./book03-renderers.js?v=20261019d";
+import { book04Markup } from "./book04-renderers.js?v=20261019d";
+import { book05Markup } from "./book05-renderers.js?v=20261019d";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
-import { book07Markup } from "./book07-renderers.js?v=20261019c";
+import { book07Markup } from "./book07-renderers.js?v=20261019d";
 import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261022c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
-import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261004c";
+import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261022a";
+import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep } from "./golden-bell-lesson-flow.js?v=20261022a";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261004a";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261003d";
 
@@ -149,6 +150,7 @@ function resetExperience() {
   state.experience.feedback = null;
   state.experience.autoplayStarted = false;
   state.experience.courseTrackId = null;
+  resetLessonFlow(state.bookId, state.lessonId);
 }
 
 function completeOriginal() {
@@ -1073,7 +1075,13 @@ function conceptOpeningQuestion(lesson) {
     || lesson.story.mission;
 }
 
+// 개념 단계: 학습 순서가 켜진 레슨(golden-bell-lesson-flow.js의 LESSON_FLOWS)은 「개념 설명 → 유형별 예제 → 게임」으로 나눈다.
 function renderConcept(lesson) {
+  const tutorial = renderConceptTutorial(lesson);
+  return renderFlowConcept({ bookId: state.bookId, lesson, tutorialHtml: tutorial }) ?? tutorial;
+}
+
+function renderConceptTutorial(lesson) {
   if (lesson.experience?.kind === "course-concept") return `<p class="lesson-kicker">${escapeAttribute(lesson.unit)} · 개념 학습</p><h2>${escapeAttribute(lesson.title)}</h2><p class="lesson-lead">${escapeAttribute(lesson.representativeConcept)}</p>${renderExperience(lesson)}<button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
   if (sourceTracks(lesson).length) return `<p class="lesson-kicker">${escapeAttribute(lesson.unit)} · 개념 학습</p><h2>${escapeAttribute(lesson.title)}</h2>${renderSourceExperience(lesson)}<button type="button" class="primary-action" data-next-phase="original">문제로 확인하기</button>`;
   const tutorialSteps = lesson.explanation.steps.map((step, index) => `<li><span>${index + 1}</span><div><strong>${index + 1}단계</strong><p>${step}</p></div></li>`).join("");
@@ -1917,12 +1925,14 @@ function renderContent() {
     return;
   }
   const lesson = activeLesson();
+  teardownLessonFlow();
   const markup = state.phase === "concept" ? renderConcept(lesson)
     : state.phase === "original" ? renderOriginal(lesson)
       : state.phase === "extension" ? renderExtension(lesson)
         : renderComplete(lesson);
   $("lessonContent").innerHTML = markup;
-  if (state.phase === "concept") mountHandsOn($("lessonContent"), {
+  const conceptStep = state.phase === "concept" ? flowStep(book.id, lesson) : null;
+  if (state.phase === "concept" && (!conceptStep || conceptStep === "tutorial")) mountHandsOn($("lessonContent"), {
     bookId: book.id,
     lessonId: lesson.id,
     onOpen: () => {
@@ -1953,6 +1963,12 @@ function renderContent() {
     }
   }
   bindLessonActions();
+  if (conceptStep) mountLessonFlow($("lessonContent"), {
+    bookId: book.id,
+    lesson,
+    rerender: () => { clearExperiencePlayback(); renderContent(); },
+    onQuestions: () => setPhase("original")
+  });
   if (!protectedBooks.has(state.bookId)) {
     const notice = document.createElement("div");
     notice.className = "protected-answer-notice";
@@ -2089,6 +2105,7 @@ $("printSelectionApply").addEventListener("click", async () => {
 window.addEventListener("keydown", (event) => {
   const lesson = activeLesson();
   if (state.phase !== "concept" || !lesson?.experience || !["clock-turning", "triangular-stair", "guided-concept", "course-concept"].includes(lesson.experience.kind)) return;
+  if ((flowStep(state.bookId, lesson) || "tutorial") !== "tutorial") return; // 예제·게임 칸에서는 화살표 키가 개념 장면을 넘기지 않는다
   if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLButtonElement) return;
   if (event.key === "ArrowLeft") {
     event.preventDefault();

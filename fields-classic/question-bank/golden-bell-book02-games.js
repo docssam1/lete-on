@@ -1,4 +1,6 @@
 import { esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
+import { createBalanceScene } from "./golden-bell-3d-balance.js?v=20261022a";
+import { flatNotice } from "./golden-bell-3d-engine.js?v=20261022a";
 import { MATRIX, BALANCE, PATTERN, SUDOKU, SHAPES, COLORS, BALANCE_ITEMS, beadAt, beadName, matrixHolds, sudokuValid } from "./golden-bell-book02-game-models.js?v=20261004a";
 
 // 2권 레벨 게임 4종의 화면. 문제 규칙은 golden-bell-book02-game-models.js, 틀(레벨·별·저장)은 golden-bell-level-game.js.
@@ -77,7 +79,8 @@ const MATRIX_GAME = {
 };
 
 // ───────────────────────── 무게 줄 세우기 ─────────────────────────
-const ITEM_HEX = ["#2f7de1", "#e5781a", "#2fb36b", "#9b6bdf", "#e2504c"];
+// 공 색은 골든벨 색표(파랑·주황·초록·보라·빨강). 3D 저울의 공과 HTML 단추가 같은 색을 쓴다.
+const ITEM_HEX = ["#2f6fe0", "#f39a1e", "#2f9e5f", "#8e5bd8", "#e8503a"];
 const ballSvg = (i) => `<svg class="lg-ball" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="26" fill="${ITEM_HEX[i]}" stroke="rgba(0,0,0,.2)" stroke-width="3"/><ellipse cx="22" cy="20" rx="9" ry="5" fill="#fff" opacity=".4"/><text x="30" y="38" text-anchor="middle" font-size="24" font-weight="900" fill="#fff">${BALANCE_ITEMS[i]}</text></svg>`;
 // 접시 위 구슬은 저울 그림 안에 직접 그린다(겹친 svg는 위치가 틀어진다).
 const panBall = (i, cx, cy) => `<circle cx="${cx}" cy="${cy}" r="15" fill="${ITEM_HEX[i]}" stroke="rgba(0,0,0,.25)" stroke-width="2"/><ellipse cx="${cx - 5}" cy="${cy - 6}" rx="6" ry="3.5" fill="#fff" opacity=".45"/><text x="${cx}" y="${cy + 6}" text-anchor="middle" font-size="16" font-weight="900" fill="#fff">${BALANCE_ITEMS[i]}</text>`;
@@ -85,20 +88,35 @@ function scaleSvg(s, k) {
   const tilt = s.heavy === "left" ? -11 : 11;
   return `<figure class="lg-scale" style="--tilt:${tilt}deg;--delay:${k * 120}ms" role="img" aria-label="${BALANCE_ITEMS[s.left]}와 ${BALANCE_ITEMS[s.right]}를 단 저울, ${BALANCE_ITEMS[s.heavy === "left" ? s.left : s.right]} 쪽이 아래로"><svg viewBox="0 0 200 130"><path d="M100 44 L82 118 H118 Z" fill="#8a6a3d"/><rect x="70" y="114" width="60" height="10" rx="4" fill="#6b5130"/><g class="lg-beam"><rect x="22" y="38" width="156" height="9" rx="4" fill="#b88a4a"/><g class="lg-pan l"><path d="M34 46 L22 82 M34 46 L46 82" stroke="#6b5130" stroke-width="2"/><path d="M14 82 H54 Q50 96 34 96 Q18 96 14 82 Z" fill="#d9b679"/>${panBall(s.left, 34, 68)}</g><g class="lg-pan r"><path d="M166 46 L154 82 M166 46 L178 82" stroke="#6b5130" stroke-width="2"/><path d="M146 82 H186 Q182 96 166 96 Q150 96 146 82 Z" fill="#d9b679"/>${panBall(s.right, 166, 68)}</g></g><circle cx="100" cy="42" r="7" fill="#6b5130"/></svg></figure>`;
 }
-function balanceBoard({ stage, controls, sound }) {
-  let p, api, slots = [], locked = false, wrongPick = new Set();
+// 저울 판: WebGL이 되면 3D 진열대(golden-bell-3d-balance.js), 안 되면 예전 평면 저울. 조작(단추·단상)은 둘 다 HTML이다.
+function balanceBoard({ stage, controls, sound, root }) {
+  let p, api, slots = [], locked = false, wrongPick = new Set(), scene = null, tried3d = false;
+  const pickFromScene = (i) => controls.querySelector(`[data-b2-item="${i}"]:not(:disabled)`)?.click();
+  const ensureScene = () => {
+    if (tried3d) return scene;
+    tried3d = true;
+    stage.innerHTML = '<div class="lg-3d lg-3d-balance"></div>';
+    scene = createBalanceScene(stage.firstElementChild, { colors: ITEM_HEX, names: BALANCE_ITEMS, onPick: pickFromScene, fullscreenTarget: root || stage });
+    if (!scene) stage.innerHTML = "";
+    return scene;
+  };
   const draw = (first = false) => {
     if (first) {
-      stage.innerHTML = `<div class="lg-scales${p.scales.length > 4 ? " many" : ""}">${p.scales.map(scaleSvg).join("")}</div>`;
-      if (!reduced()) requestAnimationFrame(() => stage.querySelectorAll(".lg-scale").forEach((f) => f.classList.add("tilted")));
-      else stage.querySelectorAll(".lg-scale").forEach((f) => f.classList.add("tilted"));
+      if (ensureScene()) scene.show(p.scales);
+      else {
+        stage.innerHTML = `<div class="lg-scales${p.scales.length > 4 ? " many" : ""}">${p.scales.map(scaleSvg).join("")}</div>`;
+        flatNotice(stage);
+        if (!reduced()) requestAnimationFrame(() => stage.querySelectorAll(".lg-scale").forEach((f) => f.classList.add("tilted")));
+        else stage.querySelectorAll(".lg-scale").forEach((f) => f.classList.add("tilted"));
+      }
     }
     const items = p.items;
+    const tip = scene ? '<p class="lg-3d-tip">저울 위 공을 눌러도 돼요.</p>' : "";
     if (p.kind !== "order") {
-      controls.innerHTML = `<p class="cg-ask">${p.kind === "pick" ? "더 무거운 것을 누르세요." : "가장 가벼운 것을 누르세요."}</p><div class="lg-items">${items.map((i) => `<button type="button" class="lg-item" data-b2-item="${i}" aria-label="${BALANCE_ITEMS[i]}" ${locked || wrongPick.has(i) ? "disabled" : ""} ${wrongPick.has(i) ? 'data-state="bad"' : ""}>${ballSvg(i)}</button>`).join("")}</div>`;
+      controls.innerHTML = `<p class="cg-ask">${p.kind === "pick" ? "더 무거운 것을 누르세요." : "가장 가벼운 것을 누르세요."}</p><div class="lg-items">${items.map((i) => `<button type="button" class="lg-item" data-b2-item="${i}" aria-label="${BALANCE_ITEMS[i]}" ${locked || wrongPick.has(i) ? "disabled" : ""} ${wrongPick.has(i) ? 'data-state="bad"' : ""}>${ballSvg(i)}</button>`).join("")}</div>${tip}`;
       return;
     }
-    controls.innerHTML = `<p class="cg-ask">무거운 것부터 차례로 누르세요.</p><ol class="lg-podium" aria-label="무거운 순서">${items.map((_, k) => `<li><span class="lg-rank">${k === 0 ? "가장 무거움" : k === p.n - 1 ? "가장 가벼움" : `${k + 1}번째`}</span><button type="button" class="lg-podium-slot" data-b2-slot="${k}" aria-label="${k + 1}번째 자리 ${slots[k] === undefined ? "빈칸" : BALANCE_ITEMS[slots[k]]}" ${locked || slots[k] === undefined ? "disabled" : ""}>${slots[k] === undefined ? "" : ballSvg(slots[k])}</button></li>`).join("")}</ol><div class="lg-items">${items.map((i) => `<button type="button" class="lg-item" data-b2-item="${i}" aria-label="${BALANCE_ITEMS[i]}" ${locked || slots.includes(i) ? "disabled" : ""}>${ballSvg(i)}</button>`).join("")}</div><div class="cg-actions"><button type="button" class="cg-secondary" data-b2-clear ${locked || !slots.length ? "disabled" : ""}>다시 놓기</button><button type="button" class="cg-primary" data-b2-check ${locked || slots.length < p.n ? "disabled" : ""}>확인!</button></div>`;
+    controls.innerHTML = `<p class="cg-ask">무거운 것부터 차례로 누르세요.</p><ol class="lg-podium" aria-label="무거운 순서">${items.map((_, k) => `<li><span class="lg-rank">${k === 0 ? "가장 무거움" : k === p.n - 1 ? "가장 가벼움" : `${k + 1}번째`}</span><button type="button" class="lg-podium-slot" data-b2-slot="${k}" aria-label="${k + 1}번째 자리 ${slots[k] === undefined ? "빈칸" : BALANCE_ITEMS[slots[k]]}" ${locked || slots[k] === undefined ? "disabled" : ""}>${slots[k] === undefined ? "" : ballSvg(slots[k])}</button></li>`).join("")}</ol><div class="lg-items">${items.map((i) => `<button type="button" class="lg-item" data-b2-item="${i}" aria-label="${BALANCE_ITEMS[i]}" ${locked || slots.includes(i) ? "disabled" : ""}>${ballSvg(i)}</button>`).join("")}</div>${tip}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-clear ${locked || !slots.length ? "disabled" : ""}>다시 놓기</button><button type="button" class="cg-primary" data-b2-check ${locked || slots.length < p.n ? "disabled" : ""}>확인!</button></div>`;
   };
   const onClick = (event) => {
     const t = event.target.closest("button");
@@ -108,7 +126,7 @@ function balanceBoard({ stage, controls, sound }) {
       sound.tick();
       if (p.kind !== "order") {
         const ok = i === p.answer;
-        if (!ok) wrongPick.add(i);
+        if (!ok) { wrongPick.add(i); scene?.dim(i); }
         draw();
         api.answer(ok, { item: i });
         return;
@@ -124,7 +142,7 @@ function balanceBoard({ stage, controls, sound }) {
     show(problem, a) { p = problem; api = a; slots = []; locked = false; wrongPick = new Set(); draw(true); },
     reveal(problem, done) { slots = Array.isArray(problem.answer) ? [...problem.answer] : slots; locked = true; draw(); if (!Array.isArray(problem.answer)) controls.querySelector(`[data-b2-item="${problem.answer}"]`)?.setAttribute("data-state", "good"); setTimeout(done, reduced() ? 0 : 500); },
     lock(on) { locked = on; draw(); if (on && !Array.isArray(p.answer)) controls.querySelector(`[data-b2-item="${p.answer}"]`)?.setAttribute("data-state", "good"); },
-    dispose() { controls.removeEventListener("click", onClick); }
+    dispose() { controls.removeEventListener("click", onClick); scene?.dispose(); scene = null; }
   };
 }
 const BALANCE_GAME = {

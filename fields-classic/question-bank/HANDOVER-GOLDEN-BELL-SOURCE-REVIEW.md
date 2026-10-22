@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261019c`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261019d`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -486,6 +486,13 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 1권 거울 그림: 휴대폰 규칙이 그림을 470px로 고정한 뒤 줄여서 칸 밖으로 나감 → 칸 너비에 맞춤. 2권 성냥개비 개념 장면: 가운데 정렬된 넓은 줄이 왼쪽으로 잘림 → 휴대폰에서 줄바꿈. 4권 숫자 1 돌리기: 휴대폰에서 줄바꿈. 7권 날짜 표: 휴대폰에서 글자·여백 줄임(`golden-bell-book05.css` — `golden-bell.css`보다 뒤에 읽혀 앞 파일에 넣으면 덮인다).
   - **공통 원인**: 문항 그림 칸(`.quiz-visual`)·개념 장면(`.guided-concept-scene`, 휴대폰)이 그리드라 칸이 내용 너비만큼 커졌다 → `minmax(0,1fr)`. 그래도 넓은 그림은 `golden-bell.js` `fitScreenVisuals()`가 렌더 뒤 칸 너비에 맞게 `zoom`으로 줄인다(최소 0.55, 내용이 바뀔 때·화면 크기가 바뀔 때마다).
   - 점검 뒤 남은 것: 1권 색종이 개념·4권 접어 자르기 4번의 svg 안쪽 측정값만(눈으로 보면 잘리지 않음), 320px에서 7권 날짜 표(가로로 밀어 볼 수 있음). 캐시 꼬리표 `20261018z`, `golden-bell.css` 링크 `20261022b`.
+
+#### 개념 → 유형별 예제 → 3D 게임 흐름 (2026-10-22 시범, 원장 요청 「튜토리얼처럼 개념 설명 → 유형마다 예시 1~2개 → 게임」)
+- 켜는 곳: `golden-bell-lesson-flow.js`의 `LESSON_FLOWS` 한 줄. 현재 1권 `clock-turning`, 2권 `balance-order`, 9권 `cube-min-max-source`·`magic-square-missing` 4개. 표에 없는 단원은 예전 개념 화면 그대로. 데이터 파일은 건드리지 않는다.
+- 새 단원 추가 순서는 그 파일 머리 주석에 있다(예제 세트 `golden-bell-type-examples.js` → 게임 규칙 `*-game-models.js` → `createStage3D` 무대 → `LESSON_FLOWS`·`mountGame` → 검사기 두 개 확장).
+- 3D 무대 `golden-bell-3d-engine.js`(저장소의 Three.js `world-explorer/vendor/three.module.js` 상대 경로, 카메라 거리 자동 맞춤, WebGL 없으면 `null` → 2D 그림). 예제 정답과 게임 퍼즐은 코드에서 계산하고 원본 그림과 같은 퍼즐은 쓰지 않는다.
+- 검사: `golden-bell-3d-game-models-audit.mjs`(퍼즐·예제 독립 풀이) · `golden-bell-3d-game-browser-audit.mjs`(`FIELDS_BASE_URL`·`FIELDS_PLAYWRIGHT` 환경변수, 375·1180px).
+- 아직: 예제는 화면 전용(인쇄 안 됨), 9권 게임은 「직접 해보기」·QR에서 열리지 않음, 실제 기기 속도 미확인(소프트웨어 WebGL로만 시험).
 
 #### 10권 골든벨 판서 (9권 판서 파일 10~11쪽)
 - 10권은 지도서에서 만든 단원(번호 0~6)이 이미 있고, 골든벨 판서는 따로 없다가 9권 판서 파일 끝 두 쪽에 「<10권> 01. 연속수의 합」으로 들어 있었다. 장부는 `book-10.sourceCoverage.goldenBell`(쪽 10·11, 문항 수), `source.goldenBellNote`.
