@@ -364,8 +364,31 @@ style="position:absolute;left:50%;bottom:3%;transform:translateX(-50%);max-width
    원본 PNG를 그대로 쓴다 — 숫자 캐릭터와 달리 색조 필터·모자/망토 오버레이 없음
    (사람은 이미 완성된 일러스트라 재염색 대상이 아니다). 모르는 kind는 boy로 폴백. */
 const HUMAN_IMG = {boy:'kid-boy.png', girl:'kid-girl.png', elder:'elder.png', doc:'docssam.png'};
+function humanLabel(H, c){
+  const l = String(window.NM_LANG || (document.documentElement && document.documentElement.lang) || 'ko').slice(0,2);
+  const lg = (l==='en'||l==='zh') ? l : 'ko';
+  const lk = H.looks.find(x=>x.id===c.look), ot = H.outfits.find(x=>x.id===c.outfit);
+  let t = (lk && lk[lg]) || '';
+  if(ot && ot.id!=='original' && ot[lg]) t += ' · ' + ot[lg];
+  return t.replace(/[<>&"']/g,'');
+}
 window.renderHumanChar = function(kind, size){
   size = size || 120;
+  if(kind && typeof kind==='object'){
+    const H = window.NM_HUMANS;
+    const c = H ? H.clean(kind) : {kind:kind.kind==='girl'?'girl':'boy', look:kind.kind==='girl'?'girl':'boy', outfit:'original'};
+    const base = window.NM_CHAR_BASE || 'assets/characters/';
+    const ph = Math.round(size * 1.25);
+    const legacy = (c.look==='boy'||c.look==='girl') && c.outfit==='original';
+    if(legacy || !H || !window.renderWalker){
+      const file = HUMAN_IMG[c.kind] || HUMAN_IMG.boy;
+      const label = H ? humanLabel(H, c) : '';
+      return `<div class="nm-human" data-look="${c.look}" data-outfit="${c.outfit}" style="width:${size}px;height:${ph}px"><img src="${base}${file}" alt="${label}" draggable="false"></div>`;
+    }
+    // Pre-rendered from the same Three.js model/palette as town, avoiding dozens
+    // of WebGL contexts in the gallery while keeping the selected outfit visible.
+    return `<div class="nm-human nm-human-custom" data-look="${c.look}" data-outfit="${c.outfit}" style="width:${size}px;height:${ph}px"><img src="${base}portraits/${c.look}-${c.outfit}.png" alt="${humanLabel(H,c)}" draggable="false"></div>`;
+  }
   const file = HUMAN_IMG[kind] || HUMAN_IMG.boy;
   const base = window.NM_CHAR_BASE || 'assets/characters/';
   const ph = Math.round(size * 1.25);
@@ -374,6 +397,7 @@ window.renderHumanChar = function(kind, size){
 
 /* window.renderPartyHtml(avatarKind, character, size) → 아바타(사람) + 오른쪽 아래로 살짝
    겹쳐 서 있는 동행 숫자/기호 캐릭터. character는 renderNumiChar와 같은 형식. */
+/* avatarKind: 문자열(기존) 또는 프로필 객체 — renderHumanChar로 그대로 전달 */
 window.renderPartyHtml = function(avatarKind, character, size){
   size = size || 120;
   const human = window.renderHumanChar ? window.renderHumanChar(avatarKind, size) : '';

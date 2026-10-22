@@ -95,6 +95,18 @@ function packExercisePages(pages) {
   pages.forEach((page) => page.remove());
 }
 
+// A figure box has a fixed print height and hides overflow; shrink overflowing content to fit instead of cutting it off.
+function fitClippedVisuals(scope) {
+  scope.querySelectorAll(".gold-print-visual > *").forEach((box) => {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      if (!box.clientHeight || box.scrollHeight <= box.clientHeight + 2) break;
+      const zoom = Math.max(0.5, Number(box.dataset.printFit || 1) * box.clientHeight / box.scrollHeight);
+      box.dataset.printFit = zoom.toFixed(3);
+      [...box.children].forEach((child) => { child.style.zoom = box.dataset.printFit; });
+    }
+  });
+}
+
 // Measure with the same print cascade, isolated from the student's screen.
 export function compactGoldenBellPrint(root) {
   const host = document.createElement("div");
@@ -123,6 +135,7 @@ export function compactGoldenBellPrint(root) {
       }
       packExercisePages(group);
     }
+    fitClippedVisuals(copy);
     const packed = [...copy.children];
     packed.forEach((page, index) => {
       if ((page.querySelector(".has-game-qr") || page.classList.contains("has-cover-games")) && !contentFits(page)) {

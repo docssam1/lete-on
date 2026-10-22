@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
-<link rel="stylesheet" href="app/styles.css">
+<link rel="stylesheet" href="app/styles.css?v=20261022-copy1">
 <style>
   /* 글꼴: Pretendard(CDN) → Noto Sans KR/CJK(Actions 러너에 apt로 설치) → 시스템 한글 순. 표지 이름은 Gowun Batang. */
   /* app/styles.css 는 앱 셸용이라 html,body{height:100%} + body{overflow:hidden} 을 건다.
@@ -218,7 +218,7 @@
 <script src="app/g1/7-9.print.js"></script>
 <script src="app/g1/10-12.print.js"></script>
 <script src="app/g1/13-15.print.js"></script>
-<script src="app/exam.js"></script>
+<script src="app/exam.js?v=20261022-copy1"></script>
 <script src="app/animal-art.js"></script>
 <script src="data/placement-books.js?v=20261018-soma2019-dunoro1"></script>
 <script src="data/dunoro-courses.js?v=20261018-dunoro-arith1"></script>
@@ -239,12 +239,15 @@ var NAME = (Q.get('n') || '').trim();
 var SEED = (Q.get('seed') || 'sheet1').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 24) || 'sheet1';
 var PLAN = window.NM_PLACEMENT_PLAN, SPEC = window.NM_COURSE_SPEC || [];
 var T = function(ko, en, zh){ return LANG === 'en' ? en : LANG === 'zh' ? zh : ko; };
+document.getElementById('wsTitle').textContent = 'Numbers of Magic · ' + T('시작점 확인 시험지', 'Starting-point check sheet', '起点测评卷');
+document.getElementById('wsSub').textContent = T('불러오는 중…', 'Loading…', '正在加载…');
+document.getElementById('wsPrint').textContent = T('🖨 인쇄 · PDF로 저장', '🖨 Print · Save as PDF', '🖨 打印 · 另存为PDF');
 var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
 var L = function(o){ return o ? (o[LANG] || o.ko || '') : ''; };
 var CIRC = ['①','②','③','④','⑤','⑥'];
 
-function fail(msg){ document.getElementById('wsBody').innerHTML = '<div class="ws-err">' + esc(msg) + '</div>'; window.NM_WS_READY = 'error'; }
-if(!PLAN) return fail('진단 자료를 불러오지 못했어요.');
+function fail(msg){ document.getElementById('wsBody').innerHTML = '<div class="ws-err">' + esc(msg) + '</div>'; document.getElementById('wsPrint').disabled = true; window.NM_WS_READY = 'error'; }
+if(!PLAN) return fail(T('진단 자료를 불러오지 못했어요.', 'Could not load the diagnostic data.', '无法加载测评数据。'));
 var STAGES = PLAN.stages();
 var BASE = Q.get('b') || 'f-split9';
 if(!STAGES.some(function(s){ return s.id === BASE; })) BASE = STAGES[0].id;
@@ -563,7 +566,7 @@ function toolbar(){
   document.getElementById('wsTitle').textContent = 'Numbers of Magic · ' + T('시작점 확인 시험지', 'Starting-point check sheet', '起点测评卷');
 }
 toolbar();
-try{ build(); }catch(e){ return fail('시험지를 만드는 중 문제가 생겼어요: ' + (e && e.message || e)); }
+try{ build(); }catch(e){ return fail(T('시험지를 만드는 중 문제가 생겼어요: ', 'Could not create the check sheet: ', '生成测评卷时出现问题：') + (e && e.message || e)); }
 document.getElementById('wsPrint').onclick = function(){ window.print(); };
 function fitWidth(){ var z = Math.min(1, (document.documentElement.clientWidth - 16) / 794); document.documentElement.style.setProperty('--ws-zoom', z > 0 ? z.toFixed(3) : 1); }
 fitWidth(); window.addEventListener('resize', fitWidth);

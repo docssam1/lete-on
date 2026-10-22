@@ -1033,6 +1033,8 @@
   /* 정답지 페이지 워터마크 없음 — 숫자 위를 지나면 채점을 방해한다 */
   .nm-print-answer-key .nm-w2-wm { display:none !important; }
   .nm-print-answer-key .nm-w2-head { margin-bottom:10px; }
+  .nm-answer-page { width:190mm; max-width:100%; margin-inline:auto; }
+  .nm-answer-page > :not(.nm-w2-foot) { flex-shrink:0; }
 
   .nm-ak-section { margin-bottom:14px; }
   .nm-draw-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:repeat(3,minmax(0,1fr)); gap:4mm 8mm; flex:1; min-height:0; }
@@ -1062,7 +1064,7 @@
      그대로 따른다. 10열이라 한 줄 = 짧은식 회차의 왼쪽 열 10문항. */
   .nm-ak-page { margin-bottom:4px; }
   .nm-ak-pg { font-size:9px; color:#8A8F99; font-family:monospace; margin:0 0 2px; }
-  .nm-print-answer-key .nm-ak-page .nm-ak-grid { grid-template-columns:repeat(10,1fr); gap:5px 4px; }
+  .nm-print-answer-key .nm-ak-page .nm-ak-grid { grid-template-columns:repeat(10,minmax(0,1fr)); gap:5px 4px; }
   .nm-print-answer-key .nm-ak-page .nm-ak-grid-middle { grid-template-columns:repeat(5,minmax(0,1fr)); }
   .nm-print-answer-key .nm-ak-page .nm-ak-item { font-size:0.85em; white-space:nowrap; }
   .nm-print-answer-key .nm-ak-grid-middle .nm-ak-item { padding-block:6px; }
@@ -1073,6 +1075,9 @@
   .nm-print-answer-key .nm-ak-page .nm-ak-item-w3 { grid-column:span 3; }
   /* 과정 빈칸 정답(2026-09-26) — 값 + 완성 사슬, 한 줄 전체 */
   .nm-print-answer-key .nm-ak-page .nm-ak-item-chain { grid-column:1 / -1; white-space:normal; }
+  .nm-print-answer-key .nm-ak-page .nm-ak-item-long { grid-column:1 / -1; white-space:normal; overflow-wrap:anywhere; }
+  .nm-ak-process-chain { display:inline-flex; max-width:100%; flex-wrap:wrap; gap:0 5px; vertical-align:top; }
+  .nm-ak-process-step { white-space:nowrap; }
   .nm-ak-process-val { font-weight:900; margin-right:4px; }
   .nm-ak-process-chain { color:#4a4436; }
   .nm-ak-boxplot-title { margin:5mm 0 2mm; font-size:12px; color:#183f42; }
@@ -2530,7 +2535,7 @@ function w2HistoryPageHtml(items, code, fallbackUnits, fallbackTitle, band){
    cv: {name, weekLabel, courseNum, courseTitle, k, cadence, code}. rounds: renderRoundPages 결과 배열. */
 /* 주간 학습지 쪽 수 — 표지 1 + 회차 쪽 + 수학사 지면(있으면 1) + 정답지 1. 표지·발치 통산 번호가
    같은 값을 쓰도록 renderMixedSheet 와 weeklyCoverHtml 이 둘 다 이 함수를 부른다(2026-09-06).
-   정답지는 흐름 조판이라 길면 두 장이 될 수 있다 — 표지의 총 쪽수는 정답지 시작 쪽까지다. */
+   정답지가 여러 장이면 렌더링 뒤 실제 높이로 나눠 표지·발치의 총 쪽수를 보정한다. */
 function w2PagesOf(r){ return (r.html.match(/class="nm-w2-page/g) || []).length; }
 function weeklyPageCount(rounds, extra){
   extra = extra || {};
@@ -2551,13 +2556,13 @@ function assignStudyDays(rounds, requestedDays){
   const target = total / dayCount;
   let day = 1, done = 0, remaining = practice.length;
   rounds.forEach(r => {
-    if(!(r.problems || []).length){ r.studyDays = [Math.max(1, day - (done >= target && day > 1 ? 1 : 0))]; return; }
-    if(day < dayCount && done >= target && remaining > dayCount - day) day++;
+    if(!(r.problems || []).length){ r.studyDays = [day]; return; }
+    if(day < dayCount && (done >= target * day || remaining <= dayCount - day)) day++;
     r.studyDays = [day];
     done += r.problems.length;
     remaining--;
   });
-  return dayCount;
+  return day;
 }
 /* extra: {history:bool, answerKey:bool} — 표지 뒤에 실제로 붙는 지면을 표지가 안다(2026-09-06).
    전에는 회차만 세어 "7 PAGES"라 적고 실제 PDF 는 9쪽이었다(수학사·정답지 누락).
@@ -2590,7 +2595,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     page += 1;
   }
   if(extra.answerKey !== false){
-    rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('정답지','Answer key','答案'))}</td><td></td><td>${pTxt(page, page)}</td><td></td></tr>`);
+    rows.push(`<tr><td class="nm-cvw-day"></td><td class="nm-cvw-no"></td><td class="nm-cvw-name">${esc(lk('정답지','Answer key','答案'))}</td><td></td><td data-nm-cover-key-pages>${pTxt(page, page)}</td><td></td></tr>`);
     page++;
   }
   const totalPages = page - 1;
@@ -2629,7 +2634,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
       </div>
     </a>
     <div class="nm-cvw-foot-r">
-      <b>${esc(lk(`문제 ${totalCount||''}문항 · 총 ${totalPages}쪽`, `${totalCount||''} QUESTIONS · ${totalPages} PAGES`, `${totalCount||''}题 · 共${totalPages}页`))}</b>
+      <b data-nm-cover-total>${esc(lk(`문제 ${totalCount||''}문항 · 총 ${totalPages}쪽`, `${totalCount||''} QUESTIONS · ${totalPages} PAGES`, `${totalCount||''}题 · 共${totalPages}页`))}</b>
       <span>${coverFooterBrand()}</span>
       <i>${esc(cv.code||'')}</i>
     </div>
@@ -4702,7 +4707,7 @@ function w2AnswerKeyItemsHtml(problems, numStart){
       // ①②③·한글은 ASCII 숫자보다 넓다. 글자 수만 세면 유리화 답안이
       // 10열 밖으로 넘쳐 브라우저가 PDF 전체를 축소한다.
       len=Math.max(len,String(inner).replace(/<[^>]+>/g,'').replace(/[^\x00-\xff]/g,'xx').length);
-      const wide = len > 22 ? ' nm-ak-item-w3' : (len > 11 ? ' nm-ak-item-w2' : '');
+      const wide = len > 30 ? ' nm-ak-item-long' : len > 16 ? ' nm-ak-item-w3' : (len > 5 ? ' nm-ak-item-w2' : '');
     return `<div class="nm-ak-item${wide}">(${n}) ${inner}</div>`;
   }
   return problems.map((p,i) => {
@@ -4710,10 +4715,10 @@ function w2AnswerKeyItemsHtml(problems, numStart){
        사슬은 길어 한 줄을 통째로 쓴다(.nm-ak-item-chain). 클래스는 그대로 .nm-ak-item — 문항 수 = 정답 수 검사 유지. */
     if(p.__process){
       const P = p.__process;
-      const chainTex = [P.expr].concat(P.chain.map((l, li) => li === P.line
-        ? P.lines[li].replace(/\\square/, `\\mathbf{${fmtAns(P.value)}}`) : l)).join(' \\;\\Rightarrow\\; ');
+      const chainParts = [P.expr].concat(P.chain.map((l, li) => li === P.line
+        ? P.lines[li].replace(/\\square/, `\\mathbf{${fmtAns(P.value)}}`) : l));
       return `<div class="nm-ak-item nm-ak-item-chain" data-process="${P.form}">(${base+i+1}) <b class="nm-ak-process-val">${esc(String(fmtAns(P.value)))}</b>`
-        + ` <span class="nm-ak-process-chain"><span class="nm-w2-tex" data-tex="${esc(texDisplay(chainTex))}"></span></span></div>`;
+        + ` <span class="nm-ak-process-chain">${chainParts.map(tex=>`<span class="nm-ak-process-step"><span class="nm-w2-tex" data-tex="${esc(texDisplay(tex))}"></span></span>`).join('<span>⇒</span>')}</span></div>`;
     }
     const steps = printSteps(p);
     if(steps){
@@ -6552,8 +6557,58 @@ ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-an
 
   document.body.appendChild(sheet);
   sheet.querySelectorAll('.nm-w2-tex, .nm-cp-tex').forEach(el => renderKaTeX(el.dataset.tex || '', el));
-
-  if(!window.NM_NO_AUTOPRINT) setTimeout(() => { window.print(); }, 350);
+  // 정답지를 A4 높이로 나눈다. 흐름 조판은 발치만 다음 장으로 밀려날 수 있다.
+  const answerRoot=sheet.querySelector('.nm-print-answer-key:not(.nm-draw-answer-key)');
+  const answerHead=answerRoot.querySelector('.nm-w2-head');
+  const answerFoot=answerRoot.querySelector('.nm-w2-foot');
+  const answerSections=[...answerRoot.children].filter(el=>el!==answerHead&&el!==answerFoot);
+  function paginateAnswers(){
+    sheet.querySelectorAll('.nm-answer-continuation').forEach(el=>el.remove());
+    answerRoot.classList.add('nm-w2-page','nm-answer-page');
+    answerRoot.replaceChildren(answerHead,answerFoot);
+    // 글자 수로는 분수·근호·서술형 답의 실제 폭을 알 수 없다.
+    // 현재 글꼴로 측정해 필요한 열을 확보한 뒤 페이지 높이를 계산한다.
+    answerSections.forEach(section=>{
+      answerRoot.insertBefore(section,answerFoot);
+      section.querySelectorAll('.nm-ak-grid').forEach(grid=>{
+        const style=getComputedStyle(grid),columns=style.gridTemplateColumns.split(' ').length;
+        const gap=parseFloat(style.columnGap)||0,unit=(grid.clientWidth+gap)/columns;
+        [...grid.children].filter(el=>el.classList.contains('nm-ak-item')&&!el.classList.contains('nm-ak-item-chain')).forEach(el=>{
+          const required=el.scrollWidth;
+          if(required>el.clientWidth+1&&unit>0)el.style.gridColumn='span '+Math.min(columns,Math.ceil((required+gap+2)/unit));
+        });
+      });
+      section.remove();
+    });
+    let current=answerRoot,sectionCount=0;
+    const pages=[answerRoot];
+    answerSections.forEach(section=>{
+      current.insertBefore(section,current.lastElementChild);
+      if(current.scrollHeight>current.clientHeight+1&&sectionCount){
+        const next=answerRoot.cloneNode(false);
+        next.classList.add('nm-answer-continuation');
+        next.append(answerHead.cloneNode(true),answerFoot.cloneNode(true));
+        current.after(next);next.insertBefore(section,next.lastElementChild);
+        current=next;pages.push(next);sectionCount=0;
+      }
+      sectionCount++;
+    });
+    if(!opts.pacing){
+      const count=totalPages+pages.length-1;
+      sheet.querySelectorAll('.nm-w2-pg').forEach(el=>{el.textContent=el.textContent.replace(/\/\s*\d+$/, '/ '+count);});
+      pages.forEach((page,i)=>{page.querySelector('.nm-w2-pg').textContent=(pg+i)+' / '+count;});
+      const coverCount=sheet.querySelector('[data-nm-cover-total]');
+      if(coverCount)coverCount.textContent=lk(`문제 ${allProblems.length}문항 · 총 ${count}쪽`,`${allProblems.length} QUESTIONS · ${count} PAGES`,`${allProblems.length}题 · 共${count}页`);
+      const keyPages=sheet.querySelector('[data-nm-cover-key-pages]');
+      if(keyPages)keyPages.textContent=pg+(pages.length>1?'–'+(pg+pages.length-1):'')+lk('쪽','p.','页');
+    }
+  }
+  paginateAnswers();
+  const ready=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
+  ready.then(()=>{
+    paginateAnswers();
+    if(!window.NM_NO_AUTOPRINT)setTimeout(()=>window.print(),350);
+  });
 }
 
 /* 스레드 레벨 params 가져오기 */
@@ -7086,7 +7141,7 @@ const NM_EXAM = {
     <button class="nm-ex-sec-card" data-sec="magic">
       <div class="nm-ex-sec-emo">✨</div>
       <div class="nm-ex-sec-name">${esc(lk('수의 마법 탐험','Number Magic Explorer','数字魔法探险'))}</div>
-      <div class="nm-ex-sec-desc">${esc(lk('스레드 직접 선택','Pick a skill thread directly','直接选择技能线'))}</div>
+      <div class="nm-ex-sec-desc">${esc(lk('학습 유형 직접 선택','Pick a skill thread directly','直接选择技能线'))}</div>
     </button>
     <button class="nm-ex-sec-card" data-sec="road">
       <div class="nm-ex-sec-emo">🛤️</div>
@@ -7787,7 +7842,7 @@ ${printWatermarkHtml()}
   </div>
   <div class="nm-ex-form-body">
     <div class="nm-ex-form-row">
-      <label class="nm-ex-label">스레드</label>
+      <label class="nm-ex-label">학습 유형</label>
       <select class="nm-ex-select" id="nm-ex-thread">
         ${threadKeys.map(k=>`<option value="${k}">${k} — ${esc((threads[k].name||{}).ko||k)}</option>`).join('')}
       </select>
@@ -8094,7 +8149,11 @@ ${round.html}
     const grade = opts.grade != null ? opts.grade : (window.NM_PRINT_GRADE ? window.NM_PRINT_GRADE() : undefined);
     const seedOf = (wk, i) => (wk + c + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g, '');
     let session = course.sessions.find(s => !s.test && s.magic && s.magic.length) || course.sessions.find(s => !s.test) || null;
-    if(k === 2 && session){
+    const exact = Number(opts.startSession);
+    if(Number.isInteger(exact)&&exact>=1&&exact<=course.sessions.length){
+      const selected=course.sessions[exact-1];
+      session=selected.test?{...selected,drills:selected.pool||[],school:selected.pool||[],magic:[],creative:[],application:[],stretch:[]}:selected;
+    }else if(k === 2 && session){
       const list = course.sessions.filter(s => !s.test);
       const idx = list.indexOf(session);
       if(list.length > 1) session = list[(idx + 1) % list.length];

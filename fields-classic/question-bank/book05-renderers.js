@@ -359,11 +359,13 @@ function sourceProductGrid(visual) {
   const size = visual.rowProducts.length;
   const cells = [];
   for (let r = 0; r < size; r += 1) {
-    for (let c = 0; c < size; c += 1) cells.push(`<span class="${shaded.has(`${r}:${c}`) ? "shaded" : ""}">${escapeHtml(visual.letters?.[r]?.[c] || "")}</span>`);
+    for (let c = 0; c < size; c += 1) cells.push(`<span class="${shaded.has(`${r}:${c}`) ? (visual.shadedEmpty ? "shaded blocked" : "shaded") : ""}">${escapeHtml(visual.letters?.[r]?.[c] || "")}</span>`);
     cells.push(`<b>${visual.rowProducts[r]}</b>`);
   }
   visual.columnProducts.forEach((value) => cells.push(`<b>${value}</b>`));
-  return `<div class="b5-src-product" style="--size:${size}" role="img" aria-label="곱셈 매트릭스">${cells.join("")}</div>`;
+  const grid = `<div class="b5-src-product" style="--size:${size}" role="img" aria-label="${escapeHtml(`곱셈 매트릭스. 가로줄 곱 ${visual.rowProducts.join(", ")}. 세로줄 곱 ${visual.columnProducts.join(", ")}${visual.shadedEmpty ? ". 색칠된 칸에는 수가 들어가지 않습니다" : ""}`)}">${cells.join("")}</div>`;
+  // 8권 10~11쪽: 판 위에 넣을 수 목록(「2, 3, 4, …, 9」)
+  return visual.pool ? `<div class="b5-src-product-wrap"><p class="b5-src-pool">${escapeHtml(visual.pool.join(", "))}</p>${grid}</div>` : grid;
 }
 
 // 사각형 피라미드: 한 줄에 1, 3, 5…개
@@ -602,7 +604,10 @@ const SHAPE_GLYPH = {
   diamond: ["마름모", "#8e5bd8", "#ece0fb", '<polygon points="17,2 32,17 17,32 2,17"/>'],
   star: ["별", "#f0b23a", "#fff3c4", '<polygon points="17,2 21,13 32,13 23,20 26,31 17,24 8,31 11,20 2,13 13,13"/>'],
   heart: ["하트", "#e0559a", "#fde0ee", '<path d="M17 31C3 21 2 12 7 7c4-4 9-2 10 3 1-5 6-7 10-3 5 5 4 14-10 24z"/>'],
-  pentagon: ["오각형", "#f39a1e", "#ffe9cc", '<polygon points="17,2 32,13 26,31 8,31 2,13"/>']
+  pentagon: ["오각형", "#f39a1e", "#ffe9cc", '<polygon points="17,2 32,13 26,31 8,31 2,13"/>'],
+  dcircle: ["겹동그라미", "#1aa3c9", "#dff3ff", '<circle cx="17" cy="17" r="14"/><circle cx="17" cy="17" r="7" fill="none"/>'],
+  squarein: ["속 네모", "#2f6fe0", "#dde9ff", '<rect x="4" y="4" width="26" height="26"/><rect x="11" y="11" width="12" height="12" fill="#2f6fe0"/>'],
+  dot: ["까만 동그라미", "#e8503a", "#e8503a", '<circle cx="17" cy="17" r="14"/>']
 };
 const shapeGlyph = (kind, value) => {
   const [name, line, fill, body] = SHAPE_GLYPH[kind];
@@ -637,7 +642,7 @@ function sourceFractionDiscs(visual) {
     const pt = (k) => { const a = -Math.PI / 2 + (2 * Math.PI * k) / pieces; return `${(40 + 36 * Math.cos(a)).toFixed(2)} ${(40 + 36 * Math.sin(a)).toFixed(2)}`; };
     return `<svg viewBox="0 0 80 80">${Array.from({ length: pieces }, (_, k) => `<path class="${k < shaded ? "on" : ""}" d="M40 40L${pt(k)}A36 36 0 0 1 ${pt(k + 1)}Z"/>`).join("")}</svg>`;
   };
-  const cols = visual.discs.map((d, k) => `<figure><figcaption>${d.pieces} 조각</figcaption>${disc(d)}${visual.fractions === false ? "" : `<span class="b5-src-fracs">${fractionMarkup([[null, null]], k * 2)}</span>`}</figure>`);
+  const cols = visual.discs.map((d, k) => `<figure>${visual.caption === false ? "" : `<figcaption>${d.pieces} 조각</figcaption>`}${disc(d)}${visual.fractions === false ? "" : `<span class="b5-src-fracs">${fractionMarkup([[null, null]], k * 2)}</span>`}</figure>`);
   return `<div class="b5-src-discs" role="img" aria-label="${escapeHtml(visual.discs.map((d) => `${d.pieces}조각 원판 중 ${d.shaded}조각 색칠`).join(", "))}"><div class="row" style="--n:${visual.discs.length}">${cols.join(visual.fractions === false ? "" : '<b class="eq">=</b>')}</div></div>`;
 }
 
@@ -876,6 +881,136 @@ function sourceVenn(visual) {
   if (u) body += `<rect class="uni" x="12" y="26" width="276" height="${H - 34}" rx="2"/>${tag(70, 26, "전체", 80)}${tag(150, H - 10, "둘 다 싫음", 112)}`;
   body += `<circle cx="118" cy="${cy}" r="56"/><circle cx="182" cy="${cy}" r="56"/>${tag(106, cy - 58, visual.labels[0])}${tag(196, cy - 58, visual.labels[1])}`;
   return `<div class="b5-src-venn" role="img" aria-label="${escapeHtml(`${visual.labels.join("와 ")}의 벤 다이어그램${u ? ", 전체와 둘 다 싫음 칸" : ""}`)}"><svg viewBox="0 0 300 ${H + 6}" style="width:min(100%,380px)">${body}</svg></div>`;
+}
+
+// 8권: 원본 기호(○□△☆◇◎)를 모양 색표 이름으로.
+const SOURCE_SYMBOL = { "○": "circle", "□": "square", "△": "triangle", "☆": "star", "◇": "diamond", "◎": "dcircle", "▣": "squarein", "●": "dot" };
+const symbolGlyph = (s) => (SOURCE_SYMBOL[s] ? shapeGlyph(SOURCE_SYMBOL[s]) : `<span class="t">${escapeHtml(s)}</span>`);
+
+// 8권 2~6쪽 덧셈 매트릭스: 칸마다 도형, 오른쪽에 가로 합, 아래에 세로 합. 합이 null인 자리는 빈 상자(물음).
+function sourceSumGrid(visual) {
+  const cols = visual.cells[0].length;
+  const total = (v) => (v == null ? `<b class="blank"></b>` : `<b>${escapeHtml(v)}</b>`);
+  const rows = visual.cells.map((row, r) => `${row.map((s) => `<span class="cell">${symbolGlyph(s)}</span>`).join("")}${total(visual.rows[r])}`).join("");
+  const bottom = `${visual.cols.map(total).join("")}<i></i>`;
+  const word = (s) => SHAPE_GLYPH[SOURCE_SYMBOL[s]]?.[0] ?? s;
+  const label = `${visual.cells.length}줄 ${cols}칸 덧셈 매트릭스. ${visual.cells.map((row, r) => `${r + 1}번째 가로줄 ${row.map(word).join(" ")}, 합 ${visual.rows[r] ?? "빈칸"}`).join(". ")}. 세로줄 합 ${visual.cols.map((v) => v ?? "빈칸").join(", ")}`;
+  return `<div class="b5-src-sumgrid" role="img" aria-label="${escapeHtml(label)}"><div class="grid" style="--cols:${cols}">${rows}${bottom}</div></div>`;
+}
+
+// 8권 4~5쪽 주방 저울: rows는 위에서부터 쌓인 줄, ○는 빨간 공 · □는 파란 상자. ask는 「□ = ?」 줄(numbered면 ①②③).
+function sourceKitchenScales(visual) {
+  const S = 22;
+  const scale = ({ rows, weight }) => {
+    const h = rows.length * S;
+    const items = rows.map((row, r) => row.map((s, k) => {
+      const x = 60 + (k - (row.length - 1) / 2) * S, y = 8 + r * S;
+      return s === "○" ? `<circle class="ball" cx="${x}" cy="${y + S / 2}" r="${S / 2 - 1}"/>` : `<rect class="cube" x="${x - S / 2 + 1}" y="${y + 1}" width="${S - 2}" height="${S - 2}" rx="2"/>`;
+    }).join("")).join("");
+    const top = 8 + h;
+    return `<svg viewBox="0 0 120 ${top + 70}" style="width:120px">${items}<path class="pan" d="M16 ${top}h88l-6 6H22z"/><line class="stem" x1="60" y1="${top + 6}" x2="60" y2="${top + 14}"/><rect class="body" x="30" y="${top + 14}" width="60" height="44" rx="6"/><rect class="screen" x="37" y="${top + 22}" width="46" height="26" rx="3"/><text x="60" y="${top + 41}">${escapeHtml(weight)}</text></svg>`;
+  };
+  const askTokens = (a) => (Array.isArray(a) ? a : [a]);
+  const ask = (visual.ask || []).map((a, k) => `<span class="pair">${visual.numbered ? `<b class="no">${STAGE_MARKS[k]}</b>` : ""}${askTokens(a).map((t) => (SOURCE_SYMBOL[t] ? symbolGlyph(t) : `<span class="t op">${escapeHtml(t)}</span>`)).join("")}<span class="t op">=</span><span class="t">?</span></span>`).join("");
+  const word = (s) => (s === "○" ? "공" : s === "□" ? "상자" : s);
+  const label = `${visual.scales.map(({ rows, weight }, k) => `저울 ${k + 1}: ${rows.flat().map(word).join(", ")}, ${weight}`).join(". ")}${(visual.ask || []).length ? `. 물음: ${visual.ask.map((a) => `${askTokens(a).map((t) => SHAPE_GLYPH[SOURCE_SYMBOL[t]]?.[0] ?? t).join(" ")} = ?`).join(", ")}` : ""}`;
+  return `<div class="b5-src-kscales" role="img" aria-label="${escapeHtml(label)}"><div class="scales">${visual.scales.map(scale).join("")}</div>${ask ? `<p class="ask">${ask}</p>` : ""}</div>`;
+}
+
+// 8권 13~19쪽 세로셈 복면산: rows(더하는 수, 위에서부터)와 result를 오른쪽 맞춤으로. 글자마다
+// 숫자 · 모양(○□△☆◇) · "_" 빈칸(칸마다 다른 숫자가 들어갈 수 있음) · ㉠ 이름 붙은 빈칸. pool은 위의 숫자 카드 줄.
+function sourceCrypt(visual) {
+  const width = Math.max(...[...visual.rows, visual.result].map((r) => [...r].length));
+  const cell = (ch) => (SOURCE_SYMBOL[ch] ? `<span class="c">${symbolGlyph(ch)}</span>` : ch === "_" ? `<span class="c"><i class="blank"></i></span>`
+    : /[㉠-㉭]/.test(ch) ? `<span class="c"><i class="blank named">${ch}</i></span>` : `<span class="c d">${escapeHtml(ch)}</span>`);
+  const line = (r, op = "") => `<span class="op">${op}</span>${"<span class=\"c\"></span>".repeat(width - [...r].length)}${[...r].map(cell).join("")}`;
+  const rows = visual.rows.map((r, k) => line(r, k === visual.rows.length - 1 ? "+" : "")).join("");
+  const word = (ch) => (SOURCE_SYMBOL[ch] ? SHAPE_GLYPH[SOURCE_SYMBOL[ch]][0] : ch === "_" ? "빈칸" : ch);
+  const label = `세로 덧셈. ${visual.rows.map((r) => [...r].map(word).join(" ")).join(" 더하기 ")} 는 ${[...visual.result].map(word).join(" ")}`;
+  return `<div class="b5-src-crypt" role="img" aria-label="${escapeHtml(label)}">${visual.pool ? `<p class="b5-src-pool">${escapeHtml(visual.pool.join(" "))}</p>` : ""}<div class="board" style="--w:${width}">${rows}<hr>${line(visual.result)}</div></div>`;
+}
+
+// 8권 22쪽 주고받기: 접시 두 개(구슬 수만큼)와 가운데 화살표, 접시 아래 「N개」.
+function sourcePlates(visual) {
+  const plate = (n, cx) => {
+    const per = n > 20 ? 9 : n > 10 ? 7 : 5, rows = Math.ceil(n / per), r = 7, gap = 15;
+    const balls = Array.from({ length: n }, (_, k) => { const row = Math.floor(k / per), inRow = row === rows - 1 ? n - row * per : per, col = k % per;
+      return `<circle class="ball" cx="${(cx + (col - (inRow - 1) / 2) * gap).toFixed(1)}" cy="${(62 - (rows - 1 - row) * 12).toFixed(1)}" r="${r}"/>`; }).join("");
+    return `<ellipse class="plate" cx="${cx}" cy="70" rx="78" ry="20"/><ellipse class="rim" cx="${cx}" cy="68" rx="62" ry="13"/>${balls}<text x="${cx}" y="112">${n}개</text>`;
+  };
+  const [a, b] = visual.plates;
+  return `<div class="b5-src-plates" role="img" aria-label="${escapeHtml(`왼쪽 접시 구슬 ${a}개, 오른쪽 접시 구슬 ${b}개`)}"><svg viewBox="0 0 400 122" style="width:min(100%,440px)">${plate(a, 90)}<path class="arrow" d="M178 70H218M210 62l10 8-10 8"/>${plate(b, 310)}</svg></div>`;
+}
+
+// 8권 24·26~29쪽 합차·배수: 줄마다 「이름 : ○○○ + 5」, 오른쪽에 「합 : N」 괄호, diff = 한 줄의 몇 칸 위/아래 괄호와 수.
+function sourceSumDiff(visual) {
+  const r = 12, gap = 30, x0 = 62, rowH = 52, top = visual.diff?.side === "above" && visual.diff.row === 0 ? 40 : 22;
+  const ys = visual.rows.map((_, i) => top + i * rowH);
+  let maxX = 0, body = "";
+  visual.rows.forEach((row, i) => {
+    body += `<text class="lbl" x="8" y="${ys[i] + 5}">${escapeHtml(row.label)} :</text>`;
+    for (let k = 0; k < row.n; k += 1) body += `<circle cx="${x0 + k * gap}" cy="${ys[i]}" r="${r}"/>`;
+    let x = x0 + (row.n - 1) * gap + r;
+    if (row.extra) { body += `<text class="ex" x="${x + 8}" y="${ys[i] + 5}">${escapeHtml(row.extra)}</text>`; x += 14 + row.extra.length * 9; }
+    maxX = Math.max(maxX, x);
+  });
+  if (visual.diff) {
+    const { row, from, n, value, side } = visual.diff, xa = x0 + from * gap - r, xb = x0 + (from + n - 1) * gap + r, y = side === "above" ? ys[row] - r - 6 : ys[row] + r + 6, d = side === "above" ? -6 : 6;
+    body += `<path class="br" d="M${xa} ${y}v${d}H${xb}v${-d}M${(xa + xb) / 2} ${y + d}v${d}"/><text class="num" x="${(xa + xb) / 2}" y="${side === "above" ? y + d * 2 - 4 : y + d * 2 + 14}">${escapeHtml(value)}</text>`;
+  }
+  let w = maxX + 20;
+  if (visual.sum != null) {
+    const ya = ys[0] - r - 2, yb = ys.at(-1) + r + 2, bx = maxX + 14;
+    body += `<path class="br" d="M${bx} ${ya}h6V${yb}h-6M${bx + 6} ${(ya + yb) / 2}h6"/><text class="sumt" x="${bx + 18}" y="${(ya + yb) / 2 + 6}">합 : ${escapeHtml(visual.sum)}</text>`;
+    w = bx + 90;
+  }
+  const h = ys.at(-1) + r + (visual.diff?.side === "below" ? 40 : 16);
+  const label = `${visual.rows.map((row) => `${row.label} 동그라미 ${row.n}개${row.extra ? ` ${row.extra}` : ""}`).join(", ")}${visual.sum != null ? `, 합 ${visual.sum}` : ""}${visual.diff ? `, ${visual.rows[visual.diff.row].label}의 동그라미 ${visual.diff.n}개가 ${visual.diff.value}` : ""}`;
+  return `<div class="b5-src-sumdiff" role="img" aria-label="${escapeHtml(label)}"><svg viewBox="0 0 ${w} ${h}" style="width:min(100%,${Math.round(w * 1.25)}px)">${body}</svg></div>`;
+}
+
+// 8권 31쪽 거꾸로 풀기: 동그라미를 한 줄로 잇고 위에 계산 상자와 화살. nodes 원소 "□"는 빈 상자, null은 빈 동그라미, 수는 그대로.
+function sourceOpChain(visual) {
+  const gap = 104, r = 26, y = 70, x0 = 40;
+  let body = "";
+  visual.nodes.forEach((v, k) => {
+    const x = x0 + k * gap;
+    body += `<circle class="node" cx="${x}" cy="${y}" r="${r}"/>`;
+    if (v === "□") body += `<rect class="box" x="${x - 15}" y="${y - 15}" width="30" height="30" rx="2"/>`;
+    else if (v != null) body += `<text class="v" x="${x}" y="${y + 7}">${escapeHtml(v)}</text>`;
+  });
+  visual.ops.forEach((op, k) => {
+    const xa = x0 + k * gap + 14, xb = x0 + (k + 1) * gap - 14, mx = (xa + xb) / 2;
+    body += `<path class="arc" d="M${xa} ${y - r + 2}Q${mx} ${y - 66} ${xb} ${y - r + 2}"/><path class="head" d="M${xb - 9} ${y - r - 6}L${xb} ${y - r + 2}L${xb - 11} ${y - r + 3}"/>`;
+    body += `<rect class="op" x="${mx - 22}" y="${y - 62}" width="44" height="24" rx="5"/><text class="o" x="${mx}" y="${y - 44}">${escapeHtml(op)}</text>`;
+  });
+  const w = x0 * 2 + (visual.nodes.length - 1) * gap;
+  const label = `${visual.nodes.map((v) => (v === "□" ? "빈 상자" : v ?? "빈 동그라미")).join(", ")}을 차례로 잇는 계산: ${visual.ops.join(", ")}`;
+  return `<div class="b5-src-opchain" role="img" aria-label="${escapeHtml(label)}"><svg viewBox="0 0 ${w} 104" style="width:min(100%,${Math.round(w * 1.1)}px)">${body}</svg></div>`;
+}
+
+// 8권 36~39쪽 분수 띠: parts칸, shaded(색칠) · crossed(큰 ×, 먹은 부분) · slash(옅은 빗금) · below(아래 둥근 괄호 from~to) · sub(그 칸 아래에 다시 나눈 띠).
+function sourceFracBar(visual) {
+  const W = 300, x0 = 10, y = 26, h = 26, cw = W / visual.parts, set = (a) => new Set(a || []);
+  const sh = set(visual.shaded), cr = set(visual.crossed), sl = set(visual.slash);
+  let body = "";
+  for (let k = 0; k < visual.parts; k += 1) {
+    const x = x0 + k * cw;
+    if (sh.has(k)) body += `<rect class="on" x="${x}" y="${y - h / 2}" width="${cw}" height="${h}"/>`;
+    if (sl.has(k)) body += `<path class="slash" d="M${x + cw * 0.3} ${y + 8}L${x + cw * 0.7} ${y - 8}"/>`;
+  }
+  body += `<path class="bar" d="M${x0} ${y}H${x0 + W}"/>` + Array.from({ length: visual.parts + 1 }, (_, k) => `<path class="tick" d="M${x0 + k * cw} ${y - h / 2 - 2}V${y + h / 2 + 2}"/>`).join("");
+  if (cr.size) { const ks = [...cr].sort((a, b) => a - b), xa = x0 + ks[0] * cw + 4, xb = x0 + (ks.at(-1) + 1) * cw - 4;
+    body += `<path class="cross" d="M${xa} ${y - h / 2}L${xb} ${y + h / 2}M${xa} ${y + h / 2}L${xb} ${y - h / 2}"/>`; }
+  let H = y + h / 2 + 10;
+  if (visual.below) { const xa = x0 + visual.below.from * cw, xb = x0 + (visual.below.to + 1) * cw;
+    body += `<path class="brace" d="M${xa} ${y + 4}Q${(xa + xb) / 2} ${y + 34} ${xb} ${y + 4}"/>`; H = y + 36; }
+  if (visual.sub) { const { from, to, parts } = visual.sub, xa = x0 + from * cw, xb = x0 + (to + 1) * cw, sy = y + 46, sw = (xb - xa) / parts;
+    body += `<path class="tick" d="M${xa} ${y + h / 2 + 2}V${sy + h / 2}M${xb} ${y + h / 2 + 2}V${sy + h / 2}"/><path class="bar" d="M${xa} ${sy}H${xb}"/>`
+      + Array.from({ length: parts - 1 }, (_, k) => `<path class="tick" d="M${xa + (k + 1) * sw} ${sy - h / 2 + 4}V${sy + h / 2}"/>`).join("");
+    H = sy + h / 2 + 8; }
+  const label = `${visual.parts}칸으로 똑같이 나눈 띠${sh.size ? `, ${sh.size}칸 색칠` : ""}${cr.size ? `, ${cr.size}칸에 × 표시` : ""}${visual.sub ? `, 한 부분을 다시 ${visual.sub.parts}칸으로 나눔` : ""}`;
+  return `<div class="b5-src-fracbar" role="img" aria-label="${escapeHtml(label)}"><svg viewBox="0 0 ${W + x0 * 2} ${H}" style="width:min(100%,360px)">${body}</svg></div>`;
 }
 
 // 7권: 단계 그림 여러 개를 한 줄로(휴대폰에서는 줄바꿈). figs = [{w, h, body}], marks면 위에 ①②③… 번호.
@@ -1290,6 +1425,13 @@ export function book05Markup(visual) {
     case "source-swap-sub": return sourceSwapSub(visual);
     case "source-distance-arcs": return sourceDistanceArcs(visual);
     case "source-venn": return sourceVenn(visual);
+    case "source-sum-grid": return sourceSumGrid(visual);
+    case "source-kitchen-scales": return sourceKitchenScales(visual);
+    case "source-crypt": return sourceCrypt(visual);
+    case "source-plates": return sourcePlates(visual);
+    case "source-sumdiff": return sourceSumDiff(visual);
+    case "source-op-chain": return sourceOpChain(visual);
+    case "source-frac-bar": return sourceFracBar(visual);
     case "source-arc-line": return sourceArcLine(visual);
     case "source-ratio-lines": return sourceRatioLines(visual);
     case "source-pencil-bars": return sourcePencilBars(visual);

@@ -78,8 +78,11 @@ function areaGrid(visual) {
   const width = visual.gridWidth * cell;
   const height = visual.gridHeight * cell;
   const grid = `${Array.from({ length: visual.gridWidth + 1 }, (_, index) => `<line x1="${index * cell}" y1="0" x2="${index * cell}" y2="${height}"/>`).join("")}${Array.from({ length: visual.gridHeight + 1 }, (_, index) => `<line x1="0" y1="${index * cell}" x2="${width}" y2="${index * cell}"/>`).join("")}`;
-  const points = visual.points.map(([x,y]) => `${x * cell},${y * cell}`).join(" ");
-  return `<svg class="b9-svg b9-area-grid" viewBox="-2 -2 ${width + 4} ${height + 4}" role="img" aria-label="모눈 위 색칠한 도형"><g class="grid">${grid}</g><polygon points="${points}"/></svg>`;
+  // 도형 여러 개(polygons) · 칠하지 않는 직사각형 틀(frame) · 안쪽 선(lines)을 함께 그린다. 옛 데이터는 points 하나.
+  const shapes = (visual.polygons || [visual.points]).map((points) => `<polygon points="${points.map(([x, y]) => `${x * cell},${y * cell}`).join(" ")}"/>`).join("");
+  const frame = visual.frame ? `<rect class="frame" x="${visual.frame[0] * cell}" y="${visual.frame[1] * cell}" width="${(visual.frame[2] - visual.frame[0]) * cell}" height="${(visual.frame[3] - visual.frame[1]) * cell}"/>` : "";
+  const lines = (visual.lines || []).map(([x1, y1, x2, y2]) => `<line class="inner" x1="${x1 * cell}" y1="${y1 * cell}" x2="${x2 * cell}" y2="${y2 * cell}"/>`).join("");
+  return `<svg class="b9-svg b9-area-grid" viewBox="-2 -2 ${width + 4} ${height + 4}" role="img" aria-label="모눈 위 색칠한 도형"><g class="grid">${grid}</g>${shapes}${frame}${lines}</svg>`;
 }
 
 function isoMap(map, compact = false) {
@@ -128,6 +131,38 @@ function cubeLayers(visual) {
   return `<div class="b9-layer-wrap"><div class="layers">${visual.layers.map((layer, index) => smallGrid(layer, `${index + 1}층`)).join("")}</div>${profiles}</div>`;
 }
 
+// 판서 5~6쪽: 위에서 본 칸(top, 줄마다 칸이 있으면 1) · 앞(왼쪽 줄부터 층수) · 오른쪽 옆(앞줄부터 층수)을 칸 그림으로.
+function viewCells(cells, cls, unit) {
+  const rows = cells.length;
+  const cols = Math.max(...cells.map((row) => row.length));
+  const rects = cells.flatMap((row, r) => row.map((on, c) => on ? `<rect class="${cls}" x="${c * unit + 2}" y="${r * unit + 2}" width="${unit}" height="${unit}"/>` : "")).join("");
+  return `<svg viewBox="0 0 ${cols * unit + 4} ${rows * unit + 4}" width="${cols * unit + 4}" height="${rows * unit + 4}" aria-hidden="true">${rects}</svg>`;
+}
+
+function profileCells(heights) {
+  const max = Math.max(1, ...heights);
+  return Array.from({ length: max }, (_, row) => heights.map((h) => (max - row <= h ? 1 : 0)));
+}
+
+function cubeThreeViews(visual) {
+  const unit = 32;
+  const figures = [
+    visual.top ? [viewCells(visual.top, "top", unit), "위"] : null,
+    [viewCells(profileCells(visual.front), "front", unit), "앞"],
+    [viewCells(profileCells(visual.side), "side", unit), "오른쪽 옆"]
+  ].filter(Boolean);
+  return `<div class="b9-three-views" role="img" aria-label="쌓기나무를 위·앞·오른쪽 옆에서 본 모양">${figures.map(([svg, label]) => `<figure>${svg}<figcaption>${label}</figcaption></figure>`).join("")}</div>`;
+}
+
+function cubeLayerGrids(visual) {
+  const unit = 32;
+  return `<div class="b9-three-views layers" role="img" aria-label="쌓기나무를 층별로 위에서 본 모양">${visual.layers.map((layer, k) => {
+    const rows = layer.length, cols = Math.max(...layer.map((row) => row.length));
+    const cells = layer.flatMap((row, r) => row.map((on, c) => `<rect class="${on ? "top" : "empty"}" x="${c * unit + 2}" y="${r * unit + 2}" width="${unit}" height="${unit}"/>`)).join("");
+    return `<figure><figcaption>〈${k + 1}층〉</figcaption><svg viewBox="0 0 ${cols * unit + 4} ${rows * unit + 4}" width="${cols * unit + 4}" height="${rows * unit + 4}" aria-hidden="true">${cells}</svg></figure>`;
+  }).join("")}</div>`;
+}
+
 function fullCubeMap(width, depth, height) {
   return Array.from({ length: depth }, () => Array.from({ length: width }, () => height));
 }
@@ -144,7 +179,7 @@ function cubeModelChoice(visual) {
 }
 
 function magicGrid(visual) {
-  return `<div class="b9-magic-grid" style="--size:${visual.size}">${visual.shown.map((value) => `<span class="${typeof value === "string" ? "target" : ""}">${esc(value)}</span>`).join("")}</div>${visual.lineSum ? `<strong class="b9-line-sum">한 줄의 합 ${visual.lineSum}</strong>` : ""}`;
+  return `<div class="b9-magic-grid" style="--size:${visual.size}">${visual.shown.map((value) => (value == null || value === "" ? `<span class="empty"></span>` : `<span class="${typeof value === "string" ? "target" : ""}">${esc(value)}</span>`)).join("")}</div>${visual.lineSum ? `<strong class="b9-line-sum">한 줄의 합 ${visual.lineSum}</strong>` : ""}`;
 }
 
 function consecutiveSum(visual) {
@@ -203,6 +238,31 @@ function circularMagic(visual) {
   return `<div class="b9-card-strip">${visual.values.map((value) => `<span>${value}</span>`).join("")}</div><svg class="b9-svg b9-circular" viewBox="0 0 340 250">${lines}${nodes}<circle cx="170" cy="125" r="18"/><text x="170" y="126">${esc(visual.center)}</text></svg>`;
 }
 
+// 9권 9쪽 원형진·삼각진: 칸 값은 수(주어진 수) · "□"(구할 칸) · null(빈 칸)
+function magicCards(cards) {
+  return (cards || []).length ? `<div class="b9-mcards">${cards.map((value) => `<span>${esc(value)}</span>`).join("")}</div>` : "";
+}
+function magicNode(x, y, value, label) {
+  const target = typeof value === "string";
+  return `<circle cx="${x}" cy="${y}" r="19" fill="${target ? "#fff0b4" : "#fff"}" stroke="#333" stroke-width="2"/>${value == null ? "" : `<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="17" font-weight="900" fill="${target ? "#9a6415" : "#222"}">${esc(value)}</text>`}${label ? `<text x="${x - 24}" y="${y - 18}" text-anchor="middle" font-size="13" font-weight="800" fill="#666">${esc(label)}</text>` : ""}`;
+}
+// 십자 모양: cells = [가운데, 위(가운데에서 바깥으로)…, 오른쪽…, 아래…, 왼쪽…], 팔 길이 arm
+function magicCross(visual) {
+  const arm = visual.arm, step = 54, c = 30 + arm * step;
+  const dirs = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+  const at = [[c, c], ...dirs.flatMap(([dx, dy]) => Array.from({ length: arm }, (_, k) => [c + dx * step * (k + 1), c + dy * step * (k + 1)]))];
+  const cells = visual.cells || at.map(() => null);
+  const lines = `<line x1="${c - arm * step}" y1="${c}" x2="${c + arm * step}" y2="${c}" stroke="#333" stroke-width="2"/><line x1="${c}" y1="${c - arm * step}" x2="${c}" y2="${c + arm * step}" stroke="#333" stroke-width="2"/>`;
+  const size = c * 2;
+  return `${magicCards(visual.cards)}<svg class="b9-svg b9-magic-cross" viewBox="0 0 ${size} ${size}" role="img" aria-label="십자 모양 칸 ${at.length}개">${lines}${at.map(([x, y], i) => magicNode(x, y, cells[i], (visual.labels || [])[i])).join("")}</svg>`;
+}
+// 삼각진(한 변에 3칸): cells = [꼭대기, 왼쪽 변 가운데, 오른쪽 변 가운데, 왼쪽 아래, 아래 가운데, 오른쪽 아래]
+function magicTriangle(visual) {
+  const at = [[150, 30], [95, 120], [205, 120], [40, 210], [150, 210], [260, 210]];
+  const cells = visual.cells || at.map(() => null);
+  return `${magicCards(visual.cards)}<svg class="b9-svg b9-magic-triangle" viewBox="0 0 300 240" role="img" aria-label="삼각형 모양 칸 6개"><polygon points="150,30 40,210 260,210" fill="none" stroke="#333" stroke-width="2"/>${at.map(([x, y], i) => magicNode(x, y, cells[i])).join("")}</svg>`;
+}
+
 function conditionList(visual) {
   return `<div class="b9-condition-list">${(visual.cards || []).length ? `<div class="b9-card-strip">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div>` : ""}${visual.conditions.map((condition, index) => `<p><b>${index + 1}</b>${esc(condition)}</p>`).join("")}${visual.slots ? `<div class="slots">${Array.from({ length: visual.slots }, (_, index) => `<span>${index + 1}등</span>`).join("")}</div>` : ""}</div>`;
 }
@@ -237,6 +297,10 @@ export function book09Markup(visual) {
     case "area-grid": return areaGrid(visual);
     case "cube-solid-views": return cubeSolidViews(visual);
     case "cube-layers": return cubeLayers(visual);
+    case "cube-three-views": return cubeThreeViews(visual);
+    case "cube-layer-grids": return cubeLayerGrids(visual);
+    case "magic-cross": return magicCross(visual);
+    case "magic-triangle": return magicTriangle(visual);
     case "cube-box": return cubeBox(visual);
     case "cube-model-choice": return cubeModelChoice(visual);
     case "magic-grid": return magicGrid(visual);

@@ -16,7 +16,7 @@
   1) 언어별 참조 → 복제 프롬프트를 한 번만 만든다.
   2) 한 줄씩 만들고, 기대 길이의 1.25배를 넘으면(꼬리 반복) 길이를 고정해 다시.
   3) 같은 모델의 Whisper 로 **다시 받아 적어** 원문과 비교(글자 오류율 CER). 최대 3번 다시 만들어
-     가장 나은 것을 쓰고, 끝까지 CER > 0.35 면 **싣지 않는다** — 그 줄은 앱이 구글 음성으로 읽는다.
+     가장 나은 것을 쓰고, 끝까지 CER > 0.12 면 **연결표에 싣지 않는다** — 화면 글을 유지하며 다른 목소리로 바꾸지 않는다.
      엉뚱하게 읽은 음성을 아이에게 들려주지 않기 위해서다. 숫자는 비교에서 뺀다
      ("3" 을 Whisper 가 "삼"·"셋"·"3" 무엇으로 적을지 정해져 있지 않다).
   4) number_magic/audio/omni/<lang>-<sha1 앞 12자>.mp3 로 저장(글이 같으면 건너뜀, 글이 바뀌면 새 파일).
@@ -38,7 +38,7 @@ MAP = os.path.join(NM, "data", "tts-map-omni.js")
 WORK = os.path.join(ROOT, ".omni-nm-work")          # .gitignore 대상
 VOICE = "nm-clone-v1"
 SR = 24000
-CER_OK, CER_RETRY, TRIES = 0.35, 0.12, 3
+CER_OK, CER_RETRY, TRIES = 0.12, 0.12, 3
 LANGS = ("ko", "en", "zh")
 ASR_LANG = {"ko": "korean", "en": "english", "zh": "chinese"}
 
@@ -67,8 +67,29 @@ def fname(lang, text):
 EMOJI = re.compile("[\U0001F000-\U0001FFFF☀-➿⬀-⯿️‍]")
 
 
-def spoken(text):
-    return re.sub(r"\s{2,}", " ", EMOJI.sub("", text)).strip()
+def spoken(lang, text):
+    """Turn display-only math placeholders into words the voice can read."""
+    if lang == "ko":
+        text = text.replace("✔를", "확인 버튼을")
+    text = text.replace("✔", {"ko":"확인 버튼", "en":"the check button", "zh":"确认按钮"}.get(lang,""))
+    text = EMOJI.sub("", text)
+    text = re.sub(r"[,]{2,}", ",", text)
+    text = re.sub(r"[!?]{2,}", ".", text)
+    text = re.sub(r"\s[—–-]\s|——", ", ", text)
+    if lang == "ko":
+        text = re.sub(r"Level\s+(\d+)", r"레벨 \1", text)
+        text = text.replace("위+아래 = 왼쪽+오른쪽", "위와 아래를 더한 수는, 왼쪽과 오른쪽을 더한 수와 같아요")
+        text = text.replace("2~9단", "이 단부터 구 단까지")
+        text = text.replace("+1000 하고 -1", "플러스 천 하고 마이너스 일")
+        text = text.replace("끝 - 시작 + 1", "끝 수 빼기 시작, 더하기 일")
+    replacements = {
+        "ko": (("□0+□0", "열 개씩 더하기"), ("□0", "열 개씩"), ("□", "빈칸")),
+        "en": (("□0+□0", "addition strategy"), ("□0", "tens"), ("□", "the missing number")),
+        "zh": (("□0+□0", "十加十"), ("□0", "十"), ("□", "未知数")),
+    }
+    for source, replacement in replacements.get(lang, ()):
+        text = text.replace(source, replacement)
+    return re.sub(r"\s{2,}", " ", text).strip()
 
 
 def letters(lang, s):
@@ -126,23 +147,32 @@ def to_mp3(wav, mp3):
 
 
 def write_map(out):
-    """지금 대사에 맞는 파일만 싣는다. 고친 글의 옛 파일은 지운다(저장소 폴더일 때만)."""
+    """Match current text and quality evidence; retain original files for recovery."""
     ts = tasks()
     valid = {fname(t["lang"], t["text"]): t for t in ts}
     exist = set(os.listdir(out)) if os.path.isdir(out) else set()
-    if out == OUT:
-        for f in exist:
-            if f.endswith(".mp3") and f not in valid:
-                os.remove(os.path.join(out, f))
+    rp = os.path.join(out, "report.json")
+    report = {}
+    if os.path.exists(rp):
+        with open(rp, encoding="utf-8") as handle:
+            report = json.load(handle)
     m = {l: {} for l in LANGS}
     for f, t in valid.items():
+        quality = report.get(f)
+        if quality is not None and quality.get("ok") is not True:
+            continue
+        if quality and quality.get("audioSHA256") and f in exist:
+            with open(os.path.join(out,f), "rb") as handle:
+                if hashlib.sha256(handle.read()).hexdigest() != quality["audioSHA256"]:
+                    continue
         if f in exist:
             m[t["lang"]][t["text"]] = f"audio/omni/{f}"
     n = sum(len(v) for v in m.values())
     body = json.dumps(m, ensure_ascii=False, indent=1)
-    open(MAP, "w", encoding="utf-8").write(
+    with open(MAP, "w", encoding="utf-8") as handle:
+        handle.write(
         "/* Numbers of Magic — OmniVoice 복제 음성 map (scripts/omnivoice-nm.py 가 만든다, 손으로 고치지 말 것)\n"
-        f" * {n}/{len(ts)}줄. 없는 줄은 앱이 tts-map.js(구글) → 기기 음성 순으로 읽는다.\n */\n"
+        f" * {n}/{len(ts)}줄. 없는 줄은 화면 글을 유지한다. 다른 목소리로 대체하지 않는다.\n */\n"
         f"window.NM_TTS_OMNI = {body};\n")
     per = {l: len(m[l]) for l in LANGS}
     print(f"tts-map-omni.js: {n}/{len(ts)}줄 {per}", flush=True)
@@ -170,6 +200,18 @@ def listen_page(refs, made, path):
     return path
 
 
+def save_report(path, report):
+    """한 줄씩 원자적으로 저장해 중단 후에도 검수 결과를 보존한다."""
+    old = {}
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as handle:
+            old = json.load(handle)
+    old.update(report)
+    with open(path + ".tmp", "w", encoding="utf-8") as handle:
+        json.dump(old, handle, ensure_ascii=False, indent=1)
+    os.replace(path + ".tmp", path)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--shard", default="", help="k/n — n 조각 중 k 번째(0부터)만")
@@ -179,9 +221,13 @@ def main():
     ap.add_argument("--lang", default="", help="이 언어만(쉼표)")
     ap.add_argument("--limit", type=int, default=0, help="앞에서 N줄만(시험용)")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--tasks-file", help="재검수 JSON: file 또는 lang/text로 선택한 문장만 후보 폴더에 생성")
     ap.add_argument("--no-check", action="store_true")
     ap.add_argument("--manifest-only", action="store_true")
     ap.add_argument("--device", default="auto")
+    ap.add_argument("--asr-device", default="cpu", help="받아쓰기 검수 장치(기본 cpu: GPU 메모리는 음성 생성에 사용)")
+    ap.add_argument("--asr-model", help="받아쓰기 모델 이름 또는 기존 로컬 캐시 경로")
+    ap.add_argument("--tries", type=int, default=TRIES, help="문장별 최대 생성 횟수(기본 3)")
     ap.add_argument("--speed", type=float, default=None)
     ap.add_argument("--model", default="k2-fsa/OmniVoice")
     a = ap.parse_args()
@@ -195,7 +241,13 @@ def main():
     if a.refs_only:
         print(f"참조만 만들었습니다: {a.ref_dir}"); return
 
+    selected = None
+    if a.tasks_file:
+        selected = set()
+        for row in json.load(open(a.tasks_file, encoding="utf-8")):
+            selected.add(row.get("file") or fname(row["lang"], row["text"]))
     todo = [t for t in tasks() if t["lang"] in refs
+            and (selected is None or fname(t["lang"],t["text"]) in selected)
             and (a.force or not os.path.exists(os.path.join(OUT, fname(t["lang"], t["text"]))))]
     if a.shard:
         k, n = map(int, a.shard.split("/")); todo = todo[k::n]
@@ -203,6 +255,7 @@ def main():
         todo = todo[:a.limit]
     print(f"이번에 만들 것 {len(todo)}줄 (참조 언어 {sorted(refs)})", flush=True)
 
+    rp = os.path.join(a.out, f"report{'-' + a.shard.replace('/', 'of') if a.shard else ''}.json")
     made, report = [], {}
     if todo:
         import torch
@@ -213,7 +266,7 @@ def main():
         from omnivoice import OmniVoice
         model = OmniVoice.from_pretrained(a.model, device_map=dev, dtype=torch.float16 if dev.startswith("cuda") else torch.float32)
         if not a.no_check:
-            model.load_asr_model()
+            model.load_asr_model(model_name=a.asr_model, device=a.asr_device)
         prompts = {l: model.create_voice_clone_prompt(ref_audio=refs[l][0], ref_text=refs[l][1]) for l in refs}
         use_lang = [True]
 
@@ -228,10 +281,11 @@ def main():
 
         t0 = time.time(); audio_s = 0.0
         for n, t in enumerate(todo, 1):
-            lang, text = t["lang"], t["text"]; say = spoken(text)
+            lang, text = t["lang"], t["text"]; say = spoken(lang, text)
             label = f"{t['unitId']} {t['key']} [{lang}]"
             exp = expected(lang, say) / (a.speed or 1.0); dur = None; best = None; ts = time.time()
-            for k in range(TRIES):
+            tries = max(1, a.tries)
+            for k in range(tries):
                 try:
                     y = gen(lang, say, dur).reshape(-1)
                 except Exception as e:
@@ -239,7 +293,7 @@ def main():
                 if len(y) / SR > exp * 1.25:
                     print(f"    ↻ {label} 너무 김 {len(y) / SR:.1f}초 > 기대 {exp:.1f}초", flush=True)
                     dur = round(exp * 1.08, 2)
-                    if k < TRIES - 1:
+                    if k < tries - 1:
                         continue
                 if a.no_check:
                     best = (0.0, "", y); break
@@ -254,20 +308,21 @@ def main():
             if best is None:
                 continue
             c, hyp, y = best; audio_s += len(y) / SR
-            f = fname(lang, text); ok = c <= CER_OK
+            f = fname(lang, text); ok = not a.no_check and c <= CER_OK
             report[f] = {"unit": t["unitId"], "key": t["key"], "lang": lang, "text": text, "asr": hyp,
-                         "cer": round(c, 3), "ok": ok, "sec": round(len(y) / SR, 2)}
-            if ok:
+                         "cer": round(c, 3), "ok": ok, "checked": not a.no_check, "spoken": say, "sec": round(len(y) / SR, 2)}
+            if ok or a.no_check:
                 wav = os.path.join(WORK, "tmp.wav"); write_wav(wav, y)
                 mp3 = os.path.join(a.out, f); to_mp3(wav, mp3); made.append((lang, text, mp3))
+                with open(mp3, "rb") as handle:
+                    report[f]["audioSHA256"] = hashlib.sha256(handle.read()).hexdigest()
+            save_report(rp, report)
             print(f"  {'✓' if ok else '✗ 뺌'} [{n}/{len(todo)}] {label} {len(y) / SR:.1f}초 · CER {c:.2f} · {time.time() - ts:.0f}초", flush=True)
         el = time.time() - t0
         print(f"만든 음성 {len(made)}개 / 뺀 것 {len(todo) - len(made)}개 · {el:.0f}초 · RTF {el / max(audio_s, 1e-6):.1f}", flush=True)
 
-    rp = os.path.join(a.out, f"report{'-' + a.shard.replace('/', 'of') if a.shard else ''}.json")
     if report:
-        old = json.load(open(rp, encoding="utf-8")) if os.path.exists(rp) else {}
-        old.update(report); json.dump(old, open(rp, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        save_report(rp, report)
     if a.out == OUT:
         write_map(OUT)
         if made:

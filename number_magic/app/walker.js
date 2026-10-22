@@ -377,16 +377,58 @@ function buildSide(uid, kind, pal){
     ${headSide(uid, kind, pal)}
   </g>`;
 }
+/* 팔레트 주의: GLASSES는 PALETTE.elder/doc 고정색을 쓰며 kid(boy/girl)에는 안경이 없다. */
 
-window.renderWalker = function(kind, size){
-  kind = PALETTE[kind] ? kind : 'boy';
-  const pal = PALETTE[kind];
+/* 프로필 객체용 — 허용된 키·#hex 값만 통과(마크업 주입 방지) */
+const HEX_RE = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+function safePalette(src, base){
+  const out = {};
+  if(!src || typeof src!=='object') return out;
+  Object.keys(src).forEach(k=>{
+    if(Object.prototype.hasOwnProperty.call(base,k) && typeof src[k]==='string' && HEX_RE.test(src[k])) out[k]=src[k];
+  });
+  return out;
+}
+function humans(){
+  if(typeof window!=='undefined' && window.NM_HUMANS) return window.NM_HUMANS;
+  return null;
+}
+function uiLang(){
+  const l = String((typeof window!=='undefined' && window.NM_LANG) ||
+    (typeof document!=='undefined' && document.documentElement && document.documentElement.lang) || 'ko').slice(0,2);
+  return (l==='en'||l==='zh') ? l : 'ko';
+}
+function describe(H, c){
+  const lk = H.looks.find(x=>x.id===c.look), ot = H.outfits.find(x=>x.id===c.outfit);
+  const lg = uiLang();
+  const t = (lk&&lk[lg]) || '';
+  return ot && ot.id!=='original' && ot[lg] ? t+' · '+ot[lg] : t;
+}
+
+window.renderWalker = function(kindOrProfile, size){
+  let kind, pal, extra = '';
+  if(kindOrProfile && typeof kindOrProfile==='object'){
+    const H = humans();
+    if(H){
+      const c = H.clean(kindOrProfile), w = H.walker(c);
+      kind = w.kind==='girl' ? 'girl' : 'boy';
+      pal = Object.assign({}, PALETTE[kind], safePalette(w.palette, PALETTE[kind]));
+      const label = describe(H, c).replace(/[<>&"']/g,'');
+      extra = ` data-look="${c.look}" data-outfit="${c.outfit}" role="img" aria-label="${label}"`;
+    }else{
+      kind = kindOrProfile.kind==='girl' ? 'girl' : 'boy';
+      pal = PALETTE[kind];
+    }
+  }else{
+    kind = PALETTE[kindOrProfile] ? kindOrProfile : 'boy';
+    pal = PALETTE[kind];
+  }
   size = size || 90;
   const ph = Math.round(size * 1.25);
   const uid = 'wk'+(++WUID);
   const defs = defsFor(uid, pal);
-  return `<div class="nm-walker" data-kind="${kind}" data-dir="s" style="width:${size}px;height:${ph}px">
-    <svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+  return `<div class="nm-walker" data-kind="${kind}" data-dir="s"${extra} style="width:${size}px;height:${ph}px">
+    <svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" overflow="visible" aria-hidden="true">
       ${defs}
       <ellipse class="wk-shadow" cx="60" cy="108" rx="21" ry="5.5" fill="#000" opacity=".22"/>
       ${buildFront(uid, kind, pal)}

@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/katex/katex.min.css">
-<link rel="stylesheet" href="app/styles.css">
+<link rel="stylesheet" href="app/styles.css?v=20261022-copy1">
 <style>
   /* 글꼴: Pretendard(CDN) → Noto Sans KR/CJK(Actions 러너에 apt로 설치) → 시스템 한글 순. 표지 이름은 Gowun Batang. */
   /* app/styles.css 는 앱 셸용이라 html,body{height:100%} + body{overflow:hidden} 을 건다.
@@ -148,7 +148,7 @@
 <script src="app/g1/7-9.print.js"></script>
 <script src="app/g1/10-12.print.js"></script>
 <script src="app/g1/13-15.print.js"></script>
-<script src="app/exam.js"></script>
+<script src="app/exam.js?v=20261022-copy1"></script>
 <script>
 (function(){
   var q = new URLSearchParams(location.search);
@@ -168,7 +168,11 @@
   function envItemSeed(weekKey, courseKey, i){
     return (weekKey + courseKey + 'i' + i).toLowerCase().replace(/[^a-z0-9]/g,'');
   }
-  var lang = q.get('l'); if(lang==='en'||lang==='zh'||lang==='ko') document.documentElement.lang = lang;
+  var lang = ['ko','en','zh'].indexOf(q.get('l')) >= 0 ? q.get('l') : 'ko';
+  document.documentElement.lang = lang;
+  function text(ko,en,zh){ return lang==='en'?en:lang==='zh'?zh:ko; }
+  document.getElementById('wsTitle').textContent = 'Numbers of Magic · ' + text('주간 학습지','Weekly worksheet','每周学习单');
+  document.getElementById('wsPrint').textContent = text('🖨 인쇄 · PDF로 저장','🖨 Print · Save as PDF','🖨 打印 · 另存为PDF');
   var w = (q.get('w') || isoWeekKey(new Date(Date.now() + 9*3600000))).trim();
   var c = (q.get('c') || '').trim();
   var name = (q.get('n') || '').trim();
@@ -179,13 +183,18 @@
   if(!auto) window.NM_NO_AUTOPRINT = true;
 
   var sub = document.getElementById('wsSub');
+  sub.textContent = text('불러오는 중…','Loading…','正在加载…');
   function fail(msg){
     sub.textContent = '';
-    document.getElementById('wsBody').innerHTML = '<div class="ws-err">' + msg + '</div>';
+    var error = document.createElement('div');
+    error.className = 'ws-err';
+    error.textContent = msg;
+    document.getElementById('wsBody').replaceChildren(error);
+    document.getElementById('wsPrint').disabled = true;
     window.NM_WS_READY = 'error';
   }
   var course = window.NM_COURSES && NM_COURSES[c];
-  if(!c || !course) return fail('학습지 주소가 올바르지 않아요. (과정 ' + (c||'없음') + ')');
+  if(!c || !course) return fail(text('학습지 주소가 올바르지 않아요.','The worksheet address is invalid.','学习单地址无效。'));
   var k = Math.max(1, Math.min(2, parseInt(q.get('k') || '1', 10) || 1));
   var cad = (q.get('cad') === 'w2' || k === 2) ? 'w2' : 'w1';
   /* 학습량 배수(1·1.25·1.5) — 없으면 1배. exam.js getAmount 가 읽는다 */
@@ -208,15 +217,15 @@
      세션 선택(주 2회 두 번째 회차)·필산 회차·독셈 회차·문장제(대안 포함)·표지·마법 유닛 전부 그쪽. */
   /* s = 이 과정에서 몇 번째 회차인가(1부터) — 없으면 모름. 언어사고력 주제 순환·유아 "중반부터" 판정용(2026-09-30). */
   var sParam = parseInt(q.get('s') || '', 10);
-  var wk = NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad, sessionIdx: isNaN(sParam) ? null : sParam - 1 });
-  if(!wk) return fail('이 과정에는 아직 학습지가 없어요.');
+  var wk = NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad, sessionIdx: isNaN(sParam) ? null : sParam - 1, startSession:q.get('p')==='1'?sParam:null });
+  if(!wk) return fail(text('이 과정에는 아직 학습지가 없어요.','No worksheet is available for this course yet.','本课程暂时没有学习单。'));
   var items = wk.items, wsId = wk.wsId, cover = wk.cover, units = wk.units, title = wk.title;
   document.title = 'Numbers of Magic' + (name ? ' · ' + name : '') + ' — ' + wsId;
   sub.textContent = (name ? name + ' · ' : '') + w + ' · ' + c + '. ' + title;
 
   try{
     NM_EXAM.renderPrintMulti(items, wsId, { mixed: 20, cover: cover, units: units, courseSessions: wk.courseSessions });
-  }catch(e){ return fail('학습지를 만드는 중 문제가 생겼어요: ' + (e && e.message || e)); }
+  }catch(e){ return fail(text('학습지를 만드는 중 문제가 생겼어요: ','Could not create the worksheet: ','生成学习单时出现问题：') + (e && e.message || e)); }
   /* renderPrintMulti 는 시트를 body 직속으로 붙인다. 인쇄 CSS가 body>*:not(.nm-print-sheet)를 숨기므로
      다른 요소 안으로 옮기면 인쇄(PDF)가 백지가 된다 — 그대로 둔다(2026-09-05 확인). */
   document.getElementById('wsPrint').onclick = function(){ window.print(); };

@@ -6,10 +6,23 @@
         → 등급 유닛목록 → 유닛[프랙티스→디스커버→핵심체크→랩→아레나→도장]
    진단 스킵(B안): 프랙티스 진입 시 "바로 넘어갈래? / 한번 볼래?"
    ============================================================ */
-(()=>{
+(async()=>{
 'use strict';
+if(!window.NM_ENTRY||window.NM_ENTRY.mode==='blocked'){
+  if(!window.NM_ENTRY)location.replace('access.html');
+  return;
+}
+// Review is a separately authenticated, learning-only session. A URL/local flag
+// alone never activates it; failed verification returns to the login page.
+const reviewRequested=new URLSearchParams(location.search).get('review')==='1';
+if(reviewRequested&&NM_ENTRY.mode!=='review'){location.replace('access.html');return;}
+const review=reviewRequested&&window.NM_REVIEW_SESSION?await NM_REVIEW_SESSION.ready():null;
+if(reviewRequested&&!review){location.replace('access.html?reason=expired');return;}
+const REVIEW=!!review;
+if(REVIEW)NM_REVIEW_SESSION.guard();
 const app=document.getElementById('app');
 const GEN=window.NM_GEN, CUR=window.NM_CURRICULUM, UNITS=window.NM_UNITS;
+const membership=REVIEW?null:window.NM_MEMBERSHIP;
 
 /* NM_TGEN 브리지: 레거시 NM_GEN + 스레드 생성기(NM_TGEN) 통합. params 전달 포함. */
 function genProblem(cfg, level){
@@ -32,14 +45,14 @@ function genProblem(cfg, level){
 const I18N={
   ko:{ appName:'수의 마법', start:'시작하기', back:'← 뒤로', next:'다음 →',
     coins:'누미 코인', locked:'준비 중', enter:'입장', mapTitle:'수의 마법 마을',
-    skipAsk:'이 부분, 이미 잘하니?', skipYes:'바로 넘어갈래!', skipNo:'한번 볼래',
+    skipAsk:'이미 배운 내용인가요?', skipYes:'다음 단계로 가기', skipNo:'먼저 배워 보기',
     ruleLabel:'마법의 규칙', tryAgain:'다시 해볼까?', correct:'정답!',
     checkTitle:'핵심 체크', openTitle:'생각해 보기', submit:'확인', myAnswer:'내 생각 적어보기(선택)',
     arenaGo:'배틀 시작!', timeUp:'시간 종료!', score:'점수', stampGet:'도장 획득!',
-    doneUnit:'유닛 완료!', toMap:'마을로', numpadHint:'숫자를 눌러 답해요', pairHint:'짝꿍 두 수를 골라요',
+    doneUnit:'학습 단원 완료!', toMap:'마을로', numpadHint:'숫자를 눌러 답해요', pairHint:'짝꿍 두 수를 골라요',
     picked:'골랐어요!', langName:'한국어', onePairMore:'정답! 하나 더 있어',
     obTitle:'나만의 숫자 친구', obSub:'캐릭터를 고르고 이름을 알려주세요!',
-    obNamePh:'이름을 적어주세요', obGo:'짜잔! 시작하기 ✨', obNeedName:'이름을 알려줘야 시작할 수 있어요!',
+    obNamePh:'이름을 적어주세요', obGo:'짜잔! 시작하기 ✨', obNeedName:'사용할 이름을 입력해 주세요.',
     obWelcome:n=>`환영해요, ${n}!`, titleCourse:'과정' },
   en:{ appName:'Numbers of Magic', start:'Start', back:'← Back', next:'Next →',
     coins:'Numi Coins', locked:'Coming soon', enter:'Enter', mapTitle:'Magic Number Town',
@@ -211,9 +224,9 @@ function readinessNote(tierKey){
 const VOICE_BANDS={
   young:{ tryAgain:'괜찮아! 한 번 더 해보자', correct:'딩동댕! 맞았어 🎉',
     timeUp:'시간이 다 됐어!', stampGet:'도장 쾅! 받았어!', doneUnit:'와, 다 했다! 최고야!',
-    skipAsk:'이거 벌써 알아?', numpadHint:'숫자를 눌러서 답해 보자', submit:'됐어!' },
+    skipAsk:'이미 배운 내용인가요?', numpadHint:'숫자를 눌러서 답해 보자', submit:'됐어!' },
   senior:{ tryAgain:'다시 시도', correct:'정답', timeUp:'시간 종료', stampGet:'도장 획득',
-    doneUnit:'유닛 완료', skipAsk:'이미 아는 내용인가요?', numpadHint:'숫자 입력' }
+    doneUnit:'학습 단원 완료', skipAsk:'이미 배운 내용인가요?', numpadHint:'숫자 입력' }
 };
 const t=k=>{
   if(S.lang==='ko'){const b=VOICE_BANDS[NM_BAND];if(b&&b[k]!==undefined)return b[k];}
@@ -222,7 +235,7 @@ const t=k=>{
 const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
 
 /* ---------- 상태 + 저장 ---------- */
-const KEY='nm_state_v1';
+const KEY=REVIEW?'nm_review_state_v1_'+review.username:'nm_state_v1';
 /* onboarded는 defaults()에 넣지 않음(항상 undefined로 시작) —
    완전 신규 설치(hadSave===false)일 때만 온보딩을 요구하기 위한 표식.
    defaults()에 박아두면 구버전 저장본(onboarded 필드 없음)과 병합 시에도
@@ -266,14 +279,46 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      원장 지시의 핵심이 "계산이 되는 것과 문장제를 이해하는 것은 다르다"이므로
      한 점수로 합치지 않는다. 어떤 것도 잠그지 않고 안내에만 쓴다. */
   checkups:{} };}
-function load(){try{const r=JSON.parse(localStorage.getItem(KEY));return r?{...defaults(),...r}:defaults();}catch(e){return defaults();}}
-const hadSave=!!localStorage.getItem(KEY); // 온보딩은 "완전 신규 설치"에서만 요구
+let hadSave=false; // 파싱에 성공한 프로필만 기존 사용자로 취급한다.
+function load(){
+  let raw=null;
+  try{
+    raw=localStorage.getItem(KEY);
+    const r=JSON.parse(raw);
+    if(r&&typeof r==='object'&&!Array.isArray(r)){
+      hadSave=true;
+      return {...defaults(),...r};
+    }
+  }catch(e){}
+  // 손상된 원본을 보존하고 새 체험 프로필의 온보딩으로 복구한다.
+  if(raw!==null)try{
+    if(localStorage.getItem(KEY+'_recovery')===null)localStorage.setItem(KEY+'_recovery',raw);
+  }catch(e){}
+  return defaults();
+}
 let S=load();
+const requestedLang=new URLSearchParams(location.search).get('lang');
+if(['ko','en','zh'].includes(requestedLang))S.lang=requestedLang;
+if(REVIEW){
+  S.onboarded=true;S.name='학습 점검';S.cloudLinked=false;S.cloudOwnerId=null;S.guardianManaged=false;
+  S.account={status:'active',code:null,checkedAt:0};
+  if(!hadSave){S.coins=1000;S.avatar={kind:'boy',name:'점검 마법사'};}
+  document.body.classList.add('nm-review-mode');
+  const bar=document.createElement('div');bar.className='nm-review-banner';
+  const label=document.createElement('span');label.textContent='학습 점검 · '+review.username;
+  const exit=document.createElement('button');exit.type='button';exit.id='nmReviewLogout';exit.textContent='점검 로그아웃';
+  exit.onclick=async()=>{exit.disabled=true;await NM_REVIEW_SESSION.logout();location.replace('access.html');};
+  bar.append(label,exit);document.body.appendChild(bar);
+}
+const ROAD_MULTS_LIST=[0.7,0.85,1,1.25,1.5];
+normalizeLoadedState(hadSave);
+function normalizeLoadedState(existingLocalProfile){
 if(S.view==='map')S.view='town'; // 구버전 상태 마이그레이션
 // 기존 저장본에 character 필드 없으면 기본값 채움
 if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
 if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
 if(!S.character_unlocked)S.character_unlocked={};
+if(window.NM_CHARACTER_STATE){S.coins=NM_CHARACTER_STATE.balance(S);NM_CHARACTER_STATE.normalizeAvatars(S,window.NM_HUMANS);}
 if(!S.seenUnlocks)S.seenUnlocks={};
 if(!S.mailbox||!S.mailbox.opened)S.mailbox={opened:(S.mailbox&&S.mailbox.opened)||{}};
 if(!S.boost)S.boost={doneWeeks:{},log:[]};
@@ -287,10 +332,9 @@ if(!S.roadPrints||typeof S.roadPrints!=='object')S.roadPrints={};
    이 줄도 같이 늘릴 것 — 모르는 키가 남아도 roadPaceDef()가 첫 기준으로 되돌린다. */
 if(['p0','p1','p2','p3','p4'].indexOf(S.roadPace)<0)S.roadPace='p2';
 /* 속도·양 배수 — 줄이기 30%(0.7)부터 늘리기 1.5배까지(원장 2026-09-25) */
-const ROAD_MULTS_LIST=[0.7,0.85,1,1.25,1.5];
 if(ROAD_MULTS_LIST.indexOf(S.roadSpeed)<0)S.roadSpeed=1;
 if(ROAD_MULTS_LIST.indexOf(S.roadAmount)<0)S.roadAmount=1;
-if(typeof S.onboarded!=='boolean')S.onboarded=hadSave; // 이미 쓰던 사용자는 온보딩 화면 스킵
+if(typeof S.onboarded!=='boolean')S.onboarded=existingLocalProfile; // 이미 쓰던 사용자는 온보딩 화면 스킵
 if(S.name===undefined)S.name='';
 /* account(체험 게이트, Phase 2B)도 onboarded와 같은 이유로 defaults()에 넣지 않는다 —
    hadSave(저장본이 이미 있었는지)로만 "신규 설치 vs 기존 프로필"을 구분해야
@@ -300,12 +344,14 @@ if(S.name===undefined)S.name='';
    완전 신규 설치(hadSave===false)만 체험으로 시작하고, 이미 쓰던 프로필은 승인번호 없이도
    active 로 남긴다(위 주석의 grandfather — 재원생이 게이트 도입으로 잠기면 안 된다).
    전에는 이 줄이 무조건 'active' 였다가 잠깐 무조건 'trial' 이었는데, 둘 다 한쪽을 깨뜨린다. */
-if(!S.account)S.account={status:hadSave?'active':'trial',code:null,checkedAt:0};
+if(!S.account)S.account={status:existingLocalProfile?'active':'trial',code:null,checkedAt:0};
 /* 소급 마이그레이션: 과거 완료(done) 유닛에 steps.stamp가 빠져 로드맵 별이 안 켜지던 버그 —
    기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
 (function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();return true;}
+}
+
+function save(){if(REVIEW&&!NM_REVIEW_SESSION.active())return false;applyAdminSettings();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();if(membership)membership.refreshIfDue();if(booted&&S.view==='courseroad')Promise.resolve().then(renderPersonalPlan);return true;}
 // The existing profile/slot and state backup own this data; no global sibling log.
 if(window.NM_STUDY_RECORDS)window.NM_STUDY_RECORDS.bind({state:()=>S,save});
 window.addEventListener('nm:study-record-error',()=>toast(S.lang==='en'?'Your score is unchanged, but the study record could not be saved. Check device storage.':S.lang==='zh'?'成绩不变，但未能保存学习记录。请检查设备存储。':'채점은 유지되지만 학습 기록을 저장하지 못했습니다. 기기 저장 공간을 확인해 주세요.',false));
@@ -319,8 +365,8 @@ function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
    nm_state_slot1|2|3 = 비활성 슬롯 백업(활성 슬롯은 백업이 없고 nm_state_v1 자체가 원본),
    nm_active_slot = 지금 nm_state_v1이 몇 번 슬롯인지(기본 1, 기존 사용자는 이 키가
    아예 없어도 1로 취급되므로 마이그레이션이 따로 필요 없다). */
-const SLOT_COUNT=3, SLOT_ACTIVE_KEY='nm_active_slot';
-function slotKey(n){ return 'nm_state_slot'+n; }
+const SLOT_COUNT=3, SLOT_ACTIVE_KEY=REVIEW?'nm_review_active_slot_'+review.username:'nm_active_slot';
+function slotKey(n){ return (REVIEW?'nm_review_slot_'+review.username+'_':'nm_state_slot')+n; }
 function activeSlot(){
   try{ const n=parseInt(localStorage.getItem(SLOT_ACTIVE_KEY),10); return (n>=1&&n<=SLOT_COUNT)?n:1; }
   catch(e){ return 1; }
@@ -398,10 +444,11 @@ function trialUnitSet(){
   if(set.size)_trialSet=set;   // 데이터 미로딩(스크립트 순서)이면 캐시하지 않는다
   return set;
 }
-function isTrialUnit(uid){return trialUnitSet().has(uid);}
+function isTrialUnit(uid){if(membership&&guardianAuth?.peek()&&['expired','revoked'].includes(membership.snapshot().membership?.status))return false;return trialUnitSet().has(uid);}
 /* 체험에서 열리는 마을 챕터인가(등급 안 레벨 index, 0부터) */
 function trialLevelOpen(tierId,idx){
   if(accountActive())return true;
+  if(membership&&guardianAuth?.peek()&&['expired','revoked'].includes(membership.snapshot().membership?.status))return false;
   const isTown=TOWN_SPOTS.some(sp=>sp.tier===tierId);
   return isTown ? idx<TRIAL_LEVELS_PER_TIER : true;  // 마을 건물만 2챕터 제한
 }
@@ -411,36 +458,110 @@ function externalBlocked(){return !accountActive();}
 /* 검증 하네스(Playwright)가 화면을 헤집지 않고 게이트 판정을 확인할 수 있게 — 읽기 전용 조회만.
    window.feedbackFx 와 같은 목적의 훅이다. */
 window.NM_GATE={trialUnitSet,isTrialUnit,unitLocked,accountActive,externalBlocked,trialLevelOpen};
-/* 원장 지시 2026-09-03 "우선 승인번호 없이도 모두 열리도록": 계정 상태와 무관하게 항상 열림.
-   승인번호 입력·재검증 코드는 그대로 두었으니, 게이트를 되살릴 때는 아래 한 줄만
-   `return !!(S.account&&S.account.status==='active');` 로 되돌리면 된다. */
-function accountActive(){return !!(S.account&&S.account.status==='active');}
+/* 체험 범위 밖의 유닛은 학원 승인 상태를 확인한다. */
+function accountActive(){
+  if(REVIEW)return NM_REVIEW_SESSION.active();
+  if(window.NM_ENTRY?.mode==='preview')return false;
+  if(membership&&guardianAuth?.peek())return S.cloudLinked&&S.cloudOwnerId===guardianAuth.peek().user.id&&!guardianAuth.requiresPassword()&&membership.contactReady()&&membership.canUse();
+  return !S.guardianManaged&&!!(S.account&&S.account.status==='active'); // preserve local approvals only until guardian enrollment
+}
 function unitLocked(uid){return !accountActive()&&!isTrialUnit(uid);}
 
 /* ---------- 클라우드 프로필 (Supabase nm_profiles) ----------
-   캐릭터 이름 = 고유 아이디. 온보딩에서 이름이 비어 있지 않고 중복이 아니면
-   그 이름으로 클레임(insert)되고, 이후 진행상황(S 전체)이 이름 아래로 동기화된다.
-   같은 이름이 이미 있으면 "이건 나예요(이어하기) / 다른 이름 쓸래요"를 고른다.
+   보호자 이메일 인증 뒤 owner_id와 이름을 함께 확인한다.
+   같은 이름만으로 다른 보호자의 기록을 읽거나 덮어쓰지 못하게 서버 RLS도 제한한다.
    네트워크가 안 되면 조용히 로컬 전용으로 동작(앱 사용을 막지 않음).
    cloudLinked가 true인 프로필만 push — 클레임 절차 없이 이름만 같은 옛 로컬
    사용자가 남의 클라우드 저장본을 덮어쓰는 사고를 막는다. */
 const SB_URL='https://fgahqumaldheqettmvqg.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnYWhxdW1hbGRoZXFldHRtdnFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NjAzNDcsImV4cCI6MjA5NzIzNjM0N30.iUXLFteDc_xIp_Xj506BKTxnZRYMObmTYQ2Dgh9RAqs';
 const sbHdr=()=>({apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'});
+const guardianAuth=REVIEW?null:window.NM_PROFILE_AUTH;
+let guardianEntry=!REVIEW&&(new URLSearchParams(location.search).get('auth')==='1'||!!window.NM_ENTRY?.guardianUserId),booted=false,guardianContactEditing=false;
+if(guardianAuth){
+  guardianAuth.configure({url:SB_URL,anonKey:SB_KEY,freshEntry:['guardian','preview'].includes(window.NM_ENTRY?.mode),entryUserId:window.NM_ENTRY?.guardianUserId});
+  const refreshGuardianUI=()=>{
+    if(!booted)return;
+    if(guardianAuth.pendingLink&&guardianAuth.pendingLink()){
+      guardianEntry=!S.onboarded;S.view='closet';render();
+      const details=$('.nm-closet-settings');if(details)details.open=true;
+    }
+    renderIdCard();renderNotifyCard();
+    refreshEntryContinue();
+  };
+  /* ready()가 늦게 끝나 한 번 더 그릴 때, 이미 입력 중인 이메일·인증번호·비밀번호 칸을 지우지 않는다.
+     (인증 성공·로그아웃 같은 실제 변화는 onChange가 따로 그린다.) */
+  guardianAuth.ready().then(()=>{
+    const typing=['#nmGuardEmail','#nmGuardToken','#nmGuardLoginPassword','#nmGuardNewPassword','#nmGuardConfirmPassword','#nmGuardPhone']
+      .some(sel=>{const el=document.querySelector(sel);return !!el&&(el.value!==''||document.activeElement===el);});
+    if(!typing)refreshGuardianUI();
+  }).catch(()=>{});
+  guardianAuth.onChange(refreshGuardianUI);
+}
+if(membership&&guardianAuth){
+  membership.configure({url:SB_URL,anonKey:SB_KEY,auth:guardianAuth,profileName:()=>S.cloudLinked?S.name:null});
+  membership.onChange(()=>{
+    if(!booted)return;
+    const changed=applyAdminSettings();
+    if(changed){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}syncAmount();}
+    renderIdCard();renderAccountCard();renderNotifyCard();
+    refreshEntryContinue();
+    if(S.view==='courseroad')renderPersonalPlan();
+  });
+}
+function applyAdminSettings(){
+  const record=membership&&membership.snapshot();const p=record&&record.settings;
+  let changed=false;
+  if(record?.contact?.registered&&S.cloudLinked&&record.owner===S.cloudOwnerId&&record.owner===guardianAuth?.peek()?.user.id&&!S.guardianManaged){S.guardianManaged=true;changed=true;}
+  if(!p||p.profileName!==S.name||record.owner!==S.cloudOwnerId)return changed;
+  changed=changed||!S.adminPlan||S.adminPlan.version!==p.version;
+  S.adminPlan={...p};S.roadSpeed=p.speed;S.roadAmount=p.amount;S.roadCadence=p.cadence;S.roadPace='p2';
+  if(p.entryYear)S.schoolAge={entryYear:p.entryYear,setAt:Date.parse(p.updatedAt)||Date.now()};
+  return changed;
+}
+async function cloudCredentials(){
+  if(REVIEW)throw new Error('learning_review_only');
+  if(!guardianAuth)throw new Error('guardian_auth_required');
+  await guardianAuth.ready();
+  if(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())throw new Error('password_setup_required');
+  if(membership&&!membership.contactReady())throw new Error('contact_required');
+  const session=await guardianAuth.getSession();
+  if(!session||!session.user||!session.user.id)throw new Error('guardian_auth_required');
+  return {owner:session.user.id,headers:{...sbHdr(),Authorization:'Bearer '+session.access_token}};
+}
 async function cloudGet(name){
-  const url=`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(name)}&select=name,state`;
-  const r=await fetch(url,{headers:sbHdr()});
+  const auth=await cloudCredentials();
+  const url=`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(name)}&owner_id=eq.${encodeURIComponent(auth.owner)}&select=name,state,owner_id`;
+  const r=await fetch(url,{headers:auth.headers});
   if(!r.ok)throw new Error('cloudGet '+r.status);
   const rows=await r.json();
+  if(!isGuardianOwner(auth.owner))throw new Error('guardian_changed');
   return rows[0]||null;
 }
+function isGuardianOwner(owner){
+  const current=guardianAuth&&guardianAuth.peek();
+  return !!(current&&current.user.id===owner);
+}
+function backupBeforeCloudResume(owner){
+  if(!isGuardianOwner(owner))return false;
+  try{
+    const backup=JSON.stringify(S);localStorage.setItem(KEY+'_preresume',backup);
+    if(localStorage.getItem(KEY+'_preresume')!==backup)throw new Error('storage');
+    return true;
+  }catch(e){
+    toast(S.lang==='ko'?'이 기기의 기록을 보관하지 못해 이어하기를 멈췄어요. 저장 공간을 확인해 주세요.':S.lang==='en'?'Could not back up this device’s progress. Check storage before continuing.':'无法备份本设备的进度，请检查存储空间后重试。',false);
+    return false;
+  }
+}
 async function cloudClaim(name,state){
+  const auth=await cloudCredentials();
   const r=await fetch(`${SB_URL}/rest/v1/nm_profiles`,{
-    method:'POST',headers:sbHdr(),
-    body:JSON.stringify({name,state,updated_at:new Date().toISOString()})});
+    method:'POST',headers:auth.headers,
+    body:JSON.stringify({name,state:{...state,cloudOwnerId:auth.owner},owner_id:auth.owner,updated_at:new Date().toISOString()})});
   if(r.status===409)return false;           // 그 사이 누가 선점 (중복)
   if(!r.ok)throw new Error('cloudClaim '+r.status);
-  return true;
+  if(!isGuardianOwner(auth.owner))throw new Error('guardian_changed');
+  return {owner:auth.owner};
 }
 /* ---------- 승인번호 (nm_codes, Phase 2B) ----------
    RLS가 이미 "active=true 행만 select 가능"으로 걸려 있으므로, code로만 조회해서
@@ -497,15 +618,23 @@ async function reverifyAccountIfNeeded(){
   }catch(e){ /* 오프라인 — 다음에 다시 시도 */ }
 }
 
-let cloudTimer=null;
+let cloudTimer=null,cloudSyncError=false;
 function cloudPushSoon(){
-  if(!S.cloudLinked||!S.name)return;
+  if(REVIEW)return;
   clearTimeout(cloudTimer);
-  cloudTimer=setTimeout(()=>{
-    fetch(`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(S.name)}`,{
-      method:'PATCH',headers:sbHdr(),
-      body:JSON.stringify({state:S,updated_at:new Date().toISOString()})
-    }).catch(()=>{});                       // 오프라인이면 다음 save 때 재시도
+  if(!S.cloudLinked||!S.name||!S.cloudOwnerId)return;
+  const name=S.name,owner=S.cloudOwnerId,state=JSON.parse(JSON.stringify(S));
+  cloudTimer=setTimeout(async()=>{
+    try{
+      const auth=await cloudCredentials();
+      if(auth.owner!==owner)return;
+      const response=await fetch(`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(name)}&owner_id=eq.${encodeURIComponent(owner)}&select=name`,{
+        method:'PATCH',headers:{...auth.headers,Prefer:'return=representation'},
+        body:JSON.stringify({state,updated_at:new Date().toISOString()})
+      });
+      if(!response.ok||!(await response.json()).length)throw new Error('cloud_save_failed');
+      if(isGuardianOwner(owner)&&cloudSyncError){cloudSyncError=false;renderIdCard();}
+    }catch(e){if(isGuardianOwner(owner)){cloudSyncError=true;renderIdCard();}} // 기기 저장은 유지하며 다음 save 때 재시도한다.
   },1500);
 }
 /* 주간 요약 — 알림 발송(Edge Function weekly-notify)이 프로필 state에서 읽는다.
@@ -661,33 +790,26 @@ function updateLiveFill(sel,vals){
   if(!/\\square/.test(tex))return;
   math(fillLiveTex(tex,vals),spans[0]);
 }
-let _ttsCache={};
-/* 음성 파일 위치 — 저장소를 옮기면(Supabase → Cloudflare R2) NM_AUDIO_BASE 한 줄만 바꾼다.
-   tts-map.js 안의 주소는 생성기(scripts/generate-nm-audio.js)가 다시 읽으므로 원래 주소 그대로 두고, 재생할 때 앞부분만 바꿔 끼운다. */
-const NM_SUPABASE_PUBLIC='https://fgahqumaldheqettmvqg.supabase.co/storage/v1/object/public/';
-const NM_AUDIO_BASE=NM_SUPABASE_PUBLIC;
-const assetUrl=(u)=>(u&&u.startsWith(NM_SUPABASE_PUBLIC)?NM_AUDIO_BASE+u.slice(NM_SUPABASE_PUBLIC.length):u);
-function say(text){
-  if(!text)return;
-  const lang=S.lang||'ko';
-  /* 2026-09-29 — OmniVoice 복제 음성(data/tts-map-omni.js)이 먼저, 없으면 구글(tts-map.js), 그다음 기기 음성 */
-  const omni=window.NM_TTS_OMNI,map=window.NM_TTS_MAP;
-  const url=assetUrl((omni&&omni[lang]&&omni[lang][text])||(map&&map[lang]&&map[lang][text]));
-  if(url){
-    try{
-      speechSynthesis.cancel();
-      let a=_ttsCache[url];
-      if(!a){a=new Audio(url);_ttsCache[url]=a;}
-      a.currentTime=0;
-      a.play().catch(()=>_sayWeb(text,lang));
-      return;
-    }catch(e){}
-  }
-  _sayWeb(text,lang);
+let lessonVersion=0;
+function lessonLater(fn,ms){
+  const version=lessonVersion,body=ms<=2000?document.getElementById('stepBody'):null,started=Date.now();
+  // A correct answer has already advanced state. Keep its controls inactive until
+  // the full feedback sentence finishes, so the old screen cannot submit again.
+  if(body){body.inert=true;body.setAttribute('aria-busy','true');}
+  const advance=()=>{
+    if(version!==lessonVersion)return;
+    if(ms<=2000&&window.NM_VOICE?.isSpeaking()&&Date.now()-started<30000){setTimeout(advance,80);return;}
+    if(body){body.inert=false;body.removeAttribute('aria-busy');}
+    fn();
+  };
+  return setTimeout(advance,ms);
 }
-function _sayWeb(text,lang){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='zh'?'zh-CN':lang==='en'?'en-US':'ko-KR';u.rate=1;u.pitch=1.2;speechSynthesis.speak(u);}catch(e){}}
-/* 성공 효과음 — 지오메트리 큐비와 같은 자체 제작 클립(assets/audio/success/). 실패해도 조용히 무시 */
-const _sfxCache={};
+function stopVoice(){
+  window.NM_VOICE?.stop();
+}
+function say(text){
+  if(text)window.NM_VOICE?.say(text,S.lang||'ko');
+}
 /* 파일 없는 짧은 효과음은 WebAudio로 합성 — tap(숫자판)·stamp(도장)·wrong(오답). 아주 작게. */
 let _actx=null;
 function beep(seq,gain){
@@ -704,31 +826,16 @@ function beep(seq,gain){
 }
 function playSfx(kind){
   if(kind==='tap'){beep([[880,0,.05]],.12);return;}
+  stopVoice();
   if(kind==='stamp'){beep([[523,0,.12],[784,.12,.18]],.25);return;}
   if(kind==='wrong'){beep([[220,0,.16]],.15);return;}
-  try{
-    const lang=(S.lang==='en'||S.lang==='zh')?S.lang:'ko';
-    const url='assets/audio/success/'+lang+'/'+kind+'.mp3';
-    let a=_sfxCache[url];
-    if(!a){a=new Audio(url);_sfxCache[url]=a;}
-    a.currentTime=0;a.volume=.85;
-    a.play().catch(()=>{});
-    return a;   // success/great-job/good-job는 효과음이 아니라 언어별 음성 클립이라
-                // 호출자가 끝나기를 기다렸다가 다음 안내 음성을 이어 틀 수 있게 돌려준다
-  }catch(e){}
+  // Feedback is a short wordless chime, so it cannot introduce an older speaker.
+  beep([[523,0,.08],[659,.08,.08],[784,.16,.12]],.12);
 }
 window.NM_SFX=playSfx;
-/* 2026-09-14 — "success"/"great-job" 같은 음성형 효과음과 뒤이은 안내 음성이 동시에
-   틀어져 겹쳐 들리던 문제(원장 확인) 수정. sfxAudio가 끝난 뒤에 say()를 부른다.
-   'ended' 이벤트가 어떤 이유로 안 오면(재생 실패 등) 900ms 뒤 강제로 이어 말한다
-   (클립이 전부 1초 미만이라 충분한 여유). sfxAudio가 없으면(beep류) 바로 말한다. */
+/* The legacy API stays compatible; feedback now contains no spoken words or delayed callbacks. */
 function sayAfterSfx(sfxAudio,text){
-  if(sfxAudio&&typeof sfxAudio.addEventListener==='function'){
-    let done=false;const go=()=>{if(done)return;done=true;say(text);};
-    sfxAudio.addEventListener('ended',go,{once:true});
-    sfxAudio.addEventListener('error',go,{once:true});
-    setTimeout(go,900);
-  }else say(text);
+  say(text);
 }
 window.NM_SAY=say;   // widgets.js(storyCard 🔊 다시듣기 버튼)에서 재낭독용으로 사용
 window.NM_L=L;        // widgets.js에서 다국어 필드(problem.prompt 등) 읽기용
@@ -765,7 +872,7 @@ function feedbackFx(ok){
 }
 window.feedbackFx=feedbackFx; // 검증 하네스(Playwright)가 실제 정답 없이도 표정 스와핑을 확인할 수 있게
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
-function coinAdd(n){S.coins+=n;save();
+function coinAdd(n,reason){if(!NM_CHARACTER_STATE.reward(S,n,reason))return;save();
   /* 화면 전환 없이 코인이 바뀌는 경우(출석 카드 등) 상단 🪙 표시를 바로 맞춘다 */
   document.querySelectorAll('.nm-coins b').forEach(b=>{b.textContent=S.coins;});}
 
@@ -787,7 +894,7 @@ function checkAttendance(){
   const today=todayKey();
   if(S.attend && S.attend.last===today) return null;
   S.attend={last:today, days:(S.attend&&S.attend.days||0)+1};
-  coinAdd(3);
+  coinAdd(3,'attendance');
   return S.attend.days;
 }
 /* 주간 보너스 — "그 주 봉투를 다 풀었다"의 정의(마을세계관-설계.md §6):
@@ -813,7 +920,7 @@ function maybeAwardWeeklyBonus(weekKey){
   if(!S.weeklyBonus) S.weeklyBonus={};
   if(S.weeklyBonus[weekKey]) return;
   S.weeklyBonus[weekKey]=true;
-  coinAdd(10);
+  coinAdd(10,'weekly');
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   toast(lk('한 주를 다 마쳤어요! 🪙 +10','You finished the week! 🪙 +10','完成了一周！🪙 +10'), true);
 }
@@ -900,6 +1007,8 @@ let hqPuzzle=null; /* 수학사 퀴즈(§3 남쪽 항구) — 현재 화면의 �
    "onboarded는 defaults()에 넣지 않음" 참고): 기존 저장본(온보딩 이전)과 병합돼도
    "아직 안 골랐음"을 구분해야 마을 이주 모달이 뜬다. 읽을 땐 항상 이 헬퍼로. */
 function avatarKind(){ return (S.avatar&&S.avatar.kind)||'boy'; }
+function avatarProfile(){return window.NM_HUMANS?NM_HUMANS.clean(S.avatar||{kind:'boy'}):{kind:avatarKind()};}
+function avatarName(){return avatarProfile().name||S.name||charIdLabel(S.character);}
 /* 캐릭터 라벨(이름 없을 때 표시) — 기호 캐릭터는 숫자 대신 글리프로. */
 function charIdLabel(ch){
   if(ch && ch.symbol){
@@ -911,8 +1020,8 @@ function charIdLabel(ch){
 /* 상단 칩의 내용물(사람 아바타 미니 렌더 + 이름표) — 옷장에서 라이브 패치할 때도
    이 함수로 innerHTML만 갈아끼운다(버튼 요소 자체는 유지해 onclick이 안 끊긴다). */
 function charChipInner(){
-  const mini = window.renderHumanChar ? window.renderHumanChar(avatarKind(), 30) : '🪄';
-  const label = S.name ? esc(S.name) : charIdLabel(S.character);
+  const mini = window.renderHumanChar ? window.renderHumanChar(avatarProfile(), 30) : '🪄';
+  const label = esc(avatarName());
   return `${mini}<span class="nm-char-chip-name">${label}</span>`;
 }
 function charChipHTML(){
@@ -934,7 +1043,16 @@ function bgKeyForView(){
 }
 
 function render(){
+  lessonVersion++;
+  stopVoice();
   syncAmount();
+  window.NM_LANG=S.lang;
+  if(REVIEW){
+    const label=document.querySelector('.nm-review-banner span'),exit=document.getElementById('nmReviewLogout');
+    if(label)label.textContent=(S.lang==='en'?'Learning review':S.lang==='zh'?'学习检查':'학습 점검')+' · '+review.username;
+    if(exit)exit.textContent=S.lang==='en'?'Review logout':S.lang==='zh'?'退出检查':'점검 로그아웃';
+  }
+  document.documentElement.lang=S.lang==='zh'?'zh-CN':S.lang;
   NM_BAND=computeBand();                                  // 적응형 밴드 — 진도 오르면 다음 렌더부터 반영
   document.documentElement.dataset.nmBand=NM_BAND;
   document.documentElement.dataset.nmBg=bgKeyForView();   // 설명·안내 화면 뒤에 깔 사진(styles.css body::before)
@@ -942,10 +1060,14 @@ function render(){
   window.NM_CURRENT_UNIT=S.unit||null;                    // widgets.js가 "N-* 유닛인가"를 판정할 때 씀(오답 소리·표정 등, 유아 전용 반응)
   if(townCleanup){townCleanup();townCleanup=null;}
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
-  if(wsHelperId){
+  if(wsHelperId&&!guardianEntry){
     app.innerHTML='<div id="screen"></div>';
     screenWorksheetHelper(wsHelperId);
     return;
+  }
+  if(guardianEntry){
+    app.innerHTML='<div id="screen"></div>';
+    screenGuardianEntry();return;
   }
   if(!S.onboarded){
     app.innerHTML='<div id="screen"></div>';
@@ -988,18 +1110,31 @@ function render(){
   else screenTown();
   renderMath();
 }
-function cycleLang(){const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];save();render();}
+function cycleLang(){stopVoice();const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.lang)+1)%3];save();render();}
 
 /* ============================================================
    온보딩 — 캐릭터+이름 선택 → "짠!" 구름 등장 연출 → 마을 입장
    완전 신규 설치(localStorage 없던 상태)에서만 1회 등장(hadSave 참고)
    ============================================================ */
+function screenGuardianEntry(){
+  const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+  $('#screen').innerHTML=`<div class="nm-step-body nm-closet-wrap"><button class="nm-btn ghost" id="nmGuardBack">${lk('학습 화면으로','Learning screen','学习界面')}</button><h1>${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</h1><div id="nm-guardian-slot"></div><div id="nm-idcard-slot"></div><div id="nm-account-slot"></div></div>`;
+  const canContinue=()=>!!guardianAuth?.peek()&&!guardianAuth.requiresPassword()&&membership?.contactReady();
+  if(!canContinue())$('#nmGuardBack').textContent=lk('승인·로그인으로','Approval / login','审批·登录');
+  $('#nmGuardBack').onclick=()=>{if(!canContinue()){location.assign('access.html');return;}guardianEntry=false;S.view='title';render();};
+  renderIdCard();renderAccountCard();
+}
+function refreshEntryContinue(){
+  const b=document.getElementById('nmGuardBack');if(!b)return;
+  const ready=!!guardianAuth?.peek()&&!guardianAuth.requiresPassword()&&membership?.contactReady();
+  b.textContent=ready?(S.lang==='ko'?'학습 화면으로':S.lang==='en'?'Learning screen':'学习界面'):(S.lang==='ko'?'승인·로그인으로':S.lang==='en'?'Approval / login':'审批·登录');
+}
 function screenWelcome(){
   const scr=$('#screen');
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const ob = { number:S.character.number||3, color:S.character.color||'blue',
     bg:S.character.bg||'plain', cape:S.character.cape||'none',
-    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&S.avatar.kind)||null, grade:null };
+    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&(S.avatar.look||S.avatar.kind))||null, grade:null };
   const NUMS=[0,1,2,3,4,5,6,7,8,9];
 
   /* 1단계 — 나(사람 아바타) 고르기. 고를 때까지 "다음"이 비활성. */
@@ -1007,29 +1142,23 @@ function screenWelcome(){
     scr.innerHTML=`
     <div class="nm-ob">
       <div class="nm-ob-card">
-        <h1 class="nm-ob-title">${lk('넌 누구야?','Who are you?','你是谁？')}</h1>
+        <h1 class="nm-ob-title">${lk('내 캐릭터를 골라요','Who are you?','你是谁？')}</h1>
         <p class="nm-ob-sub">${lk('마법 마을에 들어갈 나를 골라요','Pick yourself for the magic village','选一个进入魔法村的你')}</p>
-        <!-- 이름 유준·유빈(2026-09-09, 원장 지시) — "남자아이"/"여자아이"라는 성별 라벨 대신
-             실제 이름을 붙였다(처음엔 하늘·보라로 튜닉 색을 땄다가, 원장이 유준·유빈으로 다시 지음).
-             내부 식별자(data-av="boy"/"girl", renderHumanChar·HUMAN_IMG 키)는 손대지 않았다 —
-             화면에 보이는 이름만 바뀐다. -->
         <div class="nm-av-row">
-          <button class="nm-av-card${ob.avatar==='boy'?' sel':''}" data-av="boy">
-            ${window.renderHumanChar?window.renderHumanChar('boy',120):''}
-            <span>${lk('유준','Yujun','宥俊')}</span>
-          </button>
-          <button class="nm-av-card${ob.avatar==='girl'?' sel':''}" data-av="girl">
-            ${window.renderHumanChar?window.renderHumanChar('girl',120):''}
-            <span>${lk('유빈','Yubin','宥彬')}</span>
-          </button>
+          ${(window.NM_HUMANS?NM_HUMANS.looks:[]).map(look=>`<button class="nm-av-card${ob.avatar===look.id?' sel':''}" data-av="${look.id}" aria-pressed="${ob.avatar===look.id}">
+            ${window.renderHumanChar?window.renderHumanChar(NM_HUMANS.clean({look:look.id}),90):''}
+            <span>${esc(L(look))}</span></button>`).join('')}
         </div>
+        <p class="nm-ob-sub">${lk('이름은 직접 정하고, 옷장에서 캐릭터를 더 만들 수 있어요.','Choose a name and add more characters in the closet.','可以自己取名，也可以在衣橱添加更多角色。')}</p>
         <button class="nm-btn nm-ob-go" id="obAvNext"${ob.avatar?'':' disabled'}>${lk('다음 ›','Next ›','下一步 ›')}</button>
+        <button class="nm-btn ghost nm-ob-go" id="obGuardian">${lk('가입 · 보호자 이메일로 이어하기','Register · Continue with guardian email','注册 · 使用监护人邮箱继续')}</button>
       </div>
     </div>`;
     scr.querySelectorAll('[data-av]').forEach(b=>{
       b.onclick=()=>{ ob.avatar=b.dataset.av; stepAvatar(); };
     });
     $('#obAvNext').onclick=()=>{ if(ob.avatar) stepGrade(); };
+    $('#obGuardian').onclick=()=>{guardianEntry=true;render();};
   }
 
   /* 2단계 — 학년(2026-09-16 원장 "나이도 입력해야 돼").
@@ -1040,7 +1169,7 @@ function screenWelcome(){
     scr.innerHTML=`
     <div class="nm-ob">
       <div class="nm-ob-card">
-        <h1 class="nm-ob-title">${lk('몇 학년이야?','What grade are you in?','你上几年级？')}</h1>
+        <h1 class="nm-ob-title">${lk('지금 몇 학년인가요?','What grade are you in?','你上几年级？')}</h1>
         <p class="nm-ob-sub">${lk('학년에 맞춰 말투와 안내를 골라 줄게요. 학습은 어디서든 시작할 수 있어요.',
           'We use this to pick the right tone and guidance. You can still start anywhere.',
           '我们用这个来选择合适的语气和提示。学习仍然可以从任何地方开始。')}</p>
@@ -1064,7 +1193,7 @@ function screenWelcome(){
         <h1 class="nm-ob-title">${lk('함께 갈 숫자 친구를 골라요','Pick a number friend to go with you','选一个一起走的数字朋友')}</h1>
         <p class="nm-ob-sub">${t('obSub')}</p>
         <div class="nm-ob-stage" id="obStage">
-          <div class="nm-ob-pick" id="obChar">${window.renderPartyHtml?window.renderPartyHtml(ob.avatar,ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'')}</div>
+          <div class="nm-ob-pick" id="obChar">${window.renderPartyHtml?window.renderPartyHtml(NM_HUMANS.clean({look:ob.avatar}),ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'')}</div>
         </div>
         <div class="nm-ob-nav">
           <button class="nm-ob-arrow" id="obPrev">‹</button>
@@ -1082,7 +1211,7 @@ function screenWelcome(){
     $('#obGo').onclick=go;
   }
   function drawChar(){
-    $('#obChar').innerHTML = window.renderPartyHtml?window.renderPartyHtml(ob.avatar,ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'');
+    $('#obChar').innerHTML = window.renderPartyHtml?window.renderPartyHtml(NM_HUMANS.clean({look:ob.avatar}),ob,120):(window.renderNumiChar?window.renderNumiChar(ob,120):'');
     $('.nm-ob-num').textContent='#'+ob.number;
   }
 
@@ -1090,7 +1219,7 @@ function screenWelcome(){
     const name=(ob.name||'').trim();
     if(!name){ toast(t('obNeedName'),false); return; }
     ob.name=name;
-    /* 이름 중복 확인: 유일하면 이 이름이 곧 아이디가 되어 클라우드에 기억된다 */
+    /* 보호자 인증 상태에서만 클라우드 이름을 확인한다. 미인증이면 기기에 저장한다. */
     const btn=$('#obGo');
     btn.disabled=true;
     btn.textContent=S.lang==='ko'?'이름 확인 중…':S.lang==='en'?'Checking name…':'检查名字中…';
@@ -1102,8 +1231,14 @@ function screenWelcome(){
     /* 유일한 이름 → 클레임 */
     try{
       const okClaim=await cloudClaim(name,{});
-      if(!okClaim){ const again=await cloudGet(name).catch(()=>null); askResume(name, again||{state:{}}); return; }
-      ob.claimed=true;
+      if(!okClaim){
+        const again=await cloudGet(name).catch(()=>null);
+        if(again){askResume(name,again);return;}
+        btn.disabled=false;btn.textContent=t('obGo');
+        toast(S.lang==='ko'?'기존 기록은 학원에 보호자 연결을 요청하거나 다른 이름을 사용해 주세요.':S.lang==='en'?'Ask your academy to link the existing profile, or choose another name.':'请联系学院关联原有记录，或使用其他名字。',false);
+        return;
+      }
+      ob.claimedOwner=okClaim.owner;
       reveal(name);
     }catch(e){ reveal(name); }              // 클레임 실패 시에도 앱은 계속
   }
@@ -1121,14 +1256,16 @@ function screenWelcome(){
       </div>
     </div>`;
     $('#obResume').onclick=()=>{
+      if(!backupBeforeCloudResume(existing.owner_id))return;
+      guardianEntry=false;
       const st=existing&&existing.state?existing.state:{};
       S={...defaults(),...st};
       S.name=name; S.onboarded=true; S.cloudLinked=true;
-      /* 클라우드에서 되불러온 프로필 = 이미 쓰던 학생이다 → 승인번호 없이도 active(grandfather).
-         부팅 때의 hadSave 판정은 이 시점 이후라 여기서 한 번 더 봐야 한다. 안 그러면 새 기기에서
-         이어하기 한 재원생이 체험으로 잠긴다 — 클라우드 19명 중 10명이 account 키 자체가 없다
-         (게이트 도입 전에 저장된 프로필, 2026-09-06 확인). */
-      if(!S.account||!S.account.status)S.account={status:'active',code:null,checkedAt:0};
+      S.cloudOwnerId=existing.owner_id;
+      if(!S.account||!S.account.status)S.account={status:'trial',code:null,checkedAt:0};
+      normalizeLoadedState(false);
+      // 보호자 인증은 기록 소유권만 확인한다. 학원 승인 상태는 별도로 유지한다.
+
       if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
       if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
       save(); render();
@@ -1153,7 +1290,7 @@ function screenWelcome(){
       <div class="nm-ob-card">
         <div class="nm-ob-reveal" id="obReveal">
           <div class="ncloud nm-ob-rcloud" id="obCloud">${puffHtml}</div>
-          <div class="nm-ob-rchar" id="obRchar">${window.renderPartyHtml?window.renderPartyHtml(ob.avatar,ob,140):(window.renderNumiChar?window.renderNumiChar(ob,140):'')}</div>
+          <div class="nm-ob-rchar" id="obRchar">${window.renderPartyHtml?window.renderPartyHtml(NM_HUMANS.clean({look:ob.avatar}),ob,140):(window.renderNumiChar?window.renderNumiChar(ob,140):'')}</div>
           <div class="nm-ob-welcome" id="obWelcomeMsg">${esc(t('obWelcome')(name))}</div>
         </div>
       </div>
@@ -1168,11 +1305,12 @@ function screenWelcome(){
 
   function finish(){
     S.character = {number:ob.number,color:ob.color,bg:ob.bg,cape:ob.cape,hat:ob.hat};
-    S.avatar = {kind:ob.avatar};
+    S.avatar = NM_HUMANS.clean({id:'avatar-1',look:ob.avatar});
+    S.avatarCollection=[S.avatar];
     S.name = ob.name;
     if(ob.grade!=null) setSchoolGrade(ob.grade);
     S.onboarded = true;
-    if(ob.claimed)S.cloudLinked = true;   // 이름 클레임 성공 → 이후 진행상황 자동 동기화
+    if(ob.claimedOwner&&isGuardianOwner(ob.claimedOwner)){S.cloudLinked=true;S.cloudOwnerId=ob.claimedOwner;}
     save();
     render();
   }
@@ -1200,7 +1338,7 @@ const TOWN_SPOTS=[
 ];
 function tierById(id){return CUR.tiers.find(x=>x.id===id);}
 function tierOpen(tier){return !!(tier&&tier.levels.some(l=>l.available&&(l.units||[]).some(u=>UNITS[u])));}
-const TOWN_ALWAYS_OPEN=['_closet']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
+const TOWN_ALWAYS_OPEN=['_closet','_theater']; // 잠금 아이콘 없이 항상 열리는 스팟(등급 무관)
 
 /* 마을세계관-설계.md §3 — 형제 서비스로 나가는 관문(표지판). 절대 잠그지 않는다
    (자유 선택 원칙) — 열려 있으면 새 탭으로 나가고, 아직 없으면 "준비 중"으로만
@@ -1304,19 +1442,19 @@ function screenTown(){
   let zones='';
   TOWN_SPOTS.forEach(sp=>{
     const tier=tierById(sp.tier);
-    const open=sp.tier==='_theater'?false:TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tier);
+    const open=TOWN_ALWAYS_OPEN.indexOf(sp.tier)>=0?true:tierOpen(tier);
     zones+=`<button class="nm-zone ${open?'':'locked'}" style="${sp.pos}" data-spot="${sp.tier}">
       ${open?'<div class="nm-halo"></div>':`<div class="nm-lockico">${sp.lockIcon||'🔒'}</div>`}
-      <span class="nm-zlabel">${typeof sp.tag==='string'?sp.tag:L(sp.tag)}<small>${L(sp.sub)}</small></span>
+      <span class="nm-zlabel">${esc(townDestinationLabel(sp.tier))}<small>${sp.tier.startsWith('_')?'':esc(typeof sp.tag==='string'?sp.tag.replace(/^\S+\s*/, ''):L(sp.tag))}</small></span>
     </button>`;
   });
   let gates='';
   TOWN_GATES.forEach(g=>{
-    gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">🪧 ${g.icon} <span>${esc(L(g.name))}</span></button>`;
+    gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">${g.icon} <span>${esc(L(g.name))}</span></button>`;
   });
-  scr.classList.add('nm-town');
+  scr.classList.add('nm-town','nm-town-illustrated');
   scr.innerHTML=`
-    <div id="townVp" class="is-3d-pending" aria-busy="true">
+    <div id="townVp" class="is-illustrated" aria-label="${S.lang==='ko'?'마을 지도':S.lang==='en'?'Village map':'村庄地图'}">
       <div id="townWorld">
         <div class="ncloud a"><span class="puff" style="width:64px;height:64px;left:0;top:-8px"></span><span class="puff" style="width:48px;height:48px;left:44px;top:0"></span><span class="puff" style="width:40px;height:40px;left:78px;top:6px"></span><span class="num">7</span></div>
         <div class="ncloud b"><span class="puff" style="width:70px;height:70px;left:0;top:-10px"></span><span class="puff" style="width:50px;height:50px;left:50px;top:2px"></span><span class="num">10</span></div>
@@ -1325,8 +1463,8 @@ function screenTown(){
         ${zones}
         ${gates}
         <div class="nb nb-player nb-walker" id="nbNumi"><div class="speech"></div>
-          <div class="nb-name">${S.name?esc(S.name):'#'+S.character.number}</div>
-          <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker(avatarKind(),60):(window.renderHumanChar?window.renderHumanChar(avatarKind(),56):'<img src="assets/characters/kid-boy.png" alt="">')}</div>
+          <div class="nb-name">${esc(avatarName())}</div>
+          <div class="nb-img nb-svg">${window.renderWalker?window.renderWalker(avatarProfile(),60):(window.renderHumanChar?window.renderHumanChar(avatarProfile(),56):'<img src="assets/characters/kid-boy.png" alt="">')}</div>
           <div class="shadow"></div></div>
         <div class="nb nb-buddy" id="nbBuddy"><div class="speech"></div>
           <div class="nb-img nb-svg">${window.renderNumiChar?window.renderNumiChar(S.character,44):''}</div>
@@ -1367,9 +1505,9 @@ function screenTown(){
     </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
-      <button class="nm-iconbtn" id="townMe" title="내 위치">📍</button>
-      <button class="nm-iconbtn" id="townZin">＋</button>
-      <button class="nm-iconbtn" id="townZout">－</button>
+      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'지도 맞추기':S.lang==='en'?'Fit map':'调整地图'}">⛶</button>
+      <button class="nm-iconbtn" id="townZin" aria-label="${S.lang==='ko'?'확대':S.lang==='en'?'Zoom in':'放大'}">＋</button>
+      <button class="nm-iconbtn" id="townZout" aria-label="${S.lang==='ko'?'축소':S.lang==='en'?'Zoom out':'缩小'}">－</button>
     </div>
     <div class="nm-tmodal" id="tmodal">
       <div class="nm-tmcard">
@@ -1378,8 +1516,24 @@ function screenTown(){
         <button class="close" id="tmClose">${S.lang==='ko'?'닫기':S.lang==='en'?'Close':'关闭'}</button>
       </div>
     </div>`;
+  const tools=scr.querySelector('.nm-town-hud.info'),toolbox=document.createElement('details');
+  toolbox.className='nm-town-toolbox';
+  toolbox.innerHTML=`<summary>${S.lang==='ko'?'마을 메뉴':S.lang==='en'?'Village menu':'村庄菜单'} ☰</summary><div class="nm-town-tool-list"></div>`;
+  const panel=toolbox.querySelector('div'), more=document.createElement('details');
+  more.className='nm-town-more';
+  more.innerHTML=`<summary>${S.lang==='ko'?'더 보기':S.lang==='en'?'More':'更多'}</summary><div class="nm-town-extra-list"></div>`;
+  const list=more.querySelector('div');
+  const places=document.createElement('nav');places.className='nm-town-place-list';places.setAttribute('aria-label',S.lang==='ko'?'지도 속 장소':S.lang==='en'?'Map locations':'地图地点');
+  TOWN_SPOTS.forEach(sp=>{const b=document.createElement('button');b.type='button';b.className='nm-iconbtn';b.dataset.place=sp.tier;b.textContent=townDestinationLabel(sp.tier);b.onclick=()=>enterTownDestination(sp.tier);places.appendChild(b);});list.appendChild(places);
+  while(tools.firstChild)list.appendChild(tools.firstChild);
+  panel.appendChild(scr.querySelector('#roadBanner'));panel.appendChild(more);tools.appendChild(toolbox);
+  toolbox.open=matchMedia('(min-width:760px), (min-width:600px) and (max-height:500px)').matches;
+  ['townCourseRoad','townDex','townMagazine','townMail','townReport'].forEach(id=>{const button=scr.querySelector('#'+id);const label=document.createElement('span');label.textContent=button.title;button.appendChild(label);});
+  TOWN_GATES.forEach(g=>{const button=document.createElement('button');button.type='button';button.className='nm-iconbtn';button.dataset.townGate=g.id;button.textContent=g.icon+' '+L(g.name);button.onclick=()=>showGateLinksModal(g);list.appendChild(button);});
+  list.appendChild(scr.querySelector('.nm-town-hud.ctrls'));
+  toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
   townCleanup=initTownWorld(scr);
-  mountTown3DInto(scr);
+  // The illustrated village is now the default. Buildings open without walking or camera controls.
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
@@ -1430,15 +1584,12 @@ function showAvatarMigrateModal(){
   wrap.innerHTML=`<div class="nm-gate-card">
     <h3>${lk('너는 누구야?','Who are you?','你是谁？')}</h3>
     <p>${lk('마법 마을에 들어갈 나를 골라요','Pick yourself for the magic village','选一个进入魔法村的你')}</p>
-    <div class="nm-av-row">
-      <button class="nm-av-card" data-av="boy">${window.renderHumanChar?window.renderHumanChar('boy',110):''}<span>${lk('유준','Yujun','宥俊')}</span></button>
-      <button class="nm-av-card" data-av="girl">${window.renderHumanChar?window.renderHumanChar('girl',110):''}<span>${lk('유빈','Yubin','宥彬')}</span></button>
-    </div>
+    <div class="nm-av-row">${NM_HUMANS.looks.map(look=>`<button class="nm-av-card" data-av="${look.id}">${window.renderHumanChar?window.renderHumanChar(NM_HUMANS.clean({look:look.id}),90):''}<span>${esc(L(look))}</span></button>`).join('')}</div>
   </div>`;
   document.body.appendChild(wrap);
   wrap.querySelectorAll('[data-av]').forEach(b=>{
     b.onclick=()=>{
-      S.avatar={kind:b.dataset.av};
+      S.avatar=NM_HUMANS.clean({id:'avatar-1',look:b.dataset.av});S.avatarCollection=[S.avatar];
       save();
       wrap.remove();
       render();
@@ -1750,8 +1901,8 @@ function mountStory3DInto(scr,stages,current,nextId,o){
   const u=nextId&&UNITS[nextId];
   const here=u?{label:S.lang==='ko'?'여기부터!':S.lang==='en'?'Start here!':'从这里！',sub:L(u.title)}:null;
   const fail=()=>{ box.remove(); hero.classList.remove('is-3d'); if(hero.isConnected&&o.onFail)o.onFail(); };
-  import('./story3d/story3d.js').then(m=>m.mountStory3D(box,{
-    lang:S.lang, stages, current, here, avatar:{kind:avatarKind()},
+  import('./story3d/story3d.js?v=20261021-characters1').then(m=>m.mountStory3D(box,{
+    lang:S.lang, stages, current, here, avatar:avatarProfile(),
     onStage:o.onStage, onHere:o.onHere
   })).then(ctl=>{
     if(!ctl){ fail(); return; }
@@ -1987,7 +2138,7 @@ function _renderMiniGame(){
       const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10');save();_renderMiniGame();};
       const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
         clearInterval(mgTimer);mgTimer=null;
-        S.coins+=(mg.pairs*3);
+        coinAdd(mg.pairs*3,'game');
         S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10']=true;
         const back=S._fromRoadmap?'roadmap':'town';
         S.view=back;S._fromRoadmap=false;save();render();
@@ -2070,7 +2221,7 @@ function _renderMiniGame(){
     if(mg.done){
       const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10_3');save();_renderMiniGame();};
       const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
-        clearInterval(mgTimer);mgTimer=null;S.coins+=(mg.triples*5);
+        clearInterval(mgTimer);mgTimer=null;coinAdd(mg.triples*5,'game');
         S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10_3']=true;
         const back=S._fromRoadmap?'roadmap':'town';S.view=back;S._fromRoadmap=false;save();render();
       };
@@ -2199,7 +2350,7 @@ function screenGradeCourse(){
       if(units.length>0)bodyHtml+=`<div class="nm-gc-prog">${prog}/${units.length} ${lk('완료','done','完成')}</div>`;
       bodyHtml+=`</div>`;
     });
-    if(!bodyHtml)bodyHtml=`<div style="padding:40px;text-align:center;color:#aaa;font-size:13px">${lk('이 학년 유닛이 없어요.','No units for this grade yet.','此年级暂无单元。')}</div>`;
+    if(!bodyHtml)bodyHtml=`<div style="padding:40px;text-align:center;color:#aaa;font-size:13px">${lk('아직 준비된 학습 단원이 없어요. 다른 학년을 선택해 주세요.','No units for this grade yet.','此年级暂无单元。')}</div>`;
 
     scr.innerHTML=`<div class="nm-gc-wrap">
       <div class="nm-gc-header">
@@ -2510,6 +2661,7 @@ function roadBaseMonths(){
   return w/4;
 }
 function roadPaceMult(key){
+  if(window.NM_LEARNING_PLAN)return NM_LEARNING_PLAN.paceMultiplier(window.NM_COURSES,key);
   const base=roadBaseMonths();
   if(!base) return 1;
   return (base+roadPaceDef(key).off)/base;
@@ -2934,7 +3086,7 @@ function finishCheckup(k){
   if(!k.rewarded){
     k.rewarded=true;
     const got=(k.calcOk+(k.creOk||0)+k.wpOk)*3;
-    if(got>0 && !prevRewarded) coinAdd(got);
+    if(got>0 && !prevRewarded) coinAdd(got,'history');
   }
   save();
 }
@@ -3224,15 +3376,15 @@ function openStudentSwitch(){
     if(n===active){
       cards+=`<div class="nm-slot-card active">
         <span class="nm-slot-badge">${lk('지금','Now','当前')}</span>
-        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,56):''}</div>
-        <div class="nm-slot-name">${S.name?esc(S.name):'#'+S.character.number}</div>
+        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,56):''}</div>
+        <div class="nm-slot-name">${esc(avatarName())}</div>
       </div>`;
       continue;
     }
     const st=readSlotState(n);
     if(st&&(st.onboarded||st.name)){
       const ch=Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},st.character||{});
-      const avk=(st.avatar&&st.avatar.kind)||'boy';
+      const avk=st.avatar||{kind:'boy'};
       cards+=`<button class="nm-slot-card" data-slot="${n}">
         <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avk,ch,56):''}</div>
         <div class="nm-slot-name">${st.name?esc(st.name):'#'+ch.number}</div>
@@ -3586,6 +3738,18 @@ function paceCompareHtml(){
     <ul class="nm-pc-scope"><li>${T('scope1')}</li><li>${T('scope2')}</li><li>${T('scope3')}</li></ul>${srcHtml}</div>`;
 }
 
+function renderPersonalPlan(){
+  if(S.view!=='courseroad'||!window.NM_LEARNING_PLAN||!window.NM_COURSES)return;
+  const bar=document.querySelector('#screen .nm-cr-header, #screen .nm-unit-bar');if(!bar)return;
+  let box=document.getElementById('nmPersonalPlan');
+  if(!box){box=document.createElement('details');box.id='nmPersonalPlan';box.className='nm-personal-plan';bar.insertAdjacentElement('afterend',box);}
+  const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+  const p=S.adminPlan,now=new Date(),today=new Date(+now+9*3600000).toISOString().slice(0,10);
+  const settings=p&&NM_COURSES[p.courseKey]?p:{courseKey:currentCourseKey(),sessionIndex:1,speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2',entryYear:S.schoolAge?.entryYear,startDate:today};
+  let result;try{result=NM_LEARNING_PLAN.project(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});}catch(e){return;}
+  const reference=NM_LEARNING_PLAN.recommend(NM_COURSES,settings,{lang:S.lang});
+  box.innerHTML=`<summary>${lk('나의 월별 로드맵 · 12개월','My monthly roadmap · 12 months','我的月度路线图 · 12个月')}</summary><div class="nm-personal-plan-body"><p>${p?lk('학원에서 정한 개인별 시작점과 속도를 적용했어요.','Your academy’s individual starting point and pace are applied.','已应用学院设置的个人起点和速度。'):lk('현재 선택한 시작점과 속도로 예상했어요.','Estimated from your selected starting point and pace.','根据所选起点和速度估算。')} ${lk('실제 학습에 따라 달라질 수 있어요. 학년은 매년 3월에 바뀌어요.','Actual progress may vary. Grades change each March.','实际进度可能不同，年级每年3月变更。')}</p><p>${lk('시작','Start','开始')}: ${esc(settings.startDate)} · ${settings.speed}${lk('배 속도','× pace','倍速度')} · ${lk('주','Per week','每周')} ${settings.cadence==='w2'?2:1}${lk('회',' sessions','次')}</p><div class="nm-personal-plan-grid" role="list">${result.rows.map(row=>`<article role="listitem"><h4>${esc(row.month)} <small>${esc(row.schoolLabel)}</small></h4>${row.courseLabels.length?row.courseLabels.map((label,i)=>`<p><b>${esc(label)}</b><span>${esc(row.sessionLabels[i])}</span></p>`).join(''):`<p>${lk('예상 과정 없음','No course projected','暂无预计课程')}</p>`}</article>`).join('')}</div><aside><h4>${esc(reference.title)}</h4><p>${esc(reference.advice)}</p><p>${esc(reference.reference)}</p>${reference.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>`).join(' · ')}</aside></div>`;
+}
 function screenCourseRoad(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
@@ -3708,7 +3872,7 @@ function screenCourseRoad(){
            한 기기를 형제가 같이 쓰므로 슬롯 3개가 이미 있는데, 로드맵에는 누구 것인지
            표시가 없어 남의 진도를 자기 것으로 읽을 수 있었다. 칩을 누르면 바로 바꾼다. -->
       <button class="nm-cr-who" id="crWho">
-        <span class="nm-cr-who-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,34):''}</span>
+        <span class="nm-cr-who-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,34):''}</span>
         <span class="nm-cr-who-txt"><small>${lk('이 학생의 로드맵','Roadmap for','此学生的路线图')}</small><b>${S.name?esc(S.name):'#'+S.character.number}${schoolNowLabel()?` <em class="nm-cr-who-gr">${esc(schoolNowLabel())}</em>`:''}</b></span>
         <span class="nm-cr-who-sw">${lk('바꾸기','Switch','切换')}</span>
       </button>
@@ -4120,7 +4284,7 @@ function screenCourseRoad(){
         const isPlaced=!!(S.placement&&S.placement.course===x.key);
         const placedChip=isPlaced?`<span class="nm-cr-placed">${S.placement.self?lk('내가 고른 시작점','My chosen start','我选的起点'):lk('진단 추천','Check-up pick','测评推荐')}</span>`:'';
         html+=`<div class="nm-cr-row ${ci%2?'right':'left'}${isPlaced?' placed':''}">
-          ${isNow?`<div class="nm-cr-here">${window.renderHumanChar?window.renderHumanChar(avatarKind(),44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
+          ${isNow?`<div class="nm-cr-here">${window.renderHumanChar?window.renderHumanChar(avatarProfile(),44):'🪄'}<span>${lk('지금 여기','You are here','当前位置')}</span></div>`:''}
           <button class="nm-cr-node ${st}${locked?' trial-locked':''}" data-c="${x.key}" style="--acc:${tierDef.accent}"${isNow?' id="crNow"':''}>
             <span class="nm-cr-num">${x.num}${isDone?`<i class="nm-cr-flag">${crIc('check')}</i>`:''}</span>
             <span class="nm-cr-nbody">
@@ -4276,6 +4440,7 @@ function screenCourseRoad(){
   draw(false);
   if(heroEl&&!hero3dLikely)heroEl.remove();
   setRoadView(roadView,false);
+  renderPersonalPlan();
 }
 /* WebGL 을 쓸 수 있을 것 같은가(없으면 3D 지도 자리를 만들지 않고 옛 동작 그대로) */
 function road3dLikely(){
@@ -4331,9 +4496,9 @@ function mountRoad3DInto(heroEl, o){
       if(t) t.scrollIntoView({block:'center'});
     }
   };
-  import('./road3d/road3d.js').then(m=>m.mountRoad3D(heroEl,{
+  import('./road3d/road3d.js?v=20261021-characters1').then(m=>m.mountRoad3D(heroEl,{
     lang:S.lang, courses, bands, checkups, current:curKey, goal:goalKey, focus:o.focus,
-    avatar:{kind:avatarKind()},
+    avatar:avatarProfile(),
     onCourse:id=>roadFlashRow(o.listEl.querySelector(`.nm-cr-node[data-c="${id}"]`),o.body),
     onCheckup:num=>roadFlashRow(o.listEl.querySelector(`.nm-cr-check[data-chk="${num}"]`),o.body)
   })).then(ctl=>{
@@ -4678,6 +4843,10 @@ function screenPlacement(){
   // A saved adaptive run cannot be interpreted as a fixed 6/10/4 plan.
   if(!S._diag||S._diag.version!==ui.version){S._diag=ui.initial();save();}
   ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,
+    planSettings:{speed:S.roadSpeed||1,pace:S.roadPace||'p2',cadence:S.roadCadence||'w1'},
+    onProfile:profile=>{S.schoolAge={entryYear:profile.entryYear,birthYear:profile.birthYear,setAt:Date.now()};save();},
+    paceManaged:!!S.adminPlan,
+    onPaceApply:p=>{if(S.adminPlan||!ROAD_MULTS_LIST.includes(p.speed)||!['w1','w2'].includes(p.cadence))return false;S.roadSpeed=p.speed;S.roadCadence=p.cadence;S.roadManual=true;save();return true;},
     pick:()=>{S._diag=null;S.view='startpick';save();render();},
     seeCourse:key=>{S._diag=null;S._roadFocus=key;S.view='courseroad';save();render();},
     onResult:(result,run)=>{
@@ -5165,7 +5334,7 @@ function screenTitle(){
       </div>
       <!-- 캐릭터 크기 88→136(2026-09-16, 원장 "캐릭터를 더 키워야지"). 원본 해상도로 크게 그려야
            흐려지지 않는다 — CSS 확대가 아니라 렌더 크기 자체를 키운다. -->
-      <div class="nm-title-char">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,136):''}</div>
+      <div class="nm-title-char">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,136):''}</div>
       <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>
       <div class="nm-title-stats">
         <span class="nm-title-chip">🪙 ${S.coins}</span>
@@ -5246,13 +5415,13 @@ function mountTitle3DInto(scr, summary, badge){
   const chips=[];   /* 동전은 모듈이 coins 로 따로 그린다 */
   if(S.attend&&S.attend.days)chips.push({icon:'📅',text:{ko:`${S.attend.days}일`,en:`Day ${S.attend.days}`,zh:`第${S.attend.days}天`}});
   if(badge)chips.push({icon:'🏅',text:badge.label,gold:true});
-  import('./title3d/title3d.js').then(m=>{
+  import('./title3d/title3d.js?v=20261022-spatial1').then(m=>{
     const choices=m.DEFAULT_CHOICES.map(c=>c.id==='continue'&&summary?Object.assign({},c,{sub:summary}):c);
     return m.mountTitle3D(box,{
       lang:S.lang, choices,
       onPick:id=>{const b=document.getElementById(BTN[id]);if(b)b.click();},
-      player:px=>window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,px):'',
-      name:S.name||'', coins:S.coins, chips, extraHtml:lineageBadgeRowHtml()
+      player:px=>window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,px):'',
+      name:avatarName(), coins:S.coins, chips, extraHtml:lineageBadgeRowHtml()
     });
   }).then(ctl=>{
     if(!ctl){revealFallback();return;}
@@ -5281,6 +5450,12 @@ function lineageBadgeRowHtml(){
    없는 완전 신규 학생은 과정1부터. */
 function currentCourseKey(){
   const uid = mostRecentTouchedUnit();
+  if(S.adminPlan&&(window.NM_COURSES||{})[S.adminPlan.courseKey]){
+    const changed=Date.parse(S.adminPlan.updatedAt)||0;
+    const recent=uid&&S.progress[uid];
+    const actual=uid&&courseForUnit(uid);
+    if(!recent||recent.touchedAt<=changed||!actual||+actual.slice(1)<+S.adminPlan.courseKey.slice(1))return S.adminPlan.courseKey;
+  }
   if(uid){
     const cid = courseForUnit(uid);
     if(cid) return cid;
@@ -5372,7 +5547,7 @@ function unlockPreviewChar(item){
 function unlockOverlayHtml(item){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const previewChar=unlockPreviewChar(item);
-  const partyHtml=window.renderPartyHtml?window.renderPartyHtml(avatarKind(),previewChar,96)
+  const partyHtml=window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),previewChar,96)
     :(window.renderNumiChar?window.renderNumiChar(previewChar,96):'');
   const line=esc(lk('새 친구가 왔어! 옷장에서 고르면 나랑 같이 다니는 친구가 돼.','A new friend arrived! Pick them in the closet and they will walk with you.','新朋友来了！在衣橱里选它，它就会陪你一起走。'));
   return `<div class="nm-gate-overlay nm-unlock-overlay" id="nmUnlockOverlay">
@@ -5395,8 +5570,13 @@ function showUnlockOverlay(queue){
   $('#nmUnlockOverlay').addEventListener('click', e=>{ if(e.target.id==='nmUnlockOverlay') close(); });
 }
 /* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
-function primarySessionOf(course){
+function primarySessionOf(course,courseKey){
   if(!course || !course.sessions) return null;
+  const p=S.adminPlan;
+  if(p&&p.courseKey===courseKey&&course.sessions[p.sessionIndex-1]){
+    const s=course.sessions[p.sessionIndex-1];
+    return s.test?{...s,drills:s.pool||[],magic:[]}:s;
+  }
   const withMagic = course.sessions.find(s => !s.test && s.magic && s.magic.length);
   return withMagic || course.sessions.find(s => !s.test) || null;
 }
@@ -5411,7 +5591,7 @@ function envelopeForWeek(weekKey){
   const courseKey = currentCourseKey();
   const course = NM_COURSES[courseKey];
   if(!course) return null;
-  const session = primarySessionOf(course);
+  const session = primarySessionOf(course,courseKey);
   if(!session) return null;
   const placements = (session.drills||[]).map((d,i) => ({
     order: i+1, thread: d.t, level: d.lv, count: d.n,
@@ -5489,7 +5669,7 @@ function screenBoost(){
     S.boost.log.push({weekKey:b.weekKey, thread:b.threadId, level:b.level, score:b.score, need:b.need, ts:Date.now()});
     if(S.boost.log.length>30) S.boost.log.splice(0, S.boost.log.length-30);
     const already = !!S._boostRewarded;
-    if(!already){ coinAdd(6); S._boostRewarded=true; }
+    if(!already){ coinAdd(6,'boost'); S._boostRewarded=true; }
     maybeAwardWeeklyBonus(b.weekKey); /* §6 — 몸풀기까지 끝나면 그 주가 완료됐을 수 있다 */
     scr.innerHTML=`<div class="nm-unit-bar">
       <div class="nm-unit-title">🌟 ${lk('몸풀기 완료!','Warm-up Complete!','热身完成！')}</div>
@@ -5592,9 +5772,9 @@ function screenMailbox(){
     </div>
     <div class="nm-step-body nm-wsh-wrap">
       <div class="nm-card nm-gate-card-inline">
-        <div class="nm-card-h">🔒 ${lk('편지함은 학원 승인 후 열려요','The mailbox unlocks after academy approval','学院授权后才能开启信箱')}</div>
-        <p class="nm-wsh-sentence">${lk('승인번호가 있으면 지금 바로 열 수 있어요.','If you already have a code, you can unlock it right now.','有授权码即可立即解锁。')}</p>
-        <button class="nm-btn full" id="mbGate">🔑 ${lk('승인번호 입력','Enter code','输入授权码')}</button>
+        <div class="nm-card-h">🔒 ${lk('가입·이용기간을 확인해 주세요','Check registration and membership','请确认注册和使用期限')}</div>
+        <p class="nm-wsh-sentence">${lk('가입 후 30일 체험할 수 있어요. 이후에는 학원에서 6개월·1년 이용을 승인해요.','Registration includes a 30-day trial. Your academy can then approve 6 months or 1 year.','注册后可体验30天，之后可由学院开通6个月或1年。')}</p>
+        <button class="nm-btn full" id="mbGate">${lk('가입·이용 상태 보기','View registration and membership','查看注册及使用状态')}</button>
       </div>
     </div>`;
     $('#mbBack').onclick=()=>{S.view='town';save();render();};
@@ -5679,6 +5859,7 @@ function screenMailbox(){
          마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
       const wk = (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
         ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey(),
+            startSession:S.adminPlan?.courseKey===env.courseKey?S.adminPlan.sessionIndex:null,
             /* 몇 번째 회차인가 = 이 주 전에 연 봉투 수(2026-09-30, 언어사고력 주제 순환·유아 중반 판정) */
             sessionIdx: Object.keys((S.mailbox && S.mailbox.opened) || {}).filter(function(wk){ return wk < env.weekKey; }).length }) : null;
       const items = wk ? wk.items : env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
@@ -5721,12 +5902,12 @@ function screenMailbox(){
   });
 }
 
-function showTownModal(title,desc,onGo){
+function showTownModal(title,desc,onGo,goText){
   const modal=$('#tmodal');
   $('#tmTitle').textContent=title;
   $('#tmDesc').textContent=desc;
   const go=$('#tmGo');
-  if(onGo){go.style.display='block';go.textContent=(S.lang==='ko'?'유닛 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=()=>{modal.classList.remove('on');onGo();};}
+  if(onGo){go.style.display='block';go.textContent=goText||(S.lang==='ko'?'학습 단원 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=()=>{modal.classList.remove('on');onGo();};}
   else go.style.display='none';
   modal.classList.add('on');
 }
@@ -5753,6 +5934,12 @@ function gateModalHtml(){
   </div>`;
 }
 function showGateModal(){
+  if(membership&&guardianAuth){
+    S.view='closet';save();render();
+    const details=$('.nm-closet-settings');if(details)details.open=true;
+    const card=$('#nm-guardian-slot');if(card)card.scrollIntoView({block:'start'});
+    return;
+  }
   if($('#nmGateModal'))return;
   document.body.insertAdjacentHTML('beforeend',gateModalHtml());
   const close=()=>{const m=$('#nmGateModal');if(m)m.remove();};
@@ -5800,7 +5987,7 @@ function mountTown3DInto(scr){
   const gates=TOWN_GATES.map(g=>({ id:g.id, icon:g.icon, name:g.name }));
   const walker=(k,n)=>window.renderWalker?window.renderWalker(k,n):'';
   const numi=(c,n)=>window.renderNumiChar?window.renderNumiChar(c,n):'';
-  const myName=S.name?S.name:('#'+S.character.number);
+  const myName=avatarName();
   /* 진짜 3D 캐릭터(app/char3d) 모델 — html 은 모델을 못 만들 때의 빌보드 대체용으로 그대로 둔다.
      버디: 기호 캐릭터는 S.character.symbol(id), 숫자는 number. char3d 는 0~10 과 기호 10종만 빚으므로
      그 밖의 숫자(11·20·42…)는 모델 없이 옛 그림으로 보여 준다(엉뚱한 숫자가 서 있지 않게). */
@@ -5813,7 +6000,7 @@ function mountTown3DInto(scr){
     return ok?{kind:'buddy',buddy:{number:id,color:c.color,hat:c.hat||'none',cape:c.cape||'none'}}:null;
   })();
   const characters=[
-    { id:'player', role:'player', html:walker(avatarKind(),60), model:{kind:avatarKind()==='girl'?'girl':'boy'}, name:myName, at:'plaza',
+    { id:'player', role:'player', html:walker(avatarProfile(),60), model:NM_HUMANS.model(avatarProfile()), name:myName, at:'plaza',
       lines:[{ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`},{ko:'길을 콕 찍으면 내가 걸어가!',en:'Tap a path and I will walk there!',zh:'点一下小路，我就走过去！'}] },
     { id:'buddy', role:'buddy', html:numi(S.character,44), model:buddyModel||undefined,
       lines:[{ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'},{ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'}] },
@@ -5842,7 +6029,7 @@ function mountTown3DInto(scr){
     vp.removeAttribute('aria-busy');
   };
   const muted=()=>{const mb=scr.querySelector('#townMute');return !mb||mb.textContent.indexOf('🔇')>=0;};
-  import('./town3d/town3d.js?v=20261014-town-recovery2').then(m=>{
+  import('./town3d/town3d.js?v=20261021-characters1').then(m=>{
     if(!box.isConnected)return null;
     return m.mountTown3D(box,{
     lang, spots, gates, characters, snapshot:townVisitSnapshot,
@@ -5879,19 +6066,28 @@ function mountTown3DInto(scr){
   }).catch(revealFallback);
 }
 /* 마을 건물 탭 → 안내 모달(2D 지도·3D 마을 공통) */
+function townDestinationLabel(id){
+  if(id==='_theater')return S.lang==='ko'?'학습지·시험':S.lang==='en'?'Worksheets':'学习单';
+  if(id==='_closet')return S.lang==='ko'?'옷장':S.lang==='en'?'Closet':'衣橱';
+  const sp=TOWN_SPOTS.find(x=>x.tier===id);return sp?L(sp.sub):'';
+}
+function enterTownDestination(id){
+  if(id==='_closet'||id==='_theater'){S.view=id==='_closet'?'closet':'exam';save();render();return;}
+  const tier=tierById(id);if(tierOpen(tier))enterTier(id);else townSpotAction(id);
+}
 function townSpotAction(id){
   if(id==='_theater'){
     const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
-    const examDesc=S.lang==='ko'?'시드 학습지를 인쇄하거나 타이머 시험을 볼 수 있어요.':
+    const examDesc=S.lang==='ko'?'학습지를 인쇄하거나 시간을 정해 시험을 볼 수 있어요.':
       S.lang==='en'?'Print a seeded worksheet or take a timed exam.':'打印带种子的学习单，或进行限时考试。';
-    showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();});
+    showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();},S.lang==='ko'?'학습지 · 시험 열기 →':S.lang==='en'?'Open worksheets & tests →':'打开学习单和测试 →');
     return;
   }
   if(id==='_closet'){
     const cl=S.lang==='ko'?'🪄 마법사 옷장':S.lang==='en'?"🪄 Wizard's Closet":'🪄 魔法师衣橱';
-    const cd=S.lang==='ko'?'숫자·색·표정·모자·배경을 골라 내 캐릭터를 꾸며요!':
+    const cd=S.lang==='ko'?'캐릭터를 더 만들고 이름·옷·숫자 친구를 골라 꾸며요!':
       S.lang==='en'?'Customize your number character!':'选择数字、颜色、表情、帽子和背景，打造专属角色！';
-    showTownModal(cl, cd, ()=>{S.view='closet';save();render();});
+    showTownModal(cl, cd, ()=>{S.view='closet';save();render();},S.lang==='ko'?'옷장 들어가기 →':S.lang==='en'?'Enter closet →':'进入衣橱 →');
     return;
   }
   const tier=tierById(id);
@@ -5906,16 +6102,14 @@ function initTownWorld(scr){
   let cam={x:0,y:0,scale:1},minS=1,maxS=3;
   const BBOX=computeContentBBox(W,H,.04);
 
-  /* 최소 배율 = 화면 꽉 채우기(cover). 예전엔 "건물 전부 보이기(bbox contain)"와 비교해
-     더 작은 쪽을 골랐는데, 세로 모바일에서 지도가 화면 절반만 차지하고 위아래가 하늘색으로
-     비는 레터박스가 생겼다(1536×1024 지도에선 더 심함). 건물은 드래그·탭 이동으로 언제든
-     닿을 수 있으므로 화면은 항상 지도로 채우고, 첫 화면만 bbox 중심(광장·타운홀)에 맞춘다. */
+  /* 지도를 화면 가득 채운다. 좁은 세로 화면의 바깥 건물은 드래그하거나
+     측면 메뉴의 장소 목록으로 입장한다. 캐릭터 이동은 필요하지 않다. */
   function fit(){
     const coverS=Math.max(vp.clientWidth/W,vp.clientHeight/H);
     minS=coverS;
     if(cam.scale<minS)cam.scale=minS;
   }
-  function apply(){world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
+  function apply(){world.style.setProperty('--town-map-scale',String(cam.scale));world.style.transform=`translate(${cam.x}px,${cam.y}px) scale(${cam.scale})`;}
   function bound(){
     const mx=vp.clientWidth-W*cam.scale, my=vp.clientHeight-H*cam.scale;
     cam.x = mx>=0 ? Math.min(mx,Math.max(0,cam.x)) : Math.min(0,Math.max(mx,cam.x));
@@ -5923,9 +6117,8 @@ function initTownWorld(scr){
   }
   function center(){
     cam.scale=minS;
-    const bcx=BBOX.x+BBOX.w/2, bcy=BBOX.y+BBOX.h/2;
-    cam.x=vp.clientWidth/2-bcx*cam.scale;
-    cam.y=vp.clientHeight/2-bcy*cam.scale;
+    cam.x=(vp.clientWidth-W*cam.scale)/2;
+    cam.y=(vp.clientHeight-H*cam.scale)/2;
     bound();apply();
   }
   /* 따라가는 카메라 — 지도를 통째로 보여주는 대신 플레이어 가까이(cover×FOLLOW_ZOOM)
@@ -5933,7 +6126,7 @@ function initTownWorld(scr){
      손으로 지도를 끌면 따라가기를 잠시 끄고(자유 둘러보기), 지도를 탭해 걷게 하거나
      📍 버튼을 누르면 다시 켠다. */
   const FOLLOW_ZOOM=1.7;
-  let follow=true;
+  let follow=false;
   function playerWorld(){const p=(typeof player!=='undefined')?player:null;return p?{x:p.x/100*W,y:p.y/100*H}:{x:BBOX.x+BBOX.w/2,y:BBOX.y+BBOX.h/2};}
   function focusPlayer(immediate){
     const pw=playerWorld();
@@ -5980,19 +6173,19 @@ function initTownWorld(scr){
   zin.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale*1.25,r.left+r.width/2,r.top+r.height/2);};
   zout.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale/1.25,r.left+r.width/2,r.top+r.height/2);};
   const meBtn=scr.querySelector('#townMe');
-  if(meBtn)meBtn.onclick=()=>{follow=true;cam.scale=Math.min(maxS,minS*FOLLOW_ZOOM);focusPlayer(true);};
+  if(meBtn)meBtn.onclick=()=>{follow=false;center();};
   function onWheel(e){e.preventDefault();zoomTo(cam.scale*(e.deltaY<0?1.1:.9),e.clientX,e.clientY);}
   vp.addEventListener('wheel',onWheel,{passive:false});
 
-  requestAnimationFrame(()=>{fit();cam.scale=Math.min(maxS,minS*FOLLOW_ZOOM);focusPlayer(true);});
-  function onResize(){fit();bound();apply();}
+  requestAnimationFrame(()=>{fit();center();});
+  function onResize(){fit();center();}
   addEventListener('resize',onResize);
 
   /* 건물 클릭 */
   scr.querySelectorAll('.nm-zone').forEach(z=>{
-    z.addEventListener('pointerup',e=>{
+    z.addEventListener('click',e=>{
       if(moved)return;e.stopPropagation();
-      townSpotAction(z.dataset.spot);
+      enterTownDestination(z.dataset.spot);
     });
   });
   scr.querySelector('#tmClose').onclick=()=>modal.classList.remove('on');
@@ -6001,7 +6194,7 @@ function initTownWorld(scr){
   /* 관문 표지판 탭(§3) — .nm-zone과 같은 패턴(드래그면 무시, 지도 탭-이동과 충돌
      안 하게 stopPropagation). */
   scr.querySelectorAll('.nm-gate').forEach(g=>{
-    g.addEventListener('pointerup',e=>{
+    g.addEventListener('click',e=>{
       if(moved)return;e.stopPropagation();
       const gate=TOWN_GATES.find(x=>x.id===g.dataset.gate);
       if(gate)showGateLinksModal(gate);
@@ -6030,10 +6223,10 @@ function initTownWorld(scr){
      그 자리로 걸어간다. nbBuddy(동행 숫자/기호 캐릭터)는 플레이어를 살짝 뒤에서
      따라다닌다(pick() 대상 아님). nbElder·nbDoc는 정자·도서관 앞에 서 있는 정지
      NPC(spd:0, still:true — walk()에서 아예 움직이지 않는다). Poco/Momo는 계속 자유 배회. */
-  const myName=S.name?S.name:('#'+S.character.number);
+  const myName=avatarName();
   const nbs=[
     {el:scr.querySelector('#nbNumi'),x:40,y:62,tx:40,ty:62,spd:.22,player:true,
-      lines:[L({ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`}),L({ko:'지도를 콕 찍으면 내가 걸어가!',en:'Tap the map and I will walk there!',zh:'点一下地图，我就走过去！'})]},
+      lines:[L({ko:`안녕! 난 ${myName}(이)야 ✨`,en:`Hi! I'm ${myName} ✨`,zh:`你好！我是${myName} ✨`}),L({ko:'건물을 누르면 바로 들어갈 수 있어!',en:'Tap a building to enter!',zh:'点击建筑就能进入！'})]},
     {el:scr.querySelector('#nbBuddy'),x:37,y:63,tx:37,ty:63,spd:.22,buddy:true,
       lines:[L({ko:'오늘은 어떤 마법을 배울까?',en:'What magic shall we learn today?',zh:'今天学什么魔法呢？'}),L({ko:'내가 옆에서 도와줄게!',en:'I will help you right here!',zh:'我在旁边帮你！'})]},
     {el:scr.querySelector('#nbElder'),x:31,y:52,tx:31,ty:52,spd:0,still:true,
@@ -6087,24 +6280,6 @@ function initTownWorld(scr){
      충돌하지 않도록: 드래그하지 않은 "가벼운 탭"일 때만 목적지로 삼는다. */
   let pinched=false;
   vp.addEventListener('pointermove',()=>{if(pts.size>=2)pinched=true;});
-  vp.addEventListener('pointerup',e=>{
-    if(moved){return;}
-    if(pinched){pinched=false;return;}
-    if(modal.classList.contains('on'))return;
-    const r=vp.getBoundingClientRect();
-    const wx=(e.clientX-r.left-cam.x)/cam.scale;   // 월드 px
-    const wy=(e.clientY-r.top -cam.y)/cam.scale;
-    let px=wx/W*100, py=wy/H*100;                  // 월드 %
-    if(px<2||px>98||py<4||py>96)return;            // 지도 밖 무시
-    const me=nbs[0];
-    me.tx=px; me.ty=py; follow=true;
-    /* 목적지 표시(잠깐 반짝) */
-    const ping=document.createElement('div');
-    ping.className='nb-ping';
-    ping.style.left=px+'%';ping.style.top=py+'%';
-    world.appendChild(ping);
-    setTimeout(()=>ping.remove(),700);
-  });
   nbs.forEach(n=>{
     n.el.addEventListener('pointerup',e=>{
       if(moved)return;e.stopPropagation();
@@ -6119,11 +6294,13 @@ function initTownWorld(scr){
   /* 음소거 버튼: 배경음악+물소리(Web Audio)와 숫자친구 TTS를 함께 켜고 끔 */
   const mb=scr.querySelector('#townMute');
   mb.textContent=muted?'🔇':'🔈';
+  mb.setAttribute('aria-label',S.lang==='ko'?(muted?'마을 소리 켜기':'마을 소리 끄기'):S.lang==='en'?(muted?'Turn village sound on':'Turn village sound off'):(muted?'开启村庄声音':'关闭村庄声音'));
   mb.onclick=()=>{
     muted=!muted;
     mb.textContent=muted?'🔇':'🔈';
+  mb.setAttribute('aria-label',S.lang==='ko'?(muted?'마을 소리 켜기':'마을 소리 끄기'):S.lang==='en'?(muted?'Turn village sound on':'Turn village sound off'):(muted?'开启村庄声音':'关闭村庄声音'));
     if(muted){
-      speechSynthesis.cancel();
+      stopVoice();
       if(stopAmbience){stopAmbience();stopAmbience=null;}
     }else{
       if(!stopAmbience)stopAmbience=startAmbience();
@@ -6133,6 +6310,7 @@ function initTownWorld(scr){
   return function cleanup(){
     clearInterval(fountainTimer);
     clearInterval(sparkTimer);
+    stopVoice();
     cancelAnimationFrame(walkRAF);
     removeEventListener('resize',onResize);
     if(stopAmbience){stopAmbience();stopAmbience=null;}
@@ -6261,13 +6439,12 @@ function flowBar(){
 }
 
 function screenUnit(){
+  lessonVersion++;
+  stopVoice();
   const scr=$('#screen');const u=UNITS[S.unit];
-  /* 독쌤 학습 안내 띠 — 유닛의 "첫 화면"에서만(연습 이후 체크/랩/아레나/도장엔 안 뜸).
-     enterUnit()은 유닛에 따라 'intro'(u.introVideo)·'range'(u.ranges)·'practice' 중
-     하나로 곧장 진입시킨다(널이 아님) — 셋 다 "학습 흐름 진짜 시작 전" 화면이라 전부
-     첫 화면으로 친다. 지도에서 S.step이 비어 진입하면 discover이므로 중복 안내 띠를 싣지 않는다.
-     unitFlowOf(u)[0].key는 항상 'practice'(§curriculum.js unitFlow). */
-  const isFirstUnitStep = S.step==='range' || S.step==='intro' || S.step===unitFlowOf(u)[0].key;
+  /* Video/range selection keeps the host strip. Practice now has a separate
+     explanation screen, so it does not repeat that strip above the question. */
+  const isFirstUnitStep = S.step==='range' || S.step==='intro';
   const learningBand=u.tier==='basic'?'preschool':(/^(middle|high)/.test(u.tier||'')||['algebra','calculus1'].includes(u.tier))?'secondary':'elementary';
   scr.innerHTML=`<div class="nm-unit-view" lang="${esc(S.lang)}" data-learning-band="${learningBand}" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
     <div class="nm-unit-bar">
@@ -6300,7 +6477,7 @@ function stepUnitIntro(body,u){
   body.querySelector('.nm-uintro-skip').onclick=done;
   vid.addEventListener('ended',done);
   vid.addEventListener('error',done);
-  setTimeout(done,15000);
+  lessonLater(done,15000);
 }
 
 function gotoStep(k){S.step=k;save();screenUnit();}
@@ -6329,21 +6506,27 @@ function runPractice(body,u){
   const cur=S.sub.cur;
   const first=S.sub.pIdx===0&&!S.sub.started;
   /* 조작 위젯 문제(유아 tapCount 등)는 넘패드 대신 위젯 렌더 */
+  if(first&&L(cfg.intro)){
+    body.innerHTML=`<div class="nm-practice-intro"><div class="nm-practice-explanation">${numiDialogueHtml(L(cfg.intro))}</div><div class="nm-practice-intro-actions"><button class="nm-btn ghost" id="nmLessonReplay">${L({ko:'설명 다시 듣기',en:'Replay explanation',zh:'重听说明'})}</button><button class="nm-btn" id="nmLessonBegin">${L({ko:'문제 풀기',en:'Try the question',zh:'开始答题'})}</button></div></div>`;
+    $('#nmLessonReplay').onclick=()=>say(L(cfg.intro));
+    $('#nmLessonBegin').onclick=()=>{stopVoice();S.sub.started=true;runPractice(body,u);};
+    say(L(cfg.intro));return;
+  }
   if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
   const isMulti=Array.isArray(cur.answer);
   if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
-  body.innerHTML=`<div class="nm-dialog">
+  body.innerHTML=`<div class="nm-dialog nm-answer-dialog">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
-    <div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
+    <div class="nm-answer-guide"><div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
     <div class="nm-bubble" id="bub">${first?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt)):numiDialogueHtml(L(cur.prompt))}</div>
-    <div class="nm-board">
+    </div><div class="nm-answer-work"><div class="nm-board">
       ${pracTex}
       <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
     </div>
     <div class="nm-numpad" id="pad"></div>
-    <div class="nm-hint">${t('numpadHint')}</div>
+    <div class="nm-hint">${t('numpadHint')}</div></div>
   </div>`;
   S.sub.started=true;
   renderMath(body);
@@ -6383,7 +6566,7 @@ function wireManipulativeKeys(host){
 function runPracticeWidget(body,u,cur,first,need){
   const cfg=u.practice;
   const gridFit=cur.widget==='g13Grid'&&cur.cols<=5;
-  const widgetFit=gridFit||['g13Rep','numberBond','splitDraw','hopLine'].includes(cur.widget);
+  const widgetFit=true; // Every widget keeps its guide separate from its work area.
   body.innerHTML=`<div class="nm-dialog${widgetFit?' nm-widget-dialog '+(gridFit?'nm-grid-dialog':'nm-manipulative-dialog'):''}">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     ${widgetFit?'<div class="nm-widget-guide">':''}
@@ -6400,9 +6583,9 @@ function runPracticeWidget(body,u,cur,first,need){
       if(NM_WIDGETS._isYoungBand&&NM_WIDGETS._isYoungBand())NM_WIDGETS._correctTone();
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.cur=null;
-      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');lessonLater(()=>gotoStep('discover'),700);return;}
       S.sub.cur=genProblem(cfg,'practice');save();
-      setTimeout(()=>runPractice(body,u),650);
+      lessonLater(()=>runPractice(body,u),650);
     }else{
       toast(t('tryAgain'),false);
     }
@@ -6418,9 +6601,9 @@ function handlePractice(val,body,u){
       if(multiEquals(cur.answer)){
         toast(t('correct'),true);numiHappy();
         S.sub.pIdx++;S.sub.mvals=null;S.sub.cur=null;
-        if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+        if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');lessonLater(()=>gotoStep('discover'),700);return;}
         S.sub.cur=genProblem(u.practice,'practice');save();
-        setTimeout(()=>runPractice(body,u),650);
+        lessonLater(()=>runPractice(body,u),650);
       }else{toast(t('tryAgain'),false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-lab-expr',S.sub.mvals);}
       return;
     }
@@ -6428,9 +6611,9 @@ function handlePractice(val,body,u){
     if(parseFloat(inp)===cur.answer){
       toast(t('correct'),true);numiHappy();
       S.sub.pIdx++;S.sub.inp='';S.sub.cur=null;
-      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');setTimeout(()=>gotoStep('discover'),700);return;}
+      if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');lessonLater(()=>gotoStep('discover'),700);return;}
       S.sub.cur=genProblem(u.practice,'practice');save();
-      setTimeout(()=>runPractice(body,u),650);
+      lessonLater(()=>runPractice(body,u),650);
     }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-lab-expr','');}
     return;
   }
@@ -6968,7 +7151,7 @@ function bindHistQuizPuzzle(scr,uid,comic){
       S.histQuiz.done[uid]=true;
       hqPuzzle.checked='ok';
       save();
-      if(!already){ coinAdd(2); toast('🪙 +2',true); }
+      if(!already){ coinAdd(2,'training'); toast('🪙 +2',true); }
       screenHistQuiz();
     }else{
       hqPuzzle.checked='no';                              // 고른 순서는 그대로 둔다 — 다시 보고 고치게
@@ -7059,21 +7242,21 @@ function screenReport(){
      아레나 점수 등 다른 화면의 .nm-score는 그대로 두기 위해 리포트 전용 클래스로 분리). */
   const scoreHtml = totalUnitsDone===0
     ? `<div class="nm-rp-empty">
-        <div class="nm-rp-empty-ava">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,72):''}</div>
-        <p class="nm-rp-empty-msg">${lk('첫 유닛을 시작해 볼까요?','Shall we start the first unit?','开始第一个单元吧？')}</p>
+        <div class="nm-rp-empty-ava">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,72):''}</div>
+        <p class="nm-rp-empty-msg">${lk('첫 학습 단원을 시작해 볼까요?','Shall we start the first unit?','开始第一个单元吧？')}</p>
         <button class="nm-btn full" id="rpToTown">${lk('마을로 가기','Go to town','前往小镇')}</button>
       </div>`
-    : `<div class="nm-rp-score">${totalUnitsDone} ${lk('유닛 완료','units done','个单元完成')}</div>`;
+    : `<div class="nm-rp-score">${lk(`학습 단원 ${totalUnitsDone}개 완료`,`${totalUnitsDone} units done`,`${totalUnitsDone} 个单元完成`)}</div>`;
   /* 주간 그래프 — 최근 7일, 막대 높이=푼 문제 수, 색=정답률(60% 미만 주황). 데이터 없으면 안내 한 줄. */
   const DAYS={ko:['일','월','화','수','목','금','토'],en:['S','M','T','W','T','F','S'],zh:['日','一','二','三','四','五','六']}[S.lang]||['일','월','화','수','목','금','토'];
   const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const v=(S.daily&&S.daily[k])||{n:0,ok:0};days.push({k,dow:DAYS[d.getDay()],n:v.n,ok:v.ok,today:i===0});}
   const maxN=Math.max(1,...days.map(d=>d.n)); const wkN=days.reduce((a,d)=>a+d.n,0), wkOk=days.reduce((a,d)=>a+d.ok,0);
-  const weekHtml=`<div class="nm-mb-section-h">${lk('이번 주 7일','Last 7 days','最近7天')}</div>
+  const weekHtml=`<div class="nm-mb-section-h">${lk('최근 7일','Last 7 days','最近7天')}</div>
     <div class="nm-rp-week" role="img" aria-label="${lk('주간 활동','Weekly activity','每周活动')}">
       ${days.map(d=>{const h=d.n?Math.max(8,Math.round(d.n/maxN*72)):3;const rate=d.n?d.ok/d.n:0;const cls=d.n?(rate<.6?' low':' good'):'';
         return `<div class="nm-rp-day${d.today?' today':''}"><div class="nm-rp-bar-wrap"><div class="nm-rp-bar${cls}" style="height:${h}px" title="${d.n}"></div></div><span class="nm-rp-dow">${d.dow}</span></div>`;}).join('')}
     </div>
-    <p class="nm-wsh-sentence">${wkN?lk(`이번 주 ${wkN}문제 · 정답률 ${Math.round(wkOk/wkN*100)}%`,`${wkN} problems this week · ${Math.round(wkOk/wkN*100)}% correct`,`本周${wkN}题 · 正确率${Math.round(wkOk/wkN*100)}%`):lk('문제를 풀면 여기에 하루하루가 쌓여요.','Solve problems and the days will fill in here.','做题后这里会一天天累积。')}</p>`;
+    <p class="nm-wsh-sentence">${wkN?lk(`최근 7일간 ${wkN}문제 · 정답률 ${Math.round(wkOk/wkN*100)}%`,`${wkN} problems in the last 7 days · ${Math.round(wkOk/wkN*100)}% correct`,`最近7天${wkN}题 · 正确率${Math.round(wkOk/wkN*100)}%`):lk('문제를 풀면 여기에 하루하루가 쌓여요.','Solve problems and the days will fill in here.','做题后这里会一天天累积。')}</p>`;
   scr.innerHTML=`<div class="nm-unit-bar">
       <button class="nm-back" id="rpBack">${t('back')}</button>
       <div class="nm-unit-title">${titleHtml}</div>
@@ -7139,8 +7322,8 @@ function stepCheck(body,u){
         if(multiEquals(fill.answer)){
           toast(t('correct'),true);numiHappy();
           S.sub.fi++;S.sub.mvals=null;
-          if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
-          else setTimeout(()=>stepCheck(body,u),700);
+          if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};lessonLater(()=>openQuestion(body,u),700);}
+          else lessonLater(()=>stepCheck(body,u),700);
         }else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);multiClear(fill.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-fill',S.sub.mvals);}
         return;
       }
@@ -7148,8 +7331,8 @@ function stepCheck(body,u){
       if(parseFloat(inp)===fill.answer){
         toast(t('correct'),true);numiHappy();
         S.sub.fi++;S.sub.inp='';
-        if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};setTimeout(()=>openQuestion(body,u),700);}
-        else setTimeout(()=>stepCheck(body,u),700);
+        if(S.sub.fi>=c.fills.length){markStepDone(S.unit,'check');S.sub={};lessonLater(()=>openQuestion(body,u),700);}
+        else lessonLater(()=>stepCheck(body,u),700);
       }
       else{toast(t('tryAgain'),false);$('#fhint').textContent='💡 '+L(fill.hint);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-fill','');}
       return;}
@@ -7192,7 +7375,7 @@ function stepLabWidget(body,u){
   const origTexHtml=cur.tex?labExprHtml(cur.tex):'';
   /* steps(단계 카드) 위젯은 세로 공간을 많이 쓰므로 모바일 압축용 클래스를 단다 */
   const gridFit=cur.widget==='g13Grid'&&cur.cols<=5;
-  const widgetFit=gridFit||['g13Rep','numberBond','splitDraw','hopLine'].includes(cur.widget);
+  const widgetFit=true; // Every widget keeps its guide separate from its work area.
   body.innerHTML=`<div class="nm-dialog${widgetFit?' nm-widget-dialog '+(gridFit?'nm-grid-dialog':'nm-manipulative-dialog'):''}${cur.widget==='steps'?' steps-mode':''}">
     <div class="nm-prog">${dots(need,S.sub.li)}</div>
     ${widgetFit?'<div class="nm-widget-guide">':''}
@@ -7213,9 +7396,9 @@ function stepLabWidget(body,u){
       if(NM_WIDGETS._isYoungBand&&NM_WIDGETS._isYoungBand())NM_WIDGETS._correctTone();
       {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
       S.sub.li++;S.sub.cur=null;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');lessonLater(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
-      setTimeout(()=>stepLab(body,u),650);
+      lessonLater(()=>stepLab(body,u),650);
     }else{
       voiceLine(u,u.voice.wrong,false);
     }
@@ -7302,9 +7485,9 @@ function handleLabNumpad(val,body,u){
       if(multiEquals(cur.answer)){
         {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
         S.sub.li++;S.sub.mvals=null;S.sub.cur=null;
-        if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+        if(S.sub.li>=need){markStepDone(S.unit,'lab');lessonLater(()=>gotoStep(afterLabKey(u)),700);return;}
         S.sub.cur=genProblem(u.lab,'main');save();
-        setTimeout(()=>stepLab(body,u),650);
+        lessonLater(()=>stepLab(body,u),650);
       }else{voiceLine(u,u.voice.wrong,false);multiClear(cur.answer);const sc=$('#pscreen');sc.innerHTML=multiScreenHtml();bindMultiBoxes(sc);updateLiveFill('.nm-lab-expr',S.sub.mvals);}
       return;
     }
@@ -7312,9 +7495,9 @@ function handleLabNumpad(val,body,u){
     if(parseFloat(inp)===cur.answer){
       {const sfx=playSfx("success");voiceLine(u,u.voice.correct,true,{afterSfx:sfx});numiHappy();}
       S.sub.li++;S.sub.inp='';S.sub.cur=null;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),700);return;}
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');lessonLater(()=>gotoStep(afterLabKey(u)),700);return;}
       S.sub.cur=genProblem(u.lab,'main');save();
-      setTimeout(()=>stepLab(body,u),650);
+      lessonLater(()=>stepLab(body,u),650);
     }else{voiceLine(u,u.voice.wrong,false);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-lab-expr','');}
     return;
   }
@@ -7358,8 +7541,8 @@ function pickTile(el,i,n,body,u){
       voiceLine(u,u.voice.correct,true,{force:true,afterSfx:sfx});
       S.sub.li++;S.sub.cur=null;S.sub.pairsFound=0;
       const need=u.lab.count||4;
-      if(S.sub.li>=need){markStepDone(S.unit,'lab');setTimeout(()=>gotoStep(afterLabKey(u)),800);return;}
-      setTimeout(()=>stepLab(body,u),900);
+      if(S.sub.li>=need){markStepDone(S.unit,'lab');lessonLater(()=>gotoStep(afterLabKey(u)),800);return;}
+      lessonLater(()=>stepLab(body,u),900);
     }else{voiceLine(u,u.voice.wrong,false,{force:true});p.forEach(x=>{const e=document.querySelector(`.nm-tile[data-i="${x.i}"]`);if(e)e.classList.remove('sel');});S.sub.picked=[];pk.disabled=true;}
   };
 }
@@ -7435,7 +7618,7 @@ function stepStamp(body,u){
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
   let newLineageBadge=null;
-  if(!already){coinAdd(s.coins||20);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
+  if(!already){coinAdd(s.coins||20,'unit');S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
     S.progress[S.unit].steps=S.progress[S.unit].steps||{};S.progress[S.unit].steps.stamp=true; /* 로드맵 별점이 stepDone('stamp')를 보므로 반드시 기록(기존 누락 버그 수정) */
     S.progress[S.unit].touchedAt=Date.now();
     /* N-15(수의 나라 마지막 유닛) 최초 완주 — R0 추천 배너를 다음 마을 진입 때 1회 띄우도록 예약.
@@ -7456,7 +7639,7 @@ function stepStamp(body,u){
   playSfx('stamp');confetti();const sfx=playSfx("great-job");sayAfterSfx(sfx,L(u.voice.finish));
   bindLineageEvoCard(body);
   $('#toMap').onclick=exitUnit;
-  if(newLineageBadge)setTimeout(()=>showLineageBadgeOverlay(newLineageBadge),700);
+  if(newLineageBadge)lessonLater(()=>showLineageBadgeOverlay(newLineageBadge),700);
 }
 
 /* ---------- 공통 UI 조각 ---------- */
@@ -7547,12 +7730,14 @@ function screenCloset(){
   </div>
   <div class="nm-step-body nm-closet-wrap">
     <div id="nm-closet-cnt"></div>
-    <div id="nm-slots-slot"></div>
+    ${REVIEW?'':`    <div id="nm-slots-slot"></div>
     <details class="nm-closet-settings">
       <summary>${lk('계정 · 알림 설정','Account & notifications','账号·通知设置')}</summary>
+      <div id="nm-guardian-slot"></div>
       <div id="nm-idcard-slot"></div>
       <div id="nm-account-slot"></div>
     </details>
+`}
   </div>`;
   $('#backCloset').onclick=()=>{S.view='town';save();render();};
   renderIdCard();
@@ -7566,22 +7751,40 @@ function screenCloset(){
       unlocked: S.character_unlocked,
       coins: S.coins,
       lang: S.lang,
-      onSave(newChar, newUnlocked, coinsSpent){
-        S.character = newChar;
-        S.character_unlocked = newUnlocked;
-        if(coinsSpent) S.coins = Math.max(0, S.coins - coinsSpent);
-        save();
-        // 상단 칩만 업데이트
-        const chip=$('#charChipBtn');
-        if(chip)chip.innerHTML=charChipInner();
-        const ci=$('.nm-coins b');
-        if(ci)ci.textContent=S.coins;
+      human: avatarProfile(),
+      avatars: S.avatarCollection || [avatarProfile()],
+      ledger: S.coinLedger || [],
+      onSave(newChar){
+        const before=S.character;S.character=newChar;
+        if(!save()){S.character=before;return false;}
+        const chip=$('#charChipBtn');if(chip)chip.innerHTML=charChipInner();
+        return true;
       },
-      onSaveAvatar(kind){
-        S.avatar={kind};
-        save();
-        const chip=$('#charChipBtn');
-        if(chip)chip.innerHTML=charChipInner();
+      onPurchase(type,id){
+        // A second tab may have spent/earned coins since this screen opened.
+        // Reject stale purchases rather than overwriting that tab's progress.
+        try{const disk=JSON.parse(localStorage.getItem(KEY)||'null');
+          if(disk&&(NM_CHARACTER_STATE.balance(disk)!==S.coins||JSON.stringify(disk.character_unlocked||{})!==JSON.stringify(S.character_unlocked||{}))){
+            // Keep subsequent navigation saves from writing the stale wallet or
+            // progress back over the other tab while the reload is starting.
+            S=Object.assign(defaults(),disk);normalizeLoadedState(true);
+            window.location.reload();
+            return {ok:false,message:S.lang==='ko'?'다른 화면의 기록으로 새로고침해요. 다시 골라 주세요.':S.lang==='en'?'Reloading the other window’s record. Please choose again.':'正在刷新另一窗口的记录，请重新选择。'};
+          }
+        }catch(e){return {ok:false};}
+        const before={coins:S.coins,coinLedger:S.coinLedger,character_unlocked:S.character_unlocked};
+        const result=NM_CHARACTER_STATE.purchase(S,type,id,window.NM_AVATAR,window.NM_HUMANS);
+        if(!result.ok)return result;
+        if(result.spent&&!save()){Object.assign(S,before);return {ok:false};}
+        document.querySelectorAll('.nm-coins b').forEach(el=>{el.textContent=S.coins;});
+        return {...result,ledger:S.coinLedger||[]};
+      },
+      onSaveHuman(active,all){
+        const before={avatar:S.avatar,avatarCollection:S.avatarCollection};
+        if(!NM_CHARACTER_STATE.humans(S,active,all,NM_HUMANS))return false;
+        if(!save()){Object.assign(S,before);return false;}
+        const chip=$('#charChipBtn');if(chip)chip.innerHTML=charChipInner();
+        return true;
       }
     });
   }
@@ -7592,6 +7795,7 @@ function screenCloset(){
    (readSlotState로 다시 읽지 않음 — 방금 옷장에서 바꾼 값이 아직 저장 전일 수 있어서가
    아니라, 활성 슬롯의 원본은 항상 S이기 때문), 나머지 두 슬롯은 백업 키를 읽는다. */
 function renderSlotCards(){
+  if(REVIEW)return;
   const slot=$('#nm-slots-slot');
   if(!slot)return;
   const ko=S.lang==='ko', en=S.lang==='en';
@@ -7603,7 +7807,7 @@ function renderSlotCards(){
       const nm=S.name?esc(S.name):('#'+S.character.number);
       cards+=`<div class="nm-slot-card active">
         <span class="nm-slot-badge">${ko?'지금':en?'Now':'当前'}</span>
-        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarKind(),S.character,56):''}</div>
+        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,56):''}</div>
         <div class="nm-slot-name">${nm}</div>
       </div>`;
       continue;
@@ -7612,7 +7816,7 @@ function renderSlotCards(){
     const hasData = st && (st.onboarded || st.name);
     if(hasData){
       const ch=Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},st.character||{});
-      const avk=(st.avatar&&st.avatar.kind)||'boy';
+      const avk=st.avatar||{kind:'boy'};
       const nm=st.name?esc(st.name):('#'+ch.number);
       cards+=`<button class="nm-slot-card" data-slot="${n}" title="${ko?'전환':en?'Switch':'切换'}">
         <span class="nm-slot-del" data-del="${n}" title="${ko?'지우기':en?'Delete':'删除'}">✕</span>
@@ -7654,12 +7858,28 @@ function renderSlotCards(){
    번호는 nm_contacts에만 insert(anon은 조회 불가 — nm_profiles와 분리).
    등록 여부는 로컬 플래그(S.notifyReg)로만 표시(번호 원문은 로컬에도 안 남김). */
 function renderNotifyCard(){
+  if(REVIEW)return;
   const slot=$('#nm-account-slot');
   if(!slot)return;
+  slot.querySelectorAll('.nm-notify-card').forEach(el=>el.remove());
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
   const div=document.createElement('div');
   div.className='nm-idcard nm-notify-card';
+  const guardian=guardianAuth&&guardianAuth.peek();
+  if(!guardian||(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())||!S.cloudLinked||S.cloudOwnerId!==guardian.user.id){
+    div.textContent=lk('문자 알림은 보호자 이메일과 학생 기록을 연결한 뒤 등록할 수 있어요.','Connect a guardian email and learner profile before registering text alerts.','关联监护人邮箱和学生记录后，即可登记短信通知。');
+    slot.appendChild(div);return;
+  }
+  if(membership){
+    const contact=membership.snapshot().contact;
+    const text=document.createElement('p');text.textContent=contact?.registered
+      ?(contact.phoneMasked||'')+' · '+(contact.smsConsent?lk('학습지 문자 수신 동의','Worksheet texts enabled','已同意接收学习单短信'):lk('문자 수신 미동의','Worksheet texts disabled','未同意接收短信'))
+      :lk('가입 화면에서 보호자 전화번호를 등록해 주세요.','Register a guardian phone to complete signup.','请在注册界面填写监护人手机号。');
+    const edit=document.createElement('button');edit.className='nm-btn ghost';edit.textContent=lk('휴대폰·문자 동의 변경','Change phone or text consent','修改手机号或短信同意');
+    edit.onclick=()=>{guardianContactEditing=true;renderIdCard();$('#nm-guardian-slot')?.scrollIntoView({block:'start'});};
+    div.append(text,edit);slot.appendChild(div);return;
+  }
   if(S.notifyReg){
     div.innerHTML=`📱 ${lk('학부모 알림 등록됨','Parent alerts registered','家长通知已登记')} (${esc(S.notifyReg)}) · ${lk('해지는 학원에 문의','Contact academy to opt out','退订请联系学院')}`;
     slot.appendChild(div);
@@ -7708,8 +7928,10 @@ function renderNotifyCard(){
     }
     msgEl.textContent='…';
     try{
+      const auth=await cloudCredentials();
+      if(auth.owner!==S.cloudOwnerId)throw new Error('guardian_auth_required');
       const r=await fetch(`${SB_URL}/rest/v1/nm_contacts`,{
-        method:'POST',headers:sbHdr(),
+        method:'POST',headers:auth.headers,
         body:JSON.stringify({profile_name:S.name||('#'+(S.character&&S.character.number)),
           phone:raw,consent:true,consent_at:new Date().toISOString(),
           send_dow:($('#nmNotifyDow').value==='')?null:Number($('#nmNotifyDow').value),
@@ -7728,12 +7950,27 @@ function renderNotifyCard(){
   };
 }
 function renderAccountCard(){
+  if(REVIEW)return;
   const slot=$('#nm-account-slot');
   if(!slot)return;
+  if(membership&&!guardianAuth?.peek()&&(S.guardianManaged||S.account?.status!=='active')){
+    const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('이메일 가입 · 이용권','Email registration · Membership','邮箱注册 · 使用权')}</div><p>${lk('위에서 이메일로 로그인해 주세요. 처음 가입하면 30일 체험하고, 이후에는 6개월·1년 이용권을 학원에서 승인해 드려요.','Sign in above with your email. New registration includes a 30-day trial; your academy then approves a 6-month or 1-year plan.','请在上方使用邮箱登录。首次注册可体验30天，之后由学院开通6个月或1年使用权。')}</p></div>`;
+    return;
+  }
   const ko=S.lang==='ko', en=S.lang==='en';
+  if(membership&&guardianAuth?.peek()){
+    const state=membership.snapshot(),m=state.membership;
+    const lk=(a,b,c)=>ko?a:en?b:c;
+    const label=!m?lk('가입 정보 확인','Checking registration','确认注册信息'):m.status==='trial'?lk('30일 무료 체험','30-day free trial','30天免费体验'):m.status==='paid'?(m.plan==='six_month'?lk('6개월 이용권','6-month plan','6个月使用权'):lk('1년 이용권','1-year plan','1年使用权')):m.status==='revoked'?lk('이용권 해지','Plan revoked','使用权已撤销'):lk('이용 기간 만료','Access period ended','使用期已结束');
+    const end=m&&(m.status==='trial'?m.trialEndsAt:m.endsAt);
+    const until=end?new Date(end).toLocaleString(ko?'ko-KR':en?'en-US':'zh-CN',{timeZone:'Asia/Seoul'}):'';
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${esc(label)}</div>${until?`<p>${lk('이용 기한','Valid until','有效期至')}: ${esc(until)} (KST)</p>`:''}<p>${lk('정식 이용권은 6개월·1년 중 학원에서 승인해 드려요. 학습 기록은 이용 기간이 끝나도 보존돼요.','Your academy approves a 6-month or 1-year plan. Study records are kept after access ends.','学院可开通6个月或1年使用权。使用期结束后仍保留学习记录。')}</p><button class="nm-btn ghost" id="nmMemberRefresh">${lk('이용권 다시 확인','Refresh membership','刷新使用权')}</button></div>`;
+    $('#nmMemberRefresh').onclick=()=>membership.refresh(true);return;
+  }
   const acc=S.account||{status:'trial'};
   if(acc.status==='active'){
-    slot.innerHTML=`<div class="nm-idcard linked">🔓 ${ko?'학원 승인 완료':en?'Academy approved':'学院已授权'}${acc.code?` · <b>${esc(acc.code)}</b>`:''} · ${ko?'모든 유닛 이용 가능':en?'All units unlocked':'全部单元已解锁'} ✓</div>`;
+    slot.innerHTML=`<div class="nm-idcard linked">🔓 ${ko?'학원 승인 완료':en?'Academy approved':'学院已授权'}${acc.code?` · <b>${esc(acc.code)}</b>`:''} · ${ko?'모든 학습 단원 이용 가능':en?'All units unlocked':'全部单元已解锁'} ✓</div>`;
     return;
   }
   slot.innerHTML=`<div class="nm-idcard">
@@ -7742,7 +7979,7 @@ function renderAccountCard(){
       <input id="accCode" maxlength="24" placeholder="${ko?'승인번호 입력':en?'Enter code':'输入授权码'}" autocomplete="off">
       <button class="nm-btn" id="accSubmit">${ko?'확인':en?'Apply':'确认'}</button>
     </div>
-    <div class="nm-idcard-msg" id="accMsg">${ko?'학원에서 받은 승인번호를 입력하면 모든 유닛·편지함·인쇄가 열려요.':en?'Enter the code from your academy to unlock every unit, the mailbox, and printing.':'输入学院提供的授权码即可解锁全部单元、信箱与打印。'}</div>
+    <div class="nm-idcard-msg" id="accMsg">${ko?'학원에서 받은 승인번호를 입력하면 모든 학습 단원·편지함·인쇄가 열려요.':en?'Enter the code from your academy to unlock every unit, the mailbox, and printing.':'输入学院提供的授权码即可解锁全部单元、信箱与打印。'}</div>
   </div>`;
   $('#accCode').addEventListener('keydown',e=>{if(e.key==='Enter')submitAcc();});
   $('#accSubmit').onclick=submitAcc;
@@ -7767,24 +8004,208 @@ function renderAccountCard(){
   }
 }
 
-/* ---------- 아이디 등록 카드 (옷장 상단) ----------
-   온보딩을 이미 지난 기존 사용자도 여기서 이름을 아이디로 등록할 수 있다.
-   등록된 뒤에는 상태 표시만 남는다. */
+/* ---------- 보호자 이메일 인증·학생 기록 연결 (설정) ---------- */
+function renderGuardianContact(slot,lk){
+  if(!membership)return false;
+  const state=membership.snapshot();
+  if(membership.contactReady()&&!guardianContactEditing)return false;
+  const logout=async()=>{guardianContactEditing=false;S.cloudLinked=false;S.cloudOwnerId=null;save();try{await guardianAuth.signOut();}catch(e){toast(lk('로그아웃 정보를 확인해 주세요.','Check browser sign-out data.','请检查浏览器退出信息。'),false);}};
+  if(state.loading||!state.membership){
+    slot.innerHTML=`<div class="nm-idcard"><p role="status">${state.error?lk('회원 정보를 불러오지 못했어요. 연결을 확인하고 다시 시도해 주세요.','Could not load membership. Check your connection and retry.','无法加载会员信息，请检查网络后重试。'):lk('가입 정보를 확인하고 있어요…','Checking registration…','正在确认注册信息…')}</p><button class="nm-btn" id="nmGuardContactRetry">${lk('다시 확인','Retry','重试')}</button><button class="nm-btn ghost" id="nmGuardOut">${lk('로그아웃','Sign out','退出')}</button></div>`;
+    $('#nmGuardContactRetry').onclick=()=>membership.refresh(true);$('#nmGuardOut').onclick=logout;return true;
+  }
+  slot.innerHTML=`<div class="nm-idcard nm-guard-card"><h3 class="nm-idcard-t">${lk('보호자 휴대폰 번호 · 가입 완료','Guardian phone · Complete registration','监护人手机号 · 完成注册')}</h3><p>${lk('이메일은 학생별로 구분하고, 형제는 같은 보호자 전화번호를 사용할 수 있어요.','Each learner uses a separate email. Siblings may share a guardian phone number.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。')}</p>
+    <form id="nmGuardContactForm" novalidate><div class="nm-guard-field"><label for="nmGuardPhone">${lk('보호자 휴대폰 번호','Guardian mobile number','监护人手机号')}</label><input id="nmGuardPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="13" placeholder="010-0000-0000"></div>
+    <label class="nm-notify-consent"><input id="nmGuardPhoneConsent" type="checkbox" required><span>${lk('보호자 연락·학습 안내를 위한 전화번호 수집·이용에 동의합니다.','I agree to collection and use of this number for guardian contact and learning guidance.','同意为监护人联系和学习指导收集、使用该号码。')}</span></label>
+    <label class="nm-notify-consent"><input id="nmGuardSmsConsent" type="checkbox"><span>${lk('학습지·진도 문자 안내를 받겠습니다. (선택)','Send me worksheet and progress texts. (Optional)','接收学习单和进度短信。（可选）')}</span></label>
+    <button class="nm-btn" id="nmGuardContactSave" type="submit">${lk('저장하고 가입 완료','Save and complete registration','保存并完成注册')}</button><button class="nm-btn ghost" id="nmGuardOut" type="button">${lk('로그아웃','Sign out','退出')}</button>
+    <p class="nm-idcard-msg" id="nmGuardContactMsg" role="status" aria-live="polite"></p></form></div>`;
+  $('#nmGuardOut').onclick=logout;
+  $('#nmGuardContactForm').onsubmit=async event=>{
+    event.preventDefault();const button=$('#nmGuardContactSave'),msg=$('#nmGuardContactMsg');if(button.disabled)return;
+    const phone=$('#nmGuardPhone').value.replace(/\D/g,'');
+    if(!/^01\d{8,9}$/.test(phone)){msg.textContent=lk('휴대폰 번호를 확인해 주세요.','Check the mobile number.','请检查手机号。');return;}
+    if(!$('#nmGuardPhoneConsent').checked){msg.textContent=lk('전화번호 수집·이용 동의를 확인해 주세요.','Please confirm phone collection consent.','请确认同意收集和使用手机号。');return;}
+    button.disabled=true;guardianContactEditing=false;
+    try{await membership.registerContact(phone,true,$('#nmGuardSmsConsent').checked);}
+    catch(e){const current=$('#nmGuardContactMsg');if(current)current.textContent=lk('저장하지 못했어요. 연결을 확인하고 다시 시도해 주세요.','Could not save. Check the connection and retry.','无法保存，请检查网络后重试。');}
+    finally{button.disabled=false;}
+  };
+  return true;
+}
+function renderGuardianCard(){
+  const slot=$('#nm-guardian-slot');if(!slot)return;
+  const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+  const session=guardianAuth&&guardianAuth.peek();
+  const pending=guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink();
+  if(pending&&!session){
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('이 이메일로 로그인할까요?','Sign in with this email?','使用此邮箱登录？')}</div><p><b>${esc(pending.email||'')}</b></p><p>${lk('내 보호자 이메일인지 확인해 주세요. 학생 기록을 연결하면 이 이메일로 다른 기기에서 이어할 수 있어요.','Check that this is your guardian email. Connected learner records can be accessed with this email on other devices.','请确认这是您的监护人邮箱。关联后，可使用此邮箱在其他设备上查看学生记录。')}</p><div class="nm-idcard-row"><button class="nm-btn" id="nmGuardAccept">${lk('내 이메일이 맞아요','This is my email','这是我的邮箱')}</button><button class="nm-btn ghost" id="nmGuardCancel">${lk('취소','Cancel','取消')}</button></div><p id="nmGuardLinkMsg" role="status"></p></div>`;
+    $('#nmGuardAccept').onclick=async()=>{try{await guardianAuth.confirmLink();}catch(e){$('#nmGuardLinkMsg').textContent=lk('로그인 정보를 저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요.','Could not save sign-in. Check browser storage settings.','无法保存登录信息，请检查浏览器存储设置。');}};
+    $('#nmGuardCancel').onclick=()=>{guardianAuth.cancelLink();renderIdCard();};
+    return;
+  }
+  if(session&&guardianAuth.requiresPassword&&guardianAuth.requiresPassword()){
+    /* 이메일 인증(OTP·메일 링크) 직후: 비밀번호를 만들기 전에는 학생 기록 연결·이어하기를 열지 않는다.
+       비밀번호는 입력칸 값으로만 쓰고 상태·저장소에 남기지 않는다. 화면 갱신은 onChange가 맡는다. */
+    slot.innerHTML=`<div class="nm-idcard nm-guard-card"><div class="nm-idcard-t">${lk('비밀번호를 만들어 주세요','Create a password','请设置密码')}</div>
+      <p>${esc(session.user.email||'')}</p>
+      <p id="nmGuardPasswordHint">${lk('이메일 인증이 끝났어요. 다음부터 이메일과 비밀번호로 로그인할 수 있게 비밀번호를 만들어 주세요. 비밀번호를 저장하기 전에는 학생 기록을 연결할 수 없어요.','Your email is verified. Create a password so you can sign in with your email and password next time. Learner records stay locked until the password is saved.','邮箱已验证。请设置密码，以后可用邮箱和密码登录。保存密码之前，无法关联学生记录。')}</p>
+      <form class="nm-guard-form" id="nmGuardPasswordForm" novalidate>
+        <div class="nm-guard-field"><label for="nmGuardNewPassword">${lk('새 비밀번호 (8자 이상)','New password (8+ characters)','新密码（至少8位）')}</label>
+          <input id="nmGuardNewPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" aria-describedby="nmGuardPasswordHint" required></div>
+        <div class="nm-guard-field"><label for="nmGuardConfirmPassword">${lk('비밀번호 확인','Confirm password','确认密码')}</label>
+          <input id="nmGuardConfirmPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+        <div class="nm-idcard-row"><button class="nm-btn" type="submit" id="nmGuardPasswordSave">${lk('비밀번호 저장','Save password','保存密码')}</button>
+          <button class="nm-btn ghost" type="button" id="nmGuardOut">${lk('이메일 로그아웃','Sign out of email','退出邮箱登录')}</button></div>
+        <p class="nm-idcard-msg" id="nmGuardPasswordMsg" role="status" aria-live="polite"></p>
+      </form></div>`;
+    const passwordError=e=>{
+      const c=e&&e.code,s=e&&e.status;
+      if(c==='invalid_password')return lk('비밀번호는 8자 이상 128자 이하로 입력해 주세요.','Use a password of 8 to 128 characters.','密码需为8至128位。');
+      if(c==='mismatch')return lk('비밀번호가 서로 달라요. 다시 확인해 주세요.','The passwords do not match. Check them and try again.','两次输入的密码不一致，请检查后重试。');
+      if(c==='storage')return lk('이 기기에 로그인 정보를 저장하지 못했어요. 브라우저의 저장 공간·설정을 확인해 주세요.','Could not save sign-in on this device. Check this browser’s storage and settings.','无法在本设备保存登录信息，请检查浏览器的存储和设置。');
+      if(c==='cancelled')return lk('로그인 상태가 바뀌어 비밀번호를 적용하지 않았어요. 다시 시도해 주세요.','Your sign-in changed, so the password was not applied. Try again.','登录状态已变化，密码未生效。请重试。');
+      if(c==='network')return lk('연결에 실패했어요. 인터넷을 확인하고 다시 시도해 주세요.','Connection failed. Check your internet and try again.','连接失败，请检查网络后重试。');
+      if(s===429)return lk('요청이 많아요. 잠시 후 다시 시도해 주세요.','Too many attempts. Try again later.','请求过多，请稍后重试。');
+      if(s===422)return lk('이 비밀번호는 사용할 수 없어요. 다른 비밀번호를 입력해 주세요.','That password was not accepted. Try a different one.','该密码不可用，请换一个密码。');
+      if(c==='nosession'||s===401||s===403)return lk('로그인이 만료됐어요. 로그아웃한 뒤 이메일 인증을 다시 해 주세요.','Your sign-in expired. Sign out and verify your email again.','登录已过期。请退出后重新验证邮箱。');
+      return lk('비밀번호를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.','Could not save the password. Try again later.','无法保存密码，请稍后重试。');
+    };
+    $('#nmGuardPasswordForm').onsubmit=async ev=>{
+      ev.preventDefault();
+      const pwEl=$('#nmGuardNewPassword'),cfEl=$('#nmGuardConfirmPassword'),btn=$('#nmGuardPasswordSave'),msg=$('#nmGuardPasswordMsg');
+      if(btn.disabled)return;
+      const pw=pwEl.value,cf=cfEl.value;
+      if(pw.length<8||pw.length>128){msg.textContent=passwordError({code:'invalid_password'});return;}
+      if(pw!==cf){msg.textContent=passwordError({code:'mismatch'});return;}
+      btn.disabled=true;
+      msg.textContent=lk('비밀번호를 저장하고 있어요…','Saving your password…','正在保存密码…');
+      try{await guardianAuth.setPassword(pw,cf);}
+      catch(e){
+        if(!msg.isConnected)return;
+        pwEl.value='';cfEl.value='';
+        msg.textContent=passwordError(e);btn.disabled=false;
+        return;
+      }
+      // 성공하면 onChange가 이미 화면을 다시 그렸다. 여기서 또 그리지 않는다.
+      if(msg.isConnected){pwEl.value='';cfEl.value='';btn.disabled=false;}
+    };
+    $('#nmGuardOut').onclick=async()=>{
+      S.cloudLinked=false;S.cloudOwnerId=null;save();
+      try{await guardianAuth.signOut();}
+      catch(e){toast(lk('로그인 정보를 지우지 못했어요. 이 브라우저의 사이트 데이터를 확인해 주세요.','Could not remove sign-in. Check this browser’s site data.','无法清除登录信息，请检查浏览器的网站数据。'),false);}
+    };
+    return;
+  }
+  if(session&&renderGuardianContact(slot,lk))return;
+  if(session){
+    slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('보호자 이메일 인증 완료','Guardian email verified','监护人邮箱已验证')}</div><p>${esc(session.user.email||'')}</p><button class="nm-btn ghost" id="nmGuardOut">${lk('이메일 로그아웃','Sign out of email','退出邮箱登录')}</button></div>`;
+    $('#nmGuardOut').onclick=async()=>{
+      S.cloudLinked=false;S.cloudOwnerId=null;save();
+      try{await guardianAuth.signOut();}
+      catch(e){toast(lk('로그인 정보를 지우지 못했어요. 이 브라우저의 사이트 데이터를 확인해 주세요.','Could not remove sign-in. Check this browser’s site data.','无法清除登录信息，请检查浏览器的网站数据。'),false);}
+      // onChange가 즉시 갱신한다. 늦은 로그아웃 응답이 새 로그인 입력을 지우지 않는다.
+    };
+    const contact=membership&&membership.snapshot().contact;
+    if(contact&&contact.registered){
+      const line=document.createElement('p');line.textContent=(contact.phoneMasked||'')+' · '+(contact.smsConsent?lk('학습지 문자 수신 동의','Worksheet texts enabled','已同意接收学习单短信'):lk('문자 수신 미동의','Worksheet texts disabled','未同意接收短信'));slot.firstElementChild.appendChild(line);
+      const edit=document.createElement('button');edit.className='nm-btn ghost';edit.textContent=lk('휴대폰·문자 동의 변경','Change phone or text consent','修改手机号或短信同意');edit.onclick=()=>{guardianContactEditing=true;renderIdCard();};slot.firstElementChild.appendChild(edit);
+    }
+    return;
+  }
+  slot.innerHTML=`<div class="nm-idcard nm-guard-card"><div class="nm-idcard-t">${lk('보호자 이메일로 기록 연결','Connect records with a guardian email','用监护人邮箱关联记录')}</div>
+    <p>${lk('학생마다 이메일을 따로 사용해요. 형제는 보호자 전화번호가 같아도 돼요. 가입 후 30일 동안 체험할 수 있어요.','Use a separate email for each learner. Siblings may share a guardian phone. Registration includes a 30-day trial.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。注册后可体验30天。')}</p>
+    <div class="nm-guard-field"><label for="nmGuardEmail">${lk('보호자 이메일','Guardian email','监护人邮箱')}</label>
+    <input id="nmGuardEmail" type="email" autocomplete="email" placeholder="name@example.com"></div>
+    <section class="nm-guard-sec" aria-labelledby="nmGuardLoginTitle"><h4 id="nmGuardLoginTitle">${lk('비밀번호가 있어요','I already have a password','我已有密码')}</h4>
+    <form class="nm-guard-form" id="nmGuardLoginForm" novalidate>
+      <div class="nm-guard-field"><label for="nmGuardLoginPassword">${lk('비밀번호','Password','密码')}</label>
+      <input id="nmGuardLoginPassword" type="password" maxlength="128" autocomplete="current-password"></div>
+      <div class="nm-idcard-row"><button class="nm-btn" type="submit" id="nmGuardLogin">${lk('이메일·비밀번호로 로그인','Sign in with email and password','用邮箱和密码登录')}</button></div>
+      <p class="nm-idcard-msg" id="nmGuardLoginMsg" role="status" aria-live="polite"></p>
+    </form></section>
+    <section class="nm-guard-sec" aria-labelledby="nmGuardOtpTitle"><h4 id="nmGuardOtpTitle">${lk('처음이거나 비밀번호를 잊었어요','First visit or forgot password','首次使用或忘记密码')}</h4>
+    <p>${lk('위 이메일로 인증번호를 받아 본인 확인을 한 뒤, 새 비밀번호를 만들어요.','Get a code at the email above, verify it, then create a new password.','通过上方邮箱获取验证码并验证后，再设置新密码。')}</p>
+    <div class="nm-idcard-row"><button class="nm-btn" id="nmGuardSend">${lk('인증 메일 받기','Send verification email','发送验证邮件')}</button></div>
+    <div class="nm-guard-field"><label for="nmGuardToken">${lk('메일 인증번호','Email verification code','邮箱验证码')}</label>
+    <div class="nm-idcard-row"><input id="nmGuardToken" inputmode="numeric" autocomplete="one-time-code" maxlength="12"><button class="nm-btn" id="nmGuardVerify">${lk('이메일 인증','Verify email','验证邮箱')}</button></div></div>
+    <p class="nm-idcard-msg" id="nmGuardMsg" role="status" aria-live="polite"></p></section></div>`;
+  const message=()=>$('#nmGuardMsg');
+  const loginError=e=>{
+    const c=e&&e.code,s=e&&e.status;
+    if(c==='invalid_email')return lk('이메일 주소를 확인해 주세요.','Enter a valid email address.','请输入有效的邮箱地址。');
+    if(c==='invalid_password')return lk('비밀번호를 입력해 주세요.','Enter your password.','请输入密码。');
+    if(c==='storage')return lk('이 기기에 로그인 정보를 저장하지 못했어요. 브라우저의 저장 공간·설정을 확인해 주세요.','Could not save sign-in on this device. Check this browser’s storage and settings.','无法在本设备保存登录信息，请检查浏览器的存储和设置。');
+    if(c==='cancelled')return lk('로그인이 취소됐어요. 다시 시도해 주세요.','Sign-in was cancelled. Try again.','登录已取消，请重试。');
+    if(c==='network')return lk('연결에 실패했어요. 인터넷을 확인하고 다시 시도해 주세요.','Connection failed. Check your internet and try again.','连接失败，请检查网络后重试。');
+    if(s===429)return lk('시도가 너무 많아요. 잠시 후 다시 해 주세요.','Too many attempts. Try again later.','尝试次数过多，请稍后再试。');
+    if(s===400||s===401||s===403)return lk('이메일 또는 비밀번호가 맞지 않아요. 처음이거나 비밀번호를 잊었다면 아래 인증번호로 로그인해 주세요.','Email or password is incorrect. If this is your first visit or you forgot it, use the email code below.','邮箱或密码不正确。若首次使用或忘记密码，请使用下方验证码。');
+    return lk('로그인하지 못했어요. 잠시 후 다시 시도해 주세요.','Could not sign in. Try again later.','无法登录，请稍后重试。');
+  };
+  $('#nmGuardLoginForm').onsubmit=async ev=>{
+    ev.preventDefault();
+    const btn=$('#nmGuardLogin'),pwEl=$('#nmGuardLoginPassword'),msg=$('#nmGuardLoginMsg');
+    if(btn.disabled)return;
+    if(!guardianAuth){msg.textContent=lk('인증 도구를 불러오지 못했어요. 새로고침해 주세요.','Reload to load email sign-in.','请刷新页面以加载邮箱登录。');return;}
+    const email=$('#nmGuardEmail').value.trim(),pw=pwEl.value;
+    if(!email){msg.textContent=loginError({code:'invalid_email'});return;}
+    if(!pw){msg.textContent=loginError({code:'invalid_password'});return;}
+    btn.disabled=true;
+    msg.textContent=lk('로그인하고 있어요…','Signing in…','正在登录…');
+    try{await guardianAuth.signInWithPassword(email,pw);}
+    catch(e){
+      if(!msg.isConnected)return;
+      pwEl.value='';msg.textContent=loginError(e);btn.disabled=false;
+      return;
+    }
+    // 성공하면 onChange가 이미 화면을 다시 그렸다. 여기서 또 그리지 않는다.
+    if(msg.isConnected){pwEl.value='';btn.disabled=false;}
+  };
+  async function request(verify){
+    const btn=$(verify?'#nmGuardVerify':'#nmGuardSend'),email=$('#nmGuardEmail').value.trim(),token=$('#nmGuardToken').value.trim();
+    if(!guardianAuth){message().textContent=lk('인증 도구를 불러오지 못했어요. 새로고침해 주세요.','Reload to load email verification.','请刷新页面以加载邮箱验证。');return;}
+    btn.disabled=true;
+    message().textContent=lk('이메일 인증을 확인하고 있어요…','Processing email verification…','正在处理邮箱验证…');
+    try{
+      if(verify){await guardianAuth.verifyEmail(email,token);}
+      else{await guardianAuth.sendEmail(email);message().textContent=lk('메일로 받은 인증번호를 위에 입력하고 ‘이메일 인증’을 눌러 주세요.','Enter the code from your email above, then select Verify email.','请在上方输入邮件中的验证码，然后点击验证邮箱。');}
+    }catch(e){
+      const msg=message();if(msg)msg.textContent=e.code==='storage'?lk('이 기기에 인증 정보를 저장하지 못했어요. 브라우저의 저장 공간·설정을 확인해 주세요.','Could not save sign-in. Check this browser’s storage and settings.','无法保存登录信息，请检查浏览器的存储和设置。'):e.status===429?lk('요청이 많아요. 잠시 후 다시 시도해 주세요.','Too many requests. Try again later.','请求过多，请稍后重试。'):lk('이메일·인증번호 또는 연결 상태를 확인하고 다시 시도해 주세요.','Check your email, code and connection, then try again.','请检查邮箱、验证码和网络连接，然后重试。');
+    }finally{btn.disabled=false;}
+  }
+  $('#nmGuardSend').onclick=()=>request(false);
+  $('#nmGuardVerify').onclick=()=>request(true);
+}
 function renderIdCard(){
+  if(REVIEW)return;
   const slot=$('#nm-idcard-slot');
   if(!slot)return;
+  renderGuardianCard();
   const ko=S.lang==='ko', en=S.lang==='en';
-  if(S.cloudLinked){
-    slot.innerHTML=`<div class="nm-idcard linked">☁️ ${ko?'아이디':en?'ID':'账号'}: <b>${esc(S.name)}</b> · ${ko?'자동 저장 중':en?'Auto-saving':'自动保存中'} ✓</div>`;
+  const guardian=guardianAuth&&guardianAuth.peek();
+  if(!guardian){
+    slot.innerHTML=`<div class="nm-idcard">${ko?'학습 기록은 이 기기에 저장돼요. 보호자 이메일을 인증하면 기록을 연결할 수 있어요.':en?'Learning records are saved on this device. Verify a guardian email to connect them.':'学习记录保存在本设备上。验证监护人邮箱后即可关联记录。'}</div>`;
+    return;
+  }
+  if(guardianAuth.requiresPassword&&guardianAuth.requiresPassword()){
+    slot.innerHTML=`<div class="nm-idcard">${ko?'비밀번호 설정을 마치면 학생 기록을 연결할 수 있어요.':en?'Finish setting your password to connect learner records.':'完成密码设置后即可关联学生记录。'}</div>`;
+    return;
+  }
+  if(membership&&!membership.contactReady()){
+    slot.innerHTML=`<div class="nm-idcard">${ko?'휴대폰 등록을 마치면 학생 기록을 연결할 수 있어요.':en?'Finish phone registration to connect learner records.':'完成手机号登记后即可关联学生记录。'}</div>`;
+    return;
+  }
+  if(S.cloudLinked&&S.cloudOwnerId===guardian.user.id){
+    slot.innerHTML=`<div class="nm-idcard linked">☁️ ${ko?'연결된 학생':en?'Connected learner':'已关联学生'}: <b>${esc(S.name)}</b> · ${ko?'보호자 이메일에 연결됨':en?'Connected to guardian email':'已关联监护人邮箱'}${cloudSyncError?`<p role="status">${ko?'이 기기에 저장했어요. 클라우드 저장에 실패해 다음 저장 때 다시 시도해요.':en?'Saved on this device. Cloud save failed; it will retry on the next save.':'已保存在本设备上，云端保存失败，将在下次保存时重试。'}</p>`:''}</div>`;
     return;
   }
   slot.innerHTML=`<div class="nm-idcard">
-    <div class="nm-idcard-t">☁️ ${ko?'아이디 등록':en?'Register your ID':'注册账号'}</div>
+    <div class="nm-idcard-t">☁️ ${S.onboarded?(ko?'학생 기록 연결':en?'Connect learner records':'关联学生记录'):(ko?'이어할 학생 이름':en?'Learner name to continue':'继续学习的学生姓名')}</div>
     <div class="nm-idcard-row">
       <input id="idName" maxlength="8" placeholder="${t('obNamePh')}" value="${esc(S.name||'')}">
-      <button class="nm-btn" id="idClaim">${ko?'등록':en?'Register':'注册'}</button>
+      <button class="nm-btn" id="idClaim">${S.onboarded?(ko?'연결':en?'Connect':'关联'):(ko?'이어하기':en?'Continue':'继续')}</button>
     </div>
-    <div class="nm-idcard-msg" id="idMsg">${ko?'이름이 곧 아이디! 등록하면 다른 기기에서도 이름만 치면 이어서 할 수 있어요.':en?'Your name becomes your ID — continue on any device by typing it.':'名字就是账号！在任何设备上输入名字即可继续。'}</div>
+    <div class="nm-idcard-msg" id="idMsg" role="status">${ko?'이 학생의 기록을 인증한 보호자 이메일에 연결해요. 예전 기록의 보호자 연결은 학원에 요청해 주세요.':en?'Connect this learner to the verified guardian email. Ask your academy to link an older profile.':'将学生记录关联到已验证的监护人邮箱。旧记录请联系学院关联。'}</div>
   </div>`;
   $('#idClaim').onclick=claimFromCloset;
   $('#idName').addEventListener('keydown',e=>{if(e.key==='Enter')claimFromCloset();});
@@ -7804,16 +8225,18 @@ function renderIdCard(){
       return;
     }
     if(!existing){
+      if(!S.onboarded){btn.disabled=false;msg.textContent=ko?'이 이메일에 연결된 학생을 찾지 못했어요. 예전 기록은 학원에 연결을 요청하거나 처음부터 시작해 주세요.':en?'No learner with this name is linked to this email. Ask your academy to link an older record, or start a new learner.':'未找到与此邮箱关联的学生。请联系学院关联旧记录，或新建学生。';return;}
       try{
         const okClaim=await cloudClaim(name,S);
         if(okClaim){
-          S.name=name; S.cloudLinked=true; save();
+          S.name=name; S.cloudLinked=true; S.cloudOwnerId=okClaim.owner; save();
           toast(ko?'아이디 등록 완료! ✨':en?'ID registered! ✨':'注册成功！✨',true);
           render(); S.view='closet';  // 칩 이름 갱신 후 옷장 유지
           return;
         }
-        existing=await cloudGet(name).catch(()=>null)||{state:{}};
-      }catch(e){ btn.disabled=false; msg.textContent=ko?'등록에 실패했어요. 잠시 후 다시!':en?'Failed — try again soon.':'注册失败，请稍后再试。'; return; }
+        existing=await cloudGet(name).catch(()=>null);
+        if(!existing){btn.disabled=false;msg.textContent=ko?'이 이메일에 이미 학생이 있으면 기존 학생 이름으로 이어해 주세요. 다른 학생은 별도 이메일을 사용해 주세요. 기존 기록 연결은 학원에 문의해 주세요.':en?'If this email already has a learner, continue with that learner’s name. Use a separate email for another learner. Contact your academy to link older records.':'若此邮箱已关联学生，请使用原学生姓名继续。其他学生请使用不同邮箱。关联旧记录请联系学院。';return;}
+      }catch(e){ btn.disabled=false; msg.textContent=ko?'학생을 등록하지 못했어요. 잠시 후 다시 시도해 주세요.':en?'Failed — try again soon.':'注册失败，请稍后再试。'; return; }
     }
     /* 이미 있는 이름 → 이어하기 / 다른 이름 */
     btn.disabled=false;
@@ -7823,14 +8246,16 @@ function renderIdCard(){
         <button class="nm-btn ghost" id="idOther">${ko?'다른 이름 쓸게요':en?'Try another':'换个名字'}</button>
       </div>`;
     $('#idResume').onclick=()=>{
+      if(!backupBeforeCloudResume(existing.owner_id))return;
+      guardianEntry=false;
       const st=existing&&existing.state?existing.state:{};
       S={...defaults(),...st};
       S.name=name; S.onboarded=true; S.cloudLinked=true;
-      /* 클라우드에서 되불러온 프로필 = 이미 쓰던 학생이다 → 승인번호 없이도 active(grandfather).
-         부팅 때의 hadSave 판정은 이 시점 이후라 여기서 한 번 더 봐야 한다. 안 그러면 새 기기에서
-         이어하기 한 재원생이 체험으로 잠긴다 — 클라우드 19명 중 10명이 account 키 자체가 없다
-         (게이트 도입 전에 저장된 프로필, 2026-09-06 확인). */
-      if(!S.account||!S.account.status)S.account={status:'active',code:null,checkedAt:0};
+      S.cloudOwnerId=existing.owner_id;
+      if(!S.account||!S.account.status)S.account={status:'trial',code:null,checkedAt:0};
+      normalizeLoadedState(false);
+      // 보호자 인증은 기록 소유권만 확인한다. 학원 승인 상태는 별도로 유지한다.
+
       if(!S.character)S.character={number:3,color:'blue',bg:'plain',cape:'none',hat:'none'};
       if(S.character.hat===undefined)S.character.hat='none'; // 기존 저장본 하위호환
       S.view='closet';
@@ -7853,9 +8278,9 @@ function screenExam(){
     </div>
     <div class="nm-step-body nm-wsh-wrap">
       <div class="nm-card nm-gate-card-inline">
-        <div class="nm-card-h">🔒 ${ko?'학습지 인쇄는 학원 승인 후 열려요':en?'Worksheet printing unlocks after academy approval':'学院授权后才能打印学习单'}</div>
-        <p class="nm-wsh-sentence">${ko?'승인번호가 있으면 지금 바로 열 수 있어요.':en?'If you already have a code, you can unlock it right now.':'有授权码即可立即解锁。'}</p>
-        <button class="nm-btn full" id="examGate">🔑 ${ko?'승인번호 입력':en?'Enter code':'输入授权码'}</button>
+        <div class="nm-card-h">🔒 ${ko?'가입·이용기간을 확인해 주세요':en?'Check registration and membership':'请确认注册和使用期限'}</div>
+        <p class="nm-wsh-sentence">${ko?'이메일 인증 후 30일 체험할 수 있어요. 이후에는 학원에서 6개월 또는 1년 이용을 승인해요.':en?'Verify your email for a 30-day trial. Your academy can then approve 6 months or 1 year.':'验证邮箱后可体验30天，之后可由学院批准6个月或1年的使用期。'}</p>
+        <button class="nm-btn full" id="examGate">${ko?'가입·이용 상태 보기':en?'View registration and membership':'查看注册及使用状态'}</button>
       </div>
     </div>`;
     $('#backExam').onclick=()=>{S.view='town';save();render();};
@@ -7864,7 +8289,7 @@ function screenExam(){
   }
   if(!window.NM_EXAM||!window.examScreen){
     scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="backExam">${t('back')}</button></div>
-      <p style="padding:40px;text-align:center">시험 모듈 로딩 실패</p>`;
+      <p style="padding:40px;text-align:center">시험 화면을 불러오지 못했어요. 새로고침해 주세요.</p>`;
     $('#backExam').onclick=()=>{S.view='town';save();render();};
     return;
   }
@@ -7964,25 +8389,20 @@ function screenWorksheetHelper(wsId){
   renderMath(scr);
 }
 
-/* 타이틀 화면 게이트(§14) — "인트로 애니메이션 후"를 이 앱에서는 about.html이
-   ?enter=1을 달고 돌아오는 순간으로 본다(index.html의 기존 인트로→about 흐름,
-   되돌리지 않음). 진행 기록(mostRecentTouchedUnit)이 있는 온보딩된 프로필에서만
-   S.view를 'title'로 바꾼다 — save()는 하지 않는다(타이틀은 저장 상태가 아니라
-   "이번 진입"에서만 한 번 보이는 화면이라, 새로고침해도 URL에 enter=1이 없으면
-   바로 이전 화면으로 돌아간다). 신규 설치·진행 없음은 그대로 온보딩→마을. */
+/* A deliberate login/preview entry opens the mode selector. Reloads are handled
+   by entry.js and always return to approval/login. */
 function maybeShowTitle(){
-  if(!S.onboarded) return;
-  /* 재접속이면 항상 타이틀(모드 선택)부터 — enter=1·진행 기록 조건을 없앴다
-     (2026-09-01 원장 지적: 재접속인데 인트로/온보딩부터 나오면 안 된다).
-     진행이 없어도 타이틀은 안전하다(이어서 모험 → 마을로 낙하). 학습지
-     도우미(?ws=)는 render()가 이보다 먼저 분기하므로 영향 없다. */
-  S.view='title';
+  if(S.onboarded)S.view='title';
 }
 /* ---------- 시작 ---------- */
 function boot(){
-  if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">데이터 로딩 실패 — 스크립트 순서를 확인하세요.</p>';return;}
-  maybeShowTitle();
+  if(booted)return;
+  if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">학습 화면을 불러오지 못했어요. 새로고침해 주세요.</p>';return;}
+  booted=true;
+  if(guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink()){guardianEntry=!S.onboarded;S.view='closet';}
+  else maybeShowTitle();
   render();
+  const details=$('.nm-closet-settings');if(details&&guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink())details.open=true;
   reverifyAccountIfNeeded(); // 승인번호 회수 동기화 — 실패해도 조용히 무시(오프라인에서 안 잠금)
 }
 if(window.katex)boot(); else{const t2=setInterval(()=>{if(window.katex){clearInterval(t2);boot();}},60);setTimeout(()=>{if(!window.katex)boot();},1500);}

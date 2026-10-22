@@ -173,6 +173,90 @@ async function aligoEnqueue(sb: any, endpoint: "send" | "remain", query: string)
   return Number(id);
 }
 
+// @@pure-start (check-notify-delivery.js 가 이 구간만 잘라 transpile 해 모의 테스트한다 — 외부 import·Deno 의존 금지)
+// 자동 발송 중복 방지 kind: weekly[-2]-<SHA-256(profile_name) 앞 16 hex>. 학생 이름은 kind 에 넣지 않는다.
+// 같은 보호자 번호의 형제 계정이 (phone,week_key,kind) unique 에 서로 막히지 않게 한다.
+async function autoKind(profileName: string, k: number): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(profileName)));
+  const hex = Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 16);
+  return (k === 1 ? "weekly-" : "weekly-2-") + hex;
+}
+
+// nm_membership_rpc system_delivery 응답 검증. 모양이 틀리면 null(= fail closed).
+function parseMembership(r: any): { managed: false } | { managed: true; canUse: boolean; cadence: "w1" | "w2"; link: string | null } | null {
+  if (!r || r.error) return null;
+  const d = r.data;
+  if (!d || typeof d !== "object" || Array.isArray(d)) return null;
+  if (d.managed === false) return { managed: false };
+  if (d.managed !== true || typeof d.canUse !== "boolean") return null;
+  if (d.cadence !== "w1" && d.cadence !== "w2") return null;
+  let link: string | null = null;
+  if (d.link !== null && d.link !== undefined) {
+    if (typeof d.link !== "string" || !/^https:\/\/[^\s]{1,200}$/.test(d.link)) return null;
+    link = d.link;
+  }
+  return { managed: true, canUse: d.canUse, cadence: d.cadence, link };
+}
+
+// 연락처 1건 처리. 의존성은 모두 주입(테스트에서 모의). 반환: results 항목 배열.
+async function processContact(d: any, c: any, ctx: any): Promise<any[]> {
+  const out: any[] = [];
+  const phone = String(c.phone).replace(/\D/g, "");
+  if (!/^01\d{8,9}$/.test(phone)) { out.push({ phone: c.phone, skip: "bad-phone" }); return out; }
+
+  const ask = async (k: number) => {
+    try { return parseMembership(await d.membership({ profileName: c.profile_name, phone, k, week: ctx.wk })); } catch (_) { return null; }
+  };
+  // 소유자 있는 계정은 주기 선택 전에 k=1 로 한 번 조회(k=1 결과는 재사용). RPC 오류·이상 응답은 fail closed.
+  const first = await ask(1);
+  if (!first) { out.push({ phone, skip: "membership-error" }); return out; }
+  if (first.managed && !first.canUse) { out.push({ phone, skip: "membership-denied" }); return out; }
+
+  const st = (await d.loadState(c.profile_name)) || {};
+  const cadence = first.managed ? first.cadence : (st.roadCadence === "w2" ? "w2" : "w1");
+  const ks = cadence === "w2" ? [1, 2] : [1];
+
+  for (const k of ks) {
+    const kind = await autoKind(c.profile_name, k);
+    const own = k === 1 ? c.send_dow : c.send_dow2;
+    const dow = (own === null || own === undefined) ? (k === 1 ? ctx.gDow : ctx.gDow2) : Number(own);
+    if (!ctx.force && !ctx.dry && dow !== ctx.kstDow) { out.push({ phone, k, skip: "not-send-day", send_dow: dow }); continue; }
+
+    let m = first;
+    if (k !== 1) {
+      const second = await ask(k);
+      if (!second) { out.push({ phone, k, skip: "membership-error" }); continue; }
+      if (second.managed !== first.managed || (second.managed && (!second.canUse || second.cadence !== "w2"))) {
+        out.push({ phone, k, skip: second.managed && !second.canUse ? "membership-denied" : "membership-mismatch" }); continue;
+      }
+      m = second;
+    }
+
+    if (ctx.dry) {
+      if (await d.alreadyLogged(phone, ctx.wk, kind)) { out.push({ phone, k, skip: "already-sent" }); continue; }
+    }
+    const link = (m.managed && m.link) ? { url: m.link, kind: "member" } : await d.worksheetLink(k, st);
+    const { title, msg, msgType } = d.compose(c.profile_name, st.weeklyDigest, cadence, link, k);
+    if (ctx.dry) { out.push({ phone, k, dry: true, send_dow: dow, title, msg, msgType, bytes: d.bytes(msg), link: link.kind }); continue; }
+
+    // 먼저 로그 행을 선점(unique). 중복(23505)이면 건너뛰고, 그 밖의 오류도 보내지 않는다(fail closed).
+    const rv = await d.reserve(phone, ctx.wk, kind);
+    if (rv.error) {
+      const dup = String(rv.error.code || "") === "23505";
+      out.push({ phone, k, skip: dup ? "already-sent" : "log-unavailable" }); continue;
+    }
+    const res = await d.send(phone, title, msg, msgType); // 애매한 실패도 재시도하지 않는다
+    let logError: string | undefined;
+    try {
+      const u = await d.finalize(rv.id, res);
+      if (u && u.error) logError = "finalize_failed";
+    } catch (_) { logError = "finalize_failed"; }
+    out.push({ phone, k, ok: res.ok, via: res.via, request_id: res.request_id, detail: res.ok ? undefined : res.detail, log_error: logError });
+  }
+  return out;
+}
+// @@pure-end
+
 Deno.serve(async (req: Request) => {
   let body: any = {};
   try { body = await req.json(); } catch (_) { /* 빈 본문 허용 */ }
@@ -181,6 +265,43 @@ Deno.serve(async (req: Request) => {
   if (!need || body.trigger_key !== need) {
     return new Response(JSON.stringify({ error: "bad trigger_key" }), { status: 403 });
   }
+  // 수동 1건 발송(nm-membership 전용, 2026-10): trigger_key 인증 뒤, 연락처 순회·test_phone·cron 이전에 단독 처리한다.
+  // 서버가 만든 manual_payload 한 건만 보낸다. 일괄/force/dry 와 섞이면 거부. 응답에는 전화번호·상세 원문을 싣지 않는다.
+  if (body.manual_payload !== undefined) {
+    const jr = (o: unknown, s: number) => new Response(JSON.stringify(o), { status: s, headers: { "Content-Type": "application/json" } });
+    const mp = body.manual_payload;
+    if (body.force || body.dry || body.test_phone || body.probe) return jr({ error: "manual_exclusive" }, 400);
+    if (!mp || typeof mp !== "object" || Array.isArray(mp)) return jr({ error: "bad_manual_payload" }, 400);
+    const allowedKeys = new Set(["preview_id", "phone", "title", "msg", "msg_type"]);
+    if (Object.keys(mp).some((k) => !allowedKeys.has(k))) return jr({ error: "bad_manual_payload" }, 400);
+    const pid = typeof mp.preview_id === "string" ? mp.preview_id.toLowerCase() : "";
+    const mPhone = typeof mp.phone === "string" ? mp.phone.replace(/\D/g, "") : "";
+    const mTitle = typeof mp.title === "string" ? mp.title : "";
+    const mMsg = typeof mp.msg === "string" ? mp.msg : "";
+    const mType = mp.msg_type;
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(pid)
+      || !/^01\d{8,9}$/.test(mPhone)
+      || mTitle.length > 40
+      || mMsg.length < 1 || mMsg.length > 800
+      || (mType !== "SMS" && mType !== "LMS")
+      || !mMsg.startsWith("[numbers of magic]")
+      || !mMsg.includes("https://lete-on.gfieldacademy.net/w/?m=")) {
+      return jr({ error: "bad_manual_payload" }, 400);
+    }
+    // 중복 방지: 로그 행을 먼저 선점한다((phone,week_key,kind) unique). 선점 실패(중복·오류)면 보내지 않는다(fail closed).
+    const mWeek = "manual-" + pid;
+    const { error: reserveErr } = await sb.from("nm_notify_log").insert({ phone: mPhone, week_key: mWeek, kind: "manual", ok: null, detail: "pending", request_id: null });
+    if (reserveErr) {
+      const dup = String((reserveErr as any).code || "") === "23505";
+      return jr({ error: dup ? "duplicate" : "log_unavailable" }, dup ? 409 : 503);
+    }
+    const mres = await sendOne(sb, mPhone, mTitle, mMsg, mType);
+    await sb.from("nm_notify_log").update({ ok: mres.ok, detail: mres.detail, request_id: mres.request_id ?? null })
+      .eq("phone", mPhone).eq("week_key", mWeek).eq("kind", "manual");
+    const mStatus = mres.ok === true ? "sent" : mres.ok === null ? "queued" : "failed";
+    return jr({ ok: mres.ok, status: mStatus }, 200);
+  }
+
   const dry = !!body.dry;
   const force = !!body.force;
   const now = kstNow();
@@ -252,40 +373,37 @@ Deno.serve(async (req: Request) => {
   if (cErr) return new Response(JSON.stringify({ error: cErr.message }), { status: 500 });
 
   const results: any[] = [];
-  for (const c of contacts ?? []) {
-    const phone = String(c.phone).replace(/\D/g, "");
-    if (!/^01\d{8,9}$/.test(phone)) { results.push({ phone: c.phone, skip: "bad-phone" }); continue; }
-
+  const deps = {
+    // 내부 전용 RPC(service_role). HTTP 핸들러에는 노출되지 않고 이 함수가 서버에서만 부른다. 발송은 하지 않는다.
+    membership: (payload: any) => sb.rpc("nm_membership_rpc", { p_action: "system_delivery", p_payload: payload, p_actor: null, p_ip_hash: null }),
     // 프로필 state에서 주간 요약(weeklyDigest, 앱이 저장)과 주기(roadCadence) 읽기
-    const { data: prof } = await sb.from("nm_profiles").select("state")
-      .eq("name", c.profile_name).limit(1);
-    const st = prof && prof[0] && prof[0].state || {};
-    const cadence = st.roadCadence === "w2" ? "w2" : "w1";
-    const ks = cadence === "w2" ? [1, 2] : [1];
-
-    for (const k of ks) {
-      const kind = k === 1 ? "weekly" : "weekly-2";
-      // 요일 게이트: 학부모별 send_dow / send_dow2, 없으면 전역
-      const own = k === 1 ? c.send_dow : c.send_dow2;
-      const dow = (own === null || own === undefined) ? (k === 1 ? gDow : gDow2) : Number(own);
-      if (!force && !dry && dow !== kstDow) { results.push({ phone, k, skip: "not-send-day", send_dow: dow }); continue; }
-
-      // 회차당 1회 상한 — 이미 보냈으면 건너뜀
-      const { data: dup } = await sb.from("nm_notify_log").select("id")
-        .eq("phone", phone).eq("week_key", wk).eq("kind", kind).limit(1);
-      if (dup && dup.length) { results.push({ phone, k, skip: "already-sent" }); continue; }
-
-      const link = await worksheetLink(sb, c.profile_name, wk, st.weeklyDigest, k);
-      const { title, msg, msgType } = composeMsg(c.profile_name, st.weeklyDigest, cadence, link, k);
-
-      if (dry) { results.push({ phone, k, dry: true, send_dow: dow, title, msg, msgType, bytes: smsBytes(msg), link: link.kind }); continue; }
-
-      const res = await sendOne(sb, phone, title, msg, msgType);
-      // 로그 insert 실패는 조용히 넘기지 않는다(상한이 이 로그에 기대므로). 2026-09-05: 열 추가 뒤 PostgREST
-      // 스키마 캐시가 안 갱신돼 insert가 통째로 실패했던 적이 있다(notify pgrst, 'reload schema' 로 해결).
-      const { error: lErr } = await sb.from("nm_notify_log").insert({ phone, week_key: wk, kind, ok: res.ok, detail: res.detail, request_id: res.request_id ?? null });
-      results.push({ phone, k, ok: res.ok, via: res.via, request_id: res.request_id, detail: res.ok ? undefined : res.detail, log_error: lErr ? lErr.message : undefined });
-    }
+    loadState: async (name: string) => {
+      const { data: prof } = await sb.from("nm_profiles").select("state").eq("name", name).limit(1);
+      return (prof && prof[0] && prof[0].state) || {};
+    },
+    alreadyLogged: async (phone: string, week: string, kind: string) => {
+      const { data: dup } = await sb.from("nm_notify_log").select("id").eq("phone", phone).eq("week_key", week).eq("kind", kind).limit(1);
+      return !!(dup && dup.length);
+    },
+    // 발송 전 선점: 기존 unique(phone,week_key,kind) 사용. 상한이 이 로그에 기대므로 실패하면 보내지 않는다.
+    reserve: async (phone: string, week: string, kind: string) => {
+      const { data, error } = await sb.from("nm_notify_log")
+        .insert({ phone, week_key: week, kind, ok: null, detail: "pending", request_id: null }).select("id").single();
+      return { id: data ? data.id : null, error: error || (data ? null : { code: "no-row" }) };
+    },
+    finalize: (id: any, res: SendResult) =>
+      sb.from("nm_notify_log").update({ ok: res.ok, detail: res.detail, request_id: res.request_id ?? null }).eq("id", id),
+    worksheetLink: (k: number, st: any) => worksheetLinkFor(k, st),
+    compose: composeMsg,
+    bytes: smsBytes,
+    send: (phone: string, title: string, msg: string, msgType: "SMS" | "LMS") => sendOne(sb, phone, title, msg, msgType),
+  };
+  let curName = "";
+  const worksheetLinkFor = (k: number, st: any) => worksheetLink(sb, curName, wk, st.weeklyDigest, k);
+  const ctx = { wk, kstDow, gDow, gDow2, force, dry };
+  for (const c of contacts ?? []) {
+    curName = c.profile_name;
+    results.push(...await processContact(deps, c, ctx));
   }
   return new Response(JSON.stringify({ week: wk, kst: { dow: kstDow, hour: kstHour }, settings: { send_dow: gDow, send_dow2: gDow2, send_hour: gHour }, count: results.length, results }), {
     headers: { "Content-Type": "application/json" },

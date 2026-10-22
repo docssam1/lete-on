@@ -1,21 +1,21 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261018o";
-import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261018o";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261018z";
+import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261018z";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
-import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261018o";
+import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261018z";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261018o";
-import { book01Markup } from "./book01-renderers.js?v=20261003c";
-import { book02Markup } from "./book02-renderers.js?v=20261018o";
-import { book03Markup } from "./book03-renderers.js?v=20261018o";
-import { book04Markup } from "./book04-renderers.js?v=20261018o";
-import { book05Markup } from "./book05-renderers.js?v=20261018o";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261018z";
+import { book01Markup } from "./book01-renderers.js?v=20261022a";
+import { book02Markup } from "./book02-renderers.js?v=20261018z";
+import { book03Markup } from "./book03-renderers.js?v=20261018z";
+import { book04Markup } from "./book04-renderers.js?v=20261018z";
+import { book05Markup } from "./book05-renderers.js?v=20261018z";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
 import { book07Markup } from "./book07-renderers.js?v=20261019a";
 import { book08Markup } from "./book08-renderers.js?v=20260906a";
-import { book09Markup } from "./book09-renderers.js?v=20260829b";
+import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20260904c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
-import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261003f";
+import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
 import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261004c";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261004a";
 import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261003d";
@@ -1996,6 +1996,23 @@ function render() {
   else $("stageSteps").innerHTML = '<div class="stage-step"><strong>-</strong><span>준비 중</span></div>';
   renderContent();
 }
+
+// 좁은 화면에서 그림이 문항 칸보다 넓으면 칸에 맞게 줄인다(잘리거나 옆으로 넘치지 않게).
+function fitScreenVisuals() {
+  $("lessonContent").querySelectorAll(".quiz-visual > *, .guided-concept-scene > *, .experience-visual > *").forEach((node) => {
+    if (node.dataset.screenFit) { node.style.zoom = ""; delete node.dataset.screenFit; }
+    const room = node.parentElement.clientWidth;
+    const need = Math.max(node.scrollWidth, node.getBoundingClientRect().width);
+    if (room > 0 && need > room + 2) {
+      node.style.zoom = String(Math.max(0.55, room / need).toFixed(3));
+      node.dataset.screenFit = "1";
+    }
+  });
+}
+let screenFitFrame = 0;
+const scheduleScreenFit = () => { cancelAnimationFrame(screenFitFrame); screenFitFrame = requestAnimationFrame(fitScreenVisuals); };
+new MutationObserver(scheduleScreenFit).observe($("lessonContent"), { childList: true, subtree: true });
+window.addEventListener("resize", scheduleScreenFit);
 
 $("studentName").textContent = student;
 $("courseSelect").innerHTML = '<option value="" disabled>과정 선택</option>' + COURSE_CATALOG.map((course, index) => `<option value="${course.id}">${index + 1}과정${index ? " · 검토본" : ""}</option>`).join("");

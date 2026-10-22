@@ -1,4 +1,4 @@
-import {catalog,activityIds,buildActivity} from '../../shared/paper-craft-catalog.js?v=20261018-3';
+import {catalog,activityIds,buildActivity} from '../../shared/paper-craft-catalog.js?v=20261021-4';
 import {insideWithMargin,unfoldMarks,polygonArea,polygonCentroid,classify} from '../../shared/paper-craft-model.js?v=20261018-3';
 import {makeTenPlan} from '../../games/number-paper/calculation-help.js?v=2';
 export const modes=['questions','answers','both','quick'];
@@ -22,7 +22,7 @@ export function selectionFor(params){
     return {entries,error:false,fromGame:params.has('ids')};
   }catch{return {entries:[],error:true,fromGame:params.has('ids')};}
 }
-export const complex=p=>['top','reverse','stack','sort'].includes(p.family)||!!p.patternOptions||['l-grid','grid3'].includes(p.recipe)||p.folds?.length>=3;
+export const complex=p=>p.cutPlan||['top','reverse','stack','sort'].includes(p.family)||!!p.patternOptions||['l-grid','grid3'].includes(p.recipe)||p.folds?.length>=3;
 export function pagePlan(entries,mode='questions',duplex=false){
   if(!modes.includes(mode))throw Error('Invalid print mode');const pages=[];
   const add=kind=>{let batch=[];const flush=()=>{if(batch.length){pages.push({kind,entries:batch});batch=[];}};for(const p of entries){if(complex(p)){flush();pages.push({kind,entries:[p]});}else {batch.push(p);if(batch.length===2)flush();}}flush();};

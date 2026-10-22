@@ -2979,3 +2979,251 @@ Three 내부 손실 호출과 달리 복구 확장을 미리 캐시하지 않는
 - 랜딩과 소개 첫 화면은 같은 하늘색·종이 배경과 남색·금색 텍스트 계열로 맞췄다. 데스크톱 1280px·모바일 390px 화면을 로컬 브라우저에서 확인했으며 가로 넘침은 없었다.
 - 검사: `check-about-stats.js` (295·351·1,320 + 랜딩 5개 문구), `check-stages.js` (10단계·74과정·558회차), `check-visual-map.js` (1280/390px, 한·영·중, 실제 학습 위치·선택 시작점 분리), `check-weekly-sheets.js C0 C4 C36` (6/6장, 10분 날짜·표지·문제 쪽 표식 및 A4 넘침 검사), 브라우저 폭·스크린샷 확인을 통과했다. 전체 과정 PDF 전수 검사는 아직 다시 돌리지 않았다.
 - 이번 상태는 로컬 수정·검증만이다. 커밋·원격 푸시·PR·main 병합·Pages 배포는 하지 않았다.
+
+
+## 전체 프로그램 검수·보호자 이메일 인증 — Mac mini, 2026-10-21
+
+- 범위: 음성 제작을 제외한 수의 마법 소스·진단·학습 기록·지도·학습지·다국어·모바일 흐름. 브랜치 `codex/nm-program-review-20261021`, 작업 경로 `/Users/docssam/.codex/worktrees/115e/lete-on`. 시작 후 최신 main `3439f132`, 이후 `0b54ed24`를 병합했다. 마지막 병합의 다른 서비스 변경은 이 작업에서 수정하지 않았다. 기존 미추적 `docs/claude-design-review-20261018.md`도 보존했다.
+- 역할: Claude CLI의 실제 모델 `claude-sonnet-5-5`가 소스·대표 화면/PDF·인증 위험을 검수하고 인증 모듈과 모의 단위 검사를 작성했다. Codex가 확인된 결함을 대조하고 앱·서버 정책·인쇄 수정 및 실행 검증을 맡았다. 초기에 Haiku가 다른 서비스까지 읽은 결과는 채택하지 않았다. 음성 생성·완료 여부는 이번 검수에 포함하지 않는다.
+- 사용 스킬: `ui-ux-pro-max`와 필수 GFIELD 디자인 규칙, `pdf`, `supabase`, `email-best-practices`의 트랜잭션 메일 지침. 외부 원문·학생 정보·인증 비밀은 공개 자료로 추가하지 않았다.
+
+### 적용한 수정
+
+1. `ws.html`의 잘못된 URL·생성 오류 메시지가 HTML로 실행될 수 있던 경로를 textContent로 변경했다. 주간·진단 인쇄 도구와 오류를 한국어·영어·중국어에 맞췄다.
+2. 손상된 저장본(문자열·배열·null 등)을 기존 승인 사용자로 취급하지 않고 `_recovery`에 원본을 보관한다. 클라우드 이어하기에도 기존 상태 정규화를 적용하고, 계정 정보가 없는 클라우드 복원본은 체험으로 시작한다. 기기의 기존 승인 상태는 유지한다.
+3. 보호자 이메일 인증을 `app/profile-auth.js`로 추가했다. 인증번호와 메일 링크를 지원하고, 링크는 실제 Auth 사용자 확인 후 이메일 주소를 보여 주며 명시적으로 확인해야 로그인된다. 이름만으로 이어하기·클라우드 쓰기를 하지 않는다. 새 기기 첫 화면의 「보호자 이메일로 이어하기」에서 인증과 기존 학생 선택이 가능하다. 이메일 인증과 학원 이용 승인은 별개다.
+4. 새로고침 복구·토큰 갱신·다른 탭 로그아웃·늦은 로그인/로그아웃 응답을 구분한다. 로그인 중 보호자가 바뀌면 클라우드 응답을 적용하지 않고, 클레임 요청의 실제 owner를 유지한다. 클라우드 이어하기 전 기기 상태를 `nm_state_v1_preresume`에 보관하며 보관 실패 시 복원을 중단한다. 클라우드 저장 실패를 성공으로 표시하지 않는다.
+5. 전 과정 주간 표지의 일차 배분에서 1일차만 반복되는 경우를 수정했다. 긴 정답은 실제 글꼴 폭으로 열을 확보하고, 정답지를 A4 페이지로 나눠 바닥글만 다음 쪽에 남는 현상을 없앴다. C1 서술형 답 겹침·C26 여섯 자리 답 잘림·C29 바닥글 단독 페이지를 대표 PDF에서 재확인했다. 개념용 지면의 여백 전체를 재디자인한 것은 아니다.
+6. NL12 3단계에 빠진 개념 설명을 한·영·중으로 추가했다. 긴 한국어 카드 제목의 단어 중간 줄바꿈과 지도 전환 막대의 비치는 배경을 조정했다. 오래된 검사 파일 로더 두 곳과 Mac에서 실행되지 않던 Windows 전용 경로 판정도 고쳤다.
+
+### 서버 적용 상태 및 기존 기록 연결
+
+- 실제 Supabase 프로젝트 `fgahqumaldheqettmvqg`에 `20261021020639_nm_guardian_email_profile_ownership` 마이그레이션을 적용했다. 저장한 SQL은 `../supabase/migrations/20261021020639_nm_guardian_email_profile_ownership.sql`이다.
+- `nm_profiles.owner_id`와 소유자 RLS를 추가하고 익명 조회·생성·수정을 막았다. 문자 수신 등록도 인증한 보호자 소유 학생에 대해서만 허용한다. 익명 REST 조회 HTTP 401, 자기 기록 조회·수정 허용, 미연결 기록 조회·수정 거절, 타 보호자 소유권 지정 거절, 자기 학생 연락처 등록만 허용을 확인했다. 검증 데이터는 트랜잭션 롤백했다. 해당 두 표의 보안 advisor 지적은 없었다.
+- 기존 행은 삭제하지 않았으며 owner가 없는 상태로 보존했다. 기존 이름을 아는 것만으로 소유권을 배정하면 안 된다. 학원이 보호자·학생 관계를 확인한 뒤 **이메일 인증이 완료된 `auth.users`의 id**를 해당 학생의 `owner_id`로 연결해야 한다. 기존 owner가 있으면 임의 교체하지 않는다. 실제 학생의 연결 작업은 아직 하지 않았다.
+- Auth API에서 이메일 사용 가능·가입 허용을 확인했다. 실제 보호자 메일 발송/수신, 메일 링크의 운영 도메인 redirect 허용 목록, SMTP 발송 설정·수신 제한은 이번에 실수신 검증하지 않았다. 운영 첫 인증 전에 확인이 필요하다. 실제 이메일·문자 발송과 결제 요청을 보내지 않았다.
+
+### 실행 증거와 한계
+
+- 모의 인증 단위 검사 25개, 브라우저 보안·인증·복원 20조건(`externalWrites=0`) 통과. 클라우드 복원 전 기기 기록 보관, 신규 기기의 링크 확인·이어하기까지 확인했다.
+- 전 과정 74 × 첫째/둘째 세트 × 분량 0.7/1/1.5 = **444세트** 생성·일차 표기·A4 넘침·정답 폭 통과. 교재 진단 시험지 **510장**, 다국어 인쇄 **1,320레벨 × 3언어 = 3,960조건** 통과.
+- 신규 수학 생성 68,000문항·언어 25,304묶음, 진단·교재 병행·학습 기록·활동 복귀·지도·뷰포트·수식 풀이 등 기존 검사를 실행했다. 최초 실패는 수정 후 해당 검사를 다시 실행했다. 전체 실행 집계는 55건 모두 통과이며 quick/부분 재검사도 이 집계에 포함된다.
+- 주요 7화면 × 한·영·중 × 390/1280px = 42화면과 신규 온보딩을 확인했다. 유아~고등 10단계 대표 PDF에서 40쪽을 추려 Claude가 시각 검수하고 발견 부분을 재렌더링했다. 모든 언어·모든 PDF의 전 페이지를 사람이 눈으로 확인한 것으로 표현하지 않는다. 실제 모바일·프린터 조작, 실제 이메일 수신 및 제작 중 음성은 남은 확인 대상이다.
+- 실행 로그·PDF·대표 그림은 `/tmp/nm-program-review-20261021`에 있다. 이 절 작성 시 코드는 로컬 작성·검증 상태이며, 아래 배포 기록이 추가되기 전에는 main/Pages 완료로 간주하지 않는다.
+
+
+### main 반영·배포 확인 — 2026-10-21
+
+- 로컬 검증 커밋 `7519a76a`와 동일한 트리 `41c08b51e53d45417c80c13c3433027132148638`를 연결된 GitHub 도구로 main `820d6bbc6d52a356ec0bf87266fe4fd2bb24ed22`에 반영했다. 터미널의 HTTPS 인증은 없어 직접 push는 실패했고, main의 기대 SHA를 지정한 갱신으로 다른 작업자의 변경을 보호했다.
+- Pages [실행 39532904557](https://github.com/docssam1/lete-on/actions/runs/39532904557)이 성공했다. `https://lete-on.gfieldacademy.net/number_magic/`의 index·main·profile-auth·exam·threads·styles·주간 인쇄·진단 인쇄 8파일이 로컬 검증본과 SHA-256으로 일치했다.
+- 마지막 모바일/데스크톱·한영중 42화면 재검사도 가로 넘침·브라우저 오류 0이었다. 모의 인증 25개 및 브라우저 20조건이 통과했다. 실제 인증 메일 수신과 기존 학생의 검증된 보호자 연결은 아직 미확인이다. 메일 실수신 검증용 이메일 주소를 사용자에게 요청했다.
+- 최종 집계·대표 PDF/그림·배포 파일 대조는 `/Users/docssam/.codex/visualizations/2026/10/16/01a14653-1a0f-7d62-937e-9a804956f658/nm-program-review-20261021`에 보관했다. Drive에는 이번에 새로 업로드하지 않았다. 음성은 제작 중이므로 완료로 표시하지 않는다.
+
+
+### 실제 보호자 인증 메일 수신·로그인 확인 — 2026-10-21 11:34 KST
+
+- 사용자가 지정한 본인 이메일에 인증 메일 1건을 요청했고 Auth API 200을 확인했다. Gmail 받은편지함에 도착했으며 발신 도메인의 SPF·DKIM·DMARC가 통과했다. 실제 공용 Auth 템플릿은 링크가 아닌 8자리 인증번호 방식이었다. 따라서 수의 마법의 인증번호 라벨과 발송 후 안내를 실제 메일에 맞춰 한·영·중으로 수정했다. 공용 메일 템플릿과 다른 서비스 설정은 바꾸지 않았다.
+- 공개 사이트의 새 390px 브라우저에서 받은 번호로 실제 인증 요청 1회·로그아웃 요청 1회를 수행했다. 인증된 이메일 일치, 세션 생성 및 로그아웃 뒤 기기 세션 제거, 페이지 오류 0을 확인했다. 새 학생 프로필 생성·기존 기록 연결·문자 발송은 하지 않았다. 인증번호·JWT·수신 주소는 공개 기록에 남기지 않는다. 시험에 사용한 번호는 한 번 사용돼 소진됐으므로 실제 이용 시 「인증 메일 받기」로 새 번호를 받는다.
+- 실제 운영 확인 결과는 `/tmp/nm-program-review-20261021/live-email-browser.json`과 기존 로컬 검수 산출물 폴더에 보관했다. 이제 메일 실수신·번호 인증은 확인됐으며, 기존 학생 기록과 보호자 소유권의 개별 연결은 여전히 학원의 본인 확인 후 진행해야 한다.
+
+### 가입·이용권·관리자·개인별 로드맵 — 2026-10-21 후속
+
+- 사용자 확정: **학생별 이메일 1개**, 형제는 **같은 보호자 전화번호 허용**, 학생별 진도·이용기간 분리. 가입 순서는 이메일 인증번호 → 비밀번호 지정·확인 → 보호자 휴대폰·필수 수집 동의·선택 문자 동의 → 학생 기록 연결이다. 이후 이메일·비밀번호 로그인, 잊었을 때 이메일 번호로 다시 확인한다. 비밀번호·원문 전화번호는 브라우저 학습 상태에 저장하지 않는다.
+- 최초 인증 계정 등록 때 서버 기준 30일 체험을 한 번 시작한다. 정식 이용권은 `six_month`(6개월)·`annual`(1년), 원장 수동 승인·연장·해지다. 결제·가격·자동 청구는 구현하지 않았다. 기존 기기의 로컬 승인 상태는 보호자 연결 전까지 보존하며, 보호자 연결 후에는 자기 학생 소유권·전화 등록·서버 이용기간을 함께 확인한다. 정적 학습지의 열람·인쇄물을 회수하는 DRM은 아니다.
+- `admin.html`에서 서버 로그인, 회원 조회, 확인 후 이용 승인·해지, 미연결 기존 학생의 보호자 연결, 개인별 시작 과정·회차·속도·분량·주당 횟수·학년·시작일을 설정한다. 관리자 실제 승인값은 비공개 서버 해시에만 초기 등록했다. 공개 소스·마이그레이션·검사에는 실제 승인값을 넣지 않았다. 관리자 세션은 2시간이며 로그아웃 시 서버에서도 무효화한다.
+- 개인 설정은 기존 `progress`·진단을 덮어쓰지 않는다. 관리자·학습자 로드맵에서 같은 `learning-plan.js`로 12개월의 과정·회차·학년/월을 계산한다. 학년 전환은 3월, 속도·주당 횟수·남은 시작 회차를 반영하는 예상치다. 유아 빠른 속도는 원장이 준 **6세 3월 과정1·한 달 한 과정**을 참고로 표시하고, 필즈·소마의 공식 합격/연산 속도 기준으로 표현하지 않는다. 공식 과정 안내 링크를 함께 제공한다.
+- 관리자 학습지 문자 버튼은 번호 마스킹·정확한 문안·단문/장문·링크를 먼저 보여 주며 별도의 전송 버튼을 눌러야 1건을 보낸다. 미리보기는 10분, 학습지 공유 링크는 14일이다. 설정·수신 동의·이용기간을 발송 시 다시 확인하며 선점 후 한 번만 dispatch한다. 애매한 실패를 자동 재전송하지 않는다. 테스트에서 실제 문자는 보내지 않았다.
+- `/w/?m=…`는 신원을 담지 않는 임의 토큰으로 맞춤 `ws.html`을 연다. 개인 시작 회차는 새 `p=1` 경로에서 실제 문제·개념 회차 선택에도 반영한다(기존 `s`만 있는 링크의 읽을거리 동작 보존). 과정 점검 회차는 그 회차의 pool로 구성한다. 기존 `?YYWW.C4`·`C4-2` 링크도 유지한다.
+- 자동 문자도 같은 번호의 형제를 학생별 해시 kind로 구분하고, 로그를 먼저 선점한 다음 발송한다. 보호자 연결 계정은 서버 이용기간·개인 설정을 읽고 만료/해지 시 발송하지 않는다. 소유자 없는 기존 기록의 발송은 기존 흐름을 보존했다. 발송 시각·릴레이·Vault 설정은 변경하지 않았다.
+
+#### 서버 적용·검증
+
+- 실제 Supabase 마이그레이션 `20261021030330_nm_membership_admin_personal_learning` 적용. `nm_private`의 회원·개인 설정·연락처·관리자·세션·미리보기는 RLS를 켜고 공개 권한을 없앴으며, 서비스 역할 전용 RPC만 접근한다. `nm_profiles.owner_id` 부분 unique로 이메일당 1명을 보장한다. 연락처에는 전역 전화번호 unique를 만들지 않았다. 신규 프로필과 관리자 연결 모두 자기 보호자 연락처만 동기화한다.
+- Edge `nm-membership` v1은 JWT를 Auth 서버에 직접 확인하거나 별도 관리자 세션/공유 토큰을 검증한다(`verify_jwt=false`인 이유). `weekly-notify`는 기존 배포 v19와 로컬 원본 차이(기존 시험 과정 옵션·주석)를 대조한 뒤 v20으로 갱신했으며 기존 JWT 설정을 유지했다. 새 원시 SMS/OTP 발송은 실행하지 않았다.
+- SQL 검사는 합성 사용자·학생·연락처를 트랜잭션 롤백해 시험했다: 30일 재시작 방지, 형제 번호 공유와 독립 수신 해지, 이메일당 1명, 관리자 연결 충돌, 진도 보존, 6개월·1년 연장, 비공개 링크, 발송 선점·재사용 차단, 해지 차단·로그아웃·권한 거절. 실제 학생 행을 연결하거나 삭제하지 않았다.
+- 실제 운영 HTTP: 미인증 401, 잘못된 관리자 승인값 401, 지정 관리자 로그인·목록 200, 내부 전용 action 거절 400, 없는 공유 링크 404, 다른 Origin 403, 로그아웃 후 세션 401. 학생 정보·JWT·관리자 승인값은 검수 출력에 남기지 않았다.
+- 검사 통과: 인증 단위 37, 회원 클라이언트 17, 서버 핸들러 27, 가입/복원 브라우저 기존 25+회원 2, 관리자 브라우저, 개인 로드맵·공유 링크 브라우저 20(390/1280px·한영중), 개인 회차 선택 1,102조건·대표 5세트 실제 렌더, 자동 문자 모의 검사, 달력·학년·속도 순수 검사, 기존 주간 C0/C4/C29 6세트. 모든 이메일/문자/회원 변경 브라우저 검사는 모의 요청만 사용했다. 실제 비밀번호 설정·보호자 전화 입력은 사용자가 직접 하는 단계다.
+- 보안 advisor의 새 비공개 8표는 정책 없이 RLS로 전부 거절하도록 의도한 INFO 항목이다. 공개 테이블/함수 권한 차단은 SQL 검사로 따로 확인했다. 공용 Auth의 기존 유출 비밀번호 보호 설정과 다른 서비스는 변경하지 않았다.
+- 이 절은 서버 적용·로컬 검증 기록이다. main·Pages 반영 상태는 후속 완료 기록으로 확인한다. 음성 제작은 이번 범위에서 제외했다.
+
+- 후속 로그인 전환 검사: 보호자 이메일·연락처·학생 소유권 연결이 끝난 로컬 기록에는 전환 표시를 보존한다. 이후 로그아웃이 예전 로컬 승인을 되살리지 않으며, 원래 진도와 승인 원본 값은 지우지 않는다.
+
+#### main·운영 사이트 완료 확인
+
+- 기능 코드 `f567680d`와 로그인 전환 보완 `d5a596ee`가 main에 반영됐다. Pages [실행 39537333560](https://github.com/docssam1/lete-on/actions/runs/39537333560) 성공을 확인했다. 앞선 실행 39537160750은 후속 커밋 배포로 취소됐으므로 실패로 집계하지 않는다.
+- 운영 도메인의 index·main·profile-auth·membership·learning-plan·styles·exam·admin HTML/JS/CSS·ws·짧은 링크 **12파일이 HTTP 200이며 로컬 검증본과 SHA-256 일치**했다. 관리자 주소는 `https://lete-on.gfieldacademy.net/number_magic/admin.html`, 학습자 주소는 `https://lete-on.gfieldacademy.net/number_magic/`이다.
+- 마지막 로그아웃 회귀 포함 브라우저 25+2조건, 개인 로드맵/링크 20조건, 관리자 브라우저도 통과했다. 근거는 기존 로컬 검수 산출물 폴더의 `live-membership.json`·`membership-deployment.json`·각 검사 로그와 개인 로드맵 스크린샷에 보관했다. 사용자 미추적 Claude 디자인 검수 문서는 그대로 남겼다.
+
+### OmniVoice 제작·업로드 완료 확인 — 2026-10-21
+
+- 사용자 확인에 따라 음성을 **제작 중 목록에서 제외**했다. 생성·업로드는 기존 작업에서 완료됐으며, 이번에는 음성을 재합성하거나 유료 TTS를 호출하지 않았다. 제작 대상 55유닛의 정적 안내/피드백 813항목은 중복 제거 후 **764문장(한국어259·영어254·중국어251)**이며 현재 OmniVoice 연결표가 모두 포함한다. 다른 동적 문장까지 전부 녹음한 것으로 표현하지 않는다.
+- 실제 운영 도메인의 764개 MP3를 읽어 모두 HTTP 200, 로컬 업로드본과 SHA-256 일치, 누락 0을 확인했다. Chromium에서 764개 전부 디코딩했고 빈 파일·무음 기준 실패 0이었다. 세 언어 대표 안내의 실제 MP3 재생·재생 시간 진행을 확인했다. 기존 수식 읽기 보완(`162a70cd`, `1ed109cb`)도 현재 업로드본에 포함돼 있다.
+- 기능 검사에서 다음 안내로 빨리 넘어가면 이전 MP3가 계속 재생되는 겹침을 재현했다. 새 안내가 시작되기 전 기존 MP3와 기기 음성을 멈추고, 취소된 이전 재생의 늦은 실패가 옛 안내를 다시 말하지 않게 했다. 마을 음소거·마을 퇴장·언어 변경도 같은 정지 함수를 사용한다.
+- 새 `scripts/check-voice-browser.js`는 실제 파일 디코딩, 제작 대상 연결 범위, 3언어 재생, 빠른 안내 전환, 정지, 이전 실패 무시를 확인한다. 대사 목록은 기존 생성기의 `DUMP_TASKS`만 이용하며 합성·업로드·이메일·문자 요청을 하지 않는다. 기존 가입/복원 브라우저 25+2조건도 재검사했다.
+- **발음 품질 범위:** 기존 `report.json`에는 자동 ASR 기준 미통과 표시 74개가 남아 있다. 숫자·수식 읽기와 중국어 동음이의어도 포함돼 있어 이를 실제 오독 74개로 단정하거나 임의로 통과 처리하지 않았다. 이번 확인은 업로드 무결성·디코딩·재생 연결 검수이며, 전 문장의 자연스러움·수학 용어 발음을 사람이 전수 청취한 것은 아니다. 이 환경에서는 음성을 직접 청취할 수 없어 기존 ASR 결과를 독립 청취 결과로 표시하지 않는다.
+- 검수 근거는 `/tmp/nm-voice-review-20261021`의 `public-files.json`, `browser.json`, `browser.log`, `program-browser.log`에 있다. 코드 배포 상태는 이 절 이후 완료 기록으로 확인한다.
+
+- **운영 반영 완료:** 기능 수정은 main `6aaf0bc5`에 반영됐고, Pages [실행 39539139268](https://github.com/docssam1/lete-on/actions/runs/39539139268)이 성공했다. 운영 index·main·OmniVoice 연결표가 로컬 검증본과 SHA-256으로 일치했다. 음성 파일 764개는 앞서 전수 대조했으며 이번 수정에서 재생성하지 않았다. 배포 결과도 기존 로컬 검수 산출물 폴더의 `nm-voice-review-20261021/deployment.json`에 보관했다.
+
+
+### 캐릭터 모음·의상·코인·마을 조작 확장 — 2026-10-21
+
+- 요청: 유준·유빈 두 종류 이외의 캐릭터와 직접 정하는 이름, 더 다양한 꾸미기/포인트 안내, 실제 마을 입장·조작 확인. Mac mini의 기존 `codex/nm-program-review-20261021` 작업본에서 진행했다. `ui-ux-pro-max` 및 GFIELD 디자인 기준을 적용했고, Claude CLI `sonnet`(실제 claude-sonnet-5-5)에게 렌더러/카탈로그와 옷장 파일을 서로 겹치지 않게 맡긴 뒤 Codex가 상태·마을 통합과 브라우저 검증을 수행했다. 추가 Claude 읽기 검수의 복원 관련 두 지적을 보완했다.
+- 사람 외형 8종(기존 그림 2종 유지), 의상 9종(무료 3종 포함), 학생당 저장 캐릭터 최대 24개, 캐릭터 이름 최대 16 Unicode 글자. 캐릭터 추가는 학생 계정을 추가하는 동작이 아니다. `S.name`·보호자 소유권·학습 진도·회원 기간은 그대로 두며, `S.avatar`/`S.avatarCollection`에서 외형/이름/의상을 관리한다. 온보딩·기존 사용자 선택 화면·상단 칩·마을·3D 로드맵·그림책이 같은 선택을 사용한다.
+- 새 초상화 70장은 기존 마을 Three.js 모델과 팔레트를 로컬 Chromium에서 직접 그린 투명 PNG(240×300)다. 외부 이미지 API를 호출하지 않았다. `scripts/build-human-portraits.js`로 재현하며, 옷장 카드마다 별도 WebGL 컨텍스트를 만들지 않는다. 기존 기본 그림 두 장과 학습용 그림은 교체하지 않았다.
+- 기존 옷장의 누적 `dirty` 금액이 저장할 때마다 중복 차감되던 문제를 없앴다. 미리 입어 보기 → 가격·잔액 확인 → 구매/적용으로 변경했다. 취소·무료·보유 항목에는 차감이 없고, 실제 저장에 실패한 구매는 코인/해제를 되돌린다. 구매 뒤 외형 저장만 실패하면 보유 상태를 유지해 추가 차감 없이 다시 적용할 수 있다. 다른 창의 잔액/보유 변경을 발견하면 구매하지 않고 최신 기록으로 새로고침한다. 이후 화면 전환도 다른 창의 진도를 덮어쓰지 않는지 검사했다.
+- 실제 획득 지점(출석·주간 봉투/필요 보강·수학사·훈련·보강·단원·짝 맞추기)을 코인 이력에 연결했다. 최근 100건을 프로필에 보관하고 옷장에서는 최근 20건의 획득/사용 이유·금액·변경 후 잔액을 보여 준다. 기존 잔액은 유지하며 과거 이력을 만들어 내지 않는다. 코인은 기존 앱 안 꾸미기 보상이며 실물 결제나 서비스 승인 권한으로 쓰지 않는다. 배경 꾸미기는 초상화용이라는 안내도 넣었다.
+- 이전 `{kind}` 저장본은 계속 읽고, 일부 복원본에 의상 보유 키가 빠졌으면 이름/캐릭터를 유지한 채 기본 의상으로 복원해 이름 변경·캐릭터 추가가 막히지 않게 했다. 이름은 정규화하고 제어문자 제거·출력 이스케이프를 적용했다. 2D/3D 마을의 말풍선도 `textContent`로 표시함을 대조했다.
+- 마을에 조작 없이 입장하는 ‘바로 들어가기’ 메뉴(수의 나라·초급·중급·고급·학습지/시험·옷장)를 넣었다. 기존 입장 가능 범위는 유지한다. 메뉴·구매·탭 버튼은 최소 44px, 입력은 16px, 키보드 포커스/Enter/Escape 조작을 지원한다. PC 옷장은 미리보기와 선택 목록을 나란히 두고 휴대폰은 한 열로 표시한다.
+- 검증: `check-character-state.js`(8외형/9의상/70서로 다른 초상화, 마이그레이션·정확한 차감·소유권·부분 복원·기록 보존), `check-character-closet-browser.js`(390/1280px·한영중, 이름/여러 캐릭터/재접속·취소·중복 차감·잔액 부족·저장 실패·다른 창 갱신 후 진도 보존·코인 이력·44px/16px·가로 넘침), 기존 `check-program-safety-browser.js`(25+회원2, 외부 쓰기0)가 통과했다.
+- 실제 WebGL `check-town-navigation.js`는 390/1280px에서 여섯 목적지 실제 입장/복귀, 선택한 이름/의상, 건물까지 왕복 충돌 경로, 조이스틱 두 손가락/화면 밖 드래그/취소/blur, 방향키, 카메라/학습 목록/포커스 유지, GPU 해제/컨텍스트 복구를 확인했다. 터치 입력은 Chromium CDP 모의 입력이며 실물 휴대폰 사용자의 전수 사용성 평가라고 표시하지 않는다.
+- 검수 근거: `/tmp/nm-characters-20261021`의 `closet/closet.json`, `town/town-navigation.json`, 화면 캡처 및 로그. 코드와 재현 검사는 Git에 보관한다. 실제 문자·이메일·회원 변경·음성 재생성·Drive 업로드는 하지 않았다. 사용자 미추적 `docs/claude-design-review-20261018.md`는 수정·스테이징하지 않았다. 운영 배포 결과는 후속 기록으로 구분한다.
+
+- **운영 반영 완료:** 기능은 main `c24189d9`에 반영됐고 Pages [실행 39542552069](https://github.com/docssam1/lete-on/actions/runs/39542552069)이 성공했다. 운영 도메인의 변경된 화면·스크립트·스타일·카탈로그·초상화 **81파일 전부 HTTP 200 및 로컬 검증본과 SHA-256 일치**를 확인했다. 결과는 기존 검수 산출물 폴더의 `deployment.json`에 보관했다. 핵심 결과와 화면도 이 채팅의 기존 시각화 폴더 아래 `nm-character-review-20261021`에 복사했다. 배포 확인 뒤 이 완료 문구만 추가하며 기능 코드는 그대로다.
+
+- 후속 소개 문구 수정(2026-10-21): `characters.html`의 남자아이/여자아이와 `about.html`의 소년/소녀 표기를 기존 캐릭터 이름 유준/유빈으로 맞췄다. 영어 Yujun/Yubin·중국어 宥俊/宥彬 및 소개 그림 대체 텍스트도 언어 변경에 맞춘다. 학생이 옷장에서 직접 정한 이름에는 영향을 주지 않는다. 한영중 언어 전환을 실제 로컬 브라우저에서 두 페이지씩 확인해 6조건 통과했다.
+
+
+### 학습 점검 전용 마스터 계정 · 소개 뒤 승인 화면 — 2026-10-21
+
+- 원장님이 지정한 아이디/확인 코드로 **전체 학습 점검 전용** 계정을 만들었다. 사용자 답변에 따라 학생 관리 권한은 주지 않았다. 실제 아이디·확인 코드·해시·세션은 공개 Git/검사/문서에 적지 않는다. 기존 관리자 계정과 보호자 계정은 변경하지 않았다.
+- 소개의 상단 ‘넘어가기’와 하단 입장 버튼은 `access.html` 승인·로그인 화면으로 간다. 보호자 이메일 로그인·가입, 마스터 점검 로그인, 가입 전 둘러보기를 선택한다. `index.html?auth=1&enter=1`은 이미 온보딩한 사용자도 보호자 인증/승인 상태 화면을 연다. 기존 OTP→비밀번호→연락처 등록 흐름을 그대로 사용한다.
+- 마스터 인증은 `nm-review` Edge v1과 서비스 역할 전용 `nm_review_rpc`로 분리했다. 비공개 `nm_private.review_accounts`에는 bcrypt 해시, `review_sessions`에는 임의 256비트 토큰의 SHA-256만 저장한다. IP당 8회·아이디당 20회/15분 제한, 2시간 만료, 계정 비활성화/로그아웃 시 검증 실패를 적용했다. JWT 자동 확인을 끈 이유는 이 함수가 점검 전용 opaque 세션을 직접 검증하기 때문이다. 관리자 토큰·회원 승인·학생 명단·연락처·문자 API에는 쓸 수 없다.
+- 마이그레이션 `20261021060000_nm_learning_review_access`를 적용했다. CLI `migration new`로 만든 로컬 파일의 버전은 실제 서버 migration 목록으로 확인한 적용 버전에 맞췄다. 원격 반영 전 DDL과 DB 기능 검사를 트랜잭션에서 실행 후 rollback했고, 실제 적용 후 보안 advisor와 권한을 확인했다. 새 비공개 2표의 RLS 정책 없음 INFO는 공개 권한 없이 전부 거절하는 설계이며 anon/authenticated의 표 조회 및 RPC 실행은 차단돼 있다.
+- `?review=1`은 URL만으로 활성화되지 않는다. 먼저 서버 세션을 검증하고 실패/만료/연결 오류면 승인·로그인 화면으로 돌려보낸다. 토큰은 탭의 sessionStorage에만 저장하며 비밀번호를 저장하지 않는다. 점검용 진도·캐릭터·코인은 `nm_review_state_v1_<계정>`에 따로 저장한다. 기존 `nm_state_v1`, 형제 슬롯, 보호자 로그인 값은 읽어서 복사하거나 덮어쓰지 않는다. 점검 모드는 실제 보호자·회원·클라우드 저장 연결과 계정 설정/학생 슬롯을 사용하지 않는다.
+- 점검 모드에서는 상단에 ‘학습 점검’과 로그아웃을 계속 보여 준다. 전체 학습 유닛의 잠금을 열며, 점검용 초기 코인 1,000은 실제 학생 잔액과 관계없다. 실제 결제·회원 기간·승인 정보에 변화가 없다. 일반 접속의 기존 저장 키와 승인 판단은 그대로 유지한다.
+- 담당: Codex가 서버/세션/앱 통합·검증, Claude CLI Sonnet이 승인 화면 HTML/JS/CSS 3파일을 분담했다. 공개 코드에 실제 확인 코드를 적지 않았으며, 계정 생성/라이브 인증은 별도 비공개 서버 작업으로만 실행했다.
+- 검사: Edge 핸들러 4그룹(행동/필드 허용 목록·요청 제한·오류 비노출·역할 검사), DB 트랜잭션 검사(잘못된 코드·정상 로그인·상태·관리자 접근 불가·비활성화·로그아웃·분산 IP의 아이디 제한·권한 차단), 실제 운영 Edge 로그인/상태/관리자 행동 거절/로그아웃 후 토큰 무효화를 통과했다. 실제 토큰은 출력하지 않았다.
+- `check-review-access-browser.js`는 390/1280px·한영중, 소개→승인→마스터 로그인, 전체 유닛 접근, 별도 진도/포인트, 기존 학생/슬롯/보호자 세션 보존, 실제 학생 관련 백엔드 호출 0, 로그아웃/가짜 세션 거절, 기존 온보딩 사용자의 보호자 인증 진입을 확인했다. 기존 가입/인증 브라우저 25+회원2와 소개 통계 검사도 통과했다. 브라우저 검사는 모의 API만 쓰고 실제 이메일·문자를 보내지 않는다.
+- 근거: `/tmp/nm-review-access-20261021`의 JSON·로그·화면. 기존 미추적 Claude 디자인 문서는 보존했다. 서버 반영은 완료됐으며 정적 화면의 main·Pages 상태는 배포 확인 기록과 구분한다.
+
+- **운영 반영 완료:** 기능은 main `6f687650`에 반영됐고 Pages [실행 39553228284](https://github.com/docssam1/lete-on/actions/runs/39553228284)이 성공했다. about·access HTML, 로그인 JS/CSS, 점검 세션, main·styles·index **8파일 모두 운영 HTTP 200 및 로컬 파일과 일치**를 확인했다. 옆 브라우저에서 소개를 새로고침하고 실제 ‘넘어가기’를 눌러 승인 화면으로 이동한 뒤, 요청한 점검 계정으로 로그인해 모드 선택 화면과 ‘학습 점검’ 표시를 확인했다. 계정에는 학생 관리 권한이 없다. 결과·화면은 이 채팅의 기존 시각화 폴더 아래 `nm-review-access-20261021`에 보관했다.
+
+### 음성 중첩·작은 화면·자동 접속 재검수 — 2026-10-21
+
+- 사용자 실제 제보에 따라 앞선 검사의 누락을 수정했다. 앞선 음성 검사는 안내 MP3끼리의 전환/실패만 확인해, 별도 성공 음성·900ms 강제 후속 안내·화면을 떠난 뒤의 예약 호출을 놓쳤다. 화면 검사도 점검 띠로 줄어든 실제 높이와 일부 비격자 위젯을 충분히 다루지 않았다. 전수 청취/전체 프로그램 무결점으로 표현하지 않는다.
+- `app/voice.js`가 현재 `NM_TTS_OMNI`만 재생한다. index의 예전 Google 연결표 로딩, 기기 TTS fallback, 예전 성공 안내 MP3 재생 경로를 제거했다. 성공 피드백은 말 없는 짧은 합성음이며, 녹음이 없는 동적 문장은 화면 글을 유지한다. 기존 녹음 자산은 삭제/재합성/재업로드하지 않았다. 안내 교체·화면 전환·학습 단계 전환·탭 숨김/퇴장 때 정지하며, BroadcastChannel로 같은 사이트 탭의 중복 낭독을 막는다. 늦은 재생 실패가 다른 목소리를 시작하지 않는다. 실험실의 다시 듣기도 같은 재생기를 이용한다.
+- 연습의 첫 설명을 ‘설명 다시 듣기 → 문제 풀기’로 분리했다. 문제 화면은 안내/문제·숫자판을 명시적으로 묶으며 작은 화면에서도 주요 응답 버튼이 보이도록 한다. 위젯은 안내와 작업 구역을 분리하고 무조건 확대되던 장면 대신 실제 가용 높이에 맞춘다. 3D 메뉴는 작은 화면에서 고정 행에 배치해 투영 좌표를 보정한 뒤 다시 겹치던 문제를 막는다. 아주 낮은 가로 휴대폰·긴 읽을거리/큰 활동판의 읽기 가능한 스크롤 fallback까지 무조건 없앤 것은 아니다.
+- 원장님 명시 답변: **다시 열 때마다 승인·로그인부터**. `app/entry.js`는 직접 index 접근·새로고침·이전 방문 복구를 access로 돌린다. 둘러보기/마스터는 사용자가 방금 선택/로그인한 1회·60초 진입 표만 소비한다. 마스터 권한은 그 뒤에도 기존 서버 세션으로 별도 검증한다. 보호자 로그인 화면은 저장된 인증을 자동 복원하지 않고 다른 탭의 로그인도 가져오지 않는다. 학습 기록·캐릭터·학생 슬롯은 삭제하지 않는다. 둘러보기로 예전 로컬 승인 권한을 재사용할 수 없다. index의 옛 자동 인트로 재생도 제거했다. 소개 페이지와 수업별 영상/자산은 유지한다.
+- `?ws=`와 언어는 승인 진입을 거쳐 이어갈 수 있게 전달한다. 로그인하지 않은 보호자 화면의 학습 복귀 버튼은 승인 화면으로 돌아가며, 로그인·비밀번호 지정·연락처 등록 뒤 학습으로 이동한다. `auth=1&review=1` 조합으로 옛 점검 토큰을 자동 재사용하는 경로도 막았다. 서버/회원 기간/승인 권한·문항·정답은 변경하지 않았다.
+- 검사 근거는 `/tmp/nm-audio-entry-20261021`이다. 현재 OmniVoice 764개 전부 디코딩 통과, 3언어 재생·빠른 전환·과거 실패 무시 검사 통과. 새 브라우저 검사는 390×667·603×673·1280×720 및 390×844 한영중에서 모드 버튼 충돌·44px 터치·실제 학습 숫자판/확인·정답 제출·화면 이탈/예약 음성/다중 탭 정지·재진입 로그인 정책을 확인한다. 별도 WebGL 검사 결과/운영 반영은 후속 완료 기록으로 구분한다.
+- 기존 profile-auth 38건(신규 자동 복원 차단 포함), 가입/회원 브라우저 25+2건, 교구/격자 화면 회귀 검사도 실행했다. 기존 비진입 회귀 검사에는 로컬 서버에서만 entry fixture를 주입해 그 검사 대상과 새 진입 정책 검사를 분리했다. 운영 쓰기·실제 문자/이메일 발송은 하지 않는다. 기존 사용자 미추적 Claude 검수 문서는 수정/스테이징하지 않는다.
+
+- 로컬 완료 확인: 실제 WebGL 3D 메뉴 5조건과 대체 2D 메뉴 5조건, 각 조건의 N-01/N-06/A-01 활동 15화면씩에서 버튼 충돌·응답 위치·가용 영역을 검사했다. 셈 그림은 작은 판에서 물건 끝이 잘리지 않도록 48px 누름 영역의 행으로 정렬하며 그림/종류/개수/정답은 유지한다. 숫자판 정답 제출 후 다음 문제로 넘어가는 동작도 확인했다. 9개 격자 화면 조건 및 32개 교구 조건의 입력/전환 검사가 통과했다. 음성 재생/가입·회원/학습 점검 계정 회귀 검사도 최종 통과했다. 정식 배포 확인은 아래 후속 기록에 남긴다.
+
+- 배포 캐시 보완: 본체/CSS뿐 아니라 동적 3D 메뉴 import와 실험실 6페이지의 공용 음성 스크립트에도 버전 주소를 붙였다. 재접속 시 이전 캐시와 수정된 재생/배치 코드가 섞이지 않게 한다. 내용/문항 변경은 없다.
+
+- **운영 반영 완료:** 기능 main `d9ae39a4` 및 캐시 보완 main `b7c00f70`을 반영했다. Pages [실행 39603411620](https://github.com/docssam1/lete-on/actions/runs/39603411620) 성공. 변경된 운영 화면·스크립트·스타일·실험실 HTML **17파일 전부 HTTP 200, 로컬 검증본과 SHA-256 일치**를 확인했다. 운영 index에 점검 URL로 새로 접속해도 승인·로그인 화면으로 이동함을 옆 브라우저에서 확인했고, 그 화면을 열어 두었다. 기존 열린 학습 창은 이전 JS가 실행 중일 수 있으므로 새 접속 화면에서 다시 시작해야 한다. 이 완료 기록 외 기능 소스는 검증본 그대로다. 증거는 이 채팅의 기존 시각화 폴더 아래 `nm-audio-entry-20261021`의 `deployment.json`, 화면 및 검사 결과에 보관했다.
+
+
+### 승인·로그인 창의 마스터 점검 통합 — 2026-10-21
+
+- 사용자 요청에 따라 승인·로그인 한 카드 상단에 보호자 로그인 / 마스터 점검 탭을 배치했다. 접혀 있던 별도 점검 메뉴를 없애고, 같은 창에서 마스터 입력칸을 바로 열 수 있다. 마스터는 기존 서버 검증·학습 전용 권한을 사용하며 이메일 인증을 요구하지 않는다. 보호자 안내는 기존 회원 이메일/비밀번호와 최초 가입 인증을 구분한다.
+- 한영중, 390/1280px, 방향키·Home/End 탭 이동, 44px 이상 입력/버튼, 탭 변경 시 코드 폐기, 오류 후 재시도, 점검 진도/포인트 분리·로그아웃·잘못된 세션 차단 및 보호자 진입 검사를 통과했다. 기존 음성/재접속/학습 화면 브라우저 검사도 실행했다. 모의 인증만 사용하며 실제 이메일/문자 전송과 서버 변경은 없다.
+- 담당 Codex, 기존 ui-ux-pro-max/GFIELD UI 기준 적용. 증거 `/tmp/nm-unified-login-20261021`. 운영 배포 완료 여부는 후속 검증으로 구분한다. 기존 미추적 Claude 디자인 문서는 보존한다.
+
+- **운영 반영 완료:** main `c264d504` 및 Pages 실행 [39605015268](https://github.com/docssam1/lete-on/actions/runs/39605015268) 성공. 로그인 HTML/JS/CSS 3파일 운영 HTTP 200, 검증본과 SHA-256 일치. 옆 브라우저에서 새로고침하고 마스터 점검 탭을 열어 같은 창의 입력 화면을 확인했다. 증거 `nm-unified-login-20261021`을 이 채팅의 기존 시각화 폴더에 보관했다. 실제 로그인 정보는 입력/저장하지 않았다.
+
+
+### 공통 로그인 입력창으로 단순화 — 2026-10-21
+
+- 사용자 정정: 점검 선택 버튼 자체가 불필요하다. 직전 두 탭 설계를 대체하고 이메일 또는 아이디 / 비밀번호 / 로그인 한 폼만 표시한다. 이메일은 기존 보호자 비밀번호 인증, 아이디는 기존 학습 점검 서버 인증으로 보낸다. 별도 마스터 버튼·탭·안내는 로그인 화면에서 없앴다. 서버 검증 전 클라이언트의 아이디만으로 권한을 부여하지 않는다.
+- 가입/비밀번호 복구는 기존 이메일 OTP→비밀번호 설정→연락처 등록 경로를 이용한다. 정상 이메일 로그인 직후의 단일 진입 표(60초·1회)에 사용자 id만 담아, 같은 id의 로그인 세션을 한 번 연결한다. 비밀번호/토큰은 진입 표나 URL에 담지 않는다. 재접속·새로고침에는 기존 로그인 창 우선 정책을 유지하며 다른 탭 로그인 자동 수용도 차단한다. 점검 권한/진도 분리는 기존대로 서버가 검증한다.
+- Codex가 기존 UI 및 Supabase 스킬 기준으로 구현했다. Supabase 공식 비밀번호 인증 문서와 현재 변경 로그 확인, 신규 서버 API/DDL/권한 변경 없음. profile-auth 39건과 기존 가입/회원 브라우저 25+2건, 음성/재접속/활동 화면 5조건 검사를 통과했다. 공통 폼의 양쪽 인증과 이메일 로그인 후 중복 로그인 방지, 실제 발송 없는 회귀 검사 결과는 `/tmp/nm-single-login-20261021`에 둔다. 기존 사용자 미추적 Claude 문서는 보존했다. 배포 상태는 후속 기록으로 구분한다.
+
+- **운영 반영 완료:** main `d64a5a4a`와 Pages [39606095075](https://github.com/docssam1/lete-on/actions/runs/39606095075) 성공. 런타임 7파일 전부 운영 HTTP 200/로컬 검증본과 SHA-256 일치. 공통 폼에서 마스터/보호자 양쪽 인증, 한영중 이메일 로그인 직후 두 번째 로그인 없음·재접속 로그인 요구·가입/복구 링크 통과. 옆 창에서 별도 점검 선택 버튼 없이 이메일 또는 아이디 / 비밀번호 / 로그인만 표시됨을 확인했다. 결과·실제 화면은 이 채팅의 기존 시각화 폴더 아래 `nm-single-login-20261021`에 보관했다.
+
+
+### 마법책 첫 화면·책 펼침 로그인 — 2026-10-21
+
+- 사용자 정정: 기존 네모 로그인 폼을 첫 화면으로 쓰지 않고 수의 마법다운 입구로 디자인하며, 둘러보기를 누르면 책이 열리며 로그인이 나타나도록 한다. 파랑 표지·기존 유준/유빈 PNG를 사용한 마법책 입구와 두 쪽 속지를 구현했다. 표지/둘러보기/상단 로그인은 동일한 책을 연다. 가입 전 실제 체험은 책 안의 별도 링크로 유지한다. 방금 만든 공통 이메일/아이디 로그인·서버 권한은 그대로 이용한다.
+- 표지가 경첩을 중심으로 넘어가고 오른쪽 속지에 입력칸이 나타난다. 좁은 휴대폰은 오른쪽 속지를 넓게 보여준다. native dialog와 키보드 초점 순환·ESC/닫기·닫은 뒤 입력 비밀번호 폐기·reduced motion을 적용했다. 애니메이션이 끝나야만 인증을 할 수 있는 추가 대기는 없다. 자동 음성/영상 재생은 없다.
+- Codex가 기존 GFIELD 디자인/UI UX 스킬을 적용했다. 기존 승인 캐릭터 원본과 마을/3D·문항은 변경하지 않는다. 375/390/734/1280px와 667×375 가로 화면, 한영중, 실제 표지 전환·대체 정지 화면·포커스/44px/16px·가짜 API의 기존 계정 인증 회귀·5조건 학습 화면 검사를 통과했다. 실제 외부 인증/메일/문자 호출 없음. 근거 `/tmp/nm-book-entry-20261021`.
+- 마을에 대한 의견은 사용자에게 전달했다: 현재 완성도/길 찾기는 기존 만화풍, 조작 재미는 3D가 좋고 기본 만화풍+선택 3D를 제안했다. 마을 기본값은 이 의견만으로 바꾸지 않았다. 기존 미추적 Claude 디자인 문서는 보존했다. main/배포 완료는 후속 검증으로 구분한다.
+
+- 표지 전환의 초반이 너무 빠르게 사라지지 않도록 회전 가속을 조정하고 CSS 캐시 주소를 갱신했다. 7조건 실제 애니메이션/정지 화면 검사를 다시 통과했다. 기능 main `8e3e8728`와 회전 보완 `a937b946`까지 원격 반영됐으나 자동 Pages 실행이 아직 생기지 않아 운영 반영 확인을 계속한다.
+
+
+### 원래 초록 마법책 복구·로그인 연출 / 만화풍 마을 기본 전환 — 2026-10-21
+
+- 사용자 지적 수용: 기존에 힘들게 만든 디자인을 확인하지 않고 새 파랑 책/캐릭터 입구를 만든 것은 잘못이었다. 그 입구를 걷어내고 `promo/index.html`의 실제 초록 가죽 마법책 표지 구조, `promo/book.css`, `promo/front-page.css`, `grimoire-emerald.webp`, `promo/cover-math.js`를 그대로 재사용한다. 해당 원본 자산/스크립트/소개는 수정하지 않았다. 언어 선택과 영중 표지 문구도 원래 것에 맞췄다.
+- 둘러보기/책 클릭 시 기존 표지의 실제 위치·별 캔버스·현재 숫자 모습을 복제해 책등을 축으로 1.4초 동안 펼치며 같은 책 속 로그인으로 이어진다. 비디오·새 음성은 재생하지 않는다. 원래 수식 `8+7→8+2+5→10+5→15`는 클릭 전 자동 반복, 로그인 중 일시정지, 닫으면 재개한다. 왼쪽 속지의 기존 표어는 마법사가 글을 쓰듯 글자별로 보이며, 입력칸/로그인 동작은 글쓰기 완료를 기다리지 않는다. 닫기/ESC/초점 순환/동작 줄이기/크기변경·탭 숨김 정리를 유지했다.
+- 사용자 새 지시: 3D 마을 이동이 어려우므로 기존 만화풍 마을을 개선해 기본으로 바꾼다. 기존 `assets/map.jpg`, 건물 위치·캐릭터·분수는 유지한다. 최초 카메라는 전체 지도, 건물/큰 하단 6개 버튼은 이동·확인 모달 없이 직접 입장(잠긴 학습은 기존 제한). 마을 메뉴에 로드맵·도감·잡지·우편·리포트·외부 관문 3개를 모으며 작은 화면에서도 접근 가능하다. 확대/지도 전체 보기는 선택 조작이다. 3D 마을 모듈과 학생 데이터는 보존하고 자동 3D 전환만 멈췄다.
+- 검증: 마법책 375/390/734/1280 및 가로 화면 7조건, 실제 자동 숫자 이동·동치식 4단계·표지 회전·글자쓰기·로그인 양쪽/중복 로그인 없음·별도 점검 권한 검사 통과. 마을 한영중·6조건에서 전체 지도/6곳 한 번 입장·키보드·외부 관문 보존·포인트/진도 유지 통과. 옷장 한영중 4조건의 이름/꾸미기/정확히 1회 결제/실패 롤백 회귀와 배포용 roadmap-sync self-test 33·ladder·stages·about-stats 통과. 실제 이메일/문자/프로필 서버 쓰기 없음.
+- 담당 Codex, 기존 UI UX/GFIELD 스킬 적용. 근거 `/tmp/nm-original-book-20261021`; 이전 파랑 책 이미지는 현행 디자인이 아니다. 사용자 미추적 Claude 디자인 문서는 보존한다. 자동 Pages 실행이 재개됐으므로 앞선 GitHub 로그인 요청은 더 이상 필요하지 않다. 최신 수정의 운영 반영은 후속 배포 확인으로 구분한다.
+
+- 복구·마을 기능 main `0ecb6d82` 반영. 원래 표지 자산/수식 코드/지도 원본을 수정하지 않았음을 diff로 확인했다. 실제 숫자 반복→물리 표지 열림→글자쓰기·로그인을 녹화한 `original-book-preview.webm`과 6조건 마을 화면을 이 채팅의 기존 시각화 폴더 아래 `nm-original-book-20261021`에 저장했다. 현재 최신 배포 실행 생성은 기다리는 중이며, GitHub 공식 상태의 Actions/Pages는 정상이다.
+
+- **운영 반영 완료:** 기능 main `0ecb6d82`, 배포 대상 `acb3c4a2`, Pages [39613924267](https://github.com/docssam1/lete-on/actions/runs/39613924267) 성공. 운영 런타임 6파일과 기존 표지/CSS/숫자 애니메이션/지도 5파일 모두 HTTP 200·로컬 검증본과 SHA-256 일치. 운영 브라우저에서 원래 표지→둘러보기→책 펼침/글자쓰기→기존 마스터 서버 로그인→만화풍 마을 입장을 실제 확인했다. 점검 계정은 실제 학생 데이터와 분리되며 첫 출석 점검 코인 3만 반영됐다. 운영 마을 창을 유지하고 임시 GitHub/로컬 미리보기 탭과 전용 로컬 서버는 정리했다. `deployment.json`, `cover-live.png`, `open-live.png`, `town-live.png`, 원래 책 연출 영상은 기존 시각화 폴더의 `nm-original-book-20261021`에 보관했다. 이 기록 외 런타임은 검증본 그대로다.
+
+
+### Original desk and compact village panel — 2026-10-21
+
+- User confirmed restoration of the original wizard desk, then specified the bright forest / white desk background from the attached photo. Restore book, green leather mat, props, paper tags, brass controls and original logo from `2fda3cc63`; retain the existing bright forest, sill, ash desk and daylight. Keep compact 44px control rows, all nine routes, keyboard/reduced-motion behavior and scene cleanup. No new art or voice.
+- Additional request: remove the village's duplicate six-button building toolbar and large lower banners. Buildings open directly from the original map. Learning Journey and Grade Rooms move into a small right panel; existing tools, outside gates, zoom and mute are under More. The portrait phone panel starts closed and supports keyboard/Escape. Account permissions, student data and point/progress rules are unchanged.
+- Codex used the existing GFIELD / UI UX guidance. Local evidence: `/tmp/nm-original-desk-20261021`. Passed six village viewport/language cases (all buildings, keyboard, whole map, no duplicate toolbar, preserved progress/coins), four closet regression cases, five actual WebGL app/layout/voice/entry cases, desktop 3D props and nine controls, and roadmap-sync self-test 33 / ladder / stages / about-stats. No production emails, SMS or student writes. The user untracked Claude review document is preserved. Main publication and actual Pages deployment are recorded separately after verification.
+
+- Feature published to main `474cd2809ca0eb67ba27f07f8e9d8f72f70a6374`; remote tree matched the verified local tree `67737994d9870d0e8c1b752757b7c35ec01c631c` before publication. Five actual WebGL app cases, desktop nine-button/prop/keyboard checks, six map cases and four closet cases all passed. Artifacts are in the chat visualization folder under `nm-desk-panel-20261021`. Pages completion is still pending; source publication is not deployment confirmation.
+
+- Latest user correction supersedes the contain/whole-map presentation above: the village illustration must fill the entire screen, with no flat blue margins. The camera now starts at cover scale and the viewport reaches all screen edges. The small side panel overlays the map. On narrow screens the More panel retains text entries to reach cropped buildings without joystick/walking. Six viewport/language cases passed again for full image coverage, map/menu routes, keyboard and preserved coins/progress. Final map proofs are `full-town` (earlier `town` images show the superseded letterboxed layout).
+
+- Final full-screen map source is main `619939d8e85644f5fc28a24db3e8db9593f3d4c9` (tree matched locally before publication). At 2026-10-21 14:48 UTC Pages run 39619947274 started for the earlier `c75cdfc2` revision; that is not proof of the final cover-scale map deployment. Verify the final four runtime file SHA-256 values, then the actual UI. Current `nm-desk-panel-20261021/deployment.json` records pending status until those match.
+
+
+### Restore the attached pearl desk photo / UX copy review — 2026-10-22
+
+- Latest photo `3398.jpg` supersedes the preceding leather/brass desk interpretation. Restored the complete bright forest/white ash desk, pearl cards, serif wordmark, constellation mat and pale book from `3e33e1bdb`. Wide/normal-height screens retain object-adjacent labels as in the photo; portrait/small/very short screens keep stable 44px rows. Updated dynamic module/main cache URLs. The full-screen illustrated village and its small side panel are retained.
+- Local title proofs: 1280x735 photo reference, 960x552 landscape phone, desktop props/nine buttons/keyboard, plus 390px Korean/English/Chinese and short landscape bounds. Actual-WebGL app/entry/audio/layout regression passed in five viewport/language cases; roadmap-sync self-test 33 / ladder / stages / about-stats also passed. Evidence `/tmp/nm-pearl-copy-20261022` and `/tmp/nm-pearl-restore-20261022`. Publication/deployment are separate from local checks.
+- User also supplied Toss `ux-writing/SKILL.md`. Read the complete linked skill and its design quality-bar G6/G7/G8 reference. Built an AST inventory of Korean literals/template text in 37 app JS sources (3,335 entries, including content/developer text to classify). Proposed 13 groups of visible UI wording corrections, including learner-facing unit/thread jargon, mixed tone, missing recovery actions and the report's actual trailing-seven-day period. Following that skill's explicit before/after approval requirement, requested confirmation before changing copy. No copy replacements are applied at this point. The proposal/inventory JSON is local, not a new project task board.
+- Codex, existing GFIELD/UI UX guidance plus the user-linked Toss writing guidance. Math questions/answers, membership rules, voice recordings and the user's untracked Claude review file are preserved. No production email/SMS/student writes.
+
+- Photo restoration feature published to main `282ebfccd7e2717662d15b6facaf56edf97f573a`, matching verified local tree `0a14ca417c2046798839b463b40e1d2efff8a58d`. All local gates above passed. Copy proposals remain awaiting user confirmation; no copy replacements were included. Main publication is complete; actual Pages verification follows separately.
+
+- **Deployment verified:** Pages run [39649360257](https://github.com/docssam1/lete-on/actions/runs/39649360257) succeeded for `d399315d` (feature `282ebfcc`). Runtime index/main/title3d and the retained map CSS all return HTTP 200 and match the local SHA-256 values. Actual production book login and the restored pearl desk were verified with the existing learning-only master account; evidence is in the chat visualization folder `nm-pearl-copy-20261022/deployment.json`, `desk-live.png` and `title/photo-ko.png`. The displayed master coin count remains 1003; no student progress was edited. The 13 copy proposal groups still await the user confirmation requested by the linked Toss skill; they have not been applied.
+
+### Correct the remaining desk composition mismatch — 2026-10-22
+
+- The user's repeated 3398.jpg correction supersedes the compact-row exception recorded above. Merely restoring the pearl palette did not restore the small in-app pane: forced portrait selection below 760px and fixed bottom rows shrank the central book and detached controls from the props. Removed that toolbar entirely. Use the actual aspect ratio for the original scene; retain the photo's bright forest, white desk, large book/constellation ring, four corner props and four small prop labels. In near-square panes the greeting stays at upper right, with a bounded text width so the central wordmark remains visible.
+- Labels separate within viewport bounds instead of separating then clamping back over one another. Placement is cached between layout changes and refreshed after late font loading. Where space permits, retain an exposed selection spot on each 3D prop. Very short portrait layouts prioritize the full 44px labeled controls. All nine routes and original approved assets remain. The illustrated full-screen village, book login, narration and curriculum were not changed; main/index changes only refresh the title module cache URLs.
+- Added screenshot cases for the actual review pane (734x686), small tablet (603x625) and short portrait (390x619), with central-book size and no-wide-toolbar assertions. Existing 9-button, 3D prop and keyboard checks now also exercise the actual review pane and small tablet. Diagnostic output records any blocked prop separately. All three full interaction cases (review pane, small tablet, portrait phone) passed; reference-landscape and short-phone layout checks also passed. The final actual-WebGL app/entry/audio regression passed in all five Korean/English/Chinese viewport cases, with no control overlap, activity scrolling or external writes. Deployment gate checks roadmap-sync self-test 33 / ladder / stages / about-stats passed.
+- Codex, using the existing GFIELD/UI UX guidance. Evidence: this chat's existing visualization folder under `nm-spatial-desk-20261022`. The Toss wording proposal remains pending the already requested user confirmation; no proposed copy changes are applied. The protected untracked Claude design document is untouched. Main publication and actual deployment verification follow separately.
+
+- **Deployment verified:** feature main `82b1c264cd69c28972bf0d2c156763f5e0eefb74`, verified tree `16ca116d911d4aa52a7acd22478ac7f1d694d799`. Pages [39658997924](https://github.com/docssam1/lete-on/actions/runs/39658997924) succeeded. All three changed runtime files return HTTP 200 and match local SHA-256. Reload correctly required login; the existing learning-only master account then displayed the large central book and separate prop-adjacent buttons in the actual 734px in-app pane, with no bottom mode toolbar. Saved `nm-spatial-desk-20261022/desk-live.png` and deployment evidence; left that operating screen open. Master coins remain 1003, with no student data edits or messages. The previously requested wording confirmation is still pending. This final verification entry changes documentation only.
+
+### Apply all 13 approved UX wording groups — 2026-10-22
+
+- The user explicitly approved every group in the previously presented before/after proposal. Applied the linked Toss ux-writing guidance after that confirmation: clearer character/grade/name prompts; the same clear skip question across age overlays and explicit next/practice actions; visible unit/thread jargon becomes 학습 단원/학습 유형; worksheet help drops generator jargon; empty/error states explain the next action; registration failure identifies the student; login success names the destination; report labels reflect the actual trailing seven days. Report period translations also match that same existing calculation. Existing math content, identifiers, comments, auth/membership rules, recordings and restored desk/village composition are unchanged.
+- A longer learning-type label exposed the existing intrinsic-width overflow of the exam select on mobile. Added only min-width:0 to its flex sizing so the selector stays within its existing row. Updated cache URLs for the affected shared scripts/styles and their app/standalone HTML consumers. No new dependency, service or asset.
+- Codex in this Mac worktree; existing user-linked Toss guidance, with approval now received. Syntax/diff checks and roadmap-sync self-test 33 / ladder / stages / about-stats passed. Focused local browser checks cover 390/734/1280px: character and grade flow, empty-name recovery, both skip actions still reach practice/discover, report seven-day fixture yields 14 problems/50% and excludes an older 999-problem record, and exam type selection uses the new label. External services are blocked/mocked; no production registration, email/SMS or student writes. Evidence is in this chat's existing visualization folder under `nm-copy-approved-20261022`. The protected untracked Claude review document is untouched. Publication/deployment verification follows separately.
+
+- **Approved copy deployment verified:** feature main `cff7c199d34053afd74a40bd1d669e8136f114de`, tree `11bbfe3ae0bf5eee8e9d7653e054e928ef47cae3`; Pages [39704335779](https://github.com/docssam1/lete-on/actions/runs/39704335779) succeeded. All nine affected runtime files return HTTP 200 and match local SHA-256. Actual existing master login then opened the restored desk and worksheet type picker, showing 학습 유형 직접 선택 / 학습 유형 and a bounded select. Saved `nm-copy-approved-20261022/copy-live.png` and deployment evidence; the operating picker is left open. Master coins remain 1003, no worksheets/messages/registrations were sent. All 13 approved groups are applied; the earlier waiting-for-copy-approval notes are superseded. Final verification entry changes documentation only.
+
+
+### Age-required diagnostic intake, monthly plan and adjustable pace — 2026-10-22
+
+- Codex on Mac, `codex/nm-program-review-20261021`. User asked for a simpler intake, required age, independent actual grade versus studied math, middle/high topics for accelerated elementary learners, current-month/year forecasts, reference academy paths, and arithmetic preparation two calendar months before new curriculum study. Latest request explicitly authorizes manually increasing/decreasing pace against the supplied references. Original book/login/desk/cartoon-town design is preserved.
+- Intake is now common birth year + actual grade, then three sources: studied topic / completed books / first steps. Study band (foundation/elementary/middle/high) is independent of actual grade. Age is required on all routes. Existing completed multi-book choices (SOMA 2019, Miracle, Dunoro) and fixed 20-question 6/10/4 generation are preserved. An already answered fixed run is never regenerated; a legacy result can add missing profile information while retaining answers.
+- After the result: 12/24/36-month forecast from today, actual age/grade, course/session spans and all-course finish milestones. January age and March grade transitions are separate. Every arithmetic-start month shows the corresponding preparation connection month +2; already-studied school content is retained and gaps/next topics are addressed. These are preparation forecasts, not completion claims or automatic advancement.
+- Pace 0.7/0.85/1/1.25/1.5 and weekly frequency can be previewed with before/after completion dates. Only explicit Apply stores actual learner pace/frequency (existing road settings); answers, course/session progress, point balance and workload amount stay intact. A director-managed plan remains controlled by existing administration; the diagnostic preview cannot replace that plan. Diagnosis scores never automatically increase pace.
+- User Drive references read: folder `1wIVY-wXuEtq9zHikM377z5j5YD8P-U6Q`; new folder `1yQvP_416MstDfmsm3oQI0iJ94jzYAAG_`, index document `1Tpcm6vWT00gDm4I3jxrE4pt6cKeevP1g`, updated roadmap README `1UsK7wDAwalNYzfzdS5vnrUWDHTymt3Sq`. Build 35 public manifest matches local v31 source-monthly/reference-index/standard-preschool SHA-256. No large zip download or Drive mutation.
+- Reference versions differ: current `roadmap/index.html` ROAD_L0/LEVELS has L0 SOMA K, Miracle 2–6, then composite arithmetic, shifted by 0/3/7/10/12 months for L0–L4. v31 S1 uses a different sequence, so it is not silently substituted. New read-only reference uses current root S1 and provenance-separated Build 35 S2–S4 (Fields S2, Premier/SOMA cases, middle/high and advanced science pathway). Full out-of-grid dates are preserved; a clipped original boundary is not inferred to be completion. Rebuild script and source hashes make this reproducible. The new Drive document’s sentence that SOMA volume papers are not implemented is historical: the verified app already supports them.
+- Exact academy-level ↔ app-course equivalence remains unverified. Reference dates and user-adjusted app forecasts are shown separately, with no invented admission/class assignment. Only reference labels/intervals are included; private weekly transcripts and licensed originals remain untouched. `roadmap/` source is read-only.
+- Skills: existing UI UX Pro Max / GFIELD layout guidance; Google Drive read workflow; prior user-approved UX wording retained. Pure checks passed: diagnostic-roadmap, learning-plan, placement-plan (2,800 plans), placement-paths (7,938 cases), placement-intake, placement-integration (including explicit pace apply / managed-plan rejection), Dunoro (1,500 papers), roadmap-sync self-test 33, ladder, stages, about-stats. New browser cases exercise age on all routes, elementary→middle/high selection, all three languages, mixed completed books, old-answer preservation, forecast and manual pace controls. Final browser / deployment evidence is appended after verification.
+- Protected untracked `number_magic/docs/claude-design-review-20261018.md` remains untouched. No production email/SMS or real student administration is part of this change.
+
+
+- **Diagnostic deployment complete:** main `2048a8cfea06c606ca972729ffe2240959e4f04a`, Pages [39719386767](https://github.com/docssam1/lete-on/actions/runs/39719386767) succeeded. Seven live runtime files returned HTTP 200 and matched local SHA-256. Production master review login confirmed required birth year/actual grade and elementary grade 4 selecting middle course 32; a disposable local browser verified all result and reference controls, languages and manual apply. Evidence is in this chat’s visualization folder `nm-intake-20261022`. Real students and their learning records were not used.
+
+### Voice feedback truncation / slower speech — 2026-10-22
+
+- User heard incomplete “딩동” and other clipped/odd phrases, with speech too fast. Found a concrete runtime cause: lab success calls `voiceLine`, then unconditionally rerenders the next item after 650ms (final step 700–900ms). The N-01 “딩동댕” recording lasts 0.84s even at the previous normal rate, so the shared next-prompt call cuts its ending. Earlier decode/overlap gates did not check a complete sentence before an actual transition; they were not a pronunciation audit.
+- Current Omni recordings are retained. Shared playback now uses 0.8× with pitch preservation, including labs. Short lesson transitions wait while narration is actually starting/playing (30s stall bound), and the accepted-answer area is inert while waiting to prevent repeated submissions against the already-advanced state. Existing lesson-version checks cancel transitions after navigation. Hidden-tab/stop/rapid replacement behavior stays covered. Cache versions are updated for both index and shared lab loader.
+- Real MP3 browser gate: all 764 files decoded, three-language playback, 0.8× / pitch preservation, full playback of “딩동댕”, short praise and long instruction before advancing, input lock/release, navigation cancellation, stop and stale rejection handling passed. Existing audio/entry/layout gate passed five viewport/language cases with N-01/N-06/A-01 and no external writes. Evidence `/tmp/nm-voice-20261022` and the chat visualization folder.
+- Separate source-audio issue: existing `audio/omni/report.json` flags 74 ASR mismatches (ko 8 / en 15 / zh 51), yet every file appears in the current map. Some are likely number/Level normalization mismatches, so this is a recheck queue, not a claim that all are mispronounced. `data/voice-recheck-20261022.json` contains the eight Korean candidates. No original MP3/report/map has been deleted, synthesized or replaced in this turn.
+- Generator repair for subsequent approved regeneration: verbalize check-button/math/Level markers, normalize repeated punctuation, select exact candidates with `--tasks-file`, retain originals, record spoken text + checked status + audio SHA-256, and exclude known failed/hash-mismatched candidates when rebuilding the map. Unchecked synthesis cannot be marked approved. Local Python quality-gate tests pass. Current playback map remains unchanged pending source-audio recheck.
+- The existing Windows Numbers task’s last direct user instruction was stop; this chat asked whether to resume only the eight Korean candidates. Do not resume that task or claim it is generating without the user’s answer. Prepared candidate command on an authorized Windows GPU checkout: `python scripts/omnivoice-nm.py --lang ko --force --tasks-file number_magic/data/voice-recheck-20261022.json --out .omni-nm-work/recheck-20261022 --device cuda:0`. Candidates must be rechecked and accepted before any map/audio replacement; do not restart unrelated paused work or overwrite main.
+
+
+- **Voice runtime deployed:** main `388b38802b350972d24ee3825f6ea603a1fe2065`, Pages [39720423734](https://github.com/docssam1/lete-on/actions/runs/39720423734) succeeded. Live index/main/voice/lab loader all returned HTTP 200 with matching SHA-256. Six standalone lab HTML pages also bump the loader query version so an old cached loader cannot retain the former player. No audio files are regenerated or removed. The Korean candidate question remains pending. Production master review attendance added 3 review coins on entering the village; real students and balances were untouched.
+
+- **Standalone cache verification complete:** main `15f9bade944af4dfafde4a181ba79b93f23380ce`, Pages [39720826031](https://github.com/docssam1/lete-on/actions/runs/39720826031) succeeded. All six live lab HTML files matched SHA-256 and load `lab-lang.js?v=20261022-voice3`. Production reload returned to login, and the authorized master login loaded both main and voice v20261022-voice3. Dedicated review tab retains the new diagnostic setup. Final deployment/runtime JSON is in the chat visualization folder `nm-voice-20261022`; remaining work is the explicitly pending Windows regeneration decision, not a running job.

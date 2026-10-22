@@ -1,6 +1,6 @@
-import {selectionFor,pagePlan,modes} from './workbook-core.js?v=20261019-1';
-import {translation} from './i18n.js?v=20261019-1';
-import {renderPages} from './render.js?v=20261019-1';
+import {selectionFor,pagePlan,modes} from './workbook-core.js?v=20261021-4';
+import {translation} from './i18n.js?v=20261021-4';
+import {renderPages} from './render.js?v=20261021-4';
 const $=s=>document.querySelector(s),url=new URL(location.href),families=['cut','punch','sort','number','top','reverse','stack'];
 let lang=['ko','en','zh','ja'].includes(url.searchParams.get('lang'))?url.searchParams.get('lang'):'ko',mode=modes.includes(url.searchParams.get('print'))?url.searchParams.get('print'):'questions',selection=selectionFor(url.searchParams);
 $('#duplex').checked=url.searchParams.get('duplex')==='1';
