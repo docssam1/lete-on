@@ -6303,7 +6303,7 @@ function initTownWorld(scr){
 
   nbs.forEach(n=>{
     n.el.addEventListener('pointerup',e=>{
-      onUp(e);if(moved)return;e.stopPropagation();
+      onUp(e);pdUp(e);if(moved||pinched)return;e.stopPropagation();
       const sp=n.el.querySelector('.speech');
       const line=n.lines[Math.random()*n.lines.length|0];
       sp.textContent=line;sp.classList.add('show');
