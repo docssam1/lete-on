@@ -6513,17 +6513,17 @@ function runPractice(body,u){
     say(L(cfg.intro));return;
   }
   if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
+  const splitQuestion=cur.gen==='splitNum'&&(schoolGradeNum()!=null?schoolGradeNum()<3:NM_BAND==='young');
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
   const isMulti=Array.isArray(cur.answer);
   if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
-  body.innerHTML=`<div class="nm-dialog nm-answer-dialog">
+  body.innerHTML=`<div class="nm-dialog nm-answer-dialog${splitQuestion?' nm-split-question':''}">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-answer-guide"><div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    <div class="nm-bubble" id="bub">${first?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt)):numiDialogueHtml(L(cur.prompt))}</div>
+    <div class="nm-bubble" id="bub">${first?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt),splitQuestion?cur:null):numiDialogueHtml(L(cur.prompt),splitQuestion?cur:null)}</div>
     </div><div class="nm-answer-work"><div class="nm-board">
-      ${pracTex}
-      <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+      ${splitQuestion?splitNumberEquation(cur):`${pracTex}<div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>`}
     </div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint">${t('numpadHint')}</div></div>
@@ -6614,7 +6614,7 @@ function handlePractice(val,body,u){
       if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');lessonLater(()=>gotoStep('discover'),700);return;}
       S.sub.cur=genProblem(u.practice,'practice');save();
       lessonLater(()=>runPractice(body,u),650);
-    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-lab-expr','');}
+    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=$('.nm-split-equation')?'□':' ';updateLiveFill('.nm-lab-expr','');}
     return;
   }
   if(isMulti){
@@ -6626,7 +6626,7 @@ function handlePractice(val,body,u){
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
   else if(val==='-'){S.sub.inp=applyMinusKey(S.sub.inp||'');}
   else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
-  $('#pscreen').textContent=S.sub.inp||' ';
+  $('#pscreen').textContent=S.sub.inp||($('.nm-split-equation')?'□':' ');
   updateLiveFill('.nm-lab-expr',S.sub.inp||'');
 }
 
@@ -7444,8 +7444,20 @@ function labExprHtml(tex){
 }
 /* Short spoken lines have character; long explanations and formula source
    remain ordinary reading text. Escape each original token, never rewrite it. */
-function numiDialogueHtml(text){
+function splitNumberEquation(problem){
+  // Display only the two givens. The missing value is never put into markup.
+  return `<div class="nm-split-equation"><span data-number-role="whole">${esc(problem.n)}</span><span class="nm-split-sign">=</span><span data-number-role="part">${esc(problem.p)}</span><span class="nm-split-sign">+</span><span data-number-role="unknown" class="nm-numpad-screen" id="pscreen" aria-live="polite" aria-label="${esc(L({ko:'찾을 수',en:'Missing number',zh:'待填数字'}))}">□</span></div>`;
+}
+function numiDialogueHtml(text,problem){
   text=String(text||'');
+  if(problem&&problem.gen==='splitNum'){
+    const parts=text.split(/([0-9]+|얼마|how much more|多少)/);
+    return '<span class="nm-numi-dialogue nm-split-dialogue">'+parts.map((part,i)=>{
+      if(i%2===0)return esc(part);
+      const role=part===String(problem.n)?'whole':part===String(problem.p)?'part':'unknown';
+      return '<span class="nm-dialog-figure" data-number-role="'+role+'">'+esc(part)+'</span>';
+    }).join('')+'</span>';
+  }
   if([...text].length>90||/[\\\n]/.test(text))return esc(text);
   const parts=text.split(/([0-9]+(?:[.,][0-9]+)?|[+\-−×÷=<>≤≥□√π^%])/);
   return '<span class="nm-numi-dialogue">'+parts.map((s,i)=>i%2?`<span class="nm-dialog-figure">${esc(s)}</span>`:esc(s)).join('')+'</span>';
