@@ -238,6 +238,31 @@ function circularMagic(visual) {
   return `<div class="b9-card-strip">${visual.values.map((value) => `<span>${value}</span>`).join("")}</div><svg class="b9-svg b9-circular" viewBox="0 0 340 250">${lines}${nodes}<circle cx="170" cy="125" r="18"/><text x="170" y="126">${esc(visual.center)}</text></svg>`;
 }
 
+// 9권 9쪽 원형진·삼각진: 칸 값은 수(주어진 수) · "□"(구할 칸) · null(빈 칸)
+function magicCards(cards) {
+  return (cards || []).length ? `<div class="b9-mcards">${cards.map((value) => `<span>${esc(value)}</span>`).join("")}</div>` : "";
+}
+function magicNode(x, y, value, label) {
+  const target = typeof value === "string";
+  return `<circle cx="${x}" cy="${y}" r="19" fill="${target ? "#fff0b4" : "#fff"}" stroke="#333" stroke-width="2"/>${value == null ? "" : `<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="17" font-weight="900" fill="${target ? "#9a6415" : "#222"}">${esc(value)}</text>`}${label ? `<text x="${x - 24}" y="${y - 18}" text-anchor="middle" font-size="13" font-weight="800" fill="#666">${esc(label)}</text>` : ""}`;
+}
+// 십자 모양: cells = [가운데, 위(가운데에서 바깥으로)…, 오른쪽…, 아래…, 왼쪽…], 팔 길이 arm
+function magicCross(visual) {
+  const arm = visual.arm, step = 54, c = 30 + arm * step;
+  const dirs = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+  const at = [[c, c], ...dirs.flatMap(([dx, dy]) => Array.from({ length: arm }, (_, k) => [c + dx * step * (k + 1), c + dy * step * (k + 1)]))];
+  const cells = visual.cells || at.map(() => null);
+  const lines = `<line x1="${c - arm * step}" y1="${c}" x2="${c + arm * step}" y2="${c}" stroke="#333" stroke-width="2"/><line x1="${c}" y1="${c - arm * step}" x2="${c}" y2="${c + arm * step}" stroke="#333" stroke-width="2"/>`;
+  const size = c * 2;
+  return `${magicCards(visual.cards)}<svg class="b9-svg b9-magic-cross" viewBox="0 0 ${size} ${size}" role="img" aria-label="십자 모양 칸 ${at.length}개">${lines}${at.map(([x, y], i) => magicNode(x, y, cells[i], (visual.labels || [])[i])).join("")}</svg>`;
+}
+// 삼각진(한 변에 3칸): cells = [꼭대기, 왼쪽 변 가운데, 오른쪽 변 가운데, 왼쪽 아래, 아래 가운데, 오른쪽 아래]
+function magicTriangle(visual) {
+  const at = [[150, 30], [95, 120], [205, 120], [40, 210], [150, 210], [260, 210]];
+  const cells = visual.cells || at.map(() => null);
+  return `${magicCards(visual.cards)}<svg class="b9-svg b9-magic-triangle" viewBox="0 0 300 240" role="img" aria-label="삼각형 모양 칸 6개"><polygon points="150,30 40,210 260,210" fill="none" stroke="#333" stroke-width="2"/>${at.map(([x, y], i) => magicNode(x, y, cells[i])).join("")}</svg>`;
+}
+
 function conditionList(visual) {
   return `<div class="b9-condition-list">${(visual.cards || []).length ? `<div class="b9-card-strip">${visual.cards.map((value) => `<span>${value}</span>`).join("")}</div>` : ""}${visual.conditions.map((condition, index) => `<p><b>${index + 1}</b>${esc(condition)}</p>`).join("")}${visual.slots ? `<div class="slots">${Array.from({ length: visual.slots }, (_, index) => `<span>${index + 1}등</span>`).join("")}</div>` : ""}</div>`;
 }
@@ -274,6 +299,8 @@ export function book09Markup(visual) {
     case "cube-layers": return cubeLayers(visual);
     case "cube-three-views": return cubeThreeViews(visual);
     case "cube-layer-grids": return cubeLayerGrids(visual);
+    case "magic-cross": return magicCross(visual);
+    case "magic-triangle": return magicTriangle(visual);
     case "cube-box": return cubeBox(visual);
     case "cube-model-choice": return cubeModelChoice(visual);
     case "magic-grid": return magicGrid(visual);

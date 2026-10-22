@@ -200,7 +200,7 @@ function lineCardBoardMarkup(visual) {
   const nodes = layout.points.map(([x,y], index) => `<g class="${shown[index] == null ? "blank" : "known"}"><circle cx="${x}" cy="${y}" r="23"/><text x="${x}" y="${y + 1}">${shown[index] == null ? index + 1 : shown[index]}</text></g>`).join("");
   const cards = `<div class="b1-number-cards">${visual.cards.map((card) => `<i>${card}</i>`).join("")}</div>`;
   const footer = visual.lineSum == null ? "모든 줄의 합을 같게" : `한 줄의 합 ${visual.lineSum}`;
-  return `<div class="b1-line-card-board">${cards}<svg viewBox="0 0 320 225" role="img" aria-label="숫자 카드를 놓아 모든 줄의 합을 같게 하는 ${visual.layout} 모양">${lines}${nodes}<text class="sum" x="160" y="220">${footer}</text></svg></div>`;
+  return `<div class="b1-line-card-board">${cards}<svg viewBox="0 -8 320 256" role="img" aria-label="숫자 카드를 놓아 모든 줄의 합을 같게 하는 ${visual.layout} 모양">${lines}${nodes}<text class="sum" x="160" y="236">${footer}</text></svg></div>`;
 }
 
 function digitSumTableMarkup(visual) {
