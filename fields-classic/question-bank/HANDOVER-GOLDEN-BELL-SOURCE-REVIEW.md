@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261019b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261019c`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -505,6 +505,16 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 그림 손봄(`book10-renderers.js`): `catch-up-table` 머리글이 늘 「하루마다」였다(분·초 문제도) → 단위(`L/분`)에서 「1분마다」를 만들고 칸에는 양 단위만. `delayed-catch-up`에 `names`·`startLabels`(이름이 「민수/지우」로 박혀 있었다). 새 `statement-list`(하늘색 조건 상자). 네 물건 무게식은 모양을 고정으로 그리는 `four-weight-system` 대신 `quantity-equations`(모양 4개)로.
   - 검산기는 그림의 식을 유리수 가우스 소거로 풀고, 쌍의 합·등분·따라잡기·둘레는 식을 세워 직접 계산한다. **교사용 답과 다른 곳 없음.**
   - DB `book-10` 328키 → 397키, sha 앞 8자리 `d0c91f9f`(첫 시도는 쓰기 승인이 오지 않아 브랜치에만 올렸다가, 승인 뒤 입력하고 main에 올림). 캐시 꼬리표 `20261019b`(`book10-renderers.js` import `20261022b`, `golden-bell.css` 링크 `20261022d`).
+- **10권 묶음 3(지도서 3단원 78~104쪽, 44문항, 2026-10-22)**: 패치 `tools/golden-bell-book10/patch-book10-batch3.mjs`(정답 없음). 새 단원 번호 12 `digit-card-cases-source`(78~86쪽·연습 96~100쪽, 25문항)와 13 `ordered-digit-sum-source`(87~95쪽·연습 101~104쪽, 19문항)를 공개 단원 `digit-card-four-place`(79·87쪽) 바로 뒤에.
+  - 3단원 쪽 구성: 활동 01 숫자카드와 경우의 수(78~83) · 더클 확인(84~86) · 활동 02 점점 커지는 수와 작아지는 수(87~89) · 더클 확인(90~92) · 더클 도전(93~95) · 더클 연습(96~104). 보류 37건을 유형·쪽 순서로 맞춤: 숫자 카드 80~83 활동01~08·98 연습05·06 · 여러 번 쓰는 수 85 확인01·02·99 연습07·08 · 켜기 86 확인03(전구)·04(신호등)·100 연습09(전구)·10(동전) · 자리 증감 88 활동01·02·101 연습11·12·102 연습13 · 카드 합 90 확인01·02·91 확인03·92 확인04·95 도전5(네 수)·103 연습14·15·104 연습16 · 93 도전1·2 · 94 도전3·4 · 96 연습01(길)·02(줄서기). **장부에 없던 같은 쪽 문항 7개**(78 ①②③, 84 2-01·02, 87 ②, 89 활동03(1)(2))도 넣음 → `catalog`에 `guide-activity-extra-u3` 7, 전체 195 → 202. 3단원 보류 0, 10권 보류 45(1단원 6·4단원 39).
+  - **97쪽(연습 03·04)은 옮기지 못했다.** Drive 글자 인식이 비어 있고, 그림 파일이 작아 도구가 파일로 저장하지 않고 응답 안에 그대로 돌려줘서 그림으로 볼 수 없었다(81·82·85쪽도 같았으나 이 쪽들은 Drive 글자 인식이 있어 그것으로 옮겼다). 장부에도 없던 쪽이라 보류 수는 그대로다. 다음에 97쪽을 볼 방법이 생기면 같은 패치 방식으로 단원 12 끝에 붙인다.
+  - 「모두 구하시오」 문항은 `inputMode:"text"` + `resultContract:{type:"set"}`(순서 무관, 쉼표·띄어쓰기로 나눔). 카드 합은 묶음 안의 순서까지 맞추어야 같은 답으로 보므로 문제 끝에 「세 수는 작은 수부터 1+2+3처럼 쓰고」를 붙였다. 집합 답 입력칸은 넓게(`answer-input-wrap.set-answer`, 「쉼표로 나누어 모두 쓰세요」) — 다른 권의 집합 답 96개에도 같이 적용된다.
+  - 그림 손봄(`book10-renderers.js`, 생성기 그림과 호환): `switches`에 `look`(bulb 전구·signal 신호등·coin 동전)·`labels`·`allOffAllowed`·`note` — **그림 종류를 `kind`로 두면 안 된다**(`kind:"book10"`이 렌더러 선택 키라 처음에 겹쳤다). `route-stages`에 `nodes`(학교·문구점·집, A~D)·`groups`(옷 고르기 묶음). `lineup-slots`에 `names`. `digit-slots`에 `repeat`·`limit`·`rank` 안내 띠. `place-value-sum`에 `examples`·`rankFrom:"large"`. `step-digits`에 `between`(「같은 수만큼 커져요」/「>」)·`examples`, 한도가 없으면 안 쓴다. 이 그림들(전구·카드합·자리합·길·줄서기)의 CSS는 원래 교사용 문제은행 `styles.css`에만 있어서 골든벨 화면에서는 글자 8px·옛 청록이었다 → `golden-bell.css`에 색표대로 새로 씀(숫자카드 노랑, 자리 상자 보라, 장소 파랑).
+  - 검산기(저장소 밖 `b10/answers-batch3.mjs`)는 카드로 만들 수 있는 수·카드 묶음·자리 합을 전부 만들어 세고, 자리마다 가짓수를 곱하는 규칙과도 맞는지 본다. **교사용 답과 다른 곳 없음.**
+  - 채점 시험: 순서를 바꾼 목록 정답, 하나 빠진 목록 오답, 0을 맨 앞에 둔 오답, 두 칸 답, 카드 묶음 순서 바꾼 정답 모두 정상. 320·375px 넘침 0, 스타일 없는 클래스 0, 인쇄 잘림 0.
+  - ⚠️ **로컬 확인 서버 주의**: 8797 포트에 다른 폴더(에이전트 작업 폴더로 보임)를 띄운 서버가 살아 있어 새 단원이 안 보였다. 확인 도구들(`tool-capture`·`tool-concept2`·`b9/*-all.mjs`)이 `PORT` 환경변수를 읽게 바꿨다 — 새 포트로 띄우고 `curl … | grep 새단원id`로 먼저 확인할 것.
+  - 2단원 묶음 2 단원의 단원 표시가 숫자 「2」로 나오던 것을 「합과 차 문제 해결」로 바꿈.
+  - DB `book-10` 397키 → 447키, sha 앞 8자리 `7331d34e`. 캐시 꼬리표 `20261019c`(`book10-renderers.js` import `20261022c`, `golden-bell.css` 링크 `20261022e`).
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

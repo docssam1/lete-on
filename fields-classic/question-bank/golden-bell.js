@@ -1,19 +1,19 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261019b";
-import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261019b";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261019c";
+import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261019c";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
-import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261019b";
+import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261019c";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261019b";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261019c";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
-import { book02Markup } from "./book02-renderers.js?v=20261019b";
-import { book03Markup } from "./book03-renderers.js?v=20261019b";
-import { book04Markup } from "./book04-renderers.js?v=20261019b";
-import { book05Markup } from "./book05-renderers.js?v=20261019b";
+import { book02Markup } from "./book02-renderers.js?v=20261019c";
+import { book03Markup } from "./book03-renderers.js?v=20261019c";
+import { book04Markup } from "./book04-renderers.js?v=20261019c";
+import { book05Markup } from "./book05-renderers.js?v=20261019c";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
-import { book07Markup } from "./book07-renderers.js?v=20261019b";
+import { book07Markup } from "./book07-renderers.js?v=20261019c";
 import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
-import { book10Markup } from "./book10-renderers.js?v=20261022b";
+import { book10Markup } from "./book10-renderers.js?v=20261022c";
 import { sourceAnimationsForLesson, sourceAnimationFrame, sourceAnimationDelay } from "./golden-bell-source-animations.js?v=20260918a";
 import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022a";
 import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261004c";
@@ -1220,8 +1220,9 @@ function answerControl(groupId, item, scope) {
   if (item.answerMode === "input" && item.inputMode === "fraction") return fractionAnswerControl(groupId, item, scope);
   if (item.answerMode !== "input") return choiceButtons(groupId, item.options);
   const inputMode = item.inputMode === "numeric" ? "numeric" : "text";
-  const label = inputMode === "numeric" ? "답을 숫자로 쓰세요" : "답을 쓰세요";
-  return `<label class="answer-input-wrap"><span>${label}</span><input type="text" inputmode="${inputMode}" autocomplete="off" spellcheck="false" value="${escapeAttribute(state.selections[groupId])}" aria-label="${escapeAttribute(item.prompt)} 답" data-input-group="${groupId}" data-answer-scope="${scope}" /></label>`;
+  const set = item.resultContract?.type === "set";
+  const label = inputMode === "numeric" ? "답을 숫자로 쓰세요" : set ? "쉼표로 나누어 모두 쓰세요" : "답을 쓰세요";
+  return `<label class="answer-input-wrap${set ? " set-answer" : ""}"><span>${label}</span><input type="text" inputmode="${inputMode}" autocomplete="off" spellcheck="false" value="${escapeAttribute(state.selections[groupId])}" aria-label="${escapeAttribute(item.prompt)} 답" data-input-group="${groupId}" data-answer-scope="${scope}" /></label>`;
 }
 
 function arithmeticListRepeatedByParts(item, visual) {

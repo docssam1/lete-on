@@ -216,26 +216,49 @@ function digitSlots(visual) {
   const arrow = visual.direction ? `<b>${visual.direction === "increasing" ? "작은 숫자 → 큰 숫자" : "큰 숫자 → 작은 숫자"}</b>` : "";
   const fixed = visual.fixed || [];
   const counts = visual.choiceCounts || [];
-  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, (_, index) => `<i>${fixed[index] ?? ""}${counts[index] ? `<small>${counts[index]}가지</small>` : ""}</i>`).join("")}</div>${arrow}</div>`;
+  const notes = [visual.repeat ? "같은 숫자를 여러 번 써도 돼요" : "", visual.limit ? esc(visual.limit) : "", visual.rank ? `${visual.rankFrom === "large" ? "큰" : "작은"} 수부터 ${visual.rank}번째` : ""].filter(Boolean);
+  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, (_, index) => `<i>${fixed[index] ?? ""}${counts[index] ? `<small>${counts[index]}가지</small>` : ""}</i>`).join("")}</div>${arrow}${notes.map((note) => `<em>${note}</em>`).join("")}</div>`;
 }
 
+// 켜고 끄는 것(전구·신호등)과 앞뒤가 있는 것(동전)을 나란히 그린다.
 function switches(visual) {
-  return `<div class="b10-switches">${Array.from({ length: visual.switchCount }, (_, index) => `<span><i></i>전등 ${index + 1}</span>`).join("")}${visual.excludeAllOff ? "<b>모두 끈 모습 제외</b>" : ""}</div>`;
+  const kind = visual.look || "switch";
+  const count = visual.switchCount || visual.labels?.length || 0;
+  const labels = visual.labels || Array.from({ length: count }, (_, index) => (kind === "bulb" ? `전구 ${index + 1}` : `전등 ${index + 1}`));
+  const lamp = (label, index) => {
+    if (kind === "signal") return `<span class="signal ${["green", "yellow", "red"][index % 3]}"><i></i>${esc(label)}</span>`;
+    if (kind === "coin") return `<span class="coin"><i>${esc(label)}</i></span>`;
+    if (kind === "bulb") return `<span class="bulb"><i></i>${esc(label)}</span>`;
+    return `<span><i></i>${esc(label)}</span>`;
+  };
+  const note = visual.note || (visual.excludeAllOff ? "모두 꺼진 것은 빼요" : visual.allOffAllowed ? "모두 꺼도 돼요" : "");
+  return `<div class="b10-switches ${kind}">${labels.map(lamp).join("")}${note ? `<b>${esc(note)}</b>` : ""}</div>`;
 }
 
 function targetCards(visual) {
   return `<div class="b10-target-cards"><div>${visual.cards.map((card) => `<span>${card}</span>`).join("")}</div><strong>${visual.pickCount}장 합 = ${visual.target}</strong></div>`;
 }
 
-const placeValueSum = (visual) => `<div class="b10-place-sum"><span>백</span><span>십</span><span>일</span><b>숫자 합 ${visual.target}</b>${visual.rank ? `<strong>작은 수부터 ${visual.rank}번째</strong>` : ""}</div>`;
-const stepDigits = (visual) => `<div class="b10-step-digits"><span>□</span><i>같은 차</i><span>□</span><i>같은 차</i><span>□</span><b>${visual.limit} ${visual.direction ? "보다 작은 수" : "이하"}</b></div>`;
+const placeValueSum = (visual) => `<div class="b10-place-sum"><span>백</span><span>십</span><span>일</span><b>숫자 합 ${visual.target}</b>${visual.examples ? `<p>${visual.examples.map((n) => `<i>${n}</i>`).join("")}</p>` : ""}${visual.rank ? `<strong>${visual.rankFrom === "large" ? "큰" : "작은"} 수부터 ${visual.rank}번째</strong>` : ""}</div>`;
+// 세 자리 숫자의 관계: 같은 차로 커지기(between 생략) 또는 「>」처럼 차례로 작아지기
+const stepDigits = (visual) => {
+  const between = visual.between || "같은 차";
+  const sign = (text) => (text.length <= 2 ? `<i class="sign">${esc(text)}</i>` : `<i>${esc(text)}</i>`);
+  const limit = visual.limit ? (typeof visual.limit === "number" ? `${visual.limit} ${visual.direction ? "보다 작은 수" : "이하"}` : visual.limit) : "";
+  const examples = visual.examples ? `<p>${visual.examples.map((n) => `<i>${n}</i>`).join("")}</p>` : "";
+  return `<div class="b10-step-digits"><span>백</span>${sign(between)}<span>십</span>${sign(between)}<span>일</span>${limit ? `<b>${esc(limit)}</b>` : ""}${examples}</div>`;
+};
 
+// 갈림길: nodes가 있으면 장소를 잇는 길을, groups가 있으면 고를 거리(옷 등)를 묶음으로 그린다.
 function routeStages(visual) {
-  return `<div class="b10-routes"><span>출발</span>${visual.choices.map((count, index) => `<div>${Array.from({ length: count }, () => "<i></i>").join("")}<b>${index + 1}구간</b></div><span>→</span>`).join("")}<strong>도착</strong></div>`;
+  if (visual.groups) return `<div class="b10-choice-groups">${visual.groups.map((group, index) => `${index ? "<em>×</em>" : ""}<div><b>${esc(group.label)}</b><p>${Array.from({ length: group.count }, (_, k) => `<i class="c${k % 4}"></i>`).join("")}</p><small>${group.count}가지</small></div>`).join("")}</div>`;
+  const nodes = visual.nodes || ["출발", ...visual.choices.slice(1).map((_, index) => `${index + 1}`), "도착"];
+  return `<div class="b10-routes">${visual.choices.map((count, index) => `<span>${esc(nodes[index])}</span><div>${Array.from({ length: count }, () => "<i></i>").join("")}<b>${count}가지</b></div>`).join("")}<strong>${esc(nodes[visual.choices.length])}</strong></div>`;
 }
 
 function lineupSlots(visual) {
-  return `<div class="b10-lineup">${Array.from({ length: visual.people }, (_, index) => `<span>${visual.fixedFirst && index === 0 ? "민수" : index + 1}</span>`).join("")}</div>`;
+  const names = visual.names || Array.from({ length: visual.people }, (_, index) => (visual.fixedFirst && index === 0 ? "민수" : String(index + 1)));
+  return `<div class="b10-lineup">${names.map((name) => `<span>${esc(name)}</span>`).join("")}</div>`;
 }
 
 function numberBaseball(visual) {
