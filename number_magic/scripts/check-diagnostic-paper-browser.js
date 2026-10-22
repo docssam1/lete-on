@@ -10,7 +10,7 @@ try{if(OUT)fs.mkdirSync(OUT,{recursive:true});for(const [width,lang,baseline] of
  assert.equal(await p.locator('#pdPaperAnswers').count(),1);const href=await p.locator('#pdPaper').getAttribute('href');
  const popupPromise=p.waitForEvent('popup');await p.click('#pdPaper');const sheet=await popupPromise;await sheet.waitForFunction(()=>window.NM_WS_READY===true);await p.waitForSelector('#pdPaperForm');
  const st=await p.evaluate(()=>__INTAKE.state()),plan=st.run.plan,keep={coins:st.coins,progress:st.progress};
- assert.equal(plan.items.length,20);assert.equal(await p.locator('.pd-paper-row').count(),20);assert.equal(await sheet.locator('.pl-q').count(),20);
+ assert.equal(plan.items.length,20);assert.equal(await p.locator('.pd-paper-row legend').evaluateAll(es=>es.some(e=>e.textContent.includes(String.fromCharCode(92)))),false,'answer index must not show raw TeX commands');assert.equal(await p.locator('.pd-paper-row').count(),20);assert.equal(await sheet.locator('.pl-q').count(),20);
  // Printed and entered questions are generated independently from one seed/scope.
  const printed=await sheet.evaluate(()=>{const u=new URL(location.href);return u.searchParams.has('mixBooks')?NM_PLACEMENT_PLAN.buildBooks([{series:'soma-p',course:1},{series:'soma-d',course:6}],u.searchParams.get('seed')):NM_PLACEMENT_PLAN.build(u.searchParams.get('b'),u.searchParams.get('seed'));});assert.deepEqual(printed.items,plan.items);assert.deepEqual(printed.baseline,plan.baseline);
  assert.equal(new URL(sheet.url()).search,new URL(href,base+'/number_magic/').search);
