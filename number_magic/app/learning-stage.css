@@ -569,3 +569,20 @@
   .nm-manipulative-dialog .nm-tc-item.sc.on{transform:none}
   .nm-manipulative-dialog .nm-tc-item.sc .nm-tc-emoji{display:grid;place-items:center;width:100%;height:100%;font-size:36px}
 }
+
+/* Young learners: connect the same given numbers across speech text and the
+   equation. The typed answer occupies the missing-number position itself. */
+@media screen {
+  .nm-split-question{--split-whole:var(--blue);--split-part:#16734B;--split-unknown:var(--purple);--split-digit-size:42px;--split-formula-size:52px}
+  .nm-split-question [data-number-role="whole"]{color:var(--split-whole)}
+  .nm-split-question [data-number-role="part"]{color:var(--split-part)}
+  .nm-split-question [data-number-role="unknown"]{color:var(--split-unknown)}
+  html .nm-unit-view[data-learning-band][lang] .nm-answer-dialog.nm-split-question .nm-bubble .nm-numi-dialogue{font:600 28px/1.5 var(--lesson-font);letter-spacing:0}
+  html .nm-unit-view[data-learning-band][lang] .nm-answer-dialog.nm-split-question .nm-bubble .nm-numi-dialogue .nm-dialog-figure{font:750 var(--split-digit-size)/1.15 var(--lesson-font);white-space:nowrap;vertical-align:baseline}
+  .nm-split-equation{display:flex;align-items:center;justify-content:center;gap:12px;font:700 var(--split-formula-size)/1.2 var(--lesson-font);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .nm-split-equation .nm-split-sign{font-size:.65em;color:var(--ink)}
+  html .nm-unit-view .nm-answer-work .nm-split-equation .nm-numpad-screen{font:inherit;color:var(--split-unknown);margin:0;width:1.2em;max-width:none;min-width:1.2em;min-height:1.2em;height:auto;flex:none;padding:0;border:0;border-radius:0;background:none;box-shadow:none;text-shadow:none}
+  .nm-split-question .nm-answer-guide .nm-bubble{padding:8px 10px}
+  @media(min-width:760px){.nm-split-question{--split-digit-size:48px;--split-formula-size:60px}}
+  @media(max-width:550px){.nm-split-question{--split-digit-size:40px;--split-formula-size:48px}.nm-split-equation{gap:10px}}
+}
