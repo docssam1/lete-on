@@ -1,0 +1,58 @@
+[
+  {
+    "file": "ko-71e80f97cbce.mp3",
+    "lang": "ko",
+    "text": "백의 자리부터 먼저 빼는 연습이에요!",
+    "previousASR": "베개 자리부터 먼저 빼는 연습이에요.",
+    "reason": "Previous ASR mismatch; recheck, not confirmed by listening"
+  },
+  {
+    "file": "ko-83375b76307e.mp3",
+    "lang": "ko",
+    "text": "합과 차 마법 Level 2! 더 큰 수로!",
+    "previousASR": "합과차 마법 레벨 2 더 큰 수로",
+    "reason": "Previous ASR mismatch; recheck, not confirmed by listening"
+  },
+  {
+    "file": "ko-dd27eeeddf8d.mp3",
+    "lang": "ko",
+    "text": "완벽해! 2~9단 완전 정복! 📊✨",
+    "previousASR": "완벽해. 2구단 완전 정복.",
+    "reason": "Previous ASR mismatch; recheck, not confirmed by listening"
+  },
+  {
+    "file": "ko-dfc0b288aa20.mp3",
+    "lang": "ko",
+    "text": "완벽해! 쌍 곱 달인! 🔟✨",
+    "previousASR": "완벽해. 쌍곱다린.",
+    "reason": "Previous ASR mismatch; recheck, not confirmed by listening"
+  },
+  {
+    "file": "ko-425d6c9e6813.mp3",
+    "lang": "ko",
+    "text": "우와, 잘 셌어! 🐤",
+    "previousASR": "우와, 잘 태워.",
+    "reason": "Previous ASR mismatch; recheck, not confirmed by listening"
+  },
+  {
+    "file": "ko-3c911222b67f.mp3",
+    "lang": "ko",
+    "text": "4개는 그대로, 5번째는 사선으로 묶어요!",
+    "previousASR": "4개는 그대로 다섯 번째는 사선으로 묶어요.",
+    "reason": "Previous ASR mismatch; recheck, not confirmed by listening"
+  },
+  {
+    "file": "ko-5e171e59aff2.mp3",
+    "lang": "ko",
+    "text": "위+아래 = 왼쪽+오른쪽!",
+    "previousASR": "위부 아래 왼쪽 푸 오른쪽.",
+    "reason": "Previous ASR mismatch; recheck, not confirmed by listening"
+  },
+  {
+    "file": "ko-ced4b013f37d.mp3",
+    "lang": "ko",
+    "text": "묶어 세기 완벽! ✨",
+    "previousASR": "묶어 쐬기 완벽.",
+    "reason": "Previous ASR mismatch; recheck, not confirmed by listening"
+  }
+]

@@ -791,7 +791,19 @@ function updateLiveFill(sel,vals){
   math(fillLiveTex(tex,vals),spans[0]);
 }
 let lessonVersion=0;
-function lessonLater(fn,ms){const version=lessonVersion;return setTimeout(()=>{if(version===lessonVersion)fn();},ms);}
+function lessonLater(fn,ms){
+  const version=lessonVersion,body=ms<=2000?document.getElementById('stepBody'):null,started=Date.now();
+  // A correct answer has already advanced state. Keep its controls inactive until
+  // the full feedback sentence finishes, so the old screen cannot submit again.
+  if(body){body.inert=true;body.setAttribute('aria-busy','true');}
+  const advance=()=>{
+    if(version!==lessonVersion)return;
+    if(ms<=2000&&window.NM_VOICE?.isSpeaking()&&Date.now()-started<30000){setTimeout(advance,80);return;}
+    if(body){body.inert=false;body.removeAttribute('aria-busy');}
+    fn();
+  };
+  return setTimeout(advance,ms);
+}
 function stopVoice(){
   window.NM_VOICE?.stop();
 }
@@ -3734,7 +3746,7 @@ function renderPersonalPlan(){
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
   const p=S.adminPlan,now=new Date(),today=new Date(+now+9*3600000).toISOString().slice(0,10);
   const settings=p&&NM_COURSES[p.courseKey]?p:{courseKey:currentCourseKey(),sessionIndex:1,speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2',entryYear:S.schoolAge?.entryYear,startDate:today};
-  let result;try{result=NM_LEARNING_PLAN.project(NM_COURSES,settings,{months:12,lang:S.lang,now});}catch(e){return;}
+  let result;try{result=NM_LEARNING_PLAN.project(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});}catch(e){return;}
   const reference=NM_LEARNING_PLAN.recommend(NM_COURSES,settings,{lang:S.lang});
   box.innerHTML=`<summary>${lk('나의 월별 로드맵 · 12개월','My monthly roadmap · 12 months','我的月度路线图 · 12个月')}</summary><div class="nm-personal-plan-body"><p>${p?lk('학원에서 정한 개인별 시작점과 속도를 적용했어요.','Your academy’s individual starting point and pace are applied.','已应用学院设置的个人起点和速度。'):lk('현재 선택한 시작점과 속도로 예상했어요.','Estimated from your selected starting point and pace.','根据所选起点和速度估算。')} ${lk('실제 학습에 따라 달라질 수 있어요. 학년은 매년 3월에 바뀌어요.','Actual progress may vary. Grades change each March.','实际进度可能不同，年级每年3月变更。')}</p><p>${lk('시작','Start','开始')}: ${esc(settings.startDate)} · ${settings.speed}${lk('배 속도','× pace','倍速度')} · ${lk('주','Per week','每周')} ${settings.cadence==='w2'?2:1}${lk('회',' sessions','次')}</p><div class="nm-personal-plan-grid" role="list">${result.rows.map(row=>`<article role="listitem"><h4>${esc(row.month)} <small>${esc(row.schoolLabel)}</small></h4>${row.courseLabels.length?row.courseLabels.map((label,i)=>`<p><b>${esc(label)}</b><span>${esc(row.sessionLabels[i])}</span></p>`).join(''):`<p>${lk('예상 과정 없음','No course projected','暂无预计课程')}</p>`}</article>`).join('')}</div><aside><h4>${esc(reference.title)}</h4><p>${esc(reference.advice)}</p><p>${esc(reference.reference)}</p>${reference.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>`).join(' · ')}</aside></div>`;
 }
@@ -4831,6 +4843,10 @@ function screenPlacement(){
   // A saved adaptive run cannot be interpreted as a fixed 6/10/4 plan.
   if(!S._diag||S._diag.version!==ui.version){S._diag=ui.initial();save();}
   ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,
+    planSettings:{speed:S.roadSpeed||1,pace:S.roadPace||'p2',cadence:S.roadCadence||'w1'},
+    onProfile:profile=>{S.schoolAge={entryYear:profile.entryYear,birthYear:profile.birthYear,setAt:Date.now()};save();},
+    paceManaged:!!S.adminPlan,
+    onPaceApply:p=>{if(S.adminPlan||!ROAD_MULTS_LIST.includes(p.speed)||!['w1','w2'].includes(p.cadence))return false;S.roadSpeed=p.speed;S.roadCadence=p.cadence;S.roadManual=true;save();return true;},
     pick:()=>{S._diag=null;S.view='startpick';save();render();},
     seeCourse:key=>{S._diag=null;S._roadFocus=key;S.view='courseroad';save();render();},
     onResult:(result,run)=>{

@@ -8,7 +8,7 @@ const scripts=[...html.matchAll(/<script\s+[^>]*src=["']([^"']+)["']/g)].map(x=>
 const sources=scripts.filter(x=>/^engine\/(?:generators\.js|rng\.js|threads\/[^/]+\.js)$/.test(x));
 const files=[...new Set([...sources,'data/curriculum.js','data/threads.js','data/middle-pacing.js','data/wordable.js','data/courses.js','data/stages.js',
   ...fs.readdirSync(path.join(root,'data/units')).filter(x=>x.endsWith('.js')).map(x=>'data/units/'+x),
-  'data/placement-plan.js','data/placement-books.js','data/placement-paths.js','app/placement-ui.js'])];
+  'data/placement-plan.js','data/placement-books.js','data/placement-paths.js','app/diagnostic-roadmap.js','app/placement-ui.js'])];
 files.forEach(file=>vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),context,{filename:file,timeout:10000}));
 const ui=world.NM_PLACEMENT_UI,plan=world.NM_PLACEMENT_PLAN,books=world.NM_PLACEMENT_BOOKS;
 const plain=x=>JSON.parse(JSON.stringify(x));
@@ -40,7 +40,7 @@ const main=fs.readFileSync(path.join(root,'app/main.js'),'utf8');
 const entry=main.slice(main.indexOf('function screenPlacement(){'),main.indexOf('function screenLegacyPlacement(){'));
 assert(entry.includes('ui.render('));assert(entry.includes('S._diag.version!==ui.version'));
 assert(!entry.includes('placementNext(')&&!entry.includes('renderPlacementQuestion('));
-for(const file of ['data/placement-plan.js','data/placement-books.js','data/placement-paths.js','app/placement-ui.js'])assert(scripts.indexOf(file)<scripts.indexOf('app/main.js')&&scripts.indexOf(file)>scripts.indexOf('data/courses.js'),file+' load order');
+for(const file of ['data/placement-plan.js','data/placement-books.js','data/placement-paths.js','app/diagnostic-roadmap.js','app/placement-ui.js'])assert(scripts.indexOf(file)<scripts.indexOf('app/main.js')&&scripts.indexOf(file)>scripts.indexOf('data/courses.js'),file+' load order');
 assert(scripts.indexOf('data/placement-paths.js')<scripts.indexOf('app/placement-ui.js'),'pathway data loads before UI');
 // Run the real entry against disposable saved states. A reload enters the portal;
 // the diagnostic entry must not discard a compatible setup or answered plan.
@@ -79,6 +79,9 @@ for(const mode of ['next-wrong','one-earlier-wrong','all-skip']){
   assert.equal(world.S.placement.autoPlan.applied,false);
   assert.equal(world.S.placement.autoPlan.cadence,'w1','maintain label must show actual frequency');
 }
+world.ROAD_MULTS_LIST=[0.7,0.85,1,1.25,1.5];
+assert.equal(capture.onPaceApply({speed:1.25,cadence:'w2'}),true);assert.equal(world.S.roadSpeed,1.25);assert.equal(world.S.roadCadence,'w2');assert.equal(world.S.roadAmount,1.5);
+world.S.adminPlan={version:1};assert.equal(capture.onPaceApply({speed:1.5,cadence:'w1'}),false);assert.equal(world.S.roadSpeed,1.25);
 world.NM_PLACEMENT_UI=ui;
 
 // A minimal DOM contract supplements (not replaces) the real browser transition audit.
