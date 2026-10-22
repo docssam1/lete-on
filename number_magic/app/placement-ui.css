@@ -35,3 +35,15 @@
 /* Common learner profile; studied level is independent of actual school grade. */
 .pd-profile{padding:18px 0;border-bottom:1px solid #d9dfd9}.pd-profile-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.pd-profile-fields label{min-width:0}.pd-source-title{margin-top:24px!important}.pd-calendar{margin:24px 0;padding:20px 0;border-block:1px solid #bccac3}.pd-calendar h3{font-size:16px;margin:0 0 8px}.pd-lead-rule{border-left:4px solid var(--pd-accent);padding:12px 16px;background:#f1f6f2;margin:20px 0}.pd-lead-rule p{margin:0}.pd-calendar-table{overflow:auto;margin:14px 0;max-height:440px}.pd-calendar table{width:100%;border-collapse:collapse;font-size:14px;text-align:left}.pd-calendar th,.pd-calendar td{padding:12px 10px;border-bottom:1px solid #d9dfd9;vertical-align:top;min-width:110px}.pd-calendar thead th{position:sticky;top:0;background:#edf3ee;z-index:1}.pd-calendar small{font-weight:400;color:#526d68}.pd-calendar hr{border:0;border-top:1px solid #d9dfd9}.nm-placement .pd-routes{grid-template-columns:repeat(3,minmax(0,1fr))}.pd-calendar select{min-width:0}.pd-goal-plan>summary{min-height:48px;cursor:pointer;font-weight:700}.pd-blueprint>summary{min-height:48px;cursor:pointer;font-weight:700}
 @media(max-width:550px){.pd-profile-fields{grid-template-columns:1fr}.pd-profile{padding-top:8px}.pd-calendar-table{max-height:380px}.pd-calendar th,.pd-calendar td{padding:10px 8px;font-size:13px}.pd-header{padding:18px 0 14px}}
+
+/* Paper answer entry keeps the fixed assessment and its item order. */
+.nm-placement .pd-paper-row{min-width:0;margin:24px 0;padding:16px;border:1px solid #a6bbad;border-radius:10px;background:#fff}
+.nm-placement .pd-paper-row legend{font-size:18px;font-weight:700;padding:0 6px;max-width:100%;overflow-wrap:anywhere}
+.nm-placement .pd-paper-fields{display:flex;flex-wrap:wrap;gap:12px}
+.nm-placement .pd-paper-fields label{flex:1 1 130px;min-width:0;max-width:240px}
+.nm-placement .pd-paper-row :is(input[type=text],select){box-sizing:border-box;min-height:48px;width:100%;padding:8px 10px;font:inherit;font-size:22px;border:1.5px solid #566274;border-radius:6px;color:#182230;background:#fff}
+.nm-placement .pd-paper-row .pd-target-check{display:block;margin-top:14px;font-size:16px}
+.nm-placement .pd-paper-skip{display:flex;align-items:center;gap:10px;min-height:48px;margin-top:12px;font-size:16px}
+.nm-placement .pd-paper-skip input{width:24px;height:24px;flex:none}
+.nm-placement .pd-paper-row [aria-invalid=true]{border-color:#B42332}
+.nm-placement .pd-paper-row :disabled{opacity:.55}

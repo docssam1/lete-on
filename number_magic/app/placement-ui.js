@@ -37,6 +37,21 @@
     const l = value => label(value, lang);
     const $ = selector => root.querySelector(selector);
     const all = selector => Array.from(root.querySelectorAll(selector));
+    // Compatible saved runs may predate paper entry. Reconstruct the link
+    // from their fixed seed/scope; never replace an answered plan.
+    if(d.plan&&!d.paperQuery&&/^[A-Za-z0-9_-]{1,24}$/.test(d.plan.seed)){
+      const s=d.selection,book=d.plan.book,p={b:d.plan.baseline.id,l:lang,seed:d.plan.seed,route:s.route};
+      if(book){
+        if(book.series==='mixed')p.mixBooks='1';
+        else if(book.series==='dunoro')p.dunoro=String(book.course);
+        else if(book.series==='soma-p')p.somaP=String(book.course);
+        else{p.bookSeries=book.series;p.bookVolume=String(book.course);}
+      }
+      if(s.route==='book')p.books=JSON.stringify(s.completedBooks||[]);
+      p.goal=s.goal||'curriculum';p.target=s.goalTarget||'';p.cadence=s.cadence||'w2';
+      d.paperQuery=new URLSearchParams(p).toString();
+    }
+    if(d.paperQuery){const params=new URLSearchParams(d.paperQuery);params.set('l',lang);d.paperQuery=params.toString();}
     const redraw = () => {
       const active = d.phase==='setup' && document.activeElement && document.activeElement.id;
       const detailKey=x=>x.id||(x.querySelector('summary')||x).textContent;
@@ -206,11 +221,17 @@
         (baseline?t('진단 기준: ','Diagnostic scope: ','测评基准：')+escape(scopeText):t('진단 방법과 내용을 고르면 출발점이 나옵니다.','Choose a route and topic to see a starting point.','选择方式和内容后显示起点。'))+'</p><p class="pd-note">'+t('맞고 틀려도 문항은 바뀌지 않습니다. 첫 기초의 이전 6문항은 같은 기초의 작은 수로, 마지막 과정의 다음 4문항은 같은 과정 추가 확인으로 표시합니다.','The plan stays fixed. At the first foundation, earlier items use smaller quantities; at the final course, next items are additional checks in that course.','题目配置保持不变。最初基础的此前题使用更小数量，最后课程的后续题为同课程补充确认。')+'</p>'+
         (bookPlan?'<p class="pd-note">'+escape(l(bookPlan.book.notice))+'</p>'+(bookChoices.length>1&&bookPlan.book.series!=='mixed'?'<p class="pd-note">'+t('함께 기록한 다른 교재는 이번 문항 출제 기준에 포함되지 않아요. 다른 내용을 확인하려면 위에서 앱 진단 범위를 선택해 주세요.','Other recorded books do not determine these questions. Choose an app diagnostic topic above to check different content.','同时记录的其他教材不用于本次出题。若需确认其他内容，请在上方选择应用测评范围。')+'</p>':''):s.route==='book'?'<p class="pd-note">'+t('6·10·4문항은 선택한 진단 범위의 이전·중심·다음 내용입니다. 교재 권 번호의 앞뒤와 같다고 보지 않습니다.','The 6/10/4 questions follow the selected diagnostic scope, which may differ from adjacent book volumes.','6/10/4道题按所选测评范围的前后内容编排，未必对应相邻教材册次。')+'</p>':'')+'</details>'+
         '<p class="pd-note">'+t('유아는 보호자가 지시문을 읽어 줄 수 있습니다. 답이나 세는 방법은 알려주지 마세요.','An adult may read the prompt for a young child, without helping choose or count the answer.','成人可以为幼儿读题，但不要提示答案或计数方法。')+'</p><p id="pdSetupError" class="pd-error" role="alert"></p><p id="pdStartReason" class="pd-intake-hint"'+(setupHint?'':' hidden')+'>'+escape(setupHint)+'</p><button class="pd-primary" id="pdStart"'+(baseline?'':' disabled')+'>'+t('20문항 시작','Start 20 questions','开始20道题')+'</button>'+
-        (baseline?'<a class="pd-secondary pd-paper" id="pdPaper" href="placement-sheet.html?'+escape(paperQuery)+'" target="_blank" rel="noopener">'+t('종이로 인쇄 · O/X 채점','Print on paper · mark O/X','打印 · 对错评分')+'</a><p class="pd-note">'+t('인쇄본에는 보호자용 정답 쪽이 포함됩니다. 아이에게는 시험 쪽만 주세요.','The printout includes a parent answer page. Give the child only the test pages.','打印件包含家长用答案页，请只给孩子试题页。')+'</p>':''),'setup');
+        (baseline?'<a class="pd-secondary pd-paper" id="pdPaper" href="placement-sheet.html?'+escape(paperQuery)+'" target="_blank" rel="noopener">'+t('진단지 인쇄하기','Print assessment','打印测评卷')+'</a><p class="pd-note">'+t('인쇄본에는 보호자용 정답 쪽이 포함됩니다. 아이에게는 시험 쪽만 주세요.','The printout includes a parent answer page. Give the child only the test pages.','打印件包含家长用答案页，请只给孩子试题页。')+'</p>':''),'setup');
       // Keep the primary action beside the chosen starting point, before optional
       // planning details and the longer explanation of the fixed blueprint.
       $('.pd-selection').after($('#pdSetupError'));$('#pdSetupError').after($('#pdStartReason'));$('#pdStartReason').after($('#pdStart'));
-      if(baseline)$('#pdStart').after($('#pdPaper'));
+      if(baseline){
+        $('#pdStart').after($('#pdPaper'));
+        const answers=document.createElement('button');answers.type='button';answers.id='pdPaperAnswers';answers.className='pd-secondary pd-paper';
+        answers.textContent=t('종이에 푼 답 입력하기','Enter answers from paper','输入纸上答案');$('#pdPaper').after(answers);
+        answers.onclick=()=>begin('paper');
+        $('#pdPaper').onclick=e=>{if(!begin('paper'))e.preventDefault();};
+      }
       if($('#pdAge'))$('#pdAge').onchange=e=>{s.age=e.target.value;s.birthYear=s.age?new Date(+new Date(now)+9*3600000).getUTCFullYear()-Number(s.age)+1:null;s.profileGrade=s.age?(Number(s.age)<8?'pre':grades[Math.min(Number(s.age)-7,12)][0]):'';s.entryYear=null;s.baselineId='';s.studyBand='';redraw();};
       $('#pdGrade').onchange=e=>{s.profileGrade=e.target.value;s.entryYear=null;redraw();};
       all('[data-route]').forEach(el=>el.onclick=()=>{s.route=el.dataset.route;s.baselineId='';redraw();});
@@ -231,13 +252,14 @@
         $('#pdAddBook').onclick=()=>{if(s.completedBooks.length>=8)return;s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});s.baselineId='';s.bookFocus='';redraw();};
       }
       if($('#pdBaseline'))$('#pdBaseline').onchange=e=>{s.baselineId=e.target.value;redraw();};
-      $('#pdStart').onclick=()=>{
-        if(!baseline||!profileReady)return;
+      const begin=phase=>{
+        if(!baseline||!profileReady)return false;
         Object.assign(s,actual);if(ctx.onProfile)ctx.onProfile(actual);
         $('#pdStart').disabled=true;
-        try{d.plan=bookPlan?(focus.series==='mixed'?core.buildBooks(focus.sources,d.seed):core.buildBook(focus.series,focus.course,d.seed)):core.build(baseline.id,d.seed);if(!bookPlan)s.baselineId=baseline.id;d.index=0;d.responses=[];d.phase='question';d.questionStartedAt=Date.now();redraw();}
-        catch(_){$('#pdSetupError').textContent=t('이 범위를 안전하게 구성하지 못했습니다. 출발점을 바꿔 주세요.','This range could not be safely prepared. Choose another starting point.','无法安全生成此范围，请更改起点。');$('#pdStart').disabled=false;}
+        try{d.plan=bookPlan?(focus.series==='mixed'?core.buildBooks(focus.sources,d.seed):core.buildBook(focus.series,focus.course,d.seed)):core.build(baseline.id,d.seed);if(!bookPlan)s.baselineId=baseline.id;d.index=0;d.responses=[];d.paperQuery=paperQuery;d.paperDrafts={};d.phase=phase;d.questionStartedAt=Date.now();redraw();return true;}
+        catch(_){$('#pdSetupError').textContent=t('이 범위를 안전하게 구성하지 못했습니다. 출발점을 바꿔 주세요.','This range could not be safely prepared. Choose another starting point.','无法安全生成此范围，请更改起点。');$('#pdStart').disabled=false;return false;}
       };
+      $('#pdStart').onclick=()=>begin('question');
     }
     const tokens = (n,symbol='●') => `<div class="pd-objects" aria-label="${escape(t('수량 그림','Quantity picture','数量图'))}">${Array.from({length:n},()=>`<span class="pd-object${symbol==='●'?' pd-orb':''}" aria-hidden="true">${symbol==='●'?'':art(symbol)}</span>`).join('')}</div>`;
     function question() {
@@ -258,6 +280,11 @@
       else {shell(t('진단 자료 확인','Assessment data','测评资料'),`<p role="alert">${t('이 문항의 표현을 지원하지 않습니다. 기준 선택부터 다시 시작해 주세요.','This question display is unsupported. Restart from the starting point.','不支持此题显示，请重新选择起点。')}</p><button class="pd-primary" id="pdRestart">${t('기준 다시 선택','Choose starting point','重新选择起点')}</button>`,'question');$('#pdRestart').onclick=()=>{d.phase='setup';redraw();};return;}
       const answerCount=mode==='number'?data.answerCount||1:1;
       shell(t('학습 시작점 확인','Starting-point check','确认学习起点'), `<header class="pd-question-top"><p>${t('문항','Question','题目')} <b>${d.index+1}</b> / 20</p><progress value="${d.index}" max="20" aria-label="${t('완료 문항','Completed questions','已完成题数')}"></progress></header><section class="pd-question"><h1 id="pdPrompt">${escape(l(item.prompt))}</h1><div class="pd-scene">${scene}</div>${numeric?`<div class="pd-answer-fields">${Array.from({length:answerCount},(_,i)=>`<label>${answerCount>1?t('답','Answer','答案')+' '+(i+1):t('답','Answer','答案')}<input class="pd-answer" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="pdPrompt" aria-label="${t('답','Answer','答案')} ${i+1}"></label>`).join('')}</div><div class="pd-keypad" aria-label="${t('숫자 입력','Number input','数字输入')}">${['1','2','3','4','5','6','7','8','9','−','0','.','⌫'].map(key=>`<button type="button" data-key="${escape(key)}" aria-label="${key==='⌫'?t('한 글자 지우기','Delete one character','删除一个字符'):key==='−'?t('부호 바꾸기','Change sign','改变正负号'):escape(key)}">${key}</button>`).join('')}</div>`:''}<p id="pdInputError" class="pd-error" role="alert"></p><div class="pd-question-actions"><button type="button" class="pd-secondary" id="pdSkip">${t('아직 모르겠어요','Not sure yet','还不会')}</button><button type="button" class="pd-primary" id="pdSubmit">${t('답 제출','Submit answer','提交答案')}</button></div></section>`, 'question');
+      if(d.paperQuery){
+        const paper=document.createElement('button');paper.type='button';paper.className='pd-text-button';paper.id='pdQuestionPaper';
+        paper.textContent=t('인쇄해서 풀기 · 답 입력','Print and enter answers','打印后输入答案');$('.pd-question').append(paper);
+        paper.onclick=()=>{d.phase='paper';redraw();};
+      }
       let focused=$('.pd-answer');
       // The on-screen number pad is the mobile keyboard; hardware typing still works.
       all('.pd-answer').forEach(input=>{input.setAttribute('inputmode','none');input.onfocus=()=>{focused=input;};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('#pdSubmit').click();}};});
@@ -302,6 +329,48 @@
         submitButton.disabled=true;skipButton.disabled=true;
         setTimeout(()=>{if(submitButton.isConnected){submitButton.disabled=false;skipButton.disabled=false;}},remaining+5);
       }
+    }
+    function paper() {
+      if(!d.plan||!d.paperQuery){d.phase='setup';redraw();return;}
+      if(!d.paperDrafts)d.paperDrafts={};
+      const title=t('종이에 푼 답 입력','Enter answers from paper','输入纸上答案');
+      const rows=d.plan.items.map((item,i)=>{
+        const previous=d.responses.find(r=>r.id===item.id), count=item.responseMode==='number'?(item.renderData.answerCount||1):1;
+        const draft=d.paperDrafts[item.id]||(d.paperDrafts[item.id]={values:previous&&!previous.skipped?(Array.isArray(previous.value)?previous.value:[previous.value]).map(String):Array(count).fill(''),skipped:!!previous?.skipped,targets:previous?.validationFlags?String(previous.validationFlags.validTargets):''});
+        const choice=item.responseMode==='match-number'?item.renderData.dots.map((_,n)=>[String(n),String(n+1)]):item.responseMode==='compare'?[['1',t('왼쪽','Left','左边')],['2',t('오른쪽','Right','右边')]]:null;
+        const fields=choice?`<label>${t('고른 보기','Chosen option','所选选项')}<select data-paper-value="0">${option('',t('선택','Select','请选择'),draft.values[0])}${choice.map(x=>option(x[0],x[1],draft.values[0])).join('')}</select></label>`:
+          Array.from({length:count},(_,j)=>`<label>${count>1?t('답','Answer','答案')+' '+(j+1):t('답','Answer','答案')}<input type="text" inputmode="${item.responseMode==='number'?'text':'numeric'}" autocomplete="off" data-paper-value="${j}" value="${escape(draft.values[j]||'')}"></label>`).join('');
+        const targets=item.responseMode==='count-tap'?`<label class="pd-target-check">${t('목표 그림만 빠짐없이 표시했나요?','Were all and only target objects marked?','是否只圈出全部目标图形？')}<select data-paper-targets>${[['',t('표시한 그림 확인','Check marked objects','确认所圈图形')],['true',t('네','Yes','是')],['false',t('아니요','No','否')]].map(x=>option(x[0],x[1],draft.targets)).join('')}</select></label>`:'';
+        const prompt=item.responseMode==='count-tap'?t('목표 그림과 같은 그림을 모두 ○ 해요.','Circle every object that matches the target picture.','把与目标图形相同的物体全部圈出来。'):item.responseMode==='make'?t('말한 수만큼 그려요.','Draw the requested quantity.','画出指定的数量。'):item.responseMode==='match-number'?t('숫자와 같은 개수의 점 그림 하나에 ○ 해요.','Circle the dot picture matching the numeral.','圈出与数字数量相同的点图。'):l(item.prompt);
+        return `<fieldset class="pd-paper-row" data-paper-id="${escape(item.id)}"><legend>${i+1}. ${escape(prompt)}</legend>${choice?'<p class="pd-note">'+t('인쇄지의 보기 순서대로 선택하세요.','Use the option order on the printed sheet.','按试卷上的选项顺序选择。')+'</p>':''}<div class="pd-paper-fields">${fields}</div>${targets}<label class="pd-paper-skip"><input type="checkbox" data-paper-skip${draft.skipped?' checked':''}>${t('아직 모르겠어요 · 안 배웠어요','Not sure / not learned','还不会 / 未学过')}</label></fieldset>`;
+      }).join('');
+      shell(title,`<header class="pd-header"><p class="pd-kicker">${t('인쇄 → 종이에 풀기 → 답 입력','Print → solve on paper → enter answers','打印 → 纸上作答 → 输入答案')}</p><h1>${title}</h1><p>${t('인쇄지와 같은 20문항입니다. 답을 옮기면 진단 결과와 월별 로드맵을 볼 수 있어요. 입력하지 않은 답은 오답으로 처리하지 않아요.','These are the same 20 printed questions. Enter answers to see results and your monthly roadmap. Empty fields are not marked wrong.','与打印卷为相同20题。输入答案后查看结果和月度路线图。空白不算错答。')}</p><a class="pd-secondary pd-paper" href="placement-sheet.html?${escape(d.paperQuery)}" target="_blank" rel="noopener">${t('같은 진단지 인쇄하기','Print the same assessment','打印同一份测评卷')}</a><p class="pd-note">${t('정답 쪽은 보호자가 보관해 주세요. 그림을 고르는 문항은 표시한 그림도 확인해 주세요.','Keep the answer pages with the adult. For object-selection questions, also check which objects were marked.','答案页由家长保管。圈选图形的题也请核对所圈图形。')}</p></header><form id="pdPaperForm" novalidate>${rows}<p class="pd-error" id="pdPaperError" role="alert"></p><button class="pd-primary" type="submit">${t('채점하고 로드맵 보기','Score and see roadmap','评分并查看路线图')}</button></form><button class="pd-text-button" id="pdPaperOnline" type="button">${t('화면에서 한 문제씩 풀기','Answer one at a time on screen','在屏幕上逐题作答')}</button>`,'paper');
+      const remember=(row,persist=true)=>{
+        const draft=d.paperDrafts[row.dataset.paperId];
+        draft.values=Array.from(row.querySelectorAll('[data-paper-value]'),x=>x.value);
+        draft.skipped=row.querySelector('[data-paper-skip]').checked;
+        const targets=row.querySelector('[data-paper-targets]');draft.targets=targets?targets.value:'';
+        row.querySelectorAll('[data-paper-value],[data-paper-targets]').forEach(x=>x.disabled=draft.skipped);
+        row.querySelectorAll('[aria-invalid]').forEach(x=>x.removeAttribute('aria-invalid'));
+        if(persist)ctx.save();
+      };
+      all('.pd-paper-row').forEach(row=>{row.querySelectorAll('input,select').forEach(el=>{el.oninput=el.onchange=()=>remember(row);});remember(row,false);});
+      $('#pdPaperOnline').onclick=()=>{d.phase='question';d.questionStartedAt=Date.now();redraw();};
+      let submitted=false;
+      $('#pdPaperForm').onsubmit=e=>{
+        e.preventDefault();if(submitted)return;
+        const responses=[];
+        for(const item of d.plan.items){
+          const draft=d.paperDrafts[item.id],value=draft.skipped?null:readValues(draft.values);
+          if(!draft.skipped&&(value===null||(item.responseMode==='count-tap'&&!['true','false'].includes(draft.targets)))){
+            const row=all('.pd-paper-row').find(x=>x.dataset.paperId===item.id),input=Array.from(row.querySelectorAll('[data-paper-value],[data-paper-targets]')).find(x=>!x.value)||row.querySelector('input,select');
+            $('#pdPaperError').textContent=t('답과 그림 표시를 확인하거나 ‘아직 모르겠어요’를 선택해 주세요.','Complete the answer and object check, or select “Not sure”.','请填写答案并确认图形，或选择“还不会”。');
+            input.setAttribute('aria-invalid','true');input.focus();row.scrollIntoView({block:'center'});return;
+          }
+          responses.push({id:item.id,value,skipped:draft.skipped,sec:null,...(item.responseMode==='count-tap'?{validationFlags:{validTargets:draft.targets==='true'}}:{})});
+        }
+        submitted=true;d.responses=responses;d.index=d.plan.items.length;d.result=summarize();d.phase='result';d.responseSource='paper';ctx.onResult(d.result,d);redraw();
+      };
     }
     function result() {
       if (!paths) { shell(t('학습 경로 확인','Study pathway','学习路径'),`<p role="alert">${t('학습 경로 자료를 불러오지 못했습니다. 새로고침해 주세요.','Study pathway data could not be loaded. Please reload.','未能加载学习路径资料，请刷新。')}</p>`, 'result');return; }
@@ -366,7 +435,7 @@
       $('#pdRoad').textContent=t('로드맵에서 본진도 보기','See main study on the roadmap','在路线图查看主要进度');
       $('#pdRoad').onclick=()=>ctx.seeCourse(rec.course);$('#pdPick').onclick=ctx.pick;$('#pdAgain').onclick=()=>{const previous=JSON.parse(JSON.stringify(d.selection)),fresh=initial();Object.assign(fresh.selection,previous,paths.normalize(previous));Object.assign(d,fresh);redraw();};
     }
-    if(d.phase==='setup')setup();else if(d.phase==='question')question();else if(d.phase==='result'&&d.result)result();else {Object.assign(d,initial());setup();}
+    if(d.phase==='setup')setup();else if(d.phase==='question')question();else if(d.phase==='paper')paper();else if(d.phase==='result'&&d.result)result();else {Object.assign(d,initial());setup();}
   }
   window.NM_PLACEMENT_UI = { version: VERSION, initial, render, parseNumber, readValues };
 })();
