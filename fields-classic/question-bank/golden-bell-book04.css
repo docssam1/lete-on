@@ -287,3 +287,5 @@
   .gold-print-page[data-print-book="book-04"] .b4-fold-option{width:15mm}
   .b4-fold-row,.b4-fold-option{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
+@media screen and (max-width:420px){.b4-one-options{gap:8px 10px}}
+@media screen and (max-width:560px){.b4-digit-row{flex-wrap:wrap;justify-content:center;row-gap:8px}}

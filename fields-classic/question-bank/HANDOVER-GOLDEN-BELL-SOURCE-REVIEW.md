@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018y`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018y/20261018z/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261018z`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018z/20261019a/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -481,6 +481,11 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
 - **인쇄 그림 잘림 전수 점검(2026-10-22)**: 인쇄 그림 칸(`.gold-print-visual > *`)은 높이가 정해져 있고(70mm 등) 넘치면 **잘라 버린다**. 10권 전 단원을 학습지로 인쇄 준비해 칸 밖으로 나간 그림을 찾았더니 5단원이 실제로 잘려 있었다 — 1권 「각 자리 숫자의 합」 표 7~10줄, 2권 도형식 3단원의 마지막 줄·쓸 수 카드, 2권 성냥개비 집 ④·폭 접기 마지막 그림, 7권 바둑돌 ④ 그림, 1권 줄 놓기 그림.
   - `golden-bell-print-layout.js` `fitClippedVisuals()`: **두 단 배치가 끝난 뒤**(좁은 단에서 그림이 줄바꿈되어 더 길어지므로) 넘치는 칸의 내용을 `zoom`으로 칸에 맞게 줄인다(최소 0.5). 배치 전에 하면 소용없었다. 1권 줄 놓기는 따로 `golden-bell.css` 인쇄 규칙(그림 40mm)도 둠.
   - 점검 뒤 남은 것은 4권 숨은 쌓기나무 1단원뿐이고, 그건 그림 틀의 빈 여백만 2px 나간 것이라(그려진 선은 칸 안) 문제없다. 학습지 인쇄 준비는 10권 전 단원 성공. import 꼬리표 `golden-bell-print-layout.js?v=20261022a`.
+- **화면 그림 넘침 전수 점검(2026-10-22, 원장 「십자·마방진 그림 넘침」)**: 10권 전 단원 × 개념 장면·원본 문항·추가 학습을 320·375·1180px로 돌려 ①그림이 문항 칸·화면 밖으로 나감 ②가로 스크롤 ③스타일이 하나도 없는 그림 ④스타일이 빠져 검게 칠해진 도형을 찾았다(검사 스크립트는 저장소 밖).
+  - **10권 그림 스타일 16종이 `styles.css`(옛 앱 화면)에만 있고 골든벨 화면(`golden-bell.html`)에는 없었다** — 수 배열표(십자 모양 포함)가 숫자 한 줄로 늘어서 화면 밖으로 403px 나가고, 간격과 둘레의 운동장이 검은 타원으로 나왔다. 1권 조건 카드·7권 요일·수열·가정·8권 연산 그림도 같은 이유. 해당 규칙을 `golden-bell.css` 끝에 옮겨 넣음. **새 그림 클래스를 만들면 골든벨 화면에서 쓰는 CSS 파일에 넣을 것.**
+  - 1권 거울 그림: 휴대폰 규칙이 그림을 470px로 고정한 뒤 줄여서 칸 밖으로 나감 → 칸 너비에 맞춤. 2권 성냥개비 개념 장면: 가운데 정렬된 넓은 줄이 왼쪽으로 잘림 → 휴대폰에서 줄바꿈. 4권 숫자 1 돌리기: 휴대폰에서 줄바꿈. 7권 날짜 표: 휴대폰에서 글자·여백 줄임(`golden-bell-book05.css` — `golden-bell.css`보다 뒤에 읽혀 앞 파일에 넣으면 덮인다).
+  - **공통 원인**: 문항 그림 칸(`.quiz-visual`)·개념 장면(`.guided-concept-scene`, 휴대폰)이 그리드라 칸이 내용 너비만큼 커졌다 → `minmax(0,1fr)`. 그래도 넓은 그림은 `golden-bell.js` `fitScreenVisuals()`가 렌더 뒤 칸 너비에 맞게 `zoom`으로 줄인다(최소 0.55, 내용이 바뀔 때·화면 크기가 바뀔 때마다).
+  - 점검 뒤 남은 것: 1권 색종이 개념·4권 접어 자르기 4번의 svg 안쪽 측정값만(눈으로 보면 잘리지 않음), 320px에서 7권 날짜 표(가로로 밀어 볼 수 있음). 캐시 꼬리표 `20261018z`, `golden-bell.css` 링크 `20261022b`.
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).
