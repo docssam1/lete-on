@@ -8,7 +8,7 @@ assert.equal(p.rows.length,18);assert.equal(p.rows[0].month,'2026-10');assert.eq
 assert.equal(p.rows.find(r=>r.month==='2027-03').schoolLabel,'7세 3월');
 assert.equal(p.rows.find(r=>r.month==='2028-03').schoolLabel,'초1 3월');
 assert(p.rows[0].sessionLabels[0].startsWith('2–'));
-assert.equal(plan.schoolLabel(2027,new Date('2027-02-01T00:00Z'),'ko'),'7세 2월');
+assert.equal(plan.schoolLabel(2027,new Date('2027-02-01T00:00Z'),'ko'),'8세 2월');
 assert.equal(plan.schoolLabel(2027,new Date('2027-03-01T00:00Z'),'ko'),'초1 3월');
 assert.equal(plan.schoolLabel(null,new Date('2027-03-01T00:00Z'),'ko'),'학년 입력 필요');
 for(const lang of ['ko','en','zh']){

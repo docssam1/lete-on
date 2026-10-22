@@ -22,13 +22,13 @@
     if(!Number.isInteger(Number(entryYear))||Number(entryYear)<2000||Number(entryYear)>2100)return null;
     return d.getUTCFullYear()-(d.getUTCMonth()<2?1:0)-Number(entryYear)+1;
   }
-  function schoolLabel(entryYear,d,lang){
+  function schoolLabel(entryYear,d,lang,birthYear){
     const g=academicGrade(entryYear,d),m=d.getUTCMonth()+1;
     if(g===null)return lang==='en'?'Grade not entered':lang==='zh'?'未填写年级':'학년 입력 필요';
     let grade;
     if(lang==='en')grade=g<=0?'Preschool ('+(1-g)+' years to school)':g>12?'Graduated':'Grade '+g;
     else if(lang==='zh')grade=g<=0?'学前'+(1-g)+'年':g>12?'已毕业':g<=6?'小'+g:g<=9?'初'+(g-6):'高'+(g-9);
-    else grade=g<=0?(7+g)+'세':g>12?'졸업':g<=6?'초'+g:g<=9?'중'+(g-6):'고'+(g-9);
+    else grade=g<=0?(d.getUTCFullYear()-(Number(birthYear)||Number(entryYear)-7)+1)+'세':g>12?'졸업':g<=6?'초'+g:g<=9?'중'+(g-6):'고'+(g-9);
     return grade+(lang==='en'?' · month '+m:' '+m+(lang==='zh'?'月':'월'));
   }
   function project(courses,settings,options){
@@ -56,14 +56,14 @@
     for(let i=0;i<months;i++){
       const next=new Date(Date.UTC(month.getUTCFullYear(),month.getUTCMonth()+1,1));
       const spans=segments.filter(s=>s.start<+next&&s.end>+month);
-      rows.push({month:month.toISOString().slice(0,7),schoolLabel:schoolLabel(settings.entryYear,month,lang),courseKeys:spans.map(s=>s.key),courseLabels:spans.map(s=>s.key+' · '+s.title),sessionLabels:spans.map(s=>{
+      rows.push({month:month.toISOString().slice(0,7),schoolLabel:schoolLabel(settings.entryYear,month,lang,settings.birthYear),courseKeys:spans.map(s=>s.key),courseLabels:spans.map(s=>s.key+' · '+s.title),sessionLabels:spans.map(s=>{
         const count=s.n-s.from+1;
         const a=Math.min(s.n,s.from+Math.floor(Math.max(0,+month-s.start)/(s.end-s.start)*count));
         const b=Math.min(s.n,s.from-1+Math.ceil(Math.min(s.end,+next)-s.start>0?(Math.min(s.end,+next)-s.start)/(s.end-s.start)*count:1));
         return a+'–'+Math.max(a,b)+(lang==='en'?' sessions':lang==='zh'?'课次':'회차');
       })});month=next;
     }
-    return {rows,milestones:[],estimated:true};
+    return {rows,milestones:segments.map(s=>({key:s.key,title:s.title,date:new Date(s.end).toISOString().slice(0,10),schoolLabel:schoolLabel(settings.entryYear,new Date(s.end),lang,settings.birthYear)})),estimated:true};
   }
   function recommend(courses,settings,options){
     const lang=(options||{}).lang||'ko';
