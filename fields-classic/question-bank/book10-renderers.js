@@ -189,7 +189,11 @@ const budgetTable = (visual) => `<table class="b10-table"><thead><tr><th>가진 
 const shareChange = (visual) => `<div class="b10-share"><span>${visual.oldPeople}명</span><b>+ ${visual.added}명</b><span>${visual.newPeople}명</span><strong>한 명당 ${visual.newShare}개</strong></div>`;
 
 function catchUpTable(visual) {
-  return `<table class="b10-table"><thead><tr><th></th><th>처음</th><th>하루마다</th></tr></thead><tbody>${visual.labels.map((label, index) => `<tr><th>${esc(label)}</th><td>${visual.starts[index]}</td><td>${visual.changes[index] > 0 ? "+" : ""}${visual.changes[index]} ${esc(visual.unit)}</td></tr>`).join("")}</tbody></table>`;
+  // 단위 「L/분」→ 머리글 「1분마다」, 칸에는 「L」만(예전엔 머리글이 늘 「하루마다」였다)
+  const [amountUnit, per] = String(visual.unit || "").split("/");
+  const head = !per || per === "일" ? "하루마다" : `1${per}마다`;
+  const startUnit = esc(visual.startUnit ?? amountUnit ?? "");
+  return `<table class="b10-table"><thead><tr><th></th><th>처음</th><th>${esc(head)}</th></tr></thead><tbody>${visual.labels.map((label, index) => `<tr><th>${esc(label)}</th><td>${visual.starts[index]}${startUnit}</td><td>${visual.changes[index] > 0 ? "+" : ""}${visual.changes[index]}${esc(amountUnit || "")}</td></tr>`).join("")}</tbody></table>`;
 }
 
 function distanceLine(visual) {
@@ -200,7 +204,13 @@ function fourWeightSystem(visual) {
   return `<div class="b10-equations">${visual.equations.map((row) => `<p>${equationText(row, visual.labels)} <b>= ${row.at(-1)}</b></p>`).join("")}</div>`;
 }
 
-const delayedCatchUp = (visual) => `<div class="b10-timeline"><span>민수 시작</span><i>${visual.delay}개월</i><span>지우 시작</span><b>매달 ${visual.earlyRate} / ${visual.lateRate}만 원</b></div>`;
+const delayedCatchUp = (visual) => {
+  const [early, late] = visual.names || ["민수", "지우"];
+  const start = visual.startLabels || [`${early} 시작`, `${late} 시작`];
+  return `<div class="b10-timeline"><span>${esc(start[0])}</span><i>${visual.delay}개월 뒤</i><span>${esc(start[1])}</span><b>매달 ${esc(early)} ${visual.earlyRate}만 원 / ${esc(late)} ${visual.lateRate}만 원</b></div>`;
+};
+// 글로 된 조건 목록(원본의 하늘색 상자)
+const statementList = (visual) => `<ul class="b10-statements">${(visual.items || []).map((line) => `<li>${esc(line)}</li>`).join("")}</ul>`;
 
 function digitSlots(visual) {
   const arrow = visual.direction ? `<b>${visual.direction === "increasing" ? "작은 숫자 → 큰 숫자" : "큰 숫자 → 작은 숫자"}</b>` : "";
@@ -248,6 +258,7 @@ export function book10Markup(visual) {
     case "napier-grid": return napierGrid(visual);
     case "area-model": return areaModel(visual);
     case "split-box": return splitBox(visual);
+    case "statement-list": return statementList(visual);
     case "vertical-multiplication": return verticalMultiplication(visual);
     case "operation": return operation(visual);
     case "factor-pairs": return factorPairs(visual);
