@@ -141,6 +141,10 @@
   .gold-hands-on .cg-turn svg { width: 38px; height: 38px; }
   .gold-hands-on .cg-legend { font-size: 12px; }
 }
+/* 공용 3D 무대로 옮긴 뒤(2026-10-22): 평면 그림 알림은 설명 줄 맨 위에, 크게 보기에서는 시계를 더 크게. */
+.gold-hands-on .cg-legend > .g3d-fallback { flex-basis: 100%; margin: 0 0 4px; text-align: center; }
+.gold-hands-on .cg.g3d-fs:fullscreen, .gold-hands-on .cg.g3d-pseudo-full { align-content: start; }
+.gold-hands-on .cg.g3d-fs:fullscreen .cg-dial-host, .gold-hands-on .cg.g3d-pseudo-full .cg-dial-host { min-height: min(64dvh, 680px); }
 @media (prefers-reduced-motion: reduce) {
   .gold-hands-on .cg-dial.pulse-good, .gold-hands-on .cg-dial.pulse-bad, .gold-hands-on .cg-score.bump .cg-stars, .gold-hands-on .cg-next, .gold-hands-on .cg-banner { animation: none; }
 }
