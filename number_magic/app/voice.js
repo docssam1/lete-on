@@ -1,11 +1,12 @@
 /* One narration channel. Only the current OmniVoice recordings are used. */
 (function(root){
 'use strict';
-let active=null,run=0,channel=null;
+let active=null,run=0,channel=null,starting=false;
+const RATE=0.8;
 const cache=new Map();
 const base=new URL('../',document.currentScript.src);
 function stop(){
-  run++;
+  run++;starting=false;
   if(active){try{active.pause();active.currentTime=0;}catch(e){}active=null;}
   // Also cancel device speech left by an older page or activity.
   try{root.speechSynthesis?.cancel();}catch(e){}
@@ -21,14 +22,17 @@ function say(text,lang){
     channel?.postMessage('stop');
     let a=cache.get(url);
     if(!a){a=new Audio(new URL(url,base).href);cache.set(url,a);}
-    active=a;a.currentTime=0;
+    active=a;starting=true;a.currentTime=0;
+    a.playbackRate=RATE;a.preservesPitch=true;
+    if('webkitPreservesPitch' in a)a.webkitPreservesPitch=true;
     Promise.resolve(a.play()).then(()=>{
+      if(ticket===run)starting=false;
       if(ticket!==run&&active!==a)a.pause();
-    }).catch(()=>{if(ticket===run){try{a.pause();}catch(e){}active=null;}});
+    }).catch(()=>{if(ticket===run){try{a.pause();}catch(e){}active=null;starting=false;}});
     return a;
-  }catch(e){return null;}
+  }catch(e){if(ticket===run){active=null;starting=false;}return null;}
 }
 root.addEventListener('pagehide',stop);
 root.document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
-root.NM_VOICE={say,stop};
+root.NM_VOICE={say,stop,isSpeaking:()=>!!active&&(starting||!active.paused)&&!active.ended,rate:RATE};
 })(window);

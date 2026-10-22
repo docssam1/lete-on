@@ -20,7 +20,7 @@ var appBase=new URL('../',document.currentScript.src),voiceReady=null;
 function loadVoice(){
   if(voiceReady)return voiceReady;
   function script(path){return new Promise(function(resolve,reject){var s=document.createElement('script');s.src=new URL(path,appBase).href;s.onload=resolve;s.onerror=reject;document.head.appendChild(s);});}
-  voiceReady=script('data/tts-map-omni.js').then(function(){return script('app/voice.js?v=20261021-voice2');});
+  voiceReady=script('data/tts-map-omni.js').then(function(){return script('app/voice.js?v=20261022-voice3');});
   return voiceReady;
 }
 try{

@@ -19,7 +19,7 @@ const mime={'.html':'text/html','.js':'application/javascript','.css':'text/css'
 const server=http.createServer((req,res)=>{
  const p=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));if(!p.startsWith(root+path.sep)||!fs.existsSync(p)||!fs.statSync(p).isFile()){res.writeHead(404);return res.end();}
  res.setHeader('Content-Type',mime[path.extname(p)]||'application/octet-stream');
- if(p===path.join(root,'app/main.js')){let s=fs.readFileSync(p,'utf8'),i=s.lastIndexOf('\n})();');assert(i>0);s=s.slice(0,i)+'\nwindow.__VOICE_CHECK={say:(text,lang)=>{S.lang=lang;say(text);},stop:()=>{if(typeof stopVoice===\'function\')stopVoice();}};'+s.slice(i);return res.end(s);}
+ if(p===path.join(root,'app/main.js')){let s=fs.readFileSync(p,'utf8'),i=s.lastIndexOf('\n})();');assert(i>0);s=s.slice(0,i)+'\nwindow.__VOICE_CHECK={say:(text,lang)=>{S.lang=lang;say(text);},stop:()=>{if(typeof stopVoice===\'function\')stopVoice();},feedback:(text,lang)=>{S.lang=lang;document.getElementById(\'screen\').innerHTML=\'<div id="stepBody"><button>answer</button></div>\';window.__transitionAt=0;voiceLine({tier:\'basic\'},[{[lang]:text}],true);const at=performance.now();lessonLater(()=>{window.__transitionAt=performance.now();},650);return at;},cancel:()=>{lessonVersion++;stopVoice();}};'+s.slice(i);return res.end(s);}
  res.end(fs.readFileSync(p));
 });
 (async()=>{
@@ -59,7 +59,18 @@ const server=http.createServer((req,res)=>{
   await page.waitForFunction(()=>!__played.at(-1).paused&&__played.at(-1).currentTime>0.1);
   assert.equal(await page.evaluate(()=>__fallback),0,'Stale playback rejection speaks an old prompt');
   await page.evaluate(()=>__VOICE_CHECK.stop());
-  const report={plannedUnique:unique.length,byLanguage:Object.fromEntries(Object.entries(map).map(([l,v])=>[l,Object.keys(v).length])),decoded:decoded.count,playbackLanguages:3,rapidSwitch:true,stop:true,staleFailureIgnored:true,externalWrites:0};
+  const feedbackLines=['딩동댕! 🎉','우와, 딱 맞아! 🍬',unique.find(t=>t.lang==='ko'&&t.key==='practice-intro').text];
+  for(const text of feedbackLines){
+   const started=await page.evaluate(text=>__VOICE_CHECK.feedback(text,'ko'),text);
+   assert.equal(await page.locator('#stepBody').getAttribute('inert'),'','accepted answer controls wait for narration');
+   await page.waitForFunction(()=>__transitionAt>0);
+   const a=await page.evaluate(()=>{const a=__played.at(-1);return {rate:a.playbackRate,pitch:a.preservesPitch,ended:a.ended,position:a.currentTime,duration:a.duration,at:__transitionAt};});
+   assert.equal(a.rate,0.8);assert.equal(a.pitch,true);assert(a.ended,'full recording must end before transition: '+text);assert(a.at-started>=a.duration/0.8*1000-100,'feedback was cut short: '+text);
+   assert.equal(await page.locator('#stepBody').getAttribute('inert'),null,'input lock releases after narration');
+  }
+  await page.evaluate(text=>{__VOICE_CHECK.feedback(text,'ko');__VOICE_CHECK.cancel();},feedbackLines[1]);
+  await page.waitForTimeout(900);assert.equal(await page.evaluate(()=>__transitionAt),0,'navigation cancels the old transition');
+  const report={plannedUnique:unique.length,byLanguage:Object.fromEntries(Object.entries(map).map(([l,v])=>[l,Object.keys(v).length])),decoded:decoded.count,playbackLanguages:3,rapidSwitch:true,stop:true,staleFailureIgnored:true,rate:0.8,preservesPitch:true,completeFeedbackBeforeAdvance:feedbackLines.length,navigationCancelsAdvance:true,externalWrites:0};
   if(process.env.NM_VOICE_REPORT)fs.writeFileSync(process.env.NM_VOICE_REPORT,JSON.stringify(report,null,2));console.log('VOICE_BROWSER_OK '+JSON.stringify(report));
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1;});

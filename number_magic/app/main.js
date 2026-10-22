@@ -791,7 +791,19 @@ function updateLiveFill(sel,vals){
   math(fillLiveTex(tex,vals),spans[0]);
 }
 let lessonVersion=0;
-function lessonLater(fn,ms){const version=lessonVersion;return setTimeout(()=>{if(version===lessonVersion)fn();},ms);}
+function lessonLater(fn,ms){
+  const version=lessonVersion,body=ms<=2000?document.getElementById('stepBody'):null,started=Date.now();
+  // A correct answer has already advanced state. Keep its controls inactive until
+  // the full feedback sentence finishes, so the old screen cannot submit again.
+  if(body){body.inert=true;body.setAttribute('aria-busy','true');}
+  const advance=()=>{
+    if(version!==lessonVersion)return;
+    if(ms<=2000&&window.NM_VOICE?.isSpeaking()&&Date.now()-started<30000){setTimeout(advance,80);return;}
+    if(body){body.inert=false;body.removeAttribute('aria-busy');}
+    fn();
+  };
+  return setTimeout(advance,ms);
+}
 function stopVoice(){
   window.NM_VOICE?.stop();
 }
