@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261019d`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261019e`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -522,6 +522,12 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - ⚠️ **로컬 확인 서버 주의**: 8797 포트에 다른 폴더(에이전트 작업 폴더로 보임)를 띄운 서버가 살아 있어 새 단원이 안 보였다. 확인 도구들(`tool-capture`·`tool-concept2`·`b9/*-all.mjs`)이 `PORT` 환경변수를 읽게 바꿨다 — 새 포트로 띄우고 `curl … | grep 새단원id`로 먼저 확인할 것.
   - 2단원 묶음 2 단원의 단원 표시가 숫자 「2」로 나오던 것을 「합과 차 문제 해결」로 바꿈.
   - DB `book-10` 397키 → 447키, sha 앞 8자리 `7331d34e`. 캐시 꼬리표 `20261019c`(`book10-renderers.js` import `20261022c`, `golden-bell.css` 링크 `20261022e`).
+- **10권 묶음 4(지도서 4단원 108~132쪽, 49문항, 2026-10-22)**: 패치 `tools/golden-bell-book10/patch-book10-batch4.mjs`(정답 없음). 새 단원 14 `number-baseball-source`(숫자 야구게임 8문항, 공개 단원 `number-baseball-secret` 뒤), 15 `digit-occurrence-source`(숫자가 나오는 횟수 12문항)·16 `digit-count-source`(수와 숫자의 개수 29문항, 둘 다 `number-digit-range-count` 뒤).
+  - 4단원 쪽 구성: 활동 01 숫자 야구게임(108~110) · 더클 확인 숫자 세기(111~113) · 활동 02 수와 숫자의 개수(114~117) · 더클 확인(118~119) · 더클 도전(120~122) · 더클 연습(123~132). 108쪽 297 판은 규칙 설명용 보기라 옮기지 않음. 보류 39건 = 야구 8(109 02·110 03·04·122 도전5 기호판·123~124 연습01~04) · 숫자 횟수 7·가장 많은 숫자 1(112~113·125~126) · 구간 횟수 2(120) · 숫자 개수 11·네 자리까지 1(114 (2)~(4)·115·118·121 도전3·127 10·128) · 끝 수 찾기 9(116~117·121 도전4·129~130). **보류 번호는 공개 문항 다음부터**(야구 02~, 숫자 개수 04~)라 처음에 01부터 매겼다가 대조 검사가 잡았다. **장부에 없던 같은 쪽 문항 10개**(111 확인1 자리별·합계, 127 연습09 ①~④, 131~132 연습17~20) → `catalog` `guide-activity-extra-u4` 10, 전체 202 → 212. 4단원 보류 0, **10권 보류는 1단원 6건만 남음**.
+  - 그림: `number-baseball`에 `showCards`(1~9 카드 줄)·`notation:"symbols"`(□ 같은 자리·△ 다른 자리, 122쪽). 새 `number-sequence`(하늘색 수 줄, `last:"?"`면 끝 수 칸을 비우고 「숫자 N개」). `digit-range`에 `label`, 숫자가 없을 때 「undefined 세기」가 나오던 것 막음, 골든벨 CSS 새로 씀(글자 9px였음).
+  - ⚠️ **Drive 글자 인식의 숫자를 믿지 말 것**: 120쪽 도전2 교사용 답을 글자 인식은 다른 수로 읽었는데 그림을 직접 보니 검산값과 같았다. 답 숫자는 반드시 그림으로 확인.
+  - 검산기(저장소 밖 `b10/answers-batch4.mjs`)는 야구 판정을 1~9 서로 다른 세 숫자 전체에 대어 **답이 하나뿐인지**까지 보고, 숫자 횟수·개수는 실제로 수를 써서 센다. **교사용 답과 다른 곳 없음.** 추가 학습 야구 문제(새로 만든 판)도 답이 하나뿐임을 확인.
+  - DB `book-10` 447키 → 521키, sha 앞 8자리 `ddfe2810`. 캐시 꼬리표 `20261019e`(`book10-renderers.js` import `20261022d`, `golden-bell.css` 링크 `20261022f`).
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

@@ -263,10 +263,16 @@ function lineupSlots(visual) {
 
 function numberBaseball(visual) {
   const clues = visual.clues.slice(0, visual.visibleRows || visual.clues.length);
-  return `<div class="b10-baseball-wrap"><table class="b10-baseball"><thead><tr><th>말한 수</th><th>S</th><th>B</th></tr></thead><tbody>${clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td>${clue.strikes}</td><td>${clue.balls}</td></tr>`).join("")}</tbody></table>${visual.note ? `<p>${esc(visual.note)}</p>` : ""}</div>`;
+  const cards = visual.showCards ? `<div class="b10-baseball-cards">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `<span>${n}</span>`).join("")}</div>` : "";
+  // 기호판(지도서 122쪽): □ = 같은 자리, △ = 다른 자리. S·B 수를 기호로만 바꿔 그린다.
+  if (visual.notation === "symbols") return `<div class="b10-baseball-wrap">${cards}<table class="b10-baseball"><thead><tr><th>학생이 쓴 수</th><th>술래가 쓴 기호</th></tr></thead><tbody>${clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td class="sym">${"□".repeat(clue.strikes)}${"△".repeat(clue.balls)}</td></tr>`).join("")}</tbody></table>${visual.note ? `<p>${esc(visual.note)}</p>` : ""}</div>`;
+  return `<div class="b10-baseball-wrap">${cards}<table class="b10-baseball"><thead><tr><th>말한 수</th><th>S</th><th>B</th></tr></thead><tbody>${clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td>${clue.strikes}</td><td>${clue.balls}</td></tr>`).join("")}</tbody></table>${visual.note ? `<p>${esc(visual.note)}</p>` : ""}</div>`;
 }
 
-const digitRange = (visual) => `<div class="b10-digit-range"><strong>${visual.from}</strong><i>부터</i><strong>${visual.to}</strong><i>까지</i>${visual.digit !== null ? `<b>${esc(visual.digit)} 세기</b>` : ""}</div>`;
+const digitRange = (visual) => `<div class="b10-digit-range"><strong>${visual.from}</strong><i>부터</i><strong>${visual.to}</strong><i>까지</i>${visual.digit !== null && visual.digit !== undefined ? `<b>숫자 ${esc(visual.digit)} 세기</b>` : visual.label ? `<b>${esc(visual.label)}</b>` : ""}</div>`;
+
+// 지도서의 하늘색 수 줄: 「1,2,3,…,12,…,99」. last가 "?"이면 끝 수 칸을 비우고 숫자 개수를 함께 적는다.
+const numberSequence = (visual) => `<div class="b10-sequence"><p>${(visual.head || []).join(", ")}, …, ${visual.last === "?" ? "<i>□</i>" : (visual.tail || [visual.last]).join(", ")}</p>${visual.total ? `<b>숫자 ${visual.total}개</b>` : ""}</div>`;
 
 function digitCountBreakdown(visual) {
   const segments = visual.segments || [];
@@ -318,6 +324,7 @@ export function book10Markup(visual) {
     case "route-stages": return routeStages(visual);
     case "lineup-slots": return lineupSlots(visual);
     case "number-baseball": return numberBaseball(visual);
+    case "number-sequence": return numberSequence(visual);
     case "digit-range": return digitRange(visual);
     case "digit-count-breakdown": return digitCountBreakdown(visual);
     default: return "";
