@@ -57,7 +57,9 @@
   .pl-sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:8px 12px}
   .pl-sc-item{display:flex;align-items:center;gap:6px;font-size:14px;min-width:0}.pl-sc-item b{min-width:22px}
   .pl-sc-item label{cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;background:#f0f5f0;border-radius:8px}.pl-sc-item input{margin-right:4px;accent-color:#245b60}
-  .pl-sc-item select{font:inherit;min-height:48px;min-width:0;max-width:140px;flex:1;border:1px solid #a5b9af;border-radius:8px;background:#fff;color:#193b3c}
+  .pl-sc-item button{cursor:pointer;min-width:48px;min-height:48px;border:1.5px solid #566274;background:#fff;border-radius:6px;font:700 24px/1 system-ui;color:#182230}
+  .pl-sc-item button[aria-pressed=true]{border:3px solid #2456c4;background:#eaf0ff;color:#16417c}
+  .pl-sc-item button:focus-visible{outline:3px solid #2456c4;outline-offset:3px}
   #plGo{margin-top:10px;padding:9px 16px;min-height:48px;border:0;border-radius:10px;background:#245b60;color:#fff;font-weight:800;cursor:pointer}
   #plOut{margin-top:10px;font-size:14px;line-height:1.6}.pl-reason{color:#5c6b70}
   @media print{#plScore{display:none!important}}
@@ -225,8 +227,8 @@
 <script src="data/soma-p-2019.js?v=20261018-soma-p1"></script>
 <script src="data/book-volume-topics.js?v=20261018-volumes1"></script>
 <script src="data/placement-plan.js?v=20261018-flexible1"></script>
-<script src="data/placement-paths.js?v=20261017-multi-book2"></script>
-<link rel="stylesheet" href="app/placement-ui.css?v=20261017-multi-book2">
+<script src="data/placement-paths.js?v=20261022-marks1"></script>
+<link rel="stylesheet" href="app/placement-ui.css?v=20261022-marks1">
 <script src="data/study-projection.js?v=20261015-records1"></script>
 <script src="app/study-route.js?v=20261015-records1"></script>
 <script>
@@ -503,36 +505,28 @@ function build(){
 function renderScorer(stage){
   var box = document.getElementById('plScore'); if(!box){ box = document.createElement('div'); box.id = 'plScore'; document.body.appendChild(box); }
   var items = PLAN_NOW.items;
-  box.innerHTML = '<h2>' + esc(T('채점 입력(화면 전용)', 'Enter marks (screen only)', '输入评分（仅屏幕）')) + '</h2><div class="pl-sc-grid">' + items.map(function(it, i){
-    return '<div class="pl-sc-item" role="group" aria-label="' + (i+1) + '">' + '<b>' + (i + 1) + '</b>' + ['o','x'].map(function(k){ return '<label><input type="radio" name="q' + i + '" value="' + k + '"><span>' + (k === 'o' ? 'O' : 'X') + '</span></label>'; }).join('') + '<select aria-label="' + esc(T('안 배움 기록','Unlearned content','未学记录')) + ' ' + (i+1) + '" data-unlearned="' + i + '"><option value="">—</option><option value="n">' + esc(T('안 배움','Not learned','未学过')) + '</option></select></div>';
+  var marks = items.map(function(){return '';});
+  var key = document.querySelector('.pl-keypage'); if(key)key.id = 'plAnswerKey';
+  box.innerHTML = '<h2>' + esc(T('맞으면 ○, 틀리면 X', 'Correct ○, wrong X', '答对○，答错X')) + '</h2><p>' + esc(T('모르면 아무것도 체크하지 마세요. 체크한 버튼을 다시 누르면 지워져요.', 'Leave unknown answers unmarked. Tap again to clear a mark.', '不会的题不勾选，再次点击可清除标记。')) + '</p><a href="#plAnswerKey">' + esc(T('답지 보기', 'View answer key', '查看答案')) + '</a><div class="pl-sc-grid">' + items.map(function(it, i){
+    return '<div class="pl-sc-item" role="group" aria-label="' + (i+1) + '"><b>' + (i + 1) + '</b>' + ['o','x'].map(function(k){ return '<button type="button" data-mark-index="' + i + '" data-mark="' + k + '" aria-pressed="false" aria-label="' + (i+1) + ' ' + esc(k === 'o' ? T('맞음','Correct','正确') : T('틀림','Wrong','错误')) + '">' + (k === 'o' ? '○' : 'X') + '</button>'; }).join('') + '</div>';
   }).join('') + '</div><button type="button" id="plGo">' + esc(T('추천 보기', 'Show suggestion', '查看建议')) + '</button><div id="plOut"></div><div id="plPlanner"></div>';
   box.querySelector('#plGo').onclick = function(){
     if(box.querySelector('#plPlanner').__studyRoutePanel)box.querySelector('#plPlanner').__studyRoutePanel.dispose();
     box.querySelector('#plPlanner').replaceChildren();
-    var marks = [];
-    items.forEach(function(it, i){
-      var el = box.querySelector('input[name="q' + i + '"]:checked');
-      marks.push(box.querySelector('[data-unlearned="'+i+'"]').value || (el ? el.value : ''));
-    });
     var out = box.querySelector('#plOut');
     out.setAttribute('role','status');out.setAttribute('aria-live','polite');
-    if(marks.some(function(x){return !x;})){
-      out.textContent=T('아직 표시하지 않은 문항이 있습니다. 20개 모두 O/X로 표시하거나 안 배움으로 기록해 주세요. 미입력은 오답이 아닙니다.','Mark all 20 items with O/X or Not learned. Unmarked items are not wrong answers.','请为20道题全部标记对错或未学过。未填写不等于错答。');
-      box.querySelector('input[name="q'+marks.indexOf('')+'"]:not(:checked)').focus();return;
-    }
     try{
       var params = new URL(location.href).searchParams;
       var analysis=window.NM_PLACEMENT_PATHS.paperAnalysis(PLAN_NOW,marks,{goal:params.get('goal'),goalTarget:params.get('target'),cadence:params.get('cadence')});
       var r=analysis.result, rec=analysis.path.main;
       var b = r.bands;
-      out.innerHTML = '<p><b>' + esc(T('이전','Earlier','之前')) + '</b> ' + b.previous.correct + '/' + b.previous.asked + ' · <b>' + esc(T('현재','Current','现在')) + '</b> ' + b.current.correct + '/' + b.current.asked + ' · <b>' + esc(T('다음','Next','之后')) + '</b> ' + b.next.correct + '/' + b.next.asked + ' · ' + esc(T('안 배움','Not learned','未学过')) + ' ' + (b.previous.skipped + b.current.skipped + b.next.skipped) + '</p>' +
-        '<p><b>' + esc(T('본진도 후보','Main-study candidate','主要进度候选')) + '</b> ' + esc((rec.course || '') + ' · ' + T('회차','session','课次') + ' ' + (rec.session || '')) + (rec.label ? ' · ' + esc(L(rec.label)) : '') + '</p><p class="pl-reason">' + esc(L(analysis.comment)) + '</p><p>'+esc(L(analysis.limitation))+'</p><h3>'+esc(T('지금은 유지 · 관찰','Maintain · observe for now','先保持并观察'))+'</h3><p>'+esc(L(analysis.workload.reasons[0]))+'</p><p>'+esc(L(analysis.workload.note))+'</p><ul>'+analysis.path.support.map(function(row){return '<li>'+esc(L(row.label))+' · X '+row.wrong+' · '+esc(T('안 배움','Not learned','未学过'))+' '+row.skipped+'</li>';}).join('')+'</ul>';
+      out.innerHTML = '<p><b>' + esc(T('이전','Earlier','之前')) + '</b> ' + b.previous.correct + '/' + b.previous.asked + ' · <b>' + esc(T('현재','Current','现在')) + '</b> ' + b.current.correct + '/' + b.current.asked + ' · <b>' + esc(T('다음','Next','之后')) + '</b> ' + b.next.correct + '/' + b.next.asked + ' · ' + esc(T('모름','Unknown','不会')) + ' ' + (b.previous.skipped + b.current.skipped + b.next.skipped) + '</p>' +
+        '<p><b>' + esc(T('본진도 후보','Main-study candidate','主要进度候选')) + '</b> ' + esc((rec.course || '') + ' · ' + T('회차','session','课次') + ' ' + (rec.session || '')) + (rec.label ? ' · ' + esc(L(rec.label)) : '') + '</p><p class="pl-reason">' + esc(L(analysis.comment)) + '</p><p>'+esc(L(analysis.limitation))+'</p><h3>'+esc(T('지금은 유지 · 관찰','Maintain · observe for now','先保持并观察'))+'</h3><p>'+esc(L(analysis.workload.reasons[0]))+'</p><p>'+esc(L(analysis.workload.note))+'</p><ul>'+analysis.path.support.map(function(row){return '<li>'+esc(L(row.label))+' · X '+row.wrong+' · '+esc(T('모름','Unknown','不会'))+' '+row.skipped+'</li>';}).join('')+'</ul>';
       window.NM_STUDY_ROUTE.mount(box.querySelector('#plPlanner'),{lang:LANG,course:rec.course,session:rec.session});
     }catch(e){ out.textContent = String(e && e.message || e); }
   };
   const invalidate=function(){box.querySelector('#plOut').textContent='';if(box.querySelector('#plPlanner').__studyRoutePanel)box.querySelector('#plPlanner').__studyRoutePanel.dispose();box.querySelector('#plPlanner').replaceChildren();};
-  box.querySelectorAll('[data-unlearned]').forEach(function(sel){sel.onchange=function(){if(sel.value)box.querySelectorAll('input[name="q'+sel.dataset.unlearned+'"]').forEach(function(el){el.checked=false;});invalidate();};});
-  box.querySelectorAll('input[type="radio"]').forEach(function(el){el.onchange=function(){box.querySelector('[data-unlearned="'+el.name.slice(1)+'"]').value='';invalidate();};});
+  box.querySelectorAll('[data-mark]').forEach(function(el){el.onclick=function(){var i=Number(el.dataset.markIndex),mark=el.dataset.mark;marks[i]=marks[i]===mark?'':mark;box.querySelectorAll('[data-mark-index="'+i+'"]').forEach(function(b){b.setAttribute('aria-pressed',String(marks[i]===b.dataset.mark));});invalidate();};});
 }
 
 /* ── 상단 도구(화면 전용) ── */

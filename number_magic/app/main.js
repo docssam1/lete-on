@@ -1487,6 +1487,7 @@ function screenTown(){
       </div>
     </div>
     <div class="nm-town-hud brand">${t('mapTitle')}</div>
+    <p class="nm-town-walk-hint">${S.lang==='ko'?'지도의 빈 곳을 누르면 걸어요.':S.lang==='en'?'Tap an empty spot to walk.':'点地图空白处即可行走。'}</p>
     <div class="nm-road-banner" id="roadBanner">
       <button class="nm-road-banner-btn" id="roadEnter">
         🗺️ ${S.lang==='ko'?'학습 여행':S.lang==='en'?'Learning Journey':'学习之旅'}
@@ -1534,7 +1535,7 @@ function screenTown(){
   list.appendChild(scr.querySelector('.nm-town-hud.ctrls'));
   toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
   townCleanup=initTownWorld(scr);
-  // The illustrated village is now the default. Buildings open without walking or camera controls.
+  // Buildings open directly; tapping empty map space optionally moves the avatar.
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
@@ -4851,7 +4852,7 @@ function screenPlacement(){
     pick:()=>{S._diag=null;S.view='startpick';save();render();},
     seeCourse:key=>{S._diag=null;S._roadFocus=key;S.view='courseroad';save();render();},
     onResult:(result,run)=>{
-      S.placement={at:Date.now(),version:ui.version,course:result.recommendation.course,
+      S.placement={at:Date.now(),version:ui.version,source:run.responseSource||'online',course:result.recommendation.course,
         session:result.recommendation.session,asked:result.asked,correct:result.correct,
         age:run.selection.age||null,grade:run.selection.grade||null,
         baselineId:run.plan.baseline.id,selection:JSON.parse(JSON.stringify(run.selection)),
@@ -6138,9 +6139,13 @@ function initTownWorld(scr){
   }
 
   let drag=false,moved=false,sx,sy,cx,cy;
-  function onDown(e){drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;}
+  function onDown(e){
+    if(!pts.size)pinched=false;
+    drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;
+    if(!e.target.closest('button,a,.nb'))try{vp.setPointerCapture(e.pointerId);}catch(_){}
+  }
   function onMove(e){if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6){moved=true;follow=false;}cam.x=cx+dx;cam.y=cy+dy;bound();apply();}
-  function onUp(){drag=false;vp.classList.remove('drag');}
+  function onUp(e){drag=false;vp.classList.remove('drag');try{if(vp.hasPointerCapture(e.pointerId))vp.releasePointerCapture(e.pointerId);}catch(_){}}
   vp.addEventListener('pointerdown',onDown);
   vp.addEventListener('pointermove',onMove);
   vp.addEventListener('pointerup',onUp);
@@ -6157,7 +6162,7 @@ function initTownWorld(scr){
       pd=d;drag=false;
     }
   }
-  function pdUp(e){pts.delete(e.pointerId);if(pts.size<2){pd=0;pinched=false;}}
+  function pdUp(e){pts.delete(e.pointerId);if(pts.size<2){pd=0;}}
   vp.addEventListener('pointerdown',pdDown);
   vp.addEventListener('pointermove',pdMove);
   vp.addEventListener('pointerup',pdUp);
@@ -6244,34 +6249,36 @@ function initTownWorld(scr){
   let muted=true;
   let stopAmbience=null;
   const player=nbs[0];
-  function walk(){
+  let lastTick=0;
+  player.heading={x:1,y:0};
+  function walk(now){
+    const dt=lastTick?Math.min(.05,Math.max(0,(now-lastTick)/1000)):0;lastTick=now;
     nbs.forEach(n=>{
-      n.el.style.zIndex=20+Math.round(n.y);                 // 지도 아래쪽(y 큼)일수록 앞에 그려짐(깊이감)
-      const walker=n.el.classList.contains('nb-walker');     // 사람 리그(walker.js) — 걷기 애니메이션 대상
-      if(n.still){                                            // 할아버지·독쌤은 제자리 고정, 남쪽(정면) 응시로 숨쉬기만
-        if(walker){const root=n.el.querySelector('.nm-walker');if(root){root.classList.remove('walking');if(!root.dataset.dir||root.dataset.dir==='s')root.dataset.dir='s';}}
+      n.el.style.zIndex=20+Math.round(n.y);
+      const root=n.el.querySelector('.nm-walker');
+      if(n.still){if(root)root.classList.remove('walking');return;}
+      if(n.buddy){
+        const gap=48/cam.scale;
+        n.tx=Math.min(98,Math.max(2,player.x-player.heading.x*gap/W*100));
+        n.ty=Math.min(98,Math.max(2,player.y-player.heading.y*gap/H*100+1));
+      }
+      const dx=(n.tx-n.x)*W/100,dy=(n.ty-n.y)*H/100,d=Math.hypot(dx,dy);
+      if(d<.8){
+        n.x=n.tx;n.y=n.ty;n.velocity=0;
+        n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
+        if(root)root.classList.remove('walking');
+        if(!n.player&&!n.buddy&&Math.random()<1-Math.exp(-.7*dt))pick(n);
         return;
       }
-      if(n.buddy){n.tx=player.x-3;n.ty=player.y+1.2;}        // 동행은 플레이어를 살짝 뒤에서 따라간다
-      const dx=n.tx-n.x,dy=n.ty-n.y,d=Math.hypot(dx,dy);
-      const moving=d>=.3;
-      if(!moving){                                            // 플레이어·동행은 도착하면 그 자리에 머문다
-        if(!n.player&&!n.buddy&&Math.random()<.012)pick(n);
-        if(walker){const root=n.el.querySelector('.nm-walker');if(root)root.classList.remove('walking');}   // 멈추면 마지막 방향 유지, 걷기만 정지
-        return;
-      }
-      n.x+=dx/d*n.spd;n.y+=dy/d*n.spd;
+      // Acceleration and braking are measured in real time, independent of Hz.
+      const desired=Math.min(n.spd*1000,d*5);
+      n.velocity=(n.velocity||0)+(desired-(n.velocity||0))*(1-Math.exp(-10*dt));
+      const step=Math.min(d,n.velocity*dt);
+      n.x+=dx/d*step/W*100;n.y+=dy/d*step/H*100;
       n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
-      if(n.player&&follow)focusPlayer(false);              // 걷는 동안 카메라가 플레이어를 따라간다
-      if(walker){
-        const root=n.el.querySelector('.nm-walker');
-        if(root){
-          root.classList.add('walking');
-          root.dataset.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'w':'e'):(dy<0?'n':'s');
-        }
-      }else{
-        n.el.querySelector('.nb-img').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';   // 숫자친구는 기존 방식(좌우 반전) 그대로
-      }
+      if(n.player){player.heading={x:dx/d,y:dy/d};if(follow)focusPlayer(false);}
+      if(root){root.classList.add('walking');root.dataset.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'w':'e'):(dy<0?'n':'s');}
+      else n.el.querySelector('.nb-img').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';
     });
     walkRAF=requestAnimationFrame(walk);
   }
@@ -6281,9 +6288,22 @@ function initTownWorld(scr){
      충돌하지 않도록: 드래그하지 않은 "가벼운 탭"일 때만 목적지로 삼는다. */
   let pinched=false;
   vp.addEventListener('pointermove',()=>{if(pts.size>=2)pinched=true;});
+  let ping=null,pingTimer=null;
+  function onTapWalk(e){
+    if(moved||pinched||e.isPrimary===false||e.button!==0||e.target.closest('button,a,.nb'))return;
+    const r=vp.getBoundingClientRect();
+    const x=(e.clientX-r.left-cam.x)/cam.scale,y=(e.clientY-r.top-cam.y)/cam.scale;
+    player.tx=Math.min(98,Math.max(2,x/W*100));player.ty=Math.min(98,Math.max(2,y/H*100));
+    follow=false;
+    if(ping)ping.remove();clearTimeout(pingTimer);
+    ping=document.createElement('div');ping.className='nb-ping';ping.style.left=player.tx+'%';ping.style.top=player.ty+'%';world.appendChild(ping);
+    pingTimer=setTimeout(()=>{if(ping)ping.remove();ping=null;},800);
+  }
+  vp.addEventListener('pointerup',onTapWalk);
+
   nbs.forEach(n=>{
     n.el.addEventListener('pointerup',e=>{
-      if(moved)return;e.stopPropagation();
+      onUp(e);if(moved)return;e.stopPropagation();
       const sp=n.el.querySelector('.speech');
       const line=n.lines[Math.random()*n.lines.length|0];
       sp.textContent=line;sp.classList.add('show');
@@ -6312,7 +6332,7 @@ function initTownWorld(scr){
     clearInterval(fountainTimer);
     clearInterval(sparkTimer);
     stopVoice();
-    cancelAnimationFrame(walkRAF);
+    cancelAnimationFrame(walkRAF);clearTimeout(pingTimer);if(ping)ping.remove();nbs.forEach(n=>clearTimeout(n._t));
     removeEventListener('resize',onResize);
     if(stopAmbience){stopAmbience();stopAmbience=null;}
   };
