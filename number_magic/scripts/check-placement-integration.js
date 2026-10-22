@@ -48,9 +48,9 @@ const startEntry=main.slice(main.indexOf('function startPlacement(){'),main.inde
 world.save=()=>{};world.render=()=>{};
 vm.runInContext(startEntry,context,{filename:'startPlacement-entry'});
 let resumeContracts=0;
-for(const phase of ['setup','question']){
+for(const phase of ['setup','question','paper']){
   const run=ui.initial();run.phase=phase;run.selection.goal='competition';run.selection.goalTarget='fields-e1';run.seed='preserve-seed';
-  if(phase==='question'){run.plan=plan.build('c3',run.seed);run.index=3;run.responses=run.plan.items.slice(0,3).map(x=>({id:x.id,value:null,skipped:true}));}
+  if(phase==='question'||phase==='paper'){run.plan=plan.build('c3',run.seed);run.index=3;run.responses=run.plan.items.slice(0,3).map(x=>({id:x.id,value:null,skipped:true}));}
   world.S={_diag:run,coins:321,progress:{synthetic:true}};const before=JSON.stringify(run);
   world.startPlacement();assert.strictEqual(world.S._diag,run);assert.equal(JSON.stringify(run),before);assert.equal(world.S.view,'placement');resumeContracts++;
 }
@@ -85,7 +85,7 @@ world.S.adminPlan={version:1};assert.equal(capture.onPaceApply({speed:1.5,cadenc
 world.NM_PLACEMENT_UI=ui;
 
 // A minimal DOM contract supplements (not replaces) the real browser transition audit.
-const stub=()=>({dataset:{},firstChild:{textContent:''},setAttribute(){},appendChild(){},before(){},after(){}});
+const stub=()=>({dataset:{},firstChild:{textContent:''},setAttribute(){},appendChild(){},append(){},before(){},after(){}});
 world.document={createElement:stub};
 let markup='',view=null;
 const screen={scrollTop:230,

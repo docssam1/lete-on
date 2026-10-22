@@ -1043,6 +1043,7 @@ function bgKeyForView(){
 }
 
 function render(){
+  if(window.NM_YOUNG_NUMBERS)NM_YOUNG_NUMBERS.stop();
   lessonVersion++;
   stopVoice();
   syncAmount();
@@ -6446,7 +6447,7 @@ function screenUnit(){
      explanation screen, so it does not repeat that strip above the question. */
   const isFirstUnitStep = S.step==='range' || S.step==='intro';
   const learningBand=u.tier==='basic'?'preschool':(/^(middle|high)/.test(u.tier||'')||['algebra','calculus1'].includes(u.tier))?'secondary':'elementary';
-  scr.innerHTML=`<div class="nm-unit-view" lang="${esc(S.lang)}" data-learning-band="${learningBand}" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
+  scr.innerHTML=`<div class="nm-unit-view" lang="${esc(S.lang)}" data-learning-step="${S.step}" data-young-numbers="${schoolGradeNum()!=null?schoolGradeNum()<3:NM_BAND==='young'}" data-learning-band="${learningBand}" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backMap" aria-label="${t('back')}">←</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
@@ -6458,6 +6459,7 @@ function screenUnit(){
   $('#backMap').onclick=exitUnit;
   scr.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{S.step=b.dataset.step;save();screenUnit();});
   const body=$('#stepBody');
+  if(window.NM_YOUNG_NUMBERS)NM_YOUNG_NUMBERS.start(scr.querySelector('.nm-unit-view'));
   if(S.step==='intro'){stepUnitIntro(body,u);return;}
   if(S.step==='range'){stepRange(body,u);renderMath(body);return;}
   ({practice:stepPractice,discover:stepDiscover,check:stepCheck,lab:stepLab,arena:stepArena,stamp:stepStamp}[S.step]||stepDiscover)(body,u);
@@ -7459,8 +7461,8 @@ function numiDialogueHtml(text,problem){
     }).join('')+'</span>';
   }
   if([...text].length>90||/[\\\n]/.test(text))return esc(text);
-  const parts=text.split(/([0-9]+(?:[.,][0-9]+)?|[+\-−×÷=<>≤≥□√π^%])/);
-  return '<span class="nm-numi-dialogue">'+parts.map((s,i)=>i%2?`<span class="nm-dialog-figure">${esc(s)}</span>`:esc(s)).join('')+'</span>';
+  const parts=text.split(/([0-9]+(?:[.,][0-9]+)?|얼마|몇|how many|how much|多少|几|[+\-−×÷=<>≤≥□√π^%])/i);
+  return '<span class="nm-numi-dialogue">'+parts.map((s,i)=>i%2?`<span class="nm-dialog-figure${/^(얼마|몇|how many|how much|多少|几)$/i.test(s)?' nm-number-word':''}">${esc(s)}</span>`:esc(s)).join('')+'</span>';
 }
 function stepLabNumpad(body,u){
   const cfg=u.lab;const need=cfg.count||4;
