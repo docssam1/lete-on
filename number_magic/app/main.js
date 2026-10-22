@@ -45,14 +45,14 @@ function genProblem(cfg, level){
 const I18N={
   ko:{ appName:'수의 마법', start:'시작하기', back:'← 뒤로', next:'다음 →',
     coins:'누미 코인', locked:'준비 중', enter:'입장', mapTitle:'수의 마법 마을',
-    skipAsk:'이 부분, 이미 잘하니?', skipYes:'바로 넘어갈래!', skipNo:'한번 볼래',
+    skipAsk:'이미 배운 내용인가요?', skipYes:'다음 단계로 가기', skipNo:'먼저 배워 보기',
     ruleLabel:'마법의 규칙', tryAgain:'다시 해볼까?', correct:'정답!',
     checkTitle:'핵심 체크', openTitle:'생각해 보기', submit:'확인', myAnswer:'내 생각 적어보기(선택)',
     arenaGo:'배틀 시작!', timeUp:'시간 종료!', score:'점수', stampGet:'도장 획득!',
-    doneUnit:'유닛 완료!', toMap:'마을로', numpadHint:'숫자를 눌러 답해요', pairHint:'짝꿍 두 수를 골라요',
+    doneUnit:'학습 단원 완료!', toMap:'마을로', numpadHint:'숫자를 눌러 답해요', pairHint:'짝꿍 두 수를 골라요',
     picked:'골랐어요!', langName:'한국어', onePairMore:'정답! 하나 더 있어',
     obTitle:'나만의 숫자 친구', obSub:'캐릭터를 고르고 이름을 알려주세요!',
-    obNamePh:'이름을 적어주세요', obGo:'짜잔! 시작하기 ✨', obNeedName:'이름을 알려줘야 시작할 수 있어요!',
+    obNamePh:'이름을 적어주세요', obGo:'짜잔! 시작하기 ✨', obNeedName:'사용할 이름을 입력해 주세요.',
     obWelcome:n=>`환영해요, ${n}!`, titleCourse:'과정' },
   en:{ appName:'Numbers of Magic', start:'Start', back:'← Back', next:'Next →',
     coins:'Numi Coins', locked:'Coming soon', enter:'Enter', mapTitle:'Magic Number Town',
@@ -224,9 +224,9 @@ function readinessNote(tierKey){
 const VOICE_BANDS={
   young:{ tryAgain:'괜찮아! 한 번 더 해보자', correct:'딩동댕! 맞았어 🎉',
     timeUp:'시간이 다 됐어!', stampGet:'도장 쾅! 받았어!', doneUnit:'와, 다 했다! 최고야!',
-    skipAsk:'이거 벌써 알아?', numpadHint:'숫자를 눌러서 답해 보자', submit:'됐어!' },
+    skipAsk:'이미 배운 내용인가요?', numpadHint:'숫자를 눌러서 답해 보자', submit:'됐어!' },
   senior:{ tryAgain:'다시 시도', correct:'정답', timeUp:'시간 종료', stampGet:'도장 획득',
-    doneUnit:'유닛 완료', skipAsk:'이미 아는 내용인가요?', numpadHint:'숫자 입력' }
+    doneUnit:'학습 단원 완료', skipAsk:'이미 배운 내용인가요?', numpadHint:'숫자 입력' }
 };
 const t=k=>{
   if(S.lang==='ko'){const b=VOICE_BANDS[NM_BAND];if(b&&b[k]!==undefined)return b[k];}
@@ -1130,7 +1130,7 @@ function screenWelcome(){
     scr.innerHTML=`
     <div class="nm-ob">
       <div class="nm-ob-card">
-        <h1 class="nm-ob-title">${lk('넌 누구야?','Who are you?','你是谁？')}</h1>
+        <h1 class="nm-ob-title">${lk('내 캐릭터를 골라요','Who are you?','你是谁？')}</h1>
         <p class="nm-ob-sub">${lk('마법 마을에 들어갈 나를 골라요','Pick yourself for the magic village','选一个进入魔法村的你')}</p>
         <div class="nm-av-row">
           ${(window.NM_HUMANS?NM_HUMANS.looks:[]).map(look=>`<button class="nm-av-card${ob.avatar===look.id?' sel':''}" data-av="${look.id}" aria-pressed="${ob.avatar===look.id}">
@@ -1157,7 +1157,7 @@ function screenWelcome(){
     scr.innerHTML=`
     <div class="nm-ob">
       <div class="nm-ob-card">
-        <h1 class="nm-ob-title">${lk('몇 학년이야?','What grade are you in?','你上几年级？')}</h1>
+        <h1 class="nm-ob-title">${lk('지금 몇 학년인가요?','What grade are you in?','你上几年级？')}</h1>
         <p class="nm-ob-sub">${lk('학년에 맞춰 말투와 안내를 골라 줄게요. 학습은 어디서든 시작할 수 있어요.',
           'We use this to pick the right tone and guidance. You can still start anywhere.',
           '我们用这个来选择合适的语气和提示。学习仍然可以从任何地方开始。')}</p>
@@ -2338,7 +2338,7 @@ function screenGradeCourse(){
       if(units.length>0)bodyHtml+=`<div class="nm-gc-prog">${prog}/${units.length} ${lk('완료','done','完成')}</div>`;
       bodyHtml+=`</div>`;
     });
-    if(!bodyHtml)bodyHtml=`<div style="padding:40px;text-align:center;color:#aaa;font-size:13px">${lk('이 학년 유닛이 없어요.','No units for this grade yet.','此年级暂无单元。')}</div>`;
+    if(!bodyHtml)bodyHtml=`<div style="padding:40px;text-align:center;color:#aaa;font-size:13px">${lk('아직 준비된 학습 단원이 없어요. 다른 학년을 선택해 주세요.','No units for this grade yet.','此年级暂无单元。')}</div>`;
 
     scr.innerHTML=`<div class="nm-gc-wrap">
       <div class="nm-gc-header">
@@ -5891,7 +5891,7 @@ function showTownModal(title,desc,onGo,goText){
   $('#tmTitle').textContent=title;
   $('#tmDesc').textContent=desc;
   const go=$('#tmGo');
-  if(onGo){go.style.display='block';go.textContent=goText||(S.lang==='ko'?'유닛 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=()=>{modal.classList.remove('on');onGo();};}
+  if(onGo){go.style.display='block';go.textContent=goText||(S.lang==='ko'?'학습 단원 보러가기 →':S.lang==='en'?'See units →':'查看单元 →');go.onclick=()=>{modal.classList.remove('on');onGo();};}
   else go.style.display='none';
   modal.classList.add('on');
 }
@@ -6062,7 +6062,7 @@ function enterTownDestination(id){
 function townSpotAction(id){
   if(id==='_theater'){
     const examLabel=S.lang==='ko'?'📝 학습지 & 시험':S.lang==='en'?'📝 Worksheet & Exam':'📝 学习单 & 考试';
-    const examDesc=S.lang==='ko'?'시드 학습지를 인쇄하거나 타이머 시험을 볼 수 있어요.':
+    const examDesc=S.lang==='ko'?'학습지를 인쇄하거나 시간을 정해 시험을 볼 수 있어요.':
       S.lang==='en'?'Print a seeded worksheet or take a timed exam.':'打印带种子的学习单，或进行限时考试。';
     showTownModal(examLabel, examDesc, ()=>{S.view='exam';save();render();},S.lang==='ko'?'학습지 · 시험 열기 →':S.lang==='en'?'Open worksheets & tests →':'打开学习单和测试 →');
     return;
@@ -7227,20 +7227,20 @@ function screenReport(){
   const scoreHtml = totalUnitsDone===0
     ? `<div class="nm-rp-empty">
         <div class="nm-rp-empty-ava">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,72):''}</div>
-        <p class="nm-rp-empty-msg">${lk('첫 유닛을 시작해 볼까요?','Shall we start the first unit?','开始第一个单元吧？')}</p>
+        <p class="nm-rp-empty-msg">${lk('첫 학습 단원을 시작해 볼까요?','Shall we start the first unit?','开始第一个单元吧？')}</p>
         <button class="nm-btn full" id="rpToTown">${lk('마을로 가기','Go to town','前往小镇')}</button>
       </div>`
-    : `<div class="nm-rp-score">${totalUnitsDone} ${lk('유닛 완료','units done','个单元完成')}</div>`;
+    : `<div class="nm-rp-score">${lk(`학습 단원 ${totalUnitsDone}개 완료`,`${totalUnitsDone} units done`,`${totalUnitsDone} 个单元完成`)}</div>`;
   /* 주간 그래프 — 최근 7일, 막대 높이=푼 문제 수, 색=정답률(60% 미만 주황). 데이터 없으면 안내 한 줄. */
   const DAYS={ko:['일','월','화','수','목','금','토'],en:['S','M','T','W','T','F','S'],zh:['日','一','二','三','四','五','六']}[S.lang]||['일','월','화','수','목','금','토'];
   const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const v=(S.daily&&S.daily[k])||{n:0,ok:0};days.push({k,dow:DAYS[d.getDay()],n:v.n,ok:v.ok,today:i===0});}
   const maxN=Math.max(1,...days.map(d=>d.n)); const wkN=days.reduce((a,d)=>a+d.n,0), wkOk=days.reduce((a,d)=>a+d.ok,0);
-  const weekHtml=`<div class="nm-mb-section-h">${lk('이번 주 7일','Last 7 days','最近7天')}</div>
+  const weekHtml=`<div class="nm-mb-section-h">${lk('최근 7일','Last 7 days','最近7天')}</div>
     <div class="nm-rp-week" role="img" aria-label="${lk('주간 활동','Weekly activity','每周活动')}">
       ${days.map(d=>{const h=d.n?Math.max(8,Math.round(d.n/maxN*72)):3;const rate=d.n?d.ok/d.n:0;const cls=d.n?(rate<.6?' low':' good'):'';
         return `<div class="nm-rp-day${d.today?' today':''}"><div class="nm-rp-bar-wrap"><div class="nm-rp-bar${cls}" style="height:${h}px" title="${d.n}"></div></div><span class="nm-rp-dow">${d.dow}</span></div>`;}).join('')}
     </div>
-    <p class="nm-wsh-sentence">${wkN?lk(`이번 주 ${wkN}문제 · 정답률 ${Math.round(wkOk/wkN*100)}%`,`${wkN} problems this week · ${Math.round(wkOk/wkN*100)}% correct`,`本周${wkN}题 · 正确率${Math.round(wkOk/wkN*100)}%`):lk('문제를 풀면 여기에 하루하루가 쌓여요.','Solve problems and the days will fill in here.','做题后这里会一天天累积。')}</p>`;
+    <p class="nm-wsh-sentence">${wkN?lk(`최근 7일간 ${wkN}문제 · 정답률 ${Math.round(wkOk/wkN*100)}%`,`${wkN} problems in the last 7 days · ${Math.round(wkOk/wkN*100)}% correct`,`最近7天${wkN}题 · 正确率${Math.round(wkOk/wkN*100)}%`):lk('문제를 풀면 여기에 하루하루가 쌓여요.','Solve problems and the days will fill in here.','做题后这里会一天天累积。')}</p>`;
   scr.innerHTML=`<div class="nm-unit-bar">
       <button class="nm-back" id="rpBack">${t('back')}</button>
       <div class="nm-unit-title">${titleHtml}</div>
@@ -7954,7 +7954,7 @@ function renderAccountCard(){
   }
   const acc=S.account||{status:'trial'};
   if(acc.status==='active'){
-    slot.innerHTML=`<div class="nm-idcard linked">🔓 ${ko?'학원 승인 완료':en?'Academy approved':'学院已授权'}${acc.code?` · <b>${esc(acc.code)}</b>`:''} · ${ko?'모든 유닛 이용 가능':en?'All units unlocked':'全部单元已解锁'} ✓</div>`;
+    slot.innerHTML=`<div class="nm-idcard linked">🔓 ${ko?'학원 승인 완료':en?'Academy approved':'学院已授权'}${acc.code?` · <b>${esc(acc.code)}</b>`:''} · ${ko?'모든 학습 단원 이용 가능':en?'All units unlocked':'全部单元已解锁'} ✓</div>`;
     return;
   }
   slot.innerHTML=`<div class="nm-idcard">
@@ -7963,7 +7963,7 @@ function renderAccountCard(){
       <input id="accCode" maxlength="24" placeholder="${ko?'승인번호 입력':en?'Enter code':'输入授权码'}" autocomplete="off">
       <button class="nm-btn" id="accSubmit">${ko?'확인':en?'Apply':'确认'}</button>
     </div>
-    <div class="nm-idcard-msg" id="accMsg">${ko?'학원에서 받은 승인번호를 입력하면 모든 유닛·편지함·인쇄가 열려요.':en?'Enter the code from your academy to unlock every unit, the mailbox, and printing.':'输入学院提供的授权码即可解锁全部单元、信箱与打印。'}</div>
+    <div class="nm-idcard-msg" id="accMsg">${ko?'학원에서 받은 승인번호를 입력하면 모든 학습 단원·편지함·인쇄가 열려요.':en?'Enter the code from your academy to unlock every unit, the mailbox, and printing.':'输入学院提供的授权码即可解锁全部单元、信箱与打印。'}</div>
   </div>`;
   $('#accCode').addEventListener('keydown',e=>{if(e.key==='Enter')submitAcc();});
   $('#accSubmit').onclick=submitAcc;
@@ -8220,7 +8220,7 @@ function renderIdCard(){
         }
         existing=await cloudGet(name).catch(()=>null);
         if(!existing){btn.disabled=false;msg.textContent=ko?'이 이메일에 이미 학생이 있으면 기존 학생 이름으로 이어해 주세요. 다른 학생은 별도 이메일을 사용해 주세요. 기존 기록 연결은 학원에 문의해 주세요.':en?'If this email already has a learner, continue with that learner’s name. Use a separate email for another learner. Contact your academy to link older records.':'若此邮箱已关联学生，请使用原学生姓名继续。其他学生请使用不同邮箱。关联旧记录请联系学院。';return;}
-      }catch(e){ btn.disabled=false; msg.textContent=ko?'등록에 실패했어요. 잠시 후 다시!':en?'Failed — try again soon.':'注册失败，请稍后再试。'; return; }
+      }catch(e){ btn.disabled=false; msg.textContent=ko?'학생을 등록하지 못했어요. 잠시 후 다시 시도해 주세요.':en?'Failed — try again soon.':'注册失败，请稍后再试。'; return; }
     }
     /* 이미 있는 이름 → 이어하기 / 다른 이름 */
     btn.disabled=false;
@@ -8273,7 +8273,7 @@ function screenExam(){
   }
   if(!window.NM_EXAM||!window.examScreen){
     scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="backExam">${t('back')}</button></div>
-      <p style="padding:40px;text-align:center">시험 모듈 로딩 실패</p>`;
+      <p style="padding:40px;text-align:center">시험 화면을 불러오지 못했어요. 새로고침해 주세요.</p>`;
     $('#backExam').onclick=()=>{S.view='town';save();render();};
     return;
   }
@@ -8381,7 +8381,7 @@ function maybeShowTitle(){
 /* ---------- 시작 ---------- */
 function boot(){
   if(booted)return;
-  if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">데이터 로딩 실패 — 스크립트 순서를 확인하세요.</p>';return;}
+  if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">학습 화면을 불러오지 못했어요. 새로고침해 주세요.</p>';return;}
   booted=true;
   if(guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink()){guardianEntry=!S.onboarded;S.view='closet';}
   else maybeShowTitle();

@@ -7141,7 +7141,7 @@ const NM_EXAM = {
     <button class="nm-ex-sec-card" data-sec="magic">
       <div class="nm-ex-sec-emo">✨</div>
       <div class="nm-ex-sec-name">${esc(lk('수의 마법 탐험','Number Magic Explorer','数字魔法探险'))}</div>
-      <div class="nm-ex-sec-desc">${esc(lk('스레드 직접 선택','Pick a skill thread directly','直接选择技能线'))}</div>
+      <div class="nm-ex-sec-desc">${esc(lk('학습 유형 직접 선택','Pick a skill thread directly','直接选择技能线'))}</div>
     </button>
     <button class="nm-ex-sec-card" data-sec="road">
       <div class="nm-ex-sec-emo">🛤️</div>
@@ -7842,7 +7842,7 @@ ${printWatermarkHtml()}
   </div>
   <div class="nm-ex-form-body">
     <div class="nm-ex-form-row">
-      <label class="nm-ex-label">스레드</label>
+      <label class="nm-ex-label">학습 유형</label>
       <select class="nm-ex-select" id="nm-ex-thread">
         ${threadKeys.map(k=>`<option value="${k}">${k} — ${esc((threads[k].name||{}).ko||k)}</option>`).join('')}
       </select>
