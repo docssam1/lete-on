@@ -23,6 +23,12 @@ function napierGrid(visual) {
   return `<div class="b10-napier" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)} 네이피어 곱셈판"><div class="b10-napier-top" style="--cols:${topDigits.length}">${topDigits.map((digit) => `<b>${digit}</b>`).join("")}</div><div class="b10-napier-main"><div class="b10-napier-side" style="--rows:${sideDigits.length}">${sideDigits.map((digit) => `<b>${digit}</b>`).join("")}</div><div class="b10-napier-grid" style="--cols:${topDigits.length}">${cells}</div></div><p>${visual.revealResult ? `${esc(visual.first)} × ${esc(visual.second)} = <strong>${result}</strong>` : "대각선 방향으로 수를 더해 보세요."}</p></div>`;
 }
 
+// 판서 곱셈 상자: 곱셈식과 빈 칸만(나눈 수와 부분곱은 학생이 채운다)
+function splitBox(visual) {
+  const cells = Array.from({ length: visual.rows * visual.cols }, () => "<span></span>").join("");
+  return `<div class="b10-split-box" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)}, ${visual.cols}칸 ${visual.rows}줄 상자"><strong>${esc(visual.first)} × ${esc(visual.second)}</strong><div style="--cols:${visual.cols};--rows:${visual.rows}">${cells}</div></div>`;
+}
+
 function areaModel(visual) {
   const split = (value) => {
     const tens = Math.floor(Number(value) / 10) * 10;
@@ -241,6 +247,7 @@ export function book10Markup(visual) {
     case "multiplication-methods": return multiplicationMethods(visual);
     case "napier-grid": return napierGrid(visual);
     case "area-model": return areaModel(visual);
+    case "split-box": return splitBox(visual);
     case "vertical-multiplication": return verticalMultiplication(visual);
     case "operation": return operation(visual);
     case "factor-pairs": return factorPairs(visual);

@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261018z`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261018z/20261019a/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261019a`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019a/20261019b/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -439,7 +439,7 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
 #### 9권 (교사용 판서 11쪽, 2026-10-21 착수)
 - **원본**: Drive 폴더 `더클래식_1과정_9N30권_골든벨_230817`의 쪽 그림 11장(`…(1)_1.png`~`_11.png`). **PPT가 아니라 선생님이 모눈 노트에 손으로 쓴 판서**다. 같은 PDF(12MB)와 답 지운 판 `더클래식_1과정_9N30권_골든벨_필기삭제중.pdf`(13MB)는 Drive 도구 한도(10MB)를 넘어 받지 못했다 → 교사용 판에서 **검정 선만 문제로 옮기고** 빨강·파랑 필기(답·풀이)는 대조에만 쓴다. 받은 파일은 저장소 밖에만.
 - **모눈 좌표 읽기**: 쪽 그림 2845×2134에서 노트 모눈은 x 63.3px(시작 93) · y 53.3px(시작 131) 간격 — 칸 번호 격자를 겹쳐 그린 뒤 꼭짓점을 칸 번호로 받아쓴다.
-- **10~11쪽은 10권 내용**(제목 「<10권> 01. 연속수의 합」 — 네이피어 곱셈·수의 개수·연속수의 합). 원장 결정(2026-10-21): **10권으로 옮긴다.** 9권은 1~9쪽만 대조하고, 9권의 `consecutive-sum-pairing`(11쪽에서 가져온 단원)은 10권 대조 때 10권으로 옮긴다.
+- **10~11쪽은 10권 내용**(제목 「<10권> 01. 연속수의 합」 — 네이피어 곱셈·수의 개수·연속수의 합). 원장 결정(2026-10-21): **10권으로 옮긴다.** → **옮김 완료(2026-10-22, 아래 「10권 묶음 1」).** 9권은 1~9쪽만 대조하고, 9권의 `consecutive-sum-pairing`(11쪽에서 가져온 단원)은 10권 대조 때 10권으로 옮긴다.
 - **묶음 계획**: 1) 1~2쪽 넓이 ✅ · 2) 2~4쪽 쌓기나무 개수·숨은 쌓기나무·페인트칠·앞/옆 모양 ✅ · 3) 5~6쪽 층별 모양·최대/최소 ✅ · 4) 7~8쪽 마방진 ✅ · 5) 9쪽 원형진·삼각진 ✅ — **9권 내용(1~9쪽) 끝(2026-10-22)**. 쌓기나무 입체는 `book09-renderers.js` `isoMap`(높이 지도 → `GW_RENDER.renderIso`)을 쓴다.
 - **장부는 9권 고유 꼴**(`sourceCoverage.pages[].slots[]`, 슬롯마다 released/held + holdId). 8권처럼 바꾸지 않고 그대로 쓴다.
 - **9권 묶음 1(판서 1~2쪽 01-2 도형의 넓이 Q1 (1)~(5), 25문항, 2026-10-21)**: 패치 `tools/golden-bell-book09/patch-book09-batch1.mjs`(정답 없음).
@@ -486,6 +486,16 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 1권 거울 그림: 휴대폰 규칙이 그림을 470px로 고정한 뒤 줄여서 칸 밖으로 나감 → 칸 너비에 맞춤. 2권 성냥개비 개념 장면: 가운데 정렬된 넓은 줄이 왼쪽으로 잘림 → 휴대폰에서 줄바꿈. 4권 숫자 1 돌리기: 휴대폰에서 줄바꿈. 7권 날짜 표: 휴대폰에서 글자·여백 줄임(`golden-bell-book05.css` — `golden-bell.css`보다 뒤에 읽혀 앞 파일에 넣으면 덮인다).
   - **공통 원인**: 문항 그림 칸(`.quiz-visual`)·개념 장면(`.guided-concept-scene`, 휴대폰)이 그리드라 칸이 내용 너비만큼 커졌다 → `minmax(0,1fr)`. 그래도 넓은 그림은 `golden-bell.js` `fitScreenVisuals()`가 렌더 뒤 칸 너비에 맞게 `zoom`으로 줄인다(최소 0.55, 내용이 바뀔 때·화면 크기가 바뀔 때마다).
   - 점검 뒤 남은 것: 1권 색종이 개념·4권 접어 자르기 4번의 svg 안쪽 측정값만(눈으로 보면 잘리지 않음), 320px에서 7권 날짜 표(가로로 밀어 볼 수 있음). 캐시 꼬리표 `20261018z`, `golden-bell.css` 링크 `20261022b`.
+
+#### 10권 골든벨 판서 (9권 판서 파일 10~11쪽)
+- 10권은 지도서에서 만든 단원(번호 0~6)이 이미 있고, 골든벨 판서는 따로 없다가 9권 판서 파일 끝 두 쪽에 「<10권> 01. 연속수의 합」으로 들어 있었다. 장부는 `book-10.sourceCoverage.goldenBell`(쪽 10·11, 문항 수), `source.goldenBellNote`.
+- **10권 묶음 1(판서 10~11쪽, 46문항·답 칸 52, 2026-10-22)**: 패치 `tools/golden-bell-book10/patch-book10-batch1.mjs`(정답 없음).
+  - 새 단원 7 `napier-split-source`(01 네이피어 곱셈 Q1~Q3 12문항 — 새 그림 `book10-renderers.js` `split-box`: 곱셈식과 빈 칸만, 나눈 수·부분곱은 필기라 옮기지 않음) · 8 `number-count-source`(02 수의 개수 10문항) · 9 `consecutive-even-source`(03 짝수 개 연속수의 합 Q1·Q2 12문항) · 10 `consecutive-odd-source`(04 홀수 개 Q1 가운데 수+합 6 · Q2 합 6). 지도서 단원 옆에 같은 주제끼리 둠.
+  - **9권 단원 `consecutive-sum-pairing`(6문항)을 지우고** 그 문항은 10권 단원 9의 Q1로 다시 넣었다. 9권 장부에서 10~11쪽과 보류 3건을 뺐다 → **9권 보류 0, 공개 95문항.** DB의 옛 9권 `/lessons/3/…` 키는 쓰이지 않은 채 남긴다(4권·7권 선례).
+  - 검사기 손봄: `golden-bell-guided-experience-audit.mjs`·`golden-bell-book09-guided-browser-audit.mjs`에서 `book09-consecutive`를 뺐고, 9권 가족 개수는 9권 안에서만 센다(4권 `cube-min-count`가 9권 쌓기나무 장면을 빌려 써 「2개」로 늘 실패하던 것). 이제 guided 검사 실패 0.
+  - 인쇄: 긴 연속수 식이 줄바꿈되어 「+」로 시작하는 줄이 생겼다 → 인쇄에서 `b10-operation` 13px·한 줄.
+  - 검산기는 연속수 식의 「…」 앞뒤가 정말 1씩 늘어나는지 확인하고 처음·끝 수로 합을 직접 더한 뒤 짝·가운데 수 공식과도 맞춰 본다. **교사용 답과 다른 곳 없음**(홀수 개 Q1 (1)(2)는 판서에 식만 있어 식의 값과 대조).
+  - DB `book-10` 262키 → 328키, sha 앞 8자리 `f03c6ac5`. 캐시 꼬리표 `20261019a`(`book10-renderers.js` import `20261022a`, `golden-bell.css` 링크 `20261022c`).
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

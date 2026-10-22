@@ -13,8 +13,7 @@ if (captureDir) await fs.mkdir(captureDir, { recursive: true });
 const lessons = [
   ["unit-area-and-half", "book09-area"],
   ["cube-map-total", "book09-cube"],
-  ["magic-square-missing", "book09-magic"],
-  ["consecutive-sum-pairing", "book09-consecutive"]
+  ["magic-square-missing", "book09-magic"]
 ];
 const phases = ["problem", "organize", "calculate", "verify"];
 const browser = await chromium.launch({ headless: true });
