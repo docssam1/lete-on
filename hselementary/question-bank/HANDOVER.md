@@ -1,5 +1,13 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 25 Mission 5 SSA Correction
+
+- Re-read PDF page 21 (printed page 25) from the SHA-256-matched source using a 450dpi render and Apple Vision OCR; vertex labels and the 7cm/4cm sides were confirmed from the image. Pencil marks were excluded.
+- Found an answer-rule error in `5-2-u3-e1-mission-5`: with ㄴㄷ=7cm and ㄱㄷ=4cm, the sufficient choices are ① ㄱㄴ length (SSS), ② ∠ㄱ (the angle opposite the longer known side; SSA has one valid solution), and ④ ∠ㄷ (included-angle SAS). Choice ③ ∠ㄴ is SSA with two possible triangles and does not guarantee congruence.
+- Corrected the source-side/visual label, independent calculation, formula, and answer in the U3 readiness inventory. JSON structure (53 unique items), targeted SSA assertions, and unchanged 24-public/29-locked counts pass. The item remains locked pending implementation-figure verification; no learner-facing mapping, student data, or release state changed. Mission 6 remains unresolved and locked.
+- The existing `congruence-symmetry-audit.js` is not currently a passing gate: it reports 25,200 failures because `HSE_GENERATORS.generate` returns `null` for the first checked type (`5-2-u3-t1`). Its code is unchanged by this source-ledger correction; repair/verify it before any U3 runtime release.
+- Drive evidence: [page 24 exploration review](https://drive.google.com/file/d/1Ry4JGJ9m1WQGParWINFjg6R49ASDA02B/view) and [page 25 Missions 1–6 review](https://drive.google.com/file/d/11k5r1lrjdx7jVwPYtlFTDoevfX7k7SA3/view).
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
 
 - Rechecked PDF page 9 / printed page 11 from the 450dpi page render and Apple Vision OCR. The text asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. No figure is printed for this item; handwriting and publisher answers were excluded. The hundreds-rounding interval is 1,150–1,249 and the tens-ceiling interval is 1,191–1,200. Their intersection contains 10 natural numbers, 1,191–1,200. Publisher-key verification remains false.
