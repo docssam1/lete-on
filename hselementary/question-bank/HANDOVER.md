@@ -7,6 +7,13 @@
 - Verification: exact source SHA-256 matched the ledger; logical pages 10–17 were visually checked against printed pages 14–21; exact-rational recalculation and targeted JSON assertions passed. No merge or deployment in this stage.
 
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 17 Mission 1 Taxonomy Review
+
+- Re-read logical PDF page 13 (printed page 17) from the SHA-256-matched source. A 300dpi render and Apple Vision pass were used to locate the printed expressions; fraction notation was confirmed visually because OCR did not reliably parse stacked fractions. Pencil marks were not treated as answer evidence.
+- Independently checked Mission 1 (1)–(6): 1/8, 1 1/2, 1 1/4, 1 3/14, 4/7, and 21 2/3. The calculations match the recorded source expressions.
+- Found a taxonomy mismatch in (2)–(4): their printed expressions are two mixed numbers times a proper fraction; a mixed number times a sum of fractions; and a difference of mixed numbers times a proper fraction. They were incorrectly labeled `u2-t09` (“natural number and mixed-number multiplication”). Assigned separate locked types `u2-t46`–`u2-t48`; (6) remains `u2-t09` because it is 15 × 1 4/9. Updated both normalized-type counts from 45 to 48.
+- No learner-facing item or runtime mapping was changed; all 56 records remain locked. Source PDF and marked pages remain local.
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
 
 - Rechecked PDF page 9 / printed page 11 from the 450dpi page render and Apple Vision OCR. The text asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. No figure is printed for this item; handwriting and publisher answers were excluded. The hundreds-rounding interval is 1,150–1,249 and the tens-ceiling interval is 1,191–1,200. Their intersection contains 10 natural numbers, 1,191–1,200. Publisher-key verification remains false.
