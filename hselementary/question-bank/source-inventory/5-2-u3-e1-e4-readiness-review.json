@@ -27,7 +27,8 @@
       {"checkId": "e3-angles", "expression": "180-65-70/2=80; 90-60=30", "result": true},
       {"checkId": "e3-intervals", "expression": "3+2+1+2+1=9", "result": true},
       {"checkId": "e4-angles", "expression": "360/3=120; 90-20=70", "result": true},
-      {"checkId": "e4-areas", "expression": "10^2+5^2=125; (1/2)*6*((10+8)/2)=27", "result": true}
+      {"checkId": "e4-areas", "expression": "10^2+5^2=125; (1/2)*6*((10+8)/2)=27", "result": true},
+      {"checkId": "e1-m5-ssa-options", "expression": "given ㄴㄷ=7 opposite ㄱ, ㄱㄷ=4 opposite ㄴ; ① SSS, ② unique SSA, ③ ambiguous SSA, ④ SAS", "result": true}
     ]
   },
   "integrity": {
@@ -442,21 +443,21 @@
       "typeLabel": "합동 삼각형에 필요한 추가 요소 찾기",
       "childFriendlyTypeLabel": "빠진 길이와 각 중 꼭 필요한 것 고르기",
       "originalStructure": "두 변 7cm, 4cm만 표시된 삼각형에서 합동을 보장할 추가 요소를 고릅니다.",
-      "conditions": ["두 변의 공통 꼭짓점과 각 위치 확인", "SAS가 되는 끼인각", "ASA/AAS가 되는 각 조건", "SSA는 배제"],
-      "visualRequirement": "ㄱㄴ=7cm, ㄷㄱ=4cm의 인접 관계를 명확히 표시해야 합니다.",
-      "independentCalculation": "두 주어진 변 사이의 각 또는 나머지 각 중 하나를 더하면 유일성이 생기지만, 맞은편 변만은 SSA입니다.",
-      "answerFormula": "valid = included angle or either remaining angle; invalid = opposite side alone",
-      "independentAnswer": "유효한 추가 조건 3가지",
+      "conditions": ["원문 그림: ㄴㄷ=7cm, ㄱㄷ=4cm; 선택지 ① ㄱㄴ 길이, ② ∠ㄱ, ③ ∠ㄴ, ④ ∠ㄷ", "① 세 번째 변이면 SSS로 유일", "② 7cm 변의 맞은편인 ∠ㄱ을 더하면 SSA이나 4cm<7cm여서 유효 해가 하나", "③ 4cm 변의 맞은편인 ∠ㄴ을 더하면 SSA 두 해가 가능하여 유일성 보장 안 됨", "④ 두 주어진 변 사이의 ∠ㄷ을 더하면 SAS로 유일"],
+      "visualRequirement": "ㄴㄷ=7cm, ㄱㄷ=4cm의 인접 관계와 네 선택지의 각·변 위치를 명확히 표시해야 합니다.",
+      "independentCalculation": "ㄴㄷ=7cm는 ∠ㄱ의 맞은편, ㄱㄷ=4cm는 ∠ㄴ의 맞은편이다. ①은 SSS. ②에서는 sin(∠ㄴ)=4/7·sin(∠ㄱ); 보각인 ∠ㄴ 해는 ∠ㄱ과 합이 180°를 넘어 불가능하므로 하나다. ③에서는 sin(∠ㄱ)=7/4·sin(∠ㄴ)이고, 원래의 비직각 삼각형에서는 ∠ㄱ 및 180°−∠ㄱ가 모두 양의 나머지 각을 남겨 두 삼각형이 가능하다. ④는 두 변의 끼인각이므로 SAS.",
+      "answerFormula": "valid = ① third side (SSS), ② angle opposite 7cm side (unique SSA), ④ included angle (SAS); invalid = ③ angle opposite 4cm side (ambiguous SSA)",
+      "independentAnswer": "①, ②, ④",
       "resultContract": "set-of-conditions",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "유효 조건의 완전한 집합은 하나지만 그림의 요소 표식이 필요합니다.",
+      "singleAnswerCheck": "선택지 ③은 SSA 두 해가 가능해 제외됩니다. ①·②·④는 각각 SSS·유일 SSA·SAS로 삼각형이 하나로 정해집니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "needs-implementation-check",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "추가 조건 선택지의 정확한 변·각 표식이 공개 화면에서 확인되기 전입니다."
+      "lockReason": "답 분류를 정정했으며 공개 화면에서 원본 그림 표식이 정확히 재현되는지 확인 전입니다."
     },
     {
       "sourceItemId": "5-2-u3-e1-mission-6",
@@ -1503,7 +1504,8 @@
       "반복 구조는 commonTypeId로만 묶었고, 원문 문장·이미지·공식 답은 기록하지 않았습니다.",
       "비유일·퇴화·회전각 미제시·접기 또는 복합 도형 표식 불명확 항목은 답을 추측하지 않고 잠갔습니다.",
       "정답 숫자가 보이는 필기 흔적은 근거로 사용하지 않았으며, 독립 계산이 되지 않는 항목은 independentAnswer를 비워 두었습니다.",
-      "이 파일은 원본 대조 장부이며 중앙 생성기·공개 카탈로그·다른 파일은 수정하지 않았습니다."
+      "이 파일은 원본 대조 장부이며 중앙 생성기·공개 카탈로그·다른 파일은 수정하지 않았습니다.",
+      "2026-10-24 인쇄 25쪽 재검수에서 Mission 5의 SSA 답 분류를 바로잡았습니다. 정답 집합은 ①·②·④이며, 구현 그림 검수 전 잠금은 유지합니다. Drive QA: 11k5r1lrjdx7jVwPYtlFTDoevfX7k7SA3."
     ]
   }
 }
