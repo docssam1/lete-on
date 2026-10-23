@@ -1,0 +1,128 @@
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; overflow-wrap: break-word; }
+.boarding-shell { width: min(1180px, calc(100% - 48px)); margin-inline: auto; }
+.boarding-header { min-height: 70px; padding: 10px max(24px, calc((100vw - 1180px) / 2)); display: flex; align-items: center; gap: 24px; border-bottom: 1px solid #d8dee8; background: #fff; }
+.boarding-header .brand { display: inline-flex; align-items: center; gap: 10px; color: #182230; text-decoration: none; white-space: nowrap; }
+.boarding-header nav { margin-left: auto; display: flex; gap: 24px; align-items: center; }
+.boarding-header nav a { min-height: 44px; display: inline-flex; align-items: center; color: #566274; font-size: .9rem; font-weight: 750; text-decoration: none; }
+.boarding-header nav a[aria-current="page"] { color: #2456c4; border-bottom: 3px solid #2456c4; }
+.boarding-kicker { margin: 0; color: #2456c4; font-size: .78rem; font-weight: 900; letter-spacing: .1em; }
+.boarding-intro { color: #fff; background: #182230; }
+.boarding-intro .boarding-shell { padding-block: clamp(64px, 8vw, 108px); }
+.boarding-intro .boarding-kicker { color: #bcd0ff; }
+.boarding-intro h1 { max-width: 920px; margin: 18px 0 0; font-size: clamp(2.7rem, 5.8vw, 5.1rem); line-height: 1.1; letter-spacing: -.055em; }
+.boarding-intro h1 span { color: #bcd0ff; }
+.boarding-intro p:not(.boarding-kicker) { max-width: 670px; margin: 24px 0 0; color: #d2dbe8; font-size: 1.05rem; line-height: 1.75; }
+.boarding-intro-actions { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 10px; }
+.boarding-intro-actions a { min-height: 48px; padding: 12px 20px; display: inline-flex; align-items: center; gap: 12px; border: 1px solid #bcd0ff; color: #182230; background: #fff; text-decoration: none; font-weight: 850; }
+.boarding-intro-actions a + a { color: #fff; background: transparent; }
+.grade-map, .route-section { padding-block: clamp(60px, 7vw, 94px); scroll-margin-top: 20px; }
+.map-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+.map-head h2 { margin: 10px 0 0; font-size: clamp(1.8rem, 3vw, 2.7rem); letter-spacing: -.04em; line-height: 1.2; }
+.map-head > p { max-width: 350px; margin: 0; color: #566274; font-size: .88rem; line-height: 1.65; }
+.grade-track { margin-top: 28px; padding: 20px 24px; border: 1px solid #d8dee8; background: #fff; }
+.grade-buttons { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; position: relative; }
+.grade-buttons::before { content: ""; position: absolute; top: 22px; left: 6%; right: 6%; height: 3px; background: #c4d5f8; }
+.grade-button { min-height: 68px; padding: 12px 4px 4px; position: relative; border: 0; background: transparent; color: #566274; font: inherit; font-size: .94rem; font-weight: 900; cursor: pointer; }
+.grade-button::before { content: ""; width: 18px; height: 18px; margin: 0 auto 7px; display: block; border: 3px solid #2456c4; border-radius: 50%; background: #fff; }
+.grade-button[aria-pressed="true"] { color: #2456c4; }
+.grade-button[aria-pressed="true"]::before { background: #2456c4; box-shadow: 0 0 0 5px #eaf0ff; }
+.journey-layout { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(285px, .7fr); border: 1px solid #d8dee8; background: #fff; }
+.journey-main { min-width: 0; padding: clamp(24px, 3vw, 40px); }
+.journey-heading { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.grade-chip, .source-chip { display: inline-block; padding: 7px 10px; font-size: .74rem; font-weight: 900; }
+.grade-chip { color: #2456c4; background: #eaf0ff; }
+.source-chip { color: #566274; border: 1px solid #d8dee8; }
+.journey-heading h3 { margin: 12px 0 0; font-size: clamp(1.55rem, 2.6vw, 2.45rem); line-height: 1.2; letter-spacing: -.035em; }
+.grade-core { max-width: 680px; margin: 18px 0 0; color: #354255; font-size: 1rem; line-height: 1.7; }
+.concept-bridge { margin-top: 24px; padding: 16px 18px; display: grid; gap: 8px; border-left: 4px solid #2456c4; background: #f1f5ff; }
+.concept-bridge span { color: #2456c4; font-size: .74rem; font-weight: 900; }
+.concept-bridge strong { font-size: .95rem; line-height: 1.6; }
+.journey-path { height: 64px; margin-top: 27px; }
+.journey-path svg { width: 100%; height: 100%; display: block; }
+.stage-list { margin: -10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; list-style: none; }
+.stage-list li { min-width: 0; }
+.stage-button { width: 100%; min-height: 105px; padding: 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 11px; border: 1px solid #d8dee8; color: #182230; background: #fff; text-align: left; font: inherit; cursor: pointer; }
+.stage-node { width: 35px; height: 35px; display: grid; place-items: center; border: 2px solid #2456c4; border-radius: 50%; color: #2456c4; background: #fff; font-size: .72rem; font-weight: 900; }
+.stage-button strong { font-size: .87rem; line-height: 1.35; }
+.stage-button[aria-pressed="true"] { border-color: #2456c4; background: #eaf0ff; }
+.stage-button[aria-pressed="true"] .stage-node { color: #fff; background: #2456c4; }
+.stage-detail { margin-top: 18px; padding: 22px 24px; border: 1px solid #c4d5f8; background: #f8faff; }
+.stage-detail > span { color: #2456c4; font-size: .75rem; font-weight: 900; }
+.stage-detail h4 { margin: 7px 0 0; font-size: 1.2rem; }
+.stage-detail p { margin: 8px 0 0; font-size: .96rem; line-height: 1.6; }
+.stage-detail small { margin-top: 12px; display: block; color: #566274; font-size: .78rem; line-height: 1.5; }
+.journey-side { padding: clamp(24px, 3vw, 36px); border-left: 1px solid #d8dee8; background: #f8fafc; }
+.journey-side h3 { margin: 9px 0 0; font-size: 1.45rem; }
+.journey-side ul { margin: 24px 0 0; padding: 0; list-style: none; }
+.journey-side li { padding: 15px 0; display: grid; gap: 5px; border-top: 1px solid #d8dee8; }
+.journey-side li strong { color: #2456c4; font-size: .83rem; }
+.journey-side li span { color: #354255; font-size: .88rem; line-height: 1.5; }
+.grade-note { margin: 20px 0 0; padding: 14px; border-left: 3px solid #566274; background: #fff; color: #354255; font-size: .83rem; line-height: 1.65; }
+.journey-actions { margin-top: 20px; display: flex; gap: 8px; }
+.journey-actions button { flex: 1; min-height: 46px; padding: 8px; border: 1px solid #2456c4; color: #2456c4; background: #fff; font: inherit; font-size: .78rem; font-weight: 850; cursor: pointer; }
+.journey-actions button:disabled { border-color: #d8dee8; color: #687587; background: #f5f6f8; cursor: not-allowed; }
+.level-section { padding-bottom: clamp(60px, 7vw, 94px); }
+.level-grid { margin-top: 26px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid #d8dee8; background: #fff; }
+.level-grid article { min-width: 0; padding: 25px; border-right: 1px solid #d8dee8; }
+.level-grid article:last-child { border-right: 0; }
+.level-grid article > span { color: #2456c4; font-size: .75rem; font-weight: 900; }
+.level-grid h3 { margin: 12px 0 0; font-size: 1.12rem; line-height: 1.35; }
+.level-grid p { min-height: 70px; margin: 11px 0 0; color: #354255; font-size: .88rem; line-height: 1.65; }
+.level-grid small { display: block; padding-top: 14px; border-top: 1px solid #d8dee8; color: #566274; font-size: .77rem; line-height: 1.5; }
+.level-boundary { margin: 14px 0 0; color: #566274; font-size: .84rem; line-height: 1.55; }
+.level-boundary strong { color: #182230; }
+.route-section { border-top: 1px solid #d8dee8; }
+.route-layout { margin-top: 26px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .9fr); gap: 16px; }
+.route-buttons { display: grid; gap: 10px; }
+.route-button { min-height: 92px; padding: 17px 20px; display: grid; gap: 5px; align-content: center; border: 1px solid #d8dee8; border-left: 5px solid #c4d5f8; color: #182230; background: #fff; text-align: left; font: inherit; cursor: pointer; }
+.route-button strong { font-size: 1.05rem; }
+.route-button small { color: #566274; font-size: .84rem; line-height: 1.45; }
+.route-button[aria-pressed="true"] { border-color: #2456c4; border-left-color: #2456c4; background: #eaf0ff; }
+.route-explanation { padding: clamp(24px, 3vw, 38px); border: 1px solid #c4d5f8; background: #fff; }
+.route-explanation > span { color: #2456c4; font-size: .75rem; font-weight: 900; }
+.route-explanation h3 { margin: 10px 0 0; font-size: clamp(1.6rem, 3vw, 2.3rem); }
+.route-explanation > p { margin: 15px 0 0; color: #354255; line-height: 1.7; }
+.route-explanation > div { margin-top: 32px; padding-top: 20px; border-top: 1px solid #d8dee8; }
+.route-explanation > div strong { color: #2456c4; font-size: .84rem; }
+.route-explanation > div p { margin: 8px 0 0; line-height: 1.5; }
+.route-explanation > small { margin-top: 28px; display: block; color: #566274; font-size: .8rem; line-height: 1.6; }
+.competition-section { padding-block: clamp(60px, 7vw, 94px); border-top: 1px solid #d8dee8; }
+.competition-layout { margin-top: 26px; display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); border: 1px solid #d8dee8; background: #fff; }
+.competition-form, .competition-report { min-width: 0; padding: clamp(20px,3vw,34px); }
+.competition-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.competition-fields label { display: grid; gap: 8px; font-size: .85rem; font-weight: 850; }
+.competition-fields select, .competition-fields input, .domain-row input { width: 100%; min-height: 46px; padding: 9px 11px; border: 1px solid #566274; border-radius: 4px; color: #182230; background: #fff; font: inherit; font-size: 1rem; }
+.competition-guidance { margin: 16px 0 20px; color: #566274; font-size: .8rem; line-height: 1.6; }
+.domain-header, .domain-row { display: grid; grid-template-columns: minmax(0,1fr) 94px 94px; gap: 12px; align-items: center; }
+.domain-header { padding: 0 0 9px; border-bottom: 1px solid #d8dee8; color: #566274; font-size: .74rem; }
+.domain-row { padding: 10px 0; border-bottom: 1px solid #d8dee8; }
+.domain-row strong { font-size: .86rem; }
+.domain-row input { min-height: 44px; }
+.competition-submit { width: 100%; min-height: 48px; margin-top: 20px; padding: 11px; border: 1px solid #2456c4; border-radius: 4px; color: #fff; background: #2456c4; font: inherit; font-size: .9rem; font-weight: 850; cursor: pointer; }
+.competition-error { margin: 12px 0 0; color: #b42332; font-size: .83rem; font-weight: 750; }
+.competition-report { border-left: 1px solid #d8dee8; background: #f8fafc; }
+.competition-report > span { color: #2456c4; font-size: .76rem; font-weight: 900; }
+.competition-report h3 { margin: 9px 0 0; font-size: 1.5rem; }
+.competition-report > p { color: #354255; font-size: .85rem; line-height: 1.65; }
+.competition-report-rows { margin-top: 22px; display: grid; gap: 8px; }
+.report-row { padding: 12px; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; border: 1px solid #d8dee8; background: #fff; }
+.report-row strong { font-size: .84rem; }.report-row span { color: #2456c4; font-size: .84rem; font-weight: 900; }.report-row small { grid-column: 1 / -1; color: #566274; font-size: .72rem; }
+.competition-report-boundary { margin-top: 20px; padding-top: 15px; border-top: 1px solid #d8dee8; }
+.competition-links { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
+.competition-links a { min-height: 44px; padding: 10px 14px; display: inline-flex; align-items: center; border: 1px solid #2456c4; color: #2456c4; background: #fff; font-size: .82rem; font-weight: 850; text-decoration: none; }
+.boarding-close { color: #fff; background: #182230; }
+.boarding-close .boarding-shell { padding-block: 52px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.boarding-close .boarding-kicker { color: #bcd0ff; }
+.boarding-close h2 { margin: 9px 0 0; font-size: clamp(1.5rem, 3vw, 2.1rem); }
+.boarding-close p:not(.boarding-kicker) { max-width: 570px; margin: 10px 0 0; color: #d2dbe8; line-height: 1.6; }
+.boarding-close a { min-height: 48px; padding: 12px 20px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #fff; color: #182230; background: #fff; text-decoration: none; white-space: nowrap; font-weight: 850; }
+.page-boarding-roadmap button:hover:not(:disabled), .page-boarding-roadmap a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.page-boarding-roadmap :focus-visible { outline: 3px solid #2456c4; outline-offset: 3px; }
+.boarding-intro :focus-visible, .boarding-close :focus-visible { outline-color: #bcd0ff; }
+@media (max-width: 850px) { .boarding-header nav { gap: 12px; }.journey-layout, .route-layout, .competition-layout { grid-template-columns: 1fr; }.journey-side, .competition-report { border-left: 0; border-top: 1px solid #d8dee8; }.journey-side ul { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }.journey-side li { border-bottom: 1px solid #d8dee8; }.boarding-close .boarding-shell { align-items: start; flex-direction: column; } }
+@media (max-width: 600px) { .boarding-shell { width: min(100% - 32px, 1180px); }.boarding-header { padding: 10px 16px; gap: 12px; }.boarding-header nav { gap: 8px; }.boarding-header nav a { font-size: .72rem; }.boarding-header nav a:last-child { display: none; }.boarding-intro .boarding-shell { padding-block: 54px; }.boarding-intro h1 { font-size: clamp(2.35rem, 10vw, 3.5rem); }.map-head { align-items: start; flex-direction: column; gap: 10px; }.map-head > p { max-width: none; }.grade-track { padding: 14px 12px; }.grade-buttons { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; }.grade-buttons::before { display: none; }.grade-button { min-height: 54px; border: 1px solid #d8dee8; }.grade-button::before { display: none; }.grade-button[aria-pressed="true"] { border-color: #2456c4; background: #eaf0ff; }.journey-main, .journey-side { padding: 20px; }.journey-heading { flex-wrap: wrap; }.stage-list, .level-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }.journey-path { display: none; }.stage-list { margin-top: 20px; }.stage-button { min-height: 92px; }.journey-side ul { grid-template-columns: 1fr; gap: 0; }.level-grid { display: block; }.level-grid article { border-right: 0; border-bottom: 1px solid #d8dee8; }.level-grid article:last-child { border-bottom: 0; }.level-grid p { min-height: 0; }.route-button { min-height: 80px; }.competition-fields { grid-template-columns: 1fr; }.domain-header, .domain-row { grid-template-columns: minmax(0,1fr) 76px 76px; gap: 7px; }.domain-row strong { font-size: .76rem; }.boarding-close a { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media print { .boarding-header, .boarding-intro-actions, .grade-track, .journey-actions, .route-buttons, .competition-form, .competition-links, .boarding-close, .site-footer { display: none !important; }.boarding-intro, .boarding-close { color: #182230; background: #fff; }.boarding-intro .boarding-shell { padding-block: 12px; }.boarding-intro h1, .boarding-intro h1 span { color: #182230; }.boarding-intro p:not(.boarding-kicker) { color: #566274; }.grade-map, .level-section, .route-section, .competition-section { padding-block: 12px; }.journey-layout, .route-layout, .competition-layout { display: block; }.journey-side { border: 1px solid #d8dee8; }.route-explanation { margin-top: 12px; } }

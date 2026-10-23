@@ -1,6 +1,6 @@
 # Boarding School Math continuation handoff
 
-Updated: 2026-10-21 KST (Mac continuation; older release evidence retained below)
+Updated: 2026-10-23 KST (Mac continuation; older release evidence retained below)
 
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 
@@ -24,6 +24,14 @@ Never delete or move active sessions, source originals, Drive evidence, uncommit
 - All 18 private item drafts and three calculated SVGs have been written. Structural preflight and a separate exact-rational check of all 18 slots pass, including asset hashes and number-line coordinates. Local review repaired mixed-language copy, negative-numerator notation, an unasked rubric condition, and repeating-decimal acceptance consistency. This is local AI review evidence, not formal item-release approval; every private review/rights flag remains pending and delivery remains locked.
 - Public-exposure regression passes, and current/staged/untracked checks are clean. The new whole-repository assessment-marker history gate remains unverified because this `blob:none` partial clone lacks historical blobs. The audit fails closed without lazy network fetching. A complete local history scan is required before claiming the expanded history gate has passed.
 - Next sequence: complete formal item/rubric/translation/rights and full trilingual item-rendering reviews, then obtain valid immutable item releases before implementing the 18/4 authenticated-delivery adapter. Internal error-signal rationales follow the existing Korean/English scoring contract; Chinese teacher-feedback integration still needs its own localization work. Connect teacher-confirmed priorities to learning resources after those gates; automatic prescription and placement remain disabled.
+
+## Grade 3–10 visual roadmap milestone — 2026-10-23
+
+The user asked for the supplied grade-by-grade plans to become a Boarding School roadmap like the GFIELD visual references, and then asked for Algebra 2-style level comparison and competition diagnosis. `boarding-roadmap.html` now gives a public, interactive Grade 3–10 concept map with four stages per grade and a clearly labeled inferred Grade 9 bridge. It is linked from the home page and learning-plan page. The three level cards compare *criteria* (foundation repair, current-grade stabilization, optional extension); with no reviewed student evidence, the learner's level stays “unmeasured.” Selecting a learning route only previews an explanation and is not saved or assigned.
+
+The competition panel accepts manually checked results from an external paper for SASMO, Math Kangaroo, and grade-appropriate optional AMC 8/10/12 exploration. It validates per-domain attempted/correct counts, caps the sum to the selected paper's format, and reports raw domain counts and percentages with a small-sample warning. This is browser-only, no student name, answer key, official score conversion, award prediction, AIME qualification, school placement, or automatic path change. Existing GFIELD-original Grade 6 competition practice and SASMO source guidance remain separate links; no AMC question delivery or automatic marking was created. Contest source formats were checked against the existing `competition/k8-competition-profiles.js` and the [MAA AMC overview](https://maa.org/student-programs/amc/) on 2026-10-23. The user-provided screenshots served as interaction/visual references, not copied assets or learner evidence. No OCR was needed; scanned source OCR, if later required, should use Mac Apple Vision as requested.
+
+Local QA: six new roadmap unit/browser tests pass, including 375/390/768px and landscape overflow checks, keyboard stage selection, Grade 9 provenance, and competition count validation. Existing `learning-plan-browser.test.cjs` and `foundation-browser.test.cjs` passed 14/14 after links were added. Visual screenshots were reviewed locally. No push, deploy, cloud sync, or private Grade 7 release was performed. Remaining product work is reviewed age/grade-specific original competition assessment content and authorized result storage/teacher confirmation; these are distinct from this manual evidence-intake milestone.
 
 ## User-provided Grade 6 roadmap reference — 2026-10-21
 
