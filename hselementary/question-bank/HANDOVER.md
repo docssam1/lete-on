@@ -1,5 +1,11 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 4: Fold Figure Recheck, Still Locked
+
+- Re-read logical PDF page 25 / printed page 29 at 450dpi and checked Apple Vision OCR against the high-resolution figure. The source asks for ∠ㅅㅇㅈ after folding a rectangular sheet twice. The figure has a printed 32° mark at the left folded point, 46° at the lower-right corner against the rectangle's right side, a right-angle mark at ㅈ, and dashed fold guides from the top edge. Pencil writing was excluded.
+- Corrected the readiness record's stale “40° target” description and recorded the visible marks and target ∠SOJ. The fold/edge correspondences for the two folds still need an independent reconstruction, so no answer is entered. Calculation remains blocked-visual; implementation and public states stay locked. Source structure is now confirmed.
+- Drive QA note: https://drive.google.com/file/d/1hNhetDTelUU_AKvReI-k1H5d3sw3EZRb/view (uploaded to existing `.source-memory` folder and read back). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page image SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; diagram crop SHA-256 `b467052b425fcbbbf8f00eacf94ea1e925fed2e6a1be59f957e322fcb7d3e6c8`.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 6: Equilateral 5cm Transversal Angle
 
 - Re-read logical PDF page 25 / printed page 29 from the SHA-256-matched original at 450dpi. Apple Vision OCR confirmed the question asks for ∠ㄱㅂㅁ in equilateral △ㄱㄴㄷ; the printed 5cm marks run from ㄴ to ㄹ on ㄴㄷ and from ㄷ to ㅁ on ㄷㄱ. The segments ㄱㄹ and ㄴㅁ cross at ㅂ. Pencil marks were excluded.
