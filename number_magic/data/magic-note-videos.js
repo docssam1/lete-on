@@ -4,10 +4,11 @@
    수학은 그림이 정하지 않는다 — 검사기(scripts/check-magic-note-video.js)가 같은 state 로 물체 수를 센다.
    대사는 audio-lines 로 내보내 OmniVoice 생성 목록(scripts/generate-nm-audio.js)에 올린다. 녹음이 없으면 자막만 보인다. */
 (function(root,factory){
-  const api=factory();
+  const measured=typeof module==='object'&&module.exports?require('./voice-release-20261023.json').durations:root.NM_VOICE_DURATIONS||{};
+  const api=factory(measured);
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.NM_MAGIC_NOTE_VIDEOS=api;
-})(typeof window!=='undefined'?window:globalThis,function(){
+})(typeof window!=='undefined'?window:globalThis,function(measured){
 'use strict';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const seg=(t,a,b)=>clamp((t-a)/(b-a),0,1);
@@ -189,5 +190,32 @@ const VIDEOS={
       WORDS.ko.forEach((_,i)=>out.push({key:'video-w'+i,text:{ko:WORDS.ko[i],en:WORDS.en[i],zh:WORDS.zh[i]}}));
       return out;}}
 };
-return {has:id=>!!VIDEOS[id],get:id=>VIDEOS[id]||null,ids:()=>Object.keys(VIDEOS)};
+/* Keep the approved animation in canonical time, stretching each cue interval
+   to fit its measured recording at 0.8x. Touches, badges, captions and scene
+   boundaries use the same monotone mapping, for each language separately. */
+function timed(video,lang){
+  const rate=.8,gap=.18,length=c=>Number(measured[lang]?.[c.text[lang]||c.text.ko])||0;
+  const seconds=x=>Math.round(x*1e6)/1e6;
+  const ready=video.cues.every(c=>length(c)>0),anchors=[[0,0]];
+  if(!ready)return {...video,timingReady:false};
+  video.cues.forEach((c,i)=>{
+    const prev=video.cues[i-1],last=anchors[anchors.length-1];
+    anchors.push([c.t,seconds(i?last[1]+Math.max(c.t-prev.t,length(prev)/rate+gap):c.t)]);
+  });
+  const last=video.cues[video.cues.length-1];
+  anchors.push([video.duration,seconds(anchors[anchors.length-1][1]+Math.max(video.duration-last.t,length(last)/rate+.25))]);
+  const map=(value,from,to)=>{
+    value=clamp(value,0,anchors[anchors.length-1][from]);
+    const exact=anchors.find(a=>Math.abs(a[from]-value)<1e-8);if(exact)return exact[to];
+    const hi=anchors.findIndex(a=>a[from]>value),a=anchors[hi-1],b=anchors[hi];
+    return lerp(a[to],b[to],(value-a[from])/(b[from]-a[from]));
+  };
+  const forward=t=>map(t,0,1),back=t=>map(t,1,0),duration=forward(video.duration);
+  return {...video,lang,duration,timingReady:true,canonicalAt:back,atCanonical:forward,speechDuration:c=>length(c)/rate,
+    cues:video.cues.map(c=>({...c,t:forward(c.t)})),scenes:video.scenes.map(s=>({...s,t0:forward(s.t0),t1:forward(s.t1)})),
+    steps:video.steps.map(s=>({...s,t:forward(s.t)})),touches:Object.fromEntries(Object.entries(video.touches).map(([key,times])=>[key,times.map(forward)])),
+    scatter:video.scatter.map(forward),state:(t,l)=>({...video.state(back(t),l||lang),t:clamp(t,0,duration)})};
+}
+const TIMED=Object.fromEntries(Object.entries(VIDEOS).map(([id,v])=>[id,Object.fromEntries(['ko','en','zh'].map(l=>[l,timed(v,l)]))]));
+return {has:id=>!!VIDEOS[id],get:(id,lang)=>TIMED[id]?.[lang||'ko']||null,ids:()=>Object.keys(VIDEOS)};
 });
