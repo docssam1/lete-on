@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 5-2 Unit 2 Source Record Correction
+
+- Identified the exact source PDF from the ledger SHA-256 and visually matched logical pages 10–17 to printed pages 14–21. The earlier 27 MB scan was a different copy and its page offset does not apply to this ledger.
+- Corrected the Mission 1 (1) source condition, normalized type, independent calculation and answer to match the exact source. The item and all other Unit 2 records remain locked; no runtime generator, learner record, or release gate changed.
+- Verification: exact source SHA-256 matched the ledger; logical pages 10–17 were visually checked against printed pages 14–21; exact-rational recalculation and targeted JSON assertions passed. No merge or deployment in this stage.
+
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
 
 - Rechecked PDF page 9 / printed page 11 from the 450dpi page render and Apple Vision OCR. The text asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. No figure is printed for this item; handwriting and publisher answers were excluded. The hundreds-rounding interval is 1,150–1,249 and the tens-ceiling interval is 1,191–1,200. Their intersection contains 10 natural numbers, 1,191–1,200. Publisher-key verification remains false.
