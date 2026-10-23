@@ -1503,6 +1503,27 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             verifiedVariantCount: 3,
             answerVisualRequired: false,
             answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e3-mission-4-mat-cost",
+            name: "스케치북 묶음 판매처의 필요 비용 비교",
+            sourceItemId: "5-2-u1-e3-mission-4-mat-cost",
+            sourceItemLabel: "Mission 4",
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 7,
+            sourcePrintedPage: 9,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e3-mission-4-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄된 전교생 수, 한 사람당 한 권, 두 판매처의 묶음 수·가격 표와 최저비용 비교 요구를 원문에서 대조했습니다. 각 선택지별로 묶음 수를 올림해 총비용을 구하고 차액을 독립 검산했습니다. 공개 생성 풀에는 원문 수치를 사용하지 않고 표를 포함한 세 개 고정 구성을 연결했습니다. 손글씨와 출판사 정답지는 근거로 사용하지 않았습니다.",
+            generatorKey: "source52ApplicationMissionFourSupplyCost",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
           }]
         }
       ],

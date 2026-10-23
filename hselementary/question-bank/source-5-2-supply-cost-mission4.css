@@ -1,0 +1,15 @@
+.source52-supply-cost-question,
+.source52-supply-cost-solution { color: #17324f; line-height: 1.75; }
+.source52-supply-cost-table { width: min(100%, 620px); margin: 16px auto 20px; border-collapse: collapse; table-layout: fixed; }
+.source52-supply-cost-table caption { margin-bottom: 8px; font-weight: 700; text-align: left; }
+.source52-supply-cost-table th,
+.source52-supply-cost-table td { border: 1px solid #8fa0b3; padding: 10px 12px; text-align: center; overflow-wrap: anywhere; }
+.source52-supply-cost-table thead th { background: #eef3f8; }
+.source52-supply-cost-table tbody th { background: #f7f9fb; }
+.source52-supply-cost-hint { padding: 10px 12px; border-left: 3px solid #6c88a9; background: #f2f6fa; }
+@media (max-width: 480px) {
+  .source52-supply-cost-table { font-size: .94rem; }
+  .source52-supply-cost-table th,
+  .source52-supply-cost-table td { padding: 8px 5px; }
+}
+@media print { .source52-supply-cost-table { break-inside: avoid; } }
