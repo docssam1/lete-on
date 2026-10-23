@@ -35,7 +35,9 @@
       {"checkId": "e3-example-3-rotation-counterexamples", "expression": "right triangle legs (1,h); h=1 ⇒ target 45°, h=√3 ⇒ target 30° or 60°; both satisfy parallel condition", "result": true},
       {"checkId": "e3-example-4-fold-angle-counterexamples", "expression": "rectangle H=1, W=cot24°; M=(1,0); MB slope tanθ with θ=40° or 48°; both A→M and M→B folds possible, giving ∠BOD=64° or 72°", "result": true},
       {"checkId": "e3-mission-1-congruent-isosceles-angle-chase", "expression": "base 66° ⇒ apex 48°; ∠RSN=108° from linear pair with marked 72°; ∠RNS=24°; GN=RN ⇒ ∠GRN=78°; target 78°−48°=30°", "result": true},
-      {"checkId": "e3-mission-3-rotated-isosceles-angle", "expression": "GN=GD; base 65° ⇒ apex ∠NGD=50°; clockwise 45° rotation sends GN to RB; angle between GD and RB is 50°+45°=95°", "result": true}
+      {"checkId": "e3-mission-3-rotated-isosceles-angle", "expression": "GN=GD; base 65° ⇒ apex ∠NGD=50°; clockwise 45° rotation sends GN to RB; angle between GD and RB is 50°+45°=95°", "result": true},
+      {"checkId": "e3-mission-2-square-overlap-area", "expression": "large square [0,14]², C=(7,7); printed 6cm from upper-left fixes Q=(0,6); perpendicular adjacent edge meets bottom at P=(6,14); CQ²=CP²=50 and CQ·CP=0; overlap area=25cm²", "result": true},
+      {"checkId": "e3-mission-5-equal-offset-equilateral-rotation", "expression": "equilateral ABC; points at common distance d from A,B,C on successive sides; 120° rotation cycles ㅁ→ㄹ→ㅂ→ㅁ; inner triangle equilateral, angle 60°", "result": true}
     ]
   },
   "integrity": {
@@ -1155,13 +1157,13 @@
       "originalStructure": "정삼각형의 각 변에서 꼭짓점으로부터 같은 거리의 점을 잡아 안쪽 삼각형을 만들고 표시각을 구합니다.",
       "conditions": ["바깥 삼각형은 정삼각형", "세 점은 각 꼭짓점에서 같은 거리", "안쪽 삼각형의 대응 변이 같음"],
       "visualRequirement": "세 점의 위치와 안쪽 삼각형의 ① 표식이 필요합니다.",
-      "independentCalculation": "세 변에서 같은 비율로 대응하는 점을 잡았으므로 안쪽 삼각형도 120° 회전 대칭을 가지며 각은 60°입니다.",
-      "answerFormula": "threefold symmetry ⇒ 3x=180° ⇒ x=60°",
+      "independentCalculation": "정삼각형의 꼭짓점을 위 A, 왼쪽 아래 B, 오른쪽 아래 C로 둡니다. A에서 AB를 따라 거리 d인 점을 ㅁ, B에서 BC를 따라 거리 d인 점을 ㅂ, C에서 CA를 따라 거리 d인 점을 ㄹ이라 합니다. 120° 회전은 A→C→B→A와 함께 ㅁ→ㄹ→ㅂ→ㅁ을 대응시키므로 안쪽 삼각형 ㅁㅂㄹ은 정삼각형입니다. 따라서 표시각 ㉠은 60°입니다.",
+      "answerFormula": "A,B,C 정삼각형; common offset d; 120° rotation cycles ㅁ→ㄹ→ㅂ→ㅁ ⇒ △ㅁㅂㄹ equilateral ⇒ ∠㉠=60°",
       "independentAnswer": "60°",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "정삼각형의 회전 대칭으로 세 내각이 같음을 확인했습니다.",
+      "singleAnswerCheck": "원문 그림의 같은 거리 표식과 점 배치가 바깥 정삼각형의 120° 회전과 일치합니다. 회전이 안쪽 세 점을 순환 대응시키므로 안쪽 삼각형도 정삼각형이고, 표시각은 하나로 60°입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
@@ -1519,7 +1521,8 @@
       "2026-10-24 인쇄 28쪽 예제 3-4의 인쇄 조건은 ㄱ→ㅁ→ㅂ과 ∠ㅂㅇㄷ이며, 72°는 필기라 제외했습니다. 24° 직사각형에서 두 접기가 모두 가능한 좌표 반례로 목표각 64°와 72°를 만들어 비유일을 확인했습니다.",
       "2026-10-24 인쇄 29쪽 Mission 1의 기존 조건(65°·45° 회전)이 Mission 3에서 잘못 섞였음을 발견했습니다. 실제 조건은 합동 이등변삼각형, 66° 밑각, 교점 72°이며 각도 추적으로 원문 정답 30°를 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1zNtIYqtPweo41VVVcY4gp9UkqcXWCeKv.",
       "2026-10-24 인쇄 29쪽 Mission 3의 그림 방향(시계 방향)과 점 대응을 재확인했습니다. ㄱㄴ=ㄱㄷ과 65° 밑각으로 꼭짓각 50°를 구하고, 회전 45°를 더해 ∠ㄷㅁㅂ=95°로 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 12h10sOg4uZj0PugB1GNsebjJDtYW6BnD.",
-      "2026-10-24 인쇄 29쪽 Mission 2의 왼쪽 위 기준 6cm 치수와 큰 정사각형 중심을 직접 확인해 기존 비유일 판정을 바로잡았습니다. C=(7,7), Q=(0,6), P=(6,14)에서 겹친 직각삼각형의 넓이는 25cm²입니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC."
+      "2026-10-24 인쇄 29쪽 Mission 2의 왼쪽 위 기준 6cm 치수와 큰 정사각형 중심을 직접 확인해 기존 비유일 판정을 바로잡았습니다. C=(7,7), Q=(0,6), P=(6,14)에서 겹친 직각삼각형의 넓이는 25cm²입니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC.",
+      "2026-10-24 인쇄 29쪽 Mission 5의 같은 거리 표식과 세 점의 120° 순환 대응을 좌표 검산으로 확인했습니다. 안쪽 삼각형은 정삼각형이며 ㉠=60°입니다. Drive QA: 1rNBPO8moU-Z7i4lsHFnba14Xb17Petql."
     ]
   }
 }

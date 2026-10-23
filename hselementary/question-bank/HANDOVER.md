@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 5: Equal-Offset Equilateral Triangle
+
+- Rechecked logical PDF page 25 / printed page 29 at 450dpi. The printed text names equilateral △ㄱㄴㄷ and points ㅁ, ㅂ, ㄹ at equal distances from successive vertices on ㄱㄴ, ㄴㄷ, ㄷㄱ. The circled handwritten 60° was excluded.
+- Let A=ㄱ, B=ㄴ, C=ㄷ and common offset d. The 120° rotation cycles A→C→B→A and maps ㅁ→ㄹ→ㅂ→ㅁ. Thus △ㅁㅂㄹ is equilateral, so ㉠=60°. A coordinate model with side 2 and d=1 independently gives three equal inner sides.
+- Strengthened the readiness proof and added a focused calculation assertion. Existing status remains checked/public-candidate; counts remain 23 public candidates, 30 locked, 46 calculation-checked, 8 non-unique. No learner mapping or student data changed.
+- Drive evidence: https://drive.google.com/file/d/1rNBPO8moU-Z7i4lsHFnba14Xb17Petql/view (content read back and verified). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 render SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; focused crop SHA-256 `c6baa815bce4b9fb7c768b0724ac3125b059cfa7a923fa141733fc88ba3e3a77`.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 2: Square-Overlap Area Resolved
 
 - Rechecked logical PDF page 25 / printed page 29 at 450dpi. The two square sides are 10cm and 14cm; the large square's diagonals mark its center C, which is a vertex of the small square. The 6cm dimension runs from the large square's upper-left corner to Q on its left edge. Handwritten circled work was excluded.
