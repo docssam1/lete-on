@@ -107,7 +107,8 @@ const patternPreview = courseConceptMarkup(COURSE23_PILOT_BOOKS[0].lessons[0].ex
 assert.equal((patternPreview.match(/data-cycle-part="full"/g) || []).length, 2);
 assert.equal((patternPreview.match(/data-cycle-part="partial"/g) || []).length, 1);
 assert.match(patternPreview, /다음 마디의 앞 2개/);
-assert.equal((patternPreview.match(/<span><b>/g) || []).length, 10);
+// 2026-10-13 풀컬러 이후 모양 칸은 <b class="shape"><svg …>로 그린다. 칸 수(10)만 센다.
+assert.equal((patternPreview.match(/<span><b[ >]/g) || []).length, 10);
 assert.equal(practiceCount, 350); assert.equal(calculatedAnswerCount, practiceCount);
 assert.equal(trackCount, 91); assert.equal(beatCount, 364);
 console.log(`COURSE23 pilot public audit passed: books=8 lessons=35 tracks=${trackCount} beats=${beatCount} practice=350 uniqueIds=${ids.size} uniqueRefs=${refs.size} calculatedAnswers=${calculatedAnswerCount} publicForbiddenKeys=0`);
