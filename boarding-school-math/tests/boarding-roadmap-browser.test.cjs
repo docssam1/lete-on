@@ -40,10 +40,14 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator(".stage-button").count(), 4);
   assert.match(await page.locator(".level-boundary").innerText(), /미측정/);
   assert.match(await page.locator("#grade-note").innerText(), /검수·공개 전/);
+  assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=7&program=amc8/);
+  assert.equal(await page.locator("#competition-practice-link").getAttribute("href"), "./competition-practice.html?program=amc8");
   await page.getByRole("button", { name: "Grade 9 지도 보기" }).click();
   assert.match(await page.locator("#source-chip").innerText(), /추정안/);
   assert.match(await page.locator("#grade-note").innerText(), /제공된 7·8·10학년/);
   await page.locator("#competition-select").selectOption("amc10");
+  assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=9&program=amc10/);
+  assert.equal(await page.locator("#competition-practice-link").isHidden(), true);
   await page.locator('[data-strand="algebra"][data-field="attempted"]').fill("4");
   await page.locator('[data-strand="algebra"][data-field="correct"]').fill("3");
   await page.locator('[data-strand="geometry"][data-field="attempted"]').fill("2");

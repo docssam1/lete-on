@@ -113,6 +113,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .competition-report-boundary { margin-top: 20px; padding-top: 15px; border-top: 1px solid #d8dee8; }
 .competition-links { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
 .competition-links a { min-height: 44px; padding: 10px 14px; display: inline-flex; align-items: center; border: 1px solid #2456c4; color: #2456c4; background: #fff; font-size: .82rem; font-weight: 850; text-decoration: none; }
+.competition-links a[hidden] { display: none; }
 .boarding-close { color: #fff; background: #182230; }
 .boarding-close .boarding-shell { padding-block: 52px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
 .boarding-close .boarding-kicker { color: #bcd0ff; }

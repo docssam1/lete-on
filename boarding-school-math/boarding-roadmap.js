@@ -95,6 +95,8 @@
     });
     competition = options.some(function (entry) { return entry.id === previous; }) ? previous : (grade >= 6 && grade <= 8 ? "amc8" : "sasmo");
     select.value = competition;
+    $("paper-review-link").href = `./competition-paper-review.html?grade=${grade}&program=${competition}`;
+    $("competition-practice-link").hidden = grade < 6 || grade > 8;
     setText("competition-guidance", `이 학년의 대회 선택은 탐색용입니다. 채점이 확인된 문제지만 입력하고, 각 문항을 아래 네 영역 중 하나에 한 번만 분류하세요. 합계는 ${options.find(function (entry) { return entry.id === competition; }).itemCount}문항 이하로 입력할 수 있습니다.`);
     resetCompetitionReport();
   }
@@ -182,6 +184,7 @@
   $("next-grade").addEventListener("click", function () { if (grade < 10) { grade += 1; stage = 0; render(); } });
   $("competition-select").addEventListener("change", function (event) {
     competition = event.target.value;
+    $("paper-review-link").href = `./competition-paper-review.html?grade=${grade}&program=${competition}`;
     const option = data.competitionOptions(grade).find(function (entry) { return entry.id === competition; });
     setText("competition-guidance", `채점이 확인된 문제지만 입력하세요. 각 문항은 한 영역에만 분류하고 합계는 ${option.itemCount}문항 이하로 입력할 수 있습니다.`);
     resetCompetitionReport();
