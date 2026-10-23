@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-2 Geometry Correction
+
+- Re-read logical PDF page 24 / printed page 28 at 450dpi and checked the printed diagram against Apple Vision OCR; handwriting was excluded.
+- The answer ㄱㄴ=12cm was already correct, but the previous reason incorrectly called ㄱㄴ a square side. The diagram's 60° is between a rotated-square side and the upright square's vertical side. The perpendicular rotated-square side therefore makes 60° with the horizontal base. Together with the two 12cm square sides, this forms an equilateral triangle and proves ㄱㄴ=12cm.
+- Corrected the source conditions and independent explanation in the readiness inventory. No runtime mapping, public release, or student data changed.
+- Drive evidence: https://drive.google.com/file/d/1IQrrZjrUEr4vGxZTNfBDgEu64sFWJBQj/view. Source PDF SHA-256 d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; image SHA-256 15db8d4817b6c5cf4e3c9aa9c501553227b33cb771e81910c37f96bc392136f4.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 25 Mission 5 SSA Correction
 
 - Re-read PDF page 21 (printed page 25) from the SHA-256-matched source using a 450dpi render and Apple Vision OCR; vertex labels and the 7cm/4cm sides were confirmed from the image. Pencil marks were excluded.
