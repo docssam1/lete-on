@@ -3839,7 +3839,7 @@ function renderPersonalPlan(){
   standardBox.innerHTML=`<div class="nm-personal-plan-body"><h3>${lk('현재 진도에서 이어지는 표준 로드맵','Standard roadmap from your current progress','从当前进度开始的标准路线')}</h3><p>${lk('중등은 각 학년의 1학기 연산을 기본 약 2.5개월로 잡아요. 심화를 선택하면 기본 포함 총 약 4개월이에요. 고등 각 과목은 약 3개월이며 실제 학습에 따라 달라져요.','Each middle-school grade’s first-semester arithmetic targets about 2.5 months, or about 4 months including optional deeper study. Each high-school subject targets 3 months. Actual pace may vary.','初中各年级上学期运算基础约2.5个月，选择进阶后合计约4个月。高中每科约3个月，日期随实际学习调整。')}</p>${standardEnds.map(m=>`<p><b>${esc(m.date)}</b> · ${esc(m.key+' · '+m.title)} <small>${esc(m.schoolLabel)}</small></p>`).join('')}<p>${lk('아래에서 표준·속진과 5단계 속도를 비교한 뒤 적용할 수 있어요. 이미 배운 앞부분과 완료 기록은 바꾸지 않아요.','Compare standard or accelerated study and five pace steps below, then apply. Earlier completed work is preserved.','可在下方比较标准、加速与5档速度后应用，已学内容和完成记录保留。')}</p></div>`;
   const guidance=middleStudyGuidanceState();
   if(guidance&&window.NM_MIDDLE_STUDY_GUIDANCE){
-    const host=document.createElement('div');host.id='nmMiddleStudyGuidance';standardBox.querySelector('.nm-personal-plan-body').appendChild(host);
+    const host=document.createElement('div');host.id='nmMiddleStudyGuidance';standardBox.querySelector('.nm-personal-plan-body h3').insertAdjacentElement('afterend',host);
     NM_MIDDLE_STUDY_GUIDANCE.mount(host,{...guidance,lang:S.lang,onChoice:choice=>{
       S.middleStudyGuidanceChoices=S.middleStudyGuidanceChoices||{};S.middleStudyGuidanceChoices[guidance.key]=choice;save();
     },onContinue:()=>{if(guidance.phase==='end')openCourseSheet('C'+({1:32,2:35,3:38}[guidance.grade]));}});
