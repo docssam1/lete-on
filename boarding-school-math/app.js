@@ -11,8 +11,8 @@
     ko: {
       eyebrow: "CURRICULUM & PROBLEM BANK · K–12 PATHWAY",
       heroTitle: "학년별 교과와 문제은행을 한곳에서",
-      heroCopy: "미국 K–12 교과를 중심으로 싱가포르식 숙달, Math Kangaroo, SASMO, AMC 8·10·12를 연결합니다. 학년과 영역을 고르면 진단, 분석, 약점 클리닉, 개념 학습, 맞춤 워크북, 재확인까지의 지원 구조를 확인할 수 있습니다.",
-      viewAs: "자료 보기", student: "학생용", teacher: "교사용", chooseGrade: "미국 학년",
+      heroCopy: "학년과 영역을 고르면 공개된 교과 자료를 볼 수 있습니다. 시험지를 만들려면 교사용 편집 화면을 여세요.",
+      teacherBuilder: "교사용 문제 선택·시험지 편집 →", viewAs: "자료 보기", student: "학생용", teacher: "교사용", chooseGrade: "미국 학년",
       pathwayEyebrow: "LEARNING PATHWAYS", pathwaysTitle: "선택 학년의 교과·경시 경로", programCount: "개 경로",
       domainsTitle: "이 학년에서 다루는 영역", unitsTitle: "단원과 기준", unitLocked: "앵커 스킬 · 문항 준비 중", source: "기준:", audienceEyebrow: "STUDENT & TEACHER MATERIALS", resourcesTitle: "선택한 역할의 자료",
       promotionEyebrow: "DIAGNOSE → RECHECK", promotionTitle: "진단에서 클리닉·개념·워크북·재확인까지",
@@ -25,7 +25,7 @@
     en: {
       eyebrow: "BOARDING SCHOOL MATHEMATICS · K–12 TARGET", heroTitle: "A K–12 pathway with a verified K–8 foundation",
       heroCopy: "The full target connects US K–12 school math, Singapore mastery, Math Kangaroo, SASMO, and AMC 8/10/12. Choose a grade and domain to see the support sequence from diagnosis and analysis through clinic, concept learning, a custom workbook, and recheck.",
-      viewAs: "View as", student: "Student", teacher: "Teacher", chooseGrade: "US grade",
+      teacherBuilder: "Select questions and edit a paper →", viewAs: "View as", student: "Student", teacher: "Teacher", chooseGrade: "US grade",
       pathwayEyebrow: "PROGRAM PATHWAYS", pathwaysTitle: "Pathways for this grade", programCount: "pathways",
       domainsTitle: "Core domains for this grade", unitsTitle: "Grade learning units", unitLocked: "Anchor skill · review pending", source: "Source:", audienceEyebrow: "ROLE-BASED RESOURCES", resourcesTitle: "Resources for this role",
       promotionEyebrow: "DIAGNOSE → RECHECK", promotionTitle: "From diagnosis to clinic, concepts, workbook, and recheck",
@@ -38,7 +38,7 @@
     "zh-Hans": {
       eyebrow: "寄宿学校数学 · K–12 目标", heroTitle: "K–12 全路径与已验证的 K–8 基础",
       heroCopy: "整体目标衔接美国 K–12 校内数学、新加坡精熟学习、袋鼠数学、SASMO 与 AMC 8/10/12。选择年级和领域后，可查看从诊断、分析、弱项辅导、概念学习、个性化练习册到再次确认的支持流程。",
-      viewAs: "选择视图", student: "学生版", teacher: "教师版", chooseGrade: "美国年级",
+      teacherBuilder: "教师选题与试卷编辑 →", viewAs: "选择视图", student: "学生版", teacher: "教师版", chooseGrade: "美国年级",
       pathwayEyebrow: "课程路径", pathwaysTitle: "本年级学习路径", programCount: "条路径",
       domainsTitle: "本年级核心领域", unitsTitle: "年级学习单元", unitLocked: "锚点技能 · 等待审核", source: "依据：", audienceEyebrow: "分角色学习资源", resourcesTitle: "本角色的学习资源",
       promotionEyebrow: "学习诊断 → 学情分析 → 个性化学习方案 → 成效检验", promotionTitle: "从诊断到专项补强、概念学习、练习册与成效检验",

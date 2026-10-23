@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="공개된 Grade 7 비례관계 문항을 고르고 한 장의 A4 시험지로 확인하는 교사용 시안">
+  <title>문제 선택·시험지 편집 | GFIELD Math</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./gfield-tokens.css">
+  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261023-1">
+</head>
+<body class="gfield-ui page-paper-builder">
+  <a class="skip-link" href="#builder-main">본문으로 바로가기</a>
+  <header class="builder-header"><a class="builder-brand" href="./catalog.html?role=teacher">GFIELD <strong>MATH</strong></a><span>교사용 · 시험지 만들기</span><a href="./catalog.html?role=teacher">교과 목록</a></header>
+  <main id="builder-main">
+    <div class="builder-title"><div><p>Grade 7 / 7.RP.A</p><h1>문제 선택·시험지 편집</h1><span>공개된 비례관계 워크북 36문항으로 A4 1장 시안을 만듭니다.</span></div><button id="jump-to-sheet" type="button">시험지 미리보기</button></div>
+    <div class="builder-layout">
+      <aside class="filter-pane" aria-labelledby="filter-title"><h2 id="filter-title">단원 필터</h2><p>7.RP.A · 비례관계</p><div id="strand-filters" class="strand-filters" role="group" aria-label="세부 단원"></div><div class="filter-note">다른 학년과 비공개 진단 문항은 이 시안에 들어 있지 않습니다.</div></aside>
+      <section class="list-pane" aria-labelledby="list-title"><div class="list-toolbar"><div><h2 id="list-title">문제 목록</h2><span id="result-count" role="status" aria-live="polite"></span></div><button id="select-visible" type="button">현재 결과에서 최대 2개 선택</button></div><div class="search-controls"><label for="item-search">문제·단원 검색<input id="item-search" type="search" placeholder="예: 단위율, 그래프, 퍼센트" autocomplete="off"></label><label for="level-filter">수준<select id="level-filter"><option value="all">전체</option><option value="foundation">기초</option><option value="core">기본</option><option value="advanced">심화</option></select></label></div><p id="selection-status" class="selection-status" role="status" aria-live="polite">시험지에 담은 문제 0개</p><div class="item-list-head" aria-hidden="true"><span>선택</span><span>문항 · 단원</span><span>수준</span></div><div id="item-list" class="item-list"></div></section>
+      <aside class="editor-pane" aria-labelledby="preview-title"><div class="preview-panel"><div class="pane-heading"><h2 id="preview-title">문항 미리보기</h2><span id="preview-index">문항 선택</span></div><div id="item-preview" class="item-preview"><p>목록에서 문항을 누르면 여기에 표시됩니다.</p></div></div><div class="paper-settings"><div class="pane-heading"><h2>시험지 편집</h2><span id="selected-count">0 / 2문항</span></div><label for="paper-title">시험명<input id="paper-title" type="text" maxlength="60" value="Grade 7 비례관계 확인 평가"></label><div class="setting-pair"><label for="paper-date">날짜<input id="paper-date" type="text" maxlength="30" placeholder="예: 2026. 10. 23."></label><label for="paper-time">시험 시간<input id="paper-time" type="number" min="1" max="180" value="20"></label></div><div id="selected-items" class="selected-items"><p>목록에서 최대 2문항을 선택하세요.</p></div><p id="builder-message" class="builder-message" role="status" aria-live="polite"></p><button id="print-paper" class="print-button" type="button" disabled>A4 시험지 인쇄·PDF</button><p id="print-status" class="print-status" role="status" aria-live="polite"></p></div></aside>
+    </div>
+    <section id="sheet-section" class="sheet-section" aria-labelledby="sheet-heading"><div class="sheet-heading"><div><p>출력 미리보기</p><h2 id="sheet-heading">A4 시험지</h2></div><span>화면에서 잘림을 확인한 뒤 인쇄하세요.</span></div><div id="print-sheet" class="print-sheet"><div class="sheet-watermark" aria-hidden="true">GFIELD</div><div class="sheet-topline"><strong>GFIELD MATH</strong><span>GRADE 7 · 7.RP.A</span></div><h2 id="sheet-title">Grade 7 비례관계 확인 평가</h2><div class="sheet-fields"><span>이름 <i></i></span><span>날짜 <b id="sheet-date">____________</b></span><span>시간 <b id="sheet-time">20분</b></span><span>총점 <b id="sheet-points">0점</b></span></div><p class="sheet-instruction">문제를 읽고 답을 고르세요. 풀이가 필요한 경우 아래 빈칸을 사용하세요.</p><div id="sheet-questions" class="sheet-questions"><p class="sheet-empty">문제를 선택하면 인쇄할 시험지가 여기 나타납니다.</p></div><div class="sheet-footer"><span>GFIELD Math · 자체 제작 문항</span><span>1 / 1</span></div></div></section>
+  </main>
+  <script src="../geometry/worksheet/render.js"></script>
+  <script src="./learning/grade7-rp-a-unit-workbook.js?v=20260911-1"></script>
+  <script src="./teacher-paper-builder.js?v=20261023-1"></script>
+</body>
+</html>

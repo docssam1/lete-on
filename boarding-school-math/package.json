@@ -8,6 +8,7 @@
     "test:grade7-rp-a-unit-workbook": "node --test tests/grade7-rp-a-unit-workbook.test.cjs",
     "test:boarding-roadmap": "node --test tests/boarding-grade-roadmap.test.cjs tests/boarding-roadmap-browser.test.cjs",
     "test:competition-paper-review": "node --test tests/paper-review-analysis.test.cjs tests/competition-paper-review-browser.test.cjs",
+    "test:teacher-paper-builder": "node --test tests/teacher-paper-builder-browser.test.cjs",
     "test:grade7-ns-a-unit-workbook": "node --test tests/grade7-ns-a-unit-workbook.test.cjs",
     "test:grade7-ns-a-screener-plan": "node --test tests/grade7-ns-a-screener-plan.test.cjs",
     "test:grade7-ns-a-screener-analysis": "node --test tests/grade7-ns-a-screener-analysis.test.cjs",

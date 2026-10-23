@@ -120,10 +120,29 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .boarding-close h2 { margin: 9px 0 0; font-size: clamp(1.5rem, 3vw, 2.1rem); }
 .boarding-close p:not(.boarding-kicker) { max-width: 570px; margin: 10px 0 0; color: #d2dbe8; line-height: 1.6; }
 .boarding-close a { min-height: 48px; padding: 12px 20px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #fff; color: #182230; background: #fff; text-decoration: none; white-space: nowrap; font-weight: 850; }
+body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; background-image: none; font-family: Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; }
+.page-boarding-roadmap h1, .page-boarding-roadmap h2 { font-family: inherit; font-weight: 800; text-wrap: initial; }
+.page-boarding-roadmap .boarding-header { background: #fff; backdrop-filter: none; border-bottom-color: #d8dee8; }
+.page-boarding-roadmap .brand strong { color: #2456c4; }
+.boarding-intro { color: #182230; border-bottom: 1px solid #d8dee8; background: #fff; }
+.boarding-intro .boarding-shell { padding-block: 30px 32px; }
+.boarding-intro .boarding-kicker { color: #2456c4; }
+.boarding-intro h1 { max-width: none; margin-top: 8px; font-size: clamp(1.9rem, 3vw, 2.65rem); line-height: 1.2; letter-spacing: -.035em; }
+.boarding-intro p:not(.boarding-kicker) { max-width: none; margin-top: 8px; color: #566274; font-size: .92rem; line-height: 1.55; }
+.boarding-intro-actions { margin-top: 20px; }
+.boarding-intro-actions a { min-height: 44px; padding: 9px 15px; border-color: #2456c4; color: #fff; background: #2456c4; font-size: .84rem; }
+.boarding-intro-actions a + a { color: #2456c4; background: #fff; }
+.grade-map, .route-section, .competition-section { padding-block: 38px; }
+.level-section { padding-bottom: 38px; }
+.map-head h2 { margin-top: 5px; font-size: clamp(1.35rem, 2.4vw, 1.9rem); }
+.journey-path { display: none; }
+.stage-list { margin-top: 24px; }
+.boarding-kicker { font-size: .72rem; letter-spacing: .02em; }
 .page-boarding-roadmap button:hover:not(:disabled), .page-boarding-roadmap a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .page-boarding-roadmap :focus-visible { outline: 3px solid #2456c4; outline-offset: 3px; }
 .boarding-intro :focus-visible, .boarding-close :focus-visible { outline-color: #bcd0ff; }
 @media (max-width: 850px) { .boarding-header nav { gap: 12px; }.journey-layout, .route-layout, .competition-layout { grid-template-columns: 1fr; }.journey-side, .competition-report { border-left: 0; border-top: 1px solid #d8dee8; }.journey-side ul { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }.journey-side li { border-bottom: 1px solid #d8dee8; }.boarding-close .boarding-shell { align-items: start; flex-direction: column; } }
 @media (max-width: 600px) { .boarding-shell { width: min(100% - 32px, 1180px); }.boarding-header { padding: 10px 16px; gap: 12px; }.boarding-header nav { gap: 8px; }.boarding-header nav a { font-size: .72rem; }.boarding-header nav a:last-child { display: none; }.boarding-intro .boarding-shell { padding-block: 54px; }.boarding-intro h1 { font-size: clamp(2.35rem, 10vw, 3.5rem); }.map-head { align-items: start; flex-direction: column; gap: 10px; }.map-head > p { max-width: none; }.grade-track { padding: 14px 12px; }.grade-buttons { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; }.grade-buttons::before { display: none; }.grade-button { min-height: 54px; border: 1px solid #d8dee8; }.grade-button::before { display: none; }.grade-button[aria-pressed="true"] { border-color: #2456c4; background: #eaf0ff; }.journey-main, .journey-side { padding: 20px; }.journey-heading { flex-wrap: wrap; }.stage-list, .level-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }.journey-path { display: none; }.stage-list { margin-top: 20px; }.stage-button { min-height: 92px; }.journey-side ul { grid-template-columns: 1fr; gap: 0; }.level-grid { display: block; }.level-grid article { border-right: 0; border-bottom: 1px solid #d8dee8; }.level-grid article:last-child { border-bottom: 0; }.level-grid p { min-height: 0; }.route-button { min-height: 80px; }.competition-fields { grid-template-columns: 1fr; }.domain-header, .domain-row { grid-template-columns: minmax(0,1fr) 76px 76px; gap: 7px; }.domain-row strong { font-size: .76rem; }.boarding-close a { width: 100%; } }
+@media (max-width: 600px) { .boarding-intro .boarding-shell { padding-block: 22px 24px; }.boarding-intro h1 { font-size: 1.9rem; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 @media print { .boarding-header, .boarding-intro-actions, .grade-track, .journey-actions, .route-buttons, .competition-form, .competition-links, .boarding-close, .site-footer { display: none !important; }.boarding-intro, .boarding-close { color: #182230; background: #fff; }.boarding-intro .boarding-shell { padding-block: 12px; }.boarding-intro h1, .boarding-intro h1 span { color: #182230; }.boarding-intro p:not(.boarding-kicker) { color: #566274; }.grade-map, .level-section, .route-section, .competition-section { padding-block: 12px; }.journey-layout, .route-layout, .competition-layout { display: block; }.journey-side { border: 1px solid #d8dee8; }.route-explanation { margin-top: 12px; } }
