@@ -606,6 +606,9 @@ node golden-bell-style-audit.mjs             # GOLDEN_BELL_STYLE_OK (색·회사
   - 2026-10-13 변경 전후 비교에서 같은 지점에서 실패한 것도 더 있다: `golden-bell-book03-guided-audit.mjs`("unit-area-shapes: concept check missing"),
     `golden-bell-cover-picker-audit.mjs`, `golden-bell-progress-label-browser-audit.mjs`("book-01/digital-turn-flip/1440"),
     `golden-bell-book01-source-browser-audit.mjs`. 비공개 답안 파일이 필요한 검사(balance·grading·selected-print 등)는 여기서 못 돌린다.
+- **복구 검사 두 개의 처지(2026-10-23 확인)**:
+  - `golden-bell-recovery-audit.mjs`는 `golden-bell-recovery-data.js`의 복구 묶음을 비공개 답과 맞춰 본다. 지금 그 목록이 **비어 있어**(복구했던 문항은 모두 원본 대조 묶음으로 옮겨짐) 확인할 문항이 없다 → `FIELDS_PRIVATE_ANSWER_BANK`에 `{"books":{}}` 파일을 주면 `books=0 added=0`으로 통과한다. 복구 묶음을 다시 쓰게 되면 그때는 진짜 답 파일이 필요하다.
+  - `golden-bell-book07-recovery-audit.mjs`는 예전 복구 방식의 입력 파일(`FIELDS_GOLDEN_BELL_BOOK07_NORMALIZED`, 원장 PC 경로가 든 근거 기록)을 검사한다. 그 네 문제(22쪽 확인 04 세 개, 38쪽 확인 03)는 7권 원본 대조 때 `book07-src-s22-04-1~3`·`book07-src-s38-03-1`로 다시 들어갔고, 예전 id(`book07-recovery-…`)는 데이터에 없다. 그래서 이 환경에서는 같은 계산(수열의 몇 번째 수, 쿠폰 교환이 멈출 때까지 더하기)을 **지금 문항의 그림 데이터와 DB 답에 직접** 해서 4개 모두 일치함을 확인했다(2026-10-23).
 - 화면: `tools/golden-bell-book04/capture-lessons.mjs`(사용법은 파일 첫 줄). `playwright-core`가 설치된 폴더에 복사해 실행.
   콘솔 오류 0건이어야 하고, 찍은 그림을 원본 쪽 이미지와 나란히 놓고 눈으로 비교한다.
 - 인쇄: `tools/golden-bell-book04/print-lessons.mjs` → PDF를 이미지로 바꿔 확인.
