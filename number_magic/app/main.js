@@ -487,7 +487,7 @@ if(guardianAuth){
       const details=$('.nm-closet-settings');if(details)details.open=true;
     }
     renderIdCard();renderNotifyCard();
-    refreshEntryContinue();
+    refreshEntryContinue();renderConsentBanner();
   };
   /* ready()가 늦게 끝나 한 번 더 그릴 때, 이미 입력 중인 이메일·인증번호·비밀번호 칸을 지우지 않는다.
      (인증 성공·로그아웃 같은 실제 변화는 onChange가 따로 그린다.) */
@@ -505,9 +505,31 @@ if(membership&&guardianAuth){
     const changed=applyAdminSettings();
     if(changed){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}syncAmount();}
     renderIdCard();renderAccountCard();renderNotifyCard();
-    refreshEntryContinue();
+    refreshEntryContinue();renderConsentBanner();
     if(S.view==='courseroad')renderPersonalPlan();
   });
+}
+/* 동의서 갱신 안내(2026-10-22) — 번호는 있지만 현재 동의서 버전에 동의하지 않은 보호자에게
+   맨 위 배너로 알린다. 갱신 전에는 체험 밖 학습과 기록 저장이 멈추므로 이유를 숨기지 않는다.
+   양식이 이미 보이는 보호자 화면·옷장에서는 배너를 내린다. */
+function renderConsentBanner(){
+  const old=document.getElementById('nmConsentBanner');
+  const contact=membership&&membership.snapshot().contact;
+  const need=!REVIEW&&booted&&!!membership&&!!guardianAuth?.peek()&&!(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())
+    &&contact?.registered===true&&!membership.contactReady()&&!guardianEntry&&S.view!=='closet';
+  if(!need){if(old)old.remove();document.documentElement.style.removeProperty('--nm-consent-h');return;}
+  const lk=(k,e,z)=>S.lang==='ko'?k:S.lang==='en'?e:z;
+  const bar=old||document.createElement('div');
+  bar.id='nmConsentBanner';bar.className='nm-consent-banner';bar.setAttribute('role','region');
+  bar.setAttribute('aria-label',lk('개인정보 동의 갱신 안내','Privacy consent renewal','个人信息同意更新提示'));
+  bar.innerHTML=`<p>${lk('개인정보 동의서가 새로 바뀌었어요. 동의를 갱신해야 학습 기록이 저장돼요.','The personal data notice has changed. Renew consent to keep saving learning records.','个人信息同意书已更新。更新同意后才能保存学习记录。')}</p><button type="button" class="nm-btn" id="nmConsentRenew">${lk('동의 갱신하기','Renew consent','更新同意')}</button>`;
+  if(!old)document.body.appendChild(bar);
+  document.documentElement.style.setProperty('--nm-consent-h',(bar.offsetHeight+12)+'px');
+  bar.querySelector('#nmConsentRenew').onclick=()=>{
+    guardianContactEditing=false;S.view='closet';save();render();
+    const details=$('.nm-closet-settings');if(details)details.open=true;
+    $('#nm-guardian-slot')?.scrollIntoView({block:'start'});
+  };
 }
 function applyAdminSettings(){
   const record=membership&&membership.snapshot();const p=record&&record.settings;
@@ -1060,6 +1082,8 @@ function render(){
   if(S.onboarded)updateWeeklyDigest();                    // 알림용 주간 요약(변화 있을 때만 저장)
   window.NM_CURRENT_UNIT=S.unit||null;                    // widgets.js가 "N-* 유닛인가"를 판정할 때 씀(오답 소리·표정 등, 유아 전용 반응)
   if(townCleanup){townCleanup();townCleanup=null;}
+  window.NM_MAGIC_NOTE_PLAYER?.close();
+  renderConsentBanner();
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
   if(wsHelperId&&!guardianEntry){
     app.innerHTML='<div id="screen"></div>';
@@ -4661,6 +4685,13 @@ function startPlacement(){
     S._diag=ui.initial();
     if(previous)Object.assign(S._diag.selection,JSON.parse(JSON.stringify(previous)));
     if(paths)Object.assign(S._diag.selection,paths.normalize(previous||previousConfig));
+    // A grade entered earlier (sign-up or profile) fills the setup, so the matching scope is preselected.
+    const sel=S._diag&&S._diag.selection,sa=S.schoolAge;
+    if(sel&&sa&&sa.entryYear&&!sel.profileGrade&&!sel.entryYear){
+      const at=new Date(Number.isFinite(sa.setAt)?sa.setAt:Date.now());
+      sel.entryYear=sa.entryYear;sel.profileAt=(Number.isNaN(at.getTime())?new Date():at).toISOString().slice(0,10);
+      if(sa.birthYear&&!sel.birthYear)sel.birthYear=sa.birthYear;
+    }
   }
   // Re-entry resumes a compatible fixed plan/setup; it never regenerates
   // answered questions or reinterprets a legacy adaptive run.
@@ -5398,6 +5429,36 @@ function screenTitle(){
 /* 3D 모드 선택 화면(2026-09-26, 원장 "학습지 모드, 게임모드 이런것들 고르는 화면서 3d로 제대로 구현") — app/title3d/title3d.js.
    정상 로딩 중에는 옛 2D 타이틀을 숨기고 준비 화면만 보인다. 고르면 2D 버튼을 그대로 누른다 —
    이동 규칙(이어서 모험·진단·게임·학습지 …)이 한 곳(위 onclick)에만 있게. WebGL 이 없을 때만 2D 를 드러낸다. */
+/* 모험 책상 배경음 — promo 미리보기(showreel-15s-vertical)와 같은 음악을 뽑아 반복한다.
+   브라우저가 자동 재생을 막으면 책상을 처음 누를 때 시작한다. 끈 선택은 이 기기에 기억한다. */
+const DESK_MUSIC_KEY='nm_desk_music_v1';
+function mountDeskMusic(box){
+  let on=true;try{on=localStorage.getItem(DESK_MUSIC_KEY)!=='off';}catch(e){}
+  const audio=new Audio('assets/audio/desk/promo-ambience.m4a?v=20261022');
+  audio.loop=true;audio.volume=0;audio.preload='auto';
+  // Pause during narration (also works when iOS ignores volume writes).
+  // Guard pending play promises so leaving the desk cannot restart its music.
+  let fade=0,disposed=false,pending=false,playRun=0,needsGesture=false;
+  const blocked=()=>disposed||!on||document.hidden||!!window.NM_VOICE?.isSpeaking();
+  const fadeIn=()=>{clearInterval(fade);let step=0;fade=setInterval(()=>{if(blocked()){stop();return;}step++;audio.volume=Math.min(.35,step*.035);if(step>=10)clearInterval(fade);},60);};
+  const stop=()=>{playRun++;pending=false;clearInterval(fade);audio.pause();audio.volume=0;};
+  const start=()=>{if(blocked()||needsGesture||pending||!audio.paused)return;const ticket=++playRun;pending=true;audio.volume=0;Promise.resolve(audio.play()).then(()=>{if(ticket!==playRun)return;if(blocked()){stop();return;}pending=false;fadeIn();}).catch(()=>{if(ticket===playRun){pending=false;needsGesture=true;}});};
+  const lk=(k,e,z)=>S.lang==='ko'?k:S.lang==='en'?e:z;
+  const btn=document.createElement('button');btn.type='button';btn.className='nm-desk-music';
+  btn.setAttribute('aria-label',lk('배경음','Background music','背景音乐'));
+  const sync=()=>{btn.textContent=on?'♪':'×♪';btn.setAttribute('aria-pressed',String(on));btn.setAttribute('aria-label',on?lk('배경음 끄기','Turn off background music','关闭背景音乐'):lk('배경음 켜기','Turn on background music','开启背景音乐'));};
+  btn.onclick=()=>{on=!on;needsGesture=false;try{localStorage.setItem(DESK_MUSIC_KEY,on?'on':'off');}catch(e){}sync();if(on)start();else stop();};
+  sync();box.appendChild(btn);
+  const first=e=>{if(e.target!==btn){needsGesture=false;start();}};
+  const visible=()=>{if(document.hidden)stop();else start();};
+  box.addEventListener('pointerdown',first);box.addEventListener('keydown',first);
+  document.addEventListener('visibilitychange',visible);
+  const speechWatch=setInterval(()=>{if(blocked()){if(!audio.paused||pending)stop();}else start();},150);
+  start();
+  return ()=>{disposed=true;clearInterval(speechWatch);stop();audio.removeAttribute('src');audio.load();
+    box.removeEventListener('pointerdown',first);box.removeEventListener('keydown',first);
+    document.removeEventListener('visibilitychange',visible);btn.remove();};
+}
 function mountTitle3DInto(scr, summary, badge){
   const card=scr.querySelector('.nm-title');
   if(!card)return;
@@ -5433,8 +5494,8 @@ function mountTitle3DInto(scr, summary, badge){
     card.classList.remove('is-3d-pending');
     card.classList.add('is-3d-covered');
     card.setAttribute('aria-hidden','true');
-    const prev=townCleanup;
-    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); box.remove(); };
+    const prev=townCleanup,stopMusic=mountDeskMusic(box);
+    townCleanup=()=>{ if(prev)prev(); stopMusic(); ctl.dispose(); box.remove(); };
   }).catch(revealFallback);
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
@@ -6751,6 +6812,9 @@ function stepDiscover(body,u){
     </div>${histHtml}`:(comic?histHtml:'');   /* 이야기 훅이 없는 유닛(N-02·03·05 등)도 만화는 보인다(2026-10-05) */
   /* 이 개념과 짝인 실험실이 있으면(UNIT_LABS) 노트 하단에서 바로 연다.
      두 개 이상 걸린 유닛도 있어(M-15·C-05) 실험실마다 제 이름으로 버튼을 낸다. */
+  /* 마법 노트 짧은 영상(data/magic-note-videos.js, 2026-10-23) — 등록된 유닛만. 글 단계는 그대로 둔다. */
+  const videoBtnHtml=window.NM_MAGIC_NOTE_VIDEOS&&NM_MAGIC_NOTE_VIDEOS.has(u.id)&&window.NM_MAGIC_NOTE_PLAYER?.available(u.id,S.lang)
+    ?`<button class="nm-btn full nm-mnv-open" id="mnvOpen" type="button">▶ ${S.lang==='ko'?'영상으로 보기':S.lang==='en'?'Watch the video':'看视频'}</button>`:'';
   const unitLabs=unitLabsFor(u.id);
   const labLead=S.lang==='ko'?'실험실에서 직접 해보기':S.lang==='en'?'Try it in the lab':'去实验室动手试试';
   const labBtnHtml=unitLabs.length
@@ -6786,11 +6850,13 @@ function stepDiscover(body,u){
     </div>`:'';
   body.innerHTML=`<div class="nm-card${kid&&!living?' kid-note':''}${mzStory?' nm-mzu-card':''}${living?' nm-live-card':''}">
     ${kid&&!living?`<div class="nm-kid-hero">${u.icon?iconArt(u.icon):'📓'}</div>`:''}
-    ${living?`<div id="livingLesson"></div>${kid&&comic?histHtml:''}${!kid&&!strategy&&st&&st.history?`<details class="nm-live-history"><summary>${S.lang==='ko'?(kid?'수 이야기 더 보기':'이 교구의 수학 이야기'):S.lang==='en'?'The story behind the pieces':'教具里的数学故事'}</summary><p>${L(st.history)}</p></details>`:''}`:mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
+    ${living?`<div id="livingLesson"></div>${kid&&comic?histHtml:''}${!kid&&!strategy&&st&&st.history?`<details class="nm-live-history"><summary>${S.lang==='ko'?(kid?'수 이야기 더 보기':'이 교구의 수학 이야기'):S.lang==='en'?'The story behind the pieces':'教具里的数学故事'}</summary><p>${L(st.history)}</p></details>`:''}`:mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}${videoBtnHtml}<div id="cstages"></div>
     ${!strategy?`<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>`:''}
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   /* 3D 대표 그림을 직접 띄워 움직인다(app/hero3d/live.js, 원장 "동작도 하는거야?" → "1"). 3D 라이브러리는 이 단계에서만
      불러온다(약 2MB — 첫 화면에 싣지 않는다). 못 띄우면 정지 그림이 그대로 남는다. */
+  const mnvBtn=body.querySelector('#mnvOpen');
+  if(mnvBtn)mnvBtn.onclick=()=>{stopVoice();NM_MAGIC_NOTE_PLAYER.open(u.id,{lang:S.lang,onTry:()=>{const n=$('#toCheck');if(n&&!n.disabled)n.click();}});};
   const heroFig=body.querySelector('.nm-mzu-hero');
   if(heroFig) import('./hero3d/live.js').then(m=>m.mount(heroFig,u.id,S.lang)).catch(()=>{});
   const livingHost=body.querySelector('#livingLesson');
@@ -8046,20 +8112,29 @@ function renderGuardianContact(slot,lk){
     slot.innerHTML=`<div class="nm-idcard"><p role="status">${state.error?lk('회원 정보를 불러오지 못했어요. 연결을 확인하고 다시 시도해 주세요.','Could not load membership. Check your connection and retry.','无法加载会员信息，请检查网络后重试。'):lk('가입 정보를 확인하고 있어요…','Checking registration…','正在确认注册信息…')}</p><button class="nm-btn" id="nmGuardContactRetry">${lk('다시 확인','Retry','重试')}</button><button class="nm-btn ghost" id="nmGuardOut">${lk('로그아웃','Sign out','退出')}</button></div>`;
     $('#nmGuardContactRetry').onclick=()=>membership.refresh(true);$('#nmGuardOut').onclick=logout;return true;
   }
-  slot.innerHTML=`<div class="nm-idcard nm-guard-card"><h3 class="nm-idcard-t">${lk('보호자 휴대폰 번호 · 가입 완료','Guardian phone · Complete registration','监护人手机号 · 完成注册')}</h3><p>${lk('이메일은 학생별로 구분하고, 형제는 같은 보호자 전화번호를 사용할 수 있어요.','Each learner uses a separate email. Siblings may share a guardian phone number.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。')}</p>
-    <form id="nmGuardContactForm" novalidate><div class="nm-guard-field"><label for="nmGuardPhone">${lk('보호자 휴대폰 번호','Guardian mobile number','监护人手机号')}</label><input id="nmGuardPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="13" placeholder="010-0000-0000"></div>
-    <label class="nm-notify-consent"><input id="nmGuardPhoneConsent" type="checkbox" required><span>${lk('보호자 연락·학습 안내를 위한 전화번호 수집·이용에 동의합니다.','I agree to collection and use of this number for guardian contact and learning guidance.','同意为监护人联系和学习指导收集、使用该号码。')}</span></label>
-    <label class="nm-notify-consent"><input id="nmGuardSmsConsent" type="checkbox"><span>${lk('학습지·진도 문자 안내를 받겠습니다. (선택)','Send me worksheet and progress texts. (Optional)','接收学习单和进度短信。（可选）')}</span></label>
-    <button class="nm-btn" id="nmGuardContactSave" type="submit">${lk('저장하고 가입 완료','Save and complete registration','保存并完成注册')}</button><button class="nm-btn ghost" id="nmGuardOut" type="button">${lk('로그아웃','Sign out','退出')}</button>
+  // registered = a phone is already on file (current or legacy); ready = consent is on the current notice version.
+  const registered=state.contact?.registered===true,ready=membership.contactReady(),masked=state.contact?.phoneMasked||'';
+  const title=ready?lk('휴대폰·문자 동의 변경','Change phone or text consent','修改手机号或短信同意')
+    :registered?lk('개인정보 동의 갱신','Renew privacy consent','更新个人信息同意'):lk('보호자 휴대폰 번호 · 가입 완료','Guardian phone · Complete registration','监护人手机号 · 完成注册');
+  const intro=registered&&!ready
+    ?lk('개인정보 수집·이용 동의서가 새로 마련됐어요. 동의를 갱신하면 학습 기록 저장이 다시 이어져요.','We have a new personal data notice. Renew consent to keep saving learning records.','个人信息同意书已更新。更新同意后即可继续保存学习记录。')
+    :lk('이메일은 학생별로 구분하고, 형제는 같은 보호자 전화번호를 사용할 수 있어요.','Each learner uses a separate email. Siblings may share a guardian phone number.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。');
+  const keep=registered&&masked?`<p class="nm-privacy-note">${lk(`번호를 비워 두면 지금 번호(${masked})를 그대로 써요.`,`Leave it blank to keep the current number (${masked}).`,`留空则继续使用当前号码（${masked}）。`)}</p>`:'';
+  slot.innerHTML=`<div class="nm-idcard nm-guard-card"><h3 class="nm-idcard-t">${title}</h3><p>${intro}</p>
+    <form id="nmGuardContactForm" novalidate><div class="nm-guard-field"><label for="nmGuardPhone">${lk('보호자 휴대폰 번호','Guardian mobile number','监护人手机号')}</label><input id="nmGuardPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="13" placeholder="${esc(registered&&masked?masked:'010-0000-0000')}">${keep}</div>
+    ${window.NM_PRIVACY?window.NM_PRIVACY.fields(S.lang,"nmContact",true,{current:ready}):""}
+    <button class="nm-btn" id="nmGuardContactSave" type="submit">${registered?lk('동의 저장','Save consent','保存同意'):lk('저장하고 가입 완료','Save and complete registration','保存并完成注册')}</button><button class="nm-btn ghost" id="nmGuardOut" type="button">${lk('로그아웃','Sign out','退出')}</button>
     <p class="nm-idcard-msg" id="nmGuardContactMsg" role="status" aria-live="polite"></p></form></div>`;
   $('#nmGuardOut').onclick=logout;
+  // Only an edit of a consent on the current notice shows the saved text choice; new and renewed consent start unchecked.
+  if($('#nmContactSms'))$('#nmContactSms').checked=ready&&state.contact?.smsConsent===true;
   $('#nmGuardContactForm').onsubmit=async event=>{
     event.preventDefault();const button=$('#nmGuardContactSave'),msg=$('#nmGuardContactMsg');if(button.disabled)return;
-    const phone=$('#nmGuardPhone').value.replace(/\D/g,'');
-    if(!/^01\d{8,9}$/.test(phone)){msg.textContent=lk('휴대폰 번호를 확인해 주세요.','Check the mobile number.','请检查手机号。');return;}
-    if(!$('#nmGuardPhoneConsent').checked){msg.textContent=lk('전화번호 수집·이용 동의를 확인해 주세요.','Please confirm phone collection consent.','请确认同意收集和使用手机号。');return;}
+    const phone=$('#nmGuardPhone').value.replace(/\D/g,'')||(registered?null:'');
+    if(phone!==null&&!/^01\d{8,9}$/.test(phone)){msg.textContent=lk('휴대폰 번호를 확인해 주세요.','Check the mobile number.','请检查手机号。');return;}
+    if(!window.NM_PRIVACY||!$('#nmContactPrivacy')?.checked||!$('#nmContactGuardian')?.checked){msg.textContent=lk('필수 개인정보 동의와 본인·법정대리인 확인을 선택해 주세요.','Confirm required privacy consent and your learner/guardian role.','请选择必选隐私同意及本人或法定代理人确认。');return;}
     button.disabled=true;guardianContactEditing=false;
-    try{await membership.registerContact(phone,true,$('#nmGuardSmsConsent').checked);}
+    try{await membership.registerContact(phone,true,$('#nmContactSms').checked,{version:window.NM_PRIVACY.VERSION,guardianConsent:$('#nmContactGuardian').checked});}
     catch(e){const current=$('#nmGuardContactMsg');if(current)current.textContent=lk('저장하지 못했어요. 연결을 확인하고 다시 시도해 주세요.','Could not save. Check the connection and retry.','无法保存，请检查网络后重试。');}
     finally{button.disabled=false;}
   };
@@ -8138,6 +8213,7 @@ function renderGuardianCard(){
       catch(e){toast(lk('로그인 정보를 지우지 못했어요. 이 브라우저의 사이트 데이터를 확인해 주세요.','Could not remove sign-in. Check this browser’s site data.','无法清除登录信息，请检查浏览器的网站数据。'),false);}
       // onChange가 즉시 갱신한다. 늦은 로그아웃 응답이 새 로그인 입력을 지우지 않는다.
     };
+    const notice=document.createElement('a');notice.className='nm-btn ghost';notice.href='privacy.html?lang='+encodeURIComponent(S.lang);notice.target='_blank';notice.rel='noopener';notice.textContent=lk('개인정보 수집·이용 동의서','Personal data notice','个人信息同意书');slot.firstElementChild.appendChild(notice);
     const contact=membership&&membership.snapshot().contact;
     if(contact&&contact.registered){
       const line=document.createElement('p');line.textContent=(contact.phoneMasked||'')+' · '+(contact.smsConsent?lk('학습지 문자 수신 동의','Worksheet texts enabled','已同意接收学习单短信'):lk('문자 수신 미동의','Worksheet texts disabled','未同意接收短信'));slot.firstElementChild.appendChild(line);
@@ -8158,6 +8234,7 @@ function renderGuardianCard(){
     </form></section>
     <section class="nm-guard-sec" aria-labelledby="nmGuardOtpTitle"><h4 id="nmGuardOtpTitle">${lk('처음이거나 비밀번호를 잊었어요','First visit or forgot password','首次使用或忘记密码')}</h4>
     <p>${lk('위 이메일로 인증번호를 받아 본인 확인을 한 뒤, 새 비밀번호를 만들어요.','Get a code at the email above, verify it, then create a new password.','通过上方邮箱获取验证码并验证后，再设置新密码。')}</p>
+    <p class="nm-privacy-note">${lk('개인정보 수집·이용 동의는 이메일 인증 뒤 휴대폰 번호 단계에서 받아요.','Personal data consent is collected at the phone step after email verification.','邮箱验证后，在手机号步骤中征求个人信息同意。')}</p>
     <div class="nm-idcard-row"><button class="nm-btn" id="nmGuardSend">${lk('인증 메일 받기','Send verification email','发送验证邮件')}</button></div>
     <div class="nm-guard-field"><label for="nmGuardToken">${lk('메일 인증번호','Email verification code','邮箱验证码')}</label>
     <div class="nm-idcard-row"><input id="nmGuardToken" inputmode="numeric" autocomplete="one-time-code" maxlength="12"><button class="nm-btn" id="nmGuardVerify">${lk('이메일 인증','Verify email','验证邮箱')}</button></div></div>

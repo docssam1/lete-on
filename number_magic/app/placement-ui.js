@@ -136,14 +136,19 @@
       const actual=calendar&&calendar.profile(s,now);
       const profileReady=!!actual;
       const bandOf=x=>x.kind==='foundation'?'foundation':Number(x.course.slice(1))<29?'elementary':Number(x.course.slice(1))<38?'middle':'high';
-      if(!s.studyBand)s.studyBand=Number(s.age)<8?'foundation':Number(s.age)<14?'elementary':Number(s.age)<17?'middle':'high';
+      // The actual school grade picks the matching arithmetic scope by default
+      // (grade → course table in main.js); an explicit topic choice always wins.
+      const gradeKey=/^h/.test(s.profileGrade||'')?'hi':s.profileGrade;
+      const gradeCourse=gradeKey&&gradeKey!=='pre'&&window.NM_PLACEMENT_GRADES?(window.NM_PLACEMENT_GRADES().find(x=>x.key===gradeKey)||{}).course:null;
+      const gradeStage=gradeCourse==null?null:stages.filter(x=>x.kind!=='foundation'&&Number(x.course.slice(1))<=gradeCourse).pop()||null;
+      if(!s.studyBand)s.studyBand=gradeStage?bandOf(gradeStage):Number(s.age)<8?'foundation':Number(s.age)<14?'elementary':Number(s.age)<17?'middle':'high';
       const books=window.NM_PLACEMENT_BOOKS;
       if(s.route==='book'&&!s.completedBooks.length)s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});
       const bookChoices=completedBookChoices(s);
       const booksReady=s.route==='book'&&s.completedBooks.length>0&&s.completedBooks.length<=8&&bookChoices.length===s.completedBooks.length;
       const single=s.route==='book'&&booksReady&&bookChoices.length===1?bookChoices[0]:null;
       const resolved=single&&books?books.resolve(single.row.series,single.row.step,s.progress,single.row.editionId):null;
-      const candidate=s.route==='book'?(resolved&&resolved.baselineId||null):s.route==='unlearned'?'f-count5':s.baselineId||stages.find(x=>bandOf(x)===s.studyBand)?.id;
+      const candidate=s.route==='book'?(resolved&&resolved.baselineId||null):s.route==='unlearned'?'f-count5':s.baselineId||(gradeStage&&bandOf(gradeStage)===s.studyBand?gradeStage.id:null)||stages.find(x=>bandOf(x)===s.studyBand)?.id;
       const mayChoose=profileReady&&(s.route==='book'?booksReady:!!candidate);
       // A paper uses either one selected book or an explicit mix of supported
       // completed books. A manual app scope overrides that book choice.
@@ -157,6 +162,7 @@
       if(focus&&!s.baselineId){try{bookPlan=focus.series==='mixed'?core.buildBooks(focus.sources,d.seed):core.buildBook(focus.series,focus.course,d.seed);}catch(_){bookPlan=null;}}
       const baseline=bookPlan&&profileReady?stages.find(x=>x.id===bookPlan.baseline.id):stages.find(x=>x.id===(mayChoose?(s.baselineId||(s.route==='school'?null:candidate)):''));
       const scopeText=bookPlan?l(bookPlan.book.title):baseline?stageLabel(baseline):'';
+      const gradePicked=s.route==='age'&&!s.baselineId&&gradeStage&&baseline&&baseline.id===gradeStage.id;
       const ages=[['',t('현재 나이 선택','Select current age','选择目前年龄')],...Array.from({length:16},(_,i)=>[String(i+4),t((new Date(+new Date(now)+9*3600000).getUTCFullYear()-(i+4)+1)+'년생 · '+(i+4)+'세', 'Born '+(new Date(+new Date(now)+9*3600000).getUTCFullYear()-(i+4)+1), (i+4)+'岁')])];
       const grades=[['pre',t('취학 전','Preschool','学龄前')],...Array.from({length:6},(_,i)=>['e'+(i+1),t('초'+(i+1),'Grade '+(i+1),'小学'+(i+1)+'年级')]),...Array.from({length:3},(_,i)=>['m'+(i+1),t('중'+(i+1),'Grade '+(i+7),'初中'+(i+1)+'年级')]),...Array.from({length:3},(_,i)=>['h'+(i+1),t('고'+(i+1),'High school '+(i+1),'高中'+(i+1)+'年级')])];
       const schoolGrades=grades.filter(x=>x[0]!=='pre');
@@ -203,7 +209,7 @@
         !s.age?t('나이를 골라 주세요.','Choose the current age.','请选择目前年龄。'):'';
       const schoolFields='';
       const profileFields='<section class="pd-profile"><h2>'+t('1. 아이의 현재 정보','1. About the learner','1. 学生目前信息')+'</h2><div class="pd-profile-fields"><label>'+t('출생연도 · 필수','Birth year · required','出生年份 · 必填')+'<select id="pdAge" required>'+options(ages,s.age)+'</select></label><label>'+t('현재 학교 학년 · 필수','Actual school grade · required','目前学校年级 · 必填')+'<select id="pdGrade" required>'+option('',t('학년 선택','Choose grade','选择年级'),s.profileGrade)+options(grades,s.profileGrade)+'</select></label></div><p class="pd-note">'+t('나이는 한국 나이로 표시해요. 실제 학년과 배우는 수학 진도는 따로 봅니다.','Age labels use Korean year-count age. Actual grade and studied math are separate.','年龄按韩国虚岁显示。实际年级与数学进度分开记录。')+'</p></section>';
-      const topicFields='<label>'+t('배우는 수학 범위','Studied math level','正在学习的数学范围')+'<select id="pdStudyBand">'+options([['foundation',t('유아 · 수 감각','Early number sense','幼儿数感')],['elementary',t('초등 연산','Elementary arithmetic','小学运算')],['middle',t('중등 과정','Middle-school topics','初中课程')],['high',t('고등 과정','High-school topics','高中课程')]],s.studyBand)+'</select></label>'+range+'<p class="pd-note">'+t('실제 학년과 관계없이 지금 배우는 내용을 고르세요. 초등학생도 중·고등 내용을 선택할 수 있어요.','Choose what is being studied, regardless of actual grade. Younger learners may select middle or high-school content.','不受实际年级限制，选择目前学习内容。小学生也可选择初高中内容。')+'</p>';
+      const topicFields='<label>'+t('배우는 수학 범위','Studied math level','正在学习的数学范围')+'<select id="pdStudyBand">'+options([['foundation',t('유아 · 수 감각','Early number sense','幼儿数感')],['elementary',t('초등 연산','Elementary arithmetic','小学运算')],['middle',t('중등 과정','Middle-school topics','初中课程')],['high',t('고등 과정','High-school topics','高中课程')]],s.studyBand)+'</select></label>'+range+(gradePicked?'<p class="pd-intake-hint" id="pdGradePicked">'+t('현재 학년에 맞춰 진단 범위를 골라 두었어요. 지금 배우는 내용과 다르면 바꿔 주세요.','We picked the scope for the current grade. Change it if the learner studies something else.','已按目前年级选好测评范围。若正在学习的内容不同，请更改。')+'</p>':'')+'<p class="pd-note">'+t('실제 학년과 관계없이 지금 배우는 내용을 고르세요. 초등학생도 중·고등 내용을 선택할 수 있어요.','Choose what is being studied, regardless of actual grade. Younger learners may select middle or high-school content.','不受实际年级限制，选择目前学习内容。小学生也可选择初高中内容。')+'</p>';
       shell(t('학습 시작점 찾기','Find your starting point','找到学习起点'),
         '<header class="pd-header"><p class="pd-kicker">NUMBERS OF MAGIC</p><h1>'+t('어디부터 시작할까요?','Where shall we begin?','从哪里开始？')+'</h1><p>'+t('아이 정보와 배운 내용을 고르면 20문항으로 확인해요.','Tell us about the learner and studied topics, then check 20 questions.','填写学生信息和学过的内容，开始20题测评。')+'</p></header>'+
         profileFields+'<h2 class="pd-source-title">'+t('2. 무엇을 기준으로 확인할까요?','2. Choose a starting point','2. 按什么内容确认？')+'</h2>'+
@@ -232,8 +238,8 @@
         answers.onclick=()=>begin('paper');
         $('#pdPaper').onclick=e=>{if(!begin('paper'))e.preventDefault();};
       }
-      if($('#pdAge'))$('#pdAge').onchange=e=>{s.age=e.target.value;s.birthYear=s.age?new Date(+new Date(now)+9*3600000).getUTCFullYear()-Number(s.age)+1:null;s.profileGrade=s.age?(Number(s.age)<8?'pre':grades[Math.min(Number(s.age)-7,12)][0]):'';s.entryYear=null;s.baselineId='';s.studyBand='';redraw();};
-      $('#pdGrade').onchange=e=>{s.profileGrade=e.target.value;s.entryYear=null;redraw();};
+      if($('#pdAge'))$('#pdAge').onchange=e=>{s.age=e.target.value;s.birthYear=s.age?new Date(+new Date(now)+9*3600000).getUTCFullYear()-Number(s.age)+1:null;if(!s.profileGrade||s.gradeInferred){s.profileGrade=s.age?(Number(s.age)<8?'pre':grades[Math.min(Number(s.age)-7,12)][0]):'';s.gradeInferred=!!s.age;s.entryYear=null;}s.baselineId='';s.studyBand='';redraw();};
+      $('#pdGrade').onchange=e=>{s.profileGrade=e.target.value;s.gradeInferred=false;s.entryYear=null;if(!s.baselineId)s.studyBand='';redraw();};
       all('[data-route]').forEach(el=>el.onclick=()=>{s.route=el.dataset.route;s.baselineId='';redraw();});
       if($('#pdStudyBand'))$('#pdStudyBand').onchange=e=>{s.studyBand=e.target.value;s.baselineId='';redraw();};
       if(s.route==='book'){

@@ -14,7 +14,10 @@ else{
  finally{fs.rmSync(tmp,{recursive:true,force:true});}
 }
 const unique=[...new Map(tasks.map(t=>[t.lang+'\0'+t.text,t])).values()];
-for(const t of unique){const f=map[t.lang]?.[t.text];assert(f,'Missing planned audio: '+t.unitId+' '+t.lang);assert(/^audio\/omni\/(ko|en|zh)-[0-9a-f]{12}\.mp3$/.test(f));assert(fs.statSync(path.join(root,f)).size>1000);}
+/* 마법 노트 영상 대사(key video-*, 2026-10-23)는 OmniVoice 생성 전까지 녹음이 없을 수 있다 — 재생기가 자막만 보여 준다.
+   없으면 경고로 세고, 있으면 아래와 똑같이 파일을 확인한다. */
+let pendingVideo=0;
+for(const t of unique){const f=map[t.lang]?.[t.text];if(!f&&/^video-/.test(t.key)){pendingVideo++;continue;}assert(f,'Missing planned audio: '+t.unitId+' '+t.lang);assert(/^audio\/omni\/(ko|en|zh)-[0-9a-f]{12}\.mp3$/.test(f));assert(fs.statSync(path.join(root,f)).size>1000);}
 const mime={'.html':'text/html','.js':'application/javascript','.css':'text/css','.mp3':'audio/mpeg','.woff2':'font/woff2'};
 const server=http.createServer((req,res)=>{
  const p=path.resolve(root,'.'+decodeURIComponent(req.url.split('?')[0]));if(!p.startsWith(root+path.sep)||!fs.existsSync(p)||!fs.statSync(p).isFile()){res.writeHead(404);return res.end();}
@@ -71,6 +74,6 @@ const server=http.createServer((req,res)=>{
   await page.evaluate(text=>{__VOICE_CHECK.feedback(text,'ko');__VOICE_CHECK.cancel();},feedbackLines[1]);
   await page.waitForTimeout(900);assert.equal(await page.evaluate(()=>__transitionAt),0,'navigation cancels the old transition');
   const report={plannedUnique:unique.length,byLanguage:Object.fromEntries(Object.entries(map).map(([l,v])=>[l,Object.keys(v).length])),decoded:decoded.count,playbackLanguages:3,rapidSwitch:true,stop:true,staleFailureIgnored:true,rate:0.8,preservesPitch:true,completeFeedbackBeforeAdvance:feedbackLines.length,navigationCancelsAdvance:true,externalWrites:0};
-  if(process.env.NM_VOICE_REPORT)fs.writeFileSync(process.env.NM_VOICE_REPORT,JSON.stringify(report,null,2));console.log('VOICE_BROWSER_OK '+JSON.stringify(report));
+  if(process.env.NM_VOICE_REPORT)fs.writeFileSync(process.env.NM_VOICE_REPORT,JSON.stringify(report,null,2));if(pendingVideo)console.warn('VIDEO_LINES_PENDING '+pendingVideo+' magic-note video lines have no OmniVoice recording yet');console.log('VOICE_BROWSER_OK '+JSON.stringify(report));
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1;});

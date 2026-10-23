@@ -142,6 +142,23 @@ for (const unit of units) {
   }
 }
 
+/* 마법 노트 짧은 영상(data/magic-note-videos.js, 2026-10-23) — 대사·수 이름. rule 은 위 유닛 rule 녹음을 그대로 쓴다. */
+{
+  const videos = require('../data/magic-note-videos.js');
+  for (const id of videos.ids()) {
+    for (const line of videos.get(id).audioLines()) {
+      for (const lang of ['ko', 'en', 'zh']) {
+        const text = line.text[lang];
+        if (text) tasks.push({
+          unitId: id, key: line.key, lang,
+          text,
+          storagePath: `number-magic/${id}-${line.key}-${lang}.mp3`,
+        });
+      }
+    }
+  }
+}
+
 /* 유닛에 안 묶인 전역 UI 문구 — 짝 찾기(pairMul)에서 짝을 하나 찾았지만 더 있을 때
    부르는 onePairMore(2026-09-10, app/main.js I18N.onePairMore와 정확히 같은 문자열
    이어야 say()가 찾아 재생한다 — 하나라도 다르면 조용히 Web Speech로 폴백한다). */
