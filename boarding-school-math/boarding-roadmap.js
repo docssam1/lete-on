@@ -174,8 +174,8 @@
       }
     }
     setText("competition-guidance", selected
-      ? `채점한 문제를 영역별로 나눠 적어 주세요. 영역을 모르면 문제별 복습에서 먼저 확인하세요. 합계는 ${option.itemCount}문항을 넘길 수 없어요.`
-      : "대회를 먼저 골라 주세요. 채점한 문제를 영역별로 직접 나눠 보는 화면이에요.");
+      ? `영역별로 푼 문제 수와 정답 수를 적어 주세요. 영역을 모르겠다면 ‘문제별로 먼저 복습하기’에서 확인해요. 합계는 ${option.itemCount}문항 이하여야 해요.`
+      : "대회를 고르면 영역별 입력칸이 나와요.");
   }
   function resetCompetitionReport() {
     document.querySelector(".competition-layout").classList.add("is-empty");
@@ -255,7 +255,7 @@
   }
   function render() {
     const entry = data.getGrade(grade);
-    setText("grade-map-title", `${grade}학년에서 배우는 수학`);
+    setText("grade-map-title", `${grade}학년 수학 한눈에`);
     setText("grade-label", `${grade}학년`);
     setText("grade-title", entry.title);
     setText("grade-core", entry.core);

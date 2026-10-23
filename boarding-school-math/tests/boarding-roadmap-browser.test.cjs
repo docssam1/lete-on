@@ -35,12 +35,12 @@ test("grade map, level comparison, and competition intake stay honest and intera
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#grade-map-title").innerText(), "7학년에서 배우는 수학");
+  assert.equal(await page.locator("#grade-map-title").innerText(), "7학년 수학 한눈에");
   assert.match(await page.locator("#grade-title").innerText(), /유리수/);
   assert.equal(await page.locator(".grade-button").count(), 8);
   assert.equal(await page.locator(".stage-button").count(), 4);
   assert.deepEqual(await page.locator("#grade-focus-list strong").allInnerTexts(), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
-  assert.match(await page.locator(".level-boundary").innerText(), /진단 결과가 없습니다/);
+  assert.match(await page.locator(".level-boundary").innerText(), /진단 결과가 없어서/);
   assert.match(await page.locator("#grade-note").innerText(), /7.NS.A 워크북과 진단은 검수 중/);
   assert.equal(await page.locator("#grade-practice-links a").count(), 2);
   assert.match(await page.locator("#grade-practice-links a").first().innerText(), /검수 시안/);
@@ -78,7 +78,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator(".route-explanation").isHidden(), true);
   assert.equal(await page.locator("#route-check-block").isHidden(), true);
   assert.equal(await page.locator("#competition-select").inputValue(), "");
-  assert.equal(await page.locator("#grade-map-title").innerText(), "9학년에서 배우는 수학");
+  assert.equal(await page.locator("#grade-map-title").innerText(), "9학년 수학 한눈에");
   assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학 · 추정/);
   assert.match(await page.locator("#source-chip").innerText(), /추정안/);
   assert.match(await page.locator("#grade-note").innerText(), /제공된 7·8·10학년/);
