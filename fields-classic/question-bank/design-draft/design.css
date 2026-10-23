@@ -5,12 +5,12 @@
    ─ 색은 토큰으로만 쓴다. 파랑·하늘색 토큰은 만들지 않는다. */
 
 @font-face { font-family: 'FC Sans'; src: url('../assets/fonts/pretendard-var.woff2') format('woff2'); font-weight: 100 700; font-style: normal; font-display: swap; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-korean-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-korean-600-normal.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-latin-600-normal.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-korean-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
-@font-face { font-family: 'FC Serif'; src: url('./fonts/noto-serif-kr-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-korean-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-korean-600-normal.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-latin-600-normal.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-korean-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'FC Serif'; src: url('../assets/fonts/noto-serif-kr-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0100-02BA,U+2013-2014,U+2018-201D,U+2026,U+2030-203A; }
 
 :root {
   /* 바탕 — 따뜻한 종이색 */

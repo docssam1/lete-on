@@ -12,6 +12,7 @@ import { book08Markup } from "./book08-renderers.js?v=20260905d";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
 import { mock06Markup } from "./mock06-renderers.js?v=20260823a";
+import { layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261023a";
 
 const {
   ageStages: AGE_STAGES,
@@ -78,8 +79,10 @@ const state = {
   order: "exam",
   includeSolution: true,
   watermark: true,
+  printTemplate: loadPrintTemplate(),
   questions: []
 };
+let printTemplatePanel = null;
 
 function normalizeSearchText(value) {
   return String(value || "").normalize("NFKC").toLocaleLowerCase("ko-KR").replace(/\s+/g, " ").trim();
@@ -1162,6 +1165,8 @@ function buildQuestions() {
     return;
   }
   state.questions = questions;
+  mountPrintTemplate();
+  printTemplatePanel.resetCoverText(printTemplateInfo(worksheetTitleText()));
   renderWorksheet();
   $("builderPanel").hidden = true;
   $("worksheetSection").hidden = false;
@@ -1974,7 +1979,9 @@ function balanceScaleFourObjectsMarkup(visual) {
 
 function symbolRelationsMarkup(visual) {
   const repeat = (symbol, count) => Array.from({ length: count }, () => symbol).join(" + ");
-  return `<div class="symbol-relations">${visual.hint ? `<small>${visual.hint}</small>` : ""}<p>${repeat("☆", visual.firstStar)} = ${repeat("○", visual.firstCircle)}</p><p>☆ + ○ = ▽ + ▽</p><p>${visual.final.join(" + ")} = □</p></div>`;
+  // 양쪽 식을 따로 묶어 두면 폰 폭에서 = 앞뒤로만 줄이 바뀐다(한쪽 식은 끊기지 않음).
+  const relation = (left, right) => `<p><span class="relation-side">${left}</span><span class="relation-equals">=</span><span class="relation-side">${right}</span></p>`;
+  return `<div class="symbol-relations">${visual.hint ? `<small>${visual.hint}</small>` : ""}${relation(repeat("☆", visual.firstStar), repeat("○", visual.firstCircle))}${relation("☆ + ○", "▽ + ▽")}${relation(visual.final.join(" + "), "□")}</div>`;
 }
 
 function numberLineSixPointsMarkup(visual) {
@@ -3678,9 +3685,13 @@ function watermarkMarkup() {
   return Array.from({ length: 3 }, () => `<span>${student} · GFIELD · ${student} · GFIELD · ${student}</span>`).join("");
 }
 
+function worksheetTitleText() {
+  return state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "FC 단원 학습지" : "유형별 맞춤 학습지";
+}
+
 function renderWorksheet() {
   hideTypePreview();
-  const title = state.mode === "exam" ? "맞춤 모의고사" : state.mode === "curriculum" ? "FC 단원 학습지" : "유형별 맞춤 학습지";
+  const title = worksheetTitleText();
   $("worksheetTitle").textContent = title;
   const questionCards = state.questions.map((question, index) => {
     const domain = DOMAINS.find((item) => item.id === question.type.domain);
@@ -3712,11 +3723,16 @@ function renderWorksheet() {
       ${textbookConceptSolutionMarkup(question)}
     </article>`;
   });
-  const pages = [];
-  for (let index = 0; index < questionCards.length; index += 2) {
-    pages.push(`<section class="question-page" aria-label="${Math.floor(index / 2) + 1}쪽">${questionCards.slice(index, index + 2).join("")}</section>`);
-  }
-  $("questionGrid").innerHTML = pages.join("");
+  const info = printTemplateInfo(title);
+  const book = state.mode === "curriculum" ? CURRICULUM.find((entry) => entry.id === state.curriculumBookId) : null;
+  const { lead, grid } = layoutWorksheetPages({ cards: questionCards, questions: state.questions, settings: state.printTemplate, info, book });
+  const section = $("worksheetSection");
+  section.className = ["worksheet-section", ...printTemplateClasses(state.printTemplate)].join(" ");
+  $("printTemplateLead").innerHTML = lead;
+  $("worksheetBand").textContent = state.printTemplate.form === "exam" ? `GFIELD CLASSIC${info.bookLabel ? ` · ${info.bookLabel}` : ""}` : "GFIELD QUESTION BANK";
+  $("worksheetLessonNo").textContent = info.volume || "1";
+  $("worksheetGoal").textContent = info.goal;
+  $("questionGrid").innerHTML = grid;
   $("watermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   $("answerWatermark").innerHTML = state.watermark ? watermarkMarkup() : "";
   document.querySelectorAll(".b4-paper-toggle").forEach((button) => {
@@ -3730,6 +3746,32 @@ function renderWorksheet() {
     });
   });
   bindQuestionEditor();
+}
+
+// 표지·내지·바닥글에 쓸 공개 정보. 교재 단원 학습지면 그 권의 제목과 번호를 쓴다.
+function printTemplateInfo(title) {
+  const book = state.mode === "curriculum" ? CURRICULUM.find((entry) => entry.id === state.curriculumBookId) : null;
+  const middles = [...new Set(state.questions.map((question) => question.type.middle))];
+  return {
+    title: book ? book.title : title,
+    subtitle: book ? `사고력 수학 · ${activeTextbookStage().label}` : `${state.questions.length}문항 맞춤 학습지`,
+    volume: book ? String(book.label).replace(/[^0-9]/g, "") : "",
+    bookLabel: book ? book.label : "",
+    footLabel: book ? `지필드 클래식 · ${book.label}` : `지필드 문제은행 · ${title}`,
+    goal: `학습 내용 · ${middles.slice(0, 3).join(" · ")}${middles.length > 3 ? " 외" : ""}`
+  };
+}
+
+function mountPrintTemplate() {
+  const info = printTemplateInfo(worksheetTitleText());
+  if (!printTemplatePanel) {
+    printTemplatePanel = mountPrintTemplatePanel($("printTemplatePanel"), state.printTemplate, info, (settings, { textOnly }) => {
+      // 표지 글자만 바뀌면 문항 쪽은 그대로 두고 표지만 다시 그린다.
+      if (!textOnly) return renderWorksheet();
+      const book = state.mode === "curriculum" ? CURRICULUM.find((entry) => entry.id === state.curriculumBookId) : null;
+      $("printTemplateLead").innerHTML = layoutWorksheetPages({ cards: [], questions: state.questions, settings, info: printTemplateInfo(worksheetTitleText()), book }).lead;
+    });
+  }
 }
 
 function openAnswers() {
