@@ -38,14 +38,31 @@ test("Grade 7 paper marks yield partial learning review, never official score", 
   await page.locator('[data-question="2"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="2"][data-field="reason"]').selectOption("reading");
   await page.locator('[data-question="3"][data-field="status"]').selectOption("blank");
-  await page.getByRole("button", { name: "문항별 결과 분석" }).click();
-  assert.match(await page.locator("#report-title").innerText(), /부분 표시/);
-  assert.match(await page.locator("#report-intro").innerText(), /22문항은 아직 입력/);
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#report-title").innerText(), /입력한 결과/);
+  assert.match(await page.locator("#report-intro").innerText(), /22문제는 아직 표시/);
   assert.match(await page.locator("#report-metrics").innerText(), /50%/);
   assert.match(await page.locator("#report-reasons").innerText(), /조건 읽기 · 1문항/);
   assert.match(await page.locator(".report-boundary").innerText(), /공식 대회 점수/);
   assert.equal(await page.evaluate(() => localStorage.length), 0);
   assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("phone rows show one status first, then only relevant follow-up fields", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
+  const row = page.locator(".paper-mark-row").first();
+  assert.equal(await row.locator(".mark-domain").isHidden(), true);
+  assert.equal(await row.locator(".mark-reason").isHidden(), true);
+  await row.locator('[data-field="status"]').selectOption("correct");
+  assert.equal(await row.locator(".mark-domain").isVisible(), true);
+  assert.equal(await row.locator(".mark-reason").isHidden(), true);
+  await row.locator('[data-field="status"]').selectOption("wrong");
+  assert.equal(await row.locator(".mark-reason").isVisible(), true);
+  const widths = await row.locator("select:visible").evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().width));
+  assert.ok(widths[0] > widths[1] && widths[1] >= 100 && widths[2] >= 100, `mobile control widths: ${widths}`);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   await page.close();
 });
 

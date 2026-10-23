@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="기존 경시 문제지의 문항별 O/X와 오류 원인을 정리하는 G·MAP 학습용 진단">
-  <title>경시 문항별 진단 | G·MAP</title>
+  <meta name="description" content="채점한 경시 문제지의 결과를 문제별로 정리하고 다시 풀 부분을 찾는 화면">
+  <title>경시 문제 복습 | G·MAP</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
@@ -12,23 +12,23 @@
 </head>
 <body class="academy-page page-paper-review">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
-  <header class="site-header review-header"><a class="brand" href="./index.html" aria-label="G·MAP 홈"><span class="brand-mark" aria-hidden="true">G</span><span>G·<strong>MAP</strong></span></a><nav aria-label="주요 탐색"><a href="./boarding-roadmap.html?grade=7">학년 지도</a><a href="./competition-paper-review.html" aria-current="page">경시 문항별 진단</a></nav></header>
+  <header class="site-header review-header"><a class="brand" href="./index.html" aria-label="G·MAP 홈"><span class="brand-mark" aria-hidden="true">G</span><span>G·<strong>MAP</strong></span></a><nav aria-label="주요 탐색"><a href="./boarding-roadmap.html?grade=7">학년 지도</a><a href="./competition-paper-review.html" aria-current="page">경시 문제 복습</a></nav></header>
   <main id="main" tabindex="-1" class="gfield-ui">
-    <section class="review-intro"><div class="review-shell"><p class="review-kicker">경시 · 문제지 복습</p><h1>문항별 결과 입력</h1><p>채점된 문제지를 보며 O/X·미응답을 표시하세요. 영역과 오류 이유는 직접 고릅니다. 입력 내용은 저장되지 않습니다.</p></div></section>
+    <section class="review-intro"><div class="review-shell"><p class="review-kicker">경시 · 문제지 복습</p><h1>채점한 결과를 적어 보세요</h1><p>맞힘·틀림·안 품을 표시하면 다시 볼 문제를 찾을 수 있어요. 입력 내용은 저장되지 않아요.</p></div></section>
     <div class="review-shell review-layout">
-      <section class="review-workspace" aria-labelledby="setup-title"><div class="review-heading"><p class="review-kicker">01 · SOURCE AND MARKS</p><h2 id="setup-title">문제지와 문항별 관찰</h2><p>대회 선택은 문제지 길이만 맞춥니다. 공식 채점 방식이나 수상 등급은 계산하지 않습니다.</p></div>
+      <section class="review-workspace" aria-labelledby="setup-title"><div class="review-heading"><p class="review-kicker">01 · 결과 입력</p><h2 id="setup-title">문제별로 표시하기</h2><p>학년과 대회를 고르면 문제 수에 맞춰 입력칸이 나와요.</p></div>
         <form id="paper-review-form" novalidate><div class="review-settings"><label for="review-grade">학년<select id="review-grade"></select></label><label for="review-program">대회<select id="review-program"></select></label><label for="review-paper-label">문제지 메모<input id="review-paper-label" type="text" maxlength="80" placeholder="예: 2025 AMC 8 연습 A"></label></div>
-          <p class="review-source-note" id="review-source-note"></p><p class="review-change-note">학년이나 대회를 바꾸면 현재 문항 표시가 지워집니다.</p>
+          <p class="review-source-note" id="review-source-note"></p><p class="review-change-note">학년이나 대회를 바꾸면 표시한 내용이 지워져요.</p>
           <div class="mark-head" aria-hidden="true"><span>번호</span><span>표시</span><span>풀이 영역</span><span>오류 이유</span></div>
           <ol id="paper-mark-list" class="paper-mark-list"></ol>
-          <div class="review-form-actions"><button class="review-submit" type="submit">문항별 결과 분석</button><button id="clear-marks" class="review-clear" type="button">표시 모두 지우기</button></div><p id="paper-error" class="paper-error" role="alert" hidden></p>
+          <div class="review-form-actions"><button class="review-submit" type="submit">결과 보기</button><button id="clear-marks" class="review-clear" type="button">표시 모두 지우기</button></div><p id="paper-error" class="paper-error" role="alert" hidden></p>
         </form>
       </section>
-      <aside class="review-report" aria-labelledby="report-title" aria-live="polite"><p class="review-kicker">02 · LEARNING REVIEW</p><h2 id="report-title">분석 전</h2><p id="report-intro">표시한 문항의 수와 영역별 근거를 나란히 보여 줍니다. 입력 중인 문항을 0점이나 오답으로 계산하지 않습니다.</p><div class="report-metrics" id="report-metrics"></div><div id="report-domains" class="report-domains"></div><div id="report-reasons" class="report-reasons"></div><p id="report-next" class="report-next">현재 학생의 학습 수준은 미측정입니다.</p><p class="report-boundary">이 결과는 입력한 문제지의 학습용 수행 분석입니다. 공식 대회 점수·수상·AIME 진출·학교 과목 배치·자동 진도 조정 근거가 아닙니다.</p></aside>
+      <aside class="review-report" aria-labelledby="report-title" aria-live="polite"><p class="review-kicker">02 · 결과</p><h2 id="report-title">아직 결과가 없어요</h2><p id="report-intro">문제를 표시한 뒤 ‘결과 보기’를 누르세요. 표시하지 않은 문제는 정답률에 넣지 않아요.</p><div class="report-metrics" id="report-metrics"></div><div id="report-domains" class="report-domains"></div><div id="report-reasons" class="report-reasons"></div><p id="report-next" class="report-next">학습 단계를 정하려면 실제 풀이를 확인해야 해요.</p><p class="report-boundary">입력한 결과로 공식 대회 점수, 수상, AIME 진출이나 다음 학교 과목을 예측할 수 없어요.</p></aside>
     </div>
-    <section class="review-related review-shell"><div><h2>직접 풀 문제를 찾고 있나요?</h2><p>GFIELD 자체 Grade 6 AMC 8 기초 연습은 원본 대회 문항과 분리되어 있습니다. 실제 SASMO 기출은 확인된 원 출처에서 엽니다.</p></div><div><a href="./competition-practice.html?program=amc8">Grade 6 AMC 8 기초 연습 →</a><a href="./sasmo.html">SASMO 원문 안내 →</a><a id="back-to-roadmap" href="./boarding-roadmap.html?grade=7">학년 지도로 돌아가기 →</a></div></section>
+    <section class="review-related review-shell"><div><h2>연습 문제를 풀고 싶다면</h2><p>Grade 6 AMC 8 기초 연습은 GFIELD가 만든 문제예요. SASMO 기출은 원 출처에서 확인할 수 있어요.</p></div><div><a href="./competition-practice.html?program=amc8">Grade 6 AMC 8 기초 연습 →</a><a href="./sasmo.html">SASMO 원문 안내 →</a><a id="back-to-roadmap" href="./boarding-roadmap.html?grade=7">학년 지도로 돌아가기 →</a></div></section>
   </main>
-  <footer class="site-footer"><span>G·MAP · 경시 문항별 학습 기록</span><span>입력 내용은 저장되지 않습니다.</span></footer>
+  <footer class="site-footer"><span>G·MAP · 경시 문제 복습</span><span>입력 내용은 저장되지 않아요.</span></footer>
   <script src="./learning/boarding-grade-roadmap.js?v=20261023-1"></script>
   <script src="./competition/paper-review-analysis.js?v=20261023-1"></script>
   <script src="./competition-paper-review.js?v=20261023-1"></script>

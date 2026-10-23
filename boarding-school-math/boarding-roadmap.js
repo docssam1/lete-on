@@ -101,7 +101,7 @@
     resetCompetitionReport();
   }
   function resetCompetitionReport() {
-    setText("competition-report-title", "결과 입력 전");
+    setText("competition-report-title", "아직 결과가 없어요");
     setText("competition-report-summary", "영역마다 푼 문제와 맞힌 문제를 적으면 결과를 비교할 수 있어요.");
     $("competition-report-rows").replaceChildren();
     $("competition-error").hidden = true;

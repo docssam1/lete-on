@@ -52,7 +52,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.locator('[data-strand="algebra"][data-field="correct"]').fill("3");
   await page.locator('[data-strand="geometry"][data-field="attempted"]').fill("2");
   await page.locator('[data-strand="geometry"][data-field="correct"]').fill("1");
-  await page.getByRole("button", { name: "영역별 결과 분석" }).click();
+  await page.getByRole("button", { name: "영역별 결과 보기" }).click();
   assert.match(await page.locator("#competition-report-title").innerText(), /4\/6/);
   assert.match(await page.locator("#competition-report-rows").innerText(), /표본 부족/);
   assert.match(await page.locator("#competition-report-summary").innerText(), /비교 가능한 영역/);
