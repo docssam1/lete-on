@@ -1,6 +1,6 @@
 # Grade 7 `7.NS.A` local QA — 2026-10-13 to 2026-10-14
 
-Status: **local candidate only; not committed, pushed, deployed, catalog-published, or approved for placement/promotion use**.
+Current status (2026-10-24): **candidate committed locally; not pushed, merged, deployed, or approved for placement/promotion use**. The October 13–14 evidence below is historical; the Mac continuation and current handoff govern the remaining work.
 
 ## Implemented candidate
 
@@ -144,7 +144,7 @@ Status: **local candidate only; not committed, pushed, deployed, catalog-publish
 
 The repository non-browser command reported 403 passes, one skip, and ten failures. The ten failures were environment/sparse-checkout prerequisites rather than `7.NS.A` assertions: the isolated worktree does not contain tracked `hsmiddle`, tracked `number_magic`, or ignored private Grade 6 authoring data. No missing source was fabricated or copied into the public candidate. Focused `7.NS.A` and shared workbook browser checks pass.
 
-## Remaining release gates
+## Historical October 14 release checklist
 
 The candidate worktree started at `75cd785d`. A final fetch on 2026-10-14 found remote `main` at `2e6a7a0e`, 28 commits ahead. The complete `boarding-school-math` tree hash remains `945a697021869b5d7255d4344a8477b5abb6ef84` and the depended-on `geometry/worksheet/render.js` blob hash remains `56aa0f0adcb95f483bdf892f3e0841c828dc29f9` at both commits, so the incoming commits do not change this candidate's tested product or renderer inputs.
 
