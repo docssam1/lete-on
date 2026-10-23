@@ -654,7 +654,7 @@
       "independentAnswer": "360cm",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 일차식 독립 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "개념탐구 독립 유형으로 기록했지만 공개 승인 전입니다."
     },
@@ -671,7 +671,7 @@
       "independentAnswer": "324cm",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 역산 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "거리 합 유형과 다른 역산 유형으로 분리했지만 공개 승인 전입니다."
     },
@@ -688,7 +688,7 @@
       "independentAnswer": "3/125",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 비율 독립 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 공개 승인 전입니다."
     },
@@ -705,7 +705,7 @@
       "independentAnswer": "9800m²",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 남은 비율 독립 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 공개 승인 전입니다."
     },
@@ -722,7 +722,7 @@
       "independentAnswer": "서윤 4200원, 보현 2700원",
       "answerContract": "ordered-pair",
       "singleAnswerStatus": "pass-single-pair",
-      "evidence": "직접 렌더 대조 및 비례식 독립 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "순서쌍 답은 확인했지만 공개 승인 전입니다."
     },

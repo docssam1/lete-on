@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 18 Source Review
+
+- Rechecked logical PDF page 14 (printed page 18) from the SHA-256-matched source against the 300dpi render; Apple Vision OCR located the printed text, while stacked fractions were read from the image. Pencil marks and publisher answers were excluded.
+- Independently recalculated Concept Exploration 3 and Examples 3-1–3-4. All five source conditions and ledger answers match: 360cm; 324cm; 3/125; 9,800m²; Seoyun 4,200원 and Bohyeon 2,700원. No diagrams are printed or needed for these items.
+- Added persistent OCR evidence and strengthened the five ledger evidence fields. No answer or taxonomy correction was needed. All five remain locked pending learner-fit, generator integration, and release approval; no runtime or learner data changed.
+- Drive source/QA record in the existing `.source-memory` folder: [grade52-unit2-page18-source-review-20261024.md](https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view)
+
 ## 2026-10-24 Grade 5-2 Unit 2 Printed Page 16 Source Review
 
 - Checked logical PDF page 12 (printed page 16) from the SHA-256-matched source using a 450dpi render and Apple Vision text-location pass; stacked fractions, expressions, and both diagrams were confirmed visually. Handwriting and publisher answers were excluded.
