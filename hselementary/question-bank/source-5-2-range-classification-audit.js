@@ -30,7 +30,7 @@ const applicationMissionFiveId = "5-2-u1-e3-mission-5-bar-graph-length";
 const applicationMissionSixId = "5-2-u1-e3-mission-6-citrus-sales";
 const roundedRangeIds = ["5-2-u1-e4-exploration-rounded-range", "5-2-u1-e4-example-1"];
 const roundedMissionOneId = "5-2-u1-e4-mission-1-rounded-count";
-const congruencePage31Ids = [1, 2, 3, 5, 6].map(number => `5-2-u3-e4-mission-${number}`);
+const congruencePage31Ids = [1, 2, 3, 4, 5, 6].map(number => `5-2-u3-e4-mission-${number}`);
 const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId, ...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4", roundedMissionOneId, ...congruencePage31Ids];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
@@ -63,11 +63,11 @@ function load(curriculumSource) {
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2047, "Whole-bank classification count");
+  assert.equal(types.length, 2048, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 166, "Preserve 124 legacy records plus forty-two source records");
+  assert.equal(semesterTypes.length, 167, "Preserve 124 legacy records plus forty-three source records");
   const restored = plain(semester);
   restored.units = restored.units.map(unit => ({
     ...unit,
