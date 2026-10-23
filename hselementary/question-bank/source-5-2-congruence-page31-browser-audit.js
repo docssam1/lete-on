@@ -21,12 +21,6 @@ let browser;
         result.externalBlocked++;
         return route.fulfill({ status: 200, contentType: "text/plain", body: "" });
       }
-      if (route.request().url().includes("/curriculum.js")) {
-        const response = await route.fetch();
-        const body = await response.text();
-        const reviewOnlyUnlock = `\n;(()=>{const t=window.HSE_CURRICULUM.semesters.flatMap(s=>s.units.flatMap(u=>u.subunits.flatMap(g=>g.types))).find(x=>x.id==='5-2-u3-e4-mission-1');if(t){t.reviewLocked=false;t.generationMode='fixed-verified-pool';t.verifiedVariantCount=3;t.answerVisualStatus='verified-reconstruction';}})();\n`;
-        return route.fulfill({ response, body: body + reviewOnlyUnlock });
-      }
       return route.continue();
     });
     const page = await context.newPage();
@@ -40,6 +34,8 @@ let browser;
       await page.locator("#questionCountInput").fill("1");
       await page.evaluate(({ id, variant }) => {
         const api = window.HSE_GENERATORS;
+        const type = window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).find(x => x.id === id);
+        if (!type || type.reviewLocked || api.generatorKey(type) !== type.generatorKey) throw new Error(`${id} is not publicly enabled by the real curriculum gate`);
         const original = api.generate.bind(api);
         api.generate = (type, rank, difficulty, seed, requested) => type?.sourceItemId === id
           ? window.HSE_SOURCE_52_CONGRUENCE_PAGE31.getQuestion(id, variant, difficulty ?? 0)
@@ -58,12 +54,24 @@ let browser;
           solution: solution.innerText,
           diagramCount: problem.querySelectorAll("svg[data-source52-figure]").length,
           answerVisualInProblem: Boolean(problem.querySelector(".source52-p31-answer-visual,[data-source-answer]")),
-          solutionTextInProblem: problem.innerText.includes("회전은 각의 크기를 보존") || problem.innerText.includes("원주각은 바라보는 호의 절반"),
+          solutionTextInProblem: problem.innerText.includes("SAS 합동") || problem.innerText.includes("회전은 각의 크기를 보존") || problem.innerText.includes("원주각은 바라보는 호의 절반"),
           solutionAnswerVisible: solution.innerText.includes(generated.answer),
+          solutionProofDiagramCount: solution.querySelectorAll('svg[data-source52-figure="square-angle-proof"]').length,
+          solutionAdvancedTrig: /tan\(|탄젠트/.test(solution.innerText),
           sourceMarkerCount: problem.querySelectorAll(`[data-source-item-id='${id}']`).length,
           diagramTextClipped: (() => {
             const svg = problem.querySelector("svg[data-source52-figure]");
             if (!svg) return true;
+            const box = svg.getBoundingClientRect();
+            return [...svg.querySelectorAll("text")].some(text => {
+              const rect = text.getBoundingClientRect();
+              return rect.left < box.left - 1 || rect.right > box.right + 1 || rect.top < box.top - 1 || rect.bottom > box.bottom + 1;
+            });
+          })(),
+          proofDiagramTextClipped: (() => {
+            const svg = solution.querySelector('svg[data-source52-figure="square-angle-proof"]');
+            if (id.endsWith("mission-1") && !svg) return true;
+            if (!svg) return false;
             const box = svg.getBoundingClientRect();
             return [...svg.querySelectorAll("text")].some(text => {
               const rect = text.getBoundingClientRect();
@@ -76,6 +84,9 @@ let browser;
       }, { id, variant, difficulty });
       assert.equal(q.sourceMarkerCount, 1, `${id} prompt count`);
       assert.equal(q.diagramCount, 1, `${id} prompt diagram`);
+      assert.equal(q.solutionProofDiagramCount, id.endsWith("mission-1") ? 1 : 0, `${id} proof diagram`);
+      assert.equal(q.solutionAdvancedTrig, false, `${id} elementary solution language`);
+      assert.equal(q.proofDiagramTextClipped, false, `${id} proof diagram label clipped at ${width}px / difficulty ${difficulty} / pool ${variant}`);
       assert.equal(q.answerVisualInProblem, false, `${id} answer leak`);
       assert.equal(q.solutionTextInProblem, false, `${id} solution leak`);
       assert.equal(q.diagramTextClipped, false, `${id} diagram label clipped at ${width}px / difficulty ${difficulty} / pool ${variant}`);

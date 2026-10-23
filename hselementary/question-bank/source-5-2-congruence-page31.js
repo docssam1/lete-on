@@ -8,11 +8,11 @@
   "use strict";
 
   const definitions = Object.freeze([
-    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-1", generatorKey: "source52SquareAnglePage31Mission1", publicReady: false }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-1", generatorKey: "source52SquareAnglePage31Mission1", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-2", generatorKey: "source52SemicircleAnglePage31Mission2", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3", generatorKey: "source52EquilateralRotationPage31Mission3", publicReady: true })
   ]);
-  const squareAlphas = [8, 16, 24];
+  const squareAlphas = [9, 14, 19];
   const circleBaseVertices = [48, 57, 72];
   const triangleBaseTargets = [118, 130, 152];
   const difficultyDeltas = [-2, 0, 2];
@@ -44,6 +44,18 @@
     return `<line class="source52-equal-mark" x1="${(middle.x-px).toFixed(2)}" y1="${(middle.y-py).toFixed(2)}" x2="${(middle.x+px).toFixed(2)}" y2="${(middle.y+py).toFixed(2)}"/>`;
   }
 
+  function equalDoubleTick(first, second, length = 11) {
+    const dx = second.x - first.x, dy = second.y - first.y;
+    const magnitude = Math.hypot(dx, dy) || 1;
+    const ux = dx / magnitude, uy = dy / magnitude;
+    const px = -uy * length / 2, py = ux * length / 2;
+    const middle = { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
+    return [-3, 3].map(offset => {
+      const x = middle.x + ux * offset, y = middle.y + uy * offset;
+      return `<line class="source52-equal-mark" x1="${(x-px).toFixed(2)}" y1="${(y-py).toFixed(2)}" x2="${(x+px).toFixed(2)}" y2="${(y+py).toFixed(2)}"/>`;
+    }).join("");
+  }
+
   function squareDiagram(alpha, beta) {
     const g = { x: 70, y: 38 }, n = { x: 410, y: 38 }, d = { x: 410, y: 378 }, l = { x: 70, y: 378 };
     const side = n.x - g.x;
@@ -52,6 +64,18 @@
     const square = `${point(g.x,g.y)} ${point(n.x,n.y)} ${point(d.x,d.y)} ${point(l.x,l.y)}`;
     const alphaMark = angleMark(n,g,m,22), betaMark = angleMark(n,d,b,22), targetMark = angleMark(m,l,b,22);
     return `<svg class="source52-p31-diagram source52-p31-square" data-source52-figure="square-angle" viewBox="0 0 480 440" role="img" aria-label="정사각형 안에서 두 선분이 만나는 각 그림" xmlns="http://www.w3.org/2000/svg"><polygon points="${square}"/><line x1="${n.x}" y1="${n.y}" x2="${m.x}" y2="${m.y}"/><line x1="${n.x}" y1="${n.y}" x2="${b.x}" y2="${b.y}"/><line x1="${m.x}" y1="${m.y}" x2="${b.x}" y2="${b.y}"/><path class="source52-angle-mark" d="${alphaMark.d}"/><path class="source52-angle-mark" d="${betaMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" x="${Number((alphaMark.label.x-10).toFixed(1))}" y="${Number((alphaMark.label.y+4).toFixed(1))}">${alpha}°</text><text class="source52-angle-label" x="${Number((betaMark.label.x-8).toFixed(1))}" y="${Number((betaMark.label.y+4).toFixed(1))}">${beta}°</text><text x="50" y="30">ㄱ</text><text x="418" y="30">ㄴ</text><text x="418" y="398">ㄷ</text><text x="48" y="398">ㄹ</text><text x="47" y="${Number((m.y+6).toFixed(1))}">ㅁ</text><text x="${Number((b.x+5).toFixed(1))}" y="400">ㅂ</text><text class="source52-target-label" x="${Number((targetMark.label.x-8).toFixed(1))}" y="${Number((targetMark.label.y+4).toFixed(1))}">㉠</text></svg>`;
+  }
+
+  function squareProofDiagram(alpha, beta) {
+    const g = { x: 130, y: 270 }, n = { x: 370, y: 270 }, d = { x: 370, y: 510 }, l = { x: 130, y: 510 };
+    const side = n.x - g.x;
+    const m = { x: l.x, y: g.y + side * Math.tan(rad(alpha)) };
+    const b = { x: d.x - side * Math.tan(rad(beta)), y: d.y };
+    const s = { x: l.x + side * (1 - Math.tan(rad(alpha))), y: d.y };
+    const e = { x: g.x, y: g.y - side * Math.tan(rad(beta)) };
+    const square = `${point(g.x,g.y)} ${point(n.x,n.y)} ${point(d.x,d.y)} ${point(l.x,l.y)}`;
+    const alphaMark = angleMark(n,g,m,19), betaMark = angleMark(n,d,b,19);
+    return `<svg class="source52-p31-diagram source52-p31-proof-diagram" data-source52-figure="square-angle-proof" viewBox="0 0 500 560" role="img" aria-label="대각선 ㄹㄴ에 대한 대칭점 ㅅ과 ㄱㄹ을 연장해 만든 점 ㅇ을 표시한 풀이 그림" xmlns="http://www.w3.org/2000/svg"><polygon points="${square}"/><line class="source52-construction-line" x1="${l.x}" y1="${l.y}" x2="${n.x}" y2="${n.y}"/><line x1="${n.x}" y1="${n.y}" x2="${m.x}" y2="${m.y}"/><line x1="${n.x}" y1="${n.y}" x2="${b.x}" y2="${b.y}"/><line x1="${n.x}" y1="${n.y}" x2="${e.x}" y2="${e.y}"/><line class="source52-construction-line" x1="${e.x}" y1="${e.y}" x2="${g.x}" y2="${g.y}"/><line class="source52-construction-line" x1="${l.x}" y1="${l.y}" x2="${s.x}" y2="${s.y}"/>${equalTick(l,m)}${equalTick(l,s)}${equalDoubleTick(g,e)}${equalDoubleTick(d,b)}<path class="source52-angle-mark" d="${alphaMark.d}"/><path class="source52-angle-mark" d="${betaMark.d}"/><text x="108" y="266">ㄱ</text><text x="378" y="266">ㄴ</text><text x="378" y="535">ㄷ</text><text x="108" y="535">ㄹ</text><text x="108" y="${Number((m.y+7).toFixed(1))}">ㅁ</text><text x="${Number((b.x-24).toFixed(1))}" y="535">ㅂ</text><text x="${Number((s.x+7).toFixed(1))}" y="535">ㅅ</text><text x="108" y="${Number((e.y-6).toFixed(1))}">ㅇ</text></svg>`;
   }
 
   function circlePoint(cx, cy, radius, angle) {
@@ -89,8 +113,8 @@
     const beta = 45 - alpha;
     const answer = 2 * alpha;
     const prompt = `<div class="source52-p31-question"><p>정사각형 ㄱㄴㄷㄹ에서 점 ㅁ은 변 ㄱㄹ 위에, 점 ㅂ은 변 ㄹㄷ 위에 있습니다. ∠ㄱㄴㅁ=${alpha}°, ∠ㄷㄴㅂ=${beta}°일 때 ∠ㄹㅁㅂ을 구하세요.</p>${squareDiagram(alpha,beta)}</div>`;
-    const solution = `<div class="source52-p31-solution"><ol><li>정사각형의 한 변을 1로 두고, ㄹㅁ을 왼쪽 변에서 ㄹ까지의 길이로 나타냅니다. 직각삼각형에서 ㄹㅁ=1−tan(${alpha}°)입니다.</li><li>같은 방법으로 ㄹㅂ=1−tan(${beta}°)입니다. ${alpha}°+${beta}°=45°이므로 tan(${beta}°)=tan(45°−${alpha}°)입니다.</li><li>tan∠ㄹㅁㅂ=ㄹㅂ÷ㄹㅁ=(1−tan(45°−${alpha}°))÷(1−tan(${alpha}°))=tan(${answer}°)입니다.</li><li>그림의 목표각은 예각이므로 ∠ㄹㅁㅂ=${answer}°입니다.</li></ol><p class="source52-p31-review-note">검수 메모: 계산은 독립 확인됐지만, 이 풀이는 탄젠트 항등식을 사용합니다. 초등 학생용 풀이로 적절한지 확인 전에는 공개하지 않습니다.</p></div>`;
-    return result("5-2-u3-e4-mission-1", variant, offset, prompt, `${answer}°`, solution, { alpha, beta, answer }, true, answerVisual("정사각형 안의 목표각", `${answer}°`));
+    const solution = `<div class="source52-p31-solution"><p>풀이에 필요한 점 ㅅ과 점 ㅇ은 그림과 같이 잡습니다.</p>${squareProofDiagram(alpha,beta)}<ol><li>대각선 ㄹㄴ에 대해 점 ㅁ을 대칭이동한 점을 ㅅ이라 둡니다. △ㄹㄴㅁ과 △ㄹㄴㅅ은 ㄹㄴ을 공통으로 하고 ㄹㅁ=ㄹㅅ, 두 변 사이의 각이 각각 45°이므로 합동입니다. 따라서 ∠ㄹㄴㅅ=45°−${alpha}°=${beta}°이고, ∠ㅅㄴㄷ=${alpha}°입니다.</li><li>ㄹㄱ을 ㄱ 너머로 연장하고 ㄱㅇ=ㄷㅂ이 되게 점 ㅇ을 잡습니다. △ㄴㄷㅂ과 △ㄴㄱㅇ은 두 변과 그 사이의 각이 각각 같아 합동이므로 ㄴㅂ=ㄴㅇ, ∠ㄱㄴㅇ=${beta}°입니다.</li><li>∠ㅂㄴㅁ=90°−${alpha}°−${beta}°=45°이고 ∠ㅁㄴㅇ=${alpha}°+${beta}°=45°입니다. ㄴㅂ=ㄴㅇ, ㄴㅁ은 공통이고 두 변 사이의 각도 45°로 같으므로 △ㄴㅂㅁ과 △ㄴㅇㅁ은 합동입니다. 직각삼각형 ㄴㄱㅇ에서 ∠ㄴㅇㄱ=90°−${beta}°이고 ㄱ, ㅇ, ㅁ이 한 직선 위에 있으므로 △ㄴㅇㅁ의 나머지 각은 ∠ㄴㅁㅇ=90°−${alpha}°입니다. 따라서 ∠ㄴㅁㅂ=90°−${alpha}°입니다.</li><li>직각삼각형 ㄱㄴㅁ에서 ∠ㄴㅁㄱ=90°−${alpha}°입니다. ㄱ, ㅁ, ㄹ은 한 직선 위에 있으므로 ∠ㄹㅁㄴ=90°+${alpha}°입니다. 따라서 ∠ㄹㅁㅂ=(90°+${alpha}°)−(90°−${alpha}°)=${answer}°입니다.</li></ol></div>`;
+    return result("5-2-u3-e4-mission-1", variant, offset, prompt, `${answer}°`, solution, { alpha, beta, answer }, false, answerVisual("정사각형 안의 목표각", `${answer}°`));
   }
 
   function buildMission2(variant, offset) {

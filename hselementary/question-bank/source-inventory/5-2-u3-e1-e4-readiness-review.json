@@ -159,7 +159,7 @@
       },
       {
         "checkId": "e4-mission-1-square-angle-20-25",
-        "expression": "side=1; LM=1−tan20°, LB=1−tan25°; tan25°=tan(45°−20°) ⇒ tan∠LMB=(1−tan25°)/(1−tan20°)=tan40°",
+        "expression": "대각선 대칭으로 ∠ㅅㄴㄷ=20°; ㄱㅇ=ㄷㅂ 구성으로 SAS 2회 ⇒ ∠ㄴㅁㅂ=70°, ∠ㄹㅁㄴ=110°, 목표각=40°",
         "result": true
       },
       {
@@ -190,8 +190,8 @@
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 18,
-    "publicCandidateCount": 23,
-    "lockedCount": 30
+    "publicCandidateCount": 26,
+    "lockedCount": 27
   },
   "groupedStructures": [
     {
@@ -1720,19 +1720,19 @@
         "목표각은 ∠ㄹㅁㅂ"
       ],
       "visualRequirement": "정사각형의 꼭짓점 순서와 점 ㅁ·ㅂ의 변 위 위치, 20°(ㄱㄴ과 ㄴㅁ 사이), 25°(ㄴㄷ과 ㄴㅂ 사이), 목표각 ∠ㄹㅁㅂ을 보존합니다.",
-      "independentCalculation": "정사각형 한 변을 1로 두고 ㄱ=(0,1), ㄴ=(1,1), ㄷ=(1,0), ㄹ=(0,0)으로 둡니다. ∠ㄱㄴㅁ=20°이므로 ㄹㅁ=1−tan20°이고, ∠ㄷㄴㅂ=25°이므로 ㄹㅂ=1−tan25°입니다. t=tan20°라 두면 tan25°=tan(45°−20°)=(1−t)/(1+t)입니다. 따라서 tan∠ㄹㅁㅂ=ㄹㅂ/ㄹㅁ=(1−tan25°)/(1−tan20°)=2t/(1−t²)=tan40°입니다. 그림에서 목표각은 예각이므로 ∠ㄹㅁㅂ=40°로 유일합니다.",
-      "answerFormula": "tan∠ㄹㅁㅂ=(1−tan25°)/(1−tan20°)=tan40° ⇒ ∠ㄹㅁㅂ=40°",
+      "independentCalculation": "점 ㅅ을 대각선 ㄹㄴ에 대한 점 ㅁ의 대칭점으로 잡으면 △ㄹㄴㅁ≅△ㄹㄴㅅ이므로 ∠ㅅㄴㄷ=20°입니다. ㄱㄹ을 ㄱ 너머로 연장해 ㄱㅇ=ㄷㅂ인 점 ㅇ을 잡으면 직각삼각형 △ㄴㄷㅂ≅△ㄴㄱㅇ이므로 ㄴㅂ=ㄴㅇ입니다. 또 ∠ㅂㄴㅁ=∠ㅁㄴㅇ=45°라서 △ㄴㅂㅁ≅△ㄴㅇㅁ이고 ∠ㄴㅁㅂ=70°입니다. ∠ㄹㅁㄴ=110°이므로 ∠ㄹㅁㅂ=110°−70°=40°입니다. 두 합동은 모두 SAS이며 탄젠트·좌표 계산을 쓰지 않습니다.",
+      "answerFormula": "대각선 대칭과 두 번의 SAS 합동: ∠ㄴㅁㅂ=70°, ∠ㄹㅁㄴ=110° ⇒ ∠ㄹㅁㅂ=40°",
       "independentAnswer": "40°",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "정사각형 좌표와 tan(45°−20°) 항등식으로 조건을 모두 사용해 40°를 얻으며, 목표각은 예각입니다.",
+      "singleAnswerCheck": "원문 각 20°·25°를 모두 사용한 두 번의 SAS 합동으로 40°를 얻습니다. 목표각은 110°−70°로 유일합니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "합성 도형의 문제·풀이 분리, PC·모바일 화면과 A4 출력을 확인했습니다. 다만 현재 풀이가 탄젠트 항등식을 사용하므로 초등 학생용 풀이를 검증하기 전까지 출제 잠금을 유지합니다."
+      "implementationStatus": "reviewed",
+      "publicDecision": "public-candidate",
+      "lockReason": ""
     },
     {
       "sourceItemId": "5-2-u3-e4-mission-2",
@@ -1900,8 +1900,8 @@
   "summary": {
     "sourceItemCount": 53,
     "directlyReviewedCount": 53,
-    "publicCandidateCount": 25,
-    "lockedCount": 28,
+    "publicCandidateCount": 26,
+    "lockedCount": 27,
     "calculationCheckedCount": 49,
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
@@ -1928,7 +1928,8 @@
       "2026-10-24 인쇄 31쪽 Mission 5의 합동 순서와 직각 표식을 원문 확대에서 확인했습니다. 좌표 검산으로 △ㄱㄷㅁ=160cm²를 확인했으며, 구현 도형·A4 검수 전 잠금은 유지합니다. Drive QA: 1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s.",
       "2026-10-24 인쇄 31쪽 Mission 3은 필기 없는 대체본(황소5-2-1.pdf, SHA-256 6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88)의 600dpi 렌더에서 도형을 확인했습니다. 점 ㄷ 중심 시계 방향 60° 회전으로 ㄴ→ㄱ, ㅁ→ㄹ이 대응하여 ㉮=∠ㄱㄹㄷ=140°입니다. 구현/A4 검수 전 잠금은 유지합니다.",
       "2026-10-24 인쇄 31쪽 Missions 1·2를 깨끗한 대체본의 600dpi 렌더와 Apple Vision OCR로 재검수했습니다. Mission 1의 이전 70° 후보는 조건을 일부만 사용한 오류라 정사각형 좌표와 tan(45°−20°) 항등식으로 40°로 고쳤습니다. Mission 2는 같은 현과 같은 중심각으로 반원 호를 분할해 130°를 확인했습니다. 원문 구조는 확인했고 구현/A4 검수 전 잠금은 유지합니다.",
-      "2026-10-24 인쇄 31쪽 Missions 1–3 런타임 검수: 합성 27구성, PC 1440px·모바일 375px 54상태, 문제·풀이 6개 A4 한 쪽 PDF를 확인했습니다. Mission 2·3은 공개 후보로 전환했고, Mission 1은 초등 풀이 검증 전까지 잠금을 유지합니다. 분류 회귀 감사에서 기존 124개 항목과 그룹이 그대로임을 확인했습니다."
+      "2026-10-24 인쇄 31쪽 Missions 1–3 런타임 검수: 합성 27구성, PC 1440px·모바일 375px 54상태, 문제·풀이 6개 A4 한 쪽 PDF를 확인했습니다. Mission 2·3은 공개 후보로 전환했고, Mission 1은 초등 풀이 검증 전까지 잠금을 유지합니다. 분류 회귀 감사에서 기존 124개 항목과 그룹이 그대로임을 확인했습니다.",
+      "2026-10-24 인쇄 31쪽 Mission 1은 대각선 대칭점 ㅅ과 ㄱㄹ 연장점 ㅇ을 이용한 두 번의 SAS 합동 풀이를 검증했습니다. 탄젠트·좌표 풀이를 제거하고 문제·풀이 그림 및 A4 검수를 다시 진행합니다. Drive QA 기록은 source-review 노트에 덧붙입니다."
     ]
   }
 }

@@ -39,6 +39,16 @@
   stroke-width: 2;
 }
 
+.source52-p31-diagram .source52-construction-line {
+  stroke: #7a6f5c;
+  stroke-dasharray: 6 5;
+}
+
+.source52-p31-diagram .source52-equal-mark {
+  stroke: #2f6b4a;
+  stroke-width: 2;
+}
+
 .source52-p31-diagram text {
   fill: #191511;
   stroke: none;
@@ -68,6 +78,12 @@
   margin-top: 4px;
 }
 
+.source52-p31-proof-diagram {
+  width: min(100%, 460px);
+  max-height: 94mm;
+  margin: 4px auto 10px;
+}
+
 .source52-p31-review-note {
   margin: 10px 0 0;
   padding: 8px 10px;
@@ -89,6 +105,10 @@
 
   .source52-p31-diagram {
     max-height: 120mm;
+  }
+
+  .source52-p31-proof-diagram {
+    max-height: 94mm;
   }
 
   .source52-p31-review-note {
