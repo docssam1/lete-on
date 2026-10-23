@@ -6,7 +6,9 @@
     "publicationSafety": "원문 문구, 공식 답, 원본 이미지, 로컬 경로는 공개 페이지·배포 데이터에 넣지 않는다.",
     "sourceReference": "생각하는 황소 초등 5-2 심화 원본",
     "evidencePolicy": "sourceVerified가 false인 항목은 원문 조건·그림·답을 추측한 것으로 취급하지 않으며 공개하지 않는다.",
-    "answerPolicy": "answerContract는 후보 계약일 뿐이다. 공식 답·독립 계산·단일 정답 검수가 끝날 때까지 implementationStatus를 바꾸지 않는다."
+    "answerPolicy": "answerContract는 후보 계약일 뿐이다. 공식 답·독립 계산·단일 정답 검수가 끝날 때까지 implementationStatus를 바꾸지 않는다.",
+    "canonicalSourceFile": "5-2 심화.pdf",
+    "canonicalSourceSha256": "d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463"
   },
   "integrity": {
     "expectedTotalItems": 286,
@@ -87,8 +89,8 @@
         35
       ],
       "sourcePrintedContentPages": [
-        22,
-        37
+        24,
+        39
       ]
     },
     {
@@ -1638,7 +1640,7 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 20,
-      "printedPage": 22,
+      "printedPage": 24,
       "sourceShape": "합동인 도형의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: rubric-or-single-choice",
       "visualRisk": [
@@ -1656,7 +1658,7 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 20,
-      "printedPage": 22,
+      "printedPage": 24,
       "sourceShape": "합동인 도형의 예제 1-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1674,7 +1676,7 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 20,
-      "printedPage": 22,
+      "printedPage": 24,
       "sourceShape": "합동인 도형의 예제 1-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1692,7 +1694,7 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 20,
-      "printedPage": 22,
+      "printedPage": 24,
       "sourceShape": "합동인 도형의 예제 1-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1710,7 +1712,7 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 20,
-      "printedPage": 22,
+      "printedPage": 24,
       "sourceShape": "합동인 도형의 예제 1-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1728,7 +1730,7 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 21,
-      "printedPage": 23,
+      "printedPage": 25,
       "sourceShape": "합동인 도형의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1746,7 +1748,7 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 21,
-      "printedPage": 23,
+      "printedPage": 25,
       "sourceShape": "합동인 도형의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1764,7 +1766,7 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 21,
-      "printedPage": 23,
+      "printedPage": 25,
       "sourceShape": "합동인 도형의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1782,7 +1784,7 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 21,
-      "printedPage": 23,
+      "printedPage": 25,
       "sourceShape": "합동인 도형의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1800,7 +1802,7 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 21,
-      "printedPage": 23,
+      "printedPage": 25,
       "sourceShape": "합동인 도형의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1818,7 +1820,7 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 21,
-      "printedPage": 23,
+      "printedPage": 25,
       "sourceShape": "합동인 도형의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1836,7 +1838,7 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 22,
-      "printedPage": 24,
+      "printedPage": 26,
       "sourceShape": "합동인 삼각형의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: rubric-or-single-choice",
       "visualRisk": [
@@ -1854,7 +1856,7 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 22,
-      "printedPage": 24,
+      "printedPage": 26,
       "sourceShape": "합동인 삼각형의 예제 2-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1872,7 +1874,7 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 22,
-      "printedPage": 24,
+      "printedPage": 26,
       "sourceShape": "합동인 삼각형의 예제 2-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1890,7 +1892,7 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 22,
-      "printedPage": 24,
+      "printedPage": 26,
       "sourceShape": "합동인 삼각형의 예제 2-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1908,7 +1910,7 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 22,
-      "printedPage": 24,
+      "printedPage": 26,
       "sourceShape": "합동인 삼각형의 예제 2-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1926,7 +1928,7 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 23,
-      "printedPage": 25,
+      "printedPage": 27,
       "sourceShape": "합동인 삼각형의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1944,7 +1946,7 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 23,
-      "printedPage": 25,
+      "printedPage": 27,
       "sourceShape": "합동인 삼각형의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1962,7 +1964,7 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 23,
-      "printedPage": 25,
+      "printedPage": 27,
       "sourceShape": "합동인 삼각형의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1980,7 +1982,7 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 23,
-      "printedPage": 25,
+      "printedPage": 27,
       "sourceShape": "합동인 삼각형의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -1998,7 +2000,7 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 23,
-      "printedPage": 25,
+      "printedPage": 27,
       "sourceShape": "합동인 삼각형의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2016,7 +2018,7 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 23,
-      "printedPage": 25,
+      "printedPage": 27,
       "sourceShape": "합동인 삼각형의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2034,7 +2036,7 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 24,
-      "printedPage": 26,
+      "printedPage": 28,
       "sourceShape": "합동의 활용의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: rubric-or-single-choice",
       "visualRisk": [
@@ -2052,7 +2054,7 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 24,
-      "printedPage": 26,
+      "printedPage": 28,
       "sourceShape": "합동의 활용의 예제 3-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2070,7 +2072,7 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 24,
-      "printedPage": 26,
+      "printedPage": 28,
       "sourceShape": "합동의 활용의 예제 3-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2088,7 +2090,7 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 24,
-      "printedPage": 26,
+      "printedPage": 28,
       "sourceShape": "합동의 활용의 예제 3-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2106,7 +2108,7 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 24,
-      "printedPage": 26,
+      "printedPage": 28,
       "sourceShape": "합동의 활용의 예제 3-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2124,7 +2126,7 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 25,
-      "printedPage": 27,
+      "printedPage": 29,
       "sourceShape": "합동의 활용의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2142,7 +2144,7 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 25,
-      "printedPage": 27,
+      "printedPage": 29,
       "sourceShape": "합동의 활용의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2160,7 +2162,7 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 25,
-      "printedPage": 27,
+      "printedPage": 29,
       "sourceShape": "합동의 활용의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2178,7 +2180,7 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 25,
-      "printedPage": 27,
+      "printedPage": 29,
       "sourceShape": "합동의 활용의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2196,7 +2198,7 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 25,
-      "printedPage": 27,
+      "printedPage": 29,
       "sourceShape": "합동의 활용의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2214,7 +2216,7 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 25,
-      "printedPage": 27,
+      "printedPage": 29,
       "sourceShape": "합동의 활용의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2232,8 +2234,8 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 26,
-      "printedPage": 28,
-      "sourceShape": "선대칭도형의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 30,
+      "sourceShape": "합동의 활용 ②의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: rubric-or-single-choice",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2250,8 +2252,8 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 26,
-      "printedPage": 28,
-      "sourceShape": "선대칭도형의 예제 4-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 30,
+      "sourceShape": "합동의 활용 ②의 예제 4-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2268,8 +2270,8 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 26,
-      "printedPage": 28,
-      "sourceShape": "선대칭도형의 예제 4-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 30,
+      "sourceShape": "합동의 활용 ②의 예제 4-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2286,8 +2288,8 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 26,
-      "printedPage": 28,
-      "sourceShape": "선대칭도형의 예제 4-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 30,
+      "sourceShape": "합동의 활용 ②의 예제 4-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2304,8 +2306,8 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 26,
-      "printedPage": 28,
-      "sourceShape": "선대칭도형의 예제 4-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 30,
+      "sourceShape": "합동의 활용 ②의 예제 4-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2322,8 +2324,8 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 27,
-      "printedPage": 29,
-      "sourceShape": "선대칭도형의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 31,
+      "sourceShape": "합동의 활용 ② Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2340,8 +2342,8 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 27,
-      "printedPage": 29,
-      "sourceShape": "선대칭도형의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 31,
+      "sourceShape": "합동의 활용 ② Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2358,8 +2360,8 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 27,
-      "printedPage": 29,
-      "sourceShape": "선대칭도형의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 31,
+      "sourceShape": "합동의 활용 ② Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2376,8 +2378,8 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 27,
-      "printedPage": 29,
-      "sourceShape": "선대칭도형의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 31,
+      "sourceShape": "합동의 활용 ② Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2394,8 +2396,8 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 27,
-      "printedPage": 29,
-      "sourceShape": "선대칭도형의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 31,
+      "sourceShape": "합동의 활용 ② Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2412,8 +2414,8 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 27,
-      "printedPage": 29,
-      "sourceShape": "선대칭도형의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 31,
+      "sourceShape": "합동의 활용 ② Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2430,8 +2432,8 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 28,
-      "printedPage": 30,
-      "sourceShape": "선대칭도형의 성질의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 32,
+      "sourceShape": "선대칭도형의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: rubric-or-single-choice",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2448,8 +2450,8 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 28,
-      "printedPage": 30,
-      "sourceShape": "선대칭도형의 성질의 예제 5-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 32,
+      "sourceShape": "선대칭도형의 예제 5-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2466,8 +2468,8 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 28,
-      "printedPage": 30,
-      "sourceShape": "선대칭도형의 성질의 예제 5-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 32,
+      "sourceShape": "선대칭도형의 예제 5-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2484,8 +2486,8 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 28,
-      "printedPage": 30,
-      "sourceShape": "선대칭도형의 성질의 예제 5-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 32,
+      "sourceShape": "선대칭도형의 예제 5-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2502,8 +2504,8 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 28,
-      "printedPage": 30,
-      "sourceShape": "선대칭도형의 성질의 예제 5-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 32,
+      "sourceShape": "선대칭도형의 예제 5-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2520,8 +2522,8 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 29,
-      "printedPage": 31,
-      "sourceShape": "선대칭도형의 성질의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 33,
+      "sourceShape": "선대칭도형 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2538,8 +2540,8 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 29,
-      "printedPage": 31,
-      "sourceShape": "선대칭도형의 성질의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 33,
+      "sourceShape": "선대칭도형 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2556,8 +2558,8 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 29,
-      "printedPage": 31,
-      "sourceShape": "선대칭도형의 성질의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 33,
+      "sourceShape": "선대칭도형 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2574,8 +2576,8 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 29,
-      "printedPage": 31,
-      "sourceShape": "선대칭도형의 성질의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 33,
+      "sourceShape": "선대칭도형 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2592,8 +2594,8 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 29,
-      "printedPage": 31,
-      "sourceShape": "선대칭도형의 성질의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 33,
+      "sourceShape": "선대칭도형 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2610,8 +2612,8 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 29,
-      "printedPage": 31,
-      "sourceShape": "선대칭도형의 성질의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
+      "printedPage": 33,
+      "sourceShape": "선대칭도형 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
         "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
@@ -2628,7 +2630,7 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 30,
-      "printedPage": 32,
+      "printedPage": 34,
       "sourceShape": "점대칭도형의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: rubric-or-single-choice",
       "visualRisk": [
@@ -2646,7 +2648,7 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 30,
-      "printedPage": 32,
+      "printedPage": 34,
       "sourceShape": "점대칭도형의 예제 6-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2664,7 +2666,7 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 30,
-      "printedPage": 32,
+      "printedPage": 34,
       "sourceShape": "점대칭도형의 예제 6-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2682,7 +2684,7 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 30,
-      "printedPage": 32,
+      "printedPage": 34,
       "sourceShape": "점대칭도형의 예제 6-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2700,7 +2702,7 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 30,
-      "printedPage": 32,
+      "printedPage": 34,
       "sourceShape": "점대칭도형의 예제 6-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2718,7 +2720,7 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 31,
-      "printedPage": 33,
+      "printedPage": 35,
       "sourceShape": "점대칭도형의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2736,7 +2738,7 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 31,
-      "printedPage": 33,
+      "printedPage": 35,
       "sourceShape": "점대칭도형의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2754,7 +2756,7 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 31,
-      "printedPage": 33,
+      "printedPage": 35,
       "sourceShape": "점대칭도형의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2772,7 +2774,7 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 31,
-      "printedPage": 33,
+      "printedPage": 35,
       "sourceShape": "점대칭도형의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2790,7 +2792,7 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 31,
-      "printedPage": 33,
+      "printedPage": 35,
       "sourceShape": "점대칭도형의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2808,7 +2810,7 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 31,
-      "printedPage": 33,
+      "printedPage": 35,
       "sourceShape": "점대칭도형의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2826,7 +2828,7 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 32,
-      "printedPage": 34,
+      "printedPage": 36,
       "sourceShape": "점대칭도형의 성질의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: rubric-or-single-choice",
       "visualRisk": [
@@ -2844,7 +2846,7 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 32,
-      "printedPage": 34,
+      "printedPage": 36,
       "sourceShape": "점대칭도형의 성질의 예제 7-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2862,7 +2864,7 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 32,
-      "printedPage": 34,
+      "printedPage": 36,
       "sourceShape": "점대칭도형의 성질의 예제 7-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2880,7 +2882,7 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 32,
-      "printedPage": 34,
+      "printedPage": 36,
       "sourceShape": "점대칭도형의 성질의 예제 7-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2898,7 +2900,7 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 32,
-      "printedPage": 34,
+      "printedPage": 36,
       "sourceShape": "점대칭도형의 성질의 예제 7-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2916,7 +2918,7 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 33,
-      "printedPage": 35,
+      "printedPage": 37,
       "sourceShape": "점대칭도형의 성질의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2934,7 +2936,7 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 33,
-      "printedPage": 35,
+      "printedPage": 37,
       "sourceShape": "점대칭도형의 성질의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2952,7 +2954,7 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 33,
-      "printedPage": 35,
+      "printedPage": 37,
       "sourceShape": "점대칭도형의 성질의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2970,7 +2972,7 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 33,
-      "printedPage": 35,
+      "printedPage": 37,
       "sourceShape": "점대칭도형의 성질의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -2988,7 +2990,7 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 33,
-      "printedPage": 35,
+      "printedPage": 37,
       "sourceShape": "점대칭도형의 성질의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3006,7 +3008,7 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 33,
-      "printedPage": 35,
+      "printedPage": 37,
       "sourceShape": "점대칭도형의 성질의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3024,7 +3026,7 @@
       "section": "exploration",
       "ordinal": 1,
       "pdfPage": 34,
-      "printedPage": 36,
+      "printedPage": 38,
       "sourceShape": "합동과 대칭의 활용의 개념탐구 본문 항목으로, 조건을 해석해 필요한 표현·값·관계를 찾는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: rubric-or-single-choice",
       "visualRisk": [
@@ -3042,7 +3044,7 @@
       "section": "example",
       "ordinal": 1,
       "pdfPage": 34,
-      "printedPage": 36,
+      "printedPage": 38,
       "sourceShape": "합동과 대칭의 활용의 예제 8-1 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3060,7 +3062,7 @@
       "section": "example",
       "ordinal": 2,
       "pdfPage": 34,
-      "printedPage": 36,
+      "printedPage": 38,
       "sourceShape": "합동과 대칭의 활용의 예제 8-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3078,7 +3080,7 @@
       "section": "example",
       "ordinal": 3,
       "pdfPage": 34,
-      "printedPage": 36,
+      "printedPage": 38,
       "sourceShape": "합동과 대칭의 활용의 예제 8-3 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3096,7 +3098,7 @@
       "section": "example",
       "ordinal": 4,
       "pdfPage": 34,
-      "printedPage": 36,
+      "printedPage": 38,
       "sourceShape": "합동과 대칭의 활용의 예제 8-4 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3114,7 +3116,7 @@
       "section": "mission",
       "ordinal": 1,
       "pdfPage": 35,
-      "printedPage": 37,
+      "printedPage": 39,
       "sourceShape": "합동과 대칭의 활용의 Mission 1 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3132,7 +3134,7 @@
       "section": "mission",
       "ordinal": 2,
       "pdfPage": 35,
-      "printedPage": 37,
+      "printedPage": 39,
       "sourceShape": "합동과 대칭의 활용의 Mission 2 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3150,7 +3152,7 @@
       "section": "mission",
       "ordinal": 3,
       "pdfPage": 35,
-      "printedPage": 37,
+      "printedPage": 39,
       "sourceShape": "합동과 대칭의 활용의 Mission 3 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3168,7 +3170,7 @@
       "section": "mission",
       "ordinal": 4,
       "pdfPage": 35,
-      "printedPage": 37,
+      "printedPage": 39,
       "sourceShape": "합동과 대칭의 활용의 Mission 4 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3186,7 +3188,7 @@
       "section": "mission",
       "ordinal": 5,
       "pdfPage": 35,
-      "printedPage": 37,
+      "printedPage": 39,
       "sourceShape": "합동과 대칭의 활용의 Mission 5 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
@@ -3204,7 +3206,7 @@
       "section": "mission",
       "ordinal": 6,
       "pdfPage": 35,
-      "printedPage": 37,
+      "printedPage": 39,
       "sourceShape": "합동과 대칭의 활용의 Mission 6 항목으로, 심화 조건을 결합해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
       "answerContract": "candidate: single-value-or-set",
       "visualRisk": [
