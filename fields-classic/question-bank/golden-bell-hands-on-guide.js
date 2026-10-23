@@ -1,4 +1,6 @@
-import { clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js?v=20261023t";
+import { clockValueAfterQuarterTurns, unfoldTargets } from "./golden-bell-hands-on-models.js?v=20261023t";
+
+const unfoldTargetCount = (round, state) => unfoldTargets(round, state.unfold).filter((cell) => !state.cells.includes(cell)).length;
 
 const directions = { right: "오른쪽", left: "왼쪽", up: "위쪽", down: "아래쪽" };
 
@@ -27,7 +29,17 @@ export function handsOnGuide(activity, round, state) {
     ? { phase: "progress", text: `지금 ${state.cells.length}칸을 골랐어. 주어진 칸과 거울선 사이의 거리를 비교해 봐.` }
     : { phase: "start", text: "거울선에서 같은 거리의 빈칸을 찾아 직접 눌러 봐." };
   if (activity.kind === "fold") {
-    if (state.cut) return { phase: "progress", text: "이제 접은 순서의 반대로 펼쳐 보자. 잘린 칸을 빈 격자에 표시해 봐." };
+    // 골든벨 풀이: 마지막에 접은 선부터 펼친다 → 새 자국을 접은 선 반대쪽 같은 거리에 표시 → 첫 접기까지 되돌린 뒤 센다.
+    const n = round.model.folds.length;
+    if (state.note) return { phase: "retry", text: state.note };
+    if (state.cut) {
+      if (state.unfold === 0) return { phase: "progress", text: `① 접은 순서의 반대로 펼쳐. 마지막에 접은 ${directions[round.model.folds[n - 1]]} 접기부터 펼쳐 보자.` };
+      const fold = round.model.folds[n - state.unfold];
+      const left = unfoldTargetCount(round, state);
+      if (left) return { phase: "progress", text: `② 방금 펼친 ${fold === "left" || fold === "right" ? "세로" : "가로"} 접은 선(점선)이 거울이야. 있던 자국과 같은 거리의 반대쪽에 새 자국이 ${left}개 더 있어. 눌러서 표시해 봐.` };
+      if (state.unfold < n) return { phase: "progress", text: `좋아. 이제 그 전에 접은 ${directions[round.model.folds[n - state.unfold - 1]]} 접기를 펼쳐 보자.` };
+      return { phase: "progress", text: `③ 다 펼쳤어. 자국은 모두 ${state.cells.length}개야. 「결과 확인」으로 세어 보자.` };
+    }
     if (state.foldStep === round.model.folds.length) return { phase: "progress", text: "종이가 포개졌어. 표시된 자리를 잘라 보자." };
     const next = round.model.folds[state.foldStep];
     return { phase: state.foldStep ? "progress" : "start", text: `${state.foldStep ? "다음은" : "먼저"} ${directions[next]}으로 접어 보자. 종이가 어디에 포개질까?` };

@@ -35,7 +35,20 @@ export function unfoldCuts(model, remaining = 0) {
 }
 
 export function foldSelectedCells(model) {
-  const cuts = unfoldCuts(model);
+  return cutCells(model, 0);
+}
+
+// 접은 횟수 remaining만큼 아직 접혀 있을 때 보이는 자국 칸. 한 번 펼칠 때마다 접은 선 반대쪽에 짝이 생긴다.
+export function cutCells(model, remaining = 0) {
+  return cellsCovered(model, unfoldCuts(model, remaining));
+}
+
+// 접은 횟수 count만큼 접힌 종이가 덮는 칸(펼칠 때 아이가 고를 수 있는 자리).
+export function paperCells(model, count) {
+  return cellsCovered(model, [foldPaper(model, count)]);
+}
+
+function cellsCovered(model, cuts) {
   const inside = (poly, point) => {
     let sign = 0;
     for (let i = 0; i < poly.length; i++) {

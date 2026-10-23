@@ -1,7 +1,7 @@
 import { icon } from "../../geometry/games/shape-transform/ui-icons.js";
 import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
-import { foldPaper, unfoldCuts } from "./golden-bell-hands-on-folding.js?v=20260925a";
-import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20261023t";
+import { foldPaper, unfoldCuts, paperCells } from "./golden-bell-hands-on-folding.js?v=20261023t";
+import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue, unfoldTargets, unfoldStageDone } from "./golden-bell-hands-on-models.js?v=20261023t";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261023t";
 import { mountClockGame } from "./golden-bell-clock-game.js?v=20261023t";
 import { mountLevelGame } from "./golden-bell-level-game.js?v=20261004a";
@@ -59,19 +59,43 @@ function movingFlap(round, count) {
   if (!bounds || bounds[2] <= bounds[0] || bounds[3] <= bounds[1]) return "";
   return `<polygon class="hand-fold-moving ${fold === "left" || fold === "right" ? "vertical" : "horizontal"}" points="${points(rectangle(...bounds))}"/>`;
 }
+// 접기 → 자르기 → (마지막 접기부터) 한 번씩 펼치며 새 자국 표시. 골든벨 풀이 순서 그대로.
 function foldScene(round, state, animateFold = false) {
-  const count = state.solved ? 0 : state.foldStep;
+  const n = round.model.folds.length;
+  const unfolding = state.cut;
+  const count = unfolding ? n - state.unfold : state.foldStep;
   const shape = foldPaper(round.model, count);
-  const cuts = state.solved ? unfoldCuts(round.model) : state.foldStep === round.model.folds.length ? unfoldCuts(round.model, state.foldStep) : [];
-  const next = state.solved ? null : round.model.folds[count];
+  // 펼치는 중에는 아이가 찾은 자국만 구멍으로 그린다(아직 못 찾은 새 자국은 숨긴다).
+  const holes = unfolding
+    ? state.cells.map((cell) => rectangle((cell % 4) / 4, Math.floor(cell / 4) / 4, (cell % 4 + 1) / 4, (Math.floor(cell / 4) + 1) / 4))
+    : state.foldStep === n ? unfoldCuts(round.model, state.foldStep).map((poly) => poly) : [];
+  const next = unfolding ? (state.unfold < n && !state.solved ? round.model.folds[n - state.unfold - 1] : null) : round.model.folds[count];
   const bounds = paperBounds(shape);
-  const crease = next ? next === "left" || next === "right"
+  const creaseOf = (fold) => fold === "left" || fold === "right"
     ? `<path class="hand-fold-crease" d="M120 ${20 + bounds.y0 * 200}V${20 + bounds.y1 * 200}"/>`
-    : `<path class="hand-fold-crease" d="M${20 + bounds.x0 * 200} 120H${20 + bounds.x1 * 200}"/>` : "";
+    : `<path class="hand-fold-crease" d="M${20 + bounds.x0 * 200} 120H${20 + bounds.x1 * 200}"/>`;
+  const opened = unfolding && state.unfold > 0 ? round.model.folds[n - state.unfold] : null;
+  const crease = next ? creaseOf(next) : "";
+  const openedCrease = opened ? creaseOf(opened).replace("hand-fold-crease", "hand-fold-crease opened") : "";
   const grid = [70, 120, 170].map((p) => `<path d="M${p} 20V220M20 ${p}H220"/>`).join("");
-  const svg = `<svg viewBox="0 0 240 240" role="img" aria-label="${state.solved ? "완전히 펼친 색종이" : `${state.foldStep}번 접은 색종이${state.cut ? ", 표시한 칸을 자름" : ""}`}"><defs><clipPath id="hand-fold-grid-clip"><polygon points="${points(shape)}"/></clipPath></defs><rect class="hand-fold-outline" x="20" y="20" width="200" height="200"/><polygon class="hand-fold-paper" points="${points(shape)}"/><g class="hand-fold-grid" clip-path="url(#hand-fold-grid-clip)">${grid}</g>${crease}${next ? foldArrow(next, bounds) : ""}${cuts.map((poly) => `<polygon class="${state.cut ? "hand-fold-hole" : "hand-fold-mark"}" points="${points(poly)}"/>`).join("")}${animateFold ? movingFlap(round, count) : ""}</svg>`;
-  const doneFold = state.foldStep === round.model.folds.length;
-  return `<div class="hand-fold-layout"><figure>${svg}<figcaption>${state.solved ? "펼친 뒤" : state.cut ? "자른 뒤" : `${state.foldStep}번 접은 뒤`}</figcaption></figure><div><p class="hand-diagram-label">펼치면 잘릴 칸</p>${cellGrid(state, { enabled: state.cut, label: "잘릴 칸 예상" })}</div></div><div class="hand-controls">${button("fold", doneFold ? "접기 완료" : `${direction[round.model.folds[state.foldStep]]}으로 접기`, "next", { disabled: doneFold || state.solved })}${button("cut", "표시한 칸 자르기", null, { disabled: !doneFold || state.cut || state.solved })}</div>`;
+  const caption = state.solved ? "다 펼친 뒤" : unfolding ? state.unfold ? `${state.unfold}번 펼친 뒤` : "자른 뒤" : `${state.foldStep}번 접은 뒤`;
+  const svg = `<svg viewBox="0 0 240 240" role="img" aria-label="${esc(`색종이 ${caption}${unfolding ? `, 찾은 자국 ${state.cells.length}개` : ""}`)}"><defs><clipPath id="hand-fold-grid-clip"><polygon points="${points(shape)}"/></clipPath></defs><rect class="hand-fold-outline" x="20" y="20" width="200" height="200"/><polygon class="hand-fold-paper" points="${points(shape)}"/><g class="hand-fold-grid" clip-path="url(#hand-fold-grid-clip)">${grid}</g>${openedCrease}${crease}${next && !unfolding ? foldArrow(next, bounds) : ""}${holes.map((poly) => `<polygon class="${state.cut ? "hand-fold-hole" : "hand-fold-mark"}" points="${points(poly)}"/>`).join("")}${animateFold && !unfolding ? movingFlap(round, count) : ""}</svg>`;
+  const onPaper = unfolding ? paperCells(round.model, count) : [];
+  const pickable = unfolding && state.unfold > 0 && !state.solved;
+  const cells = Array.from({ length: 16 }, (_, i) => {
+    const label = `${Math.floor(i / 4) + 1}행 ${i % 4 + 1}열`;
+    const hole = state.cells.includes(i);
+    const inPaper = onPaper.includes(i);
+    const cls = `hand-cell${hole ? " selected" : ""}${unfolding && !inPaper ? " off-paper" : ""}`;
+    if (!pickable || !inPaper || hole && !unfoldTargets(round, state.unfold).includes(i)) return `<span class="${cls}" role="img" aria-label="${label}${hole ? " 자국" : unfolding && !inPaper ? " 아직 접혀 있음" : ""}">${hole ? icon("check") : ""}</span>`;
+    return `<button type="button" class="${cls}" data-hand-action="cell" data-value="${i}" aria-label="${label}" aria-pressed="${hole}">${hole ? icon("check") : ""}</button>`;
+  }).join("");
+  const doneFold = state.foldStep === n;
+  const stageDone = unfoldStageDone(round, state);
+  const unfoldLabel = state.unfold < n ? `${direction[round.model.folds[n - state.unfold - 1]]} 접기 펼치기` : "다 펼침";
+  return `<div class="hand-fold-layout"><figure>${svg}<figcaption>${caption}</figcaption></figure><div><p class="hand-diagram-label">${unfolding ? state.unfold ? `펼친 종이의 자국 · 새 자국 ${unfoldTargets(round, state.unfold).filter((c) => !state.cells.includes(c)).length}개 남음` : "자른 자리" : "펼치면 생길 자국"}</p><div class="hand-grid" role="group" aria-label="자국 표시">${cells}</div></div></div><div class="hand-controls">${unfolding
+    ? button("unfold", unfoldLabel, "next", { disabled: state.solved || state.unfold >= n || !stageDone })
+    : `${button("fold", doneFold ? "접기 완료" : `${direction[round.model.folds[state.foldStep]]}으로 접기`, "next", { disabled: doneFold || state.solved })}${button("cut", "표시한 칸 자르기", null, { disabled: !doneFold || state.cut || state.solved })}`}</div>`;
 }
 
 function cardsAndSlots(activity, round, state) {
@@ -164,7 +188,7 @@ function renderActivity(container, unit, session, onQuestions) {
   const portrait = state.solved ? "docssam-praise.webp" : state.checked ? "docssam-thinking.webp" : "docssam-guide.webp";
   const scene = kind === "mirror" ? mirrorScene(round, state) : kind === "fold" ? foldScene(round, state, previousActivity === session.active && state.foldStep > previousFoldStep && previousFoldStep >= 0) : ["cross", "order"].includes(kind) ? cardsAndSlots(activity, round, state) : transferScene(round, state);
   const atEnd = state.roundIndex === activity.rounds.length - 1;
-  container.innerHTML = `<div class="hand-toolbar">${activityTabs(unit, session)}<span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div><h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p><div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><strong>독쌤</strong><p>${esc(guide.text)}</p></div></div><div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}"` : ""}>${scene}</div><p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${esc(state.feedback)}</span></p><div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? unit.single ? "again" : "questions" : "next", atEnd ? unit.single ? "처음부터 다시" : "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : button("check", "결과 확인", "check", { cls: "hand-primary", disabled: (kind === "fold" && !state.cut) || (kind === "transfer" && state.phase !== "done") })}</div>${state.solved && atEnd ? '<p class="hand-finished">체험 도전 3개 완료</p>' : ""}`;
+  container.innerHTML = `<div class="hand-toolbar">${activityTabs(unit, session)}<span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div><h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p><div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><strong>독쌤</strong><p>${esc(guide.text)}</p></div></div><div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}" data-hand-unfold="${state.unfold}"` : ""}>${scene}</div><p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${esc(state.feedback)}</span></p><div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? unit.single ? "again" : "questions" : "next", atEnd ? unit.single ? "처음부터 다시" : "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : button("check", "결과 확인", "check", { cls: "hand-primary", disabled: (kind === "fold" && (!state.cut || state.unfold < round.model.folds.length || !unfoldStageDone(round, state))) || (kind === "transfer" && state.phase !== "done") })}</div>${state.solved && atEnd ? '<p class="hand-finished">체험 도전 3개 완료</p>' : ""}`;
   bindTabs(container, unit, session, onQuestions);
   container.querySelectorAll("[data-hand-action]").forEach((control) => control.addEventListener("click", () => {
     const action = control.dataset.handAction;

@@ -156,3 +156,7 @@
   .gold-hands-on :is(.hand-number-card, .lg-key, .lg-slot, .lg-choice, .lg-sq, .b9m-card) { transition: none; }
 }
 @media print { .gold-hands-on .hand-fold-layout figure svg { transform: none; filter: none; } }
+
+/* 두 번 접기: 이미 찾은 자국(누를 수 없는 칸)도 고른 칸과 같은 모양, 아직 접힌 칸은 빗금으로 흐리게. */
+.gold-hands-on span.hand-cell.selected { color: #fff; background: radial-gradient(120% 70% at 35% 10%, rgba(255, 255, 255, .6), rgba(255, 255, 255, 0) 55%), linear-gradient(180deg, #5f98f0 0%, #2f6fe0 60%, #2457b8 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 4px 0 #1b428e; }
+.gold-hands-on span.hand-cell.off-paper:not(.selected) { background: repeating-linear-gradient(45deg, rgba(120, 80, 35, .16) 0 4px, rgba(255, 248, 232, .3) 4px 8px); box-shadow: none; opacity: .7; }

@@ -1,5 +1,5 @@
 import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
-import { foldSelectedCells } from "./golden-bell-hands-on-folding.js?v=20260925a";
+import { foldSelectedCells, cutCells } from "./golden-bell-hands-on-folding.js?v=20261023t";
 
 // Authored practice, not protected original questions or their answer records.
 export const HANDS_ON_UNITS = [
@@ -49,6 +49,16 @@ export function clockValueAfterQuarterTurns(start, quarterTurns) {
   return ((start - 1 + quarterTurns * 3) % 12 + 12) % 12 + 1;
 }
 
+// 지금 펼친 단계에서 새로 생긴 자국(접은 선 반대쪽 같은 거리) 칸.
+export function unfoldTargets(round, unfold) {
+  const n = round.model.folds.length;
+  if (unfold < 1 || unfold > n) return [];
+  const before = cutCells(round.model, n - unfold + 1);
+  return cutCells(round.model, n - unfold).filter((cell) => !before.includes(cell));
+}
+
+export const unfoldStageDone = (round, state) => unfoldTargets(round, state.unfold).every((cell) => state.cells.includes(cell));
+
 export function expectedCells(activity, round) {
   if (activity.kind === "mirror") return round.given.map((cell) => reflectCell(cell, round.axis)).map(([x, y]) => y * 4 + x).sort((a, b) => a - b);
   if (activity.kind === "fold") return foldSelectedCells(round.model);
@@ -75,7 +85,9 @@ export function newActivityState(activityId, roundIndex = 0) {
   const round = activity.rounds[roundIndex];
   return { activityId, roundIndex, turns: 0, foldStep: 0, cut: false, cells: [], slots: Array(4).fill(null), selected: null, left: round.left, right: round.right, moved: 0, moves: 0, history: [], checked: false, solved: false, feedback: "",
     // 옮기기(transfer)는 골든벨 풀이 순서를 그대로 밟는다: ① 짝 없는 구슬로 차이 찾기 → ② 차이를 반으로 나눠 줄 만큼 고르기 → ③ 옮긴 뒤 덧셈·뺄셈으로 확인.
-    phase: "diff", marked: [], give: [], note: "", misses: 0 };
+    phase: "diff", marked: [], give: [], note: "", misses: 0,
+    // 접기(fold)도 풀이 순서대로: 자른 뒤 마지막 접기부터 한 번씩 펼치고, 펼칠 때마다 새 자국을 표시한다.
+    unfold: 0 };
 }
 
 export function activityCheck(state) {
@@ -83,7 +95,7 @@ export function activityCheck(state) {
   if (activity.kind === "clock") return state.turns === round.turns;
   if (["mirror", "fold"].includes(activity.kind)) {
     const expected = expectedCells(activity, round);
-    return state.cells.length === expected.length && expected.every((cell) => state.cells.includes(cell)) && (activity.kind !== "fold" || state.cut);
+    return state.cells.length === expected.length && expected.every((cell) => state.cells.includes(cell)) && (activity.kind !== "fold" || (state.cut && state.unfold === round.model.folds.length));
   }
   if (activity.kind === "cross") {
     const [top, left, right, bottom] = state.slots;
@@ -122,8 +134,25 @@ export function applyActivityAction(state, action, value) {
     Object.assign(state, state.history.pop(), { checked: false, feedback: "", note: "" });
     return true;
   }
-  const snapshot = { turns: state.turns, foldStep: state.foldStep, cut: state.cut, cells: [...state.cells], slots: [...state.slots], selected: state.selected, left: state.left, right: state.right, moved: state.moved, moves: state.moves, phase: state.phase, marked: [...state.marked], give: [...state.give], note: "" };
+  const snapshot = { turns: state.turns, foldStep: state.foldStep, cut: state.cut, cells: [...state.cells], slots: [...state.slots], selected: state.selected, left: state.left, right: state.right, moved: state.moved, moves: state.moves, phase: state.phase, marked: [...state.marked], give: [...state.give], note: "", unfold: state.unfold };
   let changed = false;
+  if (activity.kind === "fold" && ["unfold", "cell"].includes(action)) {
+    const n = round.model.folds.length;
+    state.note = "";
+    if (action === "unfold" && state.cut && state.unfold < n && unfoldStageDone(round, state)) { state.unfold++; changed = true; }
+    if (action === "cell" && state.cut && state.unfold > 0 && Number.isInteger(value) && value >= 0 && value < 16) {
+      const targets = unfoldTargets(round, state.unfold);
+      if (targets.includes(value)) { state.cells = state.cells.includes(value) ? state.cells.filter((cell) => cell !== value) : [...state.cells, value]; changed = true; }
+      else if (!state.cells.includes(value)) {
+        const fold = round.model.folds[n - state.unfold];
+        state.note = `방금 펼친 ${fold === "left" || fold === "right" ? "세로" : "가로"} 접은 선을 거울로 생각해 봐. 있던 자국에서 접은 선까지 몇 칸인지 세고, 반대쪽으로 같은 칸만큼 가면 새 자국이야.`;
+        state.misses++;
+        return true;
+      }
+    }
+    if (changed) { state.history.push(snapshot); state.moves++; state.checked = false; state.feedback = ""; }
+    return changed;
+  }
   if (activity.kind === "transfer" && ["mark", "give", "hand"].includes(action)) {
     const difference = transferDifference(round);
     state.note = "";
@@ -154,10 +183,10 @@ export function applyActivityAction(state, action, value) {
   }
   if (action === "turn" && activity.kind === "clock" && [-1, 1].includes(value) && Math.abs(state.turns + value) <= 8) { state.turns += value; changed = true; }
   if (action === "fold" && activity.kind === "fold" && state.foldStep < round.model.folds.length) { state.foldStep++; changed = true; }
-  if (action === "cut" && activity.kind === "fold" && state.foldStep === round.model.folds.length && !state.cut) { state.cut = true; changed = true; }
-  if (action === "cell" && Number.isInteger(value) && value >= 0 && value < 16 && ["mirror", "fold"].includes(activity.kind)) {
-    const givenSide = activity.kind === "mirror" && (round.axis.kind === "vertical" ? value % 4 < 2 : Math.floor(value / 4) < 2);
-    if (!givenSide && (activity.kind !== "fold" || state.cut)) { state.cells = state.cells.includes(value) ? state.cells.filter((cell) => cell !== value) : [...state.cells, value]; changed = true; }
+  if (action === "cut" && activity.kind === "fold" && state.foldStep === round.model.folds.length && !state.cut) { state.cut = true; state.cells = cutCells(round.model, round.model.folds.length); changed = true; }
+  if (action === "cell" && Number.isInteger(value) && value >= 0 && value < 16 && activity.kind === "mirror") {
+    const givenSide = round.axis.kind === "vertical" ? value % 4 < 2 : Math.floor(value / 4) < 2;
+    if (!givenSide) { state.cells = state.cells.includes(value) ? state.cells.filter((cell) => cell !== value) : [...state.cells, value]; changed = true; }
   }
   if (action === "slot" && ["cross", "order"].includes(activity.kind) && Number.isInteger(value) && value >= 0 && value < 4) {
     const pool = activity.kind === "cross" ? [1, 2, 3, 4, 5].filter((n) => n !== round.center) : ["A", "B", "C", "D"];

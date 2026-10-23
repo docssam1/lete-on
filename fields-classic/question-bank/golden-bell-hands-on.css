@@ -156,3 +156,7 @@
 /* 구슬 단추에는 일반 단추의 테두리·눌림·hover 바탕을 씌우지 않는다 — 고른 표시는 구슬의 고리로만. */
 .gold-hands-on button.hand-transfer-token, .gold-hands-on button.hand-transfer-token:hover, .gold-hands-on button.hand-transfer-token[aria-pressed="true"] { border: 0; outline: 0; background: transparent; box-shadow: none; transform: none; }
 .gold-hands-on button.hand-transfer-token:hover:not(.paired) i { filter: brightness(1.08); }
+
+/* 두 번 접기: 아직 접혀 있는 칸은 흐리게, 방금 펼친 접은 선은 금색 점선(거울선)으로. */
+.gold-hands-on .hand-cell.off-paper { background: repeating-linear-gradient(45deg, rgba(120, 80, 35, .12) 0 4px, transparent 4px 8px); border-color: rgba(86, 98, 116, .35); }
+.gold-hands-on .hand-fold-crease.opened { stroke: #d9a62e; stroke-width: 3.5; }

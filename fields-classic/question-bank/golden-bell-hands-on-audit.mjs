@@ -3,7 +3,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
-import { HANDS_ON_UNITS, HANDS_ON_ACTIVITIES as activities, unitForLesson, newActivityState, applyActivityAction, activityCheck, expectedCells, clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js";
+import { HANDS_ON_UNITS, HANDS_ON_ACTIVITIES as activities, unitForLesson, newActivityState, applyActivityAction, activityCheck, expectedCells, clockValueAfterQuarterTurns, unfoldTargets } from "./golden-bell-hands-on-models.js";
+import { paperCells } from "./golden-bell-hands-on-folding.js";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js";
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 
@@ -68,10 +69,23 @@ for (const [id, activity] of Object.entries(activities)) for (const [index, roun
       assert.deepEqual(expected, independent.map(([x, y]) => y * 4 + x).sort((a, b) => a - b));
       for (const _ of round.model.folds) applyActivityAction(state, "fold");
       applyActivityAction(state, "cut");
+      // 골든벨 풀이 순서: 마지막 접기부터 한 번씩 펼치고, 펼칠 때마다 새 자국을 표시한다.
+      assert.equal(applyActivityAction(state, "cell", expected.find((c) => !state.cells.includes(c))), false, "No marking before the first unfold");
+      for (let step = 1; step <= round.model.folds.length; step++) {
+        assert.equal(activityCheck(state), false, "Check stays false until fully unfolded");
+        applyActivityAction(state, "unfold");
+        assert.equal(state.unfold, step);
+        const targets = unfoldTargets(round, step);
+        assert.equal(targets.length, 2 ** (step - 1), "Each unfold doubles the holes");
+        assert.equal(applyActivityAction(state, "unfold"), false, "Next unfold waits for the new holes");
+        const wrong = paperCells(round.model, round.model.folds.length - step).find((c) => !targets.includes(c) && !state.cells.includes(c));
+        if (wrong !== undefined) { applyActivityAction(state, "cell", wrong); assert.equal(state.cells.includes(wrong), false); assert.match(state.note, /접은 선/); }
+        targets.forEach((cell) => applyActivityAction(state, "cell", cell));
+      }
     } else {
       assert.deepEqual(expected, round.given.map(([x, y]) => round.axis.kind === "vertical" ? y * 4 + 3 - x : (3 - y) * 4 + x).sort((a, b) => a - b));
+      expected.forEach((cell) => applyActivityAction(state, "cell", cell));
     }
-    expected.forEach((cell) => applyActivityAction(state, "cell", cell));
   }
   assert.equal(activityCheck(state), true, `${id}/${index}: solution`);
   applyActivityAction(state, "check");
@@ -182,12 +196,24 @@ try {
             assert.equal(await host.locator(".hand-fold-hole").count(), 1, "Folded paper shows only its cut, not the unfolded answer");
             await host.locator("dialog").screenshot({ path: path.join(output, `${width}-${id}-${index}-cut.png`) });
           }
-          const cells = expectedCells(activity, round);
-          await act("cell", cells[0]).focus();
-          await page.keyboard.press("Space");
-          assert.equal(await act("cell", cells[0]).getAttribute("aria-pressed"), "true");
-          assert.equal(await act("cell", cells[0]).evaluate((node) => node === document.activeElement), true);
+          if (activity.kind === "fold") {
+            for (let step = 1; step <= round.model.folds.length; step++) {
+              assert.equal(await act("check").isDisabled(), true, "Check locked until fully unfolded");
+              await act("unfold").click();
+              const targets = unfoldTargets(round, step);
+              await act("cell", targets[0]).focus();
+              await page.keyboard.press("Space");
+              assert.equal(await act("cell", targets[0]).getAttribute("aria-pressed"), "true");
+              for (const cell of targets.slice(1)) { if (width === 390) await act("cell", cell).tap(); else await act("cell", cell).click(); }
+              assert.equal(await host.locator(".hand-fold-hole").count(), 2 ** step, "Holes found so far are drawn on the paper");
+            }
+          }
+          const cells = activity.kind === "fold" ? [] : expectedCells(activity, round);
           if (activity.kind === "mirror") {
+            await act("cell", cells[0]).focus();
+            await page.keyboard.press("Space");
+            assert.equal(await act("cell", cells[0]).getAttribute("aria-pressed"), "true");
+            assert.equal(await act("cell", cells[0]).evaluate((node) => node === document.activeElement), true);
             assert.equal(await host.locator(".hand-pair-guide").count(), 1);
             assert.equal(await host.locator(".pair-source").count(), 1, "Guide highlights only the counterpart of the chosen cell");
             if (index === 0) await host.locator("dialog").screenshot({ path: path.join(output, `${width}-${id}-pair.png`) });
