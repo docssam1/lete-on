@@ -17,6 +17,8 @@ function napierGrid(visual) {
   const sideDigits = String(visual.second).split("").map(Number);
   const cells = sideDigits.flatMap((sideDigit) => topDigits.map((topDigit) => {
     const product = sideDigit * topDigit;
+    // blankCells: 지도서 문제 판처럼 칸을 비워 두고 아이가 채운다.
+    if (visual.blankCells) return '<span class="b10-napier-cell"></span>';
     return `<span class="b10-napier-cell"><i>${Math.floor(product / 10)}</i><b>${product % 10}</b></span>`;
   })).join("");
   const result = Number(visual.first) * Number(visual.second);
@@ -280,6 +282,55 @@ function digitCountBreakdown(visual) {
   return `<div class="b10-digit-count" role="img" aria-label="수의 범위에서 사용한 숫자 개수"><div>${segments.map((segment) => `<span><b>${esc(segment.label)}</b><i>${esc(segment.count)}개 × ${esc(segment.digits)}자리</i><strong>${Number(segment.count) * Number(segment.digits)}</strong></span>`).join("")}</div><p>${visual.revealResult ? `모두 <strong>${total}</strong>개` : "각 구간의 수 개수와 자릿수를 곱해 보세요."}</p></div>`;
 }
 
+// 1단원 지도서 판(묶음 5). 빈칸은 아이가 채우고, 원본에 미리 적힌 숫자만 보인다.
+const ORDINAL = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째", "일곱째", "여덟째", "아홉째", "열째", "열한째", "열두째"];
+
+// 곱셈 칸: 두 수, (규칙 찾기 문제면) 빈 작업 줄, 결과 칸. cells의 ""는 빈칸, 숫자는 원본에 적힌 도움 숫자.
+function productCells(visual) {
+  const width = visual.cells.length;
+  const row = (digits) => `<div class="row">${Array.from({ length: width }, (_, index) => {
+    const digit = digits[digits.length - width + index];
+    return `<span>${digit ?? ""}</span>`;
+  }).join("")}</div>`;
+  const work = Array.from({ length: visual.workRows || 0 }, () => `<div class="row work">${"<span></span>".repeat(width)}</div>`).join("");
+  return `<div class="b10-product-cells" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)} 계산 칸">${row(String(visual.first).split(""))}<div class="times"><b>×</b>${row(String(visual.second).split(""))}</div><i></i>${work}${work ? "<i></i>" : ""}<div class="row result">${visual.cells.map((digit) => `<span class="${digit === "" ? "blank" : "given"}">${esc(digit)}</span>`).join("")}</div></div>`;
+}
+
+// 두 수의 곱 줄: ○ × □ 를 줄마다. given에 원본이 적어 둔 줄만 숫자를 넣는다.
+function factorRows(visual) {
+  const rows = Array.from({ length: visual.rows }, (_, index) => visual.given?.[index] || [null, null]);
+  return `<div class="b10-factor-rows" role="img" aria-label="${visual.target}을 두 수의 곱으로 나타내는 줄 ${visual.rows}개"><strong>${visual.target}</strong><div>${rows.map(([left, right]) => `<span class="left">${left ?? ""}</span><i>×</i><span>${right ?? ""}</span>`).join("")}</div><p><span></span>개</p></div>`;
+}
+
+// 가우스 표: 구분 · 계산 과정 · 연속수의 합. 식 속 □는 빈칸.
+function sumTable(visual) {
+  const cell = (text) => esc(text).replaceAll("□", '<i class="box"></i>');
+  return `<table class="b10-sum-table"><thead><tr><th>구분</th><th>계산 과정</th><th>연속수의 합</th></tr></thead><tbody>${visual.rows.map((row) => `<tr><td><b>${esc(row.label)}</b> ${cell(row.expr)}</td><td>${row.process ? cell(row.process) : ""}</td><td></td></tr>`).join("")}</tbody></table>`;
+}
+
+// 연속수 동그라미: 합 = ○ + ○ + … . 가운데 동그라미(홀수 개면 하나, 짝수 개면 둘)를 칠한다.
+function consecutiveBlanks(visual) {
+  const middle = visual.count % 2 ? [Math.floor(visual.count / 2)] : [visual.count / 2 - 1, visual.count / 2];
+  const circles = Array.from({ length: visual.count }, (_, index) => `<span class="${middle.includes(index) ? "mid" : ""}" title="${ORDINAL[index] || index + 1}"></span>`).join("<i>+</i>");
+  return `<div class="b10-consecutive-blanks" role="img" aria-label="${visual.total}을 ${visual.count}개의 ${esc(visual.label || "연속수")}의 합으로"><strong>${visual.total}</strong><i>=</i>${circles}${visual.label ? `<b>${esc(visual.label)}</b>` : ""}</div>`;
+}
+
+// 빈 달력: 요일 머리줄과 빈 칸. 원본처럼 한 주(shadeFrom~shadeTo 요일)를 칠한다.
+function blankCalendar(visual) {
+  const headers = ["일", "월", "화", "수", "목", "금", "토"];
+  const cells = Array.from({ length: visual.rows * 7 }, (_, index) => {
+    const on = Math.floor(index / 7) === visual.shadeRow && index % 7 >= visual.shadeFrom && index % 7 <= visual.shadeTo;
+    return `<span${on ? ' class="on"' : ""}></span>`;
+  }).join("");
+  return `<div class="b10-calendar b10-blank-calendar" role="img" aria-label="${esc(visual.month)}월 달력, 칠한 주의 날짜 합 ${esc(visual.sum)}"><div class="head">${headers.map((day) => `<b>${day}</b>`).join("")}</div><div class="days">${cells}</div><p>${esc(visual.month)}월 · ${headers[visual.shadeFrom]}요일~${headers[visual.shadeTo]}요일 날짜의 합 <strong>${esc(visual.sum)}</strong></p></div>`;
+}
+
+// 가려진 세 수의 덧셈: 더하는 수 칸은 모두 비우고, 합은 원본처럼 백의 자리만 비운다.
+function maskedAddition(visual) {
+  const row = (count) => `<div>${"<span></span>".repeat(count)}</div>`;
+  return `<div class="b10-masked-addition" role="img" aria-label="연속하는 세 수의 덧셈, 합은 □${esc(visual.tail)}">${row(2)}${row(2)}<div class="plus"><b>+</b>${row(2)}</div><i></i><div class="total"><span></span>${String(visual.tail).split("").map((digit) => `<b>${digit}</b>`).join("")}</div></div>`;
+}
+
 export function book10Markup(visual) {
   if (!visual || visual.kind !== "book10") return "";
   switch (visual.subtype) {
@@ -327,6 +378,12 @@ export function book10Markup(visual) {
     case "number-sequence": return numberSequence(visual);
     case "digit-range": return digitRange(visual);
     case "digit-count-breakdown": return digitCountBreakdown(visual);
+    case "product-cells": return productCells(visual);
+    case "factor-rows": return factorRows(visual);
+    case "sum-table": return sumTable(visual);
+    case "consecutive-blanks": return consecutiveBlanks(visual);
+    case "blank-calendar": return blankCalendar(visual);
+    case "masked-addition": return maskedAddition(visual);
     default: return "";
   }
 }

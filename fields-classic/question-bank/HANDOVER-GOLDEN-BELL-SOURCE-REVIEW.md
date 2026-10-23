@@ -50,7 +50,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261019e`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261019f`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -528,6 +528,16 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - ⚠️ **Drive 글자 인식의 숫자를 믿지 말 것**: 120쪽 도전2 교사용 답을 글자 인식은 다른 수로 읽었는데 그림을 직접 보니 검산값과 같았다. 답 숫자는 반드시 그림으로 확인.
   - 검산기(저장소 밖 `b10/answers-batch4.mjs`)는 야구 판정을 1~9 서로 다른 세 숫자 전체에 대어 **답이 하나뿐인지**까지 보고, 숫자 횟수·개수는 실제로 수를 써서 센다. **교사용 답과 다른 곳 없음.** 추가 학습 야구 문제(새로 만든 판)도 답이 하나뿐임을 확인.
   - DB `book-10` 447키 → 521키, sha 앞 8자리 `ddfe2810`. 캐시 꼬리표 `20261019e`(`book10-renderers.js` import `20261022d`, `golden-bell.css` 링크 `20261022f`).
+- **10권 묶음 5(지도서 1단원 6~49쪽, 173문항, 2026-10-23) — 10권 보류 0, 지도서 전 단원 대조 끝**: 패치 `tools/golden-bell-book10/patch-book10-batch5.mjs`(정답 없음).
+  - **옛 단원 0·1·2(`napier-multiplication`·`even-consecutive-sum`·`consecutive-page-range`)의 원본 문항 55개를 통째로 새로 썼다.** 쪽 번호가 없고, 그림이 답을 보여 주는 문항이 많았다(연속수로 나타내는 문항에 답이 되는 수 카드가, 세 연속수 덧셈 문항에 더하는 세 수와 합이 그대로 그려져 있었다). 단원 번호·개념·추가 학습은 그대로. 세 단원 문항 9·28·35개.
+  - 새 단원 17 `multiplication-rule-source`(곱셈 규칙 10~11·35~36쪽, 40) · 18 `factor-pairs-source`(두 수의 곱과 약수 13~14·37~38쪽, 16) · 19 `calendar-page-source`(달력과 쪽수 20·26·42·46쪽, 8) · 20 `number-grid-sum-source`(수 배열표·달력 묶음 27~30·47~48쪽, 11) · 21 `consecutive-ways-source`(여러 가지 연속수 31~32·49쪽, 15) · 22 `odd-even-consecutive-source`(연속 홀수·짝수·도전 27·30·33·47쪽, 11).
+  - 보류 6건을 원본 문항에 맞춤: 16쪽 가우스 표 · 22쪽 홀수 개 표 합(복수 답란 2) · 29쪽 확인04(1) 달력 묶음 · 47쪽 연습24 13칸 · 33쪽 도전5·도전6(1). 1단원 장부는 단원별 `guide-u1-lesson-N` 9개로 다시 셌다 → 1단원 61 → 173, 전체 212 → 324, **보류 0**.
+  - 답 방식: 약수는 칸 하나에 쉼표로 모두(`inputMode:"text"`+`resultContract:{type:"set"}`, 순서 무관) + 개수. 요일은 글자 답(「금요일」·「금」 둘 다 정답). 연속수는 동그라미마다 칸(첫째 수~열두째 수). 표는 칸 10개(22쪽은 가운데 수 8칸과 합 10칸 두 문항).
+  - 새 그림(`book10-renderers.js`): `napier-grid`의 `blankCells` · `product-cells`(원본 도움 숫자만 보이는 결과 칸, 확인 01·03은 빈 작업 줄 2) · `factor-rows`(○×□ 줄, 원본이 적어 둔 줄만 숫자) · `sum-table`(가우스 표, 휴대폰에서는 빈 「연속수의 합」 열을 숨김) · `consecutive-blanks`(동그라미, 가운데 칠함) · `blank-calendar`(빈 달력 + 칠한 주) · `masked-addition`(□31처럼 백의 자리만 빈 합). CSS는 `golden-bell.css` 끝.
+  - **개념 장면·확인 문제가 원본 답을 보여 주던 곳을 바꿈**: 단원 0(46×35·57×34 → 67×34 지도서 보기·43×25), 단원 1(4~11 → 2~9), 단원 2(6~10 → 5~9, 75/6쪽 → 60/5쪽, 확인 3~9 → 4~10), 판서 단원 9(1~100 → 1~50, 확인 1~8 → 1~22), 판서 단원 10(확인 4~8 → 3~7). 확인 문제 답 키 3개는 DB에서 고쳐 씀.
+  - 검산기(저장소 밖 `b10/answers-batch5.mjs`)는 곱·약수·연속수·요일·배열표를 공개 그림에서 직접 계산하고, 원본 도움 숫자가 곱과 맞는지·약수 줄 수가 짝 수와 같은지·가려진 덧셈 답이 하나뿐인지까지 본다. **교사용 답(활동 쪽 + 153~154쪽 연습 답)과 다른 곳 없음.** 23쪽 활동02 4문항만 지도서 쪽 그림을 받지 못해(작은 파일이라 내려받기가 글자로 와서 저장이 안 됨) 계산으로만 맞췄다.
+  - 검산기에서 잡은 실수: 요일 답을 `String(["금요일","금"])`로 넣어 「금요일,금」 한 덩어리가 됐다(채점 시험이 잡음). 풀이 조사(을/를·이/가·로/으로)도 숫자 끝소리로 고침.
+  - DB `book-10` 521키 → 950키(옛 단원 0·1·2 원본 키 182개 삭제, 새 611개, 확인 문제 3개 고침), sha 앞 8자리 `7455bd03`. **SQL이 길어 5묶음으로 나눠 넣었다**(첫 묶음만 옛 sha 조건, 다음 묶음은 「앞 묶음 마지막 키가 있는지 + 키 충돌 없음」 조건). 캐시 꼬리표 `20261019f`(`book10-renderers.js` import `20261023a`, `golden-bell.css` 링크 `20261023a`).
 - **독립 풀이 배치(2026-10-18)**: `tools/golden-bell-solver/`(README). 정답 없는 공개 문항만 모델에게 주고 「가능한 답 전부」를 받아 비공개 답안과 대조 → 답이 여럿인 문항·못 푸는 문항·답안 오타 후보. 원장 PC(WSL)에서 `setsid`로 돌리고, 작업 폴더는 저장소 밖. 걸린 문항은 원본을 다시 보고 판정한 뒤에만 고친다.
 
 (같은 방식: 학생용 무답 PDF 전 쪽 vs 앱 화면 캡처 → 표로 정리 → 원장 보고 → 화면 수정 → 빠진 활동 묶음 추가).

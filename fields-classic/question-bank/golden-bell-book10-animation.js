@@ -1,4 +1,4 @@
-import { book10Markup } from "./book10-renderers.js?v=20261022d";
+import { book10Markup } from "./book10-renderers.js?v=20261023a";
 
 const HOLD_MS = 4000;
 const esc = (value) => String(value ?? "")
