@@ -40,8 +40,22 @@ for (const [id, activity] of Object.entries(activities)) for (const [index, roun
     state.slots = possible[0];
     solutions.set(`${id}/${index}`, state.slots);
   } else if (activity.kind === "transfer") {
-    const half = (round.left - round.right) / 2;
-    for (let i = 0; i < half; i++) applyActivityAction(state, "move", 1);
+    // 골든벨 풀이 순서: ① 짝 없는 구슬 = 차이 ② 차이의 반만큼 주기 ③ 같은지 확인.
+    const difference = round.left - round.right, half = difference / 2;
+    applyActivityAction(state, "mark", 0);
+    assert.equal(state.marked.length, 0, "Paired token is not part of the difference");
+    assert.match(state.note, /짝/);
+    for (let i = round.right; i < round.left; i++) applyActivityAction(state, "mark", i);
+    assert.equal(state.phase, "half", "All unpaired tokens found → difference known");
+    for (const i of state.marked) applyActivityAction(state, "give", i);
+    applyActivityAction(state, "hand");
+    assert.equal(state.phase, "half", "Giving the whole difference must not pass");
+    assert.match(state.note, /B가 \d+개 더 많아요/);
+    for (const i of state.marked.slice(half)) applyActivityAction(state, "give", i);
+    assert.equal(state.give.length, half);
+    assert.equal(activityCheck(state), false, "Must hand over before checking");
+    applyActivityAction(state, "hand");
+    assert.equal(state.phase, "done");
     assert.equal(state.left + state.right, round.left + round.right);
   } else {
     const expected = expectedCells(activity, round);
@@ -67,9 +81,9 @@ for (const [id, activity] of Object.entries(activities)) for (const [index, roun
   assert.equal(newActivityState(id, index).solved, false);
 }
 const undo = newActivityState("share-equally");
-applyActivityAction(undo, "move", 1);
+applyActivityAction(undo, "mark", 9);
 applyActivityAction(undo, "undo");
-assert.deepEqual([undo.left, undo.right, undo.moved, undo.history.length], [10, 4, 0, 0]);
+assert.deepEqual([undo.left, undo.right, undo.moved, undo.marked.length, undo.phase, undo.history.length], [10, 4, 0, 0, "diff", 0]);
 console.log("HANDS_ON_MATH_OK units=4 activities=7 rounds=21");
 
 if (process.argv.includes("--math-only")) process.exit(0);
@@ -128,7 +142,14 @@ try {
       for (const [index, round] of activity.rounds.entries()) {
         assert.equal(await host.locator(".hand-scene").getAttribute("data-hand-round"), String(index));
         assert.equal(await host.locator(".hand-feedback").innerText(), "");
-        if (activity.kind !== "fold") {
+        if (activity.kind === "transfer") {
+          // 결과 확인은 ③ 단계 전에는 잠겨 있다. 되묻기는 짝 있는 구슬을 차이로 고를 때 나온다.
+          assert.equal(await act("check").isDisabled(), true, "Transfer check stays locked before handing over");
+          await act("mark", 0).click();
+          assert.equal(await host.locator(".hand-guide").getAttribute("data-guide-phase"), "retry");
+          await act("reset").click();
+          assert.equal(await host.locator(".hand-guide").getAttribute("data-guide-phase"), "start");
+        } else if (activity.kind !== "fold") {
           await act("check").click();
           assert.equal(await host.locator(".hand-feedback.retry").count(), 1);
           assert.equal(await host.locator(".hand-guide").getAttribute("data-guide-phase"), "retry");
@@ -176,7 +197,9 @@ try {
           const slots = solutions.get(`${id}/${index}`);
           for (const [slot, value] of slots.entries()) { await act("choose", value).click(); await act("slot", slot).click(); }
         } else {
-          for (let i = 0; i < (round.left - round.right) / 2; i++) await act("move", 1).click();
+          for (let i = round.right; i < round.left; i++) await act("mark", i).click();
+          for (let i = round.right; i < round.right + (round.left - round.right) / 2; i++) await act("give", i).click();
+          await act("hand").click();
         }
         await act("check").click();
         assert.equal(await host.locator(".hand-feedback.correct").count(), 1, `${id}/${index}/${width}: correct`);
@@ -217,10 +240,15 @@ try {
         assert.equal(await root.locator(".gold-hands-on,.hand-scene").count(), 0);
         assert.doesNotMatch(await root.innerText(), /체험 도전 3개 완료|도전 3 \/ 3/);
         const expectedRole = mode === "study" ? "student" : mode === "both" ? null : "answer";
-        assert.equal(await root.locator('[data-print-challenge^="D"]').count(), mode === "both" ? 6 : 3);
-        assert.equal(await root.locator('[data-print-role="student"]').count(), mode === "answers" || mode === "quick" ? 0 : 3);
-        assert.equal(await root.locator('[data-print-role="answer"]').count(), mode === "study" ? 0 : 3);
-        if (expectedRole) assert.equal(await root.locator(`[data-print-role="${expectedRole}"]`).count(), 3);
+        // 체험 도전을 종이 문항(D01~D03)으로 인쇄하는 기능은 main에 아직 없다. 설계는 합쳐지지 않은
+        // codex/golden-bell-semantic-workbook 가지의 GOLDEN-BELL-HANDS-ON-WORKBOOK-DESIGN-20260922.md에 있고
+        // 「추후 별도 승인」이 필요하다고 적혀 있다. 그 기능이 들어오기 전에는 FIELDS_PRINT_CHALLENGES=1일 때만 본다.
+        if (process.env.FIELDS_PRINT_CHALLENGES === "1") {
+          assert.equal(await root.locator('[data-print-challenge^="D"]').count(), mode === "both" ? 6 : 3);
+          assert.equal(await root.locator('[data-print-role="student"]').count(), mode === "answers" || mode === "quick" ? 0 : 3);
+          assert.equal(await root.locator('[data-print-role="answer"]').count(), mode === "study" ? 0 : 3);
+          if (expectedRole) assert.equal(await root.locator(`[data-print-role="${expectedRole}"]`).count(), 3);
+        } else if (mode === "study") console.log("HANDS_ON_PRINT_CHALLENGES_SKIPPED 종이 도전 인쇄는 main에 없는 승인 전 설계라 검사하지 않음");
         await page.emulateMedia({ media: "print" });
         const count = await root.locator(".gold-print-page").count();
         const pdf = await page.pdf({ path: path.join(output, `fold-twice-${mode}.pdf`), format: "A4", printBackground: true });

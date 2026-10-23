@@ -73,7 +73,9 @@ export function matchesClue(slots, clue) {
 export function newActivityState(activityId, roundIndex = 0) {
   const activity = HANDS_ON_ACTIVITIES[activityId];
   const round = activity.rounds[roundIndex];
-  return { activityId, roundIndex, turns: 0, foldStep: 0, cut: false, cells: [], slots: Array(4).fill(null), selected: null, left: round.left, right: round.right, moved: 0, moves: 0, history: [], checked: false, solved: false, feedback: "" };
+  return { activityId, roundIndex, turns: 0, foldStep: 0, cut: false, cells: [], slots: Array(4).fill(null), selected: null, left: round.left, right: round.right, moved: 0, moves: 0, history: [], checked: false, solved: false, feedback: "",
+    // 옮기기(transfer)는 골든벨 풀이 순서를 그대로 밟는다: ① 짝 없는 구슬로 차이 찾기 → ② 차이를 반으로 나눠 줄 만큼 고르기 → ③ 옮긴 뒤 덧셈·뺄셈으로 확인.
+    phase: "diff", marked: [], give: [], note: "", misses: 0 };
 }
 
 export function activityCheck(state) {
@@ -88,18 +90,20 @@ export function activityCheck(state) {
     return state.slots.every((n) => Number.isInteger(n) && n >= 1 && n <= 5) && new Set([...state.slots, round.center]).size === 5 && top + bottom === left + right;
   }
   if (activity.kind === "order") return new Set(state.slots).size === 4 && state.slots.every((v) => ["A", "B", "C", "D"].includes(v)) && round.clues.every((clue) => matchesClue(state.slots, clue));
-  return state.left === state.right && state.left + state.right === round.left + round.right;
+  return state.phase === "done" && state.left === state.right && state.left + state.right === round.left + round.right;
 }
+
+export const transferDifference = (round) => round.left - round.right;
 
 export function activityFeedback(state) {
   const activity = HANDS_ON_ACTIVITIES[state.activityId], round = activity.rounds[state.roundIndex];
-  if (!state.solved) return ({ clock: "출발한 수와 방향, 돌린 양을 함께 살펴보세요.", mirror: "거울에서 떨어진 칸 수가 양쪽에서 같은지 살펴보세요.", fold: "접은 선의 반대쪽에도 같은 거리에 자국이 생기는지 살펴보세요.", cross: "카드를 한 번씩 쓰고 가로줄과 세로줄을 비교해 보세요.", order: "앞뒤 방향과 '바로 앞' 조건을 다시 살펴보세요.", transfer: "옮긴 뒤 A와 B의 개수를 비교해 보세요." })[activity.kind];
+  if (!state.solved) return ({ clock: "출발한 수와 방향, 돌린 양을 함께 살펴보세요.", mirror: "거울에서 떨어진 칸 수가 양쪽에서 같은지 살펴보세요.", fold: "접은 선의 반대쪽에도 같은 거리에 자국이 생기는지 살펴보세요.", cross: "카드를 한 번씩 쓰고 가로줄과 세로줄을 비교해 보세요.", order: "앞뒤 방향과 '바로 앞' 조건을 다시 살펴보세요.", transfer: "옮긴 뒤 A와 B의 개수를 덧셈과 뺄셈으로 다시 세어 보세요." })[activity.kind];
   if (activity.kind === "clock") return `맞았어요. ${round.start}에서 출발해 ${clockValueAfterQuarterTurns(round.start, round.turns)}을 가리킵니다.`;
   if (activity.kind === "mirror") return "맞았어요. 거울 양쪽에서 같은 거리에 있는 칸끼리 짝이 됩니다.";
   if (activity.kind === "fold") return `맞았어요. 마지막에 접은 선부터 펼치면 잘린 칸 ${state.cells.length}개가 나타납니다.`;
   if (activity.kind === "cross") return `맞았어요. 가로 ${state.slots[1]} + ${round.center} + ${state.slots[2]} = ${state.slots[1] + round.center + state.slots[2]}, 세로 ${state.slots[0]} + ${round.center} + ${state.slots[3]} = ${state.slots[0] + round.center + state.slots[3]}입니다.`;
   if (activity.kind === "order") return `맞았어요. ${state.slots.join(" → ")} 순서가 모든 조건에 맞습니다.`;
-  return `맞았어요. ${state.moved}개를 옮겨 ${round.left} − ${state.moved} = ${state.left}, ${round.right} + ${state.moved} = ${state.right}로 같아졌어요. 한 개를 옮길 때 차이는 2 줄어듭니다.`;
+  return `맞았어요. 차이 ${transferDifference(round)}개를 둘로 나눈 ${state.moved}개를 옮겨 ${round.left} − ${state.moved} = ${state.left}, ${round.right} + ${state.moved} = ${state.right}로 같아졌어요.`;
 }
 
 // UI and tests use the same bounded transitions; attempts never update lesson grades.
@@ -115,11 +119,39 @@ export function applyActivityAction(state, action, value) {
   if (action === "choose") { state.selected = value; return true; }
   if (action === "undo") {
     if (!state.history.length) return false;
-    Object.assign(state, state.history.pop(), { checked: false, feedback: "" });
+    Object.assign(state, state.history.pop(), { checked: false, feedback: "", note: "" });
     return true;
   }
-  const snapshot = { turns: state.turns, foldStep: state.foldStep, cut: state.cut, cells: [...state.cells], slots: [...state.slots], selected: state.selected, left: state.left, right: state.right, moved: state.moved, moves: state.moves };
+  const snapshot = { turns: state.turns, foldStep: state.foldStep, cut: state.cut, cells: [...state.cells], slots: [...state.slots], selected: state.selected, left: state.left, right: state.right, moved: state.moved, moves: state.moves, phase: state.phase, marked: [...state.marked], give: [...state.give], note: "" };
   let changed = false;
+  if (activity.kind === "transfer" && ["mark", "give", "hand"].includes(action)) {
+    const difference = transferDifference(round);
+    state.note = "";
+    if (action === "mark" && state.phase === "diff" && Number.isInteger(value) && value >= 0 && value < round.left) {
+      // B와 짝이 있는 구슬(앞쪽 right개)은 차이가 아니다.
+      if (value < round.right) { state.note = "그 구슬은 아래 B의 구슬과 짝이 있어요. 짝이 없는 A의 구슬만 눌러요."; state.misses++; return true; }
+      state.marked = state.marked.includes(value) ? state.marked.filter((i) => i !== value) : [...state.marked, value];
+      if (state.marked.length === difference) state.phase = "half";
+      changed = true;
+    }
+    if (action === "give" && state.phase === "half" && state.marked.includes(value)) {
+      state.give = state.give.includes(value) ? state.give.filter((i) => i !== value) : [...state.give, value];
+      changed = true;
+    }
+    if (action === "hand" && state.phase === "half" && state.give.length) {
+      const k = state.give.length;
+      if (k * 2 !== difference) {
+        // 미리 따져 보게 한다 — 옮기지 않고 그 결과만 말해 준다.
+        state.note = k * 2 > difference
+          ? `${k}개를 주면 A는 ${round.left - k}개, B는 ${round.right + k}개가 되어 이번엔 B가 ${k * 2 - difference}개 더 많아요. 한 개를 줄 때마다 차이는 2씩 줄어요.`
+          : `${k}개를 주면 A는 ${round.left - k}개, B는 ${round.right + k}개라 아직 A가 ${difference - k * 2}개 더 많아요. 한 개를 줄 때마다 차이는 2씩 줄어요.`;
+        state.misses++;
+        return true;
+      }
+      state.left -= k; state.right += k; state.moved = k; state.phase = "done";
+      changed = true;
+    }
+  }
   if (action === "turn" && activity.kind === "clock" && [-1, 1].includes(value) && Math.abs(state.turns + value) <= 8) { state.turns += value; changed = true; }
   if (action === "fold" && activity.kind === "fold" && state.foldStep < round.model.folds.length) { state.foldStep++; changed = true; }
   if (action === "cut" && activity.kind === "fold" && state.foldStep === round.model.folds.length && !state.cut) { state.cut = true; changed = true; }
@@ -138,7 +170,6 @@ export function applyActivityAction(state, action, value) {
       changed = true;
     }
   }
-  if (action === "move" && activity.kind === "transfer" && [-1, 1].includes(value) && (value > 0 ? state.left > 0 : state.right > 0)) { state.left -= value; state.right += value; state.moved += value; changed = true; }
   if (changed) { state.history.push(snapshot); state.moves++; state.checked = false; state.feedback = ""; }
   return changed;
 }

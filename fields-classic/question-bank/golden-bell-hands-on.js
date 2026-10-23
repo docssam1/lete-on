@@ -1,9 +1,9 @@
 import { icon } from "../../geometry/games/shape-transform/ui-icons.js";
 import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts } from "./golden-bell-hands-on-folding.js?v=20260925a";
-import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20261004a";
-import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261003c";
-import { mountClockGame } from "./golden-bell-clock-game.js?v=20261023w";
+import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20261023t";
+import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261023t";
+import { mountClockGame } from "./golden-bell-clock-game.js?v=20261023t";
 import { mountLevelGame } from "./golden-bell-level-game.js?v=20261004a";
 import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261023w";
 
@@ -86,9 +86,33 @@ function cardsAndSlots(activity, round, state) {
   return `<ul class="hand-clues">${round.clues.map((clue) => `<li>${state.checked ? icon(matchesClue(state.slots, clue) ? "check" : "close") : ""}${esc(clueText(clue))}</li>`).join("")}</ul><div class="hand-order-labels"><b>앞</b><b>뒤</b></div><div class="hand-order-slots">${state.slots.map((_, i) => slot(i)).join("")}</div>${bank}`;
 }
 
+// A 줄과 B 줄을 같은 칸에 맞춰 놓아 짝을 눈으로 보게 한다. ① 짝 없는 A 구슬 누르기 → ② 그중 줄 구슬 고르기 → ③ 옮긴 뒤 식으로 확인.
 function transferScene(round, state) {
-  const pile = (who, count, value) => `<div class="hand-pile ${who.toLowerCase()}"><h4>${who} <strong>${count}개</strong></h4><div class="hand-tokens" aria-hidden="true">${Array.from({ length: count }, () => "<i></i>").join("")}</div>${button("move", `${who}에서 1개 옮기기`, value > 0 ? "next" : "back", { value, disabled: state.solved || count === 0 })}</div>`;
-  return `<div class="hand-piles">${pile("A", state.left, 1)}${pile("B", state.right, -1)}</div><div class="hand-sums"><span>옮긴 개수 <b>${state.moved}</b></span><span>두 사람의 차이 <b>${Math.abs(state.left - state.right)}</b></span></div>`;
+  const columns = Math.max(round.left, round.right + state.moved);
+  const difference = round.left - round.right;
+  const done = state.phase === "done";
+  const aTokens = Array.from({ length: round.left }, (_, i) => {
+    const paired = i < round.right;
+    const marked = state.marked.includes(i);
+    const given = state.give.includes(i);
+    const gone = done && given;
+    const cls = `hand-transfer-token a${paired ? " paired" : ""}${marked ? " marked" : ""}${given ? " given" : ""}${gone ? " gone" : ""}`;
+    const label = `A의 ${i + 1}번째 구슬${paired ? ", B와 짝 있음" : ", 짝 없음"}${marked ? ", 차이로 표시함" : ""}${given ? ", B에게 줄 구슬" : ""}`;
+    if (state.phase === "diff") return `<button type="button" class="${cls}" style="grid-column:${i + 1}" data-hand-action="mark" data-value="${i}" aria-label="${label}" aria-pressed="${marked}" ${state.solved ? "disabled" : ""}><i></i></button>`;
+    if (state.phase === "half" && marked) return `<button type="button" class="${cls}" style="grid-column:${i + 1}" data-hand-action="give" data-value="${i}" aria-label="${label}" aria-pressed="${given}"><i></i></button>`;
+    return `<span class="${cls}" style="grid-column:${i + 1}" role="img" aria-label="${label}${gone ? ", B에게 줌" : ""}"><i></i></span>`;
+  }).join("");
+  const bTokens = Array.from({ length: round.right + (done ? state.moved : 0) }, (_, i) => `<span class="hand-transfer-token b${i >= round.right ? " received" : ""}" style="grid-column:${i + 1}" role="img" aria-label="B의 ${i + 1}번째 구슬${i >= round.right ? ", A에게 받음" : ""}"><i></i></span>`).join("");
+  const row = (who, count, tokens) => `<div class="hand-transfer-row ${who.toLowerCase()}"><h4>${who} <strong>${count}개</strong></h4><div class="hand-transfer-line" style="--cols:${columns}">${tokens}</div></div>`;
+  const steps = [
+    ["① 차이 찾기", state.phase === "diff" ? `${state.marked.length} / ?` : `${difference}개`],
+    ["② 줄 만큼 고르기", state.phase === "half" ? `${state.give.length}개 고름` : done ? `${state.moved}개` : "—"],
+    ["③ 같은지 확인", done ? `${state.left} = ${state.right}` : "—"]
+  ];
+  return `<ol class="hand-transfer-steps">${steps.map(([label, value], i) => `<li class="${["diff", "half", "done"][i] === state.phase ? "now" : ""}"><span>${label}</span><b>${value}</b></li>`).join("")}</ol>
+    <div class="hand-transfer">${row("A", done ? state.left : round.left, aTokens)}${row("B", done ? state.right : round.right, bTokens)}</div>
+    ${state.phase === "half" ? `<div class="hand-controls">${button("hand", state.give.length ? `골라서 주기 (${state.give.length}개)` : "줄 구슬을 고르세요", "next", { disabled: !state.give.length })}</div>` : ""}
+    ${done ? `<div class="hand-sums"><span>A <b>${round.left} − ${state.moved} = ${state.left}</b></span><span>B <b>${round.right} + ${state.moved} = ${state.right}</b></span></div>` : ""}`;
 }
 
 const activityTabs = (unit, session) => unit.single ? "" : `<nav class="hand-activity-tabs" aria-label="단원 체험">${unit.activities.map((id) => `<button type="button" data-hand-activity="${id}" aria-current="${id === session.active ? "true" : "false"}" class="${id === session.active ? "active" : ""}">${esc(HANDS_ON_ACTIVITIES[id].title)}</button>`).join("")}</nav>`;
@@ -140,7 +164,7 @@ function renderActivity(container, unit, session, onQuestions) {
   const portrait = state.solved ? "docssam-praise.webp" : state.checked ? "docssam-thinking.webp" : "docssam-guide.webp";
   const scene = kind === "mirror" ? mirrorScene(round, state) : kind === "fold" ? foldScene(round, state, previousActivity === session.active && state.foldStep > previousFoldStep && previousFoldStep >= 0) : ["cross", "order"].includes(kind) ? cardsAndSlots(activity, round, state) : transferScene(round, state);
   const atEnd = state.roundIndex === activity.rounds.length - 1;
-  container.innerHTML = `<div class="hand-toolbar">${activityTabs(unit, session)}<span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div><h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p><div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><strong>독쌤</strong><p>${esc(guide.text)}</p></div></div><div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}"` : ""}>${scene}</div><p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${esc(state.feedback)}</span></p><div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? unit.single ? "again" : "questions" : "next", atEnd ? unit.single ? "처음부터 다시" : "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : button("check", "결과 확인", "check", { cls: "hand-primary", disabled: kind === "fold" && !state.cut })}</div>${state.solved && atEnd ? '<p class="hand-finished">체험 도전 3개 완료</p>' : ""}`;
+  container.innerHTML = `<div class="hand-toolbar">${activityTabs(unit, session)}<span class="hand-round">도전 ${state.roundIndex + 1} / ${activity.rounds.length}</span></div><h3 class="hand-title">${esc(activity.title)}</h3><p class="hand-task">${esc(task(activity, round))}</p><div class="hand-guide" data-guide-phase="${guide.phase}"><img src="./${portrait}" alt="" width="96" height="96"><div class="hand-guide-copy" role="status" aria-live="polite" aria-atomic="true"><strong>독쌤</strong><p>${esc(guide.text)}</p></div></div><div class="hand-scene" data-hand-kind="${kind}" data-hand-round="${state.roundIndex}"${kind === "fold" ? ` data-hand-fold-step="${state.foldStep}"` : ""}>${scene}</div><p class="hand-feedback ${state.checked ? state.solved ? "correct" : "retry" : ""}" ${state.checked ? "" : "hidden"}>${state.checked ? icon(state.solved ? "check" : "close") : ""}<span>${esc(state.feedback)}</span></p><div class="hand-footer"><div class="hand-tools">${button("undo", "한 번 되돌리기", "back", { cls: "icon-only", disabled: !state.history.length || state.solved })}${button("reset", "이 도전 다시 시작", "retry", { cls: "icon-only" })}</div>${state.solved ? button(atEnd ? unit.single ? "again" : "questions" : "next", atEnd ? unit.single ? "처음부터 다시" : "연결 문제 풀기" : "다음 도전", "next", { cls: "hand-primary" }) : button("check", "결과 확인", "check", { cls: "hand-primary", disabled: (kind === "fold" && !state.cut) || (kind === "transfer" && state.phase !== "done") })}</div>${state.solved && atEnd ? '<p class="hand-finished">체험 도전 3개 완료</p>' : ""}`;
   bindTabs(container, unit, session, onQuestions);
   container.querySelectorAll("[data-hand-action]").forEach((control) => control.addEventListener("click", () => {
     const action = control.dataset.handAction;

@@ -82,7 +82,7 @@ function exampleView(view, groups) {
 
 async function mountGame(gameId, host, { saved, onQuestions, lesson }) {
   if (gameId === "turn-clock") {
-    const { mountClockGame } = await import("./golden-bell-clock-game.js?v=20261023w");
+    const { mountClockGame } = await import("./golden-bell-clock-game.js?v=20261023t");
     return mountClockGame(host, { single: false, saved, onQuestions });
   }
   const { mountLevelGame } = await import("./golden-bell-level-game.js?v=20261004a");

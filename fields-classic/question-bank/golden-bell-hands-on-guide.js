@@ -1,4 +1,4 @@
-import { clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js?v=20261004a";
+import { clockValueAfterQuarterTurns } from "./golden-bell-hands-on-models.js?v=20261023t";
 
 const directions = { right: "오른쪽", left: "왼쪽", up: "위쪽", down: "아래쪽" };
 
@@ -38,7 +38,14 @@ export function handsOnGuide(activity, round, state) {
   if (activity.kind === "order") return state.slots.some((slot) => slot !== null)
     ? { phase: "progress", text: "놓은 자리와 세 조건을 하나씩 비교해 봐. 카드를 다시 옮길 수 있어." }
     : { phase: "start", text: "맨 앞과 맨 뒤 조건부터 확인한 다음 친구 카드를 놓아 봐." };
-  return state.moves
-    ? { phase: "progress", text: `지금 두 사람의 차이는 ${Math.abs(state.left - state.right)}개야. 한 개 더 옮기면 차이가 어떻게 될까?` }
-    : { phase: "start", text: "A에서 B로 한 개 옮기면 두 사람의 차이는 2개 줄어들어." };
+  // 골든벨 풀이 순서: ① 차이 구하기 ② 한 개 옮길 때 차이가 2 줄므로 차이를 둘로 나누기 ③ 옮긴 뒤 같은지 확인.
+  const difference = round.left - round.right;
+  if (state.note) return { phase: "retry", text: state.note };
+  if (state.phase === "diff") return state.marked.length
+    ? { phase: "progress", text: `짝이 없는 구슬을 ${state.marked.length}개 찾았어. 남은 것도 찾아 봐.` }
+    : { phase: "start", text: "① 위 A의 구슬을 아래 B의 구슬과 하나씩 짝지었어. 짝이 없는 A의 구슬을 모두 눌러 봐. 그만큼이 두 사람의 차이야." };
+  if (state.phase === "half") return state.give.length
+    ? { phase: "progress", text: `${state.give.length}개를 골랐어. 주면 A는 ${round.left - state.give.length}개, B는 ${round.right + state.give.length}개가 돼. 맞다면 「골라서 주기」를 눌러.` }
+    : { phase: "progress", text: `② 차이는 ${difference}개야. A가 한 개를 주면 A는 1 줄고 B는 1 늘어서 차이가 2 줄어. 차이 ${difference}개 가운데 몇 개를 주면 될까? 줄 구슬을 골라 봐.` };
+  return { phase: "progress", text: `③ ${round.left} − ${state.moved} = ${state.left}, ${round.right} + ${state.moved} = ${state.right}. 두 사람의 수가 같은지 「결과 확인」으로 확인해 봐.` };
 }

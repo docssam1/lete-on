@@ -68,7 +68,11 @@ async function solveRound(page, activity, round) {
     const slots = permutations(pool).find((p) => activity.kind === "cross" ? p[0] + p[3] === p[1] + p[2] : round.clues.every((clue) => matchesClue(p, clue)));
     for (const [i, n] of slots.entries()) { await click("choose", n); await click("slot", i); }
   }
-  if (activity.kind === "transfer") for (let i = 0; i < (round.left - round.right) / 2; i++) await click("move", 1);
+  if (activity.kind === "transfer") {
+    for (let i = round.right; i < round.left; i++) await click("mark", i);
+    for (let i = round.right; i < round.right + (round.left - round.right) / 2; i++) await click("give", i);
+    await click("hand");
+  }
   await click("check");
   await page.locator(".hand-feedback.correct").waitFor();
 }

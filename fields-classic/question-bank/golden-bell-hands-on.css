@@ -124,3 +124,35 @@
 }
 @media (prefers-reduced-motion: reduce) { .gold-hands-on .hand-content, .gold-hands-on .hand-fold-moving { animation: none; } .gold-hands-on .hand-fold-moving { display: none; } }
 @media print { .gold-hands-on { display: none !important; } }
+
+/* 같아지도록 옮기기 — 골든벨 풀이 순서(① 차이 찾기 ② 둘로 나눠 줄 만큼 고르기 ③ 확인)를 단계 띠와 짝 맞춘 두 줄로 보인다. */
+.gold-hands-on .hand-transfer-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-width: 560px; margin: 0 auto 14px; padding: 0; list-style: none; }
+.gold-hands-on .hand-transfer-steps li { display: grid; gap: 2px; padding: 8px 10px; border-radius: 10px; background: rgba(120, 80, 35, .08); color: #6b4d26; font-size: 13px; font-weight: 700; text-align: center; }
+.gold-hands-on .hand-transfer-steps li b { color: #3f2a10; font-size: 16px; }
+.gold-hands-on .hand-transfer-steps li.now { background: #fff7e6; box-shadow: inset 0 0 0 2px #d9a62e; }
+.gold-hands-on .hand-transfer { display: grid; gap: 10px; max-width: 640px; margin: auto; }
+.gold-hands-on .hand-transfer-row { padding: 10px; border-radius: 16px; background: rgba(120, 80, 35, .1); box-shadow: inset 0 3px 8px rgba(80, 48, 14, .28); }
+.gold-hands-on .hand-transfer-row h4 { display: flex; justify-content: space-between; margin: 0 0 8px; color: #3f2a10; font-size: 17px; }
+.gold-hands-on .hand-transfer-line { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: 4px; }
+.gold-hands-on .hand-transfer-token { display: flex; align-items: center; justify-content: center; width: 100%; min-width: 0; overflow: visible; min-height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; }
+.gold-hands-on button.hand-transfer-token { cursor: pointer; }
+.gold-hands-on button.hand-transfer-token:focus-visible { outline: 3px solid #b4512e; outline-offset: 1px; }
+.gold-hands-on .hand-transfer-token i { display: block; flex: 0 1 30px; width: 30px; min-width: 0; max-width: 100%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(120% 70% at 35% 10%, rgba(255,255,255,.65), rgba(255,255,255,0) 55%), linear-gradient(180deg, #f6a46b 0%, #e2733a 62%, #c45a24 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 3px 0 #9a4316, 0 5px 7px rgba(120,60,20,.3); }
+.gold-hands-on .hand-transfer-token.b i { background: radial-gradient(120% 70% at 35% 10%, rgba(255,255,255,.65), rgba(255,255,255,0) 55%), linear-gradient(180deg, #5fcc8f 0%, #2f9e5f 62%, #237d4a 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 3px 0 #17603a, 0 5px 7px rgba(20,70,40,.3); }
+/* 짝이 있는 A 구슬은 아래 B와 이어 보이게 옅은 끈을 붙인다. */
+.gold-hands-on .hand-transfer-token.a.paired { position: relative; }
+.gold-hands-on .hand-transfer-token.a.paired::after { content: ""; position: absolute; left: 50%; bottom: -10px; width: 2px; height: 12px; background: #c9a46a; }
+.gold-hands-on .hand-transfer-token.marked i { box-shadow: 0 0 0 3px #fff7e6, 0 0 0 6px #d9a62e, 0 3px 0 #9a4316; }
+.gold-hands-on .hand-transfer-token.given i { transform: translateY(6px); box-shadow: 0 0 0 3px #fff7e6, 0 0 0 6px #2f9e5f; }
+.gold-hands-on .hand-transfer-token.gone i { opacity: .18; box-shadow: none; transform: none; }
+.gold-hands-on .hand-transfer-token.b.received i { box-shadow: 0 0 0 3px #fff7e6, 0 0 0 6px #e2733a; }
+@media (max-width: 560px) {
+  .gold-hands-on .hand-transfer-steps { gap: 4px; }
+  .gold-hands-on .hand-transfer-steps li { padding: 6px 4px; font-size: 11px; }
+  .gold-hands-on .hand-transfer-line { gap: 2px; }
+  .gold-hands-on .hand-transfer-token { min-height: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { .gold-hands-on .hand-transfer-token.given i { transform: none; } }
+/* 구슬 단추에는 일반 단추의 테두리·눌림·hover 바탕을 씌우지 않는다 — 고른 표시는 구슬의 고리로만. */
+.gold-hands-on button.hand-transfer-token, .gold-hands-on button.hand-transfer-token:hover, .gold-hands-on button.hand-transfer-token[aria-pressed="true"] { border: 0; outline: 0; background: transparent; box-shadow: none; transform: none; }
+.gold-hands-on button.hand-transfer-token:hover:not(.paired) i { filter: brightness(1.08); }

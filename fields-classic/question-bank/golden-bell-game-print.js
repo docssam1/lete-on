@@ -1,4 +1,4 @@
-import { HANDS_ON_ACTIVITIES, unitForLesson } from "./golden-bell-hands-on-models.js?v=20261004a";
+import { HANDS_ON_ACTIVITIES, unitForLesson } from "./golden-bell-hands-on-models.js?v=20261023t";
 import { gameLinkURL, issueGameLinks } from "./golden-bell-game-link.js?v=20261003e";
 
 const esc = (value) => String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
