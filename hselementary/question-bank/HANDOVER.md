@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 16 Source Review
+
+- Checked logical PDF page 12 (printed page 16) from the SHA-256-matched source using a 450dpi render and Apple Vision text-location pass; stacked fractions, expressions, and both diagrams were confirmed visually. Handwriting and publisher answers were excluded.
+- Independently recalculated Concept Exploration 2 (1)–(2) and Examples 2-1–2-4. Ledger conditions, type assignments, and answers match: 10/21L; 1 35/48; 266; 6 1/24cm²; 21 7/8m; and 47 253/256cm². The partitioned-rectangle and right-isosceles-square diagrams remain required visual assets.
+- Strengthened source evidence for the six records. No answer, type, or figure requirement changed. All six remain locked pending generator integration, learner-fit, screen/A4 checks, and release approval. No runtime, learner data, or public state changed.
+- Drive source/QA record in the existing `.source-memory` folder: [grade52-unit2-page16-source-review-20261024.md](https://drive.google.com/file/d/1tRKBqVcADdxIW4yArKdCIgdwORsVO_qD/view)
+
 ## 2026-10-24 Grade 5-2 Unit 2 Printed Page 14 Source Review
 
 - Checked PDF logical page 10 (printed page 14) from the SHA-256-matched source at 450dpi. Apple Vision was used to locate text; stacked fractions and equations were confirmed by enlarging the source image. The page has no printed diagrams; handwritten marks and the publisher answer key were excluded.
