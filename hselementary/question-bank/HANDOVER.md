@@ -1,4 +1,116 @@
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Mission 1: Incorrect 70° Replaced with 40°, Implementation Locked
+
+- Re-read logical PDF page 26 / printed page 31 from the clean alternate `황소5-2-1.pdf` (SHA-256 `6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88`). The printed figure confirms square ㄱㄴㄷㄹ, point ㅁ on ㄱㄹ, point ㅂ on ㄹㄷ, ∠ㄱㄴㅁ=20°, ∠ㄷㄴㅂ=25°, and target ∠ㄹㅁㅂ. Apple Vision OCR and the 600dpi crop were checked with the raster; crop SHA-256 `f926d3b8d733287776b10d51448ffeec1a846afa8db2728eb7543e8b7d77b925`.
+- The previous 70° entry used only 90°−20° and ignored the second marked angle and target vertex. With square side 1, coordinates ㄱ=(0,1), ㄴ=(1,1), ㄷ=(1,0), ㄹ=(0,0) give ㄹㅁ=1−tan20° and ㄹㅂ=1−tan25°. Since `tan25°=tan(45°−20°)`, `(1−tan25°)/(1−tan20°)=tan40°`; therefore `∠ㄹㅁㅂ=40°`. The source answer is calculation-checked; implementation stays locked pending diagram, separated solution, and A4 checks.
+- Source visual checks needed decreased 20→18 after Missions 1 and 2 were confirmed. Public-candidate/locked counts remain 23/30; student data and release state are unchanged.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Mission 2: 130° Verified from Semicircle Arcs, Implementation Locked
+
+- Re-read printed page 31 from the same clean alternate copy. The 600dpi crop SHA-256 is `0d556e3475dbf61e12746094bcaadbd0877b7ac106eefc2b13764e2786bb137f`. The diagram shows diameter ㄱ-ㄷ-ㄴ, center ㄷ, arc points ㄹ·ㅁ·ㅂ in order, equal chords ㄱㄹ=ㅁㅂ, equal central angles ∠ㅁㄷㅂ=∠ㅂㄷㄴ, given ∠ㄷㄹㅁ=60°, and target ∠ㄹㅁㅂ.
+- Since ㄷㄹ=ㄷㅁ are radii, △ㄷㄹㅁ is equilateral and arc ㄹㅁ=60°. Let arcs ㅁㅂ and ㅂㄴ be x because their central angles match. Equal chords ㄱㄹ and ㅁㅂ subtend equal minor arcs, so arc ㄱㄹ=x as well. The semicircle gives `x+60°+x+x=180°`, hence x=40°. The smaller arc ㄹㅂ through ㅁ is 100°, so ∠ㄹㅁㅂ intercepts the other 260° arc and equals 130°.
+- The source answer is calculation-checked. Keep the runtime item locked until its generated diagram, separated solution, and A4 output are checked.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Mission 5: Area Independently Verified, Implementation Locked
+
+- Re-read logical PDF page 27 / printed page 31 from the source PDF (SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`). Apple Vision OCR and the 450dpi close-up confirm the prompt asks for the area of △ㄱㄷㅁ when △ㄱㄴㄷ≅△ㄷㄹㅁ; the diagram marks ㄱㄴ=16cm and ㄹㅁ=8cm, with right angles at ㄴ and ㄹ. Crop `/tmp/gfield-grade52-u3-next/m5-zoom-v2.png` SHA-256 `2c1cc84ff1425cb12c6d6888e514bc1e1678caa387854c774612239ee1b95e3d`. Handwriting was excluded.
+- Congruence order maps ㄱ↔ㄷ, ㄴ↔ㄹ, ㄷ↔ㅁ, so ㄷㄹ=ㄱㄴ=16 and ㄴㄷ=ㄹㅁ=8. Put ㄴ=(0,0), ㄷ=(8,0), ㄹ=(24,0), ㄱ=(0,16), and ㅁ=(24,8). Then `area(△ㄱㄷㅁ)=|det((8,-16),(24,-8))|/2=160cm²`. This is an independent reconstruction, not acceptance of the pencil’s written candidate.
+- Updated the source calculation and counters (checked 47→48; source visuals needing confirmation 22→21). The item remains `review-locked`/`locked` until its generated figure, separated solution, and A4 print output are implemented and inspected. No student data or release state changed. Drive QA note: https://drive.google.com/file/d/1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s/view (read back).
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Mission 3: 140° Independently Verified, Implementation Locked
+
+- Re-read logical PDF page 26 / printed page 31 from the clean alternate publisher copy `황소5-2-1.pdf` (SHA-256 `6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88`). Its printed text confirms equilateral △ㄱㄴㄷ and △ㄷㄹㅁ, ∠ㄴㅁㄷ=140°, and asks for ㉮. The 600dpi page render SHA-256 is `5fef1593b83ee6cd8c12b5a2f57f3cdab47bba1fb44d01d0f19079f811bbbca3`; the clean figure crop SHA-256 is `373eed3cfe09649cf4ec2ab1dc95ca03b175bec87f54bb4402b02742ce7c59bd`. Apple Vision OCR and the original raster were checked together; handwriting is absent from the alternate copy.
+- In the printed figure, ㉮ is ∠ㄱㄹㄷ. A clockwise 60° rotation centered at ㄷ maps ㄴ→ㄱ and ㅁ→ㄹ while fixing ㄷ, so it maps ∠ㄴㅁㄷ directly to ∠ㄱㄹㄷ. Therefore ㉮=140°. The source answer is calculation-checked; runtime implementation stays `review-locked` until its diagram, separated solution, and A4 print output are checked.
+- Updated counters from 48→49 calculation-checked and 21→20 source-visual checks needed. Public candidates/locked items remain 23/30; no student data or release state changed. Drive QA note: https://drive.google.com/file/d/1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s/view.
+
 # Elementary Question Bank Handover
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 4: Angle-Mark Location Corrected, Still Locked
+
+- Rechecked the 450dpi source crop and a close-up around the 32° mark. The arc is at ㅈ between ㅈㅂ and ㅈㅅ, so the printed angle is ∠ㅂㅈㅅ=32°; it is not at ㅂ. The 46° is ∠ㅇㄷㄴ at ㄷ, and the right-angle mark is ∠ㅅㅈㅇ. Pencil writing was excluded.
+- Since ㅂ, ㅈ, ㄷ are collinear, the printed marks establish ∠ㄷㅈㅇ=58°. That intermediate angle does not by itself determine target ∠ㅅㅇㅈ. A tempting 58° answer requires an unverified mapping between the original rectangle edge and the folded edge, so it was rejected pending a fold-by-fold reflection reconstruction. `independentAnswer` remains null, calculation remains blocked-visual, and the item remains locked.
+- Corrected the readiness entry's angle vertex and updated the visual requirement. No runtime mapping, student data, or release state changed.
+- Drive QA correction: https://drive.google.com/file/d/1osh1VOnzsLTye9PCydxk5P-z0FEPmRzx/view (read back). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page image SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; close-up SHA-256 `cb25cc092afd912b13eee7ab44b644b61e56cb7af8b9219632cd0067eba10c8c`.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 6: Equilateral 5cm Transversal Angle
+
+- Re-read logical PDF page 25 / printed page 29 from the SHA-256-matched original at 450dpi. Apple Vision OCR confirmed the question asks for ∠ㄱㅂㅁ in equilateral △ㄱㄴㄷ; the printed 5cm marks run from ㄴ to ㄹ on ㄴㄷ and from ㄷ to ㅁ on ㄷㄱ. The segments ㄱㄹ and ㄴㅁ cross at ㅂ. Pencil marks were excluded.
+- With side length s>5, set ㄴ=(0,0), ㄷ=(s,0), ㄱ=(s/2,√3s/2), ㄹ=(5,0), and ㅁ=(s−5/2,5√3/2). The vector ㄹ→ㄱ rotates clockwise 60° to ㄴ→ㅁ. Their intersection parameters are t=25/D and r=5s/D, D=s²−5s+25; both lie strictly between 0 and 1, so the crossing is inside both segments. Therefore ∠ㄱㅂㅁ=60°.
+- Updated the source-readiness proof and counters: calculation-checked 46→47, source-structure visual checks needed 24→23. Public candidates remain 23, locked items 30, non-unique 8. This is a source-side answer check only; implementation figure check is still pending, so the item remains review-locked. No learner-facing mapping, student data, or release state changed.
+- Drive QA note: https://drive.google.com/file/d/18goPVPFZgxmFATf-w_BWzNwEt3yF-Mja/view (uploaded to the existing `.source-memory` folder and read back). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 image SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 5: Equal-Offset Equilateral Triangle
+
+- Rechecked logical PDF page 25 / printed page 29 at 450dpi. The printed text names equilateral △ㄱㄴㄷ and points ㅁ, ㅂ, ㄹ at equal distances from successive vertices on ㄱㄴ, ㄴㄷ, ㄷㄱ. The circled handwritten 60° was excluded.
+- Let A=ㄱ, B=ㄴ, C=ㄷ and common offset d. The 120° rotation cycles A→C→B→A and maps ㅁ→ㄹ→ㅂ→ㅁ. Thus △ㅁㅂㄹ is equilateral, so ㉠=60°. A coordinate model with side 2 and d=1 independently gives three equal inner sides.
+- Strengthened the readiness proof and added a focused calculation assertion. Existing status remains checked/public-candidate; counts remain 23 public candidates, 30 locked, 46 calculation-checked, 8 non-unique. No learner mapping or student data changed.
+- Drive evidence: https://drive.google.com/file/d/1rNBPO8moU-Z7i4lsHFnba14Xb17Petql/view (content read back and verified). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 render SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; focused crop SHA-256 `c6baa815bce4b9fb7c768b0724ac3125b059cfa7a923fa141733fc88ba3e3a77`.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 2: Square-Overlap Area Resolved
+
+- Rechecked logical PDF page 25 / printed page 29 at 450dpi. The two square sides are 10cm and 14cm; the large square's diagonals mark its center C, which is a vertex of the small square. The 6cm dimension runs from the large square's upper-left corner to Q on its left edge. Handwritten circled work was excluded.
+- Set the large square to [0,14]×[0,14] with top-left (0,0): C=(7,7), Q=(0,6). The small square's perpendicular side meets the bottom edge at P=(6,14). Vectors C→Q=(-7,-1) and C→P=(-1,7) have dot product 0 and squared lengths 50, so the overlap is a right triangle with area ½×√50×√50=25cm². Both legs are shorter than the small square side 10cm.
+- Corrected the readiness row from `checked-nonunique` to `checked`, answer 25cm². No source-specific public generator exists yet, so keep it review-locked pending implementation-figure verification. Counts: 23 public candidates, 30 locked, 46 calculation-checked, 8 non-unique. No learner mapping, student records, release state, or deployment changed.
+- Drive evidence: https://drive.google.com/file/d/1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC/view (uploaded to the existing QA folder; content read back and the `25cm²` result verified). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 render SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; focused Mission 2 crop SHA-256 `dd5ad1e5c409389d769af00503db510743dffba600b93ae1ab8f4c4d16bbc719`.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 1: Corrected Source Conditions and Answer
+
+- Re-read logical PDF page 25 / printed page 29 at 450dpi and compared Apple Vision OCR with the high-resolution figure. The prompt gives congruent isosceles triangles △ㄱㄴㄷ and △ㄹㄴㅁ, a printed 66° base angle, a printed 72° angle at their crossing ㅅ, and asks for ∠ㄱㄹㅅ. The previous ledger had mistakenly copied Mission 3's 65° and 45° rotation conditions into Mission 1.
+- Independent chase: each original isosceles triangle has apex 48°. The linear pair to 72° is 108°, so △ㄹㄴㅅ gives ∠ㄱㄴㄹ=24°. Corresponding equal legs ㄱㄴ=ㄹㄴ make △ㄱㄴㄹ's base angles 78°. Subtracting △ㄹㄴㅁ's 48° apex gives ∠ㄱㄹㅅ=30°. Handwritten calculations and the circled handwritten 30° were excluded.
+- Corrected the inventory conditions and answer to 30°. Keep the item locked pending implementation-figure verification. Counts: 23 public candidates, 30 locked, 45 calculation-checked, 9 non-unique. No student data, runtime mapping, release state, or deployment changed.
+- Drive evidence: https://drive.google.com/file/d/1zNtIYqtPweo41VVVcY4gp9UkqcXWCeKv/view. Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 render SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; OCR SHA-256 `9cc2f66e7ac99039cd5cd89fd8433bd529c188a96ec7db76b4bf63a5a92e7326`.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 3: Rotation Angle Verified
+
+- Re-read logical PDF page 25 / printed page 29 and used Apple Vision OCR plus a high-resolution crop. The source gives isosceles △ㄹㅂㄷ as △ㄱㄴㄷ rotated clockwise 45° about ㄷ, ㄱㄴ=ㄱㄷ, ∠ㄴ=65°, ㅁ=ㄱㄷ∩ㄹㅂ, and asks for ∠ㄷㅁㅂ. Handwriting was excluded.
+- The equal sides make the original apex angle 50°. The rotation carries side ㄱㄴ to ㄹㅂ, so their angle with fixed line ㄱㄷ is 50°+45°=95° in the shown orientation. Independent coordinates place ㅁ inside both segments and compute the requested angle as 95°.
+- Corrected the answer and source status, while keeping public release locked for implementation-figure verification. Counts: 23 public candidates, 30 locked, 46 calculation-checked, 9 non-unique. No student data, runtime mapping, release state, or deployment changed.
+- Drive evidence: https://drive.google.com/file/d/12h10sOg4uZj0PugB1GNsebjJDtYW6BnD/view. Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 render SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; high-resolution crop SHA-256 `6ec11088b26a1a0cb2772934493c0180f39db74db6c60a849e6a740c58321a9b`.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-4: Underdetermined Fold Angle
+
+- Re-read logical PDF page 24 / printed page 28 from the SHA-256-matched original and ran Apple Vision on the prompt crop. It says to fold the rectangle so ㄱ moves to ㅁ, then fold so ㅁ moves to ㅂ, and asks for ∠ㅂㅇㄷ. The diagram marks 24° between the top edge and diagonal ㄱㄷ; ㅇ is the intersection of ㄱㄷ and ㅁㅂ. The handwritten 72° and nearby angle notes were excluded.
+- The wording fixes the point correspondences but gives no fold-line location or additional location condition for ㅂ. For a coordinate counterexample, set rectangle height 1 and width cot24°, ㄱ=(0,1), ㄷ=(cot24°,0), and ㅁ=(1,0). The first fold ㄱ→ㅁ is possible across y=x. Choose ㅂ=(1.5, 0.5 tanθ); the second fold ㅁ→ㅂ is possible across the perpendicular bisector of ㅁㅂ. With θ=40° and 48°, both ㅂ points lie inside the rectangle and ㅇ lies on segment ㅁㅂ and diagonal ㄱㄷ, while ∠ㅂㅇㄷ is 64° and 72° respectively. This proves the stated conditions do not determine one numeric answer.
+- Updated the readiness row to `checked-nonunique` and kept it locked. Source counts remain 23 public candidates / 30 locked; non-unique items rise from 8 to 9 and calculation-checked items from 43 to 44. No public mapping, release state, or student data changed.
+- Drive evidence: https://drive.google.com/file/d/1-X8dd42E5ievBVx8dq1akhwRnVDnB5NK/view.
+- Source PDF SHA-256: `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 24 render SHA-256: `15db8d4817b6c5cf4e3c9aa9c501553227b33cb771e81910c37f96bc392136f4`; focused prompt OCR was generated from the same page render.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-3 Underdetermined Angle
+
+- Re-read logical PDF page 24 / printed page 28 at 450dpi, checked the exact prompt with Apple Vision OCR, and visually inspected a high-resolution crop. Handwritten ticks and answers were excluded.
+- The source gives a right triangle, fixes vertex ㄷ, rotates in the indicated direction until ㄴㄷ is parallel to ㄹㅁ, and asks for ∠ㄷㅁㄹ. It supplies no acute angle, side ratio, or equality condition.
+- Parameterized the right triangle with legs 1 and h. For both h=1 and h=√3 the construction can satisfy the printed parallel condition, while the requested angle differs (45° versus 30° or 60° according to endpoint correspondence). Corrected the prior 30° answer to checked-nonunique and locked the source row.
+- Public-candidate/locked counts change from 24/29 to 23/30; non-unique count changes from 7 to 8. No runtime mapping, student data, or deployment state changed.
+- Drive evidence: https://drive.google.com/file/d/1sT0W-X1Xk96z5XmpxOAKNevKJ7CX3zaL/view. Page 24 image SHA-256 15db8d4817b6c5cf4e3c9aa9c501553227b33cb771e81910c37f96bc392136f4; OCR SHA-256 74ecda62593e4f94cfecf3e38edc1663895151831cd795476c412b92dff6e173.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-2 Geometry Correction
+
+- Re-read logical PDF page 24 / printed page 28 at 450dpi and checked the printed diagram against Apple Vision OCR; handwriting was excluded.
+- The answer ㄱㄴ=12cm was already correct, but the previous reason incorrectly called ㄱㄴ a square side. The diagram's 60° is between a rotated-square side and the upright square's vertical side. The perpendicular rotated-square side therefore makes 60° with the horizontal base. Together with the two 12cm square sides, this forms an equilateral triangle and proves ㄱㄴ=12cm.
+- Corrected the source conditions and independent explanation in the readiness inventory. No runtime mapping, public release, or student data changed.
+- Drive evidence: https://drive.google.com/file/d/1IQrrZjrUEr4vGxZTNfBDgEu64sFWJBQj/view. Source PDF SHA-256 d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; image SHA-256 15db8d4817b6c5cf4e3c9aa9c501553227b33cb771e81910c37f96bc392136f4.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 25 Mission 5 SSA Correction
+
+- Re-read PDF page 21 (printed page 25) from the SHA-256-matched source using a 450dpi render and Apple Vision OCR; vertex labels and the 7cm/4cm sides were confirmed from the image. Pencil marks were excluded.
+- Found an answer-rule error in `5-2-u3-e1-mission-5`: with ㄴㄷ=7cm and ㄱㄷ=4cm, the sufficient choices are ① ㄱㄴ length (SSS), ② ∠ㄱ (the angle opposite the longer known side; SSA has one valid solution), and ④ ∠ㄷ (included-angle SAS). Choice ③ ∠ㄴ is SSA with two possible triangles and does not guarantee congruence.
+- Corrected the source-side/visual label, independent calculation, formula, and answer in the U3 readiness inventory. JSON structure (53 unique items), targeted SSA assertions, and unchanged 24-public/29-locked counts pass. The item remains locked pending implementation-figure verification; no learner-facing mapping, student data, or release state changed. Mission 6 remains unresolved and locked.
+- The old `congruence-symmetry-audit.js` tried to generate all 24 pre-existing types even though each is intentionally review-locked, so its baseline failures were test-policy errors. It now verifies those locks remain closed and checks all 27 page-31 configurations; 216 legacy lock checks and all 18 available/9 locked Mission configurations pass.
+- Drive evidence: [page 24 exploration review](https://drive.google.com/file/d/1Ry4JGJ9m1WQGParWINFjg6R49ASDA02B/view) and [page 25 Missions 1–6 review](https://drive.google.com/file/d/11k5r1lrjdx7jVwPYtlFTDoevfX7k7SA3/view).
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 27 Mission 6 Answer Correction
+
+- Drive QA note: https://drive.google.com/file/d/1UO3b2Ae_gjHhd7K-nDwkUz2I4VzSWGEj/view. Mission 6 now has a separate type from Example 2-4 because the source asks about different sets of triangles.
+- Re-read PDF page 23 (printed page 27) at 450dpi and checked Apple Vision OCR against the printed figure. The source says to divide the base into six equal parts, connect the apex, and compare the six triangles created. Pencil marks and handwritten answers were excluded.
+- The earlier ledger incorrectly counted larger composites formed by joining adjacent sections. For the six named small triangles only, reflection across the isosceles axis pairs positions (1,6), (2,5), and (3,4), so the answer is 3 pairs, not 9.
+- Corrected the independent calculation, formula, answer, and scope in the readiness inventory. Source public/locked counts and student data are unchanged. This records source math only; no public mapping or release state was changed.
+- Source PDF SHA-256: `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 23 render SHA-256: `79c3cdb999dcfb35eacd30e1a42717f5076c36fbafe34ce17d181b2494d00bac`.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 26 Example 2-3 Diagram Answer
+
+- Re-read PDF page 22 (printed page 26) with a 450dpi render and Apple Vision OCR; confirmed the printed names △ㄱㄴㄷ and △ㄷㄹㅁ, the two distinct side-mark classes, and the crossing segments. Handwriting was excluded.
+- Let the two equilateral side lengths be a and b (a≠b). Then △ㄱㄷㅁ and △ㄴㄷㄹ each have side lengths a,b and included angle 120°, so they are congruent by SAS. The crossed diagonals both have squared length a²+ab+b². Enumerating all eight nondegenerate triangles in the drawing leaves this as the only congruent pair.
+- Filled the previously blocked independent calculation and answer in the U3 readiness inventory. It remains locked until the implemented diagram preserves the labels and crossing segments. Source calculation checks now total 43; public/locked counts stay 24/29. Mission 6 on page 25 remains unresolved and locked.
+- Drive evidence: [Example 2-3 diagram review](https://drive.google.com/file/d/1OcVudw9mWBPR7Uu6lmG2lIAXqsaw7xL9/view) and [page 26 arithmetic/conditions review](https://drive.google.com/file/d/1GRQzfYKA5dh0Bz1M1XynMKioD-61Vr5r/view).
 
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
 
@@ -459,3 +571,10 @@ Plane-transformation group 1 publishes 10 of 11 source items after 15,000 indepe
 - `b69d525` Replace rule finding with advanced generators
 - `4b67305` Add advanced bar graph generators
 - `5aba934` Add advanced plane transformation generators
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Missions 1–3: Runtime, Screen and A4 Review
+
+- Added three page-31 source-linked runtime types in the isolated Mac worktree on `codex/grade52-u3-m5-ssa-correction-20261024`, continuing PR #401. The 27 generated configurations use synthetic values and are checked by the focused source/API audit. Publisher-key verification remains false.
+- Mission 2 and Mission 3 now have reviewed implementation status and are public candidates. Mission 1 remains locked: the generated problem, separate solution, PC/mobile rendering and print output are verified, but the current derivation relies on a tangent identity; do not release until an elementary-level solution is independently verified.
+- Browser review passed 54 configurations across 1440px and 375px, three value pools and three difficulty settings. It produced 12 screen captures, blocked 54 external requests, and reported zero page errors. Six A4 PDFs (problem and solution for each item) each contain one page; all six were rasterized and visually inspected. Answer views stay separate from problem views. M1 was temporarily unlocked only inside the isolated test browser to inspect rendering; the live curriculum gate remains locked.
+- `source-5-2-range-classification-audit.js` now filters newly added source IDs across the semester before comparing against the Git baseline; it passes and confirms all 124 legacy records and their groups are unchanged. Whole-bank checks pass at 2,045 types / 1,256 available / 789 pending. `source-item-taxonomy-audit.js` reports two 4-2 quadrilateral failures; I ran it from a clean archive of the branch baseline and reproduced the same two failures, confirming they predate this batch.
+- Updated the existing source-readiness record: Mission 2–3 are public candidates; Mission 1 stays locked; source-level counts remain 53 reviewed / 49 calculations checked / 8 non-unique / 18 source visuals needing review. README and this handover now record the runtime review. Student data was not accessed or changed. The branch is still uncommitted; PR #401 remains the review destination. No deployment has been performed.
