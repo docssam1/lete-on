@@ -55,7 +55,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261023c`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261023d`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -154,7 +154,7 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
 | ~~4~~ | 28~33 | 양팔저울 등식 8 + 저울 바꾸어 넣기 5 | **완료**(3절) |
 | ~~5~~ | 4~8 | 연산 8, 숫자 1 뒤집기·돌리기 ①~⑧, 숫자판 3, 디지털 숫자 20 + 952 반 바퀴 | **완료**(3절) |
 | ~~6~~ | 10~14 | 색종이 접어 위치(알파벳) 7·반대쪽 번호 3, 두 번 접어 자른 모양 4, 자른 수의 합 4 | **완료**(3절) |
-| 보류 유지 | 2, 3 확장, 34·47 | 정삼각형 등분 그리기, 3쪽 다섯 칸 확장(교사용 전용), 47쪽 □n(원본도 빈칸뿐) | 넣지 않는다 |
+| 보류 유지 | 2, 3 확장, 34·47 | 정삼각형 등분 그리기, 3쪽 다섯 칸 확장(교사용 전용), 47쪽 □n(원본도 빈칸뿐) | 넣지 않는다 — **2026-10-23 장부에 종결 표시**(`sourceHold[].status:"closed"`·`decision`, `tools/golden-bell-book04/close-book04-holds.mjs`) |
 
 **4권 묶음은 모두 끝났다.** 다음: **5~10권 원본 대조**
 
