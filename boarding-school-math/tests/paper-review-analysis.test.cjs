@@ -10,7 +10,8 @@ test("unmarked and unanswered questions are distinct from wrong attempts", funct
   assert.equal(report.valid, true);
   assert.deepEqual(report.counts, { correct: 1, wrong: 1, blank: 1, unmarked: 1 });
   assert.equal(report.attempted, 2);
-  assert.equal(report.accuracy, 50);
+  assert.equal(report.accuracy, null);
+  assert.equal(report.domains.find((domain) => domain.id === "algebra").rate, null);
   assert.equal(report.domains.find((domain) => domain.id === "geometry").blank, 1);
   assert.deepEqual(report.reasons, [{ id: "reading", name: "조건 읽기", count: 1 }]);
   assert.equal(report.complete, false);
@@ -31,4 +32,5 @@ test("rejects mismatched paper size and unknown marks", function () {
   assert.equal(analyze([entry()], 25).valid, false);
   assert.equal(analyze([entry("invented")], 1).valid, false);
   assert.equal(analyze([entry()], 31).valid, false);
+  assert.match(analyze([entry(), entry()], 2).error, /표시한 문제가 없습니다/);
 });

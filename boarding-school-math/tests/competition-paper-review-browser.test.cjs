@@ -40,12 +40,35 @@ test("Grade 7 paper marks yield partial learning review, never official score", 
   await page.locator('[data-question="3"][data-field="status"]').selectOption("blank");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-title").innerText(), /입력한 결과/);
-  assert.match(await page.locator("#report-intro").innerText(), /22문제는 아직 표시/);
-  assert.match(await page.locator("#report-metrics").innerText(), /50%/);
+  assert.match(await page.locator("#report-intro").innerText(), /22문제는 표시하지 않았습니다/);
+  assert.match(await page.locator("#report-metrics").innerText(), /1\/2/);
+  assert.doesNotMatch(await page.locator("#report-metrics").innerText(), /50%/);
+  assert.doesNotMatch(await page.locator("#report-domains").innerText(), /50%/);
+  assert.equal(await page.locator(".review-report").evaluate((node) => node === document.activeElement), true);
   assert.match(await page.locator("#report-reasons").innerText(), /조건 읽기 · 1문항/);
-  assert.match(await page.locator(".report-boundary").innerText(), /공식 대회 점수/);
+  assert.match(await page.locator(".report-boundary").innerText(), /공식 점수/);
   assert.equal(await page.evaluate(() => localStorage.length), 0);
   assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test("direct entry waits for a contest and keeps empty results out of view", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(url, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#review-program").inputValue(), "");
+  assert.equal(await page.locator("#paper-mark-list").isHidden(), true);
+  assert.equal(await page.locator(".review-report").isHidden(), true);
+  assert.equal(await page.locator("#review-paper-label-field").isHidden(), true);
+  assert.equal(await page.locator("#review-amc8-practice").isHidden(), true);
+  assert.equal(await page.locator(".review-related").isHidden(), true);
+  await page.locator("#review-program").selectOption("amc8");
+  assert.equal(await page.locator(".paper-mark-row").count(), 25);
+  assert.equal(await page.locator(".review-related").isVisible(), true);
+  assert.equal(await page.locator(".review-report").isHidden(), true);
+  await page.getByRole("button", { name: "결과 보기" }).click();
+  assert.match(await page.locator("#paper-error").innerText(), /표시한 문제가 없습니다/);
+  assert.equal(await page.locator(".review-report").isHidden(), true);
+  assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);
   await page.close();
 });
 

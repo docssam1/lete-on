@@ -35,10 +35,11 @@
       }
       if (entry.status === "wrong" && entry.reason !== "none") byReason.get(entry.reason).count += 1;
     }
+    if (counts.unmarked === itemCount) return { valid: false, error: "표시한 문제가 없습니다. 채점한 문제부터 표시하세요." };
     const attempted = counts.correct + counts.wrong;
     domains.forEach(function (domain) {
-      domain.rate = domain.attempted ? Math.round(domain.correct / domain.attempted * 100) : null;
-      domain.evidence = domain.attempted >= 3 ? "표본 비교 가능" : domain.attempted ? "표본 부족" : "미측정";
+      domain.rate = domain.attempted >= 3 ? Math.round(domain.correct / domain.attempted * 100) : null;
+      domain.evidence = domain.attempted >= 3 ? "3문제 이상" : domain.attempted ? "3문제 미만 · 비교 보류" : "미측정";
     });
     const comparable = domains.filter(function (domain) { return domain.attempted >= 3; }).sort(function (a, b) { return a.rate - b.rate; });
     return {
@@ -46,7 +47,7 @@
       itemCount: itemCount,
       counts: counts,
       attempted: attempted,
-      accuracy: attempted ? Math.round(counts.correct / attempted * 100) : null,
+      accuracy: attempted >= 3 ? Math.round(counts.correct / attempted * 100) : null,
       complete: counts.unmarked === 0,
       unclassified: unclassified,
       domains: domains,
