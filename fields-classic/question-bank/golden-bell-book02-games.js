@@ -275,7 +275,9 @@ function sudokuBoard({ stage, controls, sound }) {
     const bad = conflicts(), n = p.size;
     const cell = (r, c) => {
       const v = grid[r][c], given = p.puzzle[r][c] !== 0, key = `${r},${c}`;
-      const cls = `lg-sq${given ? " given" : ""}${sel === key ? " sel" : ""}${bad.has(key) ? " bad" : ""}${showWrong && !given && v && v !== p.solution[r][c] ? " wrong" : ""}`;
+      const [sr, sc] = sel ? sel.split(",").map(Number) : [-1, -1];
+      const inLine = sel && sel !== key && (r === sr || c === sc || (p.boxes && Math.floor(r / 2) === Math.floor(sr / 2) && Math.floor(c / 2) === Math.floor(sc / 2)));
+      const cls = `lg-sq${given ? " given" : ""}${sel === key ? " sel" : ""}${inLine ? " line" : ""}${bad.has(key) ? " bad" : ""}${showWrong && !given && v && v !== p.solution[r][c] ? " wrong" : ""}`;
       return given ? `<div class="${cls}" role="gridcell" aria-label="${r + 1}행 ${c + 1}열 ${v}">${v}</div>` : `<button type="button" role="gridcell" class="${cls}" data-b2-cell="${key}" aria-label="${r + 1}행 ${c + 1}열 ${v || "빈칸"}" ${locked ? "disabled" : ""}>${v || ""}</button>`;
     };
     // 상자 규칙 판은 상자(2×2)별로 묶어 그린다. 상자 순서: 왼쪽 위 → 오른쪽 위 → 왼쪽 아래 → 오른쪽 아래.
@@ -284,9 +286,21 @@ function sudokuBoard({ stage, controls, sound }) {
       : grid.map((row, r) => row.map((_, c) => cell(r, c)).join("")).join("");
     stage.innerHTML = `<div class="lg-sudoku${p.boxes ? " boxes" : ""}" style="--n:${n}" role="grid" aria-label="${n}×${n} 빈칸 채우기${p.boxes ? ", 굵은 상자 넷" : ""}">${body}</div>`;
     const full = grid.every((row) => row.every((v) => v));
-    controls.innerHTML = `<p class="cg-ask">${sel ? "넣을 수를 고르세요." : "빈칸을 먼저 누르세요."}</p>${pad([...Array(n).keys()].map((v) => v + 1), "data-b2-num", { disabled: locked || !sel })}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-erase ${locked || !sel ? "disabled" : ""}>지우기</button><button type="button" class="cg-primary" data-b2-check ${locked || !full ? "disabled" : ""}>확인!</button></div>`;
+    // 골든벨 풀이: ① 가로줄에서 빠진 수 ② 같은 칸의 세로줄(과 굵은 상자)에서도 되는지 ③ 채운 뒤 달라진 줄 다시 보기.
+    const ask = !sel ? "빈칸을 먼저 누르세요." : `① 이 칸의 가로줄에 빠진 수는? ② 그 수가 세로줄${p.boxes ? "과 굵은 상자" : ""}에도 없나요? 금색 칸들을 보고 넣을 수를 고르세요.`;
+    controls.innerHTML = `<p class="cg-ask">${ask}</p>${pad([...Array(n).keys()].map((v) => v + 1), "data-b2-num", { disabled: locked || !sel })}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-erase ${locked || !sel ? "disabled" : ""}>지우기</button><button type="button" class="cg-primary" data-b2-check ${locked || !full ? "disabled" : ""}>확인!</button></div>`;
   };
-  const firstBlank = () => { for (let r = 0; r < p.size; r++) for (let c = 0; c < p.size; c++) if (!grid[r][c]) return `${r},${c}`; return null; };
+  // 다음으로 고를 칸: 줄·상자의 수를 보고 넣을 수 있는 수가 가장 적은 빈칸(「가장 먼저 알 수 있는 칸」).
+  const candidates = (r, c) => {
+    const used = new Set([...grid[r], ...grid.map((row) => row[c])]);
+    if (p.boxes) { const br = r - (r % 2), bc = c - (c % 2); [grid[br][bc], grid[br][bc + 1], grid[br + 1][bc], grid[br + 1][bc + 1]].forEach((v) => used.add(v)); }
+    return [...Array(p.size).keys()].map((v) => v + 1).filter((v) => !used.has(v)).length;
+  };
+  const firstBlank = () => {
+    let best = null, bestCount = Infinity;
+    for (let r = 0; r < p.size; r++) for (let c = 0; c < p.size; c++) if (!grid[r][c]) { const k = candidates(r, c); if (k < bestCount) { best = `${r},${c}`; bestCount = k; } }
+    return best;
+  };
   const onClick = (event) => {
     const t = event.target.closest("button");
     if (!t || t.disabled || locked) return;
@@ -307,7 +321,7 @@ function sudokuBoard({ stage, controls, sound }) {
 }
 const SUDOKU_GAME = {
   ...SUDOKU,
-  coach: (p) => (p.boxes ? "가로줄, 세로줄, 굵은 상자 안에 1부터 4가 한 번씩이야. 빈칸이 하나뿐인 곳부터!" : `가로줄과 세로줄에 1부터 ${p.size}까지 한 번씩이야. 빈칸이 하나뿐인 줄부터 채워 봐.`),
+  coach: (p) => (p.boxes ? "가로줄, 세로줄, 굵은 상자 안에 1부터 4가 한 번씩이야. 하나를 채우면 그 줄과 상자를 다시 봐 — 다음 칸이 열려." : `가로줄과 세로줄에 1부터 ${p.size}까지 한 번씩이야. 하나를 채우면 달라진 줄을 다시 봐 — 다음 칸이 열려.`),
   mission: (p) => `빈칸 ${p.blanks}개를 채우세요. ${p.boxes ? "가로·세로·굵은 상자" : "가로·세로"}에 1부터 ${p.size}까지 <b class="cw">한 번씩</b>!`,
   hint: (p, info) => (info?.conflicts ? "빨간 칸은 같은 줄이나 상자에 같은 수가 겹친 곳이야. 그 칸부터 고쳐 봐." : "한 줄에 빠진 수가 무엇인지 하나씩 확인해 봐."),
   success: (p) => `맞았어! 빈칸 ${p.blanks}개를 모두 채웠어.`,
