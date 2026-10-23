@@ -10,11 +10,14 @@
   const definitions = Object.freeze([
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-1", generatorKey: "source52SquareAnglePage31Mission1", publicReady: true }),
     Object.freeze({ sourceItemId: "5-2-u3-e4-mission-2", generatorKey: "source52SemicircleAnglePage31Mission2", publicReady: true }),
-    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3", generatorKey: "source52EquilateralRotationPage31Mission3", publicReady: true })
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-3", generatorKey: "source52EquilateralRotationPage31Mission3", publicReady: true }),
+    Object.freeze({ sourceItemId: "5-2-u3-e4-mission-5", generatorKey: "source52CongruentTriangleAreaPage31Mission5", publicReady: true })
   ]);
   const squareAlphas = [9, 14, 19];
   const circleBaseVertices = [48, 57, 72];
   const triangleBaseTargets = [118, 130, 152];
+  const areaBaseHeights = [10, 14, 18];
+  const areaBaseWidths = [6, 10, 14];
   const difficultyDeltas = [-2, 0, 2];
   const esc = value => String(value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
   const point = (x, y) => `${Number(x.toFixed(2))},${Number(y.toFixed(2))}`;
@@ -108,6 +111,48 @@
     return `<svg class="source52-p31-diagram source52-p31-equilateral" data-source52-figure="equilateral-rotation" data-target-angle="${target}" viewBox="0 0 360 390" role="img" aria-label="공통 꼭짓점 ㄷ을 둔 두 정삼각형, 주어진 각과 회전 대응각 그림" xmlns="http://www.w3.org/2000/svg">${a(d,n)}${a(n,g)}${a(g,d)}${a(d,m)}${a(m,r)}${a(r,d)}${a(m,n)}${a(r,g)}<path class="source52-angle-mark" d="${givenMark.d}"/><path class="source52-angle-mark" d="${targetMark.d}"/><text class="source52-angle-label" x="${(givenMark.label.x-20).toFixed(2)}" y="${(givenMark.label.y+4).toFixed(2)}">${target}°</text>${text(g,"ㄱ",-20,0)}${text(n,"ㄴ",8,-10)}${text(d,"ㄷ",-18,18)}${text(r,"ㄹ",18,-2)}${text(m,"ㅁ",8,-9)}<text class="source52-target-label" x="${(targetMark.label.x-8).toFixed(2)}" y="${(targetMark.label.y+4).toFixed(2)}">㉠</text></svg>`;
   }
 
+  function congruentTriangleAreaDiagram(height, width) {
+    const total = height + width;
+    const scale = 228 / total;
+    const baseline = 302;
+    const n = { x: 76, y: baseline };
+    const d = { x: n.x + width * scale, y: baseline };
+    const r = { x: n.x + total * scale, y: baseline };
+    const g = { x: n.x, y: baseline - height * scale };
+    const m = { x: r.x, y: baseline - width * scale };
+    const pointString = p => point(p.x, p.y);
+    const rightAngle = (p, dx, dy, size = 13) => `<path class="source52-right-angle-mark" d="M${point(p.x + dx * size,p.y)} L${point(p.x + dx * size,p.y + dy * size)} L${point(p.x,p.y + dy * size)}"/>`;
+    return `<svg class="source52-p31-diagram source52-p31-area" data-source52-figure="congruent-triangle-area" data-height="${height}" data-width="${width}" data-g="${pointString(g)}" data-d="${pointString(d)}" data-m="${pointString(m)}" data-n="${pointString(n)}" data-r="${pointString(r)}" viewBox="0 0 500 370" role="img" aria-label="서로 합동인 두 직각삼각형이 이어져 있고, 가운데 삼각형 ㄱㄷㅁ의 넓이를 구하는 그림" xmlns="http://www.w3.org/2000/svg"><polygon class="source52-area-target" points="${pointString(g)} ${pointString(d)} ${pointString(m)}"/><line x1="${n.x}" y1="${n.y}" x2="${g.x}" y2="${g.y}"/><line x1="${n.x}" y1="${n.y}" x2="${d.x}" y2="${d.y}"/><line x1="${d.x}" y1="${d.y}" x2="${g.x}" y2="${g.y}"/><line x1="${d.x}" y1="${d.y}" x2="${r.x}" y2="${r.y}"/><line x1="${r.x}" y1="${r.y}" x2="${m.x}" y2="${m.y}"/><line x1="${d.x}" y1="${d.y}" x2="${m.x}" y2="${m.y}"/>${rightAngle(n,1,-1)}${rightAngle(r,-1,-1)}<path class="source52-measure-guide" d="M${point(n.x-20,n.y)} L${point(n.x-20,g.y)} M${point(n.x-25,g.y)} L${point(n.x-15,g.y)} M${point(n.x-25,n.y)} L${point(n.x-15,n.y)} M${point(r.x+20,r.y)} L${point(r.x+20,m.y)} M${point(r.x+15,m.y)} L${point(r.x+25,m.y)} M${point(r.x+15,r.y)} L${point(r.x+25,r.y)}"/><text x="${g.x-26}" y="${g.y-4}">ㄱ</text><text x="${n.x-27}" y="${n.y+24}">ㄴ</text><text x="${d.x-10}" y="${d.y+24}">ㄷ</text><text x="${r.x+7}" y="${r.y+24}">ㄹ</text><text x="${m.x+7}" y="${m.y+4}">ㅁ</text><text class="source52-length-label" x="${n.x-49}" y="${(g.y+n.y)/2+4}">${height} cm</text><text class="source52-length-label" x="${r.x+24}" y="${(m.y+r.y)/2+4}">${width} cm</text></svg>`;
+  }
+
+  function congruentTriangleAreaProofDiagram(height, width) {
+    const total = height + width;
+    const scale = 228 / total;
+    const baseline = 302;
+    const n = { x: 76, y: baseline };
+    const d = { x: n.x + width * scale, y: baseline };
+    const r = { x: n.x + total * scale, y: baseline };
+    const g = { x: n.x, y: baseline - height * scale };
+    const m = { x: r.x, y: baseline - width * scale };
+    const pointString = p => point(p.x, p.y);
+    return `<svg class="source52-p31-diagram source52-p31-area-proof" viewBox="0 0 500 370" role="img" aria-label="점 ㅂ을 더해 직사각형을 만들고 삼각형 ㄱㄷㅁ을 남긴 넓이 풀이 그림" xmlns="http://www.w3.org/2000/svg"><polygon class="source52-area-target" points="${pointString(g)} ${pointString(d)} ${pointString(m)}"/><rect class="source52-construction-line" x="${n.x}" y="${g.y}" width="${total*scale}" height="${height*scale}"/><line x1="${n.x}" y1="${n.y}" x2="${g.x}" y2="${g.y}"/><line x1="${n.x}" y1="${n.y}" x2="${d.x}" y2="${d.y}"/><line x1="${d.x}" y1="${d.y}" x2="${g.x}" y2="${g.y}"/><line x1="${d.x}" y1="${d.y}" x2="${r.x}" y2="${r.y}"/><line x1="${r.x}" y1="${r.y}" x2="${m.x}" y2="${m.y}"/><line x1="${d.x}" y1="${d.y}" x2="${m.x}" y2="${m.y}"/><text x="${g.x-25}" y="${g.y-4}">ㄱ</text><text x="${n.x-26}" y="${n.y+24}">ㄴ</text><text x="${d.x-10}" y="${d.y+24}">ㄷ</text><text x="${r.x+8}" y="${r.y+24}">ㄹ</text><text x="${m.x+8}" y="${m.y+3}">ㅁ</text><text x="${r.x+8}" y="${g.y+4}">ㅂ</text></svg>`;
+  }
+
+  function buildMission5(variant, offset) {
+    const height = areaBaseHeights[variant] + 2 * offset;
+    const width = areaBaseWidths[variant];
+    const totalWidth = height + width;
+    const topGap = height - width;
+    const leftCorner = height * width / 2;
+    const rightCorner = height * width / 2;
+    const topCorner = totalWidth * topGap / 2;
+    const rectangleArea = height * totalWidth;
+    const answer = rectangleArea - leftCorner - rightCorner - topCorner;
+    const prompt = `<div class="source52-p31-question"><p>삼각형 ㄱㄴㄷ과 삼각형 ㄷㄹㅁ은 서로 합동입니다. ㄱㄴ=${height}cm, ㄹㅁ=${width}cm일 때 삼각형 ㄱㄷㅁ의 넓이를 구하세요.</p>${congruentTriangleAreaDiagram(height,width)}</div>`;
+    const solution = `<div class="source52-p31-solution"><ol><li>합동 표기 순서대로 대응점을 맞추면 ㄱ↔ㄷ, ㄴ↔ㄹ, ㄷ↔ㅁ입니다.<br>따라서 ㄴㄷ=ㄹㅁ=${width}cm, ㄷㄹ=ㄱㄴ=${height}cm입니다.</li><li>ㄱ과 같은 높이의 점 ㅂ을 ㄹ 위에 잡아 직사각형 ㄱㄴㄹㅂ을 만듭니다.${congruentTriangleAreaProofDiagram(height,width)}직사각형의 가로는 ${totalWidth}cm, 세로는 ${height}cm이므로 넓이는 ${height}×${totalWidth}=${rectangleArea}cm²입니다.</li><li>직사각형에서 삼각형 ㄱㄷㅁ을 제외한 세 부분을 뺍니다. 왼쪽 아래와 오른쪽 아래 삼각형은 각각 ${height}×${width}÷2=${leftCorner}cm²이고, 위쪽 삼각형은 ${totalWidth}×(${height}−${width})÷2=${topCorner}cm²입니다.</li><li>따라서 삼각형 ㄱㄷㅁ의 넓이는 ${rectangleArea}−${leftCorner}−${rightCorner}−${topCorner}=${answer}cm²입니다.</li></ol></div>`;
+    return result("5-2-u3-e4-mission-5", variant, offset, prompt, `${answer}cm²`, solution, { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer }, false, answerVisual("합동인 두 삼각형으로 만든 삼각형의 넓이", `${answer}cm²`));
+  }
+
   function buildMission1(variant, offset) {
     const alpha = squareAlphas[variant] + difficultyDeltas[offset + 1];
     const beta = 45 - alpha;
@@ -165,6 +210,7 @@
     if (sourceItemId === definitions[0].sourceItemId) return buildMission1(variant,difficultyOffset);
     if (sourceItemId === definitions[1].sourceItemId) return buildMission2(variant,difficultyOffset);
     if (sourceItemId === definitions[2].sourceItemId) return buildMission3(variant,difficultyOffset);
+    if (sourceItemId === definitions[3].sourceItemId) return buildMission5(variant,difficultyOffset);
     return null;
   }
   const keyFor = sourceItemId => definitions.find(item => item.sourceItemId === sourceItemId)?.generatorKey || "";

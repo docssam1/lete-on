@@ -16,7 +16,7 @@ const legacyTypes = types.filter(type => !sourceIds.includes(type.sourceItemId))
 const sourceTypes = source.definitions.map(definition => types.find(type => type.sourceItemId === definition.sourceItemId));
 
 assert.equal(legacyTypes.length, 24, "The 24 pre-existing Unit 3 types stay present");
-assert.equal(sourceTypes.filter(Boolean).length, 3, "All three printed-page-31 items are mapped");
+assert.equal(sourceTypes.filter(Boolean).length, 4, "All four reviewed printed-page-31 items are mapped");
 
 let legacyLockChecks = 0;
 for (const type of legacyTypes) {
@@ -59,6 +59,6 @@ for (let index = 0; index < sourceTypes.length; index += 1) {
   }
 }
 
-assert.equal(availableConfigurations, 27);
+assert.equal(availableConfigurations, 36);
 assert.equal(lockedConfigurations, 0);
-console.log(`합동·대칭 공개 경계 감사 통과: 기존 24유형 잠금 ${legacyLockChecks}회 확인 · 인쇄 31쪽 신규 27조합 공개 후보`);
+console.log(`합동·대칭 공개 경계 감사 통과: 기존 24유형 잠금 ${legacyLockChecks}회 확인 · 인쇄 31쪽 공개 36조합`);
