@@ -50,9 +50,9 @@
     },
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "publicCandidateCount": 1,
-    "reviewLockedCount": 49,
-    "uniqueAnswerPassCount": 49,
+    "publicCandidateCount": 3,
+    "reviewLockedCount": 47,
+    "uniqueAnswerPassCount": 51,
     "uniqueAnswerReviewNeededCount": 1
   },
   "units": [
@@ -1113,7 +1113,7 @@
         "버림 결과 4400",
         "올림 결과 4500"
       ],
-      "visualRequirement": "4400~4600 눈금의 수직선과 세 조건의 구간을 겹쳐 보여야 합니다.",
+      "visualRequirement": "원문에 그림이나 수직선이 없는 텍스트 문항입니다. 세 조건의 수 범위를 풀이에서 수로 제시하고 교집합을 설명합니다.",
       "independentCalculation": "세 범위의 공통 자연수는 4450부터 4499까지로 50개입니다.",
       "answerFormula": "[4450,4499], 4499-4450+1=50",
       "independentAnswer": "50개",
@@ -1122,9 +1122,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "세 어림 조건을 각각 구해 겹치는 50개의 자연수만 남습니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "세 구간의 끝점 표시를 수직선 모델로 연결하기 전입니다."
+      "implementationStatus": "locally-verified-candidate",
+      "publicDecision": "candidate",
+      "lockReason": "원문과 Apple Vision OCR, 독립 계산, 9개 합성 조합, PC·모바일 24개 상태와 48개 넘침 검사, A4 문제·풀이 한 페이지 출력을 확인했습니다. 배포 전 후보입니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-1",
@@ -1140,18 +1140,18 @@
         "십의 자리 올림과 반올림 결과 같음",
         "자연수 최솟값"
       ],
-      "visualRequirement": "자리별 가능한 구간을 겹친 수직선으로 확인할 수 있어야 합니다.",
-      "independentCalculation": "천의 자리 반올림 결과 7000의 가장 작은 수는 6500이고, 6500은 백의 자리 버림·반올림과 십의 자리 올림·반올림 결과가 각각 같습니다.",
+      "visualRequirement": "원문에 그림이 없는 텍스트 문항입니다. 풀이에서 세 어림 조건을 차례로 확인합니다.",
+      "independentCalculation": "천의 자리 반올림 결과가 7000인 자연수는 6500부터 7499까지입니다. 가장 작은 후보 6500은 백의 자리 버림·반올림이 모두 6500이고 십의 자리 올림·반올림도 모두 6500이므로 최솟값입니다.",
       "answerFormula": "min n∈[6500,7499] with both equalities=6500",
       "independentAnswer": "6500",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "6500부터 조건을 차례로 검사하면 첫 수에서 모두 만족합니다.",
+      "singleAnswerCheck": "6500에서 백의 자리 버림과 반올림은 6500, 십의 자리 올림과 반올림도 6500이며, 천의 자리 반올림은 7000입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 답안 표기와 어림 경계 해석을 다시 대조한 뒤 중앙 연결합니다."
+      "implementationStatus": "locally-verified-candidate",
+      "publicDecision": "candidate",
+      "lockReason": "원문과 Apple Vision OCR, 독립 계산, 9개 합성 조합, PC·모바일 24개 상태와 48개 넘침 검사, A4 문제·풀이 한 페이지 출력을 확인했습니다. 배포 전 후보입니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-2",
@@ -1398,10 +1398,10 @@
     "sourceProblemCount": 44,
     "typeCount": 50,
     "directlyReviewedCount": 50,
-    "publicCandidateCount": 1,
-    "lockedCount": 49,
+    "publicCandidateCount": 3,
+    "lockedCount": 47,
     "visualItemCount": 43,
-    "uniqueAnswerPassCount": 49,
+    "uniqueAnswerPassCount": 51,
     "uniqueAnswerReviewNeededCount": 1,
     "groupedSameStructureCount": 1,
     "ambiguousItems": [
@@ -1411,16 +1411,16 @@
       "PDF 내용 쪽 2~9는 인쇄 쪽 4~11에 대응합니다.",
       "기존 5-2 전체 장부의 1단원 44개는 탐구당 고정 개수였으므로 그대로 신뢰하지 않고 원문 소문항 구조를 다시 세었습니다.",
       "개념탐구와 Mission의 서로 다른 풀이 구조는 별도 유형으로 나누었고, 같은 표 안에서 같은 어림을 반복하는 행만 한 유형으로 묶었습니다.",
-      "대부분의 답 계산 가능 항목은 중앙 생성기·답안 연결 전이므로 잠금 상태입니다. Mission 6은 별도 원문·화면·A4 검수를 통과한 로컬 후보이며 실배포는 대기 중입니다.",
       "그래프와 도형은 눈금·선·단위가 원문과 같은 위치로 복원될 때까지 잠금 상태를 유지합니다.",
       "예제 3-3은 4296÷20의 나머지 16을 5개씩 묶어 모두 판다는 원문 조건이 서로 맞지 않아 유일하게 잠금을 유지합니다.",
       "확대 원본으로 두 자리 수 쌍, 소수 카드, 택시 올림, 완성 상자 판매, 꺾은선그래프 선·눈금, 7200 반올림 개수를 재확인해 여섯 항목의 단일 답을 확정했습니다.",
-      "Mission 6은 500개 단위로 포장한 완성 상자의 판매액으로 해석해 독립 답 3,600,000원을 확인했습니다. 274개는 포장되지 않습니다. 생성기·화면·A4·배포 및 라이브 확인을 마쳤습니다."
+      "Mission 6(인쇄 9쪽)은 원문·계산·3개 합성 풀이 풀·화면·A4·배포·라이브 검수를 완료해 공개했습니다.",
+      "개념탐구 4와 예제 4-1(인쇄 10쪽)은 텍스트 원문에 수직선 그림이 없음을 확인했습니다. 각 정답과 원문 수치를 제외한 9개 생성 조합을 독립 검증했고, 화면·A4 검수 전 후보로 연결했습니다."
     ]
   },
   "runtimeCrosswalk": {
     "asOf": "2026-10-23",
-    "scope": "The three page-6 E3 Exploration mappings and page-7 Mission 1–6 mappings are deployed and live-verified. The 50-item source census under integrity remains unchanged.",
+    "scope": "Page-6 E3 Exploration, page-7 Missions 1–6, and locally verified text-only page-10 Exploration 4 and Example 4-1. The 50-item source census under integrity remains unchanged.",
     "releaseStatus": "deployed-and-live-verified",
     "mainMergeSha": "29910b8c3558828f9adeecac83730e7b552c27cb",
     "pullRequest": 393,
@@ -1616,6 +1616,7 @@
       }
     ],
     "repairPullRequest": 390,
-    "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4"
+    "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
+    "e4Page10Status": "local-calculation-browser-and-a4-verified-candidate-pending-deploy"
   }
 }

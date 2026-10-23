@@ -1567,6 +1567,51 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             answerVisualRequired: false,
             answerVisualStatus: "not-required"
           }]
+        }, {
+          name: "어림한 수의 범위 · 개념탐구 4 및 예제 4-1",
+          types: [{
+            id: "5-2-u1-e4-exploration-rounded-range",
+            name: "세 어림 조건의 공통 범위",
+            sourceItemId: "5-2-u1-e4-exploration-rounded-range",
+            sourceItemLabel: "개념탐구 4",
+            sourceSection: "exploration",
+            sourceTier: "advanced",
+            sourcePdfPage: 8,
+            sourcePrintedPage: 10,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e4-exploration-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄 원문과 Apple Vision OCR을 대조했습니다. 올림·버림·반올림의 세 조건에서 각각 가능한 자연수 범위를 구하면 교집합은 4450부터 4499까지이고, 양 끝을 포함해 50개입니다. 원문에는 수직선 그림이 없어 풀이에서 구간을 글과 수로 설명하며, 합성 문항에는 원문 수치를 사용하지 않았습니다. 손글씨와 출판사 정답지는 검증 근거로 사용하지 않았습니다.",
+            generatorKey: "source52RoundedRangeExploration4",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e4-example-1",
+            name: "여러 어림 조건을 만족하는 가장 작은 자연수",
+            sourceItemId: "5-2-u1-e4-example-1",
+            sourceItemLabel: "예제 4-1",
+            sourceSection: "example",
+            sourceTier: "advanced",
+            sourcePdfPage: 8,
+            sourcePrintedPage: 10,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e4-example-1-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄 원문과 Apple Vision OCR을 대조했습니다. 천의 자리 반올림 결과가 7000인 가장 작은 자연수는 6500이며, 이 수는 백의 자리 버림·반올림과 십의 자리 올림·반올림의 결과가 각각 같습니다. 원문에는 그림이 없어 풀이에서 각 어림 조건을 문자로 확인하고, 합성 문항에는 원문 수치를 사용하지 않았습니다. 손글씨와 출판사 정답지는 검증 근거로 사용하지 않았습니다.",
+            generatorKey: "source52RoundedRangeExample41",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }]
         }
       ],
       ["분수의 곱셈",

@@ -20,6 +20,7 @@ require("./source-5-2-cube-box-mission3.js");
 require("./source-5-2-supply-cost-mission4.js");
 require("./source-5-2-population-bar-length.js");
 require("./source-5-2-citrus-sales-mission6.js");
+require("./source-5-2-rounded-range-e4.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -124,7 +125,7 @@ require("./math-notation.js");
 
 const api = window.HSE_GENERATORS;
 const notation = window.HSE_MATH_NOTATION;
-const EXPECTED_PUBLIC_TYPE_COUNT = 1248;
+const EXPECTED_PUBLIC_TYPE_COUNT = 1250;
 const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types.map(type => ({
   ...type,
   semesterId: semester.id,
