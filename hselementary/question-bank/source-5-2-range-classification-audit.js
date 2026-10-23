@@ -29,7 +29,7 @@ const applicationMissionFourId = "5-2-u1-e3-mission-4-mat-cost";
 const applicationMissionFiveId = "5-2-u1-e3-mission-5-bar-graph-length";
 const applicationMissionSixId = "5-2-u1-e3-mission-6-citrus-sales";
 const roundedRangeIds = ["5-2-u1-e4-exploration-rounded-range", "5-2-u1-e4-example-1"];
-const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId, ...roundedRangeIds];
+const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId, ...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4"];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -52,16 +52,19 @@ function load(curriculumSource) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-population-bar-length.js"), "utf8"), context, { filename: "source-5-2-population-bar-length.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-citrus-sales-mission6.js"), "utf8"), context, { filename: "source-5-2-citrus-sales-mission6.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e4.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e4.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e42.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e42.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e43.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e43.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e44.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e44.js" });
   return { curriculum: plain(context.window.HSE_CURRICULUM), api: context.window.HSE_GENERATORS };
 }
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2038, "Whole-bank classification count");
+  assert.equal(types.length, 2041, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 157, "Preserve 124 legacy records plus thirty-three source records");
+  assert.equal(semesterTypes.length, 160, "Preserve 124 legacy records plus thirty-six source records");
   const restored = plain(semester);
   restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => allNewSourceIds.includes(type.sourceItemId)));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
@@ -233,6 +236,9 @@ function validate(curriculum, api, baselineSemester) {
   assert.equal(citrusType.generatorKey, "source52ApplicationMissionSixCitrusSales");
   const citrusGenerator = require("./source-5-2-citrus-sales-mission6.js");
 require("./source-5-2-rounded-range-e4.js");
+require("./source-5-2-rounded-range-e42.js");
+require("./source-5-2-rounded-range-e43.js");
+require("./source-5-2-rounded-range-e44.js");
   assert.equal(citrusGenerator.getQuestion(0, 0).answerModel.total, 9964);
   assert.equal(citrusGenerator.getQuestion(0, 0).answerModel.fullBoxes, 24);
   assert.equal(citrusGenerator.getQuestion(0, 0).answerModel.unpacked, 364);
@@ -246,9 +252,70 @@ require("./source-5-2-rounded-range-e4.js");
     assert.equal(question.publisherKeyVerified, false);
   }
   const roundedRange = unit.subunits[10].types;
-  assert.deepEqual(roundedRange.map(type => type.sourceItemId), roundedRangeIds, "Exact page-10 Exploration 4 and Example 4-1 source IDs");
+  assert.deepEqual(roundedRange.map(type => type.sourceItemId), [...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4"], "Exact page-10 Exploration 4 and Examples 4-1–4-4 source IDs");
   const roundedRangeModule = require("./source-5-2-rounded-range-e4.js");
   roundedRange.forEach((type, index) => {
+    if (index === 2) {
+      const example42 = require("./source-5-2-rounded-range-e42.js");
+      assert.equal(type.id, example42.sourceItemId);
+      assert.equal(type.sourcePdfPage, 8);
+      assert.equal(type.sourcePrintedPage, 10);
+      assert.equal(type.sourceSection, "example");
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(api.generatorKey(type), example42.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, false);
+        assert.equal(question.publisherKeyVerified, false);
+        assert(question.answerModel.minimum < question.answerModel.upperExclusive);
+      }
+      return;
+    }
+    if (index === 3) {
+      const example43 = require("./source-5-2-rounded-range-e43.js");
+      assert.equal(type.id, example43.sourceItemId);
+      assert.equal(type.sourcePdfPage, 8);
+      assert.equal(type.sourcePrintedPage, 10);
+      assert.equal(type.sourceSection, "example");
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(api.generatorKey(type), example43.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, false);
+        assert.equal(question.publisherKeyVerified, false);
+        assert(question.answerModel.minimum < question.answerModel.upperExclusive);
+      }
+      return;
+    }
+    if (index === 4) {
+      const example44 = require("./source-5-2-rounded-range-e44.js");
+      assert.equal(type.id, example44.sourceItemId);
+      assert.equal(type.sourcePdfPage, 8);
+      assert.equal(type.sourcePrintedPage, 10);
+      assert.equal(type.sourceSection, "example");
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.answerVisualRequired, true);
+      assert.equal(type.answerVisualStatus, "verified-reconstruction");
+      assert.equal(api.generatorKey(type), example44.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, true);
+        assert.equal(question.publisherKeyVerified, false);
+        assert.equal(question.questionModel.gaps.length, 6);
+      }
+      return;
+    }
     const definition = roundedRangeModule.definitions[index];
     assert.equal(type.id, roundedRangeIds[index]);
     assert.equal(type.sourcePdfPage, 8);
