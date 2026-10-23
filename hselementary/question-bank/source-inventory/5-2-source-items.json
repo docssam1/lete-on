@@ -2271,15 +2271,16 @@
       "ordinal": 2,
       "pdfPage": 26,
       "printedPage": 30,
-      "sourceShape": "합동의 활용 ②의 예제 4-2 항목으로, 조건과 계산 또는 도형 정보를 사용해 답을 구하는 문제. 세부 수치·그림·요구량은 이 항목을 다시 눈으로 대조할 때 확정한다.",
-      "answerContract": "candidate: single-value-or-set",
+      "sourceShape": "합동의 활용 ② 예제 4-2: △ㄱㄴㄷ과 △ㄴㄹㅁ은 정삼각형입니다. 그림에 ∠ㄱㄴㅁ=35°, ∠ㄴㄷㄹ=20°가 표시되고, ∠ㄴㅁㄱ의 크기를 묻습니다.",
+      "answerContract": "single-value: independently verified as 125°; publisher key not checked",
       "visualRisk": [
-        "점·선분·대칭축 또는 대칭의 중심 위치를 표식과 좌표로 고정해야 함",
-        "뒤집기·돌리기 방향을 그림만 보고 추측하게 하면 안 됨"
+        "두 정삼각형의 꼭짓점 대응 ㄱ-ㄴ-ㄷ과 ㄴ-ㄹ-ㅁ을 그대로 보존합니다.",
+        "35°는 ∠ㄱㄴㅁ, 20°는 ∠ㄴㄷㄹ이며 목표는 ∠ㄴㅁㄱ입니다.",
+        "ㄱ-ㅁ-ㄹ을 한 직선으로 잘못 합치지 말고 원문의 내부 선 배치와 각 호를 유지해야 합니다."
       ],
-      "sourceVerified": false,
+      "sourceVerified": true,
       "implementationStatus": "review-locked",
-      "reviewReason": "원문 문항의 세부 조건과 공식 답을 개별 대조하기 전이므로 공개하지 않습니다."
+      "reviewReason": "Drive 원본 황소5-2-1심화.pdf의 SHA-256 일치본(6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88)에서 기준 PDF p.26 / 깨끗한 대체본 p.25(인쇄 p.30)를 확대 대조하고 Apple Vision OCR을 그림과 비교했습니다. △ㄱㄴㄷ, △ㄴㄹㅁ, ∠ㄱㄴㅁ=35°, ∠ㄴㄷㄹ=20°, 목표 ∠ㄴㅁㄱ을 확인했습니다. 독립 각도 계산은 125°이며 출판사 답안표는 확인하지 않았습니다. 그림·풀이·A4 구현 검수가 끝날 때까지 잠금을 유지합니다."
     },
     {
       "sourceItemId": "5-2-u3-e4-example-3",
