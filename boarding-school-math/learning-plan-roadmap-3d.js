@@ -183,6 +183,10 @@ function renderFrame(time) {
     controls.update();
   }
   renderer.render(scene, camera);
+  if (!fallback.hidden) {
+    fallback.hidden = true;
+    canvas.removeAttribute("aria-hidden");
+  }
 }
 function animate(time) {
   renderFrame(time);

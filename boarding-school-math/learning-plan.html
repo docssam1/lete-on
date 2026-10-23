@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./learning-plan.css?v=20261024-1">
+  <link rel="stylesheet" href="./learning-plan.css?v=20261024-2">
 </head>
 <body class="academy-page page-learning-plan">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -67,11 +67,11 @@
         <article class="roadmap-stage" aria-labelledby="roadmap-stage-title">
           <header><div><span id="roadmap-curriculum">한국 수학 과정</span><h3 id="roadmap-stage-title">현재 → 안정화 → 목표 경로</h3></div><span class="roadmap-demo-chip">DEMO · 실제 배정 아님</span></header>
           <div class="roadmap-canvas-wrap">
-            <canvas id="roadmap-canvas" aria-label="현재 수준에서 안정화 구간을 거쳐 시간 또는 학습 횟수를 조정하는 3D 학습 경로"></canvas>
-            <div id="roadmap-fallback" class="roadmap-fallback" hidden>이 기기에서는 3D 대신 아래의 동일한 텍스트 경로를 제공합니다.</div>
+            <canvas id="roadmap-canvas" aria-hidden="true" aria-label="현재 수준에서 안정화 구간을 거쳐 시간 또는 학습 횟수를 조정하는 3D 학습 경로"></canvas>
+            <div id="roadmap-fallback" class="roadmap-fallback" role="note"><div><p>3D 지도가 보이지 않으면 이 순서로 확인하세요.</p><ol aria-label="학습 경로 네 단계"><li>현재</li><li>안정화</li><li>선택</li><li>목표</li></ol><small>시간과 학습 횟수는 옆의 설명에서 비교할 수 있어요.</small></div></div>
             <div class="roadmap-axis" aria-hidden="true"><span id="roadmap-axis-current">현재</span><span id="roadmap-axis-stable">안정화</span><span id="roadmap-axis-branch">선택</span><span id="roadmap-axis-target">목표</span></div>
           </div>
-          <p class="roadmap-interaction" id="roadmap-interaction">마우스나 손가락으로 돌려 보세요. 파란 길은 현재 선택 경로, 세 기둥은 현재·안정화·목표 단계 비교입니다.</p>
+          <p class="roadmap-interaction" id="roadmap-interaction">3D 지도가 보이면 마우스나 손가락으로 돌려 보세요. 파란 길은 선택 경로입니다.</p>
         </article>
         <aside class="roadmap-analysis" aria-live="polite">
           <div class="roadmap-state"><span id="roadmap-lock-state">속도 조정 잠금</span><strong id="roadmap-score">—</strong><small id="roadmap-paper-name">종이 진단 O/X</small></div>
@@ -113,8 +113,8 @@
   <script src="./shared/gmap-local-learning-record.js?v=20261009-3"></script>
   <script src="./learning/learner-plan-engine.js?v=20261003-1"></script>
   <script src="./learning/roadmap-pace-engine.js?v=20261015-1"></script>
-  <script src="./learning-plan.js?v=20261024-1"></script>
+  <script src="./learning-plan.js?v=20261024-2"></script>
   <script type="importmap">{"imports":{"three":"../geometry/vendor/three/three.module.js"}}</script>
-  <script type="module" src="./learning-plan-roadmap-3d.js?v=20261015-1"></script>
+  <script type="module" src="./learning-plan-roadmap-3d.js?v=20261024-2"></script>
 </body>
 </html>

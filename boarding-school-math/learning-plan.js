@@ -202,7 +202,7 @@
     text("roadmap-axis-stable", roadmapText("안정화", "Stabilize", "稳定"));
     text("roadmap-axis-branch", roadmapText("선택", "Choose", "选择"));
     text("roadmap-axis-target", roadmapText("목표", "Target", "目标"));
-    text("roadmap-interaction", roadmapText("마우스나 손가락으로 돌려 보세요. 파란 길은 현재 선택 경로, 세 기둥은 현재·안정화·목표 단계 비교입니다.", "Drag to rotate. The blue road is the selected route; the three columns compare current, stable, and target levels.", "拖动可旋转。蓝色道路是当前选择的路径，三根柱子比较当前、稳定和目标阶段。"));
+    text("roadmap-interaction", roadmapText("3D 지도가 보이면 마우스나 손가락으로 돌려 보세요. 파란 길은 선택 경로입니다.", "If the 3D map appears, drag to rotate it. The blue road shows the selected route.", "如果显示 3D 地图，可以拖动旋转。蓝色路径是当前选择的路线。"));
     text("roadmap-current-label", roadmapText("현재 학습량", "Current load", "当前学习量"));
     text("roadmap-required-label", roadmapText("필요 학습량", "Required load", "所需学习量"));
     text("roadmap-stabilization-label", roadmapText("안정화 기간", "Stabilization", "稳定期"));

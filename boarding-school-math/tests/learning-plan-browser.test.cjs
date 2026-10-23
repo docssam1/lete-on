@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 const test = require("node:test");
 const { chromium } = require("playwright");
 const sasmoCatalog = require("../competition/sasmo-mock-catalog.js");
@@ -139,6 +140,9 @@ test("paper O/X drives a real 3D branch map without immediate acceleration and l
     const canvas = document.getElementById("roadmap-canvas");
     return canvas && canvas.width > 300 && canvas.height > 250;
   });
+  assert.equal(await page.locator("#roadmap-fallback").isHidden(), true);
+  assert.equal(await page.locator("#roadmap-canvas").getAttribute("aria-hidden"), null);
+  assert.equal(await page.locator("#roadmap-interaction").isVisible(), true);
   assert.equal(await page.locator("#paper-ox-grid .paper-mark").count(), 42);
   assert.equal(await page.locator("#roadmap-branches .roadmap-branch").count(), 4);
   assert.match(await page.locator("#roadmap-lock-state").innerText(), /잠금/);
@@ -164,6 +168,22 @@ test("paper O/X drives a real 3D branch map without immediate acceleration and l
   assert.equal(await page.locator("#paper-ox-grid .paper-mark").count(), 25);
   assert.deepEqual(errors, []);
   await page.close();
+});
+
+test("local file preview keeps a readable path when browser blocks the 3D module", async function () {
+  const localUrl = pathToFileURL(path.join(root, "boarding-school-math", "learning-plan.html")).href;
+  for (const width of [320, 390]) {
+    const page = await browser.newPage({ viewport: { width, height: 844 } });
+    await page.goto(localUrl, { waitUntil: "load" });
+    assert.equal(await page.locator("#roadmap-fallback").isVisible(), true);
+    assert.match(await page.locator("#roadmap-fallback").innerText(), /이 순서로 확인/);
+    assert.deepEqual(await page.locator("#roadmap-fallback li").allInnerTexts(), ["현재", "안정화", "선택", "목표"]);
+    assert.equal(await page.locator("#roadmap-canvas").getAttribute("aria-hidden"), "true");
+    assert.equal(await page.locator("#roadmap-interaction").isHidden(), true);
+    assert.match(await page.locator(".roadmap-analysis").innerText(), /현재 학습량|현재/);
+    assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [width, width]);
+    await page.close();
+  }
 });
 
 test("teacher workspace changes the product focus and keeps its heading below the sticky mobile header", async function () {

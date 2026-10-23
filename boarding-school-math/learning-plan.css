@@ -61,8 +61,14 @@ body.academy-page.page-learning-plan { color: #182230; background: #f5f6f8; back
 .roadmap-demo-chip { padding: 5px 8px; border: 1px solid rgba(188,208,255,.5); white-space: nowrap; }
 .roadmap-canvas-wrap { position: relative; min-height: 440px; overflow: hidden; background: radial-gradient(circle at 50% 35%, #1a3157 0, #0d1728 58%, #08101d 100%); }
 #roadmap-canvas { width: 100%; height: 440px; display: block; touch-action: none; }
-.roadmap-fallback { position: absolute; inset: 0; padding: 30px; display: grid; place-items: center; color: #d7e2f4; background: #0d1728; text-align: center; }
+.roadmap-fallback { position: absolute; inset: 0; z-index: 1; padding: 22px; display: grid; place-items: center; color: #d7e2f4; background: #0d1728; text-align: center; }
 .roadmap-fallback[hidden] { display: none; }
+.roadmap-fallback > div { width: min(100%, 560px); }
+.roadmap-fallback p { margin: 0; font-size: .94rem; line-height: 1.5; }
+.roadmap-fallback ol { margin: 24px 0 18px; padding: 0; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; list-style: none; }
+.roadmap-fallback li { min-width: 0; padding: 13px 4px; border: 1px solid #6984b5; background: #1b3153; color: #fff; font-size: .8rem; font-weight: 800; }
+.roadmap-fallback small { color: #b5c6e2; font-size: .72rem; line-height: 1.5; }
+.roadmap-stage:has(.roadmap-fallback:not([hidden])) .roadmap-interaction { display: none; }
 .roadmap-axis { position: absolute; left: 18px; right: 18px; bottom: 14px; display: flex; justify-content: space-between; pointer-events: none; }
 .roadmap-axis span { padding: 4px 7px; color: #d7e2f4; background: rgba(8,16,29,.75); font-size: .58rem; font-weight: 800; letter-spacing: .04em; }
 .roadmap-interaction { margin: 0; padding: 12px 20px 15px; color: #aab9cc; font-size: .66rem; line-height: 1.55; }
