@@ -87,7 +87,7 @@ async function mountGame(gameId, host, { saved, onQuestions, lesson }) {
   }
   const { mountLevelGame } = await import("./golden-bell-level-game.js?v=20261004a");
   if (gameId.startsWith("b2-")) {
-    const { BOOK02_LEVEL_GAMES } = await import("./golden-bell-book02-games.js?v=20261023v");
+    const { BOOK02_LEVEL_GAMES } = await import("./golden-bell-book02-games.js?v=20261023w");
     return mountLevelGame(host, BOOK02_LEVEL_GAMES[gameId], { single: false, saved, onQuestions });
   }
   if (gameId.startsWith("b9-")) {

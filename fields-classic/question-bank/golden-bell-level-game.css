@@ -124,3 +124,7 @@
 .gold-hands-on .lg-facts li { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #fff7e6; box-shadow: inset 0 0 0 1.5px #d9a62e; color: #3f2a10; font-size: 14px; }
 .gold-hands-on .lg-facts li span { color: #7a5c2e; font-size: 12px; font-weight: 700; }
 .gold-hands-on .lg-facts li b { font-size: 16px; letter-spacing: .02em; }
+/* 도형 값 찾기: 지금 도형을 정하는 줄(모르는 도형이 하나뿐인 줄)을 금색으로 짚는다. */
+.gold-hands-on .lg-eq.use { box-shadow: 0 6px 16px rgba(160, 110, 20, .18), inset 0 0 0 3px #d9a62e; background: #fffaf0; }
+.gold-hands-on .lg-cell.use { box-shadow: inset 0 0 0 3px #d9a62e; }
+.gold-hands-on .lg-sum.use { background: #d9a62e; color: #fff; }

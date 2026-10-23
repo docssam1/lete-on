@@ -1,7 +1,7 @@
 import { esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
 import { createBalanceScene } from "./golden-bell-3d-balance.js?v=20261023w";
 import { flatNotice } from "./golden-bell-3d-engine.js?v=20261023w";
-import { MATRIX, BALANCE, PATTERN, SUDOKU, SHAPES, COLORS, BALANCE_ITEMS, beadAt, beadName, matrixHolds, sudokuValid } from "./golden-bell-book02-game-models.js?v=20261004a";
+import { MATRIX, BALANCE, PATTERN, SUDOKU, SHAPES, COLORS, BALANCE_ITEMS, beadAt, beadName, matrixHolds, sudokuValid, matrixSolveOrder } from "./golden-bell-book02-game-models.js?v=20261023w";
 
 // 2권 레벨 게임 4종의 화면. 문제 규칙은 golden-bell-book02-game-models.js, 틀(레벨·별·저장)은 golden-bell-level-game.js.
 
@@ -22,25 +22,35 @@ const pad = (values, attr, { disabled = false } = {}) => `<div class="lg-pad" ro
 const josaI = (n) => `${n}${[2, 4, 5, 9].includes(n % 10) && n !== 10 ? "" : "이"}`;
 
 // ───────────────────────── 도형 값 찾기 ─────────────────────────
+// 골든벨 풀이 순서: 모르는 도형이 하나뿐인 줄(같은 모양 둘의 합)부터 값을 정하고, 알게 된 값을 다른 줄에 넣는다.
+// 도형 칸은 그 순서로 하나씩 열리고, 지금 도형을 정하는 줄을 금색으로 짚어 준다.
 function matrixBoard({ stage, controls, sound }) {
-  let p, api, values, active = 0, checking = false, locked = false;
+  let p, api, values, active = 0, checking = false, locked = false, order = null;
+  const openUpTo = () => (order ? Math.max(0, order.findIndex(({ shape }) => values[p.shapes.indexOf(shape)] === null)) : -1);
   const draw = () => {
     const val = (s) => values[p.shapes.indexOf(s)];
+    const step = order ? openUpTo() : -1;
+    const allSet = values.every((v) => v !== null);
+    const useLine = order && !allSet && !locked ? order[step].line : null;
+    const use = (id) => (useLine === id ? " use" : "");
     const known = (list) => list.every((s) => val(s) !== null);
     const mark = (ok, has) => (checking && has ? (ok ? " ok" : " no") : "");
     if (p.kind === "grid") {
       const n = p.grid.length;
-      const cells = p.grid.map((row, r) => `${row.map((s) => `<div class="lg-cell">${shapeSvg(s)}${val(s) !== null ? `<b class="lg-cell-val">${val(s)}</b>` : ""}</div>`).join("")}<div class="lg-sum row${mark(row.reduce((a, s) => a + (val(s) ?? 0), 0) === p.rowSums[r], known(row))}">${p.rowSums[r]}</div>`).join("");
-      const cols = p.colSums.map((sum, c) => `<div class="lg-sum col${mark(p.grid.reduce((a, row) => a + (val(row[c]) ?? 0), 0) === sum, known(p.grid.map((row) => row[c])))}">${sum}</div>`).join("");
+      const cells = p.grid.map((row, r) => `${row.map((s, c) => `<div class="lg-cell${useLine === `row${r}` || useLine === `col${c}` ? " use" : ""}">${shapeSvg(s)}${val(s) !== null ? `<b class="lg-cell-val">${val(s)}</b>` : ""}</div>`).join("")}<div class="lg-sum row${use(`row${r}`)}${mark(row.reduce((a, s) => a + (val(s) ?? 0), 0) === p.rowSums[r], known(row))}">${p.rowSums[r]}</div>`).join("");
+      const cols = p.colSums.map((sum, c) => `<div class="lg-sum col${use(`col${c}`)}${mark(p.grid.reduce((a, row) => a + (val(row[c]) ?? 0), 0) === sum, known(p.grid.map((row) => row[c])))}">${sum}</div>`).join("");
       stage.innerHTML = `<div class="lg-matrix" style="--n:${n}" role="img" aria-label="${n}×${n} 표, 가로 합 ${p.rowSums.join(", ")}, 세로 합 ${p.colSums.join(", ")}">${cells}${cols}<div class="lg-sum corner" aria-hidden="true">합</div></div>`;
     } else {
-      stage.innerHTML = `<div class="lg-eqs">${p.equations.map((e) => {
+      stage.innerHTML = `<div class="lg-eqs">${p.equations.map((e, i) => {
         const has = known([e.a, e.b]); const got = (val(e.a) ?? 0) + (e.op === "-" ? -(val(e.b) ?? 0) : (val(e.b) ?? 0));
-        return `<div class="lg-eq${mark(got === e.result, has)}"><span class="lg-tok">${shapeSvg(e.a)}${val(e.a) !== null ? `<b>${val(e.a)}</b>` : ""}</span><span class="lg-op">${e.op === "-" ? "−" : "+"}</span><span class="lg-tok">${shapeSvg(e.b)}${val(e.b) !== null ? `<b>${val(e.b)}</b>` : ""}</span><span class="lg-op">=</span><span class="lg-res">${e.result}</span></div>`;
+        return `<div class="lg-eq${use(`eq${i}`)}${mark(got === e.result, has)}"><span class="lg-tok">${shapeSvg(e.a)}${val(e.a) !== null ? `<b>${val(e.a)}</b>` : ""}</span><span class="lg-op">${e.op === "-" ? "−" : "+"}</span><span class="lg-tok">${shapeSvg(e.b)}${val(e.b) !== null ? `<b>${val(e.b)}</b>` : ""}</span><span class="lg-op">=</span><span class="lg-res">${e.result}</span></div>`;
       }).join("")}</div>`;
     }
     const range = Array.from({ length: p.hi - p.lo + 1 }, (_, i) => p.lo + i);
-    controls.innerHTML = `<p class="cg-ask">도형을 누르고 값을 고르세요.</p><div class="lg-slots" role="group" aria-label="도형 값">${p.shapes.map((s, i) => `<button type="button" class="lg-slot${i === active ? " active" : ""}" data-b2-slot="${i}" aria-pressed="${i === active}" aria-label="${SHAPE_NAME[s]} 값 ${values[i] ?? "빈칸"}" ${locked ? "disabled" : ""}>${shapeSvg(s)}<b>${values[i] ?? "?"}</b></button>`).join("")}</div>${pad(range, "data-b2-num", { disabled: locked })}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-clear ${locked ? "disabled" : ""}>지우기</button><button type="button" class="cg-primary" data-b2-check ${locked || values.some((v) => v === null) ? "disabled" : ""}>확인!</button></div>`;
+    // 정하는 순서대로 칸을 놓고, 아직 차례가 아닌 칸은 잠근다.
+    const slotOrder = order ? order.map(({ shape }) => p.shapes.indexOf(shape)) : p.shapes.map((_, i) => i);
+    const ask = order && !allSet && !locked ? `금색 ${p.kind === "grid" ? "줄" : "식"}에는 모르는 도형이 <b>${SHAPE_NAME[order[step].shape]}</b> 하나뿐이에요. ${step ? `이제 ${SHAPE_NAME[order[step].shape]}의 값을 정하세요.` : `${SHAPE_NAME[order[step].shape]}의 값부터 정하세요.`}` : "도형을 누르고 값을 고르세요.";
+    controls.innerHTML = `<p class="cg-ask">${ask}</p><div class="lg-slots" role="group" aria-label="도형 값">${slotOrder.map((i, k) => { const s = p.shapes[i]; const waiting = order && k > step && values[i] === null && !allSet; return `<button type="button" class="lg-slot${i === active ? " active" : ""}" data-b2-slot="${i}" aria-pressed="${i === active}" aria-label="${SHAPE_NAME[s]} 값 ${values[i] ?? "빈칸"}${waiting ? ", 앞 도형을 먼저" : ""}" ${locked || waiting ? "disabled" : ""}>${shapeSvg(s)}<b>${values[i] ?? "?"}</b></button>`; }).join("")}</div>${pad(range, "data-b2-num", { disabled: locked })}<div class="cg-actions"><button type="button" class="cg-secondary" data-b2-clear ${locked ? "disabled" : ""}>지우기</button><button type="button" class="cg-primary" data-b2-check ${locked || values.some((v) => v === null) ? "disabled" : ""}>확인!</button></div>`;
   };
   const onClick = (event) => {
     const t = event.target.closest("button");
@@ -49,7 +59,7 @@ function matrixBoard({ stage, controls, sound }) {
     else if (t.dataset.b2Num !== undefined) {
       sound.tick();
       values[active] = Number(t.dataset.b2Num);
-      const nextEmpty = values.findIndex((v) => v === null);
+      const nextEmpty = order ? (order.find(({ shape }) => values[p.shapes.indexOf(shape)] === null) ? p.shapes.indexOf(order.find(({ shape }) => values[p.shapes.indexOf(shape)] === null).shape) : -1) : values.findIndex((v) => v === null);
       if (nextEmpty >= 0) active = nextEmpty;
       draw();
     } else if (t.dataset.b2Clear !== undefined) { values[active] = null; draw(); }
@@ -61,7 +71,7 @@ function matrixBoard({ stage, controls, sound }) {
   };
   controls.addEventListener("click", onClick);
   return {
-    show(problem, a) { p = problem; api = a; values = p.shapes.map(() => null); active = 0; checking = false; locked = false; draw(); },
+    show(problem, a) { p = problem; api = a; values = p.shapes.map(() => null); order = matrixSolveOrder(p); active = order ? p.shapes.indexOf(order[0].shape) : 0; checking = false; locked = false; draw(); },
     reveal(problem, done) { values = [...problem.answer]; checking = true; locked = true; draw(); setTimeout(done, reduced() ? 0 : 500); },
     lock(on) { locked = on; checking = checking || on; draw(); },
     dispose() { controls.removeEventListener("click", onClick); }

@@ -5,7 +5,7 @@ import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityActi
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261023t";
 import { mountClockGame } from "./golden-bell-clock-game.js?v=20261023t";
 import { mountLevelGame } from "./golden-bell-level-game.js?v=20261004a";
-import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261023v";
+import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261023w";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sessions = new Map();

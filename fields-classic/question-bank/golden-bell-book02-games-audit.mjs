@@ -12,7 +12,7 @@
 // playwright-core가 다른 곳에 있으면 FIELDS_PLAYWRIGHT=<그 index.mjs 경로>, 브라우저 경로는 FIELDS_CHROMIUM.
 
 import assert from "node:assert/strict";
-import { MATRIX, BALANCE, PATTERN, SUDOKU, BOOK02_GAMES } from "./golden-bell-book02-game-models.js";
+import { MATRIX, BALANCE, PATTERN, SUDOKU, BOOK02_GAMES, matrixSolveOrder } from "./golden-bell-book02-game-models.js";
 import { HANDS_ON_ACTIVITIES, HANDS_ON_UNITS } from "./golden-bell-hands-on-models.js";
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
 
@@ -34,6 +34,7 @@ function matrixAll(p) {
 for (const level of levelsOf(MATRIX)) for (let seed = 1; seed <= 25; seed++) for (const p of MATRIX.build(level, { seed })) {
   const sols = matrixAll(p);
   assert.equal(sols.length, 1, `도형 값 L${level}: 해 ${sols.length}개`);
+  assert.ok(matrixSolveOrder(p), `도형 값 L${level}: 모르는 도형이 하나뿐인 줄로 차례로 풀리지 않음`);
   assert.deepEqual(sols[0], p.answer);
 }
 // 저울: 모든 순열 중 저울을 다 만족하는 것이 하나
@@ -95,7 +96,10 @@ async function solve(page, game, mode) {
   let c = (sel) => page.locator(`[data-game-controls] ${sel}, [data-game-stage] ${sel}`).first();
   const tries = mode === "twice" ? 2 : mode === "once" ? 1 : 0;
   if (game === "b2-matrix") {
-    const fill = async (vals) => { for (const [i, v] of vals.entries()) { await c(`[data-b2-slot="${i}"]`).click(); await c(`[data-b2-num="${v}"]`).click(); } await c("[data-b2-check]").click(); };
+    // 풀이 순서(모르는 도형이 하나뿐인 줄부터)대로만 칸이 열린다.
+    const ord = matrixSolveOrder(p).map(({ shape }) => p.shapes.indexOf(shape));
+    if (await page.locator("[data-b2-slot]").count() > 1) assert.equal(await page.locator(`[data-b2-slot="${ord[1]}"]`).isDisabled(), true, "Later shape waits for the earlier one");
+    const fill = async (vals) => { for (const i of ord) { await c(`[data-b2-slot="${i}"]`).click(); await c(`[data-b2-num="${vals[i]}"]`).click(); } await c("[data-b2-check]").click(); };
     for (let t = 0; t < tries; t++) await fill(p.answer.map((v, i) => (i === 0 ? (v === p.hi ? v - 1 : v + 1) : v)));
     if (mode !== "twice") await fill(p.answer);
   } else if (game === "b2-balance") {
