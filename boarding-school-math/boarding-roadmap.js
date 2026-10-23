@@ -6,7 +6,7 @@
   const initial = Number(new URLSearchParams(location.search).get("grade"));
   let grade = data.getGrade(initial) ? initial : 7;
   let stage = 0;
-  let route = "secure";
+  let route = null;
   let competition = null;
   const publicPractice = {
     6: [
@@ -32,7 +32,7 @@
         button.className = "grade-button";
         button.textContent = `G${entry.grade}`;
         button.setAttribute("aria-label", `Grade ${entry.grade} 지도 보기`);
-        button.addEventListener("click", function () { grade = entry.grade; stage = 0; competition = null; render(); });
+        button.addEventListener("click", function () { grade = entry.grade; stage = 0; route = null; competition = null; render(); });
         container.append(button);
       });
     }
@@ -74,16 +74,16 @@
       button.setAttribute("aria-pressed", String(entry.id === route));
       const title = document.createElement("strong");
       title.textContent = entry.title;
-      const description = document.createElement("small");
-      description.textContent = entry.description;
-      button.append(title, description);
+      button.append(title);
       button.addEventListener("click", function () { route = entry.id; renderRoutes(); });
       buttons.append(button);
     });
     const entry = data.getRoute(route);
-    setText("route-name", entry.title);
-    setText("route-description", entry.description);
-    setText("route-check", entry.check);
+    setText("route-status", entry ? "선택한 길" : "선택 전");
+    setText("route-name", entry ? entry.title : "어떤 길이 맞을까요?");
+    setText("route-description", entry ? entry.description : "왼쪽에서 하나를 골라 내용을 비교해 보세요.");
+    setText("route-check", entry ? entry.check : "");
+    $("route-check-block").hidden = !entry;
   }
   function renderLevels(entry) {
     setText("level-repair", `${entry.steps[0][0]}: ${entry.steps[0][1]}`);
@@ -237,12 +237,13 @@
     renderLevels(entry);
     renderGradeFocus();
     renderPracticeLinks();
+    renderRoutes();
     renderCompetitionOptions();
     renderCompetitionRows();
     updateUrl();
   }
-  $("previous-grade").addEventListener("click", function () { if (grade > 3) { grade -= 1; stage = 0; competition = null; render(); } });
-  $("next-grade").addEventListener("click", function () { if (grade < 10) { grade += 1; stage = 0; competition = null; render(); } });
+  $("previous-grade").addEventListener("click", function () { if (grade > 3) { grade -= 1; stage = 0; route = null; competition = null; render(); } });
+  $("next-grade").addEventListener("click", function () { if (grade < 10) { grade += 1; stage = 0; route = null; competition = null; render(); } });
   $("competition-select").addEventListener("change", function (event) {
     competition = event.target.value;
     $("paper-label").value = "";
@@ -252,5 +253,4 @@
   });
   $("competition-form").addEventListener("submit", analyzeCompetition);
   render();
-  renderRoutes();
 })();

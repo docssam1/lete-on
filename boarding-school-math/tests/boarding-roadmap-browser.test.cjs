@@ -44,6 +44,11 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#grade-note").innerText(), /진단은 아직 검수 중/);
   assert.equal(await page.locator("#grade-practice-links a").count(), 2);
   assert.match(await page.locator("#grade-practice-links a").first().getAttribute("href"), /cluster=7.NS.A/);
+  assert.deepEqual(await page.locator(".route-button[aria-pressed='true']").allInnerTexts(), []);
+  assert.equal(await page.locator("#route-check-block").isHidden(), true);
+  await page.getByRole("button", { name: "다음 내용 배우기" }).click();
+  assert.equal(await page.locator("#route-name").innerText(), "다음 내용 배우기");
+  assert.equal(await page.locator("#route-check-block").isVisible(), true);
   assert.equal(await page.locator("#competition-select").inputValue(), "");
   assert.equal(await page.locator("#paper-label-field").isHidden(), true);
   assert.equal(await page.locator("#paper-review-link").isHidden(), true);
@@ -58,6 +63,8 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator(".competition-submit").isHidden(), true);
   await page.locator("#competition-select").selectOption("amc8");
   await page.getByRole("button", { name: "Grade 9 지도 보기" }).click();
+  assert.deepEqual(await page.locator(".route-button[aria-pressed='true']").allInnerTexts(), []);
+  assert.equal(await page.locator("#route-check-block").isHidden(), true);
   assert.equal(await page.locator("#competition-select").inputValue(), "");
   assert.equal(await page.locator("#grade-map-title").innerText(), "9학년에서 배우는 수학");
   assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학 · 추정/);
