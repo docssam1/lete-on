@@ -8,6 +8,13 @@
 - The existing `congruence-symmetry-audit.js` is not currently a passing gate: it reports 25,200 failures because `HSE_GENERATORS.generate` returns `null` for the first checked type (`5-2-u3-t1`). Its code is unchanged by this source-ledger correction; repair/verify it before any U3 runtime release.
 - Drive evidence: [page 24 exploration review](https://drive.google.com/file/d/1Ry4JGJ9m1WQGParWINFjg6R49ASDA02B/view) and [page 25 Missions 1–6 review](https://drive.google.com/file/d/11k5r1lrjdx7jVwPYtlFTDoevfX7k7SA3/view).
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 26 Example 2-3 Diagram Answer
+
+- Re-read PDF page 22 (printed page 26) with a 450dpi render and Apple Vision OCR; confirmed the printed names △ㄱㄴㄷ and △ㄷㄹㅁ, the two distinct side-mark classes, and the crossing segments. Handwriting was excluded.
+- Let the two equilateral side lengths be a and b (a≠b). Then △ㄱㄷㅁ and △ㄴㄷㄹ each have side lengths a,b and included angle 120°, so they are congruent by SAS. The crossed diagonals both have squared length a²+ab+b². Enumerating all eight nondegenerate triangles in the drawing leaves this as the only congruent pair.
+- Filled the previously blocked independent calculation and answer in the U3 readiness inventory. It remains locked until the implemented diagram preserves the labels and crossing segments. Source calculation checks now total 43; public/locked counts stay 24/29. Mission 6 on page 25 remains unresolved and locked.
+- Drive evidence: [Example 2-3 diagram review](https://drive.google.com/file/d/1OcVudw9mWBPR7Uu6lmG2lIAXqsaw7xL9/view) and [page 26 arithmetic/conditions review](https://drive.google.com/file/d/1GRQzfYKA5dh0Bz1M1XynMKioD-61Vr5r/view).
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
 
 - Rechecked PDF page 9 / printed page 11 from the 450dpi page render and Apple Vision OCR. The text asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. No figure is printed for this item; handwriting and publisher answers were excluded. The hundreds-rounding interval is 1,150–1,249 and the tens-ceiling interval is 1,191–1,200. Their intersection contains 10 natural numbers, 1,191–1,200. Publisher-key verification remains false.
