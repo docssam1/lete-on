@@ -185,7 +185,10 @@ function checkProblem(number, problem, difficulty) {
     }
     case 12:
       if (assertBase(problem, number, difficulty, "g1-stacked-shape-cycle")) {
-        const expectedItems = Array.from({ length: 10 }, (_, index) => ({ shape: meta.shapes[index % meta.shapes.length], count: meta.counts[index % meta.counts.length] }));
+        // 그림은 모양·개수 두 규칙이 각각 두 바퀴 이상 보이도록 (긴 주기 × 2 + 1)개를 늘어놓는다.
+        const previewCount = Math.max(meta.shapes.length, meta.counts.length) * 2 + 1;
+        if (meta.previewCount !== previewCount) fail(`${number}번 난이도 ${difficulty}: 이중 주기 그림 개수 오류`);
+        const expectedItems = Array.from({ length: previewCount }, (_, index) => ({ shape: meta.shapes[index % meta.shapes.length], count: meta.counts[index % meta.counts.length] }));
         if (meta.shape !== meta.shapes[(meta.target - 1) % meta.shapes.length] || meta.count !== meta.counts[(meta.target - 1) % meta.counts.length] || problem.answer !== `${meta.shape} ${meta.count}개` || !same(problem.visual.items, expectedItems) || problem.visual.target !== meta.target) fail(`${number}번 난이도 ${difficulty}: 이중 주기·그림 오류`);
       }
       break;

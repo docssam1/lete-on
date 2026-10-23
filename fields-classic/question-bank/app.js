@@ -289,12 +289,25 @@ function positionTypePreview(anchor) {
   const margin = 12;
   const width = Math.min(390, window.innerWidth - margin * 2);
   panel.style.width = `${width}px`;
-  const left = rect.right + margin + width <= window.innerWidth
-    ? rect.right + margin
-    : Math.max(margin, rect.left - width - margin);
-  const top = Math.max(margin, Math.min(rect.top, window.innerHeight - panel.offsetHeight - margin));
-  panel.style.left = `${left}px`;
-  panel.style.top = `${top}px`;
+  panel.style.maxHeight = "";
+  const fitsRight = rect.right + margin + width <= window.innerWidth;
+  const fitsLeft = rect.left - width - margin >= 0;
+  if (fitsRight || fitsLeft) {
+    const left = fitsRight ? rect.right + margin : rect.left - width - margin;
+    const top = Math.max(margin, Math.min(rect.top, window.innerHeight - panel.offsetHeight - margin));
+    panel.style.left = `${left}px`;
+    panel.style.top = `${top}px`;
+    return;
+  }
+  // 좁은 창에서는 옆자리가 없다. 그때 미리보기가 가리키는 줄을 덮으면 그 줄의 체크칸을 누를 수 없으므로,
+  // 줄의 아래나 위(넓은 쪽)에 두고 그 공간 안으로 높이를 줄인다.
+  const below = window.innerHeight - rect.bottom - margin * 2;
+  const above = rect.top - margin * 2;
+  const room = Math.max(below, above, 120);
+  panel.style.maxHeight = `${room}px`;
+  const height = Math.min(panel.offsetHeight, room);
+  panel.style.left = `${margin}px`;
+  panel.style.top = `${below >= above ? rect.bottom + margin : Math.max(margin, rect.top - margin - height)}px`;
 }
 
 function textbookConceptTutorialMarkup(problem, compact = false) {

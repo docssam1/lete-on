@@ -456,7 +456,9 @@ async function assertPreview(page, pilot, expectedBeats, trigger, label) {
     const targetIndex = await targetInput.evaluate((target) => [...document.querySelectorAll('#curriculumTree input[data-curriculum-key]:not([disabled])')].indexOf(target));
     assert.ok(targetIndex > 0, `${label}: target has no previous keyboard stop`);
     await tabInputs.nth(targetIndex - 1).focus();
+    // 앞 줄의 「보기」(터치·키보드용 미리보기 단추)를 한 번 지나 다음 체크칸에 닿는다.
     await page.keyboard.press("Tab");
+    if (await page.evaluate(() => Boolean(document.activeElement?.matches("[data-touch-preview]")))) await page.keyboard.press("Tab");
     assert.equal(await targetInput.evaluate((target) => document.activeElement === target), true, `${label}: Tab did not reach the target input`);
   }
   const preview = page.locator("#typePreview:not([hidden])");
@@ -522,7 +524,10 @@ async function assertPrintableCards(page, typeId) {
   assert.ok(boxes[0].bottom <= boxes[1].top + 1, `${typeId} print: question cards overlap`);
   for (const card of await cards.all()) {
     const requiredBlocks = card.locator(".textbook-concept-tutorial,.question-prompt,.visual,.answer-line,.drawing-answer-note");
-    assert.equal(await requiredBlocks.count(), 4, `${typeId} print: required instructional or response block missing`);
+    // 보조 그림을 학습지에서 빼기로 한 문항(compactPolicy "omit")은 그림 칸 없이 3개다.
+    const omitsSupportVisual = (await card.getAttribute("data-visual-policy")) === "support-omit";
+    if (omitsSupportVisual) assert.equal(await card.locator(".visual").count(), 0, `${typeId} print: omitted support visual rendered`);
+    assert.equal(await requiredBlocks.count(), omitsSupportVisual ? 3 : 4, `${typeId} print: required instructional or response block missing`);
     const cardBox = await card.boundingBox();
     for (const block of await requiredBlocks.all()) {
       assert.equal(await block.isVisible(), true, `${typeId} print: required block is hidden`);

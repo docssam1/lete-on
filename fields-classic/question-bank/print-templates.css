@@ -167,7 +167,9 @@
   .pt-cover .pt-in,.pt-paper{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   /* 머리말이 있는 첫 문항 쪽만 245mm, 그 뒤 쪽은 종이 아래까지 채운다. */
   .question-grid>.question-page~.question-page,.question-grid>.pt-paper~.question-page{min-height:280mm}
-  .question-page>.pt-foot{padding:4px 2px 0}
+  /* 바닥글이 쪽 높이를 늘리지 않게 쪽의 아래 여백(11px) 안에 한 줄로 띄운다 — 첫 쪽은 머리말과 함께 A4 한 장에 들어가야 하고 여유가 몇 px뿐이다. */
+  .question-page{position:relative}
+  .question-page>.pt-foot{position:absolute;left:13px;right:13px;bottom:1px;margin:0;padding:0;border-top:0;font-size:9px;line-height:10px}
   .pt-form-exam .question-card,.pt-form-lesson .question-card{border-top-color:#c8bfae}
   .pt-form-exam .question-page>.question-card:first-child,.pt-form-lesson .question-page>.question-card:first-child{border-top:0}
   /* 2단: 쪽당 4문항(2×2). 그림이 큰 문항은 1단을 권한다. */
