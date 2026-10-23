@@ -1175,9 +1175,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "두 몫 조건을 전수 대입해도 270~299만 남습니다.",
       "sourceVerified": true,
-      "implementationStatus": "locally-verified-candidate",
-      "publicDecision": "candidate",
-      "lockReason": "원문·Apple Vision OCR·몫의 경계 및 30개 원문 후보 전수 대입, 9개 합성 조합, 화면·A4 검수를 확인했습니다. Pages 배포 전 후보입니다."
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
+      "lockReason": "PR #396이 2026-10-23 main에 병합되어 Pages 배포 #39973818234가 성공했습니다. 인덱스 및 해당 생성기 파일의 SHA-256 일치, 1440px·375px 라이브 브라우저 생성·풀이·답 비노출·넘침 검사를 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-3",
@@ -1202,9 +1202,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "합과 차의 양끝을 조합하고 짝수 조건을 확인해 같은 범위가 나옵니다.",
       "sourceVerified": true,
-      "implementationStatus": "locally-verified-candidate",
-      "publicDecision": "candidate",
-      "lockReason": "원문·Apple Vision OCR·경계 계산과 100개 정수 후보 전수 대입, 9개 합성 조합, 화면·A4 검수를 확인했습니다. Pages 배포 전 후보입니다."
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
+      "lockReason": "PR #396이 2026-10-23 main에 병합되어 Pages 배포 #39973818234가 성공했습니다. 인덱스 및 해당 생성기 파일의 SHA-256 일치, 1440px·375px 라이브 브라우저 생성·풀이·답 비노출·넘침 검사를 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-example-4",
@@ -1229,11 +1229,11 @@
       "singleAnswer": true,
       "singleAnswerCheck": "450dpi 확대본에서 선 종류, 여섯 연도, 한 칸 100명 눈금을 다시 읽고 최대 차와 두 실제 범위를 계산했습니다.",
       "sourceVerified": true,
-      "implementationStatus": "implemented-awaiting-regression",
-      "publicDecision": "candidate",
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
       "generatorKey": "source52RoundedRangeExample44",
       "verifiedVariantCount": 3,
-      "lockReason": "좌표 재구성과 독립 계산을 구현했으며, 전체 회귀·브라우저·A4 검수 완료 전까지 공개 후보 상태입니다."
+      "lockReason": "PR #396이 2026-10-23 main에 병합되어 Pages 배포 #39973818234가 성공했습니다. 인덱스 및 해당 생성기 파일의 SHA-256 일치, 1440px·375px 라이브 브라우저 생성·풀이·답 비노출·넘침 검사를 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-1-rounded-count",
@@ -1418,9 +1418,9 @@
       "확대 원본으로 두 자리 수 쌍, 소수 카드, 택시 올림, 완성 상자 판매, 꺾은선그래프 선·눈금, 7200 반올림 개수를 재확인해 여섯 항목의 단일 답을 확정했습니다.",
       "Mission 6(인쇄 9쪽)은 원문·계산·3개 합성 풀이 풀·화면·A4·배포·라이브 검수를 완료해 공개했습니다.",
       "개념탐구 4와 예제 4-1(인쇄 10쪽)은 원문에 그림이 없는 텍스트 문항으로 확인했습니다. 18개 합성 조합, 화면 24개 상태, A4 검수를 완료했고 PR #395 병합 및 Pages 배포 workflow 성공을 확인했습니다. 공개 호스트 HTTP 429로 라이브 화면 확인은 대기 중입니다.",
-      "예제 4-2(인쇄 10쪽)는 그림 없는 텍스트 문항입니다. 정수 나눗셈 몫을 전수 대입해 원문 답을 270 이상 300 미만으로 확인했고, 합성 9개 구성을 검증했습니다. 화면·A4 확인까지 마친 배포 전 후보입니다.",
-      "예제 4-3(인쇄 10쪽)는 원문 그림이 없는 텍스트 문항입니다. 합 850 이상 950 미만, 차 350 이상 450 미만을 독립 계산해 큰 수 범위를 600 이상 700 미만으로 확정하고, 가능한 정수 답 100개가 모두 이어지는 것을 전수 검산했습니다. 합성 9개 조합·화면·A4 검수 후 배포 전 후보로 연결했습니다.",
-      "예제 4-4(인쇄 10쪽)는 그래프의 축 절단, 100명 보조 눈금, 여섯 연도, 여자 실선·남자 점선을 재구성했습니다. 최대 차 연도는 2008년이며 실제 차 551~749명, 답은 550명 초과 750명 미만입니다. 합성 9개 구성, PC·모바일 12개 화면 상태, A4 문제·풀이 검수를 통과한 로컬 후보입니다."
+      "예제 4-2(인쇄 10쪽)는 그림 없는 텍스트 문항입니다. 정수 나눗셈 몫을 전수 대입해 원문 답을 270 이상 300 미만으로 확인했고, PR #396 병합·Pages 배포와 1440px·375px 라이브 문항·풀이 검증까지 마쳤습니다.",
+      "예제 4-3(인쇄 10쪽)는 원문 그림이 없는 텍스트 문항입니다. 합 850 이상 950 미만, 차 350 이상 450 미만을 독립 계산해 큰 수 범위를 600 이상 700 미만으로 확정하고, 가능한 정수 답 100개가 모두 이어지는 것을 전수 검산했습니다. PR #396 병합·Pages 배포와 1440px·375px 라이브 문항·풀이 검증까지 마쳤습니다.",
+      "예제 4-4(인쇄 10쪽)는 그래프의 축 절단, 100명 보조 눈금, 여섯 연도, 여자 실선·남자 점선을 재구성했습니다. 최대 차 연도는 2008년이며 실제 차 551~749명, 답은 550명 초과 750명 미만입니다. PR #396 병합·Pages 배포와 1440px·375px 라이브 문항·풀이 검증까지 마쳤습니다."
     ]
   },
   "runtimeCrosswalk": {
