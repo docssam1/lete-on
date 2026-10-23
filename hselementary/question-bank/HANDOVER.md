@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Missions 4–6: Source Correction
+
+- Rechecked PDF page 9 / printed page 11 using the original 450dpi crops and Apple Vision OCR. Missions 4 and 5 are text-only; their inventory entries no longer require an invented number line or table. Mission 4’s natural-number intersection is 7,900,001–7,949,999 (49,999 values). Mission 5’s valid natural numbers are 240–299 (60 values), summing to 16,170. Both remain locked because no runtime generator, learner solution, browser, or A4 implementation has been reviewed.
+- Mission 6’s printed prompt says only that rounding a natural number gives 7200 and asks for the minimum and maximum possible counts. It never specifies the rounding place. Depending on the place, the candidate count is 1, 10, or 100; nearest-thousand rounding cannot produce 7200. The source therefore does not determine a unique pair. Corrected the inventory, added this source item to the ambiguous list, and kept it locked; handwritten annotations and publisher answers were excluded.
+- The inventory now records two unresolved unique-answer reviews and crosswalks all three source items without claiming runtime availability. Source census remains 50 items. Mission 1–3 implementation status and PR #399 remain unchanged; PR #399 is still a draft pending Claude API cross-review.
+- Source evidence: `/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page11/mission4/`, `mission5/`, and `mission6/`. Drive source-review bundles: Mission 4 ID `18KGh_mGD6YZeAhXRu0Z9SDDyEbUwiuuX`; Mission 5 ID `1fHVF0floskfEXxp0ysK2rVYYcsQxwOJ5`; Mission 6 ID `1z0IETK4L47K2E7jGofaqzBZLOvkUt7JD`. These are source-only records; no original PDF is included in the local evidence folders.
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11: Mission 1 Live-Verified; Missions 2–3 Locally Verified, Claude API Review Pending
 
 - Mission 1: PDF page 9 / printed page 11 asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. The source is text-only. Its intervals are 1,150–1,249 and 1,191–1,200, so the 10 values from 1,191 through 1,200 satisfy both conditions. The original answer and nine synthetic settings passed independent enumeration; publisher-key verification remains false.
