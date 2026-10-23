@@ -1408,6 +1408,35 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             answerVisualRequired: false,
             answerVisualStatus: "not-required"
           }))
+        },
+        {
+          name: "어림하기의 활용 · 개념탐구 3 원문 연결",
+          types: [
+            ["exploration-round-up", "올림하여 천의 자리까지 나타내기", "source52ApplicationExplorationRoundUp"],
+            ["exploration-round-down", "버림하여 십의 자리까지 나타내기", "source52ApplicationExplorationRoundDown"],
+            ["exploration-round-nearest", "반올림하여 소수 첫째 자리까지 나타내기", "source52ApplicationExplorationRoundNearest"]
+          ].map(([suffix, name, generatorKey]) => ({
+            id: `5-2-u1-e3-${suffix}`,
+            name,
+            sourceItemId: `5-2-u1-e3-${suffix}`,
+            sourceItemLabel: "개념탐구 3",
+            sourceSection: "exploration",
+            sourceTier: "advanced",
+            sourcePdfPage: 6,
+            sourcePrintedPage: 8,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e3-exploration-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄된 개념탐구 3의 세 어림 방법을 각각 연결했습니다. 원문과 다른 수를 사용해 3개 유한 변형을 만들고 각 자리 계산을 독립 검산했으며, 출판사 정답 대조 여부는 별도로 표시합니다.",
+            generatorKey,
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }))
         }
       ],
       ["분수의 곱셈",
