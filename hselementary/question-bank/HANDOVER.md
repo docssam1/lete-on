@@ -1,3 +1,11 @@
+## 2026-10-24 Grade 5-2 Unit 3 Page 31: Pages Deployment Verified
+
+- GitHub Pages deployment [run 40012863681](https://github.com/docssam1/lete-on/actions/runs/40012863681) succeeded for main merge commit `be544719d61e80d4d58ccb09fa1cda9f85088d32`.
+- The public [elementary question bank](https://lete-on.gfieldacademy.net/hselementary/question-bank/) returned HTTP 200 and included the new page-31 Mission 1–3 runtime and stylesheet. Live JS and CSS SHA-256 values matched the files on `main` exactly.
+- Mission 1 remains locked pending an elementary-level proof. Missions 2 and 3 remain reviewed candidates. The Drive source-review record was updated with the run and live-asset evidence. No student data was accessed or changed.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Mission 1: Incorrect 70° Replaced with 40°, Implementation Locked
 
 - Re-read logical PDF page 26 / printed page 31 from the clean alternate `황소5-2-1.pdf` (SHA-256 `6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88`). The printed figure confirms square ㄱㄴㄷㄹ, point ㅁ on ㄱㄹ, point ㅂ on ㄹㄷ, ∠ㄱㄴㅁ=20°, ∠ㄷㄴㅂ=25°, and target ∠ㄹㅁㅂ. Apple Vision OCR and the 600dpi crop were checked with the raster; crop SHA-256 `f926d3b8d733287776b10d51448ffeec1a846afa8db2728eb7543e8b7d77b925`.
