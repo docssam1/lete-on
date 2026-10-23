@@ -47,7 +47,7 @@
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
     "calculationCheckedCount": 46,
-    "nonUniqueCount": 9,
+    "nonUniqueCount": 8,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 24,
     "publicCandidateCount": 23,
@@ -1071,22 +1071,22 @@
       "commonTypeId": "square-overlap-area",
       "typeLabel": "서로 다른 크기 정사각형의 겹친 넓이",
       "childFriendlyTypeLabel": "두 정사각형의 겹친 부분 넓이 구하기",
-      "originalStructure": "변 10cm와 14cm인 두 정사각형이 겹친 그림에서 공통 부분 넓이를 구합니다.",
-      "conditions": ["두 정사각형 변 길이 10cm, 14cm", "겹침 경계와 중심 표시는 그림에 의존", "회전 관계의 수치가 별도로 없음"],
-      "visualRequirement": "두 정사각형의 회전각과 교차 경계를 확인해야 합니다.",
-      "independentCalculation": "변 길이만으로는 공통 영역이 정해지지 않고 회전·이동 관계가 필요합니다.",
-      "answerFormula": "overlap area = f(position, angle), position not fully specified",
-      "independentAnswer": null,
-      "resultContract": "single-value-required-but-underdetermined",
-      "candidateAnswerCount": "multiple",
-      "singleAnswer": false,
-      "singleAnswerCheck": "그림의 회전·접점 조건이 수치로 고정되지 않아 여러 넓이가 가능합니다.",
+      "originalStructure": "한 변이 10cm인 작은 정사각형의 한 꼭짓점이 한 변 14cm인 큰 정사각형의 중심에 놓이도록 겹칩니다. 작은 정사각형의 변이 큰 정사각형의 왼쪽 변과 만나는 점은 왼쪽 위 모서리에서 6cm 내려온 곳이고, 겹친 부분의 넓이를 구합니다.",
+      "conditions": ["큰 정사각형 한 변은 14cm", "작은 정사각형 한 변은 10cm", "작은 정사각형의 한 꼭짓점 C는 큰 정사각형의 중심", "작은 정사각형의 한 변과 큰 정사각형 왼쪽 변의 교점 Q는 왼쪽 위 모서리에서 6cm 아래", "작은 정사각형에서 C에 만나는 두 변은 서로 수직"],
+      "visualRequirement": "큰 정사각형의 두 대각선이 만나는 중심 C, 작은 정사각형의 변과 왼쪽 변의 교점 Q, 왼쪽 위 모서리부터 Q까지의 6cm 치수, 다른 작은 정사각형 변과 큰 정사각형 아래 변의 교점 P, 겹친 직각삼각형 CQP를 보존해야 합니다.",
+      "independentCalculation": "큰 정사각형을 좌표 [0,14]×[0,14]로 두고 왼쪽 위를 (0,0)으로 잡으면 중심 C=(7,7), 6cm 치수로 정해지는 왼쪽 변의 교점 Q=(0,6)입니다. 따라서 CQ=(-7,-1), CQ²=7²+1²=50입니다. C에서 작은 정사각형의 다른 변은 CQ와 수직이고 아래 변과 만나는 점은 P=(6,14)입니다. CP=(-1,7)이므로 CQ·CP=(-7)(-1)+(-1)(7)=0이고 CP²=1²+7²=50입니다. 두 길이는 √50cm로 같으며 √50<10이므로 Q와 P는 길이 10cm인 작은 정사각형의 두 변 위에 놓입니다. 겹친 부분 CQP는 직각삼각형이므로 넓이는 (1/2)×√50×√50=25cm²입니다.",
+      "answerFormula": "C=(7,7), Q=(0,6), P=(6,14); CQ²=7²+1²=50; CP²=1²+7²=50; CQ·CP=0; A_CQP=(1/2)×√50×√50=25cm²",
+      "independentAnswer": "25cm²",
+      "resultContract": "single-value",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "singleAnswerCheck": "왼쪽 위 모서리부터 교점 Q까지의 6cm가 작은 정사각형 변 방향을 고정합니다. C=(7,7), Q=(0,6), P=(6,14)에서 CQ와 CP는 수직이고 각각 √50cm이며, 두 길이 모두 작은 정사각형 한 변 10cm보다 짧습니다. 따라서 겹친 부분은 하나의 직각삼각형이고 넓이는 25cm²입니다.",
       "sourceVerified": true,
-      "calculationStatus": "checked-nonunique",
-      "visualCheckStatus": "needs-implementation-check",
+      "calculationStatus": "checked",
+      "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "겹침의 위치와 회전 조건이 불명확하므로 넓이를 추측하지 않습니다."
+      "lockReason": "원문 답 25cm²는 확정했으나 공개 전 구현 그림에서 큰 정사각형의 중심 C, 왼쪽 위 기준 6cm 치수, 교점 Q·P와 겹친 직각삼각형을 대조해야 합니다."
     },
     {
       "sourceItemId": "5-2-u3-e3-mission-3",
@@ -1501,7 +1501,7 @@
     "publicCandidateCount": 23,
     "lockedCount": 30,
     "calculationCheckedCount": 46,
-    "nonUniqueCount": 9,
+    "nonUniqueCount": 8,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 24,
     "notes": [
@@ -1518,7 +1518,8 @@
       "2026-10-24 인쇄 28쪽 예제 3-3에는 예각 또는 변비가 제시되지 않아 목표각이 유일하지 않음을 반례로 확인하고 기존 30° 후보를 잠갔습니다. Drive QA: 1sT0W-X1Xk96z5XmpxOAKNevKJ7CX3zaL.",
       "2026-10-24 인쇄 28쪽 예제 3-4의 인쇄 조건은 ㄱ→ㅁ→ㅂ과 ∠ㅂㅇㄷ이며, 72°는 필기라 제외했습니다. 24° 직사각형에서 두 접기가 모두 가능한 좌표 반례로 목표각 64°와 72°를 만들어 비유일을 확인했습니다.",
       "2026-10-24 인쇄 29쪽 Mission 1의 기존 조건(65°·45° 회전)이 Mission 3에서 잘못 섞였음을 발견했습니다. 실제 조건은 합동 이등변삼각형, 66° 밑각, 교점 72°이며 각도 추적으로 원문 정답 30°를 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1zNtIYqtPweo41VVVcY4gp9UkqcXWCeKv.",
-      "2026-10-24 인쇄 29쪽 Mission 3의 그림 방향(시계 방향)과 점 대응을 재확인했습니다. ㄱㄴ=ㄱㄷ과 65° 밑각으로 꼭짓각 50°를 구하고, 회전 45°를 더해 ∠ㄷㅁㅂ=95°로 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 12h10sOg4uZj0PugB1GNsebjJDtYW6BnD."
+      "2026-10-24 인쇄 29쪽 Mission 3의 그림 방향(시계 방향)과 점 대응을 재확인했습니다. ㄱㄴ=ㄱㄷ과 65° 밑각으로 꼭짓각 50°를 구하고, 회전 45°를 더해 ∠ㄷㅁㅂ=95°로 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 12h10sOg4uZj0PugB1GNsebjJDtYW6BnD.",
+      "2026-10-24 인쇄 29쪽 Mission 2의 왼쪽 위 기준 6cm 치수와 큰 정사각형 중심을 직접 확인해 기존 비유일 판정을 바로잡았습니다. C=(7,7), Q=(0,6), P=(6,14)에서 겹친 직각삼각형의 넓이는 25cm²입니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC."
     ]
   }
 }

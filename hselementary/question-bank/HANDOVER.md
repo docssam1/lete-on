@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 2: Square-Overlap Area Resolved
+
+- Rechecked logical PDF page 25 / printed page 29 at 450dpi. The two square sides are 10cm and 14cm; the large square's diagonals mark its center C, which is a vertex of the small square. The 6cm dimension runs from the large square's upper-left corner to Q on its left edge. Handwritten circled work was excluded.
+- Set the large square to [0,14]×[0,14] with top-left (0,0): C=(7,7), Q=(0,6). The small square's perpendicular side meets the bottom edge at P=(6,14). Vectors C→Q=(-7,-1) and C→P=(-1,7) have dot product 0 and squared lengths 50, so the overlap is a right triangle with area ½×√50×√50=25cm². Both legs are shorter than the small square side 10cm.
+- Corrected the readiness row from `checked-nonunique` to `checked`, answer 25cm². No source-specific public generator exists yet, so keep it review-locked pending implementation-figure verification. Counts: 23 public candidates, 30 locked, 46 calculation-checked, 8 non-unique. No learner mapping, student records, release state, or deployment changed.
+- Drive evidence: https://drive.google.com/file/d/1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC/view (uploaded to the existing QA folder; content read back and the `25cm²` result verified). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 render SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; focused Mission 2 crop SHA-256 `dd5ad1e5c409389d769af00503db510743dffba600b93ae1ab8f4c4d16bbc719`.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 1: Corrected Source Conditions and Answer
 
 - Re-read logical PDF page 25 / printed page 29 at 450dpi and compared Apple Vision OCR with the high-resolution figure. The prompt gives congruent isosceles triangles △ㄱㄴㄷ and △ㄹㄴㅁ, a printed 66° base angle, a printed 72° angle at their crossing ㅅ, and asks for ∠ㄱㄹㅅ. The previous ledger had mistakenly copied Mission 3's 65° and 45° rotation conditions into Mission 1.
