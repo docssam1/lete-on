@@ -36,6 +36,8 @@ The response QA preview now also has localized choice-group legends and valid pr
 
 The private `apply` prototype now checks all 18 records before touching current input. Missing slots and invalid control kinds are rejected without clearing sample answers in the six mobile variants; valid in-memory round trips still pass. This remains QA-only and does not change the locked item pack or deliver a student response store.
 
+A read-only Chromium accessibility-tree pass on that private preview found 48 named form controls in each KO/EN/zh-Hans mobile variant at 320/390px; at 320px it found ten named choice groups and three named images per locale. MathML structure is present, but spoken math and actual screen-reader use remain unverified. This is harness-only evidence in the external private QA note, not a release or student-renderer accessibility approval.
+
 ## Grade 3–10 visual roadmap milestone — 2026-10-23
 
 2026-10-24 skill-map wording pass: the Grade 3–10 roadmap now opens with a plain description of what choosing a grade does. Section headings and the manual contest entry text name the action; the three learning cards still say that no student grade has been measured, and the contest result still disclaims official scores or placement. The Grade 8 blank map was visually checked at 320/390/1280px with no horizontal overflow; roadmap browser and logic checks pass 8/8. This follows the previously recorded GFIELD/Toss writing reference, not a new scoring or route feature. No push or deployment occurred.
