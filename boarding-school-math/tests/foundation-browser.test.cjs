@@ -167,6 +167,9 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await gradeSevenNs.locator(".search-result-status").textContent(), "워크북 공개");
   assert.match(await gradeSevenNs.locator(".unit-action").getAttribute("href"), /unit-workbook\.html\?cluster=7.NS.A/);
   assert.equal(await page.locator('#skill-rows .search-result-status.public').count(), 2);
+  await page.locator('[data-role-target="teacher"]').click();
+  assert.match(await page.locator("#skill-rows .unit-row").filter({ hasText: "7.NS.A" }).locator(".unit-action").getAttribute("href"), /audience=teacher/);
+  await page.locator('[data-role-target="student"]').click();
   await page.locator('[data-grade-tab="6"]').click();
   assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /10개 클리닉 공개/);
   await page.locator('[data-grade-tab="4"]').click();
