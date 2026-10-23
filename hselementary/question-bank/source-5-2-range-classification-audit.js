@@ -26,7 +26,8 @@ const applicationMissionOneId = "5-2-u1-e3-mission-1-box-count";
 const applicationMissionTwoId = "5-2-u1-e3-mission-2-perimeter";
 const applicationMissionThreeId = "5-2-u1-e3-mission-3-cube-box-count";
 const applicationMissionFourId = "5-2-u1-e3-mission-4-mat-cost";
-const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId];
+const applicationMissionFiveId = "5-2-u1-e3-mission-5-bar-graph-length";
+const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -46,16 +47,17 @@ function load(curriculumSource) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-perimeter-mission2.js"), "utf8"), context, { filename: "source-5-2-perimeter-mission2.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-cube-box-mission3.js"), "utf8"), context, { filename: "source-5-2-cube-box-mission3.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-supply-cost-mission4.js"), "utf8"), context, { filename: "source-5-2-supply-cost-mission4.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-population-bar-length.js"), "utf8"), context, { filename: "source-5-2-population-bar-length.js" });
   return { curriculum: plain(context.window.HSE_CURRICULUM), api: context.window.HSE_GENERATORS };
 }
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2034, "Whole-bank classification count");
+  assert.equal(types.length, 2035, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 153, "Preserve 124 legacy records plus twenty-nine source records");
+  assert.equal(semesterTypes.length, 154, "Preserve 124 legacy records plus thirty source records");
   const restored = plain(semester);
   restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => allNewSourceIds.includes(type.sourceItemId)));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
@@ -188,7 +190,7 @@ function validate(curriculum, api, baselineSemester) {
     }
   });
   const applicationMissionOne = unit.subunits[9].types;
-  assert.deepEqual(applicationMissionOne.map(type => type.sourceItemId), [applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId], "Only directly verified next-source Missions 1–4 are connected");
+  assert.deepEqual(applicationMissionOne.map(type => type.sourceItemId), [applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId], "Only directly verified next-source Missions 1–5 are connected");
   const packingType = applicationMissionOne[0];
   assert.equal(packingType.id, applicationMissionOneId);
   assert.equal(packingType.sourcePdfPage, 7);
@@ -233,6 +235,21 @@ function validate(curriculum, api, baselineSemester) {
     const question = supplyCostGenerator.getQuestion(variant, difficulty);
     assert(question && question.sourceItemId === applicationMissionFourId);
     assert.equal(question.verifiedPoolIndex, variant);
+    assert.equal(question.publisherKeyVerified, false);
+  }
+  const populationType = applicationMissionOne[4];
+  assert.equal(populationType.id, applicationMissionFiveId);
+  assert.equal(populationType.sourcePdfPage, 7);
+  assert.equal(populationType.sourcePrintedPage, 9);
+  assert.equal(populationType.sourceSection, "mission");
+  assert.equal(populationType.reviewLocked, false);
+  assert.equal(populationType.publisherKeyVerified, false);
+  assert.equal(populationType.generatorKey, "source52ApplicationMissionFivePopulationBarLength");
+  const populationGenerator = require("./source-5-2-population-bar-length.js");
+  for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+    const question = populationGenerator.getQuestion(variant, difficulty);
+    assert(question && question.sourceItemId === applicationMissionFiveId);
+    assert.equal(question.answerModel.cities.length, 3);
     assert.equal(question.publisherKeyVerified, false);
   }
   assert.equal(perimeterType.reviewLocked, false);
