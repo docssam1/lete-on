@@ -20,6 +20,7 @@ button:disabled { cursor: not-allowed; }
 .builder-title h1 { margin: 0; font-size: 1.8rem; letter-spacing: -.035em; }
 .builder-title span { display: block; margin-top: 7px; color: #566274; font-size: .83rem; }
 .builder-title button, .list-toolbar button { min-height: 44px; padding: 9px 14px; border: 1px solid #2456c4; border-radius: 4px; color: #2456c4; background: #fff; font-size: .84rem; font-weight: 750; }
+.builder-title button:disabled { border-color: #b8c3d2; color: #687587; background: #f5f6f8; }
 .builder-layout { min-height: 660px; display: grid; grid-template-columns: minmax(185px, 215px) minmax(0, 1fr) minmax(320px, 385px); border: 1px solid #d8dee8; background: #fff; }
 .filter-pane, .list-pane, .editor-pane { min-width: 0; }
 .filter-pane { padding: 22px 14px; border-right: 1px solid #d8dee8; background: #f8fafc; }
@@ -105,6 +106,7 @@ button:disabled { cursor: not-allowed; }
 .swatch-blue { background: linear-gradient(90deg,#2456c4 0 5px,#fff 5px 100%); }
 .swatch-geometry { background: radial-gradient(circle at 14px 13px,transparent 0 6px,#2456c4 6px 7px,transparent 8px),#fff; }
 .sheet-section { margin-top: 34px; scroll-margin-top: 20px; }
+.sheet-section[hidden] { display: none; }
 .sheet-heading { margin-bottom: 14px; display: flex; justify-content: space-between; align-items: end; gap: 12px; }
 .sheet-heading h2 { margin: 0; font-size: 1.4rem; }
 .sheet-heading > span { color: #566274; font-size: .8rem; }

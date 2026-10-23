@@ -9,7 +9,7 @@
     window.GFIELDGrade6SPAUnitWorkbook, window.GFIELDGrade6SPBUnitWorkbook,
     window.GFIELDGrade7RPAUnitWorkbook, window.GFIELDGrade7NSAUnitWorkbook
   ];
-  const released = function (api) {
+  const eligibleSource = function (api) {
     const pack = api && api.pack;
     return !!(pack && pack.contentOrigin === "gfield-original-authored-public-unit-workbook" &&
       pack.rights && pack.rights.publication === "public" && pack.rights.assetRights === "original" &&
@@ -26,7 +26,7 @@
         } catch (_error) { return false; }
       }));
   };
-  if (!apis.every(released)) { $("builder-message").textContent = "공개 문항을 확인할 수 없습니다. 자료를 다시 불러오세요."; return; }
+  if (!apis.every(eligibleSource)) { $("builder-message").textContent = "워크북 문항을 확인할 수 없습니다. 자료를 다시 불러오세요."; return; }
   const sources = apis.map(function (api) {
     const pack = api.pack;
     const source = { api: api, pack: pack, cluster: pack.clusterId, grade: Number(pack.clusterId.split(".")[0]) };
@@ -78,7 +78,7 @@
     const host = $("unit-filter"); host.replaceChildren();
     sources.filter(function (source) { return source.grade === Number($("grade-filter").value); }).forEach(function (source) {
       const option = document.createElement("option"); option.value = source.cluster;
-      option.textContent = `${source.cluster} · ${source.label}`;
+      option.textContent = `${source.cluster} · ${source.label}${source.cluster === "7.NS.A" ? " · 검수 시안" : ""}`;
       host.append(option);
     });
     host.value = activeSource.cluster;
@@ -311,16 +311,19 @@
   }
   function renderPaper() {
     const info = paperInfo(), host = $("paper-pages"); host.replaceChildren();
+    $("sheet-section").hidden = selected.length === 0;
+    $("jump-to-sheet").disabled = selected.length === 0;
+    if (!selected.length) {
+      $("page-count").textContent = "본문 0쪽";
+      $("print-paper").disabled = true;
+      $("print-status").textContent = "";
+      return;
+    }
     const style = document.querySelector('input[name="cover-style"]:checked').value;
     const answers = outputKind() === "answers";
     if (style !== "none") host.append(createCover(style, info, answers));
     let page = createQuestionPage(info, answers); host.append(page);
     const oversized = [];
-    if (!selected.length) {
-      const empty = document.createElement("p"); empty.className = "sheet-empty";
-      empty.textContent = answers ? "문제를 담으면 정답지가 나타납니다." : "문제를 선택하면 인쇄할 시험지가 여기 나타납니다.";
-      page.querySelector(".sheet-questions").append(empty);
-    }
     selected.forEach(function (entry, index) {
       const article = answers ? answerArticle(entry, index) : questionArticle(entry, index);
       page.querySelector(".sheet-questions").append(article);

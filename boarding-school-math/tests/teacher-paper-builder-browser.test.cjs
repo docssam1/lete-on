@@ -13,6 +13,8 @@ test("teacher can find, preview, select, order, and set points on released Grade
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const errors = []; page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(url, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#sheet-section").isHidden(), true);
+  assert.equal(await page.locator("#jump-to-sheet").isDisabled(), true);
   assert.equal(await page.locator(".item-row").count(), 36);
   await page.locator("#item-search").fill("단위율");
   assert.equal(await page.locator(".item-row").count(), 8);
@@ -20,6 +22,8 @@ test("teacher can find, preview, select, order, and set points on released Grade
   assert.match(await page.locator("#preview-index").innerText(), /7\.RP\.A 2번/);
   assert.equal(await page.evaluate(() => document.activeElement.getAttribute("aria-label")), "2번 미리보기");
   await page.getByRole("checkbox", { name: "1번 시험지에 추가", exact: true }).check();
+  assert.equal(await page.locator("#sheet-section").isVisible(), true);
+  assert.equal(await page.locator("#jump-to-sheet").isEnabled(), true);
   assert.equal(await page.evaluate(() => document.activeElement.getAttribute("aria-label")), "1번 시험지에 추가");
   await page.getByRole("checkbox", { name: "2번 시험지에 추가", exact: true }).check();
   assert.equal(await page.locator(".sheet-question").count(), 2);
@@ -63,7 +67,7 @@ test("public Grade 6–7 units keep selections across filters and print mixed an
   await page.close();
 });
 
-test("all 432 released workbook items load without private diagnostics", async () => {
+test("all 432 eligible workbook items load without private diagnostics", async () => {
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "networkidle" });
   const inventory = await page.evaluate(() => {
@@ -105,7 +109,7 @@ test("print waits for the rendered sheet and fonts", async () => {
   await page.close();
 });
 
-test("each released unit can make a full A4 question sheet", async () => {
+test("each eligible unit can make a full A4 question sheet", async () => {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const errors = []; page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(url, { waitUntil: "networkidle" });
@@ -167,6 +171,7 @@ test("three covers use the entered paper details and the full public set paginat
   assert.equal(await page.locator("#print-paper").isEnabled(), true);
   await page.locator("#clear-selected").click();
   assert.equal(await page.locator(".sheet-question").count(), 0);
+  assert.equal(await page.locator("#sheet-section").isHidden(), true);
   assert.equal(await page.locator("#print-paper").isDisabled(), true);
   await page.close();
 });

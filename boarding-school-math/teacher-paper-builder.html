@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="공개된 Grade 6–7 단원 워크북 문항을 골라 교사용 A4 시험지를 만드는 화면">
+  <meta name="description" content="Grade 6–7 단원 워크북 문항을 골라 교사용 A4 시험지를 만드는 화면">
   <title>문제 선택·시험지 편집 | GFIELD Math</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./unit-workbook.css?v=20261023-1">
-  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261024-2">
+  <link rel="stylesheet" href="./teacher-paper-builder.css?v=20261024-3">
 </head>
 <body class="gfield-ui page-paper-builder">
   <a class="skip-link" href="#builder-main">본문으로 바로가기</a>
@@ -19,8 +19,8 @@
   </header>
   <main id="builder-main">
     <div class="builder-title">
-      <div><p>6–7학년 · 공개 워크북</p><h1>시험지 만들기</h1><span>단원을 고르고 문제를 담으세요. A4로 인쇄할 수 있어요.</span></div>
-      <button id="jump-to-sheet" type="button">출력 미리보기</button>
+      <div><p>6–7학년 · 단원 워크북</p><h1>시험지 만들기</h1><span>단원을 고르고 문제를 담으세요. A4로 인쇄할 수 있어요.</span></div>
+      <button id="jump-to-sheet" type="button" disabled>출력 미리보기</button>
     </div>
     <div class="builder-layout">
       <aside class="filter-pane" aria-labelledby="filter-title">
@@ -29,7 +29,7 @@
         <label for="unit-filter">단원<select id="unit-filter"></select></label>
         <h3>세부 주제</h3>
         <div id="strand-filters" class="strand-filters" role="group" aria-label="세부 단원"></div>
-        <div class="filter-note">공개 워크북 문제만 표시해요. 진단 문제와 경시 기출은 없어요.</div>
+        <div class="filter-note">단원 워크북 문항만 표시합니다. 7.NS.A는 검수 시안이며, 진단·경시 기출은 없습니다.</div>
       </aside>
       <section class="list-pane" aria-labelledby="list-title">
         <div class="list-toolbar"><div><h2 id="list-title">문제 목록</h2><span id="result-count" role="status" aria-live="polite"></span></div><button id="select-visible" type="button">현재 목록 모두 담기</button></div>
@@ -65,7 +65,7 @@
         </div>
       </aside>
     </div>
-    <section id="sheet-section" class="sheet-section" aria-labelledby="sheet-heading">
+    <section id="sheet-section" class="sheet-section" aria-labelledby="sheet-heading" hidden>
       <div class="sheet-heading"><div><p>출력 미리보기</p><h2 id="sheet-heading">A4 시험지</h2></div><span id="page-count">본문 1쪽</span></div>
       <div id="paper-pages" class="paper-pages"></div>
     </section>
@@ -102,6 +102,6 @@
   <script src="./learning/grade6-sp-b-unit-workbook.js?v=20261003-1"></script>
   <script src="./learning/grade7-rp-a-unit-workbook.js?v=20260911-1"></script>
   <script src="./learning/grade7-ns-a-unit-workbook.js?v=20261014-1"></script>
-  <script src="./teacher-paper-builder.js?v=20261024-1"></script>
+  <script src="./teacher-paper-builder.js?v=20261024-2"></script>
 </body>
 </html>
