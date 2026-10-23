@@ -20,7 +20,7 @@ test("school, competition, and SAT stay separate in upper-grade examples", funct
 test("competition options follow grade and keep advanced AMC paths optional", function () {
   assert.deepEqual(roadmap.competitionOptions(3).map(function (entry) { return entry.id; }), ["sasmo", "kangaroo"]);
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc8"; }));
-  assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc10" && /선택/.test(entry.title); }));
+  assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc10" && entry.optional === true; }));
   assert.ok(!roadmap.competitionOptions(10).some(function (entry) { return entry.id === "amc8"; }));
 });
 

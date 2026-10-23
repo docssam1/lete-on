@@ -205,16 +205,22 @@
     $("competition-error").hidden = true;
     const paperLabel = $("paper-label").value.trim();
     setText("competition-report-title", `${option.title} · ${result.correct}/${result.attempted}`);
-    setText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.complete ? "전체 문제" : "입력한 문제"}를 영역별로 봤어요. ${result.reviewFirst ? `${result.reviewFirst}의 풀이를 먼저 다시 보세요.` : "어느 영역을 먼저 볼지는 더 풀어 본 뒤 정해요."} 3문제 미만인 영역은 정답률로 비교하기 어려워요.`);
+    const hasSmallSample = result.rows.some(function (entry) { return entry.attempted > 0 && entry.attempted < 3; });
+    setText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.complete ? "전체 문제" : "입력한 문제"}를 영역별로 봤어요. ${result.reviewFirst ? `${result.reviewFirst}의 풀이를 먼저 다시 보세요.` : "어느 영역을 먼저 볼지는 더 풀어 본 뒤 정해요."}${hasSmallSample ? " 3문제 미만인 영역은 정답률을 표시하지 않았어요." : ""}`);
     const host = $("competition-report-rows");
     host.replaceChildren();
     result.rows.forEach(function (entry) {
       const row = document.createElement("div");
       row.className = "report-row";
       const title = document.createElement("strong"); title.textContent = entry.title;
-      const value = document.createElement("span"); value.textContent = entry.attempted ? `${entry.correct}/${entry.attempted} · ${entry.rate}%` : "입력 없음";
-      const note = document.createElement("small"); note.textContent = entry.evidence;
-      row.append(title, value, note); host.append(row);
+      const value = document.createElement("span");
+      value.textContent = !entry.attempted ? "입력 없음" : entry.attempted < 3 ? `${entry.correct}/${entry.attempted}` : `${entry.correct}/${entry.attempted} · ${entry.rate}%`;
+      row.append(title, value);
+      if (entry.attempted > 0 && entry.attempted < 3) {
+        const note = document.createElement("small"); note.textContent = "3문제 미만 · 비교 보류";
+        row.append(note);
+      }
+      host.append(row);
     });
   }
   function render() {

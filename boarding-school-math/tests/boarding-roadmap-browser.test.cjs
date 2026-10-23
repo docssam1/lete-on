@@ -78,8 +78,9 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.locator('[data-strand="geometry"][data-field="attempted"]').fill("2");
   await page.locator('[data-strand="geometry"][data-field="correct"]').fill("1");
   await page.getByRole("button", { name: "영역별 결과 보기" }).click();
-  assert.match(await page.locator("#competition-report-title").innerText(), /4\/6/);
+  assert.equal(await page.locator("#competition-report-title").innerText(), "AMC 10 · 4/6");
   assert.match(await page.locator("#competition-report-rows").innerText(), /3문제 미만/);
+  assert.doesNotMatch(await page.locator("#competition-report-rows").innerText(), /50%/);
   assert.match(await page.locator("#competition-report-summary").innerText(), /더 풀어 본 뒤/);
   assert.deepEqual(errors, []);
   await page.close();

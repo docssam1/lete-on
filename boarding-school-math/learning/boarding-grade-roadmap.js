@@ -53,8 +53,8 @@
     const options = [{ id: "sasmo", title: "SASMO", itemCount: 25 }];
     options.push({ id: "kangaroo", title: "Math Kangaroo", itemCount: grade <= 4 ? 24 : 30 });
     if (grade >= 6 && grade <= 8) options.push({ id: "amc8", title: "AMC 8", itemCount: 25 });
-    if (grade >= 7 && grade <= 10) options.push({ id: "amc10", title: "AMC 10 · 선택 탐구", itemCount: 25 });
-    if (grade >= 8) options.push({ id: "amc12", title: "AMC 12 · 선택 탐구", itemCount: 25 });
+    if (grade >= 7 && grade <= 10) options.push({ id: "amc10", title: "AMC 10", itemCount: 25, optional: true });
+    if (grade >= 8) options.push({ id: "amc12", title: "AMC 12", itemCount: 25, optional: true });
     return options;
   }
 
