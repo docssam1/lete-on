@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 15 Source Review
+
+- Checked logical PDF page 11 (printed page 15) from the SHA-256-matched source at 450dpi. Apple Vision located the text; stacked fractions were confirmed in the image. Handwriting and publisher answers were excluded.
+- Recalculated all six Mission 1 expressions and Missions 2–6. The printed conditions, classifications, and answers match the ledger. Confirmed Mission 1 (1) reads `5/6×2` (not `5/6×2/3`); its correction to type `u2-t08` and answer `1 2/3` is present. Mission 4's inverse ordering, Mission 5's divisor set, and Mission 6's strict integer bounds were also checked.
+- Added persistent source evidence to all 11 records. No other row needed correction. The page has no printed diagrams; all 11 remain locked. No runtime, learner data, or public state changed.
+- Drive source/QA record in the existing `.source-memory` folder: [grade52-unit2-page15-source-review-20261024.md](https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view)
+
 ## 2026-10-24 Grade 5-2 Unit 2 Printed Page 18 Source Review
 
 - Rechecked logical PDF page 14 (printed page 18) from the SHA-256-matched source against the 300dpi render; Apple Vision OCR located the printed text, while stacked fractions were read from the image. Pencil marks and publisher answers were excluded.

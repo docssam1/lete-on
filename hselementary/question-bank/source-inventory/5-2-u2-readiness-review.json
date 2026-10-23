@@ -178,7 +178,7 @@
       "independentAnswer": "1 2/3",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -195,7 +195,7 @@
       "independentAnswer": "42",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -212,7 +212,7 @@
       "independentAnswer": "6 2/3",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -229,7 +229,7 @@
       "independentAnswer": "51 1/9",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -246,7 +246,7 @@
       "independentAnswer": "17 1/2",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -263,7 +263,7 @@
       "independentAnswer": "21 2/3",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -280,7 +280,7 @@
       "independentAnswer": "23명",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "공통 유형으로 묶었지만 중앙 연결과 공개 승인은 수행하지 않았습니다."
     },
@@ -297,7 +297,7 @@
       "independentAnswer": "오전 10시 41분 50초",
       "answerContract": "single-value-with-time",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 공개 승인 전입니다."
     },
@@ -314,7 +314,7 @@
       "independentAnswer": "①, ②, ③",
       "answerContract": "ordered-result",
       "singleAnswerStatus": "pass-unique-order",
-      "evidence": "직접 렌더 대조 및 계수 비교: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "순서형 답 계약은 기록했지만 공개 승인 전입니다."
     },
@@ -331,7 +331,7 @@
       "independentAnswer": "10, 12, 14",
       "answerContract": "unique-set",
       "singleAnswerStatus": "pass-unique-set",
-      "evidence": "직접 렌더 대조 및 약수 전수 검사: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "집합형 답은 확인했지만 공개 승인 전입니다."
     },
@@ -348,7 +348,7 @@
       "independentAnswer": "819",
       "answerContract": "single-value-after-set-sum",
       "singleAnswerStatus": "pass-unique-set",
-      "evidence": "직접 렌더 대조 및 엄격한 경계 전수 확인: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "부등식 경계는 확인했지만 공개 승인 전입니다."
     },
