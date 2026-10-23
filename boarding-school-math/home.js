@@ -391,18 +391,35 @@
     }
   }
 
+  const publicGrade7Workbooks = new Set(["7.NS.A", "7.RP.A"]);
+
+  function isPublicUnit(unit) {
+    return String(unit.grade) === "6" || publicGrade7Workbooks.has(unit.clusterId);
+  }
+
   function unitAction(unit) {
     if (String(unit.grade) === "6") {
       return {
         label: state.roleId === "teacher" ? "학생 화면 보기" : "개념 배우기",
         href: `./concept-learning.html?cluster=${encodeURIComponent(unit.clusterId)}`,
-        state: "공개"
+        state: "개념 공개",
+        public: true
+      };
+    }
+    if (publicGrade7Workbooks.has(unit.clusterId)) {
+      const audience = state.roleId === "teacher" ? "teacher" : "student";
+      return {
+        label: state.roleId === "teacher" ? "교사용 지도서 열기" : "단원 워크북 열기",
+        href: `./unit-workbook.html?cluster=${encodeURIComponent(unit.clusterId)}&mode=workbook&audience=${audience}&locale=ko`,
+        state: "워크북 공개",
+        public: true
       };
     }
     return {
       label: state.roleId === "teacher" ? "자료 상태 보기" : "범위 보기",
       href: `./catalog.html?role=${state.roleId}&grade=${encodeURIComponent(unit.grade)}`,
-      state: "메타데이터"
+      state: "범위만 공개",
+      public: false
     };
   }
 
@@ -450,7 +467,7 @@
     if (!boardingRoadmapLink.hidden) boardingRoadmapLink.href = `./boarding-roadmap.html?grade=${grade}`;
     renderReasoningLanes(grade);
     document.getElementById("selected-grade").textContent = gradeShort(grade);
-    document.getElementById("grade-title").textContent = publicGrade ? `${mapGradeName} · 개념 10개 공개` : `${mapGradeName} · 배울 영역`;
+    document.getElementById("grade-title").textContent = publicGrade ? `${mapGradeName} · 개념 10개 공개` : String(grade) === "7" ? "7학년 · 워크북 2개 공개" : `${mapGradeName} · 배울 영역`;
     document.getElementById("skill-rows").innerHTML = domains.map(function (domain, index) {
       const localized = spine.domainTitles[domain];
       const domainUnits = units.filter(function (unit) {
@@ -464,16 +481,17 @@
           : "";
         return `<li class="unit-row">
           <div><strong>${unit.title.ko}</strong><small>${unit.clusterId} · ${unit.standardRange}</small>${reasoningText ? `<em class="unit-reasoning">사고력 · ${reasoningText}</em>` : ""}</div>
-          <span class="search-result-status ${publicGrade ? "public" : "metadata"}">${action.state}</span>
+          <span class="search-result-status ${action.public ? "public" : "metadata"}">${action.state}</span>
           <a class="unit-action" href="${action.href}">${action.label}<span aria-hidden="true">→</span></a>
         </li>`;
       }).join("");
+      const domainPublic = domainUnits.some(isPublicUnit);
       return `<details class="domain-directory-row" data-domain-code="${domain}"${index === 0 ? " open" : ""}>
         <summary class="domain-summary">
           <span class="domain-code">${domain}</span>
           <span><strong>${localized.ko}</strong><small>${localized.en}</small></span>
           <span class="domain-count">${domainUnits.length}개 단원</span>
-          <span class="status-chip ${publicGrade ? "public" : "metadata"}">${publicGrade ? "개념 공개" : "구조 공개"}</span>
+          <span class="status-chip ${domainPublic ? "public" : "metadata"}">${publicGrade ? "개념 공개" : domainPublic ? "워크북 공개" : "범위만 공개"}</span>
           <i aria-hidden="true">＋</i>
         </summary>
         <ul class="domain-units">${rows}</ul>
@@ -481,6 +499,8 @@
     }).join("");
     document.getElementById("map-footnote").textContent = publicGrade
       ? `${mapGradeName} · ${domains.length}개 영역 · ${units.length}개 자체 제작 개념 공개 · 문제·워크북·진단은 별도 검수`
+      : String(grade) === "7"
+        ? `7학년 · ${domains.length}개 영역 · 단원 워크북 2개 공개 · 진단은 검수 중`
       : `${mapGradeName} · ${domains.length}개 영역 · ${units.length}개 클러스터 구조 공개 · 학습 자료는 검수 대기`;
   }
 
@@ -510,9 +530,12 @@
         const count = registry.units.filter(function (unit) {
           return sameGrade(unit.grade, grade) && unit.domainCode === domain;
         }).length;
-        const isPublic = String(grade) === "6";
+        const isPublic = registry.units.some(function (unit) {
+          return sameGrade(unit.grade, grade) && unit.domainCode === domain && isPublicUnit(unit);
+        });
+        const stateLabel = String(grade) === "6" ? "개념 공개" : isPublic ? "워크북 공개" : "범위";
         return `<button class="domain-grade-link${isPublic ? " is-public" : ""}" type="button" data-domain-grade="${grade}" data-domain-code="${domain}" aria-label="${localized.ko} ${gradeName(grade)} ${count}개 단원 보기">
-          <strong>${gradeShort(grade)}</strong><small>${count}개</small><span>${isPublic ? "개념 공개" : "구조"}</span>
+          <strong>${gradeShort(grade)}</strong><small>${count}개</small><span>${stateLabel}</span>
         </button>`;
       }).join("");
       return `<article class="domain-overview-row">
