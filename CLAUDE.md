@@ -34,6 +34,7 @@ GitHub Pages 배포: `docssam1/lete-on` 저장소 → `/reading-world/` 경로.
 - **골든벨 원본 대조 작업(2~4권 완료분·4권 남은 묶음 3~6·5~10권)을 이어받을 때는 `fields-classic/question-bank/HANDOVER-GOLDEN-BELL-SOURCE-REVIEW.md`부터 읽는다.** 저장 위치·answerRef 번호·DB 절차·검사 명령·했던 실수가 다 거기 있다. 작업 도구는 `fields-classic/question-bank/tools/golden-bell-book04/`.
 - **골든벨 원본 = 골든벨 자료(골든벨 PPT·판서)뿐.** 본교재(수업용 교재·교사용 지도서) 문항은 골든벨에 넣지 않는다 — 문제은행 권별(`index.html`, `source-data.js` `CURRICULUM`)의 자리다(2026-10-23, 10권에서 잘못 넣었던 지도서 단원을 뺌).
 - **골든벨 그림을 그리거나 색·문구를 고칠 때는 스킬 `.claude/skills/golden-bell-figure-style/SKILL.md`부터 읽는다.** 풀컬러 색표, 각도·분수 말 대신 아이 말(「반 바퀴」), 회사 이름(FC·필즈) 금지. 끝나면 `node fields-classic/question-bank/golden-bell-style-audit.mjs`.
+- **교재 표지·단원 내지·시험지/학습지·문제은행 화면을 만들거나 고칠 때는 스킬 `.claude/skills/gfield-textbook-design/SKILL.md`부터 읽는다.** 파랑 배색·두꺼운 글씨·그림책 장면 표지는 원장이 거른 것(2026-10-23). 시안은 `fields-classic/question-bank/design-draft/`.
 
 ---
 
