@@ -918,19 +918,21 @@ function feedbackFx(ok){
 }
 window.feedbackFx=feedbackFx; // 검증 하네스(Playwright)가 실제 정답 없이도 표정 스와핑을 확인할 수 있게
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
-function coinAdd(n,reason){if(!NM_CHARACTER_STATE.reward(S,n,reason))return;save();
+function coinAdd(n,reason,claimKey){
+  const before=NM_CHARACTER_STATE.balance(S);
+  if(!NM_CHARACTER_STATE.reward(S,n,reason,claimKey))return 0;
+  const awarded=NM_CHARACTER_STATE.balance(S)-before;save();
   /* 화면 전환 없이 코인이 바뀌는 경우(출석 카드 등) 상단 🪙 표시를 바로 맞춘다 */
-  document.querySelectorAll('.nm-coins b').forEach(b=>{b.textContent=S.coins;});}
+  document.querySelectorAll('.nm-coins b').forEach(b=>{b.textContent=S.coins;});
+  return awarded;
+}
 
 /* ============================================================
    포인트 §6 — 출석 + 주간 보너스 (마을세계관-설계.md §6, 연속 배수 없음)
    ============================================================ */
-/* 로컬(단말기) 기준 오늘 날짜 키. UTC로 어긋나면 자정 근처 아이가 손해 보므로
-   반드시 로컬 Date 필드로 조합한다(toISOString은 UTC라 여기서 쓰면 안 됨). */
+/* 일별 보상과 출석 날짜를 모두 한국 시각(KST)으로 맞춘다. */
 function todayKey(){
-  const d=new Date();
-  const p=n=>String(n).padStart(2,'0');
-  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+  return new Date(Date.now()+9*3600000).toISOString().slice(0,10);
 }
 /* 출석 체크 — S.attend는 defaults()에 없다(지시사항): 기존 저장본에 필드가
    없다가 오늘 처음 생기는 것도 "출석 1일째"로 자연스럽게 시작해야 하므로,
@@ -940,7 +942,7 @@ function checkAttendance(){
   const today=todayKey();
   if(S.attend && S.attend.last===today) return null;
   S.attend={last:today, days:(S.attend&&S.attend.days||0)+1};
-  coinAdd(3,'attendance');
+  S.attend.reward=coinAdd(1,'attendance','attendance:'+today);
   return S.attend.days;
 }
 /* 주간 보너스 — "그 주 봉투를 다 풀었다"의 정의(마을세계관-설계.md §6):
@@ -966,9 +968,9 @@ function maybeAwardWeeklyBonus(weekKey){
   if(!S.weeklyBonus) S.weeklyBonus={};
   if(S.weeklyBonus[weekKey]) return;
   S.weeklyBonus[weekKey]=true;
-  coinAdd(10,'weekly');
+  const awarded=coinAdd(3,'weekly','weekly:'+weekKey);save();
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
-  toast(lk('한 주를 다 마쳤어요! 🪙 +10','You finished the week! 🪙 +10','完成了一周！🪙 +10'), true);
+  toast(lk('한 주를 다 마쳤어요!','You finished the week!','完成了一周！')+(awarded?` 🪙 +${awarded}`:''), true);
 }
 
 function pickVoice(arr){return L(arr[Math.floor(Math.random()*arr.length)]);}
@@ -1616,7 +1618,7 @@ function showAttendCard(scr,days){
   card.className='nm-attend-card';
   card.innerHTML=`${window.renderHumanChar?window.renderHumanChar('doc',48):''}
     <div class="nm-attend-text">
-      <b>${lk('오늘도 왔구나! 🪙 +3','You came today! 🪙 +3','今天也来了！🪙 +3')}</b>
+      <b>${lk('오늘도 왔구나!','You came today!','今天也来了！')}${S.attend.reward?` 🪙 +${S.attend.reward}`:''}</b>
       <span>${lk(`출석 ${days}일째`,`Day ${days}`,`第${days}天`)}</span>
     </div>`;
   scr.appendChild(card);
@@ -2141,6 +2143,12 @@ function screenMiniGame(gameId){
   _renderMiniGame();
 }
 
+function settleMiniGameReward(mg,count){
+  if(!mg.done || mg.rewardCoins!=null)return;
+  mg.rewardCoins=coinAdd(count>0?1:0,'game',mg.id+':'+mg.startTs);
+  save();
+}
+
 function _renderMiniGame(){
   const scr=$('#screen');
   const mg=S.miniGame;
@@ -2151,6 +2159,7 @@ function _renderMiniGame(){
   if(mg.id==='make10'){
     const remaining=mg.done?0:Math.max(0,mg.timer-Math.floor((Date.now()-mg.startTs)/1000));
     if(remaining===0&&!mg.done){mg.done=true;save();}
+    settleMiniGameReward(mg,mg.pairs);
 
     const tilesHtml=mg.tiles.map(tl=>{
       if(tl.state==='matched')return`<div class="nm-mg-tile matched">✓</div>`;
@@ -2170,7 +2179,7 @@ function _renderMiniGame(){
       ${mg.done?`<div class="nm-mg-done">
         <div class="nm-mg-done-icon">${mg.pairs===4?'🏆':'🌟'}</div>
         <div class="nm-mg-done-msg">${mg.pairs===4?lk('완벽! 4쌍 모두 맞췄어요!','Perfect! All 4 pairs!','完美！全部配对！'):lk(`${mg.pairs}쌍 맞췄어요! 다시 도전해볼까요?`,`Got ${mg.pairs} pairs! Try again?`,`配对了${mg.pairs}对！再试一次？`)}</div>
-        <div class="nm-mg-done-coins">🪙 +${mg.pairs*3}</div>
+        <div class="nm-mg-done-coins">🪙 +${mg.rewardCoins||0}</div>
         <div class="nm-mg-done-btns">
           <button class="nm-mg-btn" id="mgRetry">${lk('다시 하기','Play Again','再玩')}</button>
           <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
@@ -2192,7 +2201,6 @@ function _renderMiniGame(){
       const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10');save();_renderMiniGame();};
       const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
         clearInterval(mgTimer);mgTimer=null;
-        coinAdd(mg.pairs*3,'game');
         S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10']=true;
         const back=S._fromRoadmap?'roadmap':'town';
         S.view=back;S._fromRoadmap=false;save();render();
@@ -2236,6 +2244,7 @@ function _renderMiniGame(){
   else if(mg.id==='make10_3'){
     const remaining=mg.done?0:Math.max(0,mg.timer-Math.floor((Date.now()-mg.startTs)/1000));
     if(remaining===0&&!mg.done){mg.done=true;save();}
+    settleMiniGameReward(mg,mg.triples);
 
     const selSet=new Set(mg.selected);
     const tilesHtml=mg.tiles.map(tl=>{
@@ -2258,7 +2267,7 @@ function _renderMiniGame(){
       ${mg.done?`<div class="nm-mg-done">
         <div class="nm-mg-done-icon">${mg.triples===4?'🏆':'🌟'}</div>
         <div class="nm-mg-done-msg">${mg.triples===4?lk('완벽! 4세트 모두 찾았어요!','Perfect! All 4 sets!','完美！全部找到！'):lk(`${mg.triples}세트 찾았어요! 다시 도전?`,`Got ${mg.triples} sets! Try again?`,`找到${mg.triples}组！再试？`)}</div>
-        <div class="nm-mg-done-coins">🪙 +${mg.triples*5}</div>
+        <div class="nm-mg-done-coins">🪙 +${mg.rewardCoins||0}</div>
         <div class="nm-mg-done-btns">
           <button class="nm-mg-btn" id="mgRetry">${lk('다시 하기','Play Again','再玩')}</button>
           <button class="nm-mg-btn" id="mgContinue">${lk('계속 공부','Keep Learning','继续学习')}</button>
@@ -2275,7 +2284,7 @@ function _renderMiniGame(){
     if(mg.done){
       const rb=$('#mgRetry');if(rb)rb.onclick=()=>{clearInterval(mgTimer);mgTimer=null;S.miniGame=_mgInit('make10_3');save();_renderMiniGame();};
       const cb=$('#mgContinue');if(cb)cb.onclick=()=>{
-        clearInterval(mgTimer);mgTimer=null;coinAdd(mg.triples*5,'game');
+        clearInterval(mgTimer);mgTimer=null;
         S.gamesPlayed=S.gamesPlayed||{};S.gamesPlayed['make10_3']=true;
         const back=S._fromRoadmap?'roadmap':'town';S.view=back;S._fromRoadmap=false;save();render();
       };
@@ -2831,7 +2840,8 @@ function courseOutlineHtml(c){
       const source=group.sourceIndices.map(j=>c.sessions[j]);
       const units=[...new Set(source.flatMap(s=>s.magic||[]))].map(nameOf);
       const topics=[...new Set(source.flatMap(s=>(s.drills||s.pool||[]).map(d=>d.t)).concat((group.extraPractice||[]).map(d=>d.t)))].map(nameOf);
-      return `<li class="nm-cs-ses"><span class="nm-cs-sesno">${i+1}</span><span class="nm-cs-sestxt"><b>${lk('교과 연산 묶음','Curriculum practice bundle','课内运算学习组')} ${i+1}</b><small>${lk('기존 회차','Original sessions','原课次')} ${group.startSession}–${group.endSession}${source.some(s=>s.test)?' · '+lk('과정 확인 포함','includes course check','含课程检查'):''}</small>${units.length?`<small>${units.join(' · ')}</small>`:''}<small>${topics.join(' · ')}</small></span></li>`;
+      const names=[...new Set([...units,...topics])],check=source.some(s=>s.test);
+      return `<li class="nm-cs-ses"><span class="nm-cs-sesno">${i+1}</span><span class="nm-cs-sestxt"><b>${check?lk('과정 점검','Course check','课程检查'):names[0]||lk('계산 연습','Calculation practice','计算练习')}</b>${check?`<small>${names.join(' · ')}</small>`:names.length>1?`<small>${names.slice(1).join(' · ')}</small>`:''}</span></li>`;
     }).join('');
     return `<ul class="nm-cs-list">${rows}</ul>`;
   }
@@ -2898,6 +2908,7 @@ function openCourseSheet(key){
   const c=(window.NM_COURSES||{})[key];
   if(!c) return;
   if(document.getElementById('nmCourseSheet')) return;
+  const previousFocus=document.activeElement;
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
   const num=String(key).replace(/^C/,'');
@@ -2916,10 +2927,10 @@ function openCourseSheet(key){
   const ready=readinessNote(c.tier);
 
   const html=`<div class="nm-gate-overlay nm-cs-overlay" id="nmCourseSheet">
-    <div class="nm-gate-card nm-cs-card" style="--acc:${tierDef.accent}">
+    <div class="nm-gate-card nm-cs-card" role="dialog" aria-modal="true" aria-labelledby="csTitle" aria-describedby="csNote" style="--acc:${tierDef.accent}">
       <button class="nm-gate-x" id="csX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
       <div class="nm-cs-eyebrow">${esc(L(tierDef.name))} · ${esc(L(tierDef.band))}</div>
-      <h3 class="nm-cs-title"><span class="nm-cs-num">${lk('과정','Course','课程')} ${num}</span>${esc(L(c.title))}</h3>
+      <h3 class="nm-cs-title" id="csTitle"><span class="nm-cs-num">${lk('과정','Course','课程')} ${num}</span>${esc(L(c.title))}</h3>
       ${stateTxt?`<div class="nm-cs-state">${stateTxt}</div>`:''}
       ${prog.total?`<div class="nm-cs-prog">
         <div class="nm-cs-bar"><span style="width:${pct}%"></span></div>
@@ -2938,28 +2949,40 @@ function openCourseSheet(key){
       <div class="nm-cs-btns">
         ${built?`<button class="nm-btn full" id="csStart">${startTxt}</button>`
           :`<button class="nm-btn full" id="csStart" disabled>📦 ${lk('아직 준비 중이에요','Not ready yet','还在准备中')}</button>`}
-        <button class="nm-btn full ghost" id="csPeekBtn">👀 ${lk('둘러보기','Take a look','看一看')}</button>
+        <button class="nm-btn full ghost" id="csPeekBtn" aria-expanded="false" aria-controls="csPeek">👀 ${lk('둘러보기','Take a look','看一看')}</button>
       </div>
-      <p class="nm-cs-note">${lk('둘러봐도 학습은 시작되지 않아요. 시작점은 언제든 다시 고를 수 있어요.',
+      <p class="nm-cs-note" id="csNote">${lk('둘러봐도 학습은 시작되지 않아요. 시작점은 언제든 다시 고를 수 있어요.',
         'Looking around does not start anything. You can pick a different start any time.',
         '只是看一看不会开始学习。起点随时可以重新选择。')}</p>
     </div>
   </div>`;
   document.body.insertAdjacentHTML('beforeend', html);
-  const close=()=>{ const m=document.getElementById('nmCourseSheet'); if(m)m.remove(); };
+  const modal=document.getElementById('nmCourseSheet');
+  const close=()=>{ modal.remove();if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true}); };
+  modal.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();return;}
+    if(e.key!=='Tab')return;
+    const buttons=[...modal.querySelectorAll('button:not([disabled]),a[href],input,select,[tabindex="0"]')].filter(el=>el.getClientRects().length);
+    const first=buttons[0],last=buttons[buttons.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  });
   document.getElementById('csX').onclick=close;
   document.getElementById('nmCourseSheet').addEventListener('click', e=>{ if(e.target.id==='nmCourseSheet') close(); });
   const peekBtn=document.getElementById('csPeekBtn'), peek=document.getElementById('csPeek');
   peekBtn.onclick=()=>{
     const open=peek.hidden;
     peek.hidden=!open;
+    peekBtn.setAttribute('aria-expanded',String(open));
     peekBtn.textContent=open?`👀 ${lk('접기','Hide','收起')}`:`👀 ${lk('둘러보기','Take a look','看一看')}`;
-    if(open) peek.scrollIntoView({block:'nearest',behavior:'smooth'});
+    if(open) peek.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   };
+  document.getElementById('csX').focus({preventScroll:true});
   const ageBtn=document.getElementById('csAge');
   if(ageBtn) ageBtn.onclick=()=>{ close(); openAgeSheet(()=>{ render(); openCourseSheet(key); }); };
   const startBtn=document.getElementById('csStart');
   if(built) startBtn.onclick=()=>{
+    roadAssessmentReturn=null;
     close();
     /* 지금 있는 과정이 아니면 시작점을 이 과정으로 다시 찍는다 — 시작점 고르기
        화면(screenStartPick)과 정확히 같은 기록 방식이라 두 경로가 갈리지 않는다. */
@@ -3151,8 +3174,8 @@ function finishCheckup(k){
      한 점검당 한 번만 준다(다시 점검하기로 코인을 반복해서 벌 수 없게). */
   if(!k.rewarded){
     k.rewarded=true;
-    const got=(k.calcOk+(k.creOk||0)+k.wpOk)*3;
-    if(got>0 && !prevRewarded) coinAdd(got,'history');
+    const got=k.calcOk+(k.creOk||0)+k.wpOk;
+    k.rewardCoins=got>0&&!prevRewarded?coinAdd(got,'checkup','checkup:'+k.num):0;
   }
   save();
 }
@@ -3825,9 +3848,12 @@ function middleStudyGuidanceState(){
 }
 function renderPersonalPlan(){
   if(S.view!=='courseroad'||!window.NM_LEARNING_PLAN||!window.NM_COURSES)return;
-  const bar=document.querySelector('#screen .nm-cr-header, #screen .nm-unit-bar');if(!bar)return;
+  const body=document.getElementById('crBody');if(!body)return;
+  let zone=document.getElementById('nmRoadPlanZone');
+  if(!zone){zone=document.createElement('div');zone.id='nmRoadPlanZone';body.querySelector('.nm-cr-view-switch').insertAdjacentElement('afterend',zone);}
+  zone.hidden=!document.getElementById('crVisual').hidden;
   let box=document.getElementById('nmPersonalPlan');
-  if(!box){box=document.createElement('details');box.id='nmPersonalPlan';box.className='nm-personal-plan';bar.insertAdjacentElement('afterend',box);}
+  if(!box){box=document.createElement('details');box.id='nmPersonalPlan';box.className='nm-personal-plan';}
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
   const p=S.adminPlan,now=new Date(),today=new Date(+now+9*3600000).toISOString().slice(0,10);
   const highPlan=highWeeklySchedule(currentCourseKey());
@@ -3835,11 +3861,17 @@ function renderPersonalPlan(){
   let result;try{result=NM_LEARNING_PLAN.project(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});}catch(e){return;}
   const reference=NM_LEARNING_PLAN.recommend(NM_COURSES,settings,{lang:S.lang});
   let standardBox=document.getElementById('nmStandardPlan');
-  if(!standardBox){standardBox=document.createElement('section');standardBox.id='nmStandardPlan';standardBox.className='nm-personal-plan';box.insertAdjacentElement('beforebegin',standardBox);}
+  if(!standardBox){standardBox=document.createElement('section');standardBox.id='nmStandardPlan';standardBox.className='nm-personal-plan';standardBox.setAttribute('aria-labelledby','nmStandardPlanTitle');}
+  zone.append(standardBox,box);
   const standard=NM_LEARNING_PLAN.standard(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});
-  const gradeEnds=new Set([31,34,37,48,57,69,73]);
-  const standardEnds=standard.milestones.filter(m=>gradeEnds.has(+m.key.slice(1))).slice(0,7);
-  standardBox.innerHTML=`<div class="nm-personal-plan-body"><h3>${lk('현재 진도에서 이어지는 표준 로드맵','Standard roadmap from your current progress','从当前进度开始的标准路线')}</h3><p>${lk('중등은 각 학년의 1학기 연산을 기본 약 2.5개월로 잡아요. 심화를 선택하면 기본 포함 총 약 4개월이에요. 고등 각 과목은 약 3개월이며 실제 학습에 따라 달라져요.','Each middle-school grade’s first-semester arithmetic targets about 2.5 months, or about 4 months including optional deeper study. Each high-school subject targets 3 months. Actual pace may vary.','初中各年级上学期运算基础约2.5个月，选择进阶后合计约4个月。高中每科约3个月，日期随实际学习调整。')}</p>${standardEnds.map(m=>`<p><b>${esc(m.date)}</b> · ${esc(m.key+' · '+m.title)} <small>${esc(m.schoolLabel)}</small></p>`).join('')}<p>${lk('아래에서 표준·속진과 5단계 속도를 비교한 뒤 적용할 수 있어요. 이미 배운 앞부분과 완료 기록은 바꾸지 않아요.','Compare standard or accelerated study and five pace steps below, then apply. Earlier completed work is preserved.','可在下方比较标准、加速与5档速度后应用，已学内容和完成记录保留。')}</p></div>`;
+  const gradeEnds=new Set([0,7,16,25,28,31,34,37,48,57,69,73]);
+  const standardEnds=standard.milestones.filter(m=>gradeEnds.has(+m.key.slice(1)));
+  const horizonOpen=!!standardBox.querySelector('.nm-plan-horizon')?.open;
+  const milestone=m=>`<li><span class="nm-plan-date">${esc(m.date)}<small>${esc(m.schoolLabel)}</small></span><span class="nm-plan-course">${esc(m.title)}<small>${lk('과정','Course','课程')} ${esc(m.key.slice(1))} · ${lk('완료 예상','Estimated finish','预计完成')}</small></span></li>`;
+  const first=standardEnds[0],rest=standardEnds.slice(1),from=NM_COURSES[settings.courseKey];
+  const middle=/^middle/.test(from.tier),secondary=!!from.studyPlan;
+  const scope=middle?lk('중등 기본 약 2.5개월 · 심화 선택 시 총 약 4개월','Middle-school core: about 2.5 months · about 4 months with deeper study','初中基础约2.5个月 · 含进阶合计约4个月'):secondary?lk('고등 연산은 과목마다 기본 약 3개월이에요.','Each high-school arithmetic subject targets about 3 months.','高中运算每科基础约3个月。'):lk('현재 시작점에서 표준 속도로 이어가는 계획이에요.','A standard-pace plan from your current starting point.','从当前起点按标准速度继续的计划。');
+  standardBox.innerHTML=`<div class="nm-personal-plan-body"><div class="nm-plan-heading"><span class="nm-cr-eyebrow">${lk('앞으로의 학습','Your learning ahead','接下来的学习')}</span><h3 id="nmStandardPlanTitle">${lk('표준 로드맵','Standard roadmap','标准路线')}</h3></div><p class="nm-plan-origin">${lk('시작점','Starting point','起点')} · ${lk('과정','Course','课程')} ${esc(settings.courseKey.slice(1))} ${esc(L(from.title))}</p>${first?`<ol class="nm-plan-milestones" aria-label="${lk('다음 완료 예상','Next estimated finish','下一预计完成')}">${milestone(first)}</ol>`:''}<p class="nm-plan-scope">${scope}</p>${rest.length?`<details class="nm-plan-horizon"${horizonOpen?' open':''}><summary>${lk('이후 완료 예상일 보기','See later finish dates','查看之后的完成日期')}</summary><ol class="nm-plan-milestones">${rest.map(milestone).join('')}</ol></details>`:''}<p class="nm-plan-note">${lk('실제 학습에 따라 날짜는 달라질 수 있어요. 속도를 바꿔도 완료 기록은 그대로예요.','Dates may change with actual study. Changing pace preserves completed work.','日期随实际学习调整，更改速度不会改变完成记录。')}</p></div>`;
   const guidance=middleStudyGuidanceState();
   if(guidance&&window.NM_MIDDLE_STUDY_GUIDANCE){
     const host=document.createElement('div');host.id='nmMiddleStudyGuidance';standardBox.querySelector('.nm-personal-plan-body h3').insertAdjacentElement('afterend',host);
@@ -3866,6 +3898,7 @@ function screenCourseRoad(){
   }
 
   const curKey=currentCourseKey();
+  const fromAssessment=!!roadAssessmentReturn&&roadAssessmentReturn===S._diag&&S._diag.phase==='result';
   const list=roadCourseList();
   const lastNum=list.length?list[list.length-1].num:0;
   const curNum=Number(String(curKey).replace(/^C/,''));
@@ -3930,7 +3963,7 @@ function screenCourseRoad(){
   scr.innerHTML=`<div class="nm-cr-wrap nm-cr-desk">
     <div class="nm-cr-header">
       <div class="nm-cr-titlerow">
-        <button class="nm-back" id="crBack">${t('back')}</button>
+        <button class="nm-back" id="crBack">${fromAssessment?lk('진단 결과','Assessment result','测评结果'):t('back')}</button>
         <div class="nm-cr-title"><span class="nm-cr-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 20.5c0-4.6 9.5-3.2 9.5-7.6 0-3.6-6.2-3.2-6.2-6.6" stroke-dasharray="2.4 2.2"/><circle cx="5.5" cy="20" r="1.4" fill="currentColor" stroke="none"/><path d="M15.6 3.2v8M15.6 3.6h4.6l-1.5 2 1.5 2h-4.6"/></svg></span><span class="nm-cr-title-t">${lk('연산 로드맵','Course Road','运算路线图')}</span></div>
         <button class="nm-cr-diagbtn" id="crDiag">${crIc('compass')}<span>${lk('진단하기','Level Check','水平测评')}</span></button>
         <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}" aria-label="${lk('시작점 고르기','Pick your start','选择起点')}">${crIc('target')}</button>
@@ -3940,6 +3973,7 @@ function screenCourseRoad(){
       <div class="nm-cr-view-switch" role="group" aria-label="${lk('로드맵 보기 방식','Roadmap view','路线图视图')}">
         <button id="crViewRoad" type="button" aria-pressed="${roadView==='road'}">${crIc('steps')}${lk('길 로드맵','Course road','课程道路')}</button>
         <button id="crViewMap" type="button" aria-pressed="${roadView==='map'}" ${mapGroups.length?'':'disabled'}>${crIc('compass')}${lk('그림 지도','Illustrated map','图画地图')}</button>
+        <button class="nm-cr-locate" id="crCurrent" type="button" title="${lk('내 과정으로 이동','Go to my course','前往我的课程')}" aria-label="${lk('내 과정으로 이동','Go to my course','前往我的课程')}">${crIc('target')}</button>
       </div>
       <div class="nm-cr-hero" id="crHero"></div>
       <section class="nm-vmap" id="crVisual" aria-labelledby="crVisualTitle" hidden>
@@ -3950,6 +3984,9 @@ function screenCourseRoad(){
                    'The guides below the signs introduce each group of courses. Explore the details on the course road.',
                    '路标下的角色会介绍各组课程。具体课程可在课程道路中查看。')}</p>
         </div>
+        <nav class="nm-vmap-jumps" aria-label="${lk('지도 단계 바로가기','Map stage shortcuts','地图阶段快捷入口')}">
+          ${mapGroups.map((g,i)=>`<button type="button" data-map-group="${g.key}" aria-pressed="${g.key===selectedMapGroup}"><span>${i+1}</span>${esc(L(g.title))}</button>`).join('')}
+        </nav>
         <div class="nm-vmap-legend" aria-label="${lk('지도 표식 설명','Map marker legend','地图标记说明')}">
           ${learnedCourseNum!=null?`<span class="nm-vmap-legend-item learning"><i aria-hidden="true"></i>${lk('실제 학습 위치','Studied location','实际学习位置')}</span>`:''}
           ${recommendationNum!=null?`<span class="nm-vmap-legend-item recommendation"><i aria-hidden="true"></i>${recommendationLabel}</span>`:''}
@@ -3991,9 +4028,9 @@ function screenCourseRoad(){
       <div id="crList"></div>
     </div>
   </div>`;
-  $('#crBack').onclick=()=>{S._roadFocus=null;S.view='town';save();render();};
+  $('#crBack').onclick=()=>{S._roadFocus=null;S.view=fromAssessment?'placement':'town';roadAssessmentReturn=null;save();render();};
   $('#crDiag').onclick=()=>startPlacement();
-  $('#crPick').onclick=()=>{S.view='startpick';save();render();};
+  $('#crPick').onclick=()=>{roadAssessmentReturn=null;S.view='startpick';save();render();};
   $('#crWho').onclick=()=>openStudentSwitch();
 
   const body=$('#crBody');
@@ -4056,7 +4093,7 @@ function screenCourseRoad(){
   }
   function centerMapStop(){
     if(!mapScrollEl||visualEl.hidden)return;
-    const stop=visualEl.querySelector(`[data-map-group="${selectedMapGroup}"]`);
+    const stop=visualEl.querySelector(`.nm-vmap-stop[data-map-group="${selectedMapGroup}"]`);
     if(stop)mapScrollEl.scrollLeft=Math.max(0,stop.offsetLeft+stop.offsetWidth/2-mapScrollEl.clientWidth/2);
   }
   function startRoadHero(){
@@ -4071,6 +4108,7 @@ function screenCourseRoad(){
     visualEl.hidden=!isMap;
     if(heroEl&&heroEl.isConnected)heroEl.hidden=isMap;
     listEl.hidden=isMap;
+    const plans=$('#nmRoadPlanZone');if(plans)plans.hidden=isMap;
     $('#crViewRoad').setAttribute('aria-pressed',String(!isMap));
     $('#crViewMap').setAttribute('aria-pressed',String(isMap));
     if(!isMap)startRoadHero();
@@ -4079,13 +4117,19 @@ function screenCourseRoad(){
   }
   $('#crViewRoad').onclick=()=>setRoadView('road',true);
   $('#crViewMap').onclick=()=>setRoadView('map',true);
+  $('#crCurrent').onclick=()=>{
+    setRoadView('road',true);
+    const node=listEl.querySelector(`.nm-cr-node[data-c="${curKey}"]`);
+    if(node){roadFlashRow(node,body);node.focus({preventScroll:true});}
+  };
   visualEl.querySelectorAll('[data-map-group]').forEach(el=>{
     el.onclick=ev=>{
       selectedMapGroup=el.dataset.mapGroup;
       drawMapDetail();
+      centerMapStop();
       const guide=mapGroups.find(g=>g.key===selectedMapGroup).guide;
       $('#crMapLive').textContent=`${L(guide.name)}: ${L(guide.say)}`;
-      mapDetailEl.scrollIntoView({block:'start',behavior:window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+      body.scrollTo({top:body.scrollTop+mapDetailEl.getBoundingClientRect().top-body.getBoundingClientRect().top-56,behavior:window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
       if(ev.detail===0)mapDetailEl.focus({preventScroll:true});
     };
   });
@@ -4754,7 +4798,9 @@ function placementAgeEntry(opt){
 }
 
 let assessmentChooseMethod=true;
+let roadAssessmentReturn=null;
 function startPlacement(){
+  roadAssessmentReturn=null;
   const ui=window.NM_PLACEMENT_UI,paths=window.NM_PLACEMENT_PATHS;
   if(!ui)S._diag=null;
   else if(!S._diag||S._diag.version!==ui.version||S._diag.phase==='result'){
@@ -4967,7 +5013,7 @@ function screenPlacement(){
     paceManaged:!!S.adminPlan,
     onPaceApply:p=>{if(S.adminPlan||!ROAD_MULTS_LIST.includes(p.speed)||!['w1','w2'].includes(p.cadence))return false;S.roadSpeed=p.speed;S.roadCadence=p.cadence;S.roadManual=true;save();return true;},
     pick:()=>{S._diag=null;S.view='startpick';save();render();},
-    seeCourse:key=>{S._diag=null;S._roadFocus=key;S.view='courseroad';save();render();},
+    seeCourse:key=>{roadAssessmentReturn=S._diag;S._roadFocus=key;S.view='courseroad';save();render();},
     onResult:(result,run)=>{
       if(run.purpose==='achievement'){
         const record={at:Date.now(),seed:run.seed,source:run.responseSource||'online',baselineId:run.plan.baseline.id,
@@ -5620,55 +5666,26 @@ function currentCourseKey(){
   /* 진도가 전혀 없는데 진단(또는 직접 고르기)이 시작점을 정해 뒀으면 그 과정을
      "지금 여기"로 삼는다 — 로드맵의 지금 여기·다음 목표, 시작점 고르기의
      기본 펼침 탭이 이 값을 따른다. syncProgressUnlocks()는 캐릭터 해금 판정이라
-     일부러 이 함수를 안 쓴다(§syncProgressUnlocks 주석) — 그대로 둔다. */
+     진단 시작점만으로 선물이 지급되지 않게 실제 완료 기록을 따로 확인한다. */
   if(S.placement && S.placement.course && (window.NM_COURSES||{})[S.placement.course]) return S.placement.course;
   return 'C1';
 }
-/* 숫자 캐릭터 해금의 "티어" 그룹 경계 — 캐릭터-승급-설계.md §1 표 그대로
-   (level1=과정10, level2=16, level3=25, challenge=28, middle(1~3 통합)=35,
-   highmath(1~2 통합)=39가 각 그룹의 마지막 과정). numbers 항목의 course는
-   항상 이 여섯 값 중 하나(그 그룹의 대표값)라, 과정 order를 이 경계로
-   그룹핑해 "같은 그룹 이상이면 해금"으로 비교한다 — "그 티어에 도달하면"
-   (§1)은 그 티어의 *마지막 과정*이 아니라 티어 전체를 가리키므로, 예를 들어
-   level3의 첫 과정(17)만 밟아도 level3 보상(33·42·50)이 전부 열려야 한다.
-   symbols는 반대로 "배우는 과정" 그 자체가 문턱이라(§2) 이 그룹핑을 쓰지
-   않고 과정 order를 item.course와 직접 비교한다. */
-const NUMBER_TIER_GROUP_BOUNDS = [10,16,25,28,35,39];
-function numberTierGroupIdx(order){
-  for(let i=0;i<NUMBER_TIER_GROUP_BOUNDS.length;i++){
-    if(order <= NUMBER_TIER_GROUP_BOUNDS[i]) return i;
-  }
-  return NUMBER_TIER_GROUP_BOUNDS.length - 1; // 하이매쓰 이후도 최상위 그룹으로 취급
-}
-/* 과정 진도 → 캐릭터 해금(캐릭터-승급-설계.md §1·§3, §0 수정사항). 되돌아가도
-   잠기지 않는다: character_unlocked는 채우기만 하고 지우지 않는 멱등 함수라
-   현재 과정이 낮아져도(다른 유닛을 다시 만져 currentCourseKey가 내려가도) 이미
-   연 항목은 계속 unlocked로 남는다. render()마다 호출.
-   진도가 전혀 없는 완전 신규 학생(mostRecentTouchedUnit()===null)은 order=0 —
-   currentCourseKey()는 이럴 때 표시용으로 'C1'을 대신 반환하지만(§ currentCourseKey
-   주석) 그 기본값을 여기서 "과정1 도달"로 오인하면 신규 학생이 아무것도 안 했는데
-   과정1 보상(기호 plus)이 바로 열려 버린다 — 그래서 currentCourseKey()를 재사용하지
-   않고 mostRecentTouchedUnit()을 직접 봐서 진짜 진도가 있을 때만 계산한다. */
+/* 미래 무료 선물은 네 과정의 실제 완료에만 지급한다. 기존 보유 항목은
+   되잠그지 않으며 진단 시작점 선택·과정 방문만으로 새 항목을 열지 않는다. */
 function syncProgressUnlocks(){
   if(!window.NM_COURSES || !window.NM_AVATAR) return;
-  const uid = mostRecentTouchedUnit();
-  const cid = uid ? courseForUnit(uid) : null;
-  const course = cid ? NM_COURSES[cid] : null;
-  const order = course ? course.order : 0;
   if(!S.character_unlocked) S.character_unlocked = {};
   if(!S.seenUnlocks) S.seenUnlocks = {};
-  if(order <= 0) return; // 진도 없음 — 아무것도 안 연다
-  const groupIdx = numberTierGroupIdx(order);
   const newNumbers = [], newSymbols = [];
-  (NM_AVATAR.numbers || []).forEach(item => {
-    if(item.course == null || groupIdx < numberTierGroupIdx(item.course)) return;
-    const uk = 'number_' + item.id;
-    if(!S.character_unlocked[uk]){ S.character_unlocked[uk] = true; newNumbers.push(item); }
-  });
-  (NM_AVATAR.symbols || []).forEach(item => {
-    if(item.course == null || order < item.course) return;
-    const uk = 'symbol_' + item.id;
-    if(!S.character_unlocked[uk]){ S.character_unlocked[uk] = true; newSymbols.push(item); }
+  (NM_CHARACTER_STATE.gifts||[]).forEach(gift=>{
+    const course=NM_COURSES['C'+gift.course];
+    if(!course||!courseConquered(course))return;
+    const items=gift.type==='number'?NM_AVATAR.numbers:NM_AVATAR.symbols;
+    const item=(items||[]).find(x=>String(x.id)===String(gift.id));
+    const key=gift.type+'_'+gift.id;
+    if(!item||S.character_unlocked[key])return;
+    S.character_unlocked[key]=true;
+    (gift.type==='number'?newNumbers:newSymbols).push(item);
   });
   if(!newNumbers.length && !newSymbols.length) return;
   save();
@@ -5843,7 +5860,7 @@ function screenBoost(){
     S.boost.log.push({weekKey:b.weekKey, thread:b.threadId, level:b.level, score:b.score, need:b.need, ts:Date.now()});
     if(S.boost.log.length>30) S.boost.log.splice(0, S.boost.log.length-30);
     const already = !!S._boostRewarded;
-    if(!already){ coinAdd(6,'boost'); S._boostRewarded=true; }
+    if(!already){ b.rewardCoins=coinAdd(2,'boost','boost:'+b.weekKey); S._boostRewarded=true; }
     maybeAwardWeeklyBonus(b.weekKey); /* §6 — 몸풀기까지 끝나면 그 주가 완료됐을 수 있다 */
     scr.innerHTML=`<div class="nm-unit-bar">
       <div class="nm-unit-title">🌟 ${lk('몸풀기 완료!','Warm-up Complete!','热身完成！')}</div>
@@ -5853,7 +5870,7 @@ function screenBoost(){
         <div class="nm-numi big">${window.renderNumiChar?window.renderNumiChar(S.character,56):''}</div>
         <div class="nm-card-h">${lk('오늘도 한 걸음 더 튼튼해졌어요!','You just got a little stronger!','今天又变得更棒了！')}</div>
         <div class="nm-score">${b.score} / ${b.need}</div>
-        <div class="nm-stamp-coins">🪙 +6 ${t('coins')}</div>
+        <div class="nm-stamp-coins">🪙 +${b.rewardCoins||0} ${t('coins')}</div>
         <button class="nm-btn full" id="boostToMailbox">${lk('학습지로 돌아가기','Back to worksheet','返回学习单')}</button>
       </div>
     </div>`;
@@ -6169,6 +6186,7 @@ function mountTown3DInto(scr){
   const C3_SYMS=['plus','minus','times','divide','equal','percent','pi','sigma','infinity','sqrt'];
   const buddyModel=(()=>{
     const c=S.character||{};
+    if(window.NM_COSMETICS&&NM_COSMETICS.needsSprite(c))return null;
     let id=c.symbol!=null?c.symbol:c.number;
     if(typeof id==='string'&&/^\d+$/.test(id))id=+id;
     const ok=(typeof id==='number'&&id>=0&&id<=10&&Math.floor(id)===id)||C3_SYMS.indexOf(id)>=0;
@@ -7349,7 +7367,7 @@ function bindHistQuizPuzzle(scr,uid,comic){
       S.histQuiz.done[uid]=true;
       hqPuzzle.checked='ok';
       save();
-      if(!already){ coinAdd(2,'training'); toast('🪙 +2',true); }
+      if(!already){ const awarded=coinAdd(1,'training','training:'+uid);if(awarded)toast('🪙 +'+awarded,true); }
       screenHistQuiz();
     }else{
       hqPuzzle.checked='no';                              // 고른 순서는 그대로 둔다 — 다시 보고 고치게
@@ -7827,8 +7845,8 @@ function stepStamp(body,u){
   const missing=requiredKeys.find(k=>!stepDone(S.unit,k));
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
-  let newLineageBadge=null;
-  if(!already){coinAdd(s.coins||20,'unit');S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
+  let newLineageBadge=null, awarded=0;
+  if(!already){awarded=coinAdd(s.coins||20,'unit','unit:'+S.unit);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
     S.progress[S.unit].steps=S.progress[S.unit].steps||{};S.progress[S.unit].steps.stamp=true; /* 로드맵 별점이 stepDone('stamp')를 보므로 반드시 기록(기존 누락 버그 수정) */
     S.progress[S.unit].touchedAt=Date.now();
     /* N-15(수의 나라 마지막 유닛) 최초 완주 — R0 추천 배너를 다음 마을 진입 때 1회 띄우도록 예약.
@@ -7842,7 +7860,7 @@ function stepStamp(body,u){
     <div class="nm-stamp-seal">🏅</div>
     <div class="nm-card-h">${t('stampGet')}</div>
     <div class="nm-stamp-label">${L(s.label)}</div>
-    <div class="nm-stamp-coins">🪙 +${s.coins||20} ${t('coins')}</div>
+    <div class="nm-stamp-coins">🪙 +${awarded} ${t('coins')}</div>
     ${evo}
     <button class="nm-btn full" id="toMap">${t('toMap')} →</button>
   </div>`;
