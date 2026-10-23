@@ -24,6 +24,7 @@ if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
     await page.goto(`${origin}/hselementary/question-bank/`, { waitUntil: "domcontentloaded", timeout: 10000 });
     await page.locator("#gradeFilter [data-grade='5']").click();
     await page.locator("#termFilter [data-term='2']").click();
+    await page.waitForFunction(() => Array.from(document.querySelector("#unitFilter").options).some(option => option.value === "5-2-u1"));
     await page.locator("#unitFilter").selectOption("5-2-u1");
     const checkbox = page.locator(`#typeList input[data-type-id='${id}']`);
     assert.equal(await checkbox.isDisabled(), false, "Source-verified Mission 2 is available");
