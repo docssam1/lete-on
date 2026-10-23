@@ -4681,10 +4681,12 @@ function placementAgeEntry(opt){
   return idx>=0?idx:0;
 }
 
+let assessmentChooseMethod=true;
 function startPlacement(){
   const ui=window.NM_PLACEMENT_UI,paths=window.NM_PLACEMENT_PATHS;
   if(!ui)S._diag=null;
   else if(!S._diag||S._diag.version!==ui.version||S._diag.phase==='result'){
+    assessmentChooseMethod=false;
     const previous=S._diag&&S._diag.version===ui.version&&S._diag.selection
       ?S._diag.selection:S.placement&&S.placement.selection;
     const previousConfig=S.placement&&S.placement.pathRecommendation&&S.placement.pathRecommendation.config;
@@ -4700,7 +4702,7 @@ function startPlacement(){
       if(sa.birthYear)sel.birthYear=sa.birthYear;
       if(sel.scopeSource==='grade'){sel.baselineId='';sel.studyBand='';}
     }
-  }
+  }else assessmentChooseMethod=['question','paper'].includes(S._diag.phase);
   // Re-entry resumes a compatible fixed plan/setup; it never regenerates
   // answered questions or reinterprets a legacy adaptive run.
   S.view='placement'; save(); render();
@@ -4876,14 +4878,18 @@ function screenPlacement(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
   const scr=$('#screen'), ui=window.NM_PLACEMENT_UI;
-  const close=()=>{S._diag=null;S.view='town';save();render();};
+  const close=()=>{S.view='town';save();render();};
   if(!ui){
     scr.innerHTML='<div class="nm-step-body"><p role="alert">'+esc(L({ko:'진단 자료를 불러오지 못했습니다. 새로고침 후 다시 시작해 주세요.',en:'Assessment data could not be loaded. Please reload.',zh:'未能加载测评资料，请刷新。'}))+'</p><button class="nm-btn" id="pdLoadBack">'+t('back')+'</button></div>';
     $('#pdLoadBack').onclick=close;return;
   }
   // A saved adaptive run cannot be interpreted as a fixed 6/10/4 plan.
   if(!S._diag||S._diag.version!==ui.version){S._diag=ui.initial();save();}
+  if(S._diag.phase==='setup')assessmentChooseMethod=false;
   ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,
+    chooseMethod:assessmentChooseMethod,checkHistory:()=>S.achievementChecks||[],
+    onAttemptStart:()=>{assessmentChooseMethod=false;},
+    onMethodChoose:phase=>{assessmentChooseMethod=false;S._diag.phase=phase;S._diag.questionStartedAt=Date.now();save();render();},
     planSettings:{speed:S.roadSpeed||1,pace:S.roadPace||'p2',cadence:S.roadCadence||'w1'},
     onProfile:profile=>{S.schoolAge={entryYear:profile.entryYear,birthYear:profile.birthYear,setAt:Date.now()};save();},
     paceManaged:!!S.adminPlan,
@@ -4891,6 +4897,14 @@ function screenPlacement(){
     pick:()=>{S._diag=null;S.view='startpick';save();render();},
     seeCourse:key=>{S._diag=null;S._roadFocus=key;S.view='courseroad';save();render();},
     onResult:(result,run)=>{
+      if(run.purpose==='achievement'){
+        const record={at:Date.now(),seed:run.seed,source:run.responseSource||'online',baselineId:run.plan.baseline.id,
+          asked:result.asked,correct:result.correct,bands:JSON.parse(JSON.stringify(result.bands)),
+          domains:JSON.parse(JSON.stringify(result.domains)),profile:JSON.parse(JSON.stringify(result.profile)),
+          selection:JSON.parse(JSON.stringify(run.selection))};
+        S.achievementChecks=[...(S.achievementChecks||[]).filter(x=>x.seed!==run.seed),record].slice(-20);
+        return;
+      }
       S.placement={at:Date.now(),version:ui.version,source:run.responseSource||'online',course:result.recommendation.course,
         session:result.recommendation.session,asked:result.asked,correct:result.correct,
         age:run.selection.age||null,grade:run.selection.grade||null,
