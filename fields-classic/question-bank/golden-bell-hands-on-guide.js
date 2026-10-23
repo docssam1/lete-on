@@ -1,4 +1,4 @@
-import { clockValueAfterQuarterTurns, unfoldTargets } from "./golden-bell-hands-on-models.js?v=20261023t";
+import { clockValueAfterQuarterTurns, unfoldTargets, orderedClues, currentClueIndex, clueText } from "./golden-bell-hands-on-models.js?v=20261023t";
 
 const unfoldTargetCount = (round, state) => unfoldTargets(round, state.unfold).filter((cell) => !state.cells.includes(cell)).length;
 
@@ -47,9 +47,19 @@ export function handsOnGuide(activity, round, state) {
   if (activity.kind === "cross") return state.slots.some((slot) => slot !== null)
     ? { phase: "progress", text: "놓은 카드로 가로와 세로의 합을 비교해 봐. 빈 자리에는 어떤 카드가 필요할까?" }
     : { phase: "start", text: "가운데 카드는 그대로 두고, 나머지 카드를 한 번씩 놓아 봐." };
-  if (activity.kind === "order") return state.slots.some((slot) => slot !== null)
-    ? { phase: "progress", text: "놓은 자리와 세 조건을 하나씩 비교해 봐. 카드를 다시 옮길 수 있어." }
-    : { phase: "start", text: "맨 앞과 맨 뒤 조건부터 확인한 다음 친구 카드를 놓아 봐." };
+  if (activity.kind === "order") {
+    // 골든벨 풀이: 왼쪽이 앞 → 자리가 바로 정해지는 조건부터 → 사이 조건 → 앞에서부터 세어 확인.
+    const clues = orderedClues(round), now = currentClueIndex(round, state.slots);
+    if (now < 0) return state.slots.every((slot) => slot !== null)
+      ? { phase: "progress", text: "세 조건이 모두 맞았어. 앞에서부터 한 명씩 세어 보고 「결과 확인」을 눌러." }
+      : { phase: "progress", text: "조건은 다 맞았어. 남은 친구를 빈 자리에 놓아 봐." };
+    const clue = clues[now];
+    const lead = state.slots.some((slot) => slot !== null) ? "" : "왼쪽이 앞, 오른쪽이 뒤야. ";
+    const how = clue.kind === "first" || clue.kind === "last" ? "자리가 바로 정해지는 조건이야. 그 친구부터 놓아 봐."
+      : clue.kind === "adjacent" ? "두 친구가 붙어 있어야 해. 앞에서 정한 자리를 피해서 붙여 놓아 봐."
+      : "사이 조건은 마지막에 봐. 남은 자리 중 앞쪽에 누가 와야 할까?";
+    return { phase: state.slots.some((slot) => slot !== null) ? "progress" : "start", text: `${lead}${now + 1}번 조건 「${clueText(clue)}」 — ${how}` };
+  }
   // 골든벨 풀이 순서: ① 차이 구하기 ② 한 개 옮길 때 차이가 2 줄므로 차이를 둘로 나누기 ③ 옮긴 뒤 같은지 확인.
   const difference = round.left - round.right;
   if (state.note) return { phase: "retry", text: state.note };

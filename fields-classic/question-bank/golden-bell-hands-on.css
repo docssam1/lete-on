@@ -160,3 +160,13 @@
 /* 두 번 접기: 아직 접혀 있는 칸은 흐리게, 방금 펼친 접은 선은 금색 점선(거울선)으로. */
 .gold-hands-on .hand-cell.off-paper { background: repeating-linear-gradient(45deg, rgba(120, 80, 35, .12) 0 4px, transparent 4px 8px); border-color: rgba(86, 98, 116, .35); }
 .gold-hands-on .hand-fold-crease.opened { stroke: #d9a62e; stroke-width: 3.5; }
+
+/* 줄 세우기: 조건을 풀이 순서(정해지는 조건 → 붙은 조건 → 사이 조건)로 번호 매기고, 지금 볼 조건을 강조. */
+.gold-hands-on .hand-clues.ordered li { padding: 6px 10px; border-radius: 10px; }
+.gold-hands-on .hand-clues.ordered li.now { background: #fff7e6; box-shadow: inset 0 0 0 2px #d9a62e; }
+.gold-hands-on .hand-clues.ordered li.met { opacity: .75; }
+.gold-hands-on .hand-clue-no { display: inline-grid; place-items: center; flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; background: #6b4d26; color: #fff; font-size: 14px; font-weight: 700; }
+.gold-hands-on .hand-clues.ordered li.met .hand-clue-no { background: #2f9e5f; }
+.gold-hands-on .hand-clue-no svg { width: 16px; height: 16px; }
+.gold-hands-on .hand-clue-miss { display: inline-flex; margin-left: auto; color: #b4512e; }
+.gold-hands-on .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

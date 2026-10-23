@@ -1,7 +1,7 @@
 import { icon } from "../../geometry/games/shape-transform/ui-icons.js";
 import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts, paperCells } from "./golden-bell-hands-on-folding.js?v=20261023t";
-import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue, unfoldTargets, unfoldStageDone } from "./golden-bell-hands-on-models.js?v=20261023t";
+import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue, unfoldTargets, unfoldStageDone, orderedClues, currentClueIndex } from "./golden-bell-hands-on-models.js?v=20261023t";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261023t";
 import { mountClockGame } from "./golden-bell-clock-game.js?v=20261023t";
 import { mountLevelGame } from "./golden-bell-level-game.js?v=20261004a";
@@ -107,7 +107,11 @@ function cardsAndSlots(activity, round, state) {
     const sum = (a, b) => state.slots[a] !== null && state.slots[b] !== null ? state.slots[a] + round.center + state.slots[b] : "?";
     return `<div class="hand-cross"><div class="hand-cross-grid"><span></span>${slot(0)}<span></span>${slot(1)}<b class="hand-center">${round.center}</b>${slot(2)}<span></span>${slot(3)}<span></span></div><div class="hand-sums"><span>가로 합 <b>${sum(1, 2)}</b></span><span>세로 합 <b>${sum(0, 3)}</b></span></div></div>${bank}`;
   }
-  return `<ul class="hand-clues">${round.clues.map((clue) => `<li>${state.checked ? icon(matchesClue(state.slots, clue) ? "check" : "close") : ""}${esc(clueText(clue))}</li>`).join("")}</ul><div class="hand-order-labels"><b>앞</b><b>뒤</b></div><div class="hand-order-slots">${state.slots.map((_, i) => slot(i)).join("")}</div>${bank}`;
+  const clues = orderedClues(round), now = currentClueIndex(round, state.slots);
+  return `<ol class="hand-clues ordered">${clues.map((clue, i) => {
+    const met = matchesClue(state.slots, clue);
+    return `<li class="${i === now ? "now" : met ? "met" : ""}"><span class="hand-clue-no" aria-hidden="true">${met ? icon("check") : i + 1}</span>${esc(clueText(clue))}${state.checked && !met ? `<span class="hand-clue-miss">${icon("close")}<span class="sr-only">맞지 않음</span></span>` : ""}</li>`;
+  }).join("")}</ol><div class="hand-order-labels"><b>앞</b><b>뒤</b></div><div class="hand-order-slots">${state.slots.map((_, i) => slot(i)).join("")}</div>${bank}`;
 }
 
 // A 줄과 B 줄을 같은 칸에 맞춰 놓아 짝을 눈으로 보게 한다. ① 짝 없는 A 구슬 누르기 → ② 그중 줄 구슬 고르기 → ③ 옮긴 뒤 식으로 확인.

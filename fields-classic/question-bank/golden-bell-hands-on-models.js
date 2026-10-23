@@ -71,6 +71,12 @@ export function clueText(clue) {
   return `${clue.a}는 ${clue.b}${clue.kind === "adjacent" ? " 바로" : "보다"} 앞에 있습니다.`;
 }
 
+// 골든벨 풀이 순서: 자리가 바로 정해지는 조건(맨 앞·맨 뒤) → 붙어 있는 조건(바로 앞) → 사이 조건(~보다 앞).
+const CLUE_ORDER = { first: 0, last: 0, adjacent: 1, before: 2 };
+export const orderedClues = (round) => round.clues.map((clue, index) => ({ clue, index })).sort((a, b) => CLUE_ORDER[a.clue.kind] - CLUE_ORDER[b.clue.kind] || a.index - b.index).map(({ clue }) => clue);
+// 지금 풀 조건: 순서대로 보아 아직 맞지 않는 첫 조건(다 맞으면 -1).
+export const currentClueIndex = (round, slots) => orderedClues(round).findIndex((clue) => !matchesClue(slots, clue));
+
 export function matchesClue(slots, clue) {
   const a = slots.indexOf(clue.a), b = slots.indexOf(clue.b);
   if (a < 0) return false;
