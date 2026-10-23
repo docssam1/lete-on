@@ -15,11 +15,18 @@
 .print-settings { display: grid; gap: 24px; min-width: 0; }
 .print-unit-actions { display: flex; gap: 8px; margin-bottom: 12px; }
 .print-unit-list { display: grid; gap: 8px; }
-.print-unit-option { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px; border: 1px solid #566274; border-radius: 4px; cursor: pointer; }
+.print-unit-option { display: grid; gap: 6px; padding: 10px 12px; border: 1px solid #566274; border-radius: 4px; }
 .print-unit-option:has(:checked) { border-color: #2456c4; background: #eaf0ff; }
+.print-unit-head, .print-lesson-option { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; align-items: start; cursor: pointer; }
+.print-unit-head { min-height: 32px; align-items: center; }
 .print-unit-option strong { display: block; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.print-unit-lessons { display: grid; gap: 2px; padding-left: 30px; }
+.print-lesson-option { min-height: 32px; align-items: center; font-size: 13px; line-height: 1.45; color: #222; }
+.print-lesson-option span { overflow-wrap: anywhere; }
+.print-lesson-option input { width: 18px; height: 18px; margin: 0; accent-color: #2456c4; }
+.print-section-list { display: grid; gap: 2px; }
 .print-unit-types { display: block; margin-top: 4px; color: #566274; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
-.print-unit-option input, .print-answer-toggle input { width: 18px; height: 18px; margin: 2px 0; accent-color: #2456c4; }
+.print-unit-head input, .print-answer-toggle input { width: 18px; height: 18px; margin: 2px 0; accent-color: #2456c4; }
 .print-answer-toggle { display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer; font-size: 16px; }
 .cover-picker-layout fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .cover-picker-layout legend { margin-bottom: 12px; font-size: 16px; font-weight: 700; }
