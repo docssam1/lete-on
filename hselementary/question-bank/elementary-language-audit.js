@@ -16,6 +16,7 @@ require("./source-5-2-perimeter-mission2.js");
 require("./source-5-2-cube-box-mission3.js");
 require("./source-5-2-supply-cost-mission4.js");
 require("./source-5-2-population-bar-length.js");
+require("./source-5-2-citrus-sales-mission6.js");
 require("./source-6-2-decimal-e6-text.js");
 require("./source-6-2-decimal-e6-geometry.js");
 require("./source-6-2-decimal-e3.js");

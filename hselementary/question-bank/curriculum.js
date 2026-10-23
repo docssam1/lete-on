@@ -1545,6 +1545,27 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             verifiedVariantCount: 3,
             answerVisualRequired: false,
             answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e3-mission-6-citrus-sales",
+            name: "완성된 감귤 상자의 판매액 구하기",
+            sourceItemId: "5-2-u1-e3-mission-6-citrus-sales",
+            sourceItemLabel: "Mission 6",
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 7,
+            sourcePrintedPage: 9,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e3-mission-6-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄 원문과 Apple Vision OCR을 대조해 3일 수확량, 500개씩 포장, 상자당 150,000원 조건을 확인했습니다. 12,274개는 완성 상자 24개와 포장되지 않은 274개이며, ‘포장된 감귤’의 판매액은 3,600,000원입니다. 독립 계산을 풀이에 명시했고 원문 수치는 공개 생성 풀에서 제외했습니다. 출판사 정답지는 확인되지 않았습니다.",
+            generatorKey: "source52ApplicationMissionSixCitrusSales",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
           }]
         }
       ],
