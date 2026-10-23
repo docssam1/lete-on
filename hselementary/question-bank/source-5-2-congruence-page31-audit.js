@@ -30,6 +30,7 @@ const sourceTypes = source.definitions.map(def => {
 
 let combinations = 0;
 const areaPoolSignatures = new Set();
+const midpointPoolSignatures = new Set();
 for (const def of source.definitions) {
   for (let variant = 0; variant < 3; variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
@@ -86,7 +87,7 @@ for (const def of source.definitions) {
         const v = { x: d.x - m.x, y: d.y - m.y };
         const angle = Math.acos((u.x*v.x+u.y*v.y)/(Math.hypot(u.x,u.y)*Math.hypot(v.x,v.y))) * 180 / Math.PI;
         assert.ok(Math.abs(angle - targetAngle) < 1e-8);
-      } else {
+      } else if (def.sourceItemId.endsWith("mission-5")) {
         const { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer } = item.answerModel;
         const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0];
         assert.ok(svg, "Mission 5 must render a source diagram");
@@ -129,6 +130,46 @@ for (const def of source.definitions) {
         assert.match(type.sourceEvidence, /d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463/);
         assert.match(type.sourceEvidence, /PDF p\.27; printed p\.31/);
         areaPoolSignatures.add(`${height}:${width}`);
+      } else {
+        const { top, bottom, height, midpointWidth, answer } = item.answerModel;
+        const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0];
+        assert.ok(svg, "Mission 6 must render the verified trapezoid source structure");
+        const readAttr = name => Number(svg.match(new RegExp(`data-${name}="([^"]+)"`))?.[1]);
+        const readPoint = name => {
+          const [x,y] = svg.match(new RegExp(`data-${name}="([^"]+)"`))?.[1]?.split(",").map(Number) ?? [];
+          return { x, y };
+        };
+        const g = readPoint("g"), n = readPoint("n"), d = readPoint("d"), r = readPoint("r"), m = readPoint("m"), p = readPoint("p");
+        const dot = (a,b,c) => (a.x-b.x)*(c.x-b.x)+(a.y-b.y)*(c.y-b.y);
+        const area = Math.abs((r.x-g.x)*(m.y-g.y)-(r.y-g.y)*(m.x-g.x))/2;
+        assert.equal(readAttr("top"), top);
+        assert.equal(readAttr("bottom"), bottom);
+        assert.equal(readAttr("height"), height);
+        assert.deepEqual(m, { x:(n.x+d.x)/2, y:(n.y+d.y)/2 }, "M is the midpoint of side ND");
+        assert.equal(p.x, g.x);
+        assert.equal(p.y, m.y);
+        assert.ok(Math.abs(dot(n,g,r))/(distance(g,n)*distance(r,g)) < 1e-8, "base GN is perpendicular to GR");
+        assert.ok(Math.abs(dot(d,r,g))/(distance(r,d)*distance(g,r)) < 1e-8, "base RD is perpendicular to GR");
+        assert.equal(midpointWidth, (top+bottom)/2);
+        assert.equal(answer, height*midpointWidth/2);
+        if (variant === 0 && difficultyOffset === 0) {
+          assert.deepEqual({ top, bottom, height, midpointWidth, answer }, { top:10, bottom:8, height:6, midpointWidth:9, answer:27 }, "the source's original dimensions and answer must be present in the verified pool");
+        }
+        assert.ok(Math.abs(area / ((Math.min(14,240/top,180/height))**2) - answer) < 1e-8, "rendered target triangle matches the answer");
+        assert.match(svg, new RegExp(`>${bottom}cm<\/text>`));
+        assert.match(svg, new RegExp(`>${top}cm<\/text>`));
+        assert.match(svg, new RegExp(`>${height}cm<\/text>`));
+        assert.match(item.prompt, /삼각형 ㄱㄹㅁ의 넓이/);
+        assert.match(item.prompt, /점 ㅁ은 변 ㄴㄷ의 한가운데 점/);
+        assert.match(item.solution, /사다리꼴의 중선 길이는 두 평행한 변의 길이의 평균/);
+        assert.match(item.solution, new RegExp(`${answer}cm²`));
+        assert.equal(item.reviewLocked, false);
+        assert.equal(source.isPublicReady(def.sourceItemId), true);
+        const type = sourceTypes.find(candidate => candidate.sourceItemId === def.sourceItemId);
+        assert.match(type.sourceEvidence, /1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s/);
+        assert.match(type.sourceEvidence, /d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463/);
+        assert.match(type.sourceEvidence, /PDF p\.27; printed p\.31/);
+        midpointPoolSignatures.add(`${top}:${bottom}:${height}`);
       }
       combinations += 1;
     }
@@ -139,6 +180,7 @@ assert.equal(source.getQuestion("unknown", 0, 0), null);
 assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 3, 0), null);
 assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 0, 2), null);
 assert.equal(areaPoolSignatures.size, 9, "all three variants at all difficulty levels must be distinct");
+assert.equal(midpointPoolSignatures.size, 9, "all Mission 6 pools and difficulty levels must be distinct");
 for (const type of sourceTypes) {
   if (type.reviewLocked) {
     assert.equal(window.HSE_GENERATORS.generatorKey(type), "", "review-locked Mission 5 must not register publicly");
@@ -155,4 +197,4 @@ for (const type of sourceTypes) {
   }
 }
 
-console.log(`인쇄 31쪽 합동·대칭 Mission 감사 통과: 4문항 · ${combinations}개 조합 · SAS·넓이 분할 검산 · 공개 4`);
+console.log(`인쇄 31쪽 합동·대칭 Mission 감사 통과: 5문항 · ${combinations}개 조합 · SAS·넓이 분할·사다리꼴 중선 검산 · 공개 5`);

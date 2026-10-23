@@ -1803,6 +1803,28 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               verifiedVariantCount: 3,
               answerVisualRequired: true,
               answerVisualStatus: "verified-reconstruction"
+            },
+            {
+              id: "5-2-u3-e4-mission-6",
+              name: "사다리꼴의 중점으로 구하는 삼각형의 넓이",
+              sourceItemId: "5-2-u3-e4-mission-6",
+              sourceItemLabel: "Mission 6",
+              sourceSection: "mission",
+              sourceTier: "advanced",
+              sourcePdfPage: 27,
+              sourcePrintedPage: 31,
+              sourceEvidence: "source-drive:1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s; source-sha256:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; PDF p.27; printed p.31; sourceItemId:5-2-u3-e4-mission-6",
+              sourceVerified: true,
+              publisherKeyVerified: false,
+              answerVerification: "independent-trapezoid-midpoint-theorem-user-authorized",
+              reviewLocked: false,
+              reviewReason: "원본의 직각 표시, 윗변 10cm·아랫변 8cm·높이 6cm, 변 ㄴㄷ의 중점 ㅁ과 목표 △ㄱㄹㅁ을 직접 대조했습니다. 사다리꼴 중선의 길이는 9cm이므로 넓이는 6×9÷2=27cm²입니다. 9개 변형의 그림·답·풀이와 화면·A4 출력을 확인했습니다. 출판사 정답표는 확인하지 않았습니다.",
+              generatorKey: "source52TrapezoidMidpointPage31Mission6",
+              generationMode: "fixed-verified-pool",
+              verifiedVariantTarget: 3,
+              verifiedVariantCount: 3,
+              answerVisualRequired: true,
+              answerVisualStatus: "verified-reconstruction"
             }
           ]
         },
