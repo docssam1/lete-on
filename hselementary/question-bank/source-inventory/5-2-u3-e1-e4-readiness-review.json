@@ -29,12 +29,13 @@
       {"checkId": "e4-angles", "expression": "360/3=120; 90-20=70", "result": true},
       {"checkId": "e4-areas", "expression": "10^2+5^2=125; (1/2)*6*((10+8)/2)=27", "result": true},
       {"checkId": "e1-m5-ssa-options", "expression": "given ㄴㄷ=7 opposite ㄱ, ㄱㄷ=4 opposite ㄴ; ① SSS, ② unique SSA, ③ ambiguous SSA, ④ SAS", "result": true},
-      {"checkId": "e2-example-3-equilateral-crossing", "expression": "a≠b; sides (a,120°,b) match for △ㄱㄷㅁ and △ㄴㄷㄹ; SAS", "result": true}
+      {"checkId": "e2-example-3-equilateral-crossing", "expression": "a≠b; sides (a,120°,b) match for △ㄱㄷㅁ and △ㄴㄷㄹ; SAS", "result": true},
+      {"checkId": "e2-mission-6-small-sectors", "expression": "six small triangles only; reflection pairs (1,6),(2,5),(3,4) => 3", "result": true}
     ]
   },
   "integrity": {
     "sourceItemCount": 53,
-    "typeCount": 48,
+    "typeCount": 49,
     "directlyReviewedCount": 53,
     "byExploration": {"e1": 16, "e2": 15, "e3": 11, "e4": 11},
     "bySourceSection": {"exploration": 13, "example": 16, "mission": 24},
@@ -50,7 +51,6 @@
   "groupedStructures": [
     {"commonTypeId": "triangle-construction-SAS", "sourceItemIds": ["5-2-u3-e1-exploration-5", "5-2-u3-e1-mission-1"], "reason": "두 변과 끼인각으로 삼각형을 구성하는 같은 풀이 뼈대"},
     {"commonTypeId": "compass-construction-SSS", "sourceItemIds": ["5-2-u3-e1-example-1", "5-2-u3-e1-example-2"], "reason": "자와 컴퍼스로 변 길이를 옮겨 SSS로 합동 도형을 구성"},
-    {"commonTypeId": "isosceles-fan-congruent-pairs", "sourceItemIds": ["5-2-u3-e2-example-4", "5-2-u3-e2-mission-6"], "reason": "이등변 삼각형의 대칭과 연속 밑변 구간을 이용해 합동 쌍을 셈"},
     {"commonTypeId": "square-overlap-area", "sourceItemIds": ["5-2-u3-e3-example-1", "5-2-u3-e3-mission-2"], "reason": "겹친 두 정사각형의 공통 영역을 도형 분할로 구함"},
     {"commonTypeId": "folded-rectangle-angle", "sourceItemIds": ["5-2-u3-e3-example-4", "5-2-u3-e3-mission-4"], "reason": "직사각형 종이를 두 번 접은 뒤 대응각과 이등변 삼각형을 추적"}
   ],
@@ -873,19 +873,19 @@
       "sourceItemLabel": "Mission 6",
       "sourcePdfPage": 23,
       "sourcePrintedPage": 27,
-      "commonTypeId": "isosceles-fan-congruent-pairs",
-      "typeLabel": "이등변 삼각형의 모든 합동 쌍 세기",
-      "childFriendlyTypeLabel": "부채꼴에서 같은 삼각형 짝 세기",
-      "originalStructure": "이등변삼각형의 밑변을 6등분하고 꼭짓점과 모두 연결해 생긴 삼각형들 및 합성 삼각형의 합동 쌍을 셉니다.",
-      "conditions": ["밑변 6등분", "꼭짓점에서 7개 경계점으로 연결", "대칭으로 같은 밑변 구간을 짝지음"],
-      "visualRequirement": "6등분 표시와 모든 연결선이 필요합니다.",
-      "independentCalculation": "밑변 구간 길이별 합동 쌍은 1칸 3쌍, 2칸 2쌍, 3칸 1쌍, 4칸 2쌍, 5칸 1쌍으로 9쌍입니다.",
-      "answerFormula": "3+2+1+2+1=9",
-      "independentAnswer": "9쌍",
+      "commonTypeId": "isosceles-six-sector-small-triangle-pairs",
+      "typeLabel": "6등분 이등변삼각형의 작은 삼각형 합동 쌍",
+      "childFriendlyTypeLabel": "6개의 작은 삼각형에서 같은 짝 찾기",
+      "originalStructure": "이등변삼각형 ㄱㄴㄷ의 밑변 ㄴㄷ을 6등분하고 꼭짓점 ㄱ을 각 분할점에 연결해 생긴 6개의 작은 삼각형 중 합동인 쌍의 수를 구합니다.",
+      "conditions": ["밑변 ㄴㄷ을 똑같이 6등분하여 꼭짓점 ㄱ과 각 분할점을 연결", "원문이 만든 여섯 개의 작은 삼각형만 비교", "이등변삼각형의 좌우 대칭으로 대응하는 작은 삼각형이 합동"],
+      "visualRequirement": "6등분 표시와 모든 연결선을 보존하고, 합성 삼각형을 추가로 세지 않아야 합니다.",
+      "independentCalculation": "여섯 개의 작은 삼각형을 왼쪽부터 T1,…,T6이라 두면 이등변삼각형의 대칭축에 대한 대응은 T1↔T6, T2↔T5, T3↔T4다. 각 대응은 반사에 의한 합동이므로 3쌍이다. 문제에서 만든 여섯 작은 삼각형만 세며, 여러 칸을 합친 큰 삼각형은 세지 않는다.",
+      "answerFormula": "(T1,T6), (T2,T5), (T3,T4) ⇒ 3쌍",
+      "independentAnswer": "3쌍",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "모든 연속 밑변 구간을 대칭 짝으로 전수 열거했습니다.",
+      "singleAnswerCheck": "원문이 명시한 여섯 개의 분할 삼각형을 대상으로 좌우 대칭 대응을 전수 확인했습니다. 연속 구간을 합친 삼각형은 문항에서 만들었다고 한 여섯 삼각형에 포함되지 않습니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
@@ -1507,7 +1507,8 @@
       "정답 숫자가 보이는 필기 흔적은 근거로 사용하지 않았으며, 독립 계산이 되지 않는 항목은 independentAnswer를 비워 두었습니다.",
       "이 파일은 원본 대조 장부이며 중앙 생성기·공개 카탈로그·다른 파일은 수정하지 않았습니다.",
       "2026-10-24 인쇄 25쪽 재검수에서 Mission 5의 SSA 답 분류를 바로잡았습니다. 정답 집합은 ①·②·④이며, 구현 그림 검수 전 잠금은 유지합니다. Drive QA: 11k5r1lrjdx7jVwPYtlFTDoevfX7k7SA3.",
-      "2026-10-24 인쇄 26쪽 예제 2-3 도형을 재검수해 △ㄱㄷㅁ≅△ㄴㄷㄹ을 확정했습니다. source calculation checked는 43개; 구현 그림 검수 전 공개 잠금은 유지합니다. Drive QA: 1OcVudw9mWBPR7Uu6lmG2lIAXqsaw7xL9."
+      "2026-10-24 인쇄 26쪽 예제 2-3 도형을 재검수해 △ㄱㄷㅁ≅△ㄴㄷㄹ을 확정했습니다. source calculation checked는 43개; 구현 그림 검수 전 공개 잠금은 유지합니다. Drive QA: 1OcVudw9mWBPR7Uu6lmG2lIAXqsaw7xL9.",
+      "2026-10-24 인쇄 27쪽 Mission 6의 범위를 원문과 재대조해 합성 삼각형을 제외하고 정답을 3쌍으로 정정했습니다. 예제 2-4와는 서로 다른 삼각형 집합을 세므로 commonTypeId를 분리했습니다. Drive QA: 1UO3b2Ae_gjHhd7K-nDwkUz2I4VzSWGEj."
     ]
   }
 }
