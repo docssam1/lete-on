@@ -184,8 +184,8 @@
   function renderRoadmap(plan) {
     if (!plan) return;
     currentPlan = plan;
-    text("roadmap-title", roadmapText("한 번의 점수가 아니라, 안정된 속도로 목표까지 갑니다.", "One score does not set the speed. Build a stable route to the goal.", "一次成绩不决定提速，先稳定，再走向目标。"));
-    text("roadmap-intro-copy", roadmapText("종이 진단은 O/X로 빠르게 입력합니다. 첫 결과만으로 진도를 올리지 않고 재확인 뒤에 시간·횟수·목표일 중 필요한 갈림길을 고릅니다.", "Mark a paper test with O/X. Hold the current pace after the first result, then choose time, frequency, or a new target date after a stable recheck.", "纸笔诊断只需标记O/X。第一次结果后先保持当前进度，复测稳定后再选择增加时间、频次或调整目标日期。"));
+    text("roadmap-title", roadmapText("점수 한 번으로 진도를 바꾸지 않아요.", "One score does not set the speed. Build a stable route to the goal.", "一次成绩不决定提速，先稳定，再走向目标。"));
+    text("roadmap-intro-copy", roadmapText("종이 진단에 O/X를 표시해 보세요. 다시 확인한 뒤 학습 시간이나 목표일을 조정할 수 있어요.", "Mark a paper test with O/X. Hold the current pace after the first result, then choose time, frequency, or a new target date after a stable recheck.", "纸笔诊断只需标记O/X。第一次结果后先保持当前进度，复测稳定后再选择增加时间、频次或调整目标日期。"));
     text("roadmap-curriculum-label", roadmapText("교육과정 기준", "Curriculum path", "课程体系"));
     text("roadmap-observations-label", roadmapText("누적 관찰", "Observed attempts", "累计观察"));
     text("roadmap-retention-label", roadmapText("재확인에서도 유지됨", "Stable on recheck", "复测结果稳定"));
@@ -349,16 +349,16 @@
     const competitionScoreOnly = competitionLegacy || competitionTaxonomyPending;
     const evidence = grade6Diagnostic || assessmentEvidence || competitionEvidence;
     text("priority-legend", competitionScoreOnly ? "영역 판정 전 직접 선택할 학습 영역" : "현재 가장 먼저 보완할 영역");
-    text("teacher-title", competitionScoreOnly ? "선택한 영역을 한 수업 세트로 엽니다." : "한 약점 군을 한 수업 세트로 엽니다.");
+    text("teacher-title", competitionScoreOnly ? "선택한 영역의 수업 자료" : "지금 볼 영역의 수업 자료");
     text("goal-program", plan.goal.label);
     text("plan-title", `${plan.calendar.calendarWeeks}주 학습 계획`);
-    const scheduleCopy = `${plan.calendar.calendarWeeks}주 동안 주 ${plan.availability.studyDaysPerWeek}일, 하루 ${plan.availability.minutesPerDay}분을 기준으로 설계했습니다. 수업 결석과 복습 여유를 고려해 전체 시간의 80%만 배정합니다.`;
+    const scheduleCopy = `주 ${plan.availability.studyDaysPerWeek}일, 하루 ${plan.availability.minutesPerDay}분을 기준으로 했어요. 빠진 수업과 복습을 위해 시간의 80%만 계획에 넣었어요.`;
     text("plan-description", grade6Diagnostic ? `${scheduleCopy} 교사 검토가 끝난 Grade 6 42문항 진단의 점수 요약과 우선 약점을 반영했습니다. 학생 응답, 정답, 풀이 원문은 이 계획에 저장하지 않습니다.` : assessmentEvidence ? `${scheduleCopy} ${assessmentEvidence.source.label} 결과와 영역별 약점을 반영해 ${assessmentEvidence.recommendedStart.label}에서 시작하는 G·MAP 진도를 구성했습니다.` : competitionEvidence ? competitionScoreOnly ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70은 점수 이력으로만 연결했습니다. 영역 분류는 재검수 대상이어서 자동 약점 처방에 사용하지 않습니다.` : competitionPriorityConfirmed ? `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70과 영역별 약점을 반영해 오늘의 우선 학습을 골랐습니다.` : `${scheduleCopy} ${competitionEvidence.year} SASMO Grade 6 기출 최초 응시 ${competitionEvidence.score.rawScore} / 70을 연결했습니다. 충분한 약점 신호가 없어 현재 선택한 영역을 유지 학습으로 구성합니다.` : scheduleCopy);
     text("days-remaining", plural(plan.calendar.daysRemaining, "일", "일"));
     text("study-day-count", plural(plan.calendar.studyDays, "일", "일"));
     text("capacity-minutes", `${plan.calendar.usableMinutes.toLocaleString("ko-KR")}분`);
     const state = document.getElementById("plan-state");
-    state.textContent = grade6Diagnostic ? "42문항 진단 연결" : assessmentEvidence ? "학교 평가 연결" : competitionScoreOnly ? "기출 점수 연결" : competitionEvidence ? "기출 진단 연결" : "진단 연결 전";
+    state.textContent = grade6Diagnostic ? "42문항 진단 연결" : assessmentEvidence ? "학교 평가 연결" : competitionScoreOnly ? "기출 점수 연결" : competitionEvidence ? "기출 진단 연결" : "진단 결과 없음";
     state.className = `state-chip ${evidence ? "connected" : "waiting"}`;
     text("prediction-title", grade6Diagnostic ? "42문항 진단이 오늘의 개념과 문제 수로 이어졌습니다." : assessmentEvidence ? "학교 평가 결과가 오늘의 학습에 반영되었습니다." : competitionScoreOnly ? "기출 점수만 학습계획에 연결했습니다." : competitionEvidence ? "검증된 기출 결과가 오늘의 학습에 반영되었습니다." : "예상 성적은 진단 후 계산합니다.");
     text("prediction-copy", grade6Diagnostic ? `${grade6Diagnostic.score.earnedPoints} / ${grade6Diagnostic.score.maxPoints}점 · ${grade6Diagnostic.score.percentage}% · ${grade6Diagnostic.priorities.length ? `우선 보완 ${plan.priorities[0].label}` : "자동 확인된 약점 없음"}. 이 결과는 학교의 공식 배정·승급 판정이나 실전 예상 점수가 아닙니다.` : assessmentEvidence ? `${assessmentEvidence.source.label} · G·MAP 권장 시작 ${assessmentEvidence.recommendedStart.label} · 우선 보완 ${plan.priorities[0].label}. 이는 학교의 공식 배정이 아니며, 실전 예상 점수는 별도의 최초 모의 기록이 쌓인 뒤 계산합니다.` : competitionEvidence ? `실제 점수 ${competitionEvidence.score.rawScore} / 70 · ${competitionScoreOnly ? `영역 판정 재검수 중 · ${plan.priorities[0].label} 학습` : competitionPriorityConfirmed ? `우선 보완 ${plan.priorities[0].label}` : `자동 확정 약점 없음 · ${plan.priorities[0].label} 유지 학습`}. ${scoreOutlook}` : `${plan.diagnostic.actionLabel}의 최초 응시 결과와 이후 실전 모의 기록이 있어야 점수 범위와 신뢰도를 계산합니다.`);
@@ -401,11 +401,11 @@
       teacherLink.removeAttribute("aria-current");
     }
     if (audience === "teacher") {
-      text("plan-audience-eyebrow", "TEACHER · G·MAP LESSON PATH");
-      document.getElementById("plan-audience-title").innerHTML = '<span class="headline-line">진단 근거로</span><span class="headline-line accent">오늘의 수업을</span><span class="headline-line accent">설계합니다.</span>';
-      text("plan-audience-description", "학생의 현재 과정과 약점 유형을 확인하고 수업 시간에 맞춰 강사용 교안, 학생용 워크북, 숙제와 재확인을 한 수업 세트로 구성합니다.");
-      text("plan-setup-title", "학생의 수업 조건을 입력하세요.");
-      document.querySelector("#plan-form .primary-action").textContent = "학생 수업 계획 계산";
+      text("plan-audience-eyebrow", "수업 자료");
+      document.getElementById("plan-audience-title").innerHTML = '<span class="headline-line">수업 시간에 맞는</span><span class="headline-line">자료를 고르세요.</span>';
+      text("plan-audience-description", "수업 시간과 학생이 공부할 영역을 정해 주세요. 교안과 워크북을 함께 볼 수 있어요.");
+      text("plan-setup-title", "오늘 수업을 준비해 볼까요?");
+      document.querySelector("#plan-form .primary-action").textContent = "수업 자료 보기";
       const todaySection = document.querySelector(".today-section");
       todaySection.parentNode.insertBefore(teacherSection, todaySection);
       teacherSection.classList.add("audience-primary");

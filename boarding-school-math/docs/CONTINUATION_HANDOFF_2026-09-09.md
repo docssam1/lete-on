@@ -1,6 +1,6 @@
 # Boarding School Math continuation handoff
 
-Updated: 2026-10-23 KST (Mac continuation; older release evidence retained below)
+Updated: 2026-10-24 KST (Mac continuation; older release evidence retained below)
 
 This file is the short restart contract for the Boarding School Math product only. Do not mix it with `hsmiddle`, high-school selection, Geometry World, Number Magic, Fields Classic, or other repositories.
 
@@ -28,6 +28,8 @@ Never delete or move active sessions, source originals, Drive evidence, uncommit
 2026-10-24 private layout follow-up: the bound 18-item pack remains byte-identical (`109c9e0a…dfc703`) and locked. An answer-free, offline QA harness outside Git rendered KO/EN/zh-Hans at 320/390px and A4/Letter. All six PDFs were exactly 18 pages and automated overflow/asset checks passed, but visual review found three delivery blockers: a four-row number-line graphic has roughly 6–8px phone labels, a long written/repeating-decimal response needs more than a single-line text field, and a nested MathML fraction needs display-size/accessibility review. Exact mathematical checks and structural preflight still pass; neither sets formal review flags. See the private `private-layout-qa-20261024.md` beside the draft for evidence. Do not copy the private preview, screenshots, PDFs, or prompts into Git or call the screener student-ready.
 
 ## Grade 3–10 visual roadmap milestone — 2026-10-23
+
+2026-10-24 learning-plan copy/UI pass: the Grade 6 student and teacher landing text now asks for the actual input (goal and time), names the resulting action (“학습 계획 보기” / “수업 자료 보기”), and uses short Korean section labels. The large dark, serif three-line hero became a smaller two-line sans heading on white, with the form immediately below on 390px. The selected audience tab now has readable white text. This follows the existing GFIELD design rules and the official Toss UX-writing guidance on one clear message per sentence; it does not import a Toss UI kit or alter planning/scoring rules. Student/teacher mobile and desktop screenshots were inspected in the external Mac QA folder. The dedicated learning-plan browser suite passes 7/7, including 390px width, teacher mode, evidence boundaries, and print styling. No push or deployment occurred.
 
 The Grade 3–10 map now shows short, grade-specific focus lines alongside the concept chain: school math and problem solving in Grades 3–5, then distinct school, optional competition, and optional SAT exposure in Grades 6–10. These are descriptions of the supplied planning references, not learner assignments or fixed age-based acceleration. Grade 9 is still visibly inferred; Grade 8 Algebra 2 is conditioned on readiness. The 1280px and 390px journey panels were visually checked in the external QA folder. Roadmap browser and logic checks pass 8/8, including the track separation and no horizontal overflow.
 The builder's selected-item order/remove controls, clear-selection button, and point/line inputs are now at least 44px high on mobile and desktop; its 375/390/768/1440px browser check asserts those hit-target dimensions and unchanged A4 pagination in both output modes.

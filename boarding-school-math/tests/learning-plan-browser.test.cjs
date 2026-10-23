@@ -82,10 +82,10 @@ test("learning plan connects goal, time budget, student materials, and teacher m
   const errors = errorsFor(page);
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
-  assert.match(await page.locator("h1").innerText(), /진단 결과로/);
+  assert.match(await page.locator("h1").innerText(), /목표와 시간을 적고/);
   assert.equal(await page.locator("body").getAttribute("data-audience"), "student");
   assert.equal(await page.locator("#student-workspace-link").getAttribute("aria-current"), "page");
-  assert.equal(await page.locator("#plan-state").innerText(), "진단 연결 전");
+  assert.equal(await page.locator("#plan-state").innerText(), "진단 결과 없음");
   assert.match(await page.locator("#prediction-title").innerText(), /진단 후/);
   assert.equal(await page.locator("#today-blocks li").count(), 5);
   assert.match(await page.locator("#today-minutes").innerText(), /45분/);
@@ -114,8 +114,8 @@ test("learning plan stays readable at 390px and supports print styling", async f
       return { text: node.textContent.trim(), top: Math.round(rect.top), fits: node.scrollWidth <= node.clientWidth + 1 };
     });
   });
-  assert.deepEqual(headlineLines.map(function (line) { return line.text; }), ["진단 결과로", "오늘의 공부를", "설계합니다."]);
-  assert.equal(new Set(headlineLines.map(function (line) { return line.top; })).size, 3);
+  assert.deepEqual(headlineLines.map(function (line) { return line.text; }), ["목표와 시간을 적고", "계획을 확인하세요."]);
+  assert.equal(new Set(headlineLines.map(function (line) { return line.top; })).size, 2);
   headlineLines.forEach(function (line) { assert.equal(line.fits, true); });
   const targets = await page.locator("button,select,input,a").evaluateAll(function (nodes) {
     return nodes.filter(function (node) { return getComputedStyle(node).display !== "none"; }).map(function (node) {
@@ -176,9 +176,9 @@ test("teacher workspace changes the product focus and keeps its heading below th
   assert.equal(await page.locator("#teacher-grid").getByRole("link").count(), 4);
   assert.match(await page.locator("#teacher-grid a").nth(1).getAttribute("href"), /audience=teacher/);
   assert.match(await page.locator("#teacher-grid a").nth(3).getAttribute("href"), /mode=recheck/);
-  assert.match(await page.locator("#plan-audience-title").innerText(), /오늘의 수업/);
-  assert.deepEqual(await page.locator("#plan-audience-title .headline-line").allTextContents(), ["진단 근거로", "오늘의 수업을", "설계합니다."]);
-  assert.match(await page.locator("#plan-setup-title").innerText(), /학생의 수업 조건/);
+  assert.match(await page.locator("#plan-audience-title").innerText(), /수업 시간에 맞는/);
+  assert.deepEqual(await page.locator("#plan-audience-title .headline-line").allTextContents(), ["수업 시간에 맞는", "자료를 고르세요."]);
+  assert.match(await page.locator("#plan-setup-title").innerText(), /오늘 수업을 준비/);
   assert.equal(await page.locator("#teacher-pack").evaluate(function (node) {
     return node.compareDocumentPosition(document.querySelector(".today-section")) & Node.DOCUMENT_POSITION_FOLLOWING;
   }) > 0, true);
@@ -200,7 +200,7 @@ test("saved synthetic SASMO type evidence is ignored by the source-first plan", 
     }));
   });
   await page.goto(`${baseUrl}?goal=sasmo-primary6`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("#plan-state").innerText(), "진단 연결 전");
+  assert.equal(await page.locator("#plan-state").innerText(), "진단 결과 없음");
   assert.match(await page.locator("#prediction-title").innerText(), /진단 후 계산/);
   assert.equal(await page.locator("#diagnostic-action").getAttribute("href"), "./sasmo-real-paper.html?audience=student");
   assert.doesNotMatch(await page.locator("#plan-description").innerText(), /유형 점검/);
@@ -226,7 +226,7 @@ test("an older 2019 paper record retains its score but cannot prescribe an unrev
   assert.match(await page.locator("#prediction-copy").innerText(), /영역 판정 재검수 중/);
   assert.match(await page.locator("#today-description").innerText(), /검수 중인 영역 판정으로 확정한 약점이 아닙니다/);
   assert.equal(await page.locator("#priority-legend").innerText(), "영역 판정 전 직접 선택할 학습 영역");
-  assert.equal(await page.locator("#teacher-title").innerText(), "선택한 영역을 한 수업 세트로 엽니다.");
+  assert.equal(await page.locator("#teacher-title").innerText(), "선택한 영역의 수업 자료");
   assert.equal(await page.locator("#review-queue").isHidden(), true);
   await page.close();
 });
