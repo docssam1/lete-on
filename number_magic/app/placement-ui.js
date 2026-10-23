@@ -238,10 +238,10 @@
         answers.onclick=()=>begin('paper');
         $('#pdPaper').onclick=e=>{if(!begin('paper'))e.preventDefault();};
       }
-      if($('#pdAge'))$('#pdAge').onchange=e=>{s.age=e.target.value;s.birthYear=s.age?new Date(+new Date(now)+9*3600000).getUTCFullYear()-Number(s.age)+1:null;if(!s.profileGrade||s.gradeInferred){s.profileGrade=s.age?(Number(s.age)<8?'pre':grades[Math.min(Number(s.age)-7,12)][0]):'';s.gradeInferred=!!s.age;s.entryYear=null;}s.baselineId='';s.studyBand='';redraw();};
-      $('#pdGrade').onchange=e=>{s.profileGrade=e.target.value;s.gradeInferred=false;s.entryYear=null;if(!s.baselineId)s.studyBand='';redraw();};
-      all('[data-route]').forEach(el=>el.onclick=()=>{s.route=el.dataset.route;s.baselineId='';redraw();});
-      if($('#pdStudyBand'))$('#pdStudyBand').onchange=e=>{s.studyBand=e.target.value;s.baselineId='';redraw();};
+      if($('#pdAge'))$('#pdAge').onchange=e=>{s.age=e.target.value;s.birthYear=s.age?new Date(+new Date(now)+9*3600000).getUTCFullYear()-Number(s.age)+1:null;if(!s.profileGrade||s.gradeInferred){s.profileGrade=s.age?(Number(s.age)<8?'pre':grades[Math.min(Number(s.age)-7,12)][0]):'';s.gradeInferred=!!s.age;s.entryYear=null;}if(!s.baselineId&&s.scopeSource!=='manual')s.studyBand='';redraw();};
+      $('#pdGrade').onchange=e=>{s.profileGrade=e.target.value;s.gradeInferred=false;s.entryYear=null;if(!s.baselineId&&s.scopeSource!=='manual')s.studyBand='';redraw();};
+      all('[data-route]').forEach(el=>el.onclick=()=>{s.route=el.dataset.route;s.baselineId='';s.scopeSource='';redraw();});
+      if($('#pdStudyBand'))$('#pdStudyBand').onchange=e=>{s.studyBand=e.target.value;s.baselineId='';s.scopeSource='manual';redraw();};
       if(s.route==='book'){
         if($('#pdBookFocus'))$('#pdBookFocus').onchange=e=>{s.bookFocus=e.target.value;s.baselineId='';redraw();};
         all('[data-book-series]').forEach(el=>el.onchange=e=>{const row=s.completedBooks[Number(el.dataset.bookSeries)];row.series=e.target.value;row.editionId=/^soma-[pkabcd]$/.test(row.series)?'2019':'';row.step='';row.bookCourseNumber=null;row.bookStatus='';s.baselineId='';s.bookFocus='';redraw();});
@@ -257,12 +257,12 @@
         all('[data-book-remove]').forEach(el=>el.onclick=()=>{s.completedBooks.splice(Number(el.dataset.bookRemove),1);s.baselineId='';s.bookFocus='';redraw();});
         $('#pdAddBook').onclick=()=>{if(s.completedBooks.length>=8)return;s.completedBooks.push({series:'',step:'',bookCourseNumber:null,editionId:'',bookStatus:''});s.baselineId='';s.bookFocus='';redraw();};
       }
-      if($('#pdBaseline'))$('#pdBaseline').onchange=e=>{s.baselineId=e.target.value;redraw();};
+      if($('#pdBaseline'))$('#pdBaseline').onchange=e=>{s.baselineId=e.target.value;s.scopeSource='manual';redraw();};
       const begin=phase=>{
         if(!baseline||!profileReady)return false;
         Object.assign(s,actual);if(ctx.onProfile)ctx.onProfile(actual);
         $('#pdStart').disabled=true;
-        try{d.plan=bookPlan?(focus.series==='mixed'?core.buildBooks(focus.sources,d.seed):core.buildBook(focus.series,focus.course,d.seed)):core.build(baseline.id,d.seed);if(!bookPlan)s.baselineId=baseline.id;d.index=0;d.responses=[];d.paperQuery=paperQuery;d.paperDrafts={};d.paperMarks=null;d.phase=phase;d.questionStartedAt=Date.now();redraw();return true;}
+        try{d.plan=bookPlan?(focus.series==='mixed'?core.buildBooks(focus.sources,d.seed):core.buildBook(focus.series,focus.course,d.seed)):core.build(baseline.id,d.seed);if(!bookPlan){if(s.route==='age'&&!s.scopeSource)s.scopeSource=s.baselineId?'manual':'grade';s.baselineId=baseline.id;}d.index=0;d.responses=[];d.paperQuery=paperQuery;d.paperDrafts={};d.paperMarks=null;d.phase=phase;d.questionStartedAt=Date.now();redraw();return true;}
         catch(_){$('#pdSetupError').textContent=t('이 범위를 안전하게 구성하지 못했습니다. 출발점을 바꿔 주세요.','This range could not be safely prepared. Choose another starting point.','无法安全生成此范围，请更改起点。');$('#pdStart').disabled=false;return false;}
       };
       $('#pdStart').onclick=()=>begin('question');
