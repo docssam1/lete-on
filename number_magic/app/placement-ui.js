@@ -10,7 +10,7 @@
     return String(value == null ? '' : value);
   }
   function initial() {
-    return { version: VERSION, phase: 'setup', selection: { intakeVersion: 'multi-source-v2', route: 'age', age: '', profileGrade: '', studyBand: '', grade: '', semester: '1', completedBooks: [], bookFocus: '', series: '', step: '', bookCourseNumber: null, bookStatus: '', progress: '', baselineId: '', goal: 'curriculum', goalTarget: '', cadence: 'w2' },
+    return { version: VERSION, purpose:'placement', phase: 'setup', selection: { intakeVersion: 'multi-source-v2', route: 'age', age: '', profileGrade: '', studyBand: '', grade: '', semester: '1', completedBooks: [], bookFocus: '', series: '', step: '', bookCourseNumber: null, bookStatus: '', progress: '', baselineId: '', goal: 'curriculum', goalTarget: '', cadence: 'w2' },
       seed: Date.now().toString(36), plan: null, index: 0, responses: [], result: null };
   }
   function parseNumber(raw) {
@@ -37,6 +37,26 @@
     const l = value => label(value, lang);
     const $ = selector => root.querySelector(selector);
     const all = selector => Array.from(root.querySelectorAll(selector));
+    const achievement=d.purpose==='achievement';
+    const freshRun=reset=>{
+      const previous=JSON.parse(JSON.stringify(d.selection)),purpose=d.purpose||'placement',fresh=initial();
+      if(reset){for(const key of ['age','birthYear','profileGrade','entryYear','profileAt','gradeInferred'])if(previous[key]!=null)fresh.selection[key]=previous[key];}
+      else Object.assign(fresh.selection,previous);
+      fresh.purpose=purpose;
+      ctx.chooseMethod=false;ctx.onAttemptStart?.();
+      // A new seed is needed even when a learner restarts within the same millisecond.
+      fresh.seed=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
+      Object.keys(d).forEach(key=>delete d[key]);Object.assign(d,fresh);redraw();
+    };
+    const restart=reset=>{
+      const hasAnswers=d.responses.length||Object.values(d.paperMarks||{}).some(Boolean)||d.result;
+      if(!hasAnswers){freshRun(reset);return;}
+      const dialog=document.createElement('dialog');dialog.className='pd-reset-dialog';
+      dialog.innerHTML='<h2>'+t(reset?'시험 정보를 초기화할까요?':'다시 시험볼까요?',reset?'Reset assessment settings?':'Take a new assessment?',reset?'重置测评信息？':'重新测评？')+'</h2><p>'+t(reset?'교재·시험 범위 선택과 이번 답변을 지웁니다. 출생연도·학년·학습 진도와 이전에 저장한 결과는 유지해요.':'같은 범위에서 새 문제를 준비합니다. 이번 답변은 지우고, 이전에 저장한 결과와 학습 진도는 유지해요.',reset?'Clear book/topic selections and this attempt’s answers. Birth year, grade, learning progress and previously saved results stay.':'Prepare new questions in the same scope. Clear this attempt’s answers; keep saved results and learning progress.',reset?'清除教材、范围选择和本次答案，保留出生年份、年级、学习进度与已保存结果。':'在相同范围生成新题，清除本次答案，保留已保存结果与学习进度。')+'</p><div><button type="button" class="pd-secondary" data-cancel>'+t('취소','Cancel','取消')+'</button><button type="button" class="pd-primary" data-confirm>'+t(reset?'초기화하기':'다시 시험보기',reset?'Reset settings':'Start again',reset?'重置信息':'重新测评')+'</button></div>';
+      dialog.setAttribute('aria-label',t('시험 다시 시작','Restart assessment','重新开始测评'));root.appendChild(dialog);
+      dialog.querySelector('[data-cancel]').onclick=()=>dialog.close();dialog.onclose=()=>dialog.remove();
+      dialog.querySelector('[data-confirm]').onclick=()=>{dialog.close();freshRun(reset);};dialog.showModal();
+    };
     // Compatible saved runs may predate paper entry. Reconstruct the link
     // from their fixed seed/scope; never replace an answered plan.
     if(d.plan&&!d.paperQuery&&/^[A-Za-z0-9_-]{1,24}$/.test(d.plan.seed)){
@@ -74,6 +94,10 @@
         <main data-pd-view="${viewKey}" class="nm-placement ${d.selection.age && Number(String(d.selection.age).replace(/^pre/,'')) < 8 ? 'nm-placement-young' : ''}">
         <nav class="pd-flow" aria-label="${t('진단 순서','Assessment steps','测评步骤')}"><span${phase === 'setup' ? ' aria-current="step"' : ''}>01 ${t('기준 고르기','Starting point','选择起点')}</span><span${['question','paper'].includes(phase) ? ' aria-current="step"' : ''}>02 ${t('20문항 확인','20 questions','20道题')}</span><span${phase === 'result' ? ' aria-current="step"' : ''}>03 ${t('학습 제안','Learning suggestion','学习建议')}</span></nav>${body}</main>`;
       $('#pdBack').onclick = ctx.close;
+      const tools=document.createElement('div');tools.className='pd-session-tools';
+      tools.innerHTML=(d.plan?'<button type="button" class="pd-text-button" id="pdRetry">'+t('다시 시험보기','Take again','重新测评')+'</button>':'')+'<button type="button" class="pd-text-button" id="pdReset">'+t('시험 정보 초기화','Reset assessment settings','重置测评信息')+'</button>';
+      $('.pd-flow').after(tools);if($('#pdRetry'))$('#pdRetry').onclick=()=>restart(false);$('#pdReset').onclick=()=>restart(true);
+      if(achievement){$('.nm-unit-title').textContent=t('성취도 점검','Achievement check','掌握情况检测');$('.pd-flow span:last-child').textContent='03 '+t('점검 결과','Check results','检测结果');}
       if (ctx.renderMath) ctx.renderMath(root);
       // Each new question/result starts at its prompt, not at the previous answer.
       // Keep the position when only a setup selection redraws the same view.
@@ -231,8 +255,18 @@
       // Keep the primary action beside the chosen starting point, before optional
       // planning details and the longer explanation of the fixed blueprint.
       $('.pd-selection').after($('#pdSetupError'));$('#pdSetupError').after($('#pdStartReason'));$('#pdStartReason').after($('#pdStart'));
+      const purposes=document.createElement('div');purposes.className='pd-purposes';purposes.setAttribute('role','group');purposes.setAttribute('aria-label',t('시험 목적','Assessment purpose','测评目的'));
+      purposes.innerHTML=[['placement',t('시작점 진단','Starting-point check','起点测评')],['achievement',t('성취도 점검','Achievement check','掌握情况检测')]].map(([key,text])=>'<button type="button" data-purpose="'+key+'" aria-pressed="'+((d.purpose||'placement')===key)+'">'+text+'</button>').join('');
+      $('.pd-header').before(purposes);
+      all('[data-purpose]').forEach(button=>button.onclick=()=>{d.purpose=button.dataset.purpose;redraw();});
+      if(achievement){$('.pd-header h1').textContent=t('배운 내용을 점검해요','Check what you have learned','检测学过的内容');$('.pd-header>p:last-child').textContent=t('익힌 범위를 골라 같은 진단 문항 유형으로 확인해요. 시작점 진단 결과와 학습 진도는 바꾸지 않아요.','Choose a learned topic and check it with the same diagnostic question types. Your starting point and progress stay unchanged.','选择学过的范围，使用相同测评题型检测，不更改起点测评结果与学习进度。');}
+      if(achievement){
+        const history=typeof ctx.checkHistory==='function'?ctx.checkHistory():ctx.checkHistory||[];
+        if(history.length){const saved=document.createElement('details');saved.className='pd-check-history';saved.innerHTML='<summary>'+t('지난 성취도 점검 기록','Previous achievement checks','以往掌握情况检测记录')+'</summary><ul>'+history.slice(-6).reverse().map(x=>'<li>'+escape(new Date(x.at).toLocaleDateString(lang==='ko'?'ko-KR':lang==='zh'?'zh-CN':'en-US'))+' · '+escape(stageLabel(stages.find(stage=>stage.id===x.baselineId)||{id:'unknown',kind:'foundation',label:t('저장한 범위','Saved scope','已保存范围')}))+' · '+escape(x.bands.current.correct)+' / '+escape(x.bands.current.asked)+' · '+t(x.source==='paper-marks'?'보호자 ○·X 기록':'화면에서 직접 풂',x.source==='paper-marks'?'Parent-marked ○/X':'Answered on screen',x.source==='paper-marks'?'家长○/X记录':'屏幕直接作答')+'</li>').join('')+'</ul>';$('.pd-header').after(saved);}
+      }
+      $('#pdStart').textContent=t('화면에서 20문항 풀기','Answer 20 questions on screen','在屏幕上完成20题');
       if(baseline){
-        $('#pdStart').after($('#pdPaper'));
+        const print=document.createElement('details');print.id='pdPrintOptions';print.className='pd-print-options';print.innerHTML='<summary>'+t('종이로 풀기 · 인쇄와 채점','Use paper · print and mark','纸上作答 · 打印与评分')+'</summary><p class="pd-note">'+t('종이로 푼 답을 보호자가 답지와 비교해 ○·X로 기록해요. 화면에서 풀 때는 답을 직접 입력하면 됩니다.','A parent can compare paper answers with the key and mark ○/X. On screen, enter answers directly.','家长对照答案，将纸上作答结果标为○/X；在屏幕作答时直接输入答案。')+'</p>';$('#pdStart').after(print);const paperNote=$('#pdPaper').nextElementSibling;print.append($('#pdPaper'));if(paperNote?.classList.contains('pd-note'))print.append(paperNote);
         const answers=document.createElement('button');answers.type='button';answers.id='pdPaperAnswers';answers.className='pd-secondary pd-paper';
         answers.textContent=t('답지 보고 ○·X 체크','Mark ○/X with answer key','对照答案勾选○/X');$('#pdPaper').after(answers);
         answers.onclick=()=>begin('paper');
@@ -260,6 +294,7 @@
       if($('#pdBaseline'))$('#pdBaseline').onchange=e=>{s.baselineId=e.target.value;s.scopeSource='manual';redraw();};
       const begin=phase=>{
         if(!baseline||!profileReady)return false;
+        ctx.chooseMethod=false;ctx.onAttemptStart?.();
         Object.assign(s,actual);if(ctx.onProfile)ctx.onProfile(actual);
         $('#pdStart').disabled=true;
         try{d.plan=bookPlan?(focus.series==='mixed'?core.buildBooks(focus.sources,d.seed):core.buildBook(focus.series,focus.course,d.seed)):core.build(baseline.id,d.seed);if(!bookPlan){if(s.route==='age'&&!s.scopeSource)s.scopeSource=s.baselineId?'manual':'grade';s.baselineId=baseline.id;}d.index=0;d.responses=[];d.paperQuery=paperQuery;d.paperDrafts={};d.paperMarks=null;d.phase=phase;d.questionStartedAt=Date.now();redraw();return true;}
@@ -365,7 +400,7 @@
         ${path.schedule.targetMapping==='pending'?`<p class="pd-note">${t('목표별 정확한 도달 시점은 확인 필요입니다. 이번 연산 진단만으로 사고력·언어사고력이나 입학 준비도를 판단하지 않습니다.','Exact target timing still needs verification. This arithmetic check does not assess reasoning, language reasoning, or admission readiness.','准确的目标达成时间仍需确认。本运算测评不判断思维、语言思维或入学准备度。')}</p>`:''}
         <p class="pd-note">${t('목표별 학습 방향 제안입니다. 학습지 편성이나 기존 진도를 자동으로 바꾸지 않습니다.','These are goal-specific study suggestions, not automatic changes to worksheets or existing progress.','这是按目标提出的学习方向建议，不会自动改变练习纸编排或现有进度。')}</p>`;
       $('.pd-bands').after(guidance);
-      if(window.NM_DIAGNOSTIC_ROADMAP){const calendar=document.createElement('section');calendar.className='pd-calendar';guidance.before(calendar);window.NM_DIAGNOSTIC_ROADMAP.mount(calendar,{selection:d.selection,course:rec.course,session:rec.session,lang,settings:ctx.planSettings||{},now:ctx.now,save:ctx.save,onProfile:ctx.onProfile,onPaceApply:ctx.onPaceApply,paceManaged:ctx.paceManaged,onGoalChange:redraw});}
+      if(!achievement&&window.NM_DIAGNOSTIC_ROADMAP){const calendar=document.createElement('section');calendar.className='pd-calendar';guidance.before(calendar);window.NM_DIAGNOSTIC_ROADMAP.mount(calendar,{selection:d.selection,course:rec.course,session:rec.session,lang,settings:ctx.planSettings||{},now:ctx.now,save:ctx.save,onProfile:ctx.onProfile,onPaceApply:ctx.onPaceApply,paceManaged:ctx.paceManaged,onGoalChange:redraw});}
       if(window.NM_STUDY_ROUTE){
         const planner=document.createElement('div');guidance.appendChild(planner);
         window.NM_STUDY_ROUTE.mount(planner,{lang,course:rec.course,session:rec.session,cadence:ctx.currentCadence||path.config.cadence});
@@ -403,10 +438,23 @@
         boundary.textContent=d.plan.boundaries.previous?t('첫 기초의 이전 6문항은 같은 기초에서 더 작은 수를 확인했습니다.','At the first foundation, the six earlier items used smaller quantities within the same skill.','起点阶段的6道此前题目在同一基础中使用更小数量。'):t('마지막 과정에는 다음 범위가 없어 다음 4문항은 같은 과정 추가 확인입니다.','There is no later range after the final course; the four next items are extra checks in the same course.','最后课程没有后续范围，4道后续题为同一课程的补充确认。');
         $('.pd-score').before(boundary);
       }
+      if(achievement){
+        $('.pd-header h1').textContent=t('이번 범위의 점검 결과예요','Your topic check results','本次范围检测结果');
+        $('.pd-kicker').textContent=t('성취도 점검 · 시작점 진단과 별도 보관','Achievement check · saved separately','掌握情况检测 · 单独保存');
+        $('.pd-recommended>span').textContent=t('복습할 때 참고할 과정','Suggested course for review','复习参考课程')+' '+rec.course.slice(1);
+        $('.pd-header>p:last-child').textContent=t('선택한 범위 10문항을 중심으로 살펴봐요. 이전 6문항과 다음 4문항은 따로 표시하며, 이 점검으로 학습 진도를 자동 변경하지 않아요.','Focus on the 10 selected-scope questions. Earlier and next-stage items are shown separately; this check does not change learning progress.','以所选范围10题为中心，此前6题和后续4题分别显示，不自动更改学习进度。');
+        $('.pd-score').innerHTML='<b>'+result.bands.current.correct+'</b> / '+result.bands.current.asked+' <span>'+t('선택한 범위 맞힘','correct in selected scope','所选范围答对')+'</span><small>'+t('이전 6문항과 다음 4문항은 아래에서 따로 확인해요.','Review the six earlier and four next-stage items separately below.','此前6题和后续4题在下方分别显示。')+'</small>';
+        const history=(typeof ctx.checkHistory==='function'?ctx.checkHistory():ctx.checkHistory||[]).filter(x=>x.baselineId===d.plan.baseline.id).slice(-4);
+        if(history.length){const records=document.createElement('section');records.className='pd-check-history';records.innerHTML='<h2>'+t('같은 범위의 점검 기록','Checks in the same scope','相同范围检测记录')+'</h2><ul>'+history.map(x=>'<li>'+escape(new Date(x.at).toLocaleDateString(lang==='ko'?'ko-KR':lang==='zh'?'zh-CN':'en-US'))+' · '+escape(x.bands.current.correct)+' / '+escape(x.bands.current.asked)+' · '+t(x.source==='paper-marks'?'보호자 ○·X 기록':'화면에서 직접 풂',x.source==='paper-marks'?'Parent-marked ○/X':'Answered on screen',x.source==='paper-marks'?'家长○/X记录':'屏幕直接作答')+'</li>').join('')+'</ul>';$('.pd-score').before(records);}
+      }
       $('#pdRoad').textContent=t('로드맵에서 본진도 보기','See main study on the roadmap','在路线图查看主要进度');
-      $('#pdRoad').onclick=()=>ctx.seeCourse(rec.course);$('#pdPick').onclick=ctx.pick;$('#pdAgain').onclick=()=>{const previous=JSON.parse(JSON.stringify(d.selection)),fresh=initial();Object.assign(fresh.selection,previous,paths.normalize(previous));Object.assign(d,fresh);redraw();};
+      $('#pdAgain').textContent=t('다시 시험보기','Take again','重新测评');
+      $('#pdRoad').onclick=()=>ctx.seeCourse(rec.course);$('#pdPick').onclick=ctx.pick;$('#pdAgain').onclick=()=>restart(false);
     }
-    if(d.phase==='setup')setup();else if(d.phase==='question')question();else if(d.phase==='paper')paper();else if(d.phase==='result'&&d.result)result();else {Object.assign(d,initial());setup();}
+    if(ctx.chooseMethod&&d.plan&&['question','paper'].includes(d.phase)){
+      shell(t('시험 이어하기','Continue assessment','继续测评'),'<header class="pd-header"><h1>'+t('어떻게 풀까요?','How would you like to answer?','选择作答方式')+'</h1><p>'+t('이전에 열었던 시험이 있어요. 문제와 기록은 그대로 두고 풀이 방식을 골라 주세요.','An assessment is already open. Keep its questions and records and choose how to continue.','已有进行中的测评，保留原题与记录，选择继续作答方式。')+'</p></header><button type="button" class="pd-primary pd-paper" id="pdResumeOnline">'+t('화면에서 직접 풀기','Answer on screen','在屏幕上直接作答')+'</button><button type="button" class="pd-secondary pd-paper" id="pdResumePaper">'+t('종이로 푼 답 ○·X 채점','Mark paper answers ○/X','纸上答案○/X评分')+'</button>','resume');
+      $('#pdResumeOnline').onclick=()=>ctx.onMethodChoose('question');$('#pdResumePaper').onclick=()=>ctx.onMethodChoose('paper');
+    }else if(d.phase==='setup')setup();else if(d.phase==='question')question();else if(d.phase==='paper')paper();else if(d.phase==='result'&&d.result)result();else {Object.assign(d,initial());setup();}
   }
   window.NM_PLACEMENT_UI = { version: VERSION, initial, render, parseNumber, readValues };
 })();
