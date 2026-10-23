@@ -282,3 +282,38 @@ html:has(.archive-theme), body:has(.archive-theme) { background: #071011; }
 @media (max-width: 760px) { .arch-wall { top: 13%; left: 6%; } .arch-resume { bottom: auto; top: 3%; } }
 /* 카드(z 1000 안팎)보다 알약·넘기기 단추·이어서 보기가 위에 오게 */
 .arch-pills, .arch-ctrl, .arch-resume { z-index: 2000; }
+
+/* ── 초등·중등 수준(2026-10-23) — 첫 화면 알약 줄 하나 더, 카드·실험 화면 배지, 보고서 가기 ─── */
+.arch-pills.arch-levels { left: 3%; right: auto; bottom: calc(6% + 50px); flex-direction: row; align-items: center; gap: 6px; }
+.arch-pills.arch-levels button:nth-child(n) { margin-right: 0; }
+.arch-pills.arch-levels button:not(.all)::before { background: #bfeeee; }
+.arch-pills.arch-levels button[data-lvl="mid"]:not(.all)::before { background: #f0d49a; }
+@media (max-width: 760px) { .arch-pills.arch-levels { left: 4%; right: 4%; bottom: calc(3% + 40px); justify-content: center; } }
+.ac-level { font-style: normal; font-weight: 800; letter-spacing: .04em; margin-right: 8px; padding: 1px 7px; border-radius: 999px; font-size: 10.5px; background: rgba(159,216,214,.18); color: #bfeeee; border: 1px solid rgba(191,238,238,.45); }
+.ac-level.mid { background: rgba(217,164,65,.18); color: #f0d49a; border-color: rgba(240,212,154,.5); }
+.unit-head .crumb .lv { background: #e3f1ec; color: var(--accent); border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 800; }
+.tabs a.report-tab { color: var(--accent); font-weight: 700; }
+.report-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: var(--card); border: 1.5px solid var(--accent); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); color: inherit; text-decoration: none; }
+.report-cta .step { font-size: 12px; font-weight: 800; color: #fff; background: var(--accent); border-radius: 999px; padding: 2px 9px; letter-spacing: .06em; }
+.report-cta b { font-family: var(--serif); font-size: 19px; }
+.report-cta > span:last-child { color: var(--ink-2); font-size: 13.5px; }
+.report-cta:hover { transform: translateY(-1px); }
+.arch-shelf .no { min-width: 44px; }
+/* 대회 거르기(2026-10-23) — 과학탐구대회 · 자연관찰대회 · 발명대회. PC는 왼쪽 수준 줄 위, 폰은 세 줄을 가로로 밀어 보는 띠로 */
+.arch-pills.arch-contests { left: 3%; right: auto; bottom: calc(6% + 92px); flex-direction: row; align-items: center; gap: 6px; }
+.arch-pills.arch-contests button:nth-child(n) { margin-right: 0; }
+.arch-pills.arch-contests button[data-ct="inquiry"]::before { background: #7fc8f0; }
+.arch-pills.arch-contests button[data-ct="nature"]::before { background: #8fd18a; }
+.arch-pills.arch-contests button[data-ct="invent"]::before { background: #c9a6f0; }
+.ac-contest { font-style: normal; font-size: 10px; letter-spacing: .04em; border-radius: 999px; padding: 1px 7px; margin-right: 5px; border: 1px solid rgba(255,255,255,.22); color: #dfe9ee; }
+.ac-contest.nature { color: #bfe8bb; border-color: rgba(143,209,138,.5); } .ac-contest.invent { color: #e2cff8; border-color: rgba(201,166,240,.5); } .ac-contest.inquiry { color: #c7e7f8; border-color: rgba(127,200,240,.5); }
+@media (max-width: 760px) {
+  .arch-pills.arch-doms, .arch-pills.arch-levels, .arch-pills.arch-contests { left: 0; right: 0; padding: 0 4%; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; gap: 6px; }
+  .arch-pills.arch-doms::-webkit-scrollbar, .arch-pills.arch-levels::-webkit-scrollbar, .arch-pills.arch-contests::-webkit-scrollbar { display: none; }
+  .arch-pills.arch-doms button, .arch-pills.arch-levels button, .arch-pills.arch-contests button { flex: 0 0 auto; white-space: nowrap; }
+  .arch-pills.arch-doms { bottom: 2.4%; }
+  .arch-pills.arch-levels { bottom: calc(2.4% + 36px); }
+  .arch-pills.arch-contests { bottom: calc(2.4% + 72px); }
+  .arch-card { bottom: calc(2.4% + 112px); }
+  .ac-contest { display: none; }
+}
