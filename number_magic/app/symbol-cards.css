@@ -79,3 +79,5 @@
   .nmsc-acquisition-inner{padding:18px 16px}.nmsc-acquisition-inner>.nmsc-card{max-width:260px;min-height:330px}
 }
 @media(prefers-reduced-motion:reduce){.nmsc-card{transition:none}.nmsc-card:hover{transform:none}}
+
+.nmsc-back{max-width:100%;white-space:normal;overflow-wrap:anywhere}

@@ -31,7 +31,7 @@ function worldDistance(a,b){return Math.hypot((a.wx-b.wx)*20,(a.wy-b.wy)*13.42);
       });
       await context.route('**/app/entry.js?*',route=>route.fulfill({contentType:'application/javascript',body:'window.NM_ENTRY={mode:"fixture"};'}));
       await context.addInitScript(()=>{
-        if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify({
+        if(!localStorage.getItem('nm_preview_state_v1'))localStorage.setItem('nm_preview_state_v1',JSON.stringify({
           lang:'ko',onboarded:true,name:'Follow fixture',view:'town',avatar:{kind:'boy',name:'Map kid'},
           character:{number:3,color:'gold'},coins:777,progress:{'N-01':{done:true}},r0BannerSeen:true,
           attend:{last:new Date(Date.now()+9*3600000).toISOString().slice(0,10),days:1},account:{status:'active'}
@@ -51,7 +51,7 @@ function worldDistance(a,b){return Math.hypot((a.wx-b.wx)*20,(a.wy-b.wy)*13.42);
           vp:{x:vp.x,y:vp.y,width:vp.width,height:vp.height,right:vp.right,bottom:vp.bottom},
           covered:map.x<=vp.x+1&&map.y<=vp.y+1&&map.right>=vp.right-1&&map.bottom>=vp.bottom-1};
       });
-      const learner=()=>page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return{coins:s.coins,progress:s.progress,avatar:s.avatar,character:s.character};});
+      const learner=()=>page.evaluate(()=>{const s=JSON.parse(localStorage.getItem(window.NM_STATE_KEY));return{coins:s.coins,progress:s.progress,avatar:s.avatar,character:s.character};});
       const openTools=async()=>{
         if(await page.locator('.nm-town-toolbox').getAttribute('open')===null)await page.locator('.nm-town-toolbox > summary').click();
         if(await page.locator('.nm-town-more').getAttribute('open')===null)await page.locator('.nm-town-more > summary').click();

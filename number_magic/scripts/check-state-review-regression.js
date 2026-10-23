@@ -4,7 +4,7 @@
 // in-memory storage only. A failed assertion reports an actual preservation gap.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const main=fs.readFileSync(path.join(__dirname,'../app/main.js'),'utf8');
-const wallet=require('../app/character-state.js'),attendance=require('../app/attendance.js');
+const wallet=require('../app/character-state.js'),attendance=require('../app/attendance.js'),learnerStorage=require('../app/learner-storage.js');
 const reports=[];
 function section(name,end){
   const a=main.indexOf('function '+name+'('),b=main.indexOf(end,a);
@@ -21,7 +21,7 @@ const sources=[baseline[0],section('load','let S=load();'),section('stateStorage
 const fixture=name=>({lang:'ko',name,onboarded:true,coins:100,progress:{},character:{number:3},character_unlocked:{},symbolDex:{},attend:{last:'2026-10-23',days:1,dates:['2026-10-23']}});
 function runtime(state,shared=new Map(),fail=()=>false){
   const nodes=[],controls={},node=id=>controls[id]||(controls[id]={onclick:null,isConnected:false,removed:false,remove(){this.isConnected=false;this.removed=true;},classList:{toggle(){}}});
-  const w={S:state,KEY:'fixture_state',REVIEW:false,review:{username:'fixture'},SLOT_COUNT:3,SLOT_ACTIVE_KEY:'fixture_active',hadSave:false,
+  const w={S:state,KEY:'nm_preview_state_v1',REVIEW:false,review:{username:'fixture'},SLOT_COUNT:3,SLOT_ACTIVE_KEY:'nm_preview_state_v1_active_slot',hadSave:false,stateOwnerId:null,learnerTransition:false,NM_LEARNER_STORAGE:learnerStorage,NM_PROFILE_AUTH:{peek:()=>null},
     booted:false,membership:null,attendanceSaveFailed:false,NM_CHARACTER_STATE:wallet,NM_ATTENDANCE:attendance,
     NM_AVATAR:{hats:[{id:'fixture_hat',price:30}]},NM_HUMANS:{},
     applyAdminSettings(){},cloudPushSoon(){},normalizeLoadedState(){},defaults:()=>fixture(''),
@@ -33,7 +33,7 @@ function runtime(state,shared=new Map(),fail=()=>false){
       setItem(key,value){if(fail(key,value))throw Error('fixture_storage_full');shared.set(key,String(value));},
       removeItem(key){if(fail(key))throw Error('fixture_storage_full');shared.delete(key);}},
     Date,JSON,Math,Number,Object,console};
-  if(!shared.has('fixture_state'))shared.set('fixture_state',JSON.stringify(state));
+  if(!shared.has('nm_preview_state_v1'))shared.set('nm_preview_state_v1',JSON.stringify(state));
   w.window=w;vm.createContext(w);vm.runInContext(sources,w,{filename:'actual-state-review-functions.js'});w.S=w.load();
   return{w,shared};
 }
@@ -41,30 +41,30 @@ function record(name,ok,details){reports.push({name,passed:ok,...details});}
 
 // A failed write must neither advertise a grant nor keep an unpersisted claim.
 {
-  const original=fixture('Storage fixture'),stored=JSON.stringify(original),shared=new Map([['fixture_state',stored]]);
-  let failState=true;const{w}=runtime(JSON.parse(stored),shared,key=>failState&&key==='fixture_state');
+  const original=fixture('Storage fixture'),stored=JSON.stringify(original),shared=new Map([['nm_preview_state_v1',stored]]);
+  let failState=true;const{w}=runtime(JSON.parse(stored),shared,key=>failState&&key==='nm_preview_state_v1');
   const granted=w.coinAdd(78,'unit','unit:fixture');
   record('reward-write-failure',granted===0&&JSON.stringify(w.S)===stored,{
-    granted,inMemoryCoins:w.S.coins,storedCoins:JSON.parse(shared.get('fixture_state')).coins,
+    granted,inMemoryCoins:w.S.coins,storedCoins:JSON.parse(shared.get('nm_preview_state_v1')).coins,
     claimKept:!!w.S.coinRewards?.claims?.['unit|unit:fixture']});
   failState=false;const retried=w.coinAdd(78,'unit','unit:fixture');
-  record('reward-write-retry',retried===15&&JSON.parse(shared.get('fixture_state')).coins===115,{
-    granted:retried,storedCoins:JSON.parse(shared.get('fixture_state')).coins});
+  record('reward-write-retry',retried===15&&JSON.parse(shared.get('nm_preview_state_v1')).coins===115,{
+    granted:retried,storedCoins:JSON.parse(shared.get('nm_preview_state_v1')).coins});
 }
 
 // A newer tab can have exactly the same wallet but additional learning progress.
 // The purchase callback must not overwrite that newer non-wallet state.
 {
   const stale=fixture('Purchase fixture'),newer=fixture('Purchase fixture');newer.progress['N-01']={done:true,steps:{stamp:true}};
-  const shared=new Map([['fixture_state',JSON.stringify(stale)]]),{w}=runtime(stale,shared);
-  shared.set('fixture_state',JSON.stringify(newer));
-  const result=w.onPurchase('hat','fixture_hat'),disk=JSON.parse(shared.get('fixture_state'));
+  const shared=new Map([['nm_preview_state_v1',JSON.stringify(stale)]]),{w}=runtime(stale,shared);
+  shared.set('nm_preview_state_v1',JSON.stringify(newer));
+  const result=w.onPurchase('hat','fixture_hat'),disk=JSON.parse(shared.get('nm_preview_state_v1'));
   record('purchase-with-newer-progress',!!disk.progress['N-01']?.done,{
     purchaseSucceeded:result.ok,spent:result.spent||0,newerUnitRetained:!!disk.progress['N-01']?.done,
     inMemoryUnitRetained:!!w.S.progress['N-01']?.done,reloads:w.reloads});
   w.S.view='town';const saved=w.save();
-  record('save-after-purchase-conflict',!!JSON.parse(shared.get('fixture_state')).progress['N-01']?.done,{
-    saved,newerUnitRetained:!!JSON.parse(shared.get('fixture_state')).progress['N-01']?.done});
+  record('save-after-purchase-conflict',!!JSON.parse(shared.get('nm_preview_state_v1')).progress['N-01']?.done,{
+    saved,newerUnitRetained:!!JSON.parse(shared.get('nm_preview_state_v1')).progress['N-01']?.done});
 }
 
 // If the final active-slot marker write fails, the switch must be atomic.
@@ -72,11 +72,11 @@ function record(name,ok,details){reports.push({name,passed:ok,...details});}
   const first=fixture('Sibling A'),second=fixture('Sibling B'),a=JSON.stringify(first),b=JSON.stringify(second);
   // Older installs legitimately have no marker (the default slot is 1).
   // Creating its first marker can hit quota after the preceding writes fit.
-  const shared=new Map([['fixture_state',a],['nm_state_slot2',b]]),before=JSON.stringify([...shared]);
-  let failMarker=true;const{w}=runtime(first,shared,key=>failMarker&&key==='fixture_active');w.switchToSlot(2);
-  const consistent=shared.get('fixture_state')===a&&w.activeSlot()===1;
+  const shared=new Map([['nm_preview_state_v1',a],['nm_state_slot2',b]]),before=JSON.stringify([...shared]);
+  let failMarker=true;const{w}=runtime(first,shared,key=>failMarker&&key==='nm_preview_state_v1_active_slot');w.switchToSlot(2);
+  const consistent=shared.get('nm_preview_state_v1')===a&&w.activeSlot()===1;
   record('slot-marker-write-failure',consistent&&w.reloads===0,{
-    activeSlot:w.activeSlot(),rawSlotMarker:shared.get('fixture_active')||null,activeLearner:JSON.parse(shared.get('fixture_state')).name,
+    activeSlot:w.activeSlot(),rawSlotMarker:shared.get('nm_preview_state_v1_active_slot')||null,activeLearner:JSON.parse(shared.get('nm_preview_state_v1')).name,
     originalSlotBackup:JSON.parse(shared.get('nm_state_slot1')||'null')?.name,reloads:w.reloads,
     storageUnchanged:JSON.stringify([...shared])===before});
   failMarker=false;w.switchToSlot(2);const restarted=runtime(fixture('Unused defaults'),shared).w;
@@ -86,12 +86,12 @@ function record(name,ok,details){reports.push({name,passed:ok,...details});}
 
 // A tab belonging to a previous sibling must not save over the newly active one.
 {
-  const a=fixture('Sibling A'),b=fixture('Sibling B'),shared=new Map([['fixture_state',JSON.stringify(a)],['fixture_active','1'],['nm_state_slot2',JSON.stringify(b)]]);
+  const a=fixture('Sibling A'),b=fixture('Sibling B'),shared=new Map([['nm_preview_state_v1',JSON.stringify(a)],['nm_preview_state_v1_active_slot','1'],['nm_state_slot2',JSON.stringify(b)]]);
   const oldTab=runtime(a,shared).w,newTab=runtime(JSON.parse(JSON.stringify(a)),shared).w;
   newTab.switchToSlot(2);oldTab.S.progress['N-09']={done:true};const saved=oldTab.save();
-  const disk=JSON.parse(shared.get('fixture_state'));
+  const disk=JSON.parse(shared.get('nm_preview_state_v1'));
   record('stale-sibling-tab-save',disk.name==='Sibling B',{
-    staleSaveAccepted:saved,activeSlot:shared.get('fixture_active'),activeLearner:disk.name,
+    staleSaveAccepted:saved,activeSlot:shared.get('nm_preview_state_v1_active_slot'),activeLearner:disk.name,
     expectedLearner:'Sibling B',staleTabUnitWritten:!!disk.progress['N-09']?.done});
 }
 
@@ -106,7 +106,7 @@ function record(name,ok,details){reports.push({name,passed:ok,...details});}
 }
 {
   const a=fixture('Healthy sibling A'),b=fixture('Healthy sibling B');
-  const shared=new Map([['fixture_state',JSON.stringify(a)],['fixture_active','1'],['nm_state_slot2',JSON.stringify(b)]]),first=runtime(a,shared).w;
+  const shared=new Map([['nm_preview_state_v1',JSON.stringify(a)],['nm_preview_state_v1_active_slot','1'],['nm_state_slot2',JSON.stringify(b)]]),first=runtime(a,shared).w;
   first.switchToSlot(2);const second=runtime(fixture('Unused defaults'),shared).w;
   second.S.progress['N-03']={done:true};const saved=second.save();second.switchToSlot(1);
   const returned=runtime(fixture('Unused defaults'),shared).w;
@@ -116,17 +116,17 @@ function record(name,ok,details){reports.push({name,passed:ok,...details});}
 
 // Attendance's own transaction already rolls back a failed local write.
 {
-  const original=fixture('Attendance fixture'),stored=JSON.stringify(original),shared=new Map([['fixture_state',stored]]);
-  const{w}=runtime(JSON.parse(stored),shared,key=>key==='fixture_state');const result=w.checkAttendance();
+  const original=fixture('Attendance fixture'),stored=JSON.stringify(original),shared=new Map([['nm_preview_state_v1',stored]]);
+  const{w}=runtime(JSON.parse(stored),shared,key=>key==='nm_preview_state_v1');const result=w.checkAttendance();
   record('attendance-write-failure',result===null&&JSON.stringify(w.S)===stored,{
-    result,inMemoryCoins:w.S.coins,storedCoins:JSON.parse(shared.get('fixture_state')).coins,errorFlag:w.attendanceSaveFailed});
+    result,inMemoryCoins:w.S.coins,storedCoins:JSON.parse(shared.get('nm_preview_state_v1')).coins,errorFlag:w.attendanceSaveFailed});
 }
 
 // The normal card collector retains the modal and rolls the collection back.
 // Its dependency-failure fallback must provide the same persistence guarantee.
 for(const modern of [true,false]){
-  const original=fixture('Symbol fixture'),stored=JSON.stringify(original),shared=new Map([['fixture_state',stored]]);
-  const{w}=runtime(JSON.parse(stored),shared,key=>key==='fixture_state');
+  const original=fixture('Symbol fixture'),stored=JSON.stringify(original),shared=new Map([['nm_preview_state_v1',stored]]);
+  const{w}=runtime(JSON.parse(stored),shared,key=>key==='nm_preview_state_v1');
   if(modern)w.NM_SYMBOL_CARDS={bindAcquisition(_node,options){w.collect=options.onCollect;return()=>{};}};
   w.showSymbolCardModal([{sym:'+'}],0,{id:'N-fixture'});
   const result=modern?w.collect():w.controls['#nmSymClose'].onclick();

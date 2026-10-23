@@ -225,9 +225,14 @@
     line-height: 1.5;
   }
   .nm-unit-view .nm-unit-bar .nm-back {
-    width: var(--lesson-target);
-    height: var(--lesson-target);
-    font-size: 22px;
+    width: auto;
+    height: auto;
+    min-height: var(--lesson-target);
+    max-width: 100%;
+    padding: 8px 14px;
+    font-size: 16px;
+    line-height: 1.4;
+    white-space: normal;
   }
   .nm-unit-view .nm-flow {
     gap: 5px;

@@ -2,7 +2,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),main=fs.readFileSync(path.join(root,'app/main.js'),'utf8');
-const W=require('../app/character-state.js');
+const W=require('../app/character-state.js'),learnerStorage=require('../app/learner-storage.js');
 function section(name,end){
   const a=main.indexOf('function '+name+'('),b=main.indexOf(end,a);
   assert(a>=0&&b>a,'real function boundaries: '+name);return main.slice(a,b);
@@ -37,16 +37,16 @@ const w={console,Date:FixedDate,Math,JSON,Promise,Number,Map,Set,
   playSfx:()=>null,confetti(){},sayAfterSfx(){},bindLineageEvoCard(){},exitUnit(){},lessonLater(){},
   screenHistQuiz(){},showUnlockOverlay:items=>overlays.push(items),
   hqPuzzle:{picked:[0,1,2,3]},NM_STATS:{record(){}},
-  KEY:'fixture_state',REVIEW:false,membership:null,booted:false,applyAdminSettings(){},
-  defaults:()=>({coins:0,progress:{}}),hadSave:false,
+  KEY:learnerStorage.keyFor('guardian-fixture'),REVIEW:false,membership:null,booted:false,applyAdminSettings(){},
+  defaults:()=>({coins:0,progress:{}}),hadSave:false,stateOwnerId:'guardian-fixture',learnerTransition:false,NM_LEARNER_STORAGE:learnerStorage,NM_PROFILE_AUTH:{peek:()=>({user:{id:'guardian-fixture'}})},
   localStorage:{getItem:key=>storage.has(key)?storage.get(key):null,setItem:(key,value)=>storage.set(key,String(value)),removeItem:key=>storage.delete(key)},
-  SLOT_COUNT:3,SLOT_ACTIVE_KEY:'fixture_active',location:{reload(){}},
+  SLOT_COUNT:3,SLOT_ACTIVE_KEY:learnerStorage.keyFor('guardian-fixture')+'_active_slot',location:{reload(){}},
   cloudTimer:null,cloudSyncError:false,SB_URL:'https://fixture.invalid',
   cloudCredentials:async()=>({owner:'guardian-fixture',headers:{Authorization:'Bearer fixture'}}),
   isGuardianOwner:owner=>owner==='guardian-fixture',renderIdCard(){},
   fetch:async(url,options)=>{assert(url.startsWith('https://fixture.invalid/'));requests.push({url,...options});return {ok:true,json:async()=>[{}]};}};
 w.window=w;vm.createContext(w);
-const functions=[section('coinAdd','/* ============================================================'),
+const functions=[section('navigationLabel','function enterUnit('),section('coinAdd','/* ============================================================'),
   section('todayKey','/* 출석 체크'),section('checkAttendance','/* 주간 보너스'),
   section('weekFullyDone','function maybeAwardWeeklyBonus('),section('maybeAwardWeeklyBonus','function pickVoice('),
   section('settleMiniGameReward','function _renderMiniGame('),section('_renderMiniGame','function screenGradeCourse('),

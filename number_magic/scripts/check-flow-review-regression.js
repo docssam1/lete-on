@@ -17,7 +17,7 @@ function setup(completed,options={}){
   save:()=>{events.saves++;if(events.failSaves){events.failSaves--;return false;}return true;},render:()=>{events.renders++;w.lessonVersion++;},
   coinAdd:n=>{w.S.coins+=n;return n;},maybeAwardWeeklyBonus(){},
   renderMath(){},playSfx(){},logDaily(){},dots:()=>'',labExprHtml:value=>value,applyMinusKey:value=>value==='-'?'':'-',
-  buildNumpad:(pad,callback)=>{w.padCallback=callback;},NM_VOICE:{isSpeaking:()=>false},
+  navigationLabel:view=>'Return to '+view,unitReturnLabel:()=> 'Return to village',buildNumpad:(pad,callback)=>{w.padCallback=callback;},NM_VOICE:{isSpeaking:()=>false},
   NM_RNG:{hashSeed:()=>1,mulberry32:()=>()=>.5},NM_THREADS:{},NM_TGEN:{}};
  w.window=w;vm.createContext(w);vm.runInContext(stats,w,{filename:'actual-progress-stats.js'});
  vm.runInContext(section('lessonLater','function stopVoice(')+'\n'+section('screenBoost','/* 목록: 이번 주'),w,{filename:'actual-screenBoost.js'});
@@ -128,18 +128,20 @@ const findings=[];
 }
 {
  const {w,store}=setup(false),a=main.indexOf('if(window.NM_STATS?.bind)'),b=main.indexOf("window.addEventListener('nm:study-record-error'",a);assert(a>=0&&b>a,'actual main statistics binding');
- let storageCurrent=true;Object.assign(w,{stateStorageCurrent:()=>storageCurrent,REVIEW:false,review:{username:'master-fixture'},stateStorageSlot:'1',SLOT_COUNT:3});
+ let storageCurrent=true,authOwner=null;Object.assign(w,{stateStorageCurrent:()=>storageCurrent,REVIEW:false,review:{username:'master-fixture'},stateOwnerId:null,NM_PROFILE_AUTH:{peek:()=>authOwner?{user:{id:authOwner}}:null}});
  vm.runInContext(main.slice(a,b),w,{filename:'actual-main-statistics-binding.js'});
- const api=w.NM_STATS;api.record('AD3',1,0,5);w.stateStorageSlot='2';
+ const api=w.NM_STATS;api.record('AD3',1,0,5);w.stateOwnerId='owner1';authOwner='owner1';
  const localSeparate=api.sessionsOf('AD3').length===0;api.record('AD3',1,0,5);
  w.S.cloudLinked=true;w.S.cloudOwnerId='owner1';w.S.name='childA';
  const guardianSeparate=api.sessionsOf('AD3').length===0;api.record('AD3',1,0,5);
  w.S.name='childB';const profileSeparate=api.sessionsOf('AD3').length===0;api.record('AD3',1,0,5);
- w.S.cloudOwnerId='owner2';const ownerSeparate=api.sessionsOf('AD3').length===0;api.record('AD3',1,0,5);
- w.REVIEW=true;const reviewSeparate=api.sessionsOf('AD3').length===0;api.record('AD3',1,0,5);
+ w.S.cloudOwnerId='owner2';w.stateOwnerId='owner2';authOwner='owner2';const ownerSeparate=api.sessionsOf('AD3').length===0;api.record('AD3',1,0,5);
+ const beforeMismatch=JSON.stringify([...store]);authOwner='wrong-owner';
+ const ownerMismatchBlocked=api.record('AD3',1,0,5)===false&&api.sessionsOf('AD3').length===0&&JSON.stringify([...store])===beforeMismatch;
+ authOwner='owner2';w.REVIEW=true;const reviewSeparate=api.sessionsOf('AD3').length===0;api.record('AD3',1,0,5);
  const before=JSON.stringify([...store]);storageCurrent=false;
  const staleBlocked=api.record('AD3',1,0,5)===false&&api.sessionsOf('AD3').length===0&&!api.needsBoost('AD3')&&api.boostList().length===0&&JSON.stringify([...store])===before;
- findings.push({case:'actual-main-statistics-scope-binding',localSeparate,guardianSeparate,profileSeparate,ownerSeparate,reviewSeparate,staleBlocked,scopedKeys:store.size});
+ findings.push({case:'actual-main-statistics-scope-binding',localSeparate,guardianSeparate,profileSeparate,ownerSeparate,reviewSeparate,ownerMismatchBlocked,staleBlocked,scopedKeys:store.size});
 }
 {
  const {w}=setup(true);delete w.S._boost.sessionId;w.S._boostRewarded=true;
@@ -177,7 +179,7 @@ if(!process.argv.includes('--observe')){
  const latest=findings[9];assert.equal(latest.latestRead,true);assert.equal(latest.failed,false);assert.equal(latest.afterFailure,2);assert.equal(latest.retry,true);assert.equal(latest.sessions,3);assert.equal(latest.duplicateWrites,0);assert.equal(latest.legacyKeyUntouched,true);
  assert.equal(findings[10].answered,1,'same checkup answer cannot skip a question');assert.equal(findings[10].score,1);assert.equal(findings[10].logEntries,1);
  assert.equal(findings[11].view,'unit','obsolete checkup feedback cannot replace the next screen');
- for(const key of ['localSeparate','guardianSeparate','profileSeparate','ownerSeparate','reviewSeparate','staleBlocked'])assert.equal(findings[12][key],true,key);
+ for(const key of ['localSeparate','guardianSeparate','profileSeparate','ownerSeparate','reviewSeparate','ownerMismatchBlocked','staleBlocked'])assert.equal(findings[12][key],true,key);
  assert.equal(findings[12].scopedKeys,6);
  assert.equal(findings[13].logEntries,1);assert.equal(findings[13].newStats,0);assert.equal(findings[13].completedAt,1234);
  console.log('OK: fourteen flow/statistics regressions: boost/checkup completion/answer/timer guards, failed storage retry, restart idempotency, actual main scope binding, sibling/guardian/review isolation, blocked scopes, latest scoped reads and legacy preservation.');

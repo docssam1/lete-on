@@ -1959,17 +1959,17 @@ function resolveConceptUnit(threadId, level){
 
    exam.js는 drill.html에서도 로드되는데 그쪽엔 main.js가 아예 없어 앱 상태도 없다.
    그래서 두 단으로 떨어진다:
-     ① nm_state_v1의 lang — 앱이 저장해 둔 언어(메인 앱·인쇄 검사기)
+     ① 현재 계정의 NM_STATE_KEY lang — 앱 언어; 독립 문제은행은 체험 저장만 읽음
      ② 문서의 lang 속성  — 앱 상태가 없는 페이지(drill.html은 <html lang="ko">)
    둘 다 없으면 한국어. */
-const NM_LANG_KEY = 'nm_state_v1';
+const NM_LANG_KEY = window.NM_STATE_KEY || 'nm_preview_state_v1';
 function normLang(l){ const v = String(l || '').slice(0, 2); return (v === 'en' || v === 'zh') ? v : 'ko'; }
 /* 저장본 문자열이 그대로면 다시 파싱하지 않는다 — 한 장 찍는 동안 수백 번 불린다.
    (S에는 진도까지 들어 있어 매번 JSON.parse하면 인쇄 한 번에 그 비용을 다 문다.) */
 let _langMemo = { raw: null, val: null };
 function examLang(){
   try{
-    const raw = localStorage.getItem(NM_LANG_KEY);
+    const raw = localStorage.getItem(window.NM_STATE_KEY||NM_LANG_KEY);
     if(raw){
       if(raw !== _langMemo.raw){
         const st = JSON.parse(raw);
@@ -1992,7 +1992,7 @@ function lk(ko, en, zh){ const l = examLang(); return l === 'en' ? en : l === 'z
 function printStudentName(){
   if(typeof window.NM_PRINT_NAME==='string') return window.NM_PRINT_NAME.trim(); // ws.html(링크 학습지)이 URL의 이름을 넘긴다
   try{
-    const st=JSON.parse(localStorage.getItem(NM_LANG_KEY)||'null');
+    const st=JSON.parse(localStorage.getItem(window.NM_STATE_KEY||NM_LANG_KEY)||'null');
     return (st&&typeof st.name==='string')?st.name.trim():'';
   }catch(e){return '';}
 }
@@ -2791,13 +2791,13 @@ let pvOnPage = false;     /* 이 쪽에 색을 쓴 문항이 있나(범례를 �
    printAgeBand는 문항에서 난이도를 되짚는 값이라 여기 쓰면 두 가지가 어긋난다:
    ① 초1이 쉬운 학습지를 풀면 young이지만 초5가 같은 걸 풀어도 young이 된다
    ② printAgeBand는 회차를 다 만든 뒤에야 나오는데 색은 만들면서 넣어야 한다.
-   앱이 저장한 학령(nm_state_v1.schoolAge.entryYear)을 그대로 읽는다 — 기준은
+   앱이 저장한 현재 계정의 학령(NM_STATE_KEY.schoolAge.entryYear)을 그대로 읽는다 — 기준은
    앱과 같은 24개월(초3 3월) 미만. 학년을 모르면 켜지 않는다(모르면서 칠하면
    중고등 학습지에 색이 들어간다). ws.html은 window.NM_PV_HINT로 덮어쓸 수 있다. */
 function pvGradeWantsHint(){
   if(typeof window.NM_PV_HINT === 'boolean') return window.NM_PV_HINT;
   try{
-    const st = JSON.parse(localStorage.getItem(NM_LANG_KEY) || 'null');
+    const st = JSON.parse(localStorage.getItem(window.NM_STATE_KEY||NM_LANG_KEY) || 'null');
     const ey = st && st.schoolAge && st.schoolAge.entryYear;
     if(!ey) return false;
     const d = new Date();
@@ -8530,7 +8530,7 @@ ${answerSectionsHtml}`;
   middlePacingEnvelope(grade,sessionId,seed){
     const session=window.NM_MIDDLE_PACING&&NM_MIDDLE_PACING.getSession(grade,sessionId);
     if(!session||!session.bundle)return null;
-    let cad='w1';try{cad=JSON.parse(localStorage.getItem('nm_state_v1')||'{}').roadCadence==='w2'?'w2':'w1';}catch(e){}
+    let cad='w1';try{cad=JSON.parse(localStorage.getItem(window.NM_STATE_KEY||'nm_preview_state_v1')||'{}').roadCadence==='w2'?'w2':'w1';}catch(e){}
     const e=this.weeklyEnvelope((window.NM_COURSES||{})[session.course],session.course,seed||NM_RNG.newCode(),{
       compactHigh:true,lesson:session.lessonIndex,cad,grade:String(Number(grade)+6)});
     if(e)e.cover.weekLabel=cad==='w2'?`${session.week}주 ${session.day}회`:`${session.standardWeek}주`;

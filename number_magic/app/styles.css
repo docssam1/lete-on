@@ -172,8 +172,9 @@ html[data-nm-bg="challenge"]  body::before{background-image:url(../assets/stages
    만 키우면 되고 폭까지 원형으로 고정할 필요는 없다). */
 .nm-unit-view .nm-unit-bar .nm-unit-title{font-size:20px;font-weight:800;line-height:1.2}
 .nm-unit-view .nm-unit-bar .nm-unit-title small{font-size:13px;margin-top:2px}
-.nm-unit-view .nm-unit-bar .nm-back{width:40px;height:40px;padding:0;border-radius:50%;
-  display:grid;place-items:center;font-size:16px;font-weight:900;flex:none}
+.nm-unit-view .nm-unit-bar{flex-wrap:wrap;gap:8px}
+.nm-unit-view .nm-unit-bar .nm-back{width:auto;height:auto;min-height:44px;max-width:100%;padding:8px 14px;border-radius:99px;
+  display:inline-flex;align-items:center;justify-content:center;line-height:1.4;white-space:normal;font-size:14px;font-weight:700;flex:none}
 
 /* flow bar (컴팩트) */
 .nm-flow{flex:none;display:flex;align-items:center;gap:2px;overflow-x:auto;padding:4px 0 8px;-webkit-overflow-scrolling:touch}
@@ -3997,3 +3998,11 @@ body.nm-review-mode .nm-title3d{top:48px}
 /* The live announcement belongs to the map, not the outer screen scroller. */
 .nm-cr-desk .nm-vmap{position:relative}
 .nm-cr-desk .nm-vmap-live{top:0;left:0}
+
+/* Destination-labelled exit remains visible while the village menu is folded. */
+.nm-town-illustrated .nm-town-hud.brand{display:flex;flex-direction:column;align-items:flex-start;gap:6px;max-width:calc(100% - 190px);box-sizing:border-box}
+.nm-town-illustrated .nm-town-hud.brand .nm-back{min-height:44px;max-width:100%;padding:7px 12px;line-height:1.35;white-space:normal}
+
+.nm-unit-view .nm-unit-bar .nm-unit-title{min-width:0;max-width:100%;overflow-wrap:anywhere}
+
+#townLeave{pointer-events:auto}

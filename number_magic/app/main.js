@@ -237,7 +237,15 @@ const t=k=>{
 const L=(obj)=>obj?(obj[S.lang]??obj.ko??obj.en):'';   // 다국어 필드 픽
 
 /* ---------- 상태 + 저장 ---------- */
-const KEY=REVIEW?'nm_review_state_v1_'+review.username:'nm_state_v1';
+// One verified login owns one learner. Account, preview and review records have
+// separate keys; legacy device/slot data is only read by the migration helper.
+if(!REVIEW&&!window.NM_LEARNER_STORAGE){
+  document.getElementById('app').textContent='학생 기록을 불러오지 못했어요. 새로고침해 주세요.';return;
+}
+const stateOwnerId=REVIEW?null:(window.NM_ENTRY.guardianUserId||null);
+const KEY=REVIEW?'nm_review_state_v1_'+review.username:NM_LEARNER_STORAGE.keyFor(stateOwnerId);
+window.NM_STATE_KEY=KEY;
+let learnerTransition=false;
 /* onboarded는 defaults()에 넣지 않음(항상 undefined로 시작) —
    완전 신규 설치(hadSave===false)일 때만 온보딩을 요구하기 위한 표식.
    defaults()에 박아두면 구버전 저장본(onboarded 필드 없음)과 병합 시에도
@@ -284,14 +292,16 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
 let attendanceCleanup=null, symbolCardsCleanup=null, symbolAcquisitionCleanup=null;
 let pendingAttendanceDay=null, attendanceSaveFailed=false;
 let hadSave=false; // 파싱에 성공한 프로필만 기존 사용자로 취급한다.
-const SLOT_COUNT=3, SLOT_ACTIVE_KEY=REVIEW?'nm_review_active_slot_'+review.username:'nm_active_slot';
+const SLOT_COUNT=3, SLOT_ACTIVE_KEY=REVIEW?'nm_review_active_slot_'+review.username:KEY+'_active_slot';
 // Each tab may save only the profile and revision it actually loaded. A sibling
 // switch or a newer write in another tab must never be overwritten by stale S.
 let stateStorageRaw=null,stateStorageSlot=null,stateStorageReady=false,stateStorageBlocked=false;
 function load(){
   let raw=null;
   try{
-    raw=localStorage.getItem(KEY);
+    const selected=REVIEW?{ok:true,raw:localStorage.getItem(KEY)}:NM_LEARNER_STORAGE.read(localStorage,stateOwnerId);
+    if(!selected.ok){stateStorageReady=false;return defaults();}
+    raw=selected.raw;
     stateStorageRaw=raw;stateStorageSlot=localStorage.getItem(SLOT_ACTIVE_KEY);stateStorageReady=true;
     const r=JSON.parse(raw);
     if(r&&typeof r==='object'&&!Array.isArray(r)){
@@ -365,7 +375,8 @@ function stateStorageConflict(){
   return false;
 }
 function stateStorageCurrent(){
-  if(stateStorageBlocked||!stateStorageReady)return false;
+  if(stateStorageBlocked||!stateStorageReady||learnerTransition)return false;
+  if(!REVIEW&&(window.NM_PROFILE_AUTH?.peek()?.user.id||null)!==stateOwnerId)return false;
   try{
     if(localStorage.getItem(KEY)!==stateStorageRaw||localStorage.getItem(SLOT_ACTIVE_KEY)!==stateStorageSlot)return stateStorageConflict();
     return true;
@@ -383,8 +394,12 @@ if(window.NM_STUDY_RECORDS)window.NM_STUDY_RECORDS.bind({state:()=>S,save});
 if(window.NM_STATS?.bind)NM_STATS.bind({scope:()=>{
   if(!stateStorageCurrent())return null;
   if(REVIEW)return 'review:'+review.username;
-  if(S.cloudLinked&&S.cloudOwnerId)return 'guardian:'+S.cloudOwnerId+':'+S.name;
-  const slot=Number(stateStorageSlot);return 'local-slot:'+(slot>=1&&slot<=SLOT_COUNT?slot:1);
+  if(stateOwnerId){
+    if(window.NM_PROFILE_AUTH?.peek()?.user.id!==stateOwnerId)return null;
+    if(S.cloudLinked&&S.cloudOwnerId===stateOwnerId)return 'guardian:'+stateOwnerId+':'+S.name;
+    return 'guardian:'+stateOwnerId+':local';
+  }
+  return 'preview';
 }});
 
 window.addEventListener('nm:study-record-error',()=>toast(S.lang==='en'?'Your score is unchanged, but the study record could not be saved. Check device storage.':S.lang==='zh'?'成绩不变，但未能保存学习记录。请检查设备存储。':'채점은 유지되지만 학습 기록을 저장하지 못했습니다. 기기 저장 공간을 확인해 주세요.',false));
@@ -392,13 +407,10 @@ window.addEventListener('nm:study-record-error',()=>toast(S.lang==='en'?'Your sc
 function syncAmount(){ try{ if(window.NM_EXAM&&NM_EXAM.setAmount) NM_EXAM.setAmount(S.roadAmount||1); }catch(e){} }
 function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
 
-/* ---------- 프로필 슬롯 3개 (원장 지시, 형제가 한 기기를 같이 쓸 수 있게) ----------
-   저장 경로(KEY='nm_state_v1')는 절대 바꾸지 않는다 — 앱은 항상 그 한 키만 읽고 쓴다.
-   슬롯은 그 위에 얹는 최소침습 백업/전환 계층일 뿐이다.
-   nm_state_slot1|2|3 = 비활성 슬롯 백업(활성 슬롯은 백업이 없고 nm_state_v1 자체가 원본),
-   nm_active_slot = 지금 nm_state_v1이 몇 번 슬롯인지(기본 1, 기존 사용자는 이 키가
-   아예 없어도 1로 취급되므로 마이그레이션이 따로 필요 없다). */
-
+/* ---------- 이전 3슬롯 저장본 호환 ----------
+   정식 가입은 학생마다 별도 아이디다. 아래 함수는 기존 백업의 형식 호환을
+   위해 보존하며, 학생 전환 UI는 별도 아이디 로그인으로 대체했다.
+   옛 nm_state_v1/nm_state_slot1~3 원본은 계정별 저장 이관에서 지우지 않는다. */
 function slotKey(n){ return (REVIEW?'nm_review_slot_'+review.username+'_':'nm_state_slot')+n; }
 function activeSlot(){
   try{ const n=parseInt(localStorage.getItem(SLOT_ACTIVE_KEY),10); return (n>=1&&n<=SLOT_COUNT)?n:1; }
@@ -527,6 +539,19 @@ let guardianEntry=!REVIEW&&(new URLSearchParams(location.search).get('auth')==='
 if(guardianAuth){
   guardianAuth.configure({url:SB_URL,anonKey:SB_KEY,freshEntry:['guardian','preview'].includes(window.NM_ENTRY?.mode),entryUserId:window.NM_ENTRY?.guardianUserId});
   const refreshGuardianUI=()=>{
+    const owner=guardianAuth.peek()?.user.id||null;
+    if(owner!==stateOwnerId){
+      if(learnerTransition)return;
+      try{
+        if(owner)sessionStorage.setItem('nm_entry_once_v1',JSON.stringify({mode:'guardian',at:Date.now(),userId:owner}));
+      }catch(e){
+        app.textContent=S.lang==='en'?'Could not open learner records. Check browser storage and sign in again.':'학생 기록을 열지 못했어요. 브라우저 저장 공간을 확인하고 다시 로그인해 주세요.';return;
+      }
+      learnerTransition=true;stopVoice();
+      app.textContent=S.lang==='en'?'Opening your learner records…':'학생 기록을 불러오고 있어요…';
+      location.replace(owner?'index.html?enter=1&lang='+encodeURIComponent(S.lang):'access.html?lang='+encodeURIComponent(S.lang));
+      return;
+    }
     if(!booted)return;
     if(guardianAuth.pendingLink&&guardianAuth.pendingLink()){
       guardianEntry=!S.onboarded;S.view='closet';render();
@@ -595,6 +620,7 @@ async function cloudCredentials(){
   if(membership&&!membership.contactReady())throw new Error('contact_required');
   const session=await guardianAuth.getSession();
   if(!session||!session.user||!session.user.id)throw new Error('guardian_auth_required');
+  if(session.user.id!==stateOwnerId||!stateStorageCurrent())throw new Error('learner_state_changed');
   return {owner:session.user.id,headers:{...sbHdr(),Authorization:'Bearer '+session.access_token}};
 }
 async function cloudGet(name){
@@ -1267,14 +1293,14 @@ function cycleLang(){stopVoice();const o=['ko','en','zh'];S.lang=o[(o.indexOf(S.
 function screenGuardianEntry(){
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
   $('#screen').innerHTML=`<div class="nm-step-body nm-closet-wrap"><button class="nm-btn ghost" id="nmGuardBack">${lk('학습 화면으로','Learning screen','学习界面')}</button><h1>${lk('보호자 이메일로 이어하기','Continue with guardian email','使用监护人邮箱继续')}</h1><div id="nm-guardian-slot"></div><div id="nm-idcard-slot"></div><div id="nm-account-slot"></div></div>`;
-  const canContinue=()=>!!guardianAuth?.peek()&&!guardianAuth.requiresPassword()&&membership?.contactReady();
+  const canContinue=()=>stateStorageReady&&!learnerTransition&&!!stateOwnerId&&guardianAuth?.peek()?.user.id===stateOwnerId&&!guardianAuth.requiresPassword()&&membership?.contactReady();
   if(!canContinue())$('#nmGuardBack').textContent=lk('승인·로그인으로','Approval / login','审批·登录');
   $('#nmGuardBack').onclick=()=>{if(!canContinue()){location.assign('access.html');return;}guardianEntry=false;S.view='title';render();};
   renderIdCard();renderAccountCard();
 }
 function refreshEntryContinue(){
   const b=document.getElementById('nmGuardBack');if(!b)return;
-  const ready=!!guardianAuth?.peek()&&!guardianAuth.requiresPassword()&&membership?.contactReady();
+  const ready=stateStorageReady&&!learnerTransition&&!!stateOwnerId&&guardianAuth?.peek()?.user.id===stateOwnerId&&!guardianAuth.requiresPassword()&&membership?.contactReady();
   b.textContent=ready?(S.lang==='ko'?'학습 화면으로':S.lang==='en'?'Learning screen':'学习界面'):(S.lang==='ko'?'승인·로그인으로':S.lang==='en'?'Approval / login':'审批·登录');
 }
 function screenWelcome(){
@@ -1638,7 +1664,7 @@ function screenTown(){
           <div class="shadow"></div></div>
       </div>
     </div>
-    <div class="nm-town-hud brand">${t('mapTitle')}</div>
+    <div class="nm-town-hud brand"><span>${t('mapTitle')}</span><button type="button" class="nm-back" id="townLeave">← ${S.lang==='ko'?'마을 나가기':S.lang==='en'?'Leave village':'离开村庄'}</button></div>
     <p class="nm-town-walk-hint">${S.lang==='ko'?'지도의 빈 곳을 누르면 걸어요.':S.lang==='en'?'Tap an empty spot to walk.':'点地图空白处即可行走。'}</p>
     <div class="nm-road-banner" id="roadBanner">
       <button class="nm-road-banner-btn" id="roadEnter">
@@ -1686,6 +1712,7 @@ function screenTown(){
   TOWN_GATES.forEach(g=>{const button=document.createElement('button');button.type='button';button.className='nm-iconbtn';button.dataset.townGate=g.id;button.textContent=g.icon+' '+L(g.name);button.onclick=()=>showGateLinksModal(g);list.appendChild(button);});
   list.appendChild(scr.querySelector('.nm-town-hud.ctrls'));
   toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
+  $('#townLeave').onclick=()=>{S.view='title';S.unitReturn=null;S._fromRoadmap=false;S._fromCourseRoad=false;save();render();};
   townCleanup=initTownWorld(scr);
   // Buildings open directly; tapping empty map space optionally moves the avatar.
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
@@ -1798,7 +1825,7 @@ function screenRoadmap(){
   const storyCur=roadStoryCurrentStage(road,nextId);
   let html=`<div class="nm-road-wrap nm-storyroad">
     <div class="nm-road-header">
-      <button class="nm-back" id="roadBack">${t('back')}</button>
+      <button class="nm-back" id="roadBack">← ${navigationLabel('town')}</button>
       <div class="nm-unit-title"><span class="nm-road-title-ic" aria-hidden="true">🗺️</span> ${L(road.title)}</div>
       <div class="nm-road-sub">${L(road.subtitle)}</div>
       <div class="nm-road-nav">
@@ -2109,7 +2136,7 @@ function enterRoadUnit(uid){
   const wrap=document.querySelector('.nm-road-wrap');
   roadVisitSnapshot={uid,scrollTop:wrap?wrap.scrollTop:0};
   S.unit=uid;S.step=null;S.sub={};S.tierId=null;S.view='unit';
-  S._fromRoadmap=true;S._fromCourseRoad=false;
+  S._fromRoadmap=true;S._fromCourseRoad=false;S.unitReturn={view:'roadmap'};
   save();render();
 }
 function hasRoadCourseContext(){
@@ -2267,7 +2294,7 @@ function _renderMiniGame(){
 
     scr.innerHTML=`<div class="nm-mg-wrap">
       <div class="nm-mg-header">
-        <button class="nm-back" id="mgBack">${t('back')}</button>
+        <button class="nm-back" id="mgBack">← ${navigationLabel(S._fromRoadmap?'roadmap':'town')}</button>
         <div class="nm-mg-title">🎮 Make 10 — ${lk('짝 찾기','Pair Up','配对游戏')}</div>
         <div class="nm-mg-meta">
           ${mg.done?'':`<span class="nm-mg-timer${remaining<=10?' warn':''}">⏱ ${remaining}s</span>`}
@@ -2354,7 +2381,7 @@ function _renderMiniGame(){
 
     scr.innerHTML=`<div class="nm-mg-wrap">
       <div class="nm-mg-header">
-        <button class="nm-back" id="mgBack">${t('back')}</button>
+        <button class="nm-back" id="mgBack">← ${navigationLabel(S._fromRoadmap?'roadmap':'town')}</button>
         <div class="nm-mg-title">🎯 3수 Make 10 — ${lk('세 수로 10 만들기','3 Numbers → 10','三数凑10')}</div>
         <div class="nm-mg-meta">
           ${mg.done?'':`<span class="nm-mg-timer${remaining<=10?' warn':''}">⏱ ${remaining}s</span>`}
@@ -2515,7 +2542,7 @@ function screenGradeCourse(){
 
     scr.innerHTML=`<div class="nm-gc-wrap">
       <div class="nm-gc-header">
-        <button class="nm-back" id="gcBack">${t('back')}</button>
+        <button class="nm-back" id="gcBack">← ${navigationLabel('town')}</button>
         <div class="nm-gc-title">🏫 ${lk('학년별 교실','Grade Classroom','按年级学习')}</div>
       </div>
       <div class="nm-gc-tabs">${tabsHtml}</div>
@@ -2656,6 +2683,7 @@ function progressSummaryLine(){
 function enterContinueUnit(uid, fromCourseRoad){
   if(!uid){ S.view='town'; save(); render(); return; }
   if(unitLocked(uid)){ showGateModal(); return; }
+  S.unitReturn={view:fromCourseRoad?'courseroad':S.view==='title'?'title':'town'};
   S.unit=uid; S.step=null; S.sub={}; S.tierId=null; S.view='unit'; S._fromRoadmap=false;
   S._fromCourseRoad=!!fromCourseRoad;
   save(); render();
@@ -3328,7 +3356,7 @@ function screenCheckup(){
   if(k.stage==='intro'){
     const nums=checkupCourseNums(k.num);
     scr.innerHTML=`<div class="nm-unit-bar">
-      <button class="nm-back" id="cuBack">${t('back')}</button>
+      <button class="nm-back" id="cuBack">← ${navigationLabel('courseroad')}</button>
       <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>
     </div>
     <div class="nm-step-body"><div class="nm-dialog"><div class="nm-cu-wrap">
@@ -3396,7 +3424,7 @@ function screenCheckup(){
            '解法路径想得好，只是在这条路上手还慢。')
       : '';
     scr.innerHTML=`<div class="nm-unit-bar">
-      <button class="nm-back" id="cuBack">${t('back')}</button>
+      <button class="nm-back" id="cuBack">← ${navigationLabel('courseroad')}</button>
       <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>
     </div>
     <div class="nm-step-body"><div class="nm-dialog"><div class="nm-cu-wrap">
@@ -3417,7 +3445,7 @@ function screenCheckup(){
       </div>
       <p class="nm-cu-verdict">${verdict}</p>
       ${creNote?`<p class="nm-cu-verdict cre">${creNote}</p>`:''}
-      <button class="nm-btn full" id="cuDone">${lk('로드맵으로','Back to the roadmap','回到路线图')}</button>
+      <button class="nm-btn full" id="cuDone">${navigationLabel('courseroad')}</button>
       <button class="nm-btn full ghost" id="cuAgain">${lk('다시 점검하기','Check again','再检查一次')}</button>
     </div></div></div>`;
     $('#cuBack').onclick=back; $('#cuDone').onclick=back;
@@ -3470,7 +3498,7 @@ function screenCheckup(){
   /* 문장제는 이야기·물음·보기를 따로 그린다(말풍선 한 덩어리 대신) */
   const wpHtml=(item.kind==='wp'||(cur.word&&cur.choices))?wpBlockHtml(cur, S.lang):null;   // 보기 고르기 문항도 이야기·보기를 따로
   scr.innerHTML=`<div class="nm-unit-bar">
-    <button class="nm-back" id="cuBack">${t('back')}</button>
+    <button class="nm-back" id="cuBack">← ${navigationLabel('courseroad')}</button>
     <div class="nm-unit-title">🩺 ${lk('연산 점검','Check-up','运算检查')}</div>
   </div>
   <div class="nm-step-body"><div class="nm-dialog">
@@ -3565,55 +3593,19 @@ function openAgeSheet(after){
 }
 
 function openStudentSwitch(){
-  if(document.getElementById('nmWhoSheet')) return;
-  const ko=S.lang==='ko', en=S.lang==='en';
-  const lk=(k,e,z)=>ko?k:en?e:z;
-  const active=activeSlot();
-  let cards='';
-  for(let n=1;n<=SLOT_COUNT;n++){
-    if(n===active){
-      cards+=`<div class="nm-slot-card active">
-        <span class="nm-slot-badge">${lk('지금','Now','当前')}</span>
-        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,56):''}</div>
-        <div class="nm-slot-name">${esc(avatarName())}</div>
-      </div>`;
-      continue;
-    }
-    const st=readSlotState(n);
-    if(st&&(st.onboarded||st.name)){
-      const ch=Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},st.character||{});
-      const avk=st.avatar||{kind:'boy'};
-      cards+=`<button class="nm-slot-card" data-slot="${n}">
-        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avk,ch,56):''}</div>
-        <div class="nm-slot-name">${st.name?esc(st.name):'#'+ch.number}</div>
-      </button>`;
-    } else {
-      cards+=`<button class="nm-slot-card empty" data-slot="${n}">
-        <div class="nm-slot-plus">＋</div>
-        <div class="nm-slot-name">${lk('새 친구','New Friend','新朋友')}</div>
-      </button>`;
-    }
-  }
+  if(document.getElementById('nmWhoSheet'))return;
+  const lk=(k,e,z)=>S.lang==='ko'?k:S.lang==='en'?e:z;
   document.body.insertAdjacentHTML('beforeend',`<div class="nm-gate-overlay nm-cs-overlay" id="nmWhoSheet">
-    <div class="nm-gate-card nm-cs-card">
-      <button class="nm-gate-x" id="whoX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
-      <h3 class="nm-cs-title"><img src="${window.NM_CHAR_BASE||'assets/characters/'}numi-wizard.png" alt="" draggable="false" style="height:26px;width:auto;vertical-align:middle"> ${lk('누구의 로드맵을 볼까요?','Whose roadmap?','看谁的路线图？')}</h3>
-      <div class="nm-slots-grid">${cards}</div>
-      <button class="nm-btn full ghost" id="whoAge">🎒 ${schoolGradeLabel()
-        ? lk(`학년 — ${schoolNowLabel()} · 고치기`,`Grade — ${schoolNowLabel()} · change`,`年级 — ${schoolNowLabel()} · 修改`)
-        : lk('학년 알려주기','Tell us the grade','告诉我们年级')}</button>
-      <p class="nm-cs-note">${lk('바꾸면 그 학생의 진도·과정·속도가 그대로 나와요.',
-        'Switching shows that student’s own progress, course and pace.',
-        '切换后会显示该学生自己的进度、课程和速度。')}</p>
-    </div>
-  </div>`);
-  const close=()=>{ const m=document.getElementById('nmWhoSheet'); if(m)m.remove(); };
+    <div class="nm-gate-card nm-cs-card"><button class="nm-gate-x" id="whoX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
+      <h3 class="nm-cs-title">${lk('내 학습 정보','My learning details','我的学习信息')}</h3>
+      <p>${lk('학생마다 별도 아이디(이메일)로 로그인해요. 형제는 보호자 전화번호가 같아도 돼요.','Each learner signs in with a separate email account. Siblings may share a guardian phone number.','每位学生使用独立邮箱账号登录，兄弟姐妹可共用监护人手机号。')}</p>
+      <button class="nm-btn full ghost" id="whoAge">🎒 ${schoolGradeLabel()?lk(`학년 — ${schoolNowLabel()} · 고치기`,`Grade — ${schoolNowLabel()} · change`,`年级 — ${schoolNowLabel()} · 修改`):lk('학년 알려주기','Tell us the grade','告诉我们年级')}</button>
+      <a class="nm-btn full" href="access.html?lang=${encodeURIComponent(S.lang)}" id="whoLogin">${lk('다른 아이디로 로그인','Sign in to another account','登录其他账号')}</a>
+    </div></div>`);
+  const close=()=>document.getElementById('nmWhoSheet')?.remove();
   document.getElementById('whoX').onclick=close;
-  document.getElementById('nmWhoSheet').addEventListener('click',e=>{ if(e.target.id==='nmWhoSheet') close(); });
-  document.querySelectorAll('#nmWhoSheet .nm-slot-card[data-slot]').forEach(b=>{
-    b.onclick=()=>switchToSlot(b.dataset.slot);
-  });
-  document.getElementById('whoAge').onclick=()=>{ close(); openAgeSheet(()=>render()); };
+  document.getElementById('nmWhoSheet').addEventListener('click',e=>{if(e.target.id==='nmWhoSheet')close();});
+  document.getElementById('whoAge').onclick=()=>{close();openAgeSheet(()=>render());};
 }
 
 /* 연산 로드맵의 선 아이콘(2026-09-26 v2 "밝은 신비") — 제목 앞 이모지 대신 1.6px 선 그림.
@@ -3999,7 +3991,7 @@ function screenCourseRoad(){
   const lk=(k,e,z)=>ko?k:en?e:z;
 
   if(!window.NM_COURSES||!window.NM_THREADS){
-    scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="crBack">${t('back')}</button>
+    scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="crBack">← ${navigationLabel('town')}</button>
       <div class="nm-unit-title">🛤️ ${lk('연산 로드맵','Course Road','运算路线图')}</div></div>
       <div class="nm-step-body"><div class="nm-card">${lk('과정 자료를 아직 불러오지 못했어요.','Course data is not ready yet.','课程数据还没准备好。')}</div></div>`;
     $('#crBack').onclick=()=>{S.view='town';save();render();};
@@ -4072,7 +4064,7 @@ function screenCourseRoad(){
   scr.innerHTML=`<div class="nm-cr-wrap nm-cr-desk">
     <div class="nm-cr-header">
       <div class="nm-cr-titlerow">
-        <button class="nm-back" id="crBack">${fromAssessment?lk('진단 결과','Assessment result','测评结果'):t('back')}</button>
+        <button class="nm-back" id="crBack">← ${fromAssessment?lk('진단 결과로','Back to assessment result','返回测评结果'):navigationLabel('town')}</button>
         <div class="nm-cr-title"><span class="nm-cr-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 20.5c0-4.6 9.5-3.2 9.5-7.6 0-3.6-6.2-3.2-6.2-6.6" stroke-dasharray="2.4 2.2"/><circle cx="5.5" cy="20" r="1.4" fill="currentColor" stroke="none"/><path d="M15.6 3.2v8M15.6 3.6h4.6l-1.5 2 1.5 2h-4.6"/></svg></span><span class="nm-cr-title-t">${lk('연산 로드맵','Course Road','运算路线图')}</span></div>
         <button class="nm-cr-diagbtn" id="crDiag">${crIc('compass')}<span>${lk('진단하기','Level Check','水平测评')}</span></button>
         <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}" aria-label="${lk('시작점 고르기','Pick your start','选择起点')}">${crIc('target')}</button>
@@ -5496,7 +5488,7 @@ function screenStartPick(){
   const lk=(k,e,z)=>ko?k:en?e:z;
 
   if(!window.NM_COURSES||!window.NM_THREADS){
-    scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="spBack">${t('back')}</button>
+    scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="spBack">← ${navigationLabel('town')}</button>
       <div class="nm-unit-title">🎯 ${lk('시작점 고르기','Pick your start','选择起点')}</div></div>
       <div class="nm-step-body"><div class="nm-card">${lk('과정 자료를 아직 불러오지 못했어요.','Course data is not ready yet.','课程数据还没准备好。')}</div></div>`;
     $('#spBack').onclick=()=>{S.view='town';save();render();};
@@ -5567,7 +5559,7 @@ function screenStartPick(){
 
   scr.innerHTML=`<div class="nm-cr-wrap">
     <div class="nm-cr-header">
-      <button class="nm-back" id="spBack">${t('back')}</button>
+      <button class="nm-back" id="spBack">← ${navigationLabel('town')}</button>
       <div class="nm-cr-titlerow"><div class="nm-cr-title">🎯 ${lk('시작점 고르기','Pick your start','选择起点')}</div></div>
       <div class="nm-cr-sub">${lk('진단 없이 원하는 과정에서 바로 시작할 수 있어요. 언제든 바꿔도 돼요.','Start at any course without a check-up. You can change it any time.','不用测评也能从想要的课程开始，随时都可以换。')}</div>
     </div>
@@ -5992,7 +5984,7 @@ function screenBoost(){
         <div class="nm-card-h">${lk('오늘도 한 걸음 더 튼튼해졌어요!','You just got a little stronger!','今天又变得更棒了！')}</div>
         <div class="nm-score">${b.score} / ${b.need}</div>
         <div class="nm-stamp-coins">🪙 +${b.rewardCoins||0} ${t('coins')}</div>
-        <button class="nm-btn full" id="boostToMailbox">${lk('학습지로 돌아가기','Back to worksheet','返回学习单')}</button>
+        <button class="nm-btn full" id="boostToMailbox">${lk('선택한 학습지로','Back to selected worksheet','返回所选学习单')}</button>
       </div>
     </div>`;
     save();
@@ -6005,7 +5997,7 @@ function screenBoost(){
   const useWidget = cur.widget && cur.widget!=='numpad' && window.NM_WIDGETS;
 
   scr.innerHTML=`<div class="nm-unit-bar">
-    <button class="nm-back" id="boostBack">${t('back')}</button>
+    <button class="nm-back" id="boostBack">← ${lk('선택한 학습지로','Back to selected worksheet','返回所选学习单')}</button>
     <div class="nm-unit-title">🌟 ${lk('먼저 몸풀기 마법!','Warm-up Magic First!','先来热身魔法！')}</div>
   </div>
   <div class="nm-step-body">
@@ -6086,7 +6078,7 @@ function screenMailbox(){
   /* 편지함도 같은 게이트(§10) — trial이면 봉투 목록조차 만들지 않는다 */
   if(!accountActive()){
     scr.innerHTML=`<div class="nm-unit-bar">
-      <button class="nm-back" id="mbBack">${t('back')}</button>
+      <button class="nm-back" id="mbBack">← ${navigationLabel(S._mbWeek?'mailbox':'town')}</button>
       <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div>
     </div>
     <div class="nm-step-body nm-wsh-wrap">
@@ -6104,7 +6096,7 @@ function screenMailbox(){
   if(S._mbWeek){
     const env = envelopeForWeek(S._mbWeek);
     if(!env){
-      scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="mbBack">${t('back')}</button>
+      scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="mbBack">← ${navigationLabel(S._mbWeek?'mailbox':'town')}</button>
         <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div></div>
         <div class="nm-step-body"><div class="nm-card">${lk('이 주에 배정된 학습지가 없어요. 시작일과 학습 속도를 확인해 주세요.','No worksheet is scheduled for this week. Check the start date and pace.','本周未安排学习单，请确认开始日期和学习速度。')}</div></div>`;
       $('#mbBack').onclick=()=>{S._mbWeek=null;screenMailbox();};
@@ -6139,7 +6131,7 @@ function screenMailbox(){
     }).join('');
 
     scr.innerHTML=`<div class="nm-unit-bar">
-      <button class="nm-back" id="mbBack">${t('back')}</button>
+      <button class="nm-back" id="mbBack">← ${navigationLabel(S._mbWeek?'mailbox':'town')}</button>
       <div class="nm-unit-title">📬 ${esc(env.wsId)}</div>
     </div>
     <div class="nm-step-body nm-wsh-wrap">
@@ -6163,8 +6155,8 @@ function screenMailbox(){
     }
     if(goUnit){
       $('#mbGoUnit').onclick=()=>{
-        S._mbWeek=null;
-        S.unit=goUnit;S.step=null;S.sub={};S.tierId=null;S.view='unit';S._fromRoadmap=false;
+        S.unitReturn={view:'mailbox',weekKey:S._mbWeek};
+        S.unit=goUnit;S.step=null;S.sub={};S.tierId=null;S.view='unit';S._fromRoadmap=false;S._fromCourseRoad=false;
         save();render();
       };
     }
@@ -6205,7 +6197,7 @@ function screenMailbox(){
   </button>`).join('');
 
   scr.innerHTML=`<div class="nm-unit-bar">
-    <button class="nm-back" id="mbBack">${t('back')}</button>
+    <button class="nm-back" id="mbBack">← ${navigationLabel(S._mbWeek?'mailbox':'town')}</button>
     <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div>
   </div>
   <div class="nm-step-body nm-wsh-wrap">
@@ -6712,7 +6704,7 @@ function screenTier(){
   const pct=totalN?Math.round(doneN/totalN*100):0;
   let html=`<div class="nm-map">
     <div class="nm-unit-bar">
-      <button class="nm-back" id="backTown">${t('back')}</button>
+      <button class="nm-back" id="backTown">← ${navigationLabel('town')}</button>
       <div class="nm-unit-title">${tier.title}<small>${L(tier.subtitle)} · ${tier.ageLabel}</small></div>
     </div>
     <div class="nm-tier-progress-wrap">
@@ -6764,8 +6756,24 @@ function screenTier(){
 /* ============================================================
    유닛 — 6단계 STEP 흐름
    ============================================================ */
+function navigationLabel(view){
+  const labels={town:{ko:'마을로 돌아가기',en:'Back to village',zh:'返回村庄'},title:{ko:'모드 선택으로',en:'Back to mode selection',zh:'返回模式选择'},roadmap:{ko:'스토리 지도로',en:'Back to story map',zh:'返回故事地图'},courseroad:{ko:'연산 로드맵으로',en:'Back to course roadmap',zh:'返回运算路线图'},tier:{ko:'단원 목록으로',en:'Back to unit list',zh:'返回单元列表'},mailbox:{ko:'학습지 목록으로',en:'Back to worksheets',zh:'返回学习单列表'},worksheethelper:{ko:'학습지 도우미로',en:'Back to worksheet helper',zh:'返回学习单助手'}};
+  return L(labels[view]||labels.town);
+}
+function unitReturnTarget(){
+  const target=S.unitReturn;
+  if(target&&['title','town','roadmap','courseroad','tier','mailbox','worksheethelper'].includes(target.view))return target;
+  return {view:S._fromCourseRoad?'courseroad':S._fromRoadmap?'roadmap':S.tierId?'tier':'town'};
+}
+function unitReturnLabel(){
+  const target=unitReturnTarget();
+  if(target.view==='mailbox'&&target.weekKey)return L({ko:'선택한 학습지로',en:'Back to selected worksheet',zh:'返回所选学习单'});
+  return navigationLabel(target.view);
+}
 function enterUnit(uid){
   if(unitLocked(uid)){showGateModal();return;}
+  S.unitReturn={view:S.tierId?'tier':'town',tierId:S.tierId||null};
+  S._fromCourseRoad=false;S._fromRoadmap=false;
   S.view='unit';S.unit=uid;S.sub={};
   const u=UNITS[uid];
   const introSeen=!!(S.progress[uid]&&S.progress[uid].introSeen);
@@ -6775,10 +6783,18 @@ function enterUnit(uid){
 }
 function pickRange(rk){S.range=rk;S.step='practice';S.sub={};save();render();}
 function exitUnit(){
-  const back=S._fromCourseRoad?'courseroad':S._fromRoadmap?'roadmap':S.tierId?'tier':'town';
+  const target=unitReturnTarget(),back=target.view;
   restoreRoadVisit=back==='roadmap';
-  S.view=back;S._fromRoadmap=false;S._fromCourseRoad=false;S.unit=null;S.step=null;S.sub={};save();render();
+  if(back==='mailbox')S._mbWeek=target.weekKey||null;
+  if(back==='tier'&&target.tierId)S.tierId=target.tierId;
+  if(back==='worksheethelper'&&target.wsId){
+    wsHelperId=target.wsId;
+    const url=new URL(location.href);url.searchParams.set('ws',target.wsId);history.replaceState(null,'',url);
+  }
+  S.view=back==='worksheethelper'?'town':back;
+  S.unitReturn=null;S._fromRoadmap=false;S._fromCourseRoad=false;S.unit=null;S.step=null;S.sub={};save();render();
 }
+
 function finishUnitIntro(u){
   S.progress[S.unit]=S.progress[S.unit]||{steps:{}};
   S.progress[S.unit].introSeen=true;
@@ -6813,7 +6829,7 @@ function screenUnit(){
   const learningBand=u.tier==='basic'?'preschool':(/^(middle|high)/.test(u.tier||'')||['algebra','calculus1'].includes(u.tier))?'secondary':'elementary';
   scr.innerHTML=`<div class="nm-unit-view" lang="${esc(S.lang)}" data-learning-step="${S.step}" data-young-numbers="${schoolGradeNum()!=null?schoolGradeNum()<3:NM_BAND==='young'}" data-learning-band="${learningBand}" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
     <div class="nm-unit-bar">
-      <button class="nm-back" id="backMap" aria-label="${t('back')}">←</button>
+      <button class="nm-back" id="backMap" aria-label="${esc(unitReturnLabel())}">← ${esc(unitReturnLabel())}</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
     </div>
     ${isFirstUnitStep?docUnitStripHtml(u):''}
@@ -7329,7 +7345,7 @@ function screenSymbolDex(){
      센다(이전엔 틀 10칸 중 5칸이 어느 유닛에도 연결되지 않아 영원히 빈칸이었다). */
   const ordered=orderedUnitSymbols();
   if(window.NM_SYMBOL_CARDS){
-    symbolCardsCleanup=NM_SYMBOL_CARDS.mount(scr,{symbols:ordered,collected:S.symbolDex,lang:S.lang,figure:dexFigure,
+    symbolCardsCleanup=NM_SYMBOL_CARDS.mount(scr,{symbols:ordered,collected:S.symbolDex,lang:S.lang,figure:dexFigure,backLabel:'← '+navigationLabel(S._dexFrom==='title'?'title':'town'),
       onBack:()=>{const back=S._dexFrom||'town';S._dexFrom=null;S.view=back;save();render();}});return;
   }
   const canonCards=ordered.map(sy=>symDexCardHtml(sy.sym,sy)).join('');
@@ -7337,7 +7353,7 @@ function screenSymbolDex(){
   const collectedCount=Object.keys(S.symbolDex||{}).length;
   scr.innerHTML=`<div class="nm-gc-wrap nm-dex-wrap">
     <div class="nm-gc-header">
-      <button class="nm-back" id="dexBack">${t('back')}</button>
+      <button class="nm-back" id="dexBack">← ${navigationLabel(S._dexFrom==='title'?'title':'town')}</button>
       <div class="nm-gc-title">📖 ${ko?'기호 도감':en?'Symbol Dex':'符号图鉴'} <small>${collectedCount}</small></div>
     </div>
     <div class="nm-gc-body">
@@ -7374,7 +7390,7 @@ function screenMagazine(){
   const open=S._mzOpen ? list.find(a=>a.id===S._mzOpen) : null;
   const M=window.NM_MAGAZINE||{};
   const head=(title,backId)=>`<div class="nm-gc-header">
-      <button class="nm-back" id="${backId}">${t('back')}</button>
+      <button class="nm-back" id="${backId}">← ${navigationLabel('town')}</button>
       <div class="nm-gc-title">📰 ${esc(title)}</div>
     </div>`;
 
@@ -7424,7 +7440,7 @@ function screenMagazine(){
         <div class="nm-mza-close">${esc(L(open.close))}</div>
         <p class="nm-mza-src">${esc(L(open.source))}</p>
         <div class="nm-mza-nav">
-          <button class="nm-btn ghost" id="mzList">${ko?'목록으로':en?'All articles':'回到目录'}</button>
+          <button class="nm-btn ghost" id="mzList">${ko?'매거진 목록으로':en?'Back to magazine list':'返回杂志目录'}</button>
           ${list.length>1?`<button class="nm-btn" id="mzNext">${ko?'다음 기사':en?'Next article':'下一篇'} →</button>`:''}
         </div>
       </article>
@@ -7575,7 +7591,7 @@ function screenHistQuiz(){
   const uid=S.histQuiz.queue[0];
   if(!uid){
     scr.innerHTML=`<div class="nm-unit-bar">
-        <button class="nm-back" id="hqBack">${t('back')}</button>
+        <button class="nm-back" id="hqBack">← ${navigationLabel('town')}</button>
         <div class="nm-unit-title">${titleHtml}</div>
       </div>
       <div class="nm-step-body nm-hq-wrap"><div class="nm-card center">
@@ -7588,7 +7604,7 @@ function screenHistQuiz(){
   const comic=NM_COMICS[uid];
   const success=hqPuzzle.checked==='ok';
   scr.innerHTML=`<div class="nm-unit-bar">
-      <button class="nm-back" id="hqBack">${t('back')}</button>
+      <button class="nm-back" id="hqBack">← ${navigationLabel('town')}</button>
       <div class="nm-unit-title">${titleHtml}</div>
     </div>
     <div class="nm-step-body nm-hq-wrap">
@@ -7654,7 +7670,7 @@ function screenReport(){
     </div>
     <p class="nm-wsh-sentence">${wkN?lk(`최근 7일간 ${wkN}문제 · 정답률 ${Math.round(wkOk/wkN*100)}%`,`${wkN} problems in the last 7 days · ${Math.round(wkOk/wkN*100)}% correct`,`最近7天${wkN}题 · 正确率${Math.round(wkOk/wkN*100)}%`):lk('문제를 풀면 여기에 하루하루가 쌓여요.','Solve problems and the days will fill in here.','做题后这里会一天天累积。')}</p>`;
   scr.innerHTML=`<div class="nm-unit-bar">
-      <button class="nm-back" id="rpBack">${t('back')}</button>
+      <button class="nm-back" id="rpBack">← ${navigationLabel('town')}</button>
       <div class="nm-unit-title">${titleHtml}</div>
     </div>
     <div class="nm-step-body nm-wsh-wrap">
@@ -8028,7 +8044,7 @@ function stepStamp(body,u){
   let newLineageBadge=null, awarded=0;
   if(!already){awarded=coinAdd(s.coins||20,'unit','unit:'+S.unit);
     if(coinAdd.saveFailed){
-      body.innerHTML=`<div class="nm-card"><p>${S.lang==='en'?'Your reward could not be saved. Check device storage and try again.':S.lang==='zh'?'未能保存奖励，请检查设备存储后重试。':'보상을 저장하지 못했어요. 기기 저장 공간을 확인하고 다시 시도해 주세요.'}</p><button class="nm-btn full" id="stampRetry">${S.lang==='en'?'Save again':S.lang==='zh'?'重新保存':'다시 저장하기'}</button><button class="nm-btn ghost full" id="toMap">${t('toMap')}</button></div>`;
+      body.innerHTML=`<div class="nm-card"><p>${S.lang==='en'?'Your reward could not be saved. Check device storage and try again.':S.lang==='zh'?'未能保存奖励，请检查设备存储后重试。':'보상을 저장하지 못했어요. 기기 저장 공간을 확인하고 다시 시도해 주세요.'}</p><button class="nm-btn full" id="stampRetry">${S.lang==='en'?'Save again':S.lang==='zh'?'重新保存':'다시 저장하기'}</button><button class="nm-btn ghost full" id="toMap">${esc(unitReturnLabel())}</button></div>`;
       $('#stampRetry').onclick=()=>stepStamp(body,u);$('#toMap').onclick=exitUnit;return;
     }
     S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
@@ -8047,7 +8063,7 @@ function stepStamp(body,u){
     <div class="nm-stamp-label">${L(s.label)}</div>
     <div class="nm-stamp-coins">🪙 +${awarded} ${t('coins')}</div>
     ${evo}
-    <button class="nm-btn full" id="toMap">${t('toMap')} →</button>
+    <button class="nm-btn full" id="toMap">${esc(unitReturnLabel())}</button>
   </div>`;
   playSfx('stamp');confetti();const sfx=playSfx("great-job");sayAfterSfx(sfx,L(u.voice.finish));
   bindLineageEvoCard(body);
@@ -8138,7 +8154,7 @@ function screenCloset(){
      학부모 알림·승인번호 3장만 접이식 "설정"으로 내린다. id/핸들러는 그대로 유지
      (renderIdCard 등은 querySelector로 같은 id를 찾아 채운다). */
   scr.innerHTML=`<div class="nm-unit-bar">
-    <button class="nm-back" id="backCloset">${t('back')}</button>
+    <button class="nm-back" id="backCloset">← ${navigationLabel('town')}</button>
     <div class="nm-unit-title">🪄 ${titleTxt}</div>
   </div>
   <div class="nm-step-body nm-closet-wrap">
@@ -8193,66 +8209,14 @@ function screenCloset(){
   }
 }
 
-/* ---------- 프로필 슬롯 카드 (옷장) ----------
-   "우리 집 마법사들" — 슬롯 3개 고정. 활성 슬롯은 지금 메모리의 S를 그대로 보여주고
-   (readSlotState로 다시 읽지 않음 — 방금 옷장에서 바꾼 값이 아직 저장 전일 수 있어서가
-   아니라, 활성 슬롯의 원본은 항상 S이기 때문), 나머지 두 슬롯은 백업 키를 읽는다. */
+/* ---------- 학생별 별도 아이디 안내 (옷장) ---------- */
 function renderSlotCards(){
   if(REVIEW)return;
-  const slot=$('#nm-slots-slot');
-  if(!slot)return;
-  const ko=S.lang==='ko', en=S.lang==='en';
-  const titleTxt=(ko?'우리 집 마법사들':en?'Our Wizards':'我家的魔法师');
-  const active=activeSlot();
-  let cards='';
-  for(let n=1;n<=SLOT_COUNT;n++){
-    if(n===active){
-      const nm=S.name?esc(S.name):('#'+S.character.number);
-      cards+=`<div class="nm-slot-card active">
-        <span class="nm-slot-badge">${ko?'지금':en?'Now':'当前'}</span>
-        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,56):''}</div>
-        <div class="nm-slot-name">${nm}</div>
-      </div>`;
-      continue;
-    }
-    const st=readSlotState(n);
-    const hasData = st && (st.onboarded || st.name);
-    if(hasData){
-      const ch=Object.assign({number:3,color:'blue',bg:'plain',cape:'none',hat:'none'},st.character||{});
-      const avk=st.avatar||{kind:'boy'};
-      const nm=st.name?esc(st.name):('#'+ch.number);
-      cards+=`<button class="nm-slot-card" data-slot="${n}" title="${ko?'전환':en?'Switch':'切换'}">
-        <span class="nm-slot-del" data-del="${n}" title="${ko?'지우기':en?'Delete':'删除'}">✕</span>
-        <div class="nm-slot-fig">${window.renderPartyHtml?window.renderPartyHtml(avk,ch,56):''}</div>
-        <div class="nm-slot-name">${nm}</div>
-      </button>`;
-    } else {
-      cards+=`<button class="nm-slot-card empty" data-slot="${n}">
-        <div class="nm-slot-plus">＋</div>
-        <div class="nm-slot-name">${ko?'새 친구':en?'New Friend':'新朋友'}</div>
-      </button>`;
-    }
-  }
-  slot.innerHTML=`<div class="nm-slots-wrap">
-    <div class="nm-slots-title"><img src="${window.NM_CHAR_BASE||'assets/characters/'}numi-wizard.png" alt="" draggable="false" style="height:26px;width:auto;vertical-align:middle"> ${titleTxt}</div>
-    <div class="nm-slots-grid">${cards}</div>
-  </div>`;
-  slot.querySelectorAll('.nm-slot-card[data-slot]').forEach(b=>{
-    b.addEventListener('click',e=>{
-      if(e.target.closest('[data-del]')) return; // 지우기 버튼 클릭은 아래에서 따로 처리
-      switchToSlot(b.dataset.slot);
-    });
-  });
-  slot.querySelectorAll('[data-del]').forEach(b=>{
-    b.addEventListener('click',e=>{
-      e.stopPropagation();
-      const n=+b.dataset.del;
-      const msg=ko?'이 마법사를 지울까요? 되돌릴 수 없어요.':en?'Delete this wizard? This cannot be undone.':'删除这个魔法师吗？无法恢复。';
-      if(!confirm(msg)) return;
-      try{ localStorage.removeItem(slotKey(n)); }catch(err){}
-      renderSlotCards();
-    });
-  });
+  const slot=$('#nm-slots-slot');if(!slot)return;
+  const lk=(k,e,z)=>S.lang==='ko'?k:S.lang==='en'?e:z;
+  slot.innerHTML=`<div class="nm-idcard"><h3 class="nm-idcard-t">${lk('학생별 아이디','One account per learner','每位学生独立账号')}</h3>
+    <p>${lk('형제도 각자 다른 아이디(이메일)로 가입해요. 보호자 전화번호는 같아도 되고, 진도·포인트·이용기간은 각각 관리해요.','Siblings register with separate email accounts. They may share a guardian phone number; progress, coins and membership stay separate.','兄弟姐妹分别使用不同邮箱注册，可共用监护人手机号，进度、积分和使用期独立管理。')}</p>
+    <a class="nm-btn ghost" href="access.html?lang=${encodeURIComponent(S.lang)}" id="nmOtherAccount">${lk('다른 아이디로 로그인','Sign in to another account','登录其他账号')}</a></div>`;
 }
 
 /* ---------- 승인번호 카드 (옷장, Phase 2B) ----------
@@ -8412,7 +8376,7 @@ function renderGuardianContact(slot,lk){
   if(!membership)return false;
   const state=membership.snapshot();
   if(membership.contactReady()&&!guardianContactEditing)return false;
-  const logout=async()=>{guardianContactEditing=false;S.cloudLinked=false;S.cloudOwnerId=null;save();try{await guardianAuth.signOut();}catch(e){toast(lk('로그아웃 정보를 확인해 주세요.','Check browser sign-out data.','请检查浏览器退出信息。'),false);}};
+  const logout=async()=>{guardianContactEditing=false;save();try{await guardianAuth.signOut();}catch(e){toast(lk('로그아웃 정보를 확인해 주세요.','Check browser sign-out data.','请检查浏览器退出信息。'),false);}};
   if(state.loading||!state.membership){
     slot.innerHTML=`<div class="nm-idcard"><p role="status">${state.error?lk('회원 정보를 불러오지 못했어요. 연결을 확인하고 다시 시도해 주세요.','Could not load membership. Check your connection and retry.','无法加载会员信息，请检查网络后重试。'):lk('가입 정보를 확인하고 있어요…','Checking registration…','正在确认注册信息…')}</p><button class="nm-btn" id="nmGuardContactRetry">${lk('다시 확인','Retry','重试')}</button><button class="nm-btn ghost" id="nmGuardOut">${lk('로그아웃','Sign out','退出')}</button></div>`;
     $('#nmGuardContactRetry').onclick=()=>membership.refresh(true);$('#nmGuardOut').onclick=logout;return true;
@@ -8503,7 +8467,7 @@ function renderGuardianCard(){
       if(msg.isConnected){pwEl.value='';cfEl.value='';btn.disabled=false;}
     };
     $('#nmGuardOut').onclick=async()=>{
-      S.cloudLinked=false;S.cloudOwnerId=null;save();
+      save();
       try{await guardianAuth.signOut();}
       catch(e){toast(lk('로그인 정보를 지우지 못했어요. 이 브라우저의 사이트 데이터를 확인해 주세요.','Could not remove sign-in. Check this browser’s site data.','无法清除登录信息，请检查浏览器的网站数据。'),false);}
     };
@@ -8513,7 +8477,7 @@ function renderGuardianCard(){
   if(session){
     slot.innerHTML=`<div class="nm-idcard"><div class="nm-idcard-t">${lk('보호자 이메일 인증 완료','Guardian email verified','监护人邮箱已验证')}</div><p>${esc(session.user.email||'')}</p><button class="nm-btn ghost" id="nmGuardOut">${lk('이메일 로그아웃','Sign out of email','退出邮箱登录')}</button></div>`;
     $('#nmGuardOut').onclick=async()=>{
-      S.cloudLinked=false;S.cloudOwnerId=null;save();
+      save();
       try{await guardianAuth.signOut();}
       catch(e){toast(lk('로그인 정보를 지우지 못했어요. 이 브라우저의 사이트 데이터를 확인해 주세요.','Could not remove sign-in. Check this browser’s site data.','无法清除登录信息，请检查浏览器的网站数据。'),false);}
       // onChange가 즉시 갱신한다. 늦은 로그아웃 응답이 새 로그인 입력을 지우지 않는다.
@@ -8687,7 +8651,7 @@ function screenExam(){
   if(!accountActive()){
     const ko=S.lang==='ko', en=S.lang==='en';
     scr.innerHTML=`<div class="nm-unit-bar">
-      <button class="nm-back" id="backExam">${t('back')}</button>
+      <button class="nm-back" id="backExam">← ${navigationLabel('town')}</button>
       <div class="nm-unit-title">📝 ${ko?'학습지 & 시험':en?'Worksheet & Exam':'学习单 & 考试'}</div>
     </div>
     <div class="nm-step-body nm-wsh-wrap">
@@ -8702,13 +8666,13 @@ function screenExam(){
     return;
   }
   if(!window.NM_EXAM||!window.examScreen){
-    scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="backExam">${t('back')}</button></div>
+    scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="backExam">← ${navigationLabel('town')}</button></div>
       <p style="padding:40px;text-align:center">시험 화면을 불러오지 못했어요. 새로고침해 주세요.</p>`;
     $('#backExam').onclick=()=>{S.view='town';save();render();};
     return;
   }
   scr.innerHTML=`<div class="nm-unit-bar">
-    <button class="nm-back" id="backExam">${t('back')}</button>
+    <button class="nm-back" id="backExam">← ${navigationLabel('town')}</button>
     <div class="nm-unit-title">📝 ${S.lang==='ko'?'학습지 & 시험':S.lang==='en'?'Worksheet & Exam':'学习单 & 考试'}</div>
   </div><div id="nm-exam-cnt" class="nm-step-body"></div>`;
   $('#backExam').onclick=()=>{S.view='town';save();render();};
@@ -8736,7 +8700,7 @@ let wsHelperId = (function(){
 
 function exitWsHelper(){
   wsHelperId = null;
-  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+  try{const url=new URL(location.href);url.searchParams.delete('ws');history.replaceState(null,'',url);}catch(e){}
 }
 
 function screenWorksheetHelper(wsId){
@@ -8788,16 +8752,17 @@ function screenWorksheetHelper(wsId){
   }
 
   scr.innerHTML = `<div class="nm-unit-bar">
-    <button class="nm-back" id="wshBack">${t('back')}</button>
+    <button class="nm-back" id="wshBack">← ${navigationLabel('town')}</button>
     <div class="nm-unit-title">${ko?'학습지 도우미':en?'Worksheet Helper':'学习单助手'}</div>
   </div>
   <div class="nm-step-body nm-wsh-wrap">${bodyHtml}</div>`;
 
-  $('#wshBack').onclick = () => { exitWsHelper(); render(); };
+  $('#wshBack').onclick = () => {exitWsHelper();S.view='town';S.unitReturn=null;S._fromRoadmap=false;S._fromCourseRoad=false;save();render();};
   const goBtn = $('#wshGoUnit');
   if(goBtn) goBtn.onclick = () => {
+    S.unitReturn={view:'worksheethelper',wsId:wsHelperId};
     exitWsHelper();
-    S.unit = info.unitId; S.step = null; S.sub = {}; S.tierId = null; S.view = 'unit'; S._fromRoadmap = false;
+    S.unit = info.unitId; S.step = null; S.sub = {}; S.tierId = null; S.view = 'unit'; S._fromRoadmap = false; S._fromCourseRoad = false;
     save(); render();
   };
   renderMath(scr);
@@ -8813,6 +8778,9 @@ function boot(){
   if(booted)return;
   if(!GEN||!CUR||!UNITS){app.innerHTML='<p style="padding:40px;text-align:center">학습 화면을 불러오지 못했어요. 새로고침해 주세요.</p>';return;}
   booted=true;
+  if(!stateStorageReady){
+    app.innerHTML='<div class="nm-step-body"><p role="alert">학생 기록을 불러오지 못했어요. 브라우저 저장 공간을 확인하고 다시 열어 주세요.</p><a class="nm-btn" href="access.html">로그인 화면으로</a></div>';return;
+  }
   if(guardianAuth&&guardianAuth.pendingLink&&guardianAuth.pendingLink()){guardianEntry=!S.onboarded;S.view='closet';}
   else maybeShowTitle();
   render();
