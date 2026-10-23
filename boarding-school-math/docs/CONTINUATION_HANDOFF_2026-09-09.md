@@ -33,6 +33,8 @@ A third private-only QA preview adds labeled response controls for the 18 slots 
 
 The response QA preview now also has localized choice-group legends and valid prompt associations for choice, numeric, and written controls. Chromium keyboard checks pass for radio selection and sideways diagram movement at 320/390px in KO/EN/zh-Hans, with no layout regression across the 12 variants. The 390px Korean choice view was inspected. This is only private harness evidence; actual screen-reader behavior and the student renderer remain unverified.
 
+The private `apply` prototype now checks all 18 records before touching current input. Missing slots and invalid control kinds are rejected without clearing sample answers in the six mobile variants; valid in-memory round trips still pass. This remains QA-only and does not change the locked item pack or deliver a student response store.
+
 ## Grade 3–10 visual roadmap milestone — 2026-10-23
 
 2026-10-24 contest mark-progress pass: after a contest is chosen, the problem-by-problem review shows only a compact count such as `1 / 25문제 표시` above the rows. It updates on status changes, resets with the paper, and remains hidden before a contest is selected. This is progress through manual entries, not a test score. The 390px marked state was inspected, and the focused browser/analysis checks pass 8/8. No scoring or persistence behavior changed.
