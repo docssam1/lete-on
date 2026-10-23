@@ -1,6 +1,7 @@
 (function(root){
   'use strict';
   const DAY=86400000, MULTS=[0.7,0.85,1,1.25,1.5];
+  const HIGH=root.NM_HIGH_PACING || (typeof module!=='undefined'&&module.exports?require('../data/high-pacing.js'):null);
   const langText=(v,l)=>typeof v==='string'?v:(v&&(v[l]||v.ko))||'';
   function paceMultiplier(courses,pace){
     const offsets={p0:0,p1:3,p2:7,p3:12,p4:17};
@@ -32,7 +33,7 @@
     return grade+(lang==='en'?' · month '+m:' '+m+(lang==='zh'?'月':'월'));
   }
   function project(courses,settings,options){
-    settings=settings||{};options=options||{};
+    settings=settings||{};options=options||{};if(HIGH)HIGH.attach(courses);
     const lang=['ko','en','zh'].includes(options.lang)?options.lang:'ko';
     const today=date(options.now||new Date()),start=date(settings.startDate||today);
     const keys=Object.keys(courses||{}).filter(k=>/^C\d+$/.test(k)).sort((a,b)=>+a.slice(1)-+b.slice(1));
@@ -45,10 +46,15 @@
     for(let i=first;i<keys.length;i++){
       const c=courses[keys[i]],n=(c.sessions||[]).length;if(!n)continue;
       const from=i===first?Math.max(1,Math.min(n,Math.floor(Number(settings.sessionIndex)||1))):1;
-      const remaining=n-from+1;
-      const weeks=Math.max(1,Math.round(Math.ceil(remaining/cadence)*pace/speed));
+      const compact=!!c.studyPlan, count=compact?HIGH.length(c):n;
+      const firstLesson=compact?HIGH.lessonIndex(c,from)+1:from;
+      const remaining=count-firstLesson+1;
+      // Carry fractional high-school weeks across course boundaries. Rounding
+      // each small course separately would erase the selected learning speed.
+      const weeks=compact?remaining/cadence/speed
+        :Math.max(1,Math.round(Math.ceil(remaining/cadence)*pace/speed));
       const end=cursor+weeks*7*DAY;
-      segments.push({key:keys[i],title:langText(c.title,lang),start:cursor,end,from,n});cursor=end;
+      segments.push({key:keys[i],title:langText(c.title,lang),start:cursor,end,from:firstLesson,n:count,compact});cursor=end;
     }
     const firstDate=new Date(Math.max(+start,+today));
     let month=new Date(Date.UTC(firstDate.getUTCFullYear(),firstDate.getUTCMonth(),1));
@@ -60,10 +66,16 @@
         const count=s.n-s.from+1;
         const a=Math.min(s.n,s.from+Math.floor(Math.max(0,+month-s.start)/(s.end-s.start)*count));
         const b=Math.min(s.n,s.from-1+Math.ceil(Math.min(s.end,+next)-s.start>0?(Math.min(s.end,+next)-s.start)/(s.end-s.start)*count:1));
-        return a+'–'+Math.max(a,b)+(lang==='en'?' sessions':lang==='zh'?'课次':'회차');
+        return a+'–'+Math.max(a,b)+(s.compact?(lang==='en'?' study bundles':lang==='zh'?'学习组':' 학습 묶음'):(lang==='en'?' sessions':lang==='zh'?'课次':'회차'));
       })});month=next;
     }
-    return {rows,milestones:segments.map(s=>({key:s.key,title:s.title,date:new Date(s.end).toISOString().slice(0,10),schoolLabel:schoolLabel(settings.entryYear,new Date(s.end),lang,settings.birthYear)})),estimated:true};
+    return {rows,milestones:segments.map(s=>{
+      // A calendar milestone is the end of the final assigned week. Only this
+      // cumulative display boundary is rounded; segment durations stay exact.
+      const end=s.compact?+start+Math.ceil((s.end-+start)/(7*DAY)-1e-9)*7*DAY:s.end;
+      return {key:s.key,title:s.title,date:new Date(end).toISOString().slice(0,10),
+        schoolLabel:schoolLabel(settings.entryYear,new Date(end),lang,settings.birthYear)};
+    }),estimated:true};
   }
   function recommend(courses,settings,options){
     const lang=(options||{}).lang||'ko';

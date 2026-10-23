@@ -78,15 +78,15 @@ for(const series of ['soma-p','soma-k','soma-a','soma-b','soma-c','soma-d','kumo
 let paper=0;
 for(const id of ['f-count5','f-ten10','c3','c29','c45','c73']){
   const plan=core.build(id,'paper-intake'),before=JSON.stringify(plan);
-  for(const kind of ['o','x','n','mixed','next-wrong']){
+  for(const kind of ['o','x','n','','mixed','next-wrong']){
     const marks=plan.items.map((x,i)=>kind==='mixed'?['o','x','n'][i%3]:kind==='next-wrong'?(x.band==='next'?'x':'o'):kind);
     const out=P.paperAnalysis(plan,marks,{goal:'science'});
     assert.equal(out.result.correct,marks.filter(x=>x==='o').length);
-    assert.equal(out.result.profile.filter(x=>x.skipped).length,marks.filter(x=>x==='n').length);
+    assert.equal(out.result.profile.filter(x=>x.skipped).length,marks.filter(x=>x==='n'||x==='').length);
     assert.equal(out.workload.applied,false);assert.equal(out.workload.speed,1);assert.equal(out.workload.amount,1);
     if(kind==='next-wrong')assert.equal(out.path.support.length,0);
     assert.equal(JSON.stringify(plan),before);paper++;
   }
-  for(const marks of [[],new Array(20),Array(20).fill(''),Array(19).fill('o'),Array(20).fill('bad')])assert.throws(()=>P.paperAnalysis(plan,marks,{}),/20 marks/);
+  for(const marks of [[],new Array(20),Array(19).fill('o'),Array(20).fill('bad')])assert.throws(()=>P.paperAnalysis(plan,marks,{}),/Invalid paper marks/);
 }
 console.log('PLACEMENT_INTAKE_OK starts='+cases+' paperPatterns='+paper+' somaVolumes='+somaVolumes+' fixed20=true noSemesterCertification=true');

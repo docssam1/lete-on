@@ -158,16 +158,16 @@ export function courseAnswerPrintPages(lesson, book, student, { quick = false } 
   };
 
   const items = [
-    ...(lesson.original?.items || []).map((item, index) => ({ item, label: `연습 ${index + 1}` })),
+    ...(lesson.original?.items || []).map((item, index) => ({ item, kind: "original", label: `연습 ${index + 1}` })),
     ...[lesson.extension, ...(lesson.similarPractice || [])].filter(Boolean)
-      .map((item, index) => ({ item, label: `추가 학습 ${index + 1}` }))
+      .map((item, index) => ({ item, kind: "story", label: `추가 학습 ${index + 1}` }))
   ];
-  return items.map(({ item, label }, index) => {
+  return items.map(({ item, kind, label }, index) => {
     const content = protectedContent(item);
     const number = index + 1;
     const body = quick
       ? `<h2><span>${number}</span>답 ${printableText(content.answer)}</h2>`
       : `<h2><span>${number}</span>${esc(label)}</h2>${conditionText(item) ? `<p class="course-answer-condition"><strong>조건</strong><br>${printableText(conditionText(item))}</p>` : ""}<p class="course-answer-working"><strong>실제 수를 사용한 풀이</strong><br>${printableText(content.solution)}</p><p class="course-answer-result"><strong>답과 확인</strong><br>답 ${printableText(content.answer)}${content.verification ? `<br>${printableText(content.verification)}` : ""}</p>${verifyVisual(item)}`;
-    return `<article class="gold-print-page course-answer-page" data-print-book="${esc(book.id)}" data-print-lesson="${esc(lesson.id)}" data-print-part="answers-${number}" data-watermark="${esc(student)} · GFIELD"><header class="gold-print-head"><div><span>${esc(courseLabels[book.courseId])} · ${quick ? "빠른 정답" : "답안과 풀이"}</span><h1>${esc(book.label)} · ${esc(lesson.title)}</h1></div></header><section class="gold-print-block"><section class="gold-print-source-item course-answer-item" data-answer-item="${esc(item.id || `answer-${number}`)}">${body}</section></section><footer class="gold-print-footer">${esc(book.label)} · ${esc(lesson.unit)}</footer></article>`;
+    return `<article class="gold-print-page course-answer-page" data-print-book="${esc(book.id)}" data-print-lesson="${esc(lesson.id)}" data-print-part="answers-${number}" data-watermark="${esc(student)} · GFIELD"><header class="gold-print-head"><div><span>${esc(courseLabels[book.courseId])} · ${quick ? "빠른 정답" : "답안과 풀이"}</span><h1>${esc(book.label)} · ${esc(lesson.title)}</h1></div></header><section class="gold-print-block"><section class="gold-print-source-item course-answer-item" data-answer-item="${esc(item.id || `answer-${number}`)}" data-answer-kind="${kind}">${body}</section></section><footer class="gold-print-footer">${esc(book.label)} · ${esc(lesson.unit)}</footer></article>`;
   }).join("");
 }

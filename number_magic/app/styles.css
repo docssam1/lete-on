@@ -2284,6 +2284,14 @@ html[data-nm-band="young"] .nm-r0-later{min-height:44px}
 
 /* ── 학년 고르기 (온보딩 2단계 · 고치기 시트, 2026-09-16) ── */
 .nm-ob-grades{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:4px 0 14px;width:100%}
+.nm-ob:has(.nm-ob-birth){align-items:flex-start}
+.nm-ob:has(.nm-ob-birth) .nm-ob-card{margin-block:auto;flex-shrink:0}
+.nm-ob:has(.nm-ob-birth) .nm-ob-grades{grid-template-columns:repeat(4,minmax(0,1fr))}
+.nm-ob-birth{display:flex;flex-direction:column;gap:8px;text-align:left;font-size:15px;font-weight:800;color:var(--ink);margin:18px 0}
+.nm-ob-birth select{width:100%;min-height:48px;font:inherit;font-size:16px;color:var(--ink);border:1.5px solid var(--sub);border-radius:12px;background:var(--paper);padding:10px 12px}
+.nm-ob-birth select:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.nm-ob-grade-label{text-align:left;font-size:15px;font-weight:800;color:var(--ink);margin:0 0 8px}
+.nm-ob:has(.nm-ob-birth) .nm-ob-grade{min-height:44px}
 .nm-ob-grade{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 2px;
   font-size:13.5px;font-weight:800;color:var(--ink);cursor:pointer;font-family:'Pretendard',sans-serif;
   min-width:0;transition:.12s}
@@ -3056,6 +3064,14 @@ html[data-nm-ui="art"] .nm-stamp-label::before,html[data-nm-ui="art"] .nm-stamp-
 @media(max-width:480px){.nm-town:has(#townVp.is-3d) .nm-road-banner{bottom:186px;right:12px}.nm-town:has(#townVp.is-3d) .nm-road-banner-btn{max-width:170px;white-space:normal;font-size:16px;padding:8px 12px}.nm-town:has(#townVp.is-3d) .nm-road-next{display:none}}
 /* 3D 모드 선택 화면(app/title3d) — 옛 2D 메뉴는 로딩 시작부터 숨기고, WebGL 실패 때만 드러낸다. */
 .nm-title3d{position:fixed;inset:0;z-index:40;background:linear-gradient(145deg,#f7f3ea 0%,#eef1f6 48%,#e8f6f2 100%)}
+.nm-consent-banner{position:fixed;left:0;right:0;top:0;z-index:70;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));background:#fff6dc;border-bottom:1px solid #e2c67a;color:#3d2f0b;font-size:15px;line-height:1.5;box-shadow:0 4px 14px rgba(61,47,11,.12)}
+.nm-consent-banner p{margin:0;word-break:keep-all}
+.nm-consent-banner .nm-btn{min-height:44px;margin:0}
+.nm-desk-music{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:3;min-width:44px;height:44px;padding:0 12px;border:1px solid rgba(32,59,61,.18);border-radius:999px;background:rgba(255,253,247,.86);color:#203b3d;font-family:inherit;font-size:17px;font-weight:600;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(32,59,61,.12)}
+.nm-desk-music[aria-pressed=false]{opacity:.7}
+.nm-desk-music:focus-visible{outline:3px solid #97732d;outline-offset:3px}
+/* 휴대폰에서는 아래쪽 바로가기(매거진 등)와 겹치지 않게 오른쪽 위로, 동의 배너가 있으면 그 아래로 */
+@media(max-width:600px){.nm-desk-music{bottom:auto;top:calc(var(--nm-consent-h,0px) + max(10px,env(safe-area-inset-top)));right:max(10px,env(safe-area-inset-right))}.nm-consent-banner{font-size:14px;padding-top:8px;padding-bottom:8px}}
 .nm-title.is-3d-pending,.nm-title.is-3d-covered{visibility:hidden}
 .nm-3d-loading{position:absolute;inset:0;z-index:100;display:grid;place-content:center;justify-items:center;gap:12px;padding:24px;text-align:center;color:#26304a;background:inherit}
 .nm-3d-loading b{font-size:clamp(16px,2.4vw,22px);font-weight:850;letter-spacing:-.025em}
@@ -3896,3 +3912,15 @@ body.nm-review-mode .nm-title3d{top:48px}
 @media(max-height:500px){.nm-town-illustrated #townVp{inset:0}.nm-town-illustrated .nm-town-hud.info{top:6px;right:8px;width:154px}.nm-town-illustrated .nm-town-hud.brand{font-size:14px;top:10px}.nm-town-tool-list{max-height:calc(100dvh - 150px)}}
 
 .nm-town-place-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding-bottom:6px;border-bottom:1px solid #C8D5E5}
+
+/* Illustrated-map actors keep a readable size; their map coordinates mark feet. */
+.nm-town-illustrated .nb{width:52px;min-height:48px;transform:translate(-50%,-100%) scale(calc(1 / var(--town-map-scale,1)));transform-origin:50% 100%;transition:none;will-change:left,top}
+.nm-town-illustrated .nb .nb-img{width:100%}
+.nm-town-illustrated .nb-ping{transform:scale(calc(1 / var(--town-map-scale,1)));transform-origin:center}
+@media(prefers-reduced-motion:reduce){.nm-town-illustrated .nb :is(.nb-img,.wk-body,.wk-head,.wk-legL,.wk-legR,.wk-armL,.wk-armR,.wk-shadow){animation:none!important}}
+.nm-town-illustrated .nm-zone{z-index:130}
+@media(prefers-reduced-motion:reduce){.nm-town-illustrated .nb-ping{animation:none}}
+.nm-town-walk-hint{position:absolute;left:12px;bottom:10px;z-index:40;margin:0;padding:7px 10px;border:1px solid #9db4ce;border-radius:8px;background:#fffffff0;color:#143a64;font:600 13px/1.4 Pretendard,system-ui,sans-serif;pointer-events:none}
+
+/* Move characters across the map without rotating or mirroring their figures. */
+.nm-town-illustrated .nb .nb-img{animation:none;transform:none}

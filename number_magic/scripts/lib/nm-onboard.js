@@ -26,7 +26,9 @@ async function onboard(page, opts){
   /* ② 학년 */
   await page.waitForSelector('#obGrSkip', { timeout: o.timeout });
   if (o.grade != null){
-    await page.locator(`.nm-ob-grade[data-g="${o.grade}"]`).click();
+    const year=await page.evaluate(()=>new Date().getFullYear());
+    await page.selectOption('#obBirthYear',String(o.birthYear||year-Number(o.grade)-6));
+    await page.locator(`.nm-ob-grade[data-g="${Math.max(0,o.grade)}"]`).click();
     await page.locator('#obGrNext:not([disabled])').click();
   } else {
     await page.click('#obGrSkip');

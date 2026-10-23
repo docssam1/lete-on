@@ -107,17 +107,17 @@
     return gradeStarts[grades[Math.min(age - 8, grades.length - 1)]];
   }
   function paperAnalysis(plan, marks, selection) {
-    if (!plan || !Array.isArray(plan.items) || !Array.isArray(marks) || marks.length !== 20 || Array.from(marks).some(x => !['o','x','n'].includes(x)))
-      throw new Error('Complete all 20 marks first');
-    const responses = plan.items.map((it, i) => ({ id:it.id, skipped:marks[i]==='n',
+    if (!plan || !Array.isArray(plan.items) || !Array.isArray(marks) || marks.length !== 20 || Array.from(marks).some(x => !['o','x','n',''].includes(x)))
+      throw new Error('Invalid paper marks');
+    const responses = plan.items.map((it, i) => ({ id:it.id, skipped:marks[i]==='n'||marks[i]==='',
       value:marks[i]==='o'?clone(it.answer):null, validationFlags:{validTargets:true} }));
     const result = W.NM_PLACEMENT_PLAN.summarize(plan, responses);
     const notLearned = {previous:0,current:0,next:0};
     plan.items.forEach((it,i)=>{ if(marks[i]==='n') notLearned[it.band]++; });
     return { result, path:recommend(plan,result,selection), notLearned, workload:autoPlan(result,selection),
-      comment:text('이전·현재의 X는 보강 후보입니다. 안 배운 내용은 먼저 설명하고 다시 확인합니다. 다음 진도의 X만으로 현재 진도 부족을 판단하지 않습니다.',
-        'Earlier/current X marks suggest focused practice. Teach unlearned content before rechecking. Next-stage X marks alone do not show a current-stage gap.',
-        '此前与当前的错题是补充练习候选。未学内容先讲解再确认，不仅凭后续题的错答判断当前进度不足。'),
+      comment:text('이전·현재의 X는 보강 후보입니다. 모르는 내용은 함께 살펴보고 다시 확인합니다. 다음 진도의 X만으로 현재 진도 부족을 판단하지 않습니다.',
+        'Earlier/current X marks suggest focused practice. Explore unknown content together before rechecking. Next-stage X marks alone do not show a current-stage gap.',
+        '此前与当前的错题是补充练习候选。不会的内容一起学习后再确认，不仅凭后续题的错答判断当前进度不足。'),
       limitation:text('O/X만으로 풀이 속도나 틀린 원인을 알 수 없습니다.', 'O/X marks alone cannot reveal solution speed or error causes.', '仅凭对错无法判断解题速度或错误原因。') };
   }
   const api = { goals: clone(goals), targets: clone(targets), normalize, recommend, autoPlan, startingPoint, paperAnalysis };

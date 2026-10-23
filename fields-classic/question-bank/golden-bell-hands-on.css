@@ -30,7 +30,7 @@
 .gold-hands-on .hand-title { margin: 20px 0 8px; font-size: 22px; line-height: 1.4; }
 .gold-hands-on .hand-task { margin: 0 0 4px; font-size: 18px; line-height: 1.65; word-break: keep-all; overflow-wrap: anywhere; }
 .gold-hands-on button { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #566274; border-radius: 4px; background: #fff; color: var(--hand-ink); padding: 8px 12px; font: inherit; font-size: 15px; cursor: pointer; line-height: 1.4; }
-.gold-hands-on button:not([class^="cg-"]):hover:not(:disabled) { background: #eaf0ff; border-color: #2456c4; }
+.gold-hands-on button:not([class^="cg-"]):not(:is(.hand-cell, .hand-slot, .hand-number-card, .hand-primary, [class^="lg-"], [class^="b9"])):hover:not(:disabled) { background: #eaf0ff; border-color: #2456c4; }
 .gold-hands-on button:disabled { cursor: default; opacity: .55; }
 .gold-hands-on button:focus-visible { outline: 3px solid #2456c4; outline-offset: 3px; }
 .gold-hands-on button[aria-pressed="true"], .gold-hands-on .picked { outline: 3px solid #2456c4; outline-offset: -3px; background: #eaf0ff; color: #163b8e; }

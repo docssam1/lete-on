@@ -161,14 +161,16 @@ function printGradeKey(){
 }
 window.NM_PRINT_GRADE=printGradeKey;
 /* 학년을 고르면 입학 연도로 환산해 저장 — 고른 학년은 "지금" 기준이다. */
-function setSchoolGrade(gradeNum){
-  S.schoolAge={ entryYear: academicYearNow()-(gradeNum-1), setAt: Date.now() };
+function setSchoolGrade(gradeNum,birthYear){
+  const birth=Number(birthYear||S.schoolAge?.birthYear)||null;
+  S.schoolAge={...(birth?{birthYear:birth}:{}),
+    entryYear:gradeNum<1&&birth?Math.max(academicYearNow()+1,birth+7):academicYearNow()-(gradeNum-1),setAt:Date.now()};
 }
-/* 고르기 목록. 값은 학년 번호(미취학 0·-1·-2 = 1·2·3년 뒤 입학). */
+/* 실제 학년 목록. 미취학은 0이며 출생연도로 입학 연도를 정한다. */
 function schoolGradeOptions(){
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
-  const out=[{g:-2,label:lk('5세','Age 5','5岁')},{g:-1,label:lk('6세','Age 6','6岁')},{g:0,label:lk('7세','Age 7','7岁')}];
+  const out=[{g:0,label:lk('미취학','Preschool','学龄前')}];
   for(let i=1;i<=6;i++) out.push({g:i,label:lk('초'+i,'G'+i,'小'+i)});
   for(let i=1;i<=3;i++) out.push({g:6+i,label:lk('중'+i,'G'+(6+i),'初'+i)});
   for(let i=1;i<=3;i++) out.push({g:9+i,label:lk('고'+i,'G'+(9+i),'高'+i)});
@@ -487,7 +489,7 @@ if(guardianAuth){
       const details=$('.nm-closet-settings');if(details)details.open=true;
     }
     renderIdCard();renderNotifyCard();
-    refreshEntryContinue();
+    refreshEntryContinue();renderConsentBanner();
   };
   /* ready()가 늦게 끝나 한 번 더 그릴 때, 이미 입력 중인 이메일·인증번호·비밀번호 칸을 지우지 않는다.
      (인증 성공·로그아웃 같은 실제 변화는 onChange가 따로 그린다.) */
@@ -505,9 +507,31 @@ if(membership&&guardianAuth){
     const changed=applyAdminSettings();
     if(changed){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}syncAmount();}
     renderIdCard();renderAccountCard();renderNotifyCard();
-    refreshEntryContinue();
+    refreshEntryContinue();renderConsentBanner();
     if(S.view==='courseroad')renderPersonalPlan();
   });
+}
+/* 동의서 갱신 안내(2026-10-22) — 번호는 있지만 현재 동의서 버전에 동의하지 않은 보호자에게
+   맨 위 배너로 알린다. 갱신 전에는 체험 밖 학습과 기록 저장이 멈추므로 이유를 숨기지 않는다.
+   양식이 이미 보이는 보호자 화면·옷장에서는 배너를 내린다. */
+function renderConsentBanner(){
+  const old=document.getElementById('nmConsentBanner');
+  const contact=membership&&membership.snapshot().contact;
+  const need=!REVIEW&&booted&&!!membership&&!!guardianAuth?.peek()&&!(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())
+    &&contact?.registered===true&&!membership.contactReady()&&!guardianEntry&&S.view!=='closet';
+  if(!need){if(old)old.remove();document.documentElement.style.removeProperty('--nm-consent-h');return;}
+  const lk=(k,e,z)=>S.lang==='ko'?k:S.lang==='en'?e:z;
+  const bar=old||document.createElement('div');
+  bar.id='nmConsentBanner';bar.className='nm-consent-banner';bar.setAttribute('role','region');
+  bar.setAttribute('aria-label',lk('개인정보 동의 갱신 안내','Privacy consent renewal','个人信息同意更新提示'));
+  bar.innerHTML=`<p>${lk('개인정보 동의서가 새로 바뀌었어요. 동의를 갱신해야 학습 기록이 저장돼요.','The personal data notice has changed. Renew consent to keep saving learning records.','个人信息同意书已更新。更新同意后才能保存学习记录。')}</p><button type="button" class="nm-btn" id="nmConsentRenew">${lk('동의 갱신하기','Renew consent','更新同意')}</button>`;
+  if(!old)document.body.appendChild(bar);
+  document.documentElement.style.setProperty('--nm-consent-h',(bar.offsetHeight+12)+'px');
+  bar.querySelector('#nmConsentRenew').onclick=()=>{
+    guardianContactEditing=false;S.view='closet';save();render();
+    const details=$('.nm-closet-settings');if(details)details.open=true;
+    $('#nm-guardian-slot')?.scrollIntoView({block:'start'});
+  };
 }
 function applyAdminSettings(){
   const record=membership&&membership.snapshot();const p=record&&record.settings;
@@ -516,7 +540,7 @@ function applyAdminSettings(){
   if(!p||p.profileName!==S.name||record.owner!==S.cloudOwnerId)return changed;
   changed=changed||!S.adminPlan||S.adminPlan.version!==p.version;
   S.adminPlan={...p};S.roadSpeed=p.speed;S.roadAmount=p.amount;S.roadCadence=p.cadence;S.roadPace='p2';
-  if(p.entryYear)S.schoolAge={entryYear:p.entryYear,setAt:Date.parse(p.updatedAt)||Date.now()};
+  if(p.entryYear)S.schoolAge={...S.schoolAge,entryYear:p.entryYear,setAt:Date.parse(p.updatedAt)||Date.now()};
   return changed;
 }
 async function cloudCredentials(){
@@ -639,15 +663,30 @@ function cloudPushSoon(){
 }
 /* 주간 요약 — 알림 발송(Edge Function weekly-notify)이 프로필 state에서 읽는다.
    현재 과정이 바뀔 때만 저장(렌더마다 save 폭주 방지). 알림서비스-설계.md 참조. */
+function highWeeklySchedule(courseKey){
+  if(!window.NM_HIGH_PACING)return null;
+  const managed=S.adminPlan;
+  if(managed&&(window.NM_COURSES||{})[managed.courseKey]?.studyPlan&&managed.startDate)
+    return {courseKey:managed.courseKey,sessionIndex:managed.sessionIndex||1,startDate:managed.startDate,speed:managed.speed||1,cadence:managed.cadence||'w2'};
+  if(S.highSchedule&&(window.NM_COURSES||{})[S.highSchedule.courseKey]?.studyPlan)
+    return {...S.highSchedule,speed:S.roadSpeed||1,cadence:S.roadCadence||'w1'};
+  const course=(window.NM_COURSES||{})[courseKey];
+  if(!course?.studyPlan)return null;
+  // Anchor once; viewing another week never changes the student's completion record.
+  S.highSchedule={courseKey,sessionIndex:1,startDate:new Date(Date.now()+9*3600000).toISOString().slice(0,10)};
+  return {...S.highSchedule,speed:S.roadSpeed||1,cadence:S.roadCadence||'w1'};
+}
 function updateWeeklyDigest(){
   try{
-    const key=currentCourseKey();
+    const current=currentCourseKey(),plan=highWeeklySchedule(current),key=plan?plan.courseKey:current;
     const c=(window.NM_COURSES||{})[key];
     if(!c)return;
+    const fields={courseKey:key,courseNum:c.order,
+      courseTitle:(c.title&&c.title.ko)||key,cadence:plan?plan.cadence:S.roadCadence,
+      ...(plan?{sessionIndex:plan.sessionIndex,highPlanVersion:NM_HIGH_PACING.version,highStartDate:plan.startDate,highSpeed:plan.speed}:{})};
     const d=S.weeklyDigest||{};
-    if(d.courseKey===key&&d.cadence===S.roadCadence)return;
-    S.weeklyDigest={courseKey:key,courseNum:c.order,
-      courseTitle:(c.title&&c.title.ko)||key,cadence:S.roadCadence,at:Date.now()};
+    if(Object.keys(fields).every(k=>d[k]===fields[k])&&!!d.highStartDate===!!fields.highStartDate)return;
+    S.weeklyDigest={...fields,at:Date.now()};
     save();
   }catch(e){}
 }
@@ -1043,6 +1082,7 @@ function bgKeyForView(){
 }
 
 function render(){
+  if(window.NM_YOUNG_NUMBERS)NM_YOUNG_NUMBERS.stop();
   lessonVersion++;
   stopVoice();
   syncAmount();
@@ -1059,6 +1099,8 @@ function render(){
   if(S.onboarded)updateWeeklyDigest();                    // 알림용 주간 요약(변화 있을 때만 저장)
   window.NM_CURRENT_UNIT=S.unit||null;                    // widgets.js가 "N-* 유닛인가"를 판정할 때 씀(오답 소리·표정 등, 유아 전용 반응)
   if(townCleanup){townCleanup();townCleanup=null;}
+  window.NM_MAGIC_NOTE_PLAYER?.close();
+  renderConsentBanner();
   if(S.view!=='minigame'&&mgTimer){clearInterval(mgTimer);mgTimer=null;}
   if(wsHelperId&&!guardianEntry){
     app.innerHTML='<div id="screen"></div>';
@@ -1134,7 +1176,7 @@ function screenWelcome(){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const ob = { number:S.character.number||3, color:S.character.color||'blue',
     bg:S.character.bg||'plain', cape:S.character.cape||'none',
-    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&(S.avatar.look||S.avatar.kind))||null, grade:null };
+    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&(S.avatar.look||S.avatar.kind))||null, grade:null, birthYear:'' };
   const NUMS=[0,1,2,3,4,5,6,7,8,9];
 
   /* 1단계 — 나(사람 아바타) 고르기. 고를 때까지 "다음"이 비활성. */
@@ -1166,24 +1208,28 @@ function screenWelcome(){
      해서 앱이 막히면 안 된다(모르면 안내를 안 할 뿐이다). */
   function stepGrade(){
     const opts=schoolGradeOptions();
+    const year=new Date().getFullYear();
     scr.innerHTML=`
     <div class="nm-ob">
       <div class="nm-ob-card">
-        <h1 class="nm-ob-title">${lk('지금 몇 학년인가요?','What grade are you in?','你上几年级？')}</h1>
-        <p class="nm-ob-sub">${lk('학년에 맞춰 말투와 안내를 골라 줄게요. 학습은 어디서든 시작할 수 있어요.',
-          'We use this to pick the right tone and guidance. You can still start anywhere.',
-          '我们用这个来选择合适的语气和提示。学习仍然可以从任何地方开始。')}</p>
+        <h1 class="nm-ob-title">${lk('아이에 대해 알려 주세요','Tell us about the learner','请告诉我们孩子的信息')}</h1>
+        <p class="nm-ob-sub">${lk('나이와 실제 학년으로 진단의 시작 범위와 월별 계획을 준비해요. 배우는 내용은 따로 고를 수 있어요.',
+          'Age and school grade help prepare a diagnostic scope and monthly plan. You can choose a different study topic.',
+          '年龄和实际年级用于准备测评范围与月度计划，学习内容可以另外选择。')}</p>
+        <label class="nm-ob-birth">${lk('출생연도','Birth year','出生年份')}<select id="obBirthYear"><option value="">${lk('선택해 주세요','Select year','请选择')}</option>${Array.from({length:16},(_,i)=>year-3-i).map(y=>`<option value="${y}"${String(y)===ob.birthYear?' selected':''}>${lk(y+'년생',String(y),y+'年出生')}</option>`).join('')}</select></label>
+        <p class="nm-ob-grade-label">${lk('지금 다니는 학년','Current school grade','当前实际年级')}</p>
         <div class="nm-ob-grades">${opts.map(o=>
-          `<button class="nm-ob-grade${ob.grade===o.g?' sel':''}" data-g="${o.g}">${esc(o.label)}</button>`).join('')}</div>
-        <button class="nm-btn nm-ob-go" id="obGrNext"${ob.grade==null?' disabled':''}>${lk('다음 ›','Next ›','下一步 ›')}</button>
+          `<button class="nm-ob-grade${ob.grade===o.g?' sel':''}" data-g="${o.g}" aria-pressed="${ob.grade===o.g}">${esc(o.label)}</button>`).join('')}</div>
+        <button class="nm-btn nm-ob-go" id="obGrNext"${ob.grade==null||!ob.birthYear?' disabled':''}>${lk('다음 ›','Next ›','下一步 ›')}</button>
         <button class="nm-btn ghost nm-ob-go" id="obGrSkip">${lk('나중에 할래요','Later','以后再说')}</button>
       </div>
     </div>`;
     scr.querySelectorAll('[data-g]').forEach(b=>{
       b.onclick=()=>{ ob.grade=+b.dataset.g; stepGrade(); };
     });
-    $('#obGrNext').onclick=()=>{ if(ob.grade!=null) draw(); };
-    $('#obGrSkip').onclick=()=>{ ob.grade=null; draw(); };
+    $('#obBirthYear').onchange=e=>{ob.birthYear=e.target.value;$('#obGrNext').disabled=ob.grade==null||!ob.birthYear;};
+    $('#obGrNext').onclick=()=>{ if(ob.grade!=null&&ob.birthYear) draw(); };
+    $('#obGrSkip').onclick=()=>{ ob.grade=null;ob.birthYear=''; draw(); };
   }
 
   function draw(){
@@ -1308,7 +1354,7 @@ function screenWelcome(){
     S.avatar = NM_HUMANS.clean({id:'avatar-1',look:ob.avatar});
     S.avatarCollection=[S.avatar];
     S.name = ob.name;
-    if(ob.grade!=null) setSchoolGrade(ob.grade);
+    if(ob.grade!=null) setSchoolGrade(ob.grade,ob.birthYear);
     S.onboarded = true;
     if(ob.claimedOwner&&isGuardianOwner(ob.claimedOwner)){S.cloudLinked=true;S.cloudOwnerId=ob.claimedOwner;}
     save();
@@ -1486,6 +1532,7 @@ function screenTown(){
       </div>
     </div>
     <div class="nm-town-hud brand">${t('mapTitle')}</div>
+    <p class="nm-town-walk-hint">${S.lang==='ko'?'지도의 빈 곳을 누르면 걸어요.':S.lang==='en'?'Tap an empty spot to walk.':'点地图空白处即可行走。'}</p>
     <div class="nm-road-banner" id="roadBanner">
       <button class="nm-road-banner-btn" id="roadEnter">
         🗺️ ${S.lang==='ko'?'학습 여행':S.lang==='en'?'Learning Journey':'学习之旅'}
@@ -1533,7 +1580,7 @@ function screenTown(){
   list.appendChild(scr.querySelector('.nm-town-hud.ctrls'));
   toolbox.addEventListener('keydown',e=>{if(e.key==='Escape'){toolbox.open=false;toolbox.querySelector('summary').focus();}});
   townCleanup=initTownWorld(scr);
-  // The illustrated village is now the default. Buildings open without walking or camera controls.
+  // Buildings open directly; tapping empty map space optionally moves the avatar.
   const rb=$('#roadEnter');if(rb)rb.onclick=()=>{S.view='roadmap';save();render();};
   const gb=$('#gradeEnter');if(gb)gb.onclick=()=>{S.view='gradecourse';save();render();};
   const mb=$('#townMail');if(mb)mb.onclick=()=>{S._mbWeek=null;S.view='mailbox';save();render();};
@@ -2645,6 +2692,7 @@ function courseProgress(c){
   return { done: ids.filter(u=>stepDone(u,'stamp')).length, total: ids.length };
 }
 /* 주차 — 주 1회는 세션 수 그대로, 주 2회는 절반(올림) — 한 주에 두 회차 */
+function courseLessonCount(c){ return window.NM_HIGH_PACING?NM_HIGH_PACING.length(c):(c.sessions||[]).length; }
 function courseWeeks(nSessions, cadence){
   return cadence==='w2' ? Math.ceil(nSessions/2) : nSessions;
 }
@@ -2667,21 +2715,23 @@ function roadPaceMult(key){
   return (base+roadPaceDef(key).off)/base;
 }
 /* 한 과정의 주차에 목표 기준을 반영한다 — 세션 수학(위 courseWeeks)은 그대로
-   두고 배수만 곱한다. 한 주보다 짧아지지는 않는다. */
-function coursePaceWeeks(nSessions, cadence, mult){
-  return Math.max(1, Math.round(courseWeeks(nSessions,cadence)*(mult||1)));
+   두고 배수만 곱한다. 고등 묶음은 속도에 따른 소수 주수를 누적한다. */
+function coursePaceWeeks(course, cadence, mult, speed){
+  const n=typeof course==='number'?course:courseLessonCount(course);
+  if(course&&course.studyPlan)return n/(cadence==='w2'?2:1)/(speed||S.roadSpeed||1);
+  return Math.max(1, Math.round(courseWeeks(n,cadence)*(mult||1)));
 }
 /* 구간 합계 {sessions, weeks} — from~to는 과정 번호(포함).
    합계 주차는 과정별로 반올림한 값을 더하지 않고 구간 전체에 배수를 한 번
    곱해 반올림한다 — 과정마다 생기는 반올림 오차가 쌓이지 않게. */
-function roadTotals(from, to, cadence, mult){
-  let sessions=0, weeks=0, courses=0;
+function roadTotals(from, to, cadence, mult, speed){
+  let sessions=0, weeks=0, courses=0, hasHigh=false;
   roadCourseList().forEach(x=>{
     if(x.num<from||x.num>to) return;
-    const n=(x.c.sessions||[]).length;
-    sessions+=n; weeks+=courseWeeks(n,cadence); courses++;
+    const n=courseLessonCount(x.c);hasHigh=hasHigh||!!x.c.studyPlan;
+    sessions+=n; weeks+=x.c.studyPlan?n/(cadence==='w2'?2:1)/(speed||S.roadSpeed||1):courseWeeks(n,cadence)*(mult||1); courses++;
   });
-  weeks=Math.round(weeks*(mult||1));
+  weeks=hasHigh?Math.ceil(weeks-1e-9):Math.round(weeks);
   return {sessions, weeks, courses, months: Math.round(weeks/4)};
 }
 
@@ -2769,6 +2819,15 @@ function courseOutlineHtml(c){
   const lk=(k,e,z)=>ko?k:en?e:z;
   const TH=window.NM_THREADS||{};
   const nameOf=(id)=>{ const u=UNITS[id]; if(u) return esc(L(u.title)); const th=TH[id]; return th?esc(L(th.name)):esc(id); };
+  if(c.studyPlan){
+    const rows=c.studyPlan.lessons.map((group,i)=>{
+      const source=group.sourceIndices.map(j=>c.sessions[j]);
+      const units=[...new Set(source.flatMap(s=>s.magic||[]))].map(nameOf);
+      const topics=[...new Set(source.flatMap(s=>(s.drills||s.pool||[]).map(d=>d.t)))].map(nameOf);
+      return `<li class="nm-cs-ses"><span class="nm-cs-sesno">${i+1}</span><span class="nm-cs-sestxt"><b>${lk('교과 연산 묶음','Curriculum practice bundle','课内运算学习组')} ${i+1}</b><small>${lk('기존 회차','Original sessions','原课次')} ${group.startSession}–${group.endSession}${source.some(s=>s.test)?' · '+lk('과정 확인 포함','includes course check','含课程检查'):''}</small>${units.length?`<small>${units.join(' · ')}</small>`:''}<small>${topics.join(' · ')}</small></span></li>`;
+    }).join('');
+    return `<ul class="nm-cs-list">${rows}</ul>`;
+  }
   const rows=(c.sessions||[]).map((ses,i)=>{
     const no=`<span class="nm-cs-sesno">${i+1}</span>`;
     if(ses.test){
@@ -3352,8 +3411,8 @@ function openAgeSheet(after){
         'Grade never locks a course. We only use it to advise when you open the middle- and high-school stretches.',
         '年级不会锁住任何课程，只在打开初中、高中区间时用来提示现在是否合适。')}</p>
       <div class="nm-ob-grades sheet">${opts.map(o=>
-        `<button class="nm-ob-grade${cur===o.g?' sel':''}" data-g="${o.g}">${esc(o.label)}</button>`).join('')}</div>
-      ${S.schoolAge?`<button class="nm-btn full ghost" id="ageClear">${lk('학년 지우기','Clear grade','清除年级')}</button>`:''}
+        `<button class="nm-ob-grade${cur!=null&&Math.max(0,cur)===o.g?' sel':''}" data-g="${o.g}" aria-pressed="${cur!=null&&Math.max(0,cur)===o.g}">${esc(o.label)}</button>`).join('')}</div>
+      ${S.schoolAge?.entryYear?`<button class="nm-btn full ghost" id="ageClear">${lk('학년 지우기','Clear grade','清除年级')}</button>`:''}
     </div>
   </div>`);
   const close=()=>{ const m=document.getElementById('nmAgeSheet'); if(m)m.remove(); };
@@ -3363,7 +3422,7 @@ function openAgeSheet(after){
     b.onclick=()=>{ setSchoolGrade(+b.dataset.g); save(); close(); if(after)after(); else render(); };
   });
   const clr=document.getElementById('ageClear');
-  if(clr) clr.onclick=()=>{ S.schoolAge=null; save(); close(); if(after)after(); else render(); };
+  if(clr) clr.onclick=()=>{ S.schoolAge=S.schoolAge?.birthYear?{birthYear:S.schoolAge.birthYear,setAt:Date.now()}:null; save(); close(); if(after)after(); else render(); };
 }
 
 function openStudentSwitch(){
@@ -3450,10 +3509,10 @@ function crIc(name){
 function paceWeeksToFn(curNum, curFrac, cad, pace, speed){
   const mult=roadPaceMult(pace)/(speed||1);
   const cur=roadCourseList().find(x=>x.num===curNum);
-  const curW=cur?coursePaceWeeks((cur.c.sessions||[]).length,cad,mult):0;
+  const curW=cur?coursePaceWeeks(cur.c,cad,mult,speed):0;
   return target=>{
     if(target<=curNum) return 0;
-    return Math.max(0, roadTotals(curNum,target-1,cad,mult).weeks - curFrac*curW);
+    return Math.max(0, roadTotals(curNum,target-1,cad,mult,speed).weeks - curFrac*curW);
   };
 }
 /* 판정 한 벌 — 화면과 검사기(window.NM_PACE_DIAG)가 같은 것을 쓴다.
@@ -3745,7 +3804,8 @@ function renderPersonalPlan(){
   if(!box){box=document.createElement('details');box.id='nmPersonalPlan';box.className='nm-personal-plan';bar.insertAdjacentElement('afterend',box);}
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
   const p=S.adminPlan,now=new Date(),today=new Date(+now+9*3600000).toISOString().slice(0,10);
-  const settings=p&&NM_COURSES[p.courseKey]?p:{courseKey:currentCourseKey(),sessionIndex:1,speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2',entryYear:S.schoolAge?.entryYear,startDate:today};
+  const highPlan=highWeeklySchedule(currentCourseKey());
+  const settings=p&&NM_COURSES[p.courseKey]?p:{courseKey:highPlan?.courseKey||currentCourseKey(),sessionIndex:highPlan?.sessionIndex||1,speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2',entryYear:S.schoolAge?.entryYear,startDate:highPlan?.startDate||today};
   let result;try{result=NM_LEARNING_PLAN.project(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});}catch(e){return;}
   const reference=NM_LEARNING_PLAN.recommend(NM_COURSES,settings,{lang:S.lang});
   box.innerHTML=`<summary>${lk('나의 월별 로드맵 · 12개월','My monthly roadmap · 12 months','我的月度路线图 · 12个月')}</summary><div class="nm-personal-plan-body"><p>${p?lk('학원에서 정한 개인별 시작점과 속도를 적용했어요.','Your academy’s individual starting point and pace are applied.','已应用学院设置的个人起点和速度。'):lk('현재 선택한 시작점과 속도로 예상했어요.','Estimated from your selected starting point and pace.','根据所选起点和速度估算。')} ${lk('실제 학습에 따라 달라질 수 있어요. 학년은 매년 3월에 바뀌어요.','Actual progress may vary. Grades change each March.','实际进度可能不同，年级每年3月变更。')}</p><p>${lk('시작','Start','开始')}: ${esc(settings.startDate)} · ${settings.speed}${lk('배 속도','× pace','倍速度')} · ${lk('주','Per week','每周')} ${settings.cadence==='w2'?2:1}${lk('회',' sessions','次')}</p><div class="nm-personal-plan-grid" role="list">${result.rows.map(row=>`<article role="listitem"><h4>${esc(row.month)} <small>${esc(row.schoolLabel)}</small></h4>${row.courseLabels.length?row.courseLabels.map((label,i)=>`<p><b>${esc(label)}</b><span>${esc(row.sessionLabels[i])}</span></p>`).join(''):`<p>${lk('예상 과정 없음','No course projected','暂无预计课程')}</p>`}</article>`).join('')}</div><aside><h4>${esc(reference.title)}</h4><p>${esc(reference.advice)}</p><p>${esc(reference.reference)}</p>${reference.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>`).join(' · ')}</aside></div>`;
@@ -4247,12 +4307,13 @@ function screenCourseRoad(){
               :en?`Usually from ${schoolMonthsLabel(r.need)}`:`通常从${schoolMonthsLabel(r.need)}起`}</span>`; })()}
         </div>`;
         if(!again) html+=middlePacingHtml(c.tier);
+        if(!again&&c.studyPlan) html+=`<p class="nm-cr-cadfoot">${lk('교과 연산 24묶음 · 주 2회 기준 12주(약 3개월). 기존 회차를 합쳐 주당 학습량을 늘렸어요.','24 curriculum-practice bundles · 12 weeks at two bundles a week. Existing sessions are combined into a larger weekly workload.','24组课内运算 · 每周2组共12周（约3个月）。合并原课次，增加每周学习量。')}</p>`;
         prevTier=c.tier;
       }
       const tierDef=roadTierInfo(c.tier);
       {
-        const n=(c.sessions||[]).length;
-        const wk=coursePaceWeeks(n,cad,mult);
+        const n=courseLessonCount(c);
+        const wk=Math.ceil(coursePaceWeeks(c,cad,mult)-1e-9);
         const prog=courseProgress(c);
         const built=courseBuilt(c);
         const isNow=x.key===curKey;
@@ -4475,7 +4536,7 @@ function mountRoad3DInto(heroEl, o){
     const c=x.c, isDone=courseConquered(c), isNow=x.key===curKey;
     const isGoal=!isDone&&!isNow&&x.key===goalKey;
     const prog=courseProgress(c);
-    return { id:x.key, num:x.num, title:L(c.title), band:c.tier, sessions:(c.sessions||[]).length,
+    return { id:x.key, num:x.num, title:L(c.title), band:c.tier, sessions:courseLessonCount(c),
       state:isNow?'now':isDone?'done':isGoal?'goal':(prog.done>0?'doing':'ahead'),
       boss:!!c.boss, tower:c.tier==='challenge', when:whenMap[x.key]||'' };
   });
@@ -4649,17 +4710,28 @@ function placementAgeEntry(opt){
   return idx>=0?idx:0;
 }
 
+let assessmentChooseMethod=true;
 function startPlacement(){
   const ui=window.NM_PLACEMENT_UI,paths=window.NM_PLACEMENT_PATHS;
   if(!ui)S._diag=null;
   else if(!S._diag||S._diag.version!==ui.version||S._diag.phase==='result'){
+    assessmentChooseMethod=false;
     const previous=S._diag&&S._diag.version===ui.version&&S._diag.selection
       ?S._diag.selection:S.placement&&S.placement.selection;
     const previousConfig=S.placement&&S.placement.pathRecommendation&&S.placement.pathRecommendation.config;
     S._diag=ui.initial();
     if(previous)Object.assign(S._diag.selection,JSON.parse(JSON.stringify(previous)));
     if(paths)Object.assign(S._diag.selection,paths.normalize(previous||previousConfig));
-  }
+    // A grade entered earlier (sign-up or profile) fills the setup, so the matching scope is preselected.
+    const sel=S._diag&&S._diag.selection,sa=S.schoolAge;
+    if(sel&&sa){
+      const at=new Date(Number.isFinite(sa.setAt)?sa.setAt:Date.now());
+      sel.entryYear=sa.entryYear||null;sel.profileGrade='';sel.gradeInferred=false;
+      sel.profileAt=(Number.isNaN(at.getTime())?new Date():at).toISOString().slice(0,10);
+      if(sa.birthYear)sel.birthYear=sa.birthYear;
+      if(sel.scopeSource==='grade'){sel.baselineId='';sel.studyBand='';}
+    }
+  }else assessmentChooseMethod=['question','paper'].includes(S._diag.phase);
   // Re-entry resumes a compatible fixed plan/setup; it never regenerates
   // answered questions or reinterprets a legacy adaptive run.
   S.view='placement'; save(); render();
@@ -4835,14 +4907,18 @@ function screenPlacement(){
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
   const scr=$('#screen'), ui=window.NM_PLACEMENT_UI;
-  const close=()=>{S._diag=null;S.view='town';save();render();};
+  const close=()=>{S.view='town';save();render();};
   if(!ui){
     scr.innerHTML='<div class="nm-step-body"><p role="alert">'+esc(L({ko:'진단 자료를 불러오지 못했습니다. 새로고침 후 다시 시작해 주세요.',en:'Assessment data could not be loaded. Please reload.',zh:'未能加载测评资料，请刷新。'}))+'</p><button class="nm-btn" id="pdLoadBack">'+t('back')+'</button></div>';
     $('#pdLoadBack').onclick=close;return;
   }
   // A saved adaptive run cannot be interpreted as a fixed 6/10/4 plan.
   if(!S._diag||S._diag.version!==ui.version){S._diag=ui.initial();save();}
+  if(S._diag.phase==='setup')assessmentChooseMethod=false;
   ui.render({root:scr,state:S._diag,lang:S.lang,currentCadence:S.roadCadence,save,renderMath,close,
+    chooseMethod:assessmentChooseMethod,checkHistory:()=>S.achievementChecks||[],
+    onAttemptStart:()=>{assessmentChooseMethod=false;},
+    onMethodChoose:phase=>{assessmentChooseMethod=false;S._diag.phase=phase;S._diag.questionStartedAt=Date.now();save();render();},
     planSettings:{speed:S.roadSpeed||1,pace:S.roadPace||'p2',cadence:S.roadCadence||'w1'},
     onProfile:profile=>{S.schoolAge={entryYear:profile.entryYear,birthYear:profile.birthYear,setAt:Date.now()};save();},
     paceManaged:!!S.adminPlan,
@@ -4850,7 +4926,15 @@ function screenPlacement(){
     pick:()=>{S._diag=null;S.view='startpick';save();render();},
     seeCourse:key=>{S._diag=null;S._roadFocus=key;S.view='courseroad';save();render();},
     onResult:(result,run)=>{
-      S.placement={at:Date.now(),version:ui.version,course:result.recommendation.course,
+      if(run.purpose==='achievement'){
+        const record={at:Date.now(),seed:run.seed,source:run.responseSource||'online',baselineId:run.plan.baseline.id,
+          asked:result.asked,correct:result.correct,bands:JSON.parse(JSON.stringify(result.bands)),
+          domains:JSON.parse(JSON.stringify(result.domains)),profile:JSON.parse(JSON.stringify(result.profile)),
+          selection:JSON.parse(JSON.stringify(run.selection))};
+        S.achievementChecks=[...(S.achievementChecks||[]).filter(x=>x.seed!==run.seed),record].slice(-20);
+        return;
+      }
+      S.placement={at:Date.now(),version:ui.version,source:run.responseSource||'online',course:result.recommendation.course,
         session:result.recommendation.session,asked:result.asked,correct:result.correct,
         age:run.selection.age||null,grade:run.selection.grade||null,
         baselineId:run.plan.baseline.id,selection:JSON.parse(JSON.stringify(run.selection)),
@@ -5396,6 +5480,36 @@ function screenTitle(){
 /* 3D 모드 선택 화면(2026-09-26, 원장 "학습지 모드, 게임모드 이런것들 고르는 화면서 3d로 제대로 구현") — app/title3d/title3d.js.
    정상 로딩 중에는 옛 2D 타이틀을 숨기고 준비 화면만 보인다. 고르면 2D 버튼을 그대로 누른다 —
    이동 규칙(이어서 모험·진단·게임·학습지 …)이 한 곳(위 onclick)에만 있게. WebGL 이 없을 때만 2D 를 드러낸다. */
+/* 모험 책상 배경음 — promo 미리보기(showreel-15s-vertical)와 같은 음악을 뽑아 반복한다.
+   브라우저가 자동 재생을 막으면 책상을 처음 누를 때 시작한다. 끈 선택은 이 기기에 기억한다. */
+const DESK_MUSIC_KEY='nm_desk_music_v1';
+function mountDeskMusic(box){
+  let on=true;try{on=localStorage.getItem(DESK_MUSIC_KEY)!=='off';}catch(e){}
+  const audio=new Audio('assets/audio/desk/promo-ambience.m4a?v=20261022');
+  audio.loop=true;audio.volume=0;audio.preload='auto';
+  // Pause during narration (also works when iOS ignores volume writes).
+  // Guard pending play promises so leaving the desk cannot restart its music.
+  let fade=0,disposed=false,pending=false,playRun=0,needsGesture=false;
+  const blocked=()=>disposed||!on||document.hidden||!!window.NM_VOICE?.isSpeaking();
+  const fadeIn=()=>{clearInterval(fade);let step=0;fade=setInterval(()=>{if(blocked()){stop();return;}step++;audio.volume=Math.min(.35,step*.035);if(step>=10)clearInterval(fade);},60);};
+  const stop=()=>{playRun++;pending=false;clearInterval(fade);audio.pause();audio.volume=0;};
+  const start=()=>{if(blocked()||needsGesture||pending||!audio.paused)return;const ticket=++playRun;pending=true;audio.volume=0;Promise.resolve(audio.play()).then(()=>{if(ticket!==playRun)return;if(blocked()){stop();return;}pending=false;fadeIn();}).catch(()=>{if(ticket===playRun){pending=false;needsGesture=true;}});};
+  const lk=(k,e,z)=>S.lang==='ko'?k:S.lang==='en'?e:z;
+  const btn=document.createElement('button');btn.type='button';btn.className='nm-desk-music';
+  btn.setAttribute('aria-label',lk('배경음','Background music','背景音乐'));
+  const sync=()=>{btn.textContent=on?'♪':'×♪';btn.setAttribute('aria-pressed',String(on));btn.setAttribute('aria-label',on?lk('배경음 끄기','Turn off background music','关闭背景音乐'):lk('배경음 켜기','Turn on background music','开启背景音乐'));};
+  btn.onclick=()=>{on=!on;needsGesture=false;try{localStorage.setItem(DESK_MUSIC_KEY,on?'on':'off');}catch(e){}sync();if(on)start();else stop();};
+  sync();box.appendChild(btn);
+  const first=e=>{if(e.target!==btn){needsGesture=false;start();}};
+  const visible=()=>{if(document.hidden)stop();else start();};
+  box.addEventListener('pointerdown',first);box.addEventListener('keydown',first);
+  document.addEventListener('visibilitychange',visible);
+  const speechWatch=setInterval(()=>{if(blocked()){if(!audio.paused||pending)stop();}else start();},150);
+  start();
+  return ()=>{disposed=true;clearInterval(speechWatch);stop();audio.removeAttribute('src');audio.load();
+    box.removeEventListener('pointerdown',first);box.removeEventListener('keydown',first);
+    document.removeEventListener('visibilitychange',visible);btn.remove();};
+}
 function mountTitle3DInto(scr, summary, badge){
   const card=scr.querySelector('.nm-title');
   if(!card)return;
@@ -5431,8 +5545,8 @@ function mountTitle3DInto(scr, summary, badge){
     card.classList.remove('is-3d-pending');
     card.classList.add('is-3d-covered');
     card.setAttribute('aria-hidden','true');
-    const prev=townCleanup;
-    townCleanup=()=>{ if(prev)prev(); ctl.dispose(); box.remove(); };
+    const prev=townCleanup,stopMusic=mountDeskMusic(box);
+    townCleanup=()=>{ if(prev)prev(); stopMusic(); ctl.dispose(); box.remove(); };
   }).catch(revealFallback);
 }
 /* 타이틀 화면 배지 줄(§6 규칙4) — 완주한 계보의 문장(紋章)을 나열, 하나도 없으면 빈 문자열. */
@@ -5570,7 +5684,23 @@ function showUnlockOverlay(queue){
   $('#nmUnlockOverlay').addEventListener('click', e=>{ if(e.target.id==='nmUnlockOverlay') close(); });
 }
 /* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
-function primarySessionOf(course,courseKey){
+function primarySessionOf(course,courseKey,weekKey){
+  const plan=highWeeklySchedule(courseKey);
+  if(plan&&weekKey){
+    const assigned=NM_HIGH_PACING.assignment(NM_COURSES,{...plan,startSession:plan.sessionIndex,weekKey});
+    if(!assigned)return null;
+    const source=assigned.weekLessons.flatMap(ref=>ref.sourceIndices.map(i=>NM_COURSES[ref.courseKey].sessions[i]));
+    return {magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]),assignedLessons:assigned.weekLessons};
+  }
+  if(course.studyPlan&&window.NM_HIGH_PACING){
+    const start=S.adminPlan?.courseKey===courseKey?S.adminPlan.sessionIndex:null;
+    const group=NM_HIGH_PACING.select(course,{startSession:start});
+    if(group){
+      const source=group.sourceIndices.map(i=>course.sessions[i]);
+      return {magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]),sourceIndices:group.sourceIndices};
+    }
+  }
+
   if(!course || !course.sessions) return null;
   const p=S.adminPlan;
   if(p&&p.courseKey===courseKey&&course.sessions[p.sessionIndex-1]){
@@ -5588,16 +5718,17 @@ function envItemSeed(weekKey, courseKey, i){
 /* weekKey → 그 주 봉투(placements 모델, §12). courses.js/threads.js 미로딩 시 null. */
 function envelopeForWeek(weekKey){
   if(!window.NM_COURSES || !window.NM_THREADS) return null;
-  const courseKey = currentCourseKey();
+  const current=currentCourseKey(),highPlan=highWeeklySchedule(current);
+  const courseKey = highPlan?highPlan.courseKey:current;
   const course = NM_COURSES[courseKey];
   if(!course) return null;
-  const session = primarySessionOf(course,courseKey);
+  const session = primarySessionOf(course,courseKey,weekKey);
   if(!session) return null;
   const placements = (session.drills||[]).map((d,i) => ({
     order: i+1, thread: d.t, level: d.lv, count: d.n,
     seed: envItemSeed(weekKey, courseKey, i)
   }));
-  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, magic: session.magic||null, placements };
+  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, highPlan, magic: session.magic||null, placements };
 }
 function mailboxEnvelopeCode(env){ return env.wsId; }
 
@@ -5787,7 +5918,7 @@ function screenMailbox(){
     if(!env){
       scr.innerHTML=`<div class="nm-unit-bar"><button class="nm-back" id="mbBack">${t('back')}</button>
         <div class="nm-unit-title">📬 ${lk('편지함','Mailbox','信箱')}</div></div>
-        <div class="nm-step-body"><div class="nm-card">${lk('학습지 데이터를 아직 불러오지 못했어요.','Worksheet data is not ready yet.','学习单数据还没准备好。')}</div></div>`;
+        <div class="nm-step-body"><div class="nm-card">${lk('이 주에 배정된 학습지가 없어요. 시작일과 학습 속도를 확인해 주세요.','No worksheet is scheduled for this week. Check the start date and pace.','本周未安排学习单，请确认开始日期和学习速度。')}</div></div>`;
       $('#mbBack').onclick=()=>{S._mbWeek=null;screenMailbox();};
       return;
     }
@@ -5858,8 +5989,9 @@ function screenMailbox(){
       /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 독셈 + 문장제, 표지·
          마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
       const wk = (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
-        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey(),
-            startSession:S.adminPlan?.courseKey===env.courseKey?S.adminPlan.sessionIndex:null,
+        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey(), compactHigh:true,
+            startSession:env.highPlan?env.highPlan.sessionIndex:S.adminPlan?.courseKey===env.courseKey?S.adminPlan.sessionIndex:null,
+            highStartDate:env.highPlan?.startDate,highSpeed:env.highPlan?.speed,highWholeWeek:true,
             /* 몇 번째 회차인가 = 이 주 전에 연 봉투 수(2026-09-30, 언어사고력 주제 순환·유아 중반 판정) */
             sessionIdx: Object.keys((S.mailbox && S.mailbox.opened) || {}).filter(function(wk){ return wk < env.weekKey; }).length }) : null;
       const items = wk ? wk.items : env.placements.map(p=>({thread:p.thread, level:p.level, n:p.count, seed:p.seed}));
@@ -6137,9 +6269,13 @@ function initTownWorld(scr){
   }
 
   let drag=false,moved=false,sx,sy,cx,cy;
-  function onDown(e){drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;}
+  function onDown(e){
+    if(!pts.size)pinched=false;
+    drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;
+    if(!e.target.closest('button,a,.nb'))try{vp.setPointerCapture(e.pointerId);}catch(_){}
+  }
   function onMove(e){if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6){moved=true;follow=false;}cam.x=cx+dx;cam.y=cy+dy;bound();apply();}
-  function onUp(){drag=false;vp.classList.remove('drag');}
+  function onUp(e){drag=false;vp.classList.remove('drag');try{if(vp.hasPointerCapture(e.pointerId))vp.releasePointerCapture(e.pointerId);}catch(_){}}
   vp.addEventListener('pointerdown',onDown);
   vp.addEventListener('pointermove',onMove);
   vp.addEventListener('pointerup',onUp);
@@ -6156,7 +6292,7 @@ function initTownWorld(scr){
       pd=d;drag=false;
     }
   }
-  function pdUp(e){pts.delete(e.pointerId);if(pts.size<2){pd=0;pinched=false;}}
+  function pdUp(e){pts.delete(e.pointerId);if(pts.size<2){pd=0;}}
   vp.addEventListener('pointerdown',pdDown);
   vp.addEventListener('pointermove',pdMove);
   vp.addEventListener('pointerup',pdUp);
@@ -6243,34 +6379,34 @@ function initTownWorld(scr){
   let muted=true;
   let stopAmbience=null;
   const player=nbs[0];
-  function walk(){
+  let lastTick=0;
+  function walk(now){
+    const dt=lastTick?Math.min(.05,Math.max(0,(now-lastTick)/1000)):0;lastTick=now;
     nbs.forEach(n=>{
-      n.el.style.zIndex=20+Math.round(n.y);                 // 지도 아래쪽(y 큼)일수록 앞에 그려짐(깊이감)
-      const walker=n.el.classList.contains('nb-walker');     // 사람 리그(walker.js) — 걷기 애니메이션 대상
-      if(n.still){                                            // 할아버지·독쌤은 제자리 고정, 남쪽(정면) 응시로 숨쉬기만
-        if(walker){const root=n.el.querySelector('.nm-walker');if(root){root.classList.remove('walking');if(!root.dataset.dir||root.dataset.dir==='s')root.dataset.dir='s';}}
+      n.el.style.zIndex=20+Math.round(n.y);
+      const root=n.el.querySelector('.nm-walker');
+      if(n.still){if(root)root.classList.remove('walking');return;}
+      if(n.buddy){
+        const gap=48/cam.scale;
+        n.tx=Math.min(98,Math.max(2,player.x-gap/W*100));
+        n.ty=Math.min(98,Math.max(2,player.y+1));
+      }
+      const dx=(n.tx-n.x)*W/100,dy=(n.ty-n.y)*H/100,d=Math.hypot(dx,dy);
+      if(d<.8){
+        n.x=n.tx;n.y=n.ty;n.velocity=0;
+        n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
+        if(root)root.classList.remove('walking');
+        if(!n.player&&!n.buddy&&Math.random()<1-Math.exp(-.7*dt))pick(n);
         return;
       }
-      if(n.buddy){n.tx=player.x-3;n.ty=player.y+1.2;}        // 동행은 플레이어를 살짝 뒤에서 따라간다
-      const dx=n.tx-n.x,dy=n.ty-n.y,d=Math.hypot(dx,dy);
-      const moving=d>=.3;
-      if(!moving){                                            // 플레이어·동행은 도착하면 그 자리에 머문다
-        if(!n.player&&!n.buddy&&Math.random()<.012)pick(n);
-        if(walker){const root=n.el.querySelector('.nm-walker');if(root)root.classList.remove('walking');}   // 멈추면 마지막 방향 유지, 걷기만 정지
-        return;
-      }
-      n.x+=dx/d*n.spd;n.y+=dy/d*n.spd;
+      // Acceleration and braking are measured in real time, independent of Hz.
+      const desired=Math.min(n.spd*1000,d*5);
+      n.velocity=(n.velocity||0)+(desired-(n.velocity||0))*(1-Math.exp(-10*dt));
+      const step=Math.min(d,n.velocity*dt);
+      n.x+=dx/d*step/W*100;n.y+=dy/d*step/H*100;
       n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
-      if(n.player&&follow)focusPlayer(false);              // 걷는 동안 카메라가 플레이어를 따라간다
-      if(walker){
-        const root=n.el.querySelector('.nm-walker');
-        if(root){
-          root.classList.add('walking');
-          root.dataset.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'w':'e'):(dy<0?'n':'s');
-        }
-      }else{
-        n.el.querySelector('.nb-img').style.transform=dx<0?'scaleX(-1)':'scaleX(1)';   // 숫자친구는 기존 방식(좌우 반전) 그대로
-      }
+      if(n.player&&follow)focusPlayer(false);
+      if(root){root.classList.add('walking');root.dataset.dir='s';}
     });
     walkRAF=requestAnimationFrame(walk);
   }
@@ -6280,9 +6416,22 @@ function initTownWorld(scr){
      충돌하지 않도록: 드래그하지 않은 "가벼운 탭"일 때만 목적지로 삼는다. */
   let pinched=false;
   vp.addEventListener('pointermove',()=>{if(pts.size>=2)pinched=true;});
+  let ping=null,pingTimer=null;
+  function onTapWalk(e){
+    if(moved||pinched||e.isPrimary===false||e.button!==0||e.target.closest('button,a,.nb'))return;
+    const r=vp.getBoundingClientRect();
+    const x=(e.clientX-r.left-cam.x)/cam.scale,y=(e.clientY-r.top-cam.y)/cam.scale;
+    player.tx=Math.min(98,Math.max(2,x/W*100));player.ty=Math.min(98,Math.max(2,y/H*100));
+    follow=false;
+    if(ping)ping.remove();clearTimeout(pingTimer);
+    ping=document.createElement('div');ping.className='nb-ping';ping.style.left=player.tx+'%';ping.style.top=player.ty+'%';world.appendChild(ping);
+    pingTimer=setTimeout(()=>{if(ping)ping.remove();ping=null;},800);
+  }
+  vp.addEventListener('pointerup',onTapWalk);
+
   nbs.forEach(n=>{
     n.el.addEventListener('pointerup',e=>{
-      if(moved)return;e.stopPropagation();
+      onUp(e);pdUp(e);if(moved||pinched)return;e.stopPropagation();
       const sp=n.el.querySelector('.speech');
       const line=n.lines[Math.random()*n.lines.length|0];
       sp.textContent=line;sp.classList.add('show');
@@ -6311,7 +6460,7 @@ function initTownWorld(scr){
     clearInterval(fountainTimer);
     clearInterval(sparkTimer);
     stopVoice();
-    cancelAnimationFrame(walkRAF);
+    cancelAnimationFrame(walkRAF);clearTimeout(pingTimer);if(ping)ping.remove();nbs.forEach(n=>clearTimeout(n._t));
     removeEventListener('resize',onResize);
     if(stopAmbience){stopAmbience();stopAmbience=null;}
   };
@@ -6446,7 +6595,7 @@ function screenUnit(){
      explanation screen, so it does not repeat that strip above the question. */
   const isFirstUnitStep = S.step==='range' || S.step==='intro';
   const learningBand=u.tier==='basic'?'preschool':(/^(middle|high)/.test(u.tier||'')||['algebra','calculus1'].includes(u.tier))?'secondary':'elementary';
-  scr.innerHTML=`<div class="nm-unit-view" lang="${esc(S.lang)}" data-learning-band="${learningBand}" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
+  scr.innerHTML=`<div class="nm-unit-view" lang="${esc(S.lang)}" data-learning-step="${S.step}" data-young-numbers="${schoolGradeNum()!=null?schoolGradeNum()<3:NM_BAND==='young'}" data-learning-band="${learningBand}" data-stage="${stageKeyForUnit(S.unit)}"><div class="nm-unit-inner">
     <div class="nm-unit-bar">
       <button class="nm-back" id="backMap" aria-label="${t('back')}">←</button>
       <div class="nm-unit-title">${L(u.title)}<small>${L(u.subtitle)}</small></div>
@@ -6458,6 +6607,7 @@ function screenUnit(){
   $('#backMap').onclick=exitUnit;
   scr.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{S.step=b.dataset.step;save();screenUnit();});
   const body=$('#stepBody');
+  if(window.NM_YOUNG_NUMBERS)NM_YOUNG_NUMBERS.start(scr.querySelector('.nm-unit-view'));
   if(S.step==='intro'){stepUnitIntro(body,u);return;}
   if(S.step==='range'){stepRange(body,u);renderMath(body);return;}
   ({practice:stepPractice,discover:stepDiscover,check:stepCheck,lab:stepLab,arena:stepArena,stamp:stepStamp}[S.step]||stepDiscover)(body,u);
@@ -6513,17 +6663,17 @@ function runPractice(body,u){
     say(L(cfg.intro));return;
   }
   if(cur.widget&&cur.widget!=='numpad'&&window.NM_WIDGETS){runPracticeWidget(body,u,cur,first,need);return;}
+  const splitQuestion=cur.gen==='splitNum'&&(schoolGradeNum()!=null?schoolGradeNum()<3:NM_BAND==='young');
   const pracTex=cur.tex?`<div class="nm-lab-expr"><span data-tex="${esc(cur.tex)}"></span></div>`:'';
   const isMulti=Array.isArray(cur.answer);
   if(isMulti)ensureMultiState(cur.answer,cur.answerShape);
   const shapeCls=isMulti&&cur.answerShape?' nm-multi-shape':'';
-  body.innerHTML=`<div class="nm-dialog nm-answer-dialog">
+  body.innerHTML=`<div class="nm-dialog nm-answer-dialog${splitQuestion?' nm-split-question':''}">
     <div class="nm-prog">${dots(need,S.sub.pIdx)}</div>
     <div class="nm-answer-guide"><div class="nm-numi">${window.renderNumiChar?window.renderNumiChar(S.character,56,{mood:'think'}):'<img src="assets/characters/numi-wizard.png" alt="Numi">'}</div>
-    <div class="nm-bubble" id="bub">${first?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt)):numiDialogueHtml(L(cur.prompt))}</div>
+    <div class="nm-bubble" id="bub">${first?numiDialogueHtml(L(cfg.intro))+'<br><br>'+numiDialogueHtml(L(cur.prompt),splitQuestion?cur:null):numiDialogueHtml(L(cur.prompt),splitQuestion?cur:null)}</div>
     </div><div class="nm-answer-work"><div class="nm-board">
-      ${pracTex}
-      <div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>
+      ${splitQuestion?splitNumberEquation(cur):`${pracTex}<div class="nm-numpad-screen${isMulti?' nm-multi':''}${shapeCls}" id="pscreen">${isMulti?multiScreenHtml():'&nbsp;'}</div>`}
     </div>
     <div class="nm-numpad" id="pad"></div>
     <div class="nm-hint">${t('numpadHint')}</div></div>
@@ -6614,7 +6764,7 @@ function handlePractice(val,body,u){
       if(S.sub.pIdx>=need){markStepDone(S.unit,'practice');lessonLater(()=>gotoStep('discover'),700);return;}
       S.sub.cur=genProblem(u.practice,'practice');save();
       lessonLater(()=>runPractice(body,u),650);
-    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=' ';updateLiveFill('.nm-lab-expr','');}
+    }else{toast(t('tryAgain'),false);S.sub.inp='';$('#pscreen').textContent=$('.nm-split-equation')?'□':' ';updateLiveFill('.nm-lab-expr','');}
     return;
   }
   if(isMulti){
@@ -6626,7 +6776,7 @@ function handlePractice(val,body,u){
   if(val==='del'){S.sub.inp=(S.sub.inp||'').slice(0,-1);}
   else if(val==='-'){S.sub.inp=applyMinusKey(S.sub.inp||'');}
   else if((S.sub.inp||'').replace('-','').length<8&&!(val==='.'&&(S.sub.inp||'').includes('.'))){S.sub.inp=(S.sub.inp||'')+val;}
-  $('#pscreen').textContent=S.sub.inp||' ';
+  $('#pscreen').textContent=S.sub.inp||($('.nm-split-equation')?'□':' ');
   updateLiveFill('.nm-lab-expr',S.sub.inp||'');
 }
 
@@ -6731,6 +6881,9 @@ function stepDiscover(body,u){
     </div>${histHtml}`:(comic?histHtml:'');   /* 이야기 훅이 없는 유닛(N-02·03·05 등)도 만화는 보인다(2026-10-05) */
   /* 이 개념과 짝인 실험실이 있으면(UNIT_LABS) 노트 하단에서 바로 연다.
      두 개 이상 걸린 유닛도 있어(M-15·C-05) 실험실마다 제 이름으로 버튼을 낸다. */
+  /* 마법 노트 짧은 영상(data/magic-note-videos.js, 2026-10-23) — 등록된 유닛만. 글 단계는 그대로 둔다. */
+  const videoBtnHtml=window.NM_MAGIC_NOTE_VIDEOS&&NM_MAGIC_NOTE_VIDEOS.has(u.id)&&window.NM_MAGIC_NOTE_PLAYER?.available(u.id,S.lang)
+    ?`<button class="nm-btn full nm-mnv-open" id="mnvOpen" type="button">▶ ${S.lang==='ko'?'영상으로 보기':S.lang==='en'?'Watch the video':'看视频'}</button>`:'';
   const unitLabs=unitLabsFor(u.id);
   const labLead=S.lang==='ko'?'실험실에서 직접 해보기':S.lang==='en'?'Try it in the lab':'去实验室动手试试';
   const labBtnHtml=unitLabs.length
@@ -6766,11 +6919,13 @@ function stepDiscover(body,u){
     </div>`:'';
   body.innerHTML=`<div class="nm-card${kid&&!living?' kid-note':''}${mzStory?' nm-mzu-card':''}${living?' nm-live-card':''}">
     ${kid&&!living?`<div class="nm-kid-hero">${u.icon?iconArt(u.icon):'📓'}</div>`:''}
-    ${living?`<div id="livingLesson"></div>${kid&&comic?histHtml:''}${!kid&&!strategy&&st&&st.history?`<details class="nm-live-history"><summary>${S.lang==='ko'?(kid?'수 이야기 더 보기':'이 교구의 수학 이야기'):S.lang==='en'?'The story behind the pieces':'教具里的数学故事'}</summary><p>${L(st.history)}</p></details>`:''}`:mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}<div id="cstages"></div>
+    ${living?`<div id="livingLesson"></div>${kid&&comic?histHtml:''}${!kid&&!strategy&&st&&st.history?`<details class="nm-live-history"><summary>${S.lang==='ko'?(kid?'수 이야기 더 보기':'이 교구의 수학 이야기'):S.lang==='en'?'The story behind the pieces':'教具里的数学故事'}</summary><p>${L(st.history)}</p></details>`:''}`:mzStory||`<div class="nm-card-h">📓 ${L(d.title)}</div>${storyHtml}`}${videoBtnHtml}<div id="cstages"></div>
     ${!strategy?`<div class="nm-rule"><b>${t('ruleLabel')}</b><p>${L(d.rule)}</p></div>`:''}
     ${labBtnHtml}<button class="nm-btn full" id="toCheck">${t('next')}</button></div>`;
   /* 3D 대표 그림을 직접 띄워 움직인다(app/hero3d/live.js, 원장 "동작도 하는거야?" → "1"). 3D 라이브러리는 이 단계에서만
      불러온다(약 2MB — 첫 화면에 싣지 않는다). 못 띄우면 정지 그림이 그대로 남는다. */
+  const mnvBtn=body.querySelector('#mnvOpen');
+  if(mnvBtn)mnvBtn.onclick=()=>{stopVoice();NM_MAGIC_NOTE_PLAYER.open(u.id,{lang:S.lang,onTry:()=>{const n=$('#toCheck');if(n&&!n.disabled)n.click();}});};
   const heroFig=body.querySelector('.nm-mzu-hero');
   if(heroFig) import('./hero3d/live.js').then(m=>m.mount(heroFig,u.id,S.lang)).catch(()=>{});
   const livingHost=body.querySelector('#livingLesson');
@@ -7444,11 +7599,23 @@ function labExprHtml(tex){
 }
 /* Short spoken lines have character; long explanations and formula source
    remain ordinary reading text. Escape each original token, never rewrite it. */
-function numiDialogueHtml(text){
+function splitNumberEquation(problem){
+  // Display only the two givens. The missing value is never put into markup.
+  return `<div class="nm-split-equation"><span data-number-role="whole">${esc(problem.n)}</span><span class="nm-split-sign">=</span><span data-number-role="part">${esc(problem.p)}</span><span class="nm-split-sign">+</span><span data-number-role="unknown" class="nm-numpad-screen" id="pscreen" aria-live="polite" aria-label="${esc(L({ko:'찾을 수',en:'Missing number',zh:'待填数字'}))}">□</span></div>`;
+}
+function numiDialogueHtml(text,problem){
   text=String(text||'');
+  if(problem&&problem.gen==='splitNum'){
+    const parts=text.split(/([0-9]+|얼마|how much more|多少)/);
+    return '<span class="nm-numi-dialogue nm-split-dialogue">'+parts.map((part,i)=>{
+      if(i%2===0)return esc(part);
+      const role=part===String(problem.n)?'whole':part===String(problem.p)?'part':'unknown';
+      return '<span class="nm-dialog-figure" data-number-role="'+role+'">'+esc(part)+'</span>';
+    }).join('')+'</span>';
+  }
   if([...text].length>90||/[\\\n]/.test(text))return esc(text);
-  const parts=text.split(/([0-9]+(?:[.,][0-9]+)?|[+\-−×÷=<>≤≥□√π^%])/);
-  return '<span class="nm-numi-dialogue">'+parts.map((s,i)=>i%2?`<span class="nm-dialog-figure">${esc(s)}</span>`:esc(s)).join('')+'</span>';
+  const parts=text.split(/([0-9]+(?:[.,][0-9]+)?|얼마|몇|how many|how much|多少|几|[+\-−×÷=<>≤≥□√π^%])/i);
+  return '<span class="nm-numi-dialogue">'+parts.map((s,i)=>i%2?`<span class="nm-dialog-figure${/^(얼마|몇|how many|how much|多少|几)$/i.test(s)?' nm-number-word':''}">${esc(s)}</span>`:esc(s)).join('')+'</span>';
 }
 function stepLabNumpad(body,u){
   const cfg=u.lab;const need=cfg.count||4;
@@ -8014,20 +8181,29 @@ function renderGuardianContact(slot,lk){
     slot.innerHTML=`<div class="nm-idcard"><p role="status">${state.error?lk('회원 정보를 불러오지 못했어요. 연결을 확인하고 다시 시도해 주세요.','Could not load membership. Check your connection and retry.','无法加载会员信息，请检查网络后重试。'):lk('가입 정보를 확인하고 있어요…','Checking registration…','正在确认注册信息…')}</p><button class="nm-btn" id="nmGuardContactRetry">${lk('다시 확인','Retry','重试')}</button><button class="nm-btn ghost" id="nmGuardOut">${lk('로그아웃','Sign out','退出')}</button></div>`;
     $('#nmGuardContactRetry').onclick=()=>membership.refresh(true);$('#nmGuardOut').onclick=logout;return true;
   }
-  slot.innerHTML=`<div class="nm-idcard nm-guard-card"><h3 class="nm-idcard-t">${lk('보호자 휴대폰 번호 · 가입 완료','Guardian phone · Complete registration','监护人手机号 · 完成注册')}</h3><p>${lk('이메일은 학생별로 구분하고, 형제는 같은 보호자 전화번호를 사용할 수 있어요.','Each learner uses a separate email. Siblings may share a guardian phone number.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。')}</p>
-    <form id="nmGuardContactForm" novalidate><div class="nm-guard-field"><label for="nmGuardPhone">${lk('보호자 휴대폰 번호','Guardian mobile number','监护人手机号')}</label><input id="nmGuardPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="13" placeholder="010-0000-0000"></div>
-    <label class="nm-notify-consent"><input id="nmGuardPhoneConsent" type="checkbox" required><span>${lk('보호자 연락·학습 안내를 위한 전화번호 수집·이용에 동의합니다.','I agree to collection and use of this number for guardian contact and learning guidance.','同意为监护人联系和学习指导收集、使用该号码。')}</span></label>
-    <label class="nm-notify-consent"><input id="nmGuardSmsConsent" type="checkbox"><span>${lk('학습지·진도 문자 안내를 받겠습니다. (선택)','Send me worksheet and progress texts. (Optional)','接收学习单和进度短信。（可选）')}</span></label>
-    <button class="nm-btn" id="nmGuardContactSave" type="submit">${lk('저장하고 가입 완료','Save and complete registration','保存并完成注册')}</button><button class="nm-btn ghost" id="nmGuardOut" type="button">${lk('로그아웃','Sign out','退出')}</button>
+  // registered = a phone is already on file (current or legacy); ready = consent is on the current notice version.
+  const registered=state.contact?.registered===true,ready=membership.contactReady(),masked=state.contact?.phoneMasked||'';
+  const title=ready?lk('휴대폰·문자 동의 변경','Change phone or text consent','修改手机号或短信同意')
+    :registered?lk('개인정보 동의 갱신','Renew privacy consent','更新个人信息同意'):lk('보호자 휴대폰 번호 · 가입 완료','Guardian phone · Complete registration','监护人手机号 · 完成注册');
+  const intro=registered&&!ready
+    ?lk('개인정보 수집·이용 동의서가 새로 마련됐어요. 동의를 갱신하면 학습 기록 저장이 다시 이어져요.','We have a new personal data notice. Renew consent to keep saving learning records.','个人信息同意书已更新。更新同意后即可继续保存学习记录。')
+    :lk('이메일은 학생별로 구분하고, 형제는 같은 보호자 전화번호를 사용할 수 있어요.','Each learner uses a separate email. Siblings may share a guardian phone number.','每位学生使用不同邮箱，兄弟姐妹可共用监护人手机号。');
+  const keep=registered&&masked?`<p class="nm-privacy-note">${lk(`번호를 비워 두면 지금 번호(${masked})를 그대로 써요.`,`Leave it blank to keep the current number (${masked}).`,`留空则继续使用当前号码（${masked}）。`)}</p>`:'';
+  slot.innerHTML=`<div class="nm-idcard nm-guard-card"><h3 class="nm-idcard-t">${title}</h3><p>${intro}</p>
+    <form id="nmGuardContactForm" novalidate><div class="nm-guard-field"><label for="nmGuardPhone">${lk('보호자 휴대폰 번호','Guardian mobile number','监护人手机号')}</label><input id="nmGuardPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="13" placeholder="${esc(registered&&masked?masked:'010-0000-0000')}">${keep}</div>
+    ${window.NM_PRIVACY?window.NM_PRIVACY.fields(S.lang,"nmContact",true,{current:ready}):""}
+    <button class="nm-btn" id="nmGuardContactSave" type="submit">${registered?lk('동의 저장','Save consent','保存同意'):lk('저장하고 가입 완료','Save and complete registration','保存并完成注册')}</button><button class="nm-btn ghost" id="nmGuardOut" type="button">${lk('로그아웃','Sign out','退出')}</button>
     <p class="nm-idcard-msg" id="nmGuardContactMsg" role="status" aria-live="polite"></p></form></div>`;
   $('#nmGuardOut').onclick=logout;
+  // Only an edit of a consent on the current notice shows the saved text choice; new and renewed consent start unchecked.
+  if($('#nmContactSms'))$('#nmContactSms').checked=ready&&state.contact?.smsConsent===true;
   $('#nmGuardContactForm').onsubmit=async event=>{
     event.preventDefault();const button=$('#nmGuardContactSave'),msg=$('#nmGuardContactMsg');if(button.disabled)return;
-    const phone=$('#nmGuardPhone').value.replace(/\D/g,'');
-    if(!/^01\d{8,9}$/.test(phone)){msg.textContent=lk('휴대폰 번호를 확인해 주세요.','Check the mobile number.','请检查手机号。');return;}
-    if(!$('#nmGuardPhoneConsent').checked){msg.textContent=lk('전화번호 수집·이용 동의를 확인해 주세요.','Please confirm phone collection consent.','请确认同意收集和使用手机号。');return;}
+    const phone=$('#nmGuardPhone').value.replace(/\D/g,'')||(registered?null:'');
+    if(phone!==null&&!/^01\d{8,9}$/.test(phone)){msg.textContent=lk('휴대폰 번호를 확인해 주세요.','Check the mobile number.','请检查手机号。');return;}
+    if(!window.NM_PRIVACY||!$('#nmContactPrivacy')?.checked||!$('#nmContactGuardian')?.checked){msg.textContent=lk('필수 개인정보 동의와 본인·법정대리인 확인을 선택해 주세요.','Confirm required privacy consent and your learner/guardian role.','请选择必选隐私同意及本人或法定代理人确认。');return;}
     button.disabled=true;guardianContactEditing=false;
-    try{await membership.registerContact(phone,true,$('#nmGuardSmsConsent').checked);}
+    try{await membership.registerContact(phone,true,$('#nmContactSms').checked,{version:window.NM_PRIVACY.VERSION,guardianConsent:$('#nmContactGuardian').checked});}
     catch(e){const current=$('#nmGuardContactMsg');if(current)current.textContent=lk('저장하지 못했어요. 연결을 확인하고 다시 시도해 주세요.','Could not save. Check the connection and retry.','无法保存，请检查网络后重试。');}
     finally{button.disabled=false;}
   };
@@ -8106,6 +8282,7 @@ function renderGuardianCard(){
       catch(e){toast(lk('로그인 정보를 지우지 못했어요. 이 브라우저의 사이트 데이터를 확인해 주세요.','Could not remove sign-in. Check this browser’s site data.','无法清除登录信息，请检查浏览器的网站数据。'),false);}
       // onChange가 즉시 갱신한다. 늦은 로그아웃 응답이 새 로그인 입력을 지우지 않는다.
     };
+    const notice=document.createElement('a');notice.className='nm-btn ghost';notice.href='privacy.html?lang='+encodeURIComponent(S.lang);notice.target='_blank';notice.rel='noopener';notice.textContent=lk('개인정보 수집·이용 동의서','Personal data notice','个人信息同意书');slot.firstElementChild.appendChild(notice);
     const contact=membership&&membership.snapshot().contact;
     if(contact&&contact.registered){
       const line=document.createElement('p');line.textContent=(contact.phoneMasked||'')+' · '+(contact.smsConsent?lk('학습지 문자 수신 동의','Worksheet texts enabled','已同意接收学习单短信'):lk('문자 수신 미동의','Worksheet texts disabled','未同意接收短信'));slot.firstElementChild.appendChild(line);
@@ -8126,6 +8303,7 @@ function renderGuardianCard(){
     </form></section>
     <section class="nm-guard-sec" aria-labelledby="nmGuardOtpTitle"><h4 id="nmGuardOtpTitle">${lk('처음이거나 비밀번호를 잊었어요','First visit or forgot password','首次使用或忘记密码')}</h4>
     <p>${lk('위 이메일로 인증번호를 받아 본인 확인을 한 뒤, 새 비밀번호를 만들어요.','Get a code at the email above, verify it, then create a new password.','通过上方邮箱获取验证码并验证后，再设置新密码。')}</p>
+    <p class="nm-privacy-note">${lk('개인정보 수집·이용 동의는 이메일 인증 뒤 휴대폰 번호 단계에서 받아요.','Personal data consent is collected at the phone step after email verification.','邮箱验证后，在手机号步骤中征求个人信息同意。')}</p>
     <div class="nm-idcard-row"><button class="nm-btn" id="nmGuardSend">${lk('인증 메일 받기','Send verification email','发送验证邮件')}</button></div>
     <div class="nm-guard-field"><label for="nmGuardToken">${lk('메일 인증번호','Email verification code','邮箱验证码')}</label>
     <div class="nm-idcard-row"><input id="nmGuardToken" inputmode="numeric" autocomplete="one-time-code" maxlength="12"><button class="nm-btn" id="nmGuardVerify">${lk('이메일 인증','Verify email','验证邮箱')}</button></div></div>

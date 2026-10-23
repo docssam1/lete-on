@@ -20,9 +20,28 @@ begin
   assert (first_status#>>'{membership,trialEndsAt}')::timestamptz-(first_status#>>'{membership,trialStartedAt}')::timestamptz=interval '30 days','trial length';
   r := public.nm_membership_rpc('status','{}',a,null);
   assert r#>>'{membership,trialStartedAt}'=first_status#>>'{membership,trialStartedAt}','trial restarted';
-  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true}',a,null);
+  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true,"privacyVersion":"2026-10-22-v1","guardianConsent":true}',a,null);
   assert r->>'ok'='true';
-  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true}',b,null);
+  r := public.nm_membership_rpc('status','{}',a,null);
+  assert r#>>'{contact,privacyVersion}'='2026-10-22-v1' and r#>>'{contact,consentedAt}' is not null,'consent version not returned';
+  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true,"privacyVersion":"2026-10-22-v1"}',a,null);
+  assert r->>'error'='bad_request','guardian consent not required';
+  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true,"privacyVersion":"old","guardianConsent":true}',a,null);
+  assert r->>'error'='bad_request','stale consent version accepted';
+  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true,"guardianConsent":true}',a,null);
+  assert r->>'error'='bad_request','guardian consent without notice version accepted';
+  r := public.nm_membership_rpc('register_contact','{"collectionConsent":true,"smsConsent":true}',a,null);
+  assert r->>'error'='bad_request','pre-notice request without phone accepted';
+  -- pre-notice client during the deploy window: saved, stored version kept
+  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true}',a,null);
+  assert r->>'ok'='true','pre-notice request rejected';
+  r := public.nm_membership_rpc('status','{}',a,null);
+  assert r#>>'{contact,privacyVersion}'='2026-10-22-v1','pre-notice request cleared consent version';
+  -- renewal without a phone keeps the number on file
+  r := public.nm_membership_rpc('register_contact','{"collectionConsent":true,"smsConsent":true,"privacyVersion":"2026-10-22-v1","guardianConsent":true}',a,null);
+  assert r->>'ok'='true','renewal without phone rejected';
+  assert (select phone from nm_private.guardian_contacts where owner_id=a)='01000001234','phone not kept on renewal';
+  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true,"privacyVersion":"2026-10-22-v1","guardianConsent":true}',b,null);
   assert r->>'ok'='true','shared phone rejected';
   insert into public.nm_profiles(name,owner_id,state)
     values(n,a,'{"progress":{"keep":true},"diagnostics":{"keep":true}}'),(n2,b,'{"progress":{"keep":true}}');
@@ -32,10 +51,10 @@ begin
     insert into public.nm_profiles(name,owner_id,state) values(n||'-duplicate',a,'{}');
     raise exception 'duplicate student allowed';
   exception when unique_violation then null; end;
-  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":false}',a,null);
+  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":false,"privacyVersion":"2026-10-22-v1","guardianConsent":true}',a,null);
   assert not exists(select 1 from public.nm_contacts where profile_name=n and active and consent),'opt-out did not deactivate';
   assert exists(select 1 from public.nm_contacts where profile_name=n2 and active and consent),'sibling contact affected';
-  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true}',a,null);
+  r := public.nm_membership_rpc('register_contact','{"phone":"01000001234","collectionConsent":true,"smsConsent":true,"privacyVersion":"2026-10-22-v1","guardianConsent":true}',a,null);
   insert into public.nm_profiles(name,state) values(n||'-unlinked','{}');
   r := public.nm_membership_rpc('admin_link',jsonb_build_object('adminToken',token,'email',email_a,'profileName',n||'-unlinked'),null,null);
   assert r->>'error'='email_already_linked','one-email rule bypassed';

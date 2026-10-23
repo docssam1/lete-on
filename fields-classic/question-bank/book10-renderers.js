@@ -17,10 +17,18 @@ function napierGrid(visual) {
   const sideDigits = String(visual.second).split("").map(Number);
   const cells = sideDigits.flatMap((sideDigit) => topDigits.map((topDigit) => {
     const product = sideDigit * topDigit;
+    // blankCells: 지도서 문제 판처럼 칸을 비워 두고 아이가 채운다.
+    if (visual.blankCells) return '<span class="b10-napier-cell"></span>';
     return `<span class="b10-napier-cell"><i>${Math.floor(product / 10)}</i><b>${product % 10}</b></span>`;
   })).join("");
   const result = Number(visual.first) * Number(visual.second);
   return `<div class="b10-napier" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)} 네이피어 곱셈판"><div class="b10-napier-top" style="--cols:${topDigits.length}">${topDigits.map((digit) => `<b>${digit}</b>`).join("")}</div><div class="b10-napier-main"><div class="b10-napier-side" style="--rows:${sideDigits.length}">${sideDigits.map((digit) => `<b>${digit}</b>`).join("")}</div><div class="b10-napier-grid" style="--cols:${topDigits.length}">${cells}</div></div><p>${visual.revealResult ? `${esc(visual.first)} × ${esc(visual.second)} = <strong>${result}</strong>` : "대각선 방향으로 수를 더해 보세요."}</p></div>`;
+}
+
+// 판서 곱셈 상자: 곱셈식과 빈 칸만(나눈 수와 부분곱은 학생이 채운다)
+function splitBox(visual) {
+  const cells = Array.from({ length: visual.rows * visual.cols }, () => "<span></span>").join("");
+  return `<div class="b10-split-box" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)}, ${visual.cols}칸 ${visual.rows}줄 상자"><strong>${esc(visual.first)} × ${esc(visual.second)}</strong><div style="--cols:${visual.cols};--rows:${visual.rows}">${cells}</div></div>`;
 }
 
 function areaModel(visual) {
@@ -183,7 +191,11 @@ const budgetTable = (visual) => `<table class="b10-table"><thead><tr><th>가진 
 const shareChange = (visual) => `<div class="b10-share"><span>${visual.oldPeople}명</span><b>+ ${visual.added}명</b><span>${visual.newPeople}명</span><strong>한 명당 ${visual.newShare}개</strong></div>`;
 
 function catchUpTable(visual) {
-  return `<table class="b10-table"><thead><tr><th></th><th>처음</th><th>하루마다</th></tr></thead><tbody>${visual.labels.map((label, index) => `<tr><th>${esc(label)}</th><td>${visual.starts[index]}</td><td>${visual.changes[index] > 0 ? "+" : ""}${visual.changes[index]} ${esc(visual.unit)}</td></tr>`).join("")}</tbody></table>`;
+  // 단위 「L/분」→ 머리글 「1분마다」, 칸에는 「L」만(예전엔 머리글이 늘 「하루마다」였다)
+  const [amountUnit, per] = String(visual.unit || "").split("/");
+  const head = !per || per === "일" ? "하루마다" : `1${per}마다`;
+  const startUnit = esc(visual.startUnit ?? amountUnit ?? "");
+  return `<table class="b10-table"><thead><tr><th></th><th>처음</th><th>${esc(head)}</th></tr></thead><tbody>${visual.labels.map((label, index) => `<tr><th>${esc(label)}</th><td>${visual.starts[index]}${startUnit}</td><td>${visual.changes[index] > 0 ? "+" : ""}${visual.changes[index]}${esc(amountUnit || "")}</td></tr>`).join("")}</tbody></table>`;
 }
 
 function distanceLine(visual) {
@@ -194,45 +206,129 @@ function fourWeightSystem(visual) {
   return `<div class="b10-equations">${visual.equations.map((row) => `<p>${equationText(row, visual.labels)} <b>= ${row.at(-1)}</b></p>`).join("")}</div>`;
 }
 
-const delayedCatchUp = (visual) => `<div class="b10-timeline"><span>민수 시작</span><i>${visual.delay}개월</i><span>지우 시작</span><b>매달 ${visual.earlyRate} / ${visual.lateRate}만 원</b></div>`;
+const delayedCatchUp = (visual) => {
+  const [early, late] = visual.names || ["민수", "지우"];
+  const start = visual.startLabels || [`${early} 시작`, `${late} 시작`];
+  return `<div class="b10-timeline"><span>${esc(start[0])}</span><i>${visual.delay}개월 뒤</i><span>${esc(start[1])}</span><b>매달 ${esc(early)} ${visual.earlyRate}만 원 / ${esc(late)} ${visual.lateRate}만 원</b></div>`;
+};
+// 글로 된 조건 목록(원본의 하늘색 상자)
+const statementList = (visual) => `<ul class="b10-statements">${(visual.items || []).map((line) => `<li>${esc(line)}</li>`).join("")}</ul>`;
 
 function digitSlots(visual) {
   const arrow = visual.direction ? `<b>${visual.direction === "increasing" ? "작은 숫자 → 큰 숫자" : "큰 숫자 → 작은 숫자"}</b>` : "";
   const fixed = visual.fixed || [];
   const counts = visual.choiceCounts || [];
-  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, (_, index) => `<i>${fixed[index] ?? ""}${counts[index] ? `<small>${counts[index]}가지</small>` : ""}</i>`).join("")}</div>${arrow}</div>`;
+  const notes = [visual.repeat ? "같은 숫자를 여러 번 써도 돼요" : "", visual.limit ? esc(visual.limit) : "", visual.rank ? `${visual.rankFrom === "large" ? "큰" : "작은"} 수부터 ${visual.rank}번째` : ""].filter(Boolean);
+  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, (_, index) => `<i>${fixed[index] ?? ""}${counts[index] ? `<small>${counts[index]}가지</small>` : ""}</i>`).join("")}</div>${arrow}${notes.map((note) => `<em>${note}</em>`).join("")}</div>`;
 }
 
+// 켜고 끄는 것(전구·신호등)과 앞뒤가 있는 것(동전)을 나란히 그린다.
 function switches(visual) {
-  return `<div class="b10-switches">${Array.from({ length: visual.switchCount }, (_, index) => `<span><i></i>전등 ${index + 1}</span>`).join("")}${visual.excludeAllOff ? "<b>모두 끈 모습 제외</b>" : ""}</div>`;
+  const kind = visual.look || "switch";
+  const count = visual.switchCount || visual.labels?.length || 0;
+  const labels = visual.labels || Array.from({ length: count }, (_, index) => (kind === "bulb" ? `전구 ${index + 1}` : `전등 ${index + 1}`));
+  const lamp = (label, index) => {
+    if (kind === "signal") return `<span class="signal ${["green", "yellow", "red"][index % 3]}"><i></i>${esc(label)}</span>`;
+    if (kind === "coin") return `<span class="coin"><i>${esc(label)}</i></span>`;
+    if (kind === "bulb") return `<span class="bulb"><i></i>${esc(label)}</span>`;
+    return `<span><i></i>${esc(label)}</span>`;
+  };
+  const note = visual.note || (visual.excludeAllOff ? "모두 꺼진 것은 빼요" : visual.allOffAllowed ? "모두 꺼도 돼요" : "");
+  return `<div class="b10-switches ${kind}">${labels.map(lamp).join("")}${note ? `<b>${esc(note)}</b>` : ""}</div>`;
 }
 
 function targetCards(visual) {
   return `<div class="b10-target-cards"><div>${visual.cards.map((card) => `<span>${card}</span>`).join("")}</div><strong>${visual.pickCount}장 합 = ${visual.target}</strong></div>`;
 }
 
-const placeValueSum = (visual) => `<div class="b10-place-sum"><span>백</span><span>십</span><span>일</span><b>숫자 합 ${visual.target}</b>${visual.rank ? `<strong>작은 수부터 ${visual.rank}번째</strong>` : ""}</div>`;
-const stepDigits = (visual) => `<div class="b10-step-digits"><span>□</span><i>같은 차</i><span>□</span><i>같은 차</i><span>□</span><b>${visual.limit} ${visual.direction ? "보다 작은 수" : "이하"}</b></div>`;
+const placeValueSum = (visual) => `<div class="b10-place-sum"><span>백</span><span>십</span><span>일</span><b>숫자 합 ${visual.target}</b>${visual.examples ? `<p>${visual.examples.map((n) => `<i>${n}</i>`).join("")}</p>` : ""}${visual.rank ? `<strong>${visual.rankFrom === "large" ? "큰" : "작은"} 수부터 ${visual.rank}번째</strong>` : ""}</div>`;
+// 세 자리 숫자의 관계: 같은 차로 커지기(between 생략) 또는 「>」처럼 차례로 작아지기
+const stepDigits = (visual) => {
+  const between = visual.between || "같은 차";
+  const sign = (text) => (text.length <= 2 ? `<i class="sign">${esc(text)}</i>` : `<i>${esc(text)}</i>`);
+  const limit = visual.limit ? (typeof visual.limit === "number" ? `${visual.limit} ${visual.direction ? "보다 작은 수" : "이하"}` : visual.limit) : "";
+  const examples = visual.examples ? `<p>${visual.examples.map((n) => `<i>${n}</i>`).join("")}</p>` : "";
+  return `<div class="b10-step-digits"><span>백</span>${sign(between)}<span>십</span>${sign(between)}<span>일</span>${limit ? `<b>${esc(limit)}</b>` : ""}${examples}</div>`;
+};
 
+// 갈림길: nodes가 있으면 장소를 잇는 길을, groups가 있으면 고를 거리(옷 등)를 묶음으로 그린다.
 function routeStages(visual) {
-  return `<div class="b10-routes"><span>출발</span>${visual.choices.map((count, index) => `<div>${Array.from({ length: count }, () => "<i></i>").join("")}<b>${index + 1}구간</b></div><span>→</span>`).join("")}<strong>도착</strong></div>`;
+  if (visual.groups) return `<div class="b10-choice-groups">${visual.groups.map((group, index) => `${index ? "<em>×</em>" : ""}<div><b>${esc(group.label)}</b><p>${Array.from({ length: group.count }, (_, k) => `<i class="c${k % 4}"></i>`).join("")}</p><small>${group.count}가지</small></div>`).join("")}</div>`;
+  const nodes = visual.nodes || ["출발", ...visual.choices.slice(1).map((_, index) => `${index + 1}`), "도착"];
+  return `<div class="b10-routes">${visual.choices.map((count, index) => `<span>${esc(nodes[index])}</span><div>${Array.from({ length: count }, () => "<i></i>").join("")}<b>${count}가지</b></div>`).join("")}<strong>${esc(nodes[visual.choices.length])}</strong></div>`;
 }
 
 function lineupSlots(visual) {
-  return `<div class="b10-lineup">${Array.from({ length: visual.people }, (_, index) => `<span>${visual.fixedFirst && index === 0 ? "민수" : index + 1}</span>`).join("")}</div>`;
+  const names = visual.names || Array.from({ length: visual.people }, (_, index) => (visual.fixedFirst && index === 0 ? "민수" : String(index + 1)));
+  return `<div class="b10-lineup">${names.map((name) => `<span>${esc(name)}</span>`).join("")}</div>`;
 }
 
 function numberBaseball(visual) {
   const clues = visual.clues.slice(0, visual.visibleRows || visual.clues.length);
-  return `<div class="b10-baseball-wrap"><table class="b10-baseball"><thead><tr><th>말한 수</th><th>S</th><th>B</th></tr></thead><tbody>${clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td>${clue.strikes}</td><td>${clue.balls}</td></tr>`).join("")}</tbody></table>${visual.note ? `<p>${esc(visual.note)}</p>` : ""}</div>`;
+  const cards = visual.showCards ? `<div class="b10-baseball-cards">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `<span>${n}</span>`).join("")}</div>` : "";
+  // 기호판(지도서 122쪽): □ = 같은 자리, △ = 다른 자리. S·B 수를 기호로만 바꿔 그린다.
+  if (visual.notation === "symbols") return `<div class="b10-baseball-wrap">${cards}<table class="b10-baseball"><thead><tr><th>학생이 쓴 수</th><th>술래가 쓴 기호</th></tr></thead><tbody>${clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td class="sym">${"□".repeat(clue.strikes)}${"△".repeat(clue.balls)}</td></tr>`).join("")}</tbody></table>${visual.note ? `<p>${esc(visual.note)}</p>` : ""}</div>`;
+  return `<div class="b10-baseball-wrap">${cards}<table class="b10-baseball"><thead><tr><th>말한 수</th><th>S</th><th>B</th></tr></thead><tbody>${clues.map((clue) => `<tr><td>${clue.guess.join("")}</td><td>${clue.strikes}</td><td>${clue.balls}</td></tr>`).join("")}</tbody></table>${visual.note ? `<p>${esc(visual.note)}</p>` : ""}</div>`;
 }
 
-const digitRange = (visual) => `<div class="b10-digit-range"><strong>${visual.from}</strong><i>부터</i><strong>${visual.to}</strong><i>까지</i>${visual.digit !== null ? `<b>${esc(visual.digit)} 세기</b>` : ""}</div>`;
+const digitRange = (visual) => `<div class="b10-digit-range"><strong>${visual.from}</strong><i>부터</i><strong>${visual.to}</strong><i>까지</i>${visual.digit !== null && visual.digit !== undefined ? `<b>숫자 ${esc(visual.digit)} 세기</b>` : visual.label ? `<b>${esc(visual.label)}</b>` : ""}</div>`;
+
+// 지도서의 하늘색 수 줄: 「1,2,3,…,12,…,99」. last가 "?"이면 끝 수 칸을 비우고 숫자 개수를 함께 적는다.
+const numberSequence = (visual) => `<div class="b10-sequence"><p>${(visual.head || []).join(", ")}, …, ${visual.last === "?" ? "<i>□</i>" : (visual.tail || [visual.last]).join(", ")}</p>${visual.total ? `<b>숫자 ${visual.total}개</b>` : ""}</div>`;
 
 function digitCountBreakdown(visual) {
   const segments = visual.segments || [];
   const total = segments.reduce((sum, segment) => sum + Number(segment.count) * Number(segment.digits), 0);
   return `<div class="b10-digit-count" role="img" aria-label="수의 범위에서 사용한 숫자 개수"><div>${segments.map((segment) => `<span><b>${esc(segment.label)}</b><i>${esc(segment.count)}개 × ${esc(segment.digits)}자리</i><strong>${Number(segment.count) * Number(segment.digits)}</strong></span>`).join("")}</div><p>${visual.revealResult ? `모두 <strong>${total}</strong>개` : "각 구간의 수 개수와 자릿수를 곱해 보세요."}</p></div>`;
+}
+
+// 1단원 지도서 판(묶음 5). 빈칸은 아이가 채우고, 원본에 미리 적힌 숫자만 보인다.
+const ORDINAL = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째", "일곱째", "여덟째", "아홉째", "열째", "열한째", "열두째"];
+
+// 곱셈 칸: 두 수, (규칙 찾기 문제면) 빈 작업 줄, 결과 칸. cells의 ""는 빈칸, 숫자는 원본에 적힌 도움 숫자.
+function productCells(visual) {
+  const width = visual.cells.length;
+  const row = (digits) => `<div class="row">${Array.from({ length: width }, (_, index) => {
+    const digit = digits[digits.length - width + index];
+    return `<span>${digit ?? ""}</span>`;
+  }).join("")}</div>`;
+  const work = Array.from({ length: visual.workRows || 0 }, () => `<div class="row work">${"<span></span>".repeat(width)}</div>`).join("");
+  return `<div class="b10-product-cells" role="img" aria-label="${esc(visual.first)} 곱하기 ${esc(visual.second)} 계산 칸">${row(String(visual.first).split(""))}<div class="times"><b>×</b>${row(String(visual.second).split(""))}</div><i></i>${work}${work ? "<i></i>" : ""}<div class="row result">${visual.cells.map((digit) => `<span class="${digit === "" ? "blank" : "given"}">${esc(digit)}</span>`).join("")}</div></div>`;
+}
+
+// 두 수의 곱 줄: ○ × □ 를 줄마다. given에 원본이 적어 둔 줄만 숫자를 넣는다.
+function factorRows(visual) {
+  const rows = Array.from({ length: visual.rows }, (_, index) => visual.given?.[index] || [null, null]);
+  return `<div class="b10-factor-rows" role="img" aria-label="${visual.target}을 두 수의 곱으로 나타내는 줄 ${visual.rows}개"><strong>${visual.target}</strong><div>${rows.map(([left, right]) => `<span class="left">${left ?? ""}</span><i>×</i><span>${right ?? ""}</span>`).join("")}</div><p><span></span>개</p></div>`;
+}
+
+// 가우스 표: 구분 · 계산 과정 · 연속수의 합. 식 속 □는 빈칸.
+function sumTable(visual) {
+  const cell = (text) => esc(text).replaceAll("□", '<i class="box"></i>');
+  return `<table class="b10-sum-table"><thead><tr><th>구분</th><th>계산 과정</th><th>연속수의 합</th></tr></thead><tbody>${visual.rows.map((row) => `<tr><td><b>${esc(row.label)}</b> ${cell(row.expr)}</td><td>${row.process ? cell(row.process) : ""}</td><td></td></tr>`).join("")}</tbody></table>`;
+}
+
+// 연속수 동그라미: 합 = ○ + ○ + … . 가운데 동그라미(홀수 개면 하나, 짝수 개면 둘)를 칠한다.
+function consecutiveBlanks(visual) {
+  const middle = visual.count % 2 ? [Math.floor(visual.count / 2)] : [visual.count / 2 - 1, visual.count / 2];
+  const circles = Array.from({ length: visual.count }, (_, index) => `<span class="${middle.includes(index) ? "mid" : ""}" title="${ORDINAL[index] || index + 1}"></span>`).join("<i>+</i>");
+  return `<div class="b10-consecutive-blanks" role="img" aria-label="${visual.total}을 ${visual.count}개의 ${esc(visual.label || "연속수")}의 합으로"><strong>${visual.total}</strong><i>=</i>${circles}${visual.label ? `<b>${esc(visual.label)}</b>` : ""}</div>`;
+}
+
+// 빈 달력: 요일 머리줄과 빈 칸. 원본처럼 한 주(shadeFrom~shadeTo 요일)를 칠한다.
+function blankCalendar(visual) {
+  const headers = ["일", "월", "화", "수", "목", "금", "토"];
+  const cells = Array.from({ length: visual.rows * 7 }, (_, index) => {
+    const on = Math.floor(index / 7) === visual.shadeRow && index % 7 >= visual.shadeFrom && index % 7 <= visual.shadeTo;
+    return `<span${on ? ' class="on"' : ""}></span>`;
+  }).join("");
+  return `<div class="b10-calendar b10-blank-calendar" role="img" aria-label="${esc(visual.month)}월 달력, 칠한 주의 날짜 합 ${esc(visual.sum)}"><div class="head">${headers.map((day) => `<b>${day}</b>`).join("")}</div><div class="days">${cells}</div><p>${esc(visual.month)}월 · ${headers[visual.shadeFrom]}요일~${headers[visual.shadeTo]}요일 날짜의 합 <strong>${esc(visual.sum)}</strong></p></div>`;
+}
+
+// 가려진 세 수의 덧셈: 더하는 수 칸은 모두 비우고, 합은 원본처럼 백의 자리만 비운다.
+function maskedAddition(visual) {
+  const row = (count) => `<div>${"<span></span>".repeat(count)}</div>`;
+  return `<div class="b10-masked-addition" role="img" aria-label="연속하는 세 수의 덧셈, 합은 □${esc(visual.tail)}">${row(2)}${row(2)}<div class="plus"><b>+</b>${row(2)}</div><i></i><div class="total"><span></span>${String(visual.tail).split("").map((digit) => `<b>${digit}</b>`).join("")}</div></div>`;
 }
 
 export function book10Markup(visual) {
@@ -241,6 +337,8 @@ export function book10Markup(visual) {
     case "multiplication-methods": return multiplicationMethods(visual);
     case "napier-grid": return napierGrid(visual);
     case "area-model": return areaModel(visual);
+    case "split-box": return splitBox(visual);
+    case "statement-list": return statementList(visual);
     case "vertical-multiplication": return verticalMultiplication(visual);
     case "operation": return operation(visual);
     case "factor-pairs": return factorPairs(visual);
@@ -277,8 +375,15 @@ export function book10Markup(visual) {
     case "route-stages": return routeStages(visual);
     case "lineup-slots": return lineupSlots(visual);
     case "number-baseball": return numberBaseball(visual);
+    case "number-sequence": return numberSequence(visual);
     case "digit-range": return digitRange(visual);
     case "digit-count-breakdown": return digitCountBreakdown(visual);
+    case "product-cells": return productCells(visual);
+    case "factor-rows": return factorRows(visual);
+    case "sum-table": return sumTable(visual);
+    case "consecutive-blanks": return consecutiveBlanks(visual);
+    case "blank-calendar": return blankCalendar(visual);
+    case "masked-addition": return maskedAddition(visual);
     default: return "";
   }
 }

@@ -105,7 +105,8 @@ try {
       await host.locator(`[data-hand-open="${id}"]`).click();
       assert.equal(await host.locator("dialog[open]").count(), 1);
       assert.equal(await host.locator("select").count(), 0);
-      assert.equal(await host.locator(".hand-guide img").count(), 1);
+      // 시계는 네 단계 게임(2026-10-04)이라 독쌤 안내 그림이 없다. 게임 화면은 아래 turn-clock 분기가 본다.
+      assert.equal(await host.locator(".hand-guide img").count(), activities[id].kind === "clock" ? 0 : 1);
       return host;
     };
     for (const [id, activity] of Object.entries(activities)) {

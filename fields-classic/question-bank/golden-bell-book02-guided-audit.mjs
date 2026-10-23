@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { goldenBellBookById } from "./golden-bell-data.js";
 import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js";
+import { readFile } from "node:fs/promises";
+
+const privateRecords = process.env.FIELDS_PRIVATE_ANSWER_BANK
+  ? JSON.parse(await readFile(process.env.FIELDS_PRIVATE_ANSWER_BANK, "utf8")).books?.["book-02"] : null;
 
 const book = goldenBellBookById("book-02");
 const expectedIds = ["addition-matrix", "balance-order", "dual-shape-color-pattern", "diamond-number-promise"];
@@ -22,7 +26,13 @@ for (const lesson of lessons) {
   const experience = lesson.experience;
   assert.equal(experience.beats.length, 4, `${lesson.id}: beats must be exactly 4`);
   assert.ok(lesson.sourceTypeIds?.length, `${lesson.id}: sourceTypeIds must not be empty`);
-  assert.equal(experience.check.options.filter((option) => option === experience.check.answer).length, 1, `${lesson.id}: check answer must occur exactly once`);
+  // 2026-09-05 정답 보호 이후 공개 데이터에는 확인 문제 답이 없고 answerRef만 있다. 보기는 서로 달라야 하고,
+  // 비공개 답 파일(FIELDS_PRIVATE_ANSWER_BANK)을 주면 답이 보기에 꼭 한 번 나오는지도 본다.
+  assert.equal(Object.hasOwn(experience.check, "answer"), false, `${lesson.id}: check answer must not be public`);
+  assert.match(experience.check.answerRef || "", /^\/books\/book-02\//u, `${lesson.id}: check answerRef missing`);
+  assert.equal(new Set(experience.check.options).size, experience.check.options.length, `${lesson.id}: check options must be distinct`);
+  const privateCheck = privateRecords?.[experience.check.answerRef]?.answer;
+  if (privateCheck !== undefined) assert.equal(experience.check.options.filter((option) => [privateCheck].flat().map(String).includes(option)).length, 1, `${lesson.id}: check answer must occur exactly once`);
 
   const finalVisual = guidedConceptVisual(experience, experience.beats.length - 1);
   const printSummary = guidedConceptPrintSummary(experience);
@@ -31,7 +41,7 @@ for (const lesson of lessons) {
 
   const protectedText = [lesson.original, lesson.extension].flatMap(strings);
   assert.ok(!protectedText.includes(experience.check.prompt), `${lesson.id}: check prompt leaks original/extension text`);
-  assert.ok(!protectedText.includes(experience.check.answer), `${lesson.id}: check answer leaks original/extension answer`);
+  if (privateCheck !== undefined) assert.ok(!protectedText.includes(String(privateCheck)), `${lesson.id}: check answer leaks original/extension answer`);
 
   if (lesson.id === "balance-order") {
     for (const item of experience.model.order) assert.ok(finalVisual.includes(item), `${lesson.id}: final order omits ${item}`);

@@ -164,7 +164,8 @@ for (const targetLessonId of ["number-inference", "relative-order-running"]) {
 }
 
 const bookNinePhases = ["problem", "organize", "calculate", "verify"];
-const bookNineFamilies = ["book09-area", "book09-cube", "book09-magic", "book09-consecutive"];
+// 9권 연속수(book09-consecutive)는 10권으로 옮겼다(2026-10-22).
+const bookNineFamilies = ["book09-area", "book09-cube", "book09-magic"];
 
 function independentlyCalculateBookNine(record) {
   const visual = record.experience.model?.visual;
@@ -194,7 +195,8 @@ function independentlyCalculateBookNine(record) {
 }
 
 for (const family of bookNineFamilies) {
-  const matches = guidedLessons.filter((record) => record.family === family);
+  // 4권 cube-min-count도 같은 쌓기나무 개념 장면을 빌려 쓰므로 9권 안에서만 센다.
+  const matches = guidedLessons.filter((record) => record.family === family && record.bookId === "book-09");
   if (matches.length !== 1) {
     failures.push(`${family}: expected exactly one guided lesson, found ${matches.length}`);
     continue;

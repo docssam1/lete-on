@@ -1,5 +1,5 @@
 import { createSound, confetti, esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
-import { createDial } from "./golden-bell-clock-dial.js?v=20261004b";
+import { createDial } from "./golden-bell-clock-dial.js?v=20261023w";
 import { buildLevel, levelSpec, levelResult, checkTurn, checkNumber, checkChoice, missionText, hintText, successText, turnAmountText, opText, landing, landingAfter, starsFor, josa, MAX_FREE_TURNS, MASTER_LEVEL, AMOUNT_NAMES } from "./golden-bell-clock-game-model.js?v=20261004b";
 
 // 1권 「시계 바늘 돌리기」 게임. 연습할수록 늘어난다:

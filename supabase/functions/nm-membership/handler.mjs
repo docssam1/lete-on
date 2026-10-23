@@ -17,6 +17,8 @@ export const MAX_BODY_BYTES = 4096;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const NO_CTRL = /^[^\u0000-\u001f\u007f]+$/;
 const SPEEDS = [0.7, 0.85, 1, 1.25, 1.5];
+const HIGH_PLAN_VERSION = "20261023-high3m";
+const HIGH_PLAN_COURSE = /^C(3[89]|[4-6][0-9])$/;
 const INVALID = Symbol("invalid");
 const DENY_KEYS = new Set(["phone", "tokenhash", "token_hash", "code_hash", "trigger_key", "service_role", "password", "secret", "authorization", "hash"]);
 const OK_STATUS = new Set([400, 401, 403, 404, 409, 410, 429, 503]);
@@ -52,7 +54,8 @@ const bool = (v) => (typeof v === "boolean" ? v : INVALID);
 
 const ACTIONS = {
   status: { auth: "jwt", fields: { profileName: [pname, false] } },
-  register_contact: { auth: "jwt", fields: { phone: [phone, true], collectionConsent: [mustTrue, true], smsConsent: [bool, true] } },
+  // phone omitted = keep the number on file; privacyVersion/guardianConsent omitted = pre-notice client (SQL decides).
+  register_contact: { auth: "jwt", fields: { phone: [phone, false], collectionConsent: [mustTrue, true], smsConsent: [bool, true], privacyVersion: [oneOf(["2026-10-22-v1"]), false], guardianConsent: [mustTrue, false] } },
   admin_login: { auth: "none", fields: { username: [str(64, /^[A-Za-z0-9_.@-]+$/), true], code: [str(128), true] } },
   admin_logout: { auth: "admin", fields: { adminToken: [adminToken, true] } },
   admin_list: { auth: "admin", fields: { adminToken: [adminToken, true], query: [query, false] } },
@@ -189,6 +192,8 @@ export function createHandler(deps) {
           registered: c.registered === true,
           phoneMasked: typeof c.phoneMasked === "string" && /^\d{3}-\*{4}-\d{4}$/.test(c.phoneMasked) ? c.phoneMasked : null,
           smsConsent: c.smsConsent === true,
+          privacyVersion: c.privacyVersion === "2026-10-22-v1" ? c.privacyVersion : null,
+          consentedAt: typeof c.consentedAt === "string" && Number.isFinite(Date.parse(c.consentedAt)) ? c.consentedAt : null,
         };
         return out({ ...scrub(r.data), contact });
       }
@@ -196,7 +201,14 @@ export function createHandler(deps) {
       if (action === "resolve_worksheet") {
         const r = await call(action, payload, null);
         if (r.fail || !r.data.config) return fail("not_found", 404);
-        return out({ config: pick(r.data.config, ["courseKey", "week", "k", "amount", "cadence", "sessionIndex"]) });
+        const config = pick(r.data.config, ["courseKey", "week", "k", "amount", "cadence", "sessionIndex"]);
+        // A stored snapshot opts in once; old links keep their original single-session seed.
+        if (HIGH_PLAN_COURSE.test(config.courseKey) && r.data.config.highPlanVersion === HIGH_PLAN_VERSION) {
+          config.highPlanVersion = HIGH_PLAN_VERSION;
+          if (startDate(r.data.config.highStartDate) !== INVALID) config.highStartDate = r.data.config.highStartDate;
+          if (SPEEDS.includes(r.data.config.highSpeed)) config.highSpeed = r.data.config.highSpeed;
+        }
+        return out({ config });
       }
 
       if (action === "admin_login") {

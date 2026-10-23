@@ -4,6 +4,7 @@
 const fs = require('fs'), path = require('path'), vm = require('vm'), assert = require('assert');
 const SRC = fs.readFileSync(path.join(__dirname, '..', 'app', 'membership.js'), 'utf8');
 const tick = async (n) => { for (let i = 0; i < (n || 6); i++) await new Promise(r => setImmediate(r)); };
+const CONSENT = {version:'2026-10-22-v1',guardianConsent:true};
 const T0 = Date.parse('2026-10-21T00:00:00Z');
 
 function deferred() { let res, rej; const p = new Promise((a, b) => { res = a; rej = b; }); return { p, res, rej }; }
@@ -41,6 +42,7 @@ function setup(auth, handler, profile) {
     },
   });
   ctx.window = ctx;
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'..','app','privacy-consent.js'),'utf8'),ctx);
   vm.runInContext(SRC, ctx);
   const M = ctx.NM_MEMBERSHIP;
   M.configure({ url: 'https://example.test', anonKey: 'anon', auth, profileName: profile || (() => null) });
@@ -121,10 +123,10 @@ test('trial uses trialEndsAt; missing/invalid end is false', async () => {
 test('no persisted entitlement and no raw phone anywhere', async () => {
   const phone = '010-1234-5678';
   const e = setup(makeAuth('u1'), (b) => reply(b.action === 'register_contact'
-    ? { contact: { registered: true } }
+    ? { contact: { registered: true, privacyVersion: CONSENT.version } }
     : { membership: member('u1'), contact: { registered: b.action === 'status' && e && e.calls.length > 1 } }));
   await tick();
-  await e.M.registerContact(phone, true, true);
+  await e.M.registerContact(phone, true, true, CONSENT);
   assert.deepStrictEqual(e.storageWrites, []);
   assert.ok(!JSON.stringify(e.M.snapshot()).includes('1234'));
   assert.ok(!JSON.stringify(e.M.snapshot()).includes('5678'));
@@ -133,10 +135,11 @@ test('no persisted entitlement and no raw phone anywhere', async () => {
   assert.strictEqual(reg.body.collectionConsent, true);
   assert.strictEqual(reg.body.smsConsent, true);
   // 동의는 정확히 true 일 때만
-  await e.M.registerContact(phone, 'yes', 1);
-  const reg2 = e.calls.filter(c => c.body.action === 'register_contact')[1];
-  assert.strictEqual(reg2.body.collectionConsent, false);
-  assert.strictEqual(reg2.body.smsConsent, false);
+  const before=e.calls.length;
+  await assert.rejects(e.M.registerContact(phone, 'yes', 1, CONSENT), /consent_required/);
+  assert.equal(e.calls.length,before,'invalid consent must send nothing');
+  assert.equal(reg.body.privacyVersion,CONSENT.version);
+  assert.equal(reg.body.guardianConsent,true);
 });
 
 test('fail closed: network error / malformed JSON / bad shape / wrong identity', async () => {
@@ -221,14 +224,14 @@ test('registerContact: same-owner status refresh in flight does not clobber resu
   const queue = { status: [s1.p, s2.p], register_contact: [r.p] };
   const e = setup(a, (b) => queue[b.action].shift());
   await tick();                                  // S1 대기
-  const reg = e.M.registerContact('010-1', true, true);
+  const reg = e.M.registerContact('010-1', true, true, CONSENT);
   await tick();
   r.res(reply({ ok: true }));
   await tick();
   assert.strictEqual(e.calls.filter(c => c.body.action === 'status').length, 1, 'S1 끝나기 전 새 status 금지');
   s1.res(reply({ membership: member('u1'), contact: { registered: false } }));   // 옛 응답(가입 전)
   await tick();
-  s2.res(reply({ membership: member('u1'), contact: { registered: true } }));
+  s2.res(reply({ membership: member('u1'), contact: { registered: true, privacyVersion: CONSENT.version } }));
   await reg;
   assert.deepStrictEqual(e.calls.map(c => c.body.action), ['status', 'register_contact', 'status']);
   assert.strictEqual(e.M.contactReady(), true);
@@ -238,7 +241,7 @@ test('registerContact: owner changes during register -> guardian_changed, no ref
   const a = makeAuth('u1'); const r = deferred();
   const e = setup(a, (b) => b.action === 'register_contact' ? r.p : reply({ membership: member(a.uid) }));
   await tick();
-  const reg = e.M.registerContact('010-1', true, true);
+  const reg = e.M.registerContact('010-1', true, true, CONSENT);
   await tick();
   a.uid = 'u2';
   r.res(reply({ ok: true }));
@@ -248,7 +251,7 @@ test('registerContact: owner changes during register -> guardian_changed, no ref
 test('registerContact without auth rejects and sends nothing', async () => {
   const e = setup(makeAuth(null), ok('u1'));
   await tick();
-  await assert.rejects(e.M.registerContact('010', true, true));
+  await assert.rejects(e.M.registerContact('010', true, true, CONSENT));
   assert.strictEqual(e.calls.length, 0);
 });
 
@@ -259,6 +262,18 @@ test('password-required auth change clears entitlement', async () => {
   a.set('u1', true);
   assert.strictEqual(e.M.canUse(), false);
   assert.strictEqual(e.M.snapshot().membership, null);
+});
+
+
+test('consent renewal: unversioned contact stays blocked; missing/stale/false consent sends nothing', async () => {
+ const e=setup(makeAuth('u1'),()=>reply({membership:member('u1'),contact:{registered:true}}));await tick();
+ assert.equal(e.M.contactReady(),false);
+ for(const c of [undefined,{version:'old',guardianConsent:true},{version:CONSENT.version,guardianConsent:false}]){
+  const count=e.calls.length;await assert.rejects(e.M.registerContact(null,true,false,c),/consent_required/);assert.equal(e.calls.length,count);
+ }
+ await e.M.registerContact(null,true,false,CONSENT);
+ const body=e.calls.find(c=>c.body.action==='register_contact').body;
+ assert.equal('phone' in body,false,'renewal never sends masked phone as raw phone');assert.equal(body.smsConsent,false);
 });
 
 (async () => {
