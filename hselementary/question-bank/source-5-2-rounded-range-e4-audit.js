@@ -12,7 +12,7 @@ for (const filename of [
   "source-5-2-range-e1.js", "source-5-2-range-missions.js", "source-5-2-rounding-e2.js",
   "source-5-2-rounding-missions.js", "source-5-2-rounding-application-e3.js", "source-5-2-packing-mission1.js",
   "source-5-2-perimeter-mission2.js", "source-5-2-cube-box-mission3.js", "source-5-2-supply-cost-mission4.js",
-  "source-5-2-population-bar-length.js", "source-5-2-citrus-sales-mission6.js", "source-5-2-rounded-range-e4.js"
+  "source-5-2-population-bar-length.js", "source-5-2-citrus-sales-mission6.js", "source-5-2-rounded-range-e4.js", "source-5-2-rounded-range-e42.js", "source-5-2-rounded-range-e43.js", "source-5-2-rounded-range-e44.js"
 ]) require(`./${filename}`);
 
 const ids = ["5-2-u1-e4-exploration-rounded-range", "5-2-u1-e4-example-1"];
@@ -71,5 +71,5 @@ for (let sourceIndex = 0; sourceIndex < ids.length; sourceIndex++) {
     observations.push({ sourceItemId: id, variant, difficulty, answer: q.answer });
   }
 }
-assert.equal(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length, 2038);
+assert.equal(window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).length, 2041);
 console.log(JSON.stringify({ status: "passed", sourceItemIds: ids, sourcePdfPage: 8, sourcePrintedPage: 10, sourceNumbersReused: false, sourceIllustrationRequired: false, checkedConfigurations: observations.length, answers: observations }, null, 2));

@@ -1568,7 +1568,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             answerVisualStatus: "not-required"
           }]
         }, {
-          name: "어림한 수의 범위 · 개념탐구 4 및 예제 4-1",
+          name: "어림한 수의 범위 · 개념탐구 4 및 예제 4-1–4-3",
           types: [{
             id: "5-2-u1-e4-exploration-rounded-range",
             name: "세 어림 조건의 공통 범위",
@@ -1611,6 +1611,69 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             verifiedVariantCount: 3,
             answerVisualRequired: false,
             answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e4-example-2",
+            name: "두 몫을 어림한 결과로 자연수의 범위 구하기",
+            sourceItemId: "5-2-u1-e4-example-2",
+            sourceItemLabel: "예제 4-2",
+            sourceSection: "example",
+            sourceTier: "advanced",
+            sourcePdfPage: 8,
+            sourcePrintedPage: 10,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e4-example-2-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄 원문과 Apple Vision OCR을 대조했습니다. 6과 4로 나눈 몫을 각각 십의 자리까지 반올림한 조건으로 가능한 정수 몫의 구간을 구하고, 원래 자연수 범위로 되돌리면 공통 범위는 270 이상 300 미만입니다. 원문은 텍스트 문항이며 그림이 없습니다. 합성 문항은 원문 수치 50과 70을 사용하지 않습니다. 손글씨와 출판사 정답지는 검증 근거로 사용하지 않았습니다.",
+            generatorKey: "source52RoundedRangeExample42",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e4-example-3",
+            name: "합과 차를 어림한 결과로 큰 수의 범위 구하기",
+            sourceItemId: "5-2-u1-e4-example-3",
+            sourceItemLabel: "예제 4-3",
+            sourceSection: "example",
+            sourceTier: "advanced",
+            sourcePdfPage: 8,
+            sourcePrintedPage: 10,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e4-example-3-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄 원문과 Apple Vision OCR을 대조했습니다. 합의 범위는 850 이상 950 미만이고 차의 범위는 350 이상 450 미만입니다. 큰 수는 (합+차)÷2이므로 정확한 범위는 600 이상 700 미만입니다. 원문은 그림 없는 텍스트 문항이며, 합성 문항은 원문 수치 900과 400을 사용하지 않습니다. 손글씨와 출판사 정답지는 근거로 사용하지 않았습니다.",
+            generatorKey: "source52RoundedRangeExample43",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e4-example-4",
+            name: "꺾은선그래프에서 남녀 인구 차의 범위 구하기",
+            sourceItemId: "5-2-u1-e4-example-4",
+            sourceItemLabel: "예제 4-4",
+            sourceSection: "example",
+            sourceTier: "advanced",
+            sourcePdfPage: 8,
+            sourcePrintedPage: 10,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e4-example-4-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄 원문과 확대 그래프를 대조해 축 절단, 100명 눈금, 여자 실선·남자 점선, 연도 위치를 재구성했습니다. 원문의 최대 차는 2008년이며 남자 6800명·여자 6100명으로 표시됩니다. 실제 차는 551명부터 749명까지이므로 550명 초과 750명 미만입니다. 손글씨와 출판사 정답지는 검증 근거로 사용하지 않았습니다.",
+            generatorKey: "source52RoundedRangeExample44",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: true,
+            answerVisualStatus: "verified-reconstruction"
           }]
         }
       ],

@@ -18,6 +18,9 @@ require("./source-5-2-supply-cost-mission4.js");
 require("./source-5-2-population-bar-length.js");
 require("./source-5-2-citrus-sales-mission6.js");
 require("./source-5-2-rounded-range-e4.js");
+require("./source-5-2-rounded-range-e42.js");
+require("./source-5-2-rounded-range-e43.js");
+require("./source-5-2-rounded-range-e44.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -126,7 +129,7 @@ const types = allTypes.filter(type => api.generatorKey(type) && !type.reviewLock
 const floatingTail = /\b\d+\.\d{10,}\b/;
 const failures = [];
 let count = 0;
-if (types.length !== 1250) failures.push(`공개 검수 대상은 1250개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 1253) failures.push(`공개 검수 대상은 1253개여야 하나 ${types.length}개입니다.`);
 
 for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 100; seed += 1) {
   try {
