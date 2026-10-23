@@ -86,7 +86,9 @@ try {
         localStorage.setItem("qr-audit-sentinel", "unchanged");
       });
       await page.goto(`${base}/fields-classic/question-bank/game.html?activity=share-equally&book=book-10#${issued.get(id).token}`, { waitUntil: "networkidle" });
-      assert.equal(await page.locator("#gameContent").isVisible(), true);
+      // game.js는 토큰 확인 뒤 게임 모듈을 동적으로 불러오고 나서야 #gameContent를 보이게 한다.
+      // networkidle은 그 전에 울릴 수 있으므로(첫 실행의 차가운 브라우저에서 재현) 보일 때까지 기다린 뒤 검사한다.
+      await page.locator("#gameContent").waitFor({ state: "visible", timeout: 20000 });
       assert.equal(await page.locator("#gameContent").getAttribute("data-hand-activity"), id, "Query overrides cannot change the signed game");
       assert.equal(await page.locator("a,button[data-hand-activity],[data-hand-action=questions]").count(), 0);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);

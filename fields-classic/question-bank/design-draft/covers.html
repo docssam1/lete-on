@@ -6,193 +6,143 @@
   <title>디자인 시안 — 교재 표지 3안</title>
   <link rel="stylesheet" href="./design.css?v=20261023a" />
   <style>
-    /* 표지 전용 — 그림은 전부 이 파일 안 SVG(원본 도형)로 그린다. 글자는 항상 진짜 글자. */
+    /* 표지 전용 — 요즘 교재 결: 여백·큰 고딕 제목·오브젝트 하나. 그림은 전부 이 파일 안 SVG(원본). */
+    .cover { font-family: var(--sans); }
     .cover svg.art { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .cover .plate { position: absolute; z-index: 2; }
-    .cover h1 { margin: 0; font-weight: 700; line-height: 1.3; }
-    .cover .eyebrow { display: block; margin-bottom: 2.5mm; font-family: var(--sans); font-size: 8pt; font-weight: 600; letter-spacing: .24em; color: #6c6353; }
-    .cover .sub2 { display: block; margin-top: 2.5mm; font-family: var(--sans); font-size: 8.5pt; color: #6c6353; }
-    .cover .pub2 { position: absolute; z-index: 2; bottom: 8mm; left: 12mm; right: 12mm; display: flex; justify-content: space-between; font-family: var(--sans); font-size: 7.6pt; letter-spacing: .12em; color: #6c6353; }
+    .cover .plate { position: absolute; z-index: 2; left: 12mm; right: 12mm; }
+    .cover h1 { margin: 0; font-weight: 700; letter-spacing: -0.03em; line-height: 1.22; }
+    .cover .eyebrow { display: inline-flex; align-items: center; gap: 2mm; margin-bottom: 4mm; font-size: 7.6pt; font-weight: 600; letter-spacing: .2em; }
+    .cover .eyebrow::before { content: ""; width: 7mm; height: .6mm; background: currentColor; }
+    .cover .sub2 { display: block; margin-top: 3.5mm; font-size: 9pt; font-weight: 500; color: #8a7e6b; letter-spacing: .02em; }
+    .cover .pub2 { position: absolute; z-index: 2; bottom: 8mm; left: 12mm; right: 12mm; display: flex; justify-content: space-between; align-items: baseline; font-size: 7pt; font-weight: 600; letter-spacing: .14em; color: #a89c87; }
 
-    /* A안 — 종이 오리기 풍경 */
-    .cover.a2 { background: #fbf5e8; }
-    .cover.a2 .plate { top: 16mm; left: 13mm; right: 13mm; }
-    .cover.a2 h1 { font-size: 23pt; }
-    .cover.a2 .badge { position: absolute; z-index: 2; top: 15mm; right: 12mm; display: grid; place-items: center; width: 15mm; height: 15mm; border-radius: 50%; background: #2a241c; color: #fbf5e8; font-family: var(--sans); font-size: 12pt; font-weight: 700; }
-    .cover.a2 .pub2 { color: #e9e2d2; }
+    /* A안 — 흰 바탕 + 광택 오브젝트 */
+    .cover.m1 { background: #fff; }
+    .cover.m1 .plate { top: 17mm; }
+    .cover.m1 .eyebrow { color: #2f6b4a; }
+    .cover.m1 h1 { font-size: 26pt; color: #211c15; }
+    .cover.m1 .lv { position: absolute; z-index: 2; top: 15mm; right: 12mm; display: grid; place-items: center; min-width: 12mm; height: 12mm; padding: 0 3mm; border-radius: 99mm; background: #211c15; color: #fff; font-size: 10.5pt; font-weight: 700; }
 
-    /* B안 — 쌓기나무 입체 */
-    .cover.b2 { background: #f6efdf; }
-    .cover.b2 .plate { top: 15mm; left: 12mm; right: 12mm; text-align: center; }
-    .cover.b2 h1 { font-size: 21.5pt; }
-    .cover.b2 .vol-chip { position: absolute; z-index: 2; top: 44mm; left: 50%; transform: translateX(-50%); padding: 1.2mm 5mm; border: 1px solid #2a241c; border-radius: 99mm; background: #fff; font-family: var(--sans); font-size: 8.5pt; font-weight: 700; letter-spacing: .2em; }
+    /* B안 — 딥 그린 + 금 라인 아트 */
+    .cover.m2 { background: #16382a; }
+    .cover.m2 .plate { top: 19mm; }
+    .cover.m2 .eyebrow { color: #d9a62e; }
+    .cover.m2 h1 { font-size: 24pt; color: #f7f2e7; }
+    .cover.m2 .sub2 { color: #9fb5a6; }
+    .cover.m2 .pub2 { color: #7d9886; }
 
-    /* C안 — 전면 무늬 + 가운데 패 */
-    .cover.c2 { background: #2f6b4a; }
-    .cover.c2 .plate { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; padding: 9mm 7mm 8mm; border: .6mm solid #2a241c; outline: .35mm solid #2a241c; outline-offset: 1.2mm; background: #fbf5e8; text-align: center; box-shadow: 0 2mm 0 rgba(26, 46, 34, .5); }
-    .cover.c2 h1 { font-size: 18.5pt; }
-    .cover.c2 .vol-line { display: block; margin-top: 3.5mm; padding-top: 2.5mm; border-top: .3mm solid #c8bfae; font-family: var(--sans); font-size: 9pt; font-weight: 700; letter-spacing: .3em; color: #b4512e; }
-    .cover.c2 .pub2 { color: #cfe0d2; }
+    /* C안 — 반반 구성(위 여백·아래 기하 포스터) */
+    .cover.m3 { background: #faf7f0; }
+    .cover.m3 .plate { top: 17mm; }
+    .cover.m3 .eyebrow { color: #c05a33; }
+    .cover.m3 h1 { font-size: 25pt; color: #211c15; }
+    .cover.m3 .num { position: absolute; z-index: 2; top: 13mm; right: 12mm; font-size: 30pt; font-weight: 250; color: #c05a33; line-height: 1; }
   </style>
 </head>
 <body>
-  <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html">① 문제은행 화면</a><a href="./exam.html">② A4 시험지</a><a href="./covers.html" aria-current="page">③ 교재 표지 3안</a><span style="margin-left:auto;color:var(--muted)">같은 교재(1권)로 세 방향 — 그림은 전부 원본 SVG, 글자는 진짜 글자</span></nav>
+  <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html">① 문제은행 화면</a><a href="./exam.html">② A4 시험지</a><a href="./covers.html" aria-current="page">③ 교재 표지 3안</a><span style="margin-left:auto;color:var(--muted)">여백·큰 제목·오브젝트 하나 — 권마다 색·번호·오브젝트만 바꾸는 시리즈형</span></nav>
 
   <div class="covers">
     <div class="cover-wrap">
-      <article class="cover a2" aria-label="표지 A안 — 종이 오리기 풍경">
+      <article class="cover m1" aria-label="표지 A안 — 흰 바탕과 광택 도형">
         <svg class="art" viewBox="0 0 210 297" aria-hidden="true">
           <defs>
-            <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.4" flood-color="#5a4322" flood-opacity=".28"/></filter>
-            <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1" stdDeviation=".9" flood-color="#5a4322" flood-opacity=".22"/></filter>
+            <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5da97c"/><stop offset="1" stop-color="#1e5a3c"/></linearGradient>
+            <linearGradient id="gCoral" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9d73"/><stop offset="1" stop-color="#d9542b"/></linearGradient>
+            <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd978"/><stop offset="1" stop-color="#d99a1f"/></linearGradient>
+            <radialGradient id="shine" cx=".32" cy=".25" r=".9"><stop offset="0" stop-color="#ffffff" stop-opacity=".85"/><stop offset=".35" stop-color="#ffffff" stop-opacity=".12"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+            <filter id="drop" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#211c15" flood-opacity=".22"/></filter>
           </defs>
-          <!-- 은은한 점 모눈 -->
-          <g fill="#e7dcc4">
-            <circle cx="20" cy="84" r=".8"/><circle cx="44" cy="84" r=".8"/><circle cx="68" cy="84" r=".8"/><circle cx="92" cy="84" r=".8"/><circle cx="116" cy="84" r=".8"/><circle cx="140" cy="84" r=".8"/><circle cx="164" cy="84" r=".8"/><circle cx="188" cy="84" r=".8"/>
-            <circle cx="20" cy="104" r=".8"/><circle cx="44" cy="104" r=".8"/><circle cx="68" cy="104" r=".8"/><circle cx="92" cy="104" r=".8"/><circle cx="116" cy="104" r=".8"/><circle cx="140" cy="104" r=".8"/><circle cx="164" cy="104" r=".8"/><circle cx="188" cy="104" r=".8"/>
-            <circle cx="20" cy="124" r=".8"/><circle cx="44" cy="124" r=".8"/><circle cx="68" cy="124" r=".8"/><circle cx="92" cy="124" r=".8"/><circle cx="116" cy="124" r=".8"/><circle cx="140" cy="124" r=".8"/><circle cx="164" cy="124" r=".8"/><circle cx="188" cy="124" r=".8"/>
+          <!-- 큰 윤곽 숫자 (오브젝트 뒤) -->
+          <text x="150" y="252" font-family="'FC Sans',sans-serif" font-size="150" font-weight="200" fill="#f0e9db" text-anchor="middle">1</text>
+          <!-- 광택 구 -->
+          <g filter="url(#drop)">
+            <circle cx="76" cy="196" r="34" fill="url(#gGreen)"/>
+            <ellipse cx="66" cy="182" rx="20" ry="14" fill="url(#shine)"/>
           </g>
-          <!-- 해: 금색 반원 + 줄무늬 -->
-          <g filter="url(#soft2)">
-            <path d="M158 118 a24 24 0 0 1 48 0 Z" fill="#d9a62e"/>
-            <rect x="158" y="118" width="48" height="2.4" fill="#b4512e"/>
+          <!-- 광택 정육면체(살짝 기울임) -->
+          <g filter="url(#drop)" transform="rotate(-10 142 216)">
+            <path d="M118 206l24-14 24 14-24 14Z" fill="url(#gGold)"/>
+            <path d="M118 206v26l24 14v-26Z" fill="#c98a12"/>
+            <path d="M166 206v26l-24 14v-26Z" fill="#a66f08"/>
+            <path d="M118 206l24-14 24 14" fill="none" stroke="#ffffff" stroke-opacity=".45" stroke-width="1"/>
           </g>
-          <!-- 뒷산: 옅은 초록 원 -->
-          <circle cx="36" cy="236" r="86" fill="#9dbfa4" filter="url(#soft)"/>
-          <circle cx="206" cy="252" r="96" fill="#7fa88a" filter="url(#soft)"/>
-          <!-- 앞산: 깊은 초록 -->
-          <circle cx="92" cy="298" r="104" fill="#2f6b4a" filter="url(#soft)"/>
-          <!-- 산 위 무늬: 마방진 격자 패 -->
-          <g filter="url(#soft2)">
-            <rect x="24" y="196" width="40" height="40" rx="3" fill="#fbf5e8"/>
-            <g stroke="#2a241c" stroke-width=".8"><path d="M24 209.3h40M24 222.6h40M37.3 196v40M50.6 196v40"/></g>
-            <g font-family="Georgia, serif" font-size="8.4" fill="#2a241c" text-anchor="middle">
-              <text x="30.6" y="206">8</text><text x="57.3" y="206">6</text><text x="44" y="219">5</text><text x="30.6" y="232.4">4</text><text x="57.3" y="232.4">2</text>
-            </g>
+          <!-- 광택 원뿔 -->
+          <g filter="url(#drop)">
+            <path d="M104 160 l18 46 a18 7 0 0 1 -36 0Z" fill="url(#gCoral)"/>
+            <ellipse cx="104" cy="206" rx="18" ry="7" fill="#b43f1b"/>
+            <path d="M104 160 l-9 23" stroke="#fff" stroke-opacity=".5" stroke-width="1.4" stroke-linecap="round"/>
           </g>
-          <!-- 떠 있는 교구: 감색 열기구(원+삼각 바구니) -->
-          <g filter="url(#soft)">
-            <circle cx="150" cy="166" r="17" fill="#c05a33"/>
-            <path d="M150 149 a17 17 0 0 1 0 34 c5-9 5-25 0-34" fill="#d9a62e" opacity=".9"/>
-            <path d="M143 181l7 10 7-10" fill="none" stroke="#2a241c" stroke-width=".9"/>
-            <rect x="145.6" y="190" width="8.8" height="6.4" rx="1" fill="#2a241c"/>
-          </g>
-          <!-- 쌓기나무 세 개 -->
-          <g filter="url(#soft2)">
-            <g transform="translate(96 206)">
-              <path d="M0 6l10-6 10 6-10 6Z" fill="#ffeaa6"/><path d="M0 6v12l10 6V12Z" fill="#ffd45c"/><path d="M20 6v12l-10 6V12Z" fill="#f0b23a"/>
-              <path d="M0 6l10-6 10 6-10 6Z" fill="none" stroke="#a8741a" stroke-width=".7"/><path d="M0 6v12l10 6V12L0 6m20 0v12l-10 6" fill="none" stroke="#a8741a" stroke-width=".7"/>
-            </g>
-            <g transform="translate(116 194)">
-              <path d="M0 6l10-6 10 6-10 6Z" fill="#ffeaa6"/><path d="M0 6v12l10 6V12Z" fill="#ffd45c"/><path d="M20 6v12l-10 6V12Z" fill="#f0b23a"/>
-              <path d="M0 6v12l10 6V12L0 6l10-6 10 6v12l-10 6" fill="none" stroke="#a8741a" stroke-width=".7"/>
-            </g>
-            <g transform="translate(116 218)">
-              <path d="M0 6l10-6 10 6-10 6Z" fill="#ffeaa6"/><path d="M0 6v12l10 6V12Z" fill="#ffd45c"/><path d="M20 6v12l-10 6V12Z" fill="#f0b23a"/>
-              <path d="M0 6v12l10 6V12L0 6l10-6 10 6v12l-10 6" fill="none" stroke="#a8741a" stroke-width=".7"/>
-            </g>
-          </g>
-          <!-- 길: 점선 -->
-          <path d="M30 262 C70 250 120 258 182 238" fill="none" stroke="#fbf5e8" stroke-width="1.6" stroke-dasharray="4 4" opacity=".85"/>
+          <!-- 작은 점 포인트 -->
+          <circle cx="160" cy="150" r="4.5" fill="url(#gCoral)"/>
+          <circle cx="52" cy="142" r="3" fill="url(#gGold)"/>
         </svg>
         <div class="plate">
           <span class="eyebrow">GFIELD CLASSIC · 1과정</span>
           <h1>도형 움직이기와<br />마방진</h1>
-          <span class="sub2">사고력 수학의 첫걸음 · 골든벨 시리즈</span>
+          <span class="sub2">사고력 수학 · 골든벨 시리즈</span>
         </div>
-        <span class="badge">1</span>
-        <span class="pub2"><span>지필드 영재교육</span><span>GOLDEN BELL SERIES</span></span>
+        <span class="lv">1</span>
+        <span class="pub2"><span>지필드 영재교육</span><span>GOLDEN BELL</span></span>
       </article>
-      <p><b>A안 · 종이 오리기 풍경</b> — 초록 언덕 위에 마방진 패·쌓기나무·열기구. 권마다 언덕 색과 교구를 바꿉니다.</p>
+      <p><b>A안 · 흰 바탕 + 광택 도형</b> — 게임의 광택 3D와 같은 결. 권마다 도형 조합과 색만 바뀝니다.</p>
     </div>
 
     <div class="cover-wrap">
-      <article class="cover b2" aria-label="표지 B안 — 쌓기나무 입체">
+      <article class="cover m2" aria-label="표지 B안 — 딥 그린과 금 라인">
         <svg class="art" viewBox="0 0 210 297" aria-hidden="true">
-          <defs>
-            <filter id="bsoft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="1.8" flood-color="#6a5125" flood-opacity=".3"/></filter>
-          </defs>
-          <!-- 바탕 등거리 모눈 -->
-          <g stroke="#eadfc6" stroke-width=".5">
-            <path d="M-20 80 L230 220M-20 120 L230 260M-20 160 L230 300M-20 40 L230 180M-20 0 L230 140"/>
-            <path d="M230 80 L-20 220M230 120 L-20 260M230 160 L-20 300M230 40 L-20 180M230 0 L-20 140"/>
+          <!-- 오버사이즈 마방진 라인(여백 밖으로 흘림) -->
+          <g stroke="#d9a62e" stroke-width="1" fill="none" opacity=".9">
+            <path d="M44 128H250M44 188H250M44 248H250"/>
+            <path d="M74 98V320M134 98V320M194 98V320"/>
           </g>
-          <!-- 큰 권 번호 (그림 뒤) -->
-          <text x="172" y="268" font-family="Georgia, serif" font-size="110" font-weight="700" fill="none" stroke="#c05a33" stroke-width="1.1" text-anchor="middle" opacity=".85">1</text>
-          <!-- 쌓기나무 계단탑: 단 셋 -->
-          <g filter="url(#bsoft)" transform="translate(42 150)">
-            <!-- 바닥판 -->
-            <path d="M-6 76 l62-36 62 36-62 36Z" fill="#e3d4b2"/>
-            <path d="M-6 76v7l62 36v-7Z" fill="#cdbb93"/><path d="M118 76v7l-62 36v-7Z" fill="#bda87e"/>
-            <!-- 뒤 기둥(3층) -->
-            <g transform="translate(34 -20)">
-              <path d="M0 40v48l22 12.8V52.8Z" fill="#ffd45c"/><path d="M44 40v48l-22 12.8V52.8Z" fill="#f0b23a"/><path d="M0 40l22-12.8L44 40 22 52.8Z" fill="#ffeaa6"/>
-              <path d="M0 40l22-12.8L44 40M0 40v48l22 12.8V52.8L0 40m44 0v48l-22 12.8M22 52.8V100" fill="none" stroke="#a8741a" stroke-width=".8"/>
-              <path d="M0 56l22 12.8L44 56M0 72l22 12.8L44 72" fill="none" stroke="#a8741a" stroke-width=".7" opacity=".8"/>
-            </g>
-            <!-- 가운데 기둥(2층) -->
-            <g transform="translate(62 12)">
-              <path d="M0 28v32l22 12.8V40.8Z" fill="#ffd45c"/><path d="M44 28v32l-22 12.8V40.8Z" fill="#f0b23a"/><path d="M0 28l22-12.8L44 28 22 40.8Z" fill="#ffeaa6"/>
-              <path d="M0 28l22-12.8L44 28M0 28v32l22 12.8V40.8L0 28m44 0v32l-22 12.8M22 40.8V72.8" fill="none" stroke="#a8741a" stroke-width=".8"/>
-              <path d="M0 44l22 12.8L44 44" fill="none" stroke="#a8741a" stroke-width=".7" opacity=".8"/>
-            </g>
-            <!-- 앞 기둥(1층) -->
-            <g transform="translate(6 36)">
-              <path d="M0 16v16l22 12.8V28.8Z" fill="#ffd45c"/><path d="M44 16v16l-22 12.8V28.8Z" fill="#f0b23a"/><path d="M0 16l22-12.8L44 16 22 28.8Z" fill="#ffeaa6"/>
-              <path d="M0 16l22-12.8L44 16 22 28.8 0 16v16l22 12.8V28.8m22-12.8v16l-22 12.8" fill="none" stroke="#a8741a" stroke-width=".8"/>
-            </g>
-            <!-- 꼭대기 깃발 -->
-            <g transform="translate(56 -8)">
-              <path d="M0 15V-16" stroke="#2a241c" stroke-width="1.2"/>
-              <path d="M0 -16l16 4.5L0 -7Z" fill="#2f6b4a"/>
-            </g>
+          <!-- 교점 금 점 -->
+          <g fill="#d9a62e">
+            <circle cx="74" cy="128" r="2.6"/><circle cx="134" cy="188" r="2.6"/><circle cx="194" cy="248" r="2.6"/>
           </g>
-          <!-- 떠 있는 작은 조각들 -->
-          <g filter="url(#bsoft)">
-            <circle cx="36" cy="128" r="7" fill="#c05a33"/>
-            <path d="M166 120l8 14h-16Z" fill="#2f6b4a"/>
-            <rect x="26" y="252" width="12" height="12" rx="2" fill="#d9a62e" transform="rotate(-12 32 258)"/>
-          </g>
-        </svg>
-        <div class="plate">
-          <span class="eyebrow">GFIELD CLASSIC · 1과정</span>
-          <h1>도형 움직이기와 마방진</h1>
-        </div>
-        <span class="vol-chip">제 1 권</span>
-        <span class="pub2"><span>지필드 영재교육</span><span>GOLDEN BELL SERIES</span></span>
-      </article>
-      <p><b>B안 · 쌓기나무 탑</b> — 교구 색 그대로의 쌓기나무 계단과 윤곽선 권 번호. 권마다 탑 모양과 번호가 바뀝니다.</p>
-    </div>
-
-    <div class="cover-wrap">
-      <article class="cover c2" aria-label="표지 C안 — 전면 무늬와 패">
-        <svg class="art" viewBox="0 0 210 297" aria-hidden="true">
-          <defs>
-            <pattern id="motif" width="42" height="42" patternUnits="userSpaceOnUse" patternTransform="rotate(-8)">
-              <!-- 수학 모티프 4종: 시계·별·거울 쌍·주사위 눈 -->
-              <g fill="none" stroke="#fbf5e8" stroke-width="1.1" opacity=".5">
-                <circle cx="10" cy="10" r="6"/><path d="M10 6v4l3 2"/>
-                <path d="M31 4l1.8 3.8 4.2.6-3 2.9.7 4.2-3.7-2-3.7 2 .7-4.2-3-2.9 4.2-.6Z"/>
-                <path d="M6 28h6v6H6Zm9 0h-1" /><path d="M15 25v12" stroke-dasharray="2 1.6"/><path d="M18 28h6v6h-6Z" opacity=".6"/>
-                <g fill="#fbf5e8" stroke="none"><circle cx="33" cy="30" r="1.3"/><circle cx="38" cy="30" r="1.3"/><circle cx="33" cy="35" r="1.3"/><circle cx="38" cy="35" r="1.3"/><circle cx="35.5" cy="32.5" r="1.3"/></g>
-              </g>
-            </pattern>
-          </defs>
-          <rect width="210" height="297" fill="#2f6b4a"/>
-          <rect width="210" height="297" fill="url(#motif)"/>
-          <!-- 위·아래 금줄 -->
-          <rect x="8" y="8" width="194" height="281" fill="none" stroke="#d9a62e" stroke-width="1"/>
-          <rect x="10.5" y="10.5" width="189" height="276" fill="none" stroke="#d9a62e" stroke-width=".4"/>
+          <!-- 한 칸만 채움: 숫자 자리 -->
+          <rect x="74" y="128" width="60" height="60" fill="#d9a62e" opacity=".14"/>
+          <text x="104" y="172" font-family="'FC Sans',sans-serif" font-size="34" font-weight="300" fill="#f7f2e7" text-anchor="middle">15</text>
+          <!-- 큰 권 번호 -->
+          <text x="172" y="268" font-family="'FC Sans',sans-serif" font-size="88" font-weight="200" fill="#d9a62e" fill-opacity=".9" text-anchor="middle">1</text>
         </svg>
         <div class="plate">
           <span class="eyebrow">GFIELD CLASSIC · 1과정</span>
           <h1>도형 움직이기와<br />마방진</h1>
-          <span class="sub2">사고력 수학의 첫걸음</span>
-          <span class="vol-line">제 1 권</span>
+          <span class="sub2">사고력 수학 · 골든벨 시리즈</span>
         </div>
-        <span class="pub2"><span>지필드 영재교육</span><span>GOLDEN BELL SERIES</span></span>
+        <span class="pub2"><span>지필드 영재교육</span><span>GOLDEN BELL</span></span>
       </article>
-      <p><b>C안 · 전면 무늬</b> — 시계·별·거울·주사위 눈 무늬를 깐 단색 바탕 + 가운데 패. 권마다 바탕색이 바뀝니다(고전적인 전집 느낌).</p>
+      <p><b>B안 · 딥 그린 + 금 라인</b> — 단원의 핵심(마방진)을 가는 선 하나로. 가장 차분하고 고급스러운 안.</p>
+    </div>
+
+    <div class="cover-wrap">
+      <article class="cover m3" aria-label="표지 C안 — 기하 포스터">
+        <svg class="art" viewBox="0 0 210 297" aria-hidden="true">
+          <!-- 아래 절반: 정렬된 기하 구성(포스터) -->
+          <g>
+            <rect x="0" y="170" width="210" height="127" fill="#211c15"/>
+            <!-- 2×3 모듈 격자, 칸마다 도형 하나 -->
+            <circle cx="52.5" cy="201" r="22" fill="#e8734a"/>
+            <path d="M83 223 h53 v-44Z" fill="#2f8f5b"/>
+            <rect x="146" y="181" width="40" height="40" fill="#d9a62e"/>
+            <path d="M30.5 240 a22 22 0 0 1 44 0Z" fill="#d9a62e"/>
+            <rect x="85" y="240" width="49" height="33" fill="#e8734a"/>
+            <circle cx="166" cy="256" r="22" fill="#f5efe2"/>
+            <circle cx="166" cy="256" r="9" fill="#2f8f5b"/>
+          </g>
+          <!-- 위 여백의 가는 기준선 -->
+          <path d="M12 142h186" stroke="#d8ccb4" stroke-width=".5"/>
+        </svg>
+        <div class="plate">
+          <span class="eyebrow">GFIELD CLASSIC · 1과정</span>
+          <h1>도형 움직이기와<br />마방진</h1>
+          <span class="sub2">사고력 수학 · 골든벨 시리즈</span>
+        </div>
+        <span class="num">1</span>
+        <span class="pub2" style="color:#8a7e6b"><span style="position:relative;z-index:3;color:#a89c87">지필드 영재교육</span><span style="position:relative;z-index:3;color:#a89c87">GOLDEN BELL</span></span>
+      </article>
+      <p><b>C안 · 기하 포스터</b> — 아래 절반을 정렬된 도형 구성으로. 권마다 구성과 색이 바뀝니다.</p>
     </div>
   </div>
 </body>

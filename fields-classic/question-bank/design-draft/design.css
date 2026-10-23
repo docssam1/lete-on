@@ -136,7 +136,7 @@ button { cursor: pointer; }
 /* ════════════════ 2. A4 시험지 ════════════════ */
 .sheet-stage { display: grid; justify-items: center; gap: 18px; padding: 26px 14px 60px; }
 .sheet-note { max-width: 210mm; width: 100%; color: var(--muted); font-size: 12px; }
-.sheet { width: 210mm; min-height: 297mm; padding: 16mm 15mm 14mm; background: #fff; color: #191511; box-shadow: 0 2px 4px rgba(70, 55, 25, .12), 0 14px 34px rgba(70, 55, 25, .16); font-family: var(--serif); font-size: 10.5pt; line-height: 1.62; }
+.sheet { display: flex; flex-direction: column; width: 210mm; min-height: 297mm; padding: 16mm 15mm 12mm; background: #fff; color: #191511; box-shadow: 0 2px 4px rgba(70, 55, 25, .12), 0 14px 34px rgba(70, 55, 25, .16); font-family: var(--serif); font-size: 10.5pt; line-height: 1.62; }
 .sheet * { letter-spacing: 0; }
 
 .sheet-head { display: grid; grid-template-columns: 1fr auto; gap: 4mm 8mm; align-items: end; padding-bottom: 3.5mm; border-bottom: 2.6px double #191511; }
@@ -156,7 +156,10 @@ button { cursor: pointer; }
 
 .sheet-rule { margin: 3mm 0 0; padding: 1.6mm 0; border-bottom: 1px solid #c8bfae; font-family: var(--sans); font-size: 7.8pt; color: #6c6353; }
 
-.sheet-body { column-count: 1; padding-top: 2mm; }
+/* 세로 채움: 첫 문항은 머리말 바로 아래, 남는 높이는 문항 사이 간격으로 고르게 나눠 쪽을 가득 채운다. */
+.sheet-body { flex: 1; column-count: 1; padding-top: 0; }
+.sheet-body:not(.cols-2) { display: flex; flex-direction: column; justify-content: space-between; column-count: auto; }
+.sheet-body:not(.cols-2) > :first-child { padding-top: 2.5mm; }
 /* 다단: 문항이 짧은 시험지·연습지는 2단. 같은 문항 부품을 그대로 쓰고 단 수만 바꾼다. */
 .sheet-body.cols-2 { column-count: 2; column-gap: 7mm; column-rule: .5px solid #e6e0d2; }
 .sheet-body.cols-2 .q-item:first-child { padding-top: 1mm; }
@@ -199,7 +202,11 @@ button { cursor: pointer; }
 .answer-line { display: flex; justify-content: flex-end; align-items: baseline; gap: 2.5mm; margin-top: 1.6mm; font-family: var(--sans); font-size: 8.4pt; color: #40392e; }
 .answer-line i { display: inline-block; width: 26mm; border-bottom: 1px solid #40392e; }
 
-.sheet-foot { display: flex; justify-content: space-between; margin-top: 7mm; padding-top: 2mm; border-top: 1px solid #c8bfae; font-family: var(--sans); font-size: 7.4pt; color: #938a77; }
+.sheet-foot { display: flex; justify-content: space-between; margin-top: 5mm; padding-top: 2mm; border-top: 1px solid #c8bfae; font-family: var(--sans); font-size: 7.4pt; color: #938a77; }
+/* 쪽 번호는 선택(인쇄 설정 체크박스 자리). 표지에는 애초에 쪽 번호가 없다. */
+.no-pg .sheet-foot .pg { visibility: hidden; }
+.pg-toggle { display: inline-flex; align-items: center; gap: 6px; margin-left: 14px; font-weight: 600; color: var(--ink); }
+.pg-toggle input { width: 15px; height: 15px; accent-color: var(--accent); }
 
 /* ════════════════ 3. 표지 3안 ════════════════ */
 .covers { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; padding: 30px 16px 60px; }

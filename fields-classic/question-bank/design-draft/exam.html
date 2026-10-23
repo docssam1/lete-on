@@ -10,7 +10,7 @@
   <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html">① 문제은행 화면</a><a href="./exam.html" aria-current="page">② A4 시험지</a><a href="./covers.html">③ 교재 표지 3안</a><span style="margin-left:auto;color:var(--muted)">Ctrl+P로 인쇄하면 여백 없이 A4 그대로 나옵니다</span></nav>
 
   <div class="sheet-stage">
-    <p class="sheet-note">본문은 명조(세리프), 번호·배점·안내는 Pretendard. 흑백 프린터 기준이라 색이 없고, 문항마다 배점·풀이 칸·답 쓰는 줄이 있습니다. 머리말의 배점표는 본문 배점에서 자동으로 채우는 자리입니다.</p>
+    <p class="sheet-note"><label class="pg-toggle"><input id="pgToggle" type="checkbox" checked />쪽 번호</label> — 실제 인쇄 설정에 이 체크박스가 들어갑니다(표지는 항상 번호 없음). 본문은 명조(세리프), 번호·배점·안내는 Pretendard. 흑백 프린터 기준이라 색이 없고, 문항마다 배점·풀이 칸·답 쓰는 줄이 있습니다. 머리말의 배점표는 본문 배점에서 자동으로 채우는 자리입니다.</p>
     <article class="sheet" lang="ko">
       <header class="sheet-head">
         <div>
@@ -61,7 +61,7 @@
         </section>
       </div>
 
-      <footer class="sheet-foot"><span>지필드 클래식 문제은행</span><span>1 / 1</span></footer>
+      <footer class="sheet-foot"><span>지필드 클래식 문제은행</span><span class="pg">1 / 1</span></footer>
     </article>
 
     <p class="sheet-note"><b>같은 체계의 선택지</b> — 문항이 짧으면 2단, 길면 1단. 아래는 같은 문항 부품을 2단으로 흘린 연습지와, 개념·예제가 얹힌 교재형입니다. 인쇄 설정에서 「1단 / 2단」 「시험지 / 교재」만 고르면 됩니다.</p>
@@ -98,7 +98,7 @@
           <div class="workspace"></div>
           <p class="answer-line">답 <i></i></p></section>
       </div>
-      <footer class="sheet-foot"><span>지필드 클래식 문제은행</span><span>1 / 1</span></footer>
+      <footer class="sheet-foot"><span>지필드 클래식 문제은행</span><span class="pg">1 / 1</span></footer>
     </article>
 
     <article class="sheet" lang="ko" aria-label="교재형 시안">
@@ -133,8 +133,9 @@
         </section>
         <p class="lesson-foot-note">집에서 한 번 더 — 숟가락에 얼굴을 비춰 보고, 거울과 어떻게 다른지 이야기해 보세요.</p>
       </div>
-      <footer class="sheet-foot"><span>지필드 클래식 · 1과정 1권</span><span>12</span></footer>
+      <footer class="sheet-foot"><span>지필드 클래식 · 1과정 1권</span><span class="pg">12</span></footer>
     </article>
   </div>
+<script>document.getElementById("pgToggle").addEventListener("change",(e)=>document.body.classList.toggle("no-pg",!e.target.checked));</script>
 </body>
 </html>
