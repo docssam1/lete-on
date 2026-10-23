@@ -1346,11 +1346,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
           }))
         },
         {
-          name: "어림하기 · Mission 1–3 원문 연결",
+          name: "어림하기 · Mission 1–6 원문 연결",
           types: [
             ["1", "각 자리까지 올림하여 표 완성하기", "source52RoundingMissionOne", true],
             ["2", "두 어림값의 차 구하기", "source52RoundingMissionTwo", false],
-            ["3", "수 카드로 목표에 가장 가까운 수 만들기", "source52RoundingMissionThree", false]
+            ["3", "수 카드로 목표에 가장 가까운 수 만들기", "source52RoundingMissionThree", false],
+            ["4", "버림과 반올림의 결과가 같은 숫자 모두 찾기", "source52RoundingMissionFour", false],
+            ["5", "세 가지 어림 결과가 같은 수의 개수", "source52RoundingMissionFive", false],
+            ["6", "두 가지 어림 조건을 만족하는 수의 개수", "source52RoundingMissionSix", false]
           ].map(([number, name, generatorKey, answerVisualRequired]) => ({
             id: `5-2-u1-e2-mission-${number}`,
             name,

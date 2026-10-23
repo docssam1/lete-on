@@ -20,7 +20,7 @@ const expectedKeys = ["source52RangeExploration", "source52RangeMaxStart", "sour
 const expectedIds = expected.map(([suffix]) => `5-2-u1-e1-${suffix}`);
 const missionIds = [1, 2, 3, 4, 5, 6].map(number => `5-2-u1-e1-mission-${number}`);
 const roundingIds = ["exploration", "example-2-1", "example-2-2", "example-2-3", "example-2-4"].map(suffix => `5-2-u1-e2-${suffix}`);
-const roundingMissionIds = [1, 2, 3].map(number => `5-2-u1-e2-mission-${number}`);
+const roundingMissionIds = [1, 2, 3, 4, 5, 6].map(number => `5-2-u1-e2-mission-${number}`);
 const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
@@ -41,11 +41,11 @@ function load(curriculumSource) {
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2024, "Whole-bank classification count");
+  assert.equal(types.length, 2027, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 143, "Preserve 124 legacy records plus nineteen source records");
+  assert.equal(semesterTypes.length, 146, "Preserve 124 legacy records plus twenty-two source records");
   const restored = plain(semester);
   restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => allNewSourceIds.includes(type.sourceItemId)));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
@@ -126,8 +126,8 @@ function validate(curriculum, api, baselineSemester) {
     }
   }
   const roundingMissions = unit.subunits[6].types;
-  assert.deepEqual(roundingMissions.map(type => type.id), roundingMissionIds, "Exact E2 Mission 1–3 IDs");
-  const roundingMissionKeys = ["source52RoundingMissionOne", "source52RoundingMissionTwo", "source52RoundingMissionThree"];
+  assert.deepEqual(roundingMissions.map(type => type.id), roundingMissionIds, "Exact E2 Mission 1–6 IDs");
+  const roundingMissionKeys = ["source52RoundingMissionOne", "source52RoundingMissionTwo", "source52RoundingMissionThree", "source52RoundingMissionFour", "source52RoundingMissionFive", "source52RoundingMissionSix"];
   roundingMissions.forEach((type, index) => {
     assert.equal(type.sourceItemId, roundingMissionIds[index]);
     assert.equal(type.sourcePdfPage, 5);
@@ -182,4 +182,4 @@ if (output) {
   fs.mkdirSync(output, { recursive: true });
   fs.writeFileSync(path.join(output, "classification-audit.json"), JSON.stringify(finalResult, null, 2) + "\n");
 }
-console.log(`5-2 source classification passed: ${result.classified} original-range records, ${result.roundingNewlyAvailable} new rounding generators, ${result.roundingSourceItems - result.roundingNewlyAvailable} ambiguous source record locked, ${result.legacyPreserved} unchanged legacy records, ${negatives.length} rejected negative controls.`);
+  console.log(`5-2 source classification passed: ${result.classified} original-range records, ${result.roundingNewlyAvailable} unambiguous page-6 rounding records available, ${result.roundingSourceItems - result.roundingNewlyAvailable} ambiguous page-6 record locked, ${result.e2MissionItems} page-7 Missions available, ${result.legacyPreserved} unchanged legacy records, ${negatives.length} rejected negative controls.`);
