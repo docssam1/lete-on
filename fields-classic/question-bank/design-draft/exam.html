@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>디자인 시안 — A4 시험지</title>
+  <link rel="stylesheet" href="./design.css?v=20261023a" />
+</head>
+<body>
+  <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html">① 문제은행 화면</a><a href="./exam.html" aria-current="page">② A4 시험지</a><a href="./covers.html">③ 교재 표지 3안</a><span style="margin-left:auto;color:var(--muted)">Ctrl+P로 인쇄하면 여백 없이 A4 그대로 나옵니다</span></nav>
+
+  <div class="sheet-stage">
+    <p class="sheet-note">본문은 명조(세리프), 번호·배점·안내는 Pretendard. 흑백 프린터 기준이라 색이 없고, 문항마다 배점·풀이 칸·답 쓰는 줄이 있습니다. 머리말의 배점표는 본문 배점에서 자동으로 채우는 자리입니다.</p>
+    <article class="sheet" lang="ko">
+      <header class="sheet-head">
+        <div>
+          <p class="sheet-course">지필드 클래식 · 1과정 1권</p>
+          <h1 class="sheet-title">단원 평가 2회 <small>거울과 뒤집기 · 마방진</small></h1>
+        </div>
+        <table class="score-table" aria-label="배점표">
+          <tr><th scope="row">문항</th><td>1</td><td>2</td><td>3</td><td>4</td><td>합계</td></tr>
+          <tr><th scope="row">점수</th><td></td><td></td><td></td><td></td><td class="total">/ 20</td></tr>
+        </table>
+        <div class="sheet-info">
+          <span class="sheet-fields"><span>이름 <i></i></span><span>반 <i></i></span><span>날짜 <i></i></span></span>
+          <span>시험 시간 30분 · 4문항</span>
+        </div>
+      </header>
+      <p class="sheet-rule">풀이 과정을 칸 안에 쓰고, 답은 오른쪽 답 줄에 또박또박 씁니다.</p>
+
+      <div class="sheet-body">
+        <section class="q-item">
+          <div class="q-head"><span class="q-num">1.</span><span class="q-pts">[4점]</span></div>
+          <p class="q-stem">색칠한 모양을 가운데 거울선에 비추면 오른쪽에는 어떤 모양이 생기는지 그리세요.</p>
+          <div class="q-fig mirror-pair" aria-hidden="true">
+            <div class="mgrid"><span class="fill"></span><span class="fill"></span><span></span><span></span><span></span><span class="fill"></span><span></span><span></span><span class="fill"></span><span class="fill"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <span class="axis"></span>
+            <div class="mgrid"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+        </section>
+
+        <section class="q-item">
+          <div class="q-head"><span class="q-num">2.</span><span class="q-pts">[4점]</span></div>
+          <p class="q-stem">거울에 비친 시계가 3시를 가리키는 것처럼 보입니다. 실제 시각은 몇 시인지 쓰세요.</p>
+          <div class="workspace" aria-hidden="true"></div>
+          <p class="answer-line">답 <i></i></p>
+        </section>
+
+        <section class="q-item">
+          <div class="q-head"><span class="q-num">3.</span><span class="q-pts">[6점]</span></div>
+          <p class="q-stem">가로, 세로, 대각선의 합이 모두 같도록 빈칸에 알맞은 수를 써넣으세요.</p>
+          <div class="q-fig magic3" aria-hidden="true"><span>8</span><span class="blank"></span><span>6</span><span class="blank"></span><span>5</span><span class="blank"></span><span>4</span><span class="blank"></span><span>2</span></div>
+          <div class="workspace" aria-hidden="true"></div>
+        </section>
+
+        <section class="q-item">
+          <div class="q-head"><span class="q-num">4.</span><span class="q-pts">[6점]</span></div>
+          <p class="q-stem">구슬이 ●○○●○○… 과 같이 반복하여 놓여 있습니다. 20번째 구슬은 어떤 색인지 풀이 과정을 쓰고 답을 구하세요.</p>
+          <div class="workspace tall" aria-hidden="true"></div>
+          <p class="answer-line">답 <i></i></p>
+        </section>
+      </div>
+
+      <footer class="sheet-foot"><span>지필드 클래식 문제은행</span><span>1 / 1</span></footer>
+    </article>
+  </div>
+</body>
+</html>

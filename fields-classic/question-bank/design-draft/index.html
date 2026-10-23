@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>디자인 시안 — 문제은행 화면</title>
+  <link rel="stylesheet" href="./design.css?v=20261023a" />
+</head>
+<body>
+  <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html" aria-current="page">① 문제은행 화면</a><a href="./exam.html">② A4 시험지</a><a href="./covers.html">③ 교재 표지 3안</a><span style="margin-left:auto;color:var(--muted)">누르는 동작은 아직 안 붙어 있어요 — 생김새만 보는 시안입니다</span></nav>
+
+  <div class="bank">
+    <header class="bank-header">
+      <div class="bank-brand"><strong>지필드 클래식 문제은행</strong><span>교사용 편집 콘솔</span></div>
+      <label class="bank-search">🔍<input type="search" placeholder="문항·단원·유형 검색  (예: 마방진, 거울)" /></label>
+      <span class="spacer"></span>
+      <button class="btn ghost" type="button">기출 가져오기</button>
+      <button class="btn" type="button">인쇄 기록</button>
+      <button class="btn primary" type="button">시험지 만들기</button>
+    </header>
+
+    <div class="bank-body">
+      <aside class="bank-filter" aria-label="단원 필터">
+        <p class="filter-label">과정 · 권</p>
+        <select aria-label="과정과 권"><option>1과정 · 1권 — 도형 움직이기와 마방진</option><option>1과정 · 2권</option></select>
+        <p class="filter-label">단원</p>
+        <ul class="unit-tree">
+          <li><button type="button">전체 보기 <span class="count">148</span></button></li>
+          <li><button type="button">1. 시계와 방향 <span class="count">11</span></button></li>
+          <li><button type="button" aria-current="true">2. 거울과 뒤집기 <span class="count">18</span></button></li>
+          <li><button type="button">3. 접기와 자르기 <span class="count">52</span></button></li>
+          <li><button type="button">4. 합을 같게 놓기 <span class="count">36</span></button></li>
+          <li><button type="button">5. 순서와 나누기 <span class="count">31</span></button></li>
+        </ul>
+        <p class="filter-label">난이도</p>
+        <div class="filter-checks">
+          <label><input type="checkbox" checked />기본</label>
+          <label><input type="checkbox" checked />심화</label>
+          <label><input type="checkbox" />최상위</label>
+        </div>
+        <p class="filter-label">출처</p>
+        <div class="filter-checks">
+          <label><input type="checkbox" checked />교재 원문</label>
+          <label><input type="checkbox" checked />유사 문항</label>
+          <label><input type="checkbox" />진단평가</label>
+        </div>
+      </aside>
+
+      <main class="bank-list" aria-label="문항 목록">
+        <div class="list-head"><h1>2. 거울과 뒤집기</h1><span class="meta">18문항 · 원문 6 · 유사 12</span><span class="sort">정렬: 교재 순 ▾</span></div>
+        <ul class="q-rows">
+          <li class="q-row"><input type="checkbox" aria-label="담기" /><span class="q-no">2-01</span>
+            <div class="q-main"><span class="stem">거울에 비친 모양으로 알맞은 것을 고르세요.</span><span class="tags"><span class="src">원문 · 4쪽</span><span>객관식</span><span>그림 2</span></span></div>
+            <span class="q-side"><span class="diff" aria-label="난이도 1"><i class="on"></i><i></i><i></i></span><button class="add" type="button">담기</button></span></li>
+          <li class="q-row selected"><input type="checkbox" checked aria-label="담기" /><span class="q-no">2-02</span>
+            <div class="q-main"><span class="stem">색칠한 모양을 오른쪽 거울에 비추면 어떤 모양이 되는지 그리세요.</span><span class="tags"><span class="src">원문 · 4쪽</span><span>그리기</span><span>그림 1</span></span></div>
+            <span class="q-side"><span class="diff" aria-label="난이도 2"><i class="on"></i><i class="on"></i><i></i></span><button class="add" type="button" disabled>담음</button></span></li>
+          <li class="q-row"><input type="checkbox" aria-label="담기" /><span class="q-no">2-03</span>
+            <div class="q-main"><span class="stem">거울에 비친 시계가 가리키는 실제 시각을 쓰세요.</span><span class="tags"><span class="src">원문 · 5쪽</span><span>단답</span></span></div>
+            <span class="q-side"><span class="diff" aria-label="난이도 2"><i class="on"></i><i class="on"></i><i></i></span><button class="add" type="button">담기</button></span></li>
+          <li class="q-row"><input type="checkbox" aria-label="담기" /><span class="q-no">2-04</span>
+            <div class="q-main"><span class="stem">왼쪽 모양을 아래쪽으로 뒤집었을 때의 모양을 고르세요.</span><span class="tags"><span>유사</span><span>객관식</span><span>그림 2</span></span></div>
+            <span class="q-side"><span class="diff" aria-label="난이도 1"><i class="on"></i><i></i><i></i></span><button class="add" type="button">담기</button></span></li>
+          <li class="q-row"><input type="checkbox" aria-label="담기" /><span class="q-no">2-05</span>
+            <div class="q-main"><span class="stem">두 번 뒤집어도 처음과 같은 모양이 되는 글자를 모두 고르세요.</span><span class="tags"><span>유사</span><span>객관식</span></span></div>
+            <span class="q-side"><span class="diff" aria-label="난이도 3"><i class="on"></i><i class="on"></i><i class="on"></i></span><button class="add" type="button">담기</button></span></li>
+          <li class="q-row"><input type="checkbox" aria-label="담기" /><span class="q-no">2-06</span>
+            <div class="q-main"><span class="stem">거울선에서 같은 거리에 있는 칸을 찾아 빈칸을 채우세요.</span><span class="tags"><span class="src">원문 · 6쪽</span><span>그리기</span><span>그림 1</span></span></div>
+            <span class="q-side"><span class="diff" aria-label="난이도 2"><i class="on"></i><i class="on"></i><i></i></span><button class="add" type="button">담기</button></span></li>
+          <li class="q-row"><input type="checkbox" aria-label="담기" /><span class="q-no">2-07</span>
+            <div class="q-main"><span class="stem">시계 바늘을 시계 방향으로 반 바퀴 돌렸을 때 가리키는 수를 쓰세요.</span><span class="tags"><span>유사</span><span>단답</span></span></div>
+            <span class="q-side"><span class="diff" aria-label="난이도 1"><i class="on"></i><i></i><i></i></span><button class="add" type="button">담기</button></span></li>
+          <li class="q-row"><input type="checkbox" aria-label="담기" /><span class="q-no">2-08</span>
+            <div class="q-main"><span class="stem">거울에 비친 수 카드를 보고 실제 수를 구해 두 수의 합을 쓰세요.</span><span class="tags"><span>유사</span><span>서술형</span></span></div>
+            <span class="q-side"><span class="diff" aria-label="난이도 3"><i class="on"></i><i class="on"></i><i class="on"></i></span><button class="add" type="button">담기</button></span></li>
+        </ul>
+      </main>
+
+      <aside class="bank-side" aria-label="미리보기와 시험지">
+        <section class="side-panel">
+          <h2>미리보기 <span class="n">2-02</span></h2>
+          <div class="side-body">
+            <article class="preview-card">
+              <div class="p-head"><span><b>원문 · 1권 4쪽</b> · 그리기 · 심화</span><span>최근 출제 3회</span></div>
+              <p class="p-stem">색칠한 모양을 오른쪽 거울에 비추면 어떤 모양이 되는지 그리세요.</p>
+              <div class="preview-grid" aria-hidden="true"><span class="blank"></span><span>7</span><span></span><span>2</span><span class="blank"></span><span>6</span><span></span><span>9</span><span class="blank"></span></div>
+              <div class="p-score"><span>배점</span><span class="stepper"><button type="button">−</button><span>4점</span><button type="button">＋</button></span><span style="margin-left:10px">풀이 공간</span><span class="stepper"><button type="button">−</button><span>보통</span><button type="button">＋</button></span></div>
+            </article>
+          </div>
+        </section>
+        <section class="side-panel">
+          <h2>시험지에 담은 문항 <span class="n">4</span></h2>
+          <div class="side-body">
+            <ol class="basket">
+              <li><span class="grip">⠿</span><span class="no">1</span><span class="t">거울에 비친 모양으로 알맞은 것…</span><span class="pt">4점</span><button class="x" type="button" aria-label="빼기">✕</button></li>
+              <li><span class="grip">⠿</span><span class="no">2</span><span class="t">색칠한 모양을 오른쪽 거울에…</span><span class="pt">4점</span><button class="x" type="button" aria-label="빼기">✕</button></li>
+              <li><span class="grip">⠿</span><span class="no">3</span><span class="t">가로·세로·대각선 합이 같은 마방진…</span><span class="pt">6점</span><button class="x" type="button" aria-label="빼기">✕</button></li>
+              <li><span class="grip">⠿</span><span class="no">4</span><span class="t">반복되는 한 마디로 20번째 구슬…</span><span class="pt">6점</span><button class="x" type="button" aria-label="빼기">✕</button></li>
+            </ol>
+            <div class="basket-foot"><span>합계 <b>20점</b> · 예상 1쪽</span><a class="btn primary" href="./exam.html" style="text-decoration:none">A4 미리보기</a></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
