@@ -29,14 +29,14 @@ let cases = 0, assignedEnvelopes = 0, partialStarts = 0;
 // Standard is one factual baseline from the current source position. A saved
 // custom cadence/speed does not silently turn that baseline into acceleration.
 const baseline = standard(courses, settings, opts);
-for(const [key, weeks] of [['C31', 20], ['C34', 40], ['C37', 60], ['C48', 72], ['C57', 84], ['C69', 96]]){
+for(const [key, weeks] of [['C31', 10], ['C34', 20], ['C37', 30], ['C48', 42], ['C57', 54], ['C69', 66]]){
   assert.equal(weekOf(find(baseline, key)), weeks, key + ': explicit cumulative standard duration'); cases++;
 }
-for(const [from, end, weeks] of [['C29', 'C31', 20], ['C32', 'C34', 20], ['C35', 'C37', 20],
+for(const [from, end, weeks] of [['C29', 'C31', 10], ['C32', 'C34', 10], ['C35', 'C37', 10],
   ['C38', 'C48', 12], ['C49', 'C57', 12], ['C58', 'C69', 12]]){
   const standardPlan = standard(courses, {...settings, courseKey:from}, opts);
   const direct = project(courses, {...settings, courseKey:from, speed:1, cadence:'w1', pace:'p2'}, {...opts, standard:true});
-  assert.equal(weekOf(find(standardPlan, end)), weeks, 'one grade is twenty weeks; one high subject is twelve weeks');
+  assert.equal(weekOf(find(standardPlan, end)), weeks, 'one middle arithmetic scope is ten weeks; one high subject is twelve weeks');
   assert.deepEqual(standardPlan, direct, 'the public standard API and explicit standard projection agree');
   for(const speed of [.7, .85, 1, 1.25, 1.5]) for(const cadence of ['w1', 'w2']){
     assert.deepEqual(standard(courses, {...settings, courseKey:from, speed, cadence, pace:'p0'}, opts), standardPlan,
@@ -44,14 +44,21 @@ for(const [from, end, weeks] of [['C29', 'C31', 20], ['C32', 'C34', 20], ['C35',
     cases++;
   }
 }
+const highOnly = standard(courses, {...settings, courseKey:'C38'}, opts);
+assert.equal(weekOf(find(highOnly, 'C69')), 36, 'the three high-school subjects remain thirty-six weeks');
+for(const [speed, cadence, weeks] of [[1.25, 'w2', 8], [1, 'w1', 20]]){
+  const p = project(courses, {...settings, courseKey:'C29', speed, cadence}, opts);
+  assert.equal(weekOf(find(p, 'C31')), weeks, cadence === 'w1' ? 'saved once-weekly individual setting is twenty weeks, not the standard' : 'faster option is eight weeks');
+  cases++;
+}
 const speedKey = speed => speed < 1 ? String(speed).slice(1) : String(speed);
 const gradeWeeks = {w1:{'.7':29, '.85':24, '1':20, '1.25':16, '1.5':14},
   w2:{'.7':15, '.85':12, '1':10, '1.25':8, '1.5':7}};
 for(const [courseKey, gradeEnd] of [['C29', 'C31'], ['C32', 'C34'], ['C35', 'C37']]){
-  const remainingBundles = Object.values(courses).filter(course => course.studyPlan && course.order >= +courseKey.slice(1)
-    && course.order <= 69).reduce((n, course) => n + H.length(course), 0);
+  const remainingUnits = Object.values(courses).filter(course => course.studyPlan && course.order >= +courseKey.slice(1)
+    && course.order <= 73).reduce((n, course) => n + H.durationUnits(course), 0);
   for(const cadence of ['w1', 'w2']) for(const speed of [.7, .85, 1, 1.25, 1.5]){
-    const perWeek = cadence === 'w1' ? 1 : 2, completionWeeks = Math.ceil(remainingBundles / (perWeek * speed));
+    const perWeek = cadence === 'w1' ? 1 : 2, completionWeeks = Math.ceil(remainingUnits / (perWeek * speed));
     const assignedCourseEnd = {}, seenSources = [];
     let bridges = 0;
     for(let week = 0; week < completionWeeks; week++) for(const k of [1, 2]){
@@ -66,7 +73,7 @@ for(const [courseKey, gradeEnd] of [['C29', 'C31'], ['C32', 'C34'], ['C35', 'C37
     }
     assert.equal(assignedCourseEnd[gradeEnd], gradeWeeks[cadence][speedKey(speed)], 'explicit five-speed grade duration');
     const expectedSources = Object.entries(courses).filter(([key, course]) => course.studyPlan && +key.slice(1) >= +courseKey.slice(1)
-      && +key.slice(1) <= 69).sort(([a], [b]) => +a.slice(1) - +b.slice(1))
+      && +key.slice(1) <= 73).sort(([a], [b]) => +a.slice(1) - +b.slice(1))
       .flatMap(([key, course]) => course.sessions.map((_, index) => key + '-S' + index));
     assert.deepEqual(seenSources, expectedSources, 'custom speed preserves the entire middle-to-high source sequence');
     assert.equal(bridges, 1, 'middle-three cube factoring occurs once throughout the complete sequence');
@@ -83,7 +90,7 @@ for(const [courseKey, gradeEnd] of [['C29', 'C31'], ['C32', 'C34'], ['C35', 'C37
 }
 // Standard begins at each saved legacy source session, including a position
 // inside a merged bundle, instead of restarting the grade or replacing it with
-// the selected accelerated schedule. Compare actual assignments grade by grade.
+// the selected custom schedule. Compare actual assignments by arithmetic scope.
 for(let from = 29; from <= 37; from++){
   const courseKey = 'C' + from, gradeStart = 29 + Math.floor((from - 29) / 3) * 3, gradeEnd = gradeStart + 2;
   const bandCourses = Object.fromEntries(Object.entries(courses).filter(([key]) => +key.slice(1) >= from && +key.slice(1) <= gradeEnd));
@@ -92,9 +99,9 @@ for(let from = 29; from <= 37; from++){
     const inputSnapshot = JSON.stringify(input);
     const p = standard(courses, input, opts), lastAssigned = {};
     const seenSources = [];
-    for(let week = 0; week < 20; week++){
+    for(let week = 0; week < 10; week++) for(const k of [1, 2]){
       const assigned = H.assignment(bandCourses, {courseKey, startSession:source, startDate,
-        weekKey:weekKey(week), cadence:'w1', speed:1, k:1});
+        weekKey:weekKey(week), cadence:'w2', speed:1, k});
       if(!assigned) continue;
       assigned.lessons.forEach(ref => {
         lastAssigned[ref.courseKey] = week + 1;
@@ -116,5 +123,5 @@ for(const [speed, days] of [[1, [14, 35]], [1.5, [7, 21]]]){
 }
 assert.equal(JSON.stringify(courses), original, 'calendar and baseline preserve all canonical data and study plans');
 assert.equal(JSON.stringify(settings), savedSettings, 'standard baseline does not apply settings');
-console.log('MIDDLE_CALENDAR_OK standardGradeWeeks=20 acceleratedGradeWeeks=10 highSubjectWeeks=12 speeds=5 customCases=' + cases
+console.log('MIDDLE_CALENDAR_OK standardMiddleWeeks=10 fasterMiddleWeeks=8 individualW1Weeks=20 highSubjectWeeks=12 speeds=5 customCases=' + cases
   + ' partialStarts=' + partialStarts + ' assignedEnvelopes=' + assignedEnvelopes + ' ordinaryRoundingPreserved=true sourceMutation=0');

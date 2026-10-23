@@ -49,8 +49,9 @@ for(const expected of bands){
   assert.deepEqual(band.map(course => P.length(course)), [6, 6, 8], expected.tier + ': 20 common bundles');
   assert.equal(band.reduce((n, course) => n + course.sessions.length, 0), expected.source);
   assert.equal(band.reduce((n, course) => n + course.sessions.filter(s => !s.test).length, 0), expected.practice);
-  assert.equal(band.reduce((n, course) => n + P.weeks(course, 'w1'), 0), 20, 'standard: two and a half months per semester / twenty weeks per grade');
-  assert.equal(band.reduce((n, course) => n + P.weeks(course, 'w2'), 0), 10, 'accelerated: two and a half months per grade');
+  assert.equal(band.reduce((n, course) => n + P.weeks(course, 'w1'), 0), 20, 'individual slower setting: once weekly takes twenty weeks');
+  assert.equal(band.reduce((n, course) => n + P.weeks(course, 'w2'), 0), 10, 'standard: the middle arithmetic scope takes ten weeks');
+  assert.equal(Math.ceil(band.reduce((n, course) => n + P.length(course), 0) / (2 * 1.25)), 8, 'the 1.25× option completes the same scope in eight weeks');
   near(band.reduce((n, course) => n + course.studyPlan.lessons.reduce((sum, lesson) => sum + lesson.estimatedMinutes, 0), 0), expected.minutes);
   let drawingQuestions = 0;
   for(const [courseKey, course] of entries){
@@ -113,7 +114,7 @@ for(const expected of bands){
       const opts = {courseKey:entries[0][0], startSession:1, startDate:'2026-10-28', cadence, speed, weekKey:weekAt(week)};
       const first = P.assignment(bandCourses, {...opts, k:1});
       const second = P.assignment(bandCourses, {...opts, k:2});
-      if(cadence === 'w1') assert.equal(second, null, 'standard cadence does not duplicate a second weekly envelope');
+      if(cadence === 'w1') assert.equal(second, null, 'once-weekly cadence does not duplicate a second weekly envelope');
       for(const result of [first, second].filter(Boolean)){
         minutes += result.estimatedMinutes;
         for(const ref of result.lessons){
@@ -156,5 +157,5 @@ const plans = new Map(Object.values(courses).map(course => [course, course.study
 const attached = JSON.stringify(courses); P.attach(courses);
 assert.equal(JSON.stringify(courses), attached, 'reattaching is idempotent');
 Object.values(courses).forEach(course => assert.equal(course.studyPlan, plans.get(course)));
-console.log('MIDDLE_STUDY_PACING_OK grades=3 bundles=20x3 standardWeeks=20x3 acceleratedWeeks=10x3 speeds=5 legacyStarts=' + checkedStarts
+console.log('MIDDLE_STUDY_PACING_OK grades=3 bundles=20x3 standardWeeks=10x3 fasterWeeks=8x3 individualW1Weeks=20x3 speeds=5 legacyStarts=' + checkedStarts
   + ' checks=' + checkedTests + ' bridge=24questions/20minutes calendarEnvelopes=' + checkedEnvelopes + ' canonicalMutation=0');

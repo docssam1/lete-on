@@ -445,7 +445,10 @@ begin
     values(nm_private.sha256_hex(v_token),'automatic','cron',v_name,v_uid,v_k::smallint,
       pg_catalog.jsonb_build_object('courseKey',ls.course_key,'week',v_week,'k',v_k,'amount',ls.amount,
         'cadence',ls.cadence,'sessionIndex',ls.session_index)
-        || case when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
+        || case when ls.course_key ~ '^C7[0-3]$'
+             then pg_catalog.jsonb_build_object('highPlanVersion','20261024-calculus3m',
+               'highStartDate',ls.start_date,'highSpeed',ls.speed)
+             when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
              then pg_catalog.jsonb_build_object('highPlanVersion','20261023-high3m',
                'highStartDate',ls.start_date,'highSpeed',ls.speed)
              when ls.course_key ~ '^C(29|3[0-7])$'
@@ -722,7 +725,10 @@ begin
       values (nm_private.sha256_hex(v_token), v_user, v_sess, v_name, v_uid, v_k::smallint,
               pg_catalog.jsonb_build_object('courseKey', ls.course_key, 'week', v_week, 'k', v_k, 'amount', ls.amount,
                                             'cadence', ls.cadence, 'sessionIndex', ls.session_index)
-                || case when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
+                || case when ls.course_key ~ '^C7[0-3]$'
+                     then pg_catalog.jsonb_build_object('highPlanVersion','20261024-calculus3m',
+                       'highStartDate',ls.start_date,'highSpeed',ls.speed)
+                     when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
                      then pg_catalog.jsonb_build_object('highPlanVersion','20261023-high3m',
                        'highStartDate',ls.start_date,'highSpeed',ls.speed)
                      when ls.course_key ~ '^C(29|3[0-7])$'

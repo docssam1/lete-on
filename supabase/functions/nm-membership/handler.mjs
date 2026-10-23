@@ -21,6 +21,8 @@ const HIGH_PLAN_VERSION = "20261023-high3m";
 const HIGH_PLAN_COURSE = /^C(3[89]|[4-6][0-9])$/;
 const MIDDLE_PLAN_VERSION = "20261023-middle25";
 const MIDDLE_PLAN_COURSE = /^C(29|3[0-7])$/;
+const CALCULUS_PLAN_VERSION = "20261024-calculus3m";
+const CALCULUS_PLAN_COURSE = /^C7[0-3]$/;
 const INVALID = Symbol("invalid");
 const DENY_KEYS = new Set(["phone", "tokenhash", "token_hash", "code_hash", "trigger_key", "service_role", "password", "secret", "authorization", "hash"]);
 const OK_STATUS = new Set([400, 401, 403, 404, 409, 410, 429, 503]);
@@ -206,7 +208,8 @@ export function createHandler(deps) {
         const config = pick(r.data.config, ["courseKey", "week", "k", "amount", "cadence", "sessionIndex"]);
         // A stored snapshot opts in once; old links keep their original single-session seed.
         const planVersion = HIGH_PLAN_COURSE.test(config.courseKey) ? HIGH_PLAN_VERSION
-          : MIDDLE_PLAN_COURSE.test(config.courseKey) ? MIDDLE_PLAN_VERSION : null;
+          : MIDDLE_PLAN_COURSE.test(config.courseKey) ? MIDDLE_PLAN_VERSION
+          : CALCULUS_PLAN_COURSE.test(config.courseKey) ? CALCULUS_PLAN_VERSION : null;
         if (planVersion && r.data.config.highPlanVersion === planVersion) {
           config.highPlanVersion = planVersion;
           if (startDate(r.data.config.highStartDate) !== INVALID) config.highStartDate = r.data.config.highStartDate;

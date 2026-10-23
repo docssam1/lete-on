@@ -5,7 +5,7 @@ const path = require("node:path");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "playwright");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:8918";
 const ids = ["5-2-u1-e4-exploration-rounded-range", "5-2-u1-e4-example-1"];
-const widths = [1280, 375];
+const widths = [1440, 375];
 const evidenceDir = process.env.MAC_CHECK_OUTPUT || "";
 if (evidenceDir) fs.mkdirSync(evidenceDir, { recursive: true });
 const errors = [];
@@ -28,7 +28,7 @@ async function prepare(page, width, id) {
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   let states = 0;
   const observations = [];
-  for (const id of ids) for (const width of widths) for (const difficulty of [-1, 0, 1]) for (const variant of (width === 1280 ? [0, 1, 2] : [0])) {
+  for (const id of ids) for (const width of widths) for (const difficulty of [-1, 0, 1]) for (const variant of (width === 1440 ? [0, 1, 2] : [0])) {
     const context = await browser.newContext({ viewport: { width, height: 1000 }, serviceWorkers: "block" });
     await context.route("**/*", route => new URL(route.request().url()).origin === origin
       ? route.continue() : (blockedRequests++, route.fulfill({ status: 200, contentType: "text/plain", body: "" })));
@@ -65,7 +65,7 @@ async function prepare(page, width, id) {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `Solution overflow ${width}/${id}/${variant}/${difficulty}`);
     observations.push({ sourceItemId: id, width, difficulty, variant, promptLength: problemText.length, solutionLength: solutionText.length });
     if (evidenceDir && variant === 0 && difficulty === 0) await page.screenshot({ path: path.join(evidenceDir, `${id.endsWith("example-1") ? "example41" : "exploration4"}-solution-${width}.png`), fullPage: true });
-    if (variant === 0 && difficulty === 0 && width === 1280 && evidenceDir) {
+    if (variant === 0 && difficulty === 0 && width === 1440 && evidenceDir) {
       for (const mode of ["problem", "solution"]) {
         await page.locator(mode === "problem" ? "#problemTab" : "#solutionTab").click();
         await page.locator("#printMenuButton").click();

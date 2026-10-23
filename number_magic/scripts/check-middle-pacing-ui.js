@@ -51,7 +51,7 @@ const server=http.createServer((req,res)=>{
       for(const grade of [1,2,3]){
         const plan=page.locator('#middlePacing'+grade);
         await plan.locator('summary').click();
-        assert.match(await plan.locator('.nm-mp-summeta').innerText(),/표준\s*20주.*속진\s*10주/);
+        assert.match(await plan.locator('.nm-mp-summeta').innerText(),/기본\s*10주.*속진\s*8주/);
         assert.equal(await plan.locator('.nm-mp-session').count(),expect[grade-1].n);
         const buttons=plan.locator('[data-middle-session]');
         await buttons.first().focus();await page.keyboard.press('Enter');

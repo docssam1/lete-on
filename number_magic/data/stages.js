@@ -158,7 +158,7 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~37 · 주 2회 기준 30주(주 1회 60주) · 표준 학기당 약 2.5개월 · 중3 고등 연결',en:'Courses 29–37 · 30 weeks at two bundles a week (60 at one) · standard: about 2.5 months per semester · Grade 9 high-school bridge',zh:'课程29~37 · 每周2组30周(每周1组60周) · 标准每学期约2.5个月 · 初三高中衔接'}
+    meta:{ko:'과정 29~37 · 주 2회 기준 30주(주 1회 60주) · 학년별 1학기 연산 약 2.5개월 · 중3 고등 연결',en:'Courses 29–37 · 30 weeks at two bundles a week (60 at one) · first-semester arithmetic: about 2.5 months per grade · Grade 9 high-school bridge',zh:'课程29~37 · 每周2组30周(每周1组60周) · 各年级上学期运算约2.5个月 · 初三高中衔接'}
   },
   /* 고등(2026-09-29) — 원장 "공통수학1, 공통수학2도 있어야지 / 대수 / 미적분1".
      한 칸에 네 과목을 묶어 두었던 'high' 단계를 과목마다 한 단계로 나눈다(로드맵 10단계).
@@ -226,7 +226,7 @@ window.NM_STAGES = [
     name:{ko:'미적분Ⅰ — 변화의 정상',en:'Calculus I — Summit of Change',zh:'微积分Ⅰ——变化之巅'},
     band:{ko:'고등 · 미적분Ⅰ',en:'High school · Calculus I',zh:'高中 · 微积分Ⅰ'},
     chapters:['W14-1','W14-2','W14-3','W14-4','LAB-WHYCALC','LAB-CALC1'],
-    tiers:['calculus1'], courses:{from:70,to:73}, weeks:20,
+    tiers:['calculus1'], courses:{from:70,to:73}, weeks:24,
     learn:{
       ko:'함수의 극한과 연속, 미분계수와 도함수·미분법 공식, 접선·평균값 정리·증가와 감소·극값·최대와 최소·방정식과 부등식에의 활용, 다항함수의 적분·정적분의 성질, 넓이와 속도·거리.',
       en:'Limits and continuity, the derivative at a point, the derived function and the rules of differentiation, tangents, the mean value theorem, increase and decrease, extrema, maximum and minimum, applications to equations and inequalities, integrating polynomials and properties of definite integrals, area and speed and distance.',
@@ -240,7 +240,7 @@ window.NM_STAGES = [
       {sym:'lim', tr:{ko:'x가 다가가는 값',en:'the value x approaches',zh:'x趋近的值'}},
       {sym:'f′', tr:{ko:'순간의 기울기',en:'the instantaneous slope',zh:'瞬时斜率'}},
       {sym:'∫', tr:{ko:'잘게 쪼개 다 더해라',en:'cut it fine and add it all up',zh:'切细了全部加起来'}}],
-    meta:{ko:'과정 70~73 · 주 2회 기준 11주(주 1회 20주) · 실험실 2',en:'Courses 70–73 · 11 weeks at two sheets a week (20 at one) · 2 labs',zh:'课程70~73 · 每周2次约11周(每周1次20周) · 2个实验室'}
+    meta:{ko:'과정 70~73 · 주 2회 기준 12주(주 1회 24주) · 20회차 · 실험실 2',en:'Courses 70–73 · 12 weeks at two sheets a week (24 at one) · 20 sessions · 2 labs',zh:'课程70~73 · 每周2次约12周(每周1次24周) · 20课次 · 2个实验室'}
   }
 ];
 

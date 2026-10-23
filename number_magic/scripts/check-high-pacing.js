@@ -100,7 +100,7 @@ for(const [tier, expected] of [['highmath1', 2304], ['highmath2', 2004], ['algeb
     .reduce((n, course) => n + course.studyPlan.lessons.reduce((sum, lesson) => sum + lesson.estimatedMinutes, 0), 0), expected,
     tier + ': estimated subject minutes include every test');
 }
-for(const course of Object.values(courses).filter(course => !['middle1', 'middle2', 'middle3', 'highmath1', 'highmath2', 'algebra'].includes(course.tier))){
+for(const course of Object.values(courses).filter(course => !['middle1', 'middle2', 'middle3', 'highmath1', 'highmath2', 'algebra', 'calculus1'].includes(course.tier))){
   assert.equal(course.studyPlan, undefined, 'other stages are untouched');
   assert.equal(P.length(course), course.sessions.length);
 }
@@ -157,6 +157,10 @@ const orderedHigh = Object.entries(courses).filter(([, course]) => ['highmath1',
 const expectedRefs = orderedHigh.flatMap(([courseKey, course]) => course.studyPlan.lessons.map(lesson => courseKey + '-H' + lesson.index));
 const expectedSources = orderedHigh.flatMap(([key, course]) => course.sessions.map((_, i) => key + '-S' + i));
 const scheduleOpts = {courseKey:'C38', startSession:1, startDate:'2026-10-28', cadence:'w2', speed:1};
+// Keep the original three-subject regression independent of the newly appended
+// Calculus I band. The calculus/cross-band calendar has its own full audit.
+const threeSubjectCourses = Object.fromEntries(Object.entries(courses)
+  .filter(([, course]) => course.tier !== 'calculus1'));
 let calendarCases = 0;
 for(const cadence of ['w1', 'w2']) for(const speed of [0.7, 0.85, 1, 1.25, 1.5]){
   const perWeek = cadence === 'w1' ? 1 : 2;
@@ -166,8 +170,8 @@ for(const cadence of ['w1', 'w2']) for(const speed of [0.7, 0.85, 1, 1.25, 1.5])
   let assignedMinutes = 0;
   for(let week = 0; week < completionWeeks; week++){
     const opts = {...scheduleOpts, cadence, speed, weekKey:keyAt(week)};
-    const first = P.assignment(courses, {...opts, k:1});
-    const second = P.assignment(courses, {...opts, k:2});
+    const first = P.assignment(threeSubjectCourses, {...opts, k:1});
+    const second = P.assignment(threeSubjectCourses, {...opts, k:2});
     const expectedThisWeek = Math.min(72, Math.floor((week + 1) * perWeek * percent / 100))
       - Math.min(72, Math.floor(week * perWeek * percent / 100));
     assert.equal((first?.lessons.length || 0) + (second?.lessons.length || 0), expectedThisWeek, 'calendar allocates the cumulative budget exactly');
@@ -193,31 +197,31 @@ for(const cadence of ['w1', 'w2']) for(const speed of [0.7, 0.85, 1, 1.25, 1.5])
   assert.equal(subjectLastWeek.highmath1, Math.ceil(24 / (perWeek * speed)));
   assert.equal(subjectLastWeek.highmath2, Math.ceil(48 / (perWeek * speed)));
   assert.equal(subjectLastWeek.algebra, completionWeeks);
-  assert.equal(P.assignment(courses, {...scheduleOpts, cadence, speed, weekKey:keyAt(completionWeeks), k:1}), null);
-  assert.equal(P.assignment(courses, {...scheduleOpts, cadence, speed, weekKey:keyAt(completionWeeks), k:2}), null);
+  assert.equal(P.assignment(threeSubjectCourses, {...scheduleOpts, cadence, speed, weekKey:keyAt(completionWeeks), k:1}), null);
+  assert.equal(P.assignment(threeSubjectCourses, {...scheduleOpts, cadence, speed, weekKey:keyAt(completionWeeks), k:2}), null);
   if(cadence === 'w2' && speed === 1) assert.equal(completionWeeks, 36);
   if(cadence === 'w2' && speed === 1.5) assert.equal(subjectLastWeek.highmath1, 8);
   if(cadence === 'w2' && speed === 0.7) assert.equal(subjectLastWeek.highmath1, 18);
 }
-const fasterFirst = P.assignment(courses, {...scheduleOpts, speed:1.5, weekKey:keyAt(0), k:1});
-const fasterSecond = P.assignment(courses, {...scheduleOpts, speed:1.5, weekKey:keyAt(0), k:2});
+const fasterFirst = P.assignment(threeSubjectCourses, {...scheduleOpts, speed:1.5, weekKey:keyAt(0), k:1});
+const fasterSecond = P.assignment(threeSubjectCourses, {...scheduleOpts, speed:1.5, weekKey:keyAt(0), k:2});
 assert.equal(fasterFirst.weekLessons.length, 3);
 assert.equal(fasterFirst.lessons.length, 2, '1.5 speed prints two lessons in the first envelope');
 assert.equal(fasterSecond.lessons.length, 1, '1.5 speed prints the third lesson in the second envelope');
-assert.equal(P.assignment(courses, {...scheduleOpts, cadence:'w1', speed:0.7, weekKey:keyAt(0)}), null, 'a fractional first week does not skip the unassigned lesson');
-assert.equal(P.assignment(courses, {...scheduleOpts, cadence:'w1', speed:0.7, weekKey:keyAt(1)}).lessons[0].lessonIndex, 0);
-assert.equal(P.assignment(courses, {...scheduleOpts, weekKey:keyAt(-1)}), null, 'before the starting ISO week');
-assert.equal(P.assignment(courses, {...scheduleOpts, startDate:'2026-02-30', weekKey:keyAt(0)}), null);
-assert.equal(P.assignment(courses, {...scheduleOpts, weekKey:'2025-W53'}), null, 'invalid ISO week 53');
-assert.equal(P.assignment(courses, {...scheduleOpts, startDate:'2026-12-28', weekKey:'2027-W01'}).weekOffset, 1, 'ISO week-year rollover');
-const manual = P.assignment(courses, {courseKey:'C38', weekKey:'2027-W01', cadence:'w2', k:1});
+assert.equal(P.assignment(threeSubjectCourses, {...scheduleOpts, cadence:'w1', speed:0.7, weekKey:keyAt(0)}), null, 'a fractional first week does not skip the unassigned lesson');
+assert.equal(P.assignment(threeSubjectCourses, {...scheduleOpts, cadence:'w1', speed:0.7, weekKey:keyAt(1)}).lessons[0].lessonIndex, 0);
+assert.equal(P.assignment(threeSubjectCourses, {...scheduleOpts, weekKey:keyAt(-1)}), null, 'before the starting ISO week');
+assert.equal(P.assignment(threeSubjectCourses, {...scheduleOpts, startDate:'2026-02-30', weekKey:keyAt(0)}), null);
+assert.equal(P.assignment(threeSubjectCourses, {...scheduleOpts, weekKey:'2025-W53'}), null, 'invalid ISO week 53');
+assert.equal(P.assignment(threeSubjectCourses, {...scheduleOpts, startDate:'2026-12-28', weekKey:'2027-W01'}).weekOffset, 1, 'ISO week-year rollover');
+const manual = P.assignment(threeSubjectCourses, {courseKey:'C38', weekKey:'2027-W01', cadence:'w2', k:1});
 assert.equal(manual.weekOffset, 0, 'a manual selection without startDate begins at the requested week');
 assert.equal(manual.lessons[0].courseKey, 'C38');
 assert.equal(manual.lessons[0].lessonIndex, 0);
-const partialCalendar = P.assignment(courses, {...scheduleOpts, courseKey:'C59', startSession:3, weekKey:keyAt(0), k:1});
+const partialCalendar = P.assignment(threeSubjectCourses, {...scheduleOpts, courseKey:'C59', startSession:3, weekKey:keyAt(0), k:1});
 assert.equal(partialCalendar.lessons[0].startSession, 3);
 assert.equal(partialCalendar.lessons[0].sourceIndices[0], 2, 'trim the first calendar lesson to the saved legacy position');
-const partialNext = P.assignment(courses, {...scheduleOpts, courseKey:'C59', startSession:3, weekKey:keyAt(0), k:2});
+const partialNext = P.assignment(threeSubjectCourses, {...scheduleOpts, courseKey:'C59', startSession:3, weekKey:keyAt(0), k:2});
 assert.deepEqual(partialNext.lessons[0].sourceIndices, courses.C59.studyPlan.lessons[1].sourceIndices, 'only the first calendar lesson is trimmed');
 assert.equal(jsonWithoutPlans(), before, 'calendar assignment never changes canonical data');
 assert.equal(JSON.stringify(courses), once, 'calendar assignment does not change plans');

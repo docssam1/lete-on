@@ -29,8 +29,8 @@ const st=STAGES.map((tiers,i)=>{
   const cs=ids.filter(id=>tiers.includes(C[id].tier));
   const units=new Set();cs.forEach(id=>C[id].sessions.forEach(s=>(s.magic||[]).forEach(m=>units.add(m))));
   return {n:i+1,cs,from:num(cs[0]),to:num(cs[cs.length-1]),
-    sessions:cs.reduce((a,id)=>a+NM_HIGH_PACING.length(C[id]),0),
-    weeks:cs.reduce((a,id)=>a+Math.ceil(NM_HIGH_PACING.length(C[id])/2),0),units:units.size};
+    sessions:+cs.reduce((a,id)=>a+NM_HIGH_PACING.durationUnits(C[id]),0).toFixed(8),
+    weeks:Math.ceil(cs.reduce((a,id)=>a+(C[id].studyPlan?NM_HIGH_PACING.durationUnits(C[id])/2:Math.ceil(NM_HIGH_PACING.length(C[id])/2)),0)-1e-9),units:units.size};
 });
 const sum=(a,f)=>a.reduce((x,s)=>x+f(s),0);
 const arith=st.slice(0,4); /* 과정 0~25 = 단계 1~4 */

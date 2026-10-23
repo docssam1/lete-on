@@ -21,10 +21,11 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
   let checks=0;
   const context=async(width)=>{const c=await browser.newContext({viewport:{width:width||390,height:900},reducedMotion:'reduce'});await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());return c;};
   const owner='22222222-2222-4222-8222-222222222222',NAME='개인로드맵';
-  const high=process.argv.includes('--high'),middle=process.argv.includes('--middle'),compact=high||middle;
+  const high=process.argv.includes('--high'),middle=process.argv.includes('--middle'),calculus=process.argv.includes('--calculus'),compact=high||middle||calculus;
   const settings={profileName:NAME,version:7,courseKey:'C4',sessionIndex:3,speed:1.5,amount:1.25,cadence:'w2',entryYear:2020,startDate:'2026-10-19',updatedAt:'2026-10-20T00:00:00.000Z'};
   if(high)Object.assign(settings,{courseKey:'C58',sessionIndex:1,speed:1,amount:1,startDate:'2026-10-23'});
   if(middle)Object.assign(settings,{courseKey:'C29',sessionIndex:1,speed:1,amount:1,cadence:'w1',startDate:'2026-10-23'});
+  if(calculus)Object.assign(settings,{courseKey:'C70',sessionIndex:1,speed:1,amount:1,cadence:'w1',startDate:'2026-10-24'});
   const original={name:NAME,lang:'ko',onboarded:true,cloudLinked:true,cloudOwnerId:owner,view:'courseroad',progress:{'A-02':{done:true,steps:{stamp:true}}},account:{status:'active'},character:{number:3,color:'blue',hat:'none'},avatar:{id:'legacy',kind:'boy',look:'boy',name:'',outfit:'original'}};
   const session={access_token:'fake-owner-token',refresh_token:'fake-refresh',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:owner,email:'guardian@example.test'},password_setup_pending:false};
   const T={
@@ -91,13 +92,45 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
         assert.equal(st.weeklyDigest.highStartDate,settings.startDate,tag+' digest uses plan anchor');assert.equal(st.weeklyDigest.highSpeed,settings.speed,tag+' digest uses plan speed');
         if(process.env.NM_EVIDENCE_DIR){fs.mkdirSync(process.env.NM_EVIDENCE_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.NM_EVIDENCE_DIR,'high-road-'+width+'-'+lang+'.png')});}
       }
+      if(calculus){
+        const result=await page.evaluate(()=>{
+          const base={courseKey:'C70',sessionIndex:1,startDate:'2026-10-24',entryYear:2020};
+          const days=p=>(Date.parse(p.milestones.find(m=>m.key==='C73').date)-Date.parse(base.startDate))/86400000;
+          const standard=NM_LEARNING_PLAN.standard(NM_COURSES,base,{now:base.startDate});
+          const fast=NM_LEARNING_PLAN.project(NM_COURSES,{...base,speed:1.5,cadence:'w2'},{now:base.startDate});
+          const manual=NM_LEARNING_PLAN.project(NM_COURSES,{...base,speed:1,cadence:'w1'},{now:base.startDate});
+          const timing=NM_ROAD_TIMING({curKey:'C70',curFrac:0,smNow:90,cad:'w2',pace:'p2',speed:1});
+          const timingFast=NM_ROAD_TIMING({curKey:'C70',curFrac:0,smNow:90,cad:'w2',pace:'p2',speed:1.5});
+          return {standard:days(standard),fast:days(fast),manual:days(manual),weeks:timing.rows.C73.endWeeks,fastWeeks:timingFast.rows.C73.endWeeks};
+        });
+        assert.deepEqual(result,{standard:84,fast:56,manual:168,weeks:12,fastWeeks:8},tag+' calculus standard 12 / faster 8 / saved slow 24 weeks');
+        assert.equal(st.weeklyDigest.highStartDate,settings.startDate,tag+' calculus digest uses saved plan anchor');
+        assert.equal(st.weeklyDigest.highPlanVersion,'20261024-calculus3m',tag+' calculus digest has versioned compact link');
+        assert.equal(st.weeklyDigest.cadence,'w1',tag+' saved admin slow pace is not replaced by the standard');
+        if(process.env.NM_EVIDENCE_DIR){fs.mkdirSync(process.env.NM_EVIDENCE_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.NM_EVIDENCE_DIR,'calculus-road-'+width+'-'+lang+'.png')});}
+        await page.evaluate(()=>{
+          document.querySelectorAll('.nm-confetti').forEach(e=>e.remove());const wrapper=document.createElement('main');wrapper.className='nm-placement';const host=document.createElement('section');host.className='pd-calendar';host.id='paceFixture';wrapper.appendChild(host);document.querySelector('#screen').replaceChildren(wrapper);window.__paceApplied=[];
+          NM_DIAGNOSTIC_ROADMAP.mount(host,{course:'C70',session:1,lang:document.documentElement.lang,now:'2026-10-24T03:00:00Z',selection:{age:'16',birthYear:2011,profileGrade:'h1',goal:'steady'},settings:{speed:1,cadence:'w1'},onPaceApply:value=>{window.__paceApplied.push(value);return true;}});
+        });
+        assert(await page.locator('#pdStandardPlan').isVisible(),tag+' calculus standard plan visible');
+        assert.equal(await page.locator('#pdCustomPlan').evaluate(e=>e.open),false,tag+' calculus manual controls start collapsed');
+        await page.locator('#pdCustomPlan > summary').click();assert.equal(await page.locator('[data-calendar=speed] option').count(),5,tag+' five manual speeds');
+        assert.equal(await page.locator('[data-calendar=cadence]').inputValue(),'w1',tag+' saved manual cadence visible');
+        await page.selectOption('[data-calendar=cadence]','w2');await page.selectOption('[data-calendar=speed]','1.5');
+        assert.deepEqual(await page.evaluate(()=>window.__paceApplied),[],tag+' calculus preview needs explicit apply');
+        await page.click('#pdApplyPace');assert.deepEqual(await page.evaluate(()=>window.__paceApplied),[{speed:1.5,cadence:'w2'}]);
+        assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_state_v1')).progress),original.progress,tag+' calculus preview preserves actual completion');
+        const layout=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth+2,bad:[...document.querySelectorAll('#pdStandardPlan,#pdStandardPlan *,#pdCustomPlan,#pdCustomPlan *')].filter(el=>{const r=el.getBoundingClientRect();return r.width>0&&(r.right>innerWidth+1||r.left<-1);}).map(el=>el.tagName+'.'+el.className)}));
+        assert(!layout.overflow&&!layout.bad.length,tag+' calculus diagnostic calendar overflow '+JSON.stringify(layout));
+        if(process.env.NM_EVIDENCE_DIR)await page.screenshot({path:path.join(process.env.NM_EVIDENCE_DIR,'calculus-plan-'+width+'-'+lang+'.png')});
+      }
       if(middle){
         const result=await page.evaluate(()=>{
           const base={courseKey:'C29',sessionIndex:1,startDate:'2026-10-23',entryYear:2020};
-          const a=NM_LEARNING_PLAN.standard(NM_COURSES,base,{now:base.startDate}),b=NM_LEARNING_PLAN.project(NM_COURSES,{...base,cadence:'w2',speed:1},{now:base.startDate});
+          const a=NM_LEARNING_PLAN.standard(NM_COURSES,base,{now:base.startDate}),b=NM_LEARNING_PLAN.project(NM_COURSES,{...base,cadence:'w2',speed:1.25},{now:base.startDate});
           return {standard:(Date.parse(a.milestones.find(m=>m.key==='C31').date)-Date.parse(base.startDate))/86400000,accelerated:(Date.parse(b.milestones.find(m=>m.key==='C31').date)-Date.parse(base.startDate))/86400000};
         });
-        assert.deepEqual(result,{standard:140,accelerated:70},tag+' standard 20 / accelerated 10 weeks');
+        assert.deepEqual(result,{standard:70,accelerated:56},tag+' standard 10 / faster 8 weeks');
         assert(await page.locator('#nmStandardPlan').isVisible(),tag+' standard plan shown first');
         await page.evaluate(()=>{
           document.querySelectorAll('.nm-confetti').forEach(e=>e.remove());const wrapper=document.createElement('main');wrapper.className='nm-placement';const host=document.createElement('section');host.className='pd-calendar';host.id='paceFixture';wrapper.appendChild(host);document.querySelector('#screen').replaceChildren(wrapper);window.__paceApplied=[];
@@ -127,7 +160,7 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       });
       return {ctx,page,seen,hops,external};
     };
-    const goodCfg={courseKey:high?'C58':middle?'C29':'C4',...(compact?{highPlanVersion:middle?'20261023-middle25':'20261023-high3m',highStartDate:'2026-10-19',highSpeed:1.5}:{}),week:'2026-W43',k:2,amount:0.7,cadence:'w2',sessionIndex:2};
+    const goodCfg={courseKey:calculus?'C70':high?'C58':middle?'C29':'C4',...(compact?{highPlanVersion:calculus?'20261024-calculus3m':middle?'20261023-middle25':'20261023-high3m',highStartDate:'2026-10-19',highSpeed:1.5}:{}),week:'2026-W43',k:2,amount:0.7,cadence:'w2',sessionIndex:2};
     {
       const {ctx,page,seen,external}=await shortCtx((r,b)=>b.action==='resolve_worksheet'&&b.token===TOKEN?r.fulfill({headers:CORS,json:{config:goodCfg,redirect:'https://evil.example/x',url:'https://evil.example/y'}}):r.fulfill({status:400,headers:CORS,json:{error:'bad'}}));
       await page.goto(base+'/w/?m='+TOKEN);
@@ -183,6 +216,6 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       assert.equal(seen.length,0,'legacy link makes no membership request');
       checks++;await ctx.close();
     }
-    console.log('PERSONAL_PLAN_BROWSER_OK high='+high+' middle='+middle+' cases='+checks+' externalWrites=0');
+    console.log('PERSONAL_PLAN_BROWSER_OK high='+high+' middle='+middle+' calculus='+calculus+' cases='+checks+' externalWrites=0');
   }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

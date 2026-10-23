@@ -9,8 +9,8 @@
  * env: SUPABASE_SERVICE_ROLE_KEY(필수) · SUPABASE_URL(기본 프로젝트) · BASE_URL(기본: 저장소 루트를 로컬로 띄움)
  *      WEEK(주차 강제, 예 2026-W36) · DRY=1(업로드 없이 PDF만 ./out/ 에)
  * 수동: node scripts/nm-weekly-worksheets.cjs --name 홍길동 --course C4 [--cadence w2] [--amount 0.7|0.85|1|1.25|1.5]
- *       고등 C38~C69 는 3개월 묶음. --session N 은 기존 회차 번호(1부터)로 묶음 시작 위치를 지정한다.
- *       중등 C29~C37 는 학년당 20묶음. 주1회 표준은 학기당 10주, 주2회 속진은 학년당 10주다.
+ *       고등 C38~C73 은 과목별 3개월 편성. --session N 은 기존 회차 번호(1부터)로 묶음 시작 위치를 지정한다.
+ *       중등 C29~C37 는 학년당 20묶음. 각 학년의 1학기 연산은 주2묶음 기본10주이며 주1묶음은 느린 개인 설정이다.
  *       --start-date YYYY-MM-DD [--speed 0.7|0.85|1|1.25|1.5] 는 시작일로부터 해당 주의 다음 묶음을 고른다.
  *       주 2회는 k=1,2 두 벌. 분량은 기본 1배, --amount 또는 프로필 roadAmount 설정을 따른다.
  */
@@ -41,10 +41,12 @@ const AMOUNTS = [0.7, 0.85, 1, 1.25, 1.5];
 const amountOf = (value) => { const n = Number(value); return AMOUNTS.includes(n) ? n : 1; };
 const HIGH_PLAN_VERSION = '20261023-high3m';
 const HIGH_PLAN_COURSE = /^C(3[89]|[4-6][0-9])$/;
+const CALCULUS_PLAN_VERSION = '20261024-calculus3m';
+const CALCULUS_PLAN_COURSE = /^C7[0-3]$/;
 const MIDDLE_PLAN_VERSION = '20261023-middle25';
 const MIDDLE_PLAN_COURSE = /^C(29|3[0-7])$/;
 const sessionIndexOf = (value) => { const n = Number(value); return Number.isInteger(n) && n >= 1 && n <= 1000 ? n : null; };
-const planVersionOf = (courseKey) => HIGH_PLAN_COURSE.test(courseKey) ? HIGH_PLAN_VERSION : MIDDLE_PLAN_COURSE.test(courseKey) ? MIDDLE_PLAN_VERSION : null;
+const planVersionOf = (courseKey) => HIGH_PLAN_COURSE.test(courseKey) ? HIGH_PLAN_VERSION : MIDDLE_PLAN_COURSE.test(courseKey) ? MIDDLE_PLAN_VERSION : CALCULUS_PLAN_COURSE.test(courseKey) ? CALCULUS_PLAN_VERSION : null;
 const studyPlanOf = (target) => !!planVersionOf(target.courseKey) && target.highPlanVersion === planVersionOf(target.courseKey);
 const dateOf = (value) => {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
@@ -180,5 +182,5 @@ async function main() {
   console.log(`[ws] done ok=${okN} skip=${skip} fail=${fail}`);
   if (fail) process.exit(1);
 }
-module.exports = { HIGH_PLAN_VERSION, MIDDLE_PLAN_VERSION, buildWorksheetUrl, worksheetToken, worksheetTarget, sessionIndexOf, dateOf };
+module.exports = { HIGH_PLAN_VERSION, MIDDLE_PLAN_VERSION, CALCULUS_PLAN_VERSION, buildWorksheetUrl, worksheetToken, worksheetTarget, sessionIndexOf, dateOf };
 if (require.main === module) main().catch((e) => { console.error('[ws] error', e); process.exit(1); });

@@ -403,6 +403,57 @@ test("middle snapshot versions match only C29–C37 and old middle links retain 
   }
 });
 
+test("calculus snapshots opt in only for C70–C73; older exact-session links remain unmarked", async () => {
+  const code = readFileSync(new URL("../../../w/index.html", import.meta.url), "utf8").match(/<script>([\s\S]*?)<\/script>/)[1];
+  const version = "20261024-calculus3m";
+  for (const [courseKey, highPlanVersion, marked] of [
+    ["C70", version, true], ["C71", version, true], ["C72", version, true], ["C73", version, true],
+    ["C69", version, false], ["C74", version, false], ["C29", version, false],
+    ["C70", "20261023-high3m", false], ["C70", "20261023-middle25", false],
+    ["C70", "future", false], ["C70", undefined, false], ["C73", undefined, false],
+  ]) {
+    const legacy = { courseKey, week: "2026-W44", k: 2, amount: 1.25, cadence: "w2", sessionIndex: 3 };
+    const source = { ...legacy, highPlanVersion, highStartDate: "2026-10-26", highSpeed: 1.25 };
+    const t = setup({ rpc: async () => ({ data: { config: source } }) });
+    const response = await t.post({ action: "resolve_worksheet", token: "d".repeat(32) });
+    assert.equal(response.status, 200);
+    const config = (await response.json()).config;
+    assert.deepEqual(config, marked ? source : legacy);
+    assert.equal(t.calls.getUser.length + t.calls.weekly.length + t.calls.secret, 0);
+    assert.deepEqual(t.calls.rpc.map((call) => call.a), ["resolve_worksheet"]);
+    let redirected;
+    await runInNewContext(code, {
+      URL, URLSearchParams,
+      location: { search: "?m=" + "e".repeat(32), href: "https://lete-on.gfieldacademy.net/w/", replace: (u) => { redirected = u; } },
+      document: { getElementById: () => ({}) },
+      fetch: async () => ({ ok: true, json: async () => ({ config }) }),
+    });
+    if (courseKey === "C74") {
+      assert.equal(redirected, undefined, "unsupported courses must not redirect");
+      continue;
+    }
+    const url = new URL(redirected);
+    assert.equal(url.searchParams.get("hp"), marked ? "1" : null);
+    assert.equal(url.searchParams.get("hs"), marked ? "2026-10-26" : null);
+    assert.equal(url.searchParams.get("hv"), marked ? "1.25" : null);
+    assert.equal(url.searchParams.get("s"), "3");
+    assert.equal(url.searchParams.get("p"), "1");
+  }
+});
+
+test("calculus resolve validates schedule fields and preserves marker-only snapshots", async () => {
+  const base = { courseKey: "C70", week: "2026-W44", k: 1, amount: 1, cadence: "w2", sessionIndex: 1, highPlanVersion: "20261024-calculus3m" };
+  for (const [date, speed, expected] of [
+    ["2026-10-26", 1.5, { highStartDate: "2026-10-26", highSpeed: 1.5 }],
+    ["2024-02-29", 0.7, { highStartDate: "2024-02-29", highSpeed: 0.7 }],
+    ["2026-02-29", 3, {}], ["2026-13-01", "1", {}], [undefined, undefined, {}],
+  ]) {
+    const t = setup({ rpc: async () => ({ data: { config: { ...base, highStartDate: date, highSpeed: speed } } }) });
+    const response = await t.post({ action: "resolve_worksheet", token: "d".repeat(32) });
+    assert.deepEqual(await response.json(), { config: { ...base, ...expected } });
+  }
+});
+
 test("PDF URLs and tokens preserve legacy output and distinguish high-plan version and position", () => {
   const { buildWorksheetUrl, worksheetToken, worksheetTarget } = createRequire(import.meta.url)("../../../scripts/nm-weekly-worksheets.cjs");
   const week = "2026-W43", key = "offline-key", target = { name: "가상 학생", courseKey: "C4", cadence: "w2", amount: 1.25 };
@@ -424,7 +475,7 @@ test("PDF URLs and tokens preserve legacy output and distinguish high-plan versi
   assert.equal(url.searchParams.get("s"), "7");
   assert.notEqual(worksheetToken(key, week, high, 1), worksheetToken(key, week, { ...high, sessionIndex: 8 }, 1));
   assert.notEqual(worksheetToken(key, week, high, 1), worksheetToken(key, week, { ...high, highPlanVersion: undefined }, 1));
-  assert.equal(worksheetTarget({ ...target, courseKey: "C70" }).highPlanVersion, undefined);
+  assert.equal(worksheetTarget({ ...target, courseKey: "C70" }).highPlanVersion, "20261024-calculus3m");
 });
 
 test("PDF scheduled targets normalize aliases and include date/speed in URLs and token scope", () => {
@@ -469,14 +520,39 @@ test("middle PDF markers isolate version tokens while preserving unmarked and cu
   assert.notEqual(worksheetToken(key, week, high, 1), worksheetToken(key, week, middle, 1));
 });
 
+test("calculus PDF contracts isolate versions, dates and source-session anchors", () => {
+  const { buildWorksheetUrl, worksheetToken, worksheetTarget } = createRequire(import.meta.url)("../../../scripts/nm-weekly-worksheets.cjs");
+  const base = { name: "미적분 가상검수", cadence: "w2", amount: 1, sessionIndex: 3, startDate: "2026-10-26", speed: 1.25 };
+  for (const courseKey of ["C70", "C71", "C72", "C73"]) {
+    const target = worksheetTarget({ ...base, courseKey });
+    assert.equal(target.highPlanVersion, "20261024-calculus3m");
+    const url = new URL(buildWorksheetUrl("http://127.0.0.1:8767", "2026-W44", target, 1));
+    assert.equal(url.searchParams.get("hp"), "1");
+    assert.equal(url.searchParams.get("highPlanVersion"), target.highPlanVersion);
+    assert.equal(url.searchParams.get("hs"), "2026-10-26");
+    assert.equal(url.searchParams.get("hv"), "1.25");
+    assert.equal(url.searchParams.get("s"), "3");
+    const source = `${base.name}|2026-W44|${courseKey}|a1|hp20261024-calculus3m|s3|hs2026-10-26|hv1.25`;
+    assert.equal(worksheetToken("offline", "2026-W44", target, 1), createHmac("sha256", "offline").update(source).digest("hex").slice(0, 8));
+    const old = { ...target, highPlanVersion: undefined };
+    assert.equal(new URL(buildWorksheetUrl("http://127.0.0.1:8767", "2026-W44", old, 1)).searchParams.get("hp"), null);
+    assert.equal(worksheetToken("offline", "2026-W44", old, 1), createHmac("sha256", "offline").update(`${base.name}|2026-W44|${courseKey}|a1`).digest("hex").slice(0, 8));
+    for (const highPlanVersion of ["20261023-high3m", "20261023-middle25", "future"]) {
+      assert.equal(new URL(buildWorksheetUrl("http://127.0.0.1:8767", "2026-W44", { ...target, highPlanVersion }, 1)).searchParams.get("hp"), null);
+    }
+  }
+});
+
 // ---------- static checks on schema.sql ----------
 const sql = readFileSync(new URL("./schema.sql", import.meta.url), "utf8");
 test("new delivery and preview snapshots add course-specific plan versions without rewriting old snapshots", () => {
   assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261023-high3m',/g) || []).length, 2);
   assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261023-middle25',/g) || []).length, 2);
-  assert.equal((sql.match(/'highStartDate',ls\.start_date,'highSpeed',ls\.speed/g) || []).length, 4);
-  assert.equal((sql.match(/case when ls\.course_key ~ '\^C\(3\[89\]\|\[4-6\]\[0-9\]\)\$'/g) || []).length, 2);
+  assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261024-calculus3m',/g) || []).length, 2);
+  assert.equal((sql.match(/'highStartDate',ls\.start_date,'highSpeed',ls\.speed/g) || []).length, 6);
+  assert.equal((sql.match(/when ls\.course_key ~ '\^C\(3\[89\]\|\[4-6\]\[0-9\]\)\$'/g) || []).length, 2);
   assert.equal((sql.match(/when ls\.course_key ~ '\^C\(29\|3\[0-7\]\)\$'/g) || []).length, 2);
+  assert.equal((sql.match(/when ls\.course_key ~ '\^C7\[0-3\]\$'/g) || []).length, 2);
   assert.ok(!/update\s+nm_private\.worksheet_previews\s+set\s+config\s*=/i.test(sql));
 });
 test("schema.sql: locked-down exposure, no plaintext admin code, no monthly plan", () => {

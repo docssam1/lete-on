@@ -79,11 +79,15 @@ window.screenCloset = function(container, opts){
   const LISTS = {number:'numbers',symbol:'symbols',color:'colors',bg:'bgs',cape:'capes',hat:'hats'};
   const listOf = (t) => t==='outfit' ? outfits : (av[LISTS[t]] || []);
 
-  /* 잠금 안내(코인 가격과 병기) · 과정 보상 배지 */
+  /* A course tag describes related learning. Only the wallet's four gift
+     targets are completion presents; ownership alone is not reward evidence. */
   function courseNote(n){
-    return lang==='en' ? `Course ${n}` : lang==='zh' ? `第${n}阶段解锁` : `과정 ${n} 도달 시`;
+    return T(`연관 과정 ${n} · 코인으로 수집`,`Related course ${n} · collect with coins`,`关联课程${n} · 用金币收集`);
   }
-  const rewardBadgeTxt = T('✨ 과정 보상','✨ Course Reward','✨ 进度奖励');
+  const giftOf = i => (window.NM_CHARACTER_STATE?.gifts || []).find(g=>g.type===i.type&&String(g.id)===i.id);
+  const RARITIES={common:T('일반','Common','普通'),rare:T('희귀','Rare','稀有'),epic:T('영웅','Epic','史诗'),legendary:T('전설','Legendary','传说')};
+  const rarityOf=i=>Object.prototype.hasOwnProperty.call(RARITIES,i.item.rarity)?i.item.rarity:null;
+  const rarityHTML=i=>{const r=rarityOf(i);return r?`<span class="nmc-rarity nmc-rarity-${r}">${RARITIES[r]}</span>`:'';};
 
   const cp = (s) => Array.from(String(s==null?'':s).replace(/[\r\n\t]+/g,' '));
   const cpTrim = (s) => cp(s).slice(0,MAX_NAME).join('').trim();
@@ -129,10 +133,14 @@ window.screenCloset = function(container, opts){
     ? Object.assign({}, active(), {outfit: pending.id}) : active();
 
   function thumb(i){
-    if(i.type==='outfit') return hRender(Object.assign({}, active(), {outfit:i.id}), 52);
+    if(typeof window.renderCosmeticItem==='function'){
+      const art=window.renderCosmeticItem(i.type,i.id,90);
+      if(art)return art;
+    }
+    if(i.type==='outfit') return hRender(Object.assign({}, active(), {outfit:i.id}), 76);
     if(!rndr) return '';
-    if(i.type==='number') return rndr(Object.assign({}, cur, {number:+i.id, symbol:undefined}), 52);
-    return rndr(Object.assign({}, cur, {[i.type]: i.id}), 52);
+    if(i.type==='number') return rndr(Object.assign({}, cur, {number:+i.id, symbol:undefined}), 76);
+    return rndr(Object.assign({}, cur, {[i.type]: i.id}), 76);
   }
 
   function stateHTML(i){
@@ -141,33 +149,43 @@ window.screenCloset = function(container, opts){
     else if(i.free) h += `<span class="nmc-st nmc-st-free">${T('무료','Free','免费')}</span>`;
     else if(i.owned) h += `<span class="nmc-st nmc-st-own">${T('보유','Owned','已拥有')}</span>`;
     else h += `<span class="nmc-st nmc-st-price">🪙 ${i.price}</span>`;
-    const c = i.item.course;
-    if(c!=null) h += i.owned ? `<span class="nmc-ibadge">${rewardBadgeTxt}</span>` : `<span class="nmc-icourse">${courseNote(c)}</span>`;
+    const gift=giftOf(i),c=i.item.course;
+    if(gift)h+=`<span class="nmc-ibadge">${T(`과정 ${gift.course} 완료 선물`,`Course ${gift.course} completion gift`,`课程${gift.course}完成礼物`)}</span>`;
+    else if(c!=null)h+=`<span class="nmc-icourse">${courseNote(c)}</span>`;
     return h;
   }
 
   function cardHTML(i){
     const sel = pending ? (pending.type===i.type && pending.id===i.id) : i.equipped;
-    return `<button type="button" class="nmc-item${sel?' sel':''}${i.owned?'':' locked'}" data-nmc-act="item" data-type="${esc(i.type)}" data-id="${esc(i.id)}" data-k="item-${esc(i.type)}-${esc(i.id)}" aria-pressed="${sel?'true':'false'}">
-      <span class="nmc-thumb">${thumb(i)}</span>
+    const rarity=rarityOf(i),description=L(i.item.description||i.item.desc);
+    return `<button type="button" class="nmc-item${sel?' sel':''}${i.owned?'':' locked'}${rarity?' nmc-tier-'+rarity:''}" data-nmc-act="item" data-type="${esc(i.type)}" data-id="${esc(i.id)}" data-rarity="${rarity||'original'}" data-owned="${i.owned}" data-k="item-${esc(i.type)}-${esc(i.id)}" aria-pressed="${sel?'true':'false'}"${description?` title="${esc(description)}"`:''}>
+      ${rarityHTML(i)}<span class="nmc-thumb" aria-hidden="true">${thumb(i)}</span>
       <span class="nmc-iname">${esc(i.name)}</span>
+      ${description?`<span class="nmc-item-desc">${esc(description)}</span>`:''}
       ${stateHTML(i)}
     </button>`;
   }
 
   const passFilter = (i) => filter==='owned' ? i.owned
+    : filter==='shop' ? !i.owned&&i.price>0
     : filter==='affordable' ? (!i.owned && i.price>0 && i.price<=coins) : true;
+
+  function collectionHTML(){
+    const items=listOf(activeTab).map(x=>info(activeTab,x.id)).filter(Boolean),owned=items.filter(i=>i.owned).length;
+    return `<div class="nmc-collection-head"><h3>${esc(L(TABS.find(t=>t.key===activeTab)))}</h3><p><b>${owned}</b> / ${items.length} ${T('보유','owned','已拥有')}</p><progress max="${items.length||1}" value="${owned}" aria-label="${esc(T('수집 현황','Collection progress','收集进度'))}">${owned}/${items.length}</progress><small>${T(`${items.length}개 중 ${items.filter(passFilter).length}개 표시`,`${items.filter(passFilter).length} of ${items.length} items shown`,`显示${items.length}件中的${items.filter(passFilter).length}件`)}</small></div>`;
+  }
 
   function gridHTML(){
     const infos = listOf(activeTab).map(x=>info(activeTab, x.id)).filter(Boolean);
     if(!infos.length) return `<p class="nmc-empty">${T('표시할 항목이 없어요.','Nothing to show.','没有可显示的项目。')}</p>`;
-    const shown = infos.filter(passFilter);
+    const rank=i=>i.equipped?0:i.free?1:rarityOf(i)?2:3;
+    const shown = infos.filter(passFilter).sort((a,b)=>rank(a)-rank(b));
     if(!shown.length) return `<p class="nmc-empty">${T('이 조건에 맞는 항목이 없어요.','No items match this filter.','没有符合条件的项目。')}</p>`;
     if(activeTab==='number'){
       const singles = shown.filter(i=>+i.id<10), specials = shown.filter(i=>+i.id>=10);
       let h = singles.map(cardHTML).join('');
       if(specials.length){
-        h += `<div class="nmc-section-title">${T('✨ 특별 보상 · 두 자리 수','✨ Special Rewards · Two-Digit','✨ 特别奖励 · 两位数')}</div>`;
+        h += `<div class="nmc-section-title">${T('특별한 숫자 · 두 자리 수','Special numbers · two digits','特别的数字 · 两位数')}</div>`;
         h += specials.map(cardHTML).join('');
       }
       return h;
@@ -214,7 +232,8 @@ window.screenCloset = function(container, opts){
       confirmTxt = T('적용','Apply','应用'); disabled = true;
     }
     return `<div class="nmc-panel">
-      <div class="nmc-pname">${esc(i.name)}</div>
+      ${rarityHTML(i)}<div class="nmc-pname">${esc(i.name)}</div>
+      ${L(i.item.description||i.item.desc)?`<p class="nmc-panel-description">${esc(L(i.item.description||i.item.desc))}</p>`:''}
       ${lines}
       <div class="nmc-pbtns">
         <button type="button" class="nmc-btn nmc-btn-main" data-nmc-act="confirm" data-k="confirm"${disabled||busy?' disabled':''}>${confirmTxt}</button>
@@ -250,11 +269,12 @@ window.screenCloset = function(container, opts){
   }
   function pointsHTML(){
     const guide = [
-      T('출석하면 🪙 3','Daily attendance: 🪙 3','每日出勤：🪙 3'),
-      T('주간 봉투를 열고 필요한 보강을 마치면 🪙 10','Open the weekly envelope and finish any required booster: 🪙 10','打开每周信封并完成所需巩固：🪙 10'),
-      T('마법 훈련은 단계마다 한 번 🪙 2','Magic training: 🪙 2, once per step','魔法训练：每一步一次 🪙 2'),
-      T('보강 학습 🪙 6','Reinforcement: 🪙 6','巩固学习：🪙 6'),
+      T('출석하면 🪙 1','Daily attendance: 🪙 1','每日出勤：🪙 1'),
+      T('주간 봉투를 열고 필요한 보강을 마치면 🪙 3','Open the weekly envelope and finish any required booster: 🪙 3','打开每周信封并完成所需巩固：🪙 3'),
+      T('마법 훈련은 단계마다 한 번 🪙 1','Magic training: 🪙 1, once per step','魔法训练：每一步一次 🪙 1'),
+      T('보강 학습 🪙 2','Reinforcement: 🪙 2','巩固学习：🪙 2'),
       T('단원을 마치면 받는 🪙는 단원마다 달라요','Unit completion rewards vary by unit','完成单元的 🪙 因单元而异'),
+      T('하루 최대 🪙 20 · 게임 보상은 하루 최대 🪙 2','Up to 🪙 20 a day · game rewards up to 🪙 2 a day','每天最多 🪙 20 · 游戏奖励每天最多 🪙 2'),
     ];
     let body = '';
     if(pointsOpen){
@@ -337,7 +357,7 @@ window.screenCloset = function(container, opts){
 
   /* ── 렌더 ── */
   const wrap = document.createElement('div');
-  wrap.className = 'nmc-wrap';
+  wrap.className = 'nmc-wrap nmc-collection';
   wrap.innerHTML = '<div class="nmc-body"></div><div class="nmc-msg" role="status" aria-live="polite"></div>';
   const body = wrap.firstChild, msgEl = wrap.lastChild;
   container.innerHTML = '';
@@ -352,14 +372,16 @@ window.screenCloset = function(container, opts){
     const ae = document.activeElement;
     const fk = (ae && wrap.contains(ae)) ? ae.getAttribute('data-k') : null;
     const a = active();
-    const tabsHTML = TABS.map(t=>`<button type="button" class="nmc-tab${t.key===activeTab?' active':''}" data-nmc-act="tab" data-tab="${t.key}" data-k="tab-${t.key}"${t.key===activeTab?' aria-current="true"':''}>${L(t)}</button>`).join('');
-    const FILTERS = [['all',T('전체','All','全部')],['owned',T('보유','Owned','已拥有')],['affordable',T('살 수 있는','Affordable','买得起')]];
+    const tabsHTML = TABS.map(t=>{const items=t.key==='me'?[]:listOf(t.key).map(x=>info(t.key,x.id)).filter(Boolean),count=t.key==='me'?profiles.length:items.filter(i=>i.owned).length;
+      return `<button type="button" class="nmc-tab${t.key===activeTab?' active':''}" data-nmc-act="tab" data-tab="${t.key}" data-k="tab-${t.key}"${t.key===activeTab?' aria-current="true"':''}><span>${L(t)}</span><small>${t.key==='me'?T(`${count}명`,`${count} friends`,`${count}位`):`${count} / ${items.length}`}</small></button>`;}).join('');
+    const FILTERS = [['all',T('전체','All','全部')],['owned',T('보유','Owned','已拥有')],['shop',T('상점','Shop','商店')],['affordable',T('구매 가능','Affordable','可购买')]];
     const filtersHTML = FILTERS.map(f=>`<button type="button" class="nmc-chip" data-nmc-act="filter" data-f="${f[0]}" data-k="filter-${f[0]}" aria-pressed="${filter===f[0]?'true':'false'}">${filter===f[0]?'✓ ':''}${f[1]}</button>`).join('');
     body.innerHTML = `
   <div class="nmc-head">
     <div class="nmc-title">✨ ${T('내 캐릭터','My Character','我的角色')}</div>
     <div id="nmc-coins" class="nmc-coins" aria-label="${esc(T('코인(포인트)','Coins (points)','金币（积分）'))} ${coins}">🪙 ${coins}</div>
   </div>
+  <p class="nmc-budget-note">${T('학습 보상은 하루 최대 20코인 · 게임은 하루 최대 2코인','Earn up to 20 coins a day · game rewards up to 2 coins a day','学习奖励每天最多20金币 · 游戏每天最多2金币')}</p>
   <div class="nmc-preview-area">
     <div class="nmc-stage"><div id="nmc-preview">${bigPreview()}</div></div>
     <div class="nmc-pvname">${esc(nameOf(a))}</div>
@@ -368,7 +390,7 @@ window.screenCloset = function(container, opts){
   <div class="nmc-tab-bar">${tabsHTML}</div>
   ${activeTab==='me'
     ? `<div class="nmc-me">${meHTML()}</div>`
-    : `<div class="nmc-filters">${filtersHTML}</div><div id="nmc-grid" class="nmc-grid">${gridHTML()}</div>`}
+    : `${collectionHTML()}<div class="nmc-filters" role="group" aria-label="${esc(T('아이템 필터','Item filters','项目筛选'))}">${filtersHTML}</div><div id="nmc-grid" class="nmc-grid">${gridHTML()}</div>`}
   ${pointsHTML()}`;
     if(fk){
       const el = Array.from(body.querySelectorAll('[data-k]')).find(x=>x.getAttribute('data-k')===fk);

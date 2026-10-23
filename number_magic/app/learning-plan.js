@@ -49,10 +49,10 @@
       const compact=!!c.studyPlan, count=compact?HIGH.length(c):n;
       const firstLesson=compact?HIGH.lessonIndex(c,from)+1:from;
       const remaining=count-firstLesson+1;
-      // Carry fractional high-school weeks across course boundaries. Rounding
+      // Carry fractional compact-course weeks across course boundaries. Rounding
       // each small course separately would erase the selected learning speed.
-      const courseCadence=options.standard&&compact?(/^middle[123]$/.test(c.tier)?1:2):cadence;
-      const weeks=compact?remaining/courseCadence/speed
+      const courseCadence=options.standard&&compact?2:cadence;
+      const weeks=compact?HIGH.durationUnits(c,from)/courseCadence/speed
         :Math.max(1,Math.round(Math.ceil(remaining/cadence)*pace/speed));
       const end=cursor+weeks*7*DAY;
       segments.push({key:keys[i],title:langText(c.title,lang),start:cursor,end,from:firstLesson,n:count,compact});cursor=end;
