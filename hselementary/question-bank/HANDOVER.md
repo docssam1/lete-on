@@ -21,6 +21,12 @@
 - Clarified Mission 6 ledger wording: the original compares the remaining rice with 1 3/7 times the **sum** given to Hyeong-geun and Hyeon-bin, less 10kg. The condensed phrase “amount given” was ambiguous, so the condition and taxonomy label now name the sum explicitly. Exact equation gives remaining 10kg.
 - No learner-facing item, runtime mapping, or release gate changed.
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 20 Example 4-3 Answer Correction
+
+- Re-read logical PDF page 16 (printed page 20) from the SHA-256-matched source with a 300dpi render and Apple Vision location pass; stacked fractions and variables were confirmed visually. No figure is used for Example 4-3, and handwritten marks were excluded.
+- Found an omitted solution in `5-2-u2-e4-example-3`. For `가/7 × 42/11`, natural-number results below 20 require `가` to be a positive multiple of 11 below 110/3; the reduced-fraction condition leaves 11, 22, and 33. For `33/나 × 42/11=126/나`, divisor and reduced-fraction conditions leave `나=7,14`. The previous ledger answer omitted 22 and 33.
+- Updated the independent derivation and answer set. The item remains locked; no runtime mapping, learner data, or release gate changed.
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
 
 - Rechecked PDF page 9 / printed page 11 from the 450dpi page render and Apple Vision OCR. The text asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. No figure is printed for this item; handwriting and publisher answers were excluded. The hundreds-rounding interval is 1,150–1,249 and the tens-ceiling interval is 1,191–1,200. Their intersection contains 10 natural numbers, 1,191–1,200. Publisher-key verification remains false.
