@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 6: Equilateral 5cm Transversal Angle
+
+- Re-read logical PDF page 25 / printed page 29 from the SHA-256-matched original at 450dpi. Apple Vision OCR confirmed the question asks for ∠ㄱㅂㅁ in equilateral △ㄱㄴㄷ; the printed 5cm marks run from ㄴ to ㄹ on ㄴㄷ and from ㄷ to ㅁ on ㄷㄱ. The segments ㄱㄹ and ㄴㅁ cross at ㅂ. Pencil marks were excluded.
+- With side length s>5, set ㄴ=(0,0), ㄷ=(s,0), ㄱ=(s/2,√3s/2), ㄹ=(5,0), and ㅁ=(s−5/2,5√3/2). The vector ㄹ→ㄱ rotates clockwise 60° to ㄴ→ㅁ. Their intersection parameters are t=25/D and r=5s/D, D=s²−5s+25; both lie strictly between 0 and 1, so the crossing is inside both segments. Therefore ∠ㄱㅂㅁ=60°.
+- Updated the source-readiness proof and counters: calculation-checked 46→47, source-structure visual checks needed 24→23. Public candidates remain 23, locked items 30, non-unique 8. This is a source-side answer check only; implementation figure check is still pending, so the item remains review-locked. No learner-facing mapping, student data, or release state changed.
+- Drive QA note: https://drive.google.com/file/d/18goPVPFZgxmFATf-w_BWzNwEt3yF-Mja/view (uploaded to the existing `.source-memory` folder and read back). Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 image SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 5: Equal-Offset Equilateral Triangle
 
 - Rechecked logical PDF page 25 / printed page 29 at 450dpi. The printed text names equilateral △ㄱㄴㄷ and points ㅁ, ㅂ, ㄹ at equal distances from successive vertices on ㄱㄴ, ㄴㄷ, ㄷㄱ. The circled handwritten 60° was excluded.

@@ -37,7 +37,8 @@
       {"checkId": "e3-mission-1-congruent-isosceles-angle-chase", "expression": "base 66° ⇒ apex 48°; ∠RSN=108° from linear pair with marked 72°; ∠RNS=24°; GN=RN ⇒ ∠GRN=78°; target 78°−48°=30°", "result": true},
       {"checkId": "e3-mission-3-rotated-isosceles-angle", "expression": "GN=GD; base 65° ⇒ apex ∠NGD=50°; clockwise 45° rotation sends GN to RB; angle between GD and RB is 50°+45°=95°", "result": true},
       {"checkId": "e3-mission-2-square-overlap-area", "expression": "large square [0,14]², C=(7,7); printed 6cm from upper-left fixes Q=(0,6); perpendicular adjacent edge meets bottom at P=(6,14); CQ²=CP²=50 and CQ·CP=0; overlap area=25cm²", "result": true},
-      {"checkId": "e3-mission-5-equal-offset-equilateral-rotation", "expression": "equilateral ABC; points at common distance d from A,B,C on successive sides; 120° rotation cycles ㅁ→ㄹ→ㅂ→ㅁ; inner triangle equilateral, angle 60°", "result": true}
+      {"checkId": "e3-mission-5-equal-offset-equilateral-rotation", "expression": "equilateral ABC; points at common distance d from A,B,C on successive sides; 120° rotation cycles ㅁ→ㄹ→ㅂ→ㅁ; inner triangle equilateral, angle 60°", "result": true},
+      {"checkId": "e3-mission-6-equilateral-5cm-transversal-angle", "expression": "A=(s/2,√3s/2), B=(0,0), C=(s,0), L=(5,0), M=(s−5/2,5√3/2); R−60°(A−L)=M−B; t=25/D and r=5s/D lie in (0,1) for s>5; target=60°", "result": true}
     ]
   },
   "integrity": {
@@ -48,10 +49,10 @@
     "bySourceSection": {"exploration": 13, "example": 16, "mission": 24},
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "calculationCheckedCount": 46,
+    "calculationCheckedCount": 47,
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
-    "visualCheckNeededCount": 24,
+    "visualCheckNeededCount": 23,
     "publicCandidateCount": 23,
     "lockedCount": 30
   },
@@ -1181,22 +1182,22 @@
       "commonTypeId": "equilateral-triangle-angle-chase-5cm",
       "typeLabel": "정삼각형 안의 같은 길이 조건과 각",
       "childFriendlyTypeLabel": "정삼각형 안쪽 선의 각 구하기",
-      "originalStructure": "정삼각형 안에 5cm 길이 두 선분이 표시된 그림에서 목표각을 구합니다.",
-      "conditions": ["바깥 삼각형은 정삼각형", "두 선분은 각각 5cm", "목표각은 내부 교차점에 있음"],
-      "visualRequirement": "5cm 선분의 끝점과 목표각의 두 변을 재확인해야 합니다.",
-      "independentCalculation": null,
-      "answerFormula": null,
-      "independentAnswer": null,
+      "originalStructure": "정삼각형 ㄱㄴㄷ에서 ㄴㄷ 위 점 ㄹ과 ㄷㄱ 위 점 ㅁ을 각각 ㄴ, ㄷ에서 5cm인 곳에 잡고, 선분 ㄱㄹ과 ㄴㅁ의 교점 ㅂ에서 ∠ㄱㅂㅁ을 구합니다.",
+      "conditions": ["△ㄱㄴㄷ은 정삼각형", "ㄴㄹ=5cm이며 ㄹ은 변 ㄴㄷ 위에 있음", "ㄷㅁ=5cm이며 ㅁ은 변 ㄷㄱ 위에 있음", "선분 ㄱㄹ과 ㄴㅁ은 내부 교점 ㅂ에서 만남", "목표각은 ∠ㄱㅂㅁ"],
+      "visualRequirement": "밑변의 5cm 표시는 ㄴ에서 ㄹ까지, 오른쪽 변의 5cm 표시는 ㄷ에서 ㅁ까지입니다. ㄱㄹ과 ㄴㅁ의 교점이 ㅂ이며, 구현 그림에서도 이 끝점·라벨·교차를 대조해야 합니다.",
+      "independentCalculation": "변 길이를 s>5로 두고 ㄴ=(0,0), ㄷ=(s,0), ㄱ=(s/2,√3s/2)로 둡니다. ㄹ=(5,0), ㅁ=(s−5/2,5√3/2)입니다. ㄹ→ㄱ 벡터 u=(s/2−5,√3s/2)에 −60° 회전을 적용하면 ㅁ−ㄴ=(s−5/2,5√3/2)가 됩니다. 따라서 교점 ㅂ에서 ㄱ 방향과 ㅁ 방향인 두 반직선의 각은 60°입니다. 두 선분의 교점 매개변수는 t=25/D, r=5s/D (D=s²−5s+25)이고, s>5이면 0<t,r<1이어서 교점은 두 선분 내부에 있습니다.",
+      "answerFormula": "R_{−60°}(ㄹㄱ)=ㄴㅁ; D=s²−5s+25, t=25/D∈(0,1), r=5s/D∈(0,1) ⇒ ㅂ은 두 선분 내부 교점; ∠ㄱㅂㅁ=60°",
+      "independentAnswer": "60°",
       "resultContract": "single-value",
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
-      "singleAnswerCheck": "5cm 표식이 어느 선분에 붙는지와 목표각 라벨이 흐려 계산을 확정하지 못했습니다.",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "singleAnswerCheck": "임의의 변 길이 s>5에서 벡터 ㄹ→ㄱ을 −60° 회전하면 ㄴ→ㅁ과 일치합니다. 교점 위치 매개변수도 둘 다 0과 1 사이이므로, 원문 도형의 교점에서 목표각은 유일하게 60°입니다.",
       "sourceVerified": true,
-      "calculationStatus": "blocked-visual",
-      "visualCheckStatus": "needs-implementation-check",
+      "calculationStatus": "checked",
+      "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "단위 표기와 내부 선분의 연결이 답에 직접 관여하므로 추측하지 않습니다."
+      "lockReason": "원문 답은 독립 계산으로 확정했지만 구현 그림의 점 라벨·5cm 치수·교차 선분을 대조하기 전에는 공개 후보로 올리지 않습니다."
     },
 
     {
@@ -1502,10 +1503,10 @@
     "directlyReviewedCount": 53,
     "publicCandidateCount": 23,
     "lockedCount": 30,
-    "calculationCheckedCount": 46,
+    "calculationCheckedCount": 47,
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
-    "visualCheckNeededCount": 24,
+    "visualCheckNeededCount": 23,
     "notes": [
       "원본 PDF 20~27쪽을 300dpi PNG로 직접 렌더해 눈으로 대조했습니다. PDF 쪽 20~27은 인쇄 쪽 24~31에 대응합니다.",
       "원문 단위는 개념탐구 1: 6+4+6, 개념탐구 2: 5+4+6, 개념탐구 3: 1+4+6, 개념탐구 4: 1+4+6으로 총 53개입니다.",
@@ -1522,7 +1523,8 @@
       "2026-10-24 인쇄 29쪽 Mission 1의 기존 조건(65°·45° 회전)이 Mission 3에서 잘못 섞였음을 발견했습니다. 실제 조건은 합동 이등변삼각형, 66° 밑각, 교점 72°이며 각도 추적으로 원문 정답 30°를 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1zNtIYqtPweo41VVVcY4gp9UkqcXWCeKv.",
       "2026-10-24 인쇄 29쪽 Mission 3의 그림 방향(시계 방향)과 점 대응을 재확인했습니다. ㄱㄴ=ㄱㄷ과 65° 밑각으로 꼭짓각 50°를 구하고, 회전 45°를 더해 ∠ㄷㅁㅂ=95°로 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 12h10sOg4uZj0PugB1GNsebjJDtYW6BnD.",
       "2026-10-24 인쇄 29쪽 Mission 2의 왼쪽 위 기준 6cm 치수와 큰 정사각형 중심을 직접 확인해 기존 비유일 판정을 바로잡았습니다. C=(7,7), Q=(0,6), P=(6,14)에서 겹친 직각삼각형의 넓이는 25cm²입니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1nYo-dub1uoTgR5e6t40KtyKKpGvwFNcC.",
-      "2026-10-24 인쇄 29쪽 Mission 5의 같은 거리 표식과 세 점의 120° 순환 대응을 좌표 검산으로 확인했습니다. 안쪽 삼각형은 정삼각형이며 ㉠=60°입니다. Drive QA: 1rNBPO8moU-Z7i4lsHFnba14Xb17Petql."
+      "2026-10-24 인쇄 29쪽 Mission 5의 같은 거리 표식과 세 점의 120° 순환 대응을 좌표 검산으로 확인했습니다. 안쪽 삼각형은 정삼각형이며 ㉠=60°입니다. Drive QA: 1rNBPO8moU-Z7i4lsHFnba14Xb17Petql.",
+      "2026-10-24 인쇄 29쪽 Mission 6의 5cm 끝점과 교차 라벨을 원문에서 확인했습니다. 임의의 변 길이에 대해 회전 벡터 증명으로 ∠ㄱㅂㅁ=60°이고, 교점은 두 선분 내부입니다. 구현 그림 대조 전 잠금은 유지합니다. Drive QA: 18goPVPFZgxmFATf-w_BWzNwEt3yF-Mja."
     ]
   }
 }
