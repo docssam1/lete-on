@@ -92,7 +92,7 @@ async function solve(page, game, mode) {
   const p = await page.locator(".cg.lg").evaluate((el) => el.fcProblem);
   // 둘 중 고르기는 한 번 틀리면 남은 것이 정답뿐이라 두 번 틀릴 수 없다.
   if (p.kind === "pick" && mode === "twice") mode = "once";
-  const c = (sel) => page.locator(`[data-game-controls] ${sel}, [data-game-stage] ${sel}`).first();
+  let c = (sel) => page.locator(`[data-game-controls] ${sel}, [data-game-stage] ${sel}`).first();
   const tries = mode === "twice" ? 2 : mode === "once" ? 1 : 0;
   if (game === "b2-matrix") {
     const fill = async (vals) => { for (const [i, v] of vals.entries()) { await c(`[data-b2-slot="${i}"]`).click(); await c(`[data-b2-num="${v}"]`).click(); } await c("[data-b2-check]").click(); };
@@ -109,6 +109,19 @@ async function solve(page, game, mode) {
       if (mode !== "twice") await c(`[data-b2-item="${p.answer}"]`).click();
     }
   } else if (game === "b2-pattern") {
+    // ① 한 마디 찾기(dual 제외): 기차에서 마디가 끝나는 칸을 먼저 눌러야 답 단추가 열린다.
+    const unit = async () => {
+      if (p.dual || !(await page.locator("[data-b2-unit]").count())) return;
+      assert.equal(await page.locator("[data-b2-choice],[data-b2-count]").count(), 0, "Answer buttons wait for the unit step");
+      const len = p.unit.length;
+      await origC(`[data-b2-unit="${len + 1}"]`).click();
+      assert.equal(await page.locator(".lg-unit-note.retry").count(), 1, "Too long a unit is questioned");
+      await origC(`[data-b2-unit="${len}"]`).click();
+      assert.match(await page.locator(".lg-unit-note.step").innerText(), new RegExp(`${len}개씩 한 마디`));
+    };
+    const wrap = (fn) => async (...args) => { await unit(); return fn(...args); };
+    const origC = c;
+    c = (sel) => ({ click: wrap(() => origC(sel).click()) });
     if (p.kind === "count") {
       const wrongs = p.choices.filter((v) => v !== p.answer);
       for (let t = 0; t < tries; t++) await c(`[data-b2-count="${wrongs[t]}"]`).click();

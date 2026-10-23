@@ -156,16 +156,31 @@ const BALANCE_GAME = {
 };
 
 // ───────────────────────── 무늬 기차 ─────────────────────────
+// 골든벨 풀이 순서: ① 처음부터 되풀이되는 가장 짧은 묶음(한 마디) 찾기 → ② 물은 번째를 마디 칸 수로 나누기
+// → ③ 나머지로 고르기. 한 마디 무늬(dual이 아닌 것)는 ①을 아이가 기차 칸을 눌러 직접 한다.
 function patternBoard({ stage, controls, sound }) {
-  let p, api, locked = false, pickShape = null, pickColor = null, wrong = new Set(), revealUnits = false;
+  let p, api, locked = false, pickShape = null, pickColor = null, wrong = new Set(), revealUnits = false, unitFound = false, unitNote = "";
+  const unitDivision = (len) => {
+    const q = Math.floor(p.n / len), r = p.n % len;
+    if (p.kind === "next") return `${len}개씩 한 마디. 다음 구슬은 새 마디의 ${(p.shown % len) + 1}번째 구슬이에요.`;
+    if (p.kind === "count") return `${len}개씩 한 마디. ${p.n} ÷ ${len} = ${q}${r ? ` … ${r}` : ""} — 마디 ${q}개${r ? `와 남는 ${r}칸` : ""}에서 세어요.`;
+    return `${len}개씩 한 마디. ${p.n} ÷ ${len} = ${q}${r ? ` … ${r}` : ""} — ${r ? `나머지 ${r}, 마디의 ${r}번째 구슬` : "나머지 0, 마디의 마지막 구슬"}이에요.`;
+  };
   const draw = () => {
     const show = Array.from({ length: p.shown }, (_, i) => beadAt(p, i + 1));
     const unitLen = p.dual ? null : p.unit.length;
-    const cars = show.map((b, i) => `<li class="lg-car${revealUnits && unitLen && i % unitLen === 0 ? " unit-start" : ""}"><span class="lg-car-no">${i + 1}</span>${beadSvg(b)}</li>`).join("");
+    const marking = !p.dual && !unitFound && !locked;
+    const marks = (revealUnits || unitFound) && unitLen;
+    const cars = show.map((b, i) => marking
+      ? `<li class="lg-car pick"><button type="button" class="lg-car-btn" data-b2-unit="${i + 1}" aria-label="${i + 1}번째 구슬 ${beadName(b)}까지가 한 마디"><span class="lg-car-no">${i + 1}</span>${beadSvg(b)}</button></li>`
+      : `<li class="lg-car${marks && i % unitLen === 0 ? " unit-start" : ""}"><span class="lg-car-no">${i + 1}</span>${beadSvg(b)}</li>`).join("");
     const gap = p.n > p.shown + 1 ? '<li class="lg-car gap" aria-hidden="true">…</li>' : "";
     const answerShown = locked && p.kind !== "count";
     const mystery = p.kind === "count" ? "" : `<li class="lg-car mystery${answerShown ? " solved" : ""}"><span class="lg-car-no">${p.n}</span>${answerShown ? beadSvg(p.answer) : '<span class="lg-q">?</span>'}</li>`;
-    stage.innerHTML = `${p.kind === "count" ? `<p class="lg-target">${beadSvg(p.target)}<span>이 구슬이 <b>1번부터 ${p.n}번까지</b> 몇 개?</span></p>` : ""}<ol class="lg-train" aria-label="구슬 기차">${cars}${gap}${mystery}</ol>${revealUnits && unitLen ? `<p class="lg-unit-note">${unitLen}개씩 한 마디. ${p.n}번째는 ${Math.ceil(p.n / unitLen)}번째 마디의 ${(p.n - 1) % unitLen + 1}번째 구슬.</p>` : ""}${revealUnits && p.dual ? `<p class="lg-unit-note">모양은 ${p.shapeCycle.length}개마다, 색은 ${p.colorCycle.length}개마다 되풀이. ${p.n}번째: 모양 ${(p.n - 1) % p.shapeCycle.length + 1}번째, 색 ${(p.n - 1) % p.colorCycle.length + 1}번째.</p>` : ""}`;
+    const stepNote = marking ? `<p class="lg-unit-note step">① 처음부터 똑같이 되풀이되는 가장 짧은 묶음을 찾아요. <b>한 마디가 끝나는 구슬</b>을 누르세요.</p>${unitNote ? `<p class="lg-unit-note retry" role="status">${esc(unitNote)}</p>` : ""}`
+      : unitFound && !locked && unitLen ? `<p class="lg-unit-note step">② ${esc(unitDivision(unitLen))}</p>` : "";
+    stage.innerHTML = `${p.kind === "count" ? `<p class="lg-target">${beadSvg(p.target)}<span>이 구슬이 <b>1번부터 ${p.n}번까지</b> 몇 개?</span></p>` : ""}<ol class="lg-train" aria-label="구슬 기차">${cars}${gap}${mystery}</ol>${stepNote}${revealUnits && unitLen ? `<p class="lg-unit-note">${unitLen}개씩 한 마디. ${p.n}번째는 ${Math.ceil(p.n / unitLen)}번째 마디의 ${(p.n - 1) % unitLen + 1}번째 구슬.</p>` : ""}${revealUnits && p.dual ? `<p class="lg-unit-note">모양은 ${p.shapeCycle.length}개마다, 색은 ${p.colorCycle.length}개마다 되풀이. ${p.n}번째: 모양 ${(p.n - 1) % p.shapeCycle.length + 1}번째, 색 ${(p.n - 1) % p.colorCycle.length + 1}번째.</p>` : ""}`;
+    if (marking) { controls.innerHTML = '<p class="cg-ask">먼저 위 기차에서 한 마디를 찾으세요.</p>'; return; }
     if (p.kind === "count") {
       controls.innerHTML = `<p class="cg-ask">개수를 고르세요.</p>${pad(p.choices, "data-b2-count", { disabled: locked })}`;
       wrong.forEach((v) => controls.querySelector(`[data-b2-count="${v}"]`)?.setAttribute("disabled", ""));
@@ -175,6 +190,19 @@ function patternBoard({ stage, controls, sound }) {
       controls.innerHTML = `<p class="cg-ask">${p.n}번째 구슬을 고르세요.</p><div class="lg-pick-row">${p.choices.map((b, i) => `<button type="button" class="lg-choice bead" data-b2-choice="${i}" aria-label="${beadName(b)}" ${locked || wrong.has(i) ? "disabled" : ""} ${wrong.has(i) ? 'data-state="bad"' : ""}>${beadSvg(b)}</button>`).join("")}</div>`;
     }
   };
+  const onUnit = (event) => {
+    const t = event.target.closest("[data-b2-unit]");
+    if (!t || locked || unitFound) return;
+    const k = Number(t.dataset.b2Unit), len = p.unit.length;
+    sound.tick();
+    if (k === len) { unitFound = true; unitNote = ""; }
+    else unitNote = k < len
+      ? `${k + 1}번째 구슬부터 다시 보면 처음과 같은 순서로 되풀이되지 않아요. 조금 더 길게 봐요.`
+      : `${k}개보다 더 짧은 묶음이 처음부터 되풀이돼요. 가장 짧은 묶음을 찾아요.`;
+    draw();
+    stage.querySelector(unitFound ? ".lg-unit-note.step" : `[data-b2-unit="${k}"]`)?.focus?.();
+  };
+  stage.addEventListener("click", onUnit);
   const onClick = (event) => {
     const t = event.target.closest("button");
     if (!t || t.disabled || locked) return;
@@ -187,15 +215,15 @@ function patternBoard({ stage, controls, sound }) {
   };
   controls.addEventListener("click", onClick);
   return {
-    show(problem, a) { p = problem; api = a; locked = false; pickShape = null; pickColor = null; wrong = new Set(); revealUnits = false; draw(); },
+    show(problem, a) { p = problem; api = a; locked = false; pickShape = null; pickColor = null; wrong = new Set(); revealUnits = false; unitFound = false; unitNote = ""; draw(); },
     reveal(problem, done) { locked = true; revealUnits = true; draw(); setTimeout(done, reduced() ? 0 : 600); },
     lock(on) { locked = on; if (on) revealUnits = true; draw(); },
-    dispose() { controls.removeEventListener("click", onClick); }
+    dispose() { controls.removeEventListener("click", onClick); stage.removeEventListener("click", onUnit); }
   };
 }
 const PATTERN_GAME = {
   ...PATTERN,
-  coach: (p) => (p.dual ? "모양만 따로 보고, 색만 따로 봐. 둘은 되풀이되는 길이가 달라." : p.kind === "next" ? "처음부터 같은 모양이 다시 나오는 곳을 찾아 봐. 거기까지가 한 마디야." : "한 마디가 몇 개인지 세고, 그 수로 묶어서 세어 봐."),
+  coach: (p) => (p.dual ? "모양만 따로 보고, 색만 따로 봐. 둘은 되풀이되는 길이가 달라." : p.kind === "next" ? "처음부터 같은 모양이 다시 나오는 곳을 찾아 봐. 거기까지가 한 마디야." : "① 한 마디를 찾고 ② 물은 번째를 마디 칸 수로 나눠. ③ 나머지가 마디의 몇 번째인지 알려 줘."),
   mission: (p) => (p.kind === "count" ? `구슬이 되풀이되며 이어져요. <b class="cw">${p.n}번째까지</b> 이 구슬은 몇 개일까요?` : p.kind === "next" ? "다음에 올 구슬은 무엇일까요?" : `<b class="cw">${p.n}번째</b> 구슬은 무엇일까요?`),
   hint: (p, info) => (p.dual ? (info?.shapeOk ? "모양은 맞았어! 색만 따로 세어 봐." : info?.colorOk ? "색은 맞았어! 모양만 따로 세어 봐." : "모양이 몇 개마다, 색이 몇 개마다 되풀이되는지 따로 세어 봐.") : p.kind === "count" ? "한 마디 안에 그 구슬이 몇 개인지 세고, 마디가 몇 번 들어가는지 곱해 봐. 남는 칸도 잊지 말고!" : "한 마디의 길이를 다시 세어 봐. 마디 수로 나누고 남는 자리를 봐."),
   success: (p) => (p.kind === "count" ? `맞았어! ${p.n}번째까지 ${p.answer}개야.` : `맞았어! ${p.n}번째는 ${beadName(p.answer)}야.`),

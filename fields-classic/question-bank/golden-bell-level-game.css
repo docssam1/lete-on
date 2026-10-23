@@ -110,3 +110,12 @@
   .gold-hands-on .lg-beam, .gold-hands-on .lg-pan { transition: none; }
   .gold-hands-on .cg.lg-shake .lg-stage, .gold-hands-on .lg-car.solved { animation: none; }
 }
+
+/* 무늬 기차 ① 한 마디 찾기: 기차 칸이 단추가 된다. */
+.gold-hands-on .lg-car.pick { padding: 0; }
+.gold-hands-on .lg-car-btn { all: unset; position: relative; box-sizing: border-box; display: grid; place-items: center; width: 100%; height: 100%; padding: 12px 8px 6px; border-radius: inherit; cursor: pointer; }
+.gold-hands-on .lg-car-btn:hover { transform: translateY(-2px); }
+.gold-hands-on .lg-car-btn:focus-visible { outline: 3px solid var(--cg-gold, #d9a62e); outline-offset: 2px; }
+.gold-hands-on .lg-unit-note.step { color: #3f2a10; font-weight: 700; }
+.gold-hands-on .lg-unit-note.retry { color: #8f3c1c; font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { .gold-hands-on .lg-car-btn:hover { transform: none; } }
