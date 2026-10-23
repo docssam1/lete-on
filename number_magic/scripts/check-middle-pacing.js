@@ -9,7 +9,7 @@ const data=w.NM_MIDDLE_PACING,C=w.NM_COURSES,original=JSON.stringify(Object.valu
 assert.equal(data.derivedFrom,'NM_COURSES');assert.equal(data.version,'20261023-middle25');
 const modes=new Set(),summary=[];
 for(const plan of Object.values(data.grades)){
- assert.equal(plan.sessions.length,20);assert.equal(plan.weeksStandard,20);assert.equal(plan.weeksAccelerated,10);
+ assert.equal(plan.sessions.length,20);assert.equal(plan.weeksStandard,10);assert.equal(plan.weeksAccelerated,8);
  const expected=plan.courseKeys.flatMap(k=>C[k].sessions.map((s,i)=>k+'-'+i)),actual=[];
  for(const [i,s]of plan.sessions.entries()){
   assert(s.bundle&&s.blocks.length&&s.estimatedMinutes>0);assert.equal(s.week,Math.floor(i/2)+1);assert.equal(s.standardWeek,i+1);

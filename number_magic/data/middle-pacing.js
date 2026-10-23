@@ -66,7 +66,7 @@
       grades[g] = { grade:+g, tier:G.tier, courseKeys:G.courses.slice(),
         title:`중${g} 연산 — 정규 과정 ${G.courses.join('·')}`,
         scope:G.courses.map(k => C[k] && C[k].title && C[k].title.ko).filter(Boolean).join(' / '),
-        weeks:Math.ceil(sessions.length/2),weeksStandard:sessions.length,weeksAccelerated:Math.ceil(sessions.length/2),
+        weeks:Math.ceil(sessions.length/2),weeksStandard:Math.ceil(sessions.length/2),weeksAccelerated:Math.ceil(sessions.length/2/1.25),
         notes:['표준과 속진은 같은 학습 묶음의 주당 횟수 차이입니다.'],supplementary:[],sessions,legacySessions };
     });
     return grades;

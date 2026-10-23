@@ -158,7 +158,7 @@ window.NM_STAGES = [
       {sym:'−', tr:{ko:'0을 기준으로 반대 방향',en:'the opposite direction from zero',zh:'以0为界的相反方向'}},
       {sym:'x', tr:{ko:'아직 모르는 수의 자리 — 초1의 □가 자란 것',en:'the seat of the unknown — the □ of Grade 1, grown up',zh:'未知数的位置——小一的□长大了'}},
       {sym:'√', tr:{ko:'제곱하기 전의 나',en:'me, before I was squared',zh:'平方之前的我'}}],
-    meta:{ko:'과정 29~37 · 주 2회 기준 30주(주 1회 60주) · 표준 학기당 약 2.5개월 · 중3 고등 연결',en:'Courses 29–37 · 30 weeks at two bundles a week (60 at one) · standard: about 2.5 months per semester · Grade 9 high-school bridge',zh:'课程29~37 · 每周2组30周(每周1组60周) · 标准每学期约2.5个月 · 初三高中衔接'}
+    meta:{ko:'과정 29~37 · 주 2회 기준 30주(주 1회 60주) · 학년별 1학기 연산 약 2.5개월 · 중3 고등 연결',en:'Courses 29–37 · 30 weeks at two bundles a week (60 at one) · first-semester arithmetic: about 2.5 months per grade · Grade 9 high-school bridge',zh:'课程29~37 · 每周2组30周(每周1组60周) · 各年级上学期运算约2.5个月 · 初三高中衔接'}
   },
   /* 고등(2026-09-29) — 원장 "공통수학1, 공통수학2도 있어야지 / 대수 / 미적분1".
      한 칸에 네 과목을 묶어 두었던 'high' 단계를 과목마다 한 단계로 나눈다(로드맵 10단계).

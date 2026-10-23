@@ -94,10 +94,10 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       if(middle){
         const result=await page.evaluate(()=>{
           const base={courseKey:'C29',sessionIndex:1,startDate:'2026-10-23',entryYear:2020};
-          const a=NM_LEARNING_PLAN.standard(NM_COURSES,base,{now:base.startDate}),b=NM_LEARNING_PLAN.project(NM_COURSES,{...base,cadence:'w2',speed:1},{now:base.startDate});
+          const a=NM_LEARNING_PLAN.standard(NM_COURSES,base,{now:base.startDate}),b=NM_LEARNING_PLAN.project(NM_COURSES,{...base,cadence:'w2',speed:1.25},{now:base.startDate});
           return {standard:(Date.parse(a.milestones.find(m=>m.key==='C31').date)-Date.parse(base.startDate))/86400000,accelerated:(Date.parse(b.milestones.find(m=>m.key==='C31').date)-Date.parse(base.startDate))/86400000};
         });
-        assert.deepEqual(result,{standard:140,accelerated:70},tag+' standard 20 / accelerated 10 weeks');
+        assert.deepEqual(result,{standard:70,accelerated:56},tag+' standard 10 / faster 8 weeks');
         assert(await page.locator('#nmStandardPlan').isVisible(),tag+' standard plan shown first');
         await page.evaluate(()=>{
           document.querySelectorAll('.nm-confetti').forEach(e=>e.remove());const wrapper=document.createElement('main');wrapper.className='nm-placement';const host=document.createElement('section');host.className='pd-calendar';host.id='paceFixture';wrapper.appendChild(host);document.querySelector('#screen').replaceChildren(wrapper);window.__paceApplied=[];

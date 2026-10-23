@@ -666,6 +666,10 @@ function cloudPushSoon(){
 function highWeeklySchedule(courseKey){
   if(!window.NM_HIGH_PACING)return null;
   const managed=S.adminPlan;
+  const anchorKey=managed?.courseKey||S.highSchedule?.courseKey||courseKey;
+  if(!managed&&!S.roadManual&&!S.middleCadenceDefaultVersion&&/^middle[123]$/.test((window.NM_COURSES||{})[anchorKey]?.tier||'')){
+    S.roadCadence='w2';S.middleCadenceDefaultVersion='20261023-core10';
+  }
   if(managed&&(window.NM_COURSES||{})[managed.courseKey]?.studyPlan&&managed.startDate)
     return {courseKey:managed.courseKey,sessionIndex:managed.sessionIndex||1,startDate:managed.startDate,speed:managed.speed||1,cadence:managed.cadence||'w2'};
   if(S.highSchedule&&(window.NM_COURSES||{})[S.highSchedule.courseKey]?.studyPlan)
@@ -2862,9 +2866,9 @@ function middlePacingHtml(tier){
     return `${th?L(th.name):b.t} · ${lv?L(lv.label):'L'+b.lv} ${b.n}문항`;
   };
   return `<details class="nm-middle-pacing" id="middlePacing${grade}">
-    <summary><span class="nm-mp-sumt"><small>정규 과정 학습 묶음</small>${esc(plan.title)}</span><span class="nm-mp-summeta">표준 20주 · 속진 10주 · <span class="nm-cr-tnum">${plan.sessions.length}</span>묶음 · 펼쳐 보기</span></summary>
+    <summary><span class="nm-mp-sumt"><small>정규 과정 학습 묶음</small>${esc(plan.title)}</span><span class="nm-mp-summeta">기본 10주 · 속진 8주 · <span class="nm-cr-tnum">${plan.sessions.length}</span>묶음 · 펼쳐 보기</span></summary>
     <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
-    <p class="nm-mp-intro"><b>${esc(plan.scope)}.</b> 같은 정규 회차를 묶어 학년별 20묶음으로 보인 표입니다. 표준은 학기당 약 2.5개월, 속진은 학년당 약 2.5개월이며, 기하를 제외한 연산 범위의 계획입니다.</p>
+    <p class="nm-mp-intro"><b>${esc(plan.scope)}.</b> 같은 정규 회차를 묶어 학년별 20묶음으로 보인 표입니다. 각 학년의 1학기 연산은 기본 약 2.5개월이며, 심화를 선택하면 기본을 포함해 총 약 4개월입니다. 2학기 도형 기간을 더하지 않습니다.</p>
     <ul class="nm-mp-facts">
       <li>한 묶음을 여러 날로 나누어 <strong>교과 연산 → 독셈 → 적용</strong> 순서로 공부해요.</li>
       <li>쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.</li>
@@ -3797,6 +3801,25 @@ function paceCompareHtml(){
     <ul class="nm-pc-scope"><li>${T('scope1')}</li><li>${T('scope2')}</li><li>${T('scope3')}</li></ul>${srcHtml}</div>`;
 }
 
+function middleStudyGuidanceState(){
+  const courses=window.NM_COURSES||{},current=courses[currentCourseKey()];
+  if(!current)return null;
+  const match=/^middle([123])$/.exec(current.tier||''),candidates=[];
+  const previous={32:1,35:2,38:3}[current.order];
+  if(previous)candidates.push(previous);
+  if(match)candidates.push(+match[1]);
+  for(const grade of candidates){
+    const ids=[...new Set(Object.values(courses).filter(c=>c.tier==='middle'+grade).flatMap(courseUnitIds))];
+    const done=ids.filter(id=>stepDone(id,'stamp')).length;
+    if(!ids.length||done<Math.ceil(ids.length/2))continue;
+    const phase=done===ids.length?'end':'mid';
+    if(grade===previous&&phase!=='end')continue;
+    const key=grade+':'+phase,choice=S.middleStudyGuidanceChoices?.[key]||null;
+    if(choice==='continue')continue;
+    return {grade,phase,key,choice};
+  }
+  return null;
+}
 function renderPersonalPlan(){
   if(S.view!=='courseroad'||!window.NM_LEARNING_PLAN||!window.NM_COURSES)return;
   const bar=document.querySelector('#screen .nm-cr-header, #screen .nm-unit-bar');if(!bar)return;
@@ -3813,10 +3836,18 @@ function renderPersonalPlan(){
   const standard=NM_LEARNING_PLAN.standard(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});
   const gradeEnds=new Set([31,34,37,48,57,69]);
   const standardEnds=standard.milestones.filter(m=>gradeEnds.has(+m.key.slice(1))).slice(0,6);
-  standardBox.innerHTML=`<div class="nm-personal-plan-body"><h3>${lk('현재 진도에서 이어지는 표준 로드맵','Standard roadmap from your current progress','从当前进度开始的标准路线')}</h3><p>${lk('중등은 학기당 약 2.5개월·학년당 약 5개월, 고등 각 과목은 약 3개월을 기준으로 했어요. 중등 속진은 학년당 약 2.5개월이에요. 기하를 제외한 연산 범위이며 실제 학습에 따라 달라져요.','Middle-school arithmetic targets 2.5 months per semester or 5 per grade; high-school subjects target 3 months each. Accelerated middle-school study targets 2.5 months per grade. Geometry is excluded and actual pace may vary.','初中运算每学期约2.5个月、每年级约5个月；高中每科约3个月。初中加速为每年级约2.5个月。不含几何，日期随实际学习调整。')}</p>${standardEnds.map(m=>`<p><b>${esc(m.date)}</b> · ${esc(m.key+' · '+m.title)} <small>${esc(m.schoolLabel)}</small></p>`).join('')}<p>${lk('아래에서 표준·속진과 5단계 속도를 비교한 뒤 적용할 수 있어요. 이미 배운 앞부분과 완료 기록은 바꾸지 않아요.','Compare standard or accelerated study and five pace steps below, then apply. Earlier completed work is preserved.','可在下方比较标准、加速与5档速度后应用，已学内容和完成记录保留。')}</p></div>`;
+  standardBox.innerHTML=`<div class="nm-personal-plan-body"><h3>${lk('현재 진도에서 이어지는 표준 로드맵','Standard roadmap from your current progress','从当前进度开始的标准路线')}</h3><p>${lk('중등은 각 학년의 1학기 연산을 기본 약 2.5개월로 잡아요. 심화를 선택하면 기본 포함 총 약 4개월이에요. 고등 각 과목은 약 3개월이며 실제 학습에 따라 달라져요.','Each middle-school grade’s first-semester arithmetic targets about 2.5 months, or about 4 months including optional deeper study. Each high-school subject targets 3 months. Actual pace may vary.','初中各年级上学期运算基础约2.5个月，选择进阶后合计约4个月。高中每科约3个月，日期随实际学习调整。')}</p>${standardEnds.map(m=>`<p><b>${esc(m.date)}</b> · ${esc(m.key+' · '+m.title)} <small>${esc(m.schoolLabel)}</small></p>`).join('')}<p>${lk('아래에서 표준·속진과 5단계 속도를 비교한 뒤 적용할 수 있어요. 이미 배운 앞부분과 완료 기록은 바꾸지 않아요.','Compare standard or accelerated study and five pace steps below, then apply. Earlier completed work is preserved.','可在下方比较标准、加速与5档速度后应用，已学内容和完成记录保留。')}</p></div>`;
+  const guidance=middleStudyGuidanceState();
+  if(guidance&&window.NM_MIDDLE_STUDY_GUIDANCE){
+    const host=document.createElement('div');host.id='nmMiddleStudyGuidance';standardBox.querySelector('.nm-personal-plan-body').appendChild(host);
+    NM_MIDDLE_STUDY_GUIDANCE.mount(host,{...guidance,lang:S.lang,onChoice:choice=>{
+      S.middleStudyGuidanceChoices=S.middleStudyGuidanceChoices||{};S.middleStudyGuidanceChoices[guidance.key]=choice;save();
+    },onContinue:()=>{if(guidance.phase==='end')openCourseSheet('C'+({1:32,2:35,3:38}[guidance.grade]));}});
+  }
   box.innerHTML=`<summary>${lk('나의 월별 로드맵 · 12개월','My monthly roadmap · 12 months','我的月度路线图 · 12个月')}</summary><div class="nm-personal-plan-body"><p>${p?lk('학원에서 정한 개인별 시작점과 속도를 적용했어요.','Your academy’s individual starting point and pace are applied.','已应用学院设置的个人起点和速度。'):lk('현재 선택한 시작점과 속도로 예상했어요.','Estimated from your selected starting point and pace.','根据所选起点和速度估算。')} ${lk('실제 학습에 따라 달라질 수 있어요. 학년은 매년 3월에 바뀌어요.','Actual progress may vary. Grades change each March.','实际进度可能不同，年级每年3月变更。')}</p><p>${lk('시작','Start','开始')}: ${esc(settings.startDate)} · ${settings.speed}${lk('배 속도','× pace','倍速度')} · ${lk('주','Per week','每周')} ${settings.cadence==='w2'?2:1}${lk('회',' sessions','次')}</p><div class="nm-personal-plan-grid" role="list">${result.rows.map(row=>`<article role="listitem"><h4>${esc(row.month)} <small>${esc(row.schoolLabel)}</small></h4>${row.courseLabels.length?row.courseLabels.map((label,i)=>`<p><b>${esc(label)}</b><span>${esc(row.sessionLabels[i])}</span></p>`).join(''):`<p>${lk('예상 과정 없음','No course projected','暂无预计课程')}</p>`}</article>`).join('')}</div>${+settings.courseKey.slice(1)<29?`<aside><h4>${esc(reference.title)}</h4><p>${esc(reference.advice)}</p><p>${esc(reference.reference)}</p>${reference.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>`).join(' · ')}</aside>`:""}</div>`;
 }
 function screenCourseRoad(){
+  highWeeklySchedule(currentCourseKey());
   if(townCleanup){townCleanup();townCleanup=null;}
   clearInterval(mgTimer);mgTimer=null;
   const scr=$('#screen');
@@ -4113,8 +4144,8 @@ function screenCourseRoad(){
       <div class="nm-cr-step">
         <div class="nm-cr-cad-h"><i>1</i>${middleRoute?lk('중등 학습 경로','Middle-school route','初中学习路径'):lk('주당 학습 묶음','Study bundles per week','每周学习组')}</div>
         <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
-          ${segBtn('cad','w1',cad==='w1',middleRoute?lk('표준 · 학년 5개월','Standard · 5 months per grade','标准 · 每年级5个月'):lk('주 1묶음','1 per week','每周1组'))}
-          ${segBtn('cad','w2',cad==='w2',middleRoute?lk('속진 · 학년 2.5개월','Accelerated · 2.5 months per grade','加速 · 每年级2.5个月'):lk('주 2묶음','2 per week','每周2组'))}
+          ${segBtn('cad','w1',cad==='w1',middleRoute?lk('주 1묶음 · 천천히','1 bundle per week · slower','每周1组 · 慢速'):lk('주 1묶음','1 per week','每周1组'))}
+          ${segBtn('cad','w2',cad==='w2',middleRoute?lk('주 2묶음 · 기본 2.5개월','2 bundles per week · core 2.5 months','每周2组 · 基础2.5个月'):lk('주 2묶음','2 per week','每周2组'))}
         </div>
         <p class="nm-cr-cadnote">${cad==='w2'
           ? lk('한 주에 수업 2회 — 한 과정에 드는 주가 절반이 돼요. 더 다지고 싶으면 아래에서 속도를 낮춰요.',
