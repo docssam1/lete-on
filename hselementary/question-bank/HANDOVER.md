@@ -5,7 +5,10 @@
 - Browser audit passed 54 states at 1440px and 375px, three pools and three difficulties, with zero page errors and 54 external requests blocked. All six problem/solution A4 PDFs are one page. The Mission 1 proof diagram, labels, and solution page were rasterized and visually inspected.
 - Whole-bank audits now report 2,045 types, 1,257 available and 788 pending. Classification regression confirms all 124 legacy Grade 5-2 records and their groups are unchanged. The original publisher-key status remains unverified.
 - Drive source review: https://drive.google.com/file/d/1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s/view. Evidence: [Mission 1 proof review ZIP](https://drive.google.com/file/d/1AQE0WvFDBuuqBx5TC8pTCTuYWiJiTCtO/view).
-- This update is in the isolated review branch. It has not yet been merged to `main` or deployed. No student data was accessed or changed.
+- GitHub PR [#403](https://github.com/docssam1/lete-on/pull/403) merged to `main` as `81ca437b5247d3c98f6193c7ca2f8872045ac076`; Pages workflow [run 40016091381](https://github.com/docssam1/lete-on/actions/runs/40016091381) succeeded. The live runtime module and stylesheet both returned HTTP 200 and their SHA-256 values match the deployed source files (`a819b8caa6830c9be3fdecf04197ebc83b7206d073f022dbb1d2a43679bef3ae`, `7e8f6ecb6ef22c15416a5f56b949ded0b37d4ce37265c132edd4a5352755c86c`).
+- The local production-origin browser audit hit GitHub Pages HTTP 429 rate limiting, so a full live-page rerun remains pending cooldown. The local browser audit passed 54 states; all six A4 PDFs are one page and the final Mission 1 solution was visually checked after removing overlapping duplicate angle numbers.
+- The existing 5-2 source ledger identifies `5-2-u3-e4-mission-1..6` as line-symmetry items on printed page 29, while the page-31 readiness/runtime records use those same IDs for geometry items. Reconcile the source-edition identity before using those IDs for further mappings; the separate E5 ledger records line-symmetry missions on printed page 31.
+- The refreshed Drive evidence ZIP is [grade52-u3-m1-elementary-proof-20261024.zip](https://drive.google.com/file/d/1AQE0WvFDBuuqBx5TC8pTCTuYWiJiTCtO/view), SHA-256 `bd76803772f475e88d7e164e36d99c8ed3cbbbada6e43798bce30aa4279afe24`. No student data was accessed or changed.
 
 ---
 
