@@ -196,16 +196,17 @@
   }
   function render() {
     const entry = data.getGrade(grade);
-    setText("grade-label", `GRADE ${grade}`);
+    setText("grade-map-title", `${grade}학년에서 배우는 수학`);
+    setText("grade-label", `${grade}학년`);
     setText("grade-title", entry.title);
     setText("grade-core", entry.core);
     setText("grade-bridge", entry.bridge);
-    setText("source-chip", entry.source === "inferred" ? "Grade 9 · 추정안" : "참고 로드맵");
+    setText("source-chip", entry.source === "inferred" ? "9학년 · 추정안" : "학습 예시");
     setText("grade-note", grade === 7
       ? "7.NS.A 단원 연습은 공개됐어요. 진단은 아직 검수 중이에요."
       : entry.source === "inferred"
         ? "Grade 9는 제공된 7·8·10학년 자료로 추정했어요. 학교 과목 순서는 선생님과 확인해 주세요."
-        : "아직 이 학생의 진단 결과가 없어요. 다음 진도는 풀이를 보고 선생님과 정해요.");
+        : "아직 진단 결과가 없어요. 실제 풀이를 보고 다음 단계를 정해요.");
     $("previous-grade").disabled = grade === data.grades[0].grade;
     $("next-grade").disabled = grade === data.grades[data.grades.length - 1].grade;
     renderGradeButtons();

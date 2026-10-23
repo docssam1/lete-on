@@ -35,6 +35,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   const errors = [];
   page.on("pageerror", function (error) { errors.push(error.message); });
   await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#grade-map-title").innerText(), "7학년에서 배우는 수학");
   assert.match(await page.locator("#grade-title").innerText(), /유리수/);
   assert.equal(await page.locator(".grade-button").count(), 8);
   assert.equal(await page.locator(".stage-button").count(), 4);
@@ -46,6 +47,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=7&program=amc8/);
   assert.equal(await page.locator("#competition-practice-link").getAttribute("href"), "./competition-practice.html?program=amc8");
   await page.getByRole("button", { name: "Grade 9 지도 보기" }).click();
+  assert.equal(await page.locator("#grade-map-title").innerText(), "9학년에서 배우는 수학");
   assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학 · 추정/);
   assert.match(await page.locator("#source-chip").innerText(), /추정안/);
   assert.match(await page.locator("#grade-note").innerText(), /제공된 7·8·10학년/);
@@ -88,7 +90,7 @@ test("map has no horizontal overflow at 390px and supports keyboard selection", 
   const gradeButton = page.getByRole("button", { name: "Grade 8 지도 보기" });
   await gradeButton.focus();
   await page.keyboard.press("Enter");
-  assert.match(await page.locator("#grade-label").innerText(), /GRADE 8/);
+  assert.equal(await page.locator("#grade-label").innerText(), "8학년");
   assert.equal(await gradeButton.evaluate(function (node) { return node === document.activeElement; }), true);
   await page.getByRole("button", { name: /단계 3/ }).click();
   assert.match(await page.locator("#stage-number").innerText(), /단계 3/);
