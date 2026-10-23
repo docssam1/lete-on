@@ -1739,14 +1739,15 @@
         "browserAndA4Check": true,
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
-        "releaseStatus": "local-review-passed-awaiting-release",
-        "liveVerificationPending": "Claude API cross-review, release, and live verification remain pending.",
+        "releaseStatus": "draft-pr-awaiting-claude-api-review",
+        "liveVerificationPending": "PR #399 is an open draft. Claude API cross-review and post-release live verification remain pending.",
         "qaDriveId": "1vXV6Zuhl8mmwIYr-ZRKKGDyiaEnvVvP_",
         "qaSize": 4661479,
         "qaSha256": "5410b10c96fa7de42a301e5f07a8203cb1a40f7e5a2b463f0d65f7d4dbe01631",
         "revalidationQaDriveId": "1CjM1nbVI-Bzh_93BKwsxQCqyKKvb_kWv",
         "revalidationQaSize": 1306014,
-        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944"
+        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944",
+        "pullRequest": 399
       },
       {
         "sourceItemId": "5-2-u1-e4-mission-3-notebook-range",
@@ -1758,19 +1759,20 @@
         "browserAndA4Check": true,
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
-        "releaseStatus": "local-review-passed-awaiting-release",
-        "liveVerificationPending": "Claude API cross-review, release, and live verification remain pending.",
+        "releaseStatus": "draft-pr-awaiting-claude-api-review",
+        "liveVerificationPending": "PR #399 is an open draft. Claude API cross-review and post-release live verification remain pending.",
         "qaDriveId": "173BlmwAC2QQSLzoooUzlX5mUP7_Ipj5k",
         "qaSize": 4695513,
         "qaSha256": "70977169a6f4f181598b736bdd3a8b801d505be6400d30f49c482ddf0cdd5347",
         "revalidationQaDriveId": "1CjM1nbVI-Bzh_93BKwsxQCqyKKvb_kWv",
         "revalidationQaSize": 1306014,
-        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944"
+        "revalidationQaSha256": "d1ec184ef80c6f51dfcbb1856430a175be4aaf5229bd7f3c3262951563da4944",
+        "pullRequest": 399
       }
     ],
     "repairPullRequest": 390,
     "repairMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
     "e4Page10Status": "Examples 4-2–4-4 deployed and live-verified by PR #396 / Pages #39973818234; Exploration 4 and Example 4-1 remain published with live browser verification throttled.",
-    "page11MissionStatus": "Mission 1 is deployed and live-verified: PR #398, merge 62e2d20e6d5b31fe73562646b41776b975917697, Pages #39976802614 success, 12 live browser states and matching 5,048-byte generator SHA-256. Missions 2–3 passed local math, browser, and A4 checks and await release."
+    "page11MissionStatus": "Mission 1 is deployed/live-verified via PR #398 and Pages #39976802614. Missions 2–3 are in draft PR #399 and await Claude API cross-review before merge and live verification."
   }
 }
