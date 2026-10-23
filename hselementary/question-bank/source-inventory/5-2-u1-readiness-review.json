@@ -1248,18 +1248,18 @@
         "십의 자리 올림 결과 1200",
         "자연수"
       ],
-      "visualRequirement": "1200 주변의 두 구간을 수직선으로 겹쳐 보일 수 있어야 합니다.",
+      "visualRequirement": "원문은 그림이 없는 텍스트 문항입니다. 범위 풀이를 문장으로 설명하고 새 그림은 덧붙이지 않습니다.",
       "independentCalculation": "백의 자리 반올림 범위는 1150~1249, 십의 자리 올림 범위는 1191~1200이므로 공통은 1191~1200, 모두 10개입니다.",
       "answerFormula": "1200-1191+1=10",
       "independentAnswer": "10개",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "두 구간의 공통 수를 직접 세어 10개로 확인됩니다.",
+      "singleAnswerCheck": "450dpi 원문 이미지와 Apple Vision OCR을 대조하고, 1부터 3000까지 조건을 만족하는 수를 독립 열거해 1191~1200의 10개로 확인했습니다. 손글씨와 출판사 정답지는 사용하지 않았습니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "반올림·올림 구간의 끝점 표시를 중앙 검산기에 연결하기 전입니다."
+      "lockReason": "원문·독립 계산·합성 9개 조합·전체 은행 감사·PC/모바일 12상태·A4 문제/풀이 검증을 통과했습니다. main 반영과 라이브 검증 전까지 잠금을 유지합니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-2-rounded-floor-range",
