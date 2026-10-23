@@ -1161,17 +1161,17 @@
 
   "runtimeCrosswalk": {
     "asOf": "2026-10-23",
-    "scope": "The three explicit page-6 E3 mappings are deployed and live-verified; the page-7 Mission 1 mapping below is locally verified only. The 50-item source census under integrity is a historical review baseline, not a current runtime availability count; no mapping is claimed for the remaining entries.",
+    "scope": "The three page-6 E3 Exploration mappings and the page-7 Mission 1 mapping below are deployed and live-verified. The 50-item source census under integrity is a historical review baseline, not a current runtime availability count; no mapping is claimed for the remaining entries.",
     "releaseStatus": "deployed-and-live-verified",
-    "mainMergeSha": "b8eeebd31422501700aeaf33bd756badde7e9a7b",
-    "pullRequest": 380,
-    "pagesWorkflowRunId": 39947653288,
-    "liveVerification": {"httpAssetsShaMatched":4,"browserStatesPassed":18,"overflowChecksPassed":36,"answerSeparationChecksPassed":18,"a4ProblemPages":2,"a4SolutionPages":2},
+    "mainMergeSha": "a81899148f85eb16e3d013aeb7077b7e22520e1a",
+    "pullRequest": 382,
+    "pagesWorkflowRunId": 39949819499,
+    "liveVerification": {"httpAssetsShaMatched":4,"browserStatesPassed":6,"overflowChecksPassed":12,"answerSeparationChecksPassed":6,"a4ProblemPages":1,"a4SolutionPages":1},
     "items": [
       {"sourceItemId":"5-2-u1-e3-exploration-round-up","runtimeId":"5-2-u1-e3-exploration-round-up","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
       {"sourceItemId":"5-2-u1-e3-exploration-round-down","runtimeId":"5-2-u1-e3-exploration-round-down","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
       {"sourceItemId":"5-2-u1-e3-exploration-round-nearest","runtimeId":"5-2-u1-e3-exploration-round-nearest","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
-      {"sourceItemId":"5-2-u1-e3-mission-1-box-count","runtimeId":"5-2-u1-e3-mission-1-box-count","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"locally-verified-not-deployed"}
+      {"sourceItemId":"5-2-u1-e3-mission-1-box-count","runtimeId":"5-2-u1-e3-mission-1-box-count","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"deployed-and-live-verified"}
     ]
   }
 }
