@@ -1,8 +1,8 @@
 # Grade 7 `7.NS.A` authoring gate
 
-Status: **local reviewed candidate — no `7.NS.A` item, answer key, diagnostic slot, workbook route, commit, or deployment is released**.
+Status (2026-10-24): **local committed workbook candidate — no remote merge or deployment; the separate 18-slot screener remains locked**.
 
-The local candidate now contains 36 original workbook items and eight structurally distinct recheck items. Its exact answer ledger, independent BigInt rational solver, denominator-factor test, decimal long-division check, calculated number-line coordinates, trilingual student/teacher rendering, 390px layout, and A4/Letter print layout are recorded in `GRADE7_NS_A_LOCAL_QA_2026-10-13.md`. This status does not authorize a commit, catalog publication, deployment, or school-use claim.
+The local candidate now contains 36 original workbook items and eight structurally distinct recheck items. Its exact answer ledger, independent BigInt rational solver, denominator-factor test, decimal long-division check, calculated number-line coordinates, trilingual student/teacher rendering, 390px layout, and A4/Letter print layout are recorded in `GRADE7_NS_A_LOCAL_QA_2026-10-13.md`. The candidate was committed locally as `306c575c4b8ee182ac78fe19c9da6683b9fd51fb`, with later local integration commits recorded in the continuation handoff. A local commit is not catalog publication, deployment, formal item-release approval, or a school-use claim.
 
 The separate `GRADE7_NS_A_DIAGNOSTIC_CONTRACT_2026-10-14.md` and `assessment/grade7-ns-a-screener-plan.js` reserve an answer-free 18-slot unit screener. `GRADE7_NS_A_CC_SOURCE_AUDIT_2026-10-14.md` maps every slot target to the official Grade 7 source and records the corrected `1a` description and `1c` distance evidence modes. These artifacts do not reuse workbook items, do not contain learner-facing diagnostic content, and do not authorize placement, promotion, prediction, automatic prescription, or publication.
 
