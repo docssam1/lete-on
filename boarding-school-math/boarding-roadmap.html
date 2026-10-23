@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261024-1">
+  <link rel="stylesheet" href="./boarding-roadmap.css?v=20261024-3">
 </head>
 <body class="academy-page page-boarding-roadmap">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -61,18 +61,19 @@
     </section>
 
     <section class="competition-section boarding-shell" id="competition-diagnostic" aria-labelledby="competition-title"><div class="map-head"><div><p class="boarding-kicker">04 · 경시</p><h2 id="competition-title">경시 결과 입력</h2></div><p>채점된 결과를 적어 주세요. 여기서는 자동 채점하거나 저장하지 않아요.</p></div>
-      <div class="competition-layout"><form id="competition-form" class="competition-form" novalidate><div class="competition-fields"><label for="competition-select">대회<select id="competition-select" required></select></label><label for="paper-label">문제지 메모<input id="paper-label" type="text" maxlength="80" placeholder="예: 2025 연습 세트 A"></label></div>
+      <div class="competition-layout"><form id="competition-form" class="competition-form" novalidate><div class="competition-fields"><label for="competition-select">대회<select id="competition-select" required></select></label><label for="paper-label" id="paper-label-field" hidden>문제지 메모<input id="paper-label" type="text" maxlength="80" placeholder="예: 2025 연습 세트 A"></label></div>
         <p class="competition-guidance" id="competition-guidance"></p>
-        <div class="domain-header"><strong>영역</strong><span>푼 문항</span><span>정답</span></div><div id="domain-rows" class="domain-rows"></div>
-        <button class="competition-submit" type="submit">영역별 결과 보기</button><p id="competition-error" class="competition-error" role="alert" hidden></p>
+        <a class="competition-review-link" id="paper-review-link" href="./competition-paper-review.html?grade=7&amp;program=amc8" hidden>문제별로 먼저 복습하기 →</a>
+        <div class="domain-header" hidden><strong>영역</strong><span>푼 문항</span><span>정답</span></div><div id="domain-rows" class="domain-rows" hidden></div>
+        <button class="competition-submit" type="submit" hidden>영역별 결과 보기</button><p id="competition-error" class="competition-error" role="alert" hidden></p>
       </form><article class="competition-report" aria-live="polite"><span>입력한 결과</span><h3 id="competition-report-title">아직 결과가 없어요</h3><p id="competition-report-summary">영역마다 푼 개수와 맞힌 개수를 적어 주세요.</p><div id="competition-report-rows" class="competition-report-rows"></div><p class="competition-report-boundary">이 결과는 복습할 영역을 찾는 데만 써요. 공식 점수·수상·AIME 진출·학교 과목은 판단하지 않아요.</p></article></div>
-      <div class="competition-links"><a id="paper-review-link" href="./competition-paper-review.html?grade=7&amp;program=amc8">경시 문제별 복습 <span aria-hidden="true">→</span></a><a id="competition-practice-link" href="./competition-practice.html?program=amc8">Grade 6 AMC 8 기초 연습 <span aria-hidden="true">→</span></a><a href="./sasmo.html">SASMO 기출 안내 <span aria-hidden="true">→</span></a><a href="https://maa.org/student-programs/amc/" target="_blank" rel="noopener noreferrer">MAA AMC 공식 안내 <span aria-hidden="true">↗</span></a></div>
+      <div class="competition-links"><a id="competition-practice-link" href="./competition-practice.html?program=amc8">Grade 6 AMC 8 기초 연습 <span aria-hidden="true">→</span></a><a href="./sasmo.html">SASMO 기출 안내 <span aria-hidden="true">→</span></a><a href="https://maa.org/student-programs/amc/" target="_blank" rel="noopener noreferrer">MAA AMC 공식 안내 <span aria-hidden="true">↗</span></a></div>
     </section>
 
     <section class="boarding-close"><div class="boarding-shell"><div><p class="boarding-kicker">학습 계획</p><h2>다음 학습을 정할 때</h2><p>학생의 실제 풀이와 학교 진도를 함께 확인합니다.</p></div><a href="./learning-plan.html">학습 계획 보기 →</a></div></section>
   </main>
   <footer class="site-footer"><span>G·MAP · 보딩스쿨 수학 성장 지도</span><span><a href="./index.html">홈</a> · <a href="./learning-plan.html">학습 계획</a></span></footer>
   <script src="./learning/boarding-grade-roadmap.js?v=20261024-1"></script>
-  <script src="./boarding-roadmap.js?v=20261024-2"></script>
+  <script src="./boarding-roadmap.js?v=20261024-4"></script>
 </body>
 </html>

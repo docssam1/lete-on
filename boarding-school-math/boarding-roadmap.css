@@ -112,9 +112,13 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .competition-layout { margin-top: 26px; display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); border: 1px solid #d8dee8; background: #fff; }
 .competition-form, .competition-report { min-width: 0; padding: clamp(20px,3vw,34px); }
 .competition-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.competition-fields:has(#paper-label-field[hidden]) { grid-template-columns: 1fr; }
 .competition-fields label { display: grid; gap: 8px; font-size: .85rem; font-weight: 850; }
+.competition-fields label[hidden] { display: none; }
 .competition-fields select, .competition-fields input, .domain-row input { width: 100%; min-height: 46px; padding: 9px 11px; border: 1px solid #566274; border-radius: 4px; color: #182230; background: #fff; font: inherit; font-size: 1rem; }
 .competition-guidance { margin: 16px 0 20px; color: #566274; font-size: .8rem; line-height: 1.6; }
+.competition-review-link { min-height: 44px; margin-bottom: 16px; display: inline-flex; align-items: center; color: #2456c4; font-size: .84rem; font-weight: 800; text-decoration: none; }
+.competition-review-link[hidden], .domain-header[hidden], .domain-rows[hidden], .competition-submit[hidden] { display: none; }
 .domain-header, .domain-row { display: grid; grid-template-columns: minmax(0,1fr) 94px 94px; gap: 12px; align-items: center; }
 .domain-header { padding: 0 0 9px; border-bottom: 1px solid #d8dee8; color: #566274; font-size: .74rem; }
 .domain-row { padding: 10px 0; border-bottom: 1px solid #d8dee8; }

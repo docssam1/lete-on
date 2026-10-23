@@ -32,7 +32,7 @@
         button.className = "grade-button";
         button.textContent = `G${entry.grade}`;
         button.setAttribute("aria-label", `Grade ${entry.grade} 지도 보기`);
-        button.addEventListener("click", function () { grade = entry.grade; stage = 0; render(); });
+        button.addEventListener("click", function () { grade = entry.grade; stage = 0; competition = null; render(); });
         container.append(button);
       });
     }
@@ -121,6 +121,10 @@
     const select = $("competition-select");
     const previous = competition;
     select.replaceChildren();
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "대회를 선택해 주세요";
+    select.append(placeholder);
     const options = data.competitionOptions(grade);
     options.forEach(function (entry) {
       const option = document.createElement("option");
@@ -128,22 +132,36 @@
       option.textContent = `${entry.title} · ${entry.itemCount}문항`;
       select.append(option);
     });
-    competition = options.some(function (entry) { return entry.id === previous; }) ? previous : (grade >= 6 && grade <= 8 ? "amc8" : "sasmo");
+    competition = options.some(function (entry) { return entry.id === previous; }) ? previous : "";
     select.value = competition;
-    $("paper-review-link").href = `./competition-paper-review.html?grade=${grade}&program=${competition}`;
-    $("competition-practice-link").hidden = grade < 6 || grade > 8;
-    setText("competition-guidance", `채점된 문제지만 입력해 주세요. 문제 하나를 한 영역에만 넣고, 전체 합계는 ${options.find(function (entry) { return entry.id === competition; }).itemCount}문항을 넘기지 마세요.`);
+    $("competition-practice-link").hidden = grade !== 6;
+    if (!competition) $("paper-label").value = "";
+    updateCompetitionFields();
     resetCompetitionReport();
+  }
+  function updateCompetitionFields() {
+    const option = data.competitionOptions(grade).find(function (entry) { return entry.id === competition; });
+    const selected = Boolean(option);
+    $("paper-review-link").hidden = !selected;
+    if (selected) $("paper-review-link").href = `./competition-paper-review.html?grade=${grade}&program=${competition}`;
+    $("paper-label-field").hidden = !selected;
+    document.querySelector(".domain-header").hidden = !selected;
+    $("domain-rows").hidden = !selected;
+    document.querySelector(".competition-submit").hidden = !selected;
+    setText("competition-guidance", selected
+      ? `채점한 문제를 영역별로 나눠 적어 주세요. 영역을 모르면 문제별 복습에서 먼저 확인하세요. 합계는 ${option.itemCount}문항을 넘길 수 없어요.`
+      : "대회를 먼저 골라 주세요. 채점한 문제를 영역별로 직접 나눠 보는 화면이에요.");
   }
   function resetCompetitionReport() {
     setText("competition-report-title", "아직 결과가 없어요");
-    setText("competition-report-summary", "영역마다 푼 개수와 맞힌 개수를 적어 주세요.");
+    setText("competition-report-summary", competition ? "영역마다 푼 개수와 맞힌 개수를 적어 주세요." : "대회를 고르면 영역별 입력칸이 나와요.");
     $("competition-report-rows").replaceChildren();
     $("competition-error").hidden = true;
   }
   function renderCompetitionRows() {
     const host = $("domain-rows");
     host.replaceChildren();
+    if (!competition) return;
     data.strands.forEach(function (entry) {
       const row = document.createElement("div");
       row.className = "domain-row";
@@ -168,6 +186,11 @@
   function analyzeCompetition(event) {
     event.preventDefault();
     const option = data.competitionOptions(grade).find(function (entry) { return entry.id === competition; });
+    if (!option) {
+      setText("competition-error", "대회를 선택해 주세요.");
+      $("competition-error").hidden = false;
+      return;
+    }
     const rows = data.strands.map(function (strand) {
       return { attempted: $(`domain-rows`).querySelector(`[data-strand="${strand.id}"][data-field="attempted"]`).value,
         correct: $(`domain-rows`).querySelector(`[data-strand="${strand.id}"][data-field="correct"]`).value };
@@ -218,13 +241,12 @@
     renderCompetitionRows();
     updateUrl();
   }
-  $("previous-grade").addEventListener("click", function () { if (grade > 3) { grade -= 1; stage = 0; render(); } });
-  $("next-grade").addEventListener("click", function () { if (grade < 10) { grade += 1; stage = 0; render(); } });
+  $("previous-grade").addEventListener("click", function () { if (grade > 3) { grade -= 1; stage = 0; competition = null; render(); } });
+  $("next-grade").addEventListener("click", function () { if (grade < 10) { grade += 1; stage = 0; competition = null; render(); } });
   $("competition-select").addEventListener("change", function (event) {
     competition = event.target.value;
-    $("paper-review-link").href = `./competition-paper-review.html?grade=${grade}&program=${competition}`;
-    const option = data.competitionOptions(grade).find(function (entry) { return entry.id === competition; });
-    setText("competition-guidance", `채점된 문제지만 입력해 주세요. 문제 하나를 한 영역에만 넣고, 전체 합계는 ${option.itemCount}문항을 넘기지 마세요.`);
+    $("paper-label").value = "";
+    updateCompetitionFields();
     resetCompetitionReport();
     renderCompetitionRows();
   });
