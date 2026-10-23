@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 20 Example 4-4 Choice-Rule Ambiguity
+
+- Rechecked the printed wording against the hash-matched source render and Apple Vision location pass. It asks to choose two reduced proper fractions made from 3–9 and count unordered pairs whose product is 1/2, but does not state whether a number can appear in both fractions.
+- Exhaustive enumeration gives 3 pairs if cross-fraction number reuse is allowed: (3/5,5/6), (4/5,5/8), (4/7,7/8). All share one number. If the seven numbers must be used without reuse across the two fractions, there are 0 pairs. Thus “3 pairs” is conditional, not a source-unambiguous answer.
+- Changed the item to `blocked-not-determined`, expanded the answer-determinacy gate to include this case, and updated the underdetermined count to 2. The item remains locked; no runtime or learner data changed.
+- Drive evidence: [grade52-unit2-page20-example44-choice-rule-20261024.md](https://drive.google.com/file/d/1kqpE3ZrZSFep1HV6xw7Hggolw_UUwDUX/view)
+
 ## 2026-10-24 Grade 5-2 Unit 2 Printed Page 15 Source Review
 
 - Checked logical PDF page 11 (printed page 15) from the SHA-256-matched source at 450dpi. Apple Vision located the text; stacked fractions were confirmed in the image. Handwriting and publisher answers were excluded.
