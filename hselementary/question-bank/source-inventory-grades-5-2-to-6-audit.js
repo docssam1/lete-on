@@ -135,6 +135,22 @@ for (const spec of specs) {
   if (spec.semester === "5-2" && items.some(item => item.sourceVerified === true && item.implementationStatus !== "review-locked")) {
     fail("5-2: sourceVerified true 항목 중 잠금이 아닌 항목이 있습니다.");
   }
+  if (spec.semester === "5-2") {
+    const unit3 = document.units?.find(unit => unit.unitId === "5-2-u3");
+    if (unit3?.sourcePdfContentPages?.join(",") !== "20,35" || unit3?.sourcePrintedContentPages?.join(",") !== "24,39") {
+      fail("5-2 u3: SHA-256 기준본의 PDF/인쇄 페이지 범위가 20–35 / 24–39가 아닙니다.");
+    }
+    const unit3Items = items.filter(item => item.unitId === "5-2-u3");
+    if (unit3Items.length !== 88 || unit3Items.some(item => item.printedPage !== item.pdfPage + 4)) {
+      fail("5-2 u3: 88개 항목의 인쇄 쪽이 기준 PDF의 실제 페이지 번호와 일치하지 않습니다.");
+    }
+    for (const [exploration, expectedLabel] of [[4, "합동의 활용 ②"], [5, "선대칭도형"]]) {
+      const explorationItems = unit3Items.filter(item => item.exploration === exploration);
+      if (explorationItems.length !== 11 || explorationItems.some(item => !item.sourceShape.includes(expectedLabel))) {
+        fail(`5-2 u3 e${exploration}: 원문 단원명이 ${expectedLabel}로 일치하지 않습니다.`);
+      }
+    }
+  }
 }
 
 const expectedTotal = specs.reduce((sum, spec) => sum + spec.total, 0);
