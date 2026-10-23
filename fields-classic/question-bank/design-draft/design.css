@@ -164,6 +164,8 @@ button { cursor: pointer; }
 .sheet-body.cols-2 { column-count: 2; column-gap: 7mm; column-rule: .5px solid #e6e0d2; }
 .sheet-body.cols-2 .q-item:first-child { padding-top: 1mm; }
 .sheet-body.cols-2 .workspace { height: 20mm; }
+.sheet-body.cols-2 .fig-beads { gap: 1.8mm; }
+.sheet-body.cols-2 .fig-beads i { width: 8.6mm; height: 8.6mm; }
 /* 교재형: 시험지와 같은 종이·같은 문항 부품에 개념 상자·예제가 얹힌다. 색은 초록 하나만 옅게. */
 .lesson-head { display: flex; align-items: baseline; gap: 3mm; padding-bottom: 2.5mm; border-bottom: 2.6px double #191511; }
 .lesson-head .no { display: grid; place-items: center; width: 11mm; height: 11mm; border: 1.2px solid #2f6b4a; border-radius: 50%; color: #2f6b4a; font-family: var(--sans); font-size: 12pt; font-weight: 700; }
@@ -193,6 +195,23 @@ button { cursor: pointer; }
 .mgrid span { aspect-ratio: 1; border: .5px solid #938a77; }
 .mgrid .fill { background: #40392e; }
 .mirror-pair .axis { width: 1mm; height: 30mm; background: repeating-linear-gradient(#191511 0 2.2mm, transparent 2.2mm 4mm); }
+/* 그림이 문제인 문항의 그림: 시계·바둑돌·디지털 수 카드 (전부 SVG, 본문보다 또렷하게) */
+.fig-clock { display: grid; grid-auto-flow: column; align-items: center; gap: 5mm; }
+.fig-clock svg { width: 34mm; height: 34mm; }
+.fig-clock figcaption { font-family: var(--sans); font-size: 8pt; color: #6c6353; }
+.fig-beads { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2.6mm; margin: 4mm 0 3mm; }
+.fig-beads i { width: 11mm; height: 11mm; border-radius: 50%; border: .5px solid #191511; background: #fff; box-shadow: inset -1mm -1.2mm 0 rgba(0,0,0,.06); }
+.fig-beads i.b { background: #191511; box-shadow: inset 1mm 1.2mm 0 rgba(255,255,255,.22); }
+.fig-beads .more { font-size: 13pt; letter-spacing: .2em; color: #40392e; }
+.fig-digit { display: grid; grid-auto-flow: column; align-items: center; gap: 4mm; }
+.fig-digit .card { display: grid; place-items: center; width: 22mm; height: 28mm; border: .6px solid #191511; border-radius: 2mm; background: #fff; }
+.fig-digit .card.q { border-style: dashed; font-family: var(--sans); font-size: 15pt; color: #938a77; }
+.fig-digit svg { width: 13mm; height: 21mm; }
+.fig-digit .axis2 { width: 1mm; height: 30mm; background: repeating-linear-gradient(#191511 0 2.2mm, transparent 2.2mm 4mm); }
+.fig-digit figcaption { font-family: var(--sans); font-size: 8pt; color: #6c6353; }
+.choices.cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.choices.cards li { align-items: center; }
+.choices.cards .glyph { display: grid; place-items: center; width: 12mm; height: 12mm; border: .5px solid #938a77; border-radius: 1.6mm; font-size: 14pt; font-weight: 600; background: #fff; }
 .choices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2mm 4mm; margin: 2.5mm 0 0; padding: 0; list-style: none; }
 .choices li { display: flex; gap: 1.8mm; }
 .choices .mark { font-family: var(--sans); font-size: 9pt; color: #40392e; }

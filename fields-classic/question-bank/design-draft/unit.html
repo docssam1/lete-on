@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>디자인 시안 — 단원 내지 3안</title>
+  <link rel="stylesheet" href="./design.css?v=20261023a" />
+  <style>
+    /* 단원 내지(단원 도입 쪽) 전용. 시험지와 같은 .sheet 종이 위에 얹는다. */
+    .u-sheet { font-family: var(--sans); }
+
+    /* 1안 — 목차형: 둥근 탭의 큰 번호 + 소단원 목록 + 날짜 칸 */
+    .u1-band { position: relative; margin: -16mm -15mm 0; padding: 14mm 15mm 10mm; background: #e9f0e7; border-radius: 0 0 14mm 14mm; }
+    .u1-no { position: absolute; top: 12mm; left: 15mm; font-size: 46pt; font-weight: 200; line-height: 1; color: #2f6b4a; }
+    .u1-grade { position: absolute; top: 12mm; right: 15mm; display: grid; place-items: center; width: 17mm; height: 17mm; border-radius: 50%; background: #2f6b4a; color: #fff; text-align: center; font-size: 7.5pt; font-weight: 700; line-height: 1.25; }
+    .u1-grade b { display: block; font-size: 13pt; }
+    .u1-band h1 { margin: 17mm 0 0 0; font-family: var(--serif); font-size: 22pt; font-weight: 700; }
+    .u1-band p { margin: 2mm 0 0; color: #4a5f4c; font-size: 9.5pt; }
+    .u1-list { margin: 9mm 0 0; border-top: 1.2px solid #191511; }
+    .u1-list .hd { display: grid; grid-template-columns: 10mm 1fr 24mm 14mm; padding: 1.6mm 0; border-bottom: .4mm solid #c8bfae; color: #938a77; font-size: 7.5pt; font-weight: 700; }
+    .u1-row { display: grid; grid-template-columns: 10mm 1fr 24mm 14mm; align-items: center; min-height: 11mm; border-bottom: .3mm solid #e6e0d2; font-size: 10pt; }
+    .u1-row .n { color: #2f6b4a; font-weight: 700; }
+    .u1-row .d { color: #938a77; font-size: 8.5pt; }
+    .u1-row .c { justify-self: center; width: 6mm; height: 6mm; border: .4mm solid #c8bfae; border-radius: 50%; }
+    .u1-foot { display: flex; align-items: center; gap: 5mm; margin-top: 10mm; padding: 5mm 6mm; border-radius: 4mm; background: #faf4e4; }
+    .u1-foot svg { flex: 0 0 auto; }
+    .u1-foot p { margin: 0; font-size: 9pt; color: #6b5d3f; line-height: 1.6; }
+    .u1-foot b { color: #191511; }
+
+    /* 2안 — 배움 지도형: 이 단원에서 배우는 것 흐름 + 준비 확인 */
+    .u2-head { display: grid; grid-template-columns: auto 1fr; gap: 6mm; align-items: center; padding-bottom: 5mm; border-bottom: 2.6px double #191511; }
+    .u2-no { display: grid; place-items: center; width: 20mm; height: 20mm; border-radius: 6mm; background: #2f6b4a; color: #fff; font-size: 22pt; font-weight: 700; }
+    .u2-head h1 { margin: 0; font-family: var(--serif); font-size: 21pt; font-weight: 700; }
+    .u2-head small { display: block; margin-top: 1mm; color: #938a77; font-size: 9pt; font-weight: 600; }
+    .u2-label { margin: 8mm 0 3mm; font-size: 9pt; font-weight: 700; color: #1e4631; }
+    .u2-map { display: grid; gap: 3mm; }
+    .u2-step { position: relative; display: grid; grid-template-columns: 26mm 1fr; align-items: center; gap: 4mm; padding: 4mm 5mm; border: .4mm solid #d8ccb4; border-radius: 3mm; background: #fff; }
+    .u2-step + .u2-step::before { content: ""; position: absolute; top: -3.2mm; left: 12.5mm; width: .5mm; height: 3.2mm; background: #c8bfae; }
+    .u2-step b { font-size: 10.5pt; color: #191511; }
+    .u2-step .tag { justify-self: start; padding: 1mm 3mm; border-radius: 99mm; background: #e9f0e7; color: #1e4631; font-size: 8pt; font-weight: 700; }
+    .u2-step.now { border-color: #2f6b4a; box-shadow: inset 0 0 0 .5mm #2f6b4a; }
+    .u2-step.now .tag { background: #2f6b4a; color: #fff; }
+    .u2-step p { margin: .6mm 0 0; font-size: 8.8pt; color: #6c6353; }
+    .u2-ready { margin-top: 8mm; padding: 5mm 6mm; border-left: 1.2mm solid #c05a33; background: #fdf2ec; }
+    .u2-ready h2 { margin: 0 0 2mm; font-size: 9.5pt; color: #8f3c1c; }
+    .u2-ready ol { margin: 0; padding-left: 5mm; font-family: var(--serif); font-size: 10.5pt; }
+    .u2-ready li { margin-top: 1.2mm; }
+    .u2-ready .blank { display: inline-block; width: 14mm; border-bottom: .4mm solid #40392e; }
+
+    /* 3안 — 포스터형: 큰 기호 구성 + 목표 */
+    .u3 { position: relative; }
+    .u3-art { position: absolute; top: -16mm; right: -15mm; width: 96mm; height: 120mm; }
+    .u3-no { font-size: 15pt; font-weight: 250; color: #c05a33; letter-spacing: .3em; }
+    .u3 h1 { margin: 3mm 0 0; max-width: 95mm; font-family: var(--serif); font-size: 24pt; font-weight: 700; line-height: 1.3; }
+    .u3-lead { max-width: 92mm; margin: 5mm 0 0; font-family: var(--serif); font-size: 10.5pt; line-height: 1.8; color: #40392e; }
+    .u3-goals { margin: 12mm 0 0; display: grid; gap: 3mm; max-width: 120mm; }
+    .u3-goal { display: grid; grid-template-columns: 8mm 1fr; gap: 3mm; align-items: baseline; font-size: 10pt; }
+    .u3-goal i { display: grid; place-items: center; width: 7mm; height: 7mm; border-radius: 50%; background: #191511; color: #fff; font-style: normal; font-size: 8pt; font-weight: 700; }
+    .u3-start { display: inline-block; margin-top: 11mm; padding: 2.6mm 7mm; border-radius: 99mm; background: #2f6b4a; color: #fff; font-size: 9.5pt; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html">① 문제은행 화면</a><a href="./exam.html">② A4 시험지</a><a href="./covers.html">③ 교재 표지</a><a href="./unit.html" aria-current="page">④ 단원 내지 3안</a><span style="margin-left:auto;color:var(--muted)">단원 도입 쪽 — 책 성격(연산·개념·심화)에 따라 골라 쓰는 선택지</span></nav>
+
+  <div class="sheet-stage">
+    <article class="sheet u-sheet" lang="ko" aria-label="단원 내지 1안 — 목차형">
+      <div class="u1-band">
+        <span class="u1-no">1</span>
+        <span class="u1-grade">1과정<b>1권</b></span>
+        <h1>거울과 뒤집기</h1>
+        <p>거울선을 기준으로 모양이 어떻게 바뀌는지 알아봅니다.</p>
+      </div>
+      <div class="u1-list">
+        <div class="hd"><span></span><span>소단원</span><span>공부한 날</span><span style="justify-self:center">확인</span></div>
+        <div class="u1-row"><span class="n">1</span><span>거울에 비친 모양 찾기</span><span class="d">　　월　　일</span><span class="c"></span></div>
+        <div class="u1-row"><span class="n">2</span><span>거울선에서 같은 거리의 칸</span><span class="d">　　월　　일</span><span class="c"></span></div>
+        <div class="u1-row"><span class="n">3</span><span>거울에 비친 시계 읽기</span><span class="d">　　월　　일</span><span class="c"></span></div>
+        <div class="u1-row"><span class="n">4</span><span>두 번 뒤집기</span><span class="d">　　월　　일</span><span class="c"></span></div>
+        <div class="u1-row"><span class="n">5</span><span>거울 수 카드의 계산</span><span class="d">　　월　　일</span><span class="c"></span></div>
+        <div class="u1-row"><span class="n">★</span><span>골든벨 도전</span><span class="d">　　월　　일</span><span class="c"></span></div>
+      </div>
+      <div class="u1-foot">
+        <svg width="64" height="54" viewBox="0 0 64 54" aria-hidden="true">
+          <circle cx="22" cy="27" r="16" fill="#5da97c"/><ellipse cx="17" cy="21" rx="8" ry="5.4" fill="#fff" opacity=".55"/>
+          <rect x="38" y="19" width="16" height="16" rx="2.5" fill="#d9a62e" transform="rotate(-9 46 27)"/>
+          <circle cx="51" cy="13" r="3.4" fill="#e8734a"/>
+        </svg>
+        <p><b>이 단원의 열쇠말</b> — 거울선 · 같은 거리 · 뒤집기. 한 단원이 끝날 때마다 확인 칸에 동그라미를 채워 보세요.</p>
+      </div>
+      <footer class="sheet-foot"><span>지필드 클래식 · 1과정 1권</span><span class="pg">9</span></footer>
+    </article>
+
+    <article class="sheet u-sheet" lang="ko" aria-label="단원 내지 2안 — 배움 지도형">
+      <header class="u2-head">
+        <span class="u2-no">1</span>
+        <div><h1>거울과 뒤집기</h1><small>1과정 1권 · 골든벨 전 예습 단원</small></div>
+      </header>
+      <p class="u2-label">이 단원에서 배우는 것</p>
+      <div class="u2-map">
+        <div class="u2-step"><span class="tag">지난 학습</span><div><b>모양 그대로 옮기기</b><p>모양을 밀어도 크기와 방향이 변하지 않아요.</p></div></div>
+        <div class="u2-step now"><span class="tag">이번 단원</span><div><b>거울에 비친 모양 · 뒤집기</b><p>거울선을 기준으로 왼쪽과 오른쪽이 바뀌어요. 같은 거리의 칸을 찾아요.</p></div></div>
+        <div class="u2-step"><span class="tag">다음 학습</span><div><b>돌리기</b><p>시계 방향으로 반 바퀴, 반의 반 바퀴를 돌려요.</p></div></div>
+      </div>
+      <p class="u2-label">준비 확인 — 배운 것을 먼저 떠올려요</p>
+      <div class="u2-ready">
+        <h2>1분 점검</h2>
+        <ol>
+          <li>오른쪽으로 두 칸 민 모양은 크기가 변할까요? <span class="blank"></span></li>
+          <li>시계의 긴바늘이 한 바퀴 돌면 몇 분이 지날까요? <span class="blank"></span></li>
+        </ol>
+      </div>
+      <footer class="sheet-foot"><span>지필드 클래식 · 1과정 1권</span><span class="pg">9</span></footer>
+    </article>
+
+    <article class="sheet u-sheet u3" lang="ko" aria-label="단원 내지 3안 — 포스터형">
+      <svg class="u3-art" viewBox="0 0 96 120" aria-hidden="true">
+        <defs>
+          <linearGradient id="u3g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5da97c"/><stop offset="1" stop-color="#1e5a3c"/></linearGradient>
+          <linearGradient id="u3c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9d73"/><stop offset="1" stop-color="#d9542b"/></linearGradient>
+        </defs>
+        <rect width="96" height="120" fill="#f3ede0"/>
+        <!-- 큰 기호 구성: 거울 쌍 -->
+        <rect x="14" y="26" width="26" height="26" rx="4" fill="url(#u3g)"/>
+        <rect x="52" y="26" width="26" height="26" rx="4" fill="none" stroke="#2f6b4a" stroke-width="1.6"/>
+        <path d="M46 20v38" stroke="#c05a33" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <circle cx="27" cy="78" r="12" fill="url(#u3c)"/>
+        <circle cx="65" cy="78" r="12" fill="none" stroke="#c05a33" stroke-width="1.6"/>
+        <path d="M46 62v32" stroke="#c05a33" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <text x="46" y="110" font-family="inherit" font-size="7" font-weight="700" fill="#938a77" text-anchor="middle">MIRROR · FLIP</text>
+      </svg>
+      <span class="u3-no">UNIT 01</span>
+      <h1>거울과 뒤집기</h1>
+      <p class="u3-lead">거울 앞에 서면 오른손이 왼손처럼 보입니다. 모양도 마찬가지예요. 이 단원에서는 거울선을 기준으로 모양이 어떻게 바뀌는지, 어떤 것은 바뀌지 않는지 찾아냅니다.</p>
+      <div class="u3-goals">
+        <div class="u3-goal"><i>1</i><span>거울선에서 <b>같은 거리</b>에 있는 칸을 찾을 수 있어요.</span></div>
+        <div class="u3-goal"><i>2</i><span>거울에 비친 <b>시계·수 카드</b>를 바르게 읽을 수 있어요.</span></div>
+        <div class="u3-goal"><i>3</i><span>두 번 뒤집으면 어떤 모양이 되는지 설명할 수 있어요.</span></div>
+      </div>
+      <span class="u3-start">골든벨 도전 전, 5개 소단원</span>
+      <footer class="sheet-foot" style="margin-top:auto"><span>지필드 클래식 · 1과정 1권</span><span class="pg">9</span></footer>
+    </article>
+  </div>
+</body>
+</html>

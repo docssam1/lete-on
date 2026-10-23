@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="./design.css?v=20261023a" />
 </head>
 <body>
-  <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html">① 문제은행 화면</a><a href="./exam.html" aria-current="page">② A4 시험지</a><a href="./covers.html">③ 교재 표지 3안</a><span style="margin-left:auto;color:var(--muted)">Ctrl+P로 인쇄하면 여백 없이 A4 그대로 나옵니다</span></nav>
+  <nav class="draft-nav" aria-label="시안 이동"><b>디자인 시안</b><a href="./index.html">① 문제은행 화면</a><a href="./exam.html" aria-current="page">② A4 시험지</a><a href="./covers.html">③ 교재 표지</a><a href="./unit.html">④ 단원 내지</a><span style="margin-left:auto;color:var(--muted)">Ctrl+P로 인쇄하면 여백 없이 A4 그대로 나옵니다</span></nav>
 
   <div class="sheet-stage">
     <p class="sheet-note"><label class="pg-toggle"><input id="pgToggle" type="checkbox" checked />쪽 번호</label> — 실제 인쇄 설정에 이 체크박스가 들어갑니다(표지는 항상 번호 없음). 본문은 명조(세리프), 번호·배점·안내는 Pretendard. 흑백 프린터 기준이라 색이 없고, 문항마다 배점·풀이 칸·답 쓰는 줄이 있습니다. 머리말의 배점표는 본문 배점에서 자동으로 채우는 자리입니다.</p>
@@ -41,7 +41,8 @@
 
         <section class="q-item">
           <div class="q-head"><span class="q-num">2.</span><span class="q-pts">[4점]</span></div>
-          <p class="q-stem">거울에 비친 시계가 3시를 가리키는 것처럼 보입니다. 실제 시각은 몇 시인지 쓰세요.</p>
+          <p class="q-stem">거울에 비친 시계가 다음과 같이 보입니다. 실제 시각은 몇 시인지 쓰세요.</p>
+          <figure class="q-fig fig-clock" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#fff" stroke="#191511" stroke-width="2.4"/><g stroke="#191511" stroke-width="2"><path d="M50 9v7M50 84v7M9 50h7M84 50h7"/><path d="M29.5 14.5l3.5 6M70.5 14.5l-3.5 6M29.5 85.5l3.5-6M70.5 85.5l-3.5-6M14.5 29.5l6 3.5M14.5 70.5l6-3.5M85.5 29.5l-6 3.5M85.5 70.5l-6-3.5" stroke-width="1.4"/></g><circle cx="50" cy="50" r="2.8" fill="#191511"/><path d="M50 50H76" stroke="#191511" stroke-width="4" stroke-linecap="round"/><path d="M50 50V18" stroke="#191511" stroke-width="2.4" stroke-linecap="round"/></svg><figcaption>거울에 비친 모습</figcaption></figure>
           <div class="workspace" aria-hidden="true"></div>
           <p class="answer-line">답 <i></i></p>
         </section>
@@ -55,7 +56,8 @@
 
         <section class="q-item">
           <div class="q-head"><span class="q-num">4.</span><span class="q-pts">[6점]</span></div>
-          <p class="q-stem">구슬이 ●○○●○○… 과 같이 반복하여 놓여 있습니다. 20번째 구슬은 어떤 색인지 풀이 과정을 쓰고 답을 구하세요.</p>
+          <p class="q-stem">바둑돌이 다음과 같이 반복하여 놓여 있습니다. 20번째 바둑돌은 어떤 색인지 풀이 과정을 쓰고 답을 구하세요.</p>
+          <figure class="q-fig fig-beads" aria-hidden="true"><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i></i><span class="more">⋯</span></figure>
           <div class="workspace tall" aria-hidden="true"></div>
           <p class="answer-line">답 <i></i></p>
         </section>
@@ -78,23 +80,27 @@
       </header>
       <div class="sheet-body cols-2">
         <section class="q-item"><div class="q-head"><span class="q-num">1.</span><span class="q-pts">[4점]</span></div>
-          <p class="q-stem">거울에 비친 시계가 3시를 가리키는 것처럼 보입니다. 실제 시각을 쓰세요.</p>
+          <p class="q-stem">거울에 비친 시계가 다음과 같이 보입니다. 실제 시각을 쓰세요.</p>
+          <figure class="q-fig fig-clock" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#fff" stroke="#191511" stroke-width="2.4"/><g stroke="#191511" stroke-width="2"><path d="M50 9v7M50 84v7M9 50h7M84 50h7"/><path d="M29.5 14.5l3.5 6M70.5 14.5l-3.5 6M29.5 85.5l3.5-6M70.5 85.5l-3.5-6M14.5 29.5l6 3.5M14.5 70.5l6-3.5M85.5 29.5l-6 3.5M85.5 70.5l-6-3.5" stroke-width="1.4"/></g><circle cx="50" cy="50" r="2.8" fill="#191511"/><path d="M50 50H76" stroke="#191511" stroke-width="4" stroke-linecap="round"/><path d="M50 50V18" stroke="#191511" stroke-width="2.4" stroke-linecap="round"/></svg><figcaption>거울에 비친 모습</figcaption></figure>
           <p class="answer-line">답 <i></i></p></section>
         <section class="q-item"><div class="q-head"><span class="q-num">2.</span><span class="q-pts">[4점]</span></div>
-          <p class="q-stem">시계 바늘을 시계 방향으로 반 바퀴 돌리면 가리키는 수를 쓰세요.</p>
+          <p class="q-stem">빨간 바늘이 3을 가리키고 있습니다. 시계 방향으로 반 바퀴 돌리면 가리키는 수를 쓰세요.</p>
+          <figure class="q-fig fig-clock" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#fff" stroke="#191511" stroke-width="2.4"/><g font-family="inherit" font-size="13" text-anchor="middle" fill="#191511"><text x="50" y="22">12</text><text x="81" y="55">3</text><text x="50" y="88">6</text><text x="19" y="55">9</text></g><circle cx="50" cy="50" r="2.8" fill="#191511"/><path d="M50 50H72" stroke="#c0392b" stroke-width="4" stroke-linecap="round"/><path d="M72 50l-5-4m5 4l-5 4" stroke="#c0392b" stroke-width="2" stroke-linecap="round"/></svg></figure>
           <p class="answer-line">답 <i></i></p></section>
         <section class="q-item"><div class="q-head"><span class="q-num">3.</span><span class="q-pts">[4점]</span></div>
           <p class="q-stem">두 번 뒤집어도 처음과 같은 모양이 되는 것을 고르세요.</p>
-          <ul class="choices" style="grid-template-columns:repeat(2,minmax(0,1fr))"><li><span class="mark">①</span>ㄱ</li><li><span class="mark">②</span>ㅁ</li><li><span class="mark">③</span>ㄴ</li><li><span class="mark">④</span>ㄷ</li></ul></section>
+          <ul class="choices cards"><li><span class="mark">①</span><span class="glyph">ㄱ</span></li><li><span class="mark">②</span><span class="glyph">ㅁ</span></li><li><span class="mark">③</span><span class="glyph">ㄴ</span></li><li><span class="mark">④</span><span class="glyph">ㄷ</span></li></ul></section>
         <section class="q-item"><div class="q-head"><span class="q-num">4.</span><span class="q-pts">[4점]</span></div>
           <p class="q-stem">가로, 세로, 대각선의 합이 모두 같도록 빈칸을 채우세요.</p>
           <div class="q-fig magic3"><span>8</span><span class="blank"></span><span>6</span><span class="blank"></span><span>5</span><span class="blank"></span><span>4</span><span class="blank"></span><span>2</span></div></section>
         <section class="q-item"><div class="q-head"><span class="q-num">5.</span><span class="q-pts">[4점]</span></div>
-          <p class="q-stem">구슬이 ●○○●○○… 과 같이 반복됩니다. 20번째 구슬의 색을 쓰세요.</p>
+          <p class="q-stem">바둑돌이 다음과 같이 반복하여 놓여 있습니다. 20번째 바둑돌의 색을 쓰세요.</p>
+          <figure class="q-fig fig-beads" aria-hidden="true"><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i></i><span class="more">⋯</span></figure>
           <div class="workspace"></div>
           <p class="answer-line">답 <i></i></p></section>
         <section class="q-item"><div class="q-head"><span class="q-num">6.</span><span class="q-pts">[4점]</span></div>
-          <p class="q-stem">거울에 비친 수 카드가 5로 보입니다. 실제 수와의 합을 구하세요.</p>
+          <p class="q-stem">디지털 수 카드를 거울에 비추니 다음과 같이 보입니다. 실제 수와 거울에 보인 수의 합을 구하세요.</p>
+          <figure class="q-fig fig-digit" aria-hidden="true"><span class="card q">?</span><span class="axis2"></span><span class="card"><svg viewBox="0 0 44 72" aria-hidden="true"><g fill="#191511"><path d="M8 2h28l-5 6H13Z"/><path d="M6 4l6 6v20l-6 6Z"/><path d="M10 34h24l5 5-5 5H10l-5-5Z"/><path d="M38 40l6-6v28l-6-6Z"/><path d="M13 64h18l5 6H8Z"/></g></svg></span><figcaption>왼쪽이 실제 카드,<br/>오른쪽이 거울에 비친 모습</figcaption></figure>
           <div class="workspace"></div>
           <p class="answer-line">답 <i></i></p></section>
       </div>
@@ -127,7 +133,8 @@
           </div>
         </section>
         <section class="q-item"><div class="q-head"><span class="q-num">문제 2.</span></div>
-          <p class="q-stem">거울에 비친 시계가 3시를 가리키는 것처럼 보입니다. 실제 시각은 몇 시인지 풀이 과정을 쓰고 답을 구하세요.</p>
+          <p class="q-stem">거울에 비친 시계가 다음과 같이 보입니다. 실제 시각은 몇 시인지 풀이 과정을 쓰고 답을 구하세요.</p>
+          <figure class="q-fig fig-clock" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#fff" stroke="#191511" stroke-width="2.4"/><g stroke="#191511" stroke-width="2"><path d="M50 9v7M50 84v7M9 50h7M84 50h7"/><path d="M29.5 14.5l3.5 6M70.5 14.5l-3.5 6M29.5 85.5l3.5-6M70.5 85.5l-3.5-6M14.5 29.5l6 3.5M14.5 70.5l6-3.5M85.5 29.5l-6 3.5M85.5 70.5l-6-3.5" stroke-width="1.4"/></g><circle cx="50" cy="50" r="2.8" fill="#191511"/><path d="M50 50H76" stroke="#191511" stroke-width="4" stroke-linecap="round"/><path d="M50 50V18" stroke="#191511" stroke-width="2.4" stroke-linecap="round"/></svg><figcaption>거울에 비친 모습</figcaption></figure>
           <div class="workspace"></div>
           <p class="answer-line">답 <i></i></p>
         </section>
