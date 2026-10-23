@@ -60,7 +60,7 @@ async function checkScheduled(page){
     await page.waitForFunction(()=>window.NM_WS_READY!==undefined,{timeout:60000});
     assert.equal(await page.evaluate(()=>NM_WS_READY),true,await page.locator('#wsBody').innerText());
     await page.evaluate(async()=>{
-      const ids=[...new Set(Object.values(NM_COURSES).filter(c=>c.studyPlan).flatMap(c=>c.sessions.flatMap(s=>s.magic||[])))];
+      const ids=[...new Set(Object.values(NM_COURSES).filter(c=>c.studyPlan&&['highmath1','highmath2','algebra'].includes(c.tier)).flatMap(c=>c.sessions.flatMap(s=>s.magic||[])))];
       await Promise.all(ids.filter(id=>!window.NM_UNITS?.[id]).map(id=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='data/units/'+id+'.js';s.onload=resolve;s.onerror=()=>reject(Error('unit '+id));document.head.appendChild(s);}))); 
     });
     if(process.argv.includes('--schedule-only')){
@@ -72,7 +72,7 @@ async function checkScheduled(page){
     }
     const selections=await page.evaluate(()=>{
       let count=0;const before=JSON.stringify(Object.fromEntries(Object.entries(NM_COURSES).map(([k,c])=>[k,c.sessions])));
-      for(const [key,c]of Object.entries(NM_COURSES).filter(([,c])=>c.studyPlan)){
+      for(const [key,c]of Object.entries(NM_COURSES).filter(([,c])=>c.studyPlan&&['highmath1','highmath2','algebra'].includes(c.tier))){
         const visited=[];
         for(const l of c.studyPlan.lessons){
           const e=NM_EXAM.weeklyEnvelope(c,key,'2026-W43',{compactHigh:true,lesson:l.index,cad:'w2'});
@@ -101,7 +101,7 @@ async function checkScheduled(page){
       const current=window.NM_EXAM;let count=0;
       try{
         (0,eval)(source);const old=window.NM_EXAM;
-        for(const [key,c]of Object.entries(NM_COURSES).filter(([,c])=>c.studyPlan))for(let i=1;i<=c.sessions.length;i++)for(const k of [1,2]){
+        for(const [key,c]of Object.entries(NM_COURSES).filter(([,c])=>c.studyPlan&&['highmath1','highmath2','algebra'].includes(c.tier)))for(let i=1;i<=c.sessions.length;i++)for(const k of [1,2]){
           const opts={startSession:i,k,cad:'w2',sessionIdx:i-1};
           if(JSON.stringify(old.weeklyEnvelope(c,key,'2026-W43',opts))!==JSON.stringify(current.weeklyEnvelope(c,key,'2026-W43',{...opts,legacySession:true})))throw Error(key+' legacy output differs at '+i+' k'+k);
           count++;
@@ -109,7 +109,7 @@ async function checkScheduled(page){
       }finally{window.NM_EXAM=current;}
       return count;
     },legacySource);
-    const targets=await page.evaluate(all=>all?Object.entries(NM_COURSES).filter(([,c])=>c.studyPlan).flatMap(([c,v])=>v.studyPlan.lessons.map(l=>({c,lesson:l.index,amount:1}))):[
+    const targets=await page.evaluate(all=>all?Object.entries(NM_COURSES).filter(([,c])=>c.studyPlan&&['highmath1','highmath2','algebra'].includes(c.tier)).flatMap(([c,v])=>v.studyPlan.lessons.map(l=>({c,lesson:l.index,amount:1}))):[
       {c:'C38',lesson:0,amount:0.7},{c:'C38',lesson:1,amount:1.5},{c:'C59',lesson:0,amount:1},{c:'C59',lesson:1,amount:1},{c:'C64',lesson:1,amount:1}
     ],process.argv.includes('--all'));
     const sets=[];

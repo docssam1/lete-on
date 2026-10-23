@@ -10,6 +10,7 @@
  *      WEEK(주차 강제, 예 2026-W36) · DRY=1(업로드 없이 PDF만 ./out/ 에)
  * 수동: node scripts/nm-weekly-worksheets.cjs --name 홍길동 --course C4 [--cadence w2] [--amount 0.7|0.85|1|1.25|1.5]
  *       고등 C38~C69 는 3개월 묶음. --session N 은 기존 회차 번호(1부터)로 묶음 시작 위치를 지정한다.
+ *       중등 C29~C37 는 학년당 20묶음. 주1회 표준은 학기당 10주, 주2회 속진은 학년당 10주다.
  *       --start-date YYYY-MM-DD [--speed 0.7|0.85|1|1.25|1.5] 는 시작일로부터 해당 주의 다음 묶음을 고른다.
  *       주 2회는 k=1,2 두 벌. 분량은 기본 1배, --amount 또는 프로필 roadAmount 설정을 따른다.
  */
@@ -40,8 +41,11 @@ const AMOUNTS = [0.7, 0.85, 1, 1.25, 1.5];
 const amountOf = (value) => { const n = Number(value); return AMOUNTS.includes(n) ? n : 1; };
 const HIGH_PLAN_VERSION = '20261023-high3m';
 const HIGH_PLAN_COURSE = /^C(3[89]|[4-6][0-9])$/;
+const MIDDLE_PLAN_VERSION = '20261023-middle25';
+const MIDDLE_PLAN_COURSE = /^C(29|3[0-7])$/;
 const sessionIndexOf = (value) => { const n = Number(value); return Number.isInteger(n) && n >= 1 && n <= 1000 ? n : null; };
-const highPlanOf = (target) => HIGH_PLAN_COURSE.test(target.courseKey) && target.highPlanVersion === HIGH_PLAN_VERSION;
+const planVersionOf = (courseKey) => HIGH_PLAN_COURSE.test(courseKey) ? HIGH_PLAN_VERSION : MIDDLE_PLAN_COURSE.test(courseKey) ? MIDDLE_PLAN_VERSION : null;
+const studyPlanOf = (target) => !!planVersionOf(target.courseKey) && target.highPlanVersion === planVersionOf(target.courseKey);
 const dateOf = (value) => {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
   const date = new Date(value + 'T00:00:00Z');
@@ -53,17 +57,17 @@ const highSpeedOf = (target) => amountOf(target.highSpeed || target.speed || 1);
 function buildWorksheetUrl(base, week, target, k) {
   const original = `${base}/number_magic/ws.html?w=${week}&c=${encodeURIComponent(target.courseKey)}&n=${encodeURIComponent(target.name)}&k=${k}&cad=${target.cadence}&amt=${target.amount || 1}&auto=0`;
   // Unmarked targets retain the original URL, selection, and seed contract.
-  if (!highPlanOf(target)) return original;
+  if (!studyPlanOf(target)) return original;
   const sessionIndex = sessionIndexOf(target.sessionIndex);
   const startDate = highStartDateOf(target);
-  return original + `&hp=1&highPlanVersion=${HIGH_PLAN_VERSION}` + (sessionIndex ? `&p=1&s=${sessionIndex}` : '')
+  return original + `&hp=1&highPlanVersion=${target.highPlanVersion}` + (sessionIndex ? `&p=1&s=${sessionIndex}` : '')
     + (startDate ? `&hs=${startDate}&hv=${highSpeedOf(target)}` : '');
 }
 
 function worksheetToken(key, week, target, k) {
   let source = `${target.name}|${week}|${target.courseKey}|a${target.amount || 1}${k > 1 ? '|k' + k : ''}`;
-  if (highPlanOf(target)) {
-    source += `|hp${HIGH_PLAN_VERSION}|s${sessionIndexOf(target.sessionIndex) || 1}`;
+  if (studyPlanOf(target)) {
+    source += `|hp${target.highPlanVersion}|s${sessionIndexOf(target.sessionIndex) || 1}`;
     const startDate = highStartDateOf(target);
     if (startDate) source += `|hs${startDate}|hv${highSpeedOf(target)}`;
   }
@@ -71,8 +75,9 @@ function worksheetToken(key, week, target, k) {
 }
 
 function worksheetTarget(target) {
-  if (HIGH_PLAN_COURSE.test(target.courseKey)) {
-    target.highPlanVersion = HIGH_PLAN_VERSION;
+  const version = planVersionOf(target.courseKey);
+  if (version) {
+    target.highPlanVersion = version;
     const startDate = highStartDateOf(target);
     if (startDate) { target.highStartDate = startDate; target.highSpeed = highSpeedOf(target); }
   }
@@ -142,16 +147,16 @@ async function main() {
       const page = await browser.newPage({ viewport: { width: 900, height: 1200 } });
       try {
         await page.goto(url, { waitUntil: 'load', timeout: 60000 });
-        const exhausted = highPlanOf(t) && await page.evaluate(({ courseKey, k, sessionIndex, version, startDate, speed, cadence, weekKey }) => {
+        const exhausted = studyPlanOf(t) && await page.evaluate(({ courseKey, k, sessionIndex, version, startDate, speed, cadence, weekKey }) => {
           const pacing = window.NM_HIGH_PACING, course = window.NM_COURSES && window.NM_COURSES[courseKey];
           if (!(pacing && course && course.studyPlan && course.studyPlan.version === version)) return false;
           // Dated plans can continue into the next course; inspect the whole assignment.
           if (startDate) return typeof pacing.assignment === 'function'
             && !pacing.assignment(window.NM_COURSES, { courseKey, k, startSession: sessionIndex, startDate, speed, cadence, weekKey });
           return !pacing.select(course, { k, startSession: sessionIndex });
-        }, { courseKey: t.courseKey, k, sessionIndex: sessionIndexOf(t.sessionIndex), version: HIGH_PLAN_VERSION,
+        }, { courseKey: t.courseKey, k, sessionIndex: sessionIndexOf(t.sessionIndex), version: t.highPlanVersion,
           startDate: highStartDateOf(t), speed: highSpeedOf(t), cadence: t.cadence, weekKey: WEEK });
-        if (exhausted) { console.log(`[ws] skip ${t.name} k=${k}: 다음 고등 수업 묶음 없음`); skip++; continue; }
+        if (exhausted) { console.log(`[ws] skip ${t.name} k=${k}: 다음 수업 묶음 없음`); skip++; continue; }
         await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 });
         const ready = await page.evaluate(() => window.NM_WS_READY);
         if (ready !== true) throw new Error('ws.html 렌더 실패: ' + await page.evaluate(() => (document.querySelector('.ws-err') || {}).textContent));
@@ -175,5 +180,5 @@ async function main() {
   console.log(`[ws] done ok=${okN} skip=${skip} fail=${fail}`);
   if (fail) process.exit(1);
 }
-module.exports = { HIGH_PLAN_VERSION, buildWorksheetUrl, worksheetToken, worksheetTarget, sessionIndexOf, dateOf };
+module.exports = { HIGH_PLAN_VERSION, MIDDLE_PLAN_VERSION, buildWorksheetUrl, worksheetToken, worksheetTarget, sessionIndexOf, dateOf };
 if (require.main === module) main().catch((e) => { console.error('[ws] error', e); process.exit(1); });

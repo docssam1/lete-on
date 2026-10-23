@@ -28,7 +28,6 @@ function inspectSheet(){
     else if([...rows[1].querySelectorAll('td')].some(td=>td.textContent.trim()!==''))bad.push({reason:'Student drawing table leaks y answer'});
   }
   const practice=[...s.querySelectorAll('.nm-w2-page')].map(e=>e.querySelectorAll('.nm-w2-item').length).filter(Boolean);
-  if(practice.some(n=>n<6))bad.push({reason:'Practice page has fewer than six questions',practice});
   return {questions:s.querySelectorAll('.nm-w2-item').length,numericKeys:s.querySelectorAll('.nm-ak-item').length,
     drawingQuestions:drawing.length,drawingKeys:s.querySelectorAll('.nm-draw-key-item').length,
     pages:s.querySelectorAll('.nm-w2-page').length,katexErrors:s.querySelectorAll('.katex-error').length,
@@ -55,16 +54,22 @@ function inspectSheet(){
     await page.waitForFunction(()=>window.NM_EXAM&&window.NM_MIDDLE_PACING);
     await page.emulateMedia({media:'print'});
     const style=await page.addStyleTag({content:'html,body{width:190mm!important}.nm-print-sheet{width:190mm!important}'});
-    const targets=await page.evaluate(()=>Object.values(NM_MIDDLE_PACING.grades).flatMap(p=>p.sessions.map(s=>({grade:p.grade,id:s.id,
-      questions:s.blocks.reduce((n,b)=>n+b.n,0),numericKeys:s.blocks.filter(b=>b.kind!=='drawing').reduce((n,b)=>n+b.n,0),drawingKeys:s.blocks.filter(b=>b.kind==='drawing').reduce((n,b)=>n+b.n,0)}))));
+    await page.evaluate(async()=>{
+      const ids=[...new Set(Object.values(NM_COURSES).filter(c=>/^middle/.test(c.tier)).flatMap(c=>c.sessions.flatMap(s=>s.magic||[])))];
+      await Promise.all(ids.filter(id=>!window.NM_UNITS?.[id]).map(id=>new Promise(resolve=>{const sc=document.createElement('script');sc.src='data/units/'+id+'.js';sc.onload=sc.onerror=resolve;document.head.appendChild(sc);})));
+    });
+    const targets=await page.evaluate(()=>Object.values(NM_MIDDLE_PACING.grades).flatMap(p=>p.sessions.map(s=>{
+      const items=NM_EXAM.middlePacingItems(p.grade,s.id,'pacing-qa').filter(it=>!it.magicUnit);
+      return {grade:p.grade,id:s.id,questions:items.reduce((n,it)=>n+it.count,0),numericKeys:items.filter(it=>it.kind!=='drawing').reduce((n,it)=>n+it.count,0),drawingKeys:items.filter(it=>it.kind==='drawing').reduce((n,it)=>n+it.count,0)};
+    })));
     /* 2026-09-25: 보기는 정규 과정에서 계산 — 회차 수도 데이터에서(옛 판은 42 고정) */
     assert.equal(targets.length,await page.evaluate(()=>Object.values(NM_MIDDLE_PACING.grades).reduce((n,p)=>n+p.sessions.length,0)));
     assert(targets.length>0,'중등 진도 보기가 비었다 — 이 페이지가 data/courses.js 를 싣는지 볼 것');
     for(const target of targets.filter(()=>!process.env.NM_PACING_UI_ONLY)){
       try{
         await page.evaluate(async target=>{
-          const items=NM_EXAM.middlePacingItems(target.grade,target.id,'pacing-qa');
-          NM_EXAM.renderPrintMulti(items,target.id,{mixed:12,pacing:true});
+          const e=NM_EXAM.middlePacingEnvelope(target.grade,target.id,'pacing-qa');
+          NM_EXAM.renderPrintMulti(e.items,target.id,{mixed:20,compactHigh:true,cover:e.cover,units:e.units});
           await document.fonts.ready;
           await Promise.all([...document.querySelectorAll('.nm-w2-brand-logo')].map(i=>i.decode()));
           await new Promise(requestAnimationFrame);

@@ -1719,7 +1719,7 @@ function runSessionTabs(container, items, meta){
   function buildTab(it){
     const cfg = { ...it,thread: it.thread, level: it.level, count: it.count||perType, seed: it.seed, wordType: it.wordType };
     const numericSeed = NM_RNG.hashSeed(cfg.seed);
-    const problems = cfg.magicUnit?[]:buildProblems(cfg.thread, cfg.level, cfg.count, numericSeed,null,cfg.threadMix);
+    const problems = cfg.magicUnit?[]:cfg.kind==='drawing'?NM_GRAPH_DRAWING.makeSet({mode:cfg.mode,variant:cfg.variant,count:cfg.count,seed:cfg.seed}):buildProblems(cfg.thread, cfg.level, cfg.count, numericSeed,null,cfg.threadMix);
     applyWordProblems(problems, cfg.wordType, numericSeed);
     return {
       cfg, problems, userAnswers: new Array(cfg.count).fill(''), graded: false, gradeScore: 0,
@@ -1737,8 +1737,8 @@ function runSessionTabs(container, items, meta){
 
   function render(){
     const t = tabs[activeTab];
-    if(t.cfg.magicUnit){
-      const note=renderMagicNotePage(t.cfg,{name:printStudentName()});
+    if(t.cfg.magicUnit||t.cfg.kind==='drawing'){
+      const note=t.cfg.magicUnit?renderMagicNotePage(t.cfg,{name:printStudentName()}):renderDrawingRound(t.cfg,{count:t.cfg.count});
       container.innerHTML=`<div class="nm-ws-wrap nm-ws-session"><div class="nm-ws-hd">${esc(meta.title||'')}</div><div class="nm-ws-tabs">${tabs.map((x,i)=>`<button class="nm-ws-tab${i===activeTab?' active':''}" data-tabidx="${i}">${esc(x.cfg.topicName||x.cfg.magicUnit||pickL(((window.NM_THREADS||{})[x.cfg.thread]||{}).name)||x.cfg.thread)}</button>`).join('')}</div>${note?note.html:''}<button id="nm-ws-back" class="nm-ex-btn-ghost">← ${esc(lk('수업 목록으로','Back to lessons','返回课程列表'))}</button></div>`;
       container.querySelectorAll('[data-tabidx]').forEach(b=>b.onclick=()=>{activeTab=+b.dataset.tabidx;render();});
       container.querySelector('#nm-ws-back').onclick=()=>{if(run)run.stop();if(meta.onBack)meta.onBack();};
@@ -1757,7 +1757,7 @@ function runSessionTabs(container, items, meta){
     const bestHtml = best!=null
       ? `<span class="nm-grid-best">${esc(lk('최고','Best','最高'))} ${Math.round(best*100)}%</span>` : '';
     const round0Code = NM_EXAM.worksheetCode({thread:t.cfg.thread, level:t.cfg.level, count:t.cfg.count, seed:t.cfg.seed});
-    const conceptHtml = t.cfg.noTeach||t.cfg.skipConcept?'':w2ConceptPanelHtml(t.cfg.thread, t.cfg.level);
+    const conceptHtml = t.cfg.noTeach||t.cfg.skipConcept?'':w2ConceptPanelHtml(t.cfg.thread, t.cfg.level,{levelOnly:t.cfg.levelOnly,levelConcept:t.cfg.levelConcept,levelTitle:t.cfg.levelTitle});
     const exampleHtml = t.cfg.noTeach?'':w2ExampleHtml(t.cfg.thread, t.cfg.level, round0Code);
     /* 따라 풀기(§4/§build 7) — 인쇄와 같은 마크업을 화면에도 그대로(읽기 전용,
        탭을 오갈 때마다 같은 시드로 다시 만들므로 매번 같은 3문제). */
@@ -2631,7 +2631,7 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
     ${magazineC4 ? '<div class="nm-cvw-cover-teaser"><b>이번 호의 질문</b>같은 수가 두 묶음이면 어떻게 셀까요?</div><img class="nm-cvw-cover-character" src="assets/characters/docssam.png" alt="">' : ''}
     <p class="nm-cv-kicker">${esc(lk('주간 학습지','WEEKLY WORKSHEET','每周学习单'))} · ${esc(cv.weekLabel||'')}${kTxt}${cv.stage ? ' · ' + esc(cv.stage) : ''}${cv.amount != null && cv.amount !== 1 ? ' · ' + esc(cv.amountLabel || `${cv.amount}×`) : ''}</p>
     <h1 class="nm-cvw-title">Numbers <i>of</i> Magic</h1>
-    <p class="nm-cvw-tagline">${esc(cv.compactHigh?lk('주 2회, 12주에 이어 가는 고등 연산','High school arithmetic over 12 weeks at two lessons a week','每周两课，12周高中运算'):lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
+    <p class="nm-cvw-tagline">${esc(cv.compactMiddle?lk('중등 연산 · 같은 20묶음, 주 1회 20주 · 주 2회 10주','Middle school arithmetic · the same 20 bundles, 20 weeks at once a week or 10 at twice','初中运算 · 相同20组，每周一次20周，每周两次10周'):cv.compactHigh?lk('주 2회, 12주에 이어 가는 고등 연산','High school arithmetic over 12 weeks at two lessons a week','每周两课，12周高中运算'):lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
     <div class="nm-cv-rule"></div>
     <p class="nm-cvw-course">${cv.name ? `<b>${esc(cv.name)}</b> · ` : ''}${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
   </div>
@@ -5006,6 +5006,10 @@ function w2ConceptPanelHtml(threadId, level, extra){
   if(!info) return '';
   const nm = pickL(info.thread.name) || threadId;
   const lvObj = (info.thread.levels || []).find(l => l.id === level);
+  if(extra.levelOnly){
+    const sentence=pickConcept(extra.levelConcept||(lvObj&&lvObj.concept))||'';
+    return `<section class="nm-w2-concept nm-level-only-concept" data-level-only="${esc(threadId+'@'+level)}"><h3>${esc(pickL(extra.levelTitle)||pickL(lvObj&&lvObj.label)||nm)}</h3><p>${escEmph(sentence)}</p></section>`;
+  }
   const visual = window.NM_CONCEPT_VISUALS ? NM_CONCEPT_VISUALS.html(threadId, level, examLang()) : '';
   const middle = examLang() === 'ko' && (window.NM_MIDDLE_CONCEPTS || {})[threadId];
   if(middle){
@@ -6060,7 +6064,7 @@ function renderRoundPagesBody(item, opts){
   const middleLesson = examLang() === 'ko' && !!(window.NM_MIDDLE_CONCEPTS || {})[item.thread];
   const strategyHtml = !noTeach && !middleLesson && getSolveMode() ? w2StrategyBandHtml(item.thread, item.level) : '';
   const conceptHtml = (wordOnly || noTeach || item.skipConcept) ? ''
-    : w2ConceptPanelHtml(item.thread, item.level, {rampN, skipSentence: !!strategyHtml});
+    : w2ConceptPanelHtml(item.thread, item.level, {rampN, skipSentence: !!strategyHtml,levelOnly:item.levelOnly,levelConcept:item.levelConcept,levelTitle:item.levelTitle});
   const exampleMeta={};
   const exampleHtml = (noTeach || pictureOnly) ? ''
     : wordOnly ? w2WordExampleHtml(item.thread, item.level, baseCode, exclude, young, item.exampleSkip, exampleMeta)
@@ -6589,7 +6593,24 @@ ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-an
   const answerRoot=sheet.querySelector('.nm-print-answer-key:not(.nm-draw-answer-key)');
   const answerHead=answerRoot.querySelector('.nm-w2-head');
   const answerFoot=answerRoot.querySelector('.nm-w2-foot');
-  const answerSections=[...answerRoot.children].filter(el=>el!==answerHead&&el!==answerFoot);
+  const rawAnswerSections=[...answerRoot.children].filter(el=>el!==answerHead&&el!==answerFoot);
+  // 중등 묶음의 상자그림·산점도 해답은 회차 하나만으로도 A4를 넘을 수 있다.
+  // 번호 답 격자와 그림의 행을 독립된 조각으로 나누고 같은 유형 머리말을 붙인다.
+  const answerSections=opts.cover&&opts.cover.compactMiddle?rawAnswerSections.flatMap(section=>{
+    if(!section.classList.contains('nm-ak-section'))return [section];
+    const head=section.querySelector('.nm-ak-subhead'),parts=[];
+    [...section.children].filter(el=>el!==head).forEach(part=>{
+      if(part.classList.contains('nm-ak-boxplot-grid')){
+        const cells=[...part.children];
+        for(let i=0;i<cells.length;i+=2){const grid=part.cloneNode(false);cells.slice(i,i+2).forEach(cell=>grid.append(cell));parts.push(grid);}
+      }else if(part.classList.contains('nm-scatter-ak')){
+        const grid=part.querySelector('.nm-scatter-ak-grid'),cells=grid?[...grid.children]:[];
+        if(!cells.length){parts.push(part);return;}
+        for(let i=0;i<cells.length;i+=2){const copy=part.cloneNode(false),title=part.querySelector('h4'),row=grid.cloneNode(false);if(title)copy.append(title.cloneNode(true));cells.slice(i,i+2).forEach(cell=>row.append(cell));copy.append(row);parts.push(copy);}
+      }else parts.push(part);
+    });
+    return parts.map(part=>{const copy=section.cloneNode(false);if(head)copy.append(head.cloneNode(true));copy.append(part);return copy;});
+  }):rawAnswerSections;
   function paginateAnswers(){
     sheet.querySelectorAll('.nm-answer-continuation').forEach(el=>el.remove());
     answerRoot.classList.add('nm-w2-page','nm-answer-page');
@@ -6844,7 +6865,7 @@ function stageCheckItem(course, courseKey, seedBase){
   };
 }
 
-/* 고등의 수업 묶음은 정규 회차의 참조다. 원본 회차·진도 번호는 바꾸지 않는다. */
+/* 중·고등 수업 묶음은 정규 회차의 참조다. 원본 회차·진도 번호는 바꾸지 않는다. */
 function highLessons(course){ return course && course.studyPlan && course.studyPlan.lessons || null; }
 function compactHighEnvelope(course, courseKey, weekKey, opts){
   const pacing=window.NM_HIGH_PACING, lessons=highLessons(course);
@@ -6853,6 +6874,8 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
   if(!lesson)return null;
   const sourceIndices=lesson.sourceIndices, items=[], units=[];
   const k=opts.k===2?2:1;
+  const middle=/^middle[123]$/.test(course.tier),cadence=opts.cad==='w2'||k===2?'w2':'w1';
+  const amount=opts.amount==null?getAmount():normAmount(opts.amount);
   let first=null;
   sourceIndices.forEach(index=>{
     const source=course.sessions[index];
@@ -6869,6 +6892,25 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
     child.units.forEach(id=>{if(!units.includes(id))units.push(id);});
   });
   if(!first || !items.length)return null;
+  (lesson.extraPractice||[]).forEach((d,i)=>{
+    const th=(window.NM_THREADS||{})[d.t],level=(th&&th.levels||[]).find(l=>l.id===d.lv);
+    const levelConcept=d.t==='MD25'&&d.lv===1?{
+      ko:'세제곱의 합은 x³+a³=(x+a)(x²−ax+a²)입니다. 첫 괄호는 더하기, 두 번째 괄호의 가운데 항은 빼기입니다.',
+      en:'A sum of cubes factors as x³+a³=(x+a)(x²−ax+a²). The first bracket has a plus; the middle term of the second has a minus.',
+      zh:'立方和分解为x³+a³=(x+a)(x²−ax+a²)，前括号是加号，后括号中间项是减号。'
+    }:d.t==='MD25'&&d.lv===2?{
+      ko:'세제곱의 차는 x³−a³=(x−a)(x²+ax+a²)입니다. 첫 괄호는 빼기, 두 번째 괄호의 항은 모두 더하기입니다.',
+      en:'A difference of cubes factors as x³−a³=(x−a)(x²+ax+a²). The first bracket has a minus; the second has plus signs.',
+      zh:'立方差分解为x³−a³=(x−a)(x²+ax+a²)，前括号是减号，后括号都是加号。'
+    }:level&&level.concept;
+    const levelTitle=d.t==='MD25'?d.lv===1?{ko:'세제곱의 합 인수분해',en:'Factoring a sum of cubes',zh:'立方和的因式分解'}
+      :{ko:'세제곱의 차 인수분해',en:'Factoring a difference of cubes',zh:'立方差的因式分解'}:level&&level.label;
+    const count=withAmount(amount,()=>scaleCount(d,d.n));
+    items.push({thread:d.t,level:d.lv,n:d.n,count,levelOnly:true,levelConcept,levelTitle,
+      seed:(weekKey+courseKey+'b'+lesson.index+'extra'+i).toLowerCase().replace(/[^a-z0-9]/g,''),
+      topicName:pickL(levelTitle)||d.t,sourceSession:courseKey+'-extra',courseKey,compactHigh:true,
+      sessionLabel:lk('인수분해 연결 연습','Factoring practice','因式分解练习')});
+  });
   const concepts=new Set();
   items.forEach(it=>{
     if(!it.thread||it.noTeach)return;
@@ -6880,17 +6922,16 @@ function compactHighEnvelope(course, courseKey, weekKey, opts){
     const check=stageCheckItem(course,courseKey,(weekKey+courseKey+'h'+lesson.index).toLowerCase().replace(/[^a-z0-9]/g,''));
     if(check)items.push({...check,sourceSession:courseKey+'-checkpoint',courseKey,compactHigh:true});
   }
-  const amount=opts.amount==null?getAmount():normAmount(opts.amount);
   const pair=Math.floor(lesson.index/2)*2;
-  const weeklyMinutes=lessons.slice(pair,pair+2).reduce((n,l)=>n+(l.estimatedMinutes??l.minutes),0);
-  const wsId='W'+weekKey+'-'+courseKey+'-H'+(lesson.index+1);
-  const cover={...first.cover,k,cadence:opts.cad==='w2'||k===2?'w2':'w1',code:wsId,compactHigh:true,
+  const weeklyMinutes=middle&&cadence==='w1'?(lesson.estimatedMinutes??lesson.minutes):lessons.slice(pair,pair+2).reduce((n,l)=>n+(l.estimatedMinutes??l.minutes),0);
+  const wsId='W'+weekKey+'-'+courseKey+'-'+(middle?'M':'H')+(lesson.index+1);
+  const cover={...first.cover,k,cadence,code:wsId,compactHigh:true,compactMiddle:middle,
     weekLabel:first.cover.weekLabel.replace(/-1주차$/,'-'+k+'주차'),
-    studyDays:lesson.index%2===1?2:3,lessonMinutes:Math.round(lesson.estimatedMinutes??lesson.minutes),weeklyMinutes,amount,
+    studyDays:middle&&cadence==='w1'?5:lesson.index%2===1?2:3,lessonMinutes:Math.round(lesson.estimatedMinutes??lesson.minutes),weeklyMinutes,amount,
     lessonIndex:lesson.index,sourceSessions:sourceIndices.map(i=>i+1),
     sessionIdx:sourceIndices[0],courseTitle:first.title+' · '+lk('수업 '+(lesson.index+1),'Lesson '+(lesson.index+1),'第'+(lesson.index+1)+'课')};
   const grade=opts.grade!=null?opts.grade:(window.NM_PRINT_GRADE?window.NM_PRINT_GRADE():undefined);
-  items.forEach(it=>{it.schoolTier='high';if(grade!=null)it.grade=grade;});
+  items.forEach(it=>{it.schoolTier=SCHOOL_TIER_OF_COURSE[course.tier]||'elem';if(grade!=null)it.grade=grade;});
   return {...first,wsId,items,units,cover,k,cad:cover.cadence,lesson,sourceSessions:sourceIndices.map(i=>i+1),
     compactHigh:true,courseSessions:course.sessions.filter(s=>!s.test).length};
 }
@@ -8460,10 +8501,20 @@ ${answerSectionsHtml}`;
      opts: {mixed?:10|20|40(유형당 문항 수) · count?:같은 뜻(단일 유형 흐름) ·
             courseKey?:그룹 드롭다운 ①에 쓸 과정 키 · onPrint?:🖨 인쇄를 실제로
             눌렀을 때 호출(인쇄 횟수 갱신 등, 인자 없음)}. */
+  middlePacingEnvelope(grade,sessionId,seed){
+    const session=window.NM_MIDDLE_PACING&&NM_MIDDLE_PACING.getSession(grade,sessionId);
+    if(!session||!session.bundle)return null;
+    let cad='w1';try{cad=JSON.parse(localStorage.getItem('nm_state_v1')||'{}').roadCadence==='w2'?'w2':'w1';}catch(e){}
+    const e=this.weeklyEnvelope((window.NM_COURSES||{})[session.course],session.course,seed||NM_RNG.newCode(),{
+      compactHigh:true,lesson:session.lessonIndex,cad,grade:String(Number(grade)+6)});
+    if(e)e.cover.weekLabel=cad==='w2'?`${session.week}주 ${session.day}회`:`${session.standardWeek}주`;
+    return e;
+  },
   middlePacingItems(grade, sessionId, seed){
     const plan=window.NM_MIDDLE_PACING;
     const session=plan && plan.getSession(grade,sessionId);
     if(!session) throw new Error('중등 권장 진도를 찾을 수 없습니다.');
+    if(session.bundle)return this.middlePacingEnvelope(grade,sessionId,seed).items;
     const seedBase=seed||NM_RNG.newCode();
     return session.blocks.map((b,i)=>({
       thread:b.t || ({direct:'MD51',inverse:'MD69',linear:'MD74',quadratic:'MD78'})[b.mode],
@@ -8477,6 +8528,12 @@ ${answerSectionsHtml}`;
   openMiddlePacing(grade, sessionId){
     const session=window.NM_MIDDLE_PACING && window.NM_MIDDLE_PACING.getSession(grade,sessionId);
     if(!session) return;
+    if(session.bundle){
+      const e=this.middlePacingEnvelope(grade,sessionId);
+      this.openPrintEditor(e.items,`중${grade} · ${e.cover.weekLabel} · ${session.title}`,{
+        mixed:20,compactHigh:true,cover:e.cover,units:e.units,courseKey:session.course});
+      return;
+    }
     const items=this.middlePacingItems(grade,sessionId);
     this.openPrintEditor(items,`중${grade} ${session.week}주 ${session.day}회 · ${session.title}`,{pacing:true,count:12});
   },
@@ -8492,7 +8549,7 @@ ${answerSectionsHtml}`;
       topicName: it.topicName, grade: it.grade, schoolTier:it.schoolTier,
       kind:it.kind,mode:it.mode,variant:it.variant,pacing:it.pacing,noTeach:it.noTeach,
       magicUnit:it.magicUnit,sourceSession:it.sourceSession,courseKey:it.courseKey,legacySession:it.legacySession,
-      compactHigh:it.compactHigh,skipConcept:it.skipConcept,
+      compactHigh:it.compactHigh,skipConcept:it.skipConcept,levelOnly:it.levelOnly,levelConcept:it.levelConcept,levelTitle:it.levelTitle,
       creative:it.creative,role:it.role,threadMix:it.threadMix,subLabel:it.subLabel,sessionLabel:it.sessionLabel,
       overrides: Object.assign({}, it.overrides || {}),
       guideSeed: it.guideSeed || null,

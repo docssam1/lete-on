@@ -167,6 +167,16 @@ test("optional static course limits are enforced when injected", async () => {
   assert.equal((await t.post({ action: "admin_set_learning", ...admin({ ...body, sessionIndex: 5 }) })).status, 200);
 });
 
+test("middle standard/accelerated cadence and five speeds keep the existing settings payload", async () => {
+  const t = setup({ rpc: async () => ({ data: { settings: {} } }) });
+  for (const cadence of ["w1", "w2"]) for (const speed of [0.7, 0.85, 1, 1.25, 1.5]) {
+    const body = { profileName: "중등 가상검수", courseKey: "C29", sessionIndex: 1, speed, amount: 1, cadence, startDate: "2026-10-19" };
+    assert.equal((await t.post({ action: "admin_set_learning", ...admin(body) })).status, 200);
+    assert.deepEqual(t.calls.rpc.at(-1).p, { adminToken: TOKEN, ...body, entryYear: null });
+  }
+  assert.equal(t.calls.weekly.length, 0);
+});
+
 test("secret-looking keys are scrubbed from pass-through responses", async () => {
   const t = setup({ rpc: async () => ({ data: { members: [{ userId: UID, phone: RAW_PHONE, phoneMasked: "010-****-5678", token_hash: "abc", profiles: [{ name: "민수", password: "p" }] }], unlinkedProfiles: [] } }) });
   const text = await (await t.post({ action: "admin_list", ...admin() })).text();
@@ -365,6 +375,34 @@ test("short scheduled high links forward the snapshot start and speed; marker-on
   }
 });
 
+test("middle snapshot versions match only C29–C37 and old middle links retain exact source sessions", async () => {
+  const code = readFileSync(new URL("../../../w/index.html", import.meta.url), "utf8").match(/<script>([\s\S]*?)<\/script>/)[1];
+  for (const [courseKey, highPlanVersion, marked] of [
+    ["C29", "20261023-middle25", true], ["C37", "20261023-middle25", true],
+    ["C28", "20261023-middle25", false], ["C38", "20261023-middle25", false],
+    ["C29", "20261023-high3m", false], ["C29", undefined, false], ["C37", undefined, false],
+  ]) {
+    const legacy = { courseKey, week: "2026-W43", k: 1, amount: 1, cadence: "w1", sessionIndex: 7 };
+    const source = { ...legacy, highPlanVersion, highStartDate: "2026-10-19", highSpeed: 0.85 };
+    const t = setup({ rpc: async () => ({ data: { config: source } }) });
+    const config = (await (await t.post({ action: "resolve_worksheet", token: "d".repeat(32) })).json()).config;
+    assert.deepEqual(config, marked ? source : legacy);
+    let redirected;
+    await runInNewContext(code, {
+      URL, URLSearchParams,
+      location: { search: "?m=" + "e".repeat(32), href: "https://lete-on.gfieldacademy.net/w/", replace: (u) => { redirected = u; } },
+      document: { getElementById: () => ({}) },
+      fetch: async () => ({ ok: true, json: async () => ({ config }) }),
+    });
+    const url = new URL(redirected);
+    assert.equal(url.searchParams.get("hp"), marked ? "1" : null);
+    assert.equal(url.searchParams.get("hs"), marked ? "2026-10-19" : null);
+    assert.equal(url.searchParams.get("hv"), marked ? "0.85" : null);
+    assert.equal(url.searchParams.get("s"), "7");
+    assert.equal(url.searchParams.get("p"), "1");
+  }
+});
+
 test("PDF URLs and tokens preserve legacy output and distinguish high-plan version and position", () => {
   const { buildWorksheetUrl, worksheetToken, worksheetTarget } = createRequire(import.meta.url)("../../../scripts/nm-weekly-worksheets.cjs");
   const week = "2026-W43", key = "offline-key", target = { name: "가상 학생", courseKey: "C4", cadence: "w2", amount: 1.25 };
@@ -407,12 +445,38 @@ test("PDF scheduled targets normalize aliases and include date/speed in URLs and
   assert.equal(new URL(buildWorksheetUrl("http://127.0.0.1:8767", "2026-W44", worksheetTarget({ ...base, startDate: "2026-02-29" }), 1)).searchParams.get("hs"), null);
 });
 
+test("middle PDF markers isolate version tokens while preserving unmarked and current high contracts", () => {
+  const { buildWorksheetUrl, worksheetToken, worksheetTarget } = createRequire(import.meta.url)("../../../scripts/nm-weekly-worksheets.cjs");
+  const week = "2026-W43", key = "offline", base = { name: "가상검수", courseKey: "C29", amount: 1, cadence: "w1", sessionIndex: 7, startDate: "2026-10-19", speed: 1 };
+  const middle = worksheetTarget({ ...base });
+  assert.equal(middle.highPlanVersion, "20261023-middle25");
+  const url = new URL(buildWorksheetUrl("http://127.0.0.1:8767", week, middle, 1));
+  assert.equal(url.searchParams.get("highPlanVersion"), "20261023-middle25");
+  assert.equal(url.searchParams.get("hp"), "1");
+  assert.equal(url.searchParams.get("cad"), "w1");
+  assert.equal(url.searchParams.get("s"), "7");
+  const source = `${base.name}|${week}|C29|a1|hp20261023-middle25|s7|hs2026-10-19|hv1`;
+  assert.equal(worksheetToken(key, week, middle, 1), createHmac("sha256", key).update(source).digest("hex").slice(0, 8));
+  for (const [courseKey, version] of [["C28", "20261023-middle25"], ["C38", "20261023-middle25"], ["C29", "20261023-high3m"], ["C29", undefined]]) {
+    const invalid = { ...base, courseKey, highPlanVersion: version };
+    assert.equal(new URL(buildWorksheetUrl("http://127.0.0.1:8767", week, invalid, 1)).searchParams.get("hp"), null);
+    const oldSource = `${base.name}|${week}|${courseKey}|a1`;
+    assert.equal(worksheetToken(key, week, invalid, 1), createHmac("sha256", key).update(oldSource).digest("hex").slice(0, 8));
+  }
+  const high = worksheetTarget({ ...base, courseKey: "C38", cadence: "w2" });
+  const highSource = `${base.name}|${week}|C38|a1|hp20261023-high3m|s7|hs2026-10-19|hv1`;
+  assert.equal(worksheetToken(key, week, high, 1), createHmac("sha256", key).update(highSource).digest("hex").slice(0, 8));
+  assert.notEqual(worksheetToken(key, week, high, 1), worksheetToken(key, week, middle, 1));
+});
+
 // ---------- static checks on schema.sql ----------
 const sql = readFileSync(new URL("./schema.sql", import.meta.url), "utf8");
-test("new delivery and preview snapshots add the high version without rewriting old snapshots", () => {
+test("new delivery and preview snapshots add course-specific plan versions without rewriting old snapshots", () => {
   assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261023-high3m',/g) || []).length, 2);
-  assert.equal((sql.match(/'highStartDate',ls\.start_date,'highSpeed',ls\.speed/g) || []).length, 2);
+  assert.equal((sql.match(/jsonb_build_object\('highPlanVersion','20261023-middle25',/g) || []).length, 2);
+  assert.equal((sql.match(/'highStartDate',ls\.start_date,'highSpeed',ls\.speed/g) || []).length, 4);
   assert.equal((sql.match(/case when ls\.course_key ~ '\^C\(3\[89\]\|\[4-6\]\[0-9\]\)\$'/g) || []).length, 2);
+  assert.equal((sql.match(/when ls\.course_key ~ '\^C\(29\|3\[0-7\]\)\$'/g) || []).length, 2);
   assert.ok(!/update\s+nm_private\.worksheet_previews\s+set\s+config\s*=/i.test(sql));
 });
 test("schema.sql: locked-down exposure, no plaintext admin code, no monthly plan", () => {

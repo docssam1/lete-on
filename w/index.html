@@ -26,7 +26,7 @@
       if(!response.ok||!cfg||!/^C(?:[0-6]?\d|7[0-3])$/.test(cfg.courseKey)||!/^\d{4}-W(?:0[1-9]|[1-4]\d|5[0-3])$/.test(cfg.week)||![1,2].includes(cfg.k)||![0.7,0.85,1,1.25,1.5].includes(cfg.amount)||!['w1','w2'].includes(cfg.cadence)||!Number.isInteger(cfg.sessionIndex)||cfg.sessionIndex<1||cfg.sessionIndex>1000)throw new Error('invalid_link');
       var destination=new URL('../number_magic/ws.html',location.href);
       destination.search=new URLSearchParams({c:cfg.courseKey,w:cfg.week,k:String(cfg.k),cad:cfg.cadence,amt:String(cfg.amount),s:String(cfg.sessionIndex),p:'1',auto:'0'}).toString();
-      if(cfg.highPlanVersion==='20261023-high3m'&&/^C(3[89]|[4-6][0-9])$/.test(cfg.courseKey)){
+      if((cfg.highPlanVersion==='20261023-high3m'&&/^C(3[89]|[4-6][0-9])$/.test(cfg.courseKey))||(cfg.highPlanVersion==='20261023-middle25'&&/^C(29|3[0-7])$/.test(cfg.courseKey))){
         destination.searchParams.set('hp','1');
         if(typeof cfg.highStartDate==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(cfg.highStartDate)&&Number.isFinite(Date.parse(cfg.highStartDate+'T00:00:00Z'))&&new Date(cfg.highStartDate+'T00:00:00Z').toISOString().slice(0,10)===cfg.highStartDate){
           destination.searchParams.set('hs',cfg.highStartDate);

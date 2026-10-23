@@ -100,7 +100,7 @@ for(const [tier, expected] of [['highmath1', 2304], ['highmath2', 2004], ['algeb
     .reduce((n, course) => n + course.studyPlan.lessons.reduce((sum, lesson) => sum + lesson.estimatedMinutes, 0), 0), expected,
     tier + ': estimated subject minutes include every test');
 }
-for(const course of Object.values(courses).filter(course => !['highmath1', 'highmath2', 'algebra'].includes(course.tier))){
+for(const course of Object.values(courses).filter(course => !['middle1', 'middle2', 'middle3', 'highmath1', 'highmath2', 'algebra'].includes(course.tier))){
   assert.equal(course.studyPlan, undefined, 'other stages are untouched');
   assert.equal(P.length(course), course.sessions.length);
 }
@@ -160,6 +160,7 @@ const scheduleOpts = {courseKey:'C38', startSession:1, startDate:'2026-10-28', c
 let calendarCases = 0;
 for(const cadence of ['w1', 'w2']) for(const speed of [0.7, 0.85, 1, 1.25, 1.5]){
   const perWeek = cadence === 'w1' ? 1 : 2;
+  const percent = Math.round(speed * 100);
   const completionWeeks = Math.ceil(72 / (perWeek * speed));
   const seenLessons = [], seenSources = [], subjectLastWeek = {};
   let assignedMinutes = 0;
@@ -167,8 +168,8 @@ for(const cadence of ['w1', 'w2']) for(const speed of [0.7, 0.85, 1, 1.25, 1.5])
     const opts = {...scheduleOpts, cadence, speed, weekKey:keyAt(week)};
     const first = P.assignment(courses, {...opts, k:1});
     const second = P.assignment(courses, {...opts, k:2});
-    const expectedThisWeek = Math.min(72, Math.floor((week + 1) * perWeek * speed))
-      - Math.min(72, Math.floor(week * perWeek * speed));
+    const expectedThisWeek = Math.min(72, Math.floor((week + 1) * perWeek * percent / 100))
+      - Math.min(72, Math.floor(week * perWeek * percent / 100));
     assert.equal((first?.lessons.length || 0) + (second?.lessons.length || 0), expectedThisWeek, 'calendar allocates the cumulative budget exactly');
     if(expectedThisWeek === 0){ assert.equal(first, null); assert.equal(second, null); }
     if(cadence === 'w1') assert.equal(second, null, 'one weekly envelope cannot duplicate a second envelope');

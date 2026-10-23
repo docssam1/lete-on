@@ -1,6 +1,8 @@
 // 지필드 과학 탐구 랩 — 라우터·화면. 데이터는 data/curriculum.js, 3D는 engine.js + scenes/*.js
-import { UNITS, unitById, DOMAINS, ORDERED, domainOf } from './data/curriculum.js';
+import { UNITS, unitById, DOMAINS, ORDERED, domainOf, LEVELS, levelOf, CONTESTS, contestsOf } from './data/curriculum.js';
 import { Stage, Player } from './engine.js';
+import { renderReport } from './report.js';
+import { renderObserve } from './observe.js';
 
 const $app = document.getElementById('app');
 const STORE_KEY = 'sciLab.v1';
@@ -14,12 +16,15 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 const LETTERS = ['A', 'B', 'C', 'D'];
 
 let stage = null, player = null; // 현재 유닛의 3D
+let reportOff = null;             // 탐구보고서 화면 정리
 
 function route() {
   const h = location.hash.replace(/^#\/?/, '');
-  const m = h.match(/^u\/([\w-]+)/);
-  teardown3D(); homeOff?.(); homeOff = null;
-  if (m && unitById(m[1])) renderUnit(unitById(m[1])); else renderHome();
+  const m = h.match(/^u\/([\w-]+)(\/report)?/);
+  teardown3D(); homeOff?.(); homeOff = null; reportOff?.(); reportOff = null;
+  if (/^observe\b/.test(h)) reportOff = renderObserve($app, { topbar, footer }).destroy;
+  else if (m && unitById(m[1]) && m[2]) reportOff = renderReport(unitById(m[1]), $app, { topbar, footer }).destroy;
+  else if (m && unitById(m[1])) renderUnit(unitById(m[1])); else renderHome();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 function teardown3D() { if (player) { player.stop(); if (player._offKey) player._offKey(); } if (stage) stage.dispose(); stage = null; player = null; }
@@ -35,7 +40,7 @@ function topbar(backHref) {
 }
 function footer() {
   return `<footer><div class="wrap">
-    <p>교과 순서와 활동은 『2009 초등학교 과학탐구토론 지도자료』(서울특별시과학전시관)의 차례를 따르며, 개념 설명은 그 내용을 바탕으로 다시 썼습니다.</p>
+    <p>개념·활동·3D 장면은 지필드가 직접 쓰고 그렸습니다. 초등·중등 수준에 맞춘 탐구보고서 양식과 선생님 첨삭이 함께 있습니다.</p>
     <p>3D 장면은 원본 도형으로만 그렸고 외부 저작물을 포함하지 않습니다. 음성은 기기의 읽어 주기 기능(Web Speech)을 씁니다.</p>
   </div></footer>`;
 }
@@ -111,21 +116,23 @@ function renderHome() {
       <div class="arch-bg">${corridorSvg()}<img class="arch-photo" alt="" hidden></div>
       <div class="arch-wall" aria-hidden="true"><small>GFIELD · SCIENCE INQUIRY LAB</small><b>THE INQUIRY LAB</b><span>과학 탐구 실험실</span></div>
       <div class="arch-stack" tabindex="0" aria-roledescription="카드 넘기기" aria-label="실험 카드 묶음. 왼쪽·오른쪽 화살표로 넘기고 Enter로 열어요."></div>
-      <nav class="arch-pills" aria-label="영역 거르기">${DOMAINS.map((d) => { const n = ORDERED.filter((u) => domainOf(u) === d).length; return `<button type="button" data-dom="${d.id}" style="--tab:${d.color}"${n ? '' : ' disabled title="준비 중"'}>${esc(d.title)} <b>${n || '준비 중'}</b></button>`; }).join('')}<button type="button" data-dom="" class="all on">ALL <b>${UNITS.length}</b></button></nav>
+      <nav class="arch-pills arch-contests" aria-label="대회 거르기">${CONTESTS.map((c) => `<button type="button" data-ct="${c.id}" title="${esc(c.sub)}">${esc(c.title)} <b>${ORDERED.filter((u) => contestsOf(u).includes(c)).length}</b></button>`).join('')}<button type="button" data-ct="" class="all on">전체</button><a class="arch-observe" href="#/observe">🔍 자연관찰 연습</a></nav>
+      <nav class="arch-pills arch-levels" aria-label="수준 거르기">${LEVELS.map((l) => `<button type="button" data-lvl="${l.id}" title="${esc(l.sub)}">${esc(l.title)} <b>${ORDERED.filter((u) => levelOf(u) === l).length}</b></button>`).join('')}<button type="button" data-lvl="" class="all on">전체</button></nav>
+      <nav class="arch-pills arch-doms" aria-label="영역 거르기">${DOMAINS.map((d) => { const n = ORDERED.filter((u) => domainOf(u) === d).length; return `<button type="button" data-dom="${d.id}" style="--tab:${d.color}"${n ? '' : ' disabled title="준비 중"'}>${esc(d.title)} <b>${n || '준비 중'}</b></button>`; }).join('')}<button type="button" data-dom="" class="all on">ALL <b>${UNITS.length}</b></button></nav>
       <div class="arch-ctrl"><button type="button" data-step="-1" aria-label="앞 카드">‹</button><span class="arch-count" aria-live="polite"></span><button type="button" data-step="1" aria-label="뒤 카드">›</button><small>스크롤 · 클릭 · ← →로 넘겨요</small></div>
       ${last ? `<a class="arch-resume" href="#/u/${last.id}">이어서 보기 <b>${esc(last.title)}</b></a>` : ''}
     </section></div>
     <section class="wrap arch-index" aria-label="전체 실험 목록">
       <h2>실험 목록 <small>실험 ${UNITS.length}건 · 출처 『2009 초등학교 과학탐구토론 지도자료』(서울특별시과학전시관)</small></h2>
-      ${DOMAINS.map((d) => { const us = ORDERED.filter((u) => domainOf(u) === d); return `<div class="arch-shelf" style="--tab:${d.color}"><h3><span>${d.en}</span>${esc(d.title)} <small>실험 ${us.length}건</small></h3>${us.length ? `<ol>${us.map((u) => `<li><a href="#/u/${u.id}"><span class="no">${u.part}-${u.no}</span><b>${esc(u.title)}</b><span class="exp">${esc(u.activity.title)}</span>${stampsHtml(store.unit(u.id))}</a></li>`).join('')}</ol>` : '<p class="arch-empty">준비 중 — 지구와 우주 영역의 탐구 실험을 채울 자리예요.</p>'}</div>`; }).join('')}
+      ${DOMAINS.map((d) => { const us = ORDERED.filter((u) => domainOf(u) === d); return `<div class="arch-shelf" style="--tab:${d.color}"><h3><span>${d.en}</span>${esc(d.title)} <small>실험 ${us.length}건</small></h3>${us.length ? `<ol>${us.map((u) => `<li><a href="#/u/${u.id}"><span class="no">${esc(levelOf(u).title)}</span><b>${esc(u.title)}</b><span class="exp">${esc(u.activity.title)}</span>${stampsHtml(store.unit(u.id))}</a></li>`).join('')}</ol>` : '<p class="arch-empty">준비 중 — 지구와 우주 영역의 탐구 실험을 채울 자리예요.</p>'}</div>`; }).join('')}
     </section>
   </main>${footer()}`;
 
   const $stack = $app.querySelector('.arch-stack'), $count = $app.querySelector('.arch-count'), $q = $app.querySelector('.arch-search input');
-  let list = ORDERED.slice(), cur = 0, dom = '', query = '';
+  let list = ORDERED.slice(), cur = 0, dom = '', lvl = '', ct = '', query = '';
   const cardHtml = (u) => { const d = domainOf(u), s = store.unit(u.id);
     return `<article class="arch-card" data-id="${u.id}" style="--tab:${d.color}">
-      <div class="ac-meta"><span><i></i>${esc(d.title)} · ${d.en}</span><span class="ac-src">EXP-${String(ORDERED.indexOf(u) + 1).padStart(2, '0')} · 지도자료 ${u.part}-${u.no}</span></div>
+      <div class="ac-meta"><span><i></i>${esc(d.title)} · ${d.en}</span><span class="ac-src">${contestsOf(u).map((c) => `<em class="ac-contest ${c.id}">${esc(c.short)}</em>`).join('')}<em class="ac-level ${levelOf(u).id}">${esc(levelOf(u).title)}</em>EXP-${String(ORDERED.indexOf(u) + 1).padStart(2, '0')}</span></div>
       <h3>${esc(u.title)}</h3><p class="ac-sub">${esc(u.sub)}</p><p class="ac-lead">${esc(u.concept.lead)}</p>
       <div class="ac-foot"><span class="ac-exp"><b>실험</b>${esc(u.activity.title)}</span>${stampsHtml(s)}<a class="ac-open" href="#/u/${u.id}">실험 열기 →</a></div>
     </article>`; };
@@ -174,7 +181,7 @@ function renderHome() {
   const jump = (k) => { if (!list.length) return; k = Math.max(0, Math.min(list.length - 1, k)); scrollTo({ top: base() + k * STEP(), behavior: reduced ? 'auto' : 'smooth' }); };
   const go = (n) => jump(cur + n);
   const build = (rise = false) => {
-    list = ORDERED.filter((u) => (!dom || domainOf(u).id === dom) && (!query || `${u.title} ${u.sub} ${u.activity.title} ${domainOf(u).title}`.includes(query)));
+    list = ORDERED.filter((u) => (!dom || domainOf(u).id === dom) && (!lvl || levelOf(u).id === lvl) && (!ct || contestsOf(u).some((c) => c.id === ct)) && (!query || `${u.title} ${u.sub} ${u.activity.title} ${domainOf(u).title}`.includes(query)));
     $stack.innerHTML = list.map(cardHtml).join(''); sizeTrack();
     if (scrollY > base()) scrollTo({ top: Math.max(0, base()), behavior: 'auto' });   // 거르기·검색을 바꾸면 첫 카드부터
     if (rise && !reduced) { shown = 0; lift = 1; layout(); }   // 영역을 누르면 그 영역의 첫 카드가 아래에서 쑥 올라와 맨 앞에 선다(원장 2026-10-20)
@@ -186,9 +193,11 @@ function renderHome() {
     if (k !== cur) jump(k); else if (cur < list.length - 1) go(1); else $app.querySelector('.arch-index').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
   });
   $app.querySelectorAll('.arch-ctrl [data-step]').forEach((b) => b.addEventListener('click', () => go(+b.dataset.step)));
-  $app.querySelectorAll('.arch-pills button').forEach((b) => b.addEventListener('click', () => { dom = b.dataset.dom; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', x === b)); build(true); }));
+  $app.querySelectorAll('.arch-levels button').forEach((b) => b.addEventListener('click', () => { lvl = b.dataset.lvl; $app.querySelectorAll('.arch-levels button').forEach((x) => x.classList.toggle('on', x === b)); build(true); }));
+  $app.querySelectorAll('.arch-contests button').forEach((b) => b.addEventListener('click', () => { ct = b.dataset.ct; $app.querySelectorAll('.arch-contests button').forEach((x) => x.classList.toggle('on', x === b)); build(true); }));
+  $app.querySelectorAll('.arch-doms button').forEach((b) => b.addEventListener('click', () => { dom = b.dataset.dom; $app.querySelectorAll('.arch-doms button').forEach((x) => x.classList.toggle('on', x === b)); build(true); }));
   // 검색은 전체 실험에서 찾는다(영역 거르기를 ALL로 되돌림)
-  $q.addEventListener('input', () => { query = $q.value.trim(); if (query && dom) { dom = ''; $app.querySelectorAll('.arch-pills button').forEach((x) => x.classList.toggle('on', !x.dataset.dom)); } build(); });
+  $q.addEventListener('input', () => { query = $q.value.trim(); if (query && dom) { dom = ''; $app.querySelectorAll('.arch-doms button').forEach((x) => x.classList.toggle('on', !x.dataset.dom)); } build(); });
   $q.addEventListener('keydown', (e) => { if (e.key === 'Enter' && list[cur]) location.hash = `#/u/${list[cur].id}`; });
   const onKey = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === '/') { e.preventDefault(); $q.focus(); return; }
@@ -213,12 +222,12 @@ function renderUnit(u) {
   <main class="opened" style="--tab:${d.color}">
     <div class="wrap unit-head folder-label">
       <span class="label-tab">${d.en}</span>
-      <div class="crumb"><span class="tag" style="background:${d.color};color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700">${esc(d.title)}</span><span>${mine.indexOf(u) + 1}/${mine.length}</span><span>·</span><span>지도자료 ${u.part}-${u.no} · ${esc(u.source)}</span></div>
+      <div class="crumb"><span class="tag" style="background:${d.color};color:#fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700">${esc(d.title)}</span><span>${mine.indexOf(u) + 1}/${mine.length}</span><span>·</span><span class="lv">${esc(levelOf(u).title)}</span><span>·</span><span>EXP-${String(ORDERED.indexOf(u) + 1).padStart(2, '0')}</span></div>
       <h1>${esc(u.title)}</h1><p class="sub">${esc(u.sub)}</p>
       ${u.note ? `<div class="note">${esc(u.note)}</div>` : ''}
     </div>
     <nav class="tabs" aria-label="서류철 안의 자료"><div class="wrap">
-      <a href="#/u/${u.id}" data-to="concept" class="on">① 개념</a><a href="#/u/${u.id}" data-to="video">② 3D 실험</a><a href="#/u/${u.id}" data-to="activity">③ 탐구 활동</a><a href="#/u/${u.id}" data-to="discuss">④ 토론</a><a href="#/u/${u.id}" data-to="quiz">⑤ 확인</a>
+      <a href="#/u/${u.id}" data-to="concept" class="on">① 개념</a><a href="#/u/${u.id}" data-to="video">② 3D 실험</a><a href="#/u/${u.id}" data-to="activity">③ 탐구 활동</a><a href="#/u/${u.id}" data-to="discuss">④ 토론</a><a href="#/u/${u.id}" data-to="quiz">⑤ 확인</a><a href="#/u/${u.id}/report" class="report-tab">⑥ 탐구보고서</a>
     </div></nav>
     <section class="wrap section sheet" id="concept"><h2><span class="step">STEP 1</span>개념</h2><p class="lead">${esc(u.concept.lead)}</p>
       <div class="points">${u.concept.points.map(([b, t]) => `<div class="point"><b>${esc(b)}</b><span>${esc(t)}</span></div>`).join('')}</div>
@@ -262,6 +271,7 @@ function renderUnit(u) {
       <div class="quiz" id="quiz">${u.quiz.map((q, qi) => `<div class="q" data-q="${qi}"><p class="stem">${qi + 1}. ${esc(q.q)}</p><div class="choices">${q.c.map((c, ci) => `<button data-c="${ci}"><span class="l">${LETTERS[ci]}</span><span>${esc(c)}</span></button>`).join('')}</div><p class="why" hidden></p></div>`).join('')}</div>
       <p class="score" id="score"></p>
     </section>
+    <section class="wrap section" id="report-cta"><a class="report-cta" href="#/u/${u.id}/report"><span class="step">STEP 6</span><b>탐구보고서 쓰기 →</b><span>${levelOf(u).id === 'mid' ? '중등 양식 · 반복 측정·평균·그래프 · A4 2~3장' : '초등 양식 · 공정한 실험을 숫자로 · A4 1장'} · 선생님 첨삭</span></a></section>
     <div class="wrap unit-nav">
       ${prev ? `<a href="#/u/${prev.id}"><b>← 이전 기록</b>${esc(prev.title)}</a>` : '<span></span>'}
       ${next ? `<a class="next" href="#/u/${next.id}"><b>다음 기록 →</b>${esc(next.title)}</a>` : `<a class="next" href="#/"><b>실험실로</b>전체 실험</a>`}
@@ -269,7 +279,7 @@ function renderUnit(u) {
   </main>${footer()}`;
 
   // 탭: 같은 페이지 안의 섹션으로 스크롤
-  const tabs = [...$app.querySelectorAll('.tabs a')];
+  const tabs = [...$app.querySelectorAll('.tabs a[data-to]')];
   tabs.forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); document.getElementById(a.dataset.to)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
   const io = new IntersectionObserver((ents) => { ents.forEach((en) => { if (en.isIntersecting) tabs.forEach((a) => a.classList.toggle('on', a.dataset.to === en.target.id)); }); }, { rootMargin: '-40% 0px -55% 0px' });
   ['concept', 'video', 'activity', 'discuss', 'quiz'].forEach((id) => io.observe(document.getElementById(id)));
