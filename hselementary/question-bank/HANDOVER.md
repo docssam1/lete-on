@@ -1,5 +1,79 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 20 Example 4-4 Choice-Rule Ambiguity
+
+- Rechecked the printed wording against the hash-matched source render and Apple Vision location pass. It asks to choose two reduced proper fractions made from 3–9 and count unordered pairs whose product is 1/2, but does not state whether a number can appear in both fractions.
+- Exhaustive enumeration gives 3 pairs if cross-fraction number reuse is allowed: (3/5,5/6), (4/5,5/8), (4/7,7/8). All share one number. If the seven numbers must be used without reuse across the two fractions, there are 0 pairs. Thus “3 pairs” is conditional, not a source-unambiguous answer.
+- Changed the item to `blocked-not-determined`, expanded the answer-determinacy gate to include this case, and updated the underdetermined count to 2. The item remains locked; no runtime or learner data changed.
+- Drive evidence: [grade52-unit2-page20-example44-choice-rule-20261024.md](https://drive.google.com/file/d/1kqpE3ZrZSFep1HV6xw7Hggolw_UUwDUX/view)
+
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 15 Source Review
+
+- Checked logical PDF page 11 (printed page 15) from the SHA-256-matched source at 450dpi. Apple Vision located the text; stacked fractions were confirmed in the image. Handwriting and publisher answers were excluded.
+- Recalculated all six Mission 1 expressions and Missions 2–6. The printed conditions, classifications, and answers match the ledger. Confirmed Mission 1 (1) reads `5/6×2` (not `5/6×2/3`); its correction to type `u2-t08` and answer `1 2/3` is present. Mission 4's inverse ordering, Mission 5's divisor set, and Mission 6's strict integer bounds were also checked.
+- Added persistent source evidence to all 11 records. No other row needed correction. The page has no printed diagrams; all 11 remain locked. No runtime, learner data, or public state changed.
+- Drive source/QA record in the existing `.source-memory` folder: [grade52-unit2-page15-source-review-20261024.md](https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view)
+
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 18 Source Review
+
+- Rechecked logical PDF page 14 (printed page 18) from the SHA-256-matched source against the 300dpi render; Apple Vision OCR located the printed text, while stacked fractions were read from the image. Pencil marks and publisher answers were excluded.
+- Independently recalculated Concept Exploration 3 and Examples 3-1–3-4. All five source conditions and ledger answers match: 360cm; 324cm; 3/125; 9,800m²; Seoyun 4,200원 and Bohyeon 2,700원. No diagrams are printed or needed for these items.
+- Added persistent OCR evidence and strengthened the five ledger evidence fields. No answer or taxonomy correction was needed. All five remain locked pending learner-fit, generator integration, and release approval; no runtime or learner data changed.
+- Drive source/QA record in the existing `.source-memory` folder: [grade52-unit2-page18-source-review-20261024.md](https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view)
+
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 16 Source Review
+
+- Checked logical PDF page 12 (printed page 16) from the SHA-256-matched source using a 450dpi render and Apple Vision text-location pass; stacked fractions, expressions, and both diagrams were confirmed visually. Handwriting and publisher answers were excluded.
+- Independently recalculated Concept Exploration 2 (1)–(2) and Examples 2-1–2-4. Ledger conditions, type assignments, and answers match: 10/21L; 1 35/48; 266; 6 1/24cm²; 21 7/8m; and 47 253/256cm². The partitioned-rectangle and right-isosceles-square diagrams remain required visual assets.
+- Strengthened source evidence for the six records. No answer, type, or figure requirement changed. All six remain locked pending generator integration, learner-fit, screen/A4 checks, and release approval. No runtime, learner data, or public state changed.
+- Drive source/QA record in the existing `.source-memory` folder: [grade52-unit2-page16-source-review-20261024.md](https://drive.google.com/file/d/1tRKBqVcADdxIW4yArKdCIgdwORsVO_qD/view)
+
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 14 Source Review
+
+- Checked PDF logical page 10 (printed page 14) from the SHA-256-matched source at 450dpi. Apple Vision was used to locate text; stacked fractions and equations were confirmed by enlarging the source image. The page has no printed diagrams; handwritten marks and the publisher answer key were excluded.
+- Independently recalculated Concept Exploration 1 (1)–(2) and Examples 1-1–1-4. The ledgered source conditions and answers match: 52 / explanatory equality; 17 7/12; 308 students; 82km 800m; 55m 12s; and possible 나 values 3, 6, 12, 15 (sum 36). Example 1-4 permits multiple 가·다 pairs, so only the set and sum are treated as unique.
+- Strengthened evidence for the six existing entries. No answer, taxonomy, or visual-asset correction was needed. All six remain locked; publisher-key verification, learner-fit, generator integration, and release approval remain unclaimed. No runtime, learner data, or public state changed.
+- Drive source/QA record (owner-only existing `.source-memory` folder): [grade52-unit2-page14-source-review-20261024.md](https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view)
+
+## 2026-10-24 5-2 Unit 2 Source Record Correction
+
+- Identified the exact source PDF from the ledger SHA-256 and visually matched logical pages 10–17 to printed pages 14–21. The earlier 27 MB scan was a different copy and its page offset does not apply to this ledger.
+- Corrected the Mission 1 (1) source condition, normalized type, independent calculation and answer to match the exact source. The item and all other Unit 2 records remain locked; no runtime generator, learner record, or release gate changed.
+- Verification: exact source SHA-256 matched the ledger; logical pages 10–17 were visually checked against printed pages 14–21; exact-rational recalculation and targeted JSON assertions passed. No merge or deployment in this stage.
+
+
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 17 Mission 1 Taxonomy Review
+
+- Re-read logical PDF page 13 (printed page 17) from the SHA-256-matched source. A 300dpi render and Apple Vision pass were used to locate the printed expressions; fraction notation was confirmed visually because OCR did not reliably parse stacked fractions. Pencil marks were not treated as answer evidence.
+- Independently checked Mission 1 (1)–(6): 1/8, 1 1/2, 1 1/4, 1 3/14, 4/7, and 21 2/3. The calculations match the recorded source expressions.
+- Found a taxonomy mismatch in (2)–(4): their printed expressions are two mixed numbers times a proper fraction; a mixed number times a sum of fractions; and a difference of mixed numbers times a proper fraction. They were incorrectly labeled `u2-t09` (“natural number and mixed-number multiplication”). Assigned separate locked types `u2-t46`–`u2-t48`; (6) remains `u2-t09` because it is 15 × 1 4/9. Updated both normalized-type counts from 45 to 48.
+- No learner-facing item or runtime mapping was changed; all 56 records remain locked. Source PDF and marked pages remain local.
+
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 19 Mission Review
+
+- Re-read logical PDF page 15 (printed page 19) from the SHA-256-matched source using a 300dpi render and Apple Vision text-location pass; conditions and all six Mission answers were confirmed visually and independently recalculated. No diagram is used. Handwritten work was not used as answer evidence.
+- Mission 1–6 answers match the source: 32,000cm²; 47 3/5km; 30; 360원; 87개; 10kg. All six records remain locked.
+- Clarified Mission 6 ledger wording: the original compares the remaining rice with 1 3/7 times the **sum** given to Hyeong-geun and Hyeon-bin, less 10kg. The condensed phrase “amount given” was ambiguous, so the condition and taxonomy label now name the sum explicitly. Exact equation gives remaining 10kg.
+- No learner-facing item, runtime mapping, or release gate changed.
+
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 20 Example 4-3 Answer Correction
+
+- Re-read logical PDF page 16 (printed page 20) from the SHA-256-matched source with a 300dpi render and Apple Vision location pass; stacked fractions and variables were confirmed visually. No figure is used for Example 4-3, and handwritten marks were excluded.
+- Found an omitted solution in `5-2-u2-e4-example-3`. For `가/7 × 42/11`, natural-number results below 20 require `가` to be a positive multiple of 11 below 110/3; the reduced-fraction condition leaves 11, 22, and 33. For `33/나 × 42/11=126/나`, divisor and reduced-fraction conditions leave `나=7,14`. The previous ledger answer omitted 22 and 33.
+- Updated the independent derivation and answer set. The item remains locked; no runtime mapping, learner data, or release gate changed.
+
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 21 Final Mission Review
+
+- Re-read logical PDF page 17 (printed page 21) from the hash-matched source using a 300dpi render and Apple Vision text-location pass; fractions and the number-line diagram were visually confirmed. Handwritten marks were excluded from answer evidence.
+- Independently checked all six Mission records: maximum expression 33/25; digit triple 259; reduced-fraction pair sum 52; box-value sum 42; number-line value 11/7; nearest admissible fraction 48/5. The number-line item requires its equal-division figure, as recorded.
+- All source conditions, answers, and type records match. No record was changed; all six remain locked.
+
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 17 Mission 6 Underdetermination Proof
+
+- Rechecked the exact printed condition and circle diagram. With circle diameter d=14/5cm and equal adjacent-center spacing s, the rectangle width is d+9s and its area is d(d+9s).
+- Two distinct legal spacings demonstrate non-uniqueness: s=d/4 gives 637/25cm²; s=d/3 gives 784/25cm². Both use ten equal circles with constant overlap inside the rectangle, matching the text. The drawing gives no exact center spacing or width.
+- Strengthened the ledger's calculation and answer-determinacy evidence with these counterexamples. The item remains blocked/locked; no assumed scale value was promoted to source fact.
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
 
 - Rechecked PDF page 9 / printed page 11 from the 450dpi page render and Apple Vision OCR. The text asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. No figure is printed for this item; handwriting and publisher answers were excluded. The hundreds-rounding interval is 1,150–1,249 and the tens-ceiling interval is 1,191–1,200. Their intersection contains 10 natural numbers, 1,191–1,200. Publisher-key verification remains false.

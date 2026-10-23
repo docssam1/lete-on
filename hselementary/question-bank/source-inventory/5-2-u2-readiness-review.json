@@ -19,7 +19,7 @@
   "normalization": {
     "legacyBlockCount": 44,
     "atomicProblemCount": 56,
-    "normalizedTypeCount": 45,
+    "normalizedTypeCount": 48,
     "groupingRule": "숫자만 다른 동일 계산은 공통 유형으로 묶고, 요구하는 값의 의미, 단계 수, 조건 종류, 식의 구조, 그림의 정보가 달라지면 분리했습니다.",
     "sharedSkeletonGroups": [
       "u2-t07: 두 진분수의 곱셈",
@@ -49,7 +49,7 @@
     {
       "id": "answer-determinacy",
       "status": "blocked",
-      "evidence": "u2-t23은 원의 중심 간격이 글에 수치로 주어지지 않아 그림의 축척을 정답 조건으로 승격할 수 없습니다."
+      "evidence": "답 결정이 막히는 두 항목: 원 지름 d=14/5에서 중심 간격 s 미정으로 넓이가 달라지는 e2 Mission 6; e4 Example 4-4는 두 분수 사이 숫자 재사용 규칙 미명시로 해석에 따라 3쌍 또는 0쌍입니다."
     },
     {
       "id": "learner-fit",
@@ -76,7 +76,7 @@
       "independentAnswer": "두 표현은 모두 91×4/7을 뜻하므로 값이 같습니다. 설명형 답은 52와 곱셈 관계를 포함해야 합니다.",
       "answerContract": "explanation-rubric",
       "singleAnswerStatus": "not-single-value-open-explanation",
-      "evidence": "직접 렌더 대조: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "설명형 루브릭과 learner-fit 검증 전이며 공개 승인도 없습니다."
     },
@@ -93,7 +93,7 @@
       "independentAnswer": "211/12=17 7/12",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
@@ -110,7 +110,7 @@
       "independentAnswer": "308명",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
@@ -127,7 +127,7 @@
       "independentAnswer": "82km 800m",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
@@ -144,7 +144,7 @@
       "independentAnswer": "55분 12초",
       "answerContract": "single-value-with-time-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
@@ -161,7 +161,7 @@
       "independentAnswer": "36",
       "answerContract": "unique-set-then-sum",
       "singleAnswerStatus": "pass-unique-set",
-      "evidence": "직접 렌더 대조, 유한 후보 전수 검사 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
@@ -170,15 +170,15 @@
       "sourcePage": 11,
       "sourcePrintedPage": 15,
       "sourceBlock": "Mission 1 (1)",
-      "normalizedTypeId": "u2-t07",
-      "typeName": "두 진분수의 곱셈",
-      "keyConditions": ["5/6과 2/3을 곱함", "계산 결과를 간단히 함"],
+      "normalizedTypeId": "u2-t08",
+      "typeName": "자연수와 진분수의 곱셈",
+      "keyConditions": ["5/6과 2를 곱함", "계산 결과를 간단히 함"],
       "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
-      "independentCalculation": "5/6×2/3=10/18=5/9입니다.",
-      "independentAnswer": "5/9",
+      "independentCalculation": "5/6×2=10/6=5/3=1 2/3입니다.",
+      "independentAnswer": "1 2/3",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -195,7 +195,7 @@
       "independentAnswer": "42",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -212,7 +212,7 @@
       "independentAnswer": "6 2/3",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -229,7 +229,7 @@
       "independentAnswer": "51 1/9",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -246,7 +246,7 @@
       "independentAnswer": "17 1/2",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -263,7 +263,7 @@
       "independentAnswer": "21 2/3",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "같은 풀이 뼈대의 소문항과 분리 기록했지만 공개 승인 전입니다."
     },
@@ -280,7 +280,7 @@
       "independentAnswer": "23명",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "공통 유형으로 묶었지만 중앙 연결과 공개 승인은 수행하지 않았습니다."
     },
@@ -297,7 +297,7 @@
       "independentAnswer": "오전 10시 41분 50초",
       "answerContract": "single-value-with-time",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 공개 승인 전입니다."
     },
@@ -314,7 +314,7 @@
       "independentAnswer": "①, ②, ③",
       "answerContract": "ordered-result",
       "singleAnswerStatus": "pass-unique-order",
-      "evidence": "직접 렌더 대조 및 계수 비교: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "순서형 답 계약은 기록했지만 공개 승인 전입니다."
     },
@@ -331,7 +331,7 @@
       "independentAnswer": "10, 12, 14",
       "answerContract": "unique-set",
       "singleAnswerStatus": "pass-unique-set",
-      "evidence": "직접 렌더 대조 및 약수 전수 검사: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "집합형 답은 확인했지만 공개 승인 전입니다."
     },
@@ -348,7 +348,7 @@
       "independentAnswer": "819",
       "answerContract": "single-value-after-set-sum",
       "singleAnswerStatus": "pass-unique-set",
-      "evidence": "직접 렌더 대조 및 엄격한 경계 전수 확인: PDF p.11, 인쇄 p.15",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·대분수 원본 이미지 대조, 독립 계산·경계 확인. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/10P-wDUfcxMk3YMFzNjsKyyAQZYkiwXZ0/view",
       "publicDecision": "locked",
       "lockReason": "부등식 경계는 확인했지만 공개 승인 전입니다."
     },
@@ -365,7 +365,7 @@
       "independentAnswer": "10/21L",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.12, 인쇄 p.16",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식·그림 라벨 원본 이미지 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1tRKBqVcADdxIW4yArKdCIgdwORsVO_qD/view",
       "publicDecision": "locked",
       "lockReason": "소문항을 독립 항목으로 기록했지만 공개 승인 전입니다."
     },
@@ -382,7 +382,7 @@
       "independentAnswer": "1 35/48",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.12, 인쇄 p.16",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식·그림 라벨 원본 이미지 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1tRKBqVcADdxIW4yArKdCIgdwORsVO_qD/view",
       "publicDecision": "locked",
       "lockReason": "식 구조를 확인했지만 공개 승인 전입니다."
     },
@@ -399,7 +399,7 @@
       "independentAnswer": "266",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 망원경식 독립 계산: PDF p.12, 인쇄 p.16",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식·그림 라벨 원본 이미지 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1tRKBqVcADdxIW4yArKdCIgdwORsVO_qD/view",
       "publicDecision": "locked",
       "lockReason": "규칙형 식은 확인했지만 공개 승인 전입니다."
     },
@@ -416,7 +416,7 @@
       "independentAnswer": "6 1/24cm²",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 넓이비 계산: PDF p.12, 인쇄 p.16",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식·그림 라벨 원본 이미지 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1tRKBqVcADdxIW4yArKdCIgdwORsVO_qD/view",
       "publicDecision": "locked",
       "lockReason": "그림 자산 재현과 중앙 렌더 검증 전입니다."
     },
@@ -433,7 +433,7 @@
       "independentAnswer": "21 7/8m",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 단계별 거리 합: PDF p.12, 인쇄 p.16",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식·그림 라벨 원본 이미지 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1tRKBqVcADdxIW4yArKdCIgdwORsVO_qD/view",
       "publicDecision": "locked",
       "lockReason": "같은 뼈대의 반사례와 분리 검토했지만 공개 승인 전입니다."
     },
@@ -450,7 +450,7 @@
       "independentAnswer": "47 253/256cm²",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 등비 넓이 합: PDF p.12, 인쇄 p.16",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식·그림 라벨 원본 이미지 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1tRKBqVcADdxIW4yArKdCIgdwORsVO_qD/view",
       "publicDecision": "locked",
       "lockReason": "그림 자산을 데이터 모델로 재현하고 중앙 렌더를 검증하기 전입니다."
     },
@@ -476,8 +476,8 @@
       "sourcePage": 13,
       "sourcePrintedPage": 17,
       "sourceBlock": "Mission 1 (2)",
-      "normalizedTypeId": "u2-t09",
-      "typeName": "자연수와 대분수의 곱셈",
+      "normalizedTypeId": "u2-t46",
+      "typeName": "두 대분수와 진분수의 연속 곱셈",
       "keyConditions": ["2 1/7×1 1/5×7/12를 계산"],
       "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
       "independentCalculation": "15/7×6/5×7/12=90/60=3/2입니다.",
@@ -493,8 +493,8 @@
       "sourcePage": 13,
       "sourcePrintedPage": 17,
       "sourceBlock": "Mission 1 (3)",
-      "normalizedTypeId": "u2-t09",
-      "typeName": "자연수와 대분수의 곱셈",
+      "normalizedTypeId": "u2-t47",
+      "typeName": "대분수와 분수의 합의 곱셈",
       "keyConditions": ["1 1/5×(2/3+3/8)를 계산"],
       "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
       "independentCalculation": "2/3+3/8=25/24이고 6/5×25/24=5/4입니다.",
@@ -510,8 +510,8 @@
       "sourcePage": 13,
       "sourcePrintedPage": 17,
       "sourceBlock": "Mission 1 (4)",
-      "normalizedTypeId": "u2-t09",
-      "typeName": "자연수와 대분수의 곱셈",
+      "normalizedTypeId": "u2-t48",
+      "typeName": "대분수 차와 진분수의 곱셈",
       "keyConditions": ["(4 1/6-2 3/4)×6/7를 계산"],
       "visualAssetNeeded": {"required": false, "kind": null, "reason": "계산식만 필요"},
       "independentCalculation": "4 1/6-2 3/4=17/12이고 17/12×6/7=17/14입니다.",
@@ -633,8 +633,8 @@
       "typeName": "같은 원 10개의 겹침 그림에서 직사각형 넓이",
       "keyConditions": ["직사각형 높이 2 4/5cm", "같은 크기의 원 10개", "일정한 간격으로 겹침", "직사각형 넓이를 구함"],
       "visualAssetNeeded": {"required": true, "kind": "ten-overlapping-circles", "reason": "원 개수·중심 위치·중심 간격·직사각형 경계를 정확히 보존해야 함"},
-      "independentCalculation": "그림의 중심 간격을 지름의 1/4로 읽는 추가 가정이면 지름 H=14/5, 가로=H+9H/4=91/10, 넓이=637/25=25 12/25입니다. 그러나 간격 수치는 글에 없습니다.",
-      "independentAnswer": "조건이 충분하면 25 12/25이지만, 원 중심 간격이 명시되지 않아 확정 답으로 승격하지 않음",
+      "independentCalculation": "지름 d=14/5cm, 인접 중심 간격 s(0<s<d)이면 직사각형 폭=d+9s, 넓이=d(d+9s)입니다. s=d/4이면 637/25=25 12/25cm²이고 s=d/3이면 784/25=31 9/25cm²입니다. 두 배열 모두 같은 크기 원 10개가 일정한 간격으로 겹치지만 넓이가 다르므로 원문 조건만으로는 답이 정해지지 않습니다.",
+      "independentAnswer": "중심 간격 s가 미정이므로 유일 답 없음 (s=d/4이면 25 12/25cm², s=d/3이면 31 9/25cm²)",
       "answerContract": "single-value-conditional-on-visual-geometry",
       "singleAnswerStatus": "blocked-not-determined",
       "evidence": "직접 렌더 대조: PDF p.13, 인쇄 p.17. 원의 중심 간격을 그림 축척으로만 정해야 합니다.",
@@ -654,7 +654,7 @@
       "independentAnswer": "360cm",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 일차식 독립 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "개념탐구 독립 유형으로 기록했지만 공개 승인 전입니다."
     },
@@ -671,7 +671,7 @@
       "independentAnswer": "324cm",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 역산 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "거리 합 유형과 다른 역산 유형으로 분리했지만 공개 승인 전입니다."
     },
@@ -688,7 +688,7 @@
       "independentAnswer": "3/125",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 비율 독립 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 공개 승인 전입니다."
     },
@@ -705,7 +705,7 @@
       "independentAnswer": "9800m²",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 남은 비율 독립 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 공개 승인 전입니다."
     },
@@ -722,7 +722,7 @@
       "independentAnswer": "서윤 4200원, 보현 2700원",
       "answerContract": "ordered-pair",
       "singleAnswerStatus": "pass-single-pair",
-      "evidence": "직접 렌더 대조 및 비례식 독립 계산: PDF p.14, 인쇄 p.18",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 분수 조건은 이미지 대조, 독립 유리수 계산. 손글씨·출판사 정답지 미사용. 검수 기록: https://drive.google.com/file/d/1H-zHj0LJEc97kHyAJy906HRU2c-GReOf/view",
       "publicDecision": "locked",
       "lockReason": "순서쌍 답은 확인했지만 공개 승인 전입니다."
     },
@@ -817,8 +817,8 @@
       "sourcePrintedPage": 19,
       "sourceBlock": "Mission 6",
       "normalizedTypeId": "u2-t35",
-      "typeName": "남은 양과 준 양의 배율로 남은 쌀 구하기",
-      "keyConditions": ["처음 쌀의 1/3을 형근에게 줌", "남은 쌀의 3/8을 현빈에게 줌", "남은 양은 준 양의 1 3/7배보다 10kg 적음"],
+      "typeName": "두 사람에게 준 쌀의 합과 남은 쌀의 배율로 남은 쌀 구하기",
+      "keyConditions": ["처음 쌀의 1/3을 형근에게 줌", "남은 쌀의 3/8을 현빈에게 줌", "남은 양은 두 사람에게 준 쌀의 합의 1 3/7배보다 10kg 적음"],
       "visualAssetNeeded": {"required": false, "kind": null, "reason": "남은 양 방정식만 필요"},
       "independentCalculation": "남은 양 R=5/12T, 준 양=7/5R이고 R=(7/5R)×10/7-10=2R-10이므로 R=10kg입니다.",
       "independentAnswer": "10kg",
@@ -888,8 +888,8 @@
       "typeName": "기약분수에 대분수를 곱해 자연수가 되는 빈칸 찾기",
       "keyConditions": ["가/7과 33/나가 기약분수", "각각 3 9/11을 곱한 결과가 20보다 작은 자연수", "가와 나를 모두 찾음"],
       "visualAssetNeeded": {"required": false, "kind": null, "reason": "분수 조건만 필요"},
-      "independentCalculation": "3 9/11=42/11. (가/7)×42/11=6가/11<20의 자연수이므로 가=11, (33/나)×42/11=126/나에서 나=7,14입니다.",
-      "independentAnswer": "가=11, 나=7 또는 14",
+      "independentCalculation": "3 9/11=42/11. (가/7)×42/11=6가/11이 자연수이려면 11|가이고, 6가/11<20이므로 가<110/3입니다. 기약분수 조건 gcd(가,7)=1까지 적용하면 가=11,22,33입니다. (33/나)×42/11=126/나이므로 나는 126의 약수이며 나>126/20이고 gcd(나,33)=1입니다. 이를 전수 확인하면 나=7,14입니다.",
+      "independentAnswer": "가=11, 22, 33; 나=7 또는 14",
       "answerContract": "unique-set-of-values",
       "singleAnswerStatus": "pass-unique-set",
       "evidence": "직접 렌더 대조 및 유한 약수 전수 검사: PDF p.16, 인쇄 p.20",
@@ -903,15 +903,15 @@
       "sourceBlock": "예제 4-4",
       "normalizedTypeId": "u2-t40",
       "typeName": "기약 진분수 두 개의 곱이 1/2인 짝 세기",
-      "keyConditions": ["3,4,5,6,7,8,9 중 두 수로 진분수 작성", "기약분수 두 개의 곱이 1/2", "짝의 개수"],
+      "keyConditions": ["3,4,5,6,7,8,9 중 두 수를 골라 진분수를 만듦", "서로 다른 두 기약 진분수의 곱이 1/2", "두 분수 사이에서 숫자 재사용 허용 여부는 원문에 명시되지 않음"],
       "visualAssetNeeded": {"required": false, "kind": null, "reason": "수 후보 전수 열거만 필요"},
-      "independentCalculation": "3≤분자<분모≤9, 서로소인 분수 15개를 전수 열거하고 곱이 1/2인 무순서 짝을 검사하면 (3/5,5/6),(4/5,5/8),(4/7,7/8)의 3쌍입니다.",
-      "independentAnswer": "3쌍",
-      "answerContract": "single-value-count",
-      "singleAnswerStatus": "pass-unique-count-under-reuse-interpretation",
-      "evidence": "직접 렌더 대조 및 15개 후보·짝 전수 검사: PDF p.16, 인쇄 p.20",
+      "independentCalculation": "서로소인 진분수 15개를 전수 열거. 두 분수 사이 숫자 재사용 허용 시 (3/5,5/6),(4/5,5/8),(4/7,7/8)의 3쌍이며 모든 쌍이 숫자를 하나 공유합니다. 두 분수에 사용한 숫자를 겹치지 않게 제한하면 0쌍입니다. 원문이 재사용 규칙을 명시하지 않아 답 수는 미확정입니다.",
+      "independentAnswer": "숫자 재사용 허용 시 3쌍, 두 분수에 숫자 재사용 금지 시 0쌍. 원문 규칙 미명시로 단일 답 확정 보류.",
+      "answerContract": "unique-count-conditional-on-digit-reuse",
+      "singleAnswerStatus": "blocked-not-determined",
+      "evidence": "원본 PDF SHA-256 일치; 300dpi 렌더 및 Apple Vision 위치 확인, 1/2는 원본 이미지 직접 판독, 두 해석을 각각 전수 열거. 손글씨·출판사 정답지는 근거로 쓰지 않음. 보충 검수: https://drive.google.com/file/d/1kqpE3ZrZSFep1HV6xw7Hggolw_UUwDUX/view",
       "publicDecision": "locked",
-      "lockReason": "두 분수 사이에서 숫자 재사용을 허용하는 원문 해석을 기록했으며, 해석 고정과 공개 승인은 전입니다."
+      "lockReason": "두 분수 사이 숫자 재사용 허용 여부가 원문에 명시되지 않아 해석별 결과가 3쌍과 0쌍으로 갈립니다. 교사/편집자가 규칙을 확정하기 전까지 답 결정 잠금 및 공개 잠금을 유지합니다."
     },
     {
       "id": "5-2-u2-e4-mission-1",
@@ -1019,11 +1019,11 @@
   "summary": {
     "originalProblemCount": 56,
     "legacyBlockCount": 44,
-    "normalizedTypeCount": 45,
+    "normalizedTypeCount": 48,
     "directlyReviewedCount": 56,
     "calculationConfirmedCount": 55,
     "visualAssetRequiredCount": 5,
-    "nonUniqueOrUnderdeterminedCount": 1,
+    "nonUniqueOrUnderdeterminedCount": 2,
     "openExplanationRubricCount": 1,
     "publicCandidateCount": 0,
     "lockedCount": 56,
@@ -1041,7 +1041,7 @@
       {
         "id": "5-2-u2-e4-example-4",
         "risk": "medium",
-        "reason": "두 분수 사이 숫자 재사용을 허용하는 해석에서 3쌍이 나오므로 조합 규칙을 구현 전에 고정해야 합니다."
+        "reason": "재사용 허용이면 3쌍, 불허이면 0쌍이며 원문에 규칙이 없어 답 수가 확정되지 않습니다."
       },
       {
         "id": "5-2-u2-e4-example-2",
