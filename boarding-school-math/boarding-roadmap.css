@@ -95,6 +95,9 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .level-boundary strong { color: #182230; }
 .route-section { border-top: 1px solid #d8dee8; }
 .route-layout { margin-top: 26px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, .9fr); gap: 16px; }
+.route-layout.is-empty { grid-template-columns: minmax(0, 1fr); }
+.route-layout.is-empty .route-buttons { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.route-explanation[hidden], .competition-report[hidden] { display: none; }
 .route-buttons { display: grid; gap: 10px; }
 .route-button { min-height: 92px; padding: 17px 20px; display: grid; gap: 5px; align-content: center; border: 1px solid #d8dee8; border-left: 5px solid #c4d5f8; color: #182230; background: #fff; text-align: left; font: inherit; cursor: pointer; }
 .route-button strong { font-size: 1.05rem; }
@@ -113,6 +116,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .route-explanation > small { margin-top: 28px; display: block; color: #566274; font-size: .8rem; line-height: 1.6; }
 .competition-section { padding-block: clamp(60px, 7vw, 94px); border-top: 1px solid #d8dee8; }
 .competition-layout { margin-top: 26px; display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); border: 1px solid #d8dee8; background: #fff; }
+.competition-layout.is-empty { grid-template-columns: minmax(0, 1fr); }
 .competition-form, .competition-report { min-width: 0; padding: clamp(20px,3vw,34px); }
 .competition-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
 .competition-fields:has(#paper-label-field[hidden]) { grid-template-columns: 1fr; }
@@ -168,6 +172,7 @@ body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; b
 .page-boarding-roadmap :focus-visible { outline: 3px solid #2456c4; outline-offset: 3px; }
 .boarding-intro :focus-visible, .boarding-close :focus-visible { outline-color: #bcd0ff; }
 @media (max-width: 850px) { .boarding-header nav { gap: 12px; }.journey-layout, .route-layout, .competition-layout { grid-template-columns: 1fr; }.journey-side, .competition-report { border-left: 0; border-top: 1px solid #d8dee8; }.journey-side ul { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }.journey-side li { border-bottom: 1px solid #d8dee8; }.boarding-close .boarding-shell { align-items: start; flex-direction: column; } }
+@media (max-width: 850px) { .route-layout.is-empty .route-buttons { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .boarding-shell { width: min(100% - 32px, 1180px); }.boarding-header { padding: 10px 16px; gap: 12px; }.boarding-header nav { gap: 8px; }.boarding-header nav a { font-size: .72rem; }.boarding-header nav a:last-child { display: none; }.boarding-intro .boarding-shell { padding-block: 54px; }.boarding-intro h1 { font-size: clamp(2.35rem, 10vw, 3.5rem); }.map-head { align-items: start; flex-direction: column; gap: 10px; }.map-head > p { max-width: none; }.grade-track { padding: 14px 12px; }.grade-buttons { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; }.grade-buttons::before { display: none; }.grade-button { min-height: 54px; border: 1px solid #d8dee8; }.grade-button::before { display: none; }.grade-button[aria-pressed="true"] { border-color: #2456c4; background: #eaf0ff; }.journey-main, .journey-side { padding: 20px; }.journey-heading { flex-wrap: wrap; }.stage-list, .level-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }.journey-path { display: none; }.stage-list { margin-top: 20px; }.stage-button { min-height: 92px; }.journey-side ul { grid-template-columns: 1fr; gap: 0; }.level-grid { display: block; }.level-grid article { border-right: 0; border-bottom: 1px solid #d8dee8; }.level-grid article:last-child { border-bottom: 0; }.level-grid p { min-height: 0; }.route-button { min-height: 80px; }.competition-fields { grid-template-columns: 1fr; }.domain-header, .domain-row { grid-template-columns: minmax(0,1fr) 76px 76px; gap: 7px; }.domain-row strong { font-size: .76rem; }.boarding-close a { width: 100%; } }
 @media (max-width: 600px) { .boarding-intro .boarding-shell { padding-block: 22px 24px; }.boarding-intro h1 { font-size: 1.9rem; } }
 @media (max-width: 600px) { .grade-focus-list { grid-template-columns: 1fr; }.grade-focus-list > div { min-height: 0; padding: 12px; border-right: 0; border-bottom: 1px solid #d8dee8; }.grade-focus-list > div:last-child { border-bottom: 0; } }

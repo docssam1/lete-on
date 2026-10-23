@@ -74,7 +74,7 @@
   function renderRoutes() {
     const buttons = $("route-buttons");
     buttons.replaceChildren();
-    data.routes.forEach(function (entry) {
+    data.routes.forEach(function (entry, index) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "route-button";
@@ -82,13 +82,15 @@
       const title = document.createElement("strong");
       title.textContent = entry.title;
       button.append(title);
-      button.addEventListener("click", function () { route = entry.id; renderRoutes(); });
+      button.addEventListener("click", function () { route = entry.id; renderRoutes(); buttons.querySelectorAll("button")[index].focus(); });
       buttons.append(button);
     });
     const entry = data.getRoute(route);
-    setText("route-status", entry ? "선택한 길" : "선택 전");
-    setText("route-name", entry ? entry.title : "어떤 길이 맞을까요?");
-    setText("route-description", entry ? entry.description : "왼쪽에서 하나를 골라 내용을 비교해 보세요.");
+    document.querySelector(".route-layout").classList.toggle("is-empty", !entry);
+    document.querySelector(".route-explanation").hidden = !entry;
+    setText("route-status", entry ? "선택한 방향" : "선택 전");
+    setText("route-name", entry ? entry.title : "학습 방향");
+    setText("route-description", entry ? entry.description : "");
     setText("route-check", entry ? entry.check : "");
     $("route-check-block").hidden = !entry;
   }
@@ -174,6 +176,8 @@
       : "대회를 먼저 골라 주세요. 채점한 문제를 영역별로 직접 나눠 보는 화면이에요.");
   }
   function resetCompetitionReport() {
+    document.querySelector(".competition-layout").classList.add("is-empty");
+    document.querySelector(".competition-report").hidden = true;
     setText("competition-report-title", "아직 결과가 없어요");
     setText("competition-report-summary", competition ? "영역마다 푼 개수와 맞힌 개수를 적어 주세요." : "대회를 고르면 영역별 입력칸이 나와요.");
     $("competition-report-rows").replaceChildren();
@@ -224,6 +228,8 @@
       return;
     }
     $("competition-error").hidden = true;
+    document.querySelector(".competition-layout").classList.remove("is-empty");
+    document.querySelector(".competition-report").hidden = false;
     const paperLabel = $("paper-label").value.trim();
     setText("competition-report-title", `${option.title} · ${result.correct}/${result.attempted}`);
     const hasSmallSample = result.rows.some(function (entry) { return entry.attempted > 0 && entry.attempted < 3; });
@@ -243,6 +249,7 @@
       }
       host.append(row);
     });
+    document.querySelector(".competition-report").focus();
   }
   function render() {
     const entry = data.getGrade(grade);
