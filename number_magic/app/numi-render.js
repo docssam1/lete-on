@@ -375,6 +375,20 @@ function cosmeticSVG(type,id,uid){
     case 'observatory-chart':s=circle(60,77,56,'none',b)+circle(60,77,47,'none',t)+`<g transform="rotate(25 60 77)">${ellipse(60,77,56,23,'none',t)}</g><g transform="rotate(-25 60 77)">${ellipse(60,77,56,35,'none',b)}</g>`+[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].map(i=>`<g transform="rotate(${i*22.5} 60 77)">${line('M60 21 L60 25',t,1)}</g>`).join('')+[[16,49],[38,24],[83,29],[106,96],[87,127],[15,111]].map(([x,y])=>star5(x,y,4,1.7,h)).join('');break;
     case 'portal-rings':s=path('M12 137 L12 57 Q12 6 60 6 Q108 6 108 57 L108 137 Z','none',b,4)+path('M21 137 L21 58 Q21 17 60 17 Q99 17 99 58 L99 137','none',t,2)+[[17,70],[17,105],[103,70],[103,105]].map(([x,y],i)=>i%2?diamond(x,y,5,h):circle(x,y,4,h,b)).join('')+polygon('51,11 60,0 69,11 60,22',h,b)+line('M30 138 L91 138',t,3);break;
   }
+  if(type==='bg'&&s){
+    const bgid='nmbg_'+uid,seed=[...id].reduce((sum,c)=>sum+c.charCodeAt(0),0);
+    const scenePalettes=[['#24365e','#9369a6'],['#1b315c','#546ba4'],['#5d3155','#b2819a'],['#253f4f','#a17845'],['#1a5242','#6b9471'],['#2e573b','#8aa75c'],['#342453','#ab7f9f'],['#447a99','#b9d4e6'],['#28616b','#9eb5e4'],['#4d3173','#d5a7cb'],['#694334','#d9a769'],['#615079','#d6a1aa'],['#33495f','#6aa5af'],['#705544','#e2c697'],['#634c71','#e1ad5c'],['#365873','#b5c5d6'],['#27304c','#8f87bb'],['#402b6a','#b47ba6']];
+    const sceneIndex=C.groups.bg.findIndex(item=>item.id===id),sceneColors=scenePalettes[sceneIndex]||[b,t];
+    const stars=Array.from({length:12},(_,i)=>{const x=9+(seed+i*37)%102,y=13+(seed*3+i*29)%119,r=i%3===0?2.2:1;
+      return i%3===0?`<path d="M${x-r} ${y} L${x} ${y-r*2} L${x+r} ${y} L${x} ${y+r*2} Z" fill="${h}" opacity=".8"/>`:`<circle cx="${x}" cy="${y}" r="${r}" fill="${h}" opacity=".7"/>`;}).join('');
+    const scene=`<defs><linearGradient id="${bgid}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${sceneColors[0]}"/><stop offset=".5" stop-color="${sceneColors[1]}"/><stop offset="1" stop-color="${sceneColors[0]}"/></linearGradient><radialGradient id="${bgid}_light"><stop stop-color="${h}" stop-opacity=".85"/><stop offset="1" stop-color="${h}" stop-opacity="0"/></radialGradient></defs>
+      <path d="M7 140 L7 58 Q7 7 60 7 Q113 7 113 58 L113 140 Q60 151 7 140 Z" fill="url(#${bgid})" opacity=".94" stroke="${t}" stroke-width="1.2"/>
+      <ellipse cx="60" cy="65" rx="51" ry="55" fill="url(#${bgid}_light)"/>
+      <path d="M15 134 V58 Q15 17 60 17 Q105 17 105 58 V134" fill="none" stroke="${h}" stroke-width=".8" opacity=".62"/>
+      <path d="M13 128 Q60 109 107 128 M13 135 Q60 116 107 135" fill="none" stroke="${h}" opacity=".6"/>
+      <g opacity=".2" fill="${h}"><path d="M60 80 L13 35 L37 12 Z"/><path d="M60 80 L78 11 L109 37 Z"/></g>${stars}`;
+    s=scene+s;
+  }
   return s?`<g data-nm-cosmetic="${type}:${id}" stroke-linecap="round" stroke-linejoin="round">${s}</g>`:'';
 }
 

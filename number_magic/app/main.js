@@ -281,6 +281,8 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
      원장 지시의 핵심이 "계산이 되는 것과 문장제를 이해하는 것은 다르다"이므로
      한 점수로 합치지 않는다. 어떤 것도 잠그지 않고 안내에만 쓴다. */
   checkups:{} };}
+let attendanceCleanup=null, symbolCardsCleanup=null, symbolAcquisitionCleanup=null;
+let pendingAttendanceDay=null, attendanceSaveFailed=false;
 let hadSave=false; // 파싱에 성공한 프로필만 기존 사용자로 취급한다.
 function load(){
   let raw=null;
@@ -939,11 +941,31 @@ function todayKey(){
    여기서 있으면 쓰고 없으면 지금 막 만든다(그 자체가 마이그레이션). 오늘 이미
    기록돼 있으면 아무 것도 하지 않고 null 반환 — 하루 두 번 이상 안 준다. */
 function checkAttendance(){
-  const today=todayKey();
-  if(S.attend && S.attend.last===today) return null;
-  S.attend={last:today, days:(S.attend&&S.attend.days||0)+1};
-  S.attend.reward=coinAdd(1,'attendance','attendance:'+today);
-  return S.attend.days;
+  if(!window.NM_ATTENDANCE)return null;
+  const previous={attend:S.attend,coins:S.coins,coinLedger:S.coinLedger,coinRewards:S.coinRewards};
+  const marked=NM_ATTENDANCE.mark(S.attend,new Date());
+  if(JSON.stringify(marked.attend)===JSON.stringify(S.attend))return null;
+  S.attend=marked.attend;
+  if(marked.firstToday){
+    const before=NM_CHARACTER_STATE.balance(S);
+    NM_CHARACTER_STATE.reward(S,1,'attendance','attendance:'+S.attend.last);
+    S.attend.reward=NM_CHARACTER_STATE.balance(S)-before;
+  }
+  if(!save()){
+    Object.keys(previous).forEach(k=>{if(previous[k]===undefined)delete S[k];else S[k]=previous[k];});
+    attendanceSaveFailed=true;
+    return null;
+  }
+  attendanceSaveFailed=false;
+  return marked.firstToday?S.attend.days:null;
+}
+function showAttendanceBook(opener){
+  if(!window.NM_ATTENDANCE)return;
+  checkAttendance();
+  if(attendanceCleanup)attendanceCleanup();
+  attendanceCleanup=NM_ATTENDANCE.mount({attend:S.attend,lang:S.lang,opener:opener||document.activeElement,
+    onClose:()=>{attendanceCleanup=null;}});
+  if(attendanceSaveFailed)toast(S.lang==='en'?'Attendance could not be saved. Check device storage and try again.':S.lang==='zh'?'未能保存出勤。请检查设备存储后重试。':'출석을 저장하지 못했어요. 기기 저장 공간을 확인하고 다시 열어 주세요.',false);
 }
 /* 주간 보너스 — "그 주 봉투를 다 풀었다"의 정의(마을세계관-설계.md §6):
    ① 봉투를 열었을 것(S.mailbox.opened[weekKey])
@@ -1091,6 +1113,8 @@ function bgKeyForView(){
 }
 
 function render(){
+  if(attendanceCleanup){attendanceCleanup();attendanceCleanup=null;}
+  if(symbolCardsCleanup){symbolCardsCleanup.destroy();symbolCardsCleanup=null;}
   if(window.NM_YOUNG_NUMBERS)NM_YOUNG_NUMBERS.stop();
   lessonVersion++;
   stopVoice();
@@ -1125,6 +1149,7 @@ function render(){
     screenWelcome();
     return;
   }
+  const attended=checkAttendance();if(attended!=null)pendingAttendanceDay=attended;
   if(S.view==='title'){
     app.innerHTML='<div id="screen"></div>';
     screenTitle();
@@ -1135,10 +1160,12 @@ function render(){
     <div class="nm-brand">${charChipHTML()}</div>
     <div class="nm-top-right">
       <span class="nm-coins">🪙 <b>${S.coins}</b></span>
+      <button class="nm-attendance-open" id="attendanceBtn" aria-label="${S.lang==='ko'?'출석 도장':S.lang==='en'?'Attendance stamps':'出勤印章'}">${S.lang==='ko'?'출석':S.lang==='en'?'Stamps':'出勤'}</button>
       <button class="nm-lang" id="langBtn">${t('langName')}</button>
     </div>
   </div><div id="screen"></div>`;
   $('#langBtn').onclick=cycleLang;
+  $('#attendanceBtn').onclick=e=>showAttendanceBook(e.currentTarget);
   $('#charChipBtn').onclick=()=>{S.view='closet';save();render();};
   if(S.view==='town')screenTown();
   else if(S.view==='roadmap')screenRoadmap();
@@ -1508,8 +1535,9 @@ function screenTown(){
     gates+=`<button class="nm-gate" style="${g.pos}" data-gate="${g.id}">${g.icon} <span>${esc(L(g.name))}</span></button>`;
   });
   scr.classList.add('nm-town','nm-town-illustrated');
+  scr.dataset.characterMode='2d';
   scr.innerHTML=`
-    <div id="townVp" class="is-illustrated" aria-label="${S.lang==='ko'?'마을 지도':S.lang==='en'?'Village map':'村庄地图'}">
+    <div id="townVp" class="is-illustrated" tabindex="0" aria-label="${S.lang==='ko'?'마을 지도':S.lang==='en'?'Village map':'村庄地图'}">
       <div id="townWorld">
         <div class="ncloud a"><span class="puff" style="width:64px;height:64px;left:0;top:-8px"></span><span class="puff" style="width:48px;height:48px;left:44px;top:0"></span><span class="puff" style="width:40px;height:40px;left:78px;top:6px"></span><span class="num">7</span></div>
         <div class="ncloud b"><span class="puff" style="width:70px;height:70px;left:0;top:-10px"></span><span class="puff" style="width:50px;height:50px;left:50px;top:2px"></span><span class="num">10</span></div>
@@ -1561,7 +1589,7 @@ function screenTown(){
     </div>
     <div class="nm-town-hud ctrls">
       <button class="nm-iconbtn" id="townMute">🔇</button>
-      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'지도 맞추기':S.lang==='en'?'Fit map':'调整地图'}">⛶</button>
+      <button class="nm-iconbtn" id="townMe" title="${S.lang==='ko'?'내 위치 따라가기':S.lang==='en'?'Follow my position':'跟随我的位置'}" aria-pressed="false">◎</button>
       <button class="nm-iconbtn" id="townZin" aria-label="${S.lang==='ko'?'확대':S.lang==='en'?'Zoom in':'放大'}">＋</button>
       <button class="nm-iconbtn" id="townZout" aria-label="${S.lang==='ko'?'축소':S.lang==='en'?'Zoom out':'缩小'}">－</button>
     </div>
@@ -1605,8 +1633,7 @@ function screenTown(){
        건드리지 않는다. 사람을 이미 골랐으면(온보딩 완료 프로필의 정상 경로)
        그날 처음 마을에 들어온 순간에만 카드가 뜬다(checkAttendance가 하루
        한 번만 값을 반환). */
-    const attendDays=checkAttendance();
-    if(attendDays!=null){ save(); showAttendCard(scr,attendDays); }
+    if(pendingAttendanceDay!=null){showAttendCard(scr,pendingAttendanceDay);pendingAttendanceDay=null;}
   }
 }
 /* 출석 카드 — 자동 소멸(약 3.5초) + 탭하면 즉시 닫힘. 잠금 없는 비차단 알림이라
@@ -5511,7 +5538,7 @@ function screenTitle(){
       <div class="nm-title-hello">${S.name?esc(S.name)+' — ':''}${lk('다시 만나서 반가워요!','Welcome back!','欢迎回来！')}</div>
       <div class="nm-title-stats">
         <span class="nm-title-chip">🪙 ${S.coins}</span>
-        ${S.attend&&S.attend.days?`<span class="nm-title-chip">📅 ${lk(`${S.attend.days}일`,`Day ${S.attend.days}`,`第${S.attend.days}天`)}</span>`:''}
+        <button type="button" class="nm-title-chip nm-attendance-open" id="ttAttendance">📅 ${lk(`출석 ${S.attend?.days||0}일`,`Stamps · ${S.attend?.days||0} days`,`出勤 ${S.attend?.days||0}天`)}</button>
         ${badge?`<span class="nm-title-chip gold">🏅 ${esc(badge.label)}</span>`:''}
       </div>
       ${lineageBadgeRowHtml()}
@@ -5555,6 +5582,7 @@ function screenTitle(){
       </div>
     </div>
   </div>`;
+  $('#ttAttendance')?.addEventListener('click',e=>showAttendanceBook(e.currentTarget));
   $('#ttContinue').onclick=()=>enterContinueUnit(uid);
   $('#ttDiag').onclick=()=>startPlacement();
   $('#ttGame').onclick=()=>{ S.view='town'; save(); render(); };
@@ -5616,13 +5644,14 @@ function mountTitle3DInto(scr, summary, badge){
     card.removeAttribute('aria-hidden');
   };
   const chips=[];   /* 동전은 모듈이 coins 로 따로 그린다 */
-  if(S.attend&&S.attend.days)chips.push({icon:'📅',text:{ko:`${S.attend.days}일`,en:`Day ${S.attend.days}`,zh:`第${S.attend.days}天`}});
+  chips.push({action:'attendance',icon:'📅',text:{ko:`출석 ${S.attend?.days||0}일`,en:`Stamps · ${S.attend?.days||0} days`,zh:`出勤 ${S.attend?.days||0}天`}});
   if(badge)chips.push({icon:'🏅',text:badge.label,gold:true});
-  import('./title3d/title3d.js?v=20261022-spatial1').then(m=>{
+  import('./title3d/title3d.js?v=20261024-cardbook1').then(m=>{
     const choices=m.DEFAULT_CHOICES.map(c=>c.id==='continue'&&summary?Object.assign({},c,{sub:summary}):c);
     return m.mountTitle3D(box,{
       lang:S.lang, choices,
       onPick:id=>{const b=document.getElementById(BTN[id]);if(b)b.click();},
+      onChipPick:(action,button)=>{if(action==='attendance')showAttendanceBook(button);},
       player:px=>window.renderPartyHtml?window.renderPartyHtml(avatarProfile(),S.character,px):'',
       name:avatarName(), coins:S.coins, chips, extraHtml:lineageBadgeRowHtml()
     });
@@ -6314,19 +6343,26 @@ function initTownWorld(scr){
     cam.y=(vp.clientHeight-H*cam.scale)/2;
     bound();apply();
   }
-  /* 따라가는 카메라 — 지도를 통째로 보여주는 대신 플레이어 가까이(cover×FOLLOW_ZOOM)
-     당겨서 플레이어를 화면 가운데에 두고, 걸으면 지도가 함께 흐른다(Explorer식 시점).
-     손으로 지도를 끌면 따라가기를 잠시 끄고(자유 둘러보기), 지도를 탭해 걷게 하거나
-     📍 버튼을 누르면 다시 켠다. */
-  const FOLLOW_ZOOM=1.7;
-  let follow=false;
-  function playerWorld(){const p=(typeof player!=='undefined')?player:null;return p?{x:p.x/100*W,y:p.y/100*H}:{x:BBOX.x+BBOX.w/2,y:BBOX.y+BBOX.h/2};}
-  function focusPlayer(immediate){
-    const pw=playerWorld();
-    const tx=vp.clientWidth/2-pw.x*cam.scale, ty=vp.clientHeight/2-pw.y*cam.scale;
-    if(immediate){cam.x=tx;cam.y=ty;}
-    else{cam.x+=(tx-cam.x)*.08;cam.y+=(ty-cam.y)*.08;}
+  /* 그림 지도와 사람·기호는 같은 2D 좌표계다. 걷기를 시작하면 현재 확대율에서
+     화면 중앙 안전영역만 따라가고 수동 드래그/확대는 자유 둘러보기로 전환한다. */
+  let follow=false, centerOnPlayer=false;
+  const reduceCamera=!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  function playerWorld(){return {x:player.x/100*W,y:player.y/100*H};}
+  function setFollow(value){
+    follow=value;
+    const button=scr.querySelector('#townMe');if(button)button.setAttribute('aria-pressed',String(value));
+  }
+  function focusPlayer(immediate,dt){
+    const pw=playerWorld(),px=pw.x*cam.scale+cam.x,py=pw.y*cam.scale+cam.y;
+    const left=vp.clientWidth*.25,right=vp.clientWidth*.75,top=vp.clientHeight*.25,bottom=vp.clientHeight*.75;
+    let tx=cam.x,ty=cam.y;
+    if(centerOnPlayer){tx=vp.clientWidth/2-pw.x*cam.scale;ty=vp.clientHeight/2-pw.y*cam.scale;}
+    else{if(px<left)tx+=left-px;else if(px>right)tx+=right-px;
+      if(py<top)ty+=top-py;else if(py>bottom)ty+=bottom-py;}
+    const alpha=immediate||reduceCamera?1:1-Math.exp(-7*(dt||1/60));
+    cam.x+=(tx-cam.x)*alpha;cam.y+=(ty-cam.y)*alpha;
     bound();apply();
+    if(centerOnPlayer&&Math.abs(tx-cam.x)+Math.abs(ty-cam.y)<1)centerOnPlayer=false;
   }
 
   let drag=false,moved=false,sx,sy,cx,cy;
@@ -6335,7 +6371,7 @@ function initTownWorld(scr){
     drag=true;moved=false;vp.classList.add('drag');sx=e.clientX;sy=e.clientY;cx=cam.x;cy=cam.y;
     if(!e.target.closest('button,a,.nb'))try{vp.setPointerCapture(e.pointerId);}catch(_){}
   }
-  function onMove(e){if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6){moved=true;follow=false;}cam.x=cx+dx;cam.y=cy+dy;bound();apply();}
+  function onMove(e){if(!drag)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>6){moved=true;setFollow(false);centerOnPlayer=false;}cam.x=cx+dx;cam.y=cy+dy;bound();apply();}
   function onUp(e){drag=false;vp.classList.remove('drag');try{if(vp.hasPointerCapture(e.pointerId))vp.releasePointerCapture(e.pointerId);}catch(_){}}
   vp.addEventListener('pointerdown',onDown);
   vp.addEventListener('pointermove',onMove);
@@ -6360,6 +6396,7 @@ function initTownWorld(scr){
   vp.addEventListener('pointercancel',pdUp);
 
   function zoomTo(ns,ox,oy){
+    setFollow(false);centerOnPlayer=false;
     ns=Math.min(maxS,Math.max(minS,ns));
     const r=vp.getBoundingClientRect();
     const lx=ox-r.left, ly=oy-r.top;
@@ -6370,12 +6407,12 @@ function initTownWorld(scr){
   zin.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale*1.25,r.left+r.width/2,r.top+r.height/2);};
   zout.onclick=()=>{const r=vp.getBoundingClientRect();zoomTo(cam.scale/1.25,r.left+r.width/2,r.top+r.height/2);};
   const meBtn=scr.querySelector('#townMe');
-  if(meBtn)meBtn.onclick=()=>{follow=false;center();};
+  if(meBtn)meBtn.onclick=()=>{setFollow(true);centerOnPlayer=true;};
   function onWheel(e){e.preventDefault();zoomTo(cam.scale*(e.deltaY<0?1.1:.9),e.clientX,e.clientY);}
   vp.addEventListener('wheel',onWheel,{passive:false});
 
-  requestAnimationFrame(()=>{fit();center();});
-  function onResize(){fit();center();}
+  const fitRAF=requestAnimationFrame(()=>{fit();center();});
+  function onResize(){fit();if(follow)focusPlayer(true);else{bound();apply();}}
   addEventListener('resize',onResize);
 
   /* 건물 클릭 */
@@ -6466,9 +6503,9 @@ function initTownWorld(scr){
       const step=Math.min(d,n.velocity*dt);
       n.x+=dx/d*step/W*100;n.y+=dy/d*step/H*100;
       n.el.style.left=n.x+'%';n.el.style.top=n.y+'%';
-      if(n.player&&follow)focusPlayer(false);
       if(root){root.classList.add('walking');root.dataset.dir='s';}
     });
+    if(follow&&!drag&&pts.size<2)focusPlayer(false,dt);
     walkRAF=requestAnimationFrame(walk);
   }
   walkRAF=requestAnimationFrame(walk);
@@ -6480,15 +6517,34 @@ function initTownWorld(scr){
   let ping=null,pingTimer=null;
   function onTapWalk(e){
     if(moved||pinched||e.isPrimary===false||e.button!==0||e.target.closest('button,a,.nb'))return;
-    const r=vp.getBoundingClientRect();
-    const x=(e.clientX-r.left-cam.x)/cam.scale,y=(e.clientY-r.top-cam.y)/cam.scale;
+    const r=world.getBoundingClientRect();
+    const x=(e.clientX-r.left)/cam.scale,y=(e.clientY-r.top)/cam.scale;
     player.tx=Math.min(98,Math.max(2,x/W*100));player.ty=Math.min(98,Math.max(2,y/H*100));
-    follow=false;
+    centerOnPlayer=false;setFollow(true);
     if(ping)ping.remove();clearTimeout(pingTimer);
     ping=document.createElement('div');ping.className='nb-ping';ping.style.left=player.tx+'%';ping.style.top=player.ty+'%';world.appendChild(ping);
     pingTimer=setTimeout(()=>{if(ping)ping.remove();ping=null;},800);
   }
   vp.addEventListener('pointerup',onTapWalk);
+  function onWalkKey(event){
+    if(event.target!==vp||event.altKey||event.ctrlKey||event.metaKey)return;
+    const direction={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[event.key];
+    if(!direction)return;event.preventDefault();centerOnPlayer=false;setFollow(true);
+    player.tx=Math.min(98,Math.max(2,player.tx+direction[0]*70/cam.scale/W*100));
+    player.ty=Math.min(98,Math.max(2,player.ty+direction[1]*70/cam.scale/H*100));
+  }
+  vp.addEventListener('keydown',onWalkKey);
+  function onMapFocus(event){
+    const button=event.target.closest('.nm-zone,.nm-gate');
+    if(!button||!button.matches(':focus-visible'))return;
+    const r=button.getBoundingClientRect(),v=vp.getBoundingClientRect();
+    const dx=r.left<v.left+12?v.left+12-r.left:r.right>v.right-12?v.right-12-r.right:0;
+    const dy=r.top<v.top+12?v.top+12-r.top:r.bottom>v.bottom-12?v.bottom-12-r.bottom:0;
+    if(dx||dy){setFollow(false);cam.x+=dx;cam.y+=dy;bound();apply();}
+  }
+  vp.addEventListener('focusin',onMapFocus);
+
+
 
   nbs.forEach(n=>{
     n.el.addEventListener('pointerup',e=>{
@@ -6521,7 +6577,7 @@ function initTownWorld(scr){
     clearInterval(fountainTimer);
     clearInterval(sparkTimer);
     stopVoice();
-    cancelAnimationFrame(walkRAF);clearTimeout(pingTimer);if(ping)ping.remove();nbs.forEach(n=>clearTimeout(n._t));
+    cancelAnimationFrame(walkRAF);cancelAnimationFrame(fitRAF);vp.removeEventListener('keydown',onWalkKey);vp.removeEventListener('focusin',onMapFocus);clearTimeout(pingTimer);if(ping)ping.remove();nbs.forEach(n=>clearTimeout(n._t));
     removeEventListener('resize',onResize);
     if(stopAmbience){stopAmbience();stopAmbience=null;}
   };
@@ -7080,6 +7136,7 @@ function dexFigure(sym,px){
 /* "새 기호 카드!" 모달 — 앞면(기호+읽는 법) 탭하면 뒤집혀 뒷면(번역+탄생 이야기).
    닫으면(=수집하기) S.symbolDex에 저장하고 목록의 다음 기호(있으면)를 이어서 띄운다. */
 function symbolCardModalHtml(sy){
+  if(window.NM_SYMBOL_CARDS){const registry=orderedUnitSymbols();return NM_SYMBOL_CARDS.acquisitionHtml(sy,{lang:S.lang,figure:dexFigure,index:registry.findIndex(x=>x.sym===sy.sym)+1,total:registry.length});}
   const ko=S.lang==='ko',en=S.lang==='en';
   return`<div class="nm-gate-overlay nm-symmodal-overlay" id="nmSymModal">
     <div class="nm-gate-card nm-symmodal-card">
@@ -7105,6 +7162,15 @@ function showSymbolCardModal(list,idx,u){
   if(idx>=list.length)return;
   const sy=list[idx];
   document.body.insertAdjacentHTML('beforeend',symbolCardModalHtml(sy));
+  if(window.NM_SYMBOL_CARDS){
+    if(symbolAcquisitionCleanup)symbolAcquisitionCleanup();
+    symbolAcquisitionCleanup=NM_SYMBOL_CARDS.bindAcquisition($('#nmSymModal'),{onCollect:()=>{
+      const old=S.symbolDex[sy.sym];S.symbolDex[sy.sym]={unitId:u.id,earnedAt:Date.now()};
+      if(!save()){if(old===undefined)delete S.symbolDex[sy.sym];else S.symbolDex[sy.sym]=old;return false;}
+      if(symbolAcquisitionCleanup){symbolAcquisitionCleanup();symbolAcquisitionCleanup=null;}
+      $('#nmSymModal')?.remove();showSymbolCardModal(list,idx+1,u);return true;
+    }});return;
+  }
   const flip=$('#nmSymFlip');
   flip.onclick=()=>flip.classList.toggle('flipped');
   $('#nmSymClose').onclick=()=>{
@@ -7123,6 +7189,10 @@ function allUnitSymbols(){
     (u.symbols||[]).forEach(sy=>{if(!out.some(o=>o.sym===sy.sym))out.push(Object.assign({unitId:uid},sy));});
   });
   return out;
+}
+function orderedUnitSymbols(){
+  const rankOf=uid=>{const m=/^([A-Z])-(\d+)/.exec(uid)||[];return ({N:0,A:1,B:2,C:3,H:4,M:5}[m[1]]??9)*1000+(+m[2]||0);};
+  return allUnitSymbols().sort((a,b)=>rankOf(a.unitId)-rankOf(b.unitId));
 }
 function symDexCardHtml(sym,real){
   const ko=S.lang==='ko',en=S.lang==='en';
@@ -7153,8 +7223,11 @@ function screenSymbolDex(){
   const bySym={};all.forEach(sy=>{bySym[sy.sym]=sy;});
   /* 도감 순서(2026-10-01) — 배우는 순서대로: 유아(N)→초등(A·B·C)→고급(H)→중등(M). 유닛에 연결된 기호만
      센다(이전엔 틀 10칸 중 5칸이 어느 유닛에도 연결되지 않아 영원히 빈칸이었다). */
-  const rankOf=uid=>{const m=/^([A-Z])-(\d+)/.exec(uid)||[];return ({N:0,A:1,B:2,C:3,H:4,M:5}[m[1]]??9)*1000+(+m[2]||0);};
-  const ordered=all.slice().sort((a,b)=>rankOf(a.unitId)-rankOf(b.unitId));
+  const ordered=orderedUnitSymbols();
+  if(window.NM_SYMBOL_CARDS){
+    symbolCardsCleanup=NM_SYMBOL_CARDS.mount(scr,{symbols:ordered,collected:S.symbolDex,lang:S.lang,figure:dexFigure,
+      onBack:()=>{const back=S._dexFrom||'town';S._dexFrom=null;S.view=back;save();render();}});return;
+  }
   const canonCards=ordered.map(sy=>symDexCardHtml(sy.sym,sy)).join('');
   const extraCards='';
   const collectedCount=Object.keys(S.symbolDex||{}).length;

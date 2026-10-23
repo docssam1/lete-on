@@ -3956,7 +3956,7 @@ body.nm-review-mode .nm-title3d{top:48px}
 
 /* Illustrated village: direct building entry; supporting tools in a small side panel. */
 .nm-town-illustrated{position:relative;overflow:hidden;background:#BFE0F2}
-.nm-town-illustrated #townVp{position:absolute;inset:0;cursor:default;background:url(../assets/map.jpg) center/cover}
+.nm-town-illustrated #townVp{position:absolute;inset:0;overflow:clip;cursor:default;background:url(../assets/map.jpg) center/cover}
 .nm-town-illustrated #townVp.drag{cursor:grabbing}
 .nm-town-illustrated .nm-zone{min-width:calc(48px / var(--town-map-scale,1));min-height:calc(45px / var(--town-map-scale,1));touch-action:manipulation;transition:background .2s}
 .nm-town-illustrated .nm-zlabel{font-size:calc(14px / var(--town-map-scale,1));padding:calc(7px / var(--town-map-scale,1)) calc(10px / var(--town-map-scale,1));border-radius:calc(16px / var(--town-map-scale,1));top:42%;line-height:1.2;box-shadow:0 2px 5px #12375850;background:#143A64;border:calc(1px / var(--town-map-scale,1)) solid #FFFFFFC0}

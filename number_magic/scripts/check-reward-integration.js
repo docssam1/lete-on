@@ -25,7 +25,7 @@ const node=id=>controls[id]||(controls[id]={innerHTML:'',textContent:'',onclick:
   classList:{add(){}},remove(){},setAttribute(){}});
 const w={console,Date:FixedDate,Math,JSON,Promise,Number,Map,Set,
   S:{},NM_CHARACTER_STATE:{...W,reward:(s,n,reason,key)=>W.reward(s,n,reason,key,clock)},
-  NM_COURSES:data.NM_COURSES,NM_AVATAR:data.NM_AVATAR,UNITS:data.NM_UNITS,
+  NM_COURSES:data.NM_COURSES,NM_AVATAR:data.NM_AVATAR,UNITS:data.NM_UNITS,NM_ATTENDANCE:require('../app/attendance.js'),
   document:{querySelectorAll:selector=>selector==='.nm-coins b'?[coinNode]:[],createElement:()=>node('created')},
   $:node,save:()=>{saves++;return true;},render(){},clearInterval(){},townCleanup:null,mgTimer:null,
   clearTimeout(){},setTimeout:callback=>{timers.push(callback);return timers.length;},
