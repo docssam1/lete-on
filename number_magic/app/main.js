@@ -284,10 +284,15 @@ function defaults(){return{ lang:'ko', view:'town', coins:0, range:'oneDigit',
 let attendanceCleanup=null, symbolCardsCleanup=null, symbolAcquisitionCleanup=null;
 let pendingAttendanceDay=null, attendanceSaveFailed=false;
 let hadSave=false; // 파싱에 성공한 프로필만 기존 사용자로 취급한다.
+const SLOT_COUNT=3, SLOT_ACTIVE_KEY=REVIEW?'nm_review_active_slot_'+review.username:'nm_active_slot';
+// Each tab may save only the profile and revision it actually loaded. A sibling
+// switch or a newer write in another tab must never be overwritten by stale S.
+let stateStorageRaw=null,stateStorageSlot=null,stateStorageReady=false,stateStorageBlocked=false;
 function load(){
   let raw=null;
   try{
     raw=localStorage.getItem(KEY);
+    stateStorageRaw=raw;stateStorageSlot=localStorage.getItem(SLOT_ACTIVE_KEY);stateStorageReady=true;
     const r=JSON.parse(raw);
     if(r&&typeof r==='object'&&!Array.isArray(r)){
       hadSave=true;
@@ -351,13 +356,37 @@ if(S.name===undefined)S.name='';
 if(!S.account)S.account={status:existingLocalProfile?'active':'trial',code:null,checkedAt:0};
 /* 소급 마이그레이션: 과거 완료(done) 유닛에 steps.stamp가 빠져 로드맵 별이 안 켜지던 버그 —
    기존 프로필의 완료 기록에 stamp 단계를 채워 넣는다(1회성, 멱등) */
-(function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}})();
+(function(){let mig=false;Object.keys(S.progress||{}).forEach(uid=>{const p=S.progress[uid];if(p&&p.done){p.steps=p.steps||{};if(!p.steps.stamp){p.steps.stamp=true;mig=true;}}});if(mig)persistState();})();
 if(!S.firstWeek)S.firstWeek=weekKeyFor(new Date()); // 편지함 첫 방문 주 — 이전 주 봉투는 안 보여줌(§10)
 }
 
-function save(){if(REVIEW&&!NM_REVIEW_SESSION.active())return false;applyAdminSettings();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){return false;}cloudPushSoon();if(membership)membership.refreshIfDue();if(booted&&S.view==='courseroad')Promise.resolve().then(renderPersonalPlan);return true;}
+function stateStorageConflict(){
+  if(!stateStorageBlocked){stateStorageBlocked=true;location.reload();}
+  return false;
+}
+function stateStorageCurrent(){
+  if(stateStorageBlocked||!stateStorageReady)return false;
+  try{
+    if(localStorage.getItem(KEY)!==stateStorageRaw||localStorage.getItem(SLOT_ACTIVE_KEY)!==stateStorageSlot)return stateStorageConflict();
+    return true;
+  }catch(e){return false;}
+}
+function persistState(){
+  if(REVIEW&&!NM_REVIEW_SESSION.active())return false;
+  if(!stateStorageCurrent())return false;
+  try{const raw=JSON.stringify(S);localStorage.setItem(KEY,raw);stateStorageRaw=raw;return true;}
+  catch(e){return false;}
+}
+function save(){if(REVIEW&&!NM_REVIEW_SESSION.active())return false;applyAdminSettings();if(!persistState())return false;cloudPushSoon();if(membership)membership.refreshIfDue();if(booted&&S.view==='courseroad')Promise.resolve().then(renderPersonalPlan);return true;}
 // The existing profile/slot and state backup own this data; no global sibling log.
 if(window.NM_STUDY_RECORDS)window.NM_STUDY_RECORDS.bind({state:()=>S,save});
+if(window.NM_STATS?.bind)NM_STATS.bind({scope:()=>{
+  if(!stateStorageCurrent())return null;
+  if(REVIEW)return 'review:'+review.username;
+  if(S.cloudLinked&&S.cloudOwnerId)return 'guardian:'+S.cloudOwnerId+':'+S.name;
+  const slot=Number(stateStorageSlot);return 'local-slot:'+(slot>=1&&slot<=SLOT_COUNT?slot:1);
+}});
+
 window.addEventListener('nm:study-record-error',()=>toast(S.lang==='en'?'Your score is unchanged, but the study record could not be saved. Check device storage.':S.lang==='zh'?'成绩不变，但未能保存学习记录。请检查设备存储。':'채점은 유지되지만 학습 기록을 저장하지 못했습니다. 기기 저장 공간을 확인해 주세요.',false));
 /* 학습량 배수는 인쇄 쪽(exam.js)이 읽는 자리에 옮겨 둔다 — 학생을 바꾸면 그 학생 값으로 */
 function syncAmount(){ try{ if(window.NM_EXAM&&NM_EXAM.setAmount) NM_EXAM.setAmount(S.roadAmount||1); }catch(e){} }
@@ -369,7 +398,7 @@ function unitDone(id){return !!(S.progress[id]&&S.progress[id].done);}
    nm_state_slot1|2|3 = 비활성 슬롯 백업(활성 슬롯은 백업이 없고 nm_state_v1 자체가 원본),
    nm_active_slot = 지금 nm_state_v1이 몇 번 슬롯인지(기본 1, 기존 사용자는 이 키가
    아예 없어도 1로 취급되므로 마이그레이션이 따로 필요 없다). */
-const SLOT_COUNT=3, SLOT_ACTIVE_KEY=REVIEW?'nm_review_active_slot_'+review.username:'nm_active_slot';
+
 function slotKey(n){ return (REVIEW?'nm_review_slot_'+review.username+'_':'nm_state_slot')+n; }
 function activeSlot(){
   try{ const n=parseInt(localStorage.getItem(SLOT_ACTIVE_KEY),10); return (n>=1&&n<=SLOT_COUNT)?n:1; }
@@ -390,18 +419,31 @@ function readSlotState(n){
    전환 절차의 정의이므로(옷장에서의 모든 변경은 이미 save()를 거쳐 KEY에 반영돼 있다). */
 function switchToSlot(target){
   target=+target;
+  if(!stateStorageCurrent())return false;
   const cur=activeSlot();
-  if(!(target>=1&&target<=SLOT_COUNT)||target===cur) return;
+  if(!(target>=1&&target<=SLOT_COUNT)||target===cur)return false;
+  const originals=new Map();
   try{
-    const curRaw=localStorage.getItem(KEY);
-    if(curRaw!=null) localStorage.setItem(slotKey(cur),curRaw);
-    else localStorage.removeItem(slotKey(cur));
+    for(const key of [KEY,slotKey(cur),SLOT_ACTIVE_KEY])originals.set(key,localStorage.getItem(key));
     const targetRaw=localStorage.getItem(slotKey(target));
-    if(targetRaw!=null) localStorage.setItem(KEY,targetRaw);
-    else localStorage.removeItem(KEY); // 빈 슬롯 → 새로고침 시 온보딩이 자연히 뜬다
+    const curRaw=originals.get(KEY);
+    if(curRaw!=null)localStorage.setItem(slotKey(cur),curRaw);
+    else localStorage.removeItem(slotKey(cur));
+    if(targetRaw!=null)localStorage.setItem(KEY,targetRaw);
+    else localStorage.removeItem(KEY);
     localStorage.setItem(SLOT_ACTIVE_KEY,String(target));
-  }catch(e){}
-  location.reload();
+  }catch(e){
+    // Restore only keys that changed. An unchanged failing marker needs no write,
+    // including the valid legacy case where slot 1 has no explicit marker yet.
+    let restored=true;
+    for(const [key,raw]of [...originals].reverse())try{
+      if(localStorage.getItem(key)!==raw){if(raw===null)localStorage.removeItem(key);else localStorage.setItem(key,raw);}
+    }catch(error){restored=false;}
+    if(!restored)stateStorageBlocked=true;
+    toast(S.lang==='en'?'Could not switch learners. Check device storage and try again.':S.lang==='zh'?'未能切换学习者，请检查设备存储后重试。':'학습자를 바꾸지 못했어요. 기기 저장 공간을 확인하고 다시 시도해 주세요.',false);
+    return false;
+  }
+  stateStorageBlocked=true;location.reload();return true;
 }
 
 /* ---------- 체험 게이트 (Phase 2B) ----------
@@ -507,7 +549,7 @@ if(membership&&guardianAuth){
   membership.onChange(()=>{
     if(!booted)return;
     const changed=applyAdminSettings();
-    if(changed){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}syncAmount();}
+    if(changed){persistState();syncAmount();}
     renderIdCard();renderAccountCard();renderNotifyCard();
     refreshEntryContinue();renderConsentBanner();
     if(S.view==='courseroad')renderPersonalPlan();
@@ -644,24 +686,41 @@ async function reverifyAccountIfNeeded(){
   }catch(e){ /* 오프라인 — 다음에 다시 시도 */ }
 }
 
-let cloudTimer=null,cloudSyncError=false;
+let cloudTimer=null,cloudSyncError=false,cloudPending=null,cloudSending=false,cloudTarget=null,cloudGeneration=0;
 function cloudPushSoon(){
   if(REVIEW)return;
   clearTimeout(cloudTimer);
-  if(!S.cloudLinked||!S.name||!S.cloudOwnerId)return;
-  const name=S.name,owner=S.cloudOwnerId,state=JSON.parse(JSON.stringify(S));
-  cloudTimer=setTimeout(async()=>{
+  cloudTimer=null;
+  const target=S.cloudLinked&&S.name&&S.cloudOwnerId?JSON.stringify([S.cloudOwnerId,S.name]):null;
+  if(target!==cloudTarget){cloudTarget=target;cloudGeneration++;cloudSyncError=false;}
+  if(!target){cloudPending=null;return;}
+  cloudPending={name:S.name,owner:S.cloudOwnerId,state:JSON.parse(JSON.stringify(S)),generation:cloudGeneration};
+  const sameTarget=job=>job.generation===cloudGeneration&&S.cloudLinked&&S.name===job.name&&S.cloudOwnerId===job.owner;
+  const current=job=>sameTarget(job)&&isGuardianOwner(job.owner);
+  async function flush(){
+    if(cloudSending||!cloudPending)return;
+    // Include credential reads in the lock: two PATCHes must never overtake
+    // each other. Saves during a request replace just one pending snapshot.
+    cloudSending=true;
     try{
-      const auth=await cloudCredentials();
-      if(auth.owner!==owner)return;
-      const response=await fetch(`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(name)}&owner_id=eq.${encodeURIComponent(owner)}&select=name`,{
-        method:'PATCH',headers:{...auth.headers,Prefer:'return=representation'},
-        body:JSON.stringify({state,updated_at:new Date().toISOString()})
-      });
-      if(!response.ok||!(await response.json()).length)throw new Error('cloud_save_failed');
-      if(isGuardianOwner(owner)&&cloudSyncError){cloudSyncError=false;renderIdCard();}
-    }catch(e){if(isGuardianOwner(owner)){cloudSyncError=true;renderIdCard();}} // 기기 저장은 유지하며 다음 save 때 재시도한다.
-  },1500);
+      while(cloudPending){
+        clearTimeout(cloudTimer);cloudTimer=null;
+        const job=cloudPending;cloudPending=null;
+        if(!sameTarget(job)||!stateStorageCurrent())continue;
+        try{
+          const auth=await cloudCredentials();
+          if(auth.owner!==job.owner||!current(job)||!stateStorageCurrent())continue;
+          const response=await fetch(`${SB_URL}/rest/v1/nm_profiles?name=eq.${encodeURIComponent(job.name)}&owner_id=eq.${encodeURIComponent(job.owner)}&select=name`,{
+            method:'PATCH',headers:{...auth.headers,Prefer:'return=representation'},
+            body:JSON.stringify({state:job.state,updated_at:new Date().toISOString()})
+          });
+          if(!response.ok||!(await response.json()).length)throw new Error('cloud_save_failed');
+          if(current(job)&&cloudSyncError){cloudSyncError=false;renderIdCard();}
+        }catch(e){if(current(job)){cloudSyncError=true;renderIdCard();}} // 기기 저장은 유지하며 다음 save 때 재시도한다.
+      }
+    }finally{cloudSending=false;}
+  }
+  cloudTimer=setTimeout(flush,1500);
 }
 /* 주간 요약 — 알림 발송(Edge Function weekly-notify)이 프로필 state에서 읽는다.
    현재 과정이 바뀔 때만 저장(렌더마다 save 폭주 방지). 알림서비스-설계.md 참조. */
@@ -921,9 +980,17 @@ function feedbackFx(ok){
 window.feedbackFx=feedbackFx; // 검증 하네스(Playwright)가 실제 정답 없이도 표정 스와핑을 확인할 수 있게
 function confetti(){const cols=['#16417C','#EAC996','#C9A063','#2E9E6B','#3768ad'];for(let i=0;i<64;i++){const el=document.createElement('div');el.className='nm-confetti';el.style.left=Math.random()*100+'vw';el.style.background=cols[i%cols.length];document.body.appendChild(el);el.animate([{transform:'translateY(-20px) rotate(0)',opacity:1},{transform:`translateY(${innerHeight+40}px) rotate(${Math.random()*720}deg)`,opacity:.9}],{duration:1600+Math.random()*1200,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove();}}
 function coinAdd(n,reason,claimKey){
+  coinAdd.saveFailed=false;
+  const previous={coins:S.coins,coinLedger:S.coinLedger,coinRewards:S.coinRewards};
   const before=NM_CHARACTER_STATE.balance(S);
   if(!NM_CHARACTER_STATE.reward(S,n,reason,claimKey))return 0;
-  const awarded=NM_CHARACTER_STATE.balance(S)-before;save();
+  const awarded=NM_CHARACTER_STATE.balance(S)-before;
+  if(!save()){
+    Object.keys(previous).forEach(k=>{if(previous[k]===undefined)delete S[k];else S[k]=previous[k];});
+    coinAdd.saveFailed=true;
+    if(typeof toast==='function')toast(S.lang==='en'?'Could not save your reward. Check device storage and try again.':S.lang==='zh'?'未能保存奖励，请检查设备存储后重试。':'보상을 저장하지 못했어요. 기기 저장 공간을 확인하고 다시 시도해 주세요.',false);
+    return 0;
+  }
   /* 화면 전환 없이 코인이 바뀌는 경우(출석 카드 등) 상단 🪙 표시를 바로 맞춘다 */
   document.querySelectorAll('.nm-coins b').forEach(b=>{b.textContent=S.coins;});
   return awarded;
@@ -990,7 +1057,9 @@ function maybeAwardWeeklyBonus(weekKey){
   if(!S.weeklyBonus) S.weeklyBonus={};
   if(S.weeklyBonus[weekKey]) return;
   S.weeklyBonus[weekKey]=true;
-  const awarded=coinAdd(3,'weekly','weekly:'+weekKey);save();
+  const awarded=coinAdd(3,'weekly','weekly:'+weekKey);
+  if(coinAdd.saveFailed){delete S.weeklyBonus[weekKey];return;}
+  save();
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   toast(lk('한 주를 다 마쳤어요!','You finished the week!','完成了一周！')+(awarded?` 🪙 +${awarded}`:''), true);
 }
@@ -1115,6 +1184,7 @@ function bgKeyForView(){
 function render(){
   if(attendanceCleanup){attendanceCleanup();attendanceCleanup=null;}
   if(symbolCardsCleanup){symbolCardsCleanup.destroy();symbolCardsCleanup=null;}
+  clearSymbolAcquisition();
   if(window.NM_YOUNG_NUMBERS)NM_YOUNG_NUMBERS.stop();
   lessonVersion++;
   stopVoice();
@@ -2173,6 +2243,7 @@ function screenMiniGame(gameId){
 function settleMiniGameReward(mg,count){
   if(!mg.done || mg.rewardCoins!=null)return;
   mg.rewardCoins=coinAdd(count>0?1:0,'game',mg.id+':'+mg.startTs);
+  if(coinAdd.saveFailed){delete mg.rewardCoins;return;}
   save();
 }
 
@@ -3190,7 +3261,8 @@ function startCheckup(num, fresh){
 }
 function finishCheckup(k){
   if(!S.checkups) S.checkups={};
-  const prevRewarded=!!S.checkups[checkupKeyFor(k.num)];
+  const previous=S.checkups[checkupKeyFor(k.num)],prevRewarded=!!previous;
+  delete k.rewardSavePending;
   S.checkups[checkupKeyFor(k.num)]={ at:Date.now(),
     calcOk:k.calcOk, calcTotal:k.calcTotal,
     creOk:k.creOk||0, creTotal:k.creTotal||0,
@@ -3202,7 +3274,12 @@ function finishCheckup(k){
   if(!k.rewarded){
     k.rewarded=true;
     const got=k.calcOk+(k.creOk||0)+k.wpOk;
-    k.rewardCoins=got>0&&!prevRewarded?coinAdd(got,'checkup','checkup:'+k.num):0;
+    const attempt=got>0&&!prevRewarded;
+    k.rewardCoins=attempt?coinAdd(got,'checkup','checkup:'+k.num):0;
+    if(attempt&&coinAdd.saveFailed){
+      if(previous===undefined)delete S.checkups[checkupKeyFor(k.num)];else S.checkups[checkupKeyFor(k.num)]=previous;
+      k.rewarded=false;k.rewardSavePending=true;delete k.rewardCoins;return;
+    }
   }
   save();
 }
@@ -3278,6 +3355,7 @@ function screenCheckup(){
   }
 
   if(k.stage==='result'){
+    if(k.rewardSavePending)finishCheckup(k);
     const rec=checkupRecord(k.num);
     const calcPct=k.calcTotal?Math.round(k.calcOk/k.calcTotal*100):null;
     const crePct=k.creTotal?Math.round(k.creOk/k.creTotal*100):null;
@@ -3412,7 +3490,11 @@ function screenCheckup(){
   $('#cuBack').onclick=back;
   renderMath(scr);
 
+  let submitted=false;
+  const answerIndex=k.i;
   const submit=ok=>{
+    if(submitted||S.view!=='checkup'||S._checkup!==k||k.i!==answerIndex)return;
+    submitted=true;
     if(item.kind==='wp'){ if(ok) k.wpOk++; }
     else if(item.kind==='creative'){ if(ok) k.creOk=(k.creOk||0)+1; }
     else { if(ok) k.calcOk++; }
@@ -3421,7 +3503,7 @@ function screenCheckup(){
     k.i++; k.cur=null; k.qStart=null;
     save();
     if(ok) playSfx('success');
-    setTimeout(()=>screenCheckup(), ok?520:820);
+    lessonLater(()=>{if(S.view==='checkup'&&S._checkup===k)screenCheckup();},ok?520:820);
   };
   if(useWidget){
     NM_WIDGETS.render(cur,$('#cuWidget'),val=>{
@@ -5858,7 +5940,7 @@ function boosterDoneThisWeek(weekKey){ return !!(S.boost.doneWeeks && S.boost.do
 const BOOST_NEED = 5; /* 보강 세트 문항 수 — 정규 학습지(기본 20)보다 짧게, "몸풀기" */
 function startBooster(threadId, weekKey){
   const level = boosterLevelFor(threadId);
-  S._boost = { threadId, level, weekKey, i:0, need:BOOST_NEED, score:0, cur:null };
+  S._boost = { threadId, level, weekKey, sessionId:'boost:'+Date.now()+':'+Math.random().toString(36).slice(2), i:0, need:BOOST_NEED, score:0, cur:null };
   S._boostRewarded=false;
   S.view='boost'; save(); render();
 }
@@ -5884,12 +5966,22 @@ function screenBoost(){
 
   if(b.i>=b.need){
     /* 완료 — 기록 + 살짝 보상 + 리포트용 로그 */
-    if(window.NM_STATS) NM_STATS.record(b.threadId, b.level, b.score, b.need, {boost:true});
-    S.boost.doneWeeks[b.weekKey]=true;
-    S.boost.log.push({weekKey:b.weekKey, thread:b.threadId, level:b.level, score:b.score, need:b.need, ts:Date.now()});
-    if(S.boost.log.length>30) S.boost.log.splice(0, S.boost.log.length-30);
+    if(!b.completedAt&&!b.sessionId&&S._boostRewarded){
+      const previous=[...S.boost.log].reverse().find(x=>x.weekKey===b.weekKey&&x.thread===b.threadId&&x.level===b.level&&x.score===b.score&&x.need===b.need);
+      // The learner's own old result is already complete. Do not append it again
+      // when upgrading; ownerless legacy statistics remain preserved separately.
+      if(previous){b.completedAt=previous.ts||Date.now();b.statsRecorded=true;}
+    }
+    if(!b.sessionId)b.sessionId='boost:legacy:'+b.weekKey+':'+b.threadId+':'+b.level;
+    if(!b.completedAt){
+      b.completedAt=Date.now();
+      S.boost.doneWeeks[b.weekKey]=true;
+      S.boost.log.push({weekKey:b.weekKey, thread:b.threadId, level:b.level, score:b.score, need:b.need, ts:b.completedAt});
+      if(S.boost.log.length>30)S.boost.log.splice(0,S.boost.log.length-30);
+    }
+    if(!b.statsRecorded&&window.NM_STATS)b.statsRecorded=NM_STATS.record(b.threadId,b.level,b.score,b.need,{boost:true,sessionId:b.sessionId})!==false;
     const already = !!S._boostRewarded;
-    if(!already){ b.rewardCoins=coinAdd(2,'boost','boost:'+b.weekKey); S._boostRewarded=true; }
+    if(!already){b.rewardCoins=coinAdd(2,'boost','boost:'+b.weekKey);S._boostRewarded=!coinAdd.saveFailed;}
     maybeAwardWeeklyBonus(b.weekKey); /* §6 — 몸풀기까지 끝나면 그 주가 완료됐을 수 있다 */
     scr.innerHTML=`<div class="nm-unit-bar">
       <div class="nm-unit-title">🌟 ${lk('몸풀기 완료!','Warm-up Complete!','热身完成！')}</div>
@@ -5930,14 +6022,20 @@ function screenBoost(){
   $('#boostBack').onclick=()=>{ S._boost=null; S.view='mailbox'; save(); render(); };
   renderMath(scr);
 
+  let submitted=false;
+  const answerIndex=b.i;
+  function canAnswer(){return !submitted&&S.view==='boost'&&S._boost===b&&b.i===answerIndex;}
   function advance(correct){
+    if(!canAnswer())return;
+    submitted=true;
     if(correct)b.score++;
-    b.i++; b.cur=null; save();
-    setTimeout(()=>screenBoost(),correct?600:900);
+    b.i++;b.cur=null;save();
+    lessonLater(()=>{if(S.view==='boost'&&S._boost===b)screenBoost();},correct?600:900);
   }
 
   if(useWidget){
     NM_WIDGETS.render(cur,$('#boostWidget'),val=>{
+      if(!canAnswer())return;
       const ok = Array.isArray(cur.answer)
         ? Array.isArray(val) && val.length===cur.answer.length && val.every((v,i)=>+v===cur.answer[i])
         : +val===cur.answer;
@@ -5951,6 +6049,7 @@ function screenBoost(){
     const screen=$('#boostScreen');
     let inp='';
     buildNumpad($('#boostPad'),val=>{
+      if(!canAnswer())return;
       if(val==='ok'){
         if(inp==='')return;
         const ok=parseFloat(inp)===cur.answer;
@@ -7054,7 +7153,7 @@ function stepDiscover(body,u){
       saved:S.conceptJourneys?.[u.id],
       save:state=>{
         const old=S.conceptJourneys;S.conceptJourneys={...(old||{}),[u.id]:state};
-        try{localStorage.setItem(KEY,JSON.stringify(S));}catch(error){S.conceptJourneys=old;throw error;}
+        if(!persistState()){S.conceptJourneys=old;throw new Error('concept_journey_save_failed');}
         cloudPushSoon();
       },
       onStatus:status=>{const next=body.querySelector('#toCheck');if(next)next.disabled=!(status.complete&&status.saved);},
@@ -7158,27 +7257,32 @@ function symbolCardModalHtml(sy){
     </div>
   </div>`;
 }
+function clearSymbolAcquisition(){
+  if(symbolAcquisitionCleanup){symbolAcquisitionCleanup();symbolAcquisitionCleanup=null;}
+  document.querySelectorAll('#nmSymModal').forEach(modal=>modal.remove());
+}
 function showSymbolCardModal(list,idx,u){
+  clearSymbolAcquisition();
   if(idx>=list.length)return;
-  const sy=list[idx];
+  const sy=list[idx],owner=S;
   document.body.insertAdjacentHTML('beforeend',symbolCardModalHtml(sy));
+  const modal=$('#nmSymModal');
+  const collect=()=>{
+    if(S!==owner||!modal.isConnected)return false;
+    const old=S.symbolDex[sy.sym];S.symbolDex[sy.sym]={unitId:u.id,earnedAt:Date.now()};
+    if(!save()){if(old===undefined)delete S.symbolDex[sy.sym];else S.symbolDex[sy.sym]=old;return false;}
+    clearSymbolAcquisition();showSymbolCardModal(list,idx+1,u);return true;
+  };
   if(window.NM_SYMBOL_CARDS){
-    if(symbolAcquisitionCleanup)symbolAcquisitionCleanup();
-    symbolAcquisitionCleanup=NM_SYMBOL_CARDS.bindAcquisition($('#nmSymModal'),{onCollect:()=>{
-      const old=S.symbolDex[sy.sym];S.symbolDex[sy.sym]={unitId:u.id,earnedAt:Date.now()};
-      if(!save()){if(old===undefined)delete S.symbolDex[sy.sym];else S.symbolDex[sy.sym]=old;return false;}
-      if(symbolAcquisitionCleanup){symbolAcquisitionCleanup();symbolAcquisitionCleanup=null;}
-      $('#nmSymModal')?.remove();showSymbolCardModal(list,idx+1,u);return true;
-    }});return;
+    symbolAcquisitionCleanup=NM_SYMBOL_CARDS.bindAcquisition(modal,{onCollect:collect});return;
   }
   const flip=$('#nmSymFlip');
   flip.onclick=()=>flip.classList.toggle('flipped');
   $('#nmSymClose').onclick=()=>{
-    S.symbolDex[sy.sym]={unitId:u.id,earnedAt:Date.now()};save();
-    const m=$('#nmSymModal');if(m)m.remove();
-    showSymbolCardModal(list,idx+1,u);
+    if(!collect())toast(S.lang==='en'?'Could not save the card. Please try again.':S.lang==='zh'?'未能保存卡片，请重试。':'카드를 저장하지 못했어요. 다시 시도해 주세요.',false);
   };
 }
+
 /* §13 도감 초안의 전체 기호 목록(x·√·aⁿ·f(x)·Σ·lim·f′·∫·D·αβ) — 실제로 그 기호를
    구현한 유닛이 아직 없어도 "아직 만나지 못한 기호" 자리로 항상 보여준다. */
 const SYMBOL_DEX_CANON=['x','√','aⁿ','f(x)','Σ','lim',"f'",'∫','D','αβ'];
@@ -7439,9 +7543,12 @@ function bindHistQuizPuzzle(scr,uid,comic){
       const already=!!S.histQuiz.done[uid];
       S.histQuiz.done[uid]=true;
       hqPuzzle.checked='ok';
-      save();
-      if(!already){ const awarded=coinAdd(1,'training','training:'+uid);if(awarded)toast('🪙 +'+awarded,true); }
-      screenHistQuiz();
+      if(!already){
+        const awarded=coinAdd(1,'training','training:'+uid);
+        if(coinAdd.saveFailed){delete S.histQuiz.done[uid];hqPuzzle.checked=null;screenHistQuiz();return;}
+        if(awarded)toast('🪙 +'+awarded,true);
+      }
+      save();screenHistQuiz();
     }else{
       hqPuzzle.checked='no';                              // 고른 순서는 그대로 둔다 — 다시 보고 고치게
       screenHistQuiz();
@@ -7919,7 +8026,12 @@ function stepStamp(body,u){
   if(missing){gotoStep(missing);return;}
   const s=u.stamp;const already=unitDone(S.unit);
   let newLineageBadge=null, awarded=0;
-  if(!already){awarded=coinAdd(s.coins||20,'unit','unit:'+S.unit);S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
+  if(!already){awarded=coinAdd(s.coins||20,'unit','unit:'+S.unit);
+    if(coinAdd.saveFailed){
+      body.innerHTML=`<div class="nm-card"><p>${S.lang==='en'?'Your reward could not be saved. Check device storage and try again.':S.lang==='zh'?'未能保存奖励，请检查设备存储后重试。':'보상을 저장하지 못했어요. 기기 저장 공간을 확인하고 다시 시도해 주세요.'}</p><button class="nm-btn full" id="stampRetry">${S.lang==='en'?'Save again':S.lang==='zh'?'重新保存':'다시 저장하기'}</button><button class="nm-btn ghost full" id="toMap">${t('toMap')}</button></div>`;
+      $('#stampRetry').onclick=()=>stepStamp(body,u);$('#toMap').onclick=exitUnit;return;
+    }
+    S.progress[S.unit]=S.progress[S.unit]||{steps:{}};S.progress[S.unit].done=true;
     S.progress[S.unit].steps=S.progress[S.unit].steps||{};S.progress[S.unit].steps.stamp=true; /* 로드맵 별점이 stepDone('stamp')를 보므로 반드시 기록(기존 누락 버그 수정) */
     S.progress[S.unit].touchedAt=Date.now();
     /* N-15(수의 나라 마지막 유닛) 최초 완주 — R0 추천 배너를 다음 마을 진입 때 1회 띄우도록 예약.
@@ -8062,17 +8174,7 @@ function screenCloset(){
         return true;
       },
       onPurchase(type,id){
-        // A second tab may have spent/earned coins since this screen opened.
-        // Reject stale purchases rather than overwriting that tab's progress.
-        try{const disk=JSON.parse(localStorage.getItem(KEY)||'null');
-          if(disk&&(NM_CHARACTER_STATE.balance(disk)!==S.coins||JSON.stringify(disk.character_unlocked||{})!==JSON.stringify(S.character_unlocked||{}))){
-            // Keep subsequent navigation saves from writing the stale wallet or
-            // progress back over the other tab while the reload is starting.
-            S=Object.assign(defaults(),disk);normalizeLoadedState(true);
-            window.location.reload();
-            return {ok:false,message:S.lang==='ko'?'다른 화면의 기록으로 새로고침해요. 다시 골라 주세요.':S.lang==='en'?'Reloading the other window’s record. Please choose again.':'正在刷新另一窗口的记录，请重新选择。'};
-          }
-        }catch(e){return {ok:false};}
+        if(!stateStorageCurrent())return {ok:false,message:S.lang==='ko'?'다른 화면의 기록으로 새로고침해요. 다시 골라 주세요.':S.lang==='en'?'Reloading the other window’s record. Please choose again.':'正在刷新另一窗口的记录，请重新选择。'};
         const before={coins:S.coins,coinLedger:S.coinLedger,character_unlocked:S.character_unlocked};
         const result=NM_CHARACTER_STATE.purchase(S,type,id,window.NM_AVATAR,window.NM_HUMANS);
         if(!result.ok)return result;

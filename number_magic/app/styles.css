@@ -83,9 +83,9 @@ html[data-nm-bg="challenge"]  body::before{background-image:url(../assets/stages
 #screen{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
 /* ── 상단바 ── */
-.nm-top{flex:none;display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);background:rgba(251,250,247,.95);backdrop-filter:blur(8px);z-index:10}
-.nm-brand{font-weight:900;font-size:16px;color:var(--blue)}
-.nm-top-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.nm-top{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);background:rgba(251,250,247,.95);backdrop-filter:blur(8px);z-index:10}
+.nm-brand{min-width:0;max-width:100%;font-weight:900;font-size:16px;color:var(--blue)}
+.nm-top-right{margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:12px;min-width:0;max-width:100%}
 .nm-coins{font-size:14px;font-weight:800;color:var(--gold-deep)}
 .nm-coins b{color:var(--ink)}
 .nm-lang{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer}
