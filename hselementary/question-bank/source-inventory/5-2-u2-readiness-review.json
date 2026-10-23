@@ -76,7 +76,7 @@
       "independentAnswer": "두 표현은 모두 91×4/7을 뜻하므로 값이 같습니다. 설명형 답은 52와 곱셈 관계를 포함해야 합니다.",
       "answerContract": "explanation-rubric",
       "singleAnswerStatus": "not-single-value-open-explanation",
-      "evidence": "직접 렌더 대조: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "설명형 루브릭과 learner-fit 검증 전이며 공개 승인도 없습니다."
     },
@@ -93,7 +93,7 @@
       "independentAnswer": "211/12=17 7/12",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
@@ -110,7 +110,7 @@
       "independentAnswer": "308명",
       "answerContract": "single-value",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
@@ -127,7 +127,7 @@
       "independentAnswer": "82km 800m",
       "answerContract": "single-value-with-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
@@ -144,7 +144,7 @@
       "independentAnswer": "55분 12초",
       "answerContract": "single-value-with-time-units",
       "singleAnswerStatus": "pass-single-value",
-      "evidence": "직접 렌더 대조 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },
@@ -161,7 +161,7 @@
       "independentAnswer": "36",
       "answerContract": "unique-set-then-sum",
       "singleAnswerStatus": "pass-unique-set",
-      "evidence": "직접 렌더 대조, 유한 후보 전수 검사 및 독립 계산: PDF p.10, 인쇄 p.14",
+      "evidence": "원본 PDF SHA-256 일치; 450dpi 렌더 및 Apple Vision 위치 확인, 분수·수식 원본 이미지 확대 대조, 독립 계산. 손글씨·출판사 정답지는 근거로 쓰지 않음. 검수 기록: https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view",
       "publicDecision": "locked",
       "lockReason": "원문 검수 장부이며 중앙 생성기·learner-fit·공개 승인 전입니다."
     },

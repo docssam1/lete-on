@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 14 Source Review
+
+- Checked PDF logical page 10 (printed page 14) from the SHA-256-matched source at 450dpi. Apple Vision was used to locate text; stacked fractions and equations were confirmed by enlarging the source image. The page has no printed diagrams; handwritten marks and the publisher answer key were excluded.
+- Independently recalculated Concept Exploration 1 (1)–(2) and Examples 1-1–1-4. The ledgered source conditions and answers match: 52 / explanatory equality; 17 7/12; 308 students; 82km 800m; 55m 12s; and possible 나 values 3, 6, 12, 15 (sum 36). Example 1-4 permits multiple 가·다 pairs, so only the set and sum are treated as unique.
+- Strengthened evidence for the six existing entries. No answer, taxonomy, or visual-asset correction was needed. All six remain locked; publisher-key verification, learner-fit, generator integration, and release approval remain unclaimed. No runtime, learner data, or public state changed.
+- Drive source/QA record (owner-only existing `.source-memory` folder): [grade52-unit2-page14-source-review-20261024.md](https://drive.google.com/file/d/1UiEtYN3KIiU3JzxJpjzKYhvrbcjuTyOJ/view)
+
 ## 2026-10-24 5-2 Unit 2 Source Record Correction
 
 - Identified the exact source PDF from the ledger SHA-256 and visually matched logical pages 10–17 to printed pages 14–21. The earlier 27 MB scan was a different copy and its page offset does not apply to this ledger.
