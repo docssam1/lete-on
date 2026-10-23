@@ -1,5 +1,13 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-3 Underdetermined Angle
+
+- Re-read logical PDF page 24 / printed page 28 at 450dpi, checked the exact prompt with Apple Vision OCR, and visually inspected a high-resolution crop. Handwritten ticks and answers were excluded.
+- The source gives a right triangle, fixes vertex ㄷ, rotates in the indicated direction until ㄴㄷ is parallel to ㄹㅁ, and asks for ∠ㄷㅁㄹ. It supplies no acute angle, side ratio, or equality condition.
+- Parameterized the right triangle with legs 1 and h. For both h=1 and h=√3 the construction can satisfy the printed parallel condition, while the requested angle differs (45° versus 30° or 60° according to endpoint correspondence). Corrected the prior 30° answer to checked-nonunique and locked the source row.
+- Public-candidate/locked counts change from 24/29 to 23/30; non-unique count changes from 7 to 8. No runtime mapping, student data, or deployment state changed.
+- Drive evidence: https://drive.google.com/file/d/1sT0W-X1Xk96z5XmpxOAKNevKJ7CX3zaL/view. Page 24 image SHA-256 15db8d4817b6c5cf4e3c9aa9c501553227b33cb771e81910c37f96bc392136f4; OCR SHA-256 74ecda62593e4f94cfecf3e38edc1663895151831cd795476c412b92dff6e173.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-2 Geometry Correction
 
 - Re-read logical PDF page 24 / printed page 28 at 450dpi and checked the printed diagram against Apple Vision OCR; handwriting was excluded.
