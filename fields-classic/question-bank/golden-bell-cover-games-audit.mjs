@@ -19,7 +19,13 @@ const jsQR = require(process.env.FIELDS_QR_DECODER);
 const base = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8798";
 assert.ok(["127.0.0.1", "localhost"].includes(new URL(base).hostname), "Private fixtures must stay local");
 const output = path.resolve(process.env.FIELDS_CAPTURE_DIR || "");
-assert.match(output, /^E:[\\/]/iu, "Evidence must be on E:");
+// 증거(정답이 찍힌 PDF·캡처)는 저장소 밖에만 둔다. Windows 작업 PC는 지금처럼 E: 드라이브,
+// 그 밖의 기기(클라우드 작업 환경 등)는 저장소 폴더 바깥이면 된다 — 목적은 같다: git에 섞이지 않게.
+if (process.platform === "win32") assert.match(output, /^E:[\\/]/iu, "Evidence must be on E:");
+else {
+  const repo = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
+  assert.ok(process.env.FIELDS_CAPTURE_DIR && !(output + path.sep).startsWith(repo + path.sep), "Evidence must be outside the repository");
+}
 assert.ok(process.env.FIELDS_PRIVATE_ANSWER_BANK);
 await fs.mkdir(output, { recursive: true });
 const bank = JSON.parse(await fs.readFile(process.env.FIELDS_PRIVATE_ANSWER_BANK, "utf8"));
