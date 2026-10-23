@@ -22,7 +22,18 @@ const SPECS = [
   { book: "book-05", lesson: "triangle-number-source", group: 1, stem: "□개의 점 중 두 점을 연결한 선분의 개수를 구하시오.", locator: "교사용 슬라이드 54 활동 03 (1)~(3)", ids: range("book05-full-s54-03-", 1, 3) },
   { book: "book-05", lesson: "two-digit-condition-source", group: 1, stem: CONDITION, locator: "교사용 슬라이드 31 활동 05 (1)~(4)", ids: range("book05-full-s31-05-", 1, 4) },
   { book: "book-05", lesson: "two-digit-condition-source", group: 2, stem: CONDITION, locator: "교사용 슬라이드 31 활동 05 (5)~(8)", ids: range("book05-full-s31-05-", 5, 8) },
-  { book: "book-05", lesson: "two-digit-condition-source", group: 3, stem: CONDITION, locator: "교사용 슬라이드 31 활동 05 (9)~(12)", ids: range("book05-full-s31-05-", 9, 12) }
+  { book: "book-05", lesson: "two-digit-condition-source", group: 3, stem: CONDITION, locator: "교사용 슬라이드 31 활동 05 (9)~(12)", ids: range("book05-full-s31-05-", 9, 12) },
+  // 2차(원장 「1권부터 10권까지」): 1~10권을 다시 훑어 같은 꼴 연속 문항을 더 묶음. 1권 「모든 줄의 합」·6권 「빠진 한 변」은
+  // 이미 그림 한 장에 함께 나오는 학습이라, 5권 곱셈구구 관찰은 고르기 문항이라 그대로 둔다.
+  { book: "book-05", lesson: "radial-rows-source", group: 1, stem: "다음 그림과 같은 규칙으로 1부터 차례로 수를 나열하였습니다. ①번 줄의 4번째 수는 13이고, 15는 ③번 줄의 4번째 수입니다.", ids: range("book05-full-s09-08-", 1, 4) },
+  { book: "book-05", lesson: "calendar-weekday-source", group: 1, stem: "어느 해 4월 첫 번째 월요일과 두 번째 월요일의 합은 13입니다.", ids: range("book05-full-s15-04-", 1, 2) },
+  { book: "book-05", lesson: "calendar-weekday-source", group: 2, stem: "어느 해 9월 두 번째 목요일과 세 번째 일요일의 합은 28입니다.", ids: range("book05-full-s15-05-", 1, 2) },
+  { book: "book-05", lesson: "checkerboard-product-matrix", group: 1, stem: "도전 다음 빈 칸에 2, 3, 4, 5, 6, 7, 8, 9를 한 번씩 넣어 곱셈 매트릭스를 만들었습니다.", ids: range("book05-full-s40-07-", 1, 3), labels: ["(1) 5가 있는 곳은? (칸의 글자를 쓰시오)", "(2) 8이 있는 곳은? (칸의 글자를 쓰시오)", "(3) 3이 있는 곳은? (칸의 글자를 쓰시오)"] },
+  { book: "book-05", lesson: "square-number-source", group: 1, stem: "다음을 계산하시오.", ids: range("book05-full-s57-02-", 1, 3) },
+  { book: "book-07", lesson: "reverse-growth", group: 1, stem: "준교가 매일 2배씩 자라는 개구리풀 하나를 가져와 연못에 넣었더니 1일째 되는 날 그림의 색칠된 부분만큼 연못을 덮었습니다.", ids: range("book07-src-s42-03-", 1, 2) },
+  { book: "book-07", lesson: "palindrome-source", group: 2, stem: "시각을 보기와 같이 수로 나타낼 때, 대칭수는 모두 몇 번 나타납니까?", ids: range("book07-src-s56-09-", 1, 2) },
+  { book: "book-07", lesson: "palindrome-source", group: 3, stem: "시각을 보기와 같이 수로 나타낼 때, 대칭수는 모두 몇 번 나타납니까?", ids: range("book07-src-s56-10-", 1, 2) },
+  { book: "book-07", lesson: "venn-overlap-all", group: 3, stem: "원석이의 친구들은 모두 축구나 야구를 좋아합니다. 그중에서 축구를 좋아하는 친구는 13명이고, 야구를 좋아하는 친구는 9명입니다.", ids: range("book07-src-s64-03-", 1, 2) }
 ];
 
 const changed = new Map();
@@ -30,6 +41,7 @@ for (const spec of SPECS) {
   const book = books.find((b) => b.id === spec.book);
   const lesson = book.lessons.find((l) => l.id === spec.lesson);
   const items = lesson.original.items;
+  if (items.some((entry) => entry.id === `${spec.ids[0]}-group`)) continue; // 이미 묶음(도구를 다시 돌릴 때)
   const members = spec.ids.map((id) => {
     const item = items.find((entry) => entry.id === id);
     if (!item) throw new Error(`${spec.book}/${spec.lesson}: missing ${id} (already grouped?)`);
@@ -47,11 +59,16 @@ for (const spec of SPECS) {
   const grouped = {
     ...rest,
     id: `${first.id}-group`,
-    sourceLocator: spec.locator,
+    sourceLocator: spec.locator || `${first.sourceLocator.replace(/\s*\(1\)\s*$/u, "")} (1)~(${members.length})`,
     prompt: spec.stem,
     answerRef: groupRef,
     ...(discrepancies.length ? { sourceDiscrepancy: discrepancies.join(" ") } : {}),
-    parts: members.map((item, index) => ({ id: `p${index + 1}`, label: item.prompt.slice(spec.stem.length).trim(), answerRef: item.answerRef }))
+    parts: members.map((item, index) => ({
+      id: `p${index + 1}`,
+      label: spec.labels?.[index] || item.prompt.slice(spec.stem.length).trim(),
+      ...(item.inputMode === "text" ? { inputMode: "text" } : {}),
+      answerRef: item.answerRef
+    }))
   };
   if (grouped.parts.some((part) => !part.label)) throw new Error(`${first.id}: empty part label`);
   const ids = new Set(spec.ids);
