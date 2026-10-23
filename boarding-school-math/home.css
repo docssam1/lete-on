@@ -398,3 +398,12 @@ a { color: inherit; }
   .page-home .map-section .grade-tabs button { width: 100%; min-width: 0; }
   .page-home .map-section .grade-reasoning-lanes article { min-height: 0; }
 }
+
+/* Home introduction: describe what is open now. */
+.page-home .directory-copy .eyebrow { color: #2456c4; font-size: .78rem; letter-spacing: 0; }
+.page-home .directory-copy h1 { font-family: var(--academy-sans); font-size: clamp(2.25rem, 4vw, 3.7rem); font-weight: 800; line-height: 1.16; letter-spacing: -.045em; }
+.page-home .directory-copy h1 span { color: #2456c4; }
+.page-home .directory-lede { font-size: 1rem; line-height: 1.65; }
+@media (max-width: 720px) {
+  .page-home .directory-copy h1 { font-size: clamp(2rem, 8vw, 3rem); }
+}

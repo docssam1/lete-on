@@ -51,8 +51,8 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   const response = await page.goto(baseUrl, { waitUntil: "networkidle" });
   assert.equal(response.status(), 200);
   assert.equal(await page.locator("h1").count(), 1);
-  assert.match(await page.locator("h1").innerText(), /진단 한 번으로,\s*오늘의 수업과 학습계획까지/);
-  assert.match(await page.locator(".directory-lede").innerText(), /학생용 개념·워크북[\s\S]*강사용 수업팩/);
+  assert.match(await page.locator("h1").innerText(), /학년별 수학 자료,\s*여기서 바로 찾으세요/);
+  assert.match(await page.locator(".directory-lede").innerText(), /공개된 개념·워크북[\s\S]*진단과 자동 배정은 검수 중/);
   assert.match(await page.locator(".outcome-preview").innerText(), /현재 과정[\s\S]*우선 약점[\s\S]*오늘 분량/);
   assert.equal(await page.locator(".hero-actions .button-primary").getAttribute("href"), "#start");
   assert.equal(await page.locator('[data-role-preview="student"]').count(), 1);
