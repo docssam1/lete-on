@@ -1,3 +1,12 @@
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Mission 5: Area Verified and A4-Checked
+
+- Rechecked the SHA-256-matched canonical source PDF (`d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`), physical page 27 / printed page 31. The diagram confirms △ㄱㄴㄷ≅△ㄷㄹㅁ, ㄱㄴ=16cm, ㄹㅁ=8cm, right angles at ㄴ and ㄹ, and target △ㄱㄷㅁ. The publisher answer key remains unverified.
+- Correspondence gives ㄷㄹ=16cm and ㄴㄷ=8cm. The source coordinates independently yield `|det((8,-16),(24,-8))|÷2=160cm²`. The learner-facing generated proof uses an enclosing rectangle and subtracts three corner triangles, without coordinates or determinants.
+- Added a distinct fixed pool of three non-source diagrams and three difficulty settings (nine unique combinations). API checks verify matching right angles, corresponding leg and hypotenuse lengths, each SVG triangle's computed area, and its worked answer. The source identity, answer, solution, and drawing remain tied to Mission 5.
+- Browser audit passed 12 desktop/mobile states at 1280px and 375px, 24 overflow checks, 12 blocked external requests, zero page errors, and strict separation between problem and solution. Both A4 PDFs render as one A4 page; the problem figure and full area-decomposition solution were visually inspected.
+- Updated the source inventory and readiness review to show one additional verified/public-candidate item. Whole-bank release gate now passes at 2,046 types, 1,258 available, and 380 source-unlinked locked. The 5-2–6 inventory audit still reports its existing 516 unrelated Grade 6 records; it reports no new 5-2 failures.
+- Implementation is in `/Users/docssam/.codex/worktrees/grade52-u3-page31-m5-review/lete-on` on `codex/grade52-u3-page31-m5-review-20261024`, based on `main` `2b7bc5229fcf82e49c4dafd6df458acd7686f326`. Local verification is complete; remote merge and Pages deployment remain pending. No student data was accessed or changed.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Page 31 Mission 1: Elementary Proof Verified
 
 - The printed 20°/25° source problem now has a synthetic proof using two triangle congruences and angle sums. Reflect ㅁ across diagonal ㄹㄴ to get ㅅ, then extend ㄹㄱ beyond ㄱ and choose ㅇ with ㄱㅇ=ㄷㅂ. From △ㄴㄷㅂ≅△ㄴㄱㅇ, get ㄴㅂ=ㄴㅇ; since ∠ㅂㄴㅁ=∠ㅁㄴㅇ=45° and ㄴㅁ is common, △ㄴㅂㅁ≅△ㄴㅇㅁ. This gives ∠ㄴㅁㅂ=70°. Also ∠ㄹㅁㄴ=110°, so ∠ㄹㅁㅂ=40°. The learner-facing proof contains no trigonometry or coordinate calculation.

@@ -1714,7 +1714,7 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
         detailed("점대칭도형", "pointSymmetryAdvanced", ["대칭의 중심으로 대응점 완성하기", "180도 돌려 같은 기호 배열 세기", "도형과 점대칭 도형의 겹친 넓이"]),
         detailed("점대칭의 활용", "pointSymmetryApplication", ["회전하는 도형이 점대칭이 되는 시각", "점대칭 사다리꼴의 전체 넓이", "중심을 지나는 격자 직선 세기"]),
         {
-          name: "합동의 활용 ② · 인쇄 31쪽 Mission 1–3",
+          name: "합동의 활용 ②",
           types: [
             {
               id: "5-2-u3-e4-mission-1",
@@ -1776,6 +1776,28 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               reviewLocked: false,
               reviewReason: "깨끗한 대체 원본에서 ㉠의 변과 꼭짓점을 확인했습니다. 시계 방향 60° 회전이 두 정삼각형의 대응점을 옮기며, 좌표 구성으로 입력각·교점 위치를 별도 검산했습니다. 출판사 정답은 확인하지 않았습니다.",
               generatorKey: "source52EquilateralRotationPage31Mission3",
+              generationMode: "fixed-verified-pool",
+              verifiedVariantTarget: 3,
+              verifiedVariantCount: 3,
+              answerVisualRequired: true,
+              answerVisualStatus: "verified-reconstruction"
+            },
+            {
+              id: "5-2-u3-e4-mission-5",
+              name: "합동 삼각형으로 만든 삼각형의 넓이",
+              sourceItemId: "5-2-u3-e4-mission-5",
+              sourceItemLabel: "Mission 5",
+              sourceSection: "mission",
+              sourceTier: "advanced",
+              sourcePdfPage: 27,
+              sourcePrintedPage: 31,
+              sourceEvidence: "source-drive:1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s; source-sha256:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; PDF p.27; printed p.31; sourceItemId:5-2-u3-e4-mission-5",
+              sourceVerified: true,
+              publisherKeyVerified: false,
+              answerVerification: "independent-area-decomposition-user-authorized",
+              reviewLocked: false,
+              reviewReason: "원문 도형과 합동 대응을 대조하고, 직사각형에서 세 모서리 삼각형을 빼는 풀이를 독립 계산했습니다. 9개 고정 변형의 도형 넓이, 문제·풀이 분리, PC·모바일 렌더와 A4 인쇄를 검증했습니다. 출판사 정답은 확인하지 않았습니다.",
+              generatorKey: "source52CongruentTriangleAreaPage31Mission5",
               generationMode: "fixed-verified-pool",
               verifiedVariantTarget: 3,
               verifiedVariantCount: 3,

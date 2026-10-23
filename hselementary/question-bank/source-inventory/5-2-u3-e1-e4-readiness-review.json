@@ -153,6 +153,11 @@
         "result": true
       },
       {
+        "checkId": "e4-mission-5-fixed-pool-area-decomposition",
+        "expression": "9개 수치 조합: ① 8×6→50, 10×6→68, 12×6→90; ② 12×10→122, 14×10→148, 16×10→178; ③ 16×14→226, 18×14→260, 20×14→298. 각 넓이는 전체 직사각형에서 넓이가 같은 아래 삼각형 2개와 위 삼각형을 빼고, SVG 좌표의 shoelace 면적과 대조했습니다.",
+        "result": true
+      },
+      {
         "checkId": "e4-mission-3-equilateral-rotation-angle",
         "expression": "점 ㄷ 중심 시계 방향 60° 회전: ㄴ→ㄱ, ㅁ→ㄹ, ㄷ 고정; ∠ㄴㅁㄷ=∠ㄱㄹㄷ=140°",
         "result": true
@@ -190,8 +195,8 @@
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 18,
-    "publicCandidateCount": 26,
-    "lockedCount": 27
+    "publicCandidateCount": 27,
+    "lockedCount": 26
   },
   "groupedStructures": [
     {
@@ -1861,9 +1866,9 @@
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "원문 조건과 넓이는 독립 검산했으며, 문제은행 도형·풀이 분리·A4 인쇄 구현 검수 전 공개 연결은 잠금 유지합니다."
+      "implementationStatus": "reviewed",
+      "publicDecision": "public-candidate",
+      "lockReason": null
     },
     {
       "sourceItemId": "5-2-u3-e4-mission-6",

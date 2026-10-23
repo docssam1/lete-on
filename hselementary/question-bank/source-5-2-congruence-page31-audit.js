@@ -29,6 +29,7 @@ const sourceTypes = source.definitions.map(def => {
 });
 
 let combinations = 0;
+const areaPoolSignatures = new Set();
 for (const def of source.definitions) {
   for (let variant = 0; variant < 3; variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
@@ -71,7 +72,7 @@ for (const def of source.definitions) {
         assert.ok(Math.abs(answer - (360 - centralArc - equalArc) / 2) < 1e-9);
         assert.notEqual(vertexAngle, 60);
         assert.notEqual(answer, 130);
-      } else {
+      } else if (def.sourceItemId.endsWith("mission-3")) {
         const { targetAngle, rotationDegrees } = item.answerModel;
         assert.equal(rotationDegrees, 60);
         assert.notEqual(targetAngle, 140);
@@ -85,6 +86,49 @@ for (const def of source.definitions) {
         const v = { x: d.x - m.x, y: d.y - m.y };
         const angle = Math.acos((u.x*v.x+u.y*v.y)/(Math.hypot(u.x,u.y)*Math.hypot(v.x,v.y))) * 180 / Math.PI;
         assert.ok(Math.abs(angle - targetAngle) < 1e-8);
+      } else {
+        const { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer } = item.answerModel;
+        const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0];
+        assert.ok(svg, "Mission 5 must render a source diagram");
+        const readAttr = name => Number(svg.match(new RegExp(`data-${name}="([^"]+)"`))?.[1]);
+        const readPoint = name => {
+          const [x,y] = svg.match(new RegExp(`data-${name}="([^"]+)"`))?.[1]?.split(",").map(Number) ?? [];
+          return { x, y };
+        };
+        const g = readPoint("g"), d = readPoint("d"), m = readPoint("m"), n = readPoint("n"), r = readPoint("r");
+        const dot = (a,b,c) => (a.x-b.x)*(c.x-b.x)+(a.y-b.y)*(c.y-b.y);
+        const shoelaceArea = Math.abs((d.x-g.x)*(m.y-g.y)-(d.y-g.y)*(m.x-g.x))/2;
+        assert.equal(readAttr("height"), height);
+        assert.equal(readAttr("width"), width);
+        assert.ok(height > width, "the generated source figure keeps the top corner inside the bounding rectangle");
+        assert.equal(totalWidth, height + width);
+        assert.equal(topGap, height - width);
+        assert.ok(Math.abs(dot(g,n,d))/(distance(g,n)*distance(d,n)) < 1e-4, "left source triangle has its right angle at N");
+        assert.ok(Math.abs(dot(d,r,m))/(distance(d,r)*distance(m,r)) < 1e-4, "right source triangle has its right angle at R");
+        assert.ok(Math.abs(distance(n,g)-distance(r,d)) < 0.05, "congruent triangles have equal corresponding vertical legs");
+        assert.ok(Math.abs(distance(n,d)-distance(r,m)) < 0.05, "congruent triangles have equal corresponding horizontal legs");
+        assert.ok(Math.abs(distance(g,d)-distance(d,m)) < 0.05, "congruent triangles have equal hypotenuses");
+        const renderedAreaInCm = shoelaceArea / ((228/totalWidth) ** 2);
+        assert.ok(Math.abs(renderedAreaInCm-answer) < 0.01, "the rendered target triangle matches the answer");
+        assert.equal(leftCorner, height*width/2);
+        assert.equal(rightCorner, height*width/2);
+        assert.equal(rectangleArea, height*totalWidth);
+        assert.equal(topCorner, totalWidth*topGap/2);
+        assert.equal(answer, (height*height+width*width)/2);
+        assert.notDeepEqual([height,width], [16,8], "generated values do not reproduce the source numbers");
+        assert.match(item.prompt, new RegExp(`ㄱㄴ=${height}cm`));
+        assert.match(item.prompt, new RegExp(`ㄹㅁ=${width}cm`));
+        assert.match(item.solution, /합동 표기 순서대로/);
+        assert.match(item.solution, /직사각형/);
+        assert.match(item.solution, /data-source52-figure|area-proof/);
+        assert.match(item.solution, new RegExp(`${answer}cm²`));
+        assert.equal(item.reviewLocked, false);
+        assert.equal(source.isPublicReady(def.sourceItemId), true, "only the verified candidate is public-ready");
+        const type = sourceTypes.find(candidate => candidate.sourceItemId === def.sourceItemId);
+        assert.match(type.sourceEvidence, /1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s/);
+        assert.match(type.sourceEvidence, /d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463/);
+        assert.match(type.sourceEvidence, /PDF p\.27; printed p\.31/);
+        areaPoolSignatures.add(`${height}:${width}`);
       }
       combinations += 1;
     }
@@ -94,7 +138,13 @@ for (const def of source.definitions) {
 assert.equal(source.getQuestion("unknown", 0, 0), null);
 assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 3, 0), null);
 assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 0, 2), null);
+assert.equal(areaPoolSignatures.size, 9, "all three variants at all difficulty levels must be distinct");
 for (const type of sourceTypes) {
+  if (type.reviewLocked) {
+    assert.equal(window.HSE_GENERATORS.generatorKey(type), "", "review-locked Mission 5 must not register publicly");
+    assert.equal(window.HSE_GENERATORS.generate(type, 1, 0, "audit", 0), null);
+    continue;
+  }
   assert.equal(window.HSE_GENERATORS.generatorKey(type), type.generatorKey);
   for (let variant = 0; variant < 3; variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
@@ -105,4 +155,4 @@ for (const type of sourceTypes) {
   }
 }
 
-console.log(`인쇄 31쪽 합동·대칭 Mission 감사 통과: 3문항 · ${combinations}개 조합 · SAS 풀이 검증 · 공개 후보 3`);
+console.log(`인쇄 31쪽 합동·대칭 Mission 감사 통과: 4문항 · ${combinations}개 조합 · SAS·넓이 분할 검산 · 공개 4`);
