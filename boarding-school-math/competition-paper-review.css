@@ -27,6 +27,7 @@ body { margin: 0; color: #182230; background: #f5f6f8; word-break: keep-all; ove
 .paper-mark-row select:disabled { color: #687587; background: #f5f6f8; }
 .review-source-note { margin: 18px 0; padding: 12px 14px; border-left: 4px solid #2456c4; background: #f1f5ff; color: #354255; font-size: .8rem; line-height: 1.55; }
 .review-change-note { margin: -8px 0 18px; color: #566274; font-size: .76rem; }
+.mark-progress { margin: 18px 0 10px; color: #354255; font-size: .83rem; font-weight: 800; }
 .mark-head, .paper-mark-row { display: grid; grid-template-columns: 55px minmax(0, 1.05fr) minmax(0, 1.1fr) minmax(0, 1.1fr); align-items: center; gap: 10px; }
 .mark-head { padding: 0 10px 9px; color: #566274; font-size: .72rem; font-weight: 800; }
 .paper-mark-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid #d8dee8; }

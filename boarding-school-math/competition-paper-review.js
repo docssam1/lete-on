@@ -59,6 +59,7 @@
     list.replaceChildren();
     const format = selectedFormat();
     list.hidden = !format;
+    $("mark-progress").hidden = !format;
     document.querySelector(".mark-head").hidden = !format;
     document.querySelector(".review-form-actions").hidden = !format;
     if (!format) { resetReport(); return; }
@@ -92,6 +93,7 @@
             if (reasonSelect.disabled) reasonSelect.value = "none";
             if (select.value === "unmarked") li.querySelector('[data-field="domain"]').value = "unclassified";
           }
+          if (config.field === "status") updateProgress();
           resetReport("내용이 바뀌었어요");
         });
         field.append(caption, select);
@@ -99,7 +101,13 @@
       });
       list.append(li);
     }
+    updateProgress();
     resetReport();
+  }
+  function updateProgress() {
+    const marked = Array.from($("paper-mark-list").querySelectorAll('[data-field="status"]')).filter(function (node) { return node.value !== "unmarked"; }).length;
+    const format = selectedFormat();
+    if (format) setText("mark-progress", `${marked} / ${format.itemCount}문제 표시`);
   }
   function readMarks() {
     return Array.from($("paper-mark-list").children, function (li) {

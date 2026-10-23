@@ -31,6 +31,7 @@ test("Grade 7 paper marks yield partial learning review, never official score", 
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${url}?grade=7&program=amc8`, { waitUntil: "networkidle" });
   assert.equal(await page.locator(".paper-mark-row").count(), 25);
+  assert.equal(await page.locator("#mark-progress").innerText(), "0 / 25문제 표시");
   assert.equal(await page.locator('[data-field="status"]').first().inputValue(), "unmarked");
   await page.locator('[data-question="1"][data-field="status"]').selectOption("correct");
   await page.locator('[data-question="1"][data-field="domain"]').selectOption("algebra");
@@ -38,6 +39,7 @@ test("Grade 7 paper marks yield partial learning review, never official score", 
   await page.locator('[data-question="2"][data-field="domain"]').selectOption("algebra");
   await page.locator('[data-question="2"][data-field="reason"]').selectOption("reading");
   await page.locator('[data-question="3"][data-field="status"]').selectOption("blank");
+  assert.equal(await page.locator("#mark-progress").innerText(), "3 / 25문제 표시");
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.match(await page.locator("#report-title").innerText(), /입력한 결과/);
   assert.match(await page.locator("#report-intro").innerText(), /22문제는 표시하지 않았습니다/);
@@ -57,6 +59,7 @@ test("direct entry waits for a contest and keeps empty results out of view", asy
   await page.goto(url, { waitUntil: "networkidle" });
   assert.equal(await page.locator("#review-program").inputValue(), "");
   assert.equal(await page.locator("#paper-mark-list").isHidden(), true);
+  assert.equal(await page.locator("#mark-progress").isHidden(), true);
   assert.equal(await page.locator(".review-report").isHidden(), true);
   assert.equal(await page.locator("#review-paper-label-field").isHidden(), true);
   assert.equal(await page.locator("#review-amc8-practice").isHidden(), true);

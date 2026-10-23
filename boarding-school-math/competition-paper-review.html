@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./gfield-tokens.css">
   <link rel="stylesheet" href="./academy-ui.css">
-  <link rel="stylesheet" href="./competition-paper-review.css?v=20261024-2">
+  <link rel="stylesheet" href="./competition-paper-review.css?v=20261024-3">
 </head>
 <body class="academy-page page-paper-review">
   <a class="skip-link" href="#main">본문으로 바로가기</a>
@@ -19,6 +19,7 @@
       <section class="review-workspace" aria-labelledby="setup-title"><div class="review-heading"><p class="review-kicker">01 · 결과 입력</p><h2 id="setup-title">문제별로 표시하기</h2><p>채점한 문제지를 옆에 두고 표시하세요.</p></div>
         <form id="paper-review-form" novalidate><div class="review-settings"><label for="review-grade">학년<select id="review-grade"></select></label><label for="review-program">대회<select id="review-program"></select></label><label for="review-paper-label" id="review-paper-label-field" hidden>문제지 메모<input id="review-paper-label" type="text" maxlength="80" placeholder="예: 2025 AMC 8 연습 A"></label></div>
           <p class="review-source-note" id="review-source-note"></p><p class="review-change-note" hidden>학년이나 대회를 바꾸면 표시한 내용이 지워집니다.</p>
+          <p id="mark-progress" class="mark-progress" role="status" aria-live="polite" hidden></p>
           <div class="mark-head" aria-hidden="true" hidden><span>번호</span><span>표시</span><span>풀이 영역</span><span>오류 이유</span></div>
           <ol id="paper-mark-list" class="paper-mark-list" hidden></ol>
           <div class="review-form-actions" hidden><button class="review-submit" type="submit">결과 보기</button><button id="clear-marks" class="review-clear" type="button">표시 모두 지우기</button></div><p id="paper-error" class="paper-error" role="alert" hidden></p>
@@ -31,6 +32,6 @@
   <footer class="site-footer"><span>G·MAP · 경시 문제 복습</span></footer>
   <script src="./learning/boarding-grade-roadmap.js?v=20261023-1"></script>
   <script src="./competition/paper-review-analysis.js?v=20261024-2"></script>
-  <script src="./competition-paper-review.js?v=20261024-2"></script>
+  <script src="./competition-paper-review.js?v=20261024-3"></script>
 </body>
 </html>
