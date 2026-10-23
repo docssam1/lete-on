@@ -24,7 +24,8 @@ const roundingMissionIds = [1, 2, 3, 4, 5, 6].map(number => `5-2-u1-e2-mission-$
 const applicationExplorationIds = ["round-up", "round-down", "round-nearest"].map(suffix => `5-2-u1-e3-exploration-${suffix}`);
 const applicationMissionOneId = "5-2-u1-e3-mission-1-box-count";
 const applicationMissionTwoId = "5-2-u1-e3-mission-2-perimeter";
-const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId];
+const applicationMissionThreeId = "5-2-u1-e3-mission-3-cube-box-count";
+const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -42,16 +43,17 @@ function load(curriculumSource) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounding-application-e3.js"), "utf8"), context, { filename: "source-5-2-rounding-application-e3.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-packing-mission1.js"), "utf8"), context, { filename: "source-5-2-packing-mission1.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-perimeter-mission2.js"), "utf8"), context, { filename: "source-5-2-perimeter-mission2.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-cube-box-mission3.js"), "utf8"), context, { filename: "source-5-2-cube-box-mission3.js" });
   return { curriculum: plain(context.window.HSE_CURRICULUM), api: context.window.HSE_GENERATORS };
 }
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2032, "Whole-bank classification count");
+  assert.equal(types.length, 2033, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 151, "Preserve 124 legacy records plus twenty-seven source records");
+  assert.equal(semesterTypes.length, 152, "Preserve 124 legacy records plus twenty-eight source records");
   const restored = plain(semester);
   restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => allNewSourceIds.includes(type.sourceItemId)));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
@@ -184,7 +186,7 @@ function validate(curriculum, api, baselineSemester) {
     }
   });
   const applicationMissionOne = unit.subunits[9].types;
-  assert.deepEqual(applicationMissionOne.map(type => type.sourceItemId), [applicationMissionOneId, applicationMissionTwoId], "Only directly verified next-source Missions 1 and 2 are connected");
+  assert.deepEqual(applicationMissionOne.map(type => type.sourceItemId), [applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId], "Only directly verified next-source Missions 1–3 are connected");
   const packingType = applicationMissionOne[0];
   assert.equal(packingType.id, applicationMissionOneId);
   assert.equal(packingType.sourcePdfPage, 7);
@@ -200,6 +202,19 @@ function validate(curriculum, api, baselineSemester) {
   const perimeterType = types.find(type => type.sourceItemId === "5-2-u1-e3-mission-2-perimeter");
   assert(perimeterType, "Grade 5-2 Exploration 3 Mission 2 mapping");
   assert.equal(perimeterType.generatorKey, "source52ApplicationMissionTwoPerimeter");
+  const cubeBoxType = applicationMissionOne[2];
+  assert.equal(cubeBoxType.id, applicationMissionThreeId);
+  assert.equal(cubeBoxType.generatorKey, "source52ApplicationMissionThreeCubeBoxes");
+  assert.equal(cubeBoxType.reviewLocked, false);
+  assert.equal(cubeBoxType.answerVisualStatus, "not-required");
+  const cubeBoxGenerator = require("./source-5-2-cube-box-mission3.js");
+  for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+    const question = cubeBoxGenerator.getQuestion(variant, difficulty);
+    assert(question && question.sourceItemId === applicationMissionThreeId);
+    const [a, b, c] = question.answerModel.axisCounts;
+    assert.equal(question.answerModel.boxes, a * b * c);
+    assert(question.prompt.includes("source52-cube-box-diagram"));
+  }
   assert.equal(perimeterType.reviewLocked, false);
   assert.equal(perimeterType.sourceVerified, true);
   assert.equal(perimeterType.answerVisualRequired, false);
@@ -245,4 +260,4 @@ if (output) {
   fs.mkdirSync(output, { recursive: true });
   fs.writeFileSync(path.join(output, "classification-audit.json"), JSON.stringify(finalResult, null, 2) + "\n");
 }
-  console.log(`5-2 source classification passed: ${result.classified} original-range records, ${result.roundingNewlyAvailable} unambiguous page-6 rounding records available, ${result.roundingSourceItems - result.roundingNewlyAvailable} ambiguous page-6 record locked, ${result.e2MissionItems} page-7 Missions available, ${result.e3ExplorationItems} page-8 Exploration 3 items, one page-9 Mission available (${result.e3MissionOneItems} verified Mission 1), ${result.legacyPreserved} unchanged legacy records, ${negatives.length} rejected negative controls.`);
+  console.log(`5-2 source classification passed: ${result.classified} original-range records, ${result.roundingNewlyAvailable} unambiguous page-6 rounding records available, ${result.roundingSourceItems - result.roundingNewlyAvailable} ambiguous page-6 record locked, ${result.e2MissionItems} page-7 Missions available, ${result.e3ExplorationItems} page-8 Exploration 3 items, three page-9 Missions verified, ${result.legacyPreserved} unchanged legacy records, ${negatives.length} rejected negative controls.`);

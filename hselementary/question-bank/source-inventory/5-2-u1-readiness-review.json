@@ -799,9 +799,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "안쪽·바깥쪽 수평선분의 합은 각각 전체 가로 48mm, 수직선분의 합은 각각 전체 세로 24mm이므로 둘레는 144mm입니다. 14.4cm를 가장 가까운 자연수 cm로 나타내면 14cm입니다.",
       "sourceVerified": true,
-      "implementationStatus": "verified-local",
-      "publicDecision": "ready-for-deploy",
-      "lockReason": "원문 그림·조건·독립 풀이를 대조했고 9개 계산 구성, 12개 PC·모바일 화면 상태, A4 문제·풀이 출력을 검증했습니다."
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
+      "lockReason": "9개 계산 구성, 12개 PC·모바일 상태, A4 문제·풀이와 라이브 배포 파일을 검증했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-3-cube-box-count",
@@ -812,7 +812,7 @@
       "typeLabel": "직육면체 안에 같은 정육면체 상자 넣기",
       "originalStructure": "가로·세로·높이가 다른 창고에 한 변 15cm인 상자를 빈틈없이 넣을 수 있는 최대 개수를 구합니다.",
       "conditions": ["창고 3m×10m×4m", "상자 한 변 15cm", "방향은 창고의 세 방향과 나란함", "각 방향에 들어가는 개수를 곱함"],
-      "visualRequirement": "창고와 상자의 세 방향 길이, m-cm 변환을 함께 보여야 합니다.",
+      "visualRequirement": "원문은 문장형 조건입니다. 학생 화면의 보조 그림은 창고 세 방향과 정육면체 상자 한 변, 단위를 함께 표시하되 원문에 없는 수치를 사용해야 합니다.",
       "independentCalculation": "300÷15=20, 1000÷15=66, 400÷15=26이므로 20×66×26=34320개입니다.",
       "answerFormula": "(300÷15)(1000÷15)(400÷15)=34320",
       "independentAnswer": "34320개",
@@ -821,9 +821,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "세 방향의 들어가는 개수를 각각 구해 곱하면 최대 개수가 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "입체 길이 표시와 단위 변환을 도형 렌더러에 연결하기 전입니다."
+      "implementationStatus": "verified-local",
+      "publicDecision": "ready-for-deploy",
+      "lockReason": "원문 조건과 독립 풀이를 대조했고 9개 계산 구성, 12개 PC·모바일 상태, A4 문제·풀이 출력 검수를 통과했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-4-mat-cost",
@@ -1161,7 +1161,7 @@
 
   "runtimeCrosswalk": {
     "asOf": "2026-10-23",
-    "scope": "The three page-6 E3 Exploration mappings and the page-7 Mission 1 mapping below are deployed and live-verified. The 50-item source census under integrity is a historical review baseline, not a current runtime availability count; no mapping is claimed for the remaining entries.",
+    "scope": "The three page-6 E3 Exploration mappings and page-7 Mission 1–2 mappings are deployed and live-verified. Page-7 Mission 3 has local source, math, browser, and A4 verification and awaits release. The 50-item source census under integrity is historical.",
     "releaseStatus": "deployed-and-live-verified",
     "mainMergeSha": "a81899148f85eb16e3d013aeb7077b7e22520e1a",
     "pullRequest": 382,
@@ -1171,7 +1171,9 @@
       {"sourceItemId":"5-2-u1-e3-exploration-round-up","runtimeId":"5-2-u1-e3-exploration-round-up","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
       {"sourceItemId":"5-2-u1-e3-exploration-round-down","runtimeId":"5-2-u1-e3-exploration-round-down","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
       {"sourceItemId":"5-2-u1-e3-exploration-round-nearest","runtimeId":"5-2-u1-e3-exploration-round-nearest","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
-      {"sourceItemId":"5-2-u1-e3-mission-1-box-count","runtimeId":"5-2-u1-e3-mission-1-box-count","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"deployed-and-live-verified"}
+      {"sourceItemId":"5-2-u1-e3-mission-1-box-count","runtimeId":"5-2-u1-e3-mission-1-box-count","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"deployed-and-live-verified"},
+      {"sourceItemId":"5-2-u1-e3-mission-2-perimeter","runtimeId":"5-2-u1-e3-mission-2-perimeter","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"deployed-and-live-verified","pullRequest":384,"mergeSha":"3b24d1ec29d981e85ce83e39f81e379dcd0aa04f","pagesWorkflowRunId":39952863257},
+      {"sourceItemId":"5-2-u1-e3-mission-3-cube-box-count","runtimeId":"5-2-u1-e3-mission-3-cube-box-count","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"verified-local","qaDriveId":"1ysUst2jq26uqD9Hplw3edwzxi4GuT3ON"}
     ]
   }
 }
