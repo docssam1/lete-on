@@ -174,7 +174,7 @@
       }
     }
     setText("competition-guidance", selected
-      ? `영역별로 푼 문제 수와 정답 수를 적어 주세요. 영역을 모르겠다면 ‘문제별로 먼저 복습하기’에서 확인해요. 합계는 ${option.itemCount}문항 이하여야 해요.`
+      ? "영역별로 푼 문제 수와 정답 수를 적어 주세요. 영역을 모르겠다면 문제별 복습에서 확인해요."
       : "대회를 고르면 영역별 입력칸이 나와요.");
   }
   function resetCompetitionReport() {
@@ -235,7 +235,11 @@
     const paperLabel = $("paper-label").value.trim();
     setText("competition-report-title", `${option.title} · ${result.correct}/${result.attempted}`);
     const hasSmallSample = result.rows.some(function (entry) { return entry.attempted > 0 && entry.attempted < 3; });
-    setText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.complete ? "전체 문제" : "입력한 문제"}를 영역별로 봤어요. ${result.reviewFirst ? `${result.reviewFirst}의 풀이를 먼저 다시 보세요.` : "어느 영역을 먼저 볼지는 더 풀어 본 뒤 정해요."}${hasSmallSample ? " 3문제 미만인 영역은 정답률을 표시하지 않았어요." : ""}`);
+    const comparableCount = result.rows.filter(function (entry) { return entry.attempted >= 3; }).length;
+    const next = result.reviewFirst ? `${result.reviewFirst}부터 다시 보세요.` : comparableCount < 2
+      ? "영역을 비교하려면 두 영역에서 각각 3문제 이상 풀어야 해요."
+      : "영역별 정답률이 같아요. 틀린 문제부터 다시 보세요.";
+    setText("competition-report-summary", `${paperLabel ? `${paperLabel} · ` : ""}${result.attempted}/${option.itemCount}문항 입력. ${next}${hasSmallSample ? " 3문제 미만인 영역은 정답률을 표시하지 않아요." : ""}`);
     const host = $("competition-report-rows");
     host.replaceChildren();
     result.rows.forEach(function (entry) {
