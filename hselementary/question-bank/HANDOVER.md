@@ -1,5 +1,13 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-4: Underdetermined Fold Angle
+
+- Re-read logical PDF page 24 / printed page 28 from the SHA-256-matched original and ran Apple Vision on the prompt crop. It says to fold the rectangle so ㄱ moves to ㅁ, then fold so ㅁ moves to ㅂ, and asks for ∠ㅂㅇㄷ. The diagram marks 24° between the top edge and diagonal ㄱㄷ; ㅇ is the intersection of ㄱㄷ and ㅁㅂ. The handwritten 72° and nearby angle notes were excluded.
+- The wording fixes the point correspondences but gives no fold-line location or additional location condition for ㅂ. For a coordinate counterexample, set rectangle height 1 and width cot24°, ㄱ=(0,1), ㄷ=(cot24°,0), and ㅁ=(1,0). The first fold ㄱ→ㅁ is possible across y=x. Choose ㅂ=(1.5, 0.5 tanθ); the second fold ㅁ→ㅂ is possible across the perpendicular bisector of ㅁㅂ. With θ=40° and 48°, both ㅂ points lie inside the rectangle and ㅇ lies on segment ㅁㅂ and diagonal ㄱㄷ, while ∠ㅂㅇㄷ is 64° and 72° respectively. This proves the stated conditions do not determine one numeric answer.
+- Updated the readiness row to `checked-nonunique` and kept it locked. Source counts remain 23 public candidates / 30 locked; non-unique items rise from 8 to 9 and calculation-checked items from 43 to 44. No public mapping, release state, or student data changed.
+- Drive evidence: https://drive.google.com/file/d/1-X8dd42E5ievBVx8dq1akhwRnVDnB5NK/view.
+- Source PDF SHA-256: `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 24 render SHA-256: `15db8d4817b6c5cf4e3c9aa9c501553227b33cb771e81910c37f96bc392136f4`; focused prompt OCR was generated from the same page render.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-3 Underdetermined Angle
 
 - Re-read logical PDF page 24 / printed page 28 at 450dpi, checked the exact prompt with Apple Vision OCR, and visually inspected a high-resolution crop. Handwritten ticks and answers were excluded.

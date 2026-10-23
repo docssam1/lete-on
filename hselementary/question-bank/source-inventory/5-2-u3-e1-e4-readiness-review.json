@@ -32,7 +32,8 @@
       {"checkId": "e2-example-3-equilateral-crossing", "expression": "a≠b; sides (a,120°,b) match for △ㄱㄷㅁ and △ㄴㄷㄹ; SAS", "result": true},
       {"checkId": "e2-mission-6-small-sectors", "expression": "six small triangles only; reflection pairs (1,6),(2,5),(3,4) => 3", "result": true},
       {"checkId": "e3-example-2-square-angle", "expression": "12^2+12^2-2*12*12*cos(60°)=144; length=12cm", "result": true},
-      {"checkId": "e3-example-3-rotation-counterexamples", "expression": "right triangle legs (1,h); h=1 ⇒ target 45°, h=√3 ⇒ target 30° or 60°; both satisfy parallel condition", "result": true}
+      {"checkId": "e3-example-3-rotation-counterexamples", "expression": "right triangle legs (1,h); h=1 ⇒ target 45°, h=√3 ⇒ target 30° or 60°; both satisfy parallel condition", "result": true},
+      {"checkId": "e3-example-4-fold-angle-counterexamples", "expression": "rectangle H=1, W=cot24°; M=(1,0); MB slope tanθ with θ=40° or 48°; both A→M and M→B folds possible, giving ∠BOD=64° or 72°", "result": true}
     ]
   },
   "integrity": {
@@ -43,8 +44,8 @@
     "bySourceSection": {"exploration": 13, "example": 16, "mission": 24},
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "calculationCheckedCount": 43,
-    "nonUniqueCount": 8,
+    "calculationCheckedCount": 44,
+    "nonUniqueCount": 9,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 24,
     "publicCandidateCount": 23,
@@ -641,7 +642,7 @@
       "independentCalculation": "가능한 조합은 (7,8,11), (7,11,15), (7,15,20), (8,11,15), (8,15,20), (11,15,20)입니다.",
       "answerFormula": "C(5,3)-4 invalid = 10-4=6",
       "independentAnswer": "6가지",
-      "resultContract": "single-value",
+      "resultContract": "single-value-required-but-underdetermined",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
       "singleAnswerCheck": "10개 조합을 삼각형 부등식으로 전수 검사했습니다.",
@@ -1014,22 +1015,22 @@
       "commonTypeId": "folded-rectangle-angle",
       "typeLabel": "직사각형 두 번 접기의 각",
       "childFriendlyTypeLabel": "두 번 접은 종이의 각 구하기",
-      "originalStructure": "직사각형 종이를 두 번 접어 점의 위치를 대응시키고 목표각을 구합니다.",
-      "conditions": ["첫 접힘은 점 ㄱ을 점 ㅁ으로 이동", "두 번째 접힘은 점 ㅁ을 점 ㅂ으로 이동", "도형 내부에 24° 표시"],
-      "visualRequirement": "두 접힘선과 대응점의 위치를 정확히 복원해야 합니다.",
-      "independentCalculation": null,
-      "answerFormula": null,
+      "originalStructure": "직사각형 모양의 종이를 점 ㄱ이 점 ㅁ으로 오도록 접고, 다시 점 ㅁ이 점 ㅂ으로 오도록 접습니다. 그림은 직사각형의 위쪽 변과 대각선 ㄱㄷ 사이의 24°를 표시하고, ∠ㅂㅇㄷ을 묻습니다.",
+      "conditions": ["첫 접힘에서 ㄱ→ㅁ", "두 번째 접힘에서 ㅁ→ㅂ", "ㅁ은 직사각형 아래쪽 변 위", "ㅇ은 선분 ㅁㅂ과 대각선 ㄱㄷ의 교점", "위쪽 변과 아래쪽 변은 평행", "대각선 ㄱㄷ과 위쪽 변 사이의 각은 24°"],
+      "visualRequirement": "접힘으로 생기는 선과 점의 대응을 보존합니다. 24°는 인쇄된 조건으로 읽고, 72° 및 주변 각도 메모는 필기이므로 근거에서 제외합니다.",
+      "independentCalculation": "좌표 반례: 직사각형 높이를 1, 너비를 cot24°로 두어 위쪽 변과 ㄱㄷ의 각을 24°로 고정합니다. ㄱ=(0,1), ㄷ=(cot24°,0), ㅁ=(1,0)으로 둡니다. 첫 접힘 ㄱ→ㅁ은 두 점을 잇는 선분의 수직이등분선을 접는 선으로 택하면 가능합니다. 두 번째 접힘은 ㅁ과 임의의 내부점 ㅂ을 잇는 선분의 수직이등분선으로 가능합니다. ㅁㅂ의 기울기각을 40°로 잡으면 ∠ㅂㅇㄷ=64°이고, 48°로 잡으면 ∠ㅂㅇㄷ=72°입니다. 두 구성 모두 표시된 24°와 접기 순서, ㅇ의 교점 조건을 만족하므로 답은 유일하지 않습니다.",
+      "answerFormula": "MB slope angle = θ; ∠BOD = θ + 24°; θ=40° ⇒ 64°, θ=48° ⇒ 72°",
       "independentAnswer": null,
-      "resultContract": "single-value",
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
-      "singleAnswerCheck": "접힘선과 목표각 라벨의 정확한 대응을 재확인한 뒤 각도 추적이 필요합니다.",
+      "resultContract": "single-value-required-but-underdetermined",
+      "candidateAnswerCount": "multiple",
+      "singleAnswer": false,
+      "singleAnswerCheck": "접기 조건은 각 접힘의 대응점만 지정합니다. 접는 선의 위치나 ㅂ의 추가 위치 조건은 주어지지 않아, 같은 직사각형·24°·교점 관계에서 목표각이 64°와 72°로 달라집니다.",
       "sourceVerified": true,
-      "calculationStatus": "blocked-visual",
-      "visualCheckStatus": "needs-implementation-check",
+      "calculationStatus": "checked-nonunique",
+      "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "접힌 선과 점 라벨이 답에 직접 관여하므로 현재 상태에서 72°를 확정하지 않습니다."
+      "lockReason": "원문은 두 번의 점 이동만 지시하고 각 접는 선의 위치 또는 점 ㅂ의 추가 조건을 주지 않아 목표각이 유일하지 않습니다. 필기 72°는 답 근거로 사용하지 않았습니다."
     },
     {
       "sourceItemId": "5-2-u3-e3-mission-1",
@@ -1497,8 +1498,8 @@
     "directlyReviewedCount": 53,
     "publicCandidateCount": 23,
     "lockedCount": 30,
-    "calculationCheckedCount": 43,
-    "nonUniqueCount": 8,
+    "calculationCheckedCount": 44,
+    "nonUniqueCount": 9,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 24,
     "notes": [
@@ -1512,7 +1513,8 @@
       "2026-10-24 인쇄 26쪽 예제 2-3 도형을 재검수해 △ㄱㄷㅁ≅△ㄴㄷㄹ을 확정했습니다. source calculation checked는 43개; 구현 그림 검수 전 공개 잠금은 유지합니다. Drive QA: 1OcVudw9mWBPR7Uu6lmG2lIAXqsaw7xL9.",
       "2026-10-24 인쇄 27쪽 Mission 6의 범위를 원문과 재대조해 합성 삼각형을 제외하고 정답을 3쌍으로 정정했습니다. 예제 2-4와는 서로 다른 삼각형 집합을 세므로 commonTypeId를 분리했습니다. Drive QA: 1UO3b2Ae_gjHhd7K-nDwkUz2I4VzSWGEj.",
       "2026-10-24 인쇄 28쪽 예제 3-2의 60° 표식과 선분 끝점을 재검수했습니다. 두 12cm 변의 끼인각으로 정삼각형이 되어 ㄱㄴ=12cm이며, 기존의 단순한 정사각형 변 대응 설명을 교정했습니다. Drive QA: 1IQrrZjrUEr4vGxZTNfBDgEu64sFWJBQj.",
-      "2026-10-24 인쇄 28쪽 예제 3-3에는 예각 또는 변비가 제시되지 않아 목표각이 유일하지 않음을 반례로 확인하고 기존 30° 후보를 잠갔습니다. Drive QA: 1sT0W-X1Xk96z5XmpxOAKNevKJ7CX3zaL."
+      "2026-10-24 인쇄 28쪽 예제 3-3에는 예각 또는 변비가 제시되지 않아 목표각이 유일하지 않음을 반례로 확인하고 기존 30° 후보를 잠갔습니다. Drive QA: 1sT0W-X1Xk96z5XmpxOAKNevKJ7CX3zaL.",
+      "2026-10-24 인쇄 28쪽 예제 3-4의 인쇄 조건은 ㄱ→ㅁ→ㅂ과 ∠ㅂㅇㄷ이며, 72°는 필기라 제외했습니다. 24° 직사각형에서 두 접기가 모두 가능한 좌표 반례로 목표각 64°와 72°를 만들어 비유일을 확인했습니다."
     ]
   }
 }
