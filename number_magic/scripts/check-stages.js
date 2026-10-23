@@ -12,7 +12,9 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 
 global.window = {};
+require(path.join(ROOT, 'data/threads.js'));
 require(path.join(ROOT, 'data/courses.js'));
+require(path.join(ROOT, 'data/high-pacing.js'));
 require(path.join(ROOT, 'data/stages.js'));
 const COURSES = global.window.NM_COURSES;
 const STAGES = global.window.NM_STAGES;
@@ -35,7 +37,7 @@ for (const st of STAGES) {
   for (const k of Object.keys(COURSES)) {
     const num = courseNum(COURSES[k]);
     if (num < st.courses.from || num > st.courses.to) continue;
-    const nSess = (COURSES[k].sessions || []).length;
+    const nSess = window.NM_HIGH_PACING.length(COURSES[k]);
     sessions += nSess; weeksW2 += w2(nSess); n++; // 주 2회는 과정마다 올림한다(main.js courseWeeks 와 같게)
     if (seenCourses.has(num)) fail.push(`과정 ${num} 이 두 단계에 들어 있다`);
     seenCourses.add(num);

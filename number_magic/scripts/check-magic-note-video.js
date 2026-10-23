@@ -5,14 +5,15 @@
 'use strict';
 const assert=require('assert');
 const V=require('../data/magic-note-videos.js');
-const v=V.get('N-01');
+for(const lang of ['ko','en','zh']){
+const v=V.get('N-01',lang);
 assert(v,'N-01 video missing');
 const DT=0.02,EPS=1e-9;
 let samples=0;
 const scenes=new Set();
 const cueWords=v.cues.filter(c=>'word' in c);
 for(let i=0;i*DT<=v.duration+EPS;i++){
-  const t=+(i*DT).toFixed(4),s=v.state(t,'ko');samples++;scenes.add(s.scene);
+  const t=+(i*DT).toFixed(4),s=v.state(t,lang);samples++;scenes.add(s.scene);
   const shown=k=>s.objects.filter(o=>o.kind===k&&o.show);
   const exp=v.expect[s.scene];
   if(s.scene==='s1'){
@@ -44,7 +45,7 @@ for(let i=0;i*DT<=v.duration+EPS;i++){
     assert.strictEqual(new Set(nums).size,nums.length,`t=${t} duplicate badge ${nums}`);
   }
   if(exp&&exp.big&&s.big)assert.strictEqual(s.big.text,exp.big,`t=${t} big number`);
-  if(s.scene==='s3'&&t>=33)assert(s.big&&s.lasso===1,`t=${t} s3 total not shown`);
+  if(s.scene==='s3'&&(v.canonicalAt?v.canonicalAt(t):t)>=33)assert(s.big&&s.lasso===1,`t=${t} s3 total not shown`);
 }
 ['s0','s1','s2','s3','s3b','s4','s5'].forEach(id=>assert(scenes.has(id),'scene never shown: '+id));
 // 수 이름 소리 = 짚기. 같은 순간, 같은 순서.
@@ -58,12 +59,12 @@ assert.deepStrictEqual(wordTimes,[...touchesAll].sort((a,b)=>a-b),'number-word c
 v.touches.s2.forEach((k,i)=>{const s=v.state(k-0.01,'ko');assert(!s.objects[i].badge,`badge ${i+1} visible before touch`);});
 // 대사 사이 간격 — 다음 대사가 앞 대사를 끊지 않도록 글자 수로 어림(0.8배속, 초당 약 5.6자)
 const lines=v.cues.filter(c=>!('word' in c));
-lines.forEach((c,i)=>{
-  const next=v.cues.find(x=>x.t>c.t);
-  if(!next)return;
-  const need=c.text.ko.replace(/\s/g,'').length/5.6;
-  assert(next.t-c.t>=need*0.9,`line "${c.key}" (${need.toFixed(1)}s) is cut by the next cue after ${(next.t-c.t).toFixed(1)}s`);
+v.cues.forEach((c,i)=>{
+  const next=v.cues[i+1]?.t||v.duration;
+  const need=v.speechDuration(c);
+  assert(next-c.t>=need+.17,`${lang} cue "${c.key}" (${need.toFixed(1)}s) is cut after ${(next-c.t).toFixed(1)}s`);
 });
 // 세 언어 자막이 모두 있다
 lines.forEach(c=>['ko','en','zh'].forEach(l=>assert(c.text[l],`missing ${l} for ${c.key}`)));
-console.log(`MAGIC_NOTE_VIDEO_OK N-01 duration=${v.duration}s samples=${samples} scenes=${scenes.size} wordCues=${wordTimes.length} lines=${lines.length}`);
+console.log(`MAGIC_NOTE_VIDEO_OK N-01 ${lang} duration=${v.duration}s samples=${samples} scenes=${scenes.size} wordCues=${wordTimes.length} lines=${lines.length}`);
+}

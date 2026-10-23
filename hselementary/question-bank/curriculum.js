@@ -1346,11 +1346,14 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
           }))
         },
         {
-          name: "어림하기 · Mission 1–3 원문 연결",
+          name: "어림하기 · Mission 1–6 원문 연결",
           types: [
             ["1", "각 자리까지 올림하여 표 완성하기", "source52RoundingMissionOne", true],
             ["2", "두 어림값의 차 구하기", "source52RoundingMissionTwo", false],
-            ["3", "수 카드로 목표에 가장 가까운 수 만들기", "source52RoundingMissionThree", false]
+            ["3", "수 카드로 목표에 가장 가까운 수 만들기", "source52RoundingMissionThree", false],
+            ["4", "버림과 반올림의 결과가 같은 숫자 모두 찾기", "source52RoundingMissionFour", false],
+            ["5", "세 가지 어림 결과가 같은 수의 개수", "source52RoundingMissionFive", false],
+            ["6", "두 가지 어림 조건을 만족하는 수의 개수", "source52RoundingMissionSix", false]
           ].map(([number, name, generatorKey, answerVisualRequired]) => ({
             id: `5-2-u1-e2-mission-${number}`,
             name,
@@ -1405,6 +1408,60 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             answerVisualRequired: false,
             answerVisualStatus: "not-required"
           }))
+        },
+        {
+          name: "어림하기의 활용 · 개념탐구 3 원문 연결",
+          types: [
+            ["exploration-round-up", "올림하여 천의 자리까지 나타내기", "source52ApplicationExplorationRoundUp"],
+            ["exploration-round-down", "버림하여 십의 자리까지 나타내기", "source52ApplicationExplorationRoundDown"],
+            ["exploration-round-nearest", "반올림하여 소수 첫째 자리까지 나타내기", "source52ApplicationExplorationRoundNearest"]
+          ].map(([suffix, name, generatorKey]) => ({
+            id: `5-2-u1-e3-${suffix}`,
+            name,
+            sourceItemId: `5-2-u1-e3-${suffix}`,
+            sourceItemLabel: "개념탐구 3",
+            sourceSection: "exploration",
+            sourceTier: "advanced",
+            sourcePdfPage: 6,
+            sourcePrintedPage: 8,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e3-exploration-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄된 개념탐구 3의 세 어림 방법을 각각 연결했습니다. 원문과 다른 수를 사용해 3개 유한 변형을 만들고 각 자리 계산을 독립 검산했으며, 출판사 정답 대조 여부는 별도로 표시합니다.",
+            generatorKey,
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }))
+        },
+        {
+          name: "어림하기의 활용 · Mission 1 원문 연결",
+          types: [{
+            id: "5-2-u1-e3-mission-1-box-count",
+            name: "책의 수와 분수 비율로 필요한 상자 수 구하기",
+            sourceItemId: "5-2-u1-e3-mission-1-box-count",
+            sourceItemLabel: "Mission 1",
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 7,
+            sourcePrintedPage: 9,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e3-mission-1-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄된 Mission 1의 책 수 비율과 한 상자 50권 조건을 직접 대조하고 총 책 수와 필요한 상자 수를 독립 계산했습니다. 손글씨는 답 근거로 쓰지 않았고 그림이 없는 문항임을 확인했습니다. 원문 수치를 공개 코드에 복사하지 않고 3개 고정 변형으로 연결했습니다.",
+            generatorKey: "source52ApplicationMissionOneBooks",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
+          }]
         }
       ],
       ["분수의 곱셈",

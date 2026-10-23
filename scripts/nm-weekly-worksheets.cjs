@@ -9,6 +9,8 @@
  * env: SUPABASE_SERVICE_ROLE_KEY(필수) · SUPABASE_URL(기본 프로젝트) · BASE_URL(기본: 저장소 루트를 로컬로 띄움)
  *      WEEK(주차 강제, 예 2026-W36) · DRY=1(업로드 없이 PDF만 ./out/ 에)
  * 수동: node scripts/nm-weekly-worksheets.cjs --name 홍길동 --course C4 [--cadence w2] [--amount 0.7|0.85|1|1.25|1.5]
+ *       고등 C38~C69 는 3개월 묶음. --session N 은 기존 회차 번호(1부터)로 묶음 시작 위치를 지정한다.
+ *       --start-date YYYY-MM-DD [--speed 0.7|0.85|1|1.25|1.5] 는 시작일로부터 해당 주의 다음 묶음을 고른다.
  *       주 2회는 k=1,2 두 벌. 분량은 기본 1배, --amount 또는 프로필 roadAmount 설정을 따른다.
  */
 'use strict';
@@ -36,6 +38,46 @@ function kstWeekKey() {
 const WEEK = process.env.WEEK || kstWeekKey();
 const AMOUNTS = [0.7, 0.85, 1, 1.25, 1.5];
 const amountOf = (value) => { const n = Number(value); return AMOUNTS.includes(n) ? n : 1; };
+const HIGH_PLAN_VERSION = '20261023-high3m';
+const HIGH_PLAN_COURSE = /^C(3[89]|[4-6][0-9])$/;
+const sessionIndexOf = (value) => { const n = Number(value); return Number.isInteger(n) && n >= 1 && n <= 1000 ? n : null; };
+const highPlanOf = (target) => HIGH_PLAN_COURSE.test(target.courseKey) && target.highPlanVersion === HIGH_PLAN_VERSION;
+const dateOf = (value) => {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const date = new Date(value + 'T00:00:00Z');
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value ? value : null;
+};
+const highStartDateOf = (target) => dateOf(target.highStartDate || target.startDate);
+const highSpeedOf = (target) => amountOf(target.highSpeed || target.speed || 1);
+
+function buildWorksheetUrl(base, week, target, k) {
+  const original = `${base}/number_magic/ws.html?w=${week}&c=${encodeURIComponent(target.courseKey)}&n=${encodeURIComponent(target.name)}&k=${k}&cad=${target.cadence}&amt=${target.amount || 1}&auto=0`;
+  // Unmarked targets retain the original URL, selection, and seed contract.
+  if (!highPlanOf(target)) return original;
+  const sessionIndex = sessionIndexOf(target.sessionIndex);
+  const startDate = highStartDateOf(target);
+  return original + `&hp=1&highPlanVersion=${HIGH_PLAN_VERSION}` + (sessionIndex ? `&p=1&s=${sessionIndex}` : '')
+    + (startDate ? `&hs=${startDate}&hv=${highSpeedOf(target)}` : '');
+}
+
+function worksheetToken(key, week, target, k) {
+  let source = `${target.name}|${week}|${target.courseKey}|a${target.amount || 1}${k > 1 ? '|k' + k : ''}`;
+  if (highPlanOf(target)) {
+    source += `|hp${HIGH_PLAN_VERSION}|s${sessionIndexOf(target.sessionIndex) || 1}`;
+    const startDate = highStartDateOf(target);
+    if (startDate) source += `|hs${startDate}|hv${highSpeedOf(target)}`;
+  }
+  return crypto.createHmac('sha256', key || 'dry').update(source).digest('hex').slice(0, 8);
+}
+
+function worksheetTarget(target) {
+  if (HIGH_PLAN_COURSE.test(target.courseKey)) {
+    target.highPlanVersion = HIGH_PLAN_VERSION;
+    const startDate = highStartDateOf(target);
+    if (startDate) { target.highStartDate = startDate; target.highSpeed = highSpeedOf(target); }
+  }
+  return target;
+}
 
 async function sb(pathname, init = {}) {
   const r = await fetch(SB_URL + pathname, { ...init, headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, ...(init.headers || {}) } });
@@ -45,14 +87,23 @@ async function sb(pathname, init = {}) {
 
 async function listTargets() {
   const name = argOf('--name'), course = argOf('--course');
-  if (name) return [{ name, courseKey: course || '', cadence: argOf('--cadence') === 'w2' ? 'w2' : 'w1', amount: amountOf(argOf('--amount') || 1) }];
+  if (name) {
+    const sessionArg = argOf('--session'), sessionIndex = sessionIndexOf(sessionArg);
+    if (sessionArg && !sessionIndex) throw new Error('--session 은 1~1000 사이의 기존 회차 번호여야 합니다.');
+    const startDateArg = argOf('--start-date'), startDate = dateOf(startDateArg), speedArg = argOf('--speed');
+    if (startDateArg && !startDate) throw new Error('--start-date 는 실제 YYYY-MM-DD 날짜여야 합니다.');
+    if (speedArg && !AMOUNTS.includes(Number(speedArg))) throw new Error('--speed 는 0.7, 0.85, 1, 1.25, 1.5 중 하나여야 합니다.');
+    return [worksheetTarget({ name, courseKey: course || '', cadence: argOf('--cadence') === 'w2' ? 'w2' : 'w1', amount: amountOf(argOf('--amount') || 1), sessionIndex, startDate, speed: amountOf(speedArg || 1) })];
+  }
   const contacts = await sb('/rest/v1/nm_contacts?select=profile_name&active=eq.true&consent=eq.true');
   const names = [...new Set(contacts.map(c => c.profile_name).filter(Boolean))];
   const out = [];
   for (const n of names) {
     const prof = await sb(`/rest/v1/nm_profiles?select=state&name=eq.${encodeURIComponent(n)}&limit=1`);
     const st = prof && prof[0] && prof[0].state || {};
-    out.push({ name: n, courseKey: st.weeklyDigest && st.weeklyDigest.courseKey || '', cadence: st.roadCadence === 'w2' ? 'w2' : 'w1', amount: amountOf(st.roadAmount) });
+    const digest = st.weeklyDigest || {};
+    out.push(worksheetTarget({ name: n, courseKey: digest.courseKey || '', cadence: st.roadCadence === 'w2' ? 'w2' : 'w1', amount: amountOf(st.roadAmount), sessionIndex: sessionIndexOf(digest.sessionIndex),
+      highStartDate: digest.highStartDate, startDate: digest.startDate, highSpeed: digest.highSpeed, speed: digest.speed }));
   }
   return out;
 }
@@ -87,10 +138,20 @@ async function main() {
       if (!t.courseKey) { console.log(`[ws] skip ${t.name}: weeklyDigest.courseKey 없음(앱에서 로드맵을 아직 안 열었음)`); skip++; continue; }
       const ks = t.cadence === 'w2' ? [1, 2] : [1]; // 주 2회반은 그 주 학습지 두 벌
       for (const k of ks) {
-      const url = `${base}/number_magic/ws.html?w=${WEEK}&c=${encodeURIComponent(t.courseKey)}&n=${encodeURIComponent(t.name)}&k=${k}&cad=${t.cadence}&amt=${t.amount || 1}&auto=0`;
+      const url = buildWorksheetUrl(base, WEEK, t, k);
       const page = await browser.newPage({ viewport: { width: 900, height: 1200 } });
       try {
         await page.goto(url, { waitUntil: 'load', timeout: 60000 });
+        const exhausted = highPlanOf(t) && await page.evaluate(({ courseKey, k, sessionIndex, version, startDate, speed, cadence, weekKey }) => {
+          const pacing = window.NM_HIGH_PACING, course = window.NM_COURSES && window.NM_COURSES[courseKey];
+          if (!(pacing && course && course.studyPlan && course.studyPlan.version === version)) return false;
+          // Dated plans can continue into the next course; inspect the whole assignment.
+          if (startDate) return typeof pacing.assignment === 'function'
+            && !pacing.assignment(window.NM_COURSES, { courseKey, k, startSession: sessionIndex, startDate, speed, cadence, weekKey });
+          return !pacing.select(course, { k, startSession: sessionIndex });
+        }, { courseKey: t.courseKey, k, sessionIndex: sessionIndexOf(t.sessionIndex), version: HIGH_PLAN_VERSION,
+          startDate: highStartDateOf(t), speed: highSpeedOf(t), cadence: t.cadence, weekKey: WEEK });
+        if (exhausted) { console.log(`[ws] skip ${t.name} k=${k}: 다음 고등 수업 묶음 없음`); skip++; continue; }
         await page.waitForFunction(() => window.NM_WS_READY, null, { timeout: 30000 });
         const ready = await page.evaluate(() => window.NM_WS_READY);
         if (ready !== true) throw new Error('ws.html 렌더 실패: ' + await page.evaluate(() => (document.querySelector('.ws-err') || {}).textContent));
@@ -98,7 +159,7 @@ async function main() {
         if (!fonts.pretendard) console.warn(`[ws] ${t.name}: Pretendard 미로딩(${JSON.stringify(fonts)}) — 시스템 한글 글꼴로 대체됨`);
         await page.emulateMedia({ media: 'print' });
         const pdf = await page.pdf({ format: 'A4', printBackground: true, margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' } });
-        const token = crypto.createHmac('sha256', KEY || 'dry').update(`${t.name}|${WEEK}|${t.courseKey}|a${t.amount || 1}${k > 1 ? '|k' + k : ''}`).digest('hex').slice(0, 8); // 분량·회차가 달라지면 정적 PDF URL도 달라진다.
+        const token = worksheetToken(KEY, WEEK, t, k); // 고등 묶음 버전·시작 회차도 별도 파일로 보존한다.
         const objPath = `${WEEK}/${token}.pdf`;
         if (DRY) { fs.writeFileSync(path.join(outDir, objPath.replace('/', '_')), pdf); console.log(`[ws] DRY ${t.name} k=${k} → out/${objPath.replace('/', '_')} (${pdf.length}B)`); okN++; continue; }
         await sb(`/storage/v1/object/nm-worksheets/${objPath}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf', 'x-upsert': 'true' }, body: pdf });
@@ -114,4 +175,5 @@ async function main() {
   console.log(`[ws] done ok=${okN} skip=${skip} fail=${fail}`);
   if (fail) process.exit(1);
 }
-main().catch((e) => { console.error('[ws] error', e); process.exit(1); });
+module.exports = { HIGH_PLAN_VERSION, buildWorksheetUrl, worksheetToken, worksheetTarget, sessionIndexOf, dateOf };
+if (require.main === module) main().catch((e) => { console.error('[ws] error', e); process.exit(1); });

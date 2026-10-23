@@ -12,10 +12,10 @@ function close(){if(current)current.close();}
 
 function open(id,opts){
   close();
-  const data=root.NM_MAGIC_NOTE_VIDEOS&&root.NM_MAGIC_NOTE_VIDEOS.get(id);
-  if(!data)return null;
   opts=opts||{};
   const lang=opts.lang||'ko';
+  const data=root.NM_MAGIC_NOTE_VIDEOS&&root.NM_MAGIC_NOTE_VIDEOS.get(id,lang);
+  if(!data)return null;
   const lk=(ko,en,zh)=>lang==='en'?en:lang==='zh'?zh:ko;
   const reduce=!!(root.matchMedia&&root.matchMedia('(prefers-reduced-motion: reduce)').matches);
   let captions=true;try{captions=localStorage.getItem(CAP_KEY)!=='off';}catch(e){}
@@ -86,15 +86,26 @@ function open(id,opts){
 
   /* ---- 소리 ---- */
   const voice=root.NM_VOICE;
-  function sayCue(c){if(voice&&c)voice.say(c.text[lang]||c.text.ko,lang);}
-  function stopVoice(){if(voice)voice.stop();}
+  let cueRun=0;
+  function sayCue(c,offset=0){
+    if(!voice||!c)return;
+    const ticket=++cueRun,a=voice.say(c.text[lang]||c.text.ko,lang);
+    if(a&&offset>0){const seek=()=>{if(ticket===cueRun&&!closed&&playing&&Number.isFinite(a.duration))a.currentTime=Math.min(offset*(voice.rate||.8),a.duration);};if(a.readyState>=1)seek();else a.addEventListener('loadedmetadata',seek,{once:true});}
+  }
+  function stopVoice(){cueRun++;if(voice)voice.stop();}
 
   /* ---- 재생 ---- */
   let t=0,playing=false,raf=0,last=0,stepIndex=-1,closed=false;
   function frame(now){
     if(!playing)return;
     const dt=Math.min(0.25,(now-last)/1000);last=now;
-    const prev=t;t=Math.min(data.duration,t+dt);
+    const prev=t,next=data.cues.find(c=>c.t>prev);
+    t=Math.min(data.duration,t+dt);
+    // Network or decoding latency must never let the next cue cut a recording.
+    if(voice?.isSpeaking?.()){
+      if(next&&t>=next.t)t=Math.max(prev,next.t-.001);
+      if(t>=data.duration)t=data.duration-.001;
+    }
     data.cues.forEach(c=>{if(c.t>prev&&c.t<=t)sayCue(c);});
     draw(data.state(t,lang));
     if(t>=data.duration){pause();end.hidden=false;end.querySelector('[data-act=try]').focus();return;}
@@ -104,9 +115,9 @@ function open(id,opts){
     if(playing||closed)return;
     if(t>=data.duration)t=0;
     end.hidden=true;playing=true;last=performance.now();
-    // 대사 한가운데서 다시 틀면 그 대사를 처음부터 다시 들려준다.
-    const line=data.cues.filter(c=>!('word' in c)&&c.t<=t).pop();
-    if(t>0&&line&&t-line.t<3)sayCue(line);
+    // Resume both the picture and recording at the saved position, including count words.
+    const cue=data.cues.filter(c=>c.t<=t).pop();
+    if(t>0&&cue&&t-cue.t<(data.speechDuration?.(cue)||0))sayCue(cue,t-cue.t);
     syncPlay();raf=requestAnimationFrame(frame);
   }
   function pause(){playing=false;cancelAnimationFrame(raf);stopVoice();syncPlay();}
@@ -154,15 +165,16 @@ function open(id,opts){
     },
     /* 검사·디버그용: 지금 시각과 화면 상태 */
     get time(){return t;},get playing(){return playing;},
-    seek(x){t=Math.max(0,Math.min(data.duration,x));draw(data.state(t,lang));}
+    seek(x){const resume=playing;pause();t=Math.max(0,Math.min(data.duration,x));draw(data.state(t,lang));if(resume)play();}
   };
   current=api;
+  stopVoice();
   draw(data.state(0,lang));
   if(reduce)step(1);else{play();}
   (playBtn||wrap.querySelector('[data-act=next]')).focus();
   return api;
 }
 
-function available(id,lang){const data=root.NM_MAGIC_NOTE_VIDEOS?.get(id),map=root.NM_TTS_OMNI?.[lang||'ko'];return !!data&&!!map&&data.cues.every(c=>!!map[c.text[lang||'ko']||c.text.ko]);}
+function available(id,lang){const data=root.NM_MAGIC_NOTE_VIDEOS?.get(id,lang),map=root.NM_TTS_OMNI?.[lang||'ko'];return !!data&&data.timingReady!==false&&!!map&&data.cues.every(c=>!!map[c.text[lang||'ko']||c.text.ko]);}
 root.NM_MAGIC_NOTE_PLAYER={open,close,available,get current(){return current;}};
 })(window);

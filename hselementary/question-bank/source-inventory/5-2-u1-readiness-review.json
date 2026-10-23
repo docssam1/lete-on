@@ -1157,5 +1157,21 @@
       "예제 3-3은 4296÷20의 나머지 16을 5개씩 묶어 모두 판다는 원문 조건이 서로 맞지 않아 유일하게 잠금을 유지합니다.",
       "확대 원본으로 두 자리 수 쌍, 소수 카드, 택시 올림, 완성 상자 판매, 꺾은선그래프 선·눈금, 7200 반올림 개수를 재확인해 여섯 항목의 단일 답을 확정했습니다."
     ]
+  },
+
+  "runtimeCrosswalk": {
+    "asOf": "2026-10-23",
+    "scope": "The three page-6 E3 Exploration mappings and the page-7 Mission 1 mapping below are deployed and live-verified. The 50-item source census under integrity is a historical review baseline, not a current runtime availability count; no mapping is claimed for the remaining entries.",
+    "releaseStatus": "deployed-and-live-verified",
+    "mainMergeSha": "a81899148f85eb16e3d013aeb7077b7e22520e1a",
+    "pullRequest": 382,
+    "pagesWorkflowRunId": 39949819499,
+    "liveVerification": {"httpAssetsShaMatched":4,"browserStatesPassed":6,"overflowChecksPassed":12,"answerSeparationChecksPassed":6,"a4ProblemPages":1,"a4SolutionPages":1},
+    "items": [
+      {"sourceItemId":"5-2-u1-e3-exploration-round-up","runtimeId":"5-2-u1-e3-exploration-round-up","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
+      {"sourceItemId":"5-2-u1-e3-exploration-round-down","runtimeId":"5-2-u1-e3-exploration-round-down","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
+      {"sourceItemId":"5-2-u1-e3-exploration-round-nearest","runtimeId":"5-2-u1-e3-exploration-round-nearest","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
+      {"sourceItemId":"5-2-u1-e3-mission-1-box-count","runtimeId":"5-2-u1-e3-mission-1-box-count","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"deployed-and-live-verified"}
+    ]
   }
 }

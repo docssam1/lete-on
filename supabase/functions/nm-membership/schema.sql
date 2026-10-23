@@ -100,7 +100,7 @@ create table if not exists nm_private.worksheet_previews (
   profile_name     text not null,
   owner_id         uuid not null,
   k                smallint not null check (k in (1, 2)),
-  config           jsonb not null,               -- {courseKey,week,k,amount,cadence,sessionIndex} only — no identity
+  config           jsonb not null,               -- worksheet options + optional highPlanVersion — no identity
   message          text not null,
   title            text not null,
   message_type     text not null check (message_type in ('SMS', 'LMS')),
@@ -444,7 +444,11 @@ begin
       message,title,message_type,phone_hash,phone_masked,settings_version,send_expires_at,share_expires_at)
     values(nm_private.sha256_hex(v_token),'automatic','cron',v_name,v_uid,v_k::smallint,
       pg_catalog.jsonb_build_object('courseKey',ls.course_key,'week',v_week,'k',v_k,'amount',ls.amount,
-        'cadence',ls.cadence,'sessionIndex',ls.session_index),
+        'cadence',ls.cadence,'sessionIndex',ls.session_index)
+        || case when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
+             then pg_catalog.jsonb_build_object('highPlanVersion','20261023-high3m',
+               'highStartDate',ls.start_date,'highSpeed',ls.speed)
+             else '{}'::jsonb end,
       '','','SMS',nm_private.sha256_hex(v_phone),nm_private.mask_phone(v_phone),ls.version,
       v_now, v_now+interval '14 days');
     return pg_catalog.jsonb_build_object('managed',true,'canUse',true,'cadence',v_cadence,'link',v_link);
@@ -714,7 +718,11 @@ begin
          phone_hash, phone_masked, settings_version, send_expires_at, share_expires_at)
       values (nm_private.sha256_hex(v_token), v_user, v_sess, v_name, v_uid, v_k::smallint,
               pg_catalog.jsonb_build_object('courseKey', ls.course_key, 'week', v_week, 'k', v_k, 'amount', ls.amount,
-                                            'cadence', ls.cadence, 'sessionIndex', ls.session_index),
+                                            'cadence', ls.cadence, 'sessionIndex', ls.session_index)
+                || case when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
+                     then pg_catalog.jsonb_build_object('highPlanVersion','20261023-high3m',
+                       'highStartDate',ls.start_date,'highSpeed',ls.speed)
+                     else '{}'::jsonb end,
               v_msg, v_title, v_type, nm_private.sha256_hex(v_phone), nm_private.mask_phone(v_phone), ls.version,
               v_now + interval '10 minutes', v_now + interval '14 days')
       returning id into v_pid;

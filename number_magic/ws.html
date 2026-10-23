@@ -119,6 +119,7 @@
 <script src="data/math-tips.js"></script>
 <script src="data/wordable.js"></script>
 <script src="data/courses.js"></script>
+<script src="data/high-pacing.js?v=20261023-high3m"></script>
 <script src="data/stages.js"></script>
 <script src="data/story-comics.js"></script>
 <script src="data/hero3d.js"></script>
@@ -148,7 +149,7 @@
 <script src="app/g1/7-9.print.js"></script>
 <script src="app/g1/10-12.print.js"></script>
 <script src="app/g1/13-15.print.js"></script>
-<script src="app/exam.js?v=20261022-copy1"></script>
+<script src="app/exam.js?v=20261023-high3m"></script>
 <script>
 (function(){
   var q = new URLSearchParams(location.search);
@@ -203,10 +204,14 @@
      과정 하나라 몇 개면 된다. 이게 없으면 마법 노트 장이 빠지고, 매거진형 수학 이야기(수학사 지면)의
      여는 물음·역사 문단·생각해 보기가 비었다(앱 편지함 인쇄와 다른 학습지가 나갔다). */
   var unitIds = {};
-  course.sessions.forEach(function(s){
+  var sParam = parseInt(q.get('s') || '', 10);
+  var scheduled = q.get('hp')==='1' && q.get('hs') && window.NM_HIGH_PACING
+    ? NM_HIGH_PACING.assignment(NM_COURSES,{courseKey:c,startSession:sParam,startDate:q.get('hs'),speed:Number(q.get('hv')||1),cadence:cad,weekKey:w,k:k}) : null;
+  var sourceCourses = scheduled ? [...new Set(scheduled.lessons.map(function(ref){return ref.courseKey;}))].map(function(key){return NM_COURSES[key];}) : [course];
+  sourceCourses.forEach(function(sourceCourse){sourceCourse.sessions.forEach(function(s){
     (s.magic || []).forEach(function(u){ (Array.isArray(u) ? u : [u]).forEach(function(x){ if(x) unitIds[x] = 1; }); });
     (s.drills || []).concat(s.creative || []).forEach(function(d){ var th = d && NM_THREADS[d.t]; if(th && th.unit) unitIds[th.unit] = 1; });
-  });
+  });});
   var loads = Object.keys(unitIds).filter(function(id){ return /^[A-Za-z0-9-]+$/.test(id) && !(window.NM_UNITS && NM_UNITS[id]); }).map(function(id){
     return new Promise(function(res){ var sc = document.createElement('script'); sc.src = 'data/units/' + id + '.js';
       sc.onload = sc.onerror = function(){ res(); }; document.head.appendChild(sc); });
@@ -217,8 +222,8 @@
      세션 선택(주 2회 두 번째 회차)·필산 회차·독셈 회차·문장제(대안 포함)·표지·마법 유닛 전부 그쪽. */
   /* s = 이 과정에서 몇 번째 회차인가(1부터) — 없으면 모름. 언어사고력 주제 순환·유아 "중반부터" 판정용(2026-09-30). */
   var sParam = parseInt(q.get('s') || '', 10);
-  var wk = NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad, sessionIdx: isNaN(sParam) ? null : sParam - 1, startSession:q.get('p')==='1'?sParam:null });
-  if(!wk) return fail(text('이 과정에는 아직 학습지가 없어요.','No worksheet is available for this course yet.','本课程暂时没有学习单。'));
+  var wk = NM_EXAM.weeklyEnvelope(course, c, w, { k: k, name: name, cad: cad, sessionIdx: isNaN(sParam) ? null : sParam - 1, startSession:q.get('p')==='1'?sParam:null, compactHigh:q.get('p')!=='1'||q.get('hp')==='1', highStartDate:q.get('hp')==='1'?q.get('hs'):null, highSpeed:Number(q.get('hv')||1), legacySession:q.get('p')==='1'&&q.get('hp')!=='1' });
+  if(!wk) return fail(q.get('hs') ? text('이 주에 배정된 학습지가 없어요. 시작일과 학습 속도를 확인해 주세요.','No worksheet is scheduled for this week. Check the start date and pace.','本周未安排学习单，请确认开始日期和学习速度。') : text('이 과정에는 아직 학습지가 없어요.','No worksheet is available for this course yet.','本课程暂时没有学习单。'));
   var items = wk.items, wsId = wk.wsId, cover = wk.cover, units = wk.units, title = wk.title;
   document.title = 'Numbers of Magic' + (name ? ' · ' + name : '') + ' — ' + wsId;
   sub.textContent = (name ? name + ' · ' : '') + w + ' · ' + c + '. ' + title;

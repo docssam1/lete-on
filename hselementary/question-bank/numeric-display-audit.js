@@ -10,6 +10,8 @@ require("./source-5-2-range-e1.js");
 require("./source-5-2-range-missions.js");
 require("./source-5-2-rounding-e2.js");
 require("./source-5-2-rounding-missions.js");
+require("./source-5-2-rounding-application-e3.js");
+require("./source-5-2-packing-mission1.js");
 require("./source-4-2-perpendicular-parallel.js");
 require("./source-4-2-parallel-angle.js");
 require("./source-4-2-parallel-angle-chain-one.js");
@@ -118,7 +120,7 @@ const types = allTypes.filter(type => api.generatorKey(type) && !type.reviewLock
 const floatingTail = /\b\d+\.\d{10,}\b/;
 const failures = [];
 let count = 0;
-if (types.length !== 1236) failures.push(`공개 검수 대상은 1236개여야 하나 ${types.length}개입니다.`);
+if (types.length !== 1243) failures.push(`공개 검수 대상은 1243개여야 하나 ${types.length}개입니다.`);
 
 for (const type of types) for (const difficulty of [-1, 0, 1]) for (let seed = 1; seed <= 100; seed += 1) {
   try {

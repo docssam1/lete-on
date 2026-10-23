@@ -19,6 +19,7 @@ global.window=global;
 new Function('window',fs.readFileSync(path.join(ROOT,'data/threads.js'),'utf8'))(window);
 for(const f of fs.readdirSync(path.join(ROOT,'data/units'))){try{new Function('window',fs.readFileSync(path.join(ROOT,'data/units',f),'utf8'))(window)}catch(e){}}
 new Function('window',fs.readFileSync(path.join(ROOT,'data/courses.js'),'utf8'))(window);
+new Function('window',fs.readFileSync(path.join(ROOT,'data/high-pacing.js'),'utf8'))(window);
 const C=window.NM_COURSES;
 const ids=Object.keys(C).sort((a,b)=>C[a].order-C[b].order);
 const num=id=>+id.slice(1);
@@ -28,8 +29,8 @@ const st=STAGES.map((tiers,i)=>{
   const cs=ids.filter(id=>tiers.includes(C[id].tier));
   const units=new Set();cs.forEach(id=>C[id].sessions.forEach(s=>(s.magic||[]).forEach(m=>units.add(m))));
   return {n:i+1,cs,from:num(cs[0]),to:num(cs[cs.length-1]),
-    sessions:cs.reduce((a,id)=>a+C[id].sessions.length,0),
-    weeks:cs.reduce((a,id)=>a+Math.ceil(C[id].sessions.length/2),0),units:units.size};
+    sessions:cs.reduce((a,id)=>a+NM_HIGH_PACING.length(C[id]),0),
+    weeks:cs.reduce((a,id)=>a+Math.ceil(NM_HIGH_PACING.length(C[id])/2),0),units:units.size};
 });
 const sum=(a,f)=>a.reduce((x,s)=>x+f(s),0);
 const arith=st.slice(0,4); /* 과정 0~25 = 단계 1~4 */
