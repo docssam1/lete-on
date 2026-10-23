@@ -172,5 +172,17 @@ body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; b
 @media (max-width: 600px) { .boarding-intro .boarding-shell { padding-block: 22px 24px; }.boarding-intro h1 { font-size: 1.9rem; } }
 @media (max-width: 600px) { .grade-focus-list { grid-template-columns: 1fr; }.grade-focus-list > div { min-height: 0; padding: 12px; border-right: 0; border-bottom: 1px solid #d8dee8; }.grade-focus-list > div:last-child { border-bottom: 0; } }
 @media (max-width: 600px) { .route-button { min-height: 62px; } }
+.stage-list { position: relative; gap: 8px; }
+.stage-list::before { content: ""; position: absolute; top: 22px; left: 12.5%; right: 12.5%; height: 2px; background: #c4d5f8; }
+.stage-list li { position: relative; }
+.stage-button { min-height: 104px; padding: 5px 8px 12px; align-items: center; gap: 12px; border: 0; border-radius: 12px; background: transparent; text-align: center; }
+.stage-button[aria-pressed="true"] { border: 0; background: #eaf0ff; }
+.stage-node { width: 38px; height: 38px; flex: 0 0 38px; }
+@media (max-width: 600px) {
+  .stage-list { grid-template-columns: 1fr; gap: 0; }
+  .stage-list::before { top: 22px; bottom: 22px; left: 24px; right: auto; width: 2px; height: auto; }
+  .stage-button { min-height: 68px; padding: 10px 6px; flex-direction: row; justify-content: flex-start; border-radius: 0; border-bottom: 1px solid #d8dee8; text-align: left; }
+  .stage-button[aria-pressed="true"] { border-radius: 8px; border-bottom-color: #2456c4; }
+}
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 @media print { .boarding-header, .boarding-intro-actions, .grade-track, .journey-actions, .route-buttons, .competition-form, .competition-links, .boarding-close, .site-footer { display: none !important; }.boarding-intro, .boarding-close { color: #182230; background: #fff; }.boarding-intro .boarding-shell { padding-block: 12px; }.boarding-intro h1, .boarding-intro h1 span { color: #182230; }.boarding-intro p:not(.boarding-kicker) { color: #566274; }.grade-map, .level-section, .route-section, .competition-section { padding-block: 12px; }.journey-layout, .route-layout, .competition-layout { display: block; }.journey-side { border: 1px solid #d8dee8; }.route-explanation { margin-top: 12px; } }
