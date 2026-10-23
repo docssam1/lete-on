@@ -26,11 +26,12 @@ const bank = JSON.parse(await fs.readFile(process.env.FIELDS_PRIVATE_ANSWER_BANK
 const secret = "local-cover-audit-only-no-production-credential";
 const session = "a".repeat(64);
 const issued = new Map();
-for (const id of Object.keys(HANDS_ON_ACTIVITIES)) issued.set(id, await issueFieldsGameCapability(secret, id));
+// QR을 싣지 않는 게임(qr: false — 2권 레벨 게임 등)은 서버도 링크를 내주지 않는다(golden-bell-game-qr-audit.mjs와 같은 기준).
+for (const [id, activity] of Object.entries(HANDS_ON_ACTIVITIES)) if (activity.qr !== false) issued.set(id, await issueFieldsGameCapability(secret, id));
 const book1 = GOLDEN_BELL_BOOKS.find((b) => b.id === "book-01");
 const unit1 = goldenBellPrintUnits(book1).find((u) => u.number === 1);
 assert.ok(unit1);
-const allGames = Object.keys(HANDS_ON_ACTIVITIES).sort();
+const allGames = [...issued.keys()].sort();
 const firstGames = ["mirror-tiles", "turn-clock"];
 const onlyCases = new Set((process.env.FIELDS_COVER_AUDIT_CASES || "").split(",").map((s) => s.trim()).filter(Boolean));
 const report = { startedAt: new Date().toISOString(), base, selectedCases: [...onlyCases], cases: [], prints: [], previews: [], qrDecodes: [], failures: [], pageErrors: [] };
