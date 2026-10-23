@@ -10,6 +10,13 @@ test("grade roadmap covers provided grades and labels the inferred Grade 9 bridg
   roadmap.grades.forEach(function (entry) { assert.equal(entry.steps.length, 4); });
 });
 
+test("school, competition, and SAT stay separate in upper-grade examples", function () {
+  assert.deepEqual(roadmap.getTracks(3).map((track) => track[0]), ["학교 수학", "문제 해결"]);
+  assert.deepEqual(roadmap.getTracks(7).map((track) => track[0]), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
+  assert.match(roadmap.getTracks(9)[0][0], /추정/);
+  assert.match(roadmap.getTracks(10)[2][1], /응시할 때/);
+});
+
 test("competition options follow grade and keep advanced AMC paths optional", function () {
   assert.deepEqual(roadmap.competitionOptions(3).map(function (entry) { return entry.id; }), ["sasmo", "kangaroo"]);
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc8"; }));

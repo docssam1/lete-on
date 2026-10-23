@@ -90,6 +90,15 @@
     setText("level-secure", "배운 개념을 혼자 풀고 며칠 뒤 새 문제에서도 설명해요.");
     setText("level-extend", entry.steps[2][1]);
   }
+  function renderGradeFocus() {
+    const host = $("grade-focus-list"); host.replaceChildren();
+    data.getTracks(grade).forEach(function (track) {
+      const item = document.createElement("div");
+      const label = document.createElement("strong"); label.textContent = track[0];
+      const description = document.createElement("span"); description.textContent = track[1];
+      item.append(label, description); host.append(item);
+    });
+  }
   function renderPracticeLinks() {
     const items = publicPractice[grade] || [];
     const section = $("grade-practice");
@@ -202,6 +211,7 @@
     renderGradeButtons();
     renderStages(entry);
     renderLevels(entry);
+    renderGradeFocus();
     renderPracticeLinks();
     renderCompetitionOptions();
     renderCompetitionRows();

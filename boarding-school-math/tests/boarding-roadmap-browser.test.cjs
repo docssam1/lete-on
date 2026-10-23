@@ -38,6 +38,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#grade-title").innerText(), /유리수/);
   assert.equal(await page.locator(".grade-button").count(), 8);
   assert.equal(await page.locator(".stage-button").count(), 4);
+  assert.deepEqual(await page.locator("#grade-focus-list strong").allInnerTexts(), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
   assert.match(await page.locator(".level-boundary").innerText(), /진단 전/);
   assert.match(await page.locator("#grade-note").innerText(), /진단은 아직 검수 중/);
   assert.equal(await page.locator("#grade-practice-links a").count(), 2);
@@ -45,6 +46,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.match(await page.locator("#paper-review-link").getAttribute("href"), /grade=7&program=amc8/);
   assert.equal(await page.locator("#competition-practice-link").getAttribute("href"), "./competition-practice.html?program=amc8");
   await page.getByRole("button", { name: "Grade 9 지도 보기" }).click();
+  assert.match(await page.locator("#grade-focus-list").innerText(), /학교 수학 · 추정/);
   assert.match(await page.locator("#source-chip").innerText(), /추정안/);
   assert.match(await page.locator("#grade-note").innerText(), /제공된 7·8·10학년/);
   await page.locator("#competition-select").selectOption("amc10");

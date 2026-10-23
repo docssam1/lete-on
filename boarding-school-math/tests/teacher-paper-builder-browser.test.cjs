@@ -240,6 +240,10 @@ test("paper builder fits mobile and tablet widths without page overflow", async 
     assert.ok(size.sheets.every((widthOfSheet) => widthOfSheet <= size.available + 1), `paper preview overflow at ${width}px`);
     await page.locator("#select-visible").click();
     pageCounts.push(await page.locator(".question-page").count());
+    assert.equal(await page.evaluate(() => [...document.querySelectorAll(".order-controls button, .selected-summary button, .item-settings input")].every((node) => {
+      const bounds = node.getBoundingClientRect();
+      return bounds.width >= 44 && bounds.height >= 44;
+    })), true, `small editor control at ${width}px`);
     await page.locator('input[name="output-kind"][value="answers"]').check();
     keyPageCounts.push(await page.locator(".answer-page").count());
     assert.equal(await page.locator(".key-answer").count(), 36);
