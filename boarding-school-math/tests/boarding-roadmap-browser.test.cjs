@@ -129,6 +129,34 @@ test("released unit practice is reachable without exposing the private Grade 7 d
   await page.close();
 });
 
+test("Grade 7 path previews checkpoints without claiming a measured position", async function () {
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(`${url}?grade=7`, { waitUntil: "networkidle" });
+  assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
+  assert.match(await page.locator("#grade7-position").innerText(), /현재 위치 확인 전/);
+  assert.equal(await page.locator(".stage-detail").isHidden(), true);
+  assert.deepEqual(await page.locator(".grade7-path .stage-button strong").allInnerTexts(), ["유리수", "비례 관계", "식·방정식", "기하·혼합 문제"]);
+  assert.deepEqual(await page.locator(".grade7-path .stage-button[aria-pressed='true']").allInnerTexts(), []);
+  await page.getByRole("button", { name: /살펴볼 지점 2, 비례 관계/ }).click();
+  assert.match(await page.locator("#stage-number").innerText(), /살펴보는 구간 2/);
+  assert.match(await page.locator("#grade7-stage-question").innerText(), /비례/);
+  assert.match(await page.locator("#grade7-stage-resource").getAttribute("href"), /cluster=7.RP.A/);
+  assert.doesNotMatch(await page.locator("#grade7-position").innerText(), /비례 관계/);
+  await page.locator("#grade7-branches summary").click();
+  assert.match(await page.locator("#grade7-branches details p").innerText(), /정식 SAT 진단/);
+  await page.locator("#grade7-branches a[href='#competition-diagnostic']").click();
+  assert.match(page.url(), /#competition-diagnostic$/);
+  assert.equal(await page.locator("#competition-select").inputValue(), "");
+  await page.getByRole("button", { name: "Grade 8 지도 보기" }).click();
+  assert.equal(await page.locator("#grade7-road-intro").isHidden(), true);
+  await page.goBack();
+  assert.equal(await page.locator("#grade7-road-intro").isVisible(), true);
+  assert.equal(await page.locator(".stage-detail").isHidden(), true);
+  assert.match(await page.locator("#grade7-position").innerText(), /현재 위치 확인 전/);
+  assert.deepEqual(await page.evaluate(function () { return [document.documentElement.scrollWidth, document.documentElement.clientWidth]; }), [390, 390]);
+  await page.close();
+});
+
 test("map has no horizontal overflow at 390px and supports keyboard selection", async function () {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await page.goto(url, { waitUntil: "networkidle" });

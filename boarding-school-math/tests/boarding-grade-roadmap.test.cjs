@@ -17,6 +17,15 @@ test("school, competition, and SAT stay separate in upper-grade examples", funct
   assert.match(roadmap.getTracks(10)[2][1], /응시할 때/);
 });
 
+test("Grade 7 route names checkpoints and only links available workbook previews", function () {
+  assert.deepEqual(roadmap.grade7Stops.map(function (stop) { return stop.id; }), ["nsa", "rpa", "ee", "geometry"]);
+  assert.deepEqual(roadmap.getGrade(7).steps.map(function (step) { return step[0]; }), roadmap.grade7Stops.map(function (stop) { return stop.title; }));
+  assert.equal(roadmap.grade7Stops[0].resourceState, "review-preview");
+  assert.equal(roadmap.grade7Stops[1].resourceState, "public");
+  assert.ok(roadmap.grade7Stops.every(function (stop) { return Boolean(stop.check); }));
+  assert.ok(roadmap.grade7Stops.slice(2).every(function (stop) { return !stop.clusterId; }));
+});
+
 test("competition options follow grade and keep advanced AMC paths optional", function () {
   assert.deepEqual(roadmap.competitionOptions(3).map(function (entry) { return entry.id; }), ["sasmo", "kangaroo"]);
   assert.ok(roadmap.competitionOptions(7).some(function (entry) { return entry.id === "amc8"; }));

@@ -189,5 +189,49 @@ body.academy-page.page-boarding-roadmap { color: #182230; background: #f5f6f8; b
   .stage-button { min-height: 68px; padding: 10px 6px; flex-direction: row; justify-content: flex-start; border-radius: 0; border-bottom: 1px solid #d8dee8; text-align: left; }
   .stage-button[aria-pressed="true"] { border-radius: 8px; border-bottom-color: #2456c4; }
 }
+.grade7-active .grade-focus, .grade7-active .concept-bridge { display: none; }
+.grade7-road-intro { margin-top: 28px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border: 1px solid #c4d5f8; background: #f8faff; }
+.grade7-road-intro[hidden], .grade7-branches[hidden], .stage-detail[hidden], .grade7-stage-check[hidden], .grade7-stage-resource[hidden], .grade7-no-resource[hidden] { display: none; }
+.grade7-road-intro span { color: #2456c4; font-size: .78rem; font-weight: 800; }
+.grade7-road-intro h4 { margin: 5px 0 0; font-size: 1.15rem; line-height: 1.35; }
+.grade7-road-intro p { max-width: 250px; margin: 0; color: #354255; font-size: .83rem; line-height: 1.5; }
+.stage-list.grade7-path { margin: 22px 0 0; gap: 0; }
+.stage-list.grade7-path::before { top: 30px; left: 12.5%; right: 12.5%; height: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg,#9ebae9 0 16px,#e4ecfa 16px 23px); }
+.grade7-path .stage-button { min-height: 130px; padding: 6px 9px 14px; align-items: center; justify-content: flex-start; gap: 13px; border: 0; border-radius: 6px; background: transparent; text-align: center; }
+.grade7-path .stage-button[aria-pressed="true"] { border: 0; background: #eaf0ff; }
+.grade7-path .stage-node { width: 52px; height: 52px; flex: 0 0 52px; border-width: 3px; background: #fff; font-size: .85rem; }
+.grade7-path .stage-button[aria-pressed="true"] .stage-node { color: #fff; background: #2456c4; }
+.grade7-path .stage-button strong { max-width: 130px; font-size: .94rem; }
+.grade7-path .stage-button[aria-pressed="true"]::after { content: "살펴보는 중"; color: #2456c4; font-size: .74rem; font-weight: 750; }
+.grade7-active .stage-detail { margin-top: 8px; padding: 20px 22px; background: #fff; }
+.grade7-stage-check { margin-top: 18px; padding-top: 16px; border-top: 1px solid #d8dee8; }
+.grade7-stage-check strong { color: #2456c4; font-size: .82rem; }
+.grade7-stage-check p { margin: 7px 0 0; }
+.grade7-stage-resource { min-height: 44px; margin-top: 18px; padding: 9px 12px; display: inline-flex; align-items: center; border: 1px solid #2456c4; color: #1746a7; font-size: .85rem; font-weight: 800; text-decoration: none; }
+.grade7-no-resource { margin-top: 16px; color: #566274; font-size: .83rem; }
+.grade7-branches { margin-top: 26px; padding-top: 22px; position: relative; border-top: 1px solid #d8dee8; }
+.grade7-branches::before { content: ""; width: 3px; height: 23px; position: absolute; left: 50%; top: -23px; background: #c4d5f8; }
+.grade7-branches-heading h4 { margin: 0; font-size: 1.08rem; }
+.grade7-branches-heading p { margin: 5px 0 0; color: #566274; font-size: .83rem; }
+.grade7-branch-list { margin-top: 13px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.grade7-branch-list > a, .grade7-branch-list > details { min-width: 0; padding: 15px 17px; border: 1px solid #d8dee8; border-left: 4px solid #c4d5f8; color: #182230; background: #fff; text-decoration: none; }
+.grade7-branch-list > a { display: grid; align-content: start; gap: 6px; }
+.grade7-branch-list summary { display: grid; gap: 6px; cursor: pointer; }
+.grade7-branch-list span { color: #2456c4; font-size: .73rem; font-weight: 850; }
+.grade7-branch-list strong { font-size: .95rem; }
+.grade7-branch-list small, .grade7-branch-list details p { color: #566274; font-size: .8rem; line-height: 1.5; }
+.grade7-branch-list details p { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid #d8dee8; }
+@media (max-width: 600px) {
+  .grade7-road-intro { align-items: start; flex-direction: column; gap: 9px; }
+  .grade7-road-intro p { max-width: none; }
+  .stage-list.grade7-path { grid-template-columns: 1fr; gap: 0; }
+  .stage-list.grade7-path::before { top: 18px; bottom: 18px; left: 26px; right: auto; width: 4px; height: auto; background: repeating-linear-gradient(180deg,#9ebae9 0 16px,#e4ecfa 16px 23px); }
+  .grade7-path .stage-button { min-height: 75px; padding: 10px 8px 10px 0; flex-direction: row; justify-content: flex-start; gap: 16px; border: 0; text-align: left; }
+  .grade7-path .stage-button[aria-pressed="true"] { border: 0; }
+  .grade7-path .stage-node { width: 52px; height: 52px; flex-basis: 52px; }
+  .grade7-path .stage-button strong { max-width: none; }
+  .grade7-path .stage-button[aria-pressed="true"]::after { margin-left: auto; white-space: nowrap; }
+  .grade7-branch-list { grid-template-columns: 1fr; }
+}
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 @media print { .boarding-header, .boarding-intro-actions, .grade-track, .journey-actions, .route-buttons, .competition-form, .competition-links, .boarding-close, .site-footer { display: none !important; }.boarding-intro, .boarding-close { color: #182230; background: #fff; }.boarding-intro .boarding-shell { padding-block: 12px; }.boarding-intro h1, .boarding-intro h1 span { color: #182230; }.boarding-intro p:not(.boarding-kicker) { color: #566274; }.grade-map, .level-section, .route-section, .competition-section { padding-block: 12px; }.journey-layout, .route-layout, .competition-layout { display: block; }.journey-side { border: 1px solid #d8dee8; }.route-explanation { margin-top: 12px; } }

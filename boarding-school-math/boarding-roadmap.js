@@ -5,7 +5,7 @@
   const $ = function (id) { return document.getElementById(id); };
   const initial = Number(new URLSearchParams(location.search).get("grade"));
   let grade = data.getGrade(initial) ? initial : 7;
-  let stage = 0;
+  let stage = grade === 7 ? null : 0;
   let route = null;
   let competition = null;
   const competitionSources = {
@@ -25,10 +25,20 @@
   };
 
   function setText(id, value) { $(id).textContent = value; }
-  function updateUrl() {
+  function updateUrl(mode) {
     const url = new URL(location.href);
     url.searchParams.set("grade", String(grade));
-    history.replaceState(null, "", url);
+    if (mode === "push") history.pushState(null, "", url);
+    else if (mode === "replace") history.replaceState(null, "", url);
+  }
+  function changeGrade(next) {
+    if (next === grade || !data.getGrade(next)) return;
+    grade = next;
+    stage = grade === 7 ? null : 0;
+    route = null;
+    competition = null;
+    $("grade7-branches").querySelector("details").open = false;
+    render("push");
   }
   function renderGradeButtons() {
     const container = $("grade-buttons");
@@ -39,7 +49,7 @@
         button.className = "grade-button";
         button.textContent = `G${entry.grade}`;
         button.setAttribute("aria-label", `Grade ${entry.grade} 지도 보기`);
-        button.addEventListener("click", function () { grade = entry.grade; stage = 0; route = null; competition = null; render(); });
+        button.addEventListener("click", function () { changeGrade(entry.grade); });
         container.append(button);
       });
     }
@@ -49,6 +59,9 @@
   }
   function renderStages(entry) {
     const list = $("stage-list");
+    const grade7 = grade === 7;
+    list.classList.toggle("grade7-path", grade7);
+    list.setAttribute("aria-label", grade7 ? "7학년 개념 연결 예시. 선택은 현재 위치나 학습 완료를 뜻하지 않습니다." : "선택한 학년의 학습 단계");
     list.replaceChildren();
     entry.steps.forEach(function (step, index) {
       const li = document.createElement("li");
@@ -56,7 +69,7 @@
       button.type = "button";
       button.className = "stage-button";
       button.setAttribute("aria-pressed", String(index === stage));
-      button.setAttribute("aria-label", `단계 ${index + 1}, ${step[0]} 보기`);
+      button.setAttribute("aria-label", grade7 ? `살펴볼 지점 ${index + 1}, ${step[0]}` : `단계 ${index + 1}, ${step[0]} 보기`);
       const number = document.createElement("span");
       number.className = "stage-node";
       number.textContent = String(index + 1).padStart(2, "0");
@@ -67,9 +80,28 @@
       li.append(button);
       list.append(li);
     });
-    setText("stage-number", `단계 ${stage + 1} / ${entry.steps.length}`);
+    $("grade7-road-intro").hidden = !grade7;
+    $("grade7-branches").hidden = !grade7;
+    document.querySelector(".journey-main").classList.toggle("grade7-active", grade7);
+    const detail = document.querySelector(".stage-detail");
+    detail.hidden = grade7 && stage === null;
+    $("grade7-stage-check").hidden = !grade7 || stage === null;
+    $("grade7-stage-resource").hidden = true;
+    $("grade7-no-resource").hidden = true;
+    if (detail.hidden) return;
+    setText("stage-number", grade7 ? `살펴보는 구간 ${stage + 1} / ${entry.steps.length}` : `단계 ${stage + 1} / ${entry.steps.length}`);
     setText("stage-title", entry.steps[stage][0]);
     setText("stage-copy", entry.steps[stage][1]);
+    if (grade7) {
+      const stop = data.grade7Stops[stage];
+      setText("grade7-stage-question", stop.check);
+      if (stop.clusterId) {
+        const link = $("grade7-stage-resource");
+        link.href = `./unit-workbook.html?cluster=${encodeURIComponent(stop.clusterId)}&mode=workbook&audience=student&locale=ko`;
+        link.textContent = `${stop.title} 워크북 보기 · ${stop.resourceState === "review-preview" ? "검수 시안" : "36문항"} →`;
+        link.hidden = false;
+      } else $("grade7-no-resource").hidden = false;
+    }
   }
   function renderRoutes() {
     const buttons = $("route-buttons");
@@ -257,7 +289,7 @@
     });
     document.querySelector(".competition-report").focus();
   }
-  function render() {
+  function render(historyMode) {
     const entry = data.getGrade(grade);
     setText("grade-map-title", `${grade}학년 수학 한눈에`);
     setText("grade-label", `${grade}학년`);
@@ -280,10 +312,20 @@
     renderRoutes();
     renderCompetitionOptions();
     renderCompetitionRows();
-    updateUrl();
+    updateUrl(historyMode);
   }
-  $("previous-grade").addEventListener("click", function () { if (grade > 3) { grade -= 1; stage = 0; route = null; competition = null; render(); } });
-  $("next-grade").addEventListener("click", function () { if (grade < 10) { grade += 1; stage = 0; route = null; competition = null; render(); } });
+  $("previous-grade").addEventListener("click", function () { changeGrade(grade - 1); });
+  $("next-grade").addEventListener("click", function () { changeGrade(grade + 1); });
+  window.addEventListener("popstate", function () {
+    const next = Number(new URLSearchParams(location.search).get("grade"));
+    if (next === grade) return;
+    grade = data.getGrade(next) ? next : 7;
+    stage = grade === 7 ? null : 0;
+    route = null;
+    competition = null;
+    $("grade7-branches").querySelector("details").open = false;
+    render(null);
+  });
   $("competition-select").addEventListener("change", function (event) {
     competition = event.target.value;
     $("paper-label").value = "";
@@ -292,5 +334,5 @@
     renderCompetitionRows();
   });
   $("competition-form").addEventListener("submit", analyzeCompetition);
-  render();
+  render("replace");
 })();
