@@ -51,10 +51,10 @@
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
     "publicCandidateCount": 10,
-    "reviewLockedCount": 37,
+    "reviewLockedCount": 35,
     "uniqueAnswerPassCount": 55,
     "uniqueAnswerReviewNeededCount": 2,
-    "localCandidateCount": 2,
+    "localCandidateCount": 4,
     "readyForDeployCount": 1,
     "publishedCount": 10
   },
@@ -1323,26 +1323,27 @@
       "sourceItemLabel": "Mission 4",
       "sourcePdfPage": 9,
       "sourcePrintedPage": 11,
-      "typeLabel": "세 가지 어림 결과가 정해진 큰 자연수 범위",
-      "originalStructure": "십만의 자리까지 반올림·버림·올림한 결과가 각각 7900000,7900000,8000000이 되는 수의 범위를 구합니다.",
+      "typeLabel": "세 가지 어림 결과로 어떤 수의 범위 구하기",
+      "originalStructure": "어떤 수를 십만의 자리까지 반올림·버림·올림한 결과가 각각 7900000, 7900000, 8000000일 때 그 수의 범위를 구합니다. 인쇄 원문은 자연수로 한정하지 않습니다.",
       "conditions": [
-        "십만의 자리 반올림 7900000",
-        "십만의 자리 버림 7900000",
-        "십만의 자리 올림 8000000",
+        "십만의 자리 반올림 결과 7900000",
+        "십만의 자리 버림 결과 7900000",
+        "십만의 자리 올림 결과 8000000",
+        "어떤 수의 범위를 구함(원문에 자연수 조건 없음)",
         "끝점 포함 여부를 보존"
       ],
       "visualRequirement": "none",
-      "independentCalculation": "십만 자리 반올림 범위는 7,850,000~7,949,999, 버림 범위는 7,900,000~7,999,999, 올림 범위는 7,900,001~8,000,000입니다. 공통 자연수는 7,900,001~7,949,999로 모두 49,999개입니다.",
+      "independentCalculation": "실수 범위로 보면 반올림은 7850000≤n<7950000, 버림은 7900000≤n<8000000, 올림은 7900000<n≤8000000입니다. 교집합은 7900000<n<7950000입니다. 정수로 한정할 때에만 7900001~7949999의 49,999개입니다.",
       "answerFormula": "7900000<n<7950000",
       "independentAnswer": "7900000 초과 7950000 미만",
       "resultContract": "strict-range",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "450dpi 원문과 Apple Vision OCR로 세 어림 조건을 확인하고 자연수 1~8,100,000을 전수 검사해 7,900,001~7,949,999, 총 49,999개를 확인했습니다.",
+      "singleAnswerCheck": "450dpi 인쇄 원문에는 “어떤 수의 범위”라고 되어 있고 자연수 제한이 없습니다. 각 어림 구간의 열린·닫힌 끝점을 교집합해 7900000<n<7950000을 확인했습니다. 정수 영역에 추가 한정할 경우에만 49,999개입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문과 자연수 범위는 검증했지만 중앙 생성기, 풀이, 화면 및 A4 검수 전입니다."
+      "lockReason": "원문 범위와 9개 합성 조합의 계산, 화면, A4 검수는 통과했으며 공개는 API 검토와 버전 배포 뒤 갱신합니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-5-quotient-range-sum",
@@ -1366,9 +1367,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "450dpi 원문과 Apple Vision OCR을 대조하고 두 몫 조건의 자연수 후보 1~1000을 전수 열거해 240~299의 60개와 합 16,170을 확인했습니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
+      "implementationStatus": "local-review-passed-awaiting-release",
       "publicDecision": "locked",
-      "lockReason": "원문과 후보 범위·합은 검증했지만 중앙 생성기, 풀이, 화면 및 A4 검수 전입니다."
+      "lockReason": "원문 답 16,170과 9개 합성 조합의 전수 계산, 화면, A4 검수는 통과했으며 공개는 API 검토와 버전 배포 뒤 갱신합니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-mission-6-rounding-place-count",
@@ -1403,7 +1404,7 @@
     "typeCount": 50,
     "directlyReviewedCount": 50,
     "publicCandidateCount": 10,
-    "lockedCount": 37,
+    "lockedCount": 35,
     "visualItemCount": 43,
     "uniqueAnswerPassCount": 55,
     "uniqueAnswerReviewNeededCount": 2,
@@ -1428,14 +1429,14 @@
       "Mission 3 (PDF 9 / printed 11) asks for the remainder interval after giving three notebooks to a class whose student count rounds up to 50 at the tens place. The student count is 41–50, and possible remainders are 37,34,31,28,25,22,19,16,13,10; the requested bound is 10–37 inclusive, with a 3-book step rather than every integer. The source is text-only. It is locally verified; publisher-key verification remains false.",
       "Mission 1 is deployed and live-verified via PR #398 and Pages #39976802614; the exact public JS SHA-256 matches the reviewed local asset. Its live browser audit passed 12 states, 24 overflow checks, answer separation, and A4. Missions 2–3 passed a fresh local rerun on 2026-10-24: each had 12 desktop/mobile states, 24 overflow checks, no answer leak or page errors, and one-page A4 problem and solution output; release and live checks remain pending."
     ],
-    "locallyVerifiedAwaitingReleaseCount": 2,
+    "locallyVerifiedAwaitingReleaseCount": 4,
     "readyForDeployCount": 1,
     "publishedCount": 10
   },
   "runtimeCrosswalk": {
     "asOf": "2026-10-24",
-    "scope": "Grade 5-2 Unit 1 source inventory through PDF page 9 / printed page 11. Mission 1 is deployed and live-verified. Missions 2–3 are locally verified and awaiting release. Missions 4–5 are source/math verified only and remain locked pending implementation and browser/A4 review. Mission 6 is source-ambiguous because the rounding place is missing and remains locked. The 50-item source census remains unchanged.",
-    "releaseStatus": "mission1-deployed-live-verified-missions2-3-local-candidates",
+    "scope": "Grade 5-2 Unit 1 source inventory through PDF page 9 / printed page 11. Mission 1 is deployed and live-verified. Missions 2–5 are locally implemented and verified, awaiting separate Claude API review where required and release. Mission 4 answers the source wording “어떤 수” with the open real-number interval 7,900,000<n<7,950,000. Mission 6 remains locked because the rounding place is missing. The 50-item source census remains unchanged.",
+    "releaseStatus": "mission1-deployed-live-verified-missions2-5-local-candidates-mission6-ambiguous",
     "mainMergeSha": "62e2d20e6d5b31fe73562646b41776b975917697",
     "pullRequest": 398,
     "pagesWorkflowRunId": 39976802614,
@@ -1772,27 +1773,27 @@
       },
       {
         "sourceItemId": "5-2-u1-e4-mission-4-rounded-seven-million-range",
-        "runtimeId": null,
+        "runtimeId": "5-2-u1-e4-mission-4-rounded-seven-million-range",
         "sourcePdfPage": 9,
         "sourcePrintedPage": 11,
         "sourceVerified": true,
         "independentAnswerCheck": true,
-        "browserAndA4Check": false,
+        "browserAndA4Check": true,
         "publisherKeyVerified": false,
-        "runtimeAvailableLocally": false,
-        "reviewStatus": "source-and-math-verified-locked"
+        "runtimeAvailableLocally": true,
+        "reviewStatus": "local-review-passed-awaiting-release"
       },
       {
         "sourceItemId": "5-2-u1-e4-mission-5-quotient-range-sum",
-        "runtimeId": null,
+        "runtimeId": "5-2-u1-e4-mission-5-quotient-range-sum",
         "sourcePdfPage": 9,
         "sourcePrintedPage": 11,
         "sourceVerified": true,
         "independentAnswerCheck": true,
-        "browserAndA4Check": false,
+        "browserAndA4Check": true,
         "publisherKeyVerified": false,
-        "runtimeAvailableLocally": false,
-        "reviewStatus": "source-and-math-verified-locked"
+        "runtimeAvailableLocally": true,
+        "reviewStatus": "local-review-passed-awaiting-release"
       },
       {
         "sourceItemId": "5-2-u1-e4-mission-6-rounding-place-count",
