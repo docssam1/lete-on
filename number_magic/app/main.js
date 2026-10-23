@@ -161,14 +161,16 @@ function printGradeKey(){
 }
 window.NM_PRINT_GRADE=printGradeKey;
 /* 학년을 고르면 입학 연도로 환산해 저장 — 고른 학년은 "지금" 기준이다. */
-function setSchoolGrade(gradeNum){
-  S.schoolAge={ entryYear: academicYearNow()-(gradeNum-1), setAt: Date.now() };
+function setSchoolGrade(gradeNum,birthYear){
+  const birth=Number(birthYear||S.schoolAge?.birthYear)||null;
+  S.schoolAge={...(birth?{birthYear:birth}:{}),
+    entryYear:gradeNum<1&&birth?Math.max(academicYearNow()+1,birth+7):academicYearNow()-(gradeNum-1),setAt:Date.now()};
 }
-/* 고르기 목록. 값은 학년 번호(미취학 0·-1·-2 = 1·2·3년 뒤 입학). */
+/* 실제 학년 목록. 미취학은 0이며 출생연도로 입학 연도를 정한다. */
 function schoolGradeOptions(){
   const ko=S.lang==='ko', en=S.lang==='en';
   const lk=(k,e,z)=>ko?k:en?e:z;
-  const out=[{g:-2,label:lk('5세','Age 5','5岁')},{g:-1,label:lk('6세','Age 6','6岁')},{g:0,label:lk('7세','Age 7','7岁')}];
+  const out=[{g:0,label:lk('미취학','Preschool','学龄前')}];
   for(let i=1;i<=6;i++) out.push({g:i,label:lk('초'+i,'G'+i,'小'+i)});
   for(let i=1;i<=3;i++) out.push({g:6+i,label:lk('중'+i,'G'+(6+i),'初'+i)});
   for(let i=1;i<=3;i++) out.push({g:9+i,label:lk('고'+i,'G'+(9+i),'高'+i)});
@@ -538,7 +540,7 @@ function applyAdminSettings(){
   if(!p||p.profileName!==S.name||record.owner!==S.cloudOwnerId)return changed;
   changed=changed||!S.adminPlan||S.adminPlan.version!==p.version;
   S.adminPlan={...p};S.roadSpeed=p.speed;S.roadAmount=p.amount;S.roadCadence=p.cadence;S.roadPace='p2';
-  if(p.entryYear)S.schoolAge={entryYear:p.entryYear,setAt:Date.parse(p.updatedAt)||Date.now()};
+  if(p.entryYear)S.schoolAge={...S.schoolAge,entryYear:p.entryYear,setAt:Date.parse(p.updatedAt)||Date.now()};
   return changed;
 }
 async function cloudCredentials(){
@@ -1159,7 +1161,7 @@ function screenWelcome(){
   const lk=(ko,en,zh)=>S.lang==='ko'?ko:S.lang==='en'?en:zh;
   const ob = { number:S.character.number||3, color:S.character.color||'blue',
     bg:S.character.bg||'plain', cape:S.character.cape||'none',
-    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&(S.avatar.look||S.avatar.kind))||null, grade:null };
+    hat:S.character.hat||'none', name:'', avatar:(S.avatar&&(S.avatar.look||S.avatar.kind))||null, grade:null, birthYear:'' };
   const NUMS=[0,1,2,3,4,5,6,7,8,9];
 
   /* 1단계 — 나(사람 아바타) 고르기. 고를 때까지 "다음"이 비활성. */
@@ -1191,24 +1193,28 @@ function screenWelcome(){
      해서 앱이 막히면 안 된다(모르면 안내를 안 할 뿐이다). */
   function stepGrade(){
     const opts=schoolGradeOptions();
+    const year=new Date().getFullYear();
     scr.innerHTML=`
     <div class="nm-ob">
       <div class="nm-ob-card">
-        <h1 class="nm-ob-title">${lk('지금 몇 학년인가요?','What grade are you in?','你上几年级？')}</h1>
-        <p class="nm-ob-sub">${lk('학년에 맞춰 말투와 안내를 골라 줄게요. 학습은 어디서든 시작할 수 있어요.',
-          'We use this to pick the right tone and guidance. You can still start anywhere.',
-          '我们用这个来选择合适的语气和提示。学习仍然可以从任何地方开始。')}</p>
+        <h1 class="nm-ob-title">${lk('아이에 대해 알려 주세요','Tell us about the learner','请告诉我们孩子的信息')}</h1>
+        <p class="nm-ob-sub">${lk('나이와 실제 학년으로 진단의 시작 범위와 월별 계획을 준비해요. 배우는 내용은 따로 고를 수 있어요.',
+          'Age and school grade help prepare a diagnostic scope and monthly plan. You can choose a different study topic.',
+          '年龄和实际年级用于准备测评范围与月度计划，学习内容可以另外选择。')}</p>
+        <label class="nm-ob-birth">${lk('출생연도','Birth year','出生年份')}<select id="obBirthYear"><option value="">${lk('선택해 주세요','Select year','请选择')}</option>${Array.from({length:16},(_,i)=>year-3-i).map(y=>`<option value="${y}"${String(y)===ob.birthYear?' selected':''}>${lk(y+'년생',String(y),y+'年出生')}</option>`).join('')}</select></label>
+        <p class="nm-ob-grade-label">${lk('지금 다니는 학년','Current school grade','当前实际年级')}</p>
         <div class="nm-ob-grades">${opts.map(o=>
-          `<button class="nm-ob-grade${ob.grade===o.g?' sel':''}" data-g="${o.g}">${esc(o.label)}</button>`).join('')}</div>
-        <button class="nm-btn nm-ob-go" id="obGrNext"${ob.grade==null?' disabled':''}>${lk('다음 ›','Next ›','下一步 ›')}</button>
+          `<button class="nm-ob-grade${ob.grade===o.g?' sel':''}" data-g="${o.g}" aria-pressed="${ob.grade===o.g}">${esc(o.label)}</button>`).join('')}</div>
+        <button class="nm-btn nm-ob-go" id="obGrNext"${ob.grade==null||!ob.birthYear?' disabled':''}>${lk('다음 ›','Next ›','下一步 ›')}</button>
         <button class="nm-btn ghost nm-ob-go" id="obGrSkip">${lk('나중에 할래요','Later','以后再说')}</button>
       </div>
     </div>`;
     scr.querySelectorAll('[data-g]').forEach(b=>{
       b.onclick=()=>{ ob.grade=+b.dataset.g; stepGrade(); };
     });
-    $('#obGrNext').onclick=()=>{ if(ob.grade!=null) draw(); };
-    $('#obGrSkip').onclick=()=>{ ob.grade=null; draw(); };
+    $('#obBirthYear').onchange=e=>{ob.birthYear=e.target.value;$('#obGrNext').disabled=ob.grade==null||!ob.birthYear;};
+    $('#obGrNext').onclick=()=>{ if(ob.grade!=null&&ob.birthYear) draw(); };
+    $('#obGrSkip').onclick=()=>{ ob.grade=null;ob.birthYear=''; draw(); };
   }
 
   function draw(){
@@ -1333,7 +1339,7 @@ function screenWelcome(){
     S.avatar = NM_HUMANS.clean({id:'avatar-1',look:ob.avatar});
     S.avatarCollection=[S.avatar];
     S.name = ob.name;
-    if(ob.grade!=null) setSchoolGrade(ob.grade);
+    if(ob.grade!=null) setSchoolGrade(ob.grade,ob.birthYear);
     S.onboarded = true;
     if(ob.claimedOwner&&isGuardianOwner(ob.claimedOwner)){S.cloudLinked=true;S.cloudOwnerId=ob.claimedOwner;}
     save();
@@ -3378,8 +3384,8 @@ function openAgeSheet(after){
         'Grade never locks a course. We only use it to advise when you open the middle- and high-school stretches.',
         '年级不会锁住任何课程，只在打开初中、高中区间时用来提示现在是否合适。')}</p>
       <div class="nm-ob-grades sheet">${opts.map(o=>
-        `<button class="nm-ob-grade${cur===o.g?' sel':''}" data-g="${o.g}">${esc(o.label)}</button>`).join('')}</div>
-      ${S.schoolAge?`<button class="nm-btn full ghost" id="ageClear">${lk('학년 지우기','Clear grade','清除年级')}</button>`:''}
+        `<button class="nm-ob-grade${cur!=null&&Math.max(0,cur)===o.g?' sel':''}" data-g="${o.g}" aria-pressed="${cur!=null&&Math.max(0,cur)===o.g}">${esc(o.label)}</button>`).join('')}</div>
+      ${S.schoolAge?.entryYear?`<button class="nm-btn full ghost" id="ageClear">${lk('학년 지우기','Clear grade','清除年级')}</button>`:''}
     </div>
   </div>`);
   const close=()=>{ const m=document.getElementById('nmAgeSheet'); if(m)m.remove(); };
@@ -3389,7 +3395,7 @@ function openAgeSheet(after){
     b.onclick=()=>{ setSchoolGrade(+b.dataset.g); save(); close(); if(after)after(); else render(); };
   });
   const clr=document.getElementById('ageClear');
-  if(clr) clr.onclick=()=>{ S.schoolAge=null; save(); close(); if(after)after(); else render(); };
+  if(clr) clr.onclick=()=>{ S.schoolAge=S.schoolAge?.birthYear?{birthYear:S.schoolAge.birthYear,setAt:Date.now()}:null; save(); close(); if(after)after(); else render(); };
 }
 
 function openStudentSwitch(){
@@ -4687,10 +4693,12 @@ function startPlacement(){
     if(paths)Object.assign(S._diag.selection,paths.normalize(previous||previousConfig));
     // A grade entered earlier (sign-up or profile) fills the setup, so the matching scope is preselected.
     const sel=S._diag&&S._diag.selection,sa=S.schoolAge;
-    if(sel&&sa&&sa.entryYear&&!sel.profileGrade&&!sel.entryYear){
+    if(sel&&sa){
       const at=new Date(Number.isFinite(sa.setAt)?sa.setAt:Date.now());
-      sel.entryYear=sa.entryYear;sel.profileAt=(Number.isNaN(at.getTime())?new Date():at).toISOString().slice(0,10);
-      if(sa.birthYear&&!sel.birthYear)sel.birthYear=sa.birthYear;
+      sel.entryYear=sa.entryYear||null;sel.profileGrade='';sel.gradeInferred=false;
+      sel.profileAt=(Number.isNaN(at.getTime())?new Date():at).toISOString().slice(0,10);
+      if(sa.birthYear)sel.birthYear=sa.birthYear;
+      if(sel.scopeSource==='grade'){sel.baselineId='';sel.studyBand='';}
     }
   }
   // Re-entry resumes a compatible fixed plan/setup; it never regenerates
