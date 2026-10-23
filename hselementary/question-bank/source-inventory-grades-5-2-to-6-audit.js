@@ -133,8 +133,8 @@ for (const spec of specs) {
   for (const [section, expected] of Object.entries(spec.sections)) {
     if (bySection[section] !== expected) fail(`${spec.semester} ${section}: ${expected}개가 아닙니다 (${bySection[section]}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 25) {
-    fail(`5-2: sourceVerified true 항목은 25개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 26) {
+    fail(`5-2: sourceVerified true 항목은 26개여야 합니다 (${verifiedCount}).`);
   }
   if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
     fail("5-2: 검수 완료로 공개 후보가 된 항목이 페이지 31 Mission 4–6 외에 있습니다.");
