@@ -14,6 +14,13 @@
 - Found a taxonomy mismatch in (2)–(4): their printed expressions are two mixed numbers times a proper fraction; a mixed number times a sum of fractions; and a difference of mixed numbers times a proper fraction. They were incorrectly labeled `u2-t09` (“natural number and mixed-number multiplication”). Assigned separate locked types `u2-t46`–`u2-t48`; (6) remains `u2-t09` because it is 15 × 1 4/9. Updated both normalized-type counts from 45 to 48.
 - No learner-facing item or runtime mapping was changed; all 56 records remain locked. Source PDF and marked pages remain local.
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 19 Mission Review
+
+- Re-read logical PDF page 15 (printed page 19) from the SHA-256-matched source using a 300dpi render and Apple Vision text-location pass; conditions and all six Mission answers were confirmed visually and independently recalculated. No diagram is used. Handwritten work was not used as answer evidence.
+- Mission 1–6 answers match the source: 32,000cm²; 47 3/5km; 30; 360원; 87개; 10kg. All six records remain locked.
+- Clarified Mission 6 ledger wording: the original compares the remaining rice with 1 3/7 times the **sum** given to Hyeong-geun and Hyeon-bin, less 10kg. The condensed phrase “amount given” was ambiguous, so the condition and taxonomy label now name the sum explicitly. Exact equation gives remaining 10kg.
+- No learner-facing item, runtime mapping, or release gate changed.
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
 
 - Rechecked PDF page 9 / printed page 11 from the 450dpi page render and Apple Vision OCR. The text asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. No figure is printed for this item; handwriting and publisher answers were excluded. The hundreds-rounding interval is 1,150–1,249 and the tens-ceiling interval is 1,191–1,200. Their intersection contains 10 natural numbers, 1,191–1,200. Publisher-key verification remains false.
