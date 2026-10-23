@@ -320,7 +320,7 @@ try {
     await page.route("**/functions/v1/**", (r) => r.fulfill({ status: 401, contentType: "application/json", body: '{"error":"login_required"}' }));
     await page.goto(`${base}/golden-bell.html?student=3D-LEAK&book=book-09`, { waitUntil: "networkidle" });
     await page.locator('.lesson-button[data-lesson="magic-square-missing"]').click();
-    const live = () => page.evaluate(async () => (await import("./golden-bell-3d-engine.js?v=20261022a")).liveStageCount());
+    const live = () => page.evaluate(async () => (await import("./golden-bell-3d-engine.js?v=20261023w")).liveStageCount());
     for (let k = 0; k < 5; k++) {
       await page.locator('.gb-flow [data-flow-go="game"]').click();
       await page.locator(".gb-flow-game .g3d-canvas").waitFor();

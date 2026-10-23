@@ -1,4 +1,4 @@
-import { THREE, createStage3D, material, roundedBoxGeometry, textTexture, easeOutBack, GB_COLORS } from "./golden-bell-3d-engine.js?v=20261022a";
+import { THREE, createStage3D, material, roundedBoxGeometry, planarUV, woodMaterial, woodTray, textTexture, easeOutBack, GB_COLORS } from "./golden-bell-3d-engine.js?v=20261023w";
 
 // 양팔저울 진열대(3D). 저울마다 받침·기둥·막대·접시 둘, 접시 위에 물건(공). 무거운 쪽 접시가 내려간다.
 // 저울이 많으면 진열대 칸을 여러 줄로 놓고, 칸 수는 화면 비율에 맞춘다(세로 폰은 2칸).
@@ -25,7 +25,8 @@ export function createBalanceScene(host, { colors, names, onPick, fullscreenTarg
     cap: material(0xf2c14e, { metalness: 0.6, roughness: 0.28 }),
     pan: material(0xffeaa6, { roughness: 0.42, metalness: 0.08 }),
     rod: material(0x8a6a3d, { roughness: 0.6 }),
-    shelf: material(0xe9d7b9, { roughness: 0.75 })
+    shelf: woodMaterial(),
+    rail: woodMaterial({ color: 0xd0a36b, bump: 0.009 })
   };
   // 공용 재질은 저울을 다시 만들어도 남겨 둔다(clear가 버리지 않게 따로 들고 있다가 dispose 때 버린다).
   const keep = new Set(Object.values(shared));
@@ -111,14 +112,21 @@ export function createBalanceScene(host, { colors, names, onPick, fullscreenTarg
   function layout() {
     const n = scales.length, cols = columnsFor(n), rows = Math.ceil(n / cols);
     layoutCols = cols;
-    for (const child of [...root.children]) if (child.userData.shelf) { root.remove(child); child.geometry.dispose(); }
+    for (const child of [...root.children]) if (child.userData.shelf) { root.remove(child); child.traverse((n) => n.geometry?.dispose()); }
     scales.forEach((scale, i) => {
       const row = Math.floor(i / cols), col = i % cols, inRow = Math.min(cols, n - row * cols);
       scale.group.position.set((col - (inRow - 1) / 2) * 2.85, (rows - 1 - row) * 2.75, 0);
     });
+    // 맨 아래 줄은 나무 쟁반 위에, 위 줄은 나무 판자 위에.
+    if (n) {
+      const inRow = Math.min(cols, n - (rows - 1) * cols);
+      const tray = woodTray(inRow * 2.85 + 0.5, 1.7, { boardMaterial: shared.shelf, railMaterial: shared.rail });
+      tray.userData.shelf = true;
+      root.add(tray);
+    }
     for (let row = 0; row < rows - 1; row++) {
       const inRow = Math.min(cols, n - row * cols);
-      const shelf = mesh(roundedBoxGeometry(inRow * 2.85 + 0.2, 0.12, 1.1, 0.04), shared.shelf);
+      const shelf = mesh(planarUV(roundedBoxGeometry(inRow * 2.85 + 0.2, 0.12, 1.1, 0.04)), shared.shelf);
       shelf.position.set(0, (rows - 1 - row) * 2.75 - 0.06, 0);
       shelf.userData.shelf = true;
       root.add(shelf);

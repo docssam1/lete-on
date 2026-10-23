@@ -3,9 +3,9 @@ import { reflectCell } from "../../geometry/games/mirror-manor/levels.js";
 import { foldPaper, unfoldCuts } from "./golden-bell-hands-on-folding.js?v=20260925a";
 import { HANDS_ON_ACTIVITIES, unitForLesson, newActivityState, applyActivityAction, clueText, matchesClue } from "./golden-bell-hands-on-models.js?v=20261004a";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js?v=20261003c";
-import { mountClockGame } from "./golden-bell-clock-game.js?v=20261022a";
+import { mountClockGame } from "./golden-bell-clock-game.js?v=20261023w";
 import { mountLevelGame } from "./golden-bell-level-game.js?v=20261004a";
-import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261022a";
+import { BOOK02_LEVEL_GAMES } from "./golden-bell-book02-games.js?v=20261023w";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sessions = new Map();

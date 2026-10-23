@@ -55,7 +55,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261023h`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261023w`(golden-bell.js·게임 모듈만 올림, 나머지는 `20261023h`). 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -143,6 +143,14 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   4권 테트로미노·저울 토큰·숨은 쌓기나무 개념·상자 쌓기나무·안내형 「주어진 것」 파랑. 색이 문제 내용인 곳은 그대로 뒀다(스킬 2절 목록).
   공용이라 함께 바뀐 곳: 2·3과정 course-pattern·문제은행의 2권 모양 색, 1권 relative-order 칸 선, 9권 안내형 「주어진 것」 색.
   `golden-bell-style-audit.mjs`가 이제 2·3·4권 그림 규칙의 청록 계열을 색상각으로 잡는다. 캐시 꼬리표 `20261013e`.
+- **게임 그래픽을 지오메트리 게임 결로**(2026-10-23, 원장 「지오메트리 정도의 광택나는 3d 느낌」):
+  나무 결은 `golden-bell-wood.js` 하나(crystal-cubes와 같은 그림). 3D 무대는 그 캔버스를 재질로 쓰고(`woodMaterial`·`woodTray`·`planarUV`, 엔진),
+  HTML 게임 판은 같은 그림을 구운 `assets/game-wood.webp`를 쓴다 — 결을 바꾸면 `tools/golden-bell-bake-wood.mjs`로 다시 굽는다.
+  3D: 공용 `material()`이 투명 코팅(clearcoat) 광택, 부드러운 그림자, 따뜻한 크림 바탕. 쌓기나무·저울 = 나무 쟁반(턱 포함), 마방진 = 나무 판 + 보라 테두리.
+  HTML 게임(거울·접기·두 줄의 합·줄 세우기·옮기기·도형 값·무늬 기차·빈칸 채우기·9권 지도/카드): `golden-bell-game-wood.css`(게임 CSS 맨 뒤에 싣는다)
+  — 나무 쟁반 판, 두께·광택 있는 조각, 고른 조각은 들려 올라오는 파랑. 색 뜻(초록 맞음·빨강 틀림·파랑 고름, 색표)은 그대로.
+  쌓기나무 색표는 그대로 두었다. 검사: 3D 모델·3D 브라우저·2권 게임·시계 게임·직접 해보기(--game-only) 통과.
+  게임 모듈 꼬리표 `20261023w`(엔진·저울·쌓기나무·마방진·2권/9권 게임·직접 해보기·lesson-flow·시계·game.js·CSS).
 
 ## 4. 남은 일 — 이 순서대로
 

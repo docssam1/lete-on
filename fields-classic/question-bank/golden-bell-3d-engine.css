@@ -20,7 +20,7 @@
 .g3d-fallback { margin: 0 0 10px; padding: 8px 12px; border-radius: 12px; background: #fff3c4; color: #5b4300; font-size: 14px; font-weight: 700; line-height: 1.5; word-break: keep-all; }
 
 /* 전체 화면: 진짜 전체 화면(:fullscreen)과, 그것이 안 되는 기기의 화면에 꽉 찬 상자(.g3d-pseudo-full) */
-.g3d-fs:fullscreen, .g3d-pseudo-full { position: fixed !important; inset: 0 !important; z-index: 2147483000; width: 100vw !important; max-width: none !important; height: 100dvh !important; margin: 0 !important; padding: 12px max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)) !important; overflow: auto; border-radius: 0 !important; background: #f4f8fc; }
+.g3d-fs:fullscreen, .g3d-pseudo-full { position: fixed !important; inset: 0 !important; z-index: 2147483000; width: 100vw !important; max-width: none !important; height: 100dvh !important; margin: 0 !important; padding: 12px max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)) !important; overflow: auto; border-radius: 0 !important; background: #f7e8cf; }
 html.g3d-lock-scroll, html.g3d-lock-scroll body { overflow: hidden; }
 @media (max-width: 420px) {
   .g3d-label { font-size: 12px; padding: 2px 7px; }

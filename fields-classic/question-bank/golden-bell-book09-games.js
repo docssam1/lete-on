@@ -1,8 +1,8 @@
 import { esc, reduced } from "./golden-bell-game-fx.js?v=20261004a";
-import { flatNotice } from "./golden-bell-3d-engine.js?v=20261022a";
+import { flatNotice } from "./golden-bell-3d-engine.js?v=20261023w";
 import { CUBES, MAGIC, cubeViews, cubeTotal, checkCubes, checkMagic, magicLineStates } from "./golden-bell-book09-game-models.js?v=20261022a";
-import { createCubeScene } from "./golden-bell-3d-cubes.js?v=20261022a";
-import { createMagicScene } from "./golden-bell-3d-magic.js?v=20261022a";
+import { createCubeScene } from "./golden-bell-3d-cubes.js?v=20261023w";
+import { createMagicScene } from "./golden-bell-3d-magic.js?v=20261023w";
 
 // 9권 레벨 게임 2종의 화면. 문제 규칙은 golden-bell-book09-game-models.js, 틀(레벨·별·저장)은 golden-bell-level-game.js.
 // 3D 판은 보고 만지는 교구이고, 같은 일을 하는 HTML 조작(칸 단추·카드)이 늘 함께 있다 — 키보드·화면 읽기·WebGL 없는 기기.

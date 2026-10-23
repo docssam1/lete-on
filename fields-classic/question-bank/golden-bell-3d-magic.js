@@ -1,4 +1,4 @@
-import { THREE, createStage3D, material, roundedBoxGeometry, textTexture, GB_COLORS, easeOutBack } from "./golden-bell-3d-engine.js?v=20261022a";
+import { THREE, createStage3D, material, roundedBoxGeometry, planarUV, woodMaterial, textTexture, GB_COLORS, easeOutBack } from "./golden-bell-3d-engine.js?v=20261023w";
 import { magicLines } from "./golden-bell-book09-game-models.js?v=20261022a";
 
 // 숫자 유리창(마방진) 판(3D). 보이는 수는 파스텔 칸, 빈칸은 보라 테두리 홈, 채운 수는 노랑 숫자카드가 내려앉는다.
@@ -29,7 +29,7 @@ export function createMagicScene(host, { onCell, fullscreenTarget } = {}) {
     return new THREE.MeshBasicMaterial({ map: textures.get(key), transparent: true, depthWrite: false, toneMapped: false });
   };
   const shared = {
-    plate: material(GB_COLORS.purpleSoft, { roughness: 0.7 }),
+    plate: woodMaterial(),
     rim: material(GB_COLORS.purple, { roughness: 0.5 }),
     socket: material(0xffffff, { roughness: 0.6 }),
     card: material(GB_COLORS.card, { roughness: 0.45 }),
@@ -90,7 +90,7 @@ export function createMagicScene(host, { onCell, fullscreenTarget } = {}) {
       clearBoard();
       puzzle = p;
       const n = p.n, span = n * GAP + 0.5;
-      const plate = mesh(roundedBoxGeometry(span, 0.2, span, 0.1), shared.plate);
+      const plate = mesh(planarUV(roundedBoxGeometry(span, 0.2, span, 0.1)), shared.plate);
       plate.position.y = -0.1;
       const rim = mesh(roundedBoxGeometry(span + 0.16, 0.12, span + 0.16, 0.1), shared.rim);
       rim.position.y = -0.2;

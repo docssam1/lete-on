@@ -1,4 +1,5 @@
 import * as THREE from "../../world-explorer/vendor/three.module.js";
+import { woodCanvas } from "./golden-bell-wood.js?v=20261023a";
 
 // 골든벨 게임 공용 3D 무대. 규칙은 science-lab/3D-RULES.md를 따른다.
 //   · 카메라 거리는 손으로 정하지 않는다: 장면이 각도(theta·phi)만 주면, 보이는 물체(또는 frame 상자)가
@@ -41,8 +42,52 @@ export const GB_COLORS = Object.freeze({
   given: "#2f6fe0", doing: "#d39b20", check: "#16734b", ink: "#222222", card: "#fff3c4", cardLine: "#f0a500"
 });
 
+// 광택 있는 교구 재질: 플라스틱 위에 투명 코팅(clearcoat)을 한 겹 — 지오메트리 게임처럼 빛을 받으면 반짝인다.
+// 무광이 필요한 것(판·홈)은 clearcoat: 0을 넘긴다.
 export function material(color, options = {}) {
-  return new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0.04, ...options });
+  return new THREE.MeshPhysicalMaterial({ color, roughness: 0.42, metalness: 0.03, clearcoat: 0.55, clearcoatRoughness: 0.22, ...options });
+}
+
+// 나무 결(golden-bell-wood.js). 그림 한 장을 한 판 전체에 입힌다(이어 붙이면 이음매가 보인다) → planarUV로 위에서 내려 비춘다.
+let woodImage = null;
+export function woodTexture() {
+  woodImage ||= woodCanvas(512);
+  const texture = new THREE.CanvasTexture(woodImage);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  return texture;
+}
+export function woodMaterial({ color = 0xe7c28e, roughness = 0.58, bump = 0.01 } = {}) {
+  const map = woodTexture();
+  return new THREE.MeshStandardMaterial({ map, bumpMap: map, bumpScale: bump, color, roughness, metalness: 0.01 });
+}
+// 위에서 본 자리(x, z)로 무늬 좌표를 다시 매긴다 — 판 하나에 나무 그림 하나가 꼭 맞게.
+export function planarUV(geometry) {
+  geometry.computeBoundingBox();
+  const { min, max } = geometry.boundingBox, w = Math.max(1e-6, max.x - min.x), d = Math.max(1e-6, max.z - min.z);
+  const pos = geometry.attributes.position, uv = new Float32Array(pos.count * 2);
+  for (let i = 0; i < pos.count; i++) { uv[i * 2] = (pos.getX(i) - min.x) / w; uv[i * 2 + 1] = 1 - (pos.getZ(i) - min.z) / d; }
+  geometry.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+  return geometry;
+}
+// 지오메트리 게임(crystal-cubes)의 나무 쟁반: 두꺼운 판 + 네 가장자리 턱. 판 윗면이 y = 0.
+// 재질을 넘기지 않으면 쟁반마다 새로 만든다(장면이 clear()로 함께 버린다). 다시 만드는 판이면 재질을 넘겨 돌려 쓴다.
+export function woodTray(width, depth, { thickness = 0.24, rail = 0.18, railHeight = 0.12, inset = 0.32, color = 0xe7c28e, railColor = 0xd0a36b, boardMaterial = null, railMaterial = null } = {}) {
+  const tray = new THREE.Group();
+  tray.userData.tray = true;
+  const board = new THREE.Mesh(planarUV(roundedBoxGeometry(width, thickness, depth, Math.min(0.18, thickness * 0.75), 3)), boardMaterial || woodMaterial({ color }));
+  board.position.y = -thickness / 2;
+  board.castShadow = true; board.receiveShadow = true;
+  tray.add(board);
+  railMaterial ||= woodMaterial({ color: railColor, bump: 0.009 });
+  const ox = width / 2 - inset, oz = depth / 2 - inset;
+  for (const [x, z, sx, sz] of [[0, oz, width - inset * 2 + rail, rail], [0, -oz, width - inset * 2 + rail, rail], [ox, 0, rail, depth - inset * 2 + rail], [-ox, 0, rail, depth - inset * 2 + rail]]) {
+    const r = new THREE.Mesh(planarUV(roundedBoxGeometry(sx, railHeight, sz, Math.min(0.06, rail * 0.4), 2)), railMaterial);
+    r.position.set(x, railHeight / 2 - 0.01, z);
+    r.castShadow = true; r.receiveShadow = true;
+    tray.add(r);
+  }
+  return tray;
 }
 
 // 둥근 모서리 상자(가운데가 원점). 아이 교구처럼 보이게 모서리를 살짝 굴린다.
@@ -116,7 +161,7 @@ export function createStage3D(host, options = {}) {
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = 1.0;
   renderer.shadowMap.enabled = Boolean(o.shadows);
-  renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   if (getComputedStyle(host).position === "static") host.style.position = "relative";
   host.classList.add("g3d");
@@ -144,8 +189,8 @@ export function createStage3D(host, options = {}) {
   const on = (target, type, handler, options) => { target.addEventListener(type, handler, options); cleanups.push(() => target.removeEventListener(type, handler, options)); };
 
   // 조명: 하늘빛 + 왼쪽 위 주광(그림자) + 오른쪽 보조광. 환경 반사는 코드로 만든 작은 스튜디오.
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xd9ccb4, 0.95));
-  const key = new THREE.DirectionalLight(0xfff3e4, 2.1);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xc9b896, 1.15));
+  const key = new THREE.DirectionalLight(0xfff6ea, 2.4);
   key.position.set(-4, 10, 7);
   key.castShadow = Boolean(o.shadows);
   key.shadow.mapSize.set(lowPower ? 1024 : 2048, lowPower ? 1024 : 2048);
@@ -168,12 +213,12 @@ export function createStage3D(host, options = {}) {
     }
     const pmrem = new THREE.PMREMGenerator(renderer);
     envTexture = pmrem.fromScene(room, 0.03).texture;
-    scene.environment = envTexture; scene.environmentIntensity = 0.5;
+    scene.environment = envTexture; scene.environmentIntensity = 0.62;
     pmrem.dispose(); room.traverse((n) => { n.geometry?.dispose(); n.material?.dispose(); });
   } catch { /* 환경 반사가 안 되는 기기면 조명만으로 */ }
   let ground = null;
   if (o.ground) {
-    ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ color: 0x3b2c1a, opacity: 0.18, depthWrite: false }));
+    ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ color: 0x4a3418, opacity: 0.24, depthWrite: false }));
     ground.rotation.x = -Math.PI / 2; ground.position.y = o.groundY; ground.receiveShadow = true; ground.renderOrder = -1;
     ground.userData.noFrame = true;
     scene.add(ground);

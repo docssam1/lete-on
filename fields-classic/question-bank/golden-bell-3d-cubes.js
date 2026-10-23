@@ -1,4 +1,4 @@
-import { THREE, createStage3D, material, roundedBoxGeometry, GB_COLORS, easeOutBack } from "./golden-bell-3d-engine.js?v=20261022a";
+import { THREE, createStage3D, material, roundedBoxGeometry, woodMaterial, woodTray, GB_COLORS, easeOutBack } from "./golden-bell-3d-engine.js?v=20261023w";
 
 // 쌓기나무 판(3D). 위에서 본 칸마다 쌓기나무 기둥을 세운다. 칸·쌓기나무를 누르면 onCell(r, c).
 // 좌표: 가로줄 r = 0이 맨 뒤(−z), 마지막 줄이 맨 앞(+z). 세로줄 c = 0이 왼쪽(−x).
@@ -25,9 +25,10 @@ export function createCubeScene(host, { onCell, fullscreenTarget } = {}) {
   const edgeMaterial = new THREE.LineBasicMaterial({ color: GB_COLORS.cubeLine });
   const tileOn = material(0xfff8e1, { roughness: 0.8 });
   const tileOff = material(0xe4e7ec, { roughness: 0.9 });
-  const plateMaterial = material(0xd9e6f5, { roughness: 0.85 });
+  // 판은 지오메트리 게임과 같은 나무 쟁반(재질은 문제마다 돌려 쓴다).
+  const plateMaterial = woodMaterial(), railMaterial = woodMaterial({ color: 0xd0a36b, bump: 0.009 });
   const tileGeometry = roundedBoxGeometry(0.94, 0.06, 0.94, 0.03, 2);
-  const keep = new Set([cubeGeometry, edgeGeometry, tileGeometry, ...faces, edgeMaterial, tileOn, tileOff, plateMaterial]);
+  const keep = new Set([cubeGeometry, edgeGeometry, tileGeometry, ...faces, edgeMaterial, tileOn, tileOff, plateMaterial, railMaterial]);
   const cellX = (c) => c - (puzzle.cols - 1) / 2;
   const cellZ = (r) => r - (puzzle.rows - 1) / 2;
   let frontLabel = null, sideLabel = null;
@@ -60,9 +61,7 @@ export function createCubeScene(host, { onCell, fullscreenTarget } = {}) {
       disposeBoard();
       puzzle = p;
       board = new THREE.Group();
-      const plate = new THREE.Mesh(roundedBoxGeometry(p.cols + 0.5, 0.12, p.rows + 0.5, 0.06), plateMaterial);
-      plate.position.y = -0.06; plate.receiveShadow = true;
-      board.add(plate);
+      board.add(woodTray(p.cols + 1.3, p.rows + 1.3, { boardMaterial: plateMaterial, railMaterial }));
       for (let r = 0; r < p.rows; r++) for (let c = 0; c < p.cols; c++) {
         const on = Boolean(p.views.top[r][c]);
         const tile = new THREE.Mesh(tileGeometry, on ? tileOn : tileOff);

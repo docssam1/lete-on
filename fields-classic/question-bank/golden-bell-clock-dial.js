@@ -1,4 +1,4 @@
-import { THREE, createStage3D, canUseWebGL, material, flatNotice, prefersReducedMotion } from "./golden-bell-3d-engine.js?v=20261022a";
+import { THREE, createStage3D, canUseWebGL, material, flatNotice, prefersReducedMotion } from "./golden-bell-3d-engine.js?v=20261023w";
 
 // 「시계 바늘 돌리기」 게임의 시계 무대. 화면 상태(바늘 각도·지나온 길·보석·표시)를 하나로 두고
 // WebGL이 되면 공용 3D 무대(golden-bell-3d-engine.js)에 입체로, 안 되면 2D 캔버스로 같은 상태를 그린다.

@@ -1,0 +1,158 @@
+/* 골든벨 게임의 나무 판 · 광택 조각(지오메트리 게임 결). 게임 CSS들 뒤에 싣는다(덮어쓰기).
+   판 = assets/game-wood.webp(golden-bell-wood.js의 나무 결을 구운 것) 위에 짙은 나무 턱.
+   조각 = 위는 밝고 아래는 두께가 보이는 블록(아래 그림자 한 겹 = 옆면, 흐린 그림자 = 판에 진 그림자) + 위쪽 광택.
+   색 뜻(정답 초록·오답 빨강·고른 것 파랑, 색표)은 그대로 두고 질감만 바꾼다. */
+.gold-hands-on {
+  --wood-img: url("./assets/game-wood.webp");
+  --wood-rail: linear-gradient(rgba(150, 95, 40, .34), rgba(120, 72, 28, .42));
+  --wood-ink: #4a3418;
+  --gloss: radial-gradient(130% 70% at 40% 0%, rgba(255, 255, 255, .8) 0%, rgba(255, 255, 255, .25) 38%, rgba(255, 255, 255, 0) 62%);
+  --ivory: linear-gradient(180deg, #fffdf8 0%, #fff4df 58%, #f3dfb8 100%);
+  --ivory-edge: #d8b47c;
+  --drop: 0 10px 16px rgba(92, 60, 24, .26);
+}
+
+/* 바탕: 지오메트리 게임처럼 따뜻한 크림 */
+.gold-hands-on.game-only, .gold-hands-on .hand-modal { background: radial-gradient(120% 80% at 50% 0%, #fffaf0 0%, #f7ecd8 55%, #f0dfc0 100%); }
+.gold-hands-on .hand-modal-header { background: rgba(255, 250, 240, .94); border-bottom-color: #e8d5b1; }
+
+/* ── 나무 쟁반 ── 체험 게임 판(시계·레벨 게임은 자기 판이 따로 있다) · 레벨 게임의 평면 무대 */
+.gold-hands-on .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"]),
+.gold-hands-on .lg-stage:not(:has(> .lg-3d)) {
+  border: 12px solid transparent;
+  border-radius: 24px;
+  background: var(--gloss) padding-box, var(--wood-img) center / cover padding-box, var(--wood-rail) border-box, var(--wood-img) center / cover border-box;
+  box-shadow: inset 0 3px 9px rgba(80, 48, 14, .32), inset 0 -2px 0 rgba(255, 255, 255, .35), 0 2px 0 rgba(255, 255, 255, .6), 0 18px 34px rgba(92, 60, 24, .24);
+  color: var(--wood-ink);
+}
+.gold-hands-on .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"]) { padding: 18px 14px; margin: 6px 0 4px; }
+.gold-hands-on .lg-stage:not(:has(> .lg-3d)) { margin: 10px 0 4px; padding: 18px 10px; }
+.gold-hands-on .hand-scene .hand-diagram-label, .gold-hands-on .hand-scene figcaption, .gold-hands-on .hand-scene .hand-sums, .gold-hands-on .hand-scene .hand-order-labels { color: #6b4d26; font-weight: 700; }
+.gold-hands-on .hand-scene .hand-sums b { color: var(--wood-ink); }
+
+/* 레벨 게임 큰 판: 차가운 하늘색 → 따뜻한 크림 */
+.gold-hands-on .cg-board { background: radial-gradient(120% 80% at 50% 0%, #fffaf0 0%, #fbf1df 55%, #f3e2c4 100%); box-shadow: inset 0 0 0 1px #ead6b2, 0 16px 40px rgba(92, 60, 24, .14); }
+
+/* ── 광택 조각(공통) ── */
+.gold-hands-on :is(.hand-number-card, .lg-key, .lg-slot, .lg-choice, .lg-cell, .lg-eq, .lg-car, .lg-sq, .b9m-card) {
+  border: 0;
+  background: var(--gloss), var(--ivory);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .95), inset 0 -2px 0 rgba(170, 118, 52, .16), 0 5px 0 var(--ivory-edge), var(--drop);
+  transition: transform 90ms ease-out, box-shadow 90ms ease-out;
+}
+.gold-hands-on :is(.hand-number-card, .lg-key, .lg-slot, .lg-choice, .lg-sq, .b9m-card):is(:active, .is-pressed):not(:disabled) { transform: translateY(4px); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .95), 0 1px 0 var(--ivory-edge), 0 3px 6px rgba(92, 60, 24, .22); }
+.gold-hands-on :is(.hand-number-card, .lg-key, .lg-choice):hover:not(:disabled) { background: var(--gloss), linear-gradient(180deg, #ffffff 0%, #fff7e6 58%, #f6e4c0 100%); }
+.gold-hands-on .lg-key:disabled { opacity: .45; }
+
+/* 누를 수 있는 조각에 손을 올리면 살짝 들린다(바탕 질감은 그대로) */
+.gold-hands-on :is(.hand-cell, .hand-slot, .hand-number-card, .lg-key, .lg-slot, .lg-choice, .lg-sq, .b9m-card):hover:not(:disabled) { filter: brightness(1.04) saturate(1.05); }
+.gold-hands-on :is(.hand-controls button:not(.hand-primary), .hand-pile > button):hover:not(:disabled) { background: var(--gloss), linear-gradient(180deg, #ffffff 0%, #fff7e6 58%, #f6e4c0 100%); border: 0; color: var(--wood-ink); }
+
+/* 고른 조각은 들려 올라오고 파란 테두리 */
+.gold-hands-on :is(.hand-number-card[aria-pressed="true"], .lg-slot.active, .lg-choice.on, .lg-sq.sel) {
+  outline: 0; color: #163b8e;
+  background: var(--gloss), linear-gradient(180deg, #f6f9ff 0%, #e3edff 60%, #c9dafb 100%);
+  box-shadow: inset 0 0 0 3px #2f6fe0, inset 0 2px 0 rgba(255, 255, 255, .9), 0 5px 0 #8fb0ea, 0 14px 18px rgba(30, 60, 140, .28);
+  transform: translateY(-4px);
+}
+
+/* ── 체험: 4×4 칸 판 ── */
+.gold-hands-on .hand-grid { gap: 6px; transform: perspective(900px) rotateX(14deg); transform-origin: 50% 60%; }
+.gold-hands-on .hand-cell {
+  border: 0; border-radius: 8px;
+  background: var(--gloss), var(--ivory);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .95), 0 3px 0 var(--ivory-edge), 0 6px 9px rgba(92, 60, 24, .2);
+}
+.gold-hands-on span.hand-cell:not(.given) { background: rgba(255, 248, 232, .55); box-shadow: inset 0 2px 5px rgba(92, 60, 24, .28); }
+.gold-hands-on .hand-cell.given {
+  border: 0;
+  background: radial-gradient(120% 70% at 35% 10%, rgba(255, 255, 255, .6), rgba(255, 255, 255, 0) 55%), linear-gradient(180deg, #57c6ce 0%, #32a4ae 60%, #23858f 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 6px 0 #17656d, 0 11px 14px rgba(20, 70, 80, .32);
+  transform: translateY(-3px);
+}
+.gold-hands-on .hand-cell.selected {
+  border: 0; color: #fff;
+  background: radial-gradient(120% 70% at 35% 10%, rgba(255, 255, 255, .6), rgba(255, 255, 255, 0) 55%), linear-gradient(180deg, #5f98f0 0%, #2f6fe0 60%, #2457b8 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 6px 0 #1b428e, 0 11px 14px rgba(30, 60, 140, .32);
+  transform: translateY(-3px);
+}
+.gold-hands-on .hand-cell.selected .ui-icon { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .3)); }
+.gold-hands-on .hand-cell.pair-source { box-shadow: inset 0 0 0 3px #2f6fe0, 0 3px 0 var(--ivory-edge), 0 6px 9px rgba(92, 60, 24, .2); }
+.gold-hands-on .hand-cell.given.pair-source { box-shadow: inset 0 0 0 3px #fff, 0 6px 0 #17656d, 0 11px 14px rgba(20, 70, 80, .32); }
+/* 거울: 은빛 막대 */
+.gold-hands-on .hand-grid.mirror-vertical::after { left: calc(50% - 3px); border: 0; width: 6px; border-radius: 3px; background: linear-gradient(90deg, #8c96a3, #ffffff 45%, #b8c1cc 60%, #6f7884); box-shadow: 0 0 0 1.5px #b75371, 0 6px 10px rgba(0, 0, 0, .3); }
+.gold-hands-on .hand-grid.mirror-horizontal::after { top: calc(50% - 3px); border: 0; height: 6px; border-radius: 3px; background: linear-gradient(180deg, #8c96a3, #ffffff 45%, #b8c1cc 60%, #6f7884); box-shadow: 0 0 0 1.5px #b75371, 0 6px 10px rgba(0, 0, 0, .3); }
+
+/* 접기: 색종이가 판 위에 놓인 것처럼 */
+.gold-hands-on .hand-fold-layout figure svg { transform: perspective(800px) rotateX(16deg); filter: drop-shadow(0 10px 10px rgba(92, 60, 24, .32)); }
+.gold-hands-on .hand-fold-outline { stroke: rgba(107, 77, 38, .55); }
+
+/* 카드와 자리: 자리는 판에 판 홈, 놓인 카드는 홈에 앉은 조각 */
+.gold-hands-on .hand-slot { border: 2px dashed rgba(107, 72, 30, .5); border-radius: 12px; background: rgba(120, 80, 35, .1); color: #8a6a3d; box-shadow: inset 0 3px 7px rgba(80, 48, 14, .3), inset 0 -1px 0 rgba(255, 255, 255, .5); }
+.gold-hands-on .hand-slot:not([aria-label$="비어 있음"]) { border: 0; color: var(--wood-ink); background: var(--gloss), var(--ivory); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .95), 0 4px 0 var(--ivory-edge), 0 8px 12px rgba(92, 60, 24, .24); }
+.gold-hands-on .hand-slot.picked { outline: 0; box-shadow: inset 0 0 0 3px #2f6fe0, 0 4px 0 #8fb0ea, 0 8px 12px rgba(30, 60, 140, .24); }
+.gold-hands-on .hand-number-card { border-radius: 12px; color: var(--wood-ink); }
+.gold-hands-on .hand-number-card.placed { opacity: .55; transform: translateY(3px); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .9), 0 1px 0 var(--ivory-edge), 0 2px 4px rgba(92, 60, 24, .2); }
+.gold-hands-on .hand-center {
+  border: 0; border-radius: 12px; color: #fff; text-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+  background: radial-gradient(120% 70% at 35% 10%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 55%), linear-gradient(180deg, #55c286 0%, #2f9e5f 60%, #237d4a 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 5px 0 #17603a, 0 10px 14px rgba(20, 70, 40, .3);
+}
+.gold-hands-on .hand-clues li { color: var(--wood-ink); font-weight: 650; }
+
+/* 옮기기: 두 사람의 나무 쟁반 칸 + 광택 블록 */
+.gold-hands-on .hand-pile { padding: 10px; border: 0; border-radius: 16px; background: rgba(120, 80, 35, .1); box-shadow: inset 0 3px 8px rgba(80, 48, 14, .28), inset 0 -1px 0 rgba(255, 255, 255, .45); }
+.gold-hands-on .hand-pile h4 { color: var(--wood-ink); }
+.gold-hands-on .hand-tokens i {
+  max-width: 30px; border: 0; border-radius: 6px;
+  background: radial-gradient(120% 70% at 35% 10%, rgba(255, 255, 255, .65), rgba(255, 255, 255, 0) 55%), linear-gradient(180deg, #6fa3f2 0%, #2f6fe0 62%, #2457b8 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 4px 0 #1b428e, 0 7px 9px rgba(30, 60, 140, .3);
+}
+.gold-hands-on .hand-pile.b .hand-tokens i { border: 0; background: radial-gradient(120% 70% at 35% 10%, rgba(255, 255, 255, .65), rgba(255, 255, 255, 0) 55%), linear-gradient(180deg, #5fcc8f 0%, #2f9e5f 62%, #237d4a 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 4px 0 #17603a, 0 7px 9px rgba(20, 70, 40, .3); }
+
+/* 체험 아래 단추: 두께 있는 단추 */
+.gold-hands-on .hand-primary { border: 0; border-radius: 12px; background: linear-gradient(180deg, #4b7fe6, #2456c4); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 4px 0 #163b8e, 0 8px 12px rgba(22, 59, 142, .25); }
+.gold-hands-on .hand-primary:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #163b8e; }
+.gold-hands-on .hand-controls button:not(.hand-primary), .gold-hands-on .hand-pile > button { border: 0; border-radius: 12px; background: var(--gloss), var(--ivory); color: var(--wood-ink); font-weight: 700; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .95), 0 4px 0 var(--ivory-edge), 0 8px 12px rgba(92, 60, 24, .22); }
+.gold-hands-on .hand-controls button:not(.hand-primary):active:not(:disabled), .gold-hands-on .hand-pile > button:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--ivory-edge); }
+
+/* ── 레벨 게임 조각 ── */
+.gold-hands-on .lg-matrix { background: transparent; box-shadow: none; transform: perspective(900px) rotateX(10deg); }
+.gold-hands-on .lg-cell { border-radius: 16px; }
+.gold-hands-on .lg-sum { background: var(--gloss), linear-gradient(180deg, #fff6d6, #ffe28a); color: #6b4a00; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 4px 0 #d6a83a, 0 8px 12px rgba(92, 60, 24, .22); }
+.gold-hands-on .lg-sum.corner { background: transparent; box-shadow: none; color: #6b4d26; }
+.gold-hands-on .lg-sum.ok { background: var(--gloss), linear-gradient(180deg, #e9f8ef, #a9e3c1); color: #16734b; box-shadow: inset 0 0 0 2px #2f9e5f, 0 4px 0 #2f9e5f, 0 8px 12px rgba(20, 70, 40, .22); }
+.gold-hands-on .lg-sum.no { background: var(--gloss), linear-gradient(180deg, #fff0ee, #f7b7b1); color: #a3241f; box-shadow: inset 0 0 0 2px #e8503a, 0 4px 0 #c0392b, 0 8px 12px rgba(120, 30, 20, .22); }
+.gold-hands-on .lg-eq { border-radius: 18px; }
+.gold-hands-on .lg-eq.ok { box-shadow: inset 0 0 0 3px #2f9e5f, 0 5px 0 #2f9e5f, var(--drop); }
+.gold-hands-on .lg-eq.no { box-shadow: inset 0 0 0 3px #e8503a, 0 5px 0 #c0392b, var(--drop); }
+.gold-hands-on .lg-car { border-radius: 14px 14px 10px 10px; }
+.gold-hands-on .lg-car.unit-start { box-shadow: inset 0 2px 0 rgba(255, 255, 255, .95), 0 5px 0 var(--ivory-edge), var(--drop), -6px 0 0 -2px var(--cg-gold); }
+.gold-hands-on .lg-car.gap { background: transparent; box-shadow: none; color: #6b4d26; }
+.gold-hands-on .lg-car.mystery { background: var(--gloss), linear-gradient(180deg, #fff8e6, #ffd977); box-shadow: inset 0 0 0 3px var(--cg-gold), 0 5px 0 #c99412, var(--drop); }
+.gold-hands-on .lg-target, .gold-hands-on .lg-unit-note { box-shadow: 0 4px 0 rgba(216, 180, 124, .7), 0 8px 14px rgba(92, 60, 24, .14); }
+.gold-hands-on .lg-sudoku { padding: 10px; gap: 6px; background: rgba(120, 80, 35, .16); box-shadow: inset 0 3px 8px rgba(80, 48, 14, .3), inset 0 -1px 0 rgba(255, 255, 255, .45); transform: perspective(900px) rotateX(10deg); }
+.gold-hands-on .lg-sudoku.boxes { background: rgba(92, 58, 22, .42); }
+.gold-hands-on .lg-box { gap: 6px; background: rgba(255, 244, 222, .35); box-shadow: inset 0 2px 5px rgba(80, 48, 14, .25); }
+.gold-hands-on .lg-sq { border-radius: 12px; color: #2457b8; }
+.gold-hands-on .lg-sq.given { background: var(--gloss), linear-gradient(180deg, #f6ead2 0%, #ead6b0 100%); color: var(--wood-ink); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 3px 0 #c39a5c, 0 6px 9px rgba(92, 60, 24, .2); }
+.gold-hands-on :is(.lg-sq.bad, .lg-sq.wrong) { background: var(--gloss), linear-gradient(180deg, #fff0ee, #f7c2bc); color: #a3241f; box-shadow: inset 0 0 0 3px #e8503a, 0 4px 0 #c0392b, var(--drop); }
+.gold-hands-on .lg-podium-slot { border-color: rgba(107, 72, 30, .45); background: rgba(120, 80, 35, .08); box-shadow: inset 0 3px 7px rgba(80, 48, 14, .22); }
+.gold-hands-on .lg-scale { background: var(--gloss), var(--ivory); box-shadow: 0 5px 0 var(--ivory-edge), var(--drop); }
+
+/* 9권 마방진 카드 · 쌓기나무 지도 */
+.gold-hands-on .b9m-card { border: 0; background: var(--gloss), linear-gradient(180deg, #fff8dc, #ffe27f); box-shadow: inset 0 0 0 2px #f0a500, 0 5px 0 #c98a00, var(--drop); }
+.gold-hands-on .b9m-card:disabled { opacity: .35; box-shadow: inset 0 0 0 2px #f0a500; }
+.gold-hands-on .b9g-cell { border: 0; background: var(--gloss), linear-gradient(180deg, #fff3c8, #ffd45c); box-shadow: inset 0 0 0 2px #a8741a, 0 4px 0 #a8741a, 0 8px 12px rgba(92, 60, 24, .25); }
+.gold-hands-on .b9g-cell.empty { background: var(--gloss), var(--ivory); box-shadow: inset 0 0 0 2px #d8b47c, 0 4px 0 #d8b47c, 0 8px 12px rgba(92, 60, 24, .2); }
+.gold-hands-on .b9g-cell.off { box-shadow: none; }
+
+@media (max-width: 600px) {
+  .gold-hands-on .hand-scene:not([data-hand-kind="clock"]):not([data-hand-kind="level-game"]) { border-width: 9px; border-radius: 18px; padding: 14px 8px; }
+  .gold-hands-on .lg-stage:not(:has(> .lg-3d)) { border-width: 9px; border-radius: 18px; padding: 14px 6px; }
+  .gold-hands-on .hand-grid { transform: perspective(700px) rotateX(10deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gold-hands-on :is(.hand-number-card, .lg-key, .lg-slot, .lg-choice, .lg-sq, .b9m-card) { transition: none; }
+}
+@media print { .gold-hands-on .hand-fold-layout figure svg { transform: none; filter: none; } }
