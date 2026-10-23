@@ -683,7 +683,7 @@ function updateWeeklyDigest(){
     if(!c)return;
     const fields={courseKey:key,courseNum:c.order,
       courseTitle:(c.title&&c.title.ko)||key,cadence:plan?plan.cadence:S.roadCadence,
-      ...(plan?{sessionIndex:plan.sessionIndex,highPlanVersion:NM_HIGH_PACING.version,highStartDate:plan.startDate,highSpeed:plan.speed}:{})};
+      ...(plan?{sessionIndex:plan.sessionIndex,highPlanVersion:c.studyPlan.version,highStartDate:plan.startDate,highSpeed:plan.speed}:{})};
     const d=S.weeklyDigest||{};
     if(Object.keys(fields).every(k=>d[k]===fields[k])&&!!d.highStartDate===!!fields.highStartDate)return;
     S.weeklyDigest={...fields,at:Date.now()};
@@ -2823,7 +2823,7 @@ function courseOutlineHtml(c){
     const rows=c.studyPlan.lessons.map((group,i)=>{
       const source=group.sourceIndices.map(j=>c.sessions[j]);
       const units=[...new Set(source.flatMap(s=>s.magic||[]))].map(nameOf);
-      const topics=[...new Set(source.flatMap(s=>(s.drills||s.pool||[]).map(d=>d.t)))].map(nameOf);
+      const topics=[...new Set(source.flatMap(s=>(s.drills||s.pool||[]).map(d=>d.t)).concat((group.extraPractice||[]).map(d=>d.t)))].map(nameOf);
       return `<li class="nm-cs-ses"><span class="nm-cs-sesno">${i+1}</span><span class="nm-cs-sestxt"><b>${lk('교과 연산 묶음','Curriculum practice bundle','课内运算学习组')} ${i+1}</b><small>${lk('기존 회차','Original sessions','原课次')} ${group.startSession}–${group.endSession}${source.some(s=>s.test)?' · '+lk('과정 확인 포함','includes course check','含课程检查'):''}</small>${units.length?`<small>${units.join(' · ')}</small>`:''}<small>${topics.join(' · ')}</small></span></li>`;
     }).join('');
     return `<ul class="nm-cs-list">${rows}</ul>`;
@@ -2862,11 +2862,11 @@ function middlePacingHtml(tier){
     return `${th?L(th.name):b.t} · ${lv?L(lv.label):'L'+b.lv} ${b.n}문항`;
   };
   return `<details class="nm-middle-pacing" id="middlePacing${grade}">
-    <summary><span class="nm-mp-sumt"><small>정규 과정 회차표</small>${esc(plan.title)}</span><span class="nm-mp-summeta">주 2회 · <span class="nm-cr-tnum">${plan.weeks}</span>주 · 수업 <span class="nm-cr-tnum">${plan.sessions.length}</span>회 · 펼쳐 보기</span></summary>
+    <summary><span class="nm-mp-sumt"><small>정규 과정 학습 묶음</small>${esc(plan.title)}</span><span class="nm-mp-summeta">표준 20주 · 속진 10주 · <span class="nm-cr-tnum">${plan.sessions.length}</span>묶음 · 펼쳐 보기</span></summary>
     <!-- 2026-09-25 통합: 이 표는 정규 과정의 회차를 학년별로 모은 것이다(따로 편성하지 않는다) -->
-    <p class="nm-mp-intro"><b>${esc(plan.scope)}.</b> 위 정규 과정과 <strong>같은 회차</strong>를 학년별로 모아 보인 표입니다.</p>
+    <p class="nm-mp-intro"><b>${esc(plan.scope)}.</b> 같은 정규 회차를 묶어 학년별 20묶음으로 보인 표입니다. 표준은 학기당 약 2.5개월, 속진은 학년당 약 2.5개월이며, 기하를 제외한 연산 범위의 계획입니다.</p>
     <ul class="nm-mp-facts">
-      <li>한 회는 하루 약 ${plan.grade===1?30:40}분 — <strong>교과 연산 → 독셈 → 적용</strong> 순서입니다.</li>
+      <li>한 묶음을 여러 날로 나누어 <strong>교과 연산 → 독셈 → 적용</strong> 순서로 공부해요.</li>
       <li>쉬운 유형은 12문항, 어려운 유형은 18~24문항(뒤쪽은 한 단계 위)으로 더 연습합니다.</li>
       <li>시간은 개인차가 있습니다. 어려운 회차는 나누어 풀고, 주차에 맞추려고 이해를 건너뛰지 마세요.</li>
     </ul>
@@ -2874,7 +2874,7 @@ function middlePacingHtml(tier){
       const count=s.blocks.reduce((n,b)=>n+b.n,0);
       const draw=s.blocks.filter(b=>b.kind==='drawing').reduce((n,b)=>n+b.n,0);
       return `<li class="nm-mp-session">
-        <span class="nm-mp-date"><b>${s.week}주</b>${s.day}회</span>
+        <span class="nm-mp-date"><b>${S.roadCadence==='w2'?s.week:plan.sessions.indexOf(s)+1}주</b>${S.roadCadence==='w2'?s.day:1}묶음</span>
         <div><h4>${esc(s.title)}${s.checkpoint?'<span class="nm-mp-check">확인</span>':''}</h4>
           <p>${esc(s.blocks.map(blockLabel).join(' / '))}</p>
           <p>총 ${count}문항${draw?` · 손으로 그리기 ${draw}문항 포함`:''} · ${esc(s.timeNote)}</p></div>
@@ -3808,7 +3808,13 @@ function renderPersonalPlan(){
   const settings=p&&NM_COURSES[p.courseKey]?p:{courseKey:highPlan?.courseKey||currentCourseKey(),sessionIndex:highPlan?.sessionIndex||1,speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2',entryYear:S.schoolAge?.entryYear,startDate:highPlan?.startDate||today};
   let result;try{result=NM_LEARNING_PLAN.project(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});}catch(e){return;}
   const reference=NM_LEARNING_PLAN.recommend(NM_COURSES,settings,{lang:S.lang});
-  box.innerHTML=`<summary>${lk('나의 월별 로드맵 · 12개월','My monthly roadmap · 12 months','我的月度路线图 · 12个月')}</summary><div class="nm-personal-plan-body"><p>${p?lk('학원에서 정한 개인별 시작점과 속도를 적용했어요.','Your academy’s individual starting point and pace are applied.','已应用学院设置的个人起点和速度。'):lk('현재 선택한 시작점과 속도로 예상했어요.','Estimated from your selected starting point and pace.','根据所选起点和速度估算。')} ${lk('실제 학습에 따라 달라질 수 있어요. 학년은 매년 3월에 바뀌어요.','Actual progress may vary. Grades change each March.','实际进度可能不同，年级每年3月变更。')}</p><p>${lk('시작','Start','开始')}: ${esc(settings.startDate)} · ${settings.speed}${lk('배 속도','× pace','倍速度')} · ${lk('주','Per week','每周')} ${settings.cadence==='w2'?2:1}${lk('회',' sessions','次')}</p><div class="nm-personal-plan-grid" role="list">${result.rows.map(row=>`<article role="listitem"><h4>${esc(row.month)} <small>${esc(row.schoolLabel)}</small></h4>${row.courseLabels.length?row.courseLabels.map((label,i)=>`<p><b>${esc(label)}</b><span>${esc(row.sessionLabels[i])}</span></p>`).join(''):`<p>${lk('예상 과정 없음','No course projected','暂无预计课程')}</p>`}</article>`).join('')}</div><aside><h4>${esc(reference.title)}</h4><p>${esc(reference.advice)}</p><p>${esc(reference.reference)}</p>${reference.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>`).join(' · ')}</aside></div>`;
+  let standardBox=document.getElementById('nmStandardPlan');
+  if(!standardBox){standardBox=document.createElement('section');standardBox.id='nmStandardPlan';standardBox.className='nm-personal-plan';box.insertAdjacentElement('beforebegin',standardBox);}
+  const standard=NM_LEARNING_PLAN.standard(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});
+  const gradeEnds=new Set([31,34,37,48,57,69]);
+  const standardEnds=standard.milestones.filter(m=>gradeEnds.has(+m.key.slice(1))).slice(0,6);
+  standardBox.innerHTML=`<div class="nm-personal-plan-body"><h3>${lk('현재 진도에서 이어지는 표준 로드맵','Standard roadmap from your current progress','从当前进度开始的标准路线')}</h3><p>${lk('중등은 학기당 약 2.5개월·학년당 약 5개월, 고등 각 과목은 약 3개월을 기준으로 했어요. 중등 속진은 학년당 약 2.5개월이에요. 기하를 제외한 연산 범위이며 실제 학습에 따라 달라져요.','Middle-school arithmetic targets 2.5 months per semester or 5 per grade; high-school subjects target 3 months each. Accelerated middle-school study targets 2.5 months per grade. Geometry is excluded and actual pace may vary.','初中运算每学期约2.5个月、每年级约5个月；高中每科约3个月。初中加速为每年级约2.5个月。不含几何，日期随实际学习调整。')}</p>${standardEnds.map(m=>`<p><b>${esc(m.date)}</b> · ${esc(m.key+' · '+m.title)} <small>${esc(m.schoolLabel)}</small></p>`).join('')}<p>${lk('아래에서 표준·속진과 5단계 속도를 비교한 뒤 적용할 수 있어요. 이미 배운 앞부분과 완료 기록은 바꾸지 않아요.','Compare standard or accelerated study and five pace steps below, then apply. Earlier completed work is preserved.','可在下方比较标准、加速与5档速度后应用，已学内容和完成记录保留。')}</p></div>`;
+  box.innerHTML=`<summary>${lk('나의 월별 로드맵 · 12개월','My monthly roadmap · 12 months','我的月度路线图 · 12个月')}</summary><div class="nm-personal-plan-body"><p>${p?lk('학원에서 정한 개인별 시작점과 속도를 적용했어요.','Your academy’s individual starting point and pace are applied.','已应用学院设置的个人起点和速度。'):lk('현재 선택한 시작점과 속도로 예상했어요.','Estimated from your selected starting point and pace.','根据所选起点和速度估算。')} ${lk('실제 학습에 따라 달라질 수 있어요. 학년은 매년 3월에 바뀌어요.','Actual progress may vary. Grades change each March.','实际进度可能不同，年级每年3月变更。')}</p><p>${lk('시작','Start','开始')}: ${esc(settings.startDate)} · ${settings.speed}${lk('배 속도','× pace','倍速度')} · ${lk('주','Per week','每周')} ${settings.cadence==='w2'?2:1}${lk('회',' sessions','次')}</p><div class="nm-personal-plan-grid" role="list">${result.rows.map(row=>`<article role="listitem"><h4>${esc(row.month)} <small>${esc(row.schoolLabel)}</small></h4>${row.courseLabels.length?row.courseLabels.map((label,i)=>`<p><b>${esc(label)}</b><span>${esc(row.sessionLabels[i])}</span></p>`).join(''):`<p>${lk('예상 과정 없음','No course projected','暂无预计课程')}</p>`}</article>`).join('')}</div>${+settings.courseKey.slice(1)<29?`<aside><h4>${esc(reference.title)}</h4><p>${esc(reference.advice)}</p><p>${esc(reference.reference)}</p>${reference.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a>`).join(' · ')}</aside>`:""}</div>`;
 }
 function screenCourseRoad(){
   if(townCleanup){townCleanup();townCleanup=null;}
@@ -4069,6 +4075,7 @@ function screenCourseRoad(){
     const goalKey=nextGoalKey(curKey);
     const goalC=goalKey?(window.NM_COURSES||{})[goalKey]:null;
     const curC=(window.NM_COURSES||{})[curKey];
+    const middleRoute=!!curC&&/^middle[123]$/.test(curC.tier);
     const fresh=!mostRecentTouchedUnit();
     const courseLine=(key,c)=>`${lk('과정','Course','课程')} ${String(key).replace(/^C/,'')} · ${esc(L(c.title))}`;
 
@@ -4089,7 +4096,7 @@ function screenCourseRoad(){
 
     /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
     const segBtn=(attr,v,on,label)=>`<button class="${on?'on':''}" data-${attr}="${v}" aria-pressed="${on?'true':'false'}">${label}</button>`;
-    const multLbl=v=>v===1?lk('기본','1×','默认'):v+lk('배','×','倍');
+    const multLbl=v=>({0.7:lk('1 · 천천히','1 · Slow','1 · 慢速'),0.85:lk('2 · 여유 있게','2 · Steady','2 · 从容'),1:lk('3 · 표준','3 · Standard','3 · 标准'),1.25:lk('4 · 빠르게','4 · Fast','4 · 快速'),1.5:lk('5 · 더 빠르게','5 · Faster','5 · 更快')})[v];
     const amountLbl=v=>v===1?lk('기본','Standard','默认')
       : v<1 ? lk(`적게 · ${v}배`,`Lighter · ${v}×`,`少量 · ${v}倍`) : lk(`많이 · ${v}배`,`More · ${v}×`,`加量 · ${v}倍`);
     html+=`<div class="nm-cr-cad" id="crPace">
@@ -4104,10 +4111,10 @@ function screenCourseRoad(){
              '周数只算运算课程，同时上思维和教材课程会更久。')}</span></p>
       </div>
       <div class="nm-cr-step">
-        <div class="nm-cr-cad-h"><i>1</i>${lk('수업 횟수','Classes per week','上课次数')}</div>
+        <div class="nm-cr-cad-h"><i>1</i>${middleRoute?lk('중등 학습 경로','Middle-school route','初中学习路径'):lk('주당 학습 묶음','Study bundles per week','每周学习组')}</div>
         <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
-          ${segBtn('cad','w1',cad==='w1',lk('주 1회반','Once a week','每周1次'))}
-          ${segBtn('cad','w2',cad==='w2',lk('주 2회반','Twice a week','每周2次'))}
+          ${segBtn('cad','w1',cad==='w1',middleRoute?lk('표준 · 학년 5개월','Standard · 5 months per grade','标准 · 每年级5个月'):lk('주 1묶음','1 per week','每周1组'))}
+          ${segBtn('cad','w2',cad==='w2',middleRoute?lk('속진 · 학년 2.5개월','Accelerated · 2.5 months per grade','加速 · 每年级2.5个月'):lk('주 2묶음','2 per week','每周2组'))}
         </div>
         <p class="nm-cr-cadnote">${cad==='w2'
           ? lk('한 주에 수업 2회 — 한 과정에 드는 주가 절반이 돼요. 더 다지고 싶으면 아래에서 속도를 낮춰요.',
@@ -4307,7 +4314,7 @@ function screenCourseRoad(){
               :en?`Usually from ${schoolMonthsLabel(r.need)}`:`通常从${schoolMonthsLabel(r.need)}起`}</span>`; })()}
         </div>`;
         if(!again) html+=middlePacingHtml(c.tier);
-        if(!again&&c.studyPlan) html+=`<p class="nm-cr-cadfoot">${lk('교과 연산 24묶음 · 주 2회 기준 12주(약 3개월). 기존 회차를 합쳐 주당 학습량을 늘렸어요.','24 curriculum-practice bundles · 12 weeks at two bundles a week. Existing sessions are combined into a larger weekly workload.','24组课内运算 · 每周2组共12周（约3个月）。合并原课次，增加每周学习量。')}</p>`;
+        if(!again&&c.studyPlan&&!/^middle/.test(c.tier)) html+=`<p class="nm-cr-cadfoot">${lk('교과 연산 24묶음 · 주 2회 기준 12주(약 3개월). 기존 회차를 합쳐 주당 학습량을 늘렸어요.','24 curriculum-practice bundles · 12 weeks at two bundles a week. Existing sessions are combined into a larger weekly workload.','24组课内运算 · 每周2组共12周（约3个月）。合并原课次，增加每周学习量。')}</p>`;
         prevTier=c.tier;
       }
       const tierDef=roadTierInfo(c.tier);
@@ -4406,6 +4413,7 @@ function screenCourseRoad(){
 
     const keep=keepScroll?body.scrollTop:0;
     listEl.innerHTML=html;
+    if(curC?.studyPlan){const preschoolPaces=listEl.querySelector('.nm-cr-step.nm-cr-pace:not(.nm-cr-mult)');if(preschoolPaces)preschoolPaces.hidden=true;}
     if(window.NM_STUDY_ROUTE){
       const gp=S.placement&&S.placement.pathRecommendation;
       if(!listEl.querySelector('[data-study-route]'))listEl.insertAdjacentHTML('afterbegin','<section class="nm-card"><div data-study-route></div></section>');
@@ -5690,14 +5698,14 @@ function primarySessionOf(course,courseKey,weekKey){
     const assigned=NM_HIGH_PACING.assignment(NM_COURSES,{...plan,startSession:plan.sessionIndex,weekKey});
     if(!assigned)return null;
     const source=assigned.weekLessons.flatMap(ref=>ref.sourceIndices.map(i=>NM_COURSES[ref.courseKey].sessions[i]));
-    return {magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]),assignedLessons:assigned.weekLessons};
+    return {magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]).concat(assigned.weekLessons.flatMap(ref=>ref.extraPractice||[])),assignedLessons:assigned.weekLessons};
   }
   if(course.studyPlan&&window.NM_HIGH_PACING){
     const start=S.adminPlan?.courseKey===courseKey?S.adminPlan.sessionIndex:null;
     const group=NM_HIGH_PACING.select(course,{startSession:start});
     if(group){
       const source=group.sourceIndices.map(i=>course.sessions[i]);
-      return {magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]),sourceIndices:group.sourceIndices};
+      return {magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]).concat(group.extraPractice||[]),sourceIndices:group.sourceIndices};
     }
   }
 

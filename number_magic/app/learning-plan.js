@@ -51,7 +51,8 @@
       const remaining=count-firstLesson+1;
       // Carry fractional high-school weeks across course boundaries. Rounding
       // each small course separately would erase the selected learning speed.
-      const weeks=compact?remaining/cadence/speed
+      const courseCadence=options.standard&&compact?(/^middle[123]$/.test(c.tier)?1:2):cadence;
+      const weeks=compact?remaining/courseCadence/speed
         :Math.max(1,Math.round(Math.ceil(remaining/cadence)*pace/speed));
       const end=cursor+weeks*7*DAY;
       segments.push({key:keys[i],title:langText(c.title,lang),start:cursor,end,from:firstLesson,n:count,compact});cursor=end;
@@ -85,7 +86,10 @@
       reference:t('원장 기준: 빠른 유아는 6세 3월 과정 1에서 시작해 한 달에 한 과정을 참고해요. 필즈·소마 공식 진도나 입학 기준으로 표시하지 않아요.','Director reference: a fast preschool plan starts Course 1 in March of Korean age 6, at about one course a month. This is not an official Fields or SOMA entry requirement.','园长参考：进度较快的幼儿可从韩国年龄6岁3月开始课程1，参考每月一课程。这不是Fields或SOMA的官方进度或入学标准。'),
       sources:[{label:t('소마 공식 과정 안내','SOMA official programs','SOMA官方课程'),url:'https://new.somai.co.kr/menu/150/page/'},{label:t('필즈 대치 공식 유아 안내','Fields Daechi official preschool information','Fields大峙官方学前信息'),url:'https://www2.fieldsgood.co.kr/fet/index.php?fc_ccode=F001'}]};
   }
-  const api={project,recommend,academicGrade,schoolLabel,paceMultiplier};
+  function standard(courses,settings,options){
+    return project(courses,{...settings,speed:1,cadence:'w1',pace:'p2'},{...options,standard:true});
+  }
+  const api={project,standard,recommend,academicGrade,schoolLabel,paceMultiplier};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   root.NM_LEARNING_PLAN=api;
 })(typeof window!=='undefined'?window:globalThis);

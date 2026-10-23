@@ -13,7 +13,7 @@ assert.equal(preschool.entryYear,2028,'preschool admission follows birth year be
 assert.equal(D.profile(preschool,'2028-03-01T00:00Z').profileGrade,'e1');
 assert.equal(D.addMonths('2026-10-31T00:00Z',2).toISOString().slice(0,10),'2026-12-31');
 assert.equal(D.addMonths('2026-12-31T00:00Z',2).toISOString().slice(0,10),'2027-02-28');
-global.window={};require('../data/threads.js');const {NM_COURSES:c}=require('../data/courses.js'),before=JSON.stringify(c);
+global.window={};require('../data/threads.js');const {NM_COURSES:c}=require('../data/courses.js');require('../data/high-pacing.js').attach(c);const before=JSON.stringify(c);
 for(const courseKey of ['C1','C29','C32','C38','C45']){
  const q=P.project(c,{courseKey,entryYear:p.entryYear,birthYear:p.birthYear,startDate:'2026-10-22',cadence:'w2',speed:1,sessionIndex:2},{now,months:24});
  assert.equal(q.rows[0].courseKeys[0],courseKey);assert.equal(q.rows[0].schoolLabel,'초4 10월');assert.equal(q.rows.find(r=>r.month==='2027-03').schoolLabel,'초5 3월');

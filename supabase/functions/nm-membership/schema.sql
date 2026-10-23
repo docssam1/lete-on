@@ -448,6 +448,9 @@ begin
         || case when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
              then pg_catalog.jsonb_build_object('highPlanVersion','20261023-high3m',
                'highStartDate',ls.start_date,'highSpeed',ls.speed)
+             when ls.course_key ~ '^C(29|3[0-7])$'
+             then pg_catalog.jsonb_build_object('highPlanVersion','20261023-middle25',
+               'highStartDate',ls.start_date,'highSpeed',ls.speed)
              else '{}'::jsonb end,
       '','','SMS',nm_private.sha256_hex(v_phone),nm_private.mask_phone(v_phone),ls.version,
       v_now, v_now+interval '14 days');
@@ -721,6 +724,9 @@ begin
                                             'cadence', ls.cadence, 'sessionIndex', ls.session_index)
                 || case when ls.course_key ~ '^C(3[89]|[4-6][0-9])$'
                      then pg_catalog.jsonb_build_object('highPlanVersion','20261023-high3m',
+                       'highStartDate',ls.start_date,'highSpeed',ls.speed)
+                     when ls.course_key ~ '^C(29|3[0-7])$'
+                     then pg_catalog.jsonb_build_object('highPlanVersion','20261023-middle25',
                        'highStartDate',ls.start_date,'highSpeed',ls.speed)
                      else '{}'::jsonb end,
               v_msg, v_title, v_type, nm_private.sha256_hex(v_phone), nm_private.mask_phone(v_phone), ls.version,

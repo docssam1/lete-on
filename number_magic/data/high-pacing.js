@@ -1,11 +1,14 @@
-/* High-school pacing is a view over canonical sessions. Source indices, tests,
+/* Middle/high-school pacing is a view over canonical sessions. Source indices, tests,
  * and saved legacy session links keep their original meaning. */
 (function(){
   'use strict';
   const W = typeof window !== 'undefined' ? window : globalThis;
   const VERSION = '20261023-high3m';
-  const TIERS = ['highmath1', 'highmath2', 'algebra'];
-  const TEST_SECONDS = {highmath1:60, highmath2:60, algebra:65};
+  const MIDDLE_VERSION = '20261023-middle25';
+  const HIGH_TIERS = ['highmath1', 'highmath2', 'algebra'];
+  const MIDDLE_TIERS = ['middle1', 'middle2', 'middle3'];
+  const TIERS = [...MIDDLE_TIERS, ...HIGH_TIERS];
+  const TEST_SECONDS = {middle1:40, middle2:45, middle3:50, highmath1:60, highmath2:60, algebra:65};
   const own = (o, key) => Object.prototype.hasOwnProperty.call(o, key);
   const sessions = course => course && Array.isArray(course.sessions) ? course.sessions : [];
   const minutesOf = session => {
@@ -45,14 +48,24 @@
     return Number.isNaN(n) ? fallback : Math.trunc(n);
   }
   const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
-  function makeLesson(course, index, sourceIndices){
-    return {
+  function makeLesson(course, index, sourceIndices, extraPractice){
+    const lesson = {
       index,
       startSession:sourceIndices[0] + 1,
       endSession:sourceIndices[sourceIndices.length - 1] + 1,
       sourceIndices:sourceIndices.slice(),
       ...timeEstimate(course, sourceIndices)
     };
+    if(Array.isArray(extraPractice) && extraPractice.length){
+      // The bridge is appended to this view, never inserted into saved source
+      // sessions. Its time is separate from their recorded minute sum.
+      lesson.extraPractice = extraPractice.map(item => ({...item}));
+      lesson.estimatedExtraMinutes = lesson.extraPractice.reduce((n, item) => n
+        + Number(item.n || 0) * (TEST_SECONDS[course && course.tier] || 50) / 60, 0);
+      lesson.estimatedMinutes += lesson.estimatedExtraMinutes;
+      lesson.timeEstimateMethod += '+extension-tier-seconds-v1';
+    }
+    return lesson;
   }
   function makeLessons(course, count){
     const source = sessions(course), n = source.length;
@@ -82,7 +95,7 @@
   }
   function attach(courses){
     const list = Object.values(courses || {});
-    TIERS.forEach(tier => {
+    HIGH_TIERS.forEach(tier => {
       const band = list.filter(course => course && course.tier === tier && sessions(course).length)
         .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
       if(!band.length) return;
@@ -95,6 +108,22 @@
       band.forEach(course => {
         const lessons = makeLessons(course, four.has(course) ? 4 : 2);
         const plan = {version:VERSION, lessons, weeksW2:lessons.length / 2};
+        if(JSON.stringify(course.studyPlan) !== JSON.stringify(plan)) course.studyPlan = plan;
+      });
+    });
+    MIDDLE_TIERS.forEach(tier => {
+      const band = list.filter(course => course && course.tier === tier && sessions(course).length)
+        .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+      band.forEach((course, index) => {
+        // One common sequence: 20 bundles per grade. The saved cadence chooses
+        // 20 weeks at one/week or 10 weeks at two/week, with the same content.
+        const lessons = makeLessons(course, index === 2 ? 8 : 6);
+        if(tier === 'middle3' && Number(course.order) === 36 && lessons.length){
+          const last = lessons[lessons.length - 1];
+          lessons[lessons.length - 1] = makeLesson(course, last.index, last.sourceIndices,
+            [{t:'MD25', lv:1, n:12}, {t:'MD25', lv:2, n:12}]);
+        }
+        const plan = {version:MIDDLE_VERSION, lessons, weeksW2:lessons.length / 2};
         if(JSON.stringify(course.studyPlan) !== JSON.stringify(plan)) course.studyPlan = plan;
       });
     });
@@ -130,7 +159,7 @@
     const sourceIndices = explicitStart && Number(opts.k) !== 2
       ? lesson.sourceIndices.filter(sourceIndex => sourceIndex >= start - 1)
       : lesson.sourceIndices;
-    return sourceIndices.length ? makeLesson(course, lesson.index, sourceIndices) : null;
+    return sourceIndices.length ? makeLesson(course, lesson.index, sourceIndices, lesson.extraPractice) : null;
   }
   function weeks(course, cadence, legacyFrom){
     const n = sessions(course).length;
@@ -179,14 +208,21 @@
           ...(courseIndex === 0 && i === firstLesson ? {startSession:legacyStart} : {})});
         if(selected) flat.push({courseKey, lessonIndex:selected.index,
           startSession:selected.startSession, endSession:selected.endSession,
-          sourceIndices:selected.sourceIndices, estimatedMinutes:selected.estimatedMinutes});
+          sourceIndices:selected.sourceIndices, estimatedMinutes:selected.estimatedMinutes,
+          ...(selected.extraPractice ? {
+            extraPractice:selected.extraPractice.map(item => ({...item})),
+            estimatedExtraMinutes:selected.estimatedExtraMinutes
+          } : {})});
       }
     });
     const weekOffset = (weekMonday - startMonday) / (7 * DAY_MS);
     const perWeek = opts.cadence === 'w1' ? 1 : 2;
     const speed = [0.7, 0.85, 1, 1.25, 1.5].includes(Number(opts.speed)) ? Number(opts.speed) : 1;
-    const begin = Math.floor(weekOffset * perWeek * speed);
-    const end = Math.floor((weekOffset + 1) * perWeek * speed);
+    // The five speeds are exact percentages. Integer multiplication avoids an
+    // artificial extra week when, for example, 180 * 0.7 becomes 125.999… .
+    const percent = Math.round(speed * 100);
+    const begin = Math.floor(weekOffset * perWeek * percent / 100);
+    const end = Math.floor((weekOffset + 1) * perWeek * percent / 100);
     const weekLessons = flat.slice(begin, end);
     if(!weekLessons.length) return null;
     const k = Number(opts.k) === 2 ? 2 : 1;
