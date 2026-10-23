@@ -157,6 +157,24 @@ button { cursor: pointer; }
 .sheet-rule { margin: 3mm 0 0; padding: 1.6mm 0; border-bottom: 1px solid #c8bfae; font-family: var(--sans); font-size: 7.8pt; color: #6c6353; }
 
 .sheet-body { column-count: 1; padding-top: 2mm; }
+/* 다단: 문항이 짧은 시험지·연습지는 2단. 같은 문항 부품을 그대로 쓰고 단 수만 바꾼다. */
+.sheet-body.cols-2 { column-count: 2; column-gap: 7mm; column-rule: .5px solid #e6e0d2; }
+.sheet-body.cols-2 .q-item:first-child { padding-top: 1mm; }
+.sheet-body.cols-2 .workspace { height: 20mm; }
+/* 교재형: 시험지와 같은 종이·같은 문항 부품에 개념 상자·예제가 얹힌다. 색은 초록 하나만 옅게. */
+.lesson-head { display: flex; align-items: baseline; gap: 3mm; padding-bottom: 2.5mm; border-bottom: 2.6px double #191511; }
+.lesson-head .no { display: grid; place-items: center; width: 11mm; height: 11mm; border: 1.2px solid #2f6b4a; border-radius: 50%; color: #2f6b4a; font-family: var(--sans); font-size: 12pt; font-weight: 700; }
+.lesson-head h1 { margin: 0; font-size: 16pt; font-weight: 700; }
+.lesson-head .aim { margin-left: auto; font-family: var(--sans); font-size: 8pt; color: #6c6353; }
+.concept-box { margin: 4mm 0 0; padding: 3.5mm 4mm; border: .5px solid #bccbbd; border-left: 1mm solid #2f6b4a; background: #f3f6f1; break-inside: avoid; }
+.concept-box h2 { margin: 0 0 1.5mm; font-family: var(--sans); font-size: 9pt; font-weight: 700; color: #1e4631; }
+.concept-box p { margin: 0; font-size: 10pt; }
+.concept-box .tip { display: block; margin-top: 1.6mm; font-family: var(--sans); font-size: 8pt; color: #4a5f4c; }
+.example { margin: 4mm 0 0; break-inside: avoid; }
+.example .ex-label { display: inline-block; margin-bottom: 1mm; padding: .4mm 2.4mm; border-radius: 1mm; background: #2f6b4a; color: #fff; font-family: var(--sans); font-size: 7.6pt; font-weight: 600; }
+.example .steps { margin: 1.5mm 0 0; padding-left: 5mm; font-size: 9.6pt; }
+.example .steps li { margin-top: .6mm; }
+.lesson-foot-note { margin-top: 4mm; padding: 2mm 3mm; border: .5px dashed #c8bfae; font-family: var(--sans); font-size: 8pt; color: #6c6353; }
 .q-item { break-inside: avoid; padding: 4.5mm 0 0; }
 .q-item + .q-item { margin-top: 2.5mm; border-top: 1px solid #e6e0d2; }
 .q-head { display: flex; align-items: baseline; gap: 2.6mm; }
