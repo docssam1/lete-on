@@ -88,7 +88,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   await page.locator(".advanced-home-tools summary").click();
   await page.locator('[data-role-preview="teacher"]').click();
   assert.equal(await page.locator("#role-preview").getAttribute("aria-labelledby"), "role-tab-teacher");
-  assert.match(await page.locator("#role-title").textContent(), /교사는[\s\S]*근거/);
+  assert.match(await page.locator("#role-title").textContent(), /수업 자료와 검수 상태/);
   assert.equal(await page.locator('.role-shortcut').first().getAttribute("href"), "./learning-plan.html");
   await page.locator('[data-role-preview="student"]').click();
   assert.equal(await page.locator('[data-role-preview="student"]').getAttribute("aria-selected"), "true");
@@ -133,11 +133,15 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.match(await page.locator("#goal-eligibility").innerText(), /G12 이하/);
 
   await page.locator('[data-goal="school"]').click();
+  await page.locator("#goal-grade-select").selectOption("7");
+  assert.match(await page.locator("#goal-status-note").innerText(), /비례 관계 워크북 1개가 공개[\s\S]*유리수 연산 워크북은 검수 시안/);
   await page.locator("#goal-grade-select").selectOption("5");
   assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./catalog.html?role=student&grade=5");
   await page.locator('[data-goal="singapore"]').click();
   await page.locator("#goal-grade-select").selectOption("6");
   assert.equal(await page.locator("#goal-primary").getAttribute("href"), "./concept-learning.html");
+  await page.locator("#goal-grade-select").selectOption("7");
+  assert.match(await page.locator("#goal-status-note").innerText(), /비례 관계 워크북 1개가 공개[\s\S]*유리수 연산 워크북은 검수 시안/);
 
   await page.locator('[data-goal="kangaroo"]').focus();
   await page.keyboard.press("ArrowDown");
@@ -198,7 +202,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.equal(await page.locator("#course-directory").isVisible(), true);
   await page.locator('[data-course-id="pre-algebra"]').click();
   assert.equal(await page.locator('[data-course-id="pre-algebra"]').getAttribute("aria-selected"), "true");
-  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*Grade 6 개념 10개와 검증된 단원 워크북 9개 공개/);
+  assert.match(await page.locator("#course-map-panel").innerText(), /Pre-Algebra[\s\S]*Algebra 1[\s\S]*6학년 개념 10개와 단원 워크북 10개 공개/);
   assert.equal(await page.locator("#course-map-panel a").first().getAttribute("href"), "./concept-learning.html");
   await page.locator('[data-course-id="algebra-2"]').click();
   assert.match(await page.locator("#course-map-panel").innerText(), /Algebra 2[\s\S]*Precalculus/);
