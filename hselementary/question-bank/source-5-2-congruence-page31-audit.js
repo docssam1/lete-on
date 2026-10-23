@@ -31,6 +31,7 @@ const sourceTypes = source.definitions.map(def => {
 let combinations = 0;
 const areaPoolSignatures = new Set();
 const midpointPoolSignatures = new Set();
+const trisectionPoolSignatures = new Set();
 for (const def of source.definitions) {
   for (let variant = 0; variant < 3; variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
@@ -87,6 +88,59 @@ for (const def of source.definitions) {
         const v = { x: d.x - m.x, y: d.y - m.y };
         const angle = Math.acos((u.x*v.x+u.y*v.y)/(Math.hypot(u.x,u.y)*Math.hypot(v.x,v.y))) * 180 / Math.PI;
         assert.ok(Math.abs(angle - targetAngle) < 1e-8);
+      } else if (def.sourceItemId.endsWith("mission-4")) {
+        const { k, side, outerArea, trisectedLength, cornerArea, answer } = item.answerModel;
+        const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0];
+        assert.ok(svg, "Mission 4 must render the source's trisection-square diagram");
+        const readAttr = name => Number(svg.match(new RegExp(`data-${name}="([^"]+)"`))?.[1]);
+        const readPoint = name => {
+          const [x,y] = svg.match(new RegExp(`data-${name}="([^"]+)"`))?.[1]?.split(",").map(Number) ?? [];
+          return { x, y };
+        };
+        const g = readPoint("g"), n = readPoint("n"), d = readPoint("d"), r = readPoint("r");
+        const m = readPoint("m"), b = readPoint("b"), s = readPoint("s"), o = readPoint("o");
+        const dot = (a,b,c) => (a.x-b.x)*(c.x-b.x)+(a.y-b.y)*(c.y-b.y);
+        const distance = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
+        const polygon = [m,b,s,o];
+        const visualArea = Math.abs(polygon.reduce((sum,point,index) => {
+          const next = polygon[(index+1)%polygon.length];
+          return sum + point.x*next.y-point.y*next.x;
+        },0))/2;
+        const scale = (n.x-g.x)/side;
+        assert.equal(readAttr("k"), k);
+        assert.equal(readAttr("side-length"), side);
+        assert.equal(readAttr("outer-area"), outerArea);
+        assert.equal(side, 3*k);
+        assert.equal(outerArea, side*side);
+        assert.equal(trisectedLength, k);
+        assert.deepEqual(m, { x:g.x+2*(n.x-g.x)/3, y:g.y }, "M is two thirds along the top side");
+        assert.deepEqual(b, { x:r.x, y:g.y+(r.y-g.y)/3 }, "B is one third down the left side");
+        assert.deepEqual(s, { x:r.x+(d.x-r.x)/3, y:r.y }, "S is one third along the bottom side");
+        assert.deepEqual(o, { x:n.x, y:n.y+2*(d.y-n.y)/3 }, "O is two thirds down the right side");
+        const sides = [distance(m,b), distance(b,s), distance(s,o), distance(o,m)];
+        assert.ok(sides.every(value => Math.abs(value-sides[0]) < 1e-8), "inner quadrilateral is a square");
+        assert.ok(Math.abs(dot(m,b,s)) < 1e-8 && Math.abs(dot(b,s,o)) < 1e-8, "adjacent inner sides are perpendicular");
+        assert.equal((svg.match(/class="source52-corner-triangle"/g) ?? []).length, 4, "four outer corner triangles are represented");
+        assert.equal(cornerArea, k*2*k/2);
+        assert.equal(answer, outerArea-4*cornerArea);
+        assert.ok(Math.abs(visualArea/(scale*scale)-answer) < 1e-8, "rendered inner square area matches the answer");
+        assert.equal(item.answer, `${answer}cm²`);
+        assert.match(item.prompt, new RegExp(`넓이가 ${outerArea}cm²인 정사각형`));
+        assert.match(item.prompt, /삼등분점을 이어 작은 정사각형 ㅁㅂㅅㅇ/);
+        assert.match(item.solution, /직각삼각형/);
+        assert.match(item.solution, new RegExp(`${k}×${2*k}÷2=${cornerArea}cm²`));
+        assert.match(item.solution, new RegExp(`${outerArea}−${4*cornerArea}=${answer}cm²`));
+        assert.equal(item.reviewLocked, false);
+        assert.equal(source.isPublicReady(def.sourceItemId), true);
+        const type = sourceTypes.find(candidate => candidate.sourceItemId === def.sourceItemId);
+        assert.match(type.sourceEvidence, /1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s/);
+        assert.match(type.sourceEvidence, /d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463/);
+        assert.match(type.sourceEvidence, /clean-alternate-sha256:6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88/);
+        assert.match(type.sourceEvidence, /PDF p\.26; printed p\.31/);
+        if (variant === 1 && difficultyOffset === 0) {
+          assert.deepEqual({ k, side, outerArea, trisectedLength, cornerArea, answer }, { k:5, side:15, outerArea:225, trisectedLength:5, cornerArea:25, answer:125 }, "the verified pool includes the exact source values and independent answer");
+        }
+        trisectionPoolSignatures.add(`${k}:${outerArea}:${answer}`);
       } else if (def.sourceItemId.endsWith("mission-5")) {
         const { height, width, totalWidth, topGap, rectangleArea, leftCorner, rightCorner, topCorner, answer } = item.answerModel;
         const svg = item.prompt.match(/<svg[\s\S]*?<\/svg>/)?.[0];
@@ -181,6 +235,7 @@ assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 3, 0), null)
 assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 0, 2), null);
 assert.equal(areaPoolSignatures.size, 9, "all three variants at all difficulty levels must be distinct");
 assert.equal(midpointPoolSignatures.size, 9, "all Mission 6 pools and difficulty levels must be distinct");
+assert.equal(trisectionPoolSignatures.size, 9, "all Mission 4 pools and difficulty levels must be distinct");
 for (const type of sourceTypes) {
   if (type.reviewLocked) {
     assert.equal(window.HSE_GENERATORS.generatorKey(type), "", "review-locked Mission 5 must not register publicly");
@@ -197,4 +252,4 @@ for (const type of sourceTypes) {
   }
 }
 
-console.log(`인쇄 31쪽 합동·대칭 Mission 감사 통과: 5문항 · ${combinations}개 조합 · SAS·넓이 분할·사다리꼴 중선 검산 · 공개 5`);
+console.log(`인쇄 31쪽 합동·대칭 Mission 감사 통과: 6문항 · ${combinations}개 조합 · SAS·삼등분 넓이·넓이 분할·사다리꼴 중선 검산 · 공개 6`);

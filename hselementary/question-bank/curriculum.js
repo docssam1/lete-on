@@ -1783,6 +1783,28 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               answerVisualStatus: "verified-reconstruction"
             },
             {
+              id: "5-2-u3-e4-mission-4",
+              name: "삼등분점을 이은 작은 정사각형의 넓이",
+              sourceItemId: "5-2-u3-e4-mission-4",
+              sourceItemLabel: "Mission 4",
+              sourceSection: "mission",
+              sourceTier: "advanced",
+              sourcePdfPage: 27,
+              sourcePrintedPage: 31,
+              sourceEvidence: "source-drive:1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s; source-sha256:d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463; clean-alternate-sha256:6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88; PDF p.26; printed p.31; sourceItemId:5-2-u3-e4-mission-4",
+              sourceVerified: true,
+              publisherKeyVerified: false,
+              answerVerification: "independent-area-subtraction-user-authorized",
+              reviewLocked: false,
+              reviewReason: "바깥 넓이 225cm²의 한 변은 15cm이고 삼등분 길이는 5cm입니다. 네 모서리 직각삼각형은 각각 5×10÷2=25cm²이므로 안쪽 정사각형은 225−4×25=125cm²입니다. 9개 변형의 그림 좌표·답·풀이와 PC·모바일·A4 출력을 검증했습니다. 출판사 답안표는 확인하지 않았습니다.",
+              generatorKey: "source52SquareTrisectionAreaPage31Mission4",
+              generationMode: "fixed-verified-pool",
+              verifiedVariantTarget: 3,
+              verifiedVariantCount: 3,
+              answerVisualRequired: true,
+              answerVisualStatus: "verified-reconstruction"
+            },
+            {
               id: "5-2-u3-e4-mission-5",
               name: "합동 삼각형으로 만든 삼각형의 넓이",
               sourceItemId: "5-2-u3-e4-mission-5",
