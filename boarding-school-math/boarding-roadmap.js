@@ -233,7 +233,7 @@
     document.querySelector(".competition-layout").classList.remove("is-empty");
     document.querySelector(".competition-report").hidden = false;
     const paperLabel = $("paper-label").value.trim();
-    setText("competition-report-title", `${option.title} · ${result.correct}/${result.attempted}`);
+    setText("competition-report-title", `${option.title} · ${result.attempted}문제 중 ${result.correct}문제 정답`);
     const hasSmallSample = result.rows.some(function (entry) { return entry.attempted > 0 && entry.attempted < 3; });
     const comparableCount = result.rows.filter(function (entry) { return entry.attempted >= 3; }).length;
     const next = result.reviewFirst ? `${result.reviewFirst}부터 다시 보세요.` : comparableCount < 2

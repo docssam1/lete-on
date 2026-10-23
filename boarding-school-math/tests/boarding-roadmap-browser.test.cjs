@@ -92,7 +92,7 @@ test("grade map, level comparison, and competition intake stay honest and intera
   await page.getByRole("button", { name: "영역별 결과 보기" }).click();
   assert.equal(await page.locator(".competition-report").isVisible(), true);
   assert.equal(await page.locator(".competition-report").evaluate(function (node) { return node === document.activeElement; }), true);
-  assert.equal(await page.locator("#competition-report-title").innerText(), "AMC 10 · 4/6");
+  assert.equal(await page.locator("#competition-report-title").innerText(), "AMC 10 · 6문제 중 4문제 정답");
   assert.match(await page.locator("#competition-report-rows").innerText(), /3문제 미만/);
   assert.doesNotMatch(await page.locator("#competition-report-rows").innerText(), /50%/);
   assert.match(await page.locator("#competition-report-summary").innerText(), /6\/25문항 입력[\s\S]*두 영역에서 각각 3문제 이상/);
