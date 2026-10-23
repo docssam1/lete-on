@@ -40,19 +40,13 @@ for (let index = 0; index < sourceTypes.length; index += 1) {
   assert.equal(type.sourceVerified, true);
   assert.equal(type.publisherKeyVerified, false);
   assert.equal(type.verifiedVariantTarget, 3);
-  const shouldRemainLocked = index === 0;
-  assert.equal(type.verifiedVariantCount, shouldRemainLocked ? 0 : 3);
-  assert.equal(type.reviewLocked, shouldRemainLocked);
-  assert.equal(api.generatorKey(type), shouldRemainLocked ? "" : definition.generatorKey);
+  assert.equal(type.verifiedVariantCount, 3);
+  assert.equal(type.reviewLocked, false);
+  assert.equal(api.generatorKey(type), definition.generatorKey);
 
   for (const difficulty of [-1, 0, 1]) {
     for (let variant = 0; variant < 3; variant += 1) {
       const generated = api.generate(type, 0, difficulty, 1, variant);
-      if (shouldRemainLocked) {
-        assert.equal(generated, null, `${type.id}: the unverified solution must stay unavailable`);
-        lockedConfigurations += 1;
-        continue;
-      }
       assert(generated?.prompt && generated.answer !== undefined && generated.solution, `${type.id}: complete generated content`);
       assert.equal(generated.sourceItemId, type.sourceItemId);
       assert.equal(generated.generator, type.generatorKey);
@@ -65,6 +59,6 @@ for (let index = 0; index < sourceTypes.length; index += 1) {
   }
 }
 
-assert.equal(availableConfigurations, 18);
-assert.equal(lockedConfigurations, 9);
-console.log(`합동·대칭 공개 경계 감사 통과: 기존 24유형 잠금 ${legacyLockChecks}회 확인 · 인쇄 31쪽 신규 27조합 중 공개 후보 18 · 초등 풀이 미검증 잠금 9`);
+assert.equal(availableConfigurations, 27);
+assert.equal(lockedConfigurations, 0);
+console.log(`합동·대칭 공개 경계 감사 통과: 기존 24유형 잠금 ${legacyLockChecks}회 확인 · 인쇄 31쪽 신규 27조합 공개 후보`);

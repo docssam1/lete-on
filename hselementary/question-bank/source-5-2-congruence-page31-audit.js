@@ -10,6 +10,14 @@ require("./curriculum.js");
 require("./generators.js");
 const source = require("./source-5-2-congruence-page31.js");
 
+const distance = (first, second) => Math.hypot(first.x-second.x, first.y-second.y);
+const angleAt = (first, vertex, second) => {
+  const a = { x: first.x-vertex.x, y: first.y-vertex.y };
+  const b = { x: second.x-vertex.x, y: second.y-vertex.y };
+  const cosine = (a.x*b.x+a.y*b.y)/(Math.hypot(a.x,a.y)*Math.hypot(b.x,b.y));
+  return Math.acos(Math.max(-1,Math.min(1,cosine))) * 180 / Math.PI;
+};
+
 const allTypes = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types)));
 const sourceTypes = source.definitions.map(def => {
   const type = allTypes.find(item => item.id === def.sourceItemId);
@@ -38,12 +46,24 @@ for (const def of source.definitions) {
 
       if (def.sourceItemId.endsWith("mission-1")) {
         const { alpha, beta, answer } = item.answerModel;
-        const t = Math.tan(alpha * Math.PI / 180);
-        const actual = Math.atan((1 - Math.tan(beta * Math.PI / 180)) / (1 - t)) * 180 / Math.PI;
-        assert.ok(Math.abs(actual - answer) < 1e-9);
+        assert.equal(alpha + beta, 45);
+        assert.ok(beta > alpha && alpha < 22.5, "The fixed pool keeps B between R and S");
+        assert.equal(answer, 2 * alpha);
         assert.notEqual(alpha, 20);
         assert.notEqual(beta, 25);
-        assert.notEqual(answer, 40);
+        assert.match(item.solution, /두 변 사이의 각|두 변과 그 사이의 각/);
+        assert.doesNotMatch(item.solution, /tan\(|탄젠트/);
+        const tangent = value => Math.tan(value * Math.PI / 180);
+        const g = { x: 0, y: 1 }, n = { x: 1, y: 1 }, d = { x: 1, y: 0 }, r = { x: 0, y: 0 };
+        const m = { x: 0, y: 1-tangent(alpha) };
+        const b = { x: 1-tangent(beta), y: 0 };
+        const s = { x: 1-tangent(alpha), y: 0 };
+        const e = { x: 0, y: 1+tangent(beta) };
+        assert.ok(r.x < b.x && b.x < s.x && s.x < d.x, "B lies between R and S for all public variants");
+        assert.ok(Math.abs(distance(n,b)-distance(n,e)) < 1e-9, "The first SAS construction transfers NB=NE");
+        assert.ok(Math.abs(angleAt(b,n,m)-45) < 1e-9);
+        assert.ok(Math.abs(angleAt(m,n,e)-45) < 1e-9);
+        assert.ok(Math.abs(angleAt(r,m,b)-answer) < 1e-8);
       } else if (def.sourceItemId.endsWith("mission-2")) {
         const { vertexAngle, centralArc, equalArc, answer } = item.answerModel;
         assert.ok(Math.abs(centralArc - (180 - 2 * vertexAngle)) < 1e-9);
@@ -74,9 +94,7 @@ for (const def of source.definitions) {
 assert.equal(source.getQuestion("unknown", 0, 0), null);
 assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 3, 0), null);
 assert.equal(source.getQuestion(source.definitions[0].sourceItemId, 0, 2), null);
-assert.equal(window.HSE_GENERATORS.generatorKey(sourceTypes[0]), "");
-assert.equal(window.HSE_GENERATORS.generate(sourceTypes[0], 1, 0, "audit", 0), null, "Mission 1 remains locked until an elementary-level explanation is verified");
-for (const type of sourceTypes.slice(1)) {
+for (const type of sourceTypes) {
   assert.equal(window.HSE_GENERATORS.generatorKey(type), type.generatorKey);
   for (let variant = 0; variant < 3; variant += 1) {
     for (const difficultyOffset of [-1, 0, 1]) {
@@ -87,4 +105,4 @@ for (const type of sourceTypes.slice(1)) {
   }
 }
 
-console.log(`인쇄 31쪽 합동·대칭 Mission 감사 통과: 3문항 · ${combinations}개 조합 · 공개 2 · 풀이 미검증 잠금 1`);
+console.log(`인쇄 31쪽 합동·대칭 Mission 감사 통과: 3문항 · ${combinations}개 조합 · SAS 풀이 검증 · 공개 후보 3`);

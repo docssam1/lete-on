@@ -1,3 +1,14 @@
+## 2026-10-24 Grade 5-2 Unit 3 Page 31 Mission 1: Elementary Proof Verified
+
+- The printed 20°/25° source problem now has a synthetic proof using two triangle congruences and angle sums. Reflect ㅁ across diagonal ㄹㄴ to get ㅅ, then extend ㄹㄱ beyond ㄱ and choose ㅇ with ㄱㅇ=ㄷㅂ. From △ㄴㄷㅂ≅△ㄴㄱㅇ, get ㄴㅂ=ㄴㅇ; since ∠ㅂㄴㅁ=∠ㅁㄴㅇ=45° and ㄴㅁ is common, △ㄴㅂㅁ≅△ㄴㅇㅁ. This gives ∠ㄴㅁㅂ=70°. Also ∠ㄹㅁㄴ=110°, so ∠ㄹㅁㅂ=40°. The learner-facing proof contains no trigonometry or coordinate calculation.
+- Mission 1 now uses a fixed pool of nine non-source angle pairs. The source/API audit checks all 27 pool/difficulty combinations; all are enabled through the real curriculum gate.
+- Browser audit passed 54 states at 1440px and 375px, three pools and three difficulties, with zero page errors and 54 external requests blocked. All six problem/solution A4 PDFs are one page. The Mission 1 proof diagram, labels, and solution page were rasterized and visually inspected.
+- Whole-bank audits now report 2,045 types, 1,257 available and 788 pending. Classification regression confirms all 124 legacy Grade 5-2 records and their groups are unchanged. The original publisher-key status remains unverified.
+- Drive source review: https://drive.google.com/file/d/1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s/view. Evidence: [Mission 1 proof review ZIP](https://drive.google.com/file/d/1AQE0WvFDBuuqBx5TC8pTCTuYWiJiTCtO/view).
+- This update is in the isolated review branch. It has not yet been merged to `main` or deployed. No student data was accessed or changed.
+
+---
+
 ## 2026-10-24 Grade 5-2 Unit 3 Page 31: Pages Deployment Verified
 
 - GitHub Pages deployment [run 40012863681](https://github.com/docssam1/lete-on/actions/runs/40012863681) succeeded for main merge commit `be544719d61e80d4d58ccb09fa1cda9f85088d32`.

@@ -1728,15 +1728,15 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
               sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e4-missions-1-3-vision-20261024",
               sourceVerified: true,
               publisherKeyVerified: false,
-              answerVerification: "independent-calculation-user-authorized",
-              reviewLocked: true,
-              reviewReason: "원문 도형과 정답 40°는 독립 계산으로 확인했습니다. 현재 검증된 풀이에는 탄젠트 항등식이 포함되어 있어 초등 학생에게 적절한 설명을 확보하기 전까지 출제하지 않습니다.",
+              answerVerification: "independent-geometry-proof-user-authorized",
+              reviewLocked: false,
+              reviewReason: "대각선 대칭과 보조점 구성으로 두 번의 SAS 합동을 이용한 초등 기하 풀이를 검증했습니다. 원문 각 20°·25°에서 목표각은 40°이며, 생성기는 원문과 다른 9개 각 구성만 사용합니다.",
               generatorKey: "source52SquareAnglePage31Mission1",
-              generationMode: "review-locked",
+              generationMode: "fixed-verified-pool",
               verifiedVariantTarget: 3,
-              verifiedVariantCount: 0,
+              verifiedVariantCount: 3,
               answerVisualRequired: true,
-              answerVisualStatus: "locked"
+              answerVisualStatus: "verified-reconstruction"
             },
             {
               id: "5-2-u3-e4-mission-2",
