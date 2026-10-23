@@ -49,7 +49,7 @@
     {
       "id": "answer-determinacy",
       "status": "blocked",
-      "evidence": "u2-t23은 원의 중심 간격이 글에 수치로 주어지지 않아 그림의 축척을 정답 조건으로 승격할 수 없습니다."
+      "evidence": "원 지름 d=14/5에서 중심 간격 s=d/4와 s=d/3이 모두 일정 간격 겹침 조건을 만족하지만 넓이가 각각 637/25cm², 784/25cm²입니다. 간격이 주어지지 않아 답이 유일하지 않습니다."
     },
     {
       "id": "learner-fit",
@@ -633,8 +633,8 @@
       "typeName": "같은 원 10개의 겹침 그림에서 직사각형 넓이",
       "keyConditions": ["직사각형 높이 2 4/5cm", "같은 크기의 원 10개", "일정한 간격으로 겹침", "직사각형 넓이를 구함"],
       "visualAssetNeeded": {"required": true, "kind": "ten-overlapping-circles", "reason": "원 개수·중심 위치·중심 간격·직사각형 경계를 정확히 보존해야 함"},
-      "independentCalculation": "그림의 중심 간격을 지름의 1/4로 읽는 추가 가정이면 지름 H=14/5, 가로=H+9H/4=91/10, 넓이=637/25=25 12/25입니다. 그러나 간격 수치는 글에 없습니다.",
-      "independentAnswer": "조건이 충분하면 25 12/25이지만, 원 중심 간격이 명시되지 않아 확정 답으로 승격하지 않음",
+      "independentCalculation": "지름 d=14/5cm, 인접 중심 간격 s(0<s<d)이면 직사각형 폭=d+9s, 넓이=d(d+9s)입니다. s=d/4이면 637/25=25 12/25cm²이고 s=d/3이면 784/25=31 9/25cm²입니다. 두 배열 모두 같은 크기 원 10개가 일정한 간격으로 겹치지만 넓이가 다르므로 원문 조건만으로는 답이 정해지지 않습니다.",
+      "independentAnswer": "중심 간격 s가 미정이므로 유일 답 없음 (s=d/4이면 25 12/25cm², s=d/3이면 31 9/25cm²)",
       "answerContract": "single-value-conditional-on-visual-geometry",
       "singleAnswerStatus": "blocked-not-determined",
       "evidence": "직접 렌더 대조: PDF p.13, 인쇄 p.17. 원의 중심 간격을 그림 축척으로만 정해야 합니다.",
