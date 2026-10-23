@@ -21,6 +21,7 @@ require("./source-5-2-rounded-range-e4.js");
 require("./source-5-2-rounded-range-e42.js");
 require("./source-5-2-rounded-range-e43.js");
 require("./source-5-2-rounded-range-e44.js");
+require("./source-5-2-rounded-count-mission1.js");
 require("./source-6-2-decimal-e6-text.js");
 require("./source-6-2-decimal-e6-geometry.js");
 require("./source-6-2-decimal-e3.js");

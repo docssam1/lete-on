@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
+
+- Rechecked PDF page 9 / printed page 11 from the 450dpi page render and Apple Vision OCR. The text asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. No figure is printed for this item; handwriting and publisher answers were excluded. The hundreds-rounding interval is 1,150–1,249 and the tens-ceiling interval is 1,191–1,200. Their intersection contains 10 natural numbers, 1,191–1,200. Publisher-key verification remains false.
+- Added runtime type `5-2-u1-e4-mission-1-rounded-count`. Its three synthetic pools use targets other than 1,200 and produce 1- or 9-item intersections, never the source answer 10. Independent enumeration passed the original answer and all 9 pool/difficulty configurations.
+- Whole-bank classification, runtime availability, source release gate, elementary-language, math-notation, and numeric-display audits pass at 2,042 total / 1,254 generatable / 788 pending. Browser audit passed 12 states (1440px/375px), 24 overflow checks, answer separation, and 12 blocked external requests. Problem and solution PDFs each fit one A4 portrait page and were visually inspected. Existing 124 legacy 5-2 records and student data remain untouched. This is a local candidate only; main merge, live deployment, and live-browser verification are pending.
+- Evidence: `/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023/page11/mission1/`. The full original 156MB PDF is not included in the evidence bundle. Next: release this verified item, then continue with the next unchecked item, Page 11 Mission 2.
+
 ## 2026-10-23 Grade 5-2 Unit 1 Page 10 Examples 4-2–4-4: Deployed and Live Verified
 
 - Rechecked the printed graph on PDF page 8 / printed page 10. The graph has a broken vertical axis, 100-person minor intervals, bold labels at 50/55/60/65/70 hundred people, six staggered year labels, a solid female series, and a dashed male series. The original plotted differences by year are 5, 3, 1, 7, 4, and 2 hundred people, so 2008 is the unique maximum. The graph displays 6,800 male and 6,100 female; rounding/truncation intervals give an actual difference of 551–749, or `550명 초과 750명 미만`. Publisher key and handwriting were excluded.

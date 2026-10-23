@@ -1674,6 +1674,27 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             verifiedVariantCount: 3,
             answerVisualRequired: true,
             answerVisualStatus: "verified-reconstruction"
+          }, {
+            id: "5-2-u1-e4-mission-1-rounded-count",
+            name: "두 어림 조건을 함께 만족하는 자연수의 개수",
+            sourceItemId: "5-2-u1-e4-mission-1-rounded-count",
+            sourceItemLabel: "Mission 1",
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 9,
+            sourcePrintedPage: 11,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e4-mission-1-vision-20261024",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄 원문과 Apple Vision OCR을 대조했습니다. 백의 자리 반올림 1200은 1150~1249, 십의 자리 올림 1200은 1191~1200이므로 공통 자연수는 1191~1200의 10개입니다. 원문은 그림이 없는 문항이므로 새 그림을 덧붙이지 않았습니다. 합성 문항에는 원문 목표값 1200이나 원문 정답 10개를 사용하지 않았습니다. 손글씨와 출판사 정답지는 검증 근거로 사용하지 않았습니다.",
+            generatorKey: "source52RoundedCountMission1",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
           }]
         }
       ],
