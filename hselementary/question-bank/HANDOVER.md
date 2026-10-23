@@ -8,6 +8,14 @@
 - The existing `congruence-symmetry-audit.js` is not currently a passing gate: it reports 25,200 failures because `HSE_GENERATORS.generate` returns `null` for the first checked type (`5-2-u3-t1`). Its code is unchanged by this source-ledger correction; repair/verify it before any U3 runtime release.
 - Drive evidence: [page 24 exploration review](https://drive.google.com/file/d/1Ry4JGJ9m1WQGParWINFjg6R49ASDA02B/view) and [page 25 Missions 1–6 review](https://drive.google.com/file/d/11k5r1lrjdx7jVwPYtlFTDoevfX7k7SA3/view).
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 27 Mission 6 Answer Correction
+
+- Drive QA note: https://drive.google.com/file/d/1UO3b2Ae_gjHhd7K-nDwkUz2I4VzSWGEj/view. Mission 6 now has a separate type from Example 2-4 because the source asks about different sets of triangles.
+- Re-read PDF page 23 (printed page 27) at 450dpi and checked Apple Vision OCR against the printed figure. The source says to divide the base into six equal parts, connect the apex, and compare the six triangles created. Pencil marks and handwritten answers were excluded.
+- The earlier ledger incorrectly counted larger composites formed by joining adjacent sections. For the six named small triangles only, reflection across the isosceles axis pairs positions (1,6), (2,5), and (3,4), so the answer is 3 pairs, not 9.
+- Corrected the independent calculation, formula, answer, and scope in the readiness inventory. Source public/locked counts and student data are unchanged. This records source math only; no public mapping or release state was changed.
+- Source PDF SHA-256: `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 23 render SHA-256: `79c3cdb999dcfb35eacd30e1a42717f5076c36fbafe34ce17d181b2494d00bac`.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 26 Example 2-3 Diagram Answer
 
 - Re-read PDF page 22 (printed page 26) with a 450dpi render and Apple Vision OCR; confirmed the printed names △ㄱㄴㄷ and △ㄷㄹㅁ, the two distinct side-mark classes, and the crossing segments. Handwriting was excluded.
