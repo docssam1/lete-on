@@ -53,7 +53,7 @@ async function openFixture(browser,base,{course,width,height,lang='ko'}){
   const ctx=await browser.newContext({viewport:{width,height},reducedMotion:'reduce'}),page=await ctx.newPage(),errors=[],requests=[],blocked=[];
   page.on('pageerror',e=>errors.push(e.message));
   await ctx.route('**/*',r=>{if(r.request().url().startsWith(base+'/')&&r.request().method()==='GET')return r.continue();blocked.push({method:r.request().method(),url:r.request().url()});return r.abort();});
-  await ctx.addInitScript(s=>{if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify(s));},original);
+  await ctx.addInitScript(({key,state})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(state));},{key:'nm_learner_state_v1_'+encodeURIComponent(owner),state:original});
   await ctx.route('**/functions/v1/nm-membership',async r=>{
     if(r.request().method()==='OPTIONS')return r.fulfill({status:204,headers:CORS});
     const body=r.request().postDataJSON()||{};requests.push(body.action);
@@ -80,7 +80,7 @@ async function fullCase(f,c,tag){
   assert(start.regions['#crBody'].clientHeight>=Math.min(200,c.height*.4),tag+' road scroll area collapsed');
   assert.deepEqual(start.planScrollers,[],tag+' nested plan scroll areas');
   await screenshot(page,'road-standard-'+tag);
-  const protectedBefore=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return Object.fromEntries(['name','progress','coins','character','avatar','adminPlan','schoolAge','placement'].map(k=>[k,s[k]]));});
+  const protectedBefore=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem(window.NM_STATE_KEY));return Object.fromEntries(['name','progress','coins','character','avatar','adminPlan','schoolAge','placement'].map(k=>[k,s[k]]));});
   const personal=page.locator('#nmPersonalPlan>summary');await personal.focus();await page.keyboard.press('Enter');
   assert.equal(await page.locator('#nmPersonalPlan').evaluate(e=>e.open),true,tag+' keyboard opens monthly plan');
   const expanded=await layout(page);assert(expanded.regions['#crBody'].clientHeight===start.regions['#crBody'].clientHeight,tag+' expanding months must not shrink road viewport');
@@ -148,7 +148,7 @@ async function fullCase(f,c,tag){
   assert(modalMetrics.controls.every(b=>b.width>=44&&b.height>=44),tag+' course sheet small controls '+JSON.stringify(modalMetrics.controls));
   await page.keyboard.press('Escape');assert.equal(await page.locator('#nmCourseSheet').count(),0,tag+' Escape closes course sheet');
   assert.equal(await page.evaluate(()=>document.activeElement?.dataset.c),c.course,tag+' closing dialog restores course focus');checks.push('course preview dialog, scroll, touch, focus trap, Escape and focus restore');
-  const protectedAfter=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('nm_state_v1'));return Object.fromEntries(['name','progress','coins','character','avatar','adminPlan','schoolAge','placement'].map(k=>[k,s[k]]));});
+  const protectedAfter=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem(window.NM_STATE_KEY));return Object.fromEntries(['name','progress','coins','character','avatar','adminPlan','schoolAge','placement'].map(k=>[k,s[k]]));});
   assert.deepEqual(protectedAfter,protectedBefore,tag+' read-only roadmap interactions preserve learner state');
   let assessmentReturn;
   if(c.course==='C29'&&c.width===390&&c.lang==='ko'){

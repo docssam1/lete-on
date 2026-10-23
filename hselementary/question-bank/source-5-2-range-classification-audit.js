@@ -30,7 +30,8 @@ const applicationMissionFiveId = "5-2-u1-e3-mission-5-bar-graph-length";
 const applicationMissionSixId = "5-2-u1-e3-mission-6-citrus-sales";
 const roundedRangeIds = ["5-2-u1-e4-exploration-rounded-range", "5-2-u1-e4-example-1"];
 const roundedMissionOneId = "5-2-u1-e4-mission-1-rounded-count";
-const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId, ...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4", roundedMissionOneId];
+const congruencePage31Ids = [1, 2, 3].map(number => `5-2-u3-e4-mission-${number}`);
+const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId, ...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4", roundedMissionOneId, ...congruencePage31Ids];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -62,13 +63,18 @@ function load(curriculumSource) {
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2042, "Whole-bank classification count");
+  assert.equal(types.length, 2045, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 161, "Preserve 124 legacy records plus thirty-seven source records");
+  assert.equal(semesterTypes.length, 164, "Preserve 124 legacy records plus forty source records");
   const restored = plain(semester);
-  restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => allNewSourceIds.includes(type.sourceItemId)));
+  restored.units = restored.units.map(unit => ({
+    ...unit,
+    subunits: unit.subunits
+      .map(group => ({ ...group, types: group.types.filter(type => !allNewSourceIds.includes(type.sourceItemId)) }))
+      .filter(group => group.types.length > 0)
+  }));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
   const unit = semester.units.find(item => item.id === "5-2-u1");
   assert.equal(unit.subunits.length, 11);

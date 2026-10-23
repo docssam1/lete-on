@@ -9,6 +9,7 @@ const assert = (condition, message) => {
 const read = (name) => fs.readFileSync(fileURLToPath(new URL(name, import.meta.url)), "utf8");
 const app = read("./app.js");
 const styles = read("./styles.css");
+const templates = read("./print-templates.js");
 
 assert(CURRICULUM.length === 10, `expected 10 course books, found ${CURRICULUM.length}`);
 assert(TEXTBOOK_STAGES.length === 4, `expected 4 textbook stages, found ${TEXTBOOK_STAGES.length}`);
@@ -17,7 +18,9 @@ assert(/const bookModels = \(hasQuery \? CURRICULUM : \[activeBook\]\)/.test(app
 assert(/function curriculumSearchModel/.test(app), "curriculum word and unit search model missing");
 assert(/function catalogEntries/.test(app), "catalog strategy grouping missing");
 assert(/class="curriculum-inline-stages"/.test(app), "inline concept/type/practice/advanced controls missing");
-assert(/index \+= 2/.test(app) && /questionCards\.slice\(index, index \+ 2\)/.test(app), "worksheet is not grouped into two questions per page");
+// 쪽 묶음은 인쇄 양식(print-templates.js)이 맡는다. 기본 1단 = 쪽당 2문항, 2단 = 4문항.
+assert(/layoutWorksheetPages\(\{ cards: questionCards/.test(app), "worksheet pages are not laid out by print templates");
+assert(/const perPage = settings\.cols === "2" \? 4 : 2;/.test(templates) && /cols: "1"/.test(templates), "worksheet is not grouped into two questions per page by default");
 assert(/\.question-page\{[^}]*grid-template-columns:repeat\(2/.test(styles), "two-column question page layout missing");
 assert(/\.question-page\{[^}]*break-after:page/.test(styles), "question page print break missing");
 assert(/\.question-page\{[^}]*grid-template-columns:1fr;grid-template-rows:repeat\(2/.test(styles), "two-question vertical print layout missing");

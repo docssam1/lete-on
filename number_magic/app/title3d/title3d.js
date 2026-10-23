@@ -411,9 +411,11 @@ export async function mountTitle3D(container, opts){
     const chips = [];
     if(opts.coins != null) chips.push(`<span class="t3d-note t3d-chip"><i class="coin" aria-hidden="true">${COIN}</i>${esc(opts.coins)}</span>`);
     (opts.chips || []).forEach(ch => { if(!ch) return; const o = typeof ch === 'string' ? { text:ch } : ch;
-      chips.push(`<span class="t3d-note t3d-chip${o.gold ? ' gold' : ''}">${o.icon ? `<i aria-hidden="true">${esc(o.icon)}</i>` : ''}${esc(tr(o.text, lang))}</span>`); });
+      const tag=o.action?'button':'span';
+      chips.push(`<${tag}${o.action?` type="button" data-chip-action="${esc(o.action)}"`:''} class="t3d-note t3d-chip${o.gold ? ' gold' : ''}">${o.icon ? `<i aria-hidden="true">${esc(o.icon)}</i>` : ''}${esc(tr(o.text, lang))}</${tag}>`); });
     hud.innerHTML = `<div class="t3d-note t3d-hello"><b aria-hidden="true">${STAR4}</b>${opts.name ? esc(opts.name) + ' — ' : ''}${esc(HELLO[lang] || HELLO.ko)}</div>`
       + (chips.length ? `<div class="t3d-chips">${chips.join('')}</div>` : '') + (opts.extraHtml || '');
+    hud.querySelectorAll('[data-chip-action]').forEach(button=>{button.onclick=()=>opts.onChipPick?.(button.dataset.chipAction,button);});
     tag.textContent = opts.name || '';
     hint.textContent = PICK_HINT[lang] || PICK_HINT.ko;
     choices.forEach(c => {

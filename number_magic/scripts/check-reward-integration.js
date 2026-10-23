@@ -2,7 +2,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),main=fs.readFileSync(path.join(root,'app/main.js'),'utf8');
-const W=require('../app/character-state.js');
+const W=require('../app/character-state.js'),learnerStorage=require('../app/learner-storage.js');
 function section(name,end){
   const a=main.indexOf('function '+name+'('),b=main.indexOf(end,a);
   assert(a>=0&&b>a,'real function boundaries: '+name);return main.slice(a,b);
@@ -25,7 +25,7 @@ const node=id=>controls[id]||(controls[id]={innerHTML:'',textContent:'',onclick:
   classList:{add(){}},remove(){},setAttribute(){}});
 const w={console,Date:FixedDate,Math,JSON,Promise,Number,Map,Set,
   S:{},NM_CHARACTER_STATE:{...W,reward:(s,n,reason,key)=>W.reward(s,n,reason,key,clock)},
-  NM_COURSES:data.NM_COURSES,NM_AVATAR:data.NM_AVATAR,UNITS:data.NM_UNITS,
+  NM_COURSES:data.NM_COURSES,NM_AVATAR:data.NM_AVATAR,UNITS:data.NM_UNITS,NM_ATTENDANCE:require('../app/attendance.js'),
   document:{querySelectorAll:selector=>selector==='.nm-coins b'?[coinNode]:[],createElement:()=>node('created')},
   $:node,save:()=>{saves++;return true;},render(){},clearInterval(){},townCleanup:null,mgTimer:null,
   clearTimeout(){},setTimeout:callback=>{timers.push(callback);return timers.length;},
@@ -37,16 +37,16 @@ const w={console,Date:FixedDate,Math,JSON,Promise,Number,Map,Set,
   playSfx:()=>null,confetti(){},sayAfterSfx(){},bindLineageEvoCard(){},exitUnit(){},lessonLater(){},
   screenHistQuiz(){},showUnlockOverlay:items=>overlays.push(items),
   hqPuzzle:{picked:[0,1,2,3]},NM_STATS:{record(){}},
-  KEY:'fixture_state',REVIEW:false,membership:null,booted:false,applyAdminSettings(){},
-  defaults:()=>({coins:0,progress:{}}),hadSave:false,
+  KEY:learnerStorage.keyFor('guardian-fixture'),REVIEW:false,membership:null,booted:false,applyAdminSettings(){},
+  defaults:()=>({coins:0,progress:{}}),hadSave:false,stateOwnerId:'guardian-fixture',learnerTransition:false,NM_LEARNER_STORAGE:learnerStorage,NM_PROFILE_AUTH:{peek:()=>({user:{id:'guardian-fixture'}})},
   localStorage:{getItem:key=>storage.has(key)?storage.get(key):null,setItem:(key,value)=>storage.set(key,String(value)),removeItem:key=>storage.delete(key)},
-  SLOT_COUNT:3,SLOT_ACTIVE_KEY:'fixture_active',location:{reload(){}},
+  SLOT_COUNT:3,SLOT_ACTIVE_KEY:learnerStorage.keyFor('guardian-fixture')+'_active_slot',location:{reload(){}},
   cloudTimer:null,cloudSyncError:false,SB_URL:'https://fixture.invalid',
   cloudCredentials:async()=>({owner:'guardian-fixture',headers:{Authorization:'Bearer fixture'}}),
   isGuardianOwner:owner=>owner==='guardian-fixture',renderIdCard(){},
   fetch:async(url,options)=>{assert(url.startsWith('https://fixture.invalid/'));requests.push({url,...options});return {ok:true,json:async()=>[{}]};}};
 w.window=w;vm.createContext(w);
-const functions=[section('coinAdd','/* ============================================================'),
+const functions=[section('navigationLabel','function enterUnit('),section('coinAdd','/* ============================================================'),
   section('todayKey','/* 출석 체크'),section('checkAttendance','/* 주간 보너스'),
   section('weekFullyDone','function maybeAwardWeeklyBonus('),section('maybeAwardWeeklyBonus','function pickVoice('),
   section('settleMiniGameReward','function _renderMiniGame('),section('_renderMiniGame','function screenGradeCourse('),
@@ -107,15 +107,41 @@ for(const gift of W.gifts){
 assert.equal(Object.keys(w.S.character_unlocked).length,5,'four gifts plus the old right');
 const gifts=JSON.stringify(w.S.character_unlocked);w.syncProgressUnlocks();assert.equal(JSON.stringify(w.S.character_unlocked),gifts,'gift sync is idempotent');
 assert.equal(w.courseUnitIds(w.NM_COURSES.C25).length,0,'old impossible gift point is not used');cases+=2;
+// A failed grant must remain retryable at each real completion caller.
+const successfulSave=w.save;let failRewardSave=true;
+w.save=()=>{saves++;return !failRewardSave;};
+w.S=fresh();w.S.mailbox={opened:{'2026-W43':true}};w.maybeAwardWeeklyBonus('2026-W43');
+assert.equal(w.S.coins,0);assert.equal(w.S.weeklyBonus['2026-W43'],undefined);
+failRewardSave=false;w.maybeAwardWeeklyBonus('2026-W43');assert.equal(w.S.coins,3);assert.equal(w.S.weeklyBonus['2026-W43'],true);cases++;
+failRewardSave=true;w.S=fresh();const retryCheck={num:3,calcOk:12,calcTotal:12,creOk:3,creTotal:3,wpOk:6,wpTotal:6};w.finishCheckup(retryCheck);
+assert.equal(w.S.coins,0);assert.equal(retryCheck.rewarded,false);assert.equal(w.S.checkups.C3,undefined);
+failRewardSave=false;w.finishCheckup(retryCheck);assert.equal(w.S.coins,4);assert.equal(retryCheck.rewarded,true);assert.equal(retryCheck.rewardSavePending,undefined);cases++;
+failRewardSave=true;w.S=fresh();w.S.unit=unit.id;w.S.progress[unit.id]={steps:{practice:true,arena:true}};w.stepStamp(body,unit);
+assert.equal(w.S.coins,0);assert.equal(w.S.progress[unit.id].done,undefined);assert(body.innerHTML.includes('stampRetry'));
+failRewardSave=false;node('#stampRetry').onclick();assert.equal(w.S.coins,15);assert.equal(w.S.progress[unit.id].done,true);cases++;
+failRewardSave=true;w.S=fresh();const retryGame={id:'make10',startTs:99,done:true};w.settleMiniGameReward(retryGame,4);
+assert.equal(w.S.coins,0);assert.equal(retryGame.rewardCoins,undefined);
+failRewardSave=false;w.settleMiniGameReward(retryGame,4);assert.equal(w.S.coins,1);assert.equal(retryGame.rewardCoins,1);cases++;
+failRewardSave=true;w.S=fresh();w.hqPuzzle={picked:[0,1,2,3]};w.bindHistQuizPuzzle(training,'A-01',{});node('#hqCheck').onclick();
+assert.equal(w.S.coins,0);assert.equal(w.S.histQuiz.done['A-01'],undefined);
+failRewardSave=false;node('#hqCheck').onclick();assert.equal(w.S.coins,1);assert.equal(w.S.histQuiz.done['A-01'],true);cases++;
+failRewardSave=true;w.S=fresh();w.S._boost={threadId:'AD3',level:1,weekKey:'2026-W43',i:5,need:5,score:4};w.screenBoost();
+assert.equal(w.S.coins,0);assert.equal(w.S._boostRewarded,false);
+failRewardSave=false;w.screenBoost();assert.equal(w.S.coins,2);assert.equal(w.S._boostRewarded,true);assert.equal(w.S.boost.log.length,1);cases++;
+w.save=successfulSave;
 // Exercise the real serialization functions with in-memory storage and a fake
 // endpoint. This confirms the new budget is not stripped by a field allowlist.
-vm.runInContext(section('load','let S=load();')+'\n'+line('save')+'\n'+
+const storageBaseline=main.match(/^let stateStorageRaw=[^\n]+/m);assert(storageBaseline,'actual tab baseline declarations');
+const cloudQueue=main.match(/^let cloudTimer=[^\n]+/m);assert(cloudQueue,'actual cloud queue declarations');
+vm.runInContext(storageBaseline[0]+'\n'+section('load','let S=load();')+'\n'+
+  section('stateStorageConflict','function save(')+'\n'+line('save')+'\n'+
   section('backupBeforeCloudResume','async function cloudClaim(')+'\n'+
-  section('cloudPushSoon','/* 주간 요약')+'\n'+
+  cloudQueue[0]+'\n'+section('cloudPushSoon','/* 주간 요약')+'\n'+
   section('readSlotState','/* 슬롯 전환')+'\n'+section('switchToSlot','/* ---------- 체험 게이트')+'\n'+
   line('slotKey')+'\n'+section('activeSlot','/* 비활성 슬롯'),w);
 async function persistence(){
   w.S=fresh();w.S.name='Fixture';w.S.cloudLinked=true;w.S.cloudOwnerId='guardian-fixture';
+  storage.set(w.KEY,JSON.stringify(w.S));w.S=w.load();
   w.coinAdd(20,'unit','persisted-unit');const budget=JSON.stringify(w.S.coinRewards);
   assert.equal(w.save(),true);const loaded=w.load();assert.equal(JSON.stringify(loaded.coinRewards),budget);
   w.S=loaded;assert.equal(w.coinAdd(20,'unit','persisted-unit'),0,'reload retains duplicate guard');cases+=2;

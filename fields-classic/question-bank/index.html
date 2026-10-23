@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#f3f7fa" />
   <title>FC 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=20261021a" />
+  <link rel="stylesheet" href="./styles.css?v=20261023p" />
+  <link rel="stylesheet" href="./print-templates.css?v=20261023a" />
 </head>
 <body>
   <header class="app-header">
@@ -105,7 +106,9 @@
 
     <section id="worksheetSection" class="worksheet-section" hidden>
       <div class="worksheet-actions"><button id="backToBuilder" type="button">범위 다시 선택</button><div><button id="regenerateButton" type="button">새 문제</button><button id="answerButton" type="button">답안 보기</button><button id="printButton" class="primary" type="button">문제 인쇄</button></div></div>
-      <div class="worksheet-head"><div><span>GFIELD QUESTION BANK</span><h1 id="worksheetTitle">맞춤 모의고사</h1></div><dl><div><dt>이름</dt><dd id="worksheetStudent">DEMO</dd></div><div><dt>점수</dt><dd></dd></div></dl></div>
+      <div id="printTemplatePanel" class="pt-panel-host"></div>
+      <div id="printTemplateLead" class="pt-lead"></div>
+      <div class="worksheet-head"><span id="worksheetLessonNo" class="pt-lesson-no pt-only-lesson" aria-hidden="true">1</span><div><span id="worksheetBand">GFIELD QUESTION BANK</span><h1 id="worksheetTitle">맞춤 모의고사</h1><p id="worksheetGoal" class="pt-lesson-goal pt-only-lesson"></p></div><dl><div class="pt-only-exam"><dt>반</dt><dd></dd></div><div><dt>이름</dt><dd id="worksheetStudent">DEMO</dd></div><div class="pt-only-exam"><dt>날짜</dt><dd></dd></div><div><dt>점수</dt><dd></dd></div></dl></div>
       <div id="watermark" class="watermark" aria-hidden="true"></div>
       <div id="questionGrid" class="question-grid"></div>
     </section>
@@ -122,6 +125,6 @@
   <script src="../../geometry/worksheet/generators.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/render.js?v=20260829g"></script>
   <script src="../../geometry/worksheet/card.js?v=20260829g"></script>
-  <script type="module" src="./app.js?v=20261003d"></script>
+  <script type="module" src="./app.js?v=20261023p"></script>
 </body>
 </html>
