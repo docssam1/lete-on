@@ -6,7 +6,7 @@
   <meta name="description" content="개념부터 경시까지, 진단 근거를 개념 학습과 다음 연습으로 연결하는 G·MAP">
   <title>G·MAP | 개념부터 경시까지</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./home.css">
+  <link rel="stylesheet" href="./home.css?v=20261024-1">
   <link rel="stylesheet" href="./academy-ui.css">
 </head>
 <body class="academy-page page-home">
@@ -196,7 +196,7 @@
 
     <section class="map-section" id="map" aria-labelledby="map-title">
       <div class="shell">
-        <div class="directory-heading map-heading"><div><p class="eyebrow">03 · GRADE × DOMAIN</p><h2 id="map-title">K–8은 학년과 영역으로,<br>G9–12는 실제 과정 순서로 봅니다.</h2></div><p>학년만 보여 주지 않습니다. 선택한 학년에서 어떤 수학 영역을 배우고, 어디에 진단 근거가 있는지 한 화면에서 확인합니다.</p></div>
+        <div class="directory-heading map-heading"><div><p class="eyebrow">03 · 스킬 지도</p><h2 id="map-title">학년별 수학 스킬</h2></div><p>학년을 고르면 단원과 공개 자료를 볼 수 있어요. 고등 수학은 ‘과정별 보기’에서 확인하세요.<a id="boarding-roadmap-link" href="./boarding-roadmap.html?grade=6">학년별 학습 경로 보기 →</a></p></div>
         <div class="map-view-tabs" id="map-view-tabs" role="tablist" aria-label="학년, 영역 또는 과정으로 보기">
           <button id="map-view-grade" type="button" role="tab" aria-controls="grade-directory" aria-selected="true" tabindex="0" data-map-view="grade">학년별 보기</button>
           <button id="map-view-domain" type="button" role="tab" aria-controls="domain-directory" aria-selected="false" tabindex="-1" data-map-view="domain">영역별 보기</button>
@@ -205,8 +205,8 @@
         <section id="grade-directory" role="tabpanel" aria-labelledby="map-view-grade">
           <div class="grade-tabs" id="grade-tabs" role="tablist" aria-label="미국 학년 선택"></div>
           <div class="skill-map-card" id="skill-map-panel" role="tabpanel" aria-live="polite">
-            <div class="skill-map-head"><div><span class="grade-orbit" id="selected-grade">G6</span><div><p class="micro-label">GRADE DIRECTORY</p><h3 id="grade-title">Grade 6 영역별 근거</h3></div></div></div>
-            <div class="grade-reasoning-lanes" id="grade-reasoning-lanes" aria-label="학교 핵심, 사고력 클리닉, 경시 가교"></div>
+            <div class="skill-map-head"><div><span class="grade-orbit" id="selected-grade">G6</span><div><p class="micro-label">선택한 학년</p><h3 id="grade-title">6학년 · 개념 10개 공개</h3></div></div></div>
+            <div class="grade-reasoning-lanes" id="grade-reasoning-lanes" aria-label="학교 수학, 사고력 연습, 선택 경시"></div>
             <div class="skill-rows" id="skill-rows"></div>
             <p class="map-footnote" id="map-footnote">Grade 6 · 영역·단원 디렉터리</p>
           </div>
@@ -215,12 +215,12 @@
           <div class="domain-overview" id="domain-overview"></div>
         </section>
         <section id="course-directory" role="tabpanel" aria-labelledby="map-view-course" hidden>
-          <div class="course-directory-head"><div><p class="micro-label">COURSE PATHWAY · SCHOOL-CONFIGURED</p><h3>과정명으로도 현재 위치와 다음 단계를 봅니다.</h3></div><p>Pre‑Algebra부터 Precalculus까지 과정별 선수개념·핵심 영역·다음 과정·학생/교사용 진입점을 분리합니다.</p></div>
+          <div class="course-directory-head"><div><p class="micro-label">과정별 보기</p><h3>지금 배우는 과목의 앞뒤를 확인하세요.</h3></div><p>Pre‑Algebra부터 Precalculus까지 필요한 선수 개념과 공개 자료를 볼 수 있어요. 실제 수업 순서는 학교마다 달라요.</p></div>
           <div class="course-tabs" id="course-tabs" role="tablist" aria-label="수학 과정 선택"></div>
           <article class="course-map-card" id="course-map-panel" role="tabpanel" aria-live="polite"></article>
           <p class="course-sequence-note" id="course-sequence-note"></p>
         </section>
-        <aside class="high-school-bridge" id="high-school-bridge" aria-labelledby="high-school-bridge-title"><div><p class="micro-label">G9–12 · SCHOOL-CONFIGURED</p><h3 id="high-school-bridge-title">고등 과정은 과목명만으로 배정하지 않습니다.</h3><p>과정 지도에서 선수개념과 수업 자료 상태를 먼저 확인한 뒤, 학교의 실제 course sequence와 교사 근거로 배치를 검토합니다.</p></div><ul aria-label="고등 수학 공통 개념 범주"><li>Number &amp; Quantity</li><li>Algebra</li><li>Functions</li><li>Modeling</li><li>Geometry</li><li>Statistics &amp; Probability</li></ul><div class="bridge-status"><span class="status-chip planned">과정 지도 공개</span><strong>선수개념 → 현재 과정 → 다음 과정 → AMC 10·12 가교</strong></div></aside>
+        <aside class="high-school-bridge" id="high-school-bridge" aria-labelledby="high-school-bridge-title"><div><p class="micro-label">고등 수학</p><h3 id="high-school-bridge-title">학교마다 과목 순서가 달라요.</h3><p>학교 수업표와 선수 개념을 확인한 뒤 다음 과목을 정해요.</p></div><ul aria-label="고등 수학 공통 개념 범주"><li>Number &amp; Quantity</li><li>Algebra</li><li>Functions</li><li>Modeling</li><li>Geometry</li><li>Statistics &amp; Probability</li></ul><div class="bridge-status"><span class="status-chip planned">과정 지도 공개</span><strong>선수 개념 → 지금 배우는 과목 → 다음 과목</strong></div></aside>
       </div>
     </section>
 
@@ -242,6 +242,6 @@
   <script src="./curriculum/grade5-8-reasoning-progression.js"></script>
   <script src="./competition/k8-competition-profiles.js"></script>
   <script src="./competition/official-original-links.js"></script>
-  <script src="./home.js?v=20261003-1"></script>
+  <script src="./home.js?v=20261024-1"></script>
 </body>
 </html>

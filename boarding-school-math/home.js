@@ -424,10 +424,10 @@
       ? `${profile.publicClinicCount}개 클리닉 공개`
       : "영역별 설계 공개";
     const prioritySummary = profile.reasoningPriorities.slice(0, 3).map(reasoningLabel).join(" · ");
-    target.innerHTML = `<article><span>01 · SCHOOL CORE</span><strong>학교 핵심</strong><small>${profile.schoolClusterCount}개 공식 클러스터 구조</small></article>
-      <article><span>02 · THINKING CLINIC</span><strong>사고력 클리닉</strong><small>${prioritySummary} · ${clinicSummary}</small></article>
-      <article><span>03 · CONTEST BRIDGE</span><strong>경시 가교</strong><small>${profile.competitionBridge.join(" · ")}</small></article>
-      <p>원문 문항을 합친 것이 아니라 검증된 유형·학습 순서·출고 게이트를 연결한 지도입니다.</p>`;
+    target.innerHTML = `<article><span>01</span><strong>학교 수학</strong><small>${profile.schoolClusterCount}개 단원 범위</small></article>
+      <article><span>02</span><strong>사고력 연습</strong><small>${prioritySummary} · ${clinicSummary}</small></article>
+      <article><span>03 · 선택</span><strong>경시 문제</strong><small>${profile.competitionBridge.join(" · ")}</small></article>
+      <p>학교 수학을 먼저 보고, 경시는 원할 때 살펴보세요.</p>`;
   }
 
   function renderGradeMap(grade) {
@@ -444,9 +444,13 @@
     const domains = spine.gradeDomains[grade] || [];
     const units = registry.units.filter(function (unit) { return sameGrade(unit.grade, grade); });
     const publicGrade = String(grade) === "6";
+    const mapGradeName = String(grade) === "K" ? "유치원" : `${grade}학년`;
+    const boardingRoadmapLink = document.getElementById("boarding-roadmap-link");
+    boardingRoadmapLink.hidden = !Number.isInteger(Number(grade)) || Number(grade) < 3;
+    if (!boardingRoadmapLink.hidden) boardingRoadmapLink.href = `./boarding-roadmap.html?grade=${grade}`;
     renderReasoningLanes(grade);
     document.getElementById("selected-grade").textContent = gradeShort(grade);
-    document.getElementById("grade-title").textContent = publicGrade ? `${gradeName(grade)} · 공개 개념 10개` : `${gradeName(grade)} · 영역과 단원 범위`;
+    document.getElementById("grade-title").textContent = publicGrade ? `${mapGradeName} · 개념 10개 공개` : `${mapGradeName} · 배울 영역`;
     document.getElementById("skill-rows").innerHTML = domains.map(function (domain, index) {
       const localized = spine.domainTitles[domain];
       const domainUnits = units.filter(function (unit) {
@@ -476,8 +480,8 @@
       </details>`;
     }).join("");
     document.getElementById("map-footnote").textContent = publicGrade
-      ? `${gradeName(grade)} · ${domains.length}개 영역 · ${units.length}개 자체 제작 개념 공개 · 문제·워크북·진단은 별도 검수`
-      : `${gradeName(grade)} · ${domains.length}개 영역 · ${units.length}개 클러스터 구조 공개 · 학습 자료는 검수 대기`;
+      ? `${mapGradeName} · ${domains.length}개 영역 · ${units.length}개 자체 제작 개념 공개 · 문제·워크북·진단은 별도 검수`
+      : `${mapGradeName} · ${domains.length}개 영역 · ${units.length}개 클러스터 구조 공개 · 학습 자료는 검수 대기`;
   }
 
   function buildGradeTabs() {

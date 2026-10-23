@@ -152,12 +152,13 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.match(await page.locator("#search-results").innerText(), /비와 비율[\s\S]*개념 공개/);
 
   await page.locator('[data-grade-tab="8"]').click();
+  assert.equal(await page.locator("#boarding-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=8");
   assert.equal(await page.locator("#selected-grade").textContent(), "G8");
   assert.equal(await page.locator("#skill-map-panel").getAttribute("aria-labelledby"), "grade-tab-8");
   assert.equal(await page.locator("#skill-rows .domain-directory-row").count(), 5);
   assert.match(await page.locator("#map-footnote").innerText(), /5개 영역[\s\S]*10개 클러스터/);
   assert.equal(await page.locator("#grade-reasoning-lanes article").count(), 3);
-  assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /학교 핵심[\s\S]*사고력 클리닉[\s\S]*경시 가교[\s\S]*AMC 8 → AMC 10 가교/);
+  assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /학교 수학[\s\S]*사고력 연습[\s\S]*경시 문제[\s\S]*AMC 8 → AMC 10 가교/);
   assert.equal(await page.locator("#skill-rows .unit-reasoning").count(), 10);
   await page.locator('[data-grade-tab="6"]').click();
   assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /10개 클리닉 공개/);
@@ -671,6 +672,14 @@ test("home and curriculum foundation have no mobile horizontal overflow", async 
     });
     if (width <= 720) {
       assert.equal(await page.locator(".mobile-quick-nav").isVisible(), true);
+      const gradeTabLayout = await page.locator("#grade-tabs").evaluate(function (tabs) {
+        const bounds = tabs.getBoundingClientRect();
+        return Array.from(tabs.querySelectorAll("button")).every(function (button) {
+          const rect = button.getBoundingClientRect();
+          return rect.left >= bounds.left - 1 && rect.right <= bounds.right + 1;
+        });
+      });
+      assert.equal(gradeTabLayout, true, `grade choice clipped at ${width}px`);
       const quickTargets = await page.locator(".mobile-quick-nav a").evaluateAll(function (controls) {
         return controls.map(function (control) { return control.getBoundingClientRect().height; });
       });
