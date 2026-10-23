@@ -1346,6 +1346,35 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
           }))
         },
         {
+          name: "어림하기 · Mission 1–3 원문 연결",
+          types: [
+            ["1", "각 자리까지 올림하여 표 완성하기", "source52RoundingMissionOne", true],
+            ["2", "두 어림값의 차 구하기", "source52RoundingMissionTwo", false],
+            ["3", "수 카드로 목표에 가장 가까운 수 만들기", "source52RoundingMissionThree", false]
+          ].map(([number, name, generatorKey, answerVisualRequired]) => ({
+            id: `5-2-u1-e2-mission-${number}`,
+            name,
+            sourceItemId: `5-2-u1-e2-mission-${number}`,
+            sourceItemLabel: `Mission ${number}`,
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 5,
+            sourcePrintedPage: 7,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e2-direct-review-20261019",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-enumeration-user-authorized",
+            reviewLocked: false,
+            reviewReason: "사용자 요청에 따라 인쇄된 원문 조건을 직접 풀이하고 독립 열거로 검산했습니다. 공식 출판사 답안 대조 여부는 별도로 유지합니다.",
+            generatorKey,
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired,
+            answerVisualStatus: answerVisualRequired ? "verified" : "not-required"
+          }))
+        },
+        {
           name: "수의 범위 · Mission 1–6 원문 연결",
           types: [
             ["1", "겹치는 두 범위에 들어가는 수와 두 수의 합"],
