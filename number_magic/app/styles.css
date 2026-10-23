@@ -4006,3 +4006,45 @@ body.nm-review-mode .nm-title3d{top:48px}
 .nm-unit-view .nm-unit-bar .nm-unit-title{min-width:0;max-width:100%;overflow-wrap:anywhere}
 
 #townLeave{pointer-events:auto}
+
+/* Progress and pace share one explicit, previewable plan control. */
+.nm-cr-desk .nm-cr-pickbtn{display:inline-flex;width:auto;height:auto;min-height:44px;gap:7px;padding:8px 14px;border-radius:999px;font:600 14px/1.4 'Pretendard',sans-serif;text-align:center}
+.nm-cr-desk .nm-cr-pickbtn .nm-cr-ic{width:18px;height:18px}
+.nm-cr-plan-control h3{font-family:var(--la-serif);font-size:23px;font-weight:500;margin:6px 0 12px}
+.nm-plan-current{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:12px 0;padding:12px 14px;background:rgba(185,167,255,.12);border:1px solid rgba(81,66,119,.18);border-radius:12px}
+.nm-plan-current b{font-size:17px;font-weight:600}
+.nm-plan-current span{font-size:15px;font-variant-numeric:tabular-nums}
+.nm-plan-sheet{color:var(--ink);background:#fbf8f0;max-width:620px;text-align:left}
+.nm-plan-sheet p{line-height:1.65;font-size:16px;overflow-wrap:anywhere}
+.nm-plan-fields{border:0;margin:20px 0 0;padding:0;min-width:0}
+.nm-plan-fields legend{font-family:var(--font-title,'Gowun Batang',serif);font-size:20px;margin-bottom:14px;padding:0}
+.nm-plan-fields label{display:block;margin:12px 0 7px;font-size:15px;font-weight:600}
+.nm-plan-fields select{display:block;box-sizing:border-box;width:100%;min-width:0;min-height:48px;padding:10px 34px 10px 12px;border:1px solid #a99d86;border-radius:10px;background:#fffdf8;color:#29334a;font:400 16px/1.45 'Pretendard',sans-serif}
+.nm-plan-stepper{display:flex;gap:10px;margin-top:9px}
+.nm-plan-stepper button{flex:1;min-width:0;min-height:44px;padding:8px 9px;border:1px solid #b9ab8c;border-radius:10px;background:#f6f0e5;color:#29334a;font:500 14px/1.45 'Pretendard',sans-serif}
+.nm-plan-speed-title{font-weight:600;font-size:17px;margin:24px 0 12px}
+.nm-plan-speeds{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.nm-plan-speeds button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:104px;padding:10px 4px;border:1px solid #b7ab94;border-radius:14px;background:#fffdf8;color:#29334a;font-family:'Pretendard',sans-serif}
+.nm-plan-speeds button>span{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#ede6d9;font-size:14px}
+.nm-plan-speeds button>b{font-size:14px;font-weight:500;line-height:1.4;word-break:keep-all}
+.nm-plan-speeds button>small{font-size:13px;font-variant-numeric:tabular-nums}
+.nm-plan-speeds button[aria-pressed=true]{border:2px solid #655080;background:#f0e9f5;box-shadow:0 0 0 2px #fff inset}
+.nm-plan-speeds button[aria-pressed=true]>span{background:#655080;color:white}
+.nm-plan-fields[disabled]{opacity:.62}
+.nm-plan-sheet button:disabled{opacity:.5;cursor:default}
+.nm-plan-sheet :is(button,select,summary):focus-visible{outline:3px solid #655080;outline-offset:3px}
+.nm-plan-help{font-size:14px!important;line-height:1.65;color:#535564}
+.nm-plan-extra{margin:18px 0 0;border-top:1px solid rgba(81,66,119,.18);padding-top:8px}
+.nm-plan-extra>summary{min-height:44px;box-sizing:border-box;padding:12px 2px;font-size:15px;cursor:pointer;line-height:1.5}
+.nm-plan-preview{margin-top:18px;padding:16px;border:1px solid #c3b58e;border-radius:14px;background:linear-gradient(135deg,#fffdf8,#f2edf6);line-height:1.6;overflow-wrap:anywhere}
+.nm-plan-preview>span,.nm-plan-preview>b,.nm-plan-preview small{display:block}
+.nm-plan-preview>span{font-size:14px;color:#655080;margin-bottom:6px}
+.nm-plan-preview>b{font-size:17px;font-weight:600}
+.nm-plan-preview p{margin:12px 0;font-size:16px}
+.nm-plan-preview time{display:block;font-size:23px;font-family:var(--font-title,'Gowun Batang',serif);font-variant-numeric:tabular-nums}
+.nm-plan-preview small{font-size:13px;color:#535564}
+.nm-plan-managed{padding:14px;border:1px solid #baab88;border-radius:12px;background:#f3ecdd}
+.nm-plan-error{color:#993d28;background:#fff0e9;border:1px solid #c08069;padding:10px 12px;border-radius:10px}
+.nm-plan-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.nm-plan-actions .nm-btn{min-width:0;flex:1 1 120px;min-height:48px;font-size:16px}
+@media(max-width:600px){.nm-cr-desk .nm-cr-titlerow{flex-wrap:wrap}.nm-cr-desk .nm-cr-title{flex-basis:calc(100% - 154px)}.nm-cr-desk .nm-cr-pickbtn{margin-left:auto}.nm-plan-speeds{grid-template-columns:repeat(3,minmax(0,1fr))}.nm-plan-speeds button{min-height:92px}}

@@ -6977,8 +6977,77 @@ function scheduledHighEnvelope(course, courseKey, weekKey, opts){
     courseSessions:courseKeys.reduce((n,key)=>n+courses[key].sessions.filter(s=>!s.test).length,0)};
 }
 
+/* A manual plan already owns its canonical weekly references. Print those exact
+   lessons together without re-running a calendar assignment or changing sources.
+   startSession/sessionIndex are 1-based; lessonIndex/sourceIndices are 0-based. */
+function plannedEnvelope(refs, weekKey, opts){
+  opts=opts||{};
+  const courses=window.NM_COURSES||{};
+  if(!Array.isArray(refs)||!refs.length)return null;
+  const amount=opts.amount==null?getAmount():normAmount(opts.amount),cadence=opts.cad==='w2'?'w2':'w1';
+  const children=[],selectedRefs=[];
+  for(let i=0;i<refs.length;i++){
+    const ref=refs[i],course=ref&&courses[ref.courseKey];
+    if(!course||!Array.isArray(course.sessions))return null;
+    const high=!!highLessons(course);
+    let start=ref.startSession!=null?Number(ref.startSession):ref.sessionIndex!=null?Number(ref.sessionIndex):null;
+    const lesson=ref.lessonIndex!=null?Number(ref.lessonIndex):null;
+    if(lesson!==null&&(!Number.isInteger(lesson)||lesson<0))return null;
+    if(start===null){
+      if(lesson===null)return null;
+      start=high?course.studyPlan.lessons[lesson]?.startSession:lesson+1;
+    }
+    if(!Number.isInteger(start)||start<1||start>course.sessions.length)return null;
+    const child=NM_EXAM.weeklyEnvelope(course,ref.courseKey,weekKey,{...opts,
+      amount,cad:cadence,k:1,compactHigh:high,legacySession:false,highStartDate:null,
+      highWholeWeek:false,startSession:start,sessionIdx:start-1,lesson:high?lesson:undefined,
+      seedScope:'plan'+i+'s'+(start-1)});
+    if(!child)return null;
+    const indices=high?child.sourceSessions.map(n=>n-1):[start-1];
+    // Canonical refs may include these fields as evidence. Never expand a
+    // trimmed/invalid ref into an entire neighbouring lesson silently.
+    if(ref.sourceIndices!=null&&(!Array.isArray(ref.sourceIndices)||JSON.stringify(ref.sourceIndices)!==JSON.stringify(indices)))return null;
+    const extra=high?child.lesson.extraPractice||[]:[];
+    if(ref.extraPractice!=null&&JSON.stringify(ref.extraPractice)!==JSON.stringify(extra))return null;
+    child.items=child.items.map(it=>({...it,
+      courseKey:ref.courseKey,sourceSession:it.sourceSession||ref.courseKey+'-S'+start,
+      legacySession:it.legacySession||start,
+      sessionLabel:ref.courseKey+' · '+(it.sessionLabel||lk('학습 '+start,'Study '+start,'学习 '+start))}));
+    children.push(child);
+    selectedRefs.push({...ref,startSession:start,lessonIndex:high?child.lesson.index:start-1,
+      sourceIndices:indices.slice(),...(extra.length?{extraPractice:extra.map(d=>({...d}))}:{})});
+  }
+  const items=children.flatMap(child=>child.items),units=[...new Set(children.flatMap(child=>child.units))];
+  const courseKeys=[...new Set(selectedRefs.map(ref=>ref.courseKey))],concepts=new Set();
+  items.forEach(it=>{
+    if(!it.thread||it.noTeach)return;
+    const key=it.thread+'@'+it.level;
+    if(concepts.has(key))it.skipConcept=true;
+    else concepts.add(key);
+  });
+  const first=children[0],compactHigh=children.every(child=>child.compactHigh);
+  const estimatedMinutes=children.reduce((sum,child,i)=>{
+    const minutes=Number(selectedRefs[i].estimatedMinutes??child.cover.lessonMinutes??child.session?.minutes);
+    return sum+(Number.isFinite(minutes)&&minutes>0?minutes:0);
+  },0);
+  const title=courseKeys.map(key=>key+' · '+pickL(courses[key].title)).join(' / ');
+  const identity=JSON.stringify(selectedRefs.map(ref=>[ref.courseKey,ref.lessonIndex,ref.startSession,ref.sourceIndices]));
+  const wsId='W'+weekKey+'-P'+NM_RNG.hashSeed(identity+'@'+amount).toString(36);
+  const cover={...first.cover,code:wsId,k:1,cadence,name:opts.name||first.cover.name||'',amount,
+    weekLabel:first.cover.weekLabel.replace(/-[12]주차$/,'주차'),
+    courseTitle:title+' · '+lk('이번 주 학습','This week’s learning','本周学习'),
+    compactHigh,compactMiddle:compactHigh&&courseKeys.every(key=>/^middle[123]$/.test(courses[key].tier)),
+    lessonMinutes:Math.round(estimatedMinutes),weeklyMinutes:estimatedMinutes,studyDays:5,
+    assignedCourseKeys:courseKeys,highWholeWeek:compactHigh,planned:true};
+  return {...first,wsId,items,units,cover,k:1,cad:cadence,title,compactHigh,planned:true,
+    lessons:selectedRefs,assignedCourseKeys:courseKeys,
+    sourceSessions:selectedRefs.flatMap(ref=>ref.sourceIndices.map(i=>i+1)),
+    courseSessions:courseKeys.reduce((sum,key)=>sum+courses[key].sessions.filter(s=>!s.test).length,0)};
+}
+
 const NM_EXAM = {
   getAmount, setAmount, amounts:AMOUNTS.slice(),
+  plannedEnvelope,
 
   /* LaTeX→평문 치환(KaTeX 미로딩 폴백). drill.html 등 다른 스코프도 이걸 재사용한다. */
   texToPlain,
@@ -7669,8 +7738,9 @@ ${printWatermarkHtml()}
         });
         container.querySelectorAll('#nm-road-cad button').forEach(b => {
           b.addEventListener('click', () => {
-            roadCadence = b.dataset.cad;
-            if(opts.onCadence) opts.onCadence(roadCadence);
+            const nextCadence=b.dataset.cad;
+            if(opts.onCadence&&opts.onCadence(nextCadence)===false)return;
+            roadCadence=nextCadence;
             rerenderKeepScroll();
           });
         });

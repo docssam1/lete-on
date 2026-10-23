@@ -753,6 +753,10 @@ function cloudPushSoon(){
 function highWeeklySchedule(courseKey){
   if(!window.NM_HIGH_PACING)return null;
   const managed=S.adminPlan;
+  if(!managed&&S.learningPlan){
+    return (window.NM_COURSES||{})[S.learningPlan.courseKey]?.studyPlan
+      ? {...S.learningPlan} : null;
+  }
   const anchorKey=managed?.courseKey||S.highSchedule?.courseKey||courseKey;
   if(!managed&&!S.roadManual&&!S.middleCadenceDefaultVersion&&/^middle[123]$/.test((window.NM_COURSES||{})[anchorKey]?.tier||'')){
     S.roadCadence='w2';S.middleCadenceDefaultVersion='20261023-core10';
@@ -769,6 +773,37 @@ function highWeeklySchedule(courseKey){
   // Anchor once; viewing another week never changes the student's completion record.
   S.highSchedule={courseKey,sessionIndex:1,startDate:new Date(Date.now()+9*3600000).toISOString().slice(0,10)};
   return {...S.highSchedule,speed:S.roadSpeed||1,cadence:S.roadCadence||'w1'};
+}
+/* A chosen plan is separate from completed work and the diagnostic result. All
+   plan controls use this anchor; opening a lesson never rewrites it. */
+function effectiveLearningSettings(weekKey){
+  const managed=S.adminPlan,courses=window.NM_COURSES||{};
+  if(managed&&courses[managed.courseKey])return {...managed,pace:'p2'};
+  if(S.learningPlan&&courses[S.learningPlan.courseKey]){
+    const historical=weekKey&&window.NM_PLAN_CONTROL?.forWeek(S.learningPlanHistory,weekKey);
+    return {...(historical||S.learningPlan)};
+  }
+  const key=currentCourseKey(),high=highWeeklySchedule(key);
+  return {...(high||{courseKey:key,sessionIndex:1,startDate:new Date(Date.now()+9*3600000).toISOString().slice(0,10)}),
+    speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2'};
+}
+function applyLearningSettings(patch){
+  applyAdminSettings();
+  if(S.adminPlan||!window.NM_PLAN_CONTROL||!stateStorageCurrent())return false;
+  const keys=['learningPlan','learningPlanHistory','roadSpeed','roadAmount','roadCadence','roadPace','roadManual','_roadFocus','highSchedule','middleCadenceDefaultVersion','calculusCadenceDefaultVersion'];
+  const before=Object.fromEntries(keys.map(k=>[k,{present:Object.prototype.hasOwnProperty.call(S,k),value:S[k]}]));
+  try{
+    const weekKey=weekKeyFor(new Date()),current=effectiveLearningSettings();
+    const next=NM_PLAN_CONTROL.change(NM_COURSES,current,patch,{now:new Date(),weekKey});
+    S.learningPlanHistory=NM_PLAN_CONTROL.record(S.learningPlanHistory,{...current,legacy:!S.learningPlan},next,weekKey);
+    S.learningPlan=next;S.roadSpeed=next.speed;S.roadAmount=next.amount;
+    S.roadCadence=next.cadence;S.roadPace=next.pace;S.roadManual=true;S._roadFocus=next.courseKey;
+    if(!save())throw new Error('plan_save_failed');
+    syncAmount();return true;
+  }catch(e){
+    keys.forEach(k=>{if(before[k].present)S[k]=before[k].value;else delete S[k];});
+    return false;
+  }
 }
 function updateWeeklyDigest(){
   try{
@@ -2668,6 +2703,10 @@ function mostRecentBadge(){
 /* 타이틀 화면 "이어서 모험" 요약 한 줄 — "과정 N · 유닛제목" 형태(§14).
    과정에 안 속한 유닛(예: 유아 레거시 유닛)은 유닛 제목만. */
 function progressSummaryLine(){
+  if(S.learningPlan&&!S.adminPlan){
+    const key=currentCourseKey(),course=(window.NM_COURSES||{})[key];
+    if(course)return `${t('titleCourse')} ${key.slice(1)} · ${L(course.title)}`;
+  }
   const uid = mostRecentTouchedUnit();
   if(!uid) return '';
   const u = UNITS[uid];
@@ -2932,7 +2971,10 @@ function segmentEmblems(courses){
 function enterCourseNode(key){
   const c=(window.NM_COURSES||{})[key];
   if(!c) return;
-  const ids=courseUnitIds(c);
+  const position=S.learningPlan&&!S.adminPlan&&window.NM_PLAN_CONTROL
+    ? NM_PLAN_CONTROL.position(NM_COURSES,effectiveLearningSettings(),weekKeyFor(new Date())) : null;
+  const selected=position?.courseKey===key?c.sessions[position.sessionIndex-1]:null;
+  const ids=selected?(selected.magic||[]).filter(id=>UNITS[id]):courseUnitIds(c);
   if(ids.length){
     const nextId=ids.find(u=>!stepDone(u,'stamp'))||ids[0];
     S._roadFocus=key;
@@ -2950,8 +2992,8 @@ function enterCourseNode(key){
    있어야 하지 않아? 둘러보기나").
    예전엔 노드를 누르는 순간 유닛으로 들어가 버려서, 앞으로 뭘 배우는지 구경만
    하려다 학습이 시작되는 일이 생겼다. 이제 셋 중에 고른다:
-     ① 여기서부터 시작하기 — 시작점을 이 과정으로 정하고 들어간다
-        (시작점 고르기 화면과 같은 방식: S.placement에 self:true로 기록)
+     ① 여기서부터 시작하기 — 별도 학습 계획 시작점을 정하고 들어간다.
+        진단 결과와 완료 기록은 변경하지 않는다.
      ② 둘러보기 — 세션 편성(배우는 것·연습하는 것)만 펼쳐 본다. 학습은 시작 안 함
      ③ 닫기
    지금 있는 과정이면 ①의 말이 "이어서 하기"가 된다 — 시작점을 다시 찍을 일이 없다.
@@ -3110,11 +3152,11 @@ function openCourseSheet(key){
   if(built) startBtn.onclick=()=>{
     roadAssessmentReturn=null;
     close();
-    /* 지금 있는 과정이 아니면 시작점을 이 과정으로 다시 찍는다 — 시작점 고르기
-       화면(screenStartPick)과 정확히 같은 기록 방식이라 두 경로가 갈리지 않는다. */
-    if(!isNow){
-      S.placement={ at:Date.now(), course:key, self:true,
-        asked:0, correct:0, profile:[], weak:[], slow:[] };
+    /* Explicitly choose this learning position without rewriting the diagnosis. */
+    if(!isNow&&!applyLearningSettings({courseKey:key,sessionIndex:1})){
+      toast(lk(S.adminPlan?'학원에서 정한 진도예요. 변경은 학원에 요청해 주세요.':'저장하지 못했어요. 다시 시도해 주세요.',
+        S.adminPlan?'Ask your academy to change the assigned plan.':'Could not save. Please try again.',
+        S.adminPlan?'请联系学院更改学习计划。':'未能保存，请重试。'),true);return;
     }
     enterCourseNode(key);
   };
@@ -3562,6 +3604,94 @@ function screenCheckup(){
   },{decimal:isMulti?true:!Number.isInteger(cur.answer), negative:isMulti?true:!!cur.negative, comma:isMulti});
 }
 
+function openLearningPlanSheet(initial){
+  if(document.getElementById('nmPlanSheet')||!window.NM_PLAN_CONTROL)return;
+  const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
+  const courses=window.NM_COURSES||{},base=effectiveLearningSettings(),weekKey=weekKeyFor(new Date());
+  const at=NM_PLAN_CONTROL.position(courses,base,weekKey)||base;
+  const draft={courseKey:initial?.courseKey||at.courseKey,sessionIndex:initial?.sessionIndex||at.sessionIndex,
+    speed:base.speed||1,amount:base.amount||1,cadence:base.cadence||'w1',pace:base.pace||'p2'};
+  const list=roadCourseList().filter(x=>courseBuilt(x.c)&&NM_PLAN_CONTROL.choices(x.c).length);
+  const managed=!!S.adminPlan,previousFocus=document.activeElement;
+  const speedNames=[lk('천천히','Slow','慢速'),lk('여유 있게','Steady','从容'),lk('표준','Standard','标准'),lk('빠르게','Fast','快速'),lk('더 빠르게','Faster','更快')];
+  document.body.insertAdjacentHTML('beforeend',`<div class="nm-gate-overlay nm-cs-overlay" id="nmPlanSheet">
+    <div class="nm-gate-card nm-cs-card nm-plan-sheet" role="dialog" aria-modal="true" aria-labelledby="planTitle" aria-describedby="planNote">
+      <button class="nm-gate-x" id="planX" aria-label="${lk('닫기','Close','关闭')}">✕</button>
+      <span class="nm-cr-eyebrow">${lk('나에게 맞는 계획','A plan for you','适合我的计划')}</span>
+      <h3 class="nm-cs-title" id="planTitle">${lk('진도·속도 조절','Progress & pace','进度与速度')}</h3>
+      <p id="planNote">${lk('다시 공부할 곳이나 앞서 배울 곳을 골라요. 완료 기록과 진단 결과는 그대로 남아요.',
+        'Choose where to review or move ahead. Completed work and assessment results are kept.',
+        '选择复习或继续学习的位置，完成记录和测评结果都会保留。')}</p>
+      ${managed?`<p class="nm-plan-managed" id="planManaged">${lk('학원에서 정한 개인별 계획이에요. 진도·속도 변경은 학원에 요청해 주세요.','Your academy manages this plan. Ask your academy to change progress or pace.','此计划由学院设置，请联系学院调整进度或速度。')}</p>`:''}
+      <fieldset class="nm-plan-fields"${managed?' disabled':''}>
+        <legend>${lk('학습할 위치','Learning position','学习位置')}</legend>
+        <label for="planCourse">${lk('과정','Course','课程')}</label>
+        <select id="planCourse">${list.map(x=>`<option value="${x.key}">${lk('과정','Course','课程')} ${x.num} · ${esc(L(x.c.title))}</option>`).join('')}</select>
+        <div class="nm-plan-stepper"><button type="button" id="planPrev">← ${lk('이전 과정','Previous course','上一课程')}</button><button type="button" id="planNext">${lk('다음 과정','Next course','下一课程')} →</button></div>
+        <label for="planSession">${lk('시작할 회차','Starting lesson','起始课次')}</label><select id="planSession"></select>
+        <div class="nm-plan-speed-title">${lk('학습 속도 · 5단계','Learning pace · 5 levels','学习速度 · 5档')}</div>
+        <div class="nm-plan-speeds" role="group" aria-label="${lk('학습 속도','Learning pace','学习速度')}">${ROAD_MULTS_LIST.map((v,i)=>`<button type="button" data-plan-speed="${v}" aria-pressed="${v===draft.speed}"><span>${i+1}</span><b>${speedNames[i]}</b><small>${v}${lk('배','×','倍')}</small></button>`).join('')}</div>
+        <p class="nm-plan-help">${lk('속도를 낮추면 더 오래 다지고, 높이면 같은 내용을 더 빨리 배워요.','A slower pace gives more time; a faster pace covers the same content sooner.','放慢速度可多巩固，提高速度可更早学完相同内容。')}</p>
+        <details class="nm-plan-extra"><summary>${lk('주당 학습 횟수·문항 수','Weekly frequency & question count','每周次数与题量')}</summary>
+          <label for="planCadence">${lk('주당 학습 묶음','Study bundles per week','每周学习组')}</label><select id="planCadence"><option value="w1">${lk('주 1묶음','1 bundle per week','每周1组')}</option><option value="w2">${lk('주 2묶음','2 bundles per week','每周2组')}</option></select>
+          <label for="planAmount">${lk('계산 문항 수','Calculation question count','运算题量')}</label><select id="planAmount">${ROAD_MULTS_LIST.map(v=>`<option value="${v}">${v===1?lk('기본','Standard','标准'):v+lk('배','×','倍')}</option>`).join('')}</select>
+          <p class="nm-plan-help">${lk('문항 수는 연습량만 바꿔요. 진도와 완료 예상일은 속도·주당 묶음 수로 정해요.','Question count changes practice volume. Pace and weekly bundles set the schedule.','题量只改变练习量，速度和每周组数决定进度。')}</p>
+        </details>
+      </fieldset>
+      <div class="nm-plan-preview" id="planPreview" aria-live="polite" aria-atomic="true"></div>
+      <p class="nm-plan-error" id="planError" role="alert" hidden></p>
+      <div class="nm-plan-actions"><button class="nm-btn ghost" id="planCancel">${lk('취소','Cancel','取消')}</button><button class="nm-btn" id="planApply"${managed?' disabled':''}>${lk('이 계획 적용','Apply this plan','应用此计划')}</button></div>
+    </div></div>`);
+  const modal=document.getElementById('nmPlanSheet'),find=id=>modal.querySelector('#'+id);
+  const close=()=>{modal.remove();if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});};
+  function fillSessions(){
+    const course=courses[draft.courseKey],choices=NM_PLAN_CONTROL.choices(course);
+    if(course.studyPlan&&!choices.some(x=>x.sessionIndex===draft.sessionIndex)){
+      const group=NM_HIGH_PACING.lessonIndex(course,draft.sessionIndex);
+      choices.splice(group+1,0,{index:group+1,sessionIndex:draft.sessionIndex,partial:true});
+    }
+    const chosen=choices.find(x=>x.sessionIndex===draft.sessionIndex)||choices.slice().reverse().find(x=>x.sessionIndex<=draft.sessionIndex)||choices[0];
+    draft.sessionIndex=chosen?.sessionIndex||1;
+    find('planSession').innerHTML=choices.map(x=>`<option value="${x.sessionIndex}" data-display="${x.index}">${course?.studyPlan?lk('학습 묶음','Study bundle','学习组'):lk('회차','Lesson','课次')} ${x.index}${x.partial?lk(' · 이어서',' · continue',' · 继续'):''}</option>`).join('');
+    find('planSession').value=String(draft.sessionIndex);
+    find('planCourse').value=draft.courseKey;
+    const i=list.findIndex(x=>x.key===draft.courseKey);
+    find('planPrev').disabled=managed||i<=0;find('planNext').disabled=managed||i>=list.length-1;
+  }
+  function preview(){
+    try{
+      const next=NM_PLAN_CONTROL.change(courses,base,draft,{now:new Date(),weekKey});
+      const result=NM_LEARNING_PLAN.project(courses,{...next,entryYear:S.schoolAge?.entryYear,birthYear:S.schoolAge?.birthYear},{lang:S.lang,now:new Date()});
+      const tier=courses[draft.courseKey].tier,last=list.filter(x=>x.c.tier===tier).at(-1);
+      const goal=result.milestones.find(m=>m.key===last?.key)||result.milestones[0];
+      find('planPreview').innerHTML=`<span>${lk('적용 후 예상','After applying','应用后预计')}</span><b>${lk('과정','Course','课程')} ${draft.courseKey.slice(1)} · ${esc(find('planSession').selectedOptions[0]?.textContent||'')} · ${draft.speed}${lk('배 속도','× pace','倍速度')}</b>${goal?`<p>${esc(goal.title)} ${lk('완료','finish','完成')} <time datetime="${esc(goal.date)}">${esc(goal.date)}</time><small>${esc(goal.schoolLabel)}</small></p>`:''}<small>${lk('이번 주부터 새 계획을 적용해요. 완료 날짜는 실제 학습에 따라 달라질 수 있어요.','The new plan starts this week. Finish dates may change with actual study.','从本周开始应用新计划，完成日期可能随实际学习调整。')}</small>`;
+      find('planError').hidden=true;
+    }catch(e){find('planError').textContent=lk('계획을 확인하지 못했어요. 과정과 회차를 다시 골라 주세요.','Could not preview this plan. Choose a course and lesson again.','未能预览计划，请重新选择课程与课次。');find('planError').hidden=false;}
+  }
+  fillSessions();find('planCadence').value=draft.cadence;find('planAmount').value=String(draft.amount);preview();
+  find('planCourse').onchange=e=>{draft.courseKey=e.target.value;draft.sessionIndex=1;fillSessions();preview();};
+  find('planSession').onchange=e=>{draft.sessionIndex=+e.target.value;preview();};
+  ['Prev','Next'].forEach((name,i)=>{find('plan'+name).onclick=()=>{const at=list.findIndex(x=>x.key===draft.courseKey),item=list[at+(i?1:-1)];if(!item)return;draft.courseKey=item.key;draft.sessionIndex=1;fillSessions();preview();};});
+  modal.querySelectorAll('[data-plan-speed]').forEach(b=>{b.onclick=()=>{draft.speed=+b.dataset.planSpeed;modal.querySelectorAll('[data-plan-speed]').forEach(x=>x.setAttribute('aria-pressed',String(+x.dataset.planSpeed===draft.speed)));preview();};});
+  find('planCadence').onchange=e=>{draft.cadence=e.target.value;preview();};
+  find('planAmount').onchange=e=>{draft.amount=+e.target.value;preview();};
+  find('planApply').onclick=()=>{
+    if(managed)return;
+    if(!applyLearningSettings(draft)){find('planError').textContent=lk('저장하지 못했어요. 다시 시도해 주세요.','Could not save. Please try again.','未能保存，请重试。');find('planError').hidden=false;return;}
+    close();render();toast(lk('진도와 속도를 적용했어요.','Progress and pace updated.','已应用进度与速度。'));
+  };
+  find('planCancel').onclick=close;find('planX').onclick=close;
+  modal.onclick=e=>{if(e.target===modal)close();};
+  modal.onkeydown=e=>{
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();return;}
+    if(e.key!=='Tab')return;
+    const targets=[...modal.querySelectorAll('button,select,summary')].filter(el=>!el.disabled&&!el.closest('fieldset[disabled]')&&el.getClientRects().length),first=targets[0],last=targets.at(-1);
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  };
+  find('planX').focus({preventScroll:true});
+}
+
 /* 학년 고치기 시트 — 온보딩에서 건너뛰었거나 학년이 바뀐 경우.
    저장은 setSchoolGrade() 하나만 쓴다(입학 연도로 환산해 넣는다). */
 function openAgeSheet(after){
@@ -3646,6 +3776,23 @@ function paceWeeksToFn(curNum, curFrac, cad, pace, speed){
     return Math.max(0, roadTotals(curNum,target-1,cad,mult,speed).weeks - curFrac*curW);
   };
 }
+/* For an explicit plan, map labels use the same dated milestones as the
+   monthly plan, including partial starts. Hypothetical speeds rebase this week. */
+function selectedPlanWeeksTo(cad,pace,speed){
+  if(!S.learningPlan||S.adminPlan||!window.NM_PLAN_CONTROL||!window.NM_LEARNING_PLAN)return null;
+  try{
+    const base=effectiveLearningSettings(),options={now:new Date(),weekKey:weekKeyFor(new Date())};
+    const changed=base.cadence!==cad||base.pace!==pace||base.speed!==speed;
+    const rebased=NM_PLAN_CONTROL.change(NM_COURSES,base,{cadence:cad,pace,speed},options);
+    const result=NM_LEARNING_PLAN.project(NM_COURSES,changed?rebased:base,{now:options.now});
+    const monday=Date.parse(rebased.startDate+'T00:00:00Z'),cur=+currentCourseKey().slice(1);
+    return target=>{
+      if(target<=cur)return 0;
+      const goal=result.milestones.filter(m=>+m.key.slice(1)<target).at(-1);
+      return goal?Math.max(0,(Date.parse(goal.date+'T00:00:00Z')-monday)/(7*86400000)):0;
+    };
+  }catch(e){return null;}
+}
 /* 판정 한 벌 — 화면과 검사기(window.NM_PACE_DIAG)가 같은 것을 쓴다.
    o 로 설정·과정·나이를 바꿔 볼 수 있다(검사기용). 나이를 모르면 null. */
 function paceCompareResult(o){
@@ -3660,13 +3807,14 @@ function paceCompareResult(o){
   let curFrac=o.curFrac;
   if(curFrac==null){ const p=c?courseProgress(c):{done:0,total:0}; curFrac=p.total?p.done/p.total:0; }
   const cur={cad:o.cad||S.roadCadence, pace:o.pace||roadPaceDef(S.roadPace).key, speed:o.speed||S.roadSpeed||1};
-  const ctx={curNum, curFrac, smNow, weeksTo:paceWeeksToFn(curNum,curFrac,cur.cad,cur.pace,cur.speed)};
+  const selected=!o.curKey&&o.curFrac==null;
+  const ctx={curNum, curFrac, smNow, weeksTo:(selected&&selectedPlanWeeksTo(cur.cad,cur.pace,cur.speed))||paceWeeksToFn(curNum,curFrac,cur.cad,cur.pace,cur.speed)};
   const ev=PC.evaluate(ctx);
   let sugg=[];
   if(ev.target){
     const settings=[];
     ['w1','w2'].forEach(cad=>ROAD_PACES.forEach(p=>ROAD_MULTS_LIST.forEach(speed=>{
-      settings.push({cad, pace:p.key, speed, weeksTo:paceWeeksToFn(curNum,curFrac,cad,p.key,speed)});
+      settings.push({cad, pace:p.key, speed, weeksTo:(selected&&selectedPlanWeeksTo(cad,p.key,speed))||paceWeeksToFn(curNum,curFrac,cad,p.key,speed)});
     })));
     sugg=PC.suggest(ctx, ev.target.key, cur, settings, ROAD_PACES.map(p=>p.key));
   }
@@ -3688,7 +3836,7 @@ function roadTiming(o){
   let curFrac=o.curFrac;
   if(curFrac==null){ const p=c?courseProgress(c):{done:0,total:0}; curFrac=p.total?p.done/p.total:0; }
   const cad=o.cad||S.roadCadence, pace=o.pace||roadPaceDef(S.roadPace).key, speed=o.speed||S.roadSpeed||1;
-  const weeksTo=paceWeeksToFn(curNum,curFrac,cad,pace,speed);
+  const weeksTo=(!o.curKey&&o.curFrac==null&&selectedPlanWeeksTo(cad,pace,speed))||paceWeeksToFn(curNum,curFrac,cad,pace,speed);
   const ctx={curNum, curFrac, smNow, weeksTo};
   const WPM=PC?PC.WEEKS_PER_MONTH:52/12;
   const at=n=>smNow==null?null:(PC?PC.childSmAt(ctx,n):(n<=curNum?null:smNow+weeksTo(n)/WPM));
@@ -3957,8 +4105,7 @@ function renderPersonalPlan(){
   if(!box){box=document.createElement('details');box.id='nmPersonalPlan';box.className='nm-personal-plan';}
   const lk=(ko,en,zh)=>S.lang==='en'?en:S.lang==='zh'?zh:ko;
   const p=S.adminPlan,now=new Date(),today=new Date(+now+9*3600000).toISOString().slice(0,10);
-  const highPlan=highWeeklySchedule(currentCourseKey());
-  const settings=p&&NM_COURSES[p.courseKey]?p:{courseKey:highPlan?.courseKey||currentCourseKey(),sessionIndex:highPlan?.sessionIndex||1,speed:S.roadSpeed||1,amount:S.roadAmount||1,cadence:S.roadCadence||'w1',pace:S.roadPace||'p2',entryYear:S.schoolAge?.entryYear,startDate:highPlan?.startDate||today};
+  const settings={...effectiveLearningSettings(),entryYear:S.schoolAge?.entryYear};
   let result;try{result=NM_LEARNING_PLAN.project(NM_COURSES,{...settings,birthYear:S.schoolAge?.birthYear},{months:12,lang:S.lang,now});}catch(e){return;}
   const reference=NM_LEARNING_PLAN.recommend(NM_COURSES,settings,{lang:S.lang});
   let standardBox=document.getElementById('nmStandardPlan');
@@ -4043,7 +4190,7 @@ function screenCourseRoad(){
     .filter(g=>g.entries.length);
   const mapGroupFor=n=>n==null?null:mapGroups.find(g=>g.entries.some(s=>n>=s.courses.from&&n<=s.courses.to));
   const mapRange=g=>`${lk('과정','Courses','课程')} ${g.entries[0].courses.from}~${g.entries[g.entries.length-1].courses.to}`;
-  let selectedMapGroup=(mapGroupFor(learnedCourseNum)||mapGroupFor(recommendationNum)||mapGroups[0]||{}).key;
+  let selectedMapGroup=(mapGroupFor(S.learningPlan?curNum:null)||mapGroupFor(learnedCourseNum)||mapGroupFor(recommendationNum)||mapGroups[0]||{}).key;
   let roadView=S._roadFocus?'road':S.roadView;
   const mapButtons=mapGroups.map((g,i)=>{
     const learned=g===mapGroupFor(learnedCourseNum), recommended=g===mapGroupFor(recommendationNum);
@@ -4067,7 +4214,7 @@ function screenCourseRoad(){
         <button class="nm-back" id="crBack">← ${fromAssessment?lk('진단 결과로','Back to assessment result','返回测评结果'):navigationLabel('town')}</button>
         <div class="nm-cr-title"><span class="nm-cr-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 20.5c0-4.6 9.5-3.2 9.5-7.6 0-3.6-6.2-3.2-6.2-6.6" stroke-dasharray="2.4 2.2"/><circle cx="5.5" cy="20" r="1.4" fill="currentColor" stroke="none"/><path d="M15.6 3.2v8M15.6 3.6h4.6l-1.5 2 1.5 2h-4.6"/></svg></span><span class="nm-cr-title-t">${lk('연산 로드맵','Course Road','运算路线图')}</span></div>
         <button class="nm-cr-diagbtn" id="crDiag">${crIc('compass')}<span>${lk('진단하기','Level Check','水平测评')}</span></button>
-        <button class="nm-cr-pickbtn" id="crPick" title="${lk('시작점 고르기','Pick your start','选择起点')}" aria-label="${lk('시작점 고르기','Pick your start','选择起点')}">${crIc('target')}</button>
+        <button class="nm-cr-pickbtn" id="crPick">${crIc('target')}<span>${lk('진도·속도 조절','Progress & pace','进度与速度')}</span></button>
       </div>
     </div>
     <div class="nm-cr-body" id="crBody">
@@ -4131,7 +4278,7 @@ function screenCourseRoad(){
   </div>`;
   $('#crBack').onclick=()=>{S._roadFocus=null;S.view=fromAssessment?'placement':'town';roadAssessmentReturn=null;save();render();};
   $('#crDiag').onclick=()=>startPlacement();
-  $('#crPick').onclick=()=>{roadAssessmentReturn=null;S.view='startpick';save();render();};
+  $('#crPick').onclick=()=>openLearningPlanSheet();
   $('#crWho').onclick=()=>openStudentSwitch();
 
   const body=$('#crBody');
@@ -4254,8 +4401,7 @@ function screenCourseRoad(){
     const goalKey=nextGoalKey(curKey);
     const goalC=goalKey?(window.NM_COURSES||{})[goalKey]:null;
     const curC=(window.NM_COURSES||{})[curKey];
-    const middleRoute=!!curC&&/^middle[123]$/.test(curC.tier),calculusRoute=curC?.tier==='calculus1';
-    const fresh=!mostRecentTouchedUnit();
+    const fresh=!mostRecentTouchedUnit()&&!S.learningPlan&&!S.placement?.course;
     const courseLine=(key,c)=>`${lk('과정','Course','课程')} ${String(key).replace(/^C/,'')} · ${esc(L(c.title))}`;
 
     let html=`<div class="nm-cr-conq">
@@ -4274,38 +4420,18 @@ function screenCourseRoad(){
     </div>`;
 
     /* ── 주차 보기 전환 + 합계 (부가 정보 — 주인공 자리가 아니다) ── */
-    const segBtn=(attr,v,on,label)=>`<button class="${on?'on':''}" data-${attr}="${v}" aria-pressed="${on?'true':'false'}">${label}</button>`;
-    const multLbl=v=>({0.7:lk('1 · 천천히','1 · Slow','1 · 慢速'),0.85:lk('2 · 여유 있게','2 · Steady','2 · 从容'),1:lk('3 · 표준','3 · Standard','3 · 标准'),1.25:lk('4 · 빠르게','4 · Fast','4 · 快速'),1.5:lk('5 · 더 빠르게','5 · Faster','5 · 更快')})[v];
-    const amountLbl=v=>v===1?lk('기본','Standard','默认')
-      : v<1 ? lk(`적게 · ${v}배`,`Lighter · ${v}×`,`少量 · ${v}倍`) : lk(`많이 · ${v}배`,`More · ${v}×`,`加量 · ${v}倍`);
-    html+=`<div class="nm-cr-cad" id="crPace">
-      <div class="nm-cr-sec">
-        <span class="nm-cr-eyebrow">${lk('학습 속도','Pace','学习速度')}</span>
-        <div class="nm-cr-cad-h big">${lk('어느 빠르기로 걸어갈까요?','How fast shall we walk?','要以什么速度走？')}</div>
-        <p class="nm-cr-cadlead">${lk('수업 횟수와 목표를 고르면 아래 주차·개월이 바로 바뀌어요. 배우는 순서와 내용은 그대로예요.',
-             'Pick how often you meet and your target — the weeks and months below follow. The order and content stay the same.',
-             '选择上课次数和目标，下面的周数和月数随之改变。学习顺序和内容不变。')}</p>
-        <p class="nm-cr-caveat">${crIc('info')}<span>${lk('연산 트랙만 센 주차예요. 사고력·교과를 함께하면 그만큼 더 걸려요.',
-             'Weeks count the arithmetic track only — thinking-math and school-math alongside take longer.',
-             '周数只算运算课程，同时上思维和教材课程会更久。')}</span></p>
-      </div>
-      <div class="nm-cr-step">
-        <div class="nm-cr-cad-h"><i>1</i>${middleRoute?lk('중등 학습 경로','Middle-school route','初中学习路径'):lk('주당 학습 묶음','Study bundles per week','每周学习组')}</div>
-        <div class="nm-cr-seg" role="group" aria-label="${lk('수업 횟수','Class frequency','上课次数')}">
-          ${segBtn('cad','w1',cad==='w1',middleRoute?lk('주 1묶음 · 천천히','1 bundle per week · slower','每周1组 · 慢速'):calculusRoute?lk('천천히 · 24주','Slower · 24 weeks','慢速 · 24周'):lk('주 1묶음','1 per week','每周1组'))}
-          ${segBtn('cad','w2',cad==='w2',middleRoute?lk('주 2묶음 · 기본 2.5개월','2 bundles per week · core 2.5 months','每周2组 · 基础2.5个月'):calculusRoute?lk('기본 · 12주','Standard · 12 weeks','标准 · 12周'):lk('주 2묶음','2 per week','每周2组'))}
-        </div>
-        <p class="nm-cr-cadnote">${calculusRoute?lk('기본은 20회차를 12주에 나누어 공부해요. 주마다 1~2회차가 배정되며, 속도를 바꾸면 일정도 달라져요.','The standard plan distributes 20 sessions over 12 weeks, one or two sessions each week. Changing pace changes the schedule.','标准计划将20课次分配到12周，每周1~2课次，速度改变时日程也会调整。'):cad==='w2'
-          ? lk('한 주에 수업 2회 — 한 과정에 드는 주가 절반이 돼요. 더 다지고 싶으면 아래에서 속도를 낮춰요.',
-               'Two classes a week — a course takes half the weeks. To consolidate more, lower the speed below.',
-               '每周上课2次，一个课程所需周数减半。想多巩固，可在下面调低速度。')
-          : lk('한 주에 수업 1회 — 과정마다 마지막 회는 확인 수업이에요.',
-               'One class a week — each course ends with a check class.',
-               '每周上课1次，每个课程最后一次是检查课。')}</p>
-      </div>
+    const speedName=({0.7:lk('1 · 천천히','1 · Slow','1 · 慢速'),0.85:lk('2 · 여유 있게','2 · Steady','2 · 从容'),1:lk('3 · 표준','3 · Standard','3 · 标准'),1.25:lk('4 · 빠르게','4 · Fast','4 · 快速'),1.5:lk('5 · 더 빠르게','5 · Faster','5 · 更快')})[speed];
+    html+=`<section class="nm-cr-cad nm-cr-plan-control" id="crPace" aria-labelledby="crPlanControlTitle">
+      <span class="nm-cr-eyebrow">${lk('나의 학습 계획','My learning plan','我的学习计划')}</span>
+      <h3 id="crPlanControlTitle">${lk('진도와 속도를 맞춰요','Adjust progress and pace','调整进度与速度')}</h3>
+      <p>${curC?courseLine(curKey,curC):''}</p>
+      <div class="nm-plan-current"><b>${speedName}</b><span>${speed}${lk('배','×','倍')} · ${lk('주','Weekly','每周')} ${cad==='w2'?2:1}${lk('묶음',' bundles','组')}</span></div>
+      <p class="nm-plan-help">${S.adminPlan?lk('학원에서 정한 개인별 계획을 적용하고 있어요.','Your academy’s individual plan is applied.','已应用学院设置的个人计划。'):lk('이전·다음 과정이나 시작할 회차를 고르고, 속도를 5단계로 조절해요.','Choose an earlier or later course and starting lesson, then set one of five pace levels.','选择之前或之后的课程及起始课次，再调整五档速度。')}</p>
+      <button type="button" class="nm-btn full" id="crAdjust">${lk('진도·속도 조절','Progress & pace','进度与速度')}</button>
+      <details class="nm-plan-extra nm-plan-references"><summary>${lk('기준과 전체 기간 보기','Reference & whole-path estimates','参考标准与全程时间')}</summary>
       <div class="nm-cr-step nm-cr-pace">
-        <div class="nm-cr-cad-h"><i>2</i>${lk('목표 빠르기','Target pace','目标速度')}</div>
-        <div class="nm-cr-pacegrid" role="group" aria-label="${lk('목표 빠르기','Target pace','目标速度')}">
+        <div class="nm-cr-cad-h">${lk('유아·초등 계획 기준','Preschool & elementary reference','学前与小学参考标准')}</div>
+        <div class="nm-cr-pacegrid" role="group" aria-label="${lk('유아·초등 계획 기준','Preschool & elementary reference','学前与小学参考标准')}">
           ${ROAD_PACES.map(p=>{
             const mo=roadTotals(0,ROAD_OP_LAST,cad,roadPaceMult(p.key)/speed).months;
             return `<button class="nm-cr-pacebtn${p.key===pace?' on':''}" data-pace="${p.key}" aria-pressed="${p.key===pace?'true':'false'}">
@@ -4315,22 +4441,6 @@ function screenCourseRoad(){
         <p class="nm-cr-pacenote">${lk('길은 같고 걷는 빠르기만 달라요. 언제든 바꿀 수 있어요.',
              'Same road, only the walking speed changes. Switch any time.',
              '路是同一条，只是走的速度不同。随时可以切换。')}</p>
-      </div>
-      <div class="nm-cr-step nm-cr-pace nm-cr-mult">
-        <div class="nm-cr-cad-h"><i>3</i>${lk('속도 · 양 조절','Speed · amount','速度 · 分量')}<small>${lk('선택','optional','可选')}</small></div>
-        <div class="nm-cr-multrow"><span>${lk('속도','Speed','速度')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('속도','Speed','速度')}">${ROAD_MULTS_LIST.map(v=>segBtn('speed',v,speed===v,multLbl(v))).join('')}</div></div>
-        <div class="nm-cr-multrow"><span>${lk('양','Amount','分量')}</span>
-          <div class="nm-cr-seg" role="group" aria-label="${lk('양','Amount','分量')}">${ROAD_MULTS_LIST.map(v=>segBtn('amount',v,S.roadAmount===v,amountLbl(v))).join('')}</div></div>
-        <details class="nm-cr-more">
-          <summary>${lk('속도와 양이 뭔가요?','What do speed and amount do?','速度和分量是什么？')}</summary>
-          <ul>
-            <li>${lk('기본은 정해 둔 편성 그대로예요 — 한 회 30분, 중2·중3은 40분.','Default is the set plan — 30 minutes a class, 40 for middle grades 2–3.','默认即既定安排：每次30分钟，初二·初三40分钟。')}</li>
-            <li>${lk('0.7배까지 줄이고 1.5배까지 늘릴 수 있어요.','Go down to 0.7× or up to 1.5×.','可减到0.7倍、加到1.5倍。')}</li>
-            <li>${lk('속도를 올리면 같은 기간에 회차를 더 나가 주차·개월이 줄고, 내리면 늘어요.','Faster speed covers more classes in the same time, so weeks and months shrink; slower stretches them.','提高速度会在同样时间里上更多课次，周数和月数减少；放慢则增加。')}</li>
-            <li>${lk('양은 그 주에 배우는 계산의 문항 수예요. 복습·독셈·적용은 그대로이고, 같은 문제는 되풀이하지 않아요.','Amount is how many problems of that week\'s calculation. Review, Doc-T Math and applying stay the same; problems never repeat.','分量是本周所学运算的题数。复习·巧算·应用不变，题目不重复。')}</li>
-          </ul>
-        </details>
       </div>
       <div class="nm-cr-step nm-cr-est">
         <div class="nm-cr-cad-h sub">${lk('이 빠르기로 걸리는 시간','How long that takes','按这个速度需要多久')}</div>
@@ -4353,7 +4463,8 @@ function screenCourseRoad(){
             ? lk('주 2회면 한 주에 80~100분이에요.','about 80–100 minutes a week.','每周约80~100分钟。')
             : lk('주 1회면 한 주에 40~50분이에요.','about 40–50 minutes a week.','每周约40~50分钟。')}</p>
       </div>
-    </div>`;
+      </details>
+    </section>`;
     /* 속도 비교 진단 — 위에서 고른 빠르기 그대로 세 기준과 견준다(2026-09-26) */
     html+=paceCompareHtml();
 
@@ -4593,23 +4704,16 @@ function screenCourseRoad(){
 
     const keep=keepScroll?body.scrollTop:0;
     listEl.innerHTML=html;
-    if(curC?.studyPlan){const preschoolPaces=listEl.querySelector('.nm-cr-step.nm-cr-pace:not(.nm-cr-mult)');if(preschoolPaces)preschoolPaces.hidden=true;}
+    if(curC?.studyPlan){const preschoolPaces=listEl.querySelector('.nm-cr-step.nm-cr-pace');if(preschoolPaces)preschoolPaces.hidden=true;}
+    body.querySelector('#crAdjust').onclick=()=>openLearningPlanSheet();
+    if(S.adminPlan)body.querySelectorAll('[data-pace],[data-pc-apply]').forEach(b=>b.disabled=true);
     if(window.NM_STUDY_ROUTE){
       const gp=S.placement&&S.placement.pathRecommendation;
       if(!listEl.querySelector('[data-study-route]'))listEl.insertAdjacentHTML('afterbegin','<section class="nm-card"><div data-study-route></div></section>');
       listEl.querySelectorAll('[data-study-route]').forEach(el=>window.NM_STUDY_ROUTE.mount(el,{lang:S.lang,course:gp?gp.main.course:currentCourseKey(),session:gp?gp.main.session:1,cadence:S.roadCadence}));
     }
-    body.querySelectorAll('.nm-cr-seg button[data-cad]').forEach(el=>{
-      el.onclick=()=>{ S.roadCadence=el.dataset.cad; S.roadManual=true; save(); draw(true); };
-    });
     body.querySelectorAll('.nm-cr-pacebtn[data-pace]').forEach(el=>{
-      el.onclick=()=>{ S.roadPace=el.dataset.pace; save(); draw(true); };
-    });
-    body.querySelectorAll('.nm-cr-seg button[data-speed]').forEach(el=>{
-      el.onclick=()=>{ S.roadSpeed=+el.dataset.speed; S.roadManual=true; save(); draw(true); };
-    });
-    body.querySelectorAll('.nm-cr-seg button[data-amount]').forEach(el=>{
-      el.onclick=()=>{ S.roadAmount=+el.dataset.amount; S.roadManual=true; save(); syncAmount(); draw(true); };
+      el.onclick=()=>{ if(applyLearningSettings({pace:el.dataset.pace}))render(); };
     });
     body.querySelectorAll('.nm-cr-node[data-c]').forEach(el=>{
       el.onclick=()=>openCourseSheet(el.dataset.c);
@@ -4637,8 +4741,8 @@ function screenCourseRoad(){
     if(pcAge) pcAge.onclick=()=>openAgeSheet(()=>draw(true));
     body.querySelectorAll('[data-pc-apply]').forEach(el=>{
       el.onclick=()=>{
-        S.roadCadence=el.dataset.cad; S.roadPace=el.dataset.pace; S.roadSpeed=+el.dataset.speed;
-        save(); draw(true);
+        if(!applyLearningSettings({cadence:el.dataset.cad,pace:el.dataset.pace,speed:+el.dataset.speed}))return;
+        render();
         const PC=window.NM_PACE_COMPARE;
         if(PC) toast(L(PC.STR.applied));
       };
@@ -5112,7 +5216,7 @@ function screenPlacement(){
     planSettings:{speed:S.roadSpeed||1,pace:S.roadPace||'p2',cadence:S.roadCadence||'w1'},
     onProfile:profile=>{S.schoolAge={entryYear:profile.entryYear,birthYear:profile.birthYear,setAt:Date.now()};save();},
     paceManaged:!!S.adminPlan,
-    onPaceApply:p=>{if(S.adminPlan||!ROAD_MULTS_LIST.includes(p.speed)||!['w1','w2'].includes(p.cadence))return false;S.roadSpeed=p.speed;S.roadCadence=p.cadence;S.roadManual=true;save();return true;},
+    onPaceApply:p=>{if(S.adminPlan||!ROAD_MULTS_LIST.includes(p.speed)||!['w1','w2'].includes(p.cadence))return false;return applyLearningSettings({speed:p.speed,cadence:p.cadence});},
     pick:()=>{S._diag=null;S.view='startpick';save();render();},
     seeCourse:key=>{roadAssessmentReturn=S._diag;S._roadFocus=key;S.view='courseroad';save();render();},
     onResult:(result,run)=>{
@@ -5569,8 +5673,11 @@ function screenStartPick(){
   scr.querySelectorAll('.nm-sp-go').forEach(b=>{
     b.onclick=()=>{
       const key=b.dataset.c;
-      S.placement={ at:Date.now(), course:key, self:true,
-        asked:0, correct:0, profile:[], weak:[], slow:[] };
+      if(!applyLearningSettings({courseKey:key,sessionIndex:1})){
+        toast(lk(S.adminPlan?'학원에서 정한 진도예요. 변경은 학원에 요청해 주세요.':'저장하지 못했어요. 다시 시도해 주세요.',
+          S.adminPlan?'Ask your academy to change the assigned plan.':'Could not save. Please try again.',
+          S.adminPlan?'请联系学院更改学习计划。':'未能保存，请重试。'),true);return;
+      }
       S._roadFocus=key; S.view='courseroad'; save(); render();
     };
   });
@@ -5657,7 +5764,7 @@ function screenTitle(){
     </div>
   </div>`;
   $('#ttAttendance')?.addEventListener('click',e=>showAttendanceBook(e.currentTarget));
-  $('#ttContinue').onclick=()=>enterContinueUnit(uid);
+  $('#ttContinue').onclick=()=>S.learningPlan&&!S.adminPlan?enterCourseNode(currentCourseKey()):enterContinueUnit(uid);
   $('#ttDiag').onclick=()=>startPlacement();
   $('#ttGame').onclick=()=>{ S.view='town'; save(); render(); };
   $('#ttSheet').onclick=()=>{ S.view='exam'; save(); render(); };
@@ -5749,12 +5856,13 @@ function lineageBadgeRowHtml(){
   const chips=keys.map(k=>{const line=map[k];return line?`<span class="nm-lin-chip big" title="${esc(L(line.name))}">${line.emblem}</span>`:'';}).join('');
   return chips?`<div class="nm-title-lin-row">${chips}</div>`:'';
 }
-/* 학생의 현 과정 위치. courses 진행 상태를 직접 추적하는 저장값은 아직
-   없어서(§10 "courses.js의 과정 위치(현재 세션)" — 이 프로필 구조엔 세션
-   단위 진행 기록이 없다), 가장 최근에 손댄 마법 유닛이 속한 과정으로
-   대신한다(스펙의 "없으면 최근 학습 유닛의 과정" 그대로). 아무 기록도
-   없는 완전 신규 학생은 과정1부터. */
+/* The explicit learning plan has its own position. Without one, retain the
+   legacy admin/recent-study/diagnostic precedence. Completed work stays separate. */
 function currentCourseKey(){
+  if(!S.adminPlan&&S.learningPlan&&window.NM_PLAN_CONTROL){
+    const at=NM_PLAN_CONTROL.position(window.NM_COURSES||{},S.learningPlan,weekKeyFor(new Date()));
+    if(at&&(window.NM_COURSES||{})[at.courseKey])return at.courseKey;
+  }
   const uid = mostRecentTouchedUnit();
   if(S.adminPlan&&(window.NM_COURSES||{})[S.adminPlan.courseKey]){
     const changed=Date.parse(S.adminPlan.updatedAt)||0;
@@ -5847,8 +5955,8 @@ function showUnlockOverlay(queue){
   $('#nmUnlockOverlay').addEventListener('click', e=>{ if(e.target.id==='nmUnlockOverlay') close(); });
 }
 /* 그 과정에서 봉투에 담을 세션 — 마법이 있는 첫 세션(없으면 첫 세션). */
-function primarySessionOf(course,courseKey,weekKey){
-  const plan=highWeeklySchedule(courseKey);
+function primarySessionOf(course,courseKey,weekKey,scheduleOverride){
+  const plan=scheduleOverride===undefined?highWeeklySchedule(courseKey):scheduleOverride;
   if(plan&&weekKey){
     const assigned=NM_HIGH_PACING.assignment(NM_COURSES,{...plan,startSession:plan.sessionIndex,weekKey});
     if(!assigned)return null;
@@ -5881,17 +5989,25 @@ function envItemSeed(weekKey, courseKey, i){
 /* weekKey → 그 주 봉투(placements 모델, §12). courses.js/threads.js 미로딩 시 null. */
 function envelopeForWeek(weekKey){
   if(!window.NM_COURSES || !window.NM_THREADS) return null;
-  const current=currentCourseKey(),highPlan=highWeeklySchedule(current);
-  const courseKey = highPlan?highPlan.courseKey:current;
+  const manual=!S.adminPlan&&S.learningPlan&&window.NM_PLAN_CONTROL;
+  const settings=manual?effectiveLearningSettings(weekKey):null;
+  const at=settings&&!settings.legacy?NM_PLAN_CONTROL.position(NM_COURSES,settings,weekKey):null;
+  if(at&&!at.weekLessons.length)return null;
+  const current=settings?settings.courseKey:currentCourseKey();
+  const highPlan=settings?(NM_COURSES[settings.courseKey]?.studyPlan?settings:null):highWeeklySchedule(current);
+  const courseKey = at?at.courseKey:highPlan?highPlan.courseKey:current;
   const course = NM_COURSES[courseKey];
   if(!course) return null;
-  const session = primarySessionOf(course,courseKey,weekKey);
+  const source=at?.weekLessons.flatMap(ref=>ref.sourceIndices.map(i=>NM_COURSES[ref.courseKey].sessions[i]));
+  const session=source?{magic:[...new Set(source.flatMap(s=>s.magic||[]))],drills:source.flatMap(s=>s.test?s.pool||[]:s.drills||[]).concat(at.weekLessons.flatMap(ref=>ref.extraPractice||[])),assignedLessons:at.weekLessons}
+    :primarySessionOf(course,courseKey,weekKey,settings?highPlan:undefined);
   if(!session) return null;
   const placements = (session.drills||[]).map((d,i) => ({
     order: i+1, thread: d.t, level: d.lv, count: d.n,
     seed: envItemSeed(weekKey, courseKey, i)
   }));
-  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, highPlan, magic: session.magic||null, placements };
+  return { wsId: `W${weekKey}-${courseKey}`, weekKey, courseKey, course, session, highPlan, planSettings:settings,
+    plannedRefs:at?.weekLessons, magic: session.magic||null, placements };
 }
 function mailboxEnvelopeCode(env){ return env.wsId; }
 
@@ -6168,8 +6284,10 @@ function screenMailbox(){
          편집기를 먼저 연다(문항 스왑·유형 교체·인쇄는 편집기 안에서). */
       /* 링크 학습지(ws.html)와 같은 구성(2026-09-08 파리티) — 필산 회차 + 독셈 + 문장제, 표지·
          마법 유닛까지 exam.js weeklyEnvelope 하나가 만든다. 편집기에서 문항을 바꿔도 회차 구성은 같다. */
-      const wk = (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
-        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:S.roadCadence, grade:printGradeKey(), compactHigh:true,
+      const wk = env.plannedRefs&&window.NM_EXAM?.plannedEnvelope
+        ? NM_EXAM.plannedEnvelope(env.plannedRefs,env.weekKey,{name:S.name,cad:env.planSettings.cadence,amount:env.planSettings.amount,grade:printGradeKey()})
+        : (window.NM_EXAM && NM_EXAM.weeklyEnvelope)
+        ? NM_EXAM.weeklyEnvelope(env.course, env.courseKey, env.weekKey, { name:S.name, cad:env.planSettings?.cadence||S.roadCadence, amount:env.planSettings?.amount, grade:printGradeKey(), compactHigh:true,
             startSession:env.highPlan?env.highPlan.sessionIndex:S.adminPlan?.courseKey===env.courseKey?S.adminPlan.sessionIndex:null,
             highStartDate:env.highPlan?.startDate,highSpeed:env.highPlan?.speed,highWholeWeek:true,
             /* 몇 번째 회차인가 = 이 주 전에 연 봉투 수(2026-09-30, 언어사고력 주제 순환·유아 중반 판정) */
@@ -8680,7 +8798,12 @@ function screenExam(){
     currentCourse: currentCourseKey(), tiers: ROAD_TIERS,
     /* 주차 라벨용 — 연산 로드맵 화면(courseroad)과 같은 설정을 공유한다 */
     cadence: S.roadCadence,
-    onCadence: c => { if(c==='w1'||c==='w2'){ S.roadCadence=c; S.roadManual=true; save(); } },
+    onCadence: c => {
+      if(!['w1','w2'].includes(c)||!applyLearningSettings({cadence:c})){
+        toast(S.lang==='en'?'Could not change the plan. Check whether your academy manages it.':S.lang==='zh'?'未能更改计划，请确认是否由学院设置。':'계획을 바꾸지 못했어요. 학원에서 정한 계획인지 확인해 주세요.',true);return false;
+      }
+      return true;
+    },
     /* 세션 인쇄 회수(2026-09-04, "웹페이지 들어가면 추가로 계속 인쇄") — 참조를 그대로
        넘긴다(같은 객체를 exam.js가 읽고, onPrinted로 쓰기만 요청). */
     roadPrints: S.roadPrints,
