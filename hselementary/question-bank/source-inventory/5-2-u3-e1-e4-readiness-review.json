@@ -1880,20 +1880,20 @@
       "commonTypeId": "trapezoid-midpoint-triangle-area",
       "typeLabel": "사다리꼴의 옆변 중점과 삼각형 넓이",
       "childFriendlyTypeLabel": "중점을 이용해 삼각형 넓이 구하기",
-      "originalStructure": "평행한 두 변 10cm, 8cm와 높이 6cm인 사다리꼴에서 오른쪽 변의 중점을 연결한 삼각형 넓이를 구합니다.",
+      "originalStructure": "직각 사다리꼴 ㄱㄴㄷㄹ에서 ㄱㄴ=8cm, ㄷㄹ=10cm이며 두 변은 ㄱㄹ에 수직입니다. ㄱㄹ=6cm이고 점 ㅁ은 변 ㄴㄷ의 중점입니다. 목표는 △ㄱㄹㅁ의 넓이입니다.",
       "conditions": [
-        "평행한 변 10cm, 8cm",
-        "왼쪽 높이 6cm",
-        "오른쪽 점은 옆변의 중점"
+        "ㄱㄴ=8cm, ㄷㄹ=10cm, ㄱㄹ=6cm",
+        "ㄱㄴ과 ㄷㄹ은 각각 ㄱㄹ에 수직",
+        "점 ㅁ은 변 ㄴㄷ의 중점"
       ],
-      "visualRequirement": "중점 표시와 두 평행변의 길이 방향을 확인해야 합니다.",
-      "independentCalculation": "중점의 수평거리는 (10+8)/2=9cm이고 목표 삼각형 넓이는 1/2×6×9=27cm²입니다.",
-      "answerFormula": "(10+8)/2=9; A=1/2×6×9=27",
+      "visualRequirement": "사다리꼴의 꼭짓점 순서와 직각 표식, 점 ㅁ이 변 ㄴㄷ의 중점임을 보존하고 목표 △ㄱㄹㅁ을 표시합니다.",
+      "independentCalculation": "점 ㅁ을 지나 두 평행변과 평행한 중선을 그어 ㄱㄹ과 만나는 점을 ㅂ이라 합니다. 사다리꼴 중선 ㅂㅁ=(10+8)/2=9cm이고, △ㄱㄹㅁ의 밑변 ㄱㄹ=6cm이므로 넓이=6×9/2=27cm²입니다.",
+      "answerFormula": "(10+8)/2=9; A=6×9/2=27",
       "independentAnswer": "27cm²",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "좌표를 두 평행선 위에 놓고 중점의 수평거리를 독립 계산했습니다.",
+      "singleAnswerCheck": "기준 밑변 ㄱㄹ의 길이는 6cm이며, 중점 ㅁ을 지나는 사다리꼴 중선의 길이는 두 평행변의 산술평균 9cm로 유일합니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
       "visualCheckStatus": "confirmed-source-structure",
@@ -1905,8 +1905,8 @@
   "summary": {
     "sourceItemCount": 53,
     "directlyReviewedCount": 53,
-    "publicCandidateCount": 26,
-    "lockedCount": 27,
+    "publicCandidateCount": 27,
+    "lockedCount": 26,
     "calculationCheckedCount": 49,
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
@@ -1934,7 +1934,8 @@
       "2026-10-24 인쇄 31쪽 Mission 3은 필기 없는 대체본(황소5-2-1.pdf, SHA-256 6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88)의 600dpi 렌더에서 도형을 확인했습니다. 점 ㄷ 중심 시계 방향 60° 회전으로 ㄴ→ㄱ, ㅁ→ㄹ이 대응하여 ㉮=∠ㄱㄹㄷ=140°입니다. 구현/A4 검수 전 잠금은 유지합니다.",
       "2026-10-24 인쇄 31쪽 Missions 1·2를 깨끗한 대체본의 600dpi 렌더와 Apple Vision OCR로 재검수했습니다. Mission 1의 이전 70° 후보는 조건을 일부만 사용한 오류라 정사각형 좌표와 tan(45°−20°) 항등식으로 40°로 고쳤습니다. Mission 2는 같은 현과 같은 중심각으로 반원 호를 분할해 130°를 확인했습니다. 원문 구조는 확인했고 구현/A4 검수 전 잠금은 유지합니다.",
       "2026-10-24 인쇄 31쪽 Missions 1–3 런타임 검수: 합성 27구성, PC 1440px·모바일 375px 54상태, 문제·풀이 6개 A4 한 쪽 PDF를 확인했습니다. Mission 2·3은 공개 후보로 전환했고, Mission 1은 초등 풀이 검증 전까지 잠금을 유지합니다. 분류 회귀 감사에서 기존 124개 항목과 그룹이 그대로임을 확인했습니다.",
-      "2026-10-24 인쇄 31쪽 Mission 1은 대각선 대칭점 ㅅ과 ㄱㄹ 연장점 ㅇ을 이용한 두 번의 SAS 합동 풀이를 검증했습니다. 탄젠트·좌표 풀이를 제거하고 문제·풀이 그림 및 A4 검수를 다시 진행합니다. Drive QA 기록은 source-review 노트에 덧붙입니다."
+      "2026-10-24 인쇄 31쪽 Mission 1은 대각선 대칭점 ㅅ과 ㄱㄹ 연장점 ㅇ을 이용한 두 번의 SAS 합동 풀이를 검증했습니다. 탄젠트·좌표 풀이를 제거하고 문제·풀이 그림 및 A4 검수를 다시 진행합니다. Drive QA 기록은 source-review 노트에 덧붙입니다.",
+      "2026-10-24 인쇄 31쪽 Mission 6: 원본 PDF의 도형·길이·중점·목표 삼각형을 다시 대조하고, 사다리꼴 중선으로 넓이 27cm²를 검산했습니다. 3개 풀×3난이도의 생성 그림·풀이·화면·A4를 별도 검증했습니다. 출판사 정답표는 미확인입니다."
     ]
   }
 }

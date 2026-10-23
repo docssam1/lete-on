@@ -32,7 +32,7 @@ const specs = [
 ];
 
 const failures = [];
-const reviewed5_2Release = "5-2-u3-e4-mission-5";
+const reviewed5_2Releases = new Set(["5-2-u3-e4-mission-5", "5-2-u3-e4-mission-6"]);
 const allIds = new Set();
 const semesterCounts = {};
 
@@ -109,7 +109,7 @@ for (const spec of specs) {
     for (const field of ["sourceShape", "reviewReason", "visualRisk"]) {
       if (!isNonEmpty(item[field])) fail(`${label}: ${field}가 비어 있습니다.`);
     }
-    const expectedImplementationStatus = item.sourceItemId === reviewed5_2Release ? "reviewed" : "review-locked";
+    const expectedImplementationStatus = reviewed5_2Releases.has(item.sourceItemId) ? "reviewed" : "review-locked";
     if (item.implementationStatus !== expectedImplementationStatus) {
       fail(`${label}: implementationStatus가 ${expectedImplementationStatus}가 아닙니다.`);
     }
@@ -133,14 +133,14 @@ for (const spec of specs) {
   for (const [section, expected] of Object.entries(spec.sections)) {
     if (bySection[section] !== expected) fail(`${spec.semester} ${section}: ${expected}개가 아닙니다 (${bySection[section]}).`);
   }
-  if (spec.semester === "5-2" && verifiedCount !== 23) {
-    fail(`5-2: sourceVerified true 항목은 23개여야 합니다 (${verifiedCount}).`);
+  if (spec.semester === "5-2" && verifiedCount !== 24) {
+    fail(`5-2: sourceVerified true 항목은 24개여야 합니다 (${verifiedCount}).`);
   }
-  if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (item.sourceItemId !== reviewed5_2Release || item.sourceVerified !== true))) {
-    fail("5-2: 검수 완료로 공개 후보가 된 항목이 Mission 5 외에 있습니다.");
+  if (spec.semester === "5-2" && items.some(item => item.implementationStatus === "reviewed" && (!reviewed5_2Releases.has(item.sourceItemId) || item.sourceVerified !== true))) {
+    fail("5-2: 검수 완료로 공개 후보가 된 항목이 페이지 31 Mission 5·6 외에 있습니다.");
   }
-  if (spec.semester === "5-2" && items.filter(item => item.sourceItemId === reviewed5_2Release).length !== 1) {
-    fail("5-2: 검수 완료한 인쇄 31쪽 Mission 5 원문 항목이 하나여야 합니다.");
+  if (spec.semester === "5-2" && [...reviewed5_2Releases].some(id => items.filter(item => item.sourceItemId === id).length !== 1)) {
+    fail("5-2: 검수 완료한 인쇄 31쪽 Mission 5·6 원문 항목이 각각 하나여야 합니다.");
   }
   if (spec.semester === "5-2") {
     const unit3 = document.units?.find(unit => unit.unitId === "5-2-u3");
