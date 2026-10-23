@@ -1,16 +1,16 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261023e";
-import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261023e";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261023f";
+import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261023f";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
-import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261023e";
+import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261023f";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261023e";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261023f";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
-import { book02Markup } from "./book02-renderers.js?v=20261023e";
-import { book03Markup } from "./book03-renderers.js?v=20261023e";
-import { book04Markup } from "./book04-renderers.js?v=20261023e";
-import { book05Markup } from "./book05-renderers.js?v=20261023e";
+import { book02Markup } from "./book02-renderers.js?v=20261023f";
+import { book03Markup } from "./book03-renderers.js?v=20261023f";
+import { book04Markup } from "./book04-renderers.js?v=20261023f";
+import { book05Markup } from "./book05-renderers.js?v=20261023f";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
-import { book07Markup } from "./book07-renderers.js?v=20261023e";
+import { book07Markup } from "./book07-renderers.js?v=20261023f";
 import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
@@ -19,10 +19,14 @@ import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022
 import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261022a";
 import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep } from "./golden-bell-lesson-flow.js?v=20261022a";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261004a";
-import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023e";
+import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023f";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
+// 원본 분류 코드(GB5-S25-01 등)는 원장·선생님만 본다. 학생·학부모 화면과 학습지에는 1, 2, 3… 순번만 나온다.
+// 주소에 &codes=1을 붙이면 코드가 보인다(대조 작업용).
+const showSourceCodes = params.get("codes") === "1";
+const questionNo = (item, index) => (showSourceCodes && item.sourceNo ? item.sourceNo : String(index + 1));
 const student = params.get("student") || "DEMO";
 const requestedRoute = goldenBellLocation(params);
 const storageKey = `fields-classic-golden-bell:${student}`;
@@ -1262,7 +1266,7 @@ function renderOriginal(lesson) {
         : correct
           ? `<section class="quiz-item-solution" aria-live="polite"><span>풀이 확인</span><p>${mathText(item.solution, { bare: true })}</p><strong>답 ${mathText(approvedOriginalAnswer(item), { bare: true })}</strong></section>`
           : "";
-    const dots = items.map((candidate, index) => `<span class="${index === state.originalIndex ? "active" : originalItemComplete(candidate) ? "complete" : ""}" role="img" title="${escapeAttribute(candidate.sourceNo || index + 1)}" aria-label="${index + 1}번째 문제 · 원문 번호 ${escapeAttribute(candidate.sourceNo || index + 1)}" ${index === state.originalIndex ? 'aria-current="step"' : ""}>${index + 1}</span>`).join("");
+    const dots = items.map((candidate, index) => `<span class="${index === state.originalIndex ? "active" : originalItemComplete(candidate) ? "complete" : ""}" role="img" title="${escapeAttribute(questionNo(candidate, index))}" aria-label="${index + 1}번째 문제${showSourceCodes ? ` · 원문 번호 ${escapeAttribute(questionNo(candidate, index))}` : ""}" ${index === state.originalIndex ? 'aria-current="step"' : ""}>${index + 1}</span>`).join("");
     const nextLabel = state.originalIndex === items.length - 1 ? "추가 학습으로" : "다음 문제";
     const sourceVisual = item.visual || lesson.original.visual;
     const visual = item.noVisual || arithmeticListRepeatedByParts(item, sourceVisual) ? "" : `<div class="quiz-visual item-quiz-visual">${visualMarkup(sourceVisual)}</div>`;
@@ -1270,7 +1274,7 @@ function renderOriginal(lesson) {
     const progressLabel = sourceCount === items.length
       ? `${sourceCount}문제 중 ${state.originalIndex + 1}번째`
       : `${sourceCount}문항 · ${items.length}개 풀이 중 ${state.originalIndex + 1}번째`;
-    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>교재 ${item.sourceNo || state.originalIndex + 1}번</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${item.sourceNo || state.originalIndex + 1}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${mathText(item.prompt)}</p>${visual}<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "확인"}</button>`;
+    return `<div class="quiz-head daily-quiz-head"><div><span>${lesson.original.title} · ${item.typeLabel}</span><h2>${lesson.title}</h2></div><aside><strong>${progressLabel}</strong><small>${showSourceCodes ? `교재 ${escapeAttribute(questionNo(item, state.originalIndex))}번` : `${state.originalIndex + 1}번 문제`}</small></aside></div><div class="daily-question-progress source-question-progress" aria-label="교재 연습문제 진행">${dots}</div><section class="source-question-card"><header><span>문제 ${escapeAttribute(questionNo(item, state.originalIndex))}</span><strong>${item.typeLabel}</strong></header><p class="lesson-lead">${mathText(item.prompt)}</p>${visual}<section class="quiz-item ${status}" data-original-item="${escapeAttribute(item.id)}">${originalAnswerControl(item)}<div class="quiz-item-actions"><button type="button" class="secondary-action" data-original-answer="${escapeAttribute(item.id)}">풀이 보기</button><button type="button" class="secondary-action" data-original-skip="${escapeAttribute(item.id)}">${assist === "skipped" ? "넘어감" : "넘어가기"}</button></div>${solution}</section></section>${result && result.itemId === item.id ? `<p class="feedback ${result.passed ? "success" : ""}">${result.message}</p>` : ""}<button type="button" class="primary-action" data-check="original" ${resolved ? "" : "disabled"}>${correct || assist ? nextLabel : "확인"}</button>`;
   }
   const allComplete = lesson.original.items.every(originalItemComplete);
   const itemVisuals = lesson.original.items.some((item) => item.visual);
@@ -1577,7 +1581,7 @@ function printLessonExercises(lesson, lessonNumber, book) {
     const sourcePages = [...groups.entries()].map(([group, items], pageIndex) => {
       const blocks = items.map((item) => {
         const visual = printSourceItemVisual(item, lesson.original.visual);
-        return `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo)}</span>${escapeAttribute(item.typeLabel)}</h2><p>${mathText(item.prompt)}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}${printResponseMarkup(item)}</section>`;
+        return `<section class="gold-print-source-item"><h2><span>${escapeAttribute(questionNo(item, lesson.original.items.indexOf(item)))}</span>${escapeAttribute(item.typeLabel)}</h2><p>${mathText(item.prompt)}</p>${visual ? `<div class="gold-print-visual">${visual}</div>` : ""}${printResponseMarkup(item)}</section>`;
       }).join("");
       const printConcept = !separateConceptPrint && pageIndex === 0 ? concept + sourceExperience : "";
       return `<article class="gold-print-page source-practice-print" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original-${group}" data-watermark="${escapeAttribute(student)} · GFIELD">${header(String(pageIndex + 1 + (separateConceptPrint ? 1 : 0)).padStart(2, "0"))}${printConcept}<section class="gold-print-block"><h2>교재 연습 ${pageIndex + 1} / ${groups.size}</h2>${blocks}</section>${footer}</article>`;
@@ -1587,7 +1591,7 @@ function printLessonExercises(lesson, lessonNumber, book) {
   const visualHasResponseBoxes = lesson.original.visual.kind === "book03-six-original";
   const hasItemVisuals = lesson.original.items.some((item) => item.visual);
   const sharedVisual = !hasItemVisuals || visualHasResponseBoxes ? `<div class="gold-print-visual">${visualMarkup(lesson.original.visual)}</div>` : "";
-  const originalItems = visualHasResponseBoxes ? "" : lesson.original.items.map((item, index) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(item.sourceNo || index + 1)}</span>${escapeAttribute(item.typeLabel || "문제")}</h2><p>${mathText(item.prompt)}${item.conditions?.length ? `<br>${item.conditions.map(escapeAttribute).join(" · ")}` : ""}</p>${item.visual ? `<div class="gold-print-visual">${visualMarkup(item.visual)}</div>` : ""}${printResponseMarkup(item)}</section>`).join("");
+  const originalItems = visualHasResponseBoxes ? "" : lesson.original.items.map((item, index) => `<section class="gold-print-source-item"><h2><span>${escapeAttribute(questionNo(item, index))}</span>${escapeAttribute(item.typeLabel || "문제")}</h2><p>${mathText(item.prompt)}${item.conditions?.length ? `<br>${item.conditions.map(escapeAttribute).join(" · ")}` : ""}</p>${item.visual ? `<div class="gold-print-visual">${visualMarkup(item.visual)}</div>` : ""}${printResponseMarkup(item)}</section>`).join("");
   const sharedClass = !hasItemVisuals && !visualHasResponseBoxes ? " shared-source-visual" : "";
   const originalPage = `<article class="gold-print-page source-practice-print${sharedClass}" data-print-book="${escapeAttribute(book.id)}" data-print-lesson="${escapeAttribute(lesson.id)}" data-print-part="original" data-watermark="${escapeAttribute(student)} · GFIELD">${header("01")}${concept}${lesson.experience ? experienceSummaryMarkup(lesson.experience) : ""}<section class="gold-print-block"><h2>골든벨</h2><p>${lesson.original.prompt}</p>${sharedVisual}${originalItems ? `<div class="gold-print-source-items">${originalItems}</div>` : ""}</section>${footer}</article>`;
   return originalPage + storyPages;
