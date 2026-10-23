@@ -69,8 +69,14 @@ create table if not exists nm_private.guardian_contacts (
   collection_consent boolean not null check (collection_consent),
   sms_consent        boolean not null default false,
   consent_at         timestamptz not null default now(),
-  updated_at         timestamptz not null default now()
+  updated_at         timestamptz not null default now(),
+  privacy_version    text,                          -- NM_PRIVACY.VERSION the guardian accepted; null = re-consent needed
+  guardian_consent   boolean not null default false, -- learner or legal representative confirmation
+  privacy_consent_at timestamptz
 );
+alter table nm_private.guardian_contacts add column if not exists privacy_version text;
+alter table nm_private.guardian_contacts add column if not exists guardian_consent boolean not null default false;
+alter table nm_private.guardian_contacts add column if not exists privacy_consent_at timestamptz;
 
 -- One student profile per account/email. Partial, so unlinked profiles (owner_id NULL) are unaffected.
 -- Fails (without changing data) if duplicates exist; nothing is deleted or reassigned here.
@@ -317,6 +323,8 @@ declare
   v_reg   boolean;
   v_sms   boolean;
   v_cphone text;
+  v_pver  text;
+  v_pat   timestamptz;
   r       record;
   m       nm_private.memberships%rowtype;
   ls      nm_private.learning_settings%rowtype;
@@ -334,8 +342,9 @@ begin
     insert into nm_private.memberships(owner_id) values (p_actor) on conflict (owner_id) do nothing;
     v_out := pg_catalog.jsonb_build_object('membership', nm_private.member_json(p_actor));
     -- contact summary: private guardian contact first, else a valid active legacy nm_contacts row of an owned profile
-    v_reg := false; v_sms := false; v_cphone := null;
-    select g.phone, g.sms_consent into v_cphone, v_sms from nm_private.guardian_contacts g where g.owner_id = p_actor;
+    v_reg := false; v_sms := false; v_cphone := null; v_pver := null; v_pat := null;
+    select g.phone, g.sms_consent, g.privacy_version, g.privacy_consent_at into v_cphone, v_sms, v_pver, v_pat
+      from nm_private.guardian_contacts g where g.owner_id = p_actor;
     if found then
       v_reg := true;
     else
@@ -347,7 +356,8 @@ begin
       if found then v_reg := true; else v_cphone := null; v_sms := false; end if;
     end if;
     v_out := v_out || pg_catalog.jsonb_build_object('contact', pg_catalog.jsonb_build_object(
-      'registered', v_reg, 'phoneMasked', nm_private.mask_phone(v_cphone), 'smsConsent', coalesce(v_sms, false)));
+      'registered', v_reg, 'phoneMasked', nm_private.mask_phone(v_cphone), 'smsConsent', coalesce(v_sms, false),
+      'privacyVersion', v_pver, 'consentedAt', nm_private.iso(v_pat)));
     v_name := nm_private.jstr(v_p, 'profileName', 100);
     if v_name is not null and exists (select 1 from public.nm_profiles p where p.name = v_name and p.owner_id = p_actor) then
       v_set := nm_private.settings_json(v_name);
@@ -363,17 +373,41 @@ begin
     if not found or v_email is null or v_conf is null then
       return pg_catalog.jsonb_build_object('error', 'email_not_verified', 'status', 403);
     end if;
-    v_phone := nm_private.jstr(v_p, 'phone', 11);
+    -- phone omitted = keep the number on file (private contact first, else a valid legacy nm_contacts row);
+    -- only a client on the current notice may do that. privacyVersion omitted = a client from before the
+    -- 2026-10-22 notice (deploy window): its contact is saved but the stored consent version is kept, so
+    -- the new app still asks for renewal.
+    v_pver := v_p ->> 'privacyVersion';
+    if v_p ? 'phone' then
+      v_phone := nm_private.jstr(v_p, 'phone', 11);
+    elsif v_pver is not null then
+      select g.phone into v_phone from nm_private.guardian_contacts g where g.owner_id = p_actor;
+      if not found then
+        select pg_catalog.regexp_replace(coalesce(c.phone, ''), '\D', '', 'g') into v_phone
+          from public.nm_contacts c join public.nm_profiles p on p.name = c.profile_name
+         where p.owner_id = p_actor and c.active
+           and pg_catalog.regexp_replace(coalesce(c.phone, ''), '\D', '', 'g') ~ '^01[0-9]{8,9}$'
+         order by c.consent desc, c.id desc limit 1;
+      end if;
+    else
+      v_phone := null;
+    end if;
     if v_phone is null or v_phone !~ '^01[0-9]{8,9}$'
        or (v_p -> 'collectionConsent') is distinct from 'true'::jsonb
-       or pg_catalog.jsonb_typeof(v_p -> 'smsConsent') is distinct from 'boolean' then
+       or pg_catalog.jsonb_typeof(v_p -> 'smsConsent') is distinct from 'boolean'
+       or (v_pver is not null and (v_pver <> '2026-10-22-v1' or (v_p -> 'guardianConsent') is distinct from 'true'::jsonb))
+       or (v_pver is null and v_p ? 'guardianConsent') then
       return pg_catalog.jsonb_build_object('error', 'bad_request', 'status', 400);
     end if;
     v_sms := (v_p ->> 'smsConsent')::boolean;
-    insert into nm_private.guardian_contacts as g (owner_id, phone, collection_consent, sms_consent, consent_at, updated_at)
-    values (p_actor, v_phone, true, v_sms, v_now, v_now)
+    insert into nm_private.guardian_contacts as g (owner_id, phone, collection_consent, sms_consent, consent_at, updated_at,
+      privacy_version, guardian_consent, privacy_consent_at)
+    values (p_actor, v_phone, true, v_sms, v_now, v_now, v_pver, v_pver is not null, case when v_pver is not null then v_now end)
     on conflict (owner_id) do update set phone = excluded.phone, collection_consent = true,
-      sms_consent = excluded.sms_consent, consent_at = v_now, updated_at = v_now;
+      sms_consent = excluded.sms_consent, consent_at = v_now, updated_at = v_now,
+      privacy_version = coalesce(excluded.privacy_version, g.privacy_version),
+      guardian_consent = g.guardian_consent or excluded.guardian_consent,
+      privacy_consent_at = coalesce(excluded.privacy_consent_at, g.privacy_consent_at);
     for r in select p.name from public.nm_profiles p where p.owner_id = p_actor loop
       perform nm_private.sync_contact(r.name, v_phone, v_sms, v_now);
     end loop;

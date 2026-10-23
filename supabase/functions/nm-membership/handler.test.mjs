@@ -303,7 +303,8 @@ test("schema.sql: locked-down exposure, no plaintext admin code, no monthly plan
 // ---------- register_contact / status.contact (all values synthetic) ----------
 const SAMPLE = "01000001111";
 const SAMPLE2 = "01000002222";
-const goodContact = { action: "register_contact", phone: SAMPLE, collectionConsent: true, smsConsent: true };
+const CONSENT = { privacyVersion: "2026-10-22-v1", guardianConsent: true };
+const goodContact = { action: "register_contact", phone: SAMPLE, collectionConsent: true, smsConsent: true, ...CONSENT };
 
 test("register_contact: verified actor is passed to RPC, exact fields only, response has no phone", async () => {
   const t = setup({ rpc: async () => ({ data: { ok: true, phone: SAMPLE } }) });
@@ -314,7 +315,7 @@ test("register_contact: verified actor is passed to RPC, exact fields only, resp
   assert.ok(!text.includes(SAMPLE));
   assert.equal(t.calls.rpc[0].a, "register_contact");
   assert.equal(t.calls.rpc[0].actor, UID);
-  assert.deepEqual(t.calls.rpc[0].p, { phone: SAMPLE, collectionConsent: true, smsConsent: true });
+  assert.deepEqual(t.calls.rpc[0].p, { phone: SAMPLE, collectionConsent: true, smsConsent: true, ...CONSENT });
   assert.deepEqual(t.calls.getUser, [JWT]);
 });
 
@@ -335,9 +336,10 @@ test("register_contact: validation of phone and consents", async () => {
   const t = setup();
   const bad = [
     { phone: "0100000111" + "12" }, { phone: "010000011" }, { phone: "02000001111" }, { phone: "010-0000-1111" },
-    { phone: 1000001111 }, { phone: undefined },
+    { phone: 1000001111 },
     { collectionConsent: false }, { collectionConsent: "true" }, { collectionConsent: undefined },
     { smsConsent: "false" }, { smsConsent: undefined },
+    { privacyVersion: "2026-01-01-v0" }, { privacyVersion: null }, { guardianConsent: false }, { guardianConsent: "true" },
   ];
   for (const b of bad) assert.equal((await t.post({ ...goodContact, ...b }, bearer)).status, 400, JSON.stringify(b));
   assert.equal(t.calls.rpc.length, 0);
@@ -347,7 +349,17 @@ test("register_contact: SMS consent is optional (false accepted); 10-digit phone
   const t = setup({ rpc: async () => ({ data: { ok: true } }) });
   const r = await t.post({ ...goodContact, phone: "0100001111", smsConsent: false }, bearer);
   assert.equal(r.status, 200);
-  assert.deepEqual(t.calls.rpc[0].p, { phone: "0100001111", collectionConsent: true, smsConsent: false });
+  assert.deepEqual(t.calls.rpc[0].p, { phone: "0100001111", collectionConsent: true, smsConsent: false, ...CONSENT });
+});
+
+test("register_contact: phone may be omitted (keep number on file); pre-notice body without version reaches the RPC", async () => {
+  const t = setup({ rpc: async () => ({ data: { ok: true } }) });
+  const { phone: _omit, ...keep } = goodContact;
+  assert.equal((await t.post(keep, bearer)).status, 200);
+  assert.deepEqual(t.calls.rpc[0].p, { collectionConsent: true, smsConsent: true, ...CONSENT });
+  const legacy = { action: "register_contact", phone: SAMPLE, collectionConsent: true, smsConsent: false };
+  assert.equal((await t.post(legacy, bearer)).status, 200);
+  assert.deepEqual(t.calls.rpc[1].p, { phone: SAMPLE, collectionConsent: true, smsConsent: false });
 });
 
 test("register_contact: same phone is allowed for different verified actors (no uniqueness at the edge)", async () => {
@@ -368,11 +380,17 @@ test("register_contact: same phone is allowed for different verified actors (no 
 test("status: contact output is normalized/masked and raw phone is never returned", async () => {
   const t = setup({ rpc: async () => ({ data: { membership: { canUse: true }, contact: { registered: true, phoneMasked: "010-****-1111", smsConsent: true, phone: SAMPLE } } }) });
   const text = await (await t.post({ action: "status" }, bearer)).text();
-  assert.deepEqual(JSON.parse(text).contact, { registered: true, phoneMasked: "010-****-1111", smsConsent: true });
+  assert.deepEqual(JSON.parse(text).contact, { registered: true, phoneMasked: "010-****-1111", smsConsent: true, privacyVersion: null, consentedAt: null });
   assert.ok(!text.includes(SAMPLE));
   const t2 = setup({ rpc: async () => ({ data: { membership: {}, contact: { registered: true, phoneMasked: SAMPLE, smsConsent: "yes" } } }) });
   const b2 = await (await t2.post({ action: "status" }, bearer)).json();
-  assert.deepEqual(b2.contact, { registered: true, phoneMasked: null, smsConsent: false }); // unmasked digits are dropped
+  assert.deepEqual(b2.contact, { registered: true, phoneMasked: null, smsConsent: false, privacyVersion: null, consentedAt: null }); // unmasked digits are dropped
+  const at = "2026-10-22T06:00:00.000Z";
+  const t3 = setup({ rpc: async () => ({ data: { membership: {}, contact: { registered: true, phoneMasked: "010-****-1111", smsConsent: false, privacyVersion: "2026-10-22-v1", consentedAt: at } } }) });
+  assert.deepEqual((await (await t3.post({ action: "status" }, bearer)).json()).contact, { registered: true, phoneMasked: "010-****-1111", smsConsent: false, privacyVersion: "2026-10-22-v1", consentedAt: at });
+  const t4 = setup({ rpc: async () => ({ data: { membership: {}, contact: { registered: true, phoneMasked: "010-****-1111", smsConsent: false, privacyVersion: "other", consentedAt: "later" } } }) });
+  const c4 = (await (await t4.post({ action: "status" }, bearer)).json()).contact;
+  assert.equal(c4.privacyVersion, null); assert.equal(c4.consentedAt, null);
 });
 
 test("schema.sql: one-student-per-email policy, no phone uniqueness, private contacts, valid special syntax", () => {
@@ -386,6 +404,10 @@ test("schema.sql: one-student-per-email policy, no phone uniqueness, private con
   assert.ok(!/pg_catalog\.position\s*\(/i.test(sql));
   assert.match(sql, /EXTRACT\(isodow from/);
   assert.match(sql, /p_action = 'register_contact'/);
+  assert.match(sql, /v_pver := v_p ->> 'privacyVersion';/);
+  assert.match(sql, /v_pver <> '2026-10-22-v1' or \(v_p -> 'guardianConsent'\) is distinct from 'true'::jsonb/);
+  assert.match(sql, /privacy_version = coalesce\(excluded\.privacy_version, g\.privacy_version\)/);
+  assert.match(sql, /'privacyVersion', v_pver, 'consentedAt', nm_private\.iso\(v_pat\)/);
   assert.match(sql, /'entryYear', v_year::integer,\s+'setAt'/);
   assert.match(sql, /'adminPlan', nm_private\.settings_json\(v_name\)/);
   assert.ok(!/'schoolAge',\s*pg_catalog\.extract/.test(sql));

@@ -22,7 +22,7 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
   const context=async(width)=>{const c=await browser.newContext({viewport:{width:width||390,height:900},reducedMotion:'reduce'});await c.route('**/*',r=>r.request().url().startsWith(base+'/')&&r.request().method()==='GET'?r.continue():r.abort());return c;};
   const owner='22222222-2222-4222-8222-222222222222',NAME='개인로드맵';
   const settings={profileName:NAME,version:7,courseKey:'C4',sessionIndex:3,speed:1.5,amount:1.25,cadence:'w2',entryYear:2020,startDate:'2026-10-19',updatedAt:'2026-10-20T00:00:00.000Z'};
-  const original={name:NAME,lang:'ko',onboarded:true,cloudLinked:true,cloudOwnerId:owner,view:'courseroad',progress:{'A-02':{done:true,steps:{stamp:true}}},account:{status:'active'},character:{number:3,color:'blue',hat:'none'},avatar:{kind:'boy'}};
+  const original={name:NAME,lang:'ko',onboarded:true,cloudLinked:true,cloudOwnerId:owner,view:'courseroad',progress:{'A-02':{done:true,steps:{stamp:true}}},account:{status:'active'},character:{number:3,color:'blue',hat:'none'},avatar:{id:'legacy',kind:'boy',look:'boy',name:'',outfit:'original'}};
   const session={access_token:'fake-owner-token',refresh_token:'fake-refresh',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:owner,email:'guardian@example.test'},password_setup_pending:false};
   const T={
     ko:{sum:/나의 월별 로드맵.*12개월/,applied:/학원에서 정한/},
@@ -34,7 +34,7 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       page.on('request',r=>{const u=r.url();if(!u.startsWith(base+'/'))external.push({method:r.method(),url:u});});
       await ctx.addInitScript(([s,sess])=>{
         if(!localStorage.getItem('nm_state_v1'))localStorage.setItem('nm_state_v1',JSON.stringify(s));
-        localStorage.setItem('nm_guardian_session_v1',JSON.stringify(sess));
+        // Each visit starts with explicit sign-in; an old stored session must not bypass it.
       },[{...original,lang},session]);
       await ctx.route('**/functions/v1/nm-membership',async r=>{
         const req=r.request();
@@ -42,18 +42,21 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
         const body=req.postDataJSON()||{},now=Date.now();
         calls.push({action:body.action,authorization:req.headers().authorization,body});
         if(body.action!=='status')return r.fulfill({status:400,headers:CORS,json:{error:'unknown_action'}});
-        return r.fulfill({headers:CORS,json:{membership:{userId:owner,serverNow:new Date(now).toISOString(),trialStartedAt:new Date(now-86400000).toISOString(),trialEndsAt:new Date(now+6*86400000).toISOString(),endsAt:null,status:'trial',plan:null,canUse:true},settings:body.profileName===NAME?settings:null,contact:{registered:true,phoneMasked:'010-****-5678',smsConsent:false}}});
+        return r.fulfill({headers:CORS,json:{membership:{userId:owner,serverNow:new Date(now).toISOString(),trialStartedAt:new Date(now-86400000).toISOString(),trialEndsAt:new Date(now+6*86400000).toISOString(),endsAt:null,status:'trial',plan:null,canUse:true},settings:body.profileName===NAME?settings:null,contact:{registered:true,privacyVersion:'2026-10-22-v1',phoneMasked:'010-****-5678',smsConsent:false}}});
       });
       await ctx.route('**/rest/v1/nm_profiles**',r=>{
         if(r.request().method()!=='GET')writes.push(r.request().method()+' '+r.request().url());
         return r.fulfill({json:[]});
       });
-      await ctx.route('**/auth/v1/**',r=>{writes.push('auth '+r.request().method()+' '+r.request().url());return r.fulfill({json:{}});});
-      await page.goto(base+'/number_magic/index.html?enter=1');
+      await ctx.route('**/auth/v1/**',r=>{if(r.request().url().includes('/token?grant_type=password'))return r.fulfill({json:session});writes.push('auth '+r.request().method()+' '+r.request().url());return r.fulfill({json:{}});});
+      await page.goto(base+'/number_magic/access.html?lang='+lang);
+      await page.click('#open-book');await page.fill('#login-user','guardian@example.test');await page.fill('#login-password','fixture-only');await page.click('#login-submit');
+      await page.waitForFunction(()=>window.NM_MEMBERSHIP?.contactReady());
+      await page.waitForSelector('#nmGuardBack');await page.click('#nmGuardBack');
       await page.addLocatorHandler(page.locator('#nmUnlockOverlayClose'),el=>el.click(),{noWaitAfter:true});
       // The title screen overrides the saved course-road view; enter the road through its button.
-      await page.waitForSelector('#ttRoad,#nmPersonalPlan');
-      if(await page.locator('#ttRoad').count())await page.locator('#ttRoad:visible').first().click();
+      await page.locator('#ttRoad:visible,#nmPersonalPlan:visible,.nm-title3d [data-id=road]:visible').first().waitFor();
+      if(!await page.locator('#nmPersonalPlan:visible').count())await page.locator('#ttRoad:visible,.nm-title3d [data-id=road]:visible').first().click();
       await page.waitForSelector('#nmPersonalPlan');
       const t=T[lang],tag=width+'/'+lang;
       await page.waitForFunction(re=>new RegExp(re).test((document.querySelector('#nmPersonalPlan .nm-personal-plan-body p')||{}).textContent||''),t.applied.source,{timeout:10000});
@@ -73,7 +76,7 @@ const CORS={'access-control-allow-origin':'*','access-control-allow-headers':'*'
       assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('nm_guardian_session_v1')).access_token),'fake-owner-token');
       assert.deepEqual(calls.filter(c=>c.action!=='status'),[],tag+' only status calls');
       assert.deepEqual(writes,[],tag+' no profile/auth writes');
-      assert(external.every(x=>x.method==='GET'||x.url.includes('/functions/v1/nm-membership')),tag+' unexpected external writes '+JSON.stringify(external));
+      assert(external.every(x=>x.method==='GET'||(x.url.includes('/functions/v1/nm-membership')||x.url.includes('/auth/v1/token?grant_type=password'))),tag+' unexpected external writes '+JSON.stringify(external));
       checks++;await ctx.close();
     }
     // Short link /w/?m=<32 hex>: resolves through the mocked membership function.

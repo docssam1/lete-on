@@ -52,7 +52,8 @@ const bool = (v) => (typeof v === "boolean" ? v : INVALID);
 
 const ACTIONS = {
   status: { auth: "jwt", fields: { profileName: [pname, false] } },
-  register_contact: { auth: "jwt", fields: { phone: [phone, true], collectionConsent: [mustTrue, true], smsConsent: [bool, true] } },
+  // phone omitted = keep the number on file; privacyVersion/guardianConsent omitted = pre-notice client (SQL decides).
+  register_contact: { auth: "jwt", fields: { phone: [phone, false], collectionConsent: [mustTrue, true], smsConsent: [bool, true], privacyVersion: [oneOf(["2026-10-22-v1"]), false], guardianConsent: [mustTrue, false] } },
   admin_login: { auth: "none", fields: { username: [str(64, /^[A-Za-z0-9_.@-]+$/), true], code: [str(128), true] } },
   admin_logout: { auth: "admin", fields: { adminToken: [adminToken, true] } },
   admin_list: { auth: "admin", fields: { adminToken: [adminToken, true], query: [query, false] } },
@@ -189,6 +190,8 @@ export function createHandler(deps) {
           registered: c.registered === true,
           phoneMasked: typeof c.phoneMasked === "string" && /^\d{3}-\*{4}-\d{4}$/.test(c.phoneMasked) ? c.phoneMasked : null,
           smsConsent: c.smsConsent === true,
+          privacyVersion: c.privacyVersion === "2026-10-22-v1" ? c.privacyVersion : null,
+          consentedAt: typeof c.consentedAt === "string" && Number.isFinite(Date.parse(c.consentedAt)) ? c.consentedAt : null,
         };
         return out({ ...scrub(r.data), contact });
       }
