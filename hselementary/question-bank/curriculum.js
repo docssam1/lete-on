@@ -1461,6 +1461,27 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             verifiedVariantCount: 3,
             answerVisualRequired: false,
             answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e3-mission-2-perimeter",
+            name: "ㄱ자 모양 도형의 둘레를 자연수 cm로 어림하기",
+            sourceItemId: "5-2-u1-e3-mission-2-perimeter",
+            sourceItemLabel: "Mission 2",
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 7,
+            sourcePrintedPage: 9,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e3-mission-2-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄된 ㄱ자 도형의 전체 세로·가로 치수와 자연수 cm 어림 요구를 원본 그림에서 대조했습니다. 둘레를 전체 가로와 세로의 합의 두 배로 계산하고 14.4cm를 가장 가까운 자연수 cm로 나타내는 구조를 독립 검산했습니다. 원문 수치는 공개 생성 풀에 복사하지 않았고, 출판사 정답지와 손글씨는 정답 근거로 쓰지 않았습니다.",
+            generatorKey: "source52ApplicationMissionTwoPerimeter",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
           }]
         }
       ],

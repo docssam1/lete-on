@@ -12,6 +12,7 @@ require("./source-5-2-rounding-e2.js");
 require("./source-5-2-rounding-missions.js");
 require("./source-5-2-rounding-application-e3.js");
 require("./source-5-2-packing-mission1.js");
+require("./source-5-2-perimeter-mission2.js");
 require("./source-6-2-decimal-e6-text.js");
 require("./source-6-2-decimal-e6-geometry.js");
 require("./source-6-2-decimal-e3.js");
