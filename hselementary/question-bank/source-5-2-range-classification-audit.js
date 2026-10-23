@@ -30,7 +30,11 @@ const applicationMissionFiveId = "5-2-u1-e3-mission-5-bar-graph-length";
 const applicationMissionSixId = "5-2-u1-e3-mission-6-citrus-sales";
 const roundedRangeIds = ["5-2-u1-e4-exploration-rounded-range", "5-2-u1-e4-example-1"];
 const roundedMissionOneId = "5-2-u1-e4-mission-1-rounded-count";
-const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId, ...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4", roundedMissionOneId];
+const roundedMissionTwoId = "5-2-u1-e4-mission-2-rounded-floor-range";
+const roundedMissionThreeId = "5-2-u1-e4-mission-3-notebook-range";
+const roundedMissionFourId = "5-2-u1-e4-mission-4-rounded-seven-million-range";
+const roundedMissionFiveId = "5-2-u1-e4-mission-5-quotient-range-sum";
+const allNewSourceIds = [...expectedIds, ...missionIds, ...roundingIds, ...roundingMissionIds, ...applicationExplorationIds, applicationMissionOneId, applicationMissionTwoId, applicationMissionThreeId, applicationMissionFourId, applicationMissionFiveId, applicationMissionSixId, ...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4", roundedMissionOneId, roundedMissionTwoId, roundedMissionThreeId, roundedMissionFourId, roundedMissionFiveId];
 const flatten = curriculum => curriculum.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types)));
 const plain = value => JSON.parse(JSON.stringify(value));
 
@@ -57,16 +61,20 @@ function load(curriculumSource) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e43.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e43.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-range-e44.js"), "utf8"), context, { filename: "source-5-2-rounded-range-e44.js" });
   vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-count-mission1.js"), "utf8"), context, { filename: "source-5-2-rounded-count-mission1.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-floor-mission2.js"), "utf8"), context, { filename: "source-5-2-rounded-floor-mission2.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-notebook-range-mission3.js"), "utf8"), context, { filename: "source-5-2-notebook-range-mission3.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-rounded-triplet-mission4.js"), "utf8"), context, { filename: "source-5-2-rounded-triplet-mission4.js" });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "source-5-2-quotient-sum-mission5.js"), "utf8"), context, { filename: "source-5-2-quotient-sum-mission5.js" });
   return { curriculum: plain(context.window.HSE_CURRICULUM), api: context.window.HSE_GENERATORS };
 }
 
 function validate(curriculum, api, baselineSemester) {
   const types = flatten(curriculum);
-  assert.equal(types.length, 2042, "Whole-bank classification count");
+  assert.equal(types.length, 2046, "Whole-bank classification count");
   assert.equal(new Set(types.map(type => type.id)).size, types.length, "Unique runtime IDs");
   const semester = curriculum.semesters.find(item => item.id === "5-2");
   const semesterTypes = semester.units.flatMap(unit => unit.subunits.flatMap(group => group.types));
-  assert.equal(semesterTypes.length, 161, "Preserve 124 legacy records plus thirty-seven source records");
+  assert.equal(semesterTypes.length, 165, "Preserve 124 legacy records plus forty-one source records");
   const restored = plain(semester);
   restored.units[0].subunits = restored.units[0].subunits.filter(group => !group.types.some(type => allNewSourceIds.includes(type.sourceItemId)));
   assert.deepEqual(restored, baselineSemester, "All 124 legacy records and their groups must stay identical to the Git baseline");
@@ -242,6 +250,8 @@ require("./source-5-2-rounded-range-e42.js");
 require("./source-5-2-rounded-range-e43.js");
 require("./source-5-2-rounded-range-e44.js");
 require("./source-5-2-rounded-count-mission1.js");
+require("./source-5-2-rounded-triplet-mission4.js");
+require("./source-5-2-quotient-sum-mission5.js");
   assert.equal(citrusGenerator.getQuestion(0, 0).answerModel.total, 9964);
   assert.equal(citrusGenerator.getQuestion(0, 0).answerModel.fullBoxes, 24);
   assert.equal(citrusGenerator.getQuestion(0, 0).answerModel.unpacked, 364);
@@ -255,7 +265,7 @@ require("./source-5-2-rounded-count-mission1.js");
     assert.equal(question.publisherKeyVerified, false);
   }
   const roundedRange = unit.subunits[10].types;
-  assert.deepEqual(roundedRange.map(type => type.sourceItemId), [...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4", roundedMissionOneId], "Exact page-10 examples and page-11 Mission 1 source IDs");
+  assert.deepEqual(roundedRange.map(type => type.sourceItemId), [...roundedRangeIds, "5-2-u1-e4-example-2", "5-2-u1-e4-example-3", "5-2-u1-e4-example-4", roundedMissionOneId, roundedMissionTwoId, roundedMissionThreeId, roundedMissionFourId, roundedMissionFiveId], "Exact page-10 examples and page-11 Mission 1–3 source IDs");
   const roundedRangeModule = require("./source-5-2-rounded-range-e4.js");
   roundedRange.forEach((type, index) => {
     if (index === 2) {
@@ -298,6 +308,94 @@ require("./source-5-2-rounded-count-mission1.js");
         assert.equal(question.answerVisualRequired, false);
         assert.equal(question.publisherKeyVerified, false);
         assert.notEqual(question.answer, "10개");
+      }
+      return;
+    }
+    if (index === 6) {
+      const mission2 = require("./source-5-2-rounded-floor-mission2.js");
+      assert.equal(type.id, mission2.sourceItemId);
+      assert.equal(type.sourcePdfPage, 9);
+      assert.equal(type.sourcePrintedPage, 11);
+      assert.equal(type.sourceSection, "mission");
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(type.answerVisualStatus, "not-required");
+      assert.equal(type.verifiedVariantCount, 3);
+      assert.equal(type.verifiedVariantTarget, 3);
+      assert.equal(api.generatorKey(type), mission2.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, false);
+        assert.equal(question.publisherKeyVerified, false);
+        assert.notEqual(question.answer, "50개");
+      }
+      return;
+    }
+    if (index === 7) {
+      const mission3 = require("./source-5-2-notebook-range-mission3.js");
+      assert.equal(type.id, mission3.sourceItemId);
+      assert.equal(type.sourcePdfPage, 9);
+      assert.equal(type.sourcePrintedPage, 11);
+      assert.equal(type.sourceSection, "mission");
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(type.answerVisualStatus, "not-required");
+      assert.equal(type.verifiedVariantCount, 3);
+      assert.equal(type.verifiedVariantTarget, 3);
+      assert.equal(api.generatorKey(type), mission3.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, false);
+        assert.equal(question.publisherKeyVerified, false);
+        assert.notEqual(question.answer, "10권 이상 37권 이하");
+        assert(question.solution.includes("3권씩 차이"));
+      }
+      return;
+    }
+    if (index === 8) {
+      const mission4 = require("./source-5-2-rounded-triplet-mission4.js");
+      assert.equal(type.id, mission4.sourceItemId);
+      assert.equal(type.sourcePdfPage, 9);
+      assert.equal(type.sourcePrintedPage, 11);
+      assert.equal(type.sourceSection, "mission");
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(api.generatorKey(type), mission4.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, false);
+        assert.equal(question.publisherKeyVerified, false);
+        assert(question.answer.includes("이상") || question.answer.includes("초과"));
+        assert(question.answer.includes("이하") || question.answer.includes("미만"));
+      }
+      return;
+    }
+    if (index === 9) {
+      const mission5 = require("./source-5-2-quotient-sum-mission5.js");
+      assert.equal(type.id, mission5.sourceItemId);
+      assert.equal(type.sourcePdfPage, 9);
+      assert.equal(type.sourcePrintedPage, 11);
+      assert.equal(type.sourceSection, "mission");
+      assert.equal(type.sourceVerified, true);
+      assert.equal(type.publisherKeyVerified, false);
+      assert.equal(type.reviewLocked, false);
+      assert.equal(type.answerVisualRequired, false);
+      assert.equal(api.generatorKey(type), mission5.generatorKey);
+      for (let variant = 0; variant < 3; variant++) for (const difficulty of [-1, 0, 1]) {
+        const question = api.generate(type, 1, difficulty, 1, variant);
+        assert(question && question.sourceItemId === type.sourceItemId);
+        assert.equal(question.answerVisualRequired, false);
+        assert.equal(question.publisherKeyVerified, false);
+        assert.notEqual(question.answer, "16,170");
       }
       return;
     }
