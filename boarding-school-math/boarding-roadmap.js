@@ -8,6 +8,13 @@
   let stage = 0;
   let route = null;
   let competition = null;
+  const competitionSources = {
+    sasmo: { href: "./sasmo.html", label: "SASMO 자료 보기 →" },
+    kangaroo: { href: "https://mathkangaroo.org/mks/faqs/about-the-test/", label: "Math Kangaroo 공식 규칙 ↗", external: true },
+    amc8: { href: "https://maa.org/student-programs/amc/", label: "MAA AMC 공식 안내 ↗", external: true },
+    amc10: { href: "https://maa.org/student-programs/amc/", label: "MAA AMC 공식 안내 ↗", external: true },
+    amc12: { href: "https://maa.org/student-programs/amc/", label: "MAA AMC 공식 안내 ↗", external: true }
+  };
   const publicPractice = {
     6: [
       ["6.NS.A", "분수 나눗셈"], ["6.RP.A", "비와 비율"], ["6.EE.A", "식 쓰기"],
@@ -134,7 +141,6 @@
     });
     competition = options.some(function (entry) { return entry.id === previous; }) ? previous : "";
     select.value = competition;
-    $("competition-practice-link").hidden = grade !== 6;
     if (!competition) $("paper-label").value = "";
     updateCompetitionFields();
     resetCompetitionReport();
@@ -148,6 +154,21 @@
     document.querySelector(".domain-header").hidden = !selected;
     $("domain-rows").hidden = !selected;
     document.querySelector(".competition-submit").hidden = !selected;
+    $("competition-practice-link").hidden = !(grade === 6 && competition === "amc8");
+    const source = competitionSources[competition];
+    const sourceLink = $("competition-source-link");
+    sourceLink.hidden = !source;
+    if (source) {
+      sourceLink.href = source.href;
+      sourceLink.textContent = source.label;
+      if (source.external) {
+        sourceLink.target = "_blank";
+        sourceLink.rel = "noopener noreferrer";
+      } else {
+        sourceLink.removeAttribute("target");
+        sourceLink.removeAttribute("rel");
+      }
+    }
     setText("competition-guidance", selected
       ? `채점한 문제를 영역별로 나눠 적어 주세요. 영역을 모르면 문제별 복습에서 먼저 확인하세요. 합계는 ${option.itemCount}문항을 넘길 수 없어요.`
       : "대회를 먼저 골라 주세요. 채점한 문제를 영역별로 직접 나눠 보는 화면이에요.");
