@@ -1,3 +1,15 @@
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Mission 1: Incorrect 70° Replaced with 40°, Implementation Locked
+
+- Re-read logical PDF page 26 / printed page 31 from the clean alternate `황소5-2-1.pdf` (SHA-256 `6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88`). The printed figure confirms square ㄱㄴㄷㄹ, point ㅁ on ㄱㄹ, point ㅂ on ㄹㄷ, ∠ㄱㄴㅁ=20°, ∠ㄷㄴㅂ=25°, and target ∠ㄹㅁㅂ. Apple Vision OCR and the 600dpi crop were checked with the raster; crop SHA-256 `f926d3b8d733287776b10d51448ffeec1a846afa8db2728eb7543e8b7d77b925`.
+- The previous 70° entry used only 90°−20° and ignored the second marked angle and target vertex. With square side 1, coordinates ㄱ=(0,1), ㄴ=(1,1), ㄷ=(1,0), ㄹ=(0,0) give ㄹㅁ=1−tan20° and ㄹㅂ=1−tan25°. Since `tan25°=tan(45°−20°)`, `(1−tan25°)/(1−tan20°)=tan40°`; therefore `∠ㄹㅁㅂ=40°`. The source answer is calculation-checked; implementation stays locked pending diagram, separated solution, and A4 checks.
+- Source visual checks needed decreased 20→18 after Missions 1 and 2 were confirmed. Public-candidate/locked counts remain 23/30; student data and release state are unchanged.
+
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Mission 2: 130° Verified from Semicircle Arcs, Implementation Locked
+
+- Re-read printed page 31 from the same clean alternate copy. The 600dpi crop SHA-256 is `0d556e3475dbf61e12746094bcaadbd0877b7ac106eefc2b13764e2786bb137f`. The diagram shows diameter ㄱ-ㄷ-ㄴ, center ㄷ, arc points ㄹ·ㅁ·ㅂ in order, equal chords ㄱㄹ=ㅁㅂ, equal central angles ∠ㅁㄷㅂ=∠ㅂㄷㄴ, given ∠ㄷㄹㅁ=60°, and target ∠ㄹㅁㅂ.
+- Since ㄷㄹ=ㄷㅁ are radii, △ㄷㄹㅁ is equilateral and arc ㄹㅁ=60°. Let arcs ㅁㅂ and ㅂㄴ be x because their central angles match. Equal chords ㄱㄹ and ㅁㅂ subtend equal minor arcs, so arc ㄱㄹ=x as well. The semicircle gives `x+60°+x+x=180°`, hence x=40°. The smaller arc ㄹㅂ through ㅁ is 100°, so ∠ㄹㅁㅂ intercepts the other 260° arc and equals 130°.
+- The source answer is calculation-checked. Keep the runtime item locked until its generated diagram, separated solution, and A4 output are checked.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 31 Mission 5: Area Independently Verified, Implementation Locked
 
 - Re-read logical PDF page 27 / printed page 31 from the source PDF (SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`). Apple Vision OCR and the 450dpi close-up confirm the prompt asks for the area of △ㄱㄷㅁ when △ㄱㄴㄷ≅△ㄷㄹㅁ; the diagram marks ㄱㄴ=16cm and ㄹㅁ=8cm, with right angles at ㄴ and ㄹ. Crop `/tmp/gfield-grade52-u3-next/m5-zoom-v2.png` SHA-256 `2c1cc84ff1425cb12c6d6888e514bc1e1678caa387854c774612239ee1b95e3d`. Handwriting was excluded.

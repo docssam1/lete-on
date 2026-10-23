@@ -156,6 +156,16 @@
         "checkId": "e4-mission-3-equilateral-rotation-angle",
         "expression": "점 ㄷ 중심 시계 방향 60° 회전: ㄴ→ㄱ, ㅁ→ㄹ, ㄷ 고정; ∠ㄴㅁㄷ=∠ㄱㄹㄷ=140°",
         "result": true
+      },
+      {
+        "checkId": "e4-mission-1-square-angle-20-25",
+        "expression": "side=1; LM=1−tan20°, LB=1−tan25°; tan25°=tan(45°−20°) ⇒ tan∠LMB=(1−tan25°)/(1−tan20°)=tan40°",
+        "result": true
+      },
+      {
+        "checkId": "e4-mission-2-semicircle-chord-angle",
+        "expression": "Radii DR=DM and ∠DRM=60° ⇒ arc RM=60°; equal central angles ⇒ arcs MB=BN=x; equal chords GR=MB ⇒ arc GR=x; 3x+60°=180° ⇒ x=40°; ∠RMB=(360°−100°)/2=130°",
+        "result": true
       }
     ]
   },
@@ -179,7 +189,7 @@
     "calculationCheckedCount": 49,
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
-    "visualCheckNeededCount": 20,
+    "visualCheckNeededCount": 18,
     "publicCandidateCount": 23,
     "lockedCount": 30
   },
@@ -1700,26 +1710,29 @@
       "commonTypeId": "square-angle-chase-20-25",
       "typeLabel": "정사각형 안의 20°와 25° 각",
       "childFriendlyTypeLabel": "정사각형 속 각도 구하기",
-      "originalStructure": "정사각형 안의 선분에 20°, 25°가 표시되고 목표각을 구합니다.",
+      "originalStructure": "정사각형 ㄱㄴㄷㄹ에서 ∠ㄱㄴㅁ=20°, ∠ㄷㄴㅂ=25°일 때 ∠ㄹㅁㅂ을 구합니다.",
       "conditions": [
-        "정사각형 네 각 90°",
-        "오른쪽 위 부근 20°",
-        "오른쪽 변 부근 25°"
+        "ㄱㄴㄷㄹ은 정사각형",
+        "점 ㅁ은 변 ㄱㄹ 위",
+        "점 ㅂ은 변 ㄹㄷ 위",
+        "∠ㄱㄴㅁ=20°",
+        "∠ㄷㄴㅂ=25°",
+        "목표각은 ∠ㄹㅁㅂ"
       ],
-      "visualRequirement": "20°, 25°가 어느 선분 사이인지 정확히 표시해야 합니다.",
-      "independentCalculation": "직각에서 표시된 20°를 뺀 대응각으로 목표각은 70°입니다.",
-      "answerFormula": "90°-20°=70°",
-      "independentAnswer": "70°",
+      "visualRequirement": "정사각형의 꼭짓점 순서와 점 ㅁ·ㅂ의 변 위 위치, 20°(ㄱㄴ과 ㄴㅁ 사이), 25°(ㄴㄷ과 ㄴㅂ 사이), 목표각 ∠ㄹㅁㅂ을 보존합니다.",
+      "independentCalculation": "정사각형 한 변을 1로 두고 ㄱ=(0,1), ㄴ=(1,1), ㄷ=(1,0), ㄹ=(0,0)으로 둡니다. ∠ㄱㄴㅁ=20°이므로 ㄹㅁ=1−tan20°이고, ∠ㄷㄴㅂ=25°이므로 ㄹㅂ=1−tan25°입니다. t=tan20°라 두면 tan25°=tan(45°−20°)=(1−t)/(1+t)입니다. 따라서 tan∠ㄹㅁㅂ=ㄹㅂ/ㄹㅁ=(1−tan25°)/(1−tan20°)=2t/(1−t²)=tan40°입니다. 그림에서 목표각은 예각이므로 ∠ㄹㅁㅂ=40°로 유일합니다.",
+      "answerFormula": "tan∠ㄹㅁㅂ=(1−tan25°)/(1−tan20°)=tan40° ⇒ ∠ㄹㅁㅂ=40°",
+      "independentAnswer": "40°",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "정사각형의 직각과 평행한 변의 대응각으로 확인했습니다.",
+      "singleAnswerCheck": "정사각형 좌표와 tan(45°−20°) 항등식으로 조건을 모두 사용해 40°를 얻으며, 목표각은 예각입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
-      "visualCheckStatus": "needs-implementation-check",
+      "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "25° 표식과 목표각의 위치가 그림에 의존해 시각 자산 확인 전 잠급니다."
+      "lockReason": "원문 각 위치와 40° 계산은 확인했으나, 공개 전 구현 도형·풀이 분리·A4 인쇄 결과를 대조해야 합니다."
     },
     {
       "sourceItemId": "5-2-u3-e4-mission-2",
@@ -1731,27 +1744,30 @@
       "commonTypeId": "semicircle-inscribed-angle",
       "typeLabel": "반원 안 원주각과 정삼각형",
       "childFriendlyTypeLabel": "반원 속 삼각형의 각 구하기",
-      "originalStructure": "중심이 표시된 반원 안에 네 삼각형이 있고 한 각 60°가 주어진 그림에서 목표각을 구합니다.",
+      "originalStructure": "중심이 ㄷ인 반원을 네 삼각형으로 나눕니다. ㄱㄹ=ㅁㅂ이고 ∠ㅁㄷㅂ=∠ㅂㄷㄴ일 때, ∠ㄷㄹㅁ=60°에서 ∠ㄹㅁㅂ을 구합니다.",
       "conditions": [
-        "반원의 지름",
-        "중심점과 원주점 연결",
-        "한 내부각 60°",
-        "목표각은 원주각"
+        "ㄱㄷㄴ은 반원의 지름이며 ㄷ은 중심",
+        "반원 호의 점 순서는 ㄱ-ㄹ-ㅁ-ㅂ-ㄴ",
+        "ㄷㄹ=ㄷㅁ은 반지름",
+        "ㄱㄹ=ㅁㅂ",
+        "∠ㅁㄷㅂ=∠ㅂㄷㄴ",
+        "∠ㄷㄹㅁ=60°",
+        "목표각은 ∠ㄹㅁㅂ"
       ],
-      "visualRequirement": "반원의 중심, 지름 끝점, 60° 각과 목표각을 모두 확인해야 합니다.",
-      "independentCalculation": "현·중심각·원주각 관계로 목표각은 130°가 됩니다.",
-      "answerFormula": "inscribed-angle chase with 60° ⇒ 130°",
+      "visualRequirement": "지름 ㄱㄷㄴ, 중심 ㄷ, 호 위 점의 순서 ㄹ·ㅁ·ㅂ, 네 반지름·현, ㄱㄹ=ㅁㅂ 표기와 두 같은 중심각, ∠ㄷㄹㅁ 및 목표각 ∠ㄹㅁㅂ을 보존합니다.",
+      "independentCalculation": "ㄷㄹ=ㄷㅁ은 반지름이고 ∠ㄷㄹㅁ=60°이므로 △ㄷㄹㅁ은 정삼각형이며 호 ㄹㅁ은 60°입니다. ∠ㅁㄷㅂ=∠ㅂㄷㄴ이므로 호 ㅁㅂ과 호 ㅂㄴ의 크기를 각각 x라 둡니다. 같은 현 ㄱㄹ=ㅁㅂ은 같은 작은 호를 subtend하므로 호 ㄱㄹ도 x입니다. 반원 호 전체는 180°이므로 x+60°+x+x=180°, 따라서 x=40°입니다. 점 ㄹ에서 ㅂ까지 ㅁ을 지나는 작은 호는 60°+40°=100°이고, ∠ㄹㅁㅂ이 바라보는 나머지 큰 호는 260°입니다. 원주각은 맞은편 호의 절반이므로 ∠ㄹㅁㅂ=130°입니다.",
+      "answerFormula": "호 ㄱㄹ=호 ㅁㅂ=호 ㅂㄴ=x, 호 ㄹㅁ=60°; 3x+60°=180° ⇒ x=40°; ∠ㄹㅁㅂ=(360°−100°)/2=130°",
       "independentAnswer": "130°",
       "resultContract": "single-value",
       "candidateAnswerCount": 1,
       "singleAnswer": true,
-      "singleAnswerCheck": "반원 지름과 원주각의 위치를 기준으로 독립 각도 추적했습니다.",
+      "singleAnswerCheck": "세 같은 작은 호가 반원에서 60°를 제외한 120°를 나누므로 x=40°로 하나이며, 목표 원주각은 나머지 260° 호의 절반입니다.",
       "sourceVerified": true,
       "calculationStatus": "checked",
-      "visualCheckStatus": "needs-implementation-check",
+      "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "반원 안의 점 연결과 목표각 방향을 재확인하기 전입니다."
+      "lockReason": "원문 점·현·중심각 관계와 130° 계산은 확인했으나, 공개 전 구현 그림·분리 풀이·A4 인쇄 결과를 대조해야 합니다."
     },
     {
       "sourceItemId": "5-2-u3-e4-mission-3",
@@ -1889,7 +1905,7 @@
     "calculationCheckedCount": 49,
     "nonUniqueCount": 8,
     "noTriangleCount": 1,
-    "visualCheckNeededCount": 20,
+    "visualCheckNeededCount": 18,
     "notes": [
       "원본 PDF 20~27쪽을 300dpi PNG로 직접 렌더해 눈으로 대조했습니다. PDF 쪽 20~27은 인쇄 쪽 24~31에 대응합니다.",
       "원문 단위는 개념탐구 1: 6+4+6, 개념탐구 2: 5+4+6, 개념탐구 3: 1+4+6, 개념탐구 4: 1+4+6으로 총 53개입니다.",
@@ -1910,7 +1926,8 @@
       "2026-10-24 인쇄 29쪽 Mission 6의 5cm 끝점과 교차 라벨을 원문에서 확인했습니다. 임의의 변 길이에 대해 회전 벡터 증명으로 ∠ㄱㅂㅁ=60°이고, 교점은 두 선분 내부입니다. 구현 그림 대조 전 잠금은 유지합니다. Drive QA: 18goPVPFZgxmFATf-w_BWzNwEt3yF-Mja.",
       "2026-10-24 인쇄 29쪽 Mission 4를 고해상도 확대해 32°의 꼭짓점이 ㅈ임을 바로잡았습니다. ∠ㄷㅈㅇ=58°까지 확인했으나 접힘의 변 대응이 미확정이라 목표각은 비워 두고 잠금을 유지합니다. Drive QA: 1osh1VOnzsLTye9PCydxk5P-z0FEPmRzx.",
       "2026-10-24 인쇄 31쪽 Mission 5의 합동 순서와 직각 표식을 원문 확대에서 확인했습니다. 좌표 검산으로 △ㄱㄷㅁ=160cm²를 확인했으며, 구현 도형·A4 검수 전 잠금은 유지합니다. Drive QA: 1BXdJeD7DOnqb78y_E1FNuIqwoOXZ9q-s.",
-      "2026-10-24 인쇄 31쪽 Mission 3은 필기 없는 대체본(황소5-2-1.pdf, SHA-256 6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88)의 600dpi 렌더에서 도형을 확인했습니다. 점 ㄷ 중심 시계 방향 60° 회전으로 ㄴ→ㄱ, ㅁ→ㄹ이 대응하여 ㉮=∠ㄱㄹㄷ=140°입니다. 구현/A4 검수 전 잠금은 유지합니다."
+      "2026-10-24 인쇄 31쪽 Mission 3은 필기 없는 대체본(황소5-2-1.pdf, SHA-256 6c3fde0d51b7e277eee7427de4db1742a42f11ef5113b25a1050aad2fcbe0ce88)의 600dpi 렌더에서 도형을 확인했습니다. 점 ㄷ 중심 시계 방향 60° 회전으로 ㄴ→ㄱ, ㅁ→ㄹ이 대응하여 ㉮=∠ㄱㄹㄷ=140°입니다. 구현/A4 검수 전 잠금은 유지합니다.",
+      "2026-10-24 인쇄 31쪽 Missions 1·2를 깨끗한 대체본의 600dpi 렌더와 Apple Vision OCR로 재검수했습니다. Mission 1의 이전 70° 후보는 조건을 일부만 사용한 오류라 정사각형 좌표와 tan(45°−20°) 항등식으로 40°로 고쳤습니다. Mission 2는 같은 현과 같은 중심각으로 반원 호를 분할해 130°를 확인했습니다. 원문 구조는 확인했고 구현/A4 검수 전 잠금은 유지합니다."
     ]
   }
 }
