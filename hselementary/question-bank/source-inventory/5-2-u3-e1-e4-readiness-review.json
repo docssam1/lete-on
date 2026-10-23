@@ -33,7 +33,8 @@
       {"checkId": "e2-mission-6-small-sectors", "expression": "six small triangles only; reflection pairs (1,6),(2,5),(3,4) => 3", "result": true},
       {"checkId": "e3-example-2-square-angle", "expression": "12^2+12^2-2*12*12*cos(60°)=144; length=12cm", "result": true},
       {"checkId": "e3-example-3-rotation-counterexamples", "expression": "right triangle legs (1,h); h=1 ⇒ target 45°, h=√3 ⇒ target 30° or 60°; both satisfy parallel condition", "result": true},
-      {"checkId": "e3-example-4-fold-angle-counterexamples", "expression": "rectangle H=1, W=cot24°; M=(1,0); MB slope tanθ with θ=40° or 48°; both A→M and M→B folds possible, giving ∠BOD=64° or 72°", "result": true}
+      {"checkId": "e3-example-4-fold-angle-counterexamples", "expression": "rectangle H=1, W=cot24°; M=(1,0); MB slope tanθ with θ=40° or 48°; both A→M and M→B folds possible, giving ∠BOD=64° or 72°", "result": true},
+      {"checkId": "e3-mission-1-congruent-isosceles-angle-chase", "expression": "base 66° ⇒ apex 48°; ∠RSN=108° from linear pair with marked 72°; ∠RNS=24°; GN=RN ⇒ ∠GRN=78°; target 78°−48°=30°", "result": true}
     ]
   },
   "integrity": {
@@ -44,7 +45,7 @@
     "bySourceSection": {"exploration": 13, "example": 16, "mission": 24},
     "duplicateSourceItemIds": 0,
     "unclassifiedItems": 0,
-    "calculationCheckedCount": 44,
+    "calculationCheckedCount": 45,
     "nonUniqueCount": 9,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 24,
@@ -1039,25 +1040,25 @@
       "sourceItemLabel": "Mission 1",
       "sourcePdfPage": 25,
       "sourcePrintedPage": 29,
-      "commonTypeId": "congruent-isosceles-angle-chase-rotated",
-      "typeLabel": "회전한 합동 이등변삼각형의 각",
-      "childFriendlyTypeLabel": "돌려 놓은 같은 삼각형의 각 구하기",
-      "originalStructure": "65°가 표시된 이등변삼각형과 45° 회전한 합동 삼각형이 겹친 그림에서 목표각을 구합니다.",
-      "conditions": ["두 삼각형 합동", "한 삼각형의 밑각 65°", "45° 회전 표시", "교차점의 목표각"],
-      "visualRequirement": "회전 중심, 점 대응, 72° 표식과 교차선이 필요합니다.",
-      "independentCalculation": null,
-      "answerFormula": null,
-      "independentAnswer": null,
+      "commonTypeId": "congruent-isosceles-triangle-overlap-angle",
+      "typeLabel": "합동인 이등변삼각형의 겹친 각",
+      "childFriendlyTypeLabel": "겹친 같은 이등변삼각형에서 각 구하기",
+      "originalStructure": "삼각형 ㄱㄴㄷ과 삼각형 ㄹㄴㅁ은 합동인 이등변삼각형입니다. 그림의 66°와 교점 ㅅ의 72°를 이용해 ∠ㄱㄹㅅ을 구합니다.",
+      "conditions": ["△ㄱㄴㄷ≅△ㄹㄴㅁ, 두 삼각형은 이등변", "△ㄱㄴㄷ에서 ∠ㄴㄷㄱ=66°", "ㅅ=ㄱㄴ과 ㄹㅁ의 교점", "∠ㄴㅅㅁ=72°", "목표각은 ∠ㄱㄹㅅ"],
+      "visualRequirement": "△ㄱㄴㄷ의 같은 변 ㄱㄴ·ㄱㄷ, △ㄹㄴㅁ의 같은 변 ㄹㄴ·ㄹㅁ, 교점 ㅅ, 66°·72° 표식과 목표각 ∠ㄱㄹㅅ을 보존해야 합니다.",
+      "independentCalculation": "△ㄱㄴㄷ은 ㄱㄴ=ㄱㄷ인 이등변삼각형이므로 밑각 ∠ㄴㄷㄱ=∠ㄱㄴㄷ=66°이고 꼭짓각 ∠ㄴㄱㄷ=48°입니다. 합동인 △ㄹㄴㅁ도 ㄹㄴ=ㄹㅁ이고 꼭짓각 ∠ㄴㄹㅁ=48°입니다. ㅅ은 ㄱㄴ과 ㄹㅁ의 교점이며 ∠ㄴㅅㅁ=72°이므로 선형쌍 ∠ㄹㅅㄴ=108°입니다. △ㄹㄴㅅ에서 ∠ㄹㄴㅅ=180°−48°−108°=24°입니다. ㄴㅅ과 ㄴㄱ은 같은 ray이므로 △ㄱㄴㄹ의 ∠ㄱㄴㄹ=24°입니다. 합동인 이등변삼각형의 같은 변 ㄱㄴ=ㄹㄴ이므로 △ㄱㄴㄹ의 밑각 ∠ㄱㄹㄴ=∠ㄴㄱㄹ=(180°−24°)/2=78°입니다. ray ㄹㅅ은 ray ㄹㅁ과 같고 ∠ㄴㄹㅁ=48°이므로 ∠ㄱㄹㅅ=78°−48°=30°입니다.",
+      "answerFormula": "∠ㄴㄱㄷ=180°−2×66°=48°; ∠ㄹㅅㄴ=180°−72°=108°; ∠ㄱㄴㄹ=180°−48°−108°=24°; ∠ㄱㄹㄴ=(180°−24°)/2=78°; ∠ㄱㄹㅅ=78°−48°=30°",
+      "independentAnswer": "30°",
       "resultContract": "single-value",
-      "candidateAnswerCount": null,
-      "singleAnswer": null,
-      "singleAnswerCheck": "회전 후 대응점과 목표각의 정확한 위치를 확정하지 못했습니다.",
+      "candidateAnswerCount": 1,
+      "singleAnswer": true,
+      "singleAnswerCheck": "두 합동 이등변삼각형의 꼭짓각 48°, 교점의 선형쌍 108°, △ㄱㄴㄹ의 같은 변 ㄱㄴ=ㄹㄴ로 모든 목표각이 유일하게 정해집니다.",
       "sourceVerified": true,
-      "calculationStatus": "blocked-visual",
-      "visualCheckStatus": "needs-implementation-check",
+      "calculationStatus": "checked",
+      "visualCheckStatus": "confirmed-source-structure",
       "implementationStatus": "review-locked",
       "publicDecision": "locked",
-      "lockReason": "복합 회전 도형의 라벨·교차점이 답에 직접 관여해 추측을 금지합니다."
+      "lockReason": "원문 계산은 30°로 확정했으나, 공개 전 구현 그림의 점 라벨·교점·66°·72° 표식을 대조해야 합니다."
     },
     {
       "sourceItemId": "5-2-u3-e3-mission-2",
@@ -1498,7 +1499,7 @@
     "directlyReviewedCount": 53,
     "publicCandidateCount": 23,
     "lockedCount": 30,
-    "calculationCheckedCount": 44,
+    "calculationCheckedCount": 45,
     "nonUniqueCount": 9,
     "noTriangleCount": 1,
     "visualCheckNeededCount": 24,
@@ -1514,7 +1515,8 @@
       "2026-10-24 인쇄 27쪽 Mission 6의 범위를 원문과 재대조해 합성 삼각형을 제외하고 정답을 3쌍으로 정정했습니다. 예제 2-4와는 서로 다른 삼각형 집합을 세므로 commonTypeId를 분리했습니다. Drive QA: 1UO3b2Ae_gjHhd7K-nDwkUz2I4VzSWGEj.",
       "2026-10-24 인쇄 28쪽 예제 3-2의 60° 표식과 선분 끝점을 재검수했습니다. 두 12cm 변의 끼인각으로 정삼각형이 되어 ㄱㄴ=12cm이며, 기존의 단순한 정사각형 변 대응 설명을 교정했습니다. Drive QA: 1IQrrZjrUEr4vGxZTNfBDgEu64sFWJBQj.",
       "2026-10-24 인쇄 28쪽 예제 3-3에는 예각 또는 변비가 제시되지 않아 목표각이 유일하지 않음을 반례로 확인하고 기존 30° 후보를 잠갔습니다. Drive QA: 1sT0W-X1Xk96z5XmpxOAKNevKJ7CX3zaL.",
-      "2026-10-24 인쇄 28쪽 예제 3-4의 인쇄 조건은 ㄱ→ㅁ→ㅂ과 ∠ㅂㅇㄷ이며, 72°는 필기라 제외했습니다. 24° 직사각형에서 두 접기가 모두 가능한 좌표 반례로 목표각 64°와 72°를 만들어 비유일을 확인했습니다."
+      "2026-10-24 인쇄 28쪽 예제 3-4의 인쇄 조건은 ㄱ→ㅁ→ㅂ과 ∠ㅂㅇㄷ이며, 72°는 필기라 제외했습니다. 24° 직사각형에서 두 접기가 모두 가능한 좌표 반례로 목표각 64°와 72°를 만들어 비유일을 확인했습니다.",
+      "2026-10-24 인쇄 29쪽 Mission 1의 기존 조건(65°·45° 회전)이 Mission 3에서 잘못 섞였음을 발견했습니다. 실제 조건은 합동 이등변삼각형, 66° 밑각, 교점 72°이며 각도 추적으로 원문 정답 30°를 확정했습니다. 구현 도형 확인 전 잠금은 유지합니다. Drive QA: 1zNtIYqtPweo41VVVcY4gp9UkqcXWCeKv."
     ]
   }
 }

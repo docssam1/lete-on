@@ -1,5 +1,12 @@
 # Elementary Question Bank Handover
 
+## 2026-10-24 Grade 5-2 Unit 3 Printed Page 29 Mission 1: Corrected Source Conditions and Answer
+
+- Re-read logical PDF page 25 / printed page 29 at 450dpi and compared Apple Vision OCR with the high-resolution figure. The prompt gives congruent isosceles triangles △ㄱㄴㄷ and △ㄹㄴㅁ, a printed 66° base angle, a printed 72° angle at their crossing ㅅ, and asks for ∠ㄱㄹㅅ. The previous ledger had mistakenly copied Mission 3's 65° and 45° rotation conditions into Mission 1.
+- Independent chase: each original isosceles triangle has apex 48°. The linear pair to 72° is 108°, so △ㄹㄴㅅ gives ∠ㄱㄴㄹ=24°. Corresponding equal legs ㄱㄴ=ㄹㄴ make △ㄱㄴㄹ's base angles 78°. Subtracting △ㄹㄴㅁ's 48° apex gives ∠ㄱㄹㅅ=30°. Handwritten calculations and the circled handwritten 30° were excluded.
+- Corrected the inventory conditions and answer to 30°. Keep the item locked pending implementation-figure verification. Counts: 23 public candidates, 30 locked, 45 calculation-checked, 9 non-unique. No student data, runtime mapping, release state, or deployment changed.
+- Drive evidence: https://drive.google.com/file/d/1zNtIYqtPweo41VVVcY4gp9UkqcXWCeKv/view. Source PDF SHA-256 `d870f8ab03e392a5ec8be1626ad380685d50bab5f8e410ec2ccfb7e578266463`; page 25 render SHA-256 `dbe59d7a71d6aec2a7aa420cadb74e1aef72a52802540afd21435df6e1a3c604`; OCR SHA-256 `9cc2f66e7ac99039cd5cd89fd8433bd529c188a96ec7db76b4bf63a5a92e7326`.
+
 ## 2026-10-24 Grade 5-2 Unit 3 Printed Page 28 Example 3-4: Underdetermined Fold Angle
 
 - Re-read logical PDF page 24 / printed page 28 from the SHA-256-matched original and ran Apple Vision on the prompt crop. It says to fold the rectangle so ㄱ moves to ㅁ, then fold so ㅁ moves to ㅂ, and asks for ∠ㅂㅇㄷ. The diagram marks 24° between the top edge and diagonal ㄱㄷ; ㅇ is the intersection of ㄱㄷ and ㅁㅂ. The handwritten 72° and nearby angle notes were excluded.
