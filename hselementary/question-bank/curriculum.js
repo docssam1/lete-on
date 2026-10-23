@@ -1482,6 +1482,27 @@ if (typeof module !== "undefined" && module.exports && typeof window !== "undefi
             verifiedVariantCount: 3,
             answerVisualRequired: false,
             answerVisualStatus: "not-required"
+          }, {
+            id: "5-2-u1-e3-mission-3-cube-box-count",
+            name: "창고의 세 방향에 정육면체 상자 넣기",
+            sourceItemId: "5-2-u1-e3-mission-3-cube-box-count",
+            sourceItemLabel: "Mission 3",
+            sourceSection: "mission",
+            sourceTier: "advanced",
+            sourcePdfPage: 7,
+            sourcePrintedPage: 9,
+            sourceEvidence: "source-memory:hs-elementary.unit.5-2-1.e3-mission-3-vision-20261023",
+            sourceVerified: true,
+            publisherKeyVerified: false,
+            answerVerification: "independent-calculation-user-authorized",
+            reviewLocked: false,
+            reviewReason: "인쇄된 창고의 세 방향 3m·10m·4m와 정육면체 상자 한 변 15cm를 원문에서 직접 대조했습니다. 각 방향에 들어가는 수를 cm 단위로 독립 계산해 20×66×26=34,320개를 확인했습니다. 손글씨와 출판사 정답지는 근거로 사용하지 않았고, 원문 치수는 생성 풀에 복사하지 않았습니다.",
+            generatorKey: "source52ApplicationMissionThreeCubeBoxes",
+            generationMode: "fixed-verified-pool",
+            verifiedVariantTarget: 3,
+            verifiedVariantCount: 3,
+            answerVisualRequired: false,
+            answerVisualStatus: "not-required"
           }]
         }
       ],
