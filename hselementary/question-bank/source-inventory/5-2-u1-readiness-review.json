@@ -821,9 +821,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "세 방향의 들어가는 개수를 각각 구해 곱하면 최대 개수가 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "verified-local",
-      "publicDecision": "ready-for-deploy",
-      "lockReason": "원문 조건과 독립 풀이를 대조했고 9개 계산 구성, 12개 PC·모바일 상태, A4 문제·풀이 출력 검수를 통과했습니다."
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
+      "lockReason": "9개 계산 구성, 12개 라이브 PC·모바일 상태, A4 문제·풀이와 라이브 배포 파일 해시를 검증했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-4-mat-cost",
@@ -843,9 +843,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "두 묶음의 올림 구매 비용을 각각 계산하면 선택과 절약액이 하나입니다.",
       "sourceVerified": true,
-      "implementationStatus": "review-locked",
-      "publicDecision": "locked",
-      "lockReason": "표형 조건과 선택·금액 복합 답안을 중앙에 연결하기 전입니다."
+      "implementationStatus": "verified-local",
+      "publicDecision": "ready-for-deploy",
+      "lockReason": "Apple Vision OCR과 인쇄 원문 표를 대조하고 원문과 다른 수치로 만든 9개 조합을 독립 검산했습니다. 12개 PC·모바일 상태, 24개 가로 넘침 검사, A4 문제·풀이를 각 1쪽으로 확인했습니다. 라이브 배포 확인은 대기 중입니다."
     },
     {
       "sourceItemId": "5-2-u1-e3-mission-5-bar-graph-length",
@@ -1161,7 +1161,7 @@
 
   "runtimeCrosswalk": {
     "asOf": "2026-10-23",
-    "scope": "The three page-6 E3 Exploration mappings and page-7 Mission 1–3 mappings are deployed and live-verified. The 50-item source census under integrity is historical.",
+    "scope": "The three page-6 E3 Exploration mappings and page-7 Mission 1–3 mappings are deployed and live-verified; Mission 4 has passed local source, math, desktop/mobile, overflow, and A4 checks; source QA evidence is stored in Drive and live deployment verification is pending. The 50-item source census under integrity is historical.",
     "releaseStatus": "deployed-and-live-verified",
     "mainMergeSha": "aadfe1d387b02f3e9b4808326efcb538e9d7b478",
     "pullRequest": 385,
@@ -1173,7 +1173,8 @@
       {"sourceItemId":"5-2-u1-e3-exploration-round-nearest","runtimeId":"5-2-u1-e3-exploration-round-nearest","sourcePdfPage":6,"sourcePrintedPage":8,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true},
       {"sourceItemId":"5-2-u1-e3-mission-1-box-count","runtimeId":"5-2-u1-e3-mission-1-box-count","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"deployed-and-live-verified"},
       {"sourceItemId":"5-2-u1-e3-mission-2-perimeter","runtimeId":"5-2-u1-e3-mission-2-perimeter","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"deployed-and-live-verified","pullRequest":384,"mergeSha":"3b24d1ec29d981e85ce83e39f81e379dcd0aa04f","pagesWorkflowRunId":39952863257,"liveQaDriveId":"1ToRbREey4ea8N8qmg_4Aq76q2ct3GeeK"},
-      {"sourceItemId":"5-2-u1-e3-mission-3-cube-box-count","runtimeId":"5-2-u1-e3-mission-3-cube-box-count","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"deployed-and-live-verified","qaDriveId":"1ysUst2jq26uqD9Hplw3edwzxi4GuT3ON","pullRequest":385,"mergeSha":"aadfe1d387b02f3e9b4808326efcb538e9d7b478","pagesWorkflowRunId":39955010462,"pagesRunConclusion":"cancelled-after-deploy-step-success","liveQaDriveId":"1HY7TsBOcWq_t9vSrjsXfndttaJ5OsYy7","liveQaSize":567120,"liveQaSha256":"8d23e56dd3692517328e1be8bdb0bac1083dd3134b375d74289fa2e1a442d27a"}
+      {"sourceItemId":"5-2-u1-e3-mission-3-cube-box-count","runtimeId":"5-2-u1-e3-mission-3-cube-box-count","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"deployed-and-live-verified","qaDriveId":"1ysUst2jq26uqD9Hplw3edwzxi4GuT3ON","pullRequest":385,"mergeSha":"aadfe1d387b02f3e9b4808326efcb538e9d7b478","pagesWorkflowRunId":39955010462,"pagesRunConclusion":"cancelled-after-deploy-step-success","liveQaDriveId":"1HY7TsBOcWq_t9vSrjsXfndttaJ5OsYy7","liveQaSize":567120,"liveQaSha256":"8d23e56dd3692517328e1be8bdb0bac1083dd3134b375d74289fa2e1a442d27a"},
+      {"sourceItemId":"5-2-u1-e3-mission-4-mat-cost","runtimeId":"5-2-u1-e3-mission-4-mat-cost","sourcePdfPage":7,"sourcePrintedPage":9,"sourceVerified":true,"independentAnswerCheck":true,"browserAndA4Check":true,"publisherKeyVerified":false,"runtimeAvailableLocally":true,"releaseStatus":"verified-local","independentSourceAnswer":"(가)마트 396000원; (나)마트 364000원; 절약 32000원","localQaPath":"/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e4-source-20261023","browserStatesPassed":12,"overflowChecksPassed":24,"a4ProblemPages":1,"a4SolutionPages":1,"qaDriveId":"1-XlyHfilHFalbR1RyUTSZSL3cAbWUvko","qaDriveSize":1411853,"qaDriveSha256":"64ae16ac8d02c75ad98e2e6eb0cfd015a3792f91db91808117972fda9860daa8","localQaZipSha256":"64ae16ac8d02c75ad98e2e6eb0cfd015a3792f91db91808117972fda9860daa8"}
     ]
   }
 }
