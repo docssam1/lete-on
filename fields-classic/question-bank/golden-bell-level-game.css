@@ -119,3 +119,8 @@
 .gold-hands-on .lg-unit-note.step { color: #3f2a10; font-weight: 700; }
 .gold-hands-on .lg-unit-note.retry { color: #8f3c1c; font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .gold-hands-on .lg-car-btn:hover { transform: none; } }
+/* 무게 줄 세우기 ① 저울 읽기: 읽은 저울이 「무거운 > 가벼운」 칩으로 쌓인다. */
+.gold-hands-on .lg-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0 0 10px; padding: 0; list-style: none; }
+.gold-hands-on .lg-facts li { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #fff7e6; box-shadow: inset 0 0 0 1.5px #d9a62e; color: #3f2a10; font-size: 14px; }
+.gold-hands-on .lg-facts li span { color: #7a5c2e; font-size: 12px; font-weight: 700; }
+.gold-hands-on .lg-facts li b { font-size: 16px; letter-spacing: .02em; }

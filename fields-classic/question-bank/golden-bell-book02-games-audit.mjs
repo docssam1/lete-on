@@ -99,6 +99,15 @@ async function solve(page, game, mode) {
     for (let t = 0; t < tries; t++) await fill(p.answer.map((v, i) => (i === 0 ? (v === p.hi ? v - 1 : v + 1) : v)));
     if (mode !== "twice") await fill(p.answer);
   } else if (game === "b2-balance") {
+    // ① 저울 읽기(줄 세우기·가장 가벼운 것): 저울마다 내려간 쪽 공을 눌러야 다음 단계가 열린다.
+    if (p.kind !== "pick" && await page.locator("[data-b2-read]").count()) {
+      assert.equal(await page.locator("[data-b2-item]").count(), 0, "Ordering waits until every scale is read");
+      const heavy = (s) => (s.heavy === "left" ? s.left : s.right), light = (s) => (s.heavy === "left" ? s.right : s.left);
+      await c(`[data-b2-read="${light(p.scales[0])}"]`).click();
+      assert.equal(await page.locator(".lg-unit-note.retry").count(), 1, "Picking the raised side is questioned");
+      for (const s of p.scales) await c(`[data-b2-read="${heavy(s)}"]`).click();
+      assert.equal(await page.locator(".lg-facts li").count(), p.scales.length, "Every read scale becomes a fact");
+    }
     if (p.kind === "order") {
       const put = async (order) => { if (await c("[data-b2-clear]:not([disabled])").count()) await c("[data-b2-clear]").click(); for (const i of order) await c(`[data-b2-item="${i}"]`).click(); await c("[data-b2-check]").click(); };
       for (let t = 0; t < tries; t++) await put([...p.answer].reverse());
