@@ -67,6 +67,25 @@
   stroke-dasharray: 6 5;
 }
 
+.source52-p31-diagram .source52-midpoint-line {
+  stroke: #2f6b4a;
+  stroke-dasharray: 5 4;
+  stroke-width: 2.5;
+}
+
+.source52-p31-diagram .source52-midpoint-dot {
+  fill: #2f6b4a;
+  stroke: #fdfbf5;
+  stroke-width: 1.5;
+}
+
+.source52-p31-diagram .source52-construction-label,
+.source52-p31-diagram .source52-measure-label {
+  fill: #2f6b4a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .source52-p31-diagram .source52-equal-mark {
   stroke: #2f6b4a;
   stroke-width: 2;
@@ -113,6 +132,11 @@
   margin: 6px auto;
 }
 
+.source52-p31-trapezoid-proof {
+  width: min(100%, 380px);
+  max-height: 72mm;
+}
+
 .source52-p31-review-note {
   margin: 10px 0 0;
   padding: 8px 10px;
@@ -142,6 +166,10 @@
 
   .source52-p31-area-proof {
     max-height: 78mm;
+  }
+
+  .source52-p31-trapezoid-proof {
+    max-height: 72mm;
   }
 
   .source52-p31-review-note {
