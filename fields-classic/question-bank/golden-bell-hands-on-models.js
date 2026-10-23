@@ -27,7 +27,9 @@ export const HANDS_ON_ACTIVITIES = {
   ] },
   "fold-once": { title: "한 번 접고 잘라 보기", kind: "fold", lesson: "fold-one-cut", rounds: [folding(["right"], 0, 3), folding(["up"], 0, 1), folding(["left"], 2, 0)] },
   "fold-twice": { title: "두 번 접고 펼쳐 보기", kind: "fold", lesson: "fold-two-cut", rounds: [folding(["right", "down"], 3, 2), folding(["up", "left"], 0, 1), folding(["down", "left"], 3, 0)] },
-  "cross-sums": { title: "두 줄의 합 맞추기", kind: "cross", lesson: "equal-line-placement", rounds: [{ center: 3 }, { center: 1 }, { center: 5 }] },
+  // 골든벨 풀이: ① 교차점(가운데) 후보 정하기 → ② 남은 카드를 두 줄에 나누기 → ③ 카드·합 확인.
+  // 가운데는 아이가 고른다. 남은 네 수가 합이 같은 두 쌍으로 나뉘어야 하므로 되는 가운데와 안 되는 가운데가 섞여 있다.
+  "cross-sums": { title: "두 줄의 합 맞추기", kind: "cross", lesson: "equal-line-placement", rounds: [{ cards: [1, 2, 3, 4, 5] }, { cards: [2, 3, 4, 5, 6] }, { cards: [1, 3, 5, 7, 9] }] },
   "line-order": { title: "조건대로 줄 세우기", kind: "order", lesson: "relative-order-running", rounds: [
     { clues: [{ kind: "last", a: "C" }, { kind: "adjacent", a: "B", b: "A" }, { kind: "first", a: "D" }] },
     { clues: [{ kind: "last", a: "A" }, { kind: "adjacent", a: "D", b: "A" }, { kind: "before", a: "C", b: "B" }] },
@@ -65,6 +67,16 @@ export function expectedCells(activity, round) {
   return [];
 }
 
+// 숫자 뒤 목적격 조사: 받침 있는 읽기(영·일·삼·육·칠·팔)면 「을」, 아니면 「를」.
+export const eulReul = (n) => `${n}${[0, 1, 3, 6, 7, 8].includes(Math.abs(n) % 10) ? "을" : "를"}`;
+
+// 가운데 카드 center로 남은 네 수를 합이 같은 두 쌍으로 나눌 수 있는가.
+export function crossCenterWorks(round, center) {
+  const rest = round.cards.filter((n) => n !== center);
+  const total = rest.reduce((a, b) => a + b, 0);
+  return total % 2 === 0 && rest.slice(1).some((n) => rest[0] + n === total / 2);
+}
+
 export function clueText(clue) {
   if (clue.kind === "first") return `${clue.a}는 맨 앞에 있습니다.`;
   if (clue.kind === "last") return `${clue.a}는 맨 뒤에 있습니다.`;
@@ -89,7 +101,7 @@ export function matchesClue(slots, clue) {
 export function newActivityState(activityId, roundIndex = 0) {
   const activity = HANDS_ON_ACTIVITIES[activityId];
   const round = activity.rounds[roundIndex];
-  return { activityId, roundIndex, turns: 0, foldStep: 0, cut: false, cells: [], slots: Array(4).fill(null), selected: null, left: round.left, right: round.right, moved: 0, moves: 0, history: [], checked: false, solved: false, feedback: "",
+  return { activityId, roundIndex, turns: 0, foldStep: 0, cut: false, cells: [], slots: Array(activity.kind === "cross" ? 5 : 4).fill(null), selected: null, left: round.left, right: round.right, moved: 0, moves: 0, history: [], checked: false, solved: false, feedback: "",
     // 옮기기(transfer)는 골든벨 풀이 순서를 그대로 밟는다: ① 짝 없는 구슬로 차이 찾기 → ② 차이를 반으로 나눠 줄 만큼 고르기 → ③ 옮긴 뒤 덧셈·뺄셈으로 확인.
     phase: "diff", marked: [], give: [], note: "", misses: 0,
     // 접기(fold)도 풀이 순서대로: 자른 뒤 마지막 접기부터 한 번씩 펼치고, 펼칠 때마다 새 자국을 표시한다.
@@ -104,8 +116,9 @@ export function activityCheck(state) {
     return state.cells.length === expected.length && expected.every((cell) => state.cells.includes(cell)) && (activity.kind !== "fold" || (state.cut && state.unfold === round.model.folds.length));
   }
   if (activity.kind === "cross") {
+    // 자리: 0 위 · 1 왼쪽 · 2 오른쪽 · 3 아래 · 4 가운데.
     const [top, left, right, bottom] = state.slots;
-    return state.slots.every((n) => Number.isInteger(n) && n >= 1 && n <= 5) && new Set([...state.slots, round.center]).size === 5 && top + bottom === left + right;
+    return state.slots.every((n) => round.cards.includes(n)) && new Set(state.slots).size === 5 && top + bottom === left + right;
   }
   if (activity.kind === "order") return new Set(state.slots).size === 4 && state.slots.every((v) => ["A", "B", "C", "D"].includes(v)) && round.clues.every((clue) => matchesClue(state.slots, clue));
   return state.phase === "done" && state.left === state.right && state.left + state.right === round.left + round.right;
@@ -119,7 +132,7 @@ export function activityFeedback(state) {
   if (activity.kind === "clock") return `맞았어요. ${round.start}에서 출발해 ${clockValueAfterQuarterTurns(round.start, round.turns)}을 가리킵니다.`;
   if (activity.kind === "mirror") return "맞았어요. 거울 양쪽에서 같은 거리에 있는 칸끼리 짝이 됩니다.";
   if (activity.kind === "fold") return `맞았어요. 마지막에 접은 선부터 펼치면 잘린 칸 ${state.cells.length}개가 나타납니다.`;
-  if (activity.kind === "cross") return `맞았어요. 가로 ${state.slots[1]} + ${round.center} + ${state.slots[2]} = ${state.slots[1] + round.center + state.slots[2]}, 세로 ${state.slots[0]} + ${round.center} + ${state.slots[3]} = ${state.slots[0] + round.center + state.slots[3]}입니다.`;
+  if (activity.kind === "cross") { const c = state.slots[4]; return `맞았어요. 가운데 ${eulReul(c)} 두 줄이 함께 쓰므로 남은 두 쌍의 합(${state.slots[1]} + ${state.slots[2]} = ${state.slots[0]} + ${state.slots[3]})만 같으면 돼요. 가로 ${state.slots[1]} + ${c} + ${state.slots[2]} = ${state.slots[1] + c + state.slots[2]}, 세로 ${state.slots[0]} + ${c} + ${state.slots[3]} = ${state.slots[0] + c + state.slots[3]}입니다.`; }
   if (activity.kind === "order") return `맞았어요. ${state.slots.join(" → ")} 순서가 모든 조건에 맞습니다.`;
   return `맞았어요. 차이 ${transferDifference(round)}개를 둘로 나눈 ${state.moved}개를 옮겨 ${round.left} − ${state.moved} = ${state.left}, ${round.right} + ${state.moved} = ${state.right}로 같아졌어요.`;
 }
@@ -194,8 +207,11 @@ export function applyActivityAction(state, action, value) {
     const givenSide = round.axis.kind === "vertical" ? value % 4 < 2 : Math.floor(value / 4) < 2;
     if (!givenSide) { state.cells = state.cells.includes(value) ? state.cells.filter((cell) => cell !== value) : [...state.cells, value]; changed = true; }
   }
-  if (action === "slot" && ["cross", "order"].includes(activity.kind) && Number.isInteger(value) && value >= 0 && value < 4) {
-    const pool = activity.kind === "cross" ? [1, 2, 3, 4, 5].filter((n) => n !== round.center) : ["A", "B", "C", "D"];
+  if (action === "slot" && ["cross", "order"].includes(activity.kind) && Number.isInteger(value) && value >= 0 && value < state.slots.length) {
+    const pool = activity.kind === "cross" ? round.cards : ["A", "B", "C", "D"];
+    // ① 가운데부터: 두 줄이 함께 쓰는 교차점을 먼저 정해야 남은 카드를 나눌 수 있다.
+    state.note = "";
+    if (activity.kind === "cross" && state.slots[4] === null && value !== 4 && state.selected !== null) { state.note = "먼저 두 줄이 함께 쓰는 가운데 자리에 놓을 카드를 정해 봐."; state.selected = null; return true; }
     if (state.selected === null) { state.selected = state.slots[value]; return true; }
     if (pool.includes(state.selected)) {
       const previous = state.slots.indexOf(state.selected);

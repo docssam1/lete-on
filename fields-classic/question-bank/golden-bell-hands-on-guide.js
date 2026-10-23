@@ -1,4 +1,4 @@
-import { clockValueAfterQuarterTurns, unfoldTargets, orderedClues, currentClueIndex, clueText } from "./golden-bell-hands-on-models.js?v=20261023t";
+import { clockValueAfterQuarterTurns, unfoldTargets, orderedClues, currentClueIndex, clueText, eulReul } from "./golden-bell-hands-on-models.js?v=20261023t";
 
 const unfoldTargetCount = (round, state) => unfoldTargets(round, state.unfold).filter((cell) => !state.cells.includes(cell)).length;
 
@@ -17,7 +17,7 @@ export function handsOnGuide(activity, round, state) {
     clock: "끝 숫자만 보지 말고, 방향과 반의 반 바퀴씩 돌린 횟수도 확인해 봐.",
     mirror: "거울선에서 몇 칸 떨어져 있는지 하나씩 짝지어 봐.",
     fold: "마지막에 접은 선부터 펼친다고 생각해 봐. 자국은 어디로 옮겨질까?",
-    cross: "카드를 중복해 놓지 않았는지, 두 줄의 합이 같은지 확인해 봐.",
+    cross: "두 줄의 합이 다르면, 가운데를 뺀 두 쌍의 합부터 비교해 봐. 어떻게 나눠도 안 되면 가운데 카드를 바꿔 봐.",
     order: "맨 앞·맨 뒤를 확인하고, '바로 앞'인지도 살펴봐.",
     transfer: "옮긴 뒤의 두 수를 비교해 봐. 전체 개수는 바뀌지 않아."
   })[activity.kind] };
@@ -44,9 +44,16 @@ export function handsOnGuide(activity, round, state) {
     const next = round.model.folds[state.foldStep];
     return { phase: state.foldStep ? "progress" : "start", text: `${state.foldStep ? "다음은" : "먼저"} ${directions[next]}으로 접어 보자. 종이가 어디에 포개질까?` };
   }
-  if (activity.kind === "cross") return state.slots.some((slot) => slot !== null)
-    ? { phase: "progress", text: "놓은 카드로 가로와 세로의 합을 비교해 봐. 빈 자리에는 어떤 카드가 필요할까?" }
-    : { phase: "start", text: "가운데 카드는 그대로 두고, 나머지 카드를 한 번씩 놓아 봐." };
+  if (activity.kind === "cross") {
+    // 골든벨 풀이: ① 교차점 후보 정하기 ② 남은 카드를 두 줄에 나누기 ③ 카드를 한 번씩 썼는지·두 줄 합이 같은지 확인.
+    if (state.note) return { phase: "retry", text: state.note };
+    const c = state.slots[4];
+    if (c === null) return { phase: "start", text: "① 가운데 칸은 가로줄과 세로줄이 함께 써. 가운데에 놓을 카드 후보를 하나 골라 놓아 봐." };
+    const rest = round.cards.filter((n) => n !== c);
+    const total = rest.reduce((a, b) => a + b, 0);
+    if (state.slots.slice(0, 4).every((slot) => slot === null)) return { phase: "progress", text: `② 가운데가 ${c}이면 남은 ${rest.slice(0, -1).join(", ")}, ${eulReul(rest.at(-1))} 두 쌍으로 나눠 두 줄에 하나씩 넣어. 두 쌍의 합이 같아야 해 — 남은 수의 합 ${total}의 반이 될까?` };
+    return { phase: "progress", text: "놓은 카드로 가로와 세로의 합을 비교해 봐. 두 쌍의 합이 같게 나뉘지 않으면 가운데 카드를 바꿔 봐." };
+  }
   if (activity.kind === "order") {
     // 골든벨 풀이: 왼쪽이 앞 → 자리가 바로 정해지는 조건부터 → 사이 조건 → 앞에서부터 세어 확인.
     const clues = orderedClues(round), now = currentClueIndex(round, state.slots);

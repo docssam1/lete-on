@@ -15,7 +15,7 @@ const button = (action, label, symbol, { value, disabled = false, cls = "" } = {
 function task(activity, round) {
   if (activity.kind === "mirror") return `${round.axis.kind === "vertical" ? "오른쪽" : "아래쪽"} 거울에 비칠 모양을 완성하세요.`;
   if (activity.kind === "fold") return `색종이를 ${round.model.folds.map((d) => direction[d]).join(", 다시 ")}으로 접어 표시한 칸을 자릅니다. 펼치면 잘릴 칸을 모두 고르세요.`;
-  if (activity.kind === "cross") return `1, 2, 3, 4, 5를 한 번씩 놓아 가로줄과 세로줄의 합을 같게 만드세요. 가운데 수는 ${round.center}입니다.`;
+  if (activity.kind === "cross") return `${round.cards.join(", ")}를 한 번씩 놓아 가로줄과 세로줄의 합을 같게 만드세요. 가운데 칸은 두 줄이 함께 씁니다.`;
   if (activity.kind === "order") return "네 친구를 조건에 맞게 앞에서부터 놓으세요.";
   return `A는 ${round.left}개, B는 ${round.right}개를 가졌습니다. A가 B에게 주어 두 사람의 개수를 같게 만드세요.`;
 }
@@ -100,12 +100,13 @@ function foldScene(round, state, animateFold = false) {
 
 function cardsAndSlots(activity, round, state) {
   const isCross = activity.kind === "cross";
-  const cards = isCross ? [1, 2, 3, 4, 5].filter((n) => n !== round.center) : ["A", "B", "C", "D"];
-  const slot = (i) => `<button type="button" class="hand-slot ${state.selected !== null && state.slots[i] === state.selected ? "picked" : ""}" data-hand-action="slot" data-value="${i}" aria-label="${isCross ? ["위", "왼쪽", "오른쪽", "아래"][i] : `${i + 1}번째`} 자리${state.slots[i] === null ? " 비어 있음" : ` ${state.slots[i]}`}" ${state.solved ? "disabled" : ""}>${esc(state.slots[i] ?? "?")}</button>`;
+  const cards = isCross ? round.cards : ["A", "B", "C", "D"];
+  const slot = (i) => `<button type="button" class="hand-slot${isCross && i === 4 ? " hand-center" : ""} ${state.selected !== null && state.slots[i] === state.selected ? "picked" : ""}" data-hand-action="slot" data-value="${i}" aria-label="${isCross ? ["위", "왼쪽", "오른쪽", "아래", "가운데"][i] : `${i + 1}번째`} 자리${state.slots[i] === null ? " 비어 있음" : ` ${state.slots[i]}`}" ${state.solved ? "disabled" : ""}>${esc(state.slots[i] ?? "?")}</button>`;
   const bank = `<div class="hand-card-bank" role="group" aria-label="놓을 카드">${cards.map((card) => `<button type="button" data-hand-action="choose" data-value="${card}" aria-label="${card} 카드" aria-pressed="${state.selected === card}" ${state.solved ? "disabled" : ""} class="hand-number-card ${state.slots.includes(card) ? "placed" : ""}">${card}${state.slots.includes(card) ? `<small>${icon("check")}</small>` : ""}</button>`).join("")}</div>`;
   if (isCross) {
-    const sum = (a, b) => state.slots[a] !== null && state.slots[b] !== null ? state.slots[a] + round.center + state.slots[b] : "?";
-    return `<div class="hand-cross"><div class="hand-cross-grid"><span></span>${slot(0)}<span></span>${slot(1)}<b class="hand-center">${round.center}</b>${slot(2)}<span></span>${slot(3)}<span></span></div><div class="hand-sums"><span>가로 합 <b>${sum(1, 2)}</b></span><span>세로 합 <b>${sum(0, 3)}</b></span></div></div>${bank}`;
+    const c = state.slots[4];
+    const sum = (a, b) => state.slots[a] !== null && state.slots[b] !== null && c !== null ? state.slots[a] + c + state.slots[b] : "?";
+    return `<div class="hand-cross"><div class="hand-cross-grid"><span></span>${slot(0)}<span></span>${slot(1)}${slot(4)}${slot(2)}<span></span>${slot(3)}<span></span></div><div class="hand-sums"><span>가로 합 <b>${sum(1, 2)}</b></span><span>세로 합 <b>${sum(0, 3)}</b></span></div></div>${bank}`;
   }
   const clues = orderedClues(round), now = currentClueIndex(round, state.slots);
   return `<ol class="hand-clues ordered">${clues.map((clue, i) => {

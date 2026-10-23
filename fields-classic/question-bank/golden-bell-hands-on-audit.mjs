@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
-import { HANDS_ON_UNITS, HANDS_ON_ACTIVITIES as activities, unitForLesson, newActivityState, applyActivityAction, activityCheck, expectedCells, clockValueAfterQuarterTurns, unfoldTargets } from "./golden-bell-hands-on-models.js";
+import { HANDS_ON_UNITS, HANDS_ON_ACTIVITIES as activities, unitForLesson, newActivityState, applyActivityAction, activityCheck, expectedCells, clockValueAfterQuarterTurns, unfoldTargets, crossCenterWorks } from "./golden-bell-hands-on-models.js";
 import { paperCells } from "./golden-bell-hands-on-folding.js";
 import { handsOnGuide } from "./golden-bell-hands-on-guide.js";
 import { GOLDEN_BELL_BOOKS } from "./golden-bell-library.js";
@@ -31,8 +31,17 @@ for (const [id, activity] of Object.entries(activities)) for (const [index, roun
     assert.equal(activityCheck(state), false, "A matching endpoint with an extra turn is not the requested rotation");
     state.turns = round.turns;
   } else if (activity.kind === "cross") {
-    const possible = permutations([1, 2, 3, 4, 5].filter((n) => n !== round.center)).filter((slots) => activityCheck({ ...state, slots }));
-    assert.equal(possible.length, 8, "Accept all eight placements, not a single authored order");
+    // 가운데는 아이가 고른다(풀이 ① 교차점 후보). 되는 가운데마다 8가지 배치를 모두 받아들인다.
+    const possible = permutations(round.cards).filter((slots) => activityCheck({ ...state, slots }));
+    const centers = [...new Set(possible.map((slots) => slots[4]))].sort((a, b) => a - b);
+    assert.deepEqual(centers, round.cards.filter((c) => crossCenterWorks(round, c)), "Exactly the centers that split the rest into equal pairs");
+    assert.ok(centers.length >= 2 && centers.length < round.cards.length, "Some centers work and some do not");
+    assert.equal(possible.length, centers.length * 8, "Accept all eight placements for each working center");
+    const blocked = newActivityState(id, index);
+    applyActivityAction(blocked, "choose", round.cards[0]);
+    applyActivityAction(blocked, "slot", 0);
+    assert.equal(blocked.slots[0], null, "Center comes first");
+    assert.match(blocked.note, /가운데/);
     state.slots = possible[0];
     solutions.set(`${id}/${index}`, state.slots);
   } else if (activity.kind === "order") {
@@ -221,7 +230,9 @@ try {
           for (const cell of cells.slice(1)) { if (width === 390) await act("cell", cell).tap(); else await act("cell", cell).click(); }
         } else if (["cross", "order"].includes(activity.kind)) {
           const slots = solutions.get(`${id}/${index}`);
-          for (const [slot, value] of slots.entries()) { await act("choose", value).click(); await act("slot", slot).click(); }
+          // 십자 합은 가운데(자리 4)부터 놓는다 — 풀이 ① 교차점 후보.
+          const order = activity.kind === "cross" ? [4, 0, 1, 2, 3] : [0, 1, 2, 3];
+          for (const slot of order) { await act("choose", slots[slot]).click(); await act("slot", slot).click(); }
         } else {
           for (let i = round.right; i < round.left; i++) await act("mark", i).click();
           for (let i = round.right; i < round.right + (round.left - round.right) / 2; i++) await act("give", i).click();

@@ -66,9 +66,11 @@ async function solveRound(page, activity, round) {
   // 접기: 마지막 접기부터 한 번씩 펼치며 새 자국을 표시한다.
   if (activity.kind === "fold") for (let step = 1; step <= round.model.folds.length; step++) { await click("unfold"); for (const cell of unfoldTargets(round, step)) await click("cell", cell); }
   if (["cross", "order"].includes(activity.kind)) {
-    const pool = activity.kind === "cross" ? [1, 2, 3, 4, 5].filter((n) => n !== round.center) : ["A", "B", "C", "D"];
+    const pool = activity.kind === "cross" ? round.cards : ["A", "B", "C", "D"];
     const slots = permutations(pool).find((p) => activity.kind === "cross" ? p[0] + p[3] === p[1] + p[2] : round.clues.every((clue) => matchesClue(p, clue)));
-    for (const [i, n] of slots.entries()) { await click("choose", n); await click("slot", i); }
+    // 십자 합은 가운데(자리 4)부터 놓는다.
+    const order = activity.kind === "cross" ? [4, 0, 1, 2, 3] : [0, 1, 2, 3];
+    for (const i of order) { await click("choose", slots[i]); await click("slot", i); }
   }
   if (activity.kind === "transfer") {
     for (let i = round.right; i < round.left; i++) await click("mark", i);
