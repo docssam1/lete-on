@@ -1095,9 +1095,9 @@
       "singleAnswer": true,
       "singleAnswerCheck": "문제는 500개를 한 상자에 포장하고 포장된 감귤을 모두 판다고 했습니다. 274개는 500개 상자를 이루지 못하므로 완성 상자 판매액에 포함되지 않습니다.",
       "sourceVerified": true,
-      "implementationStatus": "verified-local",
-      "publicDecision": "ready-for-local-qa",
-      "lockReason": "원문 풀이와 합성 생성기 9개, 브라우저 12상태·넘침 24검사, A4 문제·풀이가 로컬 검수를 통과했습니다. GitHub 반영·배포·실사이트 확인은 대기 중입니다."
+      "implementationStatus": "deployed-and-live-verified",
+      "publicDecision": "published",
+      "lockReason": "원문과 독립 정답, 9개 합성 구성, 12개 라이브 PC·모바일 상태, 24개 넘침 검사, A4 문제·풀이, Pages 배포, 5개 배포 자산 SHA-256 일치를 확인했습니다."
     },
     {
       "sourceItemId": "5-2-u1-e4-exploration-rounded-range",
@@ -1415,18 +1415,18 @@
       "그래프와 도형은 눈금·선·단위가 원문과 같은 위치로 복원될 때까지 잠금 상태를 유지합니다.",
       "예제 3-3은 4296÷20의 나머지 16을 5개씩 묶어 모두 판다는 원문 조건이 서로 맞지 않아 유일하게 잠금을 유지합니다.",
       "확대 원본으로 두 자리 수 쌍, 소수 카드, 택시 올림, 완성 상자 판매, 꺾은선그래프 선·눈금, 7200 반올림 개수를 재확인해 여섯 항목의 단일 답을 확정했습니다.",
-      "Mission 6은 500개 단위로 포장한 완성 상자의 판매액으로 해석해 독립 답 3,600,000원을 확인했습니다. 274개는 포장되지 않으며 화면·A4·배포 검수 전 로컬 후보입니다."
+      "Mission 6은 500개 단위로 포장한 완성 상자의 판매액으로 해석해 독립 답 3,600,000원을 확인했습니다. 274개는 포장되지 않습니다. 생성기·화면·A4·배포 및 라이브 확인을 마쳤습니다."
     ]
   },
   "runtimeCrosswalk": {
     "asOf": "2026-10-23",
-    "scope": "The three page-6 E3 Exploration mappings and page-7 Mission 1–5 mappings are deployed and live-verified. Mission 6 is source-checked and math-verified locally; browser/A4, deployment, and live checks remain pending. The 50-item source census under integrity remains unchanged.",
+    "scope": "The three page-6 E3 Exploration mappings and page-7 Mission 1–6 mappings are deployed and live-verified. The 50-item source census under integrity remains unchanged.",
     "releaseStatus": "deployed-and-live-verified",
-    "mainMergeSha": "1e090a66fe2ba303fc020755f629668f6f170bd4",
-    "pullRequest": 389,
-    "pagesWorkflowRunId": 39961934608,
+    "mainMergeSha": "29910b8c3558828f9adeecac83730e7b552c27cb",
+    "pullRequest": 393,
+    "pagesWorkflowRunId": 39965598662,
     "liveVerification": {
-      "httpAssetsShaMatched": 6,
+      "httpAssetsShaMatched": 5,
       "browserStatesPassed": 12,
       "overflowChecksPassed": 24,
       "answerSeparationChecksPassed": 12,
@@ -1591,7 +1591,7 @@
         "browserAndA4Check": true,
         "publisherKeyVerified": false,
         "runtimeAvailableLocally": true,
-        "releaseStatus": "source-math-screen-a4-verified-local-pending-deploy",
+        "releaseStatus": "deployed-and-live-verified",
         "independentSourceAnswer": "24개 완성 상자 × 150000원 = 3600000원; 274개 미포장",
         "localQaPath": "/Users/docssam/Documents/Codex/GFIELD-Hermes/state/mac-continuation-20261017/checks/grade52-e6-source-20261023",
         "mathConfigurationsPassed": 9,
@@ -1604,7 +1604,15 @@
         "qaDriveId": "1SrLPoiqNnlbxaICMiCTseYGKIHUdtGsA",
         "qaDriveSize": 3038398,
         "qaDriveSha256": "1ad3f56f2a6b40a3f912dba417999202afd43eae4751385833c631f36555f25b",
-        "localQaZipSha256": "1ad3f56f2a6b40a3f912dba417999202afd43eae4751385833c631f36555f25b"
+        "localQaZipSha256": "1ad3f56f2a6b40a3f912dba417999202afd43eae4751385833c631f36555f25b",
+        "pullRequest": 393,
+        "mergeSha": "29910b8c3558828f9adeecac83730e7b552c27cb",
+        "pagesWorkflowRunId": 39965598662,
+        "pagesRunConclusion": "success",
+        "liveQaDriveId": "1MwgJ5_86Bjx_dFKO4SDuaEPV34OPijco",
+        "liveQaSize": 528144,
+        "liveQaSha256": "b450195a471d3a4aa091eb1945dabc88474bbf873abf74784c7ba8abcaa61920",
+        "httpAssetHashesMatched": 5
       }
     ],
     "repairPullRequest": 390,
