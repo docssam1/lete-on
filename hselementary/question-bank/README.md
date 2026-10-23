@@ -100,6 +100,7 @@
 - `source-5-2-rounded-range-e4-browser-audit.js`: PC·모바일 24상태, 48개 넘침 검사, 정답 분리, 외부 요청 차단, 두 문항의 A4 문제·풀이 출력을 확인합니다.
 - `source-5-2-rounded-count-mission1-audit.js` / `source-5-2-rounded-count-mission1-browser-audit.js`: 인쇄 11쪽 Mission 1의 원문 답 10개와 합성 9개 조합을 독립 계산하고, PC·모바일 12상태·24개 넘침 검사·정답 분리·외부 요청 차단·A4 문제·풀이를 확인합니다.
 - `source-5-2-congruence-page31-audit.js` / `source-5-2-congruence-page31-browser-audit.js`: 인쇄 31쪽 Mission 1–3의 27개 합성 조건과 API 계산을 검사하고, PC 1440px·모바일 375px 54상태, 문제·풀이 분리, 외부 요청 차단, A4 6개 출력을 확인합니다. 세 문항 모두 공개 후보이며 출판사 답안 미확인을 유지합니다.
+- `source-5-2-e4-example2-source-audit.js`: 인쇄 30쪽 예제 4-2의 PDF/인쇄 페이지, 35°·20° 원문 표시, 60° 회전으로 대응하는 125° 풀이, 구현 잠금 유지를 확인합니다.
 - `source-5-2-congruence-page31-m4-browser-audit.js`: 인쇄 31쪽 Mission 4의 9개 삼등분점 좌표·SVG 넓이·정답 계산을 검사하고 PC·모바일 18상태, 문제·풀이 분리, 외부 요청 차단, A4 문제·풀이 출력을 확인합니다.
 - `source-5-2-congruence-page31-m5-browser-audit.js`: 인쇄 31쪽 Mission 5의 9개 수치 조합·SVG 기하·넓이 분할을 검사하고 PC·모바일 12상태, 문제·풀이 분리, 외부 요청 차단, A4 문제·풀이 출력을 확인합니다.
 - `source-5-2-range-lock-browser-audit.js`: 기존 124개 중 대표 5개 유형의 잠금 15상태와 기존 6학년 문항 2상태를 검사합니다.
