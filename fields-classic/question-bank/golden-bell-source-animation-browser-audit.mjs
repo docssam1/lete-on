@@ -16,7 +16,8 @@ const base = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 assert.ok(["localhost", "127.0.0.1", "[::1]"].includes(new URL(base).hostname), "Private fixtures are local-only");
 const output = process.env.FIELDS_CAPTURE_DIR;
 if (output) await fs.mkdir(output, { recursive: true });
-const pilots = [["book-04", "hidden-cube-count", 3], ["book-10", "catch-up-acorns", 5]];
+// 10권 「따라잡기」(catch-up-acorns)는 본교재 단원이라 2026-10-23 골든벨에서 뺐다. 그 그림 엔진은 book10-animation 검사가 따로 본다.
+const pilots = [["book-04", "hidden-cube-count", 3]];
 const conceptStages = ["given", "target", "transform", "verify"];
 
 function syntheticAnswerRecords(book) {

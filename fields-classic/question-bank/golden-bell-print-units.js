@@ -9,8 +9,7 @@ const legacyUnits = {
     "calendar-weekday": 1, "clock-reading": 1, "multiplication-equation": 2,
     "arithmetic-sequence": 2, "assumption-score": 2, "reverse-growth": 3, "reverse-digits": 4
   },
-  "book-08": { "shape-equation-targets": 1, "pyramid-cryptarithm": 2 },
-  "book-10": { "napier-multiplication": 1, "number-digit-range-count": 4 }
+  "book-08": { "shape-equation-targets": 1, "pyramid-cryptarithm": 2 }
 };
 
 const normalize = (value) => value.replace(/\s/gu, "");

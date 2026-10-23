@@ -28,6 +28,11 @@
    인쇄에도 색이 나오도록 `print-color-adjust:exact`.
    **그림을 그리거나 색·문구를 고칠 때는 스킬 `.claude/skills/golden-bell-figure-style/SKILL.md`부터 읽는다**(색표·아이 말·실수 목록·검사기).
 9. 원장 PC의 C 드라이브에는 저장하지 않는다("C드라이브 저장 안돼").
+10. **골든벨의 원본은 골든벨 자료뿐이다**(2026-10-23 원장 확인: 「골든벨은 사전 학습이고 더클은 본 교재」).
+    Drive 「골든벨 1과정」 폴더의 `…N30권_골든벨_….pptx/pdf`, 9권은 판서 쪽 그림, 10권은 9권 판서 파일 10~11쪽.
+    **본교재(수업용 교재·교사용 지도서)의 활동·확인·도전·연습 문항은 골든벨에 넣지 않는다** — 그것은 문제은행
+    1권·2권·3권…(`index.html`, `source-data.js` `CURRICULUM`)의 자리이고, 거기에 이미 문항 번호 단위로 유형이 연결돼 있다.
+    지도서는 골든벨 문항의 물음·답을 확인하는 참고로만 본다(7권 선례).
 10. 커밋 메시지에 모델 이름을 쓰지 않는다.
 11. **회사 느낌을 내지 않는다**(2026-10-13): 화면·인쇄에 「FC」「필즈」「FIELDS CLASSIC」 같은 회사 이름을 쓰지 않는다.
     책 제목 줄은 「1과정」·「골든벨」, 페이지 제목은 「골든벨 학습」. 원본 문장에 학원 이름이 나오면 「학원」으로 바꾸고
@@ -50,7 +55,7 @@
 | 권별 CSS | `golden-bell-book03.css`, `golden-bell-book04.css` (`golden-bell.html`에서 링크) |
 | 개념 설명(안내형 가족) | 4권: `golden-bell-book04-guided.js`(`SUPPORTED_FAMILIES`, `renderBook04Guided`) + `golden-bell-guided-experiences.js:12` `BOOK_FOUR_GUIDED_FAMILIES` + 검사기 `golden-bell-book04-guided-audit.mjs`의 `FAMILIES`·`EXPECTED_ANSWER` (셋 다 같이 고쳐야 함). 다른 권 가족도 재사용 가능(9권 `book09-cube`, 1권 `relative-order`를 4권에서 재사용 중) |
 | 숨은 쌓기나무 풀이 애니메이션 | `golden-bell-cube-animation.js` (`subtype: "source-hidden-cube"`면 자동) |
-| **캐시 꼬리표** | 현재 `?v=20261019f`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
+| **캐시 꼬리표** | 현재 `?v=20261023b`. 바꿀 파일 5개: `golden-bell.js`, `golden-bell.html`, `app.js`, `golden-bell-guided-experiences.js`, `golden-bell-library.js` (`sed -i 's/20261019b/20261019c/g' …`). `golden-bell-book04-guided.js`를 고쳤으면 `golden-bell-guided-experiences.js` 안의 그 import 꼬리표도 따로 올린다 |
 | 4권 작업 도구 | `tools/golden-bell-book04/` — 패치 스크립트 2개(예시), 화면 캡처·인쇄 스크립트, DB SQL 틀(`answers-sql-template.md`) |
 | 4권 유형 대조표 | `BOOK04-SOURCE-AUDIT.md` |
 | **원본 PDF** | Google Drive `필즈더클래식 문제은행 원본/1과정(N30)/4권` 폴더 — 학생용(무답) PDF와 교사용 PDF. 5~10권은 같은 `1과정(N30)` 아래 권별 폴더. 내려받은 PDF·페이지 이미지는 **저장소 밖 임시 폴더**에만 둔다 |
@@ -504,7 +509,16 @@ DB `book-04` 현재: **키 323개**, sha 앞 8자리 `402a2b92`. 작업 전 반�
   - 검산기는 연속수 식의 「…」 앞뒤가 정말 1씩 늘어나는지 확인하고 처음·끝 수로 합을 직접 더한 뒤 짝·가운데 수 공식과도 맞춰 본다. **교사용 답과 다른 곳 없음**(홀수 개 Q1 (1)(2)는 판서에 식만 있어 식의 값과 대조).
   - DB `book-10` 262키 → 328키, sha 앞 8자리 `f03c6ac5`. 캐시 꼬리표 `20261019a`(`book10-renderers.js` import `20261022a`, `golden-bell.css` 링크 `20261022c`).
 
-#### 10권 지도서 보류 풀기 (교사용 지도서 쪽 그림: Drive 폴더 `1과정 10권`, 파일 `교사용지도서_..._10N30권_..._NNN.png`, 158쪽)
+#### ⚠️ 10권 골든벨 정리 — 지도서 단원을 골든벨에서 뺌 (2026-10-23, 원장 확인)
+- **잘못된 점**: 10권 골든벨에는 처음부터 교사용 지도서(본교재)로 만든 단원 0~6이 있었고(`source.origin:"textbook-derived"`, 화면 이름 「교재」), 묶음 2~5에서 그 지도서의 활동·확인·도전·연습 문항을 단원 11~22로 더 넣었다. 골든벨은 사전 학습이라 원본이 골든벨 판서뿐인데, 본교재를 골든벨로 옮긴 셈이다. 아래 「10권 지도서 보류 풀기」 기록은 그 작업의 이력으로만 남긴다.
+- **확인**: 문제은행 10권(`source-data.js` `CURRICULUM` book-10, `BOOK10_UNIT01~04_REFS`)은 지도서 네 단원의 활동·확인·도전·연습 문항 번호를 **빠짐없이** 유형에 연결해 두었다(본교재 문항 182개, 단원 테스트 25개). 그래서 문제은행으로 옮길 문항은 없다.
+- **한 일**: 패치 `tools/golden-bell-book10/patch-book10-goldenbell-only.mjs`(정답 없음). 골든벨 10권 = 판서 단원 7·8·9·10(46문항·답 칸 52)만. 제목 「곱셈과 연속수의 합」, `source`는 골든벨 판서, 장부는 옛 `sourceCoverage.goldenBell`을 그대로, 보류 0, `sourceQuestionCount` 46.
+  - 판서 단원 넷의 `unit`이 숫자 `1`이라 **10권 인쇄의 단원 묶기(`golden-bell-print-units.js`)가 멈춰 있었다** → 「연속수의 합」으로. 지도서 단원용 인쇄 연결표(`book-10` 줄)도 지움.
+  - 2단원 「따라잡기」(`catch-up-acorns`)의 풀이 애니메이션 시범은 골든벨에서 쓰이지 않게 됐다. 엔진(`golden-bell-book10-animation.js`)과 그 검사는 그대로 두고(문제은행에서 다시 쓸 수 있음), 화면 검사 `golden-bell-book10-unit2-browser-audit.mjs`는 지웠고 `golden-bell-source-animation-browser-audit.mjs`의 시범 목록에서 10권을 뺐다.
+  - **비공개 답안 DB `book-10`은 손대지 않았다**(950키 그대로). 지도서 단원의 답 키는 쓰이지 않은 채 남는다(9권 `/lessons/3/` 선례). 지도서 원문 대조 결과(문항·그림)는 git 이력과 `patch-book10-batch1~5.mjs`에 남아, 문제은행에 「원문 보기」를 만들 때 다시 쓸 수 있다.
+- 확인: 320·375px 넘침 0, 단원 4개, 현재 학습·이 권 전체(A4 10쪽)·선택 인쇄 모두 오류 없음, 검사기 통과.
+
+#### 10권 지도서 보류 풀기 (교사용 지도서 쪽 그림: Drive 폴더 `1과정 10권`, 파일 `교사용지도서_..._10N30권_..._NNN.png`, 158쪽) — 2026-10-23 골든벨에서 뺌(위 절)
 - 지도서 보류 102건은 장부(`sourceHold`)에 **쪽 번호 없이 유형·순번만** 있다(예: `B10-U2-two-weight-03`). 단원별로 지도서 쪽을 받아 유형과 쪽 순서로 맞춘다. 공개 문항은 연습 쪽(2단원 67~75쪽)에서 나왔고, 보류는 그 앞 활동·확인·도전 쪽이었다.
 - 쪽 그림 받기: Drive 다운로드 결과가 너무 커서 도구가 파일로 저장한다(`tool-results/mcp-Google_Drive-download_file_content-*.txt`, JSON `content`=base64) → 풀어서 저장소 밖 `b10src/gNNN.png`. 두 쪽씩 붙여 보면 빠르다.
 - **10권 묶음 2(지도서 2단원 52~66쪽, 33문항, 2026-10-22)**: 패치 `tools/golden-bell-book10/patch-book10-batch2.mjs`(정답 없음). 새 단원 번호 11 `sum-difference-activities-source`를 연습 단원(`catch-up-acorns`) 앞에.
@@ -608,6 +622,7 @@ node golden-bell-style-audit.mjs             # GOLDEN_BELL_STYLE_OK (색·회사
 - 원탁의 왼쪽·오른쪽은 **가운데를 보고 앉은 사람 기준**(교사용 37쪽 확인).
 - 교사용 그림의 오기를 따라 앱 그림을 바꿨던 일(42-(1) ㉮ 위치) → 원장 지시: **원본 학생용 그림이 기준**, 답을 그림에 맞춘다.
 - 원본에 없는 숫자(층수·전체 개수)를 그림에 적어 답이 드러난 일(18쪽) → 원본에 없는 정보는 그리지 않는다.
+- 10권에서 **본교재(교사용 지도서) 문항을 골든벨에 넣었다**(단원 0~6 + 묶음 2~5의 단원 11~22) → 원장 지적으로 2026-10-23에 뺌. 새 권을 시작할 때 원본 파일 이름에 「골든벨」이 있는지, 「수업용」「교사용지도서」가 아닌지부터 본다.
 - `git stash`를 반복문 안에서 잘못 써서 작업이 사라질 뻔함 → 기준선 비교는 `git worktree`로 따로 체크아웃해서 한다.
 
 ## 8. 작업 지시가 있는 곳 (우선순위 순)
