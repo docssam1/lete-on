@@ -33,6 +33,12 @@
 - Independently checked all six Mission records: maximum expression 33/25; digit triple 259; reduced-fraction pair sum 52; box-value sum 42; number-line value 11/7; nearest admissible fraction 48/5. The number-line item requires its equal-division figure, as recorded.
 - All source conditions, answers, and type records match. No record was changed; all six remain locked.
 
+## 2026-10-24 Grade 5-2 Unit 2 Printed Page 17 Mission 6 Underdetermination Proof
+
+- Rechecked the exact printed condition and circle diagram. With circle diameter d=14/5cm and equal adjacent-center spacing s, the rectangle width is d+9s and its area is d(d+9s).
+- Two distinct legal spacings demonstrate non-uniqueness: s=d/4 gives 637/25cm²; s=d/3 gives 784/25cm². Both use ten equal circles with constant overlap inside the rectangle, matching the text. The drawing gives no exact center spacing or width.
+- Strengthened the ledger's calculation and answer-determinacy evidence with these counterexamples. The item remains blocked/locked; no assumed scale value was promoted to source fact.
+
 ## 2026-10-24 Grade 5-2 Unit 1 Page 11 Mission 1: Locally Verified, Release Pending
 
 - Rechecked PDF page 9 / printed page 11 from the 450dpi page render and Apple Vision OCR. The text asks for natural numbers that round to 1,200 at the hundreds place and round up to 1,200 at the tens place. No figure is printed for this item; handwriting and publisher answers were excluded. The hundreds-rounding interval is 1,150–1,249 and the tens-ceiling interval is 1,191–1,200. Their intersection contains 10 natural numbers, 1,191–1,200. Publisher-key verification remains false.
