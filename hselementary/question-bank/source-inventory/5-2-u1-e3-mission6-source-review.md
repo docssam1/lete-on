@@ -1,6 +1,6 @@
 # Grade 5-2 Unit 1, printed page 9, Mission 6 source review (corrected)
 
-Status: source, independent answer, local browser, and A4 verified; deployment pending.
+Status: source, independent answer, browser/A4, deployment, and live site verified.
 
 ## Source
 
@@ -21,6 +21,7 @@ The previous draft treated a 274-mandarin partial box as an alternative. That re
 - Focused arithmetic audit passed all 9 synthetic pool/difficulty combinations; it independently confirms the source answer and checks that no answer leaks into the prompt.
 - Browser audit passed 12 states at 1280px and 375px, 24 horizontal overflow checks, 12 blocked external requests, and answer separation. The source is text-only; the learner variant preserves that structure without adding a diagram.
 - Problem and solution exports each render to one A4 portrait page. The solution layout was shortened after the first visual review so the remainder explanation stays comfortably within the page box.
-- Whole-bank availability, source-release, elementary-language, math-notation, numeric-display, and source-classification audits passed at 2,036 total / 1,248 generatable / 788 pending. This is local verification only; deployment/live check is still pending.
+- Whole-bank availability, source-release, elementary-language, math-notation, numeric-display, and source-classification audits passed at 2,036 total / 1,248 generatable / 788 pending. PR #393 merged as `29910b8c3558828f9adeecac83730e7b552c27cb`; Pages run #39965598662 succeeded. Live browser and A4 checks passed, and five deployed asset hashes match local.
+- Source QA archive is in Drive (ID `1SrLPoiqNnlbxaICMiCTseYGKIHUdtGsA`; 3,038,398 bytes; SHA-256 `1ad3f56f2a6b40a3f912dba417999202afd43eae4751385833c631f36555f25b`). Live QA archive is beside it (ID `1MwgJ5_86Bjx_dFKO4SDuaEPV34OPijco`; 528,144 bytes; SHA-256 `b450195a471d3a4aa091eb1945dabc88474bbf873abf74784c7ba8abcaa61920`). Metadata readback confirmed size and parent. Both omit the source PDF.
 
 No student data was accessed or changed.
