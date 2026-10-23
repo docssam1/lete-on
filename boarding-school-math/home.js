@@ -653,7 +653,6 @@
       };
     });
     const units = registry.units.map(function (unit) {
-      const publicGrade = String(unit.grade) === "6";
       const action = unitAction(unit);
       const domain = spine.domainTitles[unit.domainCode];
       return {
@@ -663,8 +662,8 @@
         terms: `${gradeName(unit.grade)} ${gradeShort(unit.grade)} ${unit.title.ko} ${unit.title.en} ${domain.ko} ${domain.en} ${unit.clusterId} ${unit.standardRange}`,
         href: action.href,
         mapGrade: unit.grade,
-        state: publicGrade ? "개념 공개" : "구조 공개",
-        stateClass: publicGrade ? "public" : "metadata"
+        state: action.state,
+        stateClass: action.public ? "public" : "metadata"
       };
     });
     return pathways.concat(units);

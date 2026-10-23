@@ -150,6 +150,9 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.match(await page.locator("#search-results").innerText(), /경로 보기/);
   await page.locator("#learning-search").fill("Grade 6 비와 비율");
   assert.match(await page.locator("#search-results").innerText(), /비와 비율[\s\S]*개념 공개/);
+  await page.locator("#learning-search").fill("7.NS.A");
+  assert.match(await page.locator("#search-results").innerText(), /유리수 연산[\s\S]*워크북 공개/);
+  assert.match(await page.locator("#search-results .search-result").first().getAttribute("href"), /unit-workbook\.html\?cluster=7.NS.A/);
 
   await page.locator('[data-grade-tab="8"]').click();
   assert.equal(await page.locator("#boarding-roadmap-link").getAttribute("href"), "./boarding-roadmap.html?grade=8");
