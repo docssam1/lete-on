@@ -41,8 +41,9 @@ test("grade map, level comparison, and competition intake stay honest and intera
   assert.equal(await page.locator(".stage-button").count(), 4);
   assert.deepEqual(await page.locator("#grade-focus-list strong").allInnerTexts(), ["학교 수학", "경시 · 선택", "SAT · 맛보기"]);
   assert.match(await page.locator(".level-boundary").innerText(), /진단 결과가 없습니다/);
-  assert.match(await page.locator("#grade-note").innerText(), /진단은 아직 검수 중/);
+  assert.match(await page.locator("#grade-note").innerText(), /7.NS.A 워크북과 진단은 검수 중/);
   assert.equal(await page.locator("#grade-practice-links a").count(), 2);
+  assert.match(await page.locator("#grade-practice-links a").first().innerText(), /검수 시안/);
   assert.match(await page.locator("#grade-practice-links a").first().getAttribute("href"), /cluster=7.NS.A/);
   assert.deepEqual(await page.locator(".route-button[aria-pressed='true']").allInnerTexts(), []);
   assert.equal(await page.locator(".route-explanation").isHidden(), true);

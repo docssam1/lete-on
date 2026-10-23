@@ -115,6 +115,8 @@
     const more = $("grade-practice-more");
     const moreLinks = $("grade-practice-more-links");
     section.hidden = items.length === 0;
+    section.querySelector("h4").textContent = grade === 7 ? "단원 워크북" : "지금 풀어 볼 수 있어요";
+    section.querySelector("p").textContent = grade === 7 ? "유리수 연산은 검수 시안입니다." : "배운 개념을 문제로 확인해 보세요.";
     primary.replaceChildren();
     moreLinks.replaceChildren();
     more.hidden = items.length <= 3;
@@ -122,7 +124,7 @@
     items.forEach(function (item, index) {
       const link = document.createElement("a");
       link.href = `./unit-workbook.html?cluster=${encodeURIComponent(item[0])}&mode=workbook&audience=student&locale=ko`;
-      link.textContent = `${item[1]} · 36문항 →`;
+      link.textContent = `${item[1]} · 36문항${item[0] === "7.NS.A" ? " · 검수 시안" : ""} →`;
       (index < 3 ? primary : moreLinks).append(link);
     });
   }
@@ -260,7 +262,7 @@
     setText("grade-bridge", entry.bridge);
     setText("source-chip", entry.source === "inferred" ? "9학년 · 추정안" : "학습 예시");
     setText("grade-note", grade === 7
-      ? "7.NS.A 단원 연습은 공개됐어요. 진단은 아직 검수 중이에요."
+      ? "7.RP.A 워크북은 공개됐어요. 7.NS.A 워크북과 진단은 검수 중이에요."
       : entry.source === "inferred"
         ? "Grade 9는 제공된 7·8·10학년 자료로 추정했어요. 학교 과목 순서는 선생님과 확인해 주세요."
         : "아직 진단 결과가 없어요. 실제 풀이를 보고 다음 단계를 정해요.");

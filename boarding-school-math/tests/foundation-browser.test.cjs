@@ -151,7 +151,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   await page.locator("#learning-search").fill("Grade 6 비와 비율");
   assert.match(await page.locator("#search-results").innerText(), /비와 비율[\s\S]*개념 공개/);
   await page.locator("#learning-search").fill("7.NS.A");
-  assert.match(await page.locator("#search-results").innerText(), /유리수 연산[\s\S]*워크북 공개/);
+  assert.match(await page.locator("#search-results").innerText(), /유리수 연산[\s\S]*워크북 시안/);
   assert.match(await page.locator("#search-results .search-result").first().getAttribute("href"), /unit-workbook\.html\?cluster=7.NS.A/);
 
   await page.locator('[data-grade-tab="8"]').click();
@@ -164,16 +164,18 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
   assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /학교 수학[\s\S]*사고력 연습[\s\S]*경시 문제[\s\S]*AMC 8 → AMC 10 가교/);
   assert.equal(await page.locator("#skill-rows .unit-reasoning").count(), 10);
   await page.locator('[data-grade-tab="7"]').click();
-  assert.equal(await page.locator("#grade-title").innerText(), "7학년 · 워크북 2개 공개");
-  assert.match(await page.locator("#map-footnote").innerText(), /워크북 2개 공개 · 진단은 검수 중/);
+  assert.equal(await page.locator("#grade-title").innerText(), "7학년 · 워크북 1개 · 검수 시안 1개");
+  assert.match(await page.locator("#map-footnote").innerText(), /워크북 1개와 검수 시안 1개 · 진단은 검수 중/);
   const gradeSevenNs = page.locator("#skill-rows .unit-row").filter({ hasText: "7.NS.A" });
-  assert.equal(await gradeSevenNs.locator(".search-result-status").textContent(), "워크북 공개");
+  assert.equal(await gradeSevenNs.locator(".search-result-status").textContent(), "워크북 시안");
   assert.match(await gradeSevenNs.locator(".unit-action").getAttribute("href"), /unit-workbook\.html\?cluster=7.NS.A/);
-  assert.equal(await page.locator('#skill-rows .search-result-status.public').count(), 2);
+  assert.equal(await page.locator('#skill-rows .search-result-status.public').count(), 1);
   await page.locator('[data-role-target="teacher"]').click();
   assert.match(await page.locator("#skill-rows .unit-row").filter({ hasText: "7.NS.A" }).locator(".unit-action").getAttribute("href"), /audience=teacher/);
   await page.locator('[data-role-target="student"]').click();
   await page.locator('[data-grade-tab="6"]').click();
+  assert.match(await page.locator("#grade-title").innerText(), /개념 10개 · 워크북 10개/);
+  assert.match(await page.locator("#map-footnote").innerText(), /단원 워크북 10개 · 진단은 검수 중/);
   assert.match(await page.locator("#grade-reasoning-lanes").innerText(), /10개 클리닉 공개/);
   await page.locator('[data-grade-tab="4"]').click();
   assert.equal(await page.locator("#grade-reasoning-lanes").isHidden(), true);
@@ -182,7 +184,7 @@ test("learning directory connects diagnosis, prescription, concepts, workbooks, 
 
   await page.locator('[data-map-view="domain"]').click();
   assert.equal(await page.locator("#domain-directory").isVisible(), true);
-  assert.match(await page.locator('[data-domain-grade="7"][data-domain-code="NS"]').innerText(), /워크북 공개/);
+  assert.match(await page.locator('[data-domain-grade="7"][data-domain-code="NS"]').innerText(), /워크북 시안/);
   assert.match(await page.locator('[data-domain-grade="7"][data-domain-code="RP"]').innerText(), /워크북 공개/);
   const gradeEightDomain = page.locator('[data-domain-grade="8"]').first();
   const selectedDomain = await gradeEightDomain.getAttribute("data-domain-code");
