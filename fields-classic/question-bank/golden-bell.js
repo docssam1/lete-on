@@ -1,16 +1,16 @@
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261023b";
-import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261023b";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261023c";
+import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261023c";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20260906c";
-import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261023b";
+import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261023c";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261023b";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261023c";
 import { book01Markup } from "./book01-renderers.js?v=20261022a";
-import { book02Markup } from "./book02-renderers.js?v=20261023b";
-import { book03Markup } from "./book03-renderers.js?v=20261023b";
-import { book04Markup } from "./book04-renderers.js?v=20261023b";
-import { book05Markup } from "./book05-renderers.js?v=20261023b";
+import { book02Markup } from "./book02-renderers.js?v=20261023c";
+import { book03Markup } from "./book03-renderers.js?v=20261023c";
+import { book04Markup } from "./book04-renderers.js?v=20261023c";
+import { book05Markup } from "./book05-renderers.js?v=20261023c";
 import { book06Markup } from "./book06-renderers.js?v=20260905d";
-import { book07Markup } from "./book07-renderers.js?v=20261023b";
+import { book07Markup } from "./book07-renderers.js?v=20261023c";
 import { book08Markup } from "./book08-renderers.js?v=20260906a";
 import { book09Markup } from "./book09-renderers.js?v=20261021d";
 import { book10Markup } from "./book10-renderers.js?v=20261023a";
@@ -19,7 +19,7 @@ import { compactGoldenBellPrint } from "./golden-bell-print-layout.js?v=20261022
 import { mountHandsOn } from "./golden-bell-hands-on.js?v=20261022a";
 import { renderFlowConcept, mountLessonFlow, teardownLessonFlow, resetLessonFlow, flowStep } from "./golden-bell-lesson-flow.js?v=20261022a";
 import { preparePrintGameLinks, attachPrintGameLinks, printCoverGames, printCoverGamesMarkup } from "./golden-bell-game-print.js?v=20261004a";
-import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023b";
+import { goldenBellPrintUnits } from "./golden-bell-print-units.js?v=20261023c";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
